@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-04-20 08:49:36 $
-  Version:   $Revision: 1.1.1.1 $
+  Date:      $Date: 2006-04-20 09:00:30 $
+  Version:   $Revision: 1.2 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -75,7 +75,7 @@ bool lhpBuilderApp::OnInit()
   //m_Logic->PlugVMEManager(false);  // the VmeManager at the moment cause 4 leaks of 200+32+24+56 bytes  //SIL. 20-4-2005: 
   m_Logic->Configure();
 
-  m_Logic->GetTopWin()->SetTitle("Medical Application");
+  m_Logic->GetTopWin()->SetTitle("LHPBuilder");
   SetTopWindow(mafGetFrame());  
 
   m_Logic->Plug(new mmoDICOMImporter("DICOM"));
@@ -112,6 +112,3 @@ int lhpBuilderApp::OnExit()
   cppDEL(m_Logic);
   return 0;
 }
-
-
-
