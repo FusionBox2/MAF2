@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-04-20 09:00:30 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2006-06-16 12:02:38 $
+  Version:   $Revision: 1.3 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -42,6 +42,7 @@
 #include "mmoSTLImporter.h"
 #include "mmoVTKExporter.h"
 #include "mmoVTKImporter.h"
+#include "mmoMSF1xImporter.h"
 
 #include "mafViewVTK.h"
 #include "mafViewCompound.h"
@@ -78,9 +79,10 @@ bool lhpBuilderApp::OnInit()
   m_Logic->GetTopWin()->SetTitle("LHPBuilder");
   SetTopWindow(mafGetFrame());  
 
-  m_Logic->Plug(new mmoDICOMImporter("DICOM"));
+  /*m_Logic->Plug(new mmoDICOMImporter("DICOM"));
   m_Logic->Plug(new mmoSTLImporter("STL"));
-  m_Logic->Plug(new mmoVTKImporter("VTK"));
+  m_Logic->Plug(new mmoVTKImporter("VTK"));*/
+  m_Logic->Plug(new mmoMSF1xImporter("MAF 1.x"));
 
   m_Logic->Plug(new mmoSTLExporter("STL"));
   m_Logic->Plug(new mmoVTKExporter("VTK"));
