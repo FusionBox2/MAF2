@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-06-21 13:31:52 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2006-06-27 14:24:00 $
+  Version:   $Revision: 1.5 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -46,6 +46,7 @@
 
 #include "mafViewVTK.h"
 #include "mafViewCompound.h"
+#include "mafViewRXCTLHPBuilder.h"
 
 //--------------------------------------------------------------------------------
 // Create the Application
@@ -57,6 +58,8 @@ bool lhpBuilderApp::OnInit()
 //--------------------------------------------------------------------------------
 {
   mafPics.Initialize();	
+//#include "pic/SPLASH_SCREEN.xpm"
+//	mafADDPIC(SPLASH_SCREEN);
 
   int result = mafVMEFactory::Initialize();
   assert(result==MAF_OK);
@@ -79,34 +82,52 @@ bool lhpBuilderApp::OnInit()
   m_Logic->GetTopWin()->SetTitle("LHPBuilder");
   SetTopWindow(mafGetFrame());  
 
+  //------------------------- Importers -------------------------
   /*m_Logic->Plug(new mmoDICOMImporter("DICOM"));
   m_Logic->Plug(new mmoSTLImporter("STL"));
   m_Logic->Plug(new mmoVTKImporter("VTK"));*/
   m_Logic->Plug(new mmoMSF1xImporter("MAF 1.x"));
+  //-------------------------------------------------------------
 
-  m_Logic->Plug(new mmoSTLExporter("STL"));
-  m_Logic->Plug(new mmoVTKExporter("VTK"));
+  //------------------------- Exporters -------------------------
+  //m_Logic->Plug(new mmoSTLExporter("STL"));
+  //m_Logic->Plug(new mmoVTKExporter("VTK"));
+  //-------------------------------------------------------------
 
-  m_Logic->Plug(new mmoCreateGroup("Create Group"));
-  m_Logic->Plug(new mmoCreateMeter("Create Meter"));
-  m_Logic->Plug(new mmoCreateSlicer("Create Slicer"));
-  m_Logic->Plug(new mmoReparentTo("Reparent to...  \tCtrl+R"));
-  
-  mafViewVTK *v = new mafViewVTK("Slice view", CAMERA_CT);
+  //------------------------- Operations -------------------------
+  //m_Logic->Plug(new mmoCreateGroup("Create Group"));
+  //m_Logic->Plug(new mmoCreateMeter("Create Meter"));
+  //m_Logic->Plug(new mmoCreateSlicer("Create Slicer"));
+  //m_Logic->Plug(new mmoReparentTo("Reparent to...  \tCtrl+R"));
+  //-------------------------------------------------------------
+
+  //------------------------- Views -------------------------
+/*mafViewVTK *v = new mafViewVTK("Slice view", CAMERA_CT);
   v->PlugVisualPipe("mafVMEVolumeGray", "mafPipeVolumeSlice");
   m_Logic->Plug(v);
   m_Logic->Plug(new mafViewVTK("VTK view"));
-
+*/
 	mafViewVTK *viso = new mafViewVTK("Isosurface view", CAMERA_CT);
   viso->PlugVisualPipe("mafVMEVolume", "mafPipeIsosurface");
   m_Logic->Plug(viso);
-
+/*
   mafViewCompound *vc = new mafViewCompound("view compound",3);
   mafViewVTK *v2 = new mafViewVTK("Slice view", CAMERA_CT);
   v2->PlugVisualPipe("mafVMEVolumeGray", "mafPipeVolumeSlice");
   vc->PlugChildView(v2);
   m_Logic->Plug(vc);
+*/
+  mafViewRXCTLHPBuilder *vrxct = new mafViewRXCTLHPBuilder("RXCT view");
+  vrxct->PackageView();
+  m_Logic->Plug(vrxct);
+  //-------------------------------------------------------------
 
+  wxBitmap splashBitmap;
+   splashBitmap.LoadFile("Splash/SPLASH_SCREEN.bmp", wxBITMAP_TYPE_BMP);
+   m_Logic->ShowSplashScreen(splashBitmap); 
+
+  // show the application
+	m_Logic->ShowSplashScreen(splashBitmap);
   m_Logic->Show();
   m_Logic->Init(0,NULL); // calls FileNew - which create the root
   return TRUE;
@@ -118,3 +139,4 @@ int lhpBuilderApp::OnExit()
   cppDEL(m_Logic);
   return 0;
 }
+
