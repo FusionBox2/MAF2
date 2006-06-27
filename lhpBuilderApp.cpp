@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-06-27 14:24:00 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2006-06-27 15:39:49 $
+  Version:   $Revision: 1.6 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -47,6 +47,7 @@
 #include "mafViewVTK.h"
 #include "mafViewCompound.h"
 #include "mafViewRXCTLHPBuilder.h"
+#include "mafViewOrthoSlice.h"
 
 //--------------------------------------------------------------------------------
 // Create the Application
@@ -120,6 +121,11 @@ bool lhpBuilderApp::OnInit()
   mafViewRXCTLHPBuilder *vrxct = new mafViewRXCTLHPBuilder("RXCT view");
   vrxct->PackageView();
   m_Logic->Plug(vrxct);
+
+  mafViewOrthoSlice *viewOrthoSlice = new mafViewOrthoSlice("OrthoSlice view");
+  viewOrthoSlice->PackageView();
+  m_Logic->Plug(viewOrthoSlice);
+
   //-------------------------------------------------------------
 
   wxBitmap splashBitmap;
