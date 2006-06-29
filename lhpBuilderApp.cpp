@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-06-29 08:51:50 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2006-06-29 11:23:10 $
+  Version:   $Revision: 1.8 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -129,7 +129,7 @@ bool lhpBuilderApp::OnInit()
   //-------------------------------------------------------------
 
   wxBitmap splashBitmap;
-   splashBitmap.LoadFile("Splash/SPLASH_SCREEN.bmp", wxBITMAP_TYPE_BMP);
+   splashBitmap.LoadFile("../Splash/SPLASH_SCREEN.bmp", wxBITMAP_TYPE_BMP);
    m_Logic->ShowSplashScreen(splashBitmap); 
 
   // show the application

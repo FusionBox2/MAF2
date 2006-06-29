@@ -26,7 +26,7 @@
 ; Instfiles page
 !insertmacro MUI_PAGE_INSTFILES
 ; Finish page
-!define MUI_FINISHPAGE_RUN "$INSTDIR\lhpBuilder.exe"
+!define MUI_FINISHPAGE_RUN "$INSTDIR\Bin\lhpBuilder.exe"
 !insertmacro MUI_PAGE_FINISH
 
 ; Uninstaller pages
@@ -48,17 +48,18 @@ ShowUnInstDetails show
 Section "SezionePrincipale" SEC01
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
+  CreateDirectory "$INSTDIR\bin"
+  SetOutPath "$INSTDIR\bin"
   File "..\..\BIN_builderApp\bin\Debug\lhpBuilder.exe"
   CreateDirectory "$SMPROGRAMS\b3c_software\lhpBuilder"
-  CreateShortCut "$SMPROGRAMS\b3c_software\lhpBuilder\lhpBuilder.lnk" "$INSTDIR\lhpBuilder.exe"
+  CreateShortCut "$SMPROGRAMS\b3c_software\lhpBuilder\lhpBuilder.lnk" "$INSTDIR\Bin\lhpBuilder.exe"
   CreateShortCut "$SMPROGRAMS\b3c_software\lhpBuilder\uninstall.lnk" "$INSTDIR\uninst.exe"
-  CreateShortCut "$DESKTOP\lhpBuilder.lnk" "$INSTDIR\lhpBuilder.exe"
+  CreateShortCut "$DESKTOP\lhpBuilder.lnk" "$INSTDIR\Bin\lhpBuilder.exe"
   File "..\..\BIN_builderApp\bin\Debug\lhpBuilder.exe.manifest"
   CreateDirectory "$INSTDIR\Splash"
   SetOutPath "$INSTDIR\Splash"
   File ".\SPLASH_SCREEN.bmp"
   CreateDirectory "$INSTDIR\Config"
-  CreateDirectory "$INSTDIR\bin"
   CreateDirectory "$INSTDIR\data"
   CreateDirectory "$INSTDIR\data\external"
   CreateDirectory "$INSTDIR\data\msf"
@@ -76,10 +77,10 @@ SectionEnd
 
 Section -Post
   WriteUninstaller "$INSTDIR\uninst.exe"
-  WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\lhpBuilder.exe"
+  WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\Bin\lhpBuilder.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\lhpBuilder.exe"
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\Bin\lhpBuilder.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
@@ -99,8 +100,8 @@ FunctionEnd
 Section Uninstall
   Delete "$INSTDIR\${PRODUCT_NAME}.url"
   Delete "$INSTDIR\uninst.exe"
-  Delete "$INSTDIR\lhpBuilder.exe.manifest"
-  Delete "$INSTDIR\lhpBuilder.exe"
+  Delete "$INSTDIR\Bin\lhpBuilder.exe.manifest"
+  Delete "$INSTDIR\Bin\lhpBuilder.exe"
 
   Delete "$INSTDIR\Config\Dictionary\dictionary.dic"
   Delete "$INSTDIR\Splash\SPLASH_SCREEN.bmp"
