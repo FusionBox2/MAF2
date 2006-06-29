@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-06-27 15:39:49 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2006-06-29 08:51:50 $
+  Version:   $Revision: 1.7 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -108,8 +108,8 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(v);
   m_Logic->Plug(new mafViewVTK("VTK view"));
 */
-	mafViewVTK *viso = new mafViewVTK("Isosurface view", CAMERA_CT);
-  viso->PlugVisualPipe("mafVMEVolume", "mafPipeIsosurface");
+	mafViewVTK *viso = new mafViewVTK("Isosurface view");
+  viso->PlugVisualPipe("mafVMEVolumeGray", "mafPipeIsosurface",MUTEX);
   m_Logic->Plug(viso);
 /*
   mafViewCompound *vc = new mafViewCompound("view compound",3);
