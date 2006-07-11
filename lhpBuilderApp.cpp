@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-07-05 10:16:34 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2006-07-11 17:25:45 $
+  Version:   $Revision: 1.10 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -43,6 +43,7 @@
 #include "mmoVTKExporter.h"
 #include "mmoVTKImporter.h"
 #include "mmoMSF1xImporter.h"
+#include "mmoExtractIsosurface.h"
 
 #include "mafViewVTK.h"
 #include "mafViewCompound.h"
@@ -100,6 +101,8 @@ bool lhpBuilderApp::OnInit()
   //m_Logic->Plug(new mmoCreateMeter("Create Meter"));
   //m_Logic->Plug(new mmoCreateSlicer("Create Slicer"));
   //m_Logic->Plug(new mmoReparentTo("Reparent to...  \tCtrl+R"));
+  m_Logic->Plug(new mmoExtractIsosurface("Extract Isosurface"));
+
   //-------------------------------------------------------------
 
   //------------------------- Views -------------------------
