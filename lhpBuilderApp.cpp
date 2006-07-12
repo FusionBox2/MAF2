@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-07-11 17:25:45 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2006-07-12 08:56:45 $
+  Version:   $Revision: 1.11 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -86,13 +86,13 @@ bool lhpBuilderApp::OnInit()
 
   //------------------------- Importers -------------------------
   m_Logic->Plug(new mmoDICOMImporter("DICOM"));
-  /*m_Logic->Plug(new mmoSTLImporter("STL"));
-  m_Logic->Plug(new mmoVTKImporter("VTK"));*/
+  m_Logic->Plug(new mmoSTLImporter("STL"));
+  /*m_Logic->Plug(new mmoVTKImporter("VTK"));*/
   m_Logic->Plug(new mmoMSF1xImporter("MAF 1.x"));
   //-------------------------------------------------------------
 
   //------------------------- Exporters -------------------------
-  //m_Logic->Plug(new mmoSTLExporter("STL"));
+  m_Logic->Plug(new mmoSTLExporter("STL"));
   //m_Logic->Plug(new mmoVTKExporter("VTK"));
   //-------------------------------------------------------------
 
@@ -114,6 +114,10 @@ bool lhpBuilderApp::OnInit()
 	mafViewVTK *viso = new mafViewVTK("Isosurface view");
   viso->PlugVisualPipe("mafVMEVolumeGray", "mafPipeIsosurface",MUTEX);
   m_Logic->Plug(viso);
+
+	mafViewVTK *vsurface = new mafViewVTK("Surface view");
+	vsurface->PlugVisualPipe("mafVMESurface","mafPipeSurface");
+	m_Logic->Plug(vsurface);
 /*
   mafViewCompound *vc = new mafViewCompound("view compound",3);
   mafViewVTK *v2 = new mafViewVTK("Slice view", CAMERA_CT);
