@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-07-12 08:56:45 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2006-07-13 19:03:33 $
+  Version:   $Revision: 1.12 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -87,7 +87,7 @@ bool lhpBuilderApp::OnInit()
   //------------------------- Importers -------------------------
   m_Logic->Plug(new mmoDICOMImporter("DICOM"));
   m_Logic->Plug(new mmoSTLImporter("STL"));
-  /*m_Logic->Plug(new mmoVTKImporter("VTK"));*/
+  m_Logic->Plug(new mmoVTKImporter("VTK"));
   m_Logic->Plug(new mmoMSF1xImporter("MAF 1.x"));
   //-------------------------------------------------------------
 
