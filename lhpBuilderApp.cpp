@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-07-13 19:03:33 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2006-07-14 13:25:54 $
+  Version:   $Revision: 1.13 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -32,6 +32,7 @@
 #include "mafVMERoot.h"
 #include "mafVMESurface.h"
 #include "mafPipeFactoryVME.h"
+#include "mafPipeVolumeSlice.h"
 
 #include "mmoCreateGroup.h"
 #include "mmoCreateMeter.h"
@@ -102,6 +103,7 @@ bool lhpBuilderApp::OnInit()
   //m_Logic->Plug(new mmoCreateSlicer("Create Slicer"));
   //m_Logic->Plug(new mmoReparentTo("Reparent to...  \tCtrl+R"));
   m_Logic->Plug(new mmoExtractIsosurface("Extract Isosurface"));
+	m_Logic->Plug(new mmoVolumeResample("Crop Volume"));
 
   //-------------------------------------------------------------
 
@@ -132,6 +134,10 @@ bool lhpBuilderApp::OnInit()
   mafViewOrthoSlice *viewOrthoSlice = new mafViewOrthoSlice("OrthoSlice view");
   viewOrthoSlice->PackageView();
   m_Logic->Plug(viewOrthoSlice);
+
+	/*mafViewVTK *vslice = new mafViewVTK("Slice view", CAMERA_CT);
+  vslice->PlugVisualPipe("mafVMEVolumeGray", "mafPipeVolumeSlice");
+  m_Logic->Plug(vslice);*/
 
   //-------------------------------------------------------------
 
