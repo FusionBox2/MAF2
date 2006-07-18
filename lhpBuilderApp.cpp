@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-07-17 17:08:47 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2006-07-18 16:22:41 $
+  Version:   $Revision: 1.16 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -95,7 +95,7 @@ bool lhpBuilderApp::OnInit()
 
   //------------------------- Exporters -------------------------
   m_Logic->Plug(new mmoSTLExporter("STL"));
-  //m_Logic->Plug(new mmoVTKExporter("VTK"));
+  m_Logic->Plug(new mmoVTKExporter("VTK"));
   //-------------------------------------------------------------
 
   //------------------------- Operations -------------------------
@@ -129,8 +129,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(vc);
 */
   mafViewRXCTLHPBuilder *vrxct = new mafViewRXCTLHPBuilder("RXCT view");
-  vrxct->PackageView();
-  m_Logic->Plug(vrxct);
+  vrxct->PackageView();  m_Logic->Plug(vrxct);
 
   mafViewOrthoSlice *viewOrthoSlice = new mafViewOrthoSlice("OrthoSlice view");
   viewOrthoSlice->PackageView();
