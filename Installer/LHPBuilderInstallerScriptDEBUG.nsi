@@ -38,7 +38,7 @@
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "..\LHPBuilder_Parabuild\bin\Release\Setup_LHPBuilder.exe"
+OutFile "..\bin\Release\Setup_LHPBuilder.exe"
 ;InstallDir "$PROGRAMFILES\LHPBuilder"
 InstallDir "$PROGRAMFILES\b3c_software\LHPBuilder"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
@@ -50,12 +50,12 @@ Section "SezionePrincipale" SEC01
   SetOverwrite ifnewer
   CreateDirectory "$INSTDIR\bin"
   SetOutPath "$INSTDIR\bin"
-  File "..\LHPBuilder_Parabuild\bin\Release\lhpBuilder.exe"
+  File "..\bin\Release\lhpBuilder.exe"
   CreateDirectory "$SMPROGRAMS\b3c_software\lhpBuilder"
   CreateShortCut "$SMPROGRAMS\b3c_software\lhpBuilder\lhpBuilder.lnk" "$INSTDIR\Bin\lhpBuilder.exe"
   CreateShortCut "$SMPROGRAMS\b3c_software\lhpBuilder\uninstall.lnk" "$INSTDIR\uninst.exe"
   CreateShortCut "$DESKTOP\lhpBuilder.lnk" "$INSTDIR\Bin\lhpBuilder.exe"
-  File "..\LHPBuilder_Parabuild\bin\Release\lhpBuilder.exe.manifest"
+  File "..\bin\Release\lhpBuilder.exe.manifest"
   CreateDirectory "$INSTDIR\Splash"
   SetOutPath "$INSTDIR\Splash"
   File ".\SPLASH_SCREEN.bmp"
