@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-07-18 16:22:41 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2006-07-23 19:35:50 $
+  Version:   $Revision: 1.17 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -50,6 +50,7 @@
 #include "mafViewVTK.h"
 #include "mafViewCompound.h"
 #include "mafViewRXCTLHPBuilder.h"
+#include "mafViewRXCT.h"
 #include "mafViewOrthoSlice.h"
 
 //--------------------------------------------------------------------------------
@@ -128,12 +129,16 @@ bool lhpBuilderApp::OnInit()
   vc->PlugChildView(v2);
   m_Logic->Plug(vc);
 */
-  mafViewRXCTLHPBuilder *vrxct = new mafViewRXCTLHPBuilder("RXCT view");
+  mafViewRXCTLHPBuilder *vrxct = new mafViewRXCTLHPBuilder("old RXCT view (JUST FOR COMPARISON, TO BE REMOVED)");
   vrxct->PackageView();  m_Logic->Plug(vrxct);
+
+  mafViewRXCT *vrxctl = new mafViewRXCT("new RXCT view");
+  vrxctl->PackageView();  m_Logic->Plug(vrxctl);
 
   mafViewOrthoSlice *viewOrthoSlice = new mafViewOrthoSlice("OrthoSlice view");
   viewOrthoSlice->PackageView();
   m_Logic->Plug(viewOrthoSlice);
+
 
 	/*mafViewVTK *vslice = new mafViewVTK("Slice view", CAMERA_CT);
   vslice->PlugVisualPipe("mafVMEVolumeGray", "mafPipeVolumeSlice");
