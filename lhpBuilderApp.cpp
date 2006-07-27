@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-07-23 19:35:50 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2006-07-27 12:05:23 $
+  Version:   $Revision: 1.18 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -45,7 +45,7 @@
 #include "mmoVTKImporter.h"
 #include "mmoMSF1xImporter.h"
 #include "mmoExtractIsosurface.h"
-#include "mmoVolumeResample.h"
+#include "mmoCrop.h"
 
 #include "mafViewVTK.h"
 #include "mafViewCompound.h"
@@ -105,16 +105,16 @@ bool lhpBuilderApp::OnInit()
   //m_Logic->Plug(new mmoCreateSlicer("Create Slicer"));
   //m_Logic->Plug(new mmoReparentTo("Reparent to...  \tCtrl+R"));
   m_Logic->Plug(new mmoExtractIsosurface("Extract Isosurface"));
-	m_Logic->Plug(new mmoVolumeResample("Crop Volume"));
+	m_Logic->Plug(new mmoCrop("Crop Volume"));
 
   //-------------------------------------------------------------
 
   //------------------------- Views -------------------------
-/*mafViewVTK *v = new mafViewVTK("Slice view", CAMERA_CT);
+	/*mafViewVTK *v = new mafViewVTK("Slice view", CAMERA_CT);
   v->PlugVisualPipe("mafVMEVolumeGray", "mafPipeVolumeSlice");
-  m_Logic->Plug(v);
-  m_Logic->Plug(new mafViewVTK("VTK view"));
-*/
+  m_Logic->Plug(v);*/
+  //m_Logic->Plug(new mafViewVTK("VTK view"));
+
 	mafViewVTK *viso = new mafViewVTK("Isosurface view");
   viso->PlugVisualPipe("mafVMEVolumeGray", "mafPipeIsosurface",MUTEX);
   m_Logic->Plug(viso);
