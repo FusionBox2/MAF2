@@ -66,6 +66,7 @@ Section "SezionePrincipale" SEC01
   CreateDirectory "$INSTDIR\Config\Dictionary"
   SetOutPath "$INSTDIR\Config\Dictionary"
   File ".\dictionary.dic"
+  File ".\dicom3.dic"
   SetOutPath "$INSTDIR\Config"
 SectionEnd
 
@@ -104,6 +105,7 @@ Section Uninstall
   Delete "$INSTDIR\Bin\lhpBuilder.exe"
 
   Delete "$INSTDIR\Config\Dictionary\dictionary.dic"
+  Delete "$INSTDIR\Config\Dictionary\dicom3.dic"
   Delete "$INSTDIR\Splash\SPLASH_SCREEN.bmp"
 
   Delete "$SMPROGRAMS\b3c_software\lhpBuilder\Uninstall.lnk"
