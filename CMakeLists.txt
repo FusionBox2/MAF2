@@ -73,3 +73,54 @@ ELSE (MAF_FOUND)
 ENDIF (MAF_FOUND)
 
 
+#-----------------------------------------------------------------------------
+# LHPBUILDER deploy stuff.  
+#-----------------------------------------------------------------------------
+
+# This is specific for NSIS Nullsoft Installer that runs currently under Windows only and Parabuild.
+# An LHPBUILDER_VERSION variable is created to gather versioning information
+IF (WIN32)
+    
+  # installer useful values
+  SET(LHPBUILDER_EXECUTABLE_OUTPUT_PATH "${EXECUTABLE_OUTPUT_PATH}/Debug/" CACHE PATH "Source directory for lhpBuilder executable. This is used by the installer to find the executable.")
+  
+  STRING(REPLACE "/" "\\" LHPBUILDER_EXECUTABLE_OUTPUT_PATH_WIN ${LHPBUILDER_EXECUTABLE_OUTPUT_PATH})
+  SET(LHPBUILDER_EXECUTABLE_OUTPUT_PATH_WIN ${LHPBUILDER_EXECUTABLE_OUTPUT_PATH_WIN} CACHE INTERNAL "get the executable from this directory")
+  
+  # MESSAGE("variable value = " ${LHPBUILDER_EXECUTABLE_OUTPUT_PATH})
+  # MESSAGE("variable value = " ${LHPBUILDER_EXECUTABLE_OUTPUT_PATH_WIN})
+   
+  # this values are set by hand when major or minor is released
+  SET(LHPBUILDER_MAJOR_VERSION 1 CACHE INTERNAL "major version")
+  SET(LHPBUILDER_MINOR_VERSION 0 CACHE INTERNAL "minor version")
+  
+  # test for environment variable reading
+  # MESSAG# "$ENV{PATH}")
+  # MESSAG# "$ENV{PIPPO}")
+  
+  # automatic values from parabuild created temporary environment variable
+  SET(LHPBUILDER_BUILD_TIMESTAMP $ENV{PARABUILD_BUILD_TIMESTAMP} CACHE INTERNAL "build timestamp")
+  SET(LHPBUILDER_BUILD_NUMBER $ENV{PARABUILD_BUILD_NUMBER} CACHE INTERNAL "build number")
+  
+  # create the main version variable:
+  SET(LHPBUILDER_VERSION "${LHPBUILDER_MAJOR_VERSION}_${LHPBUILDER_MINOR_VERSION}_TS_${PARABUILD_BUILD_TIMESTAMP}_BUILD_${PARABUILD_BUILD_NUMBER}" CACHE INTERNAL "big version identifier concatenating other identifier")
+  
+  # MESSAGE("variable value = " ${LHPBUILDER_VERSION})
+    
+  # config installer file
+  # set the installer directory variable
+  SET(LHPBUILDER_INSTALLER_DIR ${PROJECT_SOURCE_DIR}/Installer)
+  # convert it to Windows format
+  STRING (REPLACE "/" "\\" LHPBUILDER_INSTALLER_DIR_WIN ${LHPBUILDER_INSTALLER_DIR} )
+  # MESSAGE("variable LHPBUILDER_INSTALLER_DIR_WIN = " ${LHPBUILDER_INSTALLER_DIR_WIN})
+  
+  # installer executable will be written to this directory
+  SET(LHPBUILDER_INSTALLER_EXECUTABLE_OUTPUT_DIR ${LHPBUILDER_EXECUTABLE_OUTPUT_PATH} CACHE PATH "the installer executable will be written to this directory ")
+  # convert it to Windows format  
+  STRING(REPLACE "/" "\\" LHPBUILDER_INSTALLER_EXECUTABLE_OUTPUT_DIR_WIN ${LHPBUILDER_INSTALLER_EXECUTABLE_OUTPUT_DIR})
+  SET(LHPBUILDER_INSTALLER_EXECUTABLE_OUTPUT_DIR_WIN ${LHPBUILDER_INSTALLER_EXECUTABLE_OUTPUT_DIR_WIN} CACHE INTERNAL "get the executable  from this directory")
+  # MESSAGE("variable LHPBUILDER_INSTALLER_EXECUTABLE_OUTPUT_DIR_WIN = " ${LHPBUILDER_INSTALLER_EXECUTABLE_OUTPUT_DIR_WIN})
+  
+  CONFIGURE_FILE(${LHPBUILDER_INSTALLER_DIR}/LHPBuilderInstallerScript.nsi.in  ${LHPBUILDER_EXECUTABLE_OUTPUT_PATH}/LHPBuilderInstallerScript.nsi @ONLY)
+  
+ENDIF (WIN32)               
