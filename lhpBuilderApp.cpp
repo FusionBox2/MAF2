@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-09-19 15:41:58 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2006-09-20 15:21:08 $
+  Version:   $Revision: 1.20 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -33,27 +33,33 @@
 #include "mafVMESurface.h"
 #include "mafPipeFactoryVME.h"
 #include "mafPipeVolumeSlice.h"
+#include "medPipeFactoryVME.h"
+#include "medPipeVolumeDRR.h"
 
 #include "mmoCreateGroup.h"
 #include "mmoCreateMeter.h"
 #include "mmoCreateSlicer.h"
 #include "mmoDICOMImporter.h"
 #include "mmoReparentTo.h"
+#include "mmoImageImporter.h"
 #include "mmoSTLExporter.h"
 #include "mmoSTLImporter.h"
 #include "mmoVTKExporter.h"
 #include "mmoVTKImporter.h"
 #include "mmoMSF1xImporter.h"
+#include "mmoRAWImporterVolume.h"
 #include "mmoExtractIsosurface.h"
 #include "mmoCrop.h"
 #include "mmoVOIDensity.h"
 #include "mmoVolumeResample.h"
 
 #include "mafViewVTK.h"
+
 #include "mafViewCompound.h"
 #include "mafViewRXCTLHPBuilder.h"
 #include "mafViewRXCT.h"
 #include "mafViewOrthoSlice.h"
+#include "mafViewHTML.h"
 
 //--------------------------------------------------------------------------------
 // Create the Application
@@ -75,6 +81,8 @@ bool lhpBuilderApp::OnInit()
   result = mafPipeFactoryVME::Initialize();
   assert(result==MAF_OK);
 
+	result = medPipeFactoryVME::Initialize();
+	assert(result==MAF_OK);
   m_Logic = new mafLogicWithManagers();
   //m_Logic->PlugTimebar(false);
   //m_Logic->PlugMenu(false);
@@ -94,6 +102,8 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoSTLImporter("STL"));
   m_Logic->Plug(new mmoVTKImporter("VTK"));
   m_Logic->Plug(new mmoMSF1xImporter("MAF 1.x"));
+  m_Logic->Plug(new mmoRAWImporterVolume("RAW Volume"));
+  m_Logic->Plug(new mmoImageImporter("Images"));
   //-------------------------------------------------------------
 
   //------------------------- Exporters -------------------------
@@ -143,6 +153,14 @@ bool lhpBuilderApp::OnInit()
   viewOrthoSlice->PackageView();
   m_Logic->Plug(viewOrthoSlice);
 
+	// View DRR
+	mafViewVTK *vdrr = new mafViewVTK("DRR");
+	vdrr->PlugVisualPipe("mafVMEVolumeGray","medPipeVolumeDRR",MUTEX);
+	m_Logic->Plug(vdrr);
+  
+  // View HTML
+	mafViewHTML *vhtml = new mafViewHTML("HTML View");
+	m_Logic->Plug(vhtml);
 
 	/*mafViewVTK *vslice = new mafViewVTK("Slice view", CAMERA_CT);
   vslice->PlugVisualPipe("mafVMEVolumeGray", "mafPipeVolumeSlice");
