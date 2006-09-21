@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-09-20 19:54:32 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2006-09-21 07:56:19 $
+  Version:   $Revision: 1.22 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -34,7 +34,7 @@
 #include "mafPipeFactoryVME.h"
 #include "mafPipeVolumeSlice.h"
 #include "medPipeFactoryVME.h"
-//#include "medPipeVolumeDRR.h"
+#include "medPipeVolumeDRR.h"
 
 #include "mmoCreateGroup.h"
 #include "mmoCreateMeter.h"
@@ -102,7 +102,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoSTLImporter("STL"));
   m_Logic->Plug(new mmoVTKImporter("VTK"));
   m_Logic->Plug(new mmoMSF1xImporter("MAF 1.x"));
-  m_Logic->Plug(new mmoRAWImporterVolume("RAW Volume"));
+  //m_Logic->Plug(new mmoRAWImporterVolume("RAW Volume"));
   m_Logic->Plug(new mmoImageImporter("Images"));
   //-------------------------------------------------------------
 
@@ -154,9 +154,9 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(viewOrthoSlice);
 
 	// View DRR
-	//mafViewVTK *vdrr = new mafViewVTK("DRR");
-	//vdrr->PlugVisualPipe("mafVMEVolumeGray","medPipeVolumeDRR",MUTEX);
-	//m_Logic->Plug(vdrr);
+	mafViewVTK *vdrr = new mafViewVTK("DRR");
+	vdrr->PlugVisualPipe("mafVMEVolumeGray","medPipeVolumeDRR",MUTEX);
+	m_Logic->Plug(vdrr);
   
   // View HTML
 	mafViewHTML *vhtml = new mafViewHTML("HTML View");
