@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-09-22 10:09:16 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2006-09-27 08:36:54 $
+  Version:   $Revision: 1.24 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -52,6 +52,7 @@
 #include "mmoCrop.h"
 #include "mmoVOIDensity.h"
 #include "mmoVolumeResample.h"
+#include "mmoAddLandmark.h"
 
 #include "mafViewVTK.h"
 
@@ -88,10 +89,11 @@ bool lhpBuilderApp::OnInit()
   //m_Logic->PlugMenu(false);
   //m_Logic->PlugToolbar(false);
   //m_Logic->PlugLogbar(false);
-  //m_Logic->PlugSidebar(false);
+  m_Logic->PlugSidebar(true,mafSideBar::SINGLE_NOTEBOOK);
   //m_Logic->PlugOpManager(false);
   //m_Logic->PlugViewManager(false);
   //m_Logic->PlugVMEManager(false);  // the VmeManager at the moment cause 4 leaks of 200+32+24+56 bytes  //SIL. 20-4-2005: 
+  
   m_Logic->Configure();
 
   m_Logic->GetTopWin()->SetTitle("LHPBuilder");
@@ -116,6 +118,7 @@ bool lhpBuilderApp::OnInit()
   //m_Logic->Plug(new mmoCreateMeter("Create Meter"));
   //m_Logic->Plug(new mmoCreateSlicer("Create Slicer"));
   //m_Logic->Plug(new mmoReparentTo("Reparent to...  \tCtrl+R"));
+  m_Logic->Plug(new mmoAddLandmark("Add Landmark \tCtrl+A"));
   m_Logic->Plug(new mmoExtractIsosurface("Extract Isosurface"));
 	m_Logic->Plug(new mmoCrop("Crop Volume"));
 	m_Logic->Plug(new mmoVolumeResample("Volume Resample"));
