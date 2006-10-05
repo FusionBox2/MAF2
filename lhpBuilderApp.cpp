@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-09-27 08:36:54 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2006-10-05 08:55:27 $
+  Version:   $Revision: 1.25 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -53,6 +53,9 @@
 #include "mmoVOIDensity.h"
 #include "mmoVolumeResample.h"
 #include "mmoAddLandmark.h"
+#include "mmoRawMotionDataImporter.h"
+#include "mmoLandmarkExporter.h"
+#include "mmoLandmarkImporter.h"
 
 #include "mafViewVTK.h"
 
@@ -106,11 +109,14 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoMSF1xImporter("MAF 1.x"));
   m_Logic->Plug(new mmoRAWImporterVolume("RAW Volume"));
   m_Logic->Plug(new mmoImageImporter("Images"));
+  m_Logic->Plug(new mmoRawMotionDataImporter("Raw Motion Data"));
+  m_Logic->Plug(new mmoLandmarkImporter("Landmark"));
   //-------------------------------------------------------------
 
   //------------------------- Exporters -------------------------
   m_Logic->Plug(new mmoSTLExporter("STL"));
   m_Logic->Plug(new mmoVTKExporter("VTK"));
+  m_Logic->Plug(new mmoLandmarkExporter("Landmark"));
   //-------------------------------------------------------------
 
   //------------------------- Operations -------------------------
