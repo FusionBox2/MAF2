@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-10-05 10:55:27 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2006-10-16 14:04:37 $
+  Version:   $Revision: 1.27 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -53,6 +53,9 @@
 #include "mmoVOIDensity.h"
 #include "mmoVolumeResample.h"
 #include "mmoAddLandmark.h"
+#include "mmoRegisterClusters.h"
+#include "mmoMAFTransformScale.h"
+#include "mmoMAFTransform.h"
 #ifdef MAF_USE_ITK
   #include "mmoRawMotionDataImporter.h"
   #include "mmoLandmarkExporter.h"
@@ -129,10 +132,13 @@ bool lhpBuilderApp::OnInit()
   //m_Logic->Plug(new mmoCreateSlicer("Create Slicer"));
   //m_Logic->Plug(new mmoReparentTo("Reparent to...  \tCtrl+R"));
   m_Logic->Plug(new mmoAddLandmark("Add Landmark \tCtrl+A"));
+  //m_Logic->Plug(new mmoRegisterClusters("Register Landmark Cloud"));
   m_Logic->Plug(new mmoExtractIsosurface("Extract Isosurface"));
 	m_Logic->Plug(new mmoCrop("Crop Volume"));
 	m_Logic->Plug(new mmoVolumeResample("Volume Resample"));
 	m_Logic->Plug(new mmoVOIDensity("VOI Density"));
+	//m_Logic->Plug(new mmoMAFTransformScale("Scale Transform"));
+  m_Logic->Plug(new mmoMAFTransform("Transform"));
 
   //-------------------------------------------------------------
 
