@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-10-16 16:02:14 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2006-10-17 14:11:43 $
+  Version:   $Revision: 1.29 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -54,7 +54,7 @@
 #include "mmoVolumeResample.h"
 #include "mmoAddLandmark.h"
 //#include "mmoRegisterClusters.h"
-//#include "mmoMAFTransformScale.h"
+#include "mmoMAFTransformScale.h"
 #include "mmoMAFTransform.h"
 #ifdef MAF_USE_ITK
   #include "mmoRawMotionDataImporter.h"
@@ -137,7 +137,7 @@ bool lhpBuilderApp::OnInit()
 	m_Logic->Plug(new mmoCrop("Crop Volume"));
 	m_Logic->Plug(new mmoVolumeResample("Volume Resample"));
 	m_Logic->Plug(new mmoVOIDensity("VOI Density"));
-	//m_Logic->Plug(new mmoMAFTransformScale("Scale Transform"));
+	m_Logic->Plug(new mmoMAFTransformScale("Scale Transform"));
   m_Logic->Plug(new mmoMAFTransform("Transform"));
 
   //-------------------------------------------------------------
