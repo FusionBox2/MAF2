@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-10-23 12:14:31 $
-  Version:   $Revision: 1.30 $
+  Date:      $Date: 2006-10-23 15:02:11 $
+  Version:   $Revision: 1.31 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -120,17 +120,23 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoMSF1xImporter("MAF 1.x"));
   m_Logic->Plug(new mmoRAWImporterVolume("RAW Volume"));
   m_Logic->Plug(new mmoImageImporter("Images"));
-#ifdef MAF_USE_ITK
-  m_Logic->Plug(new mmoRawMotionDataImporter("Raw Motion Data"));
-  m_Logic->Plug(new mmoLandmarkImporter("Landmark"));
-#endif
-	m_Logic->Plug(new mmoVRMLImporter("Geometry VRML "));
+  
+  #ifdef MAF_USE_ITK
+    m_Logic->Plug(new mmoRawMotionDataImporter("Raw Motion Data"));
+    m_Logic->Plug(new mmoLandmarkImporter("Landmark"));
+  #endif
+	
+    m_Logic->Plug(new mmoVRMLImporter("Geometry VRML "));
   //-------------------------------------------------------------
 
   //------------------------- Exporters -------------------------
   m_Logic->Plug(new mmoSTLExporter("STL"));
   m_Logic->Plug(new mmoVTKExporter("VTK"));
-  m_Logic->Plug(new mmoLandmarkExporter("Landmark"));
+
+  #ifdef MAF_USE_ITK
+    m_Logic->Plug(new mmoLandmarkExporter("Landmark"));
+  #endif
+
   //-------------------------------------------------------------
 
   //------------------------- Operations -------------------------
