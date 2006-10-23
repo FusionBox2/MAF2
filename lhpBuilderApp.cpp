@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-10-17 14:11:43 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2006-10-23 12:14:31 $
+  Version:   $Revision: 1.30 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -39,6 +39,11 @@
 #include "mmoCreateGroup.h"
 #include "mmoCreateMeter.h"
 #include "mmoCreateSlicer.h"
+#include "mmoCreateRefSys.h"
+#include "mmoExplodeCollapse.h"
+#include "mmoFilterSurface.h"
+#include "mmo2DMeasure.h"
+#include "mmoReparentTo.h"
 #include "mmoDICOMImporter.h"
 #include "mmoReparentTo.h"
 #include "mmoImageImporter.h"
@@ -47,6 +52,7 @@
 #include "mmoVTKExporter.h"
 #include "mmoVTKImporter.h"
 #include "mmoMSF1xImporter.h"
+#include "mmoVRMLImporter.h"
 #include "mmoRAWImporterVolume.h"
 #include "mmoExtractIsosurface.h"
 #include "mmoCrop.h"
@@ -118,6 +124,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoRawMotionDataImporter("Raw Motion Data"));
   m_Logic->Plug(new mmoLandmarkImporter("Landmark"));
 #endif
+	m_Logic->Plug(new mmoVRMLImporter("Geometry VRML "));
   //-------------------------------------------------------------
 
   //------------------------- Exporters -------------------------
@@ -127,18 +134,22 @@ bool lhpBuilderApp::OnInit()
   //-------------------------------------------------------------
 
   //------------------------- Operations -------------------------
-  //m_Logic->Plug(new mmoCreateGroup("Create Group"));
-  //m_Logic->Plug(new mmoCreateMeter("Create Meter"));
-  //m_Logic->Plug(new mmoCreateSlicer("Create Slicer"));
-  //m_Logic->Plug(new mmoReparentTo("Reparent to...  \tCtrl+R"));
-  m_Logic->Plug(new mmoAddLandmark("Add Landmark \tCtrl+A"));
+  m_Logic->Plug(new mmoCreateGroup("Group"),"Create");
+	m_Logic->Plug(new mmoCreateRefSys("Refsys"),"Create");
+	m_Logic->Plug(new mmoAddLandmark("Add Landmark \tCtrl+A"),"Create");
+  m_Logic->Plug(new mmoCreateMeter("Distance Meter"),"Derive");
+  m_Logic->Plug(new mmoCreateSlicer("Volume Slicer"),"Derive");
+	m_Logic->Plug(new mmoExplodeCollapse("Explode/Collapse Landamark Cloud"),"Modify");
+	m_Logic->Plug(new mmoFilterSurface("Filter Surface"),"Modify");
+	m_Logic->Plug(new mmoExtractIsosurface("Extract Isosurface"),"Modify");
+	m_Logic->Plug(new mmoCrop("Crop Volume"),"Modify");
+	m_Logic->Plug(new mmoVolumeResample("Volume Resample"),"Modify");
+	m_Logic->Plug(new mmoMAFTransformScale("Scale Transform"),"Modify");
+  m_Logic->Plug(new mmoMAFTransform("Transform"),"Modify");
+	m_Logic->Plug(new mmo2DMeasure("2D Measure"),"Measure");
+	m_Logic->Plug(new mmoVOIDensity("VOI Density"),"Measure");
+  m_Logic->Plug(new mmoReparentTo("Reparent to...  \tCtrl+R"),"Fuse");
   //m_Logic->Plug(new mmoRegisterClusters("Register Landmark Cloud"));
-  m_Logic->Plug(new mmoExtractIsosurface("Extract Isosurface"));
-	m_Logic->Plug(new mmoCrop("Crop Volume"));
-	m_Logic->Plug(new mmoVolumeResample("Volume Resample"));
-	m_Logic->Plug(new mmoVOIDensity("VOI Density"));
-	m_Logic->Plug(new mmoMAFTransformScale("Scale Transform"));
-  m_Logic->Plug(new mmoMAFTransform("Transform"));
 
   //-------------------------------------------------------------
 
