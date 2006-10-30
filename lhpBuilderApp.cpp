@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-10-23 15:02:11 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2006-10-30 09:25:17 $
+  Version:   $Revision: 1.32 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -31,6 +31,7 @@
 #include "mafNodeRoot.h"
 #include "mafVMERoot.h"
 #include "mafVMESurface.h"
+#include "mafViewSingleSlice.h"
 #include "mafPipeFactoryVME.h"
 #include "mafPipeVolumeSlice.h"
 #include "medPipeFactoryVME.h"
@@ -59,7 +60,8 @@
 #include "mmoVOIDensity.h"
 #include "mmoVolumeResample.h"
 #include "mmoAddLandmark.h"
-//#include "mmoRegisterClusters.h"
+#include "mmoRegisterClusters.h"
+
 #include "mmoMAFTransformScale.h"
 #include "mmoMAFTransform.h"
 #ifdef MAF_USE_ITK
@@ -73,8 +75,15 @@
 #include "mafViewCompound.h"
 #include "mafViewRXCTLHPBuilder.h"
 #include "mafViewRXCT.h"
+#include "mafViewRX.h"
 #include "mafViewOrthoSlice.h"
 #include "mafViewHTML.h"
+#include "mafViewArbitrarySlice.h"
+#include "mafViewGlobalSliceCompound.h"
+#include "mafViewSlice.h"
+#include "mafViewImage.h"
+#include "mafViewSingleSliceCompound.h"
+#include "mafViewRXCompound.h"
 
 //--------------------------------------------------------------------------------
 // Create the Application
@@ -143,6 +152,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoCreateGroup("Group"),"Create");
 	m_Logic->Plug(new mmoCreateRefSys("Refsys"),"Create");
 	m_Logic->Plug(new mmoAddLandmark("Add Landmark \tCtrl+A"),"Create");
+  m_Logic->Plug(new mmoRegisterClusters("Register Landmark Cloud"));
   m_Logic->Plug(new mmoCreateMeter("Distance Meter"),"Derive");
   m_Logic->Plug(new mmoCreateSlicer("Volume Slicer"),"Derive");
 	m_Logic->Plug(new mmoExplodeCollapse("Explode/Collapse Landamark Cloud"),"Modify");
@@ -155,7 +165,8 @@ bool lhpBuilderApp::OnInit()
 	m_Logic->Plug(new mmo2DMeasure("2D Measure"),"Measure");
 	m_Logic->Plug(new mmoVOIDensity("VOI Density"),"Measure");
   m_Logic->Plug(new mmoReparentTo("Reparent to...  \tCtrl+R"),"Fuse");
-  //m_Logic->Plug(new mmoRegisterClusters("Register Landmark Cloud"));
+  
+
 
   //-------------------------------------------------------------
 
@@ -183,7 +194,8 @@ bool lhpBuilderApp::OnInit()
   vrxct->PackageView();  m_Logic->Plug(vrxct);
 
   mafViewRXCT *vrxctl = new mafViewRXCT("new RXCT view");
-  vrxctl->PackageView();  m_Logic->Plug(vrxctl);
+  vrxctl->PackageView();
+  m_Logic->Plug(vrxctl);
 
   mafViewOrthoSlice *viewOrthoSlice = new mafViewOrthoSlice("OrthoSlice view");
   viewOrthoSlice->PackageView();
@@ -194,6 +206,36 @@ bool lhpBuilderApp::OnInit()
 	vdrr->PlugVisualPipe("mafVMEVolumeGray","medPipeVolumeDRR",MUTEX);
 	m_Logic->Plug(vdrr);
   
+  //View Arbitrary Slice
+  mafViewArbitrarySlice *ArbitraryView = new mafViewArbitrarySlice("Arbitrary");
+	ArbitraryView->PackageView();
+  m_Logic->Plug(ArbitraryView);
+
+  //View Global Slice
+	mafViewGlobalSliceCompound *GlobalSlice = new mafViewGlobalSliceCompound("Global Slice");
+	GlobalSlice->PackageView();
+	m_Logic->Plug(GlobalSlice);
+
+	mafViewSingleSliceCompound *SingleSlice = new mafViewSingleSliceCompound("Single Slice");
+	SingleSlice->PackageView();
+	m_Logic->Plug(SingleSlice);
+
+	mafViewRXCompound *RX = new mafViewRXCompound("RX");
+	RX->PackageView();
+	m_Logic->Plug(RX);
+
+  // View 2D
+  /*mafViewSlice *vImage = new mafViewSlice("View Image",CAMERA_OS_Z,false,false,false);
+  vImage->PlugVisualPipe("mafVMEVolumeGray","mafPipeBox",NON_VISIBLE);
+  vImage->PlugVisualPipe("mafVMESurface","mafPipeSurface",NON_VISIBLE);
+  vImage->PlugVisualPipe("mafVMEImage", "mafPipeImage3D", MUTEX);
+  m_Logic->Plug(vImage);*/
+
+  mafViewImage *vImage = new mafViewImage("View Image",CAMERA_CT,false,false,false);
+  vImage->PlugVisualPipe("mafVMEVolumeGray","mafPipeBox",NON_VISIBLE);
+  vImage->PlugVisualPipe("mafVMESurface","mafPipeSurface",NON_VISIBLE);
+  m_Logic->Plug(vImage);
+
   // View HTML
 	mafViewHTML *vhtml = new mafViewHTML("HTML View");
 	m_Logic->Plug(vhtml);
