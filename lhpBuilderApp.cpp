@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-11-02 13:22:30 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2006-11-07 09:56:34 $
+  Version:   $Revision: 1.35 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -31,7 +31,7 @@
 #include "mafNodeRoot.h"
 #include "mafVMERoot.h"
 #include "mafVMESurface.h"
-#include "mafViewSingleSlice.h"
+//#include "mafViewSingleSlice.h"
 #include "mafPipeFactoryVME.h"
 #include "mafPipeVolumeSlice.h"
 #include "medPipeFactoryVME.h"
@@ -218,9 +218,9 @@ bool lhpBuilderApp::OnInit()
 	GlobalSlice->PackageView();
 	m_Logic->Plug(GlobalSlice);
 
-	mafViewSingleSliceCompound *SingleSlice = new mafViewSingleSliceCompound("Single Slice");
+	/*mafViewSingleSliceCompound *SingleSlice = new mafViewSingleSliceCompound("Single Slice");
 	SingleSlice->PackageView();
-	m_Logic->Plug(SingleSlice);
+	m_Logic->Plug(SingleSlice);*/
 
 	mafViewRXCompound *RX = new mafViewRXCompound("RX");
 	RX->PackageView();
