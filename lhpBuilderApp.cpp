@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-11-07 09:56:34 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2006-11-08 09:11:23 $
+  Version:   $Revision: 1.36 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -233,7 +233,7 @@ bool lhpBuilderApp::OnInit()
   vImage->PlugVisualPipe("mafVMEImage", "mafPipeImage3D", MUTEX);
   m_Logic->Plug(vImage);*/
 
-  mafViewImage *vImage = new mafViewImage("View Image",CAMERA_CT,false,false,false);
+  mafViewImage *vImage = new mafViewImage("View Image",CAMERA_FRONT,false,false,false);
   vImage->PlugVisualPipe("mafVMEVolumeGray","mafPipeBox",NON_VISIBLE);
   vImage->PlugVisualPipe("mafVMESurface","mafPipeSurface",NON_VISIBLE);
   m_Logic->Plug(vImage);
