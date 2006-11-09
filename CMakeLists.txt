@@ -3,14 +3,6 @@ PROJECT (lhpBuilder)
 SET(PROJECT_SRCS 
   lhpBuilderApp.cpp
   lhpBuilderApp.h
-  mafLHPBuilderViewCompound.cpp
-  mafLHPBuilderViewCompound.h
-  mafViewSliceLHPBuilder.cpp
-  mafViewSliceLHPBuilder.h
-  mafViewRXLHPBuilder.cpp
-  mafViewRXLHPBuilder.h
-  mafViewRXCTLHPBuilder.cpp
-  mafViewRXCTLHPBuilder.h
 )
 
 IF (NOT EXECUTABLE_OUTPUT_PATH)

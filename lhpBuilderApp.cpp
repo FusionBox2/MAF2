@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-11-08 09:11:23 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2006-11-09 12:11:52 $
+  Version:   $Revision: 1.37 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -74,7 +74,6 @@
 #include "mafViewVTK.h"
 
 #include "mafViewCompound.h"
-#include "mafViewRXCTLHPBuilder.h"
 #include "mafViewRXCT.h"
 #include "mafViewRX.h"
 #include "mafViewOrthoSlice.h"
@@ -192,9 +191,6 @@ bool lhpBuilderApp::OnInit()
   vc->PlugChildView(v2);
   m_Logic->Plug(vc);
 */
-  mafViewRXCTLHPBuilder *vrxct = new mafViewRXCTLHPBuilder("old RXCT view (JUST FOR COMPARISON, TO BE REMOVED)");
-  vrxct->PackageView();  m_Logic->Plug(vrxct);
-
   mafViewRXCT *vrxctl = new mafViewRXCT("new RXCT view");
   vrxctl->PackageView();
   m_Logic->Plug(vrxctl);
