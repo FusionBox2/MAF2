@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-11-09 12:11:52 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2006-11-10 12:05:34 $
+  Version:   $Revision: 1.38 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -111,8 +111,9 @@ bool lhpBuilderApp::OnInit()
   //m_Logic->PlugTimebar(false);
   //m_Logic->PlugMenu(false);
   //m_Logic->PlugToolbar(false);
-  //m_Logic->PlugLogbar(false);
-  m_Logic->PlugSidebar(true,mafSideBar::SINGLE_NOTEBOOK);
+  m_Logic->PlugLogbar(true);
+  
+  m_Logic->PlugSidebar(true,mafSideBar::DOUBLE_NOTEBOOK);
   //m_Logic->PlugOpManager(false);
   //m_Logic->PlugViewManager(false);
   //m_Logic->PlugVMEManager(false);  // the VmeManager at the moment cause 4 leaks of 200+32+24+56 bytes  //SIL. 20-4-2005: 
