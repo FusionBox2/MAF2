@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-11-10 12:05:34 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2006-11-14 10:26:28 $
+  Version:   $Revision: 1.39 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -19,6 +19,7 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
+#include <wx/datetime.h>
 
 #include "lhpBuilderApp.h"
 #include "mafDecl.h"
@@ -85,6 +86,7 @@
 #include "mafViewSingleSliceCompound.h"
 #include "mafViewRXCompound.h"
 
+
 //--------------------------------------------------------------------------------
 // Create the Application
 //--------------------------------------------------------------------------------
@@ -120,7 +122,13 @@ bool lhpBuilderApp::OnInit()
   
   m_Logic->Configure();
 
-  m_Logic->GetTopWin()->SetTitle("LHPBuilder");
+	mafString title = "LHPBuilder 1.0 ";
+	int year,month,day;
+	year=wxDateTime::Today().GetYear();
+	month=wxDateTime::Today().GetMonth();
+	day=wxDateTime::Today().GetDay();
+	title+=wxString::Format("%d/%d/%d",day,month,year);
+	m_Logic->GetTopWin()->SetTitle(title.GetCStr());
   SetTopWindow(mafGetFrame());  
 
   //------------------------- Importers -------------------------
