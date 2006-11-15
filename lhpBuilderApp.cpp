@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-11-14 10:26:28 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2006-11-15 13:40:53 $
+  Version:   $Revision: 1.40 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -122,13 +122,13 @@ bool lhpBuilderApp::OnInit()
   
   m_Logic->Configure();
 
-	mafString title = "LHPBuilder 1.0 ";
 	int year,month,day;
 	year=wxDateTime::Today().GetYear();
 	month=wxDateTime::Today().GetMonth();
 	day=wxDateTime::Today().GetDay();
-	title+=wxString::Format("%d/%d/%d",day,month,year);
-	m_Logic->GetTopWin()->SetTitle(title.GetCStr());
+	mafString revision=wxString::Format("%d/%d/%d",day,month,year);
+	m_Logic->SetRevision(revision);
+	m_Logic->GetTopWin()->SetTitle("LHPBuilder");
   SetTopWindow(mafGetFrame());  
 
   //------------------------- Importers -------------------------
