@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-11-15 13:40:53 $
-  Version:   $Revision: 1.40 $
+  Date:      $Date: 2006-11-20 14:03:10 $
+  Version:   $Revision: 1.41 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -20,6 +20,7 @@
 //----------------------------------------------------------------------------
 
 #include <wx/datetime.h>
+#include <wx/config.h>
 
 #include "lhpBuilderApp.h"
 #include "mafDecl.h"
@@ -122,12 +123,21 @@ bool lhpBuilderApp::OnInit()
   
   m_Logic->Configure();
 
-	int year,month,day;
-	year=wxDateTime::Today().GetYear();
-	month=wxDateTime::Today().GetMonth();
-	day=wxDateTime::Today().GetDay();
-	mafString revision=wxString::Format("%d/%d/%d",day,month,year);
-	m_Logic->SetRevision(revision);
+	
+	m_RegKey = new wxRegKey(wxString("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\lhpBuilder"));
+	if(m_RegKey->Exists())
+	{
+		m_RegKey->Create();
+		wxString revision;
+		m_RegKey->QueryValue(wxString("DisplayVersion"), revision);
+		revision=revision.AfterLast('_');
+		m_Logic->SetRevision(revision);
+	}
+	else
+	{
+		wxString revision="0.1";
+		m_Logic->SetRevision(revision);
+	}
 	m_Logic->GetTopWin()->SetTitle("LHPBuilder");
   SetTopWindow(mafGetFrame());  
 
