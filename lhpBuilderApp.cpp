@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-11-20 14:51:27 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2006-11-22 09:02:20 $
+  Version:   $Revision: 1.44 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -129,7 +129,7 @@ bool lhpBuilderApp::OnInit()
 		RegKey->Create();
 		wxString revision;
 		RegKey->QueryValue(wxString("DisplayVersion"), revision);
-		revision=revision.AfterLast('_');
+		//revision=revision.AfterLast('_');
 		m_Logic->SetRevision(revision);
 	}
 	else
