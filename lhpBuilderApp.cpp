@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-11-22 09:02:20 $
-  Version:   $Revision: 1.44 $
+  Date:      $Date: 2006-11-29 13:30:44 $
+  Version:   $Revision: 1.45 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -33,7 +33,6 @@
 #include "mafNodeRoot.h"
 #include "mafVMERoot.h"
 #include "mafVMESurface.h"
-//#include "mafViewSingleSlice.h"
 #include "mafPipeFactoryVME.h"
 #include "mafPipeVolumeSlice.h"
 #include "medPipeFactoryVME.h"
@@ -58,6 +57,7 @@
 #include "mmoVRMLImporter.h"
 #include "mmoRAWImporterVolume.h"
 #include "mmoRAWExporter.h"
+#include "mmoRAWImporterImages.h"
 #include "mmoExtractIsosurface.h"
 #include "mmoCrop.h"
 #include "mmoVOIDensity.h"
@@ -147,6 +147,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoMSF1xImporter("MAF 1.x"));
   m_Logic->Plug(new mmoRAWImporterVolume("RAW Volume"));
   m_Logic->Plug(new mmoImageImporter("Images"));
+	m_Logic->Plug(new mmoRAWImporterImages("Raw Images"));
   
   #ifdef MAF_USE_ITK
     m_Logic->Plug(new mmoRawMotionDataImporter("Raw Motion Data"));
@@ -231,10 +232,6 @@ bool lhpBuilderApp::OnInit()
 	mafViewGlobalSliceCompound *GlobalSlice = new mafViewGlobalSliceCompound("Global Slice");
 	GlobalSlice->PackageView();
 	m_Logic->Plug(GlobalSlice);
-
-	/*mafViewSingleSliceCompound *SingleSlice = new mafViewSingleSliceCompound("Single Slice");
-	SingleSlice->PackageView();
-	m_Logic->Plug(SingleSlice);*/
 
 	mafViewRXCompound *RX = new mafViewRXCompound("RX");
 	RX->PackageView();
