@@ -66,9 +66,12 @@ Section "create product directory structure" SEC01
   CreateDirectory "$INSTDIR\data\external"
   CreateDirectory "$INSTDIR\data\msf"
   CreateDirectory "$INSTDIR\Config\Dictionary"
+  CreateDirectory "$INSTDIR\Layout"
   SetOutPath "$INSTDIR\Config\Dictionary"
   File "@LHPBUILDER_INSTALLER_DIR_WIN@\dictionary.dic"
   File "@LHPBUILDER_INSTALLER_DIR_WIN@\dicom3.dic"
+  SetOutPath "$INSTDIR\Layout"
+  File "@LHPBUILDER_INSTALLER_DIR_WIN@\layout.msf"
   SetOutPath "$INSTDIR\Config"
 SectionEnd
 
@@ -106,6 +109,7 @@ Section Uninstall
   Delete "$INSTDIR\Bin\${PRODUCT_EXE_NAME}.manifest"
   Delete "$INSTDIR\Bin\${PRODUCT_EXE_NAME}"
 
+  Delete "$INSTDIR\Layout\layout.msf"
   Delete "$INSTDIR\Config\Dictionary\dictionary.dic"
   Delete "$INSTDIR\Config\Dictionary\dicom3.dic"
   Delete "$INSTDIR\Splash\SPLASH_SCREEN.bmp"
@@ -116,6 +120,7 @@ Section Uninstall
   Delete "$SMPROGRAMS\b3c_software\lhpBuilder\lhpBuilder.lnk"
 
   RMDir "$INSTDIR\Splash"
+  RMDir "$INSTDIR\Layout"
   RMDir "$INSTDIR\Config\Dictionary"
   RMDir "$INSTDIR\bin"
   RMDir "$INSTDIR\data\external"
