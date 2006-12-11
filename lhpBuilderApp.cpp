@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-11-29 13:30:44 $
-  Version:   $Revision: 1.45 $
+  Date:      $Date: 2006-12-11 09:14:32 $
+  Version:   $Revision: 1.46 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -64,6 +64,7 @@
 #include "mmoVolumeResample.h"
 #include "mmoAddLandmark.h"
 #include "mmoRegisterClusters.h"
+#include "mmoClassicICPRegistration.h"
 
 #include "mmoMAFTransformScale.h"
 #include "mmoMAFTransform.h"
@@ -185,6 +186,8 @@ bool lhpBuilderApp::OnInit()
 	m_Logic->Plug(new mmo2DMeasure("2D Measure"),"Measure");
 	m_Logic->Plug(new mmoVOIDensity("VOI Density"),"Measure");
   m_Logic->Plug(new mmoReparentTo("Reparent to...  \tCtrl+R"),"Fuse");
+
+	m_Logic->Plug(new mmoClassicICPRegistration("Register Surface"));
   
 
 
