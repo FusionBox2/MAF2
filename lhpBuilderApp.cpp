@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-12-11 09:14:32 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2006-12-13 15:45:35 $
+  Version:   $Revision: 1.47 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -40,7 +40,6 @@
 
 #include "mmoCreateGroup.h"
 #include "mmoCreateMeter.h"
-#include "mmoCreateSlicer.h"
 #include "mmoCreateRefSys.h"
 #include "mmoExplodeCollapse.h"
 #include "mmoFilterSurface.h"
@@ -175,7 +174,6 @@ bool lhpBuilderApp::OnInit()
 	m_Logic->Plug(new mmoAddLandmark("Add Landmark \tCtrl+A"),"Create");
   m_Logic->Plug(new mmoRegisterClusters("Register Landmark Cloud"),"Fuse");
   m_Logic->Plug(new mmoCreateMeter("Distance Meter"),"Derive");
-  m_Logic->Plug(new mmoCreateSlicer("Volume Slicer"),"Derive");
 	m_Logic->Plug(new mmoExplodeCollapse("Explode/Collapse Landamark Cloud"),"Modify");
 	m_Logic->Plug(new mmoFilterSurface("Filter Surface"),"Modify");
 	m_Logic->Plug(new mmoExtractIsosurface("Extract Isosurface"),"Modify");
