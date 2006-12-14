@@ -71,7 +71,7 @@ Section "create product directory structure" SEC01
   File "@LHPBUILDER_INSTALLER_DIR_WIN@\dictionary.dic"
   File "@LHPBUILDER_INSTALLER_DIR_WIN@\dicom3.dic"
   SetOutPath "$INSTDIR\Layout"
-  File "@LHPBUILDER_INSTALLER_DIR_WIN@\layout.msf"
+  File "@LHPBUILDER_INSTALLER_DIR_WIN@\layout.mly"
   SetOutPath "$INSTDIR\Config"
 SectionEnd
 
@@ -109,7 +109,7 @@ Section Uninstall
   Delete "$INSTDIR\Bin\${PRODUCT_EXE_NAME}.manifest"
   Delete "$INSTDIR\Bin\${PRODUCT_EXE_NAME}"
 
-  Delete "$INSTDIR\Layout\layout.msf"
+  Delete "$INSTDIR\Layout\layout.mly"
   Delete "$INSTDIR\Config\Dictionary\dictionary.dic"
   Delete "$INSTDIR\Config\Dictionary\dicom3.dic"
   Delete "$INSTDIR\Splash\SPLASH_SCREEN.bmp"
