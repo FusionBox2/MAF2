@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2006-12-19 21:00:48 $
-  Version:   $Revision: 1.48 $
+  Date:      $Date: 2007-01-23 14:37:24 $
+  Version:   $Revision: 1.49 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -63,7 +63,6 @@
 #include "mmoVolumeResample.h"
 #include "mmoAddLandmark.h"
 #include "mmoRegisterClusters.h"
-#include "mmoClassicICPRegistration.h"
 #include "mmoCreateSurfaceParametric.h"
 
 #include "mmoMAFTransformScale.h"
@@ -71,6 +70,7 @@
 #ifdef MAF_USE_ITK
   #include "mmoRawMotionDataImporter.h"
   #include "mmoLandmarkExporter.h"
+  #include "mmoClassicICPRegistration.h"
 #endif
 #include "mmoLandmarkImporter.h"
 
@@ -85,8 +85,10 @@
 #include "mafViewGlobalSliceCompound.h"
 #include "mafViewSlice.h"
 #include "mafViewImage.h"
-#include "mafViewSingleSliceCompound.h"
 #include "mafViewRXCompound.h"
+#include "mafViewImageCompound.h"
+
+#include "mafView3D.h"
 
 
 //--------------------------------------------------------------------------------
@@ -186,8 +188,9 @@ bool lhpBuilderApp::OnInit()
 	m_Logic->Plug(new mmo2DMeasure("2D Measure"),"Measure");
 	m_Logic->Plug(new mmoVOIDensity("VOI Density"),"Measure");
   m_Logic->Plug(new mmoReparentTo("Reparent to...  \tCtrl+R"),"Fuse");
-
-	m_Logic->Plug(new mmoClassicICPRegistration("Register Surface"));
+	#ifdef MAF_USE_ITK
+		m_Logic->Plug(new mmoClassicICPRegistration("Register Surface"),"Fuse");
+	#endif
   
 
 
@@ -247,10 +250,15 @@ bool lhpBuilderApp::OnInit()
   vImage->PlugVisualPipe("mafVMEImage", "mafPipeImage3D", MUTEX);
   m_Logic->Plug(vImage);*/
 
-  mafViewImage *vImage = new mafViewImage("View Image",CAMERA_FRONT,false,false,false);
+  /*mafViewImage *vImage = new mafViewImage("View Image",CAMERA_FRONT,false,false,false);
   vImage->PlugVisualPipe("mafVMEVolumeGray","mafPipeBox",NON_VISIBLE);
   vImage->PlugVisualPipe("mafVMESurface","mafPipeSurface",NON_VISIBLE);
-  m_Logic->Plug(vImage);
+  m_Logic->Plug(vImage);*/
+
+	mafViewImageCompound *vImage = new mafViewImageCompound("View Image");
+	vImage->PackageView();
+	m_Logic->Plug(vImage);
+
 
   // View HTML
 	mafViewHTML *vhtml = new mafViewHTML("HTML View");
@@ -259,6 +267,9 @@ bool lhpBuilderApp::OnInit()
 	/*mafViewVTK *vslice = new mafViewVTK("Slice view", CAMERA_CT);
   vslice->PlugVisualPipe("mafVMEVolumeGray", "mafPipeVolumeSlice");
   m_Logic->Plug(vslice);*/
+
+	mafView3D *v3D = new mafView3D("3D",CAMERA_PERSPECTIVE);
+	m_Logic->Plug(v3D);
 
   //-------------------------------------------------------------
 
