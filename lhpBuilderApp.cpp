@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-01-23 14:37:24 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2007-02-06 10:09:25 $
+  Version:   $Revision: 1.50 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -87,9 +87,6 @@
 #include "mafViewImage.h"
 #include "mafViewRXCompound.h"
 #include "mafViewImageCompound.h"
-
-#include "mafView3D.h"
-
 
 //--------------------------------------------------------------------------------
 // Create the Application
@@ -267,9 +264,6 @@ bool lhpBuilderApp::OnInit()
 	/*mafViewVTK *vslice = new mafViewVTK("Slice view", CAMERA_CT);
   vslice->PlugVisualPipe("mafVMEVolumeGray", "mafPipeVolumeSlice");
   m_Logic->Plug(vslice);*/
-
-	mafView3D *v3D = new mafView3D("3D",CAMERA_PERSPECTIVE);
-	m_Logic->Plug(v3D);
 
   //-------------------------------------------------------------
 
