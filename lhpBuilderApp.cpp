@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-02-21 11:57:37 $
-  Version:   $Revision: 1.52 $
+  Date:      $Date: 2007-03-01 09:08:13 $
+  Version:   $Revision: 1.53 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -28,15 +28,17 @@
 #include "mafPics.h"
 #include "mmgMDIFrame.h"
 
-#include "mafNodeFactory.h"
+#include "mafNodeFactory.h" 
 #include "mafNodeGeneric.h"
 #include "mafNodeRoot.h"
 #include "mafVMERoot.h"
 #include "mafVMESurface.h"
+#include "mafVMELandmark.h" 
 #include "mafPipeFactoryVME.h"
 #include "mafPipeVolumeSlice.h"
 #include "medPipeFactoryVME.h"
 #include "medPipeVolumeDRR.h"
+#include "medPipeTrajectories.h" 
 
 #include "mmoCreateGroup.h"
 #include "mmoCreateMeter.h"
@@ -204,6 +206,10 @@ bool lhpBuilderApp::OnInit()
 	mafViewVTK *viso = new mafViewVTK("Isosurface view");
   viso->PlugVisualPipe("mafVMEVolumeGray", "mafPipeIsosurface",MUTEX);
   m_Logic->Plug(viso);
+
+  mafViewVTK *traj = new mafViewVTK("AL Trajectories view");
+  traj->PlugVisualPipe("mafVMELandmark", "medPipeTrajectories");
+  m_Logic->Plug(traj);
 
 	mafViewVTK *vsurface = new mafViewVTK("Surface view");
 	vsurface->PlugVisualPipe("mafVMESurface","mafPipeSurface");
