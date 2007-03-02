@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-03-02 15:27:29 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2007-03-02 16:22:53 $
+  Version:   $Revision: 1.55 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -114,7 +114,7 @@ bool lhpBuilderApp::OnInit()
 
 	result = medPipeFactoryVME::Initialize();
 	assert(result==MAF_OK);
-  m_Logic = new mafLogicWithManagers();
+  m_Logic = new lhpBuilderLogic();
   //m_Logic->PlugTimebar(false);
   //m_Logic->PlugMenu(false);
   //m_Logic->PlugToolbar(false);
@@ -294,4 +294,3 @@ int lhpBuilderApp::OnExit()
   cppDEL(m_Logic);
   return 0;
 }
-

@@ -1,6 +1,8 @@
 PROJECT (lhpBuilder)
 
 SET(PROJECT_SRCS 
+  lhpBuilderLogic.cpp
+  lhpBuilderLogic.h
   lhpBuilderApp.cpp
   lhpBuilderApp.h
 )
