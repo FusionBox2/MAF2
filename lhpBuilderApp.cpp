@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-03-02 16:22:53 $
-  Version:   $Revision: 1.55 $
+  Date:      $Date: 2007-03-08 10:18:29 $
+  Version:   $Revision: 1.56 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -127,12 +127,12 @@ bool lhpBuilderApp::OnInit()
   
   m_Logic->Configure();
 
-	wxRegKey *RegKey = new wxRegKey(wxString("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\lhpBuilder"));
-	if(RegKey->Exists())
+	wxRegKey RegKey(wxString("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\lhpBuilder"));
+	if(RegKey.Exists())
 	{
-		RegKey->Create();
+		RegKey.Create();
 		wxString revision;
-		RegKey->QueryValue(wxString("DisplayVersion"), revision);
+		RegKey.QueryValue(wxString("DisplayVersion"), revision);
 		//revision=revision.AfterLast('_');
 		m_Logic->SetRevision(revision);
 	}
