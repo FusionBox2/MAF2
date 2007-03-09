@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-03-08 10:18:29 $
-  Version:   $Revision: 1.56 $
+  Date:      $Date: 2007-03-09 13:54:57 $
+  Version:   $Revision: 1.57 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -40,9 +40,12 @@
 #include "medPipeVolumeDRR.h"
 #include "medPipeTrajectories.h" 
 
+#include "mmoC3DImporter.h"
 #include "mmoCreateGroup.h"
 #include "mmoCreateMeter.h"
 #include "mmoCreateRefSys.h"
+#include "mmoEMGImporterWS.h"
+#include "mmoGRFImporterWS.h"
 #include "mmoExplodeCollapse.h"
 #include "mmoFilterSurface.h"
 #include "mmo2DMeasure.h"
@@ -66,6 +69,7 @@
 #include "mmoAddLandmark.h"
 #include "mmoRegisterClusters.h"
 #include "mmoCreateSurfaceParametric.h"
+
 
 #include "mmoMAFTransformScale.h"
 #include "mmoMAFTransform.h"
@@ -154,6 +158,10 @@ bool lhpBuilderApp::OnInit()
 	m_Logic->Plug(new mmoRAWImporterImages("Raw Images"));
   m_Logic->Plug(new mmoLandmarkImporterTXT("Landmark TXT"));
   m_Logic->Plug(new mmoLandmarkImporterWS("Landmark WS"));
+  m_Logic->Plug(new mmoC3DImporter("C3D"));
+  m_Logic->Plug(new mmoEMGImporterWS("EMG from WS"));
+  m_Logic->Plug(new mmoGRFImporterWS("GRF from WS"));
+  
   
 #ifdef MAF_USE_ITK
     m_Logic->Plug(new mmoRawMotionDataImporter("Raw Motion Data"));
