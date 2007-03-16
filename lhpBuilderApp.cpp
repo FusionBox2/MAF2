@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-03-16 13:12:21 $
-  Version:   $Revision: 1.58 $
+  Date:      $Date: 2007-03-16 13:42:57 $
+  Version:   $Revision: 1.59 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -40,7 +40,6 @@
 #include "medPipeVolumeDRR.h"
 #include "medPipeTrajectories.h" 
 
-#include "mmoC3DImporter.h"
 #include "mmoCreateGroup.h"
 #include "mmoCreateMeter.h"
 #include "mmoCreateRefSys.h"
@@ -75,6 +74,7 @@
 #include "mmoMAFTransform.h"
 #ifdef MAF_USE_ITK
   #include "mafVMERawMotionData.h" 
+  #include "mafVMEC3DData.h" 
   #include "mmoMotionDataImporter.h"
   #include "mmoLandmarkExporter.h"
   #include "mmoClassicICPRegistration.h"
@@ -159,7 +159,7 @@ bool lhpBuilderApp::OnInit()
 	m_Logic->Plug(new mmoRAWImporterImages("Raw Images"));
   m_Logic->Plug(new mmoLandmarkImporterTXT("Landmark TXT"));
   m_Logic->Plug(new mmoLandmarkImporterWS("Landmark WS"));
-  m_Logic->Plug(new mmoC3DImporter("C3D"));
+  m_Logic->Plug(new mmoMotionDataImporter<mafVMEC3DData>("C3D", "C3D Motion Data (*.c3d)|*.c3d", "Dictionary (*.txt)|*.txt"));
   m_Logic->Plug(new mmoEMGImporterWS("EMG from WS"));
   m_Logic->Plug(new mmoGRFImporterWS("GRF from WS"));
   

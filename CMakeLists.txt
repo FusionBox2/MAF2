@@ -1,6 +1,8 @@
 PROJECT (lhpBuilder)
 
 SET(PROJECT_SRCS 
+  mafVMEC3DData.cpp
+  mafVMEC3DData.h  
   lhpBuilderLogic.cpp
   lhpBuilderLogic.h
   lhpBuilderApp.cpp
