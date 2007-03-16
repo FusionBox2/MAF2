@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEC3DData.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-03-16 13:42:57 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-03-16 13:57:23 $
+  Version:   $Revision: 1.2 $
   Authors:   Stefano Perticoni - porting Fedor Moiseev
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -630,50 +630,3 @@ char* mafVMEC3DData::strrtrim( char* s)
 //----------------------------------------------------------------------------
 
 
-
-#ifdef ALLC3D
-/*=========================================================================
-
-Program:   Visualization Toolkit
-Module:    $RCSfile: mafVMEC3DData.cpp,v $
-Language:  C++
-Date:      $Date: 2007-03-16 13:42:57 $
-Version:   $Revision: 1.1 $
-
-=========================================================================*/
-#include "mflC3DReader.h"
-#include "vtkObjectFactory.h"
-#include "mflString.h"
-#include "vtkPolyData.h"
-
-#include "mflVMELandmarkCloud.h"
-
-#include <stdio.h>
-#include <vcl_fstream.h>
-#include <vnl\vnl_matrix.h>
-
-//----------------------------------------------------------------------------
-mflC3DReader::mflC3DReader()
-{ 
-  this->C3D_DLCloud = mflVMELandmarkCloud::New();
-  C3D_DLCloud->SetRadius(15.0);
-  C3D_DLCloud->SetDefaultVisibility(0);  //modified by Marco. 3-10-2003
-  this->FileName= new mafString;
-  this->Dictionary = 0;
-
-}
-//----------------------------------------------------------------------------
-mflC3DReader::~mflC3DReader()
-{
-  delete this->FileName;
-}
-
-
-
-
-
-
-
-
-
-#endif
