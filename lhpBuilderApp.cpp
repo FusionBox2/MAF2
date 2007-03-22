@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-03-16 13:42:57 $
-  Version:   $Revision: 1.59 $
+  Date:      $Date: 2007-03-22 17:56:44 $
+  Version:   $Revision: 1.60 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -37,6 +37,7 @@
 #include "mafPipeFactoryVME.h"
 #include "mafPipeVolumeSlice.h"
 #include "medPipeFactoryVME.h"
+#include "medPipeGraph.h"
 #include "medPipeVolumeDRR.h"
 #include "medPipeTrajectories.h" 
 
@@ -221,6 +222,10 @@ bool lhpBuilderApp::OnInit()
   mafViewVTK *traj = new mafViewVTK("AL Trajectories view");
   traj->PlugVisualPipe("mafVMELandmark", "medPipeTrajectories");
   m_Logic->Plug(traj);
+
+  mafViewVTK *graph = new mafViewVTK("EMG Graph");
+  graph->PlugVisualPipe("mafVMEScalar", "medPipeGraph");
+  m_Logic->Plug(graph);
 
 	mafViewVTK *vsurface = new mafViewVTK("Surface view");
 	vsurface->PlugVisualPipe("mafVMESurface","mafPipeSurface");
