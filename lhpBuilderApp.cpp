@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-03-22 17:56:44 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2007-03-27 08:14:47 $
+  Version:   $Revision: 1.61 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -37,15 +37,13 @@
 #include "mafPipeFactoryVME.h"
 #include "mafPipeVolumeSlice.h"
 #include "medPipeFactoryVME.h"
-#include "medPipeGraph.h"
 #include "medPipeVolumeDRR.h"
 #include "medPipeTrajectories.h" 
 
 #include "mmoCreateGroup.h"
 #include "mmoCreateMeter.h"
 #include "mmoCreateRefSys.h"
-#include "mmoEMGImporterWS.h"
-#include "mmoGRFImporterWS.h"
+
 #include "mmoExplodeCollapse.h"
 #include "mmoFilterSurface.h"
 #include "mmo2DMeasure.h"
@@ -73,7 +71,10 @@
 
 #include "mmoMAFTransformScale.h"
 #include "mmoMAFTransform.h"
-#ifdef MAF_USE_ITK
+#ifdef MAF_USE_ITK  
+  #include "mmoEMGImporterWS.h"
+  #include "mmoGRFImporterWS.h"
+  #include "medPipeGraph.h"
   #include "mafVMERawMotionData.h" 
   #include "mafVMEC3DData.h" 
   #include "mmoMotionDataImporter.h"
@@ -161,13 +162,12 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoLandmarkImporterTXT("Landmark TXT"));
   m_Logic->Plug(new mmoLandmarkImporterWS("Landmark WS"));
   m_Logic->Plug(new mmoMotionDataImporter<mafVMEC3DData>("C3D", "C3D Motion Data (*.c3d)|*.c3d", "Dictionary (*.txt)|*.txt"));
-  m_Logic->Plug(new mmoEMGImporterWS("EMG from WS"));
-  m_Logic->Plug(new mmoGRFImporterWS("GRF from WS"));
-  
   
 #ifdef MAF_USE_ITK
     m_Logic->Plug(new mmoMotionDataImporter<mafVMERawMotionData>("Raw Motion Data", "RAW Motion Data (*.MAN)|*.MAN", "Dictionary (*.txt)|*.txt"));
     m_Logic->Plug(new mmoLandmarkImporter("Landmark"));
+    m_Logic->Plug(new mmoEMGImporterWS("EMG from WS"));
+    m_Logic->Plug(new mmoGRFImporterWS("GRF from WS"));
 #endif
 	
     m_Logic->Plug(new mmoVRMLImporter("Geometry VRML "));
@@ -223,9 +223,7 @@ bool lhpBuilderApp::OnInit()
   traj->PlugVisualPipe("mafVMELandmark", "medPipeTrajectories");
   m_Logic->Plug(traj);
 
-  mafViewVTK *graph = new mafViewVTK("EMG Graph");
-  graph->PlugVisualPipe("mafVMEScalar", "medPipeGraph");
-  m_Logic->Plug(graph);
+  
 
 	mafViewVTK *vsurface = new mafViewVTK("Surface view");
 	vsurface->PlugVisualPipe("mafVMESurface","mafPipeSurface");
@@ -280,10 +278,15 @@ bool lhpBuilderApp::OnInit()
 	vImage->PackageView();
 	m_Logic->Plug(vImage);
 
-
   // View HTML
 	mafViewHTML *vhtml = new mafViewHTML("HTML View");
 	m_Logic->Plug(vhtml);
+
+#ifdef MAF_USE_ITK
+  mafViewVTK *graph = new mafViewVTK("EMG Graph");
+  graph->PlugVisualPipe("mafVMEScalar", "medPipeGraph");
+  m_Logic->Plug(graph);
+#endif
 
 	/*mafViewVTK *vslice = new mafViewVTK("Slice view", CAMERA_CT);
   vslice->PlugVisualPipe("mafVMEVolumeGray", "mafPipeVolumeSlice");
