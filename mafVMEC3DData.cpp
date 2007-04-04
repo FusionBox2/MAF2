@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEC3DData.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-03-16 13:57:23 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-04-04 11:27:31 $
+  Version:   $Revision: 1.3 $
   Authors:   Stefano Perticoni - porting Fedor Moiseev
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -157,6 +157,7 @@ int mafVMEC3DData::Read()
 
 
   delete c3DLMNamesTagArray;
+  c3DLMNamesTagArray = NULL;
   fclose(pC3DFile);
   return 0;				
 }
@@ -422,7 +423,7 @@ int mafVMEC3DData::Read_C3D_Data(unsigned short	num_markers,				// number of mar
           //newVmeSegment = NULL;
         }			
 
-        currLMId = currentCloud->AppendLandmark(dictionaryTagArray->GetTag(c3DLMNamesTagArray->at(i))->GetName());	
+        currLMId = currentCloud->AppendLandmark(c3DLMNamesTagArray->at(i));	
 
       }
 
