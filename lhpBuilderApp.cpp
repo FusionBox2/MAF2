@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-03-27 08:14:47 $
-  Version:   $Revision: 1.61 $
+  Date:      $Date: 2007-04-13 12:07:06 $
+  Version:   $Revision: 1.62 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -80,6 +80,7 @@
   #include "mmoMotionDataImporter.h"
   #include "mmoLandmarkExporter.h"
   #include "mmoClassicICPRegistration.h"
+  #include "mmoMeshImporter.h"
 #endif
 #include "mmoLandmarkImporter.h"
 #include "mmoLandmarkImporterTXT.h"
@@ -168,6 +169,7 @@ bool lhpBuilderApp::OnInit()
     m_Logic->Plug(new mmoLandmarkImporter("Landmark"));
     m_Logic->Plug(new mmoEMGImporterWS("EMG from WS"));
     m_Logic->Plug(new mmoGRFImporterWS("GRF from WS"));
+    m_Logic->Plug(new mmoMeshImporter("MESH"));
 #endif
 	
     m_Logic->Plug(new mmoVRMLImporter("Geometry VRML "));
