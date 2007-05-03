@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-04-13 12:07:06 $
-  Version:   $Revision: 1.62 $
+  Date:      $Date: 2007-05-03 11:22:57 $
+  Version:   $Revision: 1.63 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -160,15 +160,15 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoRAWImporterVolume("RAW Volume"));
   m_Logic->Plug(new mmoImageImporter("Images"));
 	m_Logic->Plug(new mmoRAWImporterImages("Raw Images"));
-  m_Logic->Plug(new mmoLandmarkImporterTXT("Landmark TXT"));
-  m_Logic->Plug(new mmoLandmarkImporterWS("Landmark WS"));
+ // m_Logic->Plug(new mmoLandmarkImporterTXT("Landmark TXT")); //Importer for BodyBuilder Files
+  m_Logic->Plug(new mmoLandmarkImporterWS("Landmark"));
   m_Logic->Plug(new mmoMotionDataImporter<mafVMEC3DData>("C3D", "C3D Motion Data (*.c3d)|*.c3d", "Dictionary (*.txt)|*.txt"));
   
 #ifdef MAF_USE_ITK
     m_Logic->Plug(new mmoMotionDataImporter<mafVMERawMotionData>("Raw Motion Data", "RAW Motion Data (*.MAN)|*.MAN", "Dictionary (*.txt)|*.txt"));
-    m_Logic->Plug(new mmoLandmarkImporter("Landmark"));
-    m_Logic->Plug(new mmoEMGImporterWS("EMG from WS"));
-    m_Logic->Plug(new mmoGRFImporterWS("GRF from WS"));
+  // m_Logic->Plug(new mmoLandmarkImporter("Landmark")); //Old Importer
+    m_Logic->Plug(new mmoEMGImporterWS("EMG"));
+    m_Logic->Plug(new mmoGRFImporterWS("GRF"));
     m_Logic->Plug(new mmoMeshImporter("MESH"));
 #endif
 	
@@ -223,9 +223,8 @@ bool lhpBuilderApp::OnInit()
 
   mafViewVTK *traj = new mafViewVTK("AL Trajectories view");
   traj->PlugVisualPipe("mafVMELandmark", "medPipeTrajectories");
+  traj->PlugVisualPipe("mafVMELandmarkCloud", "medPipeTrajectories");
   m_Logic->Plug(traj);
-
-  
 
 	mafViewVTK *vsurface = new mafViewVTK("Surface view");
 	vsurface->PlugVisualPipe("mafVMESurface","mafPipeSurface");
