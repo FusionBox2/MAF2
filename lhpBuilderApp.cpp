@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-05-14 12:13:05 $
-  Version:   $Revision: 1.64 $
+  Date:      $Date: 2007-05-14 12:15:25 $
+  Version:   $Revision: 1.65 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -194,7 +194,6 @@ bool lhpBuilderApp::OnInit()
 	m_Logic->Plug(new mmoAddLandmark("Add Landmark \tCtrl+A"),"Create");
   m_Logic->Plug(new mmoRegisterClusters("Register Landmark Cloud"),"Fuse");
   m_Logic->Plug(new mmoCreateMeter("Distance Meter"),"Derive");
-  m_Logic->Plug(new mmoVMEDataSetAttributesImporter("VME DataSet Attributes Importer"),"Modify");
 	m_Logic->Plug(new mmoExplodeCollapse("Explode/Collapse Landamark Cloud"),"Modify");
 	m_Logic->Plug(new mmoFilterSurface("Filter Surface"),"Modify");
 	m_Logic->Plug(new mmoExtractIsosurface("Extract Isosurface"),"Modify");
@@ -206,6 +205,7 @@ bool lhpBuilderApp::OnInit()
 	m_Logic->Plug(new mmoVOIDensity("VOI Density"),"Measure");
   m_Logic->Plug(new mmoReparentTo("Reparent to...  \tCtrl+R"),"Fuse");
 	#ifdef MAF_USE_ITK
+    m_Logic->Plug(new mmoVMEDataSetAttributesImporter("VME DataSet Attributes Importer"),"Modify");
 		m_Logic->Plug(new mmoClassicICPRegistration("Register Surface"),"Fuse");
 	#endif
   
