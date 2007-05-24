@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderLogic.h,v $
   Language:  C++
-  Date:      $Date: 2007-03-02 15:53:37 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-05-24 09:26:53 $
+  Version:   $Revision: 1.2 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
@@ -31,6 +31,8 @@ class lhpBuilderLogic: public mafLogicWithManagers
 public:
                lhpBuilderLogic();
 	virtual     ~lhpBuilderLogic(); 
+
+	virtual void OnEvent(mafEventBase *maf_event);
 
 protected:
   /** Respond to a VME_ADDED evt. propagate evt. to SideBar,ViewManager,ecc.. */

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderLogic.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-03-02 15:53:37 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-05-24 09:26:53 $
+  Version:   $Revision: 1.2 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
@@ -33,6 +33,29 @@ lhpBuilderLogic::lhpBuilderLogic()
 lhpBuilderLogic::~lhpBuilderLogic()
 //----------------------------------------------------------------------------
 {
+}
+//----------------------------------------------------------------------------
+void lhpBuilderLogic::OnEvent(mafEventBase *maf_event)
+//----------------------------------------------------------------------------
+{
+	if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
+	{
+		switch(e->GetId())
+		{
+		case ABOUT_APPLICATION:
+			{
+				wxString message = m_AppTitle.GetCStr();
+				message += _(" Application ");
+				message += m_Revision;
+				wxMessageBox(message, "About Application");
+				mafLogMessage(wxString::Format("%s",m_Revision.GetCStr()));
+			}
+			break;
+		default:
+			mafLogicWithManagers::OnEvent(maf_event);
+			break; 
+		} // end switch case
+	} // end if SafeDowncast
 }
 //----------------------------------------------------------------------------
 void lhpBuilderLogic::VmeAdded(mafNode *vme)
