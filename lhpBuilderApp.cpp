@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-05-14 12:15:25 $
-  Version:   $Revision: 1.65 $
+  Date:      $Date: 2007-05-24 08:21:25 $
+  Version:   $Revision: 1.66 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -225,7 +225,6 @@ bool lhpBuilderApp::OnInit()
 
   mafViewVTK *traj = new mafViewVTK("AL Trajectories view");
   traj->PlugVisualPipe("mafVMELandmark", "medPipeTrajectories");
-  traj->PlugVisualPipe("mafVMELandmarkCloud", "medPipeTrajectories");
   m_Logic->Plug(traj);
 
 	mafViewVTK *vsurface = new mafViewVTK("Surface view");
