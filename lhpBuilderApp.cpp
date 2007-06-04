@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-05-31 10:58:01 $
-  Version:   $Revision: 1.67 $
+  Date:      $Date: 2007-06-04 15:19:57 $
+  Version:   $Revision: 1.68 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -37,6 +37,7 @@
 #include "mafPipeFactoryVME.h"
 #include "mafPipeVolumeSlice.h"
 #include "medPipeFactoryVME.h"
+#include "medVMEFactory.h"
 #include "medPipeVolumeDRR.h"
 #include "medPipeTrajectories.h" 
 
@@ -121,6 +122,9 @@ bool lhpBuilderApp::OnInit()
   // Initialize and Fill of PipeFactory -- could be a SideEffect of the node plug
   result = mafPipeFactoryVME::Initialize();
   assert(result==MAF_OK);
+
+  result = medVMEFactory::Initialize();
+  assert(result == MAF_OK);
 
 	result = medPipeFactoryVME::Initialize();
 	assert(result==MAF_OK);
