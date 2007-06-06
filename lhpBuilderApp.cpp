@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-06-04 15:19:57 $
-  Version:   $Revision: 1.68 $
+  Date:      $Date: 2007-06-06 08:35:45 $
+  Version:   $Revision: 1.69 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -41,6 +41,7 @@
 #include "medPipeVolumeDRR.h"
 #include "medPipeTrajectories.h" 
 
+#include "mmoBmpExporter.h"
 #include "mmoCreateGroup.h"
 #include "mmoCreateMeter.h"
 #include "mmoCreateRefSys.h"
@@ -186,6 +187,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoSTLExporter("STL"));
   m_Logic->Plug(new mmoVTKExporter("VTK"));
 	m_Logic->Plug(new mmoRAWExporter("Raw"));
+  m_Logic->Plug(new mmoBmpExporter("Bmp"));
 
   #ifdef MAF_USE_ITK
     m_Logic->Plug(new mmoLandmarkExporter("Landmark"));
