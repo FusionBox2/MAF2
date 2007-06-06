@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-06-06 08:35:45 $
-  Version:   $Revision: 1.69 $
+  Date:      $Date: 2007-06-06 15:13:41 $
+  Version:   $Revision: 1.70 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -192,7 +192,7 @@ bool lhpBuilderApp::OnInit()
   #ifdef MAF_USE_ITK
     m_Logic->Plug(new mmoLandmarkExporter("Landmark"));
   #endif
-
+l
   //-------------------------------------------------------------
 
   //------------------------- Operations -------------------------
