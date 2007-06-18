@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-06-06 15:14:15 $
-  Version:   $Revision: 1.71 $
+  Date:      $Date: 2007-06-18 15:30:13 $
+  Version:   $Revision: 1.72 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -227,17 +227,63 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(v);*/
   //m_Logic->Plug(new mafViewVTK("VTK view"));
 
-	mafViewVTK *viso = new mafViewVTK("Isosurface view");
-  viso->PlugVisualPipe("mafVMEVolumeGray", "mafPipeIsosurface",MUTEX);
-  m_Logic->Plug(viso);
+	
 
-  mafViewVTK *traj = new mafViewVTK("AL Trajectories view");
+  mafViewVTK *traj = new mafViewVTK("AL Trajectories");
   traj->PlugVisualPipe("mafVMELandmark", "medPipeTrajectories");
   m_Logic->Plug(traj);
 
-	mafViewVTK *vsurface = new mafViewVTK("Surface view");
+  //View Arbitrary Slice
+  mafViewArbitrarySlice *ArbitraryView = new mafViewArbitrarySlice("Arbitrary");
+  ArbitraryView->PackageView();
+  m_Logic->Plug(ArbitraryView);
+
+
+  // View DRR
+  mafViewVTK *vdrr = new mafViewVTK("DRR");
+  vdrr->PlugVisualPipe("mafVMEVolumeGray","medPipeVolumeDRR",MUTEX);
+  m_Logic->Plug(vdrr);
+
+#ifdef MAF_USE_ITK
+  mafViewVTK *graph = new mafViewVTK("EMG Graph");
+  graph->PlugVisualPipe("mafVMEScalar", "medPipeGraph");
+  m_Logic->Plug(graph);
+#endif
+
+  //View Global Slice
+  mafViewGlobalSliceCompound *GlobalSlice = new mafViewGlobalSliceCompound("Global Slice");
+  GlobalSlice->PackageView();
+  m_Logic->Plug(GlobalSlice);
+
+  // View HTML
+  mafViewHTML *vhtml = new mafViewHTML("HTML");
+  m_Logic->Plug(vhtml);
+
+  mafViewImageCompound *vImage = new mafViewImageCompound("Image");
+  vImage->PackageView();
+  m_Logic->Plug(vImage);
+
+
+  mafViewVTK *viso = new mafViewVTK("Isosurface");
+  viso->PlugVisualPipe("mafVMEVolumeGray", "mafPipeIsosurface",MUTEX);
+  m_Logic->Plug(viso);
+
+  mafViewOrthoSlice *viewOrthoSlice = new mafViewOrthoSlice("OrthoSlice");
+  viewOrthoSlice->PackageView();
+  m_Logic->Plug(viewOrthoSlice);
+
+  mafViewRXCompound *RX = new mafViewRXCompound("RX");
+  RX->PackageView();
+  m_Logic->Plug(RX);
+
+  mafViewRXCT *vrxctl = new mafViewRXCT("RXCT");
+  vrxctl->PackageView();
+  m_Logic->Plug(vrxctl);
+
+	mafViewVTK *vsurface = new mafViewVTK("Surface");
 	vsurface->PlugVisualPipe("mafVMESurface","mafPipeSurface");
 	m_Logic->Plug(vsurface);
+
 /*
   mafViewCompound *vc = new mafViewCompound("view compound",3);
   mafViewVTK *v2 = new mafViewVTK("Slice view", CAMERA_CT);
@@ -245,33 +291,9 @@ bool lhpBuilderApp::OnInit()
   vc->PlugChildView(v2);
   m_Logic->Plug(vc);
 */
-  mafViewRXCT *vrxctl = new mafViewRXCT("new RXCT view");
-  vrxctl->PackageView();
-  m_Logic->Plug(vrxctl);
 
-  mafViewOrthoSlice *viewOrthoSlice = new mafViewOrthoSlice("OrthoSlice view");
-  viewOrthoSlice->PackageView();
-  m_Logic->Plug(viewOrthoSlice);
 
-	// View DRR
-	mafViewVTK *vdrr = new mafViewVTK("DRR");
-	vdrr->PlugVisualPipe("mafVMEVolumeGray","medPipeVolumeDRR",MUTEX);
-	m_Logic->Plug(vdrr);
-  
-  //View Arbitrary Slice
-  mafViewArbitrarySlice *ArbitraryView = new mafViewArbitrarySlice("Arbitrary");
-	ArbitraryView->PackageView();
-  m_Logic->Plug(ArbitraryView);
-
-  //View Global Slice
-	mafViewGlobalSliceCompound *GlobalSlice = new mafViewGlobalSliceCompound("Global Slice");
-	GlobalSlice->PackageView();
-	m_Logic->Plug(GlobalSlice);
-
-	mafViewRXCompound *RX = new mafViewRXCompound("RX");
-	RX->PackageView();
-	m_Logic->Plug(RX);
-
+	
   // View 2D
   /*mafViewSlice *vImage = new mafViewSlice("View Image",CAMERA_OS_Z,false,false,false);
   vImage->PlugVisualPipe("mafVMEVolumeGray","mafPipeBox",NON_VISIBLE);
@@ -284,19 +306,7 @@ bool lhpBuilderApp::OnInit()
   vImage->PlugVisualPipe("mafVMESurface","mafPipeSurface",NON_VISIBLE);
   m_Logic->Plug(vImage);*/
 
-	mafViewImageCompound *vImage = new mafViewImageCompound("View Image");
-	vImage->PackageView();
-	m_Logic->Plug(vImage);
 
-  // View HTML
-	mafViewHTML *vhtml = new mafViewHTML("HTML View");
-	m_Logic->Plug(vhtml);
-
-#ifdef MAF_USE_ITK
-  mafViewVTK *graph = new mafViewVTK("EMG Graph");
-  graph->PlugVisualPipe("mafVMEScalar", "medPipeGraph");
-  m_Logic->Plug(graph);
-#endif
 
 	/*mafViewVTK *vslice = new mafViewVTK("Slice view", CAMERA_CT);
   vslice->PlugVisualPipe("mafVMEVolumeGray", "mafPipeVolumeSlice");
