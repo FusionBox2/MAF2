@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-06-18 15:30:13 $
-  Version:   $Revision: 1.72 $
+  Date:      $Date: 2007-06-25 12:13:00 $
+  Version:   $Revision: 1.73 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -65,7 +65,7 @@
 #include "mmoExtractIsosurface.h"
 #include "mmoCrop.h"
 #include "mmoVOIDensity.h"
-#include "mmoVolumeResample.h"
+#include "medOpVolumeResample.h"
 #include "mmoAddLandmark.h"
 #include "mmoRegisterClusters.h"
 #include "mmoCreateSurfaceParametric.h"
@@ -206,7 +206,7 @@ bool lhpBuilderApp::OnInit()
 	m_Logic->Plug(new mmoFilterSurface("Filter Surface"),"Modify");
 	m_Logic->Plug(new mmoExtractIsosurface("Extract Isosurface"),"Modify");
 	m_Logic->Plug(new mmoCrop("Crop Volume"),"Modify");
-	m_Logic->Plug(new mmoVolumeResample("Volume Resample"),"Modify");
+	m_Logic->Plug(new medOpVolumeResample("Volume Resample"),"Modify");
 	m_Logic->Plug(new mmoMAFTransformScale("Scale Transform"),"Modify");
   m_Logic->Plug(new mmoMAFTransform("Transform"),"Modify");
 	m_Logic->Plug(new mmo2DMeasure("2D Measure"),"Measure");
