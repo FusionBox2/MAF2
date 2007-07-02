@@ -88,7 +88,7 @@ IF (WIN32)
    
   # this values are set by hand when major or minor is released
   SET(LHPBUILDER_MAJOR_VERSION 1 CACHE INTERNAL "major version")
-  SET(LHPBUILDER_MINOR_VERSION 0 CACHE INTERNAL "minor version")
+  SET(LHPBUILDER_MINOR_VERSION 2 CACHE INTERNAL "minor version")
   
   # test for environment variable reading
   # MESSAG# "$ENV{PATH}")
