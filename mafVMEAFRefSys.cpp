@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEAFRefSys.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 19:13:46 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-10 20:35:35 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -401,6 +401,7 @@ int mafVMEAFRefSys::InternalRestore(mafStorageElement *node)
       m_XoRotate = m_XRotate;
       m_YoRotate = m_YRotate;
       m_ZoRotate = m_ZRotate;
+      SetScaleFactor(m_ScaleFactor);
       return MAF_OK;
     }
   }
