@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoStickPalpation.h,v $
   Language:  C++
-  Date:      $Date: 2007-07-09 22:55:06 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-10 19:14:12 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -46,14 +46,9 @@ public:
   void CreateGui();
 
 protected: 
-  bool   ReadLMDictionary(mafString *fileName);
-  void   ParseString(wxString &pFirstLine, wxString &sOne, wxString &sTwo);
   void   ProcessSingleLM();
 
-  //typedef wxInt32 (mmoStickPalpation::*GetLandmarks)(mafVMELandmarkCloud  *pStickCloud, DiV4d *vpPoints, mafTimeStamp t = 0) const;
-
   typedef mafVME *(mmoStickPalpation::*MatchName)(mafVME  *pVME, const char *name) const;
-
 
   int    ExtractMatchingPoints(mafVMELandmarkCloud *src, mafVMELandmarkCloud *trg, float srctime, float trgtime);
   double RegisterPoints(vtkMatrix4x4 *res_matrix);

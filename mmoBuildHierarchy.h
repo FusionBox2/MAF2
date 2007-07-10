@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoBuildHierarchy.h,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 17:30:46 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-10 19:14:12 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev
 ==========================================================================
   Copyright (c) 2002/2005
@@ -88,9 +88,6 @@ public:
   /** Load links from file. */
   bool  ReadFromFile(const wxString &sFName);  
 
-  /** Load landmarks dictionary. */
-  bool  ReadLandmarksDictionary(const wxString &fileName);
-
 protected: 
 
   void OpStop(int result);
@@ -109,16 +106,10 @@ private:
   /** Destroy entire tree */
   void  BindToVME(mafVME *pvme, mafFrame *pStart = NULL);
   /** just see name */
-  static void  ExtractTwoWordsFromString(wxString &str, wxString &one, wxString &two); 
+  //static void  ExtractTwoWordsFromString(wxString &str, wxString &one, wxString &two); 
   /** Find frame with given name */
   mafFrame *FindFrame(wxString const &str, bool bCreateIfNotFound = FALSE);
   mafFrame *FindFrame(mafFrame *pRoot, wxString const &str);
   mafFrame *FindFrameUsingDictionary(wxString const &str, bool bCreateIfNotFound = FALSE);
-  /** Look in dictionary for symbol. */
-  wxString const *LookupStdName(wxString const *name);
-
-  /** Look in dictionary for symbol. */
-  wxString const *LookupUserName(wxString const *name);
-
 };
 #endif

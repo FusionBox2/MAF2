@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoBuildHierarchy.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 17:30:46 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-10 19:14:12 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -42,6 +42,7 @@
 #include "mafAbsMatrixPipe.h"
 #include "mafSmartPointer.h"
 #include "mafTransformFrame.h"
+#include "mafDictionary.h"
 #include "mmoBuildHierarchy.h"
 #include "mmuTimeSet.h"
 
@@ -179,7 +180,7 @@ void mmoBuildHierarchy::OnEvent(mafEventBase *maf_event)
     {
       if(m_DictionaryFName != "")
       {
-        ReadLandmarksDictionary(m_DictionaryFName.GetCStr());
+        ReadDictionary(&m_DictionaryFName, m_dictionary);
       }
       break;
     }
@@ -354,12 +355,11 @@ void mmoBuildHierarchy::OpUndo()
 bool mmoBuildHierarchy::ReadFromFile(const wxString& fileName)
 //----------------------------------------------------------------------------
 {
-  wxTextFile *pFile;
-  wxInt32    nI; 
-  wxString   sChild("");
-  wxString   sParent("");
-  mafFrame   *pParentFrame;
-  mafFrame   *pChildFrame;
+  wxInt32                                      nI; 
+  mafFrame                                     *pParentFrame;
+  mafFrame                                     *pChildFrame;
+  mafString                                    fname(fileName);
+  std::vector<std::pair<wxString, wxString> >  hierContent;
 
   if(m_dictionary.size() == 0)
   {
@@ -369,35 +369,19 @@ bool mmoBuildHierarchy::ReadFromFile(const wxString& fileName)
     }
   }
 
+  ReadDictionary(&fname, hierContent);
+  if(hierContent.size() == 0)
+  {
+    wxMessageBox(wxString::Format("Hierarchy is empty, nothing to do."), "Warning.", wxOK | wxCENTRE | wxICON_WARNING);
+    return false;
+  }
+
   //cleanup old if any
   Destroy(&m_root);
 
-  pFile = new wxTextFile(fileName);
-
-  if(pFile == NULL)
+  for(nI = 0; nI < hierContent.size(); )
   {
-    return false;
-  }
-  pFile->Open();
-  if(!pFile->IsOpened())
-  {
-    cppDEL(pFile);
-    return false;
-  }
-
-  for(nI = 0; nI < pFile->GetLineCount(); )
-  {
-    wxString &pFirstLine = pFile->GetLine(nI);
-    //match it as beginning of block
-    if(pFirstLine == "")
-    {
-      nI++;
-      continue;
-    }
-
-    ExtractTwoWordsFromString(pFirstLine, sParent, sChild);
-
-    if(sChild == "" || sParent == "")
+    if(hierContent[nI].second == "" || hierContent[nI].first == "")
     {
       //consider string in valid
       nI++;
@@ -405,32 +389,28 @@ bool mmoBuildHierarchy::ReadFromFile(const wxString& fileName)
     }
     //create parent if needed
     bool addRoot = false;
-    pParentFrame = FindFrame(sParent, FALSE);
+    pParentFrame = FindFrame(hierContent[nI].first, FALSE);
     if((pParentFrame == NULL) ^ (m_root == NULL))
     {
       addRoot = true;
-      //wxMessageBox(wxString::Format("Error in line %d: Bone %s sets a new root", nI + 1, sParent.GetData()), "Error.", wxOK | wxCENTRE | wxICON_ERROR);
-      //cppDEL(pParentFrame);
-      //Destroy(&m_root);
-      //goto Done;
     }
-    pParentFrame = FindFrame(sParent, TRUE);
-    pChildFrame  = FindFrame(sChild, TRUE);
+    pParentFrame = FindFrame(hierContent[nI].first, TRUE);
+    pChildFrame  = FindFrame(hierContent[nI].second, TRUE);
     if(pChildFrame->GetNext() != NULL  || pChildFrame->GetChild() != NULL)
     {
-      wxMessageBox(wxString::Format("Error in line %d: Bone %s already in hierarchy", nI + 1, sChild.GetData()), "Error.", wxOK | wxCENTRE | wxICON_ERROR);
+      wxMessageBox(wxString::Format("Error in line %d: Bone %s already in hierarchy", nI + 1, hierContent[nI].second.GetData()), "Error.", wxOK | wxCENTRE | wxICON_ERROR);
       cppDEL(pChildFrame);
       cppDEL(pParentFrame);
       Destroy(&m_root);
-      goto Done;
+      return true;
     }
     if(pChildFrame->GetParent() != NULL)
     {
-      wxMessageBox(wxString::Format("Error in line %d: Bone %s already have a parent", nI + 1, sChild.GetData()), "Error.", wxOK | wxCENTRE | wxICON_ERROR);
+      wxMessageBox(wxString::Format("Error in line %d: Bone %s already have a parent", nI + 1, hierContent[nI].second.GetData()), "Error.", wxOK | wxCENTRE | wxICON_ERROR);
       cppDEL(pChildFrame);
       cppDEL(pParentFrame);
       Destroy(&m_root);
-      goto Done;
+      return true;
     }
     if(m_root == NULL)
     {
@@ -455,69 +435,6 @@ bool mmoBuildHierarchy::ReadFromFile(const wxString& fileName)
     // to next
     nI++;
   }
-Done:
-  pFile->Close();
-  cppDEL(pFile);
-  return true;
-}
-
-//----------------------------------------------------------------------------
-bool mmoBuildHierarchy::ReadLandmarksDictionary(const wxString &fileName)
-//----------------------------------------------------------------------------
-{
-  wxTextFile   *pFile;
-  wxInt32      nI; 
-  wxString     sFirstName("");
-  wxString     sSecondName("");
-  bool         bShowWarnings = TRUE;
-
-  pFile = new wxTextFile(fileName);
-
-  if(pFile == NULL)
-  {
-    return false;
-  }
-  pFile->Open();
-  if(!pFile->IsOpened())
-  {
-    cppDEL(pFile);
-    return false;
-  }
-
-  //clean up old data if any
-  m_dictionary.clear();
-
-  for(nI = 0; nI < pFile->GetLineCount(); )
-  {
-    wxString &pFirstLine = pFile->GetLine(nI);
-    //match it as beginning of block
-    if(pFirstLine == "" || pFirstLine[0] == '#')
-    {
-      nI++;
-      continue;
-    }    
-
-    ExtractTwoWordsFromString(pFirstLine, sFirstName, sSecondName);
-
-    if(sFirstName == "" || sSecondName == "")
-    {
-      if(bShowWarnings)
-        //consider string in invalid
-        if(wxCANCEL == wxMessageBox(wxString::Format("Syntax error in file %s, line %d. Ignoring. Press Cancel to ignore all other warnings for this file.", fileName.GetData(), nI + 1), "Warning.", wxOK | wxCENTRE | wxICON_WARNING | wxCANCEL))
-        {
-          bShowWarnings = FALSE;
-        }
-
-        nI++;
-        continue;
-    }
-    //just add to dictionary
-    m_dictionary.push_back(std::make_pair(sFirstName, sSecondName));
-    // to next
-    nI++;
-  }
-  pFile->Close();
-  cppDEL(pFile);
   return true;
 }
 
@@ -576,7 +493,7 @@ void mmoBuildHierarchy::BindToVME(mafVME *pvme, mmoBuildHierarchy::mafFrame *pSt
   }
 
   pFoundVME = NULL;
-  wxString const * pVMENameStr = LookupUserName(pStart->GetName());
+  wxString const * pVMENameStr = LookupUserName(pStart->GetName(), m_dictionary);
   if(pVMENameStr != NULL)
   {
     pFoundVME = (mafVME*)pVMERoot->FindInTreeByName(pVMENameStr->GetData());
@@ -584,7 +501,7 @@ void mmoBuildHierarchy::BindToVME(mafVME *pvme, mmoBuildHierarchy::mafFrame *pSt
   //and again ^_^
   if(pFoundVME == NULL)
   {
-    pVMENameStr = LookupStdName(pStart->GetName());
+    pVMENameStr = LookupStdName(pStart->GetName(), m_dictionary);
     if(pVMENameStr != NULL)
       pFoundVME = (mafVME*)pVMERoot->FindInTreeByName(pVMENameStr->GetData());
   }
@@ -597,7 +514,7 @@ void mmoBuildHierarchy::BindToVME(mafVME *pvme, mmoBuildHierarchy::mafFrame *pSt
   pStart->SetVME(pFoundVME);
   if(pFoundVME != NULL)
     pStart->SetParentVME(pFoundVME->GetParent());
-  if(LookupStdName(pStart->GetName()) != NULL)
+  if(LookupStdName(pStart->GetName(), m_dictionary) != NULL)
   {
     //pStart->SetID(GetBoneIDByName(*LookupStdName(pStart->GetName())));
   }
@@ -614,48 +531,6 @@ void mmoBuildHierarchy::BindToVME(mafVME *pvme, mmoBuildHierarchy::mafFrame *pSt
   }
 }
 
-//----------------------------------------------------------------------------
-void  mmoBuildHierarchy::ExtractTwoWordsFromString(wxString &pFirstLine, wxString &sOne, wxString &sTwo)
-//----------------------------------------------------------------------------
-{
-  wxInt32    nJ, nK; 
-  //skip to first word
-  for(nJ = 0; nJ < pFirstLine.Length(); nJ++)
-  {
-    if(pFirstLine[nJ] == '\"')
-    {
-      break;
-    }
-  }
-  //skip first word
-  for(nK = nJ + 1; nK < pFirstLine.Length(); nK++)
-  {
-    if(pFirstLine[nK] == '\"')
-    {
-      break;
-    }
-  }
-  sOne = pFirstLine.Mid(nJ + 1, nK - nJ - 1);
-
-  //skip to second word
-  for(nJ = nK + 1; nJ < pFirstLine.Length(); nJ++)
-  {
-    if(pFirstLine[nJ] == '\"')
-    {
-      break;
-    }
-  }
-
-  //skip second word
-  for(nK = nJ + 1; nK < pFirstLine.Length(); nK++)
-  {
-    if(pFirstLine[nK] == '\"')
-    {
-      break;
-    }
-  }
-  sTwo =  pFirstLine.Mid(nJ + 1, nK - nJ - 1);
-}
 
 //----------------------------------------------------------------------------
 mmoBuildHierarchy::mafFrame::mafFrame()
@@ -681,49 +556,6 @@ mmoBuildHierarchy::mafFrame::~mafFrame()
   m_vme    = NULL;  
 }
 
-//----------------------------------------------------------------------------
-wxString const * mmoBuildHierarchy::LookupStdName(wxString const *name)
-//----------------------------------------------------------------------------
-{
-  wxInt32      nI; 
-
-  for(nI = 0; nI < m_dictionary.size(); nI++)
-  {
-    if(m_dictionary[nI].second == (*name))
-    {
-      return &m_dictionary[nI].first;
-    }
-    //already a ref one
-    if(m_dictionary[nI].first == (*name))
-    {
-      return &m_dictionary[nI].first;
-    }
-  }
-  //failed lookup
-  return NULL;
-}
-
-//----------------------------------------------------------------------------
-wxString const * mmoBuildHierarchy::LookupUserName(wxString const *name)
-//----------------------------------------------------------------------------
-{
-  wxInt32      nI; 
-
-  for(nI = 0; nI < m_dictionary.size(); nI++)
-  {
-    if(m_dictionary[nI].first == (*name))
-    {
-      return &m_dictionary[nI].second;
-    }
-    //already a ref one
-    if(m_dictionary[nI].second == (*name))
-    {
-      return &m_dictionary[nI].second;
-    }
-  }
-  //failed lookup
-  return NULL;
-}
 
 //----------------------------------------------------------------------------
 mmoBuildHierarchy::mafFrame *mmoBuildHierarchy::FindFrameUsingDictionary(wxString const &str, bool bCreateIfNotFound)    
@@ -736,12 +568,12 @@ mmoBuildHierarchy::mafFrame *mmoBuildHierarchy::FindFrameUsingDictionary(wxStrin
 
   if(pRet == NULL)
   {
-    pStr = LookupUserName(&str);
+    pStr = LookupUserName(&str, m_dictionary);
     if(pStr != NULL)
       pRet = FindFrame(*pStr, bCreateIfNotFound);
     if(pRet == NULL)
     {
-      pStr = LookupStdName(&str);
+      pStr = LookupStdName(&str, m_dictionary);
       if(pStr != NULL)
         pRet = FindFrame(*pStr, bCreateIfNotFound);
     }

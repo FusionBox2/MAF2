@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoStickPalpation.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-09 22:55:06 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-10 19:14:12 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -26,7 +26,6 @@
 #include "wx/wxprec.h"
 #include "wx/textfile.h"
 #include "wx/arrimpl.cpp"
-#include <wx/wxprec.h>
 #include <math.h>
 #include "wx/busyinfo.h"
 
@@ -36,6 +35,7 @@
 #include "mmgGui.h"
 
 #include "mmoStickPalpation.h"
+#include "mafDictionary.h"
 #include "mmoExplodeCollapse.H"
 
 #include "mafVMELandmarkCloud.h"
@@ -107,146 +107,6 @@ inline bool LMCSetState(mafVMELandmarkCloud *cloud, mafObserver *listener, bool 
     cppDEL(CloseOp); 
     return LMCOpened;
   }
-}
-
-
-//----------------------------------------------------------------------------
-void  mmoStickPalpation::ParseString(wxString &pFirstLine, wxString &sOne, wxString &sTwo)
-//----------------------------------------------------------------------------
-{
-  wxInt32 nJ, nK; 
-  wxInt32 length = pFirstLine.Length();
-
-  sOne = "";
-  sTwo = "";
-
-  //skip to first word
-  for(nJ = 0; nJ < length; nJ++)
-  {
-    if(pFirstLine[nJ] != ' ' && pFirstLine[nJ] != '\t')//if(pFirstLine[nJ] == '\"')
-    {
-      break;
-    }
-  }
-  if(nJ == length)
-    return;
-  if(pFirstLine[nJ] != '\"')
-  {
-    //skip first word
-    for(nK = nJ; nK < length; nK++)
-    {
-      if(pFirstLine[nK] == ' ' || pFirstLine[nK] == '\t')
-      {
-        break;
-      }
-    }
-  }
-  else
-  {
-    nJ++;
-    //skip first word
-    for(nK = nJ; nK < length; nK++)
-    {
-      if(pFirstLine[nK] == '\"')
-        break;
-    }
-  }
-  sOne = pFirstLine.Mid(nJ, nK - nJ);
-  if(nK == length)
-    return;
-  if(pFirstLine[nK] == '\"')
-    nK++;
-
-
-  //skip to second word
-  for(nJ = nK; nJ < length; nJ++)
-  {
-    if(pFirstLine[nJ] != ' ' && pFirstLine[nJ] != '\t')//if(pFirstLine[nJ] == '\"')
-    {
-      break;
-    }
-  }
-
-
-  if(nJ == length)
-    return;
-  if(pFirstLine[nJ] != '\"')
-  {
-    //skip first word
-    for(nK = nJ; nK < length; nK++)
-    {
-      if(pFirstLine[nK] == ' ' || pFirstLine[nK] == '\t')
-      {
-        break;
-      }
-    }
-  }
-  else
-  {
-    nJ++;
-    //skip first word
-    for(nK = nJ; nK < length; nK++)
-    {
-      if(pFirstLine[nK] == '\"')
-        break;
-    }
-  }
-  sTwo = pFirstLine.Mid(nJ, nK - nJ);
-}
-
-
-//----------------------------------------------------------------------------
-bool mmoStickPalpation::ReadLMDictionary(mafString *fileName)
-//----------------------------------------------------------------------------
-{
-  wxTextFile   *pFile;
-  wxInt32      nI; 
-  wxString     sFirstName("");
-  wxString     sSecondName("");
-
-  pFile = new wxTextFile(fileName->GetCStr());
-
-  if(pFile == NULL)
-  {
-    return false;
-  }
-  pFile->Open();
-  if(!pFile->IsOpened())
-  {
-    cppDEL(pFile);
-    return false;
-  }
-
-  //clean up old data if any
-  m_LMDict.clear();
-
-  for(nI = 0; nI < pFile->GetLineCount(); )
-  {
-    wxString &pFirstLine = pFile->GetLine(nI);
-    //match it as beginning of block
-    if(pFirstLine == "" || pFirstLine[0] == '#')
-    {
-      nI++;
-      continue;
-    }    
-
-    ParseString(pFirstLine, sFirstName, sSecondName);
-
-    if(sFirstName == "" || sSecondName == "")
-    {
-      //consider string in invalid
-      wxMessageBox(wxString::Format("Syntax error in file %s, line %d. Ignoring.", fileName->GetCStr(), nI + 1), "Warning.", wxOK | wxCENTRE | wxICON_WARNING);
-      nI++;
-      continue;
-    }
-    //just add to dictionary
-    m_LMDict.push_back(std::make_pair(sFirstName, sSecondName));// Add(pEntry);
-    // to next
-    nI++;
-  }
-  pFile->Close();
-  cppDEL(pFile); 
-  return true;
 }
 
 //----------------------------------------------------------------------------
@@ -447,7 +307,7 @@ void mmoStickPalpation::OnEvent(mafEventBase *e)
     {
       if(m_ScriptFName != "")
       {
-        ReadLMDictionary(&m_ScriptFName);
+        ReadDictionary(&m_ScriptFName, m_LMDict);
       }
       break;
     }
