@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEHelAxis.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 20:43:13 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-10 21:15:50 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -38,6 +38,8 @@
 #include "mmgGui.h"
 #include "mafPlotMath.h"
 #include "mafIndent.h"
+#include "mafVMELandmarkCloud.h"
+#include "mafVMEAFRefSys.h"
 
 #ifdef _MSC_FULL_VER
 #pragma warning (disable: 4786)
@@ -47,9 +49,51 @@ mafCxxTypeMacro(mafVMEHelAxis)
 
 
 
-void GetGlobalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat);
-void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat);
+//----------------------------------------------------------------------------
+static void GetGlobalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat)
+//----------------------------------------------------------------------------
+{
+  mafMatrix matrix;
 
+  ///This function can be called with zero this!
+  vme->GetOutput()->GetMatrix(matrix, ts);
+  mflMatrixToDi(matrix.GetVTKMatrix(), pMat);
+  mafVMELandmarkCloud *lmc = mafVMELandmarkCloud::SafeDownCast(vme);
+  mafVMEAFRefSys      *afs = NULL;
+  if(lmc == NULL)
+    return;
+
+  for(int i = 0; i < lmc->GetNumberOfChildren(); i++)
+  {
+    mafNode *child = vme->GetChild(i);
+    if(child->IsA("mafVMEAFRefSys"))
+    {
+      afs = mafVMEAFRefSys::SafeDownCast(child);
+      break;
+    }
+  }
+
+  if(afs == NULL)
+    return;
+
+  afs->GetOutput()->GetAbsMatrix(matrix, ts);
+  mflMatrixToDi(matrix.GetVTKMatrix(), pMat);
+}
+
+
+//----------------------------------------------------------------------------
+static void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat)
+//----------------------------------------------------------------------------
+{
+  DiMatrix pmatrix;
+  DiMatrix cmatrix;
+  DiMatrix pInv;
+
+  GetGlobalMatrix(vme->GetParent(), ts, &pmatrix);
+  GetGlobalMatrix(vme, ts, &cmatrix);
+  DiMatrixInvert(&pmatrix, &pInv);
+  DiMatrixMultiply(&cmatrix, &pInv, pMat);
+}
 
 void mafVMEHelAxis::InternalUpdate()
 {
