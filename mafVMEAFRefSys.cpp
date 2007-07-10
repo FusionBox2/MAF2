@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEAFRefSys.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 20:35:35 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-07-10 22:35:34 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -480,9 +480,9 @@ mmgGui *mafVMEAFRefSys::CreateGui()
   m_Gui->Divider();
   //actual code
   {
-    m_Gui->FloatSlider(ID_X_OFFSET, "X offset",&m_XOffset, -180.0, 180.0);
-    m_Gui->FloatSlider(ID_Y_OFFSET, "Y offset",&m_YOffset, -180.0, 180.0);
-    m_Gui->FloatSlider(ID_Z_OFFSET, "Z offset",&m_ZOffset, -180.0, 180.0);
+    m_Gui->FloatSlider(ID_X_OFFSET, "X offset",&m_XOffset, -1000.0, 1000.0);
+    m_Gui->FloatSlider(ID_Y_OFFSET, "Y offset",&m_YOffset, -1000.0, 1000.0);
+    m_Gui->FloatSlider(ID_Z_OFFSET, "Z offset",&m_ZOffset, -1000.0, 1000.0);
     m_Gui->FloatSlider(ID_X_ROTATE, "X rotate",&m_XRotate, -180.0, 180.0);
     m_Gui->FloatSlider(ID_Y_ROTATE, "Y rotate",&m_YRotate, -180.0, 180.0);
     m_Gui->FloatSlider(ID_Z_ROTATE, "Z rotate",&m_ZRotate, -180.0, 180.0);

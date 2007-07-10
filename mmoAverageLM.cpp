@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoAverageLM.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-09 23:00:37 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-10 22:35:24 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -58,7 +58,7 @@
 
 
 //----------------------------------------------------------------------------
-mmoAverageLM::mmoAverageLM(wxString label) :
+mmoAverageLM::mmoAverageLM(const wxString& label) :
 mafOp(label)
 //----------------------------------------------------------------------------
 {

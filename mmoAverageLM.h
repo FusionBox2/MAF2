@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoAverageLM.h,v $
   Language:  C++
-  Date:      $Date: 2007-07-09 23:00:37 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-10 22:35:24 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -39,7 +39,7 @@ class vtkPoints;
 class mmoAverageLM: public mafOp
 {
 public:
-  mmoAverageLM(wxString label);
+  mmoAverageLM(const wxString& label);
  ~mmoAverageLM(); 
 
   virtual void OnEvent(mafEventBase *maf_event);
