@@ -1,0 +1,185 @@
+/*=========================================================================
+  Program:   Multimod Application Framework
+  Module:    $RCSfile: mmoHelAxis.cpp,v $
+  Language:  C++
+  Date:      $Date: 2007-07-10 20:43:13 $
+  Version:   $Revision: 1.1 $
+  Authors:   Fedor Moiseev / Vladik Aranov
+==========================================================================
+  Copyright (c) 2001/2007 
+  ULB - Universite Libre de Bruxelles (www.ulb.ac.be)
+=========================================================================*/
+
+#include "mafDefines.h" 
+//----------------------------------------------------------------------------
+// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
+// This force to include Window,wxWidgets and VTK exactly in this order.
+// Failing in doing this will result in a run-time error saying:
+// "Failure#0: The value of ESP was not properly saved across a function call"
+//----------------------------------------------------------------------------
+
+
+#ifdef __GNUG__
+    #pragma implementation "mmoHelAxis.h"
+#endif
+
+// For compilers that support precompilation, includes "wx/wx.h".
+#include <wx/wxprec.h>
+#include "wx/busyinfo.h"
+
+#include "mafDecl.h"
+#include "mafOp.h"
+#include "mafEvent.h"
+#include "mmgGui.h"
+
+#include "mmoHelAxis.h"
+
+#include "mafVMEHelAxis.h"
+#include "mafVMEAFRefSys.h"
+#include "mafVMELandmarkCloud.h"
+#include "mafSmartPointer.h"
+#include "mafPlotMath.h"
+#include "mafTransform.h"
+#include "mafTransformFrame.h"
+#include "mafPipeIntGraph.h"
+
+//----------------------------------------------------------------------------
+// Required for MSVC
+//----------------------------------------------------------------------------
+#ifdef _MSC_FULL_VER
+#pragma warning (disable: 4786)
+#endif
+
+//----------------------------------------------------------------------------
+// Constants :
+//----------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------
+// Forward Refs
+//----------------------------------------------------------------------------
+void GetGlobalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat);
+void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat);
+
+
+//----------------------------------------------------------------------------
+mmoHelAxis::mmoHelAxis(wxString label) :
+mafOp(label), m_DictionaryFName("")
+//----------------------------------------------------------------------------
+{
+  m_OpType            = OPTYPE_OP;
+  m_Canundo           = true;
+  m_HelicalSys        = NULL;
+}
+
+//----------------------------------------------------------------------------
+mmoHelAxis::~mmoHelAxis( ) 
+//----------------------------------------------------------------------------
+{
+  vtkDEL(m_HelicalSys);
+}
+
+//----------------------------------------------------------------------------
+mafOp* mmoHelAxis::Copy()   
+//----------------------------------------------------------------------------
+{
+  return new mmoHelAxis(m_Label);
+}
+
+//----------------------------------------------------------------------------
+bool mmoHelAxis::Accept(mafNode* vme)
+//----------------------------------------------------------------------------
+{
+  if(!vme) return false;
+  return true;
+}
+
+//----------------------------------------------------------------------------
+// widget id's
+//----------------------------------------------------------------------------
+enum 
+{
+  ID_DEFAULT = MINID,
+  ID_LAST,
+  ID_FORCED_DWORD = 0x7fffffff
+};
+
+//----------------------------------------------------------------------------
+void mmoHelAxis::OpRun()   
+//----------------------------------------------------------------------------
+{
+  mafNEW(m_HelicalSys);
+  m_HelicalSys->SetName("Helical_axis");
+  //CreateGui();
+  mafEventMacro(mafEvent(this,OP_RUN_OK)); 
+}
+
+//----------------------------------------------------------------------------
+void mmoHelAxis::CreateGui()
+//----------------------------------------------------------------------------
+{
+  m_Gui = new mmgGui(this);
+  m_Gui->SetListener(this);
+  m_Gui->OkCancel();
+  ShowGui();
+}
+
+//----------------------------------------------------------------------------
+void mmoHelAxis::OpStop(int result)
+//----------------------------------------------------------------------------
+{
+  if (result == OP_RUN_CANCEL)
+  {
+    HideGui();
+    if(m_HelicalSys->GetParent())
+    {
+      mafEventMacro(mafEvent(this, VME_REMOVE, m_HelicalSys));
+    }
+    mafEventMacro(mafEvent(this,result));
+  }
+  else if (result == OP_RUN_OK)
+  {
+    HideGui();
+    mafEventMacro(mafEvent(this,result));
+  }
+}
+//----------------------------------------------------------------------------
+void mmoHelAxis::OnEvent(mafEventBase *maf_event) 
+//----------------------------------------------------------------------------
+{ 
+  switch(maf_event->GetId())
+  {
+    case wxOK:          
+    { 
+      OpStop(OP_RUN_OK);
+    }
+    break;
+    case wxCANCEL:
+    {    
+      OpStop(OP_RUN_CANCEL);
+    }
+    break;
+    default:
+    {
+      mafEventMacro(*maf_event); 
+    }
+    break;
+  }
+}
+
+//----------------------------------------------------------------------------
+void mmoHelAxis::OpDo()
+//----------------------------------------------------------------------------
+{
+  assert(m_HelicalSys);
+  m_HelicalSys->ReparentTo(m_Input);
+  m_HelicalSys->SetScaleFactor(100.0);
+  mafEventMacro(mafEvent(this, VME_ADD, m_HelicalSys));
+}
+//----------------------------------------------------------------------------
+void mmoHelAxis::OpUndo()
+//----------------------------------------------------------------------------
+{
+  assert(m_HelicalSys);
+  mafEventMacro(mafEvent(this, VME_REMOVE, m_HelicalSys));
+}
+
