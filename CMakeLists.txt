@@ -1,6 +1,52 @@
 PROJECT (lhpBuilder)
 
 SET(PROJECT_SRCS 
+  mmoTimeReduce.cpp
+  mmoTimeReduce.h  
+  mafDictionary.cpp
+  mafDictionary.h
+  mmoBuildHierarchy.cpp
+  mmoBuildHierarchy.h
+  mafINPWriter.cpp
+  mafINPWriter.h
+  mmoINPExporter.cpp
+  mmoMTRExporter.cpp
+  mmoINPExporter.h
+  mmoMTRExporter.h
+  mmoAverageLM.cpp
+  mmoAverageLM.h
+  mafVMEHelAxis.cpp
+  mafVMEHelAxis.h
+  mmoHelAxis.cpp
+  mmoHelAxis.h
+  mafVMEAFRefSys.cpp
+  mafVMEAFRefSys.h
+  mmoAFSys.cpp
+  mmoAFSys.h
+  mafPlotMath.cpp
+  mafPlotMath.h
+  mafGraphIDDesc.cpp
+  mafGraphIDDesc.h
+  mafPipeIntGraph.cpp
+  mafPipeIntGraph.h
+  mafViewIntGraph.cpp
+  mafViewIntGraph.h
+  mafViewIntGraphWindow.cpp
+  mafViewIntGraphWindow.h
+  mafMemGraph.cpp
+  mafMemGraph.h
+  mmoStickPalpation.cpp
+  mmoStickPalpation.h
+  mmoINPImporter.cpp
+  mmoINPImporter.h
+  mmoMTRImporter.cpp
+  mmoMTRImporter.h
+  mafMtrLMCReader.cpp
+  mafMtrLMCReader.h
+  mafInpReader.cpp
+  mafInpReader.h
+  mafStringSet.cpp
+  mafStringSet.h
   mafVMEC3DData.cpp
   mafVMEC3DData.h  
   lhpBuilderLogic.cpp

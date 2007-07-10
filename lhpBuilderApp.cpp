@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-05 09:22:08 $
-  Version:   $Revision: 1.75 $
+  Date:      $Date: 2007-07-10 23:36:15 $
+  Version:   $Revision: 1.76 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -21,6 +21,7 @@
 
 #include <wx/datetime.h>
 #include <wx/config.h>
+#include <vtkTimerLog.h>
 
 #include "lhpBuilderApp.h"
 #include "mafDecl.h"
@@ -41,6 +42,8 @@
 #include "medVMEEmg.h"
 #include "medPipeVolumeDRR.h"
 #include "medPipeTrajectories.h" 
+#include "mafVMEAFRefSys.h" 
+#include "mafVMEHelAxis.h" 
 
 #include "mmoBmpExporter.h"
 #include "mmoCreateGroup.h"
@@ -71,6 +74,16 @@
 #include "mmoAddLandmark.h"
 #include "mmoRegisterClusters.h"
 #include "mmoCreateSurfaceParametric.h"
+#include "mmoBuildHierarchy.h"
+#include "mmoTimeReduce.h"
+#include "mmoINPExporter.h"
+#include "mmoMTRExporter.h"
+#include "mmoINPImporter.h"
+#include "mmoMTRImporter.h"
+#include "mmoAFSys.h"
+#include "mmoAverageLM.h"
+#include "mmoHelAxis.h"
+#include "mmoStickPalpation.h"
 
 
 #include "mmoMAFTransformScale.h"
@@ -105,6 +118,44 @@
 #include "mafViewImage.h"
 #include "mafViewRXCompound.h"
 #include "mafViewImageCompound.h"
+#include "mafViewIntGraphWindow.h"
+#include "mafViewIntGraph.h"
+
+class lhpBuilderFactory : public medVMEFactory
+{
+public:
+  mafTypeMacro(lhpBuilderFactory, medVMEFactory);
+  lhpBuilderFactory():medVMEFactory()
+  {
+    mafPlugNodeMacro(mafVMEC3DData,"VME representing c3d motion data");
+    mafPlugNodeMacro(mafVMERawMotionData,"VME representing raw motion data");
+    mafPlugNodeMacro(mafVMEAFRefSys,"VME representing anatomical frame");
+    mafPlugNodeMacro(mafVMEHelAxis,"VME representing helical axis");
+  }
+  static int Initialize();
+};
+mafCxxTypeMacro(lhpBuilderFactory);
+
+int lhpBuilderFactory::Initialize()
+//----------------------------------------------------------------------------
+{
+  if (m_Instance==NULL)
+  {
+    m_Instance=lhpBuilderFactory::New();
+
+    if (m_Instance)
+    {
+      m_Instance->RegisterFactory(m_Instance);
+      return MAF_OK;  
+    }
+    else
+    {
+      return MAF_ERROR;
+    }
+  }
+
+  return MAF_OK;
+}
 
 //--------------------------------------------------------------------------------
 // Create the Application
@@ -119,7 +170,7 @@ bool lhpBuilderApp::OnInit()
 //#include "pic/SPLASH_SCREEN.xpm"
 //	mafADDPIC(SPLASH_SCREEN);
 
-  int result = mafVMEFactory::Initialize();
+  int result = lhpBuilderFactory::Initialize();
   assert(result==MAF_OK);
   
   // Initialize and Fill of PipeFactory -- could be a SideEffect of the node plug
@@ -183,10 +234,14 @@ bool lhpBuilderApp::OnInit()
 #endif
 	
     m_Logic->Plug(new mmoVRMLImporter("Geometry VRML "));
+    m_Logic->Plug(new mmoINPImporter("Geometry INP/INP_AF "));
+    m_Logic->Plug(new mmoMTRImporter("Geometry MTR "));
   //-------------------------------------------------------------
 
   //------------------------- Exporters -------------------------
   m_Logic->Plug(new mmoSTLExporter("STL"));
+  m_Logic->Plug(new mmoINPExporter("INP"));
+  m_Logic->Plug(new mmoMTRExporter("MTR"));
   m_Logic->Plug(new mmoVTKExporter("VTK"));
 	m_Logic->Plug(new mmoRAWExporter("Raw"));
   m_Logic->Plug(new mmoBmpExporter("Bmp"));
@@ -219,6 +274,12 @@ bool lhpBuilderApp::OnInit()
     m_Logic->Plug(new mmoVMEDataSetAttributesImporter("VME DataSet Attributes Importer"),"Modify");
 		m_Logic->Plug(new mmoClassicICPRegistration("Register Surface"),"Fuse");
 	#endif
+  m_Logic->Plug(new mmoAFSys("AFRefsys"),"Create");
+  m_Logic->Plug(new mmoAverageLM("Average landmark"),"Create");
+  m_Logic->Plug(new mmoStickPalpation("Wand palpated landmark"),"Create");
+  m_Logic->Plug(new mmoHelAxis("Helical axis"),"Create");
+  m_Logic->Plug(new mmoTimeReduce("Time reduce"),"Modify");
+  m_Logic->Plug(new mmoBuildHierarchy("Make hierarchical"),"Fuse");
   
 
 
@@ -332,5 +393,8 @@ int lhpBuilderApp::OnExit()
 //--------------------------------------------------------------------------------
 {
   cppDEL(m_Logic);
+
+  //this hack is fixing VTK internal memory leak
+  vtkTimerLog::CleanupLog();
   return 0;
 }
