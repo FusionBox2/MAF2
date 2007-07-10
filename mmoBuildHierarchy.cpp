@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoBuildHierarchy.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 19:14:12 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-07-10 21:29:56 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -201,7 +201,7 @@ void mmoBuildHierarchy::OnEvent(mafEventBase *maf_event)
 }
 
 #define OLDVERSION
-void makeReparent(mafVME *child, mafVME *newParent)
+static void makeReparent(mafVME *child, mafVME *newParent)
 {
   int num, t;
   mmuTimeVector input_time;
@@ -277,7 +277,7 @@ void makeReparent(mafVME *child, mafVME *newParent)
 #endif
 }
 
-void reparentAll(mmoBuildHierarchy::mafFrame *pRoot, mafVME *root)
+static void reparentAll(mmoBuildHierarchy::mafFrame *pRoot, mafVME *root)
 {
   mmoBuildHierarchy::mafFrame *pNext;
   if(pRoot == NULL)
@@ -293,23 +293,67 @@ void reparentAll(mmoBuildHierarchy::mafFrame *pRoot, mafVME *root)
   }
 }
 
-void restoreRootPlaces(mmoBuildHierarchy::mafFrame *pRoot)
+
+static bool searchVMEInTree(mmoBuildHierarchy::mafFrame *pRoot, mafVME *search)
+{
+  mmoBuildHierarchy::mafFrame *pNext;
+  if(pRoot == NULL)
+    return false;
+  if(pRoot->GetVME() == search)
+    return true;
+  if(searchVMEInTree(pRoot->GetChild(), search))
+    return true;
+
+  for(pNext = pRoot->GetNext(); pNext != NULL; pNext = pNext->GetNext())
+  {
+    if(searchVMEInTree(pNext, search))
+      return true;
+  }
+  return false;
+}
+
+static void restoreRootPlaces(mmoBuildHierarchy::mafFrame *pRoot, mafVME *input)
 {
   mmoBuildHierarchy::mafFrame *pNext;
   if(pRoot == NULL)
     return;
   if(pRoot->GetVME() == NULL)
-    restoreRootPlaces(pRoot->GetChild());
+    restoreRootPlaces(pRoot->GetChild(), input);
   else
-    makeReparent(pRoot->GetVME(), pRoot->GetParentVME());
+  {
+    if(!searchVMEInTree(pRoot->GetChild(), pRoot->GetParentVME()))
+      makeReparent(pRoot->GetVME(), pRoot->GetParentVME());
+    if(!searchVMEInTree(pRoot->GetChild(), input))
+      makeReparent(pRoot->GetVME(), input);
+  }
 
   for(pNext = pRoot->GetNext(); pNext != NULL; pNext = pNext->GetNext())
   {
-    restoreRootPlaces(pNext);
+    restoreRootPlaces(pNext, input);
   }
 }
+static bool checkPossibility(mmoBuildHierarchy::mafFrame *pRoot)
+{
+  mmoBuildHierarchy::mafFrame *pNext;
+  if(pRoot == NULL)
+    return true;
+  if(pRoot->GetVME() == NULL)
+  {
+    if(pRoot->GetParent() != NULL && pRoot->GetParent()->GetVME() != NULL && !pRoot->GetVME()->CanReparentTo(pRoot->GetParent()->GetVME()))
+      return false;
+  }
+  if(!checkPossibility(pRoot->GetChild()))
+    return false;
 
-void hierarchyReparent(mmoBuildHierarchy::mafFrame *pRoot, mafVME *parent)
+  for(pNext = pRoot->GetNext(); pNext != NULL; pNext = pNext->GetNext())
+  {
+    if(!checkPossibility(pNext))
+      return false;
+  }
+  return true;
+}
+
+static void hierarchyReparent(mmoBuildHierarchy::mafFrame *pRoot, mafVME *parent)
 {
   mmoBuildHierarchy::mafFrame *pNext;
   if(pRoot == NULL)
@@ -336,9 +380,15 @@ void mmoBuildHierarchy::OpDo()
 
   mafVME *pVMERoot = (mafVME *)m_Input->GetRoot();
 
+  if(!checkPossibility(m_root))
+  {
+    wxMessageBox(wxString::Format("Hierarchy contains impossible relation."), "Warning.", wxOK | wxCENTRE | wxICON_WARNING);
+    return;
+  }
+
   reparentAll(m_root, pVMERoot);
   hierarchyReparent(m_root, NULL);
-  restoreRootPlaces(m_root);
+  restoreRootPlaces(m_root, (mafVME*)m_Input);
   mafEventMacro(mafEvent(this,CAMERA_UPDATE));
   return;
 }
