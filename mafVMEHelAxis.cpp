@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEHelAxis.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-12 11:50:02 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007-07-12 12:32:00 $
+  Version:   $Revision: 1.4 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -222,6 +222,7 @@ mafVMEHelAxis::mafVMEHelAxis() : mafVME()
   DependsOnLinkedNodeOn();
 
   m_ScaleFactor = 1.0;
+  m_AngleFactor = 1.0;
 
   vtkUnsignedCharArray *data;
   float scalar_red[3]   = {255,0,0};
