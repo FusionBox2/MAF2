@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEHelAxis.h,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 20:43:13 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-12 11:50:02 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -98,6 +98,7 @@ protected:
   vtkAppendPolyData          *m_Axes;
 
   double                     m_ScaleFactor;
+  double                     m_AngleFactor;
 
   mafTransform               *m_Transform; ///< pose matrix for the slicer plane
 private:

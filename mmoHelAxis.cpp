@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoHelAxis.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 20:43:13 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-12 11:50:02 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -173,6 +173,7 @@ void mmoHelAxis::OpDo()
   assert(m_HelicalSys);
   m_HelicalSys->ReparentTo(m_Input);
   m_HelicalSys->SetScaleFactor(100.0);
+  m_HelicalSys->Update();
   mafEventMacro(mafEvent(this, VME_ADD, m_HelicalSys));
 }
 //----------------------------------------------------------------------------

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEHelAxis.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 21:15:50 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-07-12 11:50:02 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -136,6 +136,8 @@ void mafVMEHelAxis::InternalUpdate()
     helicalAxis[2] = -helicalAxis[2];
     angle          = -angle;
   }
+  while(angle > 360.0)
+    angle -= 360.0;
 
   DiMatrixIdentity(&mShowHelical);
   mShowHelical.vAt.x = helicalAxis[0];
@@ -147,9 +149,8 @@ void mafVMEHelAxis::InternalUpdate()
   mShowHelical.vRight.w = 0.0f;
 
   DiMatrixToVTK(&mShowHelical, mVTK);
-  double tempScale = m_ScaleFactor;
-  SetScaleFactor(m_ScaleFactor * angle);
-  m_ScaleFactor = tempScale;
+  m_AngleFactor = angle;
+  SetScaleFactor(m_ScaleFactor);
   SetMatrix(mVTK);
   vtkDEL(mVTK);
 
@@ -191,7 +192,7 @@ void mafVMEHelAxis::SetScaleFactor(double scale)
     m_Gui->Update();
   }
   m_ScaleAxisTransform->Identity();
-  m_ScaleAxisTransform->Scale(m_ScaleFactor,m_ScaleFactor,m_ScaleFactor);
+  m_ScaleAxisTransform->Scale(m_AngleFactor * m_ScaleFactor,m_AngleFactor * m_ScaleFactor,m_AngleFactor * m_ScaleFactor);
   m_ScaleAxisTransform->Update();
   m_ScaleAxis->Update();
   Modified();
