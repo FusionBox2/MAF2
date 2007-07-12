@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 23:36:15 $
-  Version:   $Revision: 1.76 $
+  Date:      $Date: 2007-07-12 11:33:23 $
+  Version:   $Revision: 1.77 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -118,7 +118,6 @@
 #include "mafViewImage.h"
 #include "mafViewRXCompound.h"
 #include "mafViewImageCompound.h"
-#include "mafViewIntGraphWindow.h"
 #include "mafViewIntGraph.h"
 
 class lhpBuilderFactory : public medVMEFactory
@@ -347,6 +346,9 @@ bool lhpBuilderApp::OnInit()
 	mafViewVTK *vsurface = new mafViewVTK("Surface");
 	vsurface->PlugVisualPipe("mafVMESurface","mafPipeSurface");
 	m_Logic->Plug(vsurface);
+
+  mafViewIntGraph *vgraph = new mafViewIntGraph("Biomechanical graph");
+  m_Logic->Plug(vgraph);
 
 /*
   mafViewCompound *vc = new mafViewCompound("view compound",3);
