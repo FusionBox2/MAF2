@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafMtrLMCReader.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-09 15:47:44 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-18 14:04:56 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -120,7 +120,7 @@ int mafMTRLMCReader::ReadASCIIMTR(FILE *fp)
     for(nJ = 0; ; nJ++)
     {
       nCurNumber = (int)(rTemp);
-      if(nCurNumber < nPrevNumber)
+      if(nCurNumber <= nPrevNumber)
         nSet++;
       nPrevNumber = nCurNumber;
       if(nSet == m_Set)
