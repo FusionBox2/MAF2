@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoMTRExporter.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-09 15:47:44 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-18 14:13:37 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -71,7 +71,9 @@ enum
 bool mmoMTRExporter::Accept(mafNode *node)   
 //----------------------------------------------------------------------------
 { 
-  if(node && !node->IsMAFType(mafVMERoot) && node->IsMAFType(mafVMELandmarkCloud))
+  if(node == NULL)
+    return false;
+  if(!node->IsMAFType(mafVMERoot) && node->IsMAFType(mafVMELandmarkCloud))
     return true;
 
   for(int i=0; i<node->GetNumberOfChildren(); i++)
