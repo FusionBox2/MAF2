@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-12 11:33:23 $
-  Version:   $Revision: 1.77 $
+  Date:      $Date: 2007-07-19 12:32:27 $
+  Version:   $Revision: 1.78 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -221,14 +221,14 @@ bool lhpBuilderApp::OnInit()
 	m_Logic->Plug(new mmoRAWImporterImages("Raw Images"));
  // m_Logic->Plug(new mmoLandmarkImporterTXT("Landmark TXT")); //Importer for BodyBuilder Files
   m_Logic->Plug(new mmoLandmarkImporter("Landmark"));
-	m_Logic->Plug(new mmoLandmarkImporterWS("Landmark WS"));
+	m_Logic->Plug(new mmoLandmarkImporterWS("ASCII trajectories (VWs)"));
   m_Logic->Plug(new mmoMotionDataImporter<mafVMEC3DData>("C3D", "C3D Motion Data (*.c3d)|*.c3d", "Dictionary (*.txt)|*.txt"));
   
 #ifdef MAF_USE_ITK
     m_Logic->Plug(new mmoMotionDataImporter<mafVMERawMotionData>("Raw Motion Data", "RAW Motion Data (*.MAN)|*.MAN", "Dictionary (*.txt)|*.txt"));
   // m_Logic->Plug(new mmoLandmarkImporter("Landmark")); //Old Importer
-    m_Logic->Plug(new mmoEMGImporterWS("EMG"));
-    m_Logic->Plug(new mmoGRFImporterWS("GRF"));
+    m_Logic->Plug(new mmoEMGImporterWS("ASCII Analog (VWs)"));
+    m_Logic->Plug(new mmoGRFImporterWS("ASCII Force Plates (VWs)"));
     m_Logic->Plug(new mmoMeshImporter("MESH"));
 #endif
 	
@@ -308,7 +308,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(vdrr);
 
 #ifdef MAF_USE_ITK
-  mafViewVTK *graph = new mafViewVTK("EMG Graph");
+  mafViewVTK *graph = new mafViewVTK("Analog Graph");
   graph->PlugVisualPipe("medVMEEmg", "medPipeGraph");
   m_Logic->Plug(graph);
 #endif
