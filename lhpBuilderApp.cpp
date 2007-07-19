@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-19 12:32:27 $
-  Version:   $Revision: 1.78 $
+  Date:      $Date: 2007-07-19 15:24:33 $
+  Version:   $Revision: 1.79 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -120,42 +120,6 @@
 #include "mafViewImageCompound.h"
 #include "mafViewIntGraph.h"
 
-class lhpBuilderFactory : public medVMEFactory
-{
-public:
-  mafTypeMacro(lhpBuilderFactory, medVMEFactory);
-  lhpBuilderFactory():medVMEFactory()
-  {
-    mafPlugNodeMacro(mafVMEC3DData,"VME representing c3d motion data");
-    mafPlugNodeMacro(mafVMERawMotionData,"VME representing raw motion data");
-    mafPlugNodeMacro(mafVMEAFRefSys,"VME representing anatomical frame");
-    mafPlugNodeMacro(mafVMEHelAxis,"VME representing helical axis");
-  }
-  static int Initialize();
-};
-mafCxxTypeMacro(lhpBuilderFactory);
-
-int lhpBuilderFactory::Initialize()
-//----------------------------------------------------------------------------
-{
-  if (m_Instance==NULL)
-  {
-    m_Instance=lhpBuilderFactory::New();
-
-    if (m_Instance)
-    {
-      m_Instance->RegisterFactory(m_Instance);
-      return MAF_OK;  
-    }
-    else
-    {
-      return MAF_ERROR;
-    }
-  }
-
-  return MAF_OK;
-}
-
 //--------------------------------------------------------------------------------
 // Create the Application
 //--------------------------------------------------------------------------------
@@ -166,33 +130,24 @@ bool lhpBuilderApp::OnInit()
 //--------------------------------------------------------------------------------
 {
   mafPics.Initialize();	
-//#include "pic/SPLASH_SCREEN.xpm"
-//	mafADDPIC(SPLASH_SCREEN);
 
-  int result = lhpBuilderFactory::Initialize();
-  assert(result==MAF_OK);
+  int result;
   
-  // Initialize and Fill of PipeFactory -- could be a SideEffect of the node plug
-  result = mafPipeFactoryVME::Initialize();
-  assert(result==MAF_OK);
-
   result = medVMEFactory::Initialize();
   assert(result == MAF_OK);
 
 	result = medPipeFactoryVME::Initialize();
 	assert(result==MAF_OK);
+
+  mafPlugNode<mafVMEC3DData>("VME representing c3d motion data");
+  mafPlugNode<mafVMERawMotionData>("VME representing raw motion data");
+  mafPlugNode<mafVMEAFRefSys>("VME representing anatomical frame");
+  mafPlugNode<mafVMEHelAxis>("VME representing helical axis");
+
   m_Logic = new lhpBuilderLogic();
-  //m_Logic->PlugTimebar(false);
-  //m_Logic->PlugMenu(false);
-  //m_Logic->PlugToolbar(false);
-  m_Logic->PlugLogbar(true);
-  
-  m_Logic->PlugSidebar(true,mafSideBar::DOUBLE_NOTEBOOK);
-  //m_Logic->PlugOpManager(false);
-  //m_Logic->PlugViewManager(false);
-  //m_Logic->PlugVMEManager(false);  // the VmeManager at the moment cause 4 leaks of 200+32+24+56 bytes  //SIL. 20-4-2005: 
-  
+  m_Logic->GetTopWin()->SetTitle("LHPBuilder");
   m_Logic->Configure();
+  SetTopWindow(mafGetFrame());  
 
 	wxRegKey RegKey(wxString("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\lhpBuilder"));
 	if(RegKey.Exists())
@@ -200,7 +155,6 @@ bool lhpBuilderApp::OnInit()
 		RegKey.Create();
 		wxString revision;
 		RegKey.QueryValue(wxString("DisplayVersion"), revision);
-		//revision=revision.AfterLast('_');
 		m_Logic->SetRevision(revision);
 	}
 	else
@@ -208,8 +162,6 @@ bool lhpBuilderApp::OnInit()
 		wxString revision="0.1";
 		m_Logic->SetRevision(revision);
 	}
-	m_Logic->GetTopWin()->SetTitle("LHPBuilder");
-  SetTopWindow(mafGetFrame());  
 
   //------------------------- Importers -------------------------
   m_Logic->Plug(new mmoDICOMImporter("DICOM"));
@@ -219,7 +171,6 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoRAWImporterVolume("RAW Volume"));
   m_Logic->Plug(new mmoImageImporter("Images"));
 	m_Logic->Plug(new mmoRAWImporterImages("Raw Images"));
- // m_Logic->Plug(new mmoLandmarkImporterTXT("Landmark TXT")); //Importer for BodyBuilder Files
   m_Logic->Plug(new mmoLandmarkImporter("Landmark"));
 	m_Logic->Plug(new mmoLandmarkImporterWS("ASCII trajectories (VWs)"));
   m_Logic->Plug(new mmoMotionDataImporter<mafVMEC3DData>("C3D", "C3D Motion Data (*.c3d)|*.c3d", "Dictionary (*.txt)|*.txt"));
@@ -232,9 +183,9 @@ bool lhpBuilderApp::OnInit()
     m_Logic->Plug(new mmoMeshImporter("MESH"));
 #endif
 	
-    m_Logic->Plug(new mmoVRMLImporter("Geometry VRML "));
-    m_Logic->Plug(new mmoINPImporter("Geometry INP/INP_AF "));
-    m_Logic->Plug(new mmoMTRImporter("Geometry MTR "));
+  m_Logic->Plug(new mmoVRMLImporter("Geometry VRML "));
+  m_Logic->Plug(new mmoINPImporter("Geometry INP/INP_AF "));
+  m_Logic->Plug(new mmoMTRImporter("Geometry MTR "));
   //-------------------------------------------------------------
 
   //------------------------- Exporters -------------------------
@@ -279,19 +230,9 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoHelAxis("Helical axis"),"Create");
   m_Logic->Plug(new mmoTimeReduce("Time reduce"),"Modify");
   m_Logic->Plug(new mmoBuildHierarchy("Make hierarchical"),"Fuse");
-  
-
-
   //-------------------------------------------------------------
 
   //------------------------- Views -------------------------
-	/*mafViewVTK *v = new mafViewVTK("Slice view", CAMERA_CT);
-  v->PlugVisualPipe("mafVMEVolumeGray", "mafPipeVolumeSlice");
-  m_Logic->Plug(v);*/
-  //m_Logic->Plug(new mafViewVTK("VTK view"));
-
-	
-
   mafViewVTK *traj = new mafViewVTK("AL Trajectories");
   traj->PlugVisualPipe("mafVMELandmark", "medPipeTrajectories");
   m_Logic->Plug(traj);
@@ -349,40 +290,11 @@ bool lhpBuilderApp::OnInit()
 
   mafViewIntGraph *vgraph = new mafViewIntGraph("Biomechanical graph");
   m_Logic->Plug(vgraph);
-
-/*
-  mafViewCompound *vc = new mafViewCompound("view compound",3);
-  mafViewVTK *v2 = new mafViewVTK("Slice view", CAMERA_CT);
-  v2->PlugVisualPipe("mafVMEVolumeGray", "mafPipeVolumeSlice");
-  vc->PlugChildView(v2);
-  m_Logic->Plug(vc);
-*/
-
-
-	
-  // View 2D
-  /*mafViewSlice *vImage = new mafViewSlice("View Image",CAMERA_OS_Z,false,false,false);
-  vImage->PlugVisualPipe("mafVMEVolumeGray","mafPipeBox",NON_VISIBLE);
-  vImage->PlugVisualPipe("mafVMESurface","mafPipeSurface",NON_VISIBLE);
-  vImage->PlugVisualPipe("mafVMEImage", "mafPipeImage3D", MUTEX);
-  m_Logic->Plug(vImage);*/
-
-  /*mafViewImage *vImage = new mafViewImage("View Image",CAMERA_FRONT,false,false,false);
-  vImage->PlugVisualPipe("mafVMEVolumeGray","mafPipeBox",NON_VISIBLE);
-  vImage->PlugVisualPipe("mafVMESurface","mafPipeSurface",NON_VISIBLE);
-  m_Logic->Plug(vImage);*/
-
-
-
-	/*mafViewVTK *vslice = new mafViewVTK("Slice view", CAMERA_CT);
-  vslice->PlugVisualPipe("mafVMEVolumeGray", "mafPipeVolumeSlice");
-  m_Logic->Plug(vslice);*/
-
   //-------------------------------------------------------------
 
   wxBitmap splashBitmap;
-   splashBitmap.LoadFile("../Splash/SPLASH_SCREEN.bmp", wxBITMAP_TYPE_BMP);
-   m_Logic->ShowSplashScreen(splashBitmap); 
+  splashBitmap.LoadFile("../Splash/SPLASH_SCREEN.bmp", wxBITMAP_TYPE_BMP);
+  m_Logic->ShowSplashScreen(splashBitmap); 
 
   // show the application
 	m_Logic->ShowSplashScreen(splashBitmap);
