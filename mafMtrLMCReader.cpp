@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafMtrLMCReader.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-19 12:37:34 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007-07-19 15:25:13 $
+  Version:   $Revision: 1.4 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -18,15 +18,9 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
-// For compilers that support precompilation, includes "wx/wx.h".
-#include "wx/wxprec.h"
-#include "wx/busyinfo.h"
-
-#include "vtkSystemIncludes.h"
-
 #include "mafMTRLMCReader.h"
 
-#include "assert.h"
+#include "vtkSystemIncludes.h"
 
 //----------------------------------------------------------------------------
 mafMTRLMCReader* mafMTRLMCReader::New() 
