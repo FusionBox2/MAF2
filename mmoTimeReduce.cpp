@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoTimeReduce.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 22:35:05 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:35 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -18,34 +18,27 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
-#ifdef __GNUG__
-    #pragma implementation "mmoTimeReduce.h"
-#endif
+#include "mmoTimeReduce.h"
 
-// For compilers that support precompilation, includes "wx/wx.h".
-#include "wx/wxprec.h"
 #include "wx/textfile.h"
 #include "wx/arrimpl.cpp"
 #include <wx/wxprec.h>
-#include <math.h>
 #include "wx/busyinfo.h"
+#include <math.h>
 
 #include "mafDecl.h"
-#include "mafOp.h"
 #include "mafEvent.h"
 #include "mmgGui.h"
 
-#include "mmoTimeReduce.h"
 #include "mmoExplodeCollapse.H"
 
-#include "mafVMELandmarkCloud.h"
 #include "mafSmartPointer.h"
 #include "mafMatrixVector.h"
 #include "mafDataVector.h"
-
 #include "mafVME.h"
 #include "mafVMESurface.h"
 #include "mafVMELandmark.h"
+#include "mafVMELandmarkCloud.h"
 
 //----------------------------------------------------------------------------
 // Required for MSVC
@@ -54,9 +47,6 @@
 #pragma warning (disable: 4786)
 #endif
 
-//----------------------------------------------------------------------------
-// Constants :
-//----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
 // widget id's
 //----------------------------------------------------------------------------
@@ -69,7 +59,6 @@ enum
   ID_FORCED_DWORD = 0x7fffffff
 };
 
-
 //----------------------------------------------------------------------------
 mmoTimeReduce::mmoTimeReduce(const wxString& label) :
 mafOp(label)
@@ -77,12 +66,12 @@ mafOp(label)
 {
   m_OpType    = OPTYPE_OP;
   m_Canundo   = false;
-  m_delete    = true;
-  m_number    = 2;
+  m_Delete    = true;
+  m_Number    = 2;
 }
 
 //----------------------------------------------------------------------------
-mmoTimeReduce::~mmoTimeReduce( ) 
+mmoTimeReduce::~mmoTimeReduce()
 //----------------------------------------------------------------------------
 {
 }
@@ -92,8 +81,8 @@ mafOp* mmoTimeReduce::Copy()
 //----------------------------------------------------------------------------
 {
   mmoTimeReduce *op = new mmoTimeReduce(m_Label);
-  op->m_delete = m_delete;
-  op->m_number = m_number;
+  op->m_Delete = m_Delete;
+  op->m_Number = m_Number;
   return op;
 }
 
@@ -123,8 +112,6 @@ void mmoTimeReduce::OpRun()
   CreateGui();
 }
 
-
-
 //----------------------------------------------------------------------------
 void mmoTimeReduce::CreateGui()
 //----------------------------------------------------------------------------
@@ -137,15 +124,15 @@ void mmoTimeReduce::CreateGui()
     m_Gui = new mmgGui(this);
     m_Gui->SetListener(this);
     m_Gui->Label(strng);
-    m_Gui->Integer(ID_NUMBER, "Each frame number", &(m_number), 1, nFrames, "This is frame index");
-    m_Gui->Bool(ID_DELETE, "will be deleted", &m_delete, 1, "This is indication to delete or to save frames indicated");
+    m_Gui->Integer(ID_NUMBER, "Each frame number", &(m_Number), 1, nFrames, "This is frame index");
+    m_Gui->Bool(ID_DELETE, "will be deleted", &m_Delete, 1, "This is indication to delete or to save frames indicated");
     m_Gui->OkCancel();
   }
   ShowGui();
 }
 
 //----------------------------------------------------------------------------
-void mmoTimeReduce::OpStop(int result)
+/*void mmoTimeReduce::OpStop(int result)
 //----------------------------------------------------------------------------
 {
   if (result == OP_RUN_CANCEL)
@@ -158,7 +145,7 @@ void mmoTimeReduce::OpStop(int result)
     HideGui();
     mafEventMacro(mafEvent(this,result));
   }
-}
+}*/
 //----------------------------------------------------------------------------
 void mmoTimeReduce::OnEvent(mafEventBase *maf_event) 
 //----------------------------------------------------------------------------
@@ -200,22 +187,22 @@ void mmoTimeReduce::OpDo()
   std::vector<mafTimeStamp> kframes;
   mafVMEGenericAbstract *vme = mafVMEGenericAbstract::SafeDownCast(m_Input);
 
-  if(m_number == 0)
+  if(m_Number == 0)
     return;
-  if(m_number == 1)
+  if(m_Number == 1)
     return;
 
   vme->GetLocalTimeStamps(kframes);
-  if(m_number == kframes.size() && m_delete)
+  if(m_Number == kframes.size() && m_Delete)
     return;
 
-  if(m_delete)
+  if(m_Delete)
   {
     mafMatrixVector *mv = vme->GetMatrixVector();
     mafDataVector   *dv = vme->GetDataVector();
     for(int i = 0; i < kframes.size(); i++)
     {
-      if(i % m_number == m_number - 1)
+      if(i % m_Number == m_Number - 1)
       {
         mafMatrixVector::TimeMap::iterator itm = mv->FindItem(kframes[i]);
         mafDataVector::TimeMap::iterator   itd = dv->FindItem(kframes[i]);
@@ -232,7 +219,7 @@ void mmoTimeReduce::OpDo()
     mafDataVector   *dv = vme->GetDataVector();
     for(int i = 0; i < kframes.size(); i++)
     {
-      if(i % m_number != m_number - 1)
+      if(i % m_Number != m_Number - 1)
       {
         mafMatrixVector::TimeMap::iterator itm = mv->FindItem(kframes[i]);
         mafDataVector::TimeMap::iterator   itd = dv->FindItem(kframes[i]);
@@ -245,8 +232,6 @@ void mmoTimeReduce::OpDo()
   }
   return;
 }
-
-
 
 //----------------------------------------------------------------------------
 void mmoTimeReduce::OpUndo()

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEHelAxis.h,v $
   Language:  C++
-  Date:      $Date: 2007-07-12 11:50:02 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-07-19 12:37:35 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -13,17 +13,26 @@
 #ifndef __mafVMEHelAxis_h
 #define __mafVMEHelAxis_h
 
+//-----------------------------------------------------------------------
+// Includes:
+//-----------------------------------------------------------------------
 #include "mafVME.h"
 #include "mafVmeOutput.h"
 #include "mafVMEGeneric.h"
 #include "mafVMERefSys.h"
 
+//-----------------------------------------------------------------------
+// class forwarding
+//-----------------------------------------------------------------------
 class vtkArrowSource;
 class vtkTransformPolyDataFilter;
 class vtkTransform;
 class vtkAppendPolyData;
 class vtkPolyData;
 
+//-----------------------------------------------------------------------
+// class mafVMEHelAxis
+//-----------------------------------------------------------------------
 class mafVMEHelAxis : public mafVME
 {
 public:
@@ -105,5 +114,4 @@ private:
   mafVMEHelAxis (const mafVMEHelAxis &); // Not implemented
   void operator=(const mafVMEHelAxis &); // Not implemented
 };
-
 #endif

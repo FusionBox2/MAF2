@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafINPWriter.h,v $
   Language:  C++
-  Date:      $Date: 2007-07-09 15:47:25 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:34 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -13,8 +13,14 @@
 #ifndef __mafINPWriter_h
 #define __mafINPWriter_h
 
+//----------------------------------------------------------------------------
+// Includes
+//----------------------------------------------------------------------------
 #include "vtkPolyDataWriter.h"
 
+//----------------------------------------------------------------------------
+// class mafINPWriter
+//----------------------------------------------------------------------------
 class VTK_IO_EXPORT mafINPWriter : public vtkPolyDataWriter
 {
 public:
@@ -34,6 +40,4 @@ private:
   mafINPWriter(const mafINPWriter&);  // Not implemented.
   void operator=(const mafINPWriter&);  // Not implemented.
 };
-
 #endif
-

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafPipeIntGraph.h,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 21:18:14 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:34 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -13,14 +13,9 @@
 #ifndef _mafPipeIntGraph_H_
 #define _mafPipeIntGraph_H_
 
-#ifdef __GNUG__
-    #pragma interface "mafPipeIntGraph.h"
-#endif
-
-#ifndef WX_PRECOMP
-    #include "wx/wx.h"
-#endif
-
+//----------------------------------------------------------------------------
+// Includes
+//----------------------------------------------------------------------------
 #include "mafDefines.h"
 #include "mafPipe.h"
 #include "mafMemGraph.h"
@@ -28,7 +23,6 @@
 //----------------------------------------------------------------------------
 // forward refs :
 //----------------------------------------------------------------------------
-
 class mafViewIntGraph;
 
 //----------------------------------------------------------------------------

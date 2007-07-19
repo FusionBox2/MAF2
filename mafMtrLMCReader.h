@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafMtrLMCReader.h,v $
   Language:  C++
-  Date:      $Date: 2007-07-09 15:47:44 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:34 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -13,6 +13,9 @@
 #ifndef __mafMTRLMCReader_h
 #define __mafMTRLMCReader_h
 
+//----------------------------------------------------------------------------
+// Includes
+//----------------------------------------------------------------------------
 #include "mafVMELandmarkCloud.h"
 #include <vector>
 
@@ -36,6 +39,9 @@ virtual void Set##name (const char* _arg) \
 
 
 
+//----------------------------------------------------------------------------
+// class mafMTRLMCReader
+//----------------------------------------------------------------------------
 class mafMTRLMCReader
 {
 public:
@@ -71,5 +77,4 @@ private:
   mafMTRLMCReader(const mafMTRLMCReader&);  // Not implemented.
   void operator=(const mafMTRLMCReader&);  // Not implemented.
 };
-
 #endif

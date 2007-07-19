@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafStringSet.h,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 23:12:59 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:34 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -17,6 +17,9 @@
 #ifndef __mafStringSet_H__
 #define __mafStringSet_H__
 
+//----------------------------------------------------------------------------
+// Includes
+//----------------------------------------------------------------------------
 #include <vector>
 #include "wx/wxprec.h" 
 #include "wx/string.h"
@@ -25,6 +28,9 @@
 #include "mafString.h"
 
 
+//----------------------------------------------------------------------------
+// class mafStringSet
+//----------------------------------------------------------------------------
 class mafStringSet
 {
 public:
@@ -40,5 +46,4 @@ protected:
   wxInt32 m_StringNumber;
   wxChar  **m_Data;
 };
-
 #endif

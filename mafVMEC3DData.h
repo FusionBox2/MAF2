@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEC3DData.h,v $
   Language:  C++
-  Date:      $Date: 2007-03-16 13:42:57 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:35 $
+  Version:   $Revision: 1.2 $
   Authors:   Stefano Perticoni - porting Fedor Moiseev
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -17,6 +17,7 @@
 //----------------------------------------------------------------------------
 #include "mafVMEGroup.h"
 #include <fstream>
+
 //----------------------------------------------------------------------------
 // forward declarations :
 //----------------------------------------------------------------------------
@@ -170,10 +171,5 @@ private:
   //mafVMERoot *root;
   int Dictionary;
   //wxString DictionaryFileName;
- 
 };
-
-
 #endif
-
-

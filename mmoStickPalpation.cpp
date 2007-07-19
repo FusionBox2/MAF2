@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoStickPalpation.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 19:14:12 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-07-19 12:37:35 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -18,42 +18,34 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
-#ifdef __GNUG__
-    #pragma implementation "mmoStickPalpation.h"
-#endif
+#include "mmoStickPalpation.h"
 
-// For compilers that support precompilation, includes "wx/wx.h".
-#include "wx/wxprec.h"
 #include "wx/textfile.h"
 #include "wx/arrimpl.cpp"
-#include <math.h>
 #include "wx/busyinfo.h"
+#include <math.h>
 
 #include "mafDecl.h"
 #include "mafOp.h"
 #include "mafEvent.h"
 #include "mmgGui.h"
 
-#include "mmoStickPalpation.h"
 #include "mafDictionary.h"
 #include "mmoExplodeCollapse.H"
 
-#include "mafVMELandmarkCloud.h"
 #include "mafSmartPointer.h"
 
 #include "mafVME.h"
+#include "mafVMEC3DData.h"
 #include "mafVMESurface.h"
 #include "mafVMELandmark.h"
-
+#include "mafVMELandmarkCloud.h"
 
 #include "vtkPolyData.h"
 #include "vtkPoints.h"
 #include "vtkWeightedLandmarkTransform.h"
 #include "vtkTransform.h"
 #include "vtkTransformPolyDataFilter.h"
-
-
-#include "mafVMEC3DData.h"
 
 //----------------------------------------------------------------------------
 // Required for MSVC
@@ -84,8 +76,9 @@ enum
 // Forward Refs
 //----------------------------------------------------------------------------
 
-
+//----------------------------------------------------------------------------
 inline bool LMCSetState(mafVMELandmarkCloud *cloud, mafObserver *listener, bool openState)
+//----------------------------------------------------------------------------
 {
   bool LMCOpened = cloud->IsOpen();
   if(LMCOpened == openState)

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafViewIntGraph.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 21:18:14 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:34 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -18,39 +18,12 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
-#include "mafIndent.h"
 #include "mafViewIntGraphWindow.h"
-#include "mafViewIntGraph.h"
-#include "mafPipeIntGraph.h"
 #include <wx/dc.h>
-#include "mafVME.h"
-#include "mafPipe.h"
-#include "mafPipeFactory.h"
-
-#include "mafVMELandmarkCloud.h"
-#include "mafVMESurface.h"
-#include "mafVMELandmark.h"
-#include "mafVMERoot.h"
-#include "mafPlotMath.h"
-
-#include "mafTagArray.h"
-
-#include "vtkMAFSmartPointer.h"
-#include "vtkTransform.h"
-#include "vtkMatrix4x4.h"
-#include "mafStringSet.h"
 
 #ifdef IMPORTED
 
-#ifdef __GNUG__
-    #pragma implementation "mafViewIntGraph.cpp"
-#endif
-
-// For compilers that support precompilation, includes "wx/wx.h".
-#include "wx/wxprec.h"
 #include "wx/image.h"
-
-//from mafView
 #include "mafDecl.h"
 #include "mmgGuiHolder.h"
 #include "mmgGui.h"
@@ -70,12 +43,33 @@
 
 #endif
 
+#include "mafViewIntGraph.h"
+#include "mafPipeIntGraph.h"
+
+#include "mafIndent.h"
+
+#include "mafPlotMath.h"
+#include "mafPipe.h"
+#include "mafPipeFactory.h"
+
+#include "mafStringSet.h"
+#include "mafTagArray.h"
+#include "mafVME.h"
+#include "mafVMELandmarkCloud.h"
+#include "mafVMESurface.h"
+#include "mafVMELandmark.h"
+#include "mafVMERoot.h"
+
+#include "vtkMAFSmartPointer.h"
+#include "vtkTransform.h"
+#include "vtkMatrix4x4.h"
 
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(mafViewIntGraph);
 //----------------------------------------------------------------------------
+
 //----------------------------------------------------------------------------
-void  mafViewIntGraph::setWindowGraph()
+void mafViewIntGraph::setWindowGraph()
 //----------------------------------------------------------------------------
 {
   mafViewIntSetGraph setGraph;
@@ -142,7 +136,6 @@ mafView *mafViewIntGraph::Copy(mafObserver *Listener)
   return v;
 }
 
-
 //----------------------------------------------------------------------------
 void mafViewIntGraph::Create()
 //----------------------------------------------------------------------------
@@ -186,7 +179,6 @@ void mafViewIntGraph::Create()
   m_ModifyMode     = false;
 }
 
-
 //----------------------------------------------------------------------------
 void mafViewIntGraph::VmeAdd(mafNode *vme)
 //----------------------------------------------------------------------------
@@ -214,29 +206,30 @@ void mafViewIntGraph::VmeAdd(mafNode *vme)
 }
 //----------------------------------------------------------------------------
 void mafViewIntGraph::VmeShow(mafNode *vme, bool show)
+//----------------------------------------------------------------------------
 {
   assert(m_Sg); 
   m_Sg->VmeShow(vme,show);
 }
 
+//----------------------------------------------------------------------------
 void mafViewIntGraph::VmeUpdateProperty(mafNode *vme, bool fromTag)
+//----------------------------------------------------------------------------
 {
   assert(m_Sg); 
   m_Sg->VmeUpdateProperty(vme,fromTag);
 }
 //----------------------------------------------------------------------------
-int  mafViewIntGraph::GetNodeStatus(mafNode *vme)
+int mafViewIntGraph::GetNodeStatus(mafNode *vme)
 //----------------------------------------------------------------------------
 {
   return m_Sg ? m_Sg->GetNodeStatus(vme) : NODE_NON_VISIBLE;
 }
 
-
 //----------------------------------------------------------------------------
 void mafViewIntGraph::VmeRemove(mafNode *vme)
 //----------------------------------------------------------------------------
 {
-
   int                        nVMEIndex;
   std::vector<mafTimeStamp>  mpStamps;
 
@@ -355,7 +348,6 @@ void mafViewIntGraph::VmeCreatePipe(mafNode *vme)
   return;
   //mafErrorMessage(_("Cannot create visual pipe object of type \"%s\"!"),pipe_name.GetCStr());
 }
-
 
 //----------------------------------------------------------------------------
 void mafViewIntGraph::VmeDeletePipe(mafNode *vme)
@@ -559,6 +551,7 @@ void mafViewIntGraph::Print(std::ostream& os, const int tabs)// const
 
 //----------------------------------------------------------------------------
 void mafViewIntGraph::VmeSelect(const IDType& nGraphID, bool select)
+//----------------------------------------------------------------------------
 {
   mafVME *vme;
   wxInt32 nPipeIndex;
@@ -577,7 +570,6 @@ void mafViewIntGraph::UpdateGui()
   if(m_Gui != NULL)
     m_Gui->Update();
 }
-
 
 //----------------------------------------------------------------------------
 void mafViewIntGraph::savePlot(void)

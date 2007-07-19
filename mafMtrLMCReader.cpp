@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafMtrLMCReader.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-18 14:04:56 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-07-19 12:37:34 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -28,13 +28,17 @@
 
 #include "assert.h"
 
+//----------------------------------------------------------------------------
 mafMTRLMCReader* mafMTRLMCReader::New() 
+//----------------------------------------------------------------------------
 { 
   return new mafMTRLMCReader; 
 } 
 
 // Construct object with merging set to true.
+//----------------------------------------------------------------------------
 mafMTRLMCReader::mafMTRLMCReader()
+//----------------------------------------------------------------------------
 {
   m_FileName   = NULL;
   m_Set        = 0;
@@ -43,7 +47,9 @@ mafMTRLMCReader::mafMTRLMCReader()
   m_Radius     = 3.0;
 }
 
+//----------------------------------------------------------------------------
 mafMTRLMCReader::~mafMTRLMCReader()
+//----------------------------------------------------------------------------
 {
   if(this->m_FileName)
   {
@@ -63,7 +69,9 @@ mafMTRLMCReader::~mafMTRLMCReader()
 //  
 //}
 
+//----------------------------------------------------------------------------
 void mafMTRLMCReader::Execute()
+//----------------------------------------------------------------------------
 {
   FILE *fp;
 
@@ -82,7 +90,9 @@ void mafMTRLMCReader::Execute()
 }
 
 #define MAX_LINE 1000
+//----------------------------------------------------------------------------
 int mafMTRLMCReader::ReadASCIIMTR(FILE *fp)
+//----------------------------------------------------------------------------
 {
   double    x[3];
   wxInt32   nI, nJ;
@@ -190,4 +200,3 @@ int mafMTRLMCReader::ReadASCIIMTR(FILE *fp)
   }
   return TRUE;
 }
-

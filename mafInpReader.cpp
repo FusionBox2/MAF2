@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafInpReader.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-09 15:47:25 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:34 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -25,18 +25,21 @@
 #include "vtkMergePoints.h"
 #include "vtkObjectFactory.h"
 #include "vtkPolyData.h"
-//#include "mafEvent.h"
 
-vtkCxxRevisionMacro(mafINPReader, "$Revision: 1.1 $");
+vtkCxxRevisionMacro(mafINPReader, "$Revision: 1.2 $");
 vtkStandardNewMacro(mafINPReader);
 
 // Construct object with merging set to true.
+//----------------------------------------------------------------------------
 mafINPReader::mafINPReader()
+//----------------------------------------------------------------------------
 {
   m_FileName = NULL;
 }
 
+//----------------------------------------------------------------------------
 mafINPReader::~mafINPReader()
+//----------------------------------------------------------------------------
 {
   if (this->m_FileName)
   {
@@ -45,8 +48,9 @@ mafINPReader::~mafINPReader()
   }
 }
 
-
+//----------------------------------------------------------------------------
 void mafINPReader::PrintSelf(ostream& os, vtkIndent indent)
+//----------------------------------------------------------------------------
 {
   this->Superclass::PrintSelf(os,indent);
 
@@ -55,7 +59,9 @@ void mafINPReader::PrintSelf(ostream& os, vtkIndent indent)
   
 }
 
+//----------------------------------------------------------------------------
 void mafINPReader::Execute()
+//----------------------------------------------------------------------------
 {
   FILE         *fp;
   vtkPoints    *newPts;
@@ -131,7 +137,9 @@ void mafINPReader::Execute()
 }
 
 #define MAX_LINE 1000
+//----------------------------------------------------------------------------
 int mafINPReader::ReadASCIIINP(FILE *fp, std::vector<double> &pointsRead, std::vector<int> &pointsIndRead, std::vector<vtkIdType> &indRead)//vtkPoints *newPts, vtkCellArray *newPolys)
+//----------------------------------------------------------------------------
 {
   double    x[3];
   vtkIdType pts[3];
@@ -232,4 +240,3 @@ int mafINPReader::ReadASCIIINP(FILE *fp, std::vector<double> &pointsRead, std::v
   } 
   return TRUE;
 }
-

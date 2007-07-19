@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafMemGraph.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 21:18:14 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:34 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -23,12 +23,4 @@
 
 #ifdef _MSC_FULL_VER
 #pragma warning (disable: 4786)
-#endif
-
-// *****************************************************************************
-// internal data
-                                        
-
-#ifdef _MSC_FULL_VER
-//#pragma warning (default: 4786)
 #endif

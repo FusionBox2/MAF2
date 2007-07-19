@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoStickPalpation.h,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 19:14:12 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-07-19 12:37:35 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -13,13 +13,15 @@
 #ifndef __mmoStickPalpation_H__
 #define __mmoStickPalpation_H__
 
+//----------------------------------------------------------------------------
+// Includes:
+//----------------------------------------------------------------------------
 #include "mafOp.h"
 
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
 class mafVME;
-class mafOp;
 class mafGui;
 class mafEvent;
 class mafVMELandmarkCloud;
@@ -33,7 +35,7 @@ class vtkMatrix4x4;
 class mmoStickPalpation: public mafOp
 {
 public:
-  mmoStickPalpation(const wxString& label);
+  mmoStickPalpation(const wxString& label = "StickPalpation");
  ~mmoStickPalpation(); 
 
   virtual void OnEvent(mafEventBase *maf_event);

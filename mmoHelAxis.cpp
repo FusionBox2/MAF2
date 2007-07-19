@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoHelAxis.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-12 11:50:02 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-07-19 12:37:35 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -18,30 +18,21 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
-
-#ifdef __GNUG__
-    #pragma implementation "mmoHelAxis.h"
-#endif
-
-// For compilers that support precompilation, includes "wx/wx.h".
-#include <wx/wxprec.h>
+#include "mmoHelAxis.h"
 #include "wx/busyinfo.h"
 
 #include "mafDecl.h"
-#include "mafOp.h"
 #include "mafEvent.h"
 #include "mmgGui.h"
-
-#include "mmoHelAxis.h"
-
-#include "mafVMEHelAxis.h"
-#include "mafVMEAFRefSys.h"
-#include "mafVMELandmarkCloud.h"
-#include "mafSmartPointer.h"
+#include "mafPipeIntGraph.h"
 #include "mafPlotMath.h"
 #include "mafTransform.h"
 #include "mafTransformFrame.h"
-#include "mafPipeIntGraph.h"
+
+#include "mafSmartPointer.h"
+#include "mafVMEHelAxis.h"
+#include "mafVMEAFRefSys.h"
+#include "mafVMELandmarkCloud.h"
 
 //----------------------------------------------------------------------------
 // Required for MSVC
@@ -72,7 +63,7 @@ mafOp(label), m_DictionaryFName("")
 }
 
 //----------------------------------------------------------------------------
-mmoHelAxis::~mmoHelAxis( ) 
+mmoHelAxis::~mmoHelAxis()
 //----------------------------------------------------------------------------
 {
   vtkDEL(m_HelicalSys);
@@ -127,20 +118,15 @@ void mmoHelAxis::CreateGui()
 void mmoHelAxis::OpStop(int result)
 //----------------------------------------------------------------------------
 {
+  HideGui();
   if (result == OP_RUN_CANCEL)
   {
-    HideGui();
     if(m_HelicalSys->GetParent())
     {
       mafEventMacro(mafEvent(this, VME_REMOVE, m_HelicalSys));
     }
-    mafEventMacro(mafEvent(this,result));
   }
-  else if (result == OP_RUN_OK)
-  {
-    HideGui();
-    mafEventMacro(mafEvent(this,result));
-  }
+  mafEventMacro(mafEvent(this,result));
 }
 //----------------------------------------------------------------------------
 void mmoHelAxis::OnEvent(mafEventBase *maf_event) 
@@ -183,4 +169,3 @@ void mmoHelAxis::OpUndo()
   assert(m_HelicalSys);
   mafEventMacro(mafEvent(this, VME_REMOVE, m_HelicalSys));
 }
-

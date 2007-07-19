@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoAverageLM.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 22:35:24 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-07-19 12:37:35 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -18,29 +18,22 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
-#ifdef __GNUG__
-    #pragma implementation "mmoAverageLM.h"
-#endif
+#include "mmoAverageLM.h"
 
-// For compilers that support precompilation, includes "wx/wx.h".
-#include "wx/wxprec.h"
 #include "wx/textfile.h"
 #include "wx/arrimpl.cpp"
 #include <wx/wxprec.h>
-#include <math.h>
 #include "wx/busyinfo.h"
+#include <math.h>
 
 #include "mafDecl.h"
-#include "mafOp.h"
 #include "mafEvent.h"
 #include "mmgGui.h"
 
-#include "mmoAverageLM.h"
 #include "mmoExplodeCollapse.H"
 
-#include "mafVMELandmarkCloud.h"
 #include "mafSmartPointer.h"
-
+#include "mafVMELandmarkCloud.h"
 #include "mafVME.h"
 #include "mafVMESurface.h"
 #include "mafVMELandmark.h"
@@ -69,7 +62,7 @@ mafOp(label)
 }
 
 //----------------------------------------------------------------------------
-mmoAverageLM::~mmoAverageLM( ) 
+mmoAverageLM::~mmoAverageLM()
 //----------------------------------------------------------------------------
 {
 }
@@ -94,7 +87,6 @@ bool mmoAverageLM::Accept(mafNode* vme)
 
   return true;
 }
-
 
 //----------------------------------------------------------------------------
 void mmoAverageLM::OpRun()   

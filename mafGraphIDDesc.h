@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafGraphIDDesc.h,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 21:18:14 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:34 $
+  Version:   $Revision: 1.2 $
   Authors:   Vladik Aranov    
   Purpose:   class for variables descriptions header 
 ==========================================================================
@@ -13,10 +13,6 @@
 #ifndef __mafGraphIDDesc_H___
 #define __mafGraphIDDesc_H___
     
-#ifdef __GNUG__
-  #pragma implementation "mafGraphIDDesc.cpp"
-#endif
-
 #include <wx/menu.h>
 #include "mafVME.h"
 #include "mafViewIntGraphWindow.h"

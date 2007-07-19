@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoTimeReduce.h,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 22:35:05 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:35 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -13,19 +13,15 @@
 #ifndef __mmoTimeReduce_H__
 #define __mmoTimeReduce_H__
 
-#ifdef __GNUG__
-    #pragma interface "mmoTimeReduce.cpp"
-#endif
-
-#ifndef WX_PRECOMP
-    #include "wx/wx.h"
-#endif
+//----------------------------------------------------------------------------
+// Includes:
+//----------------------------------------------------------------------------
+#include "mafOp.h"
 
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
 class mafVMEAFRefSys;
-class mafOp;
 class mafGui;
 class mafEvent;
 class mafIntGraphHyer;
@@ -39,7 +35,7 @@ class vtkPoints;
 class mmoTimeReduce: public mafOp
 {
 public:
-  mmoTimeReduce(const wxString& label);
+  mmoTimeReduce(const wxString& label = "TimeReduce");
  ~mmoTimeReduce(); 
 
   virtual void OnEvent(mafEventBase *maf_event);
@@ -52,10 +48,10 @@ public:
   void CreateGui();
 
 protected: 
+  //void OpStop(int result);
 
-  void OpStop(int result);
 private:
-  int m_delete;
-  int m_number;
+  int m_Delete;
+  int m_Number;
 };
 #endif

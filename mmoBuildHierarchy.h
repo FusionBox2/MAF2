@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoBuildHierarchy.h,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 19:14:12 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-07-19 12:37:35 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev
 ==========================================================================
   Copyright (c) 2002/2005
@@ -12,21 +12,16 @@
 #ifndef __mmoBuildHierarchy_H__
 #define __mmoBuildHierarchy_H__
 
-#ifdef __GNUG__
-    #pragma interface "mmoBuildHierarchy.cpp"
-#endif
-
-#ifndef WX_PRECOMP
-    #include "wx/wx.h"
-#endif
-#include <vector>
-#include "mafVME.h"
+//----------------------------------------------------------------------------
+// Includes:
+//----------------------------------------------------------------------------
 #include "mafOp.h"
+#include "mafVME.h"
+#include <vector>
 
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
-class mafOp;
 class mafGui;
 class mafEvent;
 class mafIntGraphHyer;
@@ -73,7 +68,7 @@ public:
     void      SetName(wxString const *str) {delete m_name; m_name = new wxString(*str);}
   };
 
-  mmoBuildHierarchy(wxString label);
+  mmoBuildHierarchy(wxString label = "BuildHierarchy");
  ~mmoBuildHierarchy(); 
 
   virtual void OnEvent(mafEventBase *maf_event);
@@ -90,7 +85,7 @@ public:
 
 protected: 
 
-  void OpStop(int result);
+  //void OpStop(int result);
 
   /// limb cloud from motion: animated, we will insert stick tip here
   mafVMELandmarkCloud  *m_LimbCloud;

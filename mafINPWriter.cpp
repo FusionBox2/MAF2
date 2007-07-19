@@ -2,13 +2,21 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafINPWriter.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-09 15:47:25 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:34 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
   ULB - Universite Libre de Bruxelles (www.ulb.ac.be)
 =========================================================================*/
+
+#include "mafDefines.h" 
+//----------------------------------------------------------------------------
+// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
+// This force to include Window,wxWidgets and VTK exactly in this order.
+// Failing in doing this will result in a run-time error saying:
+// "Failure#0: The value of ESP was not properly saved across a function call"
+//----------------------------------------------------------------------------
 
 #include "mafINPWriter.h"
 
@@ -25,15 +33,19 @@
 # include <io.h> /* unlink */
 #endif
 
-vtkCxxRevisionMacro(mafINPWriter, "$Revision: 1.1 $");
+vtkCxxRevisionMacro(mafINPWriter, "$Revision: 1.2 $");
 vtkStandardNewMacro(mafINPWriter);
 
+//----------------------------------------------------------------------------
 mafINPWriter::mafINPWriter()
+//----------------------------------------------------------------------------
 {
   this->FileType = VTK_ASCII;
 }
 
+//----------------------------------------------------------------------------
 void mafINPWriter::WriteData()
+//----------------------------------------------------------------------------
 {
   vtkPoints *pts;
   vtkCellArray *polys;
@@ -78,7 +90,9 @@ void mafINPWriter::WriteData()
 
 static char header[]="# AVS UCD file\n# written by lhpBuilder\n#\n";
 
+//----------------------------------------------------------------------------
 void mafINPWriter::WriteAsciiINP(vtkPoints *pts, vtkCellArray *polys)
+//----------------------------------------------------------------------------
 {
   FILE      *fp;
   double    v1[3];
@@ -86,7 +100,7 @@ void mafINPWriter::WriteAsciiINP(vtkPoints *pts, vtkCellArray *polys)
   vtkIdType *indx = 0;
   
   if ((fp = fopen(this->FileName, "w")) == NULL)
-    {
+  {
     vtkErrorMacro(<< "Couldn't open file: " << this->FileName);
     this->SetErrorCode(vtkErrorCode::CannotOpenFileError);
     return;
@@ -130,7 +144,9 @@ void mafINPWriter::WriteAsciiINP(vtkPoints *pts, vtkCellArray *polys)
   fclose (fp);
 }
 
+//----------------------------------------------------------------------------
 void mafINPWriter::WriteBinaryINP(vtkPoints *pts, vtkCellArray *polys)
+//----------------------------------------------------------------------------
 {
   FILE      *fp;
   double    v1[3];
@@ -207,6 +223,7 @@ void mafINPWriter::WriteBinaryINP(vtkPoints *pts, vtkCellArray *polys)
 
 //----------------------------------------------------------------------------
 void mafINPWriter::PrintSelf(ostream& os, vtkIndent indent)
+//----------------------------------------------------------------------------
 {
   this->Superclass::PrintSelf(os,indent);
 }

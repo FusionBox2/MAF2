@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafInpReader.h,v $
   Language:  C++
-  Date:      $Date: 2007-07-09 15:47:25 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:34 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -13,9 +13,15 @@
 #ifndef __mafINPReader_h
 #define __mafINPReader_h
 
+//----------------------------------------------------------------------------
+// Includes
+//----------------------------------------------------------------------------
 #include "vtkPolyDataSource.h"
 #include <vector>
 
+//----------------------------------------------------------------------------
+// Class forwarding
+//----------------------------------------------------------------------------
 class vtkCellArray;
 class vtkFloatArray;
 class vtkPointLocator;
@@ -48,6 +54,9 @@ virtual char* Get##name () { \
   return this->m_##name; \
   } 
 
+//----------------------------------------------------------------------------
+// class mafINPReader
+//----------------------------------------------------------------------------
 class VTK_IO_EXPORT mafINPReader: public vtkPolyDataSource 
 {
 public:
@@ -75,7 +84,4 @@ private:
   mafINPReader(const mafINPReader&);  // Not implemented.
   void operator=(const mafINPReader&);  // Not implemented.
 };
-
 #endif
-
-

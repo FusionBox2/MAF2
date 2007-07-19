@@ -2,13 +2,17 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEHelAxis.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-12 12:32:00 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2007-07-19 12:37:35 $
+  Version:   $Revision: 1.5 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
   ULB - Universite Libre de Bruxelles (www.ulb.ac.be)
 =========================================================================*/
+
+#ifdef _MSC_FULL_VER
+#pragma warning (disable: 4786)
+#endif
 
 #include "mafDefines.h" 
 //----------------------------------------------------------------------------
@@ -18,10 +22,22 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 #include "mafVMEHelAxis.h"
+
+#include "mmgGui.h"
+#include "mafPlotMath.h"
+#include "mafIndent.h"
+#include "mmaMaterial.h"
+#include "mafTransform.h"
+
 #include "mafTagArray.h"
-#include "vtkObjectFactory.h"
+#include "mafVMELandmarkCloud.h"
+#include "mafVMEAFRefSys.h"
+#include "mafVMEOutputSurface.h"
+#include "mafDataPipeCustom.h"
+#include "mafStorageElement.h"
 
 #include "vtkMAFSmartPointer.h"
+#include "vtkObjectFactory.h"
 #include "vtkPolyData.h"
 #include "vtkArrowSource.h"
 #include "vtkTransformPolyDataFilter.h"
@@ -30,24 +46,10 @@
 
 #include "vtkPointData.h"
 #include "vtkUnsignedCharArray.h"
-#include "mafTransform.h"
-#include "mmaMaterial.h"
-#include "mafVMEOutputSurface.h"
-#include "mafDataPipeCustom.h"
-#include "mafStorageElement.h"
-#include "mmgGui.h"
-#include "mafPlotMath.h"
-#include "mafIndent.h"
-#include "mafVMELandmarkCloud.h"
-#include "mafVMEAFRefSys.h"
 
-#ifdef _MSC_FULL_VER
-#pragma warning (disable: 4786)
-#endif
-
+//----------------------------------------------------------------------------
 mafCxxTypeMacro(mafVMEHelAxis)
-
-
+//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 static void GetGlobalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat)
@@ -95,7 +97,9 @@ static void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat)
   DiMatrixMultiply(&cmatrix, &pInv, pMat);
 }
 
+//----------------------------------------------------------------------------
 void mafVMEHelAxis::InternalUpdate()
+//----------------------------------------------------------------------------
 {
   DiMatrix     mt;
   DiMatrix     mt1;
@@ -157,8 +161,9 @@ void mafVMEHelAxis::InternalUpdate()
   mafDEL(pTransf);
 }
 
-
+//----------------------------------------------------------------------------
 void mafVMEHelAxis::SetMatrix(const mafMatrix &mat)
+//----------------------------------------------------------------------------
 {
   m_Transform->SetMatrix(mat);
   Modified();
@@ -174,8 +179,6 @@ void mafVMEHelAxis::UpdateCS()
   delete e;
 }
 
-
-//-----------------------------------------------------------------------
 //-------------------------------------------------------------------------
 double mafVMEHelAxis::GetScaleFactor()
 //-------------------------------------------------------------------------
@@ -327,12 +330,12 @@ mafVMEHelAxis::~mafVMEHelAxis()
   vtkDEL(m_ScaleAxis);
 }
 
-
+//----------------------------------------------------------------------------
 void mafVMEHelAxis::InternalPreUpdate()
+//----------------------------------------------------------------------------
 {
 
 }
-
 
 //-----------------------------------------------------------------------
 int mafVMEHelAxis::InternalStore(mafStorageElement *parent)
@@ -387,7 +390,7 @@ void mafVMEHelAxis::OnEvent(mafEventBase *maf_event)
   }
 }
 
-
+//----------------------------------------------------------------------------
 mmgGui *mafVMEHelAxis::CreateGui()
 //----------------------------------------------------------------------------
 {
@@ -403,6 +406,7 @@ mmgGui *mafVMEHelAxis::CreateGui()
   return m_Gui;
 }
 
+//----------------------------------------------------------------------------
 void mafVMEHelAxis::Print(std::ostream& os, const int tabs)// const
 //-----------------------------------------------------------------------
 {
@@ -410,5 +414,3 @@ void mafVMEHelAxis::Print(std::ostream& os, const int tabs)// const
   mafIndent indent(tabs);
   os<<indent<<"Scale: "<<indent<<m_ScaleFactor;
 }
-
-

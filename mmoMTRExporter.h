@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoMTRExporter.h,v $
   Language:  C++
-  Date:      $Date: 2007-07-09 15:47:44 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:35 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -34,7 +34,7 @@ Each raw represents a landmark and contains the (x,y,z) coordinate.*/
 class mmoMTRExporter: public mafOp
 {
 public:
-  mmoMTRExporter(const wxString& label);
+  mmoMTRExporter(const wxString& label = "MTRExporter");
   ~mmoMTRExporter(); 
   mafOp* Copy();
 
@@ -57,16 +57,3 @@ protected:
 
 };
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoAFSys.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 19:13:46 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:35 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -18,27 +18,20 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
-#ifdef __GNUG__
-    #pragma implementation "mmoAFSys.h"
-#endif
-
-// For compilers that support precompilation, includes "wx/wx.h".
-#include <wx/wxprec.h>
+#include "mmoAFSys.h"
 #include "wx/busyinfo.h"
 #include "wx/textfile.h"
 
-
 #include "mafDecl.h"
-#include "mafOp.h"
 #include "mafEvent.h"
 #include "mmgGui.h"
-
-#include "mmoAFSys.h"
-
 #include "mafDictionary.h"
+#include "mafPlotMath.h"
+
+#include "mafSmartPointer.h"
+
 #include "mafVMEAFRefSys.h"
 #include "mafVMELandmarkCloud.h"
-#include "mafSmartPointer.h"
 
 //----------------------------------------------------------------------------
 // Required for MSVC
@@ -440,7 +433,7 @@ mafOp(label), m_DictionaryFName("")
 }
 
 //----------------------------------------------------------------------------
-mmoAFSys::~mmoAFSys( ) 
+mmoAFSys::~mmoAFSys()
 //----------------------------------------------------------------------------
 {
   mafDEL(m_RefSys);

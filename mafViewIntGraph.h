@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafViewIntGraph.h,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 21:18:14 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:34 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -31,16 +31,6 @@
 //----------------------------------------------------------------------------
 #define mafINTG_SAVEINFO_TAG  "DM_PLOT_INFORMATION_TAG"
 #define mafINTGG_SAVEINFO_TAG "DM_GENERAL_PLOT_INFORMATION_TAG"
-//----------------------------------------------------------------------------
-// forward references
-//----------------------------------------------------------------------------
-class mafSceneGraph;
-class mafIntGraphHyer;
-
-//----------------------------------------------------------------------------
-// mafViewCustom :
-//----------------------------------------------------------------------------
-/**   */
 
 //----------------------------------------------------------------------------
 // Include:
@@ -57,11 +47,14 @@ class mafIntGraphHyer;
 // forward references :
 //----------------------------------------------------------------------------
 class mafVME;
+class mafSceneGraph;
+class mafIntGraphHyer;
 
 WX_DEFINE_ARRAY(mafVME *, VMEArray);
 
-
-
+//----------------------------------------------------------------------------
+// class mafViewIntGraph
+//----------------------------------------------------------------------------
 class mafViewIntGraph: public mafView
 {
 public:

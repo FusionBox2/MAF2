@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEAFRefSys.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 22:35:34 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007-07-19 12:37:34 $
+  Version:   $Revision: 1.4 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -18,35 +18,37 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
-#include "mafVMEAFRefSys.h"
-#include "mafTagArray.h"
-#include "vtkObjectFactory.h"
+#ifdef _MSC_FULL_VER
+#pragma warning (disable: 4786)
+#endif
 
+#include "mafVMEAFRefSys.h"
+
+#include "mmgGui.h"
+#include "mafPlotMath.h"
+#include "mmaMaterial.h"
+#include "mafTransform.h"
+#include "mafIndent.h"
+
+#include "mafTagArray.h"
+#include "mafVMEOutputSurface.h"
+#include "mafDataPipeCustom.h"
+#include "mafStorageElement.h"
+
+#include "vtkObjectFactory.h"
 #include "vtkMAFSmartPointer.h"
 #include "vtkPolyData.h"
 #include "vtkArrowSource.h"
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkTransform.h"
 #include "vtkAppendPolyData.h"
-
 #include "vtkPointData.h"
 #include "vtkUnsignedCharArray.h"
-#include "mafTransform.h"
-#include "mmaMaterial.h"
-#include "mafVMEOutputSurface.h"
-#include "mafDataPipeCustom.h"
-#include "mafStorageElement.h"
-#include "mmgGui.h"
-#include "mafPlotMath.h"
-#include "mafIndent.h"
-
-#ifdef _MSC_FULL_VER
-#pragma warning (disable: 4786)
-#endif
-
-mafCxxTypeMacro(mafVMEAFRefSys)
 
 //-----------------------------------------------------------------------
+mafCxxTypeMacro(mafVMEAFRefSys)
+//-----------------------------------------------------------------------
+
 //-------------------------------------------------------------------------
 double mafVMEAFRefSys::GetScaleFactor()
 //-------------------------------------------------------------------------
@@ -271,12 +273,16 @@ void mafVMEAFRefSys::SetTransf(double x, double y, double z, double xr, double y
   UpdateCS();
 }
 
+//----------------------------------------------------------------------------
 void mafVMEAFRefSys::InternalPreUpdate()
+//----------------------------------------------------------------------------
 {
 
 }
 
+//----------------------------------------------------------------------------
 void mafVMEAFRefSys::InternalUpdate()
+//----------------------------------------------------------------------------
 {
   //UpdateCS();
   //GetOutput()->Update();
@@ -421,8 +427,6 @@ void mafVMEAFRefSys::GetTransf(double &x, double &y, double &z, double &xr, doub
   return;
 }
 
-
-
 //----------------------------------------------------------------------------
 void mafVMEAFRefSys::OnEvent(mafEventBase *maf_event)
 //----------------------------------------------------------------------------
@@ -467,7 +471,7 @@ void mafVMEAFRefSys::OnEvent(mafEventBase *maf_event)
   }
 }
 
-
+//----------------------------------------------------------------------------
 mmgGui *mafVMEAFRefSys::CreateGui()
 //----------------------------------------------------------------------------
 {
@@ -496,6 +500,7 @@ mmgGui *mafVMEAFRefSys::CreateGui()
   return m_Gui;
 }
 
+//----------------------------------------------------------------------------
 void mafVMEAFRefSys::Print(std::ostream& os, const int tabs)// const
 //-----------------------------------------------------------------------
 {

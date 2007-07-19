@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoINPExporter.h,v $
   Language:  C++
-  Date:      $Date: 2007-07-09 15:47:25 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:35 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -31,7 +31,7 @@ class mafNode;
 class mmoINPExporter: public mafOp
 {
 public:
-  mmoINPExporter(const wxString &label = "STLExporter");
+  mmoINPExporter(const wxString &label = "INPExporter");
   ~mmoINPExporter(); 
 
   mafTypeMacro(mmoINPExporter, mafOp);
@@ -60,8 +60,8 @@ public:
   void ExportSurface();
 
 protected:
-/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-  void OpStop(int result);
+  /** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
+  //void OpStop(int result);
 
   mafString  m_File;
   mafString  m_FileDir;

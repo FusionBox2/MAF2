@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoAFSys.h,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 19:13:46 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:35 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -13,32 +13,28 @@
 #ifndef __mmoAFSys_H__
 #define __mmoAFSys_H__
 
-#ifdef __GNUG__
-    #pragma interface "mmoAFSys.cpp"
-#endif
-
-#ifndef WX_PRECOMP
-    #include "wx/wx.h"
-#endif
-
-#include "mafVME.h"
-#include "mafPlotMath.h"
+//----------------------------------------------------------------------------
+// Includes:
+//----------------------------------------------------------------------------
+#include "mafOp.h"
 
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
 class mafVMEAFRefSys;
-class mafOp;
 class mafGui;
 class mafEvent;
 
+//----------------------------------------------------------------------------
+// class mmoAFSys
+//----------------------------------------------------------------------------
 class mmoAFSys: public mafOp
 {
 public:
-  mmoAFSys(wxString label);
+  mmoAFSys(wxString label = "AFSys");
  ~mmoAFSys(); 
 
-   virtual void OnEvent(mafEventBase *maf_event);
+  virtual void OnEvent(mafEventBase *maf_event);
   mafOp* Copy();
 
   bool Accept(mafNode* vme);   

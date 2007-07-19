@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoBuildHierarchy.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 21:29:56 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007-07-19 12:37:35 $
+  Version:   $Revision: 1.4 $
   Authors:   Fedor Moiseev
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -18,46 +18,32 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
-#ifdef __GNUG__
-    #pragma implementation "mmoBuildHierarchy.h"
-#endif
-
-// For compilers that support precompilation, includes "wx/wx.h".
-#include "wx/wxprec.h"
+#include "mmoBuildHierarchy.h"
 #include "wx/textfile.h"
 #include "wx/arrimpl.cpp"
-#include <wx/wxprec.h>
-#include <math.h>
 #include "wx/busyinfo.h"
+#include <math.h>
 
 #include "mafDecl.h"
-#include "mafOp.h"
 #include "mafEvent.h"
 #include "mmgGui.h"
 
-#include "mmoBuildHierarchy.h"
 #include "mmoExplodeCollapse.H"
+#include "mafDictionary.h"
 
+#include "mafTransformFrame.h"
+#include "mmuTimeSet.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafAbsMatrixPipe.h"
 #include "mafSmartPointer.h"
-#include "mafTransformFrame.h"
-#include "mafDictionary.h"
-#include "mmoBuildHierarchy.h"
-#include "mmuTimeSet.h"
-
-#include "mafVME.h"
 #include "mafVMESurface.h"
 #include "mafVMELandmark.h"
-
 
 #include "vtkPolyData.h"
 #include "vtkPoints.h"
 #include "vtkWeightedLandmarkTransform.h"
 #include "vtkTransform.h"
 #include "vtkTransformPolyDataFilter.h"
-
-
 
 //----------------------------------------------------------------------------
 // Required for MSVC
@@ -93,7 +79,7 @@ mafOp(label)
 }
 
 //----------------------------------------------------------------------------
-mmoBuildHierarchy::~mmoBuildHierarchy( ) 
+mmoBuildHierarchy::~mmoBuildHierarchy()
 //----------------------------------------------------------------------------
 {
   Destroy(&m_root);
@@ -136,9 +122,9 @@ void mmoBuildHierarchy::CreateGui()
   {
     m_Gui = new mmgGui(this);
     m_Gui->SetListener(this);
-    m_Gui->FileOpen(ID_LOAD_DICTIONARY, "Dictionary",  &m_DictionaryFName);
+    m_Gui->FileOpen(ID_LOAD_DICTIONARY, _("Dictionary"),  &m_DictionaryFName);
     m_Gui->Label("");
-    m_Gui->FileOpen(ID_LOAD_HIERARCHY, "Hierarchy",  &m_HierarchyFName);
+    m_Gui->FileOpen(ID_LOAD_HIERARCHY, _("Hierarchy"),  &m_HierarchyFName);
     m_Gui->Label("");
     m_Gui->OkCancel();
   }
@@ -146,7 +132,7 @@ void mmoBuildHierarchy::CreateGui()
 }
 
 //----------------------------------------------------------------------------
-void mmoBuildHierarchy::OpStop(int result)
+/*void mmoBuildHierarchy::OpStop(int result)
 //----------------------------------------------------------------------------
 {
   if (result == OP_RUN_CANCEL)
@@ -159,7 +145,7 @@ void mmoBuildHierarchy::OpStop(int result)
     HideGui();
     mafEventMacro(mafEvent(this,result));
   }
-}
+}*/
 //----------------------------------------------------------------------------
 void mmoBuildHierarchy::OnEvent(mafEventBase *maf_event) 
 //----------------------------------------------------------------------------
@@ -201,7 +187,9 @@ void mmoBuildHierarchy::OnEvent(mafEventBase *maf_event)
 }
 
 #define OLDVERSION
+//----------------------------------------------------------------------------
 static void makeReparent(mafVME *child, mafVME *newParent)
+//----------------------------------------------------------------------------
 {
   int num, t;
   mmuTimeVector input_time;
@@ -277,7 +265,9 @@ static void makeReparent(mafVME *child, mafVME *newParent)
 #endif
 }
 
+//----------------------------------------------------------------------------
 static void reparentAll(mmoBuildHierarchy::mafFrame *pRoot, mafVME *root)
+//----------------------------------------------------------------------------
 {
   mmoBuildHierarchy::mafFrame *pNext;
   if(pRoot == NULL)
@@ -294,7 +284,9 @@ static void reparentAll(mmoBuildHierarchy::mafFrame *pRoot, mafVME *root)
 }
 
 
+//----------------------------------------------------------------------------
 static bool searchVMEInTree(mmoBuildHierarchy::mafFrame *pRoot, mafVME *search)
+//----------------------------------------------------------------------------
 {
   mmoBuildHierarchy::mafFrame *pNext;
   if(pRoot == NULL)
@@ -312,7 +304,9 @@ static bool searchVMEInTree(mmoBuildHierarchy::mafFrame *pRoot, mafVME *search)
   return false;
 }
 
+//----------------------------------------------------------------------------
 static void restoreRootPlaces(mmoBuildHierarchy::mafFrame *pRoot, mafVME *input)
+//----------------------------------------------------------------------------
 {
   mmoBuildHierarchy::mafFrame *pNext;
   if(pRoot == NULL)
@@ -332,7 +326,9 @@ static void restoreRootPlaces(mmoBuildHierarchy::mafFrame *pRoot, mafVME *input)
     restoreRootPlaces(pNext, input);
   }
 }
+//----------------------------------------------------------------------------
 static bool checkPossibility(mmoBuildHierarchy::mafFrame *pRoot)
+//----------------------------------------------------------------------------
 {
   mmoBuildHierarchy::mafFrame *pNext;
   if(pRoot == NULL)
@@ -353,7 +349,9 @@ static bool checkPossibility(mmoBuildHierarchy::mafFrame *pRoot)
   return true;
 }
 
+//----------------------------------------------------------------------------
 static void hierarchyReparent(mmoBuildHierarchy::mafFrame *pRoot, mafVME *parent)
+//----------------------------------------------------------------------------
 {
   mmoBuildHierarchy::mafFrame *pNext;
   if(pRoot == NULL)
@@ -392,8 +390,6 @@ void mmoBuildHierarchy::OpDo()
   mafEventMacro(mafEvent(this,CAMERA_UPDATE));
   return;
 }
-
-
 
 //----------------------------------------------------------------------------
 void mmoBuildHierarchy::OpUndo()
@@ -667,7 +663,7 @@ mmoBuildHierarchy::mafFrame *mmoBuildHierarchy::FindFrame(mmoBuildHierarchy::maf
     return (pRoot);
   }
 
-  //look into childrens
+  //look into children
   pRet = FindFrame(pRoot->GetChild(), str);
   if(pRet != NULL)
   {
@@ -682,5 +678,3 @@ mmoBuildHierarchy::mafFrame *mmoBuildHierarchy::FindFrame(mmoBuildHierarchy::maf
 
   return (pRet);
 }
-
-

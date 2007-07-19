@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoINPExporter.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-09 15:47:25 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:35 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -24,10 +24,10 @@
 #include "mafDecl.h"
 #include "mmgGui.h"
 
+#include "mafINPWriter.h"
 #include "mafVME.h"
 #include "mafVMEOutputSurface.h"
 #include "mafTransformBase.h"
-#include "mafINPWriter.h"
 
 #include "vtkMAFSmartPointer.h"
 #include "vtkTriangleFilter.h"
@@ -50,7 +50,7 @@ mmoINPExporter::mmoINPExporter(const wxString &label) : mafOp(label)
   m_FileDir       = mafGetApplicationDirectory().c_str();
 }
 //----------------------------------------------------------------------------
-mmoINPExporter::~mmoINPExporter( ) 
+mmoINPExporter::~mmoINPExporter()
 //----------------------------------------------------------------------------
 {
 }
@@ -99,9 +99,9 @@ void mmoINPExporter::OnEvent(mafEventBase *maf_event)
     case wxOK:
       {
         mafString FileDir = mafGetApplicationDirectory().c_str();
-        FileDir<<"\\";
-        FileDir<<this->m_Input->GetName();
-        FileDir<<".inp";
+        FileDir << "\\";
+        FileDir << m_Input->GetName();
+        FileDir << ".inp";
         mafString wildc = "INP (*.inp)|*.inp";
         m_File = mafGetSaveFile(FileDir.GetCStr(), wildc.GetCStr()).c_str();
         if(m_File!="")
@@ -126,12 +126,12 @@ void mmoINPExporter::OnEvent(mafEventBase *maf_event)
   }
 }
 //----------------------------------------------------------------------------
-void mmoINPExporter::OpStop(int result)
+/*void mmoINPExporter::OpStop(int result)
 //----------------------------------------------------------------------------
 {
   HideGui();
   mafEventMacro(mafEvent(this,result));        
-}
+}*/
 //----------------------------------------------------------------------------
 void mmoINPExporter::ExportSurface()
 //----------------------------------------------------------------------------

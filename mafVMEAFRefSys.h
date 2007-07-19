@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEAFRefSys.h,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 19:13:46 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:34 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -13,17 +13,26 @@
 #ifndef __mfAFRefSys_h
 #define __mfAFRefSys_h
 
+//----------------------------------------------------------------------------
+// Includes:
+//----------------------------------------------------------------------------
 #include "mafVME.h"
 #include "mafVmeOutput.h"
 #include "mafVMEGeneric.h"
 #include "mafVMERefSys.h"
 
+//----------------------------------------------------------------------------
+// class fowarding:
+//----------------------------------------------------------------------------
 class vtkArrowSource;
 class vtkTransformPolyDataFilter;
 class vtkTransform;
 class vtkAppendPolyData;
 class vtkPolyData;
 
+//----------------------------------------------------------------------------
+// class mafVMEAFRefSys
+//----------------------------------------------------------------------------
 class mafVMEAFRefSys : public mafVMEGeneric
 {
 public:

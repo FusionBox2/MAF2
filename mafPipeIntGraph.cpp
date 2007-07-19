@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafPipeIntGraph.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 21:18:14 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:34 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -18,33 +18,20 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
-#ifdef __GNUG__
-  #pragma implementation "mafPipeIntGraph.cpp"
-#endif
-
-// For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
-
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif
-
-// from mafPipe
-#include "mafDecl.h"
 #include "mafPipeIntGraph.h"
+#include "mafDecl.h"
 #include "mafViewIntGraph.h"
 
-#include "mafVMELandmarkCloud.h"
-#include "mafVMEAFRefSys.h"
 #include "mafTransform.h"
 #include "mafPlotMath.h"
 
-#include "mafVME.h"
 #include "mafMatrix3x3.h"
+#include "mafVME.h"
+#include "mafVMELandmarkCloud.h"
+#include "mafVMEAFRefSys.h"
 
 #include "vtkMath.h"
 #include "vtkMatrix4x4.h"
-
 
 #ifdef _MSC_FULL_VER
 #pragma warning (disable: 4786)
@@ -69,7 +56,9 @@ const float _Conventions[24] = {EulOrdXYZs, EulOrdXYXs, EulOrdXZYs, EulOrdXZXs, 
                                 EulOrdZYXr, EulOrdXYXr, EulOrdYZXr, EulOrdXZXr, EulOrdXZYr, EulOrdYZYr,
                                 EulOrdZXYr, EulOrdYXYr, EulOrdYXZr, EulOrdZXZr, EulOrdXYZr, EulOrdZYZr};
 
+//----------------------------------------------------------------------------
 inline float _MathRound(float val)
+//----------------------------------------------------------------------------
 {
   float rFloor;
   float rCeil;
@@ -79,7 +68,9 @@ inline float _MathRound(float val)
   return (val - rFloor > rCeil - val) ? rCeil : rFloor;
 }
 
+//----------------------------------------------------------------------------
 static float _fix360Difference(float rAold, float rAnew)
+//----------------------------------------------------------------------------
 {
   float rDiff = rAnew - rAold;
   if(rDiff > 0)
@@ -98,7 +89,9 @@ static float _fix360Difference(float rAold, float rAnew)
   return rR;//(rA + rRemnant);
 }
 
+//----------------------------------------------------------------------------
 static float _fix180Difference(float rAold, float rAnew)
+//----------------------------------------------------------------------------
 {
   rAnew = _fix360Difference(rAold, rAnew);
   float rDiff = rAnew - rAold;
@@ -118,7 +111,6 @@ static float _fix180Difference(float rAold, float rAnew)
   return rR;//(rA + rRemnant);
 }
 
-
 //----------------------------------------------------------------------------
 mafPipeIntGraph::mafPipeIntGraph():m_variables(GDT_LAST)
 //----------------------------------------------------------------------------
@@ -134,9 +126,7 @@ mafPipeIntGraph::mafPipeIntGraph():m_variables(GDT_LAST)
 mafPipeIntGraph::~mafPipeIntGraph()
 //----------------------------------------------------------------------------
 {
-
 }
-
 
 //----------------------------------------------------------------------------
 static void GetGlobalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat)
@@ -168,7 +158,6 @@ static void GetGlobalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat)
   afs->GetOutput()->GetAbsMatrix(matrix, ts);
   mflMatrixToDi(matrix.GetVTKMatrix(), pMat);
 }
-
 
 //----------------------------------------------------------------------------
 static void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat)
@@ -238,7 +227,7 @@ void  mafPipeIntGraph::StoreValueByIdx(int nObjectOrderID, IDType nVarID, int nG
     case   GDT_GTM_ROTX   :
     case   GDT_GTM_ROTY   :
     case   GDT_GTM_ROTZ   :
-      {
+     {
         //get full trio in proper convention and axises
         GetGlobalMatrix(m_Vme, ts, &mat);
         mafTransfInverseTransformUpright(&mat, &vPos, &vRot);
@@ -528,4 +517,3 @@ DiVoid mafPipeIntGraph::GrabData(wxInt32 nIdx, mafTimeStamp nTimeStamp)
     m_PrevStamp = ts;  
   }
 }
-

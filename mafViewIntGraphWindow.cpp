@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafViewIntGraphWindow.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 21:18:14 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:34 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -19,20 +19,12 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
-#ifdef __GNUG__
-  #pragma implementation "mafViewIntGraphWindow.cpp"
-#endif
-
-// For compilers that support precompilation, includes "wx/wx.h".
-#include "wx/wxprec.h" 
-#pragma hdrstop
-
+#include "mafViewIntGraphWindow.h"
 #include "wx/file.h" 
 #include "wx/colordlg.h" 
 
 #include <stdio.h>
 
-#include "mafViewIntGraphWindow.h"
 #include "mafViewIntGraph.h"
 #include "mmgGui.h"
 
@@ -141,17 +133,23 @@ IMPLEMENT_DYNAMIC_CLASS(mafViewIntGraphWindow, wxWindow)
 
 //struct for data of control window
 //must be used only in this file, so it is defined here
+//----------------------------------------------------------------------------
 int mafViewIntGraphWindow::GetIntX(const wxRect *prc, double rX)
+//----------------------------------------------------------------------------
 {
   return ((int)(rX * (prc->GetRight() - prc->GetLeft() - 10 * HALFMARK_SIZE) + 5 * HALFMARK_SIZE));
 }
 
+//----------------------------------------------------------------------------
 int mafViewIntGraphWindow::GetIntY(const wxRect *prc, double rY)
+//----------------------------------------------------------------------------
 {
   return ((int)(rY * (prc->GetBottom() - prc->GetTop()) + prc->GetTop()));
 }
 
+//----------------------------------------------------------------------------
 int mafViewIntGraphWindow::Log10Abs(double rValue)
+//----------------------------------------------------------------------------
 {
   if(fabs(rValue) > 0)
   {
@@ -160,7 +158,9 @@ int mafViewIntGraphWindow::Log10Abs(double rValue)
   return (0);
 }
 
+//----------------------------------------------------------------------------
 int mafViewIntGraphWindow::GetOptimalSplits(double rMin, double rMax, double rCoef)
+//----------------------------------------------------------------------------
 {
   int nSplitsNumber = SPLITS_NUMBER;
   int nMin,nMax;
@@ -472,8 +472,9 @@ void mafViewIntGraphWindow::DrawYAxis(wxDC *pDC, wxRect *prc, double rYMin, doub
   return;
 }
 
-
+//----------------------------------------------------------------------------
 void mafViewIntGraphWindow::DrawAxes(wxDC *pDC, wxRect *prc, const mafMemoryGraph::mafMemGrTotalRange *cpgtrRanges, double rXCoef, double rYCoef, bool bGrid, bool bPreciseGrid)
+//----------------------------------------------------------------------------
 {
   wxColor cTextColor;
 
@@ -487,8 +488,9 @@ void mafViewIntGraphWindow::DrawAxes(wxDC *pDC, wxRect *prc, const mafMemoryGrap
   return;
 }
 
-
+//----------------------------------------------------------------------------
 void mafViewIntGraphWindow::AdoptMinMaxRange(double& vMin, double& vMax, double& vPow10Marks)
+//----------------------------------------------------------------------------
 {
   int    nLowLog,nHiLog,nLog;
   double rPow10Ranges;
@@ -709,8 +711,9 @@ void mafViewIntGraphWindow::AdjustCurveAppearance(unsigned int nCurve)
   return;
 }
 
-
+//----------------------------------------------------------------------------
 wxBitmap mafViewIntGraphWindow::GetBitmap()
+//----------------------------------------------------------------------------
 {
   int        nHeight, nWidth;
   wxMemoryDC compatDC;
@@ -786,8 +789,6 @@ void mafViewIntGraphWindow::OnCommand(wxCommandEvent& event)
   Refresh(false, NULL);
   return;
 } // end of SaIntGraphWndDoCommandProc
-
-
 
 //----------------------------------------------------------------------------
 void mafViewIntGraphWindow::OnLeftMouseButtonDown(wxMouseEvent &event)
@@ -1079,7 +1080,9 @@ bool mafViewIntGraphWindow::OnEvent(mafEvent& e)
  * @author  Earnol
  * @see     Nothing
  */
+//----------------------------------------------------------------------------
 void  mafViewIntGraphWindow::Update(void)
+//----------------------------------------------------------------------------
 {
   Refresh(false, NULL);
 } // end of SaIntGraphWndDoUpdateProc
@@ -1093,7 +1096,9 @@ void  mafViewIntGraphWindow::Update(void)
  * @author  Earnol
  * @see     Nothing
  */
+//----------------------------------------------------------------------------
 bool mafViewIntGraphWindow::SaveGraphAsCSV(wxString const &sFileName)
+//----------------------------------------------------------------------------
 {
   mafMemoryGraph *pmgGraph;
   int            nI, nJ;
@@ -1184,10 +1189,9 @@ BEGIN_EVENT_TABLE(mafViewIntGraphWindow, wxWindow)
   EVT_COMMAND_RANGE(0, 0xFFFF, wxEVT_COMMAND_MENU_SELECTED, mafViewIntGraphWindow::OnCommand)
 END_EVENT_TABLE()
 
-
-
-
+//----------------------------------------------------------------------------
 void mafViewIntGraphWindow::Init()
+//----------------------------------------------------------------------------
 {
   wxInt32 nI;
 
@@ -1233,7 +1237,9 @@ void mafViewIntGraphWindow::Init()
  * @author  Earnol
  * @see     Nothing
  */
+//----------------------------------------------------------------------------
 mafViewIntGraphWindow::mafViewIntGraphWindow(void):wxWindow()
+//----------------------------------------------------------------------------
 {
   Init();
 }
@@ -1244,8 +1250,10 @@ mafViewIntGraphWindow::mafViewIntGraphWindow(void):wxWindow()
  * @author  Earnol
  * @see     Nothing
  */
+//----------------------------------------------------------------------------
 mafViewIntGraphWindow::mafViewIntGraphWindow(const wxString& label):
 wxWindow(mafGetFrame(), -1, wxDefaultPosition, wxDefaultSize, 0, label)
+//----------------------------------------------------------------------------
 {
   Init();
 }
@@ -1259,7 +1267,9 @@ wxWindow(mafGetFrame(), -1, wxDefaultPosition, wxDefaultSize, 0, label)
  * @author  Earnol
  * @see     Nothing
  */
+//----------------------------------------------------------------------------
 mafViewIntGraphWindow::~mafViewIntGraphWindow()
+//----------------------------------------------------------------------------
 {
   delete[] m_ColorTable;
   m_ColorTable       = NULL;
@@ -1267,9 +1277,9 @@ mafViewIntGraphWindow::~mafViewIntGraphWindow()
 }
 
 
-#if !defined UNIX 
-#include <windows.h>
-#endif
+//#if !defined UNIX 
+//#include <windows.h>
+//#endif
 
 //----------------------------------------------------------------------------
 wxChar const *GetListSeparator()

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoAverageLM.h,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 22:35:24 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-07-19 12:37:35 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -13,19 +13,15 @@
 #ifndef __mmoAverageLM_H__
 #define __mmoAverageLM_H__
 
-#ifdef __GNUG__
-    #pragma interface "mmoAverageLM.cpp"
-#endif
-
-#ifndef WX_PRECOMP
-    #include "wx/wx.h"
-#endif
+//----------------------------------------------------------------------------
+// Includes:
+//----------------------------------------------------------------------------
+#include "mafOp.h"
 
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
 class mafVMEAFRefSys;
-class mafOp;
 class mafGui;
 class mafEvent;
 class mafIntGraphHyer;
@@ -59,7 +55,7 @@ protected:
   mafVMELandmarkCloud  *m_LimbCloud;
 
 private:
-  /// index of new landmark for undo opration 
+  /// index of new landmark for undo operation 
   wxInt32                       m_NewIndex;
 };
 #endif

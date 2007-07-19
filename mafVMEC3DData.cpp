@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEC3DData.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-04-04 11:27:31 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007-07-19 12:37:35 $
+  Version:   $Revision: 1.4 $
   Authors:   Stefano Perticoni - porting Fedor Moiseev
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -114,9 +114,9 @@ void mafVMEC3DData::SetFileName(const char *name)
   this->Modified();
 }
 
-
 //----------------------------------------------------------------------------
 int mafVMEC3DData::Read()
+//-----------------------------------------------------------------------
 {
 
   c3DLMNamesTagArray = new std::vector<mafString>;
@@ -162,9 +162,9 @@ int mafVMEC3DData::Read()
   return 0;				
 }
 
-
 //----------------------------------------------------------------------------
 int mafVMEC3DData::PreRead()
+//-----------------------------------------------------------------------
 {
   pC3DFile = fopen(this->m_FileName, "rb");
 
@@ -194,7 +194,7 @@ void mafVMEC3DData::Read_C3D_Header(
                                     unsigned short int	*frames_per_field,
                                     float				*video_rate,
                                     FILE				*infile)
-                                    //----------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 
 { 
 
@@ -256,7 +256,6 @@ void mafVMEC3DData::Read_C3D_Header(
 
 } 
 
-
 //----------------------------------------------------------------------------
 int mafVMEC3DData::Read_C3D_Data(unsigned short	num_markers,				// number of marker trajectories
                                  unsigned short	num_analog_channels,		// number of analog channels
@@ -267,8 +266,7 @@ int mafVMEC3DData::Read_C3D_Data(unsigned short	num_markers,				// number of mar
                                  float	 scale_factor,
                                  std::vector<mafString> *c3DLMNamesTagArray,
                                  FILE			*infile)
-                                 //----------------------------------------------------------------------------
-
+//----------------------------------------------------------------------------
 {
 
   short filterStep = 1;
@@ -475,7 +473,6 @@ int mafVMEC3DData::Read_C3D_Data(unsigned short	num_markers,				// number of mar
 
 }
 
-
 //----------------------------------------------------------------------------
 void mafVMEC3DData::Read_C3D_Parameters(std::vector<mafString> *mlabels, FILE *infile)
 //----------------------------------------------------------------------------
@@ -565,8 +562,6 @@ void mafVMEC3DData::Read_C3D_Parameters(std::vector<mafString> *mlabels, FILE *i
     mafString lm_name = this->strrtrim(tmpstr);
     mlabels->push_back(lm_name);
   }
-
-
 } 
 
 //----------------------------------------------------------------------------
@@ -616,7 +611,6 @@ void mafVMEC3DData::ConvertFloatToDec(float f, char* bytes)
     ++bytes[1];      // adjust exponent
 }
 
-
 //----------------------------------------------------------------------------
 char* mafVMEC3DData::strrtrim( char* s)
 //----------------------------------------------------------------------------
@@ -628,6 +622,3 @@ char* mafVMEC3DData::strrtrim( char* s)
   }
   return s;
 }
-//----------------------------------------------------------------------------
-
-

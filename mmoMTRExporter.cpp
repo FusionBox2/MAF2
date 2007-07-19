@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoMTRExporter.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-18 14:13:37 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-07-19 12:37:35 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -60,13 +60,7 @@ mmoMTRExporter::~mmoMTRExporter()
 //----------------------------------------------------------------------------
 {
 }
-//----------------------------------------------------------------------------
-// constants
-//----------------------------------------------------------------------------
-enum 
-{
-  
-};
+
 //----------------------------------------------------------------------------
 bool mmoMTRExporter::Accept(mafNode *node)   
 //----------------------------------------------------------------------------
@@ -96,13 +90,12 @@ void mmoMTRExporter::OpRun()
 
   int result = OP_RUN_CANCEL;
   if(f != "") 
-    {
-      m_File = f;
-      ExportLandmark();
-      result = OP_RUN_OK;
-    }
+  {
+    m_File = f;
+    ExportLandmark();
+    result = OP_RUN_OK;
+  }
   mafEventMacro(mafEvent(this,result));
-
 }
 
 //----------------------------------------------------------------------------
@@ -240,7 +233,6 @@ void mmoMTRExporter::ExportLandmark()
     m_State = NULL;
   }
 }
-
 
 //----------------------------------------------------------------------------
 mafOp* mmoMTRExporter::Copy()   

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafStringSet.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 23:12:59 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:34 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -18,10 +18,6 @@
 // Failing in doing this will result in a run-time error saying:
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
-
-#ifdef __GNUG__
-#pragma implementation "mafStringSet.cpp"
-#endif
 
 #include "mafStringSet.h"
 

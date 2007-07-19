@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafMemGraph.h,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 21:18:14 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:34 $
+  Version:   $Revision: 1.2 $
   Authors:   Vladik Aranov/Fedor Moiseev    
 ==========================================================================
   Copyright (c) 2002/2004
@@ -12,14 +12,6 @@
 
 #ifndef __mafMemoryGraph_H__
 #define __mafMemoryGraph_H__
-
-#ifdef __GNUG__
-    #pragma interface "mafMemoryGraph.cpp"
-#endif
-
-#ifndef WX_PRECOMP
-    #include "wx/wx.h"
-#endif
 
 #ifdef _MSC_FULL_VER
 #pragma warning (disable: 4786)

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafViewIntGraphWindow.h,v $
   Language:  C++
-  Date:      $Date: 2007-07-10 21:18:14 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-19 12:37:34 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -13,20 +13,9 @@
 #ifndef __mafViewIntGraphWindow_H___
 #define __mafViewIntGraphWindow_H___
     
-#ifdef __GNUG__
-  #pragma implementation "mafViewIntGraphWindow.cpp"
-#endif
-
-
 //----------------------------------------------------------------------------
 // includes
 //----------------------------------------------------------------------------
-
-// For compilers that support precompilation, includes "wx/wx.h".
-#include "wx/wxprec.h" 
-#include "wx/string.h"
-#include "wx/window.h"
-
 #include "mafString.h"
 #include "mafMemGraph.h"
 #include "mafStringSet.h"
@@ -36,10 +25,10 @@
 // forward references
 //----------------------------------------------------------------------------
 class mafViewIntGraph;
+
 //----------------------------------------------------------------------------
 // defines
 //----------------------------------------------------------------------------
-
 #define mafDEFINE_GET_SET_MEMBER(type, name)       \
 protected:                                         \
   type  m_##name;                                  \
@@ -84,7 +73,6 @@ struct mafViewIntSetGraph
 //----------------------------------------------------------------------------
 // mafViewIntGraphWindow
 //----------------------------------------------------------------------------
-
 class mafViewIntGraphWindow: public wxWindow
 {
   DECLARE_DYNAMIC_CLASS(mafViewIntGraphWindow)
