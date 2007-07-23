@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-23 10:52:01 $
-  Version:   $Revision: 1.81 $
+  Date:      $Date: 2007-07-23 12:14:15 $
+  Version:   $Revision: 1.82 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -101,6 +101,7 @@
 #include "mmoLandmarkImporterTXT.h"
 #include "mmoLandmarkImporterWS.h"
 #include "mmoLandmarkImporter.h"
+#include "lhpOpBonemat.h"
 
 #include "mafViewVTK.h"
 #include "mafViewCompound.h"
@@ -212,6 +213,8 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoHelAxis("Helical axis"),"Create");
   m_Logic->Plug(new mmoTimeReduce("Time reduce"),"Modify");
   m_Logic->Plug(new mmoBuildHierarchy("Make hierarchical"),"Fuse");
+  m_Logic->Plug(new lhpOpBonemat("Bonemat"),"Modify");
+  
   //-------------------------------------------------------------
 
   //------------------------- Views -------------------------

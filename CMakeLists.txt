@@ -48,7 +48,15 @@ SET(PROJECT_SRCS
   mafStringSet.cpp
   mafStringSet.h
   mafVMEC3DData.cpp
-  mafVMEC3DData.h  
+  mafVMEC3DData.h
+  lhpOpBonemat.cpp
+  lhpOpBonemat.h 
+  lhpProceduralDataset.cxx
+  lhpProceduralDataset.h
+  lhpProceduralElements.cxx
+  lhpProceduralElements.h
+  lhpTypes.h
+
   lhpBuilderLogic.cpp
   lhpBuilderLogic.h
   lhpBuilderApp.cpp
