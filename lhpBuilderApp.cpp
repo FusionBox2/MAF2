@@ -2,9 +2,9 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-23 09:10:25 $
-  Version:   $Revision: 1.80 $
-  Authors:   Paolo Quadrani
+  Date:      $Date: 2007-07-23 10:52:01 $
+  Version:   $Revision: 1.81 $
+  Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
   CINECA - Interuniversity Consortium (www.cineca.it)
@@ -49,7 +49,6 @@
 #include "mmoCreateGroup.h"
 #include "mmoCreateMeter.h"
 #include "mmoCreateRefSys.h"
-
 #include "mmoExplodeCollapse.h"
 #include "mmoFilterSurface.h"
 #include "mmoEditMetadata.h"

@@ -2,9 +2,9 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.h,v $
   Language:  C++
-  Date:      $Date: 2007-03-02 16:22:53 $
-  Version:   $Revision: 1.2 $
-  Authors:   Paolo Quadrani
+  Date:      $Date: 2007-07-23 10:52:01 $
+  Version:   $Revision: 1.3 $
+  Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
   CINECA - Interuniversity Consortium (www.cineca.it)
@@ -16,9 +16,7 @@
 //----------------------------------------------------------------------------
 #include "lhpBuilderLogic.h" 
 
-// ============================================================================
 class lhpBuilderApp : public wxApp
-// ============================================================================
 {
 public:
   bool OnInit();
@@ -27,4 +25,4 @@ protected:
   lhpBuilderLogic *m_Logic;
 };
 DECLARE_APP(lhpBuilderApp)
-#endif //__testViewApp_H__
+#endif 
