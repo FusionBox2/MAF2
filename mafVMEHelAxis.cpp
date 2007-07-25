@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEHelAxis.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-19 12:37:35 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2007-07-25 15:02:13 $
+  Version:   $Revision: 1.6 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -91,7 +91,9 @@ static void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat)
   DiMatrix cmatrix;
   DiMatrix pInv;
 
-  GetGlobalMatrix(vme->GetParent(), ts, &pmatrix);
+  DiMatrixIdentity(&pmatrix);
+  if(vme->GetParent() != NULL)
+    GetGlobalMatrix(vme->GetParent(), ts, &pmatrix);
   GetGlobalMatrix(vme, ts, &cmatrix);
   DiMatrixInvert(&pmatrix, &pInv);
   DiMatrixMultiply(&cmatrix, &pInv, pMat);
