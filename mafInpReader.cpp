@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafInpReader.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-19 12:37:34 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-07-25 15:02:41 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -26,7 +26,7 @@
 #include "vtkObjectFactory.h"
 #include "vtkPolyData.h"
 
-vtkCxxRevisionMacro(mafINPReader, "$Revision: 1.2 $");
+vtkCxxRevisionMacro(mafINPReader, "$Revision: 1.3 $");
 vtkStandardNewMacro(mafINPReader);
 
 // Construct object with merging set to true.
@@ -222,7 +222,7 @@ int mafINPReader::ReadASCIIINP(FILE *fp, std::vector<double> &pointsRead, std::v
       nI++;
     }
     sscanf(sLine, "%d %d %*s %d %d %d", &nTrgID, &nUnkNumber1, indices, indices + 1, indices + 2);
-    wxASSERT(nUnkNumber1 == 0);
+    //wxASSERT(nUnkNumber1 == 0);
     pts[0] = indices[0];
     pts[1] = indices[1];
     pts[2] = indices[2];
