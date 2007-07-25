@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafPipeIntGraph.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-19 12:37:34 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-07-25 15:02:25 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -167,7 +167,9 @@ static void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat)
   DiMatrix cmatrix;
   DiMatrix pInv;
 
-  GetGlobalMatrix(vme->GetParent(), ts, &pmatrix);
+  DiMatrixIdentity(&pmatrix);
+  if(vme->GetParent() != NULL)
+    GetGlobalMatrix(vme->GetParent(), ts, &pmatrix);
   GetGlobalMatrix(vme, ts, &cmatrix);
   DiMatrixInvert(&pmatrix, &pInv);
   DiMatrixMultiply(&cmatrix, &pInv, pMat);
