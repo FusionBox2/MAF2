@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpBonemat.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-23 12:14:15 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-07-26 16:05:05 $
+  Version:   $Revision: 1.2 $
   Authors:   Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -63,6 +63,7 @@ this code fix digits number to six when writing values on textbox from an instan
 #include "vtkPointData.h"
 #include "vtkCellArray.h"
 #include "vtkIntArray.h"
+#include "vtkFloatArray.h"
 
 #define _DEBUG_BONEMAT
 // #define _DEBUG_BONEMAT_GUI
@@ -1011,9 +1012,22 @@ int lhpOpBonemat::Execute1()
       dataset->SetDimensions(dimensions[0], dimensions[1], dimensions[2]); 
 
       int lenghtX,lenghtY,lenghtZ;
-      vtkDoubleArray *vtkArrayX = (vtkDoubleArray *)rectilinearGrid->GetXCoordinates();
-      vtkDoubleArray *vtkArrayY = (vtkDoubleArray *)rectilinearGrid->GetYCoordinates();
-      vtkDoubleArray *vtkArrayZ = (vtkDoubleArray *)rectilinearGrid->GetZCoordinates();
+      vtkDataArray *vtkArrayX;
+      vtkDataArray *vtkArrayY;
+      vtkDataArray *vtkArrayZ;
+
+      if(vtkDoubleArray::SafeDownCast(rectilinearGrid->GetXCoordinates()))
+      {
+        vtkArrayX = vtkDoubleArray::SafeDownCast(rectilinearGrid->GetXCoordinates());
+        vtkArrayY = vtkDoubleArray::SafeDownCast(rectilinearGrid->GetYCoordinates());
+        vtkArrayZ = vtkDoubleArray::SafeDownCast(rectilinearGrid->GetZCoordinates());
+      }
+      else if(vtkFloatArray::SafeDownCast(rectilinearGrid->GetXCoordinates()))
+      {
+        vtkArrayX = vtkFloatArray::SafeDownCast(rectilinearGrid->GetXCoordinates());
+        vtkArrayY = vtkFloatArray::SafeDownCast(rectilinearGrid->GetYCoordinates());
+        vtkArrayZ = vtkFloatArray::SafeDownCast(rectilinearGrid->GetZCoordinates());
+      }
 
       lenghtX = vtkArrayX->GetNumberOfTuples();
       lenghtY = vtkArrayY->GetNumberOfTuples();
@@ -1025,17 +1039,17 @@ int lhpOpBonemat::Execute1()
 
       for(int i=0; i< lenghtX; i++)
       {
-        arrayX[i] = vtkArrayX->GetValue(i);
+        arrayX[i] = vtkArrayX->GetTuple1(i);
       }
 
       for(int i=0; i< lenghtY; i++)
       {
-        arrayY[i] = vtkArrayY->GetValue(i);
+        arrayY[i] = vtkArrayY->GetTuple1(i);
       }
 
       for(int i=0; i< lenghtZ; i++)
       {
-        arrayZ[i] = vtkArrayZ->GetValue(i);
+        arrayZ[i] = vtkArrayZ->GetTuple1(i);
       }
 
       ((RG*)dataset)->SetCoords(arrayX,arrayY,arrayZ);
@@ -1140,7 +1154,8 @@ int lhpOpBonemat::Execute1()
       element = Tetra10::New();
     else if (numElementNodes == 8 || numElementNodes == 20) 
       element = Hexa::New();
-      //case 13: element = Wedge::New(); break;
+    else
+      element = Wedge::New();
 
     
     for(int num = 0; num < numElementNodes; num++)
@@ -1531,9 +1546,25 @@ int lhpOpBonemat::Execute2()
       dataset->SetDimensions(dimensions[0], dimensions[1], dimensions[2]); 
 
       int lenghtX,lenghtY,lenghtZ;
-      vtkDoubleArray *vtkArrayX = (vtkDoubleArray *)rectilinearGrid->GetXCoordinates();
-      vtkDoubleArray *vtkArrayY = (vtkDoubleArray *)rectilinearGrid->GetYCoordinates();
-      vtkDoubleArray *vtkArrayZ = (vtkDoubleArray *)rectilinearGrid->GetZCoordinates();
+
+      vtkDataArray *vtkArrayX;
+      vtkDataArray *vtkArrayY;
+      vtkDataArray *vtkArrayZ;
+
+      if(vtkDoubleArray::SafeDownCast(rectilinearGrid->GetXCoordinates()))
+      {
+        vtkArrayX = vtkDoubleArray::SafeDownCast(rectilinearGrid->GetXCoordinates());
+        vtkArrayY = vtkDoubleArray::SafeDownCast(rectilinearGrid->GetYCoordinates());
+        vtkArrayZ = vtkDoubleArray::SafeDownCast(rectilinearGrid->GetZCoordinates());
+      }
+      else if(vtkFloatArray::SafeDownCast(rectilinearGrid->GetXCoordinates()))
+      {
+        vtkArrayX = vtkFloatArray::SafeDownCast(rectilinearGrid->GetXCoordinates());
+        vtkArrayY = vtkFloatArray::SafeDownCast(rectilinearGrid->GetYCoordinates());
+        vtkArrayZ = vtkFloatArray::SafeDownCast(rectilinearGrid->GetZCoordinates());
+      }
+
+      
 
       lenghtX = vtkArrayX->GetNumberOfTuples();
       lenghtY = vtkArrayY->GetNumberOfTuples();
@@ -1545,17 +1576,17 @@ int lhpOpBonemat::Execute2()
 
       for(int i=0; i< lenghtX; i++)
       {
-        arrayX[i] = vtkArrayX->GetValue(i);
+        arrayX[i] = vtkArrayX->GetTuple1(i);
       }
 
       for(int i=0; i< lenghtY; i++)
       {
-        arrayY[i] = vtkArrayY->GetValue(i);
+        arrayY[i] = vtkArrayY->GetTuple1(i);
       }
 
       for(int i=0; i< lenghtZ; i++)
       {
-        arrayZ[i] = vtkArrayZ->GetValue(i);
+        arrayZ[i] = vtkArrayZ->GetTuple1(i);
       }
 
       ((RG*)dataset)->SetCoords(arrayX,arrayY,arrayZ);
@@ -1664,7 +1695,8 @@ int lhpOpBonemat::Execute2()
       element = Tetra10::New();
     else if (numElementNodes == 8 || numElementNodes == 20) 
       element = Hexa::New();
-    //case 13: element = Wedge::New(); break;
+    else
+      element = Wedge::New();
 
     for(int num = 0; num < numElementNodes; num++)
     {
