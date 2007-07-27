@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpBonemat.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-26 16:05:05 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-07-27 14:36:11 $
+  Version:   $Revision: 1.3 $
   Authors:   Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -1731,37 +1731,7 @@ int lhpOpBonemat::Execute2()
       roSource[id].ro = 1e-6;
     }
 
-    //RO CORRECTION///////////////////////////////////////////////////////////////
-    // roSource[id].ro, arrayRo->GetValue(id)
-    if(m_ROCorrectionActivation)
-    {
-      if(m_ROCorrectionType == SINGLE_INTERVAL)
-      {
-        roSource[id].ro = m_RoCorrectioSingleCoefficient0 + m_RoCorrectioSingleCoefficient1 * roSource[id].ro;
-        arrayRo->SetValue(id,roSource[id].ro);
-      }
-      else if (m_ROCorrectionType == THREE_INTERVALS)
-      {
-        if (roSource[id].ro < m_ROCorrectionDensityInterval0)
-        {
-          roSource[id].ro = m_RoCorrectioFirstCoefficient0 + m_RoCorrectioFirstCoefficient1 * roSource[id].ro;
-          arrayRo->SetValue(id,roSource[id].ro);
-        } 
-        else if (m_ROCorrectionDensityInterval0 <= roSource[id].ro  && roSource[id].ro <= m_ROCorrectionDensityInterval1)
-        {
-          roSource[id].ro = m_RoCorrectioSecondCoefficient0 + m_RoCorrectioSecondCoefficient1 * roSource[id].ro;
-          arrayRo->SetValue(id,roSource[id].ro);
-        }
-        else if (roSource[id].ro > m_ROCorrectionDensityInterval1)
-        {
-          roSource[id].ro = m_RoCorrectioThirdCoefficient0 + m_RoCorrectioThirdCoefficient1 * roSource[id].ro;
-          arrayRo->SetValue(id,roSource[id].ro);
-        }
-      }
-
-    }
-
-    //////////////////////////////////////////////////////////////////////////////
+    
     // E = a + b * ro ^ c
 
     if (m_DensityIntervalsNumber == SINGLE_INTERVAL)
@@ -1823,7 +1793,34 @@ int lhpOpBonemat::Execute2()
     double density = m_ROIntercept + m_ROSlope * HU;
     if (density <= 0) {
       density = 1e-6;
-    } 
+    }
+    //RO CORRECTION///////////////////////////////////////////////////////////////
+    // roSource[id].ro, arrayRo->GetValue(id)
+    if(m_ROCorrectionActivation)
+    {
+      if(m_ROCorrectionType == SINGLE_INTERVAL)
+      {
+        density = m_RoCorrectioSingleCoefficient0 + m_RoCorrectioSingleCoefficient1 * density;
+      }
+      else if (m_ROCorrectionType == THREE_INTERVALS)
+      {
+        if (density < m_ROCorrectionDensityInterval0)
+        {
+          density = m_RoCorrectioFirstCoefficient0 + m_RoCorrectioFirstCoefficient1 * density;
+        } 
+        else if (m_ROCorrectionDensityInterval0 <= density  && density <= m_ROCorrectionDensityInterval1)
+        {
+          density = m_RoCorrectioSecondCoefficient0 + m_RoCorrectioSecondCoefficient1 * density;
+        }
+        else if (density > m_ROCorrectionDensityInterval1)
+        {
+          density = m_RoCorrectioThirdCoefficient0 + m_RoCorrectioThirdCoefficient1 * density;
+        }
+      }
+
+    }
+
+    //////////////////////////////////////////////////////////////////////////////
     // E = a + b * ro ^ c
     double youngModule = m_Ea0_Eb0_Ec0_V3_el0 + m_Ea0_Eb0_Ec0_V3_el1 * pow(density, m_Ea0_Eb0_Ec0_V3_el2);
     if (youngModule <= 0) {
@@ -1851,7 +1848,8 @@ int lhpOpBonemat::Execute2()
       element = Tetra10::New();
     else if (numElementNodes == 8 || numElementNodes == 20) 
       element = Hexa::New();
-    //case 13: element = Wedge::New(); break;
+    else
+      element = Wedge::New();
 
     for(int num = 0; num < numElementNodes; num++)
     {
