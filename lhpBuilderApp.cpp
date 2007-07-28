@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-23 12:14:15 $
-  Version:   $Revision: 1.82 $
+  Date:      $Date: 2007-07-28 05:42:17 $
+  Version:   $Revision: 1.83 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -85,7 +85,6 @@
 #include "mmoStickPalpation.h"
 #include "medOpScaleDataset.h"
 #include "medOpMove.h"
-#include "mmoMAFTransformScale.h"
 #include "mmoMAFTransform.h"
 #include "mmoEMGImporterWS.h"
 #include "mmoGRFImporterWS.h"
