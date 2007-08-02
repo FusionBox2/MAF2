@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafViewIntGraphWindow.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-07-19 12:37:34 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-08-02 11:58:16 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -81,8 +81,8 @@
 #define ID__PRECGRIDONOFF    40026
 #define ID__SAVEIMAGE        40027
 #define ID__SAVECSV          40028
-#define ID__ADJUSTCURVE      40028
-#define ID__FIRSTAUTOMENU    40029
+#define ID__ADJUSTCURVE      40029
+#define ID__FIRSTAUTOMENU    40030
 
 #define MAXTEXTLEN           1024 
 
