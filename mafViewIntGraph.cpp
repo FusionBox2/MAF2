@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafViewIntGraph.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-02 09:11:13 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007-08-08 16:10:40 $
+  Version:   $Revision: 1.4 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -425,7 +425,7 @@ mmgGui *mafViewIntGraph::CreateGui()
   m_Gui->Label("General Features",true);
   //m_Gui->Integer(ID_REFERENCE_FRAME, "Reference frame", &(m_ReferenceFrame), 0, nMaxFrame, "This frame will be treated as upright(reference) for all representations that require it!");
   //m_Gui->Button(ID_FIND_REFERENCE, "Autofind reference", "", "Find best reference frames for all joints (hierarchially based or not) ");
-  m_Gui->VectorN(ID_ZOOM_START_STOP, "Frame limit", m_FreezeFrames, DIM(m_FreezeFrames), 0, nMaxFrame, "This frame will be treated as upright(reference) for all representations that require it!");
+  //m_Gui->VectorN(ID_ZOOM_START_STOP, "Frame limit", m_FreezeFrames, DIM(m_FreezeFrames), 0, nMaxFrame, "This frame will be treated as upright(reference) for all representations that require it!");
 
   m_Gui->Bool(ID_FREEZE_GRAPH,"Freeze graph", &(m_IsFrozen),0);
 
