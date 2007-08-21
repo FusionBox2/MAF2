@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-16 08:38:52 $
-  Version:   $Revision: 1.84 $
+  Date:      $Date: 2007-08-21 08:38:41 $
+  Version:   $Revision: 1.85 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -172,6 +172,10 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoLandmarkImporter("Landmark"));
 	m_Logic->Plug(new mmoLandmarkImporterWS("ASCII trajectories (VWs)"));
   m_Logic->Plug(new mmoMotionDataImporter<mafVMEC3DData>("C3D", "C3D Motion Data (*.c3d)|*.c3d", "Dictionary (*.txt)|*.txt"));
+  m_Logic->Plug(new mmoMotionDataImporter<mafVMERawMotionData>("Raw Motion Data", "RAW Motion Data (*.MAN)|*.MAN", "Dictionary (*.txt)|*.txt"));
+  // m_Logic->Plug(new mmoLandmarkImporter("Landmark")); //Old Importer
+  m_Logic->Plug(new mmoEMGImporterWS("ASCII Analog (VWs)"));
+  m_Logic->Plug(new mmoGRFImporterWS("ASCII Force Plates (VWs)"));
   m_Logic->Plug(new mmoMeshImporter("MESH"));	
   m_Logic->Plug(new mmoVRMLImporter("Geometry VRML "));
   m_Logic->Plug(new mmoINPImporter("Geometry INP/INP_AF "));
