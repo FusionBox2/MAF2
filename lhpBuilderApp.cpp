@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-21 09:50:14 $
-  Version:   $Revision: 1.86 $
+  Date:      $Date: 2007-08-21 16:12:43 $
+  Version:   $Revision: 1.87 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -28,6 +28,7 @@
 #include "mafVMEFactory.h"
 #include "mafPics.h"
 #include "mmgMDIFrame.h"
+#include "mafInteractionFactory.h"
 
 #include "mafNodeFactory.h" 
 #include "mafNodeGeneric.h"
@@ -136,6 +137,9 @@ bool lhpBuilderApp::OnInit()
 
 	result = medPipeFactoryVME::Initialize();
 	assert(result==MAF_OK);
+
+  result = mafInteractionFactory::Initialize();
+  assert(result==MAF_OK);
 
   mafPlugNode<mafVMEC3DData>("VME representing c3d motion data");
   mafPlugNode<mafVMERawMotionData>("VME representing raw motion data");
