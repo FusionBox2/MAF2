@@ -1,127 +1,133 @@
-PROJECT (lhpBuilder)
+# =========================================================================
+#   Program:   lhpBuilder
+#   Module:    $RCSfile: CMakeLists.txt,v $
+#   Language:  CMake
+#   Date:      $Date: 2007-08-22 14:01:39 $
+#   Version:   $Revision: 1.12 $
+#   Authors:   Stefano Perticoni
+# ==========================================================================
 
-SET(PROJECT_SRCS 
-  mmoTimeReduce.cpp
-  mmoTimeReduce.h  
-  mafDictionary.cpp
-  mafDictionary.h
-  mmoBuildHierarchy.cpp
-  mmoBuildHierarchy.h
-  mafINPWriter.cpp
-  mafINPWriter.h
-  mmoINPExporter.cpp
-  mmoMTRExporter.cpp
-  mmoINPExporter.h
-  mmoMTRExporter.h
-  mmoAverageLM.cpp
-  mmoAverageLM.h
-  mafVMEHelAxis.cpp
-  mafVMEHelAxis.h
-  mmoHelAxis.cpp
-  mmoHelAxis.h
-  mafVMEAFRefSys.cpp
-  mafVMEAFRefSys.h
-  mmoAFSys.cpp
-  mmoAFSys.h
-  mafPlotMath.cpp
-  mafPlotMath.h
-  mafGraphIDDesc.cpp
-  mafGraphIDDesc.h
-  mafPipeIntGraph.cpp
-  mafPipeIntGraph.h
-  mafViewIntGraph.cpp
-  mafViewIntGraph.h
-  mafViewIntGraphWindow.cpp
-  mafViewIntGraphWindow.h
-  mafMemGraph.cpp
-  mafMemGraph.h
-  mmoStickPalpation.cpp
-  mmoStickPalpation.h
-  mmoINPImporter.cpp
-  mmoINPImporter.h
-  mmoMTRImporter.cpp
-  mmoMTRImporter.h
-  mafMtrLMCReader.cpp
-  mafMtrLMCReader.h
-  mafInpReader.cpp
-  mafInpReader.h
-  mafStringSet.cpp
-  mafStringSet.h
-  mafVMEC3DData.cpp
-  mafVMEC3DData.h
-  lhpOpBonemat.cpp
-  lhpOpBonemat.h 
-  lhpProceduralDataset.cxx
-  lhpProceduralDataset.h
-  lhpProceduralElements.cxx
-  lhpProceduralElements.h
-  lhpTypes.h
+SET (CMAKE_BACKWARDS_COMPATIBILITY "2.0" CACHE INTERNAL "This project is for CMake 2.0")
+CMAKE_MINIMUM_REQUIRED(VERSION 2.0) 
 
-  lhpBuilderLogic.cpp
-  lhpBuilderLogic.h
-  lhpBuilderApp.cpp
-  lhpBuilderApp.h
+PROJECT (LHP)
+
+#-----------------------------------------------------------------------------
+# this define the LHP_SUBPROJECT macro
+#-----------------------------------------------------------------------------
+INCLUDE (${LHP_SOURCE_DIR}/CMakeModules/LHPConfigMacro.cmake)
+
+#-----------------------------------------------------------------------------
+# where to place output binaries
+#-----------------------------------------------------------------------------
+SET (LIBRARY_OUTPUT_PATH ${LHP_BINARY_DIR}/bin/ CACHE INTERNAL
+     "Single output directory for building all libraries.")
+
+SET (EXECUTABLE_OUTPUT_PATH ${LHP_BINARY_DIR}/bin/ CACHE INTERNAL 
+     "Single output directory for building all executables.")
+
+MARK_AS_ADVANCED (
+  LIBRARY_OUTPUT_PATH 
 )
 
-IF (NOT EXECUTABLE_OUTPUT_PATH)
-  SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin/ CACHE INTERNAL 
-     "Single output directory for building all executables.")
-ENDIF (NOT EXECUTABLE_OUTPUT_PATH)
+#-----------------------------------------------------------------------------
+# Options for lhpBuilder building
+#-----------------------------------------------------------------------------
+OPTION(BUILD_SHARED_LIBS "Build with shared libraries." 0)
+MARK_AS_ADVANCED (
+  BUILD_SHARED_LIBS 
+)
 
-INCLUDE("${PROJECT_SOURCE_DIR}/FindMAF.cmake")
+OPTION(BUILD_TESTING "Build the testing tree." OFF)
+
+#-----------------------------------------------------------------------------
+# find required libraries
+#-----------------------------------------------------------------------------
+
+INCLUDE("${PROJECT_SOURCE_DIR}/CMakeModules/FindMAF.cmake")
 INCLUDE("${MAF_BINARY_PATH}/MAFConfig.cmake")
 
 # find MAF library
 IF(MAF_FOUND)
+	
   INCLUDE("${MAF_USE_FILE}")
 
-  ################################################
-  ## MAF found, now try to find Medical library ##
-  ################################################
-
-  INCLUDE("${PROJECT_SOURCE_DIR}/FindMED.cmake")
+  # Find the Medical library 
+  INCLUDE("${PROJECT_SOURCE_DIR}/CMakeModules/FindMED.cmake")
   INCLUDE("${MED_BINARY_PATH}/MEDConfig.cmake")
 
   IF(MED_FOUND)
     INCLUDE("${MED_USE_FILE}")
-
-    # MED library
-    SET(PROJECT_LIBS
-      medOperations
-    )
+  ELSE (MED_FOUND)
+  	MESSAGE (FATAL_ERROR "MAF-MEDICAL library not found, cannot build application!!")
   ENDIF(MED_FOUND)
-  ################################################
-
-  IF (WIN32)
-    ADD_EXECUTABLE(${PROJECT_NAME} WIN32 ${PROJECT_SRCS} "${PROJECT_SOURCE_DIR}/app.rc")
-    IF(EXECUTABLE_OUTPUT_PATH)
-      FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
-        CONFIGURE_FILE( "${MAF_BINARY_PATH}/Gui/manifest.in" "${EXECUTABLE_OUTPUT_PATH}/${config}/${PROJECT_NAME}.exe.manifest" COPYONLY)
-      ENDFOREACH(config)
-    ELSE (EXECUTABLE_OUTPUT_PATH)
-      FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
-        CONFIGURE_FILE( "${MAF_BINARY_PATH}/Gui/manifest.in" "${PROJECT_BINARY_DIR}/${config}/${PROJECT_NAME}.exe.manifest" COPYONLY)
-      ENDFOREACH(config)
-    ENDIF (EXECUTABLE_OUTPUT_PATH)
-  ELSE (WIN32)
-    ADD_EXECUTABLE(${PROJECT_NAME} ${PROJECT_SRCS} )
-  ENDIF (WIN32)
+      
+  # Add single dirs to inclusion path
+  INCLUDE_DIRECTORIES(BEFORE ".")
+  INCLUDE_DIRECTORIES(${LHP_BINARY_DIR})
+  INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/Common)
+  INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/Operations)
+  INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/VME)
+  INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/Views)
+  INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/vtkLHP)
+  INCLUDE_DIRECTORIES(${LHP_BINARY_DIR}/vtkLHP)
   
-  # MAF library
-  SET(PROJECT_LIBS
-    ${PROJECT_LIBS} mafVME mafOperations
+  SUBDIRS (vtkLHP)
+  SUBDIRS (Application)
+  SUBDIRS (Common)
+  SUBDIRS (Operations)
+  SUBDIRS (Views)
+  SUBDIRS (VME)
+  
+  # Configuring Doxygen documentation  
+  SUBDIRS (Documentation)
+  
+  # Export Build settings and library dependencies
+  INCLUDE(CMakeExportBuildSettings)
+  
+  CMAKE_EXPORT_BUILD_SETTINGS(
+    ${LHP_BINARY_DIR}/LHPBuildSettings.cmake
+  )
+  
+  EXPORT_LIBRARY_DEPENDENCIES(
+    ${LHP_BINARY_DIR}/LHPLibraryDepends.cmake
   )
 
-  TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
+  CONFIGURE_FILE(
+    ${LHP_SOURCE_DIR}/CMakeInput/LHPConfig.cmake.in
+    ${LHP_BINARY_DIR}/LHPConfig.cmake
+  @ONLY IMMEDIATE
+  )
   
-  IF (MAF_USE_ITK)
-    TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${ITK_LIBRARIES})
-  ENDIF (MAF_USE_ITK)
-
+  CONFIGURE_FILE(
+    ${LHP_SOURCE_DIR}/CMakeInput/LHPUse.cmake.in
+    ${LHP_BINARY_DIR}/LHPUse.cmake
+  @ONLY IMMEDIATE
+  )
+  
+  #-----------------------------------------------------------------------------
+  # Testing stuff
+  #-----------------------------------------------------------------------------
+  IF(BUILD_TESTING)
+    
+    MESSAGE("variable LHP_SOURCE_DIR = " ${LHP_SOURCE_DIR})
+    FIND_PATH(LHP_DATA_ROOT "TestingDataRoot.txt" "${LHP_SOURCE_DIR}/Testing/UnitTestsData" "${LHP_SOURCE_DIR}/../TestingData" "${LHP_SOURCE_DIR}/../mmData/TestingData" "${LHP_SOURCE_DIR}/../../TestingData"  DOC "Test data repository")
+    ENABLE_TESTING()
+      
+    # where will executable tests be written ?
+    IF (EXECUTABLE_OUTPUT_PATH)
+        SET (CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
+    ELSE (EXECUTABLE_OUTPUT_PATH)
+        SET (CXX_TEST_PATH .)
+    ENDIF (EXECUTABLE_OUTPUT_PATH)
+      
+    SUBDIRS (Testing)
+    
+  ENDIF(BUILD_TESTING)
+  
 ELSE (MAF_FOUND)
   MESSAGE (FATAL_ERROR "MAF library not found, cannot build application!!")
 ENDIF (MAF_FOUND)
-
 
 #-----------------------------------------------------------------------------
 # LHPBUILDER deploy stuff.  

@@ -1,0 +1,49 @@
+PROJECT(lhpOperations)
+
+# Set your list of sources here.
+SET(PROJECT_SRCS
+lhpOpBonemat.cpp
+lhpOpBonemat.h
+lhpProceduralDataset.cxx
+lhpProceduralDataset.h
+lhpProceduralElements.cxx
+lhpProceduralElements.h
+lhpTypes.h
+mafDictionary.cpp
+mafDictionary.h
+mafInpReader.cpp
+mafInpReader.h
+mafINPWriter.cpp
+mafINPWriter.h
+mafMtrLMCReader.cpp
+mafMtrLMCReader.h
+mmoAFSys.cpp
+mmoAFSys.h
+mmoAverageLM.cpp
+mmoAverageLM.h
+mmoBuildHierarchy.cpp
+mmoBuildHierarchy.h
+mmoHelAxis.cpp
+mmoHelAxis.h
+mmoINPExporter.cpp
+mmoINPExporter.h
+mmoINPImporter.cpp
+mmoINPImporter.h
+mmoMTRExporter.cpp
+mmoMTRExporter.h
+mmoMTRImporter.cpp
+mmoMTRImporter.h
+mmoStickPalpation.cpp
+mmoStickPalpation.h
+mmoTimeReduce.cpp
+mmoTimeReduce.h
+)
+
+# List libraries that are needed by this project.
+# SET(PROJECT_LIBS "mafVME" "mafInteraction")
+
+# SET(PROJECT_LIBS ${PROJECT_LIBS} vtkMED medCommon)
+
+# Create the library.
+ADD_LIBRARY(${PROJECT_NAME} ${PROJECT_SRCS})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})

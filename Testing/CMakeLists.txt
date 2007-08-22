@@ -1,0 +1,38 @@
+PROJECT (Medical_TEST)
+
+# Load CppUnit stuff
+INCLUDE(${LHP_SOURCE_DIR}/CMakeModules/FindCppUnit.cmake)
+IF (CPPUNIT_FOUND)
+  #MESSAGE("Found Cppunit library")
+  INCLUDE_DIRECTORIES(${CPPUNIT_INCLUDE_DIR})
+  LINK_LIBRARIES(${CPPUNIT_LIBRARIES})
+  
+ELSE (CPPUNIT_FOUND)
+  MESSAGE("Cppunit library not found! Please fill the corresponding cache entries")
+ENDIF (CPPUNIT_FOUND)
+  
+OPTION(BUILD_VIEWS_TESTING "Enable building of testing for View classes" ON)
+IF (BUILD_VIEWS_TESTING)
+  SUBDIRS(Views)
+ENDIF (BUILD_VIEWS_TESTING)
+
+OPTION(BUILD_VME_TESTING "Enable building of testing for VME classes" ON)
+IF (BUILD_VME_TESTING)
+  SUBDIRS(VME)
+ENDIF (BUILD_VME_TESTING)
+
+OPTION(BUILD_OPERATIONS_TESTING "Enable building of testing for OPERATIONS classes" ON)
+IF (BUILD_OPERATIONS_TESTING)
+  SUBDIRS(Operations)
+ENDIF (BUILD_OPERATIONS_TESTING)
+
+OPTION(BUILD_COMMON_TESTING "Enable building of testing for COMMON classes" ON)
+IF (BUILD_COMMON_TESTING)
+  SUBDIRS(Common)
+ENDIF (BUILD_COMMON_TESTING)
+
+OPTION(BUILD_WEB_SERVICES_TESTING "Enable building of testing for Web Services" ON)
+IF (BUILD_WEB_SERVICES_TESTING)
+  SUBDIRS(Common)
+ENDIF (BUILD_WEB_SERVICES_TESTING)
+
