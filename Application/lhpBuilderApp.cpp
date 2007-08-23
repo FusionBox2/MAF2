@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-08-23 07:56:11 $
+  Version:   $Revision: 1.2 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -253,14 +253,6 @@ bool lhpBuilderApp::OnInit()
   GlobalSlice->PackageView();
   m_Logic->Plug(GlobalSlice);
 
-  // View HTML
-  mafViewHTML *vhtml = new mafViewHTML("HTML");
-  m_Logic->Plug(vhtml);
-
-  mafViewImageCompound *vImage = new mafViewImageCompound("Image");
-  vImage->PackageView();
-  m_Logic->Plug(vImage);
-
   mafViewVTK *viso = new mafViewVTK("Isosurface");
   viso->PlugVisualPipe("mafVMEVolumeGray", "mafPipeIsosurface",MUTEX);
   m_Logic->Plug(viso);
@@ -268,10 +260,6 @@ bool lhpBuilderApp::OnInit()
   mafViewOrthoSlice *viewOrthoSlice = new mafViewOrthoSlice("OrthoSlice");
   viewOrthoSlice->PackageView();
   m_Logic->Plug(viewOrthoSlice);
-
-  mafViewRXCompound *RX = new mafViewRXCompound("RX");
-  RX->PackageView();
-  m_Logic->Plug(RX);
 
   mafViewRXCT *vrxctl = new mafViewRXCT("RXCT");
   vrxctl->PackageView();
