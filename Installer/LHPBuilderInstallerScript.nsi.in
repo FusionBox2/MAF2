@@ -57,7 +57,8 @@ Section "create product directory structure" SEC01
   CreateShortCut "$SMPROGRAMS\b3c_software\lhpBuilder\lhpBuilder.lnk" "$INSTDIR\Bin\${PRODUCT_EXE_NAME}"
   CreateShortCut "$SMPROGRAMS\b3c_software\lhpBuilder\uninstall.lnk" "$INSTDIR\uninst.exe"
   CreateShortCut "$DESKTOP\lhpBuilder.lnk" "$INSTDIR\Bin\${PRODUCT_EXE_NAME}"
-  File "@LHPBUILDER_EXECUTABLE_OUTPUT_PATH_WIN@\${PRODUCT_EXE_NAME}.manifest"
+  ; is this needed? commented for the moment...
+  ; File "@LHPBUILDER_EXECUTABLE_OUTPUT_PATH_WIN@\${PRODUCT_EXE_NAME}.manifest"
   CreateDirectory "$INSTDIR\Splash"
   SetOutPath "$INSTDIR\Splash"
   File "@LHPBUILDER_INSTALLER_DIR_WIN@\SPLASH_SCREEN.bmp"
