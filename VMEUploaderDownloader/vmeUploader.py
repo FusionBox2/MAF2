@@ -77,16 +77,12 @@ class vmeUploader:
         print "\nWritten output XML file exportedVME.xml in directory " + os.getcwd()
         
         
-
 def run(inMSFFileName, vmeToExtractId, inDictionaryFileName):                                            
     upl = vmeUploader()
-    upl.inputMSFFileName = inMSFFileName
+    upl.InputMSFFileName = inMSFFileName
     upl.VmeToExtractID = int(vmeToExtractId)
     upl.DictionaryFileName = inDictionaryFileName
-    upl.__init__()
-    upl.Parse()
-        
-    
+    upl.Parse()    
 
 def main():
     args = sys.argv[1:]
