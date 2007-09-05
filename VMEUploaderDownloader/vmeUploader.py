@@ -31,6 +31,7 @@ class vmeUploader:
         
         print "\ninput MSF: " + self.copyInputMSFFileName
         print "\nlhdl dictionary: " + self.DictionaryFileName + '\n'
+        print "\nExtracting vme with ID1: " + str(self.VmeToExtractID) + '\n' 
         """parse the msf extracting tags from the dictionary"""
         dict = self.LhpbDictionary
         rootNode = self.MSFRootNode
@@ -81,9 +82,10 @@ class vmeUploader:
         
         
 
-def run(inMSFFileName, inDictionaryFileName):                                            
+def run(inMSFFileName, vmeToExtractId, inDictionaryFileName):                                            
     upl = vmeUploader()
     upl.inputMSFFileName = inMSFFileName
+    upl.VmeToExtractID = int(vmeToExtractId)
     upl.DictionaryFileName = inDictionaryFileName
     upl.__init__()
     upl.Parse()
@@ -92,10 +94,10 @@ def run(inMSFFileName, inDictionaryFileName):
 
 def main():
     args = sys.argv[1:]
-    if len(args) != 2:
-        print 'usage: python.exe vmeUploader.py infile.msf dictionaryFile.txt'
+    if len(args) != 3:
+        print 'usage: python.exe vmeUploader.py infile.msf vmeToExtractId dictionaryFile.txt'
         sys.exit(-1)
-    run(args[0],args[1])
+    run(args[0],args[1],args[2])
 
 
 if __name__ == '__main__':

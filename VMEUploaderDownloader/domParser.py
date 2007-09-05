@@ -193,7 +193,7 @@ class domParser:
                             tagList.append(attrValue)
         
         # print tagList         
-        print "tagArray node tag names:"
+        print "\nVME tagArray node tag names:\n"
         for el in range(len(tagList)):
             print tagList[el]
         print "Number of tags: " + str(len(tagList))
