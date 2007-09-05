@@ -10,30 +10,26 @@ class vmeUploader:
     """upload a vme xml file from an MSF given its ID and a dictionary"""
     
     def __init__(self):                       
-        self.inputMSFFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\msf_test_import_export_VME\msf_test_import_export_VME.msf'
-        self.copyInputMSFFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\msf_test_import_export_VME\copyied_msf_test_import_export_VME.msf'
-        shutil.copy(self.inputMSFFileName, self.copyInputMSFFileName)
-
-        self.DomParser = domParser.domParser()
-        dict = self.LhpbDictionary = domParser.LHPBDictionary()
-        self.DictionaryFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\testDictionaries\testDictionary.txt'
         
-        self.LhpbDictionary.DictionaryFileName = self.DictionaryFileName
-        # load the dictionary
-        dict.Load()
-        
-        self.MSFDOMDocument = minidom.parse(self.copyInputMSFFileName)
-        self.MSFRootNode = self.MSFDOMDocument.documentElement
-        
-        self.VmeToExtractID = 1
+        self.InputMSFFileName = "No input msf"
+        self.DictionaryFileName = "No dictionary"
+        self.VmeToExtractID = 1    
         
     def Parse(self):
+       
+        self.DomParser = domParser.domParser()
+        dict = domParser.LHPBDictionary()
+        dict.DictionaryFileName = self.DictionaryFileName
+        dict.Load()
         
-        print "\ninput MSF: " + self.copyInputMSFFileName
+        self.MSFDOMDocument = minidom.parse(self.InputMSFFileName)
+        self.MSFRootNode = self.MSFDOMDocument.documentElement
+       
+        print "\ninput MSF: " + self.InputMSFFileName
         print "\nlhdl dictionary: " + self.DictionaryFileName + '\n'
-        print "\nExtracting vme with ID1: " + str(self.VmeToExtractID) + '\n' 
+        print "\nExtracting vme with ID: " + str(self.VmeToExtractID) + '\n' 
         """parse the msf extracting tags from the dictionary"""
-        dict = self.LhpbDictionary
+        
         rootNode = self.MSFRootNode
         vmeId = self.VmeToExtractID
         domP = self.DomParser
