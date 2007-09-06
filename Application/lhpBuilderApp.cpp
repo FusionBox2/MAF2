@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-23 10:38:44 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007-09-06 10:17:35 $
+  Version:   $Revision: 1.4 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -52,7 +52,6 @@
 #include "mmoCreateMeter.h"
 #include "medOpCreateWrappedMeter.h"
 #include "mmoCreateRefSys.h"
-#include "mmoExplodeCollapse.h"
 #include "mmoFilterSurface.h"
 #include "mmoEditMetadata.h"
 #include "mmo2DMeasure.h"
@@ -202,7 +201,6 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoRegisterClusters("Register Landmark Cloud"),"Fuse");
   m_Logic->Plug(new mmoCreateMeter("Distance Meter"),"Derive");
   m_Logic->Plug(new medOpCreateWrappedMeter("Wrapped Meter"),"Derive");
-	m_Logic->Plug(new mmoExplodeCollapse("Explode/Collapse Landamark Cloud"),"Modify");
   m_Logic->Plug(new mmoEditMetadata("Metadata Editor"),"Modify");
 	m_Logic->Plug(new mmoFilterSurface("Filter Surface"),"Modify");
 	m_Logic->Plug(new mmoExtractIsosurface("Extract Isosurface"),"Modify");
