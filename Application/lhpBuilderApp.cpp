@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-09-06 10:17:35 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2007-09-12 11:14:24 $
+  Version:   $Revision: 1.5 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -103,6 +103,7 @@
 #include "mmoLandmarkImporterWS.h"
 #include "mmoLandmarkImporter.h"
 #include "lhpOpBonemat.h"
+#include "medOpFreezeVME.h"
 
 #include "mafViewVTK.h"
 #include "mafViewCompound.h"
@@ -198,6 +199,7 @@ bool lhpBuilderApp::OnInit()
 	m_Logic->Plug(new mmoCreateRefSys("Refsys"),"Create");
 	m_Logic->Plug(new mmoCreateSurfaceParametric("Parametric Surface"),"Create");
 	m_Logic->Plug(new mmoAddLandmark("Add Landmark \tCtrl+A"),"Create");
+  m_Logic->Plug(new medOpFreezeVME("Freeze VME"),"Create");
   m_Logic->Plug(new mmoRegisterClusters("Register Landmark Cloud"),"Fuse");
   m_Logic->Plug(new mmoCreateMeter("Distance Meter"),"Derive");
   m_Logic->Plug(new medOpCreateWrappedMeter("Wrapped Meter"),"Derive");
@@ -220,6 +222,8 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoTimeReduce("Time reduce"),"Modify");
   m_Logic->Plug(new mmoBuildHierarchy("Make hierarchical"),"Fuse");
   m_Logic->Plug(new lhpOpBonemat("Bonemat"),"Modify");
+  
+  
   
   //-------------------------------------------------------------
 
