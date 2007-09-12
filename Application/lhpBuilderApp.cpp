@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-09-12 11:14:24 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2007-09-12 13:56:07 $
+  Version:   $Revision: 1.6 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -104,6 +104,7 @@
 #include "mmoLandmarkImporter.h"
 #include "lhpOpBonemat.h"
 #include "medOpFreezeVME.h"
+#include "medOpExporterWrappedMeter.h"
 
 #include "mafViewVTK.h"
 #include "mafViewCompound.h"
@@ -192,6 +193,8 @@ bool lhpBuilderApp::OnInit()
 	m_Logic->Plug(new mmoRAWExporter("Raw"));
   m_Logic->Plug(new mmoBmpExporter("Bmp"));
   m_Logic->Plug(new mmoLandmarkExporter("Landmark"));
+  m_Logic->Plug(new medOpExporterWrappedMeter("Wrapped Meter"));
+  
   //-------------------------------------------------------------
 
   //------------------------- Operations -------------------------
