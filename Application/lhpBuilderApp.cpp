@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-09-12 13:56:07 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2007-09-13 13:20:39 $
+  Version:   $Revision: 1.7 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -105,6 +105,7 @@
 #include "lhpOpBonemat.h"
 #include "medOpFreezeVME.h"
 #include "medOpExporterWrappedMeter.h"
+#include "medOpIterativeRegistration.h"
 
 #include "mafViewVTK.h"
 #include "mafViewCompound.h"
@@ -225,6 +226,8 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoTimeReduce("Time reduce"),"Modify");
   m_Logic->Plug(new mmoBuildHierarchy("Make hierarchical"),"Fuse");
   m_Logic->Plug(new lhpOpBonemat("Bonemat"),"Modify");
+  m_Logic->Plug(new medOpIterativeRegistration("Iterative Registration"),"Modify");
+  
   
   
   
