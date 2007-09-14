@@ -1,3 +1,9 @@
+#-----------------------------------------------------------------------------
+# BEWARE!!! This is mostly a prototype!!!
+# code is changing very fast so don't rely on it :P
+# author: Stefano Perticoni
+#-----------------------------------------------------------------------------
+
 import vmeUploader
 import os
 import domParser

@@ -1,3 +1,9 @@
+#-----------------------------------------------------------------------------
+# BEWARE!!! This is mostly a prototype!!!
+# code is changing very fast so don't rely on it :P
+# author: Stefano Perticoni
+#-----------------------------------------------------------------------------
+
 # VMEUploaderDownloader domParser.py "D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\msf_test_import_export_VME\msf_test_import_export_VME.msf"
 
  #NodeName: Name
@@ -60,7 +66,7 @@ import sys, string
 from xml.dom import minidom
 from xml.dom import Node
 
-class LHPBDictionary:
+class lhpbDictionary:
     """store and retrieve list of tags in 1 column"""
     
     def __init__(self):                                
@@ -99,7 +105,8 @@ class domParser:
         self.OutputVme = None 
         self.OutputTagArrayNode = None
         self.OutputTagItemNode = None
-    
+        self.OutputNode = None
+        
     def PrintDOMTree(self,parent, outFile, level):  
         self.PrintNode(parent, outFile, level)
         if parent.childNodes:
@@ -164,6 +171,9 @@ class domParser:
                         
         
     def RemoveTagsByList(self, inputVmeTagArrayNode, tagsToBeRemoved):
+        # change number of tags
+        # <Item NumberOfTags="2" Type="mafTagArray">
+        removedTagsNumber = 0
         for node in inputVmeTagArrayNode.childNodes:
         #  search for a Node with name "Node"...0
             if node.nodeType == Node.ELEMENT_NODE:
@@ -176,7 +186,17 @@ class domParser:
                         for tagName in tagsToBeRemoved:
                             if (attrValue == tagName):
                                 inputVmeTagArrayNode.removeChild(node)
-    
+                                removedTagsNumber += 1
+        attrs = inputVmeTagArrayNode.attributes                             
+        for attrName in attrs.keys():
+            print attrName
+            if attrName  == "NumberOfTags":
+               attrNode = attrs.get(attrName)
+               oldTagsNumber = attrNode.nodeValue
+               print oldTagsNumber
+               attrNode.nodeValue = str(int(oldTagsNumber) - removedTagsNumber)
+               print attrNode.nodeValue
+               
     def PrintTagNames(self, tagArrayNode):
         """Print the given tagArrayNode tags, also return the tagList"""
         tagList = []
@@ -200,7 +220,8 @@ class domParser:
         return tagList
     
     def GetVmeNodeById(self, vmeTreeRootNode, vmeId):
-        """Get a vme given the vme tree root and its Id"""
+        """Get a vme given the vme tree root and its Id, since the vme ID is unique
+        in a well formed MSF this is always returning one and only one node"""
         #NodeName: Node
                 #Attribute -- Name: Type  Value: mafVMEVolumeGrayAnd
                 
@@ -225,6 +246,46 @@ class domParser:
                                     (attrName, attrValue))
                                 self.OutputVme = node
             self.GetVmeNodeById(node, vmeId)
+    
+    
+    def GetVmeNodeById2(self, vmeTreeRootNode, vmeId):
+        """Prototype and not working... should get a vme given the vme tree root and its Id"""
+        #NodeName: Node
+                #Attribute -- Name: Type  Value: mafVMEVolumeGrayAnd
+                
+                #Attribute -- Name: Crypting  Value: 0
+                #Attribute -- Name: Id  Value: 1
+                #Attribute -- Name: Name  Value: test_volume
+        #Content: "
+        for node in vmeTreeRootNode.childNodes:
+            #  search for a Node with name "Node"...
+            
+            if node.nodeType == Node.ELEMENT_NODE:
+                if node.nodeName == "Node":
+                    print('NodeName: %s\n' % node.nodeName)
+                    # and an attribute "Id"...
+                    attrs = node.attributes                            
+                    for attrName in attrs.keys():
+                        attrNode = attrs.get(attrName)
+                        attrValue = attrNode.nodeValue
+                        if attrName  == "Id": 
+                            if eval(attrValue) == vmeId: 
+                                print('Attribute -- Name: %s  Value: %s\n' % \
+                                    (attrName, attrValue))
+                                self.OutputVme = node 
+                                return node
+            self.GetVmeNodeById2(node, vmeId)
+    
+    
+    def GetNodeByNodeName(self, parentNode, nodeName):
+        """Return the first node found with name nodeName descending from parentNode"""
+        for node in parentNode.childNodes:
+            if node.nodeType == Node.ELEMENT_NODE:
+                if node.nodeName == nodeName:
+                    print('NodeName: %s\n' % node.nodeName)
+                    self.OutputNode = node
+                    return
+            self.GetNodeByNodeName(node, nodeName)
     
     def PrintNodeNames(self,parent, outFile, level):                               
         for node in parent.childNodes:

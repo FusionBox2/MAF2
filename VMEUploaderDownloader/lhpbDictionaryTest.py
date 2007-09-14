@@ -1,3 +1,8 @@
+#-----------------------------------------------------------------------------
+# BEWARE!!! This is mostly a prototype!!!
+# code is changing very fast so don't rely on it :P
+# author: Stefano Perticoni
+#-----------------------------------------------------------------------------
 
 import domParser
 import sys, string
@@ -10,7 +15,7 @@ class lhpbDictionaryTest(unittest.TestCase):
         self.inFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\msf_test_import_export_VME\testDictionary.txt'
         self.copyFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\msf_test_import_export_VME\testDictionaryCopy.txt'
         # shutil.copy(self.inFileName, self.copyFileName)
-        self.dictionaryInstance = domParser.LHPBDictionary()
+        self.dictionaryInstance = domParser.lhDictionary()
         
     def testSave(self):
         testDictionary = ['pippo','pluto','topolino']
@@ -19,14 +24,14 @@ class lhpbDictionaryTest(unittest.TestCase):
         self.dictionaryInstance.Save()
         
     def testLoad(self):
-        newDict = domParser.LHPBDictionary()
+        newDict = domParser.lhDictionary()
         newDict.DictionaryFileName = "testSaveDictionary.txt"
         newDict.Load()
         for tag in newDict.DictionaryTagsList:
             print tag
         
     def testPrint(self):
-        newDict = domParser.LHPBDictionary()
+        newDict = domParser.lhDictionary()
         newDict.DictionaryFileName = "testSaveDictionary.txt"
         newDict.Load()
         newDict.Print()

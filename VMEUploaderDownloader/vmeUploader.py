@@ -1,3 +1,9 @@
+#-----------------------------------------------------------------------------
+# BEWARE!!! This is mostly a prototype!!!
+# code is changing very fast so don't rely on it :P
+# author: Stefano Perticoni
+#-----------------------------------------------------------------------------
+
 import sys, string
 import domParser
 import shutil
@@ -17,22 +23,21 @@ class vmeUploader:
         
     def Parse(self):
        
-        self.DomParser = domParser.domParser()
-        dict = domParser.LHPBDictionary()
+        domP = domParser.domParser()
+        dict = domParser.lhpbDictionary()
         dict.DictionaryFileName = self.DictionaryFileName
         dict.Load()
         
-        self.MSFDOMDocument = minidom.parse(self.InputMSFFileName)
-        self.MSFRootNode = self.MSFDOMDocument.documentElement
+        domDocument = minidom.parse(self.InputMSFFileName)
+        msfRootNode = domDocument.documentElement
        
         print "\ninput MSF: " + self.InputMSFFileName
         print "\nlhdl dictionary: " + self.DictionaryFileName + '\n'
         print "\nExtracting vme with ID: " + str(self.VmeToExtractID) + '\n' 
         """parse the msf extracting tags from the dictionary"""
         
-        rootNode = self.MSFRootNode
+        rootNode = msfRootNode
         vmeId = self.VmeToExtractID
-        domP = self.DomParser
         
         # get the vme node
         domP.GetVmeNodeById(rootNode, vmeId)

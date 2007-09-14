@@ -1,3 +1,9 @@
+#-----------------------------------------------------------------------------
+# BEWARE!!! This is mostly a prototype!!!
+# code is changing very fast so don't rely on it :P
+# author: Stefano Perticoni
+#-----------------------------------------------------------------------------
+
 # This is a vme in XML
 # 
 # <Node Crypting="0" Id="1" Name="test_volume" Type="mafVMEVolumeGray">
@@ -18,6 +24,7 @@ import shutil
 import difflib
 import pickle
 
+
 class domParserTest(unittest.TestCase):
       
     def setUp(self):
@@ -25,8 +32,8 @@ class domParserTest(unittest.TestCase):
         self.copyFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\msf_test_import_export_VME\copyied_msf_test_import_export_VME.msf'
         self.domParserInstance = domParser.domParser()
         shutil.copy(self.inFileName, self.copyFileName)
-        doc = minidom.parse(self.copyFileName)
-        self.rootNode = doc.documentElement
+        self.doc = minidom.parse(self.copyFileName)
+        self.rootNode = self.doc.documentElement
         
     # def testRun(self):
         # self.domParserInstance.run(self.inFileName)
@@ -91,13 +98,23 @@ class domParserTest(unittest.TestCase):
     def testPrintTagNames(self):
         self.domParserInstance.GetVmeNodeById(self.rootNode, 1)
         self.domParserInstance.GetVmeTagArrayNode(self.domParserInstance.OutputVme)
+        self.assertNotEqual(self.domParserInstance.OutputVme,None)
         tagList = self.domParserInstance.PrintTagNames(self.domParserInstance.OutputTagArrayNode)
+    
+    def testGetVmeNodeByID(self):
+        self.domParserInstance.GetVmeNodeById(self.rootNode, 1)
+        self.assertNotEqual(self.domParserInstance.OutputVme, None)
         
+    # this is failing...
+    #def testGetVmeNodeByID2(self):
+        #node = self.domParserInstance.GetVmeNodeById2(self.rootNode, 1)
+        #self.assertNotEqual(node, None)
+    
     def testGetVmeTagNodeByName(self):
         self.domParserInstance.GetVmeNodeById(self.rootNode, 1)
         self.domParserInstance.GetVmeTagArrayNode(self.domParserInstance.OutputVme)
         self.domParserInstance.GetVmeTagItemNodeByName(self.domParserInstance.OutputTagArrayNode, r'Dicom_CT_peakvoltage(kV)')
-        assert(self.domParserInstance.OutputTagItemNode)
+        self.assertNotEqual(self.domParserInstance.OutputTagItemNode,None)
     
     def testRemoveTagsByList(self):
         self.domParserInstance.GetVmeNodeById(self.rootNode, 1)
@@ -107,8 +124,7 @@ class domParserTest(unittest.TestCase):
         outFile = open('afterTagsRemoval.txt', 'w')
         level = 0
         self.domParserInstance.PrintDOMTree(self.domParserInstance.OutputVme, outFile,level)
-    
-        
+            
     def testPickle(self):
         # testing VMEUploaderDownloader serialization for list objects 
         stupidList = [1,2,3]
