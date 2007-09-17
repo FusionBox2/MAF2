@@ -164,10 +164,10 @@ class msfParser:
                 self.__GetVmeTagArrayNodeInternal(node)
                 
     def GetVmeTagItemNodeByName(self, inputVmeTagArrayNode, tagName):
-        self.GetVmeTagItemNodeByNameInternal(inputVmeTagArrayNode, tagName)
+        self.__GetVmeTagItemNodeByNameInternal(inputVmeTagArrayNode, tagName)
         return self.__OutputTagItemNode
         
-    def GetVmeTagItemNodeByNameInternal(self, inputVmeTagArrayNode, tagName):
+    def __GetVmeTagItemNodeByNameInternal(self, inputVmeTagArrayNode, tagName):
         for node in inputVmeTagArrayNode.childNodes:
         #  search for a Node with name "Node"...0
             if node.nodeType == Node.ELEMENT_NODE:
