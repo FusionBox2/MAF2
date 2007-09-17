@@ -5,7 +5,7 @@
 #-----------------------------------------------------------------------------
 
 import sys, string
-import domParser
+import msfParser
 import shutil
 import sets
 import os
@@ -23,8 +23,8 @@ class vmeUploader:
         
     def Parse(self):
        
-        domP = domParser.domParser()
-        dict = domParser.lhpbDictionary()
+        domP = msfParser.msfParser()
+        dict = msfParser.lhpbDictionary()
         dict.DictionaryFileName = self.DictionaryFileName
         dict.Load()
         
@@ -41,11 +41,11 @@ class vmeUploader:
         
         # get the vme node
         domP.GetVmeNodeById(rootNode, vmeId)
-        outVmeNode = domP.OutputVme
+        outVmeNode = domP.__OutputVme
         
         # get the tagArray node
         domP.GetVmeTagArrayNode(outVmeNode)
-        outVmeTagArrayNode = domP.OutputTagArrayNode
+        outVmeTagArrayNode = domP.__OutputTagArrayNode
         
         # get the tags list
         vmeTagList = domP.PrintTagNames(outVmeTagArrayNode)

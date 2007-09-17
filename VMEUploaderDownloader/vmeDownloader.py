@@ -5,7 +5,7 @@
 #-----------------------------------------------------------------------------
 
 import sys, string
-import domParser
+import msfParser
 import shutil
 import sets
 import os
@@ -22,7 +22,7 @@ class vmeDownloader:
         
     def Parse(self):
 	
-        domP = domParser.domParser()
+        domP = msfParser.msfParser()
         domDocument = minidom.parse(self.InputXMLFileName)
         xmlRootNode = domDocument.documentElement
        
@@ -32,7 +32,7 @@ class vmeDownloader:
         
         # get the vme node
         domP.GetVmeNodeById(xmlRootNode, vmeId)
-        outVmeNode = domP.OutputVme
+        outVmeNode = domP.__OutputVme
         
         msfOutputDoc = minidom.Document()
         msfOutputDoc.appendChild(outVmeNode)
@@ -52,7 +52,7 @@ class MSFBuilder:
    
     def Build(self):
         
-        domP = domParser.domParser()
+        domP = msfParser.msfParser()
 	
         #  Import the fake root tree
         importedMSFDocument = minidom.parse(self.FakeRootMSFFileName)
@@ -76,9 +76,8 @@ class MSFBuilder:
 	outFile = open('newDocumentToStoreAsMSF.txt', 'w')
 	domP.PrintDOMTree(outputDoc,outFile,0)
 	
-        # create the domparser
-        domP.GetNodeByNodeName(outputDoc,"Children")
-	childrenNode = domP.OutputNode
+        # create the msfParser
+        childrenNode = domP.GetNodeByNodeName(outputDoc,"Children")
 	     
         # append the imported XML to the Children node
         childrenNode.appendChild(importedVmeNode)

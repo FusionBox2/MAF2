@@ -6,7 +6,7 @@
 
 import vmeUploader
 import os
-import domParser
+import msfParser
 import sys, string
 import unittest
 import shutil
