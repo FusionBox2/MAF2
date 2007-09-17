@@ -46,7 +46,7 @@ class msfParserTest(unittest.TestCase):
         doc = minidom.parse(self.copyFileName)
         rootNode = doc.documentElement
         level = 0
-        self.msfParserInstance.PrintDOMTree(rootNode, outFile, level)
+        self.msfParserInstance.PrintDOMTree(rootNode, outFile)
 
     def testPrintNodesOnly(self):
         nodeName =  "test_volume"
@@ -55,7 +55,6 @@ class msfParserTest(unittest.TestCase):
         outFile = open('sourceOutXMLNodeNames.txt', 'w')
         doc = minidom.parse(self.copyFileName)
         rootNode = doc.documentElement
-        level = 0
         p = self.msfParserInstance
         p.PrintVmeNodes(rootNode,outFile)
         
@@ -64,12 +63,12 @@ class msfParserTest(unittest.TestCase):
         doc = minidom.parse(self.copyFileName)
         rootNode = doc.documentElement
         level = 0
-        self.msfParserInstance.PrintDOMTree(rootNode, outFile, level)
+        self.msfParserInstance.PrintDOMTree(rootNode, outFile)
         # create the clone
         clone = rootNode.cloneNode(True)
         outFile = open('clone.txt', 'w')
         level = 0
-        self.msfParserInstance.PrintDOMTree(clone, outFile, level)
+        self.msfParserInstance.PrintDOMTree(clone, outFile)
         # = difflib.
         self.assertEqual(rootNode.nodeName, clone.nodeName)
         
@@ -84,16 +83,14 @@ class msfParserTest(unittest.TestCase):
         p = self.msfParserInstance
         vme = p.GetVmeNodeById(self.rootNode, 1)
         outFile = open('vmeTestVolumeDOMNode.txt', 'w')
-        level = 0
-        p.PrintDOMTree(vme,outFile,level)
+        p.PrintDOMTree(vme,outFile)
     
     def testPrintVMETagArrayNodeAndSaveToXML(self):
         p = self.msfParserInstance
         vme = p.GetVmeNodeById(self.rootNode, 1)
         tagArray = p.GetVmeTagArrayNode(vme)
         outFile = open('vmeTestVolumeTagArray.txt', 'w')
-        level = 0
-        p.PrintDOMTree(tagArray,outFile,level)
+        p.PrintDOMTree(tagArray,outFile)
         newDoc = minidom.Document()
         newDoc.appendChild(tagArray)
         outFileXML = open('vmeTestVolumeTagArray.xml', 'w')
@@ -123,8 +120,7 @@ class msfParserTest(unittest.TestCase):
         p.RemoveTagsByList(tagArray, [r'Dicom_CT_peakvoltage(kV)'])
         
         outFile = open('afterTagsRemoval.txt', 'w')
-        level = 0
-        p.PrintDOMTree(vme, outFile,level)
+        p.PrintDOMTree(vme, outFile)
             
     def testPickle(self):
         # testing VMEUploaderDownloader serialization for list objects 

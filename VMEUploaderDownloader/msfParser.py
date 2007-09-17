@@ -109,7 +109,7 @@ class msfParser:
     
     def PrintDOMTree(self,parent, outFile):
         level = 0
-        self.PrintDOMTree(self,parent,outFile,level)
+        self.__PrintDOMTreeInternal(parent,outFile,level)
         
     def __PrintDOMTreeInternal(self,parent, outFile, level):  
         self.PrintNode(parent, outFile, level)

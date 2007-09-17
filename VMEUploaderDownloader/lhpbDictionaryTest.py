@@ -4,7 +4,7 @@
 # author: Stefano Perticoni
 #-----------------------------------------------------------------------------
 
-import domParser
+import msfParser
 import sys, string
 import unittest
 import shutil
@@ -15,7 +15,7 @@ class lhpbDictionaryTest(unittest.TestCase):
         self.inFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\msf_test_import_export_VME\testDictionary.txt'
         self.copyFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\msf_test_import_export_VME\testDictionaryCopy.txt'
         # shutil.copy(self.inFileName, self.copyFileName)
-        self.dictionaryInstance = domParser.lhDictionary()
+        self.dictionaryInstance = msfParser.lhDictionary()
         
     def testSave(self):
         testDictionary = ['pippo','pluto','topolino']
@@ -24,14 +24,14 @@ class lhpbDictionaryTest(unittest.TestCase):
         self.dictionaryInstance.Save()
         
     def testLoad(self):
-        newDict = domParser.lhDictionary()
+        newDict = msfParser.lhDictionary()
         newDict.DictionaryFileName = "testSaveDictionary.txt"
         newDict.Load()
         for tag in newDict.DictionaryTagsList:
             print tag
         
     def testPrint(self):
-        newDict = domParser.lhDictionary()
+        newDict = msfParser.lhDictionary()
         newDict.DictionaryFileName = "testSaveDictionary.txt"
         newDict.Load()
         newDict.Print()
