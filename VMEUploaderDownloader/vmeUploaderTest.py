@@ -23,8 +23,9 @@ class vmeUploaderTest(unittest.TestCase):
         print os.getcwd()
         
         upl = vmeUploader.vmeUploader()
-        upl.InputMSFFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\msf_test_import_export_VME\msf_test_import_export_VME.msf'
+        upl.InputMSFDirectory = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\msf_test_import_export_VME'
         upl.DictionaryFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\testDictionaries\testDictionary.txt'
+        upl.OutputFolderName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\Outgoing'
         upl.VmeToExtractID = 1    
         upl.Parse()
         
