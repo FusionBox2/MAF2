@@ -25,7 +25,10 @@ class vmeUploader:
         self.OutputVMEXMLName = "exportedVME.xml"
         self.OutputFolderName = "FolderToUpload"
         
-    def Parse(self):
+    def Upload(self):
+        self.__Parse
+        
+    def __Parse(self):
        
         domP = msfParser.msfParser()
         dict = msfParser.lhpbDictionary()
