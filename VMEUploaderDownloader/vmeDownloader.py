@@ -95,13 +95,7 @@ class MSFBuilder:
         outMSFFile = open(self.OutputMSFFileName, 'w')
         msfOutputDoc.writexml(outMSFFile)
             
-        ## Copy of VME binary file to this directory
-        ## get the file to be copied
-        #fileNameList = domP.GetVMEDataURLList(outVmeNode)
-        #assert(len(fileNameList)  == 1)
-        
-        #os.chdir(self.InputMSFDirectory)
-        #shutil.copy2(fileNameList[0],self.OutputFolderName)
+        shutil.copy2(self.InputVMEBinaryDataFileName,self.OutputMSFFolderName)
         
         print "\nWritten output MSF file " + self.OutputMSFFileName + " in directory " + self.OutputMSFFolderName
         
