@@ -181,6 +181,22 @@ class msfParser:
                             assert(isinstance(attrNode,Node))
                             self.__OutputTagItemNode = node
                         
+    def GetVMEDataURLList(self, inputVme):
+        contents = []
+        self.__GetVMEDataURLListInternal(inputVme, contents)
+        return contents
+        
+    def __GetVMEDataURLListInternal(self, inputVme, contents = []):
+        # <URL>msf_test_import_export_VME.1.vtk</URL>
+        # get node attributes
+        # Walk over any text nodes in the current node.
+        for child in inputVme.childNodes:
+            if child.nodeType == Node.ELEMENT_NODE:
+               print child.nodeName
+               if child.nodeName == "URL":
+                  contents.append(child.childNodes[0].nodeValue)
+            self.__GetVMEDataURLListInternal(child, contents)
+        
         
     def RemoveTagsByList(self, inputVmeTagArrayNode, tagsToBeRemoved):
         # change number of tags

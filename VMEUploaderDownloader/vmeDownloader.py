@@ -4,6 +4,7 @@
 # author: Stefano Perticoni
 #-----------------------------------------------------------------------------
 
+import fileUtilities
 import sys, string
 import msfParser
 import shutil
@@ -47,8 +48,10 @@ class MSFBuilder:
     
     def __init__(self):                       
         self.InputVMEXMLFileName = "No input xml"
+	self.InputVMEBinaryDataFileName = "No vme binary data"
         self.FakeRootMSFFileName = "No fake root specified"
-        self.OutputMSFFileName = "No output specified"
+        self.OutputMSFFolderName = "No output folder specified"
+	self.OutputMSFFileName = "No output file specified"
    
     def Build(self):
         
@@ -58,23 +61,23 @@ class MSFBuilder:
         importedMSFDocument = minidom.parse(self.FakeRootMSFFileName)
         fakeRootNode = importedMSFDocument.documentElement
 	
-	outFile = open('fakeRootNode.txt', 'w')
-	domP.PrintDOMTree(fakeRootNode,outFile,0)
+	#outFile = open('fakeRootNode.txt', 'w')
+	#domP.PrintDOMTree(fakeRootNode,outFile)
        
         # Open the imported VME XML
         importedVMEDocument = minidom.parse(self.InputVMEXMLFileName)
         importedVmeNode = importedVMEDocument.documentElement
 	
-	outFile = open('importedVMENode.txt', 'w')
-	domP.PrintDOMTree(importedVmeNode,outFile,0)
+	# outFile = open('importedVMENode.txt', 'w')
+	# domP.PrintDOMTree(importedVmeNode,outFile)
 	
         # create the output msf containing the fake root with imported vme appended
         msfOutputDoc = minidom.Document()
         msfOutputDoc.appendChild(fakeRootNode)
 	outputDoc = msfOutputDoc.documentElement
 	
-	outFile = open('newDocumentToStoreAsMSF.txt', 'w')
-	domP.PrintDOMTree(outputDoc,outFile,0)
+	# outFile = open('newDocumentToStoreAsMSF.txt', 'w')
+	# domP.PrintDOMTree(outputDoc,outFile)
 	
         # create the msfParser
         childrenNode = domP.GetNodeByNodeName(outputDoc,"Children")
@@ -82,14 +85,31 @@ class MSFBuilder:
         # append the imported XML to the Children node
         childrenNode.appendChild(importedVmeNode)
 	        
+        # create output directory
+        fileUtilities._mkdir(self.OutputMSFFolderName)
+        
+        # save created XML to this directory
+        os.chdir(self.OutputMSFFolderName)
+        
         # write to XML
         outMSFFile = open(self.OutputMSFFileName, 'w')
         msfOutputDoc.writexml(outMSFFile)
-    
-def run(inputVMEXMLFileName, fakeRootMSFFileName,outputMSFFileName):                                            
+            
+        ## Copy of VME binary file to this directory
+        ## get the file to be copied
+        #fileNameList = domP.GetVMEDataURLList(outVmeNode)
+        #assert(len(fileNameList)  == 1)
+        
+        #os.chdir(self.InputMSFDirectory)
+        #shutil.copy2(fileNameList[0],self.OutputFolderName)
+        
+        print "\nWritten output MSF file " + self.OutputMSFFileName + " in directory " + self.OutputMSFFolderName
+        
+def run(inputVMEXMLFileName, fakeRootMSFFileName,outputMSFFolderName,outputMSFFileName):                                            
     msfBuilder = MSFBuilder()
     msfBuilder.InputVMEXMLFileName = inputVMEXMLFileName
     msfBuilder.FakeRootMSFFileName = fakeRootMSFFileName
+    msfBuilder.OutputMSFFolderName = outputMSFFolderName
     msfBuilder.OutputMSFFileName = outputMSFFileName
     msfBuilder.Build()
     

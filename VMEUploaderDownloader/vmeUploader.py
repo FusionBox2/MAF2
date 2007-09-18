@@ -4,11 +4,13 @@
 # author: Stefano Perticoni
 #-----------------------------------------------------------------------------
 
+import fileUtilities
 import sys, string
 import msfParser
 import shutil
 import sets
 import os
+import re
 from xml.dom import minidom
 from xml.dom import Node
 
@@ -17,9 +19,11 @@ class vmeUploader:
     
     def __init__(self):                       
         
-        self.InputMSFFileName = "No input msf"
+        self.InputMSFDirectory = "No input msf"
         self.DictionaryFileName = "No dictionary"
         self.VmeToExtractID = 1    
+        self.OutputVMEXMLName = "exportedVME.xml"
+        self.OutputFolderName = "FolderToUpload"
         
     def Parse(self):
        
@@ -27,11 +31,23 @@ class vmeUploader:
         dict = msfParser.lhpbDictionary()
         dict.DictionaryFileName = self.DictionaryFileName
         dict.Load()
+       
+        # Search the MSF file inside given the given directory
+        os.chdir(self.InputMSFDirectory)
+        files = os.listdir(self.InputMSFDirectory)
+
+        msfFileNameList = []
+        for file in files:
+            if re.search('\\.msf$',file):
+               msfFileNameList.append(file)
+        assert(len(msfFileNameList)  == 1)
         
-        domDocument = minidom.parse(self.InputMSFFileName)
+        msfFileName = msfFileNameList[0]
+        domDocument = minidom.parse(msfFileName)
         msfRootNode = domDocument.documentElement
        
-        print "\ninput MSF: " + self.InputMSFFileName
+        print "\ninput MSF Directory: " + self.InputMSFDirectory
+        print "\ninput MSF filename: " + msfFileName
         print "\nlhdl dictionary: " + self.DictionaryFileName + '\n'
         print "\nExtracting vme with ID: " + str(self.VmeToExtractID) + '\n' 
         """parse the msf extracting tags from the dictionary"""
@@ -40,12 +56,10 @@ class vmeUploader:
         vmeId = self.VmeToExtractID
         
         # get the vme node
-        domP.GetVmeNodeById(rootNode, vmeId)
-        outVmeNode = domP.__OutputVme
+        outVmeNode = domP.GetVmeNodeById(rootNode, vmeId)
         
         # get the tagArray node
-        domP.GetVmeTagArrayNode(outVmeNode)
-        outVmeTagArrayNode = domP.__OutputTagArrayNode
+        outVmeTagArrayNode = domP.GetVmeTagArrayNode(outVmeNode)
         
         # get the tags list
         vmeTagList = domP.PrintTagNames(outVmeTagArrayNode)
@@ -74,19 +88,34 @@ class vmeUploader:
         
         domP.RemoveTagsByList(outVmeTagArrayNode, a)
         
+        # create output directory
+        fileUtilities._mkdir(self.OutputFolderName)
+        
+        # save created XML to this directory
+        os.chdir(self.OutputFolderName)
+        
         newDoc = minidom.Document()
         newDoc.appendChild(outVmeNode)
-        outFileXML = open('exportedVME.xml', 'w')
+        outFileXML = open(self.OutputVMEXMLName, 'w')
         newDoc.writexml(outFileXML)
         
-        print "\nWritten output XML file exportedVME.xml in directory " + os.getcwd()
+        # Copy of VME binary file to this directory
+        # get the file to be copied
+        fileNameList = domP.GetVMEDataURLList(outVmeNode)
+        assert(len(fileNameList)  == 1)
+        
+        os.chdir(self.InputMSFDirectory)
+        shutil.copy2(fileNameList[0],self.OutputFolderName)
+        
+        print "\nWritten output XML file " + self.OutputVMEXMLName + " in directory " + self.OutputFolderName
         
         
-def run(inMSFFileName, vmeToExtractId, inDictionaryFileName):                                            
+def run(inputMSFDirectory, vmeToExtractId, inDictionaryFileName, outputVMEXMLName):                                            
     upl = vmeUploader()
-    upl.InputMSFFileName = inMSFFileName
+    upl.InputMSFDirectory = inputMSFDirectory
     upl.VmeToExtractID = int(vmeToExtractId)
     upl.DictionaryFileName = inDictionaryFileName
+    upl.OutputVMEXMLName = outputVMEXMLName
     upl.Parse()    
 
 def main():

@@ -19,8 +19,13 @@ class vmeDownloaderTest(unittest.TestCase):
         msfBuilder = vmeDownloader.MSFBuilder()
         msfBuilder.InputVMEXMLFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\vmeUploaderTestData\exportedVME.xml'
         msfBuilder.FakeRootMSFFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\applicationData\fakeRoot.xml'
-        msfBuilder.OutputMSFFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\outputMAF.msf'
+        msfBuilder.OutputMSFFileName = r'outputMAF.msf'
+        msfBuilder.OutputMSFFolderName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\Incoming'
         msfBuilder.Build()
+        
+    #def testVMEDownloader(self):
+        #self.assertEqual()
+        
         
 if __name__ == '__main__':
     unittest.main()

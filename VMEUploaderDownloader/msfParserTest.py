@@ -113,6 +113,13 @@ class msfParserTest(unittest.TestCase):
         tagItem = p.GetVmeTagItemNodeByName(tagArray, r'Dicom_CT_peakvoltage(kV)')
         self.assertNotEqual(tagItem,None)
     
+    def testGetVMEDataURLList(self):
+        p = self.msfParserInstance
+        vme = p.GetVmeNodeById(self.rootNode, 1)
+        data = p.GetVMEDataURLList(vme)
+        self.assertEqual(data[0],"msf_test_import_export_VME.1.vtk")
+        self.assertEqual(len(data),1)
+    
     def testRemoveTagsByList(self):
         p = self.msfParserInstance
         vme = p.GetVmeNodeById(self.rootNode, 1)
