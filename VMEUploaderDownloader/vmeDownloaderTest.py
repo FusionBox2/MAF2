@@ -15,8 +15,9 @@ class vmeDownloaderTest(unittest.TestCase):
       
     # def setUp(self):
             
-    def testCreateIncomingDirectory(self):
+    def testCreateIncomingMSFDirectory(self):
         msfBuilder = vmeDownloader.MSFBuilder()
+        msfBuilder.InputVMEBinaryDataFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\msf_test_import_export_VME\msf_test_import_export_VME.1.vtk'
         msfBuilder.InputVMEXMLFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\vmeUploaderTestData\exportedVME.xml'
         msfBuilder.FakeRootMSFFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\applicationData\fakeRoot.xml'
         msfBuilder.OutputMSFFileName = r'outputMAF.msf'
