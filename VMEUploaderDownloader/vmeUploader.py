@@ -113,20 +113,25 @@ class vmeUploader:
         print "\nWritten output XML file " + self.OutputVMEXMLName + " in directory " + self.OutputFolderName
         
         
-def run(inputMSFDirectory, vmeToExtractId, inDictionaryFileName, outputVMEXMLName):                                            
+def run(inputMSFDirectory, vmeToExtractId, inDictionaryFileName, outputFolderName, outputVMEXMLName):                                            
     upl = vmeUploader()
     upl.InputMSFDirectory = inputMSFDirectory
     upl.VmeToExtractID = int(vmeToExtractId)
     upl.DictionaryFileName = inDictionaryFileName
+    upl.OutputFolderName = outputFolderName
     upl.OutputVMEXMLName = outputVMEXMLName
     upl.Parse()    
 
 def main():
     args = sys.argv[1:]
-    if len(args) != 3:
-        print 'usage: python.exe vmeUploader.py infile.msf vmeToExtractId dictionaryFile.txt'
+    if len(args) != 5:
+        print """
+        usage: python.exe vmeUploader.py 
+        inputMSFDirectory vmeToExtractId inputDictionaryFile.txt
+        outputFolderName outputVMEXMLName.xml
+        """
         sys.exit(-1)
-    run(args[0],args[1],args[2])
+    run(args[0],args[1],args[2],args[3],[4])
 
 
 if __name__ == '__main__':

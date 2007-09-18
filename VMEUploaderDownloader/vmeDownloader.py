@@ -99,8 +99,9 @@ class MSFBuilder:
         
         print "\nWritten output MSF file " + self.OutputMSFFileName + " in directory " + self.OutputMSFFolderName
         
-def run(inputVMEXMLFileName, fakeRootMSFFileName,outputMSFFolderName,outputMSFFileName):                                            
+def run(inputVMEXMLFileName, inputVMEBinaryDataFileName, fakeRootMSFFileName,outputMSFFolderName,outputMSFFileName):                                            
     msfBuilder = MSFBuilder()
+    msfBuilder.InputVMEBinaryDataFileName = inputVMEBinaryDataFileName
     msfBuilder.InputVMEXMLFileName = inputVMEXMLFileName
     msfBuilder.FakeRootMSFFileName = fakeRootMSFFileName
     msfBuilder.OutputMSFFolderName = outputMSFFolderName
@@ -109,10 +110,13 @@ def run(inputVMEXMLFileName, fakeRootMSFFileName,outputMSFFolderName,outputMSFFi
     
 def main():
     args = sys.argv[1:]
-    if len(args) != 2:
-        print 'usage: python.exe vmeDownloader.py inputVMEFile.xml inputFakeRoot.xml outputMSFName.msf'
+    if len(args) != 5:
+        print """
+	usage: python.exe vmeDownloader.py 
+	inputVMEXMLFile.xml inputVMEBinaryDataFileName inputFakeRoot.xml 
+	outputMSFFolderName outputMSFFileName.msf"""
         sys.exit(-1)
-    run(args[0],args[1],args[2])
+    run(args[0],args[1],args[2],args[3],args[4])
     
 
 
