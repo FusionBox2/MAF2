@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-09-18 15:20:27 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2007-09-18 15:55:40 $
+  Version:   $Revision: 1.9 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -48,6 +48,7 @@
 
 #include "mafOpImporterMSF.h"
 #include "mafOpImporterExternalFile.h"
+#include "mafOpOpenExternalFile.h"
 #include "mmoBmpExporter.h"
 #include "mmoCreateGroup.h"
 #include "mmoCreateMeter.h"
@@ -230,7 +231,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoBuildHierarchy("Make hierarchical"),"Fuse");
   m_Logic->Plug(new lhpOpBonemat("Bonemat"),"Modify");
   m_Logic->Plug(new medOpIterativeRegistration("Iterative Registration"),"Modify");
-
+  m_Logic->Plug(new mafOpOpenExternalFile("Open external file"),"Modify");
   
   
   
