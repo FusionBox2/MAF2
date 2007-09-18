@@ -19,7 +19,7 @@ class vmeUploaderTest(unittest.TestCase):
         # shutil.copy(self.inFileName, self.copyFileName)
         
     
-    def testParse(self):
+    def testCreateOutgoingDirectoryAndUpload(self):
         print os.getcwd()
         
         upl = vmeUploader.vmeUploader()
@@ -27,7 +27,7 @@ class vmeUploaderTest(unittest.TestCase):
         upl.DictionaryFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\testDictionaries\testDictionary.txt'
         upl.OutputFolderName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\Outgoing'
         upl.VmeToExtractID = 1    
-        upl.Parse()
+        upl.Upload()
         
 if __name__ == '__main__':
     unittest.main()
