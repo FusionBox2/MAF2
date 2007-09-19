@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-09-18 15:55:40 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2007-09-19 07:59:44 $
+  Version:   $Revision: 1.10 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -186,7 +186,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoVRMLImporter("Geometry VRML "));
   m_Logic->Plug(new mmoINPImporter("Geometry INP/INP_AF "));
   m_Logic->Plug(new mmoMTRImporter("Geometry MTR "));
-  m_Logic->Plug(new mafOpImporterExternalFile("External File"));
+  m_Logic->Plug(new mafOpImporterExternalFile("External data"));
 
   //-------------------------------------------------------------
 
@@ -231,7 +231,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoBuildHierarchy("Make hierarchical"),"Fuse");
   m_Logic->Plug(new lhpOpBonemat("Bonemat"),"Modify");
   m_Logic->Plug(new medOpIterativeRegistration("Iterative Registration"),"Modify");
-  m_Logic->Plug(new mafOpOpenExternalFile("Open external file"),"Modify");
+  m_Logic->Plug(new mafOpOpenExternalFile("Open with external program"),"Show");
   
   
   
