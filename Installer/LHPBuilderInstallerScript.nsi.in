@@ -73,12 +73,12 @@ Section "create product directory structure" SEC01
   File "@LHPBUILDER_INSTALLER_DIR_WIN@\dicom3.dic"
   SetOutPath "$INSTDIR\Layout"
   File "@LHPBUILDER_INSTALLER_DIR_WIN@\layout.mly"
-  SetOutPath "$INSTDIR\Config"
   
   ; vme uploader downloader stuff: for the moment this is dependent on @LHPBUILDER_INSTALLER_DIR_WIN@...
   ; should we create another variable and put it in cmake GUI?	
   CreateDirectory "$INSTDIR\VMEUploaderDownloader"
-  CopyFiles "@LHPBUILDER_INSTALLER_DIR_WIN@\..\VMEUploaderDownloader\*.*" "$INSTDIR\VMEUploaderDownloader"
+  SetOutPath "$INSTDIR\VMEUploaderDownloader"
+  File /R  "@LHPBUILDER_INSTALLER_DIR_WIN@\..\VMEUploaderDownloader\"
 
 SectionEnd
 
