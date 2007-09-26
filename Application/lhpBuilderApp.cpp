@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-09-19 07:59:44 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2007-09-26 08:50:49 $
+  Version:   $Revision: 1.11 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -119,6 +119,7 @@
 #include "mafViewSlice.h"
 #include "mafViewImageCompound.h"
 #include "mafViewIntGraph.h"
+#include "medViewSlicer.h"
 
 //--------------------------------------------------------------------------------
 // Create the Application
@@ -281,6 +282,11 @@ bool lhpBuilderApp::OnInit()
 
   mafViewIntGraph *vgraph = new mafViewIntGraph("Biomechanical graph");
   m_Logic->Plug(vgraph);
+
+  medViewSlicer *slicerView = new medViewSlicer("Slicer");
+  slicerView->PackageView();
+  m_Logic->Plug(slicerView);
+
   //-------------------------------------------------------------
 
   wxBitmap splashBitmap;
