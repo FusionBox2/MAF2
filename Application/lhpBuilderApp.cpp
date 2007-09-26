@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-09-26 08:50:49 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2007-09-26 13:19:18 $
+  Version:   $Revision: 1.12 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -53,6 +53,7 @@
 #include "mmoCreateGroup.h"
 #include "mmoCreateMeter.h"
 #include "medOpCreateWrappedMeter.h"
+#include "mmoCreateSlicer.h"
 #include "mmoCreateRefSys.h"
 #include "mmoFilterSurface.h"
 #include "mmoEditMetadata.h"
@@ -206,6 +207,7 @@ bool lhpBuilderApp::OnInit()
   //------------------------- Operations -------------------------
   m_Logic->Plug(new mmoCreateGroup("Group"),"Create");
 	m_Logic->Plug(new mmoCreateRefSys("Refsys"),"Create");
+  m_Logic->Plug(new mmoCreateSlicer("Slicer"),"Create");
 	m_Logic->Plug(new mmoCreateSurfaceParametric("Parametric Surface"),"Create");
 	m_Logic->Plug(new mmoAddLandmark("Add Landmark \tCtrl+A"),"Create");
   m_Logic->Plug(new medOpFreezeVME("Freeze VME"),"Create");
