@@ -24,6 +24,10 @@ class XmlUploadDownloadTest(unittest.TestCase):
         #copy
         testFileOLD = testFile + "OLD"
         #os.stat(testFile)
+        try:
+            os.remove(testFileOLD)
+        except:
+            pass
         os.renames(testFile, testFileOLD)
         #commands.getoutput("mv %s %s" % (testFile, testFileOLD))
 
