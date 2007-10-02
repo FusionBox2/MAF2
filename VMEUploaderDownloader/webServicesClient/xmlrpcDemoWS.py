@@ -11,8 +11,13 @@ import xml.dom.minidom as xd
 class xmlrpc_demoWS:
     """"""
 
-    def __init__(self, **kw):
+    def __init__(self):
         """"""
+
+    def post_multipart(self, bod='search', url='', username='', password='', **kw):
+        """
+        Return the server's response page.
+        """
 
         #xml request
         self.xmlUpload = \
@@ -57,11 +62,6 @@ class xmlrpc_demoWS:
        </params>
      </methodCall>''' % (kw['filename'])
 
-
-    def post_multipart(self, bod='search', url='', username='', password=''):
-        """
-        Return the server's response page.
-        """
         wh_file = ''
 
         if bod == 'xmlupload':
@@ -117,6 +117,49 @@ class xmlrpc_demoWS:
                 return res
             else:
                 return True
+
+    def run(self, command, filename):
+        """"""
+
+        args = {}
+        args['comment'] = ''
+    
+        # username and password of a test user
+        username = 'portal_admin'
+        password = 'r1zz0l1'
+    
+        #url = 'http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository'
+        url = 'http://devel.fec.cineca.it:12680/town/Members/portal_admin/test-lhp2'
+    
+        if command == 'xmlupload':
+            args['download'] = ''
+            f = file(filename,'rb')
+            args['upload'] = f.read()
+            args['id'] = f.name
+            args['title'] = f.name
+            args['description'] = f.name
+            args['filename'] = ''
+            f.close()
+        elif command == 'xmldownload':
+            args['id'] = ''
+            args['title'] = ''
+            args['description'] = ''
+            args['upload'] = ''
+            args['filename'] = ''
+            args['download'] = filename
+        elif command == 'delete':
+            args['id'] = ''
+            args['title'] = ''
+            args['description'] = ''
+            args['upload'] = ''
+            args['filename'] = filename
+            args['download'] = ''
+        else:
+            print 'Error :\n' + usage_msg
+            sys.exit(1)
+
+        #ws = xmlrpc_demoWS(**args)
+        return self.post_multipart(command, url, username, password, **args)
 
 if __name__ == '__main__':
     import sys

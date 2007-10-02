@@ -1,21 +1,25 @@
 import unittest
-#from MtomDownload import MtomDownload
+import xmlrpcDemoWS
 import os, commands, md5
 
 class XmlUploadDownloadTest(unittest.TestCase):
     """"""
     def testUploadDownload(self):
+
+        ws = xmlrpcDemoWS.xmlrpc_demoWS()
         testFile = "testXml.msf"
 
         #delete
         try:
-            commands.getoutput("./xmlrpcDemoWS.py delete %s" % (testFile))
+            ws.run('delete', testFile)
+            #commands.getoutput("./xmlrpcDemoWS.py delete %s" % (testFile))
         except:
             pass
 
         #upload
-        out = commands.getoutput("./xmlrpcDemoWS.py xmlupload %s" % (testFile))
-        self.assertEqual(out, 'True')
+        out = ws.run('xmlupload', testFile)
+        #out = commands.getoutput("./xmlrpcDemoWS.py xmlupload %s" % (testFile))
+        self.assertEqual(out, True)
 
         #copy
         testFileOLD = testFile + "OLD"
@@ -23,8 +27,9 @@ class XmlUploadDownloadTest(unittest.TestCase):
         commands.getoutput("mv %s %s" % (testFile, testFileOLD))
 
         #download
-        out = commands.getoutput("./xmlrpcDemoWS.py xmldownload %s" % (testFile))
-        self.assertEqual(out, 'True')
+        out = ws.run('xmldownload', testFile)
+        #out = commands.getoutput("./xmlrpcDemoWS.py xmldownload %s" % (testFile))
+        self.assertEqual(out, True)
 
         #md5
         f1 = open(testFile, 'rb')
