@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-10-02 12:08:26 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2007-10-02 16:45:25 $
+  Version:   $Revision: 1.14 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -19,11 +19,11 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
+#include "lhpBuilderApp.h"
+
 #include <wx/datetime.h>
 #include <wx/config.h>
-#include <vtkTimerLog.h>
 
-#include "lhpBuilderApp.h"
 #include "mafDecl.h"
 #include "mafVMEFactory.h"
 #include "mafPics.h"
@@ -121,6 +121,8 @@
 #include "mafViewImageCompound.h"
 #include "mafViewIntGraph.h"
 #include "medViewSlicer.h"
+
+#include <vtkTimerLog.h>
 
 //--------------------------------------------------------------------------------
 // Create the Application
