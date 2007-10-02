@@ -23,8 +23,9 @@ class XmlUploadDownloadTest(unittest.TestCase):
 
         #copy
         testFileOLD = testFile + "OLD"
-        os.stat(testFile)
-        commands.getoutput("mv %s %s" % (testFile, testFileOLD))
+        #os.stat(testFile)
+        os.renames(testFile, testFileOLD)
+        #commands.getoutput("mv %s %s" % (testFile, testFileOLD))
 
         #download
         out = ws.run('xmldownload', testFile)
