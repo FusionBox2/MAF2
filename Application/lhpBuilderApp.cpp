@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-09-26 13:19:18 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2007-10-02 12:08:26 $
+  Version:   $Revision: 1.13 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -234,8 +234,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoBuildHierarchy("Make hierarchical"),"Fuse");
   m_Logic->Plug(new lhpOpBonemat("Bonemat"),"Modify");
   m_Logic->Plug(new medOpIterativeRegistration("Iterative Registration"),"Modify");
-  m_Logic->Plug(new mafOpOpenExternalFile("Open with external program"),"Show");
-  
+  m_Logic->Plug(new mafOpOpenExternalFile("Open with external program"),"Show");  
   
   
   
@@ -257,7 +256,7 @@ bool lhpBuilderApp::OnInit()
   vdrr->PlugVisualPipe("mafVMEVolumeGray","medPipeVolumeDRR",MUTEX);
   m_Logic->Plug(vdrr);
 
-  mafViewVTK *graph = new mafViewVTK("Analog Graph");
+  mafViewVTK *graph = new mafViewVTK("Analog Graph", CAMERA_PERSPECTIVE, false);
   graph->PlugVisualPipe("medVMEEmg", "medPipeGraph");
   m_Logic->Plug(graph);
 
