@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-10-02 16:45:25 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2007-10-05 09:28:47 $
+  Version:   $Revision: 1.15 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -121,6 +121,9 @@
 #include "mafViewImageCompound.h"
 #include "mafViewIntGraph.h"
 #include "medViewSlicer.h"
+
+//temporary for testing
+#include "mafViewSingleSliceCompound.h"
 
 #include <vtkTimerLog.h>
 
@@ -289,6 +292,11 @@ bool lhpBuilderApp::OnInit()
   medViewSlicer *slicerView = new medViewSlicer("Slicer");
   slicerView->PackageView();
   m_Logic->Plug(slicerView);
+
+  //temporary for testing
+  mafViewSingleSliceCompound *sliceView = new mafViewSingleSliceCompound("Test Slice");
+  sliceView->PackageView();
+  m_Logic->Plug(sliceView);
 
   //-------------------------------------------------------------
 
