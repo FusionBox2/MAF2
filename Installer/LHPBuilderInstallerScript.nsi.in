@@ -76,6 +76,12 @@ Section "create product directory structure" SEC01
   
   ; vme uploader downloader stuff: for the moment this is dependent on @LHPBUILDER_INSTALLER_DIR_WIN@...
   ; should we create another variable and put it in cmake GUI?	
+  CreateDirectory "$INSTDIR\ASCIIParser"
+  SetOutPath "$INSTDIR\ASCIIParser"
+  File /R  "@LHPBUILDER_INSTALLER_DIR_WIN@\..\ASCIIParser\"
+  
+  ; ASCII parser stuff: for the moment this is dependent on @LHPBUILDER_INSTALLER_DIR_WIN@...
+  ; should we create another variable and put it in cmake GUI?	
   CreateDirectory "$INSTDIR\VMEUploaderDownloader"
   SetOutPath "$INSTDIR\VMEUploaderDownloader"
   File /R  "@LHPBUILDER_INSTALLER_DIR_WIN@\..\VMEUploaderDownloader\"
@@ -127,6 +133,7 @@ Section Uninstall
   Delete "$SMPROGRAMS\b3c_software\lhpBuilder\lhpBuilder.lnk"
 
   RMDir /R "$INSTDIR\VMEUploaderDownloader"
+  RMDir /R "$INSTDIR\ASCIIParser"
   RMDir "$INSTDIR\Splash"
   RMDir "$INSTDIR\Layout"
   RMDir "$INSTDIR\Config\Dictionary"
