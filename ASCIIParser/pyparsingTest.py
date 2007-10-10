@@ -173,16 +173,102 @@ ET,3,187
             print str(lineNum) + " > " + line
 
             # start grammar
-            elementType = "ET," + delimitedList(Word( nums ))
+            elementTypeLine = "ET," + delimitedList(Word( nums ))
             # end grammar
             
             try: 
-                print elementType.parseString( line )
+                print elementTypeLine.parseString( line )
             except ParseException:
                 print "cannot parse line " + str(lineNum)
 
             lineNum += 1 
+            
+    def testReadElementsDeclaration(self):
+        elementTypeData = """
+!!!SEZIONE DICHIARAZIONE ELEMENTI
+!!!la dichiarazione di elementi avviene a gruppi (in questo caso sono 2). Ogni gruppo si puo` distinguere per "element type", "real constant set", "material"
+!!HMNAME COMP 
+!!   2-2-3 "TYPE2-REAL3-MAT2"
+!!HMCOLOR COMP 
+!!   2-2-3 1
+
+!!!le righe seguenti definiscono il gruppo di elementi che hanno (type=2, material=2 real constant set=3) 
+!!!NB a noi per ora (e per un po`...) non interessera` la distinzione per "real constant set", solo quelle per element type e per material. 
+!!!Al momento consideriamo solo quelle per material, visto che le mesh hanno tipo di elemento uiniforme (tutti tetra 10, oppure tutti hexa 8 ecc.) 
+!!!riga TYPE: ci interessa solo l'informazione "MAT,2", che dice che tutti gli elementi del gruppo hanno material card=2 (quella definita prima) 
+!!!riga ESYS: definisce il sistema di riferimento dell'elemento. analogamente a quanto detto per i nodi, ci poniamo il problema di altri sist di rif possibili o per ora no?
+!!!riga EN: definisce il numero elemento e la connettivita`. colonna1(string EN):dichiara che stiamo creando un elemento colonna2(intero): numero dell'elemento colonna3-->10: connettivita`, ovvero lista 
+!!!dei nodi che compongono l'elemento (sono ordinati, in maniera nota per ciascun tipo di elemento in ANSYS...non serve vero?)
+!!!riga EMORE: continuazione della definizione della connettivita`, poiche` il formato inp di ANSYS va a capo dopo 10 campi-colonna. In questo caso (elementi tetra 10) rimangono due nodi da listare
+!!!NB ci saranno tante righe EN (ed eventualmente EMORE) quanti sono gli elementi contenuti nel gruppo (solo uno in questo caso) 
+!!!NB a seconda del numero di nodi per ogni elemento per ogni riga EN ci potranno essere 0 (tetra 4, hexa8),1 (tetra 10),oppure 2 (hexa20) righe EMORE  
+TYPE, 2  $ MAT, 2  $ REAL, 3
+ESYS, 0
+EN,       2,       3,       1,       2,       4,       7,       6,       9,      12
+EMORE,       8,      10
+!!!!le 5 righe seguenti sono comandi di selezione e raggruppamento di ANSYS, vanno ignorati nell'import, sono da riconsiderare per l'export 
+ESEL, S, TYPE,,2
+ESEL, R, MAT,,2
+ESEL, R, REAL,,3
+CM, TYPE2-REAL3-MAT2, ELEM
+ESEL, ALL
+
+!!!dichiarazione secondo gruppo elementi, analogo al primo...
+
+!!HMNAME COMP 
+!!   3-3-3 "TYPE3-REAL3-MAT3"
+!!HMCOLOR COMP 
+!!   3-3-3 1
+TYPE, 3  $ MAT, 3  $ REAL, 3
+ESYS, 0
+EN,       1,       5,       2,       4,       3,      11,      10,      14,      13
+EMORE,       9,      12
+ESEL, S, TYPE,,3
+ESEL, R, MAT,,3
+ESEL, R, REAL,,3
+CM, TYPE3-REAL3-MAT3, ELEM
+ESEL, ALL
+"""
+          
+        lines = elementTypeData.splitlines()
         
+        # print elementTypeData
+        lineNum = 0
+        for line in lines:
+            print str(lineNum) + " > " + line
+
+            # start grammar
+            elementHeader = "TYPE," + Word(nums)
+            elementInfo = "$" + Word( alphas) + "," + Word( nums)
+            elementLine = elementHeader + elementInfo + elementInfo
+            
+            connectivityHeader  = "EN,"
+            connectivityId = delimitedList(Word(nums))
+            connectivityLine = connectivityHeader + connectivityId
+            
+            moreConnectivityHeader  = "EMORE,"
+            moreConnectivityId = delimitedList(Word(nums))
+            moreConnectivityLine = moreConnectivityHeader + moreConnectivityId 
+            # end grammar
+            
+            try: 
+                print elementLine.parseString( line )
+            except ParseException:
+                print "cannot parse line " + str(lineNum)
+            
+            try: 
+                print connectivityLine.parseString( line )
+            except ParseException:
+                print "cannot parse line " + str(lineNum)
+            
+            try: 
+                print moreConnectivityLine.parseString( line )
+            except ParseException:
+                print "cannot parse line " + str(lineNum)
+            
+            
+            lineNum += 1 
+  
 if __name__ == '__main__':
     unittest.main()
     
