@@ -1,7 +1,7 @@
 #-----------------------------------------------------------------------------
 # BEWARE!!! This is mostly a prototype!!!
 # code is changing very fast so don't rely on it :P
-# author: Stefano Perticoni
+# author: Stefano Perticoni <s.perticoni@scsolutions.it>
 #-----------------------------------------------------------------------------
 
 import os
@@ -155,6 +155,34 @@ MPDATA,NUXY,3,1,            0.33
            
             lineNum += 1 
             
+         
+    def testReadElementType(self):
+        elementTypeData = """
+!!!SEZIONE DICHIARAZIONE ELEMENT TYPE
+!!!dichiara quanti "tipi" di elementi sono presenti NB ci possono essere diversi ET uguali, come i due qua sotto...)
+!!!tre colonne, la prima (string) dice che sto creando un "element type", la seconda (intero) assegna un numero, la terza (intero) dice che tipo di elemento del DB ansys e` (ad es, 187 e` una particolare formulazione di tetra a 10 nodi) 
+!!!NB io nell'import ignorerei queste righe, sono da considerare nell'export, ma sto pensando a un modo di evitare dichirazioni ridondanti come quella qua sotto
+ET,2,187
+ET,3,187
+"""
+        lines = elementTypeData.splitlines()
+        
+        # print elementTypeData
+        lineNum = 0
+        for line in lines:
+            print str(lineNum) + " > " + line
+
+            # start grammar
+            elementType = "ET," + delimitedList(Word( nums ))
+            # end grammar
+            
+            try: 
+                print elementType.parseString( line )
+            except ParseException:
+                print "cannot parse line " + str(lineNum)
+
+            lineNum += 1 
+        
 if __name__ == '__main__':
     unittest.main()
     
