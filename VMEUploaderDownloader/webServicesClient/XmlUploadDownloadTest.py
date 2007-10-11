@@ -12,7 +12,6 @@ class XmlUploadDownloadTest(unittest.TestCase):
         #delete
         try:
             ws.run('delete', testFile)
-            #commands.getoutput("./xmlrpcDemoWS.py delete %s" % (testFile))
         except:
             pass
 
