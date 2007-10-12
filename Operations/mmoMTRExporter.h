@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoMTRExporter.h,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-10-12 10:23:14 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -17,7 +17,7 @@
 // Include :
 //----------------------------------------------------------------------------
 #include "mafOp.h"
-
+#include <iostream>
 
 //----------------------------------------------------------------------------
 // forward references :
@@ -25,6 +25,7 @@
 class mafEvent;
 class mafVMEGroup;
 class mafVME;
+class mafVMELandmarkCloud;
 
 //----------------------------------------------------------------------------
 // mmoMTRExporter :
@@ -50,10 +51,10 @@ public:
   void SetFileName(const char *file_name) {m_File = file_name;};
 
 protected:
+  void ExportingTraverse(std::ostream &out, const char *dirName, mafNode* node);
+  void ExportOneCloud(std::ostream &out, mafVMELandmarkCloud* cloud);
   wxString m_File;
   wxString m_FileDir;
   mafVME   *m_Vme; 
-  bool     *m_State;
-
 };
 #endif

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoINPExporter.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-10-12 10:23:30 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -45,9 +45,9 @@ mmoINPExporter::mmoINPExporter(const wxString &label) : mafOp(label)
   m_OpType        = OPTYPE_EXPORTER;
   m_Canundo       = true;
   m_File          = "";
-  m_Binary        = 1;
+  m_Binary        = 0;
   m_ABSMatrixFlag = 1;
-  m_FileDir       = mafGetApplicationDirectory().c_str();
+  m_FileDir       = "";
 }
 //----------------------------------------------------------------------------
 mmoINPExporter::~mmoINPExporter()
@@ -58,7 +58,7 @@ mmoINPExporter::~mmoINPExporter()
 bool mmoINPExporter::Accept(mafNode *node)
 //----------------------------------------------------------------------------
 {
-  return (node && ((mafVME *)node)->GetOutput()->IsMAFType(mafVMEOutputSurface));
+  return (node != NULL);
 }
 //----------------------------------------------------------------------------
 // constants
@@ -77,8 +77,8 @@ void mmoINPExporter::OpRun()
 
   m_Gui = new mmgGui(this);
   //m_Gui->FileSave(ID_CHOOSE_FILENAME,"stl file", &m_File, wildc,"Save As...");
-  m_Gui->Label("file type",true);
-  m_Gui->Bool(ID_STL_BINARY_FILE,"binary",&m_Binary,0);
+  //m_Gui->Label("file type",true);
+  //m_Gui->Bool(ID_STL_BINARY_FILE,"binary",&m_Binary,0);
   m_Gui->Label("absolute matrix",true);
   m_Gui->Bool(ID_ABS_MATRIX_TO_STL,"apply",&m_ABSMatrixFlag,0);
   m_Gui->OkCancel();
@@ -98,19 +98,35 @@ void mmoINPExporter::OnEvent(mafEventBase *maf_event)
     {
     case wxOK:
       {
-        mafString FileDir = mafGetApplicationDirectory().c_str();
-        FileDir << "\\";
-        FileDir << m_Input->GetName();
-        FileDir << ".inp";
-        mafString wildc = "INP (*.inp)|*.inp";
-        m_File = mafGetSaveFile(FileDir.GetCStr(), wildc.GetCStr()).c_str();
-        if(m_File!="")
+        if(mafVME::SafeDownCast(m_Input)->GetOutput()->IsMAFType(mafVMEOutputSurface))
         {
-          ExportSurface();
-          OpStop(OP_RUN_OK);
+          mafString FileDir = mafGetApplicationDirectory().c_str();
+          FileDir << "\\";
+          FileDir << m_Input->GetName();
+          FileDir << ".inp";
+          mafString wildc = "INP (*.inp)|*.inp";
+          m_File = mafGetSaveFile(FileDir.GetCStr(), wildc.GetCStr()).c_str();
+          if(m_File!="")
+          {
+            ExportSurface();
+            OpStop(OP_RUN_OK);
+          }
+          else
+            OpStop(OP_RUN_CANCEL);
         }
         else
-          OpStop(OP_RUN_CANCEL);
+        {
+          wxString f = mafGetDirName(mafGetApplicationDirectory().c_str()).c_str();
+
+          if(f != "") 
+          {
+            m_FileDir = f;
+            ExportSurface();
+            OpStop(OP_RUN_OK);
+          }
+          else
+            OpStop(OP_RUN_CANCEL);
+        }
       }
       break;
     case ID_CHOOSE_FILENAME:
@@ -132,11 +148,12 @@ void mmoINPExporter::OnEvent(mafEventBase *maf_event)
   HideGui();
   mafEventMacro(mafEvent(this,result));        
 }*/
-//----------------------------------------------------------------------------
-void mmoINPExporter::ExportSurface()
-//----------------------------------------------------------------------------
+
+
+
+void mmoINPExporter::ExportOneSurface(const char *filename, mafVMEOutputSurface* surf)
 {
-  mafVMEOutputSurface *out_surface = mafVMEOutputSurface::SafeDownCast(((mafVME *)m_Input)->GetOutput());
+  mafVMEOutputSurface *out_surface = surf;
   out_surface->Update();
 
   vtkMAFSmartPointer<vtkTriangleFilter>triangles;
@@ -150,7 +167,7 @@ void mmoINPExporter::ExportSurface()
 
   vtkMAFSmartPointer<mafINPWriter> writer;
   mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR,writer));
-  writer->SetFileName(m_File.GetCStr());
+  writer->SetFileName(filename);
   if(this->m_ABSMatrixFlag)
     writer->SetInput(v_tpdf->GetOutput());
   else
@@ -160,6 +177,38 @@ void mmoINPExporter::ExportSurface()
   else
     writer->SetFileTypeToASCII();
   writer->Update();
+}
+
+void mmoINPExporter::ExportingTraverse(const char *dirName, mafNode* node)
+{
+  if(mafVME::SafeDownCast(node)->GetOutput()->IsMAFType(mafVMEOutputSurface))
+  {
+    wxString fn = dirName;
+    fn += "\\";
+    fn += node->GetName();
+    fn += ".inp";
+    ExportOneSurface(fn.c_str(), mafVMEOutputSurface::SafeDownCast(mafVME::SafeDownCast(node)->GetOutput()));
+    return;
+  }
+  int numberChildren = node->GetNumberOfChildren();
+  for (int i= 0; i< numberChildren; i++)
+  {
+    mafNode *child = node->GetChild(i);
+    ExportingTraverse(dirName, child);
+  }
+}
+//----------------------------------------------------------------------------
+void mmoINPExporter::ExportSurface()
+//----------------------------------------------------------------------------
+{
+  if(mafVME::SafeDownCast(m_Input)->GetOutput()->IsMAFType(mafVMEOutputSurface))
+  {
+    ExportOneSurface(m_File.GetCStr(), mafVMEOutputSurface::SafeDownCast(mafVME::SafeDownCast(m_Input)->GetOutput()));
+  }
+  else
+  {
+    ExportingTraverse(m_FileDir.GetCStr(), m_Input);
+  }
 }
 //----------------------------------------------------------------------------
 mafOp* mmoINPExporter::Copy()   

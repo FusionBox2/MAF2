@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoINPExporter.h,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-10-12 10:23:30 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -18,11 +18,14 @@
 //----------------------------------------------------------------------------
 #include "mafEvent.h"
 #include "mafOp.h"
+#include <iostream>
+
 
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
 class mafNode;
+class mafVMEOutputSurface;
 
 //----------------------------------------------------------------------------
 // mmoINPExporter :
@@ -62,6 +65,8 @@ public:
 protected:
   /** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
   //void OpStop(int result);
+  void ExportingTraverse(const char *dirName, mafNode* node);
+  void ExportOneSurface(const char *filename, mafVMEOutputSurface* surf);
 
   mafString  m_File;
   mafString  m_FileDir;

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoMTRExporter.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-10-12 10:23:14 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -51,9 +51,8 @@ mmoMTRExporter::mmoMTRExporter(const wxString& label) : mafOp(label)
   m_OpType  = OPTYPE_EXPORTER;
   m_Canundo = true;
   m_File    = "";
+  m_FileDir = "";
   m_Input   = NULL;
-  m_State   = NULL;
-
 }
 //----------------------------------------------------------------------------
 mmoMTRExporter::~mmoMTRExporter() 
@@ -67,37 +66,154 @@ bool mmoMTRExporter::Accept(mafNode *node)
 { 
   if(node == NULL)
     return false;
-  if(!node->IsMAFType(mafVMERoot) && node->IsMAFType(mafVMELandmarkCloud))
-    return true;
 
-  for(int i=0; i<node->GetNumberOfChildren(); i++)
-  {
-    if(node->GetChild(i)->IsMAFType(mafVMELandmarkCloud)) return true;
-  }
-
-  return false;
+  return true;
 }
 //----------------------------------------------------------------------------
 void mmoMTRExporter::OpRun()
 //----------------------------------------------------------------------------
 {
+  int result = OP_RUN_CANCEL;
+
   assert(m_Input);
   wxString proposed = (mafGetApplicationDirectory() + "/Data/External/").c_str();
-  proposed += m_Input->GetName();
-  proposed += ".mtr";
-  wxString wildc = "FARO MTR file (*.mtr)|*.mtr";
-  wxString f = mafGetSaveFile(proposed,wildc).c_str(); 
 
-  int result = OP_RUN_CANCEL;
-  if(f != "") 
+  if(m_Input->IsMAFType(mafVMELandmarkCloud))
   {
-    m_File = f;
-    ExportLandmark();
-    result = OP_RUN_OK;
+    proposed += m_Input->GetName();
+    proposed += ".mtr";
+    wxString wildc = "FARO MTR file (*.mtr)|*.mtr";
+
+    wxString f = mafGetSaveFile(proposed,wildc).c_str(); 
+
+    if(f != "") 
+    {
+      m_File = f;
+      ExportLandmark();
+      result = OP_RUN_OK;
+    }
+  }
+  else
+  {
+    wxMessageDialog dialog(mafGetFrame(), _("Do you want to create separate files?"),
+      _("Options"), wxYES_NO|wxYES_DEFAULT);
+    if(dialog.ShowModal() == wxID_NO)
+    {
+
+      proposed += m_Input->GetName();
+      proposed += ".mtr";
+      wxString wildc = "FARO MTR file (*.mtr)|*.mtr";
+      wxString f = mafGetSaveFile(proposed,wildc).c_str(); 
+
+      if(f != "") 
+      {
+        m_File = f;
+        ExportLandmark();
+        result = OP_RUN_OK;
+      }
+    }
+    else
+    {
+      wxString f = mafGetDirName(proposed).c_str();
+
+      if(f != "") 
+      {
+        m_FileDir = f;
+        ExportLandmark();
+        result = OP_RUN_OK;
+      }
+    }
   }
   mafEventMacro(mafEvent(this,result));
 }
 
+
+void mmoMTRExporter::ExportOneCloud(std::ostream &out, mafVMELandmarkCloud* cloud)
+{
+  std::vector<mafTimeStamp> timeStamps;
+  mafVME *vmeTemp = mafVME::SafeDownCast(m_Input);
+  cloud->GetLocalTimeStamps(timeStamps);
+
+  int numberLandmark = cloud->GetNumberOfLandmarks();
+
+  // if cloud is closed , open it
+  bool initState = cloud->IsOpen();
+  if(!initState)
+  {
+    cloud->Open();
+  }
+
+  // pick up the values and write them into the file
+  if(timeStamps.size() != 0)
+  {
+    for (int index = 0; index < timeStamps.size(); index++)
+    {
+      for(int j=0; j < numberLandmark; j++)
+      {
+        char strng[256];
+        wxString name = cloud->GetLandmarkName(j);
+        const char* nameLandmark = (name);                                        
+
+        mafVMELandmark *landmark = cloud->GetLandmark(nameLandmark);
+
+        double xLandmark, yLandmark, zLandmark;
+        landmark->GetPoint(xLandmark,yLandmark,zLandmark,timeStamps[index]);
+        sprintf(strng, "%d      %.6f      %.6f      %.6f      %.6f      %.6f      %.6f\n", j + 1, xLandmark, yLandmark, zLandmark, 0.0, 0.0, 0.0);
+        out << strng;
+      }
+    }
+  }
+  else
+  {
+    for(int j=0; j < numberLandmark; j++)
+    {
+      char strng[256];
+      wxString name = cloud->GetLandmarkName(j);
+      const char* nameLandmark = (name);                                        
+
+      mafVMELandmark *landmark = cloud->GetLandmark(nameLandmark);
+
+      double xLandmark, yLandmark, zLandmark;
+      landmark->GetPoint(xLandmark,yLandmark,zLandmark);
+      sprintf(strng, "%d      %.6f      %.6f      %.6f      %.6f      %.6f      %.6f\n", j + 1, xLandmark, yLandmark, zLandmark, 0.0, 0.0, 0.0);
+      out << strng;
+    }
+  }
+
+  // and now, close the cloud
+  if(!initState)
+  {
+    cloud->Close();
+  }
+}
+
+void mmoMTRExporter::ExportingTraverse(std::ostream &out, const char *dirName, mafNode* node)
+{
+  if(node->IsMAFType(mafVMELandmarkCloud))
+  {
+    if(dirName == NULL)
+      ExportOneCloud(out, mafVMELandmarkCloud::SafeDownCast(node));
+    else
+    {
+      wxString fn = dirName;
+      fn += "\\";
+      fn += node->GetName();
+      fn += ".mtr";
+      std::ofstream outF;
+      outF.open(fn.c_str());
+      outF<<"Index     Xmm        Ymm        Zmm     A(deg)     B(deg)     C(deg)\n";
+      ExportOneCloud(outF, mafVMELandmarkCloud::SafeDownCast(node));
+      outF.close();
+    }
+    return;
+  }
+  int numberChildren = node->GetNumberOfChildren();
+  for (int i= 0; i< numberChildren; i++)
+  {
+    mafNode *child = node->GetChild(i);
+    ExportingTraverse(out, dirName, child);
+  }
+}
 //----------------------------------------------------------------------------
 void mmoMTRExporter::ExportLandmark()
 //----------------------------------------------------------------------------
@@ -110,127 +226,26 @@ void mmoMTRExporter::ExportLandmark()
   const char    *fileName = (m_File);
   std::ofstream f_Out;
 
-  f_Out.open(fileName);
-
   if(m_Input->IsMAFType(mafVMELandmarkCloud))
   {
-
-    std::vector<mafTimeStamp> timeStamps;
-    mafVME *vmeTemp = mafVME::SafeDownCast(m_Input);
-    vmeTemp->GetTimeStamps(timeStamps);
-
-    mafVMELandmarkCloud *vmeCloud = mafVMELandmarkCloud::SafeDownCast(vmeTemp);
-
-    int numberLandmark = vmeCloud->GetNumberOfLandmarks();
-
-    // if cloud is closed , open it
-    bool initState = vmeCloud->IsOpen();
-    if(!initState)
-    {
-      vmeCloud->Open();
-    }
-
-    // pick up the values and write them into the file
+    f_Out.open(fileName);
     f_Out<<"Index     Xmm        Ymm        Zmm     A(deg)     B(deg)     C(deg)\n";
-    for (int index = 0; index < timeStamps.size(); index++)
-    {
-      for(int j=0; j < numberLandmark; j++)
-      {
-        char strng[256];
-        wxString name = vmeCloud->GetLandmarkName(j);
-        const char* nameLandmark = (name);                                        
-
-        mafVMELandmark *landmark = vmeCloud->GetLandmark(nameLandmark);
-
-        double xLandmark, yLandmark, zLandmark;
-        landmark->GetPoint(xLandmark,yLandmark,zLandmark,timeStamps[index]);
-        sprintf(strng, "%d      %.6f      %.6f      %.6f      %.6f      %.6f      %.6f\n", j + 1, xLandmark, yLandmark, zLandmark, 0.0, 0.0, 0.0);
-        f_Out << strng;
-      }
-    }
-
-    // and now, close the cloud
-    if(!initState)
-    {
-      vmeCloud->Close();
-    }
+    ExportOneCloud(f_Out, mafVMELandmarkCloud::SafeDownCast(m_Input));
+    f_Out.close();
   }
   else
   {
-    int numberChildren = m_Input->GetNumberOfChildren();
-
-    if(numberChildren > 0)
-    {  
-      std::vector<mafTimeStamp> timeStamps;
-      mafVME *vmeTemp = mafVME::SafeDownCast(m_Input);
-      vmeTemp->GetTimeStamps(timeStamps);
-
-      m_State = new bool[numberChildren];
-      for (int i= 0; i< numberChildren; i++)
-      {
-        mafNode *child = vmeTemp->GetChild(i);
-        if (child->IsMAFType(mafVMELandmarkCloud))
-        {
-          mafVMELandmarkCloud *vmeCloud = mafVMELandmarkCloud::SafeDownCast(child);
-          m_State[i] = vmeCloud->IsOpen();
-          
-           // if cloud is closed , open it
-          if (!m_State[i])
-          {
-            vmeCloud->Open();
-          }
-        } 
-      }
+    if(m_FileDir == "")
+    {
+      f_Out.open(fileName);
       f_Out<<"Index     Xmm        Ymm        Zmm     A(deg)     B(deg)     C(deg)\n";
-      // pick up the values and write them into the file
-      for (int index = 0; index < timeStamps.size(); index++)
-      {
-        for (int i=0; i< numberChildren; i++)
-        {
-          mafNode *child = m_Input->GetChild(i);
-          if (child->IsMAFType(mafVMELandmarkCloud))
-          {
-            mafVMELandmarkCloud *vmeCloud = mafVMELandmarkCloud::SafeDownCast(child);
-            int numberLandmark = vmeCloud->GetNumberOfLandmarks();
-
-            for(int j = 0; j < numberLandmark; j++)
-            {
-              char strng[256];
-              wxString name = vmeCloud->GetLandmarkName(j);
-              const char* nameLandmark = (name);                                        
-
-              mafVMELandmark *landmark = vmeCloud->GetLandmark(nameLandmark);
-
-              double xLandmark, yLandmark, zLandmark;
-              landmark->GetPoint(xLandmark,yLandmark,zLandmark,timeStamps[index]);
-              sprintf(strng, "%d      %.6f      %.6f      %.6f      %.6f      %.6f      %.6f\n", j + 1, xLandmark, yLandmark, zLandmark, 0.0, 0.0, 0.0);
-              f_Out << strng;
-            } 
-          }
-        }
-      }
-       // and now, close the cloud
-      for (i=0; i< numberChildren; i++)
-      {
-        mafNode *child = m_Input->GetChild(i);
-
-        if (child->IsMAFType(mafVMELandmarkCloud))
-        {
-          mafVMELandmarkCloud *vmeCloud = mafVMELandmarkCloud::SafeDownCast(child);  
-          if (!m_State[i])
-          {
-            vmeCloud->Close();
-          }
-        }
-      }
+      ExportingTraverse(f_Out, NULL, m_Input);
+      f_Out.close();
     }
-  }
-
-  f_Out.close();
-  if(m_State)
-  {
-    delete[] m_State;
-    m_State = NULL;
+    else
+    {
+      ExportingTraverse(f_Out, m_FileDir.c_str(), m_Input);
+    }
   }
 }
 
