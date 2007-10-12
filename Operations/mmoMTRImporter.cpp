@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoMTRImporter.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-10-12 10:23:48 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -34,43 +34,51 @@ mafCxxTypeMacro(mmoMTRImporter);
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_IMPORTER;
-  m_File    = "";
+  //m_File    = "";
   m_Canundo = true;
-  m_Group   = NULL;
+  //m_Group   = NULL;
 
   m_FileDir = mafGetApplicationDirectory().c_str();
 }
 //----------------------------------------------------------------------------
- mmoMTRImporter::~ mmoMTRImporter()
+ mmoMTRImporter::~mmoMTRImporter()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_Group);
+  for(unsigned i = 0; i < m_Groups.size(); i++)
+    mafDEL(m_Groups[i]);
 }  
 //----------------------------------------------------------------------------
 mafOp * mmoMTRImporter::Copy()
 //----------------------------------------------------------------------------
 {
   mmoMTRImporter *cp = new  mmoMTRImporter(m_Label);
-  cp->m_File    = m_File;
+  cp->m_Files   = m_Files;
   cp->m_FileDir = m_FileDir;
   return cp; 
 }
+
 //----------------------------------------------------------------------------
 void  mmoMTRImporter::OpRun()   
 //----------------------------------------------------------------------------
 {
   mafString vrml_wildc  = "MTR FARO data (*.mtr)|*.mtr";
+  std::vector<std::string> files;
   mafString f;
 
-  if (m_File.IsEmpty())
+  m_Files.clear();
+  //if (m_File.IsEmpty())
   {
-    f = mafGetOpenFile(m_FileDir.GetCStr(),vrml_wildc.GetCStr()).c_str();   
-    m_File = f;
+    mafGetOpenMultiFiles(m_FileDir.GetCStr(),vrml_wildc.GetCStr(), files);
+    for(unsigned i = 0; i < files.size(); i++)
+    {
+      f = files[i].c_str();
+      m_Files.push_back(f);
+    }
   }
 
   int result = OP_RUN_CANCEL;
 
-  if(!m_File.IsEmpty()) 
+  if(m_Files.size() != 0) 
   {
     result = OP_RUN_OK;
     ImportData();
@@ -78,69 +86,103 @@ void  mmoMTRImporter::OpRun()
 
   mafEventMacro(mafEvent(this,result));
 }
-//----------------------------------------------------------------------------
-void  mmoMTRImporter::SetFileName(const char *file_name)
-//----------------------------------------------------------------------------
-{
-  m_File = file_name;
-}
-
 
 //----------------------------------------------------------------------------
 void  mmoMTRImporter::ImportData()
 //----------------------------------------------------------------------------
 {
 
-  wxString vmeName;
-  //wxBusyInfo wait("Loading file: ...");  
-  wxString path;
-  wxString grpName, extension;
+  for(unsigned i = 0; i < m_Groups.size(); i++)
+    mafDEL(m_Groups[i]);
+  m_Groups.clear();
 
-  wxSplitPath(m_File.GetCStr(),&path,&grpName,&extension);
-
-  mafNEW(m_Group);
-  m_Group->SetName(grpName.c_str());
-
-  while(TRUE)
+  for(unsigned fi = 0; fi < m_Files.size(); fi++)
   {
-    mafMTRLMCReader *LMCReader = mafMTRLMCReader::New();
-    LMCReader->SetFileName(m_File);
-    wxString name, ext;
+    if(m_Files[fi].IsEmpty())
+      continue;
+ 
+    
+    wxString vmeName;
+    //wxBusyInfo wait("Loading file: ...");  
+    wxString path;
+    wxString grpName, extension;
+    mafVMEGroup *grp;
 
-    wxSplitPath(m_File.GetCStr(),&path,&name,&ext);
+    wxSplitPath(m_Files[fi].GetCStr(),&path,&grpName,&extension);
 
-    LMCReader->SetSet(mafMTRLMCReader::SetNotDefined);
-    LMCReader->Execute();
+    mafNEW(grp);
+    grp->SetName(grpName.c_str());
+    m_Groups.push_back(grp);
 
-    if(LMCReader->GetPointsRead() == 0)
+    while(TRUE)
     {
+      mafMTRLMCReader *LMCReader = mafMTRLMCReader::New();
+      LMCReader->SetFileName(m_Files[fi]);
+      wxString name, ext;
+
+      wxSplitPath(m_Files[fi].GetCStr(),&path,&name,&ext);
+
+      LMCReader->SetSet(mafMTRLMCReader::SetNotDefined);
+      LMCReader->Execute();
+
+      if(LMCReader->GetPointsRead() == 0)
+      {
+        cppDEL(LMCReader);
+        break;
+      }
+
+      const std::vector<mafVMELandmarkCloud*>& clouds = LMCReader->GetClouds();
+      for(int i = 0; i < clouds.size(); i++)
+      {
+        vmeName = name + "_";
+        wxString  curNumber("");
+        curNumber.Printf("%d", i);
+        vmeName = vmeName + curNumber;
+        mafTagItem tag_Nature;
+        tag_Nature.SetName("VME_NATURE");
+        tag_Nature.SetValue("NATURAL");
+
+        mafVMELandmarkCloud *cloud;
+        cloud = clouds[i];
+        cloud->SetName(vmeName);
+        cloud->GetTagArray()->SetTag(tag_Nature);
+        cloud->Close();
+        cloud->ReparentTo(grp);
+      }
       cppDEL(LMCReader);
       break;
     }
 
-    const std::vector<mafVMELandmarkCloud*>& clouds = LMCReader->GetClouds();
-    for(int i = 0; i < clouds.size(); i++)
-    {
-      vmeName = name + "_";
-      wxString  curNumber("");
-      curNumber.Printf("%d", i);
-      vmeName = vmeName + curNumber;
-      mafTagItem tag_Nature;
-      tag_Nature.SetName("VME_NATURE");
-      tag_Nature.SetValue("NATURAL");
-
-      mafVMELandmarkCloud *cloud;
-      cloud = clouds[i];
-      cloud->SetName(vmeName);
-      cloud->GetTagArray()->SetTag(tag_Nature);
-      cloud->Close();
-      cloud->ReparentTo(m_Group);
-    }
-    cppDEL(LMCReader);
-    break;
+    mafEventMacro(mafEvent(this, VME_ADD, grp));
+    mafEventMacro(mafEvent(this,CAMERA_UPDATE));
   }
+}
 
-  mafEventMacro(mafEvent(this, VME_ADD, m_Group));
-  mafDEL(m_Group);
+//----------------------------------------------------------------------------
+void mmoMTRImporter::OpDo()   
+//----------------------------------------------------------------------------
+{
+  for(unsigned i = 0; i < m_Groups.size(); i++)
+  {
+    if (m_Groups[i])
+    {
+      m_Groups[i]->ReparentTo(m_Input);
+      mafEventMacro(mafEvent(this, VME_ADD, m_Groups[i]));
+    }
+  }
+  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+}
+
+//----------------------------------------------------------------------------
+void mmoMTRImporter::OpUndo()   
+//----------------------------------------------------------------------------
+{
+  for(unsigned i = 0; i < m_Groups.size(); i++)
+  {
+    if (m_Groups[i])
+    {
+      mafEventMacro(mafEvent(this, VME_REMOVE, m_Groups[i]));
+    }
+  }
   mafEventMacro(mafEvent(this,CAMERA_UPDATE));
 }

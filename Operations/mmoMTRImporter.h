@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoMTRImporter.h,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-10-12 10:23:48 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -44,14 +44,17 @@ public:
   /** Builds operation's interface. */
   void OpRun();
 
-  /** Set the filename to import */
-  void SetFileName(const char *file_name);
+  /** Makes the undo for the operation. */
+  void OpUndo();
+
+  /** Execute the operation. */
+  void OpDo();
 
   /** Import data. */
   void ImportData();
 protected:
-  mafString    m_File;
-  mafString    m_FileDir;
-  mafVMEGroup  *m_Group;
+  std::vector<mafString>    m_Files;
+  mafString                 m_FileDir;
+  std::vector<mafVMEGroup*> m_Groups;
 };
 #endif

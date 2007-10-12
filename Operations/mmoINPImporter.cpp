@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoINPImporter.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-10-12 10:24:00 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -40,28 +40,29 @@ mafCxxTypeMacro(mmoINPImporter);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
- mmoINPImporter:: mmoINPImporter(const wxString &label) : mafOp(label)
+ mmoINPImporter::mmoINPImporter(const wxString &label) : mafOp(label)
 //----------------------------------------------------------------------------
 {
 	m_OpType	= OPTYPE_IMPORTER;
-	m_File		= "";
+	//m_File		= "";
 	m_Canundo	= true;
-	m_Surface = NULL;
+	//m_Surface = NULL;
 
  	m_FileDir = mafGetApplicationDirectory().c_str();
 }
 //----------------------------------------------------------------------------
- mmoINPImporter::~ mmoINPImporter()
+ mmoINPImporter::~mmoINPImporter()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_Surface);
-}	
+  for(unsigned i = 0; i < m_Surfaces.size(); i++)
+    mafDEL(m_Surfaces[i]);
+}
 //----------------------------------------------------------------------------
 mafOp * mmoINPImporter::Copy()
 //----------------------------------------------------------------------------
 {
   mmoINPImporter *cp = new  mmoINPImporter(m_Label);
-	cp->m_File		= m_File;
+  cp->m_Files   = m_Files;
   cp->m_FileDir = m_FileDir;
   return cp; 
 }
@@ -69,18 +70,24 @@ mafOp * mmoINPImporter::Copy()
 void  mmoINPImporter::OpRun()   
 //----------------------------------------------------------------------------
 {
-	mafString vrml_wildc	= "AMIRA geometry (*.inp)|*.inp|AMIRA geometry in AF system (*.inp_AFs)|*.inp_AFs";
+  mafString vrml_wildc = "AMIRA geometry (*.inp)|*.inp|AMIRA geometry in AF system (*.inp_AFs)|*.inp_AFs";
+  std::vector<std::string> files;
   mafString f;
 
-  if (m_File.IsEmpty())
+  m_Files.clear();
+  //if (m_File.IsEmpty())
   {
-    f = mafGetOpenFile(m_FileDir.GetCStr(),vrml_wildc.GetCStr()).c_str(); 	
-    m_File = f;
+    mafGetOpenMultiFiles(m_FileDir.GetCStr(),vrml_wildc.GetCStr(), files);
+    for(unsigned i = 0; i < files.size(); i++)
+    {
+      f = files[i].c_str();
+      m_Files.push_back(f);
+    }
   }
 
   int result = OP_RUN_CANCEL;
 
-  if(!m_File.IsEmpty()) 
+  if(m_Files.size() != 0) 
   {
     result = OP_RUN_OK;
     ImportData();
@@ -89,38 +96,69 @@ void  mmoINPImporter::OpRun()
   mafEventMacro(mafEvent(this,result));
 }
 //----------------------------------------------------------------------------
-void  mmoINPImporter::SetFileName(const char *file_name)
-//----------------------------------------------------------------------------
-{
-  m_File = file_name;
-}
-//----------------------------------------------------------------------------
 void  mmoINPImporter::ImportData()
 //----------------------------------------------------------------------------
 {
-  mafINPReader *reader = mafINPReader::New();
+  for(unsigned i = 0; i < m_Surfaces.size(); i++)
+    mafDEL(m_Surfaces[i]);
+  m_Surfaces.clear();
+  for(unsigned i = 0; i < m_Files.size(); i++)
+  {
+    if(m_Files[i].IsEmpty())
+      continue;
+    mafINPReader  *reader = mafINPReader::New();
+    mafVMESurface *surface;
 
-  reader->SetFileName(m_File);
-  wxString path, name, ext;
+    reader->SetFileName(m_Files[i]);
+    wxString path, name, ext;
 
-  wxSplitPath(m_File.GetCStr(),&path,&name,&ext);
+    wxSplitPath(m_Files[i].GetCStr(),&path,&name,&ext);
 
-  reader->Update();
+    reader->Update();
 
-  mafTimeStamp t;
-  t = ((mafVME *)m_Input)->GetTimeStamp();
-  mafNEW(m_Surface);
-  m_Surface->SetName(name.c_str());
-  vtkPolyData *data = reader->GetOutput();
-  m_Surface->SetData(data,t);
+    mafTimeStamp t;
+    t = ((mafVME *)m_Input)->GetTimeStamp();
+    mafNEW(surface);
+    surface->SetName(name.c_str());
+    vtkPolyData *data = reader->GetOutput();
+    surface->SetData(data,t);
 
-  m_Output = m_Surface;
+    m_Surfaces.push_back(surface);
 
-  mafTagItem tag_Nature;
-  tag_Nature.SetName("VME_NATURE");
-  tag_Nature.SetValue("NATURAL");
+    mafTagItem tag_Nature;
+    tag_Nature.SetName("VME_NATURE");
+    tag_Nature.SetValue("NATURAL");
 
-  m_Output->GetTagArray()->SetTag(tag_Nature);
+    surface->GetTagArray()->SetTag(tag_Nature);
 
-  vtkDEL(reader);
+    vtkDEL(reader);
+  }
+}
+//----------------------------------------------------------------------------
+void mmoINPImporter::OpDo()   
+//----------------------------------------------------------------------------
+{
+  for(unsigned i = 0; i < m_Surfaces.size(); i++)
+  {
+    if (m_Surfaces[i])
+    {
+      m_Surfaces[i]->ReparentTo(m_Input);
+      mafEventMacro(mafEvent(this, VME_ADD, m_Surfaces[i]));
+    }
+  }
+  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+}
+
+//----------------------------------------------------------------------------
+void mmoINPImporter::OpUndo()   
+//----------------------------------------------------------------------------
+{
+  for(unsigned i = 0; i < m_Surfaces.size(); i++)
+  {
+    if (m_Surfaces[i])
+    {
+      mafEventMacro(mafEvent(this, VME_REMOVE, m_Surfaces[i]));
+    }
+  }
+  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
 }

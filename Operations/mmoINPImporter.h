@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoINPImporter.h,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-10-12 10:24:00 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -17,6 +17,7 @@
 // Include :
 //----------------------------------------------------------------------------
 #include "mafOp.h"
+#include <vector>
 
 //----------------------------------------------------------------------------
 // forward references :
@@ -45,21 +46,23 @@ public:
   mafOp* Copy();
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode* node) {return true;};
+  bool Accept(mafNode* node) {return true;}
 
   /** Builds operation's interface. */
   void OpRun();
 
-  /** Set the filename to import */
-  void SetFileName(const char *file_name);
+  /** Makes the undo for the operation. */
+  void OpUndo();
+
+  /** Execute the operation. */
+  void OpDo();
 
   /** Import data. */
   void ImportData();
 
 protected:
-  mafString m_File;
-  mafString m_FileDir;
-  
-  mafVMESurface *m_Surface;
+  std::vector<mafString>      m_Files;
+  mafString                   m_FileDir;
+  std::vector<mafVMESurface*> m_Surfaces;
 };
 #endif
