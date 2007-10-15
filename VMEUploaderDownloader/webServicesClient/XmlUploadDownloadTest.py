@@ -17,22 +17,18 @@ class XmlUploadDownloadTest(unittest.TestCase):
 
         #upload
         out = ws.run('xmlupload', testFile)
-        #out = commands.getoutput("./xmlrpcDemoWS.py xmlupload %s" % (testFile))
         self.assertEqual(out, True)
 
         #copy
         testFileOLD = testFile + "OLD"
-        #os.stat(testFile)
         try:
             os.remove(testFileOLD)
         except:
             pass
         os.renames(testFile, testFileOLD)
-        #commands.getoutput("mv %s %s" % (testFile, testFileOLD))
 
         #download
         out = ws.run('xmldownload', testFile)
-        #out = commands.getoutput("./xmlrpcDemoWS.py xmldownload %s" % (testFile))
         self.assertEqual(out, True)
 
         #md5
