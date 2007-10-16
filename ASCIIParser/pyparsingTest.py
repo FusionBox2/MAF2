@@ -8,7 +8,7 @@ import os
 import sys, string
 import unittest
 import shutil
-from pyparsing import Word, alphas, nums, ZeroOrMore, ParseException, Group, delimitedList, alphanums
+from pyparsing import Word, alphas, nums, ZeroOrMore, ParseException, Group, delimitedList, alphanums, Literal,Dict
 import pprint
 
 class pyparsingTest(unittest.TestCase):
@@ -240,24 +240,29 @@ ESEL, ALL
             # start grammar
             elementHeader = "TYPE," + Word(nums)
             elementInfo = "$" + Word( alphas) + "," + Word( nums)
-            elementLine = elementHeader + elementInfo + elementInfo
+            elemDayentLine = elementHeader + elementInfo + elementInfo
             
             connectivityHeader  = "EN,"
-            connectivityId = delimitedList(Word(nums))
+            connectivityId = Dict(Group(delimitedList(Word(nums))))
             connectivityLine = connectivityHeader + connectivityId
             
             moreConnectivityHeader  = "EMORE,"
             moreConnectivityId = delimitedList(Word(nums))
             moreConnectivityLine = moreConnectivityHeader + moreConnectivityId 
             # end grammar
-            
+                        
             try: 
-                print elementLine.parseString( line )
-            except ParseException:
-                print "cannot parse line " + str(lineNum)
-            
-            try: 
-                print connectivityLine.parseString( line )
+                
+                data = connectivityLine.parseString(line)
+                print "data:", data
+                print "data.asList():",
+                pprint.pprint(data.asList())
+                print "data keys:", data.keys()
+                key = data.keys()[0]
+                print data[key]
+                
+
+
             except ParseException:
                 print "cannot parse line " + str(lineNum)
             
