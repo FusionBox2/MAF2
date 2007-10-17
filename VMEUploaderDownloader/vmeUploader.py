@@ -1,7 +1,7 @@
 #-----------------------------------------------------------------------------
 # BEWARE!!! This is mostly a prototype!!!
 # code is changing very fast so don't rely on it :P
-# author: Stefano Perticoni
+# author: Stefano Perticoni <s.perticoni@scsolutions.it>
 #-----------------------------------------------------------------------------
 
 import fileUtilities
@@ -26,7 +26,7 @@ class vmeUploader:
         self.OutputFolderName = "FolderToUpload"
         
     def Upload(self):
-        self.__Parse
+        self.__Parse()
         
     def __Parse(self):
        
