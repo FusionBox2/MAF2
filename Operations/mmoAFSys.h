@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoAFSys.h,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-10-19 10:11:03 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -25,6 +25,12 @@ class mafVMEAFRefSys;
 class mafGui;
 class mafEvent;
 
+
+#include <strstream>
+#include <vector>
+#include <map>
+#include <string>
+
 //----------------------------------------------------------------------------
 // class mmoAFSys
 //----------------------------------------------------------------------------
@@ -44,10 +50,13 @@ public:
   void CreateGui();
 
 protected: 
+  bool ReadScript(const mafString& filename, std::vector<mafString>& output);
+  void InitPredefined();
   void OpStop(int result);
 
-  std::vector<std::pair<wxString, wxString> >  m_dictionary;
-  mafVMEAFRefSys  *m_RefSys;
-  mafString       m_DictionaryFName;
+  int                                                         m_Radio;
+  mafVMEAFRefSys                                              *m_RefSys;
+  mafString                                                   m_ScriptFName;
+  std::vector<std::pair<mafString, std::vector<mafString> > > m_predefinedScripts;
 };
 #endif

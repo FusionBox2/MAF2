@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoAFSys.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-10-19 10:11:03 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -47,389 +47,36 @@
 //----------------------------------------------------------------------------
 // Forward Refs
 //----------------------------------------------------------------------------
-enum mafAFBonesList
+
+#define ADD_PREDEF(name) m_predefinedScripts.push_back(std::make_pair(#name, std::vector<mafString>(&_##name[0], &_##name[0] + sizeof(_##name)/sizeof(_##name[0]))))
+void mmoAFSys::InitPredefined()
 {
-  MBLAF_NA     = -1,
-  MBLAF_FIRST  = 0,
-  MBLAF_PELVIS = 0,
-  MBLAF_RTHIGH = 1,
-  MBLAF_LTHIGH  ,
-  MBLAF_RSHANK  ,
-  MBLAF_LSHANK  ,
-  MBLAF_RFOOT   ,
-  MBLAF_LFOOT   ,
-  MBLAF_UNKNOWN ,
-  MBLAF_LAST
-};
-struct mafAFAltLandmarksInfo
-{
-  wxChar const   *m_OldName;
-  wxChar const   *m_NewName;
-  mafAFBonesList m_BoneID;
-};
-struct mafAFAltBonesInfo
-{
-  wxChar const    *m_OldName;
-  mafAFBonesList  m_BoneID;
-};
-
-struct mafAFLMsForCnv
-{
-  mafAFBonesList m_ID;
-  wxChar         *m_LMNames[4];
-  unsigned int   m_NumLMs;
-  bool           (*m_func)(DiV4d const *vpLandmarks, DiMatrix *mpMatrix);
-};
-
-bool _mafBuildPelvisAF       (DiV4d const *vpLandmarks, DiMatrix *mpMatrix);
-bool _mafBuildLeftThighAF    (DiV4d const *vpLandmarks, DiMatrix *mpMatrix);
-bool _mafBuildLeftShankAF    (DiV4d const *vpLandmarks, DiMatrix *mpMatrix);
-bool _mafBuildLeftFootAF     (DiV4d const *vpLandmarks, DiMatrix *mpMatrix);
-bool _mafBuildRightThighAF   (DiV4d const *vpLandmarks, DiMatrix *mpMatrix);
-bool _mafBuildRightShankAF   (DiV4d const *vpLandmarks, DiMatrix *mpMatrix);
-bool _mafBuildRightFootAF    (DiV4d const *vpLandmarks, DiMatrix *mpMatrix);
-bool _mafBuildUnknownAF      (DiV4d const *vpLandmarks, DiMatrix *mpMatrix);
-
-
-static mafAFLMsForCnv _caAFBuildInfo[MBLAF_LAST] =
-{
-  {MBLAF_PELVIS , {"RAS", "LAS", "RPS", "LPS"}, 4, _mafBuildPelvisAF       },
-  {MBLAF_RTHIGH , {"RLE", "RME", "RFH", ""   }, 3, _mafBuildRightThighAF   },
-  {MBLAF_LTHIGH , {"LLE", "LME", "LFH", ""   }, 3, _mafBuildLeftThighAF    },
-  {MBLAF_RSHANK , {"RHF", "RTT", "RLM", "RMM"}, 4, _mafBuildRightShankAF   },
-  {MBLAF_LSHANK , {"LHF", "LTT", "LLM", "LMM"}, 4, _mafBuildLeftShankAF    },
-  {MBLAF_RFOOT  , {"RCA", "RFM", "RSM", "RVM"}, 4, _mafBuildRightFootAF    },
-  {MBLAF_LFOOT  , {"LCA", "LFM", "LSM", "LVM"}, 4, _mafBuildLeftFootAF     },
-  {MBLAF_UNKNOWN, {"PT1", "PT2", "PT3", "PT4"}, 4, _mafBuildUnknownAF      }
-};
-
-static mafAFAltBonesInfo _saKnownBones[]  =
-{
-  {"IPE", MBLAF_PELVIS},
-  {"RTH", MBLAF_RTHIGH},
-  {"LTH", MBLAF_LTHIGH},
-  {"RSH", MBLAF_RSHANK},
-  {"LSH", MBLAF_LSHANK},
-  {"RFO", MBLAF_RFOOT},
-  {"LFO", MBLAF_LFOOT},
-};
-static mafAFAltLandmarksInfo _saKnownLandmarks[]  =
-{
-  //pelvic
-  {"RAS", "RIAS", MBLAF_PELVIS},
-  {"LAS", "LIAS", MBLAF_PELVIS},
-  {"RPS", "RIPS", MBLAF_PELVIS},
-  {"LPS", "LIPS", MBLAF_PELVIS},
-  {"RAC", "RIAC", MBLAF_PELVIS}, // needed for thigh OVP only
-  {"LAC", "LIAC", MBLAF_PELVIS}, // needed for thigh OVP only
-
-  //femur
-  {"RFH", "RFCH", MBLAF_RTHIGH},
-  {"RLE", "RFLE", MBLAF_RTHIGH},
-  {"RME", "RFME", MBLAF_RTHIGH},
-
-  {"LFH", "LFCH", MBLAF_LTHIGH},
-  {"LLE", "LFLE", MBLAF_LTHIGH},
-  {"LME", "LFME", MBLAF_LTHIGH},
-
-  //shank segment: tibia und fibula
-  {"RHF", "RFAX", MBLAF_RSHANK},
-  {"RTT", "RTTC", MBLAF_RSHANK},
-  {"RLM", "RFAL", MBLAF_RSHANK},
-  {"RMM", "RTAM", MBLAF_RSHANK},
-
-  {"LHF", "LFAX", MBLAF_LSHANK},
-  {"LTT", "LTTC", MBLAF_LSHANK},
-  {"LLM", "LFAL", MBLAF_LSHANK},
-  {"LMM", "LTAM", MBLAF_LSHANK},
-
-  //foot segment segment
-  {"RCA", "RFCC", MBLAF_RFOOT},
-  {"RFM", "RFM1", MBLAF_RFOOT},
-  {"RSM", "RFM2", MBLAF_RFOOT},
-  {"RVM", "RFM5", MBLAF_RFOOT},
-
-  {"LCA", "LFCC", MBLAF_LFOOT},
-  {"LFM", "LFM1", MBLAF_LFOOT},
-  {"LSM", "LFM2", MBLAF_LFOOT},
-  {"LVM", "LFM5", MBLAF_LFOOT},
-
-  {"PT1", "PNT1", MBLAF_UNKNOWN},
-  {"PT2", "PNT2", MBLAF_UNKNOWN},
-  {"PT3", "PNT3", MBLAF_UNKNOWN},
-  {"PT4", "PNT4", MBLAF_UNKNOWN}
-};
-
-//----------------------------------------------------------------------------
-wxString const * LookupStdName(std::vector<std::pair<wxString, wxString> >&  m_dictionary, wxString const *name)
-//----------------------------------------------------------------------------
-{
-  wxInt32      nI; 
-
-  for(nI = 0; nI < m_dictionary.size(); nI++)
-  {
-    if(m_dictionary[nI].second == (*name))
-    {
-      return &m_dictionary[nI].first;
-    }
-    //already a ref one
-    if(m_dictionary[nI].first == (*name))
-    {
-      return &m_dictionary[nI].first;
-    }
-  }
-  //failed lookup
-  return NULL;
+  mafString _IPE[] = {"ASSV PN0 RIAS", "ASSV PN1 LIAS", "ASSV PN2 RIPS", "ASSV PN3 LIPS", "LNCMB MIDDLEA 0.5 PN0 0.5 PN1", "LNCMB MIDDLEP 0.5 PN2 0.5 PN3", "ASSV P1 PN0", "ASSV P2 PN1", "ASSV P3 MIDDLEP", "ASSV P4 PN1", "ASSV P5 PN0", "LNCMB A 1 P2 -1 P1", "NRML A", "LNCMB B 1 P3 -1 P2", "NRML B", "CROSS X1 A B", "NRML X1", "LNCMB R 1 P5 -1 P4", "NRML R", "CROSS Y1 X1 R", "NRML Y1", "CROSS Z1 X1 Y1", "NRML Z1", "ASSV X Y1", "ASSV Y X1", "LNCMB Z -1 Z1 0 Y1", "ASSV P MIDDLEA"};
+  mafString _LFT[] = {"ASSV PN0 LFCC", "ASSV PN1 LFM5", "ASSV PN2 LFM2", "ASSV PN3 LFM1", "ASSV P1 PN3", "ASSV P2 PN1", "ASSV P3 PN0", "ASSV P4 PN2", "ASSV P5 PN0", "LNCMB A 1 P2 -1 P1", "NRML A", "LNCMB B 1 P3 -1 P2", "NRML B", "CROSS X1 A B", "NRML X1", "LNCMB R 1 P5 -1 P4", "NRML R", "CROSS Y1 X1 R", "NRML Y1", "CROSS Z1 X1 Y1", "NRML Z1", "ASSV X Z1", "ASSV Y X1", "ASSV Z Y1", "ASSV P PN0"};
+  mafString _LSH[] = {"ASSV PN0 LFAX", "ASSV PN1 LTTC", "ASSV PN2 LTAM", "ASSV PN3 LFAL", "LNCMB MIDDLE 0.5 PN2 0.5 PN3", "ASSV P1 PN2", "ASSV P2 PN3", "ASSV P3 PN0", "ASSV P4 MIDDLE", "ASSV P5 PN1", "LNCMB A 1 P2 -1 P1", "NRML A", "LNCMB B 1 P3 -1 P2", "NRML B", "CROSS X1 A B", "NRML X1", "LNCMB R 1 P5 -1 P4", "NRML R", "CROSS Y1 X1 R", "NRML Y1", "CROSS Z1 X1 Y1", "NRML Z1", "ASSV X X1", "LNCMB Y -1 Z1 0 Y1", "ASSV Z Y1", "ASSV P MIDDLE"};
+  mafString _LTH[] = {"ASSV PN0 LFME", "ASSV PN1 LFLE", "ASSV PN2 LFCH", "LNCMB MIDDLE 0.5 PN0 0.5 PN1", "ASSV P1 PN0", "ASSV P2 PN1", "ASSV P3 PN2", "ASSV P4 MIDDLE", "ASSV P5 PN2", "LNCMB A 1 P2 -1 P1", "NRML A", "LNCMB B 1 P3 -1 P2", "NRML B", "CROSS X1 A B", "NRML X1", "LNCMB R 1 P5 -1 P4", "NRML R", "CROSS Y1 X1 R", "NRML Y1", "CROSS Z1 X1 Y1", "NRML Z1", "ASSV X X1", "LNCMB Y -1 Z1 0 Y1", "ASSV Z Y1", "ASSV P MIDDLE"};
+  mafString _RFT[] = {"ASSV PN0 RFCC", "ASSV PN1 RFM1", "ASSV PN2 RFM2", "ASSV PN3 RFM5", "ASSV P1 PN3", "ASSV P2 PN1", "ASSV P3 PN0", "ASSV P4 PN2", "ASSV P5 PN0", "LNCMB A 1 P2 -1 P1", "NRML A", "LNCMB B 1 P3 -1 P2", "NRML B", "CROSS X1 A B", "NRML X1", "LNCMB R 1 P5 -1 P4", "NRML R", "CROSS Y1 X1 R", "NRML Y1", "CROSS Z1 X1 Y1", "NRML Z1", "ASSV X Z1", "ASSV Y X1", "ASSV Z Y1", "ASSV P PN0"};
+  mafString _RSH[] = {"ASSV PN0 RFAX", "ASSV PN1 RTTC", "ASSV PN2 RFAL", "ASSV PN3 RTAM", "LNCMB MIDDLE 0.5 PN2 0.5 PN3", "ASSV P1 PN2", "ASSV P2 PN3", "ASSV P3 PN0", "ASSV P4 MIDDLE", "ASSV P5 PN1", "LNCMB A 1 P2 -1 P1", "NRML A", "LNCMB B 1 P3 -1 P2", "NRML B", "CROSS X1 A B", "NRML X1", "LNCMB R 1 P5 -1 P4", "NRML R", "CROSS Y1 X1 R", "NRML Y1", "CROSS Z1 X1 Y1", "NRML Z1", "ASSV X X1", "LNCMB Y -1 Z1 0 Y1", "ASSV Z Y1", "ASSV P MIDDLE"};
+  mafString _RTH[] = {"ASSV PN0 RFLE", "ASSV PN1 RFME", "ASSV PN2 RFCH", "LNCMB MIDDLE 0.5 PN0 0.5 PN1", "ASSV P1 PN0", "ASSV P2 PN1", "ASSV P3 PN2", "ASSV P4 MIDDLE", "ASSV P5 PN2", "LNCMB A 1 P2 -1 P1", "NRML A", "LNCMB B 1 P3 -1 P2", "NRML B", "CROSS X1 A B", "NRML X1", "LNCMB R 1 P5 -1 P4", "NRML R", "CROSS Y1 X1 R", "NRML Y1", "CROSS Z1 X1 Y1", "NRML Z1", "ASSV X X1", "LNCMB Y -1 Z1 0 Y1", "ASSV Z Y1", "ASSV P MIDDLE"};
+  ADD_PREDEF(IPE);
+  ADD_PREDEF(RTH);
+  ADD_PREDEF(LTH);
+  ADD_PREDEF(RSH);
+  ADD_PREDEF(LSH);
+  ADD_PREDEF(RFT);
+  ADD_PREDEF(LFT);
 }
-
-//----------------------------------------------------------------------------
-wxString const * LookupUserName(std::vector<std::pair<wxString, wxString> >&  m_dictionary, wxString const *name)
-//----------------------------------------------------------------------------
-{
-  wxInt32      nI; 
-
-  for(nI = 0; nI < m_dictionary.size(); nI++)
-  {
-    if(m_dictionary[nI].first == (*name))
-    {
-      return &m_dictionary[nI].second;
-    }
-    //already a ref one
-    if(m_dictionary[nI].second == (*name))
-    {
-      return &m_dictionary[nI].second;
-    }
-  }
-  //failed lookup
-  return NULL;
-}
-
-//----------------------------------------------------------------------------
-mafAFBonesList GetBoneIDByName(wxString const &sName, mafAFAltBonesInfo *pBonesList = NULL, wxInt32 nListSize = 0)
-//----------------------------------------------------------------------------
-{
-  wxInt32 nI;
-
-  //use internal data if no external
-  if(pBonesList == NULL)
-  {
-    pBonesList = _saKnownBones;
-    nListSize  = DIM(_saKnownBones);
-  }
-
-  for(nI = 0; nI < nListSize; nI++)
-  {
-    if(sName == pBonesList[nI].m_OldName)
-    {
-      return (pBonesList[nI].m_BoneID);
-    }
-  }
-  return (MBLAF_UNKNOWN);
-}
-
-
-//----------------------------------------------------------------------------
-mafAFAltLandmarksInfo *FindLandmark(wxString const *pOldAcronim, wxString const *pNewAcronim, mafAFAltLandmarksInfo *pLandmarksList = NULL, wxInt32 nListSize = 0)
-//----------------------------------------------------------------------------
-{
-  wxInt32 nI;
-
-  //use internal data if no external
-  if(pLandmarksList == NULL)
-  {
-    pLandmarksList = _saKnownLandmarks;
-    nListSize      = DIM(_saKnownLandmarks);
-  }
-
-  for(nI = 0; nI < nListSize; nI++)
-  {
-    //try old one for search
-    if(pOldAcronim != NULL)
-    {
-      if((*pOldAcronim) == pLandmarksList[nI].m_OldName)
-      {
-        return (pLandmarksList + nI);
-      }
-    }
-    if(pNewAcronim != NULL)
-    {
-      if((*pNewAcronim) == pLandmarksList[nI].m_NewName)
-      {
-        return (pLandmarksList + nI);
-      }
-    }
-  }
-  return (NULL);
-}
-
-
-
-/*
-* converts technical frames to anatomical
-* @memo    
-* @return  TRUE on success
-* @param   fdpDesc
-* @param   fdpResult
-*/
-//----------------------------------------------------------------------------
-bool BuildAFTransformMatrix(std::vector<std::pair<wxString, wxString> >& m_dictionary, mafVME *pVME, mafTimeStamp ts, DiMatrix *mpOut)
-//----------------------------------------------------------------------------
-{
-  DiInt32              nI,nJ;
-  DiV4d                *vpLandmarks;
-  mafAFBonesList         nBoneID;   
-  mafAFLMsForCnv         *pConvert;
-  wxInt32              nLandmarksFound;
-  mafVMELandmarkCloud  *pCloud;
-  char const           *lmName;
-  wxString const       *sLMName;
-  wxString              sTempString;
-  mafAFAltLandmarksInfo  *pInfo;
-  DiDouble              dx, dy, dz;  
-  //having hierarchy is not important here: we just need a dictionary to know who is who
-  nBoneID = GetBoneIDByName(wxString(pVME->GetName()));
-  if(nBoneID == MBLAF_UNKNOWN)
-  {
-    if(LookupStdName(m_dictionary, &wxString(pVME->GetName())) != NULL)
-    {
-      //may be it will become known after dictionary application?
-      nBoneID = GetBoneIDByName(*LookupStdName(m_dictionary, &wxString(pVME->GetName())));
-    }
-  }
-  //now proceed as we have
-  pConvert = _caAFBuildInfo + nBoneID;
-  //check order
-  wxASSERT(pConvert->m_ID == nBoneID);
-  //check VME for having landmarks
-  if(!pVME->IsA("mafVMELandmarkCloud"))
-  {
-    DiMatrixIdentity(mpOut);
-    return (FALSE);
-  }
-  //cast
-  pCloud = (mafVMELandmarkCloud *)pVME;
-  //fill landmarks array
-
-  //get memory
-  vpLandmarks = (DiV4d *)malloc(pConvert->m_NumLMs * sizeof(DiV4d));
-  memset(vpLandmarks, 0xFF, pConvert->m_NumLMs * sizeof(DiV4d));
-
-  nLandmarksFound = 0;
-  for(nI = 0; nI < pCloud->GetNumberOfLandmarks(); nI++)
-  {
-    lmName = pCloud->GetLandmarkName(nI);
-    if(LookupStdName(m_dictionary, &wxString(lmName)) != NULL)
-    {
-      sLMName = LookupStdName(m_dictionary, &wxString(lmName));
-    }
-    else
-    {
-      sTempString = lmName;
-      sLMName = &sTempString;
-    }
-    pInfo = FindLandmark(sLMName, sLMName);
-    if(pInfo == NULL)
-    {     
-      //check for all
-      for(nJ = 0; nJ < pConvert->m_NumLMs; nJ++)
-      {
-        if(*sLMName == pConvert->m_LMNames[nJ])
-        {
-          pCloud->GetLandmark(nI, dx, dy, dz, ts);
-          vpLandmarks[nJ].x = dx; 
-          vpLandmarks[nJ].y = dy;
-          vpLandmarks[nJ].z = dz;
-          vpLandmarks[nJ].w = 1.0;
-          nLandmarksFound ++;
-        }
-      }
-    }
-    else
-    {
-      //check for all
-      for(nJ = 0; nJ < pConvert->m_NumLMs; nJ++)
-      {
-        if(strcmp(pInfo->m_NewName, pConvert->m_LMNames[nJ]) == 0 ||
-          strcmp(pInfo->m_OldName, pConvert->m_LMNames[nJ]) == 0 )
-        {
-          pCloud->GetLandmark(nI, dx, dy, dz, ts);
-          vpLandmarks[nJ].x = dx; 
-          vpLandmarks[nJ].y = dy;
-          vpLandmarks[nJ].z = dz;
-          vpLandmarks[nJ].w = 1.0;
-          nLandmarksFound ++;
-        }
-      }
-    }
-  }
-  if(pConvert->m_ID == MBLAF_UNKNOWN)
-  {
-    //last landmark may or may not present
-    if(nLandmarksFound < pConvert->m_NumLMs - 1)
-    {
-      goto l_Failure;
-    }
-    if(nLandmarksFound == pConvert->m_NumLMs - 1)
-    {
-      //only last landmark may not present check w component
-      if(*((wxUint32 *)&vpLandmarks[pConvert->m_NumLMs - 1].w) != 0xFFFFFFFF)
-      {
-        goto l_Failure;
-      }
-    }
-  }
-  else if(nLandmarksFound < pConvert->m_NumLMs)
-  {
-l_Failure:
-    free(vpLandmarks);
-    DiMatrixIdentity(mpOut);
-    return (FALSE);
-  }     
-  pConvert->m_func(vpLandmarks, mpOut);
-
-  free(vpLandmarks);
-
-  return true;
-}
-
-
-
-//----------------------------------------------------------------------------
-void GetMatrix(std::vector<std::pair<wxString, wxString> >&  m_dictionary, mafVME *vme, mafTimeStamp ts, DiMatrix *pMat)
-//----------------------------------------------------------------------------
-{
-  mafMatrix matrix;
-  DiMatrix  mRightTransf;
-  DiMatrix  mLeftMatrix;
-  DiMatrix  mResult;
-
-  ///This function can be called with zero this!
-  //vme->GetOutput()->GetMatrix(matrix, ts);
-  //mflMatrixToDi(matrix.GetVTKMatrix(), pMat);
-  DiMatrixIdentity(pMat);
-  //if(this == NULL)
-  //{
-  //  return;
-  //}
-  //otherwise we need to build AF for every known VME: Hierarchy not needed here, only dictionary
-  if(BuildAFTransformMatrix(m_dictionary, vme, ts, &mRightTransf))
-  {
-    mafTransfRightLeftConv(&mRightTransf, &mLeftMatrix);
-    //correct GTM
-    DiMatrixMultiply(&mLeftMatrix, pMat, &mResult);
-    DiMatrixCopy(&mResult, pMat);
-  }
-}
-
 
 //----------------------------------------------------------------------------
 mmoAFSys::mmoAFSys(wxString label) :
-mafOp(label), m_DictionaryFName("")
+mafOp(label)
 //----------------------------------------------------------------------------
 {
-  m_OpType  = OPTYPE_OP;
-  m_Canundo = true;
-  m_RefSys  = NULL;
+  m_OpType   = OPTYPE_OP;
+  m_Canundo  = true;
+  m_RefSys   = NULL;
+  InitPredefined();
+  m_Radio    = m_predefinedScripts.size();
 }
 
 //----------------------------------------------------------------------------
@@ -454,11 +101,11 @@ bool mmoAFSys::Accept(mafNode* vme)
   if(mafVMELandmarkCloud::SafeDownCast(vme) == NULL)
     return false;
 
-  for(int i = 0; i < vme->GetNumberOfChildren(); i++)
+  /*for(int i = 0; i < vme->GetNumberOfChildren(); i++)
   {
     if(vme->GetChild(i)->IsA("mafVMEAFRefSys"))
       return false;
-  }
+  }*/
   
   return true;
 }
@@ -469,8 +116,9 @@ bool mmoAFSys::Accept(mafNode* vme)
 enum 
 {
   ID_DEFAULT = MINID,
-  ID_LOAD_HIERARCHY ,
+  ID_RADIO_SCRIPT,
   ID_LOAD_DICTIONARY,
+  ID_LOAD_SCRIPT,
   ID_LAST,
   ID_FORCED_DWORD = 0x7fffffff
 };
@@ -479,10 +127,36 @@ enum
 void mmoAFSys::OpRun()   
 //----------------------------------------------------------------------------
 {
-  mafString str(m_Input->GetName());
+  mafString strBase(m_Input->GetName());
   mafNEW(m_RefSys);
-  str += " AF_Frame";
+  strBase += "_AF_Frame";
+  mafString str = strBase;
+  unsigned ind = 0;
+  unsigned i;
+  do
+  {
+    for(i = 0; i < m_Input->GetNumberOfChildren(); i++)
+    {
+      mafNode *node = m_Input->GetChild(i);
+      if(strcmp(node->GetName(), str.GetCStr()) == 0)
+      {
+        str.Printf("%s_%u", strBase.GetCStr(), ind);
+        ind++;
+        break;
+      }
+    }
+  }
+  while(i < m_Input->GetNumberOfChildren() && ind != UINT_MAX);
   m_RefSys->SetName(str.GetCStr());
+  for(unsigned nm = 0; nm < m_predefinedScripts.size(); nm++)
+  {
+    if(stricmp(m_predefinedScripts[nm].first.GetCStr(), m_Input->GetName()) == 0)
+    {
+      m_Radio = nm;
+      m_RefSys->SetScriptText(m_predefinedScripts[m_Radio].second);
+      break;
+    }
+  }
   CreateGui();
 }
 
@@ -492,8 +166,18 @@ void mmoAFSys::CreateGui()
 {
   m_Gui = new mmgGui(this);
   m_Gui->SetListener(this);
-  m_Gui->FileOpen(ID_LOAD_DICTIONARY, "Dictionary", &m_DictionaryFName);
+
+  std::vector<wxString> list;
+  for(unsigned i = 0; i < m_predefinedScripts.size(); i++)
+  {
+    list.push_back(m_predefinedScripts[i].first.GetCStr());
+  }
+  list.push_back("Custom");
+  m_Gui->Radio(ID_RADIO_SCRIPT, "",&m_Radio, list.size(), &list[0]);
+  m_Gui->FileOpen(ID_LOAD_SCRIPT, "Script", &m_ScriptFName);
   m_Gui->Label("");
+
+  m_Gui->Enable(ID_LOAD_SCRIPT, m_Radio == m_predefinedScripts.size());
   m_Gui->OkCancel();
   ShowGui();
 }
@@ -502,8 +186,6 @@ void mmoAFSys::CreateGui()
 void mmoAFSys::OpStop(int result)
 //----------------------------------------------------------------------------
 {
-  DiMatrix mAFTransf;
-
   if (result == OP_RUN_CANCEL)
   {
     HideGui();
@@ -515,15 +197,40 @@ void mmoAFSys::OpStop(int result)
   }
   else if (result == OP_RUN_OK)
   {
-    if(!BuildAFTransformMatrix(m_dictionary, mafVME::SafeDownCast(m_Input), 0, &mAFTransf))
+    if(m_Radio == m_predefinedScripts.size() && m_ScriptFName == "")
     {
-      wxMessageBox("Either dictionary provided or landmarks not sufficient to build anatomical frame.","Alert", wxOK , NULL);
+      wxMessageBox("Method is not specified","Alert", wxOK , NULL);
       return;
     }
     HideGui();
     mafEventMacro(mafEvent(this,result));
   }
 }
+
+bool mmoAFSys::ReadScript(const mafString& filename, std::vector<mafString>& output)
+{
+  FILE *fp = fopen(filename, "rt");
+  if(fp == NULL)
+  {
+    return false;
+  }
+
+  int const maxStrLen = 1000;
+  char      sLine[maxStrLen];
+  char      *pRet;
+
+  while(true)
+  {
+    pRet = fgets(sLine, maxStrLen, fp);
+    if(pRet == NULL)
+      break;
+    output.push_back(mafString(pRet));
+  }
+  fclose(fp);
+  return true;
+}
+
+
 //----------------------------------------------------------------------------
 void mmoAFSys::OnEvent(mafEventBase *maf_event) 
 //----------------------------------------------------------------------------
@@ -531,28 +238,37 @@ void mmoAFSys::OnEvent(mafEventBase *maf_event)
   switch(maf_event->GetId())
   {
     case wxOK:          
-    { 
       OpStop(OP_RUN_OK);
-    }
-    break;
+      break;
     case wxCANCEL:
-    {    
       OpStop(OP_RUN_CANCEL);
-    }
-    break;
-    case ID_LOAD_DICTIONARY:
-    {
-      if(m_DictionaryFName != "")
+      break;
+    case ID_LOAD_SCRIPT:
       {
-        ReadDictionary(&m_DictionaryFName, m_dictionary);
+        std::vector<mafString> tmp;
+        if(m_ScriptFName != "" && ReadScript(m_ScriptFName, tmp))
+          m_RefSys->SetScriptText(tmp);
       }
-    }
-    break;
+      break;
+    case ID_RADIO_SCRIPT:
+      {
+        m_Gui->Enable(ID_LOAD_SCRIPT, m_Radio == m_predefinedScripts.size());
+        if(m_Radio != m_predefinedScripts.size())
+        {
+          m_RefSys->SetScriptText(m_predefinedScripts[m_Radio].second);
+        }
+        else
+        {
+          std::vector<mafString> tmp;
+          if(m_ScriptFName != "" && ReadScript(m_ScriptFName, tmp))
+            m_RefSys->SetScriptText(tmp);
+        }
+        m_Gui->Update();
+      }
+      break;
     default:
-    {
       mafEventMacro(*maf_event); 
-    }
-    break;
+      break;
   }
 }
 
@@ -560,36 +276,13 @@ void mmoAFSys::OnEvent(mafEventBase *maf_event)
 void mmoAFSys::OpDo()
 //----------------------------------------------------------------------------
 {
-  DiMatrix mAF;
-  wxInt32  nI;
-  std::vector<mafTimeStamp> mpStamps;
-  vtkMatrix4x4 *mVTK = NULL;
-
   wxBusyInfo wait("Please wait, working...");
 
   assert(m_RefSys);
-  vtkNEW(mVTK);
   m_RefSys->ReparentTo(m_Input);
   m_RefSys->SetScaleFactor(100.0);
   mafEventMacro(mafEvent(this, VME_ADD, m_RefSys));
-  
-  //mafProgressBarShowMacro();
-  //mafProgressBarSetTextMacro("Creating rigid anatomical frame for entire sequence...");
-
-  mafVME::SafeDownCast(m_Input)->GetTimeStamps(mpStamps);
-  for(nI = 0; nI < mpStamps.size(); nI++)
-  {
-    //mafProgressBarSetValueMacro((100 * nI / m_input->GetNumberOfTimeStamps()));
-    GetMatrix(m_dictionary, mafVME::SafeDownCast(m_Input), mpStamps[nI], &mAF);
-    mVTK->Identity();
-    DiMatrixToVTK(&mAF, mVTK);
-    mafMatrix mft(mVTK);
-    mft.SetTimeStamp(mpStamps[nI]);
-    m_RefSys->SetMatrix(mft);
-  }
-  //mafProgressBarHideMacro();
-
-  vtkDEL(mVTK);
+  m_RefSys->SetActive(1);
 }
 //----------------------------------------------------------------------------
 void mmoAFSys::OpUndo()
@@ -599,200 +292,3 @@ void mmoAFSys::OpUndo()
   mafEventMacro(mafEvent(this, VME_REMOVE, m_RefSys));
 }
 
-
-//----------------------------------------------------------------------------
-static bool _mafBuildPelvisAF    (DiV4d const *vpLandmarks, DiMatrix *mpMatrix)
-//----------------------------------------------------------------------------
-{
-  DiV4d vMiddlePS;
-  DiV4d vMiddleAS;
-
-  DiV4dLineComb(&vpLandmarks[0], 0.5f, &vpLandmarks[1], 0.5f, &vMiddleAS);
-  DiV4dLineComb(&vpLandmarks[2], 0.5f, &vpLandmarks[3], 0.5f, &vMiddlePS);
-  DiMatrixIdentity(mpMatrix);
-  mafTransfAFCoords(&vpLandmarks[0], &vpLandmarks[1], &vMiddlePS, &vpLandmarks[1], &vpLandmarks[0], 
-    &mpMatrix->vUp, &mpMatrix->vRight, &mpMatrix->vAt);
-  mpMatrix->vAt.x = -mpMatrix->vAt.x;
-  mpMatrix->vAt.y = -mpMatrix->vAt.y;
-  mpMatrix->vAt.z = -mpMatrix->vAt.z;
-  DiV4dCopy(&vMiddleAS, &mpMatrix->vPos);
-  return true;
-}
-//----------------------------------------------------------------------------
-static bool _mafBuildRightThighAF(DiV4d const *vpLandmarks, DiMatrix *mpMatrix)
-//----------------------------------------------------------------------------
-{
-  //DiMatrixIdentity(mpMatrix);
-  //return true;
-  DiV4d vMiddleMELE;
-
-  DiV4dLineComb(&vpLandmarks[0], 0.5f, &vpLandmarks[1], 0.5f, &vMiddleMELE);
-  DiMatrixIdentity(mpMatrix);
-  mafTransfAFCoords(&vpLandmarks[0], &vpLandmarks[1], &vpLandmarks[2], &vMiddleMELE, &vpLandmarks[2], 
-    &mpMatrix->vRight, &mpMatrix->vAt, &mpMatrix->vUp);
-  mpMatrix->vUp.x = -mpMatrix->vUp.x;
-  mpMatrix->vUp.y = -mpMatrix->vUp.y;
-  mpMatrix->vUp.z = -mpMatrix->vUp.z;
-  DiV4dCopy(&vMiddleMELE, &mpMatrix->vPos);
-  return true;
-}
-//----------------------------------------------------------------------------
-static bool _mafBuildLeftThighAF (DiV4d const *vpLandmarks, DiMatrix *mpMatrix)
-//----------------------------------------------------------------------------
-{
-  DiV4d vMiddleMELE;
-
-  DiV4dLineComb(&vpLandmarks[0], 0.5f, &vpLandmarks[1], 0.5f, &vMiddleMELE);
-  DiMatrixIdentity(mpMatrix);
-  mafTransfAFCoords(&vpLandmarks[1], &vpLandmarks[0], &vpLandmarks[2], &vMiddleMELE, &vpLandmarks[2], 
-    &mpMatrix->vRight, &mpMatrix->vAt, &mpMatrix->vUp);
-  mpMatrix->vUp.x = -mpMatrix->vUp.x;
-  mpMatrix->vUp.y = -mpMatrix->vUp.y;
-  mpMatrix->vUp.z = -mpMatrix->vUp.z;
-  DiV4dCopy(&vMiddleMELE, &mpMatrix->vPos);
-  return true;
-}
-//----------------------------------------------------------------------------
-static bool _mafBuildRightShankAF(DiV4d const *vpLandmarks, DiMatrix *mpMatrix)
-//----------------------------------------------------------------------------
-{
-  DiV4d vMiddleLMMM;
-  DiV4dLineComb(&vpLandmarks[2], 0.5f, &vpLandmarks[3], 0.5f, &vMiddleLMMM);
-  DiMatrixIdentity(mpMatrix);
-  mafTransfAFCoords(&vpLandmarks[2], &vpLandmarks[3], &vpLandmarks[0], &vMiddleLMMM, &vpLandmarks[1], 
-    &mpMatrix->vRight, &mpMatrix->vAt, &mpMatrix->vUp);
-  mpMatrix->vUp.x = -mpMatrix->vUp.x;
-  mpMatrix->vUp.y = -mpMatrix->vUp.y;
-  mpMatrix->vUp.z = -mpMatrix->vUp.z;
-  DiV4dCopy(&vMiddleLMMM, &mpMatrix->vPos);
-  return true;
-}
-//----------------------------------------------------------------------------
-static bool _mafBuildLeftShankAF (DiV4d const *vpLandmarks, DiMatrix *mpMatrix)
-//----------------------------------------------------------------------------
-{
-  DiV4d vMiddleLMMM;
-
-  DiV4dLineComb(&vpLandmarks[2], 0.5f, &vpLandmarks[3], 0.5f, &vMiddleLMMM);
-  DiMatrixIdentity(mpMatrix);
-  mafTransfAFCoords(&vpLandmarks[3], &vpLandmarks[2], &vpLandmarks[0], &vMiddleLMMM, &vpLandmarks[1], 
-    &mpMatrix->vRight, &mpMatrix->vAt, &mpMatrix->vUp);
-  mpMatrix->vUp.x = -mpMatrix->vUp.x;
-  mpMatrix->vUp.y = -mpMatrix->vUp.y;
-  mpMatrix->vUp.z = -mpMatrix->vUp.z;
-  DiV4dCopy(&vMiddleLMMM, &mpMatrix->vPos);
-  return true;
-}
-
-//----------------------------------------------------------------------------
-static bool _mafBuildRightFootAF (DiV4d const *vpLandmarks, DiMatrix *mpMatrix)
-//----------------------------------------------------------------------------
-{
-  DiMatrixIdentity(mpMatrix);
-  mafTransfAFCoords(&vpLandmarks[3], &vpLandmarks[1], &vpLandmarks[0], &vpLandmarks[2], &vpLandmarks[0], 
-    &mpMatrix->vUp, &mpMatrix->vAt, &mpMatrix->vRight);
-  DiV4dCopy(&vpLandmarks[0], &mpMatrix->vPos);
-  return true;
-}
-//----------------------------------------------------------------------------
-static bool _mafBuildLeftFootAF  (DiV4d const *vpLandmarks, DiMatrix *mpMatrix)
-//----------------------------------------------------------------------------
-{
-  DiMatrixIdentity(mpMatrix);
-  mafTransfAFCoords(&vpLandmarks[1], &vpLandmarks[3], &vpLandmarks[0], &vpLandmarks[2], &vpLandmarks[0], 
-    &mpMatrix->vUp, &mpMatrix->vAt, &mpMatrix->vRight);
-  DiV4dCopy(&vpLandmarks[0], &mpMatrix->vPos);
-  return true;
-}
-
-//----------------------------------------------------------------------------
-static bool _mafBuildUnknownAF (DiV4d const *vpLandmarks, DiMatrix *mpMatrix)
-//----------------------------------------------------------------------------
-{
-  DiV4d    vMiddleMELE;
-  double   lineComb = 0.5;
-  unsigned prefAxis = 0;//Z-0, Y- 1
-
-  //use two algorithms here depending on data in last landmark
-  if(*((wxUint32 *)&vpLandmarks[3].w) == 0xFFFFFFFF)
-  {
-    //3 landmarks case
-    DiV4dLineComb(&vpLandmarks[0], lineComb, &vpLandmarks[1], 1.0 - lineComb, &vMiddleMELE);
-    DiMatrixIdentity(mpMatrix);
-    switch(prefAxis)
-    {
-    case 1:
-      {
-        mafTransfAFCoords(&vpLandmarks[1], &vpLandmarks[0], &vpLandmarks[2], &vMiddleMELE, &vpLandmarks[2], 
-          &mpMatrix->vRight, &mpMatrix->vAt, &mpMatrix->vUp);
-        break;
-      }
-    case 0:
-      {
-
-        DiV4dSub(&vpLandmarks[1], &vpLandmarks[0], &mpMatrix->vAt);
-        DiV4dMakeUnit(&mpMatrix->vAt);
-        DiV4dSub(&vMiddleMELE, &vpLandmarks[2], &mpMatrix->vUp);
-        DiV4dMakeUnit(&mpMatrix->vUp);
-        DiV4dCrossProduct(&mpMatrix->vAt, &mpMatrix->vUp, &mpMatrix->vRight);
-        DiV4dMakeUnit(&mpMatrix->vRight);
-        //perform correction
-        DiV4dCrossProduct(&mpMatrix->vRight, &mpMatrix->vAt, &mpMatrix->vUp);
-        mpMatrix->vAt.w = 0.0;
-        mpMatrix->vUp.w = 0.0;
-        mpMatrix->vRight.w = 0.0;
-        break;
-      }
-    default:
-      {
-        wxASSERT(false);
-      }
-    }
-
-    mpMatrix->vUp.x = -mpMatrix->vUp.x;
-    mpMatrix->vUp.y = -mpMatrix->vUp.y;
-    mpMatrix->vUp.z = -mpMatrix->vUp.z;
-    DiV4dCopy(&vMiddleMELE, &mpMatrix->vPos);
-    return true;
-  }
-  else
-  {
-    //suppose we have 4 points here
-    //4 landmarks case
-    DiV4dLineComb(&vpLandmarks[0], lineComb, &vpLandmarks[1], 1.0 - lineComb, &vMiddleMELE);
-    DiMatrixIdentity(mpMatrix);
-    switch(prefAxis)
-    {
-    case 1:
-      {
-        mafTransfAFCoords(&vpLandmarks[1], &vpLandmarks[0], &vpLandmarks[2], &vpLandmarks[3], &vpLandmarks[2], 
-          &mpMatrix->vRight, &mpMatrix->vAt, &mpMatrix->vUp);
-        break;
-      }
-    case 0:
-      {
-        DiV4dSub(&vpLandmarks[1], &vpLandmarks[0], &mpMatrix->vAt);
-        DiV4dMakeUnit(&mpMatrix->vAt);
-        DiV4dSub(&vpLandmarks[3], &vpLandmarks[2], &mpMatrix->vUp);
-        DiV4dMakeUnit(&mpMatrix->vUp);
-        DiV4dCrossProduct(&mpMatrix->vAt, &mpMatrix->vUp, &mpMatrix->vRight);
-        DiV4dMakeUnit(&mpMatrix->vRight);
-        //perform correction
-        DiV4dCrossProduct(&mpMatrix->vRight, &mpMatrix->vAt, &mpMatrix->vUp);
-        mpMatrix->vAt.w = 0.0;
-        mpMatrix->vUp.w = 0.0;
-        mpMatrix->vRight.w = 0.0;
-        break;
-      }
-    default:
-      {
-        wxASSERT(false);
-      }
-    }
-    mpMatrix->vUp.x = -mpMatrix->vUp.x;
-    mpMatrix->vUp.y = -mpMatrix->vUp.y;
-    mpMatrix->vUp.z = -mpMatrix->vUp.z;
-    DiV4dCopy(&vMiddleMELE, &mpMatrix->vPos);
-    return true;
-  }
-}
