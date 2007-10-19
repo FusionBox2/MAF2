@@ -37,6 +37,8 @@ mmoStickPalpation.cpp
 mmoStickPalpation.h
 mmoTimeReduce.cpp
 mmoTimeReduce.h
+mmoLnSurf.cpp
+mmoLnSurf.h
 )
 
 # List libraries that are needed by this project.
