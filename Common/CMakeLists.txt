@@ -8,6 +8,10 @@ PROJECT(lhpCommon)
 SET(PROJECT_SRCS
 mafPlotMath.cpp
 mafPlotMath.h
+forarray.h
+VecProc.h
+V3d.h
+splines.h
 )
 
 # Create the library.
