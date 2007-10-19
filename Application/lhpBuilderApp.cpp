@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-10-05 09:28:47 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2007-10-19 11:12:05 $
+  Version:   $Revision: 1.16 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -84,6 +84,7 @@
 #include "mmoMTRExporter.h"
 #include "mmoINPImporter.h"
 #include "mmoMTRImporter.h"
+#include "mmoLnSurf.h"
 #include "mmoAFSys.h"
 #include "mmoAverageLM.h"
 #include "mmoHelAxis.h"
@@ -211,6 +212,7 @@ bool lhpBuilderApp::OnInit()
 
   //------------------------- Operations -------------------------
   m_Logic->Plug(new mmoCreateGroup("Group"),"Create");
+  m_Logic->Plug(new mmoLnSurf("Lineset and surface"),"Create");
 	m_Logic->Plug(new mmoCreateRefSys("Refsys"),"Create");
   m_Logic->Plug(new mmoCreateSlicer("Slicer"),"Create");
 	m_Logic->Plug(new mmoCreateSurfaceParametric("Parametric Surface"),"Create");
