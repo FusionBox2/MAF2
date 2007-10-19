@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafPipeIntGraph.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-10-19 10:12:05 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -147,8 +147,12 @@ static void GetGlobalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat)
     mafNode *child = vme->GetChild(i);
     if(child->IsA("mafVMEAFRefSys"))
     {
-      afs = mafVMEAFRefSys::SafeDownCast(child);
-      break;
+      mafVMEAFRefSys *rs = mafVMEAFRefSys::SafeDownCast(child);
+      if(rs->GetActive())
+      {
+        afs = rs;
+        break;
+      }
     }
   }
 
