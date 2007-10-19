@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: VecProc.h,v $
   Language:  C++
-  Date:      $Date: 2007-10-12 10:27:48 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-10-19 10:04:33 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -387,7 +387,7 @@ class Normalize : public Oper<Type>
 public:
   Normalize(){m_out = NULL;}
   bool postRead(){return true;}
-  void process(){m_out->GetVector() /= sqrt(m_out->GetVector().length2());}
+  void process(){Type ln = m_out->GetVector().length2(); if(ln != Type(0)) m_out->GetVector() /= sqrt(ln);}
   FIELDS_BEGIN(typename Type)
   DEFINE_FIELD(out, true, false)
   FIELDS_END()
