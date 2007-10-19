@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpBonemat.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-10-19 11:12:46 $
+  Version:   $Revision: 1.2 $
   Authors:   Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -183,7 +183,7 @@ mafOp(label)
 lhpOpBonemat::~lhpOpBonemat()
 //----------------------------------------------------------------------------
 {
-  mafNEW(m_OriginalVMEMesh);
+  //mafNEW(m_OriginalVMEMesh);
 }
 //----------------------------------------------------------------------------
 bool lhpOpBonemat::Accept(mafNode *node)
