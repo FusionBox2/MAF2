@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEAFRefSys.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-10-19 10:10:32 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-10-24 11:10:44 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -161,14 +161,12 @@ mafVMEAFRefSys::mafVMEAFRefSys()
 
   dpipe->SetInput(m_ScaleAxis->GetOutput());
 
-  m_Fixed = 0;
-
-  m_XOffset           = 0;
-  m_YOffset           = 0;
-  m_ZOffset           = 0;
-  m_XRotate           = 0;
-  m_YRotate           = 0;
-  m_ZRotate           = 0;
+  m_XOffset = 0;
+  m_YOffset = 0;
+  m_ZOffset = 0;
+  m_XRotate = 0;
+  m_YRotate = 0;
+  m_ZRotate = 0;
 
 }
 
@@ -301,9 +299,7 @@ void mafVMEAFRefSys::SetScaleFactor(double scale)
   m_ScaleAxisTransform->Update();
   m_ScaleAxis->Update();
   Update();
-  /*mafEvent cam_event(this,CAMERA_UPDATE);
-  this->ForwardUpEvent(cam_event);
-  Modified();*/
+  Modified();
 }
 
 //-------------------------------------------------------------------------
@@ -518,8 +514,7 @@ bool mafVMEAFRefSys::ConvertTextToVM()
     }
     else
     {
-      //m_Gui->FloatSlider(ID_FIRSTDYN, m_vm->getInputs()[i].first.c_str(), &(m_vm->getInputs()[i].second->GetScalar()), -10, 10);
-      //m_vm->getInputs()[i].second->GetScalar() = 0.5;
+      //actions for processing scalar inputs, actually there is nothing to do
     }
   }
   return true;
@@ -576,15 +571,11 @@ void mafVMEAFRefSys::OnEvent(mafEventBase *maf_event)
       GetOutput()->Update();
       mafEvent cam_event(this,CAMERA_UPDATE);
       ForwardUpEvent(cam_event);
-
-      //m_guiVmeInfo->Update();
-      //mafEventMacro(mafEvent(this,CAMERA_UPDATE));
       break;
     }
   case ID_SCALE_FACTOR:
     {
-      //wxLogMessage("ID_UPDATE_CURRTIME %d",this->m_UpdateCurrentTimeOnly);
-      //m_guiVmeInfo->Update();
+      wxLogMessage("ID_SCALE_FACTOR %f", m_ScaleFactor);
       SetScaleFactor(m_ScaleFactor);
       GetOutput()->Update();
       mafEvent cam_event(this,CAMERA_UPDATE);
@@ -594,11 +585,8 @@ void mafVMEAFRefSys::OnEvent(mafEventBase *maf_event)
     }
   case ID_ACTIVE:
     {
+      wxLogMessage("ID_ACTIVE %d", m_Active);
       SetActive(m_Active);
-      break;
-    }
-  case ID_LOAD_DICTIONARY:
-    {
       break;
     }
   default:
@@ -670,6 +658,7 @@ void mafVMEAFRefSys::SetTransf(double x, double y, double z, double xr, double y
   m_XRotate = xr;
   m_YRotate = yr;
   m_ZRotate = zr;
+  Modified();
   InternalUpdate();
 }
 
@@ -677,34 +666,39 @@ void mafVMEAFRefSys::SetTransf(double x, double y, double z, double xr, double y
 void mafVMEAFRefSys::InternalUpdate()
 //-----------------------------------------------------------------------
 {
-  bool calculated = true;
-  for(unsigned i = 0; i < m_vm->getInputs().size(); i++)
-  {
-    if(m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
-    {
-      V3d<double> vec;
-      std::map<mafString, mafString>::iterator it = m_lmMapping.find(m_vm->getInputs()[i].first.c_str());
-      if(it == m_lmMapping.end())
-      {
-        calculated = false;
-        break;
-      }
-      int ind = ((mafVMELandmarkCloud*)GetParent())->FindLandmarkIndex(it->second.GetCStr());
-      if(ind == -1)
-      {
-        calculated = false;
-        break;
-      }
-      ((mafVMELandmarkCloud*)GetParent())->GetLandmark(ind, vec.val, -1);
+  mafVMELandmarkCloud *parentLMC = NULL;
+  if(GetParent() != NULL)
+    parentLMC = mafVMELandmarkCloud::SafeDownCast(GetParent());
 
-      m_vm->getInputs()[i].second->GetVector() = vec;
-    }
-    else
+  bool calculated = (parentLMC != NULL);
+
+  if(calculated)
+  {
+    for(unsigned i = 0; i < m_vm->getInputs().size(); i++)
     {
-      //printf("Enter float %s:\n", m_vm->getInputs()[i].first.c_str());
-      //double num;
-      //readNum(num);
-      //m_vm->getInputs()[i].second->GetScalar() = 1.0;
+      if(m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
+      {
+        V3d<double> vec;
+        std::map<mafString, mafString>::iterator it = m_lmMapping.find(m_vm->getInputs()[i].first.c_str());
+        if(it == m_lmMapping.end())
+        {
+          calculated = false;
+          break;
+        }
+        int  ind = parentLMC->FindLandmarkIndex(it->second.GetCStr());
+        if(ind == -1)
+        {
+          calculated = false;
+          break;
+        }
+        parentLMC->GetLandmark(ind, vec.val, -1);
+
+        m_vm->getInputs()[i].second->GetVector() = vec;
+      }
+      else
+      {
+        //actions for processing scalar inputs, actually there is nothing to do
+      }
     }
   }
 
@@ -799,15 +793,6 @@ void mafVMEAFRefSys::InternalUpdate()
   DiMatrixMultiply(&mTrant, &mTrano, &mTran);
   DiMatrixCopy(&mTran, &mTrant);
 
-/*
-  mafTransfRightLeftConv(&mTrant, &mTrano);
-  DiMatrixCopy(&mTrano, &mTrant);
-
-  //mafTransfRightLeftConv(&mTran, &mTrant)
-
-  //DiMatrixMultiply(&mTran, &mTrant, &mTrano);
-  //mafTransfRightLeftConv(&mTrano, &mTrant);
-*/
   mVTK->Identity();
   DiMatrixToVTK(&mTrant, mVTK);
   SetMatrix(mVTK);
@@ -815,9 +800,5 @@ void mafVMEAFRefSys::InternalUpdate()
 
 
   SetScaleFactor(m_ScaleFactor);
-
-  /*mafEvent *e	= new mafEvent(this,CAMERA_UPDATE);
-  ForwardUpEvent(e);
-  delete e;
-  this->Modified();*///the same is called from Set scale factor
+  Modified();
 }

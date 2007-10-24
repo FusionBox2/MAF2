@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoHelAxis.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-10-24 11:11:29 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -48,9 +48,6 @@
 //----------------------------------------------------------------------------
 // Forward Refs
 //----------------------------------------------------------------------------
-void GetGlobalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat);
-void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat);
-
 
 //----------------------------------------------------------------------------
 mmoHelAxis::mmoHelAxis(wxString label) :

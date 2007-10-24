@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEAFRefSys.h,v $
   Language:  C++
-  Date:      $Date: 2007-10-19 10:10:32 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-10-24 11:10:44 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -48,7 +48,6 @@ public:
     ID_SCALE_FACTOR,
     ID_ACTIVE,
     ID_PRINT,
-    ID_LOAD_DICTIONARY,
     ID_X_OFFSET,
     ID_Y_OFFSET,
     ID_Z_OFFSET,
@@ -136,34 +135,27 @@ protected:
   /** Internally used to create a new instance of the GUI.*/
   virtual mmgGui *CreateGui();
 
-  mafString m_Point1VmeName;
-  mafString m_Point2VmeName;
-  mafString m_OriginVmeName;
-
-  vtkArrowSource						*m_XArrow;
-  vtkArrowSource						*m_YArrow;
-  vtkArrowSource						*m_ZArrow;
+  vtkArrowSource            *m_XArrow;
+  vtkArrowSource            *m_YArrow;
+  vtkArrowSource            *m_ZArrow;
 
   vtkTransformPolyDataFilter*m_XAxis;
-  vtkTransform							*m_XAxisTransform;
+  vtkTransform              *m_XAxisTransform;
 
   vtkTransformPolyDataFilter*m_YAxis;
-  vtkTransform							*m_YAxisTransform;
+  vtkTransform              *m_YAxisTransform;
 
   vtkTransformPolyDataFilter*m_ZAxis;
-  vtkTransform							*m_ZAxisTransform;
+  vtkTransform              *m_ZAxisTransform;
 
   vtkTransformPolyDataFilter*m_ScaleAxis;
-  vtkTransform							*m_ScaleAxisTransform;
+  vtkTransform              *m_ScaleAxisTransform;
 
-  vtkAppendPolyData					*m_Axes;
+  vtkAppendPolyData         *m_Axes;
 
-  double m_ScaleFactor;
-
-  int                       m_Fixed;
+  double                    m_ScaleFactor;
 
   mafTransform *m_Transform; ///< pose matrix for the slicer plane
-
 
   double                         m_XOffset, m_YOffset, m_ZOffset;
   double                         m_XRotate, m_YRotate, m_ZRotate;
