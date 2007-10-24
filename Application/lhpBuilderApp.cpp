@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-10-19 11:12:05 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2007-10-24 08:54:12 $
+  Version:   $Revision: 1.17 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -110,6 +110,7 @@
 #include "medOpFreezeVME.h"
 #include "medOpExporterWrappedMeter.h"
 #include "medOpIterativeRegistration.h"
+#include "medOpCreateLabeledVolume.h"
 
 #include "mafViewVTK.h"
 #include "mafViewCompound.h"
@@ -241,7 +242,8 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoBuildHierarchy("Make hierarchical"),"Fuse");
   m_Logic->Plug(new lhpOpBonemat("Bonemat"),"Modify");
   m_Logic->Plug(new medOpIterativeRegistration("Iterative Registration"),"Modify");
-  m_Logic->Plug(new mafOpOpenExternalFile("Open with external program"),"Show");  
+  m_Logic->Plug(new mafOpOpenExternalFile("Open with external program"),"Show"); 
+  m_Logic->Plug(new medOpCreateLabeledVolume("Labeled Volume"),"Create");
   
   
   
@@ -274,6 +276,7 @@ bool lhpBuilderApp::OnInit()
 
   mafViewVTK *viso = new mafViewVTK("Isosurface");
   viso->PlugVisualPipe("mafVMEVolumeGray", "mafPipeIsosurface",MUTEX);
+  //viso->PlugVisualPipe("medVMELabeledVolume", "mafPipeIsosurface",MUTEX);
   m_Logic->Plug(viso);
 
   mafViewOrthoSlice *viewOrthoSlice = new mafViewOrthoSlice("OrthoSlice");
