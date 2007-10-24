@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafPipeIntGraph.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-10-19 10:12:05 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-10-24 10:58:53 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -135,7 +135,7 @@ static void GetGlobalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat)
   mafMatrix matrix;
 
   ///This function can be called with zero this!
-  vme->GetOutput()->GetMatrix(matrix, ts);
+  vme->GetOutput()->GetAbsMatrix(matrix, ts);
   mflMatrixToDi(matrix.GetVTKMatrix(), pMat);
   mafVMELandmarkCloud *lmc = mafVMELandmarkCloud::SafeDownCast(vme);
   mafVMEAFRefSys      *afs = NULL;
