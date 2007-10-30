@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderLogic.h,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-10-30 09:27:39 $
+  Version:   $Revision: 1.2 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
@@ -15,7 +15,7 @@
 //----------------------------------------------------------------------------
 // includes :
 //----------------------------------------------------------------------------
-#include "mafLogicWithManagers.h"
+#include "medLogicWithManagers.h"
 
 //----------------------------------------------------------------------------
 // forward reference
@@ -26,7 +26,7 @@
 //----------------------------------------------------------------------------
 /**
 */
-class lhpBuilderLogic: public mafLogicWithManagers
+class lhpBuilderLogic: public medLogicWithManagers
 {
 public:
                lhpBuilderLogic();
