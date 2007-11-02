@@ -8,7 +8,7 @@ import os
 import sys, string
 import unittest
 import shutil
-from pyparsing import Word, alphas, nums, ZeroOrMore, ParseException, Group, delimitedList, alphanums, Literal,Dict
+from pyparsing import Word, alphas, nums, ZeroOrMore, Suppress, ParseException, Group, delimitedList, alphanums, Literal,Dict
 import pprint
 
 class pyparsingTest(unittest.TestCase):
@@ -229,7 +229,39 @@ ESEL, R, REAL,,3
 CM, TYPE3-REAL3-MAT3, ELEM
 ESEL, ALL
 """
-          
+
+
+#!!!SEZIONE DICHIARAZIONE ELEMENTI
+#!!!la dichiarazione di elementi avviene a gruppi (in questo caso sono 2). Ogni gruppo si pu??stinguere per "element type", "real constant set", "material"
+#!!HMNAME COMP 
+#!!   2-2-3 "TYPE2-REAL3-MAT2"
+#!!HMCOLOR COMP 
+#!!   2-2-3 1
+
+#!!!le righe seguenti definiscono il gruppo di elementi che hanno (type=2, material=2 real constant set=3) 
+#!!!NB a noi per ora (e per un po'...) non interesser?a distinzione per "real constant set", solo quelle per element type e per material. Al momento consideriamo solo quelle per material, visto che le mesh hanno tipo di elemento uiniforme (tutti tetra 10, oppure tutti hexa 8 ecc.) 
+#!!!riga TYPE: ci interessa solo l'informazione "MAT,2", che dice che tutti gli elementi del gruppo hanno material card=2 (quella definita prima) 
+#!!!riga ESYS: definisce il sistema di riferimento dell'elemento. analogamente a quanto detto per i nodi, ci poniamo il problema di altri sist di rif possibili o per ora no?
+#!!!riga EN: definisce il numero elemento e la connettivit?colonna1(string EN):dichiara che stiamo creando un elemento colonna2(intero): numero dell'elemento colonna3-->10: connettivit?ovvero lista dei nodi che compongono l'elemento (sono ordinati, in maniera nota per ciascun tipo di elemento in ANSYS...non serve vero?)
+#!!!riga EMORE: continuazione della definizione della connettivit?poich?l formato inp di ANSYS va a capo dopo 10 campi-colonna. In questo caso (elementi tetra 10) rimangono due nodi da listare
+#!!!NB ci saranno tante righe EN (ed eventualmente EMORE) quanti sono gli elementi contenuti nel gruppo (solo uno in questo caso) 
+#!!!NB a seconda del numero di nodi per ogni elemento per ogni riga EN ci potranno essere 0 (tetra 4, hexa8),1 (tetra 10),oppure 2 (hexa20) righe EMORE  
+#TYPE, 2  $ MAT, 2  $ REAL, 3
+#ESYS, 0
+#EN,       2,       3,       1,       2,       4,       7,       6,       9,      12
+#EMORE,       8,      10
+#!!!!le 5 righe seguenti sono comandi di selezione e raggruppamento di ANSYS, vanno ignorati nell'import, sono da riconsiderare per l'export 
+#ESEL, S, TYPE,,2
+#ESEL, R, MAT,,2
+#ESEL, R, REAL,,3
+#CM, TYPE2-REAL3-MAT2, ELEM
+#ESEL, ALL
+#
+# ... -> will generate -> ...  
+# 
+# EN  Ty Mat Rea Esy Com
+# 2   2   2   3   0   1      3     1     2     4     7     6     9    12    8    10
+        
         lines = elementTypeData.splitlines()
         
         # print elementTypeData
@@ -238,28 +270,37 @@ ESEL, ALL
             print str(lineNum) + " > " + line
 
             # start grammar
-            elementHeader = "TYPE," + Word(nums)
-            elementInfo = "$" + Word( alphas) + "," + Word( nums)
-            elemDayentLine = elementHeader + elementInfo + elementInfo
+            elementType = Suppress("TYPE,") + Word(nums)
+            elementMat = Suppress("$") + Suppress(Word( alphas)) + Suppress(",") + Word( nums)
+            elementReal = Suppress("$") + Suppress(Word( alphas)) + Suppress(",") + Word( nums)
+            typeMatReal = elementType + elementMat + elementReal
             
-            connectivityHeader  = "EN,"
-            connectivityId = Dict(Group(delimitedList(Word(nums))))
-            connectivityLine = connectivityHeader + connectivityId
+            connectivityHeader  = Suppress("EN,")
+            # connectivityId = Dict(Group(delimitedList(Word(nums))))
+            elementId = Word(nums) + Suppress(",")
+            connectivityList = delimitedList(Word(nums))
+            connectivityLine = connectivityHeader + elementId + connectivityList
             
-            moreConnectivityHeader  = "EMORE,"
+            moreConnectivityHeader  = Suppress("EMORE,")
             moreConnectivityId = delimitedList(Word(nums))
             moreConnectivityLine = moreConnectivityHeader + moreConnectivityId 
             # end grammar
                         
+            
+            try: 
+                print typeMatReal.parseString( line )
+            except ParseException:
+                print "cannot parse line " + str(lineNum)
+                
             try: 
                 
-                data = connectivityLine.parseString(line)
-                print "data:", data
-                print "data.asList():",
-                pprint.pprint(data.asList())
-                print "data keys:", data.keys()
-                key = data.keys()[0]
-                print data[key]
+                print connectivityLine.parseString(line)
+                #print "data:", data
+                #print "data.asList():",
+                #pprint.pprint(data.asList())
+                #print "data keys:", data.keys()
+                #key = data.keys()[0]
+                #print data[key]
                 
 
 
