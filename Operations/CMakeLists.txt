@@ -4,6 +4,8 @@ PROJECT(lhpOperations)
 SET(PROJECT_SRCS
 lhpOpBonemat.cpp
 lhpOpBonemat.h
+lhpOpImporterAnsysInputFile.cpp
+lhpOpImporterAnsysInputFile.h
 lhpProceduralDataset.cxx
 lhpProceduralDataset.h
 lhpProceduralElements.cxx
