@@ -80,7 +80,7 @@ class ansysReader:
             # # Elements type section
             # find the elements type section
             if re.search("^(ET,)", line):
-                print "parsing Elements section..."
+                # print "parsing Elements section..."
                 if Debug:
                     print "Found elements type section at line " + str(lineNumber)
                 elementTypeSectionsNumber += 1
@@ -97,7 +97,7 @@ class ansysReader:
             # Materials section
             # find the materials section
             if re.search("^(MPTEMP,)", line):
-                print "parsing MPTEMP materials section..."
+                # print "parsing MPTEMP materials section..."
                 if Debug:
                     print "Found materials section at line " + str(lineNumber)
                 materialsSectionsNumber += 1
@@ -491,26 +491,28 @@ class ansysReader:
             
         return file, line
 
-
-def Run(inputMSFDirectory, vmeToExtractId, inDictionaryFileName, outputFolderName, outputVMEXMLName):                                            
-    upl = vmeUploader()
-    upl.InputMSFDirectory = inputMSFDirectory
-    upl.VmeToExtractID = int(vmeToExtractId)
-    upl.DictionaryFileName = inDictionaryFileName
-    upl.OutputFolderName = outputFolderName
-    upl.OutputVMEXMLName = outputVMEXMLName
-    upl.Parse()    
+def Run(inputAnsysFileName, cacheFolderName , nodesOutputFileName , elementsOutputFileName , materialsOutputFileName ):                                            
+    reader = ansysReader()
+    reader.InputAnsysFileName = inputAnsysFileName
+    reader.CacheFolderName = cacheFolderName
+    reader.NodesOutputFileName = nodesOutputFileName
+    reader.ElementsOutputFileName = elementsOutputFileName
+    reader.MaterialsOutputFileName = materialsOutputFileName
+    reader.Read()    
 
 def main():
     args = sys.argv[1:]
     if len(args) != 5:
         print """
-        usage: python.exe vmeUploader.py 
-        inputMSFDirectory vmeToExtractId inputDictionaryFile.txt
-        outputFolderName outputVMEXMLName.xml
+        usage: python.exe ansysReader.py
+        inputAnsysFileName 
+        cacheFolderName
+        nodesOutputFileName
+        elementsOutputFileName
+        materialsOutputFileName
         """
         sys.exit(-1)
-    Run(args[0],args[1],args[2],args[3],[4])
+    Run(args[0],args[1],args[2],args[3],args[4])
 
 if __name__ == '__main__':
     main()
