@@ -6,10 +6,11 @@
 
 # creating template for general rader
 # this one is using regular expressions, grammars and exception handling to perform parsing
-# code is very clean but I guess it could be improved by using a finite state machine
+# code is quite clean but I guess it could be improved by using a finite state machine
 # experimenting...
 
 from Debug import Debug
+import progressBar
 import os
 import sys, string, StringIO
 import unittest
@@ -33,6 +34,7 @@ class ansysReader:
         self.NodesMatrix = []
         self.ElementsMatrix = []       
         self.MaterialData = []
+        self.ProgressBar = progressBar.progressBar()
         
     def Read(self):
         return self.Parse()
@@ -47,11 +49,15 @@ class ansysReader:
           
         diskFile = open(self.InputAnsysFileName)
         file = StringIO.StringIO()
+        self.FileLinesNumber = 0
         for curr in diskFile.readlines() :
+            self.FileLinesNumber += 1
             file.write(curr)
+        
+        print "Input files contains: " + str(self.FileLinesNumber) + " lines" 
         file.seek(0)
         
-        lineNumber = 0
+        self.ParsedLineNumber = 0
         
         nodeSectionsNumber = 0
         materialsSectionsNumber = 0
@@ -62,8 +68,10 @@ class ansysReader:
         while 1:
            
             line = file.readline() 
+            self.ParsedLineNumber += 1
+            
             if Debug:
-                print str(lineNumber) + " > " + line
+                print str(self.ParsedLineNumber) + " > " + line
             cargo = file, line
             
             # # NODES section
@@ -71,7 +79,7 @@ class ansysReader:
             if re.search("^(N,)", line):
                 print "parsing Nodes section..."
                 if Debug:
-                    print "Found NODES section at line " + str(lineNumber)                
+                    print "Found NODES section at line " + str(self.ParsedLineNumber)                
                 nodeSectionsNumber += 1
                 
                 # create the NODES NodesMatrix
@@ -82,7 +90,7 @@ class ansysReader:
             if re.search("^(ET,)", line):
                 # print "parsing Elements section..."
                 if Debug:
-                    print "Found elements type section at line " + str(lineNumber)
+                    print "Found elements type section at line " + str(self.ParsedLineNumber)
                 elementTypeSectionsNumber += 1
                 # self.ReadElementsType()
                 
@@ -90,7 +98,7 @@ class ansysReader:
             # find the elements declaration section
             if re.search("^(TYPE,)", line):
                 if Debug:
-                    print "Found elements declaration at line " + str(lineNumber)
+                    print "Found elements declaration at line " + str(self.ParsedLineNumber)
                 elementDeclarationSectionsNumber += 1
                 cargo = self.ReadElements(cargo)
             
@@ -99,7 +107,7 @@ class ansysReader:
             if re.search("^(MPTEMP,)", line):
                 # print "parsing MPTEMP materials section..."
                 if Debug:
-                    print "Found materials section at line " + str(lineNumber)
+                    print "Found materials section at line " + str(self.ParsedLineNumber)
                 materialsSectionsNumber += 1
                 
                 # create the materials NodesMatrix
@@ -154,10 +162,11 @@ class ansysReader:
         
         if Debug:
             print memFile.getvalue()
-        
+            
         diskFile = open(self.NodesOutputFileName, 'w')
         diskFile.write(memFile.getvalue())
         diskFile.close()
+        print "Written cache node file: "  + self.NodesOutputFileName + " in directory: "  + self.CacheFolderName
     
     def StoreElementsToFile(self):
         """Store data to disk cache"""
@@ -176,6 +185,7 @@ class ansysReader:
         diskFile = open(self.ElementsOutputFileName, 'w')
         diskFile.write(file.getvalue())
         diskFile.close()
+        print "Written cache elements file: "  + self.ElementsOutputFileName+ " in directory: "  + self.CacheFolderName
     
     def StoreMaterialsToFile(self):
         #!!         2 "MAT2"
@@ -225,6 +235,7 @@ class ansysReader:
         diskFile = open(self.MaterialsOutputFileName, 'w')
         diskFile.write(file.getvalue())
         diskFile.close()
+        print "Written cache materials file: "  + self.MaterialsOutputFileName + " in directory: "  + self.CacheFolderName
         
     def ReadNodes(self, cargo):
         """Generate Nodes NodesMatrix"""
@@ -232,6 +243,8 @@ class ansysReader:
         file, line = cargo
             
         while 1:
+            
+            self.PrintProgress()
             
             if Debug:
                 print " > " + line
@@ -256,6 +269,8 @@ class ansysReader:
                 break
             
             line = file.readline()
+            self.ParsedLineNumber += 1
+            self.PrintProgress()
 
         # f.close()
         if Debug:
@@ -267,6 +282,8 @@ class ansysReader:
     
     def ReadElements(self, cargo):
         """Generate Elements NodesMatrix"""
+
+        self.PrintProgress()
         
         TYPE = []
         ESYS = []
@@ -301,6 +318,9 @@ class ansysReader:
               
             # 
             line = file.readline()
+            self.ParsedLineNumber += 1
+            self.PrintProgress()
+            
             if Debug:
                 print " Processing line: " + line 
              
@@ -318,6 +338,8 @@ class ansysReader:
                 break
                 
             line = file.readline()
+            self.ParsedLineNumber += 1
+            self.PrintProgress()
             
             while 1:
                 
@@ -340,6 +362,9 @@ class ansysReader:
                 
                 # parse EMORE line
                 line = file.readline()
+                self.ParsedLineNumber += 1                
+                self.PrintProgress()
+                
                 if Debug:
                     print " Processing line: " + line 
                
@@ -357,6 +382,9 @@ class ansysReader:
                 
                 # 
                 line = file.readline()
+                self.ParsedLineNumber += 1
+                self.PrintProgress()
+                
                 if Debug:
                     print " Processing line: " + line 
             
@@ -406,6 +434,8 @@ class ansysReader:
     def ReadMaterials(self,cargo):
         """Generate materials text"""
            
+        self.PrintProgress()
+        
         materialList = []
         #!!         2 "MAT2"
         #MPTEMP,1,             0.0
@@ -467,6 +497,8 @@ class ansysReader:
         #['MPDATA,', 'NUXY', '2', '1', '0.3']
 
         line = file.readline()
+        self.ParsedLineNumber += 1
+        self.PrintProgress()
         
         while 1:
             matData = "MPDATA," + delimitedList(Word( alphanums + "."))
@@ -486,10 +518,18 @@ class ansysReader:
                 break
         
             line = file.readline()
-        
+            self.ParsedLineNumber += 1
+            self.PrintProgress()
+            
         self.MaterialData.append(materialList)
             
         return file, line
+
+    def PrintProgress(self):
+        progress = (int((self.ParsedLineNumber * 100 / self.FileLinesNumber)))
+        self.ProgressBar.updateAmount(progress)
+        print self.ProgressBar, '\r'
+        
 
 def Run(inputAnsysFileName, cacheFolderName , nodesOutputFileName , elementsOutputFileName , materialsOutputFileName ):                                            
     reader = ansysReader()
