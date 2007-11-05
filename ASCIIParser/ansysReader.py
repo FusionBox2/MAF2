@@ -20,7 +20,8 @@ from pyparsing import Word, alphas, nums, ZeroOrMore, ParseException, Group, del
      alphanums, Literal,Dict, Suppress
 import pprint
 import fileUtilities
-            
+import AnsysGrammar
+
 class ansysReader:
     """"""
     
@@ -248,16 +249,9 @@ class ansysReader:
             
             if Debug:
                 print " > " + line
-
-            # start grammar
-            nodeHeader = "N,"
-            nodeId = Word( alphanums ) + Suppress(",")
-            nodeCoords =  delimitedList(Word( alphanums + "." + "-"))
-            nodeTextLine = nodeHeader + nodeId + nodeCoords
-            # end grammar
-            
+    
             try: 
-                list = nodeTextLine.parseString( line )
+                list = AnsysGrammar.nodeTextLine.parseString( line )
                 if Debug:
                     print list[1:]
                 self.NodesMatrix.append(list[1:])
@@ -301,15 +295,9 @@ class ansysReader:
             
             if Debug:
                 print " Processing line: " + line 
-           
-            # parse the TYPE line
-            elementType = Suppress("TYPE,") + Word(nums)
-            elementMat = Suppress("$") + Suppress(Word( alphas)) + Suppress(",") + Word( nums)
-            elementReal = Suppress("$") + Suppress(Word( alphas)) + Suppress(",") + Word( nums)
-            typeMatReal = elementType + elementMat + elementReal                        
-            
+
             try: 
-                TYPE = typeMatReal.parseString( line )
+                TYPE = AnsysGrammar.typeMatReal.parseString( line )
                 raw.append(TYPE)
             except ParseException:
                 if Debug:
@@ -323,14 +311,9 @@ class ansysReader:
             
             if Debug:
                 print " Processing line: " + line 
-             
-            # parse the ESYS line
-            esysHeader  = Suppress("ESYS,")
-            esysType = Word(nums)
-            esysLine = esysHeader + esysType
-            
+                 
             try: 
-                ESYS = esysLine.parseString(line)
+                ESYS = AnsysGrammar.esysLine.parseString(line)
                 raw.append(ESYS)
             except ParseException:
                 if Debug:
@@ -346,14 +329,9 @@ class ansysReader:
                 # parse EN line
                 if Debug:
                     print " Processing line: " + line 
-               
-                connectivityHeader  = Suppress("EN,")
-                elementId = Word(nums) + Suppress(",")
-                connectivityList = delimitedList(Word(nums))
-                connectivityLine = connectivityHeader + elementId + connectivityList
-    
+                
                 try: 
-                    EN = connectivityLine.parseString(line)
+                    EN = AnsysGrammar.connectivityLine.parseString(line)
                     raw.append(EN)
                 except ParseException:
                     if Debug:
@@ -367,13 +345,9 @@ class ansysReader:
                 
                 if Debug:
                     print " Processing line: " + line 
-               
-                moreConnectivityHeader  = Suppress("EMORE,")
-                moreConnectivityId = delimitedList(Word(nums))
-                moreConnectivityLine = moreConnectivityHeader + moreConnectivityId 
                 
                 try: 
-                    EMORE = moreConnectivityLine.parseString( line )
+                    EMORE = AnsysGrammar.moreConnectivityLine.parseString( line )
                     raw.append(EMORE)
                 except ParseException:
                     if Debug:
@@ -433,7 +407,6 @@ class ansysReader:
 
     def ReadMaterials(self,cargo):
         """Generate materials text"""
-           
         self.PrintProgress()
         
         materialList = []
@@ -475,11 +448,9 @@ class ansysReader:
         #['MPTEMP,', '1', '0.0']
 
         file, line = cargo
-
-        materialTemp = "MPTEMP," + delimitedList(Word( alphanums + "."))
         
         try: 
-            MPTEMP =  materialTemp.parseString( line )
+            MPTEMP =  AnsysGrammar.materialTemp.parseString( line )
             matTemp = MPTEMP[2]
             materialList.append(matTemp)
             
@@ -501,10 +472,10 @@ class ansysReader:
         self.PrintProgress()
         
         while 1:
-            matData = "MPDATA," + delimitedList(Word( alphanums + "."))
-        
+
+            
             try: 
-                MPDATA = matData.parseString( line )
+                MPDATA = AnsysGrammar.matData.parseString( line )
                 matName = MPDATA[1]
                 matNumber = MPDATA[2]
                 matValue = MPDATA[4]
