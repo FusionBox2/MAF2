@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterAnsysInputFile.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-11-03 18:22:09 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-11-05 09:18:47 $
+  Version:   $Revision: 1.2 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -109,7 +109,9 @@ int lhpOpImporterAnsysInputFile::Read()
   // execute the Python reader
   wxString command2execute;
   // command2execute = "python.exe ansysreaderpath filename";
-  mafLogMessage(wxGetCwd());
+  // mafLogMessage(wxGetCwd());
+
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 
   command2execute = "python.exe ";
   command2execute.Append(m_AnsysPythonImporterFullPathFileName.c_str());
@@ -119,9 +121,10 @@ int lhpOpImporterAnsysInputFile::Read()
   command2execute.Append(m_CacheDir) ;
   command2execute.Append(" nodes.lis elements.lis materials.lis");
 
-  mafLogMessage( _T("'%s' is running please wait..."), command2execute.c_str() );
+  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
-  m_Pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC);
+  // m_Pid = wxExecute(command2execute, output, errors, wxEXEC_NODISABLE);
+  m_Pid = wxExecute(command2execute, wxEXEC_SYNC);
 
   for (int i = 0; i < output.GetCount(); i++)
   {
@@ -131,7 +134,7 @@ int lhpOpImporterAnsysInputFile::Read()
   if ( !command2execute )
     return MAF_ERROR;
 
-  mafLogMessage(_T("Process '%s' terminated with exit code %d."),
+  mafLogMessage(_T("Command process '%s' terminated with exit code %d."),
     command2execute.c_str(), m_Pid);
 
   m_NodesFileName = m_CacheDir + "\\nodes.lis" ;
