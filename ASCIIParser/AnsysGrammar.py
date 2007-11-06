@@ -42,12 +42,22 @@ moreConnectivityId = delimitedList(Word(nums))
 moreConnectivityLine = moreConnectivityHeader + moreConnectivityId 
 # end grammar
 
+
 # MTEMP line grammar
 materialTemp = "MPTEMP," + delimitedList(Word( alphanums + "."))
 # end grammar
 
-
 # MPDATA line grammar
 matData = "MPDATA," + delimitedList(Word( alphanums + "."))
 # end grammar
- 
+      
+#!MPTEMP,0
+
+#!MTEMP line grammar
+materialTemp2 = "!MPTEMP," + Word( alphanums + ".")
+# end grammar 
+
+# MP line grammar
+matData2 = "MP," + delimitedList(Word( alphanums + "."))
+# end grammar
+
