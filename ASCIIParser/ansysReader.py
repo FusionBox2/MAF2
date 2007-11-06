@@ -61,7 +61,8 @@ class ansysReader:
         self.ParsedLineNumber = 0
         
         nodeSectionsNumber = 0
-        materialsSectionsNumber = 0
+        materialsMPTEMP_MPDATASectionsNumber = 0
+        materialsMPTEMP_MPSectionsNumber = 0
         elementTypeSectionsNumber = 0
         elementDeclarationSectionsNumber = 0
         
@@ -103,16 +104,27 @@ class ansysReader:
                 elementDeclarationSectionsNumber += 1
                 cargo = self.ReadElements(cargo)
             
-            # Materials section
+            # Materials section: MTEMP format
             # find the materials section
             if re.search("^(MPTEMP,)", line):
                 # print "parsing MPTEMP materials section..."
                 if Debug:
                     print "Found materials section at line " + str(self.ParsedLineNumber)
-                materialsSectionsNumber += 1
+                materialsMPTEMP_MPDATASectionsNumber += 1
                 
                 # create the materials NodesMatrix
-                cargo = self.ReadMaterials(cargo)
+                cargo = self.ReadMaterialsMPTEMP_MPDATA(cargo)
+            
+            # Materials section MP format
+            # find the materials section
+            if re.search("^(!MPTEMP,)", line):
+                # print "parsing MPTEMP materials section..."
+                if Debug:
+                    print "Found materials section at line " + str(self.ParsedLineNumber)
+                materialsMPTEMP_MPSectionsNumber += 1
+                
+                # create the materials NodesMatrix
+                cargo = self.ReadMaterialsMPTEMP_MP(cargo)
                 
             if not line: break
             # output files into the cache directory
@@ -141,12 +153,13 @@ class ansysReader:
         self.StoreMaterialsToFile()       
         
         print "nodeSectionsNumber " + str(nodeSectionsNumber)
-        print "materialsSectionsNumber " + str(materialsSectionsNumber)
+        print "materialsMPTEMP_MPDATASectionsNumber " + str(materialsMPTEMP_MPDATASectionsNumber)
+        print "materialsMPTEMP_MPSectionsNumber " + str(materialsMPTEMP_MPSectionsNumber)
         print "elementTypeSectionsNumber " + str(elementTypeSectionsNumber)
         print "elementDeclarationSectionsNumber " + str(elementDeclarationSectionsNumber)
         
         return nodeSectionsNumber, elementDeclarationSectionsNumber, elementTypeSectionsNumber, \
-               materialsSectionsNumber
+               materialsMPTEMP_MPDATASectionsNumber, materialsMPTEMP_MPSectionsNumber
     
     
         
@@ -225,7 +238,7 @@ class ansysReader:
                     args = (str(material[i]),str(material[i + 2]))
                     file.write(toWrite % args)
                     file.write('\n')
-                    i += 2
+                    i += 3
                                                                         
                 # 1 3 4 6
                 file.write('\n')
@@ -405,7 +418,7 @@ class ansysReader:
         # f.close()
         return file, line
 
-    def ReadMaterials(self,cargo):
+    def ReadMaterialsMPTEMP_MPDATA(self,cargo):
         """Generate materials text"""
         self.PrintProgress()
         
@@ -413,28 +426,7 @@ class ansysReader:
         #!!         2 "MAT2"
         #MPTEMP,1,             0.0
         #MPDATA,EX  ,2,1,          1000.0
-        #MPDATA,NUXY,2,1,             0.3
-        
-        # or????
-        
-        #!!         1 "1"
-        #!MPTEMP,0
-        #MP,DENS,1,         25974.3
-        #MP,EX  ,1,         25974.3
-        #MP,NUXY,1,             0.3
-        #!!HMNAME MAT 
-        #!!         2 "2"
-        #!MPTEMP,0
-        #MP,DENS,2,         25752.3
-        #MP,EX  ,2,         25752.3
-        #MP,NUXY,2,             0.3
-
-        #   -> Generates ->   
-
-        #MATERIAL NUMBER =      2 EVALUATED AT TEMPERATURE OF   0.0000    
-        #EX   =   1000.0    
-        #NUXY =  0.30000
-        #DENS =  0.10700    
+        #MPDATA,NUXY,2,1,             0.3 
                 
         matNumber = ""
         matTemp = ""
@@ -492,6 +484,84 @@ class ansysReader:
             self.ParsedLineNumber += 1
             self.PrintProgress()
             
+        if Debug:
+            print materialList
+        self.MaterialData.append(materialList)
+            
+        return file, line
+
+    
+    def ReadMaterialsMPTEMP_MP(self,cargo):
+        """Generate materials text"""
+        self.PrintProgress()
+        
+        materialList = []
+        
+        #!!         1 "1"
+        #!MPTEMP,0
+        #MP,DENS,1,         25974.3
+        #MP,EX  ,1,         25974.3
+        #MP,NUXY,1,             0.3
+        #!!HMNAME MAT 
+
+        #   -> Generates ->   
+
+        #MATERIAL NUMBER =      1 EVALUATED AT TEMPERATURE OF   0    
+        #DENS =  25974.3   
+        #EX   =  25974.3   
+        #NUXY =  0.3
+        
+        matNumber = ""
+        matTemp = ""
+        matName = ""
+        matValue = ""
+        
+        # 
+        #MPTEMP,1,             0.0 
+        
+        # 
+        #['MPTEMP,', '1', '0.0']
+
+        file, line = cargo
+                
+        try: 
+            MPTEMP =  AnsysGrammar.materialTemp2.parseString( line )
+            matTemp = MPTEMP[1]
+            materialList.append(matTemp)
+            
+        except ParseException:
+            if Debug:
+                print "cannot parse line " + str(lineNum)
+            return
+        
+
+        line = file.readline()
+        self.ParsedLineNumber += 1
+        self.PrintProgress()
+        
+        while 1:
+         
+            try:
+                
+                MPDATA = AnsysGrammar.matData2.parseString( line )
+                matName = MPDATA[1]
+                matNumber = MPDATA[2]
+                matValue = MPDATA[3]
+                materialList.append(matName)
+                materialList.append(matNumber)
+                materialList.append(matValue)
+                
+            except ParseException:
+                if Debug:
+                    print "cannot parse line " + str(line)
+                break
+        
+            line = file.readline()
+            self.ParsedLineNumber += 1
+            self.PrintProgress()
+
+        if Debug:
+            print materialList
         self.MaterialData.append(materialList)
             
         return file, line
