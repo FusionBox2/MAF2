@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-11-03 18:24:48 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2007-11-08 09:43:46 $
+  Version:   $Revision: 1.19 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -233,7 +233,7 @@ bool lhpBuilderApp::OnInit()
 	m_Logic->Plug(new mmoVOIDensity("VOI Density"),"Measure");
   m_Logic->Plug(new mmoReparentTo("Reparent to...  \tCtrl+R"),"Fuse");
   m_Logic->Plug(new medOpScaleDataset("Scale Dataset"),"Modify");
-  m_Logic->Plug(new medOpMove("Move"),"Modify");    
+  m_Logic->Plug(new medOpMove(),"Modify");    
   m_Logic->Plug(new mmoVMEDataSetAttributesImporter("VME DataSet Attributes Importer"),"Modify");
   m_Logic->Plug(new mmoClassicICPRegistration("Register Surface"),"Fuse");
   m_Logic->Plug(new mmoAFSys("AFRefsys"),"Create");
