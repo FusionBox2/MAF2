@@ -35,7 +35,7 @@ class dictionaryCSV2XMLTest(unittest.TestCase):
         attributesRange = columnLabels.irange(columnLabels.ValueType , columnLabels.Notes)
         LNRange = columnLabels.irange(columnLabels.L1 , columnLabels.L8)
         
-        filename = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.csv'
+        filename = r'.\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.csv'
 
         reader = csv.reader(open(filename, "rb"))       
         
@@ -64,7 +64,7 @@ class dictionaryCSV2XMLTest(unittest.TestCase):
                              'ValueType', 'Multiplicity', 'ValueList', 'Editable', 'Searchable',\
                              'DefaultValue', 'Expert', 'Notes'])
 
-        filename = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.csv'
+        filename = r'.\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.csv'
 
         reader = csv.reader(open(filename, "rb"))
         
@@ -110,7 +110,7 @@ class dictionaryCSV2XMLTest(unittest.TestCase):
 
         attributesRange = columnLabels.irange(columnLabels.ValueType , columnLabels.Notes)
         
-        filename = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.csv'
+        filename = r'.\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.csv'
 
         reader = csv.reader(open(filename, "rb"))       
 
@@ -241,7 +241,7 @@ class dictionaryCSV2XMLTest(unittest.TestCase):
 
         attributesRange = columnLabels.irange(columnLabels.ValueType , columnLabels.Notes)
         
-        filename = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.csv'
+        filename = r'.\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.csv'
 
         reader = csv.reader(open(filename, "rb"))       
 
