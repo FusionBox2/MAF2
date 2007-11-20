@@ -16,12 +16,19 @@ class vmeDownloaderTest(unittest.TestCase):
     # def setUp(self):
             
     def testCreateIncomingMSFDirectory(self):
+        
+        print "Beware:  In order to work run this test must be launched from VMEUploaderDownloader dir!"
+        
+        curDir = os.getcwd()        
+        
+        print " current directory is: " + curDir
+        
         msfBuilder = vmeDownloader.MSFBuilder()
-        msfBuilder.InputVMEBinaryDataFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\msf_test_import_export_VME\msf_test_import_export_VME.1.vtk'
-        msfBuilder.InputVMEXMLFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\vmeUploaderTestData\exportedVME.xml'
-        msfBuilder.FakeRootMSFFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\applicationData\fakeRoot.xml'
-        msfBuilder.OutputMSFFileName = r'outputMAF.msf'
-        msfBuilder.OutputMSFFolderName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\Incoming'
+        msfBuilder.InputVMEBinaryDataFileName = curDir + r'\msf_test_import_export_VME\msf_test_import_export_VME.1.vtk'
+        msfBuilder.InputVMEXMLFileName = curDir + r'\vmeUploaderTestData\exportedVME.xml'
+        msfBuilder.FakeRootMSFFileName = curDir + r'\applicationData\fakeRoot.xml'
+        msfBuilder.OutputMSFFileName = curDir + r'outputMAF.msf'
+        msfBuilder.OutputMSFFolderName = curDir + r'\Incoming'
         msfBuilder.Build()
         
     #def testVMEDownloader(self):

@@ -23,21 +23,26 @@ import unittest
 import shutil
 import difflib
 import pickle
+import os
 
 
 class msfParserTest(unittest.TestCase):
       
     def setUp(self):
-        self.inFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\msf_test_import_export_VME\msf_test_import_export_VME.msf'
-        self.copyFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\msf_test_import_export_VME\copyied_msf_test_import_export_VME.msf'
+        
+        print "Beware:  In order to work run this test must be launched from VMEUploaderDownloader dir!"
+        
+        curDir = os.getcwd()        
+        
+        print " current directory is: " + curDir
+        
+        self.inFileName = curDir + r'\msf_test_import_export_VME\msf_test_import_export_VME.msf'
+        self.copyFileName = curDir + r'\msf_test_import_export_VME\copyied_msf_test_import_export_VME.msf'
         self.msfParserInstance = msfParser.msfParser()
         shutil.copy(self.inFileName, self.copyFileName)
         self.doc = minidom.parse(self.copyFileName)
         self.rootNode = self.doc.documentElement
-        
-    # def testRun(self):
-        # self.msfParserInstance.run(self.inFileName)
-    
+            
     def testPrintXMLTree(self):
         nodeName =  "test_volume"
         nodeId = 1;

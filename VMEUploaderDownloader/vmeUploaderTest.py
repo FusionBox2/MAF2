@@ -12,20 +12,19 @@ import unittest
 import shutil
 
 class vmeUploaderTest(unittest.TestCase):
-      
-    # def setUp(self):
-        # self.inFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\msf_test_import_export_VME\msf_test_import_export_VME.msf'
-        # self.sourceMSFFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\msf_test_import_export_VME\copyied_msf_test_VME_Uploader.msf'
-        # shutil.copy(self.inFileName, self.copyFileName)
-        
     
     def testCreateOutgoingDirectoryAndUpload(self):
-        print os.getcwd()
+
+        print "Beware:  In order to work run this test must be launched from VMEUploaderDownloader dir!"
+        
+        curDir = os.getcwd()        
+        
+        print " current directory is: " + curDir
         
         upl = vmeUploader.vmeUploader()
-        upl.InputMSFDirectory = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\msf_test_import_export_VME'
-        upl.DictionaryFileName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\testDictionaries\testDictionary.txt'
-        upl.OutputFolderName = r'D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\Outgoing'
+        upl.InputMSFDirectory = curDir + r'\msf_test_import_export_VME'
+        upl.DictionaryFileName = curDir + r'\testDictionaries\testDictionary.txt'
+        upl.OutputFolderName = curDir + r'\Outgoing'
         upl.VmeToExtractID = 1    
         upl.Upload()
         
