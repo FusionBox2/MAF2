@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-11-20 10:22:50 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2007-11-22 08:44:05 $
+  Version:   $Revision: 1.22 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -49,6 +49,7 @@
 #include "mafOpDecomposeTimeVarVME.h"
 #include "mafOpImporterMSF.h"
 #include "mafOpImporterExternalFile.h"
+#include "mafOpLabelExtractor.h"
 #include "mafOpOpenExternalFile.h"
 #include "mmoBmpExporter.h"
 #include "mmoCreateGroup.h"
@@ -248,6 +249,8 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mafOpOpenExternalFile("Open with external program"),"Show"); 
   m_Logic->Plug(new medOpCreateLabeledVolume("Labeled Volume"),"Create");
   m_Logic->Plug(new mafOpDecomposeTimeVarVME("Decompose Time"),"Create");
+  m_Logic->Plug(new mafOpLabelExtractor("Extract Label"),"Create");
+
   
   
   //-------------------------------------------------------------
