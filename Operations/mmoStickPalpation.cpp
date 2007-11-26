@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoStickPalpation.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-11-26 13:40:28 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -624,7 +624,6 @@ void mmoStickPalpation::ProcessSingleLM()
 //----------------------------------------------------------------------------
 {
   wxInt32                   nI, nJ, nK;
-  mafTimeStamp              *mpStamps = NULL;
   vtkMatrix4x4              *mVTK = NULL;
   std::vector<double>       tips;
   std::vector<int>          tipsIdx;
@@ -673,7 +672,7 @@ void mmoStickPalpation::ProcessSingleLM()
   {
     double deviation = 0.0;
     double result[4];
-    float  currTime  = kframes1[nI];
+    mafTimeStamp  currTime  = kframes1[nI];
     vtkMatrix4x4 *t_matrix = vtkMatrix4x4::New();
 
     if(ExtractMatchingPoints(m_StickDefinition, m_StickCalibration, -1, currTime))
@@ -739,7 +738,7 @@ void mmoStickPalpation::ProcessSingleLM()
     double deviation = 0.0;
     double tippos[4];
     double tipsI[4];
-    float  currTime  = kframes1[tipsIdx[nI]];
+    mafTimeStamp  currTime  = kframes1[tipsIdx[nI]];
     vtkMatrix4x4 *t_matrix = vtkMatrix4x4::New();
 
     if(ExtractMatchingPoints(m_LimbCalibration, m_LimbCalibration, kframes1[tipsIdx[0]], currTime))
@@ -807,7 +806,7 @@ void mmoStickPalpation::ProcessSingleLM()
   for (int t = 0; t < kframes1.size(); t++)
   {
     vtkMatrix4x4 *t_matrix = vtkMatrix4x4::New();
-    float        currTime  = kframes1[t];
+    mafTimeStamp currTime  = kframes1[t];
     double       deviation = 0.0;
 
     long         p         = t * 100 / kframes1.size();
@@ -877,7 +876,7 @@ void mmoStickPalpation::OpUndo()
 }
 
 //----------------------------------------------------------------------------
-int mmoStickPalpation::ExtractMatchingPoints(mafVMELandmarkCloud *src, mafVMELandmarkCloud *trg, float srctime, float trgtime)
+int mmoStickPalpation::ExtractMatchingPoints(mafVMELandmarkCloud *src, mafVMELandmarkCloud *trg, mafTimeStamp srctime, mafTimeStamp trgtime)
 //----------------------------------------------------------------------------
 {
   double lmsrcd[3];
