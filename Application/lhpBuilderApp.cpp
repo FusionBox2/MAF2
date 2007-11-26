@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-11-22 08:44:05 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2007-11-26 11:49:01 $
+  Version:   $Revision: 1.23 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -126,6 +126,7 @@
 #include "mafViewImageCompound.h"
 #include "mafViewIntGraph.h"
 #include "medViewSlicer.h"
+#include "lhpOpMultiscaleExplore.h"
 
 //temporary for testing
 #include "mafViewSingleSliceCompound.h"
@@ -250,6 +251,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new medOpCreateLabeledVolume("Labeled Volume"),"Create");
   m_Logic->Plug(new mafOpDecomposeTimeVarVME("Decompose Time"),"Create");
   m_Logic->Plug(new mafOpLabelExtractor("Extract Label"),"Create");
+  m_Logic->Plug(new lhpOpMultiscaleExplore("Multiscale Viewer"),"Multiscale");
 
   
   
