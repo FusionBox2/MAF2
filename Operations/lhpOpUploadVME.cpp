@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-11-23 14:58:14 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2007-11-26 11:13:06 $
+Version:   $Revision: 1.2 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2007
@@ -249,10 +249,9 @@ bool lhpOpUploadVME::ExistsRunningProcess()
   lockpath += "activeLock.lhp";
   if (wxFileExists(lockpath))
   {
-    result = true;
-    return result;
+    result = lockFile.Open(lockpath);
   }
-  result = lockFile.Open(lockpath);
+  
 
   if(result)
   {
@@ -265,6 +264,8 @@ bool lhpOpUploadVME::ExistsRunningProcess()
 
     lockFile.Close();
     m_Pid = pidControl;
+
+    result = wxProcess::Exists(m_Pid);
   }
   
 
