@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-11-26 11:13:06 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2007-11-27 09:36:57 $
+Version:   $Revision: 1.3 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2007
@@ -155,9 +155,14 @@ void lhpOpUploadVME::OpDo()
   if ( ExistsRunningProcess() )
   {
     // script for client
-    m_FileName = "message.py "; 
+    m_FileName = "client.py ";
     command2execute.Append(m_FileName.GetCStr());
-    command2execute.Append(wxString::Format("%s ",m_Input->GetName()));
+    command2execute.Append("127.0.0.1 "); //server address (localhost)
+    command2execute.Append("50000 "); //port address (50000)
+    command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //vme id
+    command2execute.Append(wxString::Format("%s ",m_CurrentCache)); //cache directory
+    //command2execute.Append("> log.txt"); //logme
+    
     
     //wxMessageBox(wxString::Format("Process %ld is running.", m_Pid));
     wxExecute(command2execute, wxEXEC_ASYNC);
@@ -167,9 +172,20 @@ void lhpOpUploadVME::OpDo()
     //wxMessageBox(wxString::Format("No process with pid = %ld.", m_Pid));
     m_FileName = "gui.py ";
     command2execute.Append(m_FileName.GetCStr());
-    command2execute.Append(wxString::Format("%d ",m_Input->GetId()));
-    command2execute.Append(wxString::Format("%s ",m_Input->GetName()));
+    command2execute.Append("50000");
     m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
+
+    command2execute.clear();
+    command2execute = m_PythonExe;
+    command2execute.Append(m_PythonUploadFullPath.GetCStr());
+    m_FileName = "client.py ";
+    command2execute.Append(m_FileName.GetCStr());
+    command2execute.Append("127.0.0.1 "); //server address (localhost)
+    command2execute.Append("50000 "); //port address (50000)
+    command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //vme id
+    command2execute.Append(wxString::Format("%s ",m_CurrentCache)); //cache directory
+
+    wxExecute(command2execute, wxEXEC_ASYNC);
   }
   
   
@@ -204,7 +220,6 @@ bool lhpOpUploadVME::CreateCache()
 
   bool cont = dir.GetFirst(&filename, filespec);
 
-
   //control cache subdir
   mafString currentSubdir;
   currentSubdir = m_CacheDir + m_CacheSubdir.GetCStr();
@@ -220,7 +235,7 @@ bool lhpOpUploadVME::CreateCache()
   wxMkDir(currentSubdir);
   while ( cont )
   {
-    
+    m_CurrentCache = currentSubdir;
     filenameCopy = currentSubdir;
     filenameCopy.Append(filename);
     
@@ -252,7 +267,6 @@ bool lhpOpUploadVME::ExistsRunningProcess()
     result = lockFile.Open(lockpath);
   }
   
-
   if(result)
   {
     char processId[10];
@@ -266,10 +280,11 @@ bool lhpOpUploadVME::ExistsRunningProcess()
     m_Pid = pidControl;
 
     result = wxProcess::Exists(m_Pid);
+
+    if(!result)
+    {
+      wxRemoveFile(lockpath);
+    }
   }
-  
-
-
   return result;
-
 }
