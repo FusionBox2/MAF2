@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2007-11-27 09:36:57 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2007-11-27 16:36:00 $
+Version:   $Revision: 1.3 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2007
@@ -77,7 +77,7 @@ public:
 	/** Execute the operation. */
 	virtual void OpDo();
 
-  /** */
+  /** Set Current Working Msf Directory*/
   void SetMsfDir(mafString msfDir){m_MsfDir = msfDir;}
 
 protected:
@@ -85,20 +85,21 @@ protected:
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
 	virtual void OpStop(int result);
 
-  /** This method create on filesystem a cache with msf and binary data that must be uploaded */
+  /** This method creates on filesystem a cache with msf and binary data that must be uploaded */
   bool CreateCache();
 
-  /** This method check if process exists and if there is a lock file */
+  /** This method checks if process exists and if there is a lock file */
   bool ExistsRunningProcess();
   
-  mafString m_CacheDir;
-  mafString m_PythonUploadFullPath;
-  mafString m_FileName;
-  mafString m_PythonExe;
-  mafString m_MsfDir;
-  static mafString m_CacheSubdir;
-  mafString m_CurrentCache;
-
- static long m_Pid;
+  mafString m_CacheDir; //>cache superdirectory
+  static mafString m_CacheSubdir; //>cache subdirectory
+  mafString m_CurrentCache; //>current cache directory
+  
+  mafString m_PythonUploadFullPath; //>directory where the scripts are
+  mafString m_FileName; //>script file name
+  mafString m_PythonExe; //>python  executable
+  mafString m_MsfDir; //>directory of original msf
+   
+ static long m_Pid; //> pid of the server process
 };
 #endif

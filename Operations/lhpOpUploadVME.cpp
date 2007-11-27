@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-11-27 09:36:57 $
-Version:   $Revision: 1.3 $
+Date:      $Date: 2007-11-27 16:36:00 $
+Version:   $Revision: 1.4 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2007
@@ -76,7 +76,7 @@ mafOp(label)
 	m_Canundo = false;
 
   //m_PythonExe ="C:\\Python25\\python.exe ";
-  m_PythonExe ="python.exe ";
+  m_PythonExe ="pythonw.exe ";
   //m_CacheDir = (mafGetApplicationDirectory() + "\\Data\\UploadCache").c_str();
   m_CacheDir = "C:\\tmp\\";
 
@@ -170,7 +170,7 @@ void lhpOpUploadVME::OpDo()
   else
   {
     //wxMessageBox(wxString::Format("No process with pid = %ld.", m_Pid));
-    m_FileName = "gui.py ";
+    m_FileName = "ThreadedClient.py ";
     command2execute.Append(m_FileName.GetCStr());
     command2execute.Append("50000");
     m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
@@ -178,7 +178,7 @@ void lhpOpUploadVME::OpDo()
     command2execute.clear();
     command2execute = m_PythonExe;
     command2execute.Append(m_PythonUploadFullPath.GetCStr());
-    m_FileName = "client.py ";
+    m_FileName = "Client.py ";
     command2execute.Append(m_FileName.GetCStr());
     command2execute.Append("127.0.0.1 "); //server address (localhost)
     command2execute.Append("50000 "); //port address (50000)
