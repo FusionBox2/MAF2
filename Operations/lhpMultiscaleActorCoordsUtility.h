@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpMultiscaleActorCoordsUtility.h,v $
 Language:  C++
-Date:      $Date: 2007-11-26 12:39:56 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2007-11-27 12:39:58 $
+Version:   $Revision: 1.2 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -64,14 +64,20 @@ public:
   /** Get the min size of an actor in world coords. */
   double GetMinSizeWorld(vtkActor *actor) ;
 
-  /** Get the min size of an actor in pixels. */
-  double GetMinSizeDisplay(vtkActor *actor, vtkRenderer *ren) ;
-
   /** Get the max size of an actor in world coords. */
   double GetMaxSizeWorld(vtkActor *actor) ;
 
+  /** Get the mean size of an actor in world coords. */
+  double GetMeanSizeWorld(vtkActor *actor) ;
+
+  /** Get the min size of an actor in pixels. */
+  double GetMinSizeDisplay(vtkActor *actor, vtkRenderer *ren) ;
+
   /** Get the max size of an actor in pixels. */
   double GetMaxSizeDisplay(vtkActor *actor, vtkRenderer *ren) ;
+
+  /** Get the mean size of an actor in pixels. */
+  double GetMeanSizeDisplay(vtkActor *actor, vtkRenderer *ren) ;
 
   /** Rescale actor to desired display size in pixels */
   void SetActorDisplaySize(vtkActor *actor, vtkRenderer *ren, double newSize) ;

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpMultiscaleActorCoordsUtility.cpp,v $
 Language:  C++
-Date:      $Date: 2007-11-26 12:39:56 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2007-11-27 12:40:17 $
+Version:   $Revision: 1.2 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -251,20 +251,6 @@ double lhpMultiscaleActorCoordsUtility::GetMinSizeWorld(vtkActor *actor)
   return sizmin ;
 }
 
-
-//------------------------------------------------------------------------------
-// Get the min size of an actor in pixels.
-double lhpMultiscaleActorCoordsUtility::GetMinSizeDisplay(vtkActor *actor, vtkRenderer *ren)
-//------------------------------------------------------------------------------
-{
-  double siz[3], sizmin ;
-  GetSizeDisplay(actor, ren, siz) ;
-  sizmin = std::min(siz[0], siz[1]) ;
-  return sizmin ;
-}
-
-
-
 //------------------------------------------------------------------------------
 // Get the max size of an actor in world coords.
 double lhpMultiscaleActorCoordsUtility::GetMaxSizeWorld(vtkActor *actor)
@@ -277,6 +263,27 @@ double lhpMultiscaleActorCoordsUtility::GetMaxSizeWorld(vtkActor *actor)
   return sizmax ;
 }
 
+//------------------------------------------------------------------------------
+// Get the mean size of an actor in world coords.
+double lhpMultiscaleActorCoordsUtility::GetMeanSizeWorld(vtkActor *actor)
+//------------------------------------------------------------------------------
+{
+  double siz[3], sizmean ;
+  GetSizeWorld(actor, siz) ;
+  sizmean = (siz[0] + siz[1] + siz[2]) / 3.0 ;
+  return sizmean ;
+}
+
+//------------------------------------------------------------------------------
+// Get the min size of an actor in pixels.
+double lhpMultiscaleActorCoordsUtility::GetMinSizeDisplay(vtkActor *actor, vtkRenderer *ren)
+//------------------------------------------------------------------------------
+{
+  double siz[3], sizmin ;
+  GetSizeDisplay(actor, ren, siz) ;
+  sizmin = std::min(siz[0], siz[1]) ;
+  return sizmin ;
+}
 
 //------------------------------------------------------------------------------
 // Get the max size of an actor in pixels.
@@ -289,6 +296,17 @@ double lhpMultiscaleActorCoordsUtility::GetMaxSizeDisplay(vtkActor *actor, vtkRe
   return sizmax ;
 }
 
+//------------------------------------------------------------------------------
+// Get the mean size of an actor in pixels.
+double lhpMultiscaleActorCoordsUtility::GetMeanSizeDisplay(vtkActor *actor, vtkRenderer *ren)
+//------------------------------------------------------------------------------
+{
+  double siz[3], sizmean ;
+  GetSizeDisplay(actor, ren, siz) ;
+  sizmean = (siz[0] + siz[1]) / 2.0 ;
+  return sizmean ;
+}
+
 
 
 //------------------------------------------------------------------------------
@@ -296,28 +314,62 @@ double lhpMultiscaleActorCoordsUtility::GetMaxSizeDisplay(vtkActor *actor, vtkRe
 void lhpMultiscaleActorCoordsUtility::SetActorDisplaySize(vtkActor *actor, vtkRenderer *ren, double newSize)
 //------------------------------------------------------------------------------
 {
-  double size[3] ;
-  // double sizw[3] ;
+  double sizD[3], s[3] ;
+  double Scale, ScaleLast, ScaleNext, Size, SizeLast, Err, ErrLast, ErrStop ;
 
-  //GetSizeWorld(actor, sizw) ;
-  GetSizeDisplay(actor, ren, size) ;
-  //mafLogMessage("size (initial)  :  world = %f %f %f  display = %f %f", sizw[0], sizw[1], sizw[2], size[0], size[1]) ;
+  const double ErrPCTarget = 1.0 ;    // target percentage error
+  const int maxits = 10 ;            // set max no. of iterations
 
-  // set scale back to 1.0
-  actor->SetScale(1.0) ;
+  // set up a scratch actor to test the values of scale
+  // in case we accumulate errors by piling scale on scale.
+  vtkActor *actorScratch = vtkActor::New() ;
 
-  // get current display size
-  //GetSizeWorld(actor, sizw) ;
-  GetSizeDisplay(actor, ren, size) ;
-  //mafLogMessage("size (scale = 1):  world = %f %f %f  display = %f %f", sizw[0], sizw[1], sizw[2], size[0], size[1]) ;
-  double currentSize = (size[0] + size[1]) / 2.0 ;
+  // Set stop value of error
+  ErrStop = 0.01*ErrPCTarget*newSize ;
 
-  // change scale to new size
-  double scale = newSize / currentSize ;
-  actor->SetScale(scale) ;
-  //GetSizeWorld(actor, sizw) ;
-  GetSizeDisplay(actor, ren, size) ;
-  //mafLogMessage("size (scale = %f):  world = %f %f %f  display = %f %f\n", scale, sizw[0], sizw[1], sizw[2], size[0], size[1]) ;
+  // get initial scale of actor
+  actor->GetScale(s) ;
+  Scale = (s[0]+s[1]+s[2]) / 3.0 ;
+
+  // Get initial display size
+  GetSizeDisplay(actor, ren, sizD) ;
+  Size = std::max(sizD[0], sizD[1]) ;
+
+  // Get initial error in size
+  Err = Size - newSize ;
+
+  // Make initial guess at required scale, assuming it is proportional to the size ratio
+  ScaleNext = Scale * newSize / Size ;
+
+  for (int i = 0 ;  i < maxits && std::fabs(Err) > ErrStop ;  i++){
+    // Shift variables
+    ErrLast = Err ;
+    ScaleLast = Scale ;
+    Scale = ScaleNext ;
+    SizeLast = Size ;
+
+    // copy actor with latest guess at scale
+    actorScratch->ShallowCopy(actor) ;
+    actorScratch->SetScale(Scale) ;
+
+    // Get scaled display size
+    GetSizeDisplay(actorScratch, ren, sizD) ;
+    Size = std::max(sizD[0], sizD[1]) ;
+
+    mafLogMessage("i = %d  scale = %f  size = %f", i, Scale, Size) ;
+
+    // calculate error
+    Err = (Size - newSize) ;
+
+    // calculate next guess at scale by linear interp
+    ScaleNext = Scale - Err * (Scale - ScaleLast) / (Err - ErrLast) ;
+  }
+
+  // transfer final scale to input actor
+  actor->SetScale(Scale) ;
+
+  // delete scratch actor
+  actorScratch->Delete() ;
 
 }
 
