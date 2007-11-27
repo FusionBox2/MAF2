@@ -1,0 +1,54 @@
+#-----------------------------------------------------------------------------
+# BEWARE!!! This is mostly a prototype!!!
+# code is changing very fast so don't rely on it :P
+# author: Stefano Perticoni <s.perticoni@scsolutions.it>
+#-----------------------------------------------------------------------------
+
+import lhpXMLDictionaryParser
+import sys, string
+from xml.dom import minidom
+from xml.dom import Node
+
+import Debug
+import unittest
+import shutil
+import difflib
+import pickle
+import os
+
+class lhpXMLDictionaryParserTest(unittest.TestCase):
+      
+    def setUp(self):
+        
+        print "Beware:  In order to work run this est must be launched from VMEUploaderDownloader dir!"
+        
+        curDir = os.getcwd()        
+        
+        print " current directory is: " + curDir
+            
+    def testLoadDictionary(self):
+        """test tags consistency"""
+        xmlDict = r'.\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.xml'
+
+        lhpXMLDictionaryParserInstance = lhpXMLDictionaryParser.lhpXMLDictionaryParser()
+        lhpXMLDictionaryParserInstance.LoadXMLDictionary(xmlDict)
+        lhpXMLDictionaryParserInstance.PrintXMLDictionary()
+        
+        tags =  lhpXMLDictionaryParserInstance.GetXMLDictionaryTagsList()
+        if Debug:
+            print tags
+            num = 0
+            for i in tags:
+                print str(num) + " " + str(i)
+                num += 1
+                
+        self.assertEqual(len(tags), 100)
+        
+        tatags = lhpXMLDictionaryParserInstance.GetTagArrayTagsList()
+        self.assertEqual(len(tatags), 100)
+        for i in tatags:
+            print i
+        
+if __name__ == '__main__':
+    unittest.main()
+    
