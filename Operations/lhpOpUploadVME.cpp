@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-11-27 16:36:00 $
-Version:   $Revision: 1.4 $
+Date:      $Date: 2007-11-28 11:00:59 $
+Version:   $Revision: 1.5 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2007
@@ -155,12 +155,13 @@ void lhpOpUploadVME::OpDo()
   if ( ExistsRunningProcess() )
   {
     // script for client
-    m_FileName = "client.py ";
+    m_FileName = "Client.py ";
     command2execute.Append(m_FileName.GetCStr());
     command2execute.Append("127.0.0.1 "); //server address (localhost)
     command2execute.Append("50000 "); //port address (50000)
     command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //vme id
     command2execute.Append(wxString::Format("%s ",m_CurrentCache)); //cache directory
+    command2execute.Append(wxString::Format("%s ",m_Input->GetName())); //vme name
     //command2execute.Append("> log.txt"); //logme
     
     
@@ -184,6 +185,7 @@ void lhpOpUploadVME::OpDo()
     command2execute.Append("50000 "); //port address (50000)
     command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //vme id
     command2execute.Append(wxString::Format("%s ",m_CurrentCache)); //cache directory
+    command2execute.Append(wxString::Format("%s ",m_Input->GetName())); //vme name
 
     wxExecute(command2execute, wxEXEC_ASYNC);
   }
