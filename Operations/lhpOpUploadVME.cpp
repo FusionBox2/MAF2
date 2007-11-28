@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-11-28 11:00:59 $
-Version:   $Revision: 1.5 $
+Date:      $Date: 2007-11-28 16:57:08 $
+Version:   $Revision: 1.6 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2007
@@ -81,7 +81,7 @@ mafOp(label)
   m_CacheDir = "C:\\tmp\\";
 
   //m_PythonUploadFullPath = "C:\\cvsMAF\\builderAppNEWSTYLE\\VMEUploaderDownloader\\mt\\";
-  m_PythonUploadFullPath  = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\mt\\").c_str();
+  m_PythonUploadFullPath  = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\").c_str();
   m_FileName = "";
   //m_PythonUploadFullPathFileName = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\mt\\gui.py").c_str();
 
@@ -246,7 +246,8 @@ bool lhpOpUploadVME::CreateCache()
     sourceFile.Append("//");
     sourceFile.Append(filename);
 
-    result = wxCopyFile(sourceFile, filenameCopy );
+    if(wxFileExists(sourceFile))
+      result = wxCopyFile(sourceFile, filenameCopy );
     cont = dir.GetNext(&filename);
     if(!result) break;
   }
