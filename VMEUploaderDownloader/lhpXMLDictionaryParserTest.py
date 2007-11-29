@@ -26,15 +26,15 @@ class lhpXMLDictionaryParserTest(unittest.TestCase):
         
         print " current directory is: " + curDir
             
-    def testLoadDictionary(self):
-        """test tags consistency"""
+    def test(self):
+        """test parser facilities"""
         xmlDict = r'.\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.xml'
 
         lhpXMLDictionaryParserInstance = lhpXMLDictionaryParser.lhpXMLDictionaryParser()
         lhpXMLDictionaryParserInstance.LoadXMLDictionary(xmlDict)
         lhpXMLDictionaryParserInstance.PrintXMLDictionary()
         
-        tags =  lhpXMLDictionaryParserInstance.GetXMLDictionaryTagsList()
+        tags =  lhpXMLDictionaryParserInstance.GetXMLDictionaryNodeNamesList()
         if Debug:
             print tags
             num = 0
@@ -44,10 +44,19 @@ class lhpXMLDictionaryParserTest(unittest.TestCase):
                 
         self.assertEqual(len(tags), 100)
         
-        tatags = lhpXMLDictionaryParserInstance.GetTagArrayTagsList()
+        tatags = lhpXMLDictionaryParserInstance.GetVMETagArrayTagNamesList()
         self.assertEqual(len(tatags), 100)
         for i in tatags:
             print i
+        
+        autoTags = lhpXMLDictionaryParserInstance.GetXMLDictionaryAutoNodeNamesList()
+        print "number of auto tags: " + str(len(autoTags))
+        
+        assert(len(autoTags) < 100)
+        
+        vmeAutoTags = lhpXMLDictionaryParserInstance.GetVMETagArrayAutoTagNamesList()
+        print vmeAutoTags
+        self.assertEqual(len(autoTags), len(vmeAutoTags))
         
 if __name__ == '__main__':
     unittest.main()

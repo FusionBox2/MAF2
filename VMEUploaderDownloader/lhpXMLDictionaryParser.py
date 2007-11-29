@@ -8,12 +8,19 @@ import sys, string
 import Debug
 from xml.dom import minidom
 from xml.dom import Node
+import Enum
             
 class lhpXMLDictionaryParser:
     """Facilities to handle lhpBuilder XML dictionary"""
     
     def __init__(self):                              
         
+        # dictionary columns from XML dictionary csv source
+        self.DictionaryColumnLabels = Enum.Enum([\
+            'NumTag', 'L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7', 'L8',\
+            'ValueType', 'Multiplicity', 'ValueList', 'Editable', 'Searchable',\
+            'DefaultValue', 'Expert', 'Notes'])
+      
         self.TagsList = []
         self.XMLDictionaryFileName = "UNDEFINED"
         self.DictionaryDOMDocument = None
@@ -29,17 +36,27 @@ class lhpXMLDictionaryParser:
         """ print XML dictionary to standard output """
         self.PrintXML(self.DictionaryDOMDocumentRoot, sys.stdout)
     
-    def GetXMLDictionaryTagsList(self):
-        """Return XML nodes names list
+    def GetXMLDictionaryNodeNamesList(self):
+        """Return all XML dictionary nodes names list
         For example:
         [u'L0000', u'resource', u'data', u'Type',...]
         """
         self.TagsList = []
         self.__GetTagsListInternal(self.DictionaryDOMDocumentRoot)
         return self.TagsList
-        
-    def GetTagArrayTagsList(self):
-        """Return a list of tags as stored in vme tag array
+    
+    # Attribute Name: Editable  Value: n
+    def GetXMLDictionaryAutoNodeNamesList(self):
+        """Return XML nodes names list
+        For example:
+        [u'L0000', u'resource', u'data', u'Type',...]
+        """
+        self.AutoTagsList = []
+        self.__GetAutoTagsListInternal(self.DictionaryDOMDocumentRoot)
+        return self.AutoTagsList
+    
+    def GetVMETagArrayTagNamesList(self):
+        """Return list of dictionary tags as stored in vme tag array
         For example:
         [...
         L0000_resource_Pricing_Quotation1,
@@ -48,11 +65,23 @@ class lhpXMLDictionaryParser:
         L0000_resource_Pricing_Quotation1_Policy,
         ...]
         """
-        self.TagArrayTaglList = []
+        self.TagArrayTagList = []
         self.__GetTagArrayTagsInternal(self.DictionaryDOMDocumentRoot, sys.stdout, 0)
-        return self.TagArrayTaglList
+        return self.TagArrayTagList
     
-    def GetTagArrayTagName(self, node):
+    def GetVMETagArrayAutoTagNamesList(self):
+        """Return the list of auto tags as stored in vme tag array
+        For example:
+        [...
+        L0000_resource_Pricing_AutoTagPippo,
+        L0000_resource_Pricing_Quotation1_AutoTagPluto,
+        ...]
+        """
+        self.TagArrayAutoTagList = []
+        self.__GetTagArrayAutoTagsInternal(self.DictionaryDOMDocumentRoot, sys.stdout, 0)
+        return self.TagArrayAutoTagList
+    
+    def GetVMETagArrayTagNameFromNode(self, node):
         """Given a XML dictionary node get its corresponding flat tag name in VME tagarray
         ie, for example, from Price node return L0000_resource_Pricing_Quotation1_Price 
         which is the node parents hierarchy with _ between tag names"""
@@ -71,24 +100,6 @@ class lhpXMLDictionaryParser:
             print tagName
         return tagName
     
-    def __GetParent(self, node):
-        """Cycle on every node's parent"""
-        name = self.GetNodeName(node)
-        self.Names.append(name)
-        if node.parentNode:
-           self.__GetParent(node.parentNode)       
-    
-    def __GetTagArrayTagsInternal(self,parent, outFile, level):  
-        self.TagArrayTaglList.append(self.GetTagArrayTagName(parent))
-        if parent.childNodes:
-            for node in parent.childNodes:
-                self.__GetTagArrayTagsInternal(node, sys.stdout, level)
-    
-    def __GetTagsListInternal(self, parent):
-        self.TagsList.append(self.GetNodeName(parent))
-        if parent.childNodes:
-            for node in parent.childNodes:
-                self.__GetTagsListInternal(node)
     
     def GetNodeName(self,node):
         """Return the node name"""
@@ -96,18 +107,40 @@ class lhpXMLDictionaryParser:
             if Debug:
                 print node.nodeName
             return node.nodeName
+    
+    def IsAuto(self,node):
+        """Return if the node represents an auto tag ie a
+        tag that should be filled automatically"""
+        if node.nodeType == Node.ELEMENT_NODE:
+            if Debug:
+                print "Node name: " + node.nodeName
+            attrs = node.attributes                             
+            for attrName in attrs.keys():
+                attrNode = attrs.get(attrName)
+                attrValue = attrNode.nodeValue
+                if Debug:
+                    print "Attribute name: " + attrName + "  Attribute value: " + attrValue
+                if attrName == self.DictionaryColumnLabels.Editable.asString :
+                    # Attribute Name: Editable    Value: n => AUTO
+                    if attrValue == "n":
+                        return True
+                    # Attribute Name: Editable    Value: y => MANUAL
+                    elif attrValue == "y":
+                        return False
+                    else:
+                        # tag with no Editable attribute is manual
+                        print "Editable tag not found for: " + attrName + "tag"
+                        return False
+            # tags with no attributes at all is manual
+            print "Tag: " + node.nodeName + " has no attributes... "
+            return False
+    
             
     def PrintXML(self, parent, outFile):
         """ Print XML starting from given parent node to output file outFile"""
         level = 0
         self.__PrintXMLDictionaryInternal(parent,outFile,level)
-        
-    def __PrintXMLDictionaryInternal(self,parent, outFile, level):  
-        self.PrintNode(parent, outFile, level)
-        if parent.childNodes:
-            for node in parent.childNodes:
-                self.__PrintXMLDictionaryInternal(node, outFile, level+1)
-    
+
     def PrintNode(self,node,outFile,level):
         """Print node on output file outFile with level indentation"""
         if node.nodeType == Node.ELEMENT_NODE:
@@ -128,6 +161,47 @@ class lhpXMLDictionaryParser:
         self.__GetNodeByNodeNameInternal(parentNode, nodeName)
         return self.__OutputNode
     
+    def __GetParent(self, node):
+        """Cycle on every node's parent"""
+        name = self.GetNodeName(node)
+        self.Names.append(name)
+        if node.parentNode:
+           self.__GetParent(node.parentNode)       
+    
+    def __GetTagArrayTagsInternal(self,parent, outFile, level):  
+        self.TagArrayTagList.append(self.GetVMETagArrayTagNameFromNode(parent))
+        if parent.childNodes:
+            for node in parent.childNodes:
+                self.__GetTagArrayTagsInternal(node, sys.stdout, level)
+    
+    def __GetTagArrayAutoTagsInternal(self,parent, outFile, level):  
+        if self.IsAuto(parent) == True:    
+            self.TagArrayAutoTagList.append(self.GetVMETagArrayTagNameFromNode(parent))
+        if parent.childNodes:
+            for node in parent.childNodes:
+                self.__GetTagArrayAutoTagsInternal(node, sys.stdout, level)
+    
+    def __GetTagsListInternal(self, parent):
+        self.TagsList.append(self.GetNodeName(parent))
+        if parent.childNodes:
+            for node in parent.childNodes:
+                self.__GetTagsListInternal(node)
+    
+    def __GetAutoTagsListInternal(self, parent):
+        if self.IsAuto(parent):           
+            self.AutoTagsList.append(self.GetNodeName(parent))
+        if parent.childNodes:
+            for node in parent.childNodes:
+                self.__GetAutoTagsListInternal(node)
+    
+        
+    def __PrintXMLDictionaryInternal(self,parent, outFile, level):  
+        self.PrintNode(parent, outFile, level)
+        if parent.childNodes:
+            for node in parent.childNodes:
+                self.__PrintXMLDictionaryInternal(node, outFile, level+1)
+
+                
     def __GetNodeByNodeNameInternal(self, parentNode, nodeName):
         for node in parentNode.childNodes:
             if node.nodeType == Node.ELEMENT_NODE:
@@ -144,21 +218,16 @@ class lhpXMLDictionaryParser:
 
         
         
-def run(inFileName):                                            
-    outFile = sys.stdout
-    doc = minidom.parse(inFileName)
-    rootNode = doc.documentElement
-    level = 0
-    PrintXMLDictionary(rootNode, outFile, level)
-
-def main():
-    args = sys.argv[1:]
-    if len(args) != 1:
-        print 'usage: VMEUploaderDownloader test.py infile.xml'
-        sys.exit(-1)
-    run(args[0])
+#def run(inFileName):                                            
+ 
+#def main():
+    #args = sys.argv[1:]
+    #if len(args) != 1:
+        #print 'usage: ...'
+        #sys.exit(-1)
+    #run(args[0])
 
 
-if __name__ == '__main__':
-    main()
+#if __name__ == '__main__':
+    #main()
 
