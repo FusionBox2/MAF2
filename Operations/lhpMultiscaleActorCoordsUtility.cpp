@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpMultiscaleActorCoordsUtility.cpp,v $
 Language:  C++
-Date:      $Date: 2007-11-27 12:40:17 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2007-11-29 16:16:07 $
+Version:   $Revision: 1.3 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -154,18 +154,12 @@ void lhpMultiscaleActorCoordsUtility::MoveToCenter(vtkActor *actor1, vtkActor *a
 
 
 
-
 //------------------------------------------------------------------------------
-// Get bounds of actor in display coords
-// dimensions are boundsD[6]
-void lhpMultiscaleActorCoordsUtility::GetBoundsDisplay(vtkActor *actor, vtkRenderer *ren, double *boundsD)
+// Convert bounds from world to display coords.  Dimensions are boundsW[6], boundsD[6] */
+void lhpMultiscaleActorCoordsUtility::ConvertBoundsWorldToDisplay(double* boundsW, double *boundsD, vtkRenderer *ren)
 //------------------------------------------------------------------------------
 {
   int i ;
-
-  // get bounds (world coords)
-  double boundsW[6] ;
-  actor->GetBounds(boundsW) ;
 
   // get corners of bounding box in homogeneous world coords
   double cornersW[8][4] ;
@@ -204,6 +198,20 @@ void lhpMultiscaleActorCoordsUtility::GetBoundsDisplay(vtkActor *actor, vtkRende
     boundsD[4] = std::min(cornersD[i][2], boundsD[4]) ;
     boundsD[5] = std::max(cornersD[i][2], boundsD[5]) ;
   }
+}
+
+
+//------------------------------------------------------------------------------
+// Get bounds of actor in display coords
+// dimensions are boundsD[6]
+void lhpMultiscaleActorCoordsUtility::GetBoundsDisplay(vtkActor *actor, vtkRenderer *ren, double *boundsD)
+//------------------------------------------------------------------------------
+{
+  // get bounds (world coords)
+  double boundsW[6] ;
+  actor->GetBounds(boundsW) ;
+
+  ConvertBoundsWorldToDisplay(boundsW, boundsD, ren) ;
 }
 
 
@@ -305,6 +313,61 @@ double lhpMultiscaleActorCoordsUtility::GetMeanSizeDisplay(vtkActor *actor, vtkR
   GetSizeDisplay(actor, ren, siz) ;
   sizmean = (siz[0] + siz[1]) / 2.0 ;
   return sizmean ;
+}
+
+
+//------------------------------------------------------------------------------
+// Get the max screen size which an actor can have from any view direction.
+// This is approximately independent of the view direction.
+// For a long thin actor, this returns the screen size of the long axis,
+// regardless of the current view direction.
+// cf GetMaxSizeDisplay() which returns the actual screen size.
+double lhpMultiscaleActorCoordsUtility::GetMaxSizeDisplayAnyView(vtkActor *actor, vtkRenderer *ren)
+//------------------------------------------------------------------------------
+{
+  double boundsW[6] ;
+  actor->GetBounds(boundsW) ;
+
+  // find the centre
+  double xc = (boundsW[1] + boundsW[0]) / 2.0 ;
+  double yc = (boundsW[3] + boundsW[2]) / 2.0 ;
+  double zc = (boundsW[5] + boundsW[4]) / 2.0 ;
+
+  // find the longest axis
+  double dx = (boundsW[1] - boundsW[0]) / 2.0 ;
+  double dy = (boundsW[3] - boundsW[2]) / 2.0 ;
+  double dz = (boundsW[5] - boundsW[4]) / 2.0 ;
+
+  // stretch the bounds to form a cube with dimensions equal to longest axis
+  if ((dx >= dy) && (dx >= dz)){
+    boundsW[2] = yc - dx ;
+    boundsW[3] = yc + dx ;
+    boundsW[4] = zc - dx ;
+    boundsW[5] = zc + dx ;
+  }
+  else if ((dy > dx) && (dy >= dz)){
+    boundsW[0] = xc - dy ;
+    boundsW[1] = xc + dy ;
+    boundsW[4] = zc - dy ;
+    boundsW[5] = zc + dy ;
+  }
+  else {
+    boundsW[0] = xc - dz ;
+    boundsW[1] = xc + dz ;
+    boundsW[2] = yc - dz ;
+    boundsW[3] = yc + dz ;
+  }
+
+  // find the display size of the cube and return the max
+  double boundsD[6], size[3] ;
+  ConvertBoundsWorldToDisplay(boundsW, boundsD, ren) ;
+
+  size[0] = boundsD[1] - boundsD[0] ;
+  size[1] = boundsD[3] - boundsD[2] ;
+  size[2] = boundsD[5] - boundsD[4] ;
+
+  double sizmax = std::max(size[0], size[1]) ;
+  return sizmax ;
 }
 
 

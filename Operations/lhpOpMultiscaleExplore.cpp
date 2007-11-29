@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpMultiscaleExplore.cpp,v $
 Language:  C++
-Date:      $Date: 2007-11-26 11:48:12 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2007-11-29 16:16:07 $
+Version:   $Revision: 1.2 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -455,11 +455,9 @@ void lhpOpMultiscaleExplore::SetTokenSize(vtkRenderer* renderer, int tokenId, in
   int actorId = GetMultiscaleUtility()->GetDataActorCorrespondingToToken(tokenId) ;
   vtkActor* actor = GetMultiscaleUtility()->GetMultiscaleActor(actorId)->GetActor() ;
   vtkActor* token = GetMultiscaleUtility()->GetMultiscaleActor(tokenId)->GetActor() ;
-  double siz = GetMultiscaleUtility()->GetActorCoordsUtility()->GetMaxSizeDisplay(token, renderer) ;
 
   // reset size of token
   GetMultiscaleUtility()->GetActorCoordsUtility()->SetActorDisplaySize(token, renderer, tokenSize) ;
-  siz = GetMultiscaleUtility()->GetActorCoordsUtility()->GetMaxSizeDisplay(token, renderer) ;
 
   // reposition the token on the actor because the resizing changes the position slightly
   GetMultiscaleUtility()->GetActorCoordsUtility()->MoveToCenter(token, actor) ;
@@ -559,8 +557,9 @@ void lhpOpMultiscaleExplore::OnGoBack(vtkRenderer* renderer)
 
 
 //------------------------------------------------------------------------------
-// Start Render handler
-// This is the only handler which is allowed to change the visibility of the actors
+// Start Render handler.
+// This is where we look at the scene and decide which actors and tokens should be visible.
+// Nowhere else should change the visibility of the actors.
 void lhpOpMultiscaleExplore::OnStartRender(vtkRenderer *renderer)
 //------------------------------------------------------------------------------
 {
@@ -592,8 +591,11 @@ void lhpOpMultiscaleExplore::OnStartRender(vtkRenderer *renderer)
     lhpMultiscaleActor *ma = GetMultiscaleUtility()->GetMultiscaleActor(i) ;
     vtkActor *actor = ma->GetActor() ;
 
-    // get the size of the actor
-    double screenSize = GetMultiscaleUtility()->GetActorCoordsUtility()->GetMaxSizeDisplay(actor, renderer) ;
+    // Get the size of the actor
+    // Note that we define the actor screen size with the view-independent GetMaxSizeDisplayAnyView()
+    // because we don't want the actor to change just because is is being viewed down a long thin axis.
+    // To be consistent we should do the same for the tokens, but as they don't have a long axis it doesn't matter.
+    double screenSize = GetMultiscaleUtility()->GetActorCoordsUtility()->GetMaxSizeDisplayAnyView(actor, renderer) ;
     double worldSize = GetMultiscaleUtility()->GetActorCoordsUtility()->GetMaxSizeWorld(actor) ;
  
     if (ma->GetActorType() == MSCALE_DATA_ACTOR){

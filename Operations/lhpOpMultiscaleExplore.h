@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpMultiscaleExplore.h,v $
 Language:  C++
-Date:      $Date: 2007-11-26 11:48:12 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2007-11-29 16:16:07 $
+Version:   $Revision: 1.2 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -160,9 +160,12 @@ protected:
   // methods for handling callbacks
   //----------------------------------------------------------------------------
 
-  /** constants for size thresholds */
-  static const int SIZEUPPER = 50 ;         ///< upper size threshold for actor
-  static const int SIZELOWER = 45 ;         ///< lower size threshold for actor
+  /** Constants for size thresholds
+  SIZELOWER and SIZEUPPER are different to provide hysteresis, so the actor doesn't flicker between states.
+  They should be different enough such that the state should not change under a complete camera rotation.
+  */
+  static const int SIZEUPPER = 60 ;         ///< upper size threshold for actor, ie screen size when it changes from token to visible
+  static const int SIZELOWER = 40 ;         ///< lower size threshold for actor, ie screen size when it becomes a token
   static const int TOKENSIZE = 10 ;         ///< standard size of token
   static const int TOKENSIZEMAX = 15 ;      ///< maximum size of visible token
   static const int TOKENSIZEMIN = 5 ;       ///< minimum size of visible token
@@ -196,8 +199,9 @@ protected:
   /** Go back handler */
   void OnGoBack(vtkRenderer *renderer) ;
 
-  /** Start Render handler
-  This is the only handler which is allowed to change the visibility of the actors */
+  /** Start Render handler.
+  This is where we look at the scene and decide which actors and tokens should be visible.
+  Nowhere else should change the visibility of the actors. */
   void OnStartRender(vtkRenderer *renderer) ;
   void OnActorTooSmall(vtkRenderer* renderer, int actorId) ;               ///< on actor becoming too small
   void OnActorInScale(vtkRenderer* renderer, int actorId) ;                ///< on actor coming back into scale

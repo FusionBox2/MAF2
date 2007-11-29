@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpMultiscaleVisualPipes.cpp,v $
 Language:  C++
-Date:      $Date: 2007-11-26 12:39:56 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2007-11-29 16:16:07 $
+Version:   $Revision: 1.2 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -23,7 +23,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "vtkPolyData.h"
 #include "vtkActor.h"
 #include "vtkPolyDataMapper.h"
-#include "vtkSphereSource.h"
+#include "vtkCubeSource.h"
 #include "vtkProperty.h"
 #include "lhpMultiscaleVisualPipes.h"
 
@@ -65,13 +65,13 @@ lhpMultiscaleTokenPipeline::lhpMultiscaleTokenPipeline(vtkRenderer *renderer, in
 //------------------------------------------------------------------------------
 {
   // Set up source for sphere polydata
-  m_sphereSource = vtkSphereSource::New() ;
-  m_sphereSource->SetRadius(1.0) ;
-  m_sphereSource->SetThetaResolution(10) ;
-  m_sphereSource->SetPhiResolution(10) ;
+  m_tokenSource = vtkCubeSource::New() ;
+  m_tokenSource->SetXLength(1.0) ;
+  m_tokenSource->SetYLength(1.0) ;
+  m_tokenSource->SetZLength(1.0) ;
 
   m_mapper	= vtkPolyDataMapper::New();
-  m_mapper->SetInput(m_sphereSource->GetOutput());
+  m_mapper->SetInput(m_tokenSource->GetOutput());
   m_mapper->ScalarVisibilityOn();
 
   m_actor = vtkActor::New();
@@ -95,7 +95,7 @@ lhpMultiscaleTokenPipeline::~lhpMultiscaleTokenPipeline()
 {
   m_actor->Delete() ;
   m_mapper->Delete() ;
-  m_sphereSource->Delete() ;
+  m_tokenSource->Delete() ;
 }
 
 

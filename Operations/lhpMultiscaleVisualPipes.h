@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpMultiscaleVisualPipes.h,v $
 Language:  C++
-Date:      $Date: 2007-11-26 12:39:56 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2007-11-29 16:16:07 $
+Version:   $Revision: 1.2 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -17,7 +17,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "vtkRenderer.h"
 #include "vtkActor.h"
 #include "vtkPolyDataMapper.h"
-#include "vtkSphereSource.h"
+#include "vtkCubeSource.h"
 
 
 
@@ -53,7 +53,7 @@ public:
 private:
   virtual void CalculateColor(double *a) ;
   int m_colorId ;
-  vtkSphereSource* m_sphereSource ;
+  vtkCubeSource* m_tokenSource ;
   vtkActor* m_actor ;
   vtkPolyDataMapper* m_mapper ;
 };
