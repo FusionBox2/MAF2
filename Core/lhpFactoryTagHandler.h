@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpFactoryTagHandler.h,v $
   Language:  C++
-  Date:      $Date: 2007-11-28 16:36:51 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-11-29 17:28:36 $
+  Version:   $Revision: 1.2 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -44,8 +44,7 @@ class lhpTagHandler : public mafObject, public mafObserver
 /** Object factory for tag handlers.
   To make a new handler available in the LHDL it must be plugged inside a factory, in particular
   this factory must be of type lhpFactoryTagHandler to be able to retrieve the list of handlers plugged
-  in the factory. Also when using lhpPlugTagHandler<tag_handler_type> the pipe icon is plugged inside the
-  the MAF picture factory. */
+  in the factory.  */
 
 class MAF_EXPORT lhpFactoryTagHandler : public mafObjectFactory
 // need to create LHP_EXPORT symbol
@@ -61,15 +60,15 @@ public:
   /** return the instance pointer of the factory. return NULL if not initialized yet */
   static lhpFactoryTagHandler *GetInstance() {if (!m_Instance) Initialize(); return m_Instance;}
 
-  /** create an instance of the pipe give its type name */
+  /** create an instance of the tag handler give its type name */
   static lhpTagHandler *CreateTagHandlerInstance(const char *type_name);
    
    /**
     This function can be used by Application code to register new Objects's to the mflCoreFactory */
   void RegisterNewTagHandler(const char* tagHandlerName, const char* description, mafCreateObjectFunction createFunction);
 
-  /** return list of names for pipes plugged into this factory */
-  const static std::vector<std::string> &GetPipeNames() {return m_TagHandlerNames;}
+  /** return list of names for tag handlers plugged into this factory */
+  const static std::vector<std::string> &GetTagHandlerNames() {return m_TagHandlerNames;}
 
 protected:
   lhpFactoryTagHandler();
@@ -83,7 +82,7 @@ private:
   void operator=(const lhpFactoryTagHandler&);  // Not implemented.
 };
 
-/** Plug  a pipe in the main MAF Pipe factory.*/
+/** Plug  a tag handler in the main tag handlers factory.*/
 template <class T>
 class MAF_EXPORT lhpPlugTagHandler
 // needs to create LHP_EXPORT symbol 
@@ -94,7 +93,7 @@ class MAF_EXPORT lhpPlugTagHandler
 };
 
 //------------------------------------------------------------------------------
-/** Plug a new Pipe class into the Pipe factory.*/
+/** Plug a new tag handler class into the tag handlers factory.*/
 template <class T>
 lhpPlugTagHandler<T>::lhpPlugTagHandler(const char *description)
 //------------------------------------------------------------------------------
