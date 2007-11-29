@@ -156,11 +156,6 @@ class lhpXMLDictionaryParser:
                 outFile.write('Attribute Name: %s  Value: %s\n' % \
                     (attrName, attrValue))
     
-    def GetNodeByNodeName(self, parentNode, nodeName):
-        """Return the first ELEMENT_NODE nodeType node found with name nodeName descending from parentNode"""
-        self.__GetNodeByNodeNameInternal(parentNode, nodeName)
-        return self.__OutputNode
-    
     def __GetParent(self, node):
         """Cycle on every node's parent"""
         name = self.GetNodeName(node)
@@ -200,17 +195,6 @@ class lhpXMLDictionaryParser:
         if parent.childNodes:
             for node in parent.childNodes:
                 self.__PrintXMLDictionaryInternal(node, outFile, level+1)
-
-                
-    def __GetNodeByNodeNameInternal(self, parentNode, nodeName):
-        for node in parentNode.childNodes:
-            if node.nodeType == Node.ELEMENT_NODE:
-                if node.nodeName == nodeName:
-                    print('NodeName: %s\n' % node.nodeName)
-                    self.__OutputNode = node
-                    return
-            self.__GetNodeByNodeNameInternal(node, nodeName)
-    
     
     def __printLevel(self,outFile, level):
         for idx in range(level):

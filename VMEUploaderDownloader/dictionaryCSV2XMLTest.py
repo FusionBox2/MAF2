@@ -23,7 +23,13 @@ class dictionaryCSV2XMLTest(unittest.TestCase):
          
          # some asserts here...
          # at the present time this is human validated  since dictionary is not yet stable
-         
+    
+    def testTagNameFromNode(self):
+        
+    # open XML dictionary
+    # TagNameFromNode 
+    # NodeFromTagName
+    # Print Tag Names
          
     # more experiments here: add "t" before est to enable code execution in test suite...
     def estReadingHierarchy(self):
