@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-11-28 16:06:44 $
-  Version:   $Revision: 1.24 $
+  Date:      $Date: 2007-11-29 13:23:03 $
+  Version:   $Revision: 1.25 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -258,6 +258,11 @@ bool lhpBuilderApp::OnInit()
   //-------------------------------------------------------------
 
   //------------------------- Views -------------------------
+  mafViewVTK *traj = new mafViewVTK("AL Trajectories");
+  traj->PlugVisualPipe("mafVMELandmark", "medPipeTrajectories");
+  m_Logic->Plug(traj);
+   
+  
   //View Arbitrary Slice
   mafViewArbitrarySlice *ArbitraryView = new mafViewArbitrarySlice("Arbitrary");
   ArbitraryView->PackageView();
@@ -293,7 +298,6 @@ bool lhpBuilderApp::OnInit()
 
 	mafViewVTK *vsurface = new mafViewVTK("Surface");
 	vsurface->PlugVisualPipe("mafVMESurface","mafPipeSurface");
-  vsurface->PlugVisualPipe("mafVMELandmark", "medPipeTrajectories");
 	m_Logic->Plug(vsurface);
 
   mafViewIntGraph *vgraph = new mafViewIntGraph("Biomechanical graph");
