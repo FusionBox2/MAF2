@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpMultiscaleExplore.cpp,v $
 Language:  C++
-Date:      $Date: 2007-11-29 16:16:07 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2007-11-30 12:01:57 $
+Version:   $Revision: 1.3 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -107,6 +107,14 @@ mafOp* lhpOpMultiscaleExplore::Copy()
 //----------------------------------------------------------------------------
 // Accept surface or volume data
 bool lhpOpMultiscaleExplore::Accept(mafNode* vme)
+//----------------------------------------------------------------------------
+{
+  return (vme != NULL && (vme->IsMAFType(mafVMESurface))) ;
+}
+
+//----------------------------------------------------------------------------
+// Static copy of accept function
+bool lhpOpMultiscaleExplore::AcceptStatic(mafNode* vme)
 //----------------------------------------------------------------------------
 {
   return (vme != NULL && (vme->IsMAFType(mafVMESurface))) ;
@@ -385,16 +393,23 @@ void lhpOpMultiscaleExplore::OnEvent(mafEventBase *maf_event)
     {	
     case ID_ADDVME:
       {
+        // Create pointer to the Accept() function.
+        // We have to use a static version of the function so that it can be cast to long.
+        bool (*acceptFunc)(mafNode*) = &lhpOpMultiscaleExplore::AcceptStatic ;
+
         // raise event to call up select vme dialog
-        mafEvent e(this,VME_CHOOSE);
+        // The VME_CHOOSE event is handled by mafLogicWithManagers
+        mafEvent e(this,VME_CHOOSE);  // create choose event 
+        e.SetArg((long)acceptFunc) ;  // pass the accept function to the event.
         mafEventMacro(e);
         mafVME* vme = mafVME::SafeDownCast(e.GetVme());
-        if (vme != NULL){
-          // Add vme to scene
+
+        // Add vme to scene
+        if (vme != NULL)
           AddVmeToScene(vme) ;
-        }
+
+        break;
       }
-      break;
 
     case ID_ZOOMOUT:
       OnZoomOut(GetRenderer()) ;

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpMultiscaleExplore.h,v $
 Language:  C++
-Date:      $Date: 2007-11-29 16:16:07 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2007-11-30 12:01:57 $
+Version:   $Revision: 1.3 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -106,6 +106,10 @@ public:
   /** Return true for the acceptable vme type. */
   bool Accept(mafNode* vme);
 
+  /** Static copy of Accept(), required so that we can pass the function
+  pointer to the VME_CHOOSE event */
+  static bool AcceptStatic(mafNode* vme);
+
   /** Builds operation's interface by calling CreateOpDialog() method. */
   void OpRun();
 
@@ -114,7 +118,6 @@ public:
 
   /** Makes the undo for the operation. */
   void OpUndo();
-
 
 protected:
   //----------------------------------------------------------------------------
