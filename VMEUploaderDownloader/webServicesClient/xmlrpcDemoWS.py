@@ -184,8 +184,8 @@ download <filename.zmsf> - download zmsf file
 #    args = {}
 #
 #    # username and password of a test user
-#    username = 'portal_admin'
-#    password = 'r1zz0l1'
+#    username = 'pippo'
+#    password = 'pluto'
 #
 #    #url = 'http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository'
 #    url = 'http://devel.fec.cineca.it:12680/town/Members/portal_admin/test-lhp2'
