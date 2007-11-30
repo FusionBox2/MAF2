@@ -124,10 +124,13 @@ class xmlrpc_demoWS:
         args = {}
     
         # username and password of a test user
-        username = 'portal_admin'
-        password = 'r1zz0l1'
+        username = 'testuser'
+        password = 'GRDPt8'
     
-        #url = 'http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository'
+        # production server
+        # url = 'http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository'
+        
+        # development server
         url = 'http://devel.fec.cineca.it:12680/town/Members/portal_admin/test-lhp2'
     
         if command == 'xmlupload':
