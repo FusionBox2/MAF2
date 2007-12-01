@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEC3DData.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-12-01 11:53:22 $
+  Version:   $Revision: 1.2 $
   Authors:   Stefano Perticoni - porting Fedor Moiseev
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -270,6 +270,7 @@ int mafVMEC3DData::Read_C3D_Data(unsigned short	num_markers,				// number of mar
 {
 
   short filterStep = 1;
+  unsigned int finalFreq;
   if(prefered_freq != 0)
     filterStep = (int)(*video_rate / prefered_freq);
   if (filterStep <= 0)
@@ -279,6 +280,12 @@ int mafVMEC3DData::Read_C3D_Data(unsigned short	num_markers,				// number of mar
   if ((last_field - first_field + 1) % filterStep != 0)
     numberOfFrames++;
   vnl_matrix<double> C3DMatrix(numberOfFrames, num_markers * 3);
+  if(filterStep == 1)
+    finalFreq = *video_rate;
+  else
+    finalFreq = prefered_freq;
+  if(finalFreq == 0)
+    finalFreq = 1;
 
   //unsigned char	residual, num_cam;
   unsigned short	frame, marker, sample, channel, added;
@@ -338,8 +345,8 @@ int mafVMEC3DData::Read_C3D_Data(unsigned short	num_markers,				// number of mar
 
   // end fill C3DMatrix
 
-  vcl_ofstream mtrx("C:\\m2", std::ios::out);
-  mtrx << C3DMatrix;
+  //vcl_ofstream mtrx("C:\\m2", std::ios::out);
+  //mtrx << C3DMatrix;
 
   vcl_string landmarkName, segmentName;
 
@@ -433,7 +440,7 @@ int mafVMEC3DData::Read_C3D_Data(unsigned short	num_markers,				// number of mar
           C3DMatrix( k, i * 3), 
           C3DMatrix( k, i * 3 + 1), 
           C3DMatrix( k, i * 3 + 2),
-          k /*,k + (int)(*this->first_frame)*/);
+          1.0 * k / finalFreq/*,k + (int)(*this->first_frame)*/);
       }
 
     }//end for
@@ -460,7 +467,7 @@ int mafVMEC3DData::Read_C3D_Data(unsigned short	num_markers,				// number of mar
           continue;
         this->C3D_DLCloud->SetLandmark/*ForTimeFrame*/(i, C3DMatrix(k, i * 3),
           C3DMatrix(k, i * 3 + 1),
-          C3DMatrix(k, i * 3 + 2), k/*,
+          C3DMatrix(k, i * 3 + 2), 1.0 * k / finalFreq/*,
           k + (int)(*this->first_frame)*/);
       }
     }// end for lm_id
