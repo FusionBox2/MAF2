@@ -107,8 +107,11 @@ class vmeUploader:
         fileNameList = domP.GetVMEDataURLList(outVmeNode)
         assert(len(fileNameList)  == 1)
         
-        os.chdir(self.InputMSFDirectory)
-        shutil.copy2(fileNameList[0],self.OutputFolderName)
+        if(len(fileNameList)  == 1):
+           #assert(len(fileNameList)  == 1)
+        
+           os.chdir(self.InputMSFDirectory)
+           shutil.copy2(fileNameList[0],self.OutputFolderName)
         
         print "\nWritten output XML file " + self.OutputVMEXMLName + " in directory " + self.OutputFolderName
         
