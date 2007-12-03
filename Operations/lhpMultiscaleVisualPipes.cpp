@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpMultiscaleVisualPipes.cpp,v $
 Language:  C++
-Date:      $Date: 2007-11-29 16:16:07 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2007-12-03 16:55:08 $
+Version:   $Revision: 1.3 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -95,6 +95,7 @@ lhpMultiscaleTokenPipeline::~lhpMultiscaleTokenPipeline()
 {
   m_actor->Delete() ;
   m_mapper->Delete() ;
+  int i = m_tokenSource->GetReferenceCount() ;
   m_tokenSource->Delete() ;
 }
 

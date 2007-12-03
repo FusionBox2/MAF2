@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpMultiscaleExplore.cpp,v $
 Language:  C++
-Date:      $Date: 2007-11-30 12:01:57 $
-Version:   $Revision: 1.3 $
+Date:      $Date: 2007-12-03 16:55:08 $
+Version:   $Revision: 1.4 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -71,6 +71,8 @@ mafOp(label)
   m_Dialog = NULL;
   m_Rwi = NULL;
 
+  m_externalRenderer = NULL ;
+
   m_MultiscaleUtility = new lhpMultiscaleUtility ;
   m_nextTokenColor = 0 ;
 }
@@ -89,8 +91,7 @@ lhpOpMultiscaleExplore::~lhpOpMultiscaleExplore()
   for (i = 0 ;  i < (int)m_surfacePipes.size() ;  i++)
     delete m_surfacePipes.at(i) ;
   for (i = 0 ;  i < (int)m_tokenPipes.size() ;  i++)
-    delete m_tokenPipes.at(i) ;
-    
+    delete m_tokenPipes.at(i) ; 
 }
 
 
@@ -186,6 +187,44 @@ enum EXTRACT_ISOSURFACE_ID
 };
 
 
+
+
+//----------------------------------------------------------------------------
+// Set up op without dialog
+void lhpOpMultiscaleExplore::CreateOpWithoutDialog(vtkRenderer *renderer)
+//----------------------------------------------------------------------------
+{
+  // Set pointer to external renderer
+  m_externalRenderer = renderer ;
+
+  GetRenderWindow()->SetDesiredUpdateRate(0.0001f);
+  GetRenderWindow()->SetSize(600,600);
+
+  // Set the interactor style to trackball camera
+  vtkInteractorStyleTrackballCamera* style = vtkInteractorStyleTrackballCamera::New() ;
+  GetInteractor()->SetInteractorStyle(style) ;
+  style->Delete() ;
+
+  // add observer to catch vtk start render event
+  vtkStartRenderCallback *startRenderCallback = vtkStartRenderCallback::New() ;         // instantiate callback to convert vtk event to maf event
+  GetRenderer()->AddObserver(vtkCommand::StartEvent, startRenderCallback) ;             // set callback to get start event from renderer
+  startRenderCallback->SetListener(this) ;                                              // set self as listener to callback
+  startRenderCallback->SetMafEventId(ID_START_RENDER) ;                                 // set event id to be thrown by callback
+  startRenderCallback->Delete() ;
+
+  // add observer to catch vtk mouse click event
+  vtkMouseClickCallback *mouseClickCallback = vtkMouseClickCallback::New() ;           // instantiate callback to convert vtk event to maf event
+  GetInteractor()->AddObserver(vtkCommand::LeftButtonPressEvent, mouseClickCallback) ;  // set callback to get mouse event from interactor
+  mouseClickCallback->SetListener(this) ;                                              // set self as listener to callback
+  mouseClickCallback->SetMafEventId(ID_MOUSE_CLICK) ;                                 // set event id to be thrown by callback
+  mouseClickCallback->Delete() ;
+
+  // save the current view so we can go back to it
+  GetMultiscaleUtility()->SaveInitialView(GetRenderer()) ;
+}
+
+
+
 //----------------------------------------------------------------------------
 void lhpOpMultiscaleExplore::CreateOpDialog()
 //----------------------------------------------------------------------------
@@ -275,7 +314,7 @@ void lhpOpMultiscaleExplore::CreateOpDialog()
   // set position of dialog
   m_Dialog->SetPosition(wxPoint(20,20)) ;
 
-  m_Rwi->CameraUpdate();
+  UpdateCamera() ;
 
 
   // Set the interactor style to trackball camera
@@ -307,8 +346,11 @@ void lhpOpMultiscaleExplore::CreateOpDialog()
 void lhpOpMultiscaleExplore::DeleteOpDialog()
 //----------------------------------------------------------------------------
 {
-  cppDEL(m_Rwi); 
-  cppDEL(m_Dialog);
+  if (m_Rwi != NULL)
+    cppDEL(m_Rwi); 
+
+  if (m_Dialog != NULL)
+    cppDEL(m_Dialog);
 }
 
 
@@ -340,6 +382,18 @@ void lhpOpMultiscaleExplore::CreateTokenPipeline(vtkRenderer *renderer)
   GetMultiscaleUtility()->AddMultiscaleActor(pipe->GetActor(), pipe->GetMapper(), MSCALE_TOKEN) ;
 }
 
+
+
+
+//----------------------------------------------------------------------------
+// Update the camera
+// This wraps the dialog-based method in cse there is no dialog.
+void lhpOpMultiscaleExplore::UpdateCamera()
+//----------------------------------------------------------------------------
+{
+  if (m_Rwi != NULL)
+    m_Rwi->CameraUpdate() ;
+}
 
 
 //----------------------------------------------------------------------------
@@ -377,10 +431,48 @@ void lhpOpMultiscaleExplore::AddVmeToScene(mafVME* vme)
 
   // Render the new scene
   GetRenderer()->GetRenderWindow()->Render() ;
-  m_Rwi->CameraUpdate() ;
+  UpdateCamera() ;
 }
 
 
+//----------------------------------------------------------------------------
+// Get renderer
+vtkRenderer* lhpOpMultiscaleExplore::GetRenderer()
+//----------------------------------------------------------------------------
+{
+  if (m_Rwi != NULL)
+    return m_Rwi->m_RenFront ;
+  else if (m_externalRenderer != NULL)
+    return m_externalRenderer ;
+  else
+    return NULL ;
+}
+
+//----------------------------------------------------------------------------
+// Get render window
+vtkRenderWindow* lhpOpMultiscaleExplore::GetRenderWindow()
+//----------------------------------------------------------------------------
+{
+  if (m_Rwi != NULL)
+    return m_Rwi->m_RenderWindow ;
+  else if (m_externalRenderer != NULL)
+    return m_externalRenderer->GetRenderWindow() ;
+  else
+    return NULL ;
+}
+
+//----------------------------------------------------------------------------
+// Get interactor
+vtkRenderWindowInteractor* lhpOpMultiscaleExplore::GetInteractor()
+//----------------------------------------------------------------------------
+{
+  if (m_Rwi != NULL)
+    return vtkRenderWindowInteractor::SafeDownCast(m_Rwi->m_RwiBase) ;
+  else if (m_externalRenderer != NULL)
+    return m_externalRenderer->GetRenderWindow()->GetInteractor() ;
+  else
+    return NULL ;
+}
 
 //----------------------------------------------------------------------------
 // Event Handler
@@ -499,7 +591,7 @@ void lhpOpMultiscaleExplore::OnZoomOut(vtkRenderer* renderer)
 
   // this is a dialog event so we need to manually call a render when we have finished
   renderer->GetRenderWindow()->Render() ;
-  m_Rwi->CameraUpdate() ;
+  UpdateCamera() ;
 
   std::fstream thing ;
   thing.open("C:/Documents and Settings/Nigel.DB6ZB32J/My Documents/Visual Studio Projects/MAF/Multiscale2/thing.txt", thing.out | thing.app) ;
@@ -533,7 +625,7 @@ void lhpOpMultiscaleExplore::OnCameraReset(vtkRenderer* renderer)
 
   // this is a dialog event so we need to manually call a render when we have finished
   renderer->GetRenderWindow()->Render() ;
-  m_Rwi->CameraUpdate() ;
+  UpdateCamera() ;
 }
 
 
@@ -565,7 +657,7 @@ void lhpOpMultiscaleExplore::OnGoBack(vtkRenderer* renderer)
 
   // this is a dialog event so we need to manually call a render when we have finished
   renderer->GetRenderWindow()->Render() ;
-  m_Rwi->CameraUpdate() ;
+  UpdateCamera() ;
 
 }
 
@@ -581,8 +673,7 @@ void lhpOpMultiscaleExplore::OnStartRender(vtkRenderer *renderer)
   int i, j ;
 
 
-  // Get the current scale and display in the dialog
-  // This displays the scale in tidy units.
+  // Get the current scale in tidy units and display in the dialog
   int iscale ;
   std::ostrstream units ;
   std::ostrstream value ;
@@ -591,13 +682,15 @@ void lhpOpMultiscaleExplore::OnStartRender(vtkRenderer *renderer)
   GetMultiscaleUtility()->ConvertScaleToTidyUnits(scale, &iscale, units) ;
   value << iscale << std::ends ;
 
-  wxTextCtrl* valueTxtCtrl = dynamic_cast<wxTextCtrl*>(m_Dialog->FindWindow(ID_SCALEVALUETXT)) ;
-  wxTextCtrl* unitsTxtCtrl = dynamic_cast<wxTextCtrl*>(m_Dialog->FindWindow(ID_SCALEUNITSTXT)) ;
+  if (m_Dialog != NULL){
+    wxTextCtrl* valueTxtCtrl = dynamic_cast<wxTextCtrl*>(m_Dialog->FindWindow(ID_SCALEVALUETXT)) ;
+    wxTextCtrl* unitsTxtCtrl = dynamic_cast<wxTextCtrl*>(m_Dialog->FindWindow(ID_SCALEUNITSTXT)) ;
 
-  valueTxtCtrl->Clear() ;
-  valueTxtCtrl->AppendText(value.str()) ;
-  unitsTxtCtrl->Clear() ;
-  unitsTxtCtrl->AppendText(units.str()) ;
+    valueTxtCtrl->Clear() ;
+    valueTxtCtrl->AppendText(value.str()) ;
+    unitsTxtCtrl->Clear() ;
+    unitsTxtCtrl->AppendText(units.str()) ;
+  }
 
 
   // We check all the data actors (not tokens) to see if they have crossed the size thresholds

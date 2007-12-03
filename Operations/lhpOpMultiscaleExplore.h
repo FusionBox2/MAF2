@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpMultiscaleExplore.h,v $
 Language:  C++
-Date:      $Date: 2007-11-30 12:01:57 $
-Version:   $Revision: 1.3 $
+Date:      $Date: 2007-12-03 16:55:08 $
+Version:   $Revision: 1.4 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -92,8 +92,9 @@ lhpMultiscaleVisualPipes -   Visual pipes for data and tokens.  Create and delet
 //------------------------------------------------------------------------------
 class lhpOpMultiscaleExplore : public mafOp
 {
-public:
+  friend class lhpOpMultiscaleExploreTest ;   ///< test class is a friend
 
+public:
   lhpOpMultiscaleExplore(wxString label = "Explore Multiscale");
   ~lhpOpMultiscaleExplore(); 
 
@@ -130,6 +131,14 @@ protected:
   /** Remove operation's interface. */
   void DeleteOpDialog();
 
+  /** Builds operation without dialog for testing */
+  void CreateOpWithoutDialog(vtkRenderer* renderer);
+
+  /** Add new vme to scene
+  Adds vme to list, creates multiscale actors for data and tokens and creates visual pipes. 
+  Method is public so that test class can use it. */
+  void AddVmeToScene(mafVME* vme) ;
+
   /** Visual pipe for surface data 
   Joins vme to renderer */
   void CreateSurfacePipeline(mafVME* vme, vtkRenderer *renderer);
@@ -137,9 +146,8 @@ protected:
   /** Visual pipe for polydata token */
   void CreateTokenPipeline(vtkRenderer *renderer);
 
-  /** Add new vme to scene
-  Adds vme to list, creates multiscale actors for data and tokens and creates visual pipes. */
-  void AddVmeToScene(mafVME* vme) ;
+  /** Update the camera */
+  void UpdateCamera() ;
 
 
   //----------------------------------------------------------------------------
@@ -185,10 +193,13 @@ protected:
   void SetTokenSize(vtkRenderer* renderer, int actorId, int tokenSize) ;          
 
   /** Get renderer */
-  vtkRenderer* GetRenderer() {return m_Rwi->m_RenFront ;}
+  vtkRenderer* GetRenderer() ;
+
+  /** Get render window */
+  vtkRenderWindow* GetRenderWindow() ;
 
   /** Get interactor */
-  vtkRenderWindowInteractor* GetInteractor() {return vtkRenderWindowInteractor::SafeDownCast(m_Rwi->m_RwiBase) ;}
+  vtkRenderWindowInteractor* GetInteractor() ;
 
   /** Get Multiscale utility */
   lhpMultiscaleUtility* GetMultiscaleUtility() {return m_MultiscaleUtility ;}
@@ -237,6 +248,9 @@ protected:
   std::vector <lhpMultiscaleTokenPipeline*> m_tokenPipes ;      ///< list of token pipes
 
   int m_nextTokenColor ;                                        ///< color id of next token
+
+  /** pointer to external renderer, which should be defined if op created with no dialog */
+  vtkRenderer* m_externalRenderer ;
 };
 
 

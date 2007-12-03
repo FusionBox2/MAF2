@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpMultiscaleActorCoordsUtility.cpp,v $
 Language:  C++
-Date:      $Date: 2007-11-29 16:16:07 $
-Version:   $Revision: 1.3 $
+Date:      $Date: 2007-12-03 16:55:08 $
+Version:   $Revision: 1.4 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -418,8 +418,6 @@ void lhpMultiscaleActorCoordsUtility::SetActorDisplaySize(vtkActor *actor, vtkRe
     // Get scaled display size
     GetSizeDisplay(actorScratch, ren, sizD) ;
     Size = std::max(sizD[0], sizD[1]) ;
-
-    mafLogMessage("i = %d  scale = %f  size = %f", i, Scale, Size) ;
 
     // calculate error
     Err = (Size - newSize) ;
