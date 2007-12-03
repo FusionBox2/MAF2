@@ -1,4 +1,4 @@
-PROJECT (Medical_TEST)
+PROJECT (lhpBuilder_TEST)
 
 # Load CppUnit stuff
 INCLUDE(${LHP_SOURCE_DIR}/CMakeModules/FindCppUnit.cmake)
@@ -16,7 +16,7 @@ IF (BUILD_VIEWS_TESTING)
   SUBDIRS(Views)
 ENDIF (BUILD_VIEWS_TESTING)
 
-OPTION(BUILD_VME_TESTING "Enable building of testing for VME classes" ON)
+OPTION(BUILD_VME_TESTING "Enable building of testing for VME classes" OFF)
 IF (BUILD_VME_TESTING)
   SUBDIRS(VME)
 ENDIF (BUILD_VME_TESTING)
