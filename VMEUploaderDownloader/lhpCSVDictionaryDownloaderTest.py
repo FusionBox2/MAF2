@@ -15,6 +15,9 @@ import unittest
 
 import os
 
+
+import urllib, urllib2, base64, re, os, cookielib, sys
+
 class lhpCSVDictionaryDownloaderTest(unittest.TestCase):
       
     def setUp(self):
@@ -25,7 +28,68 @@ class lhpCSVDictionaryDownloaderTest(unittest.TestCase):
         
         print " current directory is: " + curDir
             
-    def testRun(self):
+    def testBiomedtownLogin(self):
+        """login to biomedtown"""
+    
+        orig = "http://www.biomedtown.org"
+        
+        cj = cookielib.CookieJar()
+        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+        urllib2.install_opener(opener)
+        opener.addheaders = [('User-Agent','Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.0.7) Gecko/20060909 Firefox/1.5.0.7')]
+        
+        username = 'lhpparabuild'
+        password = '2bf5ZM'
+    
+        url1 = '%s/login_form' % orig
+    
+        data = {
+          'vlti-login_name':username,
+          'vlti-login_password':password,
+        }
+    
+        req1 = urllib2.Request(url1)
+    
+        postdata = urllib.urlencode(data)
+    
+        download_url = ''
+        appRes = {}
+    
+        # req = lhpCSVDictionaryDownloader.getAuthData(url1, username, password, True)
+        # print "--> URL1:", url1, "<-->", req, "<--"
+    
+        #LOGIN PAGE - 
+        try:
+            f1 = opener.open(req1)
+        except Exception, e:
+            raise 'Error: %s' % str(e)
+    
+        first_index = f1.readlines()
+        f1.close()
+    
+        cid = ''
+        
+        # X Francesco che ci metto qui???????
+        if Debug: print first_index
+        for s in first_index:
+            s = s.replace('\r\n','')
+            if re.match('.*action="/login\.htm\?cid=.*',s):
+                cid = re.search('action="/login\.htm\?cid=(.*)"',s).group(1)
+    
+        if Debug: print "*******", cid, "*******"
+    
+        req2 = urllib2.Request(url1+'?cid='+cid)
+        
+        f2 = opener.open(req2, postdata)
+    
+        afterLoginPage = f2.readlines()
+        f2.close()
+
+    
+        if Debug: print "-->", afterLoginPage, "<--"
+
+        
+    def estRun(self):
         """This is what I have to do...Not working with the following log
         
 ======================================================================
@@ -60,7 +124,7 @@ ersists please contact the site maintainer.\n  Thank you for your patience.\n   
         #print "done!"
 
     
-    def testRun2(self):
+    def estRun2(self):
         """This is just for comparison and it`s working... """
         ws = lhpCSVDictionaryDownloader.lhpCSVDictionaryDownloader()
         
