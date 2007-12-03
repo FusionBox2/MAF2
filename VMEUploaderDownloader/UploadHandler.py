@@ -25,19 +25,23 @@ class UploadHandler:
         upl = vmeUploader.vmeUploader()
         upl.InputMSFDirectory = self.dirCache
         upl.DictionaryFileName = curDir + r'\testDictionaries\testDictionary.txt'
-        upl.OutputFolderName = curDir + r'\Outgoing\\'
+        upl.OutputFolderName = curDir + r'\Outgoing'
         
         count = 0
-        directory = upl.OutputFolderName + str(count)
+        directory = upl.OutputFolderName + '\\' + str(count)
 		
         while(os.path.exists(directory)):
            count = count + 1
-           directory = upl.OutputFolderName + str(count)
+           directory = upl.OutputFolderName + '\\' + str(count)
         
         self.dirOutgoing = directory
         upl.OutputFolderName = directory
         upl.VmeToExtractID = int(self.id)
+
         upl.Upload()
+
+        #launch external XML editor
+        self.launchXMLEditor(self.dirOutgoing)
 		
         while 1:
             # To simulate asynchronous I/O, we create a random number at
@@ -50,7 +54,18 @@ class UploadHandler:
             UploadHandler.queue.put(lista)
             self.block.release()
             if(self.msg == 100): break
-			
+
+    def launchXMLEditor(self, dir):
+        print "test"
+        print str(dir)
+        files = os.listdir(dir)
+        print files
+        for file in files:
+            if (re.search('\\.xml$',file)):
+               xmlFile = file
+        #print "\"C:\\Program Files\\Peter's XML Editor\\pxe.exe\" " + dir + '\\' + xmlFile
+        os.system("\"C:\\Program Files\\Peter's XML Editor\\pxe.exe\" " + dir + '\\' + xmlFile)
+
     def sendBinaryFile(self):
         files = os.listdir(self.dirOutgoing)
         #print files
