@@ -24,6 +24,10 @@ class dictionaryCSV2XMLTest(unittest.TestCase):
          # some asserts here...
          # at the present time this is human validated  since dictionary is not yet stable
     
+    def testDownloadDictionary(self):
+        
+        
+        
     def testTagNameFromNode(self):
         
     # open XML dictionary
