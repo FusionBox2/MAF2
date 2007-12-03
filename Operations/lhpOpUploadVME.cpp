@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-11-28 16:57:08 $
-Version:   $Revision: 1.6 $
+Date:      $Date: 2007-12-03 11:32:24 $
+Version:   $Revision: 1.7 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2007
@@ -76,9 +76,10 @@ mafOp(label)
 	m_Canundo = false;
 
   //m_PythonExe ="C:\\Python25\\python.exe ";
-  m_PythonExe ="pythonw.exe ";
-  //m_CacheDir = (mafGetApplicationDirectory() + "\\Data\\UploadCache").c_str();
-  m_CacheDir = "C:\\tmp\\";
+  m_PythonExe ="python.exe ";
+  m_PythonwExe ="pythonw.exe ";
+  m_CacheDir = (mafGetApplicationDirectory() + "\\Data\\UploadCache\\").c_str();
+  //m_CacheDir = "C:\\tmp\\";
 
   //m_PythonUploadFullPath = "C:\\cvsMAF\\builderAppNEWSTYLE\\VMEUploaderDownloader\\mt\\";
   m_PythonUploadFullPath  = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\").c_str();
@@ -140,6 +141,7 @@ void lhpOpUploadVME::OpDo()
 //----------------------------------------------------------------------------
 {
 //mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  wxBusyCursor wait;
 
   if(!CreateCache())
   {
@@ -147,13 +149,14 @@ void lhpOpUploadVME::OpDo()
     return;
   }
 
-  wxString command2execute;
-  command2execute = m_PythonExe;
-  command2execute.Append(m_PythonUploadFullPath.GetCStr());
+  
   // m_Pid = wxExecute(command2execute, output, errors, wxEXEC_NODISABLE);
  
   if ( ExistsRunningProcess() )
   {
+    wxString command2execute;
+    command2execute = m_PythonwExe;
+    command2execute.Append(m_PythonUploadFullPath.GetCStr());
     // script for client
     m_FileName = "Client.py ";
     command2execute.Append(m_FileName.GetCStr());
@@ -170,14 +173,19 @@ void lhpOpUploadVME::OpDo()
   }
   else
   {
+    wxString command2execute;
+    command2execute = m_PythonExe;
+    command2execute.Append(m_PythonUploadFullPath.GetCStr());
     //wxMessageBox(wxString::Format("No process with pid = %ld.", m_Pid));
     m_FileName = "ThreadedClient.py ";
     command2execute.Append(m_FileName.GetCStr());
     command2execute.Append("50000");
     m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
 
+    mafSleep(5000);
+
     command2execute.clear();
-    command2execute = m_PythonExe;
+    command2execute = m_PythonwExe;
     command2execute.Append(m_PythonUploadFullPath.GetCStr());
     m_FileName = "Client.py ";
     command2execute.Append(m_FileName.GetCStr());
