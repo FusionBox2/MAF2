@@ -11,6 +11,9 @@ LINK_LIBRARIES(lhpCommon)
 # ADD_EXECUTABLE(myTest myTest.h myTest.cpp)
 # ADD_TEST(myTest ${EXECUTABLE_OUTPUT_PATH}/myTest)
 
+ADD_EXECUTABLE(lhpOpMultiscaleExploreTest lhpOpMultiscaleExploreTest.h lhpOpMultiscaleExploreTest.cpp)
+ADD_TEST(lhpOpMultiscaleExploreTest ${EXECUTABLE_OUTPUT_PATH}/lhpOpMultiscaleExploreTest)
+
 # wxWidgets specific classes
 #IF (MAF_USE_WX)
 #ENDIF (MAF_USE_WX)
