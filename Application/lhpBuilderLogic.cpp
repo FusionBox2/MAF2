@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderLogic.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-12-04 09:38:54 $
+  Version:   $Revision: 1.2 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
@@ -19,10 +19,11 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
-
 #include "lhpBuilderLogic.h"
+#include "lhpBuilderDecl.h"
 #include "mafDecl.h"
 #include "mafTagArray.h"
+#include "mafOp.h"
 
 //----------------------------------------------------------------------------
 lhpBuilderLogic::lhpBuilderLogic()
@@ -51,6 +52,14 @@ void lhpBuilderLogic::OnEvent(mafEventBase *maf_event)
 				mafLogMessage(wxString::Format("%s",m_Revision.GetCStr()));
 			}
 			break;
+    case ID_MSF_DATA_CACHE:
+      {
+        //comunicate to operation msf directory
+        e->SetString(&m_VMEManager->GetFileName());
+        mafOp *op = mafOp::SafeDownCast((mafObject *)e->GetSender());
+        if(op) op->OnEvent(e);
+      }
+      break;
 		default:
 			mafLogicWithManagers::OnEvent(maf_event);
 			break; 

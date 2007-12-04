@@ -5,6 +5,7 @@ lhpBuilderApp.cpp
 lhpBuilderApp.h
 lhpBuilderLogic.cpp
 lhpBuilderLogic.h
+lhpBuilderDecl.h
 )
 
 IF (NOT EXECUTABLE_OUTPUT_PATH)
