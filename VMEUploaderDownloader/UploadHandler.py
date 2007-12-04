@@ -1,7 +1,7 @@
 import vmeUploader
 #import webServicesClient.MtomUpload
 import msfParser
-import os, sys, string, time, re
+import os, sys, string, time, re ,shutil
 import threading
 
 class UploadHandler:
@@ -63,8 +63,8 @@ class UploadHandler:
         for file in files:
             if (re.search('\\.xml$',file)):
                xmlFile = file
-        #print "\"C:\\Program Files\\Peter's XML Editor\\pxe.exe\" " + dir + '\\' + xmlFile
-        os.system("\"C:\\Program Files\\Peter's XML Editor\\pxe.exe\" " + dir + '\\' + xmlFile)
+        os.chdir(dir)
+        os.system("\"C:\\Program Files\\Peter's XML Editor\\pxe.exe\" " + xmlFile)
 
     def sendBinaryFile(self):
         files = os.listdir(self.dirOutgoing)
