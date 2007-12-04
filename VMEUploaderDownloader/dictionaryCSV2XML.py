@@ -26,7 +26,7 @@ class dictionaryCSV2XML:
         # for every row create a dom node
         attributesRange = self.DictionaryColumnLabels.irange(self.DictionaryColumnLabels.ValueType , self.DictionaryColumnLabels.Notes)
         
-        reader = csv.reader(open(self.InputCSVDictionaryFileName, "rb"))       
+        reader = csv.reader(open(self.InputCSVDictionaryFileName, "r"))       
 
         reader.next()
         
