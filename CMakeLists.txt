@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2007-12-04 10:04:45 $
-#   Version:   $Revision: 1.14 $
+#   Date:      $Date: 2007-12-04 12:56:28 $
+#   Version:   $Revision: 1.15 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -131,6 +131,40 @@ IF(MAF_FOUND)
 ELSE (MAF_FOUND)
   MESSAGE (FATAL_ERROR "MAF library not found, cannot build application!!")
 ENDIF (MAF_FOUND)
+
+
+
+#-----------------------------------------------------------------------------
+# LHPBUILDER stuff
+#-----------------------------------------------------------------------------
+OPTION(DOWNLOAD_DICTIONARY "Download the lhpBuilder dictionary" ON)
+
+IF(DOWNLOAD_DICTIONARY)
+    
+    SET(LHPBUILDER_DICTIONARY_HOST "www.biomedtown.org" CACHE PATH "LHPBuilder dictionary host")
+    SET(LHPBUILDER_DICTIONARY_SELECTOR "/biomed_town/LHDL/lhdl-management/Consortium-room/lhdl-repository/WP5/Dictionaries/LHDL_dictionary.csv" CACHE PATH "LHPBuilder dictionary selector")
+    SET(LHPBUILDER_XML_DICTIONARY "lhpXMLDictionary.xml" CACHE PATH "LHPBuilder xml dictionary")
+    
+#     MESSAGE("variable LHP_SOURCE_DIR = " ${LHP_SOURCE_DIR})
+
+#     This line contains OUTPUT_VARIABLE OUTPUT_VALUE 
+#     EXEC_PROGRAM("python.exe" "${LHP_SOURCE_DIR}/VMEUploaderDownloader" ARGS "lhpCSVDictionaryDownloader.py ${LHPBUILDER_DICTIONARY_HOST} ${LHPBUILDER_DICTIONARY_SELECTOR} ${LHP_SOURCE_DIR}/${LHPBUILDER_XML_DICTIONARY}" OUTPUT_VARIABLE OUTPUT_VALUE RETURN_VALUE RETURN)
+    
+    SET(RET -1)
+    EXEC_PROGRAM("python.exe" "${LHP_SOURCE_DIR}/VMEUploaderDownloader" ARGS "lhpCSVDictionaryDownloader.py ${LHPBUILDER_DICTIONARY_HOST} ${LHPBUILDER_DICTIONARY_SELECTOR} ${LHPBUILDER_XML_DICTIONARY}"  RETURN_VALUE RET)
+
+#     MESSAGE("variable LHPBUILDER_XML_DICTIONARY = " ${LHPBUILDER_XML_DICTIONARY})
+#     MESSAGE("variable  OUTPUT = " ${OUTPUT_VALUE})
+#     MESSAGE("variable  RET = " ${RET})
+    
+    IF(${RET} EQUAL 0)
+        MESSAGE(STATUS "XML dictionary generated correctly!")
+    ELSE(${RET} EQUAL 0)
+        MESSAGE(SEND_ERROR "Problems generating XML dictionary!")
+#         MESSAGE(${OUTPUT_VALUE})
+    ENDIF(${RET} EQUAL 0)
+    
+ENDIF(DOWNLOAD_DICTIONARY)
 
 #-----------------------------------------------------------------------------
 # LHPBUILDER deploy stuff.  
