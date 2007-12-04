@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-03 11:32:24 $
-Version:   $Revision: 1.7 $
+Date:      $Date: 2007-12-04 09:36:56 $
+Version:   $Revision: 1.8 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2007
@@ -57,7 +57,7 @@ MafMedical is partially based on OpenMAF.
 
 #include "mafNode.h"
 #include "mafVMESurfaceParametric.h"
-#include "mafVMESurface.h"
+#include "mafVMERoot.h"
 
 #include "vtkPolyData.h"
 
@@ -78,7 +78,7 @@ mafOp(label)
   //m_PythonExe ="C:\\Python25\\python.exe ";
   m_PythonExe ="python.exe ";
   m_PythonwExe ="pythonw.exe ";
-  m_CacheDir = (mafGetApplicationDirectory() + "\\Data\\UploadCache\\").c_str();
+  m_CacheDir = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\UploadCache\\").c_str();
   //m_CacheDir = "C:\\tmp\\";
 
   //m_PythonUploadFullPath = "C:\\cvsMAF\\builderAppNEWSTYLE\\VMEUploaderDownloader\\mt\\";
@@ -106,7 +106,7 @@ mafOp* lhpOpUploadVME::Copy()
 bool lhpOpUploadVME::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-	return vme != NULL;
+	return (vme != NULL && !(vme->IsMAFType(mafVMERoot)));
 }
 //----------------------------------------------------------------------------
 void lhpOpUploadVME::OpRun()
@@ -145,7 +145,7 @@ void lhpOpUploadVME::OpDo()
 
   if(!CreateCache())
   {
-    wxMessageBox("Unable to create a temporary cache, check free space on disk");
+    wxMessageBox("Unable to create a temporary cache, remember that msf must be saved locally");
     return;
   }
 
@@ -165,7 +165,7 @@ void lhpOpUploadVME::OpDo()
     command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //vme id
     command2execute.Append(wxString::Format("%s ",m_CurrentCache)); //cache directory
     command2execute.Append(wxString::Format("%s ",m_Input->GetName())); //vme name
-    //command2execute.Append("> log.txt"); //logme
+    //command2execute.Append(" > log.txt"); //logme
     
     
     //wxMessageBox(wxString::Format("Process %ld is running.", m_Pid));
@@ -180,6 +180,7 @@ void lhpOpUploadVME::OpDo()
     m_FileName = "ThreadedClient.py ";
     command2execute.Append(m_FileName.GetCStr());
     command2execute.Append("50000");
+    //command2execute.Append(" > log.txt"); //logme
     m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
 
     mafSleep(5000);
@@ -215,8 +216,8 @@ bool lhpOpUploadVME::CreateCache()
   mafEventMacro(mafEvent(this, ID_MSF_DATA_CACHE));
 
   wxDir dir(m_MsfDir.GetCStr());
-
-  if ( !dir.IsOpened() )
+  wxString exist = m_MsfDir.GetCStr();
+  if ( !wxDirExists(exist) || !dir.IsOpened())
   {
     // deal with the error here - wxDir would already log an error message
     // explaining the exact reason of the failure
@@ -268,7 +269,7 @@ bool lhpOpUploadVME::CreateCache()
 bool lhpOpUploadVME::ExistsRunningProcess()
 //----------------------------------------------------------------------------
 {
-  bool result;
+  bool result = false;
   
   wxFile lockFile;
   wxString lockpath = m_PythonUploadFullPath;
