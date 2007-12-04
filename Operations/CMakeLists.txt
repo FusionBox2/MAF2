@@ -61,6 +61,8 @@ mmoTimeReduce.cpp
 mmoTimeReduce.h
 mmoLnSurf.cpp
 mmoLnSurf.h
+lhpOpUploadVME.cpp
+lhpOpUploadVME.h
 )
 
 # List libraries that are needed by this project.
