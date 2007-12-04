@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2007-11-28 16:37:47 $
-#   Version:   $Revision: 1.13 $
+#   Date:      $Date: 2007-12-04 10:04:45 $
+#   Version:   $Revision: 1.14 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -65,6 +65,7 @@ IF(MAF_FOUND)
   # Add single dirs to inclusion path
   INCLUDE_DIRECTORIES(BEFORE ".")
   INCLUDE_DIRECTORIES(${LHP_BINARY_DIR})
+  INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/Application)
   INCLUDE_DIRECTORIES(${LHP_BINARY_DIR}/Core)
   INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/Common)
   INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/Operations)
