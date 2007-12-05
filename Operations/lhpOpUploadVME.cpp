@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-04 09:36:56 $
-Version:   $Revision: 1.8 $
+Date:      $Date: 2007-12-05 10:52:15 $
+Version:   $Revision: 1.9 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2007
@@ -252,7 +252,7 @@ bool lhpOpUploadVME::CreateCache()
     
     wxString sourceFile;
     sourceFile = m_MsfDir;
-    sourceFile.Append("//");
+    sourceFile.Append("\\");
     sourceFile.Append(filename);
 
     if(wxFileExists(sourceFile))
