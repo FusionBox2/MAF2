@@ -86,6 +86,7 @@ def main():
 
         """
         sys.exit(-1)
+    print args
     run(args[0],args[1],args[2])
 
 if __name__ == '__main__':

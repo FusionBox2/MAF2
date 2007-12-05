@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2007-12-03 11:32:24 $
-Version:   $Revision: 1.4 $
+Date:      $Date: 2007-12-05 17:31:46 $
+Version:   $Revision: 1.5 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2007
@@ -81,6 +81,13 @@ public:
   void SetMsfDir(mafString msfDir){m_MsfDir = msfDir;}
 
 protected:
+  
+  /** Generate auto tags and manual tags list from XML lhdl dictionary*/
+  int GeneratesManualTagsListFromXMLDictionary();
+
+  /** Try to handle auto tags through tags factory and convert unhandled 
+  to manual tags ie to be filled by the user*/
+  void HandleAutoTagsTroughFactory();
 
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
 	virtual void OpStop(int result);
@@ -100,7 +107,19 @@ protected:
   mafString m_PythonExe; //>python  executable
   mafString m_PythonwExe; //>pythonw  executable
   mafString m_MsfDir; //>directory of original msf
-   
- static long m_Pid; //> pid of the server process
+  
+  static long m_Pid; //> pid of the server process
+
+  mafString m_XMLDictionaryFileName; 
+  mafString m_AutoTagsListFromXMLDictionaryFileName; 
+  mafString m_ManualTagsListFromXMLDictionaryFileName;
+  mafString m_UnhandledPlusManualTagsFileName;
+
+private:
+
+  wxArrayString m_AutoTagsList;
+  wxArrayString m_ManualTagsList;
+  wxArrayString m_UnhandledAutoTagsListFromFactory; ///< the factory was not able to handle these tags
+  
 };
 #endif

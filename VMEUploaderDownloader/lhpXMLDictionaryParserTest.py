@@ -58,6 +58,19 @@ class lhpXMLDictionaryParserTest(unittest.TestCase):
         print vmeAutoTags
         self.assertEqual(len(autoTags), len(vmeAutoTags))
         
+        vmeManualTags = lhpXMLDictionaryParserInstance.GetVMETagArrayManualTagNamesList()
+        print vmeManualTags
+        self.assertEqual(len(autoTags) + len(vmeManualTags), 100)
+    
+    def testRunAutoTags(self):
+        xmlDict = r'.\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.xml'
+        lhpXMLDictionaryParser.run(xmlDict,"auto_tags", "auto_tags.txt")
+        
+    
+    def estRunAutoTags(self):
+        xmlDict = r'.\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.xml'
+        lhpXMLDictionaryParser.run(xmlDict,"manual_tags", "manual_tags.txt")
+        
 if __name__ == '__main__':
     unittest.main()
     

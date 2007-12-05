@@ -9,6 +9,7 @@ import Debug
 from xml.dom import minidom
 from xml.dom import Node
 import Enum
+import os
             
 class lhpXMLDictionaryParser:
     """Facilities to handle lhpBuilder XML dictionary"""
@@ -56,7 +57,7 @@ class lhpXMLDictionaryParser:
         return self.AutoTagsList
     
     def GetVMETagArrayTagNamesList(self):
-        """Return list of dictionary tags as stored in vme tag array
+        """Return list of every dictionary tags ie auto and manual as stored in vme tag array
         For example:
         [...
         L0000_resource_Pricing_Quotation1,
@@ -70,7 +71,8 @@ class lhpXMLDictionaryParser:
         return self.TagArrayTagList
     
     def GetVMETagArrayAutoTagNamesList(self):
-        """Return the list of auto tags as stored in vme tag array
+        """Return the list of auto tags only ie tags that should be handled by 
+        lhpbuilder tag factory as stored in vme tag array
         For example:
         [...
         L0000_resource_Pricing_AutoTagPippo,
@@ -80,6 +82,20 @@ class lhpXMLDictionaryParser:
         self.TagArrayAutoTagList = []
         self.__GetTagArrayAutoTagsInternal(self.DictionaryDOMDocumentRoot, sys.stdout, 0)
         return self.TagArrayAutoTagList
+    
+    
+    def GetVMETagArrayManualTagNamesList(self):
+        """Return the list of manual tags ie tags that should be filled by the user as stored
+        in vme tag array
+        For example:
+        [...
+        L0000_resource_Pricing_AutoTagPippo,
+        L0000_resource_Pricing_Quotation1_AutoTagPluto,
+        ...]
+        """
+        self.TagArrayManualTagList = []
+        self.__GetTagArrayManualTagsInternal(self.DictionaryDOMDocumentRoot, sys.stdout, 0)
+        return self.TagArrayManualTagList
     
     def GetVMETagArrayTagNameFromNode(self, node):
         """Given a XML dictionary node get its corresponding flat tag name in VME tagarray
@@ -176,6 +192,13 @@ class lhpXMLDictionaryParser:
             for node in parent.childNodes:
                 self.__GetTagArrayAutoTagsInternal(node, sys.stdout, level)
     
+    def __GetTagArrayManualTagsInternal(self,parent, outFile, level):  
+        if self.IsAuto(parent) == False:    
+            self.TagArrayManualTagList.append(self.GetVMETagArrayTagNameFromNode(parent))
+        if parent.childNodes:
+            for node in parent.childNodes:
+                self.__GetTagArrayManualTagsInternal(node, sys.stdout, level)
+    
     def __GetTagsListInternal(self, parent):
         self.TagsList.append(self.GetNodeName(parent))
         if parent.childNodes:
@@ -200,18 +223,61 @@ class lhpXMLDictionaryParser:
         for idx in range(level):
             outFile.write('    ')
 
+
+
+def run(xmlDictionaryFilename, command, outputTagsFileName):
+    """"""
+    # load XML dictionary
+    lhpXMLDictionaryParserInstance = lhpXMLDictionaryParser()
+    lhpXMLDictionaryParserInstance.LoadXMLDictionary(xmlDictionaryFilename)
+    
+    tags = []
+    
+    if command == 'auto_tags':
+    # generates auto tags    
+         tags = lhpXMLDictionaryParserInstance.GetVMETagArrayAutoTagNamesList()
+         
+    elif command == 'manual_tags':
+        tags = lhpXMLDictionaryParserInstance.GetVMETagArrayManualTagNamesList()
+    
+    else:
+        print 'command not available!'
+        sys.exit(1)
+
+    if Debug: 
+        print "Beware:  In order to work run this est must be launched from VMEUploaderDownloader dir!"
         
+        curDir = os.getcwd()        
         
-#def run(inFileName):                                            
- 
-#def main():
-    #args = sys.argv[1:]
-    #if len(args) != 1:
-        #print 'usage: ...'
-        #sys.exit(-1)
-    #run(args[0])
+        print " current directory is: " + curDir
+      
+        for tag in tags:
+             print tag   
+      
+    
+    # Save
+    tagsFile = open(outputTagsFileName, 'w')
+    for tag in tags:
+        print "storing: " + str(tag)
+        print >> tagsFile, tag
+    tagsFile.close()
 
+    return 
 
-#if __name__ == '__main__':
-    #main()
+if __name__ == '__main__':
+    import sys
+    usage_msg = '''Usage: %s <option>
+where option can be:
+auto_tags - get auto tags from dictionary
+manual_tags - get manual tags from dictionary
+''' % sys.argv[0]
 
+    if len(sys.argv) != 4:
+        print 'Error :\n' + usage_msg
+        sys.exit(1)
+
+    xmlDictionaryFilename = sys.argv[1]
+    command = sys.argv[2]
+    outputTagsFileName = sys.argv[3]
+    
+    run(xmlDictionaryFilename, command, outputTagsFileName)

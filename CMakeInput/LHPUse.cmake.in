@@ -6,4 +6,4 @@ INCLUDE_DIRECTORIES(${LHP_INCLUDE_DIRS})
 
 LINK_DIRECTORIES(${LHP_LIBRARY_DIRS})
 
-LINK_LIBRARIES(lhpCommon lhpOperations lhpViews lhpVME vtkLHP)
+LINK_LIBRARIES(lhpCommon lhpOperations lhpViews lhpVME vtkLHP lhpCore)
