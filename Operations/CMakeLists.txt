@@ -2,6 +2,10 @@ PROJECT(lhpOperations)
 
 # Set your list of sources here.
 SET(PROJECT_SRCS
+#to be moved in core; need to solve some linking problems
+lhpFactoryTagHandler.cpp
+lhpFactoryTagHandler.h
+#
 lhpOpBonemat.cpp
 lhpOpBonemat.h
 lhpOpImporterAnsysInputFile.cpp

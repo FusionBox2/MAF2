@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-05 11:16:53 $
-Version:   $Revision: 1.10 $
+Date:      $Date: 2007-12-06 22:50:10 $
+Version:   $Revision: 1.11 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2007
@@ -58,7 +58,12 @@ MafMedical is partially based on OpenMAF.
 #include "mafNode.h"
 #include "mafVMEGenericAbstract.h"
 
+#include "lhpFactoryTagHandler.h"
 #include "vtkPolyData.h"
+
+#include <string>
+#include <istream>
+#include <ostream>
 
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(lhpOpUploadVME);
@@ -87,7 +92,18 @@ mafOp(label)
 
   m_MsfDir = "";
 
+  m_XMLDictionaryFileName = "lhpXMLDictionary.xml";
+  m_AutoTagsListFromXMLDictionaryFileName = "autoTagsList.txt";
+  m_ManualTagsListFromXMLDictionaryFileName = "manualTagsList.txt";
+  m_UnhandledPlusManualTagsFileName = "unhandledPlusManualTagsList.txt";
+
+  m_UnhandledAutoTagsListFromFactory.Clear();
+  m_AutoTagsList.Clear();
+  m_ManualTagsList.Clear();
+  m_UnhandledAutoTagsListFromFactory.Clear();
+
 }
+
 //----------------------------------------------------------------------------
 lhpOpUploadVME::~lhpOpUploadVME()
 //----------------------------------------------------------------------------
@@ -298,4 +314,153 @@ bool lhpOpUploadVME::ExistsRunningProcess()
     }
   }
   return result;
+}
+
+int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
+{
+  wxString oldDir = wxGetCwd();
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+
+  //def testRunAutoTags(self):
+  //xmlDict = r'.\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.xml'
+  //lhpXMLDictionaryParser.run(xmlDict,"auto_tags", "auto_tags.txt")
+
+
+  //def estRunAutoTags(self):
+  //xmlDict = r'.\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.xml'
+  //lhpXMLDictionaryParser.run(xmlDict,"manual_tags", "manual_tags.txt")
+  
+  // get auto tags
+  wxString command2execute;
+  command2execute.Append(m_PythonExe.GetCStr());
+  command2execute.Append(" ");
+  command2execute.Append(m_XMLDictionaryFileName.GetCStr());
+  command2execute.Append(" auto_tags ");
+  command2execute.Append(m_AutoTagsListFromXMLDictionaryFileName.GetCStr());
+  
+  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+
+  int pid = wxExecute(command2execute, wxEXEC_SYNC);
+
+  if ( !command2execute )
+    return MAF_ERROR;
+
+  mafLogMessage(_T("Command process '%s' terminated with exit code %d."),
+    command2execute.c_str(), pid);
+
+  // get manual tags
+  command2execute.Clear();
+  command2execute = m_PythonExe;
+  command2execute.Append(m_PythonUploadFullPath.GetCStr());
+  command2execute.Append(" ");
+  command2execute.Append(m_XMLDictionaryFileName.GetCStr());
+  command2execute.Append(" manual_tags ");
+  command2execute.Append(m_ManualTagsListFromXMLDictionaryFileName.GetCStr());
+
+  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+
+  pid = wxExecute(command2execute, wxEXEC_SYNC);
+
+  if ( !command2execute )
+    return MAF_ERROR;
+
+  mafLogMessage(_T("Command process '%s' terminated with exit code %d."),
+    command2execute.c_str(), pid);
+
+  // cleanup
+  m_AutoTagsList.Clear();
+  m_ManualTagsList.Clear();
+  m_UnhandledAutoTagsListFromFactory.Clear();
+
+  // open auto tags file and try to handle tags using tags factory 
+  ifstream inManualTagsFile;
+
+  inManualTagsFile.open(m_ManualTagsListFromXMLDictionaryFileName.GetCStr());
+  if (!inManualTagsFile) {
+    mafLogMessage("Unable to open file");
+    return MAF_ERROR; // terminate with error
+  }
+
+  std::string mtag;
+
+  while (inManualTagsFile >> mtag) 
+  {
+    m_ManualTagsList.Add(mtag.c_str());
+  }
+  inManualTagsFile.close();
+
+  // open auto tags file and try to handle tags using tags factory 
+  ifstream inAutoTagsFile;
+
+  inAutoTagsFile.open(m_AutoTagsListFromXMLDictionaryFileName.GetCStr());
+  if (!inAutoTagsFile) {
+    mafLogMessage("Unable to open file");
+    return MAF_ERROR; // terminate with error
+  }
+
+  std::string atag;
+
+  while (inAutoTagsFile >> atag) 
+  {
+    m_AutoTagsList.Add(atag.c_str());
+  }
+  inAutoTagsFile.close();
+
+  mafString tagName = "";
+  
+  for (int i = 0; i < m_AutoTagsList.size(); i++)
+  {
+    tagName = m_AutoTagsList[i].c_str();
+
+    if (tagName != "")
+    {
+      lhpFactoryTagHandler *tagsFactory  = lhpFactoryTagHandler::GetInstance();
+      assert(tagsFactory!=NULL);
+      mafObject *obj = NULL;
+      obj = tagsFactory->CreateInstance(tagName);
+      lhpTagHandler *tagHandler = (lhpTagHandler*)obj;
+      if (tagHandler)
+      {
+        tagHandler->HandleTag();
+      }
+      else
+      {
+        m_UnhandledAutoTagsListFromFactory.Add(tagName.GetCStr());
+        mafErrorMessage(_("Cannot handle \"%s\" tag!, this tag will become manual"),tagName.GetCStr());
+      }
+    }
+  }
+  
+  // generates manual tag file 
+
+  // open auto tags file and try to handle tags using tags factory 
+  ofstream unhandledPlusManualTagsFile;
+
+  unhandledPlusManualTagsFile.open(m_UnhandledPlusManualTagsFileName.GetCStr());
+
+  if (!unhandledPlusManualTagsFile) {
+    mafLogMessage("Unable to create file");
+    return MAF_ERROR; // terminate with error
+  }
+
+  // write unhandled auto
+  for (int i = 0; i < m_UnhandledAutoTagsListFromFactory.size(); i++)
+  {
+    tagName = m_UnhandledAutoTagsListFromFactory[i].c_str();
+    unhandledPlusManualTagsFile << tagName.GetCStr() ;
+  }
+
+  // write manuals
+  for (int i = 0; i < m_ManualTagsList.size(); i++)
+  {
+    tagName = m_ManualTagsList[i].c_str();
+    unhandledPlusManualTagsFile << tagName.GetCStr() ;
+  }
+
+  unhandledPlusManualTagsFile.close();
+
+  wxSetWorkingDirectory(oldDir);
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+
 }
