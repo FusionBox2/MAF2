@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-07 09:39:30 $
-Version:   $Revision: 1.13 $
+Date:      $Date: 2007-12-07 14:28:46 $
+Version:   $Revision: 1.14 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2007
@@ -128,6 +128,7 @@ bool lhpOpUploadVME::Accept(mafNode* vme)
 void lhpOpUploadVME::OpRun()
 //----------------------------------------------------------------------------
 {
+  this->GeneratesManualTagsListFromXMLDictionary();
 	OpStop(OP_RUN_OK);
 }
 //----------------------------------------------------------------------------
