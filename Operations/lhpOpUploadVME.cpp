@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-06 22:50:10 $
-Version:   $Revision: 1.11 $
+Date:      $Date: 2007-12-07 08:47:14 $
+Version:   $Revision: 1.12 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2007
@@ -83,6 +83,7 @@ mafOp(label)
   m_PythonExe ="python.exe ";
   m_PythonwExe ="pythonw.exe ";
   m_CacheDir = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\UploadCache\\").c_str();
+  m_OutgoingDir = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\Outgoing\\").c_str();
   //m_CacheDir = "C:\\tmp\\";
 
   //m_PythonUploadFullPath = "C:\\cvsMAF\\builderAppNEWSTYLE\\VMEUploaderDownloader\\mt\\";
@@ -157,6 +158,12 @@ void lhpOpUploadVME::OpDo()
 {
 //mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxBusyCursor wait;
+
+  if(!CreateBaseCaheAndOutgoingDirectories())
+  {
+    wxMessageBox("Unable to create Cache Base Directory");
+    return;
+  }
 
   if(!CreateCache())
   {
@@ -315,8 +322,9 @@ bool lhpOpUploadVME::ExistsRunningProcess()
   }
   return result;
 }
-
+//----------------------------------------------------------------------------
 int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
+//----------------------------------------------------------------------------
 {
   wxString oldDir = wxGetCwd();
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
@@ -463,4 +471,34 @@ int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
   wxSetWorkingDirectory(oldDir);
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 
+}
+//----------------------------------------------------------------------------
+bool lhpOpUploadVME::CreateBaseCaheAndOutgoingDirectories()
+//----------------------------------------------------------------------------
+{
+  bool resultCache = false, resultOutgoing = false;
+
+  wxString existCache = m_CacheDir.GetCStr();
+  if ( wxDirExists(existCache) )
+  {
+     resultCache = true;
+  }
+  else
+  {
+    wxMkDir(existCache);
+    if ( wxDirExists(existCache) ) resultCache = true;
+  }
+
+  wxString existOutgoing = m_OutgoingDir.GetCStr();
+  if ( wxDirExists(existOutgoing) )
+  {
+    resultOutgoing = true;
+  }
+  else
+  {
+    wxMkDir(existOutgoing);
+    if ( wxDirExists(existOutgoing) ) resultOutgoing = true;
+  }
+
+  return resultCache && resultOutgoing;
 }

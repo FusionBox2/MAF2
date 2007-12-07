@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2007-12-05 17:31:46 $
-Version:   $Revision: 1.5 $
+Date:      $Date: 2007-12-07 08:47:14 $
+Version:   $Revision: 1.6 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2007
@@ -92,6 +92,9 @@ protected:
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
 	virtual void OpStop(int result);
 
+  /* Base Cache and Outgoing creation directory*/
+  bool CreateBaseCaheAndOutgoingDirectories();
+
   /** This method creates on filesystem a cache with msf and binary data that must be uploaded */
   bool CreateCache();
 
@@ -102,6 +105,8 @@ protected:
   static mafString m_CacheSubdir; //>cache subdirectory
   mafString m_CurrentCache; //>current cache directory
   
+  mafString m_OutgoingDir; //directoyr for xml and binary to send
+
   mafString m_PythonUploadFullPath; //>directory where the scripts are
   mafString m_FileName; //>script file name
   mafString m_PythonExe; //>python  executable
