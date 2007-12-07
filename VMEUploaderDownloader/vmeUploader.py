@@ -82,22 +82,22 @@ class vmeUploader:
         # print dictionaryTagListSet
         
         tagsToBeExported = vmeTagListSet.intersection(dictionaryTagListSet)
-        print "\nThese tags will be exported: \n" + str(tagsToBeExported)
+        # print "\nThese tags will be exported: \n" + str(tagsToBeExported)
         
         tagsToBeAddedByTheUser = dictionaryTagListSet.difference(vmeTagList)
         print "\nThese tags need to be added by the user: \n" + str(tagsToBeAddedByTheUser)
-        
-        # Add Tags
+       
         # Add tags from list
-        # msfDOMParserInstance.AddTagsByList(outVmeTagArrayNode, listOfTagsToBeAdded)
+        msfDOMParserInstance.AddTagsFromList(domDocument,outVmeTagArrayNode, tagsToBeAddedByTheUser)
 
         tagsToBeRemoved  = vmeTagListSet.difference(tagsToBeExported)
-        print "\nThese tags will be removed from output vme XML: \n" + str(tagsToBeRemoved)
+        # print "\nThese tags  be removed from output vme XML: \n" + str(tagsToBeRemoved)
     
         a = list(tagsToBeRemoved)
         print a
         
-        msfDOMParserInstance.RemoveTagsByList(outVmeTagArrayNode, a)
+        # for the moment cannot remove anything
+        # msfDOMParserInstance.RemoveTagsByList(outVmeTagArrayNode, a)
         
         # create output directory
         fileUtilities._mkdir(self.OutputFolderName)
