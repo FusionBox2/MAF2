@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-07 14:28:46 $
-Version:   $Revision: 1.14 $
+Date:      $Date: 2007-12-07 16:26:52 $
+Version:   $Revision: 1.15 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2007
@@ -87,6 +87,8 @@ mafOp(label)
   //m_CacheDir = "C:\\tmp\\";
 
   //m_PythonUploadFullPath = "C:\\cvsMAF\\builderAppNEWSTYLE\\VMEUploaderDownloader\\mt\\";
+  // m_PythonUploadFullPath = "D:\\vapps\\LHPBuilder_Parabuild\\VMEUploaderDownloader\\";
+
   m_PythonUploadFullPath  = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\").c_str();
   m_FileName = "";
   //m_PythonUploadFullPathFileName = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\mt\\gui.py").c_str();
@@ -328,8 +330,9 @@ int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
 //----------------------------------------------------------------------------
 {
   wxString oldDir = wxGetCwd();
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
   //def testRunAutoTags(self):
   //xmlDict = r'.\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.xml'
@@ -343,7 +346,7 @@ int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
   // get auto tags
   wxString command2execute;
   command2execute.Append(m_PythonExe.GetCStr());
-  command2execute.Append(" ");
+  command2execute.Append(" lhpXMLDictionaryParser.py ");
   command2execute.Append(m_XMLDictionaryFileName.GetCStr());
   command2execute.Append(" auto_tags ");
   command2execute.Append(m_AutoTagsListFromXMLDictionaryFileName.GetCStr());
@@ -361,8 +364,8 @@ int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
   // get manual tags
   command2execute.Clear();
   command2execute = m_PythonExe;
-  command2execute.Append(m_PythonUploadFullPath.GetCStr());
-  command2execute.Append(" ");
+  
+  command2execute.Append(" lhpXMLDictionaryParser.py ");
   command2execute.Append(m_XMLDictionaryFileName.GetCStr());
   command2execute.Append(" manual_tags ");
   command2execute.Append(m_ManualTagsListFromXMLDictionaryFileName.GetCStr());
@@ -436,7 +439,7 @@ int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
       else
       {
         m_UnhandledAutoTagsListFromFactory.Add(tagName.GetCStr());
-        mafErrorMessage(_("Cannot handle \"%s\" tag!, this tag will become manual"),tagName.GetCStr());
+        mafLogMessage(_("Cannot handle \"%s\" tag!, this tag will become manual"),tagName.GetCStr());
       }
     }
   }
@@ -457,14 +460,14 @@ int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
   for (int i = 0; i < m_UnhandledAutoTagsListFromFactory.size(); i++)
   {
     tagName = m_UnhandledAutoTagsListFromFactory[i].c_str();
-    unhandledPlusManualTagsFile << tagName.GetCStr() ;
+    unhandledPlusManualTagsFile << tagName.GetCStr() << std::endl ;
   }
 
   // write manuals
   for (int i = 0; i < m_ManualTagsList.size(); i++)
   {
     tagName = m_ManualTagsList[i].c_str();
-    unhandledPlusManualTagsFile << tagName.GetCStr() ;
+    unhandledPlusManualTagsFile << tagName.GetCStr() << std::endl ;
   }
 
   unhandledPlusManualTagsFile.close();
