@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2007-12-07 08:47:14 $
-Version:   $Revision: 1.6 $
+Date:      $Date: 2007-12-07 09:39:30 $
+Version:   $Revision: 1.7 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2007
@@ -93,7 +93,7 @@ protected:
 	virtual void OpStop(int result);
 
   /* Base Cache and Outgoing creation directory*/
-  bool CreateBaseCaheAndOutgoingDirectories();
+  bool CreateBaseCacheAndOutgoingDirectories();
 
   /** This method creates on filesystem a cache with msf and binary data that must be uploaded */
   bool CreateCache();

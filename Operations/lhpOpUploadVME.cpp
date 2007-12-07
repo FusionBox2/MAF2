@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-07 08:47:14 $
-Version:   $Revision: 1.12 $
+Date:      $Date: 2007-12-07 09:39:30 $
+Version:   $Revision: 1.13 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2007
@@ -159,7 +159,7 @@ void lhpOpUploadVME::OpDo()
 //mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxBusyCursor wait;
 
-  if(!CreateBaseCaheAndOutgoingDirectories())
+  if(!CreateBaseCacheAndOutgoingDirectories())
   {
     wxMessageBox("Unable to create Cache Base Directory");
     return;
@@ -473,7 +473,7 @@ int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
 
 }
 //----------------------------------------------------------------------------
-bool lhpOpUploadVME::CreateBaseCaheAndOutgoingDirectories()
+bool lhpOpUploadVME::CreateBaseCacheAndOutgoingDirectories()
 //----------------------------------------------------------------------------
 {
   bool resultCache = false, resultOutgoing = false;
