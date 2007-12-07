@@ -31,7 +31,7 @@ class CustomGaugeWx(wx.BoxSizer):
 def test():
     app = wx.PySimpleApp()    
     frame = wx.Frame(None, -1)
-    gaugeContainer = CustomGauge(frame, pos = (100,100))
+    gaugeContainer = CustomGaugeWx(frame, pos = (100,100))
     gaugeContainer.gauge.SetValue(50)
     frame.Show(True)
     app.MainLoop()
