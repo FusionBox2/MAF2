@@ -2,9 +2,9 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2007-12-07 09:39:30 $
-Version:   $Revision: 1.7 $
-Authors:   Daniele Giunchi
+Date:      $Date: 2007-12-07 17:03:59 $
+Version:   $Revision: 1.8 $
+Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
 SCS s.r.l. - BioComputing Competence Centre (www.scsolutions.it - www.b3c.it)
