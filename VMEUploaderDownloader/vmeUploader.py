@@ -11,6 +11,7 @@ import shutil
 import sets
 import os
 import re
+import Debug
 from xml.dom import minidom
 from xml.dom import Node
 
@@ -30,7 +31,7 @@ class vmeUploader:
         
     def __Parse(self):
        
-        domP = msfParser.msfParser()
+        msfDOMParserInstance = msfParser.msfParser()
         dict = msfParser.lhpbDictionary()
         dict.DictionaryFileName = self.DictionaryFileName
         dict.Load()
@@ -38,7 +39,10 @@ class vmeUploader:
         # Search the MSF file inside given the given directory
         os.chdir(self.InputMSFDirectory)
         files = os.listdir(self.InputMSFDirectory)
-
+        
+        if Debug:
+            print "Directory: " + self.InputMSFDirectory + " contains: "
+            print files
         msfFileNameList = []
         for file in files:
             if re.search('\\.msf$',file):
@@ -59,13 +63,13 @@ class vmeUploader:
         vmeId = self.VmeToExtractID
         
         # get the vme node
-        outVmeNode = domP.GetVmeNodeById(rootNode, vmeId)
+        outVmeNode = msfDOMParserInstance.GetVmeNodeById(rootNode, vmeId)
         
         # get the tagArray node
-        outVmeTagArrayNode = domP.GetVmeTagArrayNode(outVmeNode)
+        outVmeTagArrayNode = msfDOMParserInstance.GetVmeTagArrayNode(outVmeNode)
         
         # get the tags list
-        vmeTagList = domP.PrintTagNames(outVmeTagArrayNode)
+        vmeTagList = msfDOMParserInstance.PrintTagNames(outVmeTagArrayNode)
         
         print vmeTagList
         dict.Print()
@@ -83,13 +87,17 @@ class vmeUploader:
         tagsToBeAddedByTheUser = dictionaryTagListSet.difference(vmeTagList)
         print "\nThese tags need to be added by the user: \n" + str(tagsToBeAddedByTheUser)
         
+        # Add Tags
+        # Add tags from list
+        # msfDOMParserInstance.AddTagsByList(outVmeTagArrayNode, listOfTagsToBeAdded)
+
         tagsToBeRemoved  = vmeTagListSet.difference(tagsToBeExported)
         print "\nThese tags will be removed from output vme XML: \n" + str(tagsToBeRemoved)
     
         a = list(tagsToBeRemoved)
         print a
         
-        domP.RemoveTagsByList(outVmeTagArrayNode, a)
+        msfDOMParserInstance.RemoveTagsByList(outVmeTagArrayNode, a)
         
         # create output directory
         fileUtilities._mkdir(self.OutputFolderName)
@@ -104,7 +112,7 @@ class vmeUploader:
         
         # Copy of VME binary file to this directory
         # get the file to be copied
-        fileNameList = domP.GetVMEDataURLList(outVmeNode)
+        fileNameList = msfDOMParserInstance.GetVMEDataURLList(outVmeNode)
         assert(len(fileNameList)  == 1)
         
         if(len(fileNameList)  == 1):

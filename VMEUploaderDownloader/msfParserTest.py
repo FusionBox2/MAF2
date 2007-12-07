@@ -14,6 +14,7 @@
 #                 Attribute -- Name: Id  Value: 1
 #                 Attribute -- Name: Name  Value: test_volume
 
+import Debug
 import msfParser
 import sys, string
 from xml.dom import minidom
@@ -143,6 +144,19 @@ class msfParserTest(unittest.TestCase):
         outFile = open('pickleStupidList.txt', 'r')
         newList = pickle.load(outFile)
         self.assertEqual(stupidList,newList)
+        
+    
+    def testAddTagsFromList(self):
+        p = self.msfParserInstance
+        vme = p.GetVmeNodeById(self.rootNode, 1)
+        tagArray = p.GetVmeTagArrayNode(vme)
+        self.assertNotEqual(tagArray, None)
+        p.PrintNodeToScreen(tagArray)
+        p.AddTagsFromList(self.doc,tagArray, [r'Dicom_CT_peakvoltage(kV)',r'pippo',r'pluto'])
+        
+        outFile = open('afterTagsAdding.txt', 'w')
+        p.PrintDOMTree(vme, outFile)
+        
         
 if __name__ == '__main__':
     unittest.main()

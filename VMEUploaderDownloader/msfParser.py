@@ -61,10 +61,12 @@
                     #NodeName: TC
                     #Content: "NATURAL"
        
-       
+
+import Debug                    
 import sys, string
 from xml.dom import minidom
 from xml.dom import Node
+from xml.dom.minidom import Document
 
 class lhpbDictionary:
     """store and retrieve list of tags in 1 column"""
@@ -142,6 +144,29 @@ class msfParser:
                 outFile.write(strContent)
                 outFile.write('"\n')
                 
+    
+    def PrintNodeToScreen(self,node):
+        if node.nodeType == Node.ELEMENT_NODE:
+            # Write out the element name.
+            print('NodeName: %s\n' % node.nodeName)
+            # Write out the attributes.
+            attrs = node.attributes                            
+            for attrName in attrs.keys():
+                attrNode = attrs.get(attrName)
+                attrValue = attrNode.nodeValue
+                print('Attribute -- Name: %s  Value: %s\n' % \
+                    (attrName, attrValue))
+            # Walk over any text nodes in the current node.
+            content = []                                      
+            for child in node.childNodes:
+                if child.nodeType == Node.TEXT_NODE:
+                    content.append(child.nodeValue)
+            if content:
+                strContent = string.join(content)
+                print('Content: "')
+                print(strContent)
+                print('"\n')
+                
     def GetVmeTagArrayNode(self,inputVmeNode):
         self.__GetVmeTagArrayNodeInternal(inputVmeNode)
         return self.__OutputTagArrayNode
@@ -196,8 +221,7 @@ class msfParser:
                if child.nodeName == "URL":
                   contents.append(child.childNodes[0].nodeValue)
             self.__GetVMEDataURLListInternal(child, contents)
-        
-        
+    
     def RemoveTagsByList(self, inputVmeTagArrayNode, tagsToBeRemoved):
         # change number of tags
         # <Item NumberOfTags="2" Type="mafTagArray">
@@ -225,6 +249,58 @@ class msfParser:
                attrNode.nodeValue = str(int(oldTagsNumber) - removedTagsNumber)
                print attrNode.nodeValue
                
+    
+    def AddTagsFromList(self, domDoc, inputVmeTagArrayNode, tagsToBeAdded):
+        # change number of tags
+        # <Item NumberOfTags="2" Type="mafTagArray">
+        addedTagsNumber = 0
+        for tagName in tagsToBeAdded:
+            node = self.CreateSTRTagItem(tagName,domDoc)
+            # self.PrintNode(node, sys.stdout,0)
+            inputVmeTagArrayNode.appendChild(node)
+            addedTagsNumber += 1
+        attrs = inputVmeTagArrayNode.attributes                             
+        for attrName in attrs.keys():
+            if Debug:               
+                print attrName
+            if attrName  == "NumberOfTags":
+               attrNode = attrs.get(attrName)
+               oldTagsNumber = attrNode.nodeValue
+               if Debug:
+                   print oldTagsNumber
+               attrNode.nodeValue = str(int(oldTagsNumber)  +  addedTagsNumber)
+               if Debug:    
+                   print attrNode.nodeValue
+    
+    def CreateSTRTagItem(self, tagName, domDoc):
+         """create a STR TagItam node ie
+         
+         <TItem Mult="1" Name="Dicom_CT_model" Type="STR">
+               <TItem>
+                 <TC>GE SuperGulp</TC>
+               </TItem>
+         </TItem>
+        
+        and return reference to it"""
+        
+         # create the node        
+         isinstance(domDoc, Document)
+         newEl = domDoc.createElement("TItem")
+             
+         newEl.setAttribute("Mult", "1" )
+         newEl.setAttribute("Name", tagName )
+         newEl.setAttribute("Type", "STR" )
+         
+         newElChild = domDoc.createElement("TItem")
+         
+         newEl.appendChild(newElChild)
+        
+         TCChild = domDoc.createTextNode("TC")
+         TCChild.data = "ANNOTATE ME!!!!!!"
+         newElChild.appendChild(TCChild)
+         
+         return newEl
+    
     def PrintTagNames(self, tagArrayNode):
         """Print the given tagArrayNode tags list, also return the tagList"""
         tagList = []
