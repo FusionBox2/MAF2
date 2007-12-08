@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-07 17:03:59 $
-Version:   $Revision: 1.16 $
+Date:      $Date: 2007-12-08 15:40:16 $
+Version:   $Revision: 1.17 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -189,12 +189,13 @@ void lhpOpUploadVME::OpDo()
     
     
     //wxMessageBox(wxString::Format("Process %ld is running.", m_Pid));
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
     wxExecute(command2execute, wxEXEC_ASYNC);
   }
   else
   {
     wxString command2execute;
-    command2execute = m_PythonExe;
+    command2execute = m_PythonwExe;
     command2execute.Append(m_PythonUploadFullPath.GetCStr());
     //wxMessageBox(wxString::Format("No process with pid = %ld.", m_Pid));
     m_FileName = "ThreadedClient.py ";
@@ -202,6 +203,7 @@ void lhpOpUploadVME::OpDo()
     command2execute.Append("50000");
     //command2execute.Append(" > log.txt"); //logme
     m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
     mafSleep(5000);
 
@@ -216,7 +218,9 @@ void lhpOpUploadVME::OpDo()
     command2execute.Append(wxString::Format("%s ",m_CurrentCache)); //cache directory
     command2execute.Append(wxString::Format("%s ",m_Input->GetName())); //vme name
 
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
     wxExecute(command2execute, wxEXEC_ASYNC);
+    
   }
   
   
