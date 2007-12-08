@@ -285,6 +285,7 @@ class msfParser:
         
          # create the node        
          isinstance(domDoc, Document)
+         
          newEl = domDoc.createElement("TItem")
              
          newEl.setAttribute("Mult", "1" )
@@ -292,12 +293,14 @@ class msfParser:
          newEl.setAttribute("Type", "STR" )
          
          newElChild = domDoc.createElement("TItem")
-         
          newEl.appendChild(newElChild)
         
-         TCChild = domDoc.createTextNode("TC")
-         TCChild.data = "ANNOTATE ME!!!!!!"
-         newElChild.appendChild(TCChild)
+         newElTC = domDoc.createElement("TC")
+         newElChild.appendChild(newElTC)
+        
+         TCChild = domDoc.createTextNode("ANNOTATE ME!!!!!!")
+         # TCChild.data = "ANNOTATE ME!!!!!!"
+         newElTC.appendChild(TCChild)
          
          return newEl
     
