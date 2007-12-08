@@ -85,10 +85,12 @@ class vmeUploader:
         # print "\nThese tags will be exported: \n" + str(tagsToBeExported)
         
         tagsToBeAddedByTheUser = dictionaryTagListSet.difference(vmeTagList)
-        print "\nThese tags need to be added by the user: \n" + str(tagsToBeAddedByTheUser)
        
         # Add tags from list
-        msfDOMParserInstance.AddTagsFromList(domDocument,outVmeTagArrayNode, tagsToBeAddedByTheUser)
+        isinstance(tagsToBeAddedByTheUser,set)
+        tagsToBeAddedByTheUserSorted = sorted(tagsToBeAddedByTheUser)
+        print "\nThese tags need to be added by the user: \n" + str(tagsToBeAddedByTheUserSorted)
+        msfDOMParserInstance.AddTagsFromList(domDocument,outVmeTagArrayNode, tagsToBeAddedByTheUserSorted)
 
         tagsToBeRemoved  = vmeTagListSet.difference(tagsToBeExported)
         # print "\nThese tags  be removed from output vme XML: \n" + str(tagsToBeRemoved)
