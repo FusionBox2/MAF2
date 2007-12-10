@@ -24,7 +24,7 @@ class UploadHandler:
         curDir = sys.path[0]
         upl = vmeUploader.vmeUploader()
         upl.InputMSFDirectory = self.dirCache
-        upl.DictionaryFileName = curDir + r'unhandledPlusManualTagsList.txt'
+        upl.DictionaryFileName = curDir + r'\unhandledPlusManualTagsList.txt'
         upl.OutputFolderName = curDir + r'\Outgoing'
         
         count = 0
