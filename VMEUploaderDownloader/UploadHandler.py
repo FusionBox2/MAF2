@@ -42,7 +42,7 @@ class UploadHandler:
 
         #launch external XML editor
         self.launchXMLEditor(self.dirOutgoing)
-		
+        print "Wainting..."
         while 1:
             # To simulate asynchronous I/O, we create a random number at
             # random intervals. Replace the following 2 lines with the real
