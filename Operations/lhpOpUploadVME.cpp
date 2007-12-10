@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-08 15:40:16 $
-Version:   $Revision: 1.17 $
+Date:      $Date: 2007-12-10 10:11:22 $
+Version:   $Revision: 1.18 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -190,7 +190,10 @@ void lhpOpUploadVME::OpDo()
     
     //wxMessageBox(wxString::Format("Process %ld is running.", m_Pid));
     mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
-    wxExecute(command2execute, wxEXEC_ASYNC);
+    m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
+    mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), m_Pid);
+
   }
   else
   {
@@ -202,8 +205,12 @@ void lhpOpUploadVME::OpDo()
     command2execute.Append(m_FileName.GetCStr());
     command2execute.Append("50000");
     //command2execute.Append(" > log.txt"); //logme
-    m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
     mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+
+    m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
+    
+    mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
+    command2execute.c_str(), m_Pid);
 
     mafSleep(5000);
 
@@ -219,7 +226,9 @@ void lhpOpUploadVME::OpDo()
     command2execute.Append(wxString::Format("%s ",m_Input->GetName())); //vme name
 
     mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
-    wxExecute(command2execute, wxEXEC_ASYNC);
+    m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
+    mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), m_Pid);
     
   }
   
@@ -357,7 +366,7 @@ int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
   if ( !command2execute )
     return MAF_ERROR;
 
-  mafLogMessage(_T("Command process '%s' terminated with exit code %d."),
+  mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
     command2execute.c_str(), pid);
 
   // get manual tags
@@ -376,7 +385,7 @@ int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
   if ( !command2execute )
     return MAF_ERROR;
 
-  mafLogMessage(_T("Command process '%s' terminated with exit code %d."),
+  mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
     command2execute.c_str(), pid);
 
   // cleanup
