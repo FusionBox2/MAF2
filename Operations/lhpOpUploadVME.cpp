@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-10 10:41:46 $
-Version:   $Revision: 1.19 $
+Date:      $Date: 2007-12-10 11:25:42 $
+Version:   $Revision: 1.20 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -219,7 +219,7 @@ void lhpOpUploadVME::OpDo()
 
     command2execute.clear();
     command2execute = m_PythonwExe;
-    command2execute.Append(m_PythonUploadFullPath.GetCStr());
+    //command2execute.Append(m_PythonUploadFullPath.GetCStr());
     m_FileName = "Client.py ";
     command2execute.Append(m_FileName.GetCStr());
     command2execute.Append("127.0.0.1 "); //server address (localhost)
