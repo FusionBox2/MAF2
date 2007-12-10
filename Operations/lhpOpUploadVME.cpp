@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-10 10:11:22 $
-Version:   $Revision: 1.18 $
+Date:      $Date: 2007-12-10 10:41:46 $
+Version:   $Revision: 1.19 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -81,7 +81,7 @@ mafOp(label)
 
   //m_PythonExe ="C:\\Python25\\python.exe ";
   m_PythonExe ="python.exe ";
-  m_PythonwExe ="pythonw.exe ";
+  m_PythonwExe ="python.exe ";
   m_CacheDir = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\UploadCache\\").c_str();
   m_OutgoingDir = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\Outgoing\\").c_str();
 
@@ -154,6 +154,9 @@ void lhpOpUploadVME::OnEvent(mafEventBase *maf_event)
 void lhpOpUploadVME::OpDo()   
 //----------------------------------------------------------------------------
 {
+  wxString oldDir = wxGetCwd();
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
 //mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxBusyCursor wait;
 
@@ -176,14 +179,14 @@ void lhpOpUploadVME::OpDo()
   {
     wxString command2execute;
     command2execute = m_PythonwExe;
-    command2execute.Append(m_PythonUploadFullPath.GetCStr());
+    //command2execute.Append(m_PythonUploadFullPath.GetCStr());
     // script for client
     m_FileName = "Client.py ";
     command2execute.Append(m_FileName.GetCStr());
     command2execute.Append("127.0.0.1 "); //server address (localhost)
     command2execute.Append("50000 "); //port address (50000)
     command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //vme id
-    command2execute.Append(wxString::Format("%s ",m_CurrentCache)); //cache directory
+    command2execute.Append(wxString::Format("\"%s\" ",m_CurrentCache)); //cache directory
     command2execute.Append(wxString::Format("%s ",m_Input->GetName())); //vme name
     //command2execute.Append(" > log.txt"); //logme
     
@@ -199,7 +202,7 @@ void lhpOpUploadVME::OpDo()
   {
     wxString command2execute;
     command2execute = m_PythonwExe;
-    command2execute.Append(m_PythonUploadFullPath.GetCStr());
+    //command2execute.Append(m_PythonUploadFullPath.GetCStr());
     //wxMessageBox(wxString::Format("No process with pid = %ld.", m_Pid));
     m_FileName = "ThreadedClient.py ";
     command2execute.Append(m_FileName.GetCStr());
@@ -232,7 +235,7 @@ void lhpOpUploadVME::OpDo()
     
   }
   
-  
+  wxSetWorkingDirectory(oldDir);
 }
 //----------------------------------------------------------------------------
 void lhpOpUploadVME::OpStop(int result)   
