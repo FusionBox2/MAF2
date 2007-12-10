@@ -63,8 +63,15 @@ class UploadHandler:
         for file in files:
             if (re.search('\\.xml$',file)):
                xmlFile = file
-        os.chdir(dir)
-        os.system("\"C:\\Program Files\\Peter's XML Editor\\pxe.exe\" " + xmlFile)
+
+        oldDir = os.getcwd()
+        os.chdir("\"C:\\Program Files\\Peter's XML Editor\\")
+        #print os.getcwd()
+        command = "\"" + dir + "\\" +  xmlFile + "\""
+        command = "pxe.exe " + command
+        #print command
+        os.system(command)
+        os.chdir(oldDir)
 
     def sendBinaryFile(self):
         files = os.listdir(self.dirOutgoing)

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-10 11:25:42 $
-Version:   $Revision: 1.20 $
+Date:      $Date: 2007-12-10 14:45:44 $
+Version:   $Revision: 1.21 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -186,7 +186,12 @@ void lhpOpUploadVME::OpDo()
     command2execute.Append("127.0.0.1 "); //server address (localhost)
     command2execute.Append("50000 "); //port address (50000)
     command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //vme id
-    command2execute.Append(wxString::Format("\"%s\" ",m_CurrentCache)); //cache directory
+
+    //workaround to understanding directory argument
+    wxString directoryWorkAround = m_CurrentCache;
+    directoryWorkAround.Replace(" ", "?");
+    command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
+    
     command2execute.Append(wxString::Format("%s ",m_Input->GetName())); //vme name
     //command2execute.Append(" > log.txt"); //logme
     
@@ -225,7 +230,12 @@ void lhpOpUploadVME::OpDo()
     command2execute.Append("127.0.0.1 "); //server address (localhost)
     command2execute.Append("50000 "); //port address (50000)
     command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //vme id
-    command2execute.Append(wxString::Format("%s ",m_CurrentCache)); //cache directory
+    
+    //workaround to understanding directory argument
+    wxString directoryWorkAround = m_CurrentCache;
+    directoryWorkAround.Replace(" ", "?");
+    command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
+    
     command2execute.Append(wxString::Format("%s ",m_Input->GetName())); //vme name
 
     mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );

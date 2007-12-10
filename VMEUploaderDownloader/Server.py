@@ -25,6 +25,7 @@ class Server(threading.Thread):
     # this function is what the thread actually runs; the required name
     # is run(); threading.Thread.start() calls threading.Thread.run(),
     # which is always overridden, as we are doing here
+  
   def decompose(self, data):
       arguments = data.split(" ") #arg 0 is id, 1 is directory , 2 is name
       sendList = []
@@ -37,6 +38,8 @@ class Server(threading.Thread):
           lastArgument = lastArgument + ' ' + i
         count = count + 1
       sendList.append(lastArgument)
+      sendList[1] = sendList[1].replace("?", " ")
+      print sendList[1]
       return sendList
       
   def run(self):
