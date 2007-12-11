@@ -35,10 +35,13 @@ class Server(threading.Thread):
         if(count < 2):
           sendList.append(i)
         else:
-          lastArgument = lastArgument + ' ' + i
+          if(lastArgument != ''):
+              lastArgument = lastArgument + ' ' + i
+          else:
+              lastArgument = lastArgument + i
         count = count + 1
       sendList.append(lastArgument)
-      sendList[1] = sendList[1].replace("?", " ")
+      sendList[1] = sendList[1].replace("?", " ") # directory with spaces arrives with "?" instead of them
       print sendList[1]
       return sendList
       
