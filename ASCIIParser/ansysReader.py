@@ -66,15 +66,16 @@ class ansysReader:
         elementTypeSectionsNumber = 0
         elementDeclarationSectionsNumber = 0
         
+        # file first-line
+        line = file.readline() 
+        self.ParsedLineNumber += 1
+        
         # parse the file structure and gather informations
         while 1:
-           
-            line = file.readline() 
-            self.ParsedLineNumber += 1
+            
             
             if Debug:
-                print str(self.ParsedLineNumber) + " > " + line
-            cargo = file, line
+                print "main loop is parsing: " + str(self.ParsedLineNumber) + " > " + line
             
             # # NODES section
             # Find the NODES section
@@ -85,6 +86,8 @@ class ansysReader:
                 nodeSectionsNumber += 1
                 
                 # create the NODES NodesMatrix
+                
+                cargo = file, line
                 cargo = self.ReadNodes(cargo)
                 
             # # Elements type section
@@ -102,7 +105,10 @@ class ansysReader:
                 if Debug:
                     print "Found elements declaration at line " + str(self.ParsedLineNumber)
                 elementDeclarationSectionsNumber += 1
+                cargo = file, line
                 cargo = self.ReadElements(cargo)
+                file, line = cargo
+                continue
             
             # Materials section: MTEMP format
             # find the materials section
@@ -113,6 +119,7 @@ class ansysReader:
                 materialsMPTEMP_MPDATASectionsNumber += 1
                 
                 # create the materials NodesMatrix
+                cargo = file, line
                 cargo = self.ReadMaterialsMPTEMP_MPDATA(cargo)
             
             # Materials section MP format
@@ -124,11 +131,17 @@ class ansysReader:
                 materialsMPTEMP_MPSectionsNumber += 1
                 
                 # create the materials NodesMatrix
+                cargo = file, line
                 cargo = self.ReadMaterialsMPTEMP_MP(cargo)
                 
             if not line: break
             # output files into the cache directory
-        
+                
+            # file first-line
+            line = file.readline() 
+            self.ParsedLineNumber += 1
+            
+            
         if Debug:
                 
             print "printing NodesMatrix..."
@@ -284,8 +297,10 @@ class ansysReader:
             print "printing NodesMatrix..."
             for raw in self.NodesMatrix:
                 print raw
-            
+            print "ReadNodes is returning: " + line 
+                
         return file, line
+        
     
     def ReadElements(self, cargo):
         """Generate Elements NodesMatrix"""
@@ -301,44 +316,66 @@ class ansysReader:
             
         # outputNodeMatrixFileName = r'D:\vapps\LHPBuilder_Parabuild\ASCIIParser\testData\ansys\outputNodeMatrix.txt'
         # f = open(outputNodeMatrixFileName, 'w')
+
+        if Debug:            
+            print "ReadElements Section:"
         
         while 1:
              
             raw = []
             
             if Debug:
-                print " Processing line: " + line 
+                print "Processing line: " + line 
 
             try: 
                 TYPE = AnsysGrammar.typeMatReal.parseString( line )
                 raw.append(TYPE)
             except ParseException:
                 if Debug:
-                    print "cannot parse line: " + line
-                break
+                    print "cannot parse as TYPE line: " + line
+     #            break
               
             # 
             line = file.readline()
             self.ParsedLineNumber += 1
             self.PrintProgress()
             
-            if Debug:
-                print " Processing line: " + line 
+            #if Debug:
+                #print " Processing line: " + line 
                  
-            try: 
-                ESYS = AnsysGrammar.esysLine.parseString(line)
-                raw.append(ESYS)
-            except ParseException:
-                if Debug:
-                    print "cannot parse line: " + line
-                break
-                
-            line = file.readline()
-            self.ParsedLineNumber += 1
-            self.PrintProgress()
+            #try: 
+                #ESYS = AnsysGrammar.esysLine.parseString(line)
+                #raw.append(ESYS)
+            #except ParseException:
+                #if Debug:
+                    #print "cannot parse line: " + line
+       #          break
             
             while 1:
+               
+                # parse EN line
+                if Debug:
+                    print " Processing line: " + line 
                 
+                try: 
+                    EN = AnsysGrammar.connectivityLine.parseString(line)
+                    if Debug:
+                        print "EN Line found!"
+                    break
+                
+                except ParseException:
+                    if Debug:
+                        print "cannot recognize line as EN... continuing...: "  + str(self.FileLinesNumber) + line
+
+                line = file.readline()
+                
+                if Debug:
+                    print "now trying: " + line
+                self.ParsedLineNumber += 1
+                self.PrintProgress()
+
+            while 1:
+                  
                 # parse EN line
                 if Debug:
                     print " Processing line: " + line 
@@ -348,7 +385,7 @@ class ansysReader:
                     raw.append(EN)
                 except ParseException:
                     if Debug:
-                        print "cannot parse line: " + line
+                        print "cannot parse line as EN: " + line
                     break
                 
                 # parse EMORE line
@@ -364,7 +401,7 @@ class ansysReader:
                     raw.append(EMORE)
                 except ParseException:
                     if Debug:
-                        print "cannot parse line: " + line
+                        print "cannot parse line as EMORE: " + line
                     break
                 
                 # 
@@ -402,7 +439,10 @@ class ansysReader:
                 for component in TYPE:
                     element.append(component)
                 
-                element.append(ESYS[0])
+                # element.append(ESYS[0])
+                # this is always zero
+                element.append('0')
+                
                 element.append('1')
     
                 for component in EN[1:]:
@@ -416,6 +456,8 @@ class ansysReader:
             
             break
         # f.close()
+        if Debug:
+             print "returning line: " + line
         return file, line
 
     def ReadMaterialsMPTEMP_MPDATA(self,cargo):
