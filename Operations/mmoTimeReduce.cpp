@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoTimeReduce.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-12-12 12:25:12 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -66,7 +66,7 @@ mafOp(label)
 {
   m_OpType    = OPTYPE_OP;
   m_Canundo   = false;
-  m_Delete    = true;
+  m_Delete    = false;
   m_Number    = 2;
 }
 
@@ -93,6 +93,10 @@ bool mmoTimeReduce::Accept(mafNode* vme)
   if(!vme) return false;
 
   if(mafVMEGenericAbstract::SafeDownCast(vme) == NULL)
+  {
+    return false;
+  }
+  if(!mafVMEGenericAbstract::SafeDownCast(vme)->IsAnimated())
   {
     return false;
   }
@@ -124,7 +128,8 @@ void mmoTimeReduce::CreateGui()
     m_Gui = new mmgGui(this);
     m_Gui->SetListener(this);
     m_Gui->Label(strng);
-    m_Gui->Integer(ID_NUMBER, "Each frame number", &(m_Number), 1, nFrames, "This is frame index");
+    m_Gui->Label("Each frame number");
+    m_Gui->Integer(ID_NUMBER, "", &(m_Number), 1, nFrames, "This is frame index");
     m_Gui->Bool(ID_DELETE, "will be deleted", &m_Delete, 1, "This is indication to delete or to save frames indicated");
     m_Gui->OkCancel();
   }
