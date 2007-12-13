@@ -13,22 +13,23 @@ from xml.dom.minidom import Document
 class dictionaryCSV2XMLTest(unittest.TestCase):
     """Tests and experiments on csv lhdl dictionary XML transformation"""
     
-    def testRun(self):
-         """main test drive for dictionaryCSV2XML: parse csv dictionary 
-         From testing directory and create xml output"""
+    def testValidation(self):
+         """main test drive for dictionaryCSV2XML: parse csv dictionary and create xml output"""
+         
+         # Application Experts note
+         # your CSV to validate here! ( replace sample data file name )
          csvDict = r'.\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.csv'
+         
+         # Application Experts note
+         # this is the output to open in Firefox to check it`s valid XML ( replace output sample data )   
          xmlOutput = r'.\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.xml'
 
          dictionaryCSV2XML.run(csvDict,xmlOutput)
          
-         # some asserts here...
-         # at the present time this is human validated  since dictionary is not yet stable
-    
-    def testDownloadDictionary(self):
+######################################################################################################## 
         
         
-        
-    def testTagNameFromNode(self):
+    # def testTagNameFromNode(self):
         
     # open XML dictionary
     # TagNameFromNode 
