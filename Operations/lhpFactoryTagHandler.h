@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpFactoryTagHandler.h,v $
   Language:  C++
-  Date:      $Date: 2007-12-06 22:52:11 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-12-13 14:54:02 $
+  Version:   $Revision: 1.2 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -20,14 +20,12 @@
 #define lhpPlugTagHandlerMacro(tag_handler_type,descr) \
   RegisterNewTagHandler(tag_handler_type::GetStaticTypeName(), descr, tag_handler_type::NewObject);
   
-//----------------------------------------------------------------------------
-// forward declarations :
-//----------------------------------------------------------------------------  
 
 // to be defined in a separate file... this is just an empty skeleton
-
+// start skeleton
 #include "mafObject.h"
 #include "mafObserver.h"
+#include "mafVME.h"
 
 class MAF_EXPORT lhpTagHandler : public mafObject
 {
@@ -35,9 +33,11 @@ class MAF_EXPORT lhpTagHandler : public mafObject
     mafTypeMacro(lhpTagHandler,mafObject);
 
     lhpTagHandler();
-    virtual     HandleTag()  {}; // do nothing for the moment...
+    virtual void FillVMETag(mafVME *vme) {mafLogMessage("Please write handling code for this tag!");};  
   
 };
+
+// end skeleton...
 
 /** Object factory for tag handlers.
   To make a new handler available in the LHDL it must be plugged inside a factory, in particular

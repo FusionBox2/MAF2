@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-10 14:45:44 $
-Version:   $Revision: 1.21 $
+Date:      $Date: 2007-12-13 14:54:02 $
+Version:   $Revision: 1.22 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -455,7 +455,7 @@ int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
       lhpTagHandler *tagHandler = (lhpTagHandler*)obj;
       if (tagHandler)
       {
-        tagHandler->HandleTag();
+        tagHandler->FillVMETag(mafVME::SafeDownCast(m_Input));
       }
       else
       {
