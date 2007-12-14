@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.h,v $
   Language:  C++
-  Date:      $Date: 2007-12-13 16:51:29 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-12-14 14:44:23 $
+  Version:   $Revision: 1.2 $
   Authors:   Stefano Perticoni - Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -16,7 +16,20 @@
 //----------------------------------------------------------------------------
 
 #include "mafVME.h"
-#include "lhpFactoryTagHandler.h"
+
+class MAF_EXPORT lhpTagHandler : public mafObject
+{
+public:
+  mafTypeMacro(lhpTagHandler,mafObject);
+
+  lhpTagHandler();
+  virtual void FillVMETag(mafVME *vme) {mafLogMessage("Please write handling code for this tag!");};  
+  const char *GetTagName(){return m_TagName;};
+
+protected:
+  virtual void ExtractTagName();
+  mafString m_TagName;
+};
 
 class lhpTagHandler_L0000_resource_data_Type: public lhpTagHandler
 {
