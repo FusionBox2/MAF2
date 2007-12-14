@@ -5,6 +5,10 @@ SET(PROJECT_SRCS
 #to be moved in core; need to solve some linking problems
 lhpFactoryTagHandler.cpp
 lhpFactoryTagHandler.h
+
+lhpTagHandlerContainer.cpp
+lhpTagHandlerContainer.h
+
 #
 lhpOpBonemat.cpp
 lhpOpBonemat.h
@@ -67,6 +71,7 @@ mmoLnSurf.cpp
 mmoLnSurf.h
 lhpOpUploadVME.cpp
 lhpOpUploadVME.h
+
 )
 
 # List libraries that are needed by this project.

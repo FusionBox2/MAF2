@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpFactoryTagHandler.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-12-06 22:52:11 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-12-14 14:46:34 $
+  Version:   $Revision: 1.2 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -33,23 +33,38 @@ lhpFactoryTagHandler *lhpFactoryTagHandler::m_Instance=NULL;
 
 mafCxxTypeMacro(lhpFactoryTagHandler);
 
-mafCxxTypeMacro(lhpTagHandler);
-
-//------------------------------------------------------------------------
-lhpTagHandler::lhpTagHandler()
-//------------------------------------------------------------------------------
-{
-
-}
-
 //------------------------------------------------------------------------
 lhpFactoryTagHandler::lhpFactoryTagHandler()
 //------------------------------------------------------------------------------
 {
-  m_Instance = NULL;
-
-  // lhpPlugTagHandlerMacro(lhpTagHandler,"General tag handler");
-
+  //lhpPlugTagHandlerMacro(lhpTagHandler,"General tag handler");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Type, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Type_Field, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Type_Dimension, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Type_VolumeType, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Type_Timevarying, "Time varying VME or static VME");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Size_DatasetSize, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Size_EntityCount, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Size_TimeFramesCount, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Dataset_DatasetURI, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Dataset_FileSize, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Dataset_UploadDate, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType_Endianity, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_TimeSpace_VMEabsoluteMatrixPose, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootURI, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootName, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_TreeInfo_VmeChildURI1, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_TreeInfo_VmeTreeCreationDate, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes_OwnerID, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes_QualityScore1, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir, "");
 }
 
 std::vector<std::string> lhpFactoryTagHandler::m_TagHandlerNames;

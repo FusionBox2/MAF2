@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpFactoryTagHandler.h,v $
   Language:  C++
-  Date:      $Date: 2007-12-14 10:00:53 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007-12-14 14:46:34 $
+  Version:   $Revision: 1.4 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -24,18 +24,8 @@
 // to be defined in a separate file. This is just an empty skeleton
 // start skeleton
 #include "mafObject.h"
-#include "mafObserver.h"
+#include "lhpTagHandlerContainer.h"
 #include "mafVME.h"
-
-class MAF_EXPORT lhpTagHandler : public mafObject
-{
-  public:
-    mafTypeMacro(lhpTagHandler,mafObject);
-
-    lhpTagHandler();
-    virtual void FillVMETag(mafVME *vme) {mafLogMessage("Please write handling code for this tag!");};  
-  
-};
 
 // end skeleton...
 
