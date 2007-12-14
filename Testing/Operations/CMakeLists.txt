@@ -17,6 +17,9 @@ ADD_TEST(lhpOpMultiscaleExploreTest ${EXECUTABLE_OUTPUT_PATH}/lhpOpMultiscaleExp
 ADD_EXECUTABLE(lhpFactoryTagHandlerTest lhpFactoryTagHandlerTest.h lhpFactoryTagHandlerTest.cpp)
 ADD_TEST(lhpFactoryTagHandlerTest ${EXECUTABLE_OUTPUT_PATH}/lhpFactoryTagHandlerTest)
 
+ADD_EXECUTABLE(lhpTagHandlerContainerTest lhpTagHandlerContainerTest.h lhpTagHandlerContainerTest.cpp)
+ADD_TEST(lhpTagHandlerContainerTest ${EXECUTABLE_OUTPUT_PATH}/lhpTagHandlerContainerTest)
+
 # wxWidgets specific classes
 #IF (MAF_USE_WX)
 #ENDIF (MAF_USE_WX)

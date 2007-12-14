@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpFactoryTagHandlerTest.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-13 14:55:29 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2007-12-14 14:48:17 $
+Version:   $Revision: 1.2 $
 Authors:   Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2004 
@@ -21,10 +21,10 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include <cppunit/config/SourcePrefix.h>
 #include "lhpFactoryTagHandlerTest.h"
 
+#include "lhpFactoryTagHandler.h"
 #include "mafVME.h"
 #include "mafTagArray.h"
 #include "mafTransform.h"
-#include "lhpFactoryTagHandler.h"
 #include "mafVMEOutputNULL.h"
 #include "mafVersion.h"
 #include <iostream>
@@ -43,17 +43,15 @@ class lhpTagHandler_L0000: public lhpTagHandler
     void FillVMETag(mafVME *vme) 
     {
       // tag name from type
-      mafString tagName = this->GetTypeName();
-      int endPos = tagName.FindFirst("_");
-      tagName.Erase(0, endPos);
+      this->ExtractTagName();
 
       mafString message = "Hooray!!! I can handle ";
-      message.Append(tagName.GetCStr());
+      message.Append(m_TagName.GetCStr());
 
       mafLogMessage(message.GetCStr());
 
       // tag handling code
-      vme->GetTagArray()->SetTag(tagName.GetCStr(), "pippo value");
+      vme->GetTagArray()->SetTag(m_TagName.GetCStr(), "pippo value");
     };
 };
 
@@ -99,10 +97,13 @@ void lhpFactoryTagHandlerTest::TestCreateTagHandlerInstance()
   lhpPlugTagHandler<lhpTagHandler_L0000>("L0000 tag handler"); 
 
   lhpTagHandler *tagHandlerNE = NULL;
-  tagHandlerNE  = lhpFactoryTagHandler::CreateInstance("lhpTagHandler_Not_Existing");
-  
+  //tagHandlerNE  = lhpFactoryTagHandler::CreateInstance("lhpTagHandler_Not_Existing");
+  //In two different computers we notice a difference in compilation. One requests this explicit cast , if not got error
+  tagHandlerNE  =(lhpTagHandler *) lhpFactoryTagHandler::CreateInstance("lhpTagHandler_Not_Existing");
   lhpTagHandler *tagHandlerL0000 = NULL;
-  tagHandlerL0000 = lhpFactoryTagHandler::CreateInstance("lhpTagHandler_L0000");
+  //tagHandlerL0000 =  lhpFactoryTagHandler::CreateInstance("lhpTagHandler_L0000");
+  //In two different computers we notice a difference in compilation. One requests this explicit cast , if not got error
+  tagHandlerL0000 = (lhpTagHandler *) lhpFactoryTagHandler::CreateInstance("lhpTagHandler_L0000");
   
 
   CPPUNIT_ASSERT(tagHandlerNE == NULL);
@@ -121,9 +122,9 @@ void lhpFactoryTagHandlerTest::TestCreateTagHandlerInstance()
 
 
   // test factory contents
-  const std::vector<std::string> &tagNamesList = tagHandlersFactory->GetTagHandlerNames();
+  const std::vector<std::string> tagNamesList = tagHandlersFactory->GetTagHandlerNames();
   int s = tagNamesList.size();
-  CPPUNIT_ASSERT(s==1); 
+  CPPUNIT_ASSERT(s>=1);
 
   bool foundNE=false;
   bool foundL0000=false;
