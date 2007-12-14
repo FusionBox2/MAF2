@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpFactoryTagHandler.h,v $
   Language:  C++
-  Date:      $Date: 2007-12-13 14:54:02 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-12-14 10:00:53 $
+  Version:   $Revision: 1.3 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -21,7 +21,7 @@
   RegisterNewTagHandler(tag_handler_type::GetStaticTypeName(), descr, tag_handler_type::NewObject);
   
 
-// to be defined in a separate file... this is just an empty skeleton
+// to be defined in a separate file. This is just an empty skeleton
 // start skeleton
 #include "mafObject.h"
 #include "mafObserver.h"
