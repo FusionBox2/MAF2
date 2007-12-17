@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-12-17 09:16:56 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007-12-17 13:39:58 $
+  Version:   $Revision: 1.4 $
   Authors:   Stefano Perticoni - Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -23,6 +23,7 @@
 #include "mafTagArray.h"
 #include "mafVME.h"
 #include "mafVMERoot.h"
+
 
 #include <string>
 #include <ostream>
@@ -96,7 +97,7 @@ void lhpTagHandler_L0000_resource_data_Type_Timevarying::FillVMETag(mafVME *vme)
 //------------------------------------------------------------------------------------
 {
   mafString value;
-  value = vme->IsAnimated()?"True":"False";
+  value = vme->IsAnimated()?"1":"0";
 
   // tag handling code
   vme->GetTagArray()->SetTag(m_TagName.GetCStr(), value);
@@ -141,7 +142,13 @@ lhpTagHandler_L0000_resource_data_Size_TimeFramesCount::lhpTagHandler_L0000_reso
 void lhpTagHandler_L0000_resource_data_Size_TimeFramesCount::FillVMETag(mafVME *vme)
 //------------------------------------------------------------------------------------
 {
+  mafString value;
+  std::vector<mafTimeStamp> timeStamps;
+  vme->GetTimeStamps(timeStamps);
+  value << (long) timeStamps.size();
 
+  // tag handling code
+  vme->GetTagArray()->SetTag(m_TagName.GetCStr(), value);
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_DatasetURI);
@@ -239,7 +246,11 @@ lhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption::lhpTagHandler_L00
 void lhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption::FillVMETag(mafVME *vme)
 //------------------------------------------------------------------------------------
 {
+  mafString value;
+  value = vme->GetCrypting()?"1":"0";
 
+  // tag handling code
+  vme->GetTagArray()->SetTag(m_TagName.GetCStr(), value);
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_TimeSpace_VMEabsoluteMatrixPose);
@@ -267,7 +278,21 @@ lhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector::lhpTagHandler_L0000
 void lhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector::FillVMETag(mafVME *vme)
 //------------------------------------------------------------------------------------
 {
+  mafString value;
+  std::vector<mafTimeStamp> timeStamps;
+  vme->GetAbsTimeStamps(timeStamps);
+  long timeCount;
+  for(timeCount = 0; timeCount < timeStamps.size(); timeCount++)
+  {
+    value << timeStamps[timeCount];
+    if(timeCount < timeStamps.size() - 1 )
+    {
+      value << " ";
+    }
+  }
 
+  // tag handling code
+  vme->GetTagArray()->SetTag(m_TagName.GetCStr(), value);
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootURI);

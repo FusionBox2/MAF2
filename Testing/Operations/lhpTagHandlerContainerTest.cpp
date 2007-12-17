@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpTagHandlerContainerTest.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-17 09:19:20 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2007-12-17 13:40:19 $
+Version:   $Revision: 1.3 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004 
@@ -30,6 +30,8 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include <iostream>
 #include "mafString.h"
 #include "mafVMESurface.h"
+#include "mafVMERoot.h"
+#include "mafMatrixVector.h"
 
 #include "vtkMAFSmartPointer.h"
 #include "vtkSphereSource.h"
@@ -64,10 +66,17 @@ void lhpTagHandlerContainerTest::CreateTestData()
   // I have have to use the MAF Magic update!
   m_TestVMESurface->GetOutput()->GetVTKData()->Update();
 
+  m_TestVMESurface->SetAbsPose(0,0,0,0,0,0, 5); //insert temporal instant 5
+  m_TestVMESurface->GetMatrixVector()->Modified();
+  m_TestVMESurface->Modified();
+  m_TestVMESurface->Update();
+
+
   CPPUNIT_ASSERT(m_TestVMESurface->GetOutput()->GetVTKData()->GetNumberOfCells() > 0);
 }
-
+//----------------------------------------------------------------------------------------
 void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_Type_Timevarying()
+//----------------------------------------------------------------------------------------
 {
   lhpTagHandler *tag = NULL;
   tag = m_TagHandlersFactory->CreateTagHandlerInstance("lhpTagHandler_L0000_resource_data_Type_Timevarying");
@@ -80,9 +89,113 @@ void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_Type_Time
   CPPUNIT_ASSERT(m_TestVMESurface->GetTagArray()->IsTagPresent(tag->GetTagName()) == true);
 
   mafString value = m_TestVMESurface->GetTagArray()->GetTag(tag->GetTagName())->GetValue();
-  CPPUNIT_ASSERT(value == "False");
+  CPPUNIT_ASSERT(value == mafString(m_TestVMESurface->IsAnimated()? "1" : "0"));
   tag->Delete();
 
 }
 
-  
+//----------------------------------------------------------------------------------------
+void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_Size_TimeFramesCount()
+//----------------------------------------------------------------------------------------
+{
+  lhpTagHandler *tag = NULL;
+  tag = m_TagHandlersFactory->CreateTagHandlerInstance("lhpTagHandler_L0000_resource_data_Size_TimeFramesCount");
+
+  CPPUNIT_ASSERT(tag!=NULL);
+  CPPUNIT_ASSERT(tag->IsMAFType(lhpTagHandler_L0000_resource_data_Size_TimeFramesCount));
+  CPPUNIT_ASSERT(m_TestVMESurface->GetTagArray()->IsTagPresent(tag->GetTagName()) == false);
+
+  tag->FillVMETag(m_TestVMESurface);
+  CPPUNIT_ASSERT(m_TestVMESurface->GetTagArray()->IsTagPresent(tag->GetTagName()) == true);
+
+  mafString value = m_TestVMESurface->GetTagArray()->GetTag(tag->GetTagName())->GetValue();
+  mafString result;
+  result << (long) m_TestVMESurface->GetNumberOfTimeStamps();
+  CPPUNIT_ASSERT(value == result);
+  tag->Delete();
+
+}
+
+//----------------------------------------------------------------------------------------
+void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption()
+//----------------------------------------------------------------------------------------
+{
+  lhpTagHandler *tag = NULL;
+  tag = m_TagHandlersFactory->CreateTagHandlerInstance("lhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption");
+  m_TestVMESurface->SetCrypting(true);
+
+  CPPUNIT_ASSERT(tag!=NULL);
+  CPPUNIT_ASSERT(tag->IsMAFType(lhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption));
+  CPPUNIT_ASSERT(m_TestVMESurface->GetTagArray()->IsTagPresent(tag->GetTagName()) == false);
+
+  tag->FillVMETag(m_TestVMESurface);
+  CPPUNIT_ASSERT(m_TestVMESurface->GetTagArray()->IsTagPresent(tag->GetTagName()) == true);
+
+  mafString value = m_TestVMESurface->GetTagArray()->GetTag(tag->GetTagName())->GetValue();
+  CPPUNIT_ASSERT(value == mafString(m_TestVMESurface->GetCrypting() ? "1" : "0"));
+  tag->Delete();
+
+}
+//----------------------------------------------------------------------------------------
+void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector()
+//----------------------------------------------------------------------------------------
+{
+  lhpTagHandler *tag = NULL;
+  tag = m_TagHandlersFactory->CreateTagHandlerInstance("lhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector");
+  m_TestVMESurface->SetCrypting(true);
+
+  CPPUNIT_ASSERT(tag!=NULL);
+  CPPUNIT_ASSERT(tag->IsMAFType(lhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector));
+  CPPUNIT_ASSERT(m_TestVMESurface->GetTagArray()->IsTagPresent(tag->GetTagName()) == false);
+
+  tag->FillVMETag(m_TestVMESurface);
+  CPPUNIT_ASSERT(m_TestVMESurface->GetTagArray()->IsTagPresent(tag->GetTagName()) == true);
+
+  mafString value = m_TestVMESurface->GetTagArray()->GetTag(tag->GetTagName())->GetValue();
+
+  mafString result;
+  std::vector<mafTimeStamp> timeStamps;
+  m_TestVMESurface->GetAbsTimeStamps(timeStamps);
+  long timeCount;
+  for(timeCount = 0; timeCount < timeStamps.size(); timeCount++)
+  {
+    result << timeStamps[timeCount];
+    if(timeCount < timeStamps.size() - 1 )
+    {
+      result << " ";
+    }
+  }
+
+  CPPUNIT_ASSERT(value == result);
+  tag->Delete();
+
+}
+//----------------------------------------------------------------------------------------
+void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_TreeInfo_VmeRootName()
+//----------------------------------------------------------------------------------------
+{
+  mafVMERoot *root;
+  mafNEW(root);
+  root->SetName("TestName");
+  root->AddChild(m_TestVMESurface);
+  root->Modified();
+  root->Update();
+
+  lhpTagHandler *tag = NULL;
+  tag = m_TagHandlersFactory->CreateTagHandlerInstance("lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootName");
+
+  CPPUNIT_ASSERT(tag!=NULL);
+  CPPUNIT_ASSERT(tag->IsMAFType(lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootName));
+  CPPUNIT_ASSERT(m_TestVMESurface->GetTagArray()->IsTagPresent(tag->GetTagName()) == false);
+
+  tag->FillVMETag(m_TestVMESurface);
+  CPPUNIT_ASSERT(m_TestVMESurface->GetTagArray()->IsTagPresent(tag->GetTagName()) == true);
+
+  mafString value = m_TestVMESurface->GetTagArray()->GetTag(tag->GetTagName())->GetValue();
+  CPPUNIT_ASSERT(value == root->GetName());
+  tag->Delete();
+
+  mafDEL(root);
+
+  delete wxLogStderr::SetActiveTarget(NULL);
+}

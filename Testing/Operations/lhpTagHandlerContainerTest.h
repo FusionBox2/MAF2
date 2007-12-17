@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpTagHandlerContainerTest.h,v $
 Language:  C++
-Date:      $Date: 2007-12-14 14:48:17 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2007-12-17 13:40:19 $
+Version:   $Revision: 1.2 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004 
@@ -35,10 +35,18 @@ class lhpTagHandlerContainerTest : public CPPUNIT_NS::TestFixture
 
     CPPUNIT_TEST_SUITE( lhpTagHandlerContainerTest );
     CPPUNIT_TEST( TestlhpTagHandler_L0000_resource_data_Type_Timevarying );
+    CPPUNIT_TEST( TestlhpTagHandler_L0000_resource_data_Size_TimeFramesCount );
+    CPPUNIT_TEST( TestlhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption );  
+    CPPUNIT_TEST( TestlhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector );
+    CPPUNIT_TEST( TestlhpTagHandler_L0000_resource_data_TreeInfo_VmeRootName );
     CPPUNIT_TEST_SUITE_END();
 
   protected:
     void TestlhpTagHandler_L0000_resource_data_Type_Timevarying();
+    void TestlhpTagHandler_L0000_resource_data_Size_TimeFramesCount();
+    void TestlhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption();
+    void TestlhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector();
+    void TestlhpTagHandler_L0000_resource_data_TreeInfo_VmeRootName();  
     void CreateTestData();
 
   private:
