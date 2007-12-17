@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-17 09:18:10 $
-Version:   $Revision: 1.23 $
+Date:      $Date: 2007-12-17 17:50:35 $
+Version:   $Revision: 1.24 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -50,6 +50,7 @@ MafMedical is partially based on OpenMAF.
 #include <wx/process.h>
 #include <wx/dir.h>
 #include <wx/file.h>
+#include <wx/busyinfo.h>
 
 #include "lhpOpUploadVME.h"
 
@@ -125,8 +126,16 @@ bool lhpOpUploadVME::Accept(mafNode* vme)
 void lhpOpUploadVME::OpRun()
 //----------------------------------------------------------------------------
 {
-  this->GeneratesManualTagsListFromXMLDictionary();
-	OpStop(OP_RUN_OK);
+  bool upToDate = this->IsLHPBuilderVersionUpToDate();
+  
+  int result = OP_RUN_OK;
+
+  if (upToDate == false)
+  {
+    result = OP_RUN_CANCEL;
+  } 
+  
+  OpStop(result);
 }
 //----------------------------------------------------------------------------
 void lhpOpUploadVME::OnEvent(mafEventBase *maf_event) 
@@ -154,6 +163,9 @@ void lhpOpUploadVME::OnEvent(mafEventBase *maf_event)
 void lhpOpUploadVME::OpDo()   
 //----------------------------------------------------------------------------
 {
+
+  this->GeneratesManualTagsListFromXMLDictionary();
+
   wxString oldDir = wxGetCwd();
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
@@ -526,4 +538,63 @@ bool lhpOpUploadVME::CreateBaseCacheAndOutgoingDirectories()
   }
 
   return resultCache && resultOutgoing;
+}
+
+bool lhpOpUploadVME::IsLHPBuilderVersionUpToDate()
+{
+  wxBusyInfo("Checking if  your software is up-to-date in order to upload, please wait...");
+  wxString oldDir = wxGetCwd();
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+
+  // get manual tags
+  wxString command2execute;
+  command2execute.Clear();
+  command2execute = m_PythonExe;
+
+  command2execute.Append(" lhpDictionaryVersionChecker.py ");
+  
+  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+
+  long pid = wxExecute(command2execute, wxEXEC_SYNC);
+  
+  wxArrayString output;
+  wxArrayString errors;
+
+  m_Pid = wxExecute(command2execute, output, errors);
+  
+
+  mafLogMessage("Command Output Messages:");
+  for (int i = 0; i < output.size(); i++)
+  {
+    mafLogMessage(output[i]);
+  }
+  
+  mafLogMessage("Command Errors Messages:");
+  for (int i = 0; i < errors.size(); i++)
+  {
+    mafLogMessage(errors[i]);
+  }
+  
+  // gathering values from Python Output:
+
+  //if dictVC.IsDictionaryUpToDate() == True:
+  //print "UpToDate"
+  //else:
+  //print "NotUpToDate"
+
+  wxString result = output[output.size() - 1];
+  if (result == "UpToDate")
+  {
+    return true;
+  } 
+  else 
+  {
+    return false;
+  }  
+  
+  wxSetWorkingDirectory(oldDir);
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+
 }

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2007-12-07 17:03:59 $
-Version:   $Revision: 1.8 $
+Date:      $Date: 2007-12-17 17:50:35 $
+Version:   $Revision: 1.9 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -82,6 +82,9 @@ public:
 
 protected:
   
+  /** check if lhbbuilder software version is up to date in order to a allow vme uploading */
+  bool IsLHPBuilderVersionUpToDate();
+
   /** Generate auto tags and manual tags list from XML lhdl dictionary*/
   int GeneratesManualTagsListFromXMLDictionary();
 
