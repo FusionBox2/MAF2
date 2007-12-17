@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-12-14 14:44:23 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-12-17 09:16:56 $
+  Version:   $Revision: 1.3 $
   Authors:   Stefano Perticoni - Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -21,27 +21,11 @@
 #include "lhpTagHandlerContainer.h"
 
 #include "mafTagArray.h"
+#include "mafVME.h"
 #include "mafVMERoot.h"
 
 #include <string>
 #include <ostream>
-
-mafCxxTypeMacro(lhpTagHandler);
-//------------------------------------------------------------------------
-lhpTagHandler::lhpTagHandler()
-//------------------------------------------------------------------------------
-{
-}
-
-//------------------------------------------------------------------------
-void lhpTagHandler::ExtractTagName()
-//------------------------------------------------------------------------
-{
-  // tag name from type
-  m_TagName = this->GetTypeName();
-  int endPos = m_TagName.FindFirst("_");
-  m_TagName.Erase(0, endPos);
-}
 
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Type);
