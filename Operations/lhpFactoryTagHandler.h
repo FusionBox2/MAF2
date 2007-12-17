@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpFactoryTagHandler.h,v $
   Language:  C++
-  Date:      $Date: 2007-12-14 14:46:34 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2007-12-17 09:17:32 $
+  Version:   $Revision: 1.5 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -49,7 +49,7 @@ public:
   static lhpFactoryTagHandler *GetInstance() {if (!m_Instance) Initialize(); return m_Instance;}
 
   /** create an instance of the tag handler give its type name */
-  static lhpTagHandler *CreateInstance(const char *type_name);
+  static lhpTagHandler *CreateTagHandlerInstance(const char *type_name);
    
    /**
     This function can be used by Application code to register new Objects's to the mflCoreFactory */

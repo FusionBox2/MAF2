@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpFactoryTagHandler.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-12-14 14:46:34 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-12-17 09:17:32 $
+  Version:   $Revision: 1.3 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -111,7 +111,7 @@ const char* lhpFactoryTagHandler::GetDescription() const
 }
 
 //------------------------------------------------------------------------------
-lhpTagHandler *lhpFactoryTagHandler::CreateInstance(const char *type_name)
+lhpTagHandler *lhpFactoryTagHandler::CreateTagHandlerInstance(const char *type_name)
 //------------------------------------------------------------------------------
 {
   return lhpTagHandler::SafeDownCast(Superclass::CreateInstance(type_name));
