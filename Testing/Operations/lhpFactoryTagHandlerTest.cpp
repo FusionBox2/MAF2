@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpFactoryTagHandlerTest.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-14 14:48:17 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2007-12-17 09:19:20 $
+Version:   $Revision: 1.3 $
 Authors:   Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2004 
@@ -99,11 +99,11 @@ void lhpFactoryTagHandlerTest::TestCreateTagHandlerInstance()
   lhpTagHandler *tagHandlerNE = NULL;
   //tagHandlerNE  = lhpFactoryTagHandler::CreateInstance("lhpTagHandler_Not_Existing");
   //In two different computers we notice a difference in compilation. One requests this explicit cast , if not got error
-  tagHandlerNE  =(lhpTagHandler *) lhpFactoryTagHandler::CreateInstance("lhpTagHandler_Not_Existing");
+  tagHandlerNE  = lhpFactoryTagHandler::CreateTagHandlerInstance("lhpTagHandler_Not_Existing");
   lhpTagHandler *tagHandlerL0000 = NULL;
   //tagHandlerL0000 =  lhpFactoryTagHandler::CreateInstance("lhpTagHandler_L0000");
   //In two different computers we notice a difference in compilation. One requests this explicit cast , if not got error
-  tagHandlerL0000 = (lhpTagHandler *) lhpFactoryTagHandler::CreateInstance("lhpTagHandler_L0000");
+  tagHandlerL0000 =  lhpFactoryTagHandler::CreateTagHandlerInstance("lhpTagHandler_L0000");
   
 
   CPPUNIT_ASSERT(tagHandlerNE == NULL);

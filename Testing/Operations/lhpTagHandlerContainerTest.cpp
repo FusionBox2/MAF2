@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpTagHandlerContainerTest.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-14 14:48:17 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2007-12-17 09:19:20 $
+Version:   $Revision: 1.2 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004 
@@ -21,7 +21,6 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include <cppunit/config/SourcePrefix.h>
 #include "lhpTagHandlerContainerTest.h"
 
-#include "lhpTagHandlerContainer.h"
 #include "lhpFactoryTagHandler.h"
 #include "mafVME.h"
 #include "mafTagArray.h"
@@ -71,7 +70,7 @@ void lhpTagHandlerContainerTest::CreateTestData()
 void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_Type_Timevarying()
 {
   lhpTagHandler *tag = NULL;
-  tag = m_TagHandlersFactory->CreateInstance("lhpTagHandler_L0000_resource_data_Type_Timevarying");
+  tag = m_TagHandlersFactory->CreateTagHandlerInstance("lhpTagHandler_L0000_resource_data_Type_Timevarying");
 
   CPPUNIT_ASSERT(tag!=NULL);
   CPPUNIT_ASSERT(tag->IsMAFType(lhpTagHandler_L0000_resource_data_Type_Timevarying));
