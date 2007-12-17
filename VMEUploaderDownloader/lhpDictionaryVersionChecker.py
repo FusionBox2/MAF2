@@ -7,96 +7,93 @@
 import httplib, urlparse, string
 from base64 import encodestring, decodestring
 
-import lhpCSVDictionaryDownloader
 import lhpDictionaryVersionChecker
 import dictionaryCSV2XML
 import Debug
 import StringIO
+import webbrowser
 
 from datetime import *
 from time import *
-
 
 import os
 
 import urllib, urllib2, base64, re, os, cookielib, sys
 
-class lhpCSVDictionaryDownloader:
+class lhpDictionaryVersionChecker:
       
     def __init__(self):
         
         # URL
         self.Host = "www.biomedtown.org"
-        self.DictionaryFileSelector = "/biomed_town/LHDL/lhdl-management/Consortium-room/lhdl-repository/WP5/Dictionaries/LHDL_dictionary.csv"
+        self.DictionaryDownloadHTMLPageSelector = "http://www.biomedtown.org/biomed_town/LHDL/lhdl-management/Consortium-room/lhdl-repository/WP5/Dictionaries/plfng_view"
+        self.RemoteWarningPage = r"http://www.biomedtown.org/biomed_town/LHDL/users/swclient/DictionaryCheck/"
         
         # authentication
         self.Username = 'lhpparabuild'
         self.Password = '2bf5ZM'
         
-        # filenames
-        self.DownloadedCSVDictionaryFileName = "lhpCSVDictionary.csv"
-        self.OutputXMLDictionaryFileName = "lhpXMLDictionary"
+        # init stuff
+        self.DictionaryDownloadHTMLPageFileName = "DictionaryDownloadHTMLPage.htm"
+        self.DictionaryCreationDate = "YYYYMMDDHHMM"
     
-    def RemoveOldDictionariesFromDisk(self):
+    def IsDictionaryUpToDate(self):
+        """
+           return True if lhp dictionary is updated otherwise return false
+        """
+        
+        localDate = self.GetLocalDictionaryDate()
+        remoteDate = self.GetRemoteDictionaryDate()
+        
+        if remoteDate > localDate:
+            print "Your LHPBuilder software is not up to date and you're not allowed to upload with it! Please download the latest version."
+            webbrowser.open(self.RemoteWarningPage)
+            return False
+        else:
+            print "Your LHPBuilder software is up to date! You can safely upload your VME!"
+            return  True
+        
+        
+        
+    def GetLocalDictionaryDate(self):
+        """
+           search for a 
+        """
+        
         # List files inside cwdir directory
         files = os.listdir(".")
         
         if Debug:
             print "\nCurrent Working Directory: " + os.getcwd() + " contains: "
             print files
-        
-        dictionariesFilesList= []
+            
+        dictionaryFilesList = []
         
         for file in files:
-            if re.search('^(lhpXML).*(\.xml)$',file):
-               dictionariesFilesList.append(os.getcwd() + '\\' + file)
-            elif re.search('^(lhpCSV).*(\.csv)$',file):
-               dictionariesFilesList.append(os.getcwd() + '\\' + file)
+            if re.search('^(lhpXMLDictionary_)',file):
+               dictionaryFilesList.append(file)
         
         # assert there is only one xml dict file
-        # assert(len(dictionaryFilesList)  >= 2)
+        assert(len(dictionaryFilesList)  == 1)
         
-        for file in dictionariesFilesList:
-            if Debug:
-                print "Removing: " + file
+        dictionaryFileName = str(dictionaryFilesList[0])
         
-#         dictionaryFileName = str(dictionaryFilesList[0])
-        
-            os.remove(file)
+        if Debug:      
+            print "\nOk, found only one XML dictionary file named:" + dictionaryFileName
             
+        startDatePos = dictionaryFileName.find("_") + 1
         
-        # os.remove()
-        # if Debug:      
-          #   print "\nOk, found only one XML dictionary file named:" + dictionaryFileName
-            
+        # retrieve its date
+        date = dictionaryFileName[startDatePos:len(dictionaryFileName)-len(".xml")]
+        
+        if Debug:           
+            print "Returning: " + date
+        
+        return int(date)
         
         
-    def DownloadCSVDictionary(self):
-        
-        print "Connecting to self.Host: " + self.Host            
-        print "Retrieving: " + self.DictionaryFileSelector
-        
-        h = httplib.HTTPConnection(self.Host)
-        h.putrequest('POST', self.DictionaryFileSelector)
-        h.putheader("AUTHORIZATION", "Basic %s" % string.replace(
-                                encodestring("%s:%s" % (self.Username, self.Password)),
-                                "\012", ""))
-        h.endheaders()
-        
-        f = open(self.DownloadedCSVDictionaryFileName, 'w')
-        
-        f.write(h.getresponse().read())
-        f.close()
-        
-        if Debug:    
-            f2 = open(self.DownloadedCSVDictionaryFileName, 'r')
-            for line in f2:
-                print line
-                
-                
-        return 0;
     
-    
+    def GetRemoteDictionaryDate(self):
         """ 
            Parse dictionary webpage and return dictionary creation datetime as a long, for example from 2007-12-13 17:56
            returns 200712131756, if successful otherwise return -1
@@ -188,69 +185,25 @@ class lhpCSVDictionaryDownloader:
             parsedLineNumber += 1
             
         
-    def ConvertDownloadedCSV2XML(self):
-        csv2xml = dictionaryCSV2XML.dictionaryCSV2XML()
-        csv2xml.InputCSVDictionaryFileName = self.DownloadedCSVDictionaryFileName
-        csv2xml.OutputXMLDictionaryFileName = self.OutputXMLDictionaryFileName
-        csv2xml.BuildXMLDictionary()
-        
-        
-def run(host, DictionaryFileSelector, outputXMLDictionaryFileName):                                            
-    
-    dictDownloader = lhpCSVDictionaryDownloader()    
-    dictVersionChecker = lhpDictionaryVersionChecker.lhpDictionaryVersionChecker()
-    dictDownloader.Host = host
-    
-    dictDownloader.RemoveOldDictionariesFromDisk()
+def run():                                            
     
     # get the dictionary creation date
-    date = dictVersionChecker.GetRemoteDictionaryDate()
-    if date == -1:
-        print " Cannot retrieve dictionary creation date: dictionary will not be created!"
-        return -1 
+    dictVC = lhpDictionaryVersionChecker()
+    return dictVC.IsDictionaryUpToDate()
     
-    dictDownloader.DictionaryFileSelector = DictionaryFileSelector
-    dictDownloader.OutputXMLDictionaryFileName = outputXMLDictionaryFileName  + "_" + str(date) + ".xml"
-    
-    dictDownloader.DownloadCSVDictionary()
-    
-    dictDownloader.ConvertDownloadedCSV2XML()
     
 def main():
     args = sys.argv[1:]
-    if len(args) != 3:
-        print """
-        usage: python.exe lhpCSVDictionaryDownloader.py
-        host DictionaryFileSelector outputXMLDictionaryFileName
-        
-        For example:
-        host = "www.biomedtown.org"
-        DictionaryFileSelector = "/biomed_town/LHDL/lhdl-management/Consortium-room/lhdl-repository/WP5/Dictionaries/LHDL_dictionary.csv"
-
-        Notes:
-        DateTime and .xml will be appended to outputXMLDictionaryFileName
+    if len(args) != 1:
+        print 
+        """
+        usage: python.exe lhpDictionaryVersionChecker.py
         """
         sys.exit(-1)
     print args
     run(args[0],args[1],args[2])
 
-    
 
-if __name__ == '__main__':
-    import sys
-    usage_msg = '''Usage: %s <option>
-where option can be:
-auto_tags - get auto tags from dictionary
-manual_tags - get manual tags from dictionary
-''' % sys.argv[0]
-
-    if len(sys.argv) != 4:
-        print 'Error :\n' + usage_msg
-        sys.exit(1)
-
-    xmlDictionaryFilename = sys.argv[1]
-    command = sys.argv[2]
-    outputTagsFileName = sys.argv[3]
-    
-    run(xmlDictionaryFilename, command, outputTagsFileName)
+if __name__ == '__main__':    
+    run()
  

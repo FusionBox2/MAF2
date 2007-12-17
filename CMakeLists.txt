@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2007-12-05 17:32:04 $
-#   Version:   $Revision: 1.16 $
+#   Date:      $Date: 2007-12-17 15:08:00 $
+#   Version:   $Revision: 1.17 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -135,7 +135,7 @@ ENDIF (MAF_FOUND)
 
 
 #-----------------------------------------------------------------------------
-# LHPBUILDER stuff
+# LHPBUILDER dictionary download stuff
 #-----------------------------------------------------------------------------
 OPTION(DOWNLOAD_DICTIONARY "Download the lhpBuilder dictionary" ON)
 
@@ -143,7 +143,7 @@ IF(DOWNLOAD_DICTIONARY)
     
     SET(LHPBUILDER_DICTIONARY_HOST "www.biomedtown.org" CACHE PATH "LHPBuilder dictionary host")
     SET(LHPBUILDER_DICTIONARY_SELECTOR "/biomed_town/LHDL/lhdl-management/Consortium-room/lhdl-repository/WP5/Dictionaries/LHDL_dictionary.csv" CACHE PATH "LHPBuilder dictionary selector")
-    SET(LHPBUILDER_XML_DICTIONARY "lhpXMLDictionary.xml" CACHE PATH "LHPBuilder xml dictionary")
+    SET(LHPBUILDER_XML_DICTIONARY "lhpXMLDictionary" CACHE INTERNAL "LHPBuilder xml dictionary")
     
 #     MESSAGE("variable LHP_SOURCE_DIR = " ${LHP_SOURCE_DIR})
 

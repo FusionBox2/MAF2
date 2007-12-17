@@ -9,22 +9,22 @@ sys.path.append('./webServicesClient')
 
 import httplib, urlparse, string
 from base64 import encodestring, decodestring
-import lhpCSVDictionaryDownloader
+import lhpDictionaryVersionChecker
 
 import Debug
 import unittest
 
-
 from datetime import *
 from time import *
 
+import webbrowser
 import StringIO
 import os
 
 
 import urllib, urllib2, base64, re, os, cookielib, sys
 
-class lhpCSVDictionaryDownloaderTest(unittest.TestCase):
+class lhpDictionaryVersionCheckerTest(unittest.TestCase):
       
     def setUp(self):
         
@@ -35,21 +35,15 @@ class lhpCSVDictionaryDownloaderTest(unittest.TestCase):
         print " current directory is: " + curDir
           
     
-    def testDownloadDictionary(self):
-        
-        dd = lhpCSVDictionaryDownloader.lhpCSVDictionaryDownloader()
-        dd.RemoveOldDictionariesFromDisk()
-        dd.DownloadCSVDictionary()
-        dd.ConvertDownloadedCSV2XML()
-        
     def testRun(self):
+            
+        lhpDictionaryVersionChecker.run()
         
-        host = "www.biomedtown.org"
-        selector = "/biomed_town/LHDL/lhdl-management/Consortium-room/lhdl-repository/WP5/Dictionaries/LHDL_dictionary.csv"
-        
-        outputXMLDictionaryFileName = "lhpXMLDictionary"
-        
-        lhpCSVDictionaryDownloader.run(host,selector,outputXMLDictionaryFileName)
+    def estGetDictionaryCreationDate(self):
+        dd = lhpDictionaryVersionChecker.lhpDictionaryVersionChecker()
+        dt = dd.GetRemoteDictionaryDate()
+        self.assertTrue(isinstance(dt, long))
+        self.assertTrue(dt > 10000)
         
 if __name__ == '__main__':
      unittest.main()
