@@ -9,7 +9,7 @@ from base64 import encodestring, decodestring
 
 import lhpDictionaryVersionChecker
 import dictionaryCSV2XML
-import Debug
+from Debug import Debug
 import StringIO
 import webbrowser
 
@@ -88,6 +88,7 @@ class lhpDictionaryVersionChecker:
         
         if Debug:           
             print "Returning: " + date
+        
         
         return int(date)
         
@@ -189,7 +190,10 @@ def run():
     
     # get the dictionary creation date
     dictVC = lhpDictionaryVersionChecker()
-    return dictVC.IsDictionaryUpToDate()
+    if dictVC.IsDictionaryUpToDate() == True:
+        print "UpToDate"
+    else:
+        print "NotUpToDate"
     
     
 def main():

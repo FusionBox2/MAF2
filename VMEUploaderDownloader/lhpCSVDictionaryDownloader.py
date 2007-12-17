@@ -10,7 +10,7 @@ from base64 import encodestring, decodestring
 import lhpCSVDictionaryDownloader
 import lhpDictionaryVersionChecker
 import dictionaryCSV2XML
-import Debug
+from Debug import Debug
 import StringIO
 
 from datetime import *
@@ -73,8 +73,9 @@ class lhpCSVDictionaryDownloader:
         
     def DownloadCSVDictionary(self):
         
-        print "Connecting to self.Host: " + self.Host            
-        print "Retrieving: " + self.DictionaryFileSelector
+        if Debug:
+            print "Connecting to self.Host: " + self.Host            
+            print "Retrieving: " + self.DictionaryFileSelector
         
         h = httplib.HTTPConnection(self.Host)
         h.putrequest('POST', self.DictionaryFileSelector)
