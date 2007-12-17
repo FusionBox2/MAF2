@@ -9,6 +9,9 @@ lhpFactoryTagHandler.h
 lhpTagHandlerContainer.cpp
 lhpTagHandlerContainer.h
 
+lhpTagHandler.cpp
+lhpTagHandler.h
+
 #
 lhpOpBonemat.cpp
 lhpOpBonemat.h
