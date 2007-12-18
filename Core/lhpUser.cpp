@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpUser.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-18 14:33:58 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2007-12-18 14:35:32 $
+Version:   $Revision: 1.3 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004
@@ -47,7 +47,7 @@ bool lhpUser::CheckUserCredentials()
   {
     InitializeUserInformations();
   }
-  bool res;// = ShowLoginDialog();
+  bool res = true;// = ShowLoginDialog();
   // Check only username and not password.
   // This can be valid for anonymous (or guest) user without password
   //res = !m_Username.IsEmpty() && res;
