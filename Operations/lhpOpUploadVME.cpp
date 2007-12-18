@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-18 12:10:10 $
-Version:   $Revision: 1.25 $
+Date:      $Date: 2007-12-18 16:14:57 $
+Version:   $Revision: 1.26 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -136,7 +136,10 @@ void lhpOpUploadVME::OpRun()
     upToDate = this->IsLHPBuilderVersionUpToDate();
   }
   else
+  {
     OpStop(result);
+    return;
+  }
 
   if(upToDate)
   {
