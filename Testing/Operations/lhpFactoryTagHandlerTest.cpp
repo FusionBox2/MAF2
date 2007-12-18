@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpFactoryTagHandlerTest.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-17 09:19:20 $
-Version:   $Revision: 1.3 $
+Date:      $Date: 2007-12-18 17:03:05 $
+Version:   $Revision: 1.4 $
 Authors:   Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2004 
@@ -40,7 +40,7 @@ class lhpTagHandler_L0000: public lhpTagHandler
   public:
     mafTypeMacro(lhpTagHandler_L0000, lhpTagHandler)
     
-    void FillVMETag(mafVME *vme) 
+    void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *parameters) 
     {
       // tag name from type
       this->ExtractTagName();
@@ -51,6 +51,7 @@ class lhpTagHandler_L0000: public lhpTagHandler
       mafLogMessage(message.GetCStr());
 
       // tag handling code
+      mafVME *vme = parameters->GetInputVme();
       vme->GetTagArray()->SetTag(m_TagName.GetCStr(), "pippo value");
     };
 };
@@ -87,6 +88,18 @@ void lhpFactoryTagHandlerTest::CreateTestData()
 
 void lhpFactoryTagHandlerTest::TestCreateTagHandlerInstance()
 {
+  // lhpTagHandlerInputOutputParametersCargo simple test drive
+  lhpTagHandlerInputOutputParametersCargo *parameterCargo = lhpTagHandlerInputOutputParametersCargo::New();
+  CPPUNIT_ASSERT(parameterCargo->GetInputVme() == NULL);
+  CPPUNIT_ASSERT(parameterCargo->GetTagHandlerGeneratedString() == "NOT YET HANDLED!");
+
+  parameterCargo->SetInputVme(m_SphereSurfaceVME);
+  CPPUNIT_ASSERT(parameterCargo->GetInputVme() == m_SphereSurfaceVME);
+  
+  parameterCargo->SetTagHandlerGeneratedString("pippo");
+  CPPUNIT_ASSERT(parameterCargo->GetTagHandlerGeneratedString()  == "pippo");
+  CPPUNIT_ASSERT(parameterCargo->GetTagHandlerGeneratedString() != "pluto");
+
   lhpFactoryTagHandler *tagHandlersFactory = lhpFactoryTagHandler::GetInstance();
   CPPUNIT_ASSERT(tagHandlersFactory!=NULL);
 
@@ -113,7 +126,7 @@ void lhpFactoryTagHandlerTest::TestCreateTagHandlerInstance()
   
   CPPUNIT_ASSERT(m_SphereSurfaceVME->GetTagArray()->IsTagPresent("L0000") == false);
   
-  tagHandlerL0000->FillVMETag(m_SphereSurfaceVME);
+  tagHandlerL0000->HandleAutoTag(parameterCargo);
   
   CPPUNIT_ASSERT(m_SphereSurfaceVME->GetTagArray()->IsTagPresent("L0000") == true);
   
@@ -141,7 +154,9 @@ void lhpFactoryTagHandlerTest::TestCreateTagHandlerInstance()
  
   // cleanup factory products
   tagHandlerL0000->Delete();
-  
+
+  // lhpTagHandlerInputOutputParametersCargo clean up
+  parameterCargo->Delete();
 }
 
   

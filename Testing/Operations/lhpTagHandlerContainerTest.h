@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpTagHandlerContainerTest.h,v $
 Language:  C++
-Date:      $Date: 2007-12-17 13:40:19 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2007-12-18 17:03:06 $
+Version:   $Revision: 1.3 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004 
@@ -20,6 +20,8 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include <cppunit/TestResult.h>
 #include <cppunit/TestResultCollector.h>
 #include <cppunit/TestRunner.h>
+
+#include "lhpTagHandler.h"
 
 class lhpFactoryTagHandler;
 class mafVMESurface;
@@ -51,6 +53,7 @@ class lhpTagHandlerContainerTest : public CPPUNIT_NS::TestFixture
 
   private:
     lhpFactoryTagHandler *m_TagHandlersFactory;
+    lhpTagHandlerInputOutputParametersCargo *m_ParametersCargo;
     mafVMESurface *m_TestVMESurface;
 
 };
