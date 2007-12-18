@@ -21,7 +21,7 @@ ELSE (WIN32)
 ENDIF (WIN32)
 
 SET(PROJECT_LIBS
-  lhpCommon lhpOperations lhpViews lhpVME vtkLHP
+  lhpCommon lhpCore lhpOperations lhpViews lhpVME vtkLHP
 )
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
 
