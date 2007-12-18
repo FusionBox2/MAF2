@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.h,v $
   Language:  C++
-  Date:      $Date: 2007-12-17 09:16:56 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2007-12-18 17:02:15 $
+  Version:   $Revision: 1.4 $
   Authors:   Stefano Perticoni - Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -24,7 +24,7 @@ class lhpTagHandler_L0000_resource_data_Type: public lhpTagHandler
     mafTypeMacro(lhpTagHandler_L0000_resource_data_Type,mafObject);
 
     lhpTagHandler_L0000_resource_data_Type();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -35,7 +35,7 @@ class lhpTagHandler_L0000_resource_data_Type_Field: public lhpTagHandler
     mafTypeMacro(lhpTagHandler_L0000_resource_data_Type_Field,mafObject);
 
     lhpTagHandler_L0000_resource_data_Type_Field();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -46,7 +46,7 @@ class lhpTagHandler_L0000_resource_data_Type_Dimension: public lhpTagHandler
     mafTypeMacro(lhpTagHandler_L0000_resource_data_Type_Dimension,mafObject);
 
     lhpTagHandler_L0000_resource_data_Type_Dimension();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -56,7 +56,7 @@ class lhpTagHandler_L0000_resource_data_Type_VolumeType: public lhpTagHandler
     mafTypeMacro(lhpTagHandler_L0000_resource_data_Type_VolumeType,mafObject);
 
     lhpTagHandler_L0000_resource_data_Type_VolumeType();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
  
@@ -66,7 +66,7 @@ class lhpTagHandler_L0000_resource_data_Type_Timevarying: public lhpTagHandler
     mafTypeMacro(lhpTagHandler_L0000_resource_data_Type_Timevarying,mafObject);
 
     lhpTagHandler_L0000_resource_data_Type_Timevarying();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -76,7 +76,7 @@ class lhpTagHandler_L0000_resource_data_Size_DatasetSize: public lhpTagHandler
     mafTypeMacro(lhpTagHandler_L0000_resource_data_Size_DatasetSize,mafObject);
 
     lhpTagHandler_L0000_resource_data_Size_DatasetSize();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -86,7 +86,7 @@ class lhpTagHandler_L0000_resource_data_Size_EntityCount: public lhpTagHandler
     mafTypeMacro(lhpTagHandler_L0000_resource_data_Size_EntityCount,mafObject);
 
     lhpTagHandler_L0000_resource_data_Size_EntityCount();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -96,7 +96,7 @@ class lhpTagHandler_L0000_resource_data_Size_TimeFramesCount: public lhpTagHandl
     mafTypeMacro(lhpTagHandler_L0000_resource_data_Size_TimeFramesCount,mafObject);
 
     lhpTagHandler_L0000_resource_data_Size_TimeFramesCount();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -106,7 +106,7 @@ class lhpTagHandler_L0000_resource_data_Dataset_DatasetURI: public lhpTagHandler
     mafTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_DatasetURI,mafObject);
 
     lhpTagHandler_L0000_resource_data_Dataset_DatasetURI();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -116,7 +116,7 @@ class lhpTagHandler_L0000_resource_data_Dataset_FileSize: public lhpTagHandler
     mafTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_FileSize,mafObject);
 
     lhpTagHandler_L0000_resource_data_Dataset_FileSize();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -126,7 +126,7 @@ class lhpTagHandler_L0000_resource_data_Dataset_UploadDate: public lhpTagHandler
     mafTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_UploadDate,mafObject);
 
     lhpTagHandler_L0000_resource_data_Dataset_UploadDate();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -136,7 +136,7 @@ class lhpTagHandler_L0000_resource_data_Dataset_FileType: public lhpTagHandler
     mafTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType,mafObject);
 
     lhpTagHandler_L0000_resource_data_Dataset_FileType();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -146,7 +146,7 @@ class lhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat: public lhpT
     mafTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat,mafObject);
 
     lhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -156,7 +156,7 @@ class lhpTagHandler_L0000_resource_data_Dataset_FileType_Endianity: public lhpTa
     mafTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType_Endianity,mafObject);
 
     lhpTagHandler_L0000_resource_data_Dataset_FileType_Endianity();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -166,7 +166,7 @@ class lhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption: public lhpT
     mafTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption,mafObject);
 
     lhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -176,7 +176,7 @@ class lhpTagHandler_L0000_resource_data_TimeSpace_VMEabsoluteMatrixPose: public 
     mafTypeMacro(lhpTagHandler_L0000_resource_data_TimeSpace_VMEabsoluteMatrixPose,mafObject);
 
     lhpTagHandler_L0000_resource_data_TimeSpace_VMEabsoluteMatrixPose();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -186,7 +186,7 @@ class lhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector: public lhpTag
     mafTypeMacro(lhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector,mafObject);
 
     lhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -196,7 +196,7 @@ class lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootURI: public lhpTagHandle
     mafTypeMacro(lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootURI,mafObject);
 
     lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootURI();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -206,7 +206,7 @@ class lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootName: public lhpTagHandl
     mafTypeMacro(lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootName,mafObject);
 
     lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootName();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -216,7 +216,7 @@ class lhpTagHandler_L0000_resource_data_TreeInfo_VmeChildURI1: public lhpTagHand
     mafTypeMacro(lhpTagHandler_L0000_resource_data_TreeInfo_VmeChildURI1,mafObject);
 
     lhpTagHandler_L0000_resource_data_TreeInfo_VmeChildURI1();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -226,7 +226,7 @@ class lhpTagHandler_L0000_resource_data_TreeInfo_VmeTreeCreationDate: public lhp
     mafTypeMacro(lhpTagHandler_L0000_resource_data_TreeInfo_VmeTreeCreationDate,mafObject);
 
     lhpTagHandler_L0000_resource_data_TreeInfo_VmeTreeCreationDate();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -236,7 +236,7 @@ class lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes: public lhpTa
     mafTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes,mafObject);
 
     lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -246,7 +246,7 @@ class lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes_OwnerID: publ
     mafTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes_OwnerID,mafObject);
 
     lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes_OwnerID();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -256,7 +256,7 @@ class lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes: public lhp
     mafTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes,mafObject);
 
     lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -266,7 +266,7 @@ class lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes_QualityScor
     mafTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes_QualityScore1,mafObject);
 
     lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes_QualityScore1();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -276,7 +276,7 @@ class lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType: 
     mafTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType,mafObject);
 
     lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
@@ -286,7 +286,7 @@ class lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_S
     mafTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir,mafObject);
 
     lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir();
-    virtual void FillVMETag(mafVME *vme);
+    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 #endif

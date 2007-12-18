@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-12-18 11:30:13 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2007-12-18 17:02:15 $
+  Version:   $Revision: 1.6 $
   Authors:   Stefano Perticoni - Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -37,7 +37,7 @@ lhpTagHandler_L0000_resource_data_Type::lhpTagHandler_L0000_resource_data_Type()
 
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Type::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_Type::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
 
@@ -51,7 +51,7 @@ lhpTagHandler_L0000_resource_data_Type_Field::lhpTagHandler_L0000_resource_data_
 
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Type_Field::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_Type_Field::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
 
@@ -65,7 +65,7 @@ lhpTagHandler_L0000_resource_data_Type_Dimension::lhpTagHandler_L0000_resource_d
 
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Type_Dimension::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_Type_Dimension::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
 
@@ -79,7 +79,7 @@ lhpTagHandler_L0000_resource_data_Type_VolumeType::lhpTagHandler_L0000_resource_
 
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Type_VolumeType::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_Type_VolumeType::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
 
@@ -93,9 +93,10 @@ lhpTagHandler_L0000_resource_data_Type_Timevarying::lhpTagHandler_L0000_resource
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Type_Timevarying::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_Type_Timevarying::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
+  mafVME *vme = cargo->GetInputVme();
   mafString value;
   value = vme->IsAnimated()?"1":"0";
 
@@ -111,7 +112,7 @@ lhpTagHandler_L0000_resource_data_Size_DatasetSize::lhpTagHandler_L0000_resource
 
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Size_DatasetSize::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_Size_DatasetSize::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
 
@@ -125,7 +126,7 @@ lhpTagHandler_L0000_resource_data_Size_EntityCount::lhpTagHandler_L0000_resource
 
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Size_EntityCount::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_Size_EntityCount::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
 
@@ -139,9 +140,11 @@ lhpTagHandler_L0000_resource_data_Size_TimeFramesCount::lhpTagHandler_L0000_reso
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Size_TimeFramesCount::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_Size_TimeFramesCount::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
+  mafVME *vme = cargo->GetInputVme();
+
   mafString value;
   std::vector<mafTimeStamp> timeStamps;
   vme->GetTimeStamps(timeStamps);
@@ -159,7 +162,7 @@ lhpTagHandler_L0000_resource_data_Dataset_DatasetURI::lhpTagHandler_L0000_resour
 
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Dataset_DatasetURI::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_Dataset_DatasetURI::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
 
@@ -173,7 +176,7 @@ lhpTagHandler_L0000_resource_data_Dataset_FileSize::lhpTagHandler_L0000_resource
 
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Dataset_FileSize::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_Dataset_FileSize::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
 
@@ -187,7 +190,7 @@ lhpTagHandler_L0000_resource_data_Dataset_UploadDate::lhpTagHandler_L0000_resour
 
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Dataset_UploadDate::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_Dataset_UploadDate::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
 
@@ -201,7 +204,7 @@ lhpTagHandler_L0000_resource_data_Dataset_FileType::lhpTagHandler_L0000_resource
 
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Dataset_FileType::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_Dataset_FileType::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
 
@@ -215,7 +218,7 @@ lhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat::lhpTagHandler_L00
 
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
 
@@ -229,7 +232,7 @@ lhpTagHandler_L0000_resource_data_Dataset_FileType_Endianity::lhpTagHandler_L000
 
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Dataset_FileType_Endianity::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_Dataset_FileType_Endianity::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
 
@@ -243,9 +246,10 @@ lhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption::lhpTagHandler_L00
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
+  mafVME *vme = cargo->GetInputVme();
   mafString value;
   value = vme->GetCrypting()?"1":"0";
 
@@ -261,7 +265,7 @@ lhpTagHandler_L0000_resource_data_TimeSpace_VMEabsoluteMatrixPose::lhpTagHandler
 
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_TimeSpace_VMEabsoluteMatrixPose::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_TimeSpace_VMEabsoluteMatrixPose::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
 
@@ -275,9 +279,10 @@ lhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector::lhpTagHandler_L0000
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
+  mafVME *vme = cargo->GetInputVme();
   mafString value;
   std::vector<mafTimeStamp> timeStamps;
   vme->GetAbsTimeStamps(timeStamps);
@@ -303,7 +308,7 @@ lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootURI::lhpTagHandler_L0000_resou
 
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootURI::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootURI::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
 
@@ -317,9 +322,10 @@ lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootName::lhpTagHandler_L0000_reso
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootName::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootName::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
+  mafVME *vme = cargo->GetInputVme();
   mafString value;
   value = vme->GetRoot()->GetName();
 
@@ -335,7 +341,7 @@ lhpTagHandler_L0000_resource_data_TreeInfo_VmeChildURI1::lhpTagHandler_L0000_res
 
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_TreeInfo_VmeChildURI1::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_TreeInfo_VmeChildURI1::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
 
@@ -349,7 +355,7 @@ lhpTagHandler_L0000_resource_data_TreeInfo_VmeTreeCreationDate::lhpTagHandler_L0
 
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_TreeInfo_VmeTreeCreationDate::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_TreeInfo_VmeTreeCreationDate::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
 
@@ -363,7 +369,7 @@ lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes::lhpTagHandler_L000
 
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
 
@@ -377,7 +383,7 @@ lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes_OwnerID::lhpTagHand
 
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes_OwnerID::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes_OwnerID::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
 
@@ -391,7 +397,7 @@ lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes::lhpTagHandler_L0
 
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
 
@@ -405,7 +411,7 @@ lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes_QualityScore1::lh
 
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes_QualityScore1::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes_QualityScore1::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
 
@@ -419,7 +425,7 @@ lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType::lhpTag
 
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
 
@@ -433,7 +439,7 @@ lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceD
 
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir::FillVMETag(mafVME *vme)
+void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
 

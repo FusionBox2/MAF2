@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-18 16:14:57 $
-Version:   $Revision: 1.26 $
+Date:      $Date: 2007-12-18 17:02:15 $
+Version:   $Revision: 1.27 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -176,8 +176,13 @@ void lhpOpUploadVME::OpDo()
 //----------------------------------------------------------------------------
 {
 
-  this->GeneratesManualTagsListFromXMLDictionary();
-
+  int ret = this->GeneratesManualTagsListFromXMLDictionary();
+  if (ret == MAF_ERROR)
+  {
+    wxMessageBox("Problems generatig tags list! Exiting...");
+    return;
+  } 
+  
   wxString oldDir = wxGetCwd();
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
@@ -435,7 +440,9 @@ int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
 
   inManualTagsFile.open(m_ManualTagsListFromXMLDictionaryFileName.GetCStr());
   if (!inManualTagsFile) {
-    mafLogMessage("Unable to open file");
+    wxString message = m_ManualTagsListFromXMLDictionaryFileName.GetCStr();
+    message.Append(" not found! Unable to open XML dictionary file");
+    mafLogMessage(message.c_str());
     return MAF_ERROR; // terminate with error
   }
 
@@ -466,12 +473,16 @@ int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
 
   mafString tagName = "";
   
+  lhpTagHandlerInputOutputParametersCargo *parametersCargo = lhpTagHandlerInputOutputParametersCargo::New();
+  parametersCargo->SetInputVme(mafVME::SafeDownCast(m_Input));
+
   for (int i = 0; i < m_AutoTagsList.size(); i++)
   {
     tagName = m_AutoTagsList[i].c_str();
 
     if (tagName != "")
     {
+      
       lhpFactoryTagHandler *tagsFactory  = lhpFactoryTagHandler::GetInstance();
       assert(tagsFactory!=NULL);
       lhpTagHandler *obj = NULL;
@@ -479,16 +490,19 @@ int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
       //lhpTagHandler *tagHandler = (lhpTagHandler*)obj;
       if (obj)
       {
-        obj->FillVMETag(mafVME::SafeDownCast(m_Input));
+        obj->HandleAutoTag(parametersCargo);
       }
       else
       {
         m_UnhandledAutoTagsListFromFactory.Add(tagName.GetCStr());
         mafLogMessage(_("Cannot handle \"%s\" tag!, this tag will become manual"),tagName.GetCStr());
-      }
+      }      
     }
   }
   
+  // clean up
+  parametersCargo->Delete();
+
   // generates manual tag file 
 
   // open auto tags file and try to handle tags using tags factory 

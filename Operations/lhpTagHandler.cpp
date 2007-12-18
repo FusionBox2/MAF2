@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandler.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-12-17 09:15:47 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2007-12-18 17:02:15 $
+  Version:   $Revision: 1.2 $
   Authors:   Stefano Perticoni - Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -19,6 +19,16 @@
 //----------------------------------------------------------------------------------
 
 #include "lhpTagHandler.h"
+
+
+mafCxxTypeMacro(lhpTagHandlerInputOutputParametersCargo);
+//------------------------------------------------------------------------
+lhpTagHandlerInputOutputParametersCargo::lhpTagHandlerInputOutputParametersCargo()
+//------------------------------------------------------------------------------
+{
+  m_InputVme = NULL;
+  m_TagHandlerGeneratedString = "NOT YET HANDLED!";
+}
 
 
 mafCxxTypeMacro(lhpTagHandler);
