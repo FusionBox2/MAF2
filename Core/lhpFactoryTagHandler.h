@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpFactoryTagHandler.h,v $
   Language:  C++
-  Date:      $Date: 2007-11-29 17:28:36 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2007-12-18 12:08:09 $
+  Version:   $Revision: 1.3 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -27,19 +27,8 @@
 // to be defined in a separate file... this is just an empty skeleton
 
 #include "mafObject.h"
-#include "mafObserver.h"
+#include "lhpTagHandlerContainer.h"
 
-class lhpTagHandler : public mafObject, public mafObserver
-  {
-  public:
-    mafTypeMacro(lhpTagHandler,mafObject);
-
-    lhpTagHandler();
-    virtual			~lhpTagHandler();
-
-  protected:
-  private:
-};
 
 /** Object factory for tag handlers.
   To make a new handler available in the LHDL it must be plugged inside a factory, in particular
