@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2007-12-17 17:50:35 $
-Version:   $Revision: 1.9 $
+Date:      $Date: 2007-12-18 12:10:10 $
+Version:   $Revision: 1.10 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -49,6 +49,7 @@ MafMedical is partially based on OpenMAF.
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
+class lhpUser;
 
 //----------------------------------------------------------------------------
 // lhpOpUploadVME :
@@ -103,6 +104,9 @@ protected:
 
   /** This method checks if process exists and if there is a lock file */
   bool ExistsRunningProcess();
+
+  /** This method use MAF Api for set the login in order to make operation like upload or download*/
+  bool CheckLogin();
   
   mafString m_CacheDir; //>cache superdirectory
   static mafString m_CacheSubdir; //>cache subdirectory
@@ -122,6 +126,8 @@ protected:
   mafString m_AutoTagsListFromXMLDictionaryFileName; 
   mafString m_ManualTagsListFromXMLDictionaryFileName;
   mafString m_UnhandledPlusManualTagsFileName;
+
+  static lhpUser  m_User;
 
 private:
 

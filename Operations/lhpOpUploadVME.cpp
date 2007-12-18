@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-17 17:50:35 $
-Version:   $Revision: 1.24 $
+Date:      $Date: 2007-12-18 12:10:10 $
+Version:   $Revision: 1.25 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -55,7 +55,7 @@ MafMedical is partially based on OpenMAF.
 #include "lhpOpUploadVME.h"
 
 #include "mmgGui.h"
-
+#include "lhpUser.h"
 #include "mafNode.h"
 #include "mafVMEGenericAbstract.h"
 
@@ -72,6 +72,8 @@ mafCxxTypeMacro(lhpOpUploadVME);
 //static variables
 long lhpOpUploadVME::m_Pid = -1;
 mafString lhpOpUploadVME::m_CacheSubdir = "0";
+lhpUser lhpOpUploadVME::m_User = lhpUser();
+
 //----------------------------------------------------------------------------
 lhpOpUploadVME::lhpOpUploadVME(wxString label) :
 mafOp(label)
@@ -126,16 +128,23 @@ bool lhpOpUploadVME::Accept(mafNode* vme)
 void lhpOpUploadVME::OpRun()
 //----------------------------------------------------------------------------
 {
-  bool upToDate = this->IsLHPBuilderVersionUpToDate();
-  
-  int result = OP_RUN_OK;
 
-  if (upToDate == false)
+  int result = OP_RUN_CANCEL;
+  bool upToDate = false;
+  if(CheckLogin())
   {
-    result = OP_RUN_CANCEL;
-  } 
+    upToDate = this->IsLHPBuilderVersionUpToDate();
+  }
+  else
+    OpStop(result);
+
+  if(upToDate)
+  {
+    result = OP_RUN_OK;
+  }
   
   OpStop(result);
+
 }
 //----------------------------------------------------------------------------
 void lhpOpUploadVME::OnEvent(mafEventBase *maf_event) 
@@ -540,7 +549,9 @@ bool lhpOpUploadVME::CreateBaseCacheAndOutgoingDirectories()
   return resultCache && resultOutgoing;
 }
 
+//----------------------------------------------------------------------------
 bool lhpOpUploadVME::IsLHPBuilderVersionUpToDate()
+//----------------------------------------------------------------------------
 {
   wxBusyInfo("Checking if  your software is up-to-date in order to upload, please wait...");
   wxString oldDir = wxGetCwd();
@@ -585,6 +596,10 @@ bool lhpOpUploadVME::IsLHPBuilderVersionUpToDate()
   //print "NotUpToDate"
 
   wxString result = output[output.size() - 1];
+  
+  wxSetWorkingDirectory(oldDir);
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+
   if (result == "UpToDate")
   {
     return true;
@@ -594,7 +609,15 @@ bool lhpOpUploadVME::IsLHPBuilderVersionUpToDate()
     return false;
   }  
   
-  wxSetWorkingDirectory(oldDir);
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-
 }
+//----------------------------------------------------------------------------
+bool lhpOpUploadVME::CheckLogin()
+//----------------------------------------------------------------------------
+{
+  bool result = false;
+
+  result = m_User.CheckUserCredentials();
+
+  return result;
+}
+
