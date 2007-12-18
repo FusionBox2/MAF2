@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-12-17 13:39:58 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2007-12-18 11:30:13 $
+  Version:   $Revision: 1.5 $
   Authors:   Stefano Perticoni - Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -136,7 +136,7 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Size_TimeFramesCount);
 lhpTagHandler_L0000_resource_data_Size_TimeFramesCount::lhpTagHandler_L0000_resource_data_Size_TimeFramesCount()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_Size_TimeFramesCount::FillVMETag(mafVME *vme)
@@ -240,7 +240,7 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption);
 lhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption::lhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption::FillVMETag(mafVME *vme)
@@ -272,7 +272,7 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector);
 lhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector::lhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector::FillVMETag(mafVME *vme)
@@ -314,7 +314,7 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootName);
 lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootName::lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootName()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootName::FillVMETag(mafVME *vme)
