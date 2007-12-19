@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-18 17:02:15 $
-Version:   $Revision: 1.27 $
+Date:      $Date: 2007-12-19 14:36:43 $
+Version:   $Revision: 1.28 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -93,15 +93,17 @@ mafOp(label)
 
   m_MsfDir = "";
 
-  m_XMLDictionaryFileName = "lhpXMLDictionary.xml";
+  m_XMLDictionaryFilePrefix = "lhpXMLDictionary_";
+  m_XMLDictionaryFileName = "UNDEFINED";
   m_AutoTagsListFromXMLDictionaryFileName = "autoTagsList.txt";
   m_ManualTagsListFromXMLDictionaryFileName = "manualTagsList.txt";
   m_UnhandledPlusManualTagsFileName = "unhandledPlusManualTagsList.txt";
+  m_HandledAutoTagsFileName = "handledAutoTagsList.txt";
 
+  m_HandledAutoTagsListFromFactory.Clear();
   m_UnhandledAutoTagsListFromFactory.Clear();
   m_AutoTagsList.Clear();
   m_ManualTagsList.Clear();
-  m_UnhandledAutoTagsListFromFactory.Clear();
 
 }
 
@@ -392,7 +394,13 @@ int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
   //def estRunAutoTags(self):
   //xmlDict = r'.\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.xml'
   //lhpXMLDictionaryParser.run(xmlDict,"manual_tags", "manual_tags.txt")
-  
+
+  m_XMLDictionaryFileName = this->GetLHPXMLDictionaryFileName();
+  if (m_XMLDictionaryFileName == "NOT FOUND")
+  {
+    return MAF_ERROR;
+  }
+
   // get auto tags
   wxString command2execute;
   command2execute.Append(m_PythonExe.GetCStr());
@@ -491,6 +499,12 @@ int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
       if (obj)
       {
         obj->HandleAutoTag(parametersCargo);
+        wxString tagValue = "\"";
+        tagValue.Append(tagName.GetCStr());
+        tagValue.Append("\" , \"");
+        tagValue.Append(parametersCargo->GetTagHandlerGeneratedString());
+        tagValue.Append('\"');
+        m_HandledAutoTagsListFromFactory.Add(tagValue.c_str());
       }
       else
       {
@@ -503,6 +517,24 @@ int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
   // clean up
   parametersCargo->Delete();
 
+
+
+  // generates handled auto file
+
+  // open auto tags file and try to handle tags using tags factory 
+  ofstream handledAutoTagsFile;
+
+  handledAutoTagsFile.open(m_HandledAutoTagsFileName.GetCStr());
+
+  for (int i = 0; i < m_HandledAutoTagsListFromFactory.size(); i++)
+  {
+    tagName = m_HandledAutoTagsListFromFactory[i].c_str();
+    handledAutoTagsFile << tagName.GetCStr() << std::endl ;
+  }
+  
+  handledAutoTagsFile.close();
+
+  
   // generates manual tag file 
 
   // open auto tags file and try to handle tags using tags factory 
@@ -514,7 +546,6 @@ int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
     mafLogMessage("Unable to create file");
     return MAF_ERROR; // terminate with error
   }
-
   // write unhandled auto
   for (int i = 0; i < m_UnhandledAutoTagsListFromFactory.size(); i++)
   {
@@ -621,7 +652,7 @@ bool lhpOpUploadVME::IsLHPBuilderVersionUpToDate()
   {
     return true;
   } 
-  else 
+  else
   {
     return false;
   }  
@@ -638,3 +669,38 @@ bool lhpOpUploadVME::CheckLogin()
   return result;
 }
 
+mafString lhpOpUploadVME::GetLHPXMLDictionaryFileName()
+{
+  mafString dictionaryFileName = "NOT FOUND";
+  wxString oldDir = wxGetCwd();
+
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+
+  wxArrayString files;
+  wxString filePattern = m_XMLDictionaryFilePrefix.GetCStr() ;
+  filePattern.Append("*.xml");
+
+  wxDir::GetAllFiles(wxGetWorkingDirectory(), &files, filePattern);
+  
+  if (files.size() != 1)
+  {
+    mafLogMessage("lhpXMLDictionary_*.xml not found! exiting");
+    return dictionaryFileName;
+  }
+  else
+  {
+    assert(files.size() == 1);
+    dictionaryFileName = files[0];
+    int pos = dictionaryFileName.FindLast("\\");
+    dictionaryFileName.Erase(0, pos);
+    mafLogMessage("Found dictionary!");
+    mafLogMessage(dictionaryFileName.GetCStr());
+  }
+  
+  wxSetWorkingDirectory(oldDir);
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  
+  return dictionaryFileName;
+}

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2007-12-18 12:10:10 $
-Version:   $Revision: 1.10 $
+Date:      $Date: 2007-12-19 14:36:43 $
+Version:   $Revision: 1.11 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -108,6 +108,7 @@ protected:
   /** This method use MAF Api for set the login in order to make operation like upload or download*/
   bool CheckLogin();
   
+  
   mafString m_CacheDir; //>cache superdirectory
   static mafString m_CacheSubdir; //>cache subdirectory
   mafString m_CurrentCache; //>current cache directory
@@ -122,7 +123,9 @@ protected:
   
   static long m_Pid; //> pid of the server process
 
-  mafString m_XMLDictionaryFileName; 
+  mafString m_XMLDictionaryFilePrefix; 
+  mafString m_XMLDictionaryFileName;
+  mafString m_HandledAutoTagsFileName;
   mafString m_AutoTagsListFromXMLDictionaryFileName; 
   mafString m_ManualTagsListFromXMLDictionaryFileName;
   mafString m_UnhandledPlusManualTagsFileName;
@@ -130,10 +133,11 @@ protected:
   static lhpUser  m_User;
 
 private:
-
+  
+  mafString GetLHPXMLDictionaryFileName();
   wxArrayString m_AutoTagsList;
   wxArrayString m_ManualTagsList;
   wxArrayString m_UnhandledAutoTagsListFromFactory; ///< the factory was not able to handle these tags
-  
+  wxArrayString m_HandledAutoTagsListFromFactory; ///< tags handled by the factory  
 };
 #endif

@@ -102,11 +102,11 @@ class msfParserTest(unittest.TestCase):
         outFileXML = open('vmeTestVolumeTagArray.xml', 'w')
         newDoc.writexml(outFileXML)
 
-    def testPrintTagNames(self):
+    def testGetTagNames(self):
         p = self.msfParserInstance
         vme = p.GetVmeNodeById(self.rootNode, 1)
         tagArray = p.GetVmeTagArrayNode(vme)
-        tagList = p.PrintTagNames(tagArray)
+        tagList = p.GetTagNames(tagArray)
     
     def testGetVmeNodeByID(self):
         vme = self.msfParserInstance.GetVmeNodeById(self.rootNode, 1)

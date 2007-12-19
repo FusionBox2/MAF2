@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-12-18 17:02:15 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2007-12-19 14:36:43 $
+  Version:   $Revision: 1.7 $
   Authors:   Stefano Perticoni - Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -101,7 +101,7 @@ void lhpTagHandler_L0000_resource_data_Type_Timevarying::HandleAutoTag(lhpTagHan
   value = vme->IsAnimated()?"1":"0";
 
   // tag handling code
-  vme->GetTagArray()->SetTag(m_TagName.GetCStr(), value);
+  cargo->SetTagHandlerGeneratedString(value);
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Size_DatasetSize);
@@ -151,7 +151,7 @@ void lhpTagHandler_L0000_resource_data_Size_TimeFramesCount::HandleAutoTag(lhpTa
   value << (long) timeStamps.size();
 
   // tag handling code
-  vme->GetTagArray()->SetTag(m_TagName.GetCStr(), value);
+  cargo->SetTagHandlerGeneratedString(value);
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_DatasetURI);
@@ -254,7 +254,8 @@ void lhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption::HandleAutoTa
   value = vme->GetCrypting()?"1":"0";
 
   // tag handling code
-  vme->GetTagArray()->SetTag(m_TagName.GetCStr(), value);
+  cargo->SetTagHandlerGeneratedString(value);
+
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_TimeSpace_VMEabsoluteMatrixPose);
@@ -297,7 +298,7 @@ void lhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector::HandleAutoTag(
   }
 
   // tag handling code
-  vme->GetTagArray()->SetTag(m_TagName.GetCStr(), value);
+  cargo->SetTagHandlerGeneratedString(value);
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootURI);
@@ -330,7 +331,7 @@ void lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootName::HandleAutoTag(lhpTa
   value = vme->GetRoot()->GetName();
 
   // tag handling code
-  vme->GetTagArray()->SetTag(m_TagName.GetCStr(), value);
+  cargo->SetTagHandlerGeneratedString(value);
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_TreeInfo_VmeChildURI1);

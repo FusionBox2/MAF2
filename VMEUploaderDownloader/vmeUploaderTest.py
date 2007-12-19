@@ -23,10 +23,11 @@ class vmeUploaderTest(unittest.TestCase):
         
         upl = vmeUploader.vmeUploader()
         upl.InputMSFDirectory = curDir + r'\msf_test_import_export_VME'
-        upl.DictionaryFileName = curDir + r'\testDictionaries\testDictionary.txt'
+        upl.UnhandledPlusManualTagsListFileName = curDir + r'\unhandledPlusManualTagsList.txt'
         upl.OutputFolderName = curDir + r'\Outgoing'
         upl.VmeToExtractID = 1    
         upl.Upload()
+        
         
 if __name__ == '__main__':
     unittest.main()

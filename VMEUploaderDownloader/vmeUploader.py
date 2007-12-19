@@ -11,7 +11,7 @@ import shutil
 import sets
 import os
 import re
-import Debug
+from Debug import Debug
 from xml.dom import minidom
 from xml.dom import Node
 
@@ -21,7 +21,7 @@ class vmeUploader:
     def __init__(self):                       
         
         self.InputMSFDirectory = "No input msf"
-        self.DictionaryFileName = "No dictionary"
+        self.UnhandledPlusManualTagsListFileName = "No dictionary"
         self.VmeToExtractID = 1    
         self.OutputVMEXMLName = "exportedVME.xml"
         self.OutputFolderName = "FolderToUpload"
@@ -32,8 +32,8 @@ class vmeUploader:
     def __Parse(self):
        
         msfDOMParserInstance = msfParser.msfParser()
-        dict = msfParser.lhpbDictionary()
-        dict.DictionaryFileName = self.DictionaryFileName
+        dict = msfParser.lhpTagsListStorage()
+        dict.FileName = self.UnhandledPlusManualTagsListFileName
         dict.Load()
        
         # Search the MSF file inside given the given directory
@@ -55,9 +55,9 @@ class vmeUploader:
        
         print "\ninput MSF Directory: " + self.InputMSFDirectory
         print "\ninput MSF filename: " + msfFileName
-        print "\nlhdl dictionary: " + self.DictionaryFileName + '\n'
+        print "\nlhdl dictionary: " + self.UnhandledPlusManualTagsListFileName + '\n'
         print "\nExtracting vme with ID: " + str(self.VmeToExtractID) + '\n' 
-        """parse the msf extracting tags from the dictionary"""
+        """parse the msf extracting tags from the UnhandledPlusManualTagsList file """
         
         rootNode = msfRootNode
         vmeId = self.VmeToExtractID
@@ -69,28 +69,41 @@ class vmeUploader:
         outVmeTagArrayNode = msfDOMParserInstance.GetVmeTagArrayNode(outVmeNode)
         
         # get the tags list
-        vmeTagList = msfDOMParserInstance.PrintTagNames(outVmeTagArrayNode)
+        vmeTagList = msfDOMParserInstance.GetTagNames(outVmeTagArrayNode)
         
-        print vmeTagList
-        dict.Print()
+        if Debug:            
+            print vmeTagList
+            dict.Print()
         
-        # find matching tags between dictionary and vme tagArray
+        # AUTO TAGS
+
+        # remove old auto tags from tagArray
+        # msfDOMParserInstance.RemoveTagsByList(outVmeTagArrayNode, autoTags)
+        
+        # add new and updated autotags
+        # "TAGNAME" , "TAGTEXT"
+
+        
+    
+        # UNHANDLED AUTO + MANUAL TAGS
+        
+        # find matching manual and unhandled manual tags between dictionary and vme tagArray
         vmeTagListSet = sets.Set(vmeTagList)
         # print vmeTagListSet
         
-        dictionaryTagListSet = sets.Set(dict.DictionaryTagsList) 
-        # print dictionaryTagListSet
+        unhandledPlusManualTagsListSet = sets.Set(dict.TagsList) 
+        # print unhandledPlusManualTagsListSet
         
-        tagsToBeExported = vmeTagListSet.intersection(dictionaryTagListSet)
+        tagsToBeExported = vmeTagListSet.intersection(unhandledPlusManualTagsListSet)
         # print "\nThese tags will be exported: \n" + str(tagsToBeExported)
         
-        tagsToBeAddedByTheUser = dictionaryTagListSet.difference(vmeTagList)
+        tagsToBeAnnotatedManually = unhandledPlusManualTagsListSet.difference(vmeTagList)
        
-        # Add tags from list
-        isinstance(tagsToBeAddedByTheUser,set)
-        tagsToBeAddedByTheUserSorted = sorted(tagsToBeAddedByTheUser)
-        print "\nThese tags need to be added by the user: \n" + str(tagsToBeAddedByTheUserSorted)
-        msfDOMParserInstance.AddTagsFromList(domDocument,outVmeTagArrayNode, tagsToBeAddedByTheUserSorted)
+        # Add tags to be annotated manually from list
+        isinstance(tagsToBeAnnotatedManually,set)
+        tagsToBeAnnotatedManuallySorted = sorted(tagsToBeAnnotatedManually)
+        print "\nThese tags need to be annotated by the user: \n" + str(tagsToBeAnnotatedManuallySorted)
+        msfDOMParserInstance.AddTagsFromList(domDocument,outVmeTagArrayNode, tagsToBeAnnotatedManuallySorted)
 
         tagsToBeRemoved  = vmeTagListSet.difference(tagsToBeExported)
         # print "\nThese tags  be removed from output vme XML: \n" + str(tagsToBeRemoved)
@@ -126,11 +139,11 @@ class vmeUploader:
         print "\nWritten output XML file " + self.OutputVMEXMLName + " in directory " + self.OutputFolderName
         
         
-def run(inputMSFDirectory, vmeToExtractId, inDictionaryFileName, outputFolderName, outputVMEXMLName):                                            
+def run(inputMSFDirectory, vmeToExtractId, inUnhandledPlusManualTagsListFileName, outputFolderName, outputVMEXMLName):                                            
     upl = vmeUploader()
     upl.InputMSFDirectory = inputMSFDirectory
     upl.VmeToExtractID = int(vmeToExtractId)
-    upl.DictionaryFileName = inDictionaryFileName
+    upl.UnhandledPlusManualTagsListFileName = inUnhandledPlusManualTagsListFileName
     upl.OutputFolderName = outputFolderName
     upl.OutputVMEXMLName = outputVMEXMLName
     upl.Parse()    

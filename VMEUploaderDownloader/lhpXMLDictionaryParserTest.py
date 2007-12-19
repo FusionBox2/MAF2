@@ -26,7 +26,7 @@ class lhpXMLDictionaryParserTest(unittest.TestCase):
         
         print " current directory is: " + curDir
             
-    def test(self):
+    def est(self):
         """test parser facilities"""
         xmlDict = r'.\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.xml'
 
@@ -62,10 +62,13 @@ class lhpXMLDictionaryParserTest(unittest.TestCase):
         print vmeManualTags
         self.assertEqual(len(autoTags) + len(vmeManualTags), 100)
     
-    def testRunAutoTags(self):
+    def estRunAutoTags(self):
         xmlDict = r'.\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.xml'
         lhpXMLDictionaryParser.run(xmlDict,"auto_tags", "auto_tags.txt")
         
+    def testRunAutoTags2(self):
+        xmlDict = r'lhpXMLDictionary.xml'
+        lhpXMLDictionaryParser.run(xmlDict,"auto_tags", "auto_tags.txt")
     
     def estRunAutoTags(self):
         xmlDict = r'.\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.xml'

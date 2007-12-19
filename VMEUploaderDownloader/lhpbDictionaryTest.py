@@ -10,7 +10,7 @@ import unittest
 import shutil
 import os
 
-class lhpbDictionaryTest(unittest.TestCase):
+class lhpTagsListStorageTest(unittest.TestCase):
       
     def setUp(self):
         
@@ -23,7 +23,7 @@ class lhpbDictionaryTest(unittest.TestCase):
         self.inFileName = curDir + r'\msf_test_import_export_VME\testDictionary.txt'
         self.copyFileName = curDir + r'\msf_test_import_export_VME\testDictionaryCopy.txt'
         # shutil.copy(self.inFileName, self.copyFileName)
-        self.dictionaryInstance = msfParser.lhpbDictionary()
+        self.dictionaryInstance = msfParser.lhpTagsListStorage()
         
     def testSave(self):
         testDictionary = ['pippo','pluto','topolino']
@@ -32,14 +32,14 @@ class lhpbDictionaryTest(unittest.TestCase):
         self.dictionaryInstance.Save()
         
     def testLoad(self):
-        newDict = msfParser.lhpbDictionary()
+        newDict = msfParser.lhpTagsListStorage()
         newDict.DictionaryFileName = "testSaveDictionary.txt"
         newDict.Load()
         for tag in newDict.DictionaryTagsList:
             print tag
         
     def testPrint(self):
-        newDict = msfParser.lhpbDictionary()
+        newDict = msfParser.lhpTagsListStorage()
         newDict.DictionaryFileName = "testSaveDictionary.txt"
         newDict.Load()
         newDict.Print()

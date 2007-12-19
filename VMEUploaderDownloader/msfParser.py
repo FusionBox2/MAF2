@@ -68,35 +68,35 @@ from xml.dom import minidom
 from xml.dom import Node
 from xml.dom.minidom import Document
 
-class lhpbDictionary:
+class lhpTagsListStorage:
     """store and retrieve list of tags in 1 column"""
     
     def __init__(self):                                
         self.Clear()
         
     def Clear(self):
-        self.DictionaryFileName = ""
-        self.DictionaryTagsList = []
+        self.FileName = ""
+        self.TagsList = []
     
     def Load(self):
-        self.DictionaryTagsList = []
-        f = open(self.DictionaryFileName, 'r')
+        self.TagsList = []
+        f = open(self.FileName, 'r')
         for line in f:
             lineStripped = str(line).strip()
-            self.DictionaryTagsList.append(lineStripped)        
+            self.TagsList.append(lineStripped)        
         f.close()    
         
     def Save(self):
-        f = open(self.DictionaryFileName, 'w')
-        for tag in self.DictionaryTagsList:
+        f = open(self.TagsStorageFileName, 'w')
+        for tag in self.TagsList:
             print >> f, tag
         f.close()
     
     def Print(self):
-        print "\nDictionary file name: " + self.DictionaryFileName
+        print "\nDictionary file name: " + self.FileName
         print "\nDictionary content:" 
         i = 0
-        for tag in self.DictionaryTagsList:
+        for tag in self.TagsList:
             print "item: " + str(i) + "     " + "value: " + str(tag) 
             i+=1
             
@@ -255,7 +255,7 @@ class msfParser:
         # <Item NumberOfTags="2" Type="mafTagArray">
         addedTagsNumber = 0
         for tagName in tagsToBeAdded:
-            node = self.CreateSTRTagItem(tagName,domDoc)
+            node = self.CreateSTRTagItem(tagName,"ANNOTATE ME!!!!!!", domDoc)
             # self.PrintNode(node, sys.stdout,0)
             inputVmeTagArrayNode.appendChild(node)
             addedTagsNumber += 1
@@ -272,7 +272,7 @@ class msfParser:
                if Debug:    
                    print attrNode.nodeValue
     
-    def CreateSTRTagItem(self, tagName, domDoc):
+    def CreateSTRTagItem(self, tagName, tagText, domDoc):
          """create a STR TagItam node ie
          
          <TItem Mult="1" Name="Dicom_CT_model" Type="STR">
@@ -298,13 +298,13 @@ class msfParser:
          newElTC = domDoc.createElement("TC")
          newElChild.appendChild(newElTC)
         
-         TCChild = domDoc.createTextNode("ANNOTATE ME!!!!!!")
+         TCChild = domDoc.createTextNode(tagText)
          # TCChild.data = "ANNOTATE ME!!!!!!"
          newElTC.appendChild(TCChild)
          
          return newEl
     
-    def PrintTagNames(self, tagArrayNode):
+    def GetTagNames(self, tagArrayNode):
         """Print the given tagArrayNode tags list, also return the tagList"""
         tagList = []
         for node in tagArrayNode.childNodes:
@@ -405,9 +405,9 @@ class msfParser:
     
     def PrintVmeNodes(self, parent, outFile):
         level = 0
-        self.PrintVmeNodesInternal(parent, outFile, level)
+        self.__PrintVmeNodesInternal(parent, outFile, level)
         
-    def PrintVmeNodesInternal(self,parent, outFile, level):                               
+    def __PrintVmeNodesInternal(self,parent, outFile, level):                               
         for node in parent.childNodes:
             if node.nodeType == Node.ELEMENT_NODE:
                 # Write out the element name.            
@@ -415,7 +415,7 @@ class msfParser:
                     self.__printLevel(outFile, level)
                     self.PrintNode(node, outFile, level)
                     # Write out the attributes.
-            self.PrintVmeNodesInternal(node, outFile, level+1)
+            self.__PrintVmeNodesInternal(node, outFile, level+1)
     
     def __printLevel(self,outFile, level):
         for idx in range(level):
