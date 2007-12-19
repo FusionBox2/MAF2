@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-12-19 16:19:22 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2007-12-19 17:05:17 $
+  Version:   $Revision: 1.9 $
   Authors:   Stefano Perticoni - Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -34,13 +34,14 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Type);
 lhpTagHandler_L0000_resource_data_Type::lhpTagHandler_L0000_resource_data_Type()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_Type::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Type_Field);
@@ -48,13 +49,14 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Type_Field);
 lhpTagHandler_L0000_resource_data_Type_Field::lhpTagHandler_L0000_resource_data_Type_Field()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_Type_Field::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Type_Dimension);
@@ -62,13 +64,14 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Type_Dimension);
 lhpTagHandler_L0000_resource_data_Type_Dimension::lhpTagHandler_L0000_resource_data_Type_Dimension()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_Type_Dimension::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Type_VolumeType);
@@ -76,13 +79,14 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Type_VolumeType);
 lhpTagHandler_L0000_resource_data_Type_VolumeType::lhpTagHandler_L0000_resource_data_Type_VolumeType()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_Type_VolumeType::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Type_Timevarying);
@@ -109,13 +113,14 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Size_DatasetSize);
 lhpTagHandler_L0000_resource_data_Size_DatasetSize::lhpTagHandler_L0000_resource_data_Size_DatasetSize()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_Size_DatasetSize::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Size_EntityCount);
@@ -123,13 +128,14 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Size_EntityCount);
 lhpTagHandler_L0000_resource_data_Size_EntityCount::lhpTagHandler_L0000_resource_data_Size_EntityCount()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_Size_EntityCount::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Size_TimeFramesCount);
@@ -159,13 +165,14 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_DatasetURI);
 lhpTagHandler_L0000_resource_data_Dataset_DatasetURI::lhpTagHandler_L0000_resource_data_Dataset_DatasetURI()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_Dataset_DatasetURI::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_FileSize);
@@ -173,13 +180,14 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_FileSize);
 lhpTagHandler_L0000_resource_data_Dataset_FileSize::lhpTagHandler_L0000_resource_data_Dataset_FileSize()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_Dataset_FileSize::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_UploadDate);
@@ -187,13 +195,14 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_UploadDate);
 lhpTagHandler_L0000_resource_data_Dataset_UploadDate::lhpTagHandler_L0000_resource_data_Dataset_UploadDate()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_Dataset_UploadDate::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType);
@@ -201,13 +210,14 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType);
 lhpTagHandler_L0000_resource_data_Dataset_FileType::lhpTagHandler_L0000_resource_data_Dataset_FileType()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_Dataset_FileType::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat);
@@ -232,13 +242,14 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType_Endianity);
 lhpTagHandler_L0000_resource_data_Dataset_FileType_Endianity::lhpTagHandler_L0000_resource_data_Dataset_FileType_Endianity()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_Dataset_FileType_Endianity::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption);
@@ -266,13 +277,14 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_TimeSpace_VMEabsoluteMatrixPos
 lhpTagHandler_L0000_resource_data_TimeSpace_VMEabsoluteMatrixPose::lhpTagHandler_L0000_resource_data_TimeSpace_VMEabsoluteMatrixPose()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_TimeSpace_VMEabsoluteMatrixPose::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector);
@@ -309,13 +321,14 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootURI);
 lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootURI::lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootURI()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootURI::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootName);
@@ -342,13 +355,14 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_TreeInfo_VmeChildURI1);
 lhpTagHandler_L0000_resource_data_TreeInfo_VmeChildURI1::lhpTagHandler_L0000_resource_data_TreeInfo_VmeChildURI1()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_TreeInfo_VmeChildURI1::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_TreeInfo_VmeTreeCreationDate);
@@ -356,13 +370,14 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_TreeInfo_VmeTreeCreationDate);
 lhpTagHandler_L0000_resource_data_TreeInfo_VmeTreeCreationDate::lhpTagHandler_L0000_resource_data_TreeInfo_VmeTreeCreationDate()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_TreeInfo_VmeTreeCreationDate::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes);
@@ -370,13 +385,14 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes);
 lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes::lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes_OwnerID);
@@ -401,13 +417,14 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes);
 lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes::lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes_QualityScore1)
@@ -415,13 +432,14 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes_Q
 lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes_QualityScore1::lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes_QualityScore1()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes_QualityScore1::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType);
@@ -429,13 +447,14 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_So
 lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType::lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir);
@@ -443,11 +462,12 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_So
 lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir::lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
 }
