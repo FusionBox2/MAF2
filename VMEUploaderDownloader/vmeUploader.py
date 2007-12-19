@@ -11,6 +11,7 @@ import shutil
 import sets
 import os
 import re
+import csv
 from Debug import Debug
 from xml.dom import minidom
 from xml.dom import Node
@@ -21,7 +22,8 @@ class vmeUploader:
     def __init__(self):                       
         
         self.InputMSFDirectory = "No input msf"
-        self.UnhandledPlusManualTagsListFileName = "No dictionary"
+        self.UnhandledPlusManualTagsListFileName = "No UnhandledPlusManualTagsListFile!"
+        self.HandledAutoTagsListFileName = "No HandledAutoTagsListFile!" 
         self.VmeToExtractID = 1    
         self.OutputVMEXMLName = "exportedVME.xml"
         self.OutputFolderName = "FolderToUpload"
@@ -76,13 +78,32 @@ class vmeUploader:
             dict.Print()
         
         # AUTO TAGS
-
-        # remove old auto tags from tagArray
-        # msfDOMParserInstance.RemoveTagsByList(outVmeTagArrayNode, autoTags)
+    
+        reader = csv.reader(open(self.HandledAutoTagsListFileName, "r"))       
         
+        autoTagsDictionary = {}
+        
+        try:
+            for row in reader:
+                if Debug:                   
+                    print row
+                autoTagsDictionary[row[0]] = str(row[1])
+                
+        except csv.Error, e:
+            sys.exit('file %s, line %d: %s' % (filename, reader.line_num, e))
+       
+        if Debug:          
+            print autoTagsDictionary
+        
+        autoTagsList = sorted(autoTagsDictionary.keys())
+        print autoTagsList
+        
+        # remove old auto tags from tagArray
+        msfDOMParserInstance.RemoveTagsByList(outVmeTagArrayNode, autoTagsList)
+    
         # add new and updated autotags
         # "TAGNAME" , "TAGTEXT"
-
+        msfDOMParserInstance.AddTagsFromDictionary(domDocument,outVmeTagArrayNode, autoTagsDictionary)
         
     
         # UNHANDLED AUTO + MANUAL TAGS
@@ -139,10 +160,11 @@ class vmeUploader:
         print "\nWritten output XML file " + self.OutputVMEXMLName + " in directory " + self.OutputFolderName
         
         
-def run(inputMSFDirectory, vmeToExtractId, inUnhandledPlusManualTagsListFileName, outputFolderName, outputVMEXMLName):                                            
+def run(inputMSFDirectory, vmeToExtractId,  handledAutoTagsListFileName, inUnhandledPlusManualTagsListFileName, outputFolderName, outputVMEXMLName):                                            
     upl = vmeUploader()
     upl.InputMSFDirectory = inputMSFDirectory
     upl.VmeToExtractID = int(vmeToExtractId)
+    upl.HandledAutoTagsListFileName = handledAutoTagsListFileName
     upl.UnhandledPlusManualTagsListFileName = inUnhandledPlusManualTagsListFileName
     upl.OutputFolderName = outputFolderName
     upl.OutputVMEXMLName = outputVMEXMLName
@@ -150,14 +172,15 @@ def run(inputMSFDirectory, vmeToExtractId, inUnhandledPlusManualTagsListFileName
 
 def main():
     args = sys.argv[1:]
-    if len(args) != 5:
+    if len(args) != 6:
         print """
         usage: python.exe vmeUploader.py 
-        inputMSFDirectory vmeToExtractId inputDictionaryFile.txt
+        inputMSFDirectory vmeToExtractId 
+        autoTagsFile.txt manualTagsFile.txt
         outputFolderName outputVMEXMLName.xml
         """
         sys.exit(-1)
-    run(args[0],args[1],args[2],args[3],[4])
+    run(args[0],args[1],args[2],args[3],args[4],args[5])
 
 
 if __name__ == '__main__':

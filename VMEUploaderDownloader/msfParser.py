@@ -255,7 +255,31 @@ class msfParser:
         # <Item NumberOfTags="2" Type="mafTagArray">
         addedTagsNumber = 0
         for tagName in tagsToBeAdded:
-            node = self.CreateSTRTagItem(tagName,"ANNOTATE ME!!!!!!", domDoc)
+            node = self.CreateSTRTagItem(tagName,"ANNOTATE ME!!! I`M A MANUAL TAG!!!", domDoc)
+            # self.PrintNode(node, sys.stdout,0)
+            inputVmeTagArrayNode.appendChild(node)
+            addedTagsNumber += 1
+        attrs = inputVmeTagArrayNode.attributes                             
+        for attrName in attrs.keys():
+            if Debug:               
+                print attrName
+            if attrName  == "NumberOfTags":
+               attrNode = attrs.get(attrName)
+               oldTagsNumber = attrNode.nodeValue
+               if Debug:
+                   print oldTagsNumber
+               attrNode.nodeValue = str(int(oldTagsNumber)  +  addedTagsNumber)
+               if Debug:    
+                   print attrNode.nodeValue
+    
+    
+    def AddTagsFromDictionary(self, domDoc, inputVmeTagArrayNode, dictionaryOfTagsToBeAdded):
+        # change number of tags
+        # <Item NumberOfTags="2" Type="mafTagArray">
+        addedTagsNumber = 0
+        for key in dictionaryOfTagsToBeAdded:
+            value = (str(dictionaryOfTagsToBeAdded[key])).strip().replace("\"","")
+            node = self.CreateSTRTagItem(key, value, domDoc)
             # self.PrintNode(node, sys.stdout,0)
             inputVmeTagArrayNode.appendChild(node)
             addedTagsNumber += 1
