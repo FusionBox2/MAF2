@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-12-19 14:36:43 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2007-12-19 16:19:22 $
+  Version:   $Revision: 1.8 $
   Authors:   Stefano Perticoni - Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -215,13 +215,16 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat);
 lhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat::lhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-
+  mafString value = "MAF2"; //for now the only file format supported
+ 
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString(value);
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType_Endianity);
@@ -381,13 +384,16 @@ mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes_Own
 lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes_OwnerID::lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes_OwnerID()
 //------------------------------------------------------------------------------------
 {
-
+  ExtractTagName();
 }
 //------------------------------------------------------------------------------------
 void lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes_OwnerID::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
+  mafString value = cargo->GetInputUser()->GetName();
 
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString(value);
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes);
