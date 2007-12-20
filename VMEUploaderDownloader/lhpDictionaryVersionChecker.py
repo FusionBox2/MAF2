@@ -42,6 +42,9 @@ class lhpDictionaryVersionChecker:
            return True if lhp dictionary is updated otherwise return false
         """
         
+        # remove older dictionaries
+        self.RemoveOldDictionaries()
+        
         localDate = self.GetLocalDictionaryDate()
         remoteDate = self.GetRemoteDictionaryDate()
         
@@ -53,8 +56,33 @@ class lhpDictionaryVersionChecker:
             print "Your LHPBuilder software is up to date! You can safely upload your VME!"
             return  True
         
+    def RemoveOldDictionaries(self):
         
+        files = os.listdir(".")
         
+        if Debug:
+            print "\nCurrent Working Directory: " + os.getcwd() + " contains: "
+            print files
+        
+        dictionariesFilesList= []
+        
+        for file in files:
+            if re.search('^(lhpXML).*(\.xml)$',file):
+               dictionariesFilesList.append(os.getcwd() + '\\' + file)
+            
+        timeSortedDictionaries = sorted(dictionariesFilesList)
+        timeSortedDictionaries.reverse()
+        
+        if Debug:
+            print timeSortedDictionaries
+            
+        for file in timeSortedDictionaries[1:]:
+            if Debug:
+                print "Removing: " + file
+            os.remove(file)      
+        
+        print "Local dictionary is: " + str(timeSortedDictionaries[0])
+            
     def GetLocalDictionaryDate(self):
         """
            search for a 
