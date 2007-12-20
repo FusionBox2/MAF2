@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2007-12-20 11:00:39 $
-#   Version:   $Revision: 1.18 $
+#   Date:      $Date: 2007-12-20 17:14:21 $
+#   Version:   $Revision: 1.19 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -137,11 +137,11 @@ ENDIF (MAF_FOUND)
 #-----------------------------------------------------------------------------
 # LHPBUILDER dictionary download stuff
 #-----------------------------------------------------------------------------
-OPTION(DOWNLOAD_DICTIONARY "Download the lhpBuilder dictionary" ON)
+OPTION(DOWNLOAD_DICTIONARY "Generate XML lhpBuilder dictionary" ON)
 
 IF(DOWNLOAD_DICTIONARY)
     
-#     MESSAGE("variable DOWNLOAD_DICTIONARY = " ${DOWNLOAD_DICTIONARY})
+   #  MESSAGE("variable DOWNLOAD_DICTIONARY = " ${DOWNLOAD_DICTIONARY})
     SET(LHPBUILDER_DICTIONARY_HOST "www.biomedtown.org" CACHE PATH "LHPBuilder dictionary host")
     SET(LHPBUILDER_DICTIONARY_SELECTOR "/biomed_town/LHDL/lhdl-management/Consortium-room/lhdl-repository/WP5/Dictionaries/LHDL_dictionary.csv" CACHE INTERNAL "LHPBuilder dictionary selector")
     SET(LHPBUILDER_XML_DICTIONARY "lhpXMLDictionary" CACHE INTERNAL "LHPBuilder xml dictionary")
@@ -158,17 +158,21 @@ IF(DOWNLOAD_DICTIONARY)
 #     MESSAGE("variable  OUTPUT = " ${OUTPUT_VALUE})
 #     MESSAGE("variable  RET = " ${RET})
     
-    IF(${RET} EQUAL 0)
+    IF(${RET} MATCHES "0")
         MESSAGE(STATUS "XML dictionary generated correctly!")
-    ELSE(${RET} EQUAL 0)
+    ELSE(${RET} MATCHES "0")
         MESSAGE("Problems generating XML dictionary!
 In order for the generation to work you need to:
 1: Be connected to the Internet
 1: Have python 2.5 installed
 2: Have python 2.5 python.exe in your PATH as default python version")
 #         MESSAGE(${OUTPUT_VALUE})
-    ENDIF(${RET} EQUAL 0)
+    ENDIF(${RET} MATCHES "0")
     
+ELSE(DOWNLOAD_DICTIONARY)
+         MESSAGE("You have choosed not to generate XML dictionary!
+Some operations will not work with this setup.")
+#   
 ENDIF(DOWNLOAD_DICTIONARY)
 
 #-----------------------------------------------------------------------------
