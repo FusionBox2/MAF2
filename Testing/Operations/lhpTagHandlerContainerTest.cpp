@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpTagHandlerContainerTest.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-20 07:25:20 $
-Version:   $Revision: 1.5 $
+Date:      $Date: 2007-12-20 07:52:30 $
+Version:   $Revision: 1.6 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004 
@@ -32,6 +32,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "mafVMESurface.h"
 #include "mafVMERoot.h"
 #include "mafMatrixVector.h"
+#include "mafUser.h"
 
 #include "vtkMAFSmartPointer.h"
 #include "vtkSphereSource.h"
@@ -52,6 +53,7 @@ void lhpTagHandlerContainerTest::tearDown()
 {
   m_ParametersCargo->Delete();;
   m_TestVMESurface->Delete();
+	delete m_TestUser;
 }
 //----------------------------------------------------
 void lhpTagHandlerContainerTest::CreateTestData()
@@ -74,6 +76,12 @@ void lhpTagHandlerContainerTest::CreateTestData()
   m_TestVMESurface->Update();
   
   m_ParametersCargo->SetInputVme(m_TestVMESurface);
+
+	m_TestUser = new mafUserDummy();
+	m_TestUser->SetUserName(mafString("UserTest"));
+	m_TestUser->SetInitialized(true);
+
+	m_ParametersCargo->SetInputUser(m_TestUser);
 
   CPPUNIT_ASSERT(m_TestVMESurface->GetOutput()->GetVTKData()->GetNumberOfCells() > 0);
 }
@@ -116,7 +124,24 @@ void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_Size_Time
   tag->Delete();
 
 }
+//----------------------------------------------------------------------------------------
+void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat()
+//----------------------------------------------------------------------------------------
+{
+	lhpTagHandler *tag = NULL;
+	tag = m_TagHandlersFactory->CreateTagHandlerInstance("lhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat");
 
+	CPPUNIT_ASSERT(tag!=NULL);
+	CPPUNIT_ASSERT(tag->IsMAFType(lhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat));
+	CPPUNIT_ASSERT(m_TestVMESurface->GetTagArray()->IsTagPresent(tag->GetTagName()) == false);
+
+	tag->HandleAutoTag(m_ParametersCargo);
+
+
+	mafString value = m_ParametersCargo->GetTagHandlerGeneratedString();
+	CPPUNIT_ASSERT(value == mafString("MAF2"));
+	tag->Delete();
+}
 //----------------------------------------------------------------------------------------
 void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption()
 //----------------------------------------------------------------------------------------
@@ -197,4 +222,21 @@ void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_TreeInfo_
   mafDEL(root);
 
   delete wxLogStderr::SetActiveTarget(NULL);
+}
+//----------------------------------------------------------------------------------------
+void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes_OwnerID()
+//----------------------------------------------------------------------------------------
+{
+	lhpTagHandler *tag = NULL;
+	tag = m_TagHandlersFactory->CreateTagHandlerInstance("lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes_OwnerID");
+
+	CPPUNIT_ASSERT(tag!=NULL);
+	CPPUNIT_ASSERT(tag->IsMAFType(lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes_OwnerID));
+	CPPUNIT_ASSERT(m_TestVMESurface->GetTagArray()->IsTagPresent(tag->GetTagName()) == false);
+
+	tag->HandleAutoTag(m_ParametersCargo);
+
+	mafString value = m_ParametersCargo->GetTagHandlerGeneratedString();
+	CPPUNIT_ASSERT(value == "UserTest");
+	tag->Delete();
 }
