@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2007-12-20 17:14:21 $
-#   Version:   $Revision: 1.19 $
+#   Date:      $Date: 2007-12-20 18:51:49 $
+#   Version:   $Revision: 1.20 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -142,7 +142,7 @@ OPTION(DOWNLOAD_DICTIONARY "Generate XML lhpBuilder dictionary" ON)
 IF(DOWNLOAD_DICTIONARY)
     
    #  MESSAGE("variable DOWNLOAD_DICTIONARY = " ${DOWNLOAD_DICTIONARY})
-    SET(LHPBUILDER_DICTIONARY_HOST "www.biomedtown.org" CACHE PATH "LHPBuilder dictionary host")
+    SET(LHPBUILDER_DICTIONARY_HOST "www.biomedtown.org" CACHE INTERNAL "LHPBuilder dictionary host")
     SET(LHPBUILDER_DICTIONARY_SELECTOR "/biomed_town/LHDL/lhdl-management/Consortium-room/lhdl-repository/WP5/Dictionaries/LHDL_dictionary.csv" CACHE INTERNAL "LHPBuilder dictionary selector")
     SET(LHPBUILDER_XML_DICTIONARY "lhpXMLDictionary" CACHE INTERNAL "LHPBuilder xml dictionary")
     
@@ -165,13 +165,19 @@ IF(DOWNLOAD_DICTIONARY)
 In order for the generation to work you need to:
 1: Be connected to the Internet
 1: Have python 2.5 installed
-2: Have python 2.5 python.exe in your PATH as default python version")
+2: Have python 2.5 python.exe in your PATH as default python version
+
+If You don't want to this message to appear you can set DOWNLOAD_DICTIONARY
+to false. Please notice that some functions ol LHPBuilder will not be available
+with this setting.
+")
 #         MESSAGE(${OUTPUT_VALUE})
     ENDIF(${RET} MATCHES "0")
     
 ELSE(DOWNLOAD_DICTIONARY)
          MESSAGE("You have choosed not to generate XML dictionary!
-Some operations will not work with this setup.")
+Please notice that some functions of LHPBUilder will not be available
+with this setting.")
 #   
 ENDIF(DOWNLOAD_DICTIONARY)
 
