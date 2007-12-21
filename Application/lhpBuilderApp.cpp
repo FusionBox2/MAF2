@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-12-20 19:45:57 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2007-12-21 12:02:55 $
+  Version:   $Revision: 1.28 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -115,6 +115,7 @@
 #include "medOpIterativeRegistration.h"
 #include "medOpCreateLabeledVolume.h"
 #include "lhpOpUploadVME.h"
+#include "medOpSurfaceMirror.h"
 
 #include "mafViewVTK.h"
 #include "mafViewCompound.h"
@@ -231,6 +232,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoEditMetadata("Metadata Editor"),"Modify");
 	m_Logic->Plug(new mmoFilterSurface("Filter Surface"),"Modify");
 	m_Logic->Plug(new mmoExtractIsosurface("Extract Isosurface"),"Create/Derive");
+  m_Logic->Plug(new medOpSurfaceMirror("Surface Mirror"),"Modify");
 	m_Logic->Plug(new mmoCrop("Crop Volume"),"Modify");
 	m_Logic->Plug(new medOpVolumeResample("Volume Resample"),"Modify");
 	m_Logic->Plug(new mmo2DMeasure("2D Measure"),"Measure");
