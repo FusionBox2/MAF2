@@ -93,7 +93,7 @@ Section "create product directory structure" SEC01
   ExecWait "@LHPBUILDER_INSTALLER_DIR_WIN@\PythonControl.bat @LHPBUILDER_INSTALLER_DIR_WIN@" $0
   
   ${If} $0 != "0"
-    MessageBox MB_OK "Python not present, several application features don't work correctly"
+    ;MessageBox MB_OK "Python not present, several application features don't work correctly"
   ${EndIf}
 
 SectionEnd
