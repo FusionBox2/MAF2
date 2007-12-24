@@ -70,10 +70,14 @@ Section "create product directory structure" SEC01
   CreateDirectory "$INSTDIR\data\external"
   CreateDirectory "$INSTDIR\data\msf"
   CreateDirectory "$INSTDIR\Config\Dictionary"
+  CreateDirectory "$INSTDIR\Config\ExternalPythonVersion"
   CreateDirectory "$INSTDIR\Layout"
   SetOutPath "$INSTDIR\Config\Dictionary"
   File "@LHPBUILDER_INSTALLER_DIR_WIN@\dictionary.dic"
   File "@LHPBUILDER_INSTALLER_DIR_WIN@\dicom3.dic"
+  SetOutPath "$INSTDIR\Config\ExternalPythonVersion"
+  File "@LHPBUILDER_INSTALLER_DIR_WIN@\PythonControl.bat"
+  File "@LHPBUILDER_INSTALLER_DIR_WIN@\PythonScriptVersion.py"
   SetOutPath "$INSTDIR\Layout"
   File "@LHPBUILDER_INSTALLER_DIR_WIN@\layout.mly"
   
@@ -90,10 +94,11 @@ Section "create product directory structure" SEC01
   File /R  "@LHPBUILDER_INSTALLER_DIR_WIN@\..\VMEUploaderDownloader\"
 
   ;message if python is not installed
-  ExecWait "@LHPBUILDER_INSTALLER_DIR_WIN@\PythonControl.bat @LHPBUILDER_INSTALLER_DIR_WIN@" $0
+  SetOutPath "$INSTDIR\Config\ExternalPythonVersion"
+  ExecWait "PythonControl.bat" $0
   
   ${If} $0 != "0"
-    ;MessageBox MB_OK "Python not present, several application features don't work correctly"
+    MessageBox MB_OK "Python not present, several application features don't work correctly"
   ${EndIf}
 
 SectionEnd
