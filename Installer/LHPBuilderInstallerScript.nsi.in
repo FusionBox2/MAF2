@@ -2,6 +2,9 @@
 
 ; HM NIS Edit Wizard helper defines
 
+#logic incluision
+!include LogicLib.nsh
+
 !define PRODUCT_NAME "lhpBuilder"
 !define PRODUCT_EXE_NAME "${PRODUCT_NAME}.exe"
 !define PRODUCT_VERSION "@LHPBUILDER_VERSION@"
@@ -85,6 +88,13 @@ Section "create product directory structure" SEC01
   CreateDirectory "$INSTDIR\VMEUploaderDownloader"
   SetOutPath "$INSTDIR\VMEUploaderDownloader"
   File /R  "@LHPBUILDER_INSTALLER_DIR_WIN@\..\VMEUploaderDownloader\"
+
+  ;message if python is not installed
+  ExecWait "@LHPBUILDER_INSTALLER_DIR_WIN@\PythonControl.bat @LHPBUILDER_INSTALLER_DIR_WIN@" $0
+  
+  ${If} $0 != "0"
+    MessageBox MB_OK "Python not present, several application features don't work correctly"
+  ${EndIf}
 
 SectionEnd
 
