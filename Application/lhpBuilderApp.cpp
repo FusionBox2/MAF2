@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-12-27 14:07:55 $
-  Version:   $Revision: 1.31 $
+  Date:      $Date: 2007-12-27 14:38:20 $
+  Version:   $Revision: 1.32 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -126,6 +126,7 @@
 #include "mafViewGlobalSliceCompound.h"
 #include "mafViewSlice.h"
 #include "mafViewImageCompound.h"
+#include "medViewEmgGraph.h"
 #include "mafViewIntGraph.h"
 #include "medViewSlicer.h"
 #include "lhpOpMultiscaleExplore.h"
