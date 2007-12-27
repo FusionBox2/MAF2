@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-12-27 08:56:26 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2007-12-27 13:12:19 $
+  Version:   $Revision: 1.30 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -94,7 +94,6 @@
 #include "medOpScaleDataset.h"
 #include "medOpMove.h"
 #include "mmoMAFTransform.h"
-#include "mmoEMGImporterWS.h"
 #include "mmoGRFImporterWS.h"
 #include "medPipeGraph.h"
 #include "mafVMERawMotionData.h" 
@@ -116,6 +115,7 @@
 #include "medOpCreateLabeledVolume.h"
 #include "lhpOpUploadVME.h"
 #include "medOpSurfaceMirror.h"
+#include "medOpImporterEmgWS.h"
 
 #include "mafViewVTK.h"
 #include "mafViewCompound.h"
@@ -203,6 +203,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoINPImporter("Geometry INP/INP_AF"), "Geometries");
   m_Logic->Plug(new mmoMTRImporter("Geometry MTR"), "Geometries");
   m_Logic->Plug(new mafOpImporterExternalFile("External data"), "Other");
+  m_Logic->Plug(new medOpImporterEmgWS("ASCII Analog (VWs)"), "Motion Analysis");
 
   //-------------------------------------------------------------
 
@@ -273,8 +274,9 @@ bool lhpBuilderApp::OnInit()
   vdrr->PlugVisualPipe("mafVMEVolumeGray","medPipeVolumeDRR",MUTEX);
   m_Logic->Plug(vdrr);
 
-  mafViewVTK *graph = new mafViewVTK("Analog Graph", CAMERA_PERSPECTIVE, false);
-  graph->PlugVisualPipe("medVMEEmg", "medPipeGraph");
+  // View Analog graph
+  medViewEmgGraph *graph = new medViewEmgGraph("Analog Graph");
+  graph->PlugVisualPipe("mafVMEScalar", "medPipeGraph");
   m_Logic->Plug(graph);
 
   //View Global Slice
