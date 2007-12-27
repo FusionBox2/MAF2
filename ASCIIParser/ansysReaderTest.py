@@ -8,7 +8,7 @@ import os
 import sys, string
 import unittest
 
-
+from Debug  import Debug
 import ansysReader
 import shutil
 from pyparsing import Word, alphas, nums, ZeroOrMore, ParseException, Group, delimitedList, alphanums, Literal,Dict
@@ -16,12 +16,19 @@ import pprint
 
 class ansysReaderTest(unittest.TestCase):
     
+    def setUp(self):
+        self.StartDir =  os.getcwd()
+        print self.StartDir
+        
+    def tearDown(self):
+        os.chdir(self.StartDir)
+        
     def estReader(self):
         
         
         # create the reader
         ar = ansysReader.ansysReader()
-        ar.InputAnsysFileName = r'D:\vapps\LHPBuilder_Parabuild\ASCIIParser\testData\ansys\tetra10_ansys_commented_ASCII_Converted.inp'
+        ar.InputAnsysFileName = self.StartDir + r'\testData\ansys\tetra10_ansys_commented_ASCII_Converted.inp'
     
         # set the file name
         # read
@@ -41,7 +48,7 @@ class ansysReaderTest(unittest.TestCase):
         
         # create the reader
         ar = ansysReader.ansysReader()
-        ar.InputAnsysFileName = r'D:\vapps\LHPBuilder_Parabuild\ASCIIParser\testData\ansys\tet10_v0.inp'
+        ar.InputAnsysFileName =  self.StartDir + r'\testData\ansys\tet10_v0.inp'
     
         # set the file name
         # read
@@ -62,7 +69,7 @@ class ansysReaderTest(unittest.TestCase):
         
         # create the reader
         ar = ansysReader.ansysReader()
-        ar.InputAnsysFileName = r'D:\vapps\LHPBuilder_Parabuild\ASCIIParser\testData\ansys\tet10_v1.inp'
+        ar.InputAnsysFileName =  self.StartDir + r'\testData\ansys\tet10_v1.inp'
     
         # set the file name
         # read
@@ -80,7 +87,7 @@ class ansysReaderTest(unittest.TestCase):
         
         # create the reader
         ar = ansysReader.ansysReader()
-        ar.InputAnsysFileName = r'D:\vapps\LHPBuilder_Parabuild\ASCIIParser\testData\ansys\tet10_v2.inp'
+        ar.InputAnsysFileName =  self.StartDir + r'\testData\ansys\tet10_v2.inp'
     
         # set the file name
         # read
@@ -97,7 +104,7 @@ class ansysReaderTest(unittest.TestCase):
         
         # create the reader
         ar = ansysReader.ansysReader()
-        ar.InputAnsysFileName = r'D:\vapps\LHPBuilder_Parabuild\ASCIIParser\testData\ansys\tet10_v3.inp'
+        ar.InputAnsysFileName = self.StartDir + r'\testData\ansys\tet10_v3.inp'
     
         # set the file name
         # read
@@ -115,7 +122,7 @@ class ansysReaderTest(unittest.TestCase):
         
         # create the reader
         ar = ansysReader.ansysReader()
-        ar.InputAnsysFileName = r'D:\vapps\LHPBuilder_Parabuild\ASCIIParser\testData\ansys\tet10_v4.inp'
+        ar.InputAnsysFileName = self.StartDir + r'\testData\ansys\tet10_v4.inp'
     
         # set the file name
         # read
@@ -130,9 +137,13 @@ class ansysReaderTest(unittest.TestCase):
 
     def testReaderV5(self):
         
+        curDir =  os.getcwd()
+        if Debug:
+            print curDir
+            
         # create the reader
         ar = ansysReader.ansysReader()
-        ar.InputAnsysFileName = r'D:\vapps\LHPBuilder_Parabuild\ASCIIParser\testData\ansys\tet10_v5.inp'
+        ar.InputAnsysFileName = self.StartDir + r'\testData\ansys\tet10_v5.inp'
     
         # set the file name
         # read
@@ -150,7 +161,7 @@ class ansysReaderTest(unittest.TestCase):
         
         # create the reader
         ar = ansysReader.ansysReader()
-        ar.InputAnsysFileName = r'D:\vapps\LHPBuilder_Parabuild\ASCIIParser\testData\ansys\2505_meshBV3_morgan.inp'
+        ar.InputAnsysFileName =  self.StartDir + r'\testData\ansys\2505_meshBV3_morgan.inp'
     
         # set the file name
         # read
