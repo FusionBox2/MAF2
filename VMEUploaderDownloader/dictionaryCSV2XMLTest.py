@@ -4,6 +4,7 @@
 # author: Stefano Perticoni  <s.perticoni@scsolutions.it>
 #-----------------------------------------------------------------------------
 
+from Debug import Debug
 import csv, sys
 import unittest
 import Enum
@@ -13,7 +14,7 @@ from xml.dom.minidom import Document
 class dictionaryCSV2XMLTest(unittest.TestCase):
     """Tests and experiments on csv lhdl dictionary XML transformation"""
     
-    def testValidation(self):
+    def testValidationMasterDictionary(self):
          """main test drive for dictionaryCSV2XML: parse csv dictionary and create xml output"""
          
          # Application Experts note
@@ -23,6 +24,32 @@ class dictionaryCSV2XMLTest(unittest.TestCase):
          # Application Experts note
          # this is the output to open in Firefox to check it`s valid XML ( replace output sample data )   
          xmlOutput = r'.\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.xml'
+
+         dictionaryCSV2XML.run(csvDict,xmlOutput)
+         
+    
+    def testValidationMotionAnalysisDictionary(self):
+         
+         # Application Experts note
+         # your CSV to validate here! ( replace sample data file name )
+         csvDict = r'.\csv2XMLTestData\MotionAnalysis.csv'
+         
+         # Application Experts note
+         # this is the output to open in Firefox to check it`s valid XML ( replace output sample data )   
+         xmlOutput = r'.\csv2XMLTestData\MotionAnalysis.xml'
+
+         dictionaryCSV2XML.run(csvDict,xmlOutput)
+    
+    
+    def testValidationDicomDictionary(self):
+         
+         # Application Experts note
+         # your CSV to validate here! ( replace sample data file name )
+         csvDict = r'.\csv2XMLTestData\DicomSource.csv'
+         
+         # Application Experts note
+         # this is the output to open in Firefox to check it`s valid XML ( replace output sample data )   
+         xmlOutput = r'.\csv2XMLTestData\DicomSource.xml'
 
          dictionaryCSV2XML.run(csvDict,xmlOutput)
          
