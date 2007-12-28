@@ -78,6 +78,7 @@ Section "create product directory structure" SEC01
   SetOutPath "$INSTDIR\Config\ExternalPythonVersion"
   File "@LHPBUILDER_INSTALLER_DIR_WIN@\PythonControl.bat"
   File "@LHPBUILDER_INSTALLER_DIR_WIN@\PythonScriptVersion.py"
+  File "@LHPBUILDER_INSTALLER_DIR_WIN@\updatePythonVersion.py"
   SetOutPath "$INSTDIR\Layout"
   File "@LHPBUILDER_INSTALLER_DIR_WIN@\layout.mly"
   
@@ -99,7 +100,21 @@ Section "create product directory structure" SEC01
   
   ${If} $0 != "0"
     MessageBox MB_OK "Python not present, several application features don't work correctly"
+    ExecShell "open" "http://www.python.org/download/releases/2.5.1/"
   ${EndIf}
+
+  IfFileExists "pythonVersion.txt" PythonExists PythonNOTExists
+  PythonNOTExists:
+     MessageBox MB_OK "Python not present, several application features don't work correctly"
+     ExecShell "open" "http://www.python.org/download/releases/2.5.1/"
+     Delete "pythonVersion.txt"
+  PythonExists:
+
+  ;must replicate control otherwise it's not deleted
+  IfFileExists "$INSTDIR\Config\ExternalPythonVersion\pythonVersion.txt" Exists NOTExists
+  Exists:
+     Delete "$INSTDIR\Config\ExternalPythonVersion\pythonVersion.txt"
+  NOTExists:
 
 SectionEnd
 
@@ -142,6 +157,16 @@ Section Uninstall
   Delete "$INSTDIR\Config\Dictionary\dicom3.dic"
   Delete "$INSTDIR\Splash\SPLASH_SCREEN.bmp"
 
+  Delete "$INSTDIR\Config\ExternalPythonVersion\PythonControl.bat"
+  Delete "$INSTDIR\Config\ExternalPythonVersion\PythonScriptVersion.py"
+  Delete "$INSTDIR\Config\ExternalPythonVersion\updatePythonVersion.py"
+
+  IfFileExists "$INSTDIR\Config\ExternalPythonVersion\updatePythonVersion.pyc" Exists NOTExists
+  Exists:
+     Delete "$INSTDIR\Config\ExternalPythonVersion\updatePythonVersion.pyc"
+
+  NOTExists:
+
   Delete "$SMPROGRAMS\b3c_software\lhpBuilder\Uninstall.lnk"
   Delete "$SMPROGRAMS\b3c_software\lhpBuilder\Website.lnk"
   Delete "$DESKTOP\lhpBuilder.lnk"
@@ -152,6 +177,7 @@ Section Uninstall
   RMDir "$INSTDIR\Splash"
   RMDir "$INSTDIR\Layout"
   RMDir "$INSTDIR\Config\Dictionary"
+  RMDir "$INSTDIR\Config\ExternalPythonVersion"
   RMDir "$INSTDIR\bin"
   RMDir "$INSTDIR\data\external"
   RMDir "$INSTDIR\data\msf"
