@@ -23,7 +23,11 @@ import fileUtilities
 import AnsysGrammar
 
 class ansysReader:
-    """"""
+    """
+    Parse ansys input files and extract geometry (points), connectivity (cells) and materials. 
+    nodes, elements and materials output files are written in maf fem meshes input format  to be
+    used by standard maf fem reader components.
+    """
     
     def __init__(self):                       
         
@@ -36,6 +40,7 @@ class ansysReader:
         self.ElementsMatrix = []       
         self.MaterialData = []
         self.ProgressBar = progressBar.progressBar()
+        self.CurrentMatTemp =  0.0  # undefined
         
     def Read(self):
         return self.Parse()
@@ -109,11 +114,21 @@ class ansysReader:
                 cargo = self.ReadElements(cargo)
                 file, line = cargo
                 continue
-            
-            # Materials section: MTEMP format
-            # find the materials section
+              
+            # Materials section MPTEMP format
             if re.search("^(MPTEMP,)", line):
                 # print "parsing MPTEMP materials section..."
+                if Debug:
+                    print "Found material temp section at line " + str(self.ParsedLineNumber)
+                
+                # create the materials NodesMatrix
+                cargo = file, line
+                cargo = self.ReadMaterialsMPTEMP(cargo)
+                file, line = cargo
+           
+            # Materials section: MPDATA format
+            if re.search("^(MPDATA,)", line):
+                # print "parsing MPDATA materials section..."
                 if Debug:
                     print "Found materials section at line " + str(self.ParsedLineNumber)
                 materialsMPTEMP_MPDATASectionsNumber += 1
@@ -123,9 +138,8 @@ class ansysReader:
                 cargo = self.ReadMaterialsMPTEMP_MPDATA(cargo)
             
             # Materials section MP format
-            # find the materials section
-            if re.search("^(!MPTEMP,)", line):
-                # print "parsing MPTEMP materials section..."
+            if re.search("^(MP,)", line):
+                # print "parsing MP materials section..."
                 if Debug:
                     print "Found materials section at line " + str(self.ParsedLineNumber)
                 materialsMPTEMP_MPSectionsNumber += 1
@@ -133,11 +147,11 @@ class ansysReader:
                 # create the materials NodesMatrix
                 cargo = file, line
                 cargo = self.ReadMaterialsMPTEMP_MP(cargo)
-                
+           
+            # exit when end of file is found
             if not line: break
-            # output files into the cache directory
                 
-            # file first-line
+            # read next line
             line = file.readline() 
             self.ParsedLineNumber += 1
             
@@ -483,15 +497,7 @@ class ansysReader:
 
         file, line = cargo
         
-        try: 
-            MPTEMP =  AnsysGrammar.materialTemp.parseString( line )
-            matTemp = MPTEMP[2]
-            materialList.append(matTemp)
-            
-        except ParseException:
-            if Debug:
-                print "cannot parse line " + str(lineNum)
-            return
+        materialList.append(self.CurrentMatTemp)
         
         # 
         #MPDATA,EX  ,2,1,          1000.0
@@ -501,9 +507,6 @@ class ansysReader:
         #['MPDATA,', 'EX', '2', '1', '1000.0']
         #['MPDATA,', 'NUXY', '2', '1', '0.3']
 
-        line = file.readline()
-        self.ParsedLineNumber += 1
-        self.PrintProgress()
         
         while 1:
 
@@ -533,6 +536,38 @@ class ansysReader:
         return file, line
 
     
+    
+    def ReadMaterialsMPTEMP(self,cargo):
+        
+        self.PrintProgress()
+        
+        matTemp = ""
+        
+        # 
+        #MPTEMP,1,             0.0 
+        
+        # 
+        
+        #['MPTEMP,', '1', '0.0']
+
+        file, line = cargo
+                
+        try: 
+            MPTEMP =  AnsysGrammar.materialTemp.parseString( line )
+            matTemp = MPTEMP[2]
+            self.CurrentMatTemp = matTemp
+            
+        except ParseException:
+            if Debug:
+                print "cannot parse line " + str(self.ParsedLineNumber)
+            return
+        
+        line = file.readline()
+        self.ParsedLineNumber += 1
+        
+        return file, line
+
+        
     def ReadMaterialsMPTEMP_MP(self,cargo):
         """Generate materials text"""
         self.PrintProgress()
@@ -565,20 +600,8 @@ class ansysReader:
         #['MPTEMP,', '1', '0.0']
 
         file, line = cargo
-                
-        try: 
-            MPTEMP =  AnsysGrammar.materialTemp2.parseString( line )
-            matTemp = MPTEMP[1]
-            materialList.append(matTemp)
-            
-        except ParseException:
-            if Debug:
-                print "cannot parse line " + str(lineNum)
-            return
         
-
-        line = file.readline()
-        self.ParsedLineNumber += 1
+        materialList.append(self.CurrentMatTemp)
         self.PrintProgress()
         
         while 1:
