@@ -135,7 +135,7 @@ class ansysReader:
                 
                 # create the materials NodesMatrix
                 cargo = file, line
-                cargo = self.ReadMaterialsMPTEMP_MPDATA(cargo)
+                cargo = self.ReadMaterialsMPDATA(cargo)
             
             # Materials section MP format
             if re.search("^(MP,)", line):
@@ -146,7 +146,7 @@ class ansysReader:
                 
                 # create the materials NodesMatrix
                 cargo = file, line
-                cargo = self.ReadMaterialsMPTEMP_MP(cargo)
+                cargo = self.ReadMaterialsMP(cargo)
            
             # exit when end of file is found
             if not line: break
@@ -474,7 +474,7 @@ class ansysReader:
              print "returning line: " + line
         return file, line
 
-    def ReadMaterialsMPTEMP_MPDATA(self,cargo):
+    def ReadMaterialsMPDATA(self,cargo):
         """Generate materials text"""
         self.PrintProgress()
         
@@ -568,7 +568,7 @@ class ansysReader:
         return file, line
 
         
-    def ReadMaterialsMPTEMP_MP(self,cargo):
+    def ReadMaterialsMP(self,cargo):
         """Generate materials text"""
         self.PrintProgress()
         
