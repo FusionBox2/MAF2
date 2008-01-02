@@ -116,6 +116,7 @@ Section "create product directory structure" SEC01
      Delete "$INSTDIR\Config\ExternalPythonVersion\pythonVersion.txt"
   NOTExists:
 
+  SetOutPath "$INSTDIR\bin"
 SectionEnd
 
 Section -AdditionalIcons
