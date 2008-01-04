@@ -105,7 +105,7 @@ Section "create product directory structure" SEC01
 
   IfFileExists "pythonVersion.txt" PythonExists PythonNOTExists
   PythonNOTExists:
-     MessageBox MB_OK "Python not present, several application features don't work correctly"
+     MessageBox MB_OK "Python 2.5 not installed or directory not present in PATH variable, several application features don't work correctly"
      ExecShell "open" "http://www.python.org/download/releases/2.5.1/"
      Delete "pythonVersion.txt"
   PythonExists:
