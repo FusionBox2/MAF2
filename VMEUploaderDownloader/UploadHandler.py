@@ -43,6 +43,8 @@ class UploadHandler:
 
         #launch external XML editor
         self.launchXMLEditor(self.dirOutgoing)
+        #send file
+        self.sendBinaryFile()
         print "Wainting..."
         while 1:
             # To simulate asynchronous I/O, we create a random number at
@@ -101,7 +103,11 @@ class UploadHandler:
         pass	
 
     def __sendFile(self,filename):
-        #MtomUpload.MtomUpload().Upload(filename)
+        instance = MtomUpload.MtomUpload()
+        result = instance.Upload(filename)
+        #self.assertEqual(, True)
+        cheksum = result.chksum
+        uri = result.uriFile
         pass
 		
 		
