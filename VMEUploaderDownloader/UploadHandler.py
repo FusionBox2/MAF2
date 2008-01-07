@@ -1,5 +1,5 @@
 import vmeUploader
-#import webServicesClient.MtomUpload
+from webServicesClient import MtomUpload
 import msfParser
 import os, sys, string, time, re ,shutil
 import threading
@@ -105,7 +105,6 @@ class UploadHandler:
     def __sendFile(self,filename):
         instance = MtomUpload.MtomUpload()
         result = instance.Upload(filename)
-        #self.assertEqual(, True)
         cheksum = result.chksum
         uri = result.uriFile
         pass
