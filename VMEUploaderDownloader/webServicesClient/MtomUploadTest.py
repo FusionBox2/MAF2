@@ -1,11 +1,18 @@
 import unittest
-from MtomUpload import MtomUpload
+import MtomUpload
 
 class MtomUploadTest(unittest.TestCase):
     """"""
     def testUpload(self):
         testFile = "testData.zip"
-        self.assertEqual(MtomUpload().Upload(testFile), True)
+        instance = MtomUpload.MtomUpload()
+        result = instance.Upload(testFile)
+        #self.assertEqual(, True)
+        cheksum = result.chksum
+        uri = result.uriFile
+
+        print checksum
+        print uri
 
 if __name__ == '__main__':
     unittest.main()
