@@ -8,7 +8,7 @@ class MtomUploadTest(unittest.TestCase):
         instance = MtomUpload.MtomUpload()
         result = instance.Upload(testFile)
         #self.assertEqual(, True)
-        cheksum = result.chksum
+        checksum = result.chksum
         uri = result.uriFile
 
         print checksum
