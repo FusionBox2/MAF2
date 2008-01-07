@@ -219,9 +219,57 @@ class msfParser:
             if child.nodeType == Node.ELEMENT_NODE:
                print child.nodeName
                if child.nodeName == "URL":
+                   
                   contents.append(child.childNodes[0].nodeValue)
             self.__GetVMEDataURLListInternal(child, contents)
     
+    def GetTagNodeByTagName(self, inputVmeTagArrayNode, tagName):
+        """Get tagNode given tag array node and tag name """
+        for node in inputVmeTagArrayNode.childNodes:
+        #  search for a Node with name "Node"...0
+            if node.nodeType == Node.ELEMENT_NODE:
+                if node.nodeName == "TItem":
+                    # get node attributes
+                    attrs = node.attributes                             
+                    for attrName in attrs.keys():
+                        attrNode = attrs.get(attrName)
+                        attrValue = attrNode.nodeValue
+                        if (attrValue == tagName):
+                             return node
+        return None
+    
+    def SetTagNodeText(self, tagNode, stringValue):
+        """Set text content for tag node of type:
+        
+         <TItem Mult="1" Name="tagName" Type="STR">
+               <TItem>
+                 <TC>This is my text content...</TC>
+               </TItem>
+         </TItem>
+        
+        which is a standard vme tag item
+        node must exist already"""
+        isinstance(tagNode, minidom.Node)
+        textNode = tagNode.childNodes[0].childNodes[0].childNodes[0]
+        isinstance(textNode,minidom.Node)
+        textNode.data = stringValue
+
+    def GetTagNodeText(self, tagNode):
+        """Return text content for tag node of type
+        
+         <TItem Mult="1" Name="tagName" Type="STR">
+               <TItem>
+                 <TC>This is my text content...</TC>
+               </TItem>
+         </TItem>
+        
+        which is a standard vme tag item
+        """
+        isinstance(tagNode, minidom.Node)
+        textNode = tagNode.childNodes[0].childNodes[0].childNodes[0]
+        isinstance(textNode,minidom.Node)
+        return textNode.data
+        
     def RemoveTagsByList(self, inputVmeTagArrayNode, tagsToBeRemoved):
         # change number of tags
         # <Item NumberOfTags="2" Type="mafTagArray">
@@ -301,7 +349,7 @@ class msfParser:
          
          <TItem Mult="1" Name="Dicom_CT_model" Type="STR">
                <TItem>
-                 <TC>GE SuperGulp</TC>
+                 <TC>This is my text content...</TC>
                </TItem>
          </TItem>
         

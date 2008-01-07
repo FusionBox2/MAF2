@@ -156,7 +156,42 @@ class msfParserTest(unittest.TestCase):
         
         outFile = open('afterTagsAdding.txt', 'w')
         p.PrintDOMTree(vme, outFile)
+    
+    def testGetTagNodeByTagName(self):
         
+        p = self.msfParserInstance
+        vme = p.GetVmeNodeById(self.rootNode, 1)
+        tagArray = p.GetVmeTagArrayNode(vme)
+        self.assertNotEqual(tagArray, None)
+        p.PrintNodeToScreen(tagArray)
+        p.AddTagsFromList(self.doc,tagArray, [r'pippo',r'pluto'])
+        # pippo exist
+        pippoNode = p.GetTagNodeByTagName(tagArray, "pippo")
+        self.assertTrue(pippoNode)
+        # mazinga doesn't...
+        mazingaNode = p.GetTagNodeByTagName(tagArray, "mazinga")        
+        self.assertFalse(mazingaNode)
+    
+    def testSetGetTagNodeText(self) :
+        
+        p = self.msfParserInstance
+        vme = p.GetVmeNodeById(self.rootNode, 1)
+        tagArray = p.GetVmeTagArrayNode(vme)
+        self.assertNotEqual(tagArray, None)
+        p.PrintNodeToScreen(tagArray)
+        p.AddTagsFromList(self.doc,tagArray, [r'pippo',r'pluto'])
+        pippoNode = p.GetTagNodeByTagName(tagArray, "pippo")
+        
+        text = p.GetTagNodeText(pippoNode)
+        # text before set         
+        print text
+        self.assertFalse(text == "ciao ciao")
+        
+        p.SetTagNodeText(pippoNode, "ciao ciao")
+        text = p.GetTagNodeText(pippoNode)
+        # text after set
+        print text
+        self.assertTrue(text == "ciao ciao")
         
 if __name__ == '__main__':
     unittest.main()
