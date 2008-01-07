@@ -48,6 +48,27 @@ except AttributeError:
 del types
 
 
+class uploadResult(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, uploadResult, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, uploadResult, name)
+    __repr__ = _swig_repr
+    __swig_setmethods__["chksum"] = _MtomUpload.uploadResult_chksum_set
+    __swig_getmethods__["chksum"] = _MtomUpload.uploadResult_chksum_get
+    if _newclass:chksum = _swig_property(_MtomUpload.uploadResult_chksum_get, _MtomUpload.uploadResult_chksum_set)
+    __swig_setmethods__["uriFile"] = _MtomUpload.uploadResult_uriFile_set
+    __swig_getmethods__["uriFile"] = _MtomUpload.uploadResult_uriFile_get
+    if _newclass:uriFile = _swig_property(_MtomUpload.uploadResult_uriFile_get, _MtomUpload.uploadResult_uriFile_set)
+    def __init__(self, *args): 
+        this = _MtomUpload.new_uploadResult(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _MtomUpload.delete_uploadResult
+    __del__ = lambda self : None;
+uploadResult_swigregister = _MtomUpload.uploadResult_swigregister
+uploadResult_swigregister(uploadResult)
+
 class MtomUpload(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, MtomUpload, name, value)
@@ -68,10 +89,4 @@ MtomUpload_swigregister = _MtomUpload.MtomUpload_swigregister
 MtomUpload_swigregister(MtomUpload)
 
 
-if __name__ == "__main__":
-    import sys
-    if len(sys.argv) != 2:
-        print "Error: wrong args.\nUsage: %s <filename>" % str(sys.argv[0])
-        sys.exit(1)
 
-    MtomUpload().Upload(sys.argv[1])
