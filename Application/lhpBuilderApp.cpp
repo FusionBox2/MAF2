@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-12-27 14:38:20 $
-  Version:   $Revision: 1.32 $
+  Date:      $Date: 2008-01-07 10:31:11 $
+  Version:   $Revision: 1.33 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -189,8 +189,8 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mafOpImporterMSF("MSF"),"Other");
   m_Logic->Plug(new mmoMSF1xImporter("MAF 1.x"),"Other");
   m_Logic->Plug(new mmoRAWImporterVolume("RAW Volume"),"Images");
+  m_Logic->Plug(new mmoRAWImporterImages("Raw Images"),"Images");
   m_Logic->Plug(new mmoImageImporter("Images"),"Images");
-	m_Logic->Plug(new mmoRAWImporterImages("Raw Images"),"Images");
   m_Logic->Plug(new mmoLandmarkImporter("Landmark"),"Motion Analysis");
 	m_Logic->Plug(new mmoLandmarkImporterWS("ASCII trajectories (VWs)"),"Motion Analysis");
   m_Logic->Plug(new mmoMotionDataImporter<mafVMEC3DData>("C3D", "C3D Motion Data (*.c3d)|*.c3d", "Dictionary (*.txt)|*.txt"),"Motion Analysis");
@@ -230,7 +230,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoRegisterClusters("Register Landmark Cloud"),"Modify/Fuse");
   m_Logic->Plug(new mmoCreateMeter("Distance Meter"),"Create/Derive");
   m_Logic->Plug(new medOpCreateWrappedMeter("Wrapped Meter"),"Create/Derive");
-  m_Logic->Plug(new mmoEditMetadata("Metadata Editor"),"Modify");
+ // m_Logic->Plug(new mmoEditMetadata("Metadata Editor"),"Modify");
 	m_Logic->Plug(new mmoFilterSurface("Filter Surface"),"Modify");
 	m_Logic->Plug(new mmoExtractIsosurface("Extract Isosurface"),"Create/Derive");
   m_Logic->Plug(new medOpSurfaceMirror("Surface Mirror"),"Modify");
@@ -310,9 +310,9 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(slicerView);
 
   //temporary for testing
-  mafViewSingleSliceCompound *sliceView = new mafViewSingleSliceCompound("Test Slice");
-  sliceView->PackageView();
-  m_Logic->Plug(sliceView);
+  //mafViewSingleSliceCompound *sliceView = new mafViewSingleSliceCompound("Test Slice");
+  //sliceView->PackageView();
+  //m_Logic->Plug(sliceView);
 
   //-------------------------------------------------------------
 
