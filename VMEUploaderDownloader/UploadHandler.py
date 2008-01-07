@@ -43,8 +43,19 @@ class UploadHandler:
 
         #launch external XML editor
         self.launchXMLEditor(self.dirOutgoing)
+
+        #get free resource
+        uri = self.getFreeResource()
+
         #send file
         self.sendBinaryFile()
+
+        #modify xml with URI
+        self.uriXMLSubstitution(uri)
+
+        #send xml file
+        self.sendXMLFile()
+
         print "Wainting..."
         while 1:
             # To simulate asynchronous I/O, we create a random number at
@@ -59,7 +70,6 @@ class UploadHandler:
             if(self.msg == 100): break
 
     def launchXMLEditor(self, dir):
-        print "test"
         print str(dir)
         files = os.listdir(dir)
         print files
@@ -76,34 +86,39 @@ class UploadHandler:
         os.system(command)
         os.chdir(oldDir)
 
+    def getFreeResource(self):
+        #here call module to get URI of first free resource
+        return "test"
+
     def sendBinaryFile(self):
         files = os.listdir(self.dirOutgoing)
-        #print files
+        print files
         binaryFile = ""
         for file in files:
             if (re.search('\\.xml$',file) == None):
                binaryFile = file
         #assert(binaryFile)
-        #print binaryFile
-        self.__sendFile(binaryFile)
+        print self.dirOutgoing + "\\" + binaryFile
+        self.__sendFile(self.dirOutgoing + "\\" + binaryFile)
 		
     def sendXMLFile(self):
         files = os.listdir(self.dirOutgoing)
-        #print files
+        print files
         xmlFile = ""
         for file in files:
             if (re.search('\\.xml$',file)):
                xmlFile = file
-        assert(xmlFile)
-        print xmlFile
-        self.__sendFile(xmlFile)
+        #assert(xmlFile)
+        print self.dirOutgoing + "\\" + xmlFile
+        self.__sendFile(self.dirOutgoing + "\\" + xmlFile)
 	
-    def uriXMLSubstitution(self, uri, xml):
+    def uriXMLSubstitution(self, realURI):
         #substitute in xml uri value
         pass	
 
     def __sendFile(self,filename):
         instance = MtomUpload.MtomUpload()
+        print "sendFile " + filename
         result = instance.Upload(filename)
         cheksum = result.chksum
         uri = result.uriFile
