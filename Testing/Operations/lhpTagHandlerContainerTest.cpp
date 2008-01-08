@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpTagHandlerContainerTest.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-20 07:52:30 $
-Version:   $Revision: 1.6 $
+Date:      $Date: 2008-01-08 16:07:15 $
+Version:   $Revision: 1.7 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004 
@@ -26,6 +26,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "mafTagArray.h"
 #include "mafTransform.h"
 #include "mafVMEOutputNULL.h"
+#include "mafAbsMatrixPipe.h"
 #include "mafVersion.h"
 #include <iostream>
 #include "mafString.h"
@@ -83,7 +84,47 @@ void lhpTagHandlerContainerTest::CreateTestData()
 
 	m_ParametersCargo->SetInputUser(m_TestUser);
 
+	mafString msfFile = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\msf_test_import_export_VME\\msf_test_import_export_VME.msf").c_str();
+  
+	m_ParametersCargo->SetInputMSF(msfFile);
+
   CPPUNIT_ASSERT(m_TestVMESurface->GetOutput()->GetVTKData()->GetNumberOfCells() > 0);
+}
+
+//----------------------------------------------------------------------------------------
+void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_Type_Dimension()
+//----------------------------------------------------------------------------------------
+{
+	lhpTagHandler *tag = NULL;
+	tag = m_TagHandlersFactory->CreateTagHandlerInstance("lhpTagHandler_L0000_resource_data_Type_Dimension");
+
+	CPPUNIT_ASSERT(tag!=NULL);
+	CPPUNIT_ASSERT(tag->IsMAFType(lhpTagHandler_L0000_resource_data_Type_Dimension));
+	CPPUNIT_ASSERT(m_TestVMESurface->GetTagArray()->IsTagPresent(tag->GetTagName()) == false);
+
+	tag->HandleAutoTag(m_ParametersCargo);
+
+	mafString value = m_ParametersCargo->GetTagHandlerGeneratedString();
+	CPPUNIT_ASSERT(value == "NOT PRESENT");
+	tag->Delete();
+}
+
+//----------------------------------------------------------------------------------------
+void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_Type_VolumeType()
+//----------------------------------------------------------------------------------------
+{
+	lhpTagHandler *tag = NULL;
+	tag = m_TagHandlersFactory->CreateTagHandlerInstance("lhpTagHandler_L0000_resource_data_Type_VolumeType");
+
+	CPPUNIT_ASSERT(tag!=NULL);
+	CPPUNIT_ASSERT(tag->IsMAFType(lhpTagHandler_L0000_resource_data_Type_VolumeType));
+	CPPUNIT_ASSERT(m_TestVMESurface->GetTagArray()->IsTagPresent(tag->GetTagName()) == false);
+
+	tag->HandleAutoTag(m_ParametersCargo);
+
+	mafString value = m_ParametersCargo->GetTagHandlerGeneratedString();
+	CPPUNIT_ASSERT(value == "NOT PRESENT");
+	tag->Delete();
 }
 //----------------------------------------------------------------------------------------
 void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_Type_Timevarying()
@@ -103,7 +144,24 @@ void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_Type_Time
   tag->Delete();
 
 }
+//----------------------------------------------------------------------------------------
+void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_Size_DatasetSize()
+//----------------------------------------------------------------------------------------
+{
+  lhpTagHandler *tag = NULL;
+  tag = m_TagHandlersFactory->CreateTagHandlerInstance("lhpTagHandler_L0000_resource_data_Size_DatasetSize");
+  CPPUNIT_ASSERT(tag!=NULL);
+  CPPUNIT_ASSERT(tag->IsMAFType(lhpTagHandler_L0000_resource_data_Size_DatasetSize));
+  CPPUNIT_ASSERT(m_TestVMESurface->GetTagArray()->IsTagPresent(tag->GetTagName()) == false);
 
+  tag->HandleAutoTag(m_ParametersCargo);
+
+  mafString value = m_ParametersCargo->GetTagHandlerGeneratedString();
+  mafString result;
+  result << "NOT YET HANDLED!"; //this test can't use wxExecute, so it can only process id = -1
+  CPPUNIT_ASSERT(value == result);
+  tag->Delete();
+}
 //----------------------------------------------------------------------------------------
 void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_Size_TimeFramesCount()
 //----------------------------------------------------------------------------------------
@@ -123,6 +181,42 @@ void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_Size_Time
   CPPUNIT_ASSERT(value == result);
   tag->Delete();
 
+}
+//----------------------------------------------------------------------------------------
+void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_Dataset_FileSize()
+//----------------------------------------------------------------------------------------
+{
+  lhpTagHandler *tag = NULL;
+  tag = m_TagHandlersFactory->CreateTagHandlerInstance("lhpTagHandler_L0000_resource_data_Dataset_FileSize");
+  CPPUNIT_ASSERT(tag!=NULL);
+  CPPUNIT_ASSERT(tag->IsMAFType(lhpTagHandler_L0000_resource_data_Dataset_FileSize));
+  CPPUNIT_ASSERT(m_TestVMESurface->GetTagArray()->IsTagPresent(tag->GetTagName()) == false);
+
+  tag->HandleAutoTag(m_ParametersCargo);
+
+  mafString value = m_ParametersCargo->GetTagHandlerGeneratedString();
+  mafString result;
+  result << "NOT YET HANDLED!"; //this test can't use wxExecute, so it can only process id = -1
+  CPPUNIT_ASSERT(value == result);
+  tag->Delete();
+}
+//----------------------------------------------------------------------------------------
+void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_Dataset_FileType_Endianity()
+//----------------------------------------------------------------------------------------
+{
+	lhpTagHandler *tag = NULL;
+	tag = m_TagHandlersFactory->CreateTagHandlerInstance("lhpTagHandler_L0000_resource_data_Dataset_FileType_Endianity");
+
+	CPPUNIT_ASSERT(tag!=NULL);
+	CPPUNIT_ASSERT(tag->IsMAFType(lhpTagHandler_L0000_resource_data_Dataset_FileType_Endianity));
+	CPPUNIT_ASSERT(m_TestVMESurface->GetTagArray()->IsTagPresent(tag->GetTagName()) == false);
+
+	tag->HandleAutoTag(m_ParametersCargo);
+
+	mafString value = m_ParametersCargo->GetTagHandlerGeneratedString();
+	mafString result = mafIsLittleEndian()? "Little Endian" : "Big Endian";
+	CPPUNIT_ASSERT(value == result);
+	tag->Delete();
 }
 //----------------------------------------------------------------------------------------
 void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat()
@@ -161,6 +255,37 @@ void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_Dataset_F
   CPPUNIT_ASSERT(value == mafString(m_TestVMESurface->GetCrypting() ? "1" : "0"));
   tag->Delete();
 
+}
+//----------------------------------------------------------------------------------------
+void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_TimeSpace_VMEabsoluteMatrixPose()
+//----------------------------------------------------------------------------------------
+{
+	lhpTagHandler *tag = NULL;
+	tag = m_TagHandlersFactory->CreateTagHandlerInstance("lhpTagHandler_L0000_resource_data_TimeSpace_VMEabsoluteMatrixPose");
+	m_TestVMESurface->SetCrypting(true);
+
+	CPPUNIT_ASSERT(tag!=NULL);
+	CPPUNIT_ASSERT(tag->IsMAFType(lhpTagHandler_L0000_resource_data_TimeSpace_VMEabsoluteMatrixPose));
+	CPPUNIT_ASSERT(m_TestVMESurface->GetTagArray()->IsTagPresent(tag->GetTagName()) == false);
+
+	tag->HandleAutoTag(m_ParametersCargo);
+
+	mafString value = m_ParametersCargo->GetTagHandlerGeneratedString();
+
+	mafString result;
+	std::vector<mafTimeStamp> timeStamps;
+	m_TestVMESurface->GetAbsTimeStamps(timeStamps);
+	mafAbsMatrixPipe *absMatrixPipe = m_TestVMESurface->GetAbsMatrixPipe();
+	long timeCount;
+	for(timeCount = 0; timeCount < timeStamps.size(); timeCount++)
+	{
+		absMatrixPipe->SetTimeStamp(timeStamps[timeCount]);
+
+		result << absMatrixPipe->GetMatrix();
+	}
+
+	CPPUNIT_ASSERT(value == result);
+	tag->Delete();
 }
 //----------------------------------------------------------------------------------------
 void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector()
@@ -238,5 +363,39 @@ void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_Attribute
 
 	mafString value = m_ParametersCargo->GetTagHandlerGeneratedString();
 	CPPUNIT_ASSERT(value == "UserTest");
+	tag->Delete();
+}
+//----------------------------------------------------------------------------------------
+void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType()
+//----------------------------------------------------------------------------------------
+{
+	lhpTagHandler *tag = NULL;
+	tag = m_TagHandlersFactory->CreateTagHandlerInstance("lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType");
+
+	CPPUNIT_ASSERT(tag!=NULL);
+	CPPUNIT_ASSERT(tag->IsMAFType(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType));
+	CPPUNIT_ASSERT(m_TestVMESurface->GetTagArray()->IsTagPresent(tag->GetTagName()) == false);
+
+	tag->HandleAutoTag(m_ParametersCargo);
+
+	mafString value = m_ParametersCargo->GetTagHandlerGeneratedString();
+	CPPUNIT_ASSERT(value == "NOT PRESENT");
+	tag->Delete();
+}
+//----------------------------------------------------------------------------------------
+void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir()
+//----------------------------------------------------------------------------------------
+{
+	lhpTagHandler *tag = NULL;
+	tag = m_TagHandlersFactory->CreateTagHandlerInstance("lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir");
+
+	CPPUNIT_ASSERT(tag!=NULL);
+	CPPUNIT_ASSERT(tag->IsMAFType(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir));
+	CPPUNIT_ASSERT(m_TestVMESurface->GetTagArray()->IsTagPresent(tag->GetTagName()) == false);
+
+	tag->HandleAutoTag(m_ParametersCargo);
+
+	mafString value = m_ParametersCargo->GetTagHandlerGeneratedString();
+	CPPUNIT_ASSERT(value == "NOT PRESENT");
 	tag->Delete();
 }

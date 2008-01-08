@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpTagHandlerContainerTest.h,v $
 Language:  C++
-Date:      $Date: 2007-12-20 07:52:30 $
-Version:   $Revision: 1.4 $
+Date:      $Date: 2008-01-08 16:07:15 $
+Version:   $Revision: 1.5 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004 
@@ -45,23 +45,42 @@ class lhpTagHandlerContainerTest : public CPPUNIT_NS::TestFixture
     void tearDown();
 
     CPPUNIT_TEST_SUITE( lhpTagHandlerContainerTest );
+		CPPUNIT_TEST( TestlhpTagHandler_L0000_resource_data_Type_Dimension );
+		CPPUNIT_TEST( TestlhpTagHandler_L0000_resource_data_Type_VolumeType );
     CPPUNIT_TEST( TestlhpTagHandler_L0000_resource_data_Type_Timevarying );
+
+    CPPUNIT_TEST( TestlhpTagHandler_L0000_resource_data_Size_DatasetSize );
+    
     CPPUNIT_TEST( TestlhpTagHandler_L0000_resource_data_Size_TimeFramesCount );
-		CPPUNIT_TEST( TestlhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat);  
-    CPPUNIT_TEST( TestlhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption );  
+		CPPUNIT_TEST( TestlhpTagHandler_L0000_resource_data_Dataset_FileSize );
+		CPPUNIT_TEST( TestlhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat);
+		CPPUNIT_TEST( TestlhpTagHandler_L0000_resource_data_Dataset_FileType_Endianity);
+    CPPUNIT_TEST( TestlhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption );
+		CPPUNIT_TEST( TestlhpTagHandler_L0000_resource_data_TimeSpace_VMEabsoluteMatrixPose );
     CPPUNIT_TEST( TestlhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector );
     CPPUNIT_TEST( TestlhpTagHandler_L0000_resource_data_TreeInfo_VmeRootName );
 		CPPUNIT_TEST( TestlhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes_OwnerID );
+		CPPUNIT_TEST( TestlhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType );
+   	CPPUNIT_TEST( TestlhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir );
+		
     CPPUNIT_TEST_SUITE_END();
 
   protected:
+		void TestlhpTagHandler_L0000_resource_data_Type_Dimension();
+		void TestlhpTagHandler_L0000_resource_data_Type_VolumeType();
     void TestlhpTagHandler_L0000_resource_data_Type_Timevarying();
+    void TestlhpTagHandler_L0000_resource_data_Size_DatasetSize();
     void TestlhpTagHandler_L0000_resource_data_Size_TimeFramesCount();
+		void TestlhpTagHandler_L0000_resource_data_Dataset_FileSize();
 		void TestlhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat();
+		void TestlhpTagHandler_L0000_resource_data_Dataset_FileType_Endianity();
     void TestlhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption();
+		void TestlhpTagHandler_L0000_resource_data_TimeSpace_VMEabsoluteMatrixPose();
     void TestlhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector();
     void TestlhpTagHandler_L0000_resource_data_TreeInfo_VmeRootName();
 		void TestlhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes_OwnerID();
+		void TestlhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType();
+		void TestlhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir();
     void CreateTestData();
 
   private:
