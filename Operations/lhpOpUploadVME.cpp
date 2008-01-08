@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-19 16:19:42 $
-Version:   $Revision: 1.29 $
+Date:      $Date: 2008-01-08 16:06:42 $
+Version:   $Revision: 1.30 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -163,6 +163,7 @@ void lhpOpUploadVME::OnEvent(mafEventBase *maf_event)
       {
         wxString temp;
         temp.Append((*e->GetString()).GetCStr());
+				m_MsfFile = temp;
         temp = temp.BeforeLast('/');
         m_MsfDir = temp;
       }
@@ -177,6 +178,17 @@ void lhpOpUploadVME::OnEvent(mafEventBase *maf_event)
 void lhpOpUploadVME::OpDo()   
 //----------------------------------------------------------------------------
 {
+	if(!CreateBaseCacheAndOutgoingDirectories())
+	{
+		wxMessageBox("Unable to create Cache Base Directory");
+		return;
+	}
+
+	if(!CreateCache())
+	{
+		wxMessageBox("Unable to create a temporary cache, remember that msf must be saved locally");
+		return;
+	}
 
   int ret = this->GeneratesManualTagsListFromXMLDictionary();
   if (ret == MAF_ERROR)
@@ -190,18 +202,6 @@ void lhpOpUploadVME::OpDo()
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
 //mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxBusyCursor wait;
-
-  if(!CreateBaseCacheAndOutgoingDirectories())
-  {
-    wxMessageBox("Unable to create Cache Base Directory");
-    return;
-  }
-
-  if(!CreateCache())
-  {
-    wxMessageBox("Unable to create a temporary cache, remember that msf must be saved locally");
-    return;
-  }
 
   
   // m_Pid = wxExecute(command2execute, output, errors, wxEXEC_NODISABLE);
@@ -484,6 +484,7 @@ int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
   lhpTagHandlerInputOutputParametersCargo *parametersCargo = lhpTagHandlerInputOutputParametersCargo::New();
   parametersCargo->SetInputVme(mafVME::SafeDownCast(m_Input));
   parametersCargo->SetInputUser(&m_User);
+	parametersCargo->SetInputMSF(m_MsfFile);
 
   for (int i = 0; i < m_AutoTagsList.size(); i++)
   {

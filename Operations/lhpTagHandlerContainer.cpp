@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-12-19 17:05:17 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2008-01-08 16:06:42 $
+  Version:   $Revision: 1.10 $
   Authors:   Stefano Perticoni - Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -23,10 +23,14 @@
 #include "mafTagArray.h"
 #include "mafVME.h"
 #include "mafVMERoot.h"
+#include "mafAbsMatrixPipe.h"
 
 
 #include <string>
-#include <ostream>
+#include <fstream>
+#include <iostream>
+
+using namespace std; 
 
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Type);
@@ -70,8 +74,19 @@ lhpTagHandler_L0000_resource_data_Type_Dimension::lhpTagHandler_L0000_resource_d
 void lhpTagHandler_L0000_resource_data_Type_Dimension::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-  // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+	mafVME *vme = cargo->GetInputVme();
+	mafString value;
+	if(vme->GetTagArray()->IsTagPresent("TYPE_DIMENSION"))
+	{
+		vme->GetTagArray()->GetTag("TYPE_DIMENSION")->GetValueAsSingleString(value);
+	}
+	else
+	{
+		value = "NOT PRESENT";
+	}
+
+	// tag handling code
+	cargo->SetTagHandlerGeneratedString(value);
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Type_VolumeType);
@@ -85,8 +100,19 @@ lhpTagHandler_L0000_resource_data_Type_VolumeType::lhpTagHandler_L0000_resource_
 void lhpTagHandler_L0000_resource_data_Type_VolumeType::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-  // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+	mafVME *vme = cargo->GetInputVme();
+	mafString value;
+	if(vme->GetTagArray()->IsTagPresent("TYPE_VOLUMETYPE"))
+	{
+		vme->GetTagArray()->GetTag("TYPE_VOLUMETYPE")->GetValueAsSingleString(value);
+	}
+	else
+	{
+		value = "NOT PRESENT";
+	}
+
+	// tag handling code
+	cargo->SetTagHandlerGeneratedString(value);
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Type_Timevarying);
@@ -119,8 +145,67 @@ lhpTagHandler_L0000_resource_data_Size_DatasetSize::lhpTagHandler_L0000_resource
 void lhpTagHandler_L0000_resource_data_Size_DatasetSize::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-  // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+	int length = 0;
+	mafString value = cargo->GetInputMSF();
+	mafString id ;
+	id << cargo->GetInputVme()->GetId();
+
+  if(cargo->GetInputVme()->GetId() == -1) return;
+
+	//here put code for filename
+	wxString oldDir = wxGetCwd();
+	mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+	wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+	mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+
+	// get manual tags
+	wxString command2execute;
+	command2execute.Clear();
+	command2execute = m_PythonExe;
+
+	command2execute.Append(" lhpCheckBinaryName.py ");
+	command2execute.Append(value.GetCStr());
+	command2execute.Append(" ");
+	command2execute.Append(id.GetCStr());
+
+	//mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+
+	long pid = wxExecute(command2execute, wxEXEC_SYNC);
+
+	wxArrayString output;
+	wxArrayString errors;
+
+	pid = wxExecute(command2execute, output, errors);
+
+	wxString result = output[output.size() - 1];
+
+	wxSetWorkingDirectory(oldDir);
+
+
+	////////////////////////////
+
+	wxString temp;
+	temp.Append(value.GetCStr());
+	temp = temp.BeforeLast('/');
+	temp.Append("/");
+	temp.Append(result);
+
+	mafString fileToComputeLength = temp;
+	fstream fp;
+	fp.open(fileToComputeLength);
+  
+  bool fileOpened = false; 
+  if(fp.fail() == false)
+  {
+	  fp.seekg(0, ios::end);
+	  length = fp.tellg();
+	  fp.close();
+    fileOpened = true;
+  }
+	
+  //Process with length
+	if(fileOpened) cargo->SetTagHandlerGeneratedString(wxString::Format("%d",length));
+
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Size_EntityCount);
@@ -186,8 +271,66 @@ lhpTagHandler_L0000_resource_data_Dataset_FileSize::lhpTagHandler_L0000_resource
 void lhpTagHandler_L0000_resource_data_Dataset_FileSize::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-  // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+  int length = 0;
+  mafString value = cargo->GetInputMSF();
+  mafString id ;
+  id << cargo->GetInputVme()->GetId();
+
+  if(cargo->GetInputVme()->GetId() == -1) return;
+
+  //here put code for filename
+  wxString oldDir = wxGetCwd();
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+
+  // get manual tags
+  wxString command2execute;
+  command2execute.Clear();
+  command2execute = m_PythonExe;
+
+  command2execute.Append(" lhpCheckBinaryName.py ");
+  command2execute.Append(value.GetCStr());
+  command2execute.Append(" ");
+  command2execute.Append(id.GetCStr());
+
+  //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+
+  long pid = wxExecute(command2execute, wxEXEC_SYNC);
+
+  wxArrayString output;
+  wxArrayString errors;
+
+  pid = wxExecute(command2execute, output, errors);
+
+  wxString result = output[output.size() - 1];
+
+  wxSetWorkingDirectory(oldDir);
+
+
+  ////////////////////////////
+
+  wxString temp;
+  temp.Append(value.GetCStr());
+  temp = temp.BeforeLast('/');
+  temp.Append("/");
+  temp.Append(result);
+
+  mafString fileToComputeLength = temp;
+  fstream fp;
+  fp.open(fileToComputeLength);
+
+  bool fileOpened = false; 
+  if(fp.fail() == false)
+  {
+    fp.seekg(0, ios::end);
+    length = fp.tellg();
+    fp.close();
+    fileOpened = true;
+  }
+
+  //Process with length
+  if(fileOpened) cargo->SetTagHandlerGeneratedString(wxString::Format("%d",length));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_UploadDate);
@@ -248,8 +391,12 @@ lhpTagHandler_L0000_resource_data_Dataset_FileType_Endianity::lhpTagHandler_L000
 void lhpTagHandler_L0000_resource_data_Dataset_FileType_Endianity::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-  // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+	
+	mafString value;
+	value = mafIsLittleEndian()? "Little Endian" : "Big Endian";
+
+	// tag handling code
+	cargo->SetTagHandlerGeneratedString(value);
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption);
@@ -283,8 +430,23 @@ lhpTagHandler_L0000_resource_data_TimeSpace_VMEabsoluteMatrixPose::lhpTagHandler
 void lhpTagHandler_L0000_resource_data_TimeSpace_VMEabsoluteMatrixPose::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-  // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+	mafVME *vme = cargo->GetInputVme();
+	mafString value;
+	mafAbsMatrixPipe *absMatrixPipe = vme->GetAbsMatrixPipe();
+
+	std::vector<mafTimeStamp> timeStamps;
+	vme->GetAbsTimeStamps(timeStamps);
+	
+	long timeCount;
+	for(timeCount = 0; timeCount < timeStamps.size(); timeCount++)
+	{
+		absMatrixPipe->SetTimeStamp(timeStamps[timeCount]);
+   
+		value << absMatrixPipe->GetMatrix();
+	}
+
+	// tag handling code
+	cargo->SetTagHandlerGeneratedString(value);
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector);
@@ -453,8 +615,19 @@ lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType::lhpTag
 void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-  // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+	mafVME *vme = cargo->GetInputVme();
+	mafString value;
+  if(vme->GetTagArray()->IsTagPresent("SOURCE_TYPE"))
+	{
+     vme->GetTagArray()->GetTag("SOURCE_TYPE")->GetValueAsSingleString(value);
+	}
+	else
+	{
+		value = "NOT PRESENT";
+	}
+
+	// tag handling code
+	cargo->SetTagHandlerGeneratedString(value);
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir);
@@ -468,6 +641,17 @@ lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceD
 void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-  // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+	mafVME *vme = cargo->GetInputVme();
+	mafString value;
+	if(vme->GetTagArray()->IsTagPresent("SOURCE_TYPE_SOURCE_DIR"))
+	{
+		vme->GetTagArray()->GetTag("SOURCE_TYPE_SOURCE_DIR")->GetValueAsSingleString(value);
+	}
+	else
+	{
+		value = "NOT PRESENT";
+	}
+
+	// tag handling code
+	cargo->SetTagHandlerGeneratedString(value);
 }

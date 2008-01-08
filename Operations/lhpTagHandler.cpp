@@ -2,15 +2,15 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandler.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-12-18 17:02:15 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-01-08 16:06:42 $
+  Version:   $Revision: 1.3 $
   Authors:   Stefano Perticoni - Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
   CINECA - Interuniversity Consortium (www.cineca.it)
 =========================================================================*/
 
-#include "mafDefines.h" 
+#include "mafDefines.h"
 //----------------------------------------------------------------------------------
 // NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
 // This force to include Window,wxWidgets and VTK exactly in this order.
@@ -19,7 +19,7 @@
 //----------------------------------------------------------------------------------
 
 #include "lhpTagHandler.h"
-
+#include "mafDecl.h"
 
 mafCxxTypeMacro(lhpTagHandlerInputOutputParametersCargo);
 //------------------------------------------------------------------------
@@ -27,6 +27,9 @@ lhpTagHandlerInputOutputParametersCargo::lhpTagHandlerInputOutputParametersCargo
 //------------------------------------------------------------------------------
 {
   m_InputVme = NULL;
+	m_InputUser = NULL;
+	m_InputMSF = "";
+
   m_TagHandlerGeneratedString = "NOT YET HANDLED!";
 }
 
@@ -36,6 +39,9 @@ mafCxxTypeMacro(lhpTagHandler);
 lhpTagHandler::lhpTagHandler()
 //------------------------------------------------------------------------------
 {
+	m_PythonExe ="python.exe ";
+	m_PythonwExe ="pythonw.exe ";
+	m_PythonUploadFullPath  = (mafGetApplicationDirectory() + "\\..\\VMEUploaderDownloader\\").c_str();
 }
 
 //------------------------------------------------------------------------

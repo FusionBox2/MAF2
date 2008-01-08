@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2007-12-19 14:36:43 $
-Version:   $Revision: 1.11 $
+Date:      $Date: 2008-01-08 16:06:42 $
+Version:   $Revision: 1.12 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -120,6 +120,7 @@ protected:
   mafString m_PythonExe; //>python  executable
   mafString m_PythonwExe; //>pythonw  executable
   mafString m_MsfDir; //>directory of original msf
+	mafString m_MsfFile; //>absolute path of original msf
   
   static long m_Pid; //> pid of the server process
 
