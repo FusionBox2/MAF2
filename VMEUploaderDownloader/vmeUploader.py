@@ -27,6 +27,8 @@ class vmeUploader:
         self.VmeToExtractID = 1    
         self.OutputVMEXMLName = "exportedVME.xml"
         self.OutputFolderName = "FolderToUpload"
+
+        self.DatasetURI = ""
         
     def Upload(self):
         self.__Parse()
@@ -104,7 +106,6 @@ class vmeUploader:
         # add new and updated autotags
         # "TAGNAME" , "TAGTEXT"
         msfDOMParserInstance.AddTagsFromDictionary(domDocument,outVmeTagArrayNode, autoTagsDictionary)
-        
     
         # UNHANDLED AUTO + MANUAL TAGS
         
@@ -131,7 +132,13 @@ class vmeUploader:
     
         a = list(tagsToBeRemoved)
         print a
-        
+
+        #AUTO TAGS SET  WITH  WEBSERVICE
+        nodeURI = msfDOMParserInstance.GetTagNodeByTagName(outVmeTagArrayNode, "L0000_resource_data_Dataset_DatasetURI")
+        msfDOMParserInstance.SetTagNodeText(nodeURI, self.DatasetURI)       
+        text = msfDOMParserInstance.GetTagNodeText(nodeURI)
+        print text
+
         # for the moment cannot remove anything
         # msfDOMParserInstance.RemoveTagsByList(outVmeTagArrayNode, a)
         

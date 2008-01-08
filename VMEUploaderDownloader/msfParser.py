@@ -361,7 +361,7 @@ class msfParser:
          newEl = domDoc.createElement("TItem")
              
          newEl.setAttribute("Mult", "1" )
-         newEl.setAttribute("Name", tagName )
+         newEl.setAttribute("Name", tagName.strip() )
          newEl.setAttribute("Type", "STR" )
          
          newElChild = domDoc.createElement("TItem")

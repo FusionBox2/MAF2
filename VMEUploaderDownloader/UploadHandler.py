@@ -1,8 +1,10 @@
 import vmeUploader
 from webServicesClient import MtomUpload
 import msfParser
+from xml.dom import minidom
+from xml.dom import Node
 import os, sys, string, time, re ,shutil
-import threading
+import threading, thread
 
 class UploadHandler:
     queue = None
@@ -17,8 +19,33 @@ class UploadHandler:
 		
     def upload(self):
         self.createXMLAndBinary()
-        self.sendBinaryFile()
+        
+        #launch external XML editor
+        self.launchXMLEditor(self.dirOutgoing)
+
+        #send file
+        #thread.start_new_thread(self.sendBinaryFile,())
+        self.sendBinaryFile() #until there is service monitor don't use thread
+
+        print "Wainting..."
+        #while 1:
+            # To simulate asynchronous I/O, we create a random number at
+            # random intervals. Replace the following 2 lines with the real
+            # thing.
+        #    time.sleep(0.2)
+        #    self.msg = self.msg + 20
+        self.msg = 100
+        lista = [self.observer,self.msg]
+        self.block.acquire()
+        UploadHandler.queue.put(lista)
+        self.block.release()
+        #    if(self.msg == 100): break
+
+        #send xml file
         self.sendXMLFile()
+        
+        print "End Upload" 
+
 		
     def createXMLAndBinary(self):
         curDir = sys.path[0]
@@ -39,48 +66,18 @@ class UploadHandler:
         upl.OutputFolderName = directory
         upl.VmeToExtractID = int(self.id)
 
+        #get free resource (return URI string)
+        uri = self.getFreeResource()
+        
+        upl.DatasetURI = uri
+
         upl.Upload()
 
-        #launch external XML editor
-        self.launchXMLEditor(self.dirOutgoing)
-
-        #get free resource
-        uri = self.getFreeResource()
-
-        #send file
-        self.sendBinaryFile()
-
-        #modify xml with URI
-        self.uriXMLSubstitution(uri)
-
-        #send xml file
-        self.sendXMLFile()
-
-        print "Wainting..."
-        while 1:
-            # To simulate asynchronous I/O, we create a random number at
-            # random intervals. Replace the following 2 lines with the real
-            # thing.
-            time.sleep(0.3)
-            self.msg = self.msg + 1
-            lista = [self.observer,self.msg]
-            self.block.acquire()
-            UploadHandler.queue.put(lista)
-            self.block.release()
-            if(self.msg == 100): break
-
     def launchXMLEditor(self, dir):
-        print str(dir)
-        files = os.listdir(dir)
-        print files
-        for file in files:
-            if (re.search('\\.xml$',file)):
-               xmlFile = file
-
         oldDir = os.getcwd()
         os.chdir("\"C:\\Program Files\\Peter's XML Editor\\")
         #print os.getcwd()
-        command = "\"" + dir + "\\" +  xmlFile + "\""
+        command = "\"" + dir + "\\" +  self.getXMLFile() + "\""
         command = "pxe.exe " + command
         #print command
         os.system(command)
@@ -88,42 +85,38 @@ class UploadHandler:
 
     def getFreeResource(self):
         #here call module to get URI of first free resource
-        return "test"
+        return "DaQuaPrendoURI"
 
     def sendBinaryFile(self):
         files = os.listdir(self.dirOutgoing)
-        print files
+        #print files
         binaryFile = ""
         for file in files:
             if (re.search('\\.xml$',file) == None):
                binaryFile = file
         #assert(binaryFile)
-        print self.dirOutgoing + "\\" + binaryFile
+        #print self.dirOutgoing + "\\" + binaryFile
         self.__sendFile(self.dirOutgoing + "\\" + binaryFile)
 		
     def sendXMLFile(self):
-        files = os.listdir(self.dirOutgoing)
-        print files
-        xmlFile = ""
-        for file in files:
-            if (re.search('\\.xml$',file)):
-               xmlFile = file
-        #assert(xmlFile)
-        print self.dirOutgoing + "\\" + xmlFile
-        self.__sendFile(self.dirOutgoing + "\\" + xmlFile)
-	
-    def uriXMLSubstitution(self, realURI):
-        #substitute in xml uri value
-        pass	
+        self.__sendFile(self.dirOutgoing + "\\" + self.getXMLFile())
 
     def __sendFile(self,filename):
         instance = MtomUpload.MtomUpload()
-        print "sendFile " + filename
+        print filename
         result = instance.Upload(filename)
         cheksum = result.chksum
         uri = result.uriFile
         pass
-		
+
+    def getXMLFile(self):
+        files = os.listdir(self.dirOutgoing)
+        #print files
+        xmlFile = ""
+        for file in files:
+            if (re.search('\\.xml$',file)):
+               xmlFile = file
+        return xmlFile	
 		
 def createUploadHandler(queue, observer, dirCache, id):
     uploadHandler = UploadHandler(queue,observer, dirCache, id)
