@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-01-08 16:06:42 $
-Version:   $Revision: 1.30 $
+Date:      $Date: 2008-01-09 17:19:58 $
+Version:   $Revision: 1.31 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -74,6 +74,18 @@ long lhpOpUploadVME::m_Pid = -1;
 mafString lhpOpUploadVME::m_CacheSubdir = "0";
 lhpUser lhpOpUploadVME::m_User = lhpUser();
 
+enum  m_SubdictionaryId_VALUES
+{
+  NO_SUBDICTIONARY = 0,
+  MOTION_ANALYSIS_SUBDICTIONARY = 1,
+  DICOM_SUBDICTIONARY = 2,
+};
+
+enum lhpOpUploadVME_ID
+{
+  ID_SUBDICTIONARY = MINID, 
+};
+
 //----------------------------------------------------------------------------
 lhpOpUploadVME::lhpOpUploadVME(wxString label) :
 mafOp(label)
@@ -93,8 +105,13 @@ mafOp(label)
 
   m_MsfDir = "";
 
-  m_XMLDictionaryFilePrefix = "lhpXMLDictionary_";
-  m_XMLDictionaryFileName = "UNDEFINED";
+  m_MasterXMLDictionaryFilePrefix = "lhpXMLDictionary_";
+  m_MasterXMLDictionaryFileName = "UNDEFINED";
+  m_SubXMLDictionaryFilePrefix = "UNDEFINED" ;
+  m_SubXMLDictionaryFileName = "UNDEFINED";
+  m_AssembledXMLDictionaryFileName = "assembledXMLDictionary.xml";
+  m_SubDictionaryBuildingCommand = "UNDEFINED";
+
   m_AutoTagsListFromXMLDictionaryFileName = "autoTagsList.txt";
   m_ManualTagsListFromXMLDictionaryFileName = "manualTagsList.txt";
   m_UnhandledPlusManualTagsFileName = "unhandledPlusManualTagsList.txt";
@@ -104,7 +121,8 @@ mafOp(label)
   m_UnhandledAutoTagsListFromFactory.Clear();
   m_AutoTagsList.Clear();
   m_ManualTagsList.Clear();
-
+  
+  m_SubdictionaryId = NO_SUBDICTIONARY; // default to none
 }
 
 //----------------------------------------------------------------------------
@@ -145,11 +163,14 @@ void lhpOpUploadVME::OpRun()
 
   if(upToDate)
   {
-    result = OP_RUN_OK;
+    CreateGui();
+    ShowGui();
+  }
+  else
+  {
+    OpStop(result);
   }
   
-  OpStop(result);
-
 }
 //----------------------------------------------------------------------------
 void lhpOpUploadVME::OnEvent(mafEventBase *maf_event) 
@@ -168,6 +189,29 @@ void lhpOpUploadVME::OnEvent(mafEventBase *maf_event)
         m_MsfDir = temp;
       }
       break;
+
+    case ID_SUBDICTIONARY:
+    {
+    //    // nothing to do for the moment...
+      mafLogMessage("You choosed dictionary number %i", m_SubdictionaryId);
+    }
+    break;
+
+    case wxOK:
+      {
+        this->OpStop(OP_RUN_OK);
+        return;
+      }
+      break;
+
+    case wxCANCEL:
+      {
+        
+        this->OpStop(OP_RUN_CANCEL);
+        return;
+      }
+      break;
+
     default:
       mafEventMacro(*e);
       break;
@@ -190,10 +234,10 @@ void lhpOpUploadVME::OpDo()
 		return;
 	}
 
-  int ret = this->GeneratesManualTagsListFromXMLDictionary();
+  int ret = this->GeneratesTagsListsFromXMLDictionary();
   if (ret == MAF_ERROR)
   {
-    wxMessageBox("Problems generatig tags list! Exiting...");
+    wxMessageBox("Problems generating tags list! Exiting...");
     return;
   } 
   
@@ -282,6 +326,7 @@ void lhpOpUploadVME::OpDo()
 void lhpOpUploadVME::OpStop(int result)   
 //----------------------------------------------------------------------------
 {
+  HideGui();
 	mafEventMacro(mafEvent(this,result));
 }
 //----------------------------------------------------------------------------
@@ -378,7 +423,7 @@ bool lhpOpUploadVME::ExistsRunningProcess()
   return result;
 }
 //----------------------------------------------------------------------------
-int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
+int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
 //----------------------------------------------------------------------------
 {
   wxString oldDir = wxGetCwd();
@@ -395,9 +440,47 @@ int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
   //xmlDict = r'.\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.xml'
   //lhpXMLDictionaryParser.run(xmlDict,"manual_tags", "manual_tags.txt")
 
-  m_XMLDictionaryFileName = this->GetLHPXMLDictionaryFileName();
-  if (m_XMLDictionaryFileName == "NOT FOUND")
+  m_MasterXMLDictionaryFileName = this->GetXMLDictionaryFileName(m_MasterXMLDictionaryFilePrefix);
+  if (m_MasterXMLDictionaryFileName == "NOT FOUND")
   {
+    return MAF_ERROR;
+  }
+  
+  mafString dictionaryToProcessFileName;
+
+  // TODO!!!!! handle sub dictionaries creation...
+  if (m_SubdictionaryId == DICOM_SUBDICTIONARY)
+  {
+    // build dicom
+    m_SubXMLDictionaryFilePrefix = "lhpXMLDicomSourceSubdictionary_";
+    m_SubDictionaryBuildingCommand = "dicom";
+    if (this->AssembleDictionaries() == MAF_ERROR)
+    {
+      return MAF_ERROR;
+    }
+    dictionaryToProcessFileName = m_AssembledXMLDictionaryFileName;
+  } 
+  else if (m_SubdictionaryId == MOTION_ANALYSIS_SUBDICTIONARY)
+  {
+    // build motion analysis
+    m_SubXMLDictionaryFilePrefix = "lhpXMLMotionAnalysisSourceSubdictionary_";
+    m_SubDictionaryBuildingCommand = "motion_analysis";
+    // build sub dictionary code
+    if (this->AssembleDictionaries() == MAF_ERROR)
+    {
+      return MAF_ERROR;
+    }
+
+    dictionaryToProcessFileName = m_AssembledXMLDictionaryFileName;
+  }
+  else if (m_SubdictionaryId == NO_SUBDICTIONARY)
+  {
+    dictionaryToProcessFileName = m_MasterXMLDictionaryFileName;
+    // nothing to do...continue...
+  }  
+  else
+  {
+    mafLogMessage("this case is not handled...");
     return MAF_ERROR;
   }
 
@@ -405,7 +488,7 @@ int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
   wxString command2execute;
   command2execute.Append(m_PythonExe.GetCStr());
   command2execute.Append(" lhpXMLDictionaryParser.py ");
-  command2execute.Append(m_XMLDictionaryFileName.GetCStr());
+  command2execute.Append(dictionaryToProcessFileName.GetCStr());
   command2execute.Append(" auto_tags ");
   command2execute.Append(m_AutoTagsListFromXMLDictionaryFileName.GetCStr());
   
@@ -424,7 +507,7 @@ int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
   command2execute = m_PythonExe;
   
   command2execute.Append(" lhpXMLDictionaryParser.py ");
-  command2execute.Append(m_XMLDictionaryFileName.GetCStr());
+  command2execute.Append(dictionaryToProcessFileName.GetCStr());
   command2execute.Append(" manual_tags ");
   command2execute.Append(m_ManualTagsListFromXMLDictionaryFileName.GetCStr());
 
@@ -563,6 +646,22 @@ int lhpOpUploadVME::GeneratesManualTagsListFromXMLDictionary()
   }
 
   unhandledPlusManualTagsFile.close();
+  
+  // launch editor
+  command2execute.Clear();
+  command2execute.Append(m_PythonExe.GetCStr());
+  command2execute.Append(" CSVOMATIC.py ");
+  command2execute.Append(m_UnhandledPlusManualTagsFileName.GetCStr());
+  
+  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+
+  pid = wxExecute(command2execute, wxEXEC_SYNC);
+
+  if ( !command2execute )
+    return MAF_ERROR;
+
+  mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+    command2execute.c_str(), pid);
 
   wxSetWorkingDirectory(oldDir);
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
@@ -671,7 +770,7 @@ bool lhpOpUploadVME::CheckLogin()
   return result;
 }
 
-mafString lhpOpUploadVME::GetLHPXMLDictionaryFileName()
+mafString lhpOpUploadVME::GetXMLDictionaryFileName( mafString dictionaryFileNamePrefix )
 {
   mafString dictionaryFileName = "NOT FOUND";
   wxString oldDir = wxGetCwd();
@@ -681,7 +780,7 @@ mafString lhpOpUploadVME::GetLHPXMLDictionaryFileName()
   mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
   wxArrayString files;
-  wxString filePattern = m_XMLDictionaryFilePrefix.GetCStr() ;
+  wxString filePattern = dictionaryFileNamePrefix ;
   filePattern.Append("*.xml");
 
   wxDir::GetAllFiles(wxGetWorkingDirectory(), &files, filePattern);
@@ -705,4 +804,85 @@ mafString lhpOpUploadVME::GetLHPXMLDictionaryFileName()
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   
   return dictionaryFileName;
+}
+
+//----------------------------------------------------------------------------
+// widget id's
+//----------------------------------------------------------------------------
+
+void lhpOpUploadVME::CreateGui()
+{
+  m_Gui = new mmgGui(this);
+
+  m_Gui->Divider(2);
+
+  m_Gui->Label("use subdictionary", true);
+  wxString subDictionariesList[3] = {"none", "motionAnalysis", "dicom"};
+  m_Gui->Combo(ID_SUBDICTIONARY,"",&m_SubdictionaryId,3,subDictionariesList);
+
+  m_Gui->Divider(2);
+ 
+  m_Gui->OkCancel(); 
+  m_Gui->Label("");
+  m_Gui->Update();
+
+}
+
+//----------------------------------------------------------------------------
+int lhpOpUploadVME::AssembleDictionaries()
+//----------------------------------------------------------------------------
+{
+  wxString oldDir = wxGetCwd();
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+
+  mafLogMessage("Assembling dictionaries...");
+
+  m_SubXMLDictionaryFileName = this->GetXMLDictionaryFileName(m_SubXMLDictionaryFilePrefix);
+  if (m_SubXMLDictionaryFileName == "NOT FOUND")
+  {
+    return MAF_ERROR;
+  }
+
+  // get manual tags
+  wxString command2execute;
+  command2execute.Clear();
+  command2execute = m_PythonExe;
+
+  command2execute.Append(" lhpXMLDictionariesBuilder.py ");
+  command2execute.Append(m_MasterXMLDictionaryFileName);
+  command2execute.Append(" ");
+  command2execute.Append(m_SubXMLDictionaryFileName);
+  command2execute.Append(" ");
+  command2execute.Append(m_SubDictionaryBuildingCommand);
+  command2execute.Append(" ");
+  command2execute.Append(m_AssembledXMLDictionaryFileName);
+
+  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+
+  long pid = wxExecute(command2execute, wxEXEC_SYNC);
+
+  wxArrayString output;
+  wxArrayString errors;
+
+  m_Pid = wxExecute(command2execute, output, errors);
+
+  
+  mafLogMessage("Command Output Messages:");
+  for (int i = 0; i < output.size(); i++)
+  {
+    mafLogMessage(output[i]);
+  }
+
+  mafLogMessage("Command Errors Messages:");
+  for (int i = 0; i < errors.size(); i++)
+  {
+    mafLogMessage(errors[i]);
+  }
+
+  wxSetWorkingDirectory(oldDir);
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+
+  return MAF_OK;
 }

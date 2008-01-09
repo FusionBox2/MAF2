@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-01-08 16:06:42 $
-Version:   $Revision: 1.12 $
+Date:      $Date: 2008-01-09 17:19:58 $
+Version:   $Revision: 1.13 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -79,7 +79,7 @@ public:
 	virtual void OpDo();
 
   /** Set Current Working Msf Directory*/
-  void SetMsfDir(mafString msfDir){m_MsfDir = msfDir;}
+  void SetMsfDir(mafString msfDir){m_MsfDir = msfDir;};
 
 protected:
   
@@ -87,7 +87,7 @@ protected:
   bool IsLHPBuilderVersionUpToDate();
 
   /** Generate auto tags and manual tags list from XML lhdl dictionary*/
-  int GeneratesManualTagsListFromXMLDictionary();
+  int GeneratesTagsListsFromXMLDictionary();
 
   /** Try to handle auto tags through tags factory and convert unhandled 
   to manual tags ie to be filled by the user*/
@@ -124,18 +124,25 @@ protected:
   
   static long m_Pid; //> pid of the server process
 
-  mafString m_XMLDictionaryFilePrefix; 
-  mafString m_XMLDictionaryFileName;
+  mafString m_MasterXMLDictionaryFilePrefix; 
+  mafString m_MasterXMLDictionaryFileName;
+  mafString m_SubXMLDictionaryFilePrefix;
+  mafString m_SubXMLDictionaryFileName;
+  mafString m_AssembledXMLDictionaryFileName;
+  mafString m_SubDictionaryBuildingCommand;
+
   mafString m_HandledAutoTagsFileName;
   mafString m_AutoTagsListFromXMLDictionaryFileName; 
   mafString m_ManualTagsListFromXMLDictionaryFileName;
   mafString m_UnhandledPlusManualTagsFileName;
 
   static lhpUser  m_User;
-
-private:
   
-  mafString GetLHPXMLDictionaryFileName();
+private:
+  mafString GetXMLDictionaryFileName(mafString dictionaryFileNamePrefix);
+  void CreateGui();
+  int AssembleDictionaries();
+  int m_SubdictionaryId;
   wxArrayString m_AutoTagsList;
   wxArrayString m_ManualTagsList;
   wxArrayString m_UnhandledAutoTagsListFromFactory; ///< the factory was not able to handle these tags
