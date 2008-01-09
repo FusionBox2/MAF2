@@ -48,9 +48,9 @@ class lhpCSVDictionaryDownloader:
         dictionariesFilesList= []
         
         for file in files:
-            if re.search('^(lhpXML).*(\.xml)$',file):
+            if re.search('^(' + self.OutputXMLDictionaryFileName + ').*(\.xml)$',file):
                dictionariesFilesList.append(os.getcwd() + '\\' + file)
-            elif re.search('^(lhpCSV).*(\.csv)$',file):
+            elif re.search(self.DownloadedCSVDictionaryFileName ,file):
                dictionariesFilesList.append(os.getcwd() + '\\' + file)
         
         # assert there is only one xml dict file
@@ -193,6 +193,7 @@ class lhpCSVDictionaryDownloader:
         csv2xml = dictionaryCSV2XML.dictionaryCSV2XML()
         csv2xml.InputCSVDictionaryFileName = self.DownloadedCSVDictionaryFileName
         csv2xml.OutputXMLDictionaryFileName = self.OutputXMLDictionaryFileName
+
         csv2xml.BuildXMLDictionary()
         
         
@@ -202,7 +203,7 @@ def run(host, DictionaryFileSelector, outputXMLDictionaryFileName):
     dictVersionChecker = lhpDictionaryVersionChecker.lhpDictionaryVersionChecker()
     dictDownloader.Host = host
     
-    dictDownloader.RemoveOldDictionariesFromDisk()
+    # dictDownloader.RemoveOldDictionariesFromDisk()
     
     # get the dictionary creation date
     date = dictVersionChecker.GetRemoteDictionaryDate()
@@ -229,7 +230,7 @@ def main():
         DictionaryFileSelector = "/biomed_town/LHDL/lhdl-management/Consortium-room/lhdl-repository/WP5/Dictionaries/LHDL_dictionary.csv"
 
         Notes:
-        DateTime and .xml will be appended to outputXMLDictionaryFileName
+        "DateTime" and ".xml" strings will be appended to outputXMLDictionaryFileName
         """
         sys.exit(-1)
     print args
@@ -238,20 +239,4 @@ def main():
     
 
 if __name__ == '__main__':
-    import sys
-    usage_msg = '''Usage: %s <option>
-where option can be:
-auto_tags - get auto tags from dictionary
-manual_tags - get manual tags from dictionary
-''' % sys.argv[0]
-
-    if len(sys.argv) != 4:
-        print 'Error :\n' + usage_msg
-        sys.exit(1)
-
-    xmlDictionaryFilename = sys.argv[1]
-    command = sys.argv[2]
-    outputTagsFileName = sys.argv[3]
-    
-    run(xmlDictionaryFilename, command, outputTagsFileName)
- 
+    main()

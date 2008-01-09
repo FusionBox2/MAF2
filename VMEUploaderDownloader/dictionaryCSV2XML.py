@@ -22,9 +22,32 @@ class dictionaryCSV2XML:
         self.InputCSVDictionaryFileName = "UNDEFINED"
         self.OutputXMLDictionaryFileName = "outputXMLDictionary.xml"
    
+    def GetDictionaryIdString(self):
+        reader = csv.reader(open(self.InputCSVDictionaryFileName, "r"))       
+
+        # skip labels
+        reader.next()
+        
+        firstDataLine = reader.next()
+        
+        # 0000 must came from dictionary hierarchy but since
+        # dictionary is work in progress for the moment I hardcode it here...
+        
+        # Get Dictionary ID, for example 0000 four master dictionary; I append an L character
+        # in front of the ID since a number is not a valid XML tag so the ID becomes L0000
+        
+        dictTag = firstDataLine[self.DictionaryColumnLabels.NumTag.asInt]
+        dictId = dictTag[0:4]
+        
+        idString = "L" + str(dictId)
+        return idString
+
+        
     def BuildXMLDictionary(self): 
         # for every row create a dom node
         attributesRange = self.DictionaryColumnLabels.irange(self.DictionaryColumnLabels.ValueType , self.DictionaryColumnLabels.Notes)
+        
+        idString = self.GetDictionaryIdString()
         
         reader = csv.reader(open(self.InputCSVDictionaryFileName, "r"))       
 
@@ -32,10 +55,7 @@ class dictionaryCSV2XML:
         
         # Create the minidom document
         doc = Document() 
-        
-        # 0000 must came from dictionary hierarchy but since
-        # dictionary is work in progress for the moment I hardcode it here...
-        root = doc.createElement("L0000")
+        root = doc.createElement(idString)
         doc.appendChild(root)
         
         lineNum = 0
