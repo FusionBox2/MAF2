@@ -57,7 +57,9 @@ class lhpXMLDictionariesBuilder:
         newDoc.writexml(outFileXML)
      
     def BuildDicomDictionary(self):
-        pass
+        # TODO!!!!!
+        # refactor to use one method only in progress...
+        self.BuildMotionAnalysisDictionary()
 
 def run(masterXMLDictionaryFilename, subXMLDictionaryFilename, command, outputXMLDictionaryFilename):
     """"""
