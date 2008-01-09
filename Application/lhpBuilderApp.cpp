@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-01-07 10:45:15 $
-  Version:   $Revision: 1.34 $
+  Date:      $Date: 2008-01-09 14:51:07 $
+  Version:   $Revision: 1.35 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -116,7 +116,7 @@
 #include "lhpOpUploadVME.h"
 #include "medOpSurfaceMirror.h"
 #include "medOpImporterEmgWS.h"
-
+#include "mmoMML.h"
 #include "mafViewVTK.h"
 #include "mafViewCompound.h"
 #include "mafViewRXCT.h"
@@ -257,6 +257,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mafOpDecomposeTimeVarVME("Decompose Time"),"Create/Derive");
   m_Logic->Plug(new mafOpLabelExtractor("Extract Label"),"Create/Derive");
   m_Logic->Plug(new lhpOpMultiscaleExplore("Multiscale Viewer"),"Manage");
+  m_Logic->Plug(new mmoMML("Register from template"),"Modify");
 
   
   
