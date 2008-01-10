@@ -1096,10 +1096,10 @@ class ConfigureDialog(wx.Dialog):
 class MainWindow(wx.Frame):
     """ We simply derive a new class of Frame. """
     def __init__(self, parent, id, title):
-        wx.Frame.__init__(self,parent,wx.ID_ANY, title, size = ( 500,400),
+        wx.Frame.__init__(self,parent,wx.ID_ANY, title, size = (1024,768),
                                      style=wx.DEFAULT_FRAME_STYLE|wx.NO_FULL_REPAINT_ON_RESIZE)
         # self.SetIcon(wx.Icon(ICONBITMAP, wx.BITMAP_TYPE_ICO))
-        self.control = wx.TextCtrl(self, 1,size = (500,400), style=wx.TE_MULTILINE | wx.TE_DONTWRAP )
+        self.control = wx.TextCtrl(self, 1,size = (1024,768), style=wx.TE_MULTILINE | wx.TE_DONTWRAP )
         self.control.SetMaxLength(1000000)#allow a million characters for input on the control.
         #the data the application needs to keep track of everything
         self.data = []
@@ -1114,11 +1114,11 @@ class MainWindow(wx.Frame):
         foundcols = []
         self.rows = 0
         self.cols = 0
-        self.rowindex = 1
+        self.rowindex = 0
         self.columnindex = 0
         self.rowindexdelta = 1
         self.columnindexdelta = 0
-        self.Delimiter = '\t' #default delimit is tab
+        self.Delimiter = ',' #default delimit is comma
         self.HeaderRow = 0 #list pointer to the headers, default at line 0
         if sys.argv[1:] != [ ] : #load a file if specified on the command line
             count = 0
