@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-01-09 17:19:58 $
-Version:   $Revision: 1.31 $
+Date:      $Date: 2008-01-10 08:20:19 $
+Version:   $Revision: 1.32 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -448,7 +448,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
   
   mafString dictionaryToProcessFileName;
 
-  // TODO!!!!! handle sub dictionaries creation...
+  // handle sub dictionaries creation...
   if (m_SubdictionaryId == DICOM_SUBDICTIONARY)
   {
     // build dicom
@@ -622,8 +622,15 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
   
   // generates manual tag file 
 
+  // TODO!!!!!  To be removed... just for demo
+  wxString justForDemoUnhandledPlusManualTagsCSVFileName = "unhandledPlusManualTagsFile.csv";
+  ofstream justForDemoUnhandledPlusManualTagsCSVFile; // TODO!!!!! to be removed: this is just to show tag editor to experts
+  justForDemoUnhandledPlusManualTagsCSVFile.open(justForDemoUnhandledPlusManualTagsCSVFileName.c_str());
+ 
+
   // open auto tags file and try to handle tags using tags factory 
   ofstream unhandledPlusManualTagsFile;
+
 
   unhandledPlusManualTagsFile.open(m_UnhandledPlusManualTagsFileName.GetCStr());
 
@@ -635,7 +642,9 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
   for (int i = 0; i < m_UnhandledAutoTagsListFromFactory.size(); i++)
   {
     tagName = m_UnhandledAutoTagsListFromFactory[i].c_str();
-    unhandledPlusManualTagsFile << tagName.GetCStr() << std::endl ;
+    unhandledPlusManualTagsFile <<  tagName.GetCStr() << std::endl ;
+    // TODO!!!!!  To be removed...
+    justForDemoUnhandledPlusManualTagsCSVFile << "\"" << tagName.GetCStr() << "\",\"ANNOTATE ME!\"" << std::endl ;
   }
 
   // write manuals
@@ -643,15 +652,23 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
   {
     tagName = m_ManualTagsList[i].c_str();
     unhandledPlusManualTagsFile << tagName.GetCStr() << std::endl ;
+    // TODO!!!!!  To be removed...
+    justForDemoUnhandledPlusManualTagsCSVFile << "\"" << tagName.GetCStr() << "\" , \"ANNOTATE ME!\"" << std::endl ;
   }
 
   unhandledPlusManualTagsFile.close();
+
+  // TODO!!!!!  To be removed
+  justForDemoUnhandledPlusManualTagsCSVFile.close();
   
   // launch editor
   command2execute.Clear();
   command2execute.Append(m_PythonExe.GetCStr());
   command2execute.Append(" CSVOMATIC.py ");
-  command2execute.Append(m_UnhandledPlusManualTagsFileName.GetCStr());
+  // TODO!!!!!  To be removed...
+  command2execute.Append(justForDemoUnhandledPlusManualTagsCSVFileName.c_str());
+  // TODO!!!!!  To be reinserted...
+  // command2execute.Append(m_UnhandledPlusManualTagsFileName.GetCStr());
   
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
@@ -766,7 +783,6 @@ bool lhpOpUploadVME::CheckLogin()
   bool result = false;
 
   result = m_User.CheckUserCredentials();
-
   return result;
 }
 
