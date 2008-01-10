@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-01-10 07:04:46 $
-  Version:   $Revision: 1.37 $
+  Date:      $Date: 2008-01-10 08:22:49 $
+  Version:   $Revision: 1.38 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -115,7 +115,7 @@
 #include "medOpCreateLabeledVolume.h"
 #include "lhpOpUploadVME.h"
 #include "medOpSurfaceMirror.h"
-  // #include "medOpImporterEmgWS.h"
+#include "medOpImporterAnalogWS.h"
 #include "mmoMML.h"
 #include "mafViewVTK.h"
 #include "mafViewCompound.h"
@@ -126,7 +126,6 @@
 #include "mafViewGlobalSliceCompound.h"
 #include "mafViewSlice.h"
 #include "mafViewImageCompound.h"
-// #include "medViewEmgGraph.h"
 #include "mafViewIntGraph.h"
 #include "medViewSlicer.h"
 #include "lhpOpMultiscaleExplore.h"
@@ -203,7 +202,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoINPImporter("INP/INP_AF"), "Geometries");
   m_Logic->Plug(new mmoMTRImporter("MTR"), "Geometries");
   m_Logic->Plug(new mafOpImporterExternalFile("External data"), "Other");
-    // m_Logic->Plug(new medOpImporterEmgWS("ASCII Analog (VWs)"), "Motion Analysis");
+  m_Logic->Plug(new medOpImporterAnalogWS("ASCII Analog (VWs)"), "Motion Analysis");
 
   //-------------------------------------------------------------
 
@@ -276,9 +275,9 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(vdrr);
 
   // View Analog graph
-  /*medViewEmgGraph *graph = new medViewEmgGraph("Analog Graph");
-  graph->PlugVisualPipe("mafVMEScalar", "medPipeGraph");
-  m_Logic->Plug(graph);*/
+  mafViewVTK *graph = new mafViewVTK("Analog Graph");
+  graph->PlugVisualPipe("medVMEAnalog", "medPipeGraph");
+  m_Logic->Plug(graph);
 
   //View Global Slice
   mafViewGlobalSliceCompound *GlobalSlice = new mafViewGlobalSliceCompound("Global Slice");
