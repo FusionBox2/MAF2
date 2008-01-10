@@ -405,7 +405,7 @@ class GridFrame(wx.Frame):
         if cols<len(headers):
             cols = len(headers)#more headers than columns in the row? a-ok!
         rows = len(self.data)
-        self.grid = grid.Grid(self, -1,size=(500,400))
+        self.grid = grid.Grid(self, -1,size=(1024,768))
         self.grid.CreateGrid(rows,cols)
         self.grid.SetColLabelAlignment(wx.ALIGN_CENTRE, wx.ALIGN_CENTRE)
         self.grid.BeginBatch()
