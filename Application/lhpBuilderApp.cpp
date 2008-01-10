@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-01-09 14:51:07 $
-  Version:   $Revision: 1.35 $
+  Date:      $Date: 2008-01-10 06:58:39 $
+  Version:   $Revision: 1.36 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -126,7 +126,7 @@
 #include "mafViewGlobalSliceCompound.h"
 #include "mafViewSlice.h"
 #include "mafViewImageCompound.h"
-#include "medViewEmgGraph.h"
+// #include "medViewEmgGraph.h"
 #include "mafViewIntGraph.h"
 #include "medViewSlicer.h"
 #include "lhpOpMultiscaleExplore.h"
@@ -276,9 +276,9 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(vdrr);
 
   // View Analog graph
-  medViewEmgGraph *graph = new medViewEmgGraph("Analog Graph");
+  /*medViewEmgGraph *graph = new medViewEmgGraph("Analog Graph");
   graph->PlugVisualPipe("mafVMEScalar", "medPipeGraph");
-  m_Logic->Plug(graph);
+  m_Logic->Plug(graph);*/
 
   //View Global Slice
   mafViewGlobalSliceCompound *GlobalSlice = new mafViewGlobalSliceCompound("Global Slice");
