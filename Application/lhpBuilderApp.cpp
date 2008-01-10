@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-01-10 06:58:39 $
-  Version:   $Revision: 1.36 $
+  Date:      $Date: 2008-01-10 07:04:46 $
+  Version:   $Revision: 1.37 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -115,7 +115,7 @@
 #include "medOpCreateLabeledVolume.h"
 #include "lhpOpUploadVME.h"
 #include "medOpSurfaceMirror.h"
-#include "medOpImporterEmgWS.h"
+  // #include "medOpImporterEmgWS.h"
 #include "mmoMML.h"
 #include "mafViewVTK.h"
 #include "mafViewCompound.h"
@@ -203,7 +203,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoINPImporter("INP/INP_AF"), "Geometries");
   m_Logic->Plug(new mmoMTRImporter("MTR"), "Geometries");
   m_Logic->Plug(new mafOpImporterExternalFile("External data"), "Other");
-  m_Logic->Plug(new medOpImporterEmgWS("ASCII Analog (VWs)"), "Motion Analysis");
+    // m_Logic->Plug(new medOpImporterEmgWS("ASCII Analog (VWs)"), "Motion Analysis");
 
   //-------------------------------------------------------------
 
