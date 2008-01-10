@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-01-10 08:20:19 $
-Version:   $Revision: 1.32 $
+Date:      $Date: 2008-01-10 08:38:51 $
+Version:   $Revision: 1.33 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -644,7 +644,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
     tagName = m_UnhandledAutoTagsListFromFactory[i].c_str();
     unhandledPlusManualTagsFile <<  tagName.GetCStr() << std::endl ;
     // TODO!!!!!  To be removed...
-    justForDemoUnhandledPlusManualTagsCSVFile << "\"" << tagName.GetCStr() << "\",\"ANNOTATE ME!\"" << std::endl ;
+    justForDemoUnhandledPlusManualTagsCSVFile << "\"" << tagName.GetCStr() << "\" , \"ANNOTATE ME!\"" << std::endl ;
   }
 
   // write manuals
