@@ -123,10 +123,18 @@ import string
 import os
 os.putenv('LANG', 'C')
 
-try:
-    from wxPython import wx, grid
-except ImportError:
-    wx = None
+# <TODO!!!!!> Investigate...
+# Stefano: since I don't need the wizard I comment out this part because I am having some
+# wxPython 2.8 msw compatibility problem:  need to investigate... 
+
+#try:
+    #from wxPython import wx, grid
+#except ImportError:
+    #wx = None
+
+wx = None
+
+# </TODO!!!!!>
 
 class InvalidDelimiter(exceptions.StandardError): pass
 class InvalidTextQualifier(exceptions.StandardError): pass
