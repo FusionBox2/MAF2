@@ -1209,7 +1209,7 @@ class MainWindow(wx.Frame):
         wx.EVT_MENU(self, ID_COLUMN1, self.OnGetColumn)
         wx.EVT_MENU(self, ID_COLUMN2, self.OnViewColumn)
         wx.EVT_MENU(self, ID_COLUMN3, self.OnFilterColumn)
-	wx.EVT_CLOSE(self, self.OnCloseDialogButton)
+	wx.EVT_CLOSE(self, self.OnEVT_CLOSE)
 
         #Layout sizers
         sizer.Add(self.control,3,wx.EXPAND)
@@ -1223,16 +1223,11 @@ class MainWindow(wx.Frame):
 	self.Close(True)  # Close the frame.
    
    
-    def OnCloseDialogButton(self,e):
+    def OnEVT_CLOSE(self,e):
  	if self.InputFileName != "UNDEFINED":
 	   self.SaveAs(self.InputFileName)
 	self.Destroy()
-    
-	# self.Close(True)  # Close the frame.
-	# val = self.Destroy()  # Close the frame.
-	
-# 	assert(val == True)
-	
+
 #--FUNCTION EXPORT DATA(to main window)
 
     
