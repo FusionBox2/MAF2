@@ -1101,6 +1101,8 @@ class MainWindow(wx.Frame):
         # self.SetIcon(wx.Icon(ICONBITMAP, wx.BITMAP_TYPE_ICO))
         self.control = wx.TextCtrl(self, 1,size = (1024,768), style=wx.TE_MULTILINE | wx.TE_DONTWRAP )
         self.control.SetMaxLength(1000000)#allow a million characters for input on the control.
+        
+	self.InputFileName = "UNDEFINED"
         #the data the application needs to keep track of everything
         self.data = []
         self.Headers = []
@@ -1125,6 +1127,9 @@ class MainWindow(wx.Frame):
             args = sys.argv[1]
             path = args
             self.data = []
+	    
+	    self.InputFileName = path # to be used to save on exit
+	    
             f = open(path,'r')
             loaddlg = wx.ProgressDialog("Loading File..",
                         "Progress",
@@ -1160,9 +1165,9 @@ class MainWindow(wx.Frame):
 	filemenu= wx.Menu()
         filemenu.Append(ID_OPEN, "&Open"," Open a file to edit")
         filemenu.AppendSeparator()
-        filemenu.Append(ID_SAVE, "&Save"," Save Current File")
+        filemenu.Append(ID_SAVE, "&Save As"," Save Current File")
         filemenu.AppendSeparator()
-        filemenu.Append(ID_EXIT,"E&xit"," Terminate the program")
+        filemenu.Append(ID_EXIT,"&Exit"," Terminate the program")
         datamenu = wx.Menu()
         #datamenu.Append(ID_OP1, "&Titan picklist", "Data row transform")
         #the above function is specialized use and will not do anything for you
@@ -1194,7 +1199,7 @@ class MainWindow(wx.Frame):
         wx.EVT_MENU(self, ID_ROW2, self.OnView)
         wx.EVT_MENU(self, ID_ROW1, self.OnDrop)
         wx.EVT_MENU(self, ID_ROW3, self.OnFilterRow)
-        wx.EVT_MENU(self, ID_SAVE, self.OnSave)
+        wx.EVT_MENU(self, ID_SAVE, self.OnSaveAs)
         wx.EVT_MENU(self, ID_OP1, self.OnPickList)
         wx.EVT_MENU(self, ID_OP2, self.OnConfigure)
         wx.EVT_MENU(self, ID_OP3, self.OnFindData)
@@ -1204,14 +1209,35 @@ class MainWindow(wx.Frame):
         wx.EVT_MENU(self, ID_COLUMN1, self.OnGetColumn)
         wx.EVT_MENU(self, ID_COLUMN2, self.OnViewColumn)
         wx.EVT_MENU(self, ID_COLUMN3, self.OnFilterColumn)
+	wx.EVT_CLOSE(self, self.OnCloseDialogButton)
+
         #Layout sizers
         sizer.Add(self.control,3,wx.EXPAND)
         self.SetSizer(sizer)
         self.SetAutoLayout(1)
         sizer.Fit(self)
         self.Show(True)
-
+       
+    #--FUNCTION EXIT
+    def OnExit(self,e):
+	if self.InputFileName != "UNDEFINED":
+	   self.SaveAs(self.InputFileName)
+	self.Close(True)  # Close the frame.
+   
+   
+    def OnCloseDialogButton(self,e):
+ 	if self.InputFileName != "UNDEFINED":
+	   self.SaveAs(self.InputFileName)
+	self.Destroy()
+    
+	# self.Close(True)  # Close the frame.
+	# val = self.Destroy()  # Close the frame.
+	
+# 	assert(val == True)
+	
 #--FUNCTION EXPORT DATA(to main window)
+
+    
     def OnExportData(self,e):
         controlData = ""
         self.control.SetValue("")
@@ -1238,19 +1264,17 @@ class MainWindow(wx.Frame):
         self.rowindexdelta = self.rows
         self.control.SetValue("Data Imported, " + str(self.rows) + "rows")
         
-#--FUNCTION EXIT
-    def OnExit(self,e):
-        self.Close(True)  # Close the frame.
-        
 #--FUNCTION LOAD DATA
     def OnOpen(self,e):
 	dlg = wx.FileDialog(None, "Choose a file", os.getcwd(), "",
+			    
                                    "CSV(*.csv)|*.csv|Text files (*.txt)|*.txt|All files (*.*)|*.*",
                                    wx.OPEN)
         if dlg.ShowModal() == wx.ID_OK:
             self.data = []
             NewData = ""
             path = dlg.GetPath()
+	    self.InputFileName = path
             f = open(path,'r')
             
             loaddlg = wx.ProgressDialog("Loading File..",
@@ -1357,34 +1381,41 @@ class MainWindow(wx.Frame):
                 pass
 
 #--FUNCTION SAVE DATA
-    def OnSave(self,e):
+
+    def OnSaveAs(self,e):
 	dlg = wx.FileDialog(None, "Choose a file", os.getcwd(), "",
                                    "CSV(*.csv)|*.csv|Text files (*.txt)|*.txt|All files (*.*)|*.*",
                                    wx.SAVE)
         if dlg.ShowModal() == wx.ID_OK:
             path = dlg.GetPath()
-            f = open(path,'w')
-            dlg.Destroy()
-            savedlg = wx.ProgressDialog("Saving File..",
-                        "Progress",
-                        maximum = len(self.data),
-                        style = wx.PD_APP_MODAL | wx.PD_AUTO_HIDE)
-            count = 0
-            for line in self.data:
-                if line[-1] == '\n':
-                    f.write(line)
-                    count = count+1
-                    savedlg.Update(count)
-                else:
-                    f.write(line+'\n')
-                    count = count+1
-                    savedlg.Update(count)
-            savedlg.Destroy()
-            self.control.SetValue("Data Saved, " + str(self.rows) + " rows")
-            self.SetTitle("SUPER-ALPHA-TAG-EDITOR: " + path)
-            os.chdir(os.path.dirname(path))
-            f.close()
-            
+	    self.SaveAs(path)
+	    dlg.Destroy()
+    
+        
+	
+    def SaveAs(self, path):
+	f = open(path,'w')
+	savedlg = wx.ProgressDialog("Saving File..",
+		    "Progress",
+		    maximum = len(self.data),
+		    style = wx.PD_APP_MODAL | wx.PD_AUTO_HIDE)
+	count = 0
+	print self.data
+	for line in self.data:
+	    if line[-1] == '\n':
+		f.write(line)
+		count = count+1
+		savedlg.Update(count)
+	    else:
+		f.write(line+'\n')
+		count = count+1
+		savedlg.Update(count)
+	savedlg.Destroy()
+	self.control.SetValue("Data Saved, " + str(self.rows) + " rows")
+	self.SetTitle("SUPER-ALPHA-TAG-EDITOR: " + path)
+	os.chdir(os.path.dirname(path))
+	f.close()
+	
 #--FUNCTION TRANSFORM DATA TO PICKLIST
     def OnPickList(self,e):
         NewData = []
