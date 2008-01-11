@@ -1220,8 +1220,6 @@ class MainWindow(wx.Frame):
        
     #--FUNCTION EXIT
     def OnExit(self,e):
-	if self.InputFileName != "UNDEFINED":
-	   self.SaveAs(self.InputFileName)
 	self.Close(True)  # Close the frame.
    
    
