@@ -1,3 +1,14 @@
+#-----------------------------------------------------------------------------
+# BEWARE!!! This is mostly a prototype!!!
+# code is changing very fast so don't rely on it :P
+# author: Stefano Perticoni  <s.perticoni@scsolutions.it>
+#-----------------------------------------------------------------------------
+
+# BEWARE: this is a temporary editor for metadata but it will be trashed 
+# when we will have the real XML editor working
+
+# this code is based on CVSOMATIC.py 
+# http://developer.berlios.de/projects/csvomatic/
 
 import wx
 import wx.grid as grid
@@ -398,7 +409,7 @@ class GridFrame(wx.Frame):
         self.headers = headers
         self.data = data
         cols = 0
-        for line in self.data: #no room for errors, punk bitches.
+        for line in self.data: #no room for errors
             if cols<len(line):
                 cols = len(line)
              #extract longest line
@@ -484,6 +495,7 @@ class GridFrame(wx.Frame):
         grid.EVT_GRID_EDITOR_HIDDEN(self, self.CellEdit)
         wx.EVT_CLOSE(self, self.CloseWindow) #MUST USE THIS TO ELIMINATE MODAL!
 
+# <TODO!!!!!> write double quotes around text
     def CellEdit(self, e):
         row = e.GetRow()
         col = e.GetCol()
@@ -512,7 +524,7 @@ class GridFrame(wx.Frame):
         parent = self.parent
         headers = parent.Headers
         self.headers = headers
-        for line in self.data: #no room for errors, punk bitches.
+        for line in self.data: #no room for errors
             if cols<len(line):
                 cols = len(line)
              #extract longest line
