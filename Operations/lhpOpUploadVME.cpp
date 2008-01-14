@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-01-10 08:38:51 $
-Version:   $Revision: 1.33 $
+Date:      $Date: 2008-01-14 14:29:43 $
+Version:   $Revision: 1.34 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -114,8 +114,8 @@ mafOp(label)
 
   m_AutoTagsListFromXMLDictionaryFileName = "autoTagsList.txt";
   m_ManualTagsListFromXMLDictionaryFileName = "manualTagsList.txt";
-  m_UnhandledPlusManualTagsFileName = "unhandledPlusManualTagsList.txt";
-  m_HandledAutoTagsFileName = "handledAutoTagsList.txt";
+  m_UnhandledPlusManualTagsFileName = "unhandledPlusManualTagsList.csv";
+  m_HandledAutoTagsFileName = "handledAutoTagsList.csv";
 
   m_HandledAutoTagsListFromFactory.Clear();
   m_UnhandledAutoTagsListFromFactory.Clear();
@@ -580,7 +580,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
       assert(tagsFactory!=NULL);
       lhpTagHandler *obj = NULL;
       obj = tagsFactory->CreateTagHandlerInstance("lhpTagHandler_" + tagName);
-      //lhpTagHandler *tagHandler = (lhpTagHandler*)obj;
+      
       if (obj)
       {
         obj->HandleAutoTag(parametersCargo);
@@ -622,12 +622,6 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
   
   // generates manual tag file 
 
-  // TODO!!!!!  To be removed... just for demo
-  wxString justForDemoUnhandledPlusManualTagsCSVFileName = "unhandledPlusManualTagsFile.csv";
-  ofstream justForDemoUnhandledPlusManualTagsCSVFile; // TODO!!!!! to be removed: this is just to show tag editor to experts
-  justForDemoUnhandledPlusManualTagsCSVFile.open(justForDemoUnhandledPlusManualTagsCSVFileName.c_str());
- 
-
   // open auto tags file and try to handle tags using tags factory 
   ofstream unhandledPlusManualTagsFile;
 
@@ -642,33 +636,23 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
   for (int i = 0; i < m_UnhandledAutoTagsListFromFactory.size(); i++)
   {
     tagName = m_UnhandledAutoTagsListFromFactory[i].c_str();
-    unhandledPlusManualTagsFile <<  tagName.GetCStr() << std::endl ;
-    // TODO!!!!!  To be removed...
-    justForDemoUnhandledPlusManualTagsCSVFile << "\"" << tagName.GetCStr() << "\" , \"ANNOTATE ME!\"" << std::endl ;
+    unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\" , \"ANNOTATE ME!\"" << std::endl ;
   }
 
   // write manuals
   for (int i = 0; i < m_ManualTagsList.size(); i++)
   {
     tagName = m_ManualTagsList[i].c_str();
-    unhandledPlusManualTagsFile << tagName.GetCStr() << std::endl ;
-    // TODO!!!!!  To be removed...
-    justForDemoUnhandledPlusManualTagsCSVFile << "\"" << tagName.GetCStr() << "\" , \"ANNOTATE ME!\"" << std::endl ;
+    unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\" , \"ANNOTATE ME!\"" << std::endl ;
   }
 
   unhandledPlusManualTagsFile.close();
-
-  // TODO!!!!!  To be removed
-  justForDemoUnhandledPlusManualTagsCSVFile.close();
   
   // launch editor
   command2execute.Clear();
   command2execute.Append(m_PythonExe.GetCStr());
   command2execute.Append(" CSVOMATIC.py ");
-  // TODO!!!!!  To be removed...
-  command2execute.Append(justForDemoUnhandledPlusManualTagsCSVFileName.c_str());
-  // TODO!!!!!  To be reinserted...
-  // command2execute.Append(m_UnhandledPlusManualTagsFileName.GetCStr());
+  command2execute.Append(m_UnhandledPlusManualTagsFileName.GetCStr());
   
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
