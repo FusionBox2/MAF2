@@ -36,9 +36,6 @@ class vmeUploader:
     def __Parse(self):
        
         msfDOMParserInstance = msfParser.msfParser()
-        dict = msfParser.lhpTagsListStorage()
-        dict.FileName = self.UnhandledPlusManualTagsListFileName
-        dict.Load()
        
         # Search the MSF file inside given the given directory
         os.chdir(self.InputMSFDirectory)
@@ -72,27 +69,28 @@ class vmeUploader:
         # get the tagArray node
         outVmeTagArrayNode = msfDOMParserInstance.GetVmeTagArrayNode(outVmeNode)
         
-        # get the tags list
+        # get the tags list from vme tag array node
         vmeTagList = msfDOMParserInstance.GetTagNames(outVmeTagArrayNode)
         
         if Debug:            
             print vmeTagList
-            dict.Print()
         
         # AUTO TAGS
-    
-        reader = csv.reader(open(self.HandledAutoTagsListFileName, "r"))       
+        
+        if Debug:
+            print self.HandledAutoTagsListFileName
+        autoTagsReader = csv.reader(open(self.HandledAutoTagsListFileName, "r"))
         
         autoTagsDictionary = {}
         
         try:
-            for row in reader:
+            for row in autoTagsReader:
                 if Debug:                   
-                    print row
+                    print "row: " +  str(row)
                 autoTagsDictionary[row[0]] = str(row[1])
                 
         except csv.Error, e:
-            sys.exit('file %s, line %d: %s' % (filename, reader.line_num, e))
+            sys.exit('file %s, line %d: %s' % (filename, autoTagsReader.line_num, e))
        
         if Debug:          
             print autoTagsDictionary
@@ -109,23 +107,60 @@ class vmeUploader:
     
         # UNHANDLED AUTO + MANUAL TAGS
         
+        # import unhandled auto + manual csv
+        
+        # create a list of keys
+        
+        unhandledPlusManualTagsReader = csv.reader(open(self.UnhandledPlusManualTagsListFileName, "r"))       
+        
+        unhandledPlusManualTagsDictionary  = {}
+        
+        try:
+            for row in unhandledPlusManualTagsReader:
+                if Debug:                   
+                    print row
+                unhandledPlusManualTagsDictionary[row[0]] = str(row[1])
+                
+        except csv.Error, e:
+            sys.exit('file %s, line %d: %s' % (filename, unhandledPlusManualTagsReader.line_num, e))
+       
+        if Debug:          
+            print unhandledPlusManualTagsDictionary  
+        
+        unhandledPlusManualTagsList = sorted(unhandledPlusManualTagsDictionary.keys())
+        print unhandledPlusManualTagsList 
+     
         # find matching manual and unhandled manual tags between dictionary and vme tagArray
         vmeTagListSet = sets.Set(vmeTagList)
-        # print vmeTagListSet
         
-        unhandledPlusManualTagsListSet = sets.Set(dict.TagsList) 
+        if Debug:
+            print vmeTagListSet
+        
+        unhandledPlusManualTagsListSet = sets.Set(unhandledPlusManualTagsList) 
         # print unhandledPlusManualTagsListSet
         
         tagsToBeExported = vmeTagListSet.intersection(unhandledPlusManualTagsListSet)
         # print "\nThese tags will be exported: \n" + str(tagsToBeExported)
         
-        tagsToBeAnnotatedManually = unhandledPlusManualTagsListSet.difference(vmeTagList)
+        tagsToBeAnnotatedManuallySet = unhandledPlusManualTagsListSet.difference(vmeTagList)
        
         # Add tags to be annotated manually from list
-        isinstance(tagsToBeAnnotatedManually,set)
-        tagsToBeAnnotatedManuallySorted = sorted(tagsToBeAnnotatedManually)
+        isinstance(tagsToBeAnnotatedManuallySet,set)
+        tagsToBeAnnotatedManuallySorted = sorted(tagsToBeAnnotatedManuallySet)
+        
+        tagsToBeAnnotatedManuallyMap = {}
+        # for each item in set
+        for key in tagsToBeAnnotatedManuallySorted:
+            
+            # create a map item
+            tagsToBeAnnotatedManuallyMap[key] = unhandledPlusManualTagsDictionary[key] 
+        
+        if Debug:
+            print "tagsToBeAnnotatedManuallyMap: "
+            print tagsToBeAnnotatedManuallyMap
+        
         print "\nThese tags need to be annotated by the user: \n" + str(tagsToBeAnnotatedManuallySorted)
-        msfDOMParserInstance.AddTagsFromList(domDocument,outVmeTagArrayNode, tagsToBeAnnotatedManuallySorted)
+        msfDOMParserInstance.AddTagsFromDictionary(domDocument,outVmeTagArrayNode, tagsToBeAnnotatedManuallyMap)
 
         tagsToBeRemoved  = vmeTagListSet.difference(tagsToBeExported)
         # print "\nThese tags  be removed from output vme XML: \n" + str(tagsToBeRemoved)
@@ -167,12 +202,12 @@ class vmeUploader:
         print "\nWritten output XML file " + self.OutputVMEXMLName + " in directory " + self.OutputFolderName
         
         
-def run(inputMSFDirectory, vmeToExtractId,  handledAutoTagsListFileName, inUnhandledPlusManualTagsListFileName, outputFolderName, outputVMEXMLName):                                            
+def run(inputMSFDirectory, vmeToExtractId,  handledAutoTagsListFileName, unhandledPlusManualTagsListFileName, outputFolderName, outputVMEXMLName):                                            
     upl = vmeUploader()
     upl.InputMSFDirectory = inputMSFDirectory
     upl.VmeToExtractID = int(vmeToExtractId)
     upl.HandledAutoTagsListFileName = handledAutoTagsListFileName
-    upl.UnhandledPlusManualTagsListFileName = inUnhandledPlusManualTagsListFileName
+    upl.UnhandledPlusManualTagsListFileName = unhandledPlusManualTagsListFileName
     upl.OutputFolderName = outputFolderName
     upl.OutputVMEXMLName = outputVMEXMLName
     upl.Parse()    
@@ -183,7 +218,7 @@ def main():
         print """
         usage: python.exe vmeUploader.py 
         inputMSFDirectory vmeToExtractId 
-        autoTagsFile.txt manualTagsFile.txt
+        autoTagsFile.csv manualTagsFile.csv
         outputFolderName outputVMEXMLName.xml
         """
         sys.exit(-1)

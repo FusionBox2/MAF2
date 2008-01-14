@@ -23,8 +23,8 @@ class vmeUploaderTest(unittest.TestCase):
         
         upl = vmeUploader.vmeUploader()
         upl.InputMSFDirectory = curDir + r'\msf_test_import_export_VME'
-        upl.UnhandledPlusManualTagsListFileName = curDir + r'\unhandledPlusManualTagsList.txt'
-        upl.HandledAutoTagsListFileName = curDir + r'\handledAutoTagsList.txt'
+        upl.UnhandledPlusManualTagsListFileName = curDir + r'\unhandledPlusManualTagsList.csv'
+        upl.HandledAutoTagsListFileName = curDir + r'\handledAutoTagsList.csv'
         upl.OutputFolderName = curDir + r'\Outgoing'
         upl.VmeToExtractID = 1    
         upl.Upload()

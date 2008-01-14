@@ -504,7 +504,8 @@ class GridFrame(wx.Frame):
             self.data[row][col] = self.grid.GetCellValue(row,col)
             NewRow = ""
             for item in self.data[row]:
-                NewRow = NewRow + item + self.parent.Delimiter
+		# put double quotes around edited item
+                NewRow = NewRow + " \"" + item + "\" " + self.parent.Delimiter
             NewRow = NewRow[:-1] #truncate the extra tab.
             self.parent.data[int(self.grid.GetRowLabelValue(row))] = NewRow #change parent data set
             if row == self.parent.HeaderRow:#if editing row 0, then refresh the headers
@@ -1140,7 +1141,7 @@ class MainWindow(wx.Frame):
             path = args
             self.data = []
 	    
-	    self.InputFileName = path # to be used to save on exit
+	    self.InputFileName = os.getcwd() + r'\\' + path # to be used to save on exit
 	    
             f = open(path,'r')
             loaddlg = wx.ProgressDialog("Loading File..",
@@ -1280,6 +1281,7 @@ class MainWindow(wx.Frame):
             NewData = ""
             path = dlg.GetPath()
 	    self.InputFileName = path
+	    # <TODO!!!!!>
             f = open(path,'r')
             
             loaddlg = wx.ProgressDialog("Loading File..",
@@ -1399,6 +1401,7 @@ class MainWindow(wx.Frame):
         
 	
     def SaveAs(self, path):
+	print "save path: " + path
 	f = open(path,'w')
 	savedlg = wx.ProgressDialog("Saving File..",
 		    "Progress",
