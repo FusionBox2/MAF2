@@ -74,7 +74,8 @@ mmoLnSurf.cpp
 mmoLnSurf.h
 lhpOpUploadVME.cpp
 lhpOpUploadVME.h
-
+lhpOpImporterC3D.cpp
+lhpOpImporterC3D.h
 )
 
 # List libraries that are needed by this project.
