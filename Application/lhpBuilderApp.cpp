@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-01-10 08:22:49 $
-  Version:   $Revision: 1.38 $
+  Date:      $Date: 2008-01-15 10:54:33 $
+  Version:   $Revision: 1.39 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -97,7 +97,7 @@
 #include "mmoGRFImporterWS.h"
 #include "medPipeGraph.h"
 #include "mafVMERawMotionData.h" 
-#include "mafVMEC3DData.h" 
+#include "lhpOpImporterC3D.h" 
 #include "mmoMotionDataImporter.h"
 #include "mmoLandmarkExporter.h"
 #include "mmoClassicICPRegistration.h"
@@ -157,7 +157,7 @@ bool lhpBuilderApp::OnInit()
   result = mafInteractionFactory::Initialize();
   assert(result==MAF_OK);
 
-  mafPlugNode<mafVMEC3DData>("VME representing c3d motion data");
+  
   mafPlugNode<mafVMERawMotionData>("VME representing raw motion data");
   mafPlugNode<mafVMEAFRefSys>("VME representing anatomical frame");
   mafPlugNode<mafVMEHelAxis>("VME representing helical axis");
@@ -192,7 +192,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoImageImporter("Images"),"Images");
   m_Logic->Plug(new mmoLandmarkImporter("Landmark"),"Motion Analysis");
 	m_Logic->Plug(new mmoLandmarkImporterWS("ASCII trajectories (VWs)"),"Motion Analysis");
-  m_Logic->Plug(new mmoMotionDataImporter<mafVMEC3DData>("C3D", "C3D Motion Data (*.c3d)|*.c3d", "Dictionary (*.txt)|*.txt"),"Motion Analysis");
+  m_Logic->Plug(new lhpOpImporterC3D("C3D"),"Motion Analysis");  
   m_Logic->Plug(new mmoMotionDataImporter<mafVMERawMotionData>("Raw Motion Data", "RAW Motion Data (*.MAN)|*.MAN", "Dictionary (*.txt)|*.txt"), "Motion Analysis");
   // m_Logic->Plug(new mmoLandmarkImporter("Landmark")); //Old Importer
   m_Logic->Plug(new mmoGRFImporterWS("ASCII Force Plates (VWs)"), "Motion Analysis");
