@@ -1,5 +1,5 @@
 import vmeUploader
-from webServicesClient import MtomUpload
+from webServicesClient import MtomUpload, MtomUploadURI, MtomSRBSize , xmlrpcDemoWS
 import msfParser
 from xml.dom import minidom
 from xml.dom import Node
@@ -15,33 +15,38 @@ class UploadHandler:
         self.dirOutgoing = ""
         self.id = id	
         self.msg = 0
+        self.binaryFileSize = 0
+        self.remoteTemporaryBinaryFileSize = 0
+        self.BinaryURI = ""
         self.block = threading.Lock()
 		
     def upload(self):
         self.createXMLAndBinary()
         
         #launch external XML editor
-        self.launchXMLEditor(self.dirOutgoing)
+        #self.launchXMLEditor(self.dirOutgoing)
 
+        #self.remoteTemporaryBinaryFileSize = self.getRemoteTemporaryBinaryFileSize()
         #send file
-        #thread.start_new_thread(self.sendBinaryFile,())
-        self.sendBinaryFile() #until there is service monitor don't use thread
-
+        thread.start_new_thread(self.sendBinaryFile,())      
+        #self.sendBinaryFile() #until there is service monitor don't use thread
+        
         print "Wainting..."
-        #while 1:
+        print "Total Size of Binary: " + str(self.binaryFileSize)
+        while 1:
             # To simulate asynchronous I/O, we create a random number at
             # random intervals. Replace the following 2 lines with the real
             # thing.
-        #    time.sleep(0.2)
-        #    self.msg = self.msg + 20
-        self.msg = 100
-        lista = [self.observer,self.msg]
-        self.block.acquire()
-        UploadHandler.queue.put(lista)
-        self.block.release()
-        #    if(self.msg == 100): break
+            time.sleep(0.5)
+            self.remoteTemporaryBinaryFileSize = self.getRemoteTemporaryBinaryFileSize()
+            percentage = 100 * self.remoteTemporaryBinaryFileSize / self.binaryFileSize
+            lista = [self.observer,percentage]
+            self.block.acquire()
+            UploadHandler.queue.put(lista)
+            self.block.release()
+            if(percentage == 100): break
 
-        #send xml file
+        #send xml file, perhaps here free source
         self.sendXMLFile()
         
         print "End Upload" 
@@ -67,11 +72,12 @@ class UploadHandler:
         upl.VmeToExtractID = int(self.id)
 
         #get free resource (return URI string)
-        uri = self.getFreeResource()
-        
-        upl.DatasetURI = uri
+        self.BinaryURI = self.getFreeResource() 
+        upl.DatasetURI = self.BinaryURI
 
         upl.Upload()
+        #get size of binary locally
+        self.binaryFileSize = self.getBinaryFileSize()
 
     def launchXMLEditor(self, dir):
         oldDir = os.getcwd()
@@ -85,29 +91,43 @@ class UploadHandler:
 
     def getFreeResource(self):
         #here call module to get URI of first free resource
-        return "DaQuaPrendoURI"
+        instance = MtomUploadURI.MtomUploadURI()
+        result = instance.ListSrbDir()
+        return result
 
     def sendBinaryFile(self):
-        files = os.listdir(self.dirOutgoing)
-        #print files
-        binaryFile = ""
-        for file in files:
-            if (re.search('\\.xml$',file) == None):
-               binaryFile = file
-        #assert(binaryFile)
-        #print self.dirOutgoing + "\\" + binaryFile
-        self.__sendFile(self.dirOutgoing + "\\" + binaryFile)
+        os.rename(self.dirOutgoing + "\\" + self.getBinaryFile(),self.dirOutgoing + "\\" +self.BinaryURI)
+        self.__sendFile(self.BinaryURI)
 		
     def sendXMLFile(self):
-        self.__sendFile(self.dirOutgoing + "\\" + self.getXMLFile())
+        newName = self.BinaryURI + "_" +self.getXMLFile()
+        os.rename(self.dirOutgoing + "\\" + self.getXMLFile(),self.dirOutgoing + "\\" + newName)
+        #self.__sendFile(self.XMLURI)
+        oldDir = os.getcwd()
+        os.chdir(self.dirOutgoing)
+        
+        ws = xmlrpcDemoWS.xmlrpc_demoWS()
+        out = ws.run('xmlupload', newName)
+        
+        os.chdir(oldDir)
 
     def __sendFile(self,filename):
+        oldDir = os.getcwd()
+        os.chdir(self.dirOutgoing)
+        
         instance = MtomUpload.MtomUpload()
-        print filename
         result = instance.Upload(filename)
+        
         cheksum = result.chksum
         uri = result.uriFile
-        pass
+        
+        os.chdir(oldDir)
+        
+        
+    def getRemoteTemporaryBinaryFileSize(self):
+        instance = MtomSRBSize.MtomSize()
+        result = instance.ListSrbDir(self.BinaryURI)
+        return result
 
     def getXMLFile(self):
         files = os.listdir(self.dirOutgoing)
@@ -116,7 +136,19 @@ class UploadHandler:
         for file in files:
             if (re.search('\\.xml$',file)):
                xmlFile = file
-        return xmlFile	
+        return xmlFile
+    
+    def getBinaryFile(self):
+        files = os.listdir(self.dirOutgoing)
+        #print files
+        binaryFile = ""
+        for file in files:
+            if (re.search('\\.xml$',file) == None):
+               binaryFile = file
+        return binaryFile
+    
+    def getBinaryFileSize(self):
+        return os.stat(self.dirOutgoing + "\\" +self.getBinaryFile()).st_size
 		
 def createUploadHandler(queue, observer, dirCache, id):
     uploadHandler = UploadHandler(queue,observer, dirCache, id)

@@ -3,6 +3,11 @@ import CustomGaugeWx
 import Queue , time
 import  wx.lib.scrolledpanel as scrolled
 
+# GAUGE
+NOT_PULSE = 0
+PULSE = 1
+
+
 class GuiPart(wx.Frame):
     def __init__(self, master, queue, endCommand):
         wx.Frame.__init__(self, None, -1, style = wx.DEFAULT_FRAME_STYLE & ~(wx.RESIZE_BORDER | wx.MAXIMIZE_BOX))
@@ -50,7 +55,7 @@ class GuiPart(wx.Frame):
         self.__createBar()
     
     def __createBar(self):
-        self.bars.append(CustomGaugeWx.CustomGaugeWx(self.scrolledPanel, len(self.bars), 100, (160, (len(self.bars)+1) * 50), (self.staticLine.GetSize()[0]/2.0, 25)))
+        self.bars.append(CustomGaugeWx.CustomGaugeWx(self.scrolledPanel, len(self.bars), 100, (160, (len(self.bars)+1) * 50), (self.staticLine.GetSize()[0]/2.0, 25), gaugePulse = NOT_PULSE))
         self.fgs1.Add(self.bars[len(self.bars)-1],flag=wx.CENTER)
         
         #self.scrolledPanel.SetAutoLayout(1)
@@ -90,7 +95,12 @@ class GuiPart(wx.Frame):
                 # Check contents of message and do what it says
                 # As a test, we simply print it
                 #self.console.SetLabel("Running...")
-                lista[0].gauge.SetValue(int(lista[1]))
+                
+                if(lista[0].gaugePulse == 0):lista[0].gauge.SetValue(int(lista[1]))
+                else:
+                   lista[0].gauge.Pulse()
+                   #here calculate time 
+                   lista[0].SetEndingLabel(str(lista[1]))
                 #print lista
             except:
                 pass
