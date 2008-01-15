@@ -18,6 +18,7 @@ class UploadHandler:
         self.binaryFileSize = 0
         self.remoteTemporaryBinaryFileSize = 0
         self.BinaryURI = ""
+        self.XMLURI = ""
         self.block = threading.Lock()
 		
     def upload(self):
@@ -49,7 +50,9 @@ class UploadHandler:
         #send xml file, perhaps here free source
         self.sendXMLFile()
         
-        print "End Upload" 
+        print "End Upload"
+        print "Uploaded Binary in SRB: " + self.BinaryURI
+        print "Uploaded XML on Biomedtown: " + self.XMLURI
 
 		
     def createXMLAndBinary(self):
@@ -100,14 +103,14 @@ class UploadHandler:
         self.__sendFile(self.BinaryURI)
 		
     def sendXMLFile(self):
-        newName = self.BinaryURI + "_" +self.getXMLFile()
-        os.rename(self.dirOutgoing + "\\" + self.getXMLFile(),self.dirOutgoing + "\\" + newName)
+        self.XMLURI = self.BinaryURI + "_" +self.getXMLFile()
+        os.rename(self.dirOutgoing + "\\" + self.getXMLFile(),self.dirOutgoing + "\\" + self.XMLURI)
         #self.__sendFile(self.XMLURI)
         oldDir = os.getcwd()
         os.chdir(self.dirOutgoing)
         
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
-        out = ws.run('xmlupload', newName)
+        out = ws.run('xmlupload', self.XMLURI)
         
         os.chdir(oldDir)
 
