@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2008-01-15 10:49:08 $
-#   Version:   $Revision: 1.22 $
+#   Date:      $Date: 2008-01-15 22:39:48 $
+#   Version:   $Revision: 1.23 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -16,7 +16,6 @@ PROJECT (LHP)
 CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/lhpDefines.h.in
              ${PROJECT_BINARY_DIR}/lhpDefines.h
              @ONLY)
-
 
 #-----------------------------------------------------------------------------
 # this define the LHP_SUBPROJECT macro
@@ -97,7 +96,7 @@ IF(MAF_FOUND)
   IF(C3DReaderAPI_FOUND)
       INCLUDE(${C3DReaderAPI_USE_FILE})
   ELSE(C3DReaderAPI_FOUND)
-		MESSAGE(FATAL_ERROR "Cannot find C3DReaderAPI_PATH")
+		#MESSAGE(FATAL_ERROR "Cannot find C3DReaderAPI_PATH")
   ENDIF(C3DReaderAPI_FOUND)
 
   # Export Build settings and library dependencies
