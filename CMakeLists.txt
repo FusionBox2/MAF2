@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2008-01-09 12:40:53 $
-#   Version:   $Revision: 1.21 $
+#   Date:      $Date: 2008-01-15 10:49:08 $
+#   Version:   $Revision: 1.22 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -11,6 +11,12 @@ SET (CMAKE_BACKWARDS_COMPATIBILITY "2.0" CACHE INTERNAL "This project is for CMa
 CMAKE_MINIMUM_REQUIRED(VERSION 2.0) 
 
 PROJECT (LHP)
+
+# Create the header to configure the classes.
+CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/lhpDefines.h.in
+             ${PROJECT_BINARY_DIR}/lhpDefines.h
+             @ONLY)
+
 
 #-----------------------------------------------------------------------------
 # this define the LHP_SUBPROJECT macro
@@ -85,6 +91,15 @@ IF(MAF_FOUND)
   # Configuring Doxygen documentation  
   SUBDIRS (Documentation)
   
+  SUBDIRS(Aurion/C3DReader/share)
+  INCLUDE("${PROJECT_SOURCE_DIR}/CMakeModules/FindC3DReaderAPI.cmake")
+
+  IF(C3DReaderAPI_FOUND)
+      INCLUDE(${C3DReaderAPI_USE_FILE})
+  ELSE(C3DReaderAPI_FOUND)
+		MESSAGE(FATAL_ERROR "Cannot find C3DReaderAPI_PATH")
+  ENDIF(C3DReaderAPI_FOUND)
+
   # Export Build settings and library dependencies
   INCLUDE(CMakeExportBuildSettings)
   
