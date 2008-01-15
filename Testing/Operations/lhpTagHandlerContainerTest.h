@@ -2,16 +2,16 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpTagHandlerContainerTest.h,v $
 Language:  C++
-Date:      $Date: 2008-01-08 16:07:15 $
-Version:   $Revision: 1.5 $
+Date:      $Date: 2008-01-15 10:57:57 $
+Version:   $Revision: 1.6 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004 
 CINECA - Interuniversity Consortium (www.cineca.it)
 =========================================================================*/
 
-#ifndef __CPP_UNIT_lhpFactoryTagHandlerTEST_H__
-#define __CPP_UNIT_lhpFactoryTagHandlerTEST_H__
+#ifndef __CPP_UNIT_lhpTagHandlerContainerTEST_H__
+#define __CPP_UNIT_lhpTagHandlerContainerTEST_H__
 
 #include <cppunit/extensions/HelperMacros.h>
 #include <cppunit/BriefTestProgressListener.h>
