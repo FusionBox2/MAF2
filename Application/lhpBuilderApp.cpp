@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-01-15 10:54:33 $
-  Version:   $Revision: 1.39 $
+  Date:      $Date: 2008-01-15 23:21:49 $
+  Version:   $Revision: 1.40 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -40,7 +40,6 @@
 #include "mafPipeVolumeSlice.h"
 #include "medPipeFactoryVME.h"
 #include "medVMEFactory.h"
-#include "medVMEEmg.h"
 #include "medPipeVolumeDRR.h"
 #include "medPipeTrajectories.h" 
 #include "mafVMEAFRefSys.h" 
