@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-01-16 17:46:51 $
-Version:   $Revision: 1.35 $
+Date:      $Date: 2008-01-16 18:21:50 $
+Version:   $Revision: 1.36 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -818,6 +818,9 @@ bool lhpOpUploadVME::CheckLogin()
 //----------------------------------------------------------------------------
 {
   bool result = false;
+
+  m_User.SetProxyPort(m_ProxyPort);
+  m_User.SetProxyURL(m_ProxyURL);
 
   result = m_User.CheckUserCredentials();
   return result;
