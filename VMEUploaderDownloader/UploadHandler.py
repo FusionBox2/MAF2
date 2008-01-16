@@ -5,6 +5,7 @@ from xml.dom import minidom
 from xml.dom import Node
 import os, sys, string, time, re ,shutil
 import threading, thread
+from Debug import Debug
 
 class UploadHandler:
     queue = None
@@ -25,7 +26,8 @@ class UploadHandler:
         self.createXMLAndBinary()
         
         #launch external XML editor
-        #self.launchXMLEditor(self.dirOutgoing)
+        if Debug:
+            self.launchXMLEditor(self.dirOutgoing)
 
         #self.remoteTemporaryBinaryFileSize = self.getRemoteTemporaryBinaryFileSize()
         #send file
