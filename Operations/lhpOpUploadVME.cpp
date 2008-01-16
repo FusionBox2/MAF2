@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-01-14 14:29:43 $
-Version:   $Revision: 1.34 $
+Date:      $Date: 2008-01-16 17:46:51 $
+Version:   $Revision: 1.35 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -123,6 +123,8 @@ mafOp(label)
   m_ManualTagsList.Clear();
   
   m_SubdictionaryId = NO_SUBDICTIONARY; // default to none
+  m_ConnectionConfigurationFileName = "vmeUploaderConnectionConfiguration.conf" ;
+
 }
 
 //----------------------------------------------------------------------------
@@ -148,8 +150,11 @@ bool lhpOpUploadVME::Accept(mafNode* vme)
 void lhpOpUploadVME::OpRun()
 //----------------------------------------------------------------------------
 {
+  // load the connection configuration file:
+  // this->LoadConnectionConfigurationFile();
 
   int result = OP_RUN_CANCEL;
+
   bool upToDate = false;
   if(CheckLogin())
   {
@@ -171,6 +176,50 @@ void lhpOpUploadVME::OpRun()
     OpStop(result);
   }
   
+}
+
+void lhpOpUploadVME::LoadConnectionConfigurationFile()
+{
+  wxString oldDir = wxGetCwd();
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+
+  // open auto tags file and try to handle tags using tags factory 
+  ifstream configurationFile;
+
+  configurationFile.open(m_ConnectionConfigurationFileName.GetCStr());
+  if (!configurationFile) {
+    wxString message = m_ConnectionConfigurationFileName.GetCStr();
+    message.Append(" not found! Unable to open connection configuration file: default values will be used");
+    mafLogMessage(message.c_str());
+  }
+  else
+  {
+    std::string tmp;
+
+    configurationFile >> tmp;
+    m_ProxyURL = tmp.c_str();
+    
+    
+    configurationFile >> tmp;
+    m_ProxyPort = tmp.c_str();
+     
+    wxString message = m_ConnectionConfigurationFileName.GetCStr();
+    message.Append("Found connection configuration file: using connection parameters");
+    message.Append("m_ProxyURL: ");
+    message.Append(m_ProxyURL.GetCStr());
+    message.Append("m_ProxyPort: ");
+    message.Append(m_ProxyPort.GetCStr());
+
+    mafLogMessage(message.c_str());
+
+    configurationFile.close();
+  }
+
+  wxSetWorkingDirectory(oldDir);
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+
 }
 //----------------------------------------------------------------------------
 void lhpOpUploadVME::OnEvent(mafEventBase *maf_event) 
@@ -715,7 +764,11 @@ bool lhpOpUploadVME::IsLHPBuilderVersionUpToDate()
   command2execute = m_PythonExe;
 
   command2execute.Append(" lhpDictionaryVersionChecker.py ");
-  
+  command2execute.Append(" ");
+  command2execute.Append(m_ProxyURL.GetCStr());
+  command2execute.Append(" ");
+  command2execute.Append(m_ProxyPort.GetCStr());
+
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   long pid = wxExecute(command2execute, wxEXEC_SYNC);

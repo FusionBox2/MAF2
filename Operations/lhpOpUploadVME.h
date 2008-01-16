@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-01-09 17:19:58 $
-Version:   $Revision: 1.13 $
+Date:      $Date: 2008-01-16 17:46:51 $
+Version:   $Revision: 1.14 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -138,14 +138,20 @@ protected:
 
   static lhpUser  m_User;
   
+  mafString m_ConnectionConfigurationFileName;
+  mafString m_ProxyURL;
+  mafString m_ProxyPort;
+
 private:
   mafString GetXMLDictionaryFileName(mafString dictionaryFileNamePrefix);
   void CreateGui();
   int AssembleDictionaries();
+  void LoadConnectionConfigurationFile();
   int m_SubdictionaryId;
   wxArrayString m_AutoTagsList;
   wxArrayString m_ManualTagsList;
   wxArrayString m_UnhandledAutoTagsListFromFactory; ///< the factory was not able to handle these tags
   wxArrayString m_HandledAutoTagsListFromFactory; ///< tags handled by the factory  
+  
 };
 #endif
