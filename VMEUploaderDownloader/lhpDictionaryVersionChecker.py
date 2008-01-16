@@ -15,6 +15,8 @@ import webbrowser
 
 from datetime import *
 from time import *
+from HttpsProxy import *
+# import HttpsProxy
 
 import os
 
@@ -29,6 +31,7 @@ class lhpDictionaryVersionChecker:
         self.DictionaryDownloadHTMLPageSelector = "http://www.biomedtown.org/biomed_town/LHDL/lhdl-management/Consortium-room/lhdl-repository/WP5/Dictionaries/plfng_view"
         self.RemoteWarningPage = r"http://www.biomedtown.org/biomed_town/LHDL/users/swclient/DictionaryCheck/"
         
+        
         # authentication
         self.Username = 'lhpparabuild'
         self.Password = '2bf5ZM'
@@ -37,7 +40,11 @@ class lhpDictionaryVersionChecker:
         self.DictionaryDownloadHTMLPageFileName = "DictionaryDownloadHTMLPage.htm"
         self.DictionaryCreationDate = "YYYYMMDDHHMM"
     
-    def IsDictionaryUpToDate(self):
+        # proxy
+        self.ProxyURL = "proxy.ior.it"
+        self.ProxyPort = 8888
+        
+    def IsDictionaryUpToDate(self, useProxy = False):
         """
            return True if lhp dictionary is updated otherwise return false
         """
@@ -48,7 +55,11 @@ class lhpDictionaryVersionChecker:
         self.RemoveOldDictionaries("lhpXMLMotionAnalysisSourceSubdictionary_")
                 
         localDate = self.GetLocalDictionaryDate()
-        remoteDate = self.GetRemoteDictionaryDate()
+        
+        if self.UseProxy:            
+            remoteDate = self.GetRemoteDictionaryDateByProxy()
+        else:
+            remoteDate = self.GetRemoteDictionaryDate()      
         
         if remoteDate > localDate:
             print "Your LHPBuilder software is not up to date and you're not allowed to upload with it! Please download the latest version."
@@ -123,7 +134,6 @@ class lhpDictionaryVersionChecker:
         return int(date)
         
         
-    
     def GetRemoteDictionaryDate(self):
         """ 
            Parse dictionary webpage and return dictionary creation datetime as a long, for example from 2007-12-13 17:56
@@ -215,6 +225,131 @@ class lhpDictionaryVersionChecker:
             
             parsedLineNumber += 1
             
+    def GetRemoteDictionaryDateByProxy(self):
+        """ 
+           Parse dictionary webpage and return dictionary creation datetime as a long, for example from 2007-12-13 17:56
+           returns 200712131756, if successful otherwise return -1
+        """
+        
+        # build opener
+                
+        # <TODO!!!!!> da qui
+        # proxy.ior.it 
+        # 8888
+        
+        self.cj = cookielib.CookieJar()
+        
+        
+        # proxy_url = self.ProxyURL
+        # proxy_port = self.ProxyPort
+        
+        proxy_url = ''
+        proxy_port = ''
+
+        
+        p = '%s:%s' % (proxy_url, proxy_port)        
+        
+        if Debug:
+            print "proxy: " + p
+
+        if proxy_url != '' and proxy_port != '':
+            self.opener = \
+              urllib2.build_opener(
+              ConnectHTTPHandler(proxy=p),
+              ConnectHTTPSHandler(proxy=p),
+              urllib2.HTTPCookieProcessor(self.cj))
+        else:
+            self.opener = \
+              urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cj))
+
+        urllib2.install_opener(self.opener)  
+        
+        print "Connecting to self.Host: " + self.Host            
+        print "Retrieving: " + self.DictionaryDownloadHTMLPageSelector
+        
+        url = self.DictionaryDownloadHTMLPageSelector
+        auth = "Basic %s" % string.replace(
+                               encodestring("%s:%s" % (self.Username, self.Password)),
+                               "\012", "")
+        
+        data = urllib.urlencode([('AUTHORIZATION', auth)])
+        req = urllib2.Request(url)
+        fd = urllib2.urlopen(req,data)        
+       
+        file = open(self.DictionaryDownloadHTMLPageFileName, 'w')       
+        for content in fd:
+            file.write(content)
+        file.close()
+
+        if Debug:
+        
+            f2 = open(self.DictionaryDownloadHTMLPageFileName, 'r')
+            for line in f2:
+                print line
+        
+        diskFile = open(self.DictionaryDownloadHTMLPageFileName, 'r')
+        file = StringIO.StringIO()
+        fileLinesNumber = 0
+        # read all the file in memory
+        for curr in diskFile.readlines() :
+            fileLinesNumber += 1
+            file.write(curr)
+        
+        if Debug:           
+            print "Input HTML file contains: " + str(fileLinesNumber) + " lines" 
+        
+        # go to the beginning of file
+        file.seek(0)
+        
+        parsedLineNumber = 0
+         
+        # parse the file structure and gather informations
+        while 1:
+            
+            # file first-line
+            line = file.readline() 
+            
+            # if Debug:
+            #     print "main loop is parsing: " + str(parsedLineNumber) + " > " + line
+        
+            if re.search("(/>&nbsp;LHDL_dictionary.csv)$", line):
+                if Debug:                   
+                    print "Found LHDL_dictionary.csv at line: " + line
+                
+                while 1:
+                    
+                    line = file.readline() 
+                    if re.search("^ *(<td>20)", line):
+                        if Debug:                            
+                            print "Found date line: " + line
+                        date = line.strip().replace("<td>","").replace("</td>","")
+                        if Debug:   
+                            print date
+                        dt = datetime(*strptime(date, "%Y-%m-%d %H:%M")[0:5])
+                        st = ""
+                        for num in dt.timetuple()[0:5]:
+                            st = st + str(num)
+                        if Debug:
+                            print st
+                        int_val = -1
+                        try:
+                            int_val = int(st)                           
+                        except ValueError:
+                            print "error converting to int"
+                            return
+                        self.DictionaryCreationDate = int_val
+                        return int_val
+                    parsedLineNumber += 1
+                    
+                    # when you reach the end of file... 
+                    if not line:
+                        return -1
+                
+            # when you reach the end of file... 
+            if not line: 
+                return -1
+            
+            parsedLineNumber += 1
         
 def run():                                            
     

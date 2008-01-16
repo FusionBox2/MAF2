@@ -32,19 +32,27 @@ class lhpDictionaryVersionCheckerTest(unittest.TestCase):
         
         curDir = os.getcwd()        
         
+        
         print " current directory is: " + curDir
           
     
-    def testRun(self):
+    def estRun(self):
             
         lhpDictionaryVersionChecker.run()
+        
         
     def estGetDictionaryCreationDate(self):
         dd = lhpDictionaryVersionChecker.lhpDictionaryVersionChecker()
         dt = dd.GetRemoteDictionaryDate()
         self.assertTrue(isinstance(dt, long))
         self.assertTrue(dt > 10000)
-        
+    
+    def testGetDictionaryCreationDateByProxy(self):
+        dd = lhpDictionaryVersionChecker.lhpDictionaryVersionChecker()
+        dt = dd.GetRemoteDictionaryDateByProxy()
+        self.assertTrue(isinstance(dt, long))
+        self.assertTrue(dt > 10000)
+    
 if __name__ == '__main__':
      unittest.main()
     
