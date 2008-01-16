@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterC3D.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-01-15 10:50:45 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-01-16 10:01:34 $
+  Version:   $Revision: 1.2 $
   Authors:   Daniele  Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -561,7 +561,7 @@ void lhpOpImporterC3D::ImportPlatform()
   wxBusyInfo *wait;
   if(!m_TestMode)
   {
-    wait = new wxBusyInfo("Please wait, import Force Plates");
+    wait = new wxBusyInfo("Please wait, import Force Plate Data");
   }
 
   long progress = 0;
@@ -778,7 +778,7 @@ void lhpOpImporterC3D::CreateGui()
 
   m_Gui->Bool(ID_IMPORT_TRAJECTORIES,_("Trajectories"),&m_ImportTrajectoriesFlag,1);
   m_Gui->Bool(ID_IMPORT_ANALOG,_("Analog Data"),&m_ImportAnalogFlag,1);
-  m_Gui->Bool(ID_IMPORT_PLATFORM,_("Force Plates"),&m_ImportPlatformFlag,1);
+  m_Gui->Bool(ID_IMPORT_PLATFORM,_("Force Plate Data"),&m_ImportPlatformFlag,1);
   //m_Gui->Bool(ID_IMPORT_EVENT,_("Auto Crop"),&m_ImportEventFlag,1);
 
 	m_Gui->OkCancel();
