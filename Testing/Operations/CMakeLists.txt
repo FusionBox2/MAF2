@@ -1,7 +1,7 @@
 PROJECT (OPERATIONS_TEST)
 
 LINK_LIBRARIES (lhpVME)
-LINK_LIBRARIES(lhpOperations)
+LINK_LIBRARIES(lhpOperations C3D_Reader)
 LINK_LIBRARIES(lhpCommon)
 
 #-----------------------------------------------------------------------------
@@ -19,6 +19,10 @@ ADD_TEST(lhpFactoryTagHandlerTest ${EXECUTABLE_OUTPUT_PATH}/lhpFactoryTagHandler
 
 ADD_EXECUTABLE(lhpTagHandlerContainerTest lhpTagHandlerContainerTest.h lhpTagHandlerContainerTest.cpp)
 ADD_TEST(lhpTagHandlerContainerTest ${EXECUTABLE_OUTPUT_PATH}/lhpTagHandlerContainerTest)
+
+ADD_EXECUTABLE(lhpOpImporterC3DTest lhpOpImporterC3DTest.h lhpOpImporterC3DTest.cpp)
+ADD_TEST(lhpOpImporterC3DTest ${EXECUTABLE_OUTPUT_PATH}/lhpOpImporterC3DTest)
+
 
 # wxWidgets specific classes
 #IF (MAF_USE_WX)
