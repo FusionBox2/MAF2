@@ -40,16 +40,10 @@ class lhpDictionaryVersionCheckerTest(unittest.TestCase):
             
         lhpDictionaryVersionChecker.run()
         
-        
-    def estGetDictionaryCreationDate(self):
+    
+    def testGetDictionaryCreationDate(self):
         dd = lhpDictionaryVersionChecker.lhpDictionaryVersionChecker()
         dt = dd.GetRemoteDictionaryDate()
-        self.assertTrue(isinstance(dt, long))
-        self.assertTrue(dt > 10000)
-    
-    def testGetDictionaryCreationDateByProxy(self):
-        dd = lhpDictionaryVersionChecker.lhpDictionaryVersionChecker()
-        dt = dd.GetRemoteDictionaryDateByProxy()
         self.assertTrue(isinstance(dt, long))
         self.assertTrue(dt > 10000)
     

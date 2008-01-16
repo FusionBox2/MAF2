@@ -16,7 +16,6 @@ import webbrowser
 from datetime import *
 from time import *
 from HttpsProxy import *
-# import HttpsProxy
 
 import os
 
@@ -41,10 +40,10 @@ class lhpDictionaryVersionChecker:
         self.DictionaryCreationDate = "YYYYMMDDHHMM"
     
         # proxy
-        self.ProxyURL = "proxy.ior.it"
-        self.ProxyPort = 8888
+        self.ProxyURL = ''
+        self.ProxyPort = ''
         
-    def IsDictionaryUpToDate(self, useProxy = False):
+    def IsDictionaryUpToDate(self):
         """
            return True if lhp dictionary is updated otherwise return false
         """
@@ -56,10 +55,8 @@ class lhpDictionaryVersionChecker:
                 
         localDate = self.GetLocalDictionaryDate()
         
-        if self.UseProxy:            
-            remoteDate = self.GetRemoteDictionaryDateByProxy()
-        else:
-            remoteDate = self.GetRemoteDictionaryDate()      
+        
+        remoteDate = self.GetRemoteDictionaryDate()
         
         if remoteDate > localDate:
             print "Your LHPBuilder software is not up to date and you're not allowed to upload with it! Please download the latest version."
@@ -133,126 +130,26 @@ class lhpDictionaryVersionChecker:
         
         return int(date)
         
-        
+            
     def GetRemoteDictionaryDate(self):
         """ 
            Parse dictionary webpage and return dictionary creation datetime as a long, for example from 2007-12-13 17:56
            returns 200712131756, if successful otherwise return -1
         """
         
-        print "Connecting to self.Host: " + self.Host            
-        print "Retrieving: " + self.DictionaryDownloadHTMLPageSelector
-        
-        h = httplib.HTTPConnection(self.Host)
-        h.putrequest('POST', self.DictionaryDownloadHTMLPageSelector)
-        h.putheader("AUTHORIZATION", "Basic %s" % string.replace(
-                                encodestring("%s:%s" % (self.Username, self.Password)),
-                                "\012", ""))
-        h.endheaders()
-        
-        #     
-        f = open(self.DictionaryDownloadHTMLPageFileName, 'w')        
-        f.write(h.getresponse().read())
-        f.close()
-    
-        if Debug:
-        
-            f2 = open(self.DictionaryDownloadHTMLPageFileName, 'r')
-            for line in f2:
-                print line
-        
-        diskFile = open(self.DictionaryDownloadHTMLPageFileName, 'r')
-        file = StringIO.StringIO()
-        fileLinesNumber = 0
-        # read all the file in memory
-        for curr in diskFile.readlines() :
-            fileLinesNumber += 1
-            file.write(curr)
-        
-        if Debug:           
-            print "Input HTML file contains: " + str(fileLinesNumber) + " lines" 
-        
-        # go to the beginning of file
-        file.seek(0)
-        
-        parsedLineNumber = 0
-         
-        # parse the file structure and gather informations
-        while 1:
-            
-            # file first-line
-            line = file.readline() 
-            
-            # if Debug:
-            #     print "main loop is parsing: " + str(parsedLineNumber) + " > " + line
-        
-            if re.search("(/>&nbsp;LHDL_dictionary.csv)$", line):
-                if Debug:                   
-                    print "Found LHDL_dictionary.csv at line: " + line
-                
-                while 1:
-                    
-                    line = file.readline() 
-                    if re.search("^ *(<td>20)", line):
-                        if Debug:                            
-                            print "Found date line: " + line
-                        date = line.strip().replace("<td>","").replace("</td>","")
-                        if Debug:   
-                            print date
-                        dt = datetime(*strptime(date, "%Y-%m-%d %H:%M")[0:5])
-                        st = ""
-                        for num in dt.timetuple()[0:5]:
-                            st = st + str(num)
-                        if Debug:
-                            print st
-                        int_val = -1
-                        try:
-                            int_val = int(st)                           
-                        except ValueError:
-                            print "error converting to int"
-                            return
-                        self.DictionaryCreationDate = int_val
-                        return int_val
-                    parsedLineNumber += 1
-                    
-                    # when you reach the end of file... 
-                    if not line:
-                        return -1
-                
-            # when you reach the end of file... 
-            if not line: 
-                return -1
-            
-            parsedLineNumber += 1
-            
-    def GetRemoteDictionaryDateByProxy(self):
-        """ 
-           Parse dictionary webpage and return dictionary creation datetime as a long, for example from 2007-12-13 17:56
-           returns 200712131756, if successful otherwise return -1
-        """
-        
         # build opener
-                
-        # <TODO!!!!!> da qui
-        # proxy.ior.it 
-        # 8888
-        
         self.cj = cookielib.CookieJar()
         
-        
-        # proxy_url = self.ProxyURL
-        # proxy_port = self.ProxyPort
-        
-        proxy_url = ''
-        proxy_port = ''
-
+        proxy_url = self.ProxyURL
+        proxy_port = self.ProxyPort        
         
         p = '%s:%s' % (proxy_url, proxy_port)        
         
-        if Debug:
-            print "proxy: " + p
-
         if proxy_url != '' and proxy_port != '':
+            
+            if Debug:
+                print "You are using proxy: " + p
+
             self.opener = \
               urllib2.build_opener(
               ConnectHTTPHandler(proxy=p),
@@ -269,21 +166,15 @@ class lhpDictionaryVersionChecker:
         print "Retrieving: " + self.DictionaryDownloadHTMLPageSelector
         
         url = self.DictionaryDownloadHTMLPageSelector
-#        auth = "Basic %s" % string.replace(
-#                               encodestring("%s:%s" % (self.Username, self.Password)),
-#                               "\012", "")
-#        
-#        data = urllib.urlencode([('AUTHORIZATION', auth)])
+
         req = urllib2.Request(url)
 
-        #XXX BASIC AUTHENTICATION CODE ####################################
-
+        # Basic authentication code
         base64string = encodestring('%s:%s' % (self.Username, self.Password))[:-1]
         authheader =  "Basic %s" % base64string
         req.add_header("Authorization", authheader)
 
-        #XXX ##############################################################
-
+        # open the url
         fd = urllib2.urlopen(req)
        
         file = open(self.DictionaryDownloadHTMLPageFileName, 'w')       
@@ -300,6 +191,7 @@ class lhpDictionaryVersionChecker:
         diskFile = open(self.DictionaryDownloadHTMLPageFileName, 'r')
         file = StringIO.StringIO()
         fileLinesNumber = 0
+        
         # read all the file in memory
         for curr in diskFile.readlines() :
             fileLinesNumber += 1
@@ -361,28 +253,31 @@ class lhpDictionaryVersionChecker:
             
             parsedLineNumber += 1
         
-def run():                                            
+def run(proxyURL = '', proxyPort = ''):                                            
     
     # get the dictionary creation date
     dictVC = lhpDictionaryVersionChecker()
+    dictVC.ProxyURL = proxyURL
+    dictVC.ProxyPort = proxyPort
     if dictVC.IsDictionaryUpToDate() == True:
         print "UpToDate"
     else:
         print "NotUpToDate"
     
-    
-def main():
-    args = sys.argv[1:]
-    if len(args) != 1:
-        print 
-        """
-        usage: python.exe lhpDictionaryVersionChecker.py
+if __name__ == '__main__':    
+
+    if len(sys.argv) != 1 and len(sys.argv) != 3:
+        print """
+        usage: python.exe lhpDictionaryVersionChecker.py proxyURL proxyPort
+        The last two arguments are optional: if a proxy is not provided it will not be used
         """
         sys.exit(-1)
-    print args
-    run(args[0],args[1],args[2])
-
-
-if __name__ == '__main__':    
-    run()
- 
+        
+    if len(sys.argv) == 1:
+        proxyURL = ''
+        proxyPort = ''
+    else:
+        proxyURL = sys.argv[1]
+        proxyPort = sys.argv[2]
+    
+    run(proxyURL,proxyPort)

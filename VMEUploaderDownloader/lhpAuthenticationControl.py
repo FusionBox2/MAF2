@@ -16,6 +16,7 @@ from time import *
 import os
 
 import urllib, urllib2, base64, re, os, cookielib, sys
+from HttpsProxy import *
 
 class lhpAuthenticationControl:
       
@@ -35,6 +36,10 @@ class lhpAuthenticationControl:
         #result
         self.AuthenticationHTMLPageFileName = "AuthenticationControlHTMLPage.htm"    
 
+        # proxy
+        self.ProxyURL = ''
+        self.ProxyPort = ''
+      
     def IsAuthenticated(self):
         """
            return True if user and password correspond to user that can write into repository
@@ -51,22 +56,56 @@ class lhpAuthenticationControl:
         print "Connecting to self.Host: " + self.Host            
         print "Retrieving: " + self.AuthenticationHTMLPageSelector
         
-        h = httplib.HTTPConnection(self.Host)
-        h.putrequest('POST', self.AuthenticationHTMLPageSelector)
-        h.putheader("AUTHORIZATION", "Basic %s" % string.replace(
-                                encodestring("%s:%s" % (self.Username, self.Password)),
-                                "\012", ""))
-        h.endheaders()
+        # build opener
+        self.cj = cookielib.CookieJar()
         
-        # 
-        f = open(self.AuthenticationHTMLPageFileName, 'w')        
-        f.write(h.getresponse().read())
-        f.close()
-    
+        proxy_url = self.ProxyURL
+        proxy_port = self.ProxyPort        
+        
+        p = '%s:%s' % (proxy_url, proxy_port)        
+        
+        if proxy_url != '' and proxy_port != '':
+            
+            if Debug:
+                print "You are using proxy: " + p
+
+            self.opener = \
+              urllib2.build_opener(
+              ConnectHTTPHandler(proxy=p),
+              ConnectHTTPSHandler(proxy=p),
+              urllib2.HTTPCookieProcessor(self.cj))
+        else:
+            self.opener = \
+              urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cj))
+
+
+        urllib2.install_opener(self.opener)  
+        
+        print "Connecting to self.Host: " + self.Host            
+        print "Retrieving: " + self.AuthenticationHTMLPageSelector 
+        
+        url = self.AuthenticationHTMLPageSelector 
+
+        req = urllib2.Request(url)
+
+        # Basic authentication code
+        base64string = encodestring('%s:%s' % (self.Username, self.Password))[:-1]
+        authheader =  "Basic %s" % base64string
+        req.add_header("Authorization", authheader)
+
+        # open the url
+        fd = urllib2.urlopen(req)
+       
+        file = open(self.AuthenticationHTMLPageFileName, 'w' )       
+        for content in fd:
+            file.write(content)
+        file.close()
+
         if Debug:
-            f2 = open(self.AuthenticationHTMLPageFileName, 'r')
+            f2 = open(self.AuthenticationHTMLPageFileName , 'r')
             for line in f2:
                 print line
+            f2.close()
         
         diskFile = open(self.AuthenticationHTMLPageFileName, 'r')
         file = StringIO.StringIO()
@@ -99,27 +138,37 @@ class lhpAuthenticationControl:
         return result
             
         
-def run(userName, password):                                            
+def run(userName, password, proxyURL = '', proxyPort = ''):                                            
     
     # get the dictionary creation date
     auth = lhpAuthenticationControl(userName, password)
+    auth.ProxyURL = proxyURL
+    auth.ProxyPort = proxyPort
+    
     if auth.IsAuthenticated() == True:
         print "Authenticated"
     else:
         print "Rejected"
     
     
-def main():
-    args = sys.argv[1:]
-    if len(args) != 2:
-        print 
-        """
-        usage: python.exe lhpAuthenticationControl.py username password
+if __name__ == '__main__':    
+    
+    if len(sys.argv) != 3 and len(sys.argv) != 5:
+        print """
+        usage: python.exe lhpAuthenticationControl.py username password proxyURL proxyPort
+        The last two arguments are optional: if a proxy is not provided it will not be used
         """
         sys.exit(-1)
-    run(args[0],args[1])
-
-
-if __name__ == '__main__':    
-    main()
+   
+    username = sys.argv[1]
+    password = sys.argv[2]
+    
+    if len(sys.argv) == 3:
+        proxyURL = ''
+        proxyPort = ''
+    else:
+        proxyURL = sys.argv[3]
+        proxyPort = sys.argv[4]
+    
+    run(username,password,proxyURL,proxyPort)
  

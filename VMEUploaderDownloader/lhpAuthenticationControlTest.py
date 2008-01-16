@@ -35,7 +35,12 @@ class lhpAuthenticationControlTest(unittest.TestCase):
           
     
     def testRun(self):
-        lhpAuthenticationControl.run("UserNameTest", "PasswordTest")
+        
+         # authentication
+        username = 'lhpparabuild'
+        password = '2bf5ZM'
+       
+        lhpAuthenticationControl.run(username, password)
                 
 if __name__ == '__main__':
      unittest.main()
