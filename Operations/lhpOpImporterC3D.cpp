@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterC3D.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-01-16 10:01:34 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-01-16 23:44:02 $
+  Version:   $Revision: 1.3 $
   Authors:   Daniele  Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -84,7 +84,7 @@ mafOp(label)
   m_ImportEventFlag = FALSE;
 
   //Aurion
-  m_Errcode = 0;
+  //m_Errcode = 0;
   m_AnalogRate = 0;
   m_VideoRate = 0;
   m_LengthMs = 0;
@@ -190,11 +190,11 @@ int lhpOpImporterC3D::OpenC3D()
 	int errcode=C3D_Open(const_cast<char *> (m_C3DInputFileNameFullPath.GetCStr()));
 	if(errcode != NOERROR)
 	{
-		if( m_Errcode == ERROR_NOT_LICENSE)
+		if( errcode == ERROR_NOT_LICENSE)
 			wxMessageBox("Prodotto non registrato. Contattare Aurion S.r.l.");
-		if( m_Errcode == ERROR_OPEN_FILE)
+		if( errcode == ERROR_OPEN_FILE)
 			wxMessageBox("Errore nell\'apertura file");
-		if( m_Errcode == ERROR_READING_PROC_TYPE)
+		if( errcode == ERROR_READING_PROC_TYPE)
 			wxMessageBox("Errore nella lettura del tipo (PC, DEC, MIPS)");
 
 		errcode = -1;
@@ -339,10 +339,10 @@ void lhpOpImporterC3D::Initialize()
 bool lhpOpImporterC3D::Import()
 //----------------------------------------------------------------------------
 {
-	if(OpenC3D()==NOERROR && ReadHeaderC3D()==NOERROR)
+	if(OpenC3D()==NOERROR)
 	{
 		//c3d read data
-		if(ReadDataC3D() == NOERROR)
+		if(ReadHeaderC3D()==NOERROR && ReadDataC3D() == NOERROR)
 		{
       Initialize();
 
@@ -351,22 +351,19 @@ bool lhpOpImporterC3D::Import()
 			if(m_ImportAnalogFlag) ImportAnalog();	
 			if(m_ImportPlatformFlag) ImportPlatform();
       if(m_ImportEventFlag) ImportEvent();
-		}
 
-    if(m_Errcode == NOERROR)
-    {
-		  CloseC3D();
-      return (m_Errcode == NOERROR);
-    }
-    else
-    {
-      CloseC3D();
-      return false; //however there is a precedent error
-    }
+			CloseC3D();
+			return true;
+		}
+		else
+		{
+			CloseC3D();
+			return false;
+		}
+    
 	}
 	else
 	{
-    CloseC3D();
     return false; //however there is a precedent error
 	}
 }
@@ -795,13 +792,13 @@ void lhpOpImporterC3D::OnEvent(mafEventBase *maf_event)
       {
 				if(Import())
 				{
-					
+					this->OpStop(OP_RUN_OK);
 				}
 				else
 				{
-					;
+					this->OpStop(OP_RUN_CANCEL);
 				}
-        this->OpStop(OP_RUN_OK);
+        
       }
       break;
       case wxCANCEL:

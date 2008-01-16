@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterC3D.h,v $
   Language:  C++
-  Date:      $Date: 2008-01-15 10:50:45 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-01-16 23:44:02 $
+  Version:   $Revision: 1.2 $
   Authors:   Daniele  Giunchi
 ==========================================================================
   Copyright (c) 2002/2004
@@ -136,7 +136,7 @@ protected:
   std::vector<mafVMEVector *> m_MomentList;
 
 	//data filled by Aurion importer
-	int m_Errcode;
+	//int m_Errcode;
 	float m_AnalogRate, m_VideoRate;
 	long m_LengthMs;
 
