@@ -56,6 +56,8 @@ Section "create product directory structure" SEC01
   CreateDirectory "$INSTDIR\bin"
   SetOutPath "$INSTDIR\bin"
   File "@LHPBUILDER_EXECUTABLE_OUTPUT_PATH_WIN@\${PRODUCT_EXE_NAME}"
+  File "@LHPBUILDER_EXECUTABLE_OUTPUT_PATH_WIN@\C3D_Reader.dll"
+  File "@LHPBUILDER_EXECUTABLE_OUTPUT_PATH_WIN@\LicenseAurion.dll"
   CreateDirectory "$SMPROGRAMS\b3c_software\lhpBuilder"
   CreateShortCut "$SMPROGRAMS\b3c_software\lhpBuilder\lhpBuilder.lnk" "$INSTDIR\Bin\${PRODUCT_EXE_NAME}"
   CreateShortCut "$SMPROGRAMS\b3c_software\lhpBuilder\uninstall.lnk" "$INSTDIR\uninst.exe"
