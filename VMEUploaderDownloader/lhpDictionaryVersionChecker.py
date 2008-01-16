@@ -262,19 +262,29 @@ class lhpDictionaryVersionChecker:
             self.opener = \
               urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cj))
 
+
         urllib2.install_opener(self.opener)  
         
         print "Connecting to self.Host: " + self.Host            
         print "Retrieving: " + self.DictionaryDownloadHTMLPageSelector
         
         url = self.DictionaryDownloadHTMLPageSelector
-        auth = "Basic %s" % string.replace(
-                               encodestring("%s:%s" % (self.Username, self.Password)),
-                               "\012", "")
-        
-        data = urllib.urlencode([('AUTHORIZATION', auth)])
+#        auth = "Basic %s" % string.replace(
+#                               encodestring("%s:%s" % (self.Username, self.Password)),
+#                               "\012", "")
+#        
+#        data = urllib.urlencode([('AUTHORIZATION', auth)])
         req = urllib2.Request(url)
-        fd = urllib2.urlopen(req,data)        
+
+        #XXX BASIC AUTHENTICATION CODE ####################################
+
+        base64string = encodestring('%s:%s' % (self.Username, self.Password))[:-1]
+        authheader =  "Basic %s" % base64string
+        req.add_header("Authorization", authheader)
+
+        #XXX ##############################################################
+
+        fd = urllib2.urlopen(req)
        
         file = open(self.DictionaryDownloadHTMLPageFileName, 'w')       
         for content in fd:
