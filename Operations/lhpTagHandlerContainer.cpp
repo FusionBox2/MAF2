@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-01-08 16:06:42 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2008-01-17 11:09:40 $
+  Version:   $Revision: 1.11 $
   Authors:   Stefano Perticoni - Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -19,11 +19,22 @@
 //----------------------------------------------------------------------------------
 
 #include "lhpTagHandlerContainer.h"
+#include <wx/zipstrm.h>
+#include <wx/zstream.h>
+#include <wx/wfstream.h>
+#include <wx/fs_zip.h>
 
 #include "mafTagArray.h"
 #include "mafVME.h"
 #include "mafVMERoot.h"
 #include "mafAbsMatrixPipe.h"
+#include "vtkImageData.h"
+#include "vtkRectilinearGrid.h"
+#include "vtkUnstructuredGrid.h"
+#include "mafVMEOutputSurface.h"
+#include "mafVMEOutputPolyline.h"
+#include "mafVMEOutputVolume.h"
+#include "mafVMEOutputPointSet.h"
 
 
 #include <string>
@@ -76,10 +87,22 @@ void lhpTagHandler_L0000_resource_data_Type_Dimension::HandleAutoTag(lhpTagHandl
 {
 	mafVME *vme = cargo->GetInputVme();
 	mafString value;
-	if(vme->GetTagArray()->IsTagPresent("TYPE_DIMENSION"))
+  if(mafVMEOutputSurface::SafeDownCast(vme->GetOutput()))
 	{
-		vme->GetTagArray()->GetTag("TYPE_DIMENSION")->GetValueAsSingleString(value);
+		value = "SURFACE";
 	}
+  else if(mafVMEOutputPolyline::SafeDownCast(vme->GetOutput())) 
+  {
+    value = "CURVE";
+  }
+  else if(mafVMEOutputVolume::SafeDownCast(vme->GetOutput()))
+  {
+    value = "VOLUME";
+  }
+  else if(mafVMEOutputPointSet::SafeDownCast(vme->GetOutput()))
+  {
+    value = "POINT";
+  }
 	else
 	{
 		value = "NOT PRESENT";
@@ -102,10 +125,22 @@ void lhpTagHandler_L0000_resource_data_Type_VolumeType::HandleAutoTag(lhpTagHand
 {
 	mafVME *vme = cargo->GetInputVme();
 	mafString value;
-	if(vme->GetTagArray()->IsTagPresent("TYPE_VOLUMETYPE"))
+  if(vtkImageData::SafeDownCast(vme->GetOutput()->GetVTKData()))
 	{
-		vme->GetTagArray()->GetTag("TYPE_VOLUMETYPE")->GetValueAsSingleString(value);
+		value = "STRUCTURED";
 	}
+  else if (vtkRectilinearGrid::SafeDownCast(vme->GetOutput()->GetVTKData()))
+  {
+    value = "CARTESIAN";
+  }
+  else if (vtkUnstructuredGrid::SafeDownCast(vme->GetOutput()->GetVTKData()))
+  {
+    value = "UNSTRUCTURED";
+  }
+/*  else if (? ::SafeDownCast(vme->GetOutput()->GetVTKData())) BREP
+  {
+    value = "BREP"; //not yet supported
+  }*/
 	else
 	{
 		value = "NOT PRESENT";
@@ -145,8 +180,9 @@ lhpTagHandler_L0000_resource_data_Size_DatasetSize::lhpTagHandler_L0000_resource
 void lhpTagHandler_L0000_resource_data_Size_DatasetSize::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-	int length = 0;
-	mafString value = cargo->GetInputMSF();
+  //here there is also the controller for zip archive
+	long length = 0;
+	mafString inputMSF = cargo->GetInputMSF();
 	mafString id ;
 	id << cargo->GetInputVme()->GetId();
 
@@ -164,7 +200,7 @@ void lhpTagHandler_L0000_resource_data_Size_DatasetSize::HandleAutoTag(lhpTagHan
 	command2execute = m_PythonExe;
 
 	command2execute.Append(" lhpCheckBinaryName.py ");
-	command2execute.Append(value.GetCStr());
+	command2execute.Append(inputMSF.GetCStr());
 	command2execute.Append(" ");
 	command2execute.Append(id.GetCStr());
 
@@ -185,23 +221,56 @@ void lhpTagHandler_L0000_resource_data_Size_DatasetSize::HandleAutoTag(lhpTagHan
 	////////////////////////////
 
 	wxString temp;
-	temp.Append(value.GetCStr());
+	temp.Append(inputMSF.GetCStr());
 	temp = temp.BeforeLast('/');
 	temp.Append("/");
 	temp.Append(result);
 
-	mafString fileToComputeLength = temp;
-	fstream fp;
-	fp.open(fileToComputeLength);
-  
-  bool fileOpened = false; 
-  if(fp.fail() == false)
+  wxString extension;
+  extension.Append(result);
+  extension = extension.AfterLast('.');
+
+  bool fileOpened = false;
+  mafString fileToComputeLength = temp;
+  if(extension == "zvtk")
   {
-	  fp.seekg(0, ios::end);
-	  length = fp.tellg();
-	  fp.close();
-    fileOpened = true;
+    wxFileInputStream in(fileToComputeLength.GetCStr());
+    wxZipInputStream zip(in);
+    if (!in || !zip)
+    {
+      ;
+    }
+    else
+    {
+      wxZipEntry *entry = NULL;
+
+      // call GetNextEntry() until the required internal name is found
+      // to be re-factored for efficiency reasons.
+
+      do 
+      {
+        entry = zip.GetNextEntry();
+        if(entry)
+          length += entry->GetSize();
+      } while(entry != NULL);
+    }
+
   }
+  else
+  {
+    
+    fstream fp;
+    fp.open(fileToComputeLength);
+
+    if(fp.fail() == false)
+    {
+      fp.seekg(0, ios::end);
+      length = fp.tellg();
+      fp.close();
+      fileOpened = true;
+    }
+  }
+	
 	
   //Process with length
 	if(fileOpened) cargo->SetTagHandlerGeneratedString(wxString::Format("%d",length));
@@ -271,7 +340,7 @@ lhpTagHandler_L0000_resource_data_Dataset_FileSize::lhpTagHandler_L0000_resource
 void lhpTagHandler_L0000_resource_data_Dataset_FileSize::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-  int length = 0;
+  long length = 0;
   mafString value = cargo->GetInputMSF();
   mafString id ;
   id << cargo->GetInputVme()->GetId();
