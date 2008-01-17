@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpFactoryTagHandler.h,v $
   Language:  C++
-  Date:      $Date: 2007-12-17 09:17:32 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2008-01-17 16:01:13 $
+  Version:   $Revision: 1.6 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -25,6 +25,7 @@
 // start skeleton
 #include "mafObject.h"
 #include "lhpTagHandlerContainer.h"
+#include "lhpTagHandlerDICOMContainer.h"
 #include "mafVME.h"
 
 // end skeleton...

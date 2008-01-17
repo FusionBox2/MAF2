@@ -9,6 +9,9 @@ lhpFactoryTagHandler.h
 lhpTagHandlerContainer.cpp
 lhpTagHandlerContainer.h
 
+lhpTagHandlerDICOMContainer.cpp
+lhpTagHandlerDICOMContainer.h
+
 lhpTagHandler.cpp
 lhpTagHandler.h
 

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-01-17 11:09:40 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2008-01-17 16:01:13 $
+  Version:   $Revision: 1.12 $
   Authors:   Stefano Perticoni - Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -200,7 +200,9 @@ void lhpTagHandler_L0000_resource_data_Size_DatasetSize::HandleAutoTag(lhpTagHan
 	command2execute = m_PythonExe;
 
 	command2execute.Append(" lhpCheckBinaryName.py ");
+  command2execute.Append("\"");
 	command2execute.Append(inputMSF.GetCStr());
+  command2execute.Append("\"");
 	command2execute.Append(" ");
 	command2execute.Append(id.GetCStr());
 
@@ -341,7 +343,7 @@ void lhpTagHandler_L0000_resource_data_Dataset_FileSize::HandleAutoTag(lhpTagHan
 //------------------------------------------------------------------------------------
 {
   long length = 0;
-  mafString value = cargo->GetInputMSF();
+  mafString inputMSF = cargo->GetInputMSF();
   mafString id ;
   id << cargo->GetInputVme()->GetId();
 
@@ -359,7 +361,9 @@ void lhpTagHandler_L0000_resource_data_Dataset_FileSize::HandleAutoTag(lhpTagHan
   command2execute = m_PythonExe;
 
   command2execute.Append(" lhpCheckBinaryName.py ");
-  command2execute.Append(value.GetCStr());
+  command2execute.Append("\"");
+  command2execute.Append(inputMSF.GetCStr());
+  command2execute.Append("\"");
   command2execute.Append(" ");
   command2execute.Append(id.GetCStr());
 
@@ -380,7 +384,7 @@ void lhpTagHandler_L0000_resource_data_Dataset_FileSize::HandleAutoTag(lhpTagHan
   ////////////////////////////
 
   wxString temp;
-  temp.Append(value.GetCStr());
+  temp.Append(inputMSF.GetCStr());
   temp = temp.BeforeLast('/');
   temp.Append("/");
   temp.Append(result);
@@ -723,4 +727,87 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 
 	// tag handling code
 	cargo->SetTagHandlerGeneratedString(value);
+}
+
+
+
+mafCxxTypeMacro(L0000_resource_Documentation)
+//------------------------------------------------------------------------------------
+L0000_resource_Documentation::L0000_resource_Documentation()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void L0000_resource_Documentation::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+}
+
+
+
+mafCxxTypeMacro(L0000_resource_Pricing_Quotation1_GroupID)
+//------------------------------------------------------------------------------------
+L0000_resource_Pricing_Quotation1_GroupID::L0000_resource_Pricing_Quotation1_GroupID()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void L0000_resource_Pricing_Quotation1_GroupID::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+}
+
+
+
+mafCxxTypeMacro(L0000_resource_Pricing_Quotation1_Price)
+//------------------------------------------------------------------------------------
+L0000_resource_Pricing_Quotation1_Price::L0000_resource_Pricing_Quotation1_Price()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void L0000_resource_Pricing_Quotation1_Price::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+}
+
+
+mafCxxTypeMacro(L0000_resource_Pricing_Quotation1_Policy)
+//------------------------------------------------------------------------------------
+L0000_resource_Pricing_Quotation1_Policy::L0000_resource_Pricing_Quotation1_Policy()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void L0000_resource_Pricing_Quotation1_Policy::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+}
+
+
+mafCxxTypeMacro(L0000_resource_Status)
+//------------------------------------------------------------------------------------
+L0000_resource_Status::L0000_resource_Status()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void L0000_resource_Status::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
 }

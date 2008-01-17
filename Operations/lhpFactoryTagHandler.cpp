@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpFactoryTagHandler.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-12-17 09:17:32 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2008-01-17 16:01:13 $
+  Version:   $Revision: 1.4 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -65,6 +65,43 @@ lhpFactoryTagHandler::lhpFactoryTagHandler()
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes_QualityScore1, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir, "");
+
+  //DICOM
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ManufacturerModelName, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ManufacturerModelName, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_PatientID, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_PatientSex, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ScanOptions, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_KVP, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_DataCollectionDiameter, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ReconstructionDiameter, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_DistanceSourceToDetector, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_DistanceSourceToPatient, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_GantryDetectorTilt, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_TableHeight, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_RotationDirection, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ExposureTime, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_XRayTubeCurrent, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_Exposure, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_FilterType, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_FocalSpot, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ConvolutionKernel, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_PatientPosition, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_StudyID, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ImagePositionPatient, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_PixelSpacing, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_PixelPaddingValue, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_WindowCenter, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_WindowWidth, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_RescaleIntercept, "");
+  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_RescaleSlope, "");
+  // END DICOM
+
+  lhpPlugTagHandlerMacro(L0000_resource_Documentation, "");
+  lhpPlugTagHandlerMacro(L0000_resource_Pricing_Quotation1_GroupID, "");
+  lhpPlugTagHandlerMacro(L0000_resource_Pricing_Quotation1_Price, "");
+  lhpPlugTagHandlerMacro(L0000_resource_Pricing_Quotation1_Policy, "");
+  lhpPlugTagHandlerMacro(L0000_resource_Status, "");
 }
 
 std::vector<std::string> lhpFactoryTagHandler::m_TagHandlerNames;

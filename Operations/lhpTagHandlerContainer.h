@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.h,v $
   Language:  C++
-  Date:      $Date: 2007-12-18 17:02:15 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2008-01-17 16:01:13 $
+  Version:   $Revision: 1.5 $
   Authors:   Stefano Perticoni - Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -289,4 +289,64 @@ class lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_S
     virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
+
+
+
+class L0000_resource_Documentation: public lhpTagHandler
+{
+public:
+  mafTypeMacro(L0000_resource_Documentation,mafObject);
+
+  L0000_resource_Documentation();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+
+
+class L0000_resource_Pricing_Quotation1_GroupID: public lhpTagHandler
+{
+public:
+  mafTypeMacro(L0000_resource_Pricing_Quotation1_GroupID,mafObject);
+
+  L0000_resource_Pricing_Quotation1_GroupID();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+
+
+class L0000_resource_Pricing_Quotation1_Price: public lhpTagHandler
+{
+public:
+  mafTypeMacro(L0000_resource_Pricing_Quotation1_Price,mafObject);
+
+  L0000_resource_Pricing_Quotation1_Price();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+
+
+class L0000_resource_Pricing_Quotation1_Policy: public lhpTagHandler
+{
+public:
+  mafTypeMacro(L0000_resource_Pricing_Quotation1_Policy,mafObject);
+
+  L0000_resource_Pricing_Quotation1_Policy();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+
+class L0000_resource_Status: public lhpTagHandler
+{
+public:
+  mafTypeMacro(L0000_resource_Status,mafObject);
+
+  L0000_resource_Status();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
 #endif
