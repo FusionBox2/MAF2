@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterC3D.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-01-16 23:44:02 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2008-01-17 09:34:13 $
+  Version:   $Revision: 1.4 $
   Authors:   Daniele  Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -191,11 +191,11 @@ int lhpOpImporterC3D::OpenC3D()
 	if(errcode != NOERROR)
 	{
 		if( errcode == ERROR_NOT_LICENSE)
-			wxMessageBox("Prodotto non registrato. Contattare Aurion S.r.l.");
+			wxMessageBox("Not registered Product. Contact Aurion S.r.l.");
 		if( errcode == ERROR_OPEN_FILE)
-			wxMessageBox("Errore nell\'apertura file");
+			wxMessageBox("Error on opening file");
 		if( errcode == ERROR_READING_PROC_TYPE)
-			wxMessageBox("Errore nella lettura del tipo (PC, DEC, MIPS)");
+			wxMessageBox("Error on reading type (PC, DEC, MIPS)");
 
 		errcode = -1;
 	}
@@ -212,13 +212,13 @@ int lhpOpImporterC3D::ReadHeaderC3D()
 		switch(errcode)
 		{
 		case ERROR_READING_HEADER:
-			wxMessageBox("Errore nella lettura dell\'header");
+			wxMessageBox("Error reading header");
 			break;
 		case ERROR_READING_PARAM:
-			wxMessageBox("Errore nella lettura dei parametri");
+			wxMessageBox("Error reading parameters");
 			break;
 		case ERROR_READING_TRIAL_PARAM:
-			wxMessageBox("Errore nella lettura dei parametri della sezione trial");
+			wxMessageBox("Error reading parameter of trial section");
 			break;
 		}
 
@@ -243,31 +243,31 @@ int lhpOpImporterC3D::ReadDataC3D()
 		switch(errcode)
 		{
 		case ERROR_READING_PARAM:
-			wxMessageBox("Errore nella lettura dei parametri");
+			wxMessageBox("Error reading parameters");
 			break;
 		case ERROR_READING_TRIAL_PARAM:
-			wxMessageBox("Errore nella lettura dei parametri della sezione trial");
+			wxMessageBox("Error reading parameters of trial section");
 			break;
 		case ERROR_READING_VIDEO_PARAM:
-			wxMessageBox("Errore nella lettura dei parametri della sezione cinematica");
+			wxMessageBox("Error reading parameters of cinematic section");
 			break;
 		case ERROR_READING_ANALOG_PARAM:
-			wxMessageBox("Errore nella lettura dei parametri della sezione analogica");
+			wxMessageBox("Error reading parameters of analog section");
 			break;
 		case ERROR_READING_FORCE_PLATFORM_PARAM:
-			wxMessageBox("Errore nella lettura dei parametri della sezione piattaforme di forza");
+			wxMessageBox("Error reading parameters of force plate section");
 			break;
 		case ERROR_READING_EVENT_PARAM:
-			wxMessageBox("Errore nella lettura dei parametri della sezione degli eventi");
+			wxMessageBox("Error reading parameters of events section");
 			break;
 		case ERROR_READING_DATA:
-			wxMessageBox("Errore nella lettura dei dati");
+			wxMessageBox("Error reading data");
 			break;
 		case ERROR_READING_VIDEO_DATA:
-			wxMessageBox("Errore nella lettura dei dati cinematici");
+			wxMessageBox("Error reading cinematic data");
 			break;			
 		case ERROR_READING_ANALOG_DATA:
-			wxMessageBox("Errore nella lettura dei dati analogici");
+			wxMessageBox("Error reading analog data");
 			break;	
 		default:
 			break;
@@ -301,7 +301,7 @@ int lhpOpImporterC3D::CloseC3D()
 	int errcode=C3D_Close();
 	if( errcode == ERROR_CLOSE_FILE)
 	{
-		wxMessageBox("Errore nella chiusura file");		
+		wxMessageBox("Error on closing file");		
 		errcode = -1;
 	}	
   return errcode;
