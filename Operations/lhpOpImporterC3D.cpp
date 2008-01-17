@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterC3D.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-01-17 09:34:13 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2008-01-17 11:06:11 $
+  Version:   $Revision: 1.5 $
   Authors:   Daniele  Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -757,7 +757,7 @@ enum C3D_IMPORTER_ID
 void lhpOpImporterC3D::CreateGui()
 //----------------------------------------------------------------------------
 {
-  mafString wildcard = "c3d files (*.c3d)|*.c3d|All Files (*.*)|*.*";
+  mafString wildcard = "c3d files (*.c3d)|*.c3d";
 
   //int result = OP_RUN_CANCEL;
   m_C3DInputFileNameFullPath = "";
