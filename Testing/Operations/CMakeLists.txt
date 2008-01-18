@@ -20,6 +20,10 @@ ADD_TEST(lhpFactoryTagHandlerTest ${EXECUTABLE_OUTPUT_PATH}/lhpFactoryTagHandler
 ADD_EXECUTABLE(lhpTagHandlerContainerTest lhpTagHandlerContainerTest.h lhpTagHandlerContainerTest.cpp)
 ADD_TEST(lhpTagHandlerContainerTest ${EXECUTABLE_OUTPUT_PATH}/lhpTagHandlerContainerTest)
 
+ADD_EXECUTABLE(lhpTagHandlerDICOMContainerTest lhpTagHandlerDICOMContainerTest.h lhpTagHandlerDICOMContainerTest.cpp)
+ADD_TEST(lhpTagHandlerDICOMContainerTest ${EXECUTABLE_OUTPUT_PATH}/lhpTagHandlerDICOMContainerTest)
+
+
 ADD_EXECUTABLE(lhpOpImporterC3DTest lhpOpImporterC3DTest.h lhpOpImporterC3DTest.cpp)
 ADD_TEST(lhpOpImporterC3DTest ${EXECUTABLE_OUTPUT_PATH}/lhpOpImporterC3DTest)
 
