@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpImporterC3DTest.cpp,v $
 Language:  C++
-Date:      $Date: 2008-01-16 15:41:59 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2008-01-18 15:31:59 $
+Version:   $Revision: 1.2 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004 
@@ -76,7 +76,7 @@ void lhpOpImporterC3DTest::Test()
   cloud->Open();
   
   cloud->GetLandmark("RGT")->GetPoint(result, time);
-  mafLogMessage("%f, %f ,%f", result[0], result[1], result[2]);
+  //mafLogMessage("%f, %f ,%f", result[0], result[1], result[2]);
   
   
   CPPUNIT_ASSERT(DIFF_MINOR_THAN_EPSILON(result[0],pos[0]) && 
@@ -136,7 +136,7 @@ void lhpOpImporterC3DTest::Test()
   moment0->GetOutput()->GetVTKData()->GetPoint(0, momentV1);
   moment0->GetOutput()->GetVTKData()->GetPoint(1, momentV2);
   //mafLogMessage("%f, %f, % f", momentV1[0], momentV1[1],momentV1[2]);
-  mafLogMessage("%f, %f, % f", momentV2[0], momentV2[1],momentV2[2]);
+  //mafLogMessage("%f, %f, % f", momentV2[0], momentV2[1],momentV2[2]);
   CPPUNIT_ASSERT(DIFF_MINOR_THAN_EPSILON(momentV2[0]-174.370056,96063.838879) && 
                  DIFF_MINOR_THAN_EPSILON(momentV2[1]-430.864624,18814.179313) &&
                  DIFF_MINOR_THAN_EPSILON(momentV2[2],10035.374665));
