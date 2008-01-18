@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpFactoryTagHandler.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-01-17 16:01:13 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2008-01-18 15:29:37 $
+  Version:   $Revision: 1.5 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -67,34 +67,39 @@ lhpFactoryTagHandler::lhpFactoryTagHandler()
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir, "");
 
   //DICOM
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ManufacturerModelName, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ManufacturerModelName, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_PatientID, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_PatientSex, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ScanOptions, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_KVP, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_DataCollectionDiameter, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ReconstructionDiameter, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_DistanceSourceToDetector, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_DistanceSourceToPatient, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_GantryDetectorTilt, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_TableHeight, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_RotationDirection, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ExposureTime, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_XRayTubeCurrent, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_Exposure, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_FilterType, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_FocalSpot, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ConvolutionKernel, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_PatientPosition, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_StudyID, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ImagePositionPatient, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_PixelSpacing, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_PixelPaddingValue, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_WindowCenter, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_WindowWidth, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_RescaleIntercept, "");
-  lhpPlugTagHandlerMacro(L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_RescaleSlope, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type, ""); 
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_StudyDate, ""); 
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_Modality, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_Manufacturer, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_InstitutionName, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_StationName, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ManufacturerModelName, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_PatientID, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_PatientSex, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ScanOptions, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_KVP, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_DataCollectionDiameter, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ReconstructionDiameter, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_DistanceSourceToDetector, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_DistanceSourceToPatient, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_GantryDetectorTilt, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_TableHeight, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_RotationDirection, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ExposureTime, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_XRayTubeCurrent, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_Exposure, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_FilterType, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_FocalSpot, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ConvolutionKernel, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_PatientPosition, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_StudyID, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ImagePositionPatient, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_PixelSpacing, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_PixelPaddingValue, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_WindowCenter, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_WindowWidth, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_RescaleIntercept, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_RescaleSlope, "");
   // END DICOM
 
   lhpPlugTagHandlerMacro(L0000_resource_Documentation, "");
