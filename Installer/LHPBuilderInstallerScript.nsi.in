@@ -155,6 +155,9 @@ Section Uninstall
   Delete "$INSTDIR\Bin\${PRODUCT_EXE_NAME}.manifest"
   Delete "$INSTDIR\Bin\${PRODUCT_EXE_NAME}"
 
+  Delete "$INSTDIR\bin\C3D_Reader.dll"
+  Delete "$INSTDIR\bin\LicenseAurion.dll"
+
   Delete "$INSTDIR\Layout\layout.mly"
   Delete "$INSTDIR\Config\Dictionary\dictionary.dic"
   Delete "$INSTDIR\Config\Dictionary\dicom3.dic"
