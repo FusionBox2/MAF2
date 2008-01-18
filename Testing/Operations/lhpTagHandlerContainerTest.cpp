@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpTagHandlerContainerTest.cpp,v $
 Language:  C++
-Date:      $Date: 2008-01-08 16:07:15 $
-Version:   $Revision: 1.7 $
+Date:      $Date: 2008-01-18 15:30:32 $
+Version:   $Revision: 1.8 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004 
@@ -105,7 +105,7 @@ void lhpTagHandlerContainerTest::TestlhpTagHandler_L0000_resource_data_Type_Dime
 	tag->HandleAutoTag(m_ParametersCargo);
 
 	mafString value = m_ParametersCargo->GetTagHandlerGeneratedString();
-	CPPUNIT_ASSERT(value == "NOT PRESENT");
+	CPPUNIT_ASSERT(value == "SURFACE");
 	tag->Delete();
 }
 
