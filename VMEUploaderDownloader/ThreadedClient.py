@@ -41,17 +41,17 @@ class ThreadedClient:
         self.periodicProcedure = periodicProcedure
         #create server
         thread.start_new_thread(Server.createServer,(self,self.port,1))
-
+        print "create server"
         #lock file
         self.lock = Lock.Lock(sys.path[0] + "\\activeLock.lhp")
-
+        print "create lock"
         # Create the queue
         self.queue = Queue.Queue()
 
         # Set up the GUI part
         guiFactory = GuiFactory.GuiFactory()
         self.gui = (guiFactory.createGui(stringAppType))(master, self.queue, self.endApplication)
-
+        print "create gui"
         # Set up the thread to do asynchronous I/O
         # More can be made if necessary
         
@@ -68,21 +68,22 @@ class ThreadedClient:
             self.gui.processIncoming()
             self.periodicProcedure(300, self.periodicCall)
         
-    def createThread(self, tupla):
+    def createThread(self, tuplaFromServer):
         #now is only implemented update
         #if tupla contain a flag for update or download it can be use the same structure
-        self.createThreadForUpdate(tupla)
+        self.createThreadForUpdate(tuplaFromServer)
         
-    def createThreadForUpdate(self, tupla):
+    def createThreadForUpdate(self, tuplaFromServer):
         self.gui.createBar()
-        self.gui.createLabel(tupla[2]) #tupla[2] is vme name
-        self.threads.append(CustomThread.CustomThread(func=self.workerThreadUpload, args = (self.gui.bars[len(self.gui.bars)-1],tupla[1], tupla[0])))
+        #0 id, 1 dir, 2 usr , 3 pwd , 4 urlServer ,5 name : is tuplaFromServer elements
+        self.gui.createLabel(tuplaFromServer[5]) #tupla[5] is vme name         
+        self.threads.append(CustomThread.CustomThread(func=self.workerThreadUpload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[1], tuplaFromServer[0],tuplaFromServer[2],tuplaFromServer[3],tuplaFromServer[4])))
         self.threads[len(self.threads)-1].start()
     
-    def createThreadForDownload(self, tupla):
+    def createThreadForDownload(self, tuplaFromServer):
         pass
         
-    def workerThreadUpload(self, observer, dirCache , id):
+    def workerThreadUpload(self, observer, dirCache , id, usr, pwd, urlServer):
         """
         This is where we handle the asynchronous I/O. For example, it may be
         a 'select()'.
@@ -90,7 +91,7 @@ class ThreadedClient:
         control.
         """
         try:
-            UploadHandler.createUploadHandler(self.queue, observer, dirCache , id)
+            UploadHandler.createUploadHandler(self.queue, observer, dirCache , id, usr, pwd, urlServer)
         except:
             pass
         

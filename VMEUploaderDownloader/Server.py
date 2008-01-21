@@ -27,12 +27,13 @@ class Server(threading.Thread):
     # which is always overridden, as we are doing here
   
   def decompose(self, data):
-      arguments = data.split(" ") #arg 0 is id, 1 is directory , 2 is name
+      #arg 0 is id, 1 is directory , 2 is usr , 3 is pwd , 4 is serverUrl, 5 is vme
+      arguments = data.split(" ") 
       sendList = []
       count = 0
       lastArgument = ""
       for i in arguments:
-        if(count < 2):
+        if(count < 5):
           sendList.append(i)
         else:
           if(lastArgument != ''):
@@ -50,7 +51,7 @@ class Server(threading.Thread):
        # receive letter from client, if it is still connected 
        k = self.myclntsock.recv(1024)
        if(k != ''): 
-       	 #decompose message and create list     
+       	 #decompose message and create list
        	 self.observer.createThread(self.decompose(k))
        self.command = k
        self.myclntsock.sendall(self.command)

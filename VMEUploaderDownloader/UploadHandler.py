@@ -9,12 +9,15 @@ from Debug import Debug
 
 class UploadHandler:
     queue = None
-    def __init__(self, queue, observer , dirCache, id):
+    def __init__(self, queue, observer , dirCache, id, usr , pwd, urlServer):
         UploadHandler.queue = queue
         self.observer = observer
         self.dirCache = dirCache
         self.dirOutgoing = ""
-        self.id = id	
+        self.id = id
+        self.currentUser = usr
+        self.currentPassword = pwd
+        self.urlServer = urlServer
         self.msg = 0
         self.binaryFileSize = 0
         self.remoteTemporaryBinaryFileSize = 0
@@ -34,28 +37,39 @@ class UploadHandler:
         thread.start_new_thread(self.sendBinaryFile,())      
         #self.sendBinaryFile() #until there is service monitor don't use thread
         
-        print "Wainting..."
+        print "Wainting for sending binary..."
         print "Total Size of Binary: " + str(self.binaryFileSize)
+        binarySendResult = False
         while 1:
             # To simulate asynchronous I/O, we create a random number at
             # random intervals. Replace the following 2 lines with the real
             # thing.
             time.sleep(0.5)
             self.remoteTemporaryBinaryFileSize = self.getRemoteTemporaryBinaryFileSize()
+            if(self.remoteTemporaryBinaryFileSize == -1):
+                break
             percentage = 100 * self.remoteTemporaryBinaryFileSize / self.binaryFileSize
             lista = [self.observer,percentage]
             self.block.acquire()
             UploadHandler.queue.put(lista)
             self.block.release()
-            if(percentage == 100): break
+            if(percentage == 100):
+                binarySendResult = True
+                break
 
         #send xml file, perhaps here free source
-        self.sendXMLFile()
+        if(binarySendResult == True):
+          print "Waiting for sending XML..."
+          self.sendXMLFile()
         
-        print "End Upload"
-        print "Uploaded Binary in SRB: " + self.BinaryURI
-        print "Uploaded XML on Biomedtown: " + self.XMLURI
-
+          print "End Upload"
+          print "Uploaded Binary in SRB: " + self.BinaryURI
+          print "Uploaded XML on Biomedtown: " + self.XMLURI
+          print "Uploaded by: " + self.currentUser
+          print "In server url: " + self.urlServer
+        
+        else:
+          print "Upload Error"
 		
     def createXMLAndBinary(self):
         curDir = sys.path[0]
@@ -112,6 +126,7 @@ class UploadHandler:
         os.chdir(self.dirOutgoing)
         
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
+        ws.setCredentials(self.currentUser, self.currentPassword)
         out = ws.run('xmlupload', self.XMLURI)
         
         os.chdir(oldDir)
@@ -155,8 +170,8 @@ class UploadHandler:
     def getBinaryFileSize(self):
         return os.stat(self.dirOutgoing + "\\" +self.getBinaryFile()).st_size
 		
-def createUploadHandler(queue, observer, dirCache, id):
-    uploadHandler = UploadHandler(queue,observer, dirCache, id)
+def createUploadHandler(queue, observer, dirCache, id , usr , pwd, urlServer):
+    uploadHandler = UploadHandler(queue,observer, dirCache, id, usr , pwd, urlServer)
     uploadHandler.upload()
     
 if __name__ == '__main__':

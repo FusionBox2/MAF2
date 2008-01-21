@@ -12,11 +12,14 @@ host = sys.argv[1] # server address
 port = int(sys.argv[2]) # server port
 id = sys.argv[3] # vme id
 msf = sys.argv[4] # msf dir
+user = sys.argv[5] #user
+password = sys.argv[6] #pwd
+urlServer = sys.argv[7] #server url where upload files
 
 name = ""
 count = 0
 for i in sys.argv:
-  if(count > 4):
+  if(count > 7):
     if(name == ""):
       name = i
     else:
@@ -31,7 +34,7 @@ s.connect((host, port))
 
 
 # compose message
-k = id + ' ' + msf + ' ' + name
+k = id + ' ' + msf + ' ' + user + ' ' + password + ' ' + urlServer + ' '+ name
 s.sendall(k) # send k to server
 # if stop signal, then leave loop
 v = s.recv(1024) # receive v from server (up to 1024 bytes)

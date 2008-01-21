@@ -13,6 +13,9 @@ class ServerTest(unittest.TestCase):
         valueList = []
         valueList.append(str(5)) #id
         valueList.append("C:\\space?proof\\") #directory with "?" instead of space
+        valueList.append("user") #user
+        valueList.append("password") #password
+        valueList.append("http://devel.fec.cineca.it:12680/town/Members/portal_admin/test-lhp2") #server
         valueList.append("vme spazio") #vme name with space
         data = " ".join(valueList)
         newValueList = s.decompose(data)
