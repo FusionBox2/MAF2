@@ -13,6 +13,9 @@ class xmlrpc_demoWS:
 
     def __init__(self):
         """"""
+        self.User = 'testuser'
+        self.Password = 'GRDPt8'
+        self.ServerURL = 'http://devel.fec.cineca.it:12680/town/Members/portal_admin/test-lhp2'
 
     def post_multipart(self, bod='search', url='', username='', password='', **kw):
         """
@@ -118,21 +121,29 @@ class xmlrpc_demoWS:
             else:
                 return True
 
+    def setCredentials(self, user, password):
+        self.User = user
+        self.Password = password
+    
+    def setServer(self, serverURL):
+        self.ServerURL = serverURL  
+    
+        
     def run(self, command, filename):
         """"""
 
         args = {}
     
         # username and password of a test user
-        username = 'testuser'
-        password = 'GRDPt8'
+        username = self.User
+        password = self.Password
     
         # production server
         # url = 'http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository'
         
         # development server
-        url = 'http://devel.fec.cineca.it:12680/town/Members/portal_admin/test-lhp2'
-    
+        url = self.ServerURL
+        
         if command == 'xmlupload':
             args['download'] = ''
             f = file(filename,'rb')
