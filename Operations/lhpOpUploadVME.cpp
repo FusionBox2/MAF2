@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-01-16 18:21:50 $
-Version:   $Revision: 1.36 $
+Date:      $Date: 2008-01-21 10:03:45 $
+Version:   $Revision: 1.37 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -315,7 +315,11 @@ void lhpOpUploadVME::OpDo()
     wxString directoryWorkAround = m_CurrentCache;
     directoryWorkAround.Replace(" ", "?");
     command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
-    
+    command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
+    command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
+    command2execute.Append(wxString::Format("%s ","http://devel.fec.cineca.it:12680/town/Members/portal_admin/test-lhp2")); //dev repository
+    //http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository prod
+
     command2execute.Append(wxString::Format("%s ",m_Input->GetName())); //vme name
     //command2execute.Append(" > log.txt"); //logme
     
@@ -359,7 +363,10 @@ void lhpOpUploadVME::OpDo()
     wxString directoryWorkAround = m_CurrentCache;
     directoryWorkAround.Replace(" ", "?");
     command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
-    
+    command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
+    command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
+    command2execute.Append(wxString::Format("%s ","http://devel.fec.cineca.it:12680/town/Members/portal_admin/test-lhp2")); //repository
+
     command2execute.Append(wxString::Format("%s ",m_Input->GetName())); //vme name
 
     mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
