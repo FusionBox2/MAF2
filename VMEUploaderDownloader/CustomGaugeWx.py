@@ -9,7 +9,7 @@ class CustomGaugeWx(wx.BoxSizer):
         
         self.sizer1 = wx.BoxSizer(wx.HORIZONTAL)
         self.initialLabel = wx.StaticText(parent, -1, label = title)
-        self.endingLabel = wx.StaticText(parent, -1, label = "") #estimate time
+        self.endingLabel = wx.StaticText(parent, -1, label = "")
         self.gauge = wx.Gauge(parent, id, range, pos, size, style, validator, name)
         self.png = None
         
