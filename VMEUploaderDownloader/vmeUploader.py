@@ -12,6 +12,7 @@ import sets
 import os
 import re
 import csv
+import datetime
 from Debug import Debug
 from xml.dom import minidom
 from xml.dom import Node
@@ -173,6 +174,12 @@ class vmeUploader:
         msfDOMParserInstance.SetTagNodeText(nodeURI, self.DatasetURI)       
         text = msfDOMParserInstance.GetTagNodeText(nodeURI)
         print text
+        
+        today = datetime.date.today()
+        nodeURI = msfDOMParserInstance.GetTagNodeByTagName(outVmeTagArrayNode, "L0000_resource_data_Dataset_UploadDate")
+        msfDOMParserInstance.SetTagNodeText(nodeURI, today)       
+        day = msfDOMParserInstance.GetTagNodeText(nodeURI)
+        print day
 
         # for the moment cannot remove anything
         # msfDOMParserInstance.RemoveTagsByList(outVmeTagArrayNode, a)
