@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2008-01-15 22:39:48 $
-#   Version:   $Revision: 1.23 $
+#   Date:      $Date: 2008-01-25 10:54:04 $
+#   Version:   $Revision: 1.24 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -281,5 +281,7 @@ IF (WIN32)
   # MESSAGE("variable LHPBUILDER_INSTALLER_EXECUTABLE_OUTPUT_DIR_WIN = " ${LHPBUILDER_INSTALLER_EXECUTABLE_OUTPUT_DIR_WIN})
   
   CONFIGURE_FILE(${LHPBUILDER_INSTALLER_DIR}/LHPBuilderInstallerScript.nsi.in  ${LHPBUILDER_EXECUTABLE_OUTPUT_PATH}/LHPBuilderInstallerScript.nsi @ONLY)
+  
+  SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE " )
   
 ENDIF (WIN32)               
