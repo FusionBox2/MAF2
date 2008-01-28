@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpMultiscaleExplore.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-03 16:55:08 $
-Version:   $Revision: 1.4 $
+Date:      $Date: 2008-01-28 16:36:30 $
+Version:   $Revision: 1.5 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -27,6 +27,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "mafRWI.h"
 #include "mmdMouse.h"
 #include "mmgButton.h"
+#include "mmgFloatSlider.h"
 #include "mmgValidator.h"
 #include "mafEventBase.h"
 #include "mafEvent.h"
@@ -41,6 +42,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "vtkSphereSource.h"
 #include "vtkProperty.h"
 #include "vtkInteractorStyleTrackballCamera.h"
+#include "vtkMatrix4x4.h"
 
 #include "lhpMultiscaleUtility.h"
 
@@ -60,6 +62,34 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 mafCxxTypeMacro(lhpOpMultiscaleExplore);
 //----------------------------------------------------------------------------
 
+
+//----------------------------------------------------------------------------
+// widget ID's
+//----------------------------------------------------------------------------
+enum MULTISCALE_IDS
+{
+  ID_ADDVME = MINID,
+  ID_SCALEVALUETXT,
+  ID_SCALEUNITSTXT,
+  ID_ZOOMOUT,
+  ID_CAMERARESET,
+  ID_GOBACK,
+  ID_OK,
+  ID_CANCEL,
+  ID_DEBUG,
+  ID_START_RENDER,  // vtk start render event
+  ID_MOUSE_CLICK,   // vtk mouse click event
+  ID_POS_SLIDER,
+  ID_POS_VALUE_TXT,
+  ID_CHANGE_VIEW,
+  ID_OPACITY_VALUE_TXT,
+  ID_OPACITY_SLIDER,
+  ID_VIEW_COMBO,
+  ID_BASE_UNITS
+};
+
+
+
 //----------------------------------------------------------------------------
 // Constructor
 lhpOpMultiscaleExplore::lhpOpMultiscaleExplore(wxString label) :
@@ -67,7 +97,7 @@ mafOp(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_OP;
-  m_Canundo = true;
+  m_Canundo = true ;
   m_Dialog = NULL;
   m_Rwi = NULL;
 
@@ -75,6 +105,10 @@ mafOp(label)
 
   m_MultiscaleUtility = new lhpMultiscaleUtility ;
   m_nextTokenColor = 0 ;
+
+  m_dclickCallback = NULL ;
+
+  m_PosSlider = NULL ;
 }
 
 
@@ -92,6 +126,11 @@ lhpOpMultiscaleExplore::~lhpOpMultiscaleExplore()
     delete m_surfacePipes.at(i) ;
   for (i = 0 ;  i < (int)m_tokenPipes.size() ;  i++)
     delete m_tokenPipes.at(i) ; 
+  for (i = 0 ;  i < (int)m_volumeSlicePipes.size() ;  i++)
+    delete m_volumeSlicePipes.at(i) ; 
+
+  if (m_dclickCallback != NULL)
+    delete m_dclickCallback ;
 }
 
 
@@ -110,7 +149,7 @@ mafOp* lhpOpMultiscaleExplore::Copy()
 bool lhpOpMultiscaleExplore::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  return (vme != NULL && (vme->IsMAFType(mafVMESurface))) ;
+  return (vme != NULL && (vme->IsMAFType(mafVMESurface) || vme->IsMAFType(mafVMEVolumeGray))) ;
 }
 
 //----------------------------------------------------------------------------
@@ -118,7 +157,7 @@ bool lhpOpMultiscaleExplore::Accept(mafNode* vme)
 bool lhpOpMultiscaleExplore::AcceptStatic(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  return (vme != NULL && (vme->IsMAFType(mafVMESurface))) ;
+  return (vme != NULL && (vme->IsMAFType(mafVMESurface) || vme->IsMAFType(mafVMEVolumeGray))) ;
 }
 
 
@@ -150,6 +189,8 @@ void lhpOpMultiscaleExplore::OpRun()
 }
 
 
+
+
 //----------------------------------------------------------------------------
 // Finish executing the op after the gui has finished
 void lhpOpMultiscaleExplore::OpDo()
@@ -164,28 +205,7 @@ void lhpOpMultiscaleExplore::OpDo()
 void lhpOpMultiscaleExplore::OpUndo()
 //----------------------------------------------------------------------------
 {
-  mafEventMacro(mafEvent(this, CAMERA_UPDATE));
 }
-
-
-//----------------------------------------------------------------------------
-// widget ID's
-//----------------------------------------------------------------------------
-enum EXTRACT_ISOSURFACE_ID
-{
-  ID_ADDVME = MINID,
-  ID_SCALEVALUETXT,
-  ID_SCALEUNITSTXT,
-  ID_ZOOMOUT,
-  ID_CAMERARESET,
-  ID_GOBACK,
-  ID_OK,
-  ID_CANCEL,
-  ID_DEBUG,
-  ID_START_RENDER,  // vtk start render event
-  ID_MOUSE_CLICK    // vtk mouse click event
-};
-
 
 
 
@@ -194,11 +214,45 @@ enum EXTRACT_ISOSURFACE_ID
 void lhpOpMultiscaleExplore::CreateOpWithoutDialog(vtkRenderer *renderer)
 //----------------------------------------------------------------------------
 {
-  // Set pointer to external renderer
+  // Set pointer to external renderer (need this when setting up with no dialog)
   m_externalRenderer = renderer ;
 
+
+  //----------------------------------------------------------------------------
+  // get input vme
+  //----------------------------------------------------------------------------
+  mafVME* vme = mafVME::SafeDownCast(m_Input) ;
+
+
+  //----------------------------------------------------------------------------
+  // setup interface
+  //----------------------------------------------------------------------------
   GetRenderWindow()->SetDesiredUpdateRate(0.0001f);
-  GetRenderWindow()->SetSize(600,600);
+  GetRenderWindow()->SetSize(400,400);
+
+
+  //----------------------------------------------------------------------------
+  // Set up the gui widgets
+  //----------------------------------------------------------------------------
+  m_BaseUnits = ID_METRES ;
+
+  m_Opacity = 1.0 ;
+  double bounds[6] ;
+  vme->GetOutput()->GetBounds(bounds) ;
+  InitSliceParams(ID_XY, bounds) ;      // set the validator values (nb there are no visual pipes at this stage)
+
+
+  //----------------------------------------------------------------------------
+  // Create visual pipe for selected vme.
+  // Additional vme's must be added later from the dialog, because this is an op - not a view.
+  //----------------------------------------------------------------------------
+  AddVmeToScene(vme) ;
+  UpdateCamera() ;
+
+
+  //----------------------------------------------------------------------------
+  // Set up interactor style and callbacks
+  //----------------------------------------------------------------------------
 
   // Set the interactor style to trackball camera
   vtkInteractorStyleTrackballCamera* style = vtkInteractorStyleTrackballCamera::New() ;
@@ -226,12 +280,23 @@ void lhpOpMultiscaleExplore::CreateOpWithoutDialog(vtkRenderer *renderer)
 
 
 //----------------------------------------------------------------------------
+// Create the op dialog
 void lhpOpMultiscaleExplore::CreateOpDialog()
 //----------------------------------------------------------------------------
 {
   wxBusyCursor wait;
 
-  //===== setup interface ====
+
+  //----------------------------------------------------------------------------
+  // get input vme
+  //----------------------------------------------------------------------------
+  mafVME* vme = mafVME::SafeDownCast(m_Input) ;
+
+
+
+  //----------------------------------------------------------------------------
+  // setup interface
+  //----------------------------------------------------------------------------
   m_Dialog = new mmgDialog("Multiscale Explorer", mafCLOSEWINDOW | mafRESIZABLE);
 
   m_Rwi = new mafRWI(m_Dialog,ONE_LAYER,false);
@@ -239,83 +304,177 @@ void lhpOpMultiscaleExplore::CreateOpDialog()
   m_Rwi->CameraSet(CAMERA_PERSPECTIVE);
 
   m_Rwi->m_RenderWindow->SetDesiredUpdateRate(0.0001f);
-  m_Rwi->SetSize(0,0,600,600);
+  m_Rwi->SetSize(0,0,400,400);
   m_Rwi->Show(true);
-  m_Rwi->m_RwiBase->SetMouse(m_Mouse);
+  m_Rwi->m_RwiBase->SetMouse(m_Mouse) ;
 
 
-  // Add selected vme to the list and create visual pipe for it.
-  // Additional vme's must be added later from the dialog, because this is an op - not a view.
-  mafVME* vme = mafVME::SafeDownCast(m_Input) ;
-  AddVmeToScene(vme) ;
 
-  vtkPolyData *polydata = vtkPolyData::SafeDownCast(((mafVME *)m_Input)->GetOutput()->GetVTKData());
 
-  double bounds[6] = {0,0,0,0,0,0};
-  polydata->GetBounds(bounds);
 
-  m_Rwi->m_RenFront->ResetCamera(polydata->GetBounds());
-  m_Rwi->m_RenFront->ResetCameraClippingRange(bounds);
-
+  //----------------------------------------------------------------------------
+  // Set up the gui widgets
+  //----------------------------------------------------------------------------
   wxPoint p = wxDefaultPosition;
 
-  wxStaticText *help  = new wxStaticText(m_Dialog,-1, "Multiscale View");
+  // title
+  wxStaticText *setupCtrlsStaticTxt  = new wxStaticText(m_Dialog, -1, "Set up view");
 
-  wxStaticText *scaleStaticTxt = new wxStaticText(m_Dialog, -1, "Current scale:") ;
-  wxTextCtrl *scaleValueTxt = new wxTextCtrl(m_Dialog, ID_SCALEVALUETXT, wxEmptyString, p, wxSize(80,20), wxTE_READONLY | wxTE_RIGHT) ;
-  wxTextCtrl *scaleUnitsTxt = new wxTextCtrl(m_Dialog, ID_SCALEUNITSTXT, wxEmptyString, p, wxSize(80,20), wxTE_READONLY | wxTE_RIGHT) ;
-
+  // add vme
   mmgButton  *AddVMEButton = new mmgButton(m_Dialog, ID_ADDVME, "add vme", p, wxSize(80,20));
+
+  // set base units
+  wxString SIUnits[5] = {"m", "cm", "mm", "microns", "nm"} ;
+  m_BaseUnits = ID_METRES ;
+  wxStaticText *unitsStaticTxt = new wxStaticText(m_Dialog, -1, "base units ") ;
+  wxComboBox *unitsCombo = new wxComboBox(m_Dialog, ID_BASE_UNITS, SIUnits[m_BaseUnits], p, wxSize(80,20), 5, SIUnits, wxCB_READONLY) ;
+
+  // multiscale controls
+  wxStaticText *mscaleCtrlsStaticTxt = new wxStaticText(m_Dialog, -1, "Multiscale controls");
   mmgButton  *ZoomOutButton = new mmgButton(m_Dialog, ID_ZOOMOUT, "zoom out x2", p, wxSize(80,20));
   mmgButton  *CameraResetButton = new mmgButton(m_Dialog, ID_CAMERARESET, "reset camera", p, wxSize(80,20));
   mmgButton  *GoBackButton = new mmgButton(m_Dialog, ID_GOBACK, "go back", p, wxSize(80,20));
+  //mmgButton  *debug = new mmgButton(m_Dialog, ID_DEBUG, "debug", p, wxSize(80,20));
+
+  // display scale
+  wxStaticText *scaleStaticTxt = new wxStaticText(m_Dialog, -1, "Current scale: ") ;
+  wxTextCtrl *scaleValueTxt = new wxTextCtrl(m_Dialog, ID_SCALEVALUETXT, wxEmptyString, p, wxSize(80,20), wxTE_READONLY | wxTE_RIGHT) ;
+  wxTextCtrl *scaleUnitsTxt = new wxTextCtrl(m_Dialog, ID_SCALEUNITSTXT, wxEmptyString, p, wxSize(80,20), wxTE_READONLY | wxTE_RIGHT) ;
+
+  // control of slice position and view direction
+  wxString Views[3] = {"XY","XZ","YZ"};
+  m_Opacity = 1.0 ;
+  double bounds[6] ;
+  vme->GetOutput()->GetBounds(bounds) ;
+  InitSliceParams(ID_XY, bounds) ;      // set the validator values (nb there are no visual pipes at this stage)
+  wxStaticText *sliceCtrlsStaticTxt = new wxStaticText(m_Dialog, -1, "Slice controls");
+  wxStaticText *posStaticTxt = new wxStaticText(m_Dialog, -1, "pos ") ;
+  wxTextCtrl *posValueTxt = new wxTextCtrl(m_Dialog, ID_POS_VALUE_TXT, wxEmptyString, p, wxSize(80,20), wxTE_RIGHT) ;
+  m_PosSlider = new mmgFloatSlider(m_Dialog, ID_POS_SLIDER, m_SliderOrigin, bounds[4], bounds[5], p) ;
+  wxStaticText *viewStaticTxt = new wxStaticText(m_Dialog, -1, "view ") ;
+  wxComboBox *viewCombo = new wxComboBox(m_Dialog, ID_CHANGE_VIEW, Views[m_ViewIndex], p, wxSize(80,20), 3, Views, wxCB_READONLY) ;
+
+  // control of opacity
+  //wxStaticText *opacityStaticTxt = new wxStaticText(m_Dialog, -1, "opacity ") ;
+  //wxTextCtrl *opacityValueTxt = new wxTextCtrl(m_Dialog, ID_OPACITY_VALUE_TXT, wxEmptyString, p, wxSize(80,20), wxTE_RIGHT) ;
+  //mmgFloatSlider *opacitySlider = new mmgFloatSlider(m_Dialog, ID_OPACITY_SLIDER, 0.5, 0.0, 1.0, p) ;
+
+  // ok and cancel
   mmgButton  *ok = new mmgButton(m_Dialog, ID_OK, "ok", p, wxSize(80,20));
   mmgButton  *cancel = new mmgButton(m_Dialog, ID_CANCEL, "cancel", p, wxSize(80,20));
-  mmgButton  *debug = new mmgButton(m_Dialog, ID_DEBUG, "debug", p, wxSize(80,20));
+
+
+  // set validators
+  AddVMEButton->SetValidator(mmgValidator(this,ID_ADDVME,AddVMEButton));
+  ZoomOutButton->SetValidator(mmgValidator(this,ID_ZOOMOUT,ZoomOutButton));
+  CameraResetButton->SetValidator(mmgValidator(this,ID_CAMERARESET,CameraResetButton));
+  GoBackButton->SetValidator(mmgValidator(this,ID_GOBACK,GoBackButton));
+  //debug->SetValidator(mmgValidator(this,ID_DEBUG,debug));
+
+  unitsCombo->SetValidator(mmgValidator(this, ID_BASE_UNITS, unitsCombo, &m_BaseUnits)) ;
 
   scaleValueTxt->SetValidator(mmgValidator(this,ID_SCALEVALUETXT,ok)) ;
   scaleUnitsTxt->SetValidator(mmgValidator(this,ID_SCALEUNITSTXT,ok)) ;
-  AddVMEButton->SetValidator(mmgValidator(this,ID_ADDVME,ok));
-  ZoomOutButton->SetValidator(mmgValidator(this,ID_ZOOMOUT,ok));
-  CameraResetButton->SetValidator(mmgValidator(this,ID_CAMERARESET,ok));
-  GoBackButton->SetValidator(mmgValidator(this,ID_GOBACK,ok));
+
+  posValueTxt->SetValidator(mmgValidator(this,ID_POS_VALUE_TXT,posValueTxt,&m_SliderOrigin)) ;
+  m_PosSlider->SetValidator(mmgValidator(this, ID_POS_SLIDER, m_PosSlider, &m_SliderOrigin, posValueTxt));
+  viewCombo->SetValidator(mmgValidator(this, ID_CHANGE_VIEW, viewCombo, &m_ViewIndex)) ;
+
+  //opacityValueTxt->SetValidator((mmgValidator(this, ID_OPACITY_VALUE_TXT, opacityValueTxt, &m_Opacity, 0.0, 1.0))) ;
+  //opacitySlider->SetValidator(mmgValidator(this, ID_OPACITY_SLIDER, opacitySlider, &m_Opacity, opacityValueTxt));
+
   ok->SetValidator(mmgValidator(this,ID_OK,ok));
   cancel->SetValidator(mmgValidator(this,ID_CANCEL,cancel));
-  debug->SetValidator(mmgValidator(this,ID_DEBUG,debug));
 
+
+  // layout
   wxBoxSizer *h_sizer0 = new wxBoxSizer(wxHORIZONTAL);
-  h_sizer0->Add(help, 0, wxRIGHT);	
-
-  wxBoxSizer *h_sizer1 = new wxBoxSizer(wxHORIZONTAL);
-  h_sizer1->Add(AddVMEButton, 0, wxRIGHT);	
-  h_sizer1->Add(ZoomOutButton, 0, wxRIGHT);	
-  h_sizer1->Add(CameraResetButton, 0, wxRIGHT);	
-  h_sizer1->Add(GoBackButton, 0, wxRIGHT);	
-  h_sizer1->Add(debug, 0, wxRIGHT);	
+  h_sizer0->Add(setupCtrlsStaticTxt, 0, wxLEFT);	
 
   wxBoxSizer *h_sizer2 = new wxBoxSizer(wxHORIZONTAL);
-  h_sizer2->Add(scaleStaticTxt, 0, wxRIGHT) ;
-  h_sizer2->Add(scaleValueTxt, 0, wxRIGHT) ;
-  h_sizer2->Add(scaleUnitsTxt, 0, wxRIGHT) ;
+  h_sizer2->Add(AddVMEButton, 0, wxLEFT);	
+  h_sizer2->AddSpacer(20) ;
+  h_sizer2->Add(unitsStaticTxt, 0, wxLEFT) ;
+  h_sizer2->Add(unitsCombo, 0, wxLEFT) ;
 
-  wxBoxSizer *h_sizer3 = new wxBoxSizer(wxHORIZONTAL);
-  h_sizer3->Add(ok, 0, wxRIGHT);
-  h_sizer3->Add(cancel, 0, wxRIGHT);
+  wxBoxSizer *h_sizer4 = new wxBoxSizer(wxHORIZONTAL);
+  h_sizer4->Add(mscaleCtrlsStaticTxt, 0, wxLEFT);	
 
-  wxBoxSizer *v_sizer =  new wxBoxSizer( wxVERTICAL );
-  v_sizer->Add(m_Rwi->m_RwiBase, 1,wxEXPAND);
-  v_sizer->Add(h_sizer0, 0, wxEXPAND | wxALL,5);
-  v_sizer->Add(h_sizer1, 0, wxEXPAND | wxALL,5);
-  v_sizer->Add(h_sizer2, 0, wxEXPAND | wxALL,5);
-  v_sizer->Add(h_sizer3, 0, wxEXPAND | wxALL,5);
+  wxBoxSizer *h_sizer6 = new wxBoxSizer(wxHORIZONTAL);
+  h_sizer6->Add(ZoomOutButton, 0, wxLEFT);	
+  h_sizer6->Add(CameraResetButton, 0, wxLEFT);	
+  h_sizer6->Add(GoBackButton, 0, wxLEFT);	
+  //h_sizer6->Add(debug, 0, wxLEFT);	
 
-  m_Dialog->Add(v_sizer, 1, wxEXPAND);
+  wxBoxSizer *h_sizer8 = new wxBoxSizer(wxHORIZONTAL);
+  h_sizer8->Add(scaleStaticTxt, 0, wxLEFT) ;
+  h_sizer8->Add(scaleValueTxt, 0, wxLEFT) ;
+  h_sizer8->Add(scaleUnitsTxt, 0, wxLEFT) ;
+
+  wxBoxSizer *h_sizer10 = new wxBoxSizer(wxHORIZONTAL);
+  h_sizer10->Add(sliceCtrlsStaticTxt, 0, wxLEFT);	
+
+  wxBoxSizer *h_sizer12 = new wxBoxSizer(wxHORIZONTAL);
+  h_sizer12->Add(posStaticTxt, 0, wxLEFT);
+  h_sizer12->Add(posValueTxt, 0, wxLEFT) ;
+  h_sizer12->Add(m_PosSlider, 0, wxLEFT);
+
+  wxBoxSizer *h_sizer14 = new wxBoxSizer(wxHORIZONTAL);
+  h_sizer14->Add(viewStaticTxt, 0, wxLEFT);
+  h_sizer14->Add(viewCombo, 0, wxLEFT) ;
+
+  //wxBoxSizer *h_sizer18 = new wxBoxSizer(wxHORIZONTAL);
+  //h_sizer18->Add(opacityStaticTxt, 0, wxLEFT);
+  //h_sizer18->Add(opacityValueTxt, 0, wxLEFT) ;
+  //h_sizer18->Add(opacitySlider, 0, wxLEFT);
+
+  wxBoxSizer *h_sizer20 = new wxBoxSizer(wxHORIZONTAL);
+  h_sizer20->Add(ok, 0, wxLEFT);
+  h_sizer20->Add(cancel, 0, wxLEFT);
+
+  wxBoxSizer *v_sizer_renwin = new wxBoxSizer(wxVERTICAL) ;
+  v_sizer_renwin->Add(m_Rwi->m_RwiBase, 1, wxEXPAND);
+
+  wxBoxSizer *v_sizer_ctrls =  new wxBoxSizer(wxVERTICAL);
+  v_sizer_ctrls->Add(h_sizer0, 0, wxEXPAND | wxALL,5);
+  v_sizer_ctrls->Add(h_sizer2, 0, wxEXPAND | wxALL,5);
+  v_sizer_ctrls->AddSpacer(20) ;
+  v_sizer_ctrls->Add(h_sizer4, 0, wxEXPAND | wxALL,5);
+  v_sizer_ctrls->Add(h_sizer6, 0, wxEXPAND | wxALL,5);
+  v_sizer_ctrls->Add(h_sizer8, 0, wxEXPAND | wxALL,5);
+  v_sizer_ctrls->AddSpacer(20) ;
+  v_sizer_ctrls->Add(h_sizer10, 0, wxEXPAND | wxALL,5);
+  v_sizer_ctrls->Add(h_sizer12, 0, wxEXPAND | wxALL,5);
+  v_sizer_ctrls->Add(h_sizer14, 0, wxEXPAND | wxALL,5);
+  //v_sizer_ctrls->Add(h_sizer18, 0, wxEXPAND | wxALL,5);
+  v_sizer_ctrls->AddSpacer(40) ;
+  v_sizer_ctrls->Add(h_sizer20, 0, wxEXPAND | wxALL,5);
+
+  wxBoxSizer *h_sizer_all = new wxBoxSizer(wxHORIZONTAL) ;
+  h_sizer_all->Add(v_sizer_renwin, 1, wxEXPAND) ;
+  h_sizer_all->Add(v_sizer_ctrls, 0, wxEXPAND) ;
+
+  m_Dialog->Add(h_sizer_all, 1, wxEXPAND);
+
 
   // set position of dialog
+  h_sizer_all->Fit(m_Dialog) ;
   m_Dialog->SetPosition(wxPoint(20,20)) ;
 
+
+
+  //----------------------------------------------------------------------------
+  // Create visual pipe for selected vme.
+  // Additional vme's must be added later from the dialog, because this is an op - not a view.
+  //----------------------------------------------------------------------------
+  AddVmeToScene(vme) ;
   UpdateCamera() ;
 
+
+
+  //----------------------------------------------------------------------------
+  // Set up interactor style and callbacks
+  //----------------------------------------------------------------------------
 
   // Set the interactor style to trackball camera
   vtkInteractorStyleTrackballCamera* style = vtkInteractorStyleTrackballCamera::New() ;
@@ -336,6 +495,12 @@ void lhpOpMultiscaleExplore::CreateOpDialog()
   mouseClickCallback->SetMafEventId(ID_MOUSE_CLICK) ;                                 // set event id to be thrown by callback
   mouseClickCallback->Delete() ;
 
+  // add observer to catch double click event
+  //m_dclickCallback = new lhpMultiscaleDoubleClickCallback ;
+ // m_dclickCallback->SetListener(this) ;                                              // set self as listener to callback
+  //m_dclickCallback->SetMafEventId(ID_MOUSE_CLICK) ;                                 // set event id to be thrown by callback
+  //m_Mouse->AddObserver(this, MCH_INPUT) ;
+
   // save the current view so we can go back to it
   GetMultiscaleUtility()->SaveInitialView(GetRenderer()) ;
 }
@@ -346,17 +511,15 @@ void lhpOpMultiscaleExplore::CreateOpDialog()
 void lhpOpMultiscaleExplore::DeleteOpDialog()
 //----------------------------------------------------------------------------
 {
-  if (m_Rwi != NULL)
-    cppDEL(m_Rwi); 
 
-  if (m_Dialog != NULL)
+    cppDEL(m_Rwi); 
     cppDEL(m_Dialog);
 }
 
 
 
 //----------------------------------------------------------------------------
-// Create the vtk pipeline
+// Create the vtk pipeline (surface pipe)
 void lhpOpMultiscaleExplore::CreateSurfacePipeline(mafVME* vme, vtkRenderer *renderer)
 //----------------------------------------------------------------------------
 {
@@ -365,12 +528,13 @@ void lhpOpMultiscaleExplore::CreateSurfacePipeline(mafVME* vme, vtkRenderer *ren
 
   // add to list of pipes and create multiscale actor
   m_surfacePipes.push_back(pipe) ;
-  GetMultiscaleUtility()->AddMultiscaleActor(pipe->GetActor(), pipe->GetMapper(), MSCALE_DATA_ACTOR) ;
+  GetMultiscaleUtility()->AddMultiscaleActor(pipe, MSCALE_DATA_ACTOR) ;
 }
 
 
+
 //----------------------------------------------------------------------------
-// Create the vtk pipeline
+// Create the vtk pipeline (token pipe)
 void lhpOpMultiscaleExplore::CreateTokenPipeline(vtkRenderer *renderer)
 //----------------------------------------------------------------------------
 {
@@ -379,15 +543,28 @@ void lhpOpMultiscaleExplore::CreateTokenPipeline(vtkRenderer *renderer)
 
   // add to list of pipes and create multiscale actor
   m_tokenPipes.push_back(pipe) ;
-  GetMultiscaleUtility()->AddMultiscaleActor(pipe->GetActor(), pipe->GetMapper(), MSCALE_TOKEN) ;
+  GetMultiscaleUtility()->AddMultiscaleActor(pipe, MSCALE_TOKEN) ;
 }
 
+
+//----------------------------------------------------------------------------
+// Create the vtk pipeline (volume slice pipe)
+void lhpOpMultiscaleExplore::CreateVolumeSlicePipeline(mafVME* vme, vtkRenderer *renderer)
+//----------------------------------------------------------------------------
+{
+  // create new pipe and add to list
+  lhpMultiscaleVolumeSlicePipeline* pipe = new lhpMultiscaleVolumeSlicePipeline(vme, m_ViewIndex, m_SliceOrigin, GetRenderer()) ;
+
+  // add to list of pipes and create multiscale actor
+  m_volumeSlicePipes.push_back(pipe) ;
+  GetMultiscaleUtility()->AddMultiscaleActor(pipe, MSCALE_DATA_ACTOR) ;
+}
 
 
 
 //----------------------------------------------------------------------------
 // Update the camera
-// This wraps the dialog-based method in cse there is no dialog.
+// This wraps the dialog-based method in case there is no dialog.
 void lhpOpMultiscaleExplore::UpdateCamera()
 //----------------------------------------------------------------------------
 {
@@ -397,14 +574,184 @@ void lhpOpMultiscaleExplore::UpdateCamera()
 
 
 //----------------------------------------------------------------------------
+// Initialize the parameters of the slice (origin and view index)
+// This only sets the parameters - it does not set or change the visual pipes !
+void lhpOpMultiscaleExplore::InitSliceParams(int viewIndex, double *bounds)
+//----------------------------------------------------------------------------
+{
+  // set the view directon validator
+  m_ViewIndex = viewIndex ;
+
+  // set the slice position params to the centre of the bounds
+  m_SliceOrigin[0] = (bounds[0] + bounds[1]) / 2.0 ;
+  m_SliceOrigin[1] = (bounds[2] + bounds[3]) / 2.0 ;
+  m_SliceOrigin[2] = (bounds[4] + bounds[5]) / 2.0 ;
+
+  // Set the slider origin validator
+  switch(viewIndex){
+    case ID_XY:
+      m_SliderOrigin = m_SliceOrigin[2] ;
+      break ;
+    case ID_XZ:
+      m_SliderOrigin = m_SliceOrigin[1] ;
+      break ;
+    case ID_YZ:
+      m_SliderOrigin = m_SliceOrigin[0] ;
+      break ;
+  }
+
+  // save the current values
+  m_ViewIndex_old = m_ViewIndex ;
+  m_SliderOrigin_old = m_SliderOrigin ;
+}
+
+
+
+//----------------------------------------------------------------------------
+// Move the global slice.
+void lhpOpMultiscaleExplore::UpdateSlicePosition()
+//----------------------------------------------------------------------------
+{
+  if (m_SliderOrigin != m_SliderOrigin_old){
+    switch(m_ViewIndex){
+    case ID_XY:
+      m_SliceOrigin[2] = m_SliderOrigin ;
+      break ;
+    case ID_XZ:
+      m_SliceOrigin[1] = m_SliderOrigin ;
+      break ;
+    case ID_YZ:
+      m_SliceOrigin[0] = m_SliderOrigin ;
+      break ;
+    }
+
+    // Update all the volume slice pipelines
+    for (int i = 0 ;  i < (int)m_volumeSlicePipes.size() ;  i++){
+      lhpMultiscaleVolumeSlicePipeline *volSlicePipe = m_volumeSlicePipes.at(i) ;
+      volSlicePipe->SetSlicePosition(m_SliceOrigin) ;
+    }
+
+    // update the saved values
+    m_SliderOrigin_old = m_SliderOrigin ;
+  }
+}
+
+
+//----------------------------------------------------------------------------
+// Update the view axis
+void lhpOpMultiscaleExplore::UpdateViewAxis(double *bounds)
+//----------------------------------------------------------------------------
+{
+  double range_min, range_mid, range_max ;
+
+  if (m_ViewIndex_old != m_ViewIndex){
+    switch(m_ViewIndex){
+    case ID_XY:
+      // get the new range for the slider
+      range_min = bounds[4] ;
+      range_max = bounds[5] ;
+      range_mid = (range_min + range_max) / 2.0 ;
+
+      // change the slice position
+      m_SliceOrigin[0] = (bounds[0] + bounds[1]) / 2.0 ;
+      m_SliceOrigin[1] = (bounds[2] + bounds[3]) / 2.0 ;
+      m_SliceOrigin[2] = range_mid ;
+      
+      break ;
+
+    case ID_XZ:
+      // get the new range for the slider
+      range_min = bounds[2] ;
+      range_max = bounds[3] ;
+      range_mid = (range_min + range_max) / 2.0 ;
+
+      // change the slice position
+      m_SliceOrigin[0] = (bounds[0] + bounds[1]) / 2.0 ;
+      m_SliceOrigin[1] = range_mid ;
+      m_SliceOrigin[2] = (bounds[4] + bounds[5]) / 2.0 ;
+
+      break ;
+
+    case ID_YZ:
+      // get the new range for the slider
+      range_min = bounds[0] ;
+      range_max = bounds[1] ;
+      range_mid = (range_min + range_max) / 2.0 ;
+
+      // change the slice position
+      m_SliceOrigin[0] = range_mid ;
+      m_SliceOrigin[1] = (bounds[2] + bounds[3]) / 2.0 ;
+      m_SliceOrigin[2] = (bounds[4] + bounds[5]) / 2.0 ;
+
+      break ;
+    }
+
+    // update the position slider (if widget is present)
+    m_SliderOrigin = range_mid ;
+    if (m_PosSlider != NULL){
+      m_PosSlider->SetRange(range_min, range_max) ;
+      m_Dialog->TransferDataToWindow() ;      // need this to update the associated text control
+    }
+
+    // Update all the volume slice pipelines
+    for (int i = 0 ;  i < (int)m_volumeSlicePipes.size() ;  i++){
+      lhpMultiscaleVolumeSlicePipeline *volSlicePipe = m_volumeSlicePipes.at(i) ;
+      volSlicePipe->SetSliceDirection(m_ViewIndex) ;
+      volSlicePipe->SetSlicePosition(m_SliceOrigin) ;
+    }
+
+    // update the saved values
+    m_ViewIndex_old = m_ViewIndex ;
+    m_SliderOrigin_old = m_SliderOrigin ;
+  }
+}
+
+
+//----------------------------------------------------------------------------
+// Set the slider range to fit the given bounds
+void lhpOpMultiscaleExplore::SetSliderRange(double *bounds)
+//----------------------------------------------------------------------------
+{
+  // do nothing if slider widget is not present
+  if (m_PosSlider == NULL)
+    return ;
+
+  switch(m_ViewIndex){
+    case ID_XY:
+      m_PosSlider->SetRange(bounds[4], bounds[5]) ;
+      break ;
+    case ID_XZ:
+      m_PosSlider->SetRange(bounds[2], bounds[3]) ;
+      break ;
+    case ID_YZ:
+      m_PosSlider->SetRange(bounds[0], bounds[1]) ;
+      break ;
+  }
+
+  // check that the slider value is in the range, and move it to the centre if not.
+  double rmin = m_PosSlider->GetMin() ;
+  double rmax = m_PosSlider->GetMax() ;
+  if (m_SliderOrigin < rmin || m_SliderOrigin > rmax)
+    m_SliderOrigin = (rmin + rmax) / 2.0 ;
+
+  // update the dialog and the slice
+  m_Dialog->TransferDataToWindow() ; 
+  UpdateSlicePosition() ;
+}
+
+
+//----------------------------------------------------------------------------
 // Add new vme to scene.
 // Adds vme to list, creates multiscale actors for data and tokens and creates visual pipes.
 void lhpOpMultiscaleExplore::AddVmeToScene(mafVME* vme)
 //----------------------------------------------------------------------------
 {
-  // add vme to list, create pipeline and multiscale actor
-  AddVME(vme) ;
-  CreateSurfacePipeline(vme, GetRenderer()) ;
+  // Create pipeline and multiscale actor
+  if (vme->IsMAFType(mafVMESurface))
+    CreateSurfacePipeline(vme, GetRenderer()) ;
+  else if (vme->IsMAFType(mafVMEVolumeGray))
+    CreateVolumeSlicePipeline(vme, GetRenderer()) ;
+
   int dataActorId = GetMultiscaleUtility()->GetNumberOfActors() - 1 ;
 
   // create pipeline and multiscale actor for corresponding token
@@ -416,14 +763,19 @@ void lhpOpMultiscaleExplore::AddVmeToScene(mafVME* vme)
   vtkActor* actor_token = GetMultiscaleUtility()->GetMultiscaleActor(tokenActorId)->GetActor() ;
   GetMultiscaleUtility()->GetActorCoordsUtility()->MoveToCenter(actor_token, actor_data) ;
 
-  // Set token to default size
-  //this->SetTokenSize(GetRenderer(), tokenActorId, TOKENSIZE) ;
-
   // Associate data actor and token together as a pair
   GetMultiscaleUtility()->SetActorTokenPair(dataActorId, tokenActorId) ;
 
   // Reset camera to view all actors currently in scene
   GetMultiscaleUtility()->ResetCameraFitAll(GetRenderer()) ;
+
+  // Set the attention to all the actors
+  GetMultiscaleUtility()->SetAttentionAll(true) ;
+
+  // attention has changed, so update the slider range
+  double bounds[6] ;
+  GetMultiscaleUtility()->GetAttentionBounds(bounds) ;
+  SetSliderRange(bounds) ;
 
   // Must save the camera view again, else the saved view will not contain
   // the required info for the new actors.
@@ -517,11 +869,40 @@ void lhpOpMultiscaleExplore::OnEvent(mafEventBase *maf_event)
 
     case ID_DEBUG:
       {
-        // Write system state to file
-        //std::fstream thing ;
-        //thing.open("C:/Documents and Settings/Nigel.DB6ZB32J/My Documents/Visual Studio Projects/MAF/Multiscale2/thing.txt", thing.out | thing.app) ;
-        //OnDebug(thing, GetRenderer()) ;
-        //thing.close() ;
+/*        // Write system state to file
+        std::fstream thing ;
+        thing.open("C:/Documents and Settings/Nigel.DB6ZB32J/My Documents/Visual Studio Projects/MAF/Multiscale2/thing.txt", thing.out | thing.app) ;
+        OnDebug(thing, GetRenderer()) ;
+        thing.close() ; */
+        break ;
+      }
+
+    case ID_POS_SLIDER:
+      {
+        UpdateSlicePosition() ;
+        UpdateCamera() ;
+        break ;
+      }
+
+    case ID_CHANGE_VIEW:
+      {
+        double bounds[6] ;
+        GetMultiscaleUtility()->GetAttentionBounds(bounds) ;
+        UpdateViewAxis(bounds) ;
+        UpdateCamera() ;
+        break ;
+      }
+
+    case ID_BASE_UNITS:
+      {
+        // render in order to update the scale display
+        UpdateCamera() ;
+        break ;
+      }
+
+    case ID_OPACITY_SLIDER:
+      {
+        m_Dialog->TransferDataToWindow() ;
         break ;
       }
 
@@ -547,7 +928,8 @@ void lhpOpMultiscaleExplore::OnEvent(mafEventBase *maf_event)
     }
   }
   else{
-    mafLogMessage("event") ;
+    if (e->GetId() == mmdMouse::MOUSE_DCLICK)
+      mafLogMessage("double click !") ;
   }
 }
 
@@ -592,12 +974,6 @@ void lhpOpMultiscaleExplore::OnZoomOut(vtkRenderer* renderer)
   // this is a dialog event so we need to manually call a render when we have finished
   renderer->GetRenderWindow()->Render() ;
   UpdateCamera() ;
-
-  std::fstream thing ;
-  thing.open("C:/Documents and Settings/Nigel.DB6ZB32J/My Documents/Visual Studio Projects/MAF/Multiscale2/thing.txt", thing.out | thing.app) ;
-  OnDebug(thing, GetRenderer()) ;
-  thing.close() ;
-
 }
 
 
@@ -614,14 +990,18 @@ void lhpOpMultiscaleExplore::OnCameraReset(vtkRenderer* renderer)
   // Set any visible tokens to the default size
   for (int i = 0 ;   i < GetMultiscaleUtility()->GetNumberOfActors() ;  i++){
     lhpMultiscaleActor *ma = GetMultiscaleUtility()->GetMultiscaleActor(i) ;
-    vtkActor *actor = ma->GetActor() ;
 
-    if ((ma->GetActorType() == MSCALE_TOKEN) && (actor->GetVisibility() == 1))
+    if ((ma->GetActorType() == MSCALE_TOKEN) && (ma->GetVisibility() == 1))
       SetTokenSize(renderer, i, TOKENSIZE) ;
   }
 
   // set the attention on all the actors
   GetMultiscaleUtility()->SetAttentionAll(true) ;
+
+  // attention has changed, so update the slider range
+  double bounds[6] ;
+  GetMultiscaleUtility()->GetAttentionBounds(bounds) ;
+  SetSliderRange(bounds) ;
 
   // this is a dialog event so we need to manually call a render when we have finished
   renderer->GetRenderWindow()->Render() ;
@@ -649,12 +1029,16 @@ void lhpOpMultiscaleExplore::OnGoBack(vtkRenderer* renderer)
   // Set any visible tokens to the default size
   for (int i = 0 ;   i < GetMultiscaleUtility()->GetNumberOfActors() ;  i++){
     lhpMultiscaleActor *ma = GetMultiscaleUtility()->GetMultiscaleActor(i) ;
-    vtkActor *actor = ma->GetActor() ;
 
-    if ((ma->GetActorType() == MSCALE_TOKEN) && (actor->GetVisibility() == 1))
+    if ((ma->GetActorType() == MSCALE_TOKEN) && (ma->GetVisibility() == 1))
       SetTokenSize(renderer, i, TOKENSIZE) ;
   }
 
+  // attention has changed, so update the slider range
+  double bounds[6] ;
+  GetMultiscaleUtility()->GetAttentionBounds(bounds) ;
+  SetSliderRange(bounds) ;
+  
   // this is a dialog event so we need to manually call a render when we have finished
   renderer->GetRenderWindow()->Render() ;
   UpdateCamera() ;
@@ -679,7 +1063,7 @@ void lhpOpMultiscaleExplore::OnStartRender(vtkRenderer *renderer)
   std::ostrstream value ;
 
   double scale = GetMultiscaleUtility()->GetCameraUtility()->CalculateScale(renderer->GetActiveCamera()) ;
-  GetMultiscaleUtility()->ConvertScaleToTidyUnits(scale, &iscale, units) ;
+  GetMultiscaleUtility()->ConvertScaleToTidyUnits(scale, m_BaseUnits, &iscale, units) ;
   value << iscale << std::ends ;
 
   if (m_Dialog != NULL){
@@ -709,17 +1093,17 @@ void lhpOpMultiscaleExplore::OnStartRender(vtkRenderer *renderer)
     if (ma->GetActorType() == MSCALE_DATA_ACTOR){
       // check if actor has gone below the size threshold
       if (screenSize < SIZELOWER){
-        if (actor->GetVisibility() == 1 || ma->GetScaleStatus() != TOO_SMALL)
+        if (ma->GetVisibility() == 1 || ma->GetScaleStatus() != TOO_SMALL)
           OnActorTooSmall(renderer, i) ;
       }
       // check if actor is in the scale range (actors with attention have no upper size limit)
       else if (ma->GetAttention() && (screenSize > SIZEUPPER)){
-        if (actor->GetVisibility() == 0 || ma->GetScaleStatus() != IN_SCALE)
+        if (ma->GetVisibility() == 0 || ma->GetScaleStatus() != IN_SCALE)
           OnActorInScale(renderer, i) ;
       }
       // check if actor is in the scale range (actors without attention have to also be smaller than current scale)
       else if (!ma->GetAttention() && (screenSize > SIZEUPPER) && (worldSize <= (double)TOO_LARGE_FACTOR*scale)){
-        if (actor->GetVisibility() == 0 || ma->GetScaleStatus() != IN_SCALE)
+        if (ma->GetVisibility() == 0 || ma->GetScaleStatus() != IN_SCALE)
           OnActorInScale(renderer, i) ;
       }
       // check if actor without attention has gone too large
@@ -738,7 +1122,7 @@ void lhpOpMultiscaleExplore::OnStartRender(vtkRenderer *renderer)
     // get the screen size of the actor
     double screenSize = GetMultiscaleUtility()->GetActorCoordsUtility()->GetMaxSizeDisplay(actor, renderer) ;
 
-    if ((ma->GetActorType() == MSCALE_TOKEN) && (actor->GetVisibility() == 1)){
+    if ((ma->GetActorType() == MSCALE_TOKEN) && (ma->GetVisibility() == 1)){
       if (ma->GetScreenSizeMode() == FIXED_SIZE){
         // fixed size - reset to default size
         SetTokenSize(renderer, i, TOKENSIZE) ;
@@ -789,19 +1173,21 @@ void lhpOpMultiscaleExplore::OnActorTooSmall(vtkRenderer* renderer, int actorId)
 {
   // get actor and token
   int tokenId = GetMultiscaleUtility()->GetTokenCorrespondingToDataActor(actorId) ;
-  vtkActor* actor = GetMultiscaleUtility()->GetMultiscaleActor(actorId)->GetActor() ;
-  vtkActor* token = GetMultiscaleUtility()->GetMultiscaleActor(tokenId)->GetActor() ;
+  lhpMultiscaleActor *ma_actor = GetMultiscaleUtility()->GetMultiscaleActor(actorId) ;
+  lhpMultiscaleActor *ma_token = GetMultiscaleUtility()->GetMultiscaleActor(tokenId) ;
+  vtkActor* actor = ma_actor->GetActor() ;
+  vtkActor* token = ma_token->GetActor() ;
 
   // make token visible instead of actor
-  actor->SetVisibility(0) ;
-  token->SetVisibility(1) ;
+  ma_actor->SetVisibility(0) ;
+  ma_token->SetVisibility(1) ;
 
   // set size and position of token
   GetMultiscaleUtility()->GetActorCoordsUtility()->SetActorDisplaySize(token, renderer, TOKENSIZE) ;
   GetMultiscaleUtility()->GetActorCoordsUtility()->MoveToCenter(token, actor) ;
 
   // set flag to indicate that this actor is now below the scale threshold
-  GetMultiscaleUtility()->GetMultiscaleActor(actorId)->SetScaleStatus(TOO_SMALL) ;
+  ma_actor->SetScaleStatus(TOO_SMALL) ;
 }
 
 
@@ -812,15 +1198,17 @@ void lhpOpMultiscaleExplore::OnActorInScale(vtkRenderer* renderer, int actorId)
 {
   // get actor and token
   int tokenId = GetMultiscaleUtility()->GetTokenCorrespondingToDataActor(actorId) ;
-  vtkActor* actor = GetMultiscaleUtility()->GetMultiscaleActor(actorId)->GetActor() ;
-  vtkActor* token = GetMultiscaleUtility()->GetMultiscaleActor(tokenId)->GetActor() ;
+  lhpMultiscaleActor *ma_actor = GetMultiscaleUtility()->GetMultiscaleActor(actorId) ;
+  lhpMultiscaleActor *ma_token = GetMultiscaleUtility()->GetMultiscaleActor(tokenId) ;
+  vtkActor* actor = ma_actor->GetActor() ;
+  vtkActor* token = ma_token->GetActor() ;
 
   // make actor visible and token invisible
-  actor->SetVisibility(1) ;
-  token->SetVisibility(0) ;
+  ma_actor->SetVisibility(1) ;
+  ma_token->SetVisibility(0) ;
 
   // set flag to indicate that this actor is now above the scale threshold
-  GetMultiscaleUtility()->GetMultiscaleActor(actorId)->SetScaleStatus(IN_SCALE) ;
+  ma_actor->SetScaleStatus(IN_SCALE) ;
 }
 
 
@@ -832,15 +1220,17 @@ void lhpOpMultiscaleExplore::OnActorTooLarge(vtkRenderer* renderer, int actorId)
 {
   // get actor and token
   int tokenId = GetMultiscaleUtility()->GetTokenCorrespondingToDataActor(actorId) ;
-  vtkActor* actor = GetMultiscaleUtility()->GetMultiscaleActor(actorId)->GetActor() ;
-  vtkActor* token = GetMultiscaleUtility()->GetMultiscaleActor(tokenId)->GetActor() ;
+  lhpMultiscaleActor *ma_actor = GetMultiscaleUtility()->GetMultiscaleActor(actorId) ;
+  lhpMultiscaleActor *ma_token = GetMultiscaleUtility()->GetMultiscaleActor(tokenId) ;
+  vtkActor* actor = ma_actor->GetActor() ;
+  vtkActor* token = ma_token->GetActor() ;
 
   // make both actor and token invisible
-  actor->SetVisibility(0) ;
-  token->SetVisibility(0) ;
+  ma_actor->SetVisibility(0) ;
+  ma_token->SetVisibility(0) ;
 
   // set flag to indicate that this actor is now too large
-  GetMultiscaleUtility()->GetMultiscaleActor(actorId)->SetScaleStatus(TOO_LARGE) ;
+  ma_actor->SetScaleStatus(TOO_LARGE) ;
 }
 
 
@@ -851,33 +1241,37 @@ void lhpOpMultiscaleExplore::OnTokensOverlap(vtkRenderer* renderer, int tokenId1
 //------------------------------------------------------------------------------
 {
   // get token actors
-  vtkActor *tokenActor1 = GetMultiscaleUtility()->GetMultiscaleActor(tokenId1)->GetActor() ;
-  vtkActor *tokenActor2 = GetMultiscaleUtility()->GetMultiscaleActor(tokenId2)->GetActor() ;
+  lhpMultiscaleActor *ma_token1 = GetMultiscaleUtility()->GetMultiscaleActor(tokenId1) ;
+  lhpMultiscaleActor *ma_token2 = GetMultiscaleUtility()->GetMultiscaleActor(tokenId2) ;
+  vtkActor *tokenActor1 = ma_token1->GetActor() ;
+  vtkActor *tokenActor2 = ma_token2->GetActor() ;
 
 
   // get corresponding data actors and their size
   int actorId1 = GetMultiscaleUtility()->GetDataActorCorrespondingToToken(tokenId1) ;
   int actorId2 = GetMultiscaleUtility()->GetDataActorCorrespondingToToken(tokenId2) ;
 
-  vtkActor *actor1 = GetMultiscaleUtility()->GetMultiscaleActor(actorId1)->GetActor() ;
-  vtkActor *actor2 = GetMultiscaleUtility()->GetMultiscaleActor(actorId2)->GetActor() ;
+  lhpMultiscaleActor *ma_actor1 = GetMultiscaleUtility()->GetMultiscaleActor(actorId1) ;
+  lhpMultiscaleActor *ma_actor2 = GetMultiscaleUtility()->GetMultiscaleActor(actorId2) ;
+  vtkActor *actor1 = ma_actor1->GetActor() ;
+  vtkActor *actor2 = ma_actor2->GetActor() ;
 
   double siz1 = GetMultiscaleUtility()->GetActorCoordsUtility()->GetMaxSizeWorld(actor1) ;
   double siz2 = GetMultiscaleUtility()->GetActorCoordsUtility()->GetMaxSizeWorld(actor2) ;
 
 
-  // Make a record of the touching pair and make the one with the smaller data actor invisible
+  // Make a record of the touching pair and make the one with the smaller data actor invisible.
   // If they are the same size, the data actor with the lower index is considered larger.
   GetMultiscaleUtility()->AddTouchingTokens(tokenId1, tokenId2) ;
   if (siz1 > siz2)
-    tokenActor2->SetVisibility(0) ;
+    ma_token2->SetVisibility(0) ;
   else if (siz1 < siz2)
-    tokenActor1->SetVisibility(0) ;
+    ma_token1->SetVisibility(0) ;
   else{
     if (actorId1 < actorId2)
-      tokenActor2->SetVisibility(0) ;
+      ma_token2->SetVisibility(0) ;
     else
-      tokenActor1->SetVisibility(0) ;
+      ma_token1->SetVisibility(0) ;
   }
 }
 
@@ -888,16 +1282,20 @@ void lhpOpMultiscaleExplore::OnTokensSeparated(vtkRenderer* renderer, int tokenI
 //------------------------------------------------------------------------------
 {
   // get token actors
-  vtkActor *tokenActor1 = GetMultiscaleUtility()->GetMultiscaleActor(tokenId1)->GetActor() ;
-  vtkActor *tokenActor2 = GetMultiscaleUtility()->GetMultiscaleActor(tokenId2)->GetActor() ;
+  lhpMultiscaleActor *ma_token1 = GetMultiscaleUtility()->GetMultiscaleActor(tokenId1) ;
+  lhpMultiscaleActor *ma_token2 = GetMultiscaleUtility()->GetMultiscaleActor(tokenId2) ;
+  vtkActor *tokenActor1 = ma_token1->GetActor() ;
+  vtkActor *tokenActor2 = ma_token2->GetActor() ;
 
 
   // get corresponding data actors and their size
   int actorId1 = GetMultiscaleUtility()->GetDataActorCorrespondingToToken(tokenId1) ;
   int actorId2 = GetMultiscaleUtility()->GetDataActorCorrespondingToToken(tokenId2) ;
 
-  vtkActor *actor1 = GetMultiscaleUtility()->GetMultiscaleActor(actorId1)->GetActor() ;
-  vtkActor *actor2 = GetMultiscaleUtility()->GetMultiscaleActor(actorId2)->GetActor() ;
+  lhpMultiscaleActor *ma_actor1 = GetMultiscaleUtility()->GetMultiscaleActor(actorId1) ;
+  lhpMultiscaleActor *ma_actor2 = GetMultiscaleUtility()->GetMultiscaleActor(actorId2) ;
+  vtkActor *actor1 = ma_actor1->GetActor() ;
+  vtkActor *actor2 = ma_actor2->GetActor() ;
 
   double siz1 = GetMultiscaleUtility()->GetActorCoordsUtility()->GetMaxSizeWorld(actor1) ;
   double siz2 = GetMultiscaleUtility()->GetActorCoordsUtility()->GetMaxSizeWorld(actor2) ;
@@ -907,10 +1305,10 @@ void lhpOpMultiscaleExplore::OnTokensSeparated(vtkRenderer* renderer, int tokenI
   GetMultiscaleUtility()->RemoveTouchingTokens(tokenId1, tokenId2) ;
 
   // make tokens visible if their data actors are not currently visible and they are not touched by any tokens of larger actors
-  if ((actor1->GetVisibility() == 0) && (GetMultiscaleUtility()->GetNumberOfTouchingTokensLarger(tokenId1) == 0))
-    tokenActor1->SetVisibility(1) ;
-  if ((actor2->GetVisibility() == 0) && (GetMultiscaleUtility()->GetNumberOfTouchingTokensLarger(tokenId2) == 0))
-    tokenActor2->SetVisibility(1) ;
+  if ((ma_actor1->GetVisibility() == 0) && (GetMultiscaleUtility()->GetNumberOfTouchingTokensLarger(tokenId1) == 0))
+    ma_token1->SetVisibility(1) ;
+  if ((ma_actor2->GetVisibility() == 0) && (GetMultiscaleUtility()->GetNumberOfTouchingTokensLarger(tokenId2) == 0))
+    ma_token2->SetVisibility(1) ;
 }
 
 
@@ -922,7 +1320,7 @@ void lhpOpMultiscaleExplore::OnMouseClick()
   int i, j, xscreen, yscreen ;
   double boundsD[6] ;
 
-  std::vector<ACTORINFO>pickedActors ;
+  std::vector<ACTORINFO>targetedActors ;
 
   vtkRenderWindowInteractor *RWI = GetInteractor() ;
   vtkRenderer *renderer = GetRenderer() ;
@@ -930,15 +1328,13 @@ void lhpOpMultiscaleExplore::OnMouseClick()
   // get position of event
   RWI->GetLastEventPosition(xscreen, yscreen) ;
 
-  // list all the visible actors which are targeted by the click (there may be more than one)
-  // note that we consider all visible actors - not just those in use by callback, because
-  // the pickable actor might be hidden behind an unpickable one.
+  // list all the visible tokens which are targeted by the click (there may be more than one)
   int nactors = GetMultiscaleUtility()->GetNumberOfActors() ;
   for (i = 0 ;   i < nactors ;  i++){
     lhpMultiscaleActor *ma = GetMultiscaleUtility()->GetMultiscaleActor(i) ;
     vtkActor *actor = ma->GetActor() ;
 
-    if (actor->GetVisibility() == 1){
+    if ((ma->GetActorType() == MSCALE_TOKEN) && (ma->GetVisibility() == 1)){
       // get bounds of actor in display coords
       GetMultiscaleUtility()->GetActorCoordsUtility()->GetBoundsDisplay(actor, renderer, boundsD) ;
 
@@ -953,27 +1349,24 @@ void lhpOpMultiscaleExplore::OnMouseClick()
         info.depth = centerV[2] ;
 
         // note index of picked actor
-        pickedActors.push_back(info) ;
+        targetedActors.push_back(info) ;
       }
     }
   }
 
-  if (pickedActors.size() == 0)
+  // do nothing if no tokens were picked
+  if (targetedActors.size() == 0)
     return ;
 
 
-  // find targeted actor which is closest to the viewer
+  // Pick the targeted actor which is closest to the viewer
   int jnearest = 0 ;
-  for (j = 0 ;  j < (int)pickedActors.size() ;  j++){
-    if (pickedActors[j].depth < pickedActors[jnearest].depth)
+  for (j = 0 ;  j < (int)targetedActors.size() ;  j++){
+    if (targetedActors[j].depth < targetedActors[jnearest].depth)
       jnearest = j ;
   }
-  i = pickedActors[jnearest].actorId ;
-
-
-  // if the nearest targeted actor is a pickable token, call pick method
-  if (GetMultiscaleUtility()->GetMultiscaleActor(i)->GetActorType() == MSCALE_TOKEN)
-    OnPick(renderer, i) ;
+  i = targetedActors[jnearest].actorId ;
+  OnPick(renderer, i) ;
 }
 
 
@@ -1023,8 +1416,6 @@ void lhpOpMultiscaleExplore::OnPick(vtkRenderer* renderer, int tokenId)
 
     // delete actor collection
     AC->Delete() ;
-
-
   }
 
   // set the token's screen size back to original behaviour
@@ -1032,6 +1423,12 @@ void lhpOpMultiscaleExplore::OnPick(vtkRenderer* renderer, int tokenId)
 
   // save the camera params and attention flags
   MSU->SaveView(renderer) ;
+
+
+  // attention has changed, so update the slider range
+  double bounds[6] ;
+  MSU->GetAttentionBounds(bounds) ;
+  SetSliderRange(bounds) ;
 
 }
 

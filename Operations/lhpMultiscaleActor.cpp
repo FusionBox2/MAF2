@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpMultiscaleActor.cpp,v $
 Language:  C++
-Date:      $Date: 2007-11-26 12:39:56 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2008-01-28 16:36:30 $
+Version:   $Revision: 1.2 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -27,8 +27,8 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 
 //------------------------------------------------------------------------------
 // Constructor
-lhpMultiscaleActor::lhpMultiscaleActor(vtkActor* actor, vtkPolyDataMapper* mapper, MultiscaleActorType actortype)
-: m_actor(actor), m_mapper(mapper), m_type(actortype), m_scaleStatus(UNKNOWN_SCALE), m_attention(true)
+lhpMultiscaleActor::lhpMultiscaleActor(lhpMultiscalePipeline *pipeline, MultiscaleActorType actortype)
+: m_pipeline(pipeline), m_type(actortype), m_scaleStatus(UNKNOWN_SCALE), m_attention(true)
 //------------------------------------------------------------------------------
 {
   // screen size behaviour: set the data actors to variable and the tokens to limited
@@ -54,7 +54,7 @@ void lhpMultiscaleActor::PrintSelf(std::ostream& os, vtkIndent indent)
 {
   os << indent ;
 
-  os << "type = " ;
+  os << "actor type = " ;
   switch(m_type){
     case MSCALE_DATA_ACTOR:
       os << "DATA " ;
@@ -67,7 +67,6 @@ void lhpMultiscaleActor::PrintSelf(std::ostream& os, vtkIndent indent)
       break ;
   }
   os << "\t" ;
-
 
   os << "size-mode = " ;
   switch(m_screenSizeMode){
@@ -107,5 +106,8 @@ void lhpMultiscaleActor::PrintSelf(std::ostream& os, vtkIndent indent)
   os << "\t" ;
 
   os << "attention =  " << m_attention << "  " ;
-  os << "visibility = " << GetActor()->GetVisibility() << std::endl ;
+  os << "visibility = " << this->GetVisibility() << std::endl ;
+
+  this->m_pipeline->PrintSelf(os, indent) ;
+  os << std::endl ;
 }

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpMultiscaleUtility.cpp,v $
 Language:  C++
-Date:      $Date: 2007-11-26 12:39:56 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2008-01-28 16:36:30 $
+Version:   $Revision: 1.2 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -33,6 +33,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "lhpMultiscaleCameraParams.h"
 #include "lhpMultiscaleCameraUtility.h"
 #include "lhpMultiscaleUtility.h"
+#include "lhpMultiscaleVisualPipes.h"
 
 #include <cmath>
 #include <iostream>
@@ -106,11 +107,11 @@ void lhpMultiscaleUtility::PrintSelf(std::ostream& os, vtkIndent indent)
 
 
 //------------------------------------------------------------------------------
-// Create multiscale actor from given actor and mapper, and add to list
-void lhpMultiscaleUtility::AddMultiscaleActor(vtkActor* actor, vtkPolyDataMapper* mapper, MultiscaleActorType type)
+// Create multiscale actor from given actor and add to list
+void lhpMultiscaleUtility::AddMultiscaleActor(lhpMultiscalePipeline *pipeline, MultiscaleActorType type)
 //------------------------------------------------------------------------------
 {
-  lhpMultiscaleActor mso(actor, mapper, type) ;
+  lhpMultiscaleActor mso(pipeline, type) ;
   m_multiscaleActors.push_back(mso) ;
 }
 
@@ -332,10 +333,34 @@ void lhpMultiscaleUtility::ResetCameraFitAll(vtkRenderer *renderer)
 
 
 //------------------------------------------------------------------------------
-// convert scale value to tidy units, eg 0.342 m -> 300 mm
-void lhpMultiscaleUtility::ConvertScaleToTidyUnits(double scale, int *iscale, std::ostrstream& units)
+// convert scale value to tidy units, eg 0.342 m -> 300 mm, or 0.6 cm -> 60 mm
+// scale is the input value, and baseUnits is the units which the value is expressed in.
+void lhpMultiscaleUtility::ConvertScaleToTidyUnits(double scale, int baseUnits, int *iscale, std::ostrstream& units)
 //------------------------------------------------------------------------------
 {
+  // Convert scale to metres
+  switch(baseUnits){
+    case ID_METRES:
+      break ;
+    case ID_CENTIMETRES:
+      scale /= 1E2 ;
+      break ;
+    case ID_MILLIMETRES:
+      scale /= 1E3 ;
+      break ;
+    case ID_MICRONS:
+      scale /= 1E6 ;
+      break ;
+    case ID_NANOMETRES:
+      scale /= 1E9 ;
+      break ;
+    default:
+      mafLogMessage("unknown base unit in lhpMultiscaleUtility::ConvertScaleToTidyUnits()") ;
+      assert(false) ;
+      break ;
+  }
+
+
   // get log base 10 of scale
   double logscale = std::log10(scale) ;
   int ilogscale = (int)logscale ;
@@ -421,6 +446,23 @@ void lhpMultiscaleUtility::SetAttentionToList(const std::vector<int> &idlist, bo
   }
 }
 
+
+//------------------------------------------------------------------------------
+// get the bounds of all the actors with current attention
+void lhpMultiscaleUtility::GetAttentionBounds(double *bounds)
+//------------------------------------------------------------------------------
+{
+  vtkActorCollection *AC = vtkActorCollection::New() ;
+
+  for (int i = 0 ;  i < GetNumberOfActors() ;  i++){
+    if (GetMultiscaleActor(i)->GetAttention())
+      AC->AddItem(GetMultiscaleActor(i)->GetActor()) ;
+  }
+
+  GetActorCoordsUtility()->GetBoundsOfCollection(AC, bounds) ;
+
+  AC->Delete() ;
+}
 
 
 //------------------------------------------------------------------------------

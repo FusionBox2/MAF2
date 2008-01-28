@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpMultiscaleExplore.h,v $
 Language:  C++
-Date:      $Date: 2007-12-03 16:55:08 $
-Version:   $Revision: 1.4 $
+Date:      $Date: 2008-01-28 16:36:30 $
+Version:   $Revision: 1.5 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -18,6 +18,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "mafEventBase.h"
 #include "mafVME.h"
 #include "mmgDialog.h"
+#include "mmgFloatSlider.h"
 
 #include "vtkPolyData.h"
 #include "vtkActor.h"
@@ -26,6 +27,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 
 #include "lhpMultiscaleUtility.h"
 #include "lhpMultiscaleVisualPipes.h"
+#include "lhpMultiscaleCallbacks.h"
 
 #include <vector>
 #include <iostream>
@@ -52,7 +54,7 @@ the group of actors.  Clicking on such a token zooms in on the group.
 
 Operation and associated classes:
 lhpOpMultiscaleExplore -     Main op, Responsible for gui, events and visual pipes.
-lhpMultiscaleActor -         Container for an actor and mapper - can be data or token.
+lhpMultiscaleActor -         Container for a vtk actor and its pipe - can be data or token.
 mafMultiscaleCoordsUtility - Methods for moving and sizing actors in world, view and display coords.
 lhpMultiscaleCallbacks -     Callbacks which convert vtk events to maf events.
 lhpMultiscaleCameraParams -  Class for saving camera parameters.
@@ -78,11 +80,12 @@ lhpMultiscaleVisualPipes -   Visual pipes for data and tokens.  Create and delet
 //        \                      -----------> ActorCoordsUtility 
 //         \                     \
 //          \                     \
-//            ---------------------> MultiscaleActor
-//            \
-//              ---> Visual Pipes
-//              \
-//                ----> Callbacks
+//            ------------------> MultiscaleActor ---------------> Visual Pipes
+//            \                                                 /
+//             \                                               /
+//               ---------------------------------------------
+//               \
+//                 -------------------------------------------------> Callbacks
 //
 //------------------------------------------------------------------------------
 
@@ -132,11 +135,10 @@ protected:
   void DeleteOpDialog();
 
   /** Builds operation without dialog for testing */
-  void CreateOpWithoutDialog(vtkRenderer* renderer);
+  void CreateOpWithoutDialog(vtkRenderer* renderer) ;
 
   /** Add new vme to scene
-  Adds vme to list, creates multiscale actors for data and tokens and creates visual pipes. 
-  Method is public so that test class can use it. */
+  Creates multiscale actors for data and tokens and creates visual pipes.  */
   void AddVmeToScene(mafVME* vme) ;
 
   /** Visual pipe for surface data 
@@ -146,25 +148,31 @@ protected:
   /** Visual pipe for polydata token */
   void CreateTokenPipeline(vtkRenderer *renderer);
 
+  /** Visual pipe for volume data 
+  Joins vme to renderer */
+  void CreateVolumeSlicePipeline(mafVME* vme, vtkRenderer *renderer);
+
   /** Update the camera */
   void UpdateCamera() ;
 
 
   //----------------------------------------------------------------------------
-  // methods for maintaining list of vme's
+  // methods for controlling the slice
   //----------------------------------------------------------------------------
 
-  /** Add vme to list */
-  void AddVME(mafVME* vme) {m_VMEs.push_back(vme) ;}
+  /** Initialize the parameters of the slice (origin and view index)
+  This only sets the parameters - it does not set or change the visual pipes ! */
+  void InitSliceParams(int viewIndex, double *bounds) ;
 
-  /** Get pointer to vme */
-  mafVME* GetVME(int i) {return m_VMEs.at(i) ;}
+  /** Move the global slice */
+  void lhpOpMultiscaleExplore::UpdateSlicePosition() ;
 
-  /** Remove vme from list */
-  void RemoveVME(int i) {m_VMEs.erase(m_VMEs.begin()+i) ;}
+  /** Update the view direction.
+  This also recalculates the slice position */
+  void lhpOpMultiscaleExplore::UpdateViewAxis(double *bounds) ;
 
-  /** Get number of selected vme's */
-  int GetNumberOfVMEs() {return (int)m_VMEs.size() ;}
+  /** Set the slider range to fit the given bounds */
+  void SetSliderRange(double *bounds) ;
 
 
   //----------------------------------------------------------------------------
@@ -180,7 +188,7 @@ protected:
   static const int TOKENSIZE = 10 ;         ///< standard size of token
   static const int TOKENSIZEMAX = 15 ;      ///< maximum size of visible token
   static const int TOKENSIZEMIN = 5 ;       ///< minimum size of visible token
-  static const int TOO_LARGE_FACTOR = 3 ;   ///< how many x larger than scale before an actor is deemed too large
+  static const int TOO_LARGE_FACTOR = 10 ;   ///< how many x larger than scale before an actor is deemed too large
 
   /** structure for actor and depth info
   used in pick callback */
@@ -237,20 +245,29 @@ protected:
   // member variables
   //----------------------------------------------------------------------------
 
-  mmgDialog		*m_Dialog;
-  mafRWI      *m_Rwi;
-
   lhpMultiscaleUtility *m_MultiscaleUtility ;                   ///< multiscale utility 
 
-  std::vector <mafVME*> m_VMEs ;                                ///< list of vme's selected by the op
-
-  std::vector <lhpMultiscaleSurfacePipeline*> m_surfacePipes ;  ///< list of surface pipes
-  std::vector <lhpMultiscaleTokenPipeline*> m_tokenPipes ;      ///< list of token pipes
+  std::vector <lhpMultiscaleSurfacePipeline*> m_surfacePipes ;          ///< list of surface pipes
+  std::vector <lhpMultiscaleTokenPipeline*> m_tokenPipes ;              ///< list of token pipes
+  std::vector <lhpMultiscaleVolumeSlicePipeline*> m_volumeSlicePipes ;  ///< list of slice pipes
 
   int m_nextTokenColor ;                                        ///< color id of next token
 
   /** pointer to external renderer, which should be defined if op created with no dialog */
   vtkRenderer* m_externalRenderer ;
+
+  lhpMultiscaleDoubleClickCallback *m_dclickCallback ;
+
+  mmgDialog		*m_Dialog;        // dialog and interactor
+  mafRWI      *m_Rwi;
+  mmgFloatSlider *m_PosSlider ;       // slice position slider (destroyed with dialog - don't delete in deconstructor)
+  double m_SliceOrigin[3] ;           // position of slice
+  int m_BaseUnits ;                   // base units validator
+  int m_ViewIndex ;                   // view direction validator (don't assume that 0,1,2 = x,y,z !!)
+  int m_ViewIndex_old ;
+  double m_SliderOrigin ;             // position slider validator
+  double m_SliderOrigin_old ;
+  double m_Opacity ;                  // opacity slider validator
 };
 
 

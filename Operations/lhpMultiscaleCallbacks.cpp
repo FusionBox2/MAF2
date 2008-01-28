@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpMultiscaleCallbacks.cpp,v $
 Language:  C++
-Date:      $Date: 2007-11-26 12:39:56 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2008-01-28 16:36:30 $
+Version:   $Revision: 1.2 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -22,6 +22,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "vtkRenderWindowInteractor.h"
 #include "mafEvent.h"
 #include "lhpMultiscaleCallbacks.h"
+#include "mmdMouse.h"
 
 
 //------------------------------------------------------------------------------
@@ -37,6 +38,7 @@ void vtkStartRenderCallback::Execute(vtkObject *caller, unsigned long, void*)
   mafEventMacro(e) ;
 }
 
+
 //------------------------------------------------------------------------------
 // Mouse click event
 void vtkMouseClickCallback::Execute(vtkObject *caller, unsigned long, void*)
@@ -48,4 +50,22 @@ void vtkMouseClickCallback::Execute(vtkObject *caller, unsigned long, void*)
 
   mafEvent e(this, m_id) ;
   mafEventMacro(e) ;
+}
+
+
+
+//------------------------------------------------------------------------------
+// Double click event
+void lhpMultiscaleDoubleClickCallback::OnEvent(mafEventBase *event)
+//------------------------------------------------------------------------------
+{
+  mafID id=event->GetId();
+  mafID ch=event->GetChannel();
+  if (ch==MCH_INPUT){
+    if (id == mmdMouse::MOUSE_DCLICK){}
+
+    mafLogMessage("double click !") ;
+    mafEvent e(this, m_id) ;
+    mafEventMacro(e) ;
+  }
 }

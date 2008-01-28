@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpMultiscaleVisualPipes.h,v $
 Language:  C++
-Date:      $Date: 2007-11-29 16:16:07 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2008-01-28 16:36:30 $
+Version:   $Revision: 1.3 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -18,6 +18,62 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "vtkActor.h"
 #include "vtkPolyDataMapper.h"
 #include "vtkCubeSource.h"
+#include "vtkCutter.h"
+#include "vtkPlane.h"
+#include "vtkOutlineCornerFilter.h"
+#include "vtkImageData.h"
+#include "vtkPolyData.h"
+#include "vtkVolumeSlicer.h"  // bug: must include vtkImageData and vtkPolyData first
+#include "vtkTexture.h"
+#include <ostream>
+
+//----------------------------------------------------------------------------
+///< Types of multiscale actor
+//----------------------------------------------------------------------------
+enum MultiscalePipeType {
+  MSCALE_SURFACE_PIPE = 0,
+  MSCALE_TOKEN_PIPE,
+  MSCALE_SLICE_PIPE
+} ;
+
+//----------------------------------------------------------------------------
+///< Index of slice direction
+//----------------------------------------------------------------------------
+enum MultiscaleViewId
+{
+  ID_XY = 0,
+  ID_XZ,
+  ID_YZ
+} ;
+
+
+
+/*******************************************************************************
+lhpMultiscalePipeline: abstract base class for vtk visual pipeline.
+Constructs vtk objects (actor, mapper) for this pipeline and connects vme to renderer.
+*******************************************************************************/
+class lhpMultiscalePipeline
+{
+public:
+  /** Return the actor which defines the size, position etc of the pipe's actor or actors 
+  Do not use this method to set the visibility, in case there is more than one actor in the pipe */
+  virtual vtkActor* GetActor() = 0 ;
+
+  /** get and set type of pipe */
+  virtual void SetType(MultiscalePipeType pipeType) {m_pipeType = pipeType ;}
+  virtual MultiscalePipeType GetType() {return m_pipeType ;}
+
+  /** Get and set the visibility of the pipe */
+  virtual int GetVisibility() = 0 ;
+  virtual void SetVisibility(int visibility) = 0 ;
+
+  /** Print self */
+  virtual void PrintSelf(std::ostream& os, vtkIndent indent) = 0 ;
+
+private:
+  MultiscalePipeType m_pipeType ;
+};
+
 
 
 
@@ -25,17 +81,21 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 lhpMultiscaleSurfacePipeline: vtk visual pipeline for surface data
 Constructs vtk objects (actor, mapper) for this pipeline and connects vme to renderer.
 *******************************************************************************/
-class lhpMultiscaleSurfacePipeline
+class lhpMultiscaleSurfacePipeline : public lhpMultiscalePipeline
 {
 public:
   lhpMultiscaleSurfacePipeline(mafVME* vme, vtkRenderer *renderer) ;
   ~lhpMultiscaleSurfacePipeline() ;
-  virtual vtkActor* GetActor() {return m_actor ;}
-  virtual vtkPolyDataMapper* GetMapper() {return m_mapper ;}
+  vtkActor* GetActor() {return m_actor ;}
+  int GetVisibility() {return m_actor->GetVisibility() ;}
+  void SetVisibility(int visibility) {m_actor->SetVisibility(visibility);}
+  void PrintSelf(std::ostream& os, vtkIndent indent) ;
 private:
-  vtkActor* m_actor ;
-  vtkPolyDataMapper* m_mapper ;
+  vtkActor *m_actor ;
+  vtkPolyDataMapper *m_mapper ;
+ 
 };
+
 
 
 /*******************************************************************************
@@ -43,19 +103,53 @@ lhpMultiscaleTokenPipeline: vtk visual pipeline for multiscale token
 Constructs vtk objects (source, actor, mapper etc) and plugs pipe into renderer.
 Note that the token pipeline has to be given a color.
 *******************************************************************************/
-class lhpMultiscaleTokenPipeline
+class lhpMultiscaleTokenPipeline : public lhpMultiscalePipeline
 {
 public:
   lhpMultiscaleTokenPipeline(vtkRenderer *renderer, int colorId) ;
   ~lhpMultiscaleTokenPipeline() ;
-  virtual vtkActor* GetActor() {return m_actor ;}
-  virtual vtkPolyDataMapper* GetMapper() {return m_mapper ;}
+  vtkActor* GetActor() {return m_actor ;}
+  int GetVisibility() {return m_actor->GetVisibility() ;}
+  void SetVisibility(int visibility) {m_actor->SetVisibility(visibility);}
+  void PrintSelf(std::ostream& os, vtkIndent indent) ;
 private:
   virtual void CalculateColor(double *a) ;
   int m_colorId ;
   vtkCubeSource* m_tokenSource ;
   vtkActor* m_actor ;
   vtkPolyDataMapper* m_mapper ;
+};
+
+
+
+/*******************************************************************************
+lhpMultiscaleSurfacePipeline: vtk visual pipeline for slicing volume data
+Constructs vtk objects (actor, mapper) for this pipeline and connects vme to renderer.
+*******************************************************************************/
+class lhpMultiscaleVolumeSlicePipeline : public lhpMultiscalePipeline
+{
+public:
+  lhpMultiscaleVolumeSlicePipeline(mafVME* vme, int viewId, double *pos, vtkRenderer *renderer) ;
+  ~lhpMultiscaleVolumeSlicePipeline() ;
+  vtkActor* GetActor() {return m_boxActor ;}
+  int GetVisibility() {return m_boxActor->GetVisibility() ;}  ///< get visibility of pipeline  
+  void SetVisibility(int visibility) ;                        ///< set visibility of all actors in pipeline
+  void SetSliceDirection(int viewId) ;                        ///< set view direction
+  void SetSlicePosition(double *pos) ;                        ///< set position of slice
+  void PrintSelf(std::ostream& os, vtkIndent indent) ;
+private:
+  int m_viewId ;
+  vtkActor *m_boxActor ;
+  vtkPolyDataMapper *m_boxMapper ;
+  vtkOutlineCornerFilter *m_ocf ;
+  vtkActor *m_sliceActor ;
+  vtkPolyDataMapper *m_sliceMapper ;
+  vtkVolumeSlicer	*m_SlicerPolygonal ;
+  vtkPolyData *m_SlicePolydata ;
+  vtkVolumeSlicer	*m_SlicerImage ;
+  vtkImageData *m_Image ;
+  vtkTexture *m_Texture ;  
+
 };
 
 #endif

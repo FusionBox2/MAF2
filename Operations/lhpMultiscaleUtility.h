@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpMultiscaleUtility.h,v $
 Language:  C++
-Date:      $Date: 2007-11-26 12:39:56 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2008-01-28 16:36:30 $
+Version:   $Revision: 1.2 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -20,6 +20,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "lhpMultiscaleCameraParams.h"
 #include "lhpMultiscaleActorCoordsUtility.h"
 #include "lhpMultiscaleCameraUtility.h"
+#include "lhpMultiscaleVisualPipes.h"
 
 #include <vector>
 #include <iostream>
@@ -62,10 +63,29 @@ private:
 } ;
 
 
+/*******************************************************************************
+Id's of base units
+*******************************************************************************/
+enum MULTISCALE_BASE_UNIT_IDS
+{
+  ID_METRES,
+  ID_CENTIMETRES,
+  ID_MILLIMETRES,
+  ID_MICRONS,
+  ID_NANOMETRES
+} ;
+
+
 
 /*******************************************************************************
 lhpMultiscaleUtility:
-Methods and blackboard for managing multiscale view
+Methods and blackboard for managing multiscale view.
+
+The class maintains a list of all the multiscale actors 
+and the current state of the view.
+
+The class also contains an ActorCoordsUtility and a CameraUtility for
+manipulating actors and cameras.
 *******************************************************************************/
 
 class lhpMultiscaleUtility
@@ -74,8 +94,10 @@ public:
   lhpMultiscaleUtility() ;
   ~lhpMultiscaleUtility() ;
 
-  /** Print self */
-  void PrintSelf(std::ostream& os, vtkIndent indent) ;
+
+  //----------------------------------------------------------------------------
+  // methods which get actor and camera utilities
+  //----------------------------------------------------------------------------
 
   /** lhpMultiscaleActorCoordsUtility provides methods for manipulating the coords and size of actors */
   lhpMultiscaleActorCoordsUtility* GetActorCoordsUtility() {return m_actorCoordsUtility ;}
@@ -83,15 +105,20 @@ public:
   /** lhpMultiscaleCameraUtility provides methods for manipulating the camera */
   lhpMultiscaleCameraUtility* GetCameraUtility() {return m_cameraUtility ;}
 
-  /** Create multiscale actor from given actor and mapper, and add to list
-  Type is data actor or token
+
+  //----------------------------------------------------------------------------
+  // methods for maintaining list of multiscale actors
+  //----------------------------------------------------------------------------
+
+  /** Create multiscale actor from vtk pipe and add to list.
+  Type is data actor or token.
   NB If you add actors after having saved the camera view, you must call SaveInitialView() again. */
-  void AddMultiscaleActor(vtkActor* actor, vtkPolyDataMapper* mapper, MultiscaleActorType type) ;
+  void AddMultiscaleActor(lhpMultiscalePipeline *pipeline, MultiscaleActorType type) ;
 
   /** Get ith multiscale actor */
   lhpMultiscaleActor* GetMultiscaleActor(int i) ;
 
-  /** Get number of actors */
+  /** Get number of multiscale actors */
   int GetNumberOfActors() {return (int)m_multiscaleActors.size() ;}
 
   /** Get the token actor which corresponds to data-actor i */
@@ -104,42 +131,28 @@ public:
   You can only call this once for each i and j. */
   void SetActorTokenPair(int i, int j) ;
 
-  /** Save current view state.  
-  Saves camera parameters and attention flags so that we can return to a previous state. */
-  void SaveView(vtkRenderer *renderer) ;
 
-  /** Save current view state as intial view
-  Saves camera parameters and attention flags so that we can return to a previous state.
-  If you add more actors, you must call this again. */
-  void SaveInitialView(vtkRenderer *renderer) ;
-
-  /** Restore view to previous state
-  If the states stored are O, A, B, C, and our current state is C' (ie C plus camera movement)
-  this will delete C and return the view to B. */
-  void RestoreView(vtkRenderer* renderer) ;
-
-  /** Restore view to last state without deleting saved state
-  If the states stored are O, A, B, C, and our current state is C' (ie C plus camera movement)
-  this will return the state to C, without deleting C. */
-  void RestoreViewWithoutDelete(vtkRenderer* renderer) ;
-
-  /** Clear all camera saves except the intial state */
-  void ClearViewSaves() ;
-
-  /** Has camera changed since last save */
-  bool CameraSameSinceLastSave(vtkRenderer *renderer) ;
-
-  /** Reset camera to fit all actors */
-  void ResetCameraFitAll(vtkRenderer *renderer) ;
-
-  /** convert scale to tidy units, eg 0.342 m -> 300 mm */
-  void ConvertScaleToTidyUnits(double scale, int *iscale, std::ostrstream& units) ;
+  //----------------------------------------------------------------------------
+  // Methods for attention.
+  // Attention defines which actors you are currently looking at.
+  // The focal point of the camera is centred on the actor(s) with attention.
+  // Actors with attention do not vanish when they become too big.
+  // The range of the slice position is set the bounds of the actor(s) with attention.
+  //----------------------------------------------------------------------------
 
   /** set attention of all actors to true or false */
   void SetAttentionAll(bool attention) ;
 
   /** set attention to all actors in list */
   void SetAttentionToList(const std::vector<int> &idlist, bool attention) ;
+
+  /** get the bounds of all the actors with current attention */
+  void GetAttentionBounds(double *bounds) ;
+
+
+  //----------------------------------------------------------------------------
+  // methods for touching tokens
+  //----------------------------------------------------------------------------
 
   /** Add pair of touching tokens to list */
   void AddTouchingTokens(int tokenid0, int tokenid1) ;
@@ -171,6 +184,55 @@ public:
   /** Get distance apart of two actors in pixel units
   This is not the 2D separation - it is the 3D distance in pixels, independent of view direction */
   double DistanceApartPixelUnits(vtkActor *actor1, vtkActor *actor2, vtkRenderer *renderer) ;
+
+
+  //----------------------------------------------------------------------------
+  // methods for saving and restoring the view settings
+  //----------------------------------------------------------------------------
+
+  /** Save current view state.  
+  Saves camera parameters and attention flags so that we can return to a previous state. */
+  void SaveView(vtkRenderer *renderer) ;
+
+  /** Save current view state as intial view
+  Saves camera parameters and attention flags so that we can return to a previous state.
+  If you add more actors, you must call this again. */
+  void SaveInitialView(vtkRenderer *renderer) ;
+
+  /** Restore view to previous state
+  If the states stored are O, A, B, C, and our current state is C' (ie C plus camera movement)
+  this will delete C and return the view to B. */
+  void RestoreView(vtkRenderer* renderer) ;
+
+  /** Restore view to last state without deleting saved state
+  If the states stored are O, A, B, C, and our current state is C' (ie C plus camera movement)
+  this will return the state to C, without deleting C. */
+  void RestoreViewWithoutDelete(vtkRenderer* renderer) ;
+
+  /** Clear all camera saves except the intial state */
+  void ClearViewSaves() ;
+
+  /** Has camera changed since last save */
+  bool CameraSameSinceLastSave(vtkRenderer *renderer) ;
+
+  /** Reset camera to fit all actors */
+  void ResetCameraFitAll(vtkRenderer *renderer) ;
+
+
+  //----------------------------------------------------------------------------
+  // methods for scale units
+  //----------------------------------------------------------------------------
+
+  /** convert scale to tidy units, eg 0.342 m -> 300 mm */
+  void ConvertScaleToTidyUnits(double scale, int baseUnits, int *iscale, std::ostrstream& units) ;
+
+
+  //----------------------------------------------------------------------------
+  // methods for debugging
+  //----------------------------------------------------------------------------
+
+  /** Print self */
+  void PrintSelf(std::ostream& os, vtkIndent indent) ;
 
 
 private:

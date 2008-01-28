@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpMultiscaleActor.h,v $
 Language:  C++
-Date:      $Date: 2007-11-26 12:39:56 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2008-01-28 16:36:30 $
+Version:   $Revision: 1.2 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -15,6 +15,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 
 #include "vtkActor.h"
 #include "vtkPolyDataMapper.h"
+#include "lhpMultiscaleVisualPipes.h"
 #include <iostream>
 
 
@@ -45,7 +46,7 @@ enum ScaleStatus {
 lhpMultiscaleActor:
 
 Utility class for lhpOpMultiscaleExplore.
-This is a container for a vtk actor and its mapper.
+This is a container for a vtk actor.
 
 The class also contains flags for:
 (a) the type of multiscale actor - visualization data or token
@@ -53,22 +54,28 @@ The class also contains flags for:
 (c) the behaviour of the screen size (tokens only)
 (d) whether the actor has current attention (ie needs to stay visible)
 
+This class is POD, and allocates no memory.
+
 *******************************************************************************/
 
 class lhpMultiscaleActor
 {
 public:
   /** Constructor */
-  lhpMultiscaleActor(vtkActor* actor, vtkPolyDataMapper* mapper, MultiscaleActorType actortype) ;
+  lhpMultiscaleActor(lhpMultiscalePipeline *pipeline, MultiscaleActorType actortype) ;
 
   /** Print self */
   void PrintSelf(std::ostream& os, vtkIndent indent) ;
 
-  /** Get the vtk actor */
-  vtkActor* GetActor() {return m_actor ;}
+  /** Get the vtk actor.
+  Do not use this method to set the visibility */
+  vtkActor* GetActor() {return m_pipeline->GetActor() ;}
 
-  /** Get the vtk mapper */
-  vtkPolyDataMapper* GetMapper() {return m_mapper ;}
+  /** Set visibility of actor */
+  void SetVisibility(int visibility) {m_pipeline->SetVisibility(visibility) ;}
+
+  /** Get visibility of actor */
+  int GetVisibility() {return m_pipeline->GetVisibility() ;}
 
   /** Get the type of actor - data or token */
   MultiscaleActorType GetActorType() {return m_type ;}
@@ -88,8 +95,7 @@ public:
   void SetAttention(bool attention) {m_attention = attention ;}
 
 private:
-  vtkActor* m_actor ;
-  vtkPolyDataMapper* m_mapper ;
+  lhpMultiscalePipeline *m_pipeline ;           ///< pointer to vtk pipeline containing actor
   MultiscaleActorType m_type ;                  ///< type of actor - data-actor, token or group
   ScaleStatus m_scaleStatus ;                   ///< status of size relative to scale thresholds
   ScreenSizeMode m_screenSizeMode ;             ///< controls behaviour of screen size

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpMultiscaleCameraUtility.cpp,v $
 Language:  C++
-Date:      $Date: 2007-11-26 12:39:56 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2008-01-28 16:36:30 $
+Version:   $Revision: 1.2 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -177,7 +177,7 @@ void lhpMultiscaleCameraUtility::SetDirectionOfProjectionSlow(vtkRenderer *rende
     // rotate to new position in steps
     for (int i = 0 ;  i < nsteps ;  i++){
       RotateDirectionOfProjection(camera, rotaxis, dtheta) ;
-      renderer->GetRenderWindow()->Render() ;
+      renderer->GetRenderWindow()->Render() ;               // nb this line causes a small once-only memory leak - why ?
       Sleep(timestep) ;
     }
   }
