@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterC3D.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-01-17 11:06:11 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2008-01-28 19:35:02 $
+  Version:   $Revision: 1.6 $
   Authors:   Daniele  Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -326,8 +326,8 @@ void lhpOpImporterC3D::Initialize()
   m_NumEvents = getEvents();              //events number
 
   //derived
-  m_TrajectorySampleFrequency = ((double)m_LengthMs/(double)m_NumFrames);
-  m_AnalogSampleFrequency = ((double)m_LengthMs/(double)m_NumSamples);
+  m_TrajectorySampleFrequency = ((double)m_LengthMs/(double)m_NumFrames) / 1000.0;
+  m_AnalogSampleFrequency = ((double)m_LengthMs/(double)m_NumSamples) / 1000.0;
   m_VectogramSampleFrequency = m_AnalogSampleFrequency;
 
   wxString fileName = m_C3DInputFileNameFullPath.GetCStr();
@@ -427,7 +427,7 @@ void lhpOpImporterC3D::ImportTrajectories()
               m_VmeCloud->SetLandmark(m_TrajectoryName,m_X,m_Y,m_Z,currentFrame * m_TrajectorySampleFrequency);
             }
 
-            m_VmeCloud->SetLandmarkVisibility(m_TrajectoryName,visibility,currentFrame);
+            m_VmeCloud->SetLandmarkVisibility(m_TrajectoryName,visibility,currentFrame * m_TrajectorySampleFrequency);
 
             m_NumTrajectories++;
           }
