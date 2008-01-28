@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterC3D.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-01-28 19:35:02 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2008-01-28 20:29:35 $
+  Version:   $Revision: 1.7 $
   Authors:   Daniele  Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -90,9 +90,9 @@ mafOp(label)
   m_LengthMs = 0;
 
   //derived
-  m_TrajectorySampleFrequency = 0;
-  m_AnalogSampleFrequency = 0;
-  m_VectogramSampleFrequency = 0;
+  m_TrajectorySamplePeriod = 0;
+  m_AnalogSamplePeriod = 0;
+  m_VectogramSamplePeriod = 0;
 
   m_NumTotTrajectories = 0; 
   m_NumTrajectories = 0; 
@@ -326,9 +326,9 @@ void lhpOpImporterC3D::Initialize()
   m_NumEvents = getEvents();              //events number
 
   //derived
-  m_TrajectorySampleFrequency = ((double)m_LengthMs/(double)m_NumFrames) / 1000.0;
-  m_AnalogSampleFrequency = ((double)m_LengthMs/(double)m_NumSamples) / 1000.0;
-  m_VectogramSampleFrequency = m_AnalogSampleFrequency;
+  m_TrajectorySamplePeriod = ((double)m_LengthMs/(double)m_NumFrames) / 1000.0;
+  m_AnalogSamplePeriod = ((double)m_LengthMs/(double)m_NumSamples) / 1000.0;
+  m_VectogramSamplePeriod = m_AnalogSamplePeriod;
 
   wxString fileName = m_C3DInputFileNameFullPath.GetCStr();
   fileName = fileName.AfterLast('\\').BeforeLast('.');
@@ -424,10 +424,10 @@ void lhpOpImporterC3D::ImportTrajectories()
             }
             else
             {
-              m_VmeCloud->SetLandmark(m_TrajectoryName,m_X,m_Y,m_Z,currentFrame * m_TrajectorySampleFrequency);
+              m_VmeCloud->SetLandmark(m_TrajectoryName,m_X,m_Y,m_Z,currentFrame * m_TrajectorySamplePeriod);
             }
 
-            m_VmeCloud->SetLandmarkVisibility(m_TrajectoryName,visibility,currentFrame * m_TrajectorySampleFrequency);
+            m_VmeCloud->SetLandmarkVisibility(m_TrajectoryName,visibility,currentFrame * m_TrajectorySamplePeriod);
 
             m_NumTrajectories++;
           }
@@ -511,7 +511,7 @@ void lhpOpImporterC3D::ImportAnalog()
   //For every Sample
   for(int currentSample=0; currentSample<m_NumSamples; currentSample++)
   {
-    int currentTime = currentSample * m_AnalogSampleFrequency;
+    int currentTime = currentSample * m_AnalogSamplePeriod;
     
     analogMatrix.put(0,currentSample, currentTime); //fill first row with timeframe, every column is a time
 
@@ -667,7 +667,7 @@ void lhpOpImporterC3D::ImportPlatform()
       m_MomentY=getMy(currentPlatform, currentSample);				//y component of moment
       m_MomentZ=getMz(currentPlatform, currentSample);				//z component of moment
 
-      currentTime = currentSample * m_VectogramSampleFrequency;
+      currentTime = currentSample * m_VectogramSamplePeriod;
 
       //force      
       pointsForce->Reset();

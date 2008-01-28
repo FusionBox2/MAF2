@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterC3D.h,v $
   Language:  C++
-  Date:      $Date: 2008-01-16 23:44:02 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-01-28 20:29:35 $
+  Version:   $Revision: 1.3 $
   Authors:   Daniele  Giunchi
 ==========================================================================
   Copyright (c) 2002/2004
@@ -141,9 +141,9 @@ protected:
 	long m_LengthMs;
 
   //derived member
-  double m_TrajectorySampleFrequency;
-  double m_AnalogSampleFrequency;
-  double m_VectogramSampleFrequency;
+  double m_TrajectorySamplePeriod;
+  double m_AnalogSamplePeriod;
+  double m_VectogramSamplePeriod;
 
 	int m_NumTotTrajectories; 
 	int m_NumTrajectories; 
