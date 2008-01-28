@@ -3,8 +3,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpMultiscaleExploreTest.cpp,v $
 Language:  C++
-Date:      $Date: 2007-12-03 16:57:57 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2008-01-28 16:36:59 $
+Version:   $Revision: 1.2 $
 Authors:   Nigel McFarlane
 
 ================================================================================
@@ -114,13 +114,13 @@ void lhpOpMultiscaleExploreTest::TestAddVMEToScene()
 {
   // Create op without a dialog
   lhpOpMultiscaleExplore* op = new lhpOpMultiscaleExplore ;
+  op->m_Input = m_vme1 ;
+
   op->CreateOpWithoutDialog(m_renderer);
 
   // add two vme's to scene
   op->AddVmeToScene(m_vme1) ;
   op->AddVmeToScene(m_vme2) ;
-
-  assert(op->GetNumberOfVMEs() == 2) ;
 
   delete op ;
 }
