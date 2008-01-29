@@ -57,7 +57,7 @@ class xmlrpc_demoWS:
         self.xmlDelete = \
     '''<?xml version="1.0"?>
      <methodCall>
-      <methodName>manage_delObjects</methodName>
+      <methodName>XMLDelete</methodName>
        <params>
        <param>
         <value><string>%s</string></value>
@@ -65,14 +65,58 @@ class xmlrpc_demoWS:
        </params>
      </methodCall>''' % (kw['filename'])
 
+        self.listBasket = \
+    '''<?xml version="1.0"?>
+     <methodCall>
+      <methodName>listBasket</methodName>
+       <params>
+       <param>
+       </param>
+       </params>
+     </methodCall>'''
+
+        self.updateBasket = \
+    '''<?xml version="1.0"?>
+     <methodCall>
+      <methodName>updateBasket</methodName>
+       <params>
+       <param>
+       <value><array><data>
+       <value><string>Data_63_exportedVME.xml</string></value>
+       <value><string>Data_57_exportedVME.xml</string></value>
+       </data></array></value>
+       </param>
+       </params>
+     </methodCall>'''
+
+        self.deleteFromBasket = \
+    '''<?xml version="1.0"?>
+     <methodCall>
+      <methodName>deleteFromBasket</methodName>
+       <params>
+       <param>
+       <value><array><data>
+       <value><string>Data_63_exportedVME.xml</string></value>
+       <value><string>Data_57_exportedVME.xml</string></value>
+       </data></array></value>
+       </param>
+       </params>
+     </methodCall>'''
+
         wh_file = ''
 
         if bod == 'xmlupload':
             body = self.xmlUpload
         elif bod == 'xmldownload':
             body = self.xmlDownload
-        elif bod == 'delete':
+        elif bod == 'xmldelete':
             body = self.xmlDelete
+        elif bod == 'listbasket':
+            body = self.listBasket
+        elif bod == 'updatebasket':
+            body = self.updateBasket
+        elif bod == 'deletefrombasket':
+            body = self.deleteFromBasket
 
         # internet location (temporary BiomedTown development instance)
         wh_url = url
@@ -129,7 +173,7 @@ class xmlrpc_demoWS:
         self.ServerURL = serverURL  
     
         
-    def run(self, command, filename):
+    def run(self, command, filename=''):
         """"""
 
         args = {}
@@ -143,6 +187,8 @@ class xmlrpc_demoWS:
         
         # development server
         url = self.ServerURL
+
+        print "COMMAND: %s" % command
         
         if command == 'xmlupload':
             args['download'] = ''
@@ -160,12 +206,33 @@ class xmlrpc_demoWS:
             args['upload'] = ''
             args['filename'] = ''
             args['download'] = filename
-        elif command == 'delete':
+        elif command == 'xmldelete':
             args['id'] = ''
             args['title'] = ''
             args['description'] = ''
             args['upload'] = ''
             args['filename'] = filename
+            args['download'] = ''
+        elif command == 'listbasket':
+            args['id'] = ''
+            args['title'] = ''
+            args['description'] = ''
+            args['upload'] = ''
+            args['filename'] = ''
+            args['download'] = ''
+        elif command == 'updatebasket':
+            args['id'] = ''
+            args['title'] = ''
+            args['description'] = ''
+            args['upload'] = ''
+            args['filename'] = ''
+            args['download'] = ''
+        elif command == 'deletefrombasket':
+            args['id'] = ''
+            args['title'] = ''
+            args['description'] = ''
+            args['upload'] = ''
+            args['filename'] = ''
             args['download'] = ''
         else:
             print 'Error :\n' + usage_msg
@@ -178,11 +245,13 @@ if __name__ == '__main__':
     import sys
     usage_msg = '''Usage: %s <option>
 where option can be:
-upload <filename.zmsf> - upload zmsf file
-download <filename.zmsf> - download zmsf file
+xmlupload <id> - upload data resource
+xmldownload <id> - download data resource
+xmldelete <id> - delete data resource
+listBasket - list user's basket items
 ''' % sys.argv[0]
 
-    if len(sys.argv) != 3:
+    if len(sys.argv) > 3:
         print 'Error :\n' + usage_msg
         sys.exit(1)
 
