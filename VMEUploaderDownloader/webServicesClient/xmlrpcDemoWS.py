@@ -82,12 +82,11 @@ class xmlrpc_demoWS:
        <params>
        <param>
        <value><array><data>
-       <value><string>Data_63_exportedVME.xml</string></value>
-       <value><string>Data_57_exportedVME.xml</string></value>
+       %s
        </data></array></value>
        </param>
        </params>
-     </methodCall>'''
+     </methodCall>''' % (kw['listitems'])
 
         self.deleteFromBasket = \
     '''<?xml version="1.0"?>
@@ -96,12 +95,11 @@ class xmlrpc_demoWS:
        <params>
        <param>
        <value><array><data>
-       <value><string>Data_63_exportedVME.xml</string></value>
-       <value><string>Data_57_exportedVME.xml</string></value>
+       %s
        </data></array></value>
        </param>
        </params>
-     </methodCall>'''
+     </methodCall>''' % (kw['listitems'])
 
         wh_file = ''
 
@@ -161,9 +159,9 @@ class xmlrpc_demoWS:
             res = h.getresponse().read()
             dom = xd.parseString(res)
             if dom.getElementsByTagName("fault"):
-                return res
+                return False, res
             else:
-                return True
+                return True, res
 
     def setCredentials(self, user, password):
         self.User = user
@@ -190,6 +188,8 @@ class xmlrpc_demoWS:
 
         print "COMMAND: %s" % command
         
+        args['listitems'] = ''
+
         if command == 'xmlupload':
             args['download'] = ''
             f = file(filename,'rb')
@@ -227,6 +227,9 @@ class xmlrpc_demoWS:
             args['upload'] = ''
             args['filename'] = ''
             args['download'] = ''
+            args['listitems'] = ''
+            for item in filename.split(','):
+              args['listitems'] += '<value><string>%s</string></value>' % item
         elif command == 'deletefrombasket':
             args['id'] = ''
             args['title'] = ''
@@ -234,6 +237,9 @@ class xmlrpc_demoWS:
             args['upload'] = ''
             args['filename'] = ''
             args['download'] = ''
+            args['listitems'] = ''
+            for item in filename.split(','):
+              args['listitems'] += '<value><string>%s</string></value>' % item
         else:
             print 'Error :\n' + usage_msg
             sys.exit(1)
@@ -256,7 +262,9 @@ listBasket - list user's basket items
         sys.exit(1)
 
     command = sys.argv[1]
-    filename = sys.argv[2]
+    if len(sys.argv) == 3:
+        filename = sys.argv[2]
+    else: filename = ''
 
     ws = xmlrpc_demoWS()
     print ws.run(command, filename)
