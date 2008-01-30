@@ -218,9 +218,14 @@ class msfParser:
         for child in inputVme.childNodes:
             if child.nodeType == Node.ELEMENT_NODE:
                print child.nodeName
-               if child.nodeName == "URL":
+              # if child.nodeName == "URL":
+               if child.nodeName == "DataVector":
+                   if child.nodeName._attr = "ArchiveFileName"
+                      #contents.append(child.childNodes[0].nodeValue)
+                      contents.append(child.nodeName._attr.nodeValue)
+                                  
                    
-                  contents.append(child.childNodes[0].nodeValue)
+                  
             self.__GetVMEDataURLListInternal(child, contents)
     
     def GetTagNodeByTagName(self, inputVmeTagArrayNode, tagName):
