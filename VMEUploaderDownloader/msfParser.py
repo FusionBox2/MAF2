@@ -1,7 +1,7 @@
 #-----------------------------------------------------------------------------
 # BEWARE!!! This is mostly a prototype!!!
 # code is changing very fast so don't rely on it :P
-# author: Stefano Perticoni
+# author: Stefano Perticoni, Roberto Mucci
 #-----------------------------------------------------------------------------
 
 # VMEUploaderDownloader msfParser.py "D:\vapps\LHPBuilder_Parabuild\VMEUploaderDownloader\msf_test_import_export_VME\msf_test_import_export_VME.msf"
@@ -215,19 +215,42 @@ class msfParser:
         # <URL>msf_test_import_export_VME.1.vtk</URL>
         # get node attributes
         # Walk over any text nodes in the current node.
+        
+        #URL of the binary file are serialized in different part of the msf
+        #so I have to manage 3 cases. In the future, we'll try to uniform
+        #the URL position.
+        isExternal = 0      
+        attrs = inputVme.attributes
+        for attrName in attrs.keys():
+            attrNode = attrs.get(attrName)
+            attrValue = attrNode.nodeValue
+            if (attrName  == "Type"):
+              if (attrValue == "mafVMEExternalData"):
+                  isExternal = 1
+              else:                  
+                 break
+            if (attrName == "Name" and isExternal == 1): #in mafVMEExternalFile
+                contents.append(attrValue)
+                return contents
+                               
         for child in inputVme.childNodes:
             if child.nodeType == Node.ELEMENT_NODE:
-               print child.nodeName
-              # if child.nodeName == "URL":
-               if child.nodeName == "DataVector":
-                   if child.nodeName._attr = "ArchiveFileName"
-                      #contents.append(child.childNodes[0].nodeValue)
-                      contents.append(child.nodeName._attr.nodeValue)
-                                  
-                   
-                  
-            self.__GetVMEDataURLListInternal(child, contents)
-    
+              print child.nodeName    
+              if child.nodeName == "DataVector":
+                   attrs = child.attributes                            
+                   for attrName in attrs.keys():
+                        attrNode = attrs.get(attrName)
+                        attrValue = attrNode.nodeValue
+                        if (attrName  == "ArchiveFileName"): #in .zvtk files
+                            contents.append(attrValue)
+                            return contents
+                         
+              if (child.nodeName == "URL"): #in .vtk files
+                   contents.append(child.childNodes[0].nodeValue)
+                   return contents            
+
+              self.__GetVMEDataURLListInternal(child, contents)
+        
     def GetTagNodeByTagName(self, inputVmeTagArrayNode, tagName):
         """Get tagNode given tag array node and tag name """
         for node in inputVmeTagArrayNode.childNodes:
