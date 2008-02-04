@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-01-25 12:47:17 $
-Version:   $Revision: 1.38 $
+Date:      $Date: 2008-02-04 14:51:29 $
+Version:   $Revision: 1.39 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -301,6 +301,7 @@ void lhpOpUploadVME::OpDo()
  
   if ( ExistsRunningProcess() )
   {
+    //PROCESS EXIST, ONLY CALL CLIENT
     wxString command2execute;
     command2execute = m_PythonwExe;
     //command2execute.Append(m_PythonUploadFullPath.GetCStr());
@@ -309,6 +310,7 @@ void lhpOpUploadVME::OpDo()
     command2execute.Append(m_FileName.GetCStr());
     command2execute.Append("127.0.0.1 "); //server address (localhost)
     command2execute.Append("50000 "); //port address (50000)
+    command2execute.Append(wxString::Format("UPLOAD ")); //UPLOAD command
     command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //vme id
 
     //workaround to understanding directory argument
@@ -333,6 +335,7 @@ void lhpOpUploadVME::OpDo()
   }
   else
   {
+    //PROCESS NOT EXIST, CREATE SERVER AND CALL CLIENT
     wxString command2execute;
     command2execute = m_PythonwExe;
     //command2execute.Append(m_PythonUploadFullPath.GetCStr());
@@ -357,6 +360,7 @@ void lhpOpUploadVME::OpDo()
     command2execute.Append(m_FileName.GetCStr());
     command2execute.Append("127.0.0.1 "); //server address (localhost)
     command2execute.Append("50000 "); //port address (50000)
+    command2execute.Append(wxString::Format("UPLOAD ")); //UPLOAD command
     command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //vme id
     
     //workaround to understanding directory argument
