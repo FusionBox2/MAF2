@@ -15,6 +15,12 @@ lhpTagHandlerDICOMContainer.h
 lhpTagHandler.cpp
 lhpTagHandler.h
 
+lhpOpUploadVME.cpp
+lhpOpUploadVME.h
+
+lhpOpDownloadVME.cpp
+lhpOpDownloadVME.h
+
 #
 lhpOpBonemat.cpp
 lhpOpBonemat.h
@@ -75,8 +81,7 @@ mmoTimeReduce.cpp
 mmoTimeReduce.h
 mmoLnSurf.cpp
 mmoLnSurf.h
-lhpOpUploadVME.cpp
-lhpOpUploadVME.h
+
 lhpOpImporterC3D.cpp
 lhpOpImporterC3D.h
 )
