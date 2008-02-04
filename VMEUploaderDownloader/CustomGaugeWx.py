@@ -2,19 +2,21 @@ import wx
 import sys
 
 class CustomGaugeWx(wx.BoxSizer):
-    def __init__(self, parent, id = -1,  range = 100, pos = wx.DefaultPosition, size=wx.DefaultSize, style= wx.GA_HORIZONTAL, validator=wx.DefaultValidator, name=wx.GaugeNameStr, title="Valori" , orient = wx.VERTICAL, gaugeAction = "U", gaugePulse = 0):
+    def __init__(self, parent, id = -1,  range = 100, pos = wx.DefaultPosition, size=wx.DefaultSize, style= wx.GA_HORIZONTAL, validator=wx.DefaultValidator, name=wx.GaugeNameStr, title="Valori" , orient = wx.VERTICAL, gaugeModality = "UPDATE", gaugePulse = 0):
         wx.BoxSizer.__init__(self,orient)
-        self.gaugeAction = gaugeAction #bar is for upload "U" or download "D"
+        self.gaugeModality = gaugeModality #bar is for upload "UPLOAD" or download "DOWNLOAD"
         self.gaugePulse = gaugePulse #if 0 Gauge is not in pulsing mode 
-        
+       
         self.sizer1 = wx.BoxSizer(wx.HORIZONTAL)
         self.initialLabel = wx.StaticText(parent, -1, label = title)
         self.endingLabel = wx.StaticText(parent, -1, label = "")
         self.gauge = wx.Gauge(parent, id, range, pos, size, style, validator, name)
         self.png = None
+
         
         #upoad or download
-        if (self.gaugeAction == "U"): self.png = wx.Image(sys.path[0] + "/bitmaps/up.png", wx.BITMAP_TYPE_PNG).ConvertToBitmap()
+        if (self.gaugeModality == "UPLOAD"): self.png = wx.Image(sys.path[0] + "/bitmaps/up.png", wx.BITMAP_TYPE_PNG).ConvertToBitmap()
+        elif (self.gaugeModality == "DOWNLOAD"): self.png = wx.Image(sys.path[0] + "/bitmaps/down.png", wx.BITMAP_TYPE_PNG).ConvertToBitmap()
         
         #pulse or not
         #if(self.gaugePulse == 0): self.gauge.Pulse()
@@ -37,6 +39,9 @@ class CustomGaugeWx(wx.BoxSizer):
         
     
     def SetTitle(self, title):
+        #15 letters max
+        letterLimit = 15
+        title = title[:letterLimit]
         self.initialLabel.SetLabel(title)
     
     def SetEndingLabel(self, label):
@@ -45,7 +50,7 @@ class CustomGaugeWx(wx.BoxSizer):
 def test():
     app = wx.PySimpleApp()    
     frame = wx.Frame(None, -1)
-    gaugeContainer = CustomGaugeWx(frame, pos = (100,100))
+    gaugeContainer = CustomGaugeWx(frame, pos = (100,100),gaugeModality ="DOWNLOAD")
     #gaugeContainer.gauge.SetValue(50)
     frame.Show(True)
     app.MainLoop()

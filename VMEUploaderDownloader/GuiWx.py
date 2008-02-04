@@ -33,7 +33,7 @@ class GuiPart(wx.Frame):
         self.CreateStatusBar()
         self.uploadNumber = 0
         self.downloadNumber = 0
-        self.SetStatusText("Upload :" + str(self.uploadNumber) + "    " + "Download :" + str(self.downloadNumber))
+        #self.SetStatusText("Upload :" + str(self.uploadNumber) + "    " + "Download :" + str(self.downloadNumber))
 
         #wx.EVT_BUTTON(self,10,self.OnCreateBar)
         self.EVT_RESULT(self.OnCreateBar)
@@ -46,6 +46,7 @@ class GuiPart(wx.Frame):
         self.timeToCall = 100
         self.timer.Start(milliseconds=self.timeToCall, oneShot=True)
         self.barCreated = False
+        self.ModalityGauge = "UPLOAD" 
  
     
     def EVT_RESULT(self,func):
@@ -55,7 +56,7 @@ class GuiPart(wx.Frame):
         self.__createBar()
     
     def __createBar(self):
-        self.bars.append(CustomGaugeWx.CustomGaugeWx(self.scrolledPanel, len(self.bars), 100, (160, (len(self.bars)+1) * 50), (self.staticLine.GetSize()[0]/2.0, 25), gaugePulse = NOT_PULSE))
+        self.bars.append(CustomGaugeWx.CustomGaugeWx(self.scrolledPanel, len(self.bars), 100, (160, (len(self.bars)+1) * 50), (self.staticLine.GetSize()[0]/2.0, 25), gaugeModality = self.ModalityGauge ,gaugePulse = NOT_PULSE))
         self.fgs1.Add(self.bars[len(self.bars)-1],flag=wx.CENTER)
         
         #self.scrolledPanel.SetAutoLayout(1)
@@ -66,7 +67,8 @@ class GuiPart(wx.Frame):
         if(self.timer.IsRunning() == False): self.timer.Start(milliseconds=self.timeToCall, oneShot=True)
         pass
     
-    def createBar(self):
+    def createBar(self, modality):
+        self.ModalityGauge = modality
         event = wx.PyEvent(10)
         event.SetEventType(10)
         self.barCreated = False
@@ -92,11 +94,11 @@ class GuiPart(wx.Frame):
         while self.queue.qsize():
             try:
                 lista = self.queue.get(0)
-                # Check contents of message and do what it says
-                # As a test, we simply print it
-                #self.console.SetLabel("Running...")
+                #lista is composed by observer (the gauge) and a value
+                #if value is -1 or gauge as option gaugepulse, is pulsing
+                #else set the value of the progress
                 
-                if(lista[0].gaugePulse == 0):lista[0].gauge.SetValue(int(lista[1]))
+                if(lista[0].gaugePulse == 0 and lista[1] != -1):lista[0].gauge.SetValue(int(lista[1]))
                 else:
                    lista[0].gauge.Pulse()
                    #here calculate time 
@@ -112,7 +114,7 @@ class GuiPart(wx.Frame):
                     if(i.gauge.GetValue() != 100):
                         finished = False
                         self.uploadNumber += 1
-                self.SetStatusText("Upload :" + str(self.uploadNumber) + "    " + "Download :" + str(self.downloadNumber))
+                #self.SetStatusText('Upload :' + str(self.uploadNumber) + '    ' + 'Download :' + str(self.downloadNumber))
                 if (finished == False): self.timer.Start(milliseconds=self.timeToCall, oneShot=True)
             except:
 			    pass

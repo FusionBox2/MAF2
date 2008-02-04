@@ -27,13 +27,20 @@ class Server(threading.Thread):
     # which is always overridden, as we are doing here
   
   def decompose(self, data):
-      #arg 0 is id, 1 is directory , 2 is usr , 3 is pwd , 4 is serverUrl, 5 is vme
+      """ Create a list of parameters arrived by client """
+      #0 is modality (UPLOAD or DOWNLOAD)
+      #1 is id, 
+      #2 is directory
+      #3 is usr
+      #4 is pwd
+      #5 is serverUrl
+      #6 is vme name
       arguments = data.split(" ") 
       sendList = []
       count = 0
       lastArgument = ""
       for i in arguments:
-        if(count < 5):
+        if(count < 6):
           sendList.append(i)
         else:
           if(lastArgument != ''):
@@ -42,8 +49,8 @@ class Server(threading.Thread):
               lastArgument = lastArgument + i
         count = count + 1
       sendList.append(lastArgument)
-      sendList[1] = sendList[1].replace("?", " ") # directory with spaces arrives with "?" instead of them
-      print sendList[1]
+      sendList[2] = sendList[2].replace("?", " ") # directory with spaces arrives with "?" instead of them
+      print sendList[2]
       return sendList
       
   def run(self):

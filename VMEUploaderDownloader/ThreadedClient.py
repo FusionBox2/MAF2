@@ -17,7 +17,7 @@ import time
 import CustomThread
 import random
 import Queue
-import UploadHandler
+import UploadHandler, DownloadHandler
 import thread
 import Server
 import Lock
@@ -71,17 +71,49 @@ class ThreadedClient:
     def createThread(self, tuplaFromServer):
         #now is only implemented update
         #if tupla contain a flag for update or download it can be use the same structure
-        self.createThreadForUpdate(tuplaFromServer)
+        #tuplaFromServer is
+        #0 is modality (UPLOAD or DOWNLOAD)
+        #1 is id, 
+        #2 is directory
+        #3 is usr
+        #4 is pwd
+        #5 is serverUrl
+        #6 is vme name
+        if(tuplaFromServer[0] == "UPLOAD"):
+           self.createThreadForUpdate(tuplaFromServer)
+        elif (tuplaFromServer[0] == "DOWNLOAD"):
+           self.createThreadForDownload(tuplaFromServer)
+           
         
     def createThreadForUpdate(self, tuplaFromServer):
-        self.gui.createBar()
-        #0 id, 1 dir, 2 usr , 3 pwd , 4 urlServer ,5 name : is tuplaFromServer elements
-        self.gui.createLabel(tuplaFromServer[5]) #tupla[5] is vme name         
-        self.threads.append(CustomThread.CustomThread(func=self.workerThreadUpload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[1], tuplaFromServer[0],tuplaFromServer[2],tuplaFromServer[3],tuplaFromServer[4])))
+        #tuplaFromServer is
+        #0 is modality (UPLOAD or DOWNLOAD)
+        #1 is id, 
+        #2 is directory
+        #3 is usr
+        #4 is pwd
+        #5 is serverUrl
+        #6 is vme name
+        self.gui.createBar(tuplaFromServer[0])
+        
+        self.gui.createLabel(tuplaFromServer[6]) #tupla[6] is vme name         
+        self.threads.append(CustomThread.CustomThread(func=self.workerThreadUpload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[2], tuplaFromServer[1],tuplaFromServer[3],tuplaFromServer[4],tuplaFromServer[5])))
         self.threads[len(self.threads)-1].start()
     
     def createThreadForDownload(self, tuplaFromServer):
-        pass
+        #tuplaFromServer is
+        #0 is modality (UPLOAD or DOWNLOAD)
+        #1 is filseSize, 
+        #2 is directory
+        #3 is usr
+        #4 is pwd
+        #5 is serverUrl
+        #6 is data URI in SRB
+        self.gui.createBar(tuplaFromServer[0])
+        
+        self.gui.createLabel(tuplaFromServer[6]) #tupla[6] is vme name         
+        self.threads.append(CustomThread.CustomThread(func=self.workerThreadDownload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[2], tuplaFromServer[6],tuplaFromServer[3],tuplaFromServer[4],tuplaFromServer[5],tuplaFromServer[1])))
+        self.threads[len(self.threads)-1].start()
         
     def workerThreadUpload(self, observer, dirCache , id, usr, pwd, urlServer):
         """
@@ -92,6 +124,21 @@ class ThreadedClient:
         """
         try:
             UploadHandler.createUploadHandler(self.queue, observer, dirCache , id, usr, pwd, urlServer)
+        except:
+            pass
+        
+    def workerThreadDownload(self, observer, dirCache , id, usr, pwd, urlServer, filesize):
+        """
+        This is where we handle the asynchronous I/O. For example, it may be
+        a 'select()'.
+        One important thing to remember is that the thread has to yield
+        control.
+        """
+        #try:
+            #UploadHandler.createDownloadHandler(self.queue, observer, dirCache , id, usr, pwd, urlServer)
+        #except:
+        try:
+            DownloadHandler.createDownloadHandler(self.queue,observer,dirCache , id, usr, pwd, urlServer, filesize)
         except:
             pass
         

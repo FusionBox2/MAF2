@@ -7,23 +7,26 @@ import sys
 
 # create Internet TCP socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
+#used by client
 host = sys.argv[1] # server address
 port = int(sys.argv[2]) # server port
-id = sys.argv[3] # vme id
-msf = sys.argv[4] # msf dir
-user = sys.argv[5] #user
-password = sys.argv[6] #pwd
-urlServer = sys.argv[7] #server url where upload files
+
+#sended
+modality = sys.argv[3] #modality "UPLOAD" or "DOWNLOAD"
+id = sys.argv[4] # vme id id if UPLOAD , size if DOWNLOAD
+msf = sys.argv[5] # msf dir
+user = sys.argv[6] #user
+password = sys.argv[7] #pwd
+urlServer = sys.argv[8] #server url where upload files
 
 name = ""
 count = 0
 for i in sys.argv:
-  if(count > 7):
+  if(count > 8):
     if(name == ""):
       name = i
     else:
-      name = name + ' ' + i #vme name
+      name = name + ' ' + i #vme name if UPLOAD, dataURI if DOWNLOAD
   count = count + 1
 
 
@@ -34,7 +37,7 @@ s.connect((host, port))
 
 
 # compose message
-k = id + ' ' + msf + ' ' + user + ' ' + password + ' ' + urlServer + ' '+ name
+k = modality + ' ' + id + ' ' + msf + ' ' + user + ' ' + password + ' ' + urlServer + ' '+ name
 s.sendall(k) # send k to server
 # if stop signal, then leave loop
 v = s.recv(1024) # receive v from server (up to 1024 bytes)

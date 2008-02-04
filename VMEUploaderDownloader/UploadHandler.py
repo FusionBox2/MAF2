@@ -4,7 +4,7 @@ import msfParser
 from xml.dom import minidom
 from xml.dom import Node
 import os, sys, string, time, re ,shutil
-import threading, thread
+import threading, thread, CustomThread
 from Debug import Debug
 
 class UploadHandler:
@@ -24,8 +24,40 @@ class UploadHandler:
         self.BinaryURI = ""
         self.XMLURI = ""
         self.block = threading.Lock()
+        self.threads = []
+        self.count = 0
+        
+    def Testfunction(self):
+        count = 0
+        while(count < 100):
+            count = count +0.0001
+            if (count % 100 == 0): print "DENTRO THREAD"
+            self.BinaryURI = str(count)
+            self.count = count
+            
 		
     def upload(self):
+        #get free resource (return URI string)
+        self.BinaryURI = self.getFreeResource() #thread maybe
+        
+        #-1 percentage means progress pulsing 
+        percentage = -1
+        """
+        while(self.count < 100):
+            lista = [self.observer,percentage]
+            #print self.BinaryURI
+            time.sleep(0.5)
+            self.block.acquire()
+            UploadHandler.queue.put(lista)
+            self.block.release()
+        """
+
+        """
+        if(self.BinaryURI == \"Services not available!!\"):
+            print "Connection Problems..."
+            return
+        """
+
         self.createXMLAndBinary()
         
         #launch external XML editor
@@ -46,6 +78,9 @@ class UploadHandler:
             # thing.
             time.sleep(0.5)
             self.remoteTemporaryBinaryFileSize = self.getRemoteTemporaryBinaryFileSize()
+            print self.remoteTemporaryBinaryFileSize , self.binaryFileSize
+            
+            #self.remoteTemporaryBinaryFileSize = self.remoteTemporaryBinaryFileSize +10000
             if(self.remoteTemporaryBinaryFileSize == -1):
                 break
             percentage = 100 * self.remoteTemporaryBinaryFileSize / self.binaryFileSize
@@ -60,7 +95,7 @@ class UploadHandler:
         #send xml file, perhaps here free source
         if(binarySendResult == True):
           print "Waiting for sending XML..."
-          self.sendXMLFile()
+          #self.sendXMLFile()
         
           print "End Upload"
           print "Uploaded Binary in SRB: " + self.BinaryURI
@@ -90,8 +125,7 @@ class UploadHandler:
         upl.OutputFolderName = directory
         upl.VmeToExtractID = int(self.id)
 
-        #get free resource (return URI string)
-        self.BinaryURI = self.getFreeResource() 
+        
         upl.DatasetURI = self.BinaryURI
 
         upl.Upload()
@@ -111,8 +145,7 @@ class UploadHandler:
     def getFreeResource(self):
         #here call module to get URI of first free resource
         instance = MtomUploadURI.MtomUploadURI()
-        result = instance.ListSrbDir()
-        return result
+        self.BinaryURI = instance.ListSrbDir()
 
     def sendBinaryFile(self):
         os.rename(self.dirOutgoing + "\\" + self.getBinaryFile(),self.dirOutgoing + "\\" +self.BinaryURI)
@@ -147,7 +180,9 @@ class UploadHandler:
     def getRemoteTemporaryBinaryFileSize(self):
         instance = MtomSRBSize.MtomSize()
         result = instance.ListSrbDir(self.BinaryURI)
-        return result
+        self.remoteTemporaryBinaryFileSize = result;
+        return result;
+        
 
     def getXMLFile(self):
         files = os.listdir(self.dirOutgoing)

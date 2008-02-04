@@ -11,6 +11,7 @@ class ServerTest(unittest.TestCase):
     def testDecompose(self):
         s = Server.Server(clntsock = None, observer = None)
         valueList = []
+        valueList.append("UPLOAD") #modality
         valueList.append(str(5)) #id
         valueList.append("C:\\space?proof\\") #directory with "?" instead of space
         valueList.append("user") #user
