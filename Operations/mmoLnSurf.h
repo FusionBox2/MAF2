@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoLnSurf.h,v $
   Language:  C++
-  Date:      $Date: 2007-10-19 11:02:38 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-02-05 11:32:47 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -21,8 +21,6 @@
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
-class mafGui;
-class mafEvent;
 class mafVMESurface;
 class mafVMEPolyline;
 
@@ -44,7 +42,6 @@ public:
   void OpRun();
   void OpDo();
   void OpUndo();
-  void CreateGui();
 
 protected: 
   enum 
@@ -58,9 +55,6 @@ protected:
     ID_GEN_LIST,
     ID_LAST
   };
-
-  void OpStop(int result);
-
 
 private:
   double          m_rhoLine;

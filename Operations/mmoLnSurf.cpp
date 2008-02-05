@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoLnSurf.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-10-19 11:02:38 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-02-05 11:32:47 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -118,13 +118,6 @@ bool mmoLnSurf::Accept(mafNode* vme)
 void mmoLnSurf::OpRun()   
 //----------------------------------------------------------------------------
 {
-  CreateGui();
-}
-
-//----------------------------------------------------------------------------
-void mmoLnSurf::CreateGui()
-//----------------------------------------------------------------------------
-{
   const wxString choices_string[] = {_("Lines and surface"), _("Surface"), _("Lines")}; 
   if(m_Gui == NULL)
   {
@@ -144,36 +137,17 @@ void mmoLnSurf::CreateGui()
 }
 
 //----------------------------------------------------------------------------
-void mmoLnSurf::OpStop(int result)
-//----------------------------------------------------------------------------
-{
-  if (result == OP_RUN_CANCEL)
-  {
-    HideGui();
-    mafEventMacro(mafEvent(this,result));
-  }
-  else if (result == OP_RUN_OK)
-  {
-    HideGui();
-    mafEventMacro(mafEvent(this,result));
-  }
-}
-//----------------------------------------------------------------------------
 void mmoLnSurf::OnEvent(mafEventBase *maf_event) 
 //----------------------------------------------------------------------------
 { 
   switch(maf_event->GetId())
   {
     case wxOK:          
-    { 
       OpStop(OP_RUN_OK);
-      break;
-    }
+    break;
     case wxCANCEL:
-    {    
       OpStop(OP_RUN_CANCEL);
-      break;
-    }
+    break;
     case ID_RHO_SPL:
     case ID_RHO_SRF:
     case ID_SGM_SRF:
@@ -181,19 +155,17 @@ void mmoLnSurf::OnEvent(mafEventBase *maf_event)
     case ID_DIMX_SRF:
     case ID_DIMY_SRF:
     case ID_GEN_LIST:
-      {
-        break;
-      }
+    break;
     default:
-    {
       mafEventMacro(*maf_event); 
-    }
     break;
   }
 }
+//----------------------------------------------------------------------------
 static void _addSegments(const std::vector<V3d<double> >& coords, unsigned from, unsigned to, vtkPoints *pnts, vtkCellArray  *cells)
+//----------------------------------------------------------------------------
 {
-  vtkIdType     pts[2];
+  vtkIdType pts[2];
   if(to <= from || to > coords.size())
     return;
   for(unsigned i = from; i < to; i++)
@@ -332,8 +304,8 @@ void mmoLnSurf::OpDo()
 
     m_Muscles->ReparentTo(m_Input);
     m_Tendons->ReparentTo(m_Input);
-    mafEventMacro(mafEvent(this,VME_ADD,m_Muscles));
-    mafEventMacro(mafEvent(this,VME_ADD,m_Tendons));
+    //mafEventMacro(mafEvent(this,VME_ADD,m_Muscles));
+    //mafEventMacro(mafEvent(this,VME_ADD,m_Tendons));
   }
   if((3 - m_generateLinesSurfaces) & 2)
   {
@@ -352,7 +324,7 @@ void mmoLnSurf::OpDo()
     m_Surface->GetTagArray()->SetTag(tag_Nature);
 
     m_Surface->ReparentTo(m_Input);
-    mafEventMacro(mafEvent(this,VME_ADD,m_Surface));
+    //mafEventMacro(mafEvent(this,VME_ADD,m_Surface));
   }
   musc->Delete();
   tend->Delete();
