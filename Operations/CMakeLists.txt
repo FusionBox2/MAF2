@@ -26,6 +26,8 @@ lhpOpBonemat.cpp
 lhpOpBonemat.h
 lhpOpImporterAnsysInputFile.cpp
 lhpOpImporterAnsysInputFile.h
+lhpOpExporterAnsysInputFile.cpp
+lhpOpExporterAnsysInputFile.h
 
 lhpOpMultiscaleExplore.cpp
 lhpOpMultiscaleExplore.h
