@@ -41,8 +41,6 @@ DOF,  DELETE,        ,        ,        ,        ,        ,        ,        ,    
             
         # read the nodes file in memory
         ansysSeparator = "             "        
-                 
-        self.NodesFileName = r"D:\vapps\openMAF_ITK_Parabuild\Testing\unittestData\FEM\ANSYS\tet10\NLISTMaterialsWritten.txt"
      
         self.NodesMatrix = []
         
@@ -262,11 +260,11 @@ ESEL, ALL
                 
             typeLine =  "TYPE, " + str(rowSplit[typeColumn]) + \
                   " $ MAT, " + str(rowSplit[materialColumn]) + \
-                  " $ REAL, " +  str(rowSplit[realColumn])
+                  " $ REAL, " +  str(rowSplit[realColumn])+ '\n'
             
             self.ElementsSectionList.append(typeLine)
             
-            esysLine =  "ESYS, " + str(rowSplit[esysColumn])
+            esysLine =  "ESYS, " + str(rowSplit[esysColumn])+ '\n'
             self.ElementsSectionList.append(esysLine)
             
             ENPointsNumber = -1
