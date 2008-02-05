@@ -29,7 +29,7 @@ class ansysWriter:
     def Write(self):
         
         self.AnsysHeader = r"""/TITLE,
-/COM,HyperMesh generated /PREP7 cards
+/COM,lhpBuilder generated
 /PREP7
 DOF,  DELETE,        ,        ,        ,        ,        ,        ,        ,        ,        
 /NOPR                                                                          
@@ -163,8 +163,8 @@ DOF,  DELETE,        ,        ,        ,        ,        ,        ,        ,    
                     material = materialPropertiesGrammar.parseString(line)
                     propertyString = material[0]
                     propertyValue = material[1]
-                    MPDATALine = "MPDATA," + str( propertyString ) + "," + str( materialID) + \
-                                 "," + str(NumberOfComponents) + ansysSeparator + str( propertyValue ) + '\n'
+                    MPDATALine = "MP," + str( propertyString ) + "," + str( materialID) + \
+                                 "," + ansysSeparator + str( propertyValue ) + '\n'
                     
                     self.MaterialsMPDATASectionList.append(MPDATALine)
                     
@@ -296,21 +296,10 @@ ESEL, ALL
                 if Debug:
                     print emoreLine
                     
-            eselTypeLine =  "ESEL, S, TYPE,," + str(rowSplit[typeColumn]) + '\n'
-            self.ElementsSectionList.append(eselTypeLine)
-            
-            eselMatLine  = "ESEL, R, MAT,," + str(rowSplit[materialColumn]) + '\n'
-            self.ElementsSectionList.append(eselMatLine)
-            
-            eselRealLine  = "ESEL, R, REAL,," + str(rowSplit[realColumn]) + '\n'
-            self.ElementsSectionList.append(eselRealLine)            
-            
             cmLine  = "CM, TYPE" + str(rowSplit[typeColumn]) + "-REAL" + str(rowSplit[realColumn]) \
                   + "-MAT" + str(rowSplit[materialColumn]) + ", ELEM" + '\n'
             self.ElementsSectionList.append(cmLine)
             
-            eselAllLine = "ESEL, ALL" + '\n'
-            self.ElementsSectionList.append(eselAllLine)
             
             self.ElementsSectionList.append('\n')
         
@@ -346,6 +335,7 @@ ESEL, ALL
             for row in self.MaterialsETSectionList:
                 print row
                 
+        
         
         self.EndSection = "FINISH"
         
@@ -395,6 +385,8 @@ ESEL, ALL
             if Debug:
                 print line
             
+        eselAllLine = "ESEL, ALL" + '\n'
+        ansysOutputFile.write(eselAllLine)
         ansysOutputFile.write('\n')
         ansysOutputFile.writelines(self.EndSection)
         ansysOutputFile.write('\n')
