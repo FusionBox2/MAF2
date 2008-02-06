@@ -26,7 +26,7 @@ class lhpAuthenticationControl:
         self.Host = "www.biomedtown.org"
         self.Repository = ""
 
-        self.AuthenticationHTMLPageSelector = "http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository-test"
+        self.AuthenticationHTMLPageSelector = "http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository"
         self.RemoteWarningPage = r"http://www.biomedtown.org/biomed_town/LHDL/users/swclient/DictionaryCheck/"
         
         # authentication
