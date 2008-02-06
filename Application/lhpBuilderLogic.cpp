@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderLogic.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-12-04 09:38:54 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-02-06 13:21:44 $
+  Version:   $Revision: 1.3 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
@@ -56,8 +56,6 @@ void lhpBuilderLogic::OnEvent(mafEventBase *maf_event)
       {
         //comunicate to operation msf directory
         e->SetString(&m_VMEManager->GetFileName());
-        mafOp *op = mafOp::SafeDownCast((mafObject *)e->GetSender());
-        if(op) op->OnEvent(e);
       }
       break;
 		default:

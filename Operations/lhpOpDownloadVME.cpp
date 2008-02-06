@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-02-04 14:50:19 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2008-02-06 13:21:20 $
+Version:   $Revision: 1.2 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -134,7 +134,7 @@ void lhpOpDownloadVME::OpRun()
 //----------------------------------------------------------------------------
 {
   // load the connection configuration file:
-  // this->LoadConnectionConfigurationFile();
+  this->LoadConnectionConfigurationFile();
 
   int result = OP_RUN_CANCEL;
 
@@ -226,15 +226,6 @@ void lhpOpDownloadVME::OnEvent(mafEventBase *maf_event)
   {
     switch(e->GetId())
     {
-    case ID_MSF_DATA_CACHE:
-      {
-        wxString temp;
-        temp.Append((*e->GetString()).GetCStr());
-				m_MsfFile = temp;
-        temp = temp.BeforeLast('/');
-        m_MsfDir = temp;
-      }
-      break;
     case wxOK:
       {
         this->OpStop(OP_RUN_OK);
@@ -405,7 +396,11 @@ bool lhpOpDownloadVME::CreateIncomingCache()
 {
   bool result = true;
   //create cache: logic comunicate the msf directory
-  mafEventMacro(mafEvent(this, ID_MSF_DATA_CACHE));
+  mafEvent event;
+  event.SetSender(this);
+  event.SetId(ID_MSF_DATA_CACHE);
+  mafEventMacro(event);
+  m_MsfDir = *(event.GetString());
 
   wxDir dir(m_MsfDir.GetCStr());
   wxString exist = m_MsfDir.GetCStr();

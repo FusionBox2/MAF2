@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-02-04 14:51:29 $
-Version:   $Revision: 1.39 $
+Date:      $Date: 2008-02-06 13:21:20 $
+Version:   $Revision: 1.40 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -229,16 +229,6 @@ void lhpOpUploadVME::OnEvent(mafEventBase *maf_event)
   {
     switch(e->GetId())
     {
-    case ID_MSF_DATA_CACHE:
-      {
-        wxString temp;
-        temp.Append((*e->GetString()).GetCStr());
-				m_MsfFile = temp;
-        temp = temp.BeforeLast('/');
-        m_MsfDir = temp;
-      }
-      break;
-
     case ID_SUBDICTIONARY:
     {
     //    // nothing to do for the moment...
@@ -395,7 +385,11 @@ bool lhpOpUploadVME::CreateCache()
 {
   bool result = true;
   //create cache: logic comunicate the msf directory
-  mafEventMacro(mafEvent(this, ID_MSF_DATA_CACHE));
+  mafEvent event;
+  event.SetSender(this);
+  event.SetId(ID_MSF_DATA_CACHE);
+  mafEventMacro(event);
+  m_MsfDir = *(event.GetString());
 
   wxDir dir(m_MsfDir.GetCStr());
   wxString exist = m_MsfDir.GetCStr();
