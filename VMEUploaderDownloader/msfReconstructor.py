@@ -102,7 +102,7 @@ def reconstructMSF():
         msfR.OutputMSFFileName = msfR.currentDir + r'\testDownload\\outputMAF.msf'
         msfR.OutputMSFFolderName = msfR.currentDir + r'\testDownload'
     else:
-        msfR.currentDir = sys.argv[1] 
+        msfR.currentDir = sys.argv[1].replace("?", " ")
         msfR.scriptsDir = msfR.currentDir + r'..\..' #go back of two directories 
         msfR.InputVMEXMLFileName = msfR.currentDir + sys.argv[2]
         
@@ -114,7 +114,7 @@ def reconstructMSF():
         msfR.FakeRootMSFFileName = msfR.scriptsDir + r'\applicationData\fakeRoot.xml'
         msfR.OutputMSFFileName = msfR.currentDir + r'outputMAF.msf'
         msfR.OutputMSFFolderName = msfR.currentDir
-        currentMSF = str(sys.argv[3])
+        currentMSF = str(sys.argv[3].replace("?", " "))
         
 
     #create configuration file
