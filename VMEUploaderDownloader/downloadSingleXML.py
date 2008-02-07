@@ -1,4 +1,4 @@
-import os, sys, shutil
+import os, sys, shutil, time
 from webServicesClient import xmlrpcDemoWS
 from base64 import decodestring
 import xml.dom.minidom as xd
@@ -16,12 +16,16 @@ class downloadSingleXML():
     
     def downloadXMLFromBasket(self):
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
-        ws.setCredentials(self.user, self.password)           
+        ws.setCredentials(self.user, self.password)
+        ws.setServer('http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2')        
         self.Result = ws.run('xmldownload', self.fileToDownload)
         
     def retrieveTagValue(self, tag):
         returnValue = ''
-        file = open(self.fileToDownload, 'r')
+        try:
+           file = open(self.fileToDownload, 'r')
+        except :
+            return ""
         dom = xd.parse(file)
         if dom.getElementsByTagName("fault"):
                 return       
@@ -40,6 +44,7 @@ class downloadSingleXML():
         pass
 
 def main():
+    
     if(len(sys.argv) != 5): #for test
        sys.argv = []
        sys.argv.append("Program")
@@ -53,9 +58,12 @@ def main():
         #print sys.argv
         dsXML = downloadSingleXML()
         dsXML.downloadXMLFromBasket()
+        
         dsXML.datasetSRBURI = dsXML.retrieveTagValue('L0000_resource_data_Dataset_DatasetURI')
         dsXML.datasetFileSize = dsXML.retrieveTagValue('L0000_resource_data_Dataset_FileSize')
+        
         dsXML.moveFileInIncomingCacheDirectory()
+        
         print dsXML.datasetSRBURI
         print dsXML.datasetFileSize
         
