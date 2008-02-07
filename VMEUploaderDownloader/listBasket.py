@@ -19,6 +19,7 @@ class listBasket:
     def getListFromBasket(self):
         self.removeIdListSelectedFile()
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
+        ws.setServer('http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2')
         ws.setCredentials(self.currentUser, self.currentPassword)
                 
         self.Result = ws.run('listbasket')[1]
