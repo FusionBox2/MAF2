@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-02-07 09:55:44 $
-Version:   $Revision: 1.3 $
+Date:      $Date: 2008-02-07 13:20:18 $
+Version:   $Revision: 1.4 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -400,7 +400,12 @@ bool lhpOpDownloadVME::CreateIncomingCache()
   event.SetSender(this);
   event.SetId(ID_MSF_DATA_CACHE);
   mafEventMacro(event);
-  m_MsfDir = *(event.GetString());
+
+  wxString temp;
+  temp.Append((*event.GetString()).GetCStr());
+  m_MsfFile = temp;
+  temp = temp.BeforeLast('/');
+  m_MsfDir = temp;
 
   wxDir dir(m_MsfDir.GetCStr());
   wxString exist = m_MsfDir.GetCStr();
@@ -646,8 +651,15 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(int indexFromBasketList)
   //else:
   //print "NotUpToDate"
 
-  m_URISRBFile = output[output.size() - 2];
+  
+  if(output.size() < 3)
+  {
+    return MAF_ERROR;
+  }
+
   m_URISRBFileSize = output[output.size() - 1];
+  m_URISRBFile = output[output.size() - 2];
+  
 
   wxSetWorkingDirectory(oldDir);
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
