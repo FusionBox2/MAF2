@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-02-06 13:21:20 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2008-02-07 09:55:44 $
+Version:   $Revision: 1.3 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -542,7 +542,7 @@ int lhpOpDownloadVME::CreateFileListFromBasket()
   command2execute.Append(m_ProxyURL.GetCStr());
   command2execute.Append(" ");
   command2execute.Append(m_ProxyPort.GetCStr());*/
-  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   long pid = wxExecute(command2execute, wxEXEC_SYNC);
 
