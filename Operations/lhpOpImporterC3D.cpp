@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterC3D.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-01-28 20:29:35 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2008-02-07 11:16:08 $
+  Version:   $Revision: 1.8 $
   Authors:   Daniele  Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -28,6 +28,7 @@
 #include "mafSmartPointer.h"
 #include "mafVME.h"
 #include "vtkMAFSmartPointer.h"
+#include "mafVMEGroup.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafVMELandmark.h"
 #include "mafVMESurface.h"
@@ -45,6 +46,8 @@
 
 #include "C3D_Reader.h"
 
+#include <vcl_fstream.h>
+#include <vcl_string.h>
 #include <vnl\vnl_matrix.h>
 
 #include <iostream>
@@ -59,29 +62,16 @@ mafCxxTypeMacro(lhpOpImporterC3D);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-lhpOpImporterC3D::lhpOpImporterC3D(const wxString &label) :
-mafOp(label)
+lhpOpImporterC3D::_InternalC3DData::_InternalC3DData()
 //----------------------------------------------------------------------------
 {
-  m_OpType  = OPTYPE_IMPORTER;
-  m_Canundo = true;
-
-  m_C3DInputFileNameFullPath = "";
-
-	m_FileDir = (mafGetApplicationDirectory() + "/Data/External/").c_str();
-
   //vmes
-  m_VmeCloud = NULL;
+  m_VmeGroup = NULL;
+  //m_VmeCloud = NULL;
   m_VmeAnalog = NULL;
-  
+
   //c3d filename
   m_FileName = "";
-
-  //gui
-  m_ImportTrajectoriesFlag = TRUE;
-  m_ImportAnalogFlag = TRUE;
-  m_ImportPlatformFlag = TRUE;
-  m_ImportEventFlag = FALSE;
 
   //Aurion
   //m_Errcode = 0;
@@ -141,22 +131,55 @@ mafOp(label)
 }
 
 //----------------------------------------------------------------------------
+lhpOpImporterC3D::lhpOpImporterC3D(const wxString &label) :
+mafOp(label)
+//----------------------------------------------------------------------------
+{
+  m_OpType  = OPTYPE_IMPORTER;
+  m_Canundo = true;
+
+  m_FileDir = (mafGetApplicationDirectory() + "/Data/External/").c_str();
+  m_DictionaryFileName = "";
+
+  //gui
+  m_ImportTrajectoriesFlag = TRUE;
+  m_ImportAnalogFlag = TRUE;
+  m_ImportPlatformFlag = TRUE;
+  m_ImportEventFlag = FALSE;
+}
+
+//----------------------------------------------------------------------------
 lhpOpImporterC3D::~lhpOpImporterC3D()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_VmeCloud);
+  Clear();
+}
 
-  mafDEL(m_VmeAnalog);
-
-  for(int currentPlatForm=0; currentPlatForm< m_PlatformList.size();currentPlatForm++)
+//----------------------------------------------------------------------------
+void lhpOpImporterC3D::Clear()
+//----------------------------------------------------------------------------
+{
+  for(unsigned i = 0; i < m_intData.size(); i++)
   {
-    mafDEL(m_PlatformList[currentPlatForm]);
-    mafDEL(m_ForceList[currentPlatForm]);
-    mafDEL(m_MomentList[currentPlatForm]);
+    mafDEL(m_intData[i].m_VmeGroup);
+    for(std::map<mafString, mafVMELandmarkCloud*>::iterator it = m_intData[i].m_Clouds.begin(); it != m_intData[i].m_Clouds.end(); ++it)
+    {
+      mafDEL(it->second);
+    }
+    m_intData[i].m_Clouds.clear();
+    //mafDEL(m_intData[i].m_VmeCloud);
+    mafDEL(m_intData[i].m_VmeAnalog);
+    for(int currentPlatForm=0; currentPlatForm< m_intData[i].m_PlatformList.size();currentPlatForm++)
+    {
+      mafDEL(m_intData[i].m_PlatformList[currentPlatForm]);
+      mafDEL(m_intData[i].m_ForceList[currentPlatForm]);
+      mafDEL(m_intData[i].m_MomentList[currentPlatForm]);
+    }
+    m_intData[i].m_PlatformList.clear();
+    m_intData[i].m_ForceList.clear();
+    m_intData[i].m_MomentList.clear();
   }
-  m_PlatformList.clear();
-  m_ForceList.clear();
-  m_MomentList.clear();
+  m_intData.clear();
 }
 //----------------------------------------------------------------------------
 bool lhpOpImporterC3D::Accept(mafNode *node)
@@ -172,7 +195,7 @@ mafOp* lhpOpImporterC3D::Copy()
   cp->m_Canundo = m_Canundo;
   cp->m_OpType = m_OpType;
   cp->m_Listener = m_Listener;
-  cp->m_VmeCloud = m_VmeCloud;
+  //cp->m_intData.m_VmeCloud = m_intData.m_VmeCloud;
   return cp;
 }
 //----------------------------------------------------------------------------
@@ -183,11 +206,11 @@ void lhpOpImporterC3D::OpRun()
   ShowGui();
 }
 //----------------------------------------------------------------------------
-int lhpOpImporterC3D::OpenC3D()
+int lhpOpImporterC3D::OpenC3D(const mafString &fullFileName)
 //----------------------------------------------------------------------------
 {
   mafLogMessage("C3D_Open");
-	int errcode=C3D_Open(const_cast<char *> (m_C3DInputFileNameFullPath.GetCStr()));
+	int errcode=C3D_Open(const_cast<char *> (fullFileName.GetCStr()));
 	if(errcode != NOERROR)
 	{
 		if( errcode == ERROR_NOT_LICENSE)
@@ -202,11 +225,11 @@ int lhpOpImporterC3D::OpenC3D()
   return errcode;
 }
 //----------------------------------------------------------------------------
-int lhpOpImporterC3D::ReadHeaderC3D()
+int lhpOpImporterC3D::ReadHeaderC3D(lhpOpImporterC3D::_InternalC3DData &intData)
 //----------------------------------------------------------------------------
 {
   mafLogMessage("C3D_Read_Header");
-	int errcode=C3D_Read_Header(&m_LengthMs, &m_VideoRate, &m_AnalogRate);
+	int errcode=C3D_Read_Header(&intData.m_LengthMs, &intData.m_VideoRate, &intData.m_AnalogRate);
 	if( errcode != NOERROR)
 	{
 		switch(errcode)
@@ -225,6 +248,35 @@ int lhpOpImporterC3D::ReadHeaderC3D()
 		errcode = -1;
 	}	
   return errcode;
+}
+
+//----------------------------------------------------------------------------
+bool lhpOpImporterC3D::LoadDictionary()
+//----------------------------------------------------------------------------
+{
+  vcl_string landmarkName, segmentName;
+  vcl_ifstream dictionaryInputStream(m_DictionaryFileName, std::ios::in);
+
+  if(dictionaryInputStream.is_open() == 0)
+    return false;
+  while(dictionaryInputStream >> landmarkName)	
+  {
+    dictionaryInputStream >> segmentName;			
+    std::map<mafString, mafString>::iterator it = m_dictionaryStruct.find(landmarkName.c_str());
+    if(it != m_dictionaryStruct.end())
+    {
+      m_dictionaryStruct.clear();
+      return false;
+    }
+    m_dictionaryStruct[landmarkName.c_str()] = segmentName.c_str();
+  }
+  return true;
+}
+//----------------------------------------------------------------------------
+void lhpOpImporterC3D::DestroyDictionary()
+//----------------------------------------------------------------------------
+{
+  m_dictionaryStruct.clear();
 }
 //----------------------------------------------------------------------------
 int lhpOpImporterC3D::ReadDataC3D()
@@ -307,68 +359,111 @@ int lhpOpImporterC3D::CloseC3D()
   return errcode;
 }
 //----------------------------------------------------------------------------
-void lhpOpImporterC3D::Initialize()
+void lhpOpImporterC3D::Initialize(const mafString &fullFileName, lhpOpImporterC3D::_InternalC3DData &intData)
 //----------------------------------------------------------------------------
 {
 	//initialize class members with read data 
   //Trajectories
-  m_NumTotTrajectories = getNumTraj();		//number of total trajectories(with angles, moments, powers)
-  m_NumFrames = getTotalFrameTraj();		  //number of frames
+  intData.m_NumTotTrajectories = getNumTraj();		//number of total trajectories(with angles, moments, powers)
+  intData.m_NumFrames = getTotalFrameTraj();		  //number of frames
 
   //Analog
-  m_NumChannels = getChannelsAnalog();    //channels number
-  m_NumSamples  = getTotalSamplesAnalog();//samples number
+  intData.m_NumChannels = getChannelsAnalog();    //channels number
+  intData.m_NumSamples  = getTotalSamplesAnalog();//samples number
 
   //Platforms
-  m_NumPlatforms = getPlatforms();        // platforms number
+  intData.m_NumPlatforms = getPlatforms();        // platforms number
 
   //Events
-  m_NumEvents = getEvents();              //events number
+  intData.m_NumEvents = getEvents();              //events number
 
   //derived
-  m_TrajectorySamplePeriod = ((double)m_LengthMs/(double)m_NumFrames) / 1000.0;
-  m_AnalogSamplePeriod = ((double)m_LengthMs/(double)m_NumSamples) / 1000.0;
-  m_VectogramSamplePeriod = m_AnalogSamplePeriod;
+  intData.m_TrajectorySamplePeriod = ((double)intData.m_LengthMs/(double)intData.m_NumFrames) / 1000.0;
+  intData.m_AnalogSamplePeriod = ((double)intData.m_LengthMs/(double)intData.m_NumSamples) / 1000.0;
+  intData.m_VectogramSamplePeriod = intData.m_AnalogSamplePeriod;
 
-  wxString fileName = m_C3DInputFileNameFullPath.GetCStr();
+  wxString fileName = fullFileName.GetCStr();
   fileName = fileName.AfterLast('\\').BeforeLast('.');
 
-  m_FileName = fileName;
+  intData.m_FileName = fileName;
 }
+//----------------------------------------------------------------------------
+mafVMEGroup *lhpOpImporterC3D::ImportSingleFile(const mafString &fullFileName, lhpOpImporterC3D::_InternalC3DData &intData)
+//----------------------------------------------------------------------------
+{
+	if(OpenC3D(fullFileName)==NOERROR)
+	{
+		//c3d read data
+		if(ReadHeaderC3D(intData)==NOERROR && ReadDataC3D() == NOERROR)
+		{
+      Initialize(fullFileName, intData);
+
+			//fill data structures
+
+      if(m_ImportTrajectoriesFlag || m_ImportAnalogFlag || m_ImportPlatformFlag || m_ImportEventFlag) 
+      {
+        mafNEW(intData.m_VmeGroup);
+        mafString resultName;
+        resultName.Append(intData.m_FileName);
+        resultName.Append("_C3D");
+        intData.m_VmeGroup->SetName(resultName);
+      }
+
+      if(m_ImportTrajectoriesFlag) 
+      {
+        ImportTrajectories(intData);
+        for(std::map<mafString, mafVMELandmarkCloud*>::iterator it = intData.m_Clouds.begin(); it != intData.m_Clouds.end(); ++it)
+        {
+          it->second->ReparentTo(intData.m_VmeGroup);
+        }
+        //intData.m_VmeCloud->ReparentTo(intData.m_VmeGroup);
+      }
+			if(m_ImportAnalogFlag) 
+      {
+        ImportAnalog(intData);	
+        intData.m_VmeAnalog->ReparentTo(intData.m_VmeGroup);
+      }
+			if(m_ImportPlatformFlag) 
+      {
+        ImportPlatform(intData);
+        for(int currentPlatform = 0; currentPlatform<intData.m_PlatformList.size(); currentPlatform++)
+        {
+          intData.m_PlatformList[currentPlatform]->ReparentTo(intData.m_VmeGroup);
+          intData.m_ForceList[currentPlatform]->ReparentTo(intData.m_PlatformList[currentPlatform]);
+          intData.m_MomentList[currentPlatform]->ReparentTo(intData.m_PlatformList[currentPlatform]);
+        }
+      }
+      if(m_ImportEventFlag) 
+      {
+        ImportEvent(intData);
+      }
+    }
+    CloseC3D();
+	}
+  return intData.m_VmeGroup;
+}
+
 //----------------------------------------------------------------------------
 bool lhpOpImporterC3D::Import()
 //----------------------------------------------------------------------------
 {
-	if(OpenC3D()==NOERROR)
-	{
-		//c3d read data
-		if(ReadHeaderC3D()==NOERROR && ReadDataC3D() == NOERROR)
-		{
-      Initialize();
-
-			//fill data structures
-      if(m_ImportTrajectoriesFlag) ImportTrajectories();
-			if(m_ImportAnalogFlag) ImportAnalog();	
-			if(m_ImportPlatformFlag) ImportPlatform();
-      if(m_ImportEventFlag) ImportEvent();
-
-			CloseC3D();
-			return true;
-		}
-		else
-		{
-			CloseC3D();
-			return false;
-		}
-    
-	}
-	else
-	{
-    return false; //however there is a precedent error
-	}
+  bool result = false;
+  Clear();
+  for(unsigned fileIndex = 0; fileIndex < m_C3DInputFileNameFullPaths.size(); fileIndex++)
+  {
+    _InternalC3DData intData;
+    mafVMEGroup *imported = ImportSingleFile(m_C3DInputFileNameFullPaths[fileIndex], intData);
+    if(imported != NULL)
+    {
+      result = true;
+      //m_VmeGroups.push_back(imported);
+      m_intData.push_back(intData);
+    }
+  }
+  return result;
 }
 //----------------------------------------------------------------------------
-void lhpOpImporterC3D::ImportTrajectories()
+void lhpOpImporterC3D::ImportTrajectories(lhpOpImporterC3D::_InternalC3DData &intData)
 //----------------------------------------------------------------------------
 {
   wxBusyInfo *wait;
@@ -377,104 +472,192 @@ void lhpOpImporterC3D::ImportTrajectories()
     wait = new wxBusyInfo("Please wait, import trajectories");
   }
 
-  mafNEW(m_VmeCloud);
-  mafString vmeCloudName;
-  vmeCloudName.Append(m_FileName);
-  vmeCloudName.Append("_TRAJECTORIES");
+  intData.m_Clouds.clear();
 
-  m_VmeCloud->SetName(vmeCloudName);
+  bool usingDictionary = (m_DictionaryFileName != "");
+  mafVMELandmarkCloud *specCloud = NULL;//the only cloud if read without dictionary and NOT_IN_DICTIONARY with
+  mafString specCloudName;//name of specCloud
+
+  specCloudName.Append(intData.m_FileName);
+  if(!usingDictionary)//without dictionary create cloud and set its name
+  {
+    mafNEW(specCloud);
+    if(specCloud == NULL)
+      return;
+    specCloudName.Append("_TRAJECTORIES");
+    specCloud->SetName(specCloudName);
+  }
+  else//with dictionary just prepare name, creation only if needed
+    specCloudName.Append("_NOT_IN_DICTIONARY");
+
 
   mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
   
   long progress = 0;
-  for(int currentFrame = 0; currentFrame < m_NumFrames; currentFrame++)
+  for(int currentFrame = 0; currentFrame < intData.m_NumFrames; currentFrame++)
   {
-    m_NumTrajectories=0;
-    m_NumAngles=0;
-    m_NumMoments=0;
-    m_NumPowers=0;
+    intData.m_NumTrajectories=0;
+    intData.m_NumAngles=0;
+    intData.m_NumMoments=0;
+    intData.m_NumPowers=0;
     //For every trajectory
-    for(int currentTrajectory=0; currentTrajectory<m_NumTotTrajectories; currentTrajectory++)
+    for(int currentTrajectory=0; currentTrajectory<intData.m_NumTotTrajectories; currentTrajectory++)
     {
       switch(getTypeTraj(currentTrajectory))
       {
       case TRAJECTORY:
         {
-          m_TrajectoryName=getNameTraj(currentTrajectory);		//trajectory name
+          intData.m_TrajectoryName=getNameTraj(currentTrajectory);		//trajectory name
+
           //control if m_Trajectory is not a phantom landmark(camera reflexes)
-          if(m_TrajectoryName[0] != '*')
+          if(intData.m_TrajectoryName[0] != '*')
           {
-            m_TrajectoryUnit=getUnitTraj(currentTrajectory);		//unit measure of trajectory
+            mafVMELandmarkCloud *addTo = specCloud;//by default add to this specific cloud
+            if(usingDictionary)
+            {
+              //find current trajectory name in dictionary
+              std::map<mafString, mafString>::iterator nmIt = m_dictionaryStruct.find(intData.m_TrajectoryName);
+              //trajectory name found
+              if(nmIt != m_dictionaryStruct.end())
+              {
+                //find corresponding cloud if already exists
+                std::map<mafString, mafVMELandmarkCloud*>::iterator clIt = intData.m_Clouds.find(nmIt->second);
+                //not created yet
+                if(clIt == intData.m_Clouds.end() || clIt->second == NULL)
+                {
+                  mafVMELandmarkCloud *cld = NULL;
+                  mafString cldName;
+                  //create cloud
+                  mafNEW(cld);
+                  //if created successfully use it
+                  if(cld != NULL)
+                  {
+                    cldName.Append(intData.m_FileName);
+                    cldName.Append("_");
+                    cldName.Append(nmIt->second);
+                    cld->SetName(cldName);
+                    intData.m_Clouds[nmIt->second] = cld;
+                    addTo = cld;
+                  }
+                  //clear and exit in case of problems in cloud creation, as we have not correct one, we cannot create new
+                  if(addTo == NULL)
+                  {
+                    for(std::map<mafString, mafVMELandmarkCloud*>::iterator it = intData.m_Clouds.begin(); it != intData.m_Clouds.end(); ++it)
+                    {
+                      mafDEL(it->second);
+                    }
+                    intData.m_Clouds.clear();
+                    return;
+                  }
+                }
+                //cloud is already created, just select it to use
+                else
+                {
+                  addTo = clIt->second;
+                }
+              }
+              //trajectory name not in dictionary
+              else
+              {
+                //if NOT_IN_DICTIONARY is not created yet, create it and use. in case of problems exit
+                if(specCloud == NULL)
+                {
+                  mafNEW(specCloud);
+                  //clear and exit in case of problems in cloud creation, as we have not correct one, we cannot create new
+                  if(specCloud == NULL)
+                  {
+                    for(std::map<mafString, mafVMELandmarkCloud*>::iterator it = intData.m_Clouds.begin(); it != intData.m_Clouds.end(); ++it)
+                    {
+                      mafDEL(it->second);
+                    }
+                    intData.m_Clouds.clear();
+                    return;
+                  }
+                  //select this cloud for using
+                  specCloud->SetName(specCloudName);
+                  addTo = specCloud;
+                }
+              }
+            }
+            intData.m_TrajectoryUnit=getUnitTraj(currentTrajectory);		//unit measure of trajectory
             bool visibility = isDefinedTraj(currentTrajectory, currentFrame);
             if(visibility)
             {
-              m_X = getXTraj(currentTrajectory, currentFrame);					//component x of the trajectory
-              m_Y = getYTraj(currentTrajectory, currentFrame);					//component y of the trajectory
-              m_Z = getZTraj(currentTrajectory, currentFrame);					//component z of the trajectory
+              intData.m_X = getXTraj(currentTrajectory, currentFrame);					//component x of the trajectory
+              intData.m_Y = getYTraj(currentTrajectory, currentFrame);					//component y of the trajectory
+              intData.m_Z = getZTraj(currentTrajectory, currentFrame);					//component z of the trajectory
             }
             else
             {
-              m_X = m_Y = m_Z = 0.0;
+              intData.m_X = intData.m_Y = intData.m_Z = 0.0;
             }
 
 
             if(currentFrame == 0)
             {
-              m_VmeCloud->AppendLandmark(m_X,m_Y,m_Z,m_TrajectoryName);
+              addTo->AppendLandmark(intData.m_X,intData.m_Y,intData.m_Z,intData.m_TrajectoryName);
             }
             else
             {
-              m_VmeCloud->SetLandmark(m_TrajectoryName,m_X,m_Y,m_Z,currentFrame * m_TrajectorySamplePeriod);
+              addTo->SetLandmark(intData.m_TrajectoryName,intData.m_X,intData.m_Y,intData.m_Z,currentFrame * intData.m_TrajectorySamplePeriod);
             }
 
-            m_VmeCloud->SetLandmarkVisibility(m_TrajectoryName,visibility,currentFrame * m_TrajectorySamplePeriod);
+            addTo->SetLandmarkVisibility(intData.m_TrajectoryName,visibility,currentFrame * intData.m_TrajectorySamplePeriod);
 
-            m_NumTrajectories++;
+            intData.m_NumTrajectories++;
           }
         }
         break;
       case ANGLE:
-        m_AngleName=getNameTraj(currentTrajectory);		//angle name
-        m_AngleUnit=getUnitTraj(currentTrajectory);		//unit measure of angle
+        intData.m_AngleName=getNameTraj(currentTrajectory);		//angle name
+        intData.m_AngleUnit=getUnitTraj(currentTrajectory);		//unit measure of angle
         if(isDefinedTraj(currentTrajectory, currentFrame))
         {
-          m_X = getXTraj(currentTrajectory, currentFrame);					//component x of angle
-          m_Y = getYTraj(currentTrajectory, currentFrame);					//component y of angle
-          m_Z = getZTraj(currentTrajectory, currentFrame);					//component z of angle
+          intData.m_X = getXTraj(currentTrajectory, currentFrame);					//component x of angle
+          intData.m_Y = getYTraj(currentTrajectory, currentFrame);					//component y of angle
+          intData.m_Z = getZTraj(currentTrajectory, currentFrame);					//component z of angle
         }
-        m_NumAngles++;
+        intData.m_NumAngles++;
         break;
       case MOMENT:
-        m_MomentName=getNameTraj(currentTrajectory);		//moment name
-        m_MomentUnit=getUnitTraj(currentTrajectory);		//unit measure of moment
+        intData.m_MomentName=getNameTraj(currentTrajectory);		//moment name
+        intData.m_MomentUnit=getUnitTraj(currentTrajectory);		//unit measure of moment
         if(isDefinedTraj(currentTrajectory, currentFrame))
         {
-          m_X = getXTraj(currentTrajectory, currentFrame);					//component x of the moment
-          m_Y = getYTraj(currentTrajectory, currentFrame);					//component y of the moment
-          m_Z = getZTraj(currentTrajectory, currentFrame);					//component z of the moment
+          intData.m_X = getXTraj(currentTrajectory, currentFrame);					//component x of the moment
+          intData.m_Y = getYTraj(currentTrajectory, currentFrame);					//component y of the moment
+          intData.m_Z = getZTraj(currentTrajectory, currentFrame);					//component z of the moment
         }
-        m_NumMoments++;
+        intData.m_NumMoments++;
         break;
       case POWER:
-        m_PowerName=getNameTraj(currentTrajectory);		//power name
-        m_PowerUnit=getUnitTraj(currentTrajectory);		//unit measure of power
+        intData.m_PowerName=getNameTraj(currentTrajectory);		//power name
+        intData.m_PowerUnit=getUnitTraj(currentTrajectory);		//unit measure of power
         if(isDefinedTraj(currentTrajectory, currentFrame))
         {
-          m_X = getXTraj(currentTrajectory, currentFrame);					//component x of power
-          m_Y = getYTraj(currentTrajectory, currentFrame);					//component y of power
-          m_Z = getZTraj(currentTrajectory, currentFrame);					//component z of power
+          intData.m_X = getXTraj(currentTrajectory, currentFrame);					//component x of power
+          intData.m_Y = getYTraj(currentTrajectory, currentFrame);					//component y of power
+          intData.m_Z = getZTraj(currentTrajectory, currentFrame);					//component z of power
         }
-        m_NumPowers++;
+        intData.m_NumPowers++;
         break;
       }
     }
 
-    progress = (currentFrame + 1) * 100 / m_NumFrames;
+    progress = (currentFrame + 1) * 100 / intData.m_NumFrames;
     mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,progress));
   }
-  
-  m_VmeCloud->Modified();
-  m_VmeCloud->Update();
+
+  //if specCloud exists add it to all clouds
+  if(specCloud != NULL)
+    intData.m_Clouds[specCloudName] = specCloud;
+
+
+  for(std::map<mafString, mafVMELandmarkCloud*>::iterator it = intData.m_Clouds.begin(); it != intData.m_Clouds.end(); ++it)
+  {
+    it->second->Modified();
+    it->second->Update();
+  }
 
   mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
 
@@ -484,7 +667,7 @@ void lhpOpImporterC3D::ImportTrajectories()
   }
 }
 //----------------------------------------------------------------------------
-void lhpOpImporterC3D::ImportAnalog()
+void lhpOpImporterC3D::ImportAnalog(lhpOpImporterC3D::_InternalC3DData &intData)
 //----------------------------------------------------------------------------
 {
   wxBusyInfo *wait;
@@ -497,50 +680,50 @@ void lhpOpImporterC3D::ImportAnalog()
   mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
 
   //name analog vme
-  mafNEW(m_VmeAnalog);
+  mafNEW(intData.m_VmeAnalog);
   mafString analogVmeName;
-  analogVmeName.Append(m_FileName);
+  analogVmeName.Append(intData.m_FileName);
   analogVmeName.Append("_ANALOG");
-  m_VmeAnalog->SetName(analogVmeName);
+  intData.m_VmeAnalog->SetName(analogVmeName);
 
   vnl_matrix<double> analogMatrix;
-  analogMatrix.set_size(m_NumChannels+1 , m_NumSamples); //set dimensions
+  analogMatrix.set_size(intData.m_NumChannels+1 , intData.m_NumSamples); //set dimensions
 
   std::vector<mafString> channelsNameList; //string array for channel name
 
   //For every Sample
-  for(int currentSample=0; currentSample<m_NumSamples; currentSample++)
+  for(int currentSample=0; currentSample < intData.m_NumSamples; currentSample++)
   {
-    int currentTime = currentSample * m_AnalogSamplePeriod;
+    int currentTime = currentSample * intData.m_AnalogSamplePeriod;
     
     analogMatrix.put(0,currentSample, currentTime); //fill first row with timeframe, every column is a time
 
     //For every channel
-    for(int currentChannel=0; currentChannel<m_NumChannels; currentChannel++)
+    for(int currentChannel=0; currentChannel < intData.m_NumChannels; currentChannel++)
     {
-      m_ChannelName=getNameAnalog(currentChannel);				            //channel name
-      m_AnalogValue=getValueAnalog(currentChannel, currentSample);	  //trajectory value
-      m_ChannelUnit=getUnitAnalog(currentChannel);				            //unit measure of analogic channel
+      intData.m_ChannelName=getNameAnalog(currentChannel);				            //channel name
+      intData.m_AnalogValue=getValueAnalog(currentChannel, currentSample);	  //trajectory value
+      intData.m_ChannelUnit=getUnitAnalog(currentChannel);				            //unit measure of analogic channel
 
-      if(currentSample == 0) channelsNameList.push_back(m_ChannelName);
+      if(currentSample == 0) channelsNameList.push_back(intData.m_ChannelName);
 
-      analogMatrix.put(currentChannel+1,currentSample, m_AnalogValue); //fill following rows with values, every channel is a row
+      analogMatrix.put(currentChannel+1,currentSample, intData.m_AnalogValue); //fill following rows with values, every channel is a row
     }
 
-    progress = (currentSample +1 ) * 100 / (m_NumSamples);
+    progress = (currentSample +1 ) * 100 / (intData.m_NumSamples);
     mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,progress));
   }
 
   mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
 
-  m_VmeAnalog->SetData(analogMatrix, 0);
+  intData.m_VmeAnalog->SetData(analogMatrix, 0);
 
   mafTagItem tag_Sig;
   tag_Sig.SetName("SIGNALS_NAME");
-  tag_Sig.SetNumberOfComponents(m_NumSamples);
-  m_VmeAnalog->GetTagArray()->SetTag(tag_Sig);
+  tag_Sig.SetNumberOfComponents(intData.m_NumSamples);
+  intData.m_VmeAnalog->GetTagArray()->SetTag(tag_Sig);
 
-  mafTagItem *tag_Signals = m_VmeAnalog->GetTagArray()->GetTag("SIGNALS_NAME");
+  mafTagItem *tag_Signals = intData.m_VmeAnalog->GetTagArray()->GetTag("SIGNALS_NAME");
   for (int n = 0; n < channelsNameList.size(); n++)
   {
     tag_Signals->SetValue(channelsNameList[n], n);
@@ -552,7 +735,7 @@ void lhpOpImporterC3D::ImportAnalog()
   }
 }
 //----------------------------------------------------------------------------
-void lhpOpImporterC3D::ImportPlatform()
+void lhpOpImporterC3D::ImportPlatform(lhpOpImporterC3D::_InternalC3DData &intData)
 //----------------------------------------------------------------------------
 {
   wxBusyInfo *wait;
@@ -565,25 +748,25 @@ void lhpOpImporterC3D::ImportPlatform()
   mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
 
   //For every platform
-  for(int currentPlatform=0; currentPlatform<m_NumPlatforms; currentPlatform++)
+  for(int currentPlatform=0; currentPlatform<intData.m_NumPlatforms; currentPlatform++)
   {
-    getCenterPlatform(currentPlatform, &m_CenterX, &m_CenterY);	//geometric center coordinate of the platform
-    getCornerPlatform(currentPlatform, 1, &m_X, &m_Y);			//corner coordinate  1
+    getCenterPlatform(currentPlatform, &intData.m_CenterX, &intData.m_CenterY);	//geometric center coordinate of the platform
+    getCornerPlatform(currentPlatform, 1, &intData.m_X, &intData.m_Y);			//corner coordinate  1
     double platformCorner1[2];
-    platformCorner1[0] = m_X;
-    platformCorner1[1] = m_Y;
-    getCornerPlatform(currentPlatform, 2, &m_X, &m_Y);			//corner coordinate  2
+    platformCorner1[0] = intData.m_X;
+    platformCorner1[1] = intData.m_Y;
+    getCornerPlatform(currentPlatform, 2, &intData.m_X, &intData.m_Y);			//corner coordinate  2
     double platformCorner2[2];
-    platformCorner2[0] = m_X;
-    platformCorner2[1] = m_Y;
-    getCornerPlatform(currentPlatform, 3, &m_X, &m_Y);			//corner coordinate  3
+    platformCorner2[0] = intData.m_X;
+    platformCorner2[1] = intData.m_Y;
+    getCornerPlatform(currentPlatform, 3, &intData.m_X, &intData.m_Y);			//corner coordinate  3
     double platformCorner3[2];
-    platformCorner3[0] = m_X;
-    platformCorner3[1] = m_Y;
-    getCornerPlatform(currentPlatform, 4, &m_X, &m_Y);			//corner coordinate  4
+    platformCorner3[0] = intData.m_X;
+    platformCorner3[1] = intData.m_Y;
+    getCornerPlatform(currentPlatform, 4, &intData.m_X, &intData.m_Y);			//corner coordinate  4
     double platformCorner4[2];
-    platformCorner4[0] = m_X;
-    platformCorner4[1] = m_Y;
+    platformCorner4[0] = intData.m_X;
+    platformCorner4[1] = intData.m_Y;
 
     double minX,maxX;
     double minY,maxY;
@@ -601,14 +784,14 @@ void lhpOpImporterC3D::ImportPlatform()
 
     mafVMESurface *platform;
     mafNEW(platform);
-    m_PlatformList.push_back(platform);
+    intData.m_PlatformList.push_back(platform);
     mafString platformNumber;
     platformNumber << (currentPlatform + 1) ;
     mafString platformName;
-    platformName.Append(m_FileName);
+    platformName.Append(intData.m_FileName);
     platformName.Append("_FORCE_PLATFORM_");
     platformName.Append(platformNumber);
-    m_PlatformList[currentPlatform]->SetName(platformName);
+    intData.m_PlatformList[currentPlatform]->SetName(platformName);
 
     double z = 0;
     double thickness = z - PLATFORM_THICKNESS;
@@ -616,27 +799,27 @@ void lhpOpImporterC3D::ImportPlatform()
     cube->SetBounds(minX,maxX,minY,maxY,thickness,z);
     
     //Create the mafVMESurface for the platforms
-    m_PlatformList[currentPlatform]->SetData(cube->GetOutput(), 0);
+    intData.m_PlatformList[currentPlatform]->SetData(cube->GetOutput(), 0);
 
     //force vector
     mafVMEVector *force;
     mafNEW(force);
-    m_ForceList.push_back(force);
+    intData.m_ForceList.push_back(force);
     mafString forceName;
-    forceName.Append(m_FileName);
+    forceName.Append(intData.m_FileName);
     forceName.Append("_GRF_");
     forceName.Append(platformNumber);
-    m_ForceList[currentPlatform]->SetName(forceName);
+    intData.m_ForceList[currentPlatform]->SetName(forceName);
 
     //moment vector
     mafVMEVector *moment;
     mafNEW(moment);
-    m_MomentList.push_back(moment);
+    intData.m_MomentList.push_back(moment);
     mafString momentName;
-    momentName.Append(m_FileName);
+    momentName.Append(intData.m_FileName);
     momentName.Append("_MOMENT_");
     momentName.Append(platformNumber);
-    m_MomentList[currentPlatform]->SetName(momentName);
+    intData.m_MomentList[currentPlatform]->SetName(momentName);
 
     vtkMAFSmartPointer<vtkPolyData> vectorForce;
     vtkMAFSmartPointer<vtkPoints> pointsForce;
@@ -654,25 +837,25 @@ void lhpOpImporterC3D::ImportPlatform()
 
     //For every sample
     int currentTime = 0;
-    for(int currentSample=0; currentSample<m_NumSamples; currentSample++)
+    for(int currentSample=0; currentSample<intData.m_NumSamples; currentSample++)
     {
-      m_CopX=getCOPX(currentPlatform, currentSample);			//x coordinate of COP
-      m_CopY=getCOPY(currentPlatform, currentSample);			//y coordinate of COP
+      intData.m_CopX=getCOPX(currentPlatform, currentSample);			//x coordinate of COP
+      intData.m_CopY=getCOPY(currentPlatform, currentSample);			//y coordinate of COP
 
-      m_ForceX=getFx(currentPlatform, currentSample);				//x component of force
-      m_ForceY=getFy(currentPlatform, currentSample);				//y component of force
-      m_ForceZ=getFz(currentPlatform, currentSample);				//z component  of force
+      intData.m_ForceX=getFx(currentPlatform, currentSample);				//x component of force
+      intData.m_ForceY=getFy(currentPlatform, currentSample);				//y component of force
+      intData.m_ForceZ=getFz(currentPlatform, currentSample);				//z component  of force
 
-      m_MomentX=getMx(currentPlatform, currentSample);				//x component of moment
-      m_MomentY=getMy(currentPlatform, currentSample);				//y component of moment
-      m_MomentZ=getMz(currentPlatform, currentSample);				//z component of moment
+      intData.m_MomentX=getMx(currentPlatform, currentSample);				//x component of moment
+      intData.m_MomentY=getMy(currentPlatform, currentSample);				//y component of moment
+      intData.m_MomentZ=getMz(currentPlatform, currentSample);				//z component of moment
 
-      currentTime = currentSample * m_VectogramSamplePeriod;
+      currentTime = currentSample * intData.m_VectogramSamplePeriod;
 
       //force      
       pointsForce->Reset();
       pointsForce->InsertPoint(0, 0, 0, 0);
-      pointsForce->InsertPoint(1, m_ForceX, m_ForceY, m_ForceZ);
+      pointsForce->InsertPoint(1, intData.m_ForceX, intData.m_ForceY, intData.m_ForceZ);
       cellArrayForce->Reset();
       cellArrayForce->InsertNextCell(2, pointIdForce);
       vectorForce->Update();
@@ -680,24 +863,24 @@ void lhpOpImporterC3D::ImportPlatform()
       vtkMAFSmartPointer<vtkTransformPolyDataFilter> transfVecForce;
       vtkMAFSmartPointer<vtkTransform> transfForce;
 
-      transfForce->Translate(m_CopX, m_CopY, z); //z = 0
+      transfForce->Translate(intData.m_CopX, intData.m_CopY, z); //z = 0
       transfVecForce->SetTransform(transfForce);
       transfVecForce->SetInput(vectorForce);
       transfVecForce->Update();
 
       
-      m_ForceList[currentPlatform]->SetData(transfVecForce->GetOutput(), currentTime); //look here times
+      intData.m_ForceList[currentPlatform]->SetData(transfVecForce->GetOutput(), currentTime); //look here times
 
-      m_ForceList[currentPlatform]->Modified();
-      m_ForceList[currentPlatform]->Update();
-      m_ForceList[currentPlatform]->GetOutput()->GetVTKData()->Update();
+      intData.m_ForceList[currentPlatform]->Modified();
+      intData.m_ForceList[currentPlatform]->Update();
+      intData.m_ForceList[currentPlatform]->GetOutput()->GetVTKData()->Update();
 
       //moment
       
       
       pointsMoment->Reset();
       pointsMoment->InsertPoint(0, 0, 0, 0);
-      pointsMoment->InsertPoint(1, m_MomentX, m_MomentY, m_MomentZ);
+      pointsMoment->InsertPoint(1, intData.m_MomentX, intData.m_MomentY, intData.m_MomentZ);
 
       cellArrayMoment->Reset();
       cellArrayMoment->InsertNextCell(2, pointIdMoment);  
@@ -706,19 +889,19 @@ void lhpOpImporterC3D::ImportPlatform()
       vtkMAFSmartPointer<vtkTransformPolyDataFilter> transfVecMoment;
       vtkMAFSmartPointer<vtkTransform> transfMoment;
 
-      transfMoment->Translate(m_CopX, m_CopY, z); //z = 0
+      transfMoment->Translate(intData.m_CopX, intData.m_CopY, z); //z = 0
       transfVecMoment->SetTransform(transfMoment);
       transfVecMoment->SetInput(vectorMoment);
       transfVecMoment->Update();
 
 
-      m_MomentList[currentPlatform]->SetData(transfVecMoment->GetOutput(), currentTime); //look here times
+      intData.m_MomentList[currentPlatform]->SetData(transfVecMoment->GetOutput(), currentTime); //look here times
 
-      m_MomentList[currentPlatform]->Modified();
-      m_MomentList[currentPlatform]->Update();
-      m_MomentList[currentPlatform]->GetOutput()->GetVTKData()->Update();
+      intData.m_MomentList[currentPlatform]->Modified();
+      intData.m_MomentList[currentPlatform]->Update();
+      intData.m_MomentList[currentPlatform]->GetOutput()->GetVTKData()->Update();
 
-      progress = (currentSample + 1 + (currentPlatform * m_NumSamples )) * 100 / (m_NumSamples * m_NumPlatforms);
+      progress = (currentSample + 1 + (currentPlatform * intData.m_NumSamples )) * 100 / (intData.m_NumSamples * intData.m_NumPlatforms);
       mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,progress));
     }
   }
@@ -730,14 +913,14 @@ void lhpOpImporterC3D::ImportPlatform()
   }
 }
 //----------------------------------------------------------------------------
-void lhpOpImporterC3D::ImportEvent()
+void lhpOpImporterC3D::ImportEvent(lhpOpImporterC3D::_InternalC3DData &intData)
 //----------------------------------------------------------------------------
 {
   //For every event
-  for(int currentEvent=0; currentEvent<m_NumEvents; currentEvent++)
+  for(int currentEvent=0; currentEvent<intData.m_NumEvents; currentEvent++)
   {
-    m_EventContext=getContextEvent(currentEvent);		//event context
-    m_EventValue=getValueEvent(currentEvent);				      //event value in seconds
+    intData.m_EventContext=getContextEvent(currentEvent);		//event context
+    intData.m_EventValue=getValueEvent(currentEvent);				      //event value in seconds
   }
 }
 //----------------------------------------------------------------------------
@@ -750,6 +933,8 @@ enum C3D_IMPORTER_ID
   ID_IMPORT_ANALOG,
   ID_IMPORT_PLATFORM,
   ID_IMPORT_EVENT,
+  ID_LOAD_DICT,
+  ID_CLEAR_DICT,
   ID_OK,
   ID_CANCEL,
 };
@@ -758,17 +943,19 @@ void lhpOpImporterC3D::CreateGui()
 //----------------------------------------------------------------------------
 {
   mafString wildcard = "c3d files (*.c3d)|*.c3d";
+  std::vector<std::string> files;
+  mafString f;
 
-  //int result = OP_RUN_CANCEL;
-  m_C3DInputFileNameFullPath = "";
-  
-  wxString f;
-  f = mafGetOpenFile(m_FileDir,wildcard).c_str(); 
-  if(!f.IsEmpty() && wxFileExists(f))
+  m_C3DInputFileNameFullPaths.clear();
   {
-    m_C3DInputFileNameFullPath = f;
-    //result = OP_RUN_OK;
+    mafGetOpenMultiFiles(m_FileDir,wildcard, files);
+    for(unsigned i = 0; i < files.size(); i++)
+    {
+      f = files[i].c_str();
+      m_C3DInputFileNameFullPaths.push_back(f);
+    }
   }
+
   //mafEventMacro(mafEvent(this,result));
 	m_Gui = new mmgGui(this);
 	m_Gui->Label("Select:", true);
@@ -777,8 +964,33 @@ void lhpOpImporterC3D::CreateGui()
   m_Gui->Bool(ID_IMPORT_ANALOG,_("Analog Data"),&m_ImportAnalogFlag,1);
   m_Gui->Bool(ID_IMPORT_PLATFORM,_("Force Plate Data"),&m_ImportPlatformFlag,1);
   //m_Gui->Bool(ID_IMPORT_EVENT,_("Auto Crop"),&m_ImportEventFlag,1);
+  m_Gui->Label("");
+  m_Gui->FileOpen(ID_LOAD_DICT, "Dictionary",  &m_DictionaryFileName, "*.txt");
+  m_Gui->Button(ID_CLEAR_DICT, "Clean", "", "Press to cancel using dictionary" );  
+
+  m_Gui->Enable(ID_CLEAR_DICT, (m_DictionaryFileName != ""));
 
 	m_Gui->OkCancel();
+}
+//----------------------------------------------------------------------------
+void lhpOpImporterC3D::DictionaryUpdate() 
+//----------------------------------------------------------------------------
+{
+  bool emptyName = (m_DictionaryFileName == "");
+  DestroyDictionary();
+  if(!emptyName)
+  {
+    if(!LoadDictionary())
+    {
+      wxLogMessage("Error reading dictionary.");
+      m_DictionaryFileName = "";
+    }
+  }
+  if(m_Gui)
+  {
+    m_Gui->Enable(ID_CLEAR_DICT, !emptyName);
+    m_Gui->Update();
+  }
 }
 //----------------------------------------------------------------------------
 void lhpOpImporterC3D::OnEvent(mafEventBase *maf_event) 
@@ -806,6 +1018,24 @@ void lhpOpImporterC3D::OnEvent(mafEventBase *maf_event)
         this->OpStop(OP_RUN_CANCEL);
       }
       break;
+      case ID_CLEAR_DICT:
+        {
+          m_DictionaryFileName = "";
+        }//WARNING! NO break operator here, execution will continue in ID_LOAD_DICT
+      case ID_LOAD_DICT:
+        {
+          DictionaryUpdate();
+          break;
+        }
+      case ID_IMPORT_TRAJECTORIES:
+        {
+          if(m_Gui)
+          {
+            m_Gui->Enable(ID_LOAD_DICT, m_ImportTrajectoriesFlag != 0);
+            m_Gui->Enable(ID_CLEAR_DICT, m_ImportTrajectoriesFlag != 0 && m_DictionaryFileName != "");
+          }
+          break;
+        }
       default:
         mafEventMacro(*e);
       break;
@@ -818,46 +1048,19 @@ void lhpOpImporterC3D::OpDo()
 //----------------------------------------------------------------------------
 {
   wxBusyInfo wait("Please wait, create all VMEs in tree");
-  
-  //trajectories -> landmark cloud (with landmarks) vme
-  if(m_ImportTrajectoriesFlag) m_VmeCloud->ReparentTo(m_Input);
 
-  //analog -> analog vme
-  if(m_ImportAnalogFlag) m_VmeAnalog->ReparentTo(m_Input);
-
-  //GRF -> platform , vectors (force, moment) vme
-  if(m_ImportPlatformFlag)
+  for(unsigned i = 0; i < m_intData.size(); i++)
   {
-    for(int currentPlatform = 0; currentPlatform<m_PlatformList.size(); currentPlatform++)
-    {
-      m_PlatformList[currentPlatform]->ReparentTo(m_Input);
-      m_ForceList[currentPlatform]->ReparentTo(m_PlatformList[currentPlatform]);
-      m_MomentList[currentPlatform]->ReparentTo(m_PlatformList[currentPlatform]);
-    }
+    m_intData[i].m_VmeGroup->ReparentTo(m_Input);
+    mafEventMacro(mafEvent(this, VME_ADD, m_intData[i].m_VmeGroup));
   }
-  
-  //if(m_ImportEventFlag);
 }
 //----------------------------------------------------------------------------
 void lhpOpImporterC3D::OpUndo()
 //----------------------------------------------------------------------------
 {   
-  if(m_VmeCloud != NULL)
-    mafEventMacro(mafEvent(this,VME_REMOVE,m_VmeCloud));
-
-  if(m_VmeAnalog != NULL)
-    mafEventMacro(mafEvent(this,VME_REMOVE,m_VmeAnalog));
-
-  for(int currentPlatform = 0; currentPlatform<m_PlatformList.size(); currentPlatform++)
+  for(unsigned i = 0; i < m_intData.size(); i++)
   {
-    if(m_PlatformList[currentPlatform] != NULL)
-      mafEventMacro(mafEvent(this,VME_REMOVE,m_PlatformList[currentPlatform]));
-
-    if(m_ForceList[currentPlatform] != NULL)
-      mafEventMacro(mafEvent(this,VME_REMOVE,m_ForceList[currentPlatform]));
-
-    if(m_MomentList[currentPlatform] != NULL)
-      mafEventMacro(mafEvent(this,VME_REMOVE,m_MomentList[currentPlatform]));
+      mafEventMacro(mafEvent(this, VME_REMOVE, m_intData[i].m_VmeGroup));
   }
-  
 }
