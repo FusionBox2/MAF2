@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-02-04 16:38:29 $
-  Version:   $Revision: 1.41 $
+  Date:      $Date: 2008-02-08 12:34:59 $
+  Version:   $Revision: 1.42 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -133,6 +133,12 @@
 //temporary for testing
 #include "mafViewSingleSliceCompound.h"
 
+#ifdef MAF_USE_ITK
+#include "lhpOpCreateSurfaceScalar.h"
+#include "lhpVMESurfaceScalarVarying.h"
+#endif
+#include "lhpVisualPipeSurfaceScalar.h"
+
 #include <vtkTimerLog.h>
 
 //--------------------------------------------------------------------------------
@@ -161,6 +167,12 @@ bool lhpBuilderApp::OnInit()
   mafPlugNode<mafVMERawMotionData>("VME representing raw motion data");
   mafPlugNode<mafVMEAFRefSys>("VME representing anatomical frame");
   mafPlugNode<mafVMEHelAxis>("VME representing helical axis");
+
+#ifdef MAF_USE_ITK
+  mafPlugNode<lhpVMESurfaceScalarVarying>("VME representing surface with attached time varying mafVMEScalar");
+#endif
+
+  mafPlugPipe<lhpVisualPipeSurfaceScalar>("Visual pipe to render a surface with its scalar values");
 
   m_Logic = new lhpBuilderLogic();
   m_Logic->GetTopWin()->SetTitle("LHPBuilder");
@@ -220,6 +232,9 @@ bool lhpBuilderApp::OnInit()
 
   //------------------------- Operations -------------------------
   m_Logic->Plug(new mmoCreateGroup("Group"),"Create/New");
+#ifdef MAF_USE_ITK
+  m_Logic->Plug(new lhpOpCreateSurfaceScalar("Surface Scalar"),"Create/Derive");
+#endif
   m_Logic->Plug(new mmoLnSurf("Lineset and surface"),"Create/Derive");
 	m_Logic->Plug(new mmoCreateRefSys("Refsys"),"Create/New");
   m_Logic->Plug(new mmoCreateSlicer("Slicer"),"Create/Derive");
@@ -301,7 +316,7 @@ bool lhpBuilderApp::OnInit()
 
 	mafViewVTK *vsurface = new mafViewVTK("Surface");
 	vsurface->PlugVisualPipe("mafVMESurface","mafPipeSurface");
-  vsurface->PlugVisualPipe("mafVMELandmark", "medPipeTrajectories");
+  //vsurface->PlugVisualPipe("mafVMELandmark", "medPipeTrajectories");
 	m_Logic->Plug(vsurface);
 
   mafViewIntGraph *vgraph = new mafViewIntGraph("Biomechanical graph");
