@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-02-07 13:20:18 $
-Version:   $Revision: 1.41 $
+Date:      $Date: 2008-02-14 12:01:13 $
+Version:   $Revision: 1.42 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -309,7 +309,7 @@ void lhpOpUploadVME::OpDo()
     command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
     command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
     command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
-    command2execute.Append(wxString::Format("%s ","http://devel.fec.cineca.it:12680/town/Members/portal_admin/test-lhp2")); //dev repository
+    command2execute.Append(wxString::Format("%s ","http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //dev repository
     //http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository prod
 
     command2execute.Append(wxString::Format("%s ",m_Input->GetName())); //vme name
@@ -319,8 +319,8 @@ void lhpOpUploadVME::OpDo()
     //wxMessageBox(wxString::Format("Process %ld is running.", m_Pid));
     //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
     m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
-    mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
-      command2execute.c_str(), m_Pid);
+    /*mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), m_Pid);*/
 
   }
   else
@@ -359,7 +359,7 @@ void lhpOpUploadVME::OpDo()
     command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
     command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
     command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
-    command2execute.Append(wxString::Format("%s ","http://devel.fec.cineca.it:12680/town/Members/portal_admin/test-lhp2")); //repository
+    command2execute.Append(wxString::Format("%s ","http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //repository
 
     command2execute.Append(wxString::Format("%s ",m_Input->GetName())); //vme name
 
