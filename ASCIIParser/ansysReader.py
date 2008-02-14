@@ -12,7 +12,10 @@
 from Debug import Debug
 import progressBar
 import os
-import sys, string, StringIO
+import sys, string
+
+from cStringIO import StringIO
+
 import unittest
 import shutil
 import re
@@ -54,7 +57,7 @@ class ansysReader:
         os.chdir(self.CacheFolderName)
           
         diskFile = open(self.InputAnsysFileName)
-        file = StringIO.StringIO()
+        file = StringIO()
         self.FileLinesNumber = 0
         for curr in diskFile.readlines() :
             self.FileLinesNumber += 1
@@ -192,7 +195,7 @@ class ansysReader:
         
     def StoreNodesToFile(self):
         """Store data to disk cache"""
-        memFile = StringIO.StringIO()
+        memFile = StringIO()
         for line in self.NodesMatrix:
             # print line
             # file.writelines
@@ -211,7 +214,7 @@ class ansysReader:
     
     def StoreElementsToFile(self):
         """Store data to disk cache"""
-        file = StringIO.StringIO()
+        file = StringIO()
         for line in self.ElementsMatrix:
             # print line
             # file.writelines
@@ -243,7 +246,7 @@ class ansysReader:
         
         """Store data to disk cache"""
         # ['0.0', 'EX', '2', '1000.0', 'NUXY', '2', '0.3']
-        file = StringIO.StringIO()
+        file = StringIO()
         for material in self.MaterialData:
                 
                 toWrite = "MATERIAL NUMBER =      %s EVALUATED AT TEMPERATURE OF   %s    " 
@@ -336,14 +339,29 @@ class ansysReader:
         
         while 1:
              
-            raw = []
             
             if Debug:
                 print "Processing line: " + line 
 
+            idTYPE = 0
+            idMAT = 1
+            idREAL = 2
+            
+            tmpLine = []            
+            TYPELine = []
+            
             try: 
                 TYPE = AnsysGrammar.typeMatReal.parseString( line )
-                raw.append(TYPE)
+
+                # Modify order to match ansys one
+                TYPELine.append(TYPE[idMAT])
+                TYPELine.append(TYPE[idTYPE])
+                TYPELine.append(TYPE[idREAL])
+                
+                if Debug:
+                    print TYPELine
+                    
+
             except ParseException:
                 if Debug:
                     print "cannot parse as TYPE line: " + line
@@ -364,6 +382,7 @@ class ansysReader:
                 #if Debug:
                     #print "cannot parse line: " + line
        #          break
+       
             
             while 1:
                
@@ -396,7 +415,7 @@ class ansysReader:
                 
                 try: 
                     EN = AnsysGrammar.connectivityLine.parseString(line)
-                    raw.append(EN)
+                    tmpLine.append(EN)
                 except ParseException:
                     if Debug:
                         print "cannot parse line as EN: " + line
@@ -412,7 +431,7 @@ class ansysReader:
                 
                 try: 
                     EMORE = AnsysGrammar.moreConnectivityLine.parseString( line )
-                    raw.append(EMORE)
+                    tmpLine.append(EMORE)
                 except ParseException:
                     if Debug:
                         print "cannot parse line as EMORE: " + line
@@ -450,7 +469,7 @@ class ansysReader:
                 element = []
                 
                 element.append(EN[0])
-                for component in TYPE:
+                for component in TYPELine:
                     element.append(component)
                 
                 # element.append(ESYS[0])

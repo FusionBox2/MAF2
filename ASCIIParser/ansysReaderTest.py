@@ -6,12 +6,13 @@
 
 import os
 import sys, string
+from cStringIO import StringIO
 import unittest
 
 from Debug  import Debug
 import ansysReader
 import shutil
-from pyparsing import Word, alphas, nums, ZeroOrMore, ParseException, Group, delimitedList, alphanums, Literal,Dict
+from pyparsing import Word, alphas, nums, ZeroOrMore, ParseException, Group, delimitedList, alphanums, Literal,Dict, Suppress
 import pprint
 
 class ansysReaderTest(unittest.TestCase):
@@ -100,7 +101,7 @@ class ansysReaderTest(unittest.TestCase):
         self.assertEqual(nodeSectionsNumber,1)
         self.assertEqual(elementDeclarationSectionsNumber, 2)
 
-    def testReaderV3(self):
+    def estReaderV3(self):
         
         # create the reader
         ar = ansysReader.ansysReader()
@@ -118,7 +119,7 @@ class ansysReaderTest(unittest.TestCase):
         self.assertEqual(elementDeclarationSectionsNumber, 2)
  
     
-    def testReaderV4(self):
+    def estReaderV4(self):
         
         # create the reader
         ar = ansysReader.ansysReader()
@@ -135,7 +136,7 @@ class ansysReaderTest(unittest.TestCase):
         self.assertEqual(nodeSectionsNumber,1)
         self.assertEqual(elementDeclarationSectionsNumber, 2)
 
-    def testReaderV5(self):
+    def estReaderV5(self):
         
         curDir =  os.getcwd()
         if Debug:
@@ -155,7 +156,32 @@ class ansysReaderTest(unittest.TestCase):
         
         self.assertEqual(nodeSectionsNumber,1)
         self.assertEqual(elementDeclarationSectionsNumber, 2)
+    
+    def testTetra10NodesIdJumpingMaterialsIdJumpingMaterialsGroupingNoTimevar(self):
         
+        curDir =  os.getcwd()
+        if Debug:
+            print curDir
+            
+        # create the reader
+        ar = ansysReader.ansysReader()
+        ar.InputAnsysFileName = self.StartDir + r'\testData\ansys\Tetra10NodesIdJumpingMaterialsIdJumpingMaterialsGroupingNoTimevar.inp'
+    
+        # set the file name
+        # read
+        
+        cargo = ar.Read()
+        
+        nodeSectionsNumber, elementDeclarationSectionsNumber, elementTypeSectionsNumber, \
+               materialsSectionsNumber , materialsMPTEMP_MPSectionsNumber = cargo
+        
+        self.assertEqual(nodeSectionsNumber,1)
+        self.assertEqual(elementDeclarationSectionsNumber, 5)
+        self.assertEqual(elementTypeSectionsNumber, 2)
+        self.assertEqual(materialsSectionsNumber, 0)
+        self.assertEqual(materialsMPTEMP_MPSectionsNumber, 4)
+    
+
     def estHugeAnsysFile(self):
         # approximately 2 minutes running for a 14 MB ansys file On a dual core Number 6600 with four gigabytes ram
         
@@ -167,8 +193,7 @@ class ansysReaderTest(unittest.TestCase):
         # read
         
         cargo = ar.Read()
-       
-    
+
 if __name__ == '__main__':
     unittest.main()
     

@@ -5,7 +5,9 @@
 #-----------------------------------------------------------------------------
 
 import os
-import sys, string, StringIO
+import sys, string
+
+from cStringIO import StringIO
 import unittest
 import ansysWriter
 
@@ -19,15 +21,33 @@ class ansysWriterTest(unittest.TestCase):
     
     def setUp(self):
         self.StartDir =  os.getcwd()
-        print self.StartDir
+        if Debug:            
+            print self.StartDir
         
         
     def tearDown(self):
         os.chdir(self.StartDir)
         
         
+        
+    def testAnsysWriterTetra10NodesIdJumpingMaterialsIdJumpingMaterialsGroupingNoTimevar(self):
+        
+        
+        exporter = ansysWriter.ansysWriter()
+        # write
+        
+        exporter.NodesFileName = self.StartDir + r'\testData\ansys\Tetra10NodesIdJumpingMaterialsIdJumpingMaterialsGroupingNoTimevar\NLIST.txt'
+        
+        exporter.ElementsFileName = self.StartDir + r'\testData\ansys\Tetra10NodesIdJumpingMaterialsIdJumpingMaterialsGroupingNoTimevar\ELIST.txt'
+        
+        exporter.MaterialsFileName = self.StartDir + r'\testData\ansys\Tetra10NodesIdJumpingMaterialsIdJumpingMaterialsGroupingNoTimevar\MPLIST.txt'
+        
+        exporter.AnsysOutputFileName = self.StartDir + r'\testData\ansys\Tetra10NodesIdJumpingMaterialsIdJumpingMaterialsGroupingNoTimevar\AnsysOutput.inp'
+         
+        exporter.Write()
+        
     
-    def testAnsysWriter(self):
+    def estAnsysWriterTetra10TrivialMesh(self):
         
         # create the ansys writer
         
@@ -41,17 +61,15 @@ class ansysWriterTest(unittest.TestCase):
         
         exporter = ansysWriter.ansysWriter()
         # write
-        exporter.NodesFileName = r"D:\vapps\openMAF_ITK_Parabuild\Testing\unittestData\FEM\ANSYS\tet10\NLISTMaterialsWritten.txt"
+        exporter.NodesFileName = self.StartDir + r'\testData\ansys\Tetra10TrivialMesh\NLIST.lis'
         
-        exporter.ElementsFileName = r"D:\vapps\openMAF_ITK_Parabuild\Testing\unittestData\FEM\ANSYS\tet10\ELISTMaterialsWritten.txt"
+        exporter.ElementsFileName = self.StartDir + r'\testData\ansys\Tetra10TrivialMesh\ELIST.lis'
         
-        exporter.MaterialsFileName = r"D:\vapps\openMAF_ITK_Parabuild\Testing\unittestData\FEM\ANSYS\tet10\MPLISTMaterialsWritten.txt"
+        exporter.MaterialsFileName = self.StartDir + r'\testData\ansys\Tetra10TrivialMesh\MPLIST.lis'
             
-        exporter.AnsysOutputFileName = "AnsysOutput.inp"
+        exporter.AnsysOutputFileName = self.StartDir + r'\testData\ansys\Tetra10TrivialMesh\AnsysOutput.inp'
          
         exporter.Write()
-        
-        
         
 if __name__ == '__main__':
     unittest.main()

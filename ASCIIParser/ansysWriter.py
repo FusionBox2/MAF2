@@ -5,14 +5,16 @@
 #-----------------------------------------------------------------------------
 
 import os
-import sys, string, StringIO
-import unittest
+import sys, string
 
+import unittest
+from cStringIO import StringIO
 from Debug  import Debug
 import ansysReader
 import shutil
 from pyparsing import Word, alphas, nums, ZeroOrMore, ParseException, Group, delimitedList, alphanums, Literal,Dict, Suppress
 import pprint
+import progressBar
 
 class ansysWriter:
         
@@ -24,9 +26,11 @@ class ansysWriter:
         self.  MaterialsFileName = "UNDEFINED"
         self.AnsysOutputFileName = "AnsysOutput.inp"
         
-        # self.ProgressBar = progressBar.progressBar()
+        self.ProgressBar = progressBar.progressBar()
             
     def Write(self):
+        
+        self.PrintProgress(0)
         
         self.AnsysHeader = r"""/TITLE,
 /COM,lhpBuilder generated
@@ -61,6 +65,7 @@ DOF,  DELETE,        ,        ,        ,        ,        ,        ,        ,    
         
         # write nodes section
         
+        
         self.NodesNSectionList = []
         
         self.ParsedLineNumber = 0
@@ -79,6 +84,7 @@ DOF,  DELETE,        ,        ,        ,        ,        ,        ,        ,    
             "," + ansysSeparator + row[2] + \
             "," + ansysSeparator + row[3] + '\n'
             
+
             self.NodesNSectionList.append(ansysNodesLine)
             
             
@@ -100,11 +106,10 @@ DOF,  DELETE,        ,        ,        ,        ,        ,        ,        ,    
         N,3,             0.0,             1.0,             0.0
         """
 
+        self.PrintProgress(20)
+        
         # write materials section
-        
-        
-
-                
+                 
         self.MaterialsMatrix = []
 
         diskFile = open(self.MaterialsFileName)
@@ -195,10 +200,10 @@ DOF,  DELETE,        ,        ,        ,        ,        ,        ,        ,    
             
             print "Materials ID List:"
             print self.MaterialsIDList
-            
+
+        self.PrintProgress(40)
+        
         # write elements section
-
-
                 
         self.ElementsMatrix = []
 
@@ -237,11 +242,13 @@ ESEL, ALL
         
         self.ElementsSectionList = []
         
+        groupsDictionary = {}
+           
         for row in self.ElementsMatrix:
             
             elementIdColumn = 0
-            typeColumn = 1
-            materialColumn = 2
+            materialColumn = 1
+            typeColumn = 2
             realColumn = 3
             esysColumn = 4
             compColumn = 5
@@ -252,52 +259,93 @@ ESEL, ALL
             if Debug:
                 print rowSplit
             
+            currentGroupKey =  str(rowSplit[materialColumn]) + "_" + str(rowSplit[typeColumn])
+            
+            hasKey = groupsDictionary.has_key(currentGroupKey)
+            
+            # check if this group already exist
 
-            pointsNumber = len(rowSplit) - headerSize
+            if hasKey == False:
+                # create new group
+                groupsDictionary[currentGroupKey] = []
+                groupsDictionary[currentGroupKey].append(rowSplit)
+                
+                if Debug:
+                    print "key: " + str(currentGroupKey) + " not found! creating new group"
+                    print groupsDictionary[currentGroupKey]
+            
+            else:
+                groupsDictionary[currentGroupKey].append(rowSplit)
+                if Debug:
+                    print "key: " + str(currentGroupKey) + " found! appending... " + str(rowSplit) 
+            
+         
+        # for each group key create an element group 
+        for key in groupsDictionary:
+            
+            # print type mat real stuff...
+             
+            groupElementsMatrix = groupsDictionary[key]
+           
+            probeLine = groupElementsMatrix[0]
+            
+            pointsNumber = len(probeLine) - headerSize
             if Debug:
                 print "Number of points: " + str(pointsNumber)
-                
-                
-            typeLine =  "TYPE, " + str(rowSplit[typeColumn]) + \
-                  " $ MAT, " + str(rowSplit[materialColumn]) + \
-                  " $ REAL, " +  str(rowSplit[realColumn])+ '\n'
+                print "Group: " + str(probeLine[materialColumn]) + " , " + str(probeLine[typeColumn])
+                   
+                typeLine =  "TYPE, " + str(probeLine[typeColumn]) + \
+                  " $ MAT, " + str(probeLine[materialColumn]) + \
+                  " $ REAL, " +  str(probeLine[realColumn])+ '\n'
             
             self.ElementsSectionList.append(typeLine)
-            
-            esysLine =  "ESYS, " + str(rowSplit[esysColumn])+ '\n'
-            self.ElementsSectionList.append(esysLine)
-            
-            ENPointsNumber = -1
-            
-            if pointsNumber  > 8: 
-                ENPointsNumber = 8
-            else:
-                ENPointsNumber = pointsNumber
-                
-            enLine = "EN," + ansysSeparator + str(rowSplit[elementIdColumn]) 
 
-            for point in rowSplit[headerSize:(headerSize + ENPointsNumber)]:
-                 enLine = enLine + "," + ansysSeparator  + str(point)
+            # commented since it is not present in Test Files
+            # esysLine =  "ESYS, " + str(probeLine[esysColumn])+ '\n'
+            # self.ElementsSectionList.append(esysLine)
             
-            self.ElementsSectionList.append(enLine + '\n')
-                 
-            if Debug:
-                print enLine
             
-            if pointsNumber  > 8: 
+            # for each element in group...
+            
+            for elementRow in groupElementsMatrix:
                 
-                # if the element has more than 8 nodes write the EMORE line also
-                emoreLine = "EMORE"
-
-                for point in rowSplit[(headerSize + ENPointsNumber):]:
-                     emoreLine = emoreLine + "," + ansysSeparator  + str(point)
-                
-                self.ElementsSectionList.append(emoreLine + '\n')
                 if Debug:
-                    print emoreLine
+                    print "element row: "
+                    print elementRow
+
+    
+                ENPointsNumber = -1
+                
+                
+                if pointsNumber  > 8: 
+                    ENPointsNumber = 8
+                else:
+                    ENPointsNumber = pointsNumber
                     
-            cmLine  = "CM, TYPE" + str(rowSplit[typeColumn]) + "-REAL" + str(rowSplit[realColumn]) \
-                  + "-MAT" + str(rowSplit[materialColumn]) + ", ELEM" + '\n'
+                enLine = "EN," + ansysSeparator + str(elementRow[elementIdColumn]) 
+    
+                for point in elementRow[headerSize:(headerSize + ENPointsNumber)]:
+                     enLine = enLine + "," + ansysSeparator  + str(point)
+                
+                self.ElementsSectionList.append(enLine + '\n')
+                     
+                if Debug:
+                    print enLine
+                
+                if pointsNumber  > 8: 
+                    
+                    # if the element has more than 8 nodes write the EMORE line also
+                    emoreLine = "EMORE"
+    
+                    for point in elementRow[(headerSize + ENPointsNumber):]:
+                         emoreLine = emoreLine + "," + ansysSeparator  + str(point)
+                    
+                    self.ElementsSectionList.append(emoreLine + '\n')
+                    if Debug:
+                        print emoreLine
+                        
+            cmLine  = "CM, TYPE" + str(elementRow[typeColumn]) + "-REAL" + str(elementRow[realColumn]) \
+                  + "-MAT" + str(elementRow[materialColumn]) + ", ELEM" + '\n'
             self.ElementsSectionList.append(cmLine)
             
             
@@ -307,8 +355,24 @@ ESEL, ALL
             print "Elements Matrix: " + '\n'
             for line in self.ElementsSectionList:
                 print line
+                
+        self.PrintProgress(60)
+        
+        # ET section
+        
+        # gather groups id
+        ETGroupsIdDictionary = {}
+        
+        for key in groupsDictionary:
+            pos = key.rfind("_")
+            groupId = key[pos + 1:]
+            if ETGroupsIdDictionary.has_key(groupId) == False:
+                ETGroupsIdDictionary[groupId] = "dummy val"
+
         
         # probe for element type
+   
+        
         nodesPerElement = len(self.ElementsMatrix[0].split()) - 6
             
         elementId = -1
@@ -327,8 +391,8 @@ ESEL, ALL
             print "Element ANSYS Id: " + str(elementId)
 
         self.MaterialsETSectionList = []
-        for row in self.MaterialsIDList:
-            etLine = "ET," + row[0] + "," + str(elementId) + '\n'
+        for key in ETGroupsIdDictionary:
+            etLine = "ET," + key + "," + str(elementId) + '\n'
             self.MaterialsETSectionList.append(etLine)
             
         if Debug:
@@ -339,8 +403,9 @@ ESEL, ALL
         
         self.EndSection = "FINISH"
         
-        # write output file
+        self.PrintProgress(80)
         
+        # write output         
         
         ansysOutputFile = open(self.AnsysOutputFileName, 'w')
         self.FileLinesNumber = 0
@@ -390,6 +455,14 @@ ESEL, ALL
         ansysOutputFile.write('\n')
         ansysOutputFile.writelines(self.EndSection)
         ansysOutputFile.write('\n')
+
+
+
+        self.PrintProgress(100)
+        
+    def PrintProgress(self,progress):
+        self.ProgressBar.updateAmount(progress)
+        print self.ProgressBar, '\r'
     
 def Run(nodesFileName , elementsFileName , materialsFileName, ansysOutputFileName  ):                                            
     exporter = ansysWriter()
