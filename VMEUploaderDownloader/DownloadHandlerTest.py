@@ -13,12 +13,12 @@ class DownloadHandlerTest(unittest.TestCase):
         
         queue = Queue.Queue()
         observer = None
-        dirCache = self.curDir + r'\msf_test_import_export_VME'  #dir  where read msf
+        dirCache = self.curDir + r'\msf_test_import_export_VME\\'  #dir  where read msf
         id = 5
         if(os.path.exists(dirCache) == False): os.mkdir(dirCache)
         urlServer = 'http://devel.fec.cineca.it:12680/town/Members/portal_admin/test-lhp2'
-        usr = 'danno' #substitute 
-        pwd = 'jibiki' #substitute
+        usr = 'user' #substitute 
+        pwd = 'pwd' #substitute
         srbData = 'Data_63'
         fileSize = 437
         downloadHandler = DownloadHandler.DownloadHandler(queue, observer, dirCache, srbData , usr , pwd, urlServer, fileSize)

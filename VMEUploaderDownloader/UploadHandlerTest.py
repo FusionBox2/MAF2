@@ -17,8 +17,8 @@ class UploadHandlerTest(unittest.TestCase):
         id = 5
         if(os.path.exists(dirCache) == False): os.mkdir(dirCache)
         if(os.path.exists(dirOutgoing) == False ): os.mkdir(dirOutgoing)
-        server = 'http://devel.fec.cineca.it:12680/town/Members/portal_admin/test-lhp2'
-        uploadHandler = UploadHandler.UploadHandler(queue,observer, dirCache, id , "danno", "jibiki",server)
+        server = 'http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2'
+        uploadHandler = UploadHandler.UploadHandler(queue,observer, dirCache, id , "putUSer", "putPassword",server)
         uploadHandler.upload()
     
 if __name__ == '__main__':

@@ -21,35 +21,32 @@ class UploadHandler:
         self.msg = 0
         self.binaryFileSize = 0
         self.remoteTemporaryBinaryFileSize = 0
-        self.BinaryURI = ""
+        self.BinaryURI = ''
         self.XMLURI = ""
         self.block = threading.Lock()
         self.threads = []
-        self.count = 0
-        
-    def Testfunction(self):
-        count = 0
-        while(count < 100):
-            count = count +0.0001
-            if (count % 100 == 0): print "DENTRO THREAD"
-            self.BinaryURI = str(count)
-            self.count = count
             
-		
     def upload(self):
         #get free resource (return URI string)
         self.BinaryURI = self.getFreeResource() #thread maybe
-        
+        #thread.start_new_thread(self.getFreeResource,())
+        print self.BinaryURI
         #-1 percentage means progress pulsing 
-        percentage = -1
+        
+        
         """
-        while(self.count < 100):
+        percentage = -1
+        while(1):
             lista = [self.observer,percentage]
             #print self.BinaryURI
-            time.sleep(0.5)
+            time.sleep(0.1)
             self.block.acquire()
+            print "Testing  " + self.BinaryURI
             UploadHandler.queue.put(lista)
             self.block.release()
+            if(self.BinaryURI != ''):
+               break
+        return #used for test
         """
 
         """
@@ -57,7 +54,7 @@ class UploadHandler:
             print "Connection Problems..."
             return
         """
-
+        
         self.createXMLAndBinary()
         
         #launch external XML editor
@@ -66,36 +63,45 @@ class UploadHandler:
 
         #self.remoteTemporaryBinaryFileSize = self.getRemoteTemporaryBinaryFileSize()
         #send file
-        thread.start_new_thread(self.sendBinaryFile,())      
-        #self.sendBinaryFile() #until there is service monitor don't use thread
+        thread.start_new_thread(self.sendBinaryFile,())
+        #self.sendBinaryFile() #until there is service monitor don't use thread 
         
         print "Wainting for sending binary..."
         print "Total Size of Binary: " + str(self.binaryFileSize)
         binarySendResult = False
+        oldTemporarySize = -1
         while 1:
             # To simulate asynchronous I/O, we create a random number at
             # random intervals. Replace the following 2 lines with the real
             # thing.
-            time.sleep(0.5)
-            self.remoteTemporaryBinaryFileSize = self.getRemoteTemporaryBinaryFileSize()
-            print self.remoteTemporaryBinaryFileSize , self.binaryFileSize
+            time.sleep(0.2)
+            #self.remoteTemporaryBinaryFileSize = self.getRemoteTemporaryBinaryFileSize()
+            #print self.remoteTemporaryBinaryFileSize , self.binaryFileSize
             
-            #self.remoteTemporaryBinaryFileSize = self.remoteTemporaryBinaryFileSize +10000
+            thread.start_new_thread(self.getRemoteTemporaryBinaryFileSize,())
+            
+            if(oldTemporarySize == self.remoteTemporaryBinaryFileSize): continue
             if(self.remoteTemporaryBinaryFileSize == -1):
                 break
+            
+            oldTemporarySize = self.remoteTemporaryBinaryFileSize
+            #self.remoteTemporaryBinaryFileSize = self.remoteTemporaryBinaryFileSize +10000
+            
             percentage = 100 * self.remoteTemporaryBinaryFileSize / self.binaryFileSize
             lista = [self.observer,percentage]
+            print "bytes: " + str(self.remoteTemporaryBinaryFileSize)
+            print "p: " + str(percentage)
             self.block.acquire()
             UploadHandler.queue.put(lista)
             self.block.release()
-            if(percentage == 100):
+            if(percentage >= 100):
                 binarySendResult = True
                 break
 
         #send xml file, perhaps here free source
         if(binarySendResult == True):
           print "Waiting for sending XML..."
-          #self.sendXMLFile()
+          self.sendXMLFile()
         
           print "End Upload"
           print "Uploaded Binary in SRB: " + self.BinaryURI
@@ -104,7 +110,7 @@ class UploadHandler:
           print "In server url: " + self.urlServer
         
         else:
-          print "Upload Error"
+          print "Upload Error on Binary"
 		
     def createXMLAndBinary(self):
         curDir = sys.path[0]
@@ -145,11 +151,14 @@ class UploadHandler:
     def getFreeResource(self):
         #here call module to get URI of first free resource
         instance = MtomUploadURI.MtomUploadURI()
-        self.BinaryURI = instance.ListSrbDir()
+        serviceUrl = 'https://ws-lhdl-dev.cineca.it:12443/mafSRBUploadURI.cgi'        
+        return instance.ListSrbDir(serviceUrl)
+        #print 'Inside FreeResource Thread ' + self.BinaryURI
 
     def sendBinaryFile(self):
         os.rename(self.dirOutgoing + "\\" + self.getBinaryFile(),self.dirOutgoing + "\\" +self.BinaryURI)
         self.__sendFile(self.BinaryURI)
+        print "Sending Thread Finished"
 		
     def sendXMLFile(self):
         self.XMLURI = self.BinaryURI + "_" +self.getXMLFile()
@@ -160,6 +169,7 @@ class UploadHandler:
         
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
         ws.setCredentials(self.currentUser, self.currentPassword)
+        ws.setServer(self.urlServer)
         out = ws.run('xmlupload', self.XMLURI)
         
         os.chdir(oldDir)
@@ -169,7 +179,7 @@ class UploadHandler:
         os.chdir(self.dirOutgoing)
         
         instance = MtomUpload.MtomUpload()
-        result = instance.Upload(filename)
+        result = instance.Upload(filename,'https://ws-lhdl-dev.cineca.it:12443/mafSRBUpload.cgi')
         
         cheksum = result.chksum
         uri = result.uriFile
@@ -179,9 +189,11 @@ class UploadHandler:
         
     def getRemoteTemporaryBinaryFileSize(self):
         instance = MtomSRBSize.MtomSize()
-        result = instance.ListSrbDir(self.BinaryURI)
+        serviceUrl = 'https://ws-lhdl.cineca.it/mafSRBSize.cgi'
+        result = instance.ListSrbDir(self.BinaryURI, serviceUrl)
         self.remoteTemporaryBinaryFileSize = result;
-        return result;
+        #print "RESIZE Thread Finished " + str(self.remoteTemporaryBinaryFileSize) 
+        #return result;
         
 
     def getXMLFile(self):
