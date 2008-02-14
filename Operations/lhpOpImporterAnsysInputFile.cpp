@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterAnsysInputFile.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-02-14 15:33:03 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2008-02-14 15:53:48 $
+  Version:   $Revision: 1.4 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -98,7 +98,7 @@ int lhpOpImporterAnsysInputFile::Read()
 {
   if (!m_TestMode)
   {
-    wxBusyInfo wait(_("Writing file: ..."));
+    wxBusyInfo wait(_("Loading file: ..."));
   }
 	
   wxArrayString output;

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpExporterAnsysInputFile.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-02-05 15:33:50 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-02-14 15:53:48 $
+  Version:   $Revision: 1.2 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -98,7 +98,7 @@ int lhpOpExporterAnsysInputFile::Read()
 {
   if (!m_TestMode)
   {
-    wxBusyInfo wait(_("Loading file: ..."));
+    wxBusyInfo wait(_("Writing file: ..."));
   }
 
   m_NodesFileName = m_CacheDir + "\\AnsysExporterNodes.lis" ;
