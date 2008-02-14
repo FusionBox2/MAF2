@@ -14,7 +14,9 @@ class MtomDownloadTest(unittest.TestCase):
             isHere = True
         except:
             pass
-        self.assertEqual(MtomDownload().Download(testFile), True)
+        serviceUrl = 'https://ws-lhdl-dev.cineca.it:12443/mafSRBDownload.cgi'
+        self.assertEqual(MtomDownload().Download(testFile,serviceUrl), True)
+        
         if isHere:
             f1 = open(testFile, 'rb')
             f2 = open(testFileOLD, 'rb')

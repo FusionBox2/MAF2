@@ -68,10 +68,4 @@ MtomDownload_swigregister = _MtomDownload.MtomDownload_swigregister
 MtomDownload_swigregister(MtomDownload)
 
 
-if __name__ == "__main__":
-    import sys
-    if len(sys.argv) != 2:
-        print "Error: wrong args.\nUsage: %s <filename>" % str(sys.argv[0])
-        sys.exit(1)
 
-    MtomDownload().Download(sys.argv[1])

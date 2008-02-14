@@ -181,7 +181,7 @@ class xmlrpc_demoWS:
         password = self.Password
     
         # production server
-        # url = 'http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository'
+        # url = 'http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2'
         
         # development server
         url = self.ServerURL

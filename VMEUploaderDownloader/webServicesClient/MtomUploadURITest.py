@@ -5,7 +5,7 @@ class MtomUploadURITest(unittest.TestCase):
     """"""
     def testUploadURI(self):
         instance = MtomUploadURI.MtomUploadURI()
-        result = instance.ListSrbDir()
+        result = instance.ListSrbDir('https://ws-lhdl-dev.cineca.it:12443/mafSRBUploadURI.cgi')
         #self.assertEqual(, True)
         print "Test Upload URI"
         print result

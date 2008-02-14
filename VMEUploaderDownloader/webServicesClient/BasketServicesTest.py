@@ -32,11 +32,13 @@ class XmlUploadDownloadTest(unittest.TestCase):
 </methodResponse>
 '''
 
+        #ws.setCredentials('PutUser','PutPassword')
         #list
         print "list basket"
         out = ws.run('listbasket')
         self.assertEqual(out[0], True)
         self.assertEqual(out[1], res1)
+        #print out[1]
         print "done!"
         
         #add
@@ -51,6 +53,7 @@ class XmlUploadDownloadTest(unittest.TestCase):
         out = ws.run('listbasket')
         self.assertEqual(out[0], True)
         self.assertEqual(out[1], res2)
+        #print out[1]
         print "done!"
             
         #delete 
