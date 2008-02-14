@@ -294,11 +294,11 @@ ESEL, ALL
                 print "Number of points: " + str(pointsNumber)
                 print "Group: " + str(probeLine[materialColumn]) + " , " + str(probeLine[typeColumn])
                    
-                typeLine =  "TYPE, " + str(probeLine[typeColumn]) + \
-                  " $ MAT, " + str(probeLine[materialColumn]) + \
-                  " $ REAL, " +  str(probeLine[realColumn])+ '\n'
-            
-                self.ElementsSectionList.append(typeLine)
+            typeLine =  "TYPE, " + str(probeLine[typeColumn]) + \
+              " $ MAT, " + str(probeLine[materialColumn]) + \
+              " $ REAL, " +  str(probeLine[realColumn])+ '\n'
+        
+            self.ElementsSectionList.append(typeLine)
 
             # commented since it is not present in Test Files
             # esysLine =  "ESYS, " + str(probeLine[esysColumn])+ '\n'
