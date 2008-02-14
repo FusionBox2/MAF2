@@ -298,7 +298,7 @@ ESEL, ALL
                   " $ MAT, " + str(probeLine[materialColumn]) + \
                   " $ REAL, " +  str(probeLine[realColumn])+ '\n'
             
-            self.ElementsSectionList.append(typeLine)
+                self.ElementsSectionList.append(typeLine)
 
             # commented since it is not present in Test Files
             # esysLine =  "ESYS, " + str(probeLine[esysColumn])+ '\n'
