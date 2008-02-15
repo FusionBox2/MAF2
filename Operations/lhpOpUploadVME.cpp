@@ -2,9 +2,9 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-02-14 12:01:13 $
-Version:   $Revision: 1.42 $
-Authors:   Daniele Giunchi, Stefano Perticoni
+Date:      $Date: 2008-02-15 10:52:02 $
+Version:   $Revision: 1.43 $
+Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
 SCS s.r.l. - BioComputing Competence Centre (www.scsolutions.it - www.b3c.it)
@@ -114,7 +114,6 @@ mafOp(label)
 
   m_AutoTagsListFromXMLDictionaryFileName = "autoTagsList.txt";
   m_ManualTagsListFromXMLDictionaryFileName = "manualTagsList.txt";
-  m_UnhandledPlusManualTagsFileName = "unhandledPlusManualTagsList.csv";
   m_HandledAutoTagsFileName = "handledAutoTagsList.csv";
 
   m_HandledAutoTagsListFromFactory.Clear();
@@ -201,7 +200,6 @@ void lhpOpUploadVME::LoadConnectionConfigurationFile()
     configurationFile >> tmp;
     m_ProxyURL = tmp.c_str();
     
-    
     configurationFile >> tmp;
     m_ProxyPort = tmp.c_str();
      
@@ -261,17 +259,19 @@ void lhpOpUploadVME::OnEvent(mafEventBase *maf_event)
 void lhpOpUploadVME::OpDo()   
 //----------------------------------------------------------------------------
 {
-	if(!CreateBaseCacheAndOutgoingDirectories())
+
+  if(!CreateBaseCacheAndOutgoingDirectories())
 	{
 		wxMessageBox("Unable to create Cache Base Directory");
 		return;
 	}
 
-	if(!CreateCache())
-	{
+   if(!CreateCache())
+	 {
 		wxMessageBox("Unable to create a temporary cache, remember that msf must be saved locally");
 		return;
 	}
+    
 
   int ret = this->GeneratesTagsListsFromXMLDictionary();
   if (ret == MAF_ERROR)
@@ -312,7 +312,8 @@ void lhpOpUploadVME::OpDo()
     command2execute.Append(wxString::Format("%s ","http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //dev repository
     //http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository prod
 
-    command2execute.Append(wxString::Format("%s ",m_Input->GetName())); //vme name
+    command2execute.Append(wxString::Format("%s ",m_NodeName)); //vme name
+    command2execute.Append(wxString::Format("%s ", m_CsvName.c_str())); //manualTagFile
     //command2execute.Append(" > log.txt"); //logme
     
     
@@ -361,7 +362,8 @@ void lhpOpUploadVME::OpDo()
     command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
     command2execute.Append(wxString::Format("%s ","http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //repository
 
-    command2execute.Append(wxString::Format("%s ",m_Input->GetName())); //vme name
+    command2execute.Append(wxString::Format("%s ", m_NodeName)); //vme name
+    command2execute.Append(wxString::Format("%s ", m_CsvName.c_str())); //manualTagFile
 
     //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
     m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
@@ -371,6 +373,12 @@ void lhpOpUploadVME::OpDo()
   }
   
   wxSetWorkingDirectory(oldDir);
+}
+//----------------------------------------------------------------------------
+void lhpOpUploadVME::SetDictionary(int subDictionary)   
+//----------------------------------------------------------------------------
+{
+  m_SubdictionaryId = subDictionary;
 }
 //----------------------------------------------------------------------------
 void lhpOpUploadVME::OpStop(int result)   
@@ -684,8 +692,16 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
   // open auto tags file and try to handle tags using tags factory 
   ofstream unhandledPlusManualTagsFile;
 
+  m_CsvName = m_Input->GetName();
+  m_CsvName.Replace(" ", "_"); //replace blank spaces in VME name
+  m_NodeName = m_CsvName;
+  m_CsvName << "_id_";
+  m_CsvName << wxString::Format("%d",m_Input->GetId());
+  m_CsvName << "_tag.csv";
+  
 
-  unhandledPlusManualTagsFile.open(m_UnhandledPlusManualTagsFileName.GetCStr());
+
+  unhandledPlusManualTagsFile.open(m_CsvName.c_str());
 
   if (!unhandledPlusManualTagsFile) {
     mafLogMessage("Unable to create file");
@@ -711,7 +727,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
   command2execute.Clear();
   command2execute.Append(m_PythonExe.GetCStr());
   command2execute.Append(" CSVOMATIC.py ");
-  command2execute.Append(m_UnhandledPlusManualTagsFileName.GetCStr());
+  command2execute.Append(m_CsvName.c_str());
   
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
