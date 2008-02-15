@@ -35,12 +35,13 @@ class Server(threading.Thread):
       #4 is pwd
       #5 is serverUrl
       #6 is vme name
+      #7 manualTagFile
       arguments = data.split(" ") 
       sendList = []
       count = 0
       lastArgument = ""
       for i in arguments:
-        if(count < 6):
+        if(count < 7):
           sendList.append(i)
         else:
           if(lastArgument != ''):

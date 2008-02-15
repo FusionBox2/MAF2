@@ -9,7 +9,7 @@ from Debug import Debug
 
 class UploadHandler:
     queue = None
-    def __init__(self, queue, observer , dirCache, id, usr , pwd, urlServer):
+    def __init__(self, queue, observer , dirCache, id, usr , pwd, urlServer, manualTagFile):
         UploadHandler.queue = queue
         self.observer = observer
         self.dirCache = dirCache
@@ -18,6 +18,7 @@ class UploadHandler:
         self.currentUser = usr
         self.currentPassword = pwd
         self.urlServer = urlServer
+        self.manualTagFile = manualTagFile
         self.msg = 0
         self.binaryFileSize = 0
         self.remoteTemporaryBinaryFileSize = 0
@@ -25,8 +26,19 @@ class UploadHandler:
         self.XMLURI = ""
         self.block = threading.Lock()
         self.threads = []
+        
+        
+    
+    
+    
+    
+    
+    
             
+		
     def upload(self):
+        self.createOutgoingDir()
+               
         #get free resource (return URI string)
         self.BinaryURI = self.getFreeResource() #thread maybe
         #thread.start_new_thread(self.getFreeResource,())
@@ -54,7 +66,7 @@ class UploadHandler:
             print "Connection Problems..."
             return
         """
-        
+
         self.createXMLAndBinary()
         
         #launch external XML editor
@@ -63,8 +75,10 @@ class UploadHandler:
 
         #self.remoteTemporaryBinaryFileSize = self.getRemoteTemporaryBinaryFileSize()
         #send file
-        thread.start_new_thread(self.sendBinaryFile,())
-        #self.sendBinaryFile() #until there is service monitor don't use thread 
+        thread.start_new_thread(self.sendBinaryFile,())      
+        #self.sendBinaryFile() #until there is service monitor don't use thread
+        
+        
         
         print "Wainting for sending binary..."
         print "Total Size of Binary: " + str(self.binaryFileSize)
@@ -77,13 +91,13 @@ class UploadHandler:
             time.sleep(0.2)
             #self.remoteTemporaryBinaryFileSize = self.getRemoteTemporaryBinaryFileSize()
             #print self.remoteTemporaryBinaryFileSize , self.binaryFileSize
-            
+                        
             thread.start_new_thread(self.getRemoteTemporaryBinaryFileSize,())
             
             if(oldTemporarySize == self.remoteTemporaryBinaryFileSize): continue
             if(self.remoteTemporaryBinaryFileSize == -1):
                 break
-            
+                
             oldTemporarySize = self.remoteTemporaryBinaryFileSize
             #self.remoteTemporaryBinaryFileSize = self.remoteTemporaryBinaryFileSize +10000
             
@@ -97,7 +111,7 @@ class UploadHandler:
             if(percentage >= 100):
                 binarySendResult = True
                 break
-
+           
         #send xml file, perhaps here free source
         if(binarySendResult == True):
           print "Waiting for sending XML..."
@@ -111,27 +125,29 @@ class UploadHandler:
         
         else:
           print "Upload Error on Binary"
-		
+          
+    def createOutgoingDir(self):
+        curDir = sys.path[0]
+        count = 0
+        self.dirOutgoing = curDir + r'\Outgoing'
+        directory = self.dirOutgoing + '\\' + str(count)
+       
+        while(os.path.exists(directory)):
+           count = count + 1
+           directory = self.dirOutgoing + '\\' + str(count)
+        self.dirOutgoing = directory
+        os.mkdir(directory)
+        
+        		
     def createXMLAndBinary(self):
         curDir = sys.path[0]
         upl = vmeUploader.vmeUploader()
         upl.InputMSFDirectory = self.dirCache
         upl.HandledAutoTagsListFileName = curDir + r'\handledAutoTagsList.csv'
-        upl.UnhandledPlusManualTagsListFileName = curDir + r'\unhandledPlusManualTagsList.csv'
-        upl.OutputFolderName = curDir + r'\Outgoing'
-        
-        count = 0
-        directory = upl.OutputFolderName + '\\' + str(count)
-		
-        while(os.path.exists(directory)):
-           count = count + 1
-           directory = upl.OutputFolderName + '\\' + str(count)
-        
-        self.dirOutgoing = directory
-        upl.OutputFolderName = directory
+        upl.UnhandledPlusManualTagsListFileName = curDir + '\\' + self.manualTagFile 
+      
+        upl.OutputFolderName = self.dirOutgoing
         upl.VmeToExtractID = int(self.id)
-
-        
         upl.DatasetURI = self.BinaryURI
 
         upl.Upload()
@@ -154,6 +170,7 @@ class UploadHandler:
         serviceUrl = 'https://ws-lhdl-dev.cineca.it:12443/mafSRBUploadURI.cgi'        
         return instance.ListSrbDir(serviceUrl)
         #print 'Inside FreeResource Thread ' + self.BinaryURI
+
 
     def sendBinaryFile(self):
         os.rename(self.dirOutgoing + "\\" + self.getBinaryFile(),self.dirOutgoing + "\\" +self.BinaryURI)
@@ -217,8 +234,8 @@ class UploadHandler:
     def getBinaryFileSize(self):
         return os.stat(self.dirOutgoing + "\\" +self.getBinaryFile()).st_size
 		
-def createUploadHandler(queue, observer, dirCache, id , usr , pwd, urlServer):
-    uploadHandler = UploadHandler(queue,observer, dirCache, id, usr , pwd, urlServer)
+def createUploadHandler(queue, observer, dirCache, id , usr , pwd, urlServer, manualTagFile):
+    uploadHandler = UploadHandler(queue,observer, dirCache, id, usr , pwd, urlServer, manualTagFile)
     uploadHandler.upload()
     
 if __name__ == '__main__':
