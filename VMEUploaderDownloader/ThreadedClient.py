@@ -21,7 +21,7 @@ import UploadHandler, DownloadHandler
 import thread
 import Server
 import Lock
-import sys
+import sys, os
 
 class ThreadedClient:
     """
@@ -79,6 +79,7 @@ class ThreadedClient:
         #4 is pwd
         #5 is serverUrl
         #6 is vme name
+        #7 is manualTagFile
         if(tuplaFromServer[0] == "UPLOAD"):
            self.createThreadForUpdate(tuplaFromServer)
         elif (tuplaFromServer[0] == "DOWNLOAD"):
@@ -94,10 +95,12 @@ class ThreadedClient:
         #4 is pwd
         #5 is serverUrl
         #6 is vme name
+        #7 is manualTagFile
         self.gui.createBar(tuplaFromServer[0])
         
+        
         self.gui.createLabel(tuplaFromServer[6]) #tupla[6] is vme name         
-        self.threads.append(CustomThread.CustomThread(func=self.workerThreadUpload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[2], tuplaFromServer[1],tuplaFromServer[3],tuplaFromServer[4],tuplaFromServer[5])))
+        self.threads.append(CustomThread.CustomThread(func=self.workerThreadUpload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[2], tuplaFromServer[1],tuplaFromServer[3],tuplaFromServer[4],tuplaFromServer[5], tuplaFromServer[7])))
         self.threads[len(self.threads)-1].start()
     
     def createThreadForDownload(self, tuplaFromServer):
@@ -111,19 +114,21 @@ class ThreadedClient:
         #6 is data URI in SRB
         self.gui.createBar(tuplaFromServer[0])
         
-        self.gui.createLabel(tuplaFromServer[6]) #tupla[6] is vme name         
+         
+               
         self.threads.append(CustomThread.CustomThread(func=self.workerThreadDownload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[2], tuplaFromServer[6],tuplaFromServer[3],tuplaFromServer[4],tuplaFromServer[5],tuplaFromServer[1])))
         self.threads[len(self.threads)-1].start()
         
-    def workerThreadUpload(self, observer, dirCache , id, usr, pwd, urlServer):
+    def workerThreadUpload(self, observer, dirCache , id, usr, pwd, urlServer, manualTagFile):
         """
         This is where we handle the asynchronous I/O. For example, it may be
         a 'select()'.
         One important thing to remember is that the thread has to yield
         control.
         """
+      
         try:
-            UploadHandler.createUploadHandler(self.queue, observer, dirCache , id, usr, pwd, urlServer)
+            UploadHandler.createUploadHandler(self.queue, observer, dirCache , id, usr, pwd, urlServer, manualTagFile)
         except:
             pass
         
