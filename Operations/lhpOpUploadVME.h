@@ -2,9 +2,9 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-01-16 17:46:51 $
-Version:   $Revision: 1.14 $
-Authors:   Daniele Giunchi, Stefano Perticoni
+Date:      $Date: 2008-02-15 11:14:31 $
+Version:   $Revision: 1.15 $
+Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
 SCS s.r.l. - BioComputing Competence Centre (www.scsolutions.it - www.b3c.it)
@@ -54,7 +54,7 @@ class lhpUser;
 //----------------------------------------------------------------------------
 // lhpOpUploadVME :
 //----------------------------------------------------------------------------
-/**Convert a Parametric Surface into a Normal Surface*/
+/**Upload VME*/
 class lhpOpUploadVME: public mafOp
 {
 public:
@@ -80,6 +80,9 @@ public:
 
   /** Set Current Working Msf Directory*/
   void SetMsfDir(mafString msfDir){m_MsfDir = msfDir;};
+
+  /** Set subDictionray. */
+  void SetDictionary(int subDictionary);   
 
 protected:
   
@@ -107,7 +110,6 @@ protected:
 
   /** This method use MAF Api for set the login in order to make operation like upload or download*/
   bool CheckLogin();
-  
   
   mafString m_CacheDir; //>cache superdirectory
   static mafString m_CacheSubdir; //>cache subdirectory
@@ -152,6 +154,8 @@ private:
   wxArrayString m_ManualTagsList;
   wxArrayString m_UnhandledAutoTagsListFromFactory; ///< the factory was not able to handle these tags
   wxArrayString m_HandledAutoTagsListFromFactory; ///< tags handled by the factory  
+  wxString m_CsvName;
+  wxString m_NodeName;
   
 };
 #endif
