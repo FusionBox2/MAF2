@@ -27,15 +27,7 @@ class UploadHandler:
         self.block = threading.Lock()
         self.threads = []
         
-        
-    
-    
-    
-    
-    
-    
             
-		
     def upload(self):
         self.createOutgoingDir()
                
@@ -167,7 +159,7 @@ class UploadHandler:
     def getFreeResource(self):
         #here call module to get URI of first free resource
         instance = MtomUploadURI.MtomUploadURI()
-        serviceUrl = 'https://ws-lhdl-dev.cineca.it:12443/mafSRBUploadURI.cgi'        
+        serviceUrl = 'https://ws-lhdl.cineca.it/mafSRBUploadURI.cgi'        
         return instance.ListSrbDir(serviceUrl)
         #print 'Inside FreeResource Thread ' + self.BinaryURI
 
@@ -196,7 +188,7 @@ class UploadHandler:
         os.chdir(self.dirOutgoing)
         
         instance = MtomUpload.MtomUpload()
-        result = instance.Upload(filename,'https://ws-lhdl-dev.cineca.it:12443/mafSRBUpload.cgi')
+        result = instance.Upload(filename,'https://ws-lhdl.cineca.it/mafSRBUpload.cgi')
         
         cheksum = result.chksum
         uri = result.uriFile
