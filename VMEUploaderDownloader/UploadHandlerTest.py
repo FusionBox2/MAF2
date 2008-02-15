@@ -18,7 +18,7 @@ class UploadHandlerTest(unittest.TestCase):
         if(os.path.exists(dirCache) == False): os.mkdir(dirCache)
         if(os.path.exists(dirOutgoing) == False ): os.mkdir(dirOutgoing)
         server = 'http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2'
-        uploadHandler = UploadHandler.UploadHandler(queue,observer, dirCache, id , "danno", "jibiki",server, "unhandledAutoTagsList.csv")
+        uploadHandler = UploadHandler.UploadHandler(queue,observer, dirCache, id , "danno", "jibiki",server, "unhandledPlusManualTagsList.csv")
         uploadHandler.upload()
     
 if __name__ == '__main__':
