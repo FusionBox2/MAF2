@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEAFRefSys.h,v $
   Language:  C++
-  Date:      $Date: 2007-10-24 11:10:44 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2008-02-19 11:40:34 $
+  Version:   $Revision: 1.4 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -102,7 +102,14 @@ public:
 
   /** Return the suggested pipe-typename for the visualization of this vme */
   virtual mafString GetVisualPipe() {return mafString("mafPipeSurface");};
+
+  /** 
+  Set links for the ref-sys*/
+  void SetRefSysLink(const char *link_name, mafNode *n);
+
   void SetVM(VecManVM<double> *vm){m_vm = vm;}
+
+  void CalculateMatrix(mafMatrix& mat, mafTimeStamp ts);
 
   void LoadScriptFromFile(const mafString& filename);
   void SetScriptText(const std::vector<mafString>& script);
@@ -110,7 +117,7 @@ public:
   void SetActive(int active);
 
 protected:
-  bool ConvertTextToVM();
+  bool ConvertTextToVM(bool buildMapping);
   static bool AcceptLandmark(mafNode *node);
 
   mafVMEAFRefSys();

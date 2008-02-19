@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEAFRefSys.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-10-24 11:10:44 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2008-02-19 11:40:34 $
+  Version:   $Revision: 1.4 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -209,7 +209,7 @@ int mafVMEAFRefSys::DeepCopy(mafNode *a)
     m_Transform->SetMatrix(vme_ref_sys->m_Transform->GetMatrix());
     SetScaleFactor(vme_ref_sys->GetScaleFactor());
     vme_ref_sys->m_scriptText = m_scriptText;
-    vme_ref_sys->ConvertTextToVM();
+    vme_ref_sys->ConvertTextToVM(true);
     mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
     if (dpipe)
     {
@@ -284,6 +284,24 @@ void mafVMEAFRefSys::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
 {
   kframes.clear();
 }
+
+//-------------------------------------------------------------------------
+void mafVMEAFRefSys::SetRefSysLink(const char *link_name, mafNode *n)
+//-------------------------------------------------------------------------
+{
+  if(n == NULL)
+  {
+    RemoveLink(link_name);
+    return;
+  }
+  if (n->IsMAFType(mafVMELandmark))
+  {
+    SetLink(link_name,n->GetParent(),((mafVMELandmarkCloud *)n->GetParent())->FindLandmarkIndex(n->GetName()));
+  }
+  else
+    SetLink(link_name, n);
+}
+
 
 //-------------------------------------------------------------------------
 void mafVMEAFRefSys::SetScaleFactor(double scale)
@@ -400,7 +418,7 @@ int mafVMEAFRefSys::InternalRestore(mafStorageElement *node)
         sprintf(nm, "ln%d", i);
         node->RestoreText(nm, m_scriptText[i]);
       }
-      ConvertTextToVM();
+      ConvertTextToVM(false);
       for(unsigned i = 0; i < m_vm->getInputs().size(); i++)
       {
         if(m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
@@ -441,8 +459,6 @@ mmaMaterial *mafVMEAFRefSys::GetMaterial()
 mmgGui* mafVMEAFRefSys::CreateGui()
 //-------------------------------------------------------------------------
 {
-  wxString saAxisChoices[2] = {"Prefer Z Axis", "Prefer Y Axis"};
-
   m_Gui = Superclass::CreateGui();
   m_Gui->Show(false);
 
@@ -496,7 +512,7 @@ bool mafVMEAFRefSys::AcceptLandmark(mafNode *node)
 }
 
 
-bool mafVMEAFRefSys::ConvertTextToVM()
+bool mafVMEAFRefSys::ConvertTextToVM(bool buildMapping)
 {
   if(m_vm != NULL)
     delete m_vm;
@@ -510,7 +526,11 @@ bool mafVMEAFRefSys::ConvertTextToVM()
   {
     if(m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
     {
-      m_lmMapping[m_vm->getInputs()[i].first.c_str()] = m_vm->getInputs()[i].first.c_str();
+      if(buildMapping)
+      {
+        m_lmMapping[m_vm->getInputs()[i].first.c_str()] = m_vm->getInputs()[i].first.c_str();
+        SetRefSysLink(m_vm->getInputs()[i].first.c_str(), GetParent());
+      }
     }
     else
     {
@@ -523,7 +543,7 @@ bool mafVMEAFRefSys::ConvertTextToVM()
 void mafVMEAFRefSys::SetScriptText(const std::vector<mafString>& script)
 {
   m_scriptText = script;
-  ConvertTextToVM();
+  ConvertTextToVM(true);
 }
 
 void mafVMEAFRefSys::LoadScriptFromFile(const mafString& filename)
@@ -548,7 +568,7 @@ void mafVMEAFRefSys::LoadScriptFromFile(const mafString& filename)
   }
 
   fclose(fp);
-  ConvertTextToVM();
+  ConvertTextToVM(true);
 }
 
 //-------------------------------------------------------------------------
@@ -605,9 +625,11 @@ void mafVMEAFRefSys::OnEvent(mafEventBase *maf_event)
             e.SetString(&title);
             e.SetId(VME_CHOOSE);
             ForwardUpEvent(e);
-            if(e.GetVme() != NULL)
+            mafNode *n = e.GetVme();
+            if(n != NULL)
             {
-              itlm->second = e.GetVme()->GetName();
+              itlm->second = n->GetName();
+              SetRefSysLink(itlm->first, n->GetParent());
             }
           }
         }
@@ -663,12 +685,19 @@ void mafVMEAFRefSys::SetTransf(double x, double y, double z, double xr, double y
 }
 
 //-----------------------------------------------------------------------
-void mafVMEAFRefSys::InternalUpdate()
+void mafVMEAFRefSys::CalculateMatrix(mafMatrix& mat, mafTimeStamp ts)
 //-----------------------------------------------------------------------
 {
+  //DiMatrix            parentMatrix;
   mafVMELandmarkCloud *parentLMC = NULL;
+  //DiMatrixIdentity(&parentMatrix);
   if(GetParent() != NULL)
+  {
+    mafMatrix mfm;
+    GetParent()->GetOutput()->GetAbsMatrix(mfm, ts);
+    //mflMatrixToDi(mfm.GetVTKMatrix(), &parentMatrix);
     parentLMC = mafVMELandmarkCloud::SafeDownCast(GetParent());
+  }
 
   bool calculated = (parentLMC != NULL);
 
@@ -685,13 +714,29 @@ void mafVMEAFRefSys::InternalUpdate()
           calculated = false;
           break;
         }
-        int  ind = parentLMC->FindLandmarkIndex(it->second.GetCStr());
+        mafVMELandmarkCloud *lmcLink = mafVMELandmarkCloud::SafeDownCast(GetLink(m_vm->getInputs()[i].first.c_str()));
+        if(lmcLink == NULL)
+        {
+          lmcLink = parentLMC;
+          SetRefSysLink(m_vm->getInputs()[i].first.c_str(), parentLMC);
+        }
+        int  ind = lmcLink->FindLandmarkIndex(it->second.GetCStr());
         if(ind == -1)
         {
           calculated = false;
           break;
         }
-        parentLMC->GetLandmark(ind, vec.val, -1);
+        mafMatrix cloudAbs;
+        double invec[4];
+        double outvec[4];
+        lmcLink->GetOutput()->GetAbsMatrix(cloudAbs, ts);
+        lmcLink->GetLandmark(ind, vec.val, ts);
+        for(unsigned indx = 0; indx < 3; indx++)
+          invec[indx] = vec[indx];
+        invec[3] = 1.0;
+        cloudAbs.MultiplyPoint(invec, outvec);
+        for(unsigned indx = 0; indx < 3; indx++)
+          vec[indx] = outvec[indx];
 
         m_vm->getInputs()[i].second->GetVector() = vec;
       }
@@ -746,11 +791,6 @@ void mafVMEAFRefSys::InternalUpdate()
 
   if(calculated)
   {
-
-    double xy = (x ^ y) * z;
-    double xz = (z ^ x) * y;
-    double yz = (y ^ z) * x;
-
     mTrant.vRight.x = x.x; mTrant.vRight.y = x.y; mTrant.vRight.z = x.z; mTrant.vRight.w = 0.0;
     mTrant.vUp.x    = y.x; mTrant.vUp.y    = y.y; mTrant.vUp.z    = y.z; mTrant.vUp.w    = 0.0;
     mTrant.vAt.x    = z.x; mTrant.vAt.y    = z.y; mTrant.vAt.z    = z.z; mTrant.vAt.w    = 0.0;
@@ -774,19 +814,8 @@ void mafVMEAFRefSys::InternalUpdate()
 
 
   mafTransfComposeMatrixStright(&mTran, &rot, &pos);
+  
   vtkNEW(mVTK);
-  {
-    x.x = mTran.vRight.x; x.y = mTran.vRight.y; x.z = mTran.vRight.z;
-    y.x = mTran.vUp.x   ; y.y = mTran.vUp.y   ; y.z = mTran.vUp.z   ;
-    z.x = mTran.vAt.x   ; z.y = mTran.vAt.y   ; z.z = mTran.vAt.z   ;
-    p.x = mTran.vPos.x  ; p.y = mTran.vPos.y  ; p.z = mTran.vPos.z  ;
-
-    double xy = (x ^ y) * z;
-    double xz = (z ^ x) * y;
-    double yz = (y ^ z) * x;
-  }
-
-
 
   mafTransfRightLeftConv(&mTrant, &mTrano);
   mafTransfRightLeftConv(&mTran, &mTrant);
@@ -795,10 +824,17 @@ void mafVMEAFRefSys::InternalUpdate()
 
   mVTK->Identity();
   DiMatrixToVTK(&mTrant, mVTK);
-  SetMatrix(mVTK);
+  mat = mVTK;
   vtkDEL(mVTK);
+}
 
-
+//-----------------------------------------------------------------------
+void mafVMEAFRefSys::InternalUpdate()
+//-----------------------------------------------------------------------
+{
+  mafMatrix mt;
+  CalculateMatrix(mt, GetTimeStamp());
+  SetAbsMatrix(mt, GetTimeStamp());
   SetScaleFactor(m_ScaleFactor);
   Modified();
 }
