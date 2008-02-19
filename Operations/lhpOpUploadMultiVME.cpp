@@ -1,0 +1,456 @@
+/*=========================================================================
+Program:   Multimod Application Framework
+Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
+Language:  C++
+Date:      $Date: 2008-02-19 09:40:55 $
+Version:   $Revision: 1.1 $
+Authors:   Roberto Mucci
+==========================================================================
+Copyright (c) 2002/2007
+SCS s.r.l. - BioComputing Competence Centre (www.scsolutions.it - www.b3c.it)
+
+MafMedical Library use license agreement
+
+The software named MafMedical Library and any accompanying documentation, 
+manuals or data (hereafter collectively "SOFTWARE") is property of the SCS s.r.l.
+This is an open-source copyright as follows:
+Redistribution and use in source and binary forms, with or without modification, 
+are permitted provided that the following conditions are met:
+* Redistributions of source code must retain the above copyright notice, 
+this list of conditions and the following disclaimer.
+* Redistributions in binary form must reproduce the above copyright notice, 
+this list of conditions and the following disclaimer in the documentation and/or 
+other materials provided with the distribution.
+* Modified source versions must be plainly marked as such, and must not be misrepresented 
+as being the original software.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' 
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR 
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND 
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+MafMedical is partially based on OpenMAF.
+=========================================================================*/
+
+#include "mafDefines.h"
+//----------------------------------------------------------------------------
+// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
+// This force to include Window,wxWidgets and VTK exactly in this order.
+// Failing in doing this will result in a run-time error saying:
+// "Failure#0: The value of ESP was not properly saved across a function call"
+//----------------------------------------------------------------------------
+#include "lhpBuilderDecl.h"
+
+#include <wx/process.h>
+#include <wx/dir.h>
+#include <wx/file.h>
+#include <wx/busyinfo.h>
+
+#include "lhpOpUploadMultiVME.h"
+#include "lhpOpUploadVME.h"
+
+#include "mmgGui.h"
+#include "lhpUser.h"
+#include "mafNode.h"
+
+#include "lhpFactoryTagHandler.h"
+#include "vtkPolyData.h"
+
+#include <string>
+#include <istream>
+#include <ostream>
+
+//----------------------------------------------------------------------------
+mafCxxTypeMacro(lhpOpUploadMultiVME);
+//----------------------------------------------------------------------------
+//static variables
+long lhpOpUploadMultiVME::m_Pid = -1;
+mafString lhpOpUploadMultiVME::m_CacheSubdir = "0";
+lhpUser lhpOpUploadMultiVME::m_User = lhpUser();
+
+enum lhpOpUploadMultiVME_ID
+{
+  ID_SUBDICTIONARY = MINID, 
+};
+
+//----------------------------------------------------------------------------
+lhpOpUploadMultiVME::lhpOpUploadMultiVME(wxString label) :
+mafOp(label)
+//----------------------------------------------------------------------------
+{
+	m_OpType  = OPTYPE_OP;
+	m_Canundo = false;
+
+  m_PythonExe ="python.exe ";
+  m_PythonUploadFullPath  = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\").c_str();
+
+  m_MasterXMLDictionaryFileName = "UNDEFINED";
+  m_SubXMLDictionaryFilePrefix = "UNDEFINED" ;
+  m_SubXMLDictionaryFileName = "UNDEFINED";
+  m_AssembledXMLDictionaryFileName = "assembledXMLDictionary.xml";
+  m_SubDictionaryBuildingCommand = "UNDEFINED";
+
+  m_SubdictionaryId = 0; // NO_SUBDICTIONARY; 
+  m_ConnectionConfigurationFileName = "vmeUploaderConnectionConfiguration.conf" ;
+  SetListener(this);
+  m_NodeCounter = 0;
+}
+
+//----------------------------------------------------------------------------
+lhpOpUploadMultiVME::~lhpOpUploadMultiVME()
+//----------------------------------------------------------------------------
+{
+}
+
+//----------------------------------------------------------------------------
+mafOp* lhpOpUploadMultiVME::Copy()
+//----------------------------------------------------------------------------
+{
+	/** return a copy of itself, needs to put it into the undo stack */
+	return new lhpOpUploadMultiVME(m_Label);
+}
+
+//----------------------------------------------------------------------------
+void lhpOpUploadMultiVME::OpRun()
+//----------------------------------------------------------------------------
+{
+  int result = OP_RUN_CANCEL;
+
+  mafString s(_("Upload VMEs"));
+  mafEvent e(this,VME_CHOOSE, &s);
+  e.SetBool(true); //true to create dialog with VME multiselect
+  mafEventMacro(e);
+  m_NodeVector = e.GetVmeVector();
+  int size = m_NodeVector.size();
+  if (size == 0)
+  {
+    OpStop(result);
+    return;
+  }
+
+  bool upToDate = false;
+  if(CheckLogin())
+  {
+    upToDate = this->IsLHPBuilderVersionUpToDate();
+    m_UploadVME = new lhpOpUploadVME("vmeUploader");
+    m_UploadVME->SetListener(this->GetListener());
+    this->MultiGui();
+  }
+  else
+  {
+    OpStop(result);
+    return;
+  } 
+}
+//----------------------------------------------------------------------------
+void lhpOpUploadMultiVME::LoadConnectionConfigurationFile()
+//----------------------------------------------------------------------------
+{
+  wxString oldDir = wxGetCwd();
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+
+  // open auto tags file and try to handle tags using tags factory 
+  ifstream configurationFile;
+
+  configurationFile.open(m_ConnectionConfigurationFileName.GetCStr());
+  if (!configurationFile) {
+    wxString message = m_ConnectionConfigurationFileName.GetCStr();
+    message.Append(" not found! Unable to open connection configuration file: default values will be used");
+    mafLogMessage(message.c_str());
+  }
+  else
+  {
+    std::string tmp;
+
+    configurationFile >> tmp;
+    m_ProxyURL = tmp.c_str();
+    
+    configurationFile >> tmp;
+    m_ProxyPort = tmp.c_str();
+     
+    wxString message = m_ConnectionConfigurationFileName.GetCStr();
+    message.Append("Found connection configuration file: using connection parameters");
+    message.Append("m_ProxyURL: ");
+    message.Append(m_ProxyURL.GetCStr());
+    message.Append("m_ProxyPort: ");
+    message.Append(m_ProxyPort.GetCStr());
+
+    mafLogMessage(message.c_str());
+
+    configurationFile.close();
+  }
+
+  wxSetWorkingDirectory(oldDir);
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+}
+
+//----------------------------------------------------------------------------
+void lhpOpUploadMultiVME::CreateGui()
+//----------------------------------------------------------------------------
+{
+  m_Gui = new mmgGui(this);
+
+  m_Gui->Divider(2);
+
+  m_Gui->Label("VME Name:", true);
+  m_Gui->Label(m_UploadingNode->GetName());
+
+  m_Gui->Label("use subdictionary", true);
+  wxString subDictionariesList[3] = {"none", "motionAnalysis", "dicom"};
+  m_Gui->Combo(ID_SUBDICTIONARY,"",&m_SubdictionaryId,3,subDictionariesList);
+
+  m_Gui->Divider(2);
+
+  m_Gui->OkCancel(); 
+  m_Gui->Label("");
+  m_Gui->Update();
+}
+//----------------------------------------------------------------------------
+int lhpOpUploadMultiVME::AssembleDictionaries()
+//----------------------------------------------------------------------------
+{
+  wxString oldDir = wxGetCwd();
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+
+  mafLogMessage("Assembling dictionaries...");
+
+  m_SubXMLDictionaryFileName = this->GetXMLDictionaryFileName(m_SubXMLDictionaryFilePrefix);
+  if (m_SubXMLDictionaryFileName == "NOT FOUND")
+  {
+    return MAF_ERROR;
+  }
+
+  // get manual tags
+  wxString command2execute;
+  command2execute.Clear();
+  command2execute = m_PythonExe;
+
+  command2execute.Append(" lhpXMLDictionariesBuilder.py ");
+  command2execute.Append(m_MasterXMLDictionaryFileName);
+  command2execute.Append(" ");
+  command2execute.Append(m_SubXMLDictionaryFileName);
+  command2execute.Append(" ");
+  command2execute.Append(m_SubDictionaryBuildingCommand);
+  command2execute.Append(" ");
+  command2execute.Append(m_AssembledXMLDictionaryFileName);
+
+  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+
+  long pid = wxExecute(command2execute, wxEXEC_SYNC);
+
+  wxArrayString output;
+  wxArrayString errors;
+
+  m_Pid = wxExecute(command2execute, output, errors);
+
+
+  mafLogMessage("Command Output Messages:");
+  for (int i = 0; i < output.size(); i++)
+  {
+    mafLogMessage(output[i]);
+  }
+
+  mafLogMessage("Command Errors Messages:");
+  for (int i = 0; i < errors.size(); i++)
+  {
+    mafLogMessage(errors[i]);
+  }
+
+  wxSetWorkingDirectory(oldDir);
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+
+  return MAF_OK;
+}
+//----------------------------------------------------------------------------
+void lhpOpUploadMultiVME::OnEvent(mafEventBase *maf_event) 
+//----------------------------------------------------------------------------
+{
+  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
+  {
+    switch(e->GetId())
+    {
+    case ID_SUBDICTIONARY:
+    {
+      // nothing to do for the moment...
+      mafLogMessage("You choosed dictionary number %i", m_SubdictionaryId);
+      m_UploadVME->SetDictionary(m_SubdictionaryId);
+    }
+    break;
+
+    case wxOK:
+      {
+        if ((m_NodeCounter + 1) < m_NodeVector.size())
+        {
+          m_UploadingNode = m_NodeVector[m_NodeCounter];
+          m_UploadVME->SetInput(m_UploadingNode);
+          m_UploadVME->OpDo();
+          m_NodeCounter++;
+          this->HideGui();
+          this->MultiGui();
+        }
+        else
+        {
+          m_UploadingNode = m_NodeVector[m_NodeCounter];
+          m_UploadVME->SetInput(m_UploadingNode);
+          m_UploadVME->OpDo();
+          this->OpStop(OP_RUN_OK);
+          return;
+        }
+      }
+      break;
+
+    case wxCANCEL:
+      {        
+        HideGui();
+        this->OpStop(OP_RUN_CANCEL);
+        return;
+      }
+      break;
+
+    default:
+      mafEventMacro(*e);
+      break;
+    }	
+  }
+}
+//----------------------------------------------------------------------------
+void lhpOpUploadMultiVME::OpDo()   
+//----------------------------------------------------------------------------
+{
+  HideGui();
+}
+
+//----------------------------------------------------------------------------
+void lhpOpUploadMultiVME::MultiGui()   
+//----------------------------------------------------------------------------
+{
+  m_UploadingNode = m_NodeVector[m_NodeCounter];
+  m_SubdictionaryId = 0;
+  CreateGui();
+  ShowGui();
+}
+//----------------------------------------------------------------------------
+void lhpOpUploadMultiVME::OpStop(int result)   
+//----------------------------------------------------------------------------
+{
+	mafEventMacro(mafEvent(this,result));
+}
+
+//----------------------------------------------------------------------------
+bool lhpOpUploadMultiVME::IsLHPBuilderVersionUpToDate()
+//----------------------------------------------------------------------------
+{
+  wxBusyInfo("Checking if  your software is up-to-date in order to upload, please wait...");
+  wxString oldDir = wxGetCwd();
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+
+  // get manual tags
+  wxString command2execute;
+  command2execute.Clear();
+  command2execute = m_PythonExe;
+
+  command2execute.Append(" lhpDictionaryVersionChecker.py ");
+  command2execute.Append(" ");
+  command2execute.Append(m_ProxyURL.GetCStr());
+  command2execute.Append(" ");
+  command2execute.Append(m_ProxyPort.GetCStr());
+
+  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+
+  long pid = wxExecute(command2execute, wxEXEC_SYNC);
+  
+  wxArrayString output;
+  wxArrayString errors;
+
+  m_Pid = wxExecute(command2execute, output, errors);
+  
+
+  mafLogMessage("Command Output Messages:");
+  for (int i = 0; i < output.size(); i++)
+  {
+    mafLogMessage(output[i]);
+  }
+  
+  mafLogMessage("Command Errors Messages:");
+  for (int i = 0; i < errors.size(); i++)
+  {
+    mafLogMessage(errors[i]);
+  }
+
+  wxString result = output[output.size() - 1];
+  
+  wxSetWorkingDirectory(oldDir);
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+
+  if (result == "UpToDate")
+  {
+    return true;
+  } 
+  else
+  {
+    return false;
+  }  
+  
+}
+//----------------------------------------------------------------------------
+bool lhpOpUploadMultiVME::CheckLogin()
+//----------------------------------------------------------------------------
+{
+  bool result = false;
+
+  m_User.SetProxyPort(m_ProxyPort);
+  m_User.SetProxyURL(m_ProxyURL);
+
+  result = m_User.CheckUserCredentials();
+  return result;
+}
+
+mafString lhpOpUploadMultiVME::GetXMLDictionaryFileName( mafString dictionaryFileNamePrefix )
+{
+  mafString dictionaryFileName = "NOT FOUND";
+  wxString oldDir = wxGetCwd();
+
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+
+  wxArrayString files;
+  wxString filePattern = dictionaryFileNamePrefix ;
+  filePattern.Append("*.xml");
+
+  wxDir::GetAllFiles(wxGetWorkingDirectory(), &files, filePattern);
+  
+  if (files.size() != 1)
+  {
+    mafLogMessage("lhpXMLDictionary_*.xml not found! exiting");
+    return dictionaryFileName;
+  }
+  else
+  {
+    assert(files.size() == 1);
+    dictionaryFileName = files[0];
+    int pos = dictionaryFileName.FindLast("\\");
+    dictionaryFileName.Erase(0, pos);
+    mafLogMessage("Found dictionary!");
+    mafLogMessage(dictionaryFileName.GetCStr());
+  }
+  
+  wxSetWorkingDirectory(oldDir);
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  
+  return dictionaryFileName;
+}
+
+
