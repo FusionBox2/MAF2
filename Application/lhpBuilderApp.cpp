@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-02-14 15:06:29 $
-  Version:   $Revision: 1.43 $
+  Date:      $Date: 2008-02-19 09:42:27 $
+  Version:   $Revision: 1.44 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -114,6 +114,7 @@
 #include "medOpIterativeRegistration.h"
 #include "medOpCreateLabeledVolume.h"
 #include "lhpOpUploadVME.h"
+#include "lhpOpUploadMultiVME.h"
 #include "lhpOpDownloadVME.h"
 #include "medOpSurfaceMirror.h"
 #include "medOpImporterAnalogWS.h"
@@ -269,6 +270,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mafOpOpenExternalFile("Open with external program"),"Manage"); 
   m_Logic->Plug(new medOpCreateLabeledVolume("Labeled Volume"),"Create/Derive");
   m_Logic->Plug(new lhpOpUploadVME("Upload VME"),"Manage");
+  m_Logic->Plug(new lhpOpUploadMultiVME("Upload Multiple VME"),"Manage");
   m_Logic->Plug(new lhpOpDownloadVME("Download VME"),"Manage");
   
   m_Logic->Plug(new mafOpDecomposeTimeVarVME("Decompose Time"),"Create/Derive");
