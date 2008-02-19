@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafPipeIntGraph.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-10-24 10:58:53 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2008-02-19 11:41:33 $
+  Version:   $Revision: 1.4 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -340,7 +340,7 @@ void  mafPipeIntGraph::StoreValueByIdx(int nObjectOrderID, IDType nVarID, int nG
         {
           DiMatrix                   mLTM;
           GetLocalMatrix(m_Vme, ts, &mLTM);
-          mafTransfInverseTransformUpright(&mat, &vPos, &vRot);
+          mafTransfInverseTransformUpright(&mLTM, &vPos, &vRot);
           m_variables[GDT_OVP_ROTX].first  = vRot.x * mafMatrix3x3::RadiansToDegrees();
           m_variables[GDT_OVP_ROTX].second = true;
           m_variables[GDT_OVP_ROTY].first  = vRot.y * mafMatrix3x3::RadiansToDegrees();
