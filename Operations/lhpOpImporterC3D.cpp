@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterC3D.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-02-11 16:59:41 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2008-02-19 11:07:51 $
+  Version:   $Revision: 1.10 $
   Authors:   Daniele  Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -694,7 +694,7 @@ void lhpOpImporterC3D::ImportAnalog(lhpOpImporterC3D::_InternalC3DData &intData)
   //For every Sample
   for(int currentSample=0; currentSample < intData.m_NumSamples; currentSample++)
   {
-    int currentTime = currentSample * intData.m_AnalogSamplePeriod;
+    mafTimeStamp currentTime = currentSample * intData.m_AnalogSamplePeriod;
     
     analogMatrix.put(0,currentSample, currentTime); //fill first row with timeframe, every column is a time
 
@@ -836,7 +836,7 @@ void lhpOpImporterC3D::ImportPlatform(lhpOpImporterC3D::_InternalC3DData &intDat
     vectorMoment->SetLines(cellArrayMoment);
 
     //For every sample
-    int currentTime = 0;
+    mafTimeStamp currentTime = 0;
     for(int currentSample=0; currentSample<intData.m_NumSamples; currentSample++)
     {
       intData.m_CopX=getCOPX(currentPlatform, currentSample);			//x coordinate of COP
