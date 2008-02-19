@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoMTRImporter.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-10-12 10:23:48 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-02-19 11:42:56 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -131,7 +131,7 @@ void  mmoMTRImporter::ImportData()
         break;
       }
 
-      const std::vector<mafVMELandmarkCloud*>& clouds = LMCReader->GetClouds();
+      const std::vector<std::pair<mafVMELandmarkCloud*, int> >& clouds = LMCReader->GetClouds();
       for(int i = 0; i < clouds.size(); i++)
       {
         vmeName = name + "_";
@@ -143,7 +143,7 @@ void  mmoMTRImporter::ImportData()
         tag_Nature.SetValue("NATURAL");
 
         mafVMELandmarkCloud *cloud;
-        cloud = clouds[i];
+        cloud = clouds[i].first;
         cloud->SetName(vmeName);
         cloud->GetTagArray()->SetTag(tag_Nature);
         cloud->Close();
