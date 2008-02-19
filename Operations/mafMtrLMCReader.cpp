@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafMtrLMCReader.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-02-19 11:39:23 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -51,7 +51,7 @@ mafMTRLMCReader::~mafMTRLMCReader()
     this->m_FileName = NULL;
   }
   for(int i = 0; i < m_PointSet.size(); i++)
-    mafDEL(m_PointSet[i]);
+    mafDEL(m_PointSet[i].first);
 }
 
 
@@ -96,6 +96,7 @@ int mafMTRLMCReader::ReadASCIIMTR(FILE *fp)
   char      *pRet;
   int       nSet = 0; 
   double    rTemp;
+  bool      newFormat = false;
 
   //just read them line by line for first uncommented string
   nI = 0;
@@ -112,6 +113,9 @@ int mafMTRLMCReader::ReadASCIIMTR(FILE *fp)
   //parse first uncommented line 
   //sscanf(sLine, "%d %d\n", &nPointsNumber, &nBonesNumber);
   
+  if(strstr(sLine, "*** OIF Ph3D ***") != NULL)
+    newFormat = true;
+
   pRet = fgets(sLine, MAX_LINE, fp);
   if(pRet == NULL)
     return FALSE;
@@ -139,27 +143,51 @@ int mafMTRLMCReader::ReadASCIIMTR(FILE *fp)
   }
 
   m_PointSet.resize(1);
-  mafNEW(m_PointSet[0]);
-  m_PointSet[0]->Open();
-  m_PointSet[0]->SetName("Tempora memorie");
-  m_PointSet[0]->SetRadius(m_Radius);
+  mafNEW(m_PointSet[0].first);
+  m_PointSet[0].first->Open();
+  m_PointSet[0].first->SetName("Tempora memorie");
+  m_PointSet[0].first->SetRadius(m_Radius);
+  m_PointSet[0].second = 0;
 
-  
+  bool ori = false;
+  bool ins = false;
   //look for start of our set
   for(; ; nJ++)
   {
     int cloudIndex = m_PointSet.size() - 1;
     //account prereaded line
     sscanf(sLine, "%lf %lf %lf %lf", &rTemp, x, x+1, x+2);
+    if(newFormat)
+    {
+      bool o = (strstr(sLine, "*** Ori") != NULL);
+      bool i = (strstr(sLine, "*** Ins") != NULL);
+      bool f = (strstr(sLine, "*** Fbr") != NULL);
+      if(o || i || f)
+      {
+        ori = o;
+        ins = i;
+      }
+    }
+    else
+    {
+      ori = (nSet == 0);
+      ins = (nSet == 1);
+    }
+    if(ori)
+      m_PointSet[cloudIndex].second = 1;
+    else if(ins)
+      m_PointSet[cloudIndex].second = 2;
+    else
+      m_PointSet[cloudIndex].second = 0;
 
     wxString number;
     number.Printf("%1.0lf", rTemp);
-    int ret = m_PointSet[cloudIndex]->SetNumberOfLandmarks(m_PointSet[cloudIndex]->GetNumberOfLandmarks() + 1);
+    int ret = m_PointSet[cloudIndex].first->SetNumberOfLandmarks(m_PointSet[cloudIndex].first->GetNumberOfLandmarks() + 1);
     if(ret==MAF_OK)
     {
-      m_PointSet[cloudIndex]->SetLandmarkName(m_PointSet[cloudIndex]->GetNumberOfLandmarks()-1,number);
-      m_PointSet[cloudIndex]->SetLandmark(m_PointSet[cloudIndex]->GetNumberOfLandmarks()-1,*x, *(x+1), *(x+2));
-      m_PointSet[cloudIndex]->SetRadius(m_Radius);
+      m_PointSet[cloudIndex].first->SetLandmarkName(m_PointSet[cloudIndex].first->GetNumberOfLandmarks()-1,number);
+      m_PointSet[cloudIndex].first->SetLandmark(m_PointSet[cloudIndex].first->GetNumberOfLandmarks()-1,*x, *(x+1), *(x+2));
+      m_PointSet[cloudIndex].first->SetRadius(m_Radius);
     }
     else
     {
@@ -184,10 +212,11 @@ int mafMTRLMCReader::ReadASCIIMTR(FILE *fp)
       if(m_Set != mafMTRLMCReader::SetNotDefined)
         break;
       m_PointSet.resize(m_PointSet.size() + 1);
-      mafNEW(m_PointSet[m_PointSet.size() - 1]);
-      m_PointSet[m_PointSet.size() - 1]->Open();
-      m_PointSet[m_PointSet.size() - 1]->SetName("Tempora memorie");
-      m_PointSet[m_PointSet.size() - 1]->SetRadius(3);
+      mafNEW(m_PointSet[m_PointSet.size() - 1].first);
+      m_PointSet[m_PointSet.size() - 1].first->Open();
+      m_PointSet[m_PointSet.size() - 1].first->SetName("Tempora memorie");
+      m_PointSet[m_PointSet.size() - 1].first->SetRadius(3);
+      m_PointSet[m_PointSet.size() - 1].second = 0;
 
     }
     nPrevNumber = nCurNumber;
