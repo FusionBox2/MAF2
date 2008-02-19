@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: VecProc.h,v $
   Language:  C++
-  Date:      $Date: 2007-10-19 10:04:33 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-02-19 11:23:40 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -658,6 +658,14 @@ bool VecManVM<Type>::processString(const char *pLine)
   else if(strcmp(activ, "SUBS") == 0)
   {
     oper = new SubScalar<Type>();
+  }
+  else if(strcmp(activ, "ADDV") == 0)
+  {
+    oper = new AddVector<Type>();
+  }
+  else if(strcmp(activ, "SUBV") == 0)
+  {
+    oper = new SubVector<Type>();
   }
   else if(strcmp(activ, "MULS") == 0)
   {
