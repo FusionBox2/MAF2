@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpVisualPipeSurfaceScalar.h,v $
   Language:  C++
-  Date:      $Date: 2008-02-08 12:33:35 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-02-19 09:54:32 $
+  Version:   $Revision: 1.2 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
@@ -19,6 +19,7 @@
 //----------------------------------------------------------------------------
 class vtkActor;
 class vtkPolyDataMapper;
+class mmaMaterial;
 
 //----------------------------------------------------------------------------
 // lhpVisualPipeSurfaceScalar :
@@ -60,5 +61,6 @@ protected:
   vtkPolyDataMapper *m_Mapper;
   vtkActor *m_Actor;
   vtkActor *m_OutlineActor;
+  mmaMaterial *m_Material;
 };  
 #endif // __lhpVisualPipeSurfaceScalar_H__

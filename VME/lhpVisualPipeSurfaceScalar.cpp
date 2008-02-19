@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpVisualPipeSurfaceScalar.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-02-08 12:33:35 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-02-19 09:54:32 $
+  Version:   $Revision: 1.2 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
@@ -75,8 +75,9 @@ void lhpVisualPipeSurfaceScalar::Create(mafSceneNode *n)
   vtkDataArray *scalar = data->GetPointData()->GetScalars();
   //scalar->GetRange(sr);
 
-  mmaMaterial *material = output_surface->GetMaterial();
-  material->m_ColorLut->GetTableRange(sr);
+  m_Material = output_surface->GetMaterial();
+  m_Material->m_MaterialType = mmaMaterial::USE_LOOKUPTABLE;
+  m_Material->m_ColorLut->GetTableRange(sr);
 
   int immediate = m_Vme->IsAnimated() ? 1 : 0;
 	vtkNEW(m_Mapper);
@@ -84,7 +85,7 @@ void lhpVisualPipeSurfaceScalar::Create(mafSceneNode *n)
 	m_Mapper->SetImmediateModeRendering(immediate);
   m_Mapper->ScalarVisibilityOn();
   m_Mapper->SetScalarModeToUsePointData();  
-  m_Mapper->SetLookupTable((vtkScalarsToColors *)material->m_ColorLut);
+  m_Mapper->SetLookupTable((vtkScalarsToColors *)m_Material->m_ColorLut);
   m_Mapper->UseLookupTableScalarRangeOn();
   //m_Mapper->SetColorModeToMapScalars();
   //m_Mapper->SetScalarRange(sr);
@@ -143,11 +144,8 @@ mmgGui* lhpVisualPipeSurfaceScalar::CreateGui()
 //-------------------------------------------------------------------------
 {
   assert(m_Gui == NULL);
-  mafVMEOutputSurface *output_surface = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
-  mmaMaterial *material = output_surface->GetMaterial();
-
   m_Gui = mafPipe::CreateGui();
-  m_Gui->Lut(ID_LUT, "lut", material->m_ColorLut);
+  m_Gui->Lut(ID_LUT, "lut", m_Material->m_ColorLut);
   return m_Gui;
 }
 //-------------------------------------------------------------------------
@@ -160,6 +158,7 @@ void lhpVisualPipeSurfaceScalar::OnEvent(mafEventBase *maf_event)
     switch(e->GetId())
     {
       case ID_LUT:
+        m_Material->UpdateFromLut();
       break;
       default:
         Superclass::OnEvent(maf_event);
