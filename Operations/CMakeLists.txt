@@ -18,6 +18,9 @@ SET(PROJECT_SRCS
 	lhpOpUploadVME.cpp
 	lhpOpUploadVME.h
 	
+	lhpOpUploadMultiVME.cpp
+	lhpOpUploadMultiVME.h
+	
 	lhpOpDownloadVME.cpp
 	lhpOpDownloadVME.h
 	
