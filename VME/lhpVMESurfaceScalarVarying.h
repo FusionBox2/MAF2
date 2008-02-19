@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpVMESurfaceScalarVarying.h,v $
   Language:  C++
-  Date:      $Date: 2008-02-08 12:33:35 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-02-19 09:55:42 $
+  Version:   $Revision: 1.2 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -134,7 +134,7 @@ protected:
   virtual void InternalUpdate();
 
   /** Used to fill the listbox with the name of the scalars*/
-  void FillScalarsName();
+  void FillScalarsName(bool new_scalars = true);
 
   /** Update surface scalars and data-pipe according to the linked surface.*/
   void UpdateSurface();

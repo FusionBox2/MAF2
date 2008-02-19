@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpVMESurfaceScalarVarying.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-02-08 12:33:35 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-02-19 09:55:42 $
+  Version:   $Revision: 1.2 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -423,8 +423,8 @@ int lhpVMESurfaceScalarVarying::InternalRestore(mafStorageElement *node)
             m_PointIdList.resize(num);
             if (node->RestoreVectorN("SurfaceScalarIndexes", m_PointIdList, num) == MAF_OK)
             {
-              mmaMaterial *mat = GetMaterial();
-              mat->m_ColorLut->GetTableRange(m_ScalarRange);
+              /*mmaMaterial *mat = GetMaterial();
+              mat->m_ColorLut->GetTableRange(m_ScalarRange);*/
               return MAF_OK;
             }
           }
@@ -451,7 +451,7 @@ mmgGui* lhpVMESurfaceScalarVarying::CreateGui()
   m_Gui->Bool(ID_EDIT_SCALAR_POSITION,_("Edit scalar"),&m_EditMode, 1);
   m_Gui->Label("available scalars:", true);
   m_ScalarsAvailableList = m_Gui->CheckList(ID_LIST_SCALARS_AVAILABLES);
-  FillScalarsName();
+  FillScalarsName(false);
   for (int s = 0; s < m_ScalarList.size(); s++)
   {
     m_ScalarsAvailableList->CheckItem(m_ScalarList[s]-1, true);
@@ -572,7 +572,7 @@ void lhpVMESurfaceScalarVarying::SetScalarIDs(int analog_scalar_index, int surfa
   Modified();
 }
 //-------------------------------------------------------------------------
-void lhpVMESurfaceScalarVarying::FillScalarsName()
+void lhpVMESurfaceScalarVarying::FillScalarsName(bool new_scalars)
 //-------------------------------------------------------------------------
 {
   medVMEAnalog *scalar = medVMEAnalog::SafeDownCast(GetScalarLink());
@@ -584,15 +584,18 @@ void lhpVMESurfaceScalarVarying::FillScalarsName()
     {
       m_ScalarsAvailableList->AddItem(s,tag_Signals->GetValue(s),false);
     }
-    mafVMEOutputScalarMatrix *output = scalar->GetScalarOutput();
-    vnl_matrix<double> mat = output->GetScalarData();
-    vnl_matrix<double> mat_scalars = mat.get_n_rows(1, mat.rows()-1);
+    if (new_scalars)
+    {
+      mafVMEOutputScalarMatrix *output = scalar->GetScalarOutput();
+      vnl_matrix<double> mat = output->GetScalarData();
+      vnl_matrix<double> mat_scalars = mat.get_n_rows(1, mat.rows()-1);
 
-    m_ScalarRange[0] = mat_scalars.min_value();
-    m_ScalarRange[1] = mat_scalars.max_value();
-    mmaMaterial *material = GetMaterial();
-    material->m_ColorLut->SetTableRange(m_ScalarRange);
-    material->m_ColorLut->Build();
+      m_ScalarRange[0] = mat_scalars.min_value();
+      m_ScalarRange[1] = mat_scalars.max_value();
+      mmaMaterial *material = GetMaterial();
+      material->m_ColorLut->SetTableRange(m_ScalarRange);
+      material->m_ColorLut->Build();
+    }
   }
   if (m_Gui != NULL)
   {
