@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoLnSurf.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-02-05 11:32:47 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-02-19 11:22:33 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -74,6 +74,7 @@ mafOp(label)
   m_splDim                = 10;
   m_xDim                  = 10;
   m_yDim                  = 10;
+  m_parseNames            = 1;
   m_generateLinesSurfaces = 0;
 }
 
@@ -129,6 +130,7 @@ void mmoLnSurf::OpRun()
     m_Gui->Slider(ID_DIMX_SRF, "surface x-split number",&m_xDim, 4, 100);
     m_Gui->Slider(ID_DIMY_SRF, "surface y-split number",&m_yDim, 4, 100);
     m_Gui->Combo(ID_GEN_LIST, _("reg. type"), &m_generateLinesSurfaces, 3, choices_string); 
+    m_Gui->Bool(ID_PARSE_NAME, _("parse names"), &m_parseNames);
     m_Gui->SetListener(this);
     m_Gui->Label("");
     m_Gui->OkCancel();
@@ -155,6 +157,7 @@ void mmoLnSurf::OnEvent(mafEventBase *maf_event)
     case ID_DIMX_SRF:
     case ID_DIMY_SRF:
     case ID_GEN_LIST:
+    case ID_PARSE_NAME:
     break;
     default:
       mafEventMacro(*maf_event); 
@@ -221,7 +224,18 @@ void mmoLnSurf::OpDo()
       mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(m_Input->GetChild(i));
       unsigned            from   = 0;
       bool                tendon = true;
-      if(cloudCounter < 2 || cloud->GetNumberOfLandmarks() >= 4)
+      bool                OriIns = (cloudCounter < 2);
+      if(m_parseNames)
+      {
+        OriIns = false;
+        int namelen = strlen(cloud->GetName());
+        if(namelen >= 4)
+        {
+          if(strncmp(cloud->GetName(), "Ori_", 4) == 0 || strncmp(cloud->GetName(), "Ins_", 4) == 0)
+            OriIns = true;
+        }
+      }
+      if(OriIns || cloud->GetNumberOfLandmarks() >= 4)
       {
         cloudCounter++;
         coords.clear();
@@ -237,7 +251,7 @@ void mmoLnSurf::OpDo()
             tendon = !tendon;
           }
         }
-        if(cloudCounter >= 3)
+        if(!OriIns)
         {
           std::vector<V3d<double> > *arr = new std::vector<V3d<double> >(coords);
           allValues.push_back(arr);
@@ -283,13 +297,13 @@ void mmoLnSurf::OpDo()
   if((3 - m_generateLinesSurfaces) & 1)
   {
     mafTimeStamp t;
-    wxString     muscnm(m_Input->GetName());
-    wxString     tendnm(m_Input->GetName());
+    wxString     muscnm("MscFbr_");
+    wxString     tendnm("TndFbr_");
     t = ((mafVME *)m_Input)->GetTimeStamp();
     mafNEW(m_Muscles);
     mafNEW(m_Tendons);
-    muscnm += "_Muscle";
-    tendnm += "_Tendon";
+    muscnm += m_Input->GetName();
+    tendnm += m_Input->GetName();
     m_Muscles->SetName(muscnm.c_str());
     m_Muscles->SetData(musc,t);
     m_Tendons->SetName(tendnm.c_str());
@@ -310,10 +324,10 @@ void mmoLnSurf::OpDo()
   if((3 - m_generateLinesSurfaces) & 2)
   {
     mafTimeStamp t;
-    wxString     sfnm(m_Input->GetName());
+    wxString     sfnm("Surf_");
     t = ((mafVME *)m_Input)->GetTimeStamp();
     mafNEW(m_Surface);
-    sfnm += "_Surface";
+    sfnm += m_Input->GetName();
     m_Surface->SetName(sfnm.c_str());
     m_Surface->SetData(surf, t);
 

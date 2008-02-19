@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoLnSurf.h,v $
   Language:  C++
-  Date:      $Date: 2008-02-05 11:32:47 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-02-19 11:22:33 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -53,6 +53,7 @@ protected:
     ID_DIMX_SRF,
     ID_DIMY_SRF,
     ID_GEN_LIST,
+    ID_PARSE_NAME,
     ID_LAST
   };
 
@@ -64,6 +65,7 @@ private:
   int             m_xDim;
   int             m_yDim;
   int             m_generateLinesSurfaces;
+  int             m_parseNames;
   mafVMESurface   *m_Surface;
   mafVMEPolyline  *m_Muscles;
   mafVMEPolyline  *m_Tendons;
