@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafPlotMath.h,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-02-19 11:42:32 $
+  Version:   $Revision: 1.2 $
   Authors:   Vladik Aranov
 ==========================================================================
   Copyright (c) 2002/2004
@@ -235,6 +235,7 @@ DiVoid     DiV4dCrossProduct(const DiV4d *vpVect1, const DiV4d *vpVect2, DiV4d *
 DiVoid     DiMatrixMultiply(const DiMatrix *mpA, const DiMatrix *mpB, DiMatrix *mpOut);
 DiVoid     DiMatrixTestIntegrity(const DiMatrix *mpMatrix);
 bool       DiMatrixTestIdentity(const DiMatrix *mpMatrix);
+bool       DiMatrixTestRotIdentity(const DiMatrix *mpMatrix);
 DiVoid     DiMatrixIdentity(DiMatrix *mpM);
 DiVoid     DiQuatBuildFromMatrix(DiMatrix const *mpMatIn, DiQuaternion *qpQuat);
 DiVoid     DiQuatBuildMatrix(DiQuaternion *qpQuat, DiMatrix *mpMatrix);

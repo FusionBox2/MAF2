@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafPlotMath.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-02-19 11:42:32 $
+  Version:   $Revision: 1.2 $
   Authors:   Vladik Aranov
 ==========================================================================
   Copyright (c) 2002/2004
@@ -131,26 +131,69 @@ bool DiMatrixTestIdentity(const DiMatrix *mpMatrix)
 {
   
   wxASSERT(mpMatrix != NULL);
-  if (!(mpMatrix->vRight.x == 1 &&
-        mpMatrix->vRight.y == 0 &&
-        mpMatrix->vRight.z == 0 &&
-        mpMatrix->vRight.w == 0 &&
-        mpMatrix->vUp.x == 0    &&
-        mpMatrix->vUp.y == 1    &&
-        mpMatrix->vUp.z == 0    &&
-        mpMatrix->vUp.w == 0    &&
-        mpMatrix->vAt.x == 0    &&
-        mpMatrix->vAt.y == 0    &&
-        mpMatrix->vAt.z == 1    &&
-        mpMatrix->vAt.w == 0    &&
-        mpMatrix->vPos.x == 0   &&
-        mpMatrix->vPos.y == 0   &&
-        mpMatrix->vPos.z == 0   &&
-        mpMatrix->vPos.w == 1))
-  {
-  	return false;
-  } 
-
+  const double eps = 1.e-6;
+  if(fabs(mpMatrix->vRight.x - 1.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vRight.y - 0.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vRight.z - 0.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vRight.w - 0.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vUp.x - 0.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vUp.y - 1.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vUp.z - 0.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vUp.w - 0.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vAt.x - 0.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vAt.y - 0.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vAt.z - 1.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vAt.w - 0.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vPos.x - 0.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vPos.y - 0.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vPos.z - 0.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vPos.w - 1.0) > eps)
+    return false;
+  return true;
+} // end of DiMatrixTestIdentity
+bool DiMatrixTestRotIdentity(const DiMatrix *mpMatrix)
+{
+  wxASSERT(mpMatrix != NULL);
+  const double eps = 1.e-6;
+  if(fabs(mpMatrix->vRight.x - 1.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vRight.y - 0.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vRight.z - 0.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vRight.w - 0.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vUp.x - 0.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vUp.y - 1.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vUp.z - 0.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vUp.w - 0.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vAt.x - 0.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vAt.y - 0.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vAt.z - 1.0) > eps)
+    return false;
+  if(fabs(mpMatrix->vAt.w - 0.0) > eps)
+    return false;
   return true;
 } // end of DiMatrixTestIdentity
 
