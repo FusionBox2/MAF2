@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-02-15 11:14:31 $
-Version:   $Revision: 1.15 $
+Date:      $Date: 2008-02-20 12:57:47 $
+Version:   $Revision: 1.16 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -84,6 +84,9 @@ public:
   /** Set subDictionray. */
   void SetDictionary(int subDictionary);   
 
+  /** This method use MAF Api for set the login in order to make operation like upload or download*/
+  bool CheckLogin();
+
 protected:
   
   /** check if lhbbuilder software version is up to date in order to a allow vme uploading */
@@ -108,8 +111,6 @@ protected:
   /** This method checks if process exists and if there is a lock file */
   bool ExistsRunningProcess();
 
-  /** This method use MAF Api for set the login in order to make operation like upload or download*/
-  bool CheckLogin();
   
   mafString m_CacheDir; //>cache superdirectory
   static mafString m_CacheSubdir; //>cache subdirectory
