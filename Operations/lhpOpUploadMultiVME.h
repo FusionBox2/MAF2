@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.h,v $
 Language:  C++
-Date:      $Date: 2008-02-19 09:40:55 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2008-02-20 12:56:54 $
+Version:   $Revision: 1.2 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -83,6 +83,7 @@ public:
   /** Set Current Working Msf Directory*/
   void SetMsfDir(mafString msfDir){m_MsfDir = msfDir;};
 
+
 protected:
   
   /** check if lhpbuilder software version is up to date in order to a allow vme uploading */
@@ -94,9 +95,6 @@ protected:
 
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
 	virtual void OpStop(int result);
-
-  /** This method use MAF Api for set the login in order to make operation like upload or download*/
-  bool CheckLogin();
 
   mafObserver *GetListener() {return m_Listener;};
   
@@ -113,8 +111,7 @@ protected:
   mafString m_SubDictionaryBuildingCommand;
   
   static long m_Pid; //> pid of the server process
-  static lhpUser  m_User;
-  
+ 
   mafString m_ConnectionConfigurationFileName;
   mafString m_ProxyURL;
   mafString m_ProxyPort;

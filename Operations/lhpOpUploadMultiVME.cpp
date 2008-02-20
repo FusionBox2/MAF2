@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-02-19 09:40:55 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2008-02-20 12:56:54 $
+Version:   $Revision: 1.2 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -72,7 +72,6 @@ mafCxxTypeMacro(lhpOpUploadMultiVME);
 //static variables
 long lhpOpUploadMultiVME::m_Pid = -1;
 mafString lhpOpUploadMultiVME::m_CacheSubdir = "0";
-lhpUser lhpOpUploadMultiVME::m_User = lhpUser();
 
 enum lhpOpUploadMultiVME_ID
 {
@@ -133,13 +132,14 @@ void lhpOpUploadMultiVME::OpRun()
     OpStop(result);
     return;
   }
+  
+  m_UploadVME = new lhpOpUploadVME("vmeUploader");
+  m_UploadVME->SetListener(this->GetListener());
 
   bool upToDate = false;
-  if(CheckLogin())
+  if(m_UploadVME->CheckLogin()) 
   {
     upToDate = this->IsLHPBuilderVersionUpToDate();
-    m_UploadVME = new lhpOpUploadVME("vmeUploader");
-    m_UploadVME->SetListener(this->GetListener());
     this->MultiGui();
   }
   else
@@ -403,7 +403,7 @@ bool lhpOpUploadMultiVME::IsLHPBuilderVersionUpToDate()
     return false;
   }  
   
-}
+}/*
 //----------------------------------------------------------------------------
 bool lhpOpUploadMultiVME::CheckLogin()
 //----------------------------------------------------------------------------
@@ -414,10 +414,16 @@ bool lhpOpUploadMultiVME::CheckLogin()
   m_User.SetProxyURL(m_ProxyURL);
 
   result = m_User.CheckUserCredentials();
+  if (result)
+  {
+    int remember = m_User.GetRememberUserCredentials();
+    result = m_User.SetCredentials(m_User.GetName(), m_User.GetPwd(), remember);
+  }
   return result;
-}
-
+}*/
+//--------------------------------------------------------------------------------------------
 mafString lhpOpUploadMultiVME::GetXMLDictionaryFileName( mafString dictionaryFileNamePrefix )
+//--------------------------------------------------------------------------------------------
 {
   mafString dictionaryFileName = "NOT FOUND";
   wxString oldDir = wxGetCwd();
