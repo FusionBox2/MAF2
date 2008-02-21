@@ -26,7 +26,7 @@ class DownloadHandler:
            os.chdir(self.dirCache)
         print os.getcwd()
         
-        serviceUrl = 'https://ws-lhdl.cineca.it:/mafSRBDownload.cgi'
+        serviceUrl = 'https://ws-lhdl.cineca.it/mafSRBDownload.cgi'
         mtomD = MtomDownload.MtomDownload()
         mtomD.Download(self.srbData,serviceUrl)
         print "Inside Download Thread"
