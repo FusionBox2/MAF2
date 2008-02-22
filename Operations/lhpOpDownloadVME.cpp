@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-02-14 12:01:13 $
-Version:   $Revision: 1.5 $
+Date:      $Date: 2008-02-22 10:41:42 $
+Version:   $Revision: 1.6 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -108,6 +108,9 @@ mafOp(label)
 
   m_URISRBFile = "";
   m_URISRBFileSize = "0";
+
+  m_ProxyURL = "";
+  m_ProxyPort = "0";
 }
 
 //----------------------------------------------------------------------------
@@ -133,6 +136,20 @@ bool lhpOpDownloadVME::Accept(mafNode* vme)
 void lhpOpDownloadVME::OpRun()
 //----------------------------------------------------------------------------
 {
+  //Get Proxy values
+  /*mafEvent event;
+  event.SetSender(this);
+  event.SetId(ID_REQUEST_PROXY);
+  mafEventMacro(event);
+
+  if(event.GetString())
+  {
+    mafString port;
+    port << event.GetArg();
+    m_ProxyURL = *event.GetString();
+    m_ProxyPort = port;
+  }*/
+
   // load the connection configuration file:
   this->LoadConnectionConfigurationFile();
 
