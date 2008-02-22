@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderLogic.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-02-22 08:49:05 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2008-02-22 10:40:51 $
+  Version:   $Revision: 1.5 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
@@ -59,6 +59,15 @@ void lhpBuilderLogic::OnEvent(mafEventBase *maf_event)
       {
         //comunicate to operation msf directory
         e->SetString(&m_VMEManager->GetFileName());
+      }
+      break;
+    case ID_REQUEST_PROXY:
+      {
+        if(m_NetworkConnectionSettings->GetProxyFlag())
+        {
+          e->SetString(&m_NetworkConnectionSettings->GetProxyHost());
+          e->SetArg(m_NetworkConnectionSettings->GetProxyPort());
+        }
       }
       break;
 		default:

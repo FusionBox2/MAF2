@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpBuilderDecl.h,v $
 Language:  C++
-Date:      $Date: 2007-12-04 09:38:54 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2008-02-22 10:40:51 $
+Version:   $Revision: 1.2 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2001/2005 
@@ -19,6 +19,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 enum LHP_MAIN_EVENT_ID
 {
 	ID_MSF_DATA_CACHE = EVT_USER_START,
+  ID_REQUEST_PROXY,
 };
 
 #endif
