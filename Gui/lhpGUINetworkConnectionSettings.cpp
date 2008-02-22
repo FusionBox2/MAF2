@@ -2,8 +2,8 @@
 Program:   LHPBuilder
 Module:    $RCSfile: lhpGUINetworkConnectionSettings.cpp,v $
 Language:  C++
-Date:      $Date: 2008-02-22 08:46:40 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2008-02-22 08:54:23 $
+Version:   $Revision: 1.2 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2008
@@ -47,7 +47,7 @@ void lhpGUINetworkConnectionSettings::CreateGui()
 //----------------------------------------------------------------------------
 {
   m_Gui = new mmgGui(this);
-  m_Gui->Label(_("LHDL Upload Download Settings"));
+  m_Gui->Label(_("Connection Settings"));
   m_Gui->Bool(ID_PROXY_FLAG,_("using proxy"),&m_ProxyFlag,1);
   m_Gui->String(ID_PROXY_HOST,_("Host"),&m_ProxyHost,"");
   m_Gui->Integer(ID_PROXY_PORT,_("Port"),&m_ProxyPort,1);
