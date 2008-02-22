@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-02-15 10:52:02 $
-Version:   $Revision: 1.43 $
+Date:      $Date: 2008-02-22 09:33:16 $
+Version:   $Revision: 1.44 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -311,9 +311,9 @@ void lhpOpUploadVME::OpDo()
     command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
     command2execute.Append(wxString::Format("%s ","http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //dev repository
     //http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository prod
-
-    command2execute.Append(wxString::Format("%s ",m_NodeName)); //vme name
     command2execute.Append(wxString::Format("%s ", m_CsvName.c_str())); //manualTagFile
+    command2execute.Append(wxString::Format("%s ",m_NodeName)); //vme name
+
     //command2execute.Append(" > log.txt"); //logme
     
     
@@ -361,9 +361,9 @@ void lhpOpUploadVME::OpDo()
     command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
     command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
     command2execute.Append(wxString::Format("%s ","http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //repository
-
-    command2execute.Append(wxString::Format("%s ", m_NodeName)); //vme name
     command2execute.Append(wxString::Format("%s ", m_CsvName.c_str())); //manualTagFile
+    command2execute.Append(wxString::Format("%s ", m_NodeName)); //vme name
+
 
     //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
     m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
@@ -693,9 +693,10 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
   ofstream unhandledPlusManualTagsFile;
 
   m_CsvName = m_Input->GetName();
-  m_CsvName.Replace(" ", "_"); //replace blank spaces in VME name
+  m_CsvName.Replace(" ", "?"); //replace blank spaces in VME name
   m_NodeName = m_CsvName;
-  m_CsvName << "_id_";
+  m_CsvName.Replace("?", "_");
+  m_CsvName << "_id";
   m_CsvName << wxString::Format("%d",m_Input->GetId());
   m_CsvName << "_tag.csv";
   

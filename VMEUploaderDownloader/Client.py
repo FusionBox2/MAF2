@@ -38,7 +38,7 @@ s.connect((host, port))
 
 
 # compose message
-k = modality + ' ' + id + ' ' + msf + ' ' + user + ' ' + password + ' ' + urlServer + ' ' + manualTagFile + ' ' + name
+k = modality + ' ' + id + ' ' + msf + ' ' + user + ' ' + password + ' ' + urlServer + ' ' + name + ' ' + manualTagFile
 s.sendall(k) # send k to server
 # if stop signal, then leave loop
 v = s.recv(1024) # receive v from server (up to 1024 bytes)

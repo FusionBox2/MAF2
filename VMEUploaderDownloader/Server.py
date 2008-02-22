@@ -34,8 +34,9 @@ class Server(threading.Thread):
       #3 is usr
       #4 is pwd
       #5 is serverUrl
-      #6 is vme name
-      #7 manualTagFile
+      #6 manualTagFile
+      #7 is vme name
+      
       arguments = data.split(" ") 
       sendList = []
       count = 0

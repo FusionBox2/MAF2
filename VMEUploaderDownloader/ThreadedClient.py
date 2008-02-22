@@ -94,13 +94,14 @@ class ThreadedClient:
         #3 is usr
         #4 is pwd
         #5 is serverUrl
-        #6 is vme name
-        #7 is manualTagFile
+        #6 is manualTagFile
+        #7 is vme name
+        
         self.gui.createBar(tuplaFromServer[0])
         
         
         self.gui.createLabel(tuplaFromServer[6]) #tupla[6] is vme name         
-        self.threads.append(CustomThread.CustomThread(func=self.workerThreadUpload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[2], tuplaFromServer[1],tuplaFromServer[3],tuplaFromServer[4],tuplaFromServer[5], tuplaFromServer[7])))
+        self.threads.append(CustomThread.CustomThread(func=self.workerThreadUpload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[2], tuplaFromServer[1],tuplaFromServer[3],tuplaFromServer[4],tuplaFromServer[5], tuplaFromServer[6])))
         self.threads[len(self.threads)-1].start()
     
     def createThreadForDownload(self, tuplaFromServer):
