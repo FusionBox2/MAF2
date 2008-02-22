@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2008-01-25 10:54:04 $
-#   Version:   $Revision: 1.24 $
+#   Date:      $Date: 2008-02-22 08:47:50 $
+#   Version:   $Revision: 1.25 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -73,6 +73,7 @@ IF(MAF_FOUND)
   INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/Application)
   INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/Core)
   INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/Common)
+  INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/Gui)
   INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/Operations)
   INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/VME)
   INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/Views)
@@ -83,6 +84,7 @@ IF(MAF_FOUND)
   SUBDIRS (vtkLHP)
   SUBDIRS (Application)
   SUBDIRS (Common)
+  SUBDIRS (Gui)
   SUBDIRS (Operations)
   SUBDIRS (Views)
   SUBDIRS (VME)
