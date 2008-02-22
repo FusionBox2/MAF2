@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderLogic.h,v $
   Language:  C++
-  Date:      $Date: 2007-10-30 09:27:39 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-02-22 08:49:05 $
+  Version:   $Revision: 1.3 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
@@ -20,6 +20,7 @@
 //----------------------------------------------------------------------------
 // forward reference
 //----------------------------------------------------------------------------
+class lhpGUINetworkConnectionSettings;
 
 //----------------------------------------------------------------------------
 // lhpBuilderLogic :
@@ -34,8 +35,15 @@ public:
 
 	virtual void OnEvent(mafEventBase *maf_event);
 
+  /** Configure the application.
+  At this point are plugged all the managers, the side-bar docking panel. 
+  Are plugged also all the setting to the dialogs interface. */
+  virtual void Configure();
+
 protected:
   /** Respond to a VME_ADDED evt. propagate evt. to SideBar,ViewManager,ecc.. */
   virtual void VmeAdded(mafNode *vme);
+
+  lhpGUINetworkConnectionSettings *m_NetworkConnectionSettings;
 };
 #endif

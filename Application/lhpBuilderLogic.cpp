@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderLogic.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-02-06 13:21:44 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2008-02-22 08:49:05 $
+  Version:   $Revision: 1.4 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
@@ -24,11 +24,14 @@
 #include "mafDecl.h"
 #include "mafTagArray.h"
 #include "mafOp.h"
+#include "mmgSettingsDialog.h"
+#include "lhpGUINetworkConnectionSettings.h"
 
 //----------------------------------------------------------------------------
 lhpBuilderLogic::lhpBuilderLogic()
 //----------------------------------------------------------------------------
 {
+  m_NetworkConnectionSettings = new lhpGUINetworkConnectionSettings(this);
 }
 //----------------------------------------------------------------------------
 lhpBuilderLogic::~lhpBuilderLogic()
@@ -77,5 +80,15 @@ void lhpBuilderLogic::VmeAdded(mafNode *vme)
     lhdlArray = mafTagArray::New();
     lhdlArray->SetName("LHDL");
     vme->SetAttribute("LHDL",lhdlArray);
+  }
+}
+//----------------------------------------------------------------------------
+void lhpBuilderLogic::Configure()
+//----------------------------------------------------------------------------
+{
+  mafLogicWithManagers::Configure(); // create the GUI - and calls CreateMenu
+  if(m_SettingsDialog)
+  {
+    m_SettingsDialog->AddPage(m_NetworkConnectionSettings->GetGui(), m_NetworkConnectionSettings->GetLabel());
   }
 }
