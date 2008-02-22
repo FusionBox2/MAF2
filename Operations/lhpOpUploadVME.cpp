@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-02-22 09:33:16 $
-Version:   $Revision: 1.44 $
+Date:      $Date: 2008-02-22 10:54:39 $
+Version:   $Revision: 1.45 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -693,8 +693,8 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
   ofstream unhandledPlusManualTagsFile;
 
   m_CsvName = m_Input->GetName();
-  m_CsvName.Replace(" ", "?"); //replace blank spaces in VME name
   m_NodeName = m_CsvName;
+  m_CsvName.Replace(" ", "?"); //replace blank spaces in VME name
   m_CsvName.Replace("?", "_");
   m_CsvName << "_id";
   m_CsvName << wxString::Format("%d",m_Input->GetId());
