@@ -78,8 +78,9 @@ class ThreadedClient:
         #3 is usr
         #4 is pwd
         #5 is serverUrl
-        #6 is vme name
         #7 is manualTagFile
+        #6 is vme name
+        
         if(tuplaFromServer[0] == "UPLOAD"):
            self.createThreadForUpdate(tuplaFromServer)
         elif (tuplaFromServer[0] == "DOWNLOAD"):
