@@ -2,8 +2,8 @@
 Program:   LHPBuilder
 Module:    $RCSfile: lhpGUINetworkConnectionSettings.cpp,v $
 Language:  C++
-Date:      $Date: 2008-02-22 08:54:23 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2008-02-22 10:39:57 $
+Version:   $Revision: 1.3 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2008
@@ -119,28 +119,14 @@ void lhpGUINetworkConnectionSettings::InitializeSettings()
   m_Config->Flush();
 }
 //----------------------------------------------------------------------------
-mafString lhpGUINetworkConnectionSettings::GetProxyHost()
+mafString &lhpGUINetworkConnectionSettings::GetProxyHost()
 //----------------------------------------------------------------------------
 {
-  if(m_ProxyFlag)
-  {
-    return m_ProxyHost;
-  }
-  else
-  {
-    return "";
-  }
+  return m_ProxyHost;
 }
 //----------------------------------------------------------------------------
 int lhpGUINetworkConnectionSettings::GetProxyPort()
 //----------------------------------------------------------------------------
-{
-  if(m_ProxyFlag)
-  {
-    return m_ProxyPort;
-  }
-  else
-  {
-    return 0;
-  }
+{ 
+  return m_ProxyPort;
 }

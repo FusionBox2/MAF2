@@ -2,8 +2,8 @@
 Program:   LHPBuilder
 Module:    $RCSfile: lhpGUINetworkConnectionSettings.h,v $
 Language:  C++
-Date:      $Date: 2008-02-22 08:46:40 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2008-02-22 10:39:57 $
+Version:   $Revision: 1.2 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2008
@@ -50,7 +50,7 @@ public:
   void SetProxyFlag(int flag){m_ProxyFlag = flag;};
 
   /** Select image type during saving of the views*/
-  mafString GetProxyHost();
+  mafString &GetProxyHost();
 
   /** Set Port in proxy connection*/
   void SetProxyHost(const char *proxyHost){m_ProxyHost = proxyHost;};
