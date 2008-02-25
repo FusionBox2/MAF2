@@ -26,7 +26,7 @@ class UploadHandler:
         self.XMLURI = ""
         self.block = threading.Lock()
         self.threads = []
-        
+        self.existThread = 0
             
     def upload(self):
         self.createOutgoingDir()
@@ -75,25 +75,31 @@ class UploadHandler:
         print "Wainting for sending binary..."
         print "Total Size of Binary: " + str(self.binaryFileSize)
         binarySendResult = False
-        oldTemporarySize = -1
+        oldPercentage = -1
+        percentage = 0
+        
+        countTime = 0
+        timeStep = 0.5
         while 1:
             # To simulate asynchronous I/O, we create a random number at
             # random intervals. Replace the following 2 lines with the real
             # thing.
-            time.sleep(0.2)
-            #self.remoteTemporaryBinaryFileSize = self.getRemoteTemporaryBinaryFileSize()
-            #print self.remoteTemporaryBinaryFileSize , self.binaryFileSize
-                        
-            thread.start_new_thread(self.getRemoteTemporaryBinaryFileSize,())
+            time.sleep(timeStep)
+            #if(countTime == 1.0): countTime = 0;
+            #else:
+            #    countTime += timeStep
+            #    continue
             
-            if(oldTemporarySize == self.remoteTemporaryBinaryFileSize): continue
-            if(self.remoteTemporaryBinaryFileSize == -1):
-                break
-                
-            oldTemporarySize = self.remoteTemporaryBinaryFileSize
-            #self.remoteTemporaryBinaryFileSize = self.remoteTemporaryBinaryFileSize +10000
+            if(self.existThread == 0):
+               thread.start_new_thread(self.getRemoteTemporaryBinaryFileSize,())
             
             percentage = 100 * self.remoteTemporaryBinaryFileSize / self.binaryFileSize
+            
+            if(percentage == oldPercentage): continue
+            oldPercentage = percentage
+            
+            
+            print "percentage " + str(percentage) 
             lista = [self.observer,percentage]
             print "bytes: " + str(self.remoteTemporaryBinaryFileSize)
             print "p: " + str(percentage)
@@ -197,11 +203,21 @@ class UploadHandler:
         
         
     def getRemoteTemporaryBinaryFileSize(self):
-        instance = MtomSRBSize.MtomSize()
-        serviceUrl = 'https://ws-lhdl.cineca.it/mafSRBSize.cgi'
-        result = instance.ListSrbDir(self.BinaryURI, serviceUrl)
-        self.remoteTemporaryBinaryFileSize = result;
-        #print "RESIZE Thread Finished " + str(self.remoteTemporaryBinaryFileSize) 
+        self.block.acquire()
+        self.existThread = 1
+        self.block.release()
+        result = None
+        try:
+            instance = MtomSRBSize.MtomSize()
+            serviceUrl = 'https://ws-lhdl.cineca.it/mafSRBSize.cgi'
+            result = instance.ListSrbDir(self.BinaryURI, serviceUrl)
+            self.remoteTemporaryBinaryFileSize = result;
+            print "SIZE Thread Finished "
+        except:
+            pass
+        self.block.acquire()
+        self.existThread = 0
+        self.block.release() 
         #return result;
         
 
