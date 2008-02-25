@@ -79,7 +79,7 @@ class UploadHandler:
         percentage = 0
         
         countTime = 0
-        timeStep = 0.5
+        timeStep = 1.0
         while 1:
             # To simulate asynchronous I/O, we create a random number at
             # random intervals. Replace the following 2 lines with the real
