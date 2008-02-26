@@ -7,12 +7,15 @@ class XmlUploadDownloadTest(unittest.TestCase):
     def testUploadDownload(self):
 
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
+        ws.Username = 'testuser'
+        ws.Password = 'GRDPt8'
+        ws.ServerURL = 'http://devel.fec.cineca.it:12680/town/Members/portal_admin/test-lhp2'
         testFile = "testXml.msf"
 
         #delete
         print "delete remote " + testFile + "..."
         try:
-            ws.run('delete', testFile)
+            ws.run('xmldelete', testFile)
         except:
             pass
         print "done!"
@@ -20,7 +23,7 @@ class XmlUploadDownloadTest(unittest.TestCase):
         #upload
         print "upload " + testFile + "..."
         out = ws.run('xmlupload', testFile)
-        self.assertEqual(out, True)
+        self.assertEqual(out[0], True)
         print "done!"
         
         #copy

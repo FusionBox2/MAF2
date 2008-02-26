@@ -19,6 +19,9 @@ class xmlrpc_demoWS:
         """"""
         self.ProxyURL = ''
         self.ProxyPort = 0
+#        self.Username = 'testuser'
+#        self.Password = 'GRDPt8'
+#        self.ServerURL = 'http://devel.fec.cineca.it:12680/town/Members/portal_admin/test-lhp2'
         self.Username = ''
         self.Password = ''
         self.ServerURL = ''
