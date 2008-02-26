@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.4
 ################################################################
 # XML-RPC Client Demo (PYTHON) to send request to Zope Server  #
 # written by Francesco Benincasa <f.benincasa@scsolutions.it>  #
@@ -8,14 +8,21 @@ import httplib, urlparse, string
 from base64 import encodestring, decodestring
 import xml.dom.minidom as xd
 
+from HttpsProxy import *
+import os
+import urllib, urllib2, base64, re, os, cookielib, sys
+
 class xmlrpc_demoWS:
     """"""
 
     def __init__(self):
         """"""
-        self.User = 'testuser'
-        self.Password = 'GRDPt8'
-        self.ServerURL = 'http://devel.fec.cineca.it:12680/town/Members/portal_admin/test-lhp2'
+        self.ProxyURL = ''
+        self.ProxyPort = 0
+        self.Username = ''
+        self.Password = ''
+        self.ServerURL = ''
+
 
     def post_multipart(self, bod='search', url='', username='', password='', **kw):
         """
@@ -116,32 +123,53 @@ class xmlrpc_demoWS:
         elif bod == 'deletefrombasket':
             body = self.deleteFromBasket
 
-        # internet location (temporary BiomedTown development instance)
-        wh_url = url
+        print "++++++\n" + body + "\n"
 
-        wh_url += wh_file
+        #####################
+        self.cj = cookielib.CookieJar()
+
+        proxy_url = self.ProxyURL
+        if self.ProxyPort == 0:
+            proxy_port = ''
+        else: proxy_port = str(self.ProxyPort)
+
+        p = '%s:%s' % (proxy_url, proxy_port)
+
+        if proxy_url != '' and proxy_port != '':
+
+            print "You are using proxy: " + p
+
+            self.opener = \
+              urllib2.build_opener(
+              ConnectHTTPHandler(proxy=p),
+              ConnectHTTPSHandler(proxy=p),
+              urllib2.HTTPCookieProcessor(self.cj))
+        else:
+            self.opener = \
+              urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cj))
+
+        urllib2.install_opener(self.opener)  
+
+        print "Connecting to URL: " + url
+
+        req = urllib2.Request(url=url,data=body)
 
         content_type = 'text/xml'
 
-        #xml request
-        urlparts = urlparse.urlsplit(wh_url)
-        host = urlparts[1]
-        selector = urlparts[2]
+        # Basic authentication code
+        base64string = encodestring('%s:%s' % (self.Username, self.Password))[:-1]
+        authheader =  "Basic %s" % base64string
+        req.add_header("Authorization", authheader)
+        req.add_header('content-type', content_type)
+        req.add_header('content-length', str(len(body)))
 
-        #print 'Connecting to %s' % str(wh_url)
-        h = httplib.HTTPConnection(host)
-        h.putrequest('POST', selector)
-        h.putheader('content-type', content_type)
-        h.putheader('content-length', str(len(body)))
-        h.putheader("AUTHORIZATION", "Basic %s" % string.replace(
-                                encodestring("%s:%s" % (username, password)),
-                                "\012", ""))
-        h.endheaders()
-        h.send(body)
-        #print 'Sending body: ... \n%s\n' % (str(body))
+        # open the url
+        print 'Sending body: ... \n%s\n' % (str(body))
+        response = urllib2.urlopen(req)
+
         #print 'Sending body: ... '
         if bod == 'xmldownload':
-            res = h.getresponse().read()
+            res = response.read()
             dom = xd.parseString(res)
 #            for el in dom.getElementsByTagName("string"):
 #                for node in el.childNodes:
@@ -156,7 +184,7 @@ class xmlrpc_demoWS:
             f.close()
             return True
         else:
-            res = h.getresponse().read()
+            res = response.read()
             dom = xd.parseString(res)
             if dom.getElementsByTagName("fault"):
                 return False, res
@@ -164,7 +192,7 @@ class xmlrpc_demoWS:
                 return True, res
 
     def setCredentials(self, user, password):
-        self.User = user
+        self.Username = user
         self.Password = password
     
     def setServer(self, serverURL):
@@ -177,11 +205,9 @@ class xmlrpc_demoWS:
         args = {}
     
         # username and password of a test user
-        username = self.User
+        username = self.Username
         password = self.Password
     
-        # production server
-        # url = 'http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2'
         
         # development server
         url = self.ServerURL
@@ -244,6 +270,7 @@ class xmlrpc_demoWS:
             print 'Error :\n' + usage_msg
             sys.exit(1)
 
+        print command, url, username, password, str(args)
         #ws = xmlrpc_demoWS(**args)
         return self.post_multipart(command, url, username, password, **args)
 
@@ -257,7 +284,7 @@ xmldelete <id> - delete data resource
 listBasket - list user's basket items
 ''' % sys.argv[0]
 
-    if len(sys.argv) > 3:
+    if len(sys.argv) not in (2,3):
         print 'Error :\n' + usage_msg
         sys.exit(1)
 
