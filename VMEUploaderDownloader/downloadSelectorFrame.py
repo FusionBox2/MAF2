@@ -67,9 +67,9 @@ class downloadSelectorFrame(wx.Frame):
         if(len(self.Selections) == 0): 
             wx.MessageBox("Must be selected some vme")
             return
-        if(len(self.Selections) != 1): 
-            wx.MessageBox("You can Select for Now 1 only vme (temporarly)")
-            return
+        #if(len(self.Selections) != 1): 
+        #    wx.MessageBox("You can Select for Now 1 only vme (temporarly)")
+        #    return
         self.lBasket.IdListSelected = self.Selections #copy selection list for listBasket selected list
         self.lBasket.writeIdListSelectedOnFile()
         self.App.ExitMainLoop()

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-02-22 10:41:42 $
-Version:   $Revision: 1.6 $
+Date:      $Date: 2008-02-27 09:47:40 $
+Version:   $Revision: 1.7 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -287,118 +287,123 @@ void lhpOpDownloadVME::OpDo()
     return;
   }
 
-  int indexNecessary = 0;
-  if(DownloadSelectedXMLFromBasket(indexNecessary) != MAF_OK)
+  for (int i = 0; i < m_BasketList.size(); i++)
   {
-    wxMessageBox("Unable to download xml");
-    return;
+    //int indexNecessary = 0;
+    if(DownloadSelectedXMLFromBasket(i) != MAF_OK)
+    {
+      wxMessageBox("Unable to download xml");
+      return;
+    }
+
+    //reconstruct msf
+    if(ReconstructMSF(i) != MAF_OK)
+    {
+      wxMessageBox("Unable to reconstruct msf");
+      return;
+    }
+
+    //import msf in the current tree
+    if(ImportMSF() != MAF_OK)
+    {
+      wxMessageBox("Unable to import msf");
+      return;
+    }
+
+    wxString oldDir = wxGetCwd();
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+    wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+    //mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+    wxBusyCursor wait;
+
+
+    // m_Pid = wxExecute(command2execute, output, errors, wxEXEC_NODISABLE);
+
+    if ( ExistsRunningProcess() )
+    {
+      //PROCESS EXIST, ONLY CALL CLIENT
+      wxString command2execute;
+      command2execute = m_PythonwExe;
+      //command2execute.Append(m_PythonUploadFullPath.GetCStr());
+      // script for client
+      m_FileName = "Client.py ";
+      command2execute.Append(m_FileName.GetCStr());
+      command2execute.Append("127.0.0.1 "); //server address (localhost)
+      command2execute.Append("50000 "); //port address (50000)
+      command2execute.Append(wxString::Format("DOWNLOAD ")); //Download command
+      command2execute.Append(wxString::Format("%s ",m_URISRBFileSize)); //vme id
+
+      //workaround to understanding directory argument
+      wxString directoryWorkAround = m_IncomingCompletePath;
+      directoryWorkAround.Replace(" ", "?");
+      command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
+      command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
+      command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
+      command2execute.Append(wxString::Format("%s ","http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //dev repository
+      //http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2 prod
+
+      command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //DATA DOWNLOAD NAME
+      //command2execute.Append(" > log.txt"); //logme
+
+
+      //wxMessageBox(wxString::Format("Process %ld is running.", m_Pid));
+      //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+      m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
+      mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
+        command2execute.c_str(), m_Pid);
+
+    }
+    else
+    {
+      //PROCESS NOT EXIST, CREATE SERVER AND CALL CLIENT
+      wxString command2execute;
+      command2execute = m_PythonwExe;
+      //command2execute.Append(m_PythonUploadFullPath.GetCStr());
+      //wxMessageBox(wxString::Format("No process with pid = %ld.", m_Pid));
+      m_FileName = "ThreadedClient.py ";
+      command2execute.Append(m_FileName.GetCStr());
+      command2execute.Append("50000");
+      //command2execute.Append(" > log.txt"); //logme
+      mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+
+      m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
+
+      mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
+        command2execute.c_str(), m_Pid);
+
+      mafSleep(5000);
+
+      command2execute.clear();
+      command2execute = m_PythonwExe;
+      //command2execute.Append(m_PythonUploadFullPath.GetCStr());
+      m_FileName = "Client.py ";
+      command2execute.Append(m_FileName.GetCStr());
+      command2execute.Append("127.0.0.1 "); //server address (localhost)
+      command2execute.Append("50000 "); //port address (50000)
+      command2execute.Append(wxString::Format("DOWNLOAD ")); //Download command
+      command2execute.Append(wxString::Format("%s ",m_URISRBFileSize)); //vme id
+
+      //workaround to understanding directory argument
+      wxString directoryWorkAround = m_IncomingCompletePath;
+      directoryWorkAround.Replace(" ", "?");
+      command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
+      command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
+      command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
+      command2execute.Append(wxString::Format("%s ","http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //repository
+
+      command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //DATA DOWNLOAD NAME
+
+      //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+      m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
+      mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
+        command2execute.c_str(), m_Pid);
+
+    }
+
+    wxSetWorkingDirectory(oldDir);
   }
 
-  //reconstruct msf
-  if(ReconstructMSF() != MAF_OK)
-  {
-    wxMessageBox("Unable to reconstruct msf");
-    return;
-  }
-
-  //import msf in the current tree
-  if(ImportMSF() != MAF_OK)
-  {
-    wxMessageBox("Unable to import msf");
-    return;
-  }
-
-  wxString oldDir = wxGetCwd();
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-//mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxBusyCursor wait;
-
-  
-  // m_Pid = wxExecute(command2execute, output, errors, wxEXEC_NODISABLE);
  
-  if ( ExistsRunningProcess() )
-  {
-    //PROCESS EXIST, ONLY CALL CLIENT
-    wxString command2execute;
-    command2execute = m_PythonwExe;
-    //command2execute.Append(m_PythonUploadFullPath.GetCStr());
-    // script for client
-    m_FileName = "Client.py ";
-    command2execute.Append(m_FileName.GetCStr());
-    command2execute.Append("127.0.0.1 "); //server address (localhost)
-    command2execute.Append("50000 "); //port address (50000)
-    command2execute.Append(wxString::Format("DOWNLOAD ")); //Download command
-    command2execute.Append(wxString::Format("%s ",m_URISRBFileSize)); //vme id
-
-    //workaround to understanding directory argument
-    wxString directoryWorkAround = m_IncomingCompletePath;
-    directoryWorkAround.Replace(" ", "?");
-    command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
-    command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
-    command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
-    command2execute.Append(wxString::Format("%s ","http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //dev repository
-    //http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2 prod
-
-    command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //DATA DOWNLOAD NAME
-    //command2execute.Append(" > log.txt"); //logme
-    
-    
-    //wxMessageBox(wxString::Format("Process %ld is running.", m_Pid));
-    //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
-    m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
-    mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
-      command2execute.c_str(), m_Pid);
-
-  }
-  else
-  {
-    //PROCESS NOT EXIST, CREATE SERVER AND CALL CLIENT
-    wxString command2execute;
-    command2execute = m_PythonwExe;
-    //command2execute.Append(m_PythonUploadFullPath.GetCStr());
-    //wxMessageBox(wxString::Format("No process with pid = %ld.", m_Pid));
-    m_FileName = "ThreadedClient.py ";
-    command2execute.Append(m_FileName.GetCStr());
-    command2execute.Append("50000");
-    //command2execute.Append(" > log.txt"); //logme
-    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
-
-    m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
-    
-    mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
-    command2execute.c_str(), m_Pid);
-
-    mafSleep(5000);
-
-    command2execute.clear();
-    command2execute = m_PythonwExe;
-    //command2execute.Append(m_PythonUploadFullPath.GetCStr());
-    m_FileName = "Client.py ";
-    command2execute.Append(m_FileName.GetCStr());
-    command2execute.Append("127.0.0.1 "); //server address (localhost)
-    command2execute.Append("50000 "); //port address (50000)
-    command2execute.Append(wxString::Format("DOWNLOAD ")); //Download command
-    command2execute.Append(wxString::Format("%s ",m_URISRBFileSize)); //vme id
-    
-    //workaround to understanding directory argument
-    wxString directoryWorkAround = m_IncomingCompletePath;
-    directoryWorkAround.Replace(" ", "?");
-    command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
-    command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
-    command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
-    command2execute.Append(wxString::Format("%s ","http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //repository
-
-    command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //DATA DOWNLOAD NAME
-
-    //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
-    m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
-    mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
-      command2execute.c_str(), m_Pid);
-    
-  }
-  
-  wxSetWorkingDirectory(oldDir);
 }
 //----------------------------------------------------------------------------
 void lhpOpDownloadVME::OpStop(int result)   
