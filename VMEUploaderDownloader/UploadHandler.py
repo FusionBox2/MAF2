@@ -85,10 +85,10 @@ class UploadHandler:
             # random intervals. Replace the following 2 lines with the real
             # thing.
             time.sleep(timeStep)
-            #if(countTime == 1.0): countTime = 0;
-            #else:
-            #    countTime += timeStep
-            #    continue
+            if(countTime == 1.0): countTime = 0;
+            else:
+                countTime += 0.1
+                continue
             
             if(self.existThread == 0):
                thread.start_new_thread(self.getRemoteTemporaryBinaryFileSize,())
