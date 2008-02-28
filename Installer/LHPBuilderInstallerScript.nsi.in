@@ -164,8 +164,8 @@ IntCmp $R0 1 registry_key_present registry_key_not_found
 registry_key_present:
 ;      MessageBox MB_OK "registry key found"
   ;    Abort
-     MessageBox MB_OK "Application already installed! Please uninstall it before performing a new installation."
-     Abort
+     ;MessageBox MB_OK "Application already installed! Please uninstall it before performing a new installation."
+     ;Abort
 registry_key_not_found:
     ;MessageBox MB_OK "registry key not found"   
 ;      Abort
