@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-02-27 09:47:40 $
-Version:   $Revision: 1.7 $
+Date:      $Date: 2008-02-28 13:17:12 $
+Version:   $Revision: 1.8 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -752,7 +752,7 @@ int lhpOpDownloadVME::ImportMSF()
   importer->ImportMSF();
 
   mafNode *node = importer->GetOutput();
-  node->ReparentTo(m_Input);
+  m_Input->AddChild(node);
 
   mafDEL(importer);
   return MAF_OK;
