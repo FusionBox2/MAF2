@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-02-22 10:54:39 $
-Version:   $Revision: 1.45 $
+Date:      $Date: 2008-02-29 09:58:12 $
+Version:   $Revision: 1.46 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -367,8 +367,8 @@ void lhpOpUploadVME::OpDo()
 
     //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
     m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
-    mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
-      command2execute.c_str(), m_Pid);
+    /*mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), m_Pid);*/
     
   }
   
