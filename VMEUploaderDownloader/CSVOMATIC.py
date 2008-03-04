@@ -505,7 +505,7 @@ class GridFrame(wx.Frame):
             NewRow = ""
             for item in self.data[row]:
 		# put double quotes around edited item
-                NewRow = NewRow + " \"" + item + "\" " + self.parent.Delimiter
+                NewRow = NewRow + "\"" + item + "\" " + self.parent.Delimiter
             NewRow = NewRow[:-1] #truncate the extra tab.
             self.parent.data[int(self.grid.GetRowLabelValue(row))] = NewRow #change parent data set
             if row == self.parent.HeaderRow:#if editing row 0, then refresh the headers
