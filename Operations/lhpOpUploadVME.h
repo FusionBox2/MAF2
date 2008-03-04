@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-02-20 12:57:47 $
-Version:   $Revision: 1.16 $
+Date:      $Date: 2008-03-04 14:56:16 $
+Version:   $Revision: 1.17 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -157,6 +157,7 @@ private:
   wxArrayString m_HandledAutoTagsListFromFactory; ///< tags handled by the factory  
   wxString m_CsvName;
   wxString m_NodeName;
+  FILE *m_ProxyFile;
   
 };
 #endif

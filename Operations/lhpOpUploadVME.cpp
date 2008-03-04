@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-02-29 09:58:12 $
-Version:   $Revision: 1.46 $
+Date:      $Date: 2008-03-04 14:56:16 $
+Version:   $Revision: 1.47 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -58,6 +58,7 @@ MafMedical is partially based on OpenMAF.
 #include "lhpUser.h"
 #include "mafNode.h"
 #include "mafVMEGenericAbstract.h"
+#include "mafTagArray.h"
 
 #include "lhpFactoryTagHandler.h"
 #include "vtkPolyData.h"
@@ -149,6 +150,26 @@ bool lhpOpUploadVME::Accept(mafNode* vme)
 void lhpOpUploadVME::OpRun()
 //----------------------------------------------------------------------------
 {
+
+  //Get Proxy values
+ /* mafEvent event;
+  event.SetSender(this);
+  event.SetId(ID_REQUEST_PROXY);
+  mafEventMacro(event);
+
+  if(event.GetString())
+  {
+    mafString proxyHost = *event.GetString();
+    proxyHost.Append("\n");
+    mafString proxyPort;
+    m_ProxyFile = fopen("proxy.txt", "w");
+    fwrite(proxyHost.GetCStr(),1,proxyHost.GetSize(), m_ProxyFile);
+    proxyPort = wxString::Format("%i",event.GetArg());
+    fwrite(proxyPort, 1, proxyPort.GetSize(), m_ProxyFile);
+    fclose(m_ProxyFile);
+  }*/
+
+
   // load the connection configuration file:
   // this->LoadConnectionConfigurationFile();
 
@@ -700,26 +721,58 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
   m_CsvName << wxString::Format("%d",m_Input->GetId());
   m_CsvName << "_tag.csv";
   
-
-
   unhandledPlusManualTagsFile.open(m_CsvName.c_str());
 
   if (!unhandledPlusManualTagsFile) {
     mafLogMessage("Unable to create file");
     return MAF_ERROR; // terminate with error
   }
+
+  std::vector<std::string> tagList;
+  m_Input->GetTagArray()->GetTagList(tagList);
+
+  bool tagFound;
+  mafString tagValue = "";
   // write unhandled auto
   for (int i = 0; i < m_UnhandledAutoTagsListFromFactory.size(); i++)
   {
+    tagFound = false;
     tagName = m_UnhandledAutoTagsListFromFactory[i].c_str();
-    unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\" , \"ANNOTATE ME!\"" << std::endl ;
+
+    for (int n = 0; n < tagList.size(); n++)
+    {
+      if (tagName.Equals(tagList[n].c_str()))
+      {
+        tagValue =  m_Input->GetTagArray()->GetTag(tagList[n].c_str())->GetValue();
+        unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\" , \"" << tagValue.GetCStr() << "\"" << std::endl ;
+        tagFound = true;
+        break;
+      }
+    }
+    if (!tagFound)
+      unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\" , \"ANNOTATE ME!\"" << std::endl ;
   }
+
 
   // write manuals
   for (int i = 0; i < m_ManualTagsList.size(); i++)
   {
+    tagFound = false;
     tagName = m_ManualTagsList[i].c_str();
-    unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\" , \"ANNOTATE ME!\"" << std::endl ;
+
+    for (int n = 0; n < tagList.size(); n++)
+    {
+      if (tagName.Equals(tagList[n].c_str()))
+      {
+        tagValue =  m_Input->GetTagArray()->GetTag(tagList[n].c_str())->GetValue();
+        unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\" , \"" << tagValue.GetCStr() << "\"" << std::endl ;
+        tagFound = true;
+        break; 
+      }
+    }
+    if (!tagFound)
+      unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\" , \"ANNOTATE ME!\"" << std::endl ;
+
   }
 
   unhandledPlusManualTagsFile.close();
