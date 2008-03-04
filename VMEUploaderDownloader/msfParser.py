@@ -278,7 +278,15 @@ class msfParser:
         which is a standard vme tag item
         node must exist already"""
         isinstance(tagNode, minidom.Node)
-        textNode = tagNode.childNodes[0].childNodes[0].childNodes[0]
+        
+        try:
+            textNode = tagNode.childNodes[0].childNodes[0].childNodes[0]
+        except:
+            try:
+                textNode = tagNode.childNodes[1].childNodes[1].childNodes[0]
+            except:
+                 return
+            
         isinstance(textNode,minidom.Node)
         textNode.data = stringValue
 
@@ -294,7 +302,15 @@ class msfParser:
         which is a standard vme tag item
         """
         isinstance(tagNode, minidom.Node)
-        textNode = tagNode.childNodes[0].childNodes[0].childNodes[0]
+        
+        try:
+            textNode = tagNode.childNodes[0].childNodes[0].childNodes[0]
+        except:
+            try:
+                textNode = tagNode.childNodes[1].childNodes[1].childNodes[0]
+            except:
+                 return
+
         isinstance(textNode,minidom.Node)
         return textNode.data
         
