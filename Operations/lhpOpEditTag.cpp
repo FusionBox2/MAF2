@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-03-04 13:22:42 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2008-03-04 13:29:56 $
+Version:   $Revision: 1.2 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -611,12 +611,6 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
   std::vector<std::string> tagList;
   m_Input->GetTagArray()->GetTagList(tagList);
 
-  //copy tags from MSF genereted by python editor, to orginal MSF
- /* for (int n = 0; n < m_TemporaryNode->GetTagArray()->GetNumberOfTags(); n++)
-  {
-    m_Input->GetTagArray()->SetTag(tagList[n].c_str(), m_TemporaryNode->GetTagArray()->GetTag(tagList[n].c_str())->GetValue());
-  }*/
-
   bool tagFound;
   mafString tagValue = "";
   // write unhandled auto
@@ -658,7 +652,6 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
     }
     if (!tagFound)
       unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\" , \"ANNOTATE ME!\"" << std::endl ;
-
   }
 
   unhandledPlusManualTagsFile.close();
