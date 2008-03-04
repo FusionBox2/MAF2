@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-03-04 13:29:56 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2008-03-04 14:52:56 $
+Version:   $Revision: 1.3 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -339,10 +339,10 @@ void lhpOpEditTag::OpDo()
   std::vector<std::string> tagList;
   m_TemporaryNode->GetTagArray()->GetTagList(tagList);
 
-  //copy tags from MSF genereted by python editor, to orginal MSF
+  //copy tags from MSF genereted by python editor, to orginal MSF.
   for (int n = 0; n < m_TemporaryNode->GetTagArray()->GetNumberOfTags(); n++)
   {
-    m_Input->GetTagArray()->SetTag(tagList[n].c_str(), m_TemporaryNode->GetTagArray()->GetTag(tagList[n].c_str())->GetValue());
+    m_Input->GetTagArray()->SetTag(tagList[n].c_str(), m_TemporaryNode->GetTagArray()->GetTag(tagList[n].c_str())->GetValue(), 2);
   }
 
   mafDEL(m_TemporaryNode);
