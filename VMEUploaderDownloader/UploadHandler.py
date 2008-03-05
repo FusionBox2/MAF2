@@ -1,4 +1,4 @@
-import vmeUploader
+import vmeUploaderOnly
 from webServicesClient import MtomUpload, MtomUploadURI, MtomSRBSize , xmlrpcDemoWS
 import msfParser
 from xml.dom import minidom
@@ -78,19 +78,17 @@ class UploadHandler:
         oldPercentage = -1
         percentage = 0
         
-        countTime = 0.0
-        timeStep = 1.0
+        countTime = 0
+        timeStep = 0.5
         while 1:
             # To simulate asynchronous I/O, we create a random number at
             # random intervals. Replace the following 2 lines with the real
             # thing.
-            time.sleep(1.0)
-            if(countTime >= 1.0):   
-                countTime = 0.0;
-            else:
-                countTime += 0.2
-                #print countTime
-                continue
+            time.sleep(timeStep)
+            #if(countTime == 1.0): countTime = 0;
+            #else:
+            #    countTime += timeStep
+            #    continue
             
             if(self.existThread == 0):
                thread.start_new_thread(self.getRemoteTemporaryBinaryFileSize,())
@@ -141,10 +139,10 @@ class UploadHandler:
         		
     def createXMLAndBinary(self):
         curDir = sys.path[0]
-        upl = vmeUploader.vmeUploader()
+        upl = vmeUploaderOnly.vmeUploaderOnly()
         upl.InputMSFDirectory = self.dirCache
-        upl.HandledAutoTagsListFileName = curDir + r'\handledAutoTagsList.csv'
-        upl.UnhandledPlusManualTagsListFileName = curDir + '\\' + self.manualTagFile 
+        #upl.HandledAutoTagsListFileName = curDir + r'\handledAutoTagsList.csv'
+        #upl.UnhandledPlusManualTagsListFileName = curDir + '\\' + self.manualTagFile 
       
         upl.OutputFolderName = self.dirOutgoing
         upl.VmeToExtractID = int(self.id)
