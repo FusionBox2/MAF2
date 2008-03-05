@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-03-04 14:56:16 $
-Version:   $Revision: 1.17 $
+Date:      $Date: 2008-03-05 11:03:28 $
+Version:   $Revision: 1.18 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -111,6 +111,9 @@ protected:
   /** This method checks if process exists and if there is a lock file */
   bool ExistsRunningProcess();
 
+  /** Import Edited MSF*/
+  int ImportMSF();
+
   
   mafString m_CacheDir; //>cache superdirectory
   static mafString m_CacheSubdir; //>cache subdirectory
@@ -158,6 +161,9 @@ private:
   wxString m_CsvName;
   wxString m_NodeName;
   FILE *m_ProxyFile;
+  mafNode *m_Parent;
+  mafNode *m_TemporaryNode;
+
   
 };
 #endif
