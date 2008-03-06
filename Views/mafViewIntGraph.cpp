@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafViewIntGraph.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-03-06 22:10:02 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -98,6 +98,7 @@ mafViewIntGraph::mafViewIntGraph(const wxString &label)
   m_VMEs               = NULL;
   m_Pipes              = NULL;
   m_Sg                 = NULL;
+  m_Rwi                = NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -106,6 +107,7 @@ mafViewIntGraph::~mafViewIntGraph()
 {
   //if(m_Gui != NULL){;} //HideGui();
   cppDEL(m_Sg);  
+  cppDEL(m_Rwi);
   cppDEL(m_VMEs);
   cppDEL(m_Graph);
   cppDEL(m_Pipes);
@@ -145,8 +147,16 @@ void mafViewIntGraph::Create()
 
   m_RenderWindow->SetNotifiedView(this);
 
-  m_Sg  = new mafSceneGraph(this,NULL,NULL);
+
+  m_Rwi = new mafRWI(m_Win,ONE_LAYER);
+  m_Rwi->SetListener(this);//SIL. 16-6-2004: 
+  m_Sg  = new mafSceneGraph(this,m_Rwi->m_RenFront,m_Rwi->m_RenBack);
   m_Sg->SetListener(this);
+  m_Rwi->m_Sg = m_Sg;
+
+
+  //m_Sg  = new mafSceneGraph(this,NULL,NULL);
+  //m_Sg->SetListener(this);
 
   m_VMEs  = new VMEArray();
   m_Graph = new mafMemoryGraph(FLT_GARB, 1, 1000);

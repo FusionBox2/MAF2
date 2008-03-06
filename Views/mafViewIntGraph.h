@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafViewIntGraph.h,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-03-06 22:10:02 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -87,7 +87,8 @@ public:
   virtual void VmeDeletePipe(mafNode *vme);
 
   virtual void CameraUpdate();
-  virtual mafSceneGraph *GetSceneGraph()	  {return m_Sg;}; 
+  virtual mafSceneGraph *GetSceneGraph()    {return m_Sg;}; 
+  virtual mafRWIBase    *GetRWI()           {return m_Rwi->m_RwiBase;};
   /** Return a pointer to the image of the renderwindow.*/
   void GetImage(wxBitmap &bmp, int magnification = 1);
   /** Called to update all components that depends on Application Options.*/
@@ -158,6 +159,8 @@ public:
     ID_ROLLOUT_RENDER,
     ID_SHOW_LAST
   };
+  mafRWI *m_Rwi;
+
 
 
 protected:
