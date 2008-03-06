@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: VecProc.h,v $
   Language:  C++
-  Date:      $Date: 2008-02-19 11:23:40 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2008-03-06 22:08:57 $
+  Version:   $Revision: 1.4 $
   Authors:   Fedor Moiseev
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -33,8 +33,8 @@ public:
   };
   Param(VarType type, bool dn = false, bool up = false):m_type(type), m_dn(dn), m_up(up){}
   VarType          GetType(){return m_type;}
-  Type&            GetScalar(){return m_scalar;}
-  const Type&      GetScalar()const{return m_scalar;}
+  Type&            GetScalar(){return m_value[0];}
+  const Type&      GetScalar()const{return m_value[0];}
   bool             IsUpLimited()const{return m_up;}
   bool             IsDnLimited()const{return m_dn;}
   bool&            UpLimited(){return m_up;}
@@ -43,66 +43,95 @@ public:
   const Type&      GetUpLimit()const{return m_upLimit;}
   Type&            GetDnLimit(){return m_dnLimit;}
   const Type&      GetDnLimit()const{return m_dnLimit;}
-  V3d<Type>&       GetVector(){return m_vector;}
-  const V3d<Type>& GetVector()const{return m_vector;}
+  V3d<Type>&       GetVector(){return m_value;}
+  const V3d<Type>& GetVector()const{return m_value;}
+  bool&            GetValid(){return m_valid;}
+  bool             IsValid()const{return m_valid;}
 private:
-  Type          m_scalar;
   Type          m_upLimit;
   Type          m_dnLimit;
   bool          m_up;
   bool          m_dn;
-  V3d<Type>     m_vector;
+  V3d<Type>     m_value;
+  bool          m_valid;
   const VarType m_type;
 };
 
 template <class Type>
 struct oneParam
 {
+  oneParam(bool v, bool i, bool c, bool o, Param<Type> **p):vector(v),input(i), constant(c), optional(o), param(p){}
   bool        vector;
   bool        input;
   bool        constant;
   bool        optional;
   Param<Type> **param;
 };
-#define FIELDS_BEGIN(Type)                          \
+
+/*#define FIELDS_BEGIN(Type)  static oneParam<typename Type> m_ops[] = {
+#define FIELDS_END()  };\
+virtual std::vector<oneParam<Type> > getFields()  \
+{                                                   \
+  std::vector<oneParam<Type> > fields;
+  for(unsigned i = 0; i < sizeof(m_ops) / sizeof(m_ops[0]); i++) fields.push_back(m_ops[i]);\
+  return fields;                             \
+}*/
+
+
+/*#define FIELDS_BEGIN(Type)                          \
 virtual std::vector<oneParam<Type> > getFields()  \
 {                                                   \
 std::vector<oneParam<Type> > fields;              oneParam<typename Type> op[] = {
 #define FIELDS_END()                               \
 };for(unsigned i = 0; i < sizeof(op) / sizeof(op[0]); i++) fields.push_back(op[i]);\
 return fields;                             \
-}
-#define DEFINE_FIELD(name,vector,input) {vector, input, false, false, &m_##name},
-#define DEFINE_VFIELDI(name)   {true,  true,  false, false, &m_##name},
-#define DEFINE_VFIELDO(name)   {true,  false, false, false, &m_##name},
-#define DEFINE_SFIELDI(name)   {false, true,  false, false, &m_##name},
-#define DEFINE_SFIELDI(name)   {false, true,  false, false, &m_##name},
-#define DEFINE_SFIELDO(name)   {false, false, false, false, &m_##name},
-#define DEFINE_SFIELDIC(name)  {false, true,  true,  false, &m_##name},
-#define DEFINE_SFIELDICO(name) {false, true,  true,  true,  &m_##name},
+}*/
+
+/*#define FIELDS_BEGIN(Type)                          \
+virtual std::vector<oneParam<Type> > getFields()  \
+{                                                   \
+std::vector<oneParam<Type> > fields;              oneParam<typename Type> op[] = {
+#define FIELDS_END()                               \
+};for(unsigned i = 0; i < sizeof(op) / sizeof(op[0]); i++) fields.push_back(op[i]);\
+return fields;                             \
+}*/
+
+
+
+#define DEFINE_FIELD(name,vector,input) do{m_ops.push_back(oneParam<Type>(vector, input, false, false, &m_##name));m_##name = NULL;}while(0)
+#define DEFINE_VFIELDI(name)   do{m_ops.push_back(oneParam<Type>(true,  true,  false, false, &m_##name));m_##name = NULL;}while(0)
+#define DEFINE_VFIELDO(name)   do{m_ops.push_back(oneParam<Type>(true,  false, false, false, &m_##name));m_##name = NULL;}while(0)
+#define DEFINE_SFIELDI(name)   do{m_ops.push_back(oneParam<Type>(false, true,  false, false, &m_##name));m_##name = NULL;}while(0)
+#define DEFINE_SFIELDI(name)   do{m_ops.push_back(oneParam<Type>(false, true,  false, false, &m_##name));m_##name = NULL;}while(0)
+#define DEFINE_SFIELDO(name)   do{m_ops.push_back(oneParam<Type>(false, false, false, false, &m_##name));m_##name = NULL;}while(0)
+#define DEFINE_SFIELDIC(name)  do{m_ops.push_back(oneParam<Type>(false, true,  true,  false, &m_##name));m_##name = NULL;}while(0)
+#define DEFINE_SFIELDICO(name) do{m_ops.push_back(oneParam<Type>(false, true,  true,  true,  &m_##name));m_##name = NULL;}while(0)
 
 template <class Type>
 class Oper
 {
 public:
   Oper(){}
+  virtual bool checkInputFields(){for(unsigned i = 0; i < m_ops.size(); i++){if(m_ops[i].input && !m_ops[i].param[0]->IsValid())return false;}return true;}
+  virtual void validateOutputFields(){for(unsigned i = 0; i < m_ops.size(); i++){if(!m_ops[i].input)m_ops[i].param[0]->GetValid()=true;}}
   virtual bool postRead() = 0;
-  virtual void process() = 0;
-  virtual std::vector<oneParam<Type> > getFields() = 0;
-private:
+  virtual bool process() = 0;
+  virtual std::vector<oneParam<Type> >& getFields(){return m_ops;}
+protected:
+  std::vector<oneParam<Type> > m_ops;
 };
 
 template <class Type>
 class AssignVector : public Oper<Type>
 {
 public:
-  AssignVector(){m_out = NULL;m_in1 = NULL;}
+  AssignVector()
+  {
+    DEFINE_FIELD(out, true, false);
+    DEFINE_FIELD(in1, true, true);
+  }
   bool postRead(){return true;}
-  void process(){m_out->GetVector() = m_in1->GetVector();}
-  FIELDS_BEGIN(typename Type)
-  DEFINE_FIELD(out, true, false)
-  DEFINE_FIELD(in1, true, true)
-  FIELDS_END()
+  bool process(){if(!checkInputFields())return false;m_out->GetVector() = m_in1->GetVector();validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -112,13 +141,13 @@ template <class Type>
 class AssignScalar : public Oper<Type>
 {
 public:
-  AssignScalar(){m_out = NULL;m_in1 = NULL;}
+  AssignScalar()
+  {
+    DEFINE_FIELD(out, false, false);
+    DEFINE_FIELD(in1, false, true);
+  }
   bool postRead(){return true;}
-  void process(){m_out->GetScalar() = m_in1->GetScalar();}
-  FIELDS_BEGIN(typename Type)
-  DEFINE_FIELD(out, false, false)
-  DEFINE_FIELD(in1, false, true)
-  FIELDS_END()
+  bool process(){if(!checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar();validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -129,14 +158,14 @@ template <class Type>
 class CrossProduct : public Oper<Type>
 {
 public:
-  CrossProduct(){m_out = NULL;m_in1 = NULL;m_in2 = NULL;}
+  CrossProduct()
+  {
+    DEFINE_FIELD(out, true, false);
+    DEFINE_FIELD(in1, true, true);
+    DEFINE_FIELD(in2, true, true);
+  }
   bool postRead(){return true;}
-  void process(){m_out->GetVector() = m_in1->GetVector() ^ m_in2->GetVector();}
-  FIELDS_BEGIN(typename Type)
-  DEFINE_FIELD(out, true, false)
-  DEFINE_FIELD(in1, true, true)
-  DEFINE_FIELD(in2, true, true)
-  FIELDS_END()
+  bool process(){if(!checkInputFields())return false;m_out->GetVector() = m_in1->GetVector() ^ m_in2->GetVector();validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -147,14 +176,14 @@ template <class Type>
 class DotProduct : public Oper<Type>
 {
 public:
-  DotProduct(){m_out = NULL;m_in1 = NULL;m_in2 = NULL;}
+  DotProduct()
+  {
+    DEFINE_FIELD(out, false, false);
+    DEFINE_FIELD(in1, true, true);
+    DEFINE_FIELD(in2, true, true);
+  }
   bool postRead(){return true;}
-  void process(){m_out->GetScalar() = m_in1->GetVector() * m_in2->GetVector();}
-  FIELDS_BEGIN(typename Type)
-  DEFINE_FIELD(out, false, false)
-  DEFINE_FIELD(in1, true, true)
-  DEFINE_FIELD(in2, true, true)
-  FIELDS_END()
+  bool process(){if(!checkInputFields())return false;m_out->GetScalar() = m_in1->GetVector() * m_in2->GetVector();validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -164,14 +193,14 @@ template <class Type>
 class AddScalar : public Oper<Type>
 {
 public:
-  AddScalar(){m_out = NULL;m_in1 = NULL;m_in2 = NULL;}
+  AddScalar()
+  {
+    DEFINE_FIELD(out, false, false);
+    DEFINE_FIELD(in1, false, true);
+    DEFINE_FIELD(in2, false, true);
+  }
   bool postRead(){return true;}
-  void process(){m_out->GetScalar() = m_in1->GetScalar() + m_in2->GetScalar();}
-  FIELDS_BEGIN(typename Type)
-  DEFINE_FIELD(out, false, false)
-  DEFINE_FIELD(in1, false, true)
-  DEFINE_FIELD(in2, false, true)
-  FIELDS_END()
+  bool process(){if(!checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar() + m_in2->GetScalar();validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -181,14 +210,14 @@ template <class Type>
 class SubScalar : public Oper<Type>
 {
 public:
-  SubScalar(){m_out = NULL;m_in1 = NULL;m_in2 = NULL;}
+  SubScalar()
+  {
+    DEFINE_FIELD(out, false, false);
+    DEFINE_FIELD(in1, false, true);
+    DEFINE_FIELD(in2, false, true);
+  }
   bool postRead(){return true;}
-  void process(){m_out->GetScalar() = m_in1->GetScalar() - m_in2->GetScalar();}
-  FIELDS_BEGIN(typename Type)
-  DEFINE_FIELD(out, false, false)
-  DEFINE_FIELD(in1, false, true)
-  DEFINE_FIELD(in2, false, true)
-  FIELDS_END()
+  bool process(){if(!checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar() - m_in2->GetScalar();validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -198,14 +227,14 @@ template <class Type>
 class MulScalar : public Oper<Type>
 {
 public:
-  MulScalar(){m_out = NULL;m_in1 = NULL;m_in2 = NULL;}
+  MulScalar()
+  {
+    DEFINE_FIELD(out, false, false);
+    DEFINE_FIELD(in1, false, true);
+    DEFINE_FIELD(in2, false, true);
+  }
   bool postRead(){return true;}
-  void process(){m_out->GetScalar() = m_in1->GetScalar() * m_in2->GetScalar();}
-  FIELDS_BEGIN(typename Type)
-  DEFINE_FIELD(out, false, false)
-  DEFINE_FIELD(in1, false, true)
-  DEFINE_FIELD(in2, false, true)
-  FIELDS_END()
+  bool process(){if(!checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar() * m_in2->GetScalar();validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -215,14 +244,14 @@ template <class Type>
 class DivScalar : public Oper<Type>
 {
 public:
-  DivScalar(){m_out = NULL;m_in1 = NULL;m_in2 = NULL;}
+  DivScalar()
+  {
+    DEFINE_FIELD(out, false, false);
+    DEFINE_FIELD(in1, false, true);
+    DEFINE_FIELD(in2, false, true);
+  }
   bool postRead(){return true;}
-  void process(){m_out->GetScalar() = m_in1->GetScalar() / m_in2->GetScalar();}
-  FIELDS_BEGIN(typename Type)
-  DEFINE_FIELD(out, false, false)
-  DEFINE_FIELD(in1, false, true)
-  DEFINE_FIELD(in2, false, true)
-  FIELDS_END()
+  bool process(){if(!checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar() / m_in2->GetScalar();validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -232,14 +261,14 @@ template <class Type>
 class AddVector : public Oper<Type>
 {
 public:
-  AddVector(){m_out = NULL;m_in1 = NULL;m_in2 = NULL;}
+  AddVector()
+  {
+    DEFINE_FIELD(out, true, false);
+    DEFINE_FIELD(in1, true, true);
+    DEFINE_FIELD(in2, true, true);
+  }
   bool postRead(){return true;}
-  void process(){m_out->GetVector() = m_in1->GetVector() + m_in2->GetVector();}
-  FIELDS_BEGIN(typename Type)
-  DEFINE_FIELD(out, true, false)
-  DEFINE_FIELD(in1, true, true)
-  DEFINE_FIELD(in2, true, true)
-  FIELDS_END()
+  bool process(){if(!checkInputFields())return false;m_out->GetVector() = m_in1->GetVector() + m_in2->GetVector();validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -249,14 +278,14 @@ template <class Type>
 class SubVector : public Oper<Type>
 {
 public:
-  SubVector(){m_out = NULL;m_in1 = NULL;m_in2 = NULL;}
+  SubVector()
+  {
+    DEFINE_FIELD(out, true, false);
+    DEFINE_FIELD(in1, true, true);
+    DEFINE_FIELD(in2, true, true);
+  }
   bool postRead(){return true;}
-  void process(){m_out->GetVector() = m_in1->GetVector() - m_in2->GetVector();}
-  FIELDS_BEGIN(typename Type)
-  DEFINE_FIELD(out, true, false)
-  DEFINE_FIELD(in1, true, true)
-  DEFINE_FIELD(in2, true, true)
-  FIELDS_END()
+  bool process(){if(!checkInputFields())return false;m_out->GetVector() = m_in1->GetVector() - m_in2->GetVector();validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -267,21 +296,25 @@ template <class Type>
 class LineComb : public Oper<Type>
 {
 public:
-  LineComb(){m_out = NULL;m_in1v = NULL;m_in1s = NULL;m_in2v = NULL;m_in2s = NULL;}
-  bool postRead(){return true;}
-  void process()
+  LineComb()
   {
+    DEFINE_FIELD(out, true, false);
+    DEFINE_FIELD(in1s, false, true);
+    DEFINE_FIELD(in1v, true, true);
+    DEFINE_FIELD(in2s, false, true);
+    DEFINE_FIELD(in2v, true, true);
+  }
+  bool postRead(){return true;}
+  bool process()
+  {
+    if(!checkInputFields())
+      return false;
     V3d<Type> p1 = m_in1s->GetScalar() * m_in1v->GetVector();
     V3d<Type> p2 = m_in2s->GetScalar() * m_in2v->GetVector();
     m_out->GetVector() = p1 + p2;
+    validateOutputFields();
+    return true;
   }
-  FIELDS_BEGIN(typename Type)
-  DEFINE_FIELD(out, true, false)
-  DEFINE_FIELD(in1s, false, true)
-  DEFINE_FIELD(in1v, true, true)
-  DEFINE_FIELD(in2s, false, true)
-  DEFINE_FIELD(in2v, true, true)
-  FIELDS_END()
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1v;
@@ -294,12 +327,12 @@ template <class Type>
 class DefVecIn : public Oper<Type>
 {
 public:
-  DefVecIn(){m_in = NULL;}
+  DefVecIn()
+  {
+    DEFINE_FIELD(in, true, true);
+  }
   bool postRead(){return true;}
-  void process(){}
-  FIELDS_BEGIN(typename Type)
-  DEFINE_FIELD(in, true, true)
-  FIELDS_END()
+  bool process(){if(!checkInputFields())return false;validateOutputFields();return true;}
 private:
   Param<Type>       *m_in;
 };
@@ -308,12 +341,12 @@ template <class Type>
 class DefVecOut : public Oper<Type>
 {
 public:
-  DefVecOut(){m_out = NULL;}
+  DefVecOut()
+  {
+    DEFINE_FIELD(out, true, false);
+  }
   bool postRead(){return true;}
-  void process(){}
-  FIELDS_BEGIN(typename Type)
-  DEFINE_FIELD(out, true, false)
-  FIELDS_END()
+  bool process(){if(!checkInputFields())return false;validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
 };
@@ -322,14 +355,14 @@ template <class Type>
 class DefSclIn : public Oper<Type>
 {
 public:
-  DefSclIn(){m_in = NULL;}
+  DefSclIn()
+  {
+    DEFINE_SFIELDICO(dn);
+    DEFINE_SFIELDI(in);
+    DEFINE_SFIELDICO(up);
+  }
   bool postRead();
-  void process(){}
-  FIELDS_BEGIN(typename Type)
-  DEFINE_SFIELDICO(dn)
-  DEFINE_SFIELDI(in)
-  DEFINE_SFIELDICO(up)
-  FIELDS_END()
+  bool process(){if(!checkInputFields())return false;validateOutputFields();return true;}
 private:
   Param<Type>       *m_dn;
   Param<Type>       *m_in;
@@ -370,12 +403,12 @@ template <class Type>
 class DefSclOut : public Oper<Type>
 {
 public:
-  DefSclOut(){m_out = NULL;}
+  DefSclOut()
+  {
+    DEFINE_FIELD(out, false, false);
+  }
   bool postRead(){return true;}
-  void process(){}
-  FIELDS_BEGIN(typename Type)
-  DEFINE_FIELD(out, false, false)
-  FIELDS_END()
+  bool process(){if(!checkInputFields())return false;validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
 };
@@ -385,12 +418,12 @@ template <class Type>
 class Normalize : public Oper<Type>
 {
 public:
-  Normalize(){m_out = NULL;}
+  Normalize()
+  {
+    DEFINE_FIELD(out, true, false);
+  }
   bool postRead(){return true;}
-  void process(){Type ln = m_out->GetVector().length2(); if(ln != Type(0)) m_out->GetVector() /= sqrt(ln);}
-  FIELDS_BEGIN(typename Type)
-  DEFINE_FIELD(out, true, false)
-  FIELDS_END()
+  bool process(){if(!checkInputFields())return false;Type ln = m_out->GetVector().length2(); if(ln != Type(0)) m_out->GetVector() /= sqrt(ln);validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
 };
@@ -400,33 +433,49 @@ template <class Type>
 class VecManVM
 {
 public:
-  bool        readFromFile(const char *filename);
+  bool        ReadFromFile(const char *filename);
   const std::vector<std::pair<std::string, Param<Type>*> > &getInputs(){return m_inputs;}
-  bool        processString(const char *str);
-  Param<Type> *getParam(const char *name);
-  bool        execute()
-  {  
-    for(unsigned i = 0; i < m_operators.size(); i++) 
-      m_operators[i]->process(); 
-    return true;
-  }
-  ~VecManVM(){clean();}
+  bool        ProcessString(const char *str);
+  Param<Type> *GetParam(const char *name);
+  bool        GetVector(const char *name, V3d<Type>& output){Param<double>* it = GetParam(name);if(it == NULL && it->GetType() != Param<double>::VECTOR && !it->IsValid())return false;output = it->GetVector();return true;}
+  bool        GetScalar(const char *name,     Type&  output){Param<double>* it = GetParam(name);if(it == NULL && it->GetType() != Param<double>::SCALAR && !it->IsValid())return false;output = it->GetScalar();return true;}
+  void        Preexecute();
+  bool        Execute();
+  ~VecManVM(){Clean();}
 private:
-  void        clean();
-  const char  *skipSpaces(const char *str);
-  bool        parseCurrentLexem(const char *&str, char *lex);
-  bool        isFloatCorrect(const char *string);
-  Param<Type> *parseVector(const char *name, bool input);
-  Param<Type> *parseScalar(const char *name, bool input, bool constant);
+  void        Clean();
+  const char  *SkipSpaces(const char *str);
+  bool        ParseCurrentLexem(const char *&str, char *lex);
+  bool        IsFloatCorrect(const char *string);
+  Param<Type> *ParseVector(const char *name, bool input);
+  Param<Type> *ParseScalar(const char *name, bool input, bool constant);
   std::vector<Oper<Type>*>                            m_operators;
   std::map<std::string, Param<Type>*>                 m_operands;
   std::vector<Param<Type>*>                           m_constants;
   std::vector<std::pair<std::string, Param<Type>*> >  m_inputs;
 };
 
+template <class Type>
+void VecManVM<Type>::Preexecute()
+{
+  for(std::map<std::string, Param<Type>*>::iterator it = m_operands.begin(); it != m_operands.end(); ++it)
+    it->second->GetValid() = false;
+}
 
 template <class Type>
-Param<Type> *VecManVM<Type>::getParam(const char *name)
+bool VecManVM<Type>::Execute()
+{
+  bool result = true;
+  for(unsigned i = 0; i < m_operators.size(); i++)
+  {
+    bool opres = m_operators[i]->process();
+    result = result && opres;
+  }
+  return result;
+}
+
+template <class Type>
+Param<Type> *VecManVM<Type>::GetParam(const char *name)
 {  
   std::map<std::string, Param<Type>*>::iterator it = m_operands.find(name);
   if(it == m_operands.end())
@@ -436,7 +485,7 @@ Param<Type> *VecManVM<Type>::getParam(const char *name)
 
 
 template <class Type>
-void VecManVM<Type>::clean()
+void VecManVM<Type>::Clean()
 {
   for(std::vector<Oper<Type>*>::iterator it = m_operators.begin(); it != m_operators.end(); ++it)
     delete *it;
@@ -451,7 +500,7 @@ void VecManVM<Type>::clean()
 
 
 template <class Type>
-const char *VecManVM<Type>::skipSpaces(const char *str)
+const char *VecManVM<Type>::SkipSpaces(const char *str)
 {
   if(str == NULL)
     return NULL;
@@ -461,9 +510,9 @@ const char *VecManVM<Type>::skipSpaces(const char *str)
 }
 
 template <class Type>
-bool VecManVM<Type>::parseCurrentLexem(const char *&str, char *lex)
+bool VecManVM<Type>::ParseCurrentLexem(const char *&str, char *lex)
 {
-  str = skipSpaces(str);
+  str = SkipSpaces(str);
   if(str == NULL || lex == NULL)
     return false;
   if(str[0] == '#')
@@ -489,7 +538,7 @@ bool VecManVM<Type>::parseCurrentLexem(const char *&str, char *lex)
 
 
 template <class Type>
-bool VecManVM<Type>::isFloatCorrect(const char *string)
+bool VecManVM<Type>::IsFloatCorrect(const char *string)
 {
   int nState,nI;
 
@@ -544,7 +593,7 @@ bool VecManVM<Type>::isFloatCorrect(const char *string)
 }
 
 template <class Type>
-Param<Type> *VecManVM<Type>::parseVector(const char *name, bool input)
+Param<Type> *VecManVM<Type>::ParseVector(const char *name, bool input)
 {
   Param<Type> *o = NULL;
   std::map<std::string, Param<Type>*>::iterator it = m_operands.find(name);
@@ -565,10 +614,10 @@ Param<Type> *VecManVM<Type>::parseVector(const char *name, bool input)
 
 
 template <class Type>
-Param<Type> *VecManVM<Type>::parseScalar(const char *name, bool input, bool constant)
+Param<Type> *VecManVM<Type>::ParseScalar(const char *name, bool input, bool constant)
 {
   Param<Type> *o = NULL;
-  if(isFloatCorrect(name))
+  if(IsFloatCorrect(name))
   {
     if(input)
     {
@@ -600,14 +649,14 @@ Param<Type> *VecManVM<Type>::parseScalar(const char *name, bool input, bool cons
 
 
 template <class Type>
-bool VecManVM<Type>::processString(const char *pLine)
+bool VecManVM<Type>::ProcessString(const char *pLine)
 {
   char      activ[1000];
 
   if(pLine == NULL)
     return false;
 
-  parseCurrentLexem(pLine, activ);
+  ParseCurrentLexem(pLine, activ);
   if(activ[0] == '\0' || activ[0] == '#')
     return true;
   Oper<Type> *oper = NULL;
@@ -677,20 +726,20 @@ bool VecManVM<Type>::processString(const char *pLine)
   }
   if(oper == NULL)
   {
-    clean();
+    Clean();
     return false;
   }
-  std::vector<oneParam<Type> > signature = oper->getFields();
+  std::vector<oneParam<Type> >& signature = oper->getFields();
   for(unsigned i = 0; i < signature.size(); i++)
   {
-    parseCurrentLexem(pLine, activ);
+    ParseCurrentLexem(pLine, activ);
     if(signature[i].vector)
-      *signature[i].param = parseVector(activ, signature[i].input);
+      *signature[i].param = ParseVector(activ, signature[i].input);
     else
-      *signature[i].param = parseScalar(activ, signature[i].input, signature[i].constant);
+      *signature[i].param = ParseScalar(activ, signature[i].input, signature[i].constant);
     if(!signature[i].optional && signature[i].param == NULL)
     {
-      clean();
+      Clean();
       delete oper;
       return false;
     }
@@ -698,7 +747,7 @@ bool VecManVM<Type>::processString(const char *pLine)
   m_operators.push_back(oper);
   if(!oper->postRead())
   {
-    clean();
+    Clean();
     return false;
   }
   return true;
@@ -707,7 +756,7 @@ bool VecManVM<Type>::processString(const char *pLine)
 
 //----------------------------------------------------------------------------
 template <class Type>
-bool VecManVM<Type>::readFromFile(const char *filename)
+bool VecManVM<Type>::ReadFromFile(const char *filename)
 //----------------------------------------------------------------------------
 {
   FILE                            *fp;
@@ -726,7 +775,7 @@ bool VecManVM<Type>::readFromFile(const char *filename)
     pRet = fgets(sLine, maxStrLen, fp);
     if(pRet == NULL)
       break;
-    if(!processString(pRet))
+    if(!ProcessString(pRet))
       break;
   }
 
