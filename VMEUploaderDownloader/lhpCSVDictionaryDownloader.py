@@ -149,25 +149,39 @@ class lhpCSVDictionaryDownloader:
             # if Debug:
             #     print "main loop is parsing: " + str(parsedLineNumber) + " > " + line
         
-            if re.search("(/>&nbsp;LHDL_dictionary.csv)$", line):
+            if re.search("\">LHDL_dictionary</a>", line):
                 if Debug:                   
                     print "Found LHDL_dictionary.csv at line: " + line
                 
                 while 1:
                     
                     line = file.readline() 
-                    if re.search("^ *(<td>20)", line):
+                    if re.search("(19|20)\d\d", line):
                         if Debug:                            
+
                             print "Found date line: " + line
-                        date = line.strip().replace("<td>","").replace("</td>","")
+
+                            date = line.strip()
                         if Debug:   
                             print date
+                      
                         dt = datetime(*strptime(date, "%Y-%m-%d %H:%M")[0:5])
                         st = ""
                         for num in dt.timetuple()[0:5]:
-                            st = st + str(num)
-                        if Debug:
-                            print st
+                            if Debug:
+                                print "num"  + str(num)
+                            
+                            # add padding 0 for dates like:
+                            # 2008-03-06 01:01 to obtain 200803060101 instead of 200803611 
+                            if num >=  10:                                
+                                st = st + str(num)
+                            else:
+                                st = st + "0" + str(num)
+                                
+                            if Debug:
+                                print st
+                     
+                        
                         int_val = -1
                         try:
                             int_val = int(st)                           
@@ -178,10 +192,7 @@ class lhpCSVDictionaryDownloader:
                         return int_val
                     parsedLineNumber += 1
                     
-                    # when you reach the end of file... 
-                    if not line:
-                        return -1
-                
+                    
             # when you reach the end of file... 
             if not line: 
                 return -1
