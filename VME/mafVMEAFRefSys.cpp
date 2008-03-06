@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEAFRefSys.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-02-19 11:40:34 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2008-03-06 22:10:47 $
+  Version:   $Revision: 1.5 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -70,6 +70,8 @@ mafVMEAFRefSys::mafVMEAFRefSys()
 
   m_Active      = 0;
   m_ScaleFactor = 1.0;
+  m_VMValid     = false;
+  m_BoneID      = ID_AFS_NOTDEFINED;
 
   vtkUnsignedCharArray *data;
   float scalar_red[3]   = {255,0,0};
@@ -335,6 +337,7 @@ int mafVMEAFRefSys::InternalStore(mafStorageElement *parent)
     parent->StoreMatrix("Transform",&m_Transform->GetMatrix());
     parent->StoreDouble("ScaleFactor", m_ScaleFactor);
     parent->StoreInteger("Active", m_Active);
+    parent->StoreInteger("BoneID", m_BoneID);
     parent->StoreDouble("XOffset", m_XOffset);
     parent->StoreDouble("YOffset", m_YOffset);
     parent->StoreDouble("ZOffset", m_ZOffset);
@@ -375,6 +378,11 @@ int mafVMEAFRefSys::InternalStore(mafStorageElement *parent)
 }
 
 
+void mafVMEAFRefSys::SetBoneID(int ID)
+{
+  m_BoneID = ID;
+}
+
 void mafVMEAFRefSys::SetActive(int active)
 {
   if(GetParent() == NULL)
@@ -404,6 +412,7 @@ int mafVMEAFRefSys::InternalRestore(mafStorageElement *node)
       m_Transform->SetMatrix(matrix);
       node->RestoreDouble("ScaleFactor", m_ScaleFactor);
       node->RestoreInteger("Active", m_Active);
+      node->RestoreInteger("BoneID", m_BoneID);
       node->RestoreDouble("XOffset", m_XOffset);
       node->RestoreDouble("YOffset", m_YOffset);
       node->RestoreDouble("ZOffset", m_ZOffset);
@@ -459,6 +468,7 @@ mmaMaterial *mafVMEAFRefSys::GetMaterial()
 mmgGui* mafVMEAFRefSys::CreateGui()
 //-------------------------------------------------------------------------
 {
+	const wxString bone_choices_string[] = {_("Undefined"),_("Pelvis"), _("Right thigh"), _("Left thigh"), _("Right shank"), _("Left shank"), _("Right foot"), _("Left foot")};
   m_Gui = Superclass::CreateGui();
   m_Gui->Show(false);
 
@@ -497,6 +507,7 @@ mmgGui* mafVMEAFRefSys::CreateGui()
     }
   }
 
+  m_Gui->Combo(ID_SELECT_BONEID, "Bone ID", &m_BoneID, DIM(bone_choices_string), bone_choices_string);
   m_Gui->Button(ID_PRINT, "print", "debug info" );
 
   m_Gui->Update();
@@ -519,7 +530,7 @@ bool mafVMEAFRefSys::ConvertTextToVM(bool buildMapping)
   m_vm = new VecManVM<double>;
   for(unsigned i = 0; i < m_scriptText.size(); i++)
   {
-    if(!m_vm->processString(m_scriptText[i].GetCStr()))
+    if(!m_vm->ProcessString(m_scriptText[i].GetCStr()))
       return false;
   }
   for(unsigned i = 0; i < m_vm->getInputs().size(); i++)
@@ -593,6 +604,8 @@ void mafVMEAFRefSys::OnEvent(mafEventBase *maf_event)
       ForwardUpEvent(cam_event);
       break;
     }
+  case ID_SELECT_BONEID:
+    break;
   case ID_SCALE_FACTOR:
     {
       wxLogMessage("ID_SCALE_FACTOR %f", m_ScaleFactor);
@@ -685,70 +698,65 @@ void mafVMEAFRefSys::SetTransf(double x, double y, double z, double xr, double y
 }
 
 //-----------------------------------------------------------------------
+bool mafVMEAFRefSys::UpdateVM(mafTimeStamp ts)
+//-----------------------------------------------------------------------
+{
+  mafVMELandmarkCloud *parentLMC = mafVMELandmarkCloud::SafeDownCast(GetParent());
+  if(m_vm == NULL)
+    return false;
+  m_VMValid = false;
+  m_VMTime  = ts;
+  m_vm->Preexecute();
+  for(unsigned i = 0; i < m_vm->getInputs().size(); i++)
+  {
+    if(m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
+    {
+      V3d<double> vec;
+      std::map<mafString, mafString>::iterator it = m_lmMapping.find(m_vm->getInputs()[i].first.c_str());
+      if(it == m_lmMapping.end())
+        break;
+      mafVMELandmarkCloud *tmpLink = mafVMELandmarkCloud::SafeDownCast(GetLink(m_vm->getInputs()[i].first.c_str()));
+      mafVMELandmarkCloud *lmcLink = (tmpLink != NULL) ? tmpLink : parentLMC;
+      if(lmcLink != NULL)
+        SetRefSysLink(m_vm->getInputs()[i].first.c_str(), parentLMC);
+      else
+        continue;
+      int ind = lmcLink->FindLandmarkIndex(it->second.GetCStr());
+      if(ind == -1 || !lmcLink->GetLandmarkVisibility(ind, ts))
+        continue;
+      mafMatrix cloudAbs;
+      double invec[4];
+      double outvec[4];
+      lmcLink->GetOutput()->GetAbsMatrix(cloudAbs, ts);
+      lmcLink->GetLandmark(ind, vec.val, ts);
+      for(unsigned indx = 0; indx < 3; indx++)
+        invec[indx] = vec[indx];
+      invec[3] = 1.0;
+      cloudAbs.MultiplyPoint(invec, outvec);
+      for(unsigned indx = 0; indx < 3; indx++)
+        vec[indx] = outvec[indx];
+
+      m_vm->getInputs()[i].second->GetVector() = vec;
+    }
+    else
+    {
+      //actions for processing scalar inputs, actually there is nothing to do
+    }
+    m_vm->getInputs()[i].second->GetValid()  = true;
+  }
+
+  bool result = m_vm->Execute();
+  if(result)
+    m_VMValid = true;
+  return result;
+}
+
+
+//-----------------------------------------------------------------------
 void mafVMEAFRefSys::CalculateMatrix(mafMatrix& mat, mafTimeStamp ts)
 //-----------------------------------------------------------------------
 {
-  //DiMatrix            parentMatrix;
-  mafVMELandmarkCloud *parentLMC = NULL;
-  //DiMatrixIdentity(&parentMatrix);
-  if(GetParent() != NULL)
-  {
-    mafMatrix mfm;
-    GetParent()->GetOutput()->GetAbsMatrix(mfm, ts);
-    //mflMatrixToDi(mfm.GetVTKMatrix(), &parentMatrix);
-    parentLMC = mafVMELandmarkCloud::SafeDownCast(GetParent());
-  }
-
-  bool calculated = (parentLMC != NULL);
-
-  if(calculated)
-  {
-    for(unsigned i = 0; i < m_vm->getInputs().size(); i++)
-    {
-      if(m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
-      {
-        V3d<double> vec;
-        std::map<mafString, mafString>::iterator it = m_lmMapping.find(m_vm->getInputs()[i].first.c_str());
-        if(it == m_lmMapping.end())
-        {
-          calculated = false;
-          break;
-        }
-        mafVMELandmarkCloud *lmcLink = mafVMELandmarkCloud::SafeDownCast(GetLink(m_vm->getInputs()[i].first.c_str()));
-        if(lmcLink == NULL)
-        {
-          lmcLink = parentLMC;
-          SetRefSysLink(m_vm->getInputs()[i].first.c_str(), parentLMC);
-        }
-        int  ind = lmcLink->FindLandmarkIndex(it->second.GetCStr());
-        if(ind == -1)
-        {
-          calculated = false;
-          break;
-        }
-        mafMatrix cloudAbs;
-        double invec[4];
-        double outvec[4];
-        lmcLink->GetOutput()->GetAbsMatrix(cloudAbs, ts);
-        lmcLink->GetLandmark(ind, vec.val, ts);
-        for(unsigned indx = 0; indx < 3; indx++)
-          invec[indx] = vec[indx];
-        invec[3] = 1.0;
-        cloudAbs.MultiplyPoint(invec, outvec);
-        for(unsigned indx = 0; indx < 3; indx++)
-          vec[indx] = outvec[indx];
-
-        m_vm->getInputs()[i].second->GetVector() = vec;
-      }
-      else
-      {
-        //actions for processing scalar inputs, actually there is nothing to do
-      }
-    }
-  }
-
-  if (calculated)
-    calculated = m_vm->execute();
+  UpdateVM(ts);
 
   DiMatrix       mTran, mTrant, mTrano;
   vtkMatrix4x4  *mVTK = NULL;
@@ -756,36 +764,13 @@ void mafVMEAFRefSys::CalculateMatrix(mafMatrix& mat, mafTimeStamp ts)
   DiV4d          pos, rot;
 
   V3d<double> x, y, z, p;
-  if(calculated)
+
+  std::pair<const char*, V3d<double>*> vects[4] = {std::make_pair("X", &x), std::make_pair("Y", &y), std::make_pair("Z", &z), std::make_pair("P", &p)};
+
+  bool calculated = (m_vm != NULL);
+  for(unsigned i = 0; i < 4 && calculated; i++)
   {
-    Param<double>* it = m_vm->getParam("X");
-    if(it != NULL && it->GetType() == Param<double>::VECTOR )
-      x = it->GetVector();
-    else
-      calculated = false;
-  }
-  if(calculated)
-  {
-    Param<double>* it = m_vm->getParam("Y");
-    if(it != NULL && it->GetType() == Param<double>::VECTOR )
-      y = it->GetVector();
-    else
-      calculated = false;
-  }
-  if(calculated)
-  {
-    Param<double>* it = m_vm->getParam("Z");
-    if(it != NULL && it->GetType() == Param<double>::VECTOR )
-      z = it->GetVector();
-    else
-      calculated = false;
-  }
-  if(calculated)
-  {
-    Param<double>* it = m_vm->getParam("P");
-    if(it != NULL && it->GetType() == Param<double>::VECTOR )
-      p = it->GetVector();
-    else
+    if(!m_vm->GetVector(vects[i].first, *vects[i].second))
       calculated = false;
   }
 

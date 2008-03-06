@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEAFRefSys.h,v $
   Language:  C++
-  Date:      $Date: 2008-02-19 11:40:34 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2008-03-06 22:10:47 $
+  Version:   $Revision: 1.5 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -54,8 +54,21 @@ public:
     ID_X_ROTATE,
     ID_Y_ROTATE,
     ID_Z_ROTATE,
+    ID_SELECT_BONEID,
     ID_FIRSTDYN,
     ID_LAST = ID_FIRSTDYN + 100
+  };
+  enum AFREFSYS_BONEID
+  {
+    ID_AFS_NOTDEFINED,
+    ID_AFS_PELVIS,
+    ID_AFS_RTHIGH,
+    ID_AFS_LTHIGH,
+    ID_AFS_RSHANK,
+    ID_AFS_LSHANK,
+    ID_AFS_RFOOT,
+    ID_AFS_LFOOT,
+    ID_AFS_LAST
   };
 
   static bool LandmarkAccept(mafNode *node) {return(node != NULL && node->IsMAFType(mafVMELandmark));};
@@ -107,17 +120,58 @@ public:
   Set links for the ref-sys*/
   void SetRefSysLink(const char *link_name, mafNode *n);
 
+  /** 
+  Set Vector virtual machine*/
   void SetVM(VecManVM<double> *vm){m_vm = vm;}
 
+  /** 
+  Calculate global matrix for given timestamp*/
   void CalculateMatrix(mafMatrix& mat, mafTimeStamp ts);
 
+  /** 
+  Load vector virtual machine script from file*/
   void LoadScriptFromFile(const mafString& filename);
+
+  /** 
+  Set vector virtual machine script*/
   void SetScriptText(const std::vector<mafString>& script);
-  int  GetActive(){return m_Active;}
+
+  /** 
+  Return current activity state*/
+  int  GetActive()const {return m_Active;}
+
+  /** 
+  Set current activity state*/
   void SetActive(int active);
 
+  /** 
+  Return current bone ID*/
+  int  GetBoneID()const {return m_BoneID;}
+
+  /** 
+  Set current bone ID*/
+  void SetBoneID(int ID);
+
+  /** 
+  Return vector for given name and timestamp from vector virtual machine*/
+  bool GetVector(const char *name, mafTimeStamp ts, V3d<double>& output){if(m_vm == NULL) return false;UpdateVM(ts);return m_vm->GetVector(name, output);}
+
+  /** 
+  Return scalar for given name and timestamp from vector virtual machine*/
+  bool GetScalar(const char *name, mafTimeStamp ts,     double&  output){if(m_vm == NULL) return false;UpdateVM(ts);return m_vm->GetScalar(name, output);}
+
 protected:
+
+  /** 
+  Update vector virtual machine with given timestamp*/
+  bool UpdateVM(mafTimeStamp ts);
+
+  /** 
+  Rebuild vector virtual machine from text*/
   bool ConvertTextToVM(bool buildMapping);
+
+  /** 
+  Selection control function for dialog*/
   static bool AcceptLandmark(mafNode *node);
 
   mafVMEAFRefSys();
@@ -168,11 +222,14 @@ protected:
   double                         m_XRotate, m_YRotate, m_ZRotate;
   VecManVM<double>               *m_vm;
   std::vector<mafString>         m_scriptText;
+  int                            m_BoneID;
 
   int                            m_Active;
   std::map<mafString, mafString> m_lmMapping;
   std::map<int, mafString>       m_buttonMapping;
   int                            m_textSize;
+  bool                           m_VMValid;
+  mafTimeStamp                   m_VMTime;
 
 
 private:
