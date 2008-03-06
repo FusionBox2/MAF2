@@ -77,7 +77,7 @@ class lhpCSVDictionaryDownloader:
             print "Connecting to self.Host: " + self.Host            
             print "Retrieving: " + self.DictionaryFileSelector
         
-        h = httplib.HTTPConnection(self.Host)
+        h = httplib.HTTPSConnection(self.Host)
         h.putrequest('POST', self.DictionaryFileSelector)
         h.putheader("AUTHORIZATION", "Basic %s" % string.replace(
                                 encodestring("%s:%s" % (self.Username, self.Password)),

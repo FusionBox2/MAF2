@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2008-02-22 08:47:50 $
-#   Version:   $Revision: 1.25 $
+#   Date:      $Date: 2008-03-06 12:37:33 $
+#   Version:   $Revision: 1.26 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -162,7 +162,7 @@ IF(DOWNLOAD_DICTIONARY)
     SET(ERROR 0)    
     #  MESSAGE("variable DOWNLOAD_DICTIONARY = " ${DOWNLOAD_DICTIONARY})
     SET(LHPBUILDER_DICTIONARY_HOST "www.biomedtown.org" CACHE INTERNAL "LHPBuilder dictionary host")
-    SET(LHPBUILDER_MASTER_DICTIONARY_SELECTOR "/biomed_town/LHDL/lhdl-management/Consortium-room/lhdl-repository/WP5/Dictionaries/LHDL_dictionary.csv" CACHE INTERNAL "LHPBuilder dictionary selector")
+    SET(LHPBUILDER_MASTER_DICTIONARY_SELECTOR "/biomed_town/LHDL/users/swclient/dictionaries/LHDL_dictionary" CACHE INTERNAL "LHPBuilder dictionary selector")
     SET(LHPBUILDER_XML_MASTER_DICTIONARY "lhpXMLDictionary" CACHE INTERNAL "LHPBuilder xml master dictionary")
     
 #     MESSAGE("variable LHP_SOURCE_DIR = " ${LHP_SOURCE_DIR})
@@ -184,7 +184,7 @@ IF(DOWNLOAD_DICTIONARY)
 
     # DICOM DICTIONARY
        
-    SET(LHPBUILDER_DICOM_DICTIONARY_SELECTOR "/biomed_town/LHDL/lhdl-management/Consortium-room/lhdl-repository/WP5/Dictionaries/DicomSource.csv" CACHE INTERNAL "LHPBuilder dictionary selector")
+    SET(LHPBUILDER_DICOM_DICTIONARY_SELECTOR "/biomed_town/LHDL/users/swclient/dictionaries/dicomsource" CACHE INTERNAL "LHPBuilder dictionary selector")
     SET(LHPBUILDER_XML_DICOM_DICTIONARY "lhpXMLDicomSourceSubdictionary" CACHE INTERNAL "LHPBuilder xml dicom dictionary")
         
     EXEC_PROGRAM("python.exe" "${LHP_SOURCE_DIR}/VMEUploaderDownloader" ARGS "lhpCSVDictionaryDownloader.py ${LHPBUILDER_DICTIONARY_HOST} ${LHPBUILDER_DICOM_DICTIONARY_SELECTOR} ${LHPBUILDER_XML_DICOM_DICTIONARY}"  RETURN_VALUE RET)
@@ -197,7 +197,7 @@ IF(DOWNLOAD_DICTIONARY)
 
     # MOTIONANALYSIS DICTIONARY
     
-    SET(LHPBUILDER_MOTIONANALYSIS_DICTIONARY_SELECTOR "/biomed_town/LHDL/lhdl-management/Consortium-room/lhdl-repository/WP5/Dictionaries/MotionAnalysis.csv" CACHE INTERNAL "LHPBuilder dictionary selector")
+    SET(LHPBUILDER_MOTIONANALYSIS_DICTIONARY_SELECTOR "/biomed_town/LHDL/users/swclient/dictionaries/MotionAnalysis" CACHE INTERNAL "LHPBuilder dictionary selector")
     SET(LHPBUILDER_XML_MOTIONANALYSIS_DICTIONARY "lhpXMLMotionAnalysisSourceSubdictionary" CACHE INTERNAL "LHPBuilder xml motion analysis dictionary")
     
     EXEC_PROGRAM("python.exe" "${LHP_SOURCE_DIR}/VMEUploaderDownloader" ARGS "lhpCSVDictionaryDownloader.py ${LHPBUILDER_DICTIONARY_HOST} ${LHPBUILDER_MOTIONANALYSIS_DICTIONARY_SELECTOR} ${LHPBUILDER_XML_MOTIONANALYSIS_DICTIONARY}"  RETURN_VALUE RET)

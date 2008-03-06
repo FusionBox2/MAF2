@@ -11,10 +11,12 @@ import httplib, urlparse, string
 from base64 import encodestring, decodestring
 import lhpCSVDictionaryDownloader
 
-import Debug
+from Debug import Debug
 import unittest
+import msfParser
 
-
+from xml.dom import minidom
+from xml.dom import Node
 from datetime import *
 from time import *
 
@@ -35,21 +37,94 @@ class lhpCSVDictionaryDownloaderTest(unittest.TestCase):
         print " current directory is: " + curDir
           
     
-    def testDownloadDictionary(self):
+    def testDownloadHTTPS(self):
+        
+        # https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/LHDL_dictionary
+        host = "www.biomedtown.org"
+        selector = "/biomed_town/LHDL/users/swclient/dictionaries/LHDL_dictionary"
+        
+        outputXMLDictionaryFileName = "lhpXMLDictionary"
+        
+        lhpCSVDictionaryDownloader.run(host,selector,outputXMLDictionaryFileName)
+    
+      
+    def testRun(self):
+        
+        host = "www.biomedtown.org"
+        selector = "/biomed_town/LHDL/users/swclient/dictionaries/LHDL_dictionary"
+        
+        outputXMLDictionaryFileName = "lhpXMLDictionary"
+        
+        lhpCSVDictionaryDownloader.run(host,selector,outputXMLDictionaryFileName)
+    
+    # 
+    # TODO: these tests needs little editing to work... 
+    # 
+    
+    def estDownloadDictionary(self):
         
         dd = lhpCSVDictionaryDownloader.lhpCSVDictionaryDownloader()
         dd.RemoveOldDictionariesFromDisk()
         dd.DownloadCSVDictionary()
         dd.ConvertDownloadedCSV2XML()
+      
+    def estDownloadMultipleDictionaries(self):
+  
+        #host = "www.biomedtown.org"
         
-    def testRun(self):
+        #selector = "/biomed_town/LHDL/lhdl-management/Consortium-room/lhdl-repository/WP5/Dictionaries/LHDL_dictionary.csv"    
+        #outputXMLMasterDictionaryFileName = "lhpXMLDictionary"
         
-        host = "www.biomedtown.org"
-        selector = "/biomed_town/LHDL/lhdl-management/Consortium-room/lhdl-repository/WP5/Dictionaries/LHDL_dictionary.csv"
+        #lhpCSVDictionaryDownloader.run(host,selector,outputXMLMasterDictionaryFileName)
         
-        outputXMLDictionaryFileName = "lhpXMLDictionary"
+        #selector = "/biomed_town/LHDL/lhdl-management/Consortium-room/lhdl-repository/WP5/Dictionaries/DicomSource.csv"
+        #outputXMLDicomDictionaryFileName = "lhpXMLDicomSourceSubdictionary"
+
+        #lhpCSVDictionaryDownloader.run(host,selector,outputXMLDicomDictionaryFileName)
         
-        lhpCSVDictionaryDownloader.run(host,selector,outputXMLDictionaryFileName)
+        #selector = "/biomed_town/LHDL/lhdl-management/Consortium-room/lhdl-repository/WP5/Dictionaries/MotionAnalysis.csv"
+        #outputXMLMotionAnalysisDictionaryFileName = "lhpXMLMotionAnalysisSourceSubdictionary"
+
+        #lhpCSVDictionaryDownloader.run(host,selector,outputXMLMotionAnalysisDictionaryFileName)
+        
+        # append subdictionary to master
+        
+        # find dictionary filenames...
+        # TODO!!!!!
+        masterDictionaryFileName = "lhpXMLDictionary_200712181319.xml"
+        motionAnalysisDictionaryFileName = "lhpXMLMotionAnalysisSourceSubdictionary_200712181319.xml"
+        dicomDictionaryFileName = "lhpXMLDicomSourceSubdictionary_200712181319.xml"
+        
+        # load master dictionary
+        msfDOMParserInstance = msfParser.msfParser()        
+        masterDomDocument = minidom.parse(masterDictionaryFileName)
+        masterRootNode = masterDomDocument.documentElement
+        
+        # get the master subdir node
+        sourceDirNode = msfDOMParserInstance.GetNodeByNodeName(masterRootNode,"SourceDir")
+        
+        self.assertTrue(masterRootNode != None)
+        
+        # load motionAnalysys dictionary
+        motionAnalysisSubictionaryDomDocument = minidom.parse(motionAnalysisDictionaryFileName)
+        motionAnalysisRootNode = motionAnalysisSubictionaryDomDocument.documentElement
+        
+        # get motionAnalysys parent node
+        motionAnalysisTypeNode = msfDOMParserInstance.GetNodeByNodeName(motionAnalysisRootNode,"Type")
+        
+        self.assertTrue(motionAnalysisTypeNode != None)
+       
+        sourceDirNode.appendChild(motionAnalysisTypeNode)
+        
+        newDoc = minidom.Document()
+        newDoc.appendChild(masterRootNode)
+        
+        
+        outputVMEXMLName = "dictionaryPlusSubdictionary.xml"
+        outFileXML = open(outputVMEXMLName, 'w')
+        newDoc.writexml(outFileXML)
+     
+        
         
 if __name__ == '__main__':
      unittest.main()
