@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoStickPalpation.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-11-26 13:40:28 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-03-06 12:06:12 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -31,7 +31,7 @@
 #include "mmgGui.h"
 
 #include "mafDictionary.h"
-#include "mmoExplodeCollapse.H"
+#include "mafOpExplodeCollapse.h"
 
 #include "mafSmartPointer.h"
 
@@ -85,7 +85,7 @@ inline bool LMCSetState(mafVMELandmarkCloud *cloud, mafObserver *listener, bool 
     return LMCOpened;
   if(openState)
   {
-    mafOp *OpenOp = new mmoExplodeCollapse("open cloud");
+    mafOp *OpenOp = new mafOpExplodeCollapse("open cloud");
     OpenOp->SetInput(cloud);
     OpenOp->SetListener(listener);
     OpenOp->OpDo();
@@ -93,7 +93,7 @@ inline bool LMCSetState(mafVMELandmarkCloud *cloud, mafObserver *listener, bool 
     return LMCOpened;
   }
   {
-    mafOp *CloseOp = new mmoExplodeCollapse("close cloud");
+    mafOp *CloseOp = new mafOpExplodeCollapse("close cloud");
     CloseOp->SetInput(cloud);
     CloseOp->SetListener(listener);
     CloseOp->OpDo();
@@ -608,9 +608,19 @@ void mmoStickPalpation::OpDo()
 
     mafEventMacro(mafEvent(this,VME_ADD,vme));
 
+#if _MSC_VER >= 1400
+	//BES: 3.3.2008 - VS 2005+ and also standard C++ requires the fully qualified method name
+	m_LimbCloud        = mafVMELandmarkCloud::SafeDownCast(MatchCriterion(m_TrgMotion, 
+		&mmoStickPalpation::MatchWithName, m_LMDict[nL].second));
+	m_LimbCalibration  = mafVMELandmarkCloud::SafeDownCast(MatchCriterion(vme, 
+		&mmoStickPalpation::MatchWithName, m_LMDict[nL].second));
+	m_StickCalibration = mafVMELandmarkCloud::SafeDownCast(MatchCriterion(vme, 
+		&mmoStickPalpation::MatchStick, NULL));
+#else
     m_LimbCloud        = mafVMELandmarkCloud::SafeDownCast(MatchCriterion(m_TrgMotion, MatchWithName, m_LMDict[nL].second));
     m_LimbCalibration  = mafVMELandmarkCloud::SafeDownCast(MatchCriterion(vme, MatchWithName, m_LMDict[nL].second));
     m_StickCalibration = mafVMELandmarkCloud::SafeDownCast(MatchCriterion(vme, MatchStick, NULL));
+#endif
 
     if(m_LimbCloud != NULL && m_LimbCalibration != NULL && m_StickCalibration != NULL)
       ProcessSingleLM();

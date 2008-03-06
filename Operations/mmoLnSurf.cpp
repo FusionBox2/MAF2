@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoLnSurf.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-02-19 11:22:33 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2008-03-06 12:06:12 $
+  Version:   $Revision: 1.4 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -31,7 +31,7 @@
 #include "mafEvent.h"
 #include "mmgGui.h"
 
-#include "mmoExplodeCollapse.H"
+#include "mafOpExplodeCollapse.h"
 
 #include "mafSmartPointer.h"
 #include "mafVMELandmarkCloud.h"

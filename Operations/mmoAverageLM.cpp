@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoAverageLM.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-03-06 12:06:12 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -30,7 +30,7 @@
 #include "mafEvent.h"
 #include "mmgGui.h"
 
-#include "mmoExplodeCollapse.H"
+#include "mafOpExplodeCollapse.h"
 
 #include "mafSmartPointer.h"
 #include "mafVMELandmarkCloud.h"
@@ -163,7 +163,7 @@ void mmoAverageLM::OpDo()
   bool bCloudClosed = !m_LimbCloud->IsOpen();
   if(!bCloudClosed)
   {
-    mafOp *OpenOp = new mmoExplodeCollapse("close cloud");
+    mafOp *OpenOp = new mafOpExplodeCollapse("close cloud");
     OpenOp->SetInput(m_LimbCloud);
     OpenOp->SetListener(m_Listener);
     OpenOp->OpDo();
@@ -209,7 +209,7 @@ void mmoAverageLM::OpDo()
   }
   if(!bCloudClosed)
   {
-    mafOp *OpenOp = new mmoExplodeCollapse("open cloud");
+    mafOp *OpenOp = new mafOpExplodeCollapse("open cloud");
     OpenOp->SetInput(m_LimbCloud);
     OpenOp->SetListener(m_Listener);
     OpenOp->OpDo();
@@ -229,7 +229,7 @@ void mmoAverageLM::OpUndo()
   bool bCloudWasOpen = m_LimbCloud->IsOpen();
   if(bCloudWasOpen)
   {
-    mafOp *pCloseOp = new mmoExplodeCollapse("close cloud");
+    mafOp *pCloseOp = new mafOpExplodeCollapse("close cloud");
     pCloseOp->SetInput(m_LimbCloud);
     pCloseOp->SetListener(m_Listener);
     pCloseOp->OpDo();
@@ -241,7 +241,7 @@ void mmoAverageLM::OpUndo()
   
   if(bCloudWasOpen)
   {
-    mafOp *OpenOp = new mmoExplodeCollapse("open cloud");
+    mafOp *OpenOp = new mafOpExplodeCollapse("open cloud");
     OpenOp->SetInput(m_LimbCloud);
     OpenOp->SetListener(m_Listener);
     OpenOp->OpDo();

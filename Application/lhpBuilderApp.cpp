@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-03-04 13:24:08 $
-  Version:   $Revision: 1.46 $
+  Date:      $Date: 2008-03-06 12:05:58 $
+  Version:   $Revision: 1.47 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -50,35 +50,35 @@
 #include "mafOpImporterExternalFile.h"
 #include "mafOpLabelExtractor.h"
 #include "mafOpOpenExternalFile.h"
-#include "mmoBmpExporter.h"
-#include "mmoCreateGroup.h"
-#include "mmoCreateMeter.h"
+#include "mafOpExporterBmp.h"
+#include "mafOpCreateGroup.h"
+#include "mafOpCreateMeter.h"
 #include "medOpCreateWrappedMeter.h"
-#include "mmoCreateSlicer.h"
-#include "mmoCreateRefSys.h"
-#include "mmoFilterSurface.h"
-#include "mmoEditMetadata.h"
-#include "mmo2DMeasure.h"
-#include "mmoReparentTo.h"
+#include "mafOpCreateSlicer.h"
+#include "mafOpCreateRefSys.h"
+#include "mafOpFilterSurface.h"
+#include "mafOpEditMetadata.h"
+#include "mafOp2DMeasure.h"
+#include "mafOpReparentTo.h"
 #include "mmoDICOMImporter.h"
-#include "mmoReparentTo.h"
-#include "mmoImageImporter.h"
-#include "mmoSTLExporter.h"
-#include "mmoSTLImporter.h"
-#include "mmoVTKExporter.h"
-#include "mmoVTKImporter.h"
-#include "mmoMSF1xImporter.h"
-#include "mmoVRMLImporter.h"
-#include "mmoRAWImporterVolume.h"
-#include "mmoRAWExporter.h"
+#include "mafOpReparentTo.h"
+#include "mafOpImporterImage.h"
+#include "mafOpImporterSTL.h"
+#include "mafOpExporterSTL.h"
+#include "mafOpExporterVTK.h"
+#include "mafOpImporterVTK.h"
+#include "mafOpImporterMSF1x.h"
+#include "mafOpImporterVRML.h"
+#include "mafOpImporterRAWVolume.h"
+#include "mafOpExporterRaw.h"
 #include "mmoRAWImporterImages.h"
-#include "mmoExtractIsosurface.h"
-#include "mmoCrop.h"
-#include "mmoVOIDensity.h"
+#include "mafOpExtractIsosurface.h"
+#include "mafOpCrop.h"
+#include "mafOpVOIDensity.h"
 #include "medOpVolumeResample.h"
-#include "mmoAddLandmark.h"
+#include "mafOpAddLandmark.h"
 #include "mmoRegisterClusters.h"
-#include "mmoCreateSurfaceParametric.h"
+#include "mafOpCreateSurfaceParametric.h"
 #include "mmoBuildHierarchy.h"
 #include "mmoTimeReduce.h"
 #include "mmoINPExporter.h"
@@ -92,7 +92,7 @@
 #include "mmoStickPalpation.h"
 #include "medOpScaleDataset.h"
 #include "medOpMove.h"
-#include "mmoMAFTransform.h"
+//#include "mafOpMAFTransform.h"
 #include "mmoGRFImporterWS.h"
 #include "medPipeGraph.h"
 #include "mafVMERawMotionData.h" 
@@ -100,8 +100,8 @@
 #include "mmoMotionDataImporter.h"
 #include "mmoLandmarkExporter.h"
 #include "mmoClassicICPRegistration.h"
-#include "mmoMeshImporter.h"
-#include "mmoVMEDataSetAttributesImporter.h"
+#include "mafOpImporterMesh.h"
+#include "mafOpImporterVMEDataSetAttributes.h"
 #include "mmoLandmarkImporter.h"
 #include "mmoLandmarkImporterTXT.h"
 #include "mmoLandmarkImporterWS.h"
@@ -198,22 +198,22 @@ bool lhpBuilderApp::OnInit()
 
   //------------------------- Importers -------------------------
   m_Logic->Plug(new mmoDICOMImporter("DICOM"),"Images");
-  m_Logic->Plug(new mmoSTLImporter("STL"),"Geometries");
-  m_Logic->Plug(new mmoVTKImporter("VTK"),"Other");
+  m_Logic->Plug(new mafOpImporterSTL("STL"),"Geometries");
+  m_Logic->Plug(new mafOpImporterVTK("VTK"),"Other");
   m_Logic->Plug(new mafOpImporterMSF("MSF"),"Other");
-  m_Logic->Plug(new mmoMSF1xImporter("MAF 1.x"),"Other");
-  m_Logic->Plug(new mmoRAWImporterVolume("RAW Volume"),"Images");
+  m_Logic->Plug(new mafOpImporterMSF1x("MAF 1.x"),"Other");
+  m_Logic->Plug(new mafOpImporterRAWVolume("RAW Volume"),"Images");
   m_Logic->Plug(new mmoRAWImporterImages("Raw Images"),"Images");
-  m_Logic->Plug(new mmoImageImporter("Images"),"Images");
+  m_Logic->Plug(new mafOpImporterImage("Images"),"Images");
   m_Logic->Plug(new mmoLandmarkImporter("Landmark"),"Motion Analysis");
 	m_Logic->Plug(new mmoLandmarkImporterWS("ASCII trajectories (VWs)"),"Motion Analysis");
   m_Logic->Plug(new lhpOpImporterC3D("C3D"),"Motion Analysis");  
   m_Logic->Plug(new mmoMotionDataImporter<mafVMERawMotionData>("Raw Motion Data", "RAW Motion Data (*.MAN)|*.MAN", "Dictionary (*.txt)|*.txt"), "Motion Analysis");
   // m_Logic->Plug(new mmoLandmarkImporter("Landmark")); //Old Importer
   m_Logic->Plug(new mmoGRFImporterWS("ASCII Force Plates (VWs)"), "Motion Analysis");
-  m_Logic->Plug(new mmoMeshImporter("Generic Mesh"), "Finite Element");
+  m_Logic->Plug(new mafOpImporterMesh("Generic Mesh"), "Finite Element");
   m_Logic->Plug(new lhpOpImporterAnsysInputFile("Ansys Input File"), "Finite Element");	
-  m_Logic->Plug(new mmoVRMLImporter("VRML"), "Geometries");
+  m_Logic->Plug(new mafOpImporterVRML("VRML"), "Geometries");
   m_Logic->Plug(new mmoINPImporter("INP/INP_AF"), "Geometries");
   m_Logic->Plug(new mmoMTRImporter("MTR"), "Geometries");
   m_Logic->Plug(new mafOpImporterExternalFile("External data"), "Other");
@@ -222,43 +222,43 @@ bool lhpBuilderApp::OnInit()
   //-------------------------------------------------------------
 
   //------------------------- Exporters -------------------------
-  m_Logic->Plug(new mmoSTLExporter("STL"),"Geometries");
+  m_Logic->Plug(new mafOpExporterSTL("STL"),"Geometries");
   m_Logic->Plug(new mmoINPExporter("INP"),"Geometries");
   m_Logic->Plug(new mmoMTRExporter("MTR"), "Geometries");
-  m_Logic->Plug(new mmoVTKExporter("VTK"), "Other");
-	m_Logic->Plug(new mmoRAWExporter("Raw"), "Images");
-  m_Logic->Plug(new mmoBmpExporter("Bmp"), "Images");
+  m_Logic->Plug(new mafOpExporterVTK("VTK"), "Other");
+	m_Logic->Plug(new mafOpExporterRAW("Raw"), "Images");
+  m_Logic->Plug(new mafOpExporterBmp("Bmp"), "Images");
   m_Logic->Plug(new mmoLandmarkExporter("Landmark"), "Motion Analysis");
   m_Logic->Plug(new medOpExporterWrappedMeter("Wrapped Meter"), "Other");
   m_Logic->Plug(new lhpOpExporterAnsysInputFile("Ansys Input File"),"Finite Element");
   //-------------------------------------------------------------
 
   //------------------------- Operations -------------------------
-  m_Logic->Plug(new mmoCreateGroup("Group"),"Create/New");
+  m_Logic->Plug(new mafOpCreateGroup("Group"),"Create/New");
 #ifdef MAF_USE_ITK
   m_Logic->Plug(new lhpOpCreateSurfaceScalar("Surface Scalar"),"Create/Derive");
 #endif
   m_Logic->Plug(new mmoLnSurf("Lineset and surface"),"Create/Derive");
-	m_Logic->Plug(new mmoCreateRefSys("Refsys"),"Create/New");
-  m_Logic->Plug(new mmoCreateSlicer("Slicer"),"Create/Derive");
-	m_Logic->Plug(new mmoCreateSurfaceParametric("Parametric Surface"),"Create/New");
-	m_Logic->Plug(new mmoAddLandmark("Add Landmark \tCtrl+A"),"Create/New");
+	m_Logic->Plug(new mafOpCreateRefSys("Refsys"),"Create/New");
+  m_Logic->Plug(new mafOpCreateSlicer("Slicer"),"Create/Derive");
+	m_Logic->Plug(new mafOpCreateSurfaceParametric("Parametric Surface"),"Create/New");
+	m_Logic->Plug(new mafOpAddLandmark("Add Landmark \tCtrl+A"),"Create/New");
   m_Logic->Plug(new medOpFreezeVME("Freeze VME"),"Create/Derive");
   m_Logic->Plug(new mmoRegisterClusters("Register Landmark Cloud"),"Modify/Fuse");
-  m_Logic->Plug(new mmoCreateMeter("Distance Meter"),"Create/Derive");
+  m_Logic->Plug(new mafOpCreateMeter("Distance Meter"),"Create/Derive");
   m_Logic->Plug(new medOpCreateWrappedMeter("Wrapped Meter"),"Create/Derive");
  // m_Logic->Plug(new mmoEditMetadata("Metadata Editor"),"Modify");
-	m_Logic->Plug(new mmoFilterSurface("Filter Surface"),"Modify");
-	m_Logic->Plug(new mmoExtractIsosurface("Extract Isosurface"),"Create/Derive");
+	m_Logic->Plug(new mafOpFilterSurface("Filter Surface"),"Modify");
+	m_Logic->Plug(new mafOpExtractIsosurface("Extract Isosurface"),"Create/Derive");
   m_Logic->Plug(new medOpSurfaceMirror("Surface Mirror"),"Modify");
-	m_Logic->Plug(new mmoCrop("Crop Volume"),"Modify");
+	m_Logic->Plug(new mafOpCrop("Crop Volume"),"Modify");
 	m_Logic->Plug(new medOpVolumeResample("Volume Resample"),"Modify");
-	m_Logic->Plug(new mmo2DMeasure("2D Measure"),"Measure");
-	m_Logic->Plug(new mmoVOIDensity("VOI Density"),"Measure");
-  m_Logic->Plug(new mmoReparentTo("Reparent to...  \tCtrl+R"),"Modify/Fuse");
+	m_Logic->Plug(new mafOp2DMeasure("2D Measure"),"Measure");
+	m_Logic->Plug(new mafOpVOIDensity("VOI Density"),"Measure");
+  m_Logic->Plug(new mafOpReparentTo("Reparent to...  \tCtrl+R"),"Modify/Fuse");
   m_Logic->Plug(new medOpScaleDataset("Scale Dataset"),"Modify");
   m_Logic->Plug(new medOpMove(),"Modify");    
-  m_Logic->Plug(new mmoVMEDataSetAttributesImporter("VME DataSet Attributes Adder"),"Modify");
+  m_Logic->Plug(new mafOpImporterVMEDataSetAttributes("VME DataSet Attributes Adder"),"Modify");
   m_Logic->Plug(new mmoClassicICPRegistration("Register Surface"),"Modify/Fuse");
   m_Logic->Plug(new mmoAFSys("AFRefsys"),"Create/Derive");
   m_Logic->Plug(new mmoAverageLM("Average landmark"),"Create/Derive");

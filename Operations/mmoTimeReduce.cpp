@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoTimeReduce.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-12-12 12:25:12 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-03-06 12:06:12 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -30,7 +30,7 @@
 #include "mafEvent.h"
 #include "mmgGui.h"
 
-#include "mmoExplodeCollapse.H"
+#include "mafOpExplodeCollapse.h"
 
 #include "mafSmartPointer.h"
 #include "mafMatrixVector.h"

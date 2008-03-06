@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpMultiscaleUtility.cpp,v $
 Language:  C++
-Date:      $Date: 2008-01-28 16:36:30 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2008-03-06 12:06:12 $
+Version:   $Revision: 1.3 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -370,8 +370,8 @@ void lhpMultiscaleUtility::ConvertScaleToTidyUnits(double scale, int baseUnits, 
 
   if (ilogscale >= 0){
     units << "m" << std::ends ;
-    *iscale = (int)(scale / pow(10,ilogscale) + 0.5) ;
-    *iscale *= std::pow(10,ilogscale) ;
+    *iscale = (int)(scale / pow(10.0,ilogscale) + 0.5) ;	//BES: 3.3.2008 - 10 => 10.0
+    *iscale *= std::pow(10.0,ilogscale) ;					//BES: 3.3.2008 - 10 => 10.0
     return ;
   }
 

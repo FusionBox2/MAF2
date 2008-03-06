@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoBuildHierarchy.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-03-06 12:06:12 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -28,7 +28,7 @@
 #include "mafEvent.h"
 #include "mmgGui.h"
 
-#include "mmoExplodeCollapse.H"
+#include "mafOpExplodeCollapse.h"
 #include "mafDictionary.h"
 
 #include "mafTransformFrame.h"
