@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoAFSys.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-02-19 11:40:59 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2008-03-06 22:11:18 $
+  Version:   $Revision: 1.4 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -48,10 +48,10 @@
 // Forward Refs
 //----------------------------------------------------------------------------
 
-#define ADD_PREDEF(name) m_predefinedScripts.push_back(std::make_pair(#name, std::vector<mafString>(&_##name[0], &_##name[0] + sizeof(_##name)/sizeof(_##name[0]))))
+#define ADD_PREDEF(name, boneID) m_predefinedScripts.push_back(PredefinedScripts(#name, std::vector<mafString>(&_##name[0], &_##name[0] + sizeof(_##name)/sizeof(_##name[0])), mafVMEAFRefSys::ID_AFS_##boneID))
 void mmoAFSys::InitPredefined()
 {
-  mafString _IPE[] = {"ASSV PN0 RIAS", "ASSV PN1 LIAS", "ASSV PN2 RIPS", "ASSV PN3 LIPS", "LNCMB MIDDLEA 0.5 PN0 0.5 PN1", "LNCMB MIDDLEP 0.5 PN2 0.5 PN3", "ASSV P1 PN0", "ASSV P2 PN1", "ASSV P3 MIDDLEP", "ASSV P4 PN1", "ASSV P5 PN0", "LNCMB A 1 P2 -1 P1", "NRML A", "LNCMB B 1 P3 -1 P2", "NRML B", "CROSS X1 A B", "NRML X1", "LNCMB R 1 P5 -1 P4", "NRML R", "CROSS Y1 X1 R", "NRML Y1", "CROSS Z1 X1 Y1", "NRML Z1", "ASSV X Y1", "ASSV Y X1", "LNCMB Z -1 Z1 0 Y1", "ASSV P MIDDLEA"};
+  mafString _IPE[] = {"ASSV PN0 RIAS", "ASSV PN1 LIAS", "ASSV PN2 RIPS", "ASSV PN3 LIPS", "DEFVI RIAC", "DEFVI LIAC", "LNCMB MIDDLEA 0.5 PN0 0.5 PN1", "LNCMB MIDDLEP 0.5 PN2 0.5 PN3", "ASSV P1 PN0", "ASSV P2 PN1", "ASSV P3 MIDDLEP", "ASSV P4 PN1", "ASSV P5 PN0", "LNCMB A 1 P2 -1 P1", "NRML A", "LNCMB B 1 P3 -1 P2", "NRML B", "CROSS X1 A B", "NRML X1", "LNCMB R 1 P5 -1 P4", "NRML R", "CROSS Y1 X1 R", "NRML Y1", "CROSS Z1 X1 Y1", "NRML Z1", "ASSV X Y1", "ASSV Y X1", "LNCMB Z -1 Z1 0 Y1", "ASSV P MIDDLEA"};
   mafString _LFT[] = {"ASSV PN0 LFCC", "ASSV PN1 LFM5", "ASSV PN2 LFM2", "ASSV PN3 LFM1", "ASSV P1 PN3", "ASSV P2 PN1", "ASSV P3 PN0", "ASSV P4 PN2", "ASSV P5 PN0", "LNCMB A 1 P2 -1 P1", "NRML A", "LNCMB B 1 P3 -1 P2", "NRML B", "CROSS X1 A B", "NRML X1", "LNCMB R 1 P5 -1 P4", "NRML R", "CROSS Y1 X1 R", "NRML Y1", "CROSS Z1 X1 Y1", "NRML Z1", "ASSV X Z1", "ASSV Y X1", "ASSV Z Y1", "ASSV P PN0"};
   mafString _LSH[] = {"ASSV PN0 LFAX", "ASSV PN1 LTTC", "ASSV PN2 LTAM", "ASSV PN3 LFAL", "LNCMB MIDDLE 0.5 PN2 0.5 PN3", "ASSV P1 PN2", "ASSV P2 PN3", "ASSV P3 PN0", "ASSV P4 MIDDLE", "ASSV P5 PN1", "LNCMB A 1 P2 -1 P1", "NRML A", "LNCMB B 1 P3 -1 P2", "NRML B", "CROSS X1 A B", "NRML X1", "LNCMB R 1 P5 -1 P4", "NRML R", "CROSS Y1 X1 R", "NRML Y1", "CROSS Z1 X1 Y1", "NRML Z1", "ASSV X X1", "LNCMB Y -1 Z1 0 Y1", "ASSV Z Y1", "ASSV P MIDDLE"};
   mafString _LSH_ISB[] = {"ASSV PN0 LTLR", "ASSV PN1 LTMR", "ASSV PN2 LFAL", "ASSV PN3 LTAM", "LNCMB MIDDLEUP 0.5 PN0 0.5 PN1", "LNCMB MIDDLEDN 0.5 PN2 0.5 PN3", "SUBV Z PN3 PN2", "NRML Z", "SUBV A MIDDLEUP MIDDLEDN", "NRML A", "CROSS X A Z", "NRML X", "CROSS Y Z X", "NRML Y", "ASSV P MIDDLEDN"};
@@ -80,34 +80,34 @@ void mmoAFSys::InitPredefined()
   mafString _4PNT_Y[] = {"ASSV PN0 PNT1", "ASSV PN1 PNT2", "ASSV PN2 PNT3", "ASSV PN3 PNT4", "DEFSI 0 t 1", "SUBS s 1 t", "LNCMB MIDDLE t PN0 s PN1", "ASSV P1 PN1", "ASSV P2 PN0", "ASSV P3 PN2", "ASSV P4 PN3", "ASSV P5 PN2", "LNCMB A 1 P2 -1 P1", "NRML A", "LNCMB B 1 P3 -1 P2", "NRML B", "CROSS X1 A B", "NRML X1", "LNCMB R 1 P5 -1 P4", "NRML R", "CROSS Y1 X1 R", "NRML Y1", "CROSS Z1 X1 Y1", "NRML Z1", "ASSV X X1", "LNCMB Y -1 Z1 0 Y1", "ASSV Z Y1", "ASSV P MIDDLE"};
   mafString _4PNT_Z[] = {"ASSV PN0 PNT1", "ASSV PN1 PNT2", "ASSV PN2 PNT3", "ASSV PN3 PNT4", "DEFSI 0 t 1", "SUBS s 1 t", "LNCMB MIDDLE t PN0 s PN1", "SUBV Z PN1 PN0", "NRML Z", "SUBV Y1 PN3 PN2", "NRML Y1", "CROSS X Z Y1", "NRML X", "CROSS Y1 X Z", "LNCMB Y -1 Y1 0 Y1", "ASSV P MIDDLE"};
 
-  ADD_PREDEF(IPE);
-  ADD_PREDEF(RTH);
-  ADD_PREDEF(LTH);
-  ADD_PREDEF(RSH);
-  ADD_PREDEF(RSH_ISB);
-  ADD_PREDEF(LSH);
-  ADD_PREDEF(LSH_ISB);
-  ADD_PREDEF(RFT);
-  ADD_PREDEF(LFT);
+  ADD_PREDEF(IPE, PELVIS);
+  ADD_PREDEF(RTH, RTHIGH);
+  ADD_PREDEF(LTH, LTHIGH);
+  ADD_PREDEF(RSH, RSHANK);
+  ADD_PREDEF(RSH_ISB, NOTDEFINED);
+  ADD_PREDEF(LSH, LSHANK);
+  ADD_PREDEF(LSH_ISB, NOTDEFINED);
+  ADD_PREDEF(RFT, RFOOT);
+  ADD_PREDEF(LFT, LFOOT);
 
-  ADD_PREDEF(TRX);
-  ADD_PREDEF(RCLV);
-  ADD_PREDEF(LCLV);
-  ADD_PREDEF(RSCP);
-  ADD_PREDEF(LSCP);
-  ADD_PREDEF(RHUM1);
-  ADD_PREDEF(LHUM1);
-  ADD_PREDEF(RHUM2);
-  ADD_PREDEF(LHUM2);
-  ADD_PREDEF(RFRA);
-  ADD_PREDEF(LFRA);
+  ADD_PREDEF(TRX, NOTDEFINED);
+  ADD_PREDEF(RCLV, NOTDEFINED);
+  ADD_PREDEF(LCLV, NOTDEFINED);
+  ADD_PREDEF(RSCP, NOTDEFINED);
+  ADD_PREDEF(LSCP, NOTDEFINED);
+  ADD_PREDEF(RHUM1, NOTDEFINED);
+  ADD_PREDEF(LHUM1, NOTDEFINED);
+  ADD_PREDEF(RHUM2, NOTDEFINED);
+  ADD_PREDEF(LHUM2, NOTDEFINED);
+  ADD_PREDEF(RFRA, NOTDEFINED);
+  ADD_PREDEF(LFRA, NOTDEFINED);
 
 
 
-  ADD_PREDEF(3PNT_Y);
-  ADD_PREDEF(3PNT_Z);
-  ADD_PREDEF(4PNT_Y);
-  ADD_PREDEF(4PNT_Z);
+  ADD_PREDEF(3PNT_Y, NOTDEFINED);
+  ADD_PREDEF(3PNT_Z, NOTDEFINED);
+  ADD_PREDEF(4PNT_Y, NOTDEFINED);
+  ADD_PREDEF(4PNT_Z, NOTDEFINED);
 }
 
 //----------------------------------------------------------------------------
@@ -193,10 +193,10 @@ void mmoAFSys::OpRun()
   m_RefSys->SetName(str.GetCStr());
   for(unsigned nm = 0; nm < m_predefinedScripts.size(); nm++)
   {
-    if(stricmp(m_predefinedScripts[nm].first.GetCStr(), m_Input->GetName()) == 0)
+    if(stricmp(m_predefinedScripts[nm].m_Name.GetCStr(), m_Input->GetName()) == 0)
     {
       m_Radio = nm;
-      m_RefSys->SetScriptText(m_predefinedScripts[m_Radio].second);
+      m_RefSys->SetScriptText(m_predefinedScripts[m_Radio].m_Script);
       break;
     }
   }
@@ -213,7 +213,7 @@ void mmoAFSys::CreateGui()
   std::vector<wxString> list;
   for(unsigned i = 0; i < m_predefinedScripts.size(); i++)
   {
-    list.push_back(m_predefinedScripts[i].first.GetCStr());
+    list.push_back(m_predefinedScripts[i].m_Name.GetCStr());
   }
   list.push_back("Custom");
   m_Gui->Radio(ID_RADIO_SCRIPT, "",&m_Radio, list.size(), &list[0]);
@@ -290,7 +290,10 @@ void mmoAFSys::OnEvent(mafEventBase *maf_event)
       {
         std::vector<mafString> tmp;
         if(m_ScriptFName != "" && ReadScript(m_ScriptFName, tmp))
+        {
           m_RefSys->SetScriptText(tmp);
+          m_RefSys->SetBoneID(mafVMEAFRefSys::ID_AFS_NOTDEFINED);
+        }
       }
       break;
     case ID_RADIO_SCRIPT:
@@ -298,13 +301,17 @@ void mmoAFSys::OnEvent(mafEventBase *maf_event)
         m_Gui->Enable(ID_LOAD_SCRIPT, m_Radio == m_predefinedScripts.size());
         if(m_Radio != m_predefinedScripts.size())
         {
-          m_RefSys->SetScriptText(m_predefinedScripts[m_Radio].second);
+          m_RefSys->SetScriptText(m_predefinedScripts[m_Radio].m_Script);
+          m_RefSys->SetBoneID(m_predefinedScripts[m_Radio].m_BoneID);
         }
         else
         {
           std::vector<mafString> tmp;
           if(m_ScriptFName != "" && ReadScript(m_ScriptFName, tmp))
+          {
             m_RefSys->SetScriptText(tmp);
+            m_RefSys->SetBoneID(mafVMEAFRefSys::ID_AFS_NOTDEFINED);
+          }
         }
         m_Gui->Update();
       }
