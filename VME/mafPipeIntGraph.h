@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafPipeIntGraph.h,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-03-06 22:11:37 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -35,11 +35,11 @@ public:
   virtual     ~mafPipeIntGraph();
   void         SetView(mafViewIntGraph  *view){m_View = view;}
   void         GrabData(int nIdx, mafTimeStamp nTimeStamp = -1.);
-
-  void         StoreValueByIdx(int nObjectOrderID, IDType nVarID, int nGraphIndex, mafTimeStamp nTimeStamp = -1., mafTimeStamp nPrevTimeStamp = -1.);
 protected:
-  mafViewIntGraph         *m_View;
-  mafTimeStamp            m_PrevStamp;
-  std::vector<std::pair<float, bool> > m_variables;
+  void         StoreValueByIdx(int nObjectOrderID, IDType nVarID, int nGraphIndex, mafTimeStamp nTimeStamp = -1., mafTimeStamp nPrevTimeStamp = -1.);
+  void         InvalidateAllVars();
+  mafViewIntGraph                       *m_View;
+  mafTimeStamp                          m_PrevStamp;
+  std::vector<std::pair<double, bool> > m_variables;
 };  
 #endif // _mafPipeIntGraph_H_

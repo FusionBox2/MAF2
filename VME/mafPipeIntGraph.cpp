@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafPipeIntGraph.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-02-19 11:41:33 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2008-03-06 22:11:37 $
+  Version:   $Revision: 1.5 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -128,20 +128,13 @@ mafPipeIntGraph::~mafPipeIntGraph()
 {
 }
 
-//----------------------------------------------------------------------------
-static void GetGlobalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat)
-//----------------------------------------------------------------------------
+
+mafVMEAFRefSys *GetRefSys(mafVME *vme)
 {
-  mafMatrix matrix;
-
-  ///This function can be called with zero this!
-  vme->GetOutput()->GetAbsMatrix(matrix, ts);
-  mflMatrixToDi(matrix.GetVTKMatrix(), pMat);
+  mafVMEAFRefSys *afs = NULL;
   mafVMELandmarkCloud *lmc = mafVMELandmarkCloud::SafeDownCast(vme);
-  mafVMEAFRefSys      *afs = NULL;
   if(lmc == NULL)
-    return;
-
+    return NULL;
   for(int i = 0; i < lmc->GetNumberOfChildren(); i++)
   {
     mafNode *child = vme->GetChild(i);
@@ -155,11 +148,23 @@ static void GetGlobalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat)
       }
     }
   }
+  return afs;
+}
 
-  if(afs == NULL)
+//----------------------------------------------------------------------------
+static void GetGlobalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat)
+//----------------------------------------------------------------------------
+{
+  DiMatrixIdentity(pMat);
+  if(vme == NULL)
     return;
 
-  afs->GetOutput()->GetAbsMatrix(matrix, ts);
+  mafMatrix      matrix;
+  mafVMEAFRefSys *afs = GetRefSys(vme);
+  if(afs == NULL)
+    vme->GetOutput()->GetAbsMatrix(matrix, ts);
+  else
+    afs->CalculateMatrix(matrix, ts);
   mflMatrixToDi(matrix.GetVTKMatrix(), pMat);
 }
 
@@ -171,30 +176,200 @@ static void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat)
   DiMatrix cmatrix;
   DiMatrix pInv;
 
-  DiMatrixIdentity(&pmatrix);
-  if(vme->GetParent() != NULL)
-    GetGlobalMatrix(vme->GetParent(), ts, &pmatrix);
-  GetGlobalMatrix(vme, ts, &cmatrix);
+  DiMatrixIdentity(pMat);
+  if(vme == NULL)
+    return;
+
+  GetGlobalMatrix(vme->GetParent(), ts, &pmatrix);//in case of GetParent == NULL Global matrix is filled as identity
+  GetGlobalMatrix(vme,              ts, &cmatrix);
+
   DiMatrixInvert(&pmatrix, &pInv);
   DiMatrixMultiply(&cmatrix, &pInv, pMat);
 }
 
+
+static int FindParentID(int id)
+{
+  switch(id)
+  {
+  case mafVMEAFRefSys::ID_AFS_LTHIGH:
+  case mafVMEAFRefSys::ID_AFS_RTHIGH:
+    return mafVMEAFRefSys::ID_AFS_PELVIS;
+  case mafVMEAFRefSys::ID_AFS_LSHANK:
+    return mafVMEAFRefSys::ID_AFS_LTHIGH;
+  case mafVMEAFRefSys::ID_AFS_RSHANK:
+    return mafVMEAFRefSys::ID_AFS_RTHIGH;
+  case mafVMEAFRefSys::ID_AFS_LFOOT:
+    return mafVMEAFRefSys::ID_AFS_LSHANK;
+  case mafVMEAFRefSys::ID_AFS_RFOOT:
+    return mafVMEAFRefSys::ID_AFS_RSHANK;
+  default:
+    return mafVMEAFRefSys::ID_AFS_NOTDEFINED;
+  }
+}
+static void OVP_GES(mafVME *vme, mafTimeStamp ts, mafTimeStamp tsRef, DiV4d *vOVPPos, DiV4d *vOVPRot, DiV4d *vGESPos, DiV4d *vGESRot)
+{
+  vOVPPos->x = 0.0;vOVPPos->y = 0.0;vOVPPos->z = 0.0;vOVPPos->w = 0.0;
+  vOVPRot->x = 0.0;vOVPRot->y = 0.0;vOVPRot->z = 0.0;vOVPRot->w = 0.0;
+  vGESPos->x = 0.0;vGESPos->y = 0.0;vGESPos->z = 0.0;vGESPos->w = 0.0;
+  vGESRot->x = 0.0;vGESRot->y = 0.0;vGESRot->z = 0.0;vGESRot->w = 0.0;
+  if(vme == NULL)
+    return;
+
+  DiMatrix mLTM;
+  DiMatrix mRefLTM;
+  DiV4d    vTm;
+  DiV4d    vOVPRefPos;
+  GetLocalMatrix(vme, ts,    &mLTM);
+  GetLocalMatrix(vme, tsRef, &mRefLTM);
+  mafTransfInverseTransformUpright(&mLTM, &vTm, vOVPRot);
+
+  mafVMEAFRefSys *vmeSys = GetRefSys(vme);
+  if(vmeSys == NULL || vmeSys->GetBoneID() == mafVMEAFRefSys::ID_AFS_NOTDEFINED || vmeSys->GetBoneID() == mafVMEAFRefSys::ID_AFS_PELVIS)
+    return;
+  mafVME *parent = vme->GetParent();
+  if(parent == NULL)
+    return;
+  mafVMEAFRefSys *parentSys = GetRefSys(parent);
+  if(parentSys == NULL || parentSys->GetBoneID() == mafVMEAFRefSys::ID_AFS_NOTDEFINED || parentSys->GetBoneID() != FindParentID(vmeSys->GetBoneID()))
+    return;
+
+  mafMatrix vmeMatr;
+  mafMatrix vmeMatrRef;
+  mafMatrix parentMatr;
+  mafMatrix parentMatrRef;
+  vmeSys->CalculateMatrix(vmeMatr, ts);
+  vmeSys->CalculateMatrix(vmeMatrRef, tsRef);
+  parentSys->CalculateMatrix(parentMatr, ts);
+  parentSys->CalculateMatrix(parentMatrRef, tsRef);
+  DiMatrix vmeMatrix;
+  DiMatrix vmeMatrixRef;
+  DiMatrix parentMatrix;
+  DiMatrix parentMatrixRef;
+  mflMatrixToDi(vmeMatr.GetVTKMatrix(), &vmeMatrix);
+  mflMatrixToDi(vmeMatrRef.GetVTKMatrix(), &vmeMatrixRef);
+  mflMatrixToDi(parentMatr.GetVTKMatrix(), &parentMatrix);
+  mflMatrixToDi(parentMatrRef.GetVTKMatrix(), &parentMatrixRef);
+  if(vmeSys->GetBoneID() == mafVMEAFRefSys::ID_AFS_LTHIGH || vmeSys->GetBoneID() == mafVMEAFRefSys::ID_AFS_RTHIGH)
+  {
+    V3d<double> pelvisPnt;
+    V3d<double> thighPnt;
+    if(vmeSys->GetBoneID() == mafVMEAFRefSys::ID_AFS_RTHIGH)
+    {
+      if(!parentSys->GetVector("RIAC", tsRef, pelvisPnt) || !vmeSys->GetVector("RFCH", tsRef, thighPnt))
+        return;
+    }
+    else
+    {
+      if(!parentSys->GetVector("LIAC", tsRef, pelvisPnt) || !vmeSys->GetVector("LFCH", tsRef, thighPnt))
+        return;
+    }
+
+    DiV4d vPlv, vThg, vTmp, vDist, vProx;
+    vPlv.x = -pelvisPnt.x;vPlv.y =  pelvisPnt.y;vPlv.z =  pelvisPnt.z;vPlv.w =  1.0;
+    vThg.x = -thighPnt.x; vThg.y =  thighPnt.y; vThg.z =  thighPnt.z; vThg.w =  1.0;
+    DiV4dInverseTransformPointTo(&vThg, &vmeMatrixRef, &vTmp);
+    DiV4dTransformPointTo(&vTmp, &vmeMatrix, &vDist);
+
+    DiV4dInverseTransformPointTo(&vPlv, &parentMatrixRef, &vTmp);
+    DiV4dTransformPointTo(&vTmp, &parentMatrix, &vProx);
+
+    DiV4dSub(&vDist, &vProx, &vTmp);
+    DiV4dInverseTransformVectorTo(&vTmp, &parentMatrix, vOVPPos);
+
+    DiV4dSub(&vThg, &vPlv, &vTmp);
+    DiV4dInverseTransformVectorTo(&vTmp, &parentMatrix, &vOVPRefPos);
+  }
+  else
+  {
+    V3d<double> middle;
+
+    if(!parentSys->GetVector("MIDDLE", tsRef, middle))
+      return;
+    DiV4d vMdl, vTmp, vDist, vProx;
+    vMdl.x = -middle.x;vMdl.y =  middle.y;vMdl.z =  middle.z;vMdl.w =  1.0;
+
+    DiV4dInverseTransformPointTo(&vMdl, &vmeMatrixRef, &vTmp);
+    DiV4dTransformPointTo(&vTmp, &vmeMatrix, &vDist);
+
+    DiV4dInverseTransformPointTo(&vMdl, &parentMatrixRef, &vTmp);
+    DiV4dTransformPointTo(&vTmp, &parentMatrix, &vProx);
+
+    DiV4dSub(&vDist, &vProx, &vTmp);
+    DiV4dInverseTransformVectorTo(&vTmp, &parentMatrix, vOVPPos);
+
+    vOVPRefPos.x = 0.0;vOVPRefPos.y = 0.0;vOVPRefPos.z = 0.0;vOVPRefPos.w = 1.0;
+  }
+  vOVPRefPos.x = -vOVPRefPos.x;
+  vOVPPos->x   = -vOVPPos->x;
+
+  //GES
+  {
+    DiMatrix mPGTM;
+    DiMatrix mDLTM;
+    DiMatrix mDURLTM;
+    DiMatrix mDURLTMInv;
+    DiMatrix mDGTM;
+    DiMatrix mDGTMInv;
+    DiMatrix mGSBasic;
+    DiMatrix mInitRotX;
+    DiMatrix mInitRotY;
+    DiMatrix mInitRot;
+    DiV4d    vGS, vGSPos;
+    DiFloat  rAngleX = 0.f  * diPI / 180.f;
+    DiFloat  rAngleY = 11.f * diPI / 180.f;
+
+    DiMatrixIdentity(&mInitRotX);
+    DiMatrixIdentity(&mInitRotY);
+    DiMatrixRotateRight(&mInitRotX, rAngleX, diREPLACE);
+    DiMatrixRotateUp(&mInitRotY, rAngleY, diREPLACE);
+    DiMatrixMultiply(&mInitRotX, &mInitRotY, &mInitRot);
+
+    DiMatrixIdentity(&mPGTM);
+    DiMatrixMultiply(&mLTM, &mInitRot, &mDLTM);
+    DiMatrixCopy(&mRefLTM, &mDURLTM);
+    DiMatrixTransposeRotationalSubmatrix(&mDURLTM, &mDURLTMInv);
+    DiMatrixMultiply(&mDURLTMInv, &mDLTM, &mDGTMInv);
+    mafTransfRightLeftConv(&mDGTMInv, &mDGTM);
+
+    mafTransfMatrixToGES(&mPGTM, &mDGTM, &mGSBasic, &vGS);
+
+    if(vmeSys->GetBoneID() != mafVMEAFRefSys::ID_AFS_NOTDEFINED && vmeSys->GetBoneID() != mafVMEAFRefSys::ID_AFS_PELVIS)//applying additional 
+    {
+      DiV4dSub(vOVPPos, &vOVPRefPos, &vGSPos);
+      DiV4dTransformVectorTo(&vGSPos, &mGSBasic, &vGSPos);
+      DiV4dCopy(&vGSPos, vGESPos);
+    }
+    DiV4dCopy(&vGS, vGESRot);
+    if(vmeSys->GetBoneID() == mafVMEAFRefSys::ID_AFS_LTHIGH ||
+       vmeSys->GetBoneID() == mafVMEAFRefSys::ID_AFS_LSHANK ||
+       vmeSys->GetBoneID() == mafVMEAFRefSys::ID_AFS_LFOOT  )
+    {
+      vGESRot->y = -vGESRot->y;
+      vGESRot->x = -vGESRot->x;
+    }
+    if(vmeSys->GetBoneID() == mafVMEAFRefSys::ID_AFS_RSHANK ||
+       vmeSys->GetBoneID() == mafVMEAFRefSys::ID_AFS_LSHANK )
+    {
+      vGESRot->z = -vGESRot->z;
+    }
+  }
+}
+
+void mafPipeIntGraph::InvalidateAllVars()
+{
+  for(unsigned int i = 0; i < m_variables.size(); i++)
+    m_variables[i].second = false;
+}
+
 //----------------------------------------------------------------------------
-void  mafPipeIntGraph::StoreValueByIdx(int nObjectOrderID, IDType nVarID, int nGraphIndex, mafTimeStamp nTimeStamp, mafTimeStamp nPrevTimeStamp)
+void mafPipeIntGraph::StoreValueByIdx(int nObjectOrderID, IDType nVarID, int nGraphIndex, mafTimeStamp nTimeStamp, mafTimeStamp nPrevTimeStamp)
 //----------------------------------------------------------------------------
 {
-  mafTimeStamp     ts;
-  mafTimeStamp     pts;
+  mafTimeStamp     ts  = nTimeStamp;
+  mafTimeStamp     pts = nPrevTimeStamp;
   DiInt32          nObjIDByVar = nVarID[0];
-  mafGraphDescType tVarType = mafGraphDescType(nVarID[1]);
-  DiMatrix         mat;
-  DiV4d            vPos; 
-  DiV4d            vRot; 
-
-  ts  = (nTimeStamp < 0) ? m_Vme->GetOutput()->GetTimeStamp() : nTimeStamp;
-  pts = (nPrevTimeStamp < 0) ? ts : nPrevTimeStamp;
-
-  DiMatrixIdentity(&mat);
+  mafGraphDescType tValIDByVar = mafGraphDescType(nVarID[1]);
 
   // all variables have native order mentioned in mafGraphDescType. 
   // It means we always have GDT_LAST variables per any element with active pipe
@@ -209,289 +384,194 @@ void  mafPipeIntGraph::StoreValueByIdx(int nObjectOrderID, IDType nVarID, int nG
   // nVarID == GDT_LAST * k, where k from N is also the EXACTLY same time!
   //always add time on first object
 
-  if(fabs(ts - m_variables[GDT_FRAME].first) > 1e-6)
+  if(nVarID.isZero())//if timestamp
   {
-    for(unsigned int i = 0; i < m_variables.size(); i++)
-      m_variables[i].second = false;
     m_variables[GDT_FRAME].first  = ts;
     m_variables[GDT_FRAME].second = true;
-  }
-
-  if(nVarID.isZero())
-  {
-    m_View->GetGraph()->SetAddCoord(nGraphIndex, ts);
+    m_View->GetGraph()->SetAddCoord(nGraphIndex, ts);//insert timestamp value and stop
     return;
   }
 
-  if(!m_variables[tVarType].second)
+  if(m_variables[tValIDByVar].second)
   {
-    switch (tVarType)
-    {
-    case   GDT_GTM_POSX   :
-    case   GDT_GTM_POSY   :
-    case   GDT_GTM_POSZ   :
-    case   GDT_GTM_ROTX   :
-    case   GDT_GTM_ROTY   :
-    case   GDT_GTM_ROTZ   :
-     {
-        //get full trio in proper convention and axises
-        GetGlobalMatrix(m_Vme, ts, &mat);
-        mafTransfInverseTransformUpright(&mat, &vPos, &vRot);
-
-        m_variables[GDT_GTM_POSX].first  = vPos.x;
-        m_variables[GDT_GTM_POSX].second = true;
-        m_variables[GDT_GTM_POSY].first  = vPos.y;
-        m_variables[GDT_GTM_POSY].second = true;
-        m_variables[GDT_GTM_POSZ].first  = vPos.z;
-        m_variables[GDT_GTM_POSZ].second = true;
-        m_variables[GDT_GTM_ROTX].first  = vRot.x * mafMatrix3x3::RadiansToDegrees();
-        m_variables[GDT_GTM_ROTX].second = true;
-        m_variables[GDT_GTM_ROTY].first  = vRot.y * mafMatrix3x3::RadiansToDegrees();
-        m_variables[GDT_GTM_ROTY].second = true;
-        m_variables[GDT_GTM_ROTZ].first  = vRot.z * mafMatrix3x3::RadiansToDegrees();
-        m_variables[GDT_GTM_ROTZ].second = true;
-        break;
-      }
-      //helical
-      case   GDT_HEL_ROTX   :
-      case   GDT_HEL_ROTY   :
-      case   GDT_HEL_ROTZ   :
-        {    
-          DiMatrix     mt;
-          DiMatrix     mt1;
-          DiMatrix     tmp;
-          mafTransform *pTransf;
-          vtkMatrix4x4 *mVTK             = NULL;
-
-          double       helicalAxis[3]    = { 0, 0, 0 };
-          double       point[3]          = { 0, 0, 0 };
-          double       angle             = 0;
-          double       translationAmount = 0;
-
-          mafNEW(pTransf);
-
-          GetLocalMatrix(m_Vme, ts, &mt);
-          GetLocalMatrix(m_Vme, ts + 1, &mt1);
-          DiMatrixInvert(&mt, &tmp);
-          DiMatrixMultiply(&mt1, &tmp, &mt);
-          vtkNEW(mVTK);
-          DiMatrixToVTK(&mt, mVTK);
-          pTransf->SetMatrix(mVTK);
-          if(!DiMatrixTestIdentity(&mt))
-          {
-            pTransf->MatrixToHelicalAxis(pTransf->GetMatrix(), helicalAxis, point, angle, translationAmount, 2);
-          }
-          else
-          {
-            helicalAxis[0] = 1.0;
-            helicalAxis[1] = 0.0;
-            helicalAxis[2] = 0.0;
-            angle          = 0.0;
-          }
-          if(angle < 0)
-          {
-            helicalAxis[0] = -helicalAxis[0];
-            helicalAxis[1] = -helicalAxis[1];
-            helicalAxis[2] = -helicalAxis[2];
-            angle          = -angle;
-          }
-          vtkDEL(mVTK);
-          mafDEL(pTransf);
-
-          m_variables[GDT_HEL_ROTX].first  = helicalAxis[0] * angle;
-          m_variables[GDT_HEL_ROTX].second = true;
-          m_variables[GDT_HEL_ROTY].first  = helicalAxis[1] * angle;
-          m_variables[GDT_HEL_ROTY].second = true;
-          m_variables[GDT_HEL_ROTZ].first  = helicalAxis[2] * angle;
-          m_variables[GDT_HEL_ROTZ].second = true;
-          break;
-        }
-      //  //LTM
-    case   GDT_LTM_POSX   :
-    case   GDT_LTM_POSY   :
-    case   GDT_LTM_POSZ   :
-    case   GDT_LTM_ROTX   :
-    case   GDT_LTM_ROTY   :
-    case   GDT_LTM_ROTZ   :
-      {
-        DiMatrix                   mLTM;
-        GetLocalMatrix(m_Vme, ts, &mLTM);
-        mafTransfInverseTransformUpright(&mLTM, &vPos, &vRot);
-
-        m_variables[GDT_LTM_POSX].first  = vPos.x;
-        m_variables[GDT_LTM_POSX].second = true;
-        m_variables[GDT_LTM_POSY].first  = vPos.y;
-        m_variables[GDT_LTM_POSY].second = true;
-        m_variables[GDT_LTM_POSZ].first  = vPos.z;
-        m_variables[GDT_LTM_POSZ].second = true;
-        m_variables[GDT_LTM_ROTX].first  = vRot.x * mafMatrix3x3::RadiansToDegrees();
-        m_variables[GDT_LTM_ROTX].second = true;
-        m_variables[GDT_LTM_ROTY].first  = vRot.y * mafMatrix3x3::RadiansToDegrees();
-        m_variables[GDT_LTM_ROTY].second = true;
-        m_variables[GDT_LTM_ROTZ].first  = vRot.z * mafMatrix3x3::RadiansToDegrees();
-        m_variables[GDT_LTM_ROTZ].second = true;
-        break;
-      }
-
-
-      case   GDT_OVP_ROTX   :
-      case   GDT_OVP_ROTY   :
-      case   GDT_OVP_ROTZ   :
-        {
-          DiMatrix                   mLTM;
-          GetLocalMatrix(m_Vme, ts, &mLTM);
-          mafTransfInverseTransformUpright(&mLTM, &vPos, &vRot);
-          m_variables[GDT_OVP_ROTX].first  = vRot.x * mafMatrix3x3::RadiansToDegrees();
-          m_variables[GDT_OVP_ROTX].second = true;
-          m_variables[GDT_OVP_ROTY].first  = vRot.y * mafMatrix3x3::RadiansToDegrees();
-          m_variables[GDT_OVP_ROTY].second = true;
-          m_variables[GDT_OVP_ROTZ].first  = vRot.z * mafMatrix3x3::RadiansToDegrees();
-          m_variables[GDT_OVP_ROTZ].second = true;
-          break;
-        }
-      //Euler
-    case   GDT_EUL_ROTXXYZs   :
-    case   GDT_EUL_ROTYXYZs   :
-    case   GDT_EUL_ROTZXYZs   :
-
-    case   GDT_EUL_ROTXXYXs   :
-    case   GDT_EUL_ROTYXYXs   :
-    case   GDT_EUL_ROTZXYXs   :
-
-    case   GDT_EUL_ROTXXZYs   :
-    case   GDT_EUL_ROTYXZYs   :
-    case   GDT_EUL_ROTZXZYs   :
-
-    case   GDT_EUL_ROTXXZXs   :
-    case   GDT_EUL_ROTYXZXs   :
-    case   GDT_EUL_ROTZXZXs   :
-
-    case   GDT_EUL_ROTXYZXs   :
-    case   GDT_EUL_ROTYYZXs   :
-    case   GDT_EUL_ROTZYZXs   :
-
-    case   GDT_EUL_ROTXYZYs   :
-    case   GDT_EUL_ROTYYZYs   :
-    case   GDT_EUL_ROTZYZYs   :
-
-    case   GDT_EUL_ROTXYXZs   :
-    case   GDT_EUL_ROTYYXZs   :
-    case   GDT_EUL_ROTZYXZs   :
-
-    case   GDT_EUL_ROTXYXYs   :
-    case   GDT_EUL_ROTYYXYs   :
-    case   GDT_EUL_ROTZYXYs   :
-
-    case   GDT_EUL_ROTXZXYs   :
-    case   GDT_EUL_ROTYZXYs   :
-    case   GDT_EUL_ROTZZXYs   :
-
-    case   GDT_EUL_ROTXZXZs   :
-    case   GDT_EUL_ROTYZXZs   :
-    case   GDT_EUL_ROTZZXZs   :
-
-    case   GDT_EUL_ROTXZYXs   :
-    case   GDT_EUL_ROTYZYXs   :
-    case   GDT_EUL_ROTZZYXs   :
-
-    case   GDT_EUL_ROTXZYZs   :
-    case   GDT_EUL_ROTYZYZs   :
-    case   GDT_EUL_ROTZZYZs   :
-
-
-      // Rotating axes 
-    case   GDT_EUL_ROTXZYXr   :
-    case   GDT_EUL_ROTYZYXr   :
-    case   GDT_EUL_ROTZZYXr   :
-
-    case   GDT_EUL_ROTXXYXr   :
-    case   GDT_EUL_ROTYXYXr   :
-    case   GDT_EUL_ROTZXYXr   :
-
-    case   GDT_EUL_ROTXYZXr   :
-    case   GDT_EUL_ROTYYZXr   :
-    case   GDT_EUL_ROTZYZXr   :
-
-    case   GDT_EUL_ROTXXZXr   :
-    case   GDT_EUL_ROTYXZXr   :
-    case   GDT_EUL_ROTZXZXr   :
-
-    case   GDT_EUL_ROTXXZYr   :
-    case   GDT_EUL_ROTYXZYr   :
-    case   GDT_EUL_ROTZXZYr   :
-
-    case   GDT_EUL_ROTXYZYr   :
-    case   GDT_EUL_ROTYYZYr   :
-    case   GDT_EUL_ROTZYZYr   :
-
-    case   GDT_EUL_ROTXZXYr   :
-    case   GDT_EUL_ROTYZXYr   :
-    case   GDT_EUL_ROTZZXYr   :
-
-    case   GDT_EUL_ROTXYXYr   :
-    case   GDT_EUL_ROTYYXYr   :
-    case   GDT_EUL_ROTZYXYr   :
-
-    case   GDT_EUL_ROTXYXZr   :
-    case   GDT_EUL_ROTYYXZr   :
-    case   GDT_EUL_ROTZYXZr   :
-
-    case   GDT_EUL_ROTXZXZr   :
-    case   GDT_EUL_ROTYZXZr   :
-    case   GDT_EUL_ROTZZXZr   :
-
-    case   GDT_EUL_ROTXXYZr   :
-    case   GDT_EUL_ROTYXYZr   :
-    case   GDT_EUL_ROTZXYZr   :
-
-    case   GDT_EUL_ROTXZYZr   :
-    case   GDT_EUL_ROTYZYZr   :
-    case   GDT_EUL_ROTZZYZr   :
-
-
-      {
-        DiMatrix                   mLTM;
-        DiFloat                    oldValueX = 0.f;
-        DiFloat                    oldValueY = 0.f;
-        DiFloat                    oldValueZ = 0.f;
-
-        vRot.w = _Conventions[(tVarType - GDT_EUL_ROTXXYZs) / 3];
-
-        GetLocalMatrix(m_Vme, ts, &mLTM);
-        mafTransfMatrixToEuler(&mLTM, &vRot);
-
-        vRot.x *= mafMatrix3x3::RadiansToDegrees();
-        vRot.y *= mafMatrix3x3::RadiansToDegrees();
-        vRot.z *= mafMatrix3x3::RadiansToDegrees();
-
-        int xindex = tVarType - (tVarType - GDT_EUL_ROTXXYZs) % 3;
-        if(m_View->GetGraph()->GetUsedMemSpace() != 0 && pts < ts)
-        {
-          oldValueX  = m_variables[xindex + 0].first;
-          oldValueY  = m_variables[xindex + 1].first;
-          oldValueZ  = m_variables[xindex + 2].first;
-        }
-        vRot.x = _fix180Difference( oldValueX, vRot.x);
-        vRot.y = _fix180Difference(-oldValueY, vRot.y);
-        vRot.z = _fix180Difference( oldValueZ, vRot.z);
-        m_variables[xindex + 0].first  = vRot.x;
-        m_variables[xindex + 0].second = true;
-        m_variables[xindex + 1].first  = vRot.y;
-        m_variables[xindex + 1].second = true;
-        m_variables[xindex + 2].first  = vRot.z;
-        m_variables[xindex + 2].second = true;
-        break;
-      }
-
-    default:
-      {
-        wxASSERT(false);
-        break;
-      }
-    }
+    m_View->GetGraph()->SetAddCoord(nGraphIndex, m_variables[tValIDByVar].first);
+    return;
   }
-  wxASSERT(m_variables[tVarType].second);
-  m_View->GetGraph()->SetAddCoord(nGraphIndex, m_variables[tVarType].first);
+  
+  //GTM
+  if(GDT_GTM_POSX <= tValIDByVar && tValIDByVar <= GDT_GTM_ROTZ)
+  {
+    DiMatrix mat;
+    DiV4d    vPos, vRot;
+    //get full trio in proper convention and axises
+    GetGlobalMatrix(m_Vme, ts, &mat);
+    mafTransfInverseTransformUpright(&mat, &vPos, &vRot);
+
+    m_variables[GDT_GTM_POSX].first  = vPos.x;
+    m_variables[GDT_GTM_POSX].second = true;
+    m_variables[GDT_GTM_POSY].first  = vPos.y;
+    m_variables[GDT_GTM_POSY].second = true;
+    m_variables[GDT_GTM_POSZ].first  = vPos.z;
+    m_variables[GDT_GTM_POSZ].second = true;
+    m_variables[GDT_GTM_ROTX].first  = vRot.x * mafMatrix3x3::RadiansToDegrees();
+    m_variables[GDT_GTM_ROTX].second = true;
+    m_variables[GDT_GTM_ROTY].first  = vRot.y * mafMatrix3x3::RadiansToDegrees();
+    m_variables[GDT_GTM_ROTY].second = true;
+    m_variables[GDT_GTM_ROTZ].first  = vRot.z * mafMatrix3x3::RadiansToDegrees();
+    m_variables[GDT_GTM_ROTZ].second = true;
+  }
+  //Helical axis
+  else if(GDT_HEL_ROTX <= tValIDByVar && tValIDByVar <= GDT_HEL_ROTZ)
+  {    
+    DiMatrix     mt;
+    DiMatrix     mt1;
+    DiMatrix     tmp;
+    mafTransform *pTransf;
+    vtkMatrix4x4 *mVTK             = NULL;
+
+    double       helicalAxis[3]    = { 0, 0, 0 };
+    double       point[3]          = { 0, 0, 0 };
+    double       angle             = 0;
+    double       translationAmount = 0;
+
+    mafNEW(pTransf);
+
+    GetLocalMatrix(m_Vme, ts, &mt);
+    GetLocalMatrix(m_Vme, ts + 1, &mt1);
+    DiMatrixInvert(&mt, &tmp);
+    DiMatrixMultiply(&mt1, &tmp, &mt);
+    vtkNEW(mVTK);
+    DiMatrixToVTK(&mt, mVTK);
+    pTransf->SetMatrix(mVTK);
+    if(!DiMatrixTestIdentity(&mt))
+    {
+      pTransf->MatrixToHelicalAxis(pTransf->GetMatrix(), helicalAxis, point, angle, translationAmount, 2);
+    }
+    else
+    {
+      helicalAxis[0] = 1.0;
+      helicalAxis[1] = 0.0;
+      helicalAxis[2] = 0.0;
+      angle          = 0.0;
+    }
+    if(angle < 0)
+    {
+      helicalAxis[0] = -helicalAxis[0];
+      helicalAxis[1] = -helicalAxis[1];
+      helicalAxis[2] = -helicalAxis[2];
+      angle          = -angle;
+    }
+    vtkDEL(mVTK);
+    mafDEL(pTransf);
+
+    m_variables[GDT_HEL_ROTX].first  = helicalAxis[0] * angle;
+    m_variables[GDT_HEL_ROTX].second = true;
+    m_variables[GDT_HEL_ROTY].first  = helicalAxis[1] * angle;
+    m_variables[GDT_HEL_ROTY].second = true;
+    m_variables[GDT_HEL_ROTZ].first  = helicalAxis[2] * angle;
+    m_variables[GDT_HEL_ROTZ].second = true;
+  }
+
+  //LTM
+  else if(GDT_LTM_POSX <= tValIDByVar && tValIDByVar <= GDT_LTM_ROTZ)
+  {
+    DiMatrix mLTM;
+    DiV4d    vPos, vRot;
+    GetLocalMatrix(m_Vme, ts, &mLTM);
+    mafTransfInverseTransformUpright(&mLTM, &vPos, &vRot);
+
+    m_variables[GDT_LTM_POSX].first  = vPos.x;
+    m_variables[GDT_LTM_POSX].second = true;
+    m_variables[GDT_LTM_POSY].first  = vPos.y;
+    m_variables[GDT_LTM_POSY].second = true;
+    m_variables[GDT_LTM_POSZ].first  = vPos.z;
+    m_variables[GDT_LTM_POSZ].second = true;
+    m_variables[GDT_LTM_ROTX].first  = vRot.x * mafMatrix3x3::RadiansToDegrees();
+    m_variables[GDT_LTM_ROTX].second = true;
+    m_variables[GDT_LTM_ROTY].first  = vRot.y * mafMatrix3x3::RadiansToDegrees();
+    m_variables[GDT_LTM_ROTY].second = true;
+    m_variables[GDT_LTM_ROTZ].first  = vRot.z * mafMatrix3x3::RadiansToDegrees();
+    m_variables[GDT_LTM_ROTZ].second = true;
+  }
+
+  //OVP and GES
+  else if(GDT_OVP_POSX <= tValIDByVar && tValIDByVar <= GDT_GES_ROTZ)
+  {
+    DiV4d vOVPRot, vOVPPos;
+    DiV4d vGESRot, vGESPos;
+    OVP_GES(m_Vme, ts, 0, &vOVPPos, &vOVPRot, &vGESPos, &vGESRot);
+    m_variables[GDT_OVP_ROTX].first  = vOVPRot.x * mafMatrix3x3::RadiansToDegrees();
+    m_variables[GDT_OVP_ROTX].second = true;
+    m_variables[GDT_OVP_ROTY].first  = vOVPRot.y * mafMatrix3x3::RadiansToDegrees();
+    m_variables[GDT_OVP_ROTY].second = true;
+    m_variables[GDT_OVP_ROTZ].first  = vOVPRot.z * mafMatrix3x3::RadiansToDegrees();
+    m_variables[GDT_OVP_ROTZ].second = true;
+    m_variables[GDT_OVP_POSX].first  = vOVPPos.x;
+    m_variables[GDT_OVP_POSX].second = true;
+    m_variables[GDT_OVP_POSY].first  = vOVPPos.y;
+    m_variables[GDT_OVP_POSY].second = true;
+    m_variables[GDT_OVP_POSZ].first  = vOVPPos.z;
+    m_variables[GDT_OVP_POSZ].second = true;
+
+    m_variables[GDT_GES_ROTX].first  = vGESRot.x * mafMatrix3x3::RadiansToDegrees();
+    m_variables[GDT_GES_ROTX].second = true;
+    m_variables[GDT_GES_ROTY].first  = vGESRot.y * mafMatrix3x3::RadiansToDegrees();
+    m_variables[GDT_GES_ROTY].second = true;
+    m_variables[GDT_GES_ROTZ].first  = vGESRot.z * mafMatrix3x3::RadiansToDegrees();
+    m_variables[GDT_GES_ROTZ].second = true;
+    m_variables[GDT_GES_POSX].first  = vGESPos.x;
+    m_variables[GDT_GES_POSX].second = true;
+    m_variables[GDT_GES_POSY].first  = vGESPos.y;
+    m_variables[GDT_GES_POSY].second = true;
+    m_variables[GDT_GES_POSZ].first  = vGESPos.z;
+    m_variables[GDT_GES_POSZ].second = true;
+  }
+    //Euler
+  else if(GDT_EUL_ROTXXYZs <= tValIDByVar && tValIDByVar <= GDT_EUL_ROTZZYZr)
+  {
+    DiMatrix mLTM;
+    DiV4d    vRot;
+    DiFloat  oldValueX = 0.f;
+    DiFloat  oldValueY = 0.f;
+    DiFloat  oldValueZ = 0.f;
+
+    vRot.w = _Conventions[(tValIDByVar - GDT_EUL_ROTXXYZs) / 3];
+
+    GetLocalMatrix(m_Vme, ts, &mLTM);
+    mafTransfMatrixToEuler(&mLTM, &vRot);
+
+    vRot.x *= mafMatrix3x3::RadiansToDegrees();
+    vRot.y *= mafMatrix3x3::RadiansToDegrees();
+    vRot.z *= mafMatrix3x3::RadiansToDegrees();
+
+    int xindex = tValIDByVar - (tValIDByVar - GDT_EUL_ROTXXYZs) % 3;
+    if(m_View->GetGraph()->GetUsedMemSpace() != 0 && pts < ts)
+    {
+      oldValueX  = m_variables[xindex + 0].first;
+      oldValueY  = m_variables[xindex + 1].first;
+      oldValueZ  = m_variables[xindex + 2].first;
+    }
+    vRot.x = _fix180Difference( oldValueX, vRot.x);
+    vRot.y = _fix180Difference(-oldValueY, vRot.y);
+    vRot.z = _fix180Difference( oldValueZ, vRot.z);
+    m_variables[xindex + 0].first  = vRot.x;
+    m_variables[xindex + 0].second = true;
+    m_variables[xindex + 1].first  = vRot.y;
+    m_variables[xindex + 1].second = true;
+    m_variables[xindex + 2].first  = vRot.z;
+    m_variables[xindex + 2].second = true;
+  }
+
+  //not known value!!
+  else
+  {
+    wxASSERT(false);
+  }
+
+  //variable should be calculated and validated here 
+  wxASSERT(m_variables[tValIDByVar].second);
+
+  m_View->GetGraph()->SetAddCoord(nGraphIndex, m_variables[tValIDByVar].first);
 }
 
 //----------------------------------------------------------------------------
@@ -512,14 +592,19 @@ DiVoid mafPipeIntGraph::GrabData(wxInt32 nIdx, mafTimeStamp nTimeStamp)
 
   if(ts != m_PrevStamp)
   {
+    m_PrevStamp = (m_PrevStamp < 0) ? ts : m_PrevStamp;//Use current time stamp as previous if array is empty
     //store X variable
     //StoreValueByIdx(nIdx, m_View->GetGraph()->GetXID(0), m_View->GetGraph()->GetXIndex(0));
-    for(nYIdx = 0; nYIdx < m_View->GetGraph()->GetDim(); nYIdx++)
+    if(fabs(ts - m_variables[GDT_FRAME].first) > 1e-6)//invalidate variables if ts is updated
     {
-      nYVarID = m_View->GetGraph()->GetID(nYIdx);
-      //nYIndex = m_View->GetGraph()->GetIndex(nYIdx);
-      StoreValueByIdx(nIdx, nYVarID, nYIdx, ts, m_PrevStamp);
+      InvalidateAllVars();
+      for(nYIdx = 0; nYIdx < m_View->GetGraph()->GetDim(); nYIdx++)
+      {
+        nYVarID = m_View->GetGraph()->GetID(nYIdx);
+        //nYIndex = m_View->GetGraph()->GetIndex(nYIdx);
+        StoreValueByIdx(nIdx, nYVarID, nYIdx, ts, m_PrevStamp);
+      }
+      m_PrevStamp = ts;  
     }
-    m_PrevStamp = ts;  
   }
 }
