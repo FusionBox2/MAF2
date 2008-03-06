@@ -237,7 +237,7 @@ class lhpDictionaryVersionChecker:
                         st = ""
                         for num in dt.timetuple()[0:5]:
                             if Debug:
-                                print "num"  + str(num)
+                                print "current date number:"  + str(num)
                             
                             # add padding 0 for dates like:
                             # 2008-03-06 01:01 to obtain 200803060101 instead of 200803611 
