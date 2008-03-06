@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafGraphIDDesc.h,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-03-06 22:09:32 $
+  Version:   $Revision: 1.2 $
   Authors:   Vladik Aranov    
   Purpose:   class for variables descriptions header 
 ==========================================================================
@@ -42,9 +42,20 @@ enum mafGraphDescType
   GDT_LTM_ROTZ   ,
 
   //OVP
+  GDT_OVP_POSX   ,
+  GDT_OVP_POSY   ,
+  GDT_OVP_POSZ   ,
   GDT_OVP_ROTX   ,
   GDT_OVP_ROTY   ,
   GDT_OVP_ROTZ   ,
+
+  //GES
+  GDT_GES_POSX   ,
+  GDT_GES_POSY   ,
+  GDT_GES_POSZ   ,
+  GDT_GES_ROTX   ,
+  GDT_GES_ROTY   ,
+  GDT_GES_ROTZ   ,
 
   //Euler
   GDT_EUL_ROTXXYZs ,

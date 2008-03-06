@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafGraphIDDesc.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-03-06 22:09:32 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev/Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -122,7 +122,10 @@ AddSetOfEulVars(YXZr)
 AddSetOfEulVars(ZXZr)
 AddSetOfEulVars(XYZr)
 AddSetOfEulVars(ZYZr)
+AddSetOfVars(GDT_OVP_POS)
 AddSetOfVars(GDT_OVP_ROT)
+AddSetOfVars(GDT_GES_POS)
+AddSetOfVars(GDT_GES_ROT)
 
 
 
@@ -158,11 +161,11 @@ addSet _addSetArray[]={
   AddSetOfEulVarsRef(ZXZr),
   AddSetOfEulVarsRef(XYZr),
   AddSetOfEulVarsRef(ZYZr),
+  AddSetOfVarsRef(GDT_OVP_POS),
   AddSetOfVarsRef(GDT_OVP_ROT),
+  AddSetOfVarsRef(GDT_GES_POS),
+  AddSetOfVarsRef(GDT_GES_ROT),
 };
-
-
-
 
 
 
@@ -185,7 +188,11 @@ void mafGraphIDDesc::GetIDDesc(const IDType& nID,char *sDescript,unsigned int nL
                              "Local Pos X, mm" ,"Local Pos Y, mm" ,"Local Pos Z, mm",
                              "Local Ori X, deg","Local Ori Y, deg","Local Ori Z, deg",
 
+                             "OVP Pos X, mm","OVP Pos Y, mm","OVP Pos Z, mm",
                              "OVP Ori X, deg","OVP Ori Y, deg","OVP Ori Z, deg",
+
+                             "GES Pos X, mm","GES Pos Y, mm","GES Pos Z, mm",
+                             "GES Ori X, deg","GES Ori Y, deg","GES Ori Z, deg",
 
                              EulerAnglesDescr(XYZs),
                              EulerAnglesDescr(XYXs),
@@ -308,7 +315,7 @@ bool mafGraphIDDesc::ProcessMenu(mafMemoryGraph *pmgGraph, unsigned int nIDComma
 wxMenu *mafGraphIDDesc::GenerateMenu(unsigned int nIDBase, unsigned int nExtended)//nIDBase is base for ID of menu commands 
 //----------------------------------------------------------------------------
 {                                                 //it will be added to each command id in generated menu
-  wxMenu *Root, *Desc, *hGlobal, *hLocal, *hOVP, *hEuler, *hSubEuler, *hHelical;
+  wxMenu *Root, *Desc, *hGlobal, *hLocal, *hOVP, *hGES, *hEuler, *hSubEuler, *hHelical;
   const char *sMainDesc;
   int nI;
   int nDescNumber = m_currVME->Count(); // take from VME
@@ -408,11 +415,36 @@ wxMenu *mafGraphIDDesc::GenerateMenu(unsigned int nIDBase, unsigned int nExtende
         Desc->Append(0, "OVP"   , hOVP   );
 
         if(nExtended > 0)
-          hOVP->Append(nIDBase + GDT_LAST * nI + nExtended + 29,  "All Ori");
+          hOVP->Append(nIDBase + GDT_LAST * nI + nExtended + 29,  "All Pos");
+
+        hOVP->Append(nIDBase + GDT_LAST * nI + GDT_OVP_POSX, "PosX");
+        hOVP->Append(nIDBase + GDT_LAST * nI + GDT_OVP_POSY, "PosY");
+        hOVP->Append(nIDBase + GDT_LAST * nI + GDT_OVP_POSZ, "PosZ");
+
+        if(nExtended > 0)
+          hOVP->Append(nIDBase + GDT_LAST * nI + nExtended + 30,  "All Ori");
 
         hOVP->Append(nIDBase + GDT_LAST * nI + GDT_OVP_ROTX, "OriX");
         hOVP->Append(nIDBase + GDT_LAST * nI + GDT_OVP_ROTY, "OriY");
         hOVP->Append(nIDBase + GDT_LAST * nI + GDT_OVP_ROTZ, "OriZ");
+
+        //GES angles available when parent is present but we need landmarks for positions     
+        hGES    = new wxMenu();
+        Desc->Append(0, "GES"   , hGES   );
+
+        if(nExtended > 0)
+          hGES->Append(nIDBase + GDT_LAST * nI + nExtended + 31,  "All Pos");
+
+        hGES->Append(nIDBase + GDT_LAST * nI + GDT_GES_POSX, "PosX");
+        hGES->Append(nIDBase + GDT_LAST * nI + GDT_GES_POSY, "PosY");
+        hGES->Append(nIDBase + GDT_LAST * nI + GDT_GES_POSZ, "PosZ");
+
+        if(nExtended > 0)
+          hGES->Append(nIDBase + GDT_LAST * nI + nExtended + 32,  "All Ori");
+
+        hGES->Append(nIDBase + GDT_LAST * nI + GDT_GES_ROTX, "OriX");
+        hGES->Append(nIDBase + GDT_LAST * nI + GDT_GES_ROTY, "OriY");
+        hGES->Append(nIDBase + GDT_LAST * nI + GDT_GES_ROTZ, "OriZ");
       }
     }
 
