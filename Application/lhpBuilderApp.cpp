@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-03-06 12:05:58 $
-  Version:   $Revision: 1.47 $
+  Date:      $Date: 2008-03-07 13:42:57 $
+  Version:   $Revision: 1.48 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -133,6 +133,8 @@
 #include "medViewSlicer.h"
 #include "lhpOpMultiscaleExplore.h"
 
+#include "mafOpValidateTree.h"
+
 //temporary for testing
 #include "mafViewSingleSliceCompound.h"
 
@@ -234,6 +236,7 @@ bool lhpBuilderApp::OnInit()
   //-------------------------------------------------------------
 
   //------------------------- Operations -------------------------
+  m_Logic->Plug(new mafOpValidateTree());
   m_Logic->Plug(new mafOpCreateGroup("Group"),"Create/New");
 #ifdef MAF_USE_ITK
   m_Logic->Plug(new lhpOpCreateSurfaceScalar("Surface Scalar"),"Create/Derive");
