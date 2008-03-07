@@ -229,7 +229,7 @@ class lhpDictionaryVersionChecker:
 
                             print "Found date line: " + line
 
-                            date = line.strip()
+                        date = line.strip()
                         if Debug:   
                             print date
                       
