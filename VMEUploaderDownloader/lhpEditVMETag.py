@@ -269,7 +269,7 @@ if __name__ == '__main__':
         print 'Error :\n' + usage_msg
         sys.exit(1)
         
-    inputMSFDirectory = sys.argv[1]
+    inputMSFDirectory = sys.argv[1].replace("?", " ")
     vmeToExtractId = sys.argv[2]
     unhandledPlusManualTagsListFileName = sys.argv[3]
     
