@@ -17,7 +17,7 @@ class downloadSingleXML():
     def downloadXMLFromBasket(self):
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
         ws.setCredentials(self.user, self.password)
-        ws.setServer('http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2')        
+        ws.setServer('https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2')        
         self.Result = ws.run('xmldownload', self.fileToDownload)
         
     def retrieveTagValue(self, tag):
