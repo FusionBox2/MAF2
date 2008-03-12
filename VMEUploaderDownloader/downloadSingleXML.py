@@ -34,7 +34,9 @@ class downloadSingleXML():
               attrNode = el.attributes.get('Name')
               attrValue = attrNode.nodeValue
               if(attrValue == tag):
-                  returnValue = el.childNodes[0].childNodes[0].firstChild.nodeValue
+                  childToFind = el.getElementsByTagName('TC')[0] # first element of childList
+                  returnValue = childToFind.firstChild.nodeValue
+                  print returnValue
         file.close()
         
         return returnValue
@@ -50,7 +52,7 @@ def main():
        sys.argv.append("Program")
        sys.argv.append("testuser") #substitute
        sys.argv.append("GRDPt8") #substitute
-       sys.argv.append('Data_63_exportedVME.xml') #xml test present in repository
+       sys.argv.append('Data_219_exportedVME.xml') #xml test present in repository
        sys.argv.append(os.getcwd()+"\\testDownload\\")
        
     if(len(sys.argv) == 5):
