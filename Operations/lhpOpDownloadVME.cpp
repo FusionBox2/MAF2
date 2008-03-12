@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-03-03 09:37:05 $
-Version:   $Revision: 1.9 $
+Date:      $Date: 2008-03-12 10:11:19 $
+Version:   $Revision: 1.10 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -339,7 +339,7 @@ void lhpOpDownloadVME::OpDo()
       command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
       command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
       command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
-      command2execute.Append(wxString::Format("%s ","http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //dev repository
+      command2execute.Append(wxString::Format("%s ","https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //dev repository
       //http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2 prod
 
       command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //DATA DOWNLOAD NAME
@@ -389,7 +389,7 @@ void lhpOpDownloadVME::OpDo()
       command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
       command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
       command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
-      command2execute.Append(wxString::Format("%s ","http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //repository
+      command2execute.Append(wxString::Format("%s ","https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //repository
 
       command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //DATA DOWNLOAD NAME
 
