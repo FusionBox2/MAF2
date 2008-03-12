@@ -10,6 +10,7 @@ import msfParser
 import shutil
 import sets
 import os
+from Debug import Debug
 from xml.dom import minidom
 from xml.dom import Node
 
@@ -61,23 +62,28 @@ class MSFBuilder:
         importedMSFDocument = minidom.parse(self.FakeRootMSFFileName)
         fakeRootNode = importedMSFDocument.documentElement
 	
-	#outFile = open('fakeRootNode.txt', 'w')
-	#domP.PrintDOMTree(fakeRootNode,outFile)
+	if Debug:
+	    
+	    outFile = open('fakeRootNode.txt', 'w')
+	    domP.PrintDOMTree(fakeRootNode,outFile)
        
         # Open the imported VME XML
         importedVMEDocument = minidom.parse(self.InputVMEXMLFileName)
         importedVmeNode = importedVMEDocument.documentElement
 	
-	# outFile = open('importedVMENode.txt', 'w')
-	# domP.PrintDOMTree(importedVmeNode,outFile)
+	if Debug:
+	    
+	    outFile = open('importedVMENode.txt', 'w')
+	    domP.PrintDOMTree(importedVmeNode,outFile)
 	
         # create the output msf containing the fake root with imported vme appended
         msfOutputDoc = minidom.Document()
         msfOutputDoc.appendChild(fakeRootNode)
 	outputDoc = msfOutputDoc.documentElement
 	
-	# outFile = open('newDocumentToStoreAsMSF.txt', 'w')
-	# domP.PrintDOMTree(outputDoc,outFile)
+	if Debug:    
+	    outFile = open('newDocumentToStoreAsMSF.txt', 'w')
+	    domP.PrintDOMTree(outputDoc,outFile)
 	
         # create the msfParser
         childrenNode = domP.GetNodeByNodeName(outputDoc,"Children")
@@ -101,6 +107,7 @@ class MSFBuilder:
         
 def run(inputVMEXMLFileName, inputVMEBinaryDataFileName, fakeRootMSFFileName,outputMSFFolderName,outputMSFFileName):                                            
     msfBuilder = MSFBuilder()
+    
     msfBuilder.InputVMEBinaryDataFileName = inputVMEBinaryDataFileName
     msfBuilder.InputVMEXMLFileName = inputVMEXMLFileName
     msfBuilder.FakeRootMSFFileName = fakeRootMSFFileName

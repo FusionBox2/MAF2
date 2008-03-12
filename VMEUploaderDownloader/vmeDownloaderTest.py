@@ -13,8 +13,7 @@ import shutil
 
 class vmeDownloaderTest(unittest.TestCase):
       
-    # def setUp(self):
-            
+    # testing data coming from Xia webservices    
     def testCreateIncomingMSFDirectory(self):
         
         print "Beware:  In order to work run this test must be launched from VMEUploaderDownloader dir!"
@@ -24,16 +23,13 @@ class vmeDownloaderTest(unittest.TestCase):
         print " current directory is: " + curDir
         
         msfBuilder = vmeDownloader.MSFBuilder()
-        msfBuilder.InputVMEBinaryDataFileName = curDir + r'\msf_test_import_export_VME\msf_test_import_export_VME.1.vtk'
-        msfBuilder.InputVMEXMLFileName = curDir + r'\vmeUploaderTestData\exportedVME.xml'
+        msfBuilder.InputVMEBinaryDataFileName = curDir + r'\testDownload\Data_549\Data_549.vtk'
+        msfBuilder.InputVMEXMLFileName = curDir + r'\testDownload\Data_549\Data_549.xml'
+
         msfBuilder.FakeRootMSFFileName = curDir + r'\applicationData\fakeRoot.xml'
-        msfBuilder.OutputMSFFileName = curDir + r'outputMAF.msf'
-        msfBuilder.OutputMSFFolderName = curDir + r'\Incoming'
+        msfBuilder.OutputMSFFolderName = curDir + r'\testDownload\Data_549\Incoming'
+        msfBuilder.OutputMSFFileName = msfBuilder.OutputMSFFolderName + r'\outputMSF.msf'
         msfBuilder.Build()
-        
-    #def testVMEDownloader(self):
-        #self.assertEqual()
-        
         
 if __name__ == '__main__':
     unittest.main()
