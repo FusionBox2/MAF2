@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-03-12 10:11:19 $
-Version:   $Revision: 1.10 $
+Date:      $Date: 2008-03-14 10:59:28 $
+Version:   $Revision: 1.11 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -137,21 +137,36 @@ void lhpOpDownloadVME::OpRun()
 //----------------------------------------------------------------------------
 {
   //Get Proxy values
-  /*mafEvent event;
+  mafEvent event;
   event.SetSender(this);
   event.SetId(ID_REQUEST_PROXY);
   mafEventMacro(event);
 
-  if(event.GetString())
+  if(event.GetString()) //if proxy string contains something != ""
   {
     mafString port;
     port << event.GetArg();
     m_ProxyURL = *event.GetString();
     m_ProxyPort = port;
-  }*/
 
-  // load the connection configuration file:
-  this->LoadConnectionConfigurationFile();
+    // load the connection configuration file:
+    this->SaveConnectionConfigurationFile();
+  }
+  else
+  {
+    wxString oldDir = wxGetCwd();
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+    wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+
+    //if file exists , delete it
+    if(wxFileExists(m_ConnectionConfigurationFileName.GetCStr()))
+    {
+      wxRemoveFile(m_ConnectionConfigurationFileName.GetCStr());
+    }
+
+    wxSetWorkingDirectory(oldDir);
+  }
 
   int result = OP_RUN_CANCEL;
 
@@ -191,7 +206,7 @@ void lhpOpDownloadVME::OpRun()
 
 }
 //------------------------------------------------------------
-void lhpOpDownloadVME::LoadConnectionConfigurationFile()
+void lhpOpDownloadVME::SaveConnectionConfigurationFile()
 //------------------------------------------------------------
 {
   wxString oldDir = wxGetCwd();
@@ -199,25 +214,26 @@ void lhpOpDownloadVME::LoadConnectionConfigurationFile()
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
   mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
+  //if file exists , delete it
+  if(wxFileExists(m_ConnectionConfigurationFileName.GetCStr()))
+  {
+    wxRemoveFile(m_ConnectionConfigurationFileName.GetCStr());
+  }
+
   // open auto tags file and try to handle tags using tags factory 
-  ifstream configurationFile;
+  ofstream configurationFile;
 
   configurationFile.open(m_ConnectionConfigurationFileName.GetCStr());
   if (!configurationFile) {
     wxString message = m_ConnectionConfigurationFileName.GetCStr();
-    message.Append(" not found! Unable to open connection configuration file: default values will be used");
+    message.Append(" not found! Unable to write configuration connection file");
     mafLogMessage(message.c_str());
   }
   else
   {
-    std::string tmp;
-
-    configurationFile >> tmp;
-    m_ProxyURL = tmp.c_str();
-    
-    
-    configurationFile >> tmp;
-    m_ProxyPort = tmp.c_str();
+    configurationFile << m_ProxyURL;   
+    configurationFile << "\n";
+    configurationFile << m_ProxyPort;
      
     wxString message = m_ConnectionConfigurationFileName.GetCStr();
     message.Append("Found connection configuration file: using connection parameters");
@@ -349,8 +365,9 @@ void lhpOpDownloadVME::OpDo()
       //wxMessageBox(wxString::Format("Process %ld is running.", m_Pid));
       //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
       m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
-   //   mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
-   //     command2execute.c_str(), m_Pid);
+
+      //mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
+      //  command2execute.c_str(), m_Pid);
 
     }
     else
@@ -395,8 +412,10 @@ void lhpOpDownloadVME::OpDo()
 
       //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
       m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
-    //  mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
-    //    command2execute.c_str(), m_Pid);
+
+      //mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
+      //  command2execute.c_str(), m_Pid);
+
 
     }
 
@@ -644,7 +663,7 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(int indexFromBasketList)
   command2execute.Append(m_ProxyURL.GetCStr());
   command2execute.Append(" ");
   command2execute.Append(m_ProxyPort.GetCStr());*/
-  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   long pid = wxExecute(command2execute, wxEXEC_SYNC);
 
@@ -776,9 +795,12 @@ bool lhpOpDownloadVME::IsLHPBuilderVersionUpToDate()
 
   command2execute.Append(" lhpDictionaryVersionChecker.py ");
   command2execute.Append(" ");
-  command2execute.Append(m_ProxyURL.GetCStr());
-  command2execute.Append(" ");
-  command2execute.Append(m_ProxyPort.GetCStr());
+  if(m_ProxyURL.GetCStr() != "" )
+  {
+    command2execute.Append(m_ProxyURL.GetCStr());
+    command2execute.Append(" ");
+    command2execute.Append(m_ProxyPort.GetCStr());
+  }
 
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-02-04 14:50:19 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2008-03-14 10:59:28 $
+Version:   $Revision: 1.2 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -102,7 +102,7 @@ protected:
   bool CheckLogin();
   
   /** Load configuration file for connection*/
-  void LoadConnectionConfigurationFile();
+  void SaveConnectionConfigurationFile();
 
   /** launch a script that open a selector after list all vme in basket, select them with a checklistbox */
   int CreateFileListFromBasket();
