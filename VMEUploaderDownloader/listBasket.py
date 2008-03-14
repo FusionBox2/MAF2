@@ -1,6 +1,7 @@
 from webServicesClient import xmlrpcDemoWS
 import xml.dom.minidom as xd
-import os
+import os, time
+from lhpDefines import *
 
 class listBasket:
     def __init__(self):
@@ -10,19 +11,34 @@ class listBasket:
         self.currentUser = ''
         self.currentPassword = ''
         self.Result = None
+        self.proxyHost = ""
+        self.proxyPort = 0
         pass
     
     def SetCredentials(self, user , password):
         self.currentUser = user
         self.currentPassword = password
     
+    
     def getListFromBasket(self):
         self.removeIdListSelectedFile()
+        
+        self.proxyHost, self.proxyPort = retriveProxyParameters()
+        
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
         ws.setServer('https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2')
         ws.setCredentials(self.currentUser, self.currentPassword)
-                
-        self.Result = ws.run('listbasket')[1]
+        ws.ProxyURL = self.proxyHost
+        ws.ProxyPort = self.proxyPort
+        #print "->"+ self.currentUser + "<-"
+        #print "->"+ self.currentPassword + "<-"
+        print "->"+ ws.ProxyURL + "<-"
+        print "->"+ str(ws.ProxyPort) + "<-"
+        
+        try:
+            self.Result = ws.run('listbasket')[1]
+        except Exception, e:
+             print "ERRORE %s" % str(e)
         self.__createListFromReultingXML()
         #print self.IdList
         pass

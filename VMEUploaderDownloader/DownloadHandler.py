@@ -4,6 +4,7 @@ import DownloadHandler
 import os, sys, string, time, re ,shutil
 from stat import ST_SIZE 
 import threading, thread, CustomThread
+from lhpDefines import *
 from Debug import Debug
 
 
@@ -19,21 +20,47 @@ class DownloadHandler:
         self.urlServer = urlServer
         self.fileSize = fileSize
         self.block = threading.Lock()
+        self.proxyHost = ""
+        self.proxyPort = 0
+        pass
     
     def __download(self):
+        #self.retrieveConnectionsParameters()
+        self.proxyHost, self.proxyPort = retriveProxyParameters()
+
         oldDir = os.getcwd()
         if(self.dirCache != None):
            os.chdir(self.dirCache)
         print os.getcwd()
-        
+
         serviceUrl = 'https://ws-lhdl.cineca.it/mafSRBDownload.cgi'
         mtomD = MtomDownload.MtomDownload()
-        mtomD.Download(self.srbData,serviceUrl)
+
+        print "->"+ self.proxyHost + "<-"
+        print "->"+ str(self.proxyPort) + "<-"
+
+        mtomD.Download(self.srbData,serviceUrl,self.proxyHost,self.proxyPort)
         print "Inside Download Thread"
         
         os.chdir(oldDir)    
         
         pass
+    
+    """def retrieveConnectionsParameters(self):
+        #proxy host
+        #proxy port
+        try:
+            print "FOUND"
+            file = open("vmeUploaderConnectionConfiguration.conf","r")
+            self.proxyHost = file.readline() # proxy host
+            self.proxyPort = file.readline()  # proxy port
+            file.close()
+        except:
+            print "NOT FOUND"
+            self.proxyHost = ""
+            self.proxyPort = 0
+            pass
+        pass"""
     
     def controlLocalFileDimension(self):
         if(os.path.exists(self.dirCache+self.srbData)):
@@ -68,7 +95,7 @@ class DownloadHandler:
         while(1):
           percentage = 100 * float(self.controlLocalFileDimension())/float(self.fileSize)
           print percentage
-          time.sleep(0.1)
+          time.sleep(0.3)
           self.block.acquire()
           if(DownloadHandler.queue):
               lista = [self.observer,percentage]

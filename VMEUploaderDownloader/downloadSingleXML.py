@@ -2,6 +2,7 @@ import os, sys, shutil, time
 from webServicesClient import xmlrpcDemoWS
 from base64 import decodestring
 import xml.dom.minidom as xd
+from lhpDefines import *
 
 class downloadSingleXML():
     def __init__(self):
@@ -12,12 +13,18 @@ class downloadSingleXML():
         
         self.datasetSRBURI = 'testSRBURI'
         self.datasetFileSize = -1
+        self.proxyHost = ""
+        self.proxyPort = 0
         pass
     
     def downloadXMLFromBasket(self):
+        self.proxyHost, self.proxyPort = retriveProxyParameters()
+
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
         ws.setCredentials(self.user, self.password)
         ws.setServer('https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2')        
+        ws.ProxyURL = self.proxyHost
+        ws.ProxyPort = self.proxyPort
         self.Result = ws.run('xmldownload', self.fileToDownload)
         
     def retrieveTagValue(self, tag):
