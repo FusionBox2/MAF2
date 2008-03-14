@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-03-05 11:03:28 $
-Version:   $Revision: 1.18 $
+Date:      $Date: 2008-03-14 12:35:51 $
+Version:   $Revision: 1.19 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -86,6 +86,9 @@ public:
 
   /** This method use MAF Api for set the login in order to make operation like upload or download*/
   bool CheckLogin();
+
+  /** Load configuration file for connection*/
+  void SaveConnectionConfigurationFile();
 
 protected:
   
