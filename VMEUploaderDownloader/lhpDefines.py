@@ -4,7 +4,9 @@ def retriveProxyParameters():
   try:
       file = open("vmeUploaderConnectionConfiguration.conf","r")
       proxyHost = file.readline() # proxy host
-      proxyPort = file.readline()  # proxy port
+      proxyPort = int(file.readline())  # proxy port
+      proxyHost = proxyHost.replace(" ", "")
+      proxyHost = proxyHost.replace("\n", "")
       file.close()
   except:
       pass
