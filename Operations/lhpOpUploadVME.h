@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-03-14 12:35:51 $
-Version:   $Revision: 1.19 $
+Date:      $Date: 2008-03-17 08:46:39 $
+Version:   $Revision: 1.20 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -155,7 +155,6 @@ private:
   mafString GetXMLDictionaryFileName(mafString dictionaryFileNamePrefix);
   void CreateGui();
   int AssembleDictionaries();
-  void LoadConnectionConfigurationFile();
   int m_SubdictionaryId;
   wxArrayString m_AutoTagsList;
   wxArrayString m_ManualTagsList;

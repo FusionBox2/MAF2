@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-03-14 12:33:30 $
-Version:   $Revision: 1.50 $
+Date:      $Date: 2008-03-17 08:46:39 $
+Version:   $Revision: 1.51 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -127,6 +127,8 @@ mafOp(label)
   m_SubdictionaryId = NO_SUBDICTIONARY; // default to none
   m_ConnectionConfigurationFileName = "vmeUploaderConnectionConfiguration.conf" ;
 
+  m_ProxyURL = "";
+  m_ProxyPort = "0";
 }
 
 //----------------------------------------------------------------------------
@@ -255,48 +257,7 @@ void lhpOpUploadVME::SaveConnectionConfigurationFile()
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 }
 
-void lhpOpUploadVME::LoadConnectionConfigurationFile()
-{
-  wxString oldDir = wxGetCwd();
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
-  // open auto tags file and try to handle tags using tags factory 
-  ifstream configurationFile;
-
-  configurationFile.open(m_ConnectionConfigurationFileName.GetCStr());
-  if (!configurationFile) {
-    wxString message = m_ConnectionConfigurationFileName.GetCStr();
-    message.Append(" not found! Unable to open connection configuration file: default values will be used");
-    mafLogMessage(message.c_str());
-  }
-  else
-  {
-    std::string tmp;
-
-    configurationFile >> tmp;
-    m_ProxyURL = tmp.c_str();
-    
-    configurationFile >> tmp;
-    m_ProxyPort = tmp.c_str();
-     
-    wxString message = m_ConnectionConfigurationFileName.GetCStr();
-    message.Append("Found connection configuration file: using connection parameters");
-    message.Append("m_ProxyURL: ");
-    message.Append(m_ProxyURL.GetCStr());
-    message.Append("m_ProxyPort: ");
-    message.Append(m_ProxyPort.GetCStr());
-
-    mafLogMessage(message.c_str());
-
-    configurationFile.close();
-  }
-
-  wxSetWorkingDirectory(oldDir);
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-
-}
 //----------------------------------------------------------------------------
 void lhpOpUploadVME::OnEvent(mafEventBase *maf_event) 
 //----------------------------------------------------------------------------
