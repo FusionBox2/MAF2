@@ -5,6 +5,7 @@ from xml.dom import minidom
 from xml.dom import Node
 import os, sys, string, time, re ,shutil
 import threading, thread, CustomThread
+from lhpDefines import *
 from Debug import Debug
 
 class UploadHandler:
@@ -27,8 +28,14 @@ class UploadHandler:
         self.block = threading.Lock()
         self.threads = []
         self.existThread = 0
+        self.proxyHost = ""
+        self.proxyPort = 0
             
     def upload(self):
+        self.proxyHost, self.proxyPort = retriveProxyParameters()
+        print "->"+ self.proxyHost + "<-"
+        print "->"+ str(self.proxyPort) + "<-"
+                
         self.createOutgoingDir()
                
         #get free resource (return URI string)
@@ -166,7 +173,7 @@ class UploadHandler:
         #here call module to get URI of first free resource
         instance = MtomUploadURI.MtomUploadURI()
         serviceUrl = 'https://ws-lhdl.cineca.it/mafSRBUploadURI.cgi'        
-        return instance.ListSrbDir(serviceUrl)
+        return instance.ListSrbDir(serviceUrl, self.proxyHost, self.proxyPort)
         #print 'Inside FreeResource Thread ' + self.BinaryURI
 
 
@@ -185,32 +192,45 @@ class UploadHandler:
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
         ws.setCredentials(self.currentUser, self.currentPassword)
         ws.setServer(self.urlServer)
+        ws.ProxyURL = self.proxyHost
+        ws.ProxyPort = self.proxyPort
         out = ws.run('xmlupload', self.XMLURI)
         
         os.chdir(oldDir)
 
     def __sendFile(self,filename):
+        
         oldDir = os.getcwd()
         os.chdir(self.dirOutgoing)
         
+        print "->"+ self.proxyHost + "<-"
+        print "->"+ str(self.proxyPort) + "<-"
+        
         instance = MtomUpload.MtomUpload()
-        result = instance.Upload(filename,'https://ws-lhdl.cineca.it/mafSRBUpload.cgi')
+        result = instance.Upload(filename,'https://ws-lhdl.cineca.it/mafSRBUpload.cgi',self.proxyHost,self.proxyPort)
         
         cheksum = result.chksum
         uri = result.uriFile
+        
+
         
         os.chdir(oldDir)
         
         
     def getRemoteTemporaryBinaryFileSize(self):
+        
         self.block.acquire()
         self.existThread = 1
         self.block.release()
         result = None
+        
+        print "->"+ self.proxyHost + "<-"
+        print "->"+ str(self.proxyPort) + "<-"
+        
         try:
             instance = MtomSRBSize.MtomSize()
             serviceUrl = 'https://ws-lhdl.cineca.it/mafSRBSize.cgi'
-            result = instance.ListSrbDir(self.BinaryURI, serviceUrl)
+            result = instance.ListSrbDir(self.BinaryURI, serviceUrl, self.proxyHost, self.proxyPort)
             self.remoteTemporaryBinaryFileSize = result;
             print "SIZE Thread Finished "
         except:
