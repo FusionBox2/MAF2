@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-03-14 10:59:28 $
-Version:   $Revision: 1.11 $
+Date:      $Date: 2008-03-18 10:11:54 $
+Version:   $Revision: 1.12 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -780,8 +780,6 @@ int lhpOpDownloadVME::ImportMSF()
 bool lhpOpDownloadVME::IsLHPBuilderVersionUpToDate()
 //----------------------------------------------------------------------------
 {
-  return true; //remove when sure
-
   wxBusyInfo("Checking if  your software is up-to-date in order to upload, please wait...");
   wxString oldDir = wxGetCwd();
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
@@ -795,7 +793,7 @@ bool lhpOpDownloadVME::IsLHPBuilderVersionUpToDate()
 
   command2execute.Append(" lhpDictionaryVersionChecker.py ");
   command2execute.Append(" ");
-  if(m_ProxyURL.GetCStr() != "" )
+  if( !m_ProxyURL.Equals("") )
   {
     command2execute.Append(m_ProxyURL.GetCStr());
     command2execute.Append(" ");

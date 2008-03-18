@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-03-17 08:46:39 $
-Version:   $Revision: 1.51 $
+Date:      $Date: 2008-03-18 10:11:54 $
+Version:   $Revision: 1.52 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -972,32 +972,35 @@ bool lhpOpUploadVME::IsLHPBuilderVersionUpToDate()
 
   command2execute.Append(" lhpDictionaryVersionChecker.py ");
   command2execute.Append(" ");
-  command2execute.Append(m_ProxyURL.GetCStr());
-  command2execute.Append(" ");
-  command2execute.Append(m_ProxyPort.GetCStr());
+  if( !m_ProxyURL.Equals("") )
+  {
+    command2execute.Append(m_ProxyURL.GetCStr());
+    command2execute.Append(" ");
+    command2execute.Append(m_ProxyPort.GetCStr());
+  }
 
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   long pid = wxExecute(command2execute, wxEXEC_SYNC);
-  
+
   wxArrayString output;
   wxArrayString errors;
 
   m_Pid = wxExecute(command2execute, output, errors);
-  
+
 
   mafLogMessage("Command Output Messages:");
   for (int i = 0; i < output.size(); i++)
   {
     mafLogMessage(output[i]);
   }
-  
+
   mafLogMessage("Command Errors Messages:");
   for (int i = 0; i < errors.size(); i++)
   {
     mafLogMessage(errors[i]);
   }
-  
+
   // gathering values from Python Output:
 
   //if dictVC.IsDictionaryUpToDate() == True:
@@ -1006,7 +1009,7 @@ bool lhpOpUploadVME::IsLHPBuilderVersionUpToDate()
   //print "NotUpToDate"
 
   wxString result = output[output.size() - 1];
-  
+
   wxSetWorkingDirectory(oldDir);
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -1018,7 +1021,7 @@ bool lhpOpUploadVME::IsLHPBuilderVersionUpToDate()
   {
     return false;
   }  
-  
+
 }
 //----------------------------------------------------------------------------
 bool lhpOpUploadVME::CheckLogin()
