@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpUser.cpp,v $
 Language:  C++
-Date:      $Date: 2008-01-16 17:47:31 $
-Version:   $Revision: 1.5 $
+Date:      $Date: 2008-03-18 12:05:12 $
+Version:   $Revision: 1.6 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004
@@ -80,10 +80,15 @@ bool lhpUser::ExecuteAuthenticationScript()
   command2execute.Append(m_Username.GetCStr());
   command2execute.Append(" ");
   command2execute.Append(m_Password.GetCStr());
-  command2execute.Append(" ");
-  command2execute.Append(m_ProxyURL.GetCStr());
-  command2execute.Append(" ");
-  command2execute.Append(m_ProxyPort.GetCStr());
+  
+  if(!m_ProxyURL.Equals(""))
+  {
+    command2execute.Append(" ");
+    command2execute.Append(m_ProxyURL.GetCStr());
+    command2execute.Append(" ");
+    command2execute.Append(m_ProxyPort.GetCStr());
+  }
+  
   //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   long pid = wxExecute(command2execute, wxEXEC_SYNC);
