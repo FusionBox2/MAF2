@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpVMESurfaceScalarVarying.h,v $
   Language:  C++
-  Date:      $Date: 2008-02-19 09:55:42 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-03-26 13:29:40 $
+  Version:   $Revision: 1.3 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -100,13 +100,13 @@ public:
   static char** GetIcon();
 
   /** Return the number of medVMEAnalog used to color the polydata.*/
-  int GetNumberOfScalarData() {return m_ScalarList.size();};
+  int GetNumberOfScalarData() {return m_ScalarMap.size();};
 
-  /** Return the medVMEAnalog scalar indexes at index idx.*/
-  int GetScalarVMEIndex(int idx) {return m_ScalarList[idx];};
+  /** Return the n-th row of the medVMEAnalog's inner vnl matrix corresponding to the index idx.*/
+  int GetScalarVMEIndex(int idx);
 
-  /** Return the scalar index associated to the position of the medVMEAnalog on to the surface.*/
-  int GetSurfaceScalarIndex(int idx) {return m_PointIdList[idx];};
+  /** Return the scalar index of the surface associated to the medVMEAnalog.*/
+  int GetSurfaceScalarIndex(int idx);
 
   /** Set the Scalar index of the mafVMEAnalog and assign it the scalar index associated to the linked surface.*/
   void SetScalarIDs(int analog_scalar_index, int surface_scalar_idx);
@@ -158,8 +158,8 @@ protected:
   int m_EditMode; ///< Flag to attach and detach th picker from the surface.
   int m_ActiveScalarVMEIndex; ///< Store the information regarding the last medVMEAnalog's scalar index added
   mmgCheckListBox *m_ScalarsAvailableList; ///< Listbox representing the list of medVMEAnalog's scalars
-  std::vector<int> m_ScalarList; ///< list of medVMEAnalog's scalars index used to color the polydata
-  std::vector<int> m_PointIdList; ///< List of IDs used to access the scalar tuple inside the polydata
+  typedef std::map<int,int> SurfaceScalarMap;
+  SurfaceScalarMap m_ScalarMap; ///< Map that associate medVMEAnalog's scalar index to the scalar tuple inside the polydata.
   std::vector<mafTimeStamp> m_ScalarTimeStamps; ///< Vector of timestamps presents in mafVMEAnalog
   
   vtkDoubleArray *m_SurfaceScalars; ///< Data Array representing the scalar data of the polydata.
