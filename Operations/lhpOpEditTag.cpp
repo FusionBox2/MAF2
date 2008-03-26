@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-03-04 14:52:56 $
-Version:   $Revision: 1.3 $
+Date:      $Date: 2008-03-26 13:11:40 $
+Version:   $Revision: 1.4 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -129,6 +129,9 @@ mafOp(label)
   m_SubdictionaryId = NO_SUBDICTIONARY; // default to none
   m_ConnectionConfigurationFileName = "vmeUploaderConnectionConfiguration.conf" ;
 
+
+  m_ProxyURL = "";
+  m_ProxyPort = "0";
 }
 
 //----------------------------------------------------------------------------
@@ -162,14 +165,19 @@ void lhpOpEditTag::OpRun()
 
   if(event.GetString())
   {
-    mafString proxyHost = *event.GetString();
+    /*mafString proxyHost = *event.GetString();
     proxyHost.Append("\n");
     mafString proxyPort;
     m_ProxyFile = fopen("proxy.txt", "w");
     fwrite(proxyHost.GetCStr(),1,proxyHost.GetSize(), m_ProxyFile);
     proxyPort = wxString::Format("%i",event.GetArg());
     fwrite(proxyPort, 1, proxyPort.GetSize(), m_ProxyFile);
-    fclose(m_ProxyFile);
+    fclose(m_ProxyFile);*/
+
+    mafString port;
+    port << event.GetArg();
+    m_ProxyURL = *event.GetString();
+    m_ProxyPort = port;
   }
 
   int result = OP_RUN_CANCEL;
@@ -694,9 +702,12 @@ bool lhpOpEditTag::IsLHPBuilderVersionUpToDate()
 
   command2execute.Append(" lhpDictionaryVersionChecker.py ");
   command2execute.Append(" ");
-  command2execute.Append(m_ProxyURL.GetCStr());
-  command2execute.Append(" ");
-  command2execute.Append(m_ProxyPort.GetCStr());
+  if( !m_ProxyURL.Equals("") )
+  {
+    command2execute.Append(m_ProxyURL.GetCStr());
+    command2execute.Append(" ");
+    command2execute.Append(m_ProxyPort.GetCStr());
+  }
 
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
