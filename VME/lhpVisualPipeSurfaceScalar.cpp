@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpVisualPipeSurfaceScalar.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-02-19 09:54:32 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-03-26 13:30:55 $
+  Version:   $Revision: 1.3 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
@@ -28,6 +28,7 @@
 #include "mafEventSource.h"
 #include "mafVME.h"
 #include "mafVMEOutputSurface.h"
+#include "lhpVMESurfaceScalarVarying.h"
 
 #include "vtkMAFAssembly.h"
 #include "vtkMAFSmartPointer.h"
@@ -39,6 +40,7 @@
 #include "vtkActor.h"
 #include "vtkProperty.h"
 #include "vtkPointData.h"
+#include "vtkDoubleArray.h"
 
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(lhpVisualPipeSurfaceScalar);
@@ -176,11 +178,29 @@ void lhpVisualPipeSurfaceScalar::OnEvent(mafEventBase *maf_event)
 void lhpVisualPipeSurfaceScalar::UpdateProperty(bool fromTag)
 //----------------------------------------------------------------------------
 {
+  lhpVMESurfaceScalarVarying *vme = lhpVMESurfaceScalarVarying::SafeDownCast(m_Vme);
   mafVMEOutputSurface *output_surface = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
   output_surface->Update();
   vtkPolyData *data = output_surface->GetSurfaceData();
   data->Update();
 
+  if (vme->GetNumberOfScalarData() == 1)
+  {
+    double rgb[3], v;
+    int scalar_index;
+    scalar_index = vme->GetSurfaceScalarIndex(0);
+    vtkDoubleArray *scalars = (vtkDoubleArray *)data->GetPointData()->GetScalars();
+    v = scalars->GetValue(scalar_index);
+    m_Mapper->ScalarVisibilityOff();
+    m_Mapper->UseLookupTableScalarRangeOff();
+    m_Material->m_ColorLut->GetColor(v,rgb);
+    m_Actor->GetProperty()->SetColor(rgb);
+  }
+  else
+  {
+    m_Mapper->ScalarVisibilityOn();
+    m_Mapper->UseLookupTableScalarRangeOn();
+  }
   /*double sr[2];
   vtkDataArray *scalar = data->GetPointData()->GetScalars();
   scalar->GetRange(sr);
