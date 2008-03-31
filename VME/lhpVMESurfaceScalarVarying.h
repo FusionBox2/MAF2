@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpVMESurfaceScalarVarying.h,v $
   Language:  C++
-  Date:      $Date: 2008-03-31 12:11:53 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2008-03-31 12:31:10 $
+  Version:   $Revision: 1.5 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -50,7 +50,7 @@ public:
     ID_SCALAR_LINK,
     ID_LIST_SCALARS_AVAILABLES,
     ID_EDIT_SCALAR_POSITION,
-    ID_POINTS_IN_BUCKET,
+    ID_RADIUS,
     ID_LAST
   };
 
@@ -164,7 +164,7 @@ protected:
   int m_CurrentTimeIndex; ///< Index of the matrix corresponding to the current time
   int m_EditMode; ///< Flag to attach and detach th picker from the surface.
   int m_ActiveScalarVMEIndex; ///< Store the information regarding the last medVMEAnalog's scalar index added
-  int m_PointsPerBucket; ///< Set the radius to consider for coloring neighbors of selected triangles.
+  int m_Radius; ///< Set the radius to consider for coloring neighbors of selected triangles.
   mmgCheckListBox *m_ScalarsAvailableList; ///< Listbox representing the list of medVMEAnalog's scalars
   typedef std::map<int, vtkIdList *> SurfaceScalarRegionMap;
   SurfaceScalarRegionMap m_ScalarRegionMap;

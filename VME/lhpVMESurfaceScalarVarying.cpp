@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpVMESurfaceScalarVarying.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-03-31 12:11:53 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2008-03-31 12:31:10 $
+  Version:   $Revision: 1.5 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -87,7 +87,7 @@ lhpVMESurfaceScalarVarying::lhpVMESurfaceScalarVarying()
 
   m_EditMode = 0;
   m_CurrentTimeIndex = 0;
-  m_PointsPerBucket = 18;
+  m_Radius = 10;
   m_ScalarMin = 0.0;
 
   // attach a data pipe which creates a bridge between VTK and MAF
@@ -207,7 +207,7 @@ int lhpVMESurfaceScalarVarying::DeepCopy(mafNode *a)
     }
     m_Transform->SetMatrix(scalarvarying->m_Transform->GetMatrix());
     m_SurfaceName = scalarvarying->m_SurfaceName;
-    m_PointsPerBucket = scalarvarying->m_PointsPerBucket;
+    m_Radius = scalarvarying->m_Radius;
     m_SurfaceScalars = vtkDoubleArray::SafeDownCast(m_PolyData->GetPointData()->GetScalars());
     for (int s = 0; s < scalarvarying->GetNumberOfScalarData(); s++)
     {
@@ -225,7 +225,7 @@ bool lhpVMESurfaceScalarVarying::Equals(mafVME *vme)
   if (Superclass::Equals(vme))
   {
     ret = m_Transform->GetMatrix() == ((lhpVMESurfaceScalarVarying *)vme)->m_Transform->GetMatrix() && \
-          m_PointsPerBucket == ((lhpVMESurfaceScalarVarying *)vme)->m_PointsPerBucket && \
+          m_Radius == ((lhpVMESurfaceScalarVarying *)vme)->m_Radius && \
           m_SurfaceName == ((lhpVMESurfaceScalarVarying *)vme)->m_SurfaceName;
   }
   return ret;
@@ -343,11 +343,10 @@ void lhpVMESurfaceScalarVarying::InitScalars()
   m_Locator = vtkPointLocator::New();
   m_Locator->SetDataSet(m_PolyData);
   m_Locator->BuildLocator();
-  m_Locator->SetNumberOfPointsPerBucket(m_PointsPerBucket);
 
   if (m_Gui != NULL)
   {
-    m_Gui->Enable(ID_POINTS_IN_BUCKET, m_Locator != NULL);
+    m_Gui->Enable(ID_RADIUS, m_Locator != NULL);
   }
 
   m_SurfaceScalars = vtkDoubleArray::New();
@@ -423,7 +422,7 @@ int lhpVMESurfaceScalarVarying::InternalStore(mafStorageElement *parent)
   if (Superclass::InternalStore(parent) == MAF_OK)
   {
     if (parent->StoreMatrix("Transform",&m_Transform->GetMatrix()) == MAF_OK &&
-        parent->StoreInteger("PointsPerBucket", m_PointsPerBucket) == MAF_OK &&
+        parent->StoreInteger("Radius", m_Radius) == MAF_OK &&
         parent->StoreInteger("NumOfScalarVMEIndexes", m_ScalarRegionMap.size()) == MAF_OK)
     {
       SurfaceScalarRegionMap::iterator it = m_ScalarRegionMap.begin();
@@ -465,7 +464,7 @@ int lhpVMESurfaceScalarVarying::InternalRestore(mafStorageElement *node)
     if (node->RestoreMatrix("Transform",&matrix) == MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
-      if (node->RestoreInteger("PointsPerBucket", m_PointsPerBucket) == MAF_OK)
+      if (node->RestoreInteger("Radius", m_Radius) == MAF_OK)
       {
         int num = 0;
         if (node->RestoreInteger("NumOfScalarVMEIndexes", num) == MAF_OK)
@@ -532,7 +531,7 @@ mmgGui* lhpVMESurfaceScalarVarying::CreateGui()
   m_Gui->Bool(ID_EDIT_SCALAR_POSITION,_("Edit scalar"),&m_EditMode, 1);
   m_Gui->Label("available scalars:", true);
   m_ScalarsAvailableList = m_Gui->CheckList(ID_LIST_SCALARS_AVAILABLES);
-  m_Gui->Integer(ID_POINTS_IN_BUCKET, _("near pts."), &m_PointsPerBucket, 1);
+  m_Gui->Integer(ID_RADIUS, _("radius"), &m_Radius, 1);
   m_Gui->Divider();
   FillScalarsName(false);
   SurfaceScalarRegionMap::iterator it = m_ScalarRegionMap.begin();
@@ -541,7 +540,7 @@ mmgGui* lhpVMESurfaceScalarVarying::CreateGui()
     m_ScalarsAvailableList->CheckItem(it->first - 1, true);
   }
   m_Gui->Enable(ID_LIST_SCALARS_AVAILABLES, m_EditMode != 0);
-  m_Gui->Enable(ID_POINTS_IN_BUCKET, m_Locator != NULL);
+  m_Gui->Enable(ID_RADIUS, m_Locator != NULL);
   m_Gui->Update();
   return m_Gui;
 }
@@ -586,8 +585,7 @@ void lhpVMESurfaceScalarVarying::OnEvent(mafEventBase *maf_event)
           }
         }
       break;
-      case ID_POINTS_IN_BUCKET:
-        m_Locator->SetNumberOfPointsPerBucket(m_PointsPerBucket);
+      case ID_RADIUS:
       break;
       case VME_PICKED:
         {
@@ -598,11 +596,10 @@ void lhpVMESurfaceScalarVarying::OnEvent(mafEventBase *maf_event)
             double pos[3];
             m_PickedPoint->GetPoint(0,pos);
             int ijk[3];
-            vtkIdList *idList = m_Locator->GetPointsInBucket(pos,ijk);
-            if(idList != NULL)
-            {
-              SetScalarIDs(m_ActiveScalarVMEIndex, idList);
-            }
+            vtkIdList *idList = vtkIdList::New();
+            m_Locator->FindPointsWithinRadius(m_Radius, pos, idList);
+            SetScalarIDs(m_ActiveScalarVMEIndex, idList);
+            vtkDEL(idList);
           }
           e->SetId(CAMERA_UPDATE);
           ForwardUpEvent(e);
