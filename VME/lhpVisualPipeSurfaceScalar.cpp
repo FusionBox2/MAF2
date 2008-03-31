@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpVisualPipeSurfaceScalar.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-03-26 13:30:55 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2008-03-31 12:12:18 $
+  Version:   $Revision: 1.4 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
@@ -41,6 +41,7 @@
 #include "vtkProperty.h"
 #include "vtkPointData.h"
 #include "vtkDoubleArray.h"
+#include "vtkIdList.h"
 
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(lhpVisualPipeSurfaceScalar);
@@ -188,7 +189,7 @@ void lhpVisualPipeSurfaceScalar::UpdateProperty(bool fromTag)
   {
     double rgb[3], v;
     int scalar_index;
-    scalar_index = vme->GetSurfaceScalarIndex(0);
+    scalar_index = vme->GetSurfaceScalarIndexes(0)->GetId(0);
     vtkDoubleArray *scalars = (vtkDoubleArray *)data->GetPointData()->GetScalars();
     v = scalars->GetValue(scalar_index);
     m_Mapper->ScalarVisibilityOff();
