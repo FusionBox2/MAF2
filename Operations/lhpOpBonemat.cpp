@@ -2,9 +2,9 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpBonemat.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-10-19 11:12:46 $
-  Version:   $Revision: 1.2 $
-  Authors:   Daniele Giunchi
+  Date:      $Date: 2008-04-01 09:55:18 $
+  Version:   $Revision: 1.3 $
+  Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
   CINECA - Interuniversity Consortium (www.cineca.it)
@@ -18,41 +18,27 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
-/** problems:
-
-bool mmgValidator::TransferToWindow(void)
-
-if(this->m_DecimalDigits == -1)
-s.Printf("%g",*m_DoubleVar);
-else
-s.Printf("%g",RoundValue(*m_DoubleVar,m_DecimalDigits));
-m_TextCtrl->SetValue(s);
-
-this code fix digits number to six when writing values on textbox from an instance variable
-*/
-
 #include "lhpOpBonemat.h"
+#include "lhpProceduralElements.h"
+
 #include "wx/busyinfo.h"
 
 #include "mafDecl.h"
-#include "mmgGui.h"
-#include "vtkMAFSmartPointer.h"
 #include "mafVMERoot.h"
-
+#include "mafVMEMesh.h"
 #include "mafString.h"
+
+#include "mmgGui.h"
+
+#include "vtkMAFSmartPointer.h"
+
 #include <fstream>
 #include <stdio.h>
 #include <iostream>
 #include <string>
 #include <math.h>
-
-#include "lhpProceduralElements.h"
-
 #include <stdlib.h>
 
-
-//my inclusions
-#include "mafVMEMesh.h"
 #include "vtkUnstructuredGrid.h"
 #include "vtkRectilinearGrid.h"
 #include "vtkImageData.h"
@@ -113,7 +99,6 @@ mafOp(label)
 {
   m_OpType  = OPTYPE_OP;
   m_Canundo = false;
-  //m_Input   = NULL;
   m_InputPreserving = false;
   m_ConfigurationFileName = "";
   m_FrequencyFileName = "";
@@ -183,7 +168,7 @@ mafOp(label)
 lhpOpBonemat::~lhpOpBonemat()
 //----------------------------------------------------------------------------
 {
-  //mafNEW(m_OriginalVMEMesh);
+  
 }
 //----------------------------------------------------------------------------
 bool lhpOpBonemat::Accept(mafNode *node)
@@ -285,17 +270,7 @@ void lhpOpBonemat::CreateGui()
 //----------------------------------------------------------------------------
 {
   m_Gui = new mmgGui(this);
-  //m_Gui->FileSave(ID_CHOOSE_FILENAME,"vtk file", &m_File, wildc);
-  /*m_Gui->Label("file type",true);
-  m_Gui->Label("absolute matrix",true);
-  if (m_Input->IsA("mafVMESurface") || m_Input->IsA("mafVMEPointSet") || m_Input->IsA("mafVMEGroup"))
-  m_Gui->Enable(ID_ABS_MATRIX,true);
-  else
-  m_Gui->Enable(ID_ABS_MATRIX,false);
-  */
-
   m_Gui->Label(""); 
-
 
   m_Gui->Label("Configuration File:", true);
   m_Gui->Button(ID_OPEN_CONFIGURATION_FILE, "open configuration file");
@@ -304,17 +279,13 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Button(ID_SAVE_CONFIGURATION_FILE_AS, "save configuration file as");
   m_Gui->Divider(2);
 
-  //m_Gui->Label("input mesh");
-  //m_Gui->FileOpen(ID_OPEN_INPUT_MESH, "", &m_InputMeshFileName, wildcNeutral);
   m_Gui->Label("Volume:", &m_InputCTFileName, true);
-  //m_Gui->FileOpen(ID_OPEN_INPUT_TAC, "", &m_InputCTFileName, wildcVTK);
+  
   m_Gui->Button(ID_VOLUME_CHOOSE, "choose volume");
-  //m_Gui->Label("output mesh");
-  //m_Gui->String(ID_OUTPUT_MESH_NAME, "", &m_OutputMeshFileName);
   m_Gui->Divider(2);
   
   m_Gui->Label("Output Frequency file: ",true);
-  //m_Gui->String(ID_OUTPUT_FREQUENCY_FILE_NAME,"", &m_FrequencyFileName);
+
   mafString wildc = "Frequency File (*.*)|*.*";
   m_FrequencyFileName = wxGetWorkingDirectory();
   m_FrequencyFileName +=  "\\" ;
@@ -330,7 +301,7 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Label("density relationship");
   m_Gui->Combo(ID_DENSITY_RELATIONSHIP_LISTBOX, "", &m_DensityRelationshipListbox, 2, densityRelationship);
 
-  // m_Gui->Label("HU0   D0");
+  
   m_Gui->Double(ID_HU0,"HU0", &m_HU0_d0_el0);
   m_Gui->Double(ID_D0,"D0", &m_HU0_d0_el1);
 
@@ -346,7 +317,6 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Divider(2);
 #endif
 
-  //m_Gui->Label("ro = a + b * HU", true);
   m_Gui->Label("CT densitometric calibration", true);
   m_Gui->Label("RhoQCT = a + b * HU", false);
   
@@ -454,18 +424,15 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Label("hu threshold");
   m_Gui->Double(::ID_HU_THRESHOLD, "", &m_HUThreshold);*/
 
-  /*m_Gui->Label("first calibration point: x0, y0");
-  m_Gui->Double(::ID_CALIBRATION_FIRST_POINT, "",m_HU0_d0,2);
-  m_Gui->Label("second calibration point: x1, y1");
-  m_Gui->Double(::ID_CALIBRATION_SECOND_POINT, "",m_HU1_d1,2);
-  */
+
   m_Gui->Divider(); 
   m_Gui->Label("integration steps");
   m_Gui->Integer(ID_STEPS_NUMBER, "", &m_StepsNumber);
   m_Gui->Label("gap value");
   m_Gui->Double(::ID_GAP_VALUE, "", &m_Egap);
   m_Gui->Divider();
-//#ifndef _DEBUG_BONEMAT
+
+  //#ifndef _DEBUG_BONEMAT
   m_Gui->Button(ID_EXECUTE, "execute");
 //#endif
   
@@ -509,29 +476,6 @@ int lhpOpBonemat::SaveConfigurationFile(const char *fileName)
 //----------------------------------------------------------------------------
 {
 
-  //char *param_filename, dataset_filename[256], mesh_input_filename[256], mesh_output_filename[256], freq_filename[256];
-  //*dataset_fp, *mesh_input_fp, *mesh_output_fp, *freq_fp;
-  //double  m_ROIntercept, m_ROSlope;
-  //ID_TYPE numNodes, numElements, numMats, id, i, key, matKey, numElementNodes;
-  //char line[256];
-  //float x[3];
-  //fpos_t file_loc;
-  //int ElementShape; 
-  //Mesh *mesh;
-  //Element *element;  
-  //Node *node;
-  //unsigned int xdim, ydim, zdim;
-  //DataSet *dataset;
-  //int type;
-  //double HU, E, G, ro, Ni = 0.3;
-  //// ElementProp *materialProperties, **materialProperties;
-  //ID_TYPE freq;
-  //char *header = "%2d%8d%8d%8d%8d%8d%8d%8d%8d\n";
-  //char *nodedata = "%16.8E%16.8E%16.8E\n";
-  //char *matdata = "%16.9E%16.9E%16.9E%16.9E%16.9E\n" ;
-  //char *elemdata1 = "%8d%8d%8d%8d%16.9E%16.9E%16.9E\n";
-  //HashTable table;
-
   std::ofstream outputFile(fileName, std::ios::out);
 
   if (outputFile == NULL) {
@@ -540,11 +484,7 @@ int lhpOpBonemat::SaveConfigurationFile(const char *fileName)
   }
 
   outputFile.precision(decimalNumbersNumber);
-  outputFile /*<< m_FrequencyFileName.GetCStr() << std::endl*/
-    
-    /*<< m_HU0_d0_el0 << '\t' <<  m_HU0_d0_el1 << std::endl
-    << m_HU1_d1_el0 << '\t' << m_HU1_d1_el1 << std::endl*/
-
+  outputFile 
     << m_ROIntercept << '\t'
     << m_ROSlope << std::endl
 
@@ -630,8 +570,8 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
       case ID_FLAG_RO_CORRECTION:
       case ID_TYPE_RO_CORRECTION:
         {
-          m_Gui->Enable(ID_TYPE_RO_CORRECTION,m_ROCorrectionActivation);
-          EnableRoCorrectionDensityInterval(m_ROCorrectionActivation);
+          m_Gui->Enable(ID_TYPE_RO_CORRECTION,m_ROCorrectionActivation?true:false);
+          EnableRoCorrectionDensityInterval(m_ROCorrectionActivation?true:false);
           EnableRoCorrectionSingleInterval(m_ROCorrectionActivation && m_ROCorrectionType == SINGLE_INTERVAL);
           EnableRoCorrectionThreeInterval(m_ROCorrectionActivation && m_ROCorrectionType == THREE_INTERVALS);
         }
@@ -788,34 +728,6 @@ void lhpOpBonemat::SetFrequencyFileName(const char* name)
 int lhpOpBonemat::OpenConfigurationFile()
 //----------------------------------------------------------------------------
 {
-  /*char *param_filename, */
-  //, *dataset_fp, *mesh_input_fp, *mesh_output_fp, *freq_fp;
-  //double m_ROIntercept, m_ROSlope;
-  //ID_TYPE numNodes, numElements, numMats, id, i, key, matKey, numElementNodes;
-  //char line[256];
-  //float x[3];
-  //fpos_t file_loc;
-  //int ElementShape; 
-  //Mesh *mesh;
-  //Element *element;  
-  //Node *node;
-  //unsigned int xdim, ydim, zdim;
-  //DataSet *dataset;
-  //int type;
-  //double   HU, E, G, ro, Ni = 0.3;
-  //// ElementProp *materialProperties, **materialProperties;
-  //ID_TYPE freq;
-  //char *header = "%2d%8d%8d%8d%8d%8d%8d%8d%8d\n";
-  //char *nodedata = "%16.8E%16.8E%16.8E\n";
-  //char *matdata = "%16.9E%16.9E%16.9E%16.9E%16.9E\n" ;
-  //char *elemdata1 = "%8d%8d%8d%8d%16.9E%16.9E%16.9E\n";
-  //HashTable table;
-
-  // PARSING ARGUMENTS
-  //if (argc !=2) {
-  //  std::cerr << "USAGE: " << argv[0] << " param_file\n";
-  //  return 1;
-  //}
   mafString wildcconf = "conf Data (*.conf)|*.conf";
 
   std::string initial = mafGetApplicationDirectory().c_str();
@@ -836,19 +748,6 @@ int lhpOpBonemat::OpenConfigurationFile()
     return 1;
   }
   
-  //inputFile.precision(decimalNumbersNumber);
-
-  
-  //inputFile >> outputFrequencyFileName
-  //inputFile.getline(outputFrequencyFileName,300);
-
-
-   /*inputFile >> m_HU0_d0_el0;
-   inputFile  >> m_HU0_d0_el1; 
-   inputFile  >> m_HU1_d1_el0;  
-   inputFile >> m_HU1_d1_el1; */
-
-
 
    inputFile >> m_ROIntercept;
    inputFile >> m_ROSlope;
@@ -919,36 +818,24 @@ int lhpOpBonemat::Execute1()
 {
   std::ostringstream logStringStream;
 
-  // char *param_filename, m_InputCTFileName.GetCStr()[256], m_InputMeshFileName.GetCStr()[256], m_OutputMeshFileName.c_str()[256], m_FrequencyFileName.c_str()[256];
+  
   FILE  *freq_fp;
-  /*double m_HU0_d0_el1, m_HU1_d1_el1, m_Ea0_Eb0_Ec0_V3_el0, m_Ea0_Eb0_Ec0_V3_el1, m_Ea0_Eb0_Ec0_V3_el2, m_Egap, m_ROIntercept, m_ROSlope;*/
-  //double m_ROIntercept, m_ROSlope;
-
-
-  ID_TYPE numNodes, numElements, numMats, id, i, key, matKey, numElementNodes;
-//  char line[256];
-//  float x[3];
-//  fpos_t file_loc;
-//  int ElementShape; 
-  //Mesh *mesh;
+  
+  ID_TYPE  numElements, numMats, id, i, numElementNodes;
   Element *element;  
-//  Node *node;
-//  unsigned int xdim, ydim, zdim;
   DataSet *dataset;
-//  int type;
-  double HU, E, G, ro, Ni = 0.3;
+  double HU, E, ro, Ni = 0.3;
   ElementProp *roSource, **materialProperties;
   ID_TYPE freq;
   
-  //bool result = wxFileExists(m_FrequencyFileName.GetCStr());
-  if (/*!result ||*/ (freq_fp = fopen(m_FrequencyFileName.GetCStr(), "w")) == NULL)
+  if ( (freq_fp = fopen(m_FrequencyFileName.GetCStr(), "w")) == NULL)
   {
     wxMessageBox("Frequency file can't be opened");
     return 1;
   }
   
-  vtkUnstructuredGrid *unstructuredGrid = vtkUnstructuredGrid::SafeDownCast(mafVMEMesh::SafeDownCast(m_Input)->GetOutput()->GetVTKData());
-  unstructuredGrid->Update();
+  vtkUnstructuredGrid *inUnstructuredGrid = vtkUnstructuredGrid::SafeDownCast(mafVMEMesh::SafeDownCast(m_Input)->GetOutput()->GetVTKData());
+  inUnstructuredGrid->Update();
 
   vtkDataSet *volume = NULL;
   //scalars
@@ -1086,9 +973,9 @@ int lhpOpBonemat::Execute1()
     wxMessageBox("Must select a volume");
     return 1;
   }
-  numElements = unstructuredGrid->GetNumberOfCells();
+  numElements = inUnstructuredGrid->GetNumberOfCells();
 
-    //  COMPUTE ELEMENTS DATA
+  //  COMPUTE ELEMENTS DATA
   /*logStringStream << "-- computing elements data bonemat v2\n";
   mafLogMessage("%s",logStringStream.str().c_str());
   logStringStream.str("");*/
@@ -1142,7 +1029,7 @@ int lhpOpBonemat::Execute1()
   for (id=0; id < numElements; id++) 
   {  
     vtkCell *cell;
-    cell = unstructuredGrid->GetCell(id);
+    cell = inUnstructuredGrid->GetCell(id);
 
     
     numElementNodes = cell->GetNumberOfPoints();
@@ -1246,21 +1133,22 @@ int lhpOpBonemat::Execute1()
   vtkMAFSmartPointer<vtkCellArray> cells;
 
 	vtkMAFSmartPointer<vtkUnstructuredGrid> outputUG;
-  pts->DeepCopy(unstructuredGrid->GetPoints());
-  cells->DeepCopy(unstructuredGrid->GetCells());
+  pts->DeepCopy(inUnstructuredGrid->GetPoints());
+  cells->DeepCopy(inUnstructuredGrid->GetCells());
   outputUG->SetPoints(pts);
-  outputUG->SetCells(unstructuredGrid->GetCellTypesArray(),unstructuredGrid->GetCellLocationsArray(),cells);
-	//outputUG->DeepCopy(unstructuredGrid);
+  outputUG->SetCells(inUnstructuredGrid->GetCellTypesArray(),inUnstructuredGrid->GetCellLocationsArray(),cells);
 	outputUG->Update();
 
-	vtkCellData *cellData = outputUG->GetCellData();
-  vtkPointData *pointData = outputUG->GetPointData();
+	vtkCellData *outCellData = outputUG->GetCellData();
+  vtkPointData *outPointData = outputUG->GetPointData();
 
-  pointData->DeepCopy(unstructuredGrid->GetPointData());
-  cellData->AddArray(arrayMaterial);
-  cellData->AddArray(arrayE);
-	cellData->AddArray(arrayPoisson);
-  cellData->AddArray(arrayRo);
+  outPointData->DeepCopy(inUnstructuredGrid->GetPointData());
+  outCellData->DeepCopy(inUnstructuredGrid->GetCellData());
+
+  outCellData->AddArray(arrayMaterial);
+  outCellData->AddArray(arrayE);
+	outCellData->AddArray(arrayPoisson);
+  outCellData->AddArray(arrayRo);
 
 	outputUG->Modified();
   outputUG->Update();
@@ -1296,7 +1184,6 @@ int lhpOpBonemat::Execute1()
     }
     else
       freq++;
-    //mesh->GetElement(roSource[id].id)->SetMatKey(numMats);
   }
   fprintf(freq_fp, "%f \t %f \t %d\n\n", ro, E, freq);
   fclose(freq_fp);
@@ -1339,7 +1226,7 @@ int lhpOpBonemat::Execute1()
     for (int j = 0; j < numMats; j++)
     {
       // fill ith data array with jth value 
-      // ciclo sui materiali
+      // cycle on materials
       if(stringVector[i] == mafString("EX"))
         darr->InsertValue(j, materialProperties[j]->E);
       else if(stringVector[i] == mafString("NUXY"))
@@ -1372,12 +1259,7 @@ int lhpOpBonemat::Execute1()
       if((valueE-valueECell)< m_Egap && (valueE-valueECell)>= -(10e-5))
       {
         index = currentE;
-      }
-      /*if(minDiff > fabs(valueE-valueECell))
-      {
-        minDiff = fabs(valueE-valueECell);
-        index = currentE;
-      }*/
+      }      
     }
     double val = vtkDoubleArray::SafeDownCast(fdata->GetArray("EX"))->GetValue(index);
     arrayE->SetTuple1(currentCell,val);
@@ -1385,32 +1267,6 @@ int lhpOpBonemat::Execute1()
     arrayRo->SetValue(currentCell,val);
     arrayMaterial->SetValue(currentCell,index);
   }
-
-  //material celldata
-  /*vtkIntArray *darray;
-  if(darray = vtkIntArray::SafeDownCast(outputUG->GetCellData()->GetArray("material")))
-  {
-    int numCells = arrayRo->GetNumberOfTuples();
-    for(int i=0; i<numCells; i++)
-    {
-      for(int j=0; j<fdata->GetArray("material_id")->GetNumberOfTuples(); j++)
-      {
-        double valueRo1, valueRo2,valueE1, valueE2;
-        valueRo1 = arrayRo->GetValue(i);
-        valueRo2 = vtkDoubleArray::SafeDownCast(fdata->GetArray("DENS"))->GetValue(j);
-        valueE1 = arrayE->GetValue(i);
-        valueE2 = vtkDoubleArray::SafeDownCast(fdata->GetArray("EX"))->GetValue(j);
-        double minRo = valueRo1 <= valueRo2 ? valueRo1 : valueRo2;
-        double minE = valueE1 <= valueE2 ? valueE1 : valueE2;
-      if( fabs(valueRo1 - valueRo2) < 10e-5 * fabs(minRo) &&
-          fabs(valueE1 - valueE2) < 10e-5 * fabs(minE)   )
-        {
-          darray->SetValue(i,vtkDoubleArray::SafeDownCast(fdata->GetArray("material_id"))->GetValue(j));
-        }
-      }
-    }
-    
-  }*/
 
   outputUG->Modified();
   outputUG->Update();
@@ -1449,39 +1305,27 @@ int lhpOpBonemat::Execute2()
 
   
 
-  // char *param_filename, m_InputCTFileName.GetCStr()[256], m_InputMeshFileName.GetCStr()[256], m_OutputMeshFileName.c_str()[256], m_FrequencyFileName.c_str()[256];
+  
   FILE  *freq_fp;
-  /*double m_HU0_d0_el1, m_HU1_d1_el1, m_Ea0_Eb0_Ec0_V3_el0, m_Ea0_Eb0_Ec0_V3_el1, m_Ea0_Eb0_Ec0_V3_el2, m_Egap, m_ROIntercept, m_ROSlope;*/
-  /*double m_ROIntercept, m_ROSlope;*/
-
-  ID_TYPE numNodes, numElements, numMats, id, i, key, matKey, numElementNodes;
-//  char line[256];
-//  float x[3];
-//  fpos_t file_loc;
-//  int ElementShape; 
-  //Mesh *mesh;
+  
+  ID_TYPE numElements, numMats, id, i, numElementNodes;
   Element *element;  
-//  Node *node;
-//  unsigned int xdim, ydim, zdim;
   DataSet *dataset;
-//  int type;
-  double HU, E, G, ro, Ni = 0.3;
+  double HU, E, ro, Ni = 0.3;
   ID_TYPE freq;
   char *header = "%2d%8d%8d%8d%8d%8d%8d%8d%8d\n";
   char *nodedata = "%16.8E%16.8E%16.8E\n";
   char *matdata = "%16.9E%16.9E%16.9E%16.9E%16.9E\n" ;
   char *elemdata1 = "%8d%8d%8d%8d%16.9E%16.9E%16.9E\n";
-  //HashTable table;
 
-  //bool result = wxFileExists(m_FrequencyFileName.GetCStr());
-  if (/*!result ||*/ (freq_fp = fopen(m_FrequencyFileName.GetCStr(), "w")) == NULL)
+  if ((freq_fp = fopen(m_FrequencyFileName.GetCStr(), "w")) == NULL)
   {
     wxMessageBox("Frequency file can't be opened");
     return 1;
   }
 
-  vtkUnstructuredGrid *unstructuredGrid = vtkUnstructuredGrid::SafeDownCast(mafVMEMesh::SafeDownCast(m_Input)->GetOutput()->GetVTKData());
-  unstructuredGrid->Update();
+  vtkUnstructuredGrid *inUnstructuredGrid = vtkUnstructuredGrid::SafeDownCast(mafVMEMesh::SafeDownCast(m_Input)->GetOutput()->GetVTKData());
+  inUnstructuredGrid->Update();
 
  
 
@@ -1624,7 +1468,7 @@ int lhpOpBonemat::Execute2()
     wxMessageBox("Must select a volume");
     return 1;
   }
-  numElements = unstructuredGrid->GetNumberOfCells();
+  numElements = inUnstructuredGrid->GetNumberOfCells();
 
 
   logStringStream << "-- Computing elements densities\n";
@@ -1657,10 +1501,6 @@ int lhpOpBonemat::Execute2()
   
   materialProperties = new ElementProp*[numElements];
 
-  //m_ROSlope = (m_HU1_d1_el1 - m_HU0_d0_el1) / double(m_HU1_d1_el0 - m_HU0_d0_el0);
-  //m_ROIntercept = m_HU0_d0_el1 - m_HU0_d0_el0 * m_ROSlope;
-
-
   double ROSlope = -1;
   double ROIntercept = -1;
 
@@ -1684,7 +1524,7 @@ int lhpOpBonemat::Execute2()
   { 
 
     vtkCell *cell;
-    cell = unstructuredGrid->GetCell(id);
+    cell = inUnstructuredGrid->GetCell(id);
 
     numElementNodes = cell->GetNumberOfPoints();
 
@@ -1711,8 +1551,6 @@ int lhpOpBonemat::Execute2()
       element->SetNode(num, current);
     }
 
-
-    //HU = mesh->GetElement(id)->ComputeScalar(dataset, m_StepsNumber);
     HU = element->ComputeScalar(dataset, m_StepsNumber);
 
     for(int h=0; h<numElementNodes; h++)
@@ -1837,7 +1675,7 @@ int lhpOpBonemat::Execute2()
   for (id=0; id < numElements; id++) 
   { 
     vtkCell *cell;
-    cell = unstructuredGrid->GetCell(id);
+    cell = inUnstructuredGrid->GetCell(id);
 
     numElementNodes = cell->GetNumberOfPoints();
 
@@ -1897,21 +1735,22 @@ int lhpOpBonemat::Execute2()
   vtkMAFSmartPointer<vtkCellArray> cells;
 
   vtkMAFSmartPointer<vtkUnstructuredGrid> outputUG;
-  pts->DeepCopy(unstructuredGrid->GetPoints());
-  cells->DeepCopy(unstructuredGrid->GetCells());
+  pts->DeepCopy(inUnstructuredGrid->GetPoints());
+  cells->DeepCopy(inUnstructuredGrid->GetCells());
   outputUG->SetPoints(pts);
-  outputUG->SetCells(unstructuredGrid->GetCellTypesArray(),unstructuredGrid->GetCellLocationsArray(),cells);
-  //outputUG->DeepCopy(unstructuredGrid);
+  outputUG->SetCells(inUnstructuredGrid->GetCellTypesArray(),inUnstructuredGrid->GetCellLocationsArray(),cells);
+  
   outputUG->Update();
 
-  vtkCellData *cellData = outputUG->GetCellData();
-  vtkPointData *pointData = outputUG->GetPointData();
+  vtkCellData *outCellData = outputUG->GetCellData();
+  vtkPointData *outPointData = outputUG->GetPointData();
 
-  pointData->DeepCopy(unstructuredGrid->GetPointData());
-  cellData->AddArray(arrayMaterial);
-  cellData->AddArray(arrayE);
-  cellData->AddArray(arrayPoisson);
-  cellData->AddArray(arrayRo);
+  outPointData->DeepCopy(inUnstructuredGrid->GetPointData());
+  outCellData->DeepCopy(inUnstructuredGrid->GetCellData());
+  outCellData->AddArray(arrayMaterial);
+  outCellData->AddArray(arrayE);
+  outCellData->AddArray(arrayPoisson);
+  outCellData->AddArray(arrayRo);
 
   outputUG->Modified();
   outputUG->Update();
@@ -2187,11 +2026,6 @@ int lhpOpBonemat::Execute2()
       {
         index = currentE;
       }
-      /*if(minDiff > fabs(valueE-valueECell))
-      {
-        minDiff = fabs(valueE-valueECell);
-        index = currentE;
-      }*/
     }
     double val = vtkDoubleArray::SafeDownCast(fdata->GetArray("EX"))->GetValue(index);
     arrayE->SetTuple1(currentCell,val);
@@ -2201,31 +2035,6 @@ int lhpOpBonemat::Execute2()
   }
 
 
-  //material celldata
-  /*vtkIntArray *darray;
-  if(darray = vtkIntArray::SafeDownCast(outputUG->GetCellData()->GetArray("material")))
-  {
-    int numCells = arrayRo->GetNumberOfTuples();
-    for(int i=0; i<numCells; i++)
-    {
-      for(int j=0; j<fdata->GetArray("material_id")->GetNumberOfTuples(); j++)
-      {
-        double valueRo1, valueRo2,valueE1, valueE2;
-        valueRo1 = arrayRo->GetValue(i);
-        valueRo2 = vtkDoubleArray::SafeDownCast(fdata->GetArray("DENS"))->GetValue(j);
-        valueE1 = arrayE->GetValue(i);
-        valueE2 = vtkDoubleArray::SafeDownCast(fdata->GetArray("EX"))->GetValue(j);
-        double minRo = valueRo1 <= valueRo2 ? valueRo1 : valueRo2;
-        double minE = valueE1 <= valueE2 ? valueE1 : valueE2;
-        if( fabs(valueRo1 - valueRo2) < 10e-5 * fabs(minRo) &&
-            fabs(valueE1 - valueE2) < 10e-5 * fabs(minE)   )
-        {
-          darray->SetValue(i,vtkDoubleArray::SafeDownCast(fdata->GetArray("material_id"))->GetValue(j));
-        }
-     }
-   }
-
- }*/
 
   outputUG->Modified();
   outputUG->Update();
@@ -2241,7 +2050,6 @@ int lhpOpBonemat::Execute2()
 
   
 
-
   logStringStream <<"Number of materials: " << numMats << std::endl << std::endl;
 
 #endif
@@ -2256,102 +2064,6 @@ int lhpOpBonemat::Execute2()
   delete [] materialProperties;
   delete [] eModuleSource;
 
-/*
-  // WRITE MESH
-
-  logStringStream << "-- Writing mesh\n\n";
-  mafLogMessage("%s",logStringStream.str().c_str());
-  logStringStream.str("");
-
-  // Title
-  fprintf(mesh_output_fp, header, 25, 0, 0, 1, 0, 0, 0, 0, 0);
-  fprintf(mesh_output_fp, ".... Output from Bonemat\n");      
-
-  // Summary data
-  fprintf(mesh_output_fp, header, 26, 0, 0, 1, numNodes, numElements, numMats, 4, 0);
-  fprintf(mesh_output_fp,"date        time    version\n");
-
-  // Node data
-
-  for (id = 0; id < numNodes; id++) {
-    node = mesh->GetNode(id);
-    fprintf(mesh_output_fp, header, 1, node->key, 0, 2, 0, 0, 0, 0, 0);    
-    fprintf(mesh_output_fp, nodedata,  node->x[0],  node->x[1],  node->x[2]);
-    fprintf(mesh_output_fp,"1G       8       0       0  000000\n");
-  }
-  
-  // Element data  
-
-  for (id = 0; id < numElements; id++) {
-    element = mesh->GetElement(id);
-    numElementNodes = element->GetNumberOfNodes();
-
-
-#ifdef _DEBUG_BONEMAT
-
-    logStringStream << "current element id: " << id << '\t' << "key: " << element->GetKey() << '\t' << "material key:" << element->GetMatKey() << std::endl;
-    mafLogMessage("%s",logStringStream.str().c_str());
-    logStringStream.str("");
-
-#endif
-
-
-    fprintf(mesh_output_fp, header, 2, element->GetKey(), element->GetType(), 1 + (numElementNodes+9)/10, 0, 0, 0, 0, 0);
-    fprintf(mesh_output_fp, elemdata1, numElementNodes, 0, element->GetMatKey() , 0, 0, 0 ,0);
-
-    for(i=0; i < numElementNodes; i++) {
-      node = element->GetNode(i);      
-      fprintf(mesh_output_fp,"%8d", node->key);
-    }
-    fprintf(mesh_output_fp,"\n");
-  }
-
-  // Material properties
-
-  for(id = 0; id < numMats; id++) {
-    ro = materialProperties[id]->ro;
-    if ( ro < 0) 
-      logStringStream << "WARNING: Negative density for material" << id + 1 << std::endl;
-    mafLogMessage("%s",logStringStream.str().c_str());
-    logStringStream.str("");
-
-    E = materialProperties[id]->E;
-    G = E / (2.0 * (1 + Ni) );
-
-    fprintf(mesh_output_fp, header, 3, id + 1, 1, 20, 0, 0, 0, 0, 0);
-    fprintf(mesh_output_fp, matdata, 0.0, ro, 0.0, 0.0, 0.0);
-    fprintf(mesh_output_fp, matdata, 0.0, 0.0, 1.0, 0.0, 0.0);
-    fprintf(mesh_output_fp, matdata, 0.0, 0.0, 0.0, 0.0, 0.0);
-    fprintf(mesh_output_fp, matdata, 0.0, 0.0, 0.0, 0.0, 0.0);
-    fprintf(mesh_output_fp, matdata, 0.0, 0.0, 0.0, 0.0, 0.0);
-    fprintf(mesh_output_fp, matdata, 0.0, E, E, E, Ni);
-    fprintf(mesh_output_fp, matdata, Ni, Ni, G, G, G);
-
-    for(i=0; i<12 ; i++)
-      fprintf(mesh_output_fp, matdata, 0.0, 0.0, 0.0, 0.0, 0.0);
-    fprintf(mesh_output_fp, "%16.9E\n", 0.0);
-  }
-
-  // Element properties
-
-  for(id = 0; id < numMats; id++)
-  {   
-    fprintf(mesh_output_fp,header, 4, id + 1, id + 1, 1, 8, 8, 0, 1, 0);
-    fprintf(mesh_output_fp,"%16.9E\n",(float) id + 1);
-  }
-
-  // End of file
-  fprintf(mesh_output_fp, header, 99, 0, 0, 1, 0, 0, 0, 0, 0); 
-
-  fclose (mesh_output_fp);
-
-  delete [] eModuleSource;
-  delete [] materialProperties;
-  delete [] roSource;
-
-  logStringStream << "-- End" << std::endl;
-  mafLogMessage("%s",logStringStream.str().c_str());
-  logStringStream.str("");*/
   return 0;
 }
 
@@ -2470,3 +2182,4 @@ void lhpOpBonemat::EnableRoCorrectionDensityInterval(bool enable)
   m_Gui->Enable(ID_RO_CORRECTION_DENSITY_INTERVAL_0, enable);
   m_Gui->Enable(ID_RO_CORRECTION_DENSITY_INTERVAL_1, enable);
 }
+

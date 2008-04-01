@@ -2,9 +2,9 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpBonemat.h,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
-  Authors:   Daniele Giunchi
+  Date:      $Date: 2008-04-01 09:55:18 $
+  Version:   $Revision: 1.2 $
+  Authors:   Daniele Giunchi , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2002/2004
   CINECA - Interuniversity Consortium (www.cineca.it) 
@@ -131,14 +131,9 @@ protected:
   void EnableRoCorrectionSingleInterval(bool enable);
   void EnableRoCorrectionThreeInterval(bool enable);
   void EnableRoCorrectionDensityInterval(bool enable);
-
-
   
-
   mafString m_ConfigurationFileName;
- // mafString m_InputMeshFileName;
   mafString m_InputCTFileName;
- // wxString m_OutputMeshFileName;
   mafString m_FrequencyFileName;
 
     
