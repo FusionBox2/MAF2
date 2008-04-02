@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpExporterAnsysInputFile.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-02-14 15:53:48 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-04-02 15:12:39 $
+  Version:   $Revision: 1.3 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -54,15 +54,13 @@ mafOp(label)
   m_ElementsFileName = "";
   m_MaterialsFileName = "";
   m_AnsysInputFileName = "";
-  m_CacheDir = (mafGetApplicationDirectory() + "\\Data\\AnsysReaderCache").c_str();
+  m_CacheDir = (mafGetApplicationDirectory() + "\\Data\\AnsysWriterCache").c_str();
   m_AnsysOutputFileNameFullPath		= "";
   m_FileDir = (mafGetApplicationDirectory() + "/Data/External/").c_str();
   
   // This is for deploy: need to work on PYTHONPATH to solve issues with Python modules execution path...
   m_AnsysPythonExporterFullPathFileName = (mafGetApplicationDirectory() + "\\ASCIIParser\\ansysWriter.py").c_str();
   
-  // This is for local testing: 
-  // m_AnsysPythonImporterFullPathFileName = "D:\\vapps\\LHPBuilder_Parabuild\\ASCIIParser\\ansysReader.py";
   m_Pid = -1;
 }
 
@@ -90,7 +88,6 @@ void lhpOpExporterAnsysInputFile::OpRun()
 //----------------------------------------------------------------------------
 {
   CreateGui();
-    // ShowGui();
 }
 //----------------------------------------------------------------------------
 int lhpOpExporterAnsysInputFile::Read()
@@ -162,6 +159,8 @@ int lhpOpExporterAnsysInputFile::Read()
   mafLogMessage(_T("Command process '%s' terminated with exit code %d."),
     command2execute.c_str(), m_Pid);
 
+  return MAF_OK;
+
 }
 //----------------------------------------------------------------------------
 // Operation constants
@@ -184,7 +183,24 @@ void lhpOpExporterAnsysInputFile::CreateGui()
 
   int result = OP_RUN_CANCEL;
   m_AnsysOutputFileNameFullPath = "";
+
+  bool cacheDirExist = wxDirExists(m_CacheDir.GetCStr());
   
+  if (cacheDirExist == false)
+  {
+    std::ostringstream stringStream;
+    stringStream << "creating cache dir: " << m_CacheDir.GetCStr() << std::endl;
+    mafLogMessage(stringStream.str().c_str());          
+    wxMkdir(m_CacheDir.GetCStr());
+  }
+  else
+  {
+    std::ostringstream stringStream;
+    stringStream << "found cache dir: " << m_CacheDir.GetCStr() << std::endl;
+    mafLogMessage(stringStream.str().c_str());
+          
+  }
+
   wxString f;
   f = mafGetSaveFile(m_FileDir,wildcard).c_str(); 
   if(!f.IsEmpty())

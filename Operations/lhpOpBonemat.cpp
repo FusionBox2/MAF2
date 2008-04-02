@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpBonemat.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-04-01 09:55:18 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2008-04-02 15:12:39 $
+  Version:   $Revision: 1.4 $
   Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -426,6 +426,7 @@ void lhpOpBonemat::CreateGui()
 
 
   m_Gui->Divider(); 
+
   m_Gui->Label("integration steps");
   m_Gui->Integer(ID_STEPS_NUMBER, "", &m_StepsNumber);
   m_Gui->Label("gap value");
@@ -433,6 +434,7 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Divider();
 
   //#ifndef _DEBUG_BONEMAT
+
   m_Gui->Button(ID_EXECUTE, "execute");
 //#endif
   
@@ -1141,9 +1143,11 @@ int lhpOpBonemat::Execute1()
 
 	vtkCellData *outCellData = outputUG->GetCellData();
   vtkPointData *outPointData = outputUG->GetPointData();
+  vtkFieldData *outFieldData = outputUG->GetFieldData();
 
   outPointData->DeepCopy(inUnstructuredGrid->GetPointData());
   outCellData->DeepCopy(inUnstructuredGrid->GetCellData());
+  outFieldData->DeepCopy(inUnstructuredGrid->GetFieldData());
 
   outCellData->AddArray(arrayMaterial);
   outCellData->AddArray(arrayE);
@@ -1744,9 +1748,12 @@ int lhpOpBonemat::Execute2()
 
   vtkCellData *outCellData = outputUG->GetCellData();
   vtkPointData *outPointData = outputUG->GetPointData();
+  vtkFieldData *outFieldData = outputUG->GetFieldData();
 
   outPointData->DeepCopy(inUnstructuredGrid->GetPointData());
   outCellData->DeepCopy(inUnstructuredGrid->GetCellData());
+  outFieldData->DeepCopy(inUnstructuredGrid->GetFieldData());
+
   outCellData->AddArray(arrayMaterial);
   outCellData->AddArray(arrayE);
   outCellData->AddArray(arrayPoisson);
