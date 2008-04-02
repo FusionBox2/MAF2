@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoMTRExporter.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-10-12 10:23:14 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-04-02 09:37:27 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -53,6 +53,7 @@ mmoMTRExporter::mmoMTRExporter(const wxString& label) : mafOp(label)
   m_File    = "";
   m_FileDir = "";
   m_Input   = NULL;
+  m_ABSPos  = 1;
 }
 //----------------------------------------------------------------------------
 mmoMTRExporter::~mmoMTRExporter() 
@@ -69,62 +70,100 @@ bool mmoMTRExporter::Accept(mafNode *node)
 
   return true;
 }
+
+enum MTR_EXPORTER_ID
+{
+  ID_ABS_POS = MINID,
+};
 //----------------------------------------------------------------------------
 void mmoMTRExporter::OpRun()
 //----------------------------------------------------------------------------
 {
-  int result = OP_RUN_CANCEL;
+  m_Gui = new mmgGui(this);
+  m_Gui->Label("absolute positions",true);
+  m_Gui->Bool(ID_ABS_POS,"apply",&m_ABSPos,0);
+  m_Gui->OkCancel();
+  //m_Gui->Enable(wxOK,m_File != "");
 
-  assert(m_Input);
-  wxString proposed = (mafGetApplicationDirectory() + "/Data/External/").c_str();
+  m_Gui->Divider();
 
-  if(m_Input->IsMAFType(mafVMELandmarkCloud))
+  ShowGui();
+}
+
+//----------------------------------------------------------------------------
+void mmoMTRExporter::OnEvent(mafEventBase *maf_event)
+//----------------------------------------------------------------------------
+{
+  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
   {
-    proposed += m_Input->GetName();
-    proposed += ".mtr";
-    wxString wildc = "FARO MTR file (*.mtr)|*.mtr";
-
-    wxString f = mafGetSaveFile(proposed,wildc).c_str(); 
-
-    if(f != "") 
+    switch(e->GetId())
     {
-      m_File = f;
-      ExportLandmark();
-      result = OP_RUN_OK;
+    case wxOK:
+      {
+        int result = OP_RUN_CANCEL;
+
+        assert(m_Input);
+        wxString proposed = (mafGetApplicationDirectory() + "/Data/External/").c_str();
+
+        if(m_Input->IsMAFType(mafVMELandmarkCloud))
+        {
+          proposed += m_Input->GetName();
+          proposed += ".mtr";
+          wxString wildc = "FARO MTR file (*.mtr)|*.mtr";
+
+          wxString f = mafGetSaveFile(proposed,wildc).c_str(); 
+
+          if(f != "") 
+          {
+            m_File = f;
+            ExportLandmark();
+            result = OP_RUN_OK;
+          }
+        }
+        else
+        {
+          wxMessageDialog dialog(mafGetFrame(), _("Do you want to create separate files?"),
+            _("Options"), wxYES_NO|wxYES_DEFAULT);
+          if(dialog.ShowModal() == wxID_NO)
+          {
+
+            proposed += m_Input->GetName();
+            proposed += ".mtr";
+            wxString wildc = "FARO MTR file (*.mtr)|*.mtr";
+            wxString f = mafGetSaveFile(proposed,wildc).c_str(); 
+
+            if(f != "") 
+            {
+              m_File = f;
+              ExportLandmark();
+              result = OP_RUN_OK;
+            }
+          }
+          else
+          {
+            wxString f = mafGetDirName(proposed).c_str();
+
+            if(f != "") 
+            {
+              m_FileDir = f;
+              ExportLandmark();
+              result = OP_RUN_OK;
+            }
+          }
+        }
+        OpStop(result);
+      }
+      break;
+    case ID_ABS_POS:
+      break;
+    case wxCANCEL:
+      OpStop(OP_RUN_CANCEL);
+      break;
+    default:
+      e->Log();
+      break;
     }
   }
-  else
-  {
-    wxMessageDialog dialog(mafGetFrame(), _("Do you want to create separate files?"),
-      _("Options"), wxYES_NO|wxYES_DEFAULT);
-    if(dialog.ShowModal() == wxID_NO)
-    {
-
-      proposed += m_Input->GetName();
-      proposed += ".mtr";
-      wxString wildc = "FARO MTR file (*.mtr)|*.mtr";
-      wxString f = mafGetSaveFile(proposed,wildc).c_str(); 
-
-      if(f != "") 
-      {
-        m_File = f;
-        ExportLandmark();
-        result = OP_RUN_OK;
-      }
-    }
-    else
-    {
-      wxString f = mafGetDirName(proposed).c_str();
-
-      if(f != "") 
-      {
-        m_FileDir = f;
-        ExportLandmark();
-        result = OP_RUN_OK;
-      }
-    }
-  }
-  mafEventMacro(mafEvent(this,result));
 }
 
 
@@ -151,15 +190,36 @@ void mmoMTRExporter::ExportOneCloud(std::ostream &out, mafVMELandmarkCloud* clou
       for(int j=0; j < numberLandmark; j++)
       {
         char strng[256];
-        wxString name = cloud->GetLandmarkName(j);
-        const char* nameLandmark = (name);                                        
+        /*wxString name = cloud->GetLandmarkName(j);
+        const char* nameLandmark = (name);
+        int index = cloud->FindLandmarkIndex(nameLandmark);
+        mafVMELandmark *landmark = cloud->GetLandmark(nameLandmark);*/
 
-        mafVMELandmark *landmark = cloud->GetLandmark(nameLandmark);
 
-        double xLandmark, yLandmark, zLandmark;
-        landmark->GetPoint(xLandmark,yLandmark,zLandmark,timeStamps[index]);
-        sprintf(strng, "%d      %.6f      %.6f      %.6f      %.6f      %.6f      %.6f\n", j + 1, xLandmark, yLandmark, zLandmark, 0.0, 0.0, 0.0);
+        //if(!cloud->GetLandmarkVisibility(j, timeStamps[index]))
+        //  continue;
+
+        mafMatrix cloudAbs;
+        double invec[4];
+        double outvec[4];
+        cloud->GetOutput()->GetAbsMatrix(cloudAbs, timeStamps[index]);
+        cloud->GetLandmark(j, invec, timeStamps[index]);
+        invec[3] = 1.0;
+        if(m_ABSPos)
+        {
+          cloudAbs.MultiplyPoint(invec, outvec);
+          for(unsigned indx = 0; indx < 3; indx++)
+            invec[indx] = outvec[indx];
+        }
+        sprintf(strng, "%d      %.6f      %.6f      %.6f      %.6f      %.6f      %.6f\n", j + 1, invec[0], invec[1], invec[2], 0.0, 0.0, 0.0);
         out << strng;
+
+        //if(indx != -1)
+        //{
+          //double xLandmark, yLandmark, zLandmark;
+          //cloud->GetLandmark(j, xLandmark,yLandmark,zLandmark,timeStamps[index]);// landmark->GetPoint(xLandmark,yLandmark,zLandmark,timeStamps[index]);
+          //landmark->GetPoint(xLandmark,yLandmark,zLandmark,timeStamps[index]);
+        //}
       }
     }
   }
@@ -168,14 +228,23 @@ void mmoMTRExporter::ExportOneCloud(std::ostream &out, mafVMELandmarkCloud* clou
     for(int j=0; j < numberLandmark; j++)
     {
       char strng[256];
-      wxString name = cloud->GetLandmarkName(j);
-      const char* nameLandmark = (name);                                        
+      /*wxString name = cloud->GetLandmarkName(j);
+      const char* nameLandmark = (name);
+      mafVMELandmark *landmark = cloud->GetLandmark(nameLandmark);*/
 
-      mafVMELandmark *landmark = cloud->GetLandmark(nameLandmark);
-
-      double xLandmark, yLandmark, zLandmark;
-      landmark->GetPoint(xLandmark,yLandmark,zLandmark);
-      sprintf(strng, "%d      %.6f      %.6f      %.6f      %.6f      %.6f      %.6f\n", j + 1, xLandmark, yLandmark, zLandmark, 0.0, 0.0, 0.0);
+      mafMatrix cloudAbs;
+      double invec[4];
+      double outvec[4];
+      cloud->GetOutput()->GetAbsMatrix(cloudAbs);
+      cloud->GetLandmark(j, invec);
+      invec[3] = 1.0;
+      if(m_ABSPos)
+      {
+        cloudAbs.MultiplyPoint(invec, outvec);
+        for(unsigned indx = 0; indx < 3; indx++)
+          invec[indx] = outvec[indx];
+      }
+      sprintf(strng, "%d      %.6f      %.6f      %.6f      %.6f      %.6f      %.6f\n", j + 1, invec[0], invec[1], invec[2], 0.0, 0.0, 0.0);
       out << strng;
     }
   }

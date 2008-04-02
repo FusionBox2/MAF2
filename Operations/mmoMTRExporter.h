@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoMTRExporter.h,v $
   Language:  C++
-  Date:      $Date: 2007-10-12 10:23:14 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-04-02 09:37:27 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -38,6 +38,7 @@ public:
   mmoMTRExporter(const wxString& label = "MTRExporter");
   ~mmoMTRExporter(); 
   mafOp* Copy();
+  void OnEvent(mafEventBase *maf_event);
 
   /** Return true for the acceptable vme type. */
   bool Accept(mafNode *node);
@@ -56,5 +57,6 @@ protected:
   wxString m_File;
   wxString m_FileDir;
   mafVME   *m_Vme; 
+  int      m_ABSPos;
 };
 #endif
