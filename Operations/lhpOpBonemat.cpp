@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpBonemat.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-04-02 15:12:39 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2008-04-04 16:27:08 $
+  Version:   $Revision: 1.5 $
   Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -1206,7 +1206,8 @@ int lhpOpBonemat::Execute1()
   iarr->SetNumberOfValues(numMats);
   for (int j = 0; j < numMats; j++)
   {
-    iarr->InsertValue(j, j/*materialProperties[j]->id*/);
+    int materialAnsysId = j + 1;
+    iarr->InsertValue(j, materialAnsysId/*materialProperties[j]->id*/);
   }
 
   // add the ith data array to the field data
@@ -1269,7 +1270,9 @@ int lhpOpBonemat::Execute1()
     arrayE->SetTuple1(currentCell,val);
     val = vtkDoubleArray::SafeDownCast(fdata->GetArray("DENS"))->GetValue(index);
     arrayRo->SetValue(currentCell,val);
-    arrayMaterial->SetValue(currentCell,index);
+  
+    int materialAnsysId = index + 1;
+    arrayMaterial->SetValue(currentCell,materialAnsysId);
   }
 
   outputUG->Modified();
@@ -1977,7 +1980,8 @@ int lhpOpBonemat::Execute2()
   iarr->SetNumberOfValues(numMats);
   for (int j = 0; j < numMats; j++)
   {
-    iarr->InsertValue(j, j/*materialProperties[j]->id*/);
+    int materialAnsysId = j + 1;
+    iarr->InsertValue(j, materialAnsysId/*materialProperties[j]->id*/);
   }
 
   // add the ith data array to the field data
@@ -2038,7 +2042,8 @@ int lhpOpBonemat::Execute2()
     arrayE->SetTuple1(currentCell,val);
     val = vtkDoubleArray::SafeDownCast(fdata->GetArray("DENS"))->GetValue(index);
     arrayRo->SetValue(currentCell,val);
-    arrayMaterial->SetValue(currentCell,index);
+    int ansysMaterialId = index + 1;
+    arrayMaterial->SetValue(currentCell,ansysMaterialId);
   }
 
 
