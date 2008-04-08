@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpVMESurfaceScalarVarying.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-03-31 12:31:10 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2008-04-08 13:40:30 $
+  Version:   $Revision: 1.6 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -379,7 +379,7 @@ void lhpVMESurfaceScalarVarying::UpdateSurface()
       val = mat.get(it->first, m_CurrentTimeIndex);
       for (int s = 0; s < it->second->GetNumberOfIds(); s++)
       {
-        m_SurfaceScalars->SetValue(it->second->GetId(s), val);
+        m_SurfaceScalars->SetValue(it->second->GetId(s), (val + m_SurfaceScalars->GetValue(it->second->GetId(s)))/2); //modified the result scalar in order to calculate a simple mean between 2 signals
       }
     }
     double sr[2];
