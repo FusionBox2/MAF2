@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-03-14 10:59:28 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2008-04-09 09:32:11 $
+Version:   $Revision: 1.3 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -59,7 +59,7 @@ class lhpOpDownloadVME: public mafOp
 {
 public:
 
-	lhpOpDownloadVME(wxString label = "Upload Vme");
+	lhpOpDownloadVME(wxString label = "Download Vme");
 	~lhpOpDownloadVME(); 
 
 	mafTypeMacro(lhpOpDownloadVME, mafOp);

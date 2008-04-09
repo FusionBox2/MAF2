@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-03-18 10:11:54 $
-Version:   $Revision: 1.12 $
+Date:      $Date: 2008-04-09 09:32:11 $
+Version:   $Revision: 1.13 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -91,7 +91,7 @@ mafOp(label)
 
   //m_PythonExe ="C:\\Python25\\python.exe ";
   m_PythonExe ="python.exe ";
-  m_PythonwExe ="python.exe ";
+  m_PythonwExe ="pythonw.exe ";
   m_CurrentCache = m_CacheDir = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\UploadCache\\").c_str();
   m_IncomingDir = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\Incoming\\").c_str();
 
@@ -374,7 +374,7 @@ void lhpOpDownloadVME::OpDo()
     {
       //PROCESS NOT EXIST, CREATE SERVER AND CALL CLIENT
       wxString command2execute;
-      command2execute = m_PythonwExe;
+      command2execute = m_PythonExe;
       //command2execute.Append(m_PythonUploadFullPath.GetCStr());
       //wxMessageBox(wxString::Format("No process with pid = %ld.", m_Pid));
       m_FileName = "ThreadedClient.py ";
@@ -578,7 +578,7 @@ int lhpOpDownloadVME::CreateFileListFromBasket()
   // gui for selecting vme
   wxString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonExe;
+  command2execute = m_PythonwExe;
 
   command2execute.Append(" downloadSelectorApp.py ");
   command2execute.Append(m_User.GetName());
@@ -718,7 +718,7 @@ int lhpOpDownloadVME::ReconstructMSF(int indexFromBasketList)
 
   wxString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonExe;
+  command2execute = m_PythonwExe;
 
   command2execute.Append(" msfReconstructor.py ");
 
@@ -789,7 +789,7 @@ bool lhpOpDownloadVME::IsLHPBuilderVersionUpToDate()
   // get manual tags
   wxString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonExe;
+  command2execute = m_PythonwExe;
 
   command2execute.Append(" lhpDictionaryVersionChecker.py ");
   command2execute.Append(" ");

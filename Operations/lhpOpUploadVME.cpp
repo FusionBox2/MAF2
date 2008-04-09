@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-03-18 10:11:54 $
-Version:   $Revision: 1.52 $
+Date:      $Date: 2008-04-09 09:32:11 $
+Version:   $Revision: 1.53 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -99,7 +99,7 @@ mafOp(label)
 
   //m_PythonExe ="C:\\Python25\\python.exe ";
   m_PythonExe ="python.exe ";
-  m_PythonwExe ="python.exe ";
+  m_PythonwExe ="pythonw.exe ";
   m_CacheDir = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\UploadCache\\").c_str();
   m_OutgoingDir = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\Outgoing\\").c_str();
 
@@ -445,7 +445,7 @@ void lhpOpUploadVME::OpDo()
   {
     //PROCESS NOT EXIST, CREATE SERVER AND CALL CLIENT
     wxString command2execute;
-    command2execute = m_PythonwExe;
+    command2execute = m_PythonExe;
     //command2execute.Append(m_PythonUploadFullPath.GetCStr());
     //wxMessageBox(wxString::Format("No process with pid = %ld.", m_Pid));
     m_FileName = "ThreadedClient.py ";
@@ -701,7 +701,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
 
   // get auto tags
   wxString command2execute;
-  command2execute.Append(m_PythonExe.GetCStr());
+  command2execute.Append(m_PythonwExe.GetCStr());
   command2execute.Append(" lhpXMLDictionaryParser.py ");
   command2execute.Append(dictionaryToProcessFileName.GetCStr());
   command2execute.Append(" auto_tags ");
@@ -719,7 +719,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
 
   // get manual tags
   command2execute.Clear();
-  command2execute = m_PythonExe;
+  command2execute = m_PythonwExe;
   
   command2execute.Append(" lhpXMLDictionaryParser.py ");
   command2execute.Append(dictionaryToProcessFileName.GetCStr());
@@ -968,7 +968,7 @@ bool lhpOpUploadVME::IsLHPBuilderVersionUpToDate()
   // get manual tags
   wxString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonExe;
+  command2execute = m_PythonwExe;
 
   command2execute.Append(" lhpDictionaryVersionChecker.py ");
   command2execute.Append(" ");
@@ -1114,7 +1114,7 @@ int lhpOpUploadVME::AssembleDictionaries()
   // get manual tags
   wxString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonExe;
+  command2execute = m_PythonwExe;
 
   command2execute.Append(" lhpXMLDictionariesBuilder.py ");
   command2execute.Append(m_MasterXMLDictionaryFileName);
