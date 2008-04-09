@@ -203,7 +203,7 @@ class msfParser:
                         attrNode = attrs.get(attrName)
                         attrValue = attrNode.nodeValue
                         if (attrValue == tagName):
-                            assert(isinstance(attrNode,Node))
+                            #assert(isinstance(attrNode,Node))
                             self.__OutputTagItemNode = node
                         
     def GetVMEDataURLList(self, inputVme):
@@ -369,13 +369,15 @@ class msfParser:
         # change number of tags
         # <Item NumberOfTags="2" Type="mafTagArray">
         addedTagsNumber = 0
+
         for key in dictionaryOfTagsToBeAdded:
             value = (str(dictionaryOfTagsToBeAdded[key])).strip().replace("\"","")
             node = self.CreateSTRTagItem(key, value, domDoc)
             # self.PrintNode(node, sys.stdout,0)
             inputVmeTagArrayNode.appendChild(node)
             addedTagsNumber += 1
-        attrs = inputVmeTagArrayNode.attributes                             
+        attrs = inputVmeTagArrayNode.attributes    
+                        
         for attrName in attrs.keys():
             if Debug:               
                 print attrName
@@ -387,6 +389,7 @@ class msfParser:
                attrNode.nodeValue = str(int(oldTagsNumber)  +  addedTagsNumber)
                if Debug:    
                    print attrNode.nodeValue
+
     
     def CreateSTRTagItem(self, tagName, tagText, domDoc):
          """create a STR TagItam node ie
@@ -423,6 +426,9 @@ class msfParser:
     def GetTagNames(self, tagArrayNode):
         """Print the given tagArrayNode tags list, also return the tagList"""
         tagList = []
+        
+        
+
         for node in tagArrayNode.childNodes:
         #  search for a Node with name "Node"...0
             if node.nodeType == Node.ELEMENT_NODE:
@@ -434,12 +440,16 @@ class msfParser:
                         attrValue = attrNode.nodeValue
                         if attrName  == "Name":
                             tagList.append(attrValue)
+
+
         
         # print tagList         
-        print "\nVME tagArray node tag names:\n"
-        for el in range(len(tagList)):
-            print tagList[el]
-        print "Number of tags: " + str(len(tagList))
+        #print "\nVME tagArray node tag names:\n"
+        #for el in range(len(tagList)):
+        #    print tagList[el]
+
+        #print "Number of tags: " + str(len(tagList))
+
         return tagList
     
     def __GetVmeNodeByIdInternal(self, vmeTreeRootNode, vmeId):
