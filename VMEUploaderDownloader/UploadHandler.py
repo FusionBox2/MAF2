@@ -10,7 +10,7 @@ from Debug import Debug
 
 class UploadHandler:
     queue = None
-    def __init__(self, queue, observer , dirCache, id, usr , pwd, urlServer, manualTagFile):
+    def __init__(self, queue, observer , dirCache, id, usr , pwd, urlServer, manualTagFile, vmeName):
         UploadHandler.queue = queue
         self.observer = observer
         self.dirCache = dirCache
@@ -27,6 +27,7 @@ class UploadHandler:
         self.XMLURI = ""
         self.block = threading.Lock()
         self.threads = []
+        self.vmeName = vmeName
         self.existThread = 0
         self.proxyHost = ""
         self.proxyPort = 0
@@ -194,7 +195,7 @@ class UploadHandler:
         ws.setServer(self.urlServer)
         ws.ProxyURL = self.proxyHost
         ws.ProxyPort = self.proxyPort
-        out = ws.run('xmlupload', self.XMLURI)
+        out = ws.run('xmlupload', self.XMLURI, self.vmeName)
         
         os.chdir(oldDir)
 
@@ -262,8 +263,8 @@ class UploadHandler:
     def getBinaryFileSize(self):
         return os.stat(self.dirOutgoing + "\\" +self.getBinaryFile()).st_size
 		
-def createUploadHandler(queue, observer, dirCache, id , usr , pwd, urlServer, manualTagFile):
-    uploadHandler = UploadHandler(queue,observer, dirCache, id, usr , pwd, urlServer, manualTagFile)
+def createUploadHandler(queue, observer, dirCache, id , usr , pwd, urlServer, manualTagFile, vmeName):
+    uploadHandler = UploadHandler(queue,observer, dirCache, id, usr , pwd, urlServer, manualTagFile, vmeName)
     uploadHandler.upload()
     
 if __name__ == '__main__':

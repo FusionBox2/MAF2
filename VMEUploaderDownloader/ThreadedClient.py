@@ -102,7 +102,7 @@ class ThreadedClient:
         
         
         self.gui.createLabel(tuplaFromServer[7]) #tupla[7] is vme name         
-        self.threads.append(CustomThread.CustomThread(func=self.workerThreadUpload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[2], tuplaFromServer[1],tuplaFromServer[3],tuplaFromServer[4],tuplaFromServer[5], tuplaFromServer[6])))
+        self.threads.append(CustomThread.CustomThread(func=self.workerThreadUpload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[2], tuplaFromServer[1],tuplaFromServer[3],tuplaFromServer[4],tuplaFromServer[5], tuplaFromServer[6],tuplaFromServer[7])))
         self.threads[len(self.threads)-1].start()
     
     def createThreadForDownload(self, tuplaFromServer):
@@ -121,7 +121,7 @@ class ThreadedClient:
         self.threads.append(CustomThread.CustomThread(func=self.workerThreadDownload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[2], tuplaFromServer[6],tuplaFromServer[3],tuplaFromServer[4],tuplaFromServer[5],tuplaFromServer[1])))
         self.threads[len(self.threads)-1].start()
         
-    def workerThreadUpload(self, observer, dirCache , id, usr, pwd, urlServer, manualTagFile):
+    def workerThreadUpload(self, observer, dirCache , id, usr, pwd, urlServer, manualTagFile, vmeName):
         """
         This is where we handle the asynchronous I/O. For example, it may be
         a 'select()'.
@@ -130,7 +130,7 @@ class ThreadedClient:
         """
       
         try:
-            UploadHandler.createUploadHandler(self.queue, observer, dirCache , id, usr, pwd, urlServer, manualTagFile)
+            UploadHandler.createUploadHandler(self.queue, observer, dirCache , id, usr, pwd, urlServer, manualTagFile, vmeName)
         except:
             pass
         
