@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: VecProc.h,v $
   Language:  C++
-  Date:      $Date: 2008-04-14 12:00:28 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2008-04-14 13:58:15 $
+  Version:   $Revision: 1.6 $
   Authors:   Fedor Moiseev
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -31,7 +31,7 @@ public:
     VECTOR = 0,
     SCALAR
   };
-  Param(VarType type, bool dn = false, bool up = false):m_type(type), m_dn(dn), m_up(up){}
+  Param(VarType type, bool dn = false, bool up = false):m_type(type), m_dn(dn), m_up(up), m_valid(true){}
   //Param(const char *name, VarType type, bool dn = false, bool up = false):m_type(type), m_dn(dn), m_up(up),m_name(name){}
   const std::string& GetName(){return m_name;}
   VarType            GetType(){return m_type;}
