@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpMultiscaleExplore.cpp,v $
 Language:  C++
-Date:      $Date: 2008-01-28 16:36:30 $
-Version:   $Revision: 1.5 $
+Date:      $Date: 2008-04-14 14:22:08 $
+Version:   $Revision: 1.6 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -334,7 +334,7 @@ void lhpOpMultiscaleExplore::CreateOpDialog()
   mmgButton  *ZoomOutButton = new mmgButton(m_Dialog, ID_ZOOMOUT, "zoom out x2", p, wxSize(80,20));
   mmgButton  *CameraResetButton = new mmgButton(m_Dialog, ID_CAMERARESET, "reset camera", p, wxSize(80,20));
   mmgButton  *GoBackButton = new mmgButton(m_Dialog, ID_GOBACK, "go back", p, wxSize(80,20));
-  //mmgButton  *debug = new mmgButton(m_Dialog, ID_DEBUG, "debug", p, wxSize(80,20));
+  mmgButton  *debug = new mmgButton(m_Dialog, ID_DEBUG, "debug", p, wxSize(80,20));
 
   // display scale
   wxStaticText *scaleStaticTxt = new wxStaticText(m_Dialog, -1, "Current scale: ") ;
@@ -369,7 +369,7 @@ void lhpOpMultiscaleExplore::CreateOpDialog()
   ZoomOutButton->SetValidator(mmgValidator(this,ID_ZOOMOUT,ZoomOutButton));
   CameraResetButton->SetValidator(mmgValidator(this,ID_CAMERARESET,CameraResetButton));
   GoBackButton->SetValidator(mmgValidator(this,ID_GOBACK,GoBackButton));
-  //debug->SetValidator(mmgValidator(this,ID_DEBUG,debug));
+  debug->SetValidator(mmgValidator(this,ID_DEBUG,debug));
 
   unitsCombo->SetValidator(mmgValidator(this, ID_BASE_UNITS, unitsCombo, &m_BaseUnits)) ;
 
@@ -404,7 +404,7 @@ void lhpOpMultiscaleExplore::CreateOpDialog()
   h_sizer6->Add(ZoomOutButton, 0, wxLEFT);	
   h_sizer6->Add(CameraResetButton, 0, wxLEFT);	
   h_sizer6->Add(GoBackButton, 0, wxLEFT);	
-  //h_sizer6->Add(debug, 0, wxLEFT);	
+  h_sizer6->Add(debug, 0, wxLEFT);	
 
   wxBoxSizer *h_sizer8 = new wxBoxSizer(wxHORIZONTAL);
   h_sizer8->Add(scaleStaticTxt, 0, wxLEFT) ;
@@ -869,11 +869,11 @@ void lhpOpMultiscaleExplore::OnEvent(mafEventBase *maf_event)
 
     case ID_DEBUG:
       {
-/*        // Write system state to file
+        // Write system state to file
         std::fstream thing ;
         thing.open("C:/Documents and Settings/Nigel.DB6ZB32J/My Documents/Visual Studio Projects/MAF/Multiscale2/thing.txt", thing.out | thing.app) ;
         OnDebug(thing, GetRenderer()) ;
-        thing.close() ; */
+        thing.close() ;
         break ;
       }
 
@@ -1146,8 +1146,19 @@ void lhpOpMultiscaleExplore::OnStartRender(vtkRenderer *renderer)
         vtkActor *actori = mai->GetActor() ;
         vtkActor *actorj = maj->GetActor() ;
 
+        // Check whether both tokens are active, ie their data actors are too small.
+        // Tokens should not be declared touching unless they are both active,
+        // Otherwise an inactive token could make a visible one disappear.
+        int ii = GetMultiscaleUtility()->GetDataActorCorrespondingToToken(i) ;
+        int jj = GetMultiscaleUtility()->GetDataActorCorrespondingToToken(j) ;
+        lhpMultiscaleActor *maii = GetMultiscaleUtility()->GetMultiscaleActor(ii) ;
+        lhpMultiscaleActor *majj = GetMultiscaleUtility()->GetMultiscaleActor(jj) ;
+        bool bothActive = ((maii->GetScaleStatus() == TOO_SMALL) && (majj->GetScaleStatus() == TOO_SMALL)) ;
+
+        // get distance between tokens
         double distApart = GetMultiscaleUtility()->DistanceApartPixelUnits(actori, actorj, renderer) ;
-        if (distApart < TOKENSIZEMIN){
+
+        if ((distApart < TOKENSIZEMIN) && bothActive){
           if (!GetMultiscaleUtility()->TokensListedAsTouching(i,j)){
             // tokens were not touching, but now are - call event handler
             OnTokensOverlap(renderer, i, j) ;
