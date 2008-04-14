@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpUser.cpp,v $
 Language:  C++
-Date:      $Date: 2008-03-18 12:05:12 $
-Version:   $Revision: 1.6 $
+Date:      $Date: 2008-04-14 11:04:04 $
+Version:   $Revision: 1.7 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004
@@ -33,6 +33,7 @@ lhpUser::lhpUser()
 //----------------------------------------------------------------------------
 {
   m_PythonExe ="python.exe ";
+  m_PythonwExe ="pythonw.exe ";
   m_PythonUploadFullPath  = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\").c_str();
   
   m_ProxyURL = "";
@@ -74,7 +75,7 @@ bool lhpUser::ExecuteAuthenticationScript()
   // get manual tags
   wxString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonExe;
+  command2execute = m_PythonwExe;
 
   command2execute.Append(" lhpAuthenticationControl.py ");
   command2execute.Append(m_Username.GetCStr());

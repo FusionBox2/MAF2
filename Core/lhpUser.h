@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpUser.h,v $
 Language:  C++
-Date:      $Date: 2008-01-16 17:47:31 $
-Version:   $Revision: 1.3 $
+Date:      $Date: 2008-04-14 11:04:04 $
+Version:   $Revision: 1.4 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004
@@ -50,6 +50,7 @@ protected:
   mafString m_PythonUploadFullPath; //>directory where the scripts are
   mafString m_FileName; //>script file name
   mafString m_PythonExe; //>python  executable
+  mafString m_PythonwExe; //>python  executable
 
   mafString m_ProxyURL;
   mafString m_ProxyPort;
