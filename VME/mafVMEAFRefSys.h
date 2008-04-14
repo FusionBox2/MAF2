@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEAFRefSys.h,v $
   Language:  C++
-  Date:      $Date: 2008-03-06 22:10:47 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2008-04-14 12:03:18 $
+  Version:   $Revision: 1.6 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -30,6 +30,7 @@ class vtkTransformPolyDataFilter;
 class vtkTransform;
 class vtkAppendPolyData;
 class vtkPolyData;
+class mafVMELandmarkCloud;
 
 //----------------------------------------------------------------------------
 // class mafVMEAFRefSys
@@ -61,7 +62,8 @@ public:
   enum AFREFSYS_BONEID
   {
     ID_AFS_NOTDEFINED,
-    ID_AFS_PELVIS,
+    ID_AFS_FIRST,
+    ID_AFS_PELVIS = ID_AFS_FIRST,
     ID_AFS_RTHIGH,
     ID_AFS_LTHIGH,
     ID_AFS_RSHANK,
@@ -154,11 +156,11 @@ public:
 
   /** 
   Return vector for given name and timestamp from vector virtual machine*/
-  bool GetVector(const char *name, mafTimeStamp ts, V3d<double>& output){if(m_vm == NULL) return false;UpdateVM(ts);return m_vm->GetVector(name, output);}
+  bool GetVector(const char *name, mafTimeStamp ts, V3d<double>& output);
 
   /** 
   Return scalar for given name and timestamp from vector virtual machine*/
-  bool GetScalar(const char *name, mafTimeStamp ts,     double&  output){if(m_vm == NULL) return false;UpdateVM(ts);return m_vm->GetScalar(name, output);}
+  bool GetScalar(const char *name, mafTimeStamp ts,     double&  output);
 
 protected:
 
@@ -196,41 +198,40 @@ protected:
   /** Internally used to create a new instance of the GUI.*/
   virtual mmgGui *CreateGui();
 
-  vtkArrowSource            *m_XArrow;
-  vtkArrowSource            *m_YArrow;
-  vtkArrowSource            *m_ZArrow;
+  vtkArrowSource                                      *m_XArrow;
+  vtkArrowSource                                      *m_YArrow;
+  vtkArrowSource                                      *m_ZArrow;
 
-  vtkTransformPolyDataFilter*m_XAxis;
-  vtkTransform              *m_XAxisTransform;
+  vtkTransformPolyDataFilter                          *m_XAxis;
+  vtkTransform                                        *m_XAxisTransform;
 
-  vtkTransformPolyDataFilter*m_YAxis;
-  vtkTransform              *m_YAxisTransform;
+  vtkTransformPolyDataFilter                          *m_YAxis;
+  vtkTransform                                        *m_YAxisTransform;
 
-  vtkTransformPolyDataFilter*m_ZAxis;
-  vtkTransform              *m_ZAxisTransform;
+  vtkTransformPolyDataFilter                          *m_ZAxis;
+  vtkTransform                                        *m_ZAxisTransform;
 
-  vtkTransformPolyDataFilter*m_ScaleAxis;
-  vtkTransform              *m_ScaleAxisTransform;
+  vtkTransformPolyDataFilter                          *m_ScaleAxis;
+  vtkTransform                                        *m_ScaleAxisTransform;
 
-  vtkAppendPolyData         *m_Axes;
+  vtkAppendPolyData                                   *m_Axes;
 
-  double                    m_ScaleFactor;
+  double                                              m_ScaleFactor;
 
-  mafTransform *m_Transform; ///< pose matrix for the slicer plane
+  mafTransform                                        *m_Transform; ///< pose matrix for the slicer plane
 
-  double                         m_XOffset, m_YOffset, m_ZOffset;
-  double                         m_XRotate, m_YRotate, m_ZRotate;
-  VecManVM<double>               *m_vm;
-  std::vector<mafString>         m_scriptText;
-  int                            m_BoneID;
+  double                                              m_XOffset, m_YOffset, m_ZOffset;
+  double                                              m_XRotate, m_YRotate, m_ZRotate;
+  VecManVM<double>                                    *m_vm;
+  std::vector<mafString>                              m_scriptText;
+  int                                                 m_BoneID;
 
-  int                            m_Active;
-  std::map<mafString, mafString> m_lmMapping;
-  std::map<int, mafString>       m_buttonMapping;
-  int                            m_textSize;
-  bool                           m_VMValid;
-  mafTimeStamp                   m_VMTime;
-
+  int                                                 m_Active;
+  std::map<mafString, mafString>                      m_lmMapping;
+  std::map<int, mafString>                            m_buttonMapping;
+  int                                                 m_textSize;
+  bool                                                m_VMValid;
+  mafTimeStamp                                        m_VMTime;
 
 private:
   mafVMEAFRefSys(const mafVMERefSys&); // Not implemented

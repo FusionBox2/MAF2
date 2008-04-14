@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoLnSurf.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-03-06 12:06:12 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2008-04-14 12:03:18 $
+  Version:   $Revision: 1.5 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -42,7 +42,7 @@
 #include "vtkCellArray.h"
 #include "vtkCellData.h"
 #include "vtkPolyData.h"
-#include <V3d.h>
+#include <vectors.h>
 #include <forarray.h>
 #include <splines.h>
 
@@ -172,7 +172,7 @@ static void _addSegments(const std::vector<V3d<double> >& coords, unsigned from,
   if(to <= from || to > coords.size())
     return;
   for(unsigned i = from; i < to; i++)
-    pnts->InsertNextPoint(coords[i].val);
+    pnts->InsertNextPoint(coords[i].components);
   for(unsigned i = from + 1; i < to; i++)
   {
     pts[0] = pnts->GetNumberOfPoints() - (to - i) - 1;
@@ -241,7 +241,7 @@ void mmoLnSurf::OpDo()
         coords.clear();
         for(wxInt32 nI = 0; nI < cloud->GetNumberOfLandmarks(); nI++)
         {
-          cloud->GetLandmark(nI, x.val);
+          cloud->GetLandmark(nI, x.components);
           if(coords.size() == 0 || ((coords[coords.size() - 1] | x) > 4.0) || cloudCounter <= 2)
             coords.push_back(x);
           else

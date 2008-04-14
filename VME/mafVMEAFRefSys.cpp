@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEAFRefSys.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-03-06 22:10:47 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2008-04-14 12:03:18 $
+  Version:   $Revision: 1.6 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -210,8 +210,11 @@ int mafVMEAFRefSys::DeepCopy(mafNode *a)
     mafVMEAFRefSys *vme_ref_sys=mafVMEAFRefSys::SafeDownCast(a);
     m_Transform->SetMatrix(vme_ref_sys->m_Transform->GetMatrix());
     SetScaleFactor(vme_ref_sys->GetScaleFactor());
-    vme_ref_sys->m_scriptText = m_scriptText;
-    vme_ref_sys->ConvertTextToVM(true);
+    m_scriptText = vme_ref_sys->m_scriptText;
+    ConvertTextToVM(false);
+    m_lmMapping = vme_ref_sys->m_lmMapping;
+    m_BoneID    = vme_ref_sys->m_BoneID;
+    m_Active    = vme_ref_sys->m_Active;
     mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
     if (dpipe)
     {
@@ -711,24 +714,28 @@ bool mafVMEAFRefSys::UpdateVM(mafTimeStamp ts)
   {
     if(m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
     {
-      V3d<double> vec;
-      std::map<mafString, mafString>::iterator it = m_lmMapping.find(m_vm->getInputs()[i].first.c_str());
-      if(it == m_lmMapping.end())
-        break;
-      mafVMELandmarkCloud *tmpLink = mafVMELandmarkCloud::SafeDownCast(GetLink(m_vm->getInputs()[i].first.c_str()));
-      mafVMELandmarkCloud *lmcLink = (tmpLink != NULL) ? tmpLink : parentLMC;
-      if(lmcLink != NULL)
-        SetRefSysLink(m_vm->getInputs()[i].first.c_str(), parentLMC);
-      else
-        continue;
-      int ind = lmcLink->FindLandmarkIndex(it->second.GetCStr());
-      if(ind == -1 || !lmcLink->GetLandmarkVisibility(ind, ts))
+      V3d<double>         vec;
+      mafVMELandmarkCloud *lmcLink = NULL;
+      int                 ind      = -1;
+      {
+        std::map<mafString, mafString>::iterator it = m_lmMapping.find(m_vm->getInputs()[i].first.c_str());
+        if(it == m_lmMapping.end())
+          continue;
+        mafVMELandmarkCloud *tmpLink = mafVMELandmarkCloud::SafeDownCast(GetLink(m_vm->getInputs()[i].first.c_str()));
+        lmcLink = (tmpLink != NULL) ? tmpLink : parentLMC;
+        if(lmcLink != NULL)
+        {
+          SetRefSysLink(m_vm->getInputs()[i].first.c_str(), lmcLink);
+          ind = lmcLink->FindLandmarkIndex(it->second.GetCStr());
+        }
+      }
+      if(lmcLink == NULL || ind == -1 || !lmcLink->GetLandmarkVisibility(ind, ts))
         continue;
       mafMatrix cloudAbs;
       double invec[4];
       double outvec[4];
       lmcLink->GetOutput()->GetAbsMatrix(cloudAbs, ts);
-      lmcLink->GetLandmark(ind, vec.val, ts);
+      lmcLink->GetLandmark(ind, vec.components, ts);
       for(unsigned indx = 0; indx < 3; indx++)
         invec[indx] = vec[indx];
       invec[3] = 1.0;
@@ -756,7 +763,7 @@ bool mafVMEAFRefSys::UpdateVM(mafTimeStamp ts)
 void mafVMEAFRefSys::CalculateMatrix(mafMatrix& mat, mafTimeStamp ts)
 //-----------------------------------------------------------------------
 {
-  UpdateVM(ts);
+  bool calculated = UpdateVM(ts);
 
   DiMatrix       mTran, mTrant, mTrano;
   vtkMatrix4x4  *mVTK = NULL;
@@ -765,9 +772,35 @@ void mafVMEAFRefSys::CalculateMatrix(mafMatrix& mat, mafTimeStamp ts)
 
   V3d<double> x, y, z, p;
 
+  Param<double> *XParam = NULL;
+  Param<double> *YParam = NULL;
+  Param<double> *ZParam = NULL;
+  Param<double> *PParam = NULL;
+
+  XParam = m_vm->GetParam("X");
+  YParam = m_vm->GetParam("Y");
+  ZParam = m_vm->GetParam("Z");
+  PParam = m_vm->GetParam("P");
+
+  if(XParam == NULL || XParam->GetType() != Param<double>::VECTOR || !XParam->IsValid())
+    calculated = false;
+  else 
+    x = XParam->GetVector();
+  if(YParam == NULL || YParam->GetType() != Param<double>::VECTOR || !YParam->IsValid())
+    calculated = false;
+  else 
+    y = YParam->GetVector();
+  if(ZParam == NULL || ZParam->GetType() != Param<double>::VECTOR || !ZParam->IsValid())
+    calculated = false;
+  else 
+    z = ZParam->GetVector();
+  if(PParam == NULL || PParam->GetType() != Param<double>::VECTOR || !PParam->IsValid())
+    calculated = false;
+  else 
+    p = PParam->GetVector();
+
   std::pair<const char*, V3d<double>*> vects[4] = {std::make_pair("X", &x), std::make_pair("Y", &y), std::make_pair("Z", &z), std::make_pair("P", &p)};
 
-  bool calculated = (m_vm != NULL);
   for(unsigned i = 0; i < 4 && calculated; i++)
   {
     if(!m_vm->GetVector(vects[i].first, *vects[i].second))
@@ -812,6 +845,43 @@ void mafVMEAFRefSys::CalculateMatrix(mafMatrix& mat, mafTimeStamp ts)
   mat = mVTK;
   vtkDEL(mVTK);
 }
+
+//-----------------------------------------------------------------------
+bool mafVMEAFRefSys::GetVector(const char *name, mafTimeStamp ts, V3d<double>& output)
+//-----------------------------------------------------------------------
+{
+  if(m_vm == NULL) 
+    return false;
+  Param<double> *tmp = NULL;
+
+  UpdateVM(ts);
+
+  tmp = m_vm->GetParam(name);
+
+  if(tmp == NULL || tmp->GetType() != Param<double>::VECTOR || !tmp->IsValid())
+    return false;
+  output = tmp->GetVector();
+  return true;
+}
+
+//-----------------------------------------------------------------------
+bool mafVMEAFRefSys::GetScalar(const char *name, mafTimeStamp ts, double&  output)
+//-----------------------------------------------------------------------
+{
+  if(m_vm == NULL) 
+    return false;
+  Param<double> *tmp = NULL;
+
+  UpdateVM(ts);
+
+  tmp = m_vm->GetParam(name);
+
+  if(tmp == NULL || tmp->GetType() != Param<double>::SCALAR || !tmp->IsValid())
+    return false;
+  output = tmp->GetScalar();
+  return true;
+}
+
 
 //-----------------------------------------------------------------------
 void mafVMEAFRefSys::InternalUpdate()

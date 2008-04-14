@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoAFSys.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-03-06 22:11:18 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2008-04-14 12:03:18 $
+  Version:   $Revision: 1.5 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -197,6 +197,7 @@ void mmoAFSys::OpRun()
     {
       m_Radio = nm;
       m_RefSys->SetScriptText(m_predefinedScripts[m_Radio].m_Script);
+      m_RefSys->SetBoneID(m_predefinedScripts[m_Radio].m_BoneID);
       break;
     }
   }
