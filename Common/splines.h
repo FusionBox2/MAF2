@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: splines.h,v $
   Language:  C++
-  Date:      $Date: 2007-10-19 10:05:53 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-04-14 12:00:28 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -14,7 +14,7 @@
 #define SPLINES_HEADER
 
 #include "forarray.h"
-#include "V3d.h"
+#include "vectors.h"
 #include <limits>
 
 #ifndef max_val
@@ -835,7 +835,7 @@ void createSurface(const std::vector<V3d<Type> > &gridValue, unsigned numlines, 
     {
       for(unsigned i = 0; i < pointsOut; i++)
       {
-        newPts->InsertNextPoint(output[j][i].val);
+        newPts->InsertNextPoint(output[j][i].components);
       }
     }
   }

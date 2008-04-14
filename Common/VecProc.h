@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: VecProc.h,v $
   Language:  C++
-  Date:      $Date: 2008-03-06 22:08:57 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2008-04-14 12:00:28 $
+  Version:   $Revision: 1.5 $
   Authors:   Fedor Moiseev
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -18,7 +18,7 @@
 #include <map>
 #include <string>
 #include <math.h>
-#include "V3d.h"
+#include "vectors.h"
 
 
 
@@ -32,29 +32,32 @@ public:
     SCALAR
   };
   Param(VarType type, bool dn = false, bool up = false):m_type(type), m_dn(dn), m_up(up){}
-  VarType          GetType(){return m_type;}
-  Type&            GetScalar(){return m_value[0];}
-  const Type&      GetScalar()const{return m_value[0];}
-  bool             IsUpLimited()const{return m_up;}
-  bool             IsDnLimited()const{return m_dn;}
-  bool&            UpLimited(){return m_up;}
-  bool&            DnLimited(){return m_dn;}
-  Type&            GetUpLimit(){return m_upLimit;}
-  const Type&      GetUpLimit()const{return m_upLimit;}
-  Type&            GetDnLimit(){return m_dnLimit;}
-  const Type&      GetDnLimit()const{return m_dnLimit;}
-  V3d<Type>&       GetVector(){return m_value;}
-  const V3d<Type>& GetVector()const{return m_value;}
-  bool&            GetValid(){return m_valid;}
-  bool             IsValid()const{return m_valid;}
+  //Param(const char *name, VarType type, bool dn = false, bool up = false):m_type(type), m_dn(dn), m_up(up),m_name(name){}
+  const std::string& GetName(){return m_name;}
+  VarType            GetType(){return m_type;}
+  Type&              GetScalar(){return m_value[0];}
+  const Type&        GetScalar()const{return m_value[0];}
+  bool               IsUpLimited()const{return m_up;}
+  bool               IsDnLimited()const{return m_dn;}
+  bool&              UpLimited(){return m_up;}
+  bool&              DnLimited(){return m_dn;}
+  Type&              GetUpLimit(){return m_upLimit;}
+  const Type&        GetUpLimit()const{return m_upLimit;}
+  Type&              GetDnLimit(){return m_dnLimit;}
+  const Type&        GetDnLimit()const{return m_dnLimit;}
+  V3d<Type>&         GetVector(){return m_value;}
+  const V3d<Type>&   GetVector()const{return m_value;}
+  bool&              GetValid(){return m_valid;}
+  bool               IsValid()const{return m_valid;}
 private:
-  Type          m_upLimit;
-  Type          m_dnLimit;
-  bool          m_up;
-  bool          m_dn;
-  V3d<Type>     m_value;
-  bool          m_valid;
-  const VarType m_type;
+  Type              m_upLimit;
+  Type              m_dnLimit;
+  bool              m_up;
+  bool              m_dn;
+  V3d<Type>         m_value;
+  bool              m_valid;
+  const VarType     m_type;
+  //const std::string m_name;
 };
 
 template <class Type>
@@ -420,7 +423,7 @@ class Normalize : public Oper<Type>
 public:
   Normalize()
   {
-    DEFINE_FIELD(out, true, false);
+    DEFINE_FIELD(out, true, true);
   }
   bool postRead(){return true;}
   bool process(){if(!checkInputFields())return false;Type ln = m_out->GetVector().length2(); if(ln != Type(0)) m_out->GetVector() /= sqrt(ln);validateOutputFields();return true;}
@@ -437,8 +440,8 @@ public:
   const std::vector<std::pair<std::string, Param<Type>*> > &getInputs(){return m_inputs;}
   bool        ProcessString(const char *str);
   Param<Type> *GetParam(const char *name);
-  bool        GetVector(const char *name, V3d<Type>& output){Param<double>* it = GetParam(name);if(it == NULL && it->GetType() != Param<double>::VECTOR && !it->IsValid())return false;output = it->GetVector();return true;}
-  bool        GetScalar(const char *name,     Type&  output){Param<double>* it = GetParam(name);if(it == NULL && it->GetType() != Param<double>::SCALAR && !it->IsValid())return false;output = it->GetScalar();return true;}
+  bool        GetVector(const char *name, V3d<Type>& output){Param<double>* it = GetParam(name);if(it == NULL || it->GetType() != Param<double>::VECTOR || !it->IsValid())return false;output = it->GetVector();return true;}
+  bool        GetScalar(const char *name,     Type&  output){Param<double>* it = GetParam(name);if(it == NULL || it->GetType() != Param<double>::SCALAR || !it->IsValid())return false;output = it->GetScalar();return true;}
   void        Preexecute();
   bool        Execute();
   ~VecManVM(){Clean();}
@@ -449,10 +452,10 @@ private:
   bool        IsFloatCorrect(const char *string);
   Param<Type> *ParseVector(const char *name, bool input);
   Param<Type> *ParseScalar(const char *name, bool input, bool constant);
-  std::vector<Oper<Type>*>                            m_operators;
-  std::map<std::string, Param<Type>*>                 m_operands;
-  std::vector<Param<Type>*>                           m_constants;
-  std::vector<std::pair<std::string, Param<Type>*> >  m_inputs;
+  std::vector<Oper<Type>*>                           m_operators;
+  std::map<std::string, Param<Type>*>                m_operands;
+  std::vector<Param<Type>*>                          m_constants;
+  std::vector<std::pair<std::string, Param<Type>*> > m_inputs;
 };
 
 template <class Type>
@@ -596,7 +599,7 @@ template <class Type>
 Param<Type> *VecManVM<Type>::ParseVector(const char *name, bool input)
 {
   Param<Type> *o = NULL;
-  std::map<std::string, Param<Type>*>::iterator it = m_operands.find(name);
+  std::map<std::string, Param<Type>*>::iterator  it = m_operands.find(name);
   if(it == m_operands.end())
   {
     o = new Param<Type>(Param<Type>::VECTOR);

@@ -6,11 +6,13 @@ PROJECT(lhpCommon)
 
 # Set your list of sources here.
 SET(PROJECT_SRCS
+mafJointAnalysis.cpp
+mafJointAnalysis.h
 mafPlotMath.cpp
 mafPlotMath.h
 forarray.h
 VecProc.h
-V3d.h
+vectors.h
 splines.h
 )
 
