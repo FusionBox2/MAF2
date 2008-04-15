@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-04-09 09:32:11 $
-Version:   $Revision: 1.53 $
+Date:      $Date: 2008-04-15 10:09:08 $
+Version:   $Revision: 1.54 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -331,7 +331,7 @@ void lhpOpUploadVME::OpDo()
 
   //EDIT TAG
   wxString command2execute;
-  command2execute = m_PythonwExe;
+  command2execute = m_PythonExe;
   // script for client
   m_FileName = "lhpEditVMETag.py ";
   command2execute.Append(m_FileName.GetCStr());
