@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-04-09 09:32:11 $
-Version:   $Revision: 1.13 $
+Date:      $Date: 2008-04-15 14:13:23 $
+Version:   $Revision: 1.14 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -428,7 +428,7 @@ void lhpOpDownloadVME::OpDo()
 void lhpOpDownloadVME::OpStop(int result)   
 //----------------------------------------------------------------------------
 {
-  HideGui();
+  //HideGui();
 	mafEventMacro(mafEvent(this,result));
 }
 //----------------------------------------------------------------------------
@@ -551,7 +551,7 @@ bool lhpOpDownloadVME::CheckLogin()
 void lhpOpDownloadVME::CreateGui()
 //----------------------------------------------------------------------------
 {
-  m_Gui = new mmgGui(this);
+  /*m_Gui = new mmgGui(this);
 
   m_Gui->Divider(2);
 
@@ -563,7 +563,7 @@ void lhpOpDownloadVME::CreateGui()
  
   m_Gui->OkCancel(); 
   m_Gui->Label("");
-  m_Gui->Update();
+  m_Gui->Update();*/
 
 }
 //----------------------------------------------------------------------------
