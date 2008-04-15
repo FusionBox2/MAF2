@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpUser.cpp,v $
 Language:  C++
-Date:      $Date: 2008-04-14 11:04:04 $
-Version:   $Revision: 1.7 $
+Date:      $Date: 2008-04-15 14:55:26 $
+Version:   $Revision: 1.8 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004
@@ -75,7 +75,8 @@ bool lhpUser::ExecuteAuthenticationScript()
   // get manual tags
   wxString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonwExe;
+  //command2execute = m_PythonwExe;
+  command2execute = m_PythonExe;
 
   command2execute.Append(" lhpAuthenticationControl.py ");
   command2execute.Append(m_Username.GetCStr());
@@ -99,6 +100,10 @@ bool lhpUser::ExecuteAuthenticationScript()
 
   pid = wxExecute(command2execute, output, errors);
 
+  if (output.size() == 0)
+  {
+    return false;
+  }
 
   mafLogMessage("Command Output Messages:");
   for (int i = 0; i < output.size(); i++)
@@ -132,5 +137,4 @@ bool lhpUser::ExecuteAuthenticationScript()
   {
     return false;
   }  
-
 }
