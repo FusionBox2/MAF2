@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-04-15 10:09:08 $
-Version:   $Revision: 1.54 $
+Date:      $Date: 2008-04-15 14:25:56 $
+Version:   $Revision: 1.55 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -532,7 +532,7 @@ void lhpOpUploadVME::SetDictionary(int subDictionary)
 void lhpOpUploadVME::OpStop(int result)   
 //----------------------------------------------------------------------------
 {
-  HideGui();
+  if(m_Gui) HideGui();
 	mafEventMacro(mafEvent(this,result));
 }
 //----------------------------------------------------------------------------
@@ -701,7 +701,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
 
   // get auto tags
   wxString command2execute;
-  command2execute.Append(m_PythonwExe.GetCStr());
+  command2execute.Append(m_PythonExe.GetCStr());
   command2execute.Append(" lhpXMLDictionaryParser.py ");
   command2execute.Append(dictionaryToProcessFileName.GetCStr());
   command2execute.Append(" auto_tags ");
