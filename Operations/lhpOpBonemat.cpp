@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpBonemat.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-04-04 16:27:08 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2008-04-16 09:38:29 $
+  Version:   $Revision: 1.6 $
   Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -537,7 +537,14 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
     switch(e->GetId())
     {
       case wxOK:
-        OpStop(OP_RUN_OK);
+        {
+          //WORKAROUND CODE 
+          //referred to bug 933
+          mafEventMacro(mafEvent(this,VME_SHOW, m_Input, false));
+          mafEventMacro(mafEvent(this,VME_SHOW, m_Input, true));
+          //END WORKAROUND CODE
+          OpStop(OP_RUN_OK);
+        }
       break;
       case wxCANCEL:
         mafVMEMesh::SafeDownCast(m_Input)->DeepCopy(m_OriginalVMEMesh);
