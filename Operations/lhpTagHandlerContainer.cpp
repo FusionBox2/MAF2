@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-04-09 09:33:22 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2008-04-16 10:37:30 $
+  Version:   $Revision: 1.14 $
   Authors:   Stefano Perticoni - Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -35,6 +35,7 @@
 #include "mafVMEOutputPolyline.h"
 #include "mafVMEOutputVolume.h"
 #include "mafVMEOutputPointSet.h"
+#include "mafVMEGenericAbstract.h"
 
 
 #include <string>
@@ -505,16 +506,32 @@ void lhpTagHandler_L0000_resource_data_TimeSpace_VMEabsoluteMatrixPose::HandleAu
 {
 	mafVME *vme = cargo->GetInputVme();
 	mafString value;
-	mafAbsMatrixPipe *absMatrixPipe = vme->GetAbsMatrixPipe();
+  std::vector<mafTimeStamp> timeStamps;
+  mafAbsMatrixPipe *absMatrixPipe;
+  long finalTimeStamps = 0;
 
-	std::vector<mafTimeStamp> timeStamps;
-	vme->GetAbsTimeStamps(timeStamps);
-	
+  if (vme->IsAnimated())
+  {
+    mafVMEGenericAbstract *vmeGeneric = mafVMEGenericAbstract::SafeDownCast(vme);
+    if (vmeGeneric != NULL)
+    {
+      vmeGeneric->GetMatrixTimeStamps(timeStamps);
+      finalTimeStamps = timeStamps.size();
+    }
+  }
+  else
+  {
+    vme->GetAbsTimeStamps(timeStamps);
+    finalTimeStamps = 1;
+  }
+
+  
+  absMatrixPipe = vme->GetAbsMatrixPipe();
+
 	long timeCount;
-	for(timeCount = 0; timeCount < timeStamps.size(); timeCount++)
+	for(timeCount = 0; timeCount < finalTimeStamps; timeCount++)
 	{
 		absMatrixPipe->SetTimeStamp(timeStamps[timeCount]);
-   
 		value << absMatrixPipe->GetMatrix();
 	}
 
