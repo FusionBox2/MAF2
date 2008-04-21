@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterC3D.h,v $
   Language:  C++
-  Date:      $Date: 2008-02-07 11:16:08 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2008-04-21 11:37:02 $
+  Version:   $Revision: 1.5 $
   Authors:   Daniele  Giunchi
 ==========================================================================
   Copyright (c) 2002/2004
@@ -92,6 +92,23 @@ public:
 
   /* Get moment vmes from a std list*/
   mafVMEVector *GetMomentVME(int index=0){if(m_intData.empty()) return NULL; return(index>=0 && index<m_intData[0].m_MomentList.size())?m_intData[0].m_MomentList[index]:NULL;}
+
+  /* Set/Get Trajectory import flag*/
+  void SetImportTrajectories(int flag){m_ImportTrajectoriesFlag = flag;}
+  int  GetImportTrajectories(){return m_ImportTrajectoriesFlag;}
+
+  /* Set/Get Analog import flag*/
+  void SetImportAnalog(int flag){m_ImportAnalogFlag = flag;}
+  int  GetImportAnalog(){return m_ImportAnalogFlag;}
+
+  /* Set/Get Platform import flag*/
+  void SetImportPlatform(int flag){m_ImportPlatformFlag = flag;}
+  int  GetImportPlatform(){return m_ImportPlatformFlag;}
+
+  /* Set/Get Event import flag*/
+  void SetImportEvent(int flag){m_ImportEventFlag = flag;}
+  int  GetImportEvent(){return m_ImportEventFlag;}
+
   
 
 protected:
