@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-04-15 14:56:42 $
-Version:   $Revision: 1.56 $
+Date:      $Date: 2008-04-21 07:56:44 $
+Version:   $Revision: 1.57 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -202,6 +202,7 @@ void lhpOpUploadVME::OpRun()
 
   if(upToDate)
   {
+    mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
     CreateGui();
     ShowGui();
   }
@@ -342,9 +343,6 @@ void lhpOpUploadVME::OpDo()
   command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
   command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //vme id
   command2execute.Append(wxString::Format("%s", m_CsvName.c_str())); //manualTagFile
-
-
-  mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
 
   //wxMessageBox(wxString::Format("Process %ld is running.", m_Pid));
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
@@ -653,7 +651,6 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
 
   //def estRunAutoTags(self):
   //xmlDict = r'.\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.xml'
-  //lhpXMLDictionaryParser.run(xmlDict,"manual_tags", "manual_tags.txt")
 
   m_MasterXMLDictionaryFileName = this->GetXMLDictionaryFileName(m_MasterXMLDictionaryFilePrefix);
   if (m_MasterXMLDictionaryFileName == "NOT FOUND")
