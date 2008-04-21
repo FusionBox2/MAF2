@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-03-10 14:41:14 $
-  Version:   $Revision: 1.49 $
+  Date:      $Date: 2008-04-21 08:18:01 $
+  Version:   $Revision: 1.50 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -301,7 +301,7 @@ bool lhpBuilderApp::OnInit()
 
   // View Analog graph
   mafViewVTK *graph = new mafViewVTK("Analog Graph", CAMERA_PERSPECTIVE, false);
-  graph->PlugVisualPipe("medVMEAnalog", "medPipeGraph");
+  graph->PlugVisualPipe("medVMEAnalog", "medPipeGraph",MUTEX);
   m_Logic->Plug(graph);
 
   //View Global Slice
