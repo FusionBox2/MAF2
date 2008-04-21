@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterC3D.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-02-19 11:07:51 $
-  Version:   $Revision: 1.10 $
+  Date:      $Date: 2008-04-21 11:36:14 $
+  Version:   $Revision: 1.11 $
   Authors:   Daniele  Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -378,8 +378,8 @@ void lhpOpImporterC3D::Initialize(const mafString &fullFileName, lhpOpImporterC3
   intData.m_NumEvents = getEvents();              //events number
 
   //derived
-  intData.m_TrajectorySamplePeriod = ((double)intData.m_LengthMs/(double)intData.m_NumFrames);
-  intData.m_AnalogSamplePeriod = ((double)intData.m_LengthMs/(double)intData.m_NumSamples);
+  intData.m_TrajectorySamplePeriod = ((double)intData.m_LengthMs/(double)intData.m_NumFrames) / 1000.0;
+  intData.m_AnalogSamplePeriod = ((double)intData.m_LengthMs/(double)intData.m_NumSamples) / 1000.0;
   intData.m_VectogramSamplePeriod = intData.m_AnalogSamplePeriod;
 
   wxString fileName = fullFileName.GetCStr();
