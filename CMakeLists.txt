@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2008-03-06 12:37:33 $
-#   Version:   $Revision: 1.26 $
+#   Date:      $Date: 2008-04-23 12:12:40 $
+#   Version:   $Revision: 1.27 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -50,7 +50,6 @@ OPTION(BUILD_TESTING "Build the testing tree." OFF)
 #-----------------------------------------------------------------------------
 
 INCLUDE("${PROJECT_SOURCE_DIR}/CMakeModules/FindMAF.cmake")
-INCLUDE("${MAF_BINARY_PATH}/MAFConfig.cmake")
 
 # find MAF library
 IF(MAF_FOUND)
@@ -59,7 +58,6 @@ IF(MAF_FOUND)
 
   # Find the Medical library 
   INCLUDE("${PROJECT_SOURCE_DIR}/CMakeModules/FindMED.cmake")
-  INCLUDE("${MED_BINARY_PATH}/MEDConfig.cmake")
 
   IF(MED_FOUND)
     INCLUDE("${MED_USE_FILE}")
@@ -69,16 +67,9 @@ IF(MAF_FOUND)
       
   # Add single dirs to inclusion path
   INCLUDE_DIRECTORIES(BEFORE ".")
-  INCLUDE_DIRECTORIES(${LHP_BINARY_DIR})
-  INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/Application)
-  INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/Core)
-  INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/Common)
-  INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/Gui)
-  INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/Operations)
-  INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/VME)
-  INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/Views)
-  INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/vtkLHP)
-  INCLUDE_DIRECTORIES(${LHP_BINARY_DIR}/vtkLHP)
+  INCLUDE_DIRECTORIES("${LHP_BINARY_DIR}" "${LHP_SOURCE_DIR}/Application" "${LHP_SOURCE_DIR}/Core" "${LHP_SOURCE_DIR}/Common" "${LHP_SOURCE_DIR}/Gui"
+                      "${LHP_SOURCE_DIR}/Operations" "${LHP_SOURCE_DIR}/VME" "${LHP_SOURCE_DIR}/Views" "${LHP_SOURCE_DIR}/vtkLHP" 
+                      "${LHP_BINARY_DIR}/vtkLHP")
   
   SUBDIRS (Core)
   SUBDIRS (vtkLHP)
