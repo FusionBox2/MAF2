@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpVMESurfaceScalarVarying.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-04-08 13:40:30 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2008-04-23 12:12:55 $
+  Version:   $Revision: 1.7 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -530,7 +530,7 @@ mmgGui* lhpVMESurfaceScalarVarying::CreateGui()
   // update the linked scalars if there are some.
   m_Gui->Bool(ID_EDIT_SCALAR_POSITION,_("Edit scalar"),&m_EditMode, 1);
   m_Gui->Label("available scalars:", true);
-  m_ScalarsAvailableList = m_Gui->CheckList(ID_LIST_SCALARS_AVAILABLES);
+  m_ScalarsAvailableList = m_Gui->CheckList(ID_LIST_SCALARS_AVAILABLES, "", 100);
   m_Gui->Integer(ID_RADIUS, _("radius"), &m_Radius, 1);
   m_Gui->Divider();
   FillScalarsName(false);
