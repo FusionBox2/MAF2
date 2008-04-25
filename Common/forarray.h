@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: forarray.h,v $
   Language:  C++
-  Date:      $Date: 2007-10-19 10:05:53 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-04-25 14:00:31 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -44,9 +44,9 @@ public:
   //reinitialization by size and value
   void assign(size_t _Newsize, const Type& _val= Type(0)){m_vector.assign(_Newsize + 4, _val);}
   //returns size of array
-  size_t size() const {return std::vector<Type>::size() - 4;}
+  size_t size() const {return m_vector.size() - 4;}
   //resize array 
-  void resize(size_t _Newsize){std::vector<Type>::resize(_Newsize + 4, Type(0)); }
+  void resize(size_t _Newsize){m_vector.resize(_Newsize + 4, Type(0)); }
   //set offset of subarray definition
   int setOffset(int offset){int tmp = m_offset;m_offset = offset;return tmp;}
   //get offset of subarray definition
