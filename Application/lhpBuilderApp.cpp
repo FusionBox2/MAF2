@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-04-21 08:18:01 $
-  Version:   $Revision: 1.50 $
+  Date:      $Date: 2008-04-28 09:30:54 $
+  Version:   $Revision: 1.51 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -71,13 +71,13 @@
 #include "mafOpImporterVRML.h"
 #include "mafOpImporterRAWVolume.h"
 #include "mafOpExporterRaw.h"
-#include "mmoRAWImporterImages.h"
+#include "medOpImporterRAWImages.h"
 #include "mafOpExtractIsosurface.h"
 #include "mafOpCrop.h"
 #include "mafOpVOIDensity.h"
 #include "medOpVolumeResample.h"
 #include "mafOpAddLandmark.h"
-#include "mmoRegisterClusters.h"
+#include "medOpRegisterClusters.h"
 #include "mafOpCreateSurfaceParametric.h"
 #include "mmoBuildHierarchy.h"
 #include "mmoTimeReduce.h"
@@ -93,19 +93,17 @@
 #include "medOpScaleDataset.h"
 #include "medOpMove.h"
 //#include "mafOpMAFTransform.h"
-#include "mmoGRFImporterWS.h"
+#include "medOpImporterGRFWS.h"
 #include "medPipeGraph.h"
 #include "mafVMERawMotionData.h" 
 #include "lhpOpImporterC3D.h" 
-#include "mmoMotionDataImporter.h"
-#include "mmoLandmarkExporter.h"
-#include "mmoClassicICPRegistration.h"
+#include "medOpImporterMotionData.h"
+#include "medOpExporterLandmark.h"
+#include "medOpClassicICPRegistration.h"
 #include "mafOpImporterMesh.h"
 #include "mafOpImporterVMEDataSetAttributes.h"
-#include "mmoLandmarkImporter.h"
-#include "mmoLandmarkImporterTXT.h"
-#include "mmoLandmarkImporterWS.h"
-#include "mmoLandmarkImporter.h"
+#include "medOpImporterLandmark.h"
+#include "medOpImporterLandmarkWS.h"
 #include "lhpOpBonemat.h"
 #include "lhpOpImporterAnsysInputFile.h"
 #include "lhpOpExporterAnsysInputFile.h"
@@ -119,7 +117,7 @@
 #include "lhpOpDownloadVME.h"
 #include "medOpSurfaceMirror.h"
 #include "medOpImporterAnalogWS.h"
-#include "mmoMML.h"
+#include "medOpMML.h"
 #include "mafViewVTK.h"
 #include "mafViewCompound.h"
 #include "mafViewRXCT.h"
@@ -205,14 +203,14 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mafOpImporterMSF("MSF"),"Other");
   m_Logic->Plug(new mafOpImporterMSF1x("MAF 1.x"),"Other");
   m_Logic->Plug(new mafOpImporterRAWVolume("RAW Volume"),"Images");
-  m_Logic->Plug(new mmoRAWImporterImages("Raw Images"),"Images");
+  m_Logic->Plug(new medOpImporterRAWImages("Raw Images"),"Images");
   m_Logic->Plug(new mafOpImporterImage("Images"),"Images");
-  m_Logic->Plug(new mmoLandmarkImporter("Landmark"),"Motion Analysis");
-	m_Logic->Plug(new mmoLandmarkImporterWS("ASCII trajectories (VWs)"),"Motion Analysis");
+  m_Logic->Plug(new medOpImporterLandmark("Landmark"),"Motion Analysis");
+	m_Logic->Plug(new medOpImporterLandmarkWS("ASCII trajectories (VWs)"),"Motion Analysis");
   m_Logic->Plug(new lhpOpImporterC3D("C3D"),"Motion Analysis");  
-  m_Logic->Plug(new mmoMotionDataImporter<mafVMERawMotionData>("Raw Motion Data", "RAW Motion Data (*.MAN)|*.MAN", "Dictionary (*.txt)|*.txt"), "Motion Analysis");
+  m_Logic->Plug(new medOpImporterMotionData<mafVMERawMotionData>("Raw Motion Data", "RAW Motion Data (*.MAN)|*.MAN", "Dictionary (*.txt)|*.txt"), "Motion Analysis");
   // m_Logic->Plug(new mmoLandmarkImporter("Landmark")); //Old Importer
-  m_Logic->Plug(new mmoGRFImporterWS("ASCII Force Plates (VWs)"), "Motion Analysis");
+  m_Logic->Plug(new medOpImporterGRFWS("ASCII Force Plates (VWs)"), "Motion Analysis");
   m_Logic->Plug(new mafOpImporterMesh("Generic Mesh"), "Finite Element");
   m_Logic->Plug(new lhpOpImporterAnsysInputFile("Ansys Input File"), "Finite Element");	
   m_Logic->Plug(new mafOpImporterVRML("VRML"), "Geometries");
@@ -230,7 +228,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mafOpExporterVTK("VTK"), "Other");
 	m_Logic->Plug(new mafOpExporterRAW("Raw"), "Images");
   m_Logic->Plug(new mafOpExporterBmp("Bmp"), "Images");
-  m_Logic->Plug(new mmoLandmarkExporter("Landmark"), "Motion Analysis");
+  m_Logic->Plug(new medOpExporterLandmark("Landmark"), "Motion Analysis");
   m_Logic->Plug(new medOpExporterWrappedMeter("Wrapped Meter"), "Other");
   m_Logic->Plug(new lhpOpExporterAnsysInputFile("Ansys Input File"),"Finite Element");
   //-------------------------------------------------------------
@@ -247,7 +245,7 @@ bool lhpBuilderApp::OnInit()
 	m_Logic->Plug(new mafOpCreateSurfaceParametric("Parametric Surface"),"Create/New");
 	m_Logic->Plug(new mafOpAddLandmark("Add Landmark \tCtrl+A"),"Create/New");
   m_Logic->Plug(new medOpFreezeVME("Freeze VME"),"Create/Derive");
-  m_Logic->Plug(new mmoRegisterClusters("Register Landmark Cloud"),"Modify/Fuse");
+  m_Logic->Plug(new medOpRegisterClusters("Register Landmark Cloud"),"Modify/Fuse");
   m_Logic->Plug(new mafOpCreateMeter("Distance Meter"),"Create/Derive");
   m_Logic->Plug(new medOpCreateWrappedMeter("Wrapped Meter"),"Create/Derive");
  // m_Logic->Plug(new mmoEditMetadata("Metadata Editor"),"Modify");
@@ -262,7 +260,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new medOpScaleDataset("Scale Dataset"),"Modify");
   m_Logic->Plug(new medOpMove(),"Modify");    
   m_Logic->Plug(new mafOpImporterVMEDataSetAttributes("VME DataSet Attributes Adder"),"Modify");
-  m_Logic->Plug(new mmoClassicICPRegistration("Register Surface"),"Modify/Fuse");
+  m_Logic->Plug(new medOpClassicICPRegistration("Register Surface"),"Modify/Fuse");
   m_Logic->Plug(new mmoAFSys("AFRefsys"),"Create/Derive");
   m_Logic->Plug(new mmoAverageLM("Average landmark"),"Create/Derive");
   m_Logic->Plug(new mmoStickPalpation("Wand palpated landmark"),"Create/Derive");
@@ -281,7 +279,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mafOpDecomposeTimeVarVME("Decompose Time"),"Create/Derive");
   m_Logic->Plug(new mafOpLabelExtractor("Extract Label"),"Create/Derive");
   m_Logic->Plug(new lhpOpMultiscaleExplore("Multiscale Viewer"),"Manage");
-  m_Logic->Plug(new mmoMML("Register from template"),"Modify");
+  m_Logic->Plug(new medOpMML("Register from template"),"Modify");
 
   
   
