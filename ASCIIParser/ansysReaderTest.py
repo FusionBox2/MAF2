@@ -24,7 +24,7 @@ class ansysReaderTest(unittest.TestCase):
     def tearDown(self):
         os.chdir(self.StartDir)
         
-    def estReader(self):
+    def testReader(self):
         
         
         # create the reader
@@ -45,7 +45,7 @@ class ansysReaderTest(unittest.TestCase):
         self.assertEqual(materialsSectionsNumber,2)
         self.assertEqual(materialsMPTEMP_MPSectionsNumber,0)
     
-    def estReaderV0(self):
+    def testReaderV0(self):
         
         # create the reader
         ar = ansysReader.ansysReader()
@@ -66,7 +66,7 @@ class ansysReaderTest(unittest.TestCase):
         #self.assertEqual(materialsMPTEMP_MPSectionsNumber,0)
 
     
-    def estReaderV1(self):
+    def testReaderV1(self):
         
         # create the reader
         ar = ansysReader.ansysReader()
@@ -101,7 +101,7 @@ class ansysReaderTest(unittest.TestCase):
         self.assertEqual(nodeSectionsNumber,1)
         self.assertEqual(elementDeclarationSectionsNumber, 2)
 
-    def estReaderV3(self):
+    def testReaderV3(self):
         
         # create the reader
         ar = ansysReader.ansysReader()
@@ -119,9 +119,9 @@ class ansysReaderTest(unittest.TestCase):
         self.assertEqual(elementDeclarationSectionsNumber, 2)
  
     
-    def estReaderV4(self):
+    def testReaderV4(self):
         
-        # create the reader
+        # create the reader 
         ar = ansysReader.ansysReader()
         ar.InputAnsysFileName = self.StartDir + r'\testData\ansys\tet10_v4.inp'
     
@@ -136,7 +136,7 @@ class ansysReaderTest(unittest.TestCase):
         self.assertEqual(nodeSectionsNumber,1)
         self.assertEqual(elementDeclarationSectionsNumber, 2)
 
-    def estReaderV5(self):
+    def testReaderV5(self):
         
         curDir =  os.getcwd()
         if Debug:
@@ -166,6 +166,30 @@ class ansysReaderTest(unittest.TestCase):
         # create the reader
         ar = ansysReader.ansysReader()
         ar.InputAnsysFileName = self.StartDir + r'\testData\ansys\Tetra10NodesIdJumpingMaterialsIdJumpingMaterialsGroupingNoTimevar.inp'
+    
+        # set the file name
+        # read
+        
+        cargo = ar.Read()
+        
+        nodeSectionsNumber, elementDeclarationSectionsNumber, elementTypeSectionsNumber, \
+               materialsSectionsNumber , materialsMPTEMP_MPSectionsNumber = cargo
+        
+        self.assertEqual(nodeSectionsNumber,1)
+        self.assertEqual(elementDeclarationSectionsNumber, 5)
+        self.assertEqual(elementTypeSectionsNumber, 2)
+        self.assertEqual(materialsSectionsNumber, 0)
+        self.assertEqual(materialsMPTEMP_MPSectionsNumber, 4)
+    
+    def testTetra10NodesIdJumpingMaterialsIdJumpingMaterialsGroupingNoTimevarRotatedNodes(self):
+        
+        curDir =  os.getcwd()
+        if Debug:
+            print curDir
+            
+        # create the reader
+        ar = ansysReader.ansysReader()
+        ar.InputAnsysFileName = self.StartDir + r'\testData\ansys\Tetra10NodesIdJumpingMaterialsIdJumpingMaterialsGroupingNoTimevarRotatedNodes.inp'
     
         # set the file name
         # read

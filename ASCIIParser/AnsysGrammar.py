@@ -11,7 +11,9 @@ from pyparsing import Word, alphas, nums, ZeroOrMore, ParseException, Group, del
 # NODES grammar
 nodeHeader = "N,"
 nodeId = Word( alphanums ) + Suppress(",")
-nodeCoords =  delimitedList(Word( alphanums + "." + "-"))
+# nodeCoords =  delimitedList(Word( alphanums + "." + "-"))
+double = Word( alphanums + "." + "-") 
+nodeCoords = double + Suppress(",") + double + Suppress(",") + double
 
 nodeTextLine = nodeHeader + nodeId + nodeCoords
 # end grammar
