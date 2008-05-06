@@ -47,30 +47,50 @@ class ansysWriterTest(unittest.TestCase):
         exporter.Write()
         
     
-    def estAnsysWriterTetra10TrivialMesh(self):
+    def testAnsysWriterTetra10TrivialMesh(self):
         
-        # create the ansys writer
-        
-        # set nodes file
-        
-        # set elements file
-            
-        # set materials file
-        
-        # set output file name
         
         exporter = ansysWriter.ansysWriter()
         # write
-        exporter.NodesFileName = self.StartDir + r'\testData\ansys\Tetra10TrivialMesh\NLIST.lis'
+        exporter.NodesFileName = self.StartDir + r'\testData\ansys\testExport\AnsysExporterNodes.lis'
         
-        exporter.ElementsFileName = self.StartDir + r'\testData\ansys\Tetra10TrivialMesh\ELIST.lis'
+        exporter.ElementsFileName = self.StartDir + r'\testData\ansys\testExport\AnsysExporterElements.lis'
         
-        exporter.MaterialsFileName = self.StartDir + r'\testData\ansys\Tetra10TrivialMesh\MPLIST.lis'
+        exporter.MaterialsFileName = self.StartDir + r'\testData\ansys\testExport\AnsysExporterMaterials.lis'
             
-        exporter.AnsysOutputFileName = self.StartDir + r'\testData\ansys\Tetra10TrivialMesh\AnsysOutput.inp'
+        exporter.AnsysOutputFileName = self.StartDir + r'\testData\ansys\testExport\AnsysOutput.inp'
+         
+        exporter.Write()
+   
+   
+    def testAnsysWriterTetra10TrivialMeshWithSpacesInPath(self):
+        
+        
+        exporter = ansysWriter.ansysWriter()
+        # write
+        exporter.NodesFileName = self.StartDir + r'\testData\ansys\test export with spaces\AnsysExporterNodes.lis'
+        
+        exporter.ElementsFileName = self.StartDir + r'\testData\ansys\test export with spaces\AnsysExporterElements.lis'
+        
+        exporter.MaterialsFileName = self.StartDir + r'\testData\ansys\test export with spaces\AnsysExporterMaterials.lis'
+            
+        exporter.AnsysOutputFileName = self.StartDir + r'\testData\ansys\test export with spaces\AnsysOutput.inp'
          
         exporter.Write()
         
+        fileName = self.StartDir + r'\log.txt'
+        print fileName
+        f = open(fileName, 'w')
+        f.write(str(exporter.NodesFileName))
+        f.write('\n')
+        f.write(str(exporter.ElementsFileName))
+        f.write('\n')       
+        f.write(str(exporter.MaterialsFileName))
+        f.write('\n')
+        f.write(str(exporter.AnsysOutputFileName))
+        f.close()
+        
+   
 if __name__ == '__main__':
     unittest.main()
     

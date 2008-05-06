@@ -464,17 +464,33 @@ ESEL, ALL
         self.ProgressBar.updateAmount(progress)
         print self.ProgressBar, '\r'
     
-def Run(nodesFileName , elementsFileName , materialsFileName, ansysOutputFileName  ):                                            
+def Run(nodesFileName , elementsFileName , materialsFileName, ansysOutputFileName  ):
+    
+    
     exporter = ansysWriter()
     exporter.NodesFileName = nodesFileName       
     exporter.ElementsFileName = elementsFileName
     exporter.MaterialsFileName = materialsFileName
     exporter.AnsysOutputFileName = ansysOutputFileName
     exporter.Write()
+    
+  
 
 
 def main():
     args = sys.argv[1:]
+    
+    if Debug:
+        
+        fileName = r'ansysWriterDebugLog.txt'
+        print fileName
+        f = open(fileName, 'w')
+        for arg in args:
+             f.write(str(arg))
+             f.write('\n')
+        f.close()
+        
+    
     if len(args) != 4:
         print """
         usage: python.exe ansysWriter.py

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpExporterAnsysInputFile.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-04-02 15:12:39 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2008-05-06 13:10:27 $
+  Version:   $Revision: 1.4 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -132,17 +132,17 @@ int lhpOpExporterAnsysInputFile::Read()
 
   // read cache files and create ansys file
   command2execute = "python.exe ";
-  command2execute.Append(" ");
+  command2execute.Append(" \"\"");
   command2execute.Append(m_AnsysPythonExporterFullPathFileName.c_str());
-  command2execute.Append(" ");
+  command2execute.Append(" \"");
   command2execute.Append(m_NodesFileName.c_str());
-  command2execute.Append(" ");
+  command2execute.Append("\" \"");
   command2execute.Append(m_ElementsFileName.c_str());
-  command2execute.Append(" ");
+  command2execute.Append("\" \"");
   command2execute.Append(m_MaterialsFileName.c_str());
-  command2execute.Append(" ");
+  command2execute.Append("\" \"");
   command2execute.Append(m_AnsysOutputFileNameFullPath.c_str());
-  
+  command2execute.Append("\"");
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   // m_Pid = wxExecute(command2execute, output, errors, wxEXEC_NODISABLE);
