@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterAnsysInputFile.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-02-14 15:53:48 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2008-05-12 12:30:41 $
+  Version:   $Revision: 1.5 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -113,14 +113,16 @@ int lhpOpImporterAnsysInputFile::Read()
 
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 
-  command2execute = "python.exe ";
+  command2execute = "python.exe";
+  command2execute.Append(" \"\"");
   command2execute.Append(m_AnsysPythonImporterFullPathFileName.c_str());
-  command2execute.Append(" ");
+  command2execute.Append(" \"");
   command2execute.Append(m_AnsysInputFileNameFullPath.c_str());
-  command2execute.Append(" ");
-  command2execute.Append(m_CacheDir) ;
-  command2execute.Append(" nodes.lis elements.lis materials.lis");
-
+  command2execute.Append("\" \"");
+  command2execute.Append(m_CacheDir);
+  command2execute.Append("\" ");
+  command2execute.Append("\"nodes.lis\" \"elements.lis\" \"materials.lis\"");
+  
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   // m_Pid = wxExecute(command2execute, output, errors, wxEXEC_NODISABLE);

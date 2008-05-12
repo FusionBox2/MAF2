@@ -667,6 +667,17 @@ def Run(inputAnsysFileName, cacheFolderName , nodesOutputFileName , elementsOutp
 
 def main():
     args = sys.argv[1:]
+    
+    if Debug:
+    
+        fileName = r'ansysReaderDebugLog.txt'
+        print fileName
+        f = open(fileName, 'w')
+        for arg in args:
+             f.write(str(arg))
+             f.write('\n')
+        f.close()
+
     if len(args) != 5:
         print """
         usage: python.exe ansysReader.py
