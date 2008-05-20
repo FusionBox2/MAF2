@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpBonemat.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-05-20 08:50:46 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2008-05-20 13:25:40 $
+  Version:   $Revision: 1.8 $
   Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -478,59 +478,6 @@ int lhpOpBonemat::SaveConfigurationFileAs()
   return SaveConfigurationFile(newFileName.GetCStr());
 }
 
-//----------------------------------------------------------------------------
-int lhpOpBonemat::SaveConfigurationFile( const char *configurationFileName )
-{
-
-  std::ofstream outputFile(configurationFileName, std::ios::out);
-
-  if (outputFile == NULL) 
-  {
-    if (GetTestMode() == false)
-    {
-      wxMessageBox("Error creating configuration file");
-    }
-    return MAF_ERROR;
-  }
-
-  outputFile.precision(decimalNumbersNumber);
-  outputFile 
-
-    //<< m_HU0_d0_el0 << '\t' << m_HU0_d0_el1 << std::endl
-    //<< m_HU1_d1_el0 << '\t' << m_HU1_d1_el1 << std::endl
-
-    << m_ROIntercept << '\t' << m_ROSlope << std::endl
-
-    << m_Ea_Eb_Ec_V2_el0 << '\t' << m_Ea_Eb_Ec_V2_el1 << '\t' << m_Ea_Eb_Ec_V2_el2 << std::endl
-    << m_RO1_RO2_el0 << '\t' << m_RO1_RO2_el1 << std::endl
-
-    << m_ROCalibrationCorrectionIsActive << std::endl
-    << m_ROCalibrationCorrectionType << std::endl
-
-    //ro interval
-    << m_RO1   << '\t' << m_RO2   << std::endl
-    
-
-    //single interval ro calibration
-    << m_RoCorrection1IntervalCoefficient0  << '\t' << m_RoCorrection1IntervalCoefficient1  << std::endl
-    
-    //three intervals ro calibration
-    << m_RoCorrection3IntervalsFirstCoefficient0  << '\t' << m_RoCorrectio3IntervalsFirstCoefficient1  << std::endl
-    << m_RoCorrection3IntervalsSecondCoefficient0 << '\t' << m_RoCorrection3IntervalsSecondCoefficient1 << std::endl
-    << m_RoCorrection3IntervalsThirdCoefficient0  << '\t' << m_RoCorrection3IntervalsThirdCoefficient1  << std::endl    
-
-    << m_Ea_Eb_Ec_V3_OneDensityInterval_el0 << '\t' << m_Ea_Eb_Ec_V3_OneDensityInterval_el1 << '\t' << m_Ea_Eb_Ec_V3_OneDensityInterval_el2 << std::endl
-    << m_Ea0_Eb0_Ec0_V3_el0 << '\t' << m_Ea0_Eb0_Ec0_V3_el1 << '\t' << m_Ea0_Eb0_Ec0_V3_el2 << std::endl
-    << m_Ea1_Eb1_Ec1_V3_el0 << '\t' << m_Ea1_Eb1_Ec1_V3_el1 << '\t' << m_Ea1_Eb1_Ec1_V3_el2 << std::endl
-    << m_Ea2_Eb2_Ec2_V3_el0 << '\t' << m_Ea2_Eb2_Ec2_V3_el1 << '\t' << m_Ea2_Eb2_Ec2_V3_el2 << std::endl
-
-    << m_StepsNumber  << std::endl
-    << m_Egap << std::endl;
-    
-  outputFile.close();
-
-  return MAF_OK;
-}
 //----------------------------------------------------------------------------
 void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
 //----------------------------------------------------------------------------
@@ -1282,8 +1229,12 @@ int lhpOpBonemat::YoungModuleIntegration()
 
   if ((freq_fp = fopen(m_FrequencyFileName.GetCStr(), "w")) == NULL)
   {
-    wxMessageBox("Frequency file can't be opened");
-    return 1;
+    if (GetTestMode() == false)
+    {
+      wxMessageBox("Frequency file can't be opened");
+    }
+    
+    return MAF_ERROR;
   }
 
   vtkUnstructuredGrid *inUnstructuredGrid = vtkUnstructuredGrid::SafeDownCast(mafVMEMesh::SafeDownCast(m_Input)->GetOutput()->GetVTKData());
@@ -2155,69 +2106,180 @@ void lhpOpBonemat::EnableRoCorrectionDensityInterval(bool enable)
   m_Gui->Enable(ID_RO_CORRECTION_DENSITY_INTERVAL_1, enable);
 }
 
+
 int lhpOpBonemat::LoadConfigurationFile( const char *configurationFileName )
 {
   std::ifstream inputFile(configurationFileName, std::ios::in);
 
   if (inputFile == NULL) {
     std::cerr << "Error opening " << configurationFileName << "\n";
+    assert(false);
     return MAF_ERROR;
   }
+
+  mafString LoadConfigurationFileCacheFileName = configurationFileName;
+  LoadConfigurationFileCacheFileName.Append(".Load.cache");
+
+  std::ofstream LoadConfigurationFileCache(LoadConfigurationFileCacheFileName.GetCStr(), std::ios::out);
+
+  if (LoadConfigurationFileCache == NULL) 
+  {
+    if (GetTestMode() == false)
+    {
+
+      wxMessageBox("Error creating configuration file cache");
+    }
+    assert(false);
+    return MAF_ERROR;
+  }
+
   
-  //inputFile >> m_HU0_d0_el0;
-  //inputFile >> m_HU0_d0_el1;
-  //inputFile >> m_HU1_d1_el0;
-  //inputFile >> m_HU1_d1_el1;
+  std::string buf;
+  while(getline(inputFile, buf)) 
+  {
+    // Find marker at start of line:finish
+    size_t pos = buf.find('#');
+    if(pos  == 0) 
+    {
+      // skip line    
+    }
+    else
+    { 
+      LoadConfigurationFileCache << buf << std::endl;
+    }
+  }
 
-  inputFile >> m_ROIntercept;
-  inputFile >> m_ROSlope;
+  LoadConfigurationFileCache.close();
+  //<< std::endl;
 
-  inputFile  >> m_Ea_Eb_Ec_V2_el0;
-  inputFile >> m_Ea_Eb_Ec_V2_el1;
-  inputFile  >> m_Ea_Eb_Ec_V2_el2;
+  std::ifstream inputFileFromCache(LoadConfigurationFileCacheFileName.GetCStr(), std::ios::in);
 
-  inputFile >> m_RO1_RO2_el0;
-  inputFile >> m_RO1_RO2_el1;
+  if (inputFileFromCache == NULL) {
+    std::cerr << "Error opening " << inputFileFromCache << "\n";
+    assert(false);
+    return MAF_ERROR;
+  }
 
-  inputFile >> m_ROCalibrationCorrectionIsActive;
-  inputFile >> m_ROCalibrationCorrectionType;
+  //<< "# #### CT Densitometric Calibration ####" << std::endl;
 
-  //ro interval
-  inputFile >>m_RO1;
-  inputFile >>m_RO2;
+  //<< "# a (m_ROIntercept) : " << std::endl;
+  inputFileFromCache >> m_ROIntercept // << std::endl;
+  //   << "# b (m_ROSlope): " // << std::endl;
+  >> m_ROSlope// << std::endl;
 
-  //single interval ro calibration
-  inputFile >>m_RoCorrection1IntervalCoefficient0;
-  inputFile >>m_RoCorrection1IntervalCoefficient1;
+  // // << std::endl;
+  // << "# apply calibration correction (m_ROCalibrationCorrectionIsActive): " // << std::endl;
+  >> m_ROCalibrationCorrectionIsActive// << std::endl;
 
-  //three intervals ro calibration
-  inputFile >>m_RoCorrection3IntervalsFirstCoefficient0;
-  inputFile >>m_RoCorrectio3IntervalsFirstCoefficient1;
+  /*// << std::endl;
+  << "# #### Correction of the calibration ####" // << std::endl;
 
-  inputFile >>m_RoCorrection3IntervalsSecondCoefficient0;
-  inputFile >>m_RoCorrection3IntervalsSecondCoefficient1;
+  << "# Intervals Type (m_ROCalibrationCorrectionType) {SINGLE_INTERVAL = 0, THREE_INTERVALS = 1}: "  // << std::endl;*/
+  >> m_ROCalibrationCorrectionType// << std::endl;
 
-  inputFile >>m_RoCorrection3IntervalsThirdCoefficient0;
-  inputFile >>m_RoCorrection3IntervalsThirdCoefficient1;
 
-  inputFile >> m_Ea_Eb_Ec_V3_OneDensityInterval_el0;
-  inputFile >> m_Ea_Eb_Ec_V3_OneDensityInterval_el1;
-  inputFile >> m_Ea_Eb_Ec_V3_OneDensityInterval_el2;
+  // << "# R01 (m_RO1) : " // << std::endl;
+  >> m_RO1// << std::endl;
+  // << "# R02 (m_RO2) : " // << std::endl;
+  >> m_RO2// << std::endl;
 
-  inputFile >> m_Ea0_Eb0_Ec0_V3_el0;
-  inputFile >> m_Ea0_Eb0_Ec0_V3_el1;
-  inputFile >> m_Ea0_Eb0_Ec0_V3_el2;
+  // << "# a (m_RoCorrection1IntervalCoefficient0): " // << std::endl;
+  >> m_RoCorrection1IntervalCoefficient0// << std::endl;
+  // << "# b (m_RoCorrection1IntervalCoefficient1): " // << std::endl;
+  >> m_RoCorrection1IntervalCoefficient1// << std::endl;
 
-  inputFile >> m_Ea1_Eb1_Ec1_V3_el0;
-  inputFile >> m_Ea1_Eb1_Ec1_V3_el1;
-  inputFile >> m_Ea1_Eb1_Ec1_V3_el2;
+  /*// << std::endl;
+  << "# R0 < R01" // << std::endl;*/
+  // << "# a (m_RoCorrection3IntervalsFirstCoefficient0): " // << std::endl;
+  >> m_RoCorrection3IntervalsFirstCoefficient0 // << std::endl;
+  // << "# b (m_RoCorrectio3IntervalsFirstCoefficient1): " // << std::endl;
+  >> m_RoCorrectio3IntervalsFirstCoefficient1 // << std::endl;
 
-  inputFile >> m_Ea2_Eb2_Ec2_V3_el0;
-  inputFile >> m_Ea2_Eb2_Ec2_V3_el1;
-  inputFile >> m_Ea2_Eb2_Ec2_V3_el2;
+  /*// << std::endl;
+  << "# R01 <= R0 <= R02" // << std::endl;  
+  << "# a (m_RoCorrection3IntervalsSecondCoefficient0): " // << std::endl;*/
+  >> m_RoCorrection3IntervalsSecondCoefficient0 // << std::endl;
+  // << "# b (m_RoCorrection3IntervalsSecondCoefficient1): " // << std::endl;
+  >> m_RoCorrection3IntervalsSecondCoefficient1 // << std::endl;
 
-  inputFile >> m_StepsNumber;
-  inputFile >> m_Egap;
+  // << std::endl;
+
+  /*<< "# R0 > R02" // << std::endl;
+  << "# a (m_RoCorrection3IntervalsThirdCoefficient0): " // << std::endl;*/
+  >> m_RoCorrection3IntervalsThirdCoefficient0// << std::endl;
+  // << "# b (m_RoCorrection3IntervalsThirdCoefficient1): " // << std::endl;
+  >> m_RoCorrection3IntervalsThirdCoefficient1// << std::endl;
+
+
+  // << std::endl;
+  /*<< "# Young`s modulus (E) calculation modality" // << std::endl;
+  << "# Modality (m_YoungModuleCalculationModality) {HU_INTEGRATION = 0,YOUNG_MODULE_INTEGRATION = 1}: " // << std::endl;*/
+  >> m_YoungModuleCalculationModality // << std::endl;
+
+  // << std::endl;
+  // << "# ####  density-elasticity relationship #### " // << std::endl;
+
+  // << "# a (m_Ea_Eb_Ec_V2_el0): " // << std::endl;
+  >> m_Ea_Eb_Ec_V2_el0// << std::endl;
+  // << "# b (m_Ea_Eb_Ec_V2_el1): " // << std::endl;
+  >> m_Ea_Eb_Ec_V2_el1// << std::endl;
+  // << "# c (m_Ea_Eb_Ec_V2_el2): " // << std::endl;
+  >> m_Ea_Eb_Ec_V2_el2// << std::endl;
+
+  /*// << std::endl;
+  << "# density-intervals for E integration" // << std::endl;
+  << "# Density intervals type (m_DensityIntervalsNumber) {SINGLE_INTERVAL = 0,THREE_INTERVALS = 1}: " // << std::endl;*/
+  >> m_DensityIntervalsNumber // << std::endl;
+
+  // << std::endl;
+  // << "# R01 (m_RO1_RO2_el0): " // << std::endl;
+  >> m_RO1_RO2_el0// << std::endl;
+  // << "# R02 (m_RO1_RO2_el1): " // << std::endl;
+  >> m_RO1_RO2_el1// << std::endl;
+  // << "# a (m_Ea_Eb_Ec_V3_OneDensityInterval_el0): " // << std::endl;
+  >> m_Ea_Eb_Ec_V3_OneDensityInterval_el0// << std::endl;
+  // << "# b (m_Ea_Eb_Ec_V3_OneDensityInterval_el1): " // << std::endl;
+  >> m_Ea_Eb_Ec_V3_OneDensityInterval_el1// << std::endl;
+  // << "# c (m_Ea_Eb_Ec_V3_OneDensityInterval_el2): " // << std::endl;
+  >> m_Ea_Eb_Ec_V3_OneDensityInterval_el2// << std::endl;
+
+  /*// << std::endl;
+  << "# R0 < R01" // << std::endl;
+  << "# a (m_Ea0_Eb0_Ec0_V3_el0): " // << std::endl;*/
+  >> m_Ea0_Eb0_Ec0_V3_el0// << std::endl;
+  // << "# b (m_Ea0_Eb0_Ec0_V3_el1): " // << std::endl;
+  >> m_Ea0_Eb0_Ec0_V3_el1// << std::endl;
+  // << "# c (m_Ea0_Eb0_Ec0_V3_el2): " // << std::endl;
+  >> m_Ea0_Eb0_Ec0_V3_el2// << std::endl;
+  /*// << std::endl;
+  << "# R01 <= R0 <= R02" // << std::endl;  
+  << "# a (m_Ea1_Eb1_Ec1_V3_el0): " // << std::endl;*/
+  >> m_Ea1_Eb1_Ec1_V3_el0// << std::endl;
+  // << "# b (m_Ea1_Eb1_Ec1_V3_el1): " // << std::endl;
+  >> m_Ea1_Eb1_Ec1_V3_el1// << std::endl;
+  // << "# c (m_Ea1_Eb1_Ec1_V3_el2): " // << std::endl;
+  >> m_Ea1_Eb1_Ec1_V3_el2// << std::endl;
+  /*// << std::endl;
+  << "# R0 > R02" // << std::endl;
+  << "# a (m_Ea2_Eb2_Ec2_V3_el0): " // << std::endl;*/
+  >> m_Ea2_Eb2_Ec2_V3_el0// << std::endl;
+  // << "# b (m_Ea2_Eb2_Ec2_V3_el1): " // << std::endl;
+  >> m_Ea2_Eb2_Ec2_V3_el1// << std::endl;
+  // << "# c (m_Ea2_Eb2_Ec2_V3_el2): " // << std::endl;
+  >> m_Ea2_Eb2_Ec2_V3_el2// << std::endl;
+
+  // << std::endl;
+
+  // << "# Integration Steps (m_StepsNumber): " // << std::endl;
+  >> m_StepsNumber// << std::endl;
+
+  // << std::endl;
+
+  // << "# Gap Value (m_Egap): " // << std::endl;
+  >> m_Egap; // << std::endl;
+
+  // << std::endl;
+
 
   if (DEBUG_MODE)
   {
@@ -2321,3 +2383,149 @@ void lhpOpBonemat::PrintSelf(std::ostream &os)
 
   os << std::endl;
 }
+
+int lhpOpBonemat::SaveConfigurationFile( const char *configurationFileName )
+{
+
+  std::ofstream outputFile(configurationFileName, std::ios::out);
+
+  if (outputFile == NULL) 
+  {
+    if (GetTestMode() == false)
+    {
+      wxMessageBox("Error creating configuration file");
+    }
+    return MAF_ERROR;
+  }
+
+  outputFile.precision(decimalNumbersNumber);
+  outputFile 
+
+  << std::endl
+
+  << "# #### CT Densitometric Calibration ####" << std::endl
+
+  << "# a (m_ROIntercept) : " << std::endl
+  << m_ROIntercept << std::endl
+  << "# b (m_ROSlope): " << std::endl
+  << m_ROSlope<< std::endl
+
+  << std::endl
+  << "# apply calibration correction (m_ROCalibrationCorrectionIsActive): " << std::endl
+  << m_ROCalibrationCorrectionIsActive<< std::endl
+
+  << std::endl
+  << "# #### Correction of the calibration ####" << std::endl
+
+  << "# Intervals Type (m_ROCalibrationCorrectionType) {SINGLE_INTERVAL = 0, THREE_INTERVALS = 1}: "  << std::endl
+  << m_ROCalibrationCorrectionType<< std::endl
+
+  
+  << "# R01 (m_RO1) : " << std::endl
+  << m_RO1<< std::endl
+  << "# R02 (m_RO2) : " << std::endl
+  << m_RO2<< std::endl
+
+  << "# a (m_RoCorrection1IntervalCoefficient0): " << std::endl
+  << m_RoCorrection1IntervalCoefficient0<< std::endl
+  << "# b (m_RoCorrection1IntervalCoefficient1): " << std::endl
+  << m_RoCorrection1IntervalCoefficient1<< std::endl
+
+  << std::endl
+  << "# R0 < R01" << std::endl
+  << "# a (m_RoCorrection3IntervalsFirstCoefficient0): " << std::endl
+  << m_RoCorrection3IntervalsFirstCoefficient0 << std::endl
+  << "# b (m_RoCorrectio3IntervalsFirstCoefficient1): " << std::endl
+  << m_RoCorrectio3IntervalsFirstCoefficient1 << std::endl
+
+  << std::endl
+  << "# R01 <= R0 <= R02" << std::endl  
+  << "# a (m_RoCorrection3IntervalsSecondCoefficient0): " << std::endl
+  << m_RoCorrection3IntervalsSecondCoefficient0 << std::endl
+  << "# b (m_RoCorrection3IntervalsSecondCoefficient1): " << std::endl
+  << m_RoCorrection3IntervalsSecondCoefficient1 << std::endl
+
+  << std::endl
+
+  << "# R0 > R02" << std::endl
+  << "# a (m_RoCorrection3IntervalsThirdCoefficient0): " << std::endl
+  << m_RoCorrection3IntervalsThirdCoefficient0<< std::endl
+  << "# b (m_RoCorrection3IntervalsThirdCoefficient1): " << std::endl
+  << m_RoCorrection3IntervalsThirdCoefficient1<< std::endl
+
+
+  << std::endl
+  << "# Young`s modulus (E) calculation modality" << std::endl
+  << "# Modality (m_YoungModuleCalculationModality) {HU_INTEGRATION = 0,YOUNG_MODULE_INTEGRATION = 1}: " << std::endl
+  << m_YoungModuleCalculationModality << std::endl
+
+  << std::endl
+  << "# ####  density-elasticity relationship #### " << std::endl
+
+  << "# a (m_Ea_Eb_Ec_V2_el0): " << std::endl
+  << m_Ea_Eb_Ec_V2_el0<< std::endl
+  << "# b (m_Ea_Eb_Ec_V2_el1): " << std::endl
+  << m_Ea_Eb_Ec_V2_el1<< std::endl
+  << "# c (m_Ea_Eb_Ec_V2_el2): " << std::endl
+  << m_Ea_Eb_Ec_V2_el2<< std::endl
+
+  << std::endl
+  << "# density-intervals for E integration" << std::endl
+  << "# Density intervals type (m_DensityIntervalsNumber) {SINGLE_INTERVAL = 0,THREE_INTERVALS = 1}: " << std::endl
+  << m_DensityIntervalsNumber << std::endl
+
+  << std::endl
+  << "# R01 (m_RO1_RO2_el0): " << std::endl
+  << m_RO1_RO2_el0<< std::endl
+  << "# R02 (m_RO1_RO2_el1): " << std::endl
+  << m_RO1_RO2_el1<< std::endl
+  << "# a (m_Ea_Eb_Ec_V3_OneDensityInterval_el0): " << std::endl
+  << m_Ea_Eb_Ec_V3_OneDensityInterval_el0<< std::endl
+  << "# b (m_Ea_Eb_Ec_V3_OneDensityInterval_el1): " << std::endl
+  << m_Ea_Eb_Ec_V3_OneDensityInterval_el1<< std::endl
+  << "# c (m_Ea_Eb_Ec_V3_OneDensityInterval_el2): " << std::endl
+  << m_Ea_Eb_Ec_V3_OneDensityInterval_el2<< std::endl
+
+  << std::endl
+  << "# R0 < R01" << std::endl
+  << "# a (m_Ea0_Eb0_Ec0_V3_el0): " << std::endl
+  << m_Ea0_Eb0_Ec0_V3_el0<< std::endl
+  << "# b (m_Ea0_Eb0_Ec0_V3_el1): " << std::endl
+  << m_Ea0_Eb0_Ec0_V3_el1<< std::endl
+  << "# c (m_Ea0_Eb0_Ec0_V3_el2): " << std::endl
+  << m_Ea0_Eb0_Ec0_V3_el2<< std::endl
+  << std::endl
+  << "# R01 <= R0 <= R02" << std::endl  
+  << "# a (m_Ea1_Eb1_Ec1_V3_el0): " << std::endl
+  << m_Ea1_Eb1_Ec1_V3_el0<< std::endl
+  << "# b (m_Ea1_Eb1_Ec1_V3_el1): " << std::endl
+  << m_Ea1_Eb1_Ec1_V3_el1<< std::endl
+  << "# c (m_Ea1_Eb1_Ec1_V3_el2): " << std::endl
+  << m_Ea1_Eb1_Ec1_V3_el2<< std::endl
+  << std::endl
+  << "# R0 > R02" << std::endl
+  << "# a (m_Ea2_Eb2_Ec2_V3_el0): " << std::endl
+  << m_Ea2_Eb2_Ec2_V3_el0<< std::endl
+  << "# b (m_Ea2_Eb2_Ec2_V3_el1): " << std::endl
+  << m_Ea2_Eb2_Ec2_V3_el1<< std::endl
+  << "# c (m_Ea2_Eb2_Ec2_V3_el2): " << std::endl
+  << m_Ea2_Eb2_Ec2_V3_el2<< std::endl
+
+  << std::endl
+
+  << "# Integration Steps (m_StepsNumber): " << std::endl
+  << m_StepsNumber<< std::endl
+
+  << std::endl
+
+  << "# Gap Value (m_Egap): " << std::endl
+  << m_Egap<< std::endl
+
+  << std::endl;
+
+  outputFile.close();
+
+  return MAF_OK;
+}
+
+

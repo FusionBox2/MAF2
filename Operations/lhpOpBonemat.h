@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpBonemat.h,v $
   Language:  C++
-  Date:      $Date: 2008-05-20 08:50:46 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2008-05-20 13:25:40 $
+  Version:   $Revision: 1.4 $
   Authors:   Daniele Giunchi , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2002/2004
@@ -19,8 +19,7 @@
 #include "mafOp.h"
 #include "mafNode.h"
 #include "mafVMEVolumeGray.h"
-#include <ostream>
-
+#include <iostream>
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
