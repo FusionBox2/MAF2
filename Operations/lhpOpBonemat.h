@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpBonemat.h,v $
   Language:  C++
-  Date:      $Date: 2008-04-01 09:55:18 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-05-20 08:50:46 $
+  Version:   $Revision: 1.3 $
   Authors:   Daniele Giunchi , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2002/2004
@@ -19,12 +19,14 @@
 #include "mafOp.h"
 #include "mafNode.h"
 #include "mafVMEVolumeGray.h"
+#include <ostream>
 
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
 class mafVME;
 class mafVMEMesh;
+
 //----------------------------------------------------------------------------
 // lhpOpBonemat :
 //----------------------------------------------------------------------------
@@ -32,17 +34,54 @@ class mafVMEMesh;
 class lhpOpBonemat: public mafOp
 {
 public:
-  lhpOpBonemat(wxString label);
- ~lhpOpBonemat(); 
-  mafOp* Copy();
-	void OnEvent(mafEventBase *maf_event);
 
-	/** Return true for the acceptable vme type. */
+  /** Set the source volume */
+  void SetVolume(mafVMEVolumeGray *volume) {m_InputVolume = volume;};
+  mafVMEVolumeGray *GetVolume() {return m_InputVolume;};
+
+  /** Fill ivars from configuration file */
+  int LoadConfigurationFile(const char *configurationFileName);
+
+  /** Set the Output Frequency file name */
+  void SetFrequencyFileName(const char* name);  
+
+  /** Get the Output Frequency file name */
+  const char* GetFrequencyFileName();
+
+  /** Execute the procedure that maps TAC values on the finite element mesh:
+  DENSITY: FROM_DATASET == old version
+  YOUNG MODULE: FROM_DENSITY == old version
+  */
+  int HUIntegration();
+
+  /** Execute the procedure that maps TAC values on the finite element mesh:
+  DENSITY: FROM_DATASET == old version
+  YOUNG MODULE: FROM_DATASET  
+  */
+  int YoungModuleIntegration();
+
+  /** Create the operation graphical user interface*/
+  void CreateGui();
+
+  void PrintSelf(std::ostream &os);
+
+  static bool VolumeAccept(mafNode* node) {return(node != NULL && node->IsMAFType(mafVMEVolumeGray));};
+
+  lhpOpBonemat(wxString label);
+  ~lhpOpBonemat(); 
+  mafOp* Copy();
+  void OnEvent(mafEventBase *maf_event);
+
+  /** Return true for the acceptable vme type. */
   bool Accept(mafNode *node);
 
-	/** Builds operation's interface. */
+  /** Builds operation's interface. */
   void OpRun();
-  
+
+protected:
+
+  int SaveConfigurationFile(const char *configurationFileName);
+
   /** Set the configuration file name */
   void SetConfigurationFileName(const char* name);  
 
@@ -50,40 +89,12 @@ public:
   const char* GetConfigurationFileName();
 
 
-  /** Set the InputCT file name */
-  void SetInputCTFileName(const char* name);  
-
-  /** Get the InputCT file name */
-  const char* GetInputCTFileName();
-
-
-  /** Set the Frequency file name */
-  void SetFrequencyFileName(const char* name);  
-
-  /** Get the Frequency file name */
-  const char* GetFrequencyFileName();
-
-  /** Create the operation graphical user interface*/
-  void CreateGui();
-
-  /** Execute the procedure that maps TAC values on the finite element mesh:
-  DENSITY: FROM_DATASET == old version
-  YOUNG MODULE: FROM_DENSITY == old version
-  */
-  int Execute1();
-
-  /** Execute the procedure that maps TAC values on the finite element mesh:
-  DENSITY: FROM_DATASET == old version
-  YOUNG MODULE: FROM_DATASET  
-  */
-  int Execute2();
-
   /** Read configuration file and fill in member variables */
   int OpenConfigurationFile();
-  
+
   /** Write the configuration file */
   int SaveConfigurationFileAs();
-  int SaveConfigurationFile(const char *fileName);
+
 
   void OnOpenConfigurationFileButton();
   void OnSaveConfigurationFileButton();
@@ -91,15 +102,10 @@ public:
   void OnOpenInputTacButton();
   void OnOutputFrequencyFileName();
   void OnExecute();
-  
+
   void UpdateDensityIntegrationGui();
 
   mafNode *VolumeSelection();
-
-  static bool VolumeAccept(mafNode* node) {return(node != NULL && node->IsMAFType(mafVMEVolumeGray));};
-
-
-protected:
 
   enum
   {
@@ -133,10 +139,9 @@ protected:
   void EnableRoCorrectionDensityInterval(bool enable);
   
   mafString m_ConfigurationFileName;
-  mafString m_InputCTFileName;
+  mafString m_InputVolumeName;
   mafString m_FrequencyFileName;
-
-    
+ 
   /** Ea, Eb, Ec */
   double m_Ea_Eb_Ec_V2_el0,m_Ea_Eb_Ec_V2_el1,m_Ea_Eb_Ec_V2_el2;
 
@@ -146,26 +151,26 @@ protected:
 
 
   //ro calibration
-  int m_ROCorrectionActivation;
-  int m_ROCorrectionType;
+  int m_ROCalibrationCorrectionIsActive;
+  int m_ROCalibrationCorrectionType;
 
   //ro interval
-  double m_ROCorrectionDensityInterval0;
-  double m_ROCorrectionDensityInterval1;
+  double m_RO1;
+  double m_RO2;
 
   //single interval ro calibration
-  double m_RoCorrectioSingleCoefficient0;
-  double m_RoCorrectioSingleCoefficient1;
+  double m_RoCorrection1IntervalCoefficient0;
+  double m_RoCorrection1IntervalCoefficient1;
 
   //three intervals ro calibration
-  double m_RoCorrectioFirstCoefficient0;
-  double m_RoCorrectioFirstCoefficient1;
+  double m_RoCorrection3IntervalsFirstCoefficient0;
+  double m_RoCorrectio3IntervalsFirstCoefficient1;
 
-  double m_RoCorrectioSecondCoefficient0;
-  double m_RoCorrectioSecondCoefficient1;
+  double m_RoCorrection3IntervalsSecondCoefficient0;
+  double m_RoCorrection3IntervalsSecondCoefficient1;
 
-  double m_RoCorrectioThirdCoefficient0;
-  double m_RoCorrectioThirdCoefficient1;
+  double m_RoCorrection3IntervalsThirdCoefficient0;
+  double m_RoCorrection3IntervalsThirdCoefficient1;
 
 
   /** density relationship */
@@ -193,8 +198,12 @@ protected:
   int m_YoungModuleCalculationModality;
 
   // my inclusions SUBSTITUTION
-  mafVMEVolumeGray *m_VmeVolume;
+  mafVMEVolumeGray *m_InputVolume;
   mafVME   *m_Vme; 
   mafVMEMesh *m_OriginalVMEMesh;
+
+  // friend test
+  friend class lhpOpBonematTest;
+
 };
 #endif

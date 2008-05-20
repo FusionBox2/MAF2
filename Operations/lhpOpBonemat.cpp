@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpBonemat.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-04-16 09:38:29 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2008-05-20 08:50:46 $
+  Version:   $Revision: 1.7 $
   Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -55,6 +55,7 @@
 // #define _DEBUG_BONEMAT_GUI
 // #define _USE_MAXIMUM_DENSITY_FOR_GROUPING
 
+const bool DEBUG_MODE = true;
 
 const int decimalNumbersNumber = 16;
 
@@ -140,29 +141,29 @@ mafOp(label)
   m_YoungModuleCalculationModality = HU_INTEGRATION;
   m_DensityRelationshipListbox = INTERCEPT_SLOPE;
 
-  m_VmeVolume = NULL;
+  m_InputVolume = NULL;
   m_OriginalVMEMesh = NULL;
 
   //Ro Calibration Flag
-  m_ROCorrectionActivation = 0;
-  m_ROCorrectionType       = 0; //equals to single interval
+  m_ROCalibrationCorrectionIsActive = 0;
+  m_ROCalibrationCorrectionType       = 0; //equals to single interval
 
-  m_ROCorrectionDensityInterval0 = 0;
-  m_ROCorrectionDensityInterval1 = 0;
+  m_RO1 = 0;
+  m_RO2 = 0;
 
   //single interval ro calibration
-  m_RoCorrectioSingleCoefficient0 = 0;
-  m_RoCorrectioSingleCoefficient1 = 1;
+  m_RoCorrection1IntervalCoefficient0 = 0;
+  m_RoCorrection1IntervalCoefficient1 = 1;
 
   //three intervals ro calibration
-  m_RoCorrectioFirstCoefficient0 = 0;
-  m_RoCorrectioFirstCoefficient1 = 1;
+  m_RoCorrection3IntervalsFirstCoefficient0 = 0;
+  m_RoCorrectio3IntervalsFirstCoefficient1 = 1;
 
-  m_RoCorrectioSecondCoefficient0 = 0;
-  m_RoCorrectioSecondCoefficient1 = 1;
+  m_RoCorrection3IntervalsSecondCoefficient0 = 0;
+  m_RoCorrection3IntervalsSecondCoefficient1 = 1;
 
-  m_RoCorrectioThirdCoefficient0 = 0;
-  m_RoCorrectioThirdCoefficient1 = 1;
+  m_RoCorrection3IntervalsThirdCoefficient0 = 0;
+  m_RoCorrection3IntervalsThirdCoefficient1 = 1;
 }
 //----------------------------------------------------------------------------
 lhpOpBonemat::~lhpOpBonemat()
@@ -263,6 +264,7 @@ enum BONEMAT_ID
   ID_RO_CORRECTION_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_0,
   ID_RO_CORRECTION_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_1,
   
+  ID_PRINT_DEBUG_INFO,
 };
 
 //----------------------------------------------------------------------------
@@ -279,7 +281,7 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Button(ID_SAVE_CONFIGURATION_FILE_AS, "save configuration file as");
   m_Gui->Divider(2);
 
-  m_Gui->Label("Volume:", &m_InputCTFileName, true);
+  m_Gui->Label("Volume:", &m_InputVolumeName, true);
   
   m_Gui->Button(ID_VOLUME_CHOOSE, "choose volume");
   m_Gui->Divider(2);
@@ -305,7 +307,7 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Double(ID_HU0,"HU0", &m_HU0_d0_el0);
   m_Gui->Double(ID_D0,"D0", &m_HU0_d0_el1);
 
-  m_Gui->Double(ID_HU1,"HU0", &m_HU1_d1_el0);
+  m_Gui->Double(ID_HU1,"HU1", &m_HU1_d1_el0);
   m_Gui->Double(ID_D1,"D1", &m_HU1_d1_el1);
 
   m_Gui->Enable(ID_HU0, false);
@@ -328,7 +330,7 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Enable(ID_RO_SLOPE, true);
 
   // flag ro correction
-  m_Gui->Bool(ID_FLAG_RO_CORRECTION, "apply calibration correction", &m_ROCorrectionActivation,1);
+  m_Gui->Bool(ID_FLAG_RO_CORRECTION, "apply calibration correction", &m_ROCalibrationCorrectionIsActive,1);
   m_Gui->Divider(2);
   // ro correction (if yes) enable 3x2 gui->double
   //////////////////////////////////////////////////////////////////////////
@@ -337,26 +339,26 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Label("Correction of the calibration",true);
   m_Gui->Label("Rho-ash = a + b * RhoQCT",false);
   const wxString densityChoicesRoCalibration[] = {"one interval", "three intervals"};
-  m_Gui->Combo(ID_TYPE_RO_CORRECTION,"", &m_ROCorrectionType,2,densityChoicesRoCalibration);  
+  m_Gui->Combo(ID_TYPE_RO_CORRECTION,"", &m_ROCalibrationCorrectionType,2,densityChoicesRoCalibration);  
   m_Gui->Divider(2);
 
-  m_Gui->Double(ID_RO_CORRECTION_DENSITY_INTERVAL_0, "RO1",&m_ROCorrectionDensityInterval0);
-  m_Gui->Double(ID_RO_CORRECTION_DENSITY_INTERVAL_1, "RO2",&m_ROCorrectionDensityInterval1);
+  m_Gui->Double(ID_RO_CORRECTION_DENSITY_INTERVAL_0, "RO1",&m_RO1);
+  m_Gui->Double(ID_RO_CORRECTION_DENSITY_INTERVAL_1, "RO2",&m_RO2);
 
-  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_SINGLE_0, "a", &m_RoCorrectioSingleCoefficient0);
-  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_SINGLE_1, "b", &m_RoCorrectioSingleCoefficient1);
+  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_SINGLE_0, "a", &m_RoCorrection1IntervalCoefficient0);
+  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_SINGLE_1, "b", &m_RoCorrection1IntervalCoefficient1);
   
   m_Gui->Label("RO < RO1");
-  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_0, "a", &m_RoCorrectioFirstCoefficient0);
-  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_1, "b", &m_RoCorrectioFirstCoefficient1);
+  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_0, "a", &m_RoCorrection3IntervalsFirstCoefficient0);
+  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_1, "b", &m_RoCorrectio3IntervalsFirstCoefficient1);
   
   m_Gui->Label("RO1 <= RO <= RO2");
-  m_Gui->Double(ID_RO_CORRECTION_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_0, "a", &m_RoCorrectioSecondCoefficient0);
-  m_Gui->Double(ID_RO_CORRECTION_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_1, "b", &m_RoCorrectioSecondCoefficient1);
+  m_Gui->Double(ID_RO_CORRECTION_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_0, "a", &m_RoCorrection3IntervalsSecondCoefficient0);
+  m_Gui->Double(ID_RO_CORRECTION_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_1, "b", &m_RoCorrection3IntervalsSecondCoefficient1);
   
   m_Gui->Label("RO > RO2");
-  m_Gui->Double(ID_RO_CORRECTION_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_0, "a", &m_RoCorrectioThirdCoefficient0);
-  m_Gui->Double(ID_RO_CORRECTION_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_1, "b", &m_RoCorrectioThirdCoefficient1);
+  m_Gui->Double(ID_RO_CORRECTION_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_0, "a", &m_RoCorrection3IntervalsThirdCoefficient0);
+  m_Gui->Double(ID_RO_CORRECTION_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_1, "b", &m_RoCorrection3IntervalsThirdCoefficient1);
   
   m_Gui->Enable(ID_TYPE_RO_CORRECTION,false);
   EnableRoCorrectionDensityInterval(false);
@@ -438,6 +440,9 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Button(ID_EXECUTE, "execute");
 //#endif
   
+  m_Gui->Divider(2);
+  m_Gui->Button(ID_PRINT_DEBUG_INFO, "Print Debug Info");
+  m_Gui->Divider(2);
 
   m_Gui->OkCancel();
   m_Gui->Label("");
@@ -468,52 +473,51 @@ int lhpOpBonemat::SaveConfigurationFileAs()
   mafString wildc = "configuration file (*.conf)|*.conf";
   mafString newFileName = mafGetSaveFile(initialFileName.GetCStr(), wildc).c_str();
  
-  if (newFileName == "") return 1;
+  if (newFileName == "") return MAF_ERROR;
 
   return SaveConfigurationFile(newFileName.GetCStr());
 }
 
 //----------------------------------------------------------------------------
-int lhpOpBonemat::SaveConfigurationFile(const char *fileName)
-//----------------------------------------------------------------------------
+int lhpOpBonemat::SaveConfigurationFile( const char *configurationFileName )
 {
 
-  std::ofstream outputFile(fileName, std::ios::out);
+  std::ofstream outputFile(configurationFileName, std::ios::out);
 
-  if (outputFile == NULL) {
-    wxMessageBox("Error opening configuration file");
-    return 1;
+  if (outputFile == NULL) 
+  {
+    if (GetTestMode() == false)
+    {
+      wxMessageBox("Error creating configuration file");
+    }
+    return MAF_ERROR;
   }
 
   outputFile.precision(decimalNumbersNumber);
   outputFile 
-    << m_ROIntercept << '\t'
-    << m_ROSlope << std::endl
+
+    //<< m_HU0_d0_el0 << '\t' << m_HU0_d0_el1 << std::endl
+    //<< m_HU1_d1_el0 << '\t' << m_HU1_d1_el1 << std::endl
+
+    << m_ROIntercept << '\t' << m_ROSlope << std::endl
 
     << m_Ea_Eb_Ec_V2_el0 << '\t' << m_Ea_Eb_Ec_V2_el1 << '\t' << m_Ea_Eb_Ec_V2_el2 << std::endl
     << m_RO1_RO2_el0 << '\t' << m_RO1_RO2_el1 << std::endl
 
-    << m_ROCorrectionActivation << std::endl
-    << m_ROCorrectionType << std::endl
+    << m_ROCalibrationCorrectionIsActive << std::endl
+    << m_ROCalibrationCorrectionType << std::endl
 
     //ro interval
-    << m_ROCorrectionDensityInterval0   << '\t' << m_ROCorrectionDensityInterval1   << std::endl
+    << m_RO1   << '\t' << m_RO2   << std::endl
     
 
     //single interval ro calibration
-    << m_RoCorrectioSingleCoefficient0  << '\t' << m_RoCorrectioSingleCoefficient1  << std::endl
+    << m_RoCorrection1IntervalCoefficient0  << '\t' << m_RoCorrection1IntervalCoefficient1  << std::endl
     
-
     //three intervals ro calibration
-    << m_RoCorrectioFirstCoefficient0  << '\t' << m_RoCorrectioFirstCoefficient1  << std::endl
-
-    
-    << m_RoCorrectioSecondCoefficient0 << '\t' << m_RoCorrectioSecondCoefficient1 << std::endl
-    
-
-    << m_RoCorrectioThirdCoefficient0  << '\t' << m_RoCorrectioThirdCoefficient1  << std::endl
-    
-
+    << m_RoCorrection3IntervalsFirstCoefficient0  << '\t' << m_RoCorrectio3IntervalsFirstCoefficient1  << std::endl
+    << m_RoCorrection3IntervalsSecondCoefficient0 << '\t' << m_RoCorrection3IntervalsSecondCoefficient1 << std::endl
+    << m_RoCorrection3IntervalsThirdCoefficient0  << '\t' << m_RoCorrection3IntervalsThirdCoefficient1  << std::endl    
 
     << m_Ea_Eb_Ec_V3_OneDensityInterval_el0 << '\t' << m_Ea_Eb_Ec_V3_OneDensityInterval_el1 << '\t' << m_Ea_Eb_Ec_V3_OneDensityInterval_el2 << std::endl
     << m_Ea0_Eb0_Ec0_V3_el0 << '\t' << m_Ea0_Eb0_Ec0_V3_el1 << '\t' << m_Ea0_Eb0_Ec0_V3_el2 << std::endl
@@ -523,10 +527,9 @@ int lhpOpBonemat::SaveConfigurationFile(const char *fileName)
     << m_StepsNumber  << std::endl
     << m_Egap << std::endl;
     
-
   outputFile.close();
 
-  return 0;
+  return MAF_OK;
 }
 //----------------------------------------------------------------------------
 void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
@@ -579,10 +582,10 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
       case ID_FLAG_RO_CORRECTION:
       case ID_TYPE_RO_CORRECTION:
         {
-          m_Gui->Enable(ID_TYPE_RO_CORRECTION,m_ROCorrectionActivation?true:false);
-          EnableRoCorrectionDensityInterval(m_ROCorrectionActivation?true:false);
-          EnableRoCorrectionSingleInterval(m_ROCorrectionActivation && m_ROCorrectionType == SINGLE_INTERVAL);
-          EnableRoCorrectionThreeInterval(m_ROCorrectionActivation && m_ROCorrectionType == THREE_INTERVALS);
+          m_Gui->Enable(ID_TYPE_RO_CORRECTION,m_ROCalibrationCorrectionIsActive?true:false);
+          EnableRoCorrectionDensityInterval(m_ROCalibrationCorrectionIsActive?true:false);
+          EnableRoCorrectionSingleInterval(m_ROCalibrationCorrectionIsActive && m_ROCalibrationCorrectionType == SINGLE_INTERVAL);
+          EnableRoCorrectionThreeInterval(m_ROCalibrationCorrectionIsActive && m_ROCalibrationCorrectionType == THREE_INTERVALS);
         }
         break;
 
@@ -625,6 +628,8 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
           m_Gui->Enable(ID_RO_INTERCEPT, false);
           m_Gui->Enable(ID_RO_SLOPE, false);
         } 
+
+        // TODO: this seems the only one used, ask to the application experts...
         else if (m_DensityRelationshipListbox == INTERCEPT_SLOPE)
         {
           m_Gui->Enable(ID_HU0, false);
@@ -643,28 +648,28 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
       {
         if (m_YoungModuleCalculationModality == HU_INTEGRATION)
         {
-          Execute1();
+          HUIntegration();
         } 
         else if (m_YoungModuleCalculationModality == YOUNG_MODULE_INTEGRATION )
         { 
-          Execute2();
+          YoungModuleIntegration();
         }
       }
       break;
       case ID_VOLUME_CHOOSE:
         {
           // select here volume
-          m_VmeVolume = mafVMEVolumeGray::SafeDownCast(VolumeSelection());
-          if(m_VmeVolume)
+          m_InputVolume = mafVMEVolumeGray::SafeDownCast(VolumeSelection());
+          if(m_InputVolume)
           {
-            m_VmeVolume->GetOutput()->GetVTKData()->Update();
-            m_VmeVolume->Update();
-            m_InputCTFileName =  m_VmeVolume->GetName();
+            m_InputVolume->GetOutput()->GetVTKData()->Update();
+            m_InputVolume->Update();
+            m_InputVolumeName =  m_InputVolume->GetName();
             m_Gui->Update();
           }
           else
           {
-            m_InputCTFileName =  "";
+            m_InputVolumeName =  "";
             m_Gui->Update();
           }
         }
@@ -677,6 +682,13 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
           mafEventMacro(mafEvent(this,VME_ADD,this->m_Input));
         }
         break;
+      case ID_PRINT_DEBUG_INFO:
+      {
+        std::ostringstream stringStream;
+        PrintSelf(stringStream);
+        mafLogMessage(stringStream.str().c_str());
+      }
+      break;
       default:
         mafEventMacro(*e);
       break;
@@ -705,19 +717,6 @@ void lhpOpBonemat::SetConfigurationFileName(const char* name)
   m_ConfigurationFileName = name;  
 }
 
-//----------------------------------------------------------------------------
-const char* lhpOpBonemat::GetInputCTFileName()
-//----------------------------------------------------------------------------
-{
-  return m_InputCTFileName.GetCStr();
-}
-
-//----------------------------------------------------------------------------
-void lhpOpBonemat::SetInputCTFileName(const char* name)
-//----------------------------------------------------------------------------
-{
-  m_InputCTFileName = name;  
-}
 //----------------------------------------------------------------------------
 const char* lhpOpBonemat::GetFrequencyFileName()
 //----------------------------------------------------------------------------
@@ -750,79 +749,19 @@ int lhpOpBonemat::OpenConfigurationFile()
 
   m_ConfigurationFileName = returnString.c_str();  
   
-  std::ifstream inputFile(m_ConfigurationFileName.GetCStr(), std::ios::in);
+  int result = LoadConfigurationFile(m_ConfigurationFileName.GetCStr());
 
-  if (inputFile == NULL) {
-    std::cerr << "Error opening " << m_ConfigurationFileName.GetCStr() << "\n";
-    return 1;
-  }
-  
-
-   inputFile >> m_ROIntercept;
-   inputFile >> m_ROSlope;
-
-   inputFile  >> m_Ea_Eb_Ec_V2_el0;
-   inputFile >> m_Ea_Eb_Ec_V2_el1;
-   inputFile  >> m_Ea_Eb_Ec_V2_el2;
-
-
-   inputFile >> m_RO1_RO2_el0;
-   inputFile >> m_RO1_RO2_el1;
-
-   inputFile >> m_ROCorrectionActivation;
-   inputFile >> m_ROCorrectionType;
-
-   //ro interval
-   inputFile >>m_ROCorrectionDensityInterval0;
-   inputFile >>m_ROCorrectionDensityInterval1;
-
-   //single interval ro calibration
-   inputFile >>m_RoCorrectioSingleCoefficient0;
-   inputFile >>m_RoCorrectioSingleCoefficient1;
-
-   //three intervals ro calibration
-   inputFile >>m_RoCorrectioFirstCoefficient0;
-   inputFile >>m_RoCorrectioFirstCoefficient1;
-
-   inputFile >>m_RoCorrectioSecondCoefficient0;
-   inputFile >>m_RoCorrectioSecondCoefficient1;
-
-   inputFile >>m_RoCorrectioThirdCoefficient0;
-   inputFile >>m_RoCorrectioThirdCoefficient1;
-
-   inputFile >> m_Ea_Eb_Ec_V3_OneDensityInterval_el0;
-   inputFile >> m_Ea_Eb_Ec_V3_OneDensityInterval_el1;
-   inputFile >> m_Ea_Eb_Ec_V3_OneDensityInterval_el2;
-
-   inputFile >> m_Ea0_Eb0_Ec0_V3_el0;
-   inputFile >> m_Ea0_Eb0_Ec0_V3_el1;
-   inputFile >> m_Ea0_Eb0_Ec0_V3_el2;
-
-   inputFile >> m_Ea1_Eb1_Ec1_V3_el0;
-   inputFile >> m_Ea1_Eb1_Ec1_V3_el1;
-   inputFile >> m_Ea1_Eb1_Ec1_V3_el2;
-
-   inputFile >> m_Ea2_Eb2_Ec2_V3_el0;
-   inputFile >> m_Ea2_Eb2_Ec2_V3_el1;
-   inputFile >> m_Ea2_Eb2_Ec2_V3_el2;
-   
-   inputFile >> m_StepsNumber;
-   inputFile >> m_Egap;
 
    m_Gui->Enable(ID_SAVE_CONFIGURATION_FILE,true);
    OnEvent(&mafEvent(this,ID_FLAG_RO_CORRECTION));
    
    m_Gui->Update();
 
-
-
-
-   inputFile.close();
-   return 0;
+   return result;
 }
 
 //----------------------------------------------------------------------------
-int lhpOpBonemat::Execute1()
+int lhpOpBonemat::HUIntegration()
 //----------------------------------------------------------------------------
 {
   std::ostringstream logStringStream;
@@ -839,8 +778,13 @@ int lhpOpBonemat::Execute1()
   
   if ( (freq_fp = fopen(m_FrequencyFileName.GetCStr(), "w")) == NULL)
   {
-    wxMessageBox("Frequency file can't be opened");
-    return 1;
+    if (GetTestMode() == false)
+    {
+      wxMessageBox("Frequency file can't be opened");
+    }
+   
+    assert(false);
+    return MAF_ERROR;
   }
   
   vtkUnstructuredGrid *inUnstructuredGrid = vtkUnstructuredGrid::SafeDownCast(mafVMEMesh::SafeDownCast(m_Input)->GetOutput()->GetVTKData());
@@ -849,9 +793,9 @@ int lhpOpBonemat::Execute1()
   vtkDataSet *volume = NULL;
   //scalars
   Scalars * scalars = NULL;
-  if(m_VmeVolume)
+  if(m_InputVolume)
   {
-    if(volume = vtkImageData::SafeDownCast(mafVMEVolumeGray::SafeDownCast(m_VmeVolume)->GetOutput()->GetVTKData()))
+    if(volume = vtkImageData::SafeDownCast(mafVMEVolumeGray::SafeDownCast(m_InputVolume)->GetOutput()->GetVTKData()))
     {
       vtkImageData * imagedata = vtkImageData::SafeDownCast(volume);
       imagedata->Update();
@@ -894,7 +838,7 @@ int lhpOpBonemat::Execute1()
 
 
     }
-    else if(volume = vtkRectilinearGrid::SafeDownCast(mafVMEVolumeGray::SafeDownCast(m_VmeVolume)->GetOutput()->GetVTKData()))
+    else if(volume = vtkRectilinearGrid::SafeDownCast(mafVMEVolumeGray::SafeDownCast(m_InputVolume)->GetOutput()->GetVTKData()))
     {
 
       vtkRectilinearGrid *rectilinearGrid = vtkRectilinearGrid::SafeDownCast(volume);
@@ -1029,9 +973,12 @@ int lhpOpBonemat::Execute1()
   }
 
 
-  wxBusyInfo wait_info("Computing elements data...");
-  mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
-
+  if (GetTestMode() == false)
+  {
+    wxBusyInfo wait_info("Computing elements data...");
+    mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+  }
+  
   //mafEventMacro(mafEvent(this,PROGRESSBAR_SET_TEXT, ""));
   long progress = 0;
 
@@ -1087,28 +1034,28 @@ int lhpOpBonemat::Execute1()
 
     //RO CORRECTION///////////////////////////////////////////////////////////////
     // roSource[id].ro, arrayRo->GetValue(id)
-    if(m_ROCorrectionActivation)
+    if(m_ROCalibrationCorrectionIsActive)
     {
-      if(m_ROCorrectionType == SINGLE_INTERVAL)
+      if(m_ROCalibrationCorrectionType == SINGLE_INTERVAL)
       {
-        roSource[id].ro = m_RoCorrectioSingleCoefficient0 + m_RoCorrectioSingleCoefficient1 * roSource[id].ro;
+        roSource[id].ro = m_RoCorrection1IntervalCoefficient0 + m_RoCorrection1IntervalCoefficient1 * roSource[id].ro;
         arrayRo->SetValue(id,roSource[id].ro);
       }
-      else if (m_ROCorrectionType == THREE_INTERVALS)
+      else if (m_ROCalibrationCorrectionType == THREE_INTERVALS)
       {
-        if (roSource[id].ro < m_ROCorrectionDensityInterval0)
+        if (roSource[id].ro < m_RO1)
         {
-          roSource[id].ro = m_RoCorrectioFirstCoefficient0 + m_RoCorrectioFirstCoefficient1 * roSource[id].ro;
+          roSource[id].ro = m_RoCorrection3IntervalsFirstCoefficient0 + m_RoCorrectio3IntervalsFirstCoefficient1 * roSource[id].ro;
           arrayRo->SetValue(id,roSource[id].ro);
         } 
-        else if (m_ROCorrectionDensityInterval0 <= roSource[id].ro  && roSource[id].ro <= m_ROCorrectionDensityInterval1)
+        else if (m_RO1 <= roSource[id].ro  && roSource[id].ro <= m_RO2)
         {
-          roSource[id].ro = m_RoCorrectioSecondCoefficient0 + m_RoCorrectioSecondCoefficient1 * roSource[id].ro;
+          roSource[id].ro = m_RoCorrection3IntervalsSecondCoefficient0 + m_RoCorrection3IntervalsSecondCoefficient1 * roSource[id].ro;
           arrayRo->SetValue(id,roSource[id].ro);
         }
-        else if (roSource[id].ro > m_ROCorrectionDensityInterval1)
+        else if (roSource[id].ro > m_RO2)
         {
-          roSource[id].ro = m_RoCorrectioThirdCoefficient0 + m_RoCorrectioThirdCoefficient1 * roSource[id].ro;
+          roSource[id].ro = m_RoCorrection3IntervalsThirdCoefficient0 + m_RoCorrection3IntervalsThirdCoefficient1 * roSource[id].ro;
           arrayRo->SetValue(id,roSource[id].ro);
         }
       }
@@ -1287,6 +1234,7 @@ int lhpOpBonemat::Execute1()
 
   mafVMEMesh::SafeDownCast(m_Input)->SetData(outputUG, 0);
 
+
   fdata->Delete();
 
   vtkDEL(arrayMaterial);
@@ -1305,12 +1253,12 @@ int lhpOpBonemat::Execute1()
 
   //logStringStream <<"Number of materials: " << numMats << std::endl << std::endl;
 
-  return 0;
+  return MAF_OK;
 }
 
 
 //----------------------------------------------------------------------------
-int lhpOpBonemat::Execute2()
+int lhpOpBonemat::YoungModuleIntegration()
 //----------------------------------------------------------------------------
 {
   std::ostringstream logStringStream;
@@ -1346,10 +1294,10 @@ int lhpOpBonemat::Execute2()
   vtkDataSet *volume = NULL;
   //scalars
   Scalars * scalars = NULL;
-  if(m_VmeVolume)
+  if(m_InputVolume)
   {
     
-    if(volume = vtkImageData::SafeDownCast(mafVMEVolumeGray::SafeDownCast(m_VmeVolume)->GetOutput()->GetVTKData()))
+    if(volume = vtkImageData::SafeDownCast(mafVMEVolumeGray::SafeDownCast(m_InputVolume)->GetOutput()->GetVTKData()))
     {
       vtkImageData * imagedata = vtkImageData::SafeDownCast(volume);
       imagedata->Update();
@@ -1390,7 +1338,7 @@ int lhpOpBonemat::Execute2()
       }
 
     }
-    else if(volume = vtkRectilinearGrid::SafeDownCast(mafVMEVolumeGray::SafeDownCast(m_VmeVolume)->GetOutput()->GetVTKData()))
+    else if(volume = vtkRectilinearGrid::SafeDownCast(mafVMEVolumeGray::SafeDownCast(m_InputVolume)->GetOutput()->GetVTKData()))
     {
 
       vtkRectilinearGrid *rectilinearGrid = vtkRectilinearGrid::SafeDownCast(volume);
@@ -1529,9 +1477,12 @@ int lhpOpBonemat::Execute2()
     ROIntercept = m_ROIntercept;
   }
 
-  wxBusyInfo wait_info("Computing elements density...");
-  mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
-
+  if (GetTestMode() == false)
+  {
+    wxBusyInfo wait_info("Computing elements density...");
+    mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+  }
+  
   long progress = 0;
   
   for (id=0; id < numElements; id++) 
@@ -1648,25 +1599,25 @@ int lhpOpBonemat::Execute2()
     }
     //RO CORRECTION///////////////////////////////////////////////////////////////
     // roSource[id].ro, arrayRo->GetValue(id)
-    if(m_ROCorrectionActivation)
+    if(m_ROCalibrationCorrectionIsActive)
     {
-      if(m_ROCorrectionType == SINGLE_INTERVAL)
+      if(m_ROCalibrationCorrectionType == SINGLE_INTERVAL)
       {
-        density = m_RoCorrectioSingleCoefficient0 + m_RoCorrectioSingleCoefficient1 * density;
+        density = m_RoCorrection1IntervalCoefficient0 + m_RoCorrection1IntervalCoefficient1 * density;
       }
-      else if (m_ROCorrectionType == THREE_INTERVALS)
+      else if (m_ROCalibrationCorrectionType == THREE_INTERVALS)
       {
-        if (density < m_ROCorrectionDensityInterval0)
+        if (density < m_RO1)
         {
-          density = m_RoCorrectioFirstCoefficient0 + m_RoCorrectioFirstCoefficient1 * density;
+          density = m_RoCorrection3IntervalsFirstCoefficient0 + m_RoCorrectio3IntervalsFirstCoefficient1 * density;
         } 
-        else if (m_ROCorrectionDensityInterval0 <= density  && density <= m_ROCorrectionDensityInterval1)
+        else if (m_RO1 <= density  && density <= m_RO2)
         {
-          density = m_RoCorrectioSecondCoefficient0 + m_RoCorrectioSecondCoefficient1 * density;
+          density = m_RoCorrection3IntervalsSecondCoefficient0 + m_RoCorrection3IntervalsSecondCoefficient1 * density;
         }
-        else if (density > m_ROCorrectionDensityInterval1)
+        else if (density > m_RO2)
         {
-          density = m_RoCorrectioThirdCoefficient0 + m_RoCorrectioThirdCoefficient1 * density;
+          density = m_RoCorrection3IntervalsThirdCoefficient0 + m_RoCorrection3IntervalsThirdCoefficient1 * density;
         }
       }
 
@@ -1682,8 +1633,11 @@ int lhpOpBonemat::Execute2()
     datasetScalars->SetScalar(pointID, youngModule);
   }
 
-  wxBusyInfo wait_info_young_module("Computing elements Young's modulus...");
-  mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+  if (GetTestMode() == false)
+  {
+    wxBusyInfo wait_info_young_module("Computing elements Young's modulus...");
+    mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+  }
   progress = 0;
 
   for (id=0; id < numElements; id++) 
@@ -2193,7 +2147,6 @@ void lhpOpBonemat::EnableRoCorrectionThreeInterval(bool enable)
   
   m_Gui->Enable(ID_RO_CORRECTION_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_0, enable);
   m_Gui->Enable(ID_RO_CORRECTION_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_1, enable);
-
 }
 
 void lhpOpBonemat::EnableRoCorrectionDensityInterval(bool enable)
@@ -2202,3 +2155,169 @@ void lhpOpBonemat::EnableRoCorrectionDensityInterval(bool enable)
   m_Gui->Enable(ID_RO_CORRECTION_DENSITY_INTERVAL_1, enable);
 }
 
+int lhpOpBonemat::LoadConfigurationFile( const char *configurationFileName )
+{
+  std::ifstream inputFile(configurationFileName, std::ios::in);
+
+  if (inputFile == NULL) {
+    std::cerr << "Error opening " << configurationFileName << "\n";
+    return MAF_ERROR;
+  }
+  
+  //inputFile >> m_HU0_d0_el0;
+  //inputFile >> m_HU0_d0_el1;
+  //inputFile >> m_HU1_d1_el0;
+  //inputFile >> m_HU1_d1_el1;
+
+  inputFile >> m_ROIntercept;
+  inputFile >> m_ROSlope;
+
+  inputFile  >> m_Ea_Eb_Ec_V2_el0;
+  inputFile >> m_Ea_Eb_Ec_V2_el1;
+  inputFile  >> m_Ea_Eb_Ec_V2_el2;
+
+  inputFile >> m_RO1_RO2_el0;
+  inputFile >> m_RO1_RO2_el1;
+
+  inputFile >> m_ROCalibrationCorrectionIsActive;
+  inputFile >> m_ROCalibrationCorrectionType;
+
+  //ro interval
+  inputFile >>m_RO1;
+  inputFile >>m_RO2;
+
+  //single interval ro calibration
+  inputFile >>m_RoCorrection1IntervalCoefficient0;
+  inputFile >>m_RoCorrection1IntervalCoefficient1;
+
+  //three intervals ro calibration
+  inputFile >>m_RoCorrection3IntervalsFirstCoefficient0;
+  inputFile >>m_RoCorrectio3IntervalsFirstCoefficient1;
+
+  inputFile >>m_RoCorrection3IntervalsSecondCoefficient0;
+  inputFile >>m_RoCorrection3IntervalsSecondCoefficient1;
+
+  inputFile >>m_RoCorrection3IntervalsThirdCoefficient0;
+  inputFile >>m_RoCorrection3IntervalsThirdCoefficient1;
+
+  inputFile >> m_Ea_Eb_Ec_V3_OneDensityInterval_el0;
+  inputFile >> m_Ea_Eb_Ec_V3_OneDensityInterval_el1;
+  inputFile >> m_Ea_Eb_Ec_V3_OneDensityInterval_el2;
+
+  inputFile >> m_Ea0_Eb0_Ec0_V3_el0;
+  inputFile >> m_Ea0_Eb0_Ec0_V3_el1;
+  inputFile >> m_Ea0_Eb0_Ec0_V3_el2;
+
+  inputFile >> m_Ea1_Eb1_Ec1_V3_el0;
+  inputFile >> m_Ea1_Eb1_Ec1_V3_el1;
+  inputFile >> m_Ea1_Eb1_Ec1_V3_el2;
+
+  inputFile >> m_Ea2_Eb2_Ec2_V3_el0;
+  inputFile >> m_Ea2_Eb2_Ec2_V3_el1;
+  inputFile >> m_Ea2_Eb2_Ec2_V3_el2;
+
+  inputFile >> m_StepsNumber;
+  inputFile >> m_Egap;
+
+  if (DEBUG_MODE)
+  {
+    std::ostringstream stringStream;
+    PrintSelf(stringStream);
+    mafLogMessage(stringStream.str().c_str());
+  }
+
+  return MAF_OK;
+}
+
+void lhpOpBonemat::PrintSelf(std::ostream &os)
+{
+
+  os << std::endl;
+
+  os << "#### CT Densitometric Calibration ####" << std::endl;
+
+  os << "a (m_ROIntercept) : " << m_ROIntercept << std::endl;
+  os << "b (m_ROSlope): " << m_ROSlope<< std::endl;
+
+  os << std::endl;
+  os << "apply calibration correction (m_ROCalibrationCorrectionIsActive): " << m_ROCalibrationCorrectionIsActive<< std::endl;
+  
+  os << std::endl;
+  os << "#### Correction of the calibration ####" << std::endl;
+  
+  os << "Intervals Type (m_ROCalibrationCorrectionType) {SINGLE_INTERVAL = 0, THREE_INTERVALS = 1}: " << m_ROCalibrationCorrectionType<< std::endl;
+
+  //ro interval
+  os << "R01 (m_RO1) : " << m_RO1<< std::endl;
+  os << "R02 (m_RO2) : " << m_RO2<< std::endl;
+  
+  //single interval ro calibration
+  os << "a (m_RoCorrection1IntervalCoefficient0): " << m_RoCorrection1IntervalCoefficient0<< std::endl;
+  os << "b (m_RoCorrection1IntervalCoefficient1): " << m_RoCorrection1IntervalCoefficient1<< std::endl;
+
+  //three intervals ro calibration
+  os << std::endl;
+  os << "R0 < R01" << std::endl;
+  os << "a (m_RoCorrection3IntervalsFirstCoefficient0): " << m_RoCorrection3IntervalsFirstCoefficient0<< std::endl;
+  os << "b (m_RoCorrectio3IntervalsFirstCoefficient1): " << m_RoCorrectio3IntervalsFirstCoefficient1<< std::endl;
+
+  os << std::endl;
+  os << "R01 <= R0 <= R02" << std::endl;  
+  os << "a (m_RoCorrection3IntervalsSecondCoefficient0): " << m_RoCorrection3IntervalsSecondCoefficient0<< std::endl;
+  os << "b (m_RoCorrection3IntervalsSecondCoefficient1): " << m_RoCorrection3IntervalsSecondCoefficient1<< std::endl;
+
+  os << std::endl;
+
+  os << "R0 > R02" << std::endl;
+  os << "a (m_RoCorrection3IntervalsThirdCoefficient0): " << m_RoCorrection3IntervalsThirdCoefficient0<< std::endl;
+  os << "b (m_RoCorrection3IntervalsThirdCoefficient1): " << m_RoCorrection3IntervalsThirdCoefficient1<< std::endl;
+
+  
+  os << std::endl;
+  os << "Young`s modulus (E) calculation modality" << std::endl;
+  os << "Modality (m_YoungModuleCalculationModality) {HU_INTEGRATION = 0,YOUNG_MODULE_INTEGRATION = 1}: " << m_YoungModuleCalculationModality << std::endl;
+
+  os << std::endl;
+  os << "####  density-elasticity relationship #### " << std::endl;
+
+  os << "a (m_Ea_Eb_Ec_V2_el0): " << m_Ea_Eb_Ec_V2_el0<< std::endl;
+  os << "b (m_Ea_Eb_Ec_V2_el1): " << m_Ea_Eb_Ec_V2_el1<< std::endl;
+  os << "c (m_Ea_Eb_Ec_V2_el2): " << m_Ea_Eb_Ec_V2_el2<< std::endl;
+
+  os << std::endl;
+  os << "density-intervals for E integration" << std::endl;
+  os << "Density intervals type (m_DensityIntervalsNumber) {SINGLE_INTERVAL = 0,THREE_INTERVALS = 1}: " << m_DensityIntervalsNumber << std::endl;
+
+  os << std::endl;
+  os << "R01 (m_RO1_RO2_el0): " << m_RO1_RO2_el0<< std::endl;
+  os << "R02 (m_RO1_RO2_el1): " << m_RO1_RO2_el1<< std::endl;
+  os << "a (m_Ea_Eb_Ec_V3_OneDensityInterval_el0): " << m_Ea_Eb_Ec_V3_OneDensityInterval_el0<< std::endl;
+  os << "b (m_Ea_Eb_Ec_V3_OneDensityInterval_el1): " << m_Ea_Eb_Ec_V3_OneDensityInterval_el1<< std::endl;
+  os << "c (m_Ea_Eb_Ec_V3_OneDensityInterval_el2): " << m_Ea_Eb_Ec_V3_OneDensityInterval_el2<< std::endl;
+
+  os << std::endl;
+  os << "R0 < R01" << std::endl;
+  os << "a (m_Ea0_Eb0_Ec0_V3_el0): " << m_Ea0_Eb0_Ec0_V3_el0<< std::endl;
+  os << "b (m_Ea0_Eb0_Ec0_V3_el1): " << m_Ea0_Eb0_Ec0_V3_el1<< std::endl;
+  os << "c (m_Ea0_Eb0_Ec0_V3_el2): " << m_Ea0_Eb0_Ec0_V3_el2<< std::endl;
+  os << std::endl;
+  os << "R01 <= R0 <= R02" << std::endl;  
+  os << "a (m_Ea1_Eb1_Ec1_V3_el0): " << m_Ea1_Eb1_Ec1_V3_el0<< std::endl;
+  os << "b (m_Ea1_Eb1_Ec1_V3_el1): " << m_Ea1_Eb1_Ec1_V3_el1<< std::endl;
+  os << "c (m_Ea1_Eb1_Ec1_V3_el2): " << m_Ea1_Eb1_Ec1_V3_el2<< std::endl;
+  os << std::endl;
+  os << "R0 > R02" << std::endl;
+  os << "a (m_Ea2_Eb2_Ec2_V3_el0): " << m_Ea2_Eb2_Ec2_V3_el0<< std::endl;
+  os << "b (m_Ea2_Eb2_Ec2_V3_el1): " << m_Ea2_Eb2_Ec2_V3_el1<< std::endl;
+  os << "c (m_Ea2_Eb2_Ec2_V3_el2): " << m_Ea2_Eb2_Ec2_V3_el2<< std::endl;
+
+  os << std::endl;
+
+  os << "Integration Steps (m_StepsNumber): " << m_StepsNumber<< std::endl;
+  
+  os << std::endl;
+
+  os << "Gap Value (m_Egap): " << m_Egap<< std::endl;
+
+  os << std::endl;
+}
