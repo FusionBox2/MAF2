@@ -27,6 +27,8 @@ ADD_TEST(lhpTagHandlerDICOMContainerTest ${EXECUTABLE_OUTPUT_PATH}/lhpTagHandler
 ADD_EXECUTABLE(lhpOpImporterC3DTest lhpOpImporterC3DTest.h lhpOpImporterC3DTest.cpp)
 ADD_TEST(lhpOpImporterC3DTest ${EXECUTABLE_OUTPUT_PATH}/lhpOpImporterC3DTest)
 
+ADD_EXECUTABLE(lhpOpBonematTest lhpOpBonematTest.h lhpOpBonematTest.cpp)
+ADD_TEST(lhpOpBonematTest ${EXECUTABLE_OUTPUT_PATH}/lhpOpBonematTest)
 
 # wxWidgets specific classes
 #IF (MAF_USE_WX)
