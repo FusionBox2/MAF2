@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpBonemat.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-05-20 13:25:40 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2008-05-27 14:18:29 $
+  Version:   $Revision: 1.9 $
   Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -593,14 +593,8 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
             
       case ID_EXECUTE	:
       {
-        if (m_YoungModuleCalculationModality == HU_INTEGRATION)
-        {
-          HUIntegration();
-        } 
-        else if (m_YoungModuleCalculationModality == YOUNG_MODULE_INTEGRATION )
-        { 
-          YoungModuleIntegration();
-        }
+        Execute();
+
       }
       break;
       case ID_VOLUME_CHOOSE:
@@ -1395,7 +1389,7 @@ int lhpOpBonemat::YoungModuleIntegration()
   // Array containing properties for each element from 0 to numElements - 1
   roSource = new ElementProp[numElements];
 
-  vtkDoubleArray *arrayMaterial = NULL;
+  vtkIntArray *arrayMaterial = NULL;
   vtkDoubleArray *arrayE = NULL;
   vtkDoubleArray *arrayPoisson = NULL;
   vtkDoubleArray *arrayRo = NULL;
@@ -2528,4 +2522,17 @@ int lhpOpBonemat::SaveConfigurationFile( const char *configurationFileName )
   return MAF_OK;
 }
 
+int lhpOpBonemat::Execute()
+{
+  int res = MAF_ERROR;
+
+  if (m_YoungModuleCalculationModality == HU_INTEGRATION)
+  {
+    return HUIntegration();
+  } 
+  else if (m_YoungModuleCalculationModality == YOUNG_MODULE_INTEGRATION )
+  { 
+    return YoungModuleIntegration();
+  }
+}
 

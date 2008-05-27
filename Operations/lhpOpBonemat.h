@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpBonemat.h,v $
   Language:  C++
-  Date:      $Date: 2008-05-20 13:25:40 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2008-05-27 14:18:29 $
+  Version:   $Revision: 1.5 $
   Authors:   Daniele Giunchi , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2002/2004
@@ -34,8 +34,8 @@ class lhpOpBonemat: public mafOp
 {
 public:
 
-  /** Set the source volume */
-  void SetVolume(mafVMEVolumeGray *volume) {m_InputVolume = volume;};
+  /** Set the source volume for mapping*/
+  void SetSourceVolume(mafVMEVolumeGray *volume) {m_InputVolume = volume;};
   mafVMEVolumeGray *GetVolume() {return m_InputVolume;};
 
   /** Fill ivars from configuration file */
@@ -46,6 +46,34 @@ public:
 
   /** Get the Output Frequency file name */
   const char* GetFrequencyFileName();
+
+  /** Set the execution modality, Default is HU integration */
+  void SetYoungModuleCalculationModalityToHUIntegration() {m_YoungModuleCalculationModality = HU_INTEGRATION;};
+  void SetYoungModuleCalculationModalityToYoungModuleIntegration() {m_YoungModuleCalculationModality = YOUNG_MODULE_INTEGRATION;};
+  
+  /** Execute the procedure that maps TAC values on the finite element mesh; 
+  input data is changed in place*/
+  int Execute();
+
+  /** Create the operation graphical user interface*/
+  void CreateGui();
+
+  void PrintSelf(std::ostream &os);
+
+  static bool VolumeAccept(mafNode* node) {return(node != NULL && node->IsMAFType(mafVMEVolumeGray));};
+
+  /** Return true for the acceptable vme type. */
+  bool Accept(mafNode *node);
+
+  /** Builds operation's interface. */
+  void OpRun();
+
+  lhpOpBonemat(wxString label);
+  ~lhpOpBonemat(); 
+  mafOp* Copy();
+  void OnEvent(mafEventBase *maf_event);
+
+protected:
 
   /** Execute the procedure that maps TAC values on the finite element mesh:
   DENSITY: FROM_DATASET == old version
@@ -58,26 +86,6 @@ public:
   YOUNG MODULE: FROM_DATASET  
   */
   int YoungModuleIntegration();
-
-  /** Create the operation graphical user interface*/
-  void CreateGui();
-
-  void PrintSelf(std::ostream &os);
-
-  static bool VolumeAccept(mafNode* node) {return(node != NULL && node->IsMAFType(mafVMEVolumeGray));};
-
-  lhpOpBonemat(wxString label);
-  ~lhpOpBonemat(); 
-  mafOp* Copy();
-  void OnEvent(mafEventBase *maf_event);
-
-  /** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node);
-
-  /** Builds operation's interface. */
-  void OpRun();
-
-protected:
 
   int SaveConfigurationFile(const char *configurationFileName);
 
