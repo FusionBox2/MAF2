@@ -2,9 +2,9 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.h,v $
   Language:  C++
-  Date:      $Date: 2008-01-17 16:01:13 $
-  Version:   $Revision: 1.5 $
-  Authors:   Stefano Perticoni - Daniele Giunchi
+  Date:      $Date: 2008-05-28 08:22:36 $
+  Version:   $Revision: 1.6 $
+  Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
   CINECA - Interuniversity Consortium (www.cineca.it)
@@ -18,54 +18,54 @@
 
 #include "lhpTagHandler.h"
 
-class lhpTagHandler_L0000_resource_data_Type: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_DataType: public lhpTagHandler
 {
   public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_Type,mafObject);
+    mafTypeMacro(lhpTagHandler_L0000_resource_data_DataType,mafObject);
 
-    lhpTagHandler_L0000_resource_data_Type();
+    lhpTagHandler_L0000_resource_data_DataType();
     virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
 
-class lhpTagHandler_L0000_resource_data_Type_Field: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_DataType_Field: public lhpTagHandler
 {
   public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_Type_Field,mafObject);
+    mafTypeMacro(lhpTagHandler_L0000_resource_data_DataType_Field,mafObject);
 
-    lhpTagHandler_L0000_resource_data_Type_Field();
+    lhpTagHandler_L0000_resource_data_DataType_Field();
     virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
 
-class lhpTagHandler_L0000_resource_data_Type_Dimension: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_DataType_Dimension: public lhpTagHandler
 {
   public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_Type_Dimension,mafObject);
+    mafTypeMacro(lhpTagHandler_L0000_resource_data_DataType_Dimension,mafObject);
 
-    lhpTagHandler_L0000_resource_data_Type_Dimension();
+    lhpTagHandler_L0000_resource_data_DataType_Dimension();
     virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
-class lhpTagHandler_L0000_resource_data_Type_VolumeType: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_DataType_VolumeType: public lhpTagHandler
 {
   public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_Type_VolumeType,mafObject);
+    mafTypeMacro(lhpTagHandler_L0000_resource_data_DataType_VolumeType,mafObject);
 
-    lhpTagHandler_L0000_resource_data_Type_VolumeType();
+    lhpTagHandler_L0000_resource_data_DataType_VolumeType();
     virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
  
-class lhpTagHandler_L0000_resource_data_Type_Timevarying: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_DataType_Timevarying: public lhpTagHandler
 {
   public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_Type_Timevarying,mafObject);
+    mafTypeMacro(lhpTagHandler_L0000_resource_data_DataType_Timevarying,mafObject);
 
-    lhpTagHandler_L0000_resource_data_Type_Timevarying();
+    lhpTagHandler_L0000_resource_data_DataType_Timevarying();
     virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
@@ -110,15 +110,16 @@ class lhpTagHandler_L0000_resource_data_Dataset_DatasetURI: public lhpTagHandler
   
 };
 
-class lhpTagHandler_L0000_resource_data_Dataset_FileSize: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_Dataset_LocalFileCheckSum: public lhpTagHandler
 {
   public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_FileSize,mafObject);
+    mafTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_LocalFileCheckSum,mafObject);
 
-    lhpTagHandler_L0000_resource_data_Dataset_FileSize();
+    lhpTagHandler_L0000_resource_data_Dataset_LocalFileCheckSum();
     virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
+
 
 class lhpTagHandler_L0000_resource_data_Dataset_UploadDate: public lhpTagHandler
 {
@@ -170,127 +171,137 @@ class lhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption: public lhpT
   
 };
 
-class lhpTagHandler_L0000_resource_data_TimeSpace_VMEabsoluteMatrixPose: public lhpTagHandler
+class lhpTagHandler_L0000_resource_MAF_TimeSpace_VMEabsoluteMatrixPose: public lhpTagHandler
 {
   public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_TimeSpace_VMEabsoluteMatrixPose,mafObject);
+    mafTypeMacro(lhpTagHandler_L0000_resource_MAF_TimeSpace_VMEabsoluteMatrixPose,mafObject);
 
-    lhpTagHandler_L0000_resource_data_TimeSpace_VMEabsoluteMatrixPose();
+    lhpTagHandler_L0000_resource_MAF_TimeSpace_VMEabsoluteMatrixPose();
     virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
-class lhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector: public lhpTagHandler
+class lhpTagHandler_L0000_resource_MAF_TimeSpace_TimeStampVector: public lhpTagHandler
 {
   public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector,mafObject);
+    mafTypeMacro(lhpTagHandler_L0000_resource_MAF_TimeSpace_TimeStampVector,mafObject);
 
-    lhpTagHandler_L0000_resource_data_TimeSpace_TimeStampVector();
+    lhpTagHandler_L0000_resource_MAF_TimeSpace_TimeStampVector();
     virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
-class lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootURI: public lhpTagHandler
+class lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeRootURI: public lhpTagHandler
 {
   public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootURI,mafObject);
+    mafTypeMacro(lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeRootURI,mafObject);
 
-    lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootURI();
+    lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeRootURI();
     virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
-class lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootName: public lhpTagHandler
+class lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeRootName: public lhpTagHandler
 {
   public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootName,mafObject);
+    mafTypeMacro(lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeRootName,mafObject);
 
-    lhpTagHandler_L0000_resource_data_TreeInfo_VmeRootName();
+    lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeRootName();
     virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
-class lhpTagHandler_L0000_resource_data_TreeInfo_VmeChildURI1: public lhpTagHandler
+class lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeChildURI1: public lhpTagHandler
 {
   public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_TreeInfo_VmeChildURI1,mafObject);
+    mafTypeMacro(lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeChildURI1,mafObject);
 
-    lhpTagHandler_L0000_resource_data_TreeInfo_VmeChildURI1();
+    lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeChildURI1();
     virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
-class lhpTagHandler_L0000_resource_data_TreeInfo_VmeTreeCreationDate: public lhpTagHandler
+class lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeTreeCreationDate: public lhpTagHandler
 {
   public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_TreeInfo_VmeTreeCreationDate,mafObject);
+    mafTypeMacro(lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeTreeCreationDate,mafObject);
 
-    lhpTagHandler_L0000_resource_data_TreeInfo_VmeTreeCreationDate();
+    lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeTreeCreationDate();
     virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
-class lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_Tracebility_Ownership: public lhpTagHandler
 {
   public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes,mafObject);
+    mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_Ownership,mafObject);
 
-    lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes();
+    lhpTagHandler_L0000_resource_data_Tracebility_Ownership();
     virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
-class lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes_OwnerID: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_Tracebility_Ownership_OwnerID: public lhpTagHandler
 {
   public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes_OwnerID,mafObject);
+    mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_Ownership_OwnerID,mafObject);
 
-    lhpTagHandler_L0000_resource_data_Attributes_OwnerAttributes_OwnerID();
+    lhpTagHandler_L0000_resource_data_Tracebility_Ownership_OwnerID();
     virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
-class lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_Quality: public lhpTagHandler
 {
   public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes,mafObject);
+    mafTypeMacro(lhpTagHandler_L0000_resource_data_Quality,mafObject);
 
-    lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes();
+    lhpTagHandler_L0000_resource_data_Quality();
     virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
-class lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes_QualityScore1: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_Quality_QualityScore1: public lhpTagHandler
 {
   public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes_QualityScore1,mafObject);
+    mafTypeMacro(lhpTagHandler_L0000_resource_data_Quality_QualityScore1,mafObject);
 
-    lhpTagHandler_L0000_resource_data_Attributes_QualityAttributes_QualityScore1();
-    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
-  
-};
-
-class lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType: public lhpTagHandler
-{
-  public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType,mafObject);
-
-    lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType();
-    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
-  
-};
-
-class lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir: public lhpTagHandler
-{
-  public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir,mafObject);
-
-    lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir();
+    lhpTagHandler_L0000_resource_data_Quality_QualityScore1();
     virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
 
+class lhpTagHandler_L0000_resource_data_Source: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_MASource: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_MASource();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
 
 class L0000_resource_Documentation: public lhpTagHandler
 {
@@ -304,47 +315,47 @@ public:
 
 
 
-class L0000_resource_Pricing_Quotation1_GroupID: public lhpTagHandler
+class L0000_resource_Access_Policy1_GroupID: public lhpTagHandler
 {
 public:
-  mafTypeMacro(L0000_resource_Pricing_Quotation1_GroupID,mafObject);
+  mafTypeMacro(L0000_resource_Access_Policy1_GroupID,mafObject);
 
-  L0000_resource_Pricing_Quotation1_GroupID();
+  L0000_resource_Access_Policy1_GroupID();
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
 
 
 
-class L0000_resource_Pricing_Quotation1_Price: public lhpTagHandler
+class L0000_resource_Access_Policy1_Price: public lhpTagHandler
 {
 public:
-  mafTypeMacro(L0000_resource_Pricing_Quotation1_Price,mafObject);
+  mafTypeMacro(L0000_resource_Access_Policy1_Price,mafObject);
 
-  L0000_resource_Pricing_Quotation1_Price();
+  L0000_resource_Access_Policy1_Price();
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
 
 
 
-class L0000_resource_Pricing_Quotation1_Policy: public lhpTagHandler
+class L0000_resource_Access_Policy1_Usage: public lhpTagHandler
 {
 public:
-  mafTypeMacro(L0000_resource_Pricing_Quotation1_Policy,mafObject);
+  mafTypeMacro(L0000_resource_Access_Policy1_Usage,mafObject);
 
-  L0000_resource_Pricing_Quotation1_Policy();
+  L0000_resource_Access_Policy1_Usage();
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
 
 
-class L0000_resource_Status: public lhpTagHandler
+class L0000_resource_Access_Publishing_PublishingStatus: public lhpTagHandler
 {
 public:
-  mafTypeMacro(L0000_resource_Status,mafObject);
+  mafTypeMacro(L0000_resource_Access_Publishing_PublishingStatus,mafObject);
 
-  L0000_resource_Status();
+  L0000_resource_Access_Publishing_PublishingStatus();
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
