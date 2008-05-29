@@ -135,6 +135,11 @@ class UploadHandler:
         if(binarySendResult == True):
           print "Waiting for sending XML..."
           self.sendXMLFile()
+          
+          #Fake progress bar used when no binary data is uploaded
+          percentage = 100          
+          lista = [self.observer,percentage]
+          UploadHandler.queue.put(lista)
         
           print "End Upload"
           print "Uploaded Binary in SRB: " + self.BinaryURI
