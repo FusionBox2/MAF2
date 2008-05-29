@@ -38,85 +38,98 @@ class UploadHandler:
         print "->"+ str(self.proxyPort) + "<-"
                 
         self.createOutgoingDir()
-               
-        #get free resource (return URI string)
-        self.BinaryURI = self.getFreeResource() #thread maybe
-        #thread.start_new_thread(self.getFreeResource,())
-        print self.BinaryURI
-        #-1 percentage means progress pulsing 
         
-        
-        """
-        percentage = -1
-        while(1):
-            lista = [self.observer,percentage]
-            #print self.BinaryURI
-            time.sleep(0.1)
-            self.block.acquire()
-            print "Testing  " + self.BinaryURI
-            UploadHandler.queue.put(lista)
-            self.block.release()
-            if(self.BinaryURI != ''):
-               break
-        return #used for test
-        """
-
-        """
-        if(self.BinaryURI == \"Services not available!!\"):
-            print "Connection Problems..."
-            return
-        """
-
-        self.createXMLAndBinary()
-        
-        #launch external XML editor
-        if Debug:
-            self.launchXMLEditor(self.dirOutgoing)
-
-        #self.remoteTemporaryBinaryFileSize = self.getRemoteTemporaryBinaryFileSize()
-        #send file
-        thread.start_new_thread(self.sendBinaryFile,())      
-        #self.sendBinaryFile() #until there is service monitor don't use thread
-        
-        
-        
-        print "Wainting for sending binary..."
-        print "Total Size of Binary: " + str(self.binaryFileSize)
         binarySendResult = False
-        oldPercentage = -1
-        percentage = 0
         
-        countTime = 0
-        timeStep = 0.5
-        while 1:
-            # To simulate asynchronous I/O, we create a random number at
-            # random intervals. Replace the following 2 lines with the real
-            # thing.
-            time.sleep(timeStep)
-            #if(countTime == 1.0): countTime = 0;
-            #else:
-            #    countTime += timeStep
-            #    continue
+        #Check if VME has a binary data        
+        if(self.isBinaryPresent() == "true"):
             
-            if(self.existThread == 0):
-               thread.start_new_thread(self.getRemoteTemporaryBinaryFileSize,())
+            #get free resource (return URI string)
+            self.BinaryURI = self.getFreeResource() #thread maybe
+            #thread.start_new_thread(self.getFreeResource,())
             
-            percentage = 100 * self.remoteTemporaryBinaryFileSize / self.binaryFileSize
+            self.createXMLAndBinary()
+                    
+            binaryFileName = self.getBinaryFile()
+            print "binary name: " + str(binaryFileName)
+            if (binaryFileName != ""):
+               
+                print self.BinaryURI
+                #-1 percentage means progress pulsing 
+                    
+                """
+                percentage = -1
+                while(1):
+                    lista = [self.observer,percentage]
+                    #print self.BinaryURI
+                    time.sleep(0.1)
+                    self.block.acquire()
+                    print "Testing  " + self.BinaryURI
+                    UploadHandler.queue.put(lista)
+                    self.block.release()
+                    if(self.BinaryURI != ''):
+                       break
+                return #used for test
+                """
+        
+                """
+                if(self.BinaryURI == \"Services not available!!\"):
+                    print "Connection Problems..."
+                    return
+                """
+    
+
+                
+                #launch external XML editor
+                if Debug:
+                    self.launchXMLEditor(self.dirOutgoing)
+        
+                #self.remoteTemporaryBinaryFileSize = self.getRemoteTemporaryBinaryFileSize()
+                #send file
             
-            if(percentage == oldPercentage): continue
-            oldPercentage = percentage
-            
-            
-            print "percentage " + str(percentage) 
-            lista = [self.observer,percentage]
-            print "bytes: " + str(self.remoteTemporaryBinaryFileSize)
-            print "p: " + str(percentage)
-            self.block.acquire()
-            UploadHandler.queue.put(lista)
-            self.block.release()
-            if(percentage >= 100):
-                binarySendResult = True
-                break
+                thread.start_new_thread(self.sendBinaryFile,())      
+                #self.sendBinaryFile() #until there is service monitor don't use thread
+                
+                print "Wainting for sending binary..."
+                print "Total Size of Binary: " + str(self.binaryFileSize)
+                #binarySendResult = False
+                oldPercentage = -1
+                percentage = 0
+                
+                countTime = 0
+                timeStep = 0.5
+                while 1:
+                    # To simulate asynchronous I/O, we create a random number at
+                    # random intervals. Replace the following 2 lines with the real
+                    # thing.
+                    time.sleep(timeStep)
+                    #if(countTime == 1.0): countTime = 0;
+                    #else:
+                    #    countTime += timeStep
+                    #    continue
+                    
+                    if(self.existThread == 0):
+                       thread.start_new_thread(self.getRemoteTemporaryBinaryFileSize,())
+                    
+                    percentage = 100 * self.remoteTemporaryBinaryFileSize / self.binaryFileSize
+                    
+                    if(percentage == oldPercentage): continue
+                    oldPercentage = percentage
+                    
+                    
+                    print "percentage " + str(percentage) 
+                    lista = [self.observer,percentage]
+                    print "bytes: " + str(self.remoteTemporaryBinaryFileSize)
+                    print "p: " + str(percentage)
+                    self.block.acquire()
+                    UploadHandler.queue.put(lista)
+                    self.block.release()
+                    if(percentage >= 100):
+                        binarySendResult = True
+                        break
+        else:
+            self.createXMLAndBinary()
+            binarySendResult = True
            
         #send xml file, perhaps here free source
         if(binarySendResult == True):
@@ -184,7 +197,8 @@ class UploadHandler:
         print "Sending Thread Finished"
 		
     def sendXMLFile(self):
-        self.XMLURI = self.BinaryURI + "_" +self.getXMLFile()
+        #self.XMLURI = self.BinaryURI + "_" +self.getXMLFile()
+        self.XMLURI = self.vmeName + "_" +self.getXMLFile()
         os.rename(self.dirOutgoing + "\\" + self.getXMLFile(),self.dirOutgoing + "\\" + self.XMLURI)
         #self.__sendFile(self.XMLURI)
         oldDir = os.getcwd()
@@ -198,6 +212,42 @@ class UploadHandler:
         out = ws.run('xmlupload', self.XMLURI, self.vmeName)
         
         os.chdir(oldDir)
+        
+    def isBinaryPresent(self):
+        result = "false"
+        oldDir = os.getcwd()
+        os.chdir(self.dirCache)
+        files = os.listdir(self.dirCache)
+        
+        msfFileNameList = []
+        for file in files:
+           if re.search('\\.msf$',file):
+              msfFileNameList.append(file)
+        assert(len(msfFileNameList)  == 1)
+        
+        msfFileName = msfFileNameList[0]
+        domDocument = minidom.parse(msfFileName)
+        msfRootNode = domDocument.documentElement
+        
+        rootNode = msfRootNode
+        
+        print "\ninput MSF Directory: " + self.dirCache
+        print "\ninput MSF filename: " + msfFileName
+        print "\nExtracting vme with ID: " + str(self.id) + '\n' 
+        
+        msfDOMParserInstance = msfParser.msfParser()
+        # get the vme node
+        outVmeNode = msfDOMParserInstance.GetVmeNodeById(rootNode, self.id)
+        print "isBinaryPresent1"  + str(self.id)
+        fileNameList = msfDOMParserInstance.GetVMEDataURLList(outVmeNode)
+        print "isBinaryPresent1" 
+        if (len(fileNameList) == 1):
+            result = "true"
+               
+        os.chdir(oldDir)  
+        print "isBinaryPresent." 
+        return result
+        
 
     def __sendFile(self,filename):
         

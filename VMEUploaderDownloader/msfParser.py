@@ -219,7 +219,7 @@ class msfParser:
         #URL of the binary file are serialized in different part of the msf
         #so I have to manage 3 cases. In the future, we'll try to uniform
         #the URL position.
-        isExternal = 0      
+        isExternal = 0     
         attrs = inputVme.attributes
         for attrName in attrs.keys():
             attrNode = attrs.get(attrName)
@@ -227,26 +227,29 @@ class msfParser:
             if (attrName  == "Type"):
               if (attrValue == "mafVMEExternalData"):
                   isExternal = 1
+                  contents.append("") #so binary must be found
               else:                  
                  break
             if (attrName == "Name" and isExternal == 1): #in mafVMEExternalFile
-                contents.append(attrValue)
+                contents[0] = attrValue;
                 return contents
                                
         for child in inputVme.childNodes:
             if child.nodeType == Node.ELEMENT_NODE:
               print child.nodeName    
               if child.nodeName == "DataVector":
+                   contents.append("") #so binary must be found
                    attrs = child.attributes                            
                    for attrName in attrs.keys():
                         attrNode = attrs.get(attrName)
                         attrValue = attrNode.nodeValue
                         if (attrName  == "ArchiveFileName"): #in .zvtk files
-                            contents.append(attrValue)
+                            contents[0] = (attrValue)
                             return contents
                          
               if (child.nodeName == "URL"): #in .vtk files
-                   contents.append(child.childNodes[0].nodeValue)
+                   contents[0] = (child.childNodes[0].nodeValue)
+               
                    return contents            
 
               self.__GetVMEDataURLListInternal(child, contents)
@@ -474,7 +477,8 @@ class msfParser:
                         attrNode = attrs.get(attrName)
                         attrValue = attrNode.nodeValue
                         if attrName  == "Id": 
-                            if eval(attrValue) == vmeId: 
+                            #if (eval(attrValue) == vmeId):
+                            if (str(attrValue)== str(vmeId)): 
                                 print('Attribute -- Name: %s  Value: %s\n' % \
                                     (attrName, attrValue))
                                 self.__OutputVme = node

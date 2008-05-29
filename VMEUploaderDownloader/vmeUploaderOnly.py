@@ -67,12 +67,12 @@ class vmeUploaderOnly:
         # get the tagArray node
         outVmeTagArrayNode = msfDOMParserInstance.GetVmeTagArrayNode(outVmeNode)
         
-        
-        #AUTO TAGS SET  WITH  WEBSERVICE
-        nodeURI = msfDOMParserInstance.GetTagNodeByTagName(outVmeTagArrayNode, "L0000_resource_data_Dataset_DatasetURI")
-        msfDOMParserInstance.SetTagNodeText(nodeURI, self.DatasetURI)       
-        text = msfDOMParserInstance.GetTagNodeText(nodeURI)
-        print text
+        if (self.DatasetURI != ""):
+            #AUTO TAGS SET  WITH  WEBSERVICE
+            nodeURI = msfDOMParserInstance.GetTagNodeByTagName(outVmeTagArrayNode, "L0000_resource_data_Dataset_DatasetURI")
+            msfDOMParserInstance.SetTagNodeText(nodeURI, self.DatasetURI)       
+            text = msfDOMParserInstance.GetTagNodeText(nodeURI)
+            print text
         
         today = datetime.date.today()
         nodeURI = msfDOMParserInstance.GetTagNodeByTagName(outVmeTagArrayNode, "L0000_resource_data_Dataset_UploadDate")
@@ -97,16 +97,16 @@ class vmeUploaderOnly:
         # Copy of VME binary file to this directory
         # get the file to be copied
         fileNameList = msfDOMParserInstance.GetVMEDataURLList(outVmeNode)
-        assert(len(fileNameList)  == 1)
+        
         
         if(len(fileNameList)  == 1):
-           #assert(len(fileNameList)  == 1)
+           assert(fileNameList  != "") #if "" URL of the file not found
         
            os.chdir(self.InputMSFDirectory)
            shutil.copy2(fileNameList[0],self.OutputFolderName)
         
         print "\nWritten output XML file " + self.OutputVMEXMLName + " in directory " + self.OutputFolderName
-        time.sleep(10)
+        #time.sleep(10)
         
 def run(inputMSFDirectory, vmeToExtractId, outputFolderName, outputVMEXMLName):                                            
     upl = vmeUploader()
