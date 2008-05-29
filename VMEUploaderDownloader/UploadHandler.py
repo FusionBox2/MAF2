@@ -238,14 +238,11 @@ class UploadHandler:
         msfDOMParserInstance = msfParser.msfParser()
         # get the vme node
         outVmeNode = msfDOMParserInstance.GetVmeNodeById(rootNode, self.id)
-        print "isBinaryPresent1"  + str(self.id)
         fileNameList = msfDOMParserInstance.GetVMEDataURLList(outVmeNode)
-        print "isBinaryPresent1" 
         if (len(fileNameList) == 1):
             result = "true"
                
         os.chdir(oldDir)  
-        print "isBinaryPresent." 
         return result
         
 
