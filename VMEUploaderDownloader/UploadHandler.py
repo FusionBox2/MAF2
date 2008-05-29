@@ -197,8 +197,8 @@ class UploadHandler:
         print "Sending Thread Finished"
 		
     def sendXMLFile(self):
-        #self.XMLURI = self.BinaryURI + "_" +self.getXMLFile()
-        self.XMLURI = self.vmeName + "_" +self.getXMLFile()
+        self.XMLURI = self.BinaryURI + "_" +self.getXMLFile()
+        #self.XMLURI = self.vmeName + "_" +self.getXMLFile()
         os.rename(self.dirOutgoing + "\\" + self.getXMLFile(),self.dirOutgoing + "\\" + self.XMLURI)
         #self.__sendFile(self.XMLURI)
         oldDir = os.getcwd()
