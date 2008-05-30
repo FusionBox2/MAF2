@@ -49,6 +49,7 @@ class MSFReconstructor():
             if (attrName  == "Type"):
               if (attrValue == "mafVMEExternalData"):
                   isExternal = 1
+                  returnValue = ""
               else:                  
                  break
             if (attrName == "Name" and isExternal == 1): #in mafVMEExternalFile
@@ -56,18 +57,23 @@ class MSFReconstructor():
                 return returnValue
                                 
         child = dom.getElementsByTagName('DataVector')
-        attrs = child[0].attributes                            
-        for attrName in attrs.keys():
-            attrNode = attrs.get(attrName)
-            attrValue = attrNode.nodeValue
-            if (attrName  == "ArchiveFileName"): #in .zvtk files
-                returnValue = attrValue
-                return returnValue
-          
-        for el in child[0].getElementsByTagName('VItem'):
-           for vitem in el.getElementsByTagName('URL'):
-              returnValue = vitem.childNodes[0].nodeValue
-              return returnValue
+        if (len(child) != 0):
+            attrs = child[0].attributes                            
+            for attrName in attrs.keys():
+                attrNode = attrs.get(attrName)
+                attrValue = attrNode.nodeValue
+                if (attrName  == "ArchiveFileName"): #in .zvtk files
+                    returnValue = attrValue
+                    return returnValue
+              
+            for el in child[0].getElementsByTagName('VItem'):
+               for vitem in el.getElementsByTagName('URL'):
+                  returnValue = vitem.childNodes[0].nodeValue
+                  return returnValue
+        else:
+            retunValue = ""
+            return returnValue
+            
               
         file.close()     
         pass
