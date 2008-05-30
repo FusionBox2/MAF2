@@ -90,24 +90,32 @@ class DownloadHandler:
         
     def download(self):
         print "DownloadHandler inside download:"
-        thread.start_new_thread(self.__download,()) #here start download thread
-        percentage = -1
-        while(1):
-          percentage = 100 * float(self.controlLocalFileDimension())/float(self.fileSize)
-          print percentage
-          time.sleep(0.3)
-          self.block.acquire()
-          if(DownloadHandler.queue):
-              lista = [self.observer,percentage]
-              DownloadHandler.queue.put(lista)
-          self.block.release()
-          if(percentage >= 100):
-              break
         
-        print str(self.controlLocalFileDimension())
-        self.moveFileInMSFDirectory()
+        if(self.srbData != "."):
+            thread.start_new_thread(self.__download,()) #here start download thread
+            percentage = -1
+            while(1):
+              percentage = 100 * float(self.controlLocalFileDimension())/float(self.fileSize)
+              print percentage
+              time.sleep(0.3)
+              self.block.acquire()
+              if(DownloadHandler.queue):
+                  lista = [self.observer,percentage]
+                  DownloadHandler.queue.put(lista)
+              self.block.release()
+              if(percentage >= 100):
+                  break
+            
+            print str(self.controlLocalFileDimension())
+            self.moveFileInMSFDirectory()
+        else:
+            if(DownloadHandler.queue):
+                percentage = 100
+                lista = [self.observer,percentage]
+                DownloadHandler.queue.put(lista)              
         
         pass
+
                       
 def createDownloadHandler(queue, observer, dirCache, srbData , usr , pwd, urlServer, fileSize):
     downloadHandler = DownloadHandler(queue, observer, dirCache, srbData , usr , pwd, urlServer, fileSize)
