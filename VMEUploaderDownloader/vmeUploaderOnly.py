@@ -67,12 +67,11 @@ class vmeUploaderOnly:
         # get the tagArray node
         outVmeTagArrayNode = msfDOMParserInstance.GetVmeTagArrayNode(outVmeNode)
         
-        if (self.DatasetURI != ""):
-            #AUTO TAGS SET  WITH  WEBSERVICE
-            nodeURI = msfDOMParserInstance.GetTagNodeByTagName(outVmeTagArrayNode, "L0000_resource_data_Dataset_DatasetURI")
-            msfDOMParserInstance.SetTagNodeText(nodeURI, self.DatasetURI)       
-            text = msfDOMParserInstance.GetTagNodeText(nodeURI)
-            print text
+        #AUTO TAGS SET  WITH  WEBSERVICE
+        nodeURI = msfDOMParserInstance.GetTagNodeByTagName(outVmeTagArrayNode, "L0000_resource_data_Dataset_DatasetURI")
+        msfDOMParserInstance.SetTagNodeText(nodeURI, self.DatasetURI)       
+        text = msfDOMParserInstance.GetTagNodeText(nodeURI)
+        print text
         
         today = datetime.date.today()
         nodeURI = msfDOMParserInstance.GetTagNodeByTagName(outVmeTagArrayNode, "L0000_resource_data_Dataset_UploadDate")
