@@ -23,7 +23,7 @@ class UploadHandler:
         self.msg = 0
         self.binaryFileSize = 0
         self.remoteTemporaryBinaryFileSize = 0
-        self.BinaryURI = ''
+        self.BinaryURI = " "
         self.XMLURI = ""
         self.block = threading.Lock()
         self.threads = []
