@@ -69,7 +69,7 @@ def main():
         dsXML.downloadXMLFromBasket()
         
         dsXML.datasetSRBURI = dsXML.retrieveTagValue('L0000_resource_data_Dataset_DatasetURI')
-        dsXML.datasetFileSize = dsXML.retrieveTagValue('L0000_resource_data_Dataset_FileSize')
+        dsXML.datasetFileSize = dsXML.retrieveTagValue('L0000_resource_data_Size_DatasetSize')
         
         dsXML.moveFileInIncomingCacheDirectory()
         
