@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-05-28 08:22:36 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2008-05-30 13:25:56 $
+  Version:   $Revision: 1.16 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -218,9 +218,15 @@ void lhpTagHandler_L0000_resource_data_Size_DatasetSize::HandleAutoTag(lhpTagHan
 	pid = wxExecute(command2execute, output, errors);
 
 	wxString result = output[output.size() - 1];
-
+  
 	wxSetWorkingDirectory(oldDir);
 
+  //if result == "", no binary data has been found
+  if (result == "")
+  {
+    cargo->SetTagHandlerGeneratedString(wxString::Format("%d",0));
+    return;
+  }
 
 	////////////////////////////
 
