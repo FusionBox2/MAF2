@@ -11,5 +11,9 @@ vme = p.GetVmeNodeById(rootNode,int(sys.argv[2]))
 
 data = p.GetVMEDataURLList(vme)
 
-print data[0]
+#if no binary is found, then return an empty string
+if (len(data) == 0):
+    print ""
+else:
+    print data[0]
 
