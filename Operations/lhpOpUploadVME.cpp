@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-04-21 07:56:44 $
-Version:   $Revision: 1.57 $
+Date:      $Date: 2008-06-04 09:48:53 $
+Version:   $Revision: 1.58 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -148,7 +148,7 @@ mafOp* lhpOpUploadVME::Copy()
 bool lhpOpUploadVME::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-	return (vme != NULL && (vme->IsMAFType(mafVMEGenericAbstract)));
+	return (vme != NULL && (!vme->IsMAFType(mafVMERoot)));
 }
 //----------------------------------------------------------------------------
 void lhpOpUploadVME::OpRun()
