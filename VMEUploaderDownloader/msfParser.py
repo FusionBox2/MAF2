@@ -186,6 +186,7 @@ class msfParser:
                         attrValue = attrNode.nodeValue
                         if attrValue  == "mafTagArray":
                             self.__OutputTagArrayNode = node
+                            break
                 self.__GetVmeTagArrayNodeInternal(node)
                 
     def GetVmeTagItemNodeByName(self, inputVmeTagArrayNode, tagName):
@@ -211,7 +212,7 @@ class msfParser:
         self.__GetVMEDataURLListInternal(inputVme, contents)
         return contents
         
-    def __GetVMEDataURLListInternal(self, inputVme, contents = []):
+    def __GetVMEDataURLListInternal(self, inputVme, contents = []): 
         # <URL>msf_test_import_export_VME.1.vtk</URL>
         # get node attributes
         # Walk over any text nodes in the current node.
@@ -233,10 +234,13 @@ class msfParser:
             if (attrName == "Name" and isExternal == 1): #in mafVMEExternalFile
                 contents[0] = attrValue;
                 return contents
-                               
+                
         for child in inputVme.childNodes:
             if child.nodeType == Node.ELEMENT_NODE:
               print child.nodeName    
+                  
+              if (child.nodeName == "Children"):
+                  continue 
               if child.nodeName == "DataVector":
                    contents.append("") #so binary must be found
                    attrs = child.attributes                            
@@ -249,7 +253,6 @@ class msfParser:
                          
               if (child.nodeName == "URL"): #in .vtk files
                    contents[0] = (child.childNodes[0].nodeValue)
-               
                    return contents            
 
               self.__GetVMEDataURLListInternal(child, contents)
