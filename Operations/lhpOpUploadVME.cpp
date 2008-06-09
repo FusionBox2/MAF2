@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-06-04 09:48:53 $
-Version:   $Revision: 1.58 $
+Date:      $Date: 2008-06-09 08:51:02 $
+Version:   $Revision: 1.59 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -372,7 +372,7 @@ void lhpOpUploadVME::OpDo()
   mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
 
   wxSetWorkingDirectory(m_MsfDir.GetCStr());
-  //delete msf created by pyhon
+  //delete msf created by python
   remove("OutputMSF.msf"); 
 
 
@@ -920,6 +920,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
   wxSetWorkingDirectory(oldDir);
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 
+  return MAF_OK;
 }
 //----------------------------------------------------------------------------
 bool lhpOpUploadVME::CreateBaseCacheAndOutgoingDirectories()
