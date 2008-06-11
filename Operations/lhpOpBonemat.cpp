@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpBonemat.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-05-27 14:18:29 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2008-06-11 17:12:26 $
+  Version:   $Revision: 1.10 $
   Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -112,31 +112,31 @@ mafOp(label)
   m_ROIntercept = 0;
   m_ROSlope = 1;
 
-  m_Ea0_Eb0_Ec0_V3_el0 = 0;
-  m_Ea0_Eb0_Ec0_V3_el1 = 1;
-  m_Ea0_Eb0_Ec0_V3_el2 = 1;
+  m_a_RoLessThanRO1_EI = 0;
+  m_b_RoLessThanR01_EI = 1;
+  m_c_RoLessThanR01_EI = 1;
 
-  m_Ea1_Eb1_Ec1_V3_el0 = 0;
-  m_Ea1_Eb1_Ec1_V3_el1 = 1;
-  m_Ea1_Eb1_Ec1_V3_el2 = 1;
+  m_a_RoBetweenR01andR02_EI = 0;
+  m_b_RoBetweenR01andR02_EI = 1;
+  m_c_RoBetweenR01andR02_EI = 1;
 
-  m_Ea2_Eb2_Ec2_V3_el0 = 0;
-  m_Ea2_Eb2_Ec2_V3_el1 = 1;
-  m_Ea2_Eb2_Ec2_V3_el2 = 1;
+  m_a_RoBiggerThanR02_EI = 0;
+  m_b_RoBiggerThanR02_EI = 1;
+  m_c_RoBiggerThanR02_EI = 1;
 
-  m_Ea_Eb_Ec_V2_el0 = 0;
-  m_Ea_Eb_Ec_V2_el1 = 1;
-  m_Ea_Eb_Ec_V2_el2 = 1;
+  m_a_DensityElasticityRelationship = 0;
+  m_b_DensityElasticityRelationship = 1;
+  m_c_DensityElasticityRelationship = 1;
 
   m_Egap = 1;
   m_StepsNumber = 4;
-  m_RO1_RO2_el0 = m_RO1_RO2_el1 = 0;
+  m_RO1_EI = m_RO2_EI = 0;
 
   m_DensityIntervalsNumber = THREE_INTERVALS;
 
-  m_Ea_Eb_Ec_V3_OneDensityInterval_el0 = 0;
-  m_Ea_Eb_Ec_V3_OneDensityInterval_el1 = 1;
-  m_Ea_Eb_Ec_V3_OneDensityInterval_el2 = 1;
+  m_a_EI = 0;
+  m_b_EI = 1;
+  m_c_EI = 1;
 
   m_YoungModuleCalculationModality = HU_INTEGRATION;
   m_DensityRelationshipListbox = INTERCEPT_SLOPE;
@@ -148,22 +148,22 @@ mafOp(label)
   m_ROCalibrationCorrectionIsActive = 0;
   m_ROCalibrationCorrectionType       = 0; //equals to single interval
 
-  m_RO1 = 0;
-  m_RO2 = 0;
+  m_RO1_CalibrationCorrection = 0;
+  m_RO2_CalibrationCorrection = 0;
 
   //single interval ro calibration
-  m_RoCorrection1IntervalCoefficient0 = 0;
-  m_RoCorrection1IntervalCoefficient1 = 1;
+  m_a_CalibrationCorrection = 0;
+  m_b_CalibrationCorrection = 1;
 
   //three intervals ro calibration
-  m_RoCorrection3IntervalsFirstCoefficient0 = 0;
-  m_RoCorrectio3IntervalsFirstCoefficient1 = 1;
+  m_a_RoLessThanR01_CalibrationCorrection = 0;
+  m_b_RoLessThanR01_CalibrationCorrection = 1;
 
-  m_RoCorrection3IntervalsSecondCoefficient0 = 0;
-  m_RoCorrection3IntervalsSecondCoefficient1 = 1;
+  m_a_RoBetweenR01AndR02_CalibrationCorrection = 0;
+  m_b_RoBetweenR01AndR02_CalibrationCorrection = 1;
 
-  m_RoCorrection3IntervalsThirdCoefficient0 = 0;
-  m_RoCorrection3IntervalsThirdCoefficient1 = 1;
+  m_a_RoBiggerThanR02_CalibrationCorrection = 0;
+  m_b_RoBiggerThanR02_CalibrationCorrection = 1;
 }
 //----------------------------------------------------------------------------
 lhpOpBonemat::~lhpOpBonemat()
@@ -342,23 +342,23 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Combo(ID_TYPE_RO_CORRECTION,"", &m_ROCalibrationCorrectionType,2,densityChoicesRoCalibration);  
   m_Gui->Divider(2);
 
-  m_Gui->Double(ID_RO_CORRECTION_DENSITY_INTERVAL_0, "RO1",&m_RO1);
-  m_Gui->Double(ID_RO_CORRECTION_DENSITY_INTERVAL_1, "RO2",&m_RO2);
+  m_Gui->Double(ID_RO_CORRECTION_DENSITY_INTERVAL_0, "RO1",&m_RO1_CalibrationCorrection);
+  m_Gui->Double(ID_RO_CORRECTION_DENSITY_INTERVAL_1, "RO2",&m_RO2_CalibrationCorrection);
 
-  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_SINGLE_0, "a", &m_RoCorrection1IntervalCoefficient0);
-  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_SINGLE_1, "b", &m_RoCorrection1IntervalCoefficient1);
+  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_SINGLE_0, "a", &m_a_CalibrationCorrection);
+  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_SINGLE_1, "b", &m_b_CalibrationCorrection);
   
   m_Gui->Label("RO < RO1");
-  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_0, "a", &m_RoCorrection3IntervalsFirstCoefficient0);
-  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_1, "b", &m_RoCorrectio3IntervalsFirstCoefficient1);
+  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_0, "a", &m_a_RoLessThanR01_CalibrationCorrection);
+  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_1, "b", &m_b_RoLessThanR01_CalibrationCorrection);
   
   m_Gui->Label("RO1 <= RO <= RO2");
-  m_Gui->Double(ID_RO_CORRECTION_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_0, "a", &m_RoCorrection3IntervalsSecondCoefficient0);
-  m_Gui->Double(ID_RO_CORRECTION_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_1, "b", &m_RoCorrection3IntervalsSecondCoefficient1);
+  m_Gui->Double(ID_RO_CORRECTION_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_0, "a", &m_a_RoBetweenR01AndR02_CalibrationCorrection);
+  m_Gui->Double(ID_RO_CORRECTION_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_1, "b", &m_b_RoBetweenR01AndR02_CalibrationCorrection);
   
   m_Gui->Label("RO > RO2");
-  m_Gui->Double(ID_RO_CORRECTION_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_0, "a", &m_RoCorrection3IntervalsThirdCoefficient0);
-  m_Gui->Double(ID_RO_CORRECTION_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_1, "b", &m_RoCorrection3IntervalsThirdCoefficient1);
+  m_Gui->Double(ID_RO_CORRECTION_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_0, "a", &m_a_RoBiggerThanR02_CalibrationCorrection);
+  m_Gui->Double(ID_RO_CORRECTION_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_1, "b", &m_b_RoBiggerThanR02_CalibrationCorrection);
   
   m_Gui->Enable(ID_TYPE_RO_CORRECTION,false);
   EnableRoCorrectionDensityInterval(false);
@@ -373,9 +373,9 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Divider(2);
   m_Gui->Label("density-elasticity relationship", true);
   m_Gui->Label("E = a + b * Rho-ash^c", false);
-  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V2_0, "a", &m_Ea_Eb_Ec_V2_el0);    
-  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V2_1, "b", &m_Ea_Eb_Ec_V2_el1);    
-  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V2_2, "c", &m_Ea_Eb_Ec_V2_el2);    
+  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V2_0, "a", &m_a_DensityElasticityRelationship);    
+  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V2_1, "b", &m_b_DensityElasticityRelationship);    
+  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V2_2, "c", &m_c_DensityElasticityRelationship);    
 
 
   m_Gui->Divider(2);
@@ -384,28 +384,28 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Combo(ID_DENSITY_INTERVALS_NUMBER,"", &m_DensityIntervalsNumber,2,densityChoices);  
   m_Gui->Divider(2);
 
-  m_Gui->Double(ID_DENSITY_INTERVAL_0, "RO1",&m_RO1_RO2_el0);
-  m_Gui->Double(ID_DENSITY_INTERVAL_1, "RO2",&m_RO1_RO2_el1);
+  m_Gui->Double(ID_DENSITY_INTERVAL_0, "RO1",&m_RO1_EI);
+  m_Gui->Double(ID_DENSITY_INTERVAL_1, "RO2",&m_RO2_EI);
 
-  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_0, "a", &m_Ea_Eb_Ec_V3_OneDensityInterval_el0);
-  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_1, "b", &m_Ea_Eb_Ec_V3_OneDensityInterval_el1);
-  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_2, "c", &m_Ea_Eb_Ec_V3_OneDensityInterval_el2);
+  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_0, "a", &m_a_EI);
+  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_1, "b", &m_b_EI);
+  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_2, "c", &m_c_EI);
 
   m_Gui->Label("RO < RO1");
-  m_Gui->Double(ID_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_0, "a", &m_Ea0_Eb0_Ec0_V3_el0);
-  m_Gui->Double(ID_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_1, "b", &m_Ea0_Eb0_Ec0_V3_el1);
-  m_Gui->Double(ID_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_2, "c", &m_Ea0_Eb0_Ec0_V3_el2);
+  m_Gui->Double(ID_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_0, "a", &m_a_RoLessThanRO1_EI);
+  m_Gui->Double(ID_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_1, "b", &m_b_RoLessThanR01_EI);
+  m_Gui->Double(ID_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_2, "c", &m_c_RoLessThanR01_EI);
   
   
   m_Gui->Label("RO1 <= RO <= RO2");
-  m_Gui->Double(ID_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_0, "a", &m_Ea1_Eb1_Ec1_V3_el0);
-  m_Gui->Double(ID_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_1, "b", &m_Ea1_Eb1_Ec1_V3_el1);
-  m_Gui->Double(ID_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_2, "c", &m_Ea1_Eb1_Ec1_V3_el2);
+  m_Gui->Double(ID_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_0, "a", &m_a_RoBetweenR01andR02_EI);
+  m_Gui->Double(ID_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_1, "b", &m_b_RoBetweenR01andR02_EI);
+  m_Gui->Double(ID_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_2, "c", &m_c_RoBetweenR01andR02_EI);
 
   m_Gui->Label("RO > RO2");
-  m_Gui->Double(ID_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_0, "a", &m_Ea2_Eb2_Ec2_V3_el0);
-  m_Gui->Double(ID_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_1, "b", &m_Ea2_Eb2_Ec2_V3_el1);
-  m_Gui->Double(ID_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_2, "c", &m_Ea2_Eb2_Ec2_V3_el2);
+  m_Gui->Double(ID_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_0, "a", &m_a_RoBiggerThanR02_EI);
+  m_Gui->Double(ID_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_1, "b", &m_b_RoBiggerThanR02_EI);
+  m_Gui->Double(ID_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_2, "c", &m_c_RoBiggerThanR02_EI);
 
   
   m_Gui->Divider(2);
@@ -979,24 +979,24 @@ int lhpOpBonemat::HUIntegration()
     {
       if(m_ROCalibrationCorrectionType == SINGLE_INTERVAL)
       {
-        roSource[id].ro = m_RoCorrection1IntervalCoefficient0 + m_RoCorrection1IntervalCoefficient1 * roSource[id].ro;
+        roSource[id].ro = m_a_CalibrationCorrection + m_b_CalibrationCorrection * roSource[id].ro;
         arrayRo->SetValue(id,roSource[id].ro);
       }
       else if (m_ROCalibrationCorrectionType == THREE_INTERVALS)
       {
-        if (roSource[id].ro < m_RO1)
+        if (roSource[id].ro < m_RO1_CalibrationCorrection)
         {
-          roSource[id].ro = m_RoCorrection3IntervalsFirstCoefficient0 + m_RoCorrectio3IntervalsFirstCoefficient1 * roSource[id].ro;
+          roSource[id].ro = m_a_RoLessThanR01_CalibrationCorrection + m_b_RoLessThanR01_CalibrationCorrection * roSource[id].ro;
           arrayRo->SetValue(id,roSource[id].ro);
         } 
-        else if (m_RO1 <= roSource[id].ro  && roSource[id].ro <= m_RO2)
+        else if (m_RO1_CalibrationCorrection <= roSource[id].ro  && roSource[id].ro <= m_RO2_CalibrationCorrection)
         {
-          roSource[id].ro = m_RoCorrection3IntervalsSecondCoefficient0 + m_RoCorrection3IntervalsSecondCoefficient1 * roSource[id].ro;
+          roSource[id].ro = m_a_RoBetweenR01AndR02_CalibrationCorrection + m_b_RoBetweenR01AndR02_CalibrationCorrection * roSource[id].ro;
           arrayRo->SetValue(id,roSource[id].ro);
         }
-        else if (roSource[id].ro > m_RO2)
+        else if (roSource[id].ro > m_RO2_CalibrationCorrection)
         {
-          roSource[id].ro = m_RoCorrection3IntervalsThirdCoefficient0 + m_RoCorrection3IntervalsThirdCoefficient1 * roSource[id].ro;
+          roSource[id].ro = m_a_RoBiggerThanR02_CalibrationCorrection + m_b_RoBiggerThanR02_CalibrationCorrection * roSource[id].ro;
           arrayRo->SetValue(id,roSource[id].ro);
         }
       }
@@ -1006,8 +1006,8 @@ int lhpOpBonemat::HUIntegration()
     //////////////////////////////////////////////////////////////////////////////
 
     // E = a + b * ro ^ c
-    roSource[id].E = m_Ea_Eb_Ec_V2_el0 + m_Ea_Eb_Ec_V2_el1 * pow(roSource[id].ro, m_Ea_Eb_Ec_V2_el2);
-    arrayE->InsertNextTuple1(m_Ea_Eb_Ec_V2_el0 + m_Ea_Eb_Ec_V2_el1 * pow((float)arrayRo->GetValue(id), (float)m_Ea_Eb_Ec_V2_el2));
+    roSource[id].E = m_a_DensityElasticityRelationship + m_b_DensityElasticityRelationship * pow(roSource[id].ro, m_c_DensityElasticityRelationship);
+    arrayE->InsertNextTuple1(m_a_DensityElasticityRelationship + m_b_DensityElasticityRelationship * pow((float)arrayRo->GetValue(id), (float)m_c_DensityElasticityRelationship));
     if (arrayE->GetValue(id) <= 0) 
     {
       arrayE->SetValue(id, 1e-6);
@@ -1484,24 +1484,27 @@ int lhpOpBonemat::YoungModuleIntegration()
 
     if (m_DensityIntervalsNumber == SINGLE_INTERVAL)
     {
-      roSource[id].E = m_Ea_Eb_Ec_V3_OneDensityInterval_el0 + m_Ea_Eb_Ec_V3_OneDensityInterval_el1 * pow(roSource[id].ro, m_Ea_Eb_Ec_V3_OneDensityInterval_el2);
+      roSource[id].E = m_a_EI + m_b_EI * pow(roSource[id].ro, m_c_EI);
       arrayE->InsertNextTuple1(roSource[id].E);
     } 
     else if (m_DensityIntervalsNumber == THREE_INTERVALS)
     {
-      if (roSource[id].ro < m_RO1_RO2_el0)
+      if (roSource[id].ro < m_RO1_EI)
       {
-        roSource[id].E = m_Ea0_Eb0_Ec0_V3_el0 + m_Ea0_Eb0_Ec0_V3_el1 * pow(roSource[id].ro, m_Ea0_Eb0_Ec0_V3_el2);
+        roSource[id].E = m_a_RoLessThanRO1_EI + 
+        m_b_RoLessThanR01_EI * pow(roSource[id].ro, m_c_RoLessThanR01_EI);
         arrayE->InsertNextTuple1(roSource[id].E);
       } 
-      else if (m_RO1_RO2_el0 <= roSource[id].ro  && roSource[id].ro <= m_RO1_RO2_el1)
+      else if (m_RO1_EI <= roSource[id].ro  && roSource[id].ro <= m_RO2_EI)
       {
-        roSource[id].E = m_Ea1_Eb1_Ec1_V3_el0 + m_Ea1_Eb1_Ec1_V3_el1 * pow(roSource[id].ro, m_Ea1_Eb1_Ec1_V3_el2);
+        roSource[id].E = m_a_RoBetweenR01andR02_EI + 
+        m_b_RoBetweenR01andR02_EI * pow(roSource[id].ro, m_c_RoBetweenR01andR02_EI);
         arrayE->InsertNextTuple1(roSource[id].E);
       }
-      else if (roSource[id].ro > m_RO1_RO2_el1)
+      else if (roSource[id].ro > m_RO2_EI)
       {
-        roSource[id].E = m_Ea2_Eb2_Ec2_V3_el0 + m_Ea2_Eb2_Ec2_V3_el1 * pow(roSource[id].ro, m_Ea2_Eb2_Ec2_V3_el2);
+        roSource[id].E = m_a_RoBiggerThanR02_EI + 
+        m_b_RoBiggerThanR02_EI * pow(roSource[id].ro, m_c_RoBiggerThanR02_EI);
         arrayE->InsertNextTuple1(roSource[id].E);
       }
     }
@@ -1548,21 +1551,21 @@ int lhpOpBonemat::YoungModuleIntegration()
     {
       if(m_ROCalibrationCorrectionType == SINGLE_INTERVAL)
       {
-        density = m_RoCorrection1IntervalCoefficient0 + m_RoCorrection1IntervalCoefficient1 * density;
+        density = m_a_CalibrationCorrection + m_b_CalibrationCorrection * density;
       }
       else if (m_ROCalibrationCorrectionType == THREE_INTERVALS)
       {
-        if (density < m_RO1)
+        if (density < m_RO1_CalibrationCorrection)
         {
-          density = m_RoCorrection3IntervalsFirstCoefficient0 + m_RoCorrectio3IntervalsFirstCoefficient1 * density;
+          density = m_a_RoLessThanR01_CalibrationCorrection + m_b_RoLessThanR01_CalibrationCorrection * density;
         } 
-        else if (m_RO1 <= density  && density <= m_RO2)
+        else if (m_RO1_CalibrationCorrection <= density  && density <= m_RO2_CalibrationCorrection)
         {
-          density = m_RoCorrection3IntervalsSecondCoefficient0 + m_RoCorrection3IntervalsSecondCoefficient1 * density;
+          density = m_a_RoBetweenR01AndR02_CalibrationCorrection + m_b_RoBetweenR01AndR02_CalibrationCorrection * density;
         }
-        else if (density > m_RO2)
+        else if (density > m_RO2_CalibrationCorrection)
         {
-          density = m_RoCorrection3IntervalsThirdCoefficient0 + m_RoCorrection3IntervalsThirdCoefficient1 * density;
+          density = m_a_RoBiggerThanR02_CalibrationCorrection + m_b_RoBiggerThanR02_CalibrationCorrection * density;
         }
       }
 
@@ -1570,7 +1573,8 @@ int lhpOpBonemat::YoungModuleIntegration()
 
     //////////////////////////////////////////////////////////////////////////////
     // E = a + b * ro ^ c
-    double youngModule = m_Ea0_Eb0_Ec0_V3_el0 + m_Ea0_Eb0_Ec0_V3_el1 * pow(density, m_Ea0_Eb0_Ec0_V3_el2);
+    double youngModule = m_a_RoLessThanRO1_EI +
+    m_b_RoLessThanR01_EI * pow(density, m_c_RoLessThanR01_EI);
     if (youngModule <= 0) {
       youngModule = 1e-6;
     } 
@@ -2172,37 +2176,37 @@ int lhpOpBonemat::LoadConfigurationFile( const char *configurationFileName )
   >> m_ROCalibrationCorrectionType// << std::endl;
 
 
-  // << "# R01 (m_RO1) : " // << std::endl;
-  >> m_RO1// << std::endl;
-  // << "# R02 (m_RO2) : " // << std::endl;
-  >> m_RO2// << std::endl;
+  // << "# R01 (m_RO1_CalibrationCorrection) : " // << std::endl;
+  >> m_RO1_CalibrationCorrection// << std::endl;
+  // << "# R02 (m_RO2_CalibrationCorrection) : " // << std::endl;
+  >> m_RO2_CalibrationCorrection// << std::endl;
 
-  // << "# a (m_RoCorrection1IntervalCoefficient0): " // << std::endl;
-  >> m_RoCorrection1IntervalCoefficient0// << std::endl;
-  // << "# b (m_RoCorrection1IntervalCoefficient1): " // << std::endl;
-  >> m_RoCorrection1IntervalCoefficient1// << std::endl;
+  // << "# a (m_a_CalibrationCorrection): " // << std::endl;
+  >> m_a_CalibrationCorrection// << std::endl;
+  // << "# b (m_b_CalibrationCorrection): " // << std::endl;
+  >> m_b_CalibrationCorrection// << std::endl;
 
   /*// << std::endl;
   << "# R0 < R01" // << std::endl;*/
-  // << "# a (m_RoCorrection3IntervalsFirstCoefficient0): " // << std::endl;
-  >> m_RoCorrection3IntervalsFirstCoefficient0 // << std::endl;
-  // << "# b (m_RoCorrectio3IntervalsFirstCoefficient1): " // << std::endl;
-  >> m_RoCorrectio3IntervalsFirstCoefficient1 // << std::endl;
+  // << "# a (m_a_RoLessThanR01_CalibrationCorrection): " // << std::endl;
+  >> m_a_RoLessThanR01_CalibrationCorrection // << std::endl;
+  // << "# b (m_b_RoLessThanR01_CalibrationCorrection): " // << std::endl;
+  >> m_b_RoLessThanR01_CalibrationCorrection // << std::endl;
 
   /*// << std::endl;
   << "# R01 <= R0 <= R02" // << std::endl;  
-  << "# a (m_RoCorrection3IntervalsSecondCoefficient0): " // << std::endl;*/
-  >> m_RoCorrection3IntervalsSecondCoefficient0 // << std::endl;
-  // << "# b (m_RoCorrection3IntervalsSecondCoefficient1): " // << std::endl;
-  >> m_RoCorrection3IntervalsSecondCoefficient1 // << std::endl;
+  << "# a (m_a_RoBetweenR01AndR02_CalibrationCorrection): " // << std::endl;*/
+  >> m_a_RoBetweenR01AndR02_CalibrationCorrection // << std::endl;
+  // << "# b (m_b_RoBetweenR01AndR02_CalibrationCorrection): " // << std::endl;
+  >> m_b_RoBetweenR01AndR02_CalibrationCorrection // << std::endl;
 
   // << std::endl;
 
   /*<< "# R0 > R02" // << std::endl;
-  << "# a (m_RoCorrection3IntervalsThirdCoefficient0): " // << std::endl;*/
-  >> m_RoCorrection3IntervalsThirdCoefficient0// << std::endl;
-  // << "# b (m_RoCorrection3IntervalsThirdCoefficient1): " // << std::endl;
-  >> m_RoCorrection3IntervalsThirdCoefficient1// << std::endl;
+  << "# a (m_a_RoBiggerThanR02_CalibrationCorrection): " // << std::endl;*/
+  >> m_a_RoBiggerThanR02_CalibrationCorrection// << std::endl;
+  // << "# b (m_b_RoBiggerThanR02_CalibrationCorrection): " // << std::endl;
+  >> m_b_RoBiggerThanR02_CalibrationCorrection// << std::endl;
 
 
   // << std::endl;
@@ -2213,12 +2217,12 @@ int lhpOpBonemat::LoadConfigurationFile( const char *configurationFileName )
   // << std::endl;
   // << "# ####  density-elasticity relationship #### " // << std::endl;
 
-  // << "# a (m_Ea_Eb_Ec_V2_el0): " // << std::endl;
-  >> m_Ea_Eb_Ec_V2_el0// << std::endl;
-  // << "# b (m_Ea_Eb_Ec_V2_el1): " // << std::endl;
-  >> m_Ea_Eb_Ec_V2_el1// << std::endl;
-  // << "# c (m_Ea_Eb_Ec_V2_el2): " // << std::endl;
-  >> m_Ea_Eb_Ec_V2_el2// << std::endl;
+  // << "# a (m_a_DensityElasticityRelationship): " // << std::endl;
+  >> m_a_DensityElasticityRelationship// << std::endl;
+  // << "# b (m_b_DensityElasticityRelationship): " // << std::endl;
+  >> m_b_DensityElasticityRelationship// << std::endl;
+  // << "# c (m_c_DensityElasticityRelationship): " // << std::endl;
+  >> m_c_DensityElasticityRelationship// << std::endl;
 
   /*// << std::endl;
   << "# density-intervals for E integration" // << std::endl;
@@ -2226,41 +2230,41 @@ int lhpOpBonemat::LoadConfigurationFile( const char *configurationFileName )
   >> m_DensityIntervalsNumber // << std::endl;
 
   // << std::endl;
-  // << "# R01 (m_RO1_RO2_el0): " // << std::endl;
-  >> m_RO1_RO2_el0// << std::endl;
-  // << "# R02 (m_RO1_RO2_el1): " // << std::endl;
-  >> m_RO1_RO2_el1// << std::endl;
-  // << "# a (m_Ea_Eb_Ec_V3_OneDensityInterval_el0): " // << std::endl;
-  >> m_Ea_Eb_Ec_V3_OneDensityInterval_el0// << std::endl;
-  // << "# b (m_Ea_Eb_Ec_V3_OneDensityInterval_el1): " // << std::endl;
-  >> m_Ea_Eb_Ec_V3_OneDensityInterval_el1// << std::endl;
-  // << "# c (m_Ea_Eb_Ec_V3_OneDensityInterval_el2): " // << std::endl;
-  >> m_Ea_Eb_Ec_V3_OneDensityInterval_el2// << std::endl;
+  // << "# R01 (m_RO1_EI): " // << std::endl;
+  >> m_RO1_EI// << std::endl;
+  // << "# R02 (m_RO2_EI): " // << std::endl;
+  >> m_RO2_EI// << std::endl;
+  // << "# a (m_a_EI): " // << std::endl;
+  >> m_a_EI// << std::endl;
+  // << "# b (m_b_EI): " // << std::endl;
+  >> m_b_EI// << std::endl;
+  // << "# c (m_c_EI): " // << std::endl;
+  >> m_c_EI// << std::endl;
 
   /*// << std::endl;
   << "# R0 < R01" // << std::endl;
-  << "# a (m_Ea0_Eb0_Ec0_V3_el0): " // << std::endl;*/
-  >> m_Ea0_Eb0_Ec0_V3_el0// << std::endl;
-  // << "# b (m_Ea0_Eb0_Ec0_V3_el1): " // << std::endl;
-  >> m_Ea0_Eb0_Ec0_V3_el1// << std::endl;
-  // << "# c (m_Ea0_Eb0_Ec0_V3_el2): " // << std::endl;
-  >> m_Ea0_Eb0_Ec0_V3_el2// << std::endl;
+  << "# a (m_a_RoLessThanRO1_EI): " // << std::endl;*/
+  >> m_a_RoLessThanRO1_EI// << std::endl;
+  // << "# b (m_b_RoLessThanR01_EI): " // << std::endl;
+  >> m_b_RoLessThanR01_EI// << std::endl;
+  // << "# c (m_c_RoLessThanR01_EI): " // << std::endl;
+  >> m_c_RoLessThanR01_EI// << std::endl;
   /*// << std::endl;
   << "# R01 <= R0 <= R02" // << std::endl;  
-  << "# a (m_Ea1_Eb1_Ec1_V3_el0): " // << std::endl;*/
-  >> m_Ea1_Eb1_Ec1_V3_el0// << std::endl;
-  // << "# b (m_Ea1_Eb1_Ec1_V3_el1): " // << std::endl;
-  >> m_Ea1_Eb1_Ec1_V3_el1// << std::endl;
-  // << "# c (m_Ea1_Eb1_Ec1_V3_el2): " // << std::endl;
-  >> m_Ea1_Eb1_Ec1_V3_el2// << std::endl;
+  << "# a (m_a_RoBetweenR01andR02_EI): " // << std::endl;*/
+  >> m_a_RoBetweenR01andR02_EI// << std::endl;
+  // << "# b (m_b_RoBetweenR01andR02_EI): " // << std::endl;
+  >> m_b_RoBetweenR01andR02_EI// << std::endl;
+  // << "# c (m_c_RoBetweenR01andR02_EI): " // << std::endl;
+  >> m_c_RoBetweenR01andR02_EI// << std::endl;
   /*// << std::endl;
   << "# R0 > R02" // << std::endl;
-  << "# a (m_Ea2_Eb2_Ec2_V3_el0): " // << std::endl;*/
-  >> m_Ea2_Eb2_Ec2_V3_el0// << std::endl;
-  // << "# b (m_Ea2_Eb2_Ec2_V3_el1): " // << std::endl;
-  >> m_Ea2_Eb2_Ec2_V3_el1// << std::endl;
-  // << "# c (m_Ea2_Eb2_Ec2_V3_el2): " // << std::endl;
-  >> m_Ea2_Eb2_Ec2_V3_el2// << std::endl;
+  << "# a (m_a_RoBiggerThanR02_EI): " // << std::endl;*/
+  >> m_a_RoBiggerThanR02_EI// << std::endl;
+  // << "# b (m_b_RoBiggerThanR02_EI): " // << std::endl;
+  >> m_b_RoBiggerThanR02_EI// << std::endl;
+  // << "# c (m_c_RoBiggerThanR02_EI): " // << std::endl;
+  >> m_c_RoBiggerThanR02_EI// << std::endl;
 
   // << std::endl;
 
@@ -2304,29 +2308,29 @@ void lhpOpBonemat::PrintSelf(std::ostream &os)
   os << "Intervals Type (m_ROCalibrationCorrectionType) {SINGLE_INTERVAL = 0, THREE_INTERVALS = 1}: " << m_ROCalibrationCorrectionType<< std::endl;
 
   //ro interval
-  os << "R01 (m_RO1) : " << m_RO1<< std::endl;
-  os << "R02 (m_RO2) : " << m_RO2<< std::endl;
+  os << "R01 (m_RO1_CalibrationCorrection) : " << m_RO1_CalibrationCorrection<< std::endl;
+  os << "R02 (m_RO2_CalibrationCorrection) : " << m_RO2_CalibrationCorrection<< std::endl;
   
   //single interval ro calibration
-  os << "a (m_RoCorrection1IntervalCoefficient0): " << m_RoCorrection1IntervalCoefficient0<< std::endl;
-  os << "b (m_RoCorrection1IntervalCoefficient1): " << m_RoCorrection1IntervalCoefficient1<< std::endl;
+  os << "a (m_a_CalibrationCorrection): " << m_a_CalibrationCorrection<< std::endl;
+  os << "b (m_b_CalibrationCorrection): " << m_b_CalibrationCorrection<< std::endl;
 
   //three intervals ro calibration
   os << std::endl;
   os << "R0 < R01" << std::endl;
-  os << "a (m_RoCorrection3IntervalsFirstCoefficient0): " << m_RoCorrection3IntervalsFirstCoefficient0<< std::endl;
-  os << "b (m_RoCorrectio3IntervalsFirstCoefficient1): " << m_RoCorrectio3IntervalsFirstCoefficient1<< std::endl;
+  os << "a (m_a_RoLessThanR01_CalibrationCorrection): " << m_a_RoLessThanR01_CalibrationCorrection<< std::endl;
+  os << "b (m_b_RoLessThanR01_CalibrationCorrection): " << m_b_RoLessThanR01_CalibrationCorrection<< std::endl;
 
   os << std::endl;
   os << "R01 <= R0 <= R02" << std::endl;  
-  os << "a (m_RoCorrection3IntervalsSecondCoefficient0): " << m_RoCorrection3IntervalsSecondCoefficient0<< std::endl;
-  os << "b (m_RoCorrection3IntervalsSecondCoefficient1): " << m_RoCorrection3IntervalsSecondCoefficient1<< std::endl;
+  os << "a (m_a_RoBetweenR01AndR02_CalibrationCorrection): " << m_a_RoBetweenR01AndR02_CalibrationCorrection<< std::endl;
+  os << "b (m_b_RoBetweenR01AndR02_CalibrationCorrection): " << m_b_RoBetweenR01AndR02_CalibrationCorrection<< std::endl;
 
   os << std::endl;
 
   os << "R0 > R02" << std::endl;
-  os << "a (m_RoCorrection3IntervalsThirdCoefficient0): " << m_RoCorrection3IntervalsThirdCoefficient0<< std::endl;
-  os << "b (m_RoCorrection3IntervalsThirdCoefficient1): " << m_RoCorrection3IntervalsThirdCoefficient1<< std::endl;
+  os << "a (m_a_RoBiggerThanR02_CalibrationCorrection): " << m_a_RoBiggerThanR02_CalibrationCorrection<< std::endl;
+  os << "b (m_b_RoBiggerThanR02_CalibrationCorrection): " << m_b_RoBiggerThanR02_CalibrationCorrection<< std::endl;
 
   
   os << std::endl;
@@ -2336,36 +2340,36 @@ void lhpOpBonemat::PrintSelf(std::ostream &os)
   os << std::endl;
   os << "####  density-elasticity relationship #### " << std::endl;
 
-  os << "a (m_Ea_Eb_Ec_V2_el0): " << m_Ea_Eb_Ec_V2_el0<< std::endl;
-  os << "b (m_Ea_Eb_Ec_V2_el1): " << m_Ea_Eb_Ec_V2_el1<< std::endl;
-  os << "c (m_Ea_Eb_Ec_V2_el2): " << m_Ea_Eb_Ec_V2_el2<< std::endl;
+  os << "a (m_a_DensityElasticityRelationship): " << m_a_DensityElasticityRelationship<< std::endl;
+  os << "b (m_b_DensityElasticityRelationship): " << m_b_DensityElasticityRelationship<< std::endl;
+  os << "c (m_c_DensityElasticityRelationship): " << m_c_DensityElasticityRelationship<< std::endl;
 
   os << std::endl;
   os << "density-intervals for E integration" << std::endl;
   os << "Density intervals type (m_DensityIntervalsNumber) {SINGLE_INTERVAL = 0,THREE_INTERVALS = 1}: " << m_DensityIntervalsNumber << std::endl;
 
   os << std::endl;
-  os << "R01 (m_RO1_RO2_el0): " << m_RO1_RO2_el0<< std::endl;
-  os << "R02 (m_RO1_RO2_el1): " << m_RO1_RO2_el1<< std::endl;
-  os << "a (m_Ea_Eb_Ec_V3_OneDensityInterval_el0): " << m_Ea_Eb_Ec_V3_OneDensityInterval_el0<< std::endl;
-  os << "b (m_Ea_Eb_Ec_V3_OneDensityInterval_el1): " << m_Ea_Eb_Ec_V3_OneDensityInterval_el1<< std::endl;
-  os << "c (m_Ea_Eb_Ec_V3_OneDensityInterval_el2): " << m_Ea_Eb_Ec_V3_OneDensityInterval_el2<< std::endl;
+  os << "R01 (m_RO1_EI): " << m_RO1_EI<< std::endl;
+  os << "R02 (m_RO2_EI): " << m_RO2_EI<< std::endl;
+  os << "a (m_a_EI): " << m_a_EI<< std::endl;
+  os << "b (m_b_EI): " << m_b_EI<< std::endl;
+  os << "c (m_c_EI): " << m_c_EI<< std::endl;
 
   os << std::endl;
   os << "R0 < R01" << std::endl;
-  os << "a (m_Ea0_Eb0_Ec0_V3_el0): " << m_Ea0_Eb0_Ec0_V3_el0<< std::endl;
-  os << "b (m_Ea0_Eb0_Ec0_V3_el1): " << m_Ea0_Eb0_Ec0_V3_el1<< std::endl;
-  os << "c (m_Ea0_Eb0_Ec0_V3_el2): " << m_Ea0_Eb0_Ec0_V3_el2<< std::endl;
+  os << "a (m_a_RoLessThanRO1_EI): " << m_a_RoLessThanRO1_EI<< std::endl;
+  os << "b (m_b_RoLessThanR01_EI): " << m_b_RoLessThanR01_EI<< std::endl;
+  os << "c (m_c_RoLessThanR01_EI): " << m_c_RoLessThanR01_EI<< std::endl;
   os << std::endl;
   os << "R01 <= R0 <= R02" << std::endl;  
-  os << "a (m_Ea1_Eb1_Ec1_V3_el0): " << m_Ea1_Eb1_Ec1_V3_el0<< std::endl;
-  os << "b (m_Ea1_Eb1_Ec1_V3_el1): " << m_Ea1_Eb1_Ec1_V3_el1<< std::endl;
-  os << "c (m_Ea1_Eb1_Ec1_V3_el2): " << m_Ea1_Eb1_Ec1_V3_el2<< std::endl;
+  os << "a (m_a_RoBetweenR01andR02_EI): " << m_a_RoBetweenR01andR02_EI<< std::endl;
+  os << "b (m_b_RoBetweenR01andR02_EI): " << m_b_RoBetweenR01andR02_EI<< std::endl;
+  os << "c (m_c_RoBetweenR01andR02_EI): " << m_c_RoBetweenR01andR02_EI<< std::endl;
   os << std::endl;
   os << "R0 > R02" << std::endl;
-  os << "a (m_Ea2_Eb2_Ec2_V3_el0): " << m_Ea2_Eb2_Ec2_V3_el0<< std::endl;
-  os << "b (m_Ea2_Eb2_Ec2_V3_el1): " << m_Ea2_Eb2_Ec2_V3_el1<< std::endl;
-  os << "c (m_Ea2_Eb2_Ec2_V3_el2): " << m_Ea2_Eb2_Ec2_V3_el2<< std::endl;
+  os << "a (m_a_RoBiggerThanR02_EI): " << m_a_RoBiggerThanR02_EI<< std::endl;
+  os << "b (m_b_RoBiggerThanR02_EI): " << m_b_RoBiggerThanR02_EI<< std::endl;
+  os << "c (m_c_RoBiggerThanR02_EI): " << m_c_RoBiggerThanR02_EI<< std::endl;
 
   os << std::endl;
 
@@ -2415,37 +2419,37 @@ int lhpOpBonemat::SaveConfigurationFile( const char *configurationFileName )
   << m_ROCalibrationCorrectionType<< std::endl
 
   
-  << "# R01 (m_RO1) : " << std::endl
-  << m_RO1<< std::endl
-  << "# R02 (m_RO2) : " << std::endl
-  << m_RO2<< std::endl
+  << "# R01 (m_RO1_CalibrationCorrection) : " << std::endl
+  << m_RO1_CalibrationCorrection<< std::endl
+  << "# R02 (m_RO2_CalibrationCorrection) : " << std::endl
+  << m_RO2_CalibrationCorrection<< std::endl
 
-  << "# a (m_RoCorrection1IntervalCoefficient0): " << std::endl
-  << m_RoCorrection1IntervalCoefficient0<< std::endl
-  << "# b (m_RoCorrection1IntervalCoefficient1): " << std::endl
-  << m_RoCorrection1IntervalCoefficient1<< std::endl
+  << "# a (m_a_CalibrationCorrection): " << std::endl
+  << m_a_CalibrationCorrection<< std::endl
+  << "# b (m_b_CalibrationCorrection): " << std::endl
+  << m_b_CalibrationCorrection<< std::endl
 
   << std::endl
   << "# R0 < R01" << std::endl
-  << "# a (m_RoCorrection3IntervalsFirstCoefficient0): " << std::endl
-  << m_RoCorrection3IntervalsFirstCoefficient0 << std::endl
-  << "# b (m_RoCorrectio3IntervalsFirstCoefficient1): " << std::endl
-  << m_RoCorrectio3IntervalsFirstCoefficient1 << std::endl
+  << "# a (m_a_RoLessThanR01_CalibrationCorrection): " << std::endl
+  << m_a_RoLessThanR01_CalibrationCorrection << std::endl
+  << "# b (m_b_RoLessThanR01_CalibrationCorrection): " << std::endl
+  << m_b_RoLessThanR01_CalibrationCorrection << std::endl
 
   << std::endl
   << "# R01 <= R0 <= R02" << std::endl  
-  << "# a (m_RoCorrection3IntervalsSecondCoefficient0): " << std::endl
-  << m_RoCorrection3IntervalsSecondCoefficient0 << std::endl
-  << "# b (m_RoCorrection3IntervalsSecondCoefficient1): " << std::endl
-  << m_RoCorrection3IntervalsSecondCoefficient1 << std::endl
+  << "# a (m_a_RoBetweenR01AndR02_CalibrationCorrection): " << std::endl
+  << m_a_RoBetweenR01AndR02_CalibrationCorrection << std::endl
+  << "# b (m_b_RoBetweenR01AndR02_CalibrationCorrection): " << std::endl
+  << m_b_RoBetweenR01AndR02_CalibrationCorrection << std::endl
 
   << std::endl
 
   << "# R0 > R02" << std::endl
-  << "# a (m_RoCorrection3IntervalsThirdCoefficient0): " << std::endl
-  << m_RoCorrection3IntervalsThirdCoefficient0<< std::endl
-  << "# b (m_RoCorrection3IntervalsThirdCoefficient1): " << std::endl
-  << m_RoCorrection3IntervalsThirdCoefficient1<< std::endl
+  << "# a (m_a_RoBiggerThanR02_CalibrationCorrection): " << std::endl
+  << m_a_RoBiggerThanR02_CalibrationCorrection<< std::endl
+  << "# b (m_b_RoBiggerThanR02_CalibrationCorrection): " << std::endl
+  << m_b_RoBiggerThanR02_CalibrationCorrection<< std::endl
 
 
   << std::endl
@@ -2456,12 +2460,12 @@ int lhpOpBonemat::SaveConfigurationFile( const char *configurationFileName )
   << std::endl
   << "# ####  density-elasticity relationship #### " << std::endl
 
-  << "# a (m_Ea_Eb_Ec_V2_el0): " << std::endl
-  << m_Ea_Eb_Ec_V2_el0<< std::endl
-  << "# b (m_Ea_Eb_Ec_V2_el1): " << std::endl
-  << m_Ea_Eb_Ec_V2_el1<< std::endl
-  << "# c (m_Ea_Eb_Ec_V2_el2): " << std::endl
-  << m_Ea_Eb_Ec_V2_el2<< std::endl
+  << "# a (m_a_DensityElasticityRelationship): " << std::endl
+  << m_a_DensityElasticityRelationship<< std::endl
+  << "# b (m_b_DensityElasticityRelationship): " << std::endl
+  << m_b_DensityElasticityRelationship<< std::endl
+  << "# c (m_c_DensityElasticityRelationship): " << std::endl
+  << m_c_DensityElasticityRelationship<< std::endl
 
   << std::endl
   << "# density-intervals for E integration" << std::endl
@@ -2469,41 +2473,41 @@ int lhpOpBonemat::SaveConfigurationFile( const char *configurationFileName )
   << m_DensityIntervalsNumber << std::endl
 
   << std::endl
-  << "# R01 (m_RO1_RO2_el0): " << std::endl
-  << m_RO1_RO2_el0<< std::endl
-  << "# R02 (m_RO1_RO2_el1): " << std::endl
-  << m_RO1_RO2_el1<< std::endl
-  << "# a (m_Ea_Eb_Ec_V3_OneDensityInterval_el0): " << std::endl
-  << m_Ea_Eb_Ec_V3_OneDensityInterval_el0<< std::endl
-  << "# b (m_Ea_Eb_Ec_V3_OneDensityInterval_el1): " << std::endl
-  << m_Ea_Eb_Ec_V3_OneDensityInterval_el1<< std::endl
-  << "# c (m_Ea_Eb_Ec_V3_OneDensityInterval_el2): " << std::endl
-  << m_Ea_Eb_Ec_V3_OneDensityInterval_el2<< std::endl
+  << "# R01 (m_RO1_EI): " << std::endl
+  << m_RO1_EI<< std::endl
+  << "# R02 (m_RO2_EI): " << std::endl
+  << m_RO2_EI<< std::endl
+  << "# a (m_a_EI): " << std::endl
+  << m_a_EI<< std::endl
+  << "# b (m_b_EI): " << std::endl
+  << m_b_EI<< std::endl
+  << "# c (m_c_EI): " << std::endl
+  << m_c_EI<< std::endl
 
   << std::endl
   << "# R0 < R01" << std::endl
-  << "# a (m_Ea0_Eb0_Ec0_V3_el0): " << std::endl
-  << m_Ea0_Eb0_Ec0_V3_el0<< std::endl
-  << "# b (m_Ea0_Eb0_Ec0_V3_el1): " << std::endl
-  << m_Ea0_Eb0_Ec0_V3_el1<< std::endl
-  << "# c (m_Ea0_Eb0_Ec0_V3_el2): " << std::endl
-  << m_Ea0_Eb0_Ec0_V3_el2<< std::endl
+  << "# a (m_a_RoLessThanRO1_EI): " << std::endl
+  << m_a_RoLessThanRO1_EI<< std::endl
+  << "# b (m_b_RoLessThanR01_EI): " << std::endl
+  << m_b_RoLessThanR01_EI<< std::endl
+  << "# c (m_c_RoLessThanR01_EI): " << std::endl
+  << m_c_RoLessThanR01_EI<< std::endl
   << std::endl
   << "# R01 <= R0 <= R02" << std::endl  
-  << "# a (m_Ea1_Eb1_Ec1_V3_el0): " << std::endl
-  << m_Ea1_Eb1_Ec1_V3_el0<< std::endl
-  << "# b (m_Ea1_Eb1_Ec1_V3_el1): " << std::endl
-  << m_Ea1_Eb1_Ec1_V3_el1<< std::endl
-  << "# c (m_Ea1_Eb1_Ec1_V3_el2): " << std::endl
-  << m_Ea1_Eb1_Ec1_V3_el2<< std::endl
+  << "# a (m_a_RoBetweenR01andR02_EI): " << std::endl
+  << m_a_RoBetweenR01andR02_EI<< std::endl
+  << "# b (m_b_RoBetweenR01andR02_EI): " << std::endl
+  << m_b_RoBetweenR01andR02_EI<< std::endl
+  << "# c (m_c_RoBetweenR01andR02_EI): " << std::endl
+  << m_c_RoBetweenR01andR02_EI<< std::endl
   << std::endl
   << "# R0 > R02" << std::endl
-  << "# a (m_Ea2_Eb2_Ec2_V3_el0): " << std::endl
-  << m_Ea2_Eb2_Ec2_V3_el0<< std::endl
-  << "# b (m_Ea2_Eb2_Ec2_V3_el1): " << std::endl
-  << m_Ea2_Eb2_Ec2_V3_el1<< std::endl
-  << "# c (m_Ea2_Eb2_Ec2_V3_el2): " << std::endl
-  << m_Ea2_Eb2_Ec2_V3_el2<< std::endl
+  << "# a (m_a_RoBiggerThanR02_EI): " << std::endl
+  << m_a_RoBiggerThanR02_EI<< std::endl
+  << "# b (m_b_RoBiggerThanR02_EI): " << std::endl
+  << m_b_RoBiggerThanR02_EI<< std::endl
+  << "# c (m_c_RoBiggerThanR02_EI): " << std::endl
+  << m_c_RoBiggerThanR02_EI<< std::endl
 
   << std::endl
 
@@ -2533,6 +2537,10 @@ int lhpOpBonemat::Execute()
   else if (m_YoungModuleCalculationModality == YOUNG_MODULE_INTEGRATION )
   { 
     return YoungModuleIntegration();
+  }
+  else
+  {
+    return MAF_ERROR;
   }
 }
 

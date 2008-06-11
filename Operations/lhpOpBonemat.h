@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpBonemat.h,v $
   Language:  C++
-  Date:      $Date: 2008-05-27 14:18:29 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2008-06-11 17:12:26 $
+  Version:   $Revision: 1.6 $
   Authors:   Daniele Giunchi , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2002/2004
@@ -150,11 +150,11 @@ protected:
   mafString m_FrequencyFileName;
  
   /** Ea, Eb, Ec */
-  double m_Ea_Eb_Ec_V2_el0,m_Ea_Eb_Ec_V2_el1,m_Ea_Eb_Ec_V2_el2;
+  double m_a_DensityElasticityRelationship,m_b_DensityElasticityRelationship,m_c_DensityElasticityRelationship;
 
-  double m_Ea0_Eb0_Ec0_V3_el0,m_Ea0_Eb0_Ec0_V3_el1,m_Ea0_Eb0_Ec0_V3_el2;
-  double m_Ea1_Eb1_Ec1_V3_el0,m_Ea1_Eb1_Ec1_V3_el1,m_Ea1_Eb1_Ec1_V3_el2;
-  double m_Ea2_Eb2_Ec2_V3_el0,m_Ea2_Eb2_Ec2_V3_el1,m_Ea2_Eb2_Ec2_V3_el2;
+  double m_a_RoLessThanRO1_EI,m_b_RoLessThanR01_EI,m_c_RoLessThanR01_EI;
+  double m_a_RoBetweenR01andR02_EI,m_b_RoBetweenR01andR02_EI,m_c_RoBetweenR01andR02_EI;
+  double m_a_RoBiggerThanR02_EI,m_b_RoBiggerThanR02_EI,m_c_RoBiggerThanR02_EI;
 
 
   //ro calibration
@@ -162,22 +162,22 @@ protected:
   int m_ROCalibrationCorrectionType;
 
   //ro interval
-  double m_RO1;
-  double m_RO2;
+  double m_RO1_CalibrationCorrection;
+  double m_RO2_CalibrationCorrection;
 
   //single interval ro calibration
-  double m_RoCorrection1IntervalCoefficient0;
-  double m_RoCorrection1IntervalCoefficient1;
+  double m_a_CalibrationCorrection;
+  double m_b_CalibrationCorrection;
 
   //three intervals ro calibration
-  double m_RoCorrection3IntervalsFirstCoefficient0;
-  double m_RoCorrectio3IntervalsFirstCoefficient1;
+  double m_a_RoLessThanR01_CalibrationCorrection;
+  double m_b_RoLessThanR01_CalibrationCorrection;
 
-  double m_RoCorrection3IntervalsSecondCoefficient0;
-  double m_RoCorrection3IntervalsSecondCoefficient1;
+  double m_a_RoBetweenR01AndR02_CalibrationCorrection;
+  double m_b_RoBetweenR01AndR02_CalibrationCorrection;
 
-  double m_RoCorrection3IntervalsThirdCoefficient0;
-  double m_RoCorrection3IntervalsThirdCoefficient1;
+  double m_a_RoBiggerThanR02_CalibrationCorrection;
+  double m_b_RoBiggerThanR02_CalibrationCorrection;
 
 
   /** density relationship */
@@ -197,9 +197,9 @@ protected:
 
   int m_StepsNumber;
   double m_Egap;
-  double m_RO1_RO2_el0,m_RO1_RO2_el1;
+  double m_RO1_EI,m_RO2_EI;
 
-  double m_Ea_Eb_Ec_V3_OneDensityInterval_el0,m_Ea_Eb_Ec_V3_OneDensityInterval_el1,m_Ea_Eb_Ec_V3_OneDensityInterval_el2;
+  double m_a_EI,m_b_EI,m_c_EI;
   int m_DensityIntervalsNumber;
   
   int m_YoungModuleCalculationModality;
