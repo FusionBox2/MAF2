@@ -19,11 +19,11 @@ class dictionaryCSV2XMLTest(unittest.TestCase):
          
          # Application Experts note
          # your CSV to validate here! ( replace sample data file name )
-         csvDict = r'.\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.csv'
+         csvDict = r'.\csv2XMLTestData\LHDL_dictionary.csv'
          
          # Application Experts note
          # this is the output to open in Firefox to check it`s valid XML ( replace output sample data )   
-         xmlOutput = r'.\csv2XMLTestData\LHDL_Resources_Taxonomy_v7c.xml'
+         xmlOutput = r'.\csv2XMLTestData\LHDL_dictionary.xml'
 
          dictionaryCSV2XML.run(csvDict,xmlOutput)
          

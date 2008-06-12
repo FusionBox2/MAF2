@@ -1,27 +1,20 @@
-"NumTag","L1","L2","L3","L4","L5","L6","ValueType","Multiplicity","ValueList","Editable","Searchable","DefaultValue","Expert","Notes"
-"0003, 0001",,,"Type",,,,"tag",1,,"n","n",,"Leardini",
-"0003, 0002",,,,"Landmark",,,"tag",1,,"n","n",,"Leardini",
-"0003, 0003",,,,,"is Landmark",,"bool",1,,"y","y",,"Leardini","True indicate the data was Landmark"
-"0003, 0004",,,,,,"Sampling Frequency","real",1,,"y","n",,"Leardini",
-"0003, 0005",,,,,,"Number Of Landmarks","integer",1,,"y","n",,"Leardini",
-"0003, 0006",,,,,,"Motor Task","list",8,"static, level walking, stair raising/descending, stair raising, stair descending, chair (sit-to-stand), step, squatting","y","y",,"Leardini",
-"0003, 0007",,,,,,"Side","list",3,"left, right, both","y","y",,"Leardini",
-"0003, 0008",,,,,,"Gait Protocol","string",1,,"y","n",,"Leardini","i.e. SAFLo / PIG / CAST / Total3D gait / 3DFoot gait"
-"0003, 0009",,,,,,"Analyzed with the protocol","bool",1,,"y","n",,"Leardini","True indicate the data was analyzed with the protocol"
-"0003, 0010",,,,"Analog Data",,,"tag",1,,"n","n",,"Leardini",
-"0003, 0011",,,,,"is Analog Data",,"bool",1,,"y","y",,"Leardini","True indicate the data was Analog Data"
-"0003, 0012",,,,,,"Sampling Frequency","real",1,,"y",,,"Leardini",
-"0003, 0013",,,,,,"Number Of Analog Channels","integer",1,,"y","n",,"Leardini",
-"0003, 0014",,,,,,"Number Of EMG Signals","integer",1,,"y","n",,"Leardini",
-"0003, 0015",,,,,,"Motor Task","list",8,"static, level walking, stair raising/descending, stair raising, stair descending, chair (sit-to-stand), step, squatting","y","y",,"Leardini",
-"0003, 0016",,,,,,"Side","list",3,"left, right, both","y","y",,"Leardini",
-"0003, 0017",,,,,,"EMG System Brand","string",1,,"y","n",,"Leardini",
-"0003, 0018",,,,,,"EMG System Model","string",1,,"y","n",,"Leardini",
-"0003, 0019",,,,"Ground Reaction Force (GRF)",,,"tag",1,,"n","n",,"Leardini",
-"0003, 0020",,,,,"is GRF",,"bool",1,,"y","y",,"Leardini","True indicate the data was GRF"
-"0003, 0021",,,,,,"Sampling Frequency","real",1,,"y","n",,"Leardini",
-"0003, 0022",,,,,,"Number Of Force Plates","integer",1,,"y","n",,"Leardini",
-"0003, 0023",,,,,,"Motor Task","list",8,"static, level walking, stair raising/descending, stair raising, stair descending, chair (sit-to-stand), step, squatting","y","y",,"Leardini",
-"0003, 0024",,,,,,"Side","list",3,"left, right, both","y","y",,"Leardini",
-"0003, 0025",,,,,,"Force Plates Brand","string",1,,"y","n",,"Leardini",
-"0003, 0026",,,,,,"Force Plate Model","string",1,,"y","n",,"Leardini",
+"NumTag","L1","L2","L3","L4","L5","L6","L7","L8","ValueType","Multiplicity","ValueList","Editable","Searchable","DefaultValue","Expert","Notes"
+"0003, 0001","General",,,,,,,,"tag",1,,"n","n",,"Leardini","General information of VME"
+"0003, 0002",,"SamplingFrequency",,,,,,,"real",1,,"n","y",,"Leardini","Sampling frequency of the signal"
+"0003, 0003",,"MotorTask",,,,,,,"list",13,"Double leg up-right posture, Level walking, Stair raising&descending, Stair raising, Stair descending, Chair standing&sitting, Chair standing, Chair sitting, Step up&down, Step up, Step down, Squatting, Reaching","y","y",,"Leardini","Type of motor task"
+"0003, 0004",,"TaskRepetition",,,,,,,"integer",1,,"y","n",,"Leardini","Number of repetitions of the motor task"
+"0003, 0005",,"Side",,,,,,,"list",4,"Left, Right, Both, Body","y","y",,"Leardini","Side where markers are applied"
+"0003, 0006","DataType",,,,,,,,"tag",1,,,,,"Leardini","Type of Data: Landmark, Analog or Ground Reaction Force (GRF)"
+"0003, 0007",,"IsLandmark",,,,,,,"bool",1,,"y","y",,"Leardini","True indicate the data was Landmark"
+"0003, 0008",,,"NumberOfLandmarks",,,,,,"integer",1,,"n","n",,"Leardini","Number of markers applied"
+"0003, 0009",,,"GaitProtocol",,,,,,"list",7,"SAFLo, PiG, CAST, Total3D gait, Total3D gait + CAST, 3DFoot, LAMB","y","y",,"Leardini","Type of protocol adopted for the Gait Analysis"
+"0003, 0010",,,"ProcessedWithTheProtocol",,,,,,"bool",1,,"y","n",,"Leardini","True indicate the data was processed with the protocol"
+"0003, 0011",,"IsAnalogData",,,,,,,"bool",1,,"y","y",,"Leardini","True indicate the data was Analog Data"
+"0003, 0012",,,"Contents",,,,,,"string",1,,"y","y",,"Leardini","i.e. EMG signals and signals from the single load cells (from the force platforms)"
+"0003, 0013",,,"EMGAcquisitionSystemBrand",,,,,,"string",1,,"y","y",,"Leardini","Brand of the electromyographic signal data acquisition system"
+"0003, 0014",,,"EMGAcquisitionSystemModel",,,,,,"string",1,,"y","y",,"Leardini","Model of the electromyographic signal data acquisition system"
+"0003, 0015",,,"ForcePlateBrand",,,,,,"string",1,,"y","y",,"Leardini","Brand of force plates"
+"0003, 0016",,,"ForcePlateModel",,,,,,"string",1,,"y","y",,"Leardini","Model of force plates"
+"0003, 0017",,"IsGRF",,,,,,,"bool",1,,"y","y",,"Leardini","True indicate the data was GRF"
+"0003, 0018",,,"ForcePlateBrand",,,,,,"string",1,,"y","y",,"Leardini","Brand of force plates"
+"0003, 0019",,,"ForcePlateModel",,,,,,"string",1,,"y","y",,"Leardini","Model of force plates"
