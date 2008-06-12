@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpBonematTest.h,v $
 Language:  C++
-Date:      $Date: 2008-06-12 07:48:17 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2008-06-12 13:39:47 $
+Version:   $Revision: 1.3 $
 Authors:   Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2004 
@@ -40,6 +40,7 @@ class lhpOpBonematTest : public CPPUNIT_NS::TestFixture
     CPPUNIT_TEST(TestSaveLoadConfigurationFile);
     CPPUNIT_TEST(TestBonematFromConfigFileBuggy);
     CPPUNIT_TEST(TestBonematFromConfigFileOk);
+    CPPUNIT_TEST(TestBonematFromConfigFileBuggyOneInterval);
     CPPUNIT_TEST_SUITE_END();
 
   protected:
@@ -48,6 +49,8 @@ class lhpOpBonematTest : public CPPUNIT_NS::TestFixture
     void TestSaveLoadConfigurationFile();
     void TestBonematFromConfigFileBuggy();
     void TestBonematFromConfigFileOk();
+    void TestBonematFromConfigFileBuggyOneInterval();
+
 
     void TestCase(const char *inputConfFile, const char *inputDataDir, 
       const char *inputVTKMesh,

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpBonematTest.cpp,v $
 Language:  C++
-Date:      $Date: 2008-06-12 07:48:17 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2008-06-12 13:39:47 $
+Version:   $Revision: 1.3 $
 Authors:   Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2004 
@@ -338,6 +338,52 @@ void lhpOpBonematTest::TestBonematFromConfigFileOk()
     outputDataCorrectDir.GetCStr(), outputFrequencyFile.GetCStr()
     );
 }
+
+void lhpOpBonematTest::TestBonematFromConfigFileBuggyOneInterval()
+{
+  mafString dirPrefix = LHP_DATA_ROOT;
+  mafString inputDataDir = dirPrefix;
+  CPPUNIT_ASSERT(wxDirExists(inputDataDir));
+
+  inputDataDir.Append("/lhpOpBonematTest/TestDataEIntegrationOneInterval/InputData/");
+
+  CPPUNIT_ASSERT(wxDirExists(inputDataDir));
+
+  mafString inputVTKMesh = inputDataDir;
+  inputVTKMesh.Append("InputMesh.vtk");
+
+  bool exist = wxFile::Exists(inputVTKMesh.GetCStr());
+
+  CPPUNIT_ASSERT(exist == TRUE);
+
+  mafString inputVTKVolume = inputDataDir;
+  inputVTKVolume.Append("InputVolume.vtk");
+
+  exist = wxFile::Exists(inputVTKVolume.GetCStr());
+
+  CPPUNIT_ASSERT(exist == TRUE);
+
+  mafString inputConfFile = inputDataDir;
+  inputConfFile.Append("buggyoneinterval.conf");
+
+  exist = wxFile::Exists(inputConfFile.GetCStr());
+  CPPUNIT_ASSERT(exist == TRUE);
+
+  mafString outputDataCorrectDir = dirPrefix;
+  outputDataCorrectDir.Append("/lhpOpBonematTest/TestDataEIntegrationOneInterval/OutputData/");
+
+  CPPUNIT_ASSERT(wxDirExists(outputDataCorrectDir.GetCStr()));
+
+  mafString outputFrequencyFile = outputDataCorrectDir;
+  outputFrequencyFile.Append("outputFrequencyFileToCheck.freq");
+
+
+  TestCase(inputConfFile.GetCStr(),inputDataDir.GetCStr() , 
+    inputVTKMesh.GetCStr(), inputVTKVolume.GetCStr(),
+    outputDataCorrectDir.GetCStr(), outputFrequencyFile.GetCStr()
+    );
+}
+
 
 void lhpOpBonematTest::TestCase(const char *inputConfFile, const char *inputDataDir, const char *inputVTKMesh, 
                                 const char *inputVTKVolume, const char *outputDataCorrectDir,
