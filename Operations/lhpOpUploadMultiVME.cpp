@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-02-20 12:56:54 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2008-06-16 09:48:49 $
+Version:   $Revision: 1.3 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -57,7 +57,9 @@ MafMedical is partially based on OpenMAF.
 
 #include "mmgGui.h"
 #include "lhpUser.h"
+
 #include "mafNode.h"
+#include "mafNodeIterator.h"
 
 #include "lhpFactoryTagHandler.h"
 #include "vtkPolyData.h"
@@ -85,6 +87,7 @@ mafOp(label)
 {
 	m_OpType  = OPTYPE_OP;
 	m_Canundo = false;
+  m_LinkURI.clear();
 
   m_PythonExe ="python.exe ";
   m_PythonUploadFullPath  = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\").c_str();
@@ -94,6 +97,7 @@ mafOp(label)
   m_SubXMLDictionaryFileName = "UNDEFINED";
   m_AssembledXMLDictionaryFileName = "assembledXMLDictionary.xml";
   m_SubDictionaryBuildingCommand = "UNDEFINED";
+  m_listURIFileName = " ";
 
   m_SubdictionaryId = 0; // NO_SUBDICTIONARY; 
   m_ConnectionConfigurationFileName = "vmeUploaderConnectionConfiguration.conf" ;
@@ -119,6 +123,38 @@ mafOp* lhpOpUploadMultiVME::Copy()
 void lhpOpUploadMultiVME::OpRun()
 //----------------------------------------------------------------------------
 {
+  //Get Proxy values
+  mafEvent event;
+  event.SetSender(this);
+  event.SetId(ID_REQUEST_PROXY);
+  mafEventMacro(event);
+
+  if(event.GetString()) //if proxy string contains something != ""
+  {
+    mafString port;
+    port << event.GetArg();
+    m_ProxyURL = *event.GetString();
+    m_ProxyPort = port;
+
+    // load the connection configuration file:
+    this->SaveConnectionConfigurationFile();
+  }
+  else
+  {
+    wxString oldDir = wxGetCwd();
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+    wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+
+    //if file exists , delete it
+    if(wxFileExists(m_ConnectionConfigurationFileName.GetCStr()))
+    {
+      wxRemoveFile(m_ConnectionConfigurationFileName.GetCStr());
+    }
+
+    wxSetWorkingDirectory(oldDir);
+  }
+
   int result = OP_RUN_CANCEL;
 
   mafString s(_("Upload VMEs"));
@@ -140,6 +176,8 @@ void lhpOpUploadMultiVME::OpRun()
   if(m_UploadVME->CheckLogin()) 
   {
     upToDate = this->IsLHPBuilderVersionUpToDate();
+    m_UploadingNode = m_NodeVector[m_NodeCounter];
+    bool hasLink = (m_UploadingNode->GetNumberOfLinks() != 0);
     this->MultiGui();
   }
   else
@@ -148,34 +186,36 @@ void lhpOpUploadMultiVME::OpRun()
     return;
   } 
 }
-//----------------------------------------------------------------------------
-void lhpOpUploadMultiVME::LoadConnectionConfigurationFile()
-//----------------------------------------------------------------------------
+//------------------------------------------------------------
+void lhpOpUploadMultiVME::SaveConnectionConfigurationFile()
+//------------------------------------------------------------
 {
   wxString oldDir = wxGetCwd();
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
   mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
+  //if file exists , delete it
+  if(wxFileExists(m_ConnectionConfigurationFileName.GetCStr()))
+  {
+    wxRemoveFile(m_ConnectionConfigurationFileName.GetCStr());
+  }
+
   // open auto tags file and try to handle tags using tags factory 
-  ifstream configurationFile;
+  ofstream configurationFile;
 
   configurationFile.open(m_ConnectionConfigurationFileName.GetCStr());
   if (!configurationFile) {
     wxString message = m_ConnectionConfigurationFileName.GetCStr();
-    message.Append(" not found! Unable to open connection configuration file: default values will be used");
+    message.Append(" not found! Unable to write configuration connection file");
     mafLogMessage(message.c_str());
   }
   else
   {
-    std::string tmp;
+    configurationFile << m_ProxyURL;   
+    configurationFile << "\n";
+    configurationFile << m_ProxyPort;
 
-    configurationFile >> tmp;
-    m_ProxyURL = tmp.c_str();
-    
-    configurationFile >> tmp;
-    m_ProxyPort = tmp.c_str();
-     
     wxString message = m_ConnectionConfigurationFileName.GetCStr();
     message.Append("Found connection configuration file: using connection parameters");
     message.Append("m_ProxyURL: ");
@@ -199,7 +239,7 @@ void lhpOpUploadMultiVME::CreateGui()
   m_Gui = new mmgGui(this);
 
   m_Gui->Divider(2);
-
+  
   m_Gui->Label("VME Name:", true);
   m_Gui->Label(m_UploadingNode->GetName());
 
@@ -272,6 +312,54 @@ int lhpOpUploadMultiVME::AssembleDictionaries()
   return MAF_OK;
 }
 //----------------------------------------------------------------------------
+bool lhpOpUploadMultiVME::isBinaryDataPresent(mafNode *node) 
+//----------------------------------------------------------------------------
+{
+  bool ret = false;
+  //create cache: logic comunicate the msf directory
+  mafEvent event;
+  event.SetSender(this);
+  event.SetId(ID_MSF_DATA_CACHE);
+  mafEventMacro(event);
+
+  wxString temp;
+  temp.Append((*event.GetString()).GetCStr());
+  mafString msfFile = temp;  
+  
+
+  wxString oldDir = wxGetCwd();
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+
+  // get manual tags
+  wxString command2execute;
+  command2execute.Clear();
+  command2execute = m_PythonExe;
+
+  command2execute.Append(" lhpCheckBinaryName.py ");
+  command2execute.Append("\"");
+  command2execute.Append(msfFile.GetCStr());
+  command2execute.Append("\"");
+  command2execute.Append(" ");
+  command2execute.Append(wxString::Format("%d ",node->GetId()));
+
+  long pid = wxExecute(command2execute, wxEXEC_SYNC);
+
+  wxArrayString output;
+  wxArrayString errors;
+
+  pid = wxExecute(command2execute, output, errors);
+  wxString result = output[output.size() - 1];
+
+  //if result == "", no binary data has been found
+  if (result != "")
+  {
+    ret = true;
+  }
+  return ret;
+}
+
+//----------------------------------------------------------------------------
 void lhpOpUploadMultiVME::OnEvent(mafEventBase *maf_event) 
 //----------------------------------------------------------------------------
 {
@@ -282,18 +370,34 @@ void lhpOpUploadMultiVME::OnEvent(mafEventBase *maf_event)
     case ID_SUBDICTIONARY:
     {
       // nothing to do for the moment...
-      mafLogMessage("You choosed dictionary number %i", m_SubdictionaryId);
+      mafLogMessage("You chosed dictionary number %i", m_SubdictionaryId);
       m_UploadVME->SetDictionary(m_SubdictionaryId);
     }
     break;
 
     case wxOK:
       {
+        m_LinkURI.clear();
+        bool hasBinary = false;
+        mafString URI;
         if ((m_NodeCounter + 1) < m_NodeVector.size())
         {
           m_UploadingNode = m_NodeVector[m_NodeCounter];
+          if (m_UploadingNode->GetNumberOfLinks() != 0)
+          {
+            UploadVMELinks(m_UploadingNode);
+          }
+
+          hasBinary = isBinaryDataPresent(m_UploadingNode);
           m_UploadVME->SetInput(m_UploadingNode);
-          m_UploadVME->OpDo();
+          if (SaveListURIFile() == MAF_ERROR)
+          {
+            wxMessageBox("Unable to write list of link binary URI");
+            return;
+          }
+          if (m_UploadVME->UploadVME(URI, hasBinary) == MAF_ERROR)
+            this->OpStop(OP_RUN_CANCEL);
+
           m_NodeCounter++;
           this->HideGui();
           this->MultiGui();
@@ -301,9 +405,24 @@ void lhpOpUploadMultiVME::OnEvent(mafEventBase *maf_event)
         else
         {
           m_UploadingNode = m_NodeVector[m_NodeCounter];
+          if (m_UploadingNode->GetNumberOfLinks() != 0)
+          {
+            UploadVMELinks(m_UploadingNode);
+          }
+
+          hasBinary = isBinaryDataPresent(m_UploadingNode);
           m_UploadVME->SetInput(m_UploadingNode);
-          m_UploadVME->OpDo();
-          this->OpStop(OP_RUN_OK);
+          
+          if (SaveListURIFile() == MAF_ERROR)
+          {
+            wxMessageBox("Unable to write list of link binary URI");
+            return;
+          }
+          if (m_UploadVME->UploadVME(URI, hasBinary) == MAF_ERROR)
+             this->OpStop(OP_RUN_CANCEL);
+
+           this->OpStop(OP_RUN_OK);
+
           return;
         }
       }
@@ -323,6 +442,72 @@ void lhpOpUploadMultiVME::OnEvent(mafEventBase *maf_event)
     }	
   }
 }
+//----------------------------------------------------------------------------
+int lhpOpUploadMultiVME::UploadVMELinks(mafNode *derived)   
+//----------------------------------------------------------------------------
+{  
+    for (mafNode::mafLinksMap::iterator i = m_UploadingNode->GetLinks()->begin(); i != m_UploadingNode->GetLinks()->end(); i++)
+  {
+    
+    bool hasBinary = false;
+    mafString URI;
+    if (i->second.m_Node != NULL)
+    {
+      mafNode *link = i->second.m_Node;
+      hasBinary = isBinaryDataPresent(link);
+      wxMessageBox(wxString::Format("Link found! Upload VME: %s", link->GetName()));
+
+      m_UploadVME->SetInput(link);
+      if (m_UploadVME->UploadVME(URI, hasBinary, true) == MAF_ERROR || (hasBinary == true && URI == ""))
+      {
+        this->OpStop(OP_RUN_CANCEL);
+      }
+      m_LinkURI.push_back(URI);
+    }
+  }
+  return MAF_OK;
+}
+
+//------------------------------------------------------------
+int lhpOpUploadMultiVME::SaveListURIFile()
+//------------------------------------------------------------
+{
+  wxString oldDir = wxGetCwd();
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+
+  m_listURIFileName = "listURI";
+  wxString lockPath = m_PythonUploadFullPath;
+  lockPath += m_listURIFileName.GetCStr();
+  //if file exists , delete it
+  if (wxFileExists(lockPath))
+    wxRemoveFile(lockPath);
+
+  // open auto tags file and try to handle tags using tags factory 
+  ofstream listURIFile;
+
+  listURIFile.open(lockPath);
+  if (!listURIFile)
+  {
+
+    return MAF_ERROR;
+  }
+  else
+  {
+    for (int n = 0; n < m_LinkURI.size(); n++)
+    {
+      listURIFile << m_LinkURI[n];
+      listURIFile << "\n";
+    }
+    listURIFile.close();
+  }
+
+  wxSetWorkingDirectory(oldDir);
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  return MAF_OK;
+}
+
 //----------------------------------------------------------------------------
 void lhpOpUploadMultiVME::OpDo()   
 //----------------------------------------------------------------------------

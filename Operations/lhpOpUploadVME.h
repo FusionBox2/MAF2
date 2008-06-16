@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-03-17 08:46:39 $
-Version:   $Revision: 1.20 $
+Date:      $Date: 2008-06-16 09:49:22 $
+Version:   $Revision: 1.21 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -90,6 +90,13 @@ public:
   /** Load configuration file for connection*/
   void SaveConnectionConfigurationFile();
 
+
+  /** Upload a single VME*/
+  int UploadVME(mafString &binaryURI, bool isBinaryDataPresent, bool returnURI = false);
+
+  /** Save information information about VME link*/
+  void SaveLinkInfo();
+
 protected:
   
   /** check if lhbbuilder software version is up to date in order to a allow vme uploading */
@@ -116,6 +123,10 @@ protected:
 
   /** Import Edited MSF*/
   int ImportMSF();
+
+  /** Return binary URI of the VME upload*/
+  mafString GetBinaryURI();
+
 
   
   mafString m_CacheDir; //>cache superdirectory
@@ -165,6 +176,10 @@ private:
   FILE *m_ProxyFile;
   mafNode *m_Parent;
   mafNode *m_TemporaryNode;
+  bool m_HasLink;
+
+  std::vector<mafNode*> m_LinkNode;
+  std::vector<mafString> m_LinkName;
 
   
 };
