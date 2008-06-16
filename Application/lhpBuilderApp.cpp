@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-04-28 09:30:54 $
-  Version:   $Revision: 1.51 $
+  Date:      $Date: 2008-06-16 10:24:12 $
+  Version:   $Revision: 1.52 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -271,7 +271,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new medOpIterativeRegistration("Iterative Registration"),"Modify/Fuse");
   m_Logic->Plug(new mafOpOpenExternalFile("Open with external program"),"Manage"); 
   m_Logic->Plug(new medOpCreateLabeledVolume("Labeled Volume"),"Create/Derive");
-  m_Logic->Plug(new lhpOpUploadVME("Upload VME"),"Manage");
+  //m_Logic->Plug(new lhpOpUploadVME("Upload VME"),"Manage");
   m_Logic->Plug(new lhpOpUploadMultiVME("Upload Multiple VME"),"Manage");
   m_Logic->Plug(new lhpOpEditTag("Edit Tag VME"),"Manage");
   m_Logic->Plug(new lhpOpDownloadVME("Download VME"),"Manage");
