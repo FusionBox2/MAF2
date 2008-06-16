@@ -8,7 +8,7 @@ LINK_LIBRARIES(lhpCommon)
 #-----------------------------------------------------------------------------
 
 # ADD_EXECUTABLE(myTest myTest.h myTest.cpp)
-# ADD_TEST(myTest ${EXECUTABLE_OUTPUT_PATH}/myTest)
+# ADD_TEST(myTest ${LHPBUILDER_EXECUTABLE_OUTPUT_PATH}/myTest)
 
 # wxWidgets specific classes
 #IF (MAF_USE_WX)
