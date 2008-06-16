@@ -17,8 +17,8 @@ ADD_TEST(lhpOpMultiscaleExploreTest ${EXECUTABLE_OUTPUT_PATH}/lhpOpMultiscaleExp
 ADD_EXECUTABLE(lhpFactoryTagHandlerTest lhpFactoryTagHandlerTest.h lhpFactoryTagHandlerTest.cpp)
 ADD_TEST(lhpFactoryTagHandlerTest ${EXECUTABLE_OUTPUT_PATH}/lhpFactoryTagHandlerTest)
 
-ADD_EXECUTABLE(lhpTagHandlerContainerTest lhpTagHandlerContainerTest.h lhpTagHandlerContainerTest.cpp)
-ADD_TEST(lhpTagHandlerContainerTest ${EXECUTABLE_OUTPUT_PATH}/lhpTagHandlerContainerTest)
+# ADD_EXECUTABLE(lhpTagHandlerContainerTest lhpTagHandlerContainerTest.h lhpTagHandlerContainerTest.cpp)
+# ADD_TEST(lhpTagHandlerContainerTest ${EXECUTABLE_OUTPUT_PATH}/lhpTagHandlerContainerTest)
 
 ADD_EXECUTABLE(lhpTagHandlerDICOMContainerTest lhpTagHandlerDICOMContainerTest.h lhpTagHandlerDICOMContainerTest.cpp)
 ADD_TEST(lhpTagHandlerDICOMContainerTest ${EXECUTABLE_OUTPUT_PATH}/lhpTagHandlerDICOMContainerTest)
