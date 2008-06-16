@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2008-04-23 12:12:40 $
-#   Version:   $Revision: 1.27 $
+#   Date:      $Date: 2008-06-16 09:38:00 $
+#   Version:   $Revision: 1.28 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -120,8 +120,9 @@ IF(MAF_FOUND)
   #-----------------------------------------------------------------------------
   IF(BUILD_TESTING)
     
-    MESSAGE("variable LHP_SOURCE_DIR = " ${LHP_SOURCE_DIR})
+    MESSAGE(STATUS "variable LHP_SOURCE_DIR = " ${LHP_SOURCE_DIR})
     FIND_PATH(LHP_DATA_ROOT "TestingDataRoot.txt" "${LHP_SOURCE_DIR}/Testing/UnitTestsData" "${LHP_SOURCE_DIR}/../TestingData" "${LHP_SOURCE_DIR}/../mmData/TestingData" "${LHP_SOURCE_DIR}/../../TestingData"  DOC "Test data repository")
+    
     ENABLE_TESTING()
       
     # where will executable tests be written ?
@@ -132,6 +133,7 @@ IF(MAF_FOUND)
     ENDIF (EXECUTABLE_OUTPUT_PATH)
       
     SUBDIRS (Testing)
+    SUBDIRS (VMEUploaderDownloader)
     
   ENDIF(BUILD_TESTING)
   
