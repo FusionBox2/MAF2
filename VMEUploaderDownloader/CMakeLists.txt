@@ -10,7 +10,7 @@ IF (BUILD_VMEUPLOADERDOWNLOADER_TESTING)
     # MESSAGE("variable LHP_BINARY_DIR = " ${LHP_BINARY_DIR})
 
     SET (VME_UPLOADER_DOWNLOADER_DIR ${LHP_BINARY_DIR}/VMEUploaderDownloader)
-    # ADD_TEST("PythonWorks" "python.exe" "-c" "print 'hello world'")
+    ADD_TEST("PythonWorks" "python.exe" "-c" "print 'hello world'")
 
     ADD_TEST("dictionaryCSV2XMLTest" "python.exe" "${VME_UPLOADER_DOWNLOADER_DIR}/dictionaryCSV2XMLTest.py")
     ADD_TEST("DownloadHandlerTest" "python.exe" "${VME_UPLOADER_DOWNLOADER_DIR}/DownloadHandlerTest.py")
