@@ -19,11 +19,13 @@ user = sys.argv[6] #user
 password = sys.argv[7] #pwd
 urlServer = sys.argv[8] #server url where upload files
 manualTagFile = sys.argv[9] #manualTag file name
+hasLink = sys.argv[10] #vme has link
 
+    
 name = ""
 count = 0
 for i in sys.argv:
-  if(count > 9):
+  if(count > 10):
     if(name == ""):
       name = i
     else:
@@ -37,8 +39,9 @@ s.settimeout(20)
 s.connect((host, port))
 
 
+
 # compose message
-k = modality + ' ' + id + ' ' + msf + ' ' + user + ' ' + password + ' ' + urlServer + ' '  + manualTagFile + ' ' + name 
+k = modality + ' ' + id + ' ' + msf + ' ' + user + ' ' + password + ' ' + urlServer + ' '  + manualTagFile + ' ' + hasLink + ' ' + name 
 s.sendall(k) # send k to server
 # if stop signal, then leave loop
 v = s.recv(1024) # receive v from server (up to 1024 bytes)

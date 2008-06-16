@@ -10,7 +10,7 @@ from Debug import Debug
 
 class UploadHandler:
     queue = None
-    def __init__(self, queue, observer , dirCache, id, usr , pwd, urlServer, manualTagFile, vmeName):
+    def __init__(self, queue, observer , dirCache, id, usr , pwd, urlServer, manualTagFile, hasLink, vmeName):
         UploadHandler.queue = queue
         self.observer = observer
         self.dirCache = dirCache
@@ -27,6 +27,7 @@ class UploadHandler:
         self.XMLURI = ""
         self.block = threading.Lock()
         self.threads = []
+        self.hasLink = hasLink
         self.vmeName = vmeName
         self.existThread = 0
         self.proxyHost = ""
@@ -173,6 +174,7 @@ class UploadHandler:
         upl.OutputFolderName = self.dirOutgoing
         upl.VmeToExtractID = int(self.id)
         upl.DatasetURI = self.BinaryURI
+        upl.hasLink = self.hasLink
 
         upl.Upload()
         #get size of binary locally
@@ -264,9 +266,6 @@ class UploadHandler:
         
         cheksum = result.chksum
         uri = result.uriFile
-        
-
-        
         os.chdir(oldDir)
         
         
@@ -285,6 +284,15 @@ class UploadHandler:
             serviceUrl = 'https://ws-lhdl.cineca.it/mafSRBSize.cgi'
             result = instance.ListSrbDir(self.BinaryURI, serviceUrl, self.proxyHost, self.proxyPort)
             self.remoteTemporaryBinaryFileSize = result;
+            
+            #writes binary URI in a file in VMEUploaderDownloader dir
+            oldDir = os.getcwd()
+            os.chdir(self.dirOutgoing + r"\..\..") 
+            file = open(self.vmeName + self.id, 'w')
+            file.write(self.BinaryURI)
+            file.close()
+            os.chdir(oldDir)
+                        
             print "SIZE Thread Finished "
         except:
             pass
@@ -315,8 +323,8 @@ class UploadHandler:
     def getBinaryFileSize(self):
         return os.stat(self.dirOutgoing + "\\" +self.getBinaryFile()).st_size
 		
-def createUploadHandler(queue, observer, dirCache, id , usr , pwd, urlServer, manualTagFile, vmeName):
-    uploadHandler = UploadHandler(queue,observer, dirCache, id, usr , pwd, urlServer, manualTagFile, vmeName)
+def createUploadHandler(queue, observer, dirCache, id , usr , pwd, urlServer, manualTagFile, hasLink,vmeName):
+    uploadHandler = UploadHandler(queue,observer, dirCache, id, usr , pwd, urlServer, manualTagFile, hasLink,  vmeName)
     uploadHandler.upload()
     
 if __name__ == '__main__':

@@ -79,7 +79,8 @@ class ThreadedClient:
         #4 is pwd
         #5 is serverUrl
         #6 is manualTagFile
-        #7 is vme name
+        #7 is hasLink
+        #8 is vme name
         
         if(tuplaFromServer[0] == "UPLOAD"):
            self.createThreadForUpdate(tuplaFromServer)
@@ -96,11 +97,12 @@ class ThreadedClient:
         #4 is pwd
         #5 is serverUrl
         #6 is manualTagFile
-        #7 is vme name
+        #7 is hasLink
+        #8 is vme name
         
         self.gui.createBar(tuplaFromServer[0])
-        self.gui.createLabel(tuplaFromServer[7]) #tupla[7] is vme name         
-        self.threads.append(CustomThread.CustomThread(func=self.workerThreadUpload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[2], tuplaFromServer[1],tuplaFromServer[3],tuplaFromServer[4],tuplaFromServer[5], tuplaFromServer[6],tuplaFromServer[7])))
+        self.gui.createLabel(tuplaFromServer[8]) #tupla[8] is vme name         
+        self.threads.append(CustomThread.CustomThread(func=self.workerThreadUpload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[2], tuplaFromServer[1],tuplaFromServer[3],tuplaFromServer[4],tuplaFromServer[5], tuplaFromServer[6], tuplaFromServer[7], tuplaFromServer[8])))
         self.threads[len(self.threads)-1].start()
     
     def createThreadForDownload(self, tuplaFromServer):
@@ -118,7 +120,7 @@ class ThreadedClient:
         self.threads.append(CustomThread.CustomThread(func=self.workerThreadDownload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[2], tuplaFromServer[6],tuplaFromServer[3],tuplaFromServer[4],tuplaFromServer[5],tuplaFromServer[1])))
         self.threads[len(self.threads)-1].start()
         
-    def workerThreadUpload(self, observer, dirCache , id, usr, pwd, urlServer, manualTagFile, vmeName):
+    def workerThreadUpload(self, observer, dirCache , id, usr, pwd, urlServer, manualTagFile, hasLink, vmeName):
         """
         This is where we handle the asynchronous I/O. For example, it may be
         a 'select()'.
@@ -127,7 +129,7 @@ class ThreadedClient:
         """
       
         try:
-            UploadHandler.createUploadHandler(self.queue, observer, dirCache , id, usr, pwd, urlServer, manualTagFile, vmeName)
+            UploadHandler.createUploadHandler(self.queue, observer, dirCache , id, usr, pwd, urlServer, manualTagFile, hasLink, vmeName)
         except:
             pass
         

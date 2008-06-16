@@ -26,8 +26,8 @@ class vmeUploaderOnly:
         self.VmeToExtractID = 1    
         self.OutputVMEXMLName = "exportedVME.xml"
         self.OutputFolderName = "FolderToUpload"
-
         self.DatasetURI = ""
+        self.hasLink = "";
         
     def Upload(self):
         self.__Parse()
@@ -37,6 +37,7 @@ class vmeUploaderOnly:
         msfDOMParserInstance = msfParser.msfParser()
        
         # Search the MSF file inside given the given directory
+        oldDir = os.getcwd()
         os.chdir(self.InputMSFDirectory)
         files = os.listdir(self.InputMSFDirectory)
         
@@ -78,6 +79,24 @@ class vmeUploaderOnly:
         msfDOMParserInstance.SetTagNodeText(nodeURI, today)       
         day = msfDOMParserInstance.GetTagNodeText(nodeURI)
         print day
+        print self.hasLink
+        
+        if (self.hasLink == "true"):   
+            newDir = os.getcwd()
+            os.chdir(newDir + r"..\..\..")
+            #ciclo su list URI
+            list = ''
+            file = open("listURI","r")
+            for line in file.readlines():
+                line = line.replace("\n", ' ')
+                list += line                
+                
+            nodeURI = msfDOMParserInstance.GetTagNodeByTagName(outVmeTagArrayNode, "L0000_resource_MAF_Procedural_VMElinkURI1")
+            msfDOMParserInstance.SetTagNodeText(nodeURI, list)       
+            URI = msfDOMParserInstance.GetTagNodeText(nodeURI)
+            print URI 
+            file.close()
+            os.chdir(newDir)
 
         # for the moment cannot remove anything
         # msfDOMParserInstance.RemoveTagsByList(outVmeTagArrayNode, a)

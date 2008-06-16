@@ -34,15 +34,16 @@ class Server(threading.Thread):
       #3 is usr
       #4 is pwd
       #5 is serverUrl
-      #6 manualTagFile
-      #7 is vme name
+      #6 is manualTagFile
+      #7 is hasLink
+      #8 is vme name
       
       arguments = data.split(" ") 
       sendList = []
       count = 0
       lastArgument = ""
       for i in arguments:
-        if(count < 7):
+        if(count < 8):
           sendList.append(i)
         else:
           if(lastArgument != ''):
