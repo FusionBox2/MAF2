@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpBonemat.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-06-12 13:31:15 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2008-06-17 15:33:15 $
+  Version:   $Revision: 1.12 $
   Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -1581,12 +1581,29 @@ int lhpOpBonemat::YoungModuleIntegration()
       youngModule = m_a_EI +
         m_b_EI * pow(density, m_c_EI);
     } 
+
     else if (m_DensityIntervalsNumber == THREE_INTERVALS)
     {
-      youngModule = m_a_RoLessThanRO1_EI +
-        m_b_RoLessThanR01_EI * pow(density, m_c_RoLessThanR01_EI);
+      if (density < m_RO1_EI)
+      {
+        youngModule = m_a_RoLessThanRO1_EI + 
+          m_b_RoLessThanR01_EI * pow(density, m_c_RoLessThanR01_EI);
+        
+      } 
+      else if (m_RO1_EI <= density  && density <= m_RO2_EI)
+      {
+        youngModule = m_a_RoBetweenR01andR02_EI + 
+          m_b_RoBetweenR01andR02_EI * pow(density, m_c_RoBetweenR01andR02_EI);
+
+      }
+      else if (density > m_RO2_EI)
+      {
+        youngModule = m_a_RoBiggerThanR02_EI + 
+          m_b_RoBiggerThanR02_EI * pow(density, m_c_RoBiggerThanR02_EI);
+       
+      }
     }
-  
+
     if (youngModule <= 0) {
       youngModule = 1e-6;
     } 

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpBonematTest.cpp,v $
 Language:  C++
-Date:      $Date: 2008-06-12 13:39:47 $
-Version:   $Revision: 1.3 $
+Date:      $Date: 2008-06-17 15:34:01 $
+Version:   $Revision: 1.4 $
 Authors:   Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2004 
@@ -249,7 +249,7 @@ void lhpOpBonematTest::TestSaveLoadConfigurationFile()
   vtkDEL(op);
 }
 
-void lhpOpBonematTest::TestBonematFromConfigFileBuggy()
+void lhpOpBonematTest::TestBonematFromConfigFileBuggy3Intervals()
 {
   mafString dirPrefix = LHP_DATA_ROOT;
   mafString inputDataDir = dirPrefix;
