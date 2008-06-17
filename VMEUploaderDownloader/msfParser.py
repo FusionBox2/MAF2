@@ -68,37 +68,6 @@ from xml.dom import minidom
 from xml.dom import Node
 from xml.dom.minidom import Document
 
-class lhpTagsListStorage:
-    """store and retrieve list of tags in 1 column"""
-    
-    def __init__(self):                                
-        self.Clear()
-        
-    def Clear(self):
-        self.FileName = ""
-        self.TagsList = []
-    
-    def Load(self):
-        self.TagsList = []
-        f = open(self.FileName, 'r')
-        for line in f:
-            lineStripped = str(line).strip()
-            self.TagsList.append(lineStripped)        
-        f.close()    
-        
-    def Save(self):
-        f = open(self.TagsStorageFileName, 'w')
-        for tag in self.TagsList:
-            print >> f, tag
-        f.close()
-    
-    def Print(self):
-        print "\nDictionary file name: " + self.FileName
-        print "\nDictionary content:" 
-        i = 0
-        for tag in self.TagsList:
-            print "item: " + str(i) + "     " + "value: " + str(tag) 
-            i+=1
             
 class msfParser:
     """Facilities to handle MSF DOM Tree"""
