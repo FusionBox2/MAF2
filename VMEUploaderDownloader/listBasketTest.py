@@ -9,7 +9,7 @@ class listBasketTest(unittest.TestCase):
         
         self.curDir = os.getcwd()
         self.user = 'testuser' #substitute
-        self.pwd  = 'GRDPt8' #substitute
+        self.pwd  = '6w8DHF' #substitute
         
         self.lBasket = listBasket.listBasket()
         self.lBasket.SetCredentials(self.user, self.pwd)

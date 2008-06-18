@@ -58,8 +58,8 @@ def main():
        sys.argv = []
        sys.argv.append("Program")
        sys.argv.append("testuser") #substitute
-       sys.argv.append("GRDPt8") #substitute
-       sys.argv.append('Data_219_exportedVME.xml') #xml test present in repository
+       sys.argv.append("6w8DHF") #substitute
+       sys.argv.append('TestXML_exportedVME.xml') #xml test present in repository
        sys.argv.append(os.getcwd()+"\\testDownload\\")
        
     if(len(sys.argv) == 5):
