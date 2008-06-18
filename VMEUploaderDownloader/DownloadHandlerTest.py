@@ -17,10 +17,10 @@ class DownloadHandlerTest(unittest.TestCase):
         id = 5
         if(os.path.exists(dirCache) == False): os.mkdir(dirCache)
         urlServer = 'http://devel.fec.cineca.it:12680/town/Members/portal_admin/test-lhp2'
-        usr = 'user' #substitute 
-        pwd = 'pwd' #substitute
-        srbData = 'Data_63'
-        fileSize = 437
+        usr = 'testuser' #substitute 
+        pwd = '6w8DHF' #substitute
+        srbData = 'Data_1'
+        fileSize = 667
         downloadHandler = DownloadHandler.DownloadHandler(queue, observer, dirCache, srbData , usr , pwd, urlServer, fileSize)
         downloadHandler.download()
     
