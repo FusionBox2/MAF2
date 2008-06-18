@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpImporterC3DTest.cpp,v $
 Language:  C++
-Date:      $Date: 2008-01-18 15:31:59 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2008-06-18 11:14:40 $
+Version:   $Revision: 1.3 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004 
@@ -71,12 +71,12 @@ void lhpOpImporterC3DTest::Test()
   //sample point ( RGT at time stamp  2000 ms)
   double result[3];
   double pos[3] = {266.377197,	-136.802872,	789.745300};
-  double time = 2000;
+  double time = 2;
 
   cloud->Open();
   
   cloud->GetLandmark("RGT")->GetPoint(result, time);
-  //mafLogMessage("%f, %f ,%f", result[0], result[1], result[2]);
+  //mafLogMessage("P:%f, %f ,%f", result[0], result[1], result[2]);
   
   
   CPPUNIT_ASSERT(DIFF_MINOR_THAN_EPSILON(result[0],pos[0]) && 
@@ -98,8 +98,8 @@ void lhpOpImporterC3DTest::Test()
   CPPUNIT_ASSERT(platform0->GetOutput()->GetVTKData()->GetNumberOfPoints() == 24);
   
   double boundsPlat0[6];
-  platform0->GetOutput()->GetBounds(boundsPlat0);
-  //mafLogMessage("%f, %f ,%f, %f, %f ,%f", boundsPlat0[0], boundsPlat0[1], boundsPlat0[2],boundsPlat0[3],boundsPlat0[4],boundsPlat0[5]);
+  platform0->GetOutput()->GetVTKData()->GetBounds(boundsPlat0);
+  //mafLogMessage("b:%f, %f ,%f, %f, %f ,%f", boundsPlat0[0], boundsPlat0[1], boundsPlat0[2],boundsPlat0[3],boundsPlat0[4],boundsPlat0[5]);
   CPPUNIT_ASSERT(boundsPlat0[0] == 0 && boundsPlat0[1] == 400 && 
                  boundsPlat0[2] == 0 && boundsPlat0[3] == 600 && 
                  boundsPlat0[4] == -5 && boundsPlat0[5] == 0);
@@ -109,7 +109,7 @@ void lhpOpImporterC3DTest::Test()
   CPPUNIT_ASSERT(force0->GetOutput()->GetVTKData()->GetNumberOfPoints() == 2);
   double forceV1[3];
   double forceV2[3];
-  force0->SetTimeStamp(2499); //5000 ts in validation document
+  force0->SetTimeStamp(2.4999); 
   force0->Update();
   force0->GetOutput()->GetVTKData()->GetPoint(0, forceV1);
   force0->GetOutput()->GetVTKData()->GetPoint(1, forceV2);
@@ -131,7 +131,7 @@ void lhpOpImporterC3DTest::Test()
   CPPUNIT_ASSERT(moment0->GetOutput()->GetVTKData()->GetNumberOfPoints() == 2);
   double momentV1[3];
   double momentV2[3];
-  moment0->SetTimeStamp(2499);
+  moment0->SetTimeStamp(2.4999);
   moment0->Update();
   moment0->GetOutput()->GetVTKData()->GetPoint(0, momentV1);
   moment0->GetOutput()->GetVTKData()->GetPoint(1, momentV2);
@@ -147,7 +147,7 @@ void lhpOpImporterC3DTest::Test()
   CPPUNIT_ASSERT(platform1->GetOutput()->GetVTKData()->GetNumberOfPoints() == 24);
 
   double boundsPlat1[6];
-  platform1->GetOutput()->GetBounds(boundsPlat1);
+  platform1->GetOutput()->GetVTKData()->GetBounds(boundsPlat1);
   //mafLogMessage("%f, %f ,%f, %f, %f ,%f", boundsPlat1[0], boundsPlat1[1], boundsPlat1[2],boundsPlat1[3],boundsPlat1[4],boundsPlat1[5]);
   CPPUNIT_ASSERT(boundsPlat1[0] == -265 && boundsPlat1[1] == 135 && 
     boundsPlat1[2] == 605 && boundsPlat1[3] == 1205 && 
@@ -156,7 +156,7 @@ void lhpOpImporterC3DTest::Test()
   mafVMEVector *force1=(mafVMEVector *)importer->GetForceVME(1);
   force1->GetOutput()->GetVTKData()->Update();
   CPPUNIT_ASSERT(force1->GetOutput()->GetVTKData()->GetNumberOfPoints() == 2);
-  force1->SetTimeStamp(2499); //5000 ts in validation document
+  force1->SetTimeStamp(2.4999); //5000 ts in validation document
   force1->Update();
   
   force1->GetOutput()->GetVTKData()->GetPoint(0, forceV1);
@@ -174,7 +174,7 @@ void lhpOpImporterC3DTest::Test()
   mafVMEVector *moment1=(mafVMEVector *)importer->GetMomentVME(1);
   moment1->GetOutput()->GetVTKData()->Update();
   CPPUNIT_ASSERT(moment1->GetOutput()->GetVTKData()->GetNumberOfPoints() == 2);
-  moment1->SetTimeStamp(2499);
+  moment1->SetTimeStamp(2.4999);
   moment1->Update();
   moment1->GetOutput()->GetVTKData()->GetPoint(0, momentV1);
   moment1->GetOutput()->GetVTKData()->GetPoint(1, momentV2);
