@@ -67,7 +67,7 @@ class lhpXMLDictionaryParserTest(unittest.TestCase):
         lhpXMLDictionaryParser.run(xmlDict,"auto_tags", "auto_tags.txt")
         
     def testRunAutoTags2(self):
-        xmlDict = r'lhpXMLDictionary.xml'
+        xmlDict = r'.\csv2XMLTestData\lhpXMLDictionary.xml'
         lhpXMLDictionaryParser.run(xmlDict,"auto_tags", "auto_tags.txt")
     
     def estRunAutoTags(self):
