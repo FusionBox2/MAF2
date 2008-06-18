@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-06-18 09:31:55 $
-Version:   $Revision: 1.4 $
+Date:      $Date: 2008-06-18 14:08:28 $
+Version:   $Revision: 1.5 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -176,6 +176,15 @@ void lhpOpUploadMultiVME::OpRun()
   if(m_UploadVME->CheckLogin()) 
   {
     upToDate = this->IsLHPBuilderVersionUpToDate();
+  }
+  else
+  {
+    OpStop(result);
+    return;
+  } 
+
+  if (upToDate)
+  {
     mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
     m_UploadingNode = m_NodeVector[m_NodeCounter];
     bool hasLink = (m_UploadingNode->GetNumberOfLinks() != 0);
@@ -184,8 +193,7 @@ void lhpOpUploadMultiVME::OpRun()
   else
   {
     OpStop(result);
-    return;
-  } 
+  }
 }
 //------------------------------------------------------------
 void lhpOpUploadMultiVME::SaveConnectionConfigurationFile()
