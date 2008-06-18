@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-06-16 09:48:49 $
-Version:   $Revision: 1.3 $
+Date:      $Date: 2008-06-18 09:31:55 $
+Version:   $Revision: 1.4 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -176,6 +176,7 @@ void lhpOpUploadMultiVME::OpRun()
   if(m_UploadVME->CheckLogin()) 
   {
     upToDate = this->IsLHPBuilderVersionUpToDate();
+    mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
     m_UploadingNode = m_NodeVector[m_NodeCounter];
     bool hasLink = (m_UploadingNode->GetNumberOfLinks() != 0);
     this->MultiGui();
@@ -421,7 +422,7 @@ void lhpOpUploadMultiVME::OnEvent(mafEventBase *maf_event)
           if (m_UploadVME->UploadVME(URI, hasBinary) == MAF_ERROR)
              this->OpStop(OP_RUN_CANCEL);
 
-           this->OpStop(OP_RUN_OK);
+          this->OpStop(OP_RUN_OK);
 
           return;
         }
