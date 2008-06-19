@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-06-16 09:49:22 $
-Version:   $Revision: 1.21 $
+Date:      $Date: 2008-06-19 10:23:31 $
+Version:   $Revision: 1.22 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -96,6 +96,14 @@ public:
 
   /** Save information information about VME link*/
   void SaveLinkInfo();
+
+  /** Used with proxy authentication*/
+  void SetProxyURL(mafString proxyURL) {m_ProxyURL = proxyURL;};
+  mafString GetProxyURL() {return m_ProxyURL;};
+
+  /** Used with proxy authentication*/
+  void SetProxyPort(mafString proxyPort) {m_ProxyPort = proxyPort;};
+  mafString GetProxyPort() {return m_ProxyPort;};
 
 protected:
   
