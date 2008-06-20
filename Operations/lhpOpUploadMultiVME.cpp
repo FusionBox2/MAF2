@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-06-19 10:23:45 $
-Version:   $Revision: 1.6 $
+Date:      $Date: 2008-06-20 10:28:05 $
+Version:   $Revision: 1.7 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -389,54 +389,7 @@ void lhpOpUploadMultiVME::OnEvent(mafEventBase *maf_event)
 
     case wxOK:
       {
-        m_LinkURI.clear();
-        bool hasBinary = false;
-        mafString URI;
-        if ((m_NodeCounter + 1) < m_NodeVector.size())
-        {
-          m_UploadingNode = m_NodeVector[m_NodeCounter];
-          if (m_UploadingNode->GetNumberOfLinks() != 0)
-          {
-            UploadVMELinks(m_UploadingNode);
-          }
-
-          hasBinary = isBinaryDataPresent(m_UploadingNode);
-          m_UploadVME->SetInput(m_UploadingNode);
-          if (SaveListURIFile() == MAF_ERROR)
-          {
-            wxMessageBox("Unable to write list of link binary URI");
-            return;
-          }
-          if (m_UploadVME->UploadVME(URI, hasBinary) == MAF_ERROR)
-            this->OpStop(OP_RUN_CANCEL);
-
-          m_NodeCounter++;
-          this->HideGui();
-          this->MultiGui();
-        }
-        else
-        {
-          m_UploadingNode = m_NodeVector[m_NodeCounter];
-          if (m_UploadingNode->GetNumberOfLinks() != 0)
-          {
-            UploadVMELinks(m_UploadingNode);
-          }
-
-          hasBinary = isBinaryDataPresent(m_UploadingNode);
-          m_UploadVME->SetInput(m_UploadingNode);
-          
-          if (SaveListURIFile() == MAF_ERROR)
-          {
-            wxMessageBox("Unable to write list of link binary URI");
-            return;
-          }
-          if (m_UploadVME->UploadVME(URI, hasBinary) == MAF_ERROR)
-             this->OpStop(OP_RUN_CANCEL);
-
-          this->OpStop(OP_RUN_OK);
-
-          return;
-        }
+        UploadMultiVME();
       }
       break;
 
@@ -453,6 +406,75 @@ void lhpOpUploadMultiVME::OnEvent(mafEventBase *maf_event)
       break;
     }	
   }
+}
+//----------------------------------------------------------------------------
+void lhpOpUploadMultiVME::UploadMultiVME()   
+//----------------------------------------------------------------------------
+{  
+  m_LinkURI.clear();
+  bool hasBinary = false;
+  mafString URI;
+  if ((m_NodeCounter + 1) < m_NodeVector.size())
+  {
+    m_UploadingNode = m_NodeVector[m_NodeCounter];
+    if (m_UploadingNode->GetNumberOfLinks() != 0)
+    {
+      if (UploadVMELinks(m_UploadingNode) == MAF_ERROR)
+      {
+        HideGui();
+        this->OpStop(OP_RUN_CANCEL);
+        return;
+      }
+    }
+    hasBinary = isBinaryDataPresent(m_UploadingNode);
+    m_UploadVME->SetInput(m_UploadingNode);
+    if (SaveListURIFile() == MAF_ERROR)
+    {
+      wxMessageBox("Unable to write list of link binary URI. Uploading stopped.");
+      return;
+    }
+    if (m_UploadVME->UploadVME(URI, hasBinary) == MAF_ERROR)
+    {
+      HideGui();
+      this->OpStop(OP_RUN_CANCEL);
+      return;
+    }
+
+    m_NodeCounter++;
+    this->HideGui();
+    this->MultiGui();
+  }
+  else
+  {
+    m_UploadingNode = m_NodeVector[m_NodeCounter];
+    if (m_UploadingNode->GetNumberOfLinks() != 0)
+    {
+      if (UploadVMELinks(m_UploadingNode) == MAF_ERROR)
+      {
+        HideGui();
+        this->OpStop(OP_RUN_CANCEL);
+        return;
+      }
+    }
+
+    hasBinary = isBinaryDataPresent(m_UploadingNode);
+    m_UploadVME->SetInput(m_UploadingNode);
+
+    if (SaveListURIFile() == MAF_ERROR)
+    {
+      wxMessageBox("Unable to write list of link binary URI. Uploading stopped.");
+      return;
+    }
+    if (m_UploadVME->UploadVME(URI, hasBinary) == MAF_ERROR)
+    {
+      HideGui();
+      this->OpStop(OP_RUN_CANCEL);
+      return;
+    }
+    this->OpStop(OP_RUN_OK);
+    return;
+  }
+
 }
 //----------------------------------------------------------------------------
 int lhpOpUploadMultiVME::UploadVMELinks(mafNode *derived)   
@@ -472,7 +494,7 @@ int lhpOpUploadMultiVME::UploadVMELinks(mafNode *derived)
       m_UploadVME->SetInput(link);
       if (m_UploadVME->UploadVME(URI, hasBinary, true) == MAF_ERROR || (hasBinary == true && URI == ""))
       {
-        this->OpStop(OP_RUN_CANCEL);
+        return MAF_ERROR;
       }
       m_LinkURI.push_back(URI);
     }
