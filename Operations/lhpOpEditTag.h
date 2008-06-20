@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.h,v $
 Language:  C++
-Date:      $Date: 2008-03-04 13:22:42 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2008-06-20 13:26:10 $
+Version:   $Revision: 1.2 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -96,6 +96,8 @@ protected:
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
 	virtual void OpStop(int result);
 
+  /** Save information information about VME link*/
+  void SaveLinkInfo();
 
   /** Import Edited MSF*/
   int ImportMSF();
@@ -148,6 +150,9 @@ private:
   FILE *m_ProxyFile;
   mafNode *m_Parent;
   mafNode *m_TemporaryNode;
+
+  std::vector<mafNode*> m_LinkNode;
+  std::vector<mafString> m_LinkName;
   
 };
 #endif

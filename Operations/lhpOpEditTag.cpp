@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-03-26 13:11:40 $
-Version:   $Revision: 1.4 $
+Date:      $Date: 2008-06-20 13:26:10 $
+Version:   $Revision: 1.5 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -98,6 +98,8 @@ mafOp(label)
 {
 	m_OpType  = OPTYPE_OP;
 	m_Canundo = false;
+  m_LinkNode.clear();
+  m_LinkName.clear();
 
   //m_PythonExe ="C:\\Python25\\python.exe ";
   m_PythonExe ="python.exe ";
@@ -138,7 +140,8 @@ mafOp(label)
 lhpOpEditTag::~lhpOpEditTag()
 //----------------------------------------------------------------------------
 {
-
+  m_LinkNode.clear();
+  m_LinkName.clear();
 }
 //----------------------------------------------------------------------------
 mafOp* lhpOpEditTag::Copy()
@@ -151,7 +154,7 @@ mafOp* lhpOpEditTag::Copy()
 bool lhpOpEditTag::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-	return (vme != NULL && (vme->IsMAFType(mafVMEGenericAbstract)));
+	return (vme != NULL && (!vme->IsMAFType(mafVMERoot)));
 }
 //----------------------------------------------------------------------------
 void lhpOpEditTag::OpRun()
@@ -281,6 +284,16 @@ void lhpOpEditTag::OnEvent(mafEventBase *maf_event)
 void lhpOpEditTag::OpDo()   
 //----------------------------------------------------------------------------
 {
+  bool hasLink = false;
+  if (m_Input->GetNumberOfLinks() != 0)
+  {
+    hasLink = true;
+    SaveLinkInfo();
+
+    //remove links that will be linked after in ImportMSF()
+    m_Input->RemoveAllLinks();
+    mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
+  }
 
   bool result = true;
   //create cache: logic comunicate the msf directory
@@ -327,9 +340,6 @@ void lhpOpEditTag::OpDo()
   command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //vme id
   command2execute.Append(wxString::Format("%s", m_CsvName.c_str())); //manualTagFile
   
-
-   mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
-  
   //wxMessageBox(wxString::Format("Process %ld is running.", m_Pid));
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
   if (m_Pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
@@ -353,6 +363,15 @@ void lhpOpEditTag::OpDo()
     m_Input->GetTagArray()->SetTag(tagList[n].c_str(), m_TemporaryNode->GetTagArray()->GetTag(tagList[n].c_str())->GetValue(), 2);
   }
 
+  //attach links previously removed
+  if (hasLink)
+  {
+    for (int i = 0; i < m_LinkNode.size(); i++)
+    {
+      m_Input->SetLink(m_LinkName[i].GetCStr(), m_LinkNode[i]);
+    }
+  }
+
   mafDEL(m_TemporaryNode);
   mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
 
@@ -374,6 +393,7 @@ int lhpOpEditTag::ImportMSF()
   mafVMEStorage *storage;
   storage = mafVMEStorage::New();
   storage->SetURL(msfFileName.GetCStr());
+
   mafVMERoot *root;
   root = storage->GetRoot();
   root->Initialize();
@@ -391,6 +411,23 @@ int lhpOpEditTag::ImportMSF()
   m_TemporaryNode->ReparentTo(m_Parent);
   mafDEL(storage);
   return MAF_OK;
+}
+
+//----------------------------------------------------------------------------
+void lhpOpEditTag::SaveLinkInfo()   
+//----------------------------------------------------------------------------
+{
+  m_LinkNode.clear();
+  m_LinkName.clear();
+  for (mafNode::mafLinksMap::iterator i = m_Input->GetLinks()->begin(); i != m_Input->GetLinks()->end(); i++)
+  {
+    if (i->second.m_Node != NULL)
+    {
+      mafNode *link = i->second.m_Node;
+      m_LinkNode.push_back(link);
+      m_LinkName.push_back(i->first);
+    }
+  }
 }
 
 //----------------------------------------------------------------------------
