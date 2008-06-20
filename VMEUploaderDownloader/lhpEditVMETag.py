@@ -200,15 +200,6 @@ class lhpEditVMETag:
             print tagsToBeAnnotatedManuallyMap
         
 
-        #print "\nThese tags need to be annotated by the user: \n" + str(tagsToBeAnnotatedManuallySorted)
-        #**********************************
-        file = open("C:\DebugMYFILE.txt","w")
-        
-        file.write("GJG")
-
-        file.close()
-        #********************************** 
-
         msfDOMParserInstance.AddTagsFromDictionary(domDocument,outVmeTagArrayNode, tagsToBeAnnotatedManuallyMap)
         
 
