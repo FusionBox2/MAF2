@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-06-20 12:58:56 $
-Version:   $Revision: 1.63 $
+Date:      $Date: 2008-06-20 14:40:09 $
+Version:   $Revision: 1.64 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -583,18 +583,18 @@ mafString lhpOpUploadVME::GetBinaryURI()
   }
   binaryUriFile.Open(lockPath);
   int end = binaryUriFile.Length();
-  char bufferURI[10];
+  char bufferURI[100];
   binaryUriFile.Read(bufferURI,end);
   binaryUriFile.Close();
 
   wxString fileURI = "'";
   fileURI.Append(bufferURI);
-  fileURI.Truncate(end);
+  fileURI.Truncate(end+1);
   fileURI.Append("'");
-  //remove file with binary URI
+  //remove file with XML URI
   wxRemoveFile(fileName);
 
-  fURI = fileURI.c_str();
+  fURI.Append(fileURI.c_str());
   return fURI;
 }
 
