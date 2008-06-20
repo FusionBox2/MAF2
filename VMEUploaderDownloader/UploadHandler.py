@@ -218,6 +218,13 @@ class UploadHandler:
         ws.ProxyPort = self.proxyPort
         out = ws.run('xmlupload', self.XMLURI, self.vmeName)
         
+        #writes binary URI in a file in VMEUploaderDownloader dir
+       # oldDir = os.getcwd()
+        os.chdir(self.dirOutgoing + r"\..\..") 
+        file = open(self.vmeName + self.id, 'w')
+        file.write(self.XMLURI)
+        file.close()
+        
         os.chdir(oldDir)
         
     def isBinaryPresent(self):
@@ -284,14 +291,7 @@ class UploadHandler:
             serviceUrl = 'https://ws-lhdl.cineca.it/mafSRBSize.cgi'
             result = instance.ListSrbDir(self.BinaryURI, serviceUrl, self.proxyHost, self.proxyPort)
             self.remoteTemporaryBinaryFileSize = result;
-            
-            #writes binary URI in a file in VMEUploaderDownloader dir
-            oldDir = os.getcwd()
-            os.chdir(self.dirOutgoing + r"\..\..") 
-            file = open(self.vmeName + self.id, 'w')
-            file.write(self.BinaryURI)
-            file.close()
-            os.chdir(oldDir)
+
                         
             print "SIZE Thread Finished "
         except:
