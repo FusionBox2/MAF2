@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-06-20 10:37:51 $
-Version:   $Revision: 1.62 $
+Date:      $Date: 2008-06-20 12:58:56 $
+Version:   $Revision: 1.63 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -297,7 +297,7 @@ void lhpOpUploadVME::OnEvent(mafEventBase *maf_event)
 }
 
 //----------------------------------------------------------------------------
-int lhpOpUploadVME::UploadVME(mafString &binaryURI, bool isBinaryDataPresent, bool returnURI)   
+int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool returnURI)   
 //----------------------------------------------------------------------------
 {
   wxBusyInfo *wait;
@@ -520,11 +520,11 @@ int lhpOpUploadVME::UploadVME(mafString &binaryURI, bool isBinaryDataPresent, bo
   }
   if (!isBinaryDataPresent || !returnURI)
   {
-    binaryURI = "";
+    XMLURI = "";
   }
   else
   {
-    binaryURI.Append(this->GetBinaryURI().GetCStr());
+    XMLURI.Append(this->GetBinaryURI());
   }
 
   //remove csv file with tags
@@ -587,9 +587,10 @@ mafString lhpOpUploadVME::GetBinaryURI()
   binaryUriFile.Read(bufferURI,end);
   binaryUriFile.Close();
 
-  wxString fileURI = bufferURI;
+  wxString fileURI = "'";
+  fileURI.Append(bufferURI);
   fileURI.Truncate(end);
-
+  fileURI.Append("'");
   //remove file with binary URI
   wxRemoveFile(fileName);
 
