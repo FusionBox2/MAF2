@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-06-18 09:33:39 $
-  Version:   $Revision: 1.53 $
+  Date:      $Date: 2008-06-23 16:46:36 $
+  Version:   $Revision: 1.54 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -69,7 +69,9 @@
 #include "mafOpImporterVTK.h"
 #include "mafOpImporterMSF1x.h"
 #include "mafOpImporterVRML.h"
-#include "mafOpImporterRAWVolume.h"
+//BES: 23.6.2008 - Large Volume - to be merged 
+#include "BES_Beta/openMAF/Operators/mafOpImporterRAWVolume_BES.h"
+//#include "mafOpImporterRAWVolume.h"
 #include "mafOpExporterRaw.h"
 #include "medOpImporterRAWImages.h"
 #include "mafOpExtractIsosurface.h"
@@ -144,15 +146,36 @@
 
 #include <vtkTimerLog.h>
 
+
+//BES: 23.6.2008 - TO BE UNCOMMENTED WHEN VTK IS PATCHED AS I SUGGESTED
+////BES: 14.5.2008 - special memory manager for supporting of large data
+//#include <vtkDataArrayMemMng.h>
+
+
 //--------------------------------------------------------------------------------
 // Create the Application
 //--------------------------------------------------------------------------------
 IMPLEMENT_APP(lhpBuilderApp)
 
+////BES: 14.5.2008 - OnIdle to unlock blocks
+//BEGIN_EVENT_TABLE(lhpBuilderApp, wxApp)
+//  EVT_IDLE(lhpBuilderApp::OnIdle)
+//END_EVENT_TABLE()
+
+
 //--------------------------------------------------------------------------------
 bool lhpBuilderApp::OnInit()
 //--------------------------------------------------------------------------------
 {
+  ////BES: 14.5.2008 - initialize the manager (with default settings)
+  ////It provides a sophisticated memory-disk swap algorithm that
+  ////allows handling of many large size memory blocks that would
+  ////take more memory than available in total.
+  ////The mechanism is NOT GUARANTEED TO BE SAFE
+  ////Swapping (especially, if HandleNewFailure option is enabled)
+  ////may lead to artifacts in data or even 
+  //vtkDataArrayMemMng::InitializeManagerUnSafeMode();  
+
   mafPics.Initialize();	
 
   int result;
@@ -202,7 +225,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mafOpImporterVTK("VTK"),"Other");
   m_Logic->Plug(new mafOpImporterMSF("MSF"),"Other");
   m_Logic->Plug(new mafOpImporterMSF1x("MAF 1.x"),"Other");
-  m_Logic->Plug(new mafOpImporterRAWVolume("RAW Volume"),"Images");
+  m_Logic->Plug(new mafOpImporterRAWVolume_BES("RAW Volume"),"Images");
   m_Logic->Plug(new medOpImporterRAWImages("Raw Images"),"Images");
   m_Logic->Plug(new mafOpImporterImage("Images"),"Images");
   m_Logic->Plug(new medOpImporterLandmark("Landmark"),"Motion Analysis");
@@ -359,3 +382,9 @@ int lhpBuilderApp::OnExit()
   vtkTimerLog::CleanupLog();
   return 0;
 }
+
+//void lhpBuilderApp::OnIdle( wxIdleEvent &event )
+//{ 
+//  vtkDataArrayMemMng::GetDataArrayMemMng()->UnlockAllMemory(0);
+//  event.Skip();
+//}

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.h,v $
   Language:  C++
-  Date:      $Date: 2008-03-26 13:28:19 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-06-23 16:46:43 $
+  Version:   $Revision: 1.3 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -21,6 +21,11 @@ class lhpBuilderApp : public wxApp
 public:
   bool OnInit();
   int  OnExit();
+
+  ////Called when the application is in the idle state
+  //virtual void OnIdle(wxIdleEvent& event);  
+  //DECLARE_EVENT_TABLE()
+
 protected:
   lhpBuilderLogic *m_Logic;
 };
