@@ -80,7 +80,7 @@ class msfParserTest(unittest.TestCase):
         
     def testExtractTestVolumeVME(self):
         #NodeName: Node
-                #Attribute -- Name: Type  Value: mafVMEVolumeGray
+                #Attribute -- Name: T5ype  Value: mafVMEVolumeGray
                 #Attribute -- Name: Crypting  Value: 0
                 #Attribute -- Name: Id  Value: 1
                 #Attribute -- Name: Name  Value: test_volume
@@ -123,7 +123,8 @@ class msfParserTest(unittest.TestCase):
         p = self.msfParserInstance
         vme = p.GetVmeNodeById(self.rootNode, 1)
         data = p.GetVMEDataURLList(vme)
-        self.assertEqual(data[0],"msf_test_import_export_VME.1.vtk")
+        print data
+        self.assertEqual(data[0],"TESTmsf.1.vtk")
         self.assertEqual(len(data),1)
     
     def testRemoveTagsByList(self):
