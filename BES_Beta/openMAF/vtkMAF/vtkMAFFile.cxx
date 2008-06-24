@@ -1,8 +1,8 @@
 /*========================================================================= 
   Program: Multimod Application Framework RELOADED 
-  Module: $RCSfile: vtkMAFFile.cpp,v $ 
+  Module: $RCSfile: vtkMAFFile.cxx,v $ 
   Language: C++ 
-  Date: $Date: 2008-06-24 15:50:14 $ 
+  Date: $Date: 2008-06-24 15:54:20 $ 
   Version: $Revision: 1.1 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 

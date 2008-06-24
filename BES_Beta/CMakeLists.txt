@@ -12,7 +12,6 @@ SET(PROJECT_SRCS
 	openMAF_AneuFuse/vtkMAF/vtkMAFVolumeTextureMapper2D.h
 	openMAF/Interaction/mafGizmoROI_BES.cpp
 	openMAF/Interaction/mafGizmoROI_BES.h     
-	openMAF/IO/IOFilesUtils.h
 	openMAF/IO/mafBrickedFile.cpp
 	openMAF/IO/mafBrickedFile.h
 	openMAF/IO/mafBrickedFileReader.cpp
@@ -45,7 +44,8 @@ SET(PROJECT_SRCS
 	openMAF/vtkMAF/vtkMAFLargeImageReader.h
 	openMAF/vtkMAF/vtkMAFLargeImageSource.cxx
 	openMAF/vtkMAF/vtkMAFLargeImageSource.h
-	
+	openMAF/vtkMAF/vtkMAFFile.cxx
+	openMAF/vtkMAF/vtkMAFFile.h	
 
 )
 
