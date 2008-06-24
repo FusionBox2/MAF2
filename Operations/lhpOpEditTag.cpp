@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-06-20 13:26:10 $
-Version:   $Revision: 1.5 $
+Date:      $Date: 2008-06-24 09:19:48 $
+Version:   $Revision: 1.6 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -103,7 +103,7 @@ mafOp(label)
 
   //m_PythonExe ="C:\\Python25\\python.exe ";
   m_PythonExe ="python.exe ";
-  m_PythonwExe ="python.exe ";
+  m_PythonwExe ="pythonw.exe ";
   m_CacheDir = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\UploadCache\\").c_str();
   m_OutgoingDir = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\Outgoing\\").c_str();
 
@@ -376,7 +376,7 @@ void lhpOpEditTag::OpDo()
   mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
 
   wxSetWorkingDirectory(m_MsfDir.GetCStr());
-  remove("OutputMSF.msf"); //delete msf created by pyhon
+  remove("OutputMSF.msf"); //delete msf created by python
   wxSetWorkingDirectory(oldDir);
 }
 
