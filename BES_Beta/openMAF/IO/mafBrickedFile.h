@@ -3,7 +3,7 @@
   File:    	 BrickedFile.h
   Language:  C++
   Date:      11:2:2008   11:49
-  Version:   $Revision: 1.1 $
+  Version:   $Revision: 1.2 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -21,7 +21,7 @@ This abstract class contains the stuff common to both, the reader and writer
 #include "mafObserver.h"
 #include "mafTimeStamped.h"
 
-#include "IOFilesUtils.h"
+#include "../vtkMAF/vtkMAFFile.h"
 #include "../vtkMAF/vtkMAFDataArrayDescriptor.h"
 
 class mafBrickedFile : public mafObject, public mafTimeStamped
@@ -76,10 +76,8 @@ protected:
 	//file name of the brick file
 	mafString m_BrickFileName;
 	
-	//IO file handle
-	//NB. <io> is used because it is the only one "platform independent" thing that
-	//supports files larger than 2GB
-	int m_BrickFileHandle;
+	//File handle	
+	vtkMAFFile2* m_BrickFile;
 
 	//File header
 	BBF_HEADER m_FileHeader;

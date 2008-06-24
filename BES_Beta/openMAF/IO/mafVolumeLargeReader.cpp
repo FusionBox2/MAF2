@@ -3,7 +3,7 @@
   File:    	 mafVolumeLargeReader.cpp
   Language:  C++
   Date:      20:2:2008   14:36
-  Version:   $Revision: 1.1 $
+  Version:   $Revision: 1.2 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -233,7 +233,7 @@ vtkIdType64 mafVolumeLargeReader::GetLevelFilesSize()
 	{
 		if (m_pLevels[i] != NULL)
 		{
-			nRet += IOFileUtils::GetFileSize(m_pLevels[i]->GetFileName());
+			nRet += vtkMAFFile::GetFileSize(m_pLevels[i]->GetFileName());
 		}
 	}
 

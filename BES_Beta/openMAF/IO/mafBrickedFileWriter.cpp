@@ -3,7 +3,7 @@
   File:    	 mafBrickedFileWriter.cpp
   Language:  C++
   Date:      11:2:2008   12:42
-  Version:   $Revision: 1.1 $
+  Version:   $Revision: 1.2 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -243,7 +243,7 @@ void mafBrickedFileWriter::SetInputDataSet(vtkMAFLargeImageData* ds)
 			ProcessBricks(zb / m_nBrickSize[0]);
 
 			//data written already in ProcessBricks
-			//IOFileUtils::WriteFile(m_BrickFileHandle, m_pDataBuffer, m_nBricksDimSizeInB[1]);
+			//m_BrickFile->WriteFile( m_pDataBuffer, m_nBricksDimSizeInB[1]);
 
 			pDstBuf = m_pDataBuffer;
 		}
@@ -311,7 +311,7 @@ void mafBrickedFileWriter::SetInputDataSet(vtkMAFLargeImageData* ds)
 	for (int i = 0; i < m_nBricksDimSize[1]; i++)
 	{
 		if (m_pBricksValidity[i]) {			
-			IOFileUtils::WriteFile(m_BrickFileHandle, pCurBrick, m_nBrickSizeInB[2]);
+			m_BrickFile->Write( pCurBrick, m_nBrickSizeInB[2]);
 		}
 
 		pCurBrick += m_nBrickSizeInB[2];
@@ -471,8 +471,10 @@ void mafBrickedFileWriter::CreateBricksIndexTable(int nCurBrickPlane)
 	try
 	{
 		//create file
-		m_BrickFileHandle = IOFileUtils::CreateFile(m_BrickFileName);
-		_lseek(m_BrickFileHandle, sizeof(BBF_HEADER), SEEK_SET);
+    m_BrickFile = vtkMAFFile2::New();
+		m_BrickFile->Create(m_BrickFileName);
+    m_BrickFile->Write( &m_FileHeader, sizeof(BBF_HEADER));
+    //m_BrickFile->Seek( sizeof(BBF_HEADER), SEEK_SET);
 
 		ExecuteInformation();	//initialize "global" variables
 		AllocateBuffers();		//allocate memory for bricks, etc.		
@@ -482,9 +484,9 @@ void mafBrickedFileWriter::CreateBricksIndexTable(int nCurBrickPlane)
 
 		//time to store low resolution
 		mafString szMsg = _("Writing LOW Resolution map ...");
-		mafEventMacro(mafEvent(this, PROGRESSBAR_SET_TEXT, &szMsg));
+		mafEventMacro(mafEvent(this, PROGRESSBAR_SET_TEXT, &szMsg));    
 		
-		IOFileUtils::WriteFile(m_BrickFileHandle, m_pLowResLevel, m_nBricksDimSize[2]*m_nVoxelSizeInB);
+		m_BrickFile->Write( m_pLowResLevel, m_nBricksDimSize[2]*m_nVoxelSizeInB);
 
 //		int f = IOFileUtils::CreateFile(wxString::Format("g:\\brckmap_%d_%d_%d.raw",
 //			m_nBricksDim[0], m_nBricksDim[1], m_nBricksDim[2]));
@@ -504,16 +506,16 @@ void mafBrickedFileWriter::CreateBricksIndexTable(int nCurBrickPlane)
 		}
 		
 
-		m_FileHeader.idxtblofs = _telli64(m_BrickFileHandle);
-		_write(m_BrickFileHandle, m_pMainIdxTable, nCount*sizeof(BBF_IDX_MAINITEM));
+		m_FileHeader.idxtblofs = m_BrickFile->GetCurrentPos();
+    m_BrickFile->Write(m_pMainIdxTable, nCount*sizeof(BBF_IDX_MAINITEM));
 
 		m_FileHeader.extra_idx_items = (unsigned long)m_ExtraBrckMAP.size();
 		for (int i = 0; i < (int)m_ExtraBrckMAP.size(); i++) {
-			_write(m_BrickFileHandle, &m_ExtraBrckMAP[i], sizeof(BBF_IDX_EXITEM));
+			m_BrickFile->Write(&m_ExtraBrckMAP[i], sizeof(BBF_IDX_EXITEM));
 		}
 
-		_lseek(m_BrickFileHandle, 0, SEEK_SET);
-		IOFileUtils::WriteFile(m_BrickFileHandle, &m_FileHeader, sizeof(BBF_HEADER));
+		m_BrickFile->Seek(0, SEEK_SET);
+		m_BrickFile->Write( &m_FileHeader, sizeof(BBF_HEADER));
 	}
 	catch (std::exception& e)
 	{
@@ -521,7 +523,9 @@ void mafBrickedFileWriter::CreateBricksIndexTable(int nCurBrickPlane)
 		wxMessageBox(e.what(), _("Error: Bricking failed"), wxOK | wxICON_EXCLAMATION);
 
 		//delete the file
-		IOFileUtils::CloseFile(m_BrickFileHandle);
+		m_BrickFile->Close();
+    m_BrickFile->Delete();
+    m_BrickFile = NULL;
 		_unlink(m_BrickFileName);
 
 		return false;
@@ -532,7 +536,9 @@ void mafBrickedFileWriter::CreateBricksIndexTable(int nCurBrickPlane)
 	mafEventMacro(mafEvent(this, PROGRESSBAR_SET_TEXT, &szMsg));
 
 	DeallocateBuffers();	
-	IOFileUtils::CloseFile(m_BrickFileHandle);	
+	m_BrickFile->Close();	
+  m_BrickFile->Delete();
+  m_BrickFile = NULL;
 
 	mafEventMacro(mafEvent(this, PROGRESSBAR_HIDE, this));
 

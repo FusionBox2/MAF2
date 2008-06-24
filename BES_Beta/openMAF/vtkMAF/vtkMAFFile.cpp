@@ -1,0 +1,130 @@
+/*========================================================================= 
+  Program: Multimod Application Framework RELOADED 
+  Module: $RCSfile: vtkMAFFile.cpp,v $ 
+  Language: C++ 
+  Date: $Date: 2008-06-24 15:50:14 $ 
+  Version: $Revision: 1.1 $ 
+  Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
+  ========================================================================== 
+  Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
+  See the COPYINGS file for license details 
+  =========================================================================
+*/
+
+#include "mafDefines.h" 
+//----------------------------------------------------------------------------
+// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
+// This force to include Window,wxWidgets and VTK exactly in this order.
+// Failing in doing this will result in a run-time error saying:
+// "Failure#0: The value of ESP was not properly saved across a function call"
+//----------------------------------------------------------------------------
+
+#include "vtkMAFFile.h"
+
+#if defined(_MSC_VER)
+  #include <share.h>
+#endif
+
+vtkCxxRevisionMacro(vtkMAFFile, "$Revision: 1.1 $");
+vtkStandardNewMacro(vtkMAFFile);
+
+vtkCxxRevisionMacro(vtkMAFFile2, "$Revision: 1.1 $");
+vtkStandardNewMacro(vtkMAFFile2);
+
+//creates a new file
+//returns false if an error occurs
+bool vtkMAFFile::Create(const char* fname) throw(...)
+{
+  Close();  //close previously associated FILE
+
+#if defined(_MSC_VER)
+  m_pFile = _fsopen(fname, "wb+", _SH_DENYWR);
+#else
+  m_pFile = fopen(fname, "wb+");
+#endif
+
+  return (m_pFile != NULL);
+}
+
+//opens an existing file for R/W or RO (bRO == true)  
+//returns false if an error occurs
+bool vtkMAFFile::Open(const char* fname, bool bRO) throw(...)
+{
+  Close();  //close previously associated FILE
+
+#if defined(_MSC_VER)
+  m_pFile = _fsopen(fname, (bRO ? "rb" : "rb+"), _SH_DENYNO);
+#else
+  m_pFile = fopen(fname, (bRO ? "rb" : "rb+"));
+#endif
+
+  return (m_pFile != NULL);
+}
+
+//returns the current file length, 
+//returns -1, if an error occurs
+long long vtkMAFFile::GetFileSize()
+{
+  long long lastpos = GetCurrentPos();
+  if (lastpos < 0)
+    return lastpos;
+
+  if (!Seek(0, SEEK_END))
+    return -1;
+
+  //this should be OK
+  long long ret = GetCurrentPos();
+  Seek(lastpos, SEEK_SET);
+  return ret;
+}
+
+//returns file size or returns -1, if an error occurs
+/*static*/ long long vtkMAFFile::GetFileSize(const char* fname)
+{
+  vtkMAFFile f;
+  if (!f.Open(fname, true))
+    return -1;
+
+  return f.GetFileSize(); //dtor will close it
+}
+
+//creates a new file
+//throws std::exceptions if an error occurs
+void vtkMAFFile2::Create(const char* fname) throw(...)
+{
+  if (!vtkMAFFile::Create(fname))
+  {
+    throw std::ios::failure(
+      (const char*)wxString::Format(_("Cannot create '%s'. Error: %d"), fname, errno));
+  }
+}
+
+//opens an existing file for R/W or RO (bRO == true)  
+//throws std::exceptions if an error occurs
+void vtkMAFFile2::Open(const char* fname, bool bRO) throw(...)
+{
+  if (!vtkMAFFile::Open(fname))
+  {
+    throw std::ios::failure(
+      (const char*)wxString::Format(_("Cannot open '%s'. Error: %d"), fname, errno));
+  }
+}
+
+//returns the current file length, throws an exception if an error occurs
+long long vtkMAFFile2::GetFileSize() throw(...)
+{
+  unsigned long long lastpos = GetCurrentPos();
+  Seek(0, SEEK_END);
+
+  unsigned long long ret = GetCurrentPos();
+  Seek(lastpos, SEEK_SET);
+  return ret;
+}
+
+//returns file size, throwing exception if an error occurs (e.g., file not found)
+/*static*/ long long vtkMAFFile2::GetFileSize(const char* fname) throw(...)
+{
+  vtkMAFFile2 f;
+  f.Open(fname, true);
+  return f.GetFileSize(); //dtor will close it
+}

@@ -3,7 +3,7 @@
   File:    	 mafBrickedFileReader.h
   Language:  C++
   Date:      13:2:2008   9:11
-  Version:   $Revision: 1.1 $
+  Version:   $Revision: 1.2 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -206,11 +206,10 @@ inline void mafBrickedFileReader::FillBrick(char* pOutPtr, const char* pConstVal
 //into the memory denoted by pOutPtr
 inline void mafBrickedFileReader::LoadBrick(int nBrickIndex, char* pOutPtr) throw(...)
 {
-	unsigned long long offset = ((unsigned long long)nBrickIndex)*m_nBrickSizeInB[2] + 
-		sizeof(BBF_HEADER);
+	long long offset = ((long long)nBrickIndex)*m_nBrickSizeInB[2] + sizeof(BBF_HEADER);
 
-	IOFileUtils::Seek(m_BrickFileHandle, offset);
-	IOFileUtils::ReadFile(m_BrickFileHandle, pOutPtr, m_nBrickSizeInB[2]);
+  m_BrickFile->Seek(offset);
+	m_BrickFile->Read(pOutPtr, m_nBrickSizeInB[2]);
 }
 
 //copies the part of brick data that is within brckExt into pOutPtr 

@@ -3,7 +3,7 @@
   File:    	 mafBrickedFile.cpp
   Language:  C++
   Date:      11:2:2008   12:18
-  Version:   $Revision: 1.1 $
+  Version:   $Revision: 1.2 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -28,11 +28,10 @@ mafCxxAbstractTypeMacro(mafBrickedFile);
 //ctor
 mafBrickedFile::mafBrickedFile()
 {
-	m_BrickFileHandle = -1;		//invalid handle
 	m_pMainIdxTable = NULL;
 	m_pExIdxTable = NULL;
 	m_pLowResLevel = NULL;
-
+  m_BrickFile = NULL;
 	m_Listener = NULL;
 }
 
@@ -40,6 +39,9 @@ mafBrickedFile::~mafBrickedFile()
 {
 	DeallocateBuffers();
 
-	if (m_BrickFileHandle >= 0)
-		_close(m_BrickFileHandle);
+  if (m_BrickFile != NULL)
+  {
+	  m_BrickFile->Close();
+    m_BrickFile->Delete();
+  }
 }

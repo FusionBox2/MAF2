@@ -3,7 +3,7 @@
 File:    	 mafBrickedFileReader.cpp
 Language:  C++
 Date:      13:2:2008   14:25
-Version:   $Revision: 1.1 $
+Version:   $Revision: 1.2 $
 Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
 
 Copyright (c) 2008
@@ -72,10 +72,11 @@ void mafBrickedFileReader::SetOutputDataSet(vtkImageData* ds)
 	//close previously opened file
 	CloseBrickFile();
 
-	m_BrickFileHandle = IOFileUtils::OpenFile(m_BrickFileName);
-	IOFileUtils::ReadFile(m_BrickFileHandle, &m_FileHeader, sizeof(m_FileHeader));
+  m_BrickFile = vtkMAFFile2::New();
+	m_BrickFile->Open(m_BrickFileName);
+	m_BrickFile->Read(&m_FileHeader, sizeof(m_FileHeader));
 	if (m_FileHeader.signature != mafBrickedFile::Signature) {
-		IOFileUtils::CloseFile(m_BrickFileHandle);
+		m_BrickFile->Close();
 		throw std::ios::failure(_("Not BBF file or corrupted one."));
 	}
 
@@ -110,28 +111,31 @@ void mafBrickedFileReader::SetOutputDataSet(vtkImageData* ds)
 //closes the currently opened brick file (if there is any)
 //releasing memory allocated for index table, etc.
 /*virtual*/ void mafBrickedFileReader::CloseBrickFile()
-{
-	IOFileUtils::CloseFile(m_BrickFileHandle);
+{	
 	DeallocateBuffers();
+  if (m_BrickFile != NULL)
+  {
+    m_BrickFile->Close();
+    m_BrickFile->Delete();
+    m_BrickFile = NULL;
+  }
 }
 
 //allocates the required buffers
 /*virtual*/ void mafBrickedFileReader::AllocateBuffers()  throw(...)
 {
 	int nLRSize = m_nBricksDimSize[2]*m_nVoxelSizeInB;
-	IOFileUtils::Seek(m_BrickFileHandle, m_FileHeader.idxtblofs - nLRSize);
+	m_BrickFile->Seek( m_FileHeader.idxtblofs - nLRSize);
 
 	m_pLowResLevel = new char[nLRSize];
-	IOFileUtils::ReadFile(m_BrickFileHandle, m_pLowResLevel, nLRSize);
+	m_BrickFile->Read( m_pLowResLevel, nLRSize);
 
 	int nBrickLines = m_nBricksDim[1]*m_nBricksDim[2];
 	m_pMainIdxTable = new BBF_IDX_MAINITEM[nBrickLines];
-	IOFileUtils::ReadFile(m_BrickFileHandle, m_pMainIdxTable, 
-		nBrickLines*sizeof(BBF_IDX_MAINITEM));
+	m_BrickFile->Read( m_pMainIdxTable, nBrickLines*sizeof(BBF_IDX_MAINITEM));
 
 	m_pExIdxTable = new BBF_IDX_EXITEM[m_FileHeader.extra_idx_items];
-	IOFileUtils::ReadFile(m_BrickFileHandle, m_pExIdxTable, 
-		m_FileHeader.extra_idx_items*sizeof(BBF_IDX_EXITEM));
+	m_BrickFile->Read( m_pExIdxTable, m_FileHeader.extra_idx_items*sizeof(BBF_IDX_EXITEM));
 
 	m_pBrickDataCache = new char[m_nBrickSizeInB[2]];	
 

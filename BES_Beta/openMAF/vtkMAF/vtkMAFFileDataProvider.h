@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFFileDataProvider.h,v $ 
   Language: C++ 
-  Date: $Date: 2008-06-23 16:43:55 $ 
-  Version: $Revision: 1.1 $ 
+  Date: $Date: 2008-06-24 15:49:58 $ 
+  Version: $Revision: 1.2 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -16,18 +16,16 @@
 #define __vtkMAFFileDataProvider_h
 
 #include "vtkMAFLargeDataProvider.h"
+#include "vtkMAFFile.h"
 
 class VTK_COMMON_EXPORT vtkMAFFileDataProvider : public vtkMAFLargeDataProvider
 {	
 protected:
-	char* FileName;				//file name
-	int File;					//file source, 
-								//NB: I use io.h because both fstream and FILE*
-								//does not support files > 2GB, I avoided WINAPI,
-								//so it could be ported under Linux
-	bool Attached;				//true, if the file is attached
-	bool CloseAttachedFile;		//true if the attached file should be closed
-	bool DeleteOnClose;			//true if the file should be deleted
+  vtkMAFFile* File;				  //<file source, 								
+	char* FileName;				    //<file name	
+	bool Attached;				    //<true, if the file is attached
+	bool CloseAttachedFile;		//<true if the attached file should be closed
+	bool DeleteOnClose;			  //<true if the file should be deleted
 
 public:
 	//returns filename (the returned pointer may not be released)
@@ -36,7 +34,7 @@ public:
 	}
 
 	//returns the underlaying file handle
-	inline int GetFile() {
+	inline vtkMAFFile* GetFile() {
 		return File;
 	}
 
@@ -61,18 +59,18 @@ public:
 	//Attaches the given file. If bAutoClose is true, the attached file will be closed.
 	//If bDeleteOnClose is set to true, the file is considered to be temporary and
 	//will be removed during the close.
-	virtual void AttachFile(int fhandle, const char* fname, bool bAutoClose = true, 
+	virtual void AttachFile(vtkMAFFile* fhandle, const char* fname, bool bAutoClose = true, 
 		bool bDeleteOnClose = false);
 
 	//Detaches the underlaying file
-	virtual int DetachFile();
+	virtual vtkMAFFile* DetachFile();
 
 	//Opens the specified file for reading/writing operations
 	//Underlaying opened file is closed in prior to this operation.
 	//If bDeleteOnClose is set to true, the file is considered to be temporary and
 	//will be removed during the close.
-	//Returns 0 if an error occurs.
-	virtual int OpenFile(const char* fname, bool bOpenForRO = true, 
+	//Returns false if an error occurs.
+	virtual bool OpenFile(const char* fname, bool bOpenForRO = true, 
 		bool bDeleteOnClose = false);
 
 	//Closes the underlaying file.

@@ -3,7 +3,7 @@
   File:    	 mafVolumeLargeWriter.cpp
   Language:  C++
   Date:      8:2:2008   11:27
-  Version:   $Revision: 1.1 $
+  Version:   $Revision: 1.2 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -199,7 +199,7 @@ void mafVolumeLargeWriter::CreateLODs(int nMaxSampleRate, vtkIdType64 nTotalMaxS
 				throw std::ios::failure(szMsg.c_str());
 			}
 
-			nTotalSize += IOFileUtils::GetFileSize(szFName);
+			nTotalSize += vtkMAFFile2::GetFileSize(szFName);
 			if (nTotalSize >= nTotalMaxSize)
 				break;	//out of space
 		}

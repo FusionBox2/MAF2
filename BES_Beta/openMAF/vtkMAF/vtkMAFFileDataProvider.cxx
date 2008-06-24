@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFFileDataProvider.cxx,v $ 
   Language: C++ 
-  Date: $Date: 2008-06-23 16:43:55 $ 
-  Version: $Revision: 1.1 $ 
+  Date: $Date: 2008-06-24 15:49:58 $ 
+  Version: $Revision: 1.2 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -15,11 +15,8 @@
 
 #include "vtkMAFFileDataProvider.h"
 #include "vtkObjectFactory.h"
-#include <io.h>
-#include <fcntl.h>
-#include <sys/stat.h>
 
-vtkCxxRevisionMacro(vtkMAFFileDataProvider, "$Revision: 1.1 $");
+vtkCxxRevisionMacro(vtkMAFFileDataProvider, "$Revision: 1.2 $");
 vtkStandardNewMacro(vtkMAFFileDataProvider);
 
 #include "mafMemDbg.h"
@@ -27,8 +24,8 @@ vtkStandardNewMacro(vtkMAFFileDataProvider);
 //ctor / dtor
 vtkMAFFileDataProvider::vtkMAFFileDataProvider() 
 {
-	this->FileName = NULL;
-	this->File = -1;
+	this->FileName = NULL;	
+  this->File = NULL;
 }
 
 vtkMAFFileDataProvider::~vtkMAFFileDataProvider()
@@ -42,11 +39,14 @@ vtkMAFFileDataProvider::~vtkMAFFileDataProvider()
 //If bDeleteOnClose is set to true, the file is considered to be temporary and
 //will be removed during the close.
 /*virtual*/ void vtkMAFFileDataProvider
-	::AttachFile(int fhandle, const char* fname, bool bAutoClose, bool bDeleteOnClose)
+	::AttachFile(vtkMAFFile* fhandle, const char* fname, bool bAutoClose, bool bDeleteOnClose)
 {
 	CloseFile();	//close the current underlaying file
 	
 	this->File = fhandle;
+  if (fhandle != NULL)
+    fhandle->Register(this);
+
 	if (fname != NULL) {
 		this->FileName = new char[strlen(fname) + 1];
 		strcpy(this->FileName, fname);
@@ -57,9 +57,9 @@ vtkMAFFileDataProvider::~vtkMAFFileDataProvider()
 }
 
 //Detaches the underlaying file
-/*virtual*/ int vtkMAFFileDataProvider::DetachFile() 
+/*virtual*/ vtkMAFFile* vtkMAFFileDataProvider::DetachFile() 
 {
-	int ret = File;
+	vtkMAFFile* ret = File;
 	File = NULL;
 
 	delete[] FileName;
@@ -73,7 +73,7 @@ vtkMAFFileDataProvider::~vtkMAFFileDataProvider()
 //If bDeleteOnClose is set to true, the file is considered to be temporary and
 //will be removed during the close.
 //Returns 0 if an error occurs.
-/*virtual*/ int vtkMAFFileDataProvider
+/*virtual*/ bool vtkMAFFileDataProvider
 	::OpenFile(const char* fname, bool bOpenForRO, bool bDeleteOnClose)
 {
 	if (fname == NULL) 
@@ -85,31 +85,32 @@ vtkMAFFileDataProvider::~vtkMAFFileDataProvider()
 	// Close file from any previous call
 	CloseFile();
 
-	int f = _open(fname, 
-		(bOpenForRO ? _O_RDONLY : _O_RDWR | _O_CREAT) | _O_BINARY, 
-		(bOpenForRO ? _S_IREAD : _S_IREAD | _S_IWRITE)
-		);
-	if (f < 0)
-		return 0;
+  vtkMAFFile* f = vtkMAFFile::New();
+  if (!f->Open(fname, bOpenForRO))
+  {
+    f->Delete();
+    return false;
+  }
 
 	AttachFile(f, fname, true, bDeleteOnClose);
 	this->Attached = false;
-	return 1;
+	return true;
 }
 
 //Closes the underlaying file.
 /*virtual*/ void vtkMAFFileDataProvider::CloseFile()
 {
-	if (this->File >= 0)
+	if (this->File != NULL)
 	{
 		if (!this->Attached || this->CloseAttachedFile) {
-			_close(this->File);		
+			this->File->Close();
 
 			if (this->DeleteOnClose)
 				_unlink(FileName);		//BES: 17.1.2008 - don't know if this is Unix compatible
 		}
 
-		this->File = -1;
+    this->File->UnRegister(this);
+		this->File = NULL;
 	}
 
 	delete[] FileName;
@@ -126,7 +127,7 @@ vtkMAFFileDataProvider::~vtkMAFFileDataProvider()
 	if (!Seek(startOffset))
 		return 0;
 
-	return _read(this->File, buffer, count);
+	return this->File->Read(buffer, count);
 }
 
 //Copies the binary data from the given buffer into the underlaying data set at
@@ -139,22 +140,11 @@ vtkMAFFileDataProvider::~vtkMAFFileDataProvider()
 	if (!Seek(startOffset))
 		return 0;
 
-	return _write(this->File, buffer, count);
+	return this->File->Write(buffer, count);
 }
 
 //Seeks the underlaying file
 /*virtual*/ bool vtkMAFFileDataProvider::Seek(vtkIdType64 startOffset)
 {
-#if !defined(_WIN32) && !defined(_WIN64)
-#pragma message("Warning: vtkMAFFileDataProvider is limited to files < 2GB. Win32 or Win64 platform required to handle larger files. ");
-	if (_lseek(this->File, (long)startOffset, SEEK_SET) < 0)
-#else
-	if (_lseeki64(this->File, startOffset, SEEK_SET) < 0)
-#endif	
-	{
-		vtkWarningMacro("File seek operation failed.");
-		return false;
-	}
-
-	return true;
+  return this->File->Seek(startOffset);	 
 }
