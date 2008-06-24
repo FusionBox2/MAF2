@@ -3,7 +3,7 @@
 File:    	 mafVMEVolumeLarge.h
 Language:  C++
 Date:      22:1:2008   10:57
-Version:   $Revision: 1.1 $
+Version:   $Revision: 1.2 $
 Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
 
 Copyright (c) 2008
@@ -115,7 +115,7 @@ protected:
 	bool m_ShowFEOutput;
 #endif
 
-public:
+public:  
 	mafTypeMacro(mafVMEVolumeLarge, mafVMEVolume);
 	enum VME_GUI_ID
 	{
@@ -155,10 +155,10 @@ public:
 	/** return icon */
 	static char** GetIcon();
 
-	//this method stores information about the large data set
+	/** this method stores information about the large data set
 	//it calls SetData to set it to the Snapshot of the give data
 	//Note: SetData is still provided but its use may lead to
-	//unpredictable behavior
+	//unpredictable behavior */
 #ifdef VME_VOLUME_VER1
 	virtual int SetLargeData(vtkMAFLargeDataSet *data, mafTimeStamp t, int mode=MAF_VME_REFERENCE_DATA);
 #else
@@ -255,7 +255,7 @@ protected:
 	//zooms to the selected ROI only
 	virtual void OnViewROIVolume();
 
-	//returns back to the original ROI only
+	/** returns back to the original ROI only */
 	virtual void OnViewOrigVOIVolume();
 
   /** handles the change of ROI in auto proof mode */

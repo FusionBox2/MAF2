@@ -3,7 +3,7 @@
   File:    	 mafVMEVolumeLarge.cpp
   Language:  C++
   Date:      8:2:2008   11:28
-  Version:   $Revision: 1.1 $
+  Version:   $Revision: 1.2 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -64,7 +64,8 @@ mafVMEVolumeLarge::mafVMEVolumeLarge()
 	m_LargeDataReader = NULL;
 #endif
 
-	for (int i = 0; i < 6; i++) {
+	for (int i = 0; i < 6; i++) 
+  {
 		m_FullExtent[i] = 0;
 		m_VOI[i] = 0;
 		m_ROI[i] = 0.0;
