@@ -10,12 +10,16 @@ class DownloadHandlerTest(unittest.TestCase):
         print " current directory is: " + self.curDir
        
     def testMSFReconstructor(self):
-        #reconstructMSF handle arguments
-        #0 program
-        #1 current dir
-        #2 xml file name
-        #3 lhpbuilder msf data directory
-        msfReconstructor.reconstructMSF()
+        
+        msfR = msfReconstructor.MSFReconstructor()
+        msfR.currentDir = os.getcwd()
+        msfR.InputVMEBinaryDataFileName = msfR.currentDir + r'\msf_test_import_export_VME\TESTmsf.1.vtk'
+        dataBinary = 'TESTmsf.1.vtk'
+        msfR.InputVMEXMLFileName = msfR.currentDir + r'\vmeUploaderTestData\exportedVME.xml'
+        msfR.FakeRootMSFFileName = msfR.currentDir + r'\applicationData\fakeRoot.xml'
+        msfR.OutputMSFFileName = msfR.currentDir + r'\testDownload\\outputMAF.msf'
+        msfR.OutputMSFFolderName = msfR.currentDir + r'\testDownload'
+        msfR.build()
         
     
 if __name__ == '__main__':

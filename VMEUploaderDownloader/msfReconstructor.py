@@ -94,19 +94,15 @@ class MSFReconstructor():
         print self.OutputMSFFolderName"""
         msfBuilder.Build()
  
+
 def reconstructMSF():
     msfR = MSFReconstructor()
     currentMSF = "NOT DEFINED"
     dataBinary = "NOT DEFINED"
     
-    if(len(sys.argv) != 4): #for test
-        msfR.currentDir = os.getcwd()
-        msfR.InputVMEBinaryDataFileName = msfR.currentDir + r'\msf_test_import_export_VME\msf_test_import_export_VME.1.vtk'
-        dataBinary = 'msf_test_import_export_VME.1.vtk'
-        msfR.InputVMEXMLFileName = msfR.currentDir + r'\vmeUploaderTestData\exportedVME.xml'
-        msfR.FakeRootMSFFileName = msfR.currentDir + r'\applicationData\fakeRoot.xml'
-        msfR.OutputMSFFileName = msfR.currentDir + r'\testDownload\\outputMAF.msf'
-        msfR.OutputMSFFolderName = msfR.currentDir + r'\testDownload'
+    if(len(sys.argv)  != 4): 
+        print "argv  != 4, MSFReconstructor exiting without doing anything..."
+        return
     else:
         msfR.currentDir = sys.argv[1].replace("?", " ")
         msfR.scriptsDir = msfR.currentDir + r'..\..' #go back of two directories 
