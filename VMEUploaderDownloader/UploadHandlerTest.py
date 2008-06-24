@@ -12,14 +12,17 @@ class UploadHandlerTest(unittest.TestCase):
     def testCreateUploadHandler(self):
         queue = Queue.Queue()
         observer = None
-        dirCache = self.curDir + r'\msf_test_import_export_VME'  #dir  where read msf
+        dirCache = self.curDir + r'\InputMSFForUploadTestData'  #dir  where read msf.
         dirOutgoing = self.curDir + r'\Outgoing' #dir  where write xml and binary
         id = 5
         if(os.path.exists(dirCache) == False): os.mkdir(dirCache)
         if(os.path.exists(dirOutgoing) == False ): os.mkdir(dirOutgoing)
         server = 'http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2'
-        uploadHandler = UploadHandler.UploadHandler(queue,observer, dirCache, id , "danno", "jibiki",server, "unhandledPlusManualTagsList.csv")
+        uploadHandler = UploadHandler.UploadHandler(\
+            queue,observer, dirCache, id , "testuser", "GRDPt8",server, "unhandledPlusManualTagsList.csv"\
+        , False, "pippo")
         uploadHandler.upload()
     
 if __name__ == '__main__':
     unittest.main()
+    

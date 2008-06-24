@@ -10,7 +10,8 @@ from Debug import Debug
 
 class UploadHandler:
     queue = None
-    def __init__(self, queue, observer , dirCache, id, usr , pwd, urlServer, manualTagFile, hasLink, vmeName):
+    def __init__(self, queue, observer , dirCache, id, usr , pwd, urlServer,\
+                 manualTagFile, hasLink, vmeName):
         UploadHandler.queue = queue
         self.observer = observer
         self.dirCache = dirCache
