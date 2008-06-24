@@ -14,7 +14,7 @@ class UploadHandlerTest(unittest.TestCase):
         observer = None
         dirCache = self.curDir + r'\InputMSFForUploadTestData'  #dir  where read msf.
         dirOutgoing = self.curDir + r'\Outgoing' #dir  where write xml and binary
-        id = 5
+        id = 1
         if(os.path.exists(dirCache) == False): os.mkdir(dirCache)
         if(os.path.exists(dirOutgoing) == False ): os.mkdir(dirOutgoing)
         server = 'http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2'
