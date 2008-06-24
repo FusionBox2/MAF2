@@ -49,6 +49,9 @@ class vmeUploader:
         for file in files:
             if re.search('\\.msf$',file):
                msfFileNameList.append(file)
+            
+        if Debug:
+            print msfFileNameList
         assert(len(msfFileNameList)  == 1)
         
         msfFileName = msfFileNameList[0]

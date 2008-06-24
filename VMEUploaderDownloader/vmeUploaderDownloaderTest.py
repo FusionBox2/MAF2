@@ -30,7 +30,7 @@ class vmeUploaderDownloaderTest(unittest.TestCase):
         print " current directory is: " + curDir
         
         upl = vmeUploader.vmeUploader()
-        upl.InputMSFDirectory = curDir + r'\msf_test_import_export_VME'
+        upl.InputMSFDirectory = curDir + r'\InputMSFForUploadTestData'
         upl.UnhandledPlusManualTagsListFileName = curDir + r'\unhandledPlusManualTagsList.csv'
         upl.HandledAutoTagsListFileName = curDir + r'\handledAutoTagsList.csv'
         upl.OutputFolderName = curDir + r'\Outgoing'
