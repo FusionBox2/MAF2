@@ -10,6 +10,10 @@ class UploadHandlerTest(unittest.TestCase):
         print " current directory is: " + self.curDir
        
     def testCreateUploadHandler(self):
+        #TODO to make the test fail otherwise  it's an infinite loop: needs fixing
+        self.assertFalse(True)
+        
+        
         queue = Queue.Queue()
         observer = None
         dirCache = self.curDir + r'\InputMSFForUploadTestData'  #dir  where read msf.
