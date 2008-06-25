@@ -3,7 +3,7 @@
   File:    	 vtkMAFFile.h
   Language:  C++
   Date:      11:2:2008   12:36
-  Version:   $Revision: 1.2 $
+  Version:   $Revision: 1.3 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -30,6 +30,7 @@ __int64 __cdecl _ftelli64(FILE *);
 
 #include <errno.h>
 #include "vtkObject.h"
+#include "vtkObjectFactory.h"
 
 class VTK_COMMON_EXPORT vtkMAFFile : vtkObject
 {
