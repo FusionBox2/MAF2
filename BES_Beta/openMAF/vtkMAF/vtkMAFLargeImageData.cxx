@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFLargeImageData.cxx,v $ 
   Language: C++ 
-  Date: $Date: 2008-06-23 16:43:55 $ 
-  Version: $Revision: 1.1 $ 
+  Date: $Date: 2008-06-25 11:50:43 $ 
+  Version: $Revision: 1.2 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -25,7 +25,7 @@
 #include "vtkSmartPointer.h"
 
 
-vtkCxxRevisionMacro(vtkMAFLargeImageData, "$Revision: 1.1 $");
+vtkCxxRevisionMacro(vtkMAFLargeImageData, "$Revision: 1.2 $");
 vtkStandardNewMacro(vtkMAFLargeImageData);
 
 //----------------------------------------------------------------------------
@@ -825,7 +825,9 @@ void vtkMAFLargeImageData::UpdateData()
 		this->InvokeEvent(vtkCommand::StartEvent);
 
 		vtkImageData* output = vtkImageData::SafeDownCast(this->Snapshot);
-		if (output != NULL)
+		if (output != NULL && this->VOI[0] <= this->VOI[1] && 
+      this->VOI[2] <= this->VOI[3] && this->VOI[4] <= this->VOI[5]    //BES: 25.6.2008 - add check for invalid VOI
+      )
 		{
 			this->ExecuteSnapshotInformation();
 			output->AllocateScalars();
