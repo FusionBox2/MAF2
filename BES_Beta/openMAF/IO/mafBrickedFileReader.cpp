@@ -3,7 +3,7 @@
 File:    	 mafBrickedFileReader.cpp
 Language:  C++
 Date:      13:2:2008   14:25
-Version:   $Revision: 1.2 $
+Version:   $Revision: 1.3 $
 Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
 
 Copyright (c) 2008
@@ -436,7 +436,7 @@ void mafBrickedFileReader::GetBricksExtent(int VOI[6], int inBExt[6], int bndBEx
 			brckExt[3] = brckMaxExt[2 + (xyzb[1] == bndBExt[3])];
 
 			int nLRIdx = nLRIdxY;	
-			bool ybValid = zbValid && xyzb[1] >= inVBExt[2] && xyzb[2] <= inVBExt[3];
+			bool ybValid = zbValid && xyzb[1] >= inVBExt[2] && xyzb[1] <= inVBExt[3];
 			char* pOutPtrX = pOutPtrY;
 
 			for (xyzb[0] = bndBExt[0]; xyzb[0] <= bndBExt[1]; xyzb[0]++, 
