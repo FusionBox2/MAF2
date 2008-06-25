@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-06-23 16:46:36 $
-  Version:   $Revision: 1.54 $
+  Date:      $Date: 2008-06-25 14:13:10 $
+  Version:   $Revision: 1.55 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -44,6 +44,8 @@
 #include "medPipeTrajectories.h" 
 #include "mafVMEAFRefSys.h" 
 #include "mafVMEHelAxis.h" 
+//BES: 23.6.2008 - Large Volume - to be merged 
+#include "BES_Beta/openMAF/VME/mafVMEVolumeLarge.h"
 
 #include "mafOpDecomposeTimeVarVME.h"
 #include "mafOpImporterMSF.h"
@@ -193,6 +195,7 @@ bool lhpBuilderApp::OnInit()
   mafPlugNode<mafVMERawMotionData>("VME representing raw motion data");
   mafPlugNode<mafVMEAFRefSys>("VME representing anatomical frame");
   mafPlugNode<mafVMEHelAxis>("VME representing helical axis");
+  mafPlugNode<mafVMEVolumeLarge>("VME storing large volume datasets with one scalar component");
 
 #ifdef MAF_USE_ITK
   mafPlugNode<lhpVMESurfaceScalarVarying>("VME representing surface with attached time varying mafVMEScalar");
