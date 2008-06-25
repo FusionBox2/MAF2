@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpVMESurfaceScalarVarying.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-04-23 12:12:55 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2008-06-25 14:42:44 $
+  Version:   $Revision: 1.8 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -594,8 +594,7 @@ void lhpVMESurfaceScalarVarying::OnEvent(mafEventBase *maf_event)
           if (m_PickedPoint)
           {
             double pos[3];
-            m_PickedPoint->GetPoint(0,pos);
-            int ijk[3];
+            m_PickedPoint->GetPoint(0,pos);            
             vtkIdList *idList = vtkIdList::New();
             m_Locator->FindPointsWithinRadius(m_Radius, pos, idList);
             SetScalarIDs(m_ActiveScalarVMEIndex, idList);
