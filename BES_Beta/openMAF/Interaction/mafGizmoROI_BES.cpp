@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: mafGizmoROI_BES.cpp,v $
 Language:  C++
-Date:      $Date: 2008-06-24 08:49:03 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2008-06-25 11:54:54 $
+Version:   $Revision: 1.3 $
 Authors:   Stefano Perticoni, Josef Kohout
 ==========================================================================
 Copyright (c) 2002/2004
@@ -289,6 +289,7 @@ void mafGizmoROI_BES::Show(bool show)
 {
 	ShowAxis(show);
 	ShowHandles(show);
+  ShowPlanes(show);
 	ShowROI(show);
 }
 
