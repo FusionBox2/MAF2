@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-06-24 09:19:48 $
-Version:   $Revision: 1.6 $
+Date:      $Date: 2008-06-25 14:45:36 $
+Version:   $Revision: 1.7 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -720,6 +720,7 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
   wxSetWorkingDirectory(oldDir);
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 
+  return MAF_OK;
 }
 
 //----------------------------------------------------------------------------
