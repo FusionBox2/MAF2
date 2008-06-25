@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: mafOpImporterRAWVolume_BES.cpp,v $
 Language:  C++
-Date:      $Date: 2008-06-23 16:40:55 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2008-06-25 11:53:44 $
+Version:   $Revision: 1.2 $
 Authors:   Paolo Quadrani     Silvano Imboden     Josef Kohout
 ==========================================================================
 Copyright (c) 2002/2004
@@ -312,7 +312,7 @@ void mafOpImporterRAWVolume_BES::OpRun()
 	mafEventMacro(mafEvent(this,res));
 
 #ifdef VME_VOLUME_LARGE
-if (res == OP_RUN_OK && (IsVolumeLarge() || IsFileLarge()))
+if (res == OP_RUN_OK && (IsVolumeLarge()/* || IsFileLarge()*/))
 	{
 		//save the VME data, it should not prompt for saving
 		mafEventMacro( mafEvent(this, MENU_FILE_SAVE));
@@ -510,11 +510,11 @@ bool mafOpImporterRAWVolume_BES::IsVolumeLarge()
 bool mafOpImporterRAWVolume_BES::VolumeLargeCheck()
 {
 	wxString msg = "";
-	if (IsFileLarge())
+/*	if (IsFileLarge())
 		msg = _("The file is larger than 2GB. VTK does not support reading of such files.\n"
 				"If you continue, the selected VOI will be, therefore, imported as a VolumeLarge VME.\n"
 				"NB: VolumeLarge VME does not support all operations that are available for Volume VME. \n");
-	else if (IsVolumeLarge())
+	else*/ if (IsVolumeLarge())
 		msg = _("The selected VOI is too large to fit the given memory limit and, therefore, "
 				"if you continue, it will be imported as a VolumeLarge VME.\n"
 				"NB: VolumeLarge VME does not support all operations that are available for Volume VME. \n"
@@ -770,8 +770,8 @@ bool mafOpImporterRAWVolume_BES::Import()
 	}
 
 #ifdef VME_VOLUME_LARGE
-	bool bIsLargeVolume = IsVolumeLarge() || IsFileLarge();
-	if (bIsLargeVolume)
+	//bool bIsLargeVolume = IsVolumeLarge() || IsFileLarge();
+	if (IsVolumeLarge())
 	{
 		vtkMAFSmartPointer< vtkMAFLargeImageReader > reader;
 #ifdef VME_VOLUME_VER1
@@ -808,16 +808,16 @@ bool mafOpImporterRAWVolume_BES::Import()
 		wr.SetListener(this->m_Listener);
 		if (wr.Update())
 		{
-			//int VOI[6];
-			//VOI[0] = VOI[2] = VOI[4] = 0;
-			//VOI[1] = m_DataDimemsion[0] - 1;
-			//VOI[3] = m_DataDimemsion[1] - 1;
-			//VOI[5] = m_SliceVOI[1] - m_SliceVOI[0];
+			int VOI[6];
+			VOI[0] = VOI[2] = VOI[4] = 0;
+			VOI[1] = m_VOI[1] - m_VOI[0];
+			VOI[3] = m_VOI[3] - m_VOI[2];
+			VOI[5] = m_VOI[5] - m_VOI[4];
 
 			rd = new mafVolumeLargeReader();
 			rd->SetFileName(m_OutputFileName);
 			rd->SetMemoryLimit(m_MemLimit * 1024);
-			rd->SetVOI(m_VOI);
+			rd->SetVOI(VOI);
 			rd->Update();
 
 			if(!this->m_TestMode)
@@ -857,16 +857,47 @@ bool mafOpImporterRAWVolume_BES::Import()
 	else
 #endif // VME_VOLUME_LARGE
 	{
-		vtkMAFSmartPointer< vtkImageReader > reader;
-		
-		if (!m_TestMode) {
-			mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR, reader));
-		}
+    vtkImageData* img = NULL;
 
-		vtkImageData* img = (vtkImageData*)ImportT< vtkImageReader >(reader);
+#ifdef VME_VOLUME_LARGE
+    if (IsFileLarge())
+    {
+      //File is large => read it by our technique but it will be small volume
+      vtkMAFSmartPointer< vtkMAFLargeImageReader > reader;
+      reader->SetMemoryLimit(m_MemLimit * 1024);
+      if(m_TestMode)
+        img = (vtkImageData*)((vtkMAFLargeImageData*)
+          ImportT< vtkMAFLargeImageReader >(reader))->GetSnapshot();
+      else
+      {		
+        vtkMAFLargeDataSetCallback* ppc = vtkMAFLargeDataSetCallback::New();
+        ppc->SetListener(this->m_Listener);
+
+        vtkMAFLargeImageData* img2 = (vtkMAFLargeImageData*)reader->GetOutput();
+        img2->AddObserver(vtkCommand::ProgressEvent, ppc);
+        img = (vtkImageData*)((vtkMAFLargeImageData*)
+          ImportT< vtkMAFLargeImageReader >(reader))->GetSnapshot();
+        img2->RemoveObserver(ppc);
+
+        ppc->Delete();
+      }
+    }
+    else
+    {
+#endif
+		  vtkMAFSmartPointer< vtkImageReader > reader;
+		
+		  if (!m_TestMode) {
+			  mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR, reader));
+		  }
+
+		  img = (vtkImageData*)ImportT< vtkImageReader >(reader);
+#ifdef VME_VOLUME_LARGE
+    }
+#endif
 
 		vtkMAFSmartPointer<vtkImageToStructuredPoints> image_to_sp;
-		image_to_sp->SetInput(img); 
+		image_to_sp->SetInput(img);
 		img->Delete();	//we no longer need img, release it
 
 		image_to_sp->Update();
