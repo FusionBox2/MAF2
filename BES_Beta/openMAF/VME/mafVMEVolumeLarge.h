@@ -3,7 +3,7 @@
 File:    	 mafVMEVolumeLarge.h
 Language:  C++
 Date:      22:1:2008   10:57
-Version:   $Revision: 1.2 $
+Version:   $Revision: 1.3 $
 Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
 
 Copyright (c) 2008
@@ -19,7 +19,7 @@ This is VME for large volumetric data sets
 // Include:
 //----------------------------------------------------------------------------
 //#define VME_VOLUME_VER1
-#define VME_VOLUME_LARGE_EXCLUDE_CROP
+//#define VME_VOLUME_LARGE_EXCLUDE_CROP
 
 #include "mafVMEVolume.h"
 #ifdef VME_VOLUME_VER1

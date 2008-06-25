@@ -3,7 +3,7 @@
   File:    	 mafVMEVolumeLarge.cpp
   Language:  C++
   Date:      8:2:2008   11:28
-  Version:   $Revision: 1.2 $
+  Version:   $Revision: 1.3 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -20,6 +20,7 @@
 //----------------------------------------------------------------------------
 
 #include "mafVMEVolumeLarge.h"
+#include "mafVMEVolumeGray.h"
 #include "mafVTKInterpolator.h"
 #include "mafDataVector.h"
 #include "mafVMEItemVTK.h"
@@ -352,7 +353,8 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 		{	
 			double usrBounds[6];
 			TransformExtent(m_FullExtent, usrBounds);
-			m_GizmoROI = new mafGizmoROI_BES(this, this, mafGizmoROI_BES::USER_BOUNDS, GetParent(), usrBounds);			
+			m_GizmoROI = new mafGizmoROI_BES(this, this, mafGizmoROI_BES::USER_BOUNDS, 
+        this, /*GetParent(),*/ usrBounds);			
 			m_GizmoROI->SetBounds(m_ROI);
 			m_GizmoROI->Show(true);
 
@@ -625,6 +627,58 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 //performs the cropping
 /*virtual*/ void mafVMEVolumeLarge::OnCrop()
 {
+#if 1
+  //BES: 25.6.2008 - changed according to Fulvia's comments
+  //the VME now creates a new small VME with the selected ROI
+  //in the quality that is currently displayed
+  //N.B. this operation may fail, if there is not enough memory!
+  if (m_LargeDataReader == NULL || 
+    m_LargeDataReader->GetOutputDataSet() == NULL)
+  {
+    wxMessageBox(wxString::Format(
+      _("This operation is invalid in the current context.\nError: %s [%d]"), 
+      __FILE__, __LINE__));
+
+    return;	//invalid state
+  }
+
+  wxBusyInfo wait(_("Cropping the volume ..."));
+
+  vtkImageData* pData = m_LargeDataReader->GetOutputDataSet();  
+  vtkImageData* pCopy = vtkImageData::New();
+  
+  try
+  {
+    pCopy->DeepCopy(pData);
+  }
+  catch (...)
+  {
+    pCopy->Delete();
+  	
+    wxMessageBox(_("ERROR: Not enough memory to complete the operation."));
+    return;	//invalid state
+  }
+  
+  mafVMEVolumeGray* newVME;
+  mafNEW(newVME);
+  newVME->SetData(pCopy, 0, MAF_VME_REFERENCE_DATA);
+  pCopy->Delete();
+
+  mafTagItem tag_Nature;
+  tag_Nature.SetName("VME_NATURE");
+  tag_Nature.SetValue("NATURAL");
+
+  wxString name = this->GetName();
+  newVME->SetName(wxString::Format("%s (OR[%d,%d,%d], SR[%d])", name, 
+    m_VOI[0], m_VOI[2], m_VOI[4], m_LargeDataReader->GetSampleRate()));
+  newVME->GetTagArray()->SetTag(tag_Nature);
+    
+  mafEvent ev(this, VME_ADD, newVME);
+  this->ForwardUpEvent(&ev);
+#else
+  //This code saves the highest resolution of the selected ROI
+  //into the output ROI
+
 #ifdef VME_VOLUME_VER1
 	if (m_LargeData == NULL || 
 		m_LargeData->GetPointDataProvider() == NULL ||
@@ -787,6 +841,7 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 		ev.SetId(PROGRESSBAR_HIDE);
 		this->ForwardUpEvent(&ev);
 	}
+#endif
 }
 #endif //VME_VOLUME_LARGE_EXCLUDE_CROP
 
@@ -1623,7 +1678,7 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 		_("displays the data in the selected ROI only, using as high quality as possible"));
 	gui->Button(ID_VIEW_ORIGVOI_VOLUME, _("view original volume"),"",
 		_("displays the data in the original VOI, using as high quality as possible"));
-#ifdef VME_VOLUME_LARGE_EXCLUDE_CROP
+#ifndef VME_VOLUME_LARGE_EXCLUDE_CROP
 	gui->Button(ID_CROP, _("crop ..."),"",
 		_("performs the cropping operation"));
 #endif // VME_VOLUME_LARGE_EXCLUDE_CROP
