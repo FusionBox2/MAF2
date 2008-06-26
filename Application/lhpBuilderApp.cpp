@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-06-26 08:59:07 $
-  Version:   $Revision: 1.56 $
+  Date:      $Date: 2008-06-26 09:18:56 $
+  Version:   $Revision: 1.57 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -44,8 +44,8 @@
 #include "medPipeTrajectories.h" 
 #include "mafVMEAFRefSys.h" 
 #include "mafVMEHelAxis.h" 
-////BES: 23.6.2008 - Large Volume - to be merged 
-//#include "BES_Beta/openMAF/VME/mafVMEVolumeLarge.h"
+//BES: 23.6.2008 - Large Volume - to be merged 
+#include "BES_Beta/openMAF/VME/mafVMEVolumeLarge.h"
 
 #include "mafOpDecomposeTimeVarVME.h"
 #include "mafOpImporterMSF.h"
@@ -71,9 +71,9 @@
 #include "mafOpImporterVTK.h"
 #include "mafOpImporterMSF1x.h"
 #include "mafOpImporterVRML.h"
-////BES: 23.6.2008 - Large Volume - to be merged 
-//#include "BES_Beta/openMAF/Operators/mafOpImporterRAWVolume_BES.h"
-#include "mafOpImporterRAWVolume.h"
+//BES: 23.6.2008 - Large Volume - to be merged 
+#include "BES_Beta/openMAF/Operators/mafOpImporterRAWVolume_BES.h"
+//#include "mafOpImporterRAWVolume.h"
 #include "mafOpExporterRaw.h"
 #include "medOpImporterRAWImages.h"
 #include "mafOpExtractIsosurface.h"
@@ -195,7 +195,7 @@ bool lhpBuilderApp::OnInit()
   mafPlugNode<mafVMERawMotionData>("VME representing raw motion data");
   mafPlugNode<mafVMEAFRefSys>("VME representing anatomical frame");
   mafPlugNode<mafVMEHelAxis>("VME representing helical axis");
-  //mafPlugNode<mafVMEVolumeLarge>("VME storing large volume datasets with one scalar component");
+  mafPlugNode<mafVMEVolumeLarge>("VME storing large volume datasets with one scalar component");
 
 #ifdef MAF_USE_ITK
   mafPlugNode<lhpVMESurfaceScalarVarying>("VME representing surface with attached time varying mafVMEScalar");
@@ -228,7 +228,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mafOpImporterVTK("VTK"),"Other");
   m_Logic->Plug(new mafOpImporterMSF("MSF"),"Other");
   m_Logic->Plug(new mafOpImporterMSF1x("MAF 1.x"),"Other");
-  m_Logic->Plug(new mafOpImporterRAWVolume("RAW Volume"),"Images");
+  m_Logic->Plug(new mafOpImporterRAWVolume_BES("RAW Volume"),"Images");
   m_Logic->Plug(new medOpImporterRAWImages("Raw Images"),"Images");
   m_Logic->Plug(new mafOpImporterImage("Images"),"Images");
   m_Logic->Plug(new medOpImporterLandmark("Landmark"),"Motion Analysis");
