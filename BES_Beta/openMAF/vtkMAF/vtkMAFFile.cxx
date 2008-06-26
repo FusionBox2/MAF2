@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFFile.cxx,v $ 
   Language: C++ 
-  Date: $Date: 2008-06-24 15:54:20 $ 
-  Version: $Revision: 1.1 $ 
+  Date: $Date: 2008-06-26 08:22:00 $ 
+  Version: $Revision: 1.2 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -25,10 +25,10 @@
   #include <share.h>
 #endif
 
-vtkCxxRevisionMacro(vtkMAFFile, "$Revision: 1.1 $");
+vtkCxxRevisionMacro(vtkMAFFile, "$Revision: 1.2 $");
 vtkStandardNewMacro(vtkMAFFile);
 
-vtkCxxRevisionMacro(vtkMAFFile2, "$Revision: 1.1 $");
+vtkCxxRevisionMacro(vtkMAFFile2, "$Revision: 1.2 $");
 vtkStandardNewMacro(vtkMAFFile2);
 
 //creates a new file
@@ -37,13 +37,15 @@ bool vtkMAFFile::Create(const char* fname) throw(...)
 {
   Close();  //close previously associated FILE
 
-#if defined(_MSC_VER)
-  m_pFile = _fsopen(fname, "wb+", _SH_DENYWR);
+#ifdef _WIN32
+  //m_pFile = _fsopen(fname, "wb+", _SH_DENYWR);
+  m_hFile = CreateFileA(fname, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ, NULL, 
+    OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS, NULL);
+  return (m_hFile != INVALID_HANDLE_VALUE);
 #else
   m_pFile = fopen(fname, "wb+");
-#endif
-
   return (m_pFile != NULL);
+#endif  
 }
 
 //opens an existing file for R/W or RO (bRO == true)  
@@ -52,19 +54,29 @@ bool vtkMAFFile::Open(const char* fname, bool bRO) throw(...)
 {
   Close();  //close previously associated FILE
 
-#if defined(_MSC_VER)
-  m_pFile = _fsopen(fname, (bRO ? "rb" : "rb+"), _SH_DENYNO);
+#ifdef _WIN32
+  //m_pFile = _fsopen(fname, (bRO ? "rb" : "rb+"), _SH_DENYNO);
+  m_hFile = CreateFileA(fname, (bRO ? GENERIC_READ : (GENERIC_READ | GENERIC_WRITE)), 
+    (bRO ? (FILE_SHARE_READ | FILE_SHARE_WRITE) : FILE_SHARE_READ), NULL, 
+    OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_RANDOM_ACCESS, NULL);
+  return (m_hFile != INVALID_HANDLE_VALUE);
 #else
   m_pFile = fopen(fname, (bRO ? "rb" : "rb+"));
-#endif
-
   return (m_pFile != NULL);
+#endif  
 }
 
 //returns the current file length, 
 //returns -1, if an error occurs
 long long vtkMAFFile::GetFileSize()
 {
+#ifdef _WIN32
+  LARGE_INTEGER liSize;
+  if (!GetFileSizeEx(m_hFile, &liSize))
+    return (long long)-1;
+  
+  return (long long)liSize.QuadPart;
+#else
   long long lastpos = GetCurrentPos();
   if (lastpos < 0)
     return lastpos;
@@ -76,6 +88,7 @@ long long vtkMAFFile::GetFileSize()
   long long ret = GetCurrentPos();
   Seek(lastpos, SEEK_SET);
   return ret;
+#endif
 }
 
 //returns file size or returns -1, if an error occurs
@@ -113,12 +126,20 @@ void vtkMAFFile2::Open(const char* fname, bool bRO) throw(...)
 //returns the current file length, throws an exception if an error occurs
 long long vtkMAFFile2::GetFileSize() throw(...)
 {
+#ifdef _WIN32
+  LARGE_INTEGER liSize;
+  if (!GetFileSizeEx(m_hFile, &liSize))
+    throw std::ios::failure(("Unable to seek in the specified file."));
+
+  return (long long)liSize.QuadPart;
+#else
   unsigned long long lastpos = GetCurrentPos();
   Seek(0, SEEK_END);
 
   unsigned long long ret = GetCurrentPos();
   Seek(lastpos, SEEK_SET);
   return ret;
+#endif
 }
 
 //returns file size, throwing exception if an error occurs (e.g., file not found)
