@@ -1,0 +1,173 @@
+/*=========================================================================
+  Program:   Multimod Application Framework
+  Module:    $RCSfile: medOpImporterRAWImages_BES.h,v $
+  Language:  C++
+  Date:      $Date: 2008-06-26 11:11:56 $
+  Version:   $Revision: 1.1 $
+  Authors:   Stefania Paperini porting Matteo Giacomoni
+==========================================================================
+Copyright (c) 2002/2004
+CINECA - Interuniversity Consortium (www.cineca.it) 
+=========================================================================*/
+#ifndef __medOpImporterRAWImages_H__
+#define __medOpImporterRAWImages_H__
+
+//----------------------------------------------------------------------------
+// Include :
+//----------------------------------------------------------------------------
+#include "mafOp.h"
+#include "mafEvent.h"
+#include "mafString.h"
+
+//----------------------------------------------------------------------------
+// forward references :
+//----------------------------------------------------------------------------
+class mafOp;
+class mafNode;
+class vtkImageReader;
+class vtkImageImport;
+class vtkImageAppendComponents;
+class vtkPlaneSource;
+class vtkPolyDataMapper;
+class vtkActor;
+class vtkDirectory;
+class mafRWI;
+class vtkWindowLevelLookupTable;
+class mmgDialogPreview;
+class vtkTexture;
+class mmiDICOMImporterInteractor;
+class mafString;
+class mafVMEVolumeGray;
+class mafVMEVolumeRGB;
+
+//----------------------------------------------------------------------------
+// medOpImporterRAWImages_BES :
+//----------------------------------------------------------------------------
+/** Importer for Raw volume data. The raw data must be stored in multiple files.
+Every file is a single slice of the volume data.
+In the directory must be present only raw slices.
+If the first slice is not 0, the slice offset (m_offset) must be setted. */
+class medOpImporterRAWImages_BES: public mafOp
+{
+public:
+            	 medOpImporterRAWImages_BES(wxString label="RAWImporterImage");
+	virtual     ~medOpImporterRAWImages_BES();
+
+	mafTypeMacro(medOpImporterRAWImages_BES, mafOp);
+	virtual void OnEvent(mafEventBase *maf_event);
+	mafOp* Copy();
+
+	/** Return true for the acceptable vme type. */
+	bool Accept(mafNode *node) {return true;};
+
+	/** Build the interface of the operation and the preview pipeline. */
+	void OpRun();
+
+	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
+	void OpStop	(int result);
+
+	/** Execute the operation. */
+	void OpDo();
+
+	/** Undo the operation. */
+	void OpUndo();
+
+	void OnStringPrefix();
+	void OnOpenDir();
+
+	/** Setting for the test */
+	void SetRawDirectory(mafString Dir){m_RawDirectory=Dir;};
+	void SetSigned(int Signed){m_Signed=Signed;};
+	void SetDataType(int Bit){m_Bit=Bit;};
+	void SetCoordFile(wxString File){m_CoordFile=File;m_Rect = true;m_Spacing[2] = 1.0;};
+	void SetStringPrefix(wxString Prefix){m_Prefix=Prefix;};
+
+	void CreatePipeline();
+	void CreateGui();
+
+	/** Import the raw data into the Data Manager*/
+	bool Import();
+
+  enum{
+    CROP_SELECTED,
+	  ADD_CROP_ITEM,
+	  GIZMO_NOT_EXIST,
+	  GIZMO_RESIZING,
+	  GIZMO_DONE
+  };
+	
+protected:
+	/** Enable the widgets of the interface. */
+	void EnableWidgets(bool enable);
+
+	/** Update the preview */
+	void UpdateReader();
+
+	/** Calculate the length of the file in order to give a guessed value for the header size. */
+	int  GetFileLength(const char * filename);
+
+  /** Control file list before read to alert for possible incoerences*/
+  bool ControlFilenameList();
+
+	mafNode			 *m_Vme; 
+
+ 	mafString			m_RawDirectory;
+	vtkDirectory *m_VtkRawDirectory;
+
+	int			 m_Bit;	
+  int      m_RgbType;
+	int			 m_Signed;
+	int			 m_Dimension[3];
+	double	 m_Spacing[3];
+  double   m_ROI_2D[4];
+	int			 m_Header;
+	int			 m_NumberByte;
+	int			 m_NumberFile;
+	int			 m_NumberSlices;	
+	int			 m_Offset;
+	int			 m_FileSpacing;
+  int      m_SideToBeDragged;
+  int      m_GizmoStatus;
+  int      m_CropMode;
+	wxString m_Extension;
+	wxString m_Prefix;
+	wxString m_Pattern;
+
+	bool		 m_Rect;
+	wxString m_CoordFile;	
+
+	//preview pipeline
+	vtkImageReader		*m_Reader;
+  vtkImageImport		*m_RedImage;
+  vtkImageImport		*m_GreenImage;
+  vtkImageImport		*m_BlueImage;
+  vtkImageAppendComponents *m_AppendComponents;
+  vtkImageAppendComponents *m_InterleavedImage;
+	vtkPlaneSource   *m_Plane;
+	vtkPolyDataMapper*m_Mapper;
+	vtkActor			   *m_Actor;
+	mafRWI				   *m_Rwi;
+	vtkTexture		   *m_Texture;
+	vtkPlaneSource   *m_GizmoPlane;
+  vtkActor         *m_GizmoActor;
+
+	//slice selector
+	int					  m_CurrentSlice;
+	wxTextCtrl	 *m_SliceText;
+	wxSlider		 *m_SliceSlider;
+	wxStaticText *m_SliceLab;
+
+	vtkWindowLevelLookupTable	*m_LookupTable;
+	
+	mmgDialogPreview	*m_Dialog;
+
+	mmiDICOMImporterInteractor *m_DicomInteractor;
+
+	mafVMEVolumeGray  *m_VolumeGray;
+  mafVMEVolumeRGB   *m_VolumeRGB;
+
+  mafString m_DimXCrop;
+  mafString m_DimYCrop;
+
+};
+#endif
