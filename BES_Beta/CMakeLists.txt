@@ -28,7 +28,6 @@ SET(PROJECT_SRCS
 	openMAF/Operators/mafOpImporterRAWVolume_BES.h       
 	openMAF/VME/mafVMEVolumeLarge.cpp
 	openMAF/VME/mafVMEVolumeLarge.h
-	openMAF/VME/mafVMEVolumeLarge.xpm       
 	openMAF/vtkMAF/vtkMAFDataArrayDescriptor.cxx
 	openMAF/vtkMAF/vtkMAFDataArrayDescriptor.h
 	openMAF/vtkMAF/vtkMAFFileDataProvider.cxx
