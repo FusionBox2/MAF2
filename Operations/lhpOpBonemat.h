@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpBonemat.h,v $
   Language:  C++
-  Date:      $Date: 2008-06-11 17:12:26 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2008-06-30 08:36:22 $
+  Version:   $Revision: 1.7 $
   Authors:   Daniele Giunchi , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2002/2004
@@ -110,7 +110,7 @@ protected:
   void OnOutputFrequencyFileName();
   void OnExecute();
 
-  void UpdateDensityIntegrationGui();
+  void UpdateRhoAshGuiOnRhoAshIntervalsNumberChange();
 
   mafNode *VolumeSelection();
 
@@ -137,47 +137,47 @@ protected:
   /** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
 	void OpStop(int result);
 
-  void EnableV2(bool enable);
-  void EnableV3SingleInterval(bool enable);
-  void DisableV3();
+  void EnableTwoIntervals(bool enable);
+  void EnableRhoAshSingleInterval(bool enable);
+  void DisableRhoAshThreeIntervals();
 
-  void EnableRoCorrectionSingleInterval(bool enable);
-  void EnableRoCorrectionThreeInterval(bool enable);
-  void EnableRoCorrectionDensityInterval(bool enable);
+  void EnableRhoQCTSingleInterval(bool enable);
+  void EnableRhoQCTThreeIntervals(bool enable);
+  void EnableRhoQCTDensityInterval(bool enable);
   
   mafString m_ConfigurationFileName;
   mafString m_InputVolumeName;
   mafString m_FrequencyFileName;
  
   /** Ea, Eb, Ec */
-  double m_a_DensityElasticityRelationship,m_b_DensityElasticityRelationship,m_c_DensityElasticityRelationship;
+  double m_a_DER,m_b_DER,m_c_DER;
 
-  double m_a_RoLessThanRO1_EI,m_b_RoLessThanR01_EI,m_c_RoLessThanR01_EI;
-  double m_a_RoBetweenR01andR02_EI,m_b_RoBetweenR01andR02_EI,m_c_RoBetweenR01andR02_EI;
-  double m_a_RoBiggerThanR02_EI,m_b_RoBiggerThanR02_EI,m_c_RoBiggerThanR02_EI;
+  double m_a_RhoAshLessThanRhoAsh1,m_b_RhoAshLessThanRhoAsh1,m_c_RhoAshLessThanRhoAsh1;
+  double m_a_RhoAshBetweenRhoAsh1andRhoAsh2,m_b_RhoAshBetweenRhoAsh1andRhoAsh2,m_c_RhoAshBetweenRhoAsh1andRhoAsh2;
+  double m_a_RhoAshBiggerThanRhoAsh2,m_b_RhoAshBiggerThanRhoAsh2,m_c_RhoAshBiggerThanRhoAsh2;
 
 
   //ro calibration
-  int m_ROCalibrationCorrectionIsActive;
-  int m_ROCalibrationCorrectionType;
+  int m_RhoCalibrationCorrectionIsActive;
+  int m_RhoCalibrationCorrectionType;
 
   //ro interval
-  double m_RO1_CalibrationCorrection;
-  double m_RO2_CalibrationCorrection;
+  double m_RhoQCT1;
+  double m_RhoQCT2;
 
   //single interval ro calibration
   double m_a_CalibrationCorrection;
   double m_b_CalibrationCorrection;
 
   //three intervals ro calibration
-  double m_a_RoLessThanR01_CalibrationCorrection;
-  double m_b_RoLessThanR01_CalibrationCorrection;
+  double m_a_RhoQCTLessThanRhoQCT1;
+  double m_b_RhoQCTLessThanRhoQCT1;
 
-  double m_a_RoBetweenR01AndR02_CalibrationCorrection;
-  double m_b_RoBetweenR01AndR02_CalibrationCorrection;
+  double m_a_RhoQCTBetweenRhoQCT1AndRhoQCT2;
+  double m_b_RhoQCTBetweenRhoQCT1AndRhoQCT2;
 
-  double m_a_RoBiggerThanR02_CalibrationCorrection;
-  double m_b_RoBiggerThanR02_CalibrationCorrection;
+  double m_a_RhoQCTBiggerThanRhoQCT2;
+  double m_b_RhoQCTBiggerThanRhoQCT2;
 
 
   /** density relationship */
@@ -185,8 +185,8 @@ protected:
   
 
   /*ro = a + b * HU*/
-  double m_ROIntercept;
-  double m_ROSlope;
+  double m_RhoIntercept;
+  double m_RhoSlope;
 
   //
   ///** HU0, d0 */
@@ -197,9 +197,9 @@ protected:
 
   int m_StepsNumber;
   double m_Egap;
-  double m_RO1_EI,m_RO2_EI;
+  double m_RhoAsh1,m_RhoAsh2;
 
-  double m_a_EI,m_b_EI,m_c_EI;
+  double m_a_OneInterval,m_b_OneInterval,m_c_OneInterval;
   int m_DensityIntervalsNumber;
   
   int m_YoungModuleCalculationModality;

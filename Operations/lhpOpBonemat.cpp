@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpBonemat.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-06-17 15:33:15 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2008-06-30 08:36:22 $
+  Version:   $Revision: 1.13 $
   Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -61,8 +61,8 @@ const int decimalNumbersNumber = 16;
 
 // Element Properties: element ID, density, Young Module
 typedef struct {
-  ID_TYPE id;  
-  double ro;
+  ID_TYPE elementID;  
+  double rho;
   double E;
 } ElementProp;
 
@@ -83,7 +83,7 @@ int compareRO(const void *p1, const void *p2)
 {
   double result;
 
-  result = ((ElementProp *) p2)->ro -  ((ElementProp *) p1)->ro; // decreasing order  
+  result = ((ElementProp *) p2)->rho -  ((ElementProp *) p1)->rho; // decreasing order  
   if (result < 0)
     return -1;
   if (result > 0)
@@ -109,34 +109,34 @@ mafOp(label)
   m_HU1_d1_el0 = 1;
   m_HU1_d1_el1 = 1;
   
-  m_ROIntercept = 0;
-  m_ROSlope = 1;
+  m_RhoIntercept = 0;
+  m_RhoSlope = 1;
 
-  m_a_RoLessThanRO1_EI = 0;
-  m_b_RoLessThanR01_EI = 1;
-  m_c_RoLessThanR01_EI = 1;
+  m_a_RhoAshLessThanRhoAsh1 = 0;
+  m_b_RhoAshLessThanRhoAsh1 = 1;
+  m_c_RhoAshLessThanRhoAsh1 = 1;
 
-  m_a_RoBetweenR01andR02_EI = 0;
-  m_b_RoBetweenR01andR02_EI = 1;
-  m_c_RoBetweenR01andR02_EI = 1;
+  m_a_RhoAshBetweenRhoAsh1andRhoAsh2 = 0;
+  m_b_RhoAshBetweenRhoAsh1andRhoAsh2 = 1;
+  m_c_RhoAshBetweenRhoAsh1andRhoAsh2 = 1;
 
-  m_a_RoBiggerThanR02_EI = 0;
-  m_b_RoBiggerThanR02_EI = 1;
-  m_c_RoBiggerThanR02_EI = 1;
+  m_a_RhoAshBiggerThanRhoAsh2 = 0;
+  m_b_RhoAshBiggerThanRhoAsh2 = 1;
+  m_c_RhoAshBiggerThanRhoAsh2 = 1;
 
-  m_a_DensityElasticityRelationship = 0;
-  m_b_DensityElasticityRelationship = 1;
-  m_c_DensityElasticityRelationship = 1;
+  m_a_DER = 0;
+  m_b_DER = 1;
+  m_c_DER = 1;
 
   m_Egap = 1;
   m_StepsNumber = 4;
-  m_RO1_EI = m_RO2_EI = 0;
+  m_RhoAsh1 = m_RhoAsh2 = 0;
 
   m_DensityIntervalsNumber = THREE_INTERVALS;
 
-  m_a_EI = 0;
-  m_b_EI = 1;
-  m_c_EI = 1;
+  m_a_OneInterval = 0;
+  m_b_OneInterval = 1;
+  m_c_OneInterval = 1;
 
   m_YoungModuleCalculationModality = HU_INTEGRATION;
   m_DensityRelationshipListbox = INTERCEPT_SLOPE;
@@ -145,25 +145,25 @@ mafOp(label)
   m_OriginalVMEMesh = NULL;
 
   //Ro Calibration Flag
-  m_ROCalibrationCorrectionIsActive = 0;
-  m_ROCalibrationCorrectionType       = 0; //equals to single interval
+  m_RhoCalibrationCorrectionIsActive = 0;
+  m_RhoCalibrationCorrectionType       = 0; //equals to single interval
 
-  m_RO1_CalibrationCorrection = 0;
-  m_RO2_CalibrationCorrection = 0;
+  m_RhoQCT1 = 0;
+  m_RhoQCT2 = 0;
 
   //single interval ro calibration
   m_a_CalibrationCorrection = 0;
   m_b_CalibrationCorrection = 1;
 
   //three intervals ro calibration
-  m_a_RoLessThanR01_CalibrationCorrection = 0;
-  m_b_RoLessThanR01_CalibrationCorrection = 1;
+  m_a_RhoQCTLessThanRhoQCT1 = 0;
+  m_b_RhoQCTLessThanRhoQCT1 = 1;
 
-  m_a_RoBetweenR01AndR02_CalibrationCorrection = 0;
-  m_b_RoBetweenR01AndR02_CalibrationCorrection = 1;
+  m_a_RhoQCTBetweenRhoQCT1AndRhoQCT2 = 0;
+  m_b_RhoQCTBetweenRhoQCT1AndRhoQCT2 = 1;
 
-  m_a_RoBiggerThanR02_CalibrationCorrection = 0;
-  m_b_RoBiggerThanR02_CalibrationCorrection = 1;
+  m_a_RhoQCTBiggerThanRhoQCT2 = 0;
+  m_b_RhoQCTBiggerThanRhoQCT2 = 1;
 }
 //----------------------------------------------------------------------------
 lhpOpBonemat::~lhpOpBonemat()
@@ -322,104 +322,99 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Label("CT densitometric calibration", true);
   m_Gui->Label("RhoQCT = a + b * HU", false);
   
-  m_Gui->Double(ID_RO_INTERCEPT, "a", &m_ROIntercept);
-  m_Gui->Double(ID_RO_SLOPE, "b", &m_ROSlope)   ;
+  m_Gui->Double(ID_RO_INTERCEPT, "a", &m_RhoIntercept);
+  m_Gui->Double(ID_RO_SLOPE, "b", &m_RhoSlope)   ;
   m_Gui->Divider(2);
   
   m_Gui->Enable(ID_RO_INTERCEPT, true);
   m_Gui->Enable(ID_RO_SLOPE, true);
 
   // flag ro correction
-  m_Gui->Bool(ID_FLAG_RO_CORRECTION, "apply calibration correction", &m_ROCalibrationCorrectionIsActive,1);
+  m_Gui->Bool(ID_FLAG_RO_CORRECTION, "apply calibration correction", &m_RhoCalibrationCorrectionIsActive,1);
   m_Gui->Divider(2);
   // ro correction (if yes) enable 3x2 gui->double
   //////////////////////////////////////////////////////////////////////////
   
   m_Gui->Divider(2);
   m_Gui->Label("Correction of the calibration",true);
-  m_Gui->Label("Rho-ash = a + b * RhoQCT",false);
+  m_Gui->Label("RhoAsh = a + b * RhoQCT",false);
   const wxString densityChoicesRoCalibration[] = {"one interval", "three intervals"};
-  m_Gui->Combo(ID_TYPE_RO_CORRECTION,"", &m_ROCalibrationCorrectionType,2,densityChoicesRoCalibration);  
-  m_Gui->Divider(2);
+  m_Gui->Combo(ID_TYPE_RO_CORRECTION,"", &m_RhoCalibrationCorrectionType,2,densityChoicesRoCalibration);  
+  m_Gui->Divider();
 
-  m_Gui->Double(ID_RO_CORRECTION_DENSITY_INTERVAL_0, "RO1",&m_RO1_CalibrationCorrection);
-  m_Gui->Double(ID_RO_CORRECTION_DENSITY_INTERVAL_1, "RO2",&m_RO2_CalibrationCorrection);
+  m_Gui->Double(ID_RO_CORRECTION_DENSITY_INTERVAL_0, "RhoQCT1",&m_RhoQCT1);
+  m_Gui->Double(ID_RO_CORRECTION_DENSITY_INTERVAL_1, "RhoQCT2",&m_RhoQCT2);
 
+  m_Gui->Divider();
   m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_SINGLE_0, "a", &m_a_CalibrationCorrection);
   m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_SINGLE_1, "b", &m_b_CalibrationCorrection);
   
-  m_Gui->Label("RO < RO1");
-  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_0, "a", &m_a_RoLessThanR01_CalibrationCorrection);
-  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_1, "b", &m_b_RoLessThanR01_CalibrationCorrection);
+  m_Gui->Divider();
+
+  m_Gui->Label("RhoQCT < RhoQCT1");
+  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_0, "a", &m_a_RhoQCTLessThanRhoQCT1);
+  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_1, "b", &m_b_RhoQCTLessThanRhoQCT1);
   
-  m_Gui->Label("RO1 <= RO <= RO2");
-  m_Gui->Double(ID_RO_CORRECTION_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_0, "a", &m_a_RoBetweenR01AndR02_CalibrationCorrection);
-  m_Gui->Double(ID_RO_CORRECTION_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_1, "b", &m_b_RoBetweenR01AndR02_CalibrationCorrection);
+  m_Gui->Label("RhoQCT1 <= RhoQCT <= RhoQCT2");
+  m_Gui->Double(ID_RO_CORRECTION_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_0, "a", &m_a_RhoQCTBetweenRhoQCT1AndRhoQCT2);
+  m_Gui->Double(ID_RO_CORRECTION_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_1, "b", &m_b_RhoQCTBetweenRhoQCT1AndRhoQCT2);
   
-  m_Gui->Label("RO > RO2");
-  m_Gui->Double(ID_RO_CORRECTION_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_0, "a", &m_a_RoBiggerThanR02_CalibrationCorrection);
-  m_Gui->Double(ID_RO_CORRECTION_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_1, "b", &m_b_RoBiggerThanR02_CalibrationCorrection);
+  m_Gui->Label("RhoQCT > RhoQCT2");
+  m_Gui->Double(ID_RO_CORRECTION_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_0, "a", &m_a_RhoQCTBiggerThanRhoQCT2);
+  m_Gui->Double(ID_RO_CORRECTION_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_1, "b", &m_b_RhoQCTBiggerThanRhoQCT2);
   
   m_Gui->Enable(ID_TYPE_RO_CORRECTION,false);
-  EnableRoCorrectionDensityInterval(false);
-  EnableRoCorrectionSingleInterval(false);
-  EnableRoCorrectionThreeInterval(false);
+  EnableRhoQCTDensityInterval(false);
+  EnableRhoQCTSingleInterval(false);
+  EnableRhoQCTThreeIntervals(false);
   m_Gui->Divider(2);
   //////////////////////////////////////////////////////////////////////////
 
-  const wxString choices[] = {"HU integration", "E integration"};
-  m_Gui->Label("Young's modulus ( E ) calculation modality");
-  m_Gui->Combo(ID_YOUNG_MODULE_CALCULATION_MODALITY, "", &m_YoungModuleCalculationModality, 2, choices);
-  m_Gui->Divider(2);
   m_Gui->Label("density-elasticity relationship", true);
-  m_Gui->Label("E = a + b * Rho-ash^c", false);
-  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V2_0, "a", &m_a_DensityElasticityRelationship);    
-  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V2_1, "b", &m_b_DensityElasticityRelationship);    
-  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V2_2, "c", &m_c_DensityElasticityRelationship);    
-
-
-  m_Gui->Divider(2);
-  m_Gui->Label("density intervals for E integration");
+  m_Gui->Label("E = a + b * RhoAsh^c", false);
+  
   const wxString densityChoices[] = {"one interval", "three intervals"};
   m_Gui->Combo(ID_DENSITY_INTERVALS_NUMBER,"", &m_DensityIntervalsNumber,2,densityChoices);  
   m_Gui->Divider(2);
 
-  m_Gui->Double(ID_DENSITY_INTERVAL_0, "RO1",&m_RO1_EI);
-  m_Gui->Double(ID_DENSITY_INTERVAL_1, "RO2",&m_RO2_EI);
+  m_Gui->Double(ID_DENSITY_INTERVAL_0, "RhoAsh1",&m_RhoAsh1);
+  m_Gui->Double(ID_DENSITY_INTERVAL_1, "RhoAsh2",&m_RhoAsh2);
+    
+  m_Gui->Divider();
+  
+  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_0, "a", &m_a_OneInterval);
+  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_1, "b", &m_b_OneInterval);
+  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_2, "c", &m_c_OneInterval);
 
-  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_0, "a", &m_a_EI);
-  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_1, "b", &m_b_EI);
-  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_2, "c", &m_c_EI);
-
-  m_Gui->Label("RO < RO1");
-  m_Gui->Double(ID_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_0, "a", &m_a_RoLessThanRO1_EI);
-  m_Gui->Double(ID_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_1, "b", &m_b_RoLessThanR01_EI);
-  m_Gui->Double(ID_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_2, "c", &m_c_RoLessThanR01_EI);
+  m_Gui->Label("RhoAsh < RhoAsh1");
+  m_Gui->Double(ID_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_0, "a", &m_a_RhoAshLessThanRhoAsh1);
+  m_Gui->Double(ID_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_1, "b", &m_b_RhoAshLessThanRhoAsh1);
+  m_Gui->Double(ID_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_2, "c", &m_c_RhoAshLessThanRhoAsh1);
   
   
-  m_Gui->Label("RO1 <= RO <= RO2");
-  m_Gui->Double(ID_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_0, "a", &m_a_RoBetweenR01andR02_EI);
-  m_Gui->Double(ID_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_1, "b", &m_b_RoBetweenR01andR02_EI);
-  m_Gui->Double(ID_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_2, "c", &m_c_RoBetweenR01andR02_EI);
+  m_Gui->Label("RhoAsh1 <= RhoAsh <= RhoAsh2");
+  m_Gui->Double(ID_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_0, "a", &m_a_RhoAshBetweenRhoAsh1andRhoAsh2);
+  m_Gui->Double(ID_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_1, "b", &m_b_RhoAshBetweenRhoAsh1andRhoAsh2);
+  m_Gui->Double(ID_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_2, "c", &m_c_RhoAshBetweenRhoAsh1andRhoAsh2);
 
-  m_Gui->Label("RO > RO2");
-  m_Gui->Double(ID_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_0, "a", &m_a_RoBiggerThanR02_EI);
-  m_Gui->Double(ID_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_1, "b", &m_b_RoBiggerThanR02_EI);
-  m_Gui->Double(ID_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_2, "c", &m_c_RoBiggerThanR02_EI);
+  m_Gui->Label("RhoAsh > RhoAsh2");
+  m_Gui->Double(ID_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_0, "a", &m_a_RhoAshBiggerThanRhoAsh2);
+  m_Gui->Double(ID_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_1, "b", &m_b_RhoAshBiggerThanRhoAsh2);
+  m_Gui->Double(ID_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_2, "c", &m_c_RhoAshBiggerThanRhoAsh2);
 
   
   m_Gui->Divider(2);
 
 
-  EnableV2(true);
+  //   EnableTwoIntervals(true);
 
   
-  m_Gui->Enable(ID_DENSITY_INTERVAL_0, false);
-  m_Gui->Enable(ID_DENSITY_INTERVAL_1, false);
+  m_Gui->Enable(ID_DENSITY_INTERVAL_0, true);
+  m_Gui->Enable(ID_DENSITY_INTERVAL_1, true);
 
-  m_Gui->Enable(ID_DENSITY_INTERVALS_NUMBER, false);
+  m_Gui->Enable(ID_DENSITY_INTERVALS_NUMBER, true);
   
-  DisableV3();
+  DisableRhoAshThreeIntervals();
 
   /*m_Gui->Label("second coefficients vector");
   m_Gui->Double(ID_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_V3, "", m_Ea1_Eb1_Ec1_V3);
@@ -428,7 +423,9 @@ void lhpOpBonemat::CreateGui()
 
 
   m_Gui->Divider(); 
-
+  const wxString choices[] = {"HU integration", "E integration"};
+  m_Gui->Label("Young's modulus ( E ) calculation modality","",TRUE);
+  m_Gui->Combo(ID_YOUNG_MODULE_CALCULATION_MODALITY, "", &m_YoungModuleCalculationModality, 2, choices);
   m_Gui->Label("integration steps");
   m_Gui->Integer(ID_STEPS_NUMBER, "", &m_StepsNumber);
   m_Gui->Label("gap value");
@@ -522,17 +519,17 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
 
       case ID_DENSITY_INTERVALS_NUMBER	:
       {
-        UpdateDensityIntegrationGui();        
+        UpdateRhoAshGuiOnRhoAshIntervalsNumberChange();        
       }
       break;
            
       case ID_FLAG_RO_CORRECTION:
       case ID_TYPE_RO_CORRECTION:
         {
-          m_Gui->Enable(ID_TYPE_RO_CORRECTION,m_ROCalibrationCorrectionIsActive?true:false);
-          EnableRoCorrectionDensityInterval(m_ROCalibrationCorrectionIsActive?true:false);
-          EnableRoCorrectionSingleInterval(m_ROCalibrationCorrectionIsActive && m_ROCalibrationCorrectionType == SINGLE_INTERVAL);
-          EnableRoCorrectionThreeInterval(m_ROCalibrationCorrectionIsActive && m_ROCalibrationCorrectionType == THREE_INTERVALS);
+          m_Gui->Enable(ID_TYPE_RO_CORRECTION,m_RhoCalibrationCorrectionIsActive?true:false);
+          EnableRhoQCTDensityInterval(m_RhoCalibrationCorrectionIsActive?true:false);
+          EnableRhoQCTSingleInterval(m_RhoCalibrationCorrectionIsActive && m_RhoCalibrationCorrectionType == SINGLE_INTERVAL);
+          EnableRhoQCTThreeIntervals(m_RhoCalibrationCorrectionIsActive && m_RhoCalibrationCorrectionType == THREE_INTERVALS);
         }
         break;
 
@@ -541,22 +538,13 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
         if (m_YoungModuleCalculationModality == HU_INTEGRATION)
         {
 
-          EnableV2(true);
-
-          m_Gui->Enable(ID_DENSITY_INTERVALS_NUMBER, false);
-          m_Gui->Enable(ID_DENSITY_INTERVAL_0, false);
-          m_Gui->Enable(ID_DENSITY_INTERVAL_1, false);
-
-          DisableV3();
+            
+            // DisableRhoAshThreeIntervals();
 
         } 
         else if (m_YoungModuleCalculationModality == YOUNG_MODULE_INTEGRATION )
         {
-          m_Gui->Enable(ID_DENSITY_INTERVALS_NUMBER, true);
-          
-          EnableV2(false);
-
-          UpdateDensityIntegrationGui();
+            // UpdateRhoAshGuiOnRhoAshIntervalsNumberChange();
         }
       }
       break;
@@ -640,6 +628,7 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
 void lhpOpBonemat::OpStop(int result)
 //----------------------------------------------------------------------------
 {
+  mafDEL(m_OriginalVMEMesh);
 	HideGui();
 	mafEventMacro(mafEvent(this,result));        
 }
@@ -710,11 +699,11 @@ int lhpOpBonemat::HUIntegration()
   
   FILE  *freq_fp;
   
-  ID_TYPE  numElements, numMats, id, i, numElementNodes;
+  ID_TYPE  numElements, numMats, elementNumber, i, numElementNodes;
   Element *element;  
   DataSet *dataset;
   double HU, E, ro, Ni = 0.3;
-  ElementProp *roSource, **materialProperties;
+  ElementProp *rhoSource, **materialProperties;
   ID_TYPE freq;
   
   if ( (freq_fp = fopen(m_FrequencyFileName.GetCStr(), "w")) == NULL)
@@ -875,12 +864,12 @@ int lhpOpBonemat::HUIntegration()
   logStringStream.str("");*/
 
   // Array containing properties for each element from 0 to numElements - 1
-  roSource = new ElementProp[numElements];
+  rhoSource = new ElementProp[numElements];
 
   vtkIntArray *arrayMaterial = NULL;
   vtkDoubleArray *arrayE = NULL;
 	vtkDoubleArray *arrayPoisson = NULL;
-  vtkDoubleArray *arrayRo = NULL;
+  vtkDoubleArray *arrayRho = NULL;
   
 	
   vtkNEW(arrayMaterial);
@@ -892,8 +881,8 @@ int lhpOpBonemat::HUIntegration()
   vtkNEW(arrayPoisson);
   arrayPoisson->SetName("NUXY");
 
-  vtkNEW(arrayRo);
-  arrayRo->SetName("DENS");
+  vtkNEW(arrayRho);
+  arrayRho->SetName("DENS");
 
 
  
@@ -905,12 +894,12 @@ int lhpOpBonemat::HUIntegration()
   if (m_DensityRelationshipListbox = POINTS_COORDINATES)
   {
     ROSlope = (m_HU1_d1_el1 - m_HU0_d0_el1) / double(m_HU1_d1_el0 - m_HU0_d0_el0);
-    ROIntercept = m_HU0_d0_el1 - m_HU0_d0_el0 * m_ROSlope;
+    ROIntercept = m_HU0_d0_el1 - m_HU0_d0_el0 * m_RhoSlope;
   }
   else
   {
-    ROSlope = m_ROSlope;
-    ROIntercept = m_ROIntercept;
+    ROSlope = m_RhoSlope;
+    ROIntercept = m_RhoIntercept;
   }
 
 
@@ -923,10 +912,10 @@ int lhpOpBonemat::HUIntegration()
   //mafEventMacro(mafEvent(this,PROGRESSBAR_SET_TEXT, ""));
   long progress = 0;
 
-  for (id=0; id < numElements; id++) 
+  for (elementNumber=0; elementNumber < numElements; elementNumber++) 
   {  
     vtkCell *cell;
-    cell = inUnstructuredGrid->GetCell(id);
+    cell = inUnstructuredGrid->GetCell(elementNumber);
 
     
     numElementNodes = cell->GetNumberOfPoints();
@@ -964,62 +953,97 @@ int lhpOpBonemat::HUIntegration()
      element->Delete();
      delete element;
      
-    // ro = a + b * HU
-    roSource[id].ro = ROIntercept + ROSlope * HU;
-    arrayRo->InsertNextTuple1(ROIntercept + ROSlope * HU);
-    if (arrayRo->GetValue(id) <= 0) 
+    // rho = a + b * HU
+    rhoSource[elementNumber].rho = ROIntercept + ROSlope * HU;
+    arrayRho->InsertNextTuple1(ROIntercept + ROSlope * HU);
+    if (arrayRho->GetValue(elementNumber) <= 0) 
     {
-      arrayRo->SetValue(id, 1e-6);
-      roSource[id].ro = 1e-6;
+      arrayRho->SetValue(elementNumber, 1e-6);
+      rhoSource[elementNumber].rho = 1e-6;
     }
 
     //RO CORRECTION///////////////////////////////////////////////////////////////
-    // roSource[id].ro, arrayRo->GetValue(id)
-    if(m_ROCalibrationCorrectionIsActive)
+    // rhoSource[elementNumber].rho, arrayRho->GetValue(elementNumber)
+    if(m_RhoCalibrationCorrectionIsActive)
     {
-      if(m_ROCalibrationCorrectionType == SINGLE_INTERVAL)
+      if(m_RhoCalibrationCorrectionType == SINGLE_INTERVAL)
       {
-        roSource[id].ro = m_a_CalibrationCorrection + m_b_CalibrationCorrection * roSource[id].ro;
-        arrayRo->SetValue(id,roSource[id].ro);
+        rhoSource[elementNumber].rho = m_a_CalibrationCorrection + m_b_CalibrationCorrection * rhoSource[elementNumber].rho;
+        arrayRho->SetValue(elementNumber,rhoSource[elementNumber].rho);
       }
-      else if (m_ROCalibrationCorrectionType == THREE_INTERVALS)
+      else if (m_RhoCalibrationCorrectionType == THREE_INTERVALS)
       {
-        if (roSource[id].ro < m_RO1_CalibrationCorrection)
+        if (rhoSource[elementNumber].rho < m_RhoQCT1)
         {
-          roSource[id].ro = m_a_RoLessThanR01_CalibrationCorrection + m_b_RoLessThanR01_CalibrationCorrection * roSource[id].ro;
-          arrayRo->SetValue(id,roSource[id].ro);
+          rhoSource[elementNumber].rho = m_a_RhoQCTLessThanRhoQCT1 + m_b_RhoQCTLessThanRhoQCT1 * rhoSource[elementNumber].rho;
+          arrayRho->SetValue(elementNumber,rhoSource[elementNumber].rho);
         } 
-        else if (m_RO1_CalibrationCorrection <= roSource[id].ro  && roSource[id].ro <= m_RO2_CalibrationCorrection)
+        else if (m_RhoQCT1 <= rhoSource[elementNumber].rho  && rhoSource[elementNumber].rho <= m_RhoQCT2)
         {
-          roSource[id].ro = m_a_RoBetweenR01AndR02_CalibrationCorrection + m_b_RoBetweenR01AndR02_CalibrationCorrection * roSource[id].ro;
-          arrayRo->SetValue(id,roSource[id].ro);
+          rhoSource[elementNumber].rho = m_a_RhoQCTBetweenRhoQCT1AndRhoQCT2 + m_b_RhoQCTBetweenRhoQCT1AndRhoQCT2 * rhoSource[elementNumber].rho;
+          arrayRho->SetValue(elementNumber,rhoSource[elementNumber].rho);
         }
-        else if (roSource[id].ro > m_RO2_CalibrationCorrection)
+        else if (rhoSource[elementNumber].rho > m_RhoQCT2)
         {
-          roSource[id].ro = m_a_RoBiggerThanR02_CalibrationCorrection + m_b_RoBiggerThanR02_CalibrationCorrection * roSource[id].ro;
-          arrayRo->SetValue(id,roSource[id].ro);
+          rhoSource[elementNumber].rho = m_a_RhoQCTBiggerThanRhoQCT2 + m_b_RhoQCTBiggerThanRhoQCT2 * rhoSource[elementNumber].rho;
+          arrayRho->SetValue(elementNumber,rhoSource[elementNumber].rho);
         }
       }
 
     }
     
     //////////////////////////////////////////////////////////////////////////////
+    // E = a + b * rho ^ c
 
-    // E = a + b * ro ^ c
-    roSource[id].E = m_a_DensityElasticityRelationship + m_b_DensityElasticityRelationship * pow(roSource[id].ro, m_c_DensityElasticityRelationship);
-    arrayE->InsertNextTuple1(m_a_DensityElasticityRelationship + m_b_DensityElasticityRelationship * pow((float)arrayRo->GetValue(id), (float)m_c_DensityElasticityRelationship));
-    if (arrayE->GetValue(id) <= 0) 
+    // Element Properties: element ID, density, Young Module
+    //typedef struct {
+    //  ID_TYPE elementID;  
+    //  double rho;
+    //  double E;
+    //} ElementProp;
+
+    double rho = rhoSource[elementNumber].rho;
+    double youngModule = -1;
+    
+    if (m_DensityIntervalsNumber == SINGLE_INTERVAL)
     {
-      arrayE->SetValue(id, 1e-6);
-      roSource[id].E = 1e-6;
+       youngModule = m_a_OneInterval + m_b_OneInterval * pow(rho, m_c_OneInterval); 
     } 
 
-    roSource[id].id = id;
+    else if (m_DensityIntervalsNumber == THREE_INTERVALS)
+    {
+      if (rho < m_RhoAsh1)
+      {
+        youngModule = m_a_RhoAshLessThanRhoAsh1 + 
+          m_b_RhoAshLessThanRhoAsh1 * pow(rho, m_c_RhoAshLessThanRhoAsh1);
+      } 
+      else if (m_RhoAsh1 <= rho  && rho <= m_RhoAsh2)
+      {
+        youngModule = m_a_RhoAshBetweenRhoAsh1andRhoAsh2 + 
+          m_b_RhoAshBetweenRhoAsh1andRhoAsh2 * pow(rho, m_c_RhoAshBetweenRhoAsh1andRhoAsh2);
 
+      }
+      else if (rho > m_RhoAsh2)
+      {
+        youngModule = m_a_RhoAshBiggerThanRhoAsh2 + 
+          m_b_RhoAshBiggerThanRhoAsh2 * pow(rho, m_c_RhoAshBiggerThanRhoAsh2);
+
+      }
+    }
+
+    if (youngModule <= 0) {
+      youngModule = 1e-6;
+    } 
+
+    arrayE->InsertNextTuple1(youngModule);
+
+    rhoSource[elementNumber].E = youngModule;
+    rhoSource[elementNumber].elementID = elementNumber;
+    
 		arrayPoisson->InsertNextTuple1(Ni);
     arrayMaterial->InsertNextTuple1(0);
 
-    progress = (id + 1) * 100 / numElements;
+    progress = (elementNumber + 1) * 100 / numElements;
     mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,progress));
 
   }
@@ -1047,19 +1071,19 @@ int lhpOpBonemat::HUIntegration()
   outCellData->AddArray(arrayMaterial);
   outCellData->AddArray(arrayE);
 	outCellData->AddArray(arrayPoisson);
-  outCellData->AddArray(arrayRo);
+  outCellData->AddArray(arrayRho);
 
 	outputUG->Modified();
   outputUG->Update();
 	
   // COMPUTE MATERIALS & WRITE FREQUENCY FILE
 
-  qsort(roSource, numElements, sizeof(ElementProp), compareE);
+  qsort(rhoSource, numElements, sizeof(ElementProp), compareE);
 
-  /*logStringStream << "RO2: " << roSource[0].ro << "\n";
-  logStringStream << "RO1: " << roSource[numElements - 1].ro << "\n";
-  logStringStream << "Emax: " << roSource[0].E << "\n";
-  logStringStream << "Emin: " << roSource[numElements - 1].E << "\n\n";*/
+  /*logStringStream << "RO2: " << rhoSource[0].ro << "\n";
+  logStringStream << "RO1: " << rhoSource[numElements - 1].ro << "\n";
+  logStringStream << "Emax: " << rhoSource[0].E << "\n";
+  logStringStream << "Emin: " << rhoSource[numElements - 1].E << "\n\n";*/
 
   /*logStringStream << "-- Writing frequency file\n";
   mafLogMessage("%s",logStringStream.str().c_str());
@@ -1069,16 +1093,16 @@ int lhpOpBonemat::HUIntegration()
 
   freq = 0;
   numMats = 1;
-  ro = roSource[0].ro;
-  E = roSource[0].E;  
-  materialProperties[0] = &roSource[0];
-  for (id = 0; id < numElements; id++) {
-    if (E - roSource[id].E > m_Egap) {
+  ro = rhoSource[0].rho;
+  E = rhoSource[0].E;  
+  materialProperties[0] = &rhoSource[0];
+  for (elementNumber = 0; elementNumber < numElements; elementNumber++) {
+    if (E - rhoSource[elementNumber].E > m_Egap) {
       fprintf(freq_fp, "%f \t %f \t %d\n", ro, E, freq); 
-      materialProperties[numMats] = &roSource[id];
+      materialProperties[numMats] = &rhoSource[elementNumber];
       numMats++;
-      E = roSource[id].E;
-      ro = roSource[id].ro;
+      E = rhoSource[elementNumber].E;
+      ro = rhoSource[elementNumber].rho;
       freq = 1;
     }
     else
@@ -1132,7 +1156,7 @@ int lhpOpBonemat::HUIntegration()
       else if(stringVector[i] == mafString("NUXY"))
         darr->InsertValue(j, 0.3);
       else if(stringVector[i] == mafString("DENS"))
-        darr->InsertValue(j, materialProperties[j]->ro);
+        darr->InsertValue(j, materialProperties[j]->rho);
        
     }
     // add the ith data array to the field data
@@ -1161,10 +1185,11 @@ int lhpOpBonemat::HUIntegration()
         index = currentE;
       }      
     }
+
     double val = vtkDoubleArray::SafeDownCast(fdata->GetArray("EX"))->GetValue(index);
     arrayE->SetTuple1(currentCell,val);
     val = vtkDoubleArray::SafeDownCast(fdata->GetArray("DENS"))->GetValue(index);
-    arrayRo->SetValue(currentCell,val);
+    arrayRho->SetValue(currentCell,val);
   
     int materialAnsysId = index + 1;
     arrayMaterial->SetValue(currentCell,materialAnsysId);
@@ -1181,7 +1206,7 @@ int lhpOpBonemat::HUIntegration()
   vtkDEL(arrayMaterial);
   vtkDEL(arrayE);
   vtkDEL(arrayPoisson);
-  vtkDEL(arrayRo);
+  vtkDEL(arrayRho);
 
   if(dataset)
   {
@@ -1189,7 +1214,7 @@ int lhpOpBonemat::HUIntegration()
     delete dataset;
   }
 
-  delete [] roSource;
+  delete [] rhoSource;
   delete [] materialProperties;
 
   //logStringStream <<"Number of materials: " << numMats << std::endl << std::endl;
@@ -1204,11 +1229,7 @@ int lhpOpBonemat::YoungModuleIntegration()
 {
   std::ostringstream logStringStream;
   logStringStream.precision(decimalNumbersNumber);
-  
-
-  
-
-  
+    
   FILE  *freq_fp;
   
   ID_TYPE numElements, numMats, id, i, numElementNodes;
@@ -1382,7 +1403,7 @@ int lhpOpBonemat::YoungModuleIntegration()
   mafLogMessage("%s",logStringStream.str().c_str());
   logStringStream.str("");
 
-  // considered this for ro density value
+  // considered this for rho density value
   ElementProp *roSource;
   ElementProp **materialProperties;
 
@@ -1414,12 +1435,12 @@ int lhpOpBonemat::YoungModuleIntegration()
   if (m_DensityRelationshipListbox = POINTS_COORDINATES)
   {
     ROSlope = (m_HU1_d1_el1 - m_HU0_d0_el1) / double(m_HU1_d1_el0 - m_HU0_d0_el0);
-    ROIntercept = m_HU0_d0_el1 - m_HU0_d0_el0 * m_ROSlope;
+    ROIntercept = m_HU0_d0_el1 - m_HU0_d0_el0 * m_RhoSlope;
   }
   else
   {
-    ROSlope = m_ROSlope;
-    ROIntercept = m_ROIntercept;
+    ROSlope = m_RhoSlope;
+    ROIntercept = m_RhoIntercept;
   }
 
   if (GetTestMode() == false)
@@ -1470,41 +1491,41 @@ int lhpOpBonemat::YoungModuleIntegration()
     element->Delete();
     delete element;
 
-    // ro = a + b * HU
-    roSource[id].ro = ROIntercept + ROSlope * HU;
+    // rho = a + b * HU
+    roSource[id].rho = ROIntercept + ROSlope * HU;
     arrayRo->InsertNextTuple1(ROIntercept + ROSlope * HU);
     if (arrayRo->GetValue(id) <= 0) 
     {
       arrayRo->SetValue(id, 1e-6);
-      roSource[id].ro = 1e-6;
+      roSource[id].rho = 1e-6;
     }
 
     
-    // E = a + b * ro ^ c
+    // E = a + b * rho ^ c
 
     if (m_DensityIntervalsNumber == SINGLE_INTERVAL)
     {
-      roSource[id].E = m_a_EI + m_b_EI * pow(roSource[id].ro, m_c_EI);
+      roSource[id].E = m_a_OneInterval + m_b_OneInterval * pow(roSource[id].rho, m_c_OneInterval);
       arrayE->InsertNextTuple1(roSource[id].E);
     } 
     else if (m_DensityIntervalsNumber == THREE_INTERVALS)
     {
-      if (roSource[id].ro < m_RO1_EI)
+      if (roSource[id].rho < m_RhoAsh1)
       {
-        roSource[id].E = m_a_RoLessThanRO1_EI + 
-        m_b_RoLessThanR01_EI * pow(roSource[id].ro, m_c_RoLessThanR01_EI);
+        roSource[id].E = m_a_RhoAshLessThanRhoAsh1 + 
+        m_b_RhoAshLessThanRhoAsh1 * pow(roSource[id].rho, m_c_RhoAshLessThanRhoAsh1);
         arrayE->InsertNextTuple1(roSource[id].E);
       } 
-      else if (m_RO1_EI <= roSource[id].ro  && roSource[id].ro <= m_RO2_EI)
+      else if (m_RhoAsh1 <= roSource[id].rho  && roSource[id].rho <= m_RhoAsh2)
       {
-        roSource[id].E = m_a_RoBetweenR01andR02_EI + 
-        m_b_RoBetweenR01andR02_EI * pow(roSource[id].ro, m_c_RoBetweenR01andR02_EI);
+        roSource[id].E = m_a_RhoAshBetweenRhoAsh1andRhoAsh2 + 
+        m_b_RhoAshBetweenRhoAsh1andRhoAsh2 * pow(roSource[id].rho, m_c_RhoAshBetweenRhoAsh1andRhoAsh2);
         arrayE->InsertNextTuple1(roSource[id].E);
       }
-      else if (roSource[id].ro > m_RO2_EI)
+      else if (roSource[id].rho > m_RhoAsh2)
       {
-        roSource[id].E = m_a_RoBiggerThanR02_EI + 
-        m_b_RoBiggerThanR02_EI * pow(roSource[id].ro, m_c_RoBiggerThanR02_EI);
+        roSource[id].E = m_a_RhoAshBiggerThanRhoAsh2 + 
+        m_b_RhoAshBiggerThanRhoAsh2 * pow(roSource[id].rho, m_c_RhoAshBiggerThanRhoAsh2);
         arrayE->InsertNextTuple1(roSource[id].E);
       }
     }
@@ -1515,7 +1536,7 @@ int lhpOpBonemat::YoungModuleIntegration()
       roSource[id].E = 1e-6;
     } 
 
-    roSource[id].id = id;
+    roSource[id].elementID = id;
 
 		arrayPoisson->InsertNextTuple1(Ni);
     arrayMaterial->InsertNextTuple1(0);
@@ -1540,66 +1561,64 @@ int lhpOpBonemat::YoungModuleIntegration()
   {
     Scalars *datasetScalars  = dataset->GetScalars();
     HU =  datasetScalars->GetScalar(pointID);
-    // ro = a + b * HU
-    double density = m_ROIntercept + m_ROSlope * HU;
-    if (density <= 0) {
-      density = 1e-6;
+    // rho = a + b * HU
+    double rho = m_RhoIntercept + m_RhoSlope * HU;
+    if (rho <= 0) {
+      rho = 1e-6;
     }
     //RO CORRECTION///////////////////////////////////////////////////////////////
-    // roSource[id].ro, arrayRo->GetValue(id)
-    if(m_ROCalibrationCorrectionIsActive)
+    // roSource[id].rho, arrayRo->GetValue(id)
+    if(m_RhoCalibrationCorrectionIsActive)
     {
-      if(m_ROCalibrationCorrectionType == SINGLE_INTERVAL)
+      if(m_RhoCalibrationCorrectionType == SINGLE_INTERVAL)
       {
-        density = m_a_CalibrationCorrection + m_b_CalibrationCorrection * density;
+        rho = m_a_CalibrationCorrection + m_b_CalibrationCorrection * rho;
       }
-      else if (m_ROCalibrationCorrectionType == THREE_INTERVALS)
+      else if (m_RhoCalibrationCorrectionType == THREE_INTERVALS)
       {
-        if (density < m_RO1_CalibrationCorrection)
+        if (rho < m_RhoQCT1)
         {
-          density = m_a_RoLessThanR01_CalibrationCorrection + m_b_RoLessThanR01_CalibrationCorrection * density;
+          rho = m_a_RhoQCTLessThanRhoQCT1 + m_b_RhoQCTLessThanRhoQCT1 * rho;
         } 
-        else if (m_RO1_CalibrationCorrection <= density  && density <= m_RO2_CalibrationCorrection)
+        else if (m_RhoQCT1 <= rho  && rho <= m_RhoQCT2)
         {
-          density = m_a_RoBetweenR01AndR02_CalibrationCorrection + m_b_RoBetweenR01AndR02_CalibrationCorrection * density;
+          rho = m_a_RhoQCTBetweenRhoQCT1AndRhoQCT2 + m_b_RhoQCTBetweenRhoQCT1AndRhoQCT2 * rho;
         }
-        else if (density > m_RO2_CalibrationCorrection)
+        else if (rho > m_RhoQCT2)
         {
-          density = m_a_RoBiggerThanR02_CalibrationCorrection + m_b_RoBiggerThanR02_CalibrationCorrection * density;
+          rho = m_a_RhoQCTBiggerThanRhoQCT2 + m_b_RhoQCTBiggerThanRhoQCT2 * rho;
         }
       }
-
     }
 
     //////////////////////////////////////////////////////////////////////////////
-    // E = a + b * ro ^ c
+    // E = a + b * rho ^ c
 
     double youngModule;
     
     if (m_DensityIntervalsNumber == SINGLE_INTERVAL)
     {
-      youngModule = m_a_EI +
-        m_b_EI * pow(density, m_c_EI);
+      youngModule = m_a_OneInterval +
+        m_b_OneInterval * pow(rho, m_c_OneInterval);
     } 
 
     else if (m_DensityIntervalsNumber == THREE_INTERVALS)
     {
-      if (density < m_RO1_EI)
+      if (rho < m_RhoAsh1)
       {
-        youngModule = m_a_RoLessThanRO1_EI + 
-          m_b_RoLessThanR01_EI * pow(density, m_c_RoLessThanR01_EI);
-        
+        youngModule = m_a_RhoAshLessThanRhoAsh1 + 
+          m_b_RhoAshLessThanRhoAsh1 * pow(rho, m_c_RhoAshLessThanRhoAsh1);
       } 
-      else if (m_RO1_EI <= density  && density <= m_RO2_EI)
+      else if (m_RhoAsh1 <= rho  && rho <= m_RhoAsh2)
       {
-        youngModule = m_a_RoBetweenR01andR02_EI + 
-          m_b_RoBetweenR01andR02_EI * pow(density, m_c_RoBetweenR01andR02_EI);
+        youngModule = m_a_RhoAshBetweenRhoAsh1andRhoAsh2 + 
+          m_b_RhoAshBetweenRhoAsh1andRhoAsh2 * pow(rho, m_c_RhoAshBetweenRhoAsh1andRhoAsh2);
 
       }
-      else if (density > m_RO2_EI)
+      else if (rho > m_RhoAsh2)
       {
-        youngModule = m_a_RoBiggerThanR02_EI + 
-          m_b_RoBiggerThanR02_EI * pow(density, m_c_RoBiggerThanR02_EI);
+        youngModule = m_a_RhoAshBiggerThanRhoAsh2 + 
+          m_b_RhoAshBiggerThanRhoAsh2 * pow(rho, m_c_RhoAshBiggerThanRhoAsh2);
        
       }
     }
@@ -1665,8 +1684,8 @@ int lhpOpBonemat::YoungModuleIntegration()
     } 
     
     eModuleSource[id].E = meanYoungModule;
-    eModuleSource[id].id = id;
-    eModuleSource[id].ro = 0;
+    eModuleSource[id].elementID = id;
+    eModuleSource[id].rho = 0;
 
     progress = (id + 1) * 100 / numElements;
     mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,progress));
@@ -1716,15 +1735,15 @@ int lhpOpBonemat::YoungModuleIntegration()
 
   for (int elementID = 0;elementID < numElements;elementID++)
   {
-    logStringStream << "id: " << eModuleSource[elementID].id << "E: " << eModuleSource[elementID].E << std::endl;
-    logStringStream << "id: " << roSource[elementID].id << "ro: " << roSource[elementID].ro << std::endl << std::endl;
+    logStringStream << "elementID: " << eModuleSource[elementID].elementID << "E: " << eModuleSource[elementID].E << std::endl;
+    logStringStream << "elementID: " << roSource[elementID].elementID << "rho: " << roSource[elementID].rho << std::endl << std::endl;
     
   }
 
   #endif
 
-  logStringStream << "RO2: " << roSource[0].ro << "\n";
-  logStringStream << "RO1: " << roSource[numElements - 1].ro << "\n";
+  logStringStream << "RO2: " << roSource[0].rho << "\n";
+  logStringStream << "RO1: " << roSource[numElements - 1].rho << "\n";
 
   logStringStream << "Emax: " << eModuleSource[0].E << "\n";
   logStringStream << "Emin: " << eModuleSource[numElements - 1].E << "\n\n";
@@ -1734,20 +1753,20 @@ int lhpOpBonemat::YoungModuleIntegration()
   mapType elementIDtoROmap;
   for (id=0; id < numElements; id++) 
   {
-    elementIDtoROmap.insert(mapType::value_type(roSource[id].id, roSource[id].ro) );
+    elementIDtoROmap.insert(mapType::value_type(roSource[id].elementID, roSource[id].rho) );
   }
 
   // assign density to eModuleSource from roSource
   for (id=0; id < numElements; id++) 
   {  
-    eModuleSource[id].ro = elementIDtoROmap[eModuleSource[id].id];
+    eModuleSource[id].rho = elementIDtoROmap[eModuleSource[id].elementID];
   }
 
   logStringStream << "-- Writing frequency file\n";
   mafLogMessage("%s",logStringStream.str().c_str());
   logStringStream.str("");
 
-  fprintf(freq_fp, "ro \t\t E \t\t NUMBER OF ELEMENTS\n\n");
+  fprintf(freq_fp, "rho \t\t E \t\t NUMBER OF ELEMENTS\n\n");
 
 #ifdef _USE_MAXIMUM_DENSITY_FOR_GROUPING
 
@@ -1772,14 +1791,14 @@ int lhpOpBonemat::YoungModuleIntegration()
       for (int idVectorIndex = 0; idVectorIndex < idVector.size(); idVectorIndex++)
       {
         // get the current element density
-        double currentDensity = eModuleSource[idVector[idVectorIndex]].ro;
+        double currentDensity = eModuleSource[idVector[idVectorIndex]].rho;
         if (currentDensity > maxDensity)
         {
           maxDensity = currentDensity;
         }
       }
       
-      eModuleSource[idVector[0]].ro = maxDensity;
+      eModuleSource[idVector[0]].rho = maxDensity;
       ro = maxDensity;
 
 #ifdef _DEBUG_BONEMAT
@@ -1810,7 +1829,7 @@ int lhpOpBonemat::YoungModuleIntegration()
       freq++;
     }
 
-    mesh->GetElement(eModuleSource[id].id)->SetMatKey(numMats);
+    mesh->GetElement(eModuleSource[id].elementID)->SetMatKey(numMats);
   }
 
   fprintf(freq_fp, "%f \t %f \t %d\n\n", ro, E, freq);
@@ -1852,12 +1871,12 @@ int lhpOpBonemat::YoungModuleIntegration()
       for (int idVectorIndex = 0; idVectorIndex < idVector.size(); idVectorIndex++)
       {
         // get the current element density
-        double currentDensity = eModuleSource[idVector[idVectorIndex]].ro;
+        double currentDensity = eModuleSource[idVector[idVectorIndex]].rho;
         densityAccumulator += currentDensity;
       }
       
-      eModuleSource[idVector[0]].ro = densityAccumulator / idVector.size();
-      ro = eModuleSource[idVector[0]].ro;
+      eModuleSource[idVector[0]].rho = densityAccumulator / idVector.size();
+      ro = eModuleSource[idVector[0]].rho;
 
 #ifdef _DEBUG_BONEMAT
       logStringStream << "material ID:" << numMats << '\t' << "material E:" << E << '\t' << "material ro" << ro << std::endl;
@@ -1890,7 +1909,7 @@ int lhpOpBonemat::YoungModuleIntegration()
     }
     
     // sets the current element material
-    //mesh->GetElement(eModuleSource[id].id)->SetMatKey(numMats);
+    //mesh->GetElement(eModuleSource[elementID].elementID)->SetMatKey(numMats);
   }
 
   fprintf(freq_fp, "%f \t %f \t %d\n\n", ro, E, freq);
@@ -1920,7 +1939,7 @@ int lhpOpBonemat::YoungModuleIntegration()
   for (int j = 0; j < numMats; j++)
   {
     int materialAnsysId = j + 1;
-    iarr->InsertValue(j, materialAnsysId/*materialProperties[j]->id*/);
+    iarr->InsertValue(j, materialAnsysId/*materialProperties[j]->elementID*/);
   }
 
   // add the ith data array to the field data
@@ -1946,7 +1965,7 @@ int lhpOpBonemat::YoungModuleIntegration()
       // fill ith data array with jth value 
       // ciclo sui materiali
       if(stringVector[i] == mafString("DENS"))
-        darr->InsertValue(j, materialProperties[j]->ro);
+        darr->InsertValue(j, materialProperties[j]->rho);
       else if(stringVector[i] == mafString("EX"))
         darr->InsertValue(j, materialProperties[j]->E);
       else if(stringVector[i] == mafString("NUXY"))
@@ -2019,28 +2038,29 @@ int lhpOpBonemat::YoungModuleIntegration()
 }
 
 //----------------------------------------------------------------------------
-void lhpOpBonemat::UpdateDensityIntegrationGui()
+void lhpOpBonemat::UpdateRhoAshGuiOnRhoAshIntervalsNumberChange()
 //----------------------------------------------------------------------------
 {
   if (m_DensityIntervalsNumber == SINGLE_INTERVAL)
   {
-    m_Gui->Enable(ID_DENSITY_INTERVAL_0, false);
-    m_Gui->Enable(ID_DENSITY_INTERVAL_1, false);
-    EnableV3SingleInterval(true);
+    m_Gui->Enable(ID_DENSITY_INTERVAL_0, true);
+    m_Gui->Enable(ID_DENSITY_INTERVAL_1, true);
+    EnableRhoAshSingleInterval(true);
 
   }
   else if (m_DensityIntervalsNumber == THREE_INTERVALS)
   {
     m_Gui->Enable(ID_DENSITY_INTERVAL_0, true);
     m_Gui->Enable(ID_DENSITY_INTERVAL_1, true);
-    EnableV3SingleInterval(false);
+    EnableRhoAshSingleInterval(false);
 
   }
   
 }
 
+
 //----------------------------------------------------------------------------
-void lhpOpBonemat::EnableV3SingleInterval(bool enable)
+void lhpOpBonemat::EnableRhoAshSingleInterval(bool enable)
 //----------------------------------------------------------------------------
 {
   m_Gui->Enable(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_0, enable);
@@ -2061,38 +2081,12 @@ void lhpOpBonemat::EnableV3SingleInterval(bool enable)
 
 }
 //----------------------------------------------------------------------------
-void lhpOpBonemat::DisableV3()
+void lhpOpBonemat::DisableRhoAshThreeIntervals()
 //----------------------------------------------------------------------------
 {
-  m_Gui->Enable(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_0, false);
-  m_Gui->Enable(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_1, false);
-  m_Gui->Enable(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_2, false);
-
-  m_Gui->Enable(ID_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_0, false);
-  m_Gui->Enable(ID_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_1, false);
-  m_Gui->Enable(ID_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_2, false);
-
-  m_Gui->Enable(ID_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_0, false);
-  m_Gui->Enable(ID_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_1, false);
-  m_Gui->Enable(ID_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_2, false);
-
-  m_Gui->Enable(ID_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_0, false);
-  m_Gui->Enable(ID_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_1, false);
-  m_Gui->Enable(ID_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_2, false);
-
+  EnableRhoAshSingleInterval(false);
 }
 
-//----------------------------------------------------------------------------
-void lhpOpBonemat::EnableV2(bool enable)
-//----------------------------------------------------------------------------
-{
-  m_Gui->Enable(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V2_0,  enable);   
-  m_Gui->Enable(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V2_1,  enable);   
-  m_Gui->Enable(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V2_2,  enable);   
-
-
-
-}
 
 mafNode *lhpOpBonemat::VolumeSelection()
 {
@@ -2110,12 +2104,12 @@ mafNode *lhpOpBonemat::VolumeSelection()
   return n;
 }
 
-void lhpOpBonemat::EnableRoCorrectionSingleInterval(bool enable)
+void lhpOpBonemat::EnableRhoQCTSingleInterval(bool enable)
 {
   m_Gui->Enable(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_SINGLE_0, enable);
   m_Gui->Enable(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_SINGLE_1, enable);
 }
-void lhpOpBonemat::EnableRoCorrectionThreeInterval(bool enable)
+void lhpOpBonemat::EnableRhoQCTThreeIntervals(bool enable)
 {
   m_Gui->Enable(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_0, enable);
   m_Gui->Enable(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_1, enable);
@@ -2127,7 +2121,7 @@ void lhpOpBonemat::EnableRoCorrectionThreeInterval(bool enable)
   m_Gui->Enable(ID_RO_CORRECTION_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_1, enable);
 }
 
-void lhpOpBonemat::EnableRoCorrectionDensityInterval(bool enable)
+void lhpOpBonemat::EnableRhoQCTDensityInterval(bool enable)
 {
   m_Gui->Enable(ID_RO_CORRECTION_DENSITY_INTERVAL_0, enable);
   m_Gui->Enable(ID_RO_CORRECTION_DENSITY_INTERVAL_1, enable);
@@ -2190,25 +2184,25 @@ int lhpOpBonemat::LoadConfigurationFile( const char *configurationFileName )
   //<< "# #### CT Densitometric Calibration ####" << std::endl;
 
   //<< "# a (m_ROIntercept) : " << std::endl;
-  inputFileFromCache >> m_ROIntercept // << std::endl;
+  inputFileFromCache >> m_RhoIntercept // << std::endl;
   //   << "# b (m_ROSlope): " // << std::endl;
-  >> m_ROSlope// << std::endl;
+  >> m_RhoSlope// << std::endl;
 
   // // << std::endl;
   // << "# apply calibration correction (m_ROCalibrationCorrectionIsActive): " // << std::endl;
-  >> m_ROCalibrationCorrectionIsActive// << std::endl;
+  >> m_RhoCalibrationCorrectionIsActive// << std::endl;
 
   /*// << std::endl;
   << "# #### Correction of the calibration ####" // << std::endl;
 
   << "# Intervals Type (m_ROCalibrationCorrectionType) {SINGLE_INTERVAL = 0, THREE_INTERVALS = 1}: "  // << std::endl;*/
-  >> m_ROCalibrationCorrectionType// << std::endl;
+  >> m_RhoCalibrationCorrectionType// << std::endl;
 
 
-  // << "# R01 (m_RO1_CalibrationCorrection) : " // << std::endl;
-  >> m_RO1_CalibrationCorrection// << std::endl;
-  // << "# R02 (m_RO2_CalibrationCorrection) : " // << std::endl;
-  >> m_RO2_CalibrationCorrection// << std::endl;
+  // << "# R01 (m_RhoQCT1) : " // << std::endl;
+  >> m_RhoQCT1// << std::endl;
+  // << "# R02 (m_RhoQCT2) : " // << std::endl;
+  >> m_RhoQCT2// << std::endl;
 
   // << "# a (m_a_CalibrationCorrection): " // << std::endl;
   >> m_a_CalibrationCorrection// << std::endl;
@@ -2217,41 +2211,28 @@ int lhpOpBonemat::LoadConfigurationFile( const char *configurationFileName )
 
   /*// << std::endl;
   << "# R0 < R01" // << std::endl;*/
-  // << "# a (m_a_RoLessThanR01_CalibrationCorrection): " // << std::endl;
-  >> m_a_RoLessThanR01_CalibrationCorrection // << std::endl;
-  // << "# b (m_b_RoLessThanR01_CalibrationCorrection): " // << std::endl;
-  >> m_b_RoLessThanR01_CalibrationCorrection // << std::endl;
+  // << "# a (m_a_RhoQCTLessThanRhoQCT1): " // << std::endl;
+  >> m_a_RhoQCTLessThanRhoQCT1 // << std::endl;
+  // << "# b (m_b_RhoQCTLessThanRhoQCT1): " // << std::endl;
+  >> m_b_RhoQCTLessThanRhoQCT1 // << std::endl;
 
   /*// << std::endl;
   << "# R01 <= R0 <= R02" // << std::endl;  
-  << "# a (m_a_RoBetweenR01AndR02_CalibrationCorrection): " // << std::endl;*/
-  >> m_a_RoBetweenR01AndR02_CalibrationCorrection // << std::endl;
-  // << "# b (m_b_RoBetweenR01AndR02_CalibrationCorrection): " // << std::endl;
-  >> m_b_RoBetweenR01AndR02_CalibrationCorrection // << std::endl;
+  << "# a (m_a_RhoQCTBetweenRhoQCT1AndRhoQCT2): " // << std::endl;*/
+  >> m_a_RhoQCTBetweenRhoQCT1AndRhoQCT2 // << std::endl;
+  // << "# b (m_b_RhoQCTBetweenRhoQCT1AndRhoQCT2): " // << std::endl;
+  >> m_b_RhoQCTBetweenRhoQCT1AndRhoQCT2 // << std::endl;
 
   // << std::endl;
 
   /*<< "# R0 > R02" // << std::endl;
-  << "# a (m_a_RoBiggerThanR02_CalibrationCorrection): " // << std::endl;*/
-  >> m_a_RoBiggerThanR02_CalibrationCorrection// << std::endl;
-  // << "# b (m_b_RoBiggerThanR02_CalibrationCorrection): " // << std::endl;
-  >> m_b_RoBiggerThanR02_CalibrationCorrection// << std::endl;
-
-
-  // << std::endl;
-  /*<< "# Young`s modulus (E) calculation modality" // << std::endl;
-  << "# Modality (m_YoungModuleCalculationModality) {HU_INTEGRATION = 0,YOUNG_MODULE_INTEGRATION = 1}: " // << std::endl;*/
-  >> m_YoungModuleCalculationModality // << std::endl;
+  << "# a (m_a_RhoQCTBiggerThanRhoQCT2): " // << std::endl;*/
+  >> m_a_RhoQCTBiggerThanRhoQCT2// << std::endl;
+  // << "# b (m_b_RhoQCTBiggerThanRhoQCT2): " // << std::endl;
+  >> m_b_RhoQCTBiggerThanRhoQCT2// << std::endl;
 
   // << std::endl;
   // << "# ####  density-elasticity relationship #### " // << std::endl;
-
-  // << "# a (m_a_DensityElasticityRelationship): " // << std::endl;
-  >> m_a_DensityElasticityRelationship// << std::endl;
-  // << "# b (m_b_DensityElasticityRelationship): " // << std::endl;
-  >> m_b_DensityElasticityRelationship// << std::endl;
-  // << "# c (m_c_DensityElasticityRelationship): " // << std::endl;
-  >> m_c_DensityElasticityRelationship// << std::endl;
 
   /*// << std::endl;
   << "# density-intervals for E integration" // << std::endl;
@@ -2259,43 +2240,47 @@ int lhpOpBonemat::LoadConfigurationFile( const char *configurationFileName )
   >> m_DensityIntervalsNumber // << std::endl;
 
   // << std::endl;
-  // << "# R01 (m_RO1_EI): " // << std::endl;
-  >> m_RO1_EI// << std::endl;
-  // << "# R02 (m_RO2_EI): " // << std::endl;
-  >> m_RO2_EI// << std::endl;
-  // << "# a (m_a_EI): " // << std::endl;
-  >> m_a_EI// << std::endl;
-  // << "# b (m_b_EI): " // << std::endl;
-  >> m_b_EI// << std::endl;
-  // << "# c (m_c_EI): " // << std::endl;
-  >> m_c_EI// << std::endl;
+  // << "# R01 (m_RhoAsh1): " // << std::endl;
+  >> m_RhoAsh1// << std::endl;
+  // << "# R02 (m_RhoAsh2): " // << std::endl;
+  >> m_RhoAsh2// << std::endl;
+  // << "# a (m_a_OneInterval): " // << std::endl;
+  >> m_a_OneInterval// << std::endl;
+  // << "# b (m_b_OneInterval): " // << std::endl;
+  >> m_b_OneInterval// << std::endl;
+  // << "# c (m_c_OneInterval): " // << std::endl;
+  >> m_c_OneInterval// << std::endl;
 
   /*// << std::endl;
   << "# R0 < R01" // << std::endl;
-  << "# a (m_a_RoLessThanRO1_EI): " // << std::endl;*/
-  >> m_a_RoLessThanRO1_EI// << std::endl;
-  // << "# b (m_b_RoLessThanR01_EI): " // << std::endl;
-  >> m_b_RoLessThanR01_EI// << std::endl;
-  // << "# c (m_c_RoLessThanR01_EI): " // << std::endl;
-  >> m_c_RoLessThanR01_EI// << std::endl;
+  << "# a (m_a_RhoAshLessThanRhoAsh1): " // << std::endl;*/
+  >> m_a_RhoAshLessThanRhoAsh1// << std::endl;
+  // << "# b (m_b_RhoAshLessThanRhoAsh1): " // << std::endl;
+  >> m_b_RhoAshLessThanRhoAsh1// << std::endl;
+  // << "# c (m_c_RhoAshLessThanRhoAsh1): " // << std::endl;
+  >> m_c_RhoAshLessThanRhoAsh1// << std::endl;
   /*// << std::endl;
   << "# R01 <= R0 <= R02" // << std::endl;  
-  << "# a (m_a_RoBetweenR01andR02_EI): " // << std::endl;*/
-  >> m_a_RoBetweenR01andR02_EI// << std::endl;
-  // << "# b (m_b_RoBetweenR01andR02_EI): " // << std::endl;
-  >> m_b_RoBetweenR01andR02_EI// << std::endl;
-  // << "# c (m_c_RoBetweenR01andR02_EI): " // << std::endl;
-  >> m_c_RoBetweenR01andR02_EI// << std::endl;
+  << "# a (m_a_RhoAshBetweenRhoAsh1andRhoAsh2): " // << std::endl;*/
+  >> m_a_RhoAshBetweenRhoAsh1andRhoAsh2// << std::endl;
+  // << "# b (m_b_RhoAshBetweenRhoAsh1andRhoAsh2): " // << std::endl;
+  >> m_b_RhoAshBetweenRhoAsh1andRhoAsh2// << std::endl;
+  // << "# c (m_c_RhoAshBetweenRhoAsh1andRhoAsh2): " // << std::endl;
+  >> m_c_RhoAshBetweenRhoAsh1andRhoAsh2// << std::endl;
   /*// << std::endl;
   << "# R0 > R02" // << std::endl;
-  << "# a (m_a_RoBiggerThanR02_EI): " // << std::endl;*/
-  >> m_a_RoBiggerThanR02_EI// << std::endl;
-  // << "# b (m_b_RoBiggerThanR02_EI): " // << std::endl;
-  >> m_b_RoBiggerThanR02_EI// << std::endl;
-  // << "# c (m_c_RoBiggerThanR02_EI): " // << std::endl;
-  >> m_c_RoBiggerThanR02_EI// << std::endl;
+  << "# a (m_a_RhoAshBiggerThanRhoAsh2): " // << std::endl;*/
+  >> m_a_RhoAshBiggerThanRhoAsh2// << std::endl;
+  // << "# b (m_b_RhoAshBiggerThanRhoAsh2): " // << std::endl;
+  >> m_b_RhoAshBiggerThanRhoAsh2// << std::endl;
+  // << "# c (m_c_RhoAshBiggerThanRhoAsh2): " // << std::endl;
+  >> m_c_RhoAshBiggerThanRhoAsh2// << std::endl;
 
   // << std::endl;
+  // << std::endl;
+  /*<< "# Young`s modulus (E) calculation modality" // << std::endl;
+  << "# Modality (m_YoungModuleCalculationModality) {HU_INTEGRATION = 0,YOUNG_MODULE_INTEGRATION = 1}: " // << std::endl;*/
+  >> m_YoungModuleCalculationModality // << std::endl;
 
   // << "# Integration Steps (m_StepsNumber): " // << std::endl;
   >> m_StepsNumber// << std::endl;
@@ -2325,41 +2310,41 @@ void lhpOpBonemat::PrintSelf(std::ostream &os)
 
   os << "#### CT Densitometric Calibration ####" << std::endl;
 
-  os << "a (m_ROIntercept) : " << m_ROIntercept << std::endl;
-  os << "b (m_ROSlope): " << m_ROSlope<< std::endl;
+  os << "a (m_ROIntercept) : " << m_RhoIntercept << std::endl;
+  os << "b (m_ROSlope): " << m_RhoSlope<< std::endl;
 
   os << std::endl;
-  os << "apply calibration correction (m_ROCalibrationCorrectionIsActive): " << m_ROCalibrationCorrectionIsActive<< std::endl;
+  os << "apply calibration correction (m_ROCalibrationCorrectionIsActive): " << m_RhoCalibrationCorrectionIsActive<< std::endl;
   
   os << std::endl;
   os << "#### Correction of the calibration ####" << std::endl;
   
-  os << "Intervals Type (m_ROCalibrationCorrectionType) {SINGLE_INTERVAL = 0, THREE_INTERVALS = 1}: " << m_ROCalibrationCorrectionType<< std::endl;
+  os << "Intervals Type (m_ROCalibrationCorrectionType) {SINGLE_INTERVAL = 0, THREE_INTERVALS = 1}: " << m_RhoCalibrationCorrectionType<< std::endl;
 
-  //ro interval
-  os << "R01 (m_RO1_CalibrationCorrection) : " << m_RO1_CalibrationCorrection<< std::endl;
-  os << "R02 (m_RO2_CalibrationCorrection) : " << m_RO2_CalibrationCorrection<< std::endl;
+  //rho interval
+  os << "R01 (m_RhoQCT1) : " << m_RhoQCT1<< std::endl;
+  os << "R02 (m_RhoQCT2) : " << m_RhoQCT2<< std::endl;
   
-  //single interval ro calibration
+  //single interval rho calibration
   os << "a (m_a_CalibrationCorrection): " << m_a_CalibrationCorrection<< std::endl;
   os << "b (m_b_CalibrationCorrection): " << m_b_CalibrationCorrection<< std::endl;
 
-  //three intervals ro calibration
+  //three intervals rho calibration
   os << std::endl;
   os << "R0 < R01" << std::endl;
-  os << "a (m_a_RoLessThanR01_CalibrationCorrection): " << m_a_RoLessThanR01_CalibrationCorrection<< std::endl;
-  os << "b (m_b_RoLessThanR01_CalibrationCorrection): " << m_b_RoLessThanR01_CalibrationCorrection<< std::endl;
+  os << "a (m_a_RhoQCTLessThanRhoQCT1): " << m_a_RhoQCTLessThanRhoQCT1<< std::endl;
+  os << "b (m_b_RhoQCTLessThanRhoQCT1): " << m_b_RhoQCTLessThanRhoQCT1<< std::endl;
 
   os << std::endl;
   os << "R01 <= R0 <= R02" << std::endl;  
-  os << "a (m_a_RoBetweenR01AndR02_CalibrationCorrection): " << m_a_RoBetweenR01AndR02_CalibrationCorrection<< std::endl;
-  os << "b (m_b_RoBetweenR01AndR02_CalibrationCorrection): " << m_b_RoBetweenR01AndR02_CalibrationCorrection<< std::endl;
+  os << "a (m_a_RhoQCTBetweenRhoQCT1AndRhoQCT2): " << m_a_RhoQCTBetweenRhoQCT1AndRhoQCT2<< std::endl;
+  os << "b (m_b_RhoQCTBetweenRhoQCT1AndRhoQCT2): " << m_b_RhoQCTBetweenRhoQCT1AndRhoQCT2<< std::endl;
 
   os << std::endl;
 
   os << "R0 > R02" << std::endl;
-  os << "a (m_a_RoBiggerThanR02_CalibrationCorrection): " << m_a_RoBiggerThanR02_CalibrationCorrection<< std::endl;
-  os << "b (m_b_RoBiggerThanR02_CalibrationCorrection): " << m_b_RoBiggerThanR02_CalibrationCorrection<< std::endl;
+  os << "a (m_a_RhoQCTBiggerThanRhoQCT2): " << m_a_RhoQCTBiggerThanRhoQCT2<< std::endl;
+  os << "b (m_b_RhoQCTBiggerThanRhoQCT2): " << m_b_RhoQCTBiggerThanRhoQCT2<< std::endl;
 
   
   os << std::endl;
@@ -2369,36 +2354,36 @@ void lhpOpBonemat::PrintSelf(std::ostream &os)
   os << std::endl;
   os << "####  density-elasticity relationship #### " << std::endl;
 
-  os << "a (m_a_DensityElasticityRelationship): " << m_a_DensityElasticityRelationship<< std::endl;
-  os << "b (m_b_DensityElasticityRelationship): " << m_b_DensityElasticityRelationship<< std::endl;
-  os << "c (m_c_DensityElasticityRelationship): " << m_c_DensityElasticityRelationship<< std::endl;
+  os << "a (m_a_DensityElasticityRelationship): " << m_a_DER<< std::endl;
+  os << "b (m_b_DensityElasticityRelationship): " << m_b_DER<< std::endl;
+  os << "c (m_c_DensityElasticityRelationship): " << m_c_DER<< std::endl;
 
   os << std::endl;
   os << "density-intervals for E integration" << std::endl;
   os << "Density intervals type (m_DensityIntervalsNumber) {SINGLE_INTERVAL = 0,THREE_INTERVALS = 1}: " << m_DensityIntervalsNumber << std::endl;
 
   os << std::endl;
-  os << "R01 (m_RO1_EI): " << m_RO1_EI<< std::endl;
-  os << "R02 (m_RO2_EI): " << m_RO2_EI<< std::endl;
-  os << "a (m_a_EI): " << m_a_EI<< std::endl;
-  os << "b (m_b_EI): " << m_b_EI<< std::endl;
-  os << "c (m_c_EI): " << m_c_EI<< std::endl;
+  os << "R01 (m_RhoAsh1): " << m_RhoAsh1<< std::endl;
+  os << "R02 (m_RhoAsh2): " << m_RhoAsh2<< std::endl;
+  os << "a (m_a_OneInterval): " << m_a_OneInterval<< std::endl;
+  os << "b (m_b_OneInterval): " << m_b_OneInterval<< std::endl;
+  os << "c (m_c_OneInterval): " << m_c_OneInterval<< std::endl;
 
   os << std::endl;
   os << "R0 < R01" << std::endl;
-  os << "a (m_a_RoLessThanRO1_EI): " << m_a_RoLessThanRO1_EI<< std::endl;
-  os << "b (m_b_RoLessThanR01_EI): " << m_b_RoLessThanR01_EI<< std::endl;
-  os << "c (m_c_RoLessThanR01_EI): " << m_c_RoLessThanR01_EI<< std::endl;
+  os << "a (m_a_RhoAshLessThanRhoAsh1): " << m_a_RhoAshLessThanRhoAsh1<< std::endl;
+  os << "b (m_b_RhoAshLessThanRhoAsh1): " << m_b_RhoAshLessThanRhoAsh1<< std::endl;
+  os << "c (m_c_RhoAshLessThanRhoAsh1): " << m_c_RhoAshLessThanRhoAsh1<< std::endl;
   os << std::endl;
   os << "R01 <= R0 <= R02" << std::endl;  
-  os << "a (m_a_RoBetweenR01andR02_EI): " << m_a_RoBetweenR01andR02_EI<< std::endl;
-  os << "b (m_b_RoBetweenR01andR02_EI): " << m_b_RoBetweenR01andR02_EI<< std::endl;
-  os << "c (m_c_RoBetweenR01andR02_EI): " << m_c_RoBetweenR01andR02_EI<< std::endl;
+  os << "a (m_a_RhoAshBetweenRhoAsh1andRhoAsh2): " << m_a_RhoAshBetweenRhoAsh1andRhoAsh2<< std::endl;
+  os << "b (m_b_RhoAshBetweenRhoAsh1andRhoAsh2): " << m_b_RhoAshBetweenRhoAsh1andRhoAsh2<< std::endl;
+  os << "c (m_c_RhoAshBetweenRhoAsh1andRhoAsh2): " << m_c_RhoAshBetweenRhoAsh1andRhoAsh2<< std::endl;
   os << std::endl;
   os << "R0 > R02" << std::endl;
-  os << "a (m_a_RoBiggerThanR02_EI): " << m_a_RoBiggerThanR02_EI<< std::endl;
-  os << "b (m_b_RoBiggerThanR02_EI): " << m_b_RoBiggerThanR02_EI<< std::endl;
-  os << "c (m_c_RoBiggerThanR02_EI): " << m_c_RoBiggerThanR02_EI<< std::endl;
+  os << "a (m_a_RhoAshBiggerThanRhoAsh2): " << m_a_RhoAshBiggerThanRhoAsh2<< std::endl;
+  os << "b (m_b_RhoAshBiggerThanRhoAsh2): " << m_b_RhoAshBiggerThanRhoAsh2<< std::endl;
+  os << "c (m_c_RhoAshBiggerThanRhoAsh2): " << m_c_RhoAshBiggerThanRhoAsh2<< std::endl;
 
   os << std::endl;
 
@@ -2433,25 +2418,25 @@ int lhpOpBonemat::SaveConfigurationFile( const char *configurationFileName )
   << "# #### CT Densitometric Calibration ####" << std::endl
 
   << "# a (m_ROIntercept) : " << std::endl
-  << m_ROIntercept << std::endl
+  << m_RhoIntercept << std::endl
   << "# b (m_ROSlope): " << std::endl
-  << m_ROSlope<< std::endl
+  << m_RhoSlope<< std::endl
 
   << std::endl
   << "# apply calibration correction (m_ROCalibrationCorrectionIsActive): " << std::endl
-  << m_ROCalibrationCorrectionIsActive<< std::endl
+  << m_RhoCalibrationCorrectionIsActive<< std::endl
 
   << std::endl
   << "# #### Correction of the calibration ####" << std::endl
 
   << "# Intervals Type (m_ROCalibrationCorrectionType) {SINGLE_INTERVAL = 0, THREE_INTERVALS = 1}: "  << std::endl
-  << m_ROCalibrationCorrectionType<< std::endl
+  << m_RhoCalibrationCorrectionType<< std::endl
 
   
-  << "# R01 (m_RO1_CalibrationCorrection) : " << std::endl
-  << m_RO1_CalibrationCorrection<< std::endl
-  << "# R02 (m_RO2_CalibrationCorrection) : " << std::endl
-  << m_RO2_CalibrationCorrection<< std::endl
+  << "# R01 (m_RhoQCT1) : " << std::endl
+  << m_RhoQCT1<< std::endl
+  << "# R02 (m_RhoQCT2) : " << std::endl
+  << m_RhoQCT2<< std::endl
 
   << "# a (m_a_CalibrationCorrection): " << std::endl
   << m_a_CalibrationCorrection<< std::endl
@@ -2460,41 +2445,31 @@ int lhpOpBonemat::SaveConfigurationFile( const char *configurationFileName )
 
   << std::endl
   << "# R0 < R01" << std::endl
-  << "# a (m_a_RoLessThanR01_CalibrationCorrection): " << std::endl
-  << m_a_RoLessThanR01_CalibrationCorrection << std::endl
-  << "# b (m_b_RoLessThanR01_CalibrationCorrection): " << std::endl
-  << m_b_RoLessThanR01_CalibrationCorrection << std::endl
+  << "# a (m_a_RhoQCTLessThanRhoQCT1): " << std::endl
+  << m_a_RhoQCTLessThanRhoQCT1 << std::endl
+  << "# b (m_b_RhoQCTLessThanRhoQCT1): " << std::endl
+  << m_b_RhoQCTLessThanRhoQCT1 << std::endl
 
   << std::endl
   << "# R01 <= R0 <= R02" << std::endl  
-  << "# a (m_a_RoBetweenR01AndR02_CalibrationCorrection): " << std::endl
-  << m_a_RoBetweenR01AndR02_CalibrationCorrection << std::endl
-  << "# b (m_b_RoBetweenR01AndR02_CalibrationCorrection): " << std::endl
-  << m_b_RoBetweenR01AndR02_CalibrationCorrection << std::endl
+  << "# a (m_a_RhoQCTBetweenRhoQCT1AndRhoQCT2): " << std::endl
+  << m_a_RhoQCTBetweenRhoQCT1AndRhoQCT2 << std::endl
+  << "# b (m_b_RhoQCTBetweenRhoQCT1AndRhoQCT2): " << std::endl
+  << m_b_RhoQCTBetweenRhoQCT1AndRhoQCT2 << std::endl
 
   << std::endl
 
   << "# R0 > R02" << std::endl
-  << "# a (m_a_RoBiggerThanR02_CalibrationCorrection): " << std::endl
-  << m_a_RoBiggerThanR02_CalibrationCorrection<< std::endl
-  << "# b (m_b_RoBiggerThanR02_CalibrationCorrection): " << std::endl
-  << m_b_RoBiggerThanR02_CalibrationCorrection<< std::endl
+  << "# a (m_a_RhoQCTBiggerThanRhoQCT2): " << std::endl
+  << m_a_RhoQCTBiggerThanRhoQCT2<< std::endl
+  << "# b (m_b_RhoQCTBiggerThanRhoQCT2): " << std::endl
+  << m_b_RhoQCTBiggerThanRhoQCT2<< std::endl
 
 
-  << std::endl
-  << "# Young`s modulus (E) calculation modality" << std::endl
-  << "# Modality (m_YoungModuleCalculationModality) {HU_INTEGRATION = 0,YOUNG_MODULE_INTEGRATION = 1}: " << std::endl
-  << m_YoungModuleCalculationModality << std::endl
-
+  
   << std::endl
   << "# ####  density-elasticity relationship #### " << std::endl
 
-  << "# a (m_a_DensityElasticityRelationship): " << std::endl
-  << m_a_DensityElasticityRelationship<< std::endl
-  << "# b (m_b_DensityElasticityRelationship): " << std::endl
-  << m_b_DensityElasticityRelationship<< std::endl
-  << "# c (m_c_DensityElasticityRelationship): " << std::endl
-  << m_c_DensityElasticityRelationship<< std::endl
 
   << std::endl
   << "# density-intervals for E integration" << std::endl
@@ -2502,43 +2477,46 @@ int lhpOpBonemat::SaveConfigurationFile( const char *configurationFileName )
   << m_DensityIntervalsNumber << std::endl
 
   << std::endl
-  << "# R01 (m_RO1_EI): " << std::endl
-  << m_RO1_EI<< std::endl
-  << "# R02 (m_RO2_EI): " << std::endl
-  << m_RO2_EI<< std::endl
-  << "# a (m_a_EI): " << std::endl
-  << m_a_EI<< std::endl
-  << "# b (m_b_EI): " << std::endl
-  << m_b_EI<< std::endl
-  << "# c (m_c_EI): " << std::endl
-  << m_c_EI<< std::endl
+  << "# R01 (m_RhoAsh1): " << std::endl
+  << m_RhoAsh1<< std::endl
+  << "# R02 (m_RhoAsh2): " << std::endl
+  << m_RhoAsh2<< std::endl
+  << "# a (m_a_OneInterval): " << std::endl
+  << m_a_OneInterval<< std::endl
+  << "# b (m_b_OneInterval): " << std::endl
+  << m_b_OneInterval<< std::endl
+  << "# c (m_c_OneInterval): " << std::endl
+  << m_c_OneInterval<< std::endl
 
   << std::endl
   << "# R0 < R01" << std::endl
-  << "# a (m_a_RoLessThanRO1_EI): " << std::endl
-  << m_a_RoLessThanRO1_EI<< std::endl
-  << "# b (m_b_RoLessThanR01_EI): " << std::endl
-  << m_b_RoLessThanR01_EI<< std::endl
-  << "# c (m_c_RoLessThanR01_EI): " << std::endl
-  << m_c_RoLessThanR01_EI<< std::endl
+  << "# a (m_a_RhoAshLessThanRhoAsh1): " << std::endl
+  << m_a_RhoAshLessThanRhoAsh1<< std::endl
+  << "# b (m_b_RhoAshLessThanRhoAsh1): " << std::endl
+  << m_b_RhoAshLessThanRhoAsh1<< std::endl
+  << "# c (m_c_RhoAshLessThanRhoAsh1): " << std::endl
+  << m_c_RhoAshLessThanRhoAsh1<< std::endl
   << std::endl
   << "# R01 <= R0 <= R02" << std::endl  
-  << "# a (m_a_RoBetweenR01andR02_EI): " << std::endl
-  << m_a_RoBetweenR01andR02_EI<< std::endl
-  << "# b (m_b_RoBetweenR01andR02_EI): " << std::endl
-  << m_b_RoBetweenR01andR02_EI<< std::endl
-  << "# c (m_c_RoBetweenR01andR02_EI): " << std::endl
-  << m_c_RoBetweenR01andR02_EI<< std::endl
+  << "# a (m_a_RhoAshBetweenRhoAsh1andRhoAsh2): " << std::endl
+  << m_a_RhoAshBetweenRhoAsh1andRhoAsh2<< std::endl
+  << "# b (m_b_RhoAshBetweenRhoAsh1andRhoAsh2): " << std::endl
+  << m_b_RhoAshBetweenRhoAsh1andRhoAsh2<< std::endl
+  << "# c (m_c_RhoAshBetweenRhoAsh1andRhoAsh2): " << std::endl
+  << m_c_RhoAshBetweenRhoAsh1andRhoAsh2<< std::endl
   << std::endl
   << "# R0 > R02" << std::endl
-  << "# a (m_a_RoBiggerThanR02_EI): " << std::endl
-  << m_a_RoBiggerThanR02_EI<< std::endl
-  << "# b (m_b_RoBiggerThanR02_EI): " << std::endl
-  << m_b_RoBiggerThanR02_EI<< std::endl
-  << "# c (m_c_RoBiggerThanR02_EI): " << std::endl
-  << m_c_RoBiggerThanR02_EI<< std::endl
+  << "# a (m_a_RhoAshBiggerThanRhoAsh2): " << std::endl
+  << m_a_RhoAshBiggerThanRhoAsh2<< std::endl
+  << "# b (m_b_RhoAshBiggerThanRhoAsh2): " << std::endl
+  << m_b_RhoAshBiggerThanRhoAsh2<< std::endl
+  << "# c (m_c_RhoAshBiggerThanRhoAsh2): " << std::endl
+  << m_c_RhoAshBiggerThanRhoAsh2<< std::endl
 
-  << std::endl
+
+  << "# Young`s modulus (E) calculation modality" << std::endl
+  << "# Modality (m_YoungModuleCalculationModality) {HU_INTEGRATION = 0,YOUNG_MODULE_INTEGRATION = 1}: " << std::endl
+  << m_YoungModuleCalculationModality << std::endl
 
   << "# Integration Steps (m_StepsNumber): " << std::endl
   << m_StepsNumber<< std::endl
