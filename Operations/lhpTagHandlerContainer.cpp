@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-06-30 09:17:11 $
-  Version:   $Revision: 1.18 $
+  Date:      $Date: 2008-06-30 15:01:20 $
+  Version:   $Revision: 1.19 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -395,7 +395,7 @@ void lhpTagHandler_L0000_resource_data_Dataset_LocalFileCheckSum::HandleAutoTag(
     cargo->SetTagHandlerGeneratedString("No binary data associated");
     return;
   }
-  else
+  else if (!cargo->GetInputVme()->IsA("mafVMEExternalData"))
   {
     mafTimeStamp currentTime = cargo->GetInputVme()->GetTimeStamp();
     mafVMEGenericAbstract *vme = mafVMEGenericAbstract::SafeDownCast(cargo->GetInputVme());
@@ -405,10 +405,10 @@ void lhpTagHandler_L0000_resource_data_Dataset_LocalFileCheckSum::HandleAutoTag(
       mafString MD5Str = MD5Tag->GetValue();
       cargo->SetTagHandlerGeneratedString(MD5Str);
     }
-    else
-    {
-      cargo->SetTagHandlerGeneratedString("MD5 Checksum not Found");
-    }
+  }
+  else
+  {
+    cargo->SetTagHandlerGeneratedString("MD5 Checksum not Found");
   }
 }
 
