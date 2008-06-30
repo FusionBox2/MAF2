@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-05-30 15:06:30 $
-Version:   $Revision: 1.16 $
+Date:      $Date: 2008-06-30 09:17:26 $
+Version:   $Revision: 1.17 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -318,13 +318,13 @@ void lhpOpDownloadVME::OpDo()
       wxMessageBox("Unable to reconstruct msf");
       return;
     }
-
+/*
     //import msf in the current tree
     if(ImportMSF() != MAF_OK)
     {
       wxMessageBox("Unable to import msf");
       return;
-    }
+    }*/
 
     wxString oldDir = wxGetCwd();
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
@@ -362,7 +362,8 @@ void lhpOpDownloadVME::OpDo()
       command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
       command2execute.Append(wxString::Format("%s ","https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //dev repository
       //http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2 prod
-
+      command2execute.Append(wxString::Format("%s ", "none")); //set "none" for download
+      command2execute.Append(wxString::Format("%s ", "false")); //has link? (set "false" for download")
       command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //DATA DOWNLOAD NAME
       //command2execute.Append(" > log.txt"); //logme
 
@@ -413,15 +414,24 @@ void lhpOpDownloadVME::OpDo()
       command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
       command2execute.Append(wxString::Format("%s ","https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //repository
 
+      command2execute.Append(wxString::Format("%s ", "none")); //set "false" for download
+      command2execute.Append(wxString::Format("%s ", "false")); //has link? (set "none" for download")
       command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //DATA DOWNLOAD NAME
 
-      //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+      mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
       m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
 
       //mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
       //  command2execute.c_str(), m_Pid);
     }
     wxSetWorkingDirectory(oldDir);
+  }
+
+  //import msf in the current tree
+  if(ImportMSF() != MAF_OK)
+  {
+    wxMessageBox("Unable to import msf");
+    return;
   }
 
  
