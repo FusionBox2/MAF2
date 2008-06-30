@@ -115,9 +115,9 @@ class ThreadedClient:
         #5 is serverUrl
         #6 is data URI in SRB
         self.gui.createBar(tuplaFromServer[0])
-        self.gui.createLabel(tuplaFromServer[6])    
+        self.gui.createLabel(tuplaFromServer[8])    
                
-        self.threads.append(CustomThread.CustomThread(func=self.workerThreadDownload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[2], tuplaFromServer[6],tuplaFromServer[3],tuplaFromServer[4],tuplaFromServer[5],tuplaFromServer[1])))
+        self.threads.append(CustomThread.CustomThread(func=self.workerThreadDownload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[2], tuplaFromServer[8],tuplaFromServer[3],tuplaFromServer[4],tuplaFromServer[5],tuplaFromServer[1])))
         self.threads[len(self.threads)-1].start()
         
     def workerThreadUpload(self, observer, dirCache , id, usr, pwd, urlServer, manualTagFile, hasLink, vmeName):
