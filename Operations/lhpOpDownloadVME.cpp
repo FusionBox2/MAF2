@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-06-30 09:17:26 $
-Version:   $Revision: 1.17 $
+Date:      $Date: 2008-06-30 15:00:22 $
+Version:   $Revision: 1.18 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -425,16 +425,14 @@ void lhpOpDownloadVME::OpDo()
       //  command2execute.c_str(), m_Pid);
     }
     wxSetWorkingDirectory(oldDir);
-  }
 
-  //import msf in the current tree
-  if(ImportMSF() != MAF_OK)
-  {
-    wxMessageBox("Unable to import msf");
-    return;
+    //import msf in the current tree
+    if(ImportMSF() != MAF_OK)
+    {
+      wxMessageBox("Unable to import msf");
+      return;
+    }
   }
-
- 
 }
 //----------------------------------------------------------------------------
 void lhpOpDownloadVME::OpStop(int result)   
