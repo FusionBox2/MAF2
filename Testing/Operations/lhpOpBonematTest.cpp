@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpBonematTest.cpp,v $
 Language:  C++
-Date:      $Date: 2008-06-17 15:34:01 $
-Version:   $Revision: 1.4 $
+Date:      $Date: 2008-06-30 08:45:02 $
+Version:   $Revision: 1.5 $
 Authors:   Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2004 
@@ -124,53 +124,53 @@ void lhpOpBonematTest::TestSaveLoadConfigurationFile()
   //op->m_HU1_d1_el0 = HU1_d1_el0;
   //op->m_HU1_d1_el1 = HU1_d1_el1;
 
-  op->m_ROIntercept = ROIntercept;
-  op->m_ROSlope = ROSlope;
+  op->m_RhoIntercept = ROIntercept;
+  op->m_RhoSlope = ROSlope;
 
-  op->m_a_RoLessThanRO1_EI = Ea0_Eb0_Ec0_V3_el0;
-  op->m_b_RoLessThanR01_EI = Ea0_Eb0_Ec0_V3_el1;
-  op->m_c_RoLessThanR01_EI = Ea0_Eb0_Ec0_V3_el2;
+  op->m_a_RhoAshLessThanRhoAsh1 = Ea0_Eb0_Ec0_V3_el0;
+  op->m_b_RhoAshLessThanRhoAsh1 = Ea0_Eb0_Ec0_V3_el1;
+  op->m_c_RhoAshLessThanRhoAsh1 = Ea0_Eb0_Ec0_V3_el2;
 
-  op->m_a_RoBetweenR01andR02_EI = Ea1_Eb1_Ec1_V3_el0;
-  op->m_b_RoBetweenR01andR02_EI = Ea1_Eb1_Ec1_V3_el1;
-  op->m_c_RoBetweenR01andR02_EI = Ea1_Eb1_Ec1_V3_el2;
+  op->m_a_RhoAshBetweenRhoAsh1andRhoAsh2 = Ea1_Eb1_Ec1_V3_el0;
+  op->m_b_RhoAshBetweenRhoAsh1andRhoAsh2 = Ea1_Eb1_Ec1_V3_el1;
+  op->m_c_RhoAshBetweenRhoAsh1andRhoAsh2 = Ea1_Eb1_Ec1_V3_el2;
 
-  op->m_a_RoBiggerThanR02_EI = Ea2_Eb2_Ec2_V3_el0;
-  op->m_b_RoBiggerThanR02_EI = Ea2_Eb2_Ec2_V3_el1;
-  op->m_c_RoBiggerThanR02_EI = Ea2_Eb2_Ec2_V3_el2;
+  op->m_a_RhoAshBiggerThanRhoAsh2 = Ea2_Eb2_Ec2_V3_el0;
+  op->m_b_RhoAshBiggerThanRhoAsh2 = Ea2_Eb2_Ec2_V3_el1;
+  op->m_c_RhoAshBiggerThanRhoAsh2 = Ea2_Eb2_Ec2_V3_el2;
 
-  op->m_a_DensityElasticityRelationship = Ea_Eb_Ec_V2_el0;
-  op->m_b_DensityElasticityRelationship = Ea_Eb_Ec_V2_el1;
-  op->m_c_DensityElasticityRelationship = Ea_Eb_Ec_V2_el2;
+  op->m_a_DER = Ea_Eb_Ec_V2_el0;
+  op->m_b_DER = Ea_Eb_Ec_V2_el1;
+  op->m_c_DER = Ea_Eb_Ec_V2_el2;
 
   op->m_Egap = Egap;
   op->m_StepsNumber = StepsNumber;
-  op->m_RO1_EI = RO1_RO2_el0;
-  op->m_RO2_EI = RO1_RO2_el1;
+  op->m_RhoAsh1 = RO1_RO2_el0;
+  op->m_RhoAsh2 = RO1_RO2_el1;
 
-  op->m_a_EI = Ea_Eb_Ec_V3_OneDensityInterval_el0;
-  op->m_b_EI = Ea_Eb_Ec_V3_OneDensityInterval_el1;
-  op->m_c_EI = Ea_Eb_Ec_V3_OneDensityInterval_el2;
+  op->m_a_OneInterval = Ea_Eb_Ec_V3_OneDensityInterval_el0;
+  op->m_b_OneInterval = Ea_Eb_Ec_V3_OneDensityInterval_el1;
+  op->m_c_OneInterval = Ea_Eb_Ec_V3_OneDensityInterval_el2;
 
   //Ro Calibration Flag
-  op->m_ROCalibrationCorrectionIsActive = ROCalibrationCorrectionActivation;
-  op->m_ROCalibrationCorrectionType       = ROCalibrationCorrectionType;
-  op->m_RO1_CalibrationCorrection = ROCorrectionDensityInterval0;
-  op->m_RO2_CalibrationCorrection = ROCorrectionDensityInterval1;
+  op->m_RhoCalibrationCorrectionIsActive = ROCalibrationCorrectionActivation;
+  op->m_RhoCalibrationCorrectionType       = ROCalibrationCorrectionType;
+  op->m_RhoQCT1 = ROCorrectionDensityInterval0;
+  op->m_RhoQCT2 = ROCorrectionDensityInterval1;
 
   //single interval ro calibration
   op->m_a_CalibrationCorrection = RoCorrection1IntervalCoefficient0;
   op->m_b_CalibrationCorrection = RoCorrection1IntervalCoefficient1;
 
   //three intervals ro calibration
-  op->m_a_RoLessThanR01_CalibrationCorrection = RoCorrection3IntervalsFirstCoefficient0;
-  op->m_b_RoLessThanR01_CalibrationCorrection = RoCorrectio3IntervalsFirstCoefficient1;
+  op->m_a_RhoQCTLessThanRhoQCT1 = RoCorrection3IntervalsFirstCoefficient0;
+  op->m_b_RhoQCTLessThanRhoQCT1 = RoCorrectio3IntervalsFirstCoefficient1;
 
-  op->m_a_RoBetweenR01AndR02_CalibrationCorrection = RoCorrection3IntervalsSecondCoefficient0;
-  op->m_b_RoBetweenR01AndR02_CalibrationCorrection = RoCorrection3IntervalsSecondCoefficient1;
+  op->m_a_RhoQCTBetweenRhoQCT1AndRhoQCT2 = RoCorrection3IntervalsSecondCoefficient0;
+  op->m_b_RhoQCTBetweenRhoQCT1AndRhoQCT2 = RoCorrection3IntervalsSecondCoefficient1;
 
-  op->m_a_RoBiggerThanR02_CalibrationCorrection = RoCorrection3IntervalsThirdCoefficient0;
-  op->m_b_RoBiggerThanR02_CalibrationCorrection = RoCorrection3IntervalsThirdCoefficient1;
+  op->m_a_RhoQCTBiggerThanRhoQCT2 = RoCorrection3IntervalsThirdCoefficient0;
+  op->m_b_RhoQCTBiggerThanRhoQCT2 = RoCorrection3IntervalsThirdCoefficient1;
 
   mafString dirPrefix = LHP_DATA_ROOT;
 
@@ -194,53 +194,49 @@ void lhpOpBonematTest::TestSaveLoadConfigurationFile()
   //CPPUNIT_ASSERT(op->m_HU1_d1_el0 == HU1_d1_el0);
   //CPPUNIT_ASSERT(op->m_HU1_d1_el1 == HU1_d1_el1);
 
-  CPPUNIT_ASSERT(op->m_ROIntercept == ROIntercept);
-  CPPUNIT_ASSERT(op->m_ROSlope == ROSlope);
+  CPPUNIT_ASSERT(op->m_RhoIntercept == ROIntercept);
+  CPPUNIT_ASSERT(op->m_RhoSlope == ROSlope);
 
-  CPPUNIT_ASSERT(op->m_a_RoLessThanRO1_EI == Ea0_Eb0_Ec0_V3_el0);
-  CPPUNIT_ASSERT(op->m_b_RoLessThanR01_EI == Ea0_Eb0_Ec0_V3_el1);
-  CPPUNIT_ASSERT(op->m_c_RoLessThanR01_EI == Ea0_Eb0_Ec0_V3_el2);
+  CPPUNIT_ASSERT(op->m_a_RhoAshLessThanRhoAsh1 == Ea0_Eb0_Ec0_V3_el0);
+  CPPUNIT_ASSERT(op->m_b_RhoAshLessThanRhoAsh1 == Ea0_Eb0_Ec0_V3_el1);
+  CPPUNIT_ASSERT(op->m_c_RhoAshLessThanRhoAsh1 == Ea0_Eb0_Ec0_V3_el2);
 
-  CPPUNIT_ASSERT(op->m_a_RoBetweenR01andR02_EI == Ea1_Eb1_Ec1_V3_el0);
-  CPPUNIT_ASSERT(op->m_b_RoBetweenR01andR02_EI == Ea1_Eb1_Ec1_V3_el1);
-  CPPUNIT_ASSERT(op->m_c_RoBetweenR01andR02_EI == Ea1_Eb1_Ec1_V3_el2);
+  CPPUNIT_ASSERT(op->m_a_RhoAshBetweenRhoAsh1andRhoAsh2 == Ea1_Eb1_Ec1_V3_el0);
+  CPPUNIT_ASSERT(op->m_b_RhoAshBetweenRhoAsh1andRhoAsh2 == Ea1_Eb1_Ec1_V3_el1);
+  CPPUNIT_ASSERT(op->m_c_RhoAshBetweenRhoAsh1andRhoAsh2 == Ea1_Eb1_Ec1_V3_el2);
 
-  CPPUNIT_ASSERT(op->m_a_RoBiggerThanR02_EI == Ea2_Eb2_Ec2_V3_el0);
-  CPPUNIT_ASSERT(op->m_b_RoBiggerThanR02_EI == Ea2_Eb2_Ec2_V3_el1);
-  CPPUNIT_ASSERT(op->m_c_RoBiggerThanR02_EI == Ea2_Eb2_Ec2_V3_el2);
-
-  CPPUNIT_ASSERT(op->m_a_DensityElasticityRelationship == Ea_Eb_Ec_V2_el0);
-  CPPUNIT_ASSERT(op->m_b_DensityElasticityRelationship == Ea_Eb_Ec_V2_el1);
-  CPPUNIT_ASSERT(op->m_c_DensityElasticityRelationship == Ea_Eb_Ec_V2_el2);
+  CPPUNIT_ASSERT(op->m_a_RhoAshBiggerThanRhoAsh2 == Ea2_Eb2_Ec2_V3_el0);
+  CPPUNIT_ASSERT(op->m_b_RhoAshBiggerThanRhoAsh2 == Ea2_Eb2_Ec2_V3_el1);
+  CPPUNIT_ASSERT(op->m_c_RhoAshBiggerThanRhoAsh2 == Ea2_Eb2_Ec2_V3_el2);
 
   CPPUNIT_ASSERT(op->m_Egap == Egap);
   CPPUNIT_ASSERT(op->m_StepsNumber == StepsNumber);
-  CPPUNIT_ASSERT(op->m_RO1_EI == RO1_RO2_el0);
-  CPPUNIT_ASSERT(op->m_RO2_EI == RO1_RO2_el1);
+  CPPUNIT_ASSERT(op->m_RhoAsh1 == RO1_RO2_el0);
+  CPPUNIT_ASSERT(op->m_RhoAsh2 == RO1_RO2_el1);
 
-  CPPUNIT_ASSERT(op->m_a_EI == Ea_Eb_Ec_V3_OneDensityInterval_el0);
-  CPPUNIT_ASSERT(op->m_b_EI == Ea_Eb_Ec_V3_OneDensityInterval_el1);
-  CPPUNIT_ASSERT(op->m_c_EI == Ea_Eb_Ec_V3_OneDensityInterval_el2);
+  CPPUNIT_ASSERT(op->m_a_OneInterval == Ea_Eb_Ec_V3_OneDensityInterval_el0);
+  CPPUNIT_ASSERT(op->m_b_OneInterval == Ea_Eb_Ec_V3_OneDensityInterval_el1);
+  CPPUNIT_ASSERT(op->m_c_OneInterval == Ea_Eb_Ec_V3_OneDensityInterval_el2);
 
   //Ro Calibration Flag
-  CPPUNIT_ASSERT(op->m_ROCalibrationCorrectionIsActive == ROCalibrationCorrectionActivation);
-  CPPUNIT_ASSERT(op->m_ROCalibrationCorrectionType       == ROCalibrationCorrectionType);
-  CPPUNIT_ASSERT(op->m_RO1_CalibrationCorrection == ROCorrectionDensityInterval0);
-  CPPUNIT_ASSERT(op->m_RO2_CalibrationCorrection == ROCorrectionDensityInterval1);
+  CPPUNIT_ASSERT(op->m_RhoCalibrationCorrectionIsActive == ROCalibrationCorrectionActivation);
+  CPPUNIT_ASSERT(op->m_RhoCalibrationCorrectionType       == ROCalibrationCorrectionType);
+  CPPUNIT_ASSERT(op->m_RhoQCT1 == ROCorrectionDensityInterval0);
+  CPPUNIT_ASSERT(op->m_RhoQCT2 == ROCorrectionDensityInterval1);
 
   //single interval ro calibration
   CPPUNIT_ASSERT(op->m_a_CalibrationCorrection == RoCorrection1IntervalCoefficient0);
   CPPUNIT_ASSERT(op->m_b_CalibrationCorrection == RoCorrection1IntervalCoefficient1);
 
   //three intervals ro calibration
-  CPPUNIT_ASSERT(op->m_a_RoLessThanR01_CalibrationCorrection == RoCorrection3IntervalsFirstCoefficient0);
-  CPPUNIT_ASSERT(op->m_b_RoLessThanR01_CalibrationCorrection == RoCorrectio3IntervalsFirstCoefficient1);
+  CPPUNIT_ASSERT(op->m_a_RhoQCTLessThanRhoQCT1 == RoCorrection3IntervalsFirstCoefficient0);
+  CPPUNIT_ASSERT(op->m_b_RhoQCTLessThanRhoQCT1 == RoCorrectio3IntervalsFirstCoefficient1);
 
-  CPPUNIT_ASSERT(op->m_a_RoBetweenR01AndR02_CalibrationCorrection == RoCorrection3IntervalsSecondCoefficient0);
-  CPPUNIT_ASSERT(op->m_b_RoBetweenR01AndR02_CalibrationCorrection == RoCorrection3IntervalsSecondCoefficient1);
+  CPPUNIT_ASSERT(op->m_a_RhoQCTBetweenRhoQCT1AndRhoQCT2 == RoCorrection3IntervalsSecondCoefficient0);
+  CPPUNIT_ASSERT(op->m_b_RhoQCTBetweenRhoQCT1AndRhoQCT2 == RoCorrection3IntervalsSecondCoefficient1);
 
-  CPPUNIT_ASSERT(op->m_a_RoBiggerThanR02_CalibrationCorrection == RoCorrection3IntervalsThirdCoefficient0);
-  CPPUNIT_ASSERT(op->m_b_RoBiggerThanR02_CalibrationCorrection == RoCorrection3IntervalsThirdCoefficient1);
+  CPPUNIT_ASSERT(op->m_a_RhoQCTBiggerThanRhoQCT2 == RoCorrection3IntervalsThirdCoefficient0);
+  CPPUNIT_ASSERT(op->m_b_RhoQCTBiggerThanRhoQCT2 == RoCorrection3IntervalsThirdCoefficient1);
   
   op->PrintSelf(std::cout);
 
@@ -249,7 +245,7 @@ void lhpOpBonematTest::TestSaveLoadConfigurationFile()
   vtkDEL(op);
 }
 
-void lhpOpBonematTest::TestBonematFromConfigFileBuggy3Intervals()
+void lhpOpBonematTest::TestBonematEIntegration3Intervals()
 {
   mafString dirPrefix = LHP_DATA_ROOT;
   mafString inputDataDir = dirPrefix;
@@ -339,7 +335,7 @@ void lhpOpBonematTest::TestBonematFromConfigFileOk()
     );
 }
 
-void lhpOpBonematTest::TestBonematFromConfigFileBuggyOneInterval()
+void lhpOpBonematTest::TestBonematEIntegrationOneInterval()
 {
   mafString dirPrefix = LHP_DATA_ROOT;
   mafString inputDataDir = dirPrefix;
@@ -371,6 +367,96 @@ void lhpOpBonematTest::TestBonematFromConfigFileBuggyOneInterval()
 
   mafString outputDataCorrectDir = dirPrefix;
   outputDataCorrectDir.Append("/lhpOpBonematTest/TestDataEIntegrationOneInterval/OutputData/");
+
+  CPPUNIT_ASSERT(wxDirExists(outputDataCorrectDir.GetCStr()));
+
+  mafString outputFrequencyFile = outputDataCorrectDir;
+  outputFrequencyFile.Append("outputFrequencyFileToCheck.freq");
+
+
+  TestCase(inputConfFile.GetCStr(),inputDataDir.GetCStr() , 
+    inputVTKMesh.GetCStr(), inputVTKVolume.GetCStr(),
+    outputDataCorrectDir.GetCStr(), outputFrequencyFile.GetCStr()
+    );
+}
+
+void lhpOpBonematTest::TestBonematHUIntegration3Intervals()
+{
+  mafString dirPrefix = LHP_DATA_ROOT;
+  mafString inputDataDir = dirPrefix;
+  CPPUNIT_ASSERT(wxDirExists(inputDataDir));
+
+  inputDataDir.Append("/lhpOpBonematTest/TestBonematHUIntegrationThreeIntervals/InputData/");
+
+  CPPUNIT_ASSERT(wxDirExists(inputDataDir));
+
+  mafString inputVTKMesh = inputDataDir;
+  inputVTKMesh.Append("InputMesh.vtk");
+
+  bool exist = wxFile::Exists(inputVTKMesh.GetCStr());
+
+  CPPUNIT_ASSERT(exist == TRUE);
+
+  mafString inputVTKVolume = inputDataDir;
+  inputVTKVolume.Append("InputVolume.vtk");
+
+  exist = wxFile::Exists(inputVTKVolume.GetCStr());
+
+  CPPUNIT_ASSERT(exist == TRUE);
+
+  mafString inputConfFile = inputDataDir;
+  inputConfFile.Append("defaultConfigurationFile_HUintegration.conf");
+
+  exist = wxFile::Exists(inputConfFile.GetCStr());
+  CPPUNIT_ASSERT(exist == TRUE);
+
+  mafString outputDataCorrectDir = dirPrefix;
+  outputDataCorrectDir.Append("/lhpOpBonematTest/TestBonematHUIntegrationThreeIntervals/OutputData/");
+
+  CPPUNIT_ASSERT(wxDirExists(outputDataCorrectDir.GetCStr()));
+
+  mafString outputFrequencyFile = outputDataCorrectDir;
+  outputFrequencyFile.Append("outputFrequencyFileToCheck.freq");
+
+
+  TestCase(inputConfFile.GetCStr(),inputDataDir.GetCStr() , 
+    inputVTKMesh.GetCStr(), inputVTKVolume.GetCStr(),
+    outputDataCorrectDir.GetCStr(), outputFrequencyFile.GetCStr()
+    );
+}
+
+void lhpOpBonematTest::TestBonematHUIntegrationOneInterval()
+{
+  mafString dirPrefix = LHP_DATA_ROOT;
+  mafString inputDataDir = dirPrefix;
+  CPPUNIT_ASSERT(wxDirExists(inputDataDir));
+
+  inputDataDir.Append("/lhpOpBonematTest/TestBonematHUIntegrationOneInterval/InputData/");
+
+  CPPUNIT_ASSERT(wxDirExists(inputDataDir));
+
+  mafString inputVTKMesh = inputDataDir;
+  inputVTKMesh.Append("InputMesh.vtk");
+
+  bool exist = wxFile::Exists(inputVTKMesh.GetCStr());
+
+  CPPUNIT_ASSERT(exist == TRUE);
+
+  mafString inputVTKVolume = inputDataDir;
+  inputVTKVolume.Append("InputVolume.vtk");
+
+  exist = wxFile::Exists(inputVTKVolume.GetCStr());
+
+  CPPUNIT_ASSERT(exist == TRUE);
+
+  mafString inputConfFile = inputDataDir;
+  inputConfFile.Append("defaultConfigurationFile_HUintegration.conf");
+
+  exist = wxFile::Exists(inputConfFile.GetCStr());
+  CPPUNIT_ASSERT(exist == TRUE);
+
+  mafString outputDataCorrectDir = dirPrefix;
+  outputDataCorrectDir.Append("/lhpOpBonematTest/TestBonematHUIntegrationOneInterval/OutputData/");
 
   CPPUNIT_ASSERT(wxDirExists(outputDataCorrectDir.GetCStr()));
 
@@ -448,7 +534,7 @@ void lhpOpBonematTest::TestCase(const char *inputConfFile, const char *inputData
   op->SetFrequencyFileName(outputFrequencyFile);
 
   // execute bonemat
-  int result = op->YoungModuleIntegration();
+  int result = op->Execute();
 
   CPPUNIT_ASSERT(result == MAF_OK);
 
