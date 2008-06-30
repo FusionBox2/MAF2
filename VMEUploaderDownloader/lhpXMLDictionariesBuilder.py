@@ -16,18 +16,12 @@ class lhpXMLDictionariesBuilder:
     """Facilities to handle lhpBuilder XML dictionary"""
     
     def __init__(self):                              
-        #self.masterDictionaryFileName = "lhpXMLDictionary_200712181319.xml"
-        #self.subDictionaryFileName = "lhpXMLMotionAnalysisSourceSubdictionary_200712181319.xml"
-        #self.outputDictionaryFileName = "dictionaryPlusSubdictionary.xml"
-        # dicomDictionaryFileName = "lhpXMLDicomSourceSubdictionary_200712181319.xml"
         
         self.masterDictionaryFileName = "UNDEFINED"
         self.subDictionaryFileName = "UNDEFINED"
         self.outputDictionaryFileName = "dictionaryPlusSubdictionary.xml"
         
     def BuildMotionAnalysisDictionary(self):
-        # find dictionary filenames...
-        # TODO!!!!!
         
         # load master dictionary
         msfDOMParserInstance = msfParser.msfParser()        
@@ -35,7 +29,35 @@ class lhpXMLDictionariesBuilder:
         masterRootNode = masterDomDocument.documentElement
         
         # get the master subdir node
-        sourceDirNode = msfDOMParserInstance.GetNodeByNodeName(masterRootNode,"SourceDir")
+        sourceDirNode = msfDOMParserInstance.GetNodeByNodeName(masterRootNode,"MASource")
+        
+        assert(masterRootNode != None)
+        
+        # load motionAnalysys dictionary
+        motionAnalysisSubictionaryDomDocument = minidom.parse(self.subDictionaryFileName)
+        motionAnalysisRootNode = motionAnalysisSubictionaryDomDocument.documentElement
+        
+        # get motionAnalysys parent node
+        motionAnalysisTypeNode = msfDOMParserInstance.GetNodeByNodeName(motionAnalysisRootNode,"Motion")
+        
+        assert(motionAnalysisTypeNode != None)
+       
+        sourceDirNode.appendChild(motionAnalysisTypeNode)
+        
+        newDoc = minidom.Document()
+        newDoc.appendChild(masterRootNode)
+               
+        outFileXML = open(self.outputDictionaryFileName, 'w')
+        newDoc.writexml(outFileXML)
+     
+    def BuildDicomDictionary(self):
+        # load master dictionary
+        msfDOMParserInstance = msfParser.msfParser()        
+        masterDomDocument = minidom.parse(self.masterDictionaryFileName)
+        masterRootNode = masterDomDocument.documentElement
+        
+        # get the master subdir node
+        sourceDirNode = msfDOMParserInstance.GetNodeByNodeName(masterRootNode,"DicomSource")
         
         assert(masterRootNode != None)
         
@@ -56,10 +78,6 @@ class lhpXMLDictionariesBuilder:
         outFileXML = open(self.outputDictionaryFileName, 'w')
         newDoc.writexml(outFileXML)
      
-    def BuildDicomDictionary(self):
-        # TODO!!!!!
-        # refactor to use one method only in progress...
-        self.BuildMotionAnalysisDictionary()
 
 def run(masterXMLDictionaryFilename, subXMLDictionaryFilename, command, outputXMLDictionaryFilename):
     """"""

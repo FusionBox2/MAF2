@@ -16,11 +16,11 @@ import difflib
 import pickle
 import os
 
-class lhpXMLDictionaryParserTest(unittest.TestCase):
+class lhpXMLDictionariesBuilderTest(unittest.TestCase):
       
     def setUp(self):
         
-        print "Beware:  In order to work run this est must be launched from VMEUploaderDownloader dir!"
+        print "Beware:  In order to work run this test must be launched from VMEUploaderDownloader dir!"
         
         curDir = os.getcwd()        
         
@@ -28,13 +28,55 @@ class lhpXMLDictionaryParserTest(unittest.TestCase):
             
     
     def testBuildMotionAnalysis(self):
+         
+        curDir = os.getcwd()
+        absPath = curDir
+        curDir  +=  "\lhpXMLDictionariesBuilderTestData"
+        print curDir  
+        master = curDir + "\LHDL_dictionary.xml"
+        exist = os.path.exists(master)
+        self.assertTrue(exist)
+        
+        motionSub = curDir + "\MotionAnalysis.xml"
+        exist = os.path.exists(motionSub)
+        self.assertTrue(exist)
+        
+        output  = curDir + "\masterDictionaryPlusMotionSubdictionary.xml"
+        exist = os.path.exists(output)
+        # self.assertFalse(exist)
         
         dictionaryBuilder = lhpXMLDictionariesBuilder.lhpXMLDictionariesBuilder()
-        dictionaryBuilder.masterDictionaryFileName = "lhpXMLDictionary_200712181319.xml"
-        dictionaryBuilder.subDictionaryFileName = "lhpXMLMotionAnalysisSourceSubdictionary_200712181319.xml"
-#         dicomDictionaryFileName = "lhpXMLDicomSourceSubdictionary_200712181319.xml"
-        dictionaryBuilder.outputDictionaryFileName = "dictionaryPlusSubdictionary.xml"
+        dictionaryBuilder.masterDictionaryFileName = master
+        print "master: " + master
+        dictionaryBuilder.subDictionaryFileName = motionSub
+        print "motionSub: " + motionSub
+        dictionaryBuilder.outputDictionaryFileName = output
+        print "output: " + output
         dictionaryBuilder.BuildMotionAnalysisDictionary()
+        
+    def testBuildDicom(self):
+        
+        curDir = os.getcwd()
+        absPath = curDir
+        curDir  +=  "\lhpXMLDictionariesBuilderTestData"
+        print curDir  
+        master = curDir + "\LHDL_dictionary.xml"
+        exist = os.path.exists(master)
+        self.assertTrue(exist)
+        
+        dicomSub = curDir + "\DicomSource.xml"
+        exist = os.path.exists(dicomSub)
+        self.assertTrue(exist)
+        
+        output  = curDir + "\masterDictionaryPlusDicomSubdictionary.xml"
+        exist = os.path.exists(output)
+        # self.assertFalse(exist)
+            
+        dictionaryBuilder = lhpXMLDictionariesBuilder.lhpXMLDictionariesBuilder()
+        dictionaryBuilder.masterDictionaryFileName = master
+        dictionaryBuilder.subDictionaryFileName = dicomSub
+        dictionaryBuilder.outputDictionaryFileName = output
+        dictionaryBuilder.BuildDicomDictionary()
         
 if __name__ == '__main__':
     unittest.main()
