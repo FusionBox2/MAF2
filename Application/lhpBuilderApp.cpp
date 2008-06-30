@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-06-26 11:09:46 $
-  Version:   $Revision: 1.59 $
+  Date:      $Date: 2008-06-30 13:49:21 $
+  Version:   $Revision: 1.60 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -137,6 +137,8 @@
 
 #include "mafOpValidateTree.h"
 
+#include "medOpImporterDicomXA.h"
+
 //temporary for testing
 #include "mafViewSingleSliceCompound.h"
 
@@ -224,6 +226,7 @@ bool lhpBuilderApp::OnInit()
 
   //------------------------- Importers -------------------------
   m_Logic->Plug(new mmoDICOMImporter("DICOM"),"Images");
+  m_Logic->Plug(new medOpImporterDicomXA("DICOM XA"),"Images");
   m_Logic->Plug(new mafOpImporterSTL("STL"),"Geometries");
   m_Logic->Plug(new mafOpImporterVTK("VTK"),"Other");
   m_Logic->Plug(new mafOpImporterMSF("MSF"),"Other");
