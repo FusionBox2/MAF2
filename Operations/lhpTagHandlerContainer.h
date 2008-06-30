@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.h,v $
   Language:  C++
-  Date:      $Date: 2008-05-28 08:22:36 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2008-06-30 09:17:11 $
+  Version:   $Revision: 1.7 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -70,12 +70,12 @@ class lhpTagHandler_L0000_resource_data_DataType_Timevarying: public lhpTagHandl
   
 };
 
-class lhpTagHandler_L0000_resource_data_Size_DatasetSize: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_Size_FileSize: public lhpTagHandler
 {
   public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_Size_DatasetSize,mafObject);
+    mafTypeMacro(lhpTagHandler_L0000_resource_data_Size_FileSize,mafObject);
 
-    lhpTagHandler_L0000_resource_data_Size_DatasetSize();
+    lhpTagHandler_L0000_resource_data_Size_FileSize();
     virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-06-04 09:43:24 $
-  Version:   $Revision: 1.17 $
+  Date:      $Date: 2008-06-30 09:17:11 $
+  Version:   $Revision: 1.18 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -171,15 +171,15 @@ void lhpTagHandler_L0000_resource_data_DataType_Timevarying::HandleAutoTag(lhpTa
   cargo->SetTagHandlerGeneratedString(value);
 }
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Size_DatasetSize);
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Size_FileSize);
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Size_DatasetSize::lhpTagHandler_L0000_resource_data_Size_DatasetSize()
+lhpTagHandler_L0000_resource_data_Size_FileSize::lhpTagHandler_L0000_resource_data_Size_FileSize()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Size_DatasetSize::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Size_FileSize::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   //here there is also the controller for zip archive
