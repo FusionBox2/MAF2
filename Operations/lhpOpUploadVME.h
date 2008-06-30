@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-06-19 10:23:31 $
-Version:   $Revision: 1.22 $
+Date:      $Date: 2008-06-30 14:59:45 $
+Version:   $Revision: 1.23 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -50,6 +50,7 @@ MafMedical is partially based on OpenMAF.
 // forward references :
 //----------------------------------------------------------------------------
 class lhpUser;
+class mafVME;
 
 //----------------------------------------------------------------------------
 // lhpOpUploadVME :
@@ -174,6 +175,8 @@ private:
   mafString GetXMLDictionaryFileName(mafString dictionaryFileNamePrefix);
   void CreateGui();
   int AssembleDictionaries();
+  mafVME *m_CacheVme;
+
   int m_SubdictionaryId;
   wxArrayString m_AutoTagsList;
   wxArrayString m_ManualTagsList;
@@ -185,6 +188,7 @@ private:
   mafNode *m_Parent;
   mafNode *m_TemporaryNode;
   bool m_HasLink;
+  bool m_HasChild;
 
   std::vector<mafNode*> m_LinkNode;
   std::vector<mafString> m_LinkName;

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-06-20 14:40:09 $
-Version:   $Revision: 1.64 $
+Date:      $Date: 2008-06-30 14:59:45 $
+Version:   $Revision: 1.65 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -61,6 +61,7 @@ MafMedical is partially based on OpenMAF.
 #include "mafTagArray.h"
 #include "mafVMEStorage.h"
 #include "mafVMERoot.h"
+#include "mafVMEFactory.h"
 
 #include "lhpFactoryTagHandler.h"
 #include "vtkPolyData.h"
@@ -97,6 +98,7 @@ mafOp(label)
 	m_OpType  = OPTYPE_OP;
 	m_Canundo = false;
   m_HasLink = false;
+  m_HasChild = false;
   m_LinkNode.clear();
   m_LinkName.clear();
 
@@ -313,8 +315,8 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     hasLink = "true";
     SaveLinkInfo();
 
-    //remove links that will be linked after in ImportMSF()
-    m_Input->RemoveAllLinks();
+    //remove links that will be linked again after 
+    m_CacheVme->RemoveAllLinks();
     mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
   }
 
@@ -324,7 +326,7 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
 
   //if already exist file with binary URI, remove it
   wxString fileName = m_Input->GetName();
-  fileName << wxString::Format("%d",m_Input->GetId());
+  fileName << wxString::Format("%d", m_Input->GetId());
   wxString lockPath = m_PythonUploadFullPath;
   lockPath += fileName;
   if (wxFileExists(lockPath))
@@ -453,7 +455,7 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     command2execute.Append("127.0.0.1 "); //server address (localhost)
     command2execute.Append("50000 "); //port address (50000)
     command2execute.Append(wxString::Format("UPLOAD ")); //UPLOAD command
-    command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //vme id
+    command2execute.Append(wxString::Format("%d ",m_CacheVme->GetId())); //vme id
 
     //workaround to understanding directory argument
     wxString directoryWorkAround = m_CurrentCache;
@@ -462,7 +464,6 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
     command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
     command2execute.Append(wxString::Format("%s ","https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //dev repository
-    //http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository prod
     command2execute.Append(wxString::Format("%s ", m_CsvName.c_str())); //manualTagFile
     command2execute.Append(wxString::Format("%s ", hasLink.GetCStr())); //has link?
     command2execute.Append(wxString::Format("%s ",m_NodeName)); //vme name
@@ -500,7 +501,7 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     command2execute.Append("127.0.0.1 "); //server address (localhost)
     command2execute.Append("50000 "); //port address (50000)
     command2execute.Append(wxString::Format("UPLOAD ")); //UPLOAD command
-    command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //vme id
+    command2execute.Append(wxString::Format("%d ",m_CacheVme->GetId())); //vme id
 
     //workaround to understanding directory argument
     wxString directoryWorkAround = m_CurrentCache;
@@ -665,35 +666,6 @@ void lhpOpUploadVME::OpStop(int result)
 bool lhpOpUploadVME::CreateCache()
 //----------------------------------------------------------------------------
 {
-  bool result = true;
-  //create cache: logic comunicate the msf directory
-  mafEvent event;
-  event.SetSender(this);
-  event.SetId(ID_MSF_DATA_CACHE);
-  mafEventMacro(event);
-  
-  wxString temp;
-  temp.Append((*event.GetString()).GetCStr());
-  m_MsfFile = temp;
-  temp = temp.BeforeLast('/');
-  m_MsfDir = temp;
-
-  wxDir dir(m_MsfDir.GetCStr());
-  wxString exist = m_MsfDir.GetCStr();
-  if ( !wxDirExists(exist) || !dir.IsOpened())
-  {
-    // deal with the error here - wxDir would already log an error message
-    // explaining the exact reason of the failure
-    return false;
-  }
-
-  wxString filename, filespec;
-  filespec = "*.*";
-
-  wxString filenameCopy;
-
-  bool cont = dir.GetFirst(&filename, filespec);
-
   //control cache subdir
   mafString currentSubdir;
   currentSubdir = m_CacheDir + m_CacheSubdir.GetCStr();
@@ -707,25 +679,43 @@ bool lhpOpUploadVME::CreateCache()
   }
   currentSubdir = currentSubdir + "\\";
   wxMkDir(currentSubdir);
-  while ( cont )
+  m_CurrentCache = currentSubdir;
+
+  currentSubdir = currentSubdir + m_Input->GetName() + ".msf";
+
+  // restore due attributes
+  mafString typeVme;
+  typeVme = m_Input->GetTypeName();
+
+  mafSmartPointer<mafVMEFactory> factory;
+  m_CacheVme = factory->CreateVMEInstance(typeVme);
+  if (!m_CacheVme)
+    return false;
+
+  m_CacheVme->DeepCopy(m_Input);
+
+  mafVMEGenericAbstract *vmeGeneric = mafVMEGenericAbstract::SafeDownCast(m_Input);
+  m_CacheVme->SetMatrix(*vmeGeneric->GetOutput()->GetAbsMatrix());
+
+  mafVMEStorage *storage;
+  storage = mafVMEStorage::New();
+  storage->SetURL(currentSubdir.GetCStr());
+
+  mafVMERoot *root;
+  root = storage->GetRoot();
+  root->Initialize();
+  root->SetName("Root");
+  mafNode *node = NULL;
+  if (m_CacheVme->GetNumberOfChildren() != 0)
   {
-    m_CurrentCache = currentSubdir;
-    filenameCopy = currentSubdir;
-    filenameCopy.Append(filename);
-    
-    wxString sourceFile;
-    sourceFile = m_MsfDir;
-    sourceFile.Append("\\");
-    sourceFile.Append(filename);
-
-    if(wxFileExists(sourceFile))
-      result = wxCopyFile(sourceFile, filenameCopy );
-    cont = dir.GetNext(&filename);
-    if(!result) break;
+    m_CacheVme->RemoveAllChildren();
   }
+  root->AddChild(m_CacheVme);
+  storage->Store();
 
-  //wxMessageBox(m_MsfDir.GetCStr());
-  return result;
+
+ 
+  return true;
   
 }
 //----------------------------------------------------------------------------
