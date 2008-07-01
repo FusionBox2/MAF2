@@ -77,6 +77,9 @@ class msfParser:
         self.__OutputTagArrayNode = None
         self.__OutputTagItemNode = None
         self.__OutputNode = None
+        self.extension = ""
+        self.extFound = 0
+        self.fileNameFound = 0
     
     def PrintDOMTree(self,parent, outFile):
         level = 0
@@ -189,7 +192,8 @@ class msfParser:
         #URL of the binary file are serialized in different part of the msf
         #so I have to manage 3 cases. In the future, we'll try to uniform
         #the URL position.
-        isExternal = 0     
+        isExternal = 0
+        
         attrs = inputVme.attributes
         for attrName in attrs.keys():
             attrNode = attrs.get(attrName)
@@ -200,13 +204,38 @@ class msfParser:
                   contents.append("") #so binary must be found
               else:                  
                  break
-            if (attrName == "Name" and isExternal == 1): #in mafVMEExternalFile
-                contents[0] = attrValue;
-                return contents
+
                 
         for child in inputVme.childNodes:
             if child.nodeType == Node.ELEMENT_NODE:
-              print child.nodeName    
+              print child.nodeName
+              
+              if (child.nodeName == "TC" and self.extFound == 1 and len(self.extension) == 0):
+                  self.extension = (child.childNodes[0].nodeValue)
+                  self.extFound = 0
+                  
+                                    
+              if (child.nodeName == "TC" and self.fileNameFound == 1 and len(self.extension) != 0):
+                  fileName = (child.childNodes[0].nodeValue)
+                  self.fileNameFound = 0
+                  contents[0] = (fileName + '.' + self.extension)
+                  return contents
+              
+              
+              if (child.nodeName == "TItem"):
+                   attrs = child.attributes                            
+                   for attrName in attrs.keys():
+                        attrNode = attrs.get(attrName)
+                        attrValue = attrNode.nodeValue
+                        if (attrName  == "Name"): #in .zvtk files
+                               if (attrValue == "EXTDATA_EXTENSION"):
+                                   self.extFound = 1
+                                   break
+                        if (attrName  == "Name"): #in .zvtk files
+                              if (attrValue == "EXTDATA_FILENAME"):
+                                   self.fileNameFound = 1
+                                   break
+                                             
                   
               if (child.nodeName == "Children"):
                   continue 
