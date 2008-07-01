@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpBonemat.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-06-30 08:36:22 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2008-07-01 11:19:07 $
+  Version:   $Revision: 1.14 $
   Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -239,12 +239,12 @@ enum BONEMAT_ID
   ID_RO_INTERCEPT,
   ID_RO_SLOPE,
   ID_YOUNG_MODULE_CALCULATION_MODALITY,
-  ID_DENSITY_INTERVALS_NUMBER, 
+  ID_RHOASH_DENSITY_INTERVALS_NUMBER, 
   ID_DENSITY_RELATIONSHIP_LISTBOX,
 
   //correction section
   ID_FLAG_RO_CORRECTION,
-  ID_TYPE_RO_CORRECTION,
+  ID_TYPE_RHOQCT_CORRECTION,
 
   ID_RO_CORRECTION_DENSITY_INTERVAL_0,
   ID_RO_CORRECTION_DENSITY_INTERVAL_1,
@@ -339,16 +339,18 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Label("Correction of the calibration",true);
   m_Gui->Label("RhoAsh = a + b * RhoQCT",false);
   const wxString densityChoicesRoCalibration[] = {"one interval", "three intervals"};
-  m_Gui->Combo(ID_TYPE_RO_CORRECTION,"", &m_RhoCalibrationCorrectionType,2,densityChoicesRoCalibration);  
+  m_Gui->Combo(ID_TYPE_RHOQCT_CORRECTION,"", &m_RhoCalibrationCorrectionType,2,densityChoicesRoCalibration);  
+  m_Gui->Divider();
+
+  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_SINGLE_0, "a", &m_a_CalibrationCorrection);
+  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_SINGLE_1, "b", &m_b_CalibrationCorrection);
+
   m_Gui->Divider();
 
   m_Gui->Double(ID_RO_CORRECTION_DENSITY_INTERVAL_0, "RhoQCT1",&m_RhoQCT1);
   m_Gui->Double(ID_RO_CORRECTION_DENSITY_INTERVAL_1, "RhoQCT2",&m_RhoQCT2);
 
-  m_Gui->Divider();
-  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_SINGLE_0, "a", &m_a_CalibrationCorrection);
-  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_SINGLE_1, "b", &m_b_CalibrationCorrection);
-  
+
   m_Gui->Divider();
 
   m_Gui->Label("RhoQCT < RhoQCT1");
@@ -363,7 +365,7 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Double(ID_RO_CORRECTION_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_0, "a", &m_a_RhoQCTBiggerThanRhoQCT2);
   m_Gui->Double(ID_RO_CORRECTION_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_1, "b", &m_b_RhoQCTBiggerThanRhoQCT2);
   
-  m_Gui->Enable(ID_TYPE_RO_CORRECTION,false);
+  m_Gui->Enable(ID_TYPE_RHOQCT_CORRECTION,false);
   EnableRhoQCTDensityInterval(false);
   EnableRhoQCTSingleInterval(false);
   EnableRhoQCTThreeIntervals(false);
@@ -374,17 +376,17 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Label("E = a + b * RhoAsh^c", false);
   
   const wxString densityChoices[] = {"one interval", "three intervals"};
-  m_Gui->Combo(ID_DENSITY_INTERVALS_NUMBER,"", &m_DensityIntervalsNumber,2,densityChoices);  
+  m_Gui->Combo(ID_RHOASH_DENSITY_INTERVALS_NUMBER,"", &m_DensityIntervalsNumber,2,densityChoices);  
   m_Gui->Divider(2);
-
-  m_Gui->Double(ID_DENSITY_INTERVAL_0, "RhoAsh1",&m_RhoAsh1);
-  m_Gui->Double(ID_DENSITY_INTERVAL_1, "RhoAsh2",&m_RhoAsh2);
-    
-  m_Gui->Divider();
   
   m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_0, "a", &m_a_OneInterval);
   m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_1, "b", &m_b_OneInterval);
   m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_2, "c", &m_c_OneInterval);
+
+  m_Gui->Divider();
+
+  m_Gui->Double(ID_DENSITY_INTERVAL_0, "RhoAsh1",&m_RhoAsh1);
+  m_Gui->Double(ID_DENSITY_INTERVAL_1, "RhoAsh2",&m_RhoAsh2);
 
   m_Gui->Label("RhoAsh < RhoAsh1");
   m_Gui->Double(ID_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_0, "a", &m_a_RhoAshLessThanRhoAsh1);
@@ -412,7 +414,7 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Enable(ID_DENSITY_INTERVAL_0, true);
   m_Gui->Enable(ID_DENSITY_INTERVAL_1, true);
 
-  m_Gui->Enable(ID_DENSITY_INTERVALS_NUMBER, true);
+  m_Gui->Enable(ID_RHOASH_DENSITY_INTERVALS_NUMBER, true);
   
   DisableRhoAshThreeIntervals();
 
@@ -517,17 +519,17 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
       }
       break;
 
-      case ID_DENSITY_INTERVALS_NUMBER	:
+      case ID_RHOASH_DENSITY_INTERVALS_NUMBER	:
       {
         UpdateRhoAshGuiOnRhoAshIntervalsNumberChange();        
       }
       break;
            
       case ID_FLAG_RO_CORRECTION:
-      case ID_TYPE_RO_CORRECTION:
+      case ID_TYPE_RHOQCT_CORRECTION:
         {
-          m_Gui->Enable(ID_TYPE_RO_CORRECTION,m_RhoCalibrationCorrectionIsActive?true:false);
-          EnableRhoQCTDensityInterval(m_RhoCalibrationCorrectionIsActive?true:false);
+          m_Gui->Enable(ID_TYPE_RHOQCT_CORRECTION,m_RhoCalibrationCorrectionIsActive?true:false);
+          EnableRhoQCTDensityInterval(m_RhoCalibrationCorrectionIsActive && m_RhoCalibrationCorrectionType == THREE_INTERVALS ? true:false);
           EnableRhoQCTSingleInterval(m_RhoCalibrationCorrectionIsActive && m_RhoCalibrationCorrectionType == SINGLE_INTERVAL);
           EnableRhoQCTThreeIntervals(m_RhoCalibrationCorrectionIsActive && m_RhoCalibrationCorrectionType == THREE_INTERVALS);
         }
@@ -536,9 +538,7 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
       case ID_YOUNG_MODULE_CALCULATION_MODALITY	:
       {
         if (m_YoungModuleCalculationModality == HU_INTEGRATION)
-        {
-
-            
+        {            
             // DisableRhoAshThreeIntervals();
 
         } 
@@ -2043,8 +2043,8 @@ void lhpOpBonemat::UpdateRhoAshGuiOnRhoAshIntervalsNumberChange()
 {
   if (m_DensityIntervalsNumber == SINGLE_INTERVAL)
   {
-    m_Gui->Enable(ID_DENSITY_INTERVAL_0, true);
-    m_Gui->Enable(ID_DENSITY_INTERVAL_1, true);
+    m_Gui->Enable(ID_DENSITY_INTERVAL_0, false);
+    m_Gui->Enable(ID_DENSITY_INTERVAL_1, false);
     EnableRhoAshSingleInterval(true);
 
   }
