@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpMultiscaleVisualPipes.h,v $
 Language:  C++
-Date:      $Date: 2008-01-28 16:36:30 $
-Version:   $Revision: 1.3 $
+Date:      $Date: 2008-07-03 12:24:12 $
+Version:   $Revision: 1.4 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -23,7 +23,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "vtkOutlineCornerFilter.h"
 #include "vtkImageData.h"
 #include "vtkPolyData.h"
-#include "vtkVolumeSlicer.h"  // bug: must include vtkImageData and vtkPolyData first
+#include "vtkMAFVolumeSlicer.h"  // bug: must include vtkImageData and vtkPolyData first
 #include "vtkTexture.h"
 #include <ostream>
 
@@ -144,9 +144,9 @@ private:
   vtkOutlineCornerFilter *m_ocf ;
   vtkActor *m_sliceActor ;
   vtkPolyDataMapper *m_sliceMapper ;
-  vtkVolumeSlicer	*m_SlicerPolygonal ;
+  vtkMAFVolumeSlicer	*m_SlicerPolygonal ;
   vtkPolyData *m_SlicePolydata ;
-  vtkVolumeSlicer	*m_SlicerImage ;
+  vtkMAFVolumeSlicer	*m_SlicerImage ;
   vtkImageData *m_Image ;
   vtkTexture *m_Texture ;  
 

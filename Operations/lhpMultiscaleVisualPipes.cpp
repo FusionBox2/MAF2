@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpMultiscaleVisualPipes.cpp,v $
 Language:  C++
-Date:      $Date: 2008-01-28 16:36:30 $
-Version:   $Revision: 1.4 $
+Date:      $Date: 2008-07-03 12:24:12 $
+Version:   $Revision: 1.5 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -31,7 +31,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "vtkLookupTable.h"
 #include "vtkPointData.h"
 #include "vtkMatrix4x4.h"
-#include "vtkVolumeSlicer.h"
+#include "vtkMAFVolumeSlicer.h"
 #include "vtkImageData.h"
 #include "vtkTexture.h"
 
@@ -221,7 +221,7 @@ void lhpMultiscaleTokenPipeline::CalculateColor(double *a)
 //               vtk_data------------------------
 //               /       \                       |
 //              /         \                      |
-//  vtkVolumeSlicer      vtkVolumeSlicer       bounding box
+//  vtkMAFVolumeSlicer      vtkMAFVolumeSlicer       bounding box
 //   slicer_image   ..>  slicer_polygonal
 //         |       .           |
 //         |      .            |
@@ -283,8 +283,8 @@ lhpMultiscaleVolumeSlicePipeline::lhpMultiscaleVolumeSlicePipeline(mafVME* vme, 
 
 
   // set up the image and polydata slicers
-  m_SlicerPolygonal = vtkVolumeSlicer::New() ;
-  m_SlicerImage = vtkVolumeSlicer::New() ;
+  m_SlicerPolygonal = vtkMAFVolumeSlicer::New() ;
+  m_SlicerImage = vtkMAFVolumeSlicer::New() ;
   this->SetSlicePosition(pos) ;
   this->SetSliceDirection(viewId) ;
   m_SlicerImage->SetInput(vtk_data);
