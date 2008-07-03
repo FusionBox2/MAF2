@@ -35,7 +35,7 @@ class MSFReconstructor():
         isExternal = 0
         
         #this function retrieve vtk, must be updated for other file types
-        returnValue = ''
+        returnValue = ""
         file = open(self.InputVMEXMLFileName, 'r')
         dom = xd.parse(file)
         if dom.getElementsByTagName("fault"):
@@ -52,9 +52,29 @@ class MSFReconstructor():
                   returnValue = ""
               else:                  
                  break
-            if (attrName == "Name" and isExternal == 1): #in mafVMEExternalFile
-                returnValue = attrValue
-                return returnValue
+           
+        child = dom.getElementsByTagName('TItem')
+        for children in child:
+            if (len(child) != 0):
+                attrs = children.attributes                            
+                for attrName in attrs.keys():
+                    attrNode = attrs.get(attrName)
+                    attrValue = attrNode.nodeValue
+                    if (attrName  == "Name"): #in External Data files
+                        if (attrValue == "EXTDATA_EXTENSION"):
+                            tc = children.getElementsByTagName('TC')
+                            extension = tc[0].childNodes[0].nodeValue
+                            extFound = 1
+                            print extension
+                                    
+                    if (attrName  == "Name"): #in External Data files
+                        if (attrValue == "EXTDATA_FILENAME"):
+                            tc = children.getElementsByTagName('TC')
+                            fileName = tc[0].childNodes[0].nodeValue
+                            returnValue = fileName + '.' + extension
+                            print returnValue 
+                            return returnValue 
+                                
                                 
         child = dom.getElementsByTagName('DataVector')
         if (len(child) != 0):
@@ -65,6 +85,7 @@ class MSFReconstructor():
                 if (attrName  == "ArchiveFileName"): #in .zvtk files
                     returnValue = attrValue
                     return returnValue
+
               
             for el in child[0].getElementsByTagName('VItem'):
                for vitem in el.getElementsByTagName('URL'):
