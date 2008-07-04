@@ -140,12 +140,26 @@ class msfParser:
                 print('"\n')
                 
     def GetVmeTagArrayNode(self,inputVmeNode):
+        self.Id = -1
+        self.correctId = 1
         self.__GetVmeTagArrayNodeInternal(inputVmeNode)
         return self.__OutputTagArrayNode
     
     def __GetVmeTagArrayNodeInternal(self,inputVmeNode):
         #NodeName: Name
             #Content: "TagArray"
+        attrs = inputVmeNode.attributes
+        for attrName in attrs.keys():
+            attrNode = attrs.get(attrName)
+            attrValue = attrNode.nodeValue
+            if (attrName  == "Id"):
+                if (self.Id == -1):
+                    self.Id = attrValue 
+                    break
+                if (attrValue != self.Id):
+                    self.correctId = 0
+                    break
+                  
         for node in inputVmeNode.childNodes:
             #  search for a Node with name "Node"...0
             
@@ -156,7 +170,7 @@ class msfParser:
                     for attrName in attrs.keys():
                         attrNode = attrs.get(attrName)
                         attrValue = attrNode.nodeValue
-                        if attrValue  == "mafTagArray":
+                        if (attrValue  == "mafTagArray" and self.correctId == 1):
                             self.__OutputTagArrayNode = node
                             break
                 self.__GetVmeTagArrayNodeInternal(node)
