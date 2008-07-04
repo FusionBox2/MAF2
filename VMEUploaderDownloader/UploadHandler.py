@@ -254,7 +254,7 @@ class UploadHandler:
         # get the vme node
         outVmeNode = msfDOMParserInstance.GetVmeNodeById(rootNode, self.id)
         fileNameList = msfDOMParserInstance.GetVMEDataURLList(outVmeNode)
-        if (len(fileNameList) == 1):
+        if (len(fileNameList) == 1 and len(fileNameList[0]) != 0):
             result = "true"
                
         os.chdir(oldDir)  

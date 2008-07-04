@@ -79,7 +79,7 @@ class vmeUploaderOnly:
         msfDOMParserInstance.SetTagNodeText(nodeURI, today)       
         day = msfDOMParserInstance.GetTagNodeText(nodeURI)
         print day
-        print self.hasLink
+        print "Vme has link? " + self.hasLink
         
         if (self.hasLink == "true"):   
             newDir = os.getcwd()
@@ -115,13 +115,12 @@ class vmeUploaderOnly:
         # Copy of VME binary file to this directory
         # get the file to be copied
         fileNameList = msfDOMParserInstance.GetVMEDataURLList(outVmeNode)
+        print fileNameList
         
-        
-        if(len(fileNameList)  == 1):
-           assert(fileNameList  != "") #if "" URL of the file not found
-        
-           os.chdir(self.InputMSFDirectory)
-           shutil.copy2(fileNameList[0],self.OutputFolderName)
+        if(len(fileNameList) == 1 and len(fileNameList[0]) != 0):
+            print self.InputMSFDirectory
+            os.chdir(self.InputMSFDirectory)
+            shutil.copy2(fileNameList[0],self.OutputFolderName)
         
         print "\nWritten output XML file " + self.OutputVMEXMLName + " in directory " + self.OutputFolderName
         #time.sleep(10)
