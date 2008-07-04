@@ -202,7 +202,7 @@ class xmlrpc_demoWS:
         self.ServerURL = serverURL  
     
         
-    def run(self, command, filename='', title=''):
+    def run(self, command, filename='', title='', description=''):
         """"""
 
         args = {}
@@ -223,9 +223,9 @@ class xmlrpc_demoWS:
             args['download'] = ''
             f = file(filename,'rb')
             args['upload'] = f.read()
-            args['id'] = f.name
+            args['id'] = '' #f.name
             args['title'] = title
-            args['description'] = f.name
+            args['description'] = description
             args['filename'] = ''
             f.close()
         elif command == 'xmldownload':
