@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-06-30 15:01:20 $
-  Version:   $Revision: 1.19 $
+  Date:      $Date: 2008-07-04 07:27:52 $
+  Version:   $Revision: 1.20 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -395,7 +395,7 @@ void lhpTagHandler_L0000_resource_data_Dataset_LocalFileCheckSum::HandleAutoTag(
     cargo->SetTagHandlerGeneratedString("No binary data associated");
     return;
   }
-  else if (!cargo->GetInputVme()->IsA("mafVMEExternalData"))
+  else if (!cargo->GetInputVme()->IsA("mafVMEExternalData") && !cargo->GetInputVme()->IsA("mafVMELandmarkCloud"))
   {
     mafTimeStamp currentTime = cargo->GetInputVme()->GetTimeStamp();
     mafVMEGenericAbstract *vme = mafVMEGenericAbstract::SafeDownCast(cargo->GetInputVme());
