@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpBonematTest.h,v $
 Language:  C++
-Date:      $Date: 2008-06-30 08:45:02 $
-Version:   $Revision: 1.5 $
+Date:      $Date: 2008-07-04 14:05:50 $
+Version:   $Revision: 1.6 $
 Authors:   Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2004 
@@ -42,6 +42,8 @@ class lhpOpBonematTest : public CPPUNIT_NS::TestFixture
     CPPUNIT_TEST(TestBonematEIntegrationOneInterval);
     CPPUNIT_TEST(TestBonematHUIntegrationOneInterval);
     CPPUNIT_TEST(TestBonematHUIntegration3Intervals);
+    CPPUNIT_TEST(TestBonematEIntegrationOneIntervalWithMeshAndVolumeAbsPoseDifferentFromIdentity);
+    
     CPPUNIT_TEST_SUITE_END();
 
   protected:
@@ -53,12 +55,13 @@ class lhpOpBonematTest : public CPPUNIT_NS::TestFixture
     void TestBonematEIntegrationOneInterval();
     void TestBonematHUIntegrationOneInterval();
     void TestBonematHUIntegration3Intervals();
-
-    void TestCase(const char *inputConfFile, const char *inputDataDir, 
-      const char *inputVTKMesh,
-      const char *inputVTKVolume, const char *outputDataCorrectDir,
-      const char *outputFrequencyFile
-      );
+    void TestBonematEIntegrationOneIntervalWithMeshAndVolumeAbsPoseDifferentFromIdentity();
+    
+    void TestCase(const char *inputConfFile, const char *inputDataDir, \
+      const char *inputVTKMesh, mafMatrix *absPoseToApplyToInputVTKMesh, \
+      const char *inputVTKVolume, mafMatrix *absPoseToApplyToInputVTKVolume, \
+      const char *outputDataCorrectDir, const char *outputFrequencyFile );
+    
     
     
     

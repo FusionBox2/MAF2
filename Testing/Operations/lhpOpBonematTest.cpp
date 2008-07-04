@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpBonematTest.cpp,v $
 Language:  C++
-Date:      $Date: 2008-06-30 08:45:02 $
-Version:   $Revision: 1.5 $
+Date:      $Date: 2008-07-04 14:05:50 $
+Version:   $Revision: 1.6 $
 Authors:   Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2004 
@@ -247,6 +247,9 @@ void lhpOpBonematTest::TestSaveLoadConfigurationFile()
 
 void lhpOpBonematTest::TestBonematEIntegration3Intervals()
 {
+  mafMatrix *meshAbsMat = mafMatrix::New();
+  mafMatrix *volumeAbsMat = mafMatrix::New();
+
   mafString dirPrefix = LHP_DATA_ROOT;
   mafString inputDataDir = dirPrefix;
   CPPUNIT_ASSERT(wxDirExists(inputDataDir));
@@ -285,13 +288,20 @@ void lhpOpBonematTest::TestBonematEIntegration3Intervals()
 
 
   TestCase(inputConfFile.GetCStr(),inputDataDir.GetCStr() , 
-           inputVTKMesh.GetCStr(), inputVTKVolume.GetCStr(),
+           inputVTKMesh.GetCStr(),meshAbsMat, inputVTKVolume.GetCStr(), meshAbsMat,
            outputDataCorrectDir.GetCStr(), outputFrequencyFile.GetCStr()
           );
+
+  mafDEL(meshAbsMat);
+  mafDEL(volumeAbsMat);
+
 }
 
 void lhpOpBonematTest::TestBonematFromConfigFileOk()
 {
+  mafMatrix *meshAbsMat = mafMatrix::New();
+  mafMatrix *volumeAbsMat = mafMatrix::New();
+
   mafString dirPrefix = LHP_DATA_ROOT;
   mafString inputDataDir = dirPrefix;
   CPPUNIT_ASSERT(wxDirExists(inputDataDir));
@@ -330,13 +340,19 @@ void lhpOpBonematTest::TestBonematFromConfigFileOk()
 
 
   TestCase(inputConfFile.GetCStr(),inputDataDir.GetCStr() , 
-    inputVTKMesh.GetCStr(), inputVTKVolume.GetCStr(),
+    inputVTKMesh.GetCStr(),meshAbsMat, inputVTKVolume.GetCStr(), meshAbsMat,
     outputDataCorrectDir.GetCStr(), outputFrequencyFile.GetCStr()
     );
+
+  mafDEL(meshAbsMat);
+  mafDEL(volumeAbsMat);
 }
 
 void lhpOpBonematTest::TestBonematEIntegrationOneInterval()
 {
+  mafMatrix *meshAbsMat = mafMatrix::New();
+  mafMatrix *volumeAbsMat = mafMatrix::New();
+
   mafString dirPrefix = LHP_DATA_ROOT;
   mafString inputDataDir = dirPrefix;
   CPPUNIT_ASSERT(wxDirExists(inputDataDir));
@@ -375,13 +391,19 @@ void lhpOpBonematTest::TestBonematEIntegrationOneInterval()
 
 
   TestCase(inputConfFile.GetCStr(),inputDataDir.GetCStr() , 
-    inputVTKMesh.GetCStr(), inputVTKVolume.GetCStr(),
+    inputVTKMesh.GetCStr(),meshAbsMat, inputVTKVolume.GetCStr(), meshAbsMat,
     outputDataCorrectDir.GetCStr(), outputFrequencyFile.GetCStr()
     );
+
+  mafDEL(meshAbsMat);
+  mafDEL(volumeAbsMat);
 }
 
 void lhpOpBonematTest::TestBonematHUIntegration3Intervals()
 {
+  mafMatrix *meshAbsMat = mafMatrix::New();
+  mafMatrix *volumeAbsMat = mafMatrix::New();
+
   mafString dirPrefix = LHP_DATA_ROOT;
   mafString inputDataDir = dirPrefix;
   CPPUNIT_ASSERT(wxDirExists(inputDataDir));
@@ -418,15 +440,21 @@ void lhpOpBonematTest::TestBonematHUIntegration3Intervals()
   mafString outputFrequencyFile = outputDataCorrectDir;
   outputFrequencyFile.Append("outputFrequencyFileToCheck.freq");
 
-
   TestCase(inputConfFile.GetCStr(),inputDataDir.GetCStr() , 
-    inputVTKMesh.GetCStr(), inputVTKVolume.GetCStr(),
+    inputVTKMesh.GetCStr(),meshAbsMat, inputVTKVolume.GetCStr(), meshAbsMat,
     outputDataCorrectDir.GetCStr(), outputFrequencyFile.GetCStr()
     );
+
+  mafDEL(meshAbsMat);
+  mafDEL(volumeAbsMat);
+
 }
 
 void lhpOpBonematTest::TestBonematHUIntegrationOneInterval()
 {
+  mafMatrix *meshAbsMat = mafMatrix::New();
+  mafMatrix *volumeAbsMat = mafMatrix::New();
+
   mafString dirPrefix = LHP_DATA_ROOT;
   mafString inputDataDir = dirPrefix;
   CPPUNIT_ASSERT(wxDirExists(inputDataDir));
@@ -465,18 +493,74 @@ void lhpOpBonematTest::TestBonematHUIntegrationOneInterval()
 
 
   TestCase(inputConfFile.GetCStr(),inputDataDir.GetCStr() , 
-    inputVTKMesh.GetCStr(), inputVTKVolume.GetCStr(),
+    inputVTKMesh.GetCStr(),meshAbsMat, inputVTKVolume.GetCStr(), meshAbsMat,
     outputDataCorrectDir.GetCStr(), outputFrequencyFile.GetCStr()
     );
+
+  mafDEL(meshAbsMat);
+  mafDEL(volumeAbsMat);
 }
 
 
-void lhpOpBonematTest::TestCase(const char *inputConfFile, const char *inputDataDir, const char *inputVTKMesh, 
-                                const char *inputVTKVolume, const char *outputDataCorrectDir,
-                                const char *outputFrequencyFile
-                                )
+void lhpOpBonematTest::TestBonematEIntegrationOneIntervalWithMeshAndVolumeAbsPoseDifferentFromIdentity()
 {
-    
+  mafMatrix *meshAbsMat = mafMatrix::New();
+  mafMatrix *volumeAbsMat = mafMatrix::New();
+
+  mafString dirPrefix = LHP_DATA_ROOT;
+  mafString inputDataDir = dirPrefix;
+  CPPUNIT_ASSERT(wxDirExists(inputDataDir));
+
+  inputDataDir.Append("/lhpOpBonematTest/TestDataEIntegrationOneInterval/InputData/");
+
+  CPPUNIT_ASSERT(wxDirExists(inputDataDir));
+
+  mafString inputVTKMesh = inputDataDir;
+  inputVTKMesh.Append("InputMesh.vtk");
+
+  bool exist = wxFile::Exists(inputVTKMesh.GetCStr());
+
+  CPPUNIT_ASSERT(exist == TRUE);
+
+  mafString inputVTKVolume = inputDataDir;
+  inputVTKVolume.Append("InputVolume.vtk");
+
+  exist = wxFile::Exists(inputVTKVolume.GetCStr());
+
+  CPPUNIT_ASSERT(exist == TRUE);
+
+  mafString inputConfFile = inputDataDir;
+  inputConfFile.Append("buggyoneinterval.conf");
+
+  exist = wxFile::Exists(inputConfFile.GetCStr());
+  CPPUNIT_ASSERT(exist == TRUE);
+
+  mafString outputDataCorrectDir = dirPrefix;
+  outputDataCorrectDir.Append("/lhpOpBonematTest/TestDataEIntegrationOneInterval/OutputData/");
+
+  CPPUNIT_ASSERT(wxDirExists(outputDataCorrectDir.GetCStr()));
+
+  mafString outputFrequencyFile = outputDataCorrectDir;
+  outputFrequencyFile.Append("outputFrequencyFileToCheck.freq");
+
+
+  TestCase(inputConfFile.GetCStr(),inputDataDir.GetCStr() , 
+    inputVTKMesh.GetCStr(),meshAbsMat, inputVTKVolume.GetCStr(), meshAbsMat,
+    outputDataCorrectDir.GetCStr(), outputFrequencyFile.GetCStr()
+    );
+
+  mafDEL(meshAbsMat);
+  mafDEL(volumeAbsMat);
+}
+
+void lhpOpBonematTest::TestCase( const char *inputConfFile, const char *inputDataDir, \
+                                const char *inputVTKMesh, mafMatrix *absPoseToApplyToInputVTKMesh,\
+                                const char *inputVTKVolume, mafMatrix *absPoseToApplyToInputVTKVolume, \
+                                const char *outputDataCorrectDir, \
+                                const char *outputFrequencyFile )
+{
+
+
   // load the VTK data for the mesh
   vtkMAFSmartPointer<vtkUnstructuredGridReader> reader;
   reader->SetFileName(inputVTKMesh);
@@ -486,6 +570,7 @@ void lhpOpBonematTest::TestCase(const char *inputConfFile, const char *inputData
   mafVMEMesh *vmeMesh;
   mafNEW(vmeMesh);
   vmeMesh->SetData(reader->GetOutput(), -1);
+  vmeMesh->SetAbsMatrix(*absPoseToApplyToInputVTKMesh);
   vmeMesh->GetOutput()->GetVTKData()->Update();
 
   vtkUnstructuredGrid *inGrid = vmeMesh->GetUnstructuredGridOutput()->GetUnstructuredGridData();
@@ -500,6 +585,7 @@ void lhpOpBonematTest::TestCase(const char *inputConfFile, const char *inputData
   mafNEW(vmeVolumeGray);
 
   vmeVolumeGray->SetData(vreader->GetOutput(), -1);
+  vmeVolumeGray->SetAbsMatrix(*absPoseToApplyToInputVTKVolume);
   vmeVolumeGray->GetOutput()->GetVTKData()->Update();
 
   vtkRectilinearGrid *inVolume = vmeVolumeGray->GetVolumeOutput()->GetRectilinearData();
