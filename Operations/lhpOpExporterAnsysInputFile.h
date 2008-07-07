@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpExporterAnsysInputFile.h,v $
   Language:  C++
-  Date:      $Date: 2008-02-05 15:33:50 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-07-07 14:31:46 $
+  Version:   $Revision: 1.2 $
   Authors:   Stefano Perticoni   
 ==========================================================================
   Copyright (c) 2002/2004
@@ -68,9 +68,18 @@ public:
   /** Return the "pid" of the wxExecute() */
   long GetPid();
 
+  /** Apply vme abs matrix to data geometry */
+  void ApplyABSMatrixOn() {m_ABSMatrixFlag = 1;};
+  void ApplyABSMatrixOff() {m_ABSMatrixFlag = 0;};
+  void SetApplyABSMatrix(int apply_matrix) {m_ABSMatrixFlag = apply_matrix;};
+
 protected:
   /** Create the dialog interface for the importer. */
   virtual void CreateGui();  
+  
+  void OpStop(int result);
+
+  void OnOK();
 
   wxString m_FileDir;
   wxString m_AnsysOutputFileNameFullPath;
@@ -95,6 +104,7 @@ protected:
   wxString m_MaterialsFileName;
 
   long m_Pid;
-
+  
+  int				 m_ABSMatrixFlag;
 };
 #endif

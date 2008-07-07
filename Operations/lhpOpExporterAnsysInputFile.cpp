@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpExporterAnsysInputFile.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-05-06 13:10:27 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2008-07-07 14:31:46 $
+  Version:   $Revision: 1.5 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -31,6 +31,7 @@
 #include "mafVME.h"
 #include "mafVMEMesh.h"
 #include "mafVMEMeshAnsysTextExporter.h"
+#include "mafAbsMatrixPipe.h"
 
 #include "vtkMAFSmartPointer.h"
 
@@ -62,12 +63,19 @@ mafOp(label)
   m_AnsysPythonExporterFullPathFileName = (mafGetApplicationDirectory() + "\\ASCIIParser\\ansysWriter.py").c_str();
   
   m_Pid = -1;
+  m_ABSMatrixFlag = 1;
 }
+
+enum ANSYS_EXPORTER_ID
+{
+  ID_ABS_MATRIX_TO_STL = MINID,  
+};
 
 //----------------------------------------------------------------------------
 lhpOpExporterAnsysInputFile::~lhpOpExporterAnsysInputFile()
 //----------------------------------------------------------------------------
 {
+  
   mafDEL(m_ImportedVmeMesh);
 }
 //----------------------------------------------------------------------------
@@ -110,25 +118,23 @@ int lhpOpExporterAnsysInputFile::Read()
   exporter->SetOutputNodesFileName(m_NodesFileName.c_str());
   exporter->SetOutputElementsFileName(m_ElementsFileName.c_str());
   exporter->SetOutputMaterialsFileName(m_MaterialsFileName.c_str());
+
+  mafVMEMesh *inMesh = mafVMEMesh::SafeDownCast(m_Input);
+  assert(inMesh);
+
+  exporter->SetMatrix(inMesh->GetAbsMatrixPipe()->GetMatrixPointer()->GetVTKMatrix());
+  exporter->SetApplyMatrix(m_ABSMatrixFlag);
   exporter->Write();
 
   delete exporter;
 
   wxArrayString output;
   wxArrayString errors;
-
-//   wxExecute (command, output, errors);
   
   // execute the Python reader
   wxString command2execute;
-  // command2execute = "python.exe ansysreaderpath filename";
-  // mafLogMessage(wxGetCwd());
-
+  
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-
-  // create cache files
-  // create cache directory
-
 
   // read cache files and create ansys file
   command2execute = "python.exe ";
@@ -179,37 +185,16 @@ enum Mesh_Importer_ID
 void lhpOpExporterAnsysInputFile::CreateGui()
 //----------------------------------------------------------------------------
 {
-  mafString wildcard = "inp files (*.inp)|*.inp|All Files (*.*)|*.*";
+  mafString wildc = "Stereo Litography (*.stl)|*.stl";
 
-  int result = OP_RUN_CANCEL;
-  m_AnsysOutputFileNameFullPath = "";
+  m_Gui = new mmgGui(this);
+  m_Gui->Label("absolute matrix",true);
+  m_Gui->Bool(ID_ABS_MATRIX_TO_STL,"apply",&m_ABSMatrixFlag,0);
+  m_Gui->OkCancel();  
+  m_Gui->Divider();
 
-  bool cacheDirExist = wxDirExists(m_CacheDir.GetCStr());
-  
-  if (cacheDirExist == false)
-  {
-    std::ostringstream stringStream;
-    stringStream << "creating cache dir: " << m_CacheDir.GetCStr() << std::endl;
-    mafLogMessage(stringStream.str().c_str());          
-    wxMkdir(m_CacheDir.GetCStr());
-  }
-  else
-  {
-    std::ostringstream stringStream;
-    stringStream << "found cache dir: " << m_CacheDir.GetCStr() << std::endl;
-    mafLogMessage(stringStream.str().c_str());
-          
-  }
+  ShowGui();
 
-  wxString f;
-  f = mafGetSaveFile(m_FileDir,wildcard).c_str(); 
-  if(!f.IsEmpty())
-  {
-    m_AnsysOutputFileNameFullPath = f;
-    Read();
-    result = OP_RUN_OK;
-  }
-  mafEventMacro(mafEvent(this,result));
 }
 //----------------------------------------------------------------------------
 void lhpOpExporterAnsysInputFile::OnEvent(mafEventBase *maf_event) 
@@ -221,7 +206,7 @@ void lhpOpExporterAnsysInputFile::OnEvent(mafEventBase *maf_event)
     {
       case wxOK:
       {
-        this->Read();
+        OnOK();
         this->OpStop(OP_RUN_OK);
       }
       break;
@@ -241,4 +226,44 @@ long lhpOpExporterAnsysInputFile::GetPid()
 //----------------------------------------------------------------------------
 {
   return m_Pid;
+}
+
+void lhpOpExporterAnsysInputFile::OnOK()
+{
+  mafString wildcard = "inp files (*.inp)|*.inp|All Files (*.*)|*.*";
+
+  m_AnsysOutputFileNameFullPath = "";
+
+  bool cacheDirExist = wxDirExists(m_CacheDir.GetCStr());
+
+  if (cacheDirExist == false)
+  {
+    std::ostringstream stringStream;
+    stringStream << "creating cache dir: " << m_CacheDir.GetCStr() << std::endl;
+    mafLogMessage(stringStream.str().c_str());          
+    wxMkdir(m_CacheDir.GetCStr());
+  }
+  else
+  {
+    std::ostringstream stringStream;
+    stringStream << "found cache dir: " << m_CacheDir.GetCStr() << std::endl;
+    mafLogMessage(stringStream.str().c_str());
+
+  }
+
+  wxString f;
+  f = mafGetSaveFile(m_FileDir,wildcard).c_str(); 
+  if(!f.IsEmpty())
+  {
+    m_AnsysOutputFileNameFullPath = f;
+    Read();
+  }
+ }
+
+//----------------------------------------------------------------------------
+void lhpOpExporterAnsysInputFile::OpStop(int result)
+//----------------------------------------------------------------------------
+{
+  HideGui();
+  mafEventMacro(mafEvent(this,result));        
 }
