@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpExporterAnsysInputFile.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-07-07 14:31:46 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2008-07-08 10:33:23 $
+  Version:   $Revision: 1.6 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -124,9 +124,19 @@ int lhpOpExporterAnsysInputFile::Read()
 
   exporter->SetMatrix(inMesh->GetAbsMatrixPipe()->GetMatrixPointer()->GetVTKMatrix());
   exporter->SetApplyMatrix(m_ABSMatrixFlag);
-  exporter->Write();
-
+  int result = exporter->Write();
   delete exporter;
+  
+  if (result == MAF_OK)
+  {
+    // continue
+  } 
+  else
+  {
+    wxMessageBox("Problems generating intermediate output files! \n\
+See the log area for more details. ");
+    return MAF_ERROR;
+  }
 
   wxArrayString output;
   wxArrayString errors;
