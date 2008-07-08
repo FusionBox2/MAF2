@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-06-30 13:49:21 $
-  Version:   $Revision: 1.60 $
+  Date:      $Date: 2008-07-08 14:03:24 $
+  Version:   $Revision: 1.61 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -11,7 +11,7 @@
 =========================================================================*/
 
 
-#include "mafDefines.h" 
+#include "medDefines.h" 
 //----------------------------------------------------------------------------
 // NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
 // This force to include Window,wxWidgets and VTK exactly in this order.
@@ -151,6 +151,66 @@
 #include <vtkTimerLog.h>
 
 
+// TODO: REFACTOR THIS 
+// this component is used only to override the Accept,  
+// and it`s the minimal amount of code in order to override the method
+// it could go in a separate file with other redefined Accept`s
+
+class lhpOpMove : public medOpMove
+{
+public:
+
+  /** Return true for the acceptable vme type. */
+  bool Accept(mafNode* vme)
+  {
+    bool accepted = false;
+    
+    accepted =   !vme->IsA("lhpVMESurfaceScalarVarying") \
+      && !vme->IsA("mafVMEMeter") \
+      && !vme->IsA("medVMEWrappedMeter") \
+      && !vme->IsA("medVMELabeledVolume") \
+      && !vme->IsA("mafVMEHelicalAxis");  
+
+    if (accepted == false)
+    {
+      return false;
+    }
+    else
+    {
+      return medOpMove::Accept(vme);
+    }
+  }
+};
+
+class lhpOpScaleDataset : public medOpScaleDataset
+{
+public:
+
+  /** Return true for the acceptable vme type. */
+  bool Accept(mafNode* vme)
+  {
+    bool accepted = false;
+
+    accepted =   !vme->IsA("lhpVMESurfaceScalarVarying") \
+      && !vme->IsA("mafVMEMeter") \
+      && !vme->IsA("medVMEWrappedMeter") \
+      && !vme->IsA("medVMELabeledVolume") \
+      && !vme->IsA("mafVMEHelicalAxis");  
+
+    if (accepted == false)
+    {
+      return false;
+    }
+    else
+    {
+      return medOpScaleDataset::Accept(vme);
+    }
+  }
+};
+
+// END TODO: REFACTOR THIS 
+
+
 //BES: 23.6.2008 - TO BE UNCOMMENTED WHEN VTK IS PATCHED AS I SUGGESTED
 ////BES: 14.5.2008 - special memory manager for supporting of large data
 //#include <vtkDataArrayMemMng.h>
@@ -159,6 +219,7 @@
 //--------------------------------------------------------------------------------
 // Create the Application
 //--------------------------------------------------------------------------------
+
 IMPLEMENT_APP(lhpBuilderApp)
 
 ////BES: 14.5.2008 - OnIdle to unlock blocks
@@ -286,8 +347,8 @@ bool lhpBuilderApp::OnInit()
 	m_Logic->Plug(new mafOp2DMeasure("2D Measure"),"Measure");
 	m_Logic->Plug(new mafOpVOIDensity("VOI Density"),"Measure");
   m_Logic->Plug(new mafOpReparentTo("Reparent to...  \tCtrl+R"),"Modify/Fuse");
-  m_Logic->Plug(new medOpScaleDataset("Scale Dataset"),"Modify");
-  m_Logic->Plug(new medOpMove(),"Modify");    
+  m_Logic->Plug(new lhpOpScaleDataset(),"Modify");
+  m_Logic->Plug(new lhpOpMove(),"Modify");    
   m_Logic->Plug(new mafOpImporterVMEDataSetAttributes("VME DataSet Attributes Adder"),"Modify");
   m_Logic->Plug(new medOpClassicICPRegistration("Register Surface"),"Modify/Fuse");
   m_Logic->Plug(new mmoAFSys("AFRefsys"),"Create/Derive");
@@ -394,3 +455,4 @@ int lhpBuilderApp::OnExit()
 //  vtkDataArrayMemMng::GetDataArrayMemMng()->UnlockAllMemory(0);
 //  event.Skip();
 //}
+
