@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-06-20 10:28:05 $
-Version:   $Revision: 1.7 $
+Date:      $Date: 2008-07-09 07:35:12 $
+Version:   $Revision: 1.8 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -55,6 +55,7 @@ MafMedical is partially based on OpenMAF.
 #include "lhpOpUploadMultiVME.h"
 #include "lhpOpUploadVME.h"
 
+#include "mafVMELandmarkCloud.h"
 #include "mmgGui.h"
 #include "lhpUser.h"
 
@@ -488,6 +489,11 @@ int lhpOpUploadMultiVME::UploadVMELinks(mafNode *derived)
     if (i->second.m_Node != NULL)
     {
       mafNode *link = i->second.m_Node;
+      if (link->IsA("mafVMELandmarkCloud") && i->second.m_NodeSubId != -1)
+      {
+        ((mafVMELandmarkCloud *)link)->Open();
+        link = (mafNode*)((mafVMELandmarkCloud *)link)->GetLandmark(i->second.m_NodeSubId);
+      }
       hasBinary = isBinaryDataPresent(link);
       wxMessageBox(wxString::Format("Link found! Upload VME: %s", link->GetName()));
 
