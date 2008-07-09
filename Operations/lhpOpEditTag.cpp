@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-06-25 14:45:36 $
-Version:   $Revision: 1.7 $
+Date:      $Date: 2008-07-09 07:36:53 $
+Version:   $Revision: 1.8 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -98,6 +98,7 @@ mafOp(label)
 {
 	m_OpType  = OPTYPE_OP;
 	m_Canundo = false;
+  m_HasLink = false;
   m_LinkNode.clear();
   m_LinkName.clear();
 
@@ -196,8 +197,7 @@ void lhpOpEditTag::OpRun()
   else
   {
     OpStop(result);
-  }
-  
+  }  
 }
 
 //----------------------------------------------------------------------------
@@ -284,10 +284,10 @@ void lhpOpEditTag::OnEvent(mafEventBase *maf_event)
 void lhpOpEditTag::OpDo()   
 //----------------------------------------------------------------------------
 {
-  bool hasLink = false;
+  m_HasLink = false;
   if (m_Input->GetNumberOfLinks() != 0)
   {
-    hasLink = true;
+    m_HasLink = true;
     SaveLinkInfo();
 
     //remove links that will be linked after in ImportMSF()
@@ -354,25 +354,6 @@ void lhpOpEditTag::OpDo()
   m_Parent = m_Input->GetParent();
  
   ImportMSF();
-  std::vector<std::string> tagList;
-  m_TemporaryNode->GetTagArray()->GetTagList(tagList);
-
-  //copy tags from MSF genereted by python editor, to orginal MSF.
-  for (int n = 0; n < m_TemporaryNode->GetTagArray()->GetNumberOfTags(); n++)
-  {
-    m_Input->GetTagArray()->SetTag(tagList[n].c_str(), m_TemporaryNode->GetTagArray()->GetTag(tagList[n].c_str())->GetValue(), 2);
-  }
-
-  //attach links previously removed
-  if (hasLink)
-  {
-    for (int i = 0; i < m_LinkNode.size(); i++)
-    {
-      m_Input->SetLink(m_LinkName[i].GetCStr(), m_LinkNode[i]);
-    }
-  }
-
-  mafDEL(m_TemporaryNode);
   mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
 
   wxSetWorkingDirectory(m_MsfDir.GetCStr());
@@ -407,8 +388,28 @@ int lhpOpEditTag::ImportMSF()
       mafErrorMessage(_("Errors during file parsing! Look the log area for error messages."));
     return MAF_ERROR;
   }
-  m_TemporaryNode = root->GetFirstChild();
-  m_TemporaryNode->ReparentTo(m_Parent);
+  mafNode *temporaryNode = root->GetFirstChild();
+
+  std::vector<std::string> tagList;
+  temporaryNode->GetTagArray()->GetTagList(tagList);
+
+  //copy tags from MSF genereted by python editor, to orginal MSF.
+  for (int n = 0; n < temporaryNode->GetTagArray()->GetNumberOfTags(); n++)
+  {
+    m_Input->GetTagArray()->SetTag(tagList[n].c_str(), temporaryNode->GetTagArray()->GetTag(tagList[n].c_str())->GetValue(), 2);
+  }
+
+  //attach links previously removed
+  if (m_HasLink)
+  {
+    for (int i = 0; i < m_LinkNode.size(); i++)
+    {
+      m_Input->SetLink(m_LinkName[i].GetCStr(), m_LinkNode[i]);
+    }
+  }
+
+
+  mafDEL(temporaryNode);
   mafDEL(storage);
   return MAF_OK;
 }
