@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-06-30 15:00:22 $
-Version:   $Revision: 1.18 $
+Date:      $Date: 2008-07-09 07:37:52 $
+Version:   $Revision: 1.19 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -59,6 +59,7 @@ MafMedical is partially based on OpenMAF.
 #include "mafNode.h"
 #include "mafVMEGenericAbstract.h"
 #include "mafOpImporterMSF.h"
+#include "mafVMELandmarkCloud.h"
 
 #include "lhpFactoryTagHandler.h"
 #include "vtkPolyData.h"
@@ -289,7 +290,6 @@ void lhpOpDownloadVME::OpDo()
 		wxMessageBox("Unable to create Incoming Directory");
 		return;
 	}
-
   
 	if(!CreateIncomingCache())
 	{
@@ -305,7 +305,6 @@ void lhpOpDownloadVME::OpDo()
 
   for (int i = 0; i < m_BasketList.size(); i++)
   {
-    //int indexNecessary = 0;
     if(DownloadSelectedXMLFromBasket(i) != MAF_OK)
     {
       wxMessageBox("Unable to download xml");
@@ -318,13 +317,6 @@ void lhpOpDownloadVME::OpDo()
       wxMessageBox("Unable to reconstruct msf");
       return;
     }
-/*
-    //import msf in the current tree
-    if(ImportMSF() != MAF_OK)
-    {
-      wxMessageBox("Unable to import msf");
-      return;
-    }*/
 
     wxString oldDir = wxGetCwd();
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
@@ -781,6 +773,10 @@ int lhpOpDownloadVME::ImportMSF()
   importer->ImportMSF();
 
   mafNode *node = importer->GetOutput();
+  if (node->IsA("mafVMELandmarkCloud"))
+  {
+    ((mafVMELandmarkCloud *)node)->Close();
+  }
   m_Input->AddChild(node);
 
   mafDEL(importer);
