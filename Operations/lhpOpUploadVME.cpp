@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-04 07:25:48 $
-Version:   $Revision: 1.66 $
+Date:      $Date: 2008-07-10 12:38:27 $
+Version:   $Revision: 1.67 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -319,7 +319,7 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     SaveLinkInfo();
 
     //remove links that will be linked again after 
-    m_CacheVme->RemoveAllLinks();
+    m_Input->RemoveAllLinks();
     mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
   }
 
@@ -436,7 +436,17 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     command2execute.Append("127.0.0.1 "); //server address (localhost)
     command2execute.Append("50000 "); //port address (50000)
     command2execute.Append(wxString::Format("UPLOAD ")); //UPLOAD command
-    command2execute.Append(wxString::Format("%d ",m_CacheVme->GetId())); //vme id
+
+    //Get the right id
+    if (m_Input->IsA("mafVMELandmark"))
+    {
+      command2execute.Append(wxString::Format("%d ", m_CacheVme->GetFirstChild()->GetId())); //vme id
+    }
+    else
+    {
+      command2execute.Append(wxString::Format("%d ",m_CacheVme->GetId())); //vme id
+    }
+   
 
     //workaround to understanding directory argument
     wxString directoryWorkAround = m_CurrentCache;
@@ -482,7 +492,16 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     command2execute.Append("127.0.0.1 "); //server address (localhost)
     command2execute.Append("50000 "); //port address (50000)
     command2execute.Append(wxString::Format("UPLOAD ")); //UPLOAD command
-    command2execute.Append(wxString::Format("%d ",m_CacheVme->GetId())); //vme id
+
+    //Get the right id
+    if (m_Input->IsA("mafVMELandmark"))
+    {
+      command2execute.Append(wxString::Format("%d ", m_CacheVme->GetFirstChild()->GetId())); //vme id
+    }
+    else
+    {
+      command2execute.Append(wxString::Format("%d ",m_CacheVme->GetId())); //vme id
+    }
 
     //workaround to understanding directory argument
     wxString directoryWorkAround = m_CurrentCache;
@@ -545,7 +564,7 @@ mafString lhpOpUploadVME::GetBinaryURI()
   wxFile binaryUriFile;
 
   wxString fileName = m_Input->GetName();
-  fileName << wxString::Format("%d",m_Input->GetId());
+  fileName << wxString::Format("%d", m_CacheVme->GetId());
 
   wxString lockPath = m_PythonUploadFullPath;
   lockPath += fileName;
@@ -680,7 +699,15 @@ bool lhpOpUploadVME::CreateCache()
   wxMkDir(currentSubdir);
   m_CurrentCache = currentSubdir;
 
-  currentSubdir = currentSubdir + m_Input->GetName() + ".msf";
+  wxString oldDir = wxGetCwd();
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  wxSetWorkingDirectory(currentSubdir.GetCStr());
+
+  //currentSubdir = currentSubdir + m_Input->GetName() + ".msf";
+
+  currentSubdir = m_Input->GetName();
+  currentSubdir.Append(".msf");
+
 
   // restore due attributes
   mafString typeVme;
@@ -710,10 +737,13 @@ bool lhpOpUploadVME::CreateCache()
 
     m_CacheVme->DeepCopy(m_Input);
     mafVMEGenericAbstract *vmeGeneric = mafVMEGenericAbstract::SafeDownCast(m_Input);
-    m_CacheVme->SetMatrix(*vmeGeneric->GetOutput()->GetAbsMatrix());
+    if (vmeGeneric != NULL)
+    {
+      m_CacheVme->SetMatrix(*vmeGeneric->GetOutput()->GetAbsMatrix());
+    }
   }
 
-   mafVMEStorage *storage;
+  mafVMEStorage *storage;
   storage = mafVMEStorage::New();
   storage->SetURL(currentSubdir.GetCStr());
 
@@ -724,6 +754,7 @@ bool lhpOpUploadVME::CreateCache()
   mafNode *node = NULL;
   root->AddChild(m_CacheVme);
   storage->Store();
+  wxSetWorkingDirectory(oldDir);
 
   return true;
   
