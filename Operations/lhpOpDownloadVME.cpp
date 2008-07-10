@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-09 07:37:52 $
-Version:   $Revision: 1.19 $
+Date:      $Date: 2008-07-10 12:37:15 $
+Version:   $Revision: 1.20 $
 Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -329,7 +329,7 @@ void lhpOpDownloadVME::OpDo()
 
     //VME has no binary data associated replace m_URISRBFile with "."
     //if you want to replace ".", modify also DownloadHanler.py
-    if (m_URISRBFile == " ")
+    if (m_URISRBFile.Equals("NOT PRESENT"))
       m_URISRBFile = ".";
 
     if ( ExistsRunningProcess() )
@@ -344,7 +344,7 @@ void lhpOpDownloadVME::OpDo()
       command2execute.Append("127.0.0.1 "); //server address (localhost)
       command2execute.Append("50000 "); //port address (50000)
       command2execute.Append(wxString::Format("DOWNLOAD ")); //Download command
-      command2execute.Append(wxString::Format("%s ",m_URISRBFileSize)); //vme id
+      command2execute.Append(wxString::Format("%s ",m_URISRBFileSize)); //file size
 
       //workaround to understanding directory argument
       wxString directoryWorkAround = m_IncomingCompletePath;
@@ -661,11 +661,6 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(int indexFromBasketList)
   directoryWorkAround.Replace(" ", "?");
   command2execute.Append(directoryWorkAround);
 
-  /*command2execute.Append(" ");
-  command2execute.Append(m_ProxyURL.GetCStr());
-  command2execute.Append(" ");
-  command2execute.Append(m_ProxyPort.GetCStr());*/
-  //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   long pid = wxExecute(command2execute, wxEXEC_SYNC);
 
@@ -686,13 +681,6 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(int indexFromBasketList)
   {
     mafLogMessage(errors[i]);
   }
-
-  // gathering values from Python Output:
-
-  //if dictVC.IsDictionaryUpToDate() == True:
-  //print "UpToDate"
-  //else:
-  //print "NotUpToDate"
 
   
   if(output.size() < 3)
