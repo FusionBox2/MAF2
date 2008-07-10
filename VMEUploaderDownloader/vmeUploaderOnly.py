@@ -26,7 +26,7 @@ class vmeUploaderOnly:
         self.VmeToExtractID = 1    
         self.OutputVMEXMLName = "exportedVME.xml"
         self.OutputFolderName = "FolderToUpload"
-        self.DatasetURI = ""
+        self.DatasetURI = "NOT PRESENT"
         self.hasLink = "";
         
     def Upload(self):
@@ -62,7 +62,7 @@ class vmeUploaderOnly:
         rootNode = msfRootNode
         vmeId = self.VmeToExtractID
         
-        # get the vme node
+        # get the vme node for tagArray
         outVmeNode = msfDOMParserInstance.GetVmeNodeById(rootNode, vmeId)
         
         # get the tagArray node
@@ -106,6 +106,10 @@ class vmeUploaderOnly:
         
         # save created XML to this directory
         os.chdir(self.OutputFolderName)
+        
+        # get the vme node 
+        #id is always 1 because the msf in uploadCache contains only teh vme to upload
+        outVmeNode = msfDOMParserInstance.GetVmeNodeById(rootNode, 1) 
         
         newDoc = minidom.Document()
         newDoc.appendChild(outVmeNode)
