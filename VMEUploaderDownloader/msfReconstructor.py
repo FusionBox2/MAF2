@@ -97,7 +97,7 @@ class MSFReconstructor():
             
               
         file.close()     
-        pass
+        return returnValue
     
     def build(self):
         msfBuilder = vmeDownloader.MSFBuilder()
