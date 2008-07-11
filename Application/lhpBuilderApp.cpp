@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-07-08 14:03:24 $
-  Version:   $Revision: 1.61 $
+  Date:      $Date: 2008-07-11 12:08:29 $
+  Version:   $Revision: 1.62 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -75,7 +75,9 @@
 #include "BES_Beta/openMAF/Operators/mafOpImporterRAWVolume_BES.h"
 //#include "mafOpImporterRAWVolume.h"
 #include "mafOpExporterRaw.h"
-#include "medOpImporterRAWImages.h"
+//BES: 11.7.2008 - Large Volume - to be merged 
+#include "BES_Beta/Medical/Operations/medOpImporterRAWImages_BES.h"
+//#include "medOpImporterRAWImages.h"
 #include "mafOpExtractIsosurface.h"
 #include "mafOpCrop.h"
 #include "mafOpVOIDensity.h"
@@ -293,7 +295,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mafOpImporterMSF("MSF"),"Other");
   m_Logic->Plug(new mafOpImporterMSF1x("MAF 1.x"),"Other");
   m_Logic->Plug(new mafOpImporterRAWVolume_BES("RAW Volume"),"Images");
-  m_Logic->Plug(new medOpImporterRAWImages("Raw Images"),"Images");
+  m_Logic->Plug(new medOpImporterRAWImages_BES("Raw Images"),"Images");
   m_Logic->Plug(new mafOpImporterImage("Images"),"Images");
   m_Logic->Plug(new medOpImporterLandmark("Landmark"),"Motion Analysis");
 	m_Logic->Plug(new medOpImporterLandmarkWS("ASCII trajectories (VWs)"),"Motion Analysis");

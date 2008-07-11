@@ -29,7 +29,7 @@ SET(PROJECT_SRCS
 	openMAF/VME/mafVMEVolumeLarge.cpp
 	openMAF/VME/mafVMEVolumeLarge.h
 	openMAF/vtkMAF/vtkMAFDataArrayDescriptor.cxx
-	openMAF/vtkMAF/vtkMAFDataArrayDescriptor.h
+	openMAF/vtkMAF/vtkMAFDataArrayDescriptor.h	
 	openMAF/vtkMAF/vtkMAFFileDataProvider.cxx
 	openMAF/vtkMAF/vtkMAFFileDataProvider.h
 	openMAF/vtkMAF/vtkMAFIdType64.h
@@ -47,7 +47,10 @@ SET(PROJECT_SRCS
 	openMAF/vtkMAF/vtkMAFLargeImageSource.h
 	openMAF/vtkMAF/vtkMAFFile.cxx
 	openMAF/vtkMAF/vtkMAFFile.h	
-
+	openMAF/vtkMAF/vtkMAFDataArrayLayout.cpp
+	openMAF/vtkMAF/vtkMAFDataArrayLayout.h
+	openMAF/vtkMAF/vtkMAFMultiFileDataProvider.cpp
+	openMAF/vtkMAF/vtkMAFMultiFileDataProvider.h
 )
 
 # List libraries that are needed by this project.
