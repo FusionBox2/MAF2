@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFLargeDataProvider.cxx,v $ 
   Language: C++ 
-  Date: $Date: 2008-06-23 16:43:55 $ 
-  Version: $Revision: 1.1 $ 
+  Date: $Date: 2008-07-11 11:55:59 $ 
+  Version: $Revision: 1.2 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -22,7 +22,7 @@
 
 
 
-vtkCxxRevisionMacro(vtkMAFLargeDataProvider, "$Revision: 1.1 $");
+vtkCxxRevisionMacro(vtkMAFLargeDataProvider, "$Revision: 1.2 $");
 
 #include "mafMemDbg.h"
 #include <assert.h>
@@ -33,6 +33,7 @@ vtkMAFLargeDataProvider::vtkMAFLargeDataProvider()
 	
 	HeaderSize = 0;
 	SwapBytes = false;
+  DefaultLayout = true;
 
 	InitializeDescriptors();
 }
@@ -58,8 +59,11 @@ vtkMAFLargeDataProvider::~vtkMAFLargeDataProvider()
 
 	for (int i = 0; i < (int)m_Descriptors.size(); i++)
 	{
-		if (m_Descriptors[i] != NULL)
-			m_Descriptors[i]->UnRegister(this);
+		if (m_Descriptors[i].pDAD != NULL)
+			m_Descriptors[i].pDAD->UnRegister(this);
+
+    if (m_Descriptors[i].pDAL != NULL)
+      m_Descriptors[i].pDAL->UnRegister(this);
 	}
 	
 	m_Descriptors.clear();
@@ -74,9 +78,13 @@ vtkMAFLargeDataProvider::~vtkMAFLargeDataProvider()
 	unsigned long mt = Superclass::GetMTime();
 	for (int i = 0; i < (int)m_Descriptors.size(); i++) 
 	{
-		unsigned long t = m_Descriptors[i]->GetMTime();
+		unsigned long t = m_Descriptors[i].pDAD->GetMTime();
 		if (t > mt)
 			mt = t;
+
+    t = m_Descriptors[i].pDAL->GetMTime();
+    if (t > mt)
+      mt = t;
 	}
 
 	return mt;
@@ -91,8 +99,11 @@ vtkMAFLargeDataProvider::~vtkMAFLargeDataProvider()
 	if (dad == NULL)
 		return -1;
 
+  DALD item;
+  item.pDAD = dad;
 	dad->Register(this);
-	m_Descriptors.push_back(dad);
+  item.pDAL = vtkMAFDataArrayLayout::New();
+	m_Descriptors.push_back(item);
 	int index = (int)m_Descriptors.size() - 1;
 
 	ReplaceLookupName(NULL, dad->GetName(), index);
@@ -139,7 +150,8 @@ vtkMAFLargeDataProvider::~vtkMAFLargeDataProvider()
 	}
 
 	m_DescriptorsMap.erase(itrem);
-	m_Descriptors[i]->UnRegister(this);
+	m_Descriptors[i].pDAD->UnRegister(this);
+  m_Descriptors[i].pDAL->UnRegister(this);
 	m_Descriptors.erase(m_Descriptors.begin() + i);
 
 	//fix m_SpecDescPos
@@ -191,11 +203,12 @@ vtkMAFLargeDataProvider::~vtkMAFLargeDataProvider()
 		else
 		{
 			//we will have to modify it
-			vtkMAFDataArrayDescriptor* old = m_Descriptors[curPos];
+      DALD& item = m_Descriptors[curPos];
+			vtkMAFDataArrayDescriptor* old = item.pDAD;
 			ReplaceLookupName(old->GetName(), dad->GetName());
 			old->UnRegister(this);			
 
-			m_Descriptors[curPos] = dad;
+			item.pDAD = dad;
 			dad->Register(this);
 		}
 	}
@@ -254,6 +267,46 @@ void vtkMAFLargeDataProvider
 	}	
 }
 
+//------------------------------------------------------------------------
+//Sets the physical layout of data array described by the descriptor at index iDsc
+//The reference of pLayout is increased => it may be deleted after calling of this routine
+/*virtual*/ void vtkMAFLargeDataProvider::SetLayout(int iDsc, vtkMAFDataArrayLayout* pLayout)
+//------------------------------------------------------------------------
+{
+  if (pLayout == NULL || iDsc < 0 || iDsc >= this->GetNumberOfDescriptors())	{
+    assert(false); return;		//invalid arguments
+  }
+
+  DALD& item = this->m_Descriptors[iDsc];
+  if (item.pDAL != pLayout)
+  {
+    pLayout->Register(this);
+    item.pDAL->UnRegister(this);
+    item.pDAL = pLayout;
+    this->Modified();
+  }
+}
+
+//Updates the default layout information
+//Should be called always before the layout is used
+/*virtual*/ void vtkMAFLargeDataProvider::UpdateDefaultLayout()
+{
+  if (this->DefaultLayout && this->GetMTime() > m_OffsetsComputeTime)
+  {
+    //we have to recalculate global offsets table				
+    vtkIdType64 ofs = this->GetHeaderSize();				
+    for (int i = 0; i < (int)m_Descriptors.size(); i++)
+    {
+      DALD& item = m_Descriptors[i];
+      item.pDAL->SetStartOffset(ofs);
+      item.pDAL->SetNumberOfComponents(item.pDAD->GetNumberOfComponents());
+      ofs += item.pDAD->GetActualMemorySize();			
+    }
+
+    m_OffsetsComputeTime.Modified();
+  }  
+}
+
 //Constructs a new vtkDataArray object and fills it with a range of tuples from 
 //the data array at index idx, starting at the specified index.
 //If count is longer than the data array, the remainder of the data array is copied.
@@ -266,8 +319,8 @@ void vtkMAFLargeDataProvider
 		return NULL;
 
 	vtkDataArray* retArray = vtkDataArray::CreateDataArray(desc->GetDataType());
-	retArray->SetNumberOfComponents(desc->GetNumberOfComponents());
-	
+  
+  //number of tuples and components set in the following routine	
 	GetDataArray(idx, retArray, startIndex, countTuples);
 	return retArray;
 }
@@ -296,68 +349,11 @@ void vtkMAFLargeDataProvider
     buffer->SetNumberOfComponents(numComps);    
     buffer->SetNumberOfTuples(countTuples);        
 
-		GetDataArray(idx, buffer->GetVoidPointer(0), countTuples*numComps, startIndex*numComps);
+    //N.B. SetNumberOfTuples allocated memory for numComps*countTuples elements
+		vtkIdType64 read = GetDataArray(idx, buffer->GetVoidPointer(0), 
+      countTuples*numComps, startIndex*numComps);
+    buffer->SetNumberOfTuples(read / numComps);   //set the read size
 	}
-}
-
-//Fills the given buffer with elements from the data array at index idx, 
-//starting at the specified !element! index. Buffer must be capable to hold these elements.
-//The routine returns the number of stored elements (may be less than count, if the
-//amount of data available is smaller than requested)
-/*virtual*/ vtkIdType64 vtkMAFLargeDataProvider::GetDataArray(int idx, void* buffer, 
-	vtkIdType64 count, vtkIdType64 startIndex)
-{
-	vtkMAFDataArrayDescriptor* desc = GetDescriptor(idx);
-	if (desc == NULL)
-		return 0;
-
-	if (desc->GetDataType() == VTK_BIT) {
-		vtkErrorMacro(<< "Binary arrays are not supported by vtkMAFLargeDataProvider.");
-		return 0;	//bit arrays are not supported
-	}
-
-	//readjust the amount of elements to be taken
-	vtkIdType64 size = desc->GetSize();
-	vtkIdType64 endIndex = startIndex + count;
-	if (endIndex >= size)
-		count = size - startIndex;	
-
-	//compute position in bytes	into the underlaying data source
-	int elemSize = desc->GetDataTypeSize();
-	vtkIdType64 ofset = GetOffset(idx, startIndex*elemSize);
-	vtkIdType64 read = ReadBinaryData(ofset, buffer, count*elemSize);
-
-	// handle swapping
-	if (GetSwapBytes())
-		vtkByteSwap::SwapVoidRange(buffer, read, elemSize);
-
-	return count / elemSize;
-}
-
-//Gets the global offset for the offset da_ofs into the data array 
-//denoted by the index da_idx. Global offset is needed by ReadBinaryData
-//and WriteBinaryData methods
-/*virtual*/ vtkIdType64 vtkMAFLargeDataProvider::GetOffset(int da_idx, vtkIdType64 da_ofs)
-{
-	if (this->GetMTime() > m_OffsetsComputeTime)
-	{
-		//we have to recalculate global offsets table
-		m_Offsets.clear();
-		
-		vtkIdType64 ofs = this->GetHeaderSize();
-		m_Offsets.push_back(ofs);
-		
-		for (int i = 0; i < (int)m_Descriptors.size(); i++)
-		{
-			vtkMAFDataArrayDescriptor* desc = m_Descriptors[i];
-			ofs += desc->GetActualMemorySize();
-			m_Offsets.push_back(ofs);
-		}
-
-		m_OffsetsComputeTime.Modified();
-	}
-
-	return da_ofs + m_Offsets[da_idx];
 }
 
 //Called by GetScalars(), etc. See public GetDataArray
@@ -386,6 +382,323 @@ void vtkMAFLargeDataProvider
 		GetDataArray(name, buffer, startIndex, countTuples);
 }
 
+//------------------------------------------------------------------------
+//Fills the given buffer with elements from the data array at index idx, 
+//starting at the specified !element! index. Buffer must be capable to hold these elements.
+//The routine returns the number of stored elements (may be less than count, if the
+//amount of data available is smaller than requested)
+/*virtual*/ int vtkMAFLargeDataProvider::GetDataArray(int idx, void* buffer, 
+                                                              int count, vtkIdType64 startIndex)
+{
+  //For the caller convenience| the data is supposed to be stored linearly as follows:
+  //
+  //ELEMENT INDEX:   |0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20| ...     
+  //COMPONENT INDEX: |0|1|2|0|1|2|0|1|2|0| 1| 2|0 | 1| 2|0 | 1| 2|0 | 1| 2| ... 
+  //TUPLE INDEX:     |  0  |  1  |  2  |  3    |    4   |   5    |   6    | ...
+  //so supposing that startIndex is 13 and count is 6 than we will retrieve
+  //the second and the third component of the fifth tuple, all components
+  //from the sixth tuple and the first component from the seventh component
+  //the physical layout of data may be, however, different. The worst scenario:
+  //????|20|???|0|??????????|1|?|2|3| ....
+  //we support starting offset (i.e., element index 0 may not be 0 in the media)
+  //gaps between tuples (same gap) and gaps between components (they may differ)
+  //and also the option that components are stored in non-interleaved mode
+  //N.B. there is no difference between the setting of the gap after the last 
+  //component to zero and the tuple gap to G and the setting of the gap after 
+  //the last component to G and the tuple gap to zero
+  //
+  //The general physical layout in the interleaved mode is:
+  //|startOffset|c1|gap(c1)|c2|gap(c2) ...cn|gap(cn)|tuple gap|c1|gap(c1)| ...
+  //and in the non-interleaved mode (tuple size is given as NonInterleavedSize:
+  //|startOffset|c1|c1|...|c1|gap(c1)|c2|c2|...|c2|gap(c2) ...|cn|gap(cn)|tuple gap|c1| ...
+
+  vtkMAFDataArrayDescriptor* pDAD = GetDescriptor(idx);
+  if (pDAD == NULL)
+    return 0;
+
+  if (pDAD->GetDataType() == VTK_BIT) {
+    vtkErrorMacro(<< "Binary arrays are not supported by vtkMAFLargeDataProvider.");
+    return 0;	//bit arrays are not supported  
+  }
+
+  //get the physical layout
+  vtkMAFDataArrayLayout* pDAL = GetLayout(idx);
+  UpdateDefaultLayout();  //and update the information
+
+  //readjust the amount of elements to be taken
+  int elemSize = pDAD->GetDataTypeSize();
+  vtkIdType64 size = pDAD->GetSize();
+  vtkIdType64 endIndex = startIndex + count;
+  if (endIndex >= size)
+    count = size - startIndex;	
+
+  //now, we need to read count elements starting from startIndex into the given buffer
+  //we must compute the physical address of every element and load it  
+  vtkIdType64 nTupleGapSize = pDAL->GetTupleGap();
+  vtkIdType64* pCompGaps = pDAL->GetComponentGaps();
+
+  int nNumOfComps = pDAL->GetNumberOfComponents();
+  assert(nNumOfComps == pDAD->GetNumberOfComponents());
+
+  int totalRead = 0;  
+  if (pDAL->GetNonInterleaved() == 0)
+  {
+    //Interleaved mode => components ordered  
+    if (nTupleGapSize == 0 && pCompGaps == NULL) 
+    {
+      //the simplest option, the logical and physical data layout is compatible            
+      vtkIdType64 ofset = pDAL->GetStartOffset() + startIndex*elemSize;
+      totalRead = ReadBinaryData(ofset, buffer, count*elemSize);
+    }
+    else
+    {
+      //we have some gaps in the physic data layout, so it is incompatible
+      //create vector of increments
+      vtkIdType64* pIncr = new vtkIdType64[nNumOfComps];
+      if (pCompGaps == NULL)
+      {
+        for (int i = 0; i < nNumOfComps; i++) {
+          pIncr[i] = elemSize;  //advance to the next component
+        }
+      }
+      else
+      {
+        for (int i = 0; i < nNumOfComps; i++) {
+          pIncr[i] = elemSize + pCompGaps[i];
+        }
+      }
+
+      pIncr[nNumOfComps - 1] += nTupleGapSize;
+
+      //compute now sum vector
+      vtkIdType64* pIncrSum = new vtkIdType64[nNumOfComps];
+      pIncrSum[0] = pIncr[0];
+      for (int i = 1; i < nNumOfComps; i++) {
+        pIncrSum[i] = pIncrSum[i - 1] + pIncr[i];
+      }
+
+      //create the buffer for data      
+      int nReadSize = ((count / nNumOfComps) + ((count % nNumOfComps) != 0))*pIncrSum[nNumOfComps - 1];
+      int nMaxBufSize = count*elemSize*8;   //we allow 8x more data at most
+      if (nMaxBufSize > 8192)               //and at most 8KB for buffer
+        nMaxBufSize = 8192;                
+      
+      int nBufSize = nMaxBufSize < nReadSize ? nMaxBufSize : nReadSize;
+      BYTE* pBuf = new BYTE[nBufSize]; 
+            
+      //compute the physical offset of the first component to be read        
+      vtkIdType64 nTuplesSoFar = (startIndex / nNumOfComps);  //tuples processed completely
+      int nCompsSoFar = (int)(startIndex % nNumOfComps);      //components in the last tuple
+      vtkIdType64 curOffset = pDAL->GetStartOffset() +        //global offset
+        nTuplesSoFar*pIncrSum[nNumOfComps - 1] +              //tuples so far
+        nCompsSoFar*pIncrSum[nCompsSoFar];                    //components so far
+
+      int nElemsToProcess = count;           //the total number of elements to process
+      while (nElemsToProcess > 0)
+      {
+        nReadSize = ((nElemsToProcess / nNumOfComps) + 
+          ((nElemsToProcess % nNumOfComps) != 0))*pIncrSum[nNumOfComps - 1];
+        int nToRead = nReadSize < nBufSize ? nReadSize : nBufSize;        
+        int nRead = ReadBinaryData(curOffset, pBuf, nToRead);
+        curOffset += nRead;  //advance the position
+
+        //compute number of elements that were read
+        int nReadElements = 0;
+        int iCurComp = (int)((startIndex + totalRead) % nNumOfComps);  //current component is
+        while (iCurComp != 0 && nRead >= elemSize)
+        {          
+          nReadElements++;
+          nRead -= pIncr[iCurComp];
+          iCurComp = (iCurComp + 1) % nNumOfComps;
+        }
+
+        //add the whole number of tuples
+        if (nRead >= elemSize)
+        {
+          int nTuples = nRead / pIncr[nNumOfComps - 1];
+          nReadElements += nTuples*nNumOfComps;
+          nRead -= nTuples * pIncr[nNumOfComps - 1];
+                  
+          //there is still some data in the buffer
+          while (nRead >= elemSize)
+          {
+            nReadElements++;
+            nRead -= pIncr[iCurComp];
+            iCurComp = (iCurComp + 1) & nNumOfComps;            
+          }
+        }
+
+        if (nReadElements == 0)
+          break;  //feof, unable to read more elements        
+
+        if (nElemsToProcess < nReadElements)
+          nReadElements = nElemsToProcess;    //this may happen, if we have some zeros in pIncr
+
+        curOffset -= nRead;  //adjust the current position
+        nElemsToProcess -= nReadElements; //decrease number of bytes to be read        
+        totalRead += nReadElements;        
+
+        //copy elements from the buffer into the user array        
+        BYTE* pSrc = pBuf;
+        BYTE* pDst = (BYTE*)buffer;   
+        iCurComp = (int)((startIndex + totalRead) % nNumOfComps);  //current component is
+        while (nReadElements)
+        {          
+          for (int j = 0; j < elemSize; j++) {
+            pDst[j] = pSrc[j]; //copy one byte            
+          }
+
+          pSrc += pIncr[iCurComp];
+          pDst += elemSize;
+          
+          iCurComp = (iCurComp + 1) % nNumOfComps;          
+          nReadElements--; //another element processed          
+        } //while (nReadElements)                
+      } //while (nElemsToProcess > 0)
+
+      delete[] pBuf;
+      delete[] pIncrSum;
+      delete[] pIncr;
+    } //if (nTupleGapSize == 0 && pCompGaps == NULL)
+  }
+  else
+  {
+    //Non-Interleaved mode => we will need to combine data
+    //create vector of increments (this will handle gaps as well)
+    vtkIdType64* pIncr = new vtkIdType64[nNumOfComps];
+    if (pCompGaps == NULL)
+    {
+      for (int i = 0; i < nNumOfComps; i++) {
+        pIncr[i] = elemSize;  //advance to the next component
+      }
+    }
+    else
+    {
+      for (int i = 0; i < nNumOfComps; i++) {
+        pIncr[i] = elemSize + pCompGaps[i];
+      }
+    }
+
+    pIncr[nNumOfComps - 1] += nTupleGapSize;
+
+    //compute now sum vector
+    vtkIdType64* pIncrSum = new vtkIdType64[nNumOfComps];
+    pIncrSum[0] = pIncr[0];
+    for (int i = 1; i < nNumOfComps; i++) {
+      pIncrSum[i] = pIncrSum[i - 1] + pIncr[i];
+    }
+
+    //create the buffer for data           
+    vtkIdType64 nNonInterleavedSize = pDAL->GetNonInterleavedSize();
+    int nReadSize = count;
+    if (nReadSize > nNonInterleavedSize)    
+      nReadSize = (int)nNonInterleavedSize;  //makes no sense to read more than NIS elements    
+    nReadSize *= elemSize; 
+
+    //we will use most 8KB for buffer
+    int nMaxBufSize = ((8192 / elemSize) + 1)*elemSize;
+    int nBufSize = nMaxBufSize < nReadSize ? nMaxBufSize : nReadSize;
+    BYTE* pBuf = new BYTE[nBufSize];
+    
+    //compute the physical offset of the first component to be read
+    vtkIdType64 nTuplesSoFar = (startIndex / nNumOfComps);  //tuples processed completely
+    int nCompsSoFar = (int)(startIndex % nNumOfComps);      //components in the last tuple
+    
+    //nTuplesSoFar also denotes the number of elements of one kind so far
+    //these are grouped into nTB blocks (so there is total number nTB*nNumOfComps
+    //of blocks for all components), every block has nNonInterleavedSize*elemSize
+    //bytes for elements and some bytes for the component gap
+    int nTB = (int)(nTuplesSoFar / nNonInterleavedSize);
+    vtkIdType64 startOffset = pDAL->GetStartOffset() +
+      nTB * (nNumOfComps * nNonInterleavedSize * elemSize + pIncrSum[nNumOfComps - 1]);
+        
+    //process every component separately 
+    BYTE* pDstEnd = ((BYTE*)buffer) + count;
+    for (int iDstComp = 0; iDstComp < nNumOfComps; iDstComp++)
+    {
+      //compute number of elements to read for the iDstComp component
+      int nElemsToProcess = count / nNumOfComps;
+      if ((count % nNumOfComps) > ((iDstComp + nNumOfComps - nCompsSoFar) % nNumOfComps))
+        nElemsToProcess++;  //the current component is present in the last tuple      
+
+      //compute the index where the data starts in the current block
+      vtkIdType64 idxStart = (nTuplesSoFar % nNonInterleavedSize);
+      if (iDstComp < nCompsSoFar)
+        idxStart++; //skip the beginning of tuple      
+
+      //compute the physical offset for the first component
+      vtkIdType64 curOffset = startOffset + (iDstComp*nNonInterleavedSize + idxStart)*elemSize;
+      BYTE* pDst = &((BYTE*)buffer)[(iDstComp + nCompsSoFar) % nNumOfComps];
+      while (nElemsToProcess > 0)
+      { 
+        int nTotalReadSize = nElemsToProcess;
+        vtkIdType64 nElemsInCurBlock = nNonInterleavedSize - idxStart;
+        if (nTotalReadSize > nElemsInCurBlock)
+          nTotalReadSize = (int)nElemsInCurBlock;
+
+        nTotalReadSize *= elemSize;
+        while (nTotalReadSize > 0)
+        {
+          nReadSize = nTotalReadSize < nBufSize ? nTotalReadSize : nBufSize;
+          int nRead = ReadBinaryData(curOffset, pBuf, nReadSize);
+          nTotalReadSize -= nRead;  //decrease the number of read elements
+          curOffset += nRead;       //advance the position
+
+          //compute number of elements that were read
+          int nReadElements = nRead / elemSize;          
+          if (nReadElements == 0) {
+            break;  //feof, unable to read more elements
+          }
+
+          nElemsToProcess -= nReadElements;
+
+          //copy elements from the buffer into the user array        
+          BYTE* pSrc = pBuf;
+          while (nReadElements > 0)
+          {          
+            for (int j = 0; j < elemSize; j++) {
+              pDst[j] = pSrc[j]; //copy one byte            
+            }
+
+            pSrc += elemSize;
+            pDst += elemSize*nNumOfComps;
+
+            nReadElements--; //another element processed          
+          } //while (nReadElements)          
+        } //while (nTotalReadSize > 0)
+
+        if (nTotalReadSize != 0)
+        {
+          //oops, we have reached unexpectedly EOF
+          if (pDst < pDstEnd)
+            pDstEnd = pDst;
+
+          nElemsToProcess = 0;
+        }
+
+        //advance the position to the next block
+        curOffset += pIncrSum[nNumOfComps - 1] + //all gaps
+          nNonInterleavedSize*(nNumOfComps - 1)*elemSize;
+        startIndex = 0; 
+      } //while (nElemsToProcess > 0)
+    } //for (int iDstComp = 0; iDstComp < nNumOfComps; iDstComp++)
+
+    //number of read elements
+    totalRead = pDstEnd - ((BYTE*)buffer);
+
+    delete[] pBuf;
+    delete[] pIncrSum;
+    delete[] pIncr;
+  }
+
+  // handle swapping
+  if (GetSwapBytes())
+    vtkByteSwap::SwapVoidRange(buffer, totalRead / elemSize, elemSize);
+
+  return totalRead / elemSize;
+}
+
+
 //Stores the data from the given buffer into the data array 
 //denoted by the index, starting at the specified index.
 /*virtual*/ void vtkMAFLargeDataProvider::SetDataArray(int da_idx, vtkDataArray* buffer, vtkIdType64 startIndex)
@@ -406,7 +719,7 @@ void vtkMAFLargeDataProvider
 //Stores the elements from the given buffer into the data array 
 //denoted by the index, starting at the specified index.
 //NB: count is given in number of elements (not bytes)
-/*virtual*/ void vtkMAFLargeDataProvider::SetDataArray(int da_idx, void* buffer, vtkIdType64 count,
+/*virtual*/ void vtkMAFLargeDataProvider::SetDataArray(int da_idx, void* buffer, int count,
 													vtkIdType64 startIndex)
 {
 	vtkMAFDataArrayDescriptor* desc = GetDescriptor(da_idx);
@@ -421,9 +734,14 @@ void vtkMAFLargeDataProvider
 		return;	//bit arrays are not supported
 	}
 
+  assert(false);
+  vtkErrorMacro(<< "vtkMAFLargeDataProvider::SetDataArray NOT IMPLEMENTED.");
+
+  //TODO: vtkMAFLargeDataProvider::SetDataArray 
+/*
 	//compute position in bytes	into the underlaying data source
 	int elemSize = desc->GetDataTypeSize();
-	vtkIdType64 ofset = GetOffset(da_idx, startIndex*elemSize);
+	vtkIdType64 ofset = UpdateDefaultLayout(da_idx, startIndex*elemSize);
 
 	char* buf = (char*)buffer;
 	
@@ -441,6 +759,7 @@ void vtkMAFLargeDataProvider
 		delete[] buf;
 
 	this->Modified();
+  */
 }
 
 //Called by SetScalars(), etc. See public SetDataArray
@@ -467,8 +786,10 @@ void vtkMAFLargeDataProvider::ShallowCopy(vtkMAFLargeDataProvider *src)
 
 		for (int i = 0; i < (int)src->m_Descriptors.size(); i++)
 		{
-			src->m_Descriptors[i]->Register(this);
-			this->m_Descriptors.push_back(src->m_Descriptors[i]);
+      DALD& item = src->m_Descriptors[i];
+      item.pDAD->Register(this);
+      item.pDAL->Register(this);
+			this->m_Descriptors.push_back(item);
 		}
 	}
 }
@@ -482,14 +803,15 @@ void vtkMAFLargeDataProvider::DeepCopy(vtkMAFLargeDataProvider *src)
 
 		for (int i = 0; i < (int)src->m_Descriptors.size(); i++)
 		{
-			vtkMAFDataArrayDescriptor* sd = src->m_Descriptors[i];
+      DALD item = src->m_Descriptors[i];			
 			vtkMAFDataArrayDescriptor* dd = vtkMAFDataArrayDescriptor::New();
-			dd->SetDataType(sd->GetDataType());
-			dd->SetName(sd->GetName());
-			dd->SetNumberOfComponents(sd->GetNumberOfComponents());
-			dd->SetNumberOfTuples(sd->GetNumberOfTuples());
-			
-			this->m_Descriptors.push_back(dd);
+			dd->DeepCopy(item.pDAD);
+
+      vtkMAFDataArrayLayout* dl = vtkMAFDataArrayLayout::New();
+      dl->DeepCopy(item.pDAL);
+
+			item.pDAD = dd; item.pDAL = dl;
+			this->m_Descriptors.push_back(item);
 		}
 	}
 }
@@ -502,11 +824,7 @@ void vtkMAFLargeDataProvider::InternalDataCopy(vtkMAFLargeDataProvider *src)
 	this->m_OffsetsComputeTime = src->m_OffsetsComputeTime;
 	this->SwapBytes = src->SwapBytes;
 	this->HeaderSize = src->HeaderSize;
-
-	for (int i = 0; i < (int)src->m_Offsets.size(); i++)
-	{
-		this->m_Offsets.push_back(src->m_Offsets[i]);
-	}
+  this->DefaultLayout = src->DefaultLayout;
 
 	for (StringToIntMap::iterator it = src->m_DescriptorsMap.begin();
 		it != src->m_DescriptorsMap.end(); it++)

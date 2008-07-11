@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFLargeDataProvider.h,v $ 
   Language: C++ 
-  Date: $Date: 2008-06-23 16:43:55 $ 
-  Version: $Revision: 1.1 $ 
+  Date: $Date: 2008-07-11 11:55:59 $ 
+  Version: $Revision: 1.2 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -13,9 +13,11 @@
   is supposed to be derived from this class. It provides access to large data
   sets for both reading and writing. A large data set comprises of one or
   more named data arrays (i.e., scalars, vectors, normals, tensors) that
-  are stored one after another by the default (derived providers may use
-  their own representation). Data arrays are described by descriptors of 
-  vtkMAFDataArrayDescriptor class. 
+  are described by descriptors of vtkMAFDataArrayDescriptor class. 
+  The data arrays are stored on the physical medium as it is described by
+  vtkMAFDataArrayLayout. By the default, they are stored sequentially one after 
+  another (components in interleaved mode), there might be an starting offset
+  of the first data array (denoted by HeaderSize)
   =========================================================================*/
 
 #ifndef __vtkMAFLargeDataProvider_h
@@ -24,6 +26,7 @@
 #include "vtkObject.h"
 #include "vtkDataSetAttributes.h"
 #include "vtkMAFDataArrayDescriptor.h"
+#include "vtkMAFDataArrayLayout.h"
 #include <vector>
 #include <map>
 
@@ -35,11 +38,19 @@ class vtkTimeStamp;
 class VTK_COMMON_EXPORT vtkMAFLargeDataProvider : public vtkObject
 {	
 protected:
+  //Data Array Layout Descriptor
+  typedef struct DALD
+  {
+    vtkMAFDataArrayDescriptor* pDAD;  //<descriptor
+    vtkMAFDataArrayLayout* pDAL;      //<physical layout
+  } DALD;
+
+protected:
 	//General tags
 	vtkFieldData* TagArray;
 
 	//descriptor of data
-	typedef std::vector< vtkMAFDataArrayDescriptor* > DescriptorVector;
+	typedef std::vector< DALD > DescriptorVector;
 	DescriptorVector m_Descriptors;
 
 	typedef std::map< const char*, int > StringToIntMap;
@@ -48,16 +59,18 @@ protected:
 	//special descriptors positions
 	int m_SpecDescPos[vtkDataSetAttributes::NUM_ATTRIBUTES];
 
-	//global offsets
-	vtkTimeStamp m_OffsetsComputeTime;
-	typedef std::vector<vtkIdType64> OfsVector;
-	OfsVector m_Offsets;
-
 	// Denotes whether the bytes should be swapped 
 	bool SwapBytes;
 
+  //true, if the data layout is automatically computed from 
+  //HeaderSize and sizes of data arrays
+  bool DefaultLayout;
+
 	//the size of header in bytes (before the first data array - it will be skipped)
 	vtkIdType64 HeaderSize;
+
+  //global offsets
+  vtkTimeStamp m_OffsetsComputeTime;
 
 	//Setters and getters
 public:
@@ -66,7 +79,12 @@ public:
 	vtkSetMacro(SwapBytes, bool);
 	vtkBooleanMacro(SwapBytes, bool);
 
-	//Get/Sets the header size (in bytes)
+  //Get/Set the physical layout mode of data arrays
+  vtkGetMacro(DefaultLayout, bool);
+  vtkSetMacro(DefaultLayout, bool);
+  vtkBooleanMacro(DefaultLayout, bool);  
+
+	//Get/Sets the header size (in bytes) - only for Default Layout
 	inline virtual vtkIdType64 GetHeaderSize() {
 		return HeaderSize;
 	}
@@ -99,14 +117,7 @@ public:
 	//Adds a new data array descriptor into the collection of descriptors.
 	//The caller is supposed to Delete the given array when it is no longer needed
 	//Returns -1 if an error occurs, otherwise, it returns the index of descriptor 
-	virtual int AddDescriptor(vtkMAFDataArrayDescriptor* dad);
-
-	//Gets the data array descriptor having the specified name
-	//NB: The caller may not Delete the returned array ->
-	//DO NOT USE SMART POINTERS FOR THE RETURNED REFERENCE
-	inline virtual vtkMAFDataArrayDescriptor* GetDescriptor(const char* name) {
-		return m_Descriptors[GetIndexOfDescriptor(name)];
-	}
+	virtual int AddDescriptor(vtkMAFDataArrayDescriptor* dad);	
 
 	// Return the i-th descriptor. A NULL is returned if the index i is out of range.
 	inline virtual vtkMAFDataArrayDescriptor* GetDescriptor(int i)
@@ -114,8 +125,15 @@ public:
 		if ( i < 0 || i >= this->GetNumberOfDescriptors())		
 			return NULL;		
 
-		return this->m_Descriptors[i];
+		return this->m_Descriptors[i].pDAD;
 	}
+
+  //Gets the data array descriptor having the specified name
+  //NB: The caller may not Delete the returned array ->
+  //DO NOT USE SMART POINTERS FOR THE RETURNED REFERENCE
+  inline virtual vtkMAFDataArrayDescriptor* GetDescriptor(const char* name) {
+    return GetDescriptor(GetIndexOfDescriptor(name));
+  }
 
 	// Removes an descriptor (with the given name) from the collection of descriptors.
 	inline virtual void RemoveDescriptor(const char *name) {
@@ -265,6 +283,90 @@ protected:
 #pragma endregion	
 #pragma endregion
 
+#pragma region LAYOUT OPERATIONS
+public:
+  /** Sets the physical layout of data array described by the descriptor at index iDsc
+  The reference of pLayout is increased => it may be deleted after calling of this routine*/
+  virtual void SetLayout(int iDsc, vtkMAFDataArrayLayout* pLayout);
+
+  /** Gets the physical layout of data array described by the descriptor at index iDsc */
+  inline virtual vtkMAFDataArrayLayout* GetLayout(int iDsc) 
+  {
+    if ( iDsc < 0 || iDsc >= this->GetNumberOfDescriptors())		
+      return NULL;		
+
+    return this->m_Descriptors[iDsc].pDAL;    
+  }
+
+  /** Gets the physical layout of data array described by the descriptor with the given name */
+  inline virtual vtkMAFDataArrayLayout* GetLayout(const char* name) {    
+    return GetLayout(GetIndexOfDescriptor(name));
+  }
+
+#pragma region LAYOUTS FOR SPECIAL DESCRIPTORS
+public:
+  //Gets the scalars layout with the specified name (or the active one, if not name is NULL)
+  inline vtkMAFDataArrayLayout* GetScalarsLayout(const char* name = NULL) {
+    return GetLayout(name != NULL ? GetIndexOfDescriptor(name) :
+      GetIndexOfDescriptor(vtkDataSetAttributes::SCALARS));      
+  }
+
+  //Gets the vectors layout with the specified name (or the active one, if not name is NULL)
+  inline vtkMAFDataArrayLayout* GetVectorsLayout(const char* name = NULL) {
+    return GetLayout(name != NULL ? GetIndexOfDescriptor(name) :
+      GetIndexOfDescriptor(vtkDataSetAttributes::VECTORS));
+  }
+
+  //Gets the normals layout with the specified name (or the active one, if not name is NULL)
+  inline vtkMAFDataArrayLayout* GetNormalsLayout(const char* name = NULL) {
+    return GetLayout(name != NULL ? GetIndexOfDescriptor(name) :
+      GetIndexOfDescriptor(vtkDataSetAttributes::NORMALS));
+  }
+
+  //Gets the texture coordinates layout with the specified name (or the active one, if not name is NULL)
+  inline vtkMAFDataArrayLayout* GetTCoordsLayout(const char* name = NULL) {
+    return GetLayout(name != NULL ? GetIndexOfDescriptor(name) :
+      GetIndexOfDescriptor(vtkDataSetAttributes::TCOORDS));
+  }
+
+  //Gets the tensor layout with the specified name (or the active one, if not name is NULL)
+  inline vtkMAFDataArrayLayout* GetTensorsLayout(const char* name = NULL) {
+    return GetLayout(name != NULL ? GetIndexOfDescriptor(name) :
+      GetIndexOfDescriptor(vtkDataSetAttributes::TENSORS));
+  }
+
+  //Sets the layout for scalars, returns -1 if an error occurs, otherwise,
+  //it returns the index of layout (that can be used e.g. in GetLayout)	
+  inline void SetScalarsLayout(vtkMAFDataArrayLayout* dal) {
+    SetLayout(GetIndexOfDescriptor(vtkDataSetAttributes::SCALARS), dal);
+  }
+
+  //Sets the layout for vectors, returns -1 if an error occurs, otherwise,
+  //it returns the index of layout (that can be used e.g. in GetLayout)
+  inline void SetVectorsLayout(vtkMAFDataArrayLayout* dal) {
+    SetLayout(GetIndexOfDescriptor(vtkDataSetAttributes::VECTORS), dal);
+  }
+
+  //Sets the layout for normals, returns -1 if an error occurs, otherwise,
+  //it returns the index of layout (that can be used e.g. in GetLayout)
+  inline void SetNormalsLayout(vtkMAFDataArrayLayout* dal) {
+    SetLayout(GetIndexOfDescriptor(vtkDataSetAttributes::NORMALS), dal);
+  }
+
+  //Sets the layout for texture coordinates, returns -1 if an error occurs, otherwise,
+  //it returns the index of layout (that can be used e.g. in GetLayout)
+  inline void SetTCoordsLayout(vtkMAFDataArrayLayout* dal) {
+    SetLayout(GetIndexOfDescriptor(vtkDataSetAttributes::TCOORDS), dal);
+  }
+
+  //Sets the layout for tensors, returns -1 if an error occurs, otherwise,
+  //it returns the index of layout (that can be used e.g. in GetLayout)
+  inline void SetTensorsLayout(vtkMAFDataArrayLayout* dal) {
+    SetLayout(GetIndexOfDescriptor(vtkDataSetAttributes::TENSORS), dal);
+  }
+#pragma endregion //LAYOUTS FOR SPECIAL DESCRIPTORS
+#pragma endregion //LAYOUT OPERATIONS
+
 #pragma region DATA ARRAYS READING/WRITING
 public:
 	//Constructs a new vtkDataArray object and fills it with a range of tuples from 
@@ -303,7 +405,7 @@ public:
 	//starting at the specified !element! index. Buffer must be capable to hold these elements.
 	//The routine returns the number of stored elements (may be less than count, if the
 	//amount of data available is smaller than requested)
-	virtual vtkIdType64 GetDataArray(int idx, void* buffer, vtkIdType64 count, vtkIdType64 startIndex = 0);
+	virtual int GetDataArray(int idx, void* buffer, int count, vtkIdType64 startIndex = 0);
 
 	//Stores the data from the given buffer into the data array 
 	//with the given name, starting at the specified index.
@@ -319,7 +421,7 @@ public:
 	//Stores the elements from the given buffer into the data array 
 	//denoted by the index, starting at the specified index.
 	//NB: count is given in number of elements (not bytes)
-	virtual void SetDataArray(int da_idx, void* buffer, vtkIdType64 count,
+	virtual void SetDataArray(int da_idx, void* buffer, int count,
 		vtkIdType64 startIndex = 0);
 
 //SPECIAL DESCRIPTORS
@@ -463,10 +565,9 @@ protected:
 	//refereed to the given index is created
 	void ReplaceLookupName(const char* old_name, const char* new_name, int index = -1);
 	
-	//Gets the global offset for the offset da_ofs into the data array 
-	//denoted by the index da_idx. Global offset is needed by ReadBinaryData
-	//and WriteBinaryData methods
-	virtual vtkIdType64 GetOffset(int da_idx, vtkIdType64 da_ofs);
+  //Updates the default layout information
+  //Should be called always before the layout is used
+  virtual void UpdateDefaultLayout();
 
 	//Copies the binary data from the underlaying source into the given buffer. 
 	//Copying starts at startOffset position and at most count bytes are copied.
