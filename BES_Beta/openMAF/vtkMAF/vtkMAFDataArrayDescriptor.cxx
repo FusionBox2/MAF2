@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFDataArrayDescriptor.cxx,v $ 
   Language: C++ 
-  Date: $Date: 2008-06-23 16:43:55 $ 
-  Version: $Revision: 1.1 $ 
+  Date: $Date: 2008-07-11 11:53:12 $ 
+  Version: $Revision: 1.2 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -16,7 +16,7 @@
 #include "vtkMAFDataArrayDescriptor.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkMAFDataArrayDescriptor, "$Revision: 1.1 $");
+vtkCxxRevisionMacro(vtkMAFDataArrayDescriptor, "$Revision: 1.2 $");
 vtkStandardNewMacro(vtkMAFDataArrayDescriptor);
 
 // Construct object with default tuple dimension (number of components) of 1.
@@ -133,4 +133,13 @@ void vtkMAFDataArrayDescriptor::PrintSelf(ostream& os, vtkIndent indent)
 	os << indent << "Type: " << this->GetDataType() << "\n";
 	os << indent << "Size: " << this->GetSize() << "\n";
 	os << indent << "MemSize: " << this->GetActualMemorySize() << "\n";
+}
+
+//Deep copy. 
+void vtkMAFDataArrayDescriptor::DeepCopy(vtkMAFDataArrayDescriptor *src)
+{
+  this->DataType = src->DataType;
+  this->NumberOfComponents = src->NumberOfComponents;
+  this->NumberOfTuples = src->NumberOfTuples;
+  SetName(src->Name); //creates a copy
 }

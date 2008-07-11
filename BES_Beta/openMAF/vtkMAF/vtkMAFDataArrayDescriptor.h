@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFDataArrayDescriptor.h,v $ 
   Language: C++ 
-  Date: $Date: 2008-06-23 16:43:55 $ 
-  Version: $Revision: 1.1 $ 
+  Date: $Date: 2008-07-11 11:53:12 $ 
+  Version: $Revision: 1.2 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -91,7 +91,10 @@ public:
 	// data type. For example for unsigned char data these will return (0,255). 
 	void GetDataTypeRange(double range[2]);
 	double GetDataTypeMin();
-	double GetDataTypeMax();
+	double GetDataTypeMax();   
+
+  //Deep copy. 
+  void DeepCopy(vtkMAFDataArrayDescriptor *src);
 
 protected:
 	// Construct object with default tuple dimension (number of components) of 1.
