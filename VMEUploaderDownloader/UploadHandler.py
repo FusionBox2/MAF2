@@ -3,6 +3,7 @@ from webServicesClient import MtomUpload, MtomUploadURI, MtomSRBSize , xmlrpcDem
 import msfParser
 from xml.dom import minidom
 from xml.dom import Node
+import xml.dom.minidom as xd
 import os, sys, string, time, re ,shutil
 import threading, thread, CustomThread
 from lhpDefines import *
@@ -145,7 +146,7 @@ class UploadHandler:
         
           print "End Upload"
           print "Uploaded Binary in SRB: " + self.BinaryURI
-          print "Uploaded XML on Biomedtown: " + self.XMLURI
+          print "Uploaded XML on Biomedtown: " + self.XMLName
           print "Uploaded by: " + self.currentUser
           print "In server url: " + self.urlServer
         
@@ -205,7 +206,6 @@ class UploadHandler:
         print "Sending Thread Finished"
 		
     def sendXMLFile(self):
-        #self.XMLURI = self.BinaryURI + "_" +self.getXMLFile()
         self.XMLURI = self.vmeName + "_" +self.getXMLFile()
         os.rename(self.dirOutgoing + "\\" + self.getXMLFile(),self.dirOutgoing + "\\" + self.XMLURI)
         #self.__sendFile(self.XMLURI)
@@ -217,13 +217,24 @@ class UploadHandler:
         ws.setServer(self.urlServer)
         ws.ProxyURL = self.proxyHost
         ws.ProxyPort = self.proxyPort
-        out = ws.run('xmlupload', self.XMLURI, self.vmeName)
         
+        out = ws.run('xmlupload', self.XMLURI, self.vmeName)[1]
+        
+        dom = xd.parseString(out)
+        if dom.getElementsByTagName("fault"):
+                return
+        for el in dom.getElementsByTagName("string"):
+            for node in el.childNodes:  
+                self.XMLName = node.data
+        pass
+    
+        print self.XMLName
+            
         #writes binary URI in a file in VMEUploaderDownloader dir
        # oldDir = os.getcwd()
         os.chdir(self.dirOutgoing + r"\..\..") 
         file = open(self.vmeName + self.id, 'w')
-        file.write(self.XMLURI)
+        file.write(self.XMLName)
         file.close()
         
         os.chdir(oldDir)
