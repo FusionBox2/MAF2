@@ -3,7 +3,7 @@
 File:    	 mafVMEVolumeLarge.h
 Language:  C++
 Date:      22:1:2008   10:57
-Version:   $Revision: 1.3 $
+Version:   $Revision: 1.4 $
 Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
 
 Copyright (c) 2008
@@ -155,6 +155,9 @@ public:
 	/** return icon */
 	static char** GetIcon();
 
+  /** Return pointer to material attribute. */
+  mmaVolumeMaterial *GetMaterial();
+
 	/** this method stores information about the large data set
 	//it calls SetData to set it to the Snapshot of the give data
 	//Note: SetData is still provided but its use may lead to
@@ -193,6 +196,8 @@ protected:
 	/*virtual*/ int InternalStore(mafStorageElement *parent);
 	/*virtual*/ int InternalRestore(mafStorageElement *node);
 
+  /** used to initialize and create the material attribute if not yet present */
+  /*virtual*/ int InternalInitialize();
 
 	/** Process events coming from other objects */ 
 	/*virtual*/ void OnEvent(mafEventBase *e);

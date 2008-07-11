@@ -1,15 +1,19 @@
 /**=======================================================================
-  
-  File:    	 mafVMEVolumeLarge.cpp
-  Language:  C++
-  Date:      8:2:2008   11:28
-  Version:   $Revision: 1.3 $
-  Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
-  
-  Copyright (c) 2008
-  University of Bedfordshire
-=========================================================================
 
+File:    	 mafVMEVolumeLarge.cpp
+Language:  C++
+Date:      8:2:2008   11:28
+Version:   $Revision: 1.4 $
+Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
+
+Copyright (c) 2008
+University of Bedfordshire
+=========================================================================
+See: Agrawal A, Kohout J, Clapworthy GJ, McFarlane NJB, Dong F, Viceconti M, 
+Taddei F, Testi D. Interactive Out-of-Core Exploration of Large Volume 
+Datasets in VTK-Based Visualisation Systems. 
+In: Proceedings of EG UK Theory and Practice of Computer Graphics (TP.CG. 2008), 
+June 9-11, 2008, Manchester, UK, p. 1-8
 =========================================================================*/
 #include "mafDefines.h" 
 //----------------------------------------------------------------------------
@@ -60,37 +64,37 @@ mafVMEVolumeLarge::mafVMEVolumeLarge()
 //-------------------------------------------------------------------------
 {
 #ifdef VME_VOLUME_VER1
-	m_LargeData = NULL;
+  m_LargeData = NULL;
 #else
-	m_LargeDataReader = NULL;
+  m_LargeDataReader = NULL;
 #endif
 
-	for (int i = 0; i < 6; i++) 
+  for (int i = 0; i < 6; i++) 
   {
-		m_FullExtent[i] = 0;
-		m_VOI[i] = 0;
-		m_ROI[i] = 0.0;
-	}
+    m_FullExtent[i] = 0;
+    m_VOI[i] = 0;
+    m_ROI[i] = 0.0;
+  }
 
-	m_SampleInfoGui = m_ShowROIOpt = m_CropEdVxls = NULL;
-	m_CropEdMm = m_InfoGui = m_CropGui = NULL;
-	m_VOIUnits = 0;
+  m_SampleInfoGui = m_ShowROIOpt = m_CropEdVxls = NULL;
+  m_CropEdMm = m_InfoGui = m_CropGui = NULL;
+  m_VOIUnits = 0;
 
-	m_ShowHandles = 1;
-	m_ShowAxis = 1;
-	m_ShowPlanes = 1;
-	m_ShowROI = 0;
-	m_GizmoROI = NULL;		
-		
-	m_SampleMemLimit = 16;	//16 MB
+  m_ShowHandles = 1;
+  m_ShowAxis = 1;
+  m_ShowPlanes = 1;
+  m_ShowROI = 0;
+  m_GizmoROI = NULL;		
+
+  m_SampleMemLimit = 16;	//16 MB
   m_AutoProof = 0;
   m_AutoProofZone = 32;   //16 voxels => 32 per side => (N+32)*(N+32)*(N + 32) increase
 #ifdef VME_VOLUME_VER1
-	m_FEOutput = NULL;	
-	m_ShowFEOutput = true;
+  m_FEOutput = NULL;	
+  m_ShowFEOutput = true;
 
-	m_ProgressCallback = vtkMAFLargeDataSetCallback::New();
-	m_ProgressCallback->SetListener(this);
+  m_ProgressCallback = vtkMAFLargeDataSetCallback::New();
+  m_ProgressCallback->SetListener(this);
 #endif
 }
 
@@ -98,28 +102,28 @@ mafVMEVolumeLarge::mafVMEVolumeLarge()
 mafVMEVolumeLarge::~mafVMEVolumeLarge()
 //-------------------------------------------------------------------------
 {
-	// data pipe destroyed in mafVME
-	// data vector destroyed in mafVMEGeneric	
+  // data pipe destroyed in mafVME
+  // data vector destroyed in mafVMEGeneric	
 #ifdef VME_VOLUME_VER1
-	if (m_LargeData != NULL) {
-		m_LargeData->RemoveObserver(m_ProgressCallback);
-		vtkDEL(m_LargeData);
-	}
+  if (m_LargeData != NULL) {
+    m_LargeData->RemoveObserver(m_ProgressCallback);
+    vtkDEL(m_LargeData);
+  }
 
-	vtkDEL(m_ProgressCallback);
-	vtkDEL(m_FEOutput);
+  vtkDEL(m_ProgressCallback);
+  vtkDEL(m_FEOutput);
 #endif
-		
-	cppDEL(m_GizmoROI);
-	cppDEL(m_SampleInfoGui);
-	cppDEL(m_InfoGui);
-	cppDEL(m_CropEdVxls);
-	cppDEL(m_CropEdMm);
-	cppDEL(m_ShowROIOpt);
-	cppDEL(m_CropGui);	
+
+  cppDEL(m_GizmoROI);
+  cppDEL(m_SampleInfoGui);
+  cppDEL(m_InfoGui);
+  cppDEL(m_CropEdVxls);
+  cppDEL(m_CropEdMm);
+  cppDEL(m_ShowROIOpt);
+  cppDEL(m_CropGui);	
 
 #ifndef VME_VOLUME_VER1
-	cppDEL(m_LargeDataReader);
+  cppDEL(m_LargeDataReader);
 #endif
 }
 
@@ -128,8 +132,57 @@ char** mafVMEVolumeLarge::GetIcon()
 //-------------------------------------------------------------------------
 {
 #include "mafVMEVolumeLarge.xpm"
-	return mafVMEVolumeLarge_xpm;
+  return mafVMEVolumeLarge_xpm;
 }
+
+#include "mmaVolumeMaterial.h"
+#include "vtkLookupTable.h"
+
+//-------------------------------------------------------------------------
+int mafVMEVolumeLarge::InternalInitialize()
+//-------------------------------------------------------------------------
+{
+//BES: 11.7.2008 - THIS IS HERE BECAUSE OF PAOLO'S BUG IN mafVMEVolume
+//THAT PREVENT CORRECT MATERIAL CONSTRUCTION
+//WHEN IT IS FIXED, NEITHER InternalInitialize NOR GetMaterial
+//IS NEEDED TO BE IN mafVMEVolumeLarge
+  if (mafVMEGeneric::InternalInitialize()==MAF_OK)
+  {
+    // force material allocation   
+    GetMaterial();
+    return MAF_OK;
+  }
+  return MAF_ERROR;
+}
+
+//-------------------------------------------------------------------------
+mmaVolumeMaterial *mafVMEVolumeLarge::GetMaterial()
+//-------------------------------------------------------------------------
+{
+  mmaVolumeMaterial *material = (mmaVolumeMaterial *)GetAttribute("VolumeMaterialAttributes");
+  if (material == NULL)
+  {
+    material = mmaVolumeMaterial::New();
+    
+    if(GetOutput() && GetOutput()->GetVTKData())
+    {
+      GetOutput()->GetVTKData()->Update();
+      double sr[2];
+      GetOutput()->GetVTKData()->GetScalarRange(sr);
+      material->m_ColorLut->SetTableRange(sr);
+      material->m_ColorLut->SetRange(sr);
+      material->UpdateFromTables();
+    }
+
+    SetAttribute("VolumeMaterialAttributes", material);
+    if (m_Output)
+    {
+      ((mafVMEOutputVolume *)m_Output)->SetMaterial(material);
+    }
+  }
+  return material;
+}
+
 
 /** called to prepare the update of output */
 /*virtual*/ void mafVMEVolumeLarge::InternalPreUpdate()
