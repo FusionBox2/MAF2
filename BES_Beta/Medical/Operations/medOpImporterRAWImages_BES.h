@@ -2,9 +2,10 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: medOpImporterRAWImages_BES.h,v $
   Language:  C++
-  Date:      $Date: 2008-06-26 11:11:56 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-07-11 11:46:54 $
+  Version:   $Revision: 1.2 $
   Authors:   Stefania Paperini porting Matteo Giacomoni
+             Modified by Josef Kohout to support large volumes 
 ==========================================================================
 Copyright (c) 2002/2004
 CINECA - Interuniversity Consortium (www.cineca.it) 
@@ -18,6 +19,13 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "mafOp.h"
 #include "mafEvent.h"
 #include "mafString.h"
+
+#define VME_VOLUME_LARGE
+#ifdef VME_VOLUME_LARGE
+#include "vtkObject.h"
+#include "../../openMAF/vtkMAF/vtkMAFIdType64.h"
+#include "../../openMAF/VME/mafVMEVolumeLarge.h"
+#endif
 
 //----------------------------------------------------------------------------
 // forward references :
@@ -39,6 +47,9 @@ class mmiDICOMImporterInteractor;
 class mafString;
 class mafVMEVolumeGray;
 class mafVMEVolumeRGB;
+#ifdef VME_VOLUME_LARGE
+class vtkMAFLargeImageReader;
+#endif // VME_VOLUME_LARGE
 
 //----------------------------------------------------------------------------
 // medOpImporterRAWImages_BES :
@@ -82,6 +93,20 @@ public:
 	void SetCoordFile(wxString File){m_CoordFile=File;m_Rect = true;m_Spacing[2] = 1.0;};
 	void SetStringPrefix(wxString Prefix){m_Prefix=Prefix;};
 
+#ifdef VME_VOLUME_LARGE
+  //Sets the output file (with bricks)
+  void SetOutputFile(const char* szOutputFile);
+
+  //returns true, if the volume to be imported is too large
+  //and should be processed as VMEVolumeLarge
+  bool IsVolumeLarge();
+
+  /** Configure the data provider of the given reader
+  if bNonInterleaved is set to true, the underlaying physical medium is supposed
+  to keep the data in non-interleaved mode, i.e., RRRRR...R, GGGG...G, B....B*/
+  virtual void SetDataLayout(vtkMAFLargeImageReader* r, bool bNonInterleaved);
+#endif  //VME_VOLUME_LARGE
+
 	void CreatePipeline();
 	void CreateGui();
 
@@ -106,13 +131,24 @@ protected:
 	/** Calculate the length of the file in order to give a guessed value for the header size. */
 	int  GetFileLength(const char * filename);
 
-  /** Control file list before read to alert for possible incoerences*/
+  /** Control file list before read to alert for possible incoherences*/
   bool ControlFilenameList();
+
+#ifdef VME_VOLUME_LARGE
+  //if the volume (or VOI) is large, it displays a warning that the volume 
+  //to be imported is large and returns true, if the operation should continue,
+  //false otherwise (user canceled the import)
+  bool VolumeLargeCheck();
+#endif // VME_VOLUME_LARGE
+
 
 	mafNode			 *m_Vme; 
 
  	mafString			m_RawDirectory;
 	vtkDirectory *m_VtkRawDirectory;
+#ifdef VME_VOLUME_LARGE
+  mafString		m_OutputFileName;
+#endif // VME_VOLUME_LARGE
 
 	int			 m_Bit;	
   int      m_RgbType;
@@ -132,12 +168,20 @@ protected:
 	wxString m_Extension;
 	wxString m_Prefix;
 	wxString m_Pattern;
+#ifdef VME_VOLUME_LARGE
+  int     m_MemLimit;   //<memory limit in MB
+#endif // VME_VOLUME_LARGE
+  int     m_UseLookupTable; //<zero, if the preview should use the values in the data directly
 
 	bool		 m_Rect;
 	wxString m_CoordFile;	
 
 	//preview pipeline
-	vtkImageReader		*m_Reader;
+#ifdef VME_VOLUME_LARGE
+  vtkMAFLargeImageReader* m_Reader;
+#else
+  vtkImageReader		*m_Reader;
+#endif // VME_VOLUME_LARGE	
   vtkImageImport		*m_RedImage;
   vtkImageImport		*m_GreenImage;
   vtkImageImport		*m_BlueImage;
@@ -159,12 +203,16 @@ protected:
 
 	vtkWindowLevelLookupTable	*m_LookupTable;
 	
-	mmgDialogPreview	*m_Dialog;
+	mmgDialogPreview	*m_Dialog; 
+  mmgGui* m_GuiSlider;
 
 	mmiDICOMImporterInteractor *m_DicomInteractor;
 
 	mafVMEVolumeGray  *m_VolumeGray;
   mafVMEVolumeRGB   *m_VolumeRGB;
+#ifdef VME_VOLUME_LARGE
+  mafVMEVolumeLarge* m_VolumeLarge;
+#endif // VME_VOLUME_LARGE
 
   mafString m_DimXCrop;
   mafString m_DimYCrop;
