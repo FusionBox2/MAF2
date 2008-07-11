@@ -3,7 +3,7 @@
   File:    	 mafBrickedFileWriter.cpp
   Language:  C++
   Date:      11:2:2008   12:42
-  Version:   $Revision: 1.2 $
+  Version:   $Revision: 1.3 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -189,7 +189,10 @@ void mafBrickedFileWriter::SetInputDataSet(vtkMAFLargeImageData* ds)
 	dataIncrSkip[0] = dataIncr[0]*nSampleRate;
 	dataIncrSkip[1] = dataIncr[1]*nSampleRate;
 	dataIncrSkip[2] = dataIncr[2]*nSampleRate;
-  int nLineBufSkip = ((int)dataIncrSkip[0] - 1)*m_nVoxelSizeInB;
+  int nLineBufSkip = 
+  //BES: 11.7.2008 - GetIncrements takes number of components into account
+    ((int)dataIncrSkip[0] - dsc->GetNumberOfComponents())*
+      (m_nVoxelSizeInB / dsc->GetNumberOfComponents());
 
 	char* pDstBuf = m_pDataBuffer;
 

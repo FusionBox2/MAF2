@@ -3,7 +3,7 @@
 File:    	 mafBrickedFileReader.cpp
 Language:  C++
 Date:      13:2:2008   14:25
-Version:   $Revision: 1.3 $
+Version:   $Revision: 1.4 $
 Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
 
 Copyright (c) 2008
@@ -383,8 +383,11 @@ void mafBrickedFileReader::GetBricksExtent(int VOI[6], int inBExt[6], int bndBEx
 	int outIncr[3], outIncrInB[3];
 	vtkImageData* output = GetOutputDataSet();	
 	output->GetIncrements(outIncr);
-	for (int i = 0; i < 3; i++) {
-		outIncrInB[i] = outIncr[i]*m_nVoxelSizeInB;
+	for (int i = 0; i < 3; i++) 
+  {
+    //BES: 11.7.2008 - GetIncrements takes number of components into account =>
+    //we need to make some corrections
+		outIncrInB[i] = outIncr[i]*(m_nVoxelSizeInB / m_FileHeader.numcomps);
 	}
 
 	int RSR = m_FileHeader.sample_rate;
