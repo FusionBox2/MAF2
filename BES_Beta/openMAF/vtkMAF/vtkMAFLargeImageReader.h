@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFLargeImageReader.h,v $ 
   Language: C++ 
-  Date: $Date: 2008-06-23 16:43:55 $ 
-  Version: $Revision: 1.1 $ 
+  Date: $Date: 2008-07-11 11:56:28 $ 
+  Version: $Revision: 1.2 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -36,7 +36,11 @@ protected:
 	int DataVOI[6];
 
 #pragma region vtkImageReader2 stuff
-	char *FileName;
+  char* InternalFileName;           //<this is the name of the file from which we will read
+  char* InternalFilePattern;        //<this is combined FilePattern and FilePrefix
+  char *FileName;
+  char *FilePrefix;
+  char *FilePattern;  
 	int NumberOfScalarComponents;
 	int FileLowerLeft;
 
@@ -47,10 +51,13 @@ protected:
 	int FileDimensionality;
 	unsigned long HeaderSize;
 	int DataScalarType;
-	unsigned long ManualHeaderSize;
+	unsigned long ManualHeaderSize;   //<zero, if the header size should be determined automatically
 
 	double DataSpacing[3];
 	double DataOrigin[3];	
+
+  int FileNameSliceOffset;
+  int FileNameSliceSpacing;
 #pragma endregion //vtkImageReader2 stuff
 	
 	// Mask each pixel with this DataMask
@@ -89,6 +96,18 @@ public:
 	// in multiple files.
 	virtual void SetFileName(const char *);
 	vtkGetStringMacro(FileName);
+
+  // Description:
+  // Specify file prefix for the image file(s).You should specify either
+  // a FileName or FilePrefix. Use FilePrefix if the data is stored
+  // in multiple files.
+  virtual void SetFilePrefix(const char *);
+  vtkGetStringMacro(FilePrefix);
+
+  // Description:
+  // The sprintf format used to build filename from FilePrefix and number.
+  virtual void SetFilePattern(const char *);
+  vtkGetStringMacro(FilePattern);
 
 	// Description:
 	// Set the data type of pixels in the file.  
@@ -162,6 +181,19 @@ public:
 	virtual void SetDataByteOrder(int);
 	virtual const char *GetDataByteOrderAsString();
 
+  // Description:
+  // When reading files which start at an unusual index, this can be added
+  // to the slice number when generating the file name (default = 0)
+  vtkSetMacro(FileNameSliceOffset,int);
+  vtkGetMacro(FileNameSliceOffset,int);
+
+  // Description:
+  // When reading files which have regular, but non contiguous slices
+  // (eg filename.1,filename.3,filename.5)
+  // a spacing can be specified to skip missing files (default = 1)
+  vtkSetMacro(FileNameSliceSpacing,int);
+  vtkGetMacro(FileNameSliceSpacing,int);
+
 	// Description:
 	// Set/Get the byte swapping to explicitly swap the bytes of a file.
 	vtkSetMacro(SwapBytes,int);
@@ -179,6 +211,16 @@ public:
 	// Set/Get the Data mask.
 	vtkGetMacro(DataMask, unsigned short);
 	vtkSetMacro(DataMask, unsigned short);	
+
+  // Description:
+  // Set/Get the internal file name
+  virtual void ComputeInternalFileName(int slice);
+  vtkGetStringMacro(InternalFileName);
+
+  // Description:
+  // Set/Get the internal file pattern
+  virtual void ComputeInternalFilePattern();
+  vtkGetStringMacro(InternalFilePattern);  
 #pragma endregion
 
 

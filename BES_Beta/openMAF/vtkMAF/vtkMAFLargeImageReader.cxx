@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFLargeImageReader.cxx,v $ 
   Language: C++ 
-  Date: $Date: 2008-06-23 16:43:55 $ 
-  Version: $Revision: 1.1 $ 
+  Date: $Date: 2008-07-11 11:56:28 $ 
+  Version: $Revision: 1.2 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -16,10 +16,11 @@
 #include "vtkMAFLargeImageReader.h"
 #include "vtkMAFLargeImageData.h"
 #include "vtkMAFFileDataProvider.h"
+#include "vtkMAFMultiFileDataProvider.h"
 
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkMAFLargeImageReader, "$Revision: 1.1 $");
+vtkCxxRevisionMacro(vtkMAFLargeImageReader, "$Revision: 1.2 $");
 vtkStandardNewMacro(vtkMAFLargeImageReader);
 
 #include "mafMemDbg.h"
@@ -45,6 +46,14 @@ vtkMAFLargeImageReader::vtkMAFLargeImageReader()
 		this->DataIncrements[2] = this->DataIncrements[3] = 1;
 
 	this->FileName = NULL;
+  this->InternalFileName = NULL;
+  this->InternalFilePattern = NULL;
+  this->FilePrefix = NULL;
+  this->FilePattern = new char[strlen("%s.%d") + 1];
+  strcpy (this->FilePattern, "%s.%d");  
+
+  this->FileNameSliceOffset = 0;
+  this->FileNameSliceSpacing = 1;
 
 	this->HeaderSize = 0;
 	this->ManualHeaderSize = 0;
@@ -69,32 +78,78 @@ vtkMAFLargeImageReader::~vtkMAFLargeImageReader()
 		delete [] this->FileName;
 		this->FileName = NULL;
 	}
+
+  if (this->FilePrefix)
+  {
+    delete [] this->FilePrefix;
+    this->FilePrefix = NULL;
+  }
+
+  if (this->FilePattern)
+  {
+    delete [] this->FilePattern;
+    this->FilePattern = NULL;
+  }
+
+  if (this->InternalFileName)
+  {
+    delete [] this->InternalFileName;
+    this->InternalFileName = NULL;
+  }
+
+  if (this->InternalFilePattern)
+  {
+    delete [] this->InternalFilePattern;
+    this->InternalFilePattern = NULL;
+  }
 }
 
 //Initializes data providers for the given image data set
 /*virtual*/ void vtkMAFLargeImageReader::InitializeDataProviders(vtkMAFLargeImageData* ds)
 {
-	vtkMAFFileDataProvider* fp;
-	vtkMAFLargeDataProvider* pp = ds->GetPointDataProvider();	 
-	if (pp != NULL)
-		fp = vtkMAFFileDataProvider::SafeDownCast(pp);
-	else
-	{
-		//no provider at all, create the default one
-		fp = vtkMAFFileDataProvider::New();
-		ds->SetPointDataProvider(pp = fp);
-		pp->Delete();	//we no longer need it
-	}
-		
-	if (fp != NULL && (fp->GetFileName() == NULL || 
-		strcmp(fp->GetFileName(), this->GetFileName()) != 0))
-	{
-		//open a new file
-		if (!fp->OpenFile(this->GetFileName()))
-		{
-			vtkErrorMacro(<< "Cannot open file: " << this->GetFileName());
-		}
-	}
+  vtkMAFLargeDataProvider* pp = ds->GetPointDataProvider();
+  if (this->FileName != NULL)
+  {
+    //simple file => data provider must be of vtkMAFFileDataProvider type
+    vtkMAFFileDataProvider* fp = vtkMAFFileDataProvider::SafeDownCast(pp);
+    if (fp == NULL)
+    {
+      //no provider at all, create the default one
+      fp = vtkMAFFileDataProvider::New();
+      ds->SetPointDataProvider(pp = fp);
+      pp->Delete();	//we no longer need it
+    }
+
+    if (fp->GetFileName() == NULL || 
+      strcmp(fp->GetFileName(), this->GetFileName()) != 0)
+    {
+      //open a new file
+      if (!fp->OpenFile(this->GetFileName()))
+      {
+        vtkErrorMacro(<< "Cannot open file: " << this->GetFileName());
+      }
+    }
+  }
+  else
+  {
+    //multiple files => data provider must be of vtkMAFMultiFileDataProvider type
+    vtkMAFMultiFileDataProvider* fp = vtkMAFMultiFileDataProvider::SafeDownCast(pp);
+    if (fp == NULL)
+    {
+      //no provider at all, create the default one
+      fp = vtkMAFMultiFileDataProvider::New();
+      ds->SetPointDataProvider(pp = fp);
+      pp->Delete();	//we no longer need it
+    }
+
+    fp->SetHeaderSize2(this->GetHeaderSize());
+    if (!fp->OpenMultiFile(this->GetInternalFilePattern(), 
+      this->DataExtent[5] - this->DataExtent[4] + 1,
+      this->GetFileNameSliceOffset(), this->GetFileNameSliceSpacing()))
+    {    
+      vtkErrorMacro(<< "Cannot open multi-file: " << this->GetInternalFilePattern());
+    }    
+  }
 
 	pp->SetHeaderSize(this->GetHeaderSize());
 	pp->SetSwapBytes(this->GetSwapBytes() != 0);
@@ -145,9 +200,9 @@ vtkMAFLargeImageReader::~vtkMAFLargeImageReader()
 // are assumed to be the same as the file extent/order.
 void vtkMAFLargeImageReader::ExecuteData(vtkDataObject *output)
 {	
-	if (!this->FileName)
+	if (this->FileName == NULL && this->InternalFilePattern == NULL)
 	{
-		vtkErrorMacro("A valid FileName must be specified.");
+		vtkErrorMacro("A valid FileName or FilePattern must be specified.");
 		return;
 	}
 
@@ -165,7 +220,51 @@ void vtkMAFLargeImageReader::ExecuteData(vtkDataObject *output)
 }
 
 
-#pragma region vtkMAFLargeImageReader stuff
+#pragma region vtkImageReader stuff
+//----------------------------------------------------------------------------
+// This function sets the name of the file. 
+void vtkMAFLargeImageReader::ComputeInternalFileName(int slice)
+{
+  // delete any old filename
+  if (this->InternalFileName)
+  {
+    delete [] this->InternalFileName;
+    this->InternalFileName = NULL;
+  }
+
+  if (!this->FileName && !this->InternalFilePattern)
+  {
+    vtkErrorMacro(<<"Either a FileName or FilePattern must be specified.");
+    return;
+  }
+
+  // make sure we figure out a filename to open
+  if (this->FileName != NULL)
+  {
+    this->InternalFileName = new char [strlen(this->FileName) + 1];    
+    strcpy(this->InternalFileName, this->FileName);
+  }
+  else if (this->InternalFilePattern != NULL)
+  {
+    int slicenum = slice * this->FileNameSliceSpacing + this->FileNameSliceOffset;       
+    int len = _scprintf(this->InternalFilePattern, slicenum) + 1;        
+    this->InternalFileName = new char [len];  
+
+#if defined(_MSC_VER) && _MSC_VER >= 1400
+    sprintf_s(this->InternalFileName, len, 
+#else
+    sprintf(this->InternalFileName, 
+#endif            
+      this->InternalFilePattern, slicenum);    
+  }
+  else
+  {
+    //FilePattern is NULL
+    delete [] this->InternalFileName;
+    this->InternalFileName = NULL;
+  }
+}
+
 //----------------------------------------------------------------------------
 // This function sets the name of the file. 
 void vtkMAFLargeImageReader::SetFileName(const char *name)
@@ -195,6 +294,228 @@ void vtkMAFLargeImageReader::SetFileName(const char *name)
 
 	this->Modified();
 }
+
+//----------------------------------------------------------------------------
+// This function sets the prefix of the file name. "image" would be the
+// name of a series: image.1, image.2 ...
+void vtkMAFLargeImageReader::SetFilePrefix(const char *prefix)
+{
+  if ( this->FilePrefix && prefix && (!strcmp(this->FilePrefix,prefix)))
+  {
+    return;
+  }
+  if (!prefix && !this->FilePrefix)
+  {
+    return;
+  }
+  if (this->FilePrefix)
+  {
+    delete [] this->FilePrefix;
+  }
+  if (this->FileName)
+  {
+    delete [] this->FileName;
+    this->FileName = NULL;
+  }  
+  this->FilePrefix = new char[strlen(prefix) + 1];
+  strcpy(this->FilePrefix, prefix);
+
+  ComputeInternalFilePattern();
+  this->Modified();
+}
+
+//----------------------------------------------------------------------------
+// This function sets the pattern of the file name which turn a prefix
+// into a file name. "%s.%3d" would be the
+// pattern of a series: image.001, image.002 ...
+void vtkMAFLargeImageReader::SetFilePattern(const char *pattern)
+{
+  if ( this->FilePattern && pattern && 
+    (!strcmp(this->FilePattern,pattern)))
+  { //neither is NULL but they are the same
+    return;
+  }
+  if (!pattern && !this->FilePattern)
+  { //both are NULLs
+    return;
+  }
+  if (this->FilePattern)
+  {
+    delete [] this->FilePattern;
+  }
+  if (this->FileName)
+  {
+    delete [] this->FileName;
+    this->FileName = NULL;
+  }
+
+  this->FilePattern = new char[strlen(pattern) + 1];
+  strcpy(this->FilePattern, pattern);
+    
+  ComputeInternalFilePattern();
+  this->Modified();
+}
+
+//------------------------------------------------------------------------
+// Set/Get the internal file pattern
+/*virtual*/ void vtkMAFLargeImageReader::ComputeInternalFilePattern()
+//------------------------------------------------------------------------
+{
+  //For security reasons, analyze the given FilePattern;  
+  //invalid pattern specified by the user may have dire effects
+  bool bFilePatternHasString = false;
+  int nPercents = 0;
+
+  char *pSChrStart, *pSChrEnd;  
+  char* pChr = this->FilePattern;
+  while (*pChr != '\0')
+  {         
+    if (*pChr != '%') 
+    {
+      //ordinary character
+      pChr++;
+      continue;
+    }    
+
+    pChr++;  //advance to next
+    if (*pChr == '%') 
+    {
+      //'%' character
+      pChr++;
+      continue;
+    }
+
+    if (nPercents == 2)
+    {
+      //we already have two %, the rest must be invalidate
+      *pChr = '%'; pChr++;
+      continue;
+    }
+
+    //search for strings (those are critical); the format is:
+    //%[flags][width][.precision][{h,l,ll,I,I32,I64}]type
+    //strings have type 's' or 'S' (MS specified)
+    char* pChrPStart = pChr;      
+    if (*pChr == '-' || *pChr == '+' || *pChr == '0' || 
+      *pChr == ' ' || *pChr == '#')
+      pChr++;  //skip flags
+
+    while (*pChr >= '0' && *pChr <= '9') {
+      pChr++;  //skip width digit
+    }
+
+    if (*pChr == '.')
+    {
+      pChr++;    //skip precision mark
+      while (*pChr >= '0' && *pChr <= '9') {
+        pChr++;  //skip precision digit
+      }     
+    }
+
+    if (*pChr == 'h')
+      pChr++;
+    else if (*pChr == 'l')
+    {
+      pChr++;
+      if (*pChr == 'l')
+        pChr++;  //'ll'        
+    }
+    else if (*pChr == 'I')
+    {
+      pChr++;
+
+      if ((*pChr == '3' && pChr[1] == '2') ||
+        (*pChr == '6' && pChr[1] == '4'))
+        pChr += 2;
+    }
+
+    if (*pChr == 's' || *pChr == 'S')
+    {
+      //string, we found it
+      if (bFilePatternHasString)
+        *pChrPStart = '%';    //we have already one %s there
+      else
+      {
+        pSChrStart = pChrPStart - 1;    //start with %
+        pSChrEnd = pChr + 1;            //one more (exclusive end)
+        bFilePatternHasString = true;
+      }        
+    }
+
+    pChr++;                   //advance type
+    nPercents++;
+  }
+
+  if (this->InternalFilePattern != NULL)
+  {
+    delete[] this->InternalFilePattern;
+  }
+
+  if (!bFilePatternHasString)
+  {
+    //there is no %s in the pattern => prefix will be ignored
+    //N.B. we might have detected more than one %, sprintf will generate
+    //invalid string, however, no matter what will be in the stack, there will 
+    //be no crash because parameters in the stack will be considered as value types 
+    //(unlike %s parameters, which are reference types). => we are ready
+
+#if defined(_MSC_VER) && _MSC_VER >= 1400
+    this->InternalFilePattern = _strdup(this->FilePattern);
+#else
+    int nLen = (int)strlen(this->FilePattern);
+    this->InternalFilePattern = new char[nLen + 1];
+    strcpy(this->InternalFilePattern, this->FilePattern);
+#endif
+  }
+  else
+  {
+    //we have there some %s, so, we will need to merge it with FilePrefix
+    char chOld2 = *pSChrEnd;
+    *pSChrEnd = '\0';
+
+    int nLen2 = _scprintf(pSChrStart, 
+      (this->FilePrefix != NULL ? this->FilePrefix : "")) + 1;
+
+    char* tmp = new char[nLen2];
+#if defined(_MSC_VER) && _MSC_VER >= 1400
+    sprintf_s(tmp, nLen2, 
+#else
+    sprintf(tmp, 
+#endif
+      pSChrStart, (this->FilePrefix != NULL ? this->FilePrefix : ""));
+
+    //tmp now contains formated FilePrefix, merge it
+    int nLen1 = pSChrStart - this->FilePattern;
+    int nLen3 = pChr - pSChrEnd;
+
+    char chOld1 = *pSChrStart;
+    *pSChrStart = '\0';
+
+    this->InternalFilePattern = new char[nLen1 + nLen2 + nLen3];
+#if defined(_MSC_VER) && _MSC_VER >= 1400
+    strcpy_s(this->InternalFilePattern, nLen1 + nLen2 + nLen3, this->FilePattern);
+    strcpy_s(&this->InternalFilePattern[nLen1], nLen2 + nLen3, tmp);    
+#else
+    strcpy(this->InternalFilePattern, this->FilePattern);
+    strcpy(&this->InternalFilePattern[nLen1], tmp);    
+#endif
+
+    //release memory
+    delete[] tmp;
+
+    //restore original characters
+    *pSChrEnd = chOld2;
+    *pSChrStart = chOld1;
+
+#if defined(_MSC_VER) && _MSC_VER >= 1400
+    strcpy_s(&this->InternalFilePattern[nLen1 + nLen2 - 1], nLen3 + 1, pSChrEnd);
+#else
+    strcpy(&this->InternalFilePattern[nLen1 + nLen2 - 1], pSChrEnd);
+#endif
+  }
+}
+
+
 
 void vtkMAFLargeImageReader::SetDataByteOrderToBigEndian()
 {
@@ -284,6 +605,15 @@ void vtkMAFLargeImageReader::PrintSelf(ostream& os, vtkIndent indent)
 	// this->File, this->Colors need not be printed  
 	os << indent << "FileName: " <<
 		(this->FileName ? this->FileName : "(none)") << "\n";
+  os << indent << "FilePrefix: " << 
+    (this->FilePrefix ? this->FilePrefix : "(none)") << "\n";
+  os << indent << "FilePattern: " << 
+    (this->FilePattern ? this->FilePattern : "(none)") << "\n";
+
+  os << indent << "FileNameSliceOffset: " 
+    << this->FileNameSliceOffset << "\n";
+  os << indent << "FileNameSliceSpacing: " 
+    << this->FileNameSliceSpacing << "\n";
 
 	os << indent << "DataScalarType: " 
 		<< vtkImageScalarTypeNameMacro(this->DataScalarType) << "\n";
@@ -326,6 +656,15 @@ void vtkMAFLargeImageReader::PrintSelf(ostream& os, vtkIndent indent)
 	os << ")\n";
 
 	os << indent << "HeaderSize: " << this->HeaderSize << "\n";
+
+  if ( this->InternalFileName )
+  {
+    os << indent << "Internal File Name: " << this->InternalFileName << "\n";
+  }
+  else
+  {
+    os << indent << "Internal File Name: (none)\n";
+  }
 }
 
 
