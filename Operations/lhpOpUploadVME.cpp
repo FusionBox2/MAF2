@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-10 12:38:27 $
-Version:   $Revision: 1.67 $
+Date:      $Date: 2008-07-15 08:46:17 $
+Version:   $Revision: 1.68 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -64,6 +64,7 @@ MafMedical is partially based on OpenMAF.
 #include "mafVMEFactory.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafVMELandmark.h"
+#include "mafVMESurface.h"
 #include "mafSmartPointer.h"
 
 #include "lhpFactoryTagHandler.h"
@@ -637,6 +638,7 @@ int lhpOpUploadVME::ImportMSF()
     m_Input->GetTagArray()->SetTag(tagList[n].c_str(), temporaryNode->GetTagArray()->GetTag(tagList[n].c_str())->GetValue(), 2);
   }
 
+
   //attach links previously removed
   if (m_HasLink)
   {
@@ -740,6 +742,18 @@ bool lhpOpUploadVME::CreateCache()
     if (vmeGeneric != NULL)
     {
       m_CacheVme->SetMatrix(*vmeGeneric->GetOutput()->GetAbsMatrix());
+    }
+  }
+
+  mafSmartPointer<mafVMESurface> fakeLinkNode;
+
+  //link a fake node, in order to have link with Id = -1. So when the VME will be downloaded
+  //it will be imported even if the linked VME are still to be downloaded
+  if (m_HasLink)
+  {
+    for (int i = 0; i < m_LinkNode.size(); i++)
+    {
+      m_CacheVme->SetLink(m_LinkName[i].GetCStr(), fakeLinkNode);
     }
   }
 
@@ -1150,12 +1164,6 @@ bool lhpOpUploadVME::IsLHPBuilderVersionUpToDate()
     mafLogMessage(errors[i]);
   }
 
-  // gathering values from Python Output:
-
-  //if dictVC.IsDictionaryUpToDate() == True:
-  //print "UpToDate"
-  //else:
-  //print "NotUpToDate"
 
   wxString result = output[output.size() - 1];
 
