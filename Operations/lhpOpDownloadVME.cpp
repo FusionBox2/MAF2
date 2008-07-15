@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-15 08:47:21 $
-Version:   $Revision: 1.21 $
+Date:      $Date: 2008-07-15 15:25:59 $
+Version:   $Revision: 1.22 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -317,11 +317,17 @@ void lhpOpDownloadVME::OpDo()
     int counter = 0;
     for (int n = 0; n < m_DerivedNodeVector.size(); n++)
     {
+      int subId = -1;
       mafString linkName;
       for (mafNode::mafLinksMap::iterator i = m_DerivedNodeVector[n]->GetLinks()->begin(); i != m_DerivedNodeVector[n]->GetLinks()->end(); i++)
       {
         linkName = i->first;
-        m_DerivedNodeVector[n]->SetLink(linkName.GetCStr(), m_LinkNodeVector[counter]);
+        if (m_LinkNodeVector[counter]->IsA("mafVMELandmarkCloud") && m_LinkNodeVector[counter]->GetNumberOfChildren() != 0)
+        {
+          //set subId to 0, because it is the first landmark of the cloud
+          subId = 0;
+        }
+        m_DerivedNodeVector[n]->SetLink(linkName.GetCStr(), m_LinkNodeVector[counter], subId); 
         counter++;
       }
     }
@@ -720,7 +726,7 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(mafString  xmlFile)
   return MAF_OK;
 }
 //-------------------------------------------------------------------
-int lhpOpDownloadVME::ReconstructMSF(mafString  xmlFile)
+int lhpOpDownloadVME::ReconstructMSF(mafString xmlFile)
 //-------------------------------------------------------------------
 {
   wxString oldDir = wxGetCwd();
@@ -777,7 +783,7 @@ void lhpOpDownloadVME::GetLinkURI()
   while (listURI.find_first_of("'") != -1)
   {
     count2 = listURI.find_first_of("'");
-    name = (listURI.substr(count, count2)).c_str();
+    name = (listURI.substr(0, count2)).c_str();
     if (name != " ")
     {
       m_ListLinkURI.Add(name);
