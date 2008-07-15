@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-09 07:35:12 $
-Version:   $Revision: 1.8 $
+Date:      $Date: 2008-07-15 15:23:10 $
+Version:   $Revision: 1.9 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -498,7 +498,7 @@ int lhpOpUploadMultiVME::UploadVMELinks(mafNode *derived)
       wxMessageBox(wxString::Format("Link found! Upload VME: %s", link->GetName()));
 
       m_UploadVME->SetInput(link);
-      if (m_UploadVME->UploadVME(URI, hasBinary, true) == MAF_ERROR || (hasBinary == true && URI == ""))
+      if (m_UploadVME->UploadVME(URI, hasBinary) == MAF_ERROR || (hasBinary == true && URI == ""))
       {
         return MAF_ERROR;
       }
