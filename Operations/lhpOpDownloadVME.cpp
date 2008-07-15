@@ -2,9 +2,9 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-10 12:37:15 $
-Version:   $Revision: 1.20 $
-Authors:   Daniele Giunchi, Stefano Perticoni
+Date:      $Date: 2008-07-15 08:47:21 $
+Version:   $Revision: 1.21 $
+Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
 SCS s.r.l. - BioComputing Competence Centre (www.scsolutions.it - www.b3c.it)
@@ -60,6 +60,12 @@ MafMedical is partially based on OpenMAF.
 #include "mafVMEGenericAbstract.h"
 #include "mafOpImporterMSF.h"
 #include "mafVMELandmarkCloud.h"
+#include "mafTagArray.h"
+
+#include "mafVMEStorage.h"
+#include "mafVMERoot.h"
+#include "mafVMEGroup.h"
+
 
 #include "lhpFactoryTagHandler.h"
 #include "vtkPolyData.h"
@@ -89,6 +95,10 @@ mafOp(label)
 {
 	m_OpType  = OPTYPE_OP;
 	m_Canundo = false;
+  m_FillLinkVector = false;
+  m_DerivedNodeVector.clear();
+  m_LinkNodeVector.clear();
+  m_Group = NULL;
 
   //m_PythonExe ="C:\\Python25\\python.exe ";
   m_PythonExe ="python.exe ";
@@ -118,7 +128,9 @@ mafOp(label)
 lhpOpDownloadVME::~lhpOpDownloadVME()
 //----------------------------------------------------------------------------
 {
-
+  m_DerivedNodeVector.clear();
+  m_LinkNodeVector.clear();
+  mafDEL(m_Group);
 }
 //----------------------------------------------------------------------------
 mafOp* lhpOpDownloadVME::Copy()
@@ -187,8 +199,6 @@ void lhpOpDownloadVME::OpRun()
   { 
     if(this->CreateFileListFromBasket() == MAF_OK)
     {
-      //CreateGui();
-      //ShowGui();
       result = OP_RUN_OK;
       mafEventMacro(mafEvent(this,result));
     }
@@ -197,7 +207,6 @@ void lhpOpDownloadVME::OpRun()
       OpStop(result);
       return;
     }
-    
   }
   else
   {
@@ -285,37 +294,68 @@ void lhpOpDownloadVME::OnEvent(mafEventBase *maf_event)
 void lhpOpDownloadVME::OpDo()   
 //----------------------------------------------------------------------------
 {
-	if(!CreateIncomingDirectory())
-	{
-		wxMessageBox("Unable to create Incoming Directory");
-		return;
-	}
-  
-	if(!CreateIncomingCache())
-	{
-		wxMessageBox("Unable to create a temporary cache, remember that msf must be saved locally");
-		return;
-	}
- 
   if(RetrieveInformationFromBasketListFile() != MAF_OK)
   {
     wxMessageBox("Unable to read what are the choosen vme");
     return;
   }
-
-  for (int i = 0; i < m_BasketList.size(); i++)
+  //Download VME form the basket
+  if (DownloadVME(m_BasketList) != MAF_OK)
   {
-    if(DownloadSelectedXMLFromBasket(i) != MAF_OK)
+    return;
+  }
+
+  if (m_ListLinkURI.size() != 0)
+  {
+    m_FillLinkVector = true;
+
+    //Download VME link
+    if (DownloadVME(m_ListLinkURI) != MAF_OK)
+    {
+      return;
+    }
+    int counter = 0;
+    for (int n = 0; n < m_DerivedNodeVector.size(); n++)
+    {
+      mafString linkName;
+      for (mafNode::mafLinksMap::iterator i = m_DerivedNodeVector[n]->GetLinks()->begin(); i != m_DerivedNodeVector[n]->GetLinks()->end(); i++)
+      {
+        linkName = i->first;
+        m_DerivedNodeVector[n]->SetLink(linkName.GetCStr(), m_LinkNodeVector[counter]);
+        counter++;
+      }
+    }
+  }
+}
+//----------------------------------------------------------------------------
+int lhpOpDownloadVME::DownloadVME(wxArrayString listVME)   
+//----------------------------------------------------------------------------
+{
+	if(!CreateIncomingDirectory())
+	{
+		wxMessageBox("Unable to create Incoming Directory");
+		return MAF_ERROR;
+	}
+  
+	if(!CreateIncomingCache())
+	{
+		wxMessageBox("Unable to create a temporary cache, remember that msf must be saved locally");
+		return MAF_ERROR;
+	}
+
+  for (int i = 0; i < listVME.size(); i++)
+  {
+    if(DownloadSelectedXMLFromBasket(listVME[i]) != MAF_OK)
     {
       wxMessageBox("Unable to download xml");
-      return;
+      return MAF_ERROR;
     }
 
     //reconstruct msf
-    if(ReconstructMSF(i) != MAF_OK)
+    if(ReconstructMSF(listVME[i]) != MAF_OK)
     {
       wxMessageBox("Unable to reconstruct msf");
-      return;
+      return MAF_ERROR;
     }
 
     wxString oldDir = wxGetCwd();
@@ -325,10 +365,6 @@ void lhpOpDownloadVME::OpDo()
     wxBusyCursor wait;
 
 
-    // m_Pid = wxExecute(command2execute, output, errors, wxEXEC_NODISABLE);
-
-    //VME has no binary data associated replace m_URISRBFile with "."
-    //if you want to replace ".", modify also DownloadHanler.py
     if (m_URISRBFile.Equals("NOT PRESENT"))
       m_URISRBFile = ".";
 
@@ -359,22 +395,13 @@ void lhpOpDownloadVME::OpDo()
       command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //DATA DOWNLOAD NAME
       //command2execute.Append(" > log.txt"); //logme
 
-
-      //wxMessageBox(wxString::Format("Process %ld is running.", m_Pid));
-      //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
       m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
-
-      //mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
-      //  command2execute.c_str(), m_Pid);
-
     }
     else
     {
       //PROCESS NOT EXIST, CREATE SERVER AND CALL CLIENT
       wxString command2execute;
       command2execute = m_PythonExe;
-      //command2execute.Append(m_PythonUploadFullPath.GetCStr());
-      //wxMessageBox(wxString::Format("No process with pid = %ld.", m_Pid));
       m_FileName = "ThreadedClient.py ";
       command2execute.Append(m_FileName.GetCStr());
       command2execute.Append("50000");
@@ -412,9 +439,6 @@ void lhpOpDownloadVME::OpDo()
 
       mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
       m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
-
-      //mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
-      //  command2execute.c_str(), m_Pid);
     }
     wxSetWorkingDirectory(oldDir);
 
@@ -422,9 +446,10 @@ void lhpOpDownloadVME::OpDo()
     if(ImportMSF() != MAF_OK)
     {
       wxMessageBox("Unable to import msf");
-      return;
+      return MAF_ERROR;;
     }
   }
+  return MAF_OK;
 }
 //----------------------------------------------------------------------------
 void lhpOpDownloadVME::OpStop(int result)   
@@ -632,7 +657,7 @@ int lhpOpDownloadVME::RetrieveInformationFromBasketListFile()
   return MAF_OK;
 }
 //-------------------------------------------------------------------
-int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(int indexFromBasketList)
+int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(mafString  xmlFile)
 //-------------------------------------------------------------------
 {
   wxString oldDir = wxGetCwd();
@@ -651,9 +676,6 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(int indexFromBasketList)
   command2execute.Append(m_User.GetPwd());
   command2execute.Append(" ");
 
-  mafString xmlFile;
-  xmlFile = m_BasketList[indexFromBasketList];
- 
   command2execute.Append(xmlFile.GetCStr());
   command2execute.Append(" ");
 
@@ -698,7 +720,7 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(int indexFromBasketList)
   return MAF_OK;
 }
 //-------------------------------------------------------------------
-int lhpOpDownloadVME::ReconstructMSF(int indexFromBasketList)
+int lhpOpDownloadVME::ReconstructMSF(mafString  xmlFile)
 //-------------------------------------------------------------------
 {
   wxString oldDir = wxGetCwd();
@@ -717,9 +739,6 @@ int lhpOpDownloadVME::ReconstructMSF(int indexFromBasketList)
 
   command2execute.Append(directoryWorkAround);
   command2execute.Append(" ");
-
-  mafString xmlFile;
-  xmlFile = m_BasketList[indexFromBasketList];
 
   command2execute.Append(xmlFile);
   command2execute.Append(" ");
@@ -745,29 +764,77 @@ int lhpOpDownloadVME::ReconstructMSF(int indexFromBasketList)
   return MAF_OK;
 }
 //-------------------------------------------------------------------
+void lhpOpDownloadVME::GetLinkURI()
+//-------------------------------------------------------------------
+{
+  wxString name;
+  int count, count2;
+  std::string listURI = m_NodeDownloaded->GetTagArray()->GetTag("L0000_resource_MAF_Procedural_VMElinkURI1")->GetValue();
+
+  count = listURI.find_first_of("'");
+  listURI.erase(0, count+1);
+
+  while (listURI.find_first_of("'") != -1)
+  {
+    count2 = listURI.find_first_of("'");
+    name = (listURI.substr(count, count2)).c_str();
+    if (name != " ")
+    {
+      m_ListLinkURI.Add(name);
+    }
+    listURI.erase(0, count2+1);
+  }
+}
+//-------------------------------------------------------------------
 int lhpOpDownloadVME::ImportMSF()
 //-------------------------------------------------------------------
 {
-  //here put code
-  // msf name is standard: outputMAF.msf
+  //msf name is standard: outputMSF.msf
   mafString msfFileName;
   msfFileName.Append(m_IncomingCompletePath);
   msfFileName.Append("outputMAF.msf");
 
-  mafOpImporterMSF *importer=new mafOpImporterMSF("importer");
-  importer->TestModeOn();
-  importer->SetInput(m_Input);
-  importer->SetFileName(msfFileName.GetCStr());
-  importer->ImportMSF();
+  mafVMEStorage *storage;
+  storage = mafVMEStorage::New();
+  storage->SetURL(msfFileName.GetCStr());
 
-  mafNode *node = importer->GetOutput();
-  if (node->IsA("mafVMELandmarkCloud"))
+  mafVMERoot *root;
+  root = storage->GetRoot();
+  root->Initialize();
+  root->SetName("RootB");
+
+  int res = storage->Restore();
+  if (res != MAF_OK)
   {
-    ((mafVMELandmarkCloud *)node)->Close();
+    // if some problems occurred during import give feedback to the user
+    if (!m_TestMode)
+      mafErrorMessage(_("Errors during file parsing! Look the log area for error messages."));
+    return MAF_ERROR;
   }
-  m_Input->AddChild(node);
+  m_NodeDownloaded = root->GetFirstChild();
 
-  mafDEL(importer);
+  if (m_NodeDownloaded->GetNumberOfLinks() != 0)
+  {
+    wxMessageBox(wxString::Format("Link found! VME link will be downloaded"));
+    GetLinkURI();
+    m_DerivedNodeVector.push_back(m_NodeDownloaded);    
+  }
+
+  if (m_FillLinkVector)
+  {
+    m_LinkNodeVector.push_back(m_NodeDownloaded);
+  }
+
+  if (m_Group == NULL)
+  {
+    mafNEW(m_Group);
+    m_Group->SetName("Download");
+    m_Group->ReparentTo(m_Input);
+  }
+   
+  m_NodeDownloaded->ReparentTo(m_Group);
+
+  mafDEL(storage);
   return MAF_OK;
 }
 //----------------------------------------------------------------------------
@@ -815,13 +882,6 @@ bool lhpOpDownloadVME::IsLHPBuilderVersionUpToDate()
   {
     mafLogMessage(errors[i]);
   }
-
-  // gathering values from Python Output:
-
-  //if dictVC.IsDictionaryUpToDate() == True:
-  //print "UpToDate"
-  //else:
-  //print "NotUpToDate"
 
   wxString result = output[output.size() - 1];
 
