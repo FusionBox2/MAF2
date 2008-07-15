@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-15 08:46:17 $
-Version:   $Revision: 1.68 $
+Date:      $Date: 2008-07-15 15:25:13 $
+Version:   $Revision: 1.69 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -105,6 +105,7 @@ mafOp(label)
   m_HasChild = false;
   m_LinkNode.clear();
   m_LinkName.clear();
+  m_SubId = -1;
 
   //m_PythonExe ="C:\\Python25\\python.exe ";
   m_PythonExe ="python.exe ";
@@ -303,7 +304,7 @@ void lhpOpUploadVME::OnEvent(mafEventBase *maf_event)
 }
 
 //----------------------------------------------------------------------------
-int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool returnURI)   
+int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent)   
 //----------------------------------------------------------------------------
 {
   wxBusyInfo *wait;
@@ -520,14 +521,9 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     /*mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
     command2execute.c_str(), m_Pid);*/
   }
-  if (!isBinaryDataPresent || !returnURI)
-  {
-    XMLURI = "";
-  }
-  else
-  {
-    XMLURI.Append(this->GetBinaryURI());
-  }
+
+   XMLURI.Append(this->GetBinaryURI());
+
 
   //remove csv file with tags
   wxRemoveFile(m_CsvName);
@@ -546,7 +542,7 @@ void lhpOpUploadVME::OpDo()
 {
   mafString URI;
 
-  if (UploadVME(URI, "", true) == MAF_ERROR)
+  if (UploadVME(URI, "") == MAF_ERROR)
   {
     return;
   }
@@ -565,7 +561,16 @@ mafString lhpOpUploadVME::GetBinaryURI()
   wxFile binaryUriFile;
 
   wxString fileName = m_Input->GetName();
-  fileName << wxString::Format("%d", m_CacheVme->GetId());
+  //Get the right id
+  if (m_Input->IsA("mafVMELandmark"))
+  {
+    fileName << wxString::Format("%d", m_CacheVme->GetFirstChild()->GetId());
+  }
+  else
+  {
+    fileName << wxString::Format("%d", m_CacheVme->GetId());
+  }
+  
 
   wxString lockPath = m_PythonUploadFullPath;
   lockPath += fileName;
@@ -644,7 +649,7 @@ int lhpOpUploadVME::ImportMSF()
   {
     for (int i = 0; i < m_LinkNode.size(); i++)
     {
-      m_Input->SetLink(m_LinkName[i].GetCStr(), m_LinkNode[i]);
+      m_Input->SetLink(m_LinkName[i].GetCStr(), m_LinkNode[i], m_SubId);
     }
   }
 
@@ -664,6 +669,10 @@ void lhpOpUploadVME::SaveLinkInfo()
     if (i->second.m_Node != NULL)
     {
       mafNode *link = i->second.m_Node;
+      if (link->IsA("mafVMELandmarkCloud") && i->second.m_NodeSubId != -1)
+      {
+        m_SubId = i->second.m_NodeSubId;
+      }
       m_LinkNode.push_back(link);
       m_LinkName.push_back(i->first);
     }

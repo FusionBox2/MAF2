@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-07-04 07:25:48 $
-Version:   $Revision: 1.24 $
+Date:      $Date: 2008-07-15 15:25:13 $
+Version:   $Revision: 1.25 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -93,7 +93,7 @@ public:
 
 
   /** Upload a single VME*/
-  int UploadVME(mafString &binaryURI, bool isBinaryDataPresent, bool returnURI = false);
+  int UploadVME(mafString &binaryURI, bool isBinaryDataPresent);
 
   /** Save information information about VME link*/
   void SaveLinkInfo();
@@ -175,6 +175,7 @@ private:
   mafString GetXMLDictionaryFileName(mafString dictionaryFileNamePrefix);
   void CreateGui();
   int AssembleDictionaries();
+  int m_SubId;
   mafVME *m_CacheVme;
 
   int m_SubdictionaryId;
