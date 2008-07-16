@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpExporterAnsysInputFile.h,v $
   Language:  C++
-  Date:      $Date: 2008-07-16 15:56:46 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2008-07-16 15:58:08 $
+  Version:   $Revision: 1.4 $
   Authors:   Stefano Perticoni   
 ==========================================================================
   Copyright (c) 2002/2004
@@ -43,7 +43,7 @@ public:
   void SetApplyABSMatrix(int apply_matrix) {m_ABSMatrixFlag = apply_matrix;};
 
   /** Set/Get output file name*/
-  void SetOutputFileName(const char *ofn) {m_AnsysOutputFileNameFullPath = ofn;};
+  void SetOutputFileName(const char *outputFileName) {m_AnsysOutputFileNameFullPath = outputFileName;};
   const char *GetOutputFileName() {return m_AnsysOutputFileNameFullPath.c_str();};
 
   /** Import the mesh*/
