@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpExporterAnsysInputFile.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-07-08 10:33:23 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2008-07-16 15:56:46 $
+  Version:   $Revision: 1.7 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -98,7 +98,7 @@ void lhpOpExporterAnsysInputFile::OpRun()
   CreateGui();
 }
 //----------------------------------------------------------------------------
-int lhpOpExporterAnsysInputFile::Read()
+int lhpOpExporterAnsysInputFile::Write()
 //----------------------------------------------------------------------------
 {
   if (!m_TestMode)
@@ -266,7 +266,7 @@ void lhpOpExporterAnsysInputFile::OnOK()
   if(!f.IsEmpty())
   {
     m_AnsysOutputFileNameFullPath = f;
-    Read();
+    Write();
   }
  }
 
