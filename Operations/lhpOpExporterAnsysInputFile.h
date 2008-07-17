@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpExporterAnsysInputFile.h,v $
   Language:  C++
-  Date:      $Date: 2008-07-16 16:04:08 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2008-07-17 08:11:15 $
+  Version:   $Revision: 1.6 $
   Authors:   Stefano Perticoni   
 ==========================================================================
   Copyright (c) 2002/2004
@@ -28,8 +28,8 @@ class mafEvent;
 //----------------------------------------------------------------------------
 // lhpOpExporterAnsysInputFile :
 //----------------------------------------------------------------------------
-/** Write a mafVMEMesh in ANSYS .inp format by calling ansysWriter.py grammar based
-Python Ansys .inp format writer*/
+/** Write a mafVMEMesh in ANSYS .inp format by calling ansysWriter.py which is a 
+grammar based Ansys .inp format writer written in Python */
 class lhpOpExporterAnsysInputFile : public mafOp
 {
 public:
@@ -47,7 +47,7 @@ public:
   void SetOutputFileName(const char *outputFileName) {m_AnsysOutputFileNameFullPath = outputFileName;};
   const char *GetOutputFileName() {return m_AnsysOutputFileNameFullPath.c_str();};
 
-  /** Import the mesh*/
+  /** Export the input mesh by writing it in Ansys .inp format */
   int Write();
 
   /** Builds operation's interface. */
