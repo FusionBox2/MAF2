@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpBonemat.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-07-01 11:19:07 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2008-07-17 14:03:34 $
+  Version:   $Revision: 1.15 $
   Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -23,14 +23,13 @@
 
 #include "wx/busyinfo.h"
 
+#include "mmgGui.h"
+
 #include "mafDecl.h"
 #include "mafVMERoot.h"
 #include "mafVMEMesh.h"
 #include "mafString.h"
-
-#include "mmgGui.h"
-
-#include "vtkMAFSmartPointer.h"
+#include "mafAbsMatrixPipe.h"
 
 #include <fstream>
 #include <stdio.h>
@@ -39,6 +38,7 @@
 #include <math.h>
 #include <stdlib.h>
 
+#include "vtkMAFSmartPointer.h"
 #include "vtkUnstructuredGrid.h"
 #include "vtkRectilinearGrid.h"
 #include "vtkImageData.h"
@@ -50,6 +50,8 @@
 #include "vtkCellArray.h"
 #include "vtkIntArray.h"
 #include "vtkFloatArray.h"
+#include "vtkTransformFilter.h"
+#include "vtkTransform.h"
 
 #define _DEBUG_BONEMAT
 // #define _DEBUG_BONEMAT_GUI
@@ -717,8 +719,69 @@ int lhpOpBonemat::HUIntegration()
     return MAF_ERROR;
   }
   
-  vtkUnstructuredGrid *inUnstructuredGrid = vtkUnstructuredGrid::SafeDownCast(mafVMEMesh::SafeDownCast(m_Input)->GetOutput()->GetVTKData());
-  inUnstructuredGrid->Update();
+  mafVMEMesh *inMesh =  mafVMEMesh::SafeDownCast(m_Input);
+  assert(inMesh);
+
+  mafMatrix identityMatrix;
+
+  mafMatrix inputMeshABSMatrix = inMesh->GetAbsMatrixPipe()->GetMatrix();
+
+  // just to test that equals is working
+  assert(inputMeshABSMatrix.Equals(&inputMeshABSMatrix));
+
+  bool inputMeshABSMatrixEqualToIdenity = inputMeshABSMatrix.Equals(&identityMatrix);
+
+  vtkUnstructuredGrid *inputUnstructuredGrid = inMesh->GetUnstructuredGridOutput()->GetUnstructuredGridData();
+  assert(inputUnstructuredGrid);
+
+  // this wil feed the algorithm...
+  inputUnstructuredGrid->Update();
+  
+  // if VME matrix is not identity apply it to dataset
+  vtkTransform *transform = NULL;
+  vtkTransformFilter *transformFilter = NULL;
+  vtkUnstructuredGrid *inputUGTransformed = NULL;
+
+  if (inputMeshABSMatrixEqualToIdenity)
+  {
+    // do not transform geometry
+    if (DEBUG_MODE)
+    {
+      std::ostringstream stringStream;
+      stringStream << "Not applying abs pose to geometry... DeepCopy not needed"  << std::endl;
+      mafLogMessage(stringStream.str().c_str());
+    }
+
+  } 
+  else
+  {
+    // apply abs matrix to geometry
+    transform = vtkTransform::New();
+    transform->SetMatrix(inputMeshABSMatrix.GetVTKMatrix());
+
+    // to delete
+    transformFilter = vtkTransformFilter::New();
+
+    inputUGTransformed = vtkUnstructuredGrid::New();
+
+    transformFilter->SetInput(inputUnstructuredGrid);
+    transformFilter->SetTransform(transform);
+    transformFilter->Update();
+
+    inputUGTransformed->DeepCopy(transformFilter->GetUnstructuredGridOutput());
+
+    if (DEBUG_MODE)
+    {
+      std::ostringstream stringStream;
+      stringStream << "Applying abs pose to geometry... Now working on DeepCopy"  << std::endl;
+      mafLogMessage(stringStream.str().c_str());
+    }
+
+    inputUnstructuredGrid = inputUGTransformed;
+  }
+
+
+  // read all the pointsToBeExported in memory (vnl_matrix)
 
   vtkDataSet *volume = NULL;
   //scalars
@@ -856,7 +919,7 @@ int lhpOpBonemat::HUIntegration()
     wxMessageBox("Must select a volume");
     return 1;
   }
-  numElements = inUnstructuredGrid->GetNumberOfCells();
+  numElements = inputUnstructuredGrid->GetNumberOfCells();
 
   //  COMPUTE ELEMENTS DATA
   /*logStringStream << "-- computing elements data bonemat v2\n";
@@ -915,7 +978,7 @@ int lhpOpBonemat::HUIntegration()
   for (elementNumber=0; elementNumber < numElements; elementNumber++) 
   {  
     vtkCell *cell;
-    cell = inUnstructuredGrid->GetCell(elementNumber);
+    cell = inputUnstructuredGrid->GetCell(elementNumber);
 
     
     numElementNodes = cell->GetNumberOfPoints();
@@ -1054,19 +1117,19 @@ int lhpOpBonemat::HUIntegration()
   vtkMAFSmartPointer<vtkCellArray> cells;
 
 	vtkMAFSmartPointer<vtkUnstructuredGrid> outputUG;
-  pts->DeepCopy(inUnstructuredGrid->GetPoints());
-  cells->DeepCopy(inUnstructuredGrid->GetCells());
+  pts->DeepCopy(inputUnstructuredGrid->GetPoints());
+  cells->DeepCopy(inputUnstructuredGrid->GetCells());
   outputUG->SetPoints(pts);
-  outputUG->SetCells(inUnstructuredGrid->GetCellTypesArray(),inUnstructuredGrid->GetCellLocationsArray(),cells);
+  outputUG->SetCells(inputUnstructuredGrid->GetCellTypesArray(),inputUnstructuredGrid->GetCellLocationsArray(),cells);
 	outputUG->Update();
 
 	vtkCellData *outCellData = outputUG->GetCellData();
   vtkPointData *outPointData = outputUG->GetPointData();
   vtkFieldData *outFieldData = outputUG->GetFieldData();
 
-  outPointData->DeepCopy(inUnstructuredGrid->GetPointData());
-  outCellData->DeepCopy(inUnstructuredGrid->GetCellData());
-  outFieldData->DeepCopy(inUnstructuredGrid->GetFieldData());
+  outPointData->DeepCopy(inputUnstructuredGrid->GetPointData());
+  outCellData->DeepCopy(inputUnstructuredGrid->GetCellData());
+  outFieldData->DeepCopy(inputUnstructuredGrid->GetFieldData());
 
   outCellData->AddArray(arrayMaterial);
   outCellData->AddArray(arrayE);
@@ -1189,7 +1252,7 @@ int lhpOpBonemat::HUIntegration()
     double val = vtkDoubleArray::SafeDownCast(fdata->GetArray("EX"))->GetValue(index);
     arrayE->SetTuple1(currentCell,val);
     val = vtkDoubleArray::SafeDownCast(fdata->GetArray("DENS"))->GetValue(index);
-    arrayRho->SetValue(currentCell,val);
+    arrayRho->SetValue(currentCell,val);  
   
     int materialAnsysId = index + 1;
     arrayMaterial->SetValue(currentCell,materialAnsysId);
@@ -1198,8 +1261,23 @@ int lhpOpBonemat::HUIntegration()
   outputUG->Modified();
   outputUG->Update();
 
+  if (inputMeshABSMatrixEqualToIdenity)
+  {
+    // nothing to do
+  } 
+  else
+  {
+    // copy back old, not transformed, geometry     
+    outputUG->GetPoints()->DeepCopy(inputUnstructuredGrid->GetPoints());
+  }
+
+  // input modified in place
   mafVMEMesh::SafeDownCast(m_Input)->SetData(outputUG, 0);
 
+  // clean up
+  vtkDEL(inputUGTransformed);
+  vtkDEL(transform);
+  vtkDEL(transformFilter);
 
   fdata->Delete();
 
@@ -1251,11 +1329,68 @@ int lhpOpBonemat::YoungModuleIntegration()
     
     return MAF_ERROR;
   }
+  
+  mafVMEMesh *inMesh =  mafVMEMesh::SafeDownCast(m_Input);
+  assert(inMesh);
 
-  vtkUnstructuredGrid *inUnstructuredGrid = vtkUnstructuredGrid::SafeDownCast(mafVMEMesh::SafeDownCast(m_Input)->GetOutput()->GetVTKData());
-  inUnstructuredGrid->Update();
+  mafMatrix identityMatrix;
 
- 
+  mafMatrix inputMeshABSMatrix = inMesh->GetAbsMatrixPipe()->GetMatrix();
+
+  // just to test that equals is working
+  assert(inputMeshABSMatrix.Equals(&inputMeshABSMatrix));
+
+  bool inputMeshABSMatrixEqualToIdenity = inputMeshABSMatrix.Equals(&identityMatrix);
+
+  vtkUnstructuredGrid *inputUnstructuredGrid = inMesh->GetUnstructuredGridOutput()->GetUnstructuredGridData();
+  assert(inputUnstructuredGrid);
+
+  // this wil feed the algorithm...
+  inputUnstructuredGrid->Update();
+
+  // if VME matrix is not identity apply it to dataset
+  vtkTransform *transform = NULL;
+  vtkTransformFilter *transformFilter = NULL;
+  vtkUnstructuredGrid *inputUGTransformed = NULL;
+
+  if (inputMeshABSMatrixEqualToIdenity)
+  {
+    // do not transform geometry
+    if (DEBUG_MODE)
+    {
+      std::ostringstream stringStream;
+      stringStream << "Not applying abs pose to geometry... DeepCopy not needed"  << std::endl;
+      mafLogMessage(stringStream.str().c_str());
+    }
+
+  } 
+  else
+  {
+    // apply abs matrix to geometry
+    transform = vtkTransform::New();
+    transform->SetMatrix(inputMeshABSMatrix.GetVTKMatrix());
+
+    // to delete
+    transformFilter = vtkTransformFilter::New();
+
+    inputUGTransformed = vtkUnstructuredGrid::New();
+
+    transformFilter->SetInput(inputUnstructuredGrid);
+    transformFilter->SetTransform(transform);
+    transformFilter->Update();
+
+    inputUGTransformed->DeepCopy(transformFilter->GetUnstructuredGridOutput());
+
+    if (DEBUG_MODE)
+    {
+      std::ostringstream stringStream;
+      stringStream << "Applying abs pose to geometry... Now working on DeepCopy"  << std::endl;
+      mafLogMessage(stringStream.str().c_str());
+    }
+
+    inputUnstructuredGrid = inputUGTransformed;
+  }
+
 
   vtkDataSet *volume = NULL;
   //scalars
@@ -1396,7 +1531,7 @@ int lhpOpBonemat::YoungModuleIntegration()
     wxMessageBox("Must select a volume");
     return 1;
   }
-  numElements = inUnstructuredGrid->GetNumberOfCells();
+  numElements = inputUnstructuredGrid->GetNumberOfCells();
 
 
   logStringStream << "-- Computing elements densities\n";
@@ -1455,7 +1590,7 @@ int lhpOpBonemat::YoungModuleIntegration()
   { 
 
     vtkCell *cell;
-    cell = inUnstructuredGrid->GetCell(id);
+    cell = inputUnstructuredGrid->GetCell(id);
 
     numElementNodes = cell->GetNumberOfPoints();
 
@@ -1640,7 +1775,7 @@ int lhpOpBonemat::YoungModuleIntegration()
   for (id=0; id < numElements; id++) 
   { 
     vtkCell *cell;
-    cell = inUnstructuredGrid->GetCell(id);
+    cell = inputUnstructuredGrid->GetCell(id);
 
     numElementNodes = cell->GetNumberOfPoints();
 
@@ -1700,10 +1835,10 @@ int lhpOpBonemat::YoungModuleIntegration()
   vtkMAFSmartPointer<vtkCellArray> cells;
 
   vtkMAFSmartPointer<vtkUnstructuredGrid> outputUG;
-  pts->DeepCopy(inUnstructuredGrid->GetPoints());
-  cells->DeepCopy(inUnstructuredGrid->GetCells());
+  pts->DeepCopy(inputUnstructuredGrid->GetPoints());
+  cells->DeepCopy(inputUnstructuredGrid->GetCells());
   outputUG->SetPoints(pts);
-  outputUG->SetCells(inUnstructuredGrid->GetCellTypesArray(),inUnstructuredGrid->GetCellLocationsArray(),cells);
+  outputUG->SetCells(inputUnstructuredGrid->GetCellTypesArray(),inputUnstructuredGrid->GetCellLocationsArray(),cells);
   
   outputUG->Update();
 
@@ -1711,9 +1846,9 @@ int lhpOpBonemat::YoungModuleIntegration()
   vtkPointData *outPointData = outputUG->GetPointData();
   vtkFieldData *outFieldData = outputUG->GetFieldData();
 
-  outPointData->DeepCopy(inUnstructuredGrid->GetPointData());
-  outCellData->DeepCopy(inUnstructuredGrid->GetCellData());
-  outFieldData->DeepCopy(inUnstructuredGrid->GetFieldData());
+  outPointData->DeepCopy(inputUnstructuredGrid->GetPointData());
+  outCellData->DeepCopy(inputUnstructuredGrid->GetCellData());
+  outFieldData->DeepCopy(inputUnstructuredGrid->GetFieldData());
 
   outCellData->AddArray(arrayMaterial);
   outCellData->AddArray(arrayE);
@@ -2005,11 +2140,26 @@ int lhpOpBonemat::YoungModuleIntegration()
   }
 
 
-
   outputUG->Modified();
   outputUG->Update();
 
+  if (inputMeshABSMatrixEqualToIdenity)
+  {
+    // nothing to do
+  } 
+  else
+  {
+    // copy back old, not transformed, geometry     
+    outputUG->GetPoints()->DeepCopy(inputUnstructuredGrid->GetPoints());
+  }
+
+  // input modified in place
   mafVMEMesh::SafeDownCast(m_Input)->SetData(outputUG, 0);
+
+  // clean up
+  vtkDEL(inputUGTransformed);
+  vtkDEL(transform);
+  vtkDEL(transformFilter);
 
   fdata->Delete();
 
