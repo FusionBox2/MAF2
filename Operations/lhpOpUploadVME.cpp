@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-22 12:53:28 $
-Version:   $Revision: 1.70 $
+Date:      $Date: 2008-07-22 13:00:04 $
+Version:   $Revision: 1.71 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -795,6 +795,7 @@ bool lhpOpUploadVME::CreateCache()
   storage->Store();
   wxSetWorkingDirectory(oldDir);
 
+  copied = true;
   return copied;
 }
 //----------------------------------------------------------------------------
