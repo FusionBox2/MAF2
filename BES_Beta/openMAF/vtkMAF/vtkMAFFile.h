@@ -3,7 +3,7 @@
   File:    	 vtkMAFFile.h
   Language:  C++
   Date:      11:2:2008   12:36
-  Version:   $Revision: 1.5 $
+  Version:   $Revision: 1.6 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -123,7 +123,9 @@ inline int vtkMAFFile::Read(void* buffer, int count)
 {
 #ifdef _WIN32
   DWORD dwRead;
-  ReadFile(m_hFile, buffer, (DWORD)count, &dwRead, NULL);
+  if (!ReadFile(m_hFile, buffer, (DWORD)count, &dwRead, NULL))
+    dwRead = 0; //error => set dwRead to zero
+
   return (int)dwRead;
 #else
   return fread(buffer, 1, count, m_pFile);

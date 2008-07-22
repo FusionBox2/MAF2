@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: mafVMEVolumeLargeUtils.cpp,v $ 
   Language: C++ 
-  Date: $Date: 2008-07-22 13:15:50 $ 
-  Version: $Revision: 1.1 $ 
+  Date: $Date: 2008-07-22 15:09:12 $ 
+  Version: $Revision: 1.2 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -77,6 +77,7 @@
       szStr += szSep;
     szStr += "LargeVolumes";	
 
+#pragma warning(suppress: 6031) // warning C6031: Return value ignored: 'wxMkDir'
     ::wxMkDir(szStr);
   }
 

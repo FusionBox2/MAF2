@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoDICOMImporter_BES.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-07-22 13:12:05 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-07-22 15:08:30 $
+  Version:   $Revision: 1.2 $
   Authors:   Paolo Quadrani    Stefano Perticoni    Josef Kohout
 ==========================================================================
   Copyright (c) 2002/2004
@@ -961,9 +961,11 @@ void mmoDICOMImporter_BES::ImportDicomTags()
   for (int i=0;i<m_DicomReader->GetNumberOfTags();i++)
   {
 	  char tmp[256];
-	  const char *keyword;
+	  const char *keyword = NULL;
 
 	  const vtkDicomUnPacker::DICOM *tag = m_DicomReader->GetTag(i);
+    if (tag == NULL || tag->Keyword == NULL)
+      continue; //proceed with the next tag
 
 	  if (!strcmp(tag->Keyword,""))
 	  {
@@ -1776,6 +1778,8 @@ int mmoDICOMImporter_BES::GetImageId(int timeId, int heigthId)
 		return heigthId;
 
   assert(m_StudyListbox);
+  if (m_StudyListbox == NULL)
+    return -1;  //error
 
   m_ListSelected = (ListDicomFiles *)m_StudyListbox->GetClientData(m_StudyListbox->GetSelection());
   
@@ -1810,6 +1814,8 @@ int mmoDICOMImporter_BES::GetImageId(int timeId, int heigthId)
   //m_SliceTexture must exist and contain valid slice
   vtkImageData* pImg = m_SliceTexture->GetInput();
   assert(pImg != NULL);
+  if (pImg == NULL)
+    return false;
 
   int* pIncr = pImg->GetIncrements();  //returns number of elements in plane (all components)
   int nSize = (int)
@@ -1827,6 +1833,8 @@ bool mmoDICOMImporter_BES::VolumeLargeCheck(int nSlices)
   //m_SliceTexture must exist and contain valid slice
   vtkImageData* pSlice = m_SliceTexture->GetInput();
   assert(pSlice != NULL);
+  if (pSlice == NULL)
+    return false;
 
   int VOI[6];
   pSlice->GetExtent(VOI);
@@ -1933,6 +1941,7 @@ bool mmoDICOMImporter_BES::ImportLargeRAWFile(const char* lpszFileName, vtkDoubl
   if(!this->m_TestMode)
     mafVMEVolumeLargeUtils::DisplayVolumeLargeSpaceConsumtion(rd->GetLevelFilesSize());
   
+#pragma warning(suppress: 6031) // warning C6031: Return value ignored: '_unlink'
   _unlink(lpszFileName);
   return true;
 }

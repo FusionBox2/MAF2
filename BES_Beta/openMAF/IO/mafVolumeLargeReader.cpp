@@ -3,7 +3,7 @@
   File:    	 mafVolumeLargeReader.cpp
   Language:  C++
   Date:      20:2:2008   14:36
-  Version:   $Revision: 1.3 $
+  Version:   $Revision: 1.4 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -181,7 +181,7 @@ void mafVolumeLargeReader::SetOutputRLGDataSet(vtkRectilinearGrid* ds)
 		for (int i = 0; i < 3; i++)
 		{
 			m_VOI[2*i] = 0;
-			m_VOI[2*i - 1] = nDims[i] - 1;
+			m_VOI[2*i + 1] = nDims[i] - 1;
 		}
 	}
 

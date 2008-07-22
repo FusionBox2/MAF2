@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: medOpImporterRAWImages_BES.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-07-22 13:03:51 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2008-07-22 15:08:30 $
+  Version:   $Revision: 1.4 $
   Authors:   Stefania Paperini porting Matteo Giacomoni
              Modified by Josef Kohout to support large volumes 
 ==========================================================================
@@ -339,11 +339,13 @@ void medOpImporterRAWImages_BES::CreateGui()
     m_SliceSlider->SetValidator(mmgValidator(this,ID_SLICE,m_SliceSlider,&m_CurrentSlice,m_SliceText));
 		m_SliceText->SetValidator(mmgValidator(this,ID_SLICE,m_SliceText,  &m_CurrentSlice,m_SliceSlider,0,100));
 
+#pragma warning(suppress: 6211) // warning C6211: Leaking memory 'slice_sizer' due to an exception. Consider using a local catch block to clean up memory:
 		wxBoxSizer *slice_sizer = new wxBoxSizer(wxHORIZONTAL);    
 		slice_sizer->Add(m_SliceLab,    0, wxALIGN_CENTER|wxRIGHT, 5);
 		slice_sizer->Add(m_SliceText,	 0, wxALIGN_CENTER|wxRIGHT, 5);
 		slice_sizer->Add(m_SliceSlider, 1, wxALIGN_CENTER|wxEXPAND);
 
+#pragma warning(suppress: 6211) // warning C6211: Leaking memory 'slice_sizer' due to an exception. Consider using a local catch block to clean up memory:
     m_GuiSlider = new mmgGui(this);      
     m_GuiSlider->Bool(ID_LOOKUPTABLE, _("use lookup table"), &m_UseLookupTable, 1, 
       _("determines whether the default lookup table should be used for the preview"));
@@ -474,6 +476,8 @@ void medOpImporterRAWImages_BES::EnableWidgets(bool enable)
 //----------------------------------------------------------------------------
 {
 	assert(m_Gui && m_SliceSlider);
+  if (m_Gui == NULL || m_SliceSlider == NULL)
+    return; //avoid crash
 	m_Gui->Enable(ID_BITS,		enable);
   if(enable && m_Bit == 3)
     m_Gui->Enable(ID_RGB_TYPE,true);

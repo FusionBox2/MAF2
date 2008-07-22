@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFMultiFileDataProvider.cpp,v $ 
   Language: C++ 
-  Date: $Date: 2008-07-11 11:58:41 $ 
-  Version: $Revision: 1.1 $ 
+  Date: $Date: 2008-07-22 15:09:27 $ 
+  Version: $Revision: 1.2 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -14,7 +14,7 @@
 #include "vtkMAFMultiFileDataProvider.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkMAFMultiFileDataProvider, "$Revision: 1.1 $");
+vtkCxxRevisionMacro(vtkMAFMultiFileDataProvider, "$Revision: 1.2 $");
 vtkStandardNewMacro(vtkMAFMultiFileDataProvider);
 
 #include "mafMemDbg.h"
@@ -123,6 +123,7 @@ vtkMAFMultiFileDataProvider::~vtkMAFMultiFileDataProvider(void)
     {
       m_pFDLastUsed->pFile->Delete();       //this will close the file as well
       if (DeleteOnClose) {                  //temporary file, remove it
+#pragma warning(suppress: 6031) // warning C6031: Return value ignored: '_unlink'
         _unlink(m_pFDLastUsed->szFileName);
       }
     }

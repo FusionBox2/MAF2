@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFLargeImageReader.cxx,v $ 
   Language: C++ 
-  Date: $Date: 2008-07-11 11:56:28 $ 
-  Version: $Revision: 1.2 $ 
+  Date: $Date: 2008-07-22 15:09:27 $ 
+  Version: $Revision: 1.3 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -20,7 +20,7 @@
 
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkMAFLargeImageReader, "$Revision: 1.2 $");
+vtkCxxRevisionMacro(vtkMAFLargeImageReader, "$Revision: 1.3 $");
 vtkStandardNewMacro(vtkMAFLargeImageReader);
 
 #include "mafMemDbg.h"
@@ -317,10 +317,15 @@ void vtkMAFLargeImageReader::SetFilePrefix(const char *prefix)
     delete [] this->FileName;
     this->FileName = NULL;
   }  
-  this->FilePrefix = new char[strlen(prefix) + 1];
-  strcpy(this->FilePrefix, prefix);
+  if (prefix == NULL)
+    this->FilePrefix = NULL;
+  else
+  {
+    this->FilePrefix = new char[strlen(prefix) + 1];
+    strcpy(this->FilePrefix, prefix);
+  }
 
-  ComputeInternalFilePattern();
+  ComputeInternalFilePattern();  
   this->Modified();
 }
 
@@ -349,8 +354,13 @@ void vtkMAFLargeImageReader::SetFilePattern(const char *pattern)
     this->FileName = NULL;
   }
 
-  this->FilePattern = new char[strlen(pattern) + 1];
-  strcpy(this->FilePattern, pattern);
+  if (pattern == NULL)
+    this->FilePattern = NULL;
+  else
+  {
+    this->FilePattern = new char[strlen(pattern) + 1];
+    strcpy(this->FilePattern, pattern);
+  }
     
   ComputeInternalFilePattern();
   this->Modified();

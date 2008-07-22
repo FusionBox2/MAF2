@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: mafOpImporterRAWVolume_BES.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-22 13:14:55 $
-Version:   $Revision: 1.3 $
+Date:      $Date: 2008-07-22 15:09:01 $
+Version:   $Revision: 1.4 $
 Authors:   Paolo Quadrani     Silvano Imboden     Josef Kohout
 ==========================================================================
 Copyright (c) 2002/2004
@@ -325,21 +325,24 @@ void mafOpImporterRAWVolume_BES::EnableWidgets(bool enable)
 //----------------------------------------------------------------------------
 {
 	assert(m_Gui && m_SliceSlider);
+  if (m_Gui != NULL)
+  {
+	  m_Gui->Enable(ID_BITS,		    enable);
+	  m_Gui->Enable(ID_SCALAR_TYPE,	enable);
+	  m_Gui->Enable(ID_SIGNED,	    enable);
+	  m_Gui->Enable(ID_DIM,		      enable); 
+	  m_Gui->Enable(ID_VOI_X,  enable); 
+    m_Gui->Enable(ID_VOI_Y,  enable); 
+    m_Gui->Enable(ID_VOI_Z,  enable); 
+    m_Gui->Enable(ID_COMPONENTS, enable);
+	  m_Gui->Enable(ID_SPC,		      enable); 
+	  m_Gui->Enable(ID_GUESS,		    enable);
+	  m_Gui->Enable(ID_HEADER,	    enable);
+	  m_Gui->Enable(wxOK,		        enable);
+  }
 
-	m_Gui->Enable(ID_BITS,		    enable);
-	m_Gui->Enable(ID_SCALAR_TYPE,	enable);
-	m_Gui->Enable(ID_SIGNED,	    enable);
-	m_Gui->Enable(ID_DIM,		      enable); 
-	m_Gui->Enable(ID_VOI_X,  enable); 
-  m_Gui->Enable(ID_VOI_Y,  enable); 
-  m_Gui->Enable(ID_VOI_Z,  enable); 
-  m_Gui->Enable(ID_COMPONENTS, enable);
-	m_Gui->Enable(ID_SPC,		      enable); 
-	m_Gui->Enable(ID_GUESS,		    enable);
-	m_Gui->Enable(ID_HEADER,	    enable);
-	m_Gui->Enable(wxOK,		        enable);
-
-	m_GuiSlider->Enable(ID_SLICE,enable);
+  if (m_GuiSlider != NULL)
+	  m_GuiSlider->Enable(ID_SLICE,enable);  
 }
 //----------------------------------------------------------------------------
 void mafOpImporterRAWVolume_BES::	OnEvent(mafEventBase *maf_event) 

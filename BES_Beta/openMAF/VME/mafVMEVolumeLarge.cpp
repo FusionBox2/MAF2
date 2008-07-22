@@ -3,7 +3,7 @@
 File:    	 mafVMEVolumeLarge.cpp
 Language:  C++
 Date:      8:2:2008   11:28
-Version:   $Revision: 1.5 $
+Version:   $Revision: 1.6 $
 Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
 
 Copyright (c) 2008
@@ -225,8 +225,8 @@ mmaVolumeMaterial *mafVMEVolumeLarge::GetMaterial()
 
       //there is some source, push all its outputs
       int nOutputs = pSource->GetNumberOfOutputs();
-      for (int i = 0; i < nOutputs; i++) {
-        stck.push(pSource->GetOutputs()[i]);
+      for (int j = 0; j < nOutputs; j++) {
+        stck.push(pSource->GetOutputs()[j]);
       }
 
       vtkImageClip* pClip = vtkImageClip::SafeDownCast(pSource);
@@ -424,7 +424,7 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 			m_GizmoROI->Show(true);
 
 			//probably this is not necessary
-			mafEvent ev(this, CAMERA_UPDATE);
+			ev.SetId(CAMERA_UPDATE);
 			this->ForwardUpEvent(&ev);		
 		}
 	}
@@ -1364,6 +1364,8 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 /*virtual*/ int mafVMEVolumeLarge::SetLargeData(mafVolumeLargeReader *data)
 {
 	assert(data);
+  if (data == NULL)
+    return MAF_ERROR;
 	
 	data->Update();	//make sure we have the current data
 	int ret = Superclass::SetData((data->IsRectilinearGrid() ? 
@@ -1738,6 +1740,7 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 //updates the existing Info gui
 /*virtual*/ mmgGui* mafVMEVolumeLarge::CreateCropGui()
 {
+#pragma warning(suppress: 6211) // warning C6211: Leaking memory 'gui' due to an exception. Consider using a local catch block to clean up memory:
 	mmgGui* gui = new mmgGui(this);
 	gui->Show(true);
 
@@ -1865,6 +1868,8 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 /*virtual*/ void mafVMEVolumeLarge::UpdateInfoGui(mmgGui* gui)
 {
 	assert(gui != NULL);
+  if (gui == NULL)
+    return;
 
 	//reset variables
 	m_SourceFile = m_SourcePath = m_SourceDimensions = 
@@ -1982,6 +1987,8 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 /*virtual*/ void mafVMEVolumeLarge::UpdateSampleInfoGui(mmgGui* gui)
 {
 	assert(gui != NULL);
+  if (gui == NULL)
+    return;
 
 	m_SampleDimensions = m_SampleSize = m_SampleRate = "";
 	for (int i = 0; i < 3; i++){
@@ -2053,6 +2060,8 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 /*virtual*/ void mafVMEVolumeLarge::UpdateCropGui(mmgGui* gui)
 {
 	assert(gui != NULL);
+  if (gui == NULL)
+    return;
 	
 	m_CropEdVxls->Show(m_VOIUnits == 0);
 	m_CropEdMm->Show(m_VOIUnits != 0);

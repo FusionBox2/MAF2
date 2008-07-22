@@ -3,7 +3,7 @@
   File:    	 mafBrickedFileWriter.cpp
   Language:  C++
   Date:      11:2:2008   12:42
-  Version:   $Revision: 1.4 $
+  Version:   $Revision: 1.5 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -638,7 +638,7 @@ void mafBrickedFileWriter::CreateBricksIndexTable(int nCurBrickPlane)
 		ExecuteData();
 
 		//time to store low resolution
-		mafString szMsg = _("Writing LOW Resolution map ...");
+		szMsg = _("Writing LOW Resolution map ...");
 		mafEventMacro(mafEvent(this, PROGRESSBAR_SET_TEXT, &szMsg));    
 		
 		m_BrickFile->Write( m_pLowResLevel, m_nBricksDimSize[2]*m_nVoxelSizeInB);
@@ -684,6 +684,7 @@ void mafBrickedFileWriter::CreateBricksIndexTable(int nCurBrickPlane)
 		m_BrickFile->Close();
     m_BrickFile->Delete();
     m_BrickFile = NULL;
+#pragma warning(suppress: 6031) // warning C6031: Return value ignored: '_unlink'
 		_unlink(m_BrickFileName);
 
 		return false;

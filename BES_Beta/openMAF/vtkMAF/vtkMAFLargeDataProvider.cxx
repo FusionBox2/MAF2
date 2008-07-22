@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFLargeDataProvider.cxx,v $ 
   Language: C++ 
-  Date: $Date: 2008-07-11 11:55:59 $ 
-  Version: $Revision: 1.2 $ 
+  Date: $Date: 2008-07-22 15:09:27 $ 
+  Version: $Revision: 1.3 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -22,7 +22,7 @@
 
 
 
-vtkCxxRevisionMacro(vtkMAFLargeDataProvider, "$Revision: 1.2 $");
+vtkCxxRevisionMacro(vtkMAFLargeDataProvider, "$Revision: 1.3 $");
 
 #include "mafMemDbg.h"
 #include <assert.h>
@@ -173,7 +173,11 @@ vtkMAFLargeDataProvider::~vtkMAFLargeDataProvider()
 //it is not created.
 /*virtual*/ vtkMAFDataArrayDescriptor* vtkMAFLargeDataProvider::GetDescriptor(int type, const char* name)
 {
-	assert(type >= 0 && type < vtkDataSetAttributes::NUM_ATTRIBUTES);
+  if (type < 0 || type >= vtkDataSetAttributes::NUM_ATTRIBUTES) 
+  {
+	  assert(type >= 0 && type < vtkDataSetAttributes::NUM_ATTRIBUTES);
+    return NULL;
+  }
 
 	if (name == NULL || *name != '\0')
 		return GetDescriptor(m_SpecDescPos[type]);
@@ -187,7 +191,12 @@ vtkMAFLargeDataProvider::~vtkMAFLargeDataProvider()
 //it returns the index of descriptor (that can be used e.g. in GetDescriptor)
 /*virtual*/ int vtkMAFLargeDataProvider::SetDescriptor(int type, vtkMAFDataArrayDescriptor* dad)
 {
-	assert(type >= 0 && type < vtkDataSetAttributes::NUM_ATTRIBUTES);
+  if (type < 0 || type >= vtkDataSetAttributes::NUM_ATTRIBUTES) 
+  {
+    assert(type >= 0 && type < vtkDataSetAttributes::NUM_ATTRIBUTES);
+    return -1;
+  }
+	
 	int curPos = m_SpecDescPos[type];
 
 	// If there is an existing attribute, replace it
@@ -222,7 +231,11 @@ vtkMAFLargeDataProvider::~vtkMAFLargeDataProvider()
 //returns index of the special descriptor
 /*virtual*/ int vtkMAFLargeDataProvider::GetIndexOfDescriptor(int type)
 {
-	assert(type >= 0 && type < vtkDataSetAttributes::NUM_ATTRIBUTES);
+  if (type < 0 || type >= vtkDataSetAttributes::NUM_ATTRIBUTES) 
+  {
+    assert(type >= 0 && type < vtkDataSetAttributes::NUM_ATTRIBUTES);
+    return -1;  //error
+  }
 	
 	return m_SpecDescPos[type];
 }
@@ -230,9 +243,13 @@ vtkMAFLargeDataProvider::~vtkMAFLargeDataProvider()
 //sets index of the special descriptor
 /*virtual*/ void vtkMAFLargeDataProvider::SetIndexOfDescriptor(int type, int idx)
 {
-	assert(type >= 0 && type < vtkDataSetAttributes::NUM_ATTRIBUTES);
-	assert(idx >= 0 && idx < (int)m_Descriptors.size());
-
+  if (type < 0 || type >= vtkDataSetAttributes::NUM_ATTRIBUTES) 
+  {
+    assert(type >= 0 && type < vtkDataSetAttributes::NUM_ATTRIBUTES);
+    return;  //error
+  }
+	
+  assert(idx >= 0 && idx < (int)m_Descriptors.size());  
 	m_SpecDescPos[type] = idx;
 }
 
@@ -360,7 +377,11 @@ void vtkMAFLargeDataProvider
 /*virtual*/ vtkDataArray* vtkMAFLargeDataProvider::GetDataArray(int type, const char* name, 
 									   vtkIdType64 startIndex, int countTuples)
 {
-	assert(type >= 0 && type < vtkDataSetAttributes::NUM_ATTRIBUTES);
+  if (type < 0 || type >= vtkDataSetAttributes::NUM_ATTRIBUTES) 
+  {
+    assert(type >= 0 && type < vtkDataSetAttributes::NUM_ATTRIBUTES);
+    return NULL;  //error
+  }
 
 	if (name == NULL || *name != '\0')
 		return GetDataArray(m_SpecDescPos[type], startIndex, countTuples);
@@ -373,7 +394,11 @@ void vtkMAFLargeDataProvider
 /*virtual*/ void vtkMAFLargeDataProvider::GetDataArray(int type, const char* name, 
 							vtkDataArray* buffer, vtkIdType64 startIndex, int countTuples)
 {
-	assert(type >= 0 && type < vtkDataSetAttributes::NUM_ATTRIBUTES);
+  if (type < 0 || type >= vtkDataSetAttributes::NUM_ATTRIBUTES) 
+  {
+    assert(type >= 0 && type < vtkDataSetAttributes::NUM_ATTRIBUTES);
+    return;  //error
+  }
 
 	if (name == NULL || *name != '\0')
 		GetDataArray(m_SpecDescPos[type], buffer, startIndex, countTuples);
@@ -767,7 +792,11 @@ void vtkMAFLargeDataProvider
 													vtkDataArray* buffer, 
 													vtkIdType64 startIndex)
 {
-	assert(type >= 0 && type < vtkDataSetAttributes::NUM_ATTRIBUTES);
+  if (type < 0 || type >= vtkDataSetAttributes::NUM_ATTRIBUTES) 
+  {
+    assert(type >= 0 && type < vtkDataSetAttributes::NUM_ATTRIBUTES);
+    return;  //error
+  }
 
 	if (name == NULL || *name != '\0')
 		SetDataArray(m_SpecDescPos[type], buffer, startIndex);
