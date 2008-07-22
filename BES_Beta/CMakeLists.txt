@@ -8,6 +8,8 @@ SET(PROJECT_SRCS
 	Medical_AneuFuse/VME/medPipeVolumeVR_BES.h
 	Medical/Operations/medOpImporterRAWImages_BES.cpp
 	Medical/Operations/medOpImporterRAWImages_BES.h
+	Medical/Operations/mmoDICOMImporter_BES.cpp
+	Medical/Operations/mmoDICOMImporter_BES.h
 	openMAF_AneuFuse/vtkMAF/vtkMAFVolumeRayCastMapper.cxx
 	openMAF_AneuFuse/vtkMAF/vtkMAFVolumeRayCastMapper.h
 	openMAF_AneuFuse/vtkMAF/vtkMAFVolumeTextureMapper2D.cxx 
