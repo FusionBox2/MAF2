@@ -3,7 +3,7 @@
   File:    	 mafBrickedFileWriter.cpp
   Language:  C++
   Date:      11:2:2008   12:42
-  Version:   $Revision: 1.3 $
+  Version:   $Revision: 1.4 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -31,11 +31,14 @@ mafBrickedFileWriter::mafBrickedFileWriter()
 {
 	memset(&m_FileHeader, 0, sizeof(m_FileHeader));
 	m_FileHeader.signature = Signature;
-	m_FileHeader.version = 1;		//version 1
+	m_FileHeader.version = CurrentVersion;		//version 1
 	m_FileHeader.bricksize = 16;	//16x16x16 by the default
 	m_FileHeader.sample_rate = 1;	//no subsampling by the default
 	
-	m_DataSet = NULL;
+	m_InputDataSet = NULL;
+  m_pInputXYZCoords[0] = NULL;
+  m_pInputXYZCoords[1] = NULL;
+  m_pInputXYZCoords[2] = NULL;
 
 	m_pBricksBuffer = NULL;
 	m_pBricksValidity = NULL;
@@ -48,7 +51,10 @@ mafBrickedFileWriter::mafBrickedFileWriter()
 mafBrickedFileWriter::~mafBrickedFileWriter()
 {	
 	//all should be removed in Update
-	vtkDEL(m_DataSet);
+	vtkDEL(m_InputDataSet);
+  vtkDEL(m_pInputXYZCoords[0]);
+  vtkDEL(m_pInputXYZCoords[1]);
+  vtkDEL(m_pInputXYZCoords[2]);
 }
 
 
@@ -56,40 +62,110 @@ mafBrickedFileWriter::~mafBrickedFileWriter()
 //NB: the reference count of the specified input data set is increased
 void mafBrickedFileWriter::SetInputDataSet(vtkMAFLargeImageData* ds)
 {
-	if (ds != m_DataSet)
+	if (ds != m_InputDataSet)
 	{
-		vtkDEL(m_DataSet);
+		vtkDEL(m_InputDataSet);
 
-		if ((m_DataSet = ds) != NULL)
-			m_DataSet->Register(NULL);
+		if ((m_InputDataSet = ds) != NULL)
+			m_InputDataSet->Register(NULL);
 
 		this->Modified();
 	}
 }
 
+//------------------------------------------------------------------------
+//Specifies the grid coordinates in x-direction
+void mafBrickedFileWriter::SetInputXCoordinates(vtkDoubleArray* pCoords)
+//------------------------------------------------------------------------
+{
+  if (pCoords != m_pInputXYZCoords[0])
+  {
+    vtkDEL(m_pInputXYZCoords[0]);  
+    if (NULL != (m_pInputXYZCoords[0] = pCoords))
+    {
+      m_pInputXYZCoords[0]->Register(NULL);
+      m_FileHeader.rlgrid = 1;
+    }
+    else
+    {
+      if (m_pInputXYZCoords[1] == NULL && m_pInputXYZCoords[2] == NULL)
+        m_FileHeader.rlgrid = 0;
+    }
+
+    this->Modified();
+  }
+}
+
+//------------------------------------------------------------------------
+//Specifies the grid coordinates in y-direction
+void mafBrickedFileWriter::SetInputYCoordinates(vtkDoubleArray* pCoords)
+//------------------------------------------------------------------------
+{
+  if (pCoords != m_pInputXYZCoords[1])
+  {
+    vtkDEL(m_pInputXYZCoords[1]);  
+    if (NULL != (m_pInputXYZCoords[1] = pCoords))
+    {
+      m_pInputXYZCoords[1]->Register(NULL);
+      m_FileHeader.rlgrid = 1;
+    }
+    else
+    {
+      if (m_pInputXYZCoords[0] == NULL && m_pInputXYZCoords[2] == NULL)
+        m_FileHeader.rlgrid = 0;
+    }
+
+    this->Modified();
+  }
+}
+
+//------------------------------------------------------------------------
+//Specifies the grid coordinates in z-direction
+void mafBrickedFileWriter::SetInputZCoordinates(vtkDoubleArray* pCoords)
+//------------------------------------------------------------------------
+{
+  if (pCoords != m_pInputXYZCoords[2])
+  {
+    vtkDEL(m_pInputXYZCoords[2]);  
+    if (NULL != (m_pInputXYZCoords[2] = pCoords))
+    {
+      m_pInputXYZCoords[2]->Register(NULL);
+      m_FileHeader.rlgrid = 1;
+    }
+    else
+    {
+      if (m_pInputXYZCoords[0] == NULL && m_pInputXYZCoords[1] == NULL)
+        m_FileHeader.rlgrid = 0;
+    }
+
+    this->Modified();
+  }
+}
+
 //Called by Update to fill some internal structures
 /*virtual*/ void mafBrickedFileWriter::ExecuteInformation() throw(...)
 {
-	if (m_DataSet == NULL)	//error
+	if (m_InputDataSet == NULL)	//error
 		throw std::invalid_argument(_("Invalid argument. Input Data Set cannot be NULL"));
 
 	int VOI[6],wext[6];	
-	m_DataSet->GetVOI(VOI);		//find out the volume to be processed	
-	m_DataSet->GetExtent(wext);
-	m_DataSet->GetOrigin(m_FileHeader.origin);
-	m_DataSet->GetSpacing(m_FileHeader.spacing);
+	m_InputDataSet->GetVOI(VOI);		//find out the volume to be processed	
+	m_InputDataSet->GetExtent(wext);
+	m_InputDataSet->GetOrigin(m_FileHeader.origin);
+	m_InputDataSet->GetSpacing(m_FileHeader.spacing);
 
 	for (int i = 0; i < 3; i++) 
 	{
 		m_FileHeader.origin[i] += (VOI[2*i] - wext[2*i])*m_FileHeader.spacing[i];
-		m_FileHeader.dims[i] = (VOI[2*i + 1] - VOI[2*i] + 1) / m_FileHeader.sample_rate;
+		m_FileHeader.dims[i] = (VOI[2*i + 1] - VOI[2*i] + 1) / m_FileHeader.sample_rate +
+      ((VOI[2*i + 1] - VOI[2*i] + 1) % m_FileHeader.sample_rate != 0);
 		m_FileHeader.spacing[i] *= m_FileHeader.sample_rate;
 
 		m_nBricksDim[i] = (m_FileHeader.dims[i] + m_FileHeader.bricksize - 1) / 
 			m_FileHeader.bricksize;
 	}
 	
-	vtkMAFLargeDataProvider* dp = m_DataSet->GetPointDataProvider();
+	vtkMAFLargeDataProvider* dp = m_InputDataSet->GetPointDataProvider();
 	vtkMAFDataArrayDescriptor* dsc = dp->GetScalarsDescriptor();
 
 	m_FileHeader.numcomps = dsc->GetNumberOfComponents();
@@ -134,6 +210,16 @@ void mafBrickedFileWriter::SetInputDataSet(vtkMAFLargeImageData* ds)
 	memset(m_pMainIdxTable, 0, m_nBricksDim[1]*m_nBricksDim[2]*sizeof(BBF_IDX_MAINITEM));
 	
 	m_ExtraBrckMAP.clear();	
+
+  if (this->IsRectilinearGrid())
+  {
+    for (int i = 0; i < 3; i++)
+    {
+      m_pXYZCoords[i] = vtkDoubleArray::New();
+      m_pXYZCoords[i]->Allocate(m_FileHeader.dims[i]);  
+      m_pXYZCoords[i]->SetNumberOfTuples(m_FileHeader.dims[i]);
+    }
+  }
 }
 
 //allocates the required buffers
@@ -147,6 +233,10 @@ void mafBrickedFileWriter::SetInputDataSet(vtkMAFLargeImageData* ds)
 	cppDEL(m_pBricksValidity);
 	cppDEL(m_pTuplesBuffer);
 	cppDEL(m_pSumTuplesBuffer);
+
+  for (int i = 0; i < 3; i++) {    
+    vtkDEL(m_pXYZCoords[i]);
+  }
 }
 
 //processes data
@@ -160,13 +250,13 @@ void mafBrickedFileWriter::SetInputDataSet(vtkMAFLargeImageData* ds)
 	mafEventMacro(mafEvent(this, PROGRESSBAR_SET_TEXT, &szMsg));
 	mafEventMacro(mafEvent(this, PROGRESSBAR_SET_VALUE, (long)0));
 
-	vtkMAFLargeDataProvider* dp = m_DataSet->GetPointDataProvider();	
+	vtkMAFLargeDataProvider* dp = m_InputDataSet->GetPointDataProvider();	
 	int nScalarsDscIndex = dp->GetIndexOfScalarsDescriptor();
 	vtkMAFDataArrayDescriptor* dsc = dp->GetDescriptor(nScalarsDscIndex);
 
 	//get VOI
 	int VOI[6];
-	m_DataSet->GetVOI(VOI);
+	m_InputDataSet->GetVOI(VOI);
 
 	//compute output dimensions
 	int nDims[3];
@@ -183,7 +273,7 @@ void mafBrickedFileWriter::SetInputDataSet(vtkMAFLargeImageData* ds)
 
 	//get increments
 	vtkIdType64 dataIncr[3];
-	m_DataSet->GetIncrements(dataIncr);	//get increments (in elements)	
+	m_InputDataSet->GetIncrements(dataIncr);	//get increments (in elements)	
 
 	vtkIdType64 dataIncrSkip[3];
 	dataIncrSkip[0] = dataIncr[0]*nSampleRate;
@@ -253,6 +343,69 @@ void mafBrickedFileWriter::SetInputDataSet(vtkMAFLargeImageData* ds)
 	}	
 }
 
+//------------------------------------------------------------------------
+//Process the grid coordinates for rectilinear grid
+//If the input data is regular, this method does nothing
+/*virtual*/ void mafBrickedFileWriter::ProcessCoordinates() throw(...)
+//------------------------------------------------------------------------
+{
+  if (!this->IsRectilinearGrid())
+    return; //invalid call
+
+  int nSampleRate = this->GetSampleRate();
+  for (int i = 0; i < 3; i++)
+  {    
+    int nDstVals = m_pXYZCoords[i]->GetNumberOfTuples();      
+    double* pDstPtr = m_pXYZCoords[i]->WritePointer(0, nDstVals);
+
+    if (m_pInputXYZCoords[i] != NULL)
+    {
+      int nSrcVals = m_pInputXYZCoords[i]->GetNumberOfTuples();
+      double* pSrcPtr = m_pInputXYZCoords[i]->GetPointer(0);            
+      
+      for (int j = 0; j < nSrcVals && nDstVals > 0; j += nSampleRate)
+      {
+        *pDstPtr = *pSrcPtr;        
+        pSrcPtr += nSampleRate;
+        pDstPtr++;
+        nDstVals--;
+      }
+
+      if (nDstVals > 0)
+      {
+        //aligning, we need to set manually the missing coordinates
+        double dblStep = 0.0;
+        if (nSrcVals > nSampleRate) {
+          dblStep = *(pDstPtr - 1) - *(pDstPtr - 2);
+        }        
+
+        while (nDstVals > 0)
+        {
+          *pDstPtr = *(pDstPtr - 1) + dblStep;  //the same as previous
+          pDstPtr++; nDstVals--;
+        }
+      }
+    } //endif
+    else
+    {
+      //the coordinates not specified
+      double origin = this->GetDataOrigin()[i];
+      double dblStep = this->GetDataSpacing()[i];
+      if (dblStep == 0.0) //if there is no spacing, there is 0.0
+        dblStep = 1.0;
+
+      for (int j = 0; j < nDstVals; j++) {
+        pDstPtr[j] = origin + j*dblStep;
+      }
+    }
+
+    //now, we need to store them
+    m_BrickFile->Write(m_pXYZCoords[i]->GetPointer(0), 
+      m_pXYZCoords[i]->GetNumberOfTuples()*sizeof(double));
+  } //end for  
+}
+
+
 
 //processes the currently loaded block of data
 //creating its bricked version, computing average values
@@ -289,7 +442,7 @@ void mafBrickedFileWriter::SetInputDataSet(vtkMAFLargeImageData* ds)
 //for every brick and determining which bricks are uniform
 /*virtual*/ void mafBrickedFileWriter::ProcessBricks(int nCurBrickPlane)  throw(...)
 {
-	switch (m_DataSet->GetScalarType())
+	switch (m_InputDataSet->GetScalarType())
 	{
 		//short data type => we can use int for sums (will be faster)
 	case VTK_UNSIGNED_CHAR: CreateBricksLowResolution< unsigned char, int >(nCurBrickPlane); break;
@@ -333,7 +486,7 @@ void mafBrickedFileWriter::SetInputDataSet(vtkMAFLargeImageData* ds)
 template< typename T_VAL, typename T_SUM >
 void mafBrickedFileWriter::CreateBricksLowResolution(int nCurBrickPlane)
 {
-	vtkMAFLargeDataProvider* dp = m_DataSet->GetPointDataProvider();
+	vtkMAFLargeDataProvider* dp = m_InputDataSet->GetPointDataProvider();
 	vtkMAFDataArrayDescriptor* dsc = dp->GetScalarsDescriptor();
 
 	int comps = dsc->GetNumberOfComponents();
@@ -477,12 +630,11 @@ void mafBrickedFileWriter::CreateBricksIndexTable(int nCurBrickPlane)
     m_BrickFile = vtkMAFFile2::New();
 		m_BrickFile->Create(m_BrickFileName);
     m_BrickFile->Write( &m_FileHeader, sizeof(BBF_HEADER));
-    //m_BrickFile->Seek( sizeof(BBF_HEADER), SEEK_SET);
 
 		ExecuteInformation();	//initialize "global" variables
 		AllocateBuffers();		//allocate memory for bricks, etc.		
 
-		//perform sampling + bricking
+		//perform sampling + bricking (stores also rectilinear grid)
 		ExecuteData();
 
 		//time to store low resolution
@@ -516,6 +668,9 @@ void mafBrickedFileWriter::CreateBricksIndexTable(int nCurBrickPlane)
 		for (int i = 0; i < (int)m_ExtraBrckMAP.size(); i++) {
 			m_BrickFile->Write(&m_ExtraBrckMAP[i], sizeof(BBF_IDX_EXITEM));
 		}
+
+    //compute rectilinear coordinates and store them
+    ProcessCoordinates(); 
 
 		m_BrickFile->Seek(0, SEEK_SET);
 		m_BrickFile->Write( &m_FileHeader, sizeof(BBF_HEADER));

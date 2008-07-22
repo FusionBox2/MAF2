@@ -3,7 +3,7 @@
   File:    	 BrickedFile.h
   Language:  C++
   Date:      11:2:2008   11:49
-  Version:   $Revision: 1.2 $
+  Version:   $Revision: 1.3 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -21,6 +21,7 @@ This abstract class contains the stuff common to both, the reader and writer
 #include "mafObserver.h"
 #include "mafTimeStamped.h"
 
+#include "vtkDoubleArray.h"
 #include "../vtkMAF/vtkMAFFile.h"
 #include "../vtkMAF/vtkMAFDataArrayDescriptor.h"
 
@@ -30,6 +31,7 @@ public:
 	mafAbstractTypeMacro(mafBrickedFile, mafObject);
 
 	const static unsigned long Signature = 0xCA464242;	//'BBF' + CRC of 'BBF'		
+  const static unsigned short CurrentVersion = 2;
 
 public:
 
@@ -40,15 +42,15 @@ public:
 		unsigned short version;		//version of this file				
 		unsigned short dims[3];		//sample data dimension (in voxels)
 		unsigned short bricksize;	//size of one brick => number of brick can
-									//be calculated from aligned(dim[i] / bricksize)		
+									            //be calculated from aligned(dim[i] / bricksize)		
 		unsigned short sample_rate;	//sample rate that was used			
-		double origin[3];			//origin
+		double origin[3];			  //origin
 		double spacing[3];			//spacing (sampled one)
 
 		unsigned char datatype;		//VTK data type
 		unsigned char numcomps;		//number of components
-		unsigned char endian;		//0 - little-endian (Intel), 1 - big-endian (Motorola)
-		unsigned char reserved;
+		unsigned char endian;		  //0 - little-endian (Intel), 1 - big-endian (Motorola)
+		unsigned char rlgrid;     //0 - regular grid, 1 - rectilinear grid => coordinates stored in the file
 
 		unsigned long long idxtblofs;	//offset to index table (in file), map is always before
 		unsigned long extra_idx_items;	//number of extra index items
@@ -88,6 +90,8 @@ protected:
 
 	//low resolution level (brick map)
 	char* m_pLowResLevel;
+
+  vtkDoubleArray* m_pXYZCoords[3];   //<X,Y,Z-coordinates for rectilinear grids  
 
 #pragma region Values Precomputed to Speed Up Operations
 	//number of bytes per one voxel = element size*number of components
@@ -199,7 +203,7 @@ public:
 		pos_z = m_FileHeader.origin[2];		
 	}
 
-	//Gets the spacing	
+	//Gets the spacing (returns 0,0,0 for rectilinear grid)	
 	inline double* GetDataSpacing() {
 		return m_FileHeader.spacing;
 	}
@@ -214,6 +218,26 @@ public:
 		sp_x = m_FileHeader.spacing[0]; sp_y = m_FileHeader.spacing[1]; 
 		sp_z = m_FileHeader.spacing[2];		
 	}
+
+  //Returns true, if the data is rectilinear grid
+  inline bool IsRectilinearGrid() {
+    return m_FileHeader.rlgrid != 0;
+  }
+
+  //Returns the grid coordinates in the x-direction
+  inline vtkDoubleArray* GetXCoordinates() {
+    return m_pXYZCoords[0];
+  }
+
+  //Returns the grid coordinates in the y-direction
+  inline vtkDoubleArray* GetYCoordinates() {
+    return m_pXYZCoords[1];
+  }
+
+  //Returns the grid coordinates in the z-direction
+  inline vtkDoubleArray* GetZCoordinates() {
+    return m_pXYZCoords[2];
+  }
 
 	//Gets the VTK data type
 	inline int GetDataType() {

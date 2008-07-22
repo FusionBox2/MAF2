@@ -3,7 +3,7 @@
   File:    	 mafVolumeLargeWriter.h
   Language:  C++
   Date:      8:2:2008   11:26
-  Version:   $Revision: 1.1 $
+  Version:   $Revision: 1.2 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -18,6 +18,7 @@
 #include "mafString.h"
 #include "mafObserver.h"
 #include "../vtkMAF/vtkMAFLargeImageData.h"
+#include "vtkDoubleArray.h"
 
 class mafVolumeLargeWriter : public mafObject
 {
@@ -29,7 +30,8 @@ protected:
 	mafString m_BrickFileName;
 
 	//input data set that should be bricked
-	vtkMAFLargeImageData* m_DataSet;
+	vtkMAFLargeImageData* m_InputDataSet;
+  vtkDoubleArray* m_pInputXYZCoords[3];   //<X,Y,Z-coordinates for rectilinear grids
 
 	//listener that should receive events
 	mafObserver* m_Listener;
@@ -59,12 +61,21 @@ public:
 
 	//Gets the associated input data set
 	inline vtkMAFLargeImageData* GetInputDataSet() {
-		return m_DataSet;
+		return m_InputDataSet;
 	}
 
 	//Sets a new associated input data set
 	//NB: the reference count of the specified input data set is increased
 	void SetInputDataSet(vtkMAFLargeImageData* ds);
+
+  /** Specifies the grid coordinates in x-direction */
+  void SetInputXCoordinates(vtkDoubleArray* pCoords);
+
+  /** Specifies the grid coordinates in y-direction */
+  void SetInputYCoordinates(vtkDoubleArray* pCoords);
+
+  /** Specifies the grid coordinates in z-direction */
+  void SetInputZCoordinates(vtkDoubleArray* pCoords);
 	
 	//Gets the current size limit coefficient
 	inline double GetLimitConst() {

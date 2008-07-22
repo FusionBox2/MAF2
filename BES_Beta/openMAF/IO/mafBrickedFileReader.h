@@ -3,7 +3,7 @@
   File:    	 mafBrickedFileReader.h
   Language:  C++
   Date:      13:2:2008   9:11
-  Version:   $Revision: 1.2 $
+  Version:   $Revision: 1.3 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -17,6 +17,7 @@ Reads the BBF file into vtkImageDataSet
 
 #include "mafBrickedFile.h"
 #include "vtkImageData.h"
+#include "vtkRectilinearGrid.h"
 
 class mafBrickedFileReader : public mafBrickedFile
 {
@@ -42,6 +43,7 @@ protected:
 protected:
 	//output data set
 	vtkImageData* m_DataSet;
+  vtkRectilinearGrid* m_DataSetRLG;   //rectilinear data set
 
 	//requested VOI (in the highest resolution units)
 	int m_VOI[6];		
@@ -74,9 +76,25 @@ public:
 		return m_DataSet;
 	}
 
+  //Gets the associated rectilinear output data set
+  //If there is no output data set, it is created
+  inline vtkRectilinearGrid* GetOutputRLGDataSet()
+  {
+    if (m_DataSetRLG == NULL)
+      m_DataSetRLG = vtkRectilinearGrid::New();
+
+    return m_DataSetRLG;
+  }
+
 	//Sets a new associated output data set
 	//NB: the reference count of the specified output data set is increased
 	void SetOutputDataSet(vtkImageData* ds);
+
+  //Sets a new associated output data set
+  //NB: the reference count of the specified output data set is increased
+  //This forces the Execute to produce vtkRectilinearGrid object even, if
+  //the underlaying grid is regular one (use IsRectilinearGrid to check it)
+  void SetOutputRLGDataSet(vtkRectilinearGrid* ds);
 	
 	//Gets the currently requested VOI
 	inline int* GetVOI() {
@@ -123,6 +141,9 @@ protected:
 
 	//processes data
 	virtual void ExecuteData() throw(...);
+
+  /** processes data by converting m_DataSet into m_DataSetRLG */
+  virtual void ExecuteRLGData();
 
 	//opens the brick file, loading index table, etc. 
 	virtual void OpenBrickFile() throw(...);

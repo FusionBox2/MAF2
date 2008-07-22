@@ -3,7 +3,7 @@
   File:    	 mafVolumeLargeReader.cpp
   Language:  C++
   Date:      20:2:2008   14:36
-  Version:   $Revision: 1.2 $
+  Version:   $Revision: 1.3 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -21,12 +21,14 @@
 
 #include "mafVolumeLargeReader.h"
 #include "../vtkMAF/vtkMAFIdType64.h"
+#include "vtkPointData.h"
 
 mafCxxTypeMacro(mafVolumeLargeReader);
 
 mafVolumeLargeReader::mafVolumeLargeReader(void)
 {
 	m_DataSet = NULL;
+  m_DataSetRLG = NULL;
 	m_pLevels = NULL;
 	m_nLevels = 0;
 
@@ -44,6 +46,7 @@ mafVolumeLargeReader::~mafVolumeLargeReader(void)
 	DestroyLODs();
 
 	vtkDEL(m_DataSet);
+  vtkDEL(m_DataSetRLG);
 }
 
 //Sets a new associated output data set
@@ -60,6 +63,24 @@ void mafVolumeLargeReader::SetOutputDataSet(vtkImageData* ds)
 		this->Modified();
 	}
 }
+
+//Sets a new associated output data set
+//NB: the reference count of the specified output data set is increased
+//This forces the Execute to produce vtkRectilinearGrid object even, if
+//the underlaying grid is regular one (use IsRectilinearGrid to check it)
+void mafVolumeLargeReader::SetOutputRLGDataSet(vtkRectilinearGrid* ds)
+{
+  if (ds != m_DataSetRLG)
+  {
+    vtkDEL(m_DataSetRLG);
+
+    if ((m_DataSetRLG = ds) != NULL)
+      m_DataSetRLG->Register(NULL);
+    
+    this->Modified();
+  }
+}
+
 
 //Creates all levels
 /*virtual*/ void mafVolumeLargeReader::CreateLODs() throw(...)
@@ -191,6 +212,15 @@ void mafVolumeLargeReader::SetOutputDataSet(vtkImageData* ds)
 	output->ShallowCopy(input);
 	output->SetUpdateExtentToWholeExtent();
 
+  if (this->IsRectilinearGrid())
+  {
+    vtkRectilinearGrid* outputRLG = GetOutputRLGDataSet();
+    vtkRectilinearGrid* inputRLG = m_pLevels[m_nCurrentLevel]->GetOutputRLGDataSet();
+
+    outputRLG->ShallowCopy(inputRLG);
+    outputRLG->SetUpdateExtentToWholeExtent();
+  }
+
 	//get modified VOI for the data (it might change)
 	m_pLevels[m_nCurrentLevel]->GetVOI(m_VOI);
 }
@@ -208,7 +238,9 @@ void mafVolumeLargeReader::SetOutputDataSet(vtkImageData* ds)
 		ExecuteInformation();
 		ExecuteData();
 
-		if (m_DataSet->GetScalarPointer() == NULL)
+		if (m_DataSet->GetScalarPointer() == NULL ||
+      (this->IsRectilinearGrid() && m_DataSetRLG->GetPointData()
+        ->GetScalars()->GetVoidPointer(0) == NULL))
 			throw std::bad_alloc(_("Out of memory."));
 	}
 	catch (std::exception& e)

@@ -3,7 +3,7 @@
 File:    	 mafBrickedFileReader.cpp
 Language:  C++
 Date:      13:2:2008   14:25
-Version:   $Revision: 1.4 $
+Version:   $Revision: 1.5 $
 Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
 
 Copyright (c) 2008
@@ -35,6 +35,7 @@ mafCxxTypeMacro(mafBrickedFileReader);
 mafBrickedFileReader::mafBrickedFileReader()
 {				 
 	m_DataSet = NULL;
+  m_DataSetRLG = NULL;
 	m_bROIValid = false;
 	
 	m_pBrickDataCache = NULL;
@@ -47,6 +48,7 @@ mafBrickedFileReader::~mafBrickedFileReader()
 {	
 	CloseBrickFile();
 	vtkDEL(m_DataSet);
+  vtkDEL(m_DataSetRLG);
 }
 
 
@@ -64,6 +66,24 @@ void mafBrickedFileReader::SetOutputDataSet(vtkImageData* ds)
 		m_bROIValid = false;
 		this->Modified();
 	}
+}
+
+//Sets a new associated output data set
+//NB: the reference count of the specified output data set is increased
+//This forces the Execute to produce vtkRectilinearGrid object even, if
+//the underlaying grid is regular one (use IsRectilinearGrid to check it)
+void mafBrickedFileReader::SetOutputRLGDataSet(vtkRectilinearGrid* ds)
+{
+  if (ds != m_DataSetRLG)
+  {
+    vtkDEL(m_DataSetRLG);
+
+    if ((m_DataSetRLG = ds) != NULL)
+      m_DataSetRLG->Register(NULL);
+
+    m_bROIValid = false;
+    this->Modified();
+  }
 }
 
 //opens the brick file, loading index table, etc. 
@@ -137,6 +157,19 @@ void mafBrickedFileReader::SetOutputDataSet(vtkImageData* ds)
 	m_pExIdxTable = new BBF_IDX_EXITEM[m_FileHeader.extra_idx_items];
 	m_BrickFile->Read( m_pExIdxTable, m_FileHeader.extra_idx_items*sizeof(BBF_IDX_EXITEM));
 
+  if (this->IsRectilinearGrid())
+  {
+    for (int i = 0; i < 3; i++)
+    {
+      m_pXYZCoords[i] = vtkDoubleArray::New();
+      m_pXYZCoords[i]->Allocate(m_FileHeader.dims[i]);   
+
+      //now, we need to store them
+      m_BrickFile->Read(m_pXYZCoords[i]->WritePointer(0, m_FileHeader.dims[i]), 
+        m_FileHeader.dims[i]*sizeof(double));
+    }
+  }
+
 	m_pBrickDataCache = new char[m_nBrickSizeInB[2]];	
 
 
@@ -156,7 +189,11 @@ void mafBrickedFileReader::SetOutputDataSet(vtkImageData* ds)
 	cppDEL(m_pBrickDataCache);
 	cppDEL(m_pLowResLevel);
 	cppDEL(m_pMainIdxTable);
-	cppDEL(m_pExIdxTable);
+  cppDEL(m_pExIdxTable);
+
+  for (int i = 0; i < 3; i++) {    
+    vtkDEL(m_pXYZCoords[i]);
+  }
 }
 
 //Called by Update to fill some internal structures
@@ -480,7 +517,52 @@ void mafBrickedFileReader::GetBricksExtent(int VOI[6], int inBExt[6], int bndBEx
 	} //end for xyzb[2]
 
 	memcpy(&m_ValidROI[0], &m_VOI[0], sizeof(int)*6);
-	m_bROIValid = true;
+	m_bROIValid = true;  
+}
+
+/** processes data by converting m_DataSet into m_DataSetRLG */
+/*virtual*/ void mafBrickedFileReader::ExecuteRLGData()
+{
+  int* dims = m_DataSet->GetDimensions();
+  double* origin = m_DataSet->GetOrigin();
+  double* spacing = m_DataSet->GetSpacing();    
+
+  vtkDoubleArray* XYZCoords[3];
+  for (int i = 0; i < 3; i++)
+  {
+    XYZCoords[i] = vtkDoubleArray::New();
+    XYZCoords[i]->Allocate(dims[i]);
+    double* pDstPtr = XYZCoords[i]->WritePointer(0, dims[i]);
+
+    if (m_pXYZCoords[i] != NULL)
+    {
+      //copy part of it
+      memcpy(pDstPtr, m_pXYZCoords[i]->GetPointer(
+        m_VOI[2*i] / m_FileHeader.sample_rate), //VOI is given in highest resolution
+        dims[i]*sizeof(double));
+    }
+    else
+    {
+      //the coordinates not specified        
+      if (spacing[i] == 0.0) //if there is no spacing, there is 0.0
+        spacing[i] = 1.0;
+
+      for (int j = 0; j < dims[i]; j++) {
+        pDstPtr[j] = origin[i] + j*spacing[i];
+      }
+    }            
+  }
+
+  vtkDataArray *scalars = m_DataSet->GetPointData()->GetScalars();
+  m_DataSetRLG->SetXCoordinates(XYZCoords[0]);
+  m_DataSetRLG->SetYCoordinates(XYZCoords[1]);
+  m_DataSetRLG->SetZCoordinates(XYZCoords[2]);
+  m_DataSetRLG->SetDimensions(dims);
+  m_DataSetRLG->GetPointData()->SetScalars(scalars);
+
+  for (int i = 0; i < 3; i++) {
+    XYZCoords[i]->Delete();
+  }
 }
 
 //This method updates the output (i.e., it performs the loading)	
@@ -508,7 +590,14 @@ void mafBrickedFileReader::GetBricksExtent(int VOI[6], int inBExt[6], int bndBEx
 		}
 
 		ExecuteInformation();	//initialize variables				
-		ExecuteData();			//get data
+		ExecuteData();	  		//get data
+
+    if (this->IsRectilinearGrid())
+      GetOutputRLGDataSet();  //force the construction of rectilinear grid  
+
+    //if rectilinear grid is to be available, we will need to convert it to RLG
+    if (m_DataSetRLG != NULL)    
+      ExecuteRLGData();     //convert vtkImageData to vtkRectilinearGrid
 	}
 	catch (std::exception& e)
 	{

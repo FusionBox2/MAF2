@@ -3,7 +3,7 @@
   File:    	 mafVolumeLargeReader.h
   Language:  C++
   Date:      20:2:2008   14:04
-  Version:   $Revision: 1.1 $
+  Version:   $Revision: 1.2 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -40,6 +40,7 @@ protected:
 
 	//output data set
 	vtkImageData* m_DataSet;
+  vtkRectilinearGrid* m_DataSetRLG;   //rectilinear data set
 
 	//listener that should receive events
 	mafObserver* m_Listener;
@@ -86,6 +87,17 @@ public:
 		}
 	}
 
+  //Returns true, if the underlaying volume data set is a rectilinear grid
+  //The caller should use GetOutputRLGDataSet
+  inline bool IsRectilinearGrid() 
+  {
+    mafBrickedFileReader* pFile = GetLevelFile(1);
+    if (pFile == NULL)
+      return false;
+    else
+      return pFile->IsRectilinearGrid();
+  }
+
 	//Gets the associated output data set
 	//If there is no output data set, it is created
 	inline vtkImageData* GetOutputDataSet() 
@@ -96,9 +108,25 @@ public:
 		return m_DataSet;
 	}
 
+  //Gets the associated rectilinear output data set
+  //If there is no output data set, it is created
+  inline vtkRectilinearGrid* GetOutputRLGDataSet()
+  {
+    if (m_DataSetRLG == NULL)
+      m_DataSetRLG = vtkRectilinearGrid::New();
+
+    return m_DataSetRLG;
+  }
+
 	//Sets a new associated output data set
 	//NB: the reference count of the specified output data set is increased
 	void SetOutputDataSet(vtkImageData* ds);
+
+  //Sets a new associated output data set
+  //NB: the reference count of the specified output data set is increased
+  //This forces the Execute to produce vtkRectilinearGrid object even, if
+  //the underlaying grid is regular one (use IsRectilinearGrid to check it)
+  void SetOutputRLGDataSet(vtkRectilinearGrid* ds);
 
 	//Gets the currently requested VOI
 	inline int* GetVOI() {

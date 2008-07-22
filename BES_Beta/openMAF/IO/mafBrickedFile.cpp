@@ -3,7 +3,7 @@
   File:    	 mafBrickedFile.cpp
   Language:  C++
   Date:      11:2:2008   12:18
-  Version:   $Revision: 1.2 $
+  Version:   $Revision: 1.3 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -32,7 +32,10 @@ mafBrickedFile::mafBrickedFile()
 	m_pExIdxTable = NULL;
 	m_pLowResLevel = NULL;
   m_BrickFile = NULL;
-	m_Listener = NULL;
+	m_Listener = NULL;  
+  m_pXYZCoords[0] = NULL;
+  m_pXYZCoords[1] = NULL;
+  m_pXYZCoords[2] = NULL;
 }
 
 mafBrickedFile::~mafBrickedFile()

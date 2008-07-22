@@ -3,7 +3,7 @@
   File:    	 mafBrickedFileWriter.h
   Language:  C++
   Date:      11:2:2008   12:40
-  Version:   $Revision: 1.1 $
+  Version:   $Revision: 1.2 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -25,8 +25,9 @@ public:
 
 protected:
 	//input data set that should be bricked
-	vtkMAFLargeImageData* m_DataSet;
-
+	vtkMAFLargeImageData* m_InputDataSet;
+  vtkDoubleArray* m_pInputXYZCoords[3];   //<X,Y,Z-coordinates for rectilinear grids
+  
 	//buffer for bricks data
 	char* m_pBricksBuffer;
 	bool* m_pBricksValidity;	//false mean that the brick is uniform
@@ -48,13 +49,21 @@ public:
 public:
 	//Gets the associated input data set
 	inline vtkMAFLargeImageData* GetInputDataSet() {
-		return m_DataSet;
+		return m_InputDataSet;
 	}
 
 	//Sets a new associated input data set
 	//NB: the reference count of the specified input data set is increased
 	void SetInputDataSet(vtkMAFLargeImageData* ds);
 		
+  /** Specifies the grid coordinates in x-direction */
+  void SetInputXCoordinates(vtkDoubleArray* pCoords);
+
+  /** Specifies the grid coordinates in y-direction */
+  void SetInputYCoordinates(vtkDoubleArray* pCoords);
+
+  /** Specifies the grid coordinates in z-direction */
+  void SetInputZCoordinates(vtkDoubleArray* pCoords);
 
 	//Sets the size of brick
 	//NB: must be equal to 2^k, where k is an integer > 0
@@ -73,7 +82,7 @@ public:
 			m_FileHeader.sample_rate = (unsigned short)nSampleRate;
 			this->Modified();
 		}		
-	}
+	}  
 
 public:
 	//This method updates the output (i.e., it performs the bricking)	
@@ -100,6 +109,10 @@ protected:
 	//Process the currently loaded bricks, computing average values
 	//for every brick and determining which bricks are uniform
 	virtual void ProcessBricks(int nCurBrickPlane) throw(...);
+
+  /** Process the grid coordinates for rectilinear grid
+  If the input data is regular, this method does nothing */
+  virtual void ProcessCoordinates() throw(...);
 
 protected:
 	//computes an average value for every brick in the current
