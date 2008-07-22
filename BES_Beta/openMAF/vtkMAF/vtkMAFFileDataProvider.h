@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFFileDataProvider.h,v $ 
   Language: C++ 
-  Date: $Date: 2008-06-24 15:49:58 $ 
-  Version: $Revision: 1.2 $ 
+  Date: $Date: 2008-07-22 13:16:20 $ 
+  Version: $Revision: 1.3 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -89,7 +89,7 @@ public:
 
 protected:
 	vtkMAFFileDataProvider();
-	~vtkMAFFileDataProvider();
+	virtual ~vtkMAFFileDataProvider();
 
 	//Seeks the underlaying file
 	//Returns false, if an error occurs

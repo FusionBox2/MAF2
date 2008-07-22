@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFLargeDataSet.cxx,v $ 
   Language: C++ 
-  Date: $Date: 2008-06-23 16:43:55 $ 
-  Version: $Revision: 1.1 $ 
+  Date: $Date: 2008-07-22 13:16:20 $ 
+  Version: $Revision: 1.2 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -21,7 +21,7 @@
 #include "vtkMAFLargeDataSet.h"
 #include "vtkMAFLargeDataProvider.h"
 
-vtkCxxRevisionMacro(vtkMAFLargeDataSet, "$Revision: 1.1 $");
+vtkCxxRevisionMacro(vtkMAFLargeDataSet, "$Revision: 1.2 $");
 
 #include "mafMemDbg.h"
 
@@ -46,9 +46,16 @@ vtkMAFLargeDataSet::vtkMAFLargeDataSet ()
 vtkMAFLargeDataSet::~vtkMAFLargeDataSet ()
 {
 	if (PointDataProvider != NULL)
+  {
 		PointDataProvider->Delete();
+    PointDataProvider = NULL;
+  }
+
 	if (CellDataProvider != NULL)
+  {
 		CellDataProvider->Delete();
+    CellDataProvider = NULL;
+  }
 }
 
 //----------------------------------------------------------------------------
