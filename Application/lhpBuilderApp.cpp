@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-07-11 12:08:29 $
-  Version:   $Revision: 1.62 $
+  Date:      $Date: 2008-07-22 13:27:53 $
+  Version:   $Revision: 1.63 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -62,7 +62,9 @@
 #include "mafOpEditMetadata.h"
 #include "mafOp2DMeasure.h"
 #include "mafOpReparentTo.h"
-#include "mmoDICOMImporter.h"
+//BES: 22.7.2008 - Large Volume - to be merged 
+#include "BES_Beta/Medical/Operations/mmoDICOMImporter_BES.h"
+//#include "mmoDICOMImporter.h"
 #include "mafOpReparentTo.h"
 #include "mafOpImporterImage.h"
 #include "mafOpImporterSTL.h"
@@ -288,7 +290,7 @@ bool lhpBuilderApp::OnInit()
 	}
 
   //------------------------- Importers -------------------------
-  m_Logic->Plug(new mmoDICOMImporter("DICOM"),"Images");
+  m_Logic->Plug(new mmoDICOMImporter_BES("DICOM"),"Images");
   m_Logic->Plug(new medOpImporterDicomXA("DICOM XA"),"Images");
   m_Logic->Plug(new mafOpImporterSTL("STL"),"Geometries");
   m_Logic->Plug(new mafOpImporterVTK("VTK"),"Other");
