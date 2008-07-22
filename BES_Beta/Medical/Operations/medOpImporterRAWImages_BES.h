@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: medOpImporterRAWImages_BES.h,v $
   Language:  C++
-  Date:      $Date: 2008-07-11 11:46:54 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-07-22 13:03:51 $
+  Version:   $Revision: 1.3 $
   Authors:   Stefania Paperini porting Matteo Giacomoni
              Modified by Josef Kohout to support large volumes 
 ==========================================================================
@@ -25,6 +25,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "vtkObject.h"
 #include "../../openMAF/vtkMAF/vtkMAFIdType64.h"
 #include "../../openMAF/VME/mafVMEVolumeLarge.h"
+#include "../../openMAF/VME/mafVMEVolumeLargeUtils.h"
 #endif
 
 //----------------------------------------------------------------------------
@@ -122,6 +123,9 @@ public:
   };
 	
 protected:
+  /** Converts the internal data type into VTK data type */
+  inline int GetVTKDataType();
+
 	/** Enable the widgets of the interface. */
 	void EnableWidgets(bool enable);
 
@@ -218,4 +222,19 @@ protected:
   mafString m_DimYCrop;
 
 };
+
+//------------------------------------------------------------------------
+// Converts the internal data type into VTK data type
+inline int medOpImporterRAWImages_BES::GetVTKDataType()
+//------------------------------------------------------------------------
+{
+  const static int BIT2VTK[] = {
+    VTK_UNSIGNED_CHAR, VTK_CHAR, 
+    VTK_UNSIGNED_SHORT, VTK_SHORT, 
+    VTK_UNSIGNED_SHORT, VTK_SHORT,     
+    VTK_UNSIGNED_CHAR, VTK_UNSIGNED_CHAR,
+  };
+
+  return BIT2VTK[2*m_Bit + m_Signed];
+}
 #endif

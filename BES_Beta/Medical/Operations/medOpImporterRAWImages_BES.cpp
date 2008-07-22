@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: medOpImporterRAWImages_BES.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-07-11 11:46:54 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-07-22 13:03:51 $
+  Version:   $Revision: 1.3 $
   Authors:   Stefania Paperini porting Matteo Giacomoni
              Modified by Josef Kohout to support large volumes 
 ==========================================================================
@@ -137,12 +137,22 @@ medOpImporterRAWImages_BES::medOpImporterRAWImages_BES(wxString label) : mafOp(l
 #ifdef VME_VOLUME_LARGE
   m_MemLimit = 16;	//memory limit in MB, default is 16 MB
 #endif // VME_VOLUME_LARGE
+
+  m_VolumeGray = NULL;
+  m_VolumeRGB = NULL;
+#ifdef VME_VOLUME_LARGE
+  m_VolumeLarge = NULL;
+#endif	
 }
 //----------------------------------------------------------------------------
 medOpImporterRAWImages_BES::~medOpImporterRAWImages_BES()
 //----------------------------------------------------------------------------
 {
-	mafDEL(m_Output);
+  mafDEL(m_VolumeGray);
+  mafDEL(m_VolumeRGB);
+#ifdef VME_VOLUME_LARGE
+  mafDEL(m_VolumeLarge);
+#endif	
 }
 //----------------------------------------------------------------------------
 mafOp *medOpImporterRAWImages_BES::Copy()
@@ -439,8 +449,8 @@ void medOpImporterRAWImages_BES::OpStop(int result)
  	vtkDEL(m_VtkRawDirectory);
 	cppDEL(m_Dialog);
 
-	m_VolumeGray = NULL;
-	m_VolumeRGB = NULL;
+	//m_VolumeGray = NULL;
+	//m_VolumeRGB = NULL;
 
 	if(!this->m_TestMode)
 		mafEventMacro(mafEvent(this,result));
@@ -812,97 +822,54 @@ void medOpImporterRAWImages_BES::OnEvent(mafEventBase *maf_event)
 //and should be processed as VMEVolumeLarge
 bool medOpImporterRAWImages_BES::IsVolumeLarge()
 {  
-  vtkIdType64 size = this->m_CropMode == 0 ? ((vtkIdType64)m_Dimension[0])*m_Dimension[1] :
-    ((vtkIdType64)(m_ROI_2D[1] - m_ROI_2D[0] + 1))*(m_ROI_2D[3] - m_ROI_2D[2] + 1);            
+  int VOI[6];  
+  VOI[4] = 0; VOI[5] = m_Dimension[2] - 1;
 
-  size = size*m_Dimension[2] / (1024*1024);
-  return size >= m_MemLimit;  
+  if (this->m_CropMode == 0)
+  {    
+    VOI[0] = 0; VOI[1] = m_Dimension[0] - 1;
+    VOI[2] = 0; VOI[3] = m_Dimension[1] - 1;
+  }
+  else
+  {
+    VOI[0] = m_ROI_2D[0]; VOI[1] = m_ROI_2D[1];
+    VOI[2] = m_ROI_2D[2]; VOI[3] = m_ROI_2D[3];
+  }  
+
+  return mafVMEVolumeLargeUtils::IsVolumeLarge(VOI,
+    GetVTKDataType(), m_Bit != 3 ? 1 : 3, m_MemLimit);
 }
 
 //if the volume (or VOI) is large, it displays a warning that the volume 
 //to be imported is large and returns true, if the operation should continue,
 //false otherwise (user canceled the import)
 bool medOpImporterRAWImages_BES::VolumeLargeCheck()
-{  
-  if (!IsVolumeLarge())
-    return true;
+{ 
+  int VOI[6];  
+  VOI[4] = 0; VOI[5] = m_Dimension[2] - 1;
 
-  wxString msg = _("The selected VOI is too large to fit the given memory limit and, therefore, "
-    "if you continue, it will be imported as a VolumeLarge VME.\n"
-    "NB: VolumeLarge VME does not support all operations that are available for Volume VME. \n"
-    "In order to import the data as a Volume VME (small), reduce the number of slices to "
-    "be imported or increase the memory limit.\n"
-    "\nDo you want to proceed with the import?");
-
-  if (wxMessageBox(msg, _("Warning: VolumeLarge VME"), 
-    wxYES_NO | wxCENTRE | wxICON_QUESTION) != wxYES)
-    return false;
-
-  vtkMAFLargeImageData* img = m_Reader->GetOutput();
-  if(this->m_CropMode)
-    img->SetVOI(m_ROI_2D[0], m_ROI_2D[1], m_ROI_2D[2], m_ROI_2D[3], 0, m_Dimension[2] - 1);
-  else
-    img->SetVOI(0, m_Dimension[0] - 1, 0, m_Dimension[1] - 1, 0, m_Dimension[2] - 1);
-
-
-  mafVolumeLargeWriter wr;
-  wr.SetInputDataSet(img);
-
-  wxString szTotalSize = wxString::Format("%d", 
-    (int)(wr.GetEstimatedTotalSize() / (1024*1024)));
-  int nLen = (int)szTotalSize.Len();
-  while (nLen > 3)
-  {
-    nLen -= 3;
-    szTotalSize.insert(nLen, ' ');
+  if (this->m_CropMode == 0)
+  {    
+    VOI[0] = 0; VOI[1] = m_Dimension[0] - 1;
+    VOI[2] = 0; VOI[3] = m_Dimension[1] - 1;
   }
-
-  if (wxMessageBox(wxString::Format(
-    _("The selected VOI will be imported as VolumeLarge VME, \n"
-    "which includes the construction of a couple of optimized volume files \n"
-    "with the total size up to %s MB (much less for medical data).\n\n"
-    "The current project must be saved before proceeding.\n"
-    "Do you want to continue?"), szTotalSize), 
-    _("Confirmation"), wxYES_NO | wxICON_QUESTION) == wxNO)
-    return false;
-
-  //save the .MSF file
-  mafEventMacro( mafEvent(this, MENU_FILE_SAVE));	
-
-  mafVMEVolumeGray* pTempVME;
-  mafNEW(pTempVME);
-
-  mafEventMacro( mafEvent(this, VME_ADD, pTempVME));
-
-  mafEventIO e(this, NODE_GET_STORAGE);  
-  pTempVME->ForwardUpEvent(e);  
-
-  mafEventMacro( mafEvent(this, VME_REMOVE, pTempVME));
-  mafDEL(pTempVME);
+  else
+  {
+    VOI[0] = m_ROI_2D[0]; VOI[1] = m_ROI_2D[1];
+    VOI[2] = m_ROI_2D[2]; VOI[3] = m_ROI_2D[3];
+  }
 
   mafString szStr;
-  mafStorage* storage = e.GetStorage();
-  if (storage == NULL)
-    szStr = mafGetDirName(mafGetApplicationDirectory().c_str(), 
-    _("Select a folder for optimized volume files")).c_str();
-  else
-  {
-    szStr = storage->GetURL();
-    szStr.ExtractPathName();
+  int nResult = mafVMEVolumeLargeUtils::VolumeLargeCheck(this, m_Listener,
+    VOI, GetVTKDataType(), m_Bit != 3 ? 1 : 3, m_MemLimit, szStr);
 
-    wxString szSep = wxFILE_SEP_PATH;
-    if (!wxEndsWithPathSeparator(szStr))
-      szStr += szSep;
-    szStr += "LargeVolumes";	
-
-    ::wxMkDir(szStr);
+  if (nResult == 0)
+    return false;
+  else if (nResult == 2)
+  {    
+    m_OutputFileName = szStr;  
+    m_OutputFileName += wxFILE_SEP_PATH + wxString::Format("%s_%X", m_Prefix, (int)time(NULL));   
   }
-
-  if (szStr.IsEmpty())
-    return false;	//cancel
-
-  m_OutputFileName = szStr;
-  m_OutputFileName += wxFILE_SEP_PATH + wxString::Format("%s_%X", m_Prefix, (int)time(NULL));  
   return true;
 }
 #endif // VME_VOLUME_LARGE
@@ -931,9 +898,10 @@ bool medOpImporterRAWImages_BES::VolumeLargeCheck()
   if (pDAL == NULL)
   {
     //missing scalars
-    vtkMAFDataArrayDescriptor* pDAD = vtkMAFDataArrayDescriptor::New();
-        
+    vtkMAFDataArrayDescriptor* pDAD = vtkMAFDataArrayDescriptor::New();        
     fp->SetScalarsDescriptor(pDAD);
+    pDAD->Delete(); //decrease references
+
     pDAL = fp->GetScalarsLayout();
   }
         
@@ -957,37 +925,28 @@ void medOpImporterRAWImages_BES::UpdateReader()
 
 	wxString pattern = m_Pattern + m_Extension;
 	m_Reader->SetFilePattern(pattern.c_str());
-		
+  
+  m_Reader->SetDataScalarType(GetVTKDataType());
+  m_Reader->SetNumberOfScalarComponents(1);
 	switch(m_Bit)
 	{	  
-		case 0:
-			m_Reader->SetDataScalarType( (m_Signed) ? VTK_CHAR : VTK_UNSIGNED_CHAR);
-			m_NumberByte = 1;
-			m_Reader->SetNumberOfScalarComponents(1);
+		case 0:			
+			m_NumberByte = 1;			
 		break;
-		case 1:
-			m_Reader->SetDataScalarType( (m_Signed) ? VTK_SHORT : VTK_UNSIGNED_SHORT);
+		case 1:			
 			m_Reader->SetDataByteOrderToBigEndian();
-			m_NumberByte = 2;
-			m_Reader->SetNumberOfScalarComponents(1);
+			m_NumberByte = 2;			
 		break;
-		case 2:
-			m_Reader->SetDataScalarType( (m_Signed) ? VTK_SHORT : VTK_UNSIGNED_SHORT);
+		case 2:			
 			m_Reader->SetDataByteOrderToLittleEndian();
-			m_NumberByte = 2;
-			m_Reader->SetNumberOfScalarComponents(1);
+			m_NumberByte = 2;			
 		break;
-		case 3:
-			m_Reader->SetDataScalarType(VTK_UNSIGNED_CHAR);
+		case 3:			
 			m_NumberByte = 3;
-#ifdef VME_VOLUME_LARGE //LargeReader support non-interleaved mode
-      m_Reader->SetNumberOfScalarComponents(3);
-#else
+#ifndef VME_VOLUME_LARGE //LargeReader support non-interleaved mode
       if(m_RgbType == 0)
-			  m_Reader->SetNumberOfScalarComponents(3); // INTERLEAVED
-      else
-        m_Reader->SetNumberOfScalarComponents(1); // NOT INTERLEAVED
 #endif
+        m_Reader->SetNumberOfScalarComponents(3);
 		break;
 	}
 	
@@ -1086,41 +1045,29 @@ bool medOpImporterRAWImages_BES::Import()
 	wxString pattern = m_Pattern + m_Extension;
 
 #ifdef VME_VOLUME_LARGE
-  vtkMAFLargeImageReader *r = vtkMAFLargeImageReader::New();
+  vtkMAFSmartPointer< vtkMAFLargeImageReader > r;
 #else
-  vtkImageReader *r = vtkImageReader::New();
+  vtkMAFSmartPointer< vtkImageReader > r;
 #endif //VME_VOLUME_LARGE
 	r->SetFilePrefix(prefix);
 	r->SetFilePattern(pattern.c_str());
 	
-	switch(m_Bit)
-	{	  
-		case 0:
-			r->SetDataScalarType( (m_Signed) ? VTK_CHAR : VTK_UNSIGNED_CHAR);
-			r->SetNumberOfScalarComponents(1);
-		break;
-		case 1:
-			r->SetDataScalarType( (m_Signed) ? VTK_SHORT : VTK_UNSIGNED_SHORT);
-			r->SetDataByteOrderToBigEndian();
-			r->SetNumberOfScalarComponents(1);
-		break;
-		case 2:
-			r->SetDataScalarType( (m_Signed) ? VTK_SHORT : VTK_UNSIGNED_SHORT);
-			r->SetDataByteOrderToLittleEndian();
-			r->SetNumberOfScalarComponents(1);
-		break;
-		case 3:
-			r->SetDataScalarType(VTK_UNSIGNED_CHAR);
-#ifdef VME_VOLUME_LARGE
-      r->SetNumberOfScalarComponents(3);   //large volume reader supports non-interleaved mode
-#else
-      if(m_RgbType == 0)
-			  r->SetNumberOfScalarComponents(3); // INTERLEAVED
-      else
-        r->SetNumberOfScalarComponents(1); // NOT INTERLEAVED
-#endif //VME_VOLUME_LARGE
-		break;
-	}
+  m_Reader->SetDataScalarType(GetVTKDataType());
+  m_Reader->SetNumberOfScalarComponents(1);
+  m_Reader->SetDataByteOrderToLittleEndian();
+
+  switch(m_Bit)
+  {	    
+  case 1:			
+    m_Reader->SetDataByteOrderToBigEndian();    
+    break;  
+  case 3:    
+#ifndef VME_VOLUME_LARGE //LargeReader support non-interleaved mode
+    if(m_RgbType == 0)
+#endif
+      m_Reader->SetNumberOfScalarComponents(3);
+    break;
+  }
 
 	r->SetFileNameSliceOffset(m_Offset);
 	r->SetFileNameSliceSpacing(m_FileSpacing);
@@ -1167,7 +1114,30 @@ bool medOpImporterRAWImages_BES::Import()
   wxString path, name, ext;
   wxSplitPath(slice_name.c_str(),&path,&name,&ext);
 
-  vtkImageToStructuredPoints *convert = vtkImageToStructuredPoints::New();
+  vtkMAFSmartPointer<vtkImageToStructuredPoints> convert;
+
+  vtkDoubleArray* ZDoubleArray = NULL;
+  if (m_Rect)
+  {    
+    //if we want to construct a rectilinear grid, load z-coordinates
+    ZDoubleArray = vtkDoubleArray::New();
+
+    char title[256];
+    const char* nome = (m_CoordFile);
+    std::ifstream f_in;
+    f_in.open(nome);
+    f_in.getline(title,256);
+
+    //z array is read from a file	
+    for (int i = 0; i <= m_Dimension[2]; i++)
+    {
+      double currentValue;
+      f_in >> currentValue;
+      ZDoubleArray->InsertNextValue(currentValue);
+    }
+    f_in.close();
+  }
+
 
 #ifdef VME_VOLUME_LARGE
   if (!bLarge)
@@ -1216,8 +1186,7 @@ bool medOpImporterRAWImages_BES::Import()
 		  vtkDataArray *scalars = data->GetScalars();
 		  vtkDoubleArray *XDoubleArray = vtkDoubleArray::New();
 		  vtkDoubleArray *YDoubleArray = vtkDoubleArray::New();
-		  vtkDoubleArray *ZDoubleArray = vtkDoubleArray::New();
-
+		  
 		  double origin[3];
 		  double currentValue;
 		  structured_data->GetOrigin(origin);
@@ -1232,21 +1201,7 @@ bool medOpImporterRAWImages_BES::Import()
 		  {
 			  currentValue =  origin[1]+((double)iy)*m_Spacing[1];
 			  YDoubleArray->InsertNextValue(currentValue);					
-		  }
-  					 
-		  char title[256];
-		  const char* nome = (m_CoordFile);
-		  std::ifstream f_in;
-		  f_in.open(nome);
-		  f_in.getline(title,256);
-  		
-		  //z array is read from a file	
-		  for (int i = 0; i <= m_Dimension[2]; i++)
-		  {
-			  f_in>> currentValue;
-			  ZDoubleArray->InsertNextValue(currentValue);
-		  }
-		  f_in.close();
+		  }  			
 
       vtkRectilinearGrid *rectilinear_data = vtkRectilinearGrid::New();
 		  rectilinear_data->SetXCoordinates(XDoubleArray);
@@ -1255,6 +1210,11 @@ bool medOpImporterRAWImages_BES::Import()
 		  rectilinear_data->SetDimensions(m_Dimension[0],m_Dimension[1],m_Dimension[2]);
 		  rectilinear_data->GetPointData()->SetScalars(scalars);
 
+      vtkDEL(XDoubleArray);
+      vtkDEL(YDoubleArray);
+      vtkDEL(ZDoubleArray);
+
+      //create VME
 		  mafNEW(m_VolumeGray);
 		  mafNEW(m_VolumeRGB);
 		  if (m_VolumeGray->SetDataByDetaching((vtkDataSet *)rectilinear_data,0) == MAF_OK)
@@ -1268,16 +1228,16 @@ bool medOpImporterRAWImages_BES::Import()
 		  else
 		  {
 			  wxMessageBox(_("Some importing error occurred!!"), _("Warning!"));
+        vtkDEL(rectilinear_data);        
 			  return false;
 		  }
-
-		  vtkDEL(XDoubleArray);
-		  vtkDEL(YDoubleArray);
-		  vtkDEL(ZDoubleArray);
+		  
 		  vtkDEL(rectilinear_data);
 	  } 
-	  else 
+	  else //if (m_Rect)
 	  {
+      assert(ZDoubleArray == NULL);
+
 		  mafNEW(m_VolumeGray);
 		  mafNEW(m_VolumeRGB);
 		  if (m_VolumeGray->SetDataByDetaching((vtkDataSet *)convert->GetOutput(),0) == MAF_OK)
@@ -1290,19 +1250,22 @@ bool medOpImporterRAWImages_BES::Import()
 		  }
 		  else
 		  {
-			  wxMessageBox(_("Some importing error occurred!!"), _("Warning!"));
+			  wxMessageBox(_("Some importing error occurred!!"), _("Warning!"));        
 			  return false;
 		  }
 	  }
 #ifdef VME_VOLUME_LARGE
    } //if (!bLarge)
-   else
+  else
    {
      //the volume is large => rectilinear grid is not supported YET
      mafVolumeLargeWriter wr;
      wr.SetInputDataSet(r->GetOutput());
+     wr.SetInputZCoordinates(ZDoubleArray);   //is NULL for regular girds
      wr.SetOutputFileName(m_OutputFileName);
      wr.SetListener(this->m_Listener);
+     vtkDEL(ZDoubleArray);                    //no longer needed
+
      if (wr.Update())
      {
        int VOI[6];
@@ -1354,9 +1317,6 @@ bool medOpImporterRAWImages_BES::Import()
 
 	m_Output->GetTagArray()->SetTag(tag_Nature);
 	//m_Output->Register(m_Output); //increment reference count so that the vme can't die
-
-	vtkDEL(r);
-	vtkDEL(convert);
 
 	return true;
 }
