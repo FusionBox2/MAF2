@@ -3,7 +3,7 @@
 File:    	 mafVMEVolumeLarge.cpp
 Language:  C++
 Date:      8:2:2008   11:28
-Version:   $Revision: 1.4 $
+Version:   $Revision: 1.5 $
 Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
 
 Copyright (c) 2008
@@ -24,6 +24,7 @@ June 9-11, 2008, Manchester, UK, p. 1-8
 //----------------------------------------------------------------------------
 
 #include "mafVMEVolumeLarge.h"
+#include "mafVMEVolumeLargeUtils.h"
 #include "mafVMEVolumeGray.h"
 #include "mafVTKInterpolator.h"
 #include "mafDataVector.h"
@@ -37,6 +38,7 @@ June 9-11, 2008, Manchester, UK, p. 1-8
 #include "vtkDataArray.h"
 #include "vtkDataSet.h"
 #include "vtkImageData.h"
+#include "vtkRectilinearGrid.h"
 #include "vtkPointData.h"
 #include "vtkImageClip.h"
 
@@ -201,7 +203,10 @@ mmaVolumeMaterial *mafVMEVolumeLarge::GetMaterial()
 #ifdef VME_VOLUME_VER1
   vtkDataObject* pLargeData = m_LargeData->GetSnapshot();  
 #else
-  vtkDataObject* pLargeData = m_LargeDataReader->GetOutputDataSet();
+  vtkDataObject* pLargeData = 
+    m_LargeDataReader->IsRectilinearGrid() ? 
+    (vtkDataObject*)m_LargeDataReader->GetOutputRLGDataSet() :
+    (vtkDataObject*)m_LargeDataReader->GetOutputDataSet();
 #endif
   
   stck.push(pLargeData);
@@ -386,9 +391,16 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 	if (m_ShowROI == 0) 
 	{
 		if ( m_GizmoROI != NULL)
-		{
-			m_GizmoROI->Show(false);
-			cppDEL(m_GizmoROI);
+		{      
+      //N.B. both, Show method and the destructor, sends events 
+      //that may lead into the processing of destruction request
+      //and thus into calling of UnRegister function
+      //if m_GizmoROI is not NULL that time, the dtor will be called twice!
+      mafGizmoROI_BES* roi = m_GizmoROI;
+      m_GizmoROI = NULL;
+
+      roi->Show(false);
+      cppDEL(roi);     
 		}
 	}
 	else
@@ -518,11 +530,14 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 
     UpdateVOI(m_VOI);
 
-    SetData(m_LargeDataReader->GetOutputDataSet(), 0, MAF_VME_REFERENCE_DATA);
+    SetData((m_LargeDataReader->IsRectilinearGrid() ?
+      (vtkDataSet*)m_LargeDataReader->GetOutputRLGDataSet() :
+      (vtkDataSet*)m_LargeDataReader->GetOutputDataSet()), 0, MAF_VME_REFERENCE_DATA);
     this->Modified();
     //force redraw
     mafEvent ev(this, VME_SELECTED,this);
     this->ForwardUpEvent(&ev);
+    UpdateGui();
   }
 #endif
 }
@@ -608,13 +623,16 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 	}
 #else
   UpdateVOI();
-	SetData(m_LargeDataReader->GetOutputDataSet(), 0, MAF_VME_REFERENCE_DATA);
+	SetData((m_LargeDataReader->IsRectilinearGrid() ?
+    (vtkDataSet*)m_LargeDataReader->GetOutputRLGDataSet() :
+    (vtkDataSet*)m_LargeDataReader->GetOutputDataSet()), 0, MAF_VME_REFERENCE_DATA);
 	this->Modified();
 //	UpdateOutput();	
 
   //force redraw
   mafEvent ev(this, VME_SELECTED,this);
   this->ForwardUpEvent(&ev);
+  UpdateGui();
 #endif
 }
 
@@ -665,7 +683,9 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 	m_LargeDataReader->Update();
   UpdateVOI();
 
-	SetData(m_LargeDataReader->GetOutputDataSet(), 0, MAF_VME_REFERENCE_DATA);
+	SetData((m_LargeDataReader->IsRectilinearGrid() ?
+    (vtkDataSet*)m_LargeDataReader->GetOutputRLGDataSet() :
+    (vtkDataSet*)m_LargeDataReader->GetOutputDataSet()), 0, MAF_VME_REFERENCE_DATA);
 #endif
 		
 	this->Modified();
@@ -674,6 +694,7 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
   //force redraw
   mafEvent ev(this, VME_SELECTED,this);
   this->ForwardUpEvent(&ev);
+  UpdateGui();
 }
 
 #ifndef VME_VOLUME_LARGE_EXCLUDE_CROP
@@ -697,16 +718,32 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 
   wxBusyInfo wait(_("Cropping the volume ..."));
 
-  vtkImageData* pData = m_LargeDataReader->GetOutputDataSet();  
-  vtkImageData* pCopy = vtkImageData::New();
-  
+  vtkImageData* pCopy = NULL;
+  vtkRectilinearGrid* pCopyRLG = NULL;
+
+  bool bRLG = m_LargeDataReader->IsRectilinearGrid();
   try
   {
-    pCopy->DeepCopy(pData);
+    if (!bRLG)
+    {
+      vtkImageData* pData = m_LargeDataReader->GetOutputDataSet();  
+
+      pCopy = vtkImageData::New();    
+      pCopy->DeepCopy(pData);
+    }
+    else
+    {
+      //rectilinear grid
+      vtkRectilinearGrid* pData = m_LargeDataReader->GetOutputRLGDataSet();  
+
+      pCopyRLG = vtkRectilinearGrid::New();
+      pCopyRLG->DeepCopy(pData);
+    }
   }
   catch (...)
   {
-    pCopy->Delete();
+    vtkDEL(pCopy);
+    vtkDEL(pCopyRLG);
   	
     wxMessageBox(_("ERROR: Not enough memory to complete the operation."));
     return;	//invalid state
@@ -714,8 +751,12 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
   
   mafVMEVolumeGray* newVME;
   mafNEW(newVME);
-  newVME->SetData(pCopy, 0, MAF_VME_REFERENCE_DATA);
-  pCopy->Delete();
+  if (bRLG)
+    newVME->SetData(pCopyRLG, 0, MAF_VME_REFERENCE_DATA);
+  else
+    newVME->SetData(pCopy, 0, MAF_VME_REFERENCE_DATA);
+  vtkDEL(pCopy);
+  vtkDEL(pCopyRLG);
 
   mafTagItem tag_Nature;
   tag_Nature.SetName("VME_NATURE");
@@ -728,6 +769,8 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
     
   mafEvent ev(this, VME_ADD, newVME);
   this->ForwardUpEvent(&ev);
+
+  mafDEL(newVME);   //VME_ADD increased reference
 #else
   //This code saves the highest resolution of the selected ROI
   //into the output ROI
@@ -1323,7 +1366,9 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 	assert(data);
 	
 	data->Update();	//make sure we have the current data
-	int ret = Superclass::SetData(data->GetOutputDataSet(), 0, MAF_VME_REFERENCE_DATA);
+	int ret = Superclass::SetData((data->IsRectilinearGrid() ? 
+    (vtkDataSet*)data->GetOutputRLGDataSet() : (vtkDataSet*)data->GetOutputDataSet()),
+    0, MAF_VME_REFERENCE_DATA);
 	if (ret != MAF_OK)
 		return ret;
 
@@ -1356,7 +1401,13 @@ void mafVMEVolumeLarge::SetFileName(const char *filename)
 const char* mafVMEVolumeLarge::GetFileName()
 {
 	mafTagItem *item=this->GetTagArray()->GetTag("EXTDATA_FILENAME");
-	return item->GetValue();
+  if (item != NULL)
+	  return item->GetValue();
+  else
+  {
+    assert(false);
+    return "";
+  }
 }
 
 #pragma endregion
@@ -1450,25 +1501,6 @@ void mafVMEVolumeLarge::UpdateOutput()
 }
 */
 
-//formats the specified size to B, KB, MB or GB
-void mafVMEVolumeLarge::FormatDataSize(vtkIdType64 size, mafString& szOut)
-{
-	const char* SZUN[] = {"B", "KB", "MB", "GB", NULL};
-	const int LIMITS[] = { 16384, 4096, 1024, INT_MAX};
-
-	int idx = 0;
-	double nsize = (double)size;
-	while (SZUN[idx] != NULL)
-	{
-		if (nsize < LIMITS[idx])
-			break;
-
-		nsize /= 1024;
-		idx++;
-	}
-
-	szOut = wxString::Format("%g %s", RoundValue(nsize), SZUN[idx]);
-}
 
 //transforms the extent given in units into extent in mm
 void mafVMEVolumeLarge::TransformExtent(int extUn[6], double outMm[6])
@@ -1487,30 +1519,46 @@ void mafVMEVolumeLarge::TransformExtent(int extUn[6], double outMm[6])
 		}
 	}
 	else
-	{
-		int wext[6];
+	{		
 		double orig[3], sp[3];
 
 #ifdef VME_VOLUME_VER1
+    int wext[6];
 		ds->GetWholeExtent(wext);
 		ds->GetOrigin(orig);
 		ds->GetSpacing(sp);
+
+    outMm[0] = orig[0] + (extUn[0] - wext[0])*sp[0];
+    outMm[1] = orig[0] + (extUn[1] - wext[0])*sp[0];
+    outMm[2] = orig[1] + (extUn[2] - wext[2])*sp[1];
+    outMm[3] = orig[1] + (extUn[3] - wext[2])*sp[1];
+    outMm[4] = orig[2] + (extUn[4] - wext[4])*sp[2];
+    outMm[5] = orig[2] + (extUn[5] - wext[4])*sp[2];
 #else
-		ds->GetDataDimensions(wext[1], wext[3], wext[5]);
-		for (int i = 0; i < 6; i += 2){
-			wext[i] = 0; wext[i + 1]--;
-		}
-		ds->GetDataOrigin(orig);
-		ds->GetDataSpacing(sp);
+    if (!ds->IsRectilinearGrid())
+    {
+      ds->GetDataOrigin(orig);
+		  ds->GetDataSpacing(sp);
 
-#endif // VME_VOLUME_VER1
+      for (int i = 0, j = 0; i < 3; i++, j += 2)
+      {
+        outMm[j] = orig[i] + extUn[j]*sp[i];
+        outMm[j+1] = orig[i] + extUn[j+1]*sp[i];
+      }		  
+    }
+    else
+    {
+      //rectilinear grid => it will be more interesting
+      double* pXYZ = ds->GetXCoordinates()->GetPointer(0);
+      outMm[0] = pXYZ[extUn[0]]; outMm[1] = pXYZ[extUn[1]];
 
-		outMm[0] = orig[0] + (extUn[0] - wext[0])*sp[0];
-		outMm[1] = orig[0] + (extUn[1] - wext[0])*sp[0];
-		outMm[2] = orig[1] + (extUn[2] - wext[2])*sp[1];
-		outMm[3] = orig[1] + (extUn[3] - wext[2])*sp[1];
-		outMm[4] = orig[2] + (extUn[4] - wext[4])*sp[2];
-		outMm[5] = orig[2] + (extUn[5] - wext[4])*sp[2];		
+      pXYZ = ds->GetYCoordinates()->GetPointer(0);
+      outMm[2] = pXYZ[extUn[2]]; outMm[3] = pXYZ[extUn[3]];
+
+      pXYZ = ds->GetZCoordinates()->GetPointer(0);
+      outMm[4] = pXYZ[extUn[4]]; outMm[5] = pXYZ[extUn[5]];
+    }
+#endif //VME_VOLUME_VER1
 	}
 }
 
@@ -1531,29 +1579,66 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 		}
 	}
 	else
-	{
-		int wext[6];
+	{		
 		double orig[3], sp[3];
 
 #ifdef VME_VOLUME_VER1
+    int wext[6];
 		ds->GetWholeExtent(wext);
 		ds->GetOrigin(orig);
 		ds->GetSpacing(sp);
-#else
-		ds->GetDataDimensions(wext[1], wext[3], wext[5]);
-		for (int i = 0; i < 6; i += 2){
-			wext[i] = 0; wext[i + 1]--;
-		}
-		ds->GetDataOrigin(orig);
-		ds->GetDataSpacing(sp);
-#endif // VME_VOLUME_VER1
 
-		outUn[0] = wext[0] + (extMm[0] - orig[0]) / sp[0];
-		outUn[1] = wext[0] + (extMm[1] - orig[0]) / sp[0];
-		outUn[2] = wext[2] + (extMm[2] - orig[1]) / sp[1];
-		outUn[3] = wext[2] + (extMm[3] - orig[1]) / sp[1];
-		outUn[4] = wext[4] + (extMm[4] - orig[2]) / sp[2];
-		outUn[5] = wext[4] + (extMm[5] - orig[2]) / sp[2];
+    outUn[0] = wext[0] + (extMm[0] - orig[0]) / sp[0];
+    outUn[1] = wext[0] + (extMm[1] - orig[0]) / sp[0];
+    outUn[2] = wext[2] + (extMm[2] - orig[1]) / sp[1];
+    outUn[3] = wext[2] + (extMm[3] - orig[1]) / sp[1];
+    outUn[4] = wext[4] + (extMm[4] - orig[2]) / sp[2];
+    outUn[5] = wext[4] + (extMm[5] - orig[2]) / sp[2];
+#else		
+    if (!ds->IsRectilinearGrid())
+    {
+		  ds->GetDataOrigin(orig);
+		  ds->GetDataSpacing(sp);
+
+      for (int i = 0, j = 0; i < 3; i++, j += 2)
+      {
+        outUn[j] = (extMm[j] - orig[i]) / sp[i];
+        outUn[j+1] = (extMm[j+1] - orig[i]) / sp[i];        
+      }	
+    }
+    else
+    {
+      //rectilinear grid => it will be more interesting
+      vtkDoubleArray* pXYZCoords[3];
+      pXYZCoords[0] = ds->GetXCoordinates();
+      pXYZCoords[1] = ds->GetYCoordinates();
+      pXYZCoords[2] = ds->GetZCoordinates();
+      for (int i = 0; i < 3; i++)
+      {         
+        double* pXYZ = pXYZCoords[i]->GetPointer(0);
+        for (int j = 0; j < 2; j++)
+        {
+          int a = 0, b = pXYZCoords[i]->GetMaxId();
+          bool bAsc = pXYZ[a] < pXYZ[b];
+          
+          //binary search
+          while (a < b)
+          {
+            int t = (a + b) / 2;
+            if (extMm[2*i + j] == pXYZ[t]) {
+              a = t; break;
+            }
+            else if (extMm[2*i + j] < pXYZ[t] == bAsc)            
+              b = t - 1;  //the value is in the area <a..t>            
+            else
+              a = t + 1;  //the value is in the area <t..b>            
+          }
+
+          outUn[2*i + j] = a; //the nearest pos
+        }
+      }     
+    }
+#endif // VME_VOLUME_VER1
 	}
 }
 
@@ -1698,7 +1783,21 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 		bounds[0] = bounds[2] = bounds[4] = -DBL_MAX;
 		bounds[1] = bounds[3] = bounds[5] = DBL_MAX;
 	}
-	else
+	else if (ds->IsRectilinearGrid())
+  {
+    vtkDoubleArray* pXYZCoords = ds->GetXCoordinates();
+    bounds[0] = *pXYZCoords->GetPointer(0);
+    bounds[1] = *pXYZCoords->GetPointer(pXYZCoords->GetMaxId());
+
+    pXYZCoords = ds->GetYCoordinates();
+    bounds[2] = *pXYZCoords->GetPointer(0);
+    bounds[3] = *pXYZCoords->GetPointer(pXYZCoords->GetMaxId());
+
+    pXYZCoords = ds->GetZCoordinates();
+    bounds[4] = *pXYZCoords->GetPointer(0);
+    bounds[5] = *pXYZCoords->GetPointer(pXYZCoords->GetMaxId());
+  }
+  else
 	{
 		ds->GetDataOrigin(bounds[0], bounds[2], bounds[4]);
 
@@ -1794,7 +1893,7 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 			wext[3] - wext[2] + 1, wext[5] - wext[4] + 1);
 
 		//size		
-		FormatDataSize(((vtkIdType64)wext[1] - wext[0] + 1)*
+    mafVMEVolumeLargeUtils::FormatDataSize(((vtkIdType64)wext[1] - wext[0] + 1)*
 			(wext[3] - wext[2] + 1)*(wext[5] - wext[4] + 1), m_SourceSize);		
 
 		//bounds
@@ -1834,23 +1933,44 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 			m_SourceDimensions = wxString::Format("%d x %d x %d", dims[0], dims[1], dims[2]);
 
 			//size		
-			FormatDataSize(((vtkIdType64)dims[0])*dims[1]*dims[2], m_SourceSize);		
+			mafFormatDataSize(((vtkIdType64)dims[0])*dims[1]*dims[2], m_SourceSize);		
 
-			//spacing
-			double sp[3];
-			ds->GetDataSpacing(sp);
-			m_SourceSpacing = wxString::Format("  %.2f x %.2f x %.2f [mm]", 
-				sp[0], sp[1], sp[2]);
+      double b[6];
+      if (ds->IsRectilinearGrid())
+      {
+        //spacing
+        m_SourceSpacing = "N/A (rectilinear grid)";
 
-			//bounds
-			double b[6];
-			ds->GetDataOrigin(b[0], b[2], b[4]);
-			for (int i = 0; i < 3; i++) {
-				b[2*i + 1] = b[2*i] + dims[i]*sp[i];
-			}
-			m_SourceBounds[0] = wxString::Format("  xmin: %.2f  xmax: %.2f [mm]", b[0], b[1]);
+        vtkDoubleArray* pXYZCoords = ds->GetXCoordinates();
+        b[0] = *pXYZCoords->GetPointer(0);
+        b[1] = *pXYZCoords->GetPointer(pXYZCoords->GetMaxId());
+
+        pXYZCoords = ds->GetYCoordinates();
+        b[2] = *pXYZCoords->GetPointer(0);
+        b[3] = *pXYZCoords->GetPointer(pXYZCoords->GetMaxId());
+
+        pXYZCoords = ds->GetZCoordinates();
+        b[4] = *pXYZCoords->GetPointer(0);
+        b[5] = *pXYZCoords->GetPointer(pXYZCoords->GetMaxId());
+      }
+      else
+      {
+			  //spacing
+			  double sp[3];
+			  ds->GetDataSpacing(sp);
+			  m_SourceSpacing = wxString::Format("  %.2f x %.2f x %.2f [mm]", 
+				  sp[0], sp[1], sp[2]);
+
+			  //bounds			  
+			  ds->GetDataOrigin(b[0], b[2], b[4]);
+			  for (int i = 0; i < 3; i++) {
+				  b[2*i + 1] = b[2*i] + dims[i]*sp[i];
+			  }
+      }
+			
+      m_SourceBounds[0] = wxString::Format("  xmin: %.2f  xmax: %.2f [mm]", b[0], b[1]);
 			m_SourceBounds[1] = wxString::Format("  ymin: %.2f  ymax: %.2f [mm]", b[2], b[3]);
-			m_SourceBounds[2] = wxString::Format("  zmin: %.2f  zmax: %.2f [mm]", b[4], b[5]);					
+			m_SourceBounds[2] = wxString::Format("  zmin: %.2f  zmax: %.2f [mm]", b[4], b[5]);					      
 		}
 	}
 #endif
@@ -1889,7 +2009,7 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
     nBytesPerVoxel = ((vtkImageData*)ds)->GetScalarSize();
   else if (ds->GetPointData()->GetScalars() != NULL)
     nBytesPerVoxel = ds->GetPointData()->GetScalars()->GetDataTypeSize();
-	FormatDataSize(
+	mafFormatDataSize(
     ((vtkIdType64)wext[1] - wext[0] + 1)*
 		(wext[3] - wext[2] + 1)*(wext[5] - wext[4] + 1)*nBytesPerVoxel, m_SampleSize);	
 		
@@ -1908,7 +2028,7 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 
 	//memory limit
 	if (m_LargeData->GetAutoSampleRate()) {
-		//FormatDataSize(((vtkIdType64) m_LargeData->GetMemoryLimit()) * 1024,
+		//mafVMEVolumeLargeUtils::FormatDataSize(((vtkIdType64) m_LargeData->GetMemoryLimit()) * 1024,
 		//	m_SampleMemLimit);
 		m_SampleMemLimit = m_LargeData->GetMemoryLimit() / 1024;
 		gui->Enable(ID_SAMPLE_MEMLIMIT, true);

@@ -3,7 +3,7 @@
 File:    	 mafVMEVolumeLarge.h
 Language:  C++
 Date:      22:1:2008   10:57
-Version:   $Revision: 1.4 $
+Version:   $Revision: 1.5 $
 Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
 
 Copyright (c) 2008
@@ -279,12 +279,8 @@ protected:
 
 #pragma endregion
 #endif
-
 	
 protected:
-	//formats the specified size to B, KB, MB or GB
-	void FormatDataSize(vtkIdType64 size, mafString& szOut);
-
 	//transforms the extent given in units into extent in mm
 	void TransformExtent(int extUn[6], double outMm[6]);
 
