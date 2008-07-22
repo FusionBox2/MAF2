@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-15 15:25:13 $
-Version:   $Revision: 1.69 $
+Date:      $Date: 2008-07-22 12:53:28 $
+Version:   $Revision: 1.70 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -65,6 +65,7 @@ MafMedical is partially based on OpenMAF.
 #include "mafVMELandmarkCloud.h"
 #include "mafVMELandmark.h"
 #include "mafVMESurface.h"
+#include "mafVMEExternalData.h"
 #include "mafSmartPointer.h"
 
 #include "lhpFactoryTagHandler.h"
@@ -695,6 +696,7 @@ void lhpOpUploadVME::OpStop(int result)
 bool lhpOpUploadVME::CreateCache()
 //----------------------------------------------------------------------------
 {
+  bool copied = false;
   //control cache subdir
   mafString currentSubdir;
   currentSubdir = m_CacheDir + m_CacheSubdir.GetCStr();
@@ -709,6 +711,20 @@ bool lhpOpUploadVME::CreateCache()
   currentSubdir = currentSubdir + "\\";
   wxMkDir(currentSubdir);
   m_CurrentCache = currentSubdir;
+
+  //If VME is ExternalData, copy the external file
+  if (m_Input->IsA("mafVMEExternalData"))
+  {
+    wxString externalFileName = ((mafVMEExternalData *)m_Input)->GetFileName();
+    externalFileName.append(".");
+    externalFileName.append(((mafVMEExternalData *)m_Input)->GetExtension());
+    wxString externalFilePath = ((mafVMEExternalData *)m_Input)->GetAbsoluteFileName();
+    wxString externalCopiedName =  currentSubdir + "\\" + externalFileName;
+    if(wxFileExists(externalFilePath))
+    {
+      copied = wxCopyFile(externalFilePath, externalCopiedName);
+    }
+  }
 
   wxString oldDir = wxGetCwd();
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
@@ -779,8 +795,7 @@ bool lhpOpUploadVME::CreateCache()
   storage->Store();
   wxSetWorkingDirectory(oldDir);
 
-  return true;
-  
+  return copied;
 }
 //----------------------------------------------------------------------------
 bool lhpOpUploadVME::ExistsRunningProcess()

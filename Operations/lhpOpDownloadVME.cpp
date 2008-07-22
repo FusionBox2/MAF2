@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-15 15:25:59 $
-Version:   $Revision: 1.22 $
+Date:      $Date: 2008-07-22 12:54:15 $
+Version:   $Revision: 1.23 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -834,7 +834,7 @@ int lhpOpDownloadVME::ImportMSF()
   if (m_Group == NULL)
   {
     mafNEW(m_Group);
-    m_Group->SetName("Download");
+    m_Group->SetName("Downloaded from repository");
     m_Group->ReparentTo(m_Input);
   }
    
