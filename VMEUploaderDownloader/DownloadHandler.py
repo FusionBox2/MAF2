@@ -84,8 +84,10 @@ class DownloadHandler:
         
         if(os.path.exists(fullPathInMSF)):
             os.remove(fullPathInMSF)
-        
-        shutil.move(self.dirCache+self.srbData, fullPathInMSF)
+            
+        dataName = os.path.basename(fullPathInMSF)
+    
+        os.rename(self.dirCache+self.srbData, self.dirCache+dataName)
         pass
         
     def download(self):
