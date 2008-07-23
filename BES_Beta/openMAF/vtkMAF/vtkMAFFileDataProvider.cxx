@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFFileDataProvider.cxx,v $ 
   Language: C++ 
-  Date: $Date: 2008-07-22 15:09:27 $ 
-  Version: $Revision: 1.4 $ 
+  Date: $Date: 2008-07-23 12:24:57 $ 
+  Version: $Revision: 1.5 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -16,7 +16,7 @@
 #include "vtkMAFFileDataProvider.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkMAFFileDataProvider, "$Revision: 1.4 $");
+vtkCxxRevisionMacro(vtkMAFFileDataProvider, "$Revision: 1.5 $");
 vtkStandardNewMacro(vtkMAFFileDataProvider);
 
 #include "mafMemDbg.h"
@@ -88,8 +88,11 @@ vtkMAFFileDataProvider::~vtkMAFFileDataProvider()
   vtkMAFFile* f = vtkMAFFile::New();
   if (!f->Open(fname, bOpenForRO))
   {
-    f->Delete();
-    return false;
+    if (bOpenForRO || !f->Create(fname))
+    {
+      f->Delete();
+      return false;
+    }
   }
 
 	AttachFile(f, fname, true, bDeleteOnClose);

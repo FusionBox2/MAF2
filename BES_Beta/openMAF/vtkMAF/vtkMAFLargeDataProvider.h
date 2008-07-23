@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFLargeDataProvider.h,v $ 
   Language: C++ 
-  Date: $Date: 2008-07-11 11:55:59 $ 
-  Version: $Revision: 1.2 $ 
+  Date: $Date: 2008-07-23 12:25:08 $ 
+  Version: $Revision: 1.3 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -564,6 +564,14 @@ protected:
 	//replaces the name used in the lookup table, if old_name is NULL, then new entry
 	//refereed to the given index is created
 	void ReplaceLookupName(const char* old_name, const char* new_name, int index = -1);
+
+  /** Reads or writes the data in interleaved mode */
+  int GetSetDataArrayIM(int da_idx, void* buffer, int count, 
+    vtkIdType64 startIndex, bool bGetMode);
+
+  /** Reads or writes the data in non-interleaved mode */
+  int GetSetDataArrayNIM(int da_idx, void* buffer, int count, 
+    vtkIdType64 startIndex, bool bGetMode);
 	
   //Updates the default layout information
   //Should be called always before the layout is used
@@ -580,6 +588,7 @@ protected:
 	//(nb: this feature may not be available for all providers)  
 	//The routine returns number of bytes successfully transfered.	
 	virtual int WriteBinaryData(vtkIdType64 startOffset, void* buffer, int count) = 0; 
+
 
 private:
 	vtkMAFLargeDataProvider(const vtkMAFLargeDataProvider&);  // Not implemented.
