@@ -48,8 +48,14 @@ class downloadSelectorFrame(wx.Frame):
     
     def FillList(self):
         self.lBasket.getListFromBasket()
+        write = False
+        card = 0
         for count in range(0,len(self.lBasket.IdList)):
-          self.checkList.Insert(self.lBasket.IdList[count],count)
+          write = not write
+          card+1
+          if(write == True): #show only VME name and not datasource-...
+               self.checkList.Insert(self.lBasket.IdList[count],card)
+             
 
     def VwXDelComp(self):
         return
@@ -62,7 +68,8 @@ class downloadSelectorFrame(wx.Frame):
         self.Selections = []
         for count in range(0,self.checkList.GetCount()):
             if(self.checkList.IsChecked(count)):
-                self.Selections.append(self.checkList.GetItems()[count])
+                #self.Selections.append(self.checkList.GetItems()[count])
+                self.Selections.append(self.lBasket.IdList[(count*2)+1])#get datasource-... corrisponding to VME name checked
         #wx.MessageBox("Selections: " + str(self.Selections))
         if(len(self.Selections) == 0): 
             wx.MessageBox("Must be selected some vme")
