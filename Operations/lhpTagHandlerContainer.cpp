@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-07-04 07:27:52 $
-  Version:   $Revision: 1.20 $
+  Date:      $Date: 2008-07-23 08:18:42 $
+  Version:   $Revision: 1.21 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -395,7 +395,9 @@ void lhpTagHandler_L0000_resource_data_Dataset_LocalFileCheckSum::HandleAutoTag(
     cargo->SetTagHandlerGeneratedString("No binary data associated");
     return;
   }
-  else if (!cargo->GetInputVme()->IsA("mafVMEExternalData") && !cargo->GetInputVme()->IsA("mafVMELandmarkCloud"))
+  //if VME has more than one vtk file, has also more than one MD5Checksum, so don't write it
+  else if (!cargo->GetInputVme()->IsA("mafVMEExternalData") && !cargo->GetInputVme()->IsA("mafVMELandmarkCloud") 
+           && !cargo->GetInputVme()->IsA("mafVMEVector") && !cargo->GetInputVme()->IsA("medVMEAnalog"))
   {
     mafTimeStamp currentTime = cargo->GetInputVme()->GetTimeStamp();
     mafVMEGenericAbstract *vme = mafVMEGenericAbstract::SafeDownCast(cargo->GetInputVme());
