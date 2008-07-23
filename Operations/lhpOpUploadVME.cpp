@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-22 13:00:04 $
-Version:   $Revision: 1.71 $
+Date:      $Date: 2008-07-23 08:17:41 $
+Version:   $Revision: 1.72 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -583,7 +583,7 @@ mafString lhpOpUploadVME::GetBinaryURI()
     //waiting for file with binary URI from python
     mafSleep(1000);
     timeOut += 1;
-    if (timeOut == 50)
+    if (timeOut == 300)
     {
       wxMessageBox("Time out searching file with binary URI information");
       return fURI;
@@ -635,15 +635,8 @@ int lhpOpUploadVME::ImportMSF()
   }
   mafNode *temporaryNode = root->GetFirstChild();
 
-  std::vector<std::string> tagList;
-  temporaryNode->GetTagArray()->GetTagList(tagList);
-
   //copy tags from MSF genereted by python editor, to orginal MSF.
-  for (int n = 0; n < temporaryNode->GetTagArray()->GetNumberOfTags(); n++)
-  {
-    m_Input->GetTagArray()->SetTag(tagList[n].c_str(), temporaryNode->GetTagArray()->GetTag(tagList[n].c_str())->GetValue(), 2);
-  }
-
+  m_Input->GetTagArray()->DeepCopy(temporaryNode->GetTagArray());
 
   //attach links previously removed
   if (m_HasLink)
