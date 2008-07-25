@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpMultiscaleExplore.cpp,v $
 Language:  C++
-Date:      $Date: 2008-04-14 14:22:08 $
-Version:   $Revision: 1.6 $
+Date:      $Date: 2008-07-25 12:19:11 $
+Version:   $Revision: 1.7 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -21,14 +21,14 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "wx/busyinfo.h"
 
 #include "mafDecl.h"
-#include "mmgGui.h"
-#include "mmgDialog.h"
+#include "mafGUI.h"
+#include "mafGUIDialog.h"
 #include "mafRWIBase.h"
 #include "mafRWI.h"
 #include "mmdMouse.h"
-#include "mmgButton.h"
-#include "mmgFloatSlider.h"
-#include "mmgValidator.h"
+#include "mafGUIButton.h"
+#include "mafGUIFloatSlider.h"
+#include "mafGUIValidator.h"
 #include "mafEventBase.h"
 #include "mafEvent.h"
 #include "mafEventInteraction.h"
@@ -297,7 +297,7 @@ void lhpOpMultiscaleExplore::CreateOpDialog()
   //----------------------------------------------------------------------------
   // setup interface
   //----------------------------------------------------------------------------
-  m_Dialog = new mmgDialog("Multiscale Explorer", mafCLOSEWINDOW | mafRESIZABLE);
+  m_Dialog = new mafGUIDialog("Multiscale Explorer", mafCLOSEWINDOW | mafRESIZABLE);
 
   m_Rwi = new mafRWI(m_Dialog,ONE_LAYER,false);
   m_Rwi->SetListener(this);
@@ -321,7 +321,7 @@ void lhpOpMultiscaleExplore::CreateOpDialog()
   wxStaticText *setupCtrlsStaticTxt  = new wxStaticText(m_Dialog, -1, "Set up view");
 
   // add vme
-  mmgButton  *AddVMEButton = new mmgButton(m_Dialog, ID_ADDVME, "add vme", p, wxSize(80,20));
+  mafGUIButton  *AddVMEButton = new mafGUIButton(m_Dialog, ID_ADDVME, "add vme", p, wxSize(80,20));
 
   // set base units
   wxString SIUnits[5] = {"m", "cm", "mm", "microns", "nm"} ;
@@ -331,10 +331,10 @@ void lhpOpMultiscaleExplore::CreateOpDialog()
 
   // multiscale controls
   wxStaticText *mscaleCtrlsStaticTxt = new wxStaticText(m_Dialog, -1, "Multiscale controls");
-  mmgButton  *ZoomOutButton = new mmgButton(m_Dialog, ID_ZOOMOUT, "zoom out x2", p, wxSize(80,20));
-  mmgButton  *CameraResetButton = new mmgButton(m_Dialog, ID_CAMERARESET, "reset camera", p, wxSize(80,20));
-  mmgButton  *GoBackButton = new mmgButton(m_Dialog, ID_GOBACK, "go back", p, wxSize(80,20));
-  mmgButton  *debug = new mmgButton(m_Dialog, ID_DEBUG, "debug", p, wxSize(80,20));
+  mafGUIButton  *ZoomOutButton = new mafGUIButton(m_Dialog, ID_ZOOMOUT, "zoom out x2", p, wxSize(80,20));
+  mafGUIButton  *CameraResetButton = new mafGUIButton(m_Dialog, ID_CAMERARESET, "reset camera", p, wxSize(80,20));
+  mafGUIButton  *GoBackButton = new mafGUIButton(m_Dialog, ID_GOBACK, "go back", p, wxSize(80,20));
+  mafGUIButton  *debug = new mafGUIButton(m_Dialog, ID_DEBUG, "debug", p, wxSize(80,20));
 
   // display scale
   wxStaticText *scaleStaticTxt = new wxStaticText(m_Dialog, -1, "Current scale: ") ;
@@ -350,41 +350,41 @@ void lhpOpMultiscaleExplore::CreateOpDialog()
   wxStaticText *sliceCtrlsStaticTxt = new wxStaticText(m_Dialog, -1, "Slice controls");
   wxStaticText *posStaticTxt = new wxStaticText(m_Dialog, -1, "pos ") ;
   wxTextCtrl *posValueTxt = new wxTextCtrl(m_Dialog, ID_POS_VALUE_TXT, wxEmptyString, p, wxSize(80,20), wxTE_RIGHT) ;
-  m_PosSlider = new mmgFloatSlider(m_Dialog, ID_POS_SLIDER, m_SliderOrigin, bounds[4], bounds[5], p) ;
+  m_PosSlider = new mafGUIFloatSlider(m_Dialog, ID_POS_SLIDER, m_SliderOrigin, bounds[4], bounds[5], p) ;
   wxStaticText *viewStaticTxt = new wxStaticText(m_Dialog, -1, "view ") ;
   wxComboBox *viewCombo = new wxComboBox(m_Dialog, ID_CHANGE_VIEW, Views[m_ViewIndex], p, wxSize(80,20), 3, Views, wxCB_READONLY) ;
 
   // control of opacity
   //wxStaticText *opacityStaticTxt = new wxStaticText(m_Dialog, -1, "opacity ") ;
   //wxTextCtrl *opacityValueTxt = new wxTextCtrl(m_Dialog, ID_OPACITY_VALUE_TXT, wxEmptyString, p, wxSize(80,20), wxTE_RIGHT) ;
-  //mmgFloatSlider *opacitySlider = new mmgFloatSlider(m_Dialog, ID_OPACITY_SLIDER, 0.5, 0.0, 1.0, p) ;
+  //mafGUIFloatSlider *opacitySlider = new mafGUIFloatSlider(m_Dialog, ID_OPACITY_SLIDER, 0.5, 0.0, 1.0, p) ;
 
   // ok and cancel
-  mmgButton  *ok = new mmgButton(m_Dialog, ID_OK, "ok", p, wxSize(80,20));
-  mmgButton  *cancel = new mmgButton(m_Dialog, ID_CANCEL, "cancel", p, wxSize(80,20));
+  mafGUIButton  *ok = new mafGUIButton(m_Dialog, ID_OK, "ok", p, wxSize(80,20));
+  mafGUIButton  *cancel = new mafGUIButton(m_Dialog, ID_CANCEL, "cancel", p, wxSize(80,20));
 
 
   // set validators
-  AddVMEButton->SetValidator(mmgValidator(this,ID_ADDVME,AddVMEButton));
-  ZoomOutButton->SetValidator(mmgValidator(this,ID_ZOOMOUT,ZoomOutButton));
-  CameraResetButton->SetValidator(mmgValidator(this,ID_CAMERARESET,CameraResetButton));
-  GoBackButton->SetValidator(mmgValidator(this,ID_GOBACK,GoBackButton));
-  debug->SetValidator(mmgValidator(this,ID_DEBUG,debug));
+  AddVMEButton->SetValidator(mafGUIValidator(this,ID_ADDVME,AddVMEButton));
+  ZoomOutButton->SetValidator(mafGUIValidator(this,ID_ZOOMOUT,ZoomOutButton));
+  CameraResetButton->SetValidator(mafGUIValidator(this,ID_CAMERARESET,CameraResetButton));
+  GoBackButton->SetValidator(mafGUIValidator(this,ID_GOBACK,GoBackButton));
+  debug->SetValidator(mafGUIValidator(this,ID_DEBUG,debug));
 
-  unitsCombo->SetValidator(mmgValidator(this, ID_BASE_UNITS, unitsCombo, &m_BaseUnits)) ;
+  unitsCombo->SetValidator(mafGUIValidator(this, ID_BASE_UNITS, unitsCombo, &m_BaseUnits)) ;
 
-  scaleValueTxt->SetValidator(mmgValidator(this,ID_SCALEVALUETXT,ok)) ;
-  scaleUnitsTxt->SetValidator(mmgValidator(this,ID_SCALEUNITSTXT,ok)) ;
+  scaleValueTxt->SetValidator(mafGUIValidator(this,ID_SCALEVALUETXT,ok)) ;
+  scaleUnitsTxt->SetValidator(mafGUIValidator(this,ID_SCALEUNITSTXT,ok)) ;
 
-  posValueTxt->SetValidator(mmgValidator(this,ID_POS_VALUE_TXT,posValueTxt,&m_SliderOrigin)) ;
-  m_PosSlider->SetValidator(mmgValidator(this, ID_POS_SLIDER, m_PosSlider, &m_SliderOrigin, posValueTxt));
-  viewCombo->SetValidator(mmgValidator(this, ID_CHANGE_VIEW, viewCombo, &m_ViewIndex)) ;
+  posValueTxt->SetValidator(mafGUIValidator(this,ID_POS_VALUE_TXT,posValueTxt,&m_SliderOrigin)) ;
+  m_PosSlider->SetValidator(mafGUIValidator(this, ID_POS_SLIDER, m_PosSlider, &m_SliderOrigin, posValueTxt));
+  viewCombo->SetValidator(mafGUIValidator(this, ID_CHANGE_VIEW, viewCombo, &m_ViewIndex)) ;
 
-  //opacityValueTxt->SetValidator((mmgValidator(this, ID_OPACITY_VALUE_TXT, opacityValueTxt, &m_Opacity, 0.0, 1.0))) ;
-  //opacitySlider->SetValidator(mmgValidator(this, ID_OPACITY_SLIDER, opacitySlider, &m_Opacity, opacityValueTxt));
+  //opacityValueTxt->SetValidator((mafGUIValidator(this, ID_OPACITY_VALUE_TXT, opacityValueTxt, &m_Opacity, 0.0, 1.0))) ;
+  //opacitySlider->SetValidator(mafGUIValidator(this, ID_OPACITY_SLIDER, opacitySlider, &m_Opacity, opacityValueTxt));
 
-  ok->SetValidator(mmgValidator(this,ID_OK,ok));
-  cancel->SetValidator(mmgValidator(this,ID_CANCEL,cancel));
+  ok->SetValidator(mafGUIValidator(this,ID_OK,ok));
+  cancel->SetValidator(mafGUIValidator(this,ID_CANCEL,cancel));
 
 
   // layout

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpVMESurfaceScalarVarying.h,v $
   Language:  C++
-  Date:      $Date: 2008-03-31 12:31:10 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2008-07-25 12:15:29 $
+  Version:   $Revision: 1.6 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -26,7 +26,7 @@
 //----------------------------------------------------------------------------
 // forward declarations :
 //----------------------------------------------------------------------------
-class mmgCheckListBox;
+class mafGUICheckListBox;
 class mafTransform;
 class mmaMaterial;
 class vtkPolyData;
@@ -122,7 +122,7 @@ protected:
   virtual ~lhpVMESurfaceScalarVarying(); 
 
   /** Internally used to create a new instance of the GUI.*/
-  virtual mmgGui *CreateGui();
+  virtual mafGUI *CreateGui();
 
   /** used to initialize and create the material attribute if not yet present */
   virtual int InternalInitialize();
@@ -165,7 +165,7 @@ protected:
   int m_EditMode; ///< Flag to attach and detach th picker from the surface.
   int m_ActiveScalarVMEIndex; ///< Store the information regarding the last medVMEAnalog's scalar index added
   int m_Radius; ///< Set the radius to consider for coloring neighbors of selected triangles.
-  mmgCheckListBox *m_ScalarsAvailableList; ///< Listbox representing the list of medVMEAnalog's scalars
+  mafGUICheckListBox *m_ScalarsAvailableList; ///< Listbox representing the list of medVMEAnalog's scalars
   typedef std::map<int, vtkIdList *> SurfaceScalarRegionMap;
   SurfaceScalarRegionMap m_ScalarRegionMap;
   std::vector<mafTimeStamp> m_ScalarTimeStamps; ///< Vector of timestamps presents in mafVMEAnalog

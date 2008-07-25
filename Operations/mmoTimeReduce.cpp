@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoTimeReduce.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-03-06 12:06:12 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2008-07-25 12:19:42 $
+  Version:   $Revision: 1.4 $
   Authors:   Fedor Moiseev
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -28,7 +28,7 @@
 
 #include "mafDecl.h"
 #include "mafEvent.h"
-#include "mmgGui.h"
+#include "mafGUI.h"
 
 #include "mafOpExplodeCollapse.h"
 
@@ -125,7 +125,7 @@ void mmoTimeReduce::CreateGui()
     char strng[100];
     int nFrames = mafVMEGenericAbstract::SafeDownCast(m_Input)->GetNumberOfLocalTimeStamps();
     sprintf(strng, "Node has %d timestamps", nFrames);
-    m_Gui = new mmgGui(this);
+    m_Gui = new mafGUI(this);
     m_Gui->SetListener(this);
     m_Gui->Label(strng);
     m_Gui->Label("Each frame number");

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEAFRefSys.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-04-14 12:03:18 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2008-07-25 12:15:29 $
+  Version:   $Revision: 1.7 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -24,7 +24,7 @@
 
 #include "mafVMEAFRefSys.h"
 
-#include "mmgGui.h"
+#include "mafGUI.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafPlotMath.h"
 #include "mmaMaterial.h"
@@ -468,7 +468,7 @@ mmaMaterial *mafVMEAFRefSys::GetMaterial()
   return material;
 }
 //-------------------------------------------------------------------------
-mmgGui* mafVMEAFRefSys::CreateGui()
+mafGUI* mafVMEAFRefSys::CreateGui()
 //-------------------------------------------------------------------------
 {
 	const wxString bone_choices_string[] = {_("Undefined"),_("Pelvis"), _("Right thigh"), _("Left thigh"), _("Right shank"), _("Left shank"), _("Right foot"), _("Left foot")};

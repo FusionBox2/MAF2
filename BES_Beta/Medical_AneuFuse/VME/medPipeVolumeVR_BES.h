@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: medPipeVolumeVR_BES.h,v $
   Language:  C++
-  Date:      $Date: 2008-06-23 16:38:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-07-25 12:04:41 $
+  Version:   $Revision: 1.2 $
   Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004
@@ -91,7 +91,7 @@ public:
 	double GetResampleFactor();
 
 protected:
-  virtual mmgGui  *CreateGui();
+  virtual mafGUI  *CreateGui();
 
   vtkColorTransferFunction		*m_ColorTransferFunction;
   vtkPiecewiseFunction				*m_PiecewiseFunction;

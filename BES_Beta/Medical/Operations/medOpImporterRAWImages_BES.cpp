@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: medOpImporterRAWImages_BES.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-07-22 15:08:30 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2008-07-25 12:03:43 $
+  Version:   $Revision: 1.5 $
   Authors:   Stefania Paperini porting Matteo Giacomoni
              Modified by Josef Kohout to support large volumes 
 ==========================================================================
@@ -28,12 +28,13 @@
 #include "mafEvent.h"
 #include "mafEventIO.h"
 #include "mafStorage.h"
-#include "mmgGui.h"
+#include "mafGUI.h"
+
 #include "mafOp.h"
-#include "mmgValidator.h"
+#include "mafGUIValidator.h"
 #include "mafRWIBase.h"
 #include "mafRWI.h"
-#include "mmgDialogPreview.h"
+#include "mafGUIDialogPreview.h"
 #include "mmdMouse.h"
 #include "mmiDICOMImporterInteractor.h"
 #include "mafTagArray.h"
@@ -255,12 +256,12 @@ void medOpImporterRAWImages_BES::CreateGui()
 	int res=OP_RUN_OK;
 	if(!this->m_TestMode)
 	{
-		m_Dialog = new mmgDialogPreview(_("raw importer"), mafCLOSEWINDOW | mafRESIZABLE | mafUSEGUI | mafUSERWI);
+		m_Dialog = new mafGUIDialogPreview(_("raw importer"), mafCLOSEWINDOW | mafRESIZABLE | mafUSEGUI | mafUSERWI);
 
 		wxString bit_choices[4] = {_("8 bits"),_("16 bits Big Endian"),_("16 bits Little Endian"),_("24 bits (RGB)")};
 		wxString type_choices[2] = {_("interleaved"),_("not interleaved")};
 		
-		m_Gui = new mmgGui(this);
+		m_Gui = new mafGUI(this);
 		m_Gui->SetListener(this);
 
 		m_Gui->Divider(0);
@@ -334,10 +335,10 @@ void medOpImporterRAWImages_BES::CreateGui()
 		wxPoint dp = wxDefaultPosition;
 		m_SliceLab     = new wxStaticText(m_Dialog, -1, _(" slice num. "),dp, wxSize(-1,16));
 		m_SliceText    = new wxTextCtrl  (m_Dialog, -1, "",					   dp, wxSize(30,16), wxNO_BORDER);
-		m_SliceSlider  = new wxSlider     (m_Dialog, -1,0,0,100,		   dp, wxSize(200,22));   
-    
-    m_SliceSlider->SetValidator(mmgValidator(this,ID_SLICE,m_SliceSlider,&m_CurrentSlice,m_SliceText));
-		m_SliceText->SetValidator(mmgValidator(this,ID_SLICE,m_SliceText,  &m_CurrentSlice,m_SliceSlider,0,100));
+		m_SliceSlider  = new wxSlider     (m_Dialog, -1,0,0,100,		   dp, wxSize(200,22));
+
+		m_SliceSlider->SetValidator(mafGUIValidator(this,ID_SLICE,m_SliceSlider,&m_CurrentSlice,m_SliceText));
+		m_SliceText->SetValidator(mafGUIValidator(this,ID_SLICE,m_SliceText,  &m_CurrentSlice,m_SliceSlider,0,100));
 
 #pragma warning(suppress: 6211) // warning C6211: Leaking memory 'slice_sizer' due to an exception. Consider using a local catch block to clean up memory:
 		wxBoxSizer *slice_sizer = new wxBoxSizer(wxHORIZONTAL);    

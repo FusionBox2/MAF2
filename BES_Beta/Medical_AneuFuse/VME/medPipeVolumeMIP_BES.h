@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: medPipeVolumeMIP_BES.h,v $
   Language:  C++
-  Date:      $Date: 2008-06-23 16:38:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-07-25 12:04:41 $
+  Version:   $Revision: 1.2 $
   Authors:   Paolo Quadrani
 ==========================================================================
 Copyright (c) 2002/2004
@@ -71,7 +71,7 @@ protected:
   Given a color LUT, generate color transfer function and opacity transfer function*/
   void UpdateMIPFromLUT();
 
-  virtual mmgGui  *CreateGui();
+  virtual mafGUI  *CreateGui();
 
   double					  m_ResampleFactor;
   vtkImageCast                *m_Caster;

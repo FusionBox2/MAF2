@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafViewIntGraph.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-03-06 22:10:02 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-07-25 12:13:22 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -25,8 +25,8 @@
 
 #include "wx/image.h"
 #include "mafDecl.h"
-#include "mmgGuiHolder.h"
-#include "mmgGui.h"
+#include "mafGUIHolder.h"
+#include "mafGUI.h"
 #include "mafSceneNode.h"
 #include "mafSceneGraph.h"
 #include "mafVMEPointSet.h"
@@ -406,7 +406,7 @@ void mafViewIntGraph::VmeDeletePipe(mafNode *vme)
   cppDEL(n->m_Pipe);
 }
 //-------------------------------------------------------------------------
-mmgGui *mafViewIntGraph::CreateGui()
+mafGUI *mafViewIntGraph::CreateGui()
 //-------------------------------------------------------------------------
 {
   assert(m_Gui == NULL);
@@ -429,7 +429,7 @@ mmgGui *mafViewIntGraph::CreateGui()
   }
 
   //////////////////////////////////////////Plot gui
-  //m_Gui = new mmgGui(this);
+  //m_Gui = new mafGUI(this);
   m_Gui->SetListener(this);
 
   m_Gui->Label("General Features",true);

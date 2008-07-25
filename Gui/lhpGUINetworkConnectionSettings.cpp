@@ -2,8 +2,8 @@
 Program:   LHPBuilder
 Module:    $RCSfile: lhpGUINetworkConnectionSettings.cpp,v $
 Language:  C++
-Date:      $Date: 2008-02-22 10:39:57 $
-Version:   $Revision: 1.3 $
+Date:      $Date: 2008-07-25 12:11:14 $
+Version:   $Revision: 1.4 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2008
@@ -23,7 +23,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "mafCrypt.h"
 
 #include "mafDecl.h"
-#include "mmgGui.h"
+#include "mafGUI.h"
 
 //----------------------------------------------------------------------------
 lhpGUINetworkConnectionSettings::lhpGUINetworkConnectionSettings(mafObserver *Listener, const mafString &label):
@@ -46,7 +46,7 @@ lhpGUINetworkConnectionSettings::~lhpGUINetworkConnectionSettings()
 void lhpGUINetworkConnectionSettings::CreateGui()
 //----------------------------------------------------------------------------
 {
-  m_Gui = new mmgGui(this);
+  m_Gui = new mafGUI(this);
   m_Gui->Label(_("Connection Settings"));
   m_Gui->Bool(ID_PROXY_FLAG,_("using proxy"),&m_ProxyFlag,1);
   m_Gui->String(ID_PROXY_HOST,_("Host"),&m_ProxyHost,"");

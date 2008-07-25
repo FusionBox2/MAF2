@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafViewIntGraphWindow.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-07-25 12:13:22 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -26,7 +26,7 @@
 #include <stdio.h>
 
 #include "mafViewIntGraph.h"
-#include "mmgGui.h"
+#include "mafGUI.h"
 
 
 #ifdef _MSC_FULL_VER
@@ -975,12 +975,12 @@ mafMemoryGraph *mafViewIntGraphWindow::GetGraph(void) const
 
 
 //----------------------------------------------------------------------------
-mmgGui *mafViewIntGraphWindow::GetGUI(mmgGui *pGUI, mafObserver *listener, wxInt32 nBaseID)
+mafGUI *mafViewIntGraphWindow::GetGUI(mafGUI *pGUI, mafObserver *listener, wxInt32 nBaseID)
 //----------------------------------------------------------------------------
 {
   static wxString choices[] = {wxString("Default"),wxString("Decorative"), wxString("Roman"), wxString("Script"), wxString("Swiss"), wxString("Modern")};
   if(pGUI == NULL)
-    pGUI = new mmgGui(listener);
+    pGUI = new mafGUI(listener);
   m_BaseID = nBaseID;
 
   pGUI->Bool   (nBaseID + ID_SHOW_ROUGH_GRID  ,"Rough Grid"       , &(m_RoughGrid),0);

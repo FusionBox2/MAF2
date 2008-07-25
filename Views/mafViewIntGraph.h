@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafViewIntGraph.h,v $
   Language:  C++
-  Date:      $Date: 2008-03-06 22:10:02 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-07-25 12:13:22 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -189,7 +189,7 @@ protected:
 
   //int   m_NumberOfVisibleVme; ///< perform ResetCamera only for the first vme shown into the view
 
-  virtual mmgGui *CreateGui();
+  virtual mafGUI *CreateGui();
 
   /** Return the visual pipe's name.*/
   void GetVisualPipeName(mafNode *node, mafString &pipe_name);

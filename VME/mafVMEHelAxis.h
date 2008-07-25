@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEHelAxis.h,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-07-25 12:15:29 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -84,7 +84,7 @@ protected:
   virtual int InternalStore(mafStorageElement *parent);
   virtual int InternalRestore(mafStorageElement *node);
 
-  mmgGui *CreateGui();
+  mafGUI *CreateGui();
   /** called to prepare the update of the output */
   virtual void InternalPreUpdate();
   /** used to initialize and create the material attribute if not yet present */

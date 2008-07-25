@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-25 08:00:40 $
-Version:   $Revision: 1.24 $
+Date:      $Date: 2008-07-25 12:19:11 $
+Version:   $Revision: 1.25 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -54,7 +54,7 @@ MafMedical is partially based on OpenMAF.
 
 #include "lhpOpDownloadVME.h"
 
-#include "mmgGui.h"
+#include "mafGUI.h"
 #include "lhpUser.h"
 #include "mafNode.h"
 #include "mafVMEGenericAbstract.h"
@@ -584,7 +584,7 @@ bool lhpOpDownloadVME::CheckLogin()
 void lhpOpDownloadVME::CreateGui()
 //----------------------------------------------------------------------------
 {
-  /*m_Gui = new mmgGui(this);
+  /*m_Gui = new mafGUI(this);
 
   m_Gui->Divider(2);
 

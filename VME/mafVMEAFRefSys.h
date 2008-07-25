@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEAFRefSys.h,v $
   Language:  C++
-  Date:      $Date: 2008-04-14 12:03:18 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2008-07-25 12:15:29 $
+  Version:   $Revision: 1.7 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -196,7 +196,7 @@ protected:
 
 
   /** Internally used to create a new instance of the GUI.*/
-  virtual mmgGui *CreateGui();
+  virtual mafGUI *CreateGui();
 
   vtkArrowSource                                      *m_XArrow;
   vtkArrowSource                                      *m_YArrow;

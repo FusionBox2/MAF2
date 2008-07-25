@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterAnsysInputFile.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-05-12 12:30:41 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2008-07-25 12:19:11 $
+  Version:   $Revision: 1.6 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -23,7 +23,7 @@
 #include "wx/busyinfo.h"
 
 #include "mafDecl.h"
-#include "mmgGui.h"
+#include "mafGUI.h"
 
 #include "mafSmartPointer.h"
 #include "mafTagItem.h"

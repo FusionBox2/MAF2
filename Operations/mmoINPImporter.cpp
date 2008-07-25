@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoINPImporter.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-10-12 10:24:00 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-07-25 12:19:11 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -22,7 +22,7 @@
 #include "mmoINPImporter.h"
 
 #include "mafDecl.h"
-#include "mmgDialog.h"
+#include "mafGUIDialog.h"
 
 #include "mmaMaterial.h"
 

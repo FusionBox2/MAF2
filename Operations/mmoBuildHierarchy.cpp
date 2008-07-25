@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoBuildHierarchy.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-03-06 12:06:12 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-07-25 12:19:11 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -26,7 +26,7 @@
 
 #include "mafDecl.h"
 #include "mafEvent.h"
-#include "mmgGui.h"
+#include "mafGUI.h"
 
 #include "mafOpExplodeCollapse.h"
 #include "mafDictionary.h"
@@ -120,7 +120,7 @@ void mmoBuildHierarchy::CreateGui()
 {
   if(m_Gui == NULL)
   {
-    m_Gui = new mmgGui(this);
+    m_Gui = new mafGUI(this);
     m_Gui->SetListener(this);
     m_Gui->FileOpen(ID_LOAD_DICTIONARY, _("Dictionary"),  &m_DictionaryFName);
     m_Gui->Label("");

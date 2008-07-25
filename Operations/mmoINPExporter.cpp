@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoINPExporter.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-10-12 10:23:30 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-07-25 12:19:11 $
+  Version:   $Revision: 1.3 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -22,7 +22,7 @@
 #include "mmoINPExporter.h"
 
 #include "mafDecl.h"
-#include "mmgGui.h"
+#include "mafGUI.h"
 
 #include "mafINPWriter.h"
 #include "mafVME.h"
@@ -75,7 +75,7 @@ void mmoINPExporter::OpRun()
 {
   mafString wildc = "INP file (*.inp)|*.inp";
 
-  m_Gui = new mmgGui(this);
+  m_Gui = new mafGUI(this);
   //m_Gui->FileSave(ID_CHOOSE_FILENAME,"stl file", &m_File, wildc,"Save As...");
   //m_Gui->Label("file type",true);
   //m_Gui->Bool(ID_STL_BINARY_FILE,"binary",&m_Binary,0);

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: medPipeVolumeVR_BES.cpp,v $
 Language:  C++
-Date:      $Date: 2008-06-23 16:38:40 $
-Version:   $Revision: 1.1 $
+Date:      $Date: 2008-07-25 12:04:41 $
+Version:   $Revision: 1.2 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004
@@ -22,8 +22,8 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "medPipeVolumeVR_BES.h"
 
 #include "mafDecl.h"
-#include "mmgGui.h"
-#include "mmgLutPreset.h"
+#include "mafGUI.h"
+#include "mafGUILutPreset.h"
 
 #include "vtkMAFAssembly.h"
 #include "mmaVolumeMaterial.h"
@@ -495,11 +495,11 @@ void medPipeVolumeVR_BES::Select(bool sel)
   //	m_sel_a->SetVisibility(sel);
 }
 //----------------------------------------------------------------------------
-mmgGui *medPipeVolumeVR_BES::CreateGui()
+mafGUI *medPipeVolumeVR_BES::CreateGui()
 //----------------------------------------------------------------------------
 {
   assert(m_Gui == NULL);
-  m_Gui = new mmgGui(this);
+  m_Gui = new mafGUI(this);
 
   m_Gui->Double(ID_RESAMPLE_FACTOR,_("Resample"),&m_ResampleFactor,0.00001,1);
 

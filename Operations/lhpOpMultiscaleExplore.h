@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpMultiscaleExplore.h,v $
 Language:  C++
-Date:      $Date: 2008-01-28 16:36:30 $
-Version:   $Revision: 1.5 $
+Date:      $Date: 2008-07-25 12:19:11 $
+Version:   $Revision: 1.6 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -17,8 +17,8 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "mafRWI.h"
 #include "mafEventBase.h"
 #include "mafVME.h"
-#include "mmgDialog.h"
-#include "mmgFloatSlider.h"
+#include "mafGUIDialog.h"
+#include "mafGUIFloatSlider.h"
 
 #include "vtkPolyData.h"
 #include "vtkActor.h"
@@ -258,9 +258,9 @@ protected:
 
   lhpMultiscaleDoubleClickCallback *m_dclickCallback ;
 
-  mmgDialog		*m_Dialog;        // dialog and interactor
+  mafGUIDialog		*m_Dialog;        // dialog and interactor
   mafRWI      *m_Rwi;
-  mmgFloatSlider *m_PosSlider ;       // slice position slider (destroyed with dialog - don't delete in deconstructor)
+  mafGUIFloatSlider *m_PosSlider ;       // slice position slider (destroyed with dialog - don't delete in deconstructor)
   double m_SliceOrigin[3] ;           // position of slice
   int m_BaseUnits ;                   // base units validator
   int m_ViewIndex ;                   // view direction validator (don't assume that 0,1,2 = x,y,z !!)

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoMTRExporter.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-04-02 09:37:27 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2008-07-25 12:19:42 $
+  Version:   $Revision: 1.4 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -22,7 +22,7 @@
 #include "wx/busyinfo.h"
 
 #include "mafDecl.h"
-#include "mmgGui.h"
+#include "mafGUI.h"
 
 #include <iostream>
 #include <fstream>
@@ -79,7 +79,7 @@ enum MTR_EXPORTER_ID
 void mmoMTRExporter::OpRun()
 //----------------------------------------------------------------------------
 {
-  m_Gui = new mmgGui(this);
+  m_Gui = new mafGUI(this);
   m_Gui->Label("absolute positions",true);
   m_Gui->Bool(ID_ABS_POS,"apply",&m_ABSPos,0);
   m_Gui->OkCancel();

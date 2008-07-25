@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpVisualPipeSurfaceScalar.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-03-31 12:12:18 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2008-07-25 12:15:29 $
+  Version:   $Revision: 1.5 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
@@ -21,7 +21,7 @@
 
 #include "lhpVisualPipeSurfaceScalar.h"
 #include "mafSceneNode.h"
-#include "mmgGui.h"
+#include "mafGUI.h"
 
 #include "mmaMaterial.h"
 
@@ -143,7 +143,7 @@ void lhpVisualPipeSurfaceScalar::Select(bool sel)
 	}
 }
 //-------------------------------------------------------------------------
-mmgGui* lhpVisualPipeSurfaceScalar::CreateGui()
+mafGUI* lhpVisualPipeSurfaceScalar::CreateGui()
 //-------------------------------------------------------------------------
 {
   assert(m_Gui == NULL);

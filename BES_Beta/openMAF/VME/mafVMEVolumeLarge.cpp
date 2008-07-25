@@ -3,7 +3,7 @@
 File:    	 mafVMEVolumeLarge.cpp
 Language:  C++
 Date:      8:2:2008   11:28
-Version:   $Revision: 1.6 $
+Version:   $Revision: 1.7 $
 Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
 
 Copyright (c) 2008
@@ -32,8 +32,8 @@ June 9-11, 2008, Manchester, UK, p. 1-8
 #include "mafTagArray.h"
 #include "mafVMEStorage.h"
 #include "mafStorageElement.h"
-#include "mmgGui.h"
-#include "mmgRollOut.h"
+#include "mafGUI.h"
+#include "mafGUIRollOut.h"
 
 #include "vtkDataArray.h"
 #include "vtkDataSet.h"
@@ -1648,7 +1648,7 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 
 #pragma region GUI
 //-------------------------------------------------------------------------
-/*virtual*/ mmgGui* mafVMEVolumeLarge::CreateGui()
+/*virtual*/ mafGUI* mafVMEVolumeLarge::CreateGui()
 //-------------------------------------------------------------------------
 {	
 	assert(m_Gui == NULL);
@@ -1686,9 +1686,9 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 }
 
 //creates the GUI with information about the large volume data
-/*virtual*/ mmgGui* mafVMEVolumeLarge::CreateInfoGui()
+/*virtual*/ mafGUI* mafVMEVolumeLarge::CreateInfoGui()
 {
-	mmgGui* gui = new mmgGui(this);
+	mafGUI* gui = new mafGUI(this);
 	gui->Show(true);
 
 	gui->Divider(0);
@@ -1711,9 +1711,9 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 }
 
 //creates the GUI with information about the sampled output
-/*virtual*/ mmgGui* mafVMEVolumeLarge::CreateSampleInfoGui()
+/*virtual*/ mafGUI* mafVMEVolumeLarge::CreateSampleInfoGui()
 {
-	mmgGui* gui = new mmgGui(this);
+	mafGUI* gui = new mafGUI(this);
 	gui->Show(true);
 	gui->Label(_("sample dims:"), true);
 	gui->Label(&m_SampleDimensions);
@@ -1738,17 +1738,17 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 
 
 //updates the existing Info gui
-/*virtual*/ mmgGui* mafVMEVolumeLarge::CreateCropGui()
+/*virtual*/ mafGUI* mafVMEVolumeLarge::CreateCropGui()
 {
 #pragma warning(suppress: 6211) // warning C6211: Leaking memory 'gui' due to an exception. Consider using a local catch block to clean up memory:
-	mmgGui* gui = new mmgGui(this);
+	mafGUI* gui = new mafGUI(this);
 	gui->Show(true);
 
 	gui->Divider(0);
 	gui->Bool(ID_SHOW_ROI, "show ROI", &m_ShowROI, 0, 
 		_("toggle region of interest visibility"));
 
-	m_ShowROIOpt = new mmgGui(this);
+	m_ShowROIOpt = new mafGUI(this);
 	m_ShowROIOpt->Divider(0);
 
 	m_ShowROIOpt->Bool(ID_SHOW_HANDLES, _("show handles"), &m_ShowHandles, 1, 
@@ -1768,7 +1768,7 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 	gui->Label(_("selected ROI:"), true);
 	AddVoxelsMmCombo(gui, ID_COMBO_VOI_UNITS, &m_VOIUnits);
 
-	m_CropEdVxls = new mmgGui(this);	
+	m_CropEdVxls = new mafGUI(this);	
 //	m_CropEdVxls->Show(m_VOIUnits == 0);
 	m_CropEdVxls->Show(true);
 	m_CropEdVxls->VectorN(ID_CROP_DIR_X, _("range x"), &m_VOI[0], 2, m_FullExtent[0], m_FullExtent[1]);
@@ -1814,7 +1814,7 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 	}
 #endif // VME_VOLUME_VER1
 
-	m_CropEdMm = new mmgGui(this);	
+	m_CropEdMm = new mafGUI(this);	
 //	m_CropEdMm->Show(m_VOIUnits != 0);	
 	m_CropEdMm->Show(true);
 	m_CropEdMm->VectorN(ID_CROP_DIR_XMM, _("range x"), &m_ROI[0], 2, bounds[0], bounds[1]);
@@ -1865,7 +1865,7 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 
 
 //updates the existing gui
-/*virtual*/ void mafVMEVolumeLarge::UpdateInfoGui(mmgGui* gui)
+/*virtual*/ void mafVMEVolumeLarge::UpdateInfoGui(mafGUI* gui)
 {
 	assert(gui != NULL);
   if (gui == NULL)
@@ -1984,7 +1984,7 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 }
 
 //updates the existing sample Info gui
-/*virtual*/ void mafVMEVolumeLarge::UpdateSampleInfoGui(mmgGui* gui)
+/*virtual*/ void mafVMEVolumeLarge::UpdateSampleInfoGui(mafGUI* gui)
 {
 	assert(gui != NULL);
   if (gui == NULL)
@@ -2057,7 +2057,7 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 }
 
 //updates the existing Crop gui
-/*virtual*/ void mafVMEVolumeLarge::UpdateCropGui(mmgGui* gui)
+/*virtual*/ void mafVMEVolumeLarge::UpdateCropGui(mafGUI* gui)
 {
 	assert(gui != NULL);
   if (gui == NULL)
@@ -2082,7 +2082,7 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 #pragma region GUI MISC
 //adds a new combobox (identified by id) with "voxels", "mm" options
 //onto the given gui; pvar is the combo data variable 
-void mafVMEVolumeLarge::AddVoxelsMmCombo(mmgGui* gui, int id, int* pvar)
+void mafVMEVolumeLarge::AddVoxelsMmCombo(mafGUI* gui, int id, int* pvar)
 {
 	const int UNITCHOISE_NUM = 2;
 	const wxString UNITCHOISE_STR[UNITCHOISE_NUM] = {_("voxels"), _("mm")};

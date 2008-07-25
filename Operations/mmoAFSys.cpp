@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoAFSys.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-04-14 12:03:18 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2008-07-25 12:19:11 $
+  Version:   $Revision: 1.6 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -24,7 +24,7 @@
 
 #include "mafDecl.h"
 #include "mafEvent.h"
-#include "mmgGui.h"
+#include "mafGUI.h"
 #include "mafDictionary.h"
 #include "mafPlotMath.h"
 
@@ -208,7 +208,7 @@ void mmoAFSys::OpRun()
 void mmoAFSys::CreateGui()
 //----------------------------------------------------------------------------
 {
-  m_Gui = new mmgGui(this);
+  m_Gui = new mafGUI(this);
   m_Gui->SetListener(this);
 
   std::vector<wxString> list;

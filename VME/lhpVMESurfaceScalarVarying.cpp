@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpVMESurfaceScalarVarying.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-06-25 14:42:44 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2008-07-25 12:15:29 $
+  Version:   $Revision: 1.9 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -20,8 +20,8 @@
 //----------------------------------------------------------------------------
 
 #include "lhpVMESurfaceScalarVarying.h"
-#include "mmgGui.h"
-#include "mmgCheckListBox.h"
+#include "mafGUI.h"
+#include "mafGUICheckListBox.h"
 
 #include "mmiPicker.h"
 
@@ -515,7 +515,7 @@ vtkIdList *lhpVMESurfaceScalarVarying::GetSurfaceScalarIndexes(int idx)
   return it->second;
 }
 //-------------------------------------------------------------------------
-mmgGui* lhpVMESurfaceScalarVarying::CreateGui()
+mafGUI* lhpVMESurfaceScalarVarying::CreateGui()
 //-------------------------------------------------------------------------
 {
   m_Gui = mafNode::CreateGui(); // Called to show info about vmes' type and name

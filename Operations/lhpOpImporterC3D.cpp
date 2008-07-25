@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterC3D.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-04-21 11:36:14 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2008-07-25 12:19:11 $
+  Version:   $Revision: 1.12 $
   Authors:   Daniele  Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -23,7 +23,7 @@
 #include "wx/busyinfo.h"
 
 #include "mafDecl.h"
-#include "mmgGui.h"
+#include "mafGUI.h"
 
 #include "mafSmartPointer.h"
 #include "mafVME.h"
@@ -957,7 +957,7 @@ void lhpOpImporterC3D::CreateGui()
   }
 
   //mafEventMacro(mafEvent(this,result));
-	m_Gui = new mmgGui(this);
+	m_Gui = new mafGUI(this);
 	m_Gui->Label("Select:", true);
 
   m_Gui->Bool(ID_IMPORT_TRAJECTORIES,_("Trajectories"),&m_ImportTrajectoriesFlag,1);

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpBonemat.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-07-17 14:03:34 $
-  Version:   $Revision: 1.15 $
+  Date:      $Date: 2008-07-25 12:19:11 $
+  Version:   $Revision: 1.16 $
   Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -23,7 +23,7 @@
 
 #include "wx/busyinfo.h"
 
-#include "mmgGui.h"
+#include "mafGUI.h"
 
 #include "mafDecl.h"
 #include "mafVMERoot.h"
@@ -273,7 +273,7 @@ enum BONEMAT_ID
 void lhpOpBonemat::CreateGui()
 //----------------------------------------------------------------------------
 {
-  m_Gui = new mmgGui(this);
+  m_Gui = new mafGUI(this);
   m_Gui->Label(""); 
 
   m_Gui->Label("Configuration File:", true);

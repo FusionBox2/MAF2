@@ -3,7 +3,7 @@
 File:    	 mafVMEVolumeLarge.h
 Language:  C++
 Date:      22:1:2008   10:57
-Version:   $Revision: 1.5 $
+Version:   $Revision: 1.6 $
 Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
 
 Copyright (c) 2008
@@ -65,7 +65,7 @@ protected:
 
 #pragma region GUIS
 #pragma region INFO GUI
-	mmgGui* m_InfoGui;
+	mafGUI* m_InfoGui;
 	mafString m_SourceFile;
 	mafString m_SourcePath;
 	mafString m_SourceDimensions;
@@ -75,7 +75,7 @@ protected:
 #pragma endregion //INFO GUI
 
 #pragma region SAMPLE INFO GUI
-	mmgGui* m_SampleInfoGui;
+	mafGUI* m_SampleInfoGui;
 	mafString m_SampleDimensions;
 	mafString m_SampleBounds[3];
 	//mafString m_SampleMemLimit;
@@ -85,7 +85,7 @@ protected:
 #pragma endregion //SAMPLE INFO GUI
 
 #pragma region CROP GUI
-	mmgGui* m_CropGui;
+	mafGUI* m_CropGui;
 	mafGizmoROI_BES *m_GizmoROI; ///< Gizmo used to define sub-volume region to crop	
 
 	int m_ShowROI;		///< Flag used to show/hide crop gizmo
@@ -93,9 +93,9 @@ protected:
 	int m_ShowAxis;		///< Flag used to show/hide crop gizmo translation axis
 	int m_ShowPlanes;	///< Flag used to show/hide crop gizmo translation planes
 	
-	mmgGui* m_CropEdVxls;
-	mmgGui* m_CropEdMm;
-	mmgGui* m_ShowROIOpt;
+	mafGUI* m_CropEdVxls;
+	mafGUI* m_CropEdMm;
+	mafGUI* m_ShowROIOpt;
 	double m_ROI[6];		// Gizmo (given in mm)
 	int m_VOI[6];			// Gizmo in units
 
@@ -184,7 +184,7 @@ protected:
 
 
 	/** Internally used to create a new instance of the GUI.*/
-	/*virtual*/ mmgGui* CreateGui();
+	/*virtual*/ mafGUI* CreateGui();
 
   /** called to prepare the update of output */
   /*virtual*/ void InternalPreUpdate();
@@ -212,29 +212,29 @@ protected:
 #pragma region GUI stuff
 
 	//creates the GUI with information about the large volume data
-	virtual mmgGui* CreateInfoGui();
+	virtual mafGUI* CreateInfoGui();
 
 	//creates the GUI with information about the sampled output
-	virtual mmgGui* CreateSampleInfoGui();
+	virtual mafGUI* CreateSampleInfoGui();
 
 	//creates the GUI with the cropping options
-	virtual mmgGui* CreateCropGui();	
+	virtual mafGUI* CreateCropGui();	
 
 	//updates all existing GUIs
 	virtual void UpdateGui();	
 
 	//updates the existing Info gui
-	virtual void UpdateInfoGui(mmgGui* gui);
+	virtual void UpdateInfoGui(mafGUI* gui);
 
 	//updates the existing sample Info gui
-	virtual void UpdateSampleInfoGui(mmgGui* gui);
+	virtual void UpdateSampleInfoGui(mafGUI* gui);
 
 	//updates the existing Crop gui
-	virtual void UpdateCropGui(mmgGui* gui);	
+	virtual void UpdateCropGui(mafGUI* gui);	
 
 	//adds a new combobox (identified by id) with "voxels", "mm" options
 	//onto the given gui; pvar is the combo data variable 
-	void AddVoxelsMmCombo(mmgGui* gui, int id, int* pvar);
+	void AddVoxelsMmCombo(mafGUI* gui, int id, int* pvar);
 
 	//updates the gizmo
 	void UpdateGizmo();	

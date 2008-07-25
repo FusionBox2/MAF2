@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafViewIntGraphWindow.h,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-07-25 12:13:22 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -19,7 +19,7 @@
 #include "mafString.h"
 #include "mafMemGraph.h"
 #include "mafStringSet.h"
-#include "mmgGui.h"
+#include "mafGUI.h"
 
 //----------------------------------------------------------------------------
 // forward references
@@ -89,7 +89,7 @@ public:
   void           SetGraphData(mafViewIntSetGraph *pSetGrpah);
   void           Update(void);
   bool           SaveGraphAsCSV(wxString const &sFileName);
-  mmgGui         *GetGUI(mmgGui *pGUI, mafObserver *listener, wxInt32 nBaseID);
+  mafGUI         *GetGUI(mafGUI *pGUI, mafObserver *listener, wxInt32 nBaseID);
   bool           OnEvent(mafEvent& e);
   static wxInt32 GetFontFamily(mafViewIntGraphFontFamily fFamily);
   /** Tune curve parameters */

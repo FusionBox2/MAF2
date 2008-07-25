@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-15 15:23:10 $
-Version:   $Revision: 1.9 $
+Date:      $Date: 2008-07-25 12:19:11 $
+Version:   $Revision: 1.10 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -56,7 +56,8 @@ MafMedical is partially based on OpenMAF.
 #include "lhpOpUploadVME.h"
 
 #include "mafVMELandmarkCloud.h"
-#include "mmgGui.h"
+#include "mafGUI.h"
+
 #include "lhpUser.h"
 
 #include "mafNode.h"
@@ -249,7 +250,7 @@ void lhpOpUploadMultiVME::SaveConnectionConfigurationFile()
 void lhpOpUploadMultiVME::CreateGui()
 //----------------------------------------------------------------------------
 {
-  m_Gui = new mmgGui(this);
+  m_Gui = new mafGUI(this);
 
   m_Gui->Divider(2);
   

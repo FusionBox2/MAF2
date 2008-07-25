@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: mafOpImporterRAWVolume_BES.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-22 15:09:01 $
-Version:   $Revision: 1.4 $
+Date:      $Date: 2008-07-25 12:08:10 $
+Version:   $Revision: 1.5 $
 Authors:   Paolo Quadrani     Silvano Imboden     Josef Kohout
 ==========================================================================
 Copyright (c) 2002/2004
@@ -20,9 +20,9 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 
 #include "mafOpImporterRAWVolume_BES.h"
 
-#include "mmgGui.h"
+#include "mafGUI.h"
 #include "mafRWI.h"
-#include "mmgDialogPreview.h"
+#include "mafGUIDialogPreview.h"
 #include "mafTagItem.h"
 #include "mafTagArray.h"
 
@@ -159,10 +159,10 @@ enum RAW_IMPORTER_ID
 void mafOpImporterRAWVolume_BES::OpRun()
 //----------------------------------------------------------------------------
 {
-	m_Gui = new mmgGui(this);
+	m_Gui = new mafGUI(this);
 
 	//dialog +++++++++++++++++++++++++++++++++++++++
-	m_Dialog = new mmgDialogPreview(_("raw importer"), mafCLOSEWINDOW | mafRESIZABLE | mafUSEGUI | mafUSERWI);
+	m_Dialog = new mafGUIDialogPreview(_("raw importer"), mafCLOSEWINDOW | mafRESIZABLE | mafUSEGUI | mafUSERWI);
 
 	//Preview Pipeline ++++++++++++++++++++++++++++++
 	vtkNEW(m_Reader);
@@ -246,7 +246,7 @@ void mafOpImporterRAWVolume_BES::OpRun()
 	m_Gui->OkCancel();
 
 	//slice slider +++++++++++++++++++++++++++++++++++++++++++
-	m_GuiSlider = new mmgGui(this);  
+	m_GuiSlider = new mafGUI(this);  
 	m_SliceSlider = m_GuiSlider->Slider(ID_SLICE,_("slice num"),&m_CurrentSlice,0);
   m_GuiSlider->Bool(ID_LOOKUPTABLE, _("use lookup table"), &m_UseLookupTable, 1, 
     _("determines whether the default lookup table should be used for the preview"));

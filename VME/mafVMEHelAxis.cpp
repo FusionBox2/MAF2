@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafVMEHelAxis.cpp,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-07-25 12:15:29 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -23,7 +23,7 @@
 //----------------------------------------------------------------------------
 #include "mafVMEHelAxis.h"
 
-#include "mmgGui.h"
+#include "mafGUI.h"
 #include "mafPlotMath.h"
 #include "mafIndent.h"
 #include "mmaMaterial.h"
@@ -393,7 +393,7 @@ void mafVMEHelAxis::OnEvent(mafEventBase *maf_event)
 }
 
 //----------------------------------------------------------------------------
-mmgGui *mafVMEHelAxis::CreateGui()
+mafGUI *mafVMEHelAxis::CreateGui()
 //----------------------------------------------------------------------------
 {
   wxString saAxisChoices[2] = {"Prefer Z Axis", "Prefer Y Axis"};

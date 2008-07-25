@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoLnSurf.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-04-14 12:03:18 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2008-07-25 12:19:11 $
+  Version:   $Revision: 1.6 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -29,7 +29,7 @@
 #include "mafDecl.h"
 #include "mafTagArray.h"
 #include "mafEvent.h"
-#include "mmgGui.h"
+#include "mafGUI.h"
 
 #include "mafOpExplodeCollapse.h"
 
@@ -122,7 +122,7 @@ void mmoLnSurf::OpRun()
   const wxString choices_string[] = {_("Lines and surface"), _("Surface"), _("Lines")}; 
   if(m_Gui == NULL)
   {
-    m_Gui = new mmgGui(this);
+    m_Gui = new mafGUI(this);
     m_Gui->FloatSlider(ID_RHO_SPL, "rho spline param",&m_rhoLine, 0.0, 1000.0);
     m_Gui->FloatSlider(ID_RHO_SRF, "rho surface param",&m_rhoSurf, 0.0, 1000.0);
     m_Gui->FloatSlider(ID_SGM_SRF, "sigma surface param",&m_sgmSurf, 0.0, 1000.0);

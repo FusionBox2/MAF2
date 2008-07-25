@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-09 07:36:53 $
-Version:   $Revision: 1.8 $
+Date:      $Date: 2008-07-25 12:19:11 $
+Version:   $Revision: 1.9 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -56,7 +56,7 @@ MafMedical is partially based on OpenMAF.
 
 #include "mafTagArray.h"
 
-#include "mmgGui.h"
+#include "mafGUI.h"
 #include "lhpUser.h"
 #include "mafNode.h"
 #include "mafVMEGenericAbstract.h"
@@ -830,7 +830,7 @@ mafString lhpOpEditTag::GetXMLDictionaryFileName( mafString dictionaryFileNamePr
 
 void lhpOpEditTag::CreateGui()
 {
-  m_Gui = new mmgGui(this);
+  m_Gui = new mafGUI(this);
 
   m_Gui->Divider(2);
 

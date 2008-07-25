@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpVisualPipeSurfaceScalar.h,v $
   Language:  C++
-  Date:      $Date: 2008-02-19 09:54:32 $
-  Version:   $Revision: 1.2 $
+  Date:      $Date: 2008-07-25 12:15:29 $
+  Version:   $Revision: 1.3 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
@@ -56,7 +56,7 @@ public:
 
 protected:
   /** Internally used to create a new instance of the GUI.*/
-  virtual mmgGui *CreateGui();
+  virtual mafGUI *CreateGui();
 
   vtkPolyDataMapper *m_Mapper;
   vtkActor *m_Actor;

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoStickPalpation.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-03-06 12:06:12 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2008-07-25 12:19:42 $
+  Version:   $Revision: 1.4 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -28,7 +28,7 @@
 #include "mafDecl.h"
 #include "mafOp.h"
 #include "mafEvent.h"
-#include "mmgGui.h"
+#include "mafGUI.h"
 
 #include "mafDictionary.h"
 #include "mafOpExplodeCollapse.h"
@@ -199,7 +199,7 @@ void mmoStickPalpation::CreateGui()
   const wxString choices_string[] = {_("rigid"), _("similarity"), _("affine")}; 
   if(m_Gui == NULL)
   {
-    m_Gui = new mmgGui(this);
+    m_Gui = new mafGUI(this);
     m_Gui->SetListener(this);
     m_Gui->Label("");
     m_Gui->Button(ID_STICK_DEFINITION, "Wand definition cloud", "", "Press to select wand cloud with wand definition." );  
