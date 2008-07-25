@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoDICOMImporter_BES.h,v $
   Language:  C++
-  Date:      $Date: 2008-07-22 13:12:05 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-07-25 12:30:42 $
+  Version:   $Revision: 1.2 $
   Authors:   Paolo Quadrani    Stefano Perticoni    Josef Kohout
 ==========================================================================
   Copyright (c) 2002/2004
@@ -30,7 +30,7 @@
 // forward references :
 //----------------------------------------------------------------------------
 class mafNode;
-class mmgDialogPreview;
+class mafGUIDialogPreview;
 class mmoDICOMImporter_BESListElement;
 class mmiDICOMImporterInteractor;
 class vtkPlaneSource;
@@ -181,7 +181,7 @@ protected:
 	wxString									m_BuildStepChoices[4];
 
 	mafTagArray							 *m_TagArray;
-	mmgDialogPreview				 *m_DicomDialog;
+	mafGUIDialogPreview				 *m_DicomDialog;
 	mafVMEVolumeGray				 *m_Volume;
   mafVMEImage              *m_Image;
 

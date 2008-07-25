@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: medOpImporterRAWImages_BES.h,v $
   Language:  C++
-  Date:      $Date: 2008-07-25 12:03:43 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2008-07-25 12:30:41 $
+  Version:   $Revision: 1.5 $
   Authors:   Stefania Paperini porting Matteo Giacomoni
              Modified by Josef Kohout to support large volumes 
 ==========================================================================
@@ -208,7 +208,7 @@ protected:
 	vtkWindowLevelLookupTable	*m_LookupTable;
 	
 	mafGUIDialogPreview	*m_Dialog;
-  mmgGui* m_GuiSlider;
+  mafGUI* m_GuiSlider;
 
 	mmiDICOMImporterInteractor *m_DicomInteractor;
 

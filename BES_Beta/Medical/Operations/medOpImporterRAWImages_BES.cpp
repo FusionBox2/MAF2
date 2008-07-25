@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: medOpImporterRAWImages_BES.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-07-25 12:03:43 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2008-07-25 12:30:41 $
+  Version:   $Revision: 1.6 $
   Authors:   Stefania Paperini porting Matteo Giacomoni
              Modified by Josef Kohout to support large volumes 
 ==========================================================================
@@ -347,7 +347,7 @@ void medOpImporterRAWImages_BES::CreateGui()
 		slice_sizer->Add(m_SliceSlider, 1, wxALIGN_CENTER|wxEXPAND);
 
 #pragma warning(suppress: 6211) // warning C6211: Leaking memory 'slice_sizer' due to an exception. Consider using a local catch block to clean up memory:
-    m_GuiSlider = new mmgGui(this);      
+    m_GuiSlider = new mafGUI(this);      
     m_GuiSlider->Bool(ID_LOOKUPTABLE, _("use lookup table"), &m_UseLookupTable, 1, 
       _("determines whether the default lookup table should be used for the preview"));
     m_GuiSlider->Show(true);
