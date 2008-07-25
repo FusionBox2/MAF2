@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-07-25 12:00:07 $
-  Version:   $Revision: 1.64 $
+  Date:      $Date: 2008-07-25 15:04:40 $
+  Version:   $Revision: 1.65 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -73,6 +73,7 @@
 #include "mafOpImporterVTK.h"
 #include "mafOpImporterMSF1x.h"
 #include "mafOpImporterVRML.h"
+#include "BES_Beta/openMAF/Operators/mafOpImporterBBF.h"
 //BES: 23.6.2008 - Large Volume - to be merged 
 #include "BES_Beta/openMAF/Operators/mafOpImporterRAWVolume_BES.h"
 //#include "mafOpImporterRAWVolume.h"
@@ -296,6 +297,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mafOpImporterVTK("VTK"),"Other");
   m_Logic->Plug(new mafOpImporterMSF("MSF"),"Other");
   m_Logic->Plug(new mafOpImporterMSF1x("MAF 1.x"),"Other");
+  m_Logic->Plug(new mafOpImporterBBF("BFF (VolumeLarge)"),"Other");
   m_Logic->Plug(new mafOpImporterRAWVolume_BES("RAW Volume"),"Images");
   m_Logic->Plug(new medOpImporterRAWImages_BES("Raw Images"),"Images");
   m_Logic->Plug(new mafOpImporterImage("Images"),"Images");
@@ -389,6 +391,7 @@ bool lhpBuilderApp::OnInit()
   // View DRR
   mafViewVTK *vdrr = new mafViewVTK("DRR");
   vdrr->PlugVisualPipe("mafVMEVolumeGray","medPipeVolumeDRR",MUTEX);
+  vdrr->PlugVisualPipe("mafVMEVolumeLarge","medPipeVolumeDRR",MUTEX);
   m_Logic->Plug(vdrr);
 
   // View Analog graph
@@ -404,6 +407,7 @@ bool lhpBuilderApp::OnInit()
   mafViewVTK *viso = new mafViewVTK("Isosurface");
   viso->PlugVisualPipe("mafVMEVolumeGray", "mafPipeIsosurface",MUTEX);
   viso->PlugVisualPipe("medVMELabeledVolume", "mafPipeIsosurface",MUTEX);
+  viso->PlugVisualPipe("mafVMEVolumeLarge","mafPipeIsosurface",MUTEX);
   m_Logic->Plug(viso);
 
   mafViewOrthoSlice *viewOrthoSlice = new mafViewOrthoSlice("OrthoSlice");

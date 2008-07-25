@@ -28,6 +28,8 @@ SET(PROJECT_SRCS
 	openMAF/IO/mafVolumeLargeWriter.h  
 	openMAF/Operators/mafOpImporterRAWVolume_BES.cpp
 	openMAF/Operators/mafOpImporterRAWVolume_BES.h       
+	openMAF/Operators/mafOpImporterBBF.cpp
+	openMAF/Operators/mafOpImporterBBF.h       
 	openMAF/VME/mafVMEVolumeLarge.cpp
 	openMAF/VME/mafVMEVolumeLarge.h
 	openMAF/VME/mafVMEVolumeLargeUtils.cpp
