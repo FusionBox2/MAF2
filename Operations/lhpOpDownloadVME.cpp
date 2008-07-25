@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-22 12:54:15 $
-Version:   $Revision: 1.23 $
+Date:      $Date: 2008-07-25 08:00:40 $
+Version:   $Revision: 1.24 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -799,6 +799,7 @@ int lhpOpDownloadVME::ImportMSF()
   mafString msfFileName;
   msfFileName.Append(m_IncomingCompletePath);
   msfFileName.Append("outputMAF.msf");
+  msfFileName.ParsePathName();
 
   mafVMEStorage *storage;
   storage = mafVMEStorage::New();
