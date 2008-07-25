@@ -70,7 +70,6 @@ class DownloadHandler:
         
     
     def moveFileInMSFDirectory(self):
-        print "Move file in current MSF dir"
         #rename file, reading information by conf file
         try:
           file = open(self.dirCache+"configuration.conf","r")
@@ -80,14 +79,14 @@ class DownloadHandler:
         
         fullPathInMSF = file.read()
         file.close()
-        print "move " + self.dirCache+self.srbData + " in " + fullPathInMSF
-        
+                
         if(os.path.exists(fullPathInMSF)):
             os.remove(fullPathInMSF)
             
         dataName = os.path.basename(fullPathInMSF)
     
         os.rename(self.dirCache+self.srbData, self.dirCache+dataName)
+        print "Download complete!"
         pass
         
     def download(self):
