@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpExporterAnsysInputFile.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-07-25 12:19:11 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2008-07-25 12:36:47 $
+  Version:   $Revision: 1.9 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -197,7 +197,7 @@ void lhpOpExporterAnsysInputFile::CreateGui()
 {
   mafString wildc = "Stereo Litography (*.stl)|*.stl";
 
-  m_Gui = new mmgGui(this);
+  m_Gui = new mafGUI(this);
   m_Gui->Label("absolute matrix",true);
   m_Gui->Bool(ID_ABS_MATRIX_TO_STL,"apply",&m_ABSMatrixFlag,0);
   m_Gui->OkCancel();  
