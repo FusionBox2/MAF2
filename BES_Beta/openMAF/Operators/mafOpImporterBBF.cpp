@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mafOpImporterBBF.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-07-25 15:05:11 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-07-28 12:42:57 $
+  Version:   $Revision: 1.2 $
   Authors:   Hui Wei
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -93,13 +93,16 @@ int mafOpImporterBBF::ImportBBF()
 	if(!this->m_TestMode)
 		wxBusyInfo wait(_("Loading file: ..."));
   
-	size_t idx1 = m_File.find_last_of("_");
-	size_t idx2 = m_File.find_last_of(".");
-	wxString nFileName = m_File.Mid(0,idx1)+m_File.Mid(idx2);
-	
-  mafVolumeLargeReader* reader = mafVolumeLargeReader::New();
-	reader->SetFileName(nFileName);
-	reader->Update();//is it necessary ?
+  size_t idx1 = m_File.find_last_of("_");
+  size_t idx2 = m_File.find_last_of(".");
+  size_t idx3 = m_File.find_last_of("\\");
+
+  wxString nFileName = m_File.Mid(0,idx1)+m_File.Mid(idx2);
+  size_t idx4 = nFileName.find_last_of(".");
+  wxString showName = m_File.Mid(idx3+1,idx4-idx3-1);
+  mafVolumeLargeReader *reader = mafVolumeLargeReader::New();
+  reader->SetFileName(nFileName);
+  reader->Update();
 	
 	mafNEW(m_VmeLarge); 
   m_VmeLarge->SetFileName("");
@@ -107,7 +110,7 @@ int mafOpImporterBBF::ImportBBF()
   {
 	  m_Output = m_VmeLarge;
     m_Output->ReparentTo(m_Input);
-	  m_Output->SetName("newBBF");
+    m_Output->SetName(showName);
     return MAF_OK;
   }
   else
