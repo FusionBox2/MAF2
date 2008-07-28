@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: mafOpImporterRAWVolume_BES.h,v $
 Language:  C++
-Date:      $Date: 2008-07-22 13:14:55 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2008-07-28 09:07:17 $
+Version:   $Revision: 1.3 $
 Authors:   Paolo Quadrani     Silvano Imboden     Josef Kohout
 ==========================================================================
 Copyright (c) 2002/2004
@@ -35,7 +35,7 @@ class vtkImageReader;
 class vtkMAFLargeImageReader;
 #endif // VME_VOLUME_LARGE
 class vtkActor;
-class mmgDialogPreview;
+class mafGUIDialogPreview;
 class mafVMEVolumeGray;
 class mafVMEVolumeRGB;
 class vtkWindowLevelLookupTable;
@@ -172,7 +172,7 @@ protected:
   int			m_NumberOfByte;
   bool		m_BuildRectilinearGrid;
   mafString	m_CoordFile;
-  mmgGui *m_GuiSlider;
+  mafGUI *m_GuiSlider;
 #ifdef VME_VOLUME_LARGE
   int     m_MemLimit;
 #endif // VME_VOLUME_LARGE
@@ -199,7 +199,7 @@ protected:
   int					  m_CurrentSlice;
   wxSlider		 *m_SliceSlider;
 
-  mmgDialogPreview *m_Dialog;
+  mafGUIDialogPreview *m_Dialog;
 
 #ifdef VME_VOLUME_LARGE
   //LargeDataSetCallback may access our protected stuff
