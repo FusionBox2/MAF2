@@ -70,24 +70,23 @@ class DownloadHandler:
         
     
     def moveFileInMSFDirectory(self):
-        #rename file, reading information by conf file
-        try:
-          file = open(self.dirCache+"configuration.conf","r")
-        except:
-          print "Unable to Open ConfigurationFile"
-          return
-        
-        fullPathInMSF = file.read()
-        file.close()
-                
-        if(os.path.exists(fullPathInMSF)):
-            os.remove(fullPathInMSF)
+            print "Move file in current MSF dir"
+            #rename file, reading information by conf file
+            try:
+              file = open(self.dirCache+"configuration.conf","r")
+            except:
+              print "Unable to Open ConfigurationFile"
+              return
             
-        dataName = os.path.basename(fullPathInMSF)
-    
-        os.rename(self.dirCache+self.srbData, self.dirCache+dataName)
-        print "Download complete!"
-        pass
+            fullPathInMSF = file.read()
+            file.close()
+            print "move " + self.dirCache+self.srbData + " in " + fullPathInMSF
+            
+            if(os.path.exists(fullPathInMSF)):
+                os.remove(fullPathInMSF)
+            
+            shutil.move(self.dirCache+self.srbData, fullPathInMSF)
+            pass
         
     def download(self):
         print "DownloadHandler inside download:"
