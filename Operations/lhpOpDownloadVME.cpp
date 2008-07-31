@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-25 12:19:11 $
-Version:   $Revision: 1.25 $
+Date:      $Date: 2008-07-31 08:35:41 $
+Version:   $Revision: 1.26 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -60,6 +60,7 @@ MafMedical is partially based on OpenMAF.
 #include "mafVMEGenericAbstract.h"
 #include "mafOpImporterMSF.h"
 #include "mafVMELandmarkCloud.h"
+#include "medVMEWrappedMeter.h"
 #include "mafTagArray.h"
 
 #include "mafVMEStorage.h"
@@ -327,7 +328,15 @@ void lhpOpDownloadVME::OpDo()
           //set subId to 0, because it is the first landmark of the cloud
           subId = 0;
         }
-        m_DerivedNodeVector[n]->SetLink(linkName.GetCStr(), m_LinkNodeVector[counter], subId); 
+        if (m_DerivedNodeVector[n]->IsA("medVMEWrappedMeter") && linkName == m_LinkNodeVector[counter]->GetName())
+        {
+          ((medVMEWrappedMeter *)m_DerivedNodeVector[n])->SetMeterLink(linkName.GetCStr(), m_LinkNodeVector[counter]); 
+          ((medVMEWrappedMeter *)m_DerivedNodeVector[n])->AddMidPoint(m_LinkNodeVector[counter]);
+        }
+        else
+        {
+          m_DerivedNodeVector[n]->SetLink(linkName.GetCStr(), m_LinkNodeVector[counter], subId); 
+        }
         counter++;
       }
     }
