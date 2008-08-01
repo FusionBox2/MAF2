@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-31 08:35:41 $
-Version:   $Revision: 1.26 $
+Date:      $Date: 2008-08-01 10:30:38 $
+Version:   $Revision: 1.27 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -323,21 +323,36 @@ void lhpOpDownloadVME::OpDo()
       for (mafNode::mafLinksMap::iterator i = m_DerivedNodeVector[n]->GetLinks()->begin(); i != m_DerivedNodeVector[n]->GetLinks()->end(); i++)
       {
         linkName = i->first;
-        if (m_LinkNodeVector[counter]->IsA("mafVMELandmarkCloud") && m_LinkNodeVector[counter]->GetNumberOfChildren() != 0)
+        if (m_LinkNodeVector[counter]->IsA("mafVMELandmarkCloud") && m_LinkNodeVector[counter]->GetNumberOfChildren() == 1)
         {
           //set subId to 0, because it is the first landmark of the cloud
           subId = 0;
-        }
-        if (m_DerivedNodeVector[n]->IsA("medVMEWrappedMeter") && linkName == m_LinkNodeVector[counter]->GetName())
-        {
-          ((medVMEWrappedMeter *)m_DerivedNodeVector[n])->SetMeterLink(linkName.GetCStr(), m_LinkNodeVector[counter]); 
-          ((medVMEWrappedMeter *)m_DerivedNodeVector[n])->AddMidPoint(m_LinkNodeVector[counter]);
+          m_LinkNodeVector[counter] = m_LinkNodeVector[counter]->GetFirstChild();
+          
+          if (m_DerivedNodeVector[n]->IsA("medVMEWrappedMeter") && linkName == m_LinkNodeVector[counter]->GetName())
+          {
+            ((medVMEWrappedMeter *)m_DerivedNodeVector[n])->SetMeterLink(linkName.GetCStr(), m_LinkNodeVector[counter]); 
+            ((medVMEWrappedMeter *)m_DerivedNodeVector[n])->AddMidPoint(m_LinkNodeVector[counter]->GetParent());
+          }
+          else
+          {
+            m_DerivedNodeVector[n]->SetLink(linkName.GetCStr(), m_LinkNodeVector[counter]->GetParent(), subId); 
+          }
+          counter++;
         }
         else
         {
-          m_DerivedNodeVector[n]->SetLink(linkName.GetCStr(), m_LinkNodeVector[counter], subId); 
+         if (m_DerivedNodeVector[n]->IsA("medVMEWrappedMeter") && linkName == m_LinkNodeVector[counter]->GetName())
+          {
+            ((medVMEWrappedMeter *)m_DerivedNodeVector[n])->SetMeterLink(linkName.GetCStr(), m_LinkNodeVector[counter]); 
+            ((medVMEWrappedMeter *)m_DerivedNodeVector[n])->AddMidPoint(m_LinkNodeVector[counter]);
+          }
+          else
+          {
+            m_DerivedNodeVector[n]->SetLink(linkName.GetCStr(), m_LinkNodeVector[counter]->GetParent()); 
+          }
+          counter++;
         }
-        counter++;
       }
     }
   }
