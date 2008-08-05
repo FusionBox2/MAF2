@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-07-23 08:18:42 $
-  Version:   $Revision: 1.21 $
+  Date:      $Date: 2008-08-05 10:32:29 $
+  Version:   $Revision: 1.22 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -339,80 +339,6 @@ void lhpTagHandler_L0000_resource_data_Dataset_DatasetURI::HandleAutoTag(lhpTagH
   cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
 }
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_LocalFileCheckSum);
-//------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Dataset_LocalFileCheckSum::lhpTagHandler_L0000_resource_data_Dataset_LocalFileCheckSum()
-//------------------------------------------------------------------------------------
-{
-  ExtractTagName();
-}
-//------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Dataset_LocalFileCheckSum::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
-//------------------------------------------------------------------------------------
-{
-  //here there is also the controller for zip archive
-  long length = 0;
-  mafString inputMSF = cargo->GetInputMSF();
-  mafString id ;
-  id << cargo->GetInputVme()->GetId();
-
-  if(cargo->GetInputVme()->GetId() == -1) return;
-
-  //here put code for filename
-  wxString oldDir = wxGetCwd();
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
-
-  // get manual tags
-  wxString command2execute;
-  command2execute.Clear();
-  command2execute = m_PythonwExe;
-
-  command2execute.Append(" lhpCheckBinaryName.py ");
-  command2execute.Append("\"");
-  command2execute.Append(inputMSF.GetCStr());
-  command2execute.Append("\"");
-  command2execute.Append(" ");
-  command2execute.Append(id.GetCStr());
-
-  //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
-
-  long pid = wxExecute(command2execute, wxEXEC_SYNC);
-
-  wxArrayString output;
-  wxArrayString errors;
-
-  pid = wxExecute(command2execute, output, errors);
-
-  wxString result = output[output.size() - 1];
-
-  wxSetWorkingDirectory(oldDir);
-
-  //if result == "", no binary data has been found
-  if (result == "")
-  {
-    cargo->SetTagHandlerGeneratedString("No binary data associated");
-    return;
-  }
-  //if VME has more than one vtk file, has also more than one MD5Checksum, so don't write it
-  else if (!cargo->GetInputVme()->IsA("mafVMEExternalData") && !cargo->GetInputVme()->IsA("mafVMELandmarkCloud") 
-           && !cargo->GetInputVme()->IsA("mafVMEVector") && !cargo->GetInputVme()->IsA("medVMEAnalog"))
-  {
-    mafTimeStamp currentTime = cargo->GetInputVme()->GetTimeStamp();
-    mafVMEGenericAbstract *vme = mafVMEGenericAbstract::SafeDownCast(cargo->GetInputVme());
-    if (vme->GetDataVector()->GetItem(currentTime)->GetTagArray()->IsTagPresent("MD5Checksum"))
-    {
-      mafTagItem *MD5Tag = vme->GetDataVector()->GetItem(currentTime)->GetTagArray()->GetTag("MD5Checksum");
-      mafString MD5Str = MD5Tag->GetValue();
-      cargo->SetTagHandlerGeneratedString(MD5Str);
-    }
-  }
-  else
-  {
-    cargo->SetTagHandlerGeneratedString("MD5 Checksum not Found");
-  }
-}
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_UploadDate);
 //------------------------------------------------------------------------------------
