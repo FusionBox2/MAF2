@@ -151,8 +151,6 @@ class UploadHandler:
         if(binarySendResult == True): #and self.checksumControl() == "true"):
           print "Waiting for sending XML..."
           self.sendXMLFile()
-        
-          self.writeMD5tag()
           
           #Fake progress bar used when no binary data is uploaded
           percentage = 100          
