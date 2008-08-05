@@ -2,6 +2,8 @@ import vmeDownloader
 from webServicesClient import MtomDownload
 import DownloadHandler
 import os, sys, string, time, re ,shutil
+import hashlib
+import xml.dom.minidom as xd
 from stat import ST_SIZE 
 import threading, thread, CustomThread
 from lhpDefines import *
@@ -20,6 +22,8 @@ class DownloadHandler:
         self.urlServer = urlServer
         self.fileSize = fileSize
         self.block = threading.Lock()
+        self.localChksum = ""
+        self.remoteChksum = ""
         self.proxyHost = ""
         self.proxyPort = 0
         pass
@@ -107,7 +111,31 @@ class DownloadHandler:
                   break
             
             print str(self.controlLocalFileDimension())
-            self.moveFileInMSFDirectory()
+            
+            
+            #-----MD5 chek-point-----#
+            self.localChksum = self.md5(self.dirCache+self.srbData)
+            print "Loocal checksum= " + self.localChksum
+            time.sleep(2)
+            
+            self.remoteChksum = self.retrieveTagValue('L0000_resource_data_Dataset_LocalFileCheckSum')
+            self.remoteChksum = self.remoteChksum.lower()
+            print "remote checksum= " + self.remoteChksum
+            time.sleep(2)
+            
+            if (self.localChksum == self.remoteChksum):
+                print " "
+                print "MD5 chkesum control successful!"
+                print " "
+                self.moveFileInMSFDirectory()
+            else:
+                print " "
+                print "Error: MD5 chkesum control unsuccessful!"
+                print " "
+                time.sleep(5)
+                return
+                
+                
         else:
             if(DownloadHandler.queue):
                 percentage = 100
@@ -115,6 +143,41 @@ class DownloadHandler:
                 DownloadHandler.queue.put(lista)              
         
         pass
+        
+    def md5(self,fileName):
+        #Compute md5 hash of the specified file
+        m = hashlib.md5()
+        try:
+            fd = open(fileName,"rb")
+        except IOError:
+            print "Unable to open the file in readmode:", filename
+            return
+        content = fd.readlines()
+        fd.close()
+        for eachLine in content:
+            m.update(eachLine)
+        return m.hexdigest()
+    
+    def retrieveTagValue(self, tag):
+        returnValue = ''
+        try:
+           file = open(self.dirCache + 'outputMAF.msf', 'r')
+        except :
+            return "Unable to open the file in readmode"
+        dom = xd.parse(file)
+        if dom.getElementsByTagName("fault"):
+                return       
+        for el in dom.getElementsByTagName('TItem'):
+           if(el.attributes != None and el.attributes.get('Name')):
+              attrNode = el.attributes.get('Name')
+              attrValue = attrNode.nodeValue
+              if(attrValue == tag):
+                  childToFind = el.getElementsByTagName('TC')[0] # first element of childList
+                  returnValue = childToFind.firstChild.nodeValue
+        file.close()
+        
+        return returnValue
+
 
                       
 def createDownloadHandler(queue, observer, dirCache, srbData , usr , pwd, urlServer, fileSize):
