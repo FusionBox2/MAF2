@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-08-01 10:30:38 $
-Version:   $Revision: 1.27 $
+Date:      $Date: 2008-08-05 13:39:48 $
+Version:   $Revision: 1.28 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -361,20 +361,21 @@ void lhpOpDownloadVME::OpDo()
 int lhpOpDownloadVME::DownloadVME(wxArrayString listVME)   
 //----------------------------------------------------------------------------
 {
-	if(!CreateIncomingDirectory())
-	{
-		wxMessageBox("Unable to create Incoming Directory");
-		return MAF_ERROR;
-	}
-  
-	if(!CreateIncomingCache())
-	{
-		wxMessageBox("Unable to create a temporary cache, remember that msf must be saved locally");
-		return MAF_ERROR;
-	}
+
 
   for (int i = 0; i < listVME.size(); i++)
   {
+    if(!CreateIncomingDirectory())
+    {
+      wxMessageBox("Unable to create Incoming Directory");
+      return MAF_ERROR;
+    }
+
+    if(!CreateIncomingCache())
+    {
+      wxMessageBox("Unable to create a temporary cache, remember that msf must be saved locally");
+      return MAF_ERROR;
+    }
     if(DownloadSelectedXMLFromBasket(listVME[i]) != MAF_OK)
     {
       wxMessageBox("Unable to download xml");
