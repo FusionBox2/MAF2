@@ -32,6 +32,9 @@ class UploadHandler:
         self.hasLink = hasLink
         self.vmeName = vmeName
         self.existThread = 0
+        self.remoteChksum = ""
+        self.localChksum = ""
+        self.uri = ""
         self.proxyHost = ""
         self.proxyPort = 0
             
@@ -133,11 +136,23 @@ class UploadHandler:
         else:
             self.createXMLAndBinary()
             binarySendResult = True
-           
+            
+        #---------------------------------------------------#
+        #Decommment when correct cheksum will return from WS
+        #if (self.localChksum != self.remoteChksum):
+        #    print "Checksum validation error!"
+        #    binarySendResult = False
+        #---------------------------------------------------#
+            
+        
+        
+          
         #send xml file, perhaps here free source
-        if(binarySendResult == True):
+        if(binarySendResult == True): #and self.checksumControl() == "true"):
           print "Waiting for sending XML..."
           self.sendXMLFile()
+        
+          self.writeMD5tag()
           
           #Fake progress bar used when no binary data is uploaded
           percentage = 100          
@@ -152,7 +167,8 @@ class UploadHandler:
         
         else:
           print "Upload Error on Binary"
-          
+
+                  
     def createOutgoingDir(self):
         curDir = sys.path[0]
         count = 0
@@ -177,8 +193,7 @@ class UploadHandler:
         upl.VmeToExtractID = int(self.id)
         upl.DatasetURI = self.BinaryURI
         upl.hasLink = self.hasLink
-
-        upl.Upload()
+        self.localChksum = upl.Upload()
         #get size of binary locally
         self.binaryFileSize = self.getBinaryFileSize()
 
@@ -270,7 +285,7 @@ class UploadHandler:
                
         os.chdir(oldDir)  
         return result
-        
+            
 
     def __sendFile(self,filename):
         
@@ -283,8 +298,11 @@ class UploadHandler:
         instance = MtomUpload.MtomUpload()
         result = instance.Upload(filename,'https://ws-lhdl.cineca.it/mafSRBUpload.cgi',self.proxyHost,self.proxyPort)
         
-        cheksum = result.chksum
-        uri = result.uriFile
+        self.remoteChksum = result.chksum
+        #print "check: " + str(result.chksum)
+        self.uri = result.uriFile
+        #print "URI File: " + str(result.uriFile)
+        #time.sleep(10)
         os.chdir(oldDir)
         
         
@@ -334,6 +352,8 @@ class UploadHandler:
     
     def getBinaryFileSize(self):
         return os.stat(self.dirOutgoing + "\\" +self.getBinaryFile()).st_size
+    
+    
 		
 def createUploadHandler(queue, observer, dirCache, id , usr , pwd, urlServer, manualTagFile, hasLink,vmeName):
     uploadHandler = UploadHandler(queue,observer, dirCache, id, usr , pwd, urlServer, manualTagFile, hasLink,  vmeName)

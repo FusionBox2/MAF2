@@ -13,6 +13,7 @@ import os
 import re
 import csv
 import datetime, time
+import hashlib
 from Debug import Debug
 from xml.dom import minidom
 from xml.dom import Node
@@ -27,10 +28,12 @@ class vmeUploaderOnly:
         self.OutputVMEXMLName = "exportedVME.xml"
         self.OutputFolderName = "FolderToUpload"
         self.DatasetURI = "NOT PRESENT"
-        self.hasLink = "";
+        self.hasLink = ""
+        self.localChksum = ""
         
     def Upload(self):
         self.__Parse()
+        return self.localChksum
         
     def __Parse(self):
        
@@ -79,7 +82,7 @@ class vmeUploaderOnly:
         msfDOMParserInstance.SetTagNodeText(nodeURI, today)       
         day = msfDOMParserInstance.GetTagNodeText(nodeURI)
         print day
-        print "Vme has link? " + self.hasLink
+        
         
         if (self.hasLink == "true"):   
             newDir = os.getcwd()
@@ -97,6 +100,8 @@ class vmeUploaderOnly:
             print URI 
             file.close()
             os.chdir(newDir)
+            
+        
 
         # for the moment cannot remove anything
         # msfDOMParserInstance.RemoveTagsByList(outVmeTagArrayNode, a)
@@ -110,24 +115,57 @@ class vmeUploaderOnly:
         # get the vme node 
         #id is always 1 because the msf in uploadCache contains only teh vme to upload
         outVmeNode = msfDOMParserInstance.GetVmeNodeById(rootNode, 1) 
-        
-        newDoc = minidom.Document()
-        newDoc.appendChild(outVmeNode)
-        outFileXML = open(self.OutputVMEXMLName, 'w')
-        newDoc.writexml(outFileXML)
+
         
         # Copy of VME binary file to this directory
         # get the file to be copied
         fileNameList = msfDOMParserInstance.GetVMEDataURLList(outVmeNode)
         print fileNameList
         
+        oldDir = os.getcwd()
+        os.chdir(self.InputMSFDirectory)
+        
         if(len(fileNameList) == 1 and len(fileNameList[0]) != 0):
             print self.InputMSFDirectory
             os.chdir(self.InputMSFDirectory)
             shutil.copy2(fileNameList[0],self.OutputFolderName)
+            
+            #-----MD5 checksum calculation-----#
+            os.chdir(self.OutputFolderName)
+            self.localChksum = self.md5(fileNameList[0])
+            print "Loocal checksum= " + self.localChksum
+            time.sleep(2)
+            
+            #AUTO TAGS SET  WITH  WEBSERVICE      
+            nodeURI = msfDOMParserInstance.GetTagNodeByTagName(outVmeTagArrayNode, "L0000_resource_data_Dataset_LocalFileCheckSum")
+            msfDOMParserInstance.SetTagNodeText(nodeURI, self.localChksum)       
+            chksum = msfDOMParserInstance.GetTagNodeText(nodeURI)
+            print chksum
+
         
+        os.chdir(oldDir)
+        newDoc = minidom.Document()
+        newDoc.appendChild(outVmeNode)
+        outFileXML = open(self.OutputVMEXMLName, 'w')
+        newDoc.writexml(outFileXML)
+
         print "\nWritten output XML file " + self.OutputVMEXMLName + " in directory " + self.OutputFolderName
-        #time.sleep(10)
+
+    
+    def md5(self,fileName):
+        #Compute md5 hash of the specified file
+        m = hashlib.md5()
+        try:
+            fd = open(fileName,"rb")
+        except IOError:
+            print "Unable to open the file in readmode:", filename
+            return
+        content = fd.readlines()
+        fd.close()
+        for eachLine in content:
+            m.update(eachLine)
+        return m.hexdigest()
+
         
 def run(inputMSFDirectory, vmeToExtractId, outputFolderName, outputVMEXMLName):                                            
     upl = vmeUploader()
