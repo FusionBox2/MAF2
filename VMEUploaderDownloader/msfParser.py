@@ -140,7 +140,7 @@ class msfParser:
                 print('"\n')
                 
     def GetVmeTagArrayNode(self,inputVmeNode):
-        self.Id = -1
+        self.Id = -2
         self.correctId = 1
         self.__GetVmeTagArrayNodeInternal(inputVmeNode)
         return self.__OutputTagArrayNode
@@ -153,7 +153,7 @@ class msfParser:
             attrNode = attrs.get(attrName)
             attrValue = attrNode.nodeValue
             if (attrName  == "Id"):
-                if (self.Id == -1):
+                if (self.Id == -2):
                     self.Id = attrValue 
                     break
                 if (attrValue != self.Id):
@@ -505,6 +505,19 @@ class msfParser:
     def GetVmeNodeById(self, vmeTreeRootNode, vmeId):
         self.__GetVmeNodeByIdInternal(vmeTreeRootNode, vmeId)
         # return vme node given its Id and the root node 
+        return self.__OutputVme
+    
+    def GetRootNode(self, vmeTreeRootNode):
+        for node in vmeTreeRootNode.childNodes:
+            #  search for a Node with name "Root"
+            if node.nodeType == Node.ELEMENT_NODE:
+                if node.nodeName == "Root":
+                    self.__OutputVme = node
+        return self.__OutputVme
+    
+    def GetMSFNode(self, parentNode):
+        if (parentNode.tagName == "MSF"):
+            self.__OutputVme = parentNode
         return self.__OutputVme
         
     def __GetVmeNodeByIdInternal2(self, vmeTreeRootNode, vmeId):
