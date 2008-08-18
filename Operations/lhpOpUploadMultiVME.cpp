@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-25 12:19:11 $
-Version:   $Revision: 1.10 $
+Date:      $Date: 2008-08-18 10:35:01 $
+Version:   $Revision: 1.11 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -61,10 +61,15 @@ MafMedical is partially based on OpenMAF.
 #include "lhpUser.h"
 
 #include "mafNode.h"
+#include "mafStorageElement.h"
 #include "mafNodeIterator.h"
+#include "mafTagArray.h"
 
 #include "lhpFactoryTagHandler.h"
 #include "vtkPolyData.h"
+
+
+#include "mafNodeIterator.h"
 
 #include <string>
 #include <istream>
@@ -89,7 +94,12 @@ mafOp(label)
 {
 	m_OpType  = OPTYPE_OP;
 	m_Canundo = false;
-  m_LinkURI.clear();
+  m_WithChild = false;
+  m_UploadedURIVector.clear();
+  m_UploadedNodeVector.clear();
+  m_EmptyNodeVector.clear();
+  m_FileCreatedVector.clear();
+ 
 
   m_PythonExe ="python.exe ";
   m_PythonUploadFullPath  = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\").c_str();
@@ -111,6 +121,10 @@ mafOp(label)
 lhpOpUploadMultiVME::~lhpOpUploadMultiVME()
 //----------------------------------------------------------------------------
 {
+  m_UploadedURIVector.clear();
+  m_UploadedNodeVector.clear();
+  m_EmptyNodeVector.clear();
+  m_FileCreatedVector.clear();
 }
 
 //----------------------------------------------------------------------------
@@ -153,7 +167,6 @@ void lhpOpUploadMultiVME::OpRun()
     {
       wxRemoveFile(m_ConnectionConfigurationFileName.GetCStr());
     }
-
     wxSetWorkingDirectory(oldDir);
   }
 
@@ -384,14 +397,35 @@ void lhpOpUploadMultiVME::OnEvent(mafEventBase *maf_event)
     case ID_SUBDICTIONARY:
     {
       // nothing to do for the moment...
-      mafLogMessage("You chosed dictionary number %i", m_SubdictionaryId);
+      mafLogMessage("You chose dictionary number %i", m_SubdictionaryId);
       m_UploadVME->SetDictionary(m_SubdictionaryId);
     }
     break;
 
     case wxOK:
       {
-        UploadMultiVME();
+        if (m_UploadingNode->IsA("mafVMERoot"))
+        {
+          m_WithChild = true;
+          m_EmptyNodeVector.clear();
+          m_UploadedNodeVector.clear();
+          UploadTree(m_NodeVector[m_NodeCounter]);
+          if ((m_NodeCounter + 1) < m_NodeVector.size())
+          {
+            this->HideGui();
+            this->MultiGui();
+          }
+          else
+          {
+            this->OpStop(OP_RUN_OK);
+            return;
+          }
+        }
+        else
+        {
+          m_WithChild = false;
+          UploadMultiVME();
+        }
       }
       break;
 
@@ -410,69 +444,154 @@ void lhpOpUploadMultiVME::OnEvent(mafEventBase *maf_event)
   }
 }
 //----------------------------------------------------------------------------
+void lhpOpUploadMultiVME::UploadTree(mafNode *node)   
+//----------------------------------------------------------------------------
+{
+  std::vector<const mafNode::mafChildrenVector*> childrenVector;
+  childrenVector.clear();
+  bool hasBinary = false;
+  bool alreadyUploaded = false;
+  bool emptyNode = false;
+  mafString URI;
+  int numVmeChild = 0;
+  int i = 0;
+  mafNode *childToUpload = NULL;
+  
+  const mafNode::mafChildrenVector *children;
+  children = node->GetChildren();
+  childrenVector.push_back(children);
+  numVmeChild = children->size();
+  childToUpload = children->at(0);
+  while (numVmeChild != 0)
+  {
+    i = 0;
+    for ( i ; i < children->size() ; i++)
+    {
+      numVmeChild = children->size();
+      alreadyUploaded = false;
+      emptyNode = false;
+      
+      //Check if VME children has been already uploaded
+      for (int c = 0; c < m_EmptyNodeVector.size(); c++)
+      {
+        if (m_EmptyNodeVector[c]->Equals(children->at(i)) && m_EmptyNodeVector[c]->GetId() == children->at(i)->GetId())
+        {
+          emptyNode = true;
+          break;
+        }
+      }
+      children = children->at(i)->GetChildren();
+
+      if (children->size() == 0 || emptyNode)
+      {
+        children = childrenVector.back();
+        childToUpload = children->at(i);
+
+        //Check if VME has been already uploaded
+        for (int c = 0; c < m_UploadedNodeVector.size(); c++)
+        {
+          if (m_UploadedNodeVector[c]->Equals(children->at(i)) && m_UploadedNodeVector[c]->GetId() == children->at(i)->GetId())
+          {
+            alreadyUploaded = true;
+            break;
+          }
+        }
+        if (!alreadyUploaded)
+        {
+          if (childToUpload->GetNumberOfLinks() != 0)
+          {
+            if (UploadVMELinks(childToUpload) == MAF_ERROR)
+            {
+              HideGui();
+              this->OpStop(OP_RUN_CANCEL);
+              return;
+            }
+          }
+          hasBinary = isBinaryDataPresent(childToUpload);
+          m_UploadVME->SetInput(childToUpload);
+          URI = "";
+          if (m_UploadVME->UploadVME(URI, hasBinary, childToUpload->GetNumberOfChildren()!=0) == MAF_ERROR || (URI == ""))
+          {
+          HideGui();
+          this->OpStop(OP_RUN_CANCEL);
+          return;
+          }
+          m_UploadedNodeVector.push_back(childToUpload);
+          m_EmptyNodeVector.push_back(childToUpload);
+          m_UploadedURIVector.push_back(URI);
+          SaveChildURIFile(childToUpload, URI);
+
+          this->HideGui();
+          this->MultiGui();
+        }
+      }
+      else
+      {
+        childrenVector.push_back(children);
+        i = -1;
+      }
+    }
+    m_EmptyNodeVector.push_back(childToUpload->GetParent());
+
+    if (childrenVector.size() > 1)
+      childrenVector.pop_back();
+    else
+      break;
+
+    children = childrenVector.back();
+    numVmeChild = children->size();
+  }
+
+  //upload VME Root
+  m_UploadVME->SetInput(node);
+  URI = "";
+  if (m_UploadVME->UploadVME(URI, false, node->GetNumberOfChildren()!=0) == MAF_ERROR)
+  {
+    HideGui();
+    this->OpStop(OP_RUN_CANCEL);
+    return;
+  }
+  m_UploadedNodeVector.push_back(node);
+  m_UploadedURIVector.push_back(URI);
+  if (node->IsA("mafVMERoot"))
+    m_NodeCounter++;
+}
+
+//----------------------------------------------------------------------------
 void lhpOpUploadMultiVME::UploadMultiVME()   
 //----------------------------------------------------------------------------
 {  
-  m_LinkURI.clear();
   bool hasBinary = false;
   mafString URI;
-  if ((m_NodeCounter + 1) < m_NodeVector.size())
+
+  m_UploadingNode = m_NodeVector[m_NodeCounter];
+  if (m_UploadingNode->GetNumberOfLinks() != 0)
   {
-    m_UploadingNode = m_NodeVector[m_NodeCounter];
-    if (m_UploadingNode->GetNumberOfLinks() != 0)
-    {
-      if (UploadVMELinks(m_UploadingNode) == MAF_ERROR)
-      {
-        HideGui();
-        this->OpStop(OP_RUN_CANCEL);
-        return;
-      }
-    }
-    hasBinary = isBinaryDataPresent(m_UploadingNode);
-    m_UploadVME->SetInput(m_UploadingNode);
-    if (SaveListURIFile() == MAF_ERROR)
-    {
-      wxMessageBox("Unable to write list of link binary URI. Uploading stopped.");
-      return;
-    }
-    if (m_UploadVME->UploadVME(URI, hasBinary) == MAF_ERROR)
+    if (UploadVMELinks(m_UploadingNode) == MAF_ERROR)
     {
       HideGui();
       this->OpStop(OP_RUN_CANCEL);
       return;
     }
+  }
+  hasBinary = isBinaryDataPresent(m_UploadingNode);
+  m_UploadVME->SetInput(m_UploadingNode);
+  URI = "";
+  if (m_UploadVME->UploadVME(URI, hasBinary, false) == MAF_ERROR)
+  {
+    HideGui();
+    this->OpStop(OP_RUN_CANCEL);
+    return;
+  }
 
+  if ((m_NodeCounter + 1) < m_NodeVector.size())
+  {
     m_NodeCounter++;
     this->HideGui();
     this->MultiGui();
   }
   else
   {
-    m_UploadingNode = m_NodeVector[m_NodeCounter];
-    if (m_UploadingNode->GetNumberOfLinks() != 0)
-    {
-      if (UploadVMELinks(m_UploadingNode) == MAF_ERROR)
-      {
-        HideGui();
-        this->OpStop(OP_RUN_CANCEL);
-        return;
-      }
-    }
-
-    hasBinary = isBinaryDataPresent(m_UploadingNode);
-    m_UploadVME->SetInput(m_UploadingNode);
-
-    if (SaveListURIFile() == MAF_ERROR)
-    {
-      wxMessageBox("Unable to write list of link binary URI. Uploading stopped.");
-      return;
-    }
-    if (m_UploadVME->UploadVME(URI, hasBinary) == MAF_ERROR)
-    {
-      HideGui();
-      this->OpStop(OP_RUN_CANCEL);
-      return;
-    }
     this->OpStop(OP_RUN_OK);
     return;
   }
@@ -482,10 +601,16 @@ void lhpOpUploadMultiVME::UploadMultiVME()
 int lhpOpUploadMultiVME::UploadVMELinks(mafNode *derived)   
 //----------------------------------------------------------------------------
 {  
-    for (mafNode::mafLinksMap::iterator i = m_UploadingNode->GetLinks()->begin(); i != m_UploadingNode->GetLinks()->end(); i++)
+  bool emptyNode = false;
+  std::vector<mafString> linkURI;
+  linkURI.clear();
+  bool alreadyUploaded = false;
+  bool hasBinary = false;
+  for (mafNode::mafLinksMap::iterator i = derived->GetLinks()->begin(); i != derived->GetLinks()->end(); i++)
   {
     
-    bool hasBinary = false;
+    hasBinary = false;
+    alreadyUploaded = false;
     mafString URI;
     if (i->second.m_Node != NULL)
     {
@@ -498,19 +623,77 @@ int lhpOpUploadMultiVME::UploadVMELinks(mafNode *derived)
       hasBinary = isBinaryDataPresent(link);
       wxMessageBox(wxString::Format("Link found! Upload VME: %s", link->GetName()));
 
-      m_UploadVME->SetInput(link);
-      if (m_UploadVME->UploadVME(URI, hasBinary) == MAF_ERROR || (hasBinary == true && URI == ""))
+      //Verify if the link has some link!!
+      if (link->GetNumberOfLinks() != 0)
       {
-        return MAF_ERROR;
+        if (UploadVMELinks(link) == MAF_ERROR)
+        {
+          return MAF_ERROR;
+        }
       }
-      m_LinkURI.push_back(URI);
+
+      m_UploadVME->SetInput(link);
+
+      //Check if VME has been already uploaded
+      int counterVec = 0;
+      for (counterVec = 0; counterVec < m_UploadedNodeVector.size(); counterVec++)
+      {
+        if (m_UploadedNodeVector[counterVec]->Equals(link))
+        {
+          alreadyUploaded = true;
+          break;
+        }
+      }
+
+      if (!alreadyUploaded)
+      {
+        //Check if VME children has been already uploaded
+        for (int c = 0; c < m_EmptyNodeVector.size(); c++)
+        {
+          if (m_EmptyNodeVector[c]->Equals(link))
+          {
+            emptyNode = true;
+            break;
+          }
+        }
+        //Before uploading the link, upload all its children
+        if (!emptyNode)
+        {
+          UploadTree(link);
+          URI = m_UploadedURIVector.back();
+          linkURI.push_back(URI);
+        }
+        else
+        {
+          URI = "";
+          if (m_UploadVME->UploadVME(URI, hasBinary, link->GetNumberOfChildren()!=0) == MAF_ERROR || (URI == ""))
+          {
+            return MAF_ERROR;
+          }
+          m_UploadedNodeVector.push_back(link);
+          SaveChildURIFile(link, URI);
+          linkURI.push_back(URI);
+          
+        }
+      }
+      else
+      {
+        URI = m_UploadedURIVector.at(counterVec);
+        linkURI.push_back(URI);
+      }
     }
   }
+  if (SaveLinkURIFile(derived, linkURI) == MAF_ERROR)
+  {
+    wxMessageBox("Unable to write list of link binary URI. Uploading stopped.");
+    return MAF_ERROR;
+  }
+
   return MAF_OK;
 }
 
 //------------------------------------------------------------
-int lhpOpUploadMultiVME::SaveListURIFile()
+int lhpOpUploadMultiVME::SaveLinkURIFile(mafNode *node, std::vector<mafString> linkURI)
 //------------------------------------------------------------
 {
   wxString oldDir = wxGetCwd();
@@ -518,7 +701,9 @@ int lhpOpUploadMultiVME::SaveListURIFile()
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
   mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
-  m_listURIFileName = "listURI";
+  m_listURIFileName = node->GetName();
+  m_listURIFileName.Append(wxString::Format("%d",node->GetId()));
+  m_listURIFileName.Append(".linkURI");
   wxString lockPath = m_PythonUploadFullPath;
   lockPath += m_listURIFileName.GetCStr();
   //if file exists , delete it
@@ -536,9 +721,9 @@ int lhpOpUploadMultiVME::SaveListURIFile()
   }
   else
   {
-    for (int n = 0; n < m_LinkURI.size(); n++)
+    for (int n = 0; n < linkURI.size(); n++)
     {
-      listURIFile << m_LinkURI[n];
+      listURIFile << linkURI[n];
       listURIFile << "\n";
     }
     listURIFile.close();
@@ -548,6 +733,62 @@ int lhpOpUploadMultiVME::SaveListURIFile()
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   return MAF_OK;
 }
+
+//------------------------------------------------------------
+int lhpOpUploadMultiVME::SaveChildURIFile(mafNode* node, mafString URI)
+//------------------------------------------------------------
+{
+  wxString oldDir = wxGetCwd();
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+
+  m_listURIFileName = node->GetParent()->GetName();
+  m_listURIFileName.Append(wxString::Format("%d",node->GetParent()->GetId()));
+  m_listURIFileName.Append(".childURI");
+  wxString lockPath = m_PythonUploadFullPath;
+  lockPath += m_listURIFileName.GetCStr();
+
+  //Check if file named "lockPath" has been created by this operation
+  bool myFile = false;
+  for (int n = 0; n < m_FileCreatedVector.size(); n++)
+  {
+    if (m_FileCreatedVector[n].Equals(lockPath))
+    {
+      myFile = true;
+      break;
+    }
+  }
+
+   //if file exists and is not created by this operation, delete it
+  if (!myFile)
+  {
+    if (wxFileExists(lockPath))
+      wxRemoveFile(lockPath);
+  }
+
+  m_FileCreatedVector.push_back(lockPath);
+
+  // open auto tags file and try to handle tags using tags factory 
+  ofstream listURIFile;
+
+  listURIFile.open(lockPath, fstream::in | fstream::out | fstream::app);
+  if (!listURIFile)
+  {
+    return MAF_ERROR;
+  }
+  else
+  {
+    listURIFile << URI;
+    listURIFile << "\n";
+  }
+    listURIFile.close();
+
+  wxSetWorkingDirectory(oldDir);
+  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  return MAF_OK;
+}
+
 
 //----------------------------------------------------------------------------
 void lhpOpUploadMultiVME::OpDo()   

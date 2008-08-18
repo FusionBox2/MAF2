@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.h,v $
 Language:  C++
-Date:      $Date: 2008-06-20 10:28:05 $
-Version:   $Revision: 1.4 $
+Date:      $Date: 2008-08-18 10:35:01 $
+Version:   $Revision: 1.5 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -45,6 +45,8 @@ MafMedical is partially based on OpenMAF.
 // Include :
 //----------------------------------------------------------------------------
 #include "mafOp.h"
+#include "mafNode.h"
+
 
 //----------------------------------------------------------------------------
 // forward references :
@@ -52,6 +54,7 @@ MafMedical is partially based on OpenMAF.
 class lhpUser;
 class mafNode;
 class lhpOpUploadVME;
+
 
 //----------------------------------------------------------------------------
 // lhpOpUploadMultiVME :
@@ -122,11 +125,17 @@ private:
   /** Upload one or more than one VME chosen from a check list box */
   void UploadMultiVME();
 
+  /** Upload of node and all its children*/
+  void UploadTree(mafNode *node);
+
   /** Upload linked VME */
   int UploadVMELinks(mafNode *derived);   
 
-  /** Write a file woth information about VME link uploaded */
-  int SaveListURIFile();
+  /** Write a file with URI information about VME link uploaded */
+  int SaveLinkURIFile(mafNode *node, std::vector<mafString> linkURI);
+
+  /** Write a file with URI information about VME children uploaded */
+  int SaveChildURIFile(mafNode* node, mafString URI);
 
   /** Check if a binary data is associated to the VME */
   bool isBinaryDataPresent(mafNode *node);
@@ -136,13 +145,20 @@ private:
   void CreateGui();
   void MultiGui();
 
-  int m_SubdictionaryId;
+  bool m_WithChild;
+ 
   mafString m_listURIFileName;
 
   lhpOpUploadVME *m_UploadVME;
   std::vector<mafNode*> m_NodeVector;
-  std::vector<mafString> m_LinkURI;
+  std::vector<mafString> m_FileCreatedVector;
+  std::vector<mafNode*> m_EmptyNodeVector;
+  std::vector<mafNode*> m_UploadedNodeVector;
+  std::vector<mafString> m_UploadedURIVector;
+  
   mafNode *m_UploadingNode;
   int m_NodeCounter;
+  int m_SubdictionaryId;
+
 };
 #endif
