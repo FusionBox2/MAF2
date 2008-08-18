@@ -116,12 +116,11 @@ class DownloadHandler:
             #-----MD5 chek-point-----#
             self.localChksum = self.md5(self.dirCache+self.srbData)
             print "Loocal checksum= " + self.localChksum
-            time.sleep(2)
             
             self.remoteChksum = self.retrieveTagValue('L0000_resource_data_Dataset_LocalFileCheckSum')
             self.remoteChksum = self.remoteChksum.lower()
             print "remote checksum= " + self.remoteChksum
-            time.sleep(2)
+            time.sleep(1)
             
             if (self.localChksum == self.remoteChksum):
                 print " "
@@ -132,7 +131,7 @@ class DownloadHandler:
                 print " "
                 print "Error: MD5 chkesum control unsuccessful!"
                 print " "
-                time.sleep(5)
+                time.sleep(2)
                 return
                 
                 
