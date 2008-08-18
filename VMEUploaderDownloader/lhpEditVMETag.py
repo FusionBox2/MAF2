@@ -36,6 +36,7 @@ class lhpEditVMETag:
         self.OutputVMEXMLName = "OutputXML.xml"  #xml with tag edited
         self.OutputMSFFileName = "OutputMSF.msf"
         self.FakeRootMSFFileName = "FakeRoot"
+        self.FakeMSFFileName = "FakeMSF"
         
         
         self.DatasetURI = ""
@@ -79,13 +80,14 @@ class lhpEditVMETag:
         
         rootNode = msfRootNode
         vmeId = self.VmeToExtractID
-
-             
-
-        # get the vme node
-        outVmeNode = msfDOMParserInstance.GetVmeNodeById(rootNode, vmeId)
-
         
+        if (vmeId == -1):
+            # get the root node
+            outVmeNode = msfDOMParserInstance.GetRootNode(rootNode)
+        else:
+            # get the vme node
+            outVmeNode = msfDOMParserInstance.GetVmeNodeById(rootNode, vmeId)
+
 
         # get the tagArray node
         outVmeTagArrayNode = msfDOMParserInstance.GetVmeTagArrayNode(outVmeNode)
@@ -158,12 +160,9 @@ class lhpEditVMETag:
         unhandledPlusManualTagsList = unhandledPlusManualTagsDictionary.keys()
         unhandledPlusManualTagsList.sort()
 
-        
-
         #unhandledPlusManualTagsList = sorted(unhandledPlusManualTagsDictionary.keys())
         #print unhandledPlusManualTagsList 
-        
-
+    
         # find matching manual and unhandled manual tags between dictionary and vme tagArray
         vmeTagListSet = set(vmeTagList)
 
@@ -186,8 +185,6 @@ class lhpEditVMETag:
         tagsToBeAnnotatedManuallySorted.sort()
         
         tagsToBeAnnotatedManuallyMap = {}
-
-
        
         # for each item in set
         for key in tagsToBeAnnotatedManuallySorted:
@@ -215,9 +212,6 @@ class lhpEditVMETag:
         # save created XML to this directory
         os.chdir(self.OutputFolderName)
 
-
-
-
         newDoc = minidom.Document()
         newDoc.appendChild(outVmeNode)
         outFileXML = open(self.OutputVMEXMLName, 'w')
@@ -235,6 +229,10 @@ class lhpEditVMETag:
         #  Import the fake root tree
         importedMSFDocument = minidom.parse(self.FakeRootMSFFileName)
         fakeRootNode = importedMSFDocument.documentElement
+        
+        #  Import the fake MSF tree
+        importedMSFDocument = minidom.parse(self.FakeMSFFileName)
+        fakeMSFNode = importedMSFDocument.documentElement
     
      #outFile = open('fakeRootNode.txt', 'w')
      #domP.PrintDOMTree(fakeRootNode,outFile)
@@ -248,17 +246,20 @@ class lhpEditVMETag:
     
         # create the output msf containing the fake root with imported vme appended
         msfOutputDoc = minidom.Document()
-        msfOutputDoc.appendChild(fakeRootNode)
-        outputDoc = msfOutputDoc.documentElement
-    
-    # outFile = open('newDocumentToStoreAsMSF.txt', 'w')
-    # domP.PrintDOMTree(outputDoc,outFile)
-    
-        # create the msfParser
-        childrenNode = domP.GetNodeByNodeName(outputDoc,"Children")
-         
-        # append the imported XML to the Children node
-        childrenNode.appendChild(importedVmeNode)
+        if (self.VmeToExtractID != -1):
+            msfOutputDoc.appendChild(fakeRootNode)
+            outputDoc = msfOutputDoc.documentElement
+            childrenNode = domP.GetNodeByNodeName(outputDoc,"Children") 
+            # append the imported XML to the Children node
+            childrenNode.appendChild(importedVmeNode)
+        else:
+            msfOutputDoc.appendChild(fakeMSFNode)
+            outputDoc = msfOutputDoc.documentElement
+            # create the msfParser
+            childrenNode = domP.GetMSFNode(outputDoc) 
+            # append the imported XML to the Children node
+            childrenNode.appendChild(importedVmeNode)
+
             
         # create output directory
         fileUtilities._mkdir(self.OutputFolderName)
@@ -288,6 +289,7 @@ def run(inputMSFDirectory, vmeToExtractId, unhandledPlusManualTagsListFileName):
      #lhpEditVMETagInstance.OutputVMEXMLName = curDir + r'\Outgoing'
      lhpEditVMETagInstance.OutputFolderName = inputMSFDirectory #put out xml in the msf directoty
      lhpEditVMETagInstance.FakeRootMSFFileName = curDir + r'\applicationData\fakeRoot.xml'
+     lhpEditVMETagInstance.FakeMSFFileName = curDir + r'\applicationData\fakeMSF.xml'
 
      lhpEditVMETagInstance.ParseInput()
      lhpEditVMETagInstance.ParseOutput() 
