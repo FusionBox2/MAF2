@@ -18,14 +18,15 @@ msf = sys.argv[5] # msf dir
 user = sys.argv[6] #user
 password = sys.argv[7] #pwd
 urlServer = sys.argv[8] #server url where upload files
-manualTagFile = sys.argv[9] #manualTag file name
+originalId = sys.argv[9] #manualTag file name
 hasLink = sys.argv[10] #vme has link
+withChild = sys.argv[11] #vme has link
 
     
 name = ""
 count = 0
 for i in sys.argv:
-  if(count > 10):
+  if(count > 11):
     if(name == ""):
       name = i
     else:
@@ -41,7 +42,7 @@ s.connect((host, port))
 
 
 # compose message
-k = modality + ' ' + id + ' ' + msf + ' ' + user + ' ' + password + ' ' + urlServer + ' '  + manualTagFile + ' ' + hasLink + ' ' + name 
+k = modality + ' ' + id + ' ' + msf + ' ' + user + ' ' + password + ' ' + urlServer + ' '  + originalId + ' ' + hasLink + ' ' + withChild + ' ' + name 
 s.sendall(k) # send k to server
 # if stop signal, then leave loop
 v = s.recv(1024) # receive v from server (up to 1024 bytes)
