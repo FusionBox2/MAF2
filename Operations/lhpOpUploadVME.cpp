@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-25 12:19:11 $
-Version:   $Revision: 1.73 $
+Date:      $Date: 2008-08-18 10:35:30 $
+Version:   $Revision: 1.74 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -305,7 +305,7 @@ void lhpOpUploadVME::OnEvent(mafEventBase *maf_event)
 }
 
 //----------------------------------------------------------------------------
-int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent)   
+int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool withChild)   
 //----------------------------------------------------------------------------
 {
   wxBusyInfo *wait;
@@ -314,6 +314,14 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent)
     wait = new wxBusyInfo("Please wait, uploading VME");
   }
   mafString hasLink = "false";
+  mafString uploadWithChild = "false";
+  m_HasLink = false;
+
+  if (withChild)
+  {
+    uploadWithChild = "true";
+  }
+  
   
   if (m_Input->GetNumberOfLinks() != 0)
   {
@@ -365,6 +373,15 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent)
     wxMessageBox("Problems generating tags list! Uploading stopped");
     return ret;
   } 
+
+
+  //If doesn't exist yet, append a TagArray:
+  if (m_Input->IsA("mafVMERoot") && m_Input->GetTagArray() == NULL)
+  {
+    mafTagItem rootTag;
+    rootTag.SetName("ROOT_TAG");
+    m_Input->GetTagArray()->SetTag(rootTag);
+  }
 
   //EDIT TAG
   wxString command2execute;
@@ -458,8 +475,9 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent)
     command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
     command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
     command2execute.Append(wxString::Format("%s ","https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //dev repository
-    command2execute.Append(wxString::Format("%s ", m_CsvName.c_str())); //manualTagFile
+    command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //id in original tree
     command2execute.Append(wxString::Format("%s ", hasLink.GetCStr())); //has link?
+    command2execute.Append(wxString::Format("%s ", uploadWithChild.GetCStr())); //upload with children?
     command2execute.Append(wxString::Format("%s ",m_NodeName)); //vme name
 
 
@@ -513,11 +531,11 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent)
     command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
     command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
     command2execute.Append(wxString::Format("%s ","https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //repository
-    command2execute.Append(wxString::Format("%s ", m_CsvName.c_str())); //manualTagFile
+    command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //id in original tree
     command2execute.Append(wxString::Format("%s ", hasLink.GetCStr())); //has link?
+    command2execute.Append(wxString::Format("%s ", uploadWithChild.GetCStr())); //upload with children?
     command2execute.Append(wxString::Format("%s ", m_NodeName)); //vme name
 
-    //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
     m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
     /*mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
     command2execute.c_str(), m_Pid);*/
@@ -543,7 +561,7 @@ void lhpOpUploadVME::OpDo()
 {
   mafString URI;
 
-  if (UploadVME(URI, "") == MAF_ERROR)
+  if (UploadVME(URI, "", false) == MAF_ERROR)
   {
     return;
   }
@@ -634,9 +652,16 @@ int lhpOpUploadVME::ImportMSF()
     return MAF_ERROR;
   }
   mafNode *temporaryNode = root->GetFirstChild();
-
-  //copy tags from MSF genereted by python editor, to orginal MSF.
-  m_Input->GetTagArray()->DeepCopy(temporaryNode->GetTagArray());
+  if (temporaryNode == NULL)
+  {
+    //copy tags from MSF genereted by python editor, to orginal MSF.
+    m_Input->GetTagArray()->DeepCopy(root->GetTagArray());
+  }
+  else
+  {
+    //copy tags from MSF genereted by python editor, to orginal MSF.
+    m_Input->GetTagArray()->DeepCopy(temporaryNode->GetTagArray());
+  }
 
   //attach links previously removed
   if (m_HasLink)
@@ -646,7 +671,7 @@ int lhpOpUploadVME::ImportMSF()
       m_Input->SetLink(m_LinkName[i].GetCStr(), m_LinkNode[i], m_SubId);
     }
   }
-
+ 
   mafDEL(temporaryNode);
   mafDEL(storage);
   return MAF_OK;
@@ -723,11 +748,8 @@ bool lhpOpUploadVME::CreateCache()
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(currentSubdir.GetCStr());
 
-  //currentSubdir = currentSubdir + m_Input->GetName() + ".msf";
-
   currentSubdir = m_Input->GetName();
   currentSubdir.Append(".msf");
-
 
   // restore due attributes
   mafString typeVme;
@@ -783,8 +805,12 @@ bool lhpOpUploadVME::CreateCache()
   root = storage->GetRoot();
   root->Initialize();
   root->SetName("Root");
-  mafNode *node = NULL;
-  root->AddChild(m_CacheVme);
+
+  if (m_CacheVme->IsA("mafVMERoot"))
+    root->DeepCopy(m_CacheVme);
+  else
+    root->AddChild(m_CacheVme);
+  
   storage->Store();
   wxSetWorkingDirectory(oldDir);
 
@@ -1022,8 +1048,8 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
 
   m_CsvName = m_Input->GetName();
   m_NodeName = m_CsvName;
-  m_CsvName.Replace(" ", "?"); //replace blank spaces in VME name
-  m_CsvName.Replace("?", "_");
+  //m_CsvName.Replace(" ", "?"); //replace blank spaces in VME name
+  m_CsvName.Replace(" ", "_");
   m_CsvName << "_id";
   m_CsvName << wxString::Format("%d",m_Input->GetId());
   m_CsvName << "_tag.csv";
