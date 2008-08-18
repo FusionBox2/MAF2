@@ -78,8 +78,9 @@ class ThreadedClient:
         #3 is usr
         #4 is pwd
         #5 is serverUrl
-        #6 is manualTagFile
+        #6 is originalId
         #7 is hasLink
+        #8 is withChild
         #8 is vme name
         
         if(tuplaFromServer[0] == "UPLOAD"):
@@ -96,31 +97,32 @@ class ThreadedClient:
         #3 is usr
         #4 is pwd
         #5 is serverUrl
-        #6 is manualTagFile
+        #6 is originalId
         #7 is hasLink
-        #8 is vme name
+        #8 is withChild
+        #9 is vme name
         
         self.gui.createBar(tuplaFromServer[0])
-        self.gui.createLabel(tuplaFromServer[8]) #tupla[8] is vme name         
-        self.threads.append(CustomThread.CustomThread(func=self.workerThreadUpload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[2], tuplaFromServer[1],tuplaFromServer[3],tuplaFromServer[4],tuplaFromServer[5], tuplaFromServer[6], tuplaFromServer[7], tuplaFromServer[8])))
+        self.gui.createLabel(tuplaFromServer[9]) #tupla[9] is vme name         
+        self.threads.append(CustomThread.CustomThread(func=self.workerThreadUpload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[2], tuplaFromServer[1],tuplaFromServer[3],tuplaFromServer[4],tuplaFromServer[5], tuplaFromServer[6], tuplaFromServer[7], tuplaFromServer[8], tuplaFromServer[9])))
         self.threads[len(self.threads)-1].start()
     
     def createThreadForDownload(self, tuplaFromServer):
         #tuplaFromServer is
         #0 is modality (UPLOAD or DOWNLOAD)
-        #1 is filseSize, 
+        #1 is id, 
         #2 is directory
         #3 is usr
         #4 is pwd
         #5 is serverUrl
         #6 is data URI in SRB
         self.gui.createBar(tuplaFromServer[0])
-        self.gui.createLabel(tuplaFromServer[8])    
+        self.gui.createLabel(tuplaFromServer[9])    
                
         self.threads.append(CustomThread.CustomThread(func=self.workerThreadDownload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[2], tuplaFromServer[8],tuplaFromServer[3],tuplaFromServer[4],tuplaFromServer[5],tuplaFromServer[1])))
         self.threads[len(self.threads)-1].start()
         
-    def workerThreadUpload(self, observer, dirCache , id, usr, pwd, urlServer, manualTagFile, hasLink, vmeName):
+    def workerThreadUpload(self, observer, dirCache , id, usr, pwd, urlServer, originalId, hasLink, withChild, vmeName):
         """
         This is where we handle the asynchronous I/O. For example, it may be
         a 'select()'.
@@ -129,7 +131,7 @@ class ThreadedClient:
         """
       
         try:
-            UploadHandler.createUploadHandler(self.queue, observer, dirCache , id, usr, pwd, urlServer, manualTagFile, hasLink, vmeName)
+            UploadHandler.createUploadHandler(self.queue, observer, dirCache , id, usr, pwd, urlServer, originalId, hasLink, withChild, vmeName)
         except:
             pass
         

@@ -12,7 +12,7 @@ from Debug import Debug
 class UploadHandler:
     queue = None
     def __init__(self, queue, observer , dirCache, id, usr , pwd, urlServer,\
-                 manualTagFile, hasLink, vmeName):
+                 originalId, hasLink, withChild, vmeName):
         UploadHandler.queue = queue
         self.observer = observer
         self.dirCache = dirCache
@@ -21,7 +21,7 @@ class UploadHandler:
         self.currentUser = usr
         self.currentPassword = pwd
         self.urlServer = urlServer
-        self.manualTagFile = manualTagFile
+        self.originalId = originalId
         self.msg = 0
         self.binaryFileSize = 0
         self.remoteTemporaryBinaryFileSize = 0
@@ -30,6 +30,7 @@ class UploadHandler:
         self.block = threading.Lock()
         self.threads = []
         self.hasLink = hasLink
+        self.withChild = withChild
         self.vmeName = vmeName
         self.existThread = 0
         self.remoteChksum = ""
@@ -137,7 +138,7 @@ class UploadHandler:
             self.createXMLAndBinary()
             binarySendResult = True
             
-        #---------------------------------------------------#
+        #----MD5 check-point-----------------------------------#
         #Decommment when correct cheksum will return from WS
         #if (self.localChksum != self.remoteChksum):
         #    print "Checksum validation error!"
@@ -185,13 +186,17 @@ class UploadHandler:
         upl = vmeUploaderOnly.vmeUploaderOnly()
         upl.InputMSFDirectory = self.dirCache
         #upl.HandledAutoTagsListFileName = curDir + r'\handledAutoTagsList.csv'
-        #upl.UnhandledPlusManualTagsListFileName = curDir + '\\' + self.manualTagFile 
+        #upl.UnhandledPlusManualTagsListFileName = curDir + '\\' + self.originalId 
       
         upl.OutputFolderName = self.dirOutgoing
         upl.VmeToExtractID = int(self.id)
+        upl.originalId = self.originalId
         upl.DatasetURI = self.BinaryURI
         upl.hasLink = self.hasLink
+        upl.withChild = self.withChild
+        upl.vmeName = self.vmeName
         self.localChksum = upl.Upload()
+        
         #get size of binary locally
         self.binaryFileSize = self.getBinaryFileSize()
 
@@ -254,10 +259,16 @@ class UploadHandler:
         
     def isBinaryPresent(self):
         result = "false"
+        
+        #if node is root VME, no binary is present
+        if (str(self.id) == "-1"):
+            print "\nNo binary data"
+            return result
+        
         oldDir = os.getcwd()
         os.chdir(self.dirCache)
         files = os.listdir(self.dirCache)
-        
+    
         msfFileNameList = []
         for file in files:
            if re.search('\\.msf$',file):
@@ -275,6 +286,7 @@ class UploadHandler:
         print "\nExtracting vme with ID: " + str(self.id) + '\n' 
         
         msfDOMParserInstance = msfParser.msfParser()
+        
         # get the vme node
         outVmeNode = msfDOMParserInstance.GetVmeNodeById(rootNode, self.id)
         fileNameList = msfDOMParserInstance.GetVMEDataURLList(outVmeNode)
@@ -282,9 +294,9 @@ class UploadHandler:
             result = "true"
                
         os.chdir(oldDir)  
+        print "Binary data present"
         return result
             
-
     def __sendFile(self,filename):
         
         oldDir = os.getcwd()
@@ -353,8 +365,8 @@ class UploadHandler:
     
     
 		
-def createUploadHandler(queue, observer, dirCache, id , usr , pwd, urlServer, manualTagFile, hasLink,vmeName):
-    uploadHandler = UploadHandler(queue,observer, dirCache, id, usr , pwd, urlServer, manualTagFile, hasLink,  vmeName)
+def createUploadHandler(queue, observer, dirCache, id , usr , pwd, urlServer, originalId, hasLink, withChild, vmeName):
+    uploadHandler = UploadHandler(queue,observer, dirCache, id, usr , pwd, urlServer, originalId, hasLink, withChild, vmeName)
     uploadHandler.upload()
     
 if __name__ == '__main__':

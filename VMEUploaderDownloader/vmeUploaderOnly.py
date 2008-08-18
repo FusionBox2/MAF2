@@ -25,10 +25,13 @@ class vmeUploaderOnly:
         
         self.InputMSFDirectory = "No input msf"
         self.VmeToExtractID = 1    
+        self.originalId = 1
         self.OutputVMEXMLName = "exportedVME.xml"
         self.OutputFolderName = "FolderToUpload"
         self.DatasetURI = "NOT PRESENT"
+        self.vmeName = ""
         self.hasLink = ""
+        self.withChild = ""
         self.localChksum = ""
         
     def Upload(self):
@@ -65,8 +68,13 @@ class vmeUploaderOnly:
         rootNode = msfRootNode
         vmeId = self.VmeToExtractID
         
-        # get the vme node for tagArray
-        outVmeNode = msfDOMParserInstance.GetVmeNodeById(rootNode, vmeId)
+        if (str(vmeId) == "-1"):
+            # get the root node
+            outVmeNode = msfDOMParserInstance.GetRootNode(rootNode)
+        else:
+            # get the vme node
+            outVmeNode = msfDOMParserInstance.GetVmeNodeById(rootNode, vmeId)
+        
         
         # get the tagArray node
         outVmeTagArrayNode = msfDOMParserInstance.GetVmeTagArrayNode(outVmeNode)
@@ -83,22 +91,46 @@ class vmeUploaderOnly:
         day = msfDOMParserInstance.GetTagNodeText(nodeURI)
         print day
         
+        print "has child? " + self.withChild
+        if (self.withChild == "true"):   
+            newDir = os.getcwd()
+            os.chdir(newDir + r"..\..\..")
+            #cicle on file with list of child URI
+            list = ''
+            fileName = str(self.vmeName)+ str(self.originalId) + ".childURI"
+            print "file name: " + fileName 
+            file = open(fileName ,"r")
+            print "file opened: " + fileName
+            for line in file.readlines():
+                line = line.replace("\n", ' ')
+                list += line                
+                
+            nodeURI = msfDOMParserInstance.GetTagNodeByTagName(outVmeTagArrayNode, "L0000_resource_MAF_TreeInfo_VmeChildURI1")
+            msfDOMParserInstance.SetTagNodeText(nodeURI, list)       
+            childURI = msfDOMParserInstance.GetTagNodeText(nodeURI)
+            print childURI 
+            time.sleep(10)
+            file.close()
+            os.remove(fileName)
+            os.chdir(newDir)
         
         if (self.hasLink == "true"):   
             newDir = os.getcwd()
             os.chdir(newDir + r"..\..\..")
-            #ciclo su list URI
+            #cicle on file with list of link URI
             list = ''
-            file = open("listURI","r")
+            fileName = self.vmeName + str(self.originalId) + ".linkURI"
+            file = open(fileName,"r")
             for line in file.readlines():
                 line = line.replace("\n", ' ')
                 list += line                
                 
             nodeURI = msfDOMParserInstance.GetTagNodeByTagName(outVmeTagArrayNode, "L0000_resource_MAF_Procedural_VMElinkURI1")
             msfDOMParserInstance.SetTagNodeText(nodeURI, list)       
-            URI = msfDOMParserInstance.GetTagNodeText(nodeURI)
-            print URI 
+            linkURI = msfDOMParserInstance.GetTagNodeText(nodeURI)
+            print linkURI 
             file.close()
+            os.remove(fileName)
             os.chdir(newDir)
             
         
@@ -113,8 +145,8 @@ class vmeUploaderOnly:
         os.chdir(self.OutputFolderName)
         
         # get the vme node 
-        #id is always 1 because the msf in uploadCache contains only teh vme to upload
-        outVmeNode = msfDOMParserInstance.GetVmeNodeById(rootNode, 1) 
+        #id is always 1 because the msf in uploadCache contains only the vme to upload
+        #outVmeNode = msfDOMParserInstance.GetVmeNodeById(rootNode, 1)
 
         
         # Copy of VME binary file to this directory
