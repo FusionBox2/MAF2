@@ -59,7 +59,7 @@ def main():
        sys.argv.append("Program")
        sys.argv.append("testuser") #substitute
        sys.argv.append("6w8DHF") #substitute
-       sys.argv.append('TestXML_exportedVME.xml') #xml test present in repository
+       sys.argv.append('dataresource-1513') #xml test present in repository
        sys.argv.append(os.getcwd()+"\\testDownload\\")
        
     if(len(sys.argv) == 5):
@@ -75,7 +75,7 @@ def main():
         
         print dsXML.datasetSRBURI
         print dsXML.datasetFileSize
-        
+
 
 if __name__ == '__main__':
     main()
