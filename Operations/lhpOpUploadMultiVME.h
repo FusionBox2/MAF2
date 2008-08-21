@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.h,v $
 Language:  C++
-Date:      $Date: 2008-08-18 10:35:01 $
-Version:   $Revision: 1.5 $
+Date:      $Date: 2008-08-21 14:22:53 $
+Version:   $Revision: 1.6 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -151,10 +151,10 @@ private:
 
   lhpOpUploadVME *m_UploadVME;
   std::vector<mafNode*> m_NodeVector;
-  std::vector<mafString> m_FileCreatedVector;
   std::vector<mafNode*> m_EmptyNodeVector;
   std::vector<mafNode*> m_UploadedNodeVector;
   std::vector<mafString> m_UploadedURIVector;
+  std::vector<mafString> m_FileCreatedVector;
   
   mafNode *m_UploadingNode;
   int m_NodeCounter;
