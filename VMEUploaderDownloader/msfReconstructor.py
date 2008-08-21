@@ -1,5 +1,6 @@
 import sys, os, time
 import xml.dom.minidom as xd
+import msfParser
 import vmeDownloader
 
 class MSFReconstructor():
@@ -8,6 +9,7 @@ class MSFReconstructor():
         self.InputVMEBinaryDataFileName = ''
         self.InputVMEXMLFileName = ''
         self.FakeRootMSFFileName = ''
+        self.FakeMSFFileName = ''
         self.OutputMSFFileName = ''
         self.OutputMSFFolderName = ''
         pass
@@ -104,6 +106,7 @@ class MSFReconstructor():
         msfBuilder.InputVMEBinaryDataFileName = self.InputVMEBinaryDataFileName
         msfBuilder.InputVMEXMLFileName = self.InputVMEXMLFileName
         msfBuilder.FakeRootMSFFileName = self.FakeRootMSFFileName
+        msfBuilder.FakeMSFFileName =  self.FakeMSFFileName;
         msfBuilder.OutputMSFFileName = self.OutputMSFFileName
         msfBuilder.OutputMSFFolderName = self.OutputMSFFolderName
         
@@ -111,6 +114,7 @@ class MSFReconstructor():
         print self.InputVMEBinaryDataFileName
         print self.InputVMEXMLFileName
         print self.FakeRootMSFFileName
+        print self.FakeMSFFileName
         print self.OutputMSFFileName
         print self.OutputMSFFolderName"""
         msfBuilder.Build()
@@ -129,12 +133,24 @@ def reconstructMSF():
         msfR.scriptsDir = msfR.currentDir + r'..\..' #go back of two directories 
         msfR.InputVMEXMLFileName = msfR.currentDir + sys.argv[2]
         
-        dataBinary = msfR.retrieveBinaryName()
+       
+        #Check if node is a root
+        domP = msfParser.msfParser()
+        importedVMEDocument = xd.parse(msfR.InputVMEXMLFileName)
+        importedVmeNode = importedVMEDocument.documentElement
+        isRoot = False
+        isRoot = domP.IsARoot(importedVmeNode)
+       
+        if (isRoot == False):
+            dataBinary = msfR.retrieveBinaryName()
+        else:
+            dataBinary = ""
         
         msfR.InputVMEBinaryDataFileName = msfR.currentDir + dataBinary
-        print msfR.InputVMEBinaryDataFileName
+        print msfR.InputVMEBinaryDataFileName 
         
         msfR.FakeRootMSFFileName = msfR.scriptsDir + r'\applicationData\fakeRoot.xml'
+        msfR.FakeMSFFileName = msfR.scriptsDir + r'\applicationData\fakeMSF.xml'
         msfR.OutputMSFFileName = msfR.currentDir + r'outputMAF.msf'
         msfR.OutputMSFFolderName = msfR.currentDir
         currentMSF = str(sys.argv[3].replace("?", " "))
