@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-08-18 10:35:30 $
-Version:   $Revision: 1.74 $
+Date:      $Date: 2008-08-21 14:23:18 $
+Version:   $Revision: 1.75 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -440,7 +440,6 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
   //mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wait;
 
   // m_Pid = wxExecute(command2execute, output, errors, wxEXEC_NODISABLE);
 
