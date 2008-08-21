@@ -20,7 +20,7 @@ class DownloadHandlerTest(unittest.TestCase):
         usr = 'testuser' #substitute 
         pwd = '6w8DHF' #substitute
         srbData = 'Data_1'
-        fileSize = 667
+        fileSize = 9708
         downloadHandler = DownloadHandler.DownloadHandler(queue, observer, dirCache, srbData , usr , pwd, urlServer, fileSize)
         downloadHandler.download()
     
