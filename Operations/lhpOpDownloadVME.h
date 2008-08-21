@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-07-15 08:47:21 $
-Version:   $Revision: 1.4 $
+Date:      $Date: 2008-08-21 14:22:29 $
+Version:   $Revision: 1.5 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -118,20 +118,33 @@ protected:
   int ReconstructMSF(mafString  xmlFile);
 
   /** Import Reconstructed MSF*/
-  int ImportMSF();
+  int ImportMSF(mafNode *parentNode = NULL);
 
   /** Create a list of link URI */
-  void GetLinkURI();
+  void GetLinkURI(mafNode *node);
+
+  /** Create a list of child URI */
+  wxArrayString GetChildURI(mafNode *node);
 
   /** Download a list of VME */
-  int DownloadVME(wxArrayString listVME);   
+  int DownloadVME(wxArrayString listVME, mafNode *parentNode = NULL);  
+
+  /** Download the whole MSF */
+  int DownloadTree(mafNode *node);
 
   mafNode *m_NodeDownloaded;
   std::vector<mafNode*> m_DerivedNodeVector;
   std::vector<mafNode*> m_LinkNodeVector;
+  std::vector<mafString> m_DownloadedURIVector;
+  std::vector<mafNode*> m_DownloadedNodeVector;
+  mafVMEGroup *m_RootGroup;
   mafVMEGroup *m_Group;
 
   bool m_FillLinkVector;
+  bool m_WholeMsfDownload;
+
+  bool m_ENTERED;
+  bool m_ENTERED2;
 
  
   mafString m_CacheDir; //>cache superdirectory
