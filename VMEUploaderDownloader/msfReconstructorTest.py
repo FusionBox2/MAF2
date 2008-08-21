@@ -15,8 +15,9 @@ class DownloadHandlerTest(unittest.TestCase):
         msfR.currentDir = os.getcwd()
         msfR.InputVMEBinaryDataFileName = msfR.currentDir + r'\msf_test_import_export_VME\TESTmsf.1.vtk'
         dataBinary = 'TESTmsf.1.vtk'
-        msfR.InputVMEXMLFileName = msfR.currentDir + r'\vmeUploaderTestData\exportedVME.xml'
+        msfR.InputVMEXMLFileName = msfR.currentDir + r'\testDownload\dataresource-1494'
         msfR.FakeRootMSFFileName = msfR.currentDir + r'\applicationData\fakeRoot.xml'
+        msfR.FakeMSFFileName = msfR.currentDir + r'\applicationData\fakeMSF.xml'
         msfR.OutputMSFFileName = msfR.currentDir + r'\testDownload\\outputMAF.msf'
         msfR.OutputMSFFolderName = msfR.currentDir + r'\testDownload'
         msfR.build()

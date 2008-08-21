@@ -14,7 +14,7 @@ import shutil
 class vmeDownloaderTest(unittest.TestCase):
       
     # testing data coming from Xia webservices    
-    def testCreateIncomingMSFDirectory(self):
+ def testCreateIncomingMSFDirectory(self):
         
         print "Beware:  In order to work run this test must be launched from VMEUploaderDownloader dir!"
         
@@ -27,6 +27,7 @@ class vmeDownloaderTest(unittest.TestCase):
         msfBuilder.InputVMEXMLFileName = curDir + r'\testDownload\Data_549\Data_549.xml'
 
         msfBuilder.FakeRootMSFFileName = curDir + r'\applicationData\fakeRoot.xml'
+        msfBuilder.FakeMSFFileName = curDir + r'\applicationData\fakeMSF.xml'
         msfBuilder.OutputMSFFolderName = curDir + r'\testDownload\Data_549\Incoming'
         msfBuilder.OutputMSFFileName = msfBuilder.OutputMSFFolderName + r'\outputMSF.msf'
         msfBuilder.Build()
