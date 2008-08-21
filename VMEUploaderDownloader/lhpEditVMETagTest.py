@@ -31,6 +31,7 @@ class lhpEditVMETagTest(unittest.TestCase):
         tag.UnhandledPlusManualTagsListFileName = curDir + r'\unhandledPlusManualTagsList.csv'
         tag.HandledAutoTagsListFileName = curDir + r'\handledAutoTagsList.csv'
         tag.FakeRootMSFFileName = curDir + r'\applicationData\fakeRoot.xml'
+        tag.FakeMSFFileName = curDir + r'\applicationData\fakeMSF.xml'
         tag.VmeToExtractID = 1   
         tag.ParseInput()
         tag.ParseOutput()
