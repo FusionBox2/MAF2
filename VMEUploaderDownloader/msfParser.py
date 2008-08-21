@@ -547,6 +547,15 @@ class msfParser:
             else:
                 self.__GetVmeNodeByIdInternal2(node, vmeId)
                 
+    def IsARoot(self, parentNode):
+        """Return true if node is a root"""
+        result = False
+        if parentNode.nodeName == "Root":
+            result = True
+            return result
+                
+        return result
+                
     def GetNodeByNodeName(self, parentNode, nodeName):
         """Return the first ELEMENT_NODE nodeType node found with name nodeName descending from parentNode"""
         self.__GetNodeByNodeNameInternal(parentNode, nodeName)
