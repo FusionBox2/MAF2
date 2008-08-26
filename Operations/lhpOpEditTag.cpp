@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-08-26 09:02:40 $
-Version:   $Revision: 1.10 $
+Date:      $Date: 2008-08-26 15:28:31 $
+Version:   $Revision: 1.11 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -169,15 +169,6 @@ void lhpOpEditTag::OpRun()
 
   if(event.GetString())
   {
-    /*mafString proxyHost = *event.GetString();
-    proxyHost.Append("\n");
-    mafString proxyPort;
-    m_ProxyFile = fopen("proxy.txt", "w");
-    fwrite(proxyHost.GetCStr(),1,proxyHost.GetSize(), m_ProxyFile);
-    proxyPort = wxString::Format("%i",event.GetArg());
-    fwrite(proxyPort, 1, proxyPort.GetSize(), m_ProxyFile);
-    fclose(m_ProxyFile);*/
-
     mafString port;
     port << event.GetArg();
     m_ProxyURL = *event.GetString();
