@@ -109,7 +109,7 @@ class vmeUploaderOnly:
             msfDOMParserInstance.SetTagNodeText(nodeURI, list)       
             childURI = msfDOMParserInstance.GetTagNodeText(nodeURI)
             print childURI 
-            time.sleep(10)
+            time.sleep(1)
             file.close()
             os.remove(fileName)
             os.chdir(newDir)
