@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-08-18 10:35:01 $
-Version:   $Revision: 1.11 $
+Date:      $Date: 2008-08-26 15:28:14 $
+Version:   $Revision: 1.12 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -114,7 +114,6 @@ mafOp(label)
   m_SubdictionaryId = 0; // NO_SUBDICTIONARY; 
   m_ConnectionConfigurationFileName = "vmeUploaderConnectionConfiguration.conf" ;
   SetListener(this);
-  m_NodeCounter = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -203,14 +202,32 @@ void lhpOpUploadMultiVME::OpRun()
 
   if (upToDate)
   {
+    result = OP_RUN_OK;
     mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
-    m_UploadingNode = m_NodeVector[m_NodeCounter];
-    bool hasLink = (m_UploadingNode->GetNumberOfLinks() != 0);
-    this->MultiGui();
+    OpStop(result); 
   }
   else
   {
     OpStop(result);
+  }
+}
+
+//----------------------------------------------------------------------------
+void lhpOpUploadMultiVME::OpDo()   
+//----------------------------------------------------------------------------
+{
+  wxMessageBox("All Vmes will be uploaded with their metadata.\nPlease check before uploading completion of curation can be done in the sandbox.");
+  
+  for (int i = 0; i < m_NodeVector.size(); i++)
+  {
+    if (m_NodeVector[i]->IsA("mafVMERoot"))
+    {
+      UploadTree(m_NodeVector[i]);
+    }
+    else
+    {
+      UploadMultiVME(m_NodeVector[i]);
+    }
   }
 }
 //------------------------------------------------------------
@@ -259,27 +276,6 @@ void lhpOpUploadMultiVME::SaveConnectionConfigurationFile()
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 }
 
-//----------------------------------------------------------------------------
-void lhpOpUploadMultiVME::CreateGui()
-//----------------------------------------------------------------------------
-{
-  m_Gui = new mafGUI(this);
-
-  m_Gui->Divider(2);
-  
-  m_Gui->Label("VME Name:", true);
-  m_Gui->Label(m_UploadingNode->GetName());
-
-  m_Gui->Label("use subdictionary", true);
-  wxString subDictionariesList[3] = {"none", "motionAnalysis", "dicom"};
-  m_Gui->Combo(ID_SUBDICTIONARY,"",&m_SubdictionaryId,3,subDictionariesList);
-
-  m_Gui->Divider(2);
-
-  m_Gui->OkCancel(); 
-  m_Gui->Label("");
-  m_Gui->Update();
-}
 //----------------------------------------------------------------------------
 int lhpOpUploadMultiVME::AssembleDictionaries()
 //----------------------------------------------------------------------------
@@ -386,63 +382,7 @@ bool lhpOpUploadMultiVME::isBinaryDataPresent(mafNode *node)
   return ret;
 }
 
-//----------------------------------------------------------------------------
-void lhpOpUploadMultiVME::OnEvent(mafEventBase *maf_event) 
-//----------------------------------------------------------------------------
-{
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch(e->GetId())
-    {
-    case ID_SUBDICTIONARY:
-    {
-      // nothing to do for the moment...
-      mafLogMessage("You chose dictionary number %i", m_SubdictionaryId);
-      m_UploadVME->SetDictionary(m_SubdictionaryId);
-    }
-    break;
 
-    case wxOK:
-      {
-        if (m_UploadingNode->IsA("mafVMERoot"))
-        {
-          m_WithChild = true;
-          m_EmptyNodeVector.clear();
-          m_UploadedNodeVector.clear();
-          UploadTree(m_NodeVector[m_NodeCounter]);
-          if ((m_NodeCounter + 1) < m_NodeVector.size())
-          {
-            this->HideGui();
-            this->MultiGui();
-          }
-          else
-          {
-            this->OpStop(OP_RUN_OK);
-            return;
-          }
-        }
-        else
-        {
-          m_WithChild = false;
-          UploadMultiVME();
-        }
-      }
-      break;
-
-    case wxCANCEL:
-      {        
-        HideGui();
-        this->OpStop(OP_RUN_CANCEL);
-        return;
-      }
-      break;
-
-    default:
-      mafEventMacro(*e);
-      break;
-    }	
-  }
-}
 //----------------------------------------------------------------------------
 void lhpOpUploadMultiVME::UploadTree(mafNode *node)   
 //----------------------------------------------------------------------------
@@ -461,7 +401,8 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
   children = node->GetChildren();
   childrenVector.push_back(children);
   numVmeChild = children->size();
-  childToUpload = children->at(0);
+  if (numVmeChild != 0)
+    childToUpload = children->at(0);
   while (numVmeChild != 0)
   {
     i = 0;
@@ -502,7 +443,6 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
           {
             if (UploadVMELinks(childToUpload) == MAF_ERROR)
             {
-              HideGui();
               this->OpStop(OP_RUN_CANCEL);
               return;
             }
@@ -512,7 +452,6 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
           URI = "";
           if (m_UploadVME->UploadVME(URI, hasBinary, childToUpload->GetNumberOfChildren()!=0) == MAF_ERROR || (URI == ""))
           {
-          HideGui();
           this->OpStop(OP_RUN_CANCEL);
           return;
           }
@@ -520,9 +459,6 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
           m_EmptyNodeVector.push_back(childToUpload);
           m_UploadedURIVector.push_back(URI);
           SaveChildURIFile(childToUpload, URI);
-
-          this->HideGui();
-          this->MultiGui();
         }
       }
       else
@@ -547,55 +483,36 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
   URI = "";
   if (m_UploadVME->UploadVME(URI, false, node->GetNumberOfChildren()!=0) == MAF_ERROR)
   {
-    HideGui();
     this->OpStop(OP_RUN_CANCEL);
     return;
   }
   m_UploadedNodeVector.push_back(node);
   m_UploadedURIVector.push_back(URI);
-  if (node->IsA("mafVMERoot"))
-    m_NodeCounter++;
 }
 
 //----------------------------------------------------------------------------
-void lhpOpUploadMultiVME::UploadMultiVME()   
+void lhpOpUploadMultiVME::UploadMultiVME(mafNode *node)   
 //----------------------------------------------------------------------------
 {  
   bool hasBinary = false;
   mafString URI;
 
-  m_UploadingNode = m_NodeVector[m_NodeCounter];
-  if (m_UploadingNode->GetNumberOfLinks() != 0)
+  if (node->GetNumberOfLinks() != 0)
   {
-    if (UploadVMELinks(m_UploadingNode) == MAF_ERROR)
+    if (UploadVMELinks(node) == MAF_ERROR)
     {
-      HideGui();
       this->OpStop(OP_RUN_CANCEL);
       return;
     }
   }
-  hasBinary = isBinaryDataPresent(m_UploadingNode);
-  m_UploadVME->SetInput(m_UploadingNode);
+  hasBinary = isBinaryDataPresent(node);
+  m_UploadVME->SetInput(node);
   URI = "";
   if (m_UploadVME->UploadVME(URI, hasBinary, false) == MAF_ERROR)
   {
-    HideGui();
     this->OpStop(OP_RUN_CANCEL);
     return;
   }
-
-  if ((m_NodeCounter + 1) < m_NodeVector.size())
-  {
-    m_NodeCounter++;
-    this->HideGui();
-    this->MultiGui();
-  }
-  else
-  {
-    this->OpStop(OP_RUN_OK);
-    return;
-  }
-
 }
 //----------------------------------------------------------------------------
 int lhpOpUploadMultiVME::UploadVMELinks(mafNode *derived)   
@@ -631,7 +548,6 @@ int lhpOpUploadMultiVME::UploadVMELinks(mafNode *derived)
           return MAF_ERROR;
         }
       }
-
       m_UploadVME->SetInput(link);
 
       //Check if VME has been already uploaded
@@ -673,7 +589,6 @@ int lhpOpUploadMultiVME::UploadVMELinks(mafNode *derived)
           m_UploadedNodeVector.push_back(link);
           SaveChildURIFile(link, URI);
           linkURI.push_back(URI);
-          
         }
       }
       else
@@ -688,7 +603,6 @@ int lhpOpUploadMultiVME::UploadVMELinks(mafNode *derived)
     wxMessageBox("Unable to write list of link binary URI. Uploading stopped.");
     return MAF_ERROR;
   }
-
   return MAF_OK;
 }
 
@@ -716,7 +630,6 @@ int lhpOpUploadMultiVME::SaveLinkURIFile(mafNode *node, std::vector<mafString> l
   listURIFile.open(lockPath);
   if (!listURIFile)
   {
-
     return MAF_ERROR;
   }
   else
@@ -789,23 +702,6 @@ int lhpOpUploadMultiVME::SaveChildURIFile(mafNode* node, mafString URI)
   return MAF_OK;
 }
 
-
-//----------------------------------------------------------------------------
-void lhpOpUploadMultiVME::OpDo()   
-//----------------------------------------------------------------------------
-{
-  HideGui();
-}
-
-//----------------------------------------------------------------------------
-void lhpOpUploadMultiVME::MultiGui()   
-//----------------------------------------------------------------------------
-{
-  m_UploadingNode = m_NodeVector[m_NodeCounter];
-  m_SubdictionaryId = 0;
-  CreateGui();
-  ShowGui();
-}
 //----------------------------------------------------------------------------
 void lhpOpUploadMultiVME::OpStop(int result)   
 //----------------------------------------------------------------------------
@@ -870,24 +766,8 @@ bool lhpOpUploadMultiVME::IsLHPBuilderVersionUpToDate()
     return false;
   }  
   
-}/*
-//----------------------------------------------------------------------------
-bool lhpOpUploadMultiVME::CheckLogin()
-//----------------------------------------------------------------------------
-{
-  bool result = false;
+}
 
-  m_User.SetProxyPort(m_ProxyPort);
-  m_User.SetProxyURL(m_ProxyURL);
-
-  result = m_User.CheckUserCredentials();
-  if (result)
-  {
-    int remember = m_User.GetRememberUserCredentials();
-    result = m_User.SetCredentials(m_User.GetName(), m_User.GetPwd(), remember);
-  }
-  return result;
-}*/
 //--------------------------------------------------------------------------------------------
 mafString lhpOpUploadMultiVME::GetXMLDictionaryFileName( mafString dictionaryFileNamePrefix )
 //--------------------------------------------------------------------------------------------
