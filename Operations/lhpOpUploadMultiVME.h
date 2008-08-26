@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.h,v $
 Language:  C++
-Date:      $Date: 2008-08-21 14:22:53 $
-Version:   $Revision: 1.6 $
+Date:      $Date: 2008-08-26 15:29:05 $
+Version:   $Revision: 1.7 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -71,9 +71,6 @@ public:
 
 	mafOp* Copy();
 
-  /** Class for handle mafEvent*/
-  virtual void OnEvent(mafEventBase *maf_event);
-
 	/** Return true for the acceptable vme type. */
   bool Accept(mafNode* vme) {return true;};
 
@@ -123,7 +120,7 @@ private:
   mafString GetXMLDictionaryFileName(mafString dictionaryFileNamePrefix);
 
   /** Upload one or more than one VME chosen from a check list box */
-  void UploadMultiVME();
+  void UploadMultiVME(mafNode *node);
 
   /** Upload of node and all its children*/
   void UploadTree(mafNode *node);
@@ -142,8 +139,6 @@ private:
 
   void SaveConnectionConfigurationFile();
   int AssembleDictionaries();
-  void CreateGui();
-  void MultiGui();
 
   bool m_WithChild;
  
