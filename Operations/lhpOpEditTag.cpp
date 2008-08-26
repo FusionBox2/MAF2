@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-25 12:19:11 $
-Version:   $Revision: 1.9 $
+Date:      $Date: 2008-08-26 09:02:40 $
+Version:   $Revision: 1.10 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -155,7 +155,7 @@ mafOp* lhpOpEditTag::Copy()
 bool lhpOpEditTag::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-	return (vme != NULL && (!vme->IsMAFType(mafVMERoot)));
+	return (vme != NULL);
 }
 //----------------------------------------------------------------------------
 void lhpOpEditTag::OpRun()
@@ -320,6 +320,14 @@ void lhpOpEditTag::OpDo()
     wxMessageBox("Problems generating tags list! Exiting...");
     return;
   } 
+
+  //If doesn't exist yet, append a TagArray:
+  if (m_Input->IsA("mafVMERoot") && m_Input->GetTagArray() == NULL)
+  {
+    mafTagItem rootTag;
+    rootTag.SetName("ROOT_TAG");
+    m_Input->GetTagArray()->SetTag(rootTag);
+  }
   
   wxString oldDir = wxGetCwd();
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
@@ -389,14 +397,15 @@ int lhpOpEditTag::ImportMSF()
     return MAF_ERROR;
   }
   mafNode *temporaryNode = root->GetFirstChild();
-
-  std::vector<std::string> tagList;
-  temporaryNode->GetTagArray()->GetTagList(tagList);
-
-  //copy tags from MSF genereted by python editor, to orginal MSF.
-  for (int n = 0; n < temporaryNode->GetTagArray()->GetNumberOfTags(); n++)
+  if (temporaryNode == NULL)
   {
-    m_Input->GetTagArray()->SetTag(tagList[n].c_str(), temporaryNode->GetTagArray()->GetTag(tagList[n].c_str())->GetValue(), 2);
+    //copy tags from MSF genereted by python editor, to orginal MSF.
+    m_Input->GetTagArray()->DeepCopy(root->GetTagArray());
+  }
+  else
+  {
+    //copy tags from MSF genereted by python editor, to orginal MSF.
+    m_Input->GetTagArray()->DeepCopy(temporaryNode->GetTagArray());
   }
 
   //attach links previously removed
@@ -408,6 +417,11 @@ int lhpOpEditTag::ImportMSF()
     }
   }
 
+  //remove csv file
+  wxString lockPath = m_PythonUploadFullPath;
+  lockPath += m_CsvName.c_str();
+  if (wxFileExists(lockPath))
+    wxRemoveFile(lockPath); //fileName
 
   mafDEL(temporaryNode);
   mafDEL(storage);
