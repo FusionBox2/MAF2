@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-08-26 09:02:18 $
-Version:   $Revision: 1.76 $
+Date:      $Date: 2008-08-26 15:27:44 $
+Version:   $Revision: 1.77 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -214,8 +214,7 @@ void lhpOpUploadVME::OpRun()
   if(upToDate)
   {
     mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
-    CreateGui();
-    ShowGui();
+    this->OpStop(OP_RUN_OK);
   }
 
   
@@ -266,44 +265,6 @@ void lhpOpUploadVME::SaveConnectionConfigurationFile()
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 }
 
-
-//----------------------------------------------------------------------------
-void lhpOpUploadVME::OnEvent(mafEventBase *maf_event) 
-//----------------------------------------------------------------------------
-{
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch(e->GetId())
-    {
-    case ID_SUBDICTIONARY:
-    {
-    //    // nothing to do for the moment...
-      mafLogMessage("You choosed dictionary number %i", m_SubdictionaryId);
-    }
-    break;
-
-    case wxOK:
-      {
-        this->OpStop(OP_RUN_OK);
-        return;
-      }
-      break;
-
-    case wxCANCEL:
-      {
-        
-        this->OpStop(OP_RUN_CANCEL);
-        return;
-      }
-      break;
-
-    default:
-      mafEventMacro(*e);
-      break;
-    }	
-  }
-}
-
 //----------------------------------------------------------------------------
 int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool withChild)   
 //----------------------------------------------------------------------------
@@ -345,8 +306,6 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
   if (wxFileExists(lockPath))
     wxRemoveFile(lockPath); //fileName
 
-
-  bool result = true;
   //logic comunicate the msf directory
   mafEvent event;
   event.SetSender(this);
@@ -372,7 +331,6 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     wxMessageBox("Problems generating tags list! Uploading stopped");
     return ret;
   } 
-
 
   //If doesn't exist yet, append a TagArray:
   if (m_Input->IsA("mafVMERoot") && m_Input->GetTagArray() == NULL)
@@ -414,11 +372,10 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
 
   mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
 
-  wxSetWorkingDirectory(m_MsfDir.GetCStr());
+    wxSetWorkingDirectory(m_MsfDir.GetCStr());
 
   //delete msf created by python
   remove("OutputMSF.msf"); 
-
 
   if(!CreateBaseCacheAndOutgoingDirectories())
   {
@@ -432,7 +389,6 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     return MAF_ERROR;
   }
 
-
   oldDir = wxGetCwd();
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
@@ -445,8 +401,6 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     //PROCESS EXIST, ONLY CALL CLIENT
     wxString command2execute;
     command2execute = m_PythonwExe;
-    //command2execute.Append(m_PythonUploadFullPath.GetCStr());
-    // script for client
     m_FileName = "Client.py ";
     command2execute.Append(m_FileName.GetCStr());
     command2execute.Append("127.0.0.1 "); //server address (localhost)
@@ -486,8 +440,6 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     //PROCESS NOT EXIST, CREATE SERVER AND CALL CLIENT
     wxString command2execute;
     command2execute = m_PythonExe;
-    //command2execute.Append(m_PythonUploadFullPath.GetCStr());
-    //wxMessageBox(wxString::Format("No process with pid = %ld.", m_Pid));
     m_FileName = "ThreadedClient.py ";
     command2execute.Append(m_FileName.GetCStr());
     command2execute.Append("50000");
@@ -503,7 +455,6 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
 
     command2execute.clear();
     command2execute = m_PythonwExe;
-    //command2execute.Append(m_PythonUploadFullPath.GetCStr());
     m_FileName = "Client.py ";
     command2execute.Append(m_FileName.GetCStr());
     command2execute.Append("127.0.0.1 "); //server address (localhost)
@@ -1025,10 +976,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
   // clean up
   parametersCargo->Delete();
 
-
-
   // generates handled auto file
-
   // open auto tags file and try to handle tags using tags factory 
   ofstream handledAutoTagsFile;
 
@@ -1088,7 +1036,6 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
       unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\" , \"ANNOTATE ME!\"" << std::endl ;
   }
 
-
   // write manuals
   for (int i = 0; i < m_ManualTagsList.size(); i++)
   {
@@ -1107,30 +1054,10 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
     }
     if (!tagFound)
       unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\" , \"ANNOTATE ME!\"" << std::endl ;
-
   }
-
   unhandledPlusManualTagsFile.close();
-  
-  // launch editor
-  command2execute.Clear();
-  command2execute.Append(m_PythonExe.GetCStr());
-  command2execute.Append(" CSVOMATIC.py ");
-  command2execute.Append(m_CsvName.c_str());
-  
-  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
-
-  pid = wxExecute(command2execute, wxEXEC_SYNC);
-
-  if ( !command2execute )
-    return MAF_ERROR;
-
-  mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-    command2execute.c_str(), pid);
-
   wxSetWorkingDirectory(oldDir);
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-
   return MAF_OK;
 }
 //----------------------------------------------------------------------------
@@ -1273,28 +1200,6 @@ mafString lhpOpUploadVME::GetXMLDictionaryFileName( mafString dictionaryFileName
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   
   return dictionaryFileName;
-}
-
-//----------------------------------------------------------------------------
-// widget id's
-//----------------------------------------------------------------------------
-
-void lhpOpUploadVME::CreateGui()
-{
-  m_Gui = new mafGUI(this);
-
-  m_Gui->Divider(2);
-
-  m_Gui->Label("use subdictionary", true);
-  wxString subDictionariesList[3] = {"none", "motionAnalysis", "dicom"};
-  m_Gui->Combo(ID_SUBDICTIONARY,"",&m_SubdictionaryId,3,subDictionariesList);
-
-  m_Gui->Divider(2);
- 
-  m_Gui->OkCancel(); 
-  m_Gui->Label("");
-  m_Gui->Update();
-
 }
 
 //----------------------------------------------------------------------------

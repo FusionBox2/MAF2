@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-08-18 10:35:30 $
-Version:   $Revision: 1.26 $
+Date:      $Date: 2008-08-26 15:27:44 $
+Version:   $Revision: 1.27 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -66,9 +66,6 @@ public:
 	mafTypeMacro(lhpOpUploadVME, mafOp);
 
 	mafOp* Copy();
-
-  /** Class for handle mafEvent*/
-  virtual void OnEvent(mafEventBase *maf_event);
 
 	/** Return true for the acceptable vme type. */
 	bool Accept(mafNode* vme);
@@ -173,7 +170,6 @@ protected:
 
 private:
   mafString GetXMLDictionaryFileName(mafString dictionaryFileNamePrefix);
-  void CreateGui();
   int AssembleDictionaries();
   int m_SubId;
   mafVME *m_CacheVme;
