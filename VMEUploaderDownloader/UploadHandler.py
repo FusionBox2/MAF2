@@ -138,11 +138,22 @@ class UploadHandler:
             self.createXMLAndBinary()
             binarySendResult = True
             
-        #----MD5 check-point-----------------------------------#
-        #Decommment when correct cheksum will return from WS
-        #if (self.localChksum != self.remoteChksum):
-        #    print "Checksum validation error!"
-        #    binarySendResult = False
+            
+        #---MD5 check-point-----------------------------------#
+        if(self.isBinaryPresent() == "true"):
+            print "Local checksum= " + self.localChksum
+            print "Remote checksum= " + self.remoteChksum
+            if (self.localChksum == self.remoteChksum):
+                print " "
+                print "MD5 checksum control successful!"
+                print " "
+                time.sleep(2)
+            else:
+                print " "
+                print "Error: MD5 checksum control unsuccessful!"
+                print " "
+                binarySendResult = False
+                time.sleep(2)
         #---------------------------------------------------#
             
         
@@ -309,10 +320,11 @@ class UploadHandler:
         result = instance.Upload(filename,'https://ws-lhdl.cineca.it/mafSRBUpload.cgi',self.proxyHost,self.proxyPort)
         
         self.remoteChksum = result.chksum
-        #print "check: " + str(result.chksum)
+        self.remoteChksum = self.remoteChksum.lower()
+        print "Remote checksum: " + str(self.remoteChksum)
         self.uri = result.uriFile
-        #print "URI File: " + str(result.uriFile)
-        #time.sleep(10)
+        print "URI File: " + str(result.uriFile)
+        time.sleep(10)
         os.chdir(oldDir)
         
         
