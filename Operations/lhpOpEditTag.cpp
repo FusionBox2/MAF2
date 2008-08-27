@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-08-26 15:28:31 $
-Version:   $Revision: 1.11 $
+Date:      $Date: 2008-08-27 13:41:02 $
+Version:   $Revision: 1.12 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -327,7 +327,7 @@ void lhpOpEditTag::OpDo()
 
   //PROCESS EXIST, ONLY CALL CLIENT
   wxString command2execute;
-  command2execute = m_PythonwExe;
+  command2execute = m_PythonExe;
   // script for client
   m_FileName = "lhpEditVMETag.py ";
   command2execute.Append(m_FileName.GetCStr());
@@ -350,8 +350,6 @@ void lhpOpEditTag::OpDo()
   mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
     command2execute.c_str(), m_Pid);
 
-  m_Parent = m_Input->GetParent();
- 
   ImportMSF();
   mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
 
