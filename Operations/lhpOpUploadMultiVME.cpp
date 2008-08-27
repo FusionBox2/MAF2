@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-08-26 15:28:14 $
-Version:   $Revision: 1.12 $
+Date:      $Date: 2008-08-27 14:27:36 $
+Version:   $Revision: 1.13 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -216,7 +216,7 @@ void lhpOpUploadMultiVME::OpRun()
 void lhpOpUploadMultiVME::OpDo()   
 //----------------------------------------------------------------------------
 {
-  wxMessageBox("All Vmes will be uploaded with their metadata.\nPlease check before uploading completion of curation can be done in the sandbox.");
+  wxMessageBox("All Vmes will be uploaded with their metadata.\nPlease check before uploading. Completion of curation can be done in the sandbox.");
   
   for (int i = 0; i < m_NodeVector.size(); i++)
   {
