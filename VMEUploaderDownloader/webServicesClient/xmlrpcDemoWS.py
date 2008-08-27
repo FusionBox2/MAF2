@@ -108,6 +108,30 @@ class xmlrpc_demoWS:
        </params>
      </methodCall>''' % (kw['listitems'])
 
+        self.xmlRead = \
+    '''<?xml version="1.0"?>
+     <methodCall>
+      <methodName>xml_read</methodName>
+       <params>
+       <param>
+        <value><string>%s</string></value>
+       </param>
+       </params>
+     </methodCall>''' % (kw['listitems'])
+
+        self.xmlEdit = \
+    '''<?xml version="1.0"?>
+     <methodCall>
+      <methodName>xml_edit</methodName>
+       <params>
+       <param>
+       <value><struct>
+       %s
+       </struct></value>
+       </param>
+       </params>
+     </methodCall>''' % (kw['listitems'])
+
         wh_file = ''
 
         if bod == 'xmlupload':
@@ -122,6 +146,10 @@ class xmlrpc_demoWS:
             body = self.updateBasket
         elif bod == 'deletefrombasket':
             body = self.deleteFromBasket
+        elif bod == 'xmledit':
+            body = self.xmlEdit
+        elif bod == 'xmlread':
+            body = self.xmlRead
 
         print "++++++\n" + body + "\n"
 
@@ -266,6 +294,24 @@ class xmlrpc_demoWS:
             args['listitems'] = ''
             for item in filename.split(','):
               args['listitems'] += '<value><string>%s</string></value>' % item
+        elif command == 'xmlread':
+            args['id'] = ''
+            args['title'] = ''
+            args['description'] = ''
+            args['upload'] = ''
+            args['filename'] = ''
+            args['download'] = ''
+            args['listitems'] = filename.split(',')[1]
+        elif command == 'xmledit':
+            args['id'] = ''
+            args['title'] = ''
+            args['description'] = ''
+            args['upload'] = ''
+            args['filename'] = ''
+            args['download'] = ''
+            args['listitems'] = \
+             '<member><name>name</name><value><string>%s</string></value></member><member><name>new</name><value><string>%s</string></value></member>' % \
+             (filename.split(',')[1],filename.split(',')[2])
         else:
             print 'Error :\n' + usage_msg
             sys.exit(1)
@@ -282,6 +328,8 @@ xmlupload <id> - upload data resource
 xmldownload <id> - download data resource
 xmldelete <id> - delete data resource
 listBasket - list user's basket items
+xmlread -
+xmledit -
 ''' % sys.argv[0]
 
     if len(sys.argv) not in (2,3):
@@ -294,6 +342,8 @@ listBasket - list user's basket items
     else: filename = ''
 
     ws = xmlrpc_demoWS()
+    if sys.argv[1] in ('xmlread','xmledit'):
+        ws.setServer(ws.ServerURL + filename.split(',')[0])
     print ws.run(command, filename)
 
 #    args = {}
