@@ -115,21 +115,22 @@ class DownloadHandler:
             
             #-----MD5 chek-point-----#
             self.localChksum = self.md5(self.dirCache+self.srbData)
-            print "Loocal checksum= " + self.localChksum
+            print "Local checksum= " + self.localChksum
             
             self.remoteChksum = self.retrieveTagValue('L0000_resource_data_Dataset_LocalFileCheckSum')
             self.remoteChksum = self.remoteChksum.lower()
-            print "remote checksum= " + self.remoteChksum
+            print "Remote checksum= " + self.remoteChksum
             time.sleep(1)
             
             if (self.localChksum == self.remoteChksum):
                 print " "
-                print "MD5 chkesum control successful!"
+                print "MD5 checksum control successful!"
                 print " "
+                time.sleep(2)
                 self.moveFileInMSFDirectory()
             else:
                 print " "
-                print "Error: MD5 chkesum control unsuccessful!"
+                print "Error: MD5 checksum control unsuccessful!"
                 print " "
                 time.sleep(2)
                 return
