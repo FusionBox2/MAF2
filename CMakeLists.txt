@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2008-08-27 10:52:57 $
-#   Version:   $Revision: 1.30 $
+#   Date:      $Date: 2008-08-27 11:03:09 $
+#   Version:   $Revision: 1.31 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -198,7 +198,7 @@ IF(DOWNLOAD_DICTIONARY)
 
     # MOTIONANALYSIS DICTIONARY
     
-    SET(LHPBUILDER_MOTIONANALYSIS_DICTIONARY_SELECTOR "/biomed_town/LHDL/users/swclient/dictionaries/MASource" CACHE INTERNAL "LHPBuilder dictionary selector")
+    SET(LHPBUILDER_MOTIONANALYSIS_DICTIONARY_SELECTOR "/biomed_town/LHDL/users/swclient/dictionaries/MAsource" CACHE INTERNAL "LHPBuilder dictionary selector")
     SET(LHPBUILDER_XML_MOTIONANALYSIS_DICTIONARY "lhpXMLMotionAnalysisSourceSubdictionary" CACHE INTERNAL "LHPBuilder xml motion analysis dictionary")
     
     EXEC_PROGRAM("python.exe" "${LHP_SOURCE_DIR}/VMEUploaderDownloader" ARGS "lhpCSVDictionaryDownloader.py ${LHPBUILDER_DICTIONARY_HOST} ${LHPBUILDER_MOTIONANALYSIS_DICTIONARY_SELECTOR} ${LHPBUILDER_XML_MOTIONANALYSIS_DICTIONARY}"  RETURN_VALUE RET)
