@@ -19,12 +19,9 @@ class xmlrpc_demoWS:
         """"""
         self.ProxyURL = ''
         self.ProxyPort = 0
-        self.Username = 'portal_admin'
-        self.Password = 'R1ZZ0L1'
-        self.ServerURL = 'https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2'
-#        self.Username = ''
-#        self.Password = ''
-#        self.ServerURL = ''
+        self.Username = ''
+        self.Password = ''
+        self.ServerURL = ''
 
 
     def post_multipart(self, bod='search', url='', username='', password='', **kw):
