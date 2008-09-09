@@ -19,3 +19,16 @@ def _mkdir(newdir):
         if tail:
             os.mkdir(newdir)
 
+def rmdir_recursive(dir):
+    """Remove a directory, and all its contents if it is not already empty."""
+    for name in os.listdir(dir):
+        full_name = os.path.join(dir, name)
+        # on Windows, if we don't have write permission we can't remove
+        # the file/directory either, so turn that on
+        if not os.access(full_name, os.W_OK):
+            os.chmod(full_name, 0600)
+        if os.path.isdir(full_name):
+            rmdir_recursive(full_name)
+        else:
+            os.remove(full_name)
+    os.rmdir(dir)

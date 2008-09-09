@@ -6,6 +6,7 @@ from xml.dom import Node
 import xml.dom.minidom as xd
 import os, sys, string, time, re ,shutil
 import threading, thread, CustomThread
+import fileUtilities
 from lhpDefines import *
 from Debug import Debug
 
@@ -174,7 +175,33 @@ class UploadHandler:
           print "Uploaded XML on Biomedtown: " + self.XMLName
           print "Uploaded by: " + self.currentUser
           print "In server url: " + self.urlServer
+          print "--------Upload Successful :D :D :D --------"
+          
+          print "--------cleaning up cache directories--------"
+          print "cache dir is: " + str(self.dirCache) 
+          print "outgoing dir is " + str(self.dirOutgoing)
+          
+          print "current dir is: " + str(os.getcwd())
+          os.chdir(self.dirOutgoing + r"\..\..")
+          print "changing to: " + str(os.getcwd())
+          print "removing " + str(self.dirCache) 
+          fileUtilities.rmdir_recursive(self.dirCache)
+          
+          if (os.path.isdir(self.dirCache) == False):
+            print "done!"
+          else:
+            print "cannot remove " + str(self.dirCache)
         
+
+          print "removing " + str(self.dirOutgoing)
+          fileUtilities.rmdir_recursive(self.dirOutgoing)
+          
+          if (os.path.isdir(self.dirOutgoing) == False):
+            print "done!"
+          else:
+            print "cannot remove " + str(self.dirOutgoing)
+          print "--------clean up cache directories successful--------"
+          
         else:
           print "Upload Error on Binary"
 
