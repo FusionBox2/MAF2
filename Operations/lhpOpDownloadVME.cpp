@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-08-21 14:22:29 $
-Version:   $Revision: 1.29 $
+Date:      $Date: 2008-09-10 15:07:28 $
+Version:   $Revision: 1.30 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -372,7 +372,7 @@ int lhpOpDownloadVME::DownloadTree(mafNode *node)
 
   int numChild = listChildURI.size();
 
-  //No ch
+  //No child
   if (numChild == 0)
   {
     result = MAF_OK;
@@ -886,7 +886,7 @@ void lhpOpDownloadVME::GetLinkURI(mafNode *node)
   {
     count2 = listURI.find_first_of("'");
     name = (listURI.substr(0, count2)).c_str();
-    if (name != " ")
+    if (!name.IsEmpty())
     {
       m_ListLinkURI.Add(name);
     }
@@ -933,6 +933,7 @@ int lhpOpDownloadVME::ImportMSF(mafNode *parentNode)
     label.Append(root->GetName());
     m_RootGroup->SetName(label.GetCStr());
     m_RootGroup->ReparentTo(m_Input);
+    m_DownloadedNodeVector.push_back(m_RootGroup);
     if (DownloadTree(root) != MAF_OK)
     {
       return MAF_ERROR;
