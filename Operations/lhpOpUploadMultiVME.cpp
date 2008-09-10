@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-10 15:11:51 $
-Version:   $Revision: 1.14 $
+Date:      $Date: 2008-09-10 15:19:16 $
+Version:   $Revision: 1.15 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -596,7 +596,7 @@ int lhpOpUploadMultiVME::UploadVMELinks(mafNode *derived)
   bool hasBinary = false;
   std::vector<mafString> linkURI;
   linkURI.clear();
-  m_UncompletedTagNode.clear();
+
 
   for (mafNode::mafLinksMap::iterator i = derived->GetLinks()->begin(); i != derived->GetLinks()->end(); i++)
   {
