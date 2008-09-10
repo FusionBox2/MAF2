@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-08-27 14:27:36 $
-Version:   $Revision: 1.13 $
+Date:      $Date: 2008-09-10 15:11:51 $
+Version:   $Revision: 1.14 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -81,6 +81,7 @@ mafCxxTypeMacro(lhpOpUploadMultiVME);
 //static variables
 long lhpOpUploadMultiVME::m_Pid = -1;
 mafString lhpOpUploadMultiVME::m_CacheSubdir = "0";
+lhpUser lhpOpUploadMultiVME::m_User = lhpUser();
 
 enum lhpOpUploadMultiVME_ID
 {
@@ -99,6 +100,7 @@ mafOp(label)
   m_UploadedNodeVector.clear();
   m_EmptyNodeVector.clear();
   m_FileCreatedVector.clear();
+  m_NodeDerivedId.clear();
  
 
   m_PythonExe ="python.exe ";
@@ -124,6 +126,7 @@ lhpOpUploadMultiVME::~lhpOpUploadMultiVME()
   m_UploadedNodeVector.clear();
   m_EmptyNodeVector.clear();
   m_FileCreatedVector.clear();
+  m_NodeDerivedId.clear();
 }
 
 //----------------------------------------------------------------------------
@@ -437,15 +440,12 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
             break;
           }
         }
+
         if (!alreadyUploaded)
         {
           if (childToUpload->GetNumberOfLinks() != 0)
           {
-            if (UploadVMELinks(childToUpload) == MAF_ERROR)
-            {
-              this->OpStop(OP_RUN_CANCEL);
-              return;
-            }
+            m_NodeDerivedId.push_back(childToUpload->GetId());
           }
           hasBinary = isBinaryDataPresent(childToUpload);
           m_UploadVME->SetInput(childToUpload);
@@ -488,6 +488,7 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
   }
   m_UploadedNodeVector.push_back(node);
   m_UploadedURIVector.push_back(URI);
+  SetVMELinks(node);
 }
 
 //----------------------------------------------------------------------------
@@ -515,17 +516,90 @@ void lhpOpUploadMultiVME::UploadMultiVME(mafNode *node)
   }
 }
 //----------------------------------------------------------------------------
+void lhpOpUploadMultiVME::SetVMELinks(mafNode *node)   
+//----------------------------------------------------------------------------
+{  
+  wxString vmeURI;
+  mafString listURI;
+  mafNode *derived;
+  for (int n = 0; n < m_NodeDerivedId.size(); n++)
+  {
+    derived = node->FindInTreeById(m_NodeDerivedId[n]);
+    //find URI of this VME
+    for (int c = 0; c < m_UploadedNodeVector.size(); c++)
+    {
+      if (m_UploadedNodeVector[c]->Equals(derived) && m_UploadedNodeVector[c]->GetId() == derived->GetId())
+      {
+        vmeURI = m_UploadedURIVector[c];
+        int count = vmeURI.find_first_of("'");
+        vmeURI.erase(0, count+1);
+        count = vmeURI.find_first_of("'");
+        vmeURI = (vmeURI.substr(0, count)).c_str();
+        break;
+      }
+    }
+
+    for (mafNode::mafLinksMap::iterator i = derived->GetLinks()->begin(); i != derived->GetLinks()->end(); i++)
+    {
+      if (i->second.m_Node != NULL)
+      {
+        mafNode *link = i->second.m_Node;
+        for (int c = 0; c < m_UploadedNodeVector.size(); c++)
+        {
+          if (m_UploadedNodeVector[c]->Equals(link) && m_UploadedNodeVector[c]->GetId() == link->GetId())
+          {
+            m_UploadedURIVector[c];
+            listURI.Append(m_UploadedURIVector[c]);
+            break;
+          }
+        }
+      }
+    }
+
+    wxString oldDir = wxGetCwd();
+    mafString path  = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader").c_str();
+    wxSetWorkingDirectory(path.GetCStr());
+    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+
+    //Add URI tag to link VME uploaded
+    wxString command2execute;
+    command2execute.Clear();
+    command2execute = m_PythonExe;
+
+    command2execute.Append("lhpEditRemoteTag.py ");
+    command2execute.Append(m_User.GetName());
+    command2execute.Append(" ");
+    command2execute.Append(m_User.GetPwd());
+    command2execute.Append(" ");
+    command2execute.Append(vmeURI.c_str());
+    command2execute.Append(",");
+    command2execute.Append("L0000_resource_MAF_Procedural_VMElinkURI1");
+    command2execute.Append(",");
+    command2execute.Append(listURI.GetCStr());
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+
+    long pid = wxExecute(command2execute, wxEXEC_SYNC);
+
+    wxSetWorkingDirectory(oldDir);
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  }
+
+}
+//----------------------------------------------------------------------------
 int lhpOpUploadMultiVME::UploadVMELinks(mafNode *derived)   
 //----------------------------------------------------------------------------
 {  
+ // m_UncompletedTagNode.clear();
+ // m_UncompletedTagURI.clear();
   bool emptyNode = false;
-  std::vector<mafString> linkURI;
-  linkURI.clear();
   bool alreadyUploaded = false;
   bool hasBinary = false;
+  std::vector<mafString> linkURI;
+  linkURI.clear();
+  m_UncompletedTagNode.clear();
+
   for (mafNode::mafLinksMap::iterator i = derived->GetLinks()->begin(); i != derived->GetLinks()->end(); i++)
   {
-    
     hasBinary = false;
     alreadyUploaded = false;
     mafString URI;
@@ -551,7 +625,7 @@ int lhpOpUploadMultiVME::UploadVMELinks(mafNode *derived)
       m_UploadVME->SetInput(link);
 
       //Check if VME has been already uploaded
-      int counterVec = 0;
+     /* int counterVec = 0;
       for (counterVec = 0; counterVec < m_UploadedNodeVector.size(); counterVec++)
       {
         if (m_UploadedNodeVector[counterVec]->Equals(link))
@@ -559,43 +633,38 @@ int lhpOpUploadMultiVME::UploadVMELinks(mafNode *derived)
           alreadyUploaded = true;
           break;
         }
-      }
+      }*/
 
-      if (!alreadyUploaded)
-      {
+      //if (!alreadyUploaded)
+      //{
         //Check if VME children has been already uploaded
-        for (int c = 0; c < m_EmptyNodeVector.size(); c++)
+     /*   for (int c = 0; c < m_EmptyNodeVector.size(); c++)
         {
           if (m_EmptyNodeVector[c]->Equals(link))
           {
             emptyNode = true;
             break;
           }
-        }
-        //Before uploading the link, upload all its children
-        if (!emptyNode)
+        }*/
+
+        URI = "";
+        //if (m_UploadVME->UploadVME(URI, hasBinary, link->GetNumberOfChildren()!=0) == MAF_ERROR || (URI == ""))
+        if (m_UploadVME->UploadVME(URI, hasBinary, false) == MAF_ERROR || (URI == ""))
         {
-          UploadTree(link);
-          URI = m_UploadedURIVector.back();
-          linkURI.push_back(URI);
+          return MAF_ERROR;
         }
-        else
-        {
-          URI = "";
-          if (m_UploadVME->UploadVME(URI, hasBinary, link->GetNumberOfChildren()!=0) == MAF_ERROR || (URI == ""))
-          {
-            return MAF_ERROR;
-          }
-          m_UploadedNodeVector.push_back(link);
-          SaveChildURIFile(link, URI);
-          linkURI.push_back(URI);
-        }
-      }
-      else
-      {
+        m_UploadedNodeVector.push_back(link);
+        //SaveChildURIFile(link, URI);
+        linkURI.push_back(URI);
+       // m_UncompletedTagURI.push_back(URI);
+       // m_UncompletedTagNode.push_back(link);
+
+     // }
+     // else
+     /* {
         URI = m_UploadedURIVector.at(counterVec);
         linkURI.push_back(URI);
-      }
+      }*/
     }
   }
   if (SaveLinkURIFile(derived, linkURI) == MAF_ERROR)

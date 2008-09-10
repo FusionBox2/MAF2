@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.h,v $
 Language:  C++
-Date:      $Date: 2008-08-26 15:29:05 $
-Version:   $Revision: 1.7 $
+Date:      $Date: 2008-09-10 15:12:51 $
+Version:   $Revision: 1.8 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -115,6 +115,7 @@ protected:
   mafString m_ConnectionConfigurationFileName;
   mafString m_ProxyURL;
   mafString m_ProxyPort;
+  static lhpUser m_User;
 
 private:
   mafString GetXMLDictionaryFileName(mafString dictionaryFileNamePrefix);
@@ -134,6 +135,9 @@ private:
   /** Write a file with URI information about VME children uploaded */
   int SaveChildURIFile(mafNode* node, mafString URI);
 
+  /** Edit VME tag with VME link URI */
+  void SetVMELinks(mafNode *node);
+
   /** Check if a binary data is associated to the VME */
   bool isBinaryDataPresent(mafNode *node);
 
@@ -150,7 +154,8 @@ private:
   std::vector<mafNode*> m_UploadedNodeVector;
   std::vector<mafString> m_UploadedURIVector;
   std::vector<mafString> m_FileCreatedVector;
-  
+  std::vector<int> m_NodeDerivedId;
+
   mafNode *m_UploadingNode;
   int m_NodeCounter;
   int m_SubdictionaryId;
