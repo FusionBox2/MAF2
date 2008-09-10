@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-08-26 15:27:44 $
-Version:   $Revision: 1.77 $
+Date:      $Date: 2008-09-10 15:15:20 $
+Version:   $Revision: 1.78 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -289,7 +289,7 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     hasLink = "true";
     SaveLinkInfo();
 
-    //remove links that will be linked again after 
+    //remove links that will be linked again after
     m_Input->RemoveAllLinks();
     mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
   }
@@ -339,6 +339,13 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     rootTag.SetName("ROOT_TAG");
     m_Input->GetTagArray()->SetTag(rootTag);
   }
+//----------------------------------//
+  if(!CreateCache())
+  {
+    wxMessageBox("Unable to create a temporary cache, remember that msf must be saved locally. Uploading stopped");
+    return MAF_ERROR;
+  }
+
 
   //EDIT TAG
   wxString command2execute;
@@ -348,10 +355,10 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
   command2execute.Append(m_FileName.GetCStr());
 
   //workaround to understanding directory argument
-  wxString directoryWorkAround = m_MsfDir;
+  wxString directoryWorkAround = m_CurrentCache;
   directoryWorkAround.Replace(" ", "?");
   command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
-  command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //vme id
+  command2execute.Append(wxString::Format("%d ",m_CacheVme->GetId())); //vme id
   command2execute.Append(wxString::Format("%s", m_CsvName.c_str())); //manualTagFile
 
   //wxMessageBox(wxString::Format("Process %ld is running.", m_Pid));
@@ -376,6 +383,7 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
 
   //delete msf created by python
   remove("OutputMSF.msf"); 
+//----------------------------------//
 
   if(!CreateBaseCacheAndOutgoingDirectories())
   {
@@ -577,7 +585,7 @@ int lhpOpUploadVME::ImportMSF()
 {
   //msf name is standard: OutputMSF.msf
   mafString msfFileName;
-  msfFileName.Append(m_MsfDir);
+  msfFileName.Append(m_CurrentCache);
   msfFileName.Append("/");
   msfFileName.Append("OutputMSF.msf");
 
