@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-10 15:15:20 $
-Version:   $Revision: 1.78 $
+Date:      $Date: 2008-09-11 15:33:03 $
+Version:   $Revision: 1.79 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -340,6 +340,12 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     m_Input->GetTagArray()->SetTag(rootTag);
   }
 //----------------------------------//
+  if(!CreateBaseCacheAndOutgoingDirectories())
+  {
+    wxMessageBox("Unable to create Cache Base Directory. Uploading stopped");
+    return MAF_ERROR;
+  }
+
   if(!CreateCache())
   {
     wxMessageBox("Unable to create a temporary cache, remember that msf must be saved locally. Uploading stopped");
@@ -385,11 +391,6 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
   remove("OutputMSF.msf"); 
 //----------------------------------//
 
-  if(!CreateBaseCacheAndOutgoingDirectories())
-  {
-    wxMessageBox("Unable to create Cache Base Directory. Uploading stopped");
-    return MAF_ERROR;
-  }
 
   if(!CreateCache())
   {
