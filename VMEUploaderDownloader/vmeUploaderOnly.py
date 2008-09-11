@@ -114,24 +114,27 @@ class vmeUploaderOnly:
             os.remove(fileName)
             os.chdir(newDir)
         
+        print "has Link = " + self.hasLink
         if (self.hasLink == "true"):   
             newDir = os.getcwd()
             os.chdir(newDir + r"..\..\..")
             #cicle on file with list of link URI
             list = ''
             fileName = self.vmeName + str(self.originalId) + ".linkURI"
-            file = open(fileName,"r")
-            for line in file.readlines():
-                line = line.replace("\n", ' ')
-                list += line                
-                
-            nodeURI = msfDOMParserInstance.GetTagNodeByTagName(outVmeTagArrayNode, "L0000_resource_MAF_Procedural_VMElinkURI1")
-            msfDOMParserInstance.SetTagNodeText(nodeURI, list)       
-            linkURI = msfDOMParserInstance.GetTagNodeText(nodeURI)
-            print linkURI 
-            file.close()
-            os.remove(fileName)
-            os.chdir(newDir)
+            if(os.path.exists(fileName)):
+                file = open(fileName,"r")
+
+                for line in file.readlines():
+                    line = line.replace("\n", ' ')
+                    list += line                
+                    
+                nodeURI = msfDOMParserInstance.GetTagNodeByTagName(outVmeTagArrayNode, "L0000_resource_MAF_Procedural_VMElinkURI1")
+                msfDOMParserInstance.SetTagNodeText(nodeURI, list)       
+                linkURI = msfDOMParserInstance.GetTagNodeText(nodeURI)
+                print linkURI 
+                file.close()
+                os.remove(fileName)
+                os.chdir(newDir)
             
         
 
@@ -165,7 +168,7 @@ class vmeUploaderOnly:
             #-----MD5 checksum calculation-----#
             os.chdir(self.OutputFolderName)
             self.localChksum = self.md5(fileNameList[0])
-            print "Loocal checksum= " + self.localChksum
+            print "Local checksum= " + self.localChksum
             time.sleep(2)
             
             #AUTO TAGS SET  WITH  WEBSERVICE      
