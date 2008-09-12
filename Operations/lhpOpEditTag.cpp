@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-08-27 13:41:02 $
-Version:   $Revision: 1.12 $
+Date:      $Date: 2008-09-12 13:22:03 $
+Version:   $Revision: 1.13 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -134,7 +134,7 @@ mafOp(label)
 
 
   m_ProxyURL = "";
-  m_ProxyPort = "0";
+  m_ProxyPort = "";
 }
 
 //----------------------------------------------------------------------------
@@ -744,13 +744,10 @@ bool lhpOpEditTag::IsLHPBuilderVersionUpToDate()
 
   command2execute.Append(" lhpDictionaryVersionChecker.py ");
   command2execute.Append(" ");
-  if( !m_ProxyURL.Equals("") )
-  {
-    command2execute.Append(m_ProxyURL.GetCStr());
-    command2execute.Append(" ");
-    command2execute.Append(m_ProxyPort.GetCStr());
-  }
-
+  command2execute.Append(m_ProxyURL.GetCStr());
+  command2execute.Append(" ");
+  command2execute.Append(m_ProxyPort.GetCStr());
+  
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   long pid = wxExecute(command2execute, wxEXEC_SYNC);
