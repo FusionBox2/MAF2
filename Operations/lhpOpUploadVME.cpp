@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-11 15:33:03 $
-Version:   $Revision: 1.79 $
+Date:      $Date: 2008-09-15 14:25:17 $
+Version:   $Revision: 1.80 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -165,7 +165,6 @@ bool lhpOpUploadVME::Accept(mafNode* vme)
 void lhpOpUploadVME::OpRun()
 //----------------------------------------------------------------------------
 {
-
   //Get Proxy values
   mafEvent event;
   event.SetSender(this);
@@ -266,7 +265,7 @@ void lhpOpUploadVME::SaveConnectionConfigurationFile()
 }
 
 //----------------------------------------------------------------------------
-int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool withChild)   
+int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool withChild, bool needURI)   
 //----------------------------------------------------------------------------
 {
   wxBusyInfo *wait;
@@ -351,7 +350,6 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     wxMessageBox("Unable to create a temporary cache, remember that msf must be saved locally. Uploading stopped");
     return MAF_ERROR;
   }
-
 
   //EDIT TAG
   wxString command2execute;
@@ -497,8 +495,14 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     command2execute.c_str(), m_Pid);*/
   }
 
-   XMLURI.Append(this->GetBinaryURI());
-
+  if (needURI)
+  {
+    XMLURI.Append(this->GetXMLURI());
+  }
+  else
+  {
+    XMLURI.Append("");
+  }
 
   //remove csv file with tags
   wxRemoveFile(m_CsvName);
@@ -517,14 +521,14 @@ void lhpOpUploadVME::OpDo()
 {
   mafString URI;
 
-  if (UploadVME(URI, "", false) == MAF_ERROR)
+  if (UploadVME(URI, "", false, false) == MAF_ERROR)
   {
     return;
   }
 }
 
 //-------------------------------------------------------------------
-mafString lhpOpUploadVME::GetBinaryURI()
+mafString lhpOpUploadVME::GetXMLURI()
 //-------------------------------------------------------------------
 {
   mafString fURI;

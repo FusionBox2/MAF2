@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-10 15:19:16 $
-Version:   $Revision: 1.15 $
+Date:      $Date: 2008-09-15 14:24:41 $
+Version:   $Revision: 1.16 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -450,7 +450,7 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
           hasBinary = isBinaryDataPresent(childToUpload);
           m_UploadVME->SetInput(childToUpload);
           URI = "";
-          if (m_UploadVME->UploadVME(URI, hasBinary, childToUpload->GetNumberOfChildren()!=0) == MAF_ERROR || (URI == ""))
+          if (m_UploadVME->UploadVME(URI, hasBinary, childToUpload->GetNumberOfChildren()!=0, true) == MAF_ERROR || URI == "")
           {
           this->OpStop(OP_RUN_CANCEL);
           return;
@@ -481,7 +481,7 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
   //upload VME Root
   m_UploadVME->SetInput(node);
   URI = "";
-  if (m_UploadVME->UploadVME(URI, false, node->GetNumberOfChildren()!=0) == MAF_ERROR)
+  if (m_UploadVME->UploadVME(URI, false, node->GetNumberOfChildren()!=0, true) == MAF_ERROR)
   {
     this->OpStop(OP_RUN_CANCEL);
     return;
@@ -509,7 +509,7 @@ void lhpOpUploadMultiVME::UploadMultiVME(mafNode *node)
   hasBinary = isBinaryDataPresent(node);
   m_UploadVME->SetInput(node);
   URI = "";
-  if (m_UploadVME->UploadVME(URI, hasBinary, false) == MAF_ERROR)
+  if (m_UploadVME->UploadVME(URI, hasBinary, false, false) == MAF_ERROR)
   {
     this->OpStop(OP_RUN_CANCEL);
     return;
@@ -589,8 +589,6 @@ void lhpOpUploadMultiVME::SetVMELinks(mafNode *node)
 int lhpOpUploadMultiVME::UploadVMELinks(mafNode *derived)   
 //----------------------------------------------------------------------------
 {  
- // m_UncompletedTagNode.clear();
- // m_UncompletedTagURI.clear();
   bool emptyNode = false;
   bool alreadyUploaded = false;
   bool hasBinary = false;
@@ -624,47 +622,13 @@ int lhpOpUploadMultiVME::UploadVMELinks(mafNode *derived)
       }
       m_UploadVME->SetInput(link);
 
-      //Check if VME has been already uploaded
-     /* int counterVec = 0;
-      for (counterVec = 0; counterVec < m_UploadedNodeVector.size(); counterVec++)
-      {
-        if (m_UploadedNodeVector[counterVec]->Equals(link))
-        {
-          alreadyUploaded = true;
-          break;
-        }
-      }*/
-
-      //if (!alreadyUploaded)
-      //{
-        //Check if VME children has been already uploaded
-     /*   for (int c = 0; c < m_EmptyNodeVector.size(); c++)
-        {
-          if (m_EmptyNodeVector[c]->Equals(link))
-          {
-            emptyNode = true;
-            break;
-          }
-        }*/
-
         URI = "";
-        //if (m_UploadVME->UploadVME(URI, hasBinary, link->GetNumberOfChildren()!=0) == MAF_ERROR || (URI == ""))
-        if (m_UploadVME->UploadVME(URI, hasBinary, false) == MAF_ERROR || (URI == ""))
+        if (m_UploadVME->UploadVME(URI, hasBinary, false, false) == MAF_ERROR)
         {
           return MAF_ERROR;
         }
         m_UploadedNodeVector.push_back(link);
-        //SaveChildURIFile(link, URI);
         linkURI.push_back(URI);
-       // m_UncompletedTagURI.push_back(URI);
-       // m_UncompletedTagNode.push_back(link);
-
-     // }
-     // else
-     /* {
-        URI = m_UploadedURIVector.at(counterVec);
-        linkURI.push_back(URI);
-      }*/
     }
   }
   if (SaveLinkURIFile(derived, linkURI) == MAF_ERROR)
@@ -874,5 +838,3 @@ mafString lhpOpUploadMultiVME::GetXMLDictionaryFileName( mafString dictionaryFil
   
   return dictionaryFileName;
 }
-
-
