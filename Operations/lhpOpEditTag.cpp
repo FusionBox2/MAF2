@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-12 13:22:03 $
-Version:   $Revision: 1.13 $
+Date:      $Date: 2008-09-16 16:02:21 $
+Version:   $Revision: 1.14 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -75,7 +75,7 @@ MafMedical is partially based on OpenMAF.
 mafCxxTypeMacro(lhpOpEditTag);
 //----------------------------------------------------------------------------
 //static variables
-long lhpOpEditTag::m_Pid = -1;
+//long lhpOpEditTag::m_Pid = -1;
 mafString lhpOpEditTag::m_CacheSubdir = "0";
 lhpUser lhpOpEditTag::m_User = lhpUser();
 
@@ -275,6 +275,15 @@ void lhpOpEditTag::OnEvent(mafEventBase *maf_event)
 void lhpOpEditTag::OpDo()   
 //----------------------------------------------------------------------------
 {
+  if (EditTags()== MAF_ERROR)
+  {
+    return;
+  }
+}
+//-------------------------------------------------------------------
+int lhpOpEditTag::EditTags()
+//-------------------------------------------------------------------
+{
   m_HasLink = false;
   if (m_Input->GetNumberOfLinks() != 0)
   {
@@ -298,18 +307,18 @@ void lhpOpEditTag::OpDo()
   m_MsfFile = temp;
   temp = temp.BeforeLast('/');
   m_MsfDir = temp;  
-  
+
   if (m_MsfDir == "")
   {
     wxMessageBox("Can't edit VME tags: msf must be saved locally");
-    return;
+    return MAF_ERROR;
   }
 
   int ret = this->GeneratesTagsListsFromXMLDictionary();
   if (ret == MAF_ERROR)
   {
     wxMessageBox("Problems generating tags list! Exiting...");
-    return;
+    return MAF_ERROR;
   } 
 
   //If doesn't exist yet, append a TagArray:
@@ -319,7 +328,7 @@ void lhpOpEditTag::OpDo()
     rootTag.SetName("ROOT_TAG");
     m_Input->GetTagArray()->SetTag(rootTag);
   }
-  
+
   wxString oldDir = wxGetCwd();
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
@@ -338,17 +347,19 @@ void lhpOpEditTag::OpDo()
   command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
   command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //vme id
   command2execute.Append(wxString::Format("%s", m_CsvName.c_str())); //manualTagFile
-  
-  //wxMessageBox(wxString::Format("Process %ld is running.", m_Pid));
+
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
-  if (m_Pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  long pid = -1;
+  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
   {
-    wxMessageBox("Can't edit MSF");
-    return;
+    wxMessageBox("Error in lhpEditVMETag.py. Uploading stopped");
+    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), pid);
+    return MAF_ERROR;
   }
-  
+
   mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
-    command2execute.c_str(), m_Pid);
+    command2execute.c_str(), pid);
 
   ImportMSF();
   mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
@@ -356,21 +367,37 @@ void lhpOpEditTag::OpDo()
   wxSetWorkingDirectory(m_MsfDir.GetCStr());
   remove("OutputMSF.msf"); //delete msf created by python
   wxSetWorkingDirectory(oldDir);
+  return MAF_OK;
 }
 
 //-------------------------------------------------------------------
 int lhpOpEditTag::ImportMSF()
 //-------------------------------------------------------------------
 {
-  // msf name is standard: OutputMSF.msf
-  mafString msfFileName;
-  msfFileName.Append(m_MsfDir);
-  msfFileName.Append("/");
-  msfFileName.Append("OutputMSF.msf");
+  //msf name created by phyton tag editor is standard: OutputMSF.lhp
+  mafString msfPythonFileName;
+  mafString msfCompletePath;
+  msfPythonFileName.Append(m_MsfDir);
+  msfPythonFileName.Append("/");
+  msfPythonFileName.Append("OutputMSF");
+  int fileNumber = 0;
+  msfCompletePath = msfPythonFileName;
+
+  while(wxFileExists(msfCompletePath.Append(".msf").GetCStr()))
+  {
+    msfCompletePath = msfPythonFileName;
+    msfCompletePath << fileNumber;
+    fileNumber++;   
+  }
+  msfPythonFileName.Append(".lhp");
+  int result = rename(msfPythonFileName, msfCompletePath);
+  if ( result != 0 )
+    return MAF_ERROR;
+
 
   mafVMEStorage *storage;
   storage = mafVMEStorage::New();
-  storage->SetURL(msfFileName.GetCStr());
+  storage->SetURL(msfCompletePath.GetCStr());
 
   mafVMERoot *root;
   root = storage->GetRoot();
@@ -511,7 +538,14 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
   
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
-  int pid = wxExecute(command2execute, wxEXEC_SYNC);
+  long pid = -1;
+  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  {
+    wxMessageBox("Error in lhpXMLDictionaryParser.py. Uploading stopped");
+    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), pid);
+    return MAF_ERROR;
+  }
 
   if ( !command2execute )
     return MAF_ERROR;
@@ -530,7 +564,14 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
 
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
-  pid = wxExecute(command2execute, wxEXEC_SYNC);
+  pid = -1;
+  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  {
+    wxMessageBox("Error in lhpXMLDictionaryParser.py. Uploading stopped");
+    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), pid);
+    return MAF_ERROR;
+  }
 
   if ( !command2execute )
     return MAF_ERROR;
@@ -750,12 +791,19 @@ bool lhpOpEditTag::IsLHPBuilderVersionUpToDate()
   
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
-  long pid = wxExecute(command2execute, wxEXEC_SYNC);
+  long pid = -1;
+  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  {
+    wxMessageBox("Error in lhpDictionaryVersionChecker.py. Uploading stopped");
+    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), pid);
+    return MAF_ERROR;
+  }
   
   wxArrayString output;
   wxArrayString errors;
 
-  m_Pid = wxExecute(command2execute, output, errors);
+  pid = wxExecute(command2execute, output, errors);
   
 
   mafLogMessage("Command Output Messages:");
@@ -879,12 +927,19 @@ int lhpOpEditTag::AssembleDictionaries()
 
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
-  long pid = wxExecute(command2execute, wxEXEC_SYNC);
+  long pid = -1;
+  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  {
+    wxMessageBox("Error in lhpXMLDictionariesBuilder.py. Uploading stopped");
+    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), pid);
+    return MAF_ERROR;
+  }
 
   wxArrayString output;
   wxArrayString errors;
 
-  m_Pid = wxExecute(command2execute, output, errors);
+  pid = wxExecute(command2execute, output, errors);
 
   
   mafLogMessage("Command Output Messages:");

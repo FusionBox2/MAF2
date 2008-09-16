@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.h,v $
 Language:  C++
-Date:      $Date: 2008-07-09 07:36:53 $
-Version:   $Revision: 1.3 $
+Date:      $Date: 2008-09-16 16:02:21 $
+Version:   $Revision: 1.4 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -101,6 +101,9 @@ protected:
 
   /** Import Edited MSF*/
   int ImportMSF();
+
+  /** Edit VME tags*/
+  int EditTags();
   
   mafString m_CacheDir; //>cache superdirectory
   static mafString m_CacheSubdir; //>cache subdirectory
