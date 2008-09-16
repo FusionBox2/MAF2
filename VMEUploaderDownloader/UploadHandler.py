@@ -141,8 +141,8 @@ class UploadHandler:
             
             
         #---MD5 check-point-----------------------------------#
-        if(self.isBinaryPresent() == "true"):
-            print "Local checksum= " + self.localChksum
+        if(self.isBinaryPresent() == "true" and binarySendResult == True):
+            print "Local checksum=  " + self.localChksum
             print "Remote checksum= " + self.remoteChksum
             if (self.localChksum == self.remoteChksum):
                 print " "
@@ -351,7 +351,7 @@ class UploadHandler:
         print "Remote checksum: " + str(self.remoteChksum)
         self.uri = result.uriFile
         print "URI File: " + str(result.uriFile)
-        time.sleep(10)
+        time.sleep(1)
         os.chdir(oldDir)
         
         
