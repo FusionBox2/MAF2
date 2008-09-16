@@ -34,7 +34,7 @@ class lhpEditVMETag:
         self.VmeToExtractID = 1
         self.OutputFolderName = "No output msf dir"
         self.OutputVMEXMLName = "OutputXML.xml"  #xml with tag edited
-        self.OutputMSFFileName = "OutputMSF.msf"
+        self.OutputMSFFileName = "OutputMSF.lhp"
         self.FakeRootMSFFileName = "FakeRoot"
         self.FakeMSFFileName = "FakeMSF"
         
