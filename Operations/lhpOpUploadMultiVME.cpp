@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-15 14:24:41 $
-Version:   $Revision: 1.16 $
+Date:      $Date: 2008-09-16 16:03:34 $
+Version:   $Revision: 1.17 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -79,7 +79,7 @@ MafMedical is partially based on OpenMAF.
 mafCxxTypeMacro(lhpOpUploadMultiVME);
 //----------------------------------------------------------------------------
 //static variables
-long lhpOpUploadMultiVME::m_Pid = -1;
+//long lhpOpUploadMultiVME::m_Pid = -1;
 mafString lhpOpUploadMultiVME::m_CacheSubdir = "0";
 lhpUser lhpOpUploadMultiVME::m_User = lhpUser();
 
@@ -312,12 +312,19 @@ int lhpOpUploadMultiVME::AssembleDictionaries()
 
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
-  long pid = wxExecute(command2execute, wxEXEC_SYNC);
+  long pid = -1;
+  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  {
+    wxMessageBox("Error in lhpXMLDictionariesBuilder.py. Uploading stopped");
+    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), pid);
+    return MAF_ERROR;
+  }
 
   wxArrayString output;
   wxArrayString errors;
 
-  m_Pid = wxExecute(command2execute, output, errors);
+  pid = wxExecute(command2execute, output, errors);
 
 
   mafLogMessage("Command Output Messages:");
@@ -369,7 +376,14 @@ bool lhpOpUploadMultiVME::isBinaryDataPresent(mafNode *node)
   command2execute.Append(" ");
   command2execute.Append(wxString::Format("%d ",node->GetId()));
 
-  long pid = wxExecute(command2execute, wxEXEC_SYNC);
+  long pid = -1;
+  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  {
+    wxMessageBox("Error in lhpCheckBinaryName.py. Uploading stopped");
+    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), pid);
+    return MAF_ERROR;
+  }
 
   wxArrayString output;
   wxArrayString errors;
@@ -452,8 +466,7 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
           URI = "";
           if (m_UploadVME->UploadVME(URI, hasBinary, childToUpload->GetNumberOfChildren()!=0, true) == MAF_ERROR || URI == "")
           {
-          this->OpStop(OP_RUN_CANCEL);
-          return;
+            return;
           }
           m_UploadedNodeVector.push_back(childToUpload);
           m_EmptyNodeVector.push_back(childToUpload);
@@ -483,12 +496,15 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
   URI = "";
   if (m_UploadVME->UploadVME(URI, false, node->GetNumberOfChildren()!=0, true) == MAF_ERROR)
   {
-    this->OpStop(OP_RUN_CANCEL);
     return;
   }
   m_UploadedNodeVector.push_back(node);
   m_UploadedURIVector.push_back(URI);
-  SetVMELinks(node);
+  if (SetVMELinks(node) == MAF_ERROR)
+  {
+    return;
+  }
+  
 }
 
 //----------------------------------------------------------------------------
@@ -502,7 +518,6 @@ void lhpOpUploadMultiVME::UploadMultiVME(mafNode *node)
   {
     if (UploadVMELinks(node) == MAF_ERROR)
     {
-      this->OpStop(OP_RUN_CANCEL);
       return;
     }
   }
@@ -511,12 +526,11 @@ void lhpOpUploadMultiVME::UploadMultiVME(mafNode *node)
   URI = "";
   if (m_UploadVME->UploadVME(URI, hasBinary, false, false) == MAF_ERROR)
   {
-    this->OpStop(OP_RUN_CANCEL);
     return;
   }
 }
 //----------------------------------------------------------------------------
-void lhpOpUploadMultiVME::SetVMELinks(mafNode *node)   
+int lhpOpUploadMultiVME::SetVMELinks(mafNode *node)   
 //----------------------------------------------------------------------------
 {  
   wxString vmeURI;
@@ -578,11 +592,19 @@ void lhpOpUploadMultiVME::SetVMELinks(mafNode *node)
     command2execute.Append(listURI.GetCStr());
     mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
-    long pid = wxExecute(command2execute, wxEXEC_SYNC);
+    long pid = -1;
+    if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+    {
+      wxMessageBox("Error in lhpEditRemoteTag.py. Uploading stopped");
+      mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+        command2execute.c_str(), pid);
+      return MAF_ERROR;
+    }
 
     wxSetWorkingDirectory(oldDir);
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   }
+  return MAF_OK;
 
 }
 //----------------------------------------------------------------------------
@@ -765,12 +787,19 @@ bool lhpOpUploadMultiVME::IsLHPBuilderVersionUpToDate()
 
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
-  long pid = wxExecute(command2execute, wxEXEC_SYNC);
+  long pid = -1;
+  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  {
+    wxMessageBox("Error in lhpDictionaryVersionChecker.py. Uploading stopped");
+    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), pid);
+    return MAF_ERROR;
+  }
   
   wxArrayString output;
   wxArrayString errors;
 
-  m_Pid = wxExecute(command2execute, output, errors);
+  pid = wxExecute(command2execute, output, errors);
   
 
   mafLogMessage("Command Output Messages:");

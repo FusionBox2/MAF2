@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.h,v $
 Language:  C++
-Date:      $Date: 2008-09-10 15:12:51 $
-Version:   $Revision: 1.8 $
+Date:      $Date: 2008-09-16 16:03:34 $
+Version:   $Revision: 1.9 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -136,7 +136,7 @@ private:
   int SaveChildURIFile(mafNode* node, mafString URI);
 
   /** Edit VME tag with VME link URI */
-  void SetVMELinks(mafNode *node);
+  int SetVMELinks(mafNode *node);
 
   /** Check if a binary data is associated to the VME */
   bool isBinaryDataPresent(mafNode *node);
