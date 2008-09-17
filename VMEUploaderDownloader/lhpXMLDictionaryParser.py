@@ -3,13 +3,15 @@
 # code is changing very fast so don't rely on it :P
 # author: Stefano Perticoni <s.perticoni@scsolutions.it>
 #-----------------------------------------------------------------------------
+from test.test_codecs import Str2StrTest
 
 import sys, string
 import Debug
-from xml.dom import minidom
+from xml.dom import minidom 
 from xml.dom import Node
 import Enum
 import os
+from string import split
             
 class lhpXMLDictionaryParser:
     """Facilities to handle lhpBuilder XML dictionary"""
@@ -26,6 +28,7 @@ class lhpXMLDictionaryParser:
         self.XMLDictionaryFileName = "UNDEFINED"
         self.DictionaryDOMDocument = None
         self.DictionaryDOMDocumentRoot = None
+        
         
     def LoadXMLDictionary(self, xmlDictFileName):
         """Load lhpBuilder XML dictionary"""
@@ -120,8 +123,6 @@ class lhpXMLDictionaryParser:
     def GetNodeName(self,node):
         """Return the node name"""
         if node.nodeType == Node.ELEMENT_NODE:
-            if Debug:
-                print node.nodeName
             return node.nodeName
     
     def IsAuto(self,node):
@@ -222,8 +223,44 @@ class lhpXMLDictionaryParser:
     def __printLevel(self,outFile, level):
         for idx in range(level):
             outFile.write('    ')
-
-
+    
+    def GetChildNodeByName(self, parent, searchedName):
+        """Get the child node by name. Return none if non existant 
+        domDocumentNode
+            ElementNode Name: L0000
+                ElementNode Name: resource
+                        ElementNode Name: data
+                        ElementNode Name: DataType
+            
+        GetChildNodeByName(domDocumentNode, L0000): returns L0000 node
+        GetChildNodeByName(domDocumentNode, resource): returns None
+        """
+        if parent.hasChildNodes():
+            for node in parent.childNodes:
+                name = self.GetNodeName(node)
+                if name == searchedName:
+                    return node
+        return None
+    
+    def GetNodeFromVMETagArrayTagName(self, vmeTagArrayTagName):
+        """Get corresponding xml dictionary node from vme tag item name:
+        For example: given L0000_resource_MAF_TreeInfo_VmeRootURI as argument
+        the VmeRootURI named dom node is returned if it exists otherwise None"""
+        assert(self.DictionaryDOMDocument)
+        splitted = split(vmeTagArrayTagName, '_')
+        print splitted
+        
+        currentParent = self.DictionaryDOMDocument
+        
+        for name in splitted:
+            child = self.GetChildNodeByName(currentParent, name)
+            if child:
+                currentParent = child
+            else:
+                return None
+        
+        return currentParent
+        
 
 def run(xmlDictionaryFilename, command, outputTagsFileName):
     """"""

@@ -377,8 +377,10 @@ class msfParser:
                attrNode = attrs.get(attrName)
                oldTagsNumber = attrNode.nodeValue
                if Debug:
-                   print oldTagsNumber
+                   print "old tags number was: " + oldTagsNumber
+                   print str(addedTagsNumber)+ " tags have been added"
                attrNode.nodeValue = str(int(oldTagsNumber)  +  addedTagsNumber)
+               print "new tags number is: " + attrNode.nodeValue
                if Debug:    
                    print attrNode.nodeValue
     
@@ -443,14 +445,13 @@ class msfParser:
     
     def GetTagNames(self, tagArrayNode):
         """Print the given tagArrayNode tags list, also return the tagList"""
-        tagList = []
-        
-        
+        tagList = []    
 
         for node in tagArrayNode.childNodes:
         #  search for a Node with name "Node"...0
             if node.nodeType == Node.ELEMENT_NODE:
                 if node.nodeName == "TItem":
+                                
                     # get node attributes
                     attrs = node.attributes                             
                     for attrName in attrs.keys():
@@ -458,7 +459,6 @@ class msfParser:
                         attrValue = attrNode.nodeValue
                         if attrName  == "Name":
                             tagList.append(attrValue)
-
 
         
         # print tagList         
@@ -470,6 +470,34 @@ class msfParser:
 
         return tagList
     
+    def GetTagDictionary(self, tagArrayNode):
+        """return tag names and their text content in a dictionary"""
+        tagDictionary = {} 
+
+        for node in tagArrayNode.childNodes:
+        #  search for a Node with name "Node"...0
+            if node.nodeType == Node.ELEMENT_NODE:
+                if node.nodeName == "TItem":
+                    
+                    tagText = self.GetTagNodeText(node)
+                    
+                    # get node attributes
+                    attrs = node.attributes                             
+                    for attrName in attrs.keys():
+                        attrNode = attrs.get(attrName)
+                        attrValue = attrNode.nodeValue
+                        if attrName  == "Name":
+                            tagDictionary[attrValue] = tagText
+        
+        # print tagDictionary         
+        #print "\nVME tagArray node tag names:\n"
+        #for el in range(len(tagDictionary)):
+        #    print tagDictionary[el]
+
+        #print "Number of tags: " + str(len(tagDictionary))
+
+        return tagDictionary
+
     def __GetVmeNodeByIdInternal(self, vmeTreeRootNode, vmeId):
         """Get a vme given the vme tree root and its Id, since the vme ID is unique
         in a well formed MSF this is always returning one and only one node"""
