@@ -44,7 +44,7 @@ class msfParserTest(unittest.TestCase):
         self.doc = minidom.parse(self.copyFileName)
         self.rootNode = self.doc.documentElement
             
-    def testPrintXMLTree(self):
+    def estPrintXMLTree(self):
         nodeName =  "test_volume"
         nodeId = 1;
         # other node attributes eventually here
@@ -54,7 +54,7 @@ class msfParserTest(unittest.TestCase):
         level = 0
         self.msfParserInstance.PrintDOMTree(rootNode, outFile)
 
-    def testPrintNodesOnly(self):
+    def estPrintNodesOnly(self):
         nodeName =  "test_volume"
         nodeId = 1
         # other node attributes eventually here
@@ -64,7 +64,7 @@ class msfParserTest(unittest.TestCase):
         p = self.msfParserInstance
         p.PrintVmeNodes(rootNode,outFile)
         
-    def testCloneNode(self):
+    def estCloneNode(self):
         outFile = open('cloneSource.txt', 'w')
         doc = minidom.parse(self.copyFileName)
         rootNode = doc.documentElement
@@ -78,7 +78,7 @@ class msfParserTest(unittest.TestCase):
         # = difflib.
         self.assertEqual(rootNode.nodeName, clone.nodeName)
         
-    def testExtractTestVolumeVME(self):
+    def estExtractTestVolumeVME(self):
         #NodeName: Node
                 #Attribute -- Name: T5ype  Value: mafVMEVolumeGray
                 #Attribute -- Name: Crypting  Value: 0
@@ -91,7 +91,7 @@ class msfParserTest(unittest.TestCase):
         outFile = open('vmeTestVolumeDOMNode.txt', 'w')
         p.PrintDOMTree(vme,outFile)
     
-    def testPrintVMETagArrayNodeAndSaveToXML(self):
+    def estPrintVMETagArrayNodeAndSaveToXML(self):
         p = self.msfParserInstance
         vme = p.GetVmeNodeById(self.rootNode, 1)
         tagArray = p.GetVmeTagArrayNode(vme)
@@ -102,24 +102,24 @@ class msfParserTest(unittest.TestCase):
         outFileXML = open('vmeTestVolumeTagArray.xml', 'w')
         newDoc.writexml(outFileXML)
 
-    def testGetTagNames(self):
+    def estGetTagNames(self):
         p = self.msfParserInstance
         vme = p.GetVmeNodeById(self.rootNode, 1)
         tagArray = p.GetVmeTagArrayNode(vme)
         tagList = p.GetTagNames(tagArray)
     
-    def testGetVmeNodeByID(self):
+    def estGetVmeNodeByID(self):
         vme = self.msfParserInstance.GetVmeNodeById(self.rootNode, 1)
         self.assertNotEqual(vme, None)
     
-    def testGetVmeTagNodeByName(self):
+    def estGetVmeTagNodeByName(self):
         p = self.msfParserInstance
         vme = p.GetVmeNodeById(self.rootNode, 1)
         tagArray = p.GetVmeTagArrayNode(vme)
         tagItem = p.GetVmeTagItemNodeByName(tagArray, r'Dicom_CT_peakvoltage(kV)')
         self.assertNotEqual(tagItem,None)
     
-    def testGetVMEDataURLList(self):
+    def estGetVMEDataURLList(self):
         p = self.msfParserInstance
         vme = p.GetVmeNodeById(self.rootNode, 1)
         data = p.GetVMEDataURLList(vme)
@@ -127,7 +127,7 @@ class msfParserTest(unittest.TestCase):
         self.assertEqual(data[0],"TESTmsf.1.vtk")
         self.assertEqual(len(data),1)
     
-    def testRemoveTagsByList(self):
+    def estRemoveTagsByList(self):
         p = self.msfParserInstance
         vme = p.GetVmeNodeById(self.rootNode, 1)
         tagArray = p.GetVmeTagArrayNode(vme)
@@ -136,7 +136,7 @@ class msfParserTest(unittest.TestCase):
         outFile = open('afterTagsRemoval.txt', 'w')
         p.PrintDOMTree(vme, outFile)
             
-    def testPickle(self):
+    def estPickle(self):
         # testing VMEUploaderDownloader serialization for list objects 
         stupidList = [1,2,3]
         outFile = open('pickleStupidList.txt', 'w')
@@ -147,7 +147,7 @@ class msfParserTest(unittest.TestCase):
         self.assertEqual(stupidList,newList)
         
     
-    def testAddTagsFromList(self):
+    def estAddTagsFromList(self):
         p = self.msfParserInstance
         vme = p.GetVmeNodeById(self.rootNode, 1)
         tagArray = p.GetVmeTagArrayNode(vme)
@@ -158,7 +158,7 @@ class msfParserTest(unittest.TestCase):
         outFile = open('afterTagsAdding.txt', 'w')
         p.PrintDOMTree(vme, outFile)
     
-    def testGetTagNodeByTagName(self):
+    def estGetTagNodeByTagName(self):
         
         p = self.msfParserInstance
         vme = p.GetVmeNodeById(self.rootNode, 1)
@@ -173,7 +173,7 @@ class msfParserTest(unittest.TestCase):
         mazingaNode = p.GetTagNodeByTagName(tagArray, "mazinga")        
         self.assertFalse(mazingaNode)
     
-    def testSetGetTagNodeText(self) :
+    def estSetGetTagNodeText(self) :
         
         p = self.msfParserInstance
         vme = p.GetVmeNodeById(self.rootNode, 1)
@@ -229,6 +229,9 @@ class msfParserTest(unittest.TestCase):
         tagDictionary = p.GetTagDictionary(tagArrayNode)
         print tagDictionary
         
+        for key in tagDictionary.keys():
+            print key, '\t', tagDictionary[key]
+            
         self.assertTrue(tagDictionary["L0000_resource_MAF_TreeInfo_VmeRootURI"] \
                          == "Automated Tag Not Handled (instance exists)")
         
