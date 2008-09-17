@@ -333,7 +333,7 @@ class xmlrpc_demoWS:
             args['download'] = ''
             args['listitems'] = ''
         else:
-            print 'Error :\n' + usage_msg
+            print 'Error: command not found\n'
             sys.exit(1)
 
         print command, url, username, password, str(args)
