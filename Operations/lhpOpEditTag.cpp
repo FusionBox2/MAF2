@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-16 16:02:21 $
-Version:   $Revision: 1.14 $
+Date:      $Date: 2008-09-18 08:45:40 $
+Version:   $Revision: 1.15 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -363,10 +363,6 @@ int lhpOpEditTag::EditTags()
 
   ImportMSF();
   mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
-
-  wxSetWorkingDirectory(m_MsfDir.GetCStr());
-  remove("OutputMSF.msf"); //delete msf created by python
-  wxSetWorkingDirectory(oldDir);
   return MAF_OK;
 }
 
@@ -412,16 +408,20 @@ int lhpOpEditTag::ImportMSF()
       mafErrorMessage(_("Errors during file parsing! Look the log area for error messages."));
     return MAF_ERROR;
   }
-  mafNode *temporaryNode = root->GetFirstChild();
-  if (temporaryNode == NULL)
+  if (m_Input->IsA("mafVMERoot"))
   {
     //copy tags from MSF genereted by python editor, to orginal MSF.
     m_Input->GetTagArray()->DeepCopy(root->GetTagArray());
   }
   else
   {
-    //copy tags from MSF genereted by python editor, to orginal MSF.
-    m_Input->GetTagArray()->DeepCopy(temporaryNode->GetTagArray());
+    mafNode *temporaryNode = root->GetFirstChild();
+    if (temporaryNode != NULL)
+    {
+      //copy tags from MSF genereted by python editor, to orginal MSF.
+      m_Input->GetTagArray()->DeepCopy(temporaryNode->GetTagArray());
+    }
+    mafDEL(temporaryNode);
   }
 
   //attach links previously removed
@@ -439,7 +439,9 @@ int lhpOpEditTag::ImportMSF()
   if (wxFileExists(lockPath))
     wxRemoveFile(lockPath); //fileName
 
-  mafDEL(temporaryNode);
+  //remove msf created by phyton tag editor
+  remove(msfCompletePath); 
+
   mafDEL(storage);
   return MAF_OK;
 }
