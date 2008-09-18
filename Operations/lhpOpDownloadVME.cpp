@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-10 15:07:28 $
-Version:   $Revision: 1.30 $
+Date:      $Date: 2008-09-18 08:43:27 $
+Version:   $Revision: 1.31 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -118,12 +118,9 @@ mafOp(label)
   
   m_BasketListFileName = "ToDownload.txt" ;
   m_ConnectionConfigurationFileName = "vmeUploaderConnectionConfiguration.conf" ;
-
   m_BinaryRealName = "";
-
   m_URISRBFile = "";
   m_URISRBFileSize = "0";
-
   m_ProxyURL = "";
   m_ProxyPort = "0";
 }
@@ -188,7 +185,6 @@ void lhpOpDownloadVME::OpRun()
   }
 
   int result = OP_RUN_CANCEL;
-
   bool upToDate = false;
 
   if(CheckLogin())
@@ -238,7 +234,6 @@ void lhpOpDownloadVME::SaveConnectionConfigurationFile()
 
   // open auto tags file and try to handle tags using tags factory 
   ofstream configurationFile;
-
   configurationFile.open(m_ConnectionConfigurationFileName.GetCStr());
   if (!configurationFile) {
     wxString message = m_ConnectionConfigurationFileName.GetCStr();
@@ -284,7 +279,6 @@ void lhpOpDownloadVME::OnEvent(mafEventBase *maf_event)
 
     case wxCANCEL:
       {
-        
         this->OpStop(OP_RUN_CANCEL);
         return;
       }
@@ -307,7 +301,7 @@ void lhpOpDownloadVME::OpDo()
   }
 
   //Download VME form the basket
-  if (DownloadVME(m_BasketList) != MAF_OK)
+  if (DownloadVME(m_BasketListURI) != MAF_OK)
   {
     return;
   }
@@ -466,11 +460,8 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
         command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
         command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
         command2execute.Append(wxString::Format("%s ","https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //dev repository
-        //http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2 prod
-        command2execute.Append(wxString::Format("%s ", "none")); //set "none" for download
-        command2execute.Append(wxString::Format("%s ", "false")); //has link? (set "false" for download")
-        command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //DATA DOWNLOAD NAME
-        //command2execute.Append(" > log.txt"); //logme
+        command2execute.Append(wxString::Format("%s ",listVME[i].c_str())); //XML URI NAME
+        command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //SRB DATA NAME
 
         m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
       }
@@ -509,10 +500,8 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
         command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
         command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
         command2execute.Append(wxString::Format("%s ","https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //repository
-
-        command2execute.Append(wxString::Format("%s ", "none")); //set "none" for download
-        command2execute.Append(wxString::Format("%s ", "false")); //has link? (set "false" for download")
-        command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //DATA DOWNLOAD NAME
+        command2execute.Append(wxString::Format("%s ",listVME[i].c_str())); //XML URI NAME
+        command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //SRB DATA NAME
 
         mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
         m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
@@ -550,7 +539,6 @@ bool lhpOpDownloadVME::CreateIncomingCache()
 
   wxString temp;
   temp.Append((*event.GetString()).GetCStr());
-  m_MsfFile = temp;
   temp = temp.BeforeLast('/');
   m_MsfDir = temp;
 
@@ -622,7 +610,6 @@ bool lhpOpDownloadVME::CreateIncomingDirectory()
 //----------------------------------------------------------------------------
 {
   bool resultIncoming = false;
-
   
   wxString existIncoming = m_IncomingDir.GetCStr();
   if ( wxDirExists(existIncoming) )
@@ -634,10 +621,8 @@ bool lhpOpDownloadVME::CreateIncomingDirectory()
     wxMkDir(existIncoming);
     if ( wxDirExists(existIncoming) ) resultIncoming = true;
   }
-
   return resultIncoming;
 }
-
 
 //----------------------------------------------------------------------------
 bool lhpOpDownloadVME::CheckLogin()
@@ -651,27 +636,7 @@ bool lhpOpDownloadVME::CheckLogin()
   result = m_User.CheckUserCredentials();
   return result;
 }
-//----------------------------------------------------------------------------
-// widget id's
-//----------------------------------------------------------------------------
-void lhpOpDownloadVME::CreateGui()
-//----------------------------------------------------------------------------
-{
-  /*m_Gui = new mafGUI(this);
 
-  m_Gui->Divider(2);
-
-  m_Gui->Label("Download", true);
-  wxString subDictionariesList[3] = {"none", "motionAnalysis", "dicom"};
-  //m_Gui->Combo(ID_SUBDICTIONARY,"",&m_SubdictionaryId,3,subDictionariesList);
-
-  m_Gui->Divider(2);
- 
-  m_Gui->OkCancel(); 
-  m_Gui->Label("");
-  m_Gui->Update();*/
-
-}
 //----------------------------------------------------------------------------
 int lhpOpDownloadVME::CreateFileListFromBasket()
 //----------------------------------------------------------------------------
@@ -690,14 +655,8 @@ int lhpOpDownloadVME::CreateFileListFromBasket()
   command2execute.Append(m_User.GetName());
   command2execute.Append(" ");
   command2execute.Append(m_User.GetPwd());
-  /*command2execute.Append(" ");
-  command2execute.Append(m_ProxyURL.GetCStr());
-  command2execute.Append(" ");
-  command2execute.Append(m_ProxyPort.GetCStr());*/
-  //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   long pid = wxExecute(command2execute, wxEXEC_SYNC);
-
 
   wxSetWorkingDirectory(oldDir);
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
@@ -724,9 +683,10 @@ int lhpOpDownloadVME::RetrieveInformationFromBasketListFile()
 
   std::string idName;
 
+  //read SRB data URI
   while (inBasketListFile >> idName) 
   {
-    m_BasketList.Add(idName.c_str());
+    m_BasketListURI.Add(idName.c_str());
   }
   inBasketListFile.close();
 
@@ -748,13 +708,11 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(mafString  xmlFile)
   wxString command2execute;
   command2execute.Clear();
   command2execute = m_PythonwExe;
-
   command2execute.Append(" downloadSingleXML.py ");
   command2execute.Append(m_User.GetName());
   command2execute.Append(" ");
   command2execute.Append(m_User.GetPwd());
   command2execute.Append(" ");
-
   command2execute.Append(xmlFile.GetCStr());
   command2execute.Append(" ");
 
@@ -762,14 +720,17 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(mafString  xmlFile)
   directoryWorkAround.Replace(" ", "?");
   command2execute.Append(directoryWorkAround);
 
-
-  long pid = wxExecute(command2execute, wxEXEC_SYNC);
+  long pid = -1;
+  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  {
+    wxMessageBox("Error in downloadSingleXML.py. Uploading stopped");
+    return MAF_ERROR;
+  }
 
   wxArrayString output;
   wxArrayString errors;
 
-  m_Pid = wxExecute(command2execute, output, errors);
-
+  pid = wxExecute(command2execute, output, errors);
 
   mafLogMessage("Command Output Messages:");
   for (int i = 0; i < output.size(); i++)
@@ -783,7 +744,6 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(mafString  xmlFile)
     mafLogMessage(errors[i]);
   }
 
-  
   if(output.size() < 3)
   {
     return MAF_ERROR;
@@ -792,7 +752,6 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(mafString  xmlFile)
   m_URISRBFileSize = output[output.size() - 1];
   m_URISRBFile = output[output.size() - 2];
   
-
   wxSetWorkingDirectory(oldDir);
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -818,7 +777,6 @@ int lhpOpDownloadVME::ReconstructMSF(mafString xmlFile)
 
   command2execute.Append(directoryWorkAround);
   command2execute.Append(" ");
-
   command2execute.Append(xmlFile);
   command2execute.Append(" ");
 
@@ -828,14 +786,9 @@ int lhpOpDownloadVME::ReconstructMSF(mafString xmlFile)
 
   command2execute.Append(directoryWorkAroundMSF);
   command2execute.Append(" ");
-  /*command2execute.Append(" ");
-  command2execute.Append(m_ProxyURL.GetCStr());
-  command2execute.Append(" ");
-  command2execute.Append(m_ProxyPort.GetCStr());*/
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   long pid = wxExecute(command2execute, wxEXEC_SYNC);
-
   
   wxSetWorkingDirectory(oldDir);
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
@@ -852,9 +805,12 @@ wxArrayString lhpOpDownloadVME::GetChildURI(mafNode *node)
   int count, count2;
   wxArrayString listChildURI;
   listChildURI.clear();
-  
-  std::string listChild = node->GetTagArray()->GetTag("L0000_resource_MAF_TreeInfo_VmeChildURI1")->GetValue();
+  mafTagItem *tagChild = node->GetTagArray()->GetTag("L0000_resource_MAF_TreeInfo_VmeChildURI1");
 
+  if (tagChild == NULL)
+    return listChildURI;
+
+  std::string listChild = tagChild->GetValue();
   count = listChild.find_first_of("'");
   listChild.erase(0, count+1);
 
@@ -943,14 +899,7 @@ int lhpOpDownloadVME::ImportMSF(mafNode *parentNode)
     return MAF_OK;
   }
 
-
   m_DownloadedNodeVector.push_back(m_NodeDownloaded);
-
-  //Download the whole MSF
-  if (m_NodeDownloaded->IsA("mafVMERoot"))
-  {
-    
-  }
 
   if (m_NodeDownloaded->GetNumberOfLinks() != 0)
   {
@@ -1001,7 +950,6 @@ bool lhpOpDownloadVME::IsLHPBuilderVersionUpToDate()
   wxString command2execute;
   command2execute.Clear();
   command2execute = m_PythonwExe;
-
   command2execute.Append(" lhpDictionaryVersionChecker.py ");
   command2execute.Append(" ");
   if( !m_ProxyURL.Equals("") )
@@ -1013,13 +961,17 @@ bool lhpOpDownloadVME::IsLHPBuilderVersionUpToDate()
 
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
-  long pid = wxExecute(command2execute, wxEXEC_SYNC);
+  long pid = -1;
+  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  {
+    wxMessageBox("Error in lhpDictionaryVersionChecker.py. Uploading stopped");
+    return MAF_ERROR;
+  }
 
   wxArrayString output;
   wxArrayString errors;
 
-  m_Pid = wxExecute(command2execute, output, errors);
-
+  pid = wxExecute(command2execute, output, errors);
 
   mafLogMessage("Command Output Messages:");
   for (int i = 0; i < output.size(); i++)
@@ -1046,5 +998,4 @@ bool lhpOpDownloadVME::IsLHPBuilderVersionUpToDate()
   {
     return false;
   }  
-
 }

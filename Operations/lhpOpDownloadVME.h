@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-08-21 14:22:29 $
-Version:   $Revision: 1.5 $
+Date:      $Date: 2008-09-18 08:43:27 $
+Version:   $Revision: 1.6 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -159,14 +159,13 @@ protected:
   mafString m_PythonExe; //>python  executable
   mafString m_PythonwExe; //>pythonw  executable
   mafString m_MsfDir; //>directory of original msf
-  mafString m_MsfFile; //>absolute path of original msf
   
   static long m_Pid; //> pid of the server process
 
   static lhpUser  m_User;
   
   mafString m_BasketListFileName; 
-  wxArrayString m_BasketList;
+  wxArrayString m_BasketListURI;
   wxArrayString m_ListLinkURI;
 
   mafString m_BinaryRealName;
@@ -177,10 +176,6 @@ protected:
   mafString m_ConnectionConfigurationFileName;
   mafString m_ProxyURL;
   mafString m_ProxyPort;
-
-private:
-  void CreateGui();
-
   
 };
 #endif
