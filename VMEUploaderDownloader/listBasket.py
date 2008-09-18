@@ -49,7 +49,8 @@ class listBasket:
         #self.IdList.append("Id2.xml")
         dom = xd.parseString(self.Result)
         if dom.getElementsByTagName("fault"):
-                return
+            print "-----Error in listbasket service---------"
+            return
         for el in dom.getElementsByTagName("string"):
             for node in el.childNodes:  
                 self.IdList.append(node.data)

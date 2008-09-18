@@ -35,7 +35,8 @@ class downloadSingleXML():
             return ""
         dom = xd.parse(file)
         if dom.getElementsByTagName("fault"):
-                return       
+            print "------Error in xmldownload service--------"
+            return       
         for el in dom.getElementsByTagName('TItem'):
            if(el.attributes != None and el.attributes.get('Name')):
               attrNode = el.attributes.get('Name')
