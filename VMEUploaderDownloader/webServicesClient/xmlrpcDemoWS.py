@@ -22,6 +22,7 @@ class xmlrpc_demoWS:
         self.Username = ''
         self.Password = ''
         self.ServerURL = ''
+        #self.ServerURL = 'http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/'
 
 
     def post_multipart(self, bod='search', url='', username='', password='', **kw):
@@ -142,6 +143,16 @@ class xmlrpc_demoWS:
        </params>
      </methodCall>'''
 
+        self.createResource = \
+    '''<?xml version="1.0"?>
+     <methodCall>
+      <methodName>createResource</methodName>
+       <params>
+       <param>
+       </param>
+       </params>
+     </methodCall>'''
+
         wh_file = ''
 
         if bod == 'xmlupload':
@@ -162,6 +173,8 @@ class xmlrpc_demoWS:
             body = self.xmlRead
         elif bod == 'gettitle':
             body = self.getTitle
+        elif bod == 'createresource':
+            body = self.createResource
 
         print "++++++\n" + body + "\n"
 
@@ -260,7 +273,8 @@ class xmlrpc_demoWS:
             args['download'] = ''
             f = file(filename,'rb')
             args['upload'] = f.read()
-            args['id'] = '' #f.name
+            #args['id'] = '' #f.name
+            args['id'] = f.name
             args['title'] = title
             args['description'] = description
             args['filename'] = ''
@@ -325,6 +339,14 @@ class xmlrpc_demoWS:
              '<member><name>name</name><value><string>%s</string></value></member><member><name>new</name><value><string>%s</string></value></member>' % \
              (filename.split(',')[1],filename.split(',')[2])
         elif command == 'gettitle':
+            args['id'] = ''
+            args['title'] = ''
+            args['description'] = ''
+            args['upload'] = ''
+            args['filename'] = ''
+            args['download'] = ''
+            args['listitems'] = ''
+        elif command == 'createresource':
             args['id'] = ''
             args['title'] = ''
             args['description'] = ''
