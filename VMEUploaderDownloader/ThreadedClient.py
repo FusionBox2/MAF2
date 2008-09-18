@@ -18,6 +18,9 @@ import CustomThread
 import random
 import Queue
 import UploadHandler, DownloadHandler
+from webServicesClient import xmlrpcDemoWS
+import xml.dom.minidom as xd
+from lhpDefines import *
 import thread
 import Server
 import Lock
@@ -73,15 +76,15 @@ class ThreadedClient:
         #if tupla contain a flag for update or download it can be use the same structure
         #tuplaFromServer is
         #0 is modality (UPLOAD or DOWNLOAD)
-        #1 is id, 
+        #1 is id for UPLOAD, SRB file size for DOWNLOAD 
         #2 is directory
         #3 is usr
         #4 is pwd
         #5 is serverUrl
-        #6 is originalId
-        #7 is hasLink
-        #8 is withChild
-        #8 is vme name
+        #6 is originalId in UPLOAD, SRB data URI in DOWNLOAD
+        #7 is hasLink (UPLOAD)
+        #8 is withChild (UPLOAD)
+        #9 is vme name (UPLOAD)
         
         if(tuplaFromServer[0] == "UPLOAD"):
            self.createThreadForUpdate(tuplaFromServer)
@@ -91,7 +94,7 @@ class ThreadedClient:
         
     def createThreadForUpdate(self, tuplaFromServer):
         #tuplaFromServer is
-        #0 is modality (UPLOAD or DOWNLOAD)
+        #0 is modality UPLOAD
         #1 is id, 
         #2 is directory
         #3 is usr
@@ -109,17 +112,22 @@ class ThreadedClient:
     
     def createThreadForDownload(self, tuplaFromServer):
         #tuplaFromServer is
-        #0 is modality (UPLOAD or DOWNLOAD)
-        #1 is id, 
+        #0 is modality DOWNLOAD)
+        #1 is SRB file size
         #2 is directory
         #3 is usr
         #4 is pwd
         #5 is serverUrl
-        #6 is data URI in SRB
+        #6 is is XML data URI 
+        #7 is is SRB data URI 
+        
+        self.userName = tuplaFromServer[3]
+        self.password = tuplaFromServer[4]
+        vmeName = self.GetVmeName(tuplaFromServer[6])
         self.gui.createBar(tuplaFromServer[0])
-        self.gui.createLabel(tuplaFromServer[9])    
+        self.gui.createLabel(vmeName)    
                
-        self.threads.append(CustomThread.CustomThread(func=self.workerThreadDownload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[2], tuplaFromServer[8],tuplaFromServer[3],tuplaFromServer[4],tuplaFromServer[5],tuplaFromServer[1])))
+        self.threads.append(CustomThread.CustomThread(func=self.workerThreadDownload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[2], tuplaFromServer[7], tuplaFromServer[3],tuplaFromServer[4],tuplaFromServer[5],tuplaFromServer[1])))
         self.threads[len(self.threads)-1].start()
         
     def workerThreadUpload(self, observer, dirCache , id, usr, pwd, urlServer, originalId, hasLink, withChild, vmeName):
@@ -131,11 +139,11 @@ class ThreadedClient:
         """
       
         try:
-            UploadHandler.createUploadHandler(self.queue, observer, dirCache , id, usr, pwd, urlServer, originalId, hasLink, withChild, vmeName)
+            UploadHandler.createUploadHandler(self.queue, observer, dirCache, id, usr, pwd, urlServer, originalId, hasLink, withChild, vmeName)
         except:
             pass
         
-    def workerThreadDownload(self, observer, dirCache , id, usr, pwd, urlServer, filesize):
+    def workerThreadDownload(self, observer, dirCache , srbData, usr, pwd, urlServer, filesize):
         """
         This is where we handle the asynchronous I/O. For example, it may be
         a 'select()'.
@@ -146,9 +154,36 @@ class ThreadedClient:
             #UploadHandler.createDownloadHandler(self.queue, observer, dirCache , id, usr, pwd, urlServer)
         #except:
         try:
-            DownloadHandler.createDownloadHandler(self.queue,observer,dirCache , id, usr, pwd, urlServer, filesize)
+            DownloadHandler.createDownloadHandler(self.queue ,observer, dirCache , srbData, usr, pwd, urlServer, filesize)
         except:
             pass
+        
+    def GetVmeName(self, XMLUri):
+        self.proxyHost, self.proxyPort = retriveProxyParameters()
+        print "->"+ self.proxyHost + "<-"
+        print "->"+ str(self.proxyPort) + "<-"
+        
+        ws = xmlrpcDemoWS.xmlrpc_demoWS()
+        ws.setServer('https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/' + XMLUri)
+        ws.setCredentials(self.userName, self.password)
+        ws.ProxyURL = self.proxyHost
+        ws.ProxyPort = self.proxyPort
+    
+        print "XML URI = " + XMLUri 
+        out = ws.run('gettitle', XMLUri)[1]
+        
+        self.vmeName = []
+        dom = xd.parseString(out)
+        if dom.getElementsByTagName("fault"):
+            print "------Error in gettitle service-------"
+            return
+        for el in dom.getElementsByTagName("string"):
+            for node in el.childNodes:  
+                self.vmeName.append(node.data)            
+        pass
+        
+        print "VME Name: " + self.vmeName[0]
+        return self.vmeName[0]
         
 
     def endApplication(self):
