@@ -28,31 +28,31 @@ class Server(threading.Thread):
   
   def decompose(self, data):
       """ Create a list of parameters arrived by client """
-      #0 is modality (UPLOAD or DOWNLOAD)
-      #1 is id, 
-      #2 is directory
-      #3 is usr
-      #4 is pwd
-      #5 is serverUrl
-      #6 is originalId
-      #7 is hasLink
-      #8 is withChild
-      #9 is vme name
+      #0 modality "UPLOAD" or "DOWNLOAD"
+      #1 vme id id if UPLOAD , size if DOWNLOAD
+      #2 msf dir
+      #3 user
+      #4 pwd
+      #5 server url where upload files
+      #6 original Id in UPLOAD, VME name in DOWNLAOD
+      #7 vme has link in UPLOAD, SRB data URI in DOWNALOAD
+      #8 vme with child (UPLOAD)
+      #9 vme Name (UPLAOD)
       
       arguments = data.split(" ") 
       sendList = []
       count = 0
       lastArgument = ""
       for i in arguments:
-        if(count < 9):
+      #  if(count < 9):
           sendList.append(i)
-        else:
-          if(lastArgument != ''):
-              lastArgument = lastArgument + ' ' + i
-          else:
-              lastArgument = lastArgument + i
-        count = count + 1
-      sendList.append(lastArgument)
+      #  else:
+      #    if(lastArgument != ''):
+      #        lastArgument = lastArgument + ' ' + i
+      #    else:
+      #        lastArgument = lastArgument + i
+      #  count = count + 1
+      #sendList.append(lastArgument)
       sendList[2] = sendList[2].replace("?", " ") # directory with spaces arrives with "?" instead of them
       print sendList[2]
       return sendList
