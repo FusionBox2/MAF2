@@ -138,26 +138,23 @@ class UploadHandler:
         else:
             self.createXMLAndBinary()
             binarySendResult = True
-            
-            
+                       
         #---MD5 check-point-----------------------------------#
         if(self.isBinaryPresent() == "true" and binarySendResult == True):
             print "Local checksum=  " + self.localChksum
             print "Remote checksum= " + self.remoteChksum
             if (self.localChksum == self.remoteChksum):
                 print " "
-                print "MD5 checksum control successful!"
+                print "-------MD5 checksum control successful!-----------"
                 print " "
                 time.sleep(2)
             else:
                 print " "
-                print "Error: MD5 checksum control unsuccessful!"
+                print "-------Error: MD5 checksum control unsuccessful!--------"
                 print " "
                 binarySendResult = False
                 time.sleep(2)
         #---------------------------------------------------#
-            
-        
         
           
         #send xml file, perhaps here free source
@@ -175,7 +172,7 @@ class UploadHandler:
           print "Uploaded XML on Biomedtown: " + self.XMLName
           print "Uploaded by: " + self.currentUser
           print "In server url: " + self.urlServer
-          print "--------Upload Successful :D :D :D --------"
+          print "--------Upload successful :D :D :D --------"
           
           print "--------cleaning up cache directories--------"
           print "cache dir is: " + str(self.dirCache) 
@@ -203,7 +200,7 @@ class UploadHandler:
           print "--------clean up cache directories successful--------"
           
         else:
-          print "Upload Error on Binary"
+          print "--------Error uploading binary data----------------"
 
                   
     def createOutgoingDir(self):
@@ -278,7 +275,8 @@ class UploadHandler:
         
         dom = xd.parseString(out)
         if dom.getElementsByTagName("fault"):
-                return
+            print "-----------Error in xmlupload service------------"
+            return
         for el in dom.getElementsByTagName("string"):
             for node in el.childNodes:  
                 self.XMLName = node.data
