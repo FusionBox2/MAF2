@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-16 16:02:50 $
-Version:   $Revision: 1.81 $
+Date:      $Date: 2008-09-18 08:45:09 $
+Version:   $Revision: 1.82 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -612,16 +612,20 @@ int lhpOpUploadVME::ImportMSF()
       mafErrorMessage(_("Errors during file parsing! Look the log area for error messages."));
     return MAF_ERROR;
   }
-  mafNode *temporaryNode = root->GetFirstChild();
-  if (temporaryNode == NULL)
+  if (m_Input->IsA("mafVMERoot"))
   {
     //copy tags from MSF genereted by python editor, to orginal MSF.
     m_Input->GetTagArray()->DeepCopy(root->GetTagArray());
   }
   else
   {
-    //copy tags from MSF genereted by python editor, to orginal MSF.
-    m_Input->GetTagArray()->DeepCopy(temporaryNode->GetTagArray());
+    mafNode *temporaryNode = root->GetFirstChild();
+    if (temporaryNode != NULL)
+    {
+      //copy tags from MSF genereted by python editor, to orginal MSF.
+      m_Input->GetTagArray()->DeepCopy(temporaryNode->GetTagArray());
+    }
+    mafDEL(temporaryNode);
   }
 
   //attach links previously removed
@@ -638,8 +642,9 @@ int lhpOpUploadVME::ImportMSF()
   lockPath += m_CsvName.c_str();
   if (wxFileExists(lockPath))
     wxRemoveFile(lockPath); //fileName
- 
-  mafDEL(temporaryNode);
+
+  //remove msf created by phyton tag editor
+  remove(msfCompletePath);
   mafDEL(storage);
   return MAF_OK;
 }
