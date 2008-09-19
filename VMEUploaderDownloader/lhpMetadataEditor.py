@@ -1,13 +1,21 @@
+from xml.dom import minidom
 
 import  wx
 import  wx.gizmos   as  gizmos
 
 import  images
-
+import lhpXMLDictionaryParser
 #----------------------------------------------------------------------
 
 class TestPanel(wx.Panel):
     def __init__(self, parent, log):
+        
+        xmlDict = r'.\metadataEditorTestData\xmlDictionaries\LHDL_dictionary.xml'
+
+        self.lhpXMLDictionaryParserInstance = lhpXMLDictionaryParser.lhpXMLDictionaryParser()
+        self.lhpXMLDictionaryParserInstance.LoadXMLDictionary(xmlDict)
+        self.lhpXMLDictionaryParserInstance.PrintXMLDictionary()
+
         self.log = log
         wx.Panel.__init__(self, parent, -1)
         self.Bind(wx.EVT_SIZE, self.OnSize)
@@ -32,7 +40,8 @@ class TestPanel(wx.Panel):
         self.tree.SetImageList(il)
         self.il = il
 
-        # create some columns
+        
+        # create some columns         
         self.tree.AddColumn("Main column")
         self.tree.AddColumn("Column 1")
         self.tree.AddColumn("Column 2")
@@ -45,34 +54,42 @@ class TestPanel(wx.Panel):
         self.tree.SetItemText(self.root, "col 2 root", 2)
         self.tree.SetItemImage(self.root, fldridx, which = wx.TreeItemIcon_Normal)
         self.tree.SetItemImage(self.root, fldropenidx, which = wx.TreeItemIcon_Expanded)
+        
+        pi = self.lhpXMLDictionaryParserInstance
+        parent = pi.DictionaryDOMDocumentRoot
+        print pi.GetNodeName(parent) # L0000
+        
+        # for each node
+                
+      # create a tree item with the node name
+        self.FillGuiTree(self.lhpXMLDictionaryParserInstance.DictionaryDOMDocument.firstChild,  self.root)
+
+#        for x in range(15):
+#            txt = "Item %d" % x
+#            child = self.tree.AppendItem(self.root, txt)
+#            self.tree.SetItemText(child, txt + "(c1)", 1)
+#            self.tree.SetItemText(child, txt + "(c2)", 2)
+#            self.tree.SetItemImage(child, fldridx, which = wx.TreeItemIcon_Normal)
+#            self.tree.SetItemImage(child, fldropenidx, which = wx.TreeItemIcon_Expanded)
+#
+#            for y in range(5):
+#                txt = "item %d-%s" % (x, chr(ord("a")+y))
+#                last = self.tree.AppendItem(child, txt)
+#                self.tree.SetItemText(last, txt + "(c1)", 1)
+#                self.tree.SetItemText(last, txt + "(c2)", 2)
+#                self.tree.SetItemImage(last, fldridx, which = wx.TreeItemIcon_Normal)
+#                self.tree.SetItemImage(last, fldropenidx, which = wx.TreeItemIcon_Expanded)
+#
+#                for z in range(5):
+#                    txt = "item %d-%s-%d" % (x, chr(ord("a")+y), z)
+#                    item = self.tree.AppendItem(last,  txt)
+#                    self.tree.SetItemText(item, txt + "(c1)", 1)
+#                    self.tree.SetItemText(item, txt + "(c2)", 2)
+#                    self.tree.SetItemImage(item, fileidx, which = wx.TreeItemIcon_Normal)
+#                    self.tree.SetItemImage(item, smileidx, which = wx.TreeItemIcon_Selected)
 
 
-        for x in range(15):
-            txt = "Item %d" % x
-            child = self.tree.AppendItem(self.root, txt)
-            self.tree.SetItemText(child, txt + "(c1)", 1)
-            self.tree.SetItemText(child, txt + "(c2)", 2)
-            self.tree.SetItemImage(child, fldridx, which = wx.TreeItemIcon_Normal)
-            self.tree.SetItemImage(child, fldropenidx, which = wx.TreeItemIcon_Expanded)
-
-            for y in range(5):
-                txt = "item %d-%s" % (x, chr(ord("a")+y))
-                last = self.tree.AppendItem(child, txt)
-                self.tree.SetItemText(last, txt + "(c1)", 1)
-                self.tree.SetItemText(last, txt + "(c2)", 2)
-                self.tree.SetItemImage(last, fldridx, which = wx.TreeItemIcon_Normal)
-                self.tree.SetItemImage(last, fldropenidx, which = wx.TreeItemIcon_Expanded)
-
-                for z in range(5):
-                    txt = "item %d-%s-%d" % (x, chr(ord("a")+y), z)
-                    item = self.tree.AppendItem(last,  txt)
-                    self.tree.SetItemText(item, txt + "(c1)", 1)
-                    self.tree.SetItemText(item, txt + "(c2)", 2)
-                    self.tree.SetItemImage(item, fileidx, which = wx.TreeItemIcon_Normal)
-                    self.tree.SetItemImage(item, smileidx, which = wx.TreeItemIcon_Selected)
-
-
-        self.tree.Expand(self.root)
+        self.tree.ExpandAll(self.root)
 
         self.tree.GetMainWindow().Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
         self.tree.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.OnActivate)
@@ -91,8 +108,22 @@ class TestPanel(wx.Panel):
 
     def OnSize(self, evt):
         self.tree.SetSize(self.GetSize())
+   
+    # navigate the dictionary and fill the self.tree
+          
+       
+    def FillGuiTree(self, xmlDictParent, guiParent):
+        """ Print XML starting from given xmlDictParent node to output file outFile"""
+        self.__FillGuiTreeInternal(xmlDictParent,guiParent)
 
+    def __FillGuiTreeInternal(self,xmlDictParent, guiTreeParent):  
+        text = self.lhpXMLDictionaryParserInstance.GetNodeName(xmlDictParent)
+        child = self.tree.AppendItem(guiTreeParent, str(text))          
+        if xmlDictParent.childNodes:
+            for node in xmlDictParent.childNodes:
+                self.__FillGuiTreeInternal(node, child)
 
+    
 #----------------------------------------------------------------------
 
 def runTest(frame, nb, log):
