@@ -18,23 +18,23 @@ msf = sys.argv[5] # msf dir
 user = sys.argv[6] #user
 password = sys.argv[7] #pwd
 urlServer = sys.argv[8] #server url where upload files
-originalId = sys.argv[9] #original Id in UPLOAD, VME name in DOWNLAOD
+originalId = sys.argv[9] #original Id in UPLOAD, XML URI in DOWNLOAD
 hasLink = sys.argv[10] #vme has link in UPLOAD, SRB data URI in DOWNALOAD
 if (modality == "UPLOAD"):
     withChild = sys.argv[11] #vme with child (UPLOAD)
-    name = sys.argv[12] #vme Name (UPLAOD)
-
-    
-#name = ""
-#count = 0
-#for i in sys.argv:
-#  if(count > 11):
-#    if(name == ""):
-#      name = i
-#    else:
-#      name = name + ' ' + i #vme name if UPLOAD, dataURI if DOWNLOAD
-#  count = count + 1
-
+    XMLURI = sys.argv[12] #XML resource URI (UPLOAD)
+    #name = sys.argv[13] #vme Name (UPLAOD)
+            
+    name = ""
+    count = 0
+    for i in sys.argv:
+      if(count > 12):
+        if(name == ""):
+          name = i
+        else:
+          name = name + ' ' + i #vme name if UPLOAD, dataURI if DOWNLOAD
+      count = count + 1
+      
 
 
 # connect to server
@@ -45,7 +45,7 @@ s.connect((host, port))
 
 # compose message
 if (modality == "UPLOAD"):
-    k = modality + ' ' + id + ' ' + msf + ' ' + user + ' ' + password + ' ' + urlServer + ' '  + originalId + ' ' + hasLink+ ' ' + withChild + ' ' + name
+    k = modality + ' ' + id + ' ' + msf + ' ' + user + ' ' + password + ' ' + urlServer + ' '  + originalId + ' ' + hasLink + ' ' + withChild + ' ' + XMLURI + ' ' + name
 else:
     k = modality + ' ' + id + ' ' + msf + ' ' + user + ' ' + password + ' ' + urlServer + ' '  + originalId + ' ' + hasLink
      
