@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-18 08:43:27 $
-Version:   $Revision: 1.31 $
+Date:      $Date: 2008-09-19 14:13:49 $
+Version:   $Revision: 1.32 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -565,8 +565,7 @@ bool lhpOpDownloadVME::CreateIncomingCache()
   currentSubdir = currentSubdir + "\\";
   wxMkDir(currentSubdir);
   m_IncomingCompletePath = currentSubdir;
-  
-  //wxMessageBox(m_MsfDir.GetCStr());
+
   return result;
   
 }
@@ -811,19 +810,21 @@ wxArrayString lhpOpDownloadVME::GetChildURI(mafNode *node)
     return listChildURI;
 
   std::string listChild = tagChild->GetValue();
-  count = listChild.find_first_of("'");
-  listChild.erase(0, count+1);
 
-  while (listChild.find_first_of("'") != -1)
+  if (listChild.rfind("dataresource-") != std::string::npos)
   {
-    count2 = listChild.find_first_of("'");
-    name = (listChild.substr(0, count2)).c_str();
-    if (name != " ")
+    while (listChild.find_first_of(' ') != -1)
     {
-      listChildURI.Add(name);
+      count = listChild.find_first_of(' ');
+      name = (listChild.substr(0, count)).c_str();
+      if (!name.IsEmpty())
+      {
+        listChildURI.Add(name);
+      }
+      listChild.erase(0, count+1);
     }
-    listChild.erase(0, count2+1);
   }
+
   return listChildURI;
 }
 
