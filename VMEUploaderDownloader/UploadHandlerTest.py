@@ -24,7 +24,7 @@ class UploadHandlerTest(unittest.TestCase):
         server = 'http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2'
         uploadHandler = UploadHandler.UploadHandler(\
             queue,observer, dirCache, id , "testuser", "GRDPt8",server, "unhandledPlusManualTagsList.csv"\
-        , False, "pippo")
+        , False, False, "dataresource-3000", "pippo")
         uploadHandler.upload()
     
 if __name__ == '__main__':
