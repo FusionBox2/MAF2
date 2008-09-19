@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-09-15 14:25:17 $
-Version:   $Revision: 1.28 $
+Date:      $Date: 2008-09-19 14:17:49 $
+Version:   $Revision: 1.29 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -129,11 +129,6 @@ protected:
 
   /** Import Edited MSF*/
   int ImportMSF();
-
-  /** Return XML URI of the VME upload*/
-  mafString GetXMLURI();
-
-
   
   mafString m_CacheDir; //>cache superdirectory
   static mafString m_CacheSubdir; //>cache subdirectory
