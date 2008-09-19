@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-16 16:03:34 $
-Version:   $Revision: 1.17 $
+Date:      $Date: 2008-09-19 14:15:00 $
+Version:   $Revision: 1.18 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -225,6 +225,11 @@ void lhpOpUploadMultiVME::OpDo()
   {
     if (m_NodeVector[i]->IsA("mafVMERoot"))
     {
+      //if exists, remove error file form python
+      if (wxFileExists(m_PythonUploadFullPath + "ErrorFound.lhp"))
+      {
+        wxRemoveFile(m_PythonUploadFullPath + "ErrorFound.lhp");
+      }
       UploadTree(m_NodeVector[i]);
     }
     else
@@ -464,6 +469,28 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
           hasBinary = isBinaryDataPresent(childToUpload);
           m_UploadVME->SetInput(childToUpload);
           URI = "";
+
+          //Search for python uploader error
+          if (wxFileExists(m_PythonUploadFullPath + "ErrorFound.lhp"))
+          {
+            mafString errorMessage;
+            std::ifstream errorFile(m_PythonUploadFullPath + "ErrorFound.lhp", std::ios::in);
+            if (errorFile!=NULL)
+            {
+              std::string buf;
+              getline(errorFile, buf);
+              errorMessage.Append(buf.c_str());
+              errorMessage.Append("\n");
+              getline(errorFile, buf);
+              errorMessage.Append(buf.c_str());
+              
+              wxMessageBox(wxString::Format("Error in MSF upload:\n%s. \nUpload MSF stopped.",errorMessage.GetCStr()));
+              errorFile.close();
+              wxRemoveFile(m_PythonUploadFullPath + "ErrorFound.lhp");
+              return;
+            }
+          }
+
           if (m_UploadVME->UploadVME(URI, hasBinary, childToUpload->GetNumberOfChildren()!=0, true) == MAF_ERROR || URI == "")
           {
             return;
@@ -571,8 +598,8 @@ int lhpOpUploadMultiVME::SetVMELinks(mafNode *node)
     }
 
     wxString oldDir = wxGetCwd();
-    mafString path  = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader").c_str();
-    wxSetWorkingDirectory(path.GetCStr());
+    //mafString path  = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader").c_str();
+    wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
     //Add URI tag to link VME uploaded
