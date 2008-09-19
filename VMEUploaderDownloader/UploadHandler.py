@@ -12,8 +12,7 @@ from Debug import Debug
 
 class UploadHandler:
     queue = None
-    def __init__(self, queue, observer , dirCache, id, usr , pwd, urlServer,\
-                 originalId, hasLink, withChild, vmeName):
+    def __init__(self, queue, observer , dirCache, id, usr , pwd, urlServer, originalId, hasLink, withChild, XMLURI, vmeName):
         UploadHandler.queue = queue
         self.observer = observer
         self.dirCache = dirCache
@@ -27,11 +26,11 @@ class UploadHandler:
         self.binaryFileSize = 0
         self.remoteTemporaryBinaryFileSize = 0
         self.BinaryURI = "NOT PRESENT"
-        self.XMLURI = ""
         self.block = threading.Lock()
         self.threads = []
         self.hasLink = hasLink
         self.withChild = withChild
+        self.XMLURI = XMLURI
         self.vmeName = vmeName
         self.existThread = 0
         self.remoteChksum = ""
@@ -50,7 +49,7 @@ class UploadHandler:
         binarySendResult = False
         
         #Check if VME has a binary data        
-        if(self.isBinaryPresent() == "true"):
+        if(self.isBinaryPresent() == True):
             
             #get free resource (return URI string)
             self.BinaryURI = self.getFreeResource() #thread maybe
@@ -85,8 +84,6 @@ class UploadHandler:
                     print "Connection Problems..."
                     return
                 """
-    
-
                 
                 #launch external XML editor
                 if Debug:
@@ -140,7 +137,7 @@ class UploadHandler:
             binarySendResult = True
                        
         #---MD5 check-point-----------------------------------#
-        if(self.isBinaryPresent() == "true" and binarySendResult == True):
+        if(self.isBinaryPresent() == True and binarySendResult == True):
             print "Local checksum=  " + self.localChksum
             print "Remote checksum= " + self.remoteChksum
             if (self.localChksum == self.remoteChksum):
@@ -259,9 +256,8 @@ class UploadHandler:
         print "Sending Thread Finished"
 		
     def sendXMLFile(self):
-        self.XMLURI = self.vmeName + "_" +self.getXMLFile()
+        #self.XMLURI = self.vmeName + "_" +self.getXMLFile()
         os.rename(self.dirOutgoing + "\\" + self.getXMLFile(),self.dirOutgoing + "\\" + self.XMLURI)
-        #self.__sendFile(self.XMLURI)
         oldDir = os.getcwd()
         os.chdir(self.dirOutgoing)
         
@@ -272,10 +268,22 @@ class UploadHandler:
         ws.ProxyPort = self.proxyPort
         
         out = ws.run('xmlupload', self.XMLURI, self.vmeName)[1]
+    #    self.__removeSRBData(self.BinaryURI)
         
         dom = xd.parseString(out)
         if dom.getElementsByTagName("fault"):
             print "-----------Error in xmlupload service------------"
+            for el in dom.getElementsByTagName("string"):
+                for node in el.childNodes:  
+                    error = node.data
+
+            print error 
+            #write a file used by builder to catch error and stop MSF upload
+            errorFile = open(self.dirOutgoing + '\\..\\..\\ErrorFound.lhp', 'w')
+            errorFile.write('Error in xmlupload service\n')
+            errorFile.write(error)
+            errorFile.close()        
+  #          self.__removeSRBData(self.BinaryURI)
             return
         for el in dom.getElementsByTagName("string"):
             for node in el.childNodes:  
@@ -283,18 +291,9 @@ class UploadHandler:
         pass
     
         print self.XMLName
-            
-        #writes binary URI in a file in VMEUploaderDownloader dir
-       # oldDir = os.getcwd()
-        os.chdir(self.dirOutgoing + r"\..\..") 
-        file = open(self.vmeName + self.id, 'w')
-        file.write(self.XMLName)
-        file.close()
-        
-        os.chdir(oldDir)
         
     def isBinaryPresent(self):
-        result = "false"
+        result = False
         
         #if node is root VME, no binary is present
         if (str(self.id) == "-1"):
@@ -327,7 +326,7 @@ class UploadHandler:
         outVmeNode = msfDOMParserInstance.GetVmeNodeById(rootNode, self.id)
         fileNameList = msfDOMParserInstance.GetVMEDataURLList(outVmeNode)
         if (len(fileNameList) == 1 and len(fileNameList[0]) != 0):
-            result = "true"
+            result = True
                
         os.chdir(oldDir)  
         print "Binary data present"
@@ -351,6 +350,21 @@ class UploadHandler:
         print "URI File: " + str(result.uriFile)
         time.sleep(1)
         os.chdir(oldDir)
+        
+  #  def __removeSRBData(self,filename):
+  #      
+  #      oldDir = os.getcwd()
+  #      os.chdir(self.dirOutgoing)
+  #      
+  #      print "->"+ self.proxyHost + "<-"
+  #      print "->"+ str(self.proxyPort) + "<-"
+  #      
+  #      instance = MtomDelete.MtomDelete()
+  #      result = instance.Delete(filename,'https://ws-lhdl.cineca.it/mafSRBDelete.cgi',self.proxyHost,self.proxyPort)
+   
+
+#        time.sleep(1)
+#        os.chdir(oldDir)
         
         
     def getRemoteTemporaryBinaryFileSize(self):
@@ -402,8 +416,8 @@ class UploadHandler:
     
     
 		
-def createUploadHandler(queue, observer, dirCache, id , usr , pwd, urlServer, originalId, hasLink, withChild, vmeName):
-    uploadHandler = UploadHandler(queue,observer, dirCache, id, usr , pwd, urlServer, originalId, hasLink, withChild, vmeName)
+def createUploadHandler(queue, observer, dirCache, id , usr , pwd, urlServer, originalId, hasLink, withChild, XMLURI, vmeName):
+    uploadHandler = UploadHandler(queue,observer, dirCache, id, usr , pwd, urlServer, originalId, hasLink, withChild, XMLURI, vmeName)
     uploadHandler.upload()
     
 if __name__ == '__main__':
