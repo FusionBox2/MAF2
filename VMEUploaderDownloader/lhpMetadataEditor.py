@@ -24,8 +24,8 @@ class TestPanel(wx.Panel):
                                         wx.TR_DEFAULT_STYLE
                                         #| wx.TR_HAS_BUTTONS
                                         #| wx.TR_TWIST_BUTTONS
-                                        #| wx.TR_ROW_LINES
-                                        #| wx.TR_COLUMN_LINES
+#                                         | wx.TR_ROW_LINES
+                                        | wx.TR_COLUMN_LINES
                                         #| wx.TR_NO_LINES 
                                         | wx.TR_FULL_ROW_HIGHLIGHT
                                    )
@@ -40,16 +40,28 @@ class TestPanel(wx.Panel):
         self.tree.SetImageList(il)
         self.il = il
 
+#        'NumTag', 'L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7', 'L8', \
+#        'ValueType', 'Multiplicity', 'ValueList', 'Editable', 'Searchable', \
+#        'DefaultValue', 'Expert', 'Notes'])
+#        
         
+        # create a column for each field
+        
+        range = self.lhpXMLDictionaryParserInstance.DictionaryColumnLabels.irange\
+        (self.lhpXMLDictionaryParserInstance.DictionaryColumnLabels.ValueType \
+        , self.lhpXMLDictionaryParserInstance.DictionaryColumnLabels.Notes)
+        
+        for columnName in range:     
+            print "column name: " + str(columnName)
+            self.tree.AddColumn(str(columnName))
+  
+        self.tree.SetColumnWidth(7, 400)      
         # create some columns         
-        self.tree.AddColumn("Main column")
-        self.tree.AddColumn("Column 1")
-        self.tree.AddColumn("Column 2")
         self.tree.SetMainColumn(0) # the one with the tree in it...
-        self.tree.SetColumnWidth(0, 175)
+        self.tree.SetColumnWidth(0, 300)
 
 
-        self.root = self.tree.AddRoot("The Root Item")
+        self.root = self.tree.AddRoot("LHDL Master Dictionary")
         self.tree.SetItemText(self.root, "col 1 root", 1)
         self.tree.SetItemText(self.root, "col 2 root", 2)
         self.tree.SetItemImage(self.root, fldridx, which = wx.TreeItemIcon_Normal)
@@ -107,10 +119,10 @@ class TestPanel(wx.Panel):
                            (flags, col, self.tree.GetItemText(item, col)))
 
     def OnSize(self, evt):
+    
         self.tree.SetSize(self.GetSize())
    
-    # navigate the dictionary and fill the self.tree
-          
+    # navigate the dictionary and fill the self.tree       
        
     def FillGuiTree(self, xmlDictParent, guiParent):
         """ Print XML starting from given xmlDictParent node to output file outFile"""
