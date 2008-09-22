@@ -1,10 +1,10 @@
-from xml.dom import minidom
+from xml.dom.minidom import Childless
 
 import  wx
 import  wx.gizmos   as  gizmos
-
 import  images
 import lhpXMLDictionaryParser
+
 #----------------------------------------------------------------------
 
 class TestPanel(wx.Panel):
@@ -13,17 +13,19 @@ class TestPanel(wx.Panel):
         xmlDict = r'.\metadataEditorTestData\xmlDictionaries\LHDL_dictionary.xml'
 
         self.lhpXMLDictionaryParserInstance = lhpXMLDictionaryParser.lhpXMLDictionaryParser()
-        self.lhpXMLDictionaryParserInstance.LoadXMLDictionary(xmlDict)
-        self.lhpXMLDictionaryParserInstance.PrintXMLDictionary()
-
+        
+        pi = self.lhpXMLDictionaryParserInstance
+        pi.LoadXMLDictionary(xmlDict)
+        pi.PrintXMLDictionary()
+        
         self.log = log
         wx.Panel.__init__(self, parent, -1)
         self.Bind(wx.EVT_SIZE, self.OnSize)
 
         self.tree = gizmos.TreeListCtrl(self, -1, style =
                                         wx.TR_DEFAULT_STYLE
-                                        #| wx.TR_HAS_BUTTONS
-                                        #| wx.TR_TWIST_BUTTONS
+                                        | wx.TR_HAS_BUTTONS
+#                                       | wx.TR_TWIST_BUTTONS
 #                                         | wx.TR_ROW_LINES
                                         | wx.TR_COLUMN_LINES
                                         #| wx.TR_NO_LINES 
@@ -46,16 +48,19 @@ class TestPanel(wx.Panel):
 #        
         
         # create a column for each field
+        self.tree.AddColumn("Tags")
+        self.tree.AddColumn("Value", edit = True)
         
-        range = self.lhpXMLDictionaryParserInstance.DictionaryColumnLabels.irange\
-        (self.lhpXMLDictionaryParserInstance.DictionaryColumnLabels.ValueType \
-        , self.lhpXMLDictionaryParserInstance.DictionaryColumnLabels.Notes)
+        range = pi.DictionaryColumnLabels.irange\
+        (pi.DictionaryColumnLabels.ValueType \
+        , pi.DictionaryColumnLabels.Notes)
         
         for columnName in range:     
             print "column name: " + str(columnName)
             self.tree.AddColumn(str(columnName))
   
-        self.tree.SetColumnWidth(7, 400)      
+        
+        self.tree.SetColumnWidth(9, 400)      
         # create some columns         
         self.tree.SetMainColumn(0) # the one with the tree in it...
         self.tree.SetColumnWidth(0, 300)
@@ -67,15 +72,15 @@ class TestPanel(wx.Panel):
         self.tree.SetItemImage(self.root, fldridx, which = wx.TreeItemIcon_Normal)
         self.tree.SetItemImage(self.root, fldropenidx, which = wx.TreeItemIcon_Expanded)
         
-        pi = self.lhpXMLDictionaryParserInstance
-        parent = pi.DictionaryDOMDocumentRoot
-        print pi.GetNodeName(parent) # L0000
+    
+        # parent = pi.DictionaryDOMDocumentRoot
+        #  print pi.GetNodeName(parent) # L0000
         
         # for each node
                 
-      # create a tree item with the node name
-        self.FillGuiTree(self.lhpXMLDictionaryParserInstance.DictionaryDOMDocument.firstChild,  self.root)
-
+        # create a tree item with the node name
+        self.FillGuiTree(pi.DictionaryDOMDocument.firstChild,  self.root)
+        
 #        for x in range(15):
 #            txt = "Item %d" % x
 #            child = self.tree.AppendItem(self.root, txt)
