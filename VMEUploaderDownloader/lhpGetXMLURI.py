@@ -1,0 +1,78 @@
+#-----------------------------------------------------------------------------
+# BEWARE!!! This is mostly a prototype!!!
+# code is changing very fast so don't rely on it :P
+# author: Roberto Mucci <r.mucci@cineca.it>
+#-----------------------------------------------------------------------------
+
+from webServicesClient import xmlrpcDemoWS
+import xml.dom.minidom as xd
+import os, time
+from lhpDefines import *
+import StringIO
+
+import urllib, urllib2, base64, re, os, cookielib, sys
+from HttpsProxy import *
+
+class lhpGetXMLURI:
+      
+    def __init__(self):
+                        
+        self.userName = sys.argv[0]
+        self.password = sys.argv[1]
+
+          
+        # proxy
+        self.proxyHost = ''
+        self.ProxyPort = ''
+        
+    def getURI(self):
+        """ 
+           Creates an empty resource on repository and return the URI
+        """
+        self.proxyHost, self.proxyPort = retriveProxyParameters()
+        print "->"+ self.proxyHost + "<-"
+        print "->"+ str(self.proxyPort) + "<-"
+        
+        ws = xmlrpcDemoWS.xmlrpc_demoWS()
+        ws.setCredentials(self.userName, self.password)
+        ws.setServer('https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2')
+        ws.ProxyURL = self.proxyHost
+        ws.ProxyPort = self.proxyPort
+        
+        out = ws.run('createresource')[1]
+        
+        dom = xd.parseString(out)
+        if dom.getElementsByTagName("fault"):
+            print "-----------Error in xmlupload service------------"
+            return
+        for el in dom.getElementsByTagName("string"):
+            for node in el.childNodes:  
+                XMLURI = node.data
+        pass
+    
+        print XMLURI
+        return XMLURI
+  
+def main():
+    
+    if(len(sys.argv) != 3): #for test
+        sys.argv = []
+        sys.argv.append("testuser") #substitute
+        sys.argv.append("6w8DHF") #substitute
+        
+        getURI = lhpGetXMLURI()
+        getURI.XMLURI = getURI.getURI()
+        #add code to remove resource created
+        return
+       
+    if(len(sys.argv) == 3):
+        sys.argv = sys.argv[1:]
+        #print sys.argv
+        getURI = lhpGetXMLURI()
+        getURI.XMLURI = getURI.getURI()
+        
+        print getURI.XMLURI
+
+if __name__ == '__main__':
+    main()
+        
