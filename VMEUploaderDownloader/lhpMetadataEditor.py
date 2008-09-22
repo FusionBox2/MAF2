@@ -1,15 +1,48 @@
-from xml.dom.minidom import Childless
+#-----------------------------------------------------------------------------
+# BEWARE!!! This is mostly a prototype!!!
+# code is changing very fast so don't rely on it :P
+# author: Stefano Perticoni
+#-----------------------------------------------------------------------------
 
+from xml.dom.minidom import Childless
+import os
 import  wx
 import  wx.gizmos   as  gizmos
 import  images
 import lhpXMLDictionaryParser
-
+import msfParser
+from xml.dom import minidom
 #----------------------------------------------------------------------
 
 class TestPanel(wx.Panel):
     def __init__(self, parent, log):
         
+        # load msf infos
+        curDir = os.getcwd()        
+        
+        print " current directory is: " + curDir
+        
+        self.inFileName = curDir + r'\metadataEditorTestData\surfaceWithMasterDictionaryTags\surfaceWithMasterDictionaryTags.msf'
+        assert(os.path.exists(self.inFileName))
+        
+        self.msfParserInstance = msfParser.msfParser()
+        self.doc = minidom.parse(self.inFileName)
+        self.rootNode = self.doc.documentElement
+        
+        p = self.msfParserInstance
+        
+        # get a test vme 
+        vme = p.GetVmeNodeById(self.rootNode, 18)
+        tagArrayNode = p.GetVmeTagArrayNode(vme)
+        assert(tagArrayNode != None)
+        
+        self.msfTagsDictionary = p.GetTagDictionary(tagArrayNode)
+        print self.msfTagsDictionary
+        
+        for key in self.msfTagsDictionary.keys():
+            print key, '\t', self.msfTagsDictionary[key]
+    
+        # load xml dictionary
         xmlDict = r'.\metadataEditorTestData\xmlDictionaries\LHDL_dictionary.xml'
 
         self.lhpXMLDictionaryParserInstance = lhpXMLDictionaryParser.lhpXMLDictionaryParser()
@@ -51,20 +84,26 @@ class TestPanel(wx.Panel):
         self.tree.AddColumn("Tags")
         self.tree.AddColumn("Value", edit = True)
         
-        range = pi.DictionaryColumnLabels.irange\
+        interval = pi.DictionaryColumnLabels.irange\
         (pi.DictionaryColumnLabels.ValueType \
         , pi.DictionaryColumnLabels.Notes)
         
-        for columnName in range:     
+        for columnName in interval:     
             print "column name: " + str(columnName)
             self.tree.AddColumn(str(columnName))
-  
+            
         
-        self.tree.SetColumnWidth(9, 400)      
+        
         # create some columns         
         self.tree.SetMainColumn(0) # the one with the tree in it...
-        self.tree.SetColumnWidth(0, 300)
+        self.tree.SetColumnWidth(0, 200)
 
+        for i in range(1,10):
+            
+            self.tree.SetColumnWidth(i, 80)
+            
+        self.tree.SetColumnWidth(9, 400)      
+  
 
         self.root = self.tree.AddRoot("LHDL Master Dictionary")
         self.tree.SetItemText(self.root, "col 1 root", 1)
@@ -73,12 +112,6 @@ class TestPanel(wx.Panel):
         self.tree.SetItemImage(self.root, fldropenidx, which = wx.TreeItemIcon_Expanded)
         
     
-        # parent = pi.DictionaryDOMDocumentRoot
-        #  print pi.GetNodeName(parent) # L0000
-        
-        # for each node
-                
-        # create a tree item with the node name
         self.FillGuiTree(pi.DictionaryDOMDocument.firstChild,  self.root)
         
 #        for x in range(15):
@@ -130,14 +163,45 @@ class TestPanel(wx.Panel):
     # navigate the dictionary and fill the self.tree       
        
     def FillGuiTree(self, xmlDictParent, guiParent):
-        """ Print XML starting from given xmlDictParent node to output file outFile"""
         self.__FillGuiTreeInternal(xmlDictParent,guiParent)
 
-    def __FillGuiTreeInternal(self,xmlDictParent, guiTreeParent):  
-        text = self.lhpXMLDictionaryParserInstance.GetNodeName(xmlDictParent)
-        child = self.tree.AppendItem(guiTreeParent, str(text))          
-        if xmlDictParent.childNodes:
-            for node in xmlDictParent.childNodes:
+    def __FillGuiTreeInternal(self,xmlDictNode, guiTreeParent):
+        pi = self.lhpXMLDictionaryParserInstance  
+        nodeName = pi.GetNodeName(xmlDictNode)
+             
+        # get tag array corresponding entry 
+        msfTagName =  pi.GetVMETagArrayTagNameFromNode(xmlDictNode)  
+        msfTagValue = self.msfTagsDictionary[msfTagName] 
+        print msfTagValue
+        
+        attrDict =  pi.GetAttributesDictionary(xmlDictNode)
+        
+        # names from ValueType to Notes
+        columnNames = pi.DictionaryColumnLabels.irange(pi.DictionaryColumnLabels.ValueType \
+        , pi.DictionaryColumnLabels.Notes)
+   
+        
+        # append item to tree 
+        child = self.tree.AppendItem(guiTreeParent, str(nodeName))  
+        
+        # set item nodeName        
+        if attrDict != {}:
+            for guiColumnId in range(2,10):        
+                print "guiColumnId: " + str(guiColumnId)
+                print self.tree.GetColumnText(guiColumnId)
+                # get the column string# 
+                columnName = pi.DictionaryColumnLabels[guiColumnId + 7]
+                print "col name: " + str(columnName)
+                
+                value = attrDict[str(columnName)]
+                print "value: " + str(value)#               
+        
+                pass
+        # set item text
+                self.tree.SetItemText(child, value, guiColumnId)
+           
+        if xmlDictNode.childNodes:
+            for node in xmlDictNode.childNodes:
                 self.__FillGuiTreeInternal(node, child)
 
     

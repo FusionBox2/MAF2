@@ -6,7 +6,7 @@
 from test.test_codecs import Str2StrTest
 
 import sys, string
-import Debug
+from Debug import Debug
 from xml.dom import minidom 
 from xml.dom import Node
 import Enum
@@ -36,9 +36,6 @@ class lhpXMLDictionaryParser:
         self.DictionaryDOMDocument = minidom.parse(xmlDictFileName)
         self.DictionaryDOMDocumentRoot = self.DictionaryDOMDocument.firstChild
         
-    def PrintXMLDictionary(self):
-        """ print XML dictionary to standard output """
-        self.PrintXML(self.DictionaryDOMDocumentRoot, sys.stdout)
     
     def GetXMLDictionaryNodeNamesList(self):
         """Return all XML dictionary nodes names list
@@ -152,12 +149,39 @@ class lhpXMLDictionaryParser:
             print "Tag: " + node.nodeName + " has no attributes... "
             return False
     
+    def GetAttributesDictionary(self,node):
+        """"""
+        dictionary = {}
+        if node.nodeType == Node.ELEMENT_NODE:
+            if Debug:
+                print "Node name: " + node.nodeName
+            attrs = node.attributes     
+            print attrs.keys                        
+            for attribute in attrs.keys():
+                attrNode = attrs.get(attribute)
+                attrValue = attrNode.nodeValue
+                if Debug:
+                    print "Attribute name: " + attribute + "  Attribute value: " + attrValue
+                dictionary[attribute] = attrValue
+            return dictionary
+        return None
+        
             
+    def PrintXMLDictionary(self):
+        """ print XML dictionary to standard output """
+        self.PrintXML(self.DictionaryDOMDocumentRoot, sys.stdout)
+       
     def PrintXML(self, parent, outFile):
         """ Print XML starting from given parent node to output file outFile"""
         level = 0
         self.__PrintXMLDictionaryInternal(parent,outFile,level)
 
+    def __PrintXMLDictionaryInternal(self,parent, outFile, level):  
+        self.PrintNode(parent, outFile, level)
+        if parent.childNodes:
+            for node in parent.childNodes:
+                self.__PrintXMLDictionaryInternal(node, outFile, level+1)
+    
     def PrintNode(self,node,outFile,level):
         """Print node on output file outFile with level indentation"""
         if node.nodeType == Node.ELEMENT_NODE:
@@ -214,12 +238,6 @@ class lhpXMLDictionaryParser:
                 self.__GetAutoTagsListInternal(node)
     
         
-    def __PrintXMLDictionaryInternal(self,parent, outFile, level):  
-        self.PrintNode(parent, outFile, level)
-        if parent.childNodes:
-            for node in parent.childNodes:
-                self.__PrintXMLDictionaryInternal(node, outFile, level+1)
-    
     def __printLevel(self,outFile, level):
         for idx in range(level):
             outFile.write('    ')
