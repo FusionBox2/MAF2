@@ -34,25 +34,26 @@ class Server(threading.Thread):
       #3 user
       #4 pwd
       #5 server url where upload files
-      #6 original Id in UPLOAD, VME name in DOWNLAOD
+      #6 original Id in UPLOAD, XML data URI in DOWNALOAD
       #7 vme has link in UPLOAD, SRB data URI in DOWNALOAD
       #8 vme with child (UPLOAD)
-      #9 vme Name (UPLAOD)
+      #9 XML resource URI (UPLOAD)
+      #10 vme Name (UPLAOD)
       
       arguments = data.split(" ") 
       sendList = []
       count = 0
       lastArgument = ""
       for i in arguments:
-      #  if(count < 9):
+        if(count < 10):
           sendList.append(i)
-      #  else:
-      #    if(lastArgument != ''):
-      #        lastArgument = lastArgument + ' ' + i
-      #    else:
-      #        lastArgument = lastArgument + i
-      #  count = count + 1
-      #sendList.append(lastArgument)
+        else:
+          if(lastArgument != ''):
+              lastArgument = lastArgument + ' ' + i
+          else:
+              lastArgument = lastArgument + i
+        count = count + 1
+      sendList.append(lastArgument)
       sendList[2] = sendList[2].replace("?", " ") # directory with spaces arrives with "?" instead of them
       print sendList[2]
       return sendList
