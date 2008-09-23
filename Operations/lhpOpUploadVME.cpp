@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-23 10:22:27 $
-Version:   $Revision: 1.86 $
+Date:      $Date: 2008-09-23 10:25:13 $
+Version:   $Revision: 1.87 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -444,8 +444,8 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
     command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
     command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
-    //command2execute.Append(wxString::Format("%s ","https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/")); //dev repository
-    command2execute.Append(wxString::Format("%s ","http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/")); //dev repository
+    command2execute.Append(wxString::Format("%s ","https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/")); //dev repository
+    //command2execute.Append(wxString::Format("%s ","http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/")); //dev repository
     command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //id in original tree
     command2execute.Append(wxString::Format("%s ", hasLink.GetCStr())); //has link?
     command2execute.Append(wxString::Format("%s ", uploadWithChild.GetCStr())); //upload with children?
