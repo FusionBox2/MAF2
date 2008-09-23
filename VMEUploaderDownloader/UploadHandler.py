@@ -280,7 +280,7 @@ class UploadHandler:
             print error 
             #write a file used by builder to catch error and stop MSF upload
             errorFile = open(self.dirOutgoing + '\\..\\..\\ErrorFound.lhp', 'w')
-            errorFile.write('Error in xmlupload service\n')
+            errorFile.write('Error in xmlupload service: ' + self.vmeName + '\n')
             errorFile.write(error)
             errorFile.close()        
   #          self.__removeSRBData(self.BinaryURI)
