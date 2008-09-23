@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-18 08:45:40 $
-Version:   $Revision: 1.15 $
+Date:      $Date: 2008-09-23 08:50:59 $
+Version:   $Revision: 1.16 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -793,20 +793,16 @@ bool lhpOpEditTag::IsLHPBuilderVersionUpToDate()
   
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
+  wxArrayString output;
+  wxArrayString errors;
   long pid = -1;
-  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Error in lhpDictionaryVersionChecker.py. Uploading stopped");
     mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
       command2execute.c_str(), pid);
     return MAF_ERROR;
   }
-  
-  wxArrayString output;
-  wxArrayString errors;
-
-  pid = wxExecute(command2execute, output, errors);
-  
 
   mafLogMessage("Command Output Messages:");
   for (int i = 0; i < output.size(); i++)
@@ -929,8 +925,10 @@ int lhpOpEditTag::AssembleDictionaries()
 
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
+  wxArrayString output;
+  wxArrayString errors;
   long pid = -1;
-  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Error in lhpXMLDictionariesBuilder.py. Uploading stopped");
     mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
@@ -938,12 +936,6 @@ int lhpOpEditTag::AssembleDictionaries()
     return MAF_ERROR;
   }
 
-  wxArrayString output;
-  wxArrayString errors;
-
-  pid = wxExecute(command2execute, output, errors);
-
-  
   mafLogMessage("Command Output Messages:");
   for (int i = 0; i < output.size(); i++)
   {

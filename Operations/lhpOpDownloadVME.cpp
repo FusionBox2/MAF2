@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-19 14:13:49 $
-Version:   $Revision: 1.32 $
+Date:      $Date: 2008-09-23 08:50:45 $
+Version:   $Revision: 1.33 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -719,17 +719,15 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(mafString  xmlFile)
   directoryWorkAround.Replace(" ", "?");
   command2execute.Append(directoryWorkAround);
 
+
+  wxArrayString output;
+  wxArrayString errors;
   long pid = -1;
-  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Error in downloadSingleXML.py. Uploading stopped");
     return MAF_ERROR;
   }
-
-  wxArrayString output;
-  wxArrayString errors;
-
-  pid = wxExecute(command2execute, output, errors);
 
   mafLogMessage("Command Output Messages:");
   for (int i = 0; i < output.size(); i++)
@@ -819,6 +817,8 @@ wxArrayString lhpOpDownloadVME::GetChildURI(mafNode *node)
       name = (listChild.substr(0, count)).c_str();
       if (!name.IsEmpty())
       {
+        name.Trim(false);
+        name.Trim();
         listChildURI.Add(name);
       }
       listChild.erase(0, count+1);
@@ -962,17 +962,14 @@ bool lhpOpDownloadVME::IsLHPBuilderVersionUpToDate()
 
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
+  wxArrayString output;
+  wxArrayString errors;
   long pid = -1;
-  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Error in lhpDictionaryVersionChecker.py. Uploading stopped");
     return MAF_ERROR;
   }
-
-  wxArrayString output;
-  wxArrayString errors;
-
-  pid = wxExecute(command2execute, output, errors);
 
   mafLogMessage("Command Output Messages:");
   for (int i = 0; i < output.size(); i++)

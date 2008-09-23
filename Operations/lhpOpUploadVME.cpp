@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-19 14:17:42 $
-Version:   $Revision: 1.83 $
+Date:      $Date: 2008-09-23 08:50:33 $
+Version:   $Revision: 1.84 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -383,19 +383,16 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
   command2execute.Append(m_User.GetPwd());
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
+  wxArrayString output;
+  wxArrayString errors;
   pid = -1;
-  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Error in lhpGetXMLURI.py. Uploading stopped");
     mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
       command2execute.c_str(), pid);
     return MAF_ERROR;
   }
-
-  wxArrayString output;
-  wxArrayString errors;
-
-  pid = wxExecute(command2execute, output, errors);
 
   mafLogMessage("Command Output Messages:");
   for (int i = 0; i < output.size(); i++)
@@ -441,7 +438,8 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
     command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
     command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
-    command2execute.Append(wxString::Format("%s ","https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //dev repository
+    //command2execute.Append(wxString::Format("%s ","https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/")); //dev repository
+    command2execute.Append(wxString::Format("%s ","http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/")); //dev repository
     command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //id in original tree
     command2execute.Append(wxString::Format("%s ", hasLink.GetCStr())); //has link?
     command2execute.Append(wxString::Format("%s ", uploadWithChild.GetCStr())); //upload with children?
@@ -495,7 +493,8 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
     command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
     command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
-    command2execute.Append(wxString::Format("%s ","https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //repository
+    //command2execute.Append(wxString::Format("%s ","https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/")); //repository
+    command2execute.Append(wxString::Format("%s ","http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/")); //dev repository
     command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //id in original tree
     command2execute.Append(wxString::Format("%s ", hasLink.GetCStr())); //has link?
     command2execute.Append(wxString::Format("%s ", uploadWithChild.GetCStr())); //upload with children?
@@ -1101,17 +1100,15 @@ bool lhpOpUploadVME::IsLHPBuilderVersionUpToDate()
 
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
+
+  wxArrayString output;
+  wxArrayString errors;
   long pid = -1;
-  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Error in lhpDictionaryVersionChecker.py. Uploading stopped");
     return MAF_ERROR;
   }
-
-  wxArrayString output;
-  wxArrayString errors;
-
-  pid = wxExecute(command2execute, output, errors);
 
   mafLogMessage("Command Output Messages:");
   for (int i = 0; i < output.size(); i++)
@@ -1224,18 +1221,14 @@ int lhpOpUploadVME::AssembleDictionaries()
 
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
+  wxArrayString output;
+  wxArrayString errors;
   long pid = -1;
-  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Error in lhpXMLDictionariesBuilder.py. Uploading stopped");
     return MAF_ERROR;
   }
-
-  wxArrayString output;
-  wxArrayString errors;
-
-  pid = wxExecute(command2execute, output, errors);
-
   
   mafLogMessage("Command Output Messages:");
   for (int i = 0; i < output.size(); i++)

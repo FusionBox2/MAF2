@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-19 14:15:00 $
-Version:   $Revision: 1.18 $
+Date:      $Date: 2008-09-23 08:51:18 $
+Version:   $Revision: 1.19 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -317,20 +317,16 @@ int lhpOpUploadMultiVME::AssembleDictionaries()
 
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
+  wxArrayString output;
+  wxArrayString errors;
   long pid = -1;
-  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Error in lhpXMLDictionariesBuilder.py. Uploading stopped");
     mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
       command2execute.c_str(), pid);
     return MAF_ERROR;
   }
-
-  wxArrayString output;
-  wxArrayString errors;
-
-  pid = wxExecute(command2execute, output, errors);
-
 
   mafLogMessage("Command Output Messages:");
   for (int i = 0; i < output.size(); i++)
@@ -381,8 +377,10 @@ bool lhpOpUploadMultiVME::isBinaryDataPresent(mafNode *node)
   command2execute.Append(" ");
   command2execute.Append(wxString::Format("%d ",node->GetId()));
 
+  wxArrayString output;
+  wxArrayString errors;
   long pid = -1;
-  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Error in lhpCheckBinaryName.py. Uploading stopped");
     mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
@@ -390,10 +388,6 @@ bool lhpOpUploadMultiVME::isBinaryDataPresent(mafNode *node)
     return MAF_ERROR;
   }
 
-  wxArrayString output;
-  wxArrayString errors;
-
-  pid = wxExecute(command2execute, output, errors);
   wxString result = output[output.size() - 1];
 
   //if result == "", no binary data has been found
@@ -481,8 +475,12 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
               getline(errorFile, buf);
               errorMessage.Append(buf.c_str());
               errorMessage.Append("\n");
-              getline(errorFile, buf);
-              errorMessage.Append(buf.c_str());
+              while (!errorFile.eof())
+              {
+                getline(errorFile, buf);
+                errorMessage.Append(buf.c_str());
+              }
+              
               
               wxMessageBox(wxString::Format("Error in MSF upload:\n%s. \nUpload MSF stopped.",errorMessage.GetCStr()));
               errorFile.close();
@@ -814,20 +812,17 @@ bool lhpOpUploadMultiVME::IsLHPBuilderVersionUpToDate()
 
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
+
+  wxArrayString output;
+  wxArrayString errors;
   long pid = -1;
-  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Error in lhpDictionaryVersionChecker.py. Uploading stopped");
     mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
       command2execute.c_str(), pid);
     return MAF_ERROR;
   }
-  
-  wxArrayString output;
-  wxArrayString errors;
-
-  pid = wxExecute(command2execute, output, errors);
-  
 
   mafLogMessage("Command Output Messages:");
   for (int i = 0; i < output.size(); i++)
