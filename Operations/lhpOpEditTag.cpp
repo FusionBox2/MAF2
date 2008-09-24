@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-23 08:50:59 $
-Version:   $Revision: 1.16 $
+Date:      $Date: 2008-09-24 12:07:48 $
+Version:   $Revision: 1.17 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -751,8 +751,10 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
   // launch editor
   command2execute.Clear();
   command2execute.Append(m_PythonExe.GetCStr());
-  command2execute.Append(" CSVOMATIC.py ");
-  command2execute.Append(m_CsvName.c_str());
+  command2execute.Append(" lhpMetadataEditor.py ");
+  command2execute.Append(m_CsvName.c_str()); 
+  command2execute.Append(" ");
+  command2execute.Append(m_AssembledXMLDictionaryFileName.GetCStr());
   
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 

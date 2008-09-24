@@ -1,3 +1,9 @@
+#-----------------------------------------------------------------------------
+# BEWARE!!! This is mostly a prototype!!!
+# code is changing very fast so don't rely on it :P
+# author: Stefano Perticoni
+#-----------------------------------------------------------------------------
+# adapted from:
 #!/usr/bin/env python
 #----------------------------------------------------------------------------
 # Name:         run.py
@@ -6,10 +12,11 @@
 # Author:       Robin Dunn
 #
 # Created:      6-March-2000
-# RCS-ID:       $Id: run.py,v 1.1 2008-09-18 16:17:49 ior01 Exp $
+# RCS-ID:       $Id: run.py,v 1.2 2008-09-24 12:07:25 ior01 Exp $
 # Copyright:    (c) 2000 by Total Control Software
 # Licence:      wxWindows license
 #----------------------------------------------------------------------------
+from wx.py.introspect import getAttributeNames
 
 """
 This program will load and run one of the individual demos in this
@@ -41,10 +48,11 @@ class Log:
 
 
 class RunDemoApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
-    def __init__(self, name, module, useShell):
+    def __init__(self, name, module, useShell, arg):
         self.name = name
         self.demoModule = module
         self.useShell = useShell
+        self.arg = arg
         wx.App.__init__(self, redirect=False)
 
 
@@ -54,7 +62,7 @@ class RunDemoApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
         self.SetAssertMode(assertMode)
         self.Init()  # InspectionMixin
 
-        frame = wx.Frame(None, -1, "RunDemo: " + self.name, pos=(50,50), size=(200,100),
+        frame = wx.Frame(None, -1, "" + self.name, pos=(50,50), size=(1024,768),
                         style=wx.DEFAULT_FRAME_STYLE, name="run a sample")
         frame.CreateStatusBar()
 
@@ -74,13 +82,13 @@ class RunDemoApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
         frame.Show(True)
         frame.Bind(wx.EVT_CLOSE, self.OnCloseFrame)
 
-        win = self.demoModule.runTest(frame, frame, Log())
+        win = self.demoModule.runTest(frame, frame, Log(),self.arg)
 
         # a window will be returned if the demo does not create
         # its own top-level window
         if win:
             # so set the frame to a good size for showing stuff
-            frame.SetSize((640, 480))
+            frame.SetSize((1024, 768))
             win.SetFocus()
             self.window = win
             ns['win'] = win
@@ -117,11 +125,17 @@ class RunDemoApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
         return True
 
 
-    def OnExitApp(self, evt):
+    def OnExitApp(self, evt):     
+        if hasattr(self.window, "SaveOnExit"):   
+            self.window.SaveOnExit()
+        
         self.frame.Close(True)
 
 
     def OnCloseFrame(self, evt):
+        if hasattr(self.window, "SaveOnExit"):   
+            self.window.SaveOnExit()
+        
         if hasattr(self, "window") and hasattr(self.window, "ShutdownDemo"):
             self.window.ShutdownDemo()
         evt.Skip()
@@ -144,12 +158,11 @@ def main(argv):
 
     name, ext  = os.path.splitext(argv[1])
     module = __import__(name)
-
-
-    app = RunDemoApp(name, module, useShell)
+    
+    print  sys.argv[1] # Surface_Parametric_id18_tag.csv
+    arg = sys.argv[1:]
+    app = RunDemoApp(name, module, useShell, arg)
     app.MainLoop()
-
-
 
 if __name__ == "__main__":
     main(sys.argv)

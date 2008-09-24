@@ -4,8 +4,11 @@
 # author: Stefano Perticoni
 #-----------------------------------------------------------------------------
 
+from Debug import Debug
 from xml.dom.minidom import Childless
+from test.test_new import argcount
 import os
+import csv
 import  wx
 import  wx.gizmos   as  gizmos
 import  images
@@ -15,45 +18,61 @@ from xml.dom import minidom
 #----------------------------------------------------------------------
 
 class TestPanel(wx.Panel):
-    def __init__(self, parent, log):
+    def __init__(self, parent, log, arg):
+        
+        self.CacheList = []
         
         # load msf infos
         curDir = os.getcwd()        
-        
         print " current directory is: " + curDir
         
-        self.inFileName = curDir + r'\metadataEditorTestData\surfaceWithMasterDictionaryTags\surfaceWithMasterDictionaryTags.msf'
-        assert(os.path.exists(self.inFileName))
+        self.inputCSVFileName = os.getcwd() + r'\\' + str(arg[0]) # to be used to save on exit    
+        print self.inputCSVFileName
+        assert(os.path.exists(self.inputCSVFileName))
         
-        self.msfParserInstance = msfParser.msfParser()
-        self.doc = minidom.parse(self.inFileName)
-        self.rootNode = self.doc.documentElement
+        # read this from the csv
+        autoTagsReader = csv.reader(open(self.inputCSVFileName, "r"))
         
-        p = self.msfParserInstance
-        
-        # get a test vme 
-        vme = p.GetVmeNodeById(self.rootNode, 18)
-        tagArrayNode = p.GetVmeTagArrayNode(vme)
-        assert(tagArrayNode != None)
-        
-        self.msfTagsDictionary = p.GetTagDictionary(tagArrayNode)
-        print self.msfTagsDictionary
-        
-        for key in self.msfTagsDictionary.keys():
-            print key, '\t', self.msfTagsDictionary[key]
-    
-        # load xml dictionary
-        xmlDict = r'.\metadataEditorTestData\xmlDictionaries\LHDL_dictionary.xml'
+        self.csvTagsDictionary = {}
+         
+        try:
+            for row in autoTagsReader:
+                if Debug:          
+                             
+                    print "row: " +  str(row)
+                self.csvTagsDictionary[row[0].strip()] = str(row[1])
+                
+        except csv.Error, e:
+#            sys.exit('file %s, line %d: %s' % (filename, autoTagsReader.line_num, e))
+             pass
+        if Debug:          
+            print self.csvTagsDictionary
 
+        for item in self.csvTagsDictionary:
+            print item[0]+ " " + item[1]
+            
+        tagsList = sorted(self.csvTagsDictionary.keys())
+        print tagsList
+
+       
+        # load xml dictionary (already assembled if composed)
+        self.inputXMLDictionaryFileName = os.getcwd() + r'\\' + str(arg[1]) # to be used to save on exit    
+        print self.inputXMLDictionaryFileName
+        assert(os.path.exists(self.inputXMLDictionaryFileName))
+        
         self.lhpXMLDictionaryParserInstance = lhpXMLDictionaryParser.lhpXMLDictionaryParser()
         
         pi = self.lhpXMLDictionaryParserInstance
-        pi.LoadXMLDictionary(xmlDict)
+        pi.LoadXMLDictionary(self.inputXMLDictionaryFileName)
         pi.PrintXMLDictionary()
         
         self.log = log
         wx.Panel.__init__(self, parent, -1)
+        
+        # wx.Panel.SetSize(1024,768)
         self.Bind(wx.EVT_SIZE, self.OnSize)
+        
+        
 
         self.tree = gizmos.TreeListCtrl(self, -1, style =
                                         wx.TR_DEFAULT_STYLE
@@ -99,52 +118,34 @@ class TestPanel(wx.Panel):
         self.tree.SetColumnWidth(0, 200)
 
         for i in range(1,10):
-            
             self.tree.SetColumnWidth(i, 80)
             
         self.tree.SetColumnWidth(9, 400)      
   
-
         self.root = self.tree.AddRoot("LHDL Master Dictionary")
-        self.tree.SetItemText(self.root, "col 1 root", 1)
-        self.tree.SetItemText(self.root, "col 2 root", 2)
         self.tree.SetItemImage(self.root, fldridx, which = wx.TreeItemIcon_Normal)
         self.tree.SetItemImage(self.root, fldropenidx, which = wx.TreeItemIcon_Expanded)
-        
     
         self.FillGuiTree(pi.DictionaryDOMDocument.firstChild,  self.root)
-        
-#        for x in range(15):
-#            txt = "Item %d" % x
-#            child = self.tree.AppendItem(self.root, txt)
-#            self.tree.SetItemText(child, txt + "(c1)", 1)
-#            self.tree.SetItemText(child, txt + "(c2)", 2)
-#            self.tree.SetItemImage(child, fldridx, which = wx.TreeItemIcon_Normal)
-#            self.tree.SetItemImage(child, fldropenidx, which = wx.TreeItemIcon_Expanded)
-#
-#            for y in range(5):
-#                txt = "item %d-%s" % (x, chr(ord("a")+y))
-#                last = self.tree.AppendItem(child, txt)
-#                self.tree.SetItemText(last, txt + "(c1)", 1)
-#                self.tree.SetItemText(last, txt + "(c2)", 2)
-#                self.tree.SetItemImage(last, fldridx, which = wx.TreeItemIcon_Normal)
-#                self.tree.SetItemImage(last, fldropenidx, which = wx.TreeItemIcon_Expanded)
-#
-#                for z in range(5):
-#                    txt = "item %d-%s-%d" % (x, chr(ord("a")+y), z)
-#                    item = self.tree.AppendItem(last,  txt)
-#                    self.tree.SetItemText(item, txt + "(c1)", 1)
-#                    self.tree.SetItemText(item, txt + "(c2)", 2)
-#                    self.tree.SetItemImage(item, fileidx, which = wx.TreeItemIcon_Normal)
-#                    self.tree.SetItemImage(item, smileidx, which = wx.TreeItemIcon_Selected)
-
-
         self.tree.ExpandAll(self.root)
 
         self.tree.GetMainWindow().Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
         self.tree.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.OnActivate)
 
-
+         
+    def SaveOnExit(self):
+        for i in self.CacheList:
+            print i[0] + " " + i[1]
+        
+        file = open(self.inputCSVFileName, 'w')
+        assert(os.path.exists(self.inputCSVFileName))
+        for row in self.CacheList:
+            toWrite = '"' + row[0] + '"' + " , " + row[1] + "\n"
+            print toWrite
+            file.write(str(toWrite))
+        
+        file.close()
+        
     def OnActivate(self, evt):
         self.log.write('OnActivate: %s' % self.tree.GetItemText(evt.GetItem()))
         
@@ -171,30 +172,51 @@ class TestPanel(wx.Panel):
              
         # get tag array corresponding entry 
         msfTagName =  pi.GetVMETagArrayTagNameFromNode(xmlDictNode)  
-        msfTagValue = self.msfTagsDictionary[msfTagName] 
+        print msfTagName
+        # print self.csvTagsDictionary
+        msfTagName = msfTagName.strip()
+        print msfTagName
+        
+        try:
+            msfTagValue = self.csvTagsDictionary[msfTagName]
+        except:
+            print "unexpected exceptions"
+            print "problems setting " + str(msfTagName) + " tag (probably an auto tag...)"
+            print "the corresponding tree entries will not be created"
+            return
+         
         print msfTagValue
         
+        # build {long_tag , value dictionary}
+        
+         
         attrDict =  pi.GetAttributesDictionary(xmlDictNode)
         
         # names from ValueType to Notes
         columnNames = pi.DictionaryColumnLabels.irange(pi.DictionaryColumnLabels.ValueType \
         , pi.DictionaryColumnLabels.Notes)
-   
         
         # append item to tree 
         child = self.tree.AppendItem(guiTreeParent, str(nodeName))  
         
+        self.CacheList.append([msfTagName, msfTagValue])
+     
+        assert isinstance(msfTagValue ,str )
+        msfTagValue = msfTagValue.replace('"', '')
+        # set the value column
+        self.tree.SetItemText(child, msfTagValue, 1)
+        
         # set item nodeName        
         if attrDict != {}:
             for guiColumnId in range(2,10):        
-                print "guiColumnId: " + str(guiColumnId)
-                print self.tree.GetColumnText(guiColumnId)
+                # print "guiColumnId: " + str(guiColumnId)
+                # print self.tree.GetColumnText(guiColumnId)
                 # get the column string# 
                 columnName = pi.DictionaryColumnLabels[guiColumnId + 7]
-                print "col name: " + str(columnName)
+                # print "col name: " + str(columnName)
                 
                 value = attrDict[str(columnName)]
-                print "value: " + str(value)#               
+                # print "value: " + str(value)#               
         
                 pass
         # set item text
@@ -207,8 +229,8 @@ class TestPanel(wx.Panel):
     
 #----------------------------------------------------------------------
 
-def runTest(frame, nb, log):
-    win = TestPanel(nb, log)
+def runTest(frame, nb, log,arg):
+    win = TestPanel(nb, log,arg)
     return win
 
 #----------------------------------------------------------------------
@@ -226,8 +248,9 @@ such that the look is similar to a wx.ListCtrl.
 
 
 if __name__ == '__main__':
-    #raw_input("Press enter...")
+    
     import sys,os
     import run
+    # list: ['D:\\vapps_merge_target\\LHPBuilder_Parabuild_Binary\\VMEUploaderDownloader\\lhpMetadataEditor.py'
+    print sys.argv[1]     # , 'Surface_Parametric_id18_tag.csv']
     run.main(['', os.path.basename(sys.argv[0])] + sys.argv[1:])
-
