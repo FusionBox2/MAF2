@@ -178,9 +178,15 @@ class ThreadedClient:
         dom = xd.parseString(out)
         if dom.getElementsByTagName("fault"):
             print "------Error in gettitle service-------"
+            for el in dom.getElementsByTagName("string"):
+                for node in el.childNodes:  
+                    error = node.data
+            print error
+            
             #write a file used by builder to catch error 
             errorFile = open(os.getcwd() + '\\ErrorFound.lhp', 'w')
-            errorFile.write('Error in gettitle service')   
+            errorFile.write('Error in gettitle service.\n')   
+            errorFile.write(error)   
             errorFile.close()
             return
         for el in dom.getElementsByTagName("string"):

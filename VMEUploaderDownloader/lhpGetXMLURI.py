@@ -35,7 +35,8 @@ class lhpGetXMLURI:
         
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
         ws.setCredentials(self.userName, self.password)
-        ws.setServer('https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2')
+        ws.setServer('https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/')
+        #ws.setServer('http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/')
         ws.ProxyURL = self.proxyHost
         ws.ProxyPort = self.proxyPort
         
@@ -43,7 +44,11 @@ class lhpGetXMLURI:
         
         dom = xd.parseString(out)
         if dom.getElementsByTagName("fault"):
-            print "-----------Error in xmlupload service------------"
+            print "-----------Error in createresource service------------"
+            for el in dom.getElementsByTagName("string"):
+                for node in el.childNodes:  
+                    error = node.data
+            print error
             return
         for el in dom.getElementsByTagName("string"):
             for node in el.childNodes:  
