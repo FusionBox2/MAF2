@@ -24,7 +24,7 @@ class UploadHandler:
         self.originalId = originalId
         self.msg = 0
         self.binaryFileSize = 0
-        self.IsBinaryPresent = False
+        self.isBinaryDataPresent = False
         self.binaryName = ''
         self.remoteTemporaryBinaryFileSize = 0
         self.BinaryURI = "NOT PRESENT"
@@ -49,14 +49,16 @@ class UploadHandler:
         self.createOutgoingDir()
         
         binarySendResult = False
-        self.IsBinaryPresent = self.isBinaryPresent()
+        self.isBinaryDataPresent = self.isBinaryPresent()
+        print self.isBinaryDataPresent
         
         
         #Check if VME has a binary data        
-        if(self.isBinaryPresent == True):
+        if(self.isBinaryDataPresent == True):
             
             #get free resource (return URI string)
             self.BinaryURI = self.getFreeResource() #thread maybe
+            print self.BinaryURI
             #thread.start_new_thread(self.getFreeResource,())
             
             self.createXMLAndBinary()
@@ -141,7 +143,7 @@ class UploadHandler:
             binarySendResult = True
                        
         #---MD5 check-point-----------------------------------#
-        if(self.isBinaryPresent == True and binarySendResult == True):
+        if(self.isBinaryDataPresent == True and binarySendResult == True):
             print "Local checksum=  " + self.localChksum
             print "Remote checksum= " + self.remoteChksum
             if (self.localChksum == self.remoteChksum):
@@ -228,12 +230,12 @@ class UploadHandler:
         upl.hasLink = self.hasLink
         upl.withChild = self.withChild
         upl.vmeName = self.vmeName
-        upl.hasBinary = self.IsBinaryPresent
+        upl.hasBinary = self.isBinaryDataPresent
         upl.binaryName = self.binaryName
         self.localChksum = upl.Upload()
         
         #get size of binary locally
-        if (self.IsBinaryPresent == True):
+        if (self.isBinaryDataPresent == True):
             self.binaryFileSize = self.getBinaryFileSize()
 
     def launchXMLEditor(self, dir):
@@ -296,8 +298,6 @@ class UploadHandler:
     
         print self.XMLName
         
-
-        
     def isBinaryPresent(self):
         result = False
         
@@ -334,10 +334,12 @@ class UploadHandler:
         if (len(fileNameList) == 1 and len(fileNameList[0]) != 0):
             self.binaryName = fileNameList[0]
             result = True
+            print "Binary data present"
                
         os.chdir(oldDir)  
-        print "Binary data present"
         return result
+        
+    
             
     def __sendFile(self,filename):
         
