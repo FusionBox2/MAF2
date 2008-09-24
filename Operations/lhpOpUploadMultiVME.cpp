@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-23 08:51:18 $
-Version:   $Revision: 1.19 $
+Date:      $Date: 2008-09-24 13:00:21 $
+Version:   $Revision: 1.20 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -481,7 +481,6 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
                 errorMessage.Append(buf.c_str());
               }
               
-              
               wxMessageBox(wxString::Format("Error in MSF upload:\n%s. \nUpload MSF stopped.",errorMessage.GetCStr()));
               errorFile.close();
               wxRemoveFile(m_PythonUploadFullPath + "ErrorFound.lhp");
@@ -489,7 +488,7 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
             }
           }
 
-          if (m_UploadVME->UploadVME(URI, hasBinary, childToUpload->GetNumberOfChildren()!=0, true) == MAF_ERROR || URI == "")
+          if (m_UploadVME->UploadVME(URI, hasBinary, childToUpload->GetNumberOfChildren()!=0) == MAF_ERROR)
           {
             return;
           }
@@ -519,7 +518,7 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
   //upload VME Root
   m_UploadVME->SetInput(node);
   URI = "";
-  if (m_UploadVME->UploadVME(URI, false, node->GetNumberOfChildren()!=0, true) == MAF_ERROR)
+  if (m_UploadVME->UploadVME(URI, false, node->GetNumberOfChildren()!=0) == MAF_ERROR)
   {
     return;
   }
@@ -549,7 +548,7 @@ void lhpOpUploadMultiVME::UploadMultiVME(mafNode *node)
   hasBinary = isBinaryDataPresent(node);
   m_UploadVME->SetInput(node);
   URI = "";
-  if (m_UploadVME->UploadVME(URI, hasBinary, false, false) == MAF_ERROR)
+  if (m_UploadVME->UploadVME(URI, hasBinary, false) == MAF_ERROR)
   {
     return;
   }
@@ -670,7 +669,7 @@ int lhpOpUploadMultiVME::UploadVMELinks(mafNode *derived)
       m_UploadVME->SetInput(link);
 
         URI = "";
-        if (m_UploadVME->UploadVME(URI, hasBinary, false, false) == MAF_ERROR)
+        if (m_UploadVME->UploadVME(URI, hasBinary, false) == MAF_ERROR)
         {
           return MAF_ERROR;
         }

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-23 10:25:13 $
-Version:   $Revision: 1.87 $
+Date:      $Date: 2008-09-24 13:02:02 $
+Version:   $Revision: 1.88 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -265,7 +265,7 @@ void lhpOpUploadVME::SaveConnectionConfigurationFile()
 }
 
 //----------------------------------------------------------------------------
-int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool withChild, bool needURI)   
+int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool withChild)   
 //----------------------------------------------------------------------------
 {
   wxBusyInfo *wait;
@@ -454,8 +454,8 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
 
     m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
 
-    /*mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
-    command2execute.c_str(), m_Pid);*/
+    //mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
+    //command2execute.c_str(), m_Pid);
   }
   else
   {
@@ -532,7 +532,7 @@ void lhpOpUploadVME::OpDo()
 {
   mafString URI;
 
-  if (UploadVME(URI, "", false, false) == MAF_ERROR)
+  if (UploadVME(URI, "", false) == MAF_ERROR)
   {
     return;
   }
