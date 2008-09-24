@@ -32,6 +32,8 @@ class vmeUploaderOnly:
         self.vmeName = ""
         self.hasLink = ""
         self.withChild = ""
+        self.hasBinary = False
+        self.binaryName = ''
         self.localChksum = ""
         
     def Upload(self):
@@ -91,7 +93,7 @@ class vmeUploaderOnly:
         day = msfDOMParserInstance.GetTagNodeText(nodeURI)
         print day
         
-        print "has child? " + self.withChild
+       # print "has child? " + self.withChild
         if (self.withChild == "true"):   
             newDir = os.getcwd()
             os.chdir(newDir + r"..\..\..")
@@ -114,7 +116,7 @@ class vmeUploaderOnly:
             os.remove(fileName)
             os.chdir(newDir)
         
-        print "has Link = " + self.hasLink
+       # print "has Link = " + self.hasLink
         if (self.hasLink == "true"):   
             newDir = os.getcwd()
             os.chdir(newDir + r"..\..\..")
@@ -145,31 +147,20 @@ class vmeUploaderOnly:
         fileUtilities._mkdir(self.OutputFolderName)
         
         # save created XML to this directory
-        os.chdir(self.OutputFolderName)
-        
-        # get the vme node 
-        #id is always 1 because the msf in uploadCache contains only the vme to upload
-        #outVmeNode = msfDOMParserInstance.GetVmeNodeById(rootNode, 1)
-
-        
-        # Copy of VME binary file to this directory
-        # get the file to be copied
-        fileNameList = msfDOMParserInstance.GetVMEDataURLList(outVmeNode)
-        print fileNameList
-        
+        os.chdir(self.OutputFolderName)    
         oldDir = os.getcwd()
         os.chdir(self.InputMSFDirectory)
         
-        if(len(fileNameList) == 1 and len(fileNameList[0]) != 0):
+        #if(len(fileNameList) == 1 and len(fileNameList[0]) != 0):
+        if(self.hasBinary == True):
             print self.InputMSFDirectory
             os.chdir(self.InputMSFDirectory)
-            shutil.copy2(fileNameList[0],self.OutputFolderName)
+            shutil.copy2(self.binaryName,self.OutputFolderName)
             
             #-----MD5 checksum calculation-----#
             os.chdir(self.OutputFolderName)
-            self.localChksum = self.md5(fileNameList[0])
+            self.localChksum = self.md5(self.binaryName)
             print "Local checksum= " + self.localChksum
-            time.sleep(2)
             
             #AUTO TAGS SET  WITH  WEBSERVICE      
             nodeURI = msfDOMParserInstance.GetTagNodeByTagName(outVmeTagArrayNode, "L0000_resource_data_Dataset_LocalFileCheckSum")
