@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-24 12:07:48 $
-Version:   $Revision: 1.17 $
+Date:      $Date: 2008-09-24 13:48:30 $
+Version:   $Revision: 1.18 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -89,6 +89,7 @@ enum  m_SubdictionaryId_VALUES
 enum lhpOpUploadVME_ID
 {
   ID_SUBDICTIONARY = MINID, 
+  ID_METADATA_EDITOR,
 };
 
 //----------------------------------------------------------------------------
@@ -135,6 +136,8 @@ mafOp(label)
 
   m_ProxyURL = "";
   m_ProxyPort = "";
+
+  m_MetadataEditorId = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -748,13 +751,25 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
 
   unhandledPlusManualTagsFile.close();
   
-  // launch editor
-  command2execute.Clear();
-  command2execute.Append(m_PythonExe.GetCStr());
-  command2execute.Append(" lhpMetadataEditor.py ");
-  command2execute.Append(m_CsvName.c_str()); 
-  command2execute.Append(" ");
-  command2execute.Append(m_AssembledXMLDictionaryFileName.GetCStr());
+  if (m_MetadataEditorId == 0)
+  {
+    // launch new editor
+    command2execute.Clear();
+    command2execute.Append(m_PythonExe.GetCStr());
+    command2execute.Append(" lhpMetadataEditor.py ");
+    command2execute.Append(m_CsvName.c_str()); 
+    command2execute.Append(" ");
+    command2execute.Append(m_AssembledXMLDictionaryFileName.GetCStr());
+  } 
+  else
+  {
+    // launch old editor
+    command2execute.Clear();
+    command2execute.Append(m_PythonExe.GetCStr());
+    command2execute.Append(" CSVOMATIC.py ");
+    command2execute.Append(m_CsvName.c_str());
+  }
+  
   
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
@@ -881,8 +896,12 @@ void lhpOpEditTag::CreateGui()
   m_Gui = new mafGUI(this);
 
   m_Gui->Divider(2);
+  const wxString metadataEditor[] = {"Metadata Editor","CSV Editor"};
+  m_Gui->Label("Choose editor");
+  m_Gui->Combo(ID_METADATA_EDITOR, "", &m_MetadataEditorId, 2, metadataEditor);
 
-  m_Gui->Label("use subdictionary", true);
+  m_Gui->Divider(2);
+  m_Gui->Label("Use subdictionary");
   wxString subDictionariesList[3] = {"none", "motionAnalysis", "dicom"};
   m_Gui->Combo(ID_SUBDICTIONARY,"",&m_SubdictionaryId,3,subDictionariesList);
 

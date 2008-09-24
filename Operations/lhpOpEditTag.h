@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.h,v $
 Language:  C++
-Date:      $Date: 2008-09-16 16:02:21 $
-Version:   $Revision: 1.4 $
+Date:      $Date: 2008-09-24 13:48:30 $
+Version:   $Revision: 1.5 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -157,5 +157,10 @@ private:
   std::vector<mafNode*> m_LinkNode;
   std::vector<mafString> m_LinkName;
   
+  /** id identifying the metadata editor:
+  0: lhpMetadataEditor
+  1: CSV Editor
+  */
+  int m_MetadataEditorId;
 };
 #endif
