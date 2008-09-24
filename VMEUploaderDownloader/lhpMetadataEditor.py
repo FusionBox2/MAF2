@@ -21,6 +21,7 @@ class TestPanel(wx.Panel):
     def __init__(self, parent, log, arg):
         
         self.CacheList = []
+        self.ExceptionList = []
         
         # load msf infos
         curDir = os.getcwd()        
@@ -33,25 +34,25 @@ class TestPanel(wx.Panel):
         # read this from the csv
         autoTagsReader = csv.reader(open(self.inputCSVFileName, "r"))
         
-        self.csvTagsDictionary = {}
+        self.vmeCSVUnhandledPlusManualTagsFile = {}
          
         try:
             for row in autoTagsReader:
                 if Debug:          
                              
                     print "row: " +  str(row)
-                self.csvTagsDictionary[row[0].strip()] = str(row[1])
+                self.vmeCSVUnhandledPlusManualTagsFile[row[0].strip()] = str(row[1].strip())
                 
         except csv.Error, e:
 #            sys.exit('file %s, line %d: %s' % (filename, autoTagsReader.line_num, e))
              pass
         if Debug:          
-            print self.csvTagsDictionary
+            print self.vmeCSVUnhandledPlusManualTagsFile
 
-        for item in self.csvTagsDictionary:
+        for item in self.vmeCSVUnhandledPlusManualTagsFile:
             print item[0]+ " " + item[1]
             
-        tagsList = sorted(self.csvTagsDictionary.keys())
+        tagsList = sorted(self.vmeCSVUnhandledPlusManualTagsFile.keys())
         print tagsList
 
        
@@ -73,7 +74,6 @@ class TestPanel(wx.Panel):
         self.Bind(wx.EVT_SIZE, self.OnSize)
         
         
-
         self.tree = gizmos.TreeListCtrl(self, -1, style =
                                         wx.TR_DEFAULT_STYLE
                                         | wx.TR_HAS_BUTTONS
@@ -131,8 +131,12 @@ class TestPanel(wx.Panel):
 
         self.tree.GetMainWindow().Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
         self.tree.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.OnActivate)
-
-         
+    
+        print "self.ExceptionList:"
+        for item in self.ExceptionList:
+            print item
+        
+        
     def SaveOnExit(self):
         for i in self.CacheList:
             print i[0] + " " + i[1]
@@ -141,7 +145,6 @@ class TestPanel(wx.Panel):
         assert(os.path.exists(self.inputCSVFileName))
         for row in self.CacheList:
             toWrite = '"' + row[0] + '"' + " , " + row[1] + "\n"
-            print toWrite
             file.write(str(toWrite))
         
         file.close()
@@ -173,18 +176,17 @@ class TestPanel(wx.Panel):
         # get tag array corresponding entry 
         msfTagName =  pi.GetVMETagArrayTagNameFromNode(xmlDictNode)  
         print msfTagName
-        # print self.csvTagsDictionary
+        # print self.vmeCSVUnhandledPlusManualTagsFile
         msfTagName = msfTagName.strip()
         print msfTagName
         
-        try:
-            msfTagValue = self.csvTagsDictionary[msfTagName]
-        except:
-            print "unexpected exceptions"
-            print "problems setting " + str(msfTagName) + " tag (probably an auto tag...)"
-            print "the corresponding tree entries will not be created"
-            return
-         
+        msfTagValue = ""
+        
+        if self.vmeCSVUnhandledPlusManualTagsFile.has_key(msfTagName):
+            msfTagValue = self.vmeCSVUnhandledPlusManualTagsFile[msfTagName]
+        else:
+            msfTagValue = "ANNOTATE ME!"
+  
         print msfTagValue
         
         # build {long_tag , value dictionary}
