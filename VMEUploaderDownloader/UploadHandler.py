@@ -24,6 +24,8 @@ class UploadHandler:
         self.originalId = originalId
         self.msg = 0
         self.binaryFileSize = 0
+        self.IsBinaryPresent = False
+        self.binaryName = ''
         self.remoteTemporaryBinaryFileSize = 0
         self.BinaryURI = "NOT PRESENT"
         self.block = threading.Lock()
@@ -47,9 +49,11 @@ class UploadHandler:
         self.createOutgoingDir()
         
         binarySendResult = False
+        self.IsBinaryPresent = self.isBinaryPresent()
+        
         
         #Check if VME has a binary data        
-        if(self.isBinaryPresent() == True):
+        if(self.isBinaryPresent == True):
             
             #get free resource (return URI string)
             self.BinaryURI = self.getFreeResource() #thread maybe
@@ -137,20 +141,19 @@ class UploadHandler:
             binarySendResult = True
                        
         #---MD5 check-point-----------------------------------#
-        if(self.isBinaryPresent() == True and binarySendResult == True):
+        if(self.isBinaryPresent == True and binarySendResult == True):
             print "Local checksum=  " + self.localChksum
             print "Remote checksum= " + self.remoteChksum
             if (self.localChksum == self.remoteChksum):
                 print " "
                 print "-------MD5 checksum control successful!-----------"
                 print " "
-                time.sleep(2)
             else:
                 print " "
                 print "-------Error: MD5 checksum control unsuccessful!--------"
                 print " "
                 binarySendResult = False
-                time.sleep(2)
+
         #---------------------------------------------------#
         
           
@@ -217,9 +220,7 @@ class UploadHandler:
         curDir = sys.path[0]
         upl = vmeUploaderOnly.vmeUploaderOnly()
         upl.InputMSFDirectory = self.dirCache
-        #upl.HandledAutoTagsListFileName = curDir + r'\handledAutoTagsList.csv'
-        #upl.UnhandledPlusManualTagsListFileName = curDir + '\\' + self.originalId 
-      
+
         upl.OutputFolderName = self.dirOutgoing
         upl.VmeToExtractID = int(self.id)
         upl.originalId = self.originalId
@@ -227,10 +228,13 @@ class UploadHandler:
         upl.hasLink = self.hasLink
         upl.withChild = self.withChild
         upl.vmeName = self.vmeName
+        upl.hasBinary = self.IsBinaryPresent
+        upl.binaryName = self.binaryName
         self.localChksum = upl.Upload()
         
         #get size of binary locally
-        self.binaryFileSize = self.getBinaryFileSize()
+        if (self.IsBinaryPresent == True):
+            self.binaryFileSize = self.getBinaryFileSize()
 
     def launchXMLEditor(self, dir):
         oldDir = os.getcwd()
@@ -282,7 +286,7 @@ class UploadHandler:
             errorFile = open(self.dirOutgoing + '\\..\\..\\ErrorFound.lhp', 'w')
             errorFile.write('Error in xmlupload service: ' + self.vmeName + '\n')
             errorFile.write(error)
-            errorFile.close()        
+            errorFile.close()      
   #          self.__removeSRBData(self.BinaryURI)
             return
         for el in dom.getElementsByTagName("string"):
@@ -291,6 +295,8 @@ class UploadHandler:
         pass
     
         print self.XMLName
+        
+
         
     def isBinaryPresent(self):
         result = False
@@ -326,6 +332,7 @@ class UploadHandler:
         outVmeNode = msfDOMParserInstance.GetVmeNodeById(rootNode, self.id)
         fileNameList = msfDOMParserInstance.GetVMEDataURLList(outVmeNode)
         if (len(fileNameList) == 1 and len(fileNameList[0]) != 0):
+            self.binaryName = fileNameList[0]
             result = True
                
         os.chdir(oldDir)  
