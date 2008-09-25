@@ -138,13 +138,24 @@ class TestPanel(wx.Panel):
         
         
     def SaveOnExit(self):
-        for i in self.CacheList:
-            print i[0] + " " + i[1]
+        
+        rootId = self.tree.GetRootItem()
+        id = None
+        id = rootId
+        listValuesFromTree = []
+        while True:
+            id = self.tree.GetNext(id)
+            if id:
+                listValuesFromTree.append(self.tree.GetItemText(id,1))
+            else:
+                break
+                    
+        print listValuesFromTree
         
         file = open(self.inputCSVFileName, 'w')
         assert(os.path.exists(self.inputCSVFileName))
-        for row in self.CacheList:
-            toWrite = '"' + row[0] + '"' + " , " + row[1] + "\n"
+        for id in range(len(self.CacheList)):
+            toWrite = '"' + self.CacheList[id][0] + '"' + " , " + '"' + listValuesFromTree[id] + '"' + "\n" 
             file.write(str(toWrite))
         
         file.close()
