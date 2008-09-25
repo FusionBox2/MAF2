@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.h,v $
 Language:  C++
-Date:      $Date: 2008-09-25 12:00:12 $
-Version:   $Revision: 1.6 $
+Date:      $Date: 2008-09-25 13:15:47 $
+Version:   $Revision: 1.7 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -168,5 +168,7 @@ private:
   1: yes
   */
   int m_UseFADictionary;
+
+  mafString m_DictionaryToProcessFileName;
 };
 #endif

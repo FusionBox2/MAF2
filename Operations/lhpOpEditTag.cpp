@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-25 12:00:12 $
-Version:   $Revision: 1.19 $
+Date:      $Date: 2008-09-25 13:15:47 $
+Version:   $Revision: 1.20 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -140,6 +140,7 @@ mafOp(label)
 
   m_MetadataEditorId = 0;
   m_UseFADictionary = 0;
+  m_DictionaryToProcessFileName = "UNDEFINED";
 }
 
 //----------------------------------------------------------------------------
@@ -486,6 +487,7 @@ void lhpOpEditTag::OpStop(int result)
 int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
 //----------------------------------------------------------------------------
 {
+  
   wxString oldDir = wxGetCwd();
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
@@ -497,7 +499,7 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
     return MAF_ERROR;
   }
   
-  mafString dictionaryToProcessFileName;
+  mafString m_DictionaryToProcessFileName;
 
   // handle sub dictionaries creation...
   if (m_SubdictionaryId == DICOM_SUBDICTIONARY)
@@ -509,7 +511,7 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
     {
       return MAF_ERROR;
     }
-    dictionaryToProcessFileName = m_AssembledXMLDictionaryFileName;
+    m_DictionaryToProcessFileName = m_AssembledXMLDictionaryFileName;
   } 
   else if (m_SubdictionaryId == MOTION_ANALYSIS_SUBDICTIONARY)
   {
@@ -522,11 +524,14 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
       return MAF_ERROR;
     }
 
-    dictionaryToProcessFileName = m_AssembledXMLDictionaryFileName;
+    m_DictionaryToProcessFileName = m_AssembledXMLDictionaryFileName;
   }
   else if (m_SubdictionaryId == NO_SUBDICTIONARY)
   {
-    dictionaryToProcessFileName = m_MasterXMLDictionaryFileName;
+    m_DictionaryToProcessFileName = m_MasterXMLDictionaryFileName;
+    std::ostringstream stringStream;
+    stringStream << "Not using Dicom or MA subdictionaries..."  << std::endl;
+    mafLogMessage(stringStream.str().c_str());
     // nothing to do...continue...
   }  
   else
@@ -550,15 +555,17 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
     wxString command2execute;
     command2execute = m_PythonExe;
 
+    mafString assembledWithFaDictionaryFileName = "assembledWithFA.xml";
     command2execute.Append(" lhpXMLDictionariesBuilder.py ");
-    command2execute.Append(m_AssembledXMLDictionaryFileName);
+    command2execute.Append(m_DictionaryToProcessFileName);
     command2execute.Append(" ");
     command2execute.Append(faDictionaryFileName);
     command2execute.Append(" ");
     command2execute.Append("functional_anatomy");
     command2execute.Append(" ");
-    command2execute.Append(m_AssembledXMLDictionaryFileName);
+    command2execute.Append(assembledWithFaDictionaryFileName);
 
+    m_DictionaryToProcessFileName = assembledWithFaDictionaryFileName;
     mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
     wxArrayString output;
@@ -584,7 +591,7 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
   wxString command2execute;
   command2execute.Append(m_PythonExe.GetCStr());
   command2execute.Append(" lhpXMLDictionaryParser.py ");
-  command2execute.Append(dictionaryToProcessFileName.GetCStr());
+  command2execute.Append(m_DictionaryToProcessFileName.GetCStr());
   command2execute.Append(" auto_tags ");
   command2execute.Append(m_AutoTagsListFromXMLDictionaryFileName.GetCStr());
   
@@ -610,7 +617,7 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
   command2execute = m_PythonExe;
   
   command2execute.Append(" lhpXMLDictionaryParser.py ");
-  command2execute.Append(dictionaryToProcessFileName.GetCStr());
+  command2execute.Append(m_DictionaryToProcessFileName.GetCStr());
   command2execute.Append(" manual_tags ");
   command2execute.Append(m_ManualTagsListFromXMLDictionaryFileName.GetCStr());
 
@@ -806,7 +813,7 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
     command2execute.Append(" lhpMetadataEditor.py ");
     command2execute.Append(m_CsvName.c_str()); 
     command2execute.Append(" ");
-    command2execute.Append(m_AssembledXMLDictionaryFileName.GetCStr());
+    command2execute.Append(m_DictionaryToProcessFileName.GetCStr());
   } 
   else
   {
