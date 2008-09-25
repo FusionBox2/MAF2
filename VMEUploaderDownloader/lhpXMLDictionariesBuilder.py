@@ -78,7 +78,34 @@ class lhpXMLDictionariesBuilder:
         outFileXML = open(self.outputDictionaryFileName, 'w')
         newDoc.writexml(outFileXML)
      
-
+    def BuildFunctionalAnatomyDictionary(self):
+        # load master dictionary
+        msfDOMParserInstance = msfParser.msfParser()        
+        masterDomDocument = minidom.parse(self.masterDictionaryFileName)
+        masterRootNode = masterDomDocument.documentElement
+        
+        # get the master subdir node
+        sourceDirNode = msfDOMParserInstance.GetNodeByNodeName(masterRootNode,"FunctionalAnatomy")
+        
+        assert(masterRootNode != None)
+        
+        # load motionAnalysys dictionary
+        FASubictionaryDomDocument = minidom.parse(self.subDictionaryFileName)
+        motionAnalysisRootNode = FASubictionaryDomDocument.documentElement
+        
+        # get motionAnalysys parent node
+        FATypeNode = msfDOMParserInstance.GetNodeByNodeName(motionAnalysisRootNode,"Type")
+        
+        assert(FATypeNode != None)
+       
+        sourceDirNode.appendChild(FATypeNode)
+        
+        newDoc = minidom.Document()
+        newDoc.appendChild(masterRootNode)
+               
+        outFileXML = open(self.outputDictionaryFileName, 'w')
+        newDoc.writexml(outFileXML)
+    
 def run(masterXMLDictionaryFilename, subXMLDictionaryFilename, command, outputXMLDictionaryFilename):
     """"""
     
@@ -93,6 +120,9 @@ def run(masterXMLDictionaryFilename, subXMLDictionaryFilename, command, outputXM
     elif command == 'motion_analysis':
         lhpXMLDictionariesBuilderInstance.BuildMotionAnalysisDictionary()
     
+    elif command == 'functional_anatomy':
+        lhpXMLDictionariesBuilderInstance.BuildFunctionalAnatomyDictionary()
+
     else:
         print 'command not available!'
         sys.exit(1)

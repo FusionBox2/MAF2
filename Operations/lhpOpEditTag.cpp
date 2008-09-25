@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-24 13:48:30 $
-Version:   $Revision: 1.18 $
+Date:      $Date: 2008-09-25 12:00:12 $
+Version:   $Revision: 1.19 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -90,6 +90,7 @@ enum lhpOpUploadVME_ID
 {
   ID_SUBDICTIONARY = MINID, 
   ID_METADATA_EDITOR,
+  ID_USEFADICTIONARY,
 };
 
 //----------------------------------------------------------------------------
@@ -138,6 +139,7 @@ mafOp(label)
   m_ProxyPort = "";
 
   m_MetadataEditorId = 0;
+  m_UseFADictionary = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -532,6 +534,51 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
     mafLogMessage("this case is not handled...");
     return MAF_ERROR;
   }
+  
+  if (m_UseFADictionary)
+  {
+    mafString faDictionaryFilePrefix = "lhpXMLFASourceSubdictionary_";
+    mafString faDictionaryFileName = this->GetXMLDictionaryFileName(faDictionaryFilePrefix).GetCStr();
+    if (faDictionaryFileName == "NOT FOUND")
+    { 
+      std::ostringstream stringStream;
+      stringStream << "No FA dictionary found. Exiting..."  << std::endl;
+      mafLogMessage(stringStream.str().c_str());
+      return MAF_ERROR;
+    }
+
+    wxString command2execute;
+    command2execute = m_PythonExe;
+
+    command2execute.Append(" lhpXMLDictionariesBuilder.py ");
+    command2execute.Append(m_AssembledXMLDictionaryFileName);
+    command2execute.Append(" ");
+    command2execute.Append(faDictionaryFileName);
+    command2execute.Append(" ");
+    command2execute.Append("functional_anatomy");
+    command2execute.Append(" ");
+    command2execute.Append(m_AssembledXMLDictionaryFileName);
+
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+
+    wxArrayString output;
+    wxArrayString errors;
+    long pid = -1;
+    if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
+    {
+      wxMessageBox("Error in lhpXMLDictionariesBuilder.py. Uploading stopped");
+      mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+        command2execute.c_str(), pid);
+      return MAF_ERROR;
+    }
+
+  } 
+  else
+  {
+      std::ostringstream stringStream;
+      stringStream << "Not using FA dictionary..."  << std::endl;
+      mafLogMessage(stringStream.str().c_str());
+  }
 
   // get auto tags
   wxString command2execute;
@@ -906,7 +953,11 @@ void lhpOpEditTag::CreateGui()
   m_Gui->Combo(ID_SUBDICTIONARY,"",&m_SubdictionaryId,3,subDictionariesList);
 
   m_Gui->Divider(2);
- 
+  m_Gui->Label("Use FA ontology");
+  m_Gui->Bool(ID_USEFADICTIONARY,_(""),&m_UseFADictionary);
+  m_Gui->Divider();
+  m_Gui->Divider();
+
   m_Gui->OkCancel(); 
   m_Gui->Label("");
   m_Gui->Update();
@@ -968,7 +1019,7 @@ int lhpOpEditTag::AssembleDictionaries()
   {
     mafLogMessage(errors[i]);
   }
-
+  
   wxSetWorkingDirectory(oldDir);
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 

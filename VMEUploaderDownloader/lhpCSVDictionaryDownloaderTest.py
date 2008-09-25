@@ -37,7 +37,7 @@ class lhpCSVDictionaryDownloaderTest(unittest.TestCase):
         print " current directory is: " + curDir
           
     
-    def testDownloadHTTPS(self):
+    def testDownloadMasterDictionaryHTTPS(self):
         
         # https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/LHDL_dictionary
         host = "www.biomedtown.org"
@@ -47,7 +47,18 @@ class lhpCSVDictionaryDownloaderTest(unittest.TestCase):
         
         lhpCSVDictionaryDownloader.run(host,selector,outputXMLDictionaryFileName)
     
-      
+        
+        
+    def testDownloadFAOntologySubdictionaryHTTPS(self):
+        
+        # https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/LHDL_dictionary
+        host = "www.biomedtown.org"
+        selector = "/biomed_town/LHDL/users/swclient/dictionaries/FA_onto"
+        
+        outputXMLDictionaryFileName = "lhpXMLFAOntologySourceySubdictionary"
+        
+        lhpCSVDictionaryDownloader.run(host,selector,outputXMLDictionaryFileName)
+        
     def testRun(self):
         
         host = "www.biomedtown.org"

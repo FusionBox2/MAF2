@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2008-08-27 11:03:09 $
-#   Version:   $Revision: 1.31 $
+#   Date:      $Date: 2008-09-25 11:59:55 $
+#   Version:   $Revision: 1.32 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -210,6 +210,20 @@ IF(DOWNLOAD_DICTIONARY)
         SET(ERROR 1)
     ENDIF(${RET} MATCHES "0")
 
+    # FA DICTIONARY
+    
+    SET(LHPBUILDER_FA_DICTIONARY_SELECTOR "/biomed_town/LHDL/users/swclient/dictionaries/FA_onto" CACHE INTERNAL "LHPBuilder dictionary selector")
+    SET(LHPBUILDER_XML_FA_DICTIONARY "lhpXMLFASourceSubdictionary" CACHE INTERNAL "LHPBuilder xml FA dictionary")
+    
+    EXEC_PROGRAM("python.exe" "${LHP_SOURCE_DIR}/VMEUploaderDownloader" ARGS "lhpCSVDictionaryDownloader.py ${LHPBUILDER_DICTIONARY_HOST} ${LHPBUILDER_FA_DICTIONARY_SELECTOR} ${LHPBUILDER_XML_FA_DICTIONARY}"  RETURN_VALUE RET)
+
+    
+    IF(${RET} MATCHES "0")
+        MESSAGE(STATUS "XML FA dictionary generated correctly!")
+    ELSE(${RET} MATCHES "0")
+        SET(ERROR 1)
+    ENDIF(${RET} MATCHES "0")
+    
     IF(${ERROR} MATCHES "0")
         MESSAGE(STATUS "XML dictionary generated correctly!")
     ELSE(${ERROR} MATCHES "0")

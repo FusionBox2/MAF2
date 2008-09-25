@@ -77,6 +77,30 @@ class lhpXMLDictionariesBuilderTest(unittest.TestCase):
         dictionaryBuilder.subDictionaryFileName = dicomSub
         dictionaryBuilder.outputDictionaryFileName = output
         dictionaryBuilder.BuildDicomDictionary()
+    
+    def testBuildFA(self):
+        
+        curDir = os.getcwd()
+        absPath = curDir
+        curDir  +=  "\lhpXMLDictionariesBuilderTestData"
+        print curDir  
+        master = curDir + "\LHDL_dictionary.xml"
+        exist = os.path.exists(master)
+        self.assertTrue(exist)
+        
+        FASub = curDir + "\FA.xml"
+        exist = os.path.exists(FASub)
+        self.assertTrue(exist)
+        
+        output  = curDir + "\masterDictionaryPlusFASubdictionary.xml"
+        exist = os.path.exists(output)
+        # self.assertFalse(exist)
+            
+        dictionaryBuilder = lhpXMLDictionariesBuilder.lhpXMLDictionariesBuilder()
+        dictionaryBuilder.masterDictionaryFileName = master
+        dictionaryBuilder.subDictionaryFileName = FASub
+        dictionaryBuilder.outputDictionaryFileName = output
+        dictionaryBuilder.BuildFunctionalAnatomyDictionary()
         
 if __name__ == '__main__':
     unittest.main()

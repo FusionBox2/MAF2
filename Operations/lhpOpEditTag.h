@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.h,v $
 Language:  C++
-Date:      $Date: 2008-09-24 13:48:30 $
-Version:   $Revision: 1.5 $
+Date:      $Date: 2008-09-25 12:00:12 $
+Version:   $Revision: 1.6 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -162,5 +162,11 @@ private:
   1: CSV Editor
   */
   int m_MetadataEditorId;
+
+  /**id identifying if FA subontology should be added to the meta data
+  0: no (Default)
+  1: yes
+  */
+  int m_UseFADictionary;
 };
 #endif
