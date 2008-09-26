@@ -158,7 +158,6 @@ class UploadHandler:
 
         #---------------------------------------------------#
         
-          
         #send xml file, perhaps here free source
         if(binarySendResult == True): #and self.checksumControl() == "true"):
           print "Waiting for sending XML..."
@@ -286,7 +285,7 @@ class UploadHandler:
             print error 
             #write a file used by builder to catch error and stop MSF upload
             errorFile = open(self.dirOutgoing + '\\..\\..\\ErrorFound.lhp', 'w')
-            errorFile.write('Error in xmlupload service: ' + self.vmeName + '\n')
+            errorFile.write('Error in xmlupload service uploading VME: ' + self.vmeName + '\n')
             errorFile.write(error)
             errorFile.close()      
   #          self.__removeSRBData(self.BinaryURI)
