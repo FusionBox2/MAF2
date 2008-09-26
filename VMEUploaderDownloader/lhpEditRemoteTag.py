@@ -19,7 +19,16 @@ class lhpEditRemoteTag:
                         
         self.userName = sys.argv[0]
         self.password = sys.argv[1]
-        self.parameter = sys.argv[2]
+        
+        self.parameter = ""
+        count = 0
+        for i in sys.argv:
+          if(count > 1):
+            if(self.parameter == ""):
+              self.parameter = i
+            else:
+              self.parameter = self.parameter + ' ' + i #vme name if UPLOAD, dataURI if DOWNLOAD
+          count = count + 1
   
         # proxy
         self.proxyHost = ''
@@ -43,25 +52,32 @@ class lhpEditRemoteTag:
         #print "->"+ self.currentPassword + "<-"
         print "->"+ ws.ProxyURL + "<-"
         print "->"+ str(ws.ProxyPort) + "<-"
+        print self.parameter
+        time.sleep(10)
+        
         
         out = ws.run("xmledit", self.parameter)[1]
         
         dom = xd.parseString(out)
         if dom.getElementsByTagName("fault"):
-                return
+            print "Error editing tags on repository"
+            time.sleep(10)
+            return
        
   
   
 def main():
     
-    if(len(sys.argv) != 4): #for test
-       print "1YOYO"
+    if(len(sys.argv) < 4): #for test
        sys.argv = []
        sys.argv.append("testuser") #substitute
        sys.argv.append("6w8DHF") #substitute
-       sys.argv.append('dataresource-1513,L0000_resource_MAF_Procedural_VMElinkURI1, ') #xml test present in repository
+       sys.argv.append('dataresource-3976,L0000_resource_MAF_Procedural_VMElinkURI1,dataresource-3978 dataresource-3977 ') #xml test present in repository
        
-    if(len(sys.argv) == 4):
+       edit = lhpEditRemoteTag()
+       edit.EditTag()
+       
+    if(len(sys.argv) >= 4):
         print "YOYO"
         sys.argv = sys.argv[1:]
         #print sys.argv
