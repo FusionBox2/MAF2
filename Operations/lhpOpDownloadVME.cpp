@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-23 08:50:45 $
-Version:   $Revision: 1.33 $
+Date:      $Date: 2008-09-26 10:18:43 $
+Version:   $Revision: 1.34 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -394,7 +394,11 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
       mafString VMEname = listVME[i].c_str();
       if (m_DownloadedURIVector[c].Equals(VMEname))
       {
-        alreadyDownloaded = true;
+        if (m_WholeMsfDownload || m_FillLinkVector)
+        {
+          alreadyDownloaded = true;
+        }
+        
         if (m_FillLinkVector)
         {
           //Fill vector of link, with node already downloaded
@@ -418,7 +422,6 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
       }
       if(DownloadSelectedXMLFromBasket(listVME[i]) != MAF_OK)
       {
-        wxMessageBox("Unable to download xml");
         return MAF_ERROR;
       }
 
@@ -444,7 +447,6 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
         //PROCESS EXIST, ONLY CALL CLIENT
         wxString command2execute;
         command2execute = m_PythonwExe;
-        //command2execute.Append(m_PythonUploadFullPath.GetCStr());
         // script for client
         m_FileName = "Client.py ";
         command2execute.Append(m_FileName.GetCStr());
@@ -463,7 +465,9 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
         command2execute.Append(wxString::Format("%s ",listVME[i].c_str())); //XML URI NAME
         command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //SRB DATA NAME
 
+        //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
         m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
+
       }
       else
       {
@@ -473,7 +477,6 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
         m_FileName = "ThreadedClient.py ";
         command2execute.Append(m_FileName.GetCStr());
         command2execute.Append("50000");
-        //command2execute.Append(" > log.txt"); //logme
         mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
         m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
@@ -485,7 +488,6 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
 
         command2execute.clear();
         command2execute = m_PythonwExe;
-        //command2execute.Append(m_PythonUploadFullPath.GetCStr());
         m_FileName = "Client.py ";
         command2execute.Append(m_FileName.GetCStr());
         command2execute.Append("127.0.0.1 "); //server address (localhost)
@@ -503,7 +505,7 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
         command2execute.Append(wxString::Format("%s ",listVME[i].c_str())); //XML URI NAME
         command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //SRB DATA NAME
 
-        mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+        //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
         m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
       }
       wxSetWorkingDirectory(oldDir);
@@ -725,7 +727,7 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(mafString  xmlFile)
   long pid = -1;
   if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
-    wxMessageBox("Error in downloadSingleXML.py. Uploading stopped");
+    wxMessageBox(wxString::Format("Error in downloadSingleXML.py trying to download '%s'.\nMSF download stopped.",xmlFile.GetCStr()));
     return MAF_ERROR;
   }
 
@@ -799,7 +801,7 @@ wxArrayString lhpOpDownloadVME::GetChildURI(mafNode *node)
 {
   int result = MAF_ERROR;
   wxString name;
-  int count, count2;
+  int count;
   wxArrayString listChildURI;
   listChildURI.clear();
   mafTagItem *tagChild = node->GetTagArray()->GetTag("L0000_resource_MAF_TreeInfo_VmeChildURI1");
@@ -833,21 +835,35 @@ void lhpOpDownloadVME::GetLinkURI(mafNode *node)
 //-------------------------------------------------------------------
 {
   wxString name;
-  int count, count2;
-  std::string listURI = node->GetTagArray()->GetTag("L0000_resource_MAF_Procedural_VMElinkURI1")->GetValue();
+  int count;
+  mafTagItem *linkChild = node->GetTagArray()->GetTag("L0000_resource_MAF_Procedural_VMElinkURI1");
+   if (linkChild == NULL)
+     return;
 
-  count = listURI.find_first_of("'");
-  listURI.erase(0, count+1);
+  std::string linkURI = linkChild->GetValue();
 
-  while (listURI.find_first_of("'") != -1)
+  if (linkURI.rfind("dataresource-") != std::string::npos)
   {
-    count2 = listURI.find_first_of("'");
-    name = (listURI.substr(0, count2)).c_str();
-    if (!name.IsEmpty())
+    while (linkURI.find_first_of(' ') != -1)
     {
-      m_ListLinkURI.Add(name);
+      count = linkURI.find_first_of(' ');
+      name = (linkURI.substr(0, count)).c_str();
+      if (!name.IsEmpty())
+      {
+        name.Trim(false);
+        name.Trim();
+        m_ListLinkURI.Add(name);
+      }
+      linkURI.erase(0, count+1);
     }
-    listURI.erase(0, count2+1);
+    if (!linkURI.empty())
+    {
+      if (linkURI.rfind("dataresource-") != std::string::npos)
+      {
+        m_ListLinkURI.Add(linkURI.c_str());
+      }
+    }
+
   }
 }
 //-------------------------------------------------------------------
