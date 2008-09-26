@@ -52,16 +52,13 @@ class lhpEditRemoteTag:
         #print "->"+ self.currentPassword + "<-"
         print "->"+ ws.ProxyURL + "<-"
         print "->"+ str(ws.ProxyPort) + "<-"
-        print self.parameter
-        time.sleep(10)
-        
+        print self.parameter      
         
         out = ws.run("xmledit", self.parameter)[1]
         
         dom = xd.parseString(out)
         if dom.getElementsByTagName("fault"):
             print "Error editing tags on repository"
-            time.sleep(10)
             return
        
   
@@ -78,7 +75,6 @@ def main():
        edit.EditTag()
        
     if(len(sys.argv) >= 4):
-        print "YOYO"
         sys.argv = sys.argv[1:]
         #print sys.argv
         edit = lhpEditRemoteTag()
