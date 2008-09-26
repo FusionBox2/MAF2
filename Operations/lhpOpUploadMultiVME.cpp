@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-24 13:00:21 $
-Version:   $Revision: 1.20 $
+Date:      $Date: 2008-09-26 10:17:09 $
+Version:   $Revision: 1.21 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -205,8 +205,24 @@ void lhpOpUploadMultiVME::OpRun()
 
   if (upToDate)
   {
-    result = OP_RUN_OK;
     mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
+    //logic comunicate the msf directory
+    mafEvent event;
+    event.SetSender(this);
+    event.SetId(ID_MSF_DATA_CACHE);
+    mafEventMacro(event);
+
+    wxString temp;
+    temp.Append((*event.GetString()).GetCStr());
+    mafString msfFile = temp;
+    temp = temp.BeforeLast('/');
+    mafString msfDir = temp;  
+
+    if (msfDir == "")
+      wxMessageBox("Msf must be saved locally. Uploading stopped");
+    else
+      result = OP_RUN_OK;
+
     OpStop(result); 
   }
   else
@@ -220,6 +236,12 @@ void lhpOpUploadMultiVME::OpDo()
 //----------------------------------------------------------------------------
 {
   wxMessageBox("All Vmes will be uploaded with their metadata.\nPlease check before uploading. Completion of curation can be done in the sandbox.");
+
+  wxBusyInfo *wait;
+  if(!m_TestMode)
+  {
+    wait = new wxBusyInfo("Please wait, uploading VME");
+  }
   
   for (int i = 0; i < m_NodeVector.size(); i++)
   {
@@ -236,6 +258,10 @@ void lhpOpUploadMultiVME::OpDo()
     {
       UploadMultiVME(m_NodeVector[i]);
     }
+  }
+  if(!m_TestMode)
+  {
+    delete wait;
   }
 }
 //------------------------------------------------------------
@@ -403,6 +429,7 @@ bool lhpOpUploadMultiVME::isBinaryDataPresent(mafNode *node)
 void lhpOpUploadMultiVME::UploadTree(mafNode *node)   
 //----------------------------------------------------------------------------
 {
+  //creates a file with 
   std::vector<const mafNode::mafChildrenVector*> childrenVector;
   childrenVector.clear();
   bool hasBinary = false;
@@ -465,27 +492,10 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
           URI = "";
 
           //Search for python uploader error
-          if (wxFileExists(m_PythonUploadFullPath + "ErrorFound.lhp"))
+          if (GetUploadError())
           {
-            mafString errorMessage;
-            std::ifstream errorFile(m_PythonUploadFullPath + "ErrorFound.lhp", std::ios::in);
-            if (errorFile!=NULL)
-            {
-              std::string buf;
-              getline(errorFile, buf);
-              errorMessage.Append(buf.c_str());
-              errorMessage.Append("\n");
-              while (!errorFile.eof())
-              {
-                getline(errorFile, buf);
-                errorMessage.Append(buf.c_str());
-              }
-              
-              wxMessageBox(wxString::Format("Error in MSF upload:\n%s. \nUpload MSF stopped.",errorMessage.GetCStr()));
-              errorFile.close();
-              wxRemoveFile(m_PythonUploadFullPath + "ErrorFound.lhp");
-              return;
-            }
+            RemoveVME();
+            return;
           }
 
           if (m_UploadVME->UploadVME(URI, hasBinary, childToUpload->GetNumberOfChildren()!=0) == MAF_ERROR)
@@ -518,6 +528,14 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
   //upload VME Root
   m_UploadVME->SetInput(node);
   URI = "";
+
+  //Search for python upload error
+  if (GetUploadError())
+  {
+    RemoveVME();
+    return;
+  }
+  
   if (m_UploadVME->UploadVME(URI, false, node->GetNumberOfChildren()!=0) == MAF_ERROR)
   {
     return;
@@ -551,6 +569,62 @@ void lhpOpUploadMultiVME::UploadMultiVME(mafNode *node)
   if (m_UploadVME->UploadVME(URI, hasBinary, false) == MAF_ERROR)
   {
     return;
+  }
+}
+//----------------------------------------------------------------------------
+bool lhpOpUploadMultiVME::GetUploadError()   
+//----------------------------------------------------------------------------
+{
+  bool errorFound = false;
+  if (wxFileExists(m_PythonUploadFullPath + "ErrorFound.lhp"))
+  {
+    mafString errorMessage;
+    std::ifstream errorFile(m_PythonUploadFullPath + "ErrorFound.lhp", std::ios::in);
+    if (errorFile!=NULL)
+    {
+      std::string buf;
+      getline(errorFile, buf);
+      errorMessage.Append(buf.c_str());
+      errorMessage.Append("\n");
+      while (!errorFile.eof())
+      {
+        getline(errorFile, buf);
+        errorMessage.Append(buf.c_str());
+      }
+
+      wxMessageBox(wxString::Format("Error in MSF upload.\n%s\n.Upload MSF stopped.\nVME already uploaded will be removed from repository.",errorMessage.GetCStr()));
+      errorFile.close();
+      wxRemoveFile(m_PythonUploadFullPath + "ErrorFound.lhp");
+      errorFound = true;
+    }
+  }
+  return errorFound;
+}
+//----------------------------------------------------------------------------
+void lhpOpUploadMultiVME::RemoveVME()   
+//----------------------------------------------------------------------------
+{
+  int pid = -1;
+  wxString command2execute;
+  for (int n = 0; n < m_UploadedURIVector.size(); n++)
+  {
+    command2execute.Clear();
+    command2execute = m_PythonExe;
+    command2execute.Append("lhpRemoveResource.py ");
+    command2execute.Append(m_User.GetName());
+    command2execute.Append(" ");
+    command2execute.Append(m_User.GetPwd());
+    command2execute.Append(" ");
+    command2execute.Append(m_UploadedURIVector[n].GetCStr());
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+
+     pid = -1;
+    if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+    {
+      wxMessageBox(wxString::Format("Error in lhpRemoveResource.py on '%s'.", m_UploadedURIVector[n].GetCStr()));
+      mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+        command2execute.c_str(), pid);
+    }
   }
 }
 //----------------------------------------------------------------------------
@@ -588,6 +662,7 @@ int lhpOpUploadMultiVME::SetVMELinks(mafNode *node)
           {
             m_UploadedURIVector[c];
             listURI.Append(m_UploadedURIVector[c]);
+            listURI.Append(" ");
             break;
           }
         }
@@ -595,7 +670,6 @@ int lhpOpUploadMultiVME::SetVMELinks(mafNode *node)
     }
 
     wxString oldDir = wxGetCwd();
-    //mafString path  = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader").c_str();
     wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 

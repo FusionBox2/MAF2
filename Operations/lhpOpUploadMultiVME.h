@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.h,v $
 Language:  C++
-Date:      $Date: 2008-09-16 16:03:34 $
-Version:   $Revision: 1.9 $
+Date:      $Date: 2008-09-26 10:17:28 $
+Version:   $Revision: 1.10 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -128,6 +128,12 @@ private:
 
   /** Upload linked VME */
   int UploadVMELinks(mafNode *derived);   
+
+  /** Search for python uploader error */
+  bool GetUploadError();   
+
+  /** Remove xml uploaded, in case of MSF upload failure */
+  void RemoveVME();
 
   /** Write a file with URI information about VME link uploaded */
   int SaveLinkURIFile(mafNode *node, std::vector<mafString> linkURI);
