@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2008-09-25 11:59:55 $
-#   Version:   $Revision: 1.32 $
+#   Date:      $Date: 2008-09-29 15:21:34 $
+#   Version:   $Revision: 1.33 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -223,7 +223,21 @@ IF(DOWNLOAD_DICTIONARY)
     ELSE(${RET} MATCHES "0")
         SET(ERROR 1)
     ENDIF(${RET} MATCHES "0")
+
+    # MICROCT DICTIONARY
     
+    SET(LHPBUILDER_MICROCT_DICTIONARY_SELECTOR "/biomed_town/LHDL/users/swclient/dictionaries/MicroCTSource" CACHE INTERNAL "LHPBuilder dictionary selector")
+    SET(LHPBUILDER_XML_MICROCT_DICTIONARY "lhpXMLMicroCTSourceSubdictionary" CACHE INTERNAL "LHPBuilder xml MicroCT dictionary")
+    
+    EXEC_PROGRAM("python.exe" "${LHP_SOURCE_DIR}/VMEUploaderDownloader" ARGS "lhpCSVDictionaryDownloader.py ${LHPBUILDER_DICTIONARY_HOST} ${LHPBUILDER_MICROCT_DICTIONARY_SELECTOR} ${LHPBUILDER_XML_MICROCT_DICTIONARY}"  RETURN_VALUE RET)
+
+    
+    IF(${RET} MATCHES "0")
+        MESSAGE(STATUS "XML MicroCT dictionary generated correctly!")
+    ELSE(${RET} MATCHES "0")
+        SET(ERROR 1)
+    ENDIF(${RET} MATCHES "0")
+        
     IF(${ERROR} MATCHES "0")
         MESSAGE(STATUS "XML dictionary generated correctly!")
     ELSE(${ERROR} MATCHES "0")
