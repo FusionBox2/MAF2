@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-25 13:15:47 $
-Version:   $Revision: 1.20 $
+Date:      $Date: 2008-09-29 14:40:06 $
+Version:   $Revision: 1.21 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -84,6 +84,7 @@ enum  m_SubdictionaryId_VALUES
   NO_SUBDICTIONARY = 0,
   MOTION_ANALYSIS_SUBDICTIONARY = 1,
   DICOM_SUBDICTIONARY = 2,
+  MICROCT_SUBDICTIONARY = 3,
 };
 
 enum lhpOpUploadVME_ID
@@ -526,11 +527,24 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
 
     m_DictionaryToProcessFileName = m_AssembledXMLDictionaryFileName;
   }
+  else if (m_SubdictionaryId == MICROCT_SUBDICTIONARY)
+  {
+    // build micro ct
+    m_SubXMLDictionaryFilePrefix = "lhpXMLMicroCTSubdictionary_";
+    m_SubDictionaryBuildingCommand = "micro_ct";
+    // build sub dictionary code
+    if (this->AssembleDictionaries() == MAF_ERROR)
+    {
+      return MAF_ERROR;
+    }
+
+    m_DictionaryToProcessFileName = m_AssembledXMLDictionaryFileName;
+  }
   else if (m_SubdictionaryId == NO_SUBDICTIONARY)
   {
     m_DictionaryToProcessFileName = m_MasterXMLDictionaryFileName;
     std::ostringstream stringStream;
-    stringStream << "Not using Dicom or MA subdictionaries..."  << std::endl;
+    stringStream << "Not using subdictionaries..."  << std::endl;
     mafLogMessage(stringStream.str().c_str());
     // nothing to do...continue...
   }  
@@ -542,43 +556,7 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
   
   if (m_UseFADictionary)
   {
-    mafString faDictionaryFilePrefix = "lhpXMLFASourceSubdictionary_";
-    mafString faDictionaryFileName = this->GetXMLDictionaryFileName(faDictionaryFilePrefix).GetCStr();
-    if (faDictionaryFileName == "NOT FOUND")
-    { 
-      std::ostringstream stringStream;
-      stringStream << "No FA dictionary found. Exiting..."  << std::endl;
-      mafLogMessage(stringStream.str().c_str());
-      return MAF_ERROR;
-    }
-
-    wxString command2execute;
-    command2execute = m_PythonExe;
-
-    mafString assembledWithFaDictionaryFileName = "assembledWithFA.xml";
-    command2execute.Append(" lhpXMLDictionariesBuilder.py ");
-    command2execute.Append(m_DictionaryToProcessFileName);
-    command2execute.Append(" ");
-    command2execute.Append(faDictionaryFileName);
-    command2execute.Append(" ");
-    command2execute.Append("functional_anatomy");
-    command2execute.Append(" ");
-    command2execute.Append(assembledWithFaDictionaryFileName);
-
-    m_DictionaryToProcessFileName = assembledWithFaDictionaryFileName;
-    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
-
-    wxArrayString output;
-    wxArrayString errors;
-    long pid = -1;
-    if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
-    {
-      wxMessageBox("Error in lhpXMLDictionariesBuilder.py. Uploading stopped");
-      mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-        command2execute.c_str(), pid);
-      return MAF_ERROR;
-    }
-
+    return BuildFADictionary();
   } 
   else
   {
@@ -956,7 +934,7 @@ void lhpOpEditTag::CreateGui()
 
   m_Gui->Divider(2);
   m_Gui->Label("Use subdictionary");
-  wxString subDictionariesList[3] = {"none", "motionAnalysis", "dicom"};
+  wxString subDictionariesList[4] = {"none", "motionAnalysis", "dicom","microCT"};
   m_Gui->Combo(ID_SUBDICTIONARY,"",&m_SubdictionaryId,3,subDictionariesList);
 
   m_Gui->Divider(2);
@@ -1029,6 +1007,48 @@ int lhpOpEditTag::AssembleDictionaries()
   
   wxSetWorkingDirectory(oldDir);
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+
+  return MAF_OK;
+}
+
+int lhpOpEditTag::BuildFADictionary()
+{
+  mafString faDictionaryFilePrefix = "lhpXMLFASourceSubdictionary_";
+  mafString faDictionaryFileName = this->GetXMLDictionaryFileName(faDictionaryFilePrefix).GetCStr();
+  if (faDictionaryFileName == "NOT FOUND")
+  { 
+    std::ostringstream stringStream;
+    stringStream << "No FA dictionary found. Exiting..."  << std::endl;
+    mafLogMessage(stringStream.str().c_str());
+    return MAF_ERROR;
+  }
+
+  wxString command2execute;
+  command2execute = m_PythonExe;
+
+  mafString assembledWithFaDictionaryFileName = "assembledWithFA.xml";
+  command2execute.Append(" lhpXMLDictionariesBuilder.py ");
+  command2execute.Append(m_DictionaryToProcessFileName);
+  command2execute.Append(" ");
+  command2execute.Append(faDictionaryFileName);
+  command2execute.Append(" ");
+  command2execute.Append("functional_anatomy");
+  command2execute.Append(" ");
+  command2execute.Append(assembledWithFaDictionaryFileName);
+
+  m_DictionaryToProcessFileName = assembledWithFaDictionaryFileName;
+  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+
+  wxArrayString output;
+  wxArrayString errors;
+  long pid = -1;
+  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
+  {
+    wxMessageBox("Error in lhpXMLDictionariesBuilder.py. Uploading stopped");
+    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), pid);
+    return MAF_ERROR;
+  }
 
   return MAF_OK;
 }

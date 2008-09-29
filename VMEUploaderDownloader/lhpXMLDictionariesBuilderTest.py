@@ -101,6 +101,31 @@ class lhpXMLDictionariesBuilderTest(unittest.TestCase):
         dictionaryBuilder.subDictionaryFileName = FASub
         dictionaryBuilder.outputDictionaryFileName = output
         dictionaryBuilder.BuildFunctionalAnatomyDictionary()
+    
+    
+    def testBuildMicroCT(self):
+        
+        curDir = os.getcwd()
+        absPath = curDir
+        curDir  +=  "\lhpXMLDictionariesBuilderTestData"
+        print curDir  
+        master = curDir + "\LHDL_dictionary.xml"
+        exist = os.path.exists(master)
+        self.assertTrue(exist)
+        
+        MicroCTSub = curDir + "\MicroCT.xml"
+        exist = os.path.exists(MicroCTSub)
+        self.assertTrue(exist)
+        
+        output  = curDir + "\masterDictionaryPlusMicroCTSubdictionary.xml"
+        exist = os.path.exists(output)
+        # self.assertFalse(exist)
+            
+        dictionaryBuilder = lhpXMLDictionariesBuilder.lhpXMLDictionariesBuilder()
+        dictionaryBuilder.masterDictionaryFileName = master
+        dictionaryBuilder.subDictionaryFileName = MicroCTSub
+        dictionaryBuilder.outputDictionaryFileName = output
+        dictionaryBuilder.BuildMicroCTDictionary()
         
 if __name__ == '__main__':
     unittest.main()

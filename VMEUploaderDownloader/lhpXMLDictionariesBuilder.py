@@ -38,7 +38,7 @@ class lhpXMLDictionariesBuilder:
         motionAnalysisRootNode = motionAnalysisSubictionaryDomDocument.documentElement
         
         # get motionAnalysys parent node
-        motionAnalysisTypeNode = msfDOMParserInstance.GetNodeByNodeName(motionAnalysisRootNode,"Motion")
+        motionAnalysisTypeNode = msfDOMParserInstance.GetNodeByNodeName(motionAnalysisRootNode,"Type")
         
         assert(motionAnalysisTypeNode != None)
        
@@ -106,6 +106,32 @@ class lhpXMLDictionariesBuilder:
         outFileXML = open(self.outputDictionaryFileName, 'w')
         newDoc.writexml(outFileXML)
     
+    
+    def BuildMicroCTDictionary(self):
+        
+        msfDOMParserInstance = msfParser.msfParser()        
+        masterDomDocument = minidom.parse(self.masterDictionaryFileName)
+        masterRootNode = masterDomDocument.documentElement
+        
+        masterMicroCTSourceNode = msfDOMParserInstance.GetNodeByNodeName(masterRootNode,"MicroCTSource")
+        
+        assert(masterRootNode != None)
+        
+        MicroCTSourceSubictionaryDomDocument = minidom.parse(self.subDictionaryFileName)
+        microCTRootNode = MicroCTSourceSubictionaryDomDocument.documentElement
+        
+        microCTSourceTypeNode = msfDOMParserInstance.GetNodeByNodeName(microCTRootNode,"Type")
+        
+        assert(microCTSourceTypeNode != None)
+       
+        masterMicroCTSourceNode.appendChild(microCTSourceTypeNode)
+        
+        newDoc = minidom.Document()
+        newDoc.appendChild(masterRootNode)
+               
+        outFileXML = open(self.outputDictionaryFileName, 'w')
+        newDoc.writexml(outFileXML)
+    
 def run(masterXMLDictionaryFilename, subXMLDictionaryFilename, command, outputXMLDictionaryFilename):
     """"""
     
@@ -122,6 +148,9 @@ def run(masterXMLDictionaryFilename, subXMLDictionaryFilename, command, outputXM
     
     elif command == 'functional_anatomy':
         lhpXMLDictionariesBuilderInstance.BuildFunctionalAnatomyDictionary()
+
+    elif command == 'micro_ct':
+        lhpXMLDictionariesBuilderInstance.BuildMicroCTDictionary()
 
     else:
         print 'command not available!'

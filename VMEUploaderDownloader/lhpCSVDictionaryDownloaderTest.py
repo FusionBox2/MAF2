@@ -39,25 +39,49 @@ class lhpCSVDictionaryDownloaderTest(unittest.TestCase):
     
     def testDownloadMasterDictionaryHTTPS(self):
         
-        # https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/LHDL_dictionary
         host = "www.biomedtown.org"
         selector = "/biomed_town/LHDL/users/swclient/dictionaries/LHDL_dictionary"
         
         outputXMLDictionaryFileName = "lhpXMLDictionary"
         
-        lhpCSVDictionaryDownloader.run(host,selector,outputXMLDictionaryFileName)
+        lhpCSVDictionaryDownloader.run(host, selector, outputXMLDictionaryFileName)
     
+    def testDownloadDicomSubdictionaryHTTPS(self):
+                
+        host = "www.biomedtown.org"
+        selector = "/biomed_town/LHDL/users/swclient/dictionaries/dicomsource"
+        
+        outputXMLDictionaryFileName = "lhpXMLDicomSubdictionary"
+        
+        lhpCSVDictionaryDownloader.run(host, selector, outputXMLDictionaryFileName)
+    
+    def testDownloadMASourceSubdictionaryHTTPS(self):
+        
+        host = "www.biomedtown.org"
+        selector = "/biomed_town/LHDL/users/swclient/dictionaries/MAsource"
+        
+        outputXMLDictionaryFileName = "lhpXMLMAsourceSubdictionary"
+        
+        lhpCSVDictionaryDownloader.run(host, selector, outputXMLDictionaryFileName)
         
         
     def testDownloadFAOntologySubdictionaryHTTPS(self):
         
-        # https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/LHDL_dictionary
         host = "www.biomedtown.org"
         selector = "/biomed_town/LHDL/users/swclient/dictionaries/FA_onto"
         
-        outputXMLDictionaryFileName = "lhpXMLFAOntologySourceySubdictionary"
+        outputXMLDictionaryFileName = "lhpXMLFAOntologySourceSubdictionary"
         
-        lhpCSVDictionaryDownloader.run(host,selector,outputXMLDictionaryFileName)
+        lhpCSVDictionaryDownloader.run(host, selector, outputXMLDictionaryFileName)
+    
+    def testDownloadMicroCTSubdictionaryHTTPS(self):
+                
+        host = "www.biomedtown.org"
+        selector = "/biomed_town/LHDL/users/swclient/dictionaries/MicroCTSource"
+        
+        outputXMLDictionaryFileName = "lhpXMLMicroCTSubdictionary"
+        
+        lhpCSVDictionaryDownloader.run(host, selector, outputXMLDictionaryFileName)
         
     def testRun(self):
         
@@ -66,7 +90,7 @@ class lhpCSVDictionaryDownloaderTest(unittest.TestCase):
         
         outputXMLDictionaryFileName = "lhpXMLDictionary"
         
-        lhpCSVDictionaryDownloader.run(host,selector,outputXMLDictionaryFileName)
+        lhpCSVDictionaryDownloader.run(host, selector, outputXMLDictionaryFileName)
     
     # 
     # TODO: these tests needs little editing to work... 
@@ -81,27 +105,6 @@ class lhpCSVDictionaryDownloaderTest(unittest.TestCase):
       
     def estDownloadMultipleDictionaries(self):
   
-        #host = "www.biomedtown.org"
-        
-        #selector = "/biomed_town/LHDL/lhdl-management/Consortium-room/lhdl-repository/WP5/Dictionaries/LHDL_dictionary.csv"    
-        #outputXMLMasterDictionaryFileName = "lhpXMLDictionary"
-        
-        #lhpCSVDictionaryDownloader.run(host,selector,outputXMLMasterDictionaryFileName)
-        
-        #selector = "/biomed_town/LHDL/lhdl-management/Consortium-room/lhdl-repository/WP5/Dictionaries/DicomSource.csv"
-        #outputXMLDicomDictionaryFileName = "lhpXMLDicomSourceSubdictionary"
-
-        #lhpCSVDictionaryDownloader.run(host,selector,outputXMLDicomDictionaryFileName)
-        
-        #selector = "/biomed_town/LHDL/lhdl-management/Consortium-room/lhdl-repository/WP5/Dictionaries/MotionAnalysis.csv"
-        #outputXMLMotionAnalysisDictionaryFileName = "lhpXMLMotionAnalysisSourceSubdictionary"
-
-        #lhpCSVDictionaryDownloader.run(host,selector,outputXMLMotionAnalysisDictionaryFileName)
-        
-        # append subdictionary to master
-        
-        # find dictionary filenames...
-        # TODO!!!!!
         masterDictionaryFileName = "lhpXMLDictionary_200712181319.xml"
         motionAnalysisDictionaryFileName = "lhpXMLMotionAnalysisSourceSubdictionary_200712181319.xml"
         dicomDictionaryFileName = "lhpXMLDicomSourceSubdictionary_200712181319.xml"
@@ -112,7 +115,7 @@ class lhpCSVDictionaryDownloaderTest(unittest.TestCase):
         masterRootNode = masterDomDocument.documentElement
         
         # get the master subdir node
-        sourceDirNode = msfDOMParserInstance.GetNodeByNodeName(masterRootNode,"SourceDir")
+        sourceDirNode = msfDOMParserInstance.GetNodeByNodeName(masterRootNode, "SourceDir")
         
         self.assertTrue(masterRootNode != None)
         
@@ -121,7 +124,7 @@ class lhpCSVDictionaryDownloaderTest(unittest.TestCase):
         motionAnalysisRootNode = motionAnalysisSubictionaryDomDocument.documentElement
         
         # get motionAnalysys parent node
-        motionAnalysisTypeNode = msfDOMParserInstance.GetNodeByNodeName(motionAnalysisRootNode,"Type")
+        motionAnalysisTypeNode = msfDOMParserInstance.GetNodeByNodeName(motionAnalysisRootNode, "Type")
         
         self.assertTrue(motionAnalysisTypeNode != None)
        
