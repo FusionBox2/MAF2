@@ -136,9 +136,10 @@ class UploadHandler:
                     UploadHandler.queue.put(lista)
                     self.block.release()
                     if(percentage >= 100):
-                        binarySendResult = True
-                        break
+                         binarySendResult = True
+                         break
         else:
+        
             self.createXMLAndBinary()
             binarySendResult = True
                        
@@ -159,14 +160,13 @@ class UploadHandler:
         #---------------------------------------------------#
         
         #send xml file, perhaps here free source
-        if(binarySendResult == True): #and self.checksumControl() == "true"):
-          print "Waiting for sending XML..."
+        if(binarySendResult == True):
           self.sendXMLFile()
-          
-          #Fake progress bar used when no binary data is uploaded
-          percentage = 100          
+          percentage = 110
           lista = [self.observer,percentage]
+          self.block.acquire()  
           UploadHandler.queue.put(lista)
+          self.block.release()
         
           print "End Upload"
           print "Uploaded Binary in SRB: " + self.BinaryURI

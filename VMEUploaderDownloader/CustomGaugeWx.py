@@ -8,7 +8,7 @@ class CustomGaugeWx(wx.BoxSizer):
         self.gaugePulse = gaugePulse #if 0 Gauge is not in pulsing mode 
        
         self.sizer1 = wx.BoxSizer(wx.HORIZONTAL)
-        self.initialLabel = wx.StaticText(parent, -1, label = title)
+        self.initialLabel = wx.StaticText(parent, -1, label = title, pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.ALIGN_LEFT)       
         self.endingLabel = wx.StaticText(parent, -1, label = "")
         self.gauge = wx.Gauge(parent, id, range, pos, size, style, validator, name)
         self.png = None
@@ -24,10 +24,11 @@ class CustomGaugeWx(wx.BoxSizer):
         
         self.image = wx.StaticBitmap(parent, -1, self.png, size = (self.png.GetWidth(), self.png.GetHeight()))
         
-        self.sizer1.Add(self.initialLabel, 2, wx.ALIGN_LEFT | wx.ALIGN_CENTRE_VERTICAL)
-        self.sizer1.Add(self.image, 0, wx.ALIGN_CENTER | wx.ALIGN_CENTRE_VERTICAL)
-        self.sizer1.Add(self.gauge, 4, wx.ALIGN_RIGHT)
-        self.sizer1.AddSpacer(5)
+        self.sizer1.Add(self.initialLabel, 1, wx.ALIGN_LEFT | wx.ALIGN_CENTRE_VERTICAL)
+        self.sizer1.AddSpacer(4)
+        self.sizer1.Add(self.image, 1, wx.ALIGN_CENTER | wx.ALIGN_CENTRE_VERTICAL)
+        self.sizer1.Add(self.gauge, 3, wx.ALIGN_CENTER)
+        self.sizer1.AddSpacer(4)
         self.sizer1.Add(self.endingLabel, 1, wx.ALIGN_RIGHT | wx.ALIGN_CENTRE_VERTICAL)
         
         self.AddSpacer(5)

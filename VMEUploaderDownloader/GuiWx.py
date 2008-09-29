@@ -20,7 +20,7 @@ class GuiPart(wx.Frame):
         self.fgs1 = wx.BoxSizer(wx.VERTICAL)
         
         self.bars = []
-        self.labels = []
+        self.endingBars = []
         #self.console = wx.Button(self.scrolledPanel, 10,  'Waiting...', (150,0), (100,25))
         self.staticLabel = wx.StaticText(self.scrolledPanel, -1,  'Uploads (and Downloads)', (150,15), (200,25))
         self.staticLine = wx.StaticLine(self.scrolledPanel, -1, (25,35), (360,2))
@@ -77,11 +77,10 @@ class GuiPart(wx.Frame):
             pass
             
                   
-    def createLabel(self , title):
-        #self.labels.append(wx.StaticText(self.scrolledPanel, len(self.labels) + 1000, label=title, pos = (30, (len(self.labels)+1) * 50)))
+    def createLabel(self , title):  
         self.bars[len(self.bars)-1].SetTitle(title)
         pass
- 
+        
     def __del__(self):
         self.quitApplication()
         wx.Frame.__del__(self)
@@ -98,12 +97,16 @@ class GuiPart(wx.Frame):
                 #if value is -1 or gauge as option gaugepulse, is pulsing
                 #else set the value of the progress
                 
-                if(lista[0].gaugePulse == 0 and lista[1] != -1):lista[0].gauge.SetValue(int(lista[1]))
+                if(lista[0].gaugePulse == 0 and lista[1] != -1):
+                   lista[0].gauge.SetValue(int(lista[1]))
                 else:
                    lista[0].gauge.Pulse()
                    #here calculate time 
                    lista[0].SetEndingLabel(str(lista[1]))
-                #print lista
+                if(lista[1] == 110):
+                    lista[0].SetEndingLabel('Completed!')
+                self.Refresh()
+
             except:
                 pass
         else:
@@ -111,7 +114,7 @@ class GuiPart(wx.Frame):
                 self.uploadNumber = self.downloadNumber = 0
                 finished = True
                 for i in self.bars:
-                    if(i.gauge.GetValue() != 100):
+                    if(i.gauge.GetValue() != 110):
                         finished = False
                         self.uploadNumber += 1
                 #self.SetStatusText('Upload :' + str(self.uploadNumber) + '    ' + 'Download :' + str(self.downloadNumber))
