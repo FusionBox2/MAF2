@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-29 14:40:06 $
-Version:   $Revision: 1.21 $
+Date:      $Date: 2008-09-30 16:25:42 $
+Version:   $Revision: 1.22 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -530,7 +530,7 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
   else if (m_SubdictionaryId == MICROCT_SUBDICTIONARY)
   {
     // build micro ct
-    m_SubXMLDictionaryFilePrefix = "lhpXMLMicroCTSubdictionary_";
+    m_SubXMLDictionaryFilePrefix = "lhpXMLMicroCTSourceSubdictionary_";
     m_SubDictionaryBuildingCommand = "micro_ct";
     // build sub dictionary code
     if (this->AssembleDictionaries() == MAF_ERROR)
@@ -896,11 +896,18 @@ mafString lhpOpEditTag::GetXMLDictionaryFileName( mafString dictionaryFileNamePr
   wxString filePattern = dictionaryFileNamePrefix ;
   filePattern.Append("*.xml");
 
-  wxDir::GetAllFiles(wxGetWorkingDirectory(), &files, filePattern);
+  wxDir::GetAllFiles(wxGetWorkingDirectory(), &files, filePattern, wxDIR_FILES);
   
   if (files.size() != 1)
   {
-    mafLogMessage("lhpXMLDictionary_*.xml not found! exiting");
+    std::ostringstream stringStream;
+    
+    for (int i = 0; i < files.size(); i++) 
+    { 
+      stringStream << "found dictionary: " << files[i].c_str()  << std::endl;      
+    }
+    mafLogMessage(stringStream.str().c_str());
+    mafLogMessage("Too much dictionaries found! exiting...");
     return dictionaryFileName;
   }
   else
@@ -935,7 +942,7 @@ void lhpOpEditTag::CreateGui()
   m_Gui->Divider(2);
   m_Gui->Label("Use subdictionary");
   wxString subDictionariesList[4] = {"none", "motionAnalysis", "dicom","microCT"};
-  m_Gui->Combo(ID_SUBDICTIONARY,"",&m_SubdictionaryId,3,subDictionariesList);
+  m_Gui->Combo(ID_SUBDICTIONARY,"",&m_SubdictionaryId,4,subDictionariesList);
 
   m_Gui->Divider(2);
   m_Gui->Label("Use FA ontology");
