@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-26 10:18:43 $
-Version:   $Revision: 1.34 $
+Date:      $Date: 2008-10-02 10:35:28 $
+Version:   $Revision: 1.35 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -112,6 +112,8 @@ mafOp(label)
 
   m_PythonUploadFullPath  = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\").c_str();
   m_FileName = "";
+  //m_ServiceURL = "https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2";
+  m_ServiceURL = "http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/";
 
   m_MsfDir = "";
   m_IncomingCompletePath = "";
@@ -461,7 +463,7 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
         command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
         command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
         command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
-        command2execute.Append(wxString::Format("%s ","https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //dev repository
+        command2execute.Append(wxString::Format("%s ",m_ServiceURL.GetCStr())); //dev repository
         command2execute.Append(wxString::Format("%s ",listVME[i].c_str())); //XML URI NAME
         command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //SRB DATA NAME
 
@@ -477,12 +479,12 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
         m_FileName = "ThreadedClient.py ";
         command2execute.Append(m_FileName.GetCStr());
         command2execute.Append("50000");
-        mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+        //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
         m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
 
-        mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
-          command2execute.c_str(), m_Pid);
+        //mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
+        //  command2execute.c_str(), m_Pid);
 
         mafSleep(5000);
 
@@ -501,7 +503,7 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
         command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
         command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
         command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
-        command2execute.Append(wxString::Format("%s ","https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2")); //repository
+        command2execute.Append(wxString::Format("%s ",m_ServiceURL.GetCStr())); //dev repository
         command2execute.Append(wxString::Format("%s ",listVME[i].c_str())); //XML URI NAME
         command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //SRB DATA NAME
 
@@ -785,7 +787,7 @@ int lhpOpDownloadVME::ReconstructMSF(mafString xmlFile)
 
   command2execute.Append(directoryWorkAroundMSF);
   command2execute.Append(" ");
-  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   long pid = wxExecute(command2execute, wxEXEC_SYNC);
   
@@ -976,7 +978,7 @@ bool lhpOpDownloadVME::IsLHPBuilderVersionUpToDate()
     command2execute.Append(m_ProxyPort.GetCStr());
   }
 
-  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   wxArrayString output;
   wxArrayString errors;
