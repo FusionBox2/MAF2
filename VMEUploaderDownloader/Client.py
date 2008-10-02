@@ -22,13 +22,14 @@ originalId = sys.argv[9] #original Id in UPLOAD, XML URI in DOWNLOAD
 hasLink = sys.argv[10] #vme has link in UPLOAD, SRB data URI in DOWNALOAD
 if (modality == "UPLOAD"):
     withChild = sys.argv[11] #vme with child (UPLOAD)
-    XMLURI = sys.argv[12] #XML resource URI (UPLOAD)
-    #name = sys.argv[13] #vme Name (UPLAOD)
+    msfListFile = sys.argv[12] #file for upload rollback (UPLOAD)
+    XMLURI = sys.argv[13] #XML resource URI (UPLOAD)
+
             
     name = ""
     count = 0
     for i in sys.argv:
-      if(count > 12):
+      if(count > 13):
         if(name == ""):
           name = i
         else:
@@ -45,7 +46,7 @@ s.connect((host, port))
 
 # compose message
 if (modality == "UPLOAD"):
-    k = modality + ' ' + id + ' ' + msf + ' ' + user + ' ' + password + ' ' + urlServer + ' '  + originalId + ' ' + hasLink + ' ' + withChild + ' ' + XMLURI + ' ' + name
+    k = modality + ' ' + id + ' ' + msf + ' ' + user + ' ' + password + ' ' + urlServer + ' '  + originalId + ' ' + hasLink + ' ' + withChild + ' ' + msfListFile + ' ' + XMLURI + ' ' + name
 else:
     k = modality + ' ' + id + ' ' + msf + ' ' + user + ' ' + password + ' ' + urlServer + ' '  + originalId + ' ' + hasLink
      
