@@ -19,6 +19,7 @@ class lhpGetXMLURI:
                         
         self.userName = sys.argv[0]
         self.password = sys.argv[1]
+        self.URL = sys.argv[2]
 
           
         # proxy
@@ -35,12 +36,15 @@ class lhpGetXMLURI:
         
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
         ws.setCredentials(self.userName, self.password)
-        ws.setServer('https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/')
-        #ws.setServer('http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/')
+        ws.setServer(self.URL)
         ws.ProxyURL = self.proxyHost
         ws.ProxyPort = self.proxyPort
-        
-        out = ws.run('createresource')[1]
+        try:
+            out = ws.run('createresource')[1]
+        except:
+            print "-----------Error calling createresource service------------"
+            return
+            
         
         dom = xd.parseString(out)
         if dom.getElementsByTagName("fault"):
@@ -60,17 +64,18 @@ class lhpGetXMLURI:
   
 def main():
     
-    if(len(sys.argv) != 3): #for test
+    if(len(sys.argv) != 4): #for test
         sys.argv = []
         sys.argv.append("testuser") #substitute
         sys.argv.append("6w8DHF") #substitute
+        sys.argv.append("http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/") #substitute
         
         getURI = lhpGetXMLURI()
         getURI.XMLURI = getURI.getURI()
         #add code to remove resource created
         return
        
-    if(len(sys.argv) == 3):
+    if(len(sys.argv) == 4):
         sys.argv = sys.argv[1:]
         #print sys.argv
         getURI = lhpGetXMLURI()
