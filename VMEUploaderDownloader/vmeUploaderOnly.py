@@ -7,6 +7,7 @@
 import fileUtilities
 import sys, string
 import msfParser
+import UploadHandler
 import shutil
 import sets
 import os
@@ -33,6 +34,7 @@ class vmeUploaderOnly:
         self.hasLink = ""
         self.withChild = ""
         self.hasBinary = False
+        self.IsUploadMSF = False
         self.binaryName = ''
         self.localChksum = ""
         
@@ -101,23 +103,33 @@ class vmeUploaderOnly:
             list = ''
             fileName = str(self.vmeName)+ str(self.originalId) + ".childURI"
             print "file name: " + fileName 
-            file = open(fileName ,"r")
-            print "file opened: " + fileName
-            for line in file.readlines():
-                line = line.replace("\n", ' ')
-                list += line                
+            if(os.path.exists(fileName)):
+                file = open(fileName ,"r")
+                print "file opened: " + fileName
+                for line in file.readlines():
+                    line = line.replace("\n", ' ')
+                    list += line                
+                    
+                nodeURI = msfDOMParserInstance.GetTagNodeByTagName(outVmeTagArrayNode, "L0000_resource_MAF_TreeInfo_VmeChildURI1")
+                msfDOMParserInstance.SetTagNodeText(nodeURI, list)       
+                childURI = msfDOMParserInstance.GetTagNodeText(nodeURI)
+                print childURI 
+                time.sleep(1)
+                file.close()
+                os.remove(fileName)
+                os.chdir(newDir)
+            else:
+                print fileName + ' not Found'
+                time.sleep(5)
+                errorFile = open(sys.path[0] + '\\ErrorFound.lhp', 'a')
+                errorFile.write(fileName + ' not Found\n')
+                errorFile.close() 
+                return 
                 
-            nodeURI = msfDOMParserInstance.GetTagNodeByTagName(outVmeTagArrayNode, "L0000_resource_MAF_TreeInfo_VmeChildURI1")
-            msfDOMParserInstance.SetTagNodeText(nodeURI, list)       
-            childURI = msfDOMParserInstance.GetTagNodeText(nodeURI)
-            print childURI 
-            time.sleep(1)
-            file.close()
-            os.remove(fileName)
-            os.chdir(newDir)
+                    
         
        # print "has Link = " + self.hasLink
-        if (self.hasLink == "true"):   
+        if (self.hasLink == "true" and self.IsUploadMSF == False):   
             newDir = os.getcwd()
             os.chdir(newDir + r"..\..\..")
             #cicle on file with list of link URI
@@ -137,6 +149,13 @@ class vmeUploaderOnly:
                 file.close()
                 os.remove(fileName)
                 os.chdir(newDir)
+            else:
+                print fileName + ' not Found'
+                time.sleep(5)
+                errorFile = open(sys.path[0] + '\\ErrorFound.lhp', 'a')
+                errorFile.write(fileName + ' not Found\n')
+                errorFile.close() 
+                return 
             
         
 
