@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-09-18 08:43:27 $
-Version:   $Revision: 1.6 $
+Date:      $Date: 2008-10-02 10:35:44 $
+Version:   $Revision: 1.7 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -176,6 +176,7 @@ protected:
   mafString m_ConnectionConfigurationFileName;
   mafString m_ProxyURL;
   mafString m_ProxyPort;
+  mafString m_ServiceURL;
   
 };
 #endif
