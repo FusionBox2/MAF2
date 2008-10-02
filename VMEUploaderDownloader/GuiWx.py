@@ -106,6 +106,9 @@ class GuiPart(wx.Frame):
                 if(lista[1] == 110):
                     lista[0].SetEndingLabel('Completed!')
                 self.Refresh()
+                if(lista[1] == 120):
+                    lista[0].SetEndingLabel('Error!')
+                self.Refresh()
 
             except:
                 pass
@@ -114,7 +117,7 @@ class GuiPart(wx.Frame):
                 self.uploadNumber = self.downloadNumber = 0
                 finished = True
                 for i in self.bars:
-                    if(i.gauge.GetValue() != 110):
+                    if(i.gauge.GetValue() != 110 or i.gauge.GetValue() != 120):
                         finished = False
                         self.uploadNumber += 1
                 #self.SetStatusText('Upload :' + str(self.uploadNumber) + '    ' + 'Download :' + str(self.downloadNumber))
