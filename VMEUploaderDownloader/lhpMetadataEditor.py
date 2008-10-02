@@ -5,7 +5,7 @@
 #-----------------------------------------------------------------------------
 
 from Debug import Debug
-from xml.dom.minidom import Childless
+from xml.dom.minidom import Childless, Node
 from test.test_new import argcount
 import os
 import csv
@@ -20,42 +20,61 @@ from xml.dom import minidom
 class TestPanel(wx.Panel):
     def __init__(self, parent, log, arg):
         
-        self.CacheList = []
-        self.ExceptionList = []
+        # tegs in iput vme csv        
+        self.TagsToBeSaved = []
+        
+        # tags in tree but not in input vme csv 
+        # for example this could be tags erroneusly filled by the factory
+        self.InTreeButNotInUnhandledPlusManual = []
         
         # load msf infos
         curDir = os.getcwd()        
         print " current directory is: " + curDir
         
+                
         self.inputCSVFileName = os.getcwd() + r'\\' + str(arg[0]) # to be used to save on exit    
         print self.inputCSVFileName
         assert(os.path.exists(self.inputCSVFileName))
         
+        if len(arg) ==  2:
+            self.OutputCSVFileName  = self.inputCSVFileName
+        elif len(arg) ==  3:
+            self.OutputCSVFileName = os.getcwd() + r'\\' + str(arg[2])
+            
+        
         # read this from the csv
         autoTagsReader = csv.reader(open(self.inputCSVFileName, "r"))
         
-        self.vmeCSVUnhandledPlusManualTagsFile = {}
+        self.unhandledPlusManualDict = {}
          
         try:
             for row in autoTagsReader:
                 if Debug:          
                              
                     print "row: " +  str(row)
-                self.vmeCSVUnhandledPlusManualTagsFile[row[0].strip()] = str(row[1].strip())
+                self.unhandledPlusManualDict[row[0].strip()] = str(row[1].strip())
                 
         except csv.Error, e:
 #            sys.exit('file %s, line %d: %s' % (filename, autoTagsReader.line_num, e))
              pass
         if Debug:          
-            print self.vmeCSVUnhandledPlusManualTagsFile
+            print self.unhandledPlusManualDict
 
-        for item in self.vmeCSVUnhandledPlusManualTagsFile:
+        for item in self.unhandledPlusManualDict:
             print item[0]+ " " + item[1]
             
-        tagsList = sorted(self.vmeCSVUnhandledPlusManualTagsFile.keys())
+        tagsList = sorted(self.unhandledPlusManualDict.keys())
         print tagsList
 
-       
+        file = open("InputTagsSorted", 'w')
+        sorts = sorted(self.unhandledPlusManualDict.keys())
+        assert(os.path.exists(self.inputCSVFileName))
+        for key in sorts:
+            toWrite = '"' + str(key) + '"' + " , " + '"' + str(self.unhandledPlusManualDict[key]) + '"' + "\n" 
+            file.write(str(toWrite))
+        
+        file.close()
+        
         # load xml dictionary (already assembled if composed)
         self.inputXMLDictionaryFileName = os.getcwd() + r'\\' + str(arg[1]) # to be used to save on exit    
         print self.inputXMLDictionaryFileName
@@ -120,6 +139,7 @@ class TestPanel(wx.Panel):
         for i in range(1,10):
             self.tree.SetColumnWidth(i, 80)
             
+        self.tree.SetColumnWidth(1, 200)
         self.tree.SetColumnWidth(9, 400)      
   
         self.root = self.tree.AddRoot("LHDL Master Dictionary")
@@ -132,34 +152,37 @@ class TestPanel(wx.Panel):
         self.tree.GetMainWindow().Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
         self.tree.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.OnActivate)
     
-        print "self.ExceptionList:"
-        for item in self.ExceptionList:
+        print "self.InTreeButNotInUnhandledPlusManual: tags in tree but not in UnhandledPlusManual"
+        for item in self.InTreeButNotInUnhandledPlusManual:
             print item
         
         
     def SaveOnExit(self):
         
         rootId = self.tree.GetRootItem()
-        id = None
-        id = rootId
+        childId = None
         listValuesFromTree = []
-        while True:
-            id = self.tree.GetNext(id)
-            if id:
-                listValuesFromTree.append(self.tree.GetItemText(id,1))
-            else:
-                break
-                    
+        for tag in self.TagsToBeSaved:
+    
+            childId = tag[2]
+            listValuesFromTree.append(self.tree.GetItemText(childId,1))
+        
         print listValuesFromTree
         
-        file = open(self.inputCSVFileName, 'w')
+        toBeSaved = len(self.TagsToBeSaved) 
+        unhandledPlusMan = len(self.unhandledPlusManualDict)
+        assert(toBeSaved == unhandledPlusMan)
+        
+        file = open(self.OutputCSVFileName, 'w')
         assert(os.path.exists(self.inputCSVFileName))
-        for id in range(len(self.CacheList)):
-            toWrite = '"' + self.CacheList[id][0] + '"' + " , " + '"' + listValuesFromTree[id] + '"' + "\n" 
+        
+        for index in range(len(self.TagsToBeSaved)):
+        
+            toWrite = '"' + self.TagsToBeSaved[index][0] + '"' + " , " + '"' + listValuesFromTree[index] + '"' + "\n" 
             file.write(str(toWrite))
         
         file.close()
-        
+            
     def OnActivate(self, evt):
         self.log.write('OnActivate: %s' % self.tree.GetItemText(evt.GetItem()))
         
@@ -182,22 +205,29 @@ class TestPanel(wx.Panel):
 
     def __FillGuiTreeInternal(self,xmlDictNode, guiTreeParent):
         pi = self.lhpXMLDictionaryParserInstance  
-        nodeName = pi.GetNodeName(xmlDictNode)
+        guiTreeNodeName = pi.GetNodeName(xmlDictNode)
              
         # get tag array corresponding entry 
         msfTagName =  pi.GetVMETagArrayTagNameFromNode(xmlDictNode)  
-        print msfTagName
-        # print self.vmeCSVUnhandledPlusManualTagsFile
+        
         msfTagName = msfTagName.strip()
-        print msfTagName
         
         msfTagValue = ""
         
-        if self.vmeCSVUnhandledPlusManualTagsFile.has_key(msfTagName):
-            msfTagValue = self.vmeCSVUnhandledPlusManualTagsFile[msfTagName]
+        assert isinstance(xmlDictNode , minidom.Node)
+
+       
+     
+        if xmlDictNode.hasChildNodes():
+            # GROUPING NODE
+            msfTagValue = " "
+        
+        elif self.unhandledPlusManualDict.has_key(msfTagName):
+            msfTagValue = self.unhandledPlusManualDict[msfTagName]
+    
         else:
-            msfTagValue = "ANNOTATE ME!"
-  
+            msfTagValue = "NOT FOUND IN UNHPLUSMAN"
+            return
         print msfTagValue
         
         # build {long_tag , value dictionary}
@@ -205,39 +235,35 @@ class TestPanel(wx.Panel):
          
         attrDict =  pi.GetAttributesDictionary(xmlDictNode)
         
-        # names from ValueType to Notes
         columnNames = pi.DictionaryColumnLabels.irange(pi.DictionaryColumnLabels.ValueType \
         , pi.DictionaryColumnLabels.Notes)
+         
+        childId = self.tree.AppendItem(guiTreeParent, str(guiTreeNodeName))  
         
-        # append item to tree 
-        child = self.tree.AppendItem(guiTreeParent, str(nodeName))  
-        
-        self.CacheList.append([msfTagName, msfTagValue])
-     
+        if self.unhandledPlusManualDict.has_key(msfTagName):               
+            self.TagsToBeSaved.append([msfTagName, msfTagValue, childId])
+              
+        else:
+            # not in unhandledPlusManual
+            self.InTreeButNotInUnhandledPlusManual.append(msfTagName)
+            msfTagValue = "EXCEPTION: Remove this tag filling from the factory!"
+           
         assert isinstance(msfTagValue ,str )
         msfTagValue = msfTagValue.replace('"', '')
         # set the value column
-        self.tree.SetItemText(child, msfTagValue, 1)
+        self.tree.SetItemText(childId, msfTagValue, 1)
         
-        # set item nodeName        
+        # set item guiTreeNodeName        
         if attrDict != {}:
-            for guiColumnId in range(2,10):        
-                # print "guiColumnId: " + str(guiColumnId)
-                # print self.tree.GetColumnText(guiColumnId)
-                # get the column string# 
-                columnName = pi.DictionaryColumnLabels[guiColumnId + 7]
-                # print "col name: " + str(columnName)
-                
+            for guiColumnId in range(2,10):      
+                  
+                columnName = pi.DictionaryColumnLabels[guiColumnId + 7]      
                 value = attrDict[str(columnName)]
-                # print "value: " + str(value)#               
-        
-                pass
-        # set item text
-                self.tree.SetItemText(child, value, guiColumnId)
+                self.tree.SetItemText(childId, value, guiColumnId)
            
         if xmlDictNode.childNodes:
             for node in xmlDictNode.childNodes:
-                self.__FillGuiTreeInternal(node, child)
+                self.__FillGuiTreeInternal(node, childId)
 
     
 #----------------------------------------------------------------------
