@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-02 10:33:40 $
-Version:   $Revision: 1.90 $
+Date:      $Date: 2008-10-02 12:02:15 $
+Version:   $Revision: 1.91 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -119,8 +119,8 @@ mafOp(label)
 
   m_MsfDir = "";
 
-  m_ServiceURL = "http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/";
-  //"https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/"
+  //m_ServiceURL = "http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/";
+  m_ServiceURL ="https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/";
 
 
   m_MasterXMLDictionaryFilePrefix = "lhpXMLDictionary_";

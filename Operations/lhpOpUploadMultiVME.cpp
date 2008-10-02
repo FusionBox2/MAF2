@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-02 10:34:45 $
-Version:   $Revision: 1.22 $
+Date:      $Date: 2008-10-02 12:02:15 $
+Version:   $Revision: 1.23 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -102,8 +102,8 @@ mafOp(label)
   m_FileCreatedVector.clear();
   m_NodeDerivedId.clear();
 
-  m_ServiceURL = "http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/";
-  //"https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/"
+  //m_ServiceURL = "http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/";
+  m_ServiceURL = "https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/";
  
 
   m_PythonExe ="python.exe ";
