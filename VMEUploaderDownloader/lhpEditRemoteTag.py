@@ -19,11 +19,12 @@ class lhpEditRemoteTag:
                         
         self.userName = sys.argv[0]
         self.password = sys.argv[1]
+        self.URL = sys.argv[2]
         
         self.parameter = ""
         count = 0
         for i in sys.argv:
-          if(count > 1):
+          if(count > 2):
             if(self.parameter == ""):
               self.parameter = i
             else:
@@ -44,7 +45,7 @@ class lhpEditRemoteTag:
         print "->"+ str(self.proxyPort) + "<-"
         
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
-        ws.setServer('https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/' + self.parameter.split(',')[0])
+        ws.setServer(self.URL + self.parameter.split(',')[0])
         ws.setCredentials(self.userName, self.password)
         ws.ProxyURL = self.proxyHost
         ws.ProxyPort = self.proxyPort
@@ -65,16 +66,17 @@ class lhpEditRemoteTag:
   
 def main():
     
-    if(len(sys.argv) < 4): #for test
+    if(len(sys.argv) < 5): #for test
        sys.argv = []
        sys.argv.append("testuser") #substitute
        sys.argv.append("6w8DHF") #substitute
+       sys.argv.append('http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/') #substitute
        sys.argv.append('dataresource-3976,L0000_resource_MAF_Procedural_VMElinkURI1,dataresource-3978 dataresource-3977 ') #xml test present in repository
        
        edit = lhpEditRemoteTag()
        edit.EditTag()
        
-    if(len(sys.argv) >= 4):
+    if(len(sys.argv) >= 5):
         sys.argv = sys.argv[1:]
         #print sys.argv
         edit = lhpEditRemoteTag()
