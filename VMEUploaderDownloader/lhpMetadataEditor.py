@@ -51,35 +51,16 @@ class TestPanel(wx.Panel):
          
         try:
             for row in autoTagsReader:
-                if Debug:          
-                             
-                    print "row: " +  str(row)
                 self.unhandledPlusManualDict[row[0].strip()] = str(row[1].strip())
                 
         except csv.Error, e:
 #            sys.exit('file %s, line %d: %s' % (filename, autoTagsReader.line_num, e))
              pass
-        if Debug:          
-            print self.unhandledPlusManualDict
-
-        for item in self.unhandledPlusManualDict:
-            print item[0]+ " " + item[1]
-            
+                   
         tagsList = sorted(self.unhandledPlusManualDict.keys())
-        print tagsList
-
-        file = open("InputTagsSorted", 'w')
-        sorts = sorted(self.unhandledPlusManualDict.keys())
-        assert(os.path.exists(self.inputCSVFileName))
-        for key in sorts:
-            toWrite = '"' + str(key) + '"' + " , " + '"' + str(self.unhandledPlusManualDict[key]) + '"' + "\n" 
-            file.write(str(toWrite))
-        
-        file.close()
         
         # load xml dictionary (already assembled if composed)
         self.inputXMLDictionaryFileName = os.getcwd() + r'\\' + str(arg[1]) # to be used to save on exit    
-        print self.inputXMLDictionaryFileName
         assert(os.path.exists(self.inputXMLDictionaryFileName))
         
         self.lhpXMLDictionaryParserInstance = lhpXMLDictionaryParser.lhpXMLDictionaryParser()
@@ -129,32 +110,30 @@ class TestPanel(wx.Panel):
         , pi.DictionaryColumnLabels.Notes)
         
         for columnName in interval:     
-            print "column name: " + str(columnName)
             self.tree.AddColumn(str(columnName))
-            
-        
-        
+                    
         # create some columns         
         self.tree.SetMainColumn(0) # the one with the tree in it...
-        self.tree.SetColumnWidth(0, 200)
+        self.tree.SetColumnWidth(0, 250)
 
         for i in range(1,10):
-            self.tree.SetColumnWidth(i, 80)
+            self.tree.SetColumnWidth(i, 60)
             
-        self.tree.SetColumnWidth(1, 200)
+        self.tree.SetColumnWidth(1, 150)
         self.tree.SetColumnWidth(9, 400)      
   
         self.root = self.tree.AddRoot("LHDL Master Dictionary")
-        self.tree.SetItemImage(self.root, self.folderImageID, which = wx.TreeItemIcon_Normal)
-        self.tree.SetItemImage(self.root, self.fileOpenImageID, which = wx.TreeItemIcon_Expanded)
-    
+        self.tree.SetItemImage(self.root, self.folderImageID)
+        
         self.FillGuiTree(pi.DictionaryDOMDocument.firstChild,  self.root)
         self.tree.ExpandAll(self.root)
 
         self.tree.GetMainWindow().Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
         self.tree.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.OnActivate)
     
-        print "self.InTreeButNotInUnhandledPlusManual: tags in tree but not in UnhandledPlusManual"
+        print """self.InTreeButNotInUnhandledPlusManual: 
+tags in tree but not in UnhandledPlusManual: should be removed from the factory"""
+        
         for item in self.InTreeButNotInUnhandledPlusManual:
             print item
         
@@ -168,12 +147,30 @@ class TestPanel(wx.Panel):
     
             childId = tag[2]
             listValuesFromTree.append(self.tree.GetItemText(childId,1))
+                
+        tagsToBeSavedSet = set()
+        for item in self.TagsToBeSaved:
+            tagsToBeSavedSet.add(item[0])
         
-        print listValuesFromTree
+        unhPlusManualSet = set()
+        for item in self.unhandledPlusManualDict.keys():
+            unhPlusManualSet.add(item)
+                            
+        setDiff = unhPlusManualSet.difference(tagsToBeSavedSet)
+        setDiff2 = tagsToBeSavedSet.difference(unhPlusManualSet)
+        
+        print setDiff
+        print setDiff2
         
         toBeSaved = len(self.TagsToBeSaved) 
-        unhandledPlusMan = len(self.unhandledPlusManualDict)
-        assert(toBeSaved == unhandledPlusMan)
+        unhandledPlusMan = len(self.unhandledPlusManualDict.keys())
+        print "unhandledPlusManual list lenght: " + str(unhandledPlusMan)
+        print "toBeSaved dict size: "  + str(toBeSaved)
+        
+        print "unhandledPlusManualSet size: " + str(len(unhPlusManualSet))
+        print "toBeSavedSet size: "  + str(len(tagsToBeSavedSet))
+        
+#        assert(toBeSaved == unhandledPlusMan)
         
         file = open(self.OutputCSVFileName, 'w')
         assert(os.path.exists(self.inputCSVFileName))
@@ -230,11 +227,7 @@ class TestPanel(wx.Panel):
         else:
             msfTagValue = "NOT FOUND IN UNHPLUSMAN"
             return
-        print msfTagValue
-        
-        # build {long_tag , value dictionary}
-        
-         
+                 
         attrDict =  pi.GetAttributesDictionary(xmlDictNode)
         
         columnNames = pi.DictionaryColumnLabels.irange(pi.DictionaryColumnLabels.ValueType \

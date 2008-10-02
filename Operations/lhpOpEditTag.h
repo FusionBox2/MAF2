@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.h,v $
 Language:  C++
-Date:      $Date: 2008-09-29 14:40:06 $
-Version:   $Revision: 1.8 $
+Date:      $Date: 2008-10-02 16:38:52 $
+Version:   $Revision: 1.9 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -92,7 +92,7 @@ protected:
   /** Generate auto tags and manual tags list from XML lhdl dictionary*/
   int GeneratesTagsListsFromXMLDictionary();
 
-  int BuildFADictionary();
+  int AppendFADictionary();
 
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
 	virtual void OpStop(int result);
@@ -142,7 +142,7 @@ protected:
 private:
   mafString GetXMLDictionaryFileName(mafString dictionaryFileNamePrefix);
   void CreateGui();
-  int AssembleDictionaries();
+  int AssembleMasterWithSubdictionary();
   void LoadConnectionConfigurationFile();
   int m_SubdictionaryId;
   wxArrayString m_AutoTagsList;
@@ -170,6 +170,7 @@ private:
   */
   int m_UseFADictionary;
 
-  mafString m_DictionaryToProcessFileName;
+  mafString m_InputDictionaryFileName;
+  mafString m_DictionaryToProcessFileName  ;
 };
 #endif

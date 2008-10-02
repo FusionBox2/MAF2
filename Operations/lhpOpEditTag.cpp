@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-09-30 16:25:42 $
-Version:   $Revision: 1.22 $
+Date:      $Date: 2008-10-02 16:38:52 $
+Version:   $Revision: 1.23 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -500,7 +500,7 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
     return MAF_ERROR;
   }
   
-  mafString m_DictionaryToProcessFileName;
+  m_DictionaryToProcessFileName = m_MasterXMLDictionaryFileName;
 
   // handle sub dictionaries creation...
   if (m_SubdictionaryId == DICOM_SUBDICTIONARY)
@@ -508,7 +508,7 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
     // build dicom
     m_SubXMLDictionaryFilePrefix = "lhpXMLDicomSourceSubdictionary_";
     m_SubDictionaryBuildingCommand = "dicom";
-    if (this->AssembleDictionaries() == MAF_ERROR)
+    if (this->AssembleMasterWithSubdictionary() == MAF_ERROR)
     {
       return MAF_ERROR;
     }
@@ -520,7 +520,7 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
     m_SubXMLDictionaryFilePrefix = "lhpXMLMotionAnalysisSourceSubdictionary_";
     m_SubDictionaryBuildingCommand = "motion_analysis";
     // build sub dictionary code
-    if (this->AssembleDictionaries() == MAF_ERROR)
+    if (this->AssembleMasterWithSubdictionary() == MAF_ERROR)
     {
       return MAF_ERROR;
     }
@@ -533,7 +533,7 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
     m_SubXMLDictionaryFilePrefix = "lhpXMLMicroCTSourceSubdictionary_";
     m_SubDictionaryBuildingCommand = "micro_ct";
     // build sub dictionary code
-    if (this->AssembleDictionaries() == MAF_ERROR)
+    if (this->AssembleMasterWithSubdictionary() == MAF_ERROR)
     {
       return MAF_ERROR;
     }
@@ -556,7 +556,12 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
   
   if (m_UseFADictionary)
   {
-    return BuildFADictionary();
+    int result = AppendFADictionary();
+
+    if (result == MAF_ERROR)
+    {
+      return MAF_ERROR;
+    } 
   } 
   else
   {
@@ -957,7 +962,7 @@ void lhpOpEditTag::CreateGui()
 }
 
 //----------------------------------------------------------------------------
-int lhpOpEditTag::AssembleDictionaries()
+int lhpOpEditTag::AssembleMasterWithSubdictionary()
 //----------------------------------------------------------------------------
 {
   wxString oldDir = wxGetCwd();
@@ -1018,7 +1023,7 @@ int lhpOpEditTag::AssembleDictionaries()
   return MAF_OK;
 }
 
-int lhpOpEditTag::BuildFADictionary()
+int lhpOpEditTag::AppendFADictionary()
 {
   mafString faDictionaryFilePrefix = "lhpXMLFASourceSubdictionary_";
   mafString faDictionaryFileName = this->GetXMLDictionaryFileName(faDictionaryFilePrefix).GetCStr();
