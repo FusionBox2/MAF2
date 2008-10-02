@@ -37,15 +37,16 @@ class Server(threading.Thread):
       #6 original Id in UPLOAD, XML data URI in DOWNALOAD
       #7 vme has link in UPLOAD, SRB data URI in DOWNALOAD
       #8 vme with child (UPLOAD)
-      #9 XML resource URI (UPLOAD)
-      #10 vme Name (UPLAOD)
+      #9 file for upload rollback (UPLOAD)
+      #10 XML resource URI (UPLOAD)
+      #11 vme Name (UPLAOD)
       
       arguments = data.split(" ") 
       sendList = []
       count = 0
       lastArgument = ""
       for i in arguments:
-        if(count < 10):
+        if(count < 11):
           sendList.append(i)
         else:
           if(lastArgument != ''):
@@ -54,7 +55,8 @@ class Server(threading.Thread):
               lastArgument = lastArgument + i
         count = count + 1
       sendList.append(lastArgument)
-      sendList[2] = sendList[2].replace("?", " ") # directory with spaces arrives with "?" instead of them
+      sendList[11] = sendList[11].replace("??", " ") # VME name with spaces arrives with "??" instead of them
+      sendList[2] = sendList[2].replace("??", " ") # directory with spaces arrives with "??" instead of them
       print sendList[2]
       return sendList
       
