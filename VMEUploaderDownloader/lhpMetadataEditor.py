@@ -20,6 +20,8 @@ from xml.dom import minidom
 class TestPanel(wx.Panel):
     def __init__(self, parent, log, arg):
         
+               # make an image list
+
         # tegs in iput vme csv        
         self.TagsToBeSaved = []
         
@@ -105,10 +107,10 @@ class TestPanel(wx.Panel):
 
         isz = (16,16)
         il = wx.ImageList(isz[0], isz[1])
-        fldridx     = il.Add(wx.ArtProvider_GetBitmap(wx.ART_FOLDER,      wx.ART_OTHER, isz))
-        fldropenidx = il.Add(wx.ArtProvider_GetBitmap(wx.ART_FILE_OPEN,   wx.ART_OTHER, isz))
-        fileidx     = il.Add(wx.ArtProvider_GetBitmap(wx.ART_NORMAL_FILE, wx.ART_OTHER, isz))
-        smileidx    = il.Add(images.getSmilesBitmap())
+        self.folderImageID     = il.Add(wx.ArtProvider_GetBitmap(wx.ART_FOLDER,      wx.ART_OTHER, isz))
+        self.fileOpenImageID = il.Add(wx.ArtProvider_GetBitmap(wx.ART_FILE_OPEN,   wx.ART_OTHER, isz))
+        self.normalFileID     = il.Add(wx.ArtProvider_GetBitmap(wx.ART_NORMAL_FILE, wx.ART_OTHER, isz))
+        self.smileID    = il.Add(images.getSmilesBitmap())
 
         self.tree.SetImageList(il)
         self.il = il
@@ -143,8 +145,8 @@ class TestPanel(wx.Panel):
         self.tree.SetColumnWidth(9, 400)      
   
         self.root = self.tree.AddRoot("LHDL Master Dictionary")
-        self.tree.SetItemImage(self.root, fldridx, which = wx.TreeItemIcon_Normal)
-        self.tree.SetItemImage(self.root, fldropenidx, which = wx.TreeItemIcon_Expanded)
+        self.tree.SetItemImage(self.root, self.folderImageID, which = wx.TreeItemIcon_Normal)
+        self.tree.SetItemImage(self.root, self.fileOpenImageID, which = wx.TreeItemIcon_Expanded)
     
         self.FillGuiTree(pi.DictionaryDOMDocument.firstChild,  self.root)
         self.tree.ExpandAll(self.root)
@@ -217,14 +219,14 @@ class TestPanel(wx.Panel):
         assert isinstance(xmlDictNode , minidom.Node)
 
        
-     
+        img = None
         if xmlDictNode.hasChildNodes():
             # GROUPING NODE
             msfTagValue = " "
-        
+            img = self.folderImageID
         elif self.unhandledPlusManualDict.has_key(msfTagName):
             msfTagValue = self.unhandledPlusManualDict[msfTagName]
-    
+            img = self.normalFileID
         else:
             msfTagValue = "NOT FOUND IN UNHPLUSMAN"
             return
@@ -238,7 +240,7 @@ class TestPanel(wx.Panel):
         columnNames = pi.DictionaryColumnLabels.irange(pi.DictionaryColumnLabels.ValueType \
         , pi.DictionaryColumnLabels.Notes)
          
-        childId = self.tree.AppendItem(guiTreeParent, str(guiTreeNodeName))  
+        childId = self.tree.AppendItem(guiTreeParent, str(guiTreeNodeName),img)  
         
         if self.unhandledPlusManualDict.has_key(msfTagName):               
             self.TagsToBeSaved.append([msfTagName, msfTagValue, childId])
