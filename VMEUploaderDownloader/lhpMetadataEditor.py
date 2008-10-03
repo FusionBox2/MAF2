@@ -17,7 +17,7 @@ import msfParser
 from xml.dom import minidom
 #----------------------------------------------------------------------
 
-class TestPanel(wx.Panel):
+class MetadataEditorPanel(wx.Panel):
     def __init__(self, parent, log, arg):
         
                # make an image list
@@ -261,30 +261,17 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
                 self.__FillGuiTreeInternal(node, childId)
 
     
-#----------------------------------------------------------------------
 
-def runTest(frame, nb, log,arg):
-    win = TestPanel(nb, log,arg)
+def execute(frame, nb, log,arg):
+    win = MetadataEditorPanel(nb, log,arg)
     return win
 
-#----------------------------------------------------------------------
-
-
-
-overview = """<html><body>
-<h2><center>TreeListCtrl</center></h2>
-
-The TreeListCtrl is essentially a wx.TreeCtrl with extra columns,
-such that the look is similar to a wx.ListCtrl.
-
-</body></html>
-"""
 
 
 if __name__ == '__main__':
     
     import sys,os
-    import run
+    import runLHPMetadataEditor
     # list: ['D:\\vapps_merge_target\\LHPBuilder_Parabuild_Binary\\VMEUploaderDownloader\\lhpMetadataEditor.py'
     print sys.argv[1]     # , 'Surface_Parametric_id18_tag.csv']
-    run.main(['', os.path.basename(sys.argv[0])] + sys.argv[1:])
+    runLHPMetadataEditor.main(['', os.path.basename(sys.argv[0])] + sys.argv[1:])

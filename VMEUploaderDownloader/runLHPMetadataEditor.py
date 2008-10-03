@@ -12,17 +12,12 @@
 # Author:       Robin Dunn
 #
 # Created:      6-March-2000
-# RCS-ID:       $Id: run.py,v 1.2 2008-09-24 12:07:25 ior01 Exp $
+# RCS-ID:       $Id: runLHPMetadataEditor.py,v 1.1 2008-10-03 12:47:35 ior01 Exp $
 # Copyright:    (c) 2000 by Total Control Software
 # Licence:      wxWindows license
 #----------------------------------------------------------------------------
 from wx.py.introspect import getAttributeNames
 
-"""
-This program will load and run one of the individual demos in this
-directory within its own frame window.  Just specify the module name
-on the command line.
-"""
 
 import wx
 import wx.lib.mixins.inspection
@@ -47,10 +42,10 @@ class Log:
     write = WriteText
 
 
-class RunDemoApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
+class RunMetaDataEditor(wx.App, wx.lib.mixins.inspection.InspectionMixin):
     def __init__(self, name, module, useShell, arg):
         self.name = name
-        self.demoModule = module
+        self.moduleToRun = module
         self.useShell = useShell
         self.arg = arg
         wx.App.__init__(self, redirect=False)
@@ -75,14 +70,14 @@ class RunDemoApp(wx.App, wx.lib.mixins.inspection.InspectionMixin):
         ns = {}
         ns['wx'] = wx
         ns['app'] = self
-        ns['module'] = self.demoModule
+        ns['module'] = self.moduleToRun
         ns['frame'] = frame
         
         frame.SetMenuBar(menuBar)
         frame.Show(True)
         frame.Bind(wx.EVT_CLOSE, self.OnCloseFrame)
 
-        win = self.demoModule.runTest(frame, frame, Log(),self.arg)
+        win = self.moduleToRun.execute(frame, frame, Log(),self.arg)
 
         # a window will be returned if the demo does not create
         # its own top-level window
@@ -159,9 +154,9 @@ def main(argv):
     name, ext  = os.path.splitext(argv[1])
     module = __import__(name)
     
-    print  sys.argv[1] # Surface_Parametric_id18_tag.csv
+    # print  sys.argv[1] # Surface_Parametric_id18_tag.csv
     arg = sys.argv[1:]
-    app = RunDemoApp(name, module, useShell, arg)
+    app = RunMetaDataEditor(name, module, useShell, arg)
     app.MainLoop()
 
 if __name__ == "__main__":
