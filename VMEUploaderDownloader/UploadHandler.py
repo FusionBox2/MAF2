@@ -53,7 +53,7 @@ class UploadHandler:
        
         self.createOutgoingDir()
         
-        binarySendResult = False
+        self.binarySendResult = False
         self.isBinaryDataPresent = self.isBinaryPresent()      
         
         #Check if VME has a binary data        
@@ -127,7 +127,7 @@ class UploadHandler:
                     
                     percentage = 100 * self.remoteTemporaryBinaryFileSize / self.binaryFileSize
                     
-                    if(percentage == oldPercentage): continue
+                    #if(percentage == oldPercentage): continue
                     oldPercentage = percentage
                     
                     
@@ -138,16 +138,15 @@ class UploadHandler:
                     self.block.acquire()
                     UploadHandler.queue.put(lista)
                     self.block.release()
-                    if(percentage >= 100):
-                         binarySendResult = True
+                    if(percentage >= 100 and self.binarySendResult == True):
                          break
         else:
         
             self.createXMLAndBinary()
-            binarySendResult = True
+            self.binarySendResult = True
                        
         #---MD5 check-point-----------------------------------#
-        if(self.isBinaryDataPresent == True and binarySendResult == True):
+        if(self.isBinaryDataPresent == True and self.binarySendResult == True):
             print "Local checksum=  " + self.localChksum
             print "Remote checksum= " + self.remoteChksum
             if (self.localChksum == self.remoteChksum):
@@ -163,7 +162,7 @@ class UploadHandler:
                 self.block.acquire()  
                 UploadHandler.queue.put(lista)
                 self.block.release()
-                binarySendResult = False
+                self.binarySendResult = False
                 errorFile = open(sys.path[0] + '\\ErrorFound.lhp', 'a')
                 errorFile.write('Checksum Error uploading binary data of VME: ' + self.vmeName + '.')
                 errorFile.close() 
@@ -172,7 +171,7 @@ class UploadHandler:
         #---------------------------------------------------#
         
         #send xml file, perhaps here free source
-        if(binarySendResult == True):
+        if(self.binarySendResult == True):
           self.sendXMLFile()
           percentage = 110 #110 for 'complete!'
           lista = [self.observer,percentage]
@@ -349,7 +348,7 @@ class UploadHandler:
             self.block.release()
             #write a file used by builder to catch error and stop MSF upload
             errorFile = open(sys.path[0] + '\\ErrorFound.lhp', 'a')
-            errorFile.write('Error in xmlupload service uploading VME: ' + self.vmeName + '\n')
+            errorFile.write('Error in xmlupload service uploading VME: ' + self.vmeName + '.')
             errorFile.write(error)
             errorFile.close() 
             if(self.msfListFile != "noMsf"):
@@ -451,25 +450,13 @@ class UploadHandler:
         except:
             print "--------Error calling mafSRBUpload.cgi-----------"
             return
-        
-        if(result.chksum == ''):
-            percentage = 120 #120 for 'error!'
-            lista = [self.observer,percentage]
-            self.block.acquire()  
-            UploadHandler.queue.put(lista)
-            self.block.release()
-            errorFile = open(sys.path[0] + '\\ErrorFound.lhp', 'a')
-            errorFile.write('Error calling mafSRBUpload.cgi for binary data of VME: ' + filename + '.')
-            errorFile.close() 
-            if(self.msfListFile != "noMsf"):
-                self.removeUploadedXml()
-                return
             
         self.remoteChksum = result.chksum
         self.remoteChksum = self.remoteChksum.lower()
         print "Remote checksum: " + str(self.remoteChksum)
         self.uri = result.uriFile
         print "URI File: " + str(result.uriFile)
+        self.binarySendResult = True
         os.chdir(oldDir)
         
   #  def __removeSRBData(self,filename):
