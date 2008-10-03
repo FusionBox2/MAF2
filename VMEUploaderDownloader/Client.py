@@ -33,7 +33,7 @@ if (modality == "UPLOAD"):
         if(name == ""):
           name = i
         else:
-          name = name + ' ' + i #vme name if UPLOAD, dataURI if DOWNLOAD
+          name = name + ' ' + i #vme name if UPLOAD
       count = count + 1
       
 
