@@ -12,7 +12,7 @@ from Debug import Debug
 
 class DownloadHandler:
     queue = None
-    def __init__(self, queue, observer, dirCache, srbData , usr , pwd, urlServer, fileSize):
+    def __init__(self, queue, observer, dirCache, srbData, usr , pwd, urlServer, fileSize):
         DownloadHandler.queue = queue
         self.observer = observer
         self.dirCache = dirCache
@@ -42,9 +42,19 @@ class DownloadHandler:
 
         print "->"+ self.proxyHost + "<-"
         print "->"+ str(self.proxyPort) + "<-"
-
-        mtomD.Download(self.srbData,serviceUrl,self.proxyHost,self.proxyPort)
-        print "Inside Download Thread"
+         
+        try:
+            mtomD.Download(self.srbData,serviceUrl,self.proxyHost,self.proxyPort)
+            print "Inside Download Thread"
+        except:
+            print "-------Error calling mafSRBDownload.cgi----------" 
+            self.block.acquire()
+            if(DownloadHandler.queue):
+                percentage = 120 #110 for 'Error!'
+                lista = [self.observer,percentage]
+                DownloadHandler.queue.put(lista)
+            self.block.release()
+            return
         
         os.chdir(oldDir)    
         
@@ -79,7 +89,7 @@ class DownloadHandler:
             try:
               file = open(self.dirCache+"configuration.conf","r")
             except:
-              print "Unable to Open ConfigurationFile"
+              print "------Unable to Open ConfigurationFile-----------"
               return
             
             fullPathInMSF = file.read()
@@ -111,36 +121,56 @@ class DownloadHandler:
                   break
             
             print str(self.controlLocalFileDimension())
-            
-            
-            #-----MD5 chek-point-----#
+
+            #-----MD5 check-point-----#
             self.localChksum = self.md5(self.dirCache+self.srbData)
-            print "Local checksum= " + self.localChksum
+            print "Local checksum=  " + self.localChksum
             
-            self.remoteChksum = self.retrieveTagValue('L0000_resource_data_Dataset_LocalFileCheckSum')
+            try:
+                self.remoteChksum = self.retrieveTagValue('L0000_resource_data_Dataset_LocalFileCheckSum')
+            except:
+                print "------------Checksum not found------------"
+                self.block.acquire()
+                if(DownloadHandler.queue):
+                    percentage = 120 #110 for 'Error!'
+                    lista = [self.observer,percentage]
+                    DownloadHandler.queue.put(lista)
+                self.block.release()
+                return
             self.remoteChksum = self.remoteChksum.lower()
             print "Remote checksum= " + self.remoteChksum
-            time.sleep(1)
             
             if (self.localChksum == self.remoteChksum):
                 print " "
                 print "MD5 checksum control successful!"
                 print " "
-                time.sleep(2)
+                self.block.acquire()
+                if(DownloadHandler.queue):
+                    percentage = 110 #110 for 'Completed!'
+                    lista = [self.observer,percentage]
+                    DownloadHandler.queue.put(lista)
+                self.block.release()
                 self.moveFileInMSFDirectory()
             else:
                 print " "
                 print "Error: MD5 checksum control unsuccessful!"
                 print " "
-                time.sleep(2)
+                self.block.acquire()
+                if(DownloadHandler.queue):
+                    percentage = 120 #110 for 'Error!'
+                    lista = [self.observer,percentage]
+                    DownloadHandler.queue.put(lista)
+                self.block.release()
                 return
                 
                 
         else:
+            self.block.acquire()
             if(DownloadHandler.queue):
-                percentage = 100
+                percentage = 110 #110 for 'Completed!'
                 lista = [self.observer,percentage]
-                DownloadHandler.queue.put(lista)              
+                DownloadHandler.queue.put(lista)
+            self.block.release()            
         
         pass
         
@@ -180,8 +210,8 @@ class DownloadHandler:
 
 
                       
-def createDownloadHandler(queue, observer, dirCache, srbData , usr , pwd, urlServer, fileSize):
-    downloadHandler = DownloadHandler(queue, observer, dirCache, srbData , usr , pwd, urlServer, fileSize)
+def createDownloadHandler(queue, observer, dirCache, srbData, usr , pwd, urlServer, fileSize):
+    downloadHandler = DownloadHandler(queue, observer, dirCache, srbData, usr, pwd, urlServer, fileSize)
     downloadHandler.download()
     
 if __name__ == '__main__':
