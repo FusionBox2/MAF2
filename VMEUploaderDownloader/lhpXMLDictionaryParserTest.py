@@ -120,7 +120,7 @@ class lhpXMLDictionaryParserTest(unittest.TestCase):
         self.assertTrue(pi.GetChildNodeByName(resourceNode, "service") != None)
         self.assertTrue(pi.GetChildNodeByName(resourceNode, "DataType") == None)
         
-    def testGetAttributesDictionary(self):
+    def testGetAttributesDictionaryAndGetSingleAttributeMethods(self):
         xmlDict = r'.\metadataEditorTestData\xmlDictionaries\LHDL_dictionary.xml'
 
         lhpXMLDictionaryParserInstance = lhpXMLDictionaryParser.lhpXMLDictionaryParser()
@@ -151,7 +151,9 @@ class lhpXMLDictionaryParserTest(unittest.TestCase):
         resourceNode = pi.GetChildNodeByName(L0000Node, "resource")
         
         d = pi.GetAttributesDictionary(resourceNode)
-        print d
+        for key in d.keys():
+            print str(key) + " "  + str(d[key])
+            
         self.assertTrue(d["Expert"]  ==  "Viceconti") 
         self.assertTrue(d["Searchable"]  ==  "n") 
         self.assertTrue(d["Multiplicity"]  ==  "1") 
@@ -161,7 +163,30 @@ class lhpXMLDictionaryParserTest(unittest.TestCase):
         self.assertTrue(d["Notes"]  ==  "Root concept; everything stored on LHDL is a resource") 
         self.assertTrue(d["ValueType"]  ==  "tag")
                 
-
+        expert =  pi.GetExpert(resourceNode)
+        self.assertEqual(expert, "Viceconti")
+        
+        isSearchable =  pi.IsSearchable(resourceNode)
+        self.assertEqual(isSearchable, False) 
+        
+        multiplicity = pi.GetMultiplicity(resourceNode)
+        self.assertEqual(multiplicity, 1)
+        
+        defaultValue = pi.GetDefaultValue(resourceNode)
+        self.assertEqual(defaultValue,None)
+        
+        isEditable = pi.IsEditable(resourceNode)
+        self.assertEqual(isEditable , False)
+        
+        valueList = pi.GetValueList(resourceNode)
+        self.assertEqual(valueList, None)
+        
+        notes = pi.GetNotes(resourceNode)
+        self.assertEqual(notes,"Root concept; everything stored on LHDL is a resource")
+        
+        valueType = pi.GetValueType(resourceNode)
+        self.assertEqual(valueType, "tag")
+        
     def testGetNodeFromVMETagArrayTagName(self):
         xmlDict = r'.\metadataEditorTestData\xmlDictionaries\LHDL_dictionary.xml'
 

@@ -4,6 +4,7 @@
 # author: Stefano Perticoni <s.perticoni@scsolutions.it>
 #-----------------------------------------------------------------------------
 from test.test_codecs import Str2StrTest
+from pickle import NONE
 
 import sys, string
 from Debug import Debug
@@ -20,8 +21,8 @@ class lhpXMLDictionaryParser:
         
         # dictionary columns from XML dictionary csv source
         self.DictionaryColumnLabels = Enum.Enum([\
-            'NumTag', 'L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7', 'L8',\
-            'ValueType', 'Multiplicity', 'ValueList', 'Editable', 'Searchable',\
+            'NumTag', 'L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7', 'L8', \
+            'ValueType', 'Multiplicity', 'ValueList', 'Editable', 'Searchable', \
             'DefaultValue', 'Expert', 'Notes'])
       
         self.TagsList = []
@@ -117,12 +118,12 @@ class lhpXMLDictionaryParser:
         return tagName
     
     
-    def GetNodeName(self,node):
+    def GetNodeName(self, node):
         """Return the node name"""
         if node.nodeType == Node.ELEMENT_NODE:
             return node.nodeName
     
-    def IsAuto(self,node):
+    def IsAuto(self, node):
         """Return if the node represents an auto tag ie a
         tag that should be filled automatically"""
         if node.nodeType == Node.ELEMENT_NODE:
@@ -149,8 +150,20 @@ class lhpXMLDictionaryParser:
             print "Tag: " + node.nodeName + " has no attributes... "
             return False
     
-    def GetAttributesDictionary(self,node):
-        """"""
+    def GetAttributesDictionary(self, node):
+        """ Return node attributes  and values in a dictionary, for example
+        
+         KEY            VALUE
+        Expert:         Pippo
+        Searchable:     n
+        Multiplicity:   1
+        DefaultValue:   0
+        Editable:       n
+        ValueList       0, 1, 2, 3
+        Notes:          This is a note
+        ValueType:      tag
+
+        """
         dictionary = {}
         if node.nodeType == Node.ELEMENT_NODE:
             if Debug:
@@ -166,7 +179,64 @@ class lhpXMLDictionaryParser:
             return dictionary
         return None
         
-            
+    def GetExpert(self, node):
+        dictionary = self.GetAttributesDictionary(node)
+        return str(dictionary["Expert"])
+    
+    def IsSearchable(self, node):
+        dictionary = self.GetAttributesDictionary(node)
+        if (dictionary["Searchable"] == "y"):
+            return True
+        elif (dictionary["Searchable"] == "n"):
+            return False
+        
+    def GetMultiplicity(self, node):
+        dictionary = self.GetAttributesDictionary(node)
+        multiplicity = dictionary["Multiplicity"]
+        if multiplicity:
+            return int(multiplicity)
+        else:
+            return None
+    
+    def GetDefaultValue(self, node):
+        dictionary = self.GetAttributesDictionary(node)
+        defaultValue = dictionary["DefaultValue"]
+        if defaultValue:
+            return defaultValue
+        else:
+            return None
+        
+    def IsEditable(self, node):
+        dictionary = self.GetAttributesDictionary(node)
+        if (dictionary["Editable"] == "y"):
+            return True
+        elif (dictionary["Editable"] == "n"):
+            return False
+        
+    def GetValueList(self,node):
+        dictionary = self.GetAttributesDictionary(node)
+        valueList = dictionary["ValueList"]
+        if valueList:
+            return valueList.split(",")
+        else:
+            return None
+        
+    def GetNotes(self, node):
+        dictionary = self.GetAttributesDictionary(node)
+        notes = dictionary["Notes"]
+        if notes:
+            return str(notes)
+        else:
+            return None
+
+    def GetValueType(self, node):
+        dictionary = self.GetAttributesDictionary(node)
+        valueType = dictionary["ValueType"]
+        if valueType:
+            return str(valueType)
+        else:
+            return None
+
     def PrintXMLDictionary(self):
         """ print XML dictionary to standard output """
         self.PrintXML(self.DictionaryDOMDocumentRoot, sys.stdout)
@@ -174,15 +244,15 @@ class lhpXMLDictionaryParser:
     def PrintXML(self, parent, outFile):
         """ Print XML starting from given parent node to output file outFile"""
         level = 0
-        self.__PrintXMLDictionaryInternal(parent,outFile,level)
+        self.__PrintXMLDictionaryInternal(parent, outFile, level)
 
-    def __PrintXMLDictionaryInternal(self,parent, outFile, level):  
+    def __PrintXMLDictionaryInternal(self, parent, outFile, level):  
         self.PrintNode(parent, outFile, level)
         if parent.childNodes:
             for node in parent.childNodes:
                 self.__PrintXMLDictionaryInternal(node, outFile, level+1)
     
-    def PrintNode(self,node,outFile,level):
+    def PrintNode(self, node, outFile, level):
         """Print node on output file outFile with level indentation"""
         if node.nodeType == Node.ELEMENT_NODE:
             # Write out the element name.
@@ -204,20 +274,20 @@ class lhpXMLDictionaryParser:
         if node.parentNode:
            self.__GetParent(node.parentNode)       
     
-    def __GetTagArrayTagsInternal(self,parent, outFile, level):  
+    def __GetTagArrayTagsInternal(self, parent, outFile, level):  
         self.TagArrayTagList.append(self.GetVMETagArrayTagNameFromNode(parent))
         if parent.childNodes:
             for node in parent.childNodes:
                 self.__GetTagArrayTagsInternal(node, sys.stdout, level)
     
-    def __GetTagArrayAutoTagsInternal(self,parent, outFile, level):  
+    def __GetTagArrayAutoTagsInternal(self, parent, outFile, level):  
         if self.IsAuto(parent) == True:    
             self.TagArrayAutoTagList.append(self.GetVMETagArrayTagNameFromNode(parent))
         if parent.childNodes:
             for node in parent.childNodes:
                 self.__GetTagArrayAutoTagsInternal(node, sys.stdout, level)
     
-    def __GetTagArrayManualTagsInternal(self,parent, outFile, level):  
+    def __GetTagArrayManualTagsInternal(self, parent, outFile, level):  
         if self.IsAuto(parent) == False:    
             self.TagArrayManualTagList.append(self.GetVMETagArrayTagNameFromNode(parent))
         if parent.childNodes:
@@ -238,7 +308,7 @@ class lhpXMLDictionaryParser:
                 self.__GetAutoTagsListInternal(node)
     
         
-    def __printLevel(self,outFile, level):
+    def __printLevel(self, outFile, level):
         for idx in range(level):
             outFile.write('    ')
     
