@@ -171,12 +171,13 @@ class vmeUploaderOnly:
         if(self.hasBinary == True):
             print self.InputMSFDirectory
             os.chdir(self.InputMSFDirectory)
-            shutil.copy2(self.binaryName,self.OutputFolderName)
+            shutil.copyfile(self.binaryName,self.OutputFolderName + "\\" + self.binaryName)
             
             #-----MD5 checksum calculation-----#
             os.chdir(self.OutputFolderName)
+            print self.OutputFolderName
             self.localChksum = self.md5(self.binaryName)
-            print "Local checksum= " + self.localChksum
+            print "Local checksumII= " + self.localChksum
             
             #AUTO TAGS SET  WITH  WEBSERVICE      
             nodeURI = msfDOMParserInstance.GetTagNodeByTagName(outVmeTagArrayNode, "L0000_resource_data_Dataset_LocalFileCheckSum")
@@ -200,7 +201,7 @@ class vmeUploaderOnly:
         try:
             fd = open(fileName,"rb")
         except IOError:
-            print "Unable to open the file in readmode:", filename
+            print "Unable to open the file in read mode: " + filename
             return
         content = fd.readlines()
         fd.close()
