@@ -98,7 +98,7 @@ class vmeUploaderOnly:
        # print "has child? " + self.withChild
         if (self.withChild == "true"):   
             newDir = os.getcwd()
-            os.chdir(newDir + r"..\\..\\..")
+            os.chdir(sys.path[0])
             #cicle on file with list of child URI
             list = ''
             fileName = str(self.vmeName)+ str(self.originalId) + ".childURI"
@@ -129,7 +129,7 @@ class vmeUploaderOnly:
        # print "has Link = " + self.hasLink
         if (self.hasLink == "true" and self.IsUploadMSF == False):   
             newDir = os.getcwd()
-            os.chdir(newDir + r"..\\..\\..")
+            os.chdir(sys.path[0])
             #cicle on file with list of link URI
             list = ''
             fileName = self.vmeName + str(self.originalId) + ".linkURI"
