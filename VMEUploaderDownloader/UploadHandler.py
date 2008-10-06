@@ -127,7 +127,7 @@ class UploadHandler:
                     
                     percentage = 100 * self.remoteTemporaryBinaryFileSize / self.binaryFileSize
                     
-                    #if(percentage == oldPercentage): continue
+                    if(percentage == oldPercentage and percentage < 100): continue
                     oldPercentage = percentage
                     
                     
