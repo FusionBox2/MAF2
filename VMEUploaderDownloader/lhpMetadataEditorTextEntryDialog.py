@@ -61,7 +61,13 @@ class Dialog(wx.Dialog):
         sep1 = wx.StaticText(self, -1, "")
         mainVSizer.Add(sep1)
  
-        notes = wx.StaticText(self, -1, pi.GetNotes(node))
+        notesText = pi.GetNotes(node)
+        if notesText:
+            pass
+        else:
+            notesText = "Sorry, Notes not available for this entry..."
+            
+        notes = wx.StaticText(self, -1, notesText)
         mainVSizer.Add(notes, 0, wx.ALIGN_CENTRE|wx.ALL, 5)
         
         sep4 = wx.StaticText(self, -1, "")
