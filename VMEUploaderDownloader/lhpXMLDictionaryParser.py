@@ -217,7 +217,11 @@ class lhpXMLDictionaryParser:
         dictionary = self.GetAttributesDictionary(node)
         valueList = dictionary["ValueList"]
         if valueList:
-            return valueList.split(",")
+            list =  valueList.split(",")
+            returnList = []
+            for val in list:
+                returnList.append(val.strip())
+            return returnList
         else:
             return None
         
