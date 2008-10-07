@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-08-05 10:32:29 $
-  Version:   $Revision: 1.22 $
+  Date:      $Date: 2008-10-07 12:35:59 $
+  Version:   $Revision: 1.23 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -45,21 +45,6 @@
 
 using namespace std; 
 
-
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_DataType);
-//------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_DataType::lhpTagHandler_L0000_resource_data_DataType()
-//------------------------------------------------------------------------------------
-{
-  ExtractTagName();
-}
-//------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_DataType::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
-//------------------------------------------------------------------------------------
-{
-  // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
-}
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_DataType_Field);
 //------------------------------------------------------------------------------------
@@ -264,7 +249,6 @@ void lhpTagHandler_L0000_resource_data_Size_FileSize::HandleAutoTag(lhpTagHandle
           length += entry->GetSize();
       } while(entry != NULL);
     }
-
   }
   else
   {
@@ -280,11 +264,9 @@ void lhpTagHandler_L0000_resource_data_Size_FileSize::HandleAutoTag(lhpTagHandle
       fileOpened = true;
     }
   }
-	
-	
+
   //Process with length
 	if(fileOpened) cargo->SetTagHandlerGeneratedString(wxString::Format("%d",length));
-
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Size_EntityCount);
@@ -336,7 +318,7 @@ void lhpTagHandler_L0000_resource_data_Dataset_DatasetURI::HandleAutoTag(lhpTagH
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+  cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
 }
 
 
@@ -352,22 +334,22 @@ void lhpTagHandler_L0000_resource_data_Dataset_UploadDate::HandleAutoTag(lhpTagH
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+  cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
 }
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType);
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_LocalFileCheckSum);
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Dataset_FileType::lhpTagHandler_L0000_resource_data_Dataset_FileType()
+lhpTagHandler_L0000_resource_data_Dataset_LocalFileCheckSum::lhpTagHandler_L0000_resource_data_Dataset_LocalFileCheckSum()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Dataset_FileType::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Dataset_LocalFileCheckSum::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+  cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat);
@@ -384,7 +366,7 @@ void lhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat::HandleAutoTa
   mafString value = "MAF2"; //for now the only file format supported
  
   // tag handling code
-  cargo->SetTagHandlerGeneratedString(value);
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType_Endianity);
@@ -425,6 +407,24 @@ void lhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption::HandleAutoTa
   cargo->SetTagHandlerGeneratedString(value);
 
 }
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_MAF_VmeType);
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_MAF_VmeType::lhpTagHandler_L0000_resource_MAF_VmeType()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_MAF_VmeType::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  value = vme->GetTypeName();
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+}
+
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_MAF_TimeSpace_VMEabsoluteMatrixPose);
 //------------------------------------------------------------------------------------
@@ -565,6 +565,60 @@ void lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeTreeCreationDate::HandleAutoTa
   cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
 }
 
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Application);
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Application::lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Application()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Application::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetRoot()->GetTagArray()->IsTagPresent("APP_STAMP"))
+  {
+    value = vme->GetRoot()->GetTagArray()->GetTag("APP_STAMP")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_IsNatural);
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_IsNatural::lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_IsNatural()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_IsNatural::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("VME_NATURE"))
+  {
+    value = vme->GetTagArray()->GetTag("VME_NATURE")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+}
+
+
+
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_Ownership);
 //------------------------------------------------------------------------------------
 lhpTagHandler_L0000_resource_data_Tracebility_Ownership::lhpTagHandler_L0000_resource_data_Tracebility_Ownership()
@@ -597,61 +651,6 @@ void lhpTagHandler_L0000_resource_data_Tracebility_Ownership_OwnerID::HandleAuto
   cargo->SetTagHandlerGeneratedString(value);
 }
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Quality);
-//------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Quality::lhpTagHandler_L0000_resource_data_Quality()
-//------------------------------------------------------------------------------------
-{
-  ExtractTagName();
-}
-//------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Quality::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
-//------------------------------------------------------------------------------------
-{
-  // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
-}
-
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Quality_QualityScore1)
-//------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Quality_QualityScore1::lhpTagHandler_L0000_resource_data_Quality_QualityScore1()
-//------------------------------------------------------------------------------------
-{
-  ExtractTagName();
-}
-//------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Quality_QualityScore1::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
-//------------------------------------------------------------------------------------
-{
-  // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
-}
-
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source);
-//------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source::lhpTagHandler_L0000_resource_data_Source()
-//------------------------------------------------------------------------------------
-{
-  ExtractTagName();
-}
-//------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
-//------------------------------------------------------------------------------------
-{
-	mafVME *vme = cargo->GetInputVme();
-	mafString value;
-  if(vme->GetTagArray()->IsTagPresent("SOURCE_TYPE"))
-	{
-     vme->GetTagArray()->GetTag("SOURCE_TYPE")->GetValueAsSingleString(value);
-	}
-	else
-	{
-		value = "NOT PRESENT";
-	}
-
-	// tag handling code
-	cargo->SetTagHandlerGeneratedString(value);
-}
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource)
 //------------------------------------------------------------------------------------
@@ -763,4 +762,888 @@ void L0000_resource_Access_Publishing_PublishingStatus::HandleAutoTag(lhpTagHand
 {
   // tag handling code
   cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+}
+
+//////////
+//DICOM///
+//////////
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StudyDate)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StudyDate::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StudyDate()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StudyDate::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("StudyDate"))
+  {
+    value = vme->GetTagArray()->GetTag("StudyDate")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Modality)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Modality::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Modality()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Modality::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("Modality"))
+  {
+    value = vme->GetTagArray()->GetTag("Modality")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Manufacturer)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Manufacturer::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Manufacturer()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Manufacturer::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("Manufacturer"))
+  {
+    value = vme->GetTagArray()->GetTag("Manufacturer")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_InstitutionName)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_InstitutionName::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_InstitutionName()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_InstitutionName::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("InstitutionName"))
+  {
+    value = vme->GetTagArray()->GetTag("InstitutionName")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StationName)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StationName::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StationName()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StationName::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("StationName"))
+  {
+    value = vme->GetTagArray()->GetTag("StationName")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ManufacturerModelName)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ManufacturerModelName::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ManufacturerModelName()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ManufacturerModelName::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("ManufacturerModelName"))
+  {
+    value = vme->GetTagArray()->GetTag("ManufacturerModelName")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientID)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientID::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientID()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientID::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("PatientID"))
+  {
+    value = vme->GetTagArray()->GetTag("PatientID")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientSex)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientSex::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientSex()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientSex::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("PatientSex"))
+  {
+    value = vme->GetTagArray()->GetTag("PatientSex")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ScanOptions)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ScanOptions::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ScanOptions()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ScanOptions::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("ScanOptions"))
+  {
+    value = vme->GetTagArray()->GetTag("ScanOptions")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_KVP)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_KVP::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_KVP()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_KVP::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("KVP"))
+  {
+    value = vme->GetTagArray()->GetTag("KVP")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DataCollectionDiameter)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DataCollectionDiameter::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DataCollectionDiameter()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DataCollectionDiameter::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("DataCollectionDiameter"))
+  {
+    value = vme->GetTagArray()->GetTag("DataCollectionDiameter")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ReconstructionDiameter)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ReconstructionDiameter::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ReconstructionDiameter()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ReconstructionDiameter::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("ReconstructionDiameter"))
+  {
+    value = vme->GetTagArray()->GetTag("ReconstructionDiameter")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DistanceSourceToDetector)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DistanceSourceToDetector::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DistanceSourceToDetector()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DistanceSourceToDetector::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("DistanceSourceToDetector"))
+  {
+    value = vme->GetTagArray()->GetTag("DistanceSourceToDetector")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DistanceSourceToPatient)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DistanceSourceToPatient::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DistanceSourceToPatient()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DistanceSourceToPatient::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("DistanceSourceToPatient"))
+  {
+    value = vme->GetTagArray()->GetTag("DistanceSourceToPatient")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_GantryDetectorTilt)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_GantryDetectorTilt::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_GantryDetectorTilt()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_GantryDetectorTilt::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("GantryDetectorTilt"))
+  {
+    value = vme->GetTagArray()->GetTag("GantryDetectorTilt")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_TableHeight)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_TableHeight::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_TableHeight()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_TableHeight::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("TableHeight"))
+  {
+    value = vme->GetTagArray()->GetTag("TableHeight")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RotationDirection)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RotationDirection::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RotationDirection()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RotationDirection::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("RotationDirection"))
+  {
+    value = vme->GetTagArray()->GetTag("RotationDirection")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ExposureTime)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ExposureTime::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ExposureTime()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ExposureTime::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("ExposureTime"))
+  {
+    value = vme->GetTagArray()->GetTag("ExposureTime")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_XRayTubeCurrent)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_XRayTubeCurrent::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_XRayTubeCurrent()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_XRayTubeCurrent::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("XrayTubeCurrent"))
+  {
+    value = vme->GetTagArray()->GetTag("XrayTubeCurrent")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Exposure)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Exposure::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Exposure()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Exposure::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("Exposure"))
+  {
+    value = vme->GetTagArray()->GetTag("Exposure")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_FilterType)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_FilterType::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_FilterType()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_FilterType::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("FilterType"))
+  {
+    value = vme->GetTagArray()->GetTag("FilterType")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_FocalSpot)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_FocalSpot::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_FocalSpot()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_FocalSpot::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("FocalSpot"))
+  {
+    value = vme->GetTagArray()->GetTag("FocalSpot")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ConvolutionKernel)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ConvolutionKernel::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ConvolutionKernel()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ConvolutionKernel::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("ConvolutionKernel"))
+  {
+    value = vme->GetTagArray()->GetTag("ConvolutionKernel")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientPosition)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientPosition::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientPosition()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientPosition::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("PatientPosition"))
+  {
+    value = vme->GetTagArray()->GetTag("PatientPosition")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StudyID)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StudyID::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StudyID()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StudyID::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("StudyID"))
+  {
+    value = vme->GetTagArray()->GetTag("StudyID")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ImagePositionPatient)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ImagePositionPatient::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ImagePositionPatient()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ImagePositionPatient::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("ImagePositionPatient"))
+  {
+    value = vme->GetTagArray()->GetTag("ImagePositionPatient")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PixelSpacing)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PixelSpacing::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PixelSpacing()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PixelSpacing::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("PixelSpacing"))
+  {
+    value = vme->GetTagArray()->GetTag("PixelSpacing")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PixelPaddingValue)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PixelPaddingValue::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PixelPaddingValue()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PixelPaddingValue::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("PixelPaddingValue"))
+  {
+    value = vme->GetTagArray()->GetTag("PixelPaddingValue")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_WindowCenter)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_WindowCenter::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_WindowCenter()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_WindowCenter::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("WindowCenter"))
+  {
+    value = vme->GetTagArray()->GetTag("WindowCenter")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_WindowWidth)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_WindowWidth::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_WindowWidth()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_WindowWidth::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("WindowWidth"))
+  {
+    value = vme->GetTagArray()->GetTag("WindowWidth")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RescaleIntercept)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RescaleIntercept::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RescaleIntercept()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RescaleIntercept::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("RescaleIntercept"))
+  {
+    value = vme->GetTagArray()->GetTag("RescaleIntercept")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RescaleSlope)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RescaleSlope::lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RescaleSlope()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RescaleSlope::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  if(vme->GetTagArray()->IsTagPresent("RescaleSlope"))
+  {
+    value = vme->GetTagArray()->GetTag("RescaleSlope")->GetValue();
+  }
+  else
+  {
+    value = "Not found";
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+
 }

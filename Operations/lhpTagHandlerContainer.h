@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.h,v $
   Language:  C++
-  Date:      $Date: 2008-08-05 10:32:29 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2008-10-07 12:36:05 $
+  Version:   $Revision: 1.9 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -17,17 +17,6 @@
 //----------------------------------------------------------------------------
 
 #include "lhpTagHandler.h"
-
-class lhpTagHandler_L0000_resource_data_DataType: public lhpTagHandler
-{
-  public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_DataType,mafObject);
-
-    lhpTagHandler_L0000_resource_data_DataType();
-    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
-  
-};
-
 
 class lhpTagHandler_L0000_resource_data_DataType_Field: public lhpTagHandler
 {
@@ -120,15 +109,16 @@ class lhpTagHandler_L0000_resource_data_Dataset_UploadDate: public lhpTagHandler
   
 };
 
-class lhpTagHandler_L0000_resource_data_Dataset_FileType: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_Dataset_LocalFileCheckSum: public lhpTagHandler
 {
-  public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType,mafObject);
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_LocalFileCheckSum,mafObject);
 
-    lhpTagHandler_L0000_resource_data_Dataset_FileType();
-    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
-  
+  lhpTagHandler_L0000_resource_data_Dataset_LocalFileCheckSum();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
 };
+
 
 class lhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat: public lhpTagHandler
 {
@@ -158,6 +148,16 @@ class lhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption: public lhpT
     lhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption();
     virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
+};
+
+class lhpTagHandler_L0000_resource_MAF_VmeType: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_MAF_VmeType,mafObject);
+
+  lhpTagHandler_L0000_resource_MAF_VmeType();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
 };
 
 class lhpTagHandler_L0000_resource_MAF_TimeSpace_VMEabsoluteMatrixPose: public lhpTagHandler
@@ -220,6 +220,26 @@ class lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeTreeCreationDate: public lhpT
   
 };
 
+class lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Application: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Application,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Application();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_IsNatural: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_IsNatural,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_IsNatural();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
 class lhpTagHandler_L0000_resource_data_Tracebility_Ownership: public lhpTagHandler
 {
   public:
@@ -239,38 +259,6 @@ class lhpTagHandler_L0000_resource_data_Tracebility_Ownership_OwnerID: public lh
     virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
-
-class lhpTagHandler_L0000_resource_data_Quality: public lhpTagHandler
-{
-  public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_Quality,mafObject);
-
-    lhpTagHandler_L0000_resource_data_Quality();
-    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
-  
-};
-
-class lhpTagHandler_L0000_resource_data_Quality_QualityScore1: public lhpTagHandler
-{
-  public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_Quality_QualityScore1,mafObject);
-
-    lhpTagHandler_L0000_resource_data_Quality_QualityScore1();
-    virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
-  
-};
-
-
-class lhpTagHandler_L0000_resource_data_Source: public lhpTagHandler
-{
-public:
-  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source,mafObject);
-
-  lhpTagHandler_L0000_resource_data_Source();
-  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
-
-};
-
 
 class lhpTagHandler_L0000_resource_data_Source_DicomSource: public lhpTagHandler
 {
@@ -303,7 +291,6 @@ public:
 };
 
 
-
 class L0000_resource_Access_Policy1_GroupID: public lhpTagHandler
 {
 public:
@@ -313,7 +300,6 @@ public:
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
-
 
 
 class L0000_resource_Access_Policy1_Price: public lhpTagHandler
@@ -327,7 +313,6 @@ public:
 };
 
 
-
 class L0000_resource_Access_Policy1_Usage: public lhpTagHandler
 {
 public:
@@ -338,13 +323,332 @@ public:
 
 };
 
-
 class L0000_resource_Access_Publishing_PublishingStatus: public lhpTagHandler
 {
 public:
   mafTypeMacro(L0000_resource_Access_Publishing_PublishingStatus,mafObject);
 
   L0000_resource_Access_Publishing_PublishingStatus();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StudyDate: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StudyDate,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StudyDate();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Modality: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Modality,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Modality();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Manufacturer: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Manufacturer,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Manufacturer();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_InstitutionName: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_InstitutionName,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_InstitutionName();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StationName: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StationName,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StationName();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ManufacturerModelName: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ManufacturerModelName,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ManufacturerModelName();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientID: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientID,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientID();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientSex: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientSex,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientSex();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ScanOptions: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ScanOptions,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ScanOptions();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_KVP: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_KVP,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_KVP();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DataCollectionDiameter: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DataCollectionDiameter,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DataCollectionDiameter();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ReconstructionDiameter: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ReconstructionDiameter,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ReconstructionDiameter();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DistanceSourceToDetector: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DistanceSourceToDetector,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DistanceSourceToDetector();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DistanceSourceToPatient: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DistanceSourceToPatient,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DistanceSourceToPatient();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_GantryDetectorTilt: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_GantryDetectorTilt,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_GantryDetectorTilt();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_TableHeight: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_TableHeight,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_TableHeight();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RotationDirection: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RotationDirection,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RotationDirection();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ExposureTime: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ExposureTime,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ExposureTime();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_XRayTubeCurrent: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_XRayTubeCurrent,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_XRayTubeCurrent();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Exposure: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Exposure,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Exposure();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_FilterType: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_FilterType,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_FilterType();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_FocalSpot: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_FocalSpot,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_FocalSpot();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ConvolutionKernel: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ConvolutionKernel,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ConvolutionKernel();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientPosition: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientPosition,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientPosition();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StudyID: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StudyID,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StudyID();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ImagePositionPatient: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ImagePositionPatient,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ImagePositionPatient();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PixelSpacing: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PixelSpacing,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PixelSpacing();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PixelPaddingValue: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PixelPaddingValue,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PixelPaddingValue();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_WindowCenter: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_WindowCenter,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_WindowCenter();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_WindowWidth: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_WindowWidth,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_WindowWidth();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RescaleIntercept: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RescaleIntercept,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RescaleIntercept();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RescaleSlope: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RescaleSlope,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RescaleSlope();
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };

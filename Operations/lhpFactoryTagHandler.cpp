@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpFactoryTagHandler.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-08-05 10:32:29 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2008-10-07 12:35:41 $
+  Version:   $Revision: 1.9 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -38,7 +38,6 @@ lhpFactoryTagHandler::lhpFactoryTagHandler()
 //------------------------------------------------------------------------------
 {
   //lhpPlugTagHandlerMacro(lhpTagHandler,"General tag handler");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_DataType, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_DataType_Field, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_DataType_Dimension, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_DataType_VolumeType, "");
@@ -48,59 +47,58 @@ lhpFactoryTagHandler::lhpFactoryTagHandler()
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Size_TimeFramesCount, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Dataset_DatasetURI, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Dataset_UploadDate, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Dataset_LocalFileCheckSum, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType_Endianity, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_MAF_VmeType, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_MAF_TimeSpace_VMEabsoluteMatrixPose, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_MAF_TimeSpace_TimeStampVector, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeRootURI, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeRootName, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeChildURI1, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeTreeCreationDate, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Application, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_IsNatural, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_Ownership, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_Ownership_OwnerID, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Quality, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Quality_QualityScore1, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_MASource, "");
 
 
   //DICOM
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type, ""); 
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_StudyDate, ""); 
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_Modality, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_Manufacturer, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_InstitutionName, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_StationName, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ManufacturerModelName, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_PatientID, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_PatientSex, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ScanOptions, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_KVP, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_DataCollectionDiameter, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ReconstructionDiameter, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_DistanceSourceToDetector, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_DistanceSourceToPatient, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_GantryDetectorTilt, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_TableHeight, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_RotationDirection, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ExposureTime, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_XRayTubeCurrent, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_Exposure, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_FilterType, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_FocalSpot, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ConvolutionKernel, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_PatientPosition, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_StudyID, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_ImagePositionPatient, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_PixelSpacing, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_PixelPaddingValue, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_WindowCenter, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_WindowWidth, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_RescaleIntercept, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_SourceDir_Type_RescaleSlope, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StudyDate, ""); 
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Modality, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Manufacturer, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_InstitutionName, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StationName, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ManufacturerModelName, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientID, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientSex, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ScanOptions, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_KVP, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DataCollectionDiameter, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ReconstructionDiameter, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DistanceSourceToDetector, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DistanceSourceToPatient, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_GantryDetectorTilt, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_TableHeight, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RotationDirection, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ExposureTime, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_XRayTubeCurrent, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Exposure, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_FilterType, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_FocalSpot, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ConvolutionKernel, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientPosition, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StudyID, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ImagePositionPatient, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PixelSpacing, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PixelPaddingValue, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_WindowCenter, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_WindowWidth, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RescaleIntercept, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RescaleSlope, "");
   // END DICOM
 
   lhpPlugTagHandlerMacro(L0000_resource_Documentation, "");
