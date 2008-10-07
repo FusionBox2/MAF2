@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-10-07 12:35:59 $
-  Version:   $Revision: 1.23 $
+  Date:      $Date: 2008-10-07 15:44:59 $
+  Version:   $Revision: 1.24 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -785,10 +785,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StudyDate::Handle
   {
     value = vme->GetTagArray()->GetTag("StudyDate")->GetValue();
   }
-  else
-  {
-    value = "Not found";
-  }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
 
@@ -811,10 +807,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Modality::HandleA
   if(vme->GetTagArray()->IsTagPresent("Modality"))
   {
     value = vme->GetTagArray()->GetTag("Modality")->GetValue();
-  }
-  else
-  {
-    value = "Not found";
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -839,10 +831,7 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Manufacturer::Han
   {
     value = vme->GetTagArray()->GetTag("Manufacturer")->GetValue();
   }
-  else
-  {
-    value = "Not found";
-  }
+
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
 
@@ -865,10 +854,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_InstitutionName::
   if(vme->GetTagArray()->IsTagPresent("InstitutionName"))
   {
     value = vme->GetTagArray()->GetTag("InstitutionName")->GetValue();
-  }
-  else
-  {
-    value = "Not found";
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -894,10 +879,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StationName::Hand
   {
     value = vme->GetTagArray()->GetTag("StationName")->GetValue();
   }
-  else
-  {
-    value = "Not found";
-  }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
 
@@ -921,10 +902,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ManufacturerModel
   if(vme->GetTagArray()->IsTagPresent("ManufacturerModelName"))
   {
     value = vme->GetTagArray()->GetTag("ManufacturerModelName")->GetValue();
-  }
-  else
-  {
-    value = "Not found";
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -950,10 +927,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientID::Handle
   {
     value = vme->GetTagArray()->GetTag("PatientID")->GetValue();
   }
-  else
-  {
-    value = "Not found";
-  }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
 
@@ -977,10 +950,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientSex::Handl
   if(vme->GetTagArray()->IsTagPresent("PatientSex"))
   {
     value = vme->GetTagArray()->GetTag("PatientSex")->GetValue();
-  }
-  else
-  {
-    value = "Not found";
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1006,10 +975,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ScanOptions::Hand
   {
     value = vme->GetTagArray()->GetTag("ScanOptions")->GetValue();
   }
-  else
-  {
-    value = "Not found";
-  }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
 
@@ -1034,10 +999,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_KVP::HandleAutoTa
   {
     value = vme->GetTagArray()->GetTag("KVP")->GetValue();
   }
-  else
-  {
-    value = "Not found";
-  }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
 
@@ -1061,10 +1022,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DataCollectionDia
   if(vme->GetTagArray()->IsTagPresent("DataCollectionDiameter"))
   {
     value = vme->GetTagArray()->GetTag("DataCollectionDiameter")->GetValue();
-  }
-  else
-  {
-    value = "Not found";
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1091,9 +1048,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ReconstructionDia
     value = vme->GetTagArray()->GetTag("ReconstructionDiameter")->GetValue();
   }
   else
-  {
-    value = "Not found";
-  }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
 
@@ -1118,11 +1072,7 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DistanceSourceToD
   {
     value = vme->GetTagArray()->GetTag("DistanceSourceToDetector")->GetValue();
   }
-  else
-  {
-    value = "Not found";
-  }
-
+ 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
 
 }
@@ -1145,10 +1095,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_DistanceSourceToP
   if(vme->GetTagArray()->IsTagPresent("DistanceSourceToPatient"))
   {
     value = vme->GetTagArray()->GetTag("DistanceSourceToPatient")->GetValue();
-  }
-  else
-  {
-    value = "Not found";
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1174,10 +1120,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_GantryDetectorTil
   {
     value = vme->GetTagArray()->GetTag("GantryDetectorTilt")->GetValue();
   }
-  else
-  {
-    value = "Not found";
-  }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
 
@@ -1202,11 +1144,7 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_TableHeight::Hand
   {
     value = vme->GetTagArray()->GetTag("TableHeight")->GetValue();
   }
-  else
-  {
-    value = "Not found";
-  }
-
+ 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
 
 }
@@ -1229,10 +1167,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RotationDirection
   if(vme->GetTagArray()->IsTagPresent("RotationDirection"))
   {
     value = vme->GetTagArray()->GetTag("RotationDirection")->GetValue();
-  }
-  else
-  {
-    value = "Not found";
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1258,10 +1192,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ExposureTime::Han
   {
     value = vme->GetTagArray()->GetTag("ExposureTime")->GetValue();
   }
-  else
-  {
-    value = "Not found";
-  }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
 
@@ -1285,10 +1215,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_XRayTubeCurrent::
   if(vme->GetTagArray()->IsTagPresent("XrayTubeCurrent"))
   {
     value = vme->GetTagArray()->GetTag("XrayTubeCurrent")->GetValue();
-  }
-  else
-  {
-    value = "Not found";
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1314,10 +1240,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_Exposure::HandleA
   {
     value = vme->GetTagArray()->GetTag("Exposure")->GetValue();
   }
-  else
-  {
-    value = "Not found";
-  }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
 
@@ -1342,10 +1264,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_FilterType::Handl
   {
     value = vme->GetTagArray()->GetTag("FilterType")->GetValue();
   }
-  else
-  {
-    value = "Not found";
-  }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
 
@@ -1368,10 +1286,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_FocalSpot::Handle
   if(vme->GetTagArray()->IsTagPresent("FocalSpot"))
   {
     value = vme->GetTagArray()->GetTag("FocalSpot")->GetValue();
-  }
-  else
-  {
-    value = "Not found";
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1396,10 +1310,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ConvolutionKernel
   {
     value = vme->GetTagArray()->GetTag("ConvolutionKernel")->GetValue();
   }
-  else
-  {
-    value = "Not found";
-  }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
 
@@ -1422,10 +1332,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PatientPosition::
   if(vme->GetTagArray()->IsTagPresent("PatientPosition"))
   {
     value = vme->GetTagArray()->GetTag("PatientPosition")->GetValue();
-  }
-  else
-  {
-    value = "Not found";
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1450,10 +1356,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_StudyID::HandleAu
   {
     value = vme->GetTagArray()->GetTag("StudyID")->GetValue();
   }
-  else
-  {
-    value = "Not found";
-  }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
 
@@ -1476,10 +1378,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_ImagePositionPati
   if(vme->GetTagArray()->IsTagPresent("ImagePositionPatient"))
   {
     value = vme->GetTagArray()->GetTag("ImagePositionPatient")->GetValue();
-  }
-  else
-  {
-    value = "Not found";
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1504,10 +1402,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PixelSpacing::Han
   {
     value = vme->GetTagArray()->GetTag("PixelSpacing")->GetValue();
   }
-  else
-  {
-    value = "Not found";
-  }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
 
@@ -1531,10 +1425,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_PixelPaddingValue
   {
     value = vme->GetTagArray()->GetTag("PixelPaddingValue")->GetValue();
   }
-  else
-  {
-    value = "Not found";
-  }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
 
@@ -1557,10 +1447,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_WindowCenter::Han
   if(vme->GetTagArray()->IsTagPresent("WindowCenter"))
   {
     value = vme->GetTagArray()->GetTag("WindowCenter")->GetValue();
-  }
-  else
-  {
-    value = "Not found";
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1612,10 +1498,6 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RescaleIntercept:
   {
     value = vme->GetTagArray()->GetTag("RescaleIntercept")->GetValue();
   }
-  else
-  {
-    value = "Not found";
-  }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
 
@@ -1639,10 +1521,7 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RescaleSlope::Han
   {
     value = vme->GetTagArray()->GetTag("RescaleSlope")->GetValue();
   }
-  else
-  {
-    value = "Not found";
-  }
+
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
 
