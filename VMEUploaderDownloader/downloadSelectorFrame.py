@@ -28,8 +28,11 @@ class downloadSelectorFrame(wx.Frame):
     def VwXinit(self):
         self.Show(False)
         self.panel = wx.Panel(self,-1,wx.Point(-5,-5),wx.Size(435,200))
+        self.selectAllButton = wx.Button(self.panel,-1,"",wx.Point(141,151),wx.Size(130,20))
+        self.selectAllButton.SetLabel("Select all")
         self.downloadButton = wx.Button(self.panel,-1,"",wx.Point(141,151),wx.Size(130,20))
         self.downloadButton.SetLabel("Download")
+        self.Bind(wx.EVT_BUTTON,self.selectAllButton_VwXEvOnButtonClick,self.selectAllButton)
         self.Bind(wx.EVT_BUTTON,self.downloadButton_VwXEvOnButtonClick,self.downloadButton)
         self.checkList = wx.CheckListBox(self.panel,-1,wx.Point(41,11),wx.Size(332,133),[])
         self.FillList()
@@ -38,6 +41,7 @@ class downloadSelectorFrame(wx.Frame):
         self.horizontalButtonSizer = wx.BoxSizer(wx.HORIZONTAL)
         
         self.horizontalCheckListSizer.Add(self.checkList,1,wx.CENTER|wx.EXPAND|wx.FIXED_MINSIZE,3)
+        self.horizontalButtonSizer.Add(self.selectAllButton,1,wx.CENTER|wx.EXPAND|wx.FIXED_MINSIZE,3)
         self.horizontalButtonSizer.Add(self.downloadButton,1,wx.CENTER|wx.EXPAND|wx.FIXED_MINSIZE,3)
         self.verticalSizer.Add(self.horizontalCheckListSizer,3,wx.CENTER|wx.EXPAND|wx.FIXED_MINSIZE,3)
         self.verticalSizer.Add(self.horizontalButtonSizer,1,wx.CENTER|wx.EXPAND|wx.FIXED_MINSIZE,3)
@@ -59,6 +63,11 @@ class downloadSelectorFrame(wx.Frame):
 
     def VwXDelComp(self):
         return
+    
+    def selectAllButton_VwXEvOnButtonClick(self,event): #init function
+        for count in range(0,self.checkList.GetCount()):
+                self.checkList.Check(count)
+        
 
 #[win]add your code here
     def downloadButton_VwXEvOnButtonClick(self,event): #init function
@@ -66,13 +75,20 @@ class downloadSelectorFrame(wx.Frame):
         #add your code here
         totalNumberOfSelected = 0
         self.Selections = []
-        for count in range(0,self.checkList.GetCount()):
+        for count in range(0,self.checkList.GetCount()):            
             if(self.checkList.IsChecked(count)):
                 self.Selections.append(self.lBasket.IdList[((count*2)+1)])#get datasource-... corrisponding to VME name checked
+
+        #for count in range(0,self.checkList.GetCount()):
+        #    if(self.checkList.IsChecked(count)):
+        #        self.Selections.append(self.lBasket.IdList[((count*2))])#get datasource-... corrisponding to VME name checked
+        #        self.Selections.append(self.lBasket.IdList[((count*2)+1)])#get datasource-... corrisponding to VME name checked
         #wx.MessageBox("Selections: " + str(self.Selections))
         if(len(self.Selections) == 0): 
             wx.MessageBox("Must be selected some vme")
             return
+
+            
         #if(len(self.Selections) != 1): 
         #    wx.MessageBox("You can Select for Now 1 only vme (temporarly)")
         #    return
