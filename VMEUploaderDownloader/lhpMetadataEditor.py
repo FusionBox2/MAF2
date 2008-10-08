@@ -35,30 +35,50 @@ class MetadataEditorPanel(wx.Panel):
         print " current directory is: " + curDir
         
                 
-        self.inputCSVFileName = os.getcwd() + r'\\' + str(arg[0]) # to be used to save on exit    
-        print self.inputCSVFileName
-        assert(os.path.exists(self.inputCSVFileName))
+        self.inputUnhandledPlusManualCSVFileName = os.getcwd() + r'\\' + str(arg[0]) # to be used to save on exit    
+        print self.inputUnhandledPlusManualCSVFileName
+        assert(os.path.exists(self.inputUnhandledPlusManualCSVFileName))
         
         if len(arg) ==  2:
-            self.OutputCSVFileName  = self.inputCSVFileName
+            self.OutputCSVFileName  = self.inputUnhandledPlusManualCSVFileName
         elif len(arg) ==  3:
             self.OutputCSVFileName = os.getcwd() + r'\\' + str(arg[2])
             
         
-        # read this from the csv
-        autoTagsReader = csv.reader(open(self.inputCSVFileName, "r"))
+        # read unhandledPlusManual tags ie manual tags plus
+        # tags the factory cannot fill (factory methods not yet implemented)
+        unhandledPlusManualTagsReader = csv.reader(open(self.inputUnhandledPlusManualCSVFileName, "r"))
         
         self.unhandledPlusManualDict = {}
          
         try:
-            for row in autoTagsReader:
+            for row in unhandledPlusManualTagsReader:
                 self.unhandledPlusManualDict[row[0].strip()] = str(row[1].strip())
                 
         except csv.Error, e:
-#            sys.exit('file %s, line %d: %s' % (filename, autoTagsReader.line_num, e))
+#            sys.exit('file %s, line %d: %s' % (filename, unhandledPlusManualTagsReader.line_num, e))
              pass
                    
-        tagsList = sorted(self.unhandledPlusManualDict.keys())
+        unhandledPlusManualTagsList = sorted(self.unhandledPlusManualDict.keys())
+        
+        # read handledAutoTagsList.csv ie tags filled from the factory to be displayed read only        
+        self.factoryFilledTagsCSVFileName = os.getcwd() + r'\\' + "handledAutoTagsList.csv"     
+        print self.factoryFilledTagsCSVFileName
+        assert(os.path.exists(self.factoryFilledTagsCSVFileName))
+       
+        factoryFilledTagsReader = csv.reader(open(self.factoryFilledTagsCSVFileName, "r"))
+        
+        self.factoryFilledTagsDict = {}
+         
+        try:
+            for row in factoryFilledTagsReader:
+                self.factoryFilledTagsDict[row[0].strip()] = str(row[1].strip())
+                
+        except csv.Error, e:
+#            sys.exit('file %s, line %d: %s' % (filename, factoryFilledTagsReader.line_num, e))
+             pass
+                   
+        factoryFiledTagsList = sorted(self.factoryFilledTagsDict.keys())
         
         # load xml dictionary (already assembled if composed)
         self.inputXMLDictionaryFileName = os.getcwd() + r'\\' + str(arg[1]) # to be used to save on exit    
@@ -176,7 +196,7 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
 #        assert(toBeSaved == unhandledPlusMan)
         
         file = open(self.OutputCSVFileName, 'w')
-        assert(os.path.exists(self.inputCSVFileName))
+        assert(os.path.exists(self.inputUnhandledPlusManualCSVFileName))
         
         for index in range(len(self.TagsToBeSavedList)):
         
@@ -213,6 +233,15 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
     
             dlg.Destroy()
        
+        elif self.tree.GetItemImage(evt.GetItem()) == self.smileID:
+            
+            dlg = wx.MessageDialog(self,  'You are not allowed to edit me, I`m factory filled :D',
+                               'Warning',
+                               wx.OK | wx.ICON_WARNING
+                               #wx.YES_NO | wx.NO_DEFAULT | wx.CANCEL | wx.ICON_INFORMATION
+                               )
+            dlg.ShowModal()
+
         else:
             
             dlg = wx.MessageDialog(self,  'You are not allowed to edit this tag',
@@ -260,8 +289,12 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
             msfTagValue = self.unhandledPlusManualDict[msfTagName]
             img = self.normalFileID
             self.TagsThatCanBeEditedDictionary[msfTagName] = ""
+        elif self.factoryFilledTagsDict.has_key(msfTagName):
+            msfTagValue = self.factoryFilledTagsDict[msfTagName]
+            img = self.smileID
         else:
-            msfTagValue = "NOT FOUND IN UNHPLUSMAN"
+            msfTagValue = str(msfTagName) + " NOT FOUND IN UNHPLUSMAN AND FACTORY FILLED!!!!!!! \
+            CHECK FOR THIS STRANGE BEHAVIOR!!!!!"
             return
                  
         attrDict =  pi.GetAttributesDictionary(xmlDictNode)
@@ -273,6 +306,9 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
         
         if self.unhandledPlusManualDict.has_key(msfTagName):               
             self.TagsToBeSavedList.append([msfTagName, msfTagValue, childId])
+        
+        elif self.factoryFilledTagsDict.has_key(msfTagName):
+            print "I`m " + str(msfTagName) + " The factory was so kind to fill me :D!"
         else:
            
             # not in unhandledPlusManual
