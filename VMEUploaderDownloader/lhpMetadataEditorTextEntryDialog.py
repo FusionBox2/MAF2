@@ -139,9 +139,7 @@ class Dialog(wx.Dialog):
     
         elif vt == "real":
             print "real validation..."
-        
-        elif vt == "bool":
-            print "bool validation..."
+            self.TextControl = wx.TextCtrl(self, -1, "", validator = TextObjectValidator(vt))
         
         else:
             
