@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-08 08:27:03 $
-Version:   $Revision: 1.24 $
+Date:      $Date: 2008-10-08 12:56:25 $
+Version:   $Revision: 1.25 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -238,6 +238,7 @@ void lhpOpUploadMultiVME::OpRun()
 void lhpOpUploadMultiVME::OpDo()   
 //----------------------------------------------------------------------------
 {
+  bool rootChosen = false;
   int res = wxMessageBox("All Vmes will be uploaded with their metadata.\nPlease check before uploading. Completion of curation can be done in the sandbox.", wxMessageBoxCaptionStr, wxOK | wxCANCEL);
   //returns 4 for OK, 16 for CANCEL
   if (res == 16)
@@ -250,11 +251,13 @@ void lhpOpUploadMultiVME::OpDo()
   {
     wait = new wxBusyInfo("Please wait, uploading VME");
   }
-  
+
+  //If VMERoot has been chosen, than upload only itself with its children
   for (int i = 0; i < m_NodeVector.size(); i++)
   {
     if (m_NodeVector[i]->IsA("mafVMERoot"))
     {
+      rootChosen = true;
       //if exists, remove error file form python
       if (wxFileExists(m_PythonUploadFullPath + "ErrorFound.lhp"))
       {
@@ -270,8 +273,13 @@ void lhpOpUploadMultiVME::OpDo()
       }
 
       UploadTree(m_NodeVector[i]);
+      break;
     }
-    else
+  }
+  
+  if (!rootChosen)
+  {
+    for (int i = 0; i < m_NodeVector.size(); i++)
     {
       if (strcmp(m_NodeVector[i]->GetName(), "") == 0)
       {
@@ -281,6 +289,7 @@ void lhpOpUploadMultiVME::OpDo()
       UploadMultiVME(m_NodeVector[i]);
     }
   }
+
   if(!m_TestMode)
   {
     delete wait;
