@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-10-09 09:49:36 $
-  Version:   $Revision: 1.26 $
+  Date:      $Date: 2008-10-09 11:36:45 $
+  Version:   $Revision: 1.27 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -550,15 +550,15 @@ void lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeChildURI1::HandleAutoTag(lhpTa
   cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
 }
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_MAF_Procedural_VmelinkURI1);
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_MAF_Procedural_VMElinkURI1);
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_MAF_Procedural_VmelinkURI1::lhpTagHandler_L0000_resource_MAF_Procedural_VmelinkURI1()
+lhpTagHandler_L0000_resource_MAF_Procedural_VMElinkURI1::lhpTagHandler_L0000_resource_MAF_Procedural_VMElinkURI1()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_MAF_Procedural_VmelinkURI1::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_MAF_Procedural_VMElinkURI1::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   // tag handling code
@@ -679,7 +679,7 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource::HandleAutoTag(lhpTagH
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+  cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/dicomsource/view?searchterm=DicomSource");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource)
@@ -694,8 +694,24 @@ void lhpTagHandler_L0000_resource_data_Source_MASource::HandleAutoTag(lhpTagHand
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+  cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/MAsource/view?searchterm=MASource");
 }
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_MicroCTSource)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_MicroCTSource::lhpTagHandler_L0000_resource_data_Source_MicroCTSource()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_MicroCTSource::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/MicroCTSource/view?searchterm=MicroCTSource");
+}
+
 
 
 mafCxxTypeMacro(L0000_resource_Documentation)

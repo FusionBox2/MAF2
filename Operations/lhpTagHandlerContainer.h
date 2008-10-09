@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.h,v $
   Language:  C++
-  Date:      $Date: 2008-10-09 09:49:36 $
-  Version:   $Revision: 1.11 $
+  Date:      $Date: 2008-10-09 11:36:45 $
+  Version:   $Revision: 1.12 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -210,12 +210,12 @@ class lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeChildURI1: public lhpTagHandl
   
 };
 
-class lhpTagHandler_L0000_resource_MAF_Procedural_VmelinkURI1: public lhpTagHandler
+class lhpTagHandler_L0000_resource_MAF_Procedural_VMElinkURI1: public lhpTagHandler
 {
 public:
-  mafTypeMacro(lhpTagHandler_L0000_resource_MAF_Procedural_VmelinkURI1,mafObject);
+  mafTypeMacro(lhpTagHandler_L0000_resource_MAF_Procedural_VMElinkURI1,mafObject);
 
-  lhpTagHandler_L0000_resource_MAF_Procedural_VmelinkURI1();
+  lhpTagHandler_L0000_resource_MAF_Procedural_VMElinkURI1();
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
@@ -286,6 +286,16 @@ public:
   mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource,mafObject);
 
   lhpTagHandler_L0000_resource_data_Source_MASource();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_MicroCTSource: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_MicroCTSource,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_MicroCTSource();
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
