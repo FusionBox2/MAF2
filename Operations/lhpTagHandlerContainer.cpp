@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-10-09 08:53:18 $
-  Version:   $Revision: 1.25 $
+  Date:      $Date: 2008-10-09 09:49:36 $
+  Version:   $Revision: 1.26 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -550,15 +550,15 @@ void lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeChildURI1::HandleAutoTag(lhpTa
   cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
 }
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_MAF_Procedural_VmeLinkURI1);
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_MAF_Procedural_VmelinkURI1);
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_MAF_Procedural_VmeLinkURI1::lhpTagHandler_L0000_resource_MAF_Procedural_VmeLinkURI1()
+lhpTagHandler_L0000_resource_MAF_Procedural_VmelinkURI1::lhpTagHandler_L0000_resource_MAF_Procedural_VmelinkURI1()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_MAF_Procedural_VmeLinkURI1::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_MAF_Procedural_VmelinkURI1::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   // tag handling code
