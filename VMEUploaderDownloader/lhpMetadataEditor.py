@@ -111,8 +111,10 @@ class MetadataEditorPanel(wx.Panel):
         il = wx.ImageList(isz[0], isz[1])
         self.folderImageID     = il.Add(wx.ArtProvider_GetBitmap(wx.ART_FOLDER,      wx.ART_OTHER, isz))
         self.fileOpenImageID = il.Add(wx.ArtProvider_GetBitmap(wx.ART_FILE_OPEN,   wx.ART_OTHER, isz))
-        self.normalFileID     = il.Add(wx.ArtProvider_GetBitmap(wx.ART_NORMAL_FILE, wx.ART_OTHER, isz))
-        self.smileID    = il.Add(images.getSmilesBitmap())
+        self.manualTagImageID     = il.Add(wx.ArtProvider_GetBitmap(wx.ART_NORMAL_FILE, wx.ART_OTHER, isz))
+        # self.factoryTagImageID    = il.Add(images.getSmilesBitmap())
+        self.factoryTagImageID = il.Add(wx.ArtProvider_GetBitmap(wx.ART_EXECUTABLE_FILE, wx.ART_OTHER, isz))
+        
 
         self.tree.SetImageList(il)
         self.il = il
@@ -233,7 +235,7 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
     
             dlg.Destroy()
        
-        elif self.tree.GetItemImage(evt.GetItem()) == self.smileID:
+        elif self.tree.GetItemImage(evt.GetItem()) == self.factoryTagImageID:
             
             dlg = wx.MessageDialog(self,  'You are not allowed to edit me, I`m factory filled :D',
                                'Warning',
@@ -287,11 +289,11 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
             img = self.folderImageID
         elif self.unhandledPlusManualDict.has_key(msfTagName):
             msfTagValue = self.unhandledPlusManualDict[msfTagName]
-            img = self.normalFileID
+            img = self.manualTagImageID
             self.TagsThatCanBeEditedDictionary[msfTagName] = ""
         elif self.factoryFilledTagsDict.has_key(msfTagName):
             msfTagValue = self.factoryFilledTagsDict[msfTagName]
-            img = self.smileID
+            img = self.factoryTagImageID
         else:
             msfTagValue = str(msfTagName) + " NOT FOUND IN UNHPLUSMAN AND FACTORY FILLED!!!!!!! \
             CHECK FOR THIS STRANGE BEHAVIOR!!!!!"
