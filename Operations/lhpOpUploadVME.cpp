@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-02 12:02:15 $
-Version:   $Revision: 1.91 $
+Date:      $Date: 2008-10-13 10:24:03 $
+Version:   $Revision: 1.92 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -272,6 +272,7 @@ void lhpOpUploadVME::SaveConnectionConfigurationFile()
 int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool withChild, mafString msfListFile)   
 //----------------------------------------------------------------------------
 {
+  mafSleep(2000); //to avoid DB conflicts..
   //check if vme has a name
   if(strcmp(m_Input->GetName(), "") == 0)
   {
@@ -446,6 +447,7 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     //PROCESS EXIST, ONLY CALL CLIENT
     wxString command2execute;
     command2execute = m_PythonwExe;
+    //command2execute = "pythonw.exe ";
     m_FileName = "Client.py ";
     command2execute.Append(m_FileName.GetCStr());
     command2execute.Append("127.0.0.1 "); //server address (localhost)
@@ -487,6 +489,7 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     //PROCESS NOT EXIST, CREATE SERVER AND CALL CLIENT
     wxString command2execute;
     command2execute = m_PythonExe;
+    //command2execute = "pythonw.exe ";
     m_FileName = "ThreadedClient.py ";
     command2execute.Append(m_FileName.GetCStr());
     command2execute.Append("50000");
