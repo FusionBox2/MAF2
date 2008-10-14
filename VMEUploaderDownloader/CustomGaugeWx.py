@@ -2,15 +2,15 @@ import wx
 import sys
 
 class CustomGaugeWx(wx.BoxSizer):
-    def __init__(self, parent, id = -1,  range = 100, pos = wx.DefaultPosition, size=wx.DefaultSize, style= wx.GA_HORIZONTAL, validator=wx.DefaultValidator, name=wx.GaugeNameStr, title="Valori" , orient = wx.VERTICAL, gaugeModality = "UPDATE", gaugePulse = 0):
+    def __init__(self, parent, id = -1,  range = 100, pos = wx.DefaultPosition, size=wx.DefaultSize, style= wx.GA_HORIZONTAL, validator=wx.DefaultValidator, name=wx.GaugeNameStr, title="123456789101213" , orient = wx.VERTICAL, gaugeModality = "UPDATE", gaugePulse = 0):
         wx.BoxSizer.__init__(self,orient)
         self.gaugeModality = gaugeModality #bar is for upload "UPLOAD" or download "DOWNLOAD"
         self.gaugePulse = gaugePulse #if 0 Gauge is not in pulsing mode 
        
         self.sizer1 = wx.BoxSizer(wx.HORIZONTAL)
-        self.initialLabel = wx.StaticText(parent, -1, label = title, pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.ALIGN_LEFT)       
+        self.initialLabel = wx.StaticText(parent, -1, label = "123456789101213" ,pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.ALIGN_LEFT)      
         self.endingLabel = wx.StaticText(parent, -1, label = "")
-        self.gauge = wx.Gauge(parent, id, range, pos, size, style, validator, name)
+        self.gauge = wx.Gauge(parent, id, range, pos, size, style = wx.ALIGN_CENTER , validator=wx.DefaultValidator, name=wx.GaugeNameStr)
         self.png = None
 
         
@@ -24,16 +24,15 @@ class CustomGaugeWx(wx.BoxSizer):
         
         self.image = wx.StaticBitmap(parent, -1, self.png, size = (self.png.GetWidth(), self.png.GetHeight()))
         
-        self.sizer1.Add(self.initialLabel, 1, wx.ALIGN_LEFT | wx.ALIGN_CENTRE_VERTICAL)
-        self.sizer1.AddSpacer(4)
-        self.sizer1.Add(self.image, 1, wx.ALIGN_CENTER | wx.ALIGN_CENTRE_VERTICAL)
-        self.sizer1.Add(self.gauge, 3, wx.ALIGN_CENTER)
-        self.sizer1.AddSpacer(4)
+        self.sizer1.Add(self.initialLabel, 0, wx.ALIGN_LEFT | wx.ALIGN_CENTRE_VERTICAL)
+        self.sizer1.Add(self.image, 0, wx.ALIGN_CENTER | wx.ALIGN_CENTRE_VERTICAL)
+        self.sizer1.Add(self.gauge, 0, wx.ALIGN_CENTER )
+        self.sizer1.AddSpacer(5)
         self.sizer1.Add(self.endingLabel, 1, wx.ALIGN_RIGHT | wx.ALIGN_CENTRE_VERTICAL)
         
         self.AddSpacer(5)
         self.line = wx.StaticLine(parent, -1, size = (self.gauge.GetSize()[0]*2 , 2))
-        self.Add(self.sizer1, 3 , wx.ALIGN_CENTER)
+        self.Add(self.sizer1, 0 , wx.ALIGN_LEFT)
         self.AddSpacer(5)
         self.Add(self.line, 0 , wx.ALIGN_CENTER)
         self.AddSpacer(5)
@@ -43,6 +42,11 @@ class CustomGaugeWx(wx.BoxSizer):
         #15 letters max
         letterLimit = 15
         title = title[:letterLimit]
+        spaces = (letterLimit - len(title))
+        whiteSpace = "               "
+        whiteSpace = whiteSpace[0:spaces+1]
+        title = title + whiteSpace
+        
         self.initialLabel.SetLabel(title)
     
     def SetEndingLabel(self, label):
