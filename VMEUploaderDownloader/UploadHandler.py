@@ -351,6 +351,26 @@ class UploadHandler:
             errorFile.write('Error in xmlupload service uploading VME: ' + self.vmeName + '.')
             errorFile.write(error)
             errorFile.close() 
+            if(os.path.exists(sys.path[0] + '\\' + self.msfListFile)):
+                while 1:
+                    size = os.path.getsize(sys.path[0] + '\\' + self.msfListFile)
+                    msfList = open(sys.path[0] + '\\' + self.msfListFile, 'a')
+                    try:
+                        msvcrt.locking(msfList.fileno(), msvcrt.LK_RLCK, size)
+                        msfList.write(self.XMLURI + '\n')
+                        print 'data: '+ self.XMLURI  
+                        msfList.close()
+                        break
+                    except:
+                        counter = counter+1 #to avoid deadlock
+                        msfList1.close()
+                        pass
+                    if(counter == 3):
+
+                        print "----------Can not write in " + self.msfList + "-----------"
+                        msfList.close()
+                        os.remove(sys.path[0] + '\\' + self.msfListFile)
+                        return
             if(self.msfListFile != "noMsf"):
                 self.removeUploadedXml()
             
@@ -378,13 +398,12 @@ class UploadHandler:
                         counter = counter+1 #to avoid deadlock
                         msfList1.close()
                         pass
-                    if(counter == 2):
+                    if(counter == 3):
 
                         print "----------Can not write in " + self.msfList + "-----------"
                         msfList.close()
                         os.remove(sys.path[0] + '\\' + self.msfListFile)
-                        return
-                  
+                        return            
                 
         if(str(self.id) == '-1'):
             if(os.path.exists(sys.path[0] + '\\' + self.msfListFile)):
