@@ -3,7 +3,7 @@
   File:    	 mafVolumeLargeWriter.h
   Language:  C++
   Date:      8:2:2008   11:26
-  Version:   $Revision: 1.2 $
+  Version:   $Revision: 1.3 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -112,7 +112,8 @@ protected:
 
 	//creates BBF files with LOD with sample rate ranges from 1 to nMaxSampleRate
 	//skipping less important levels in order to fit into nTotalMaxSize Bytes
-	void CreateLODs(int nMaxSampleRate, vtkIdType64 nTotalMaxSize) throw(...);
+  //returns number of constructed levels and in nTotalMaxSize their size in bytes
+	int CreateLODs(int nMaxSampleRate, vtkIdType64& nTotalMaxSize) throw(...);
 };
 
 #endif //__mafBrickingProcessObject__

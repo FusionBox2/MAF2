@@ -3,7 +3,7 @@
   File:    	 mafVolumeLargeWriter.cpp
   Language:  C++
   Date:      8:2:2008   11:27
-  Version:   $Revision: 1.3 $
+  Version:   $Revision: 1.4 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -27,6 +27,8 @@
 
 mafCxxTypeMacro(mafVolumeLargeWriter);
 #include "mafMemDbg.h"
+
+//#define _PROFILE_LARGEDATA_
 
 mafVolumeLargeWriter::mafVolumeLargeWriter()
 {
@@ -158,6 +160,11 @@ int mafVolumeLargeWriter::ComputeSampleRate(vtkIdType64 nSize, vtkIdType64 nMemL
 			throw std::invalid_argument(_("Invalid argument. Input Data Set cannot be NULL"));
 		}
 
+#ifdef _PROFILE_LARGEDATA_
+    LARGE_INTEGER liBegin;
+    ::QueryPerformanceCounter(&liBegin);
+#endif //_PROFILE_LARGEDATA_
+
 		//compute the volume size
 		vtkIdType64 nTotalSize = GetVOISizeInBytes();
 		int max_sample = ComputeSampleRate(nTotalSize / 1024, 1024
@@ -165,7 +172,24 @@ int mafVolumeLargeWriter::ComputeSampleRate(vtkIdType64 nSize, vtkIdType64 nMemL
 		
 		//compute the limit for our LODs
 		nTotalSize = (vtkIdType64)(nTotalSize*m_dblLimitCoef);
-		CreateLODs(max_sample, nTotalSize);
+		vtkIdType64 nNewTotalSize = nTotalSize;
+    int nLevels = CreateLODs(max_sample, nNewTotalSize);
+
+#ifdef _PROFILE_LARGEDATA_
+    LARGE_INTEGER liEnd, liFreq;
+    ::QueryPerformanceCounter(&liEnd);
+    ::QueryPerformanceFrequency(&liFreq);
+    
+    int VOI[6];
+    m_InputDataSet->GetVOI(VOI);
+
+    FILE* fLog = fopen("mafVolumeLargeWriter.log", "at");
+    fprintf(fLog, "%dx%dx%d (%.2f MB -> %.2f MB in %d levels) in %.2f s.\n", 
+      VOI[1] + 1, VOI[3] + 1, VOI[5] + 1, (double)(GetVOISizeInBytes() / (1024*1024.0)),
+      (double)(nNewTotalSize / (1024*1024.0)), nLevels,
+      ((double)(liEnd.QuadPart - liBegin.QuadPart)) / liFreq.QuadPart);
+    fclose(fLog);          
+#endif //_PROFILE_LARGEDATA_
 	}
 	catch (std::exception& e)
 	{
@@ -208,7 +232,8 @@ int mafVolumeLargeWriter::ComputeBrickSize(int nSampleRate, int nMaxSampleRate)
 
 //creates BBF files with LOD with sample rate ranges from 1 to nMaxSampleRate
 //skipping less important levels in order to fit into nTotalMaxSize Bytes
-void mafVolumeLargeWriter::CreateLODs(int nMaxSampleRate, vtkIdType64 nTotalMaxSize) throw(...)
+//returns number of constructed levels and in nTotalMaxSize their size in bytes
+int mafVolumeLargeWriter::CreateLODs(int nMaxSampleRate, vtkIdType64& nTotalMaxSize) throw(...)
 {
 	//construct name
 	wxString szPath, szFile, szExt;	
@@ -232,11 +257,26 @@ void mafVolumeLargeWriter::CreateLODs(int nMaxSampleRate, vtkIdType64 nTotalMaxS
   bf.SetInputYCoordinates(m_pInputXYZCoords[1]);
   bf.SetInputZCoordinates(m_pInputXYZCoords[2]);
 
+#ifdef _PROFILE_LARGEDATA_
+  int VOI[6];
+  m_InputDataSet->GetVOI(VOI);
+  double dblVOISizeInMB = GetVOISizeInBytes() / (1024*1024.0);
+  
+  LARGE_INTEGER liFreq;
+  ::QueryPerformanceFrequency(&liFreq);
+#endif
+
+  int nRetLevels = 0;
 	vtkIdType64 nTotalSize = 0;
 	for (int i = 1; i <= nMaxSampleRate/*nCount*/; i++)
 	{
 //		if (pOrder[i] <= nMaxSampleRate)
 		{
+#ifdef _PROFILE_LARGEDATA_
+      LARGE_INTEGER liBegin;
+      ::QueryPerformanceCounter(&liBegin);
+#endif //_PROFILE_LARGEDATA_
+
 			wxString szFName = wxString::Format("%s_%02d.bbf", szFNamePref, /*pOrder[i]*/i);
 
 			bf.SetSampleRate(i/*pOrder[i]*/);
@@ -248,11 +288,29 @@ void mafVolumeLargeWriter::CreateLODs(int nMaxSampleRate, vtkIdType64 nTotalMaxS
 				throw std::ios::failure(szMsg.c_str());
 			}
 
-			nTotalSize += vtkMAFFile2::GetFileSize(szFName);
+      vtkIdType64 nFileSize = vtkMAFFile2::GetFileSize(szFName);
+
+#ifdef _PROFILE_LARGEDATA_
+      LARGE_INTEGER liEnd;
+      ::QueryPerformanceCounter(&liEnd);      
+
+      FILE* fLog = fopen("mafVolumeLargeWriter2.log", "at");
+      fprintf(fLog, "%dx%dx%d (%.2f MB -> %.2f MB; SR = %d, BS = %d) in %.2f s.\n", 
+        VOI[1] + 1, VOI[3] + 1, VOI[5] + 1, dblVOISizeInMB,
+        (double)(nFileSize / (1024*1024.0)), bf.GetSampleRate(), 
+        bf.GetBrickSize(), ((double)(liEnd.QuadPart - liBegin.QuadPart)) / liFreq.QuadPart);
+      fclose(fLog);          
+#endif //_PROFILE_LARGEDATA_
+
+      nRetLevels++;
+			nTotalSize += nFileSize;
 			if (nTotalSize >= nTotalMaxSize)
 				break;	//out of space
 		}
 	}	
+
+  nTotalMaxSize = nTotalSize;
+  return nRetLevels;
 }
 
 //returns estimated total size for the given VOI and number of levels

@@ -3,7 +3,7 @@
   File:    	 mafBrickedFileWriter.h
   Language:  C++
   Date:      11:2:2008   12:40
-  Version:   $Revision: 1.2 $
+  Version:   $Revision: 1.3 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -32,8 +32,7 @@ protected:
 	char* m_pBricksBuffer;
 	bool* m_pBricksValidity;	//false mean that the brick is uniform
 
-	//buffer for input data set
-	char* m_pLineBuffer;
+	//buffer for input data set	
 	char* m_pDataBuffer;	//sampled data
 
 	//a small buffers capable to hold 16 tuples (or their sums)

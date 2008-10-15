@@ -3,7 +3,7 @@
   File:    	 mafBrickedFileWriter.cpp
   Language:  C++
   Date:      11:2:2008   12:42
-  Version:   $Revision: 1.5 $
+  Version:   $Revision: 1.6 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -41,8 +41,7 @@ mafBrickedFileWriter::mafBrickedFileWriter()
   m_pInputXYZCoords[2] = NULL;
 
 	m_pBricksBuffer = NULL;
-	m_pBricksValidity = NULL;
-	m_pLineBuffer = NULL;	
+	m_pBricksValidity = NULL;	
 
 	m_pTuplesBuffer = NULL;
 	m_pSumTuplesBuffer = NULL;		
@@ -193,8 +192,7 @@ void mafBrickedFileWriter::SetInputZCoordinates(vtkDoubleArray* pCoords)
 
 //allocates the required buffers
 /*virtual*/ void mafBrickedFileWriter::AllocateBuffers() throw(...)
-{
-	m_pLineBuffer = new char[m_nBricksDimSizeInB[0]];
+{	
 	m_pDataBuffer = new char[m_nBricksDimSizeInB[1]];
 	m_pBricksBuffer = new char[m_nBricksDimSizeInB[1]];	
 	m_pBricksValidity = new bool[m_nBricksDimSize[1]];
@@ -226,8 +224,7 @@ void mafBrickedFileWriter::SetInputZCoordinates(vtkDoubleArray* pCoords)
 /*virtual*/ void mafBrickedFileWriter::DeallocateBuffers() throw(...)
 {
 	cppDEL(m_pLowResLevel);
-	cppDEL(m_pMainIdxTable);
-	cppDEL(m_pLineBuffer);
+	cppDEL(m_pMainIdxTable);	
 	cppDEL(m_pDataBuffer);
 	cppDEL(m_pBricksBuffer);
 	cppDEL(m_pBricksValidity);
@@ -265,6 +262,7 @@ void mafBrickedFileWriter::SetInputZCoordinates(vtkDoubleArray* pCoords)
 	//compute how many elements will be read in one step
 	int nElemsPerLine = (VOI[1] - VOI[0] + 1) * dsc->GetNumberOfComponents();
 	int nBytesPerLine = nElemsPerLine * dsc->GetDataTypeSize();
+  char* pLineBuffer = new char[nBytesPerLine];
 	
 	//number of sampled bytes
 	int nSkipBytesX = (m_nBricksDim[0]*m_nBrickSize[0] - nDims[0])*m_nVoxelSizeInB;
@@ -298,12 +296,12 @@ void mafBrickedFileWriter::SetInputZCoordinates(vtkDoubleArray* pCoords)
 		for (int yb = 0; yb < nDims[1]; yb++, nLineIndex += dataIncrSkip[1])
 		{
 			//process every pixel the current line 
-			dp->GetDataArray(nScalarsDscIndex, (void*)m_pLineBuffer, 
+			dp->GetDataArray(nScalarsDscIndex, (void*)pLineBuffer, 
 				(vtkIdType64)nElemsPerLine, nLineIndex);
 
 			//now sample the read pixel line and write it
 			//first voxel is always present
-			char* pSrcLineBuf = m_pLineBuffer;
+			char* pSrcLineBuf = pLineBuffer;
 			for (int xb = 0; xb < nDims[0]; xb++)
 			{
 				for (int i = 0; i < m_nVoxelSizeInB; i++) {
@@ -341,6 +339,8 @@ void mafBrickedFileWriter::SetInputZCoordinates(vtkDoubleArray* pCoords)
 			pDstBuf = m_pDataBuffer;
 		}
 	}	
+
+  delete[] pLineBuffer;
 }
 
 //------------------------------------------------------------------------

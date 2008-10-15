@@ -3,7 +3,7 @@
   File:    	 mafVolumeLargeReader.cpp
   Language:  C++
   Date:      20:2:2008   14:36
-  Version:   $Revision: 1.4 $
+  Version:   $Revision: 1.5 $
   Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
   
   Copyright (c) 2008
@@ -24,6 +24,8 @@
 #include "vtkPointData.h"
 
 mafCxxTypeMacro(mafVolumeLargeReader);
+
+//#define _PROFILE_LARGEDATA_
 
 mafVolumeLargeReader::mafVolumeLargeReader(void)
 {
@@ -233,6 +235,11 @@ void mafVolumeLargeReader::SetOutputRLGDataSet(vtkRectilinearGrid* ds)
 		return true; //no change
 	}
 
+#ifdef _PROFILE_LARGEDATA_
+  LARGE_INTEGER liBegin;
+  ::QueryPerformanceCounter(&liBegin);
+#endif //_PROFILE_LARGEDATA_
+
 	try
 	{
 		ExecuteInformation();
@@ -251,6 +258,29 @@ void mafVolumeLargeReader::SetOutputRLGDataSet(vtkRectilinearGrid* ds)
 
 		return false;
 	}
+
+#ifdef _PROFILE_LARGEDATA_
+  LARGE_INTEGER liEnd;
+  ::QueryPerformanceCounter(&liEnd);   
+
+  LARGE_INTEGER liFreq;
+  ::QueryPerformanceFrequency(&liFreq);
+
+  int VOI[6];
+  this->GetVOI(VOI);     
+
+  FILE* fLog = fopen("mafVolumeLargeReader.log", "at");
+  fprintf(fLog, "%dx%dx%d (%d-%dx%d-%dx%d-%d = %.2f MB) retrieved in %.2f s - SR = %d, ML = %d MB.\n",
+    VOI[1] - VOI[0] + 1, VOI[3] - VOI[2] + 1, VOI[5] - VOI[4] + 1, 
+    VOI[0], VOI[1], VOI[2], VOI[3], VOI[4], VOI[5],
+    this->GetOutputDataSet()->GetScalarSize()*
+    (((VOI[1] - VOI[0] + 1)*(VOI[3] - VOI[2] + 1)/1024.0)*(VOI[5] - VOI[4] + 1)) / 1024.0,    
+    ((double)(liEnd.QuadPart - liBegin.QuadPart)) / liFreq.QuadPart,
+    this->GetSampleRate(), this->GetMemoryLimit() / 1024
+    );
+  fclose(fLog);          
+#endif //_PROFILE_LARGEDATA_
+
 
 	m_LastUpdateTime.Modified();
 	return true;
