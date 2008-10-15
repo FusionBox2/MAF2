@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-10-15 15:33:52 $
-  Version:   $Revision: 1.67 $
+  Date:      $Date: 2008-10-15 15:50:34 $
+  Version:   $Revision: 1.68 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -450,7 +450,6 @@ bool lhpBuilderApp::OnInit()
   // show the application
 	m_Logic->ShowSplashScreen(splashBitmap);
   m_Logic->Show();
-  m_Logic->Init(0,NULL); // calls FileNew - which create the root
 
   m_User.SetProxyPort(m_ProxyPort);
   m_User.SetProxyURL(m_ProxyURL);
@@ -462,6 +461,9 @@ bool lhpBuilderApp::OnInit()
   {
     retry = m_User.CheckUserCredentials();
   }
+
+  m_Logic->Init(0,NULL); // calls FileNew - which create the root
+
 
   return TRUE;
 }
