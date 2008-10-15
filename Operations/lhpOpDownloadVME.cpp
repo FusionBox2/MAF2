@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-02 10:35:28 $
-Version:   $Revision: 1.35 $
+Date:      $Date: 2008-10-15 15:36:23 $
+Version:   $Revision: 1.36 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -138,6 +138,14 @@ lhpOpDownloadVME::~lhpOpDownloadVME()
   mafDEL(m_Group);
   mafDEL(m_RootGroup);
 }
+
+//----------------------------------------------------------------------------
+bool lhpOpDownloadVME::Accept(mafNode* vme)
+//----------------------------------------------------------------------------
+{
+  return (lhpUser::IsAuthenticated() && vme != NULL);
+}
+
 //----------------------------------------------------------------------------
 mafOp* lhpOpDownloadVME::Copy()
 //----------------------------------------------------------------------------
@@ -145,12 +153,7 @@ mafOp* lhpOpDownloadVME::Copy()
 	/** return a copy of itself, needs to put it into the undo stack */
 	return new lhpOpDownloadVME(m_Label);
 }
-//----------------------------------------------------------------------------
-bool lhpOpDownloadVME::Accept(mafNode* vme)
-//----------------------------------------------------------------------------
-{
-	return (vme != NULL);
-}
+
 //----------------------------------------------------------------------------
 void lhpOpDownloadVME::OpRun()
 //----------------------------------------------------------------------------
