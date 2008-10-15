@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpUser.cpp,v $
 Language:  C++
-Date:      $Date: 2008-04-15 14:55:26 $
-Version:   $Revision: 1.8 $
+Date:      $Date: 2008-10-15 15:32:31 $
+Version:   $Revision: 1.9 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004
@@ -27,6 +27,8 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "mafCrypt.h"
 
 #include <fstream>
+
+ bool lhpUser::m_IsAuthenticated = false;
 
 //----------------------------------------------------------------------------
 lhpUser::lhpUser()
@@ -52,17 +54,29 @@ bool lhpUser::CheckUserCredentials()
   {
     InitializeUserInformations();
   }
-  int res = ShowLoginDialog() != wxID_CANCEL;
-  if(!res) return res;
+ 
+  int res = false;
+  if(ShowLoginDialog() != wxID_CANCEL)
+    res = !m_Username.IsEmpty() && !m_Password.IsEmpty() && ExecuteAuthenticationScript();
 
-  res = res && !m_Username.IsEmpty() && !m_Password.IsEmpty() && ExecuteAuthenticationScript();
   if(!res)
   {
-    wxMessageBox("Incorrect Authentication");
+    int result = wxMessageBox("Incorrect Authentication.\nRetry?\nPressing Cancel information about user will not stored on VME tagArray!!",wxMessageBoxCaptionStr, wxOK | wxCANCEL);
+    //returns 4 for OK, 16 for CANCEL
+    if (result == 16)
+    {
+      return false;
+    }
+    else
+    {
+      return true;
+    }
   }
+  m_IsAuthenticated = true;
 
-  return res;
+  return false;
 }
+
 //----------------------------------------------------------------------------
 bool lhpUser::ExecuteAuthenticationScript()
 //----------------------------------------------------------------------------
@@ -138,3 +152,6 @@ bool lhpUser::ExecuteAuthenticationScript()
     return false;
   }  
 }
+
+
+
