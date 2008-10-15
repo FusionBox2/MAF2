@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.h,v $
 Language:  C++
-Date:      $Date: 2008-10-02 10:34:51 $
-Version:   $Revision: 1.11 $
+Date:      $Date: 2008-10-15 15:37:49 $
+Version:   $Revision: 1.12 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -72,7 +72,7 @@ public:
 	mafOp* Copy();
 
 	/** Return true for the acceptable vme type. */
-  bool Accept(mafNode* vme) {return true;};
+  bool Accept(mafNode* vme);
 
 	/** Builds operation's interface by calling CreateOpDialog() method. */
 	void OpRun();

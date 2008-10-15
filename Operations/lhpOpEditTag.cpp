@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-02 16:38:52 $
-Version:   $Revision: 1.23 $
+Date:      $Date: 2008-10-15 15:37:36 $
+Version:   $Revision: 1.24 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -162,8 +162,9 @@ mafOp* lhpOpEditTag::Copy()
 bool lhpOpEditTag::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-	return (vme != NULL);
+  return (lhpUser::IsAuthenticated() && vme != NULL);
 }
+
 //----------------------------------------------------------------------------
 void lhpOpEditTag::OpRun()
 //----------------------------------------------------------------------------
