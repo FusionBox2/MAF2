@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-13 10:24:03 $
-Version:   $Revision: 1.92 $
+Date:      $Date: 2008-10-15 15:37:18 $
+Version:   $Revision: 1.93 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -204,16 +204,8 @@ void lhpOpUploadVME::OpRun()
   int result = OP_RUN_CANCEL;
 
   bool upToDate = false;
-  if(CheckLogin())
-  {
-    upToDate = this->IsLHPBuilderVersionUpToDate();
-  }
-  else
-  {
-    OpStop(result);
-    return;
-  }
 
+  upToDate = this->IsLHPBuilderVersionUpToDate();
   if(upToDate)
   {
     mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
@@ -1164,18 +1156,7 @@ bool lhpOpUploadVME::IsLHPBuilderVersionUpToDate()
   }  
 
 }
-//----------------------------------------------------------------------------
-bool lhpOpUploadVME::CheckLogin()
-//----------------------------------------------------------------------------
-{
-  bool result = false;
 
-  m_User.SetProxyPort(m_ProxyPort);
-  m_User.SetProxyURL(m_ProxyURL);
-
-  result = m_User.CheckUserCredentials();
-  return result;
-}
 //----------------------------------------------------------------------------
 mafString lhpOpUploadVME::GetXMLDictionaryFileName( mafString dictionaryFileNamePrefix )
 //----------------------------------------------------------------------------
