@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-10-02 10:34:00 $
-Version:   $Revision: 1.31 $
+Date:      $Date: 2008-10-15 15:38:09 $
+Version:   $Revision: 1.32 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -82,9 +82,6 @@ public:
   /** Set subDictionray. */
   void SetDictionary(int subDictionary);   
 
-  /** This method use MAF Api for set the login in order to make operation like upload or download*/
-  bool CheckLogin();
-
   /** Load configuration file for connection*/
   void SaveConnectionConfigurationFile();
 
@@ -94,14 +91,6 @@ public:
 
   /** Save information information about VME link*/
   void SaveLinkInfo();
-
-  /** Used with proxy authentication*/
-  void SetProxyURL(mafString proxyURL) {m_ProxyURL = proxyURL;};
-  mafString GetProxyURL() {return m_ProxyURL;};
-
-  /** Used with proxy authentication*/
-  void SetProxyPort(mafString proxyPort) {m_ProxyPort = proxyPort;};
-  mafString GetProxyPort() {return m_ProxyPort;};
 
 protected:
   
