@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-10-02 10:35:44 $
-Version:   $Revision: 1.7 $
+Date:      $Date: 2008-10-15 15:47:59 $
+Version:   $Revision: 1.8 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -99,9 +99,6 @@ protected:
   /** This method checks if process exists and if there is a lock file */
   bool ExistsRunningProcess();
 
-  /** This method use MAF Api for set the login in order to make operation like upload or download*/
-  bool CheckLogin();
-  
   /** Load configuration file for connection*/
   void SaveConnectionConfigurationFile();
 

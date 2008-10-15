@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-15 15:36:23 $
-Version:   $Revision: 1.36 $
+Date:      $Date: 2008-10-15 15:47:46 $
+Version:   $Revision: 1.37 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -192,15 +192,7 @@ void lhpOpDownloadVME::OpRun()
   int result = OP_RUN_CANCEL;
   bool upToDate = false;
 
-  if(CheckLogin())
-  {
-    upToDate = this->IsLHPBuilderVersionUpToDate();
-  }
-  else
-  {
-    OpStop(result);
-    return;
-  }
+  upToDate = this->IsLHPBuilderVersionUpToDate();
 
   if(upToDate)
   { 
@@ -628,19 +620,6 @@ bool lhpOpDownloadVME::CreateIncomingDirectory()
     if ( wxDirExists(existIncoming) ) resultIncoming = true;
   }
   return resultIncoming;
-}
-
-//----------------------------------------------------------------------------
-bool lhpOpDownloadVME::CheckLogin()
-//----------------------------------------------------------------------------
-{
-  bool result = false;
-
-  m_User.SetProxyPort(m_ProxyPort);
-  m_User.SetProxyURL(m_ProxyURL);
-
-  result = m_User.CheckUserCredentials();
-  return result;
 }
 
 //----------------------------------------------------------------------------
