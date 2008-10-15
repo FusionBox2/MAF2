@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-08 12:56:25 $
-Version:   $Revision: 1.25 $
+Date:      $Date: 2008-10-15 15:36:50 $
+Version:   $Revision: 1.26 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -133,6 +133,13 @@ lhpOpUploadMultiVME::~lhpOpUploadMultiVME()
 }
 
 //----------------------------------------------------------------------------
+bool lhpOpUploadMultiVME::Accept(mafNode* vme)
+//----------------------------------------------------------------------------
+{
+  return (lhpUser::IsAuthenticated() && vme != NULL);
+}
+
+//----------------------------------------------------------------------------
 mafOp* lhpOpUploadMultiVME::Copy()
 //----------------------------------------------------------------------------
 {
@@ -193,18 +200,7 @@ void lhpOpUploadMultiVME::OpRun()
   m_UploadVME->SetListener(this->GetListener());
 
   bool upToDate = false;
-  m_UploadVME->SetProxyPort(m_ProxyPort);
-  m_UploadVME->SetProxyURL(m_ProxyURL);
-
-  if(m_UploadVME->CheckLogin()) 
-  {
-    upToDate = this->IsLHPBuilderVersionUpToDate();
-  }
-  else
-  {
-    OpStop(result);
-    return;
-  } 
+  upToDate = this->IsLHPBuilderVersionUpToDate();
 
   if (upToDate)
   {
