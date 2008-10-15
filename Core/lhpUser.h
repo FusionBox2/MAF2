@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpUser.h,v $
 Language:  C++
-Date:      $Date: 2008-04-14 11:04:04 $
-Version:   $Revision: 1.4 $
+Date:      $Date: 2008-10-15 15:32:55 $
+Version:   $Revision: 1.5 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004
@@ -44,8 +44,13 @@ public:
   void SetProxyPort(mafString proxyPort) {m_ProxyPort = proxyPort;};
   mafString GetProxyPort() {return m_ProxyPort;};
 
+  /** return true if user is authenticated on BiomedTown*/
+  static bool IsAuthenticated() {return m_IsAuthenticated;};
+
 protected:
   bool ExecuteAuthenticationScript();
+
+  static bool m_IsAuthenticated;
 
   mafString m_PythonUploadFullPath; //>directory where the scripts are
   mafString m_FileName; //>script file name
@@ -54,6 +59,5 @@ protected:
 
   mafString m_ProxyURL;
   mafString m_ProxyPort;
-
 };
 #endif
