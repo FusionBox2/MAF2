@@ -2,9 +2,9 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-15 15:37:36 $
-Version:   $Revision: 1.24 $
-Authors:   Roberto Mucci
+Date:      $Date: 2008-10-16 09:41:45 $
+Version:   $Revision: 1.25 $
+Authors:   Roberto Mucci , Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
 SCS s.r.l. - BioComputing Competence Centre (www.scsolutions.it - www.b3c.it)
@@ -71,6 +71,8 @@ MafMedical is partially based on OpenMAF.
 #include <istream>
 #include <ostream>
 
+const bool DEBUG_TAGS_PROPAGATION = false;
+
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(lhpOpEditTag);
 //----------------------------------------------------------------------------
@@ -92,6 +94,7 @@ enum lhpOpUploadVME_ID
   ID_SUBDICTIONARY = MINID, 
   ID_METADATA_EDITOR,
   ID_USEFADICTIONARY,
+  ID_PROPAGATE,
 };
 
 //----------------------------------------------------------------------------
@@ -186,8 +189,16 @@ void lhpOpEditTag::OpRun()
   int result = OP_RUN_CANCEL;
 
   bool upToDate = false;
-  upToDate = this->IsLHPBuilderVersionUpToDate();
-
+  
+  if (DEBUG_TAGS_PROPAGATION)
+  {
+    upToDate = true;
+  }
+  else
+  {
+    upToDate = this->IsLHPBuilderVersionUpToDate();
+  }
+  
   if(upToDate)
   {
     CreateGui();
@@ -257,6 +268,13 @@ void lhpOpEditTag::OnEvent(mafEventBase *maf_event)
       mafLogMessage("You choosed dictionary number %i", m_SubdictionaryId);
     }
     break;
+    
+    case ID_PROPAGATE:
+    {
+      PropagateTagsToChoosedVMES();
+      return;
+    }
+    break;
 
     case wxOK:
       {
@@ -283,9 +301,16 @@ void lhpOpEditTag::OnEvent(mafEventBase *maf_event)
 void lhpOpEditTag::OpDo()   
 //----------------------------------------------------------------------------
 {
-  if (EditTags()== MAF_ERROR)
+  if (DEBUG_TAGS_PROPAGATION)
   {
-    return;
+    // continue
+  }
+  else
+  {
+    if (EditTags()== MAF_ERROR)
+    {
+      return;
+    }
   }
 }
 //-------------------------------------------------------------------
@@ -303,7 +328,6 @@ int lhpOpEditTag::EditTags()
     mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
   }
 
-  bool result = true;
   //create cache: logic comunicate the msf directory
   mafEvent event;
   event.SetSender(this);
@@ -371,6 +395,21 @@ int lhpOpEditTag::EditTags()
 
   ImportMSF();
   mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
+
+  // show dialog for tag propagation...
+  int propagate = wxMessageBox(wxString::Format("Propagate edited tags to other VMEs?"),\
+  "Propagate Tags", wxOK | wxCANCEL | wxCENTRE | wxICON_QUESTION);
+  
+  if (propagate == wxOK)
+  {
+    PropagateTagsToChoosedVMES();
+  } 
+  else if (propagate == wxCANCEL)
+  {
+    std::ostringstream stringStream;
+    stringStream << "Skipping propagation..."  << std::endl;
+    mafLogMessage(stringStream.str().c_str());
+  }
   return MAF_OK;
 }
 
@@ -939,7 +978,13 @@ mafString lhpOpEditTag::GetXMLDictionaryFileName( mafString dictionaryFileNamePr
 void lhpOpEditTag::CreateGui()
 {
   m_Gui = new mafGUI(this);
-
+  
+  if (DEBUG_TAGS_PROPAGATION)
+  {
+    m_Gui->Divider(2);
+    m_Gui->Button(ID_PROPAGATE,"test propagate");
+  }
+  
   m_Gui->Divider(2);
   const wxString metadataEditor[] = {"Metadata Editor","CSV Editor"};
   m_Gui->Label("Choose editor");
@@ -1064,4 +1109,114 @@ int lhpOpEditTag::AppendFADictionary()
   }
 
   return MAF_OK;
+}
+
+void lhpOpEditTag::PropagateTagsToChoosedVMES()
+{
+  mafString s(_("Choose target VMEs"));
+  mafEvent e(this,VME_CHOOSE, &s);
+  e.SetBool(true); //true to create dialog with VME multiselect
+  mafEventMacro(e);
+  std::vector<mafNode *> nodeVector;
+  nodeVector = e.GetVmeVector();
+  int size = nodeVector.size();
+
+  std::ostringstream stringStream;
+  stringStream << "Vector size: "<< size  << std::endl;
+  mafLogMessage(stringStream.str().c_str());
+
+  // for each vme different from the input one
+  // copy input edited tags into it
+
+  // get L000 tags from the vme tag array
+  std::vector<std::string> tagNamesVector;
+  std::vector<std::string>::iterator tagNamesVectorIterator;
+
+  std::map<std::string, std::string> tagsToBeCopiedDictionary;
+  std::map<std::string, std::string>::iterator tagsToBeCopiedDictionaryIterator;
+
+  mafTagArray *inputTagArray = m_Input->GetTagArray();
+  inputTagArray->GetTagList(tagNamesVector); 
+
+  size = tagNamesVector.size();
+
+  for (int i = 0; i < size; i++) 
+  { 
+    std::string tagName = tagNamesVector[i];
+    std::string stringToSearch = "L0000";
+
+    bool found = false;
+    std::ostringstream stringStream;
+
+    int foundPos = -1;
+    foundPos = tagName.find(stringToSearch);
+    std::string foundTxt;
+
+
+    if (foundPos == 0)
+    {
+      foundTxt = "Found";
+      std::string tagValue;
+
+      tagValue = inputTagArray->GetTag(tagName.c_str())->GetValue();
+      tagsToBeCopiedDictionary[tagName] = tagValue;
+    } 
+    else
+    {
+      foundTxt = "NOT Found";
+    }
+
+    stringStream << foundTxt << " " << stringToSearch << " in "<< tagName <<  std::endl;
+    mafLogMessage(stringStream.str().c_str());
+  }
+
+  std::vector<mafNode *>::iterator nodeVectorIterator = nodeVector.begin();
+  stringStream.clear();
+  stringStream << "The following vme were checked: " << std::endl;
+  mafLogMessage(stringStream.str().c_str());
+
+
+  // for each target vme excluding the input
+  while( nodeVectorIterator != nodeVector.end() )
+  {
+    mafVME *targetVme = mafVME::SafeDownCast(*nodeVectorIterator);
+    assert(targetVme);
+    std::ostringstream stringStream;
+    stringStream << "vme name: " << targetVme->GetName()  << std::endl;
+    mafLogMessage(stringStream.str().c_str());
+
+    if (targetVme == m_Input)
+    {
+      std::ostringstream stringStream;
+      stringStream << "Skipping input vme!"  << std::endl;
+      mafLogMessage(stringStream.str().c_str());
+    } 
+    else
+    {
+      std::ostringstream stringStream;
+      stringStream << "Copying to "  << targetVme->GetName() << std::endl;
+      mafLogMessage(stringStream.str().c_str());
+
+      // get the target vme tag array
+      mafTagArray *targetTagArray = targetVme->GetTagArray();
+
+      tagsToBeCopiedDictionaryIterator = tagsToBeCopiedDictionary.begin();
+
+      // for every tag in source:
+      while (tagsToBeCopiedDictionaryIterator != tagsToBeCopiedDictionary.end()) 
+      { 
+        std::string key = tagsToBeCopiedDictionaryIterator->first;
+        std::string val = tagsToBeCopiedDictionaryIterator->second;
+        std::ostringstream stringStream;
+        stringStream << "Copying " << key << " " << val << " to " << targetVme->GetName() << std::endl;
+        mafLogMessage(stringStream.str().c_str());
+        targetTagArray->SetTag(key.c_str(), val.c_str());
+        tagsToBeCopiedDictionaryIterator++;
+      }
+
+    }
+
+    nodeVectorIterator++;
+  }
+  return;
 }

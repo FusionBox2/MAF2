@@ -2,9 +2,9 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.h,v $
 Language:  C++
-Date:      $Date: 2008-10-02 16:38:52 $
-Version:   $Revision: 1.9 $
-Authors:   Roberto Mucci
+Date:      $Date: 2008-10-16 09:41:45 $
+Version:   $Revision: 1.10 $
+Authors:   Roberto Mucci , Stefano Perticoni 
 ==========================================================================
 Copyright (c) 2002/2007
 SCS s.r.l. - BioComputing Competence Centre (www.scsolutions.it - www.b3c.it)
@@ -69,7 +69,7 @@ public:
   /** Class for handle mafEvent*/
   virtual void OnEvent(mafEventBase *maf_event);
 
-	/** Return true for the acceptable vme type. */
+  /** Return true for the acceptable vme type. */
 	bool Accept(mafNode* vme);
 
 	/** Builds operation's interface by calling CreateOpDialog() method. */
@@ -86,6 +86,9 @@ public:
 
 protected:
   
+  /** Propagate tags to other vmes choosed through a tree checkbox */
+  void PropagateTagsToChoosedVMES();
+
   /** check if lhbbuilder software version is up to date in order to a allow vme uploading */
   bool IsLHPBuilderVersionUpToDate();
 
