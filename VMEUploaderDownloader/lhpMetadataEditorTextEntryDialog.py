@@ -19,10 +19,11 @@ class Dialog(wx.Dialog):
     def __init__(
             self, parent, ID, title, size=wx.DefaultSize, pos=wx.DefaultPosition, 
             style=wx.DEFAULT_DIALOG_STYLE,
-            useMetal=False, selectedTag = ""):
+            useMetal=False, selectedTag = "", selectedText = ""):
         
         self.TextControl = None
-        self.SelectedTag = selectedTag
+        
+        # need default selection
         
         mep = parent
         assert isinstance(mep , lhpMetadataEditor.MetadataEditorPanel)
@@ -96,7 +97,7 @@ class Dialog(wx.Dialog):
                                                 demo         = True,
                                                 name         = control[0])
         
-                
+           
         elif vt == "list":
              
              values = pi.GetValueList(node)
@@ -108,7 +109,7 @@ class Dialog(wx.Dialog):
                          | wx.CB_READONLY
                          #| wx.CB_SORT
                          )
-
+             
         elif vt == "bool":
              
              values = pi.GetValueList(node)
@@ -125,22 +126,27 @@ class Dialog(wx.Dialog):
             
             
             self.TextControl = wx.TextCtrl(self, -1, "", validator = TextObjectValidator(vt))
+            self.TextControl.SetValue(selectedText)
+           
         elif vt == "URI":
         
             print "URI validation..."
             
             
             self.TextControl = wx.TextCtrl(self, -1, "", validator = TextObjectValidator(vt))
+            self.TextControl.SetValue(selectedText)
            
         elif vt == "integer":
             print "int validation..."
     
             self.TextControl = wx.TextCtrl(self, -1, "", validator = TextObjectValidator(vt))
-    
+            self.TextControl.SetValue(selectedText)
+           
         elif vt == "real":
             print "real validation..."
             self.TextControl = wx.TextCtrl(self, -1, "", validator = TextObjectValidator(vt))
-        
+            self.TextControl.SetValue(selectedText)
+           
         else:
             
             label = wx.StaticText(self, -1, "Cannot Create ")

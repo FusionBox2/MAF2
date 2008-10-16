@@ -212,12 +212,14 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
 
         tagName = self.tree.GetItemText(evt.GetItem())
         selectedTag = self.tree.GetItemText(evt.GetItem(), 2)
+        selectedTagValue = self.tree.GetItemText(evt.GetItem(), 1)
         print selectedTag
         if self.TagsThatCanBeEditedDictionary.has_key(selectedTag):
         
             dlg = lhpMetadataEditorTextEntryDialog.Dialog(self, -1, tagName, size=(350, 200),
                              #style=wx.CAPTION | wx.SYSTEM_MENU | wx.THICK_FRAME,
-                             style=wx.DEFAULT_DIALOG_STYLE, selectedTag = selectedTag# & ~wx.CLOSE_BOX,
+                             style=wx.DEFAULT_DIALOG_STYLE, selectedTag = selectedTag,
+                             selectedText = selectedTagValue# & ~wx.CLOSE_BOX,
                              )
             
             val = dlg.ShowModal()
