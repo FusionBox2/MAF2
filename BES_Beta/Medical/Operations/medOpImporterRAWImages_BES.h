@@ -2,16 +2,16 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: medOpImporterRAWImages_BES.h,v $
   Language:  C++
-  Date:      $Date: 2008-07-25 12:30:41 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2008-10-17 13:19:06 $
+  Version:   $Revision: 1.6 $
   Authors:   Stefania Paperini porting Matteo Giacomoni
              Modified by Josef Kohout to support large volumes 
 ==========================================================================
 Copyright (c) 2002/2004
 CINECA - Interuniversity Consortium (www.cineca.it) 
 =========================================================================*/
-#ifndef __medOpImporterRAWImages_H__
-#define __medOpImporterRAWImages_H__
+#ifndef __medOpImporterRAWImages_BES_H__
+#define __medOpImporterRAWImages_BES_H__
 
 //----------------------------------------------------------------------------
 // Include :
