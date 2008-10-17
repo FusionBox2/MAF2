@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.h,v $
   Language:  C++
-  Date:      $Date: 2008-10-15 15:34:28 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2008-10-17 07:38:50 $
+  Version:   $Revision: 1.5 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -15,6 +15,8 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "lhpBuilderLogic.h" 
+#include "mafEvent.h"
+#include "mafObserver.h"
 
 //----------------------------------------------------------------------------
 // forward references :
@@ -27,13 +29,6 @@ public:
   bool OnInit();
   int  OnExit();
 
-  /** Used with proxy authentication*/
-  void SetProxyURL(mafString proxyURL) {m_ProxyURL = proxyURL;};
-  mafString GetProxyURL() {return m_ProxyURL;};
-
-  /** Used with proxy authentication*/
-  void SetProxyPort(mafString proxyPort) {m_ProxyPort = proxyPort;};
-  mafString GetProxyPort() {return m_ProxyPort;};
 
   ////Called when the application is in the idle state
   //virtual void OnIdle(wxIdleEvent& event);  
@@ -41,9 +36,7 @@ public:
 
 protected:
   lhpBuilderLogic *m_Logic;
-  static lhpUser  m_User;
-  mafString m_ProxyURL;
-  mafString m_ProxyPort;
+
 };
 DECLARE_APP(lhpBuilderApp)
 #endif 

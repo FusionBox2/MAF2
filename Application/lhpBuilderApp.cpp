@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-10-15 15:50:34 $
-  Version:   $Revision: 1.68 $
+  Date:      $Date: 2008-10-17 07:38:20 $
+  Version:   $Revision: 1.69 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -18,7 +18,6 @@
 // Failing in doing this will result in a run-time error saying:
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
-
 #include "lhpBuilderApp.h"
 
 #include <wx/datetime.h>
@@ -29,7 +28,6 @@
 #include "mafPics.h"
 #include "mafGUIMDIFrame.h"
 #include "mafInteractionFactory.h"
-#include "lhpUser.h""
 
 #include "mafNodeFactory.h" 
 #include "mafNodeGeneric.h"
@@ -228,7 +226,6 @@ public:
 //--------------------------------------------------------------------------------
 
 IMPLEMENT_APP(lhpBuilderApp)
-lhpUser lhpBuilderApp::m_User = lhpUser();
 
 ////BES: 14.5.2008 - OnIdle to unlock blocks
 //BEGIN_EVENT_TABLE(lhpBuilderApp, wxApp)
@@ -249,8 +246,7 @@ bool lhpBuilderApp::OnInit()
   ////may lead to artifacts in data or even 
   //vtkDataArrayMemMng::InitializeManagerUnSafeMode();  
 
-  m_ProxyURL = "";
-  m_ProxyPort = "0";
+
   mafPics.Initialize();	
 
   int result;
@@ -450,20 +446,9 @@ bool lhpBuilderApp::OnInit()
   // show the application
 	m_Logic->ShowSplashScreen(splashBitmap);
   m_Logic->Show();
-
-  m_User.SetProxyPort(m_ProxyPort);
-  m_User.SetProxyURL(m_ProxyURL);
-
-  bool retry = false;
-  retry = m_User.CheckUserCredentials();
-
-  while (retry)
-  {
-    retry = m_User.CheckUserCredentials();
-  }
+  m_Logic->GetCredentials();
 
   m_Logic->Init(0,NULL); // calls FileNew - which create the root
-
 
   return TRUE;
 }
@@ -483,4 +468,3 @@ int lhpBuilderApp::OnExit()
 //  vtkDataArrayMemMng::GetDataArrayMemMng()->UnlockAllMemory(0);
 //  event.Skip();
 //}
-
