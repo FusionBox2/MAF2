@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderLogic.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-07-25 12:00:07 $
-  Version:   $Revision: 1.7 $
+  Date:      $Date: 2008-10-17 07:40:13 $
+  Version:   $Revision: 1.8 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
@@ -26,6 +26,9 @@
 #include "mafOp.h"
 #include "mafGUISettingsDialog.h"
 #include "lhpGUINetworkConnectionSettings.h"
+#include "lhpUser.h"
+
+lhpUser lhpBuilderLogic::m_User = lhpUser();
 
 //----------------------------------------------------------------------------
 lhpBuilderLogic::lhpBuilderLogic()
@@ -100,5 +103,25 @@ void lhpBuilderLogic::Configure()
   if(m_SettingsDialog)
   {
     m_SettingsDialog->AddPage(m_NetworkConnectionSettings->GetGui(), m_NetworkConnectionSettings->GetLabel());
+  }
+}
+//----------------------------------------------------------------------------
+void lhpBuilderLogic::GetCredentials()
+//----------------------------------------------------------------------------
+{
+  if(m_NetworkConnectionSettings->GetProxyFlag())
+  {
+    m_User.SetProxyURL(m_NetworkConnectionSettings->GetProxyHost());;
+
+    mafString port;
+    port << m_NetworkConnectionSettings->GetProxyPort();
+    m_User.SetProxyPort(port);
+  }
+  bool retry = false;
+  retry = m_User.CheckUserCredentials();
+
+  while (retry)
+  {
+    retry = m_User.CheckUserCredentials();
   }
 }
