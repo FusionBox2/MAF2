@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-15 15:47:46 $
-Version:   $Revision: 1.37 $
+Date:      $Date: 2008-10-20 09:53:10 $
+Version:   $Revision: 1.38 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -438,6 +438,8 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
 
       if (m_URISRBFile.Equals("NOT PRESENT"))
         m_URISRBFile = ".";
+
+      mafSleep(3000);
 
       if ( ExistsRunningProcess() )
       {
