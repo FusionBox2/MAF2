@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: mmoHelAxis.h,v $
   Language:  C++
-  Date:      $Date: 2007-08-22 14:01:40 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-10-21 15:29:11 $
+  Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
   Copyright (c) 2001/2007 
@@ -38,13 +38,14 @@ public:
   mmoHelAxis(wxString label = "HelAxis");
  ~mmoHelAxis(); 
 
+  mafTypeMacro(mmoHelAxis, mafOp);
+
   virtual void OnEvent(mafEventBase *maf_event);
   mafOp* Copy();
 
   bool Accept(mafNode* vme);   
   void OpRun();
   void OpDo();
-  void OpUndo();
   void CreateGui();
 
   static double RegisterPoints(vtkPoints *pointsSource, vtkPoints *pointsTarget, int &numPoints, mafVMELandmarkCloud *src, float time1, float time2, vtkMatrix4x4 *res_matrix);
