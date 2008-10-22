@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-16 09:41:45 $
-Version:   $Revision: 1.25 $
+Date:      $Date: 2008-10-22 09:52:21 $
+Version:   $Revision: 1.26 $
 Authors:   Roberto Mucci , Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -79,7 +79,6 @@ mafCxxTypeMacro(lhpOpEditTag);
 //static variables
 //long lhpOpEditTag::m_Pid = -1;
 mafString lhpOpEditTag::m_CacheSubdir = "0";
-lhpUser lhpOpEditTag::m_User = lhpUser();
 
 enum  m_SubdictionaryId_VALUES
 {
@@ -107,6 +106,7 @@ mafOp(label)
   m_HasLink = false;
   m_LinkNode.clear();
   m_LinkName.clear();
+  m_User = NULL;
 
   //m_PythonExe ="C:\\Python25\\python.exe ";
   m_PythonExe ="python.exe ";
@@ -165,15 +165,34 @@ mafOp* lhpOpEditTag::Copy()
 bool lhpOpEditTag::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  return (lhpUser::IsAuthenticated() && vme != NULL);
+  lhpUser *user = NULL;
+  //Get User values
+  mafEvent event;
+  event.SetSender(this);
+  event.SetId(ID_REQUEST_USER);
+  mafEventMacro(event);
+  if(event.GetMafObject() != NULL) //if proxy string contains something != ""
+  {
+    user = (lhpUser*)event.GetMafObject();
+  }
+  return (user != NULL && user->IsAuthenticated() && vme != NULL);
 }
 
 //----------------------------------------------------------------------------
 void lhpOpEditTag::OpRun()
 //----------------------------------------------------------------------------
 {
-  //Get Proxy values
+  //Get User values
   mafEvent event;
+  event.SetSender(this);
+  event.SetId(ID_REQUEST_USER);
+  mafEventMacro(event);
+  if(event.GetMafObject() != NULL) //if proxy string contains something != ""
+  {
+    m_User = (lhpUser*)event.GetMafObject();
+  }
+
+  //Get Proxy values
   event.SetSender(this);
   event.SetId(ID_REQUEST_PROXY);
   mafEventMacro(event);
@@ -706,7 +725,7 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
   
   lhpTagHandlerInputOutputParametersCargo *parametersCargo = lhpTagHandlerInputOutputParametersCargo::New();
   parametersCargo->SetInputVme(mafVME::SafeDownCast(m_Input));
-  parametersCargo->SetInputUser(&m_User);
+  parametersCargo->SetInputUser(m_User);
 	parametersCargo->SetInputMSF(m_MsfFile);
 
   for (int i = 0; i < m_AutoTagsList.size(); i++)

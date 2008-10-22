@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-10-15 15:47:59 $
-Version:   $Revision: 1.8 $
+Date:      $Date: 2008-10-22 09:51:29 $
+Version:   $Revision: 1.9 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -137,6 +137,8 @@ protected:
   mafVMEGroup *m_RootGroup;
   mafVMEGroup *m_Group;
 
+  lhpUser  *m_User;
+
   bool m_FillLinkVector;
   bool m_WholeMsfDownload;
 
@@ -159,8 +161,6 @@ protected:
   
   static long m_Pid; //> pid of the server process
 
-  static lhpUser  m_User;
-  
   mafString m_BasketListFileName; 
   wxArrayString m_BasketListURI;
   wxArrayString m_ListLinkURI;

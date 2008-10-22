@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-15 15:37:18 $
-Version:   $Revision: 1.93 $
+Date:      $Date: 2008-10-22 09:53:16 $
+Version:   $Revision: 1.94 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -81,7 +81,6 @@ mafCxxTypeMacro(lhpOpUploadVME);
 //static variables
 long lhpOpUploadVME::m_Pid = -1;
 mafString lhpOpUploadVME::m_CacheSubdir = "0";
-lhpUser lhpOpUploadVME::m_User = lhpUser();
 
 enum  m_SubdictionaryId_VALUES
 {
@@ -107,6 +106,7 @@ mafOp(label)
   m_LinkNode.clear();
   m_LinkName.clear();
   m_SubId = -1;
+  m_User = NULL;
 
   //m_PythonExe ="C:\\Python25\\python.exe ";
   m_PythonExe ="python.exe ";
@@ -150,7 +150,7 @@ mafOp(label)
 lhpOpUploadVME::~lhpOpUploadVME()
 //----------------------------------------------------------------------------
 {
-
+  cppDEL (m_User);
 }
 //----------------------------------------------------------------------------
 mafOp* lhpOpUploadVME::Copy()
@@ -265,6 +265,17 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
 //----------------------------------------------------------------------------
 {
   mafSleep(2000); //to avoid DB conflicts..
+
+  //Get User values
+  mafEvent event;
+  event.SetSender(this);
+  event.SetId(ID_REQUEST_USER);
+  mafEventMacro(event);
+  if(event.GetMafObject() != NULL) //if proxy string contains something != ""
+  {
+    m_User = (lhpUser*)event.GetMafObject();
+  }
+
   //check if vme has a name
   if(strcmp(m_Input->GetName(), "") == 0)
   {
@@ -305,7 +316,6 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     wxRemoveFile(lockPath); //fileName
 
   //logic comunicate the msf directory
-  mafEvent event;
   event.SetSender(this);
   event.SetId(ID_MSF_DATA_CACHE);
   mafEventMacro(event);
@@ -399,9 +409,9 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
   command2execute.Clear();
   command2execute = m_PythonExe;
   command2execute.Append("lhpGetXMLURI.py ");
-  command2execute.Append(m_User.GetName());
+  command2execute.Append(m_User->GetName());
   command2execute.Append(" ");
-  command2execute.Append(m_User.GetPwd());
+  command2execute.Append(m_User->GetPwd());
   command2execute.Append(" ");
   command2execute.Append(m_ServiceURL.GetCStr());
   //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
@@ -460,8 +470,8 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     wxString directoryWorkAround = m_CurrentCache;
     directoryWorkAround.Replace(" ", "??");
     command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
-    command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
-    command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
+    command2execute.Append(wxString::Format("%s ",m_User->GetName())); //user
+    command2execute.Append(wxString::Format("%s ",m_User->GetPwd())); //pwd
     command2execute.Append(wxString::Format("%s ",m_ServiceURL.GetCStr())); //dev repository
     command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //id in original tree
     command2execute.Append(wxString::Format("%s ", hasLink.GetCStr())); //has link?
@@ -516,8 +526,8 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     wxString directoryWorkAround = m_CurrentCache;
     directoryWorkAround.Replace(" ", "??");
     command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
-    command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
-    command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
+    command2execute.Append(wxString::Format("%s ",m_User->GetName())); //user
+    command2execute.Append(wxString::Format("%s ",m_User->GetPwd())); //pwd
     command2execute.Append(wxString::Format("%s ",m_ServiceURL.GetCStr())); //dev repository
     command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //id in original tree
     command2execute.Append(wxString::Format("%s ", hasLink.GetCStr())); //has link?
@@ -944,7 +954,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
   
   lhpTagHandlerInputOutputParametersCargo *parametersCargo = lhpTagHandlerInputOutputParametersCargo::New();
   parametersCargo->SetInputVme(mafVME::SafeDownCast(m_Input));
-  parametersCargo->SetInputUser(&m_User);
+  parametersCargo->SetInputUser(m_User);
 	parametersCargo->SetInputMSF(m_MsfFile);
 
   for (int i = 0; i < m_AutoTagsList.size(); i++)

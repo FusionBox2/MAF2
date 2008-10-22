@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-20 09:53:10 $
-Version:   $Revision: 1.38 $
+Date:      $Date: 2008-10-22 09:51:29 $
+Version:   $Revision: 1.39 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -81,8 +81,6 @@ mafCxxTypeMacro(lhpOpDownloadVME);
 //static variables
 long lhpOpDownloadVME::m_Pid = -1;
 mafString lhpOpDownloadVME::m_CacheSubdir = "0";
-lhpUser lhpOpDownloadVME::m_User = lhpUser();
-
 enum lhpOpDownloadVME_ID
 {
   ID_TEST = MINID, 
@@ -103,6 +101,7 @@ mafOp(label)
   m_DownloadedNodeVector.clear();
   m_Group = NULL;
   m_RootGroup = NULL;
+  m_User = NULL;
 
   //m_PythonExe ="C:\\Python25\\python.exe ";
   m_PythonExe ="python.exe ";
@@ -143,7 +142,17 @@ lhpOpDownloadVME::~lhpOpDownloadVME()
 bool lhpOpDownloadVME::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  return (lhpUser::IsAuthenticated() && vme != NULL);
+  lhpUser *user = NULL;
+  //Get User values
+  mafEvent event;
+  event.SetSender(this);
+  event.SetId(ID_REQUEST_USER);
+  mafEventMacro(event);
+  if(event.GetMafObject() != NULL) //if proxy string contains something != ""
+  {
+    user = (lhpUser*)event.GetMafObject();
+  }
+  return (user != NULL && user->IsAuthenticated() && vme != NULL);
 }
 
 //----------------------------------------------------------------------------
@@ -158,8 +167,17 @@ mafOp* lhpOpDownloadVME::Copy()
 void lhpOpDownloadVME::OpRun()
 //----------------------------------------------------------------------------
 {
-  //Get Proxy values
+  //Get User values
   mafEvent event;
+  event.SetSender(this);
+  event.SetId(ID_REQUEST_USER);
+  mafEventMacro(event);
+  if(event.GetMafObject() != NULL) //if proxy string contains something != ""
+  {
+    m_User = (lhpUser*)event.GetMafObject();
+  }
+
+  //Get Proxy values
   event.SetSender(this);
   event.SetId(ID_REQUEST_PROXY);
   mafEventMacro(event);
@@ -458,8 +476,8 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
         wxString directoryWorkAround = m_IncomingCompletePath;
         directoryWorkAround.Replace(" ", "?");
         command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
-        command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
-        command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
+        command2execute.Append(wxString::Format("%s ",m_User->GetName())); //user
+        command2execute.Append(wxString::Format("%s ",m_User->GetPwd())); //pwd
         command2execute.Append(wxString::Format("%s ",m_ServiceURL.GetCStr())); //dev repository
         command2execute.Append(wxString::Format("%s ",listVME[i].c_str())); //XML URI NAME
         command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //SRB DATA NAME
@@ -498,8 +516,8 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
         wxString directoryWorkAround = m_IncomingCompletePath;
         directoryWorkAround.Replace(" ", "?");
         command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
-        command2execute.Append(wxString::Format("%s ",m_User.GetName())); //user
-        command2execute.Append(wxString::Format("%s ",m_User.GetPwd())); //pwd
+        command2execute.Append(wxString::Format("%s ",m_User->GetName())); //user
+        command2execute.Append(wxString::Format("%s ",m_User->GetPwd())); //pwd
         command2execute.Append(wxString::Format("%s ",m_ServiceURL.GetCStr())); //dev repository
         command2execute.Append(wxString::Format("%s ",listVME[i].c_str())); //XML URI NAME
         command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //SRB DATA NAME
@@ -639,9 +657,9 @@ int lhpOpDownloadVME::CreateFileListFromBasket()
   command2execute = m_PythonwExe;
 
   command2execute.Append(" downloadSelectorApp.py ");
-  command2execute.Append(m_User.GetName());
+  command2execute.Append(m_User->GetName());
   command2execute.Append(" ");
-  command2execute.Append(m_User.GetPwd());
+  command2execute.Append(m_User->GetPwd());
 
   long pid = wxExecute(command2execute, wxEXEC_SYNC);
 
@@ -696,9 +714,9 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(mafString  xmlFile)
   command2execute.Clear();
   command2execute = m_PythonwExe;
   command2execute.Append(" downloadSingleXML.py ");
-  command2execute.Append(m_User.GetName());
+  command2execute.Append(m_User->GetName());
   command2execute.Append(" ");
-  command2execute.Append(m_User.GetPwd());
+  command2execute.Append(m_User->GetPwd());
   command2execute.Append(" ");
   command2execute.Append(xmlFile.GetCStr());
   command2execute.Append(" ");
