@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderLogic.h,v $
   Language:  C++
-  Date:      $Date: 2008-10-17 07:40:41 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2008-10-22 12:00:35 $
+  Version:   $Revision: 1.5 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
@@ -40,8 +40,8 @@ public:
   At this point are plugged all the managers, the side-bar docking panel. 
   Are plugged also all the setting to the dialogs interface. */
   virtual void Configure();
- 
-  /** Obtain user credentials */
+
+  /** Get user credentials */
   void GetCredentials();
 
 protected:
@@ -49,6 +49,6 @@ protected:
   virtual void VmeAdded(mafNode *vme);
 
   lhpGUINetworkConnectionSettings *m_NetworkConnectionSettings;
-  static lhpUser  m_User;
+  lhpUser  *m_User;
 };
 #endif

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderLogic.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-10-17 07:40:13 $
-  Version:   $Revision: 1.8 $
+  Date:      $Date: 2008-10-22 12:00:35 $
+  Version:   $Revision: 1.9 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
@@ -24,17 +24,17 @@
 #include "mafDecl.h"
 #include "mafTagArray.h"
 #include "mafOp.h"
+#include "mafOpManager.h"
 #include "mafGUISettingsDialog.h"
 #include "lhpGUINetworkConnectionSettings.h"
 #include "lhpUser.h"
-
-lhpUser lhpBuilderLogic::m_User = lhpUser();
 
 //----------------------------------------------------------------------------
 lhpBuilderLogic::lhpBuilderLogic()
 //----------------------------------------------------------------------------
 {
   m_NetworkConnectionSettings = new lhpGUINetworkConnectionSettings(this);
+  m_User = new lhpUser();
 }
 //----------------------------------------------------------------------------
 lhpBuilderLogic::~lhpBuilderLogic()
@@ -74,6 +74,11 @@ void lhpBuilderLogic::OnEvent(mafEventBase *maf_event)
         }
       }
       break;
+    case ID_REQUEST_USER:
+      {
+        e->SetMafObject((mafObject*)m_User);
+      }
+      break;
 		default:
 			mafLogicWithManagers::OnEvent(maf_event);
 			break; 
@@ -111,17 +116,19 @@ void lhpBuilderLogic::GetCredentials()
 {
   if(m_NetworkConnectionSettings->GetProxyFlag())
   {
-    m_User.SetProxyURL(m_NetworkConnectionSettings->GetProxyHost());;
-
+    m_User->SetProxyURL(m_NetworkConnectionSettings->GetProxyHost());;
     mafString port;
     port << m_NetworkConnectionSettings->GetProxyPort();
-    m_User.SetProxyPort(port);
+    m_User->SetProxyPort(port);
   }
+
   bool retry = false;
-  retry = m_User.CheckUserCredentials();
+  retry = m_User->CheckUserCredentials();
 
   while (retry)
   {
-    retry = m_User.CheckUserCredentials();
+    retry = m_User->CheckUserCredentials();
   }
+  m_OpManager->SetMafUser(m_User);
+
 }
