@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-22 09:51:29 $
-Version:   $Revision: 1.39 $
+Date:      $Date: 2008-10-22 10:07:35 $
+Version:   $Revision: 1.40 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -661,7 +661,18 @@ int lhpOpDownloadVME::CreateFileListFromBasket()
   command2execute.Append(" ");
   command2execute.Append(m_User->GetPwd());
 
+  wxBusyInfo *wait;
+  if(!m_TestMode)
+  {
+    wait = new wxBusyInfo("Please wait for your data resource listing...");
+  }
+
   long pid = wxExecute(command2execute, wxEXEC_SYNC);
+
+  if(!m_TestMode)
+  {
+    delete wait;
+  }
 
   wxSetWorkingDirectory(oldDir);
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
