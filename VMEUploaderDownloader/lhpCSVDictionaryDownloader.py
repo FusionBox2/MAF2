@@ -112,8 +112,9 @@ def run(host, DictionaryFileSelector, outputXMLDictionaryFileName):
     dictDownloader = lhpCSVDictionaryDownloader()    
     dictVersionChecker = lhpDictionaryVersionChecker.lhpDictionaryVersionChecker()
     dictDownloader.Host = host
+    dictDownloader.OutputXMLDictionaryFileName = outputXMLDictionaryFileName
     
-    # dictDownloader.RemoveOldDictionariesFromDisk()
+    dictDownloader.RemoveOldDictionariesFromDisk()
     
     # get the dictionary creation date
     date = dictVersionChecker.GetRemoteDictionaryDate()
