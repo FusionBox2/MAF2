@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpBuilderDecl.h,v $
 Language:  C++
-Date:      $Date: 2008-02-22 10:40:51 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2008-10-22 12:00:52 $
+Version:   $Revision: 1.3 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2001/2005 
@@ -20,6 +20,7 @@ enum LHP_MAIN_EVENT_ID
 {
 	ID_MSF_DATA_CACHE = EVT_USER_START,
   ID_REQUEST_PROXY,
+  ID_REQUEST_USER,
 };
 
 #endif
