@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.h,v $
 Language:  C++
-Date:      $Date: 2008-10-15 15:37:49 $
-Version:   $Revision: 1.12 $
+Date:      $Date: 2008-10-22 09:52:51 $
+Version:   $Revision: 1.13 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -54,7 +54,6 @@ MafMedical is partially based on OpenMAF.
 class lhpUser;
 class mafNode;
 class lhpOpUploadVME;
-
 
 //----------------------------------------------------------------------------
 // lhpOpUploadMultiVME :
@@ -110,12 +109,12 @@ protected:
   mafString m_AssembledXMLDictionaryFileName;
   mafString m_SubDictionaryBuildingCommand;
   
-  static long m_Pid; //> pid of the server process
  
   mafString m_ConnectionConfigurationFileName;
   mafString m_ProxyURL;
   mafString m_ProxyPort;
-  static lhpUser m_User;
+
+  lhpUser *m_User;
 
 private:
   mafString GetXMLDictionaryFileName(mafString dictionaryFileNamePrefix);
@@ -131,9 +130,6 @@ private:
 
   /** Search for python uploader error */
   bool GetUploadError();   
-
-  /** Remove xml uploaded, in case of MSF upload failure */
-  void RemoveVME();
 
   /** Write a file with URI information about VME link uploaded */
   int SaveLinkURIFile(mafNode *node, std::vector<mafString> linkURI);

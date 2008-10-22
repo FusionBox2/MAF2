@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-15 15:36:50 $
-Version:   $Revision: 1.26 $
+Date:      $Date: 2008-10-22 09:52:51 $
+Version:   $Revision: 1.27 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -79,9 +79,7 @@ MafMedical is partially based on OpenMAF.
 mafCxxTypeMacro(lhpOpUploadMultiVME);
 //----------------------------------------------------------------------------
 //static variables
-//long lhpOpUploadMultiVME::m_Pid = -1;
 mafString lhpOpUploadMultiVME::m_CacheSubdir = "0";
-lhpUser lhpOpUploadMultiVME::m_User = lhpUser();
 
 enum lhpOpUploadMultiVME_ID
 {
@@ -96,6 +94,7 @@ mafOp(label)
 	m_OpType  = OPTYPE_OP;
 	m_Canundo = false;
   m_WithChild = false;
+  m_User = NULL;
   m_UploadedURIVector.clear();
   m_UploadedNodeVector.clear();
   m_EmptyNodeVector.clear();
@@ -136,7 +135,17 @@ lhpOpUploadMultiVME::~lhpOpUploadMultiVME()
 bool lhpOpUploadMultiVME::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  return (lhpUser::IsAuthenticated() && vme != NULL);
+  lhpUser *user = NULL;
+  //Get User values
+  mafEvent event;
+  event.SetSender(this);
+  event.SetId(ID_REQUEST_USER);
+  mafEventMacro(event);
+  if(event.GetMafObject() != NULL) //if proxy string contains something != ""
+  {
+    user = (lhpUser*)event.GetMafObject();
+  }
+  return (user != NULL && user->IsAuthenticated() && vme != NULL);
 }
 
 //----------------------------------------------------------------------------
@@ -151,8 +160,17 @@ mafOp* lhpOpUploadMultiVME::Copy()
 void lhpOpUploadMultiVME::OpRun()
 //----------------------------------------------------------------------------
 {
-  //Get Proxy values
+  //Get User values
   mafEvent event;
+  event.SetSender(this);
+  event.SetId(ID_REQUEST_USER);
+  mafEventMacro(event);
+  if(event.GetMafObject() != NULL) //if proxy string contains something != ""
+  {
+    m_User = (lhpUser*)event.GetMafObject();
+  }
+
+  //Get Proxy values
   event.SetSender(this);
   event.SetId(ID_REQUEST_PROXY);
   mafEventMacro(event);
@@ -534,13 +552,6 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
           m_UploadVME->SetInput(childToUpload);
           URI = "";
 
-          //Search for python uploader error
-          if (GetUploadError())
-          {
-            RemoveVME();
-            return;
-          }
-
           if (m_UploadVME->UploadVME(URI, hasBinary, childToUpload->GetNumberOfChildren()!=0, msfFileName) == MAF_ERROR)
           {
             return;
@@ -572,13 +583,6 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
   m_UploadVME->SetInput(node);
   URI = "";
 
-  //Search for python upload error
-  if (GetUploadError())
-  {
-    RemoveVME();
-    return;
-  }
-  
   if (m_UploadVME->UploadVME(URI, false, node->GetNumberOfChildren()!=0, msfFileName) == MAF_ERROR)
   {
     return;
@@ -643,33 +647,7 @@ bool lhpOpUploadMultiVME::GetUploadError()
   }
   return errorFound;
 }
-//----------------------------------------------------------------------------
-void lhpOpUploadMultiVME::RemoveVME()   
-//----------------------------------------------------------------------------
-{
- /* int pid = -1;
-  wxString command2execute;
-  for (int n = 0; n < m_UploadedURIVector.size(); n++)
-  {
-    command2execute.Clear();
-    command2execute = m_PythonExe;
-    command2execute.Append("lhpRemoveResource.py ");
-    command2execute.Append(m_User.GetName());
-    command2execute.Append(" ");
-    command2execute.Append(m_User.GetPwd());
-    command2execute.Append(" ");
-    command2execute.Append(m_UploadedURIVector[n].GetCStr());
-    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
-     pid = -1;
-    if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
-    {
-      wxMessageBox(wxString::Format("Error in lhpRemoveResource.py on '%s'.", m_UploadedURIVector[n].GetCStr()));
-      mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-        command2execute.c_str(), pid);
-    }
-  }*/
-}
 //----------------------------------------------------------------------------
 int lhpOpUploadMultiVME::SetVMELinks(mafNode *node)   
 //----------------------------------------------------------------------------
@@ -722,9 +700,9 @@ int lhpOpUploadMultiVME::SetVMELinks(mafNode *node)
     command2execute = m_PythonExe;
 
     command2execute.Append("lhpEditRemoteTag.py ");
-    command2execute.Append(m_User.GetName());
+    command2execute.Append(m_User->GetName());
     command2execute.Append(" ");
-    command2execute.Append(m_User.GetPwd());
+    command2execute.Append(m_User->GetPwd());
     command2execute.Append(" ");
     command2execute.Append(m_ServiceURL.GetCStr());
     command2execute.Append(" ");
