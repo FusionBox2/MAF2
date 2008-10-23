@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpUser.h,v $
 Language:  C++
-Date:      $Date: 2008-10-15 15:32:55 $
-Version:   $Revision: 1.5 $
+Date:      $Date: 2008-10-23 08:02:10 $
+Version:   $Revision: 1.6 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004
@@ -34,7 +34,7 @@ public:
 
   /** Function to be customized at application level.
   By default open Login Dialog if the user did not inserted any information.*/
-  virtual bool CheckUserCredentials();
+  bool CheckUserCredentials();
   
   /** Used with proxy authentication*/
   void SetProxyURL(mafString proxyURL) {m_ProxyURL = proxyURL;};
@@ -45,12 +45,12 @@ public:
   mafString GetProxyPort() {return m_ProxyPort;};
 
   /** return true if user is authenticated on BiomedTown*/
-  static bool IsAuthenticated() {return m_IsAuthenticated;};
+  bool IsAuthenticated();
 
 protected:
   bool ExecuteAuthenticationScript();
 
-  static bool m_IsAuthenticated;
+  bool m_IsAuthenticated;
 
   mafString m_PythonUploadFullPath; //>directory where the scripts are
   mafString m_FileName; //>script file name

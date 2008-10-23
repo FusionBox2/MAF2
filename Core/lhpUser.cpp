@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpUser.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-15 15:32:31 $
-Version:   $Revision: 1.9 $
+Date:      $Date: 2008-10-23 08:02:10 $
+Version:   $Revision: 1.10 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004
@@ -28,8 +28,6 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 
 #include <fstream>
 
- bool lhpUser::m_IsAuthenticated = false;
-
 //----------------------------------------------------------------------------
 lhpUser::lhpUser()
 //----------------------------------------------------------------------------
@@ -40,6 +38,7 @@ lhpUser::lhpUser()
   
   m_ProxyURL = "";
   m_ProxyPort = "";
+  m_IsAuthenticated = false;
 }
 //----------------------------------------------------------------------------
 lhpUser::~lhpUser()
@@ -75,6 +74,13 @@ bool lhpUser::CheckUserCredentials()
   m_IsAuthenticated = true;
 
   return false;
+}
+
+//----------------------------------------------------------------------------
+bool lhpUser::IsAuthenticated()
+//----------------------------------------------------------------------------
+{
+  return m_IsAuthenticated;
 }
 
 //----------------------------------------------------------------------------
