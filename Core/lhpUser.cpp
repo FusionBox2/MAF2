@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpUser.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-23 08:02:10 $
-Version:   $Revision: 1.10 $
+Date:      $Date: 2008-10-23 10:13:18 $
+Version:   $Revision: 1.11 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004
@@ -60,7 +60,7 @@ bool lhpUser::CheckUserCredentials()
 
   if(!res)
   {
-    int result = wxMessageBox("Incorrect Authentication.\nRetry?\nPressing Cancel information about user will not stored on VME tagArray!!",wxMessageBoxCaptionStr, wxOK | wxCANCEL);
+    int result = wxMessageBox("Incorrect Authentication.\nRetry?\nPressing Cancel information about user will not be stored on MSF!!",wxMessageBoxCaptionStr, wxOK | wxCANCEL);
     //returns 4 for OK, 16 for CANCEL
     if (result == 16)
     {
