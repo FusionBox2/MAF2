@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.h,v $
   Language:  C++
-  Date:      $Date: 2008-10-09 11:36:45 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2008-10-24 09:48:35 $
+  Version:   $Revision: 1.13 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -289,6 +289,28 @@ public:
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
+/*
+class lhpTagHandler_L0000_resource_data_Source_MASource_Motion_General_SamplingFrequency: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource_Motion_General_SamplingFrequency,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_MASource_Motion_General_SamplingFrequency();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};*/
+
+class lhpTagHandler_L0000_resource_data_Source_MASource_Motion_DataType_IsLandmark_NumberOfLandmarks: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource_Motion_DataType_IsLandmark_NumberOfLandmarks,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_MASource_Motion_DataType_IsLandmark_NumberOfLandmarks();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+
 
 class lhpTagHandler_L0000_resource_data_Source_MicroCTSource: public lhpTagHandler
 {

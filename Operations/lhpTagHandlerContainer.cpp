@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-10-09 11:36:45 $
-  Version:   $Revision: 1.27 $
+  Date:      $Date: 2008-10-24 09:48:35 $
+  Version:   $Revision: 1.28 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -32,11 +32,13 @@
 #include "vtkImageData.h"
 #include "vtkRectilinearGrid.h"
 #include "vtkUnstructuredGrid.h"
+#include "vtkPolyData.h"
 #include "mafVMEOutputSurface.h"
 #include "mafVMEOutputPolyline.h"
 #include "mafVMEOutputVolume.h"
 #include "mafVMEOutputPointSet.h"
 #include "mafVMEGenericAbstract.h"
+#include "mafVMELandmarkCloud.h"
 
 
 #include <string>
@@ -696,6 +698,41 @@ void lhpTagHandler_L0000_resource_data_Source_MASource::HandleAutoTag(lhpTagHand
   // tag handling code
   cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/MAsource/view?searchterm=MASource");
 }
+/*
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource_Motion_General_SamplingFrequency)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_MASource_Motion_General_SamplingFrequency::lhpTagHandler_L0000_resource_data_Source_MASource_Motion_General_SamplingFrequency()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_MASource_Motion_General_SamplingFrequency::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+
+}*/
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource_Motion_DataType_IsLandmark_NumberOfLandmarks)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_MASource_Motion_DataType_IsLandmark_NumberOfLandmarks::lhpTagHandler_L0000_resource_data_Source_MASource_Motion_DataType_IsLandmark_NumberOfLandmarks()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_MASource_Motion_DataType_IsLandmark_NumberOfLandmarks::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafString value;
+  mafVME *vme = cargo->GetInputVme();
+  if (vme->IsA("mafVMELandmarkCloud"))
+  {
+    value << ((mafVMELandmarkCloud*)vme)->GetNumberOfLandmarks();
+  }
+  cargo->SetTagHandlerGeneratedString(value);
+}
+
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_MicroCTSource)
 //------------------------------------------------------------------------------------
