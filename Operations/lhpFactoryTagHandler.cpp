@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpFactoryTagHandler.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-10-09 11:36:45 $
-  Version:   $Revision: 1.12 $
+  Date:      $Date: 2008-10-24 09:48:15 $
+  Version:   $Revision: 1.13 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -102,6 +102,13 @@ lhpFactoryTagHandler::lhpFactoryTagHandler()
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RescaleIntercept, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Type_RescaleSlope, "");
   // END DICOM
+
+  //MA
+  //lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_MASource_Motion_General_SamplingFrequency, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_MASource_Motion_DataType_IsLandmark_NumberOfLandmarks, "");
+  
+
+  //END MA
 
   lhpPlugTagHandlerMacro(L0000_resource_Documentation, "");
   lhpPlugTagHandlerMacro(L0000_resource_Access_Policy1_GroupID, "");
