@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-10-17 13:20:04 $
-  Version:   $Revision: 1.70 $
+  Date:      $Date: 2008-10-24 13:58:21 $
+  Version:   $Revision: 1.71 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -75,7 +75,7 @@
 #include "BES_Beta/openMAF/Operators/mafOpImporterBBF.h"
 //BES: 23.6.2008 - Large Volume - to be merged 
 #include "BES_Beta/openMAF/Operators/mafOpImporterRAWVolume_BES.h"
-//#include "mafOpImporterRAWVolume.h"
+#include "mafOpImporterRAWVolume.h"
 #include "mafOpExporterRaw.h"
 //BES: 11.7.2008 - Large Volume - to be merged 
 #include "BES_Beta/Medical/Operations/medOpImporterRAWImages_BES.h"
@@ -299,7 +299,8 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mafOpImporterMSF("MSF"),"Other");
   m_Logic->Plug(new mafOpImporterMSF1x("MAF 1.x"),"Other");
   m_Logic->Plug(new mafOpImporterBBF("BFF (VolumeLarge)"),"Other");
-  m_Logic->Plug(new mafOpImporterRAWVolume_BES("RAW Volume"),"Images");
+  m_Logic->Plug(new mafOpImporterRAWVolume_BES("Raw Volume"),"Images");
+  m_Logic->Plug(new mafOpImporterRAWVolume("Raw Volume Legacy"),"Images");
   m_Logic->Plug(new medOpImporterRAWImages_BES("Raw Images"),"Images");
   m_Logic->Plug(new medOpImporterRAWImages("Raw Images Legacy"),"Images");
   m_Logic->Plug(new mafOpImporterImage("Images"),"Images");
