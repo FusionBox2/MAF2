@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-10-24 09:48:35 $
-  Version:   $Revision: 1.28 $
+  Date:      $Date: 2008-10-27 10:20:16 $
+  Version:   $Revision: 1.29 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -39,6 +39,7 @@
 #include "mafVMEOutputPointSet.h"
 #include "mafVMEGenericAbstract.h"
 #include "mafVMELandmarkCloud.h"
+#include "mafAttributeTraceability.h"
 
 
 #include <string>
@@ -580,6 +581,54 @@ void lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeTreeCreationDate::HandleAutoTa
 {
   // tag handling code
   cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Operation);
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Operation::lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Operation()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Operation::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute("TrialAttribute");
+  if (trial != NULL)
+  {
+    value = trial->m_TraceabilityVector[0].m_OperationName;
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+}
+
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_CreationDate);
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_CreationDate::lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_CreationDate()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_CreationDate::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute("TrialAttribute");
+  if (trial != NULL)
+  {
+    value = trial->m_TraceabilityVector[0].m_Date;
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Application);
@@ -596,13 +645,10 @@ void lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Application::Hand
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetRoot()->GetTagArray()->IsTagPresent("APP_STAMP"))
+  mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute("TrialAttribute");
+  if (trial != NULL)
   {
-    value = vme->GetRoot()->GetTagArray()->GetTag("APP_STAMP")->GetValue();
-  }
-  else
-  {
-    value = "Not found";
+    value = trial->m_TraceabilityVector[0].m_AppStamp;
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -622,18 +668,37 @@ void lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_IsNatural::Handle
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("VME_NATURE"))
+  mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute("TrialAttribute");
+  if (trial != NULL)
   {
-    value = vme->GetTagArray()->GetTag("VME_NATURE")->GetValue();
-  }
-  else
-  {
-    value = "Not found";
+    value = trial->m_TraceabilityVector[0].m_IsNatural;
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
 }
 
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_OperatorID);
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_OperatorID::lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_OperatorID()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_OperatorID::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute("TrialAttribute");
+  if (trial != NULL)
+  {
+    value = trial->m_TraceabilityVector[0].m_OperatorID;
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+}
 
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_Ownership);

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.h,v $
   Language:  C++
-  Date:      $Date: 2008-10-24 09:48:35 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2008-10-27 10:20:31 $
+  Version:   $Revision: 1.14 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -230,6 +230,27 @@ class lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeTreeCreationDate: public lhpT
   
 };
 
+
+class lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Operation: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Operation,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Operation();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_CreationDate: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_CreationDate,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_CreationDate();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
 class lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Application: public lhpTagHandler
 {
 public:
@@ -249,6 +270,17 @@ public:
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
+
+class lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_OperatorID: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_OperatorID,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_OperatorID();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
 
 class lhpTagHandler_L0000_resource_data_Tracebility_Ownership: public lhpTagHandler
 {
