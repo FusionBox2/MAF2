@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpFactoryTagHandler.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-10-24 09:48:15 $
-  Version:   $Revision: 1.13 $
+  Date:      $Date: 2008-10-27 10:19:54 $
+  Version:   $Revision: 1.14 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -59,8 +59,11 @@ lhpFactoryTagHandler::lhpFactoryTagHandler()
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeChildURI1, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_MAF_Procedural_VMElinkURI1, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeTreeCreationDate, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Operation, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_CreationDate, "")
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Application, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_IsNatural, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_OperatorID, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_Ownership, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_Ownership_OwnerID, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource, "");
