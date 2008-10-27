@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2008-09-29 15:21:34 $
-#   Version:   $Revision: 1.33 $
+#   Date:      $Date: 2008-10-27 15:42:52 $
+#   Version:   $Revision: 1.33.2.1 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -261,6 +261,7 @@ ELSE(DOWNLOAD_DICTIONARY)
 Please notice that some functions of LHPBUilder will not be available
 with this setting.")
 #   
+
 ENDIF(DOWNLOAD_DICTIONARY)
 
 #-----------------------------------------------------------------------------
