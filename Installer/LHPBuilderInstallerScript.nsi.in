@@ -123,6 +123,10 @@ Section "create product directory structure" SEC01
   CreateDirectory "$INSTDIR\ASCIIParser"
   SetOutPath "$INSTDIR\ASCIIParser"
   File /R  "@LHPBUILDER_INSTALLER_DIR_WIN@\..\ASCIIParser\"
+
+  CreateDirectory "$INSTDIR\CDBParser"
+  SetOutPath "$INSTDIR\CDBParser"
+  File /R  "@LHPBUILDER_INSTALLER_DIR_WIN@\..\CDBParser\"
   
   ; ASCII parser stuff: for the moment this is dependent on @LHPBUILDER_INSTALLER_DIR_WIN@...
   ; should we create another variable and put it in cmake GUI?	
@@ -236,6 +240,7 @@ Section Uninstall
 
   RMDir /R "$INSTDIR\VMEUploaderDownloader"
   RMDir /R "$INSTDIR\ASCIIParser"
+  RMDir /R "$INSTDIR\CDBParser"
   RMDir "$INSTDIR\Splash"
   RMDir "$INSTDIR\Layout"
   RMDir "$INSTDIR\Config\Dictionary"

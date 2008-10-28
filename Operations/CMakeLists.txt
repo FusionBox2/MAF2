@@ -34,6 +34,9 @@ SET(PROJECT_SRCS
 	lhpOpImporterAnsysInputFile.h
 	lhpOpExporterAnsysInputFile.cpp
 	lhpOpExporterAnsysInputFile.h
+
+    lhpOpImporterAnsysCDBFile.cpp
+	lhpOpImporterAnsysCDBFile.h
 	
 	lhpOpMultiscaleExplore.cpp
 	lhpOpMultiscaleExplore.h

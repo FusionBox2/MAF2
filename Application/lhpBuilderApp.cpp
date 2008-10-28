@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-10-24 13:58:21 $
-  Version:   $Revision: 1.71 $
+  Date:      $Date: 2008-10-28 11:26:37 $
+  Version:   $Revision: 1.71.2.1 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -116,6 +116,7 @@
 #include "lhpOpBonemat.h"
 #include "lhpOpImporterAnsysInputFile.h"
 #include "lhpOpExporterAnsysInputFile.h"
+#include "lhpOpImporterAnsysCDBFile.h"
 #include "medOpFreezeVME.h"
 #include "medOpExporterWrappedMeter.h"
 #include "medOpIterativeRegistration.h"
@@ -312,6 +313,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new medOpImporterGRFWS("ASCII Force Plates (VWs)"), "Motion Analysis");
   m_Logic->Plug(new mafOpImporterMesh("Generic Mesh"), "Finite Element");
   m_Logic->Plug(new lhpOpImporterAnsysInputFile("Ansys Input File"), "Finite Element");	
+  m_Logic->Plug(new lhpOpImporterAnsysCDBFile("Ansys CDB File"), "Finite Element");	
   m_Logic->Plug(new mafOpImporterVRML("VRML"), "Geometries");
   m_Logic->Plug(new mmoINPImporter("INP/INP_AF"), "Geometries");
   m_Logic->Plug(new mmoMTRImporter("MTR"), "Geometries");
