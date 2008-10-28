@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterAnsysCDBFile.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-10-28 16:32:37 $
-  Version:   $Revision: 1.1.2.2 $
+  Date:      $Date: 2008-10-28 16:56:15 $
+  Version:   $Revision: 1.1.2.3 $
   Authors:   Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -54,7 +54,7 @@ mafOp(label)
   m_ElementsFileName = "";
   m_MaterialsFileName = "";
   m_AnsysInputFileName = "";
-  m_CacheDir = (mafGetApplicationDirectory() + "\\CDBParser\\AnsysReaderCache").c_str();
+  m_CacheDir = (mafGetApplicationDirectory() + "\\Data\\AnsysReaderCache").c_str();
   m_AnsysInputFileNameFullPath		= "";
   m_FileDir = (mafGetApplicationDirectory() + "/Data/External/").c_str();
   
