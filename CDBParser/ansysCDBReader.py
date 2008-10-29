@@ -311,7 +311,7 @@ class ansysReader:
         """Store data to disk cache"""
         # ['EX', '2', '1000.0', 'NUXY', '2', '0.3']
         file = StringIO()
-        print self.MaterialData
+        #print self.MaterialData
         for material in self.MaterialData:
                 
                 toWrite = "MATERIAL NUMBER =      %s EVALUATED AT TEMPERATURE OF   %s    " 
