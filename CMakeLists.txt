@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2008-10-27 15:42:52 $
-#   Version:   $Revision: 1.33.2.1 $
+#   Date:      $Date: 2008-10-29 13:06:25 $
+#   Version:   $Revision: 1.33.2.2 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -261,8 +261,40 @@ ELSE(DOWNLOAD_DICTIONARY)
 Please notice that some functions of LHPBUilder will not be available
 with this setting.")
 #   
-
 ENDIF(DOWNLOAD_DICTIONARY)
+
+#-----------------------------------------------------------------------------
+# Security stuff.  
+#-----------------------------------------------------------------------------
+
+EXEC_PROGRAM("python.exe" "${LHP_SOURCE_DIR}/Security/keyczar" ARGS "CheckKeyczarDependencies.py"  RETURN_VALUE RET)
+
+# MESSAGE("variable RET = " ${RET})
+
+IF(${RET} MATCHES "0")
+    MESSAGE(STATUS "Check Keyczar Dependencies successfull!")
+    SET(ERROR 0)
+ELSE(${RET} MATCHES "0")
+    SET(ERROR 1)
+ENDIF(${RET} MATCHES "0")
+    
+# MESSAGE("variable ERROR = " ${ERROR})
+
+IF(${ERROR} MATCHES "0")
+    MESSAGE(STATUS "Check Keyczar Dependencies successfull!")
+ELSE(${ERROR} MATCHES "0")
+    MESSAGE("Problems checking Keyczar Dependencies...
+    
+In order to install the security components you have to:
+1: Be connected to the Internet; this is required to download additional components
+2: Have python 2.5 installed
+3: Have python 2.5 python.exe in your PATH as default python version
+4: Your user account should be able to write in python2.5 directory
+
+")
+
+# MESSAGE(${OUTPUT_VALUE})
+ENDIF(${ERROR} MATCHES "0")
 
 #-----------------------------------------------------------------------------
 # LHPBUILDER deploy stuff.  

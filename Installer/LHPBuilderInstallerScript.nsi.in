@@ -119,7 +119,7 @@ Section "create product directory structure" SEC01
   File "@LHPBUILDER_INSTALLER_DIR_WIN@\layout.mly"
   
   ; vme uploader downloader stuff: for the moment this is dependent on @LHPBUILDER_INSTALLER_DIR_WIN@...
-  ; should we create another variable and put it in cmake GUI?	
+  ; should we create another variable and put it in cmake GUI?  
   CreateDirectory "$INSTDIR\ASCIIParser"
   SetOutPath "$INSTDIR\ASCIIParser"
   File /R  "@LHPBUILDER_INSTALLER_DIR_WIN@\..\ASCIIParser\"
@@ -129,7 +129,7 @@ Section "create product directory structure" SEC01
   File /R  "@LHPBUILDER_INSTALLER_DIR_WIN@\..\CDBParser\"
   
   ; ASCII parser stuff: for the moment this is dependent on @LHPBUILDER_INSTALLER_DIR_WIN@...
-  ; should we create another variable and put it in cmake GUI?	
+  ; should we create another variable and put it in cmake GUI?  
   CreateDirectory "$INSTDIR\VMEUploaderDownloader"
   SetOutPath "$INSTDIR\VMEUploaderDownloader"
   File /R  "@LHPBUILDER_INSTALLER_DIR_WIN@\..\VMEUploaderDownloader\"
@@ -155,7 +155,31 @@ Section "create product directory structure" SEC01
   Exists:
      Delete "$INSTDIR\Config\ExternalPythonVersion\pythonVersion.txt"
   NOTExists:
-
+  
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;security stuff
+  CreateDirectory "$INSTDIR\Security"
+  SetOutPath "$INSTDIR\Security"
+  File /R  "@LHPBUILDER_INSTALLER_DIR_WIN@\..\Security\"
+  
+  ;Check for security stuff dependencies
+  SetOutPath "$INSTDIR\Security\keyczar"
+  ExecWait '"python.exe" CheckKeyczarDependencies.py' $0
+  
+  ${If} $0  != "0"
+    MessageBox MB_OK  "Problems installing security libraries: please check that you have sufficient privileges to write \
+    in Python installation directory. \
+    Several application features will not work correctly. A web page showing all dependencies needed for security stuff \
+    will open when you press OK. Since this error is non fatal installation process will continue."   
+    ExecShell "open" "http://code.google.com/p/keyczar/wiki/PythonDependencies"
+  ${EndIf}
+  
+  ; end security stuff
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;v
+    
+  
+  
+  
   SetOutPath "$INSTDIR\bin"
 SectionEnd
 
@@ -250,7 +274,7 @@ Section Uninstall
   RMDir "$INSTDIR\data\msf"
   RMDir "$INSTDIR\data"
   RMDir "$INSTDIR\Config"
-	
+    
   RMDir "$SMPROGRAMS\b3c_software\lhpBuilder"
   RMDir "$INSTDIR"
 
