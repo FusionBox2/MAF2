@@ -21,6 +21,9 @@ SET(PROJECT_SRCS
 	lhpOpEditTag.cpp
 	lhpOpEditTag.h
 	
+	lhpOpKeyczarIntegrationTest.cpp
+	lhpOpKeyczarIntegrationTest.h
+
 	lhpOpUploadMultiVME.cpp
 	lhpOpUploadMultiVME.h
 	

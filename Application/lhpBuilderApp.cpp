@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-10-28 11:26:37 $
-  Version:   $Revision: 1.71.2.1 $
+  Date:      $Date: 2008-10-29 17:00:48 $
+  Version:   $Revision: 1.71.2.2 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -124,6 +124,7 @@
 #include "lhpOpUploadVME.h"
 #include "lhpOpUploadMultiVME.h"
 #include "lhpOpEditTag.h"
+#include "lhpOpKeyczarIntegrationTest.h"
 #include "lhpOpDownloadVME.h"
 #include "medOpSurfaceMirror.h"
 #include "medOpImporterAnalogWS.h"
@@ -382,6 +383,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mafOpLabelExtractor("Extract Label"),"Create/Derive");
   m_Logic->Plug(new lhpOpMultiscaleExplore("Multiscale Viewer"),"Manage");
   m_Logic->Plug(new medOpMML("Register from template"),"Modify");
+  m_Logic->Plug(new lhpOpKeyczarIntegrationTest("Security Libraries Integration"),"Test");
 
   
   
