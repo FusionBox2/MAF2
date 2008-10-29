@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterAnsysCDBFile.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-10-28 16:56:15 $
-  Version:   $Revision: 1.1.2.3 $
+  Date:      $Date: 2008-10-29 09:19:53 $
+  Version:   $Revision: 1.1.2.4 $
   Authors:   Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -114,11 +114,13 @@ int lhpOpImporterAnsysCDBFile::Read()
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 
   command2execute = "python.exe";
-  command2execute.Append(" \"\"");
+  command2execute.Append(" \"");
   command2execute.Append(m_AnsysPythonImporterFullPathFileName.c_str());
+  command2execute.Append("\"");
   command2execute.Append(" \"");
   command2execute.Append(m_AnsysInputFileNameFullPath.c_str());
-  command2execute.Append("\" \"");
+  command2execute.Append("\"");
+  command2execute.Append(" \"");
   command2execute.Append(m_CacheDir);
   command2execute.Append("\" ");
   command2execute.Append("\"nodes.lis\" \"elements.lis\" \"materials.lis\"");
