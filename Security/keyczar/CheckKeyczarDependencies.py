@@ -55,7 +55,18 @@ except:
   os.chdir("pycrypto-2.0.1")
   curDir = os.getcwd()
   print curDir
-  os.system("python.exe setup.py install")
+  result = os.system("python.exe setup.py install")
+  
+  if result == 0:
+      # building succeeded
+      pass
+  
+  else:
+      print  "cannot build the library: installing exe package"
+      os.chdir("dist")
+      os.system("pycrypto-2.0.1.win32-py2.5.exe")
+      os.chdir("..")
+      
   os.chdir("..")
   print "current directory is: " + os.getcwd()
   print "############## pycrypto installed successfully! ##############"
