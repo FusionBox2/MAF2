@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-10-27 10:20:16 $
-  Version:   $Revision: 1.29 $
+  Date:      $Date: 2008-10-30 14:22:04 $
+  Version:   $Revision: 1.29.2.1 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -284,7 +284,7 @@ void lhpTagHandler_L0000_resource_data_Size_EntityCount::HandleAutoTag(lhpTagHan
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+  cargo->SetTagHandlerGeneratedString("Automated Tag , Not Handled (instance exists)");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Size_TimeFramesCount);
@@ -695,6 +695,29 @@ void lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_OperatorID::Handl
   if (trial != NULL)
   {
     value = trial->m_TraceabilityVector[0].m_OperatorID;
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Parameters);
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Parameters::lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Parameters()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Parameters::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
+
+  mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute("TrialAttribute");
+  if (trial != NULL)
+  {
+     value = trial->m_TraceabilityVector[0].m_Parameters;
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.h,v $
   Language:  C++
-  Date:      $Date: 2008-10-27 10:20:31 $
-  Version:   $Revision: 1.14 $
+  Date:      $Date: 2008-10-30 14:22:04 $
+  Version:   $Revision: 1.14.2.1 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -281,6 +281,15 @@ public:
 
 };
 
+class lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Parameters: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Parameters,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Parameters();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
 
 class lhpTagHandler_L0000_resource_data_Tracebility_Ownership: public lhpTagHandler
 {
