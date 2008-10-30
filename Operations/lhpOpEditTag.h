@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.h,v $
 Language:  C++
-Date:      $Date: 2008-10-22 09:52:21 $
-Version:   $Revision: 1.11 $
+Date:      $Date: 2008-10-30 14:20:15 $
+Version:   $Revision: 1.11.2.1 $
 Authors:   Roberto Mucci , Stefano Perticoni 
 ==========================================================================
 Copyright (c) 2002/2007
@@ -122,8 +122,6 @@ protected:
   mafString m_MsfDir; //>directory of original msf
 	mafString m_MsfFile; //>absolute path of original msf
   
-  static long m_Pid; //> pid of the server process
-
   mafString m_MasterXMLDictionaryFilePrefix; 
   mafString m_MasterXMLDictionaryFileName;
   mafString m_SubXMLDictionaryFilePrefix;

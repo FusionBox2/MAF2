@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-22 09:52:21 $
-Version:   $Revision: 1.26 $
+Date:      $Date: 2008-10-30 14:20:15 $
+Version:   $Revision: 1.26.2.1 $
 Authors:   Roberto Mucci , Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -77,7 +77,6 @@ const bool DEBUG_TAGS_PROPAGATION = false;
 mafCxxTypeMacro(lhpOpEditTag);
 //----------------------------------------------------------------------------
 //static variables
-//long lhpOpEditTag::m_Pid = -1;
 mafString lhpOpEditTag::m_CacheSubdir = "0";
 
 enum  m_SubdictionaryId_VALUES
@@ -403,7 +402,7 @@ int lhpOpEditTag::EditTags()
   long pid = -1;
   if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
   {
-    wxMessageBox("Error in lhpEditVMETag.py. Uploading stopped");
+    wxMessageBox("Error in lhpEditVMETag.py");
     mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
       command2execute.c_str(), pid);
     return MAF_ERROR;
