@@ -23,8 +23,9 @@ Testcases to test behavior of Keyczar Signers.
 import os
 import unittest
 
+import keyczar
+# from keyczar import keyczar
 from keyczar import errors
-from keyczar import keyczar
 from keyczar import util
 
 TEST_DATA = os.path.realpath(os.path.join(os.getcwd(), "..", "..", "testdata"))

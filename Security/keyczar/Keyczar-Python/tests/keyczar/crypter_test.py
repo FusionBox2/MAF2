@@ -23,8 +23,10 @@ Testcases to test behavior of Keyczar Crypters.
 import os
 import unittest
 
+import keyczar
+# from keyczar import keyczar
+
 from keyczar import errors
-from keyczar import keyczar
 from keyczar import readers
 from keyczar import util
 
