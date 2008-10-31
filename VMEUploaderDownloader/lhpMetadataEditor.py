@@ -35,19 +35,19 @@ class MetadataEditorPanel(wx.Panel):
         print " current directory is: " + curDir
         
                 
-        self.InputUnhandledPlusManualCSVFileName = os.getcwd() + r'\\' + str(arg[0]) # to be used to save on exit    
-        print self.InputUnhandledPlusManualCSVFileName
-        assert(os.path.exists(self.InputUnhandledPlusManualCSVFileName))
+        self.inputUnhandledPlusManualCSVFileName = os.getcwd() + r'\\' + str(arg[0]) # to be used to save on exit    
+        print self.inputUnhandledPlusManualCSVFileName
+        assert(os.path.exists(self.inputUnhandledPlusManualCSVFileName))
         
         if len(arg) ==  2:
-            self.OutputCSVFileName  = self.InputUnhandledPlusManualCSVFileName
+            self.OutputCSVFileName  = self.inputUnhandledPlusManualCSVFileName
         elif len(arg) ==  3:
             self.OutputCSVFileName = os.getcwd() + r'\\' + str(arg[2])
             
         
         # read unhandledPlusManual tags ie manual tags plus
         # tags the factory cannot fill (factory methods not yet implemented)
-        unhandledPlusManualTagsReader = csv.reader(open(self.InputUnhandledPlusManualCSVFileName, "r"))
+        unhandledPlusManualTagsReader = csv.reader(open(self.inputUnhandledPlusManualCSVFileName, "r"))
         
         self.unhandledPlusManualDict = {}
          
@@ -62,11 +62,11 @@ class MetadataEditorPanel(wx.Panel):
         unhandledPlusManualTagsList = sorted(self.unhandledPlusManualDict.keys())
         
         # read handledAutoTagsList.csv ie tags filled from the factory to be displayed read only        
-        self.FactoryFilledTagsCSVFileName = os.getcwd() + r'\\' + "handledAutoTagsList.csv"     
-        print self.FactoryFilledTagsCSVFileName
-        assert(os.path.exists(self.FactoryFilledTagsCSVFileName))
+        self.factoryFilledTagsCSVFileName = os.getcwd() + r'\\' + "handledAutoTagsList.csv"     
+        print self.factoryFilledTagsCSVFileName
+        assert(os.path.exists(self.factoryFilledTagsCSVFileName))
        
-        factoryFilledTagsReader = csv.reader(open(self.FactoryFilledTagsCSVFileName, "r"))
+        factoryFilledTagsReader = csv.reader(open(self.factoryFilledTagsCSVFileName, "r"))
         
         self.factoryFilledTagsDict = {}
          
@@ -81,25 +81,13 @@ class MetadataEditorPanel(wx.Panel):
         factoryFiledTagsList = sorted(self.factoryFilledTagsDict.keys())
         
         # load xml dictionary (already assembled if composed)
-        self.InputXMLDictionaryFileName = os.getcwd() + r'\\' + str(arg[1]) # to be used to save on exit    
-        assert(os.path.exists(self.InputXMLDictionaryFileName))
-
-        if Debug:
-                
-            print "InputXMLDictionaryFileName:"
-            print self.InputXMLDictionaryFileName
-            print ""
-            print "FactoryFilledTagsCSVFileName:"
-            print self.FactoryFilledTagsCSVFileName
-            print ""
-            print "InputUnhandledPlusManualCSVFileName:"
-            print self.InputUnhandledPlusManualCSVFileName
-            print ""
-                    
+        self.inputXMLDictionaryFileName = os.getcwd() + r'\\' + str(arg[1]) # to be used to save on exit    
+        assert(os.path.exists(self.inputXMLDictionaryFileName))
+        
         self.lhpXMLDictionaryParserInstance = lhpXMLDictionaryParser.lhpXMLDictionaryParser()
         
         pi = self.lhpXMLDictionaryParserInstance
-        pi.LoadXMLDictionary(self.InputXMLDictionaryFileName)
+        pi.LoadXMLDictionary(self.inputXMLDictionaryFileName)
         pi.PrintXMLDictionary()
         
         self.log = log
@@ -112,14 +100,13 @@ class MetadataEditorPanel(wx.Panel):
         self.tree = gizmos.TreeListCtrl(self, -1, style =
                                         wx.TR_DEFAULT_STYLE
                                         | wx.TR_HAS_BUTTONS
-#       
-                               #  | wx.TR_TWIST_BUTTONS
-                                       # | wx.TR_ROW_LINES
-                                         | wx.TR_COLUMN_LINES
+#                                       | wx.TR_TWIST_BUTTONS
+#                                         | wx.TR_ROW_LINES
+                                        | wx.TR_COLUMN_LINES
                                         #| wx.TR_NO_LINES 
                                         | wx.TR_FULL_ROW_HIGHLIGHT
                                    )
-        
+
         isz = (16,16)
         il = wx.ImageList(isz[0], isz[1])
         self.folderImageID     = il.Add(wx.ArtProvider_GetBitmap(wx.ART_FOLDER,      wx.ART_OTHER, isz))
@@ -211,11 +198,11 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
 #        assert(toBeSaved == unhandledPlusMan)
         
         file = open(self.OutputCSVFileName, 'w')
-        assert(os.path.exists(self.InputUnhandledPlusManualCSVFileName))
+        assert(os.path.exists(self.inputUnhandledPlusManualCSVFileName))
         
         for index in range(len(self.TagsToBeSavedList)):
         
-            toWrite = '"' + self.TagsToBeSavedList[index][0] + "\",\"" + listValuesFromTree[index] + '"' + "\n" 
+            toWrite = '"' + self.TagsToBeSavedList[index][0] + '"' + " , " + '"' + listValuesFromTree[index] + '"' + "\n" 
             file.write(str(toWrite))
         
         file.close()
@@ -374,6 +361,5 @@ if __name__ == '__main__':
     # Notes:
     # A factory generated file called "handledAutoTagsList.csv"  must be present in the same directory
     # 
-    
-    
+
     runLHPMetadataEditor.main(['', os.path.basename(sys.argv[0])] + sys.argv[1:])
