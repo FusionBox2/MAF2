@@ -35,19 +35,19 @@ class MetadataEditorPanel(wx.Panel):
         print " current directory is: " + curDir
         
                 
-        self.inputUnhandledPlusManualCSVFileName = os.getcwd() + r'\\' + str(arg[0]) # to be used to save on exit    
-        print self.inputUnhandledPlusManualCSVFileName
-        assert(os.path.exists(self.inputUnhandledPlusManualCSVFileName))
+        self.InputUnhandledPlusManualCSVFileName = os.getcwd() + r'\\' + str(arg[0]) # to be used to save on exit    
+        print self.InputUnhandledPlusManualCSVFileName
+        assert(os.path.exists(self.InputUnhandledPlusManualCSVFileName))
         
         if len(arg) ==  2:
-            self.OutputCSVFileName  = self.inputUnhandledPlusManualCSVFileName
+            self.OutputCSVFileName  = self.InputUnhandledPlusManualCSVFileName
         elif len(arg) ==  3:
             self.OutputCSVFileName = os.getcwd() + r'\\' + str(arg[2])
             
         
         # read unhandledPlusManual tags ie manual tags plus
         # tags the factory cannot fill (factory methods not yet implemented)
-        unhandledPlusManualTagsReader = csv.reader(open(self.inputUnhandledPlusManualCSVFileName, "r"))
+        unhandledPlusManualTagsReader = csv.reader(open(self.InputUnhandledPlusManualCSVFileName, "r"))
         
         self.unhandledPlusManualDict = {}
          
@@ -62,11 +62,11 @@ class MetadataEditorPanel(wx.Panel):
         unhandledPlusManualTagsList = sorted(self.unhandledPlusManualDict.keys())
         
         # read handledAutoTagsList.csv ie tags filled from the factory to be displayed read only        
-        self.factoryFilledTagsCSVFileName = os.getcwd() + r'\\' + "handledAutoTagsList.csv"     
-        print self.factoryFilledTagsCSVFileName
-        assert(os.path.exists(self.factoryFilledTagsCSVFileName))
+        self.FactoryFilledTagsCSVFileName = os.getcwd() + r'\\' + "handledAutoTagsList.csv"     
+        print self.FactoryFilledTagsCSVFileName
+        assert(os.path.exists(self.FactoryFilledTagsCSVFileName))
        
-        factoryFilledTagsReader = csv.reader(open(self.factoryFilledTagsCSVFileName, "r"))
+        factoryFilledTagsReader = csv.reader(open(self.FactoryFilledTagsCSVFileName, "r"))
         
         self.factoryFilledTagsDict = {}
          
@@ -81,13 +81,25 @@ class MetadataEditorPanel(wx.Panel):
         factoryFiledTagsList = sorted(self.factoryFilledTagsDict.keys())
         
         # load xml dictionary (already assembled if composed)
-        self.inputXMLDictionaryFileName = os.getcwd() + r'\\' + str(arg[1]) # to be used to save on exit    
-        assert(os.path.exists(self.inputXMLDictionaryFileName))
-        
+        self.InputXMLDictionaryFileName = os.getcwd() + r'\\' + str(arg[1]) # to be used to save on exit    
+        assert(os.path.exists(self.InputXMLDictionaryFileName))
+
+        if Debug:
+                
+            print "InputXMLDictionaryFileName:"
+            print self.InputXMLDictionaryFileName
+            print ""
+            print "FactoryFilledTagsCSVFileName:"
+            print self.FactoryFilledTagsCSVFileName
+            print ""
+            print "InputUnhandledPlusManualCSVFileName:"
+            print self.InputUnhandledPlusManualCSVFileName
+            print ""
+                    
         self.lhpXMLDictionaryParserInstance = lhpXMLDictionaryParser.lhpXMLDictionaryParser()
         
         pi = self.lhpXMLDictionaryParserInstance
-        pi.LoadXMLDictionary(self.inputXMLDictionaryFileName)
+        pi.LoadXMLDictionary(self.InputXMLDictionaryFileName)
         pi.PrintXMLDictionary()
         
         self.log = log
@@ -100,13 +112,14 @@ class MetadataEditorPanel(wx.Panel):
         self.tree = gizmos.TreeListCtrl(self, -1, style =
                                         wx.TR_DEFAULT_STYLE
                                         | wx.TR_HAS_BUTTONS
-#                                       | wx.TR_TWIST_BUTTONS
-#                                         | wx.TR_ROW_LINES
-                                        | wx.TR_COLUMN_LINES
+#       
+                               #  | wx.TR_TWIST_BUTTONS
+                                       # | wx.TR_ROW_LINES
+                                         | wx.TR_COLUMN_LINES
                                         #| wx.TR_NO_LINES 
                                         | wx.TR_FULL_ROW_HIGHLIGHT
                                    )
-
+        
         isz = (16,16)
         il = wx.ImageList(isz[0], isz[1])
         self.folderImageID     = il.Add(wx.ArtProvider_GetBitmap(wx.ART_FOLDER,      wx.ART_OTHER, isz))
@@ -198,11 +211,11 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
 #        assert(toBeSaved == unhandledPlusMan)
         
         file = open(self.OutputCSVFileName, 'w')
-        assert(os.path.exists(self.inputUnhandledPlusManualCSVFileName))
+        assert(os.path.exists(self.InputUnhandledPlusManualCSVFileName))
         
         for index in range(len(self.TagsToBeSavedList)):
         
-            toWrite = '"' + self.TagsToBeSavedList[index][0] + '"' + " , " + '"' + listValuesFromTree[index] + '"' + "\n" 
+            toWrite = '"' + self.TagsToBeSavedList[index][0] + "\",\"" + listValuesFromTree[index] + '"' + "\n" 
             file.write(str(toWrite))
         
         file.close()
@@ -349,6 +362,18 @@ if __name__ == '__main__':
     
     import sys,os
     import runLHPMetadataEditor
-    # list: ['D:\\vapps_merge_target\\LHPBuilder_Parabuild_Binary\\VMEUploaderDownloader\\lhpMetadataEditor.py'
-    print sys.argv[1]     # , 'Surface_Parametric_id18_tag.csv']
+    # 
+    # Arguments:
+    # argv[1]: Input unhandledPlusManual CSV
+    # argv[2]: Input XML Dictionary
+    # argv[3]: Output CSV (if not specified is the same as the input)
+    # 
+    # Example usage:
+    # lhpMetadataEditor testVtk_id1_tag.csv lhpXMLDictionary_200810291009.xml
+    # 
+    # Notes:
+    # A factory generated file called "handledAutoTagsList.csv"  must be present in the same directory
+    # 
+    
+    
     runLHPMetadataEditor.main(['', os.path.basename(sys.argv[0])] + sys.argv[1:])

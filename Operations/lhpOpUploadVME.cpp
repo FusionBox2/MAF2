@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-22 09:53:16 $
-Version:   $Revision: 1.94 $
+Date:      $Date: 2008-10-31 13:20:45 $
+Version:   $Revision: 1.94.2.1 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -974,7 +974,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
         obj->HandleAutoTag(parametersCargo);
         wxString tagValue = "\"";
         tagValue.Append(tagName.GetCStr());
-        tagValue.Append("\" , \"");
+        tagValue.Append("\",\"");
         tagValue.Append(parametersCargo->GetTagHandlerGeneratedString());
         tagValue.Append('\"');
         m_HandledAutoTagsListFromFactory.Add(tagValue.c_str());
@@ -1039,13 +1039,13 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
       if (tagName.Equals(tagList[n].c_str()))
       {
         tagValue =  m_Input->GetTagArray()->GetTag(tagList[n].c_str())->GetValue();
-        unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\" , \"" << tagValue.GetCStr() << "\"" << std::endl ;
+        unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\",\"" << tagValue.GetCStr() << "\"" << std::endl ;
         tagFound = true;
         break;
       }
     }
     if (!tagFound)
-      unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\" , \"ANNOTATE ME!\"" << std::endl ;
+      unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\",\"ANNOTATE ME!\"" << std::endl ;
   }
 
   // write manuals
@@ -1059,13 +1059,13 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
       if (tagName.Equals(tagList[n].c_str()))
       {
         tagValue =  m_Input->GetTagArray()->GetTag(tagList[n].c_str())->GetValue();
-        unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\" , \"" << tagValue.GetCStr() << "\"" << std::endl ;
+        unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\",\"" << tagValue.GetCStr() << "\"" << std::endl ;
         tagFound = true;
         break; 
       }
     }
     if (!tagFound)
-      unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\" , \"ANNOTATE ME!\"" << std::endl ;
+      unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\",\"ANNOTATE ME!\"" << std::endl ;
   }
   unhandledPlusManualTagsFile.close();
   wxSetWorkingDirectory(oldDir);
