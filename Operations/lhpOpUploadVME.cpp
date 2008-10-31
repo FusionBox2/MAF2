@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-31 13:54:01 $
-Version:   $Revision: 1.94.2.2 $
+Date:      $Date: 2008-10-31 18:25:08 $
+Version:   $Revision: 1.94.2.3 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -974,7 +974,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
         obj->HandleAutoTag(parametersCargo);
         wxString tagValue = "\"";
         tagValue.Append(tagName.GetCStr());
-        tagValue.Append("\" , \"");
+        tagValue.Append("\",\"");
         tagValue.Append(parametersCargo->GetTagHandlerGeneratedString());
         tagValue.Append('\"');
         m_HandledAutoTagsListFromFactory.Add(tagValue.c_str());
@@ -983,7 +983,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
       {
         m_UnhandledAutoTagsListFromFactory.Add(tagName.GetCStr());
         mafLogMessage(_("Cannot handle \"%s\" tag!, this tag will become manual"),tagName.GetCStr());
-      }      
+      }
     }
   }
   
@@ -1039,13 +1039,13 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
       if (tagName.Equals(tagList[n].c_str()))
       {
         tagValue =  m_Input->GetTagArray()->GetTag(tagList[n].c_str())->GetValue();
-        unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\" , \"" << tagValue.GetCStr() << "\"" << std::endl ;
+        unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\",\"" << tagValue.GetCStr() << "\"" << std::endl ;
         tagFound = true;
         break;
       }
     }
     if (!tagFound)
-      unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\" , \"ANNOTATE ME!\"" << std::endl ;
+      unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\",\"ANNOTATE ME!\"" << std::endl ;
   }
 
   // write manuals
@@ -1059,13 +1059,13 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
       if (tagName.Equals(tagList[n].c_str()))
       {
         tagValue =  m_Input->GetTagArray()->GetTag(tagList[n].c_str())->GetValue();
-        unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\" , \"" << tagValue.GetCStr() << "\"" << std::endl ;
+        unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\",\"" << tagValue.GetCStr() << "\"" << std::endl ;
         tagFound = true;
         break; 
       }
     }
     if (!tagFound)
-      unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\" , \"ANNOTATE ME!\"" << std::endl ;
+      unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\",\"ANNOTATE ME!\"" << std::endl ;
   }
   unhandledPlusManualTagsFile.close();
   wxSetWorkingDirectory(oldDir);
@@ -1182,11 +1182,22 @@ mafString lhpOpUploadVME::GetXMLDictionaryFileName( mafString dictionaryFileName
   wxString filePattern = dictionaryFileNamePrefix ;
   filePattern.Append("*.xml");
 
-  wxDir::GetAllFiles(wxGetWorkingDirectory(), &files, filePattern);
+  wxDir::GetAllFiles(wxGetWorkingDirectory(), &files, filePattern, wxDIR_FILES);
   
+  if (files.size() == 0)
+  {
+    std::ostringstream stringStream;
+    mafLogMessage(stringStream.str().c_str());
+    mafLogMessage("lhpXMLDictionary_*.xml not found! exiting");
+    return dictionaryFileName;
+  }
   if (files.size() != 1)
   {
-    mafLogMessage("lhpXMLDictionary_*.xml not found! exiting");
+    std::ostringstream stringStream;
+    stringStream << "Found " << files.size() << " dictionaries!"  << std::endl;    
+    mafLogMessage(stringStream.str().c_str());
+
+    mafLogMessage("Too many lhpXMLDictionary_*.xml! exiting");
     return dictionaryFileName;
   }
   else

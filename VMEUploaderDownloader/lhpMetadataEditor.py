@@ -202,7 +202,7 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
         
         for index in range(len(self.TagsToBeSavedList)):
         
-            toWrite = '"' + self.TagsToBeSavedList[index][0] + '"' + " , " + '"' + listValuesFromTree[index] + '"' + "\n" 
+            toWrite = '"' + self.TagsToBeSavedList[index][0] + "\",\"" + listValuesFromTree[index] + '"' + "\n" 
             file.write(str(toWrite))
         
         file.close()

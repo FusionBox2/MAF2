@@ -95,11 +95,11 @@ class lhpEditVMETag:
   
         # get the tags list from vme tag array node
 
-        vmeTagList = msfDOMParserInstance.GetTagNames(outVmeTagArrayNode)
+        vmeTagNames = msfDOMParserInstance.GetTagNames(outVmeTagArrayNode)
 
 
         if Debug:            
-            print vmeTagList
+            print vmeTagNames
 
         
         # AUTO TAGS
@@ -119,7 +119,8 @@ class lhpEditVMETag:
         except csv.Error, e:
             sys.exit('file %s, line %d: %s' % (filename, autoTagsReader.line_num, e))
        
-        if Debug:          
+        if Debug:
+            print "autoTagsDictionary:"          
             print autoTagsDictionary
 
         
@@ -156,7 +157,9 @@ class lhpEditVMETag:
 
 
         if Debug:          
+            print "unhandledPlusManualTagsDictionary:"
             print unhandledPlusManualTagsDictionary  
+        
         unhandledPlusManualTagsList = unhandledPlusManualTagsDictionary.keys()
         unhandledPlusManualTagsList.sort()
 
@@ -164,26 +167,33 @@ class lhpEditVMETag:
         #print unhandledPlusManualTagsList 
     
         # find matching manual and unhandled manual tags between dictionary and vme tagArray
-        vmeTagListSet = set(vmeTagList)
+        vmeTagNamesSet = set(vmeTagNames)
 
-        if Debug:
-            print vmeTagListSet
+        if Debug:            
+            print "unhandledPlusManualTagsList:"
+            print unhandledPlusManualTagsList
+            
+            print "vmeTagNamesSet:"
+            print vmeTagNamesSet
         
-        unhandledPlusManualTagsListSet = set(unhandledPlusManualTagsList) 
-        # print unhandledPlusManualTagsListSet
+        unhandledPlusManualTagNamesSet = set(unhandledPlusManualTagsList) 
+        # print unhandledPlusManualTagNamesSet
         
-        tagsToBeExported = vmeTagListSet.intersection(unhandledPlusManualTagsListSet)
+        tagsToBeExported = vmeTagNamesSet.intersection(unhandledPlusManualTagNamesSet)
         # print "\nThese tags will be exported: \n" + str(tagsToBeExported)
         
-        tagsToBeAnnotatedManuallySet = unhandledPlusManualTagsListSet.difference(vmeTagList)
+        tagsToBeAnnotatedManuallySet = unhandledPlusManualTagNamesSet
        
         # Add tags to be annotated manually from list
         isinstance(tagsToBeAnnotatedManuallySet,set)
 
-        #tagsToBeAnnotatedManuallySorted = sorted(tagsToBeAnnotatedManuallySet)
         tagsToBeAnnotatedManuallySorted = list(tagsToBeAnnotatedManuallySet)
         tagsToBeAnnotatedManuallySorted.sort()
         
+        if Debug:
+            print "tagsToBeAnnotatedManuallySorted:"
+            print tagsToBeAnnotatedManuallySorted
+            
         tagsToBeAnnotatedManuallyMap = {}
        
         # for each item in set
@@ -200,7 +210,7 @@ class lhpEditVMETag:
         msfDOMParserInstance.AddTagsFromDictionary(domDocument,outVmeTagArrayNode, tagsToBeAnnotatedManuallyMap)
         
 
-        tagsToBeRemoved  = vmeTagListSet.difference(tagsToBeExported)
+        tagsToBeRemoved  = vmeTagNamesSet.difference(tagsToBeExported)
         # print "\nThese tags  be removed from output vme XML: \n" + str(tagsToBeRemoved)
     
         a = list(tagsToBeRemoved)

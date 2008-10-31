@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-22 09:52:51 $
-Version:   $Revision: 1.27 $
+Date:      $Date: 2008-10-31 18:25:08 $
+Version:   $Revision: 1.27.2.1 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -963,7 +963,7 @@ mafString lhpOpUploadMultiVME::GetXMLDictionaryFileName( mafString dictionaryFil
   wxString filePattern = dictionaryFileNamePrefix ;
   filePattern.Append("*.xml");
 
-  wxDir::GetAllFiles(wxGetWorkingDirectory(), &files, filePattern);
+  wxDir::GetAllFiles(wxGetWorkingDirectory(), &files, filePattern, wxDIR_FILES);
   
   if (files.size() != 1)
   {
