@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: mafOpImporterRAWVolume_BES.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-25 12:08:10 $
-Version:   $Revision: 1.5 $
+Date:      $Date: 2008-11-03 11:39:18 $
+Version:   $Revision: 1.5.2.1 $
 Authors:   Paolo Quadrani     Silvano Imboden     Josef Kohout
 ==========================================================================
 Copyright (c) 2002/2004
@@ -206,7 +206,7 @@ void mafOpImporterRAWVolume_BES::OpRun()
 
 	m_Gui->Divider(0);
 	m_Gui->Label(_("dimensions (x,y,z)"));
-	m_Gui->Vector(ID_DIM, "",m_DataDimemsion,1,10000);   
+	m_Gui->Vector(ID_DIM, "",m_DataDimemsion,1,100000);   
 	m_Gui->VectorN(ID_VOI_X, "VOI x" ,&m_VOI[0],2,0,MAXINT,_("define the range of voxels in x dimension to import."));
   m_Gui->VectorN(ID_VOI_Y, "VOI y" ,&m_VOI[2],2,0,MAXINT,_("define the range of voxels in y dimension to import."));
   m_Gui->VectorN(ID_VOI_Z, "VOI z" ,&m_VOI[4],2,0,MAXINT,_("define the range of voxels in z dimension to import."));
