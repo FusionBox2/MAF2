@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFMultiFileDataProvider.cpp,v $ 
   Language: C++ 
-  Date: $Date: 2008-07-22 15:09:27 $ 
-  Version: $Revision: 1.2 $ 
+  Date: $Date: 2008-11-03 11:40:39 $ 
+  Version: $Revision: 1.2.2.1 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -14,7 +14,7 @@
 #include "vtkMAFMultiFileDataProvider.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkMAFMultiFileDataProvider, "$Revision: 1.2 $");
+vtkCxxRevisionMacro(vtkMAFMultiFileDataProvider, "$Revision: 1.2.2.1 $");
 vtkStandardNewMacro(vtkMAFMultiFileDataProvider);
 
 #include "mafMemDbg.h"
@@ -185,6 +185,7 @@ vtkMAFMultiFileDataProvider::~vtkMAFMultiFileDataProvider(void)
 /*virtual*/ int vtkMAFMultiFileDataProvider::Seek(vtkIdType64 startOffset, int count)
 //------------------------------------------------------------------------
 {
+  //RELEASE NOTE: startOffset is already shifted by HeaderSize
   ComputeOffsets();
 
   if (m_pFDLastUsed == NULL)
@@ -220,7 +221,7 @@ vtkMAFMultiFileDataProvider::~vtkMAFMultiFileDataProvider(void)
   if (nBytesAvailable > count)
     nBytesAvailable = count;
   
-  if (!m_pFDLastUsed->pFile->Seek(startOffset - m_pFDLastUsed->nCorrection, SEEK_SET))
+  if (!m_pFDLastUsed->pFile->Seek(startOffset + m_pFDLastUsed->nCorrection, SEEK_SET))
     return -1;  //seek error!
 
   return nBytesAvailable;
@@ -234,21 +235,26 @@ vtkMAFMultiFileDataProvider::~vtkMAFMultiFileDataProvider(void)
   if (GetMTime() <= m_OffsetsComputeTime) {
     return; //no change
   }
-    
+
+  //as Seek is called with startOffset that is already shifted by HeaderSize
+  //there is no correction for the offset of the first file
+  //for others, the correction = -nStartOffset + HeaderSize2    
   vtkIdType64 nOfs = HeaderSize;
-  vtkIdType64 nCor = 0;
+  vtkIdType64 nCor = HeaderSize;
   
   m_pFDLastUsed = m_pFDHead;
   while (m_pFDLastUsed != NULL)
   {
     m_pFDLastUsed->nStartOffset = nOfs;
-    m_pFDLastUsed->nCorrection = nOfs - nCor;
+    m_pFDLastUsed->nCorrection = nCor - nOfs;
         
-    nOfs += (vtkIdType64)m_pFDLastUsed->pFile->GetFileSize();
+    nOfs += (vtkIdType64)m_pFDLastUsed->pFile->GetFileSize() - nCor;
     nCor = HeaderSize2;
 
     m_pFDLastUsed = m_pFDLastUsed->pNext;
   }
+
+  m_pFDHead->nStartOffset = 0;     
 
   m_pFDLastUsed = m_pFDHead;
   m_OffsetsComputeTime.Modified();
@@ -262,6 +268,7 @@ vtkMAFMultiFileDataProvider::~vtkMAFMultiFileDataProvider(void)
                                                             void* buffer, int count)
 //------------------------------------------------------------------------
 {
+  //RELEASE NOTE: startOffset is already shifted by HeaderSize
   BYTE* pBuf = (BYTE*)buffer;
   int nTotalRead = 0;
 

@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFLargeImageReader.cxx,v $ 
   Language: C++ 
-  Date: $Date: 2008-07-22 15:09:27 $ 
-  Version: $Revision: 1.3 $ 
+  Date: $Date: 2008-11-03 11:40:21 $ 
+  Version: $Revision: 1.3.2.1 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -20,7 +20,7 @@
 
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkMAFLargeImageReader, "$Revision: 1.3 $");
+vtkCxxRevisionMacro(vtkMAFLargeImageReader, "$Revision: 1.3.2.1 $");
 vtkStandardNewMacro(vtkMAFLargeImageReader);
 
 #include "mafMemDbg.h"
@@ -754,7 +754,7 @@ void vtkMAFLargeImageReader::ComputeDataIncrements()
 #include <sys/stat.h>
 unsigned long vtkMAFLargeImageReader::GetHeaderSize()
 {
-	if (!this->FileName)
+	if (!this->FileName && !this->FilePattern)
 	{
 		vtkErrorMacro(<<"Either a FileName or FilePattern must be specified.");
 		return 0;

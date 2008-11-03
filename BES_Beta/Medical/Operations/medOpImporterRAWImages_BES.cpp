@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: medOpImporterRAWImages_BES.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-07-25 12:30:41 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2008-11-03 11:37:58 $
+  Version:   $Revision: 1.6.2.1 $
   Authors:   Stefania Paperini porting Matteo Giacomoni
              Modified by Josef Kohout to support large volumes 
 ==========================================================================
@@ -392,11 +392,13 @@ void medOpImporterRAWImages_BES::CreateGui()
 		m_Dialog->ShowModal();
 
 		//Import the file if required +++++++++++++++++++++++++++++++++	
-		res = (m_Dialog->GetReturnCode() == wxID_OK) ? OP_RUN_OK : OP_RUN_CANCEL;
-		if(res == OP_RUN_OK)
-    {
+    res = (m_Dialog->GetReturnCode() == wxID_OK) ? OP_RUN_OK : OP_RUN_CANCEL;
+    if(res == OP_RUN_OK)
+    { 
       wxBusyInfo wait(_("Importing RAW data, please wait..."));
-     if( !Import() ) res = OP_RUN_CANCEL; // se l'import fallisce devi ritornare OP_RUN_CANCEL, cosi non verra chiamato DO
+      wxBusyCursor waitCursor;
+      
+      if( !Import() ) res = OP_RUN_CANCEL; // se l'import fallisce devi ritornare OP_RUN_CANCEL, cosi non verra chiamato DO
     }
 	}
 	else
@@ -877,7 +879,6 @@ bool medOpImporterRAWImages_BES::VolumeLargeCheck()
   }
   return true;
 }
-#endif // VME_VOLUME_LARGE
 
 //------------------------------------------------------------------------
 //Configure the data provider of the given reader
@@ -920,6 +921,7 @@ bool medOpImporterRAWImages_BES::VolumeLargeCheck()
     /**r->GetNumberOfScalarComponents()*/
   }
 }
+#endif // VME_VOLUME_LARGE
 
 //----------------------------------------------------------------------------
 void medOpImporterRAWImages_BES::UpdateReader() 
@@ -1042,10 +1044,7 @@ void medOpImporterRAWImages_BES::UpdateReader()
 //----------------------------------------------------------------------------
 bool medOpImporterRAWImages_BES::Import()
 //----------------------------------------------------------------------------
-{
-	if(!this->m_TestMode)
-		wxBusyCursor wait;
-	
+{		
 	wxString prefix = m_RawDirectory + "\\" + m_Prefix;
 	wxString pattern = m_Pattern + m_Extension;
 
@@ -1057,20 +1056,20 @@ bool medOpImporterRAWImages_BES::Import()
 	r->SetFilePrefix(prefix);
 	r->SetFilePattern(pattern.c_str());
 	
-  m_Reader->SetDataScalarType(GetVTKDataType());
-  m_Reader->SetNumberOfScalarComponents(1);
-  m_Reader->SetDataByteOrderToLittleEndian();
+  r->SetDataScalarType(GetVTKDataType());
+  r->SetNumberOfScalarComponents(1);
+  r->SetDataByteOrderToLittleEndian();
 
   switch(m_Bit)
   {	    
   case 1:			
-    m_Reader->SetDataByteOrderToBigEndian();    
+    r->SetDataByteOrderToBigEndian();    
     break;  
   case 3:    
 #ifndef VME_VOLUME_LARGE //LargeReader support non-interleaved mode
     if(m_RgbType == 0)
 #endif
-      m_Reader->SetNumberOfScalarComponents(3);
+      r->SetNumberOfScalarComponents(3);
     break;
   }
 
@@ -1263,7 +1262,7 @@ bool medOpImporterRAWImages_BES::Import()
    } //if (!bLarge)
   else
    {
-     //the volume is large => rectilinear grid is not supported YET
+     //the volume is large
      mafVolumeLargeWriter wr;
      wr.SetInputDataSet(r->GetOutput());
      wr.SetInputZCoordinates(ZDoubleArray);   //is NULL for regular girds

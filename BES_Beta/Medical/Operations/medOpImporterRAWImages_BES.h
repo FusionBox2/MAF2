@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: medOpImporterRAWImages_BES.h,v $
   Language:  C++
-  Date:      $Date: 2008-10-17 13:19:06 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2008-11-03 11:37:58 $
+  Version:   $Revision: 1.6.2.1 $
   Authors:   Stefania Paperini porting Matteo Giacomoni
              Modified by Josef Kohout to support large volumes 
 ==========================================================================
@@ -20,9 +20,10 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "mafEvent.h"
 #include "mafString.h"
 
+#include "vtkObject.h"
+
 #define VME_VOLUME_LARGE
 #ifdef VME_VOLUME_LARGE
-#include "vtkObject.h"
 #include "../../openMAF/vtkMAF/vtkMAFIdType64.h"
 #include "../../openMAF/VME/mafVMEVolumeLarge.h"
 #include "../../openMAF/VME/mafVMEVolumeLargeUtils.h"
