@@ -3,7 +3,7 @@
 File:    	 mafVMEVolumeLarge.cpp
 Language:  C++
 Date:      8:2:2008   11:28
-Version:   $Revision: 1.7 $
+Version:   $Revision: 1.7.2.1 $
 Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
 
 Copyright (c) 2008
@@ -701,6 +701,40 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 //performs the cropping
 /*virtual*/ void mafVMEVolumeLarge::OnCrop()
 {
+  ////TODO: remove
+  //static int iTest = 0;
+  //typedef int VOI_TYPE[6];
+  //VOI_TYPE VOIs[] = {
+  //  {0,2040,0,1200,0,5160 },
+  //  {0,2037,0,1197,0,3885 },
+  //  {0,2040,0,1200,0,3120 },
+  //  {0,2034,0,1206,0,2340 },
+  //  {0,2040,0,1200,1110,2340 },
+  //  {1056,2040,0,1200,1104,2340 },
+  //  {1053,2034,0,1206,1791,2340 },
+  //  {1050,2037,756,1204,1792,2338 },
+  //  {1050,1698,756,1206,1794,2340 },
+  //  {1308,1700,760,1208,2064,2340 },
+  //  {1308,1497,759,1209,2064,2343 },
+  //  {1308,1498,824,946,2064,2342 },
+  //  {1298,1412,858,946,2064,2342 },
+  //  {1298,1413,858,946,2207,2307 },
+  //  {-1, -1, -1, -1, -1, -1},
+  //};
+  //
+  //if (VOIs[iTest][0] >= 0)
+  //{
+  //  OnViewROIVolume();
+
+  //  iTest++;
+
+  //  memcpy(m_VOI, VOIs[iTest], sizeof(VOI_TYPE));
+  //  UpdateGizmo();        
+  //}
+  //else iTest = 0;
+
+  //return;
+
 #if 1
   //BES: 25.6.2008 - changed according to Fulvia's comments
   //the VME now creates a new small VME with the selected ROI
