@@ -85,6 +85,7 @@ ShowInstDetails show
 ShowUnInstDetails show
 
 Section "create product directory structure" SEC01
+  RMDir /R "$INSTDIR"
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
   CreateDirectory "$INSTDIR\bin"
