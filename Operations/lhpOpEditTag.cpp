@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-07 13:51:38 $
-Version:   $Revision: 1.26.2.5 $
+Date:      $Date: 2008-11-07 14:04:23 $
+Version:   $Revision: 1.26.2.6 $
 Authors:   Roberto Mucci , Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -416,13 +416,13 @@ int lhpOpEditTag::EditTags()
 
   // show dialog for tag propagation...
   int propagate = wxMessageBox(wxString::Format("Propagate edited tags to other VMEs?"),\
-  "Propagate Tags", wxOK | wxCANCEL | wxCENTRE | wxICON_QUESTION);
+  "Propagate Tags", wxYES | wxNO | wxCENTRE | wxICON_QUESTION);
   
-  if (propagate == wxOK)
+  if (propagate == wxYES)
   {
     PropagateTagsToChoosedVMES();
   } 
-  else if (propagate == wxCANCEL)
+  else if (propagate == wxNO)
   {
     std::ostringstream stringStream;
     stringStream << "Skipping propagation..."  << std::endl;
