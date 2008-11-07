@@ -283,16 +283,29 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
         msfTagValue = ""
         
         assert isinstance(xmlDictNode , minidom.Node)
-       
+        
         img = None
-        if xmlDictNode.hasChildNodes():
+    
+        # tag type rendered as folder        
+        if  pi.GetValueType(xmlDictNode) != None \
+            and pi.GetValueType(xmlDictNode) == "tag":
+            # GROUPING NODE
+            msfTagValue = " "   
+            img = self.folderImageID
+        
+        # if has child must be a folder
+        elif xmlDictNode.hasChildNodes():
             # GROUPING NODE
             msfTagValue = " "
             img = self.folderImageID
+        
+        # if unhandled must be edited and is rendered as a page
         elif self.unhandledPlusManualDict.has_key(msfTagName):
             msfTagValue = self.unhandledPlusManualDict[msfTagName]
             img = self.manualTagImageID
             self.TagsThatCanBeEditedDictionary[msfTagName] = ""
+        
+        # if filled by the factory cannot be edited and is rendered as a gear
         elif self.factoryFilledTagsDict.has_key(msfTagName):
             msfTagValue = self.factoryFilledTagsDict[msfTagName]
             img = self.factoryTagImageID

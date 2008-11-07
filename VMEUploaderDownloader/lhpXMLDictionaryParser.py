@@ -235,8 +235,8 @@ class lhpXMLDictionaryParser:
 
     def GetValueType(self, node):
         dictionary = self.GetAttributesDictionary(node)
-        valueType = dictionary["ValueType"]
-        if valueType:
+        if dictionary.has_key("ValueType"):
+            valueType = dictionary["ValueType"]
             return str(valueType)
         else:
             return None
