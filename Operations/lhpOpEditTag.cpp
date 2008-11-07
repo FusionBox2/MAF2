@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-31 18:25:08 $
-Version:   $Revision: 1.26.2.4 $
+Date:      $Date: 2008-11-07 13:51:38 $
+Version:   $Revision: 1.26.2.5 $
 Authors:   Roberto Mucci , Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -820,7 +820,7 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
       }
     }
     if (!tagFound)
-      unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\",\"ANNOTATE ME!\"" << std::endl ;
+      unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\",\"enter a value\"" << std::endl ;
   }
 
 
@@ -841,7 +841,7 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
       }
     }
     if (!tagFound)
-      unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\",\"ANNOTATE ME!\"" << std::endl ;
+      unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\",\"enter a value\"" << std::endl ;
   }
 
   unhandledPlusManualTagsFile.close();

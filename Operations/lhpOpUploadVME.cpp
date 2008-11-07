@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-31 18:25:08 $
-Version:   $Revision: 1.94.2.3 $
+Date:      $Date: 2008-11-07 13:51:38 $
+Version:   $Revision: 1.94.2.4 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -1045,7 +1045,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
       }
     }
     if (!tagFound)
-      unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\",\"ANNOTATE ME!\"" << std::endl ;
+      unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\",\"enter a value\"" << std::endl ;
   }
 
   // write manuals
@@ -1065,7 +1065,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
       }
     }
     if (!tagFound)
-      unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\",\"ANNOTATE ME!\"" << std::endl ;
+      unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\",\"enter a value\"" << std::endl ;
   }
   unhandledPlusManualTagsFile.close();
   wxSetWorkingDirectory(oldDir);
