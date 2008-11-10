@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-10-29 17:00:48 $
-  Version:   $Revision: 1.71.2.2 $
+  Date:      $Date: 2008-11-10 16:18:24 $
+  Version:   $Revision: 1.71.2.3 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -250,6 +250,15 @@ bool lhpBuilderApp::OnInit()
 
 
   mafPics.Initialize();	
+  mafPics.Initialize();
+#include "pic/lhpBuilder/FRAME_ICON16x16.xpm"
+  mafADDPIC(FRAME_ICON16x16);
+
+#include "pic/lhpBuilder/FRAME_ICON32x32.xpm"
+  mafADDPIC(FRAME_ICON32x32);
+
+#include "pic/lhpBuilder/MDICHILD_ICON.xpm"
+  mafADDPIC(MDICHILD_ICON);
 
   int result;
  

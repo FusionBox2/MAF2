@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: psLoaderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-10 14:10:46 $
-  Version:   $Revision: 1.1.2.1 $
+  Date:      $Date: 2008-11-10 16:18:24 $
+  Version:   $Revision: 1.1.2.2 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -249,7 +249,16 @@ bool psLoaderApp::OnInit()
   //vtkDataArrayMemMng::InitializeManagerUnSafeMode();  
 
 
-  mafPics.Initialize();	
+  mafPics.Initialize();
+  #include "pic/lhpBuilder/FRAME_ICON16x16.xpm"
+  mafADDPIC(FRAME_ICON16x16);
+  
+  #include "pic/lhpBuilder/FRAME_ICON32x32.xpm"
+  mafADDPIC(FRAME_ICON32x32);
+    
+  #include "pic/lhpBuilder/MDICHILD_ICON.xpm"
+  mafADDPIC(MDICHILD_ICON);
+
 
   int result;
  
