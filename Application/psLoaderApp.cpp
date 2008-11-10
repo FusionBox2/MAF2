@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: psLoaderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-10 16:18:24 $
-  Version:   $Revision: 1.1.2.2 $
+  Date:      $Date: 2008-11-10 16:21:13 $
+  Version:   $Revision: 1.1.2.3 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -284,7 +284,7 @@ bool psLoaderApp::OnInit()
   mafPlugPipe<lhpVisualPipeSurfaceScalar>("Visual pipe to render a surface with its scalar values");
 
   m_Logic = new lhpBuilderLogic();
-  m_Logic->GetTopWin()->SetTitle("psLoader");
+  m_Logic->GetTopWin()->SetTitle("PSLoader");
   m_Logic->Configure();
   SetTopWindow(mafGetFrame());  
 
