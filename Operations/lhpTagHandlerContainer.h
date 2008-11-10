@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.h,v $
   Language:  C++
-  Date:      $Date: 2008-10-30 14:22:04 $
-  Version:   $Revision: 1.14.2.1 $
+  Date:      $Date: 2008-11-10 15:05:09 $
+  Version:   $Revision: 1.14.2.2 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -330,23 +330,23 @@ public:
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
-/*
-class lhpTagHandler_L0000_resource_data_Source_MASource_Motion_General_SamplingFrequency: public lhpTagHandler
+
+class lhpTagHandler_L0000_resource_data_Source_MASource_Type_General_SamplingFrequency: public lhpTagHandler
 {
 public:
-  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource_Motion_General_SamplingFrequency,mafObject);
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource_Type_General_SamplingFrequency,mafObject);
 
-  lhpTagHandler_L0000_resource_data_Source_MASource_Motion_General_SamplingFrequency();
+  lhpTagHandler_L0000_resource_data_Source_MASource_Type_General_SamplingFrequency();
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
-};*/
+};
 
-class lhpTagHandler_L0000_resource_data_Source_MASource_Motion_DataType_IsLandmark_NumberOfLandmarks: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_Source_MASource_Type_DataType_IsLandmark_NumberOfLandmarks: public lhpTagHandler
 {
 public:
-  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource_Motion_DataType_IsLandmark_NumberOfLandmarks,mafObject);
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource_Type_DataType_IsLandmark_NumberOfLandmarks,mafObject);
 
-  lhpTagHandler_L0000_resource_data_Source_MASource_Motion_DataType_IsLandmark_NumberOfLandmarks();
+  lhpTagHandler_L0000_resource_data_Source_MASource_Type_DataType_IsLandmark_NumberOfLandmarks();
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
