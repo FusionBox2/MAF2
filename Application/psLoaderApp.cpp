@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: psLoaderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-10 16:21:13 $
-  Version:   $Revision: 1.1.2.3 $
+  Date:      $Date: 2008-11-10 17:19:55 $
+  Version:   $Revision: 1.1.2.4 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -381,10 +381,10 @@ bool psLoaderApp::OnInit()
 //  m_Logic->Plug(new medOpIterativeRegistration("Iterative Registration"),"Modify/Fuse");
 //  m_Logic->Plug(new mafOpOpenExternalFile("Open with external program"),"Manage"); 
   m_Logic->Plug(new medOpCreateLabeledVolume("Labeled Volume"),"Create/Derive");
-//  //m_Logic->Plug(new lhpOpUploadVME("Upload VME"),"Manage");
-//  m_Logic->Plug(new lhpOpUploadMultiVME("Upload VME"),"Manage");
-//  m_Logic->Plug(new lhpOpEditTag("Edit Tag VME"),"Manage");
-//  m_Logic->Plug(new lhpOpDownloadVME("Download VME"),"Manage");
+//  m_Logic->Plug(new lhpOpUploadVME("Upload VME"),"Manage");
+  m_Logic->Plug(new lhpOpUploadMultiVME("Upload VME"),"Manage");
+  m_Logic->Plug(new lhpOpEditTag("Edit Tag VME"),"Manage");
+  m_Logic->Plug(new lhpOpDownloadVME("Download VME"),"Manage");
 //  
   m_Logic->Plug(new mafOpDecomposeTimeVarVME("Decompose Time"),"Create/Derive");
   m_Logic->Plug(new mafOpLabelExtractor("Extract Label"),"Create/Derive");
