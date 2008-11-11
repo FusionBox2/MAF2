@@ -53,10 +53,7 @@ class lhpAuthenticationControl:
         """ 
            Authentication for user and password
         """
-        
-        print "Connecting to self.Host: " + self.Host            
-        print "Retrieving: " + self.AuthenticationHTMLPageSelector
-        
+         
         # build opener
         self.cj = cookielib.CookieJar()
         
@@ -82,6 +79,7 @@ class lhpAuthenticationControl:
 
         urllib2.install_opener(self.opener)  
         
+        print "Performing user authentication:"
         print "Connecting to self.Host: " + self.Host            
         print "Retrieving: " + self.AuthenticationHTMLPageSelector 
         
