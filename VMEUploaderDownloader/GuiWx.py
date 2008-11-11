@@ -10,7 +10,7 @@ PULSE = 1
 
 class GuiPart(wx.Frame):
     def __init__(self, master, queue, endCommand):
-        wx.Frame.__init__(self, None, -1, style = wx.DEFAULT_FRAME_STYLE|wx.RESIZE_BORDER |wx.MAXIMIZE_BOX )
+        wx.Frame.__init__(self, None, -1, style = wx.DEFAULT_FRAME_STYLE & ~(wx.RESIZE_BORDER | wx.MAXIMIZE_BOX))
         self.master = master
         self.queue = queue 
         # Set up the GUI

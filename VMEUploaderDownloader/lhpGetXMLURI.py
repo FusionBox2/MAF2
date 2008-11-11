@@ -8,7 +8,6 @@ from webServicesClient import xmlrpcDemoWS
 import xml.dom.minidom as xd
 import os, time
 from lhpDefines import *
-from Debug import Debug
 import StringIO
 
 import urllib, urllib2, base64, re, os, cookielib, sys
@@ -32,9 +31,8 @@ class lhpGetXMLURI:
            Creates an empty resource on repository and return the URI
         """
         self.proxyHost, self.proxyPort = retriveProxyParameters()
-        if Debug:
-            print "->"+ self.proxyHost + "<-"
-            print "->"+ str(self.proxyPort) + "<-"
+        print "->"+ self.proxyHost + "<-"
+        print "->"+ str(self.proxyPort) + "<-"
         
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
         ws.setCredentials(self.userName, self.password)
@@ -54,8 +52,7 @@ class lhpGetXMLURI:
             for el in dom.getElementsByTagName("string"):
                 for node in el.childNodes:  
                     error = node.data
-            if Debug:
-                print error
+            print error
             return
         for el in dom.getElementsByTagName("string"):
             for node in el.childNodes:  

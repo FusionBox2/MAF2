@@ -202,7 +202,7 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
         
         for index in range(len(self.TagsToBeSavedList)):
         
-            toWrite = '"' + self.TagsToBeSavedList[index][0] + "\",\"" + listValuesFromTree[index] + '"' + "\n" 
+            toWrite = '"' + self.TagsToBeSavedList[index][0] + '"' + " , " + '"' + listValuesFromTree[index] + '"' + "\n" 
             file.write(str(toWrite))
         
         file.close()
@@ -283,29 +283,16 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
         msfTagValue = ""
         
         assert isinstance(xmlDictNode , minidom.Node)
-        
+       
         img = None
-    
-        # tag type rendered as folder        
-        if  pi.GetValueType(xmlDictNode) != None \
-            and pi.GetValueType(xmlDictNode) == "tag":
-            # GROUPING NODE
-            msfTagValue = " "   
-            img = self.folderImageID
-        
-        # if has child must be a folder
-        elif xmlDictNode.hasChildNodes():
+        if xmlDictNode.hasChildNodes():
             # GROUPING NODE
             msfTagValue = " "
             img = self.folderImageID
-        
-        # if unhandled must be edited and is rendered as a page
         elif self.unhandledPlusManualDict.has_key(msfTagName):
             msfTagValue = self.unhandledPlusManualDict[msfTagName]
             img = self.manualTagImageID
             self.TagsThatCanBeEditedDictionary[msfTagName] = ""
-        
-        # if filled by the factory cannot be edited and is rendered as a gear
         elif self.factoryFilledTagsDict.has_key(msfTagName):
             msfTagValue = self.factoryFilledTagsDict[msfTagName]
             img = self.factoryTagImageID
@@ -362,17 +349,6 @@ if __name__ == '__main__':
     
     import sys,os
     import runLHPMetadataEditor
-    # 
-    # Arguments:
-    # argv[1]: Input unhandledPlusManual CSV
-    # argv[2]: Input XML Dictionary
-    # argv[3]: Output CSV (if not specified is the same as the input)
-    # 
-    # Example usage:
-    # lhpMetadataEditor testVtk_id1_tag.csv lhpXMLDictionary_200810291009.xml
-    # 
-    # Notes:
-    # A factory generated file called "handledAutoTagsList.csv"  must be present in the same directory
-    # 
-
+    # list: ['D:\\vapps_merge_target\\LHPBuilder_Parabuild_Binary\\VMEUploaderDownloader\\lhpMetadataEditor.py'
+    print sys.argv[1]     # , 'Surface_Parametric_id18_tag.csv']
     runLHPMetadataEditor.main(['', os.path.basename(sys.argv[0])] + sys.argv[1:])

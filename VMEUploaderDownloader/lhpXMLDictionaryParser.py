@@ -168,9 +168,8 @@ class lhpXMLDictionaryParser:
         if node.nodeType == Node.ELEMENT_NODE:
             if Debug:
                 print "Node name: " + node.nodeName
-            attrs = node.attributes 
-            if Debug:
-                print attrs.keys                        
+            attrs = node.attributes     
+            print attrs.keys                        
             for attribute in attrs.keys():
                 attrNode = attrs.get(attribute)
                 attrValue = attrNode.nodeValue
@@ -236,8 +235,8 @@ class lhpXMLDictionaryParser:
 
     def GetValueType(self, node):
         dictionary = self.GetAttributesDictionary(node)
-        if dictionary.has_key("ValueType"):
-            valueType = dictionary["ValueType"]
+        valueType = dictionary["ValueType"]
+        if valueType:
             return str(valueType)
         else:
             return None
@@ -341,8 +340,7 @@ class lhpXMLDictionaryParser:
         the VmeRootURI named dom node is returned if it exists otherwise None"""
         assert(self.DictionaryDOMDocument)
         splitted = split(vmeTagArrayTagName, '_')
-        if Debug:
-            print splitted
+        print splitted
         
         currentParent = self.DictionaryDOMDocument
         
@@ -380,20 +378,17 @@ def run(xmlDictionaryFilename, command, outputTagsFileName):
         
         curDir = os.getcwd()        
         
-        if Debug:
-            print " current directory is: " + curDir
+        print " current directory is: " + curDir
       
         for tag in tags:
-            if Debug:
-                print tag   
+             print tag   
       
     
     # Save
     tagsFile = open(outputTagsFileName, 'w')
     for tag in tags:
-        if Debug:
-            print "storing: " + str(tag)
-            print >> tagsFile, tag
+        print "storing: " + str(tag)
+        print >> tagsFile, tag
     tagsFile.close()
 
     return 

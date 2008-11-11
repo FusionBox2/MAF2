@@ -29,8 +29,7 @@ class vmeDownloader:
         domDocument = minidom.parse(self.InputXMLFileName)
         xmlRootNode = domDocument.documentElement
        
-        if Debug:
-            print "\ninput XML vme filename: " + self.InputXMLFileName
+        print "\ninput XML vme filename: " + self.InputXMLFileName
         
         vmeId = self.VmeToExtractID
         
@@ -43,8 +42,7 @@ class vmeDownloader:
         outFileXML = open('importedVME.msf', 'w')
         msfOutputDoc.writexml(outFileXML)
         
-        if Debug:
-            print "\nWritten downloaded MSF file importedVME.msf in directory " + os.getcwd()
+        print "\nWritten downloaded MSF file importedVME.msf in directory " + os.getcwd()
         
         
 class MSFBuilder:
@@ -76,8 +74,7 @@ class MSFBuilder:
         importedVmeNode = importedVMEDocument.documentElement
         isRoot = False
         isRoot = domP.IsARoot(importedVmeNode)
-        if Debug:
-            print "Is a Root? " + str(isRoot)
+        print "Is a Root? " + str(isRoot)
                
 	
 	if Debug:
@@ -123,8 +120,7 @@ class MSFBuilder:
             
         shutil.copy2(self.InputVMEBinaryDataFileName,self.OutputMSFFolderName)
         
-        if Debug:
-            print "\nWritten output MSF file " + self.OutputMSFFileName + " in directory " + self.OutputMSFFolderName
+        print "\nWritten output MSF file " + self.OutputMSFFileName + " in directory " + self.OutputMSFFolderName
         
 def run(inputVMEXMLFileName, inputVMEBinaryDataFileName, fakeRootMSFFileName, fakeMSFFileName, outputMSFFolderName,outputMSFFileName):                                            
     msfBuilder = MSFBuilder()
