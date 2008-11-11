@@ -13,6 +13,7 @@ import StringIO
 from datetime import *
 from time import *
 
+import socket
 import os
 
 import urllib, urllib2, base64, re, os, cookielib, sys
@@ -93,9 +94,19 @@ class lhpAuthenticationControl:
         authheader =  "Basic %s" % base64string
         req.add_header("Authorization", authheader)
 
-        # open the url
-        fd = urllib2.urlopen(req)
        
+         # timeout in seconds
+        self.Timeout = 15
+        socket.setdefaulttimeout(self.Timeout)
+        
+        try:
+            fd = urllib2.urlopen(req)
+        except urllib2.URLError:
+            print "Timeout Error!" 
+            print "More than " + str(self.Timeout) + " seconds to connect to www.biomedtown.org..."
+            print "Please  check your Internet connection"
+            return False
+      
         file = open(self.AuthenticationHTMLPageFileName, 'w' )       
         for content in fd:
             file.write(content)
