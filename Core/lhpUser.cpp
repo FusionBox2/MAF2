@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpUser.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-23 10:13:18 $
-Version:   $Revision: 1.11 $
+Date:      $Date: 2008-11-11 12:57:15 $
+Version:   $Revision: 1.11.2.1 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004
@@ -60,7 +60,12 @@ bool lhpUser::CheckUserCredentials()
 
   if(!res)
   {
-    int result = wxMessageBox("Incorrect Authentication.\nRetry?\nPressing Cancel information about user will not be stored on MSF!!",wxMessageBoxCaptionStr, wxOK | wxCANCEL);
+    int result = wxMessageBox("\
+No server side authentication!\n\
+Do you want to Retry?\n\
+Pressing Cancel information about\n\
+the user will not be stored on MSF and network enabled\n\
+facilities will be disabled",wxMessageBoxCaptionStr, wxOK | wxCANCEL);
     //returns 4 for OK, 16 for CANCEL
     if (result == 16)
     {
@@ -131,7 +136,7 @@ bool lhpUser::ExecuteAuthenticationScript()
     mafLogMessage(output[i]);
   }
 
-  mafLogMessage("Command Errors Messages:");
+  mafLogMessage("Command Errors Messages \(if any...\):");
   for (int i = 0; i < errors.size(); i++)
   {
     mafLogMessage(errors[i]);
@@ -155,6 +160,10 @@ bool lhpUser::ExecuteAuthenticationScript()
   } 
   else 
   {
+    int result = wxMessageBox("\
+Problems during server side authentication!\n\
+Please check the Log Area for more details on the error \n"\
+,wxMessageBoxCaptionStr, wxOK);
     return false;
   }  
 }
