@@ -15,6 +15,7 @@ from time import *
 
 import os
 
+import socket
 import urllib, urllib2, base64, re, os, cookielib, sys
 from HttpsProxy import *
 
@@ -53,9 +54,6 @@ class lhpAuthenticationControl:
            Authentication for user and password
         """
         
-        print "Connecting to self.Host: " + self.Host            
-        print "Retrieving: " + self.AuthenticationHTMLPageSelector
-        
         # build opener
         self.cj = cookielib.CookieJar()
         
@@ -92,9 +90,19 @@ class lhpAuthenticationControl:
         base64string = encodestring('%s:%s' % (self.Username, self.Password))[:-1]
         authheader =  "Basic %s" % base64string
         req.add_header("Authorization", authheader)
-
-        # open the url
-        fd = urllib2.urlopen(req)
+        
+        # timeout in seconds
+        self.Timeout = 15
+        socket.setdefaulttimeout(self.Timeout)
+        
+        try:
+            fd = urllib2.urlopen(req)
+        except urllib2.URLError:
+            print "Timeout Error!" 
+            print "More than " + str(self.Timeout) + " seconds to connect to www.biomedtown.org..."
+            print "Please  check your Internet connection"
+            return False
+            
        
         file = open(self.AuthenticationHTMLPageFileName, 'w' )       
         for content in fd:
