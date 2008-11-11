@@ -1,6 +1,7 @@
 import os, sys, shutil, time
 from webServicesClient import xmlrpcDemoWS
 from base64 import decodestring
+from Debug import Debug
 import xml.dom.minidom as xd
 from lhpDefines import *
 
@@ -44,7 +45,8 @@ class downloadSingleXML():
               if(attrValue == tag):
                   childToFind = el.getElementsByTagName('TC')[0] # first element of childList
                   returnValue = childToFind.firstChild.nodeValue
-                  print returnValue
+                  if Debug:
+                      print returnValue
         file.close()
         
         return returnValue

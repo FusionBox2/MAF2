@@ -19,6 +19,7 @@ import random
 import Queue
 import UploadHandler, DownloadHandler
 from webServicesClient import xmlrpcDemoWS
+from Debug import Debug
 import xml.dom.minidom as xd
 from lhpDefines import *
 import thread
@@ -164,8 +165,9 @@ class ThreadedClient:
         
     def GetVmeName(self, XMLUri):
         self.proxyHost, self.proxyPort = retriveProxyParameters()
-        print "->"+ self.proxyHost + "<-"
-        print "->"+ str(self.proxyPort) + "<-"
+        if Debug:
+            print "->"+ self.proxyHost + "<-"
+            print "->"+ str(self.proxyPort) + "<-"
         
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
         ws.setServer('https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/' + XMLUri)
@@ -173,7 +175,8 @@ class ThreadedClient:
         ws.ProxyURL = self.proxyHost
         ws.ProxyPort = self.proxyPort
     
-        print "XML URI = " + XMLUri 
+        if Debug:
+            print "XML URI = " + XMLUri 
         out = ws.run('gettitle', XMLUri)[1]
         
         self.vmeName = []
@@ -196,7 +199,8 @@ class ThreadedClient:
                 self.vmeName.append(node.data)            
         pass
         
-        print "VME Name: " + self.vmeName[0]
+        if Debug:
+            print "VME Name: " + self.vmeName[0]
         return self.vmeName[0]
         
 

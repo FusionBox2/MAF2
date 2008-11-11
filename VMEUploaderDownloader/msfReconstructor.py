@@ -2,6 +2,7 @@ import sys, os, time
 import xml.dom.minidom as xd
 import msfParser
 import vmeDownloader
+from Debug import Debug
 
 class MSFReconstructor():
     def __init__(self):
@@ -67,14 +68,16 @@ class MSFReconstructor():
                             tc = children.getElementsByTagName('TC')
                             extension = tc[0].childNodes[0].nodeValue
                             extFound = 1
-                            print extension
+                            if Debug:
+                                print extension
                                     
                     if (attrName  == "Name"): #in External Data files
                         if (attrValue == "EXTDATA_FILENAME"):
                             tc = children.getElementsByTagName('TC')
                             fileName = tc[0].childNodes[0].nodeValue
                             returnValue = fileName + '.' + extension
-                            print returnValue 
+                            if Debug:
+                                print returnValue 
                             return returnValue 
                                 
                                 
@@ -147,7 +150,8 @@ def reconstructMSF():
             dataBinary = ""
         
         msfR.InputVMEBinaryDataFileName = msfR.currentDir + dataBinary
-        print msfR.InputVMEBinaryDataFileName 
+        if Debug:
+            print msfR.InputVMEBinaryDataFileName 
         
         msfR.FakeRootMSFFileName = msfR.scriptsDir + r'\applicationData\fakeRoot.xml'
         msfR.FakeMSFFileName = msfR.scriptsDir + r'\applicationData\fakeMSF.xml'

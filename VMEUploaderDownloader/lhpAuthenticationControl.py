@@ -28,6 +28,7 @@ class lhpAuthenticationControl:
         self.Repository = ""
 
         self.AuthenticationHTMLPageSelector = "https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2"
+        #self.AuthenticationHTMLPageSelector = "http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/"
         self.RemoteWarningPage = r"https://www.biomedtown.org/biomed_town/LHDL/users/swclient/DictionaryCheck/"
         
         # authentication
@@ -79,8 +80,9 @@ class lhpAuthenticationControl:
 
         urllib2.install_opener(self.opener)  
         
-        print "Connecting to self.Host: " + self.Host            
-        print "Retrieving: " + self.AuthenticationHTMLPageSelector 
+        if Debug:
+            print "Connecting to self.Host: " + self.Host            
+            print "Retrieving: " + self.AuthenticationHTMLPageSelector 
         
         url = self.AuthenticationHTMLPageSelector 
 
