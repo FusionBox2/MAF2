@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-07 13:51:38 $
-Version:   $Revision: 1.94.2.4 $
+Date:      $Date: 2008-11-12 13:40:05 $
+Version:   $Revision: 1.94.2.5 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -361,7 +361,7 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
 
   //------Edit Tag----------------------------//
   wxString command2execute;
-  command2execute = m_PythonExe;
+  command2execute = m_PythonwExe;
   // script for client
   m_FileName = "lhpEditVMETag.py ";
   command2execute.Append(m_FileName.GetCStr());
@@ -869,7 +869,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
 
   // get auto tags
   wxString command2execute;
-  command2execute.Append(m_PythonExe.GetCStr());
+  command2execute.Append(m_PythonwExe.GetCStr());
   command2execute.Append(" lhpXMLDictionaryParser.py ");
   command2execute.Append(dictionaryToProcessFileName.GetCStr());
   command2execute.Append(" auto_tags ");
@@ -890,7 +890,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
 
   // get manual tags
   command2execute.Clear();
-  command2execute = m_PythonExe;
+  command2execute = m_PythonwExe;
   
   command2execute.Append(" lhpXMLDictionaryParser.py ");
   command2execute.Append(dictionaryToProcessFileName.GetCStr());
