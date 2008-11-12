@@ -9,6 +9,7 @@ import xml.dom.minidom as xd
 import os, time
 from lhpDefines import *
 import StringIO
+from Debug import Debug
 
 import urllib, urllib2, base64, re, os, cookielib, sys
 from HttpsProxy import *
@@ -31,8 +32,9 @@ class lhpGetXMLURI:
            Creates an empty resource on repository and return the URI
         """
         self.proxyHost, self.proxyPort = retriveProxyParameters()
-        print "->"+ self.proxyHost + "<-"
-        print "->"+ str(self.proxyPort) + "<-"
+        if Debug:
+            print "->"+ self.proxyHost + "<-"
+            print "->"+ str(self.proxyPort) + "<-"
         
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
         ws.setCredentials(self.userName, self.password)
@@ -52,7 +54,8 @@ class lhpGetXMLURI:
             for el in dom.getElementsByTagName("string"):
                 for node in el.childNodes:  
                     error = node.data
-            print error
+            if Debug:
+                print error
             return
         for el in dom.getElementsByTagName("string"):
             for node in el.childNodes:  

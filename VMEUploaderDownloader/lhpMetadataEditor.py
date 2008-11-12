@@ -32,11 +32,13 @@ class MetadataEditorPanel(wx.Panel):
         
         # load msf infos
         curDir = os.getcwd()        
-        print " current directory is: " + curDir
+        if Debug:
+            print " current directory is: " + curDir
         
                 
         self.inputUnhandledPlusManualCSVFileName = os.getcwd() + r'\\' + str(arg[0]) # to be used to save on exit    
-        print self.inputUnhandledPlusManualCSVFileName
+        if Debug:
+            print self.inputUnhandledPlusManualCSVFileName
         assert(os.path.exists(self.inputUnhandledPlusManualCSVFileName))
         
         if len(arg) ==  2:
@@ -63,7 +65,8 @@ class MetadataEditorPanel(wx.Panel):
         
         # read handledAutoTagsList.csv ie tags filled from the factory to be displayed read only        
         self.factoryFilledTagsCSVFileName = os.getcwd() + r'\\' + "handledAutoTagsList.csv"     
-        print self.factoryFilledTagsCSVFileName
+        if Debug:
+            print self.factoryFilledTagsCSVFileName
         assert(os.path.exists(self.factoryFilledTagsCSVFileName))
        
         factoryFilledTagsReader = csv.reader(open(self.factoryFilledTagsCSVFileName, "r"))
@@ -156,11 +159,13 @@ class MetadataEditorPanel(wx.Panel):
         self.tree.GetMainWindow().Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
         self.tree.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.OnActivate)
     
-        print """self.InTreeButNotInUnhandledPlusManual: 
+        if Debug:
+            print """self.InTreeButNotInUnhandledPlusManual: 
 tags in tree but not in UnhandledPlusManual: should be removed from the factory"""
         
         for item in self.InTreeButNotInUnhandledPlusManual:
-            print item
+            if Debug:
+                print item
         
         
     def SaveOnExit(self):
@@ -184,16 +189,18 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
         setDiff = unhPlusManualSet.difference(tagsToBeSavedSet)
         setDiff2 = tagsToBeSavedSet.difference(unhPlusManualSet)
         
-        print setDiff
-        print setDiff2
+        if Debug:
+            print setDiff
+            print setDiff2
         
         toBeSaved = len(self.TagsToBeSavedList) 
         unhandledPlusMan = len(self.unhandledPlusManualDict.keys())
-        print "unhandledPlusManual list lenght: " + str(unhandledPlusMan)
-        print "toBeSaved dict size: "  + str(toBeSaved)
+        if Debug:
+            print "unhandledPlusManual list lenght: " + str(unhandledPlusMan)
+            print "toBeSaved dict size: "  + str(toBeSaved)
         
-        print "unhandledPlusManualSet size: " + str(len(unhPlusManualSet))
-        print "toBeSavedSet size: "  + str(len(tagsToBeSavedSet))
+            print "unhandledPlusManualSet size: " + str(len(unhPlusManualSet))
+            print "toBeSavedSet size: "  + str(len(tagsToBeSavedSet))
         
 #        assert(toBeSaved == unhandledPlusMan)
         
@@ -213,7 +220,8 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
         tagName = self.tree.GetItemText(evt.GetItem())
         selectedTag = self.tree.GetItemText(evt.GetItem(), 2)
         selectedTagValue = self.tree.GetItemText(evt.GetItem(), 1)
-        print selectedTag
+        if Debug:
+            print selectedTag
         if self.TagsThatCanBeEditedDictionary.has_key(selectedTag):
         
             dlg = lhpMetadataEditorTextEntryDialog.Dialog(self, -1, tagName, size=(350, 200),
@@ -227,13 +235,15 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
             if val == wx.ID_OK:
                self.log.WriteText("You pressed OK\n")
                if dlg.TextControl: 
-                    print "assigning: " + dlg.TextControl.GetValue()
+                    if Debug:
+                        print "assigning: " + dlg.TextControl.GetValue()
                     self.tree.SetItemText(evt.GetItem(),dlg.TextControl.GetValue(), 1)
             
             else:
                self.log.WriteText("You pressed Cancel\n")
                if dlg.TextControl: 
-                    print "discarding: " + dlg.TextControl.GetValue()
+                    if Debug:
+                        print "discarding: " + dlg.TextControl.GetValue()
     
             dlg.Destroy()
        
@@ -312,7 +322,8 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
             self.TagsToBeSavedList.append([msfTagName, msfTagValue, childId])
         
         elif self.factoryFilledTagsDict.has_key(msfTagName):
-            print "I`m " + str(msfTagName) + " The factory was so kind to fill me :D!"
+            if Debug:
+                print "I`m " + str(msfTagName) + " The factory was so kind to fill me :D!"
         else:
            
             # not in unhandledPlusManual

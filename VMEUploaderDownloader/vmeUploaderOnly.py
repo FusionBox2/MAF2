@@ -64,10 +64,11 @@ class vmeUploaderOnly:
         domDocument = minidom.parse(msfFileName)
         msfRootNode = domDocument.documentElement
        
-        print "\ninput MSF Directory: " + self.InputMSFDirectory
-        print "\ninput MSF filename: " + msfFileName
-        print "\nExtracting vme with ID: " + str(self.VmeToExtractID) + '\n' 
-        """parse the msf extracting tags from the UnhandledPlusManualTagsList file """
+        if Debug:
+            print "\ninput MSF Directory: " + self.InputMSFDirectory
+            print "\ninput MSF filename: " + msfFileName
+            print "\nExtracting vme with ID: " + str(self.VmeToExtractID) + '\n' 
+            """parse the msf extracting tags from the UnhandledPlusManualTagsList file """
         
         rootNode = msfRootNode
         vmeId = self.VmeToExtractID
@@ -87,13 +88,15 @@ class vmeUploaderOnly:
         nodeURI = msfDOMParserInstance.GetTagNodeByTagName(outVmeTagArrayNode, "L0000_resource_data_Dataset_DatasetURI")
         msfDOMParserInstance.SetTagNodeText(nodeURI, self.DatasetURI)       
         text = msfDOMParserInstance.GetTagNodeText(nodeURI)
-        print text
+        if Debug:
+            print text
         
         today = datetime.date.today()
         nodeURI = msfDOMParserInstance.GetTagNodeByTagName(outVmeTagArrayNode, "L0000_resource_data_Dataset_UploadDate")
         msfDOMParserInstance.SetTagNodeText(nodeURI, today)       
         day = msfDOMParserInstance.GetTagNodeText(nodeURI)
-        print day
+        if Debug:
+            print day
         
        # print "has child? " + self.withChild
         if (self.withChild == "true"):   
@@ -102,10 +105,12 @@ class vmeUploaderOnly:
             #cicle on file with list of child URI
             list = ''
             fileName = str(self.vmeName)+ str(self.originalId) + ".childURI"
-            print "file name: " + fileName 
+            if Debug:
+                print "file name: " + fileName 
             if(os.path.exists(fileName)):
                 file = open(fileName ,"r")
-                print "file opened: " + fileName
+                if Debug:
+                    print "file opened: " + fileName
                 for line in file.readlines():
                     line = line.replace("\n", ' ')
                     list += line                
@@ -113,7 +118,8 @@ class vmeUploaderOnly:
                 nodeURI = msfDOMParserInstance.GetTagNodeByTagName(outVmeTagArrayNode, "L0000_resource_MAF_TreeInfo_VmeChildURI1")
                 msfDOMParserInstance.SetTagNodeText(nodeURI, list)       
                 childURI = msfDOMParserInstance.GetTagNodeText(nodeURI)
-                print childURI 
+                if Debug:
+                    print childURI 
                 file.close()
                 os.remove(fileName)
                 os.chdir(newDir)
@@ -143,7 +149,8 @@ class vmeUploaderOnly:
                 nodeURI = msfDOMParserInstance.GetTagNodeByTagName(outVmeTagArrayNode, "L0000_resource_MAF_Procedural_VMElinkURI1")
                 msfDOMParserInstance.SetTagNodeText(nodeURI, list)       
                 linkURI = msfDOMParserInstance.GetTagNodeText(nodeURI)
-                print linkURI 
+                if Debug:
+                    print linkURI 
                 file.close()
                 os.remove(fileName)
                 os.chdir(newDir)
@@ -169,21 +176,25 @@ class vmeUploaderOnly:
         
         #if(len(fileNameList) == 1 and len(fileNameList[0]) != 0):
         if(self.hasBinary == True):
-            print self.InputMSFDirectory
+            if Debug:
+                print self.InputMSFDirectory
             os.chdir(self.InputMSFDirectory)
             shutil.copyfile(self.binaryName,self.OutputFolderName + "\\" + self.binaryName)
             
             #-----MD5 checksum calculation-----#
             os.chdir(self.OutputFolderName)
-            print self.OutputFolderName
+            if Debug:
+                print self.OutputFolderName
             self.localChksum = self.md5(self.binaryName)
-            print "Local checksumII= " + self.localChksum
+            if Debug:
+                print "Local checksumII= " + self.localChksum
             
             #AUTO TAGS SET  WITH  WEBSERVICE      
             nodeURI = msfDOMParserInstance.GetTagNodeByTagName(outVmeTagArrayNode, "L0000_resource_data_Dataset_LocalFileCheckSum")
             msfDOMParserInstance.SetTagNodeText(nodeURI, self.localChksum)       
             chksum = msfDOMParserInstance.GetTagNodeText(nodeURI)
-            print chksum
+            if Debug:
+                print chksum
 
         
         os.chdir(oldDir)
@@ -192,7 +203,8 @@ class vmeUploaderOnly:
         outFileXML = open(self.OutputVMEXMLName, 'w')
         newDoc.writexml(outFileXML)
 
-        print "\nWritten output XML file " + self.OutputVMEXMLName + " in directory " + self.OutputFolderName
+        if Debug:
+            print "\nWritten output XML file " + self.OutputVMEXMLName + " in directory " + self.OutputFolderName
 
     
     def md5(self,fileName):

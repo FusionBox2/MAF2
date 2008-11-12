@@ -62,7 +62,7 @@
                     #Content: "NATURAL"
        
 
-import Debug                    
+from Debug import Debug                    
 import sys, string
 from xml.dom import minidom
 from xml.dom import Node
@@ -120,13 +120,15 @@ class msfParser:
     def PrintNodeToScreen(self,node):
         if node.nodeType == Node.ELEMENT_NODE:
             # Write out the element name.
-            print('NodeName: %s\n' % node.nodeName)
+            if Debug:
+                print('NodeName: %s\n' % node.nodeName)
             # Write out the attributes.
             attrs = node.attributes                            
             for attrName in attrs.keys():
                 attrNode = attrs.get(attrName)
                 attrValue = attrNode.nodeValue
-                print('Attribute -- Name: %s  Value: %s\n' % \
+                if Debug:
+                    print('Attribute -- Name: %s  Value: %s\n' % \
                     (attrName, attrValue))
             # Walk over any text nodes in the current node.
             content = []                                      
@@ -135,9 +137,10 @@ class msfParser:
                     content.append(child.nodeValue)
             if content:
                 strContent = string.join(content)
-                print('Content: "')
-                print(strContent)
-                print('"\n')
+                if Debug:
+                    print('Content: "')
+                    print(strContent)
+                    print('"\n')
                 
     def GetVmeTagArrayNode(self,inputVmeNode):
         self.Id = -2
@@ -222,7 +225,8 @@ class msfParser:
                 
         for child in inputVme.childNodes:
             if child.nodeType == Node.ELEMENT_NODE:
-              print child.nodeName
+              if Debug:
+                  print child.nodeName
               
               if (child.nodeName == "TC" and self.extFound == 1 and len(self.extension) == 0):
                   self.extension = (child.childNodes[0].nodeValue)
@@ -351,13 +355,16 @@ class msfParser:
                                 removedTagsNumber += 1
         attrs = inputVmeTagArrayNode.attributes                             
         for attrName in attrs.keys():
-            print attrName
+            if Debug:
+                print attrName
             if attrName  == "NumberOfTags":
                attrNode = attrs.get(attrName)
                oldTagsNumber = attrNode.nodeValue
-               print oldTagsNumber
+               if Debug:
+                   print oldTagsNumber
                attrNode.nodeValue = str(int(oldTagsNumber) - removedTagsNumber)
-               print attrNode.nodeValue
+               if Debug:
+                   print attrNode.nodeValue
                
     
     def AddTagsFromList(self, domDoc, inputVmeTagArrayNode, tagsToBeAdded):
@@ -380,8 +387,8 @@ class msfParser:
                    print "old tags number was: " + oldTagsNumber
                    print str(addedTagsNumber)+ " tags have been added"
                attrNode.nodeValue = str(int(oldTagsNumber)  +  addedTagsNumber)
-               print "new tags number is: " + attrNode.nodeValue
-               if Debug:    
+               if Debug:
+                   print "new tags number is: " + attrNode.nodeValue  
                    print attrNode.nodeValue
     
     
@@ -513,7 +520,8 @@ class msfParser:
             #  search for a Node with name "Node" ie a vme
             if node.nodeType == Node.ELEMENT_NODE:
                 if node.nodeName == "Node":
-                    print('NodeName: %s\n' % node.nodeName)
+                    if Debug:
+                        print('NodeName: %s\n' % node.nodeName)
                     # and an attribute "Id"...
                     attrs = node.attributes                            
                     for attrName in attrs.keys():
@@ -522,7 +530,8 @@ class msfParser:
                         if attrName  == "Id": 
                             #if (eval(attrValue) == vmeId):
                             if (str(attrValue)== str(vmeId)): 
-                                print('Attribute -- Name: %s  Value: %s\n' % \
+                                if Debug:
+                                    print('Attribute -- Name: %s  Value: %s\n' % \
                                     (attrName, attrValue))
                                 self.__OutputVme = node
                                 break
@@ -560,7 +569,8 @@ class msfParser:
         for node in vmeTreeRootNode.childNodes:
             if node.nodeType == Node.ELEMENT_NODE:
                 if node.nodeName == "Node":
-                    print('NodeName: %s\n' % node.nodeName)
+                    if Debug:
+                        print('NodeName: %s\n' % node.nodeName)
                     # and an attribute "Id"...
                     attrs = node.attributes                            
                     for attrName in attrs.keys():
@@ -568,7 +578,8 @@ class msfParser:
                         attrValue = attrNode.nodeValue
                         if attrName  == "Id": 
                             if eval(attrValue) == vmeId: 
-                                print('Attribute -- Name: %s  Value: %s\n' % \
+                                if Debug:
+                                    print('Attribute -- Name: %s  Value: %s\n' % \
                                     (attrName, attrValue))
                                 self.__OutputVme = node 
                                 break
@@ -593,7 +604,8 @@ class msfParser:
         for node in parentNode.childNodes:
             if node.nodeType == Node.ELEMENT_NODE:
                 if node.nodeName == nodeName:
-                    print('NodeName: %s\n' % node.nodeName)
+                    if Debug:
+                        print('NodeName: %s\n' % node.nodeName)
                     self.__OutputNode = node
                     return
             self.__GetNodeByNodeNameInternal(node, nodeName)

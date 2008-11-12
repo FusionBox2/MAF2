@@ -9,6 +9,7 @@ from base64 import encodestring, decodestring
 import xml.dom.minidom as xd
 
 from HttpsProxy import *
+from Debug import Debug
 import os
 import urllib, urllib2, base64, re, os, cookielib, sys
 
@@ -176,7 +177,8 @@ class xmlrpc_demoWS:
         elif bod == 'createresource':
             body = self.createResource
 
-        print "++++++\n" + body + "\n"
+        if Debug:
+            print "++++++\n" + body + "\n"
 
         #####################
         self.cj = cookielib.CookieJar()
@@ -190,7 +192,8 @@ class xmlrpc_demoWS:
 
         if proxy_url != '' and proxy_port != '':
 
-            print "You are using proxy: " + p
+            if Debug:
+                print "You are using proxy: " + p
 
             self.opener = \
               urllib2.build_opener(
@@ -203,7 +206,8 @@ class xmlrpc_demoWS:
 
         urllib2.install_opener(self.opener)  
 
-        print "Connecting to URL: " + url
+        if Debug:
+            print "Connecting to URL: " + url
 
         req = urllib2.Request(url=url,data=body)
 
@@ -217,7 +221,8 @@ class xmlrpc_demoWS:
         req.add_header('content-length', str(len(body)))
 
         # open the url
-        print 'Sending body: ... \n%s\n' % (str(body))
+        if Debug:
+            print 'Sending body: ... \n%s\n' % (str(body))
         response = urllib2.urlopen(req)
 
         #print 'Sending body: ... '
@@ -265,7 +270,8 @@ class xmlrpc_demoWS:
         # development server
         url = self.ServerURL
 
-        print "COMMAND: %s" % command
+        if Debug:
+            print "COMMAND: %s" % command
         
         args['listitems'] = ''
 
@@ -358,7 +364,8 @@ class xmlrpc_demoWS:
             print 'Error: command not found\n'
             sys.exit(1)
 
-        print command, url, username, password, str(args)
+        if Debug:
+            print command, url, username, password, str(args)
         #ws = xmlrpc_demoWS(**args)
         return self.post_multipart(command, url, username, password, **args)
 

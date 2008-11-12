@@ -35,17 +35,20 @@ class DownloadHandler:
         oldDir = os.getcwd()
         if(self.dirCache != None):
            os.chdir(self.dirCache)
-        print os.getcwd()
+        if Debug:
+            print os.getcwd()
 
         serviceUrl = 'https://ws-lhdl.cineca.it/mafSRBDownload.cgi'
         mtomD = MtomDownload.MtomDownload()
 
-        print "->"+ self.proxyHost + "<-"
-        print "->"+ str(self.proxyPort) + "<-"
+        if Debug:
+            print "->"+ self.proxyHost + "<-"
+            print "->"+ str(self.proxyPort) + "<-"
          
         try:
             mtomD.Download(self.srbData,serviceUrl,self.proxyHost,self.proxyPort)
-            print "Inside Download Thread"
+            if Debug:
+                print "Inside Download Thread"
         except:
             print "-------Error calling mafSRBDownload.cgi----------" 
             self.block.acquire()
@@ -84,7 +87,8 @@ class DownloadHandler:
         
     
     def moveFileInMSFDirectory(self):
-            print "Move file in current MSF dir"
+            if Debug:
+                print "Move file in current MSF dir"
             #rename file, reading information by conf file
             try:
               file = open(self.dirCache+"configuration.conf","r")
@@ -94,7 +98,8 @@ class DownloadHandler:
             
             fullPathInMSF = file.read()
             file.close()
-            print "move " + self.dirCache+self.srbData + " in " + fullPathInMSF
+            if Debug:
+                print "move " + self.dirCache+self.srbData + " in " + fullPathInMSF
             
             if(os.path.exists(fullPathInMSF)):
                 os.remove(fullPathInMSF)
@@ -103,14 +108,16 @@ class DownloadHandler:
             pass
         
     def download(self):
-        print "DownloadHandler inside download:"
+        if Debug:
+            print "DownloadHandler inside download:"
         
         if(self.srbData != "."):
             thread.start_new_thread(self.__download,()) #here start download thread
             percentage = -1
             while(1):
               percentage = 100 * float(self.controlLocalFileDimension())/float(self.fileSize)
-              print percentage
+              if Debug:
+                  print percentage
               time.sleep(0.3)
               self.block.acquire()
               if(DownloadHandler.queue):
@@ -120,7 +127,8 @@ class DownloadHandler:
               if(percentage >= 100):
                   break
             
-            print str(self.controlLocalFileDimension())
+            if Debug:
+                print str(self.controlLocalFileDimension())
 
             #-----MD5 check-point-----#
             self.localChksum = self.md5(self.dirCache+self.srbData)

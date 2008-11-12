@@ -64,7 +64,8 @@ class lhpEditVMETag:
         #assert(len(msfFileNameList)  == 1)
         
         self.msfFileName = msfFileNameList[0]
-        print self.msfFileName
+        if Debug:
+            print self.msfFileName
         
 
         domDocument = minidom.parse(self.msfFileName)
@@ -72,11 +73,12 @@ class lhpEditVMETag:
 
 
  
-        print "\ninput MSF Directory: " + self.InputMSFDirectory
-        print "\ninput MSF filename: " + msfFileNameList[0]
-        print "\nlhdl dictionary: " + self.UnhandledPlusManualTagsListFileName + '\n'
-        print "\nExtracting vme with ID: " + str(self.VmeToExtractID) + '\n' 
-        """parse the msf extracting tags from the UnhandledPlusManualTagsList file """
+        if Debug:
+            print "\ninput MSF Directory: " + self.InputMSFDirectory
+            print "\ninput MSF filename: " + msfFileNameList[0]
+            print "\nlhdl dictionary: " + self.UnhandledPlusManualTagsListFileName + '\n'
+            print "\nExtracting vme with ID: " + str(self.VmeToExtractID) + '\n' 
+            """parse the msf extracting tags from the UnhandledPlusManualTagsList file """
         
         rootNode = msfRootNode
         vmeId = self.VmeToExtractID
@@ -124,7 +126,8 @@ class lhpEditVMETag:
 
         
         autoTagsList = sorted(autoTagsDictionary.keys())
-        print autoTagsList
+        if Debug:
+            print autoTagsList
 
 
         # remove old auto tags from tagArray
@@ -204,7 +207,8 @@ class lhpEditVMETag:
         # print "\nThese tags  be removed from output vme XML: \n" + str(tagsToBeRemoved)
     
         a = list(tagsToBeRemoved)
-        print a
+        if Debug:
+            print a
         
         # create output directory
         fileUtilities._mkdir(self.OutputFolderName) 
@@ -218,7 +222,8 @@ class lhpEditVMETag:
         newDoc.writexml(outFileXML)
 
 
-        print "\nWritten XML file " + self.OutputVMEXMLName + " with tag edited in directory " + self.OutputFolderName
+        if Debug:
+            print "\nWritten XML file " + self.OutputVMEXMLName + " with tag edited in directory " + self.OutputFolderName
         
     def ParseOutput(self):
         #Create an msf from xml created in ParseInput
@@ -275,7 +280,8 @@ class lhpEditVMETag:
         xmlFilePath = self.OutputFolderName + "\\" + self.InputVMEXMLFileName
         os.remove(xmlFilePath)
         
-        print "\nWritten output MSF file " + self.OutputMSFFileName + " in directory " + self.OutputFolderName
+        if Debug:
+            print "\nWritten output MSF file " + self.OutputMSFFileName + " in directory " + self.OutputFolderName
 
             
 def run(inputMSFDirectory, vmeToExtractId, unhandledPlusManualTagsListFileName):                                        

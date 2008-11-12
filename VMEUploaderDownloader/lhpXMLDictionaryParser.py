@@ -144,10 +144,12 @@ class lhpXMLDictionaryParser:
                         return False
                     else:
                         # tag with no Editable attribute is manual
-                        print "Editable tag not found for: " + attrName + "tag"
+                        if Debug:
+                            print "Editable tag not found for: " + attrName + "tag"
                         return False
             # tags with no attributes at all is manual
-            print "Tag: " + node.nodeName + " has no attributes... "
+            if Debug:
+                print "Tag: " + node.nodeName + " has no attributes... "
             return False
     
     def GetAttributesDictionary(self, node):
@@ -169,7 +171,8 @@ class lhpXMLDictionaryParser:
             if Debug:
                 print "Node name: " + node.nodeName
             attrs = node.attributes     
-            print attrs.keys                        
+            if Debug:
+                print attrs.keys                        
             for attribute in attrs.keys():
                 attrNode = attrs.get(attribute)
                 attrValue = attrNode.nodeValue
@@ -243,7 +246,8 @@ class lhpXMLDictionaryParser:
 
     def PrintXMLDictionary(self):
         """ print XML dictionary to standard output """
-        self.PrintXML(self.DictionaryDOMDocumentRoot, sys.stdout)
+        if Debug:
+            self.PrintXML(self.DictionaryDOMDocumentRoot, sys.stdout)
        
     def PrintXML(self, parent, outFile):
         """ Print XML starting from given parent node to output file outFile"""
@@ -340,7 +344,8 @@ class lhpXMLDictionaryParser:
         the VmeRootURI named dom node is returned if it exists otherwise None"""
         assert(self.DictionaryDOMDocument)
         splitted = split(vmeTagArrayTagName, '_')
-        print splitted
+        if Debug:
+            print splitted
         
         currentParent = self.DictionaryDOMDocument
         

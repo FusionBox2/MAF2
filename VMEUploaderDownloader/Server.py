@@ -4,6 +4,7 @@
 import socket # networking module
 import threading
 import time
+from Debug import Debug
 
 
 
@@ -58,7 +59,8 @@ class Server(threading.Thread):
       if (sendList[0] == "UPLOAD"):
            sendList[11] = sendList[11].replace("??", " ") # VME name with spaces arrives with "??" instead of them
       sendList[2] = sendList[2].replace("??", " ") # directory with spaces arrives with "??" instead of them
-      print sendList[2]
+      if Debug:
+          print sendList[2]
       return sendList
       
   def run(self):

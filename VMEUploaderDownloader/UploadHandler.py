@@ -48,8 +48,9 @@ class UploadHandler:
             
     def upload(self):
         self.proxyHost, self.proxyPort = retriveProxyParameters()
-        print "->"+ self.proxyHost + "<-"
-        print "->"+ str(self.proxyPort) + "<-"
+        if Debug:
+            print "->"+ self.proxyHost + "<-"
+            print "->"+ str(self.proxyPort) + "<-"
        
         self.createOutgoingDir()
         
@@ -61,16 +62,19 @@ class UploadHandler:
             
             #get free resource (return URI string)
             self.getFreeResource() #thread maybe
-            print self.BinaryURI
+            if Debug:
+                print self.BinaryURI
             #thread.start_new_thread(self.getFreeResource,())
             
             self.createXMLAndBinary()
                     
             binaryFileName = self.getBinaryFile()
-            print "binary name: " + str(binaryFileName)
+            if Debug:
+                print "binary name: " + str(binaryFileName)
             if (binaryFileName != ""):
                
-                print self.BinaryURI
+                if Debug:
+                    print self.BinaryURI
                 #-1 percentage means progress pulsing 
                     
                 """
@@ -104,8 +108,9 @@ class UploadHandler:
                 thread.start_new_thread(self.sendBinaryFile,())      
                 #self.sendBinaryFile() #until there is service monitor don't use thread
                 
-                print "Wainting for sending binary..."
-                print "Total Size of Binary: " + str(self.binaryFileSize)
+                if Debug:
+                    print "Wainting for sending binary..."
+                    print "Total Size of Binary: " + str(self.binaryFileSize)
                 #binarySendResult = False
                 oldPercentage = -1
                 percentage = 0
@@ -131,10 +136,12 @@ class UploadHandler:
                     oldPercentage = percentage
                     
                     
-                    print "percentage " + str(percentage) 
+                    if Debug:
+                        print "percentage " + str(percentage) 
                     lista = [self.observer,percentage]
-                    print "bytes: " + str(self.remoteTemporaryBinaryFileSize)
-                    print "p: " + str(percentage)
+                    if Debug:
+                        print "bytes: " + str(self.remoteTemporaryBinaryFileSize)
+                        print "p: " + str(percentage)
                     self.block.acquire()
                     UploadHandler.queue.put(lista)
                     self.block.release()
@@ -179,37 +186,46 @@ class UploadHandler:
           UploadHandler.queue.put(lista)
           self.block.release()
         
-          print "End Upload"
-          print "Uploaded Binary in SRB: " + self.BinaryURI
-          print "Uploaded XML on Biomedtown: " + self.XMLName
-          print "Uploaded by: " + self.currentUser
-          print "In server url: " + self.urlServer
+        
+          if Debug:
+              print "End Upload"
+              print "Uploaded Binary in SRB: " + self.BinaryURI
+              print "Uploaded XML on Biomedtown: " + self.XMLName
+              print "Uploaded by: " + self.currentUser
+              print "In server url: " + self.urlServer
           print "--------Upload successful :D :D :D --------"
           
-          print "--------cleaning up cache directories--------"
-          print "cache dir is: " + str(self.dirCache) 
-          print "outgoing dir is " + str(self.dirOutgoing)
-          
-          print "current dir is: " + str(os.getcwd())
+          if Debug:
+              print "--------cleaning up cache directories--------"
+              print "cache dir is: " + str(self.dirCache) 
+              print "outgoing dir is " + str(self.dirOutgoing)
+              print "current dir is: " + str(os.getcwd())
           os.chdir(self.dirOutgoing + r"\..\..")
-          print "changing to: " + str(os.getcwd())
-          print "removing " + str(self.dirCache) 
+          if Debug:
+              print "changing to: " + str(os.getcwd())
+              print "removing " + str(self.dirCache) 
           fileUtilities.rmdir_recursive(self.dirCache)
           
           if (os.path.isdir(self.dirCache) == False):
-            print "done!"
+            if Debug:
+                print "done!"
           else:
-            print "cannot remove " + str(self.dirCache)
+            if Debug:
+                print "cannot remove " + str(self.dirCache)
         
 
-          print "removing " + str(self.dirOutgoing)
+          if Debug:
+              print "removing " + str(self.dirOutgoing)
           fileUtilities.rmdir_recursive(self.dirOutgoing)
           
           if (os.path.isdir(self.dirOutgoing) == False):
-            print "done!"
+            if Debug:
+                print "done!"
           else:
-            print "cannot remove " + str(self.dirOutgoing)
-          print "--------clean up cache directories successful--------"
+            if Debug:
+                print "cannot remove " + str(self.dirOutgoing)
+          if Debug:
+              print "--------clean up cache directories successful--------"
           
         else:
           percentage = 120 #120 for 'error!'
@@ -281,7 +297,6 @@ class UploadHandler:
         serviceUrl = 'https://ws-lhdl.cineca.it/mafSRBUploadURI.cgi'
 
         try:
-            print "here"
             result = instance.ListSrbDir(serviceUrl, self.proxyHost, self.proxyPort)
         except:
             print "------Error calling mafSRBUploadURI.cgi----------"  
@@ -306,7 +321,8 @@ class UploadHandler:
     def sendBinaryFile(self):
         os.rename(self.dirOutgoing + "\\" + self.getBinaryFile(),self.dirOutgoing + "\\" + self.BinaryURI)
         self.__sendFile(self.BinaryURI)
-        print "Sending Thread Finished"
+        if Debug:
+            print "Sending Thread Finished"
 		
     def sendXMLFile(self):
         os.rename(self.dirOutgoing + "\\" + self.getXMLFile(),self.dirOutgoing + "\\" + self.XMLURI)
@@ -340,7 +356,8 @@ class UploadHandler:
                 for node in el.childNodes:  
                     error = node.data
 
-            print error 
+            if Debug:
+                print error 
             percentage = 120 #120 for 'error!'
             lista = [self.observer,percentage]
             self.block.acquire()  
@@ -358,7 +375,8 @@ class UploadHandler:
                     try:
                         msvcrt.locking(msfList.fileno(), msvcrt.LK_RLCK, size)
                         msfList.write(self.XMLURI + '\n')
-                        print 'data: '+ self.XMLURI  
+                        if Debug:
+                            print 'data: '+ self.XMLURI  
                         msfList.close()
                         break
                     except:
@@ -410,7 +428,8 @@ class UploadHandler:
                 os.remove(sys.path[0] + '\\' + self.msfListFile)
                     
                           
-        print self.XMLName
+        if Debug:
+            print self.XMLName
         
     def isBinaryPresent(self):
         result = False
@@ -436,9 +455,10 @@ class UploadHandler:
         
         rootNode = msfRootNode
         
-        print "\ninput MSF Directory: " + self.dirCache
-        print "\ninput MSF filename: " + msfFileName
-        print "\nExtracting vme with ID: " + str(self.id) + '\n' 
+        if Debug:
+            print "\ninput MSF Directory: " + self.dirCache
+            print "\ninput MSF filename: " + msfFileName
+            print "\nExtracting vme with ID: " + str(self.id) + '\n' 
         
         msfDOMParserInstance = msfParser.msfParser()
         
@@ -448,7 +468,8 @@ class UploadHandler:
         if (len(fileNameList) == 1 and len(fileNameList[0]) != 0):
             self.binaryName = fileNameList[0]
             result = True
-            print "Binary data present"
+            if Debug:
+                print "Binary data present"
                
         os.chdir(oldDir)  
         return result
@@ -460,8 +481,9 @@ class UploadHandler:
         oldDir = os.getcwd()
         os.chdir(self.dirOutgoing)
         
-        print "->"+ self.proxyHost + "<-"
-        print "->"+ str(self.proxyPort) + "<-"
+        if Debug:
+            print "->"+ self.proxyHost + "<-"
+            print "->"+ str(self.proxyPort) + "<-"
         
         instance = MtomUpload.MtomUpload()
         try:
@@ -472,9 +494,11 @@ class UploadHandler:
             
         self.remoteChksum = result.chksum
         self.remoteChksum = self.remoteChksum.lower()
-        print "Remote checksum: " + str(self.remoteChksum)
+        if Debug:
+            print "Remote checksum: " + str(self.remoteChksum)
         self.uri = result.uriFile
-        print "URI File: " + str(result.uriFile)
+        if Debug:
+            print "URI File: " + str(result.uriFile)
         self.binarySendResult = True
         os.chdir(oldDir)
         
@@ -501,8 +525,9 @@ class UploadHandler:
         self.block.release()
         result = None
         
-        print "->"+ self.proxyHost + "<-"
-        print "->"+ str(self.proxyPort) + "<-"
+        if Debug:
+            print "->"+ self.proxyHost + "<-"
+            print "->"+ str(self.proxyPort) + "<-"
         
         try:
             instance = MtomSRBSize.MtomSize()
@@ -514,7 +539,8 @@ class UploadHandler:
             self.remoteTemporaryBinaryFileSize = result;
 
                         
-            print "SIZE Thread Finished "
+            if Debug:
+                print "SIZE Thread Finished "
         except:
             return
         self.block.acquire()
@@ -534,7 +560,8 @@ class UploadHandler:
             if(os.path.exists(sys.path[0] + '\\' + self.msfListFile)):
                 msfList = open(sys.path[0] + '\\' + self.msfListFile, 'r')
                 for line in msfList.readlines():
-                    print "removing file: " + line
+                    if Debug:
+                        print "removing file: " + line
                     if(line != ""):
                         line = line.replace ( "\n", "" )
                         ws.setServer(self.urlServer)
@@ -558,7 +585,8 @@ class UploadHandler:
                             for el in dom.getElementsByTagName("string"):
                                 for node in el.childNodes:  
                                     error = node.data
-                            print error
+                            if Debug:
+                                print error
                             continue
         
             os.remove(sys.path[0] + '\\' + self.msfListFile)           
