@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-07 14:04:23 $
-Version:   $Revision: 1.26.2.6 $
+Date:      $Date: 2008-11-12 13:39:08 $
+Version:   $Revision: 1.26.2.7 $
 Authors:   Roberto Mucci , Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -107,9 +107,8 @@ mafOp(label)
   m_LinkName.clear();
   m_User = NULL;
 
-  //m_PythonExe ="C:\\Python25\\python.exe ";
-  m_PythonExe ="python.exe ";
-  m_PythonwExe ="pythonw.exe ";
+
+  m_PythonExe ="pythonw.exe ";
   m_CacheDir = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\UploadCache\\").c_str();
   m_OutgoingDir = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\Outgoing\\").c_str();
 
@@ -207,6 +206,27 @@ void lhpOpEditTag::OpRun()
   int result = OP_RUN_CANCEL;
 
   bool upToDate = false;
+
+  mafString DebugPath = m_PythonUploadFullPath;
+  DebugPath.Append("\\Debug.py");
+  if (wxFileExists(DebugPath.GetCStr()))
+  {
+    ifstream debugFile;
+    debugFile.open(DebugPath.GetCStr());
+    if (!debugFile) {
+      mafLogMessage("Unable to open Debug.py file");
+    }
+
+    std::string isDebug;
+    debugFile >> isDebug;
+    int pos = isDebug.find_last_of('=');
+    isDebug = isDebug.substr(pos+1);
+    if (!isDebug.compare("1") || !isDebug.compare("True"))
+    {
+      m_PythonExe ="python.exe ";
+    }
+    debugFile.close();
+  }
   
   if (DEBUG_TAGS_PROPAGATION)
   {
