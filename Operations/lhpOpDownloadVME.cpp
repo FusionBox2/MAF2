@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-10-22 10:07:35 $
-Version:   $Revision: 1.40 $
+Date:      $Date: 2008-11-12 13:43:16 $
+Version:   $Revision: 1.40.2.1 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -111,8 +111,8 @@ mafOp(label)
 
   m_PythonUploadFullPath  = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\").c_str();
   m_FileName = "";
-  //m_ServiceURL = "https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2";
-  m_ServiceURL = "http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/";
+  m_ServiceURL = "https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2";
+  //m_ServiceURL = "http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/";
 
   m_MsfDir = "";
   m_IncomingCompletePath = "";
@@ -890,6 +890,11 @@ int lhpOpDownloadVME::ImportMSF(mafNode *parentNode)
   msfFileName.Append(m_IncomingCompletePath);
   msfFileName.Append("outputMAF.msf");
   msfFileName.ParsePathName();
+
+  if (!wxFileExists(msfFileName.GetCStr()))
+  {
+    return MAF_ERROR;
+  }
 
   mafVMEStorage *storage;
   storage = mafVMEStorage::New();
