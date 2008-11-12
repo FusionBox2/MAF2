@@ -91,7 +91,8 @@ class lhpDictionaryVersionChecker:
                 print "Removing: " + file
             os.remove(file)      
         
-        print "Local dictionary is: " + str(timeSortedDictionaries[0])
+        if Debug:
+            print "Local dictionary is: " + str(timeSortedDictionaries[0])
             
     def GetLocalDictionaryDate(self):
         """
@@ -162,8 +163,9 @@ class lhpDictionaryVersionChecker:
 
         urllib2.install_opener(self.opener)  
         
-        print "Connecting to self.Host: " + self.Host            
-        print "Retrieving: " + self.DictionaryDownloadHTMLPageSelector
+        if Debug:
+            print "Connecting to self.Host: " + self.Host            
+            print "Retrieving: " + self.DictionaryDownloadHTMLPageSelector
         
         url = self.DictionaryDownloadHTMLPageSelector
 

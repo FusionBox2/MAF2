@@ -5,6 +5,7 @@
 #-----------------------------------------------------------------------------
 
 from webServicesClient import xmlrpcDemoWS
+from Debug import Debug
 import xml.dom.minidom as xd
 import os, time
 from lhpDefines import *
@@ -41,19 +42,19 @@ class lhpEditRemoteTag:
         """
         
         self.proxyHost, self.proxyPort = retriveProxyParameters()
-        print "->"+ self.proxyHost + "<-"
-        print "->"+ str(self.proxyPort) + "<-"
+        if Debug:
+            print "->"+ self.proxyHost + "<-"
+            print "->"+ str(self.proxyPort) + "<-"
         
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
         ws.setServer(self.URL + self.parameter.split(',')[0])
         ws.setCredentials(self.userName, self.password)
         ws.ProxyURL = self.proxyHost
         ws.ProxyPort = self.proxyPort
-        #print "->"+ self.currentUser + "<-"
-        #print "->"+ self.currentPassword + "<-"
-        print "->"+ ws.ProxyURL + "<-"
-        print "->"+ str(ws.ProxyPort) + "<-"
-        print self.parameter      
+        if Debug:
+            print "->"+ ws.ProxyURL + "<-"
+            print "->"+ str(ws.ProxyPort) + "<-"
+            print self.parameter      
         
         out = ws.run("xmledit", self.parameter)[1]
         

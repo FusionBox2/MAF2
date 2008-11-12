@@ -436,7 +436,8 @@ class UploadHandler:
         
         #if node is root VME, no binary is present
         if (str(self.id) == "-1"):
-            print "\nNo binary data"
+            if Debug:
+                print "\nNo binary data"
             return result
         
         oldDir = os.getcwd()

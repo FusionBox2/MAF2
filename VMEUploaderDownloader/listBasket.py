@@ -2,6 +2,7 @@ from webServicesClient import xmlrpcDemoWS
 import xml.dom.minidom as xd
 import os, time
 from lhpDefines import *
+from Debug import Debug
 
 class listBasket:
     def __init__(self):
@@ -30,15 +31,15 @@ class listBasket:
         ws.setCredentials(self.currentUser, self.currentPassword)
         ws.ProxyURL = self.proxyHost
         ws.ProxyPort = self.proxyPort
-        #print "->"+ self.currentUser + "<-"
-        #print "->"+ self.currentPassword + "<-"
-        print "->"+ ws.ProxyURL + "<-"
-        print "->"+ str(ws.ProxyPort) + "<-"
+
+        if Debug:
+            print "->"+ ws.ProxyURL + "<-"
+            print "->"+ str(ws.ProxyPort) + "<-"
         
         try:
             self.Result = ws.run('listbasket')[1]
         except Exception, e:
-             print "ERRORE %s" % str(e)
+             print "ERROR %s" % str(e)
         self.__createListFromReultingXML()
         #print self.IdList
         pass
