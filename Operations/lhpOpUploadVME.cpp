@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-12 13:40:05 $
-Version:   $Revision: 1.94.2.5 $
+Date:      $Date: 2008-11-13 11:30:49 $
+Version:   $Revision: 1.94.2.6 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -188,9 +188,11 @@ void lhpOpUploadVME::OpRun()
   else
   {
     wxString oldDir = wxGetCwd();
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+    if (m_DebugMode)
+      mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
     wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+    if (m_DebugMode)
+      mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
     //if file exists , delete it
     if(wxFileExists(m_ConnectionConfigurationFileName.GetCStr()))
@@ -219,9 +221,11 @@ void lhpOpUploadVME::SaveConnectionConfigurationFile()
 //------------------------------------------------------------
 {
   wxString oldDir = wxGetCwd();
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
   //if file exists , delete it
   if(wxFileExists(m_ConnectionConfigurationFileName.GetCStr()))
@@ -251,13 +255,15 @@ void lhpOpUploadVME::SaveConnectionConfigurationFile()
     message.Append("m_ProxyPort: ");
     message.Append(m_ProxyPort.GetCStr());
 
-    mafLogMessage(message.c_str());
+    if (m_DebugMode)
+      mafLogMessage(message.c_str());
 
     configurationFile.close();
   }
 
   wxSetWorkingDirectory(oldDir);
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 }
 
 //----------------------------------------------------------------------------
@@ -304,7 +310,8 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
   }
 
   wxString oldDir = wxGetCwd();
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
 
   //if already exist file with binary URI, remove it
@@ -373,13 +380,15 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
   command2execute.Append(wxString::Format("%d ",m_CacheVme->GetId())); //vme id
   command2execute.Append(wxString::Format("%s", m_CsvName.c_str())); //manualTagFile
 
-  //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
   long pid = -1;
   if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Can't edit MSF. Uploading stopped");
-    //mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
-    //  command2execute.c_str(), pid);
+    if (m_DebugMode)
+      mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), pid);
     return MAF_ERROR;
   }
   //------Edit Tag----------------------------//
@@ -414,7 +423,8 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
   command2execute.Append(m_User->GetPwd());
   command2execute.Append(" ");
   command2execute.Append(m_ServiceURL.GetCStr());
-  //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   wxArrayString output;
   wxArrayString errors;
@@ -422,27 +432,32 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
   if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Error in lhpGetXMLURI.py. Uploading stopped");
-    //mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-    //  command2execute.c_str(), pid);
+    if (m_DebugMode)
+      mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), pid);
     return MAF_ERROR;
   }
 
-  mafLogMessage("Command Output Messages:");
-  for (int i = 0; i < output.size(); i++)
+  if (m_DebugMode)
   {
-    mafLogMessage(output[i]);
-  }
+     mafLogMessage("Command Output Messages:");
+    for (int i = 0; i < output.size(); i++)
+    {
+      mafLogMessage(output[i]);
+    }
 
-  mafLogMessage("Command Errors Messages:");
-  for (int i = 0; i < errors.size(); i++)
-  {
-    mafLogMessage(errors[i]);
+    mafLogMessage("Command Errors Messages:");
+    for (int i = 0; i < errors.size(); i++)
+    {
+      mafLogMessage(errors[i]);
+    }
   }
 
   XMLURI = output[output.size() - 1];
 
   wxSetWorkingDirectory(oldDir);
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str());
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str());
  
   if ( ExistsRunningProcess() )
   {
@@ -483,8 +498,9 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
 
     m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
 
-    //mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
-    //command2execute.c_str(), m_Pid);
+    if (m_DebugMode)
+      mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), m_Pid);
   }
   else
   {
@@ -496,12 +512,14 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     command2execute.Append(m_FileName.GetCStr());
     command2execute.Append("50000");
     //command2execute.Append(" > log.txt"); //logme
-    //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+    if (m_DebugMode)
+      mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
     m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
 
-    //mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
-    //  command2execute.c_str(), m_Pid);
+    if (m_DebugMode)
+      mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), m_Pid);
 
     mafSleep(5000);
     command2execute.clear();
@@ -539,8 +557,9 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
 
     m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
     
-    //mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
-    //    command2execute.c_str(), m_Pid);
+    if (m_DebugMode)
+      mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
+        command2execute.c_str(), m_Pid);
   }
 
   //remove csv file with tags
@@ -708,7 +727,8 @@ bool lhpOpUploadVME::CreateCache()
   }
 
   wxString oldDir = wxGetCwd();
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(currentSubdir.GetCStr());
 
   currentSubdir = m_Input->GetName();
@@ -819,9 +839,11 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
 //----------------------------------------------------------------------------
 {
   wxString oldDir = wxGetCwd();
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
   m_MasterXMLDictionaryFileName = this->GetXMLDictionaryFileName(m_MasterXMLDictionaryFilePrefix);
   if (m_MasterXMLDictionaryFileName == "NOT FOUND")
@@ -875,14 +897,16 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
   command2execute.Append(" auto_tags ");
   command2execute.Append(m_AutoTagsListFromXMLDictionaryFileName.GetCStr());
   
-  //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   long pid = -1;
   if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Error in lhpXMLDictionaryParser.py. Uploading stopped");
-   // mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-   //   command2execute.c_str(), pid);
+    if (m_DebugMode)
+     mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), pid);
     return MAF_ERROR;
   }
   if ( !command2execute )
@@ -897,14 +921,16 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
   command2execute.Append(" manual_tags ");
   command2execute.Append(m_ManualTagsListFromXMLDictionaryFileName.GetCStr());
 
-  //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   pid = -1;
   if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Error in lhpXMLDictionaryParser.py. Uploading stopped");
-    //mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-    //  command2execute.c_str(), pid);
+    if (m_DebugMode)
+      mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), pid);
     return MAF_ERROR;
   }
   if ( !command2execute )
@@ -982,7 +1008,8 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
       else
       {
         m_UnhandledAutoTagsListFromFactory.Add(tagName.GetCStr());
-        mafLogMessage(_("Cannot handle \"%s\" tag!, this tag will become manual"),tagName.GetCStr());
+        if (m_DebugMode)
+          mafLogMessage(_("Cannot handle \"%s\" tag!, this tag will become manual"),tagName.GetCStr());
       }
     }
   }
@@ -1069,7 +1096,8 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
   }
   unhandledPlusManualTagsFile.close();
   wxSetWorkingDirectory(oldDir);
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   return MAF_OK;
 }
 //----------------------------------------------------------------------------
@@ -1109,9 +1137,11 @@ bool lhpOpUploadVME::IsLHPBuilderVersionUpToDate()
 {
   wxBusyInfo("Checking if  your software is up-to-date in order to upload, please wait...");
   wxString oldDir = wxGetCwd();
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
   // get manual tags
   wxString command2execute;
@@ -1127,7 +1157,8 @@ bool lhpOpUploadVME::IsLHPBuilderVersionUpToDate()
     command2execute.Append(m_ProxyPort.GetCStr());
   }
 
-  //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   wxArrayString output;
   wxArrayString errors;
@@ -1138,23 +1169,26 @@ bool lhpOpUploadVME::IsLHPBuilderVersionUpToDate()
     return false;
   }
 
-  mafLogMessage("Command Output Messages:");
-  for (int i = 0; i < output.size(); i++)
+  if (m_DebugMode)
   {
-    mafLogMessage(output[i]);
-  }
+    mafLogMessage("Command Output Messages:");
+    for (int i = 0; i < output.size(); i++)
+    {
+      mafLogMessage(output[i]);
+    }
 
-  mafLogMessage("Command Errors Messages:");
-  for (int i = 0; i < errors.size(); i++)
-  {
-    mafLogMessage(errors[i]);
+    mafLogMessage("Command Errors Messages:");
+    for (int i = 0; i < errors.size(); i++)
+    {
+      mafLogMessage(errors[i]);
+    }
   }
-
 
   wxString result = output[output.size() - 1];
 
   wxSetWorkingDirectory(oldDir);
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 
   if (result == "UpToDate")
   {
@@ -1174,9 +1208,11 @@ mafString lhpOpUploadVME::GetXMLDictionaryFileName( mafString dictionaryFileName
   mafString dictionaryFileName = "NOT FOUND";
   wxString oldDir = wxGetCwd();
 
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
   wxArrayString files;
   wxString filePattern = dictionaryFileNamePrefix ;
@@ -1189,6 +1225,7 @@ mafString lhpOpUploadVME::GetXMLDictionaryFileName( mafString dictionaryFileName
     std::ostringstream stringStream;
     mafLogMessage(stringStream.str().c_str());
     mafLogMessage("lhpXMLDictionary_*.xml not found! exiting");
+
     return dictionaryFileName;
   }
   if (files.size() != 1)
@@ -1196,8 +1233,8 @@ mafString lhpOpUploadVME::GetXMLDictionaryFileName( mafString dictionaryFileName
     std::ostringstream stringStream;
     stringStream << "Found " << files.size() << " dictionaries!"  << std::endl;    
     mafLogMessage(stringStream.str().c_str());
-
     mafLogMessage("Too many lhpXMLDictionary_*.xml! exiting");
+
     return dictionaryFileName;
   }
   else
@@ -1206,12 +1243,16 @@ mafString lhpOpUploadVME::GetXMLDictionaryFileName( mafString dictionaryFileName
     dictionaryFileName = files[0];
     int pos = dictionaryFileName.FindLast("\\");
     dictionaryFileName.Erase(0, pos);
-    mafLogMessage("Found dictionary!");
-    mafLogMessage(dictionaryFileName.GetCStr());
+    if (m_DebugMode)
+    {
+      mafLogMessage("Found dictionary!");
+      mafLogMessage(dictionaryFileName.GetCStr());
+    }
   }
   
   wxSetWorkingDirectory(oldDir);
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   
   return dictionaryFileName;
 }
@@ -1221,11 +1262,14 @@ int lhpOpUploadVME::AssembleDictionaries()
 //----------------------------------------------------------------------------
 {
   wxString oldDir = wxGetCwd();
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
-
-  mafLogMessage("Assembling dictionaries...");
+  if (m_DebugMode)
+  {
+    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+    mafLogMessage("Assembling dictionaries...");
+  }
 
   m_SubXMLDictionaryFileName = this->GetXMLDictionaryFileName(m_SubXMLDictionaryFilePrefix);
   if (m_SubXMLDictionaryFileName == "NOT FOUND")
@@ -1247,7 +1291,8 @@ int lhpOpUploadVME::AssembleDictionaries()
   command2execute.Append(" ");
   command2execute.Append(m_AssembledXMLDictionaryFileName);
 
-  //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   wxArrayString output;
   wxArrayString errors;
@@ -1258,20 +1303,24 @@ int lhpOpUploadVME::AssembleDictionaries()
     return MAF_ERROR;
   }
   
-  mafLogMessage("Command Output Messages:");
-  for (int i = 0; i < output.size(); i++)
+  if (m_DebugMode)
   {
-    mafLogMessage(output[i]);
-  }
+    mafLogMessage("Command Output Messages:");
+    for (int i = 0; i < output.size(); i++)
+    {
+      mafLogMessage(output[i]);
+    }
 
-  mafLogMessage("Command Errors Messages:");
-  for (int i = 0; i < errors.size(); i++)
-  {
-    mafLogMessage(errors[i]);
+    mafLogMessage("Command Errors Messages:");
+    for (int i = 0; i < errors.size(); i++)
+    {
+      mafLogMessage(errors[i]);
+    }
   }
 
   wxSetWorkingDirectory(oldDir);
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 
   return MAF_OK;
 }

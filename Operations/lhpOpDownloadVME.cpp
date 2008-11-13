@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-12 13:43:16 $
-Version:   $Revision: 1.40.2.1 $
+Date:      $Date: 2008-11-13 11:30:48 $
+Version:   $Revision: 1.40.2.2 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -95,6 +95,7 @@ mafOp(label)
 	m_Canundo = false;
   m_FillLinkVector = false;
   m_WholeMsfDownload = false;
+  m_DebugMode = false;
   m_DerivedNodeVector.clear();
   m_LinkNodeVector.clear();
   m_DownloadedURIVector.clear();
@@ -195,9 +196,11 @@ void lhpOpDownloadVME::OpRun()
   else
   {
     wxString oldDir = wxGetCwd();
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+    if (m_DebugMode)
+      mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
     wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+    if (m_DebugMode)
+      mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
     //if file exists , delete it
     if(wxFileExists(m_ConnectionConfigurationFileName.GetCStr()))
@@ -208,8 +211,32 @@ void lhpOpDownloadVME::OpRun()
   }
 
   int result = OP_RUN_CANCEL;
-  bool upToDate = false;
 
+  mafString DebugPath = m_PythonUploadFullPath;
+  DebugPath.Append("\\Debug.py");
+  if (wxFileExists(DebugPath.GetCStr()))
+  {
+    ifstream debugFile;
+    debugFile.open(DebugPath.GetCStr());
+    if (!debugFile) 
+    {
+      mafLogMessage("Unable to open Debug.py file");
+    }
+
+    std::string isDebug;
+    debugFile >> isDebug;
+    int pos = isDebug.find_last_of('=');
+    isDebug = isDebug.substr(pos+1);
+    if (!isDebug.compare("1") || !isDebug.compare("True"))
+    {
+      //m_PythonExe ="python.exe "; //debugging mode
+      m_DebugMode = true;
+    }
+    debugFile.close();
+  }
+
+
+  bool upToDate = false;
   upToDate = this->IsLHPBuilderVersionUpToDate();
 
   if(upToDate)
@@ -237,9 +264,11 @@ void lhpOpDownloadVME::SaveConnectionConfigurationFile()
 //------------------------------------------------------------
 {
   wxString oldDir = wxGetCwd();
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
   //if file exists , delete it
   if(wxFileExists(m_ConnectionConfigurationFileName.GetCStr()))
@@ -268,13 +297,15 @@ void lhpOpDownloadVME::SaveConnectionConfigurationFile()
     message.Append("m_ProxyPort: ");
     message.Append(m_ProxyPort.GetCStr());
 
-    mafLogMessage(message.c_str());
+    if (m_DebugMode)
+      mafLogMessage(message.c_str());
 
     configurationFile.close();
   }
 
   wxSetWorkingDirectory(oldDir);
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 
 }
 //----------------------------------------------------------------------------
@@ -448,9 +479,11 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
       }
 
       wxString oldDir = wxGetCwd();
-      mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+      if (m_DebugMode)
+        mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
       wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-      //mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+      if (m_DebugMode)
+        mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
       wxBusyCursor wait;
 
 
@@ -482,7 +515,8 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
         command2execute.Append(wxString::Format("%s ",listVME[i].c_str())); //XML URI NAME
         command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //SRB DATA NAME
 
-        //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+        if (m_DebugMode)
+          mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
         m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
 
       }
@@ -494,12 +528,14 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
         m_FileName = "ThreadedClient.py ";
         command2execute.Append(m_FileName.GetCStr());
         command2execute.Append("50000");
-        //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+        if (m_DebugMode)
+          mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
         m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
 
-        //mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
-        //  command2execute.c_str(), m_Pid);
+        if (m_DebugMode)
+          mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
+          command2execute.c_str(), m_Pid);
 
         mafSleep(5000);
 
@@ -522,7 +558,8 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
         command2execute.Append(wxString::Format("%s ",listVME[i].c_str())); //XML URI NAME
         command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //SRB DATA NAME
 
-        //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+        if (m_DebugMode)
+          mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
         m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
       }
       wxSetWorkingDirectory(oldDir);
@@ -647,9 +684,11 @@ int lhpOpDownloadVME::CreateFileListFromBasket()
 //----------------------------------------------------------------------------
 {
   wxString oldDir = wxGetCwd();
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
   // gui for selecting vme
   wxString command2execute;
@@ -675,7 +714,8 @@ int lhpOpDownloadVME::CreateFileListFromBasket()
   }
 
   wxSetWorkingDirectory(oldDir);
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 
   return MAF_OK;
 }
@@ -684,9 +724,11 @@ int lhpOpDownloadVME::RetrieveInformationFromBasketListFile()
 //-------------------------------------------------------------------
 {
   wxString oldDir = wxGetCwd();
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
   // open auto tags file and try to handle tags using tags factory 
   ifstream inBasketListFile;
@@ -707,7 +749,8 @@ int lhpOpDownloadVME::RetrieveInformationFromBasketListFile()
   inBasketListFile.close();
 
   wxSetWorkingDirectory(oldDir);
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 
   return MAF_OK;
 }
@@ -716,9 +759,11 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(mafString  xmlFile)
 //-------------------------------------------------------------------
 {
   wxString oldDir = wxGetCwd();
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
   // get manual tags
   wxString command2execute;
@@ -746,17 +791,21 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(mafString  xmlFile)
     return MAF_ERROR;
   }
 
-  mafLogMessage("Command Output Messages:");
-  for (int i = 0; i < output.size(); i++)
+  if (m_DebugMode)
   {
-    mafLogMessage(output[i]);
-  }
+    mafLogMessage("Command Output Messages:");
+    for (int i = 0; i < output.size(); i++)
+    {
+      mafLogMessage(output[i]);
+    }
 
-  mafLogMessage("Command Errors Messages:");
-  for (int i = 0; i < errors.size(); i++)
-  {
-    mafLogMessage(errors[i]);
+    mafLogMessage("Command Errors Messages:");
+    for (int i = 0; i < errors.size(); i++)
+    {
+      mafLogMessage(errors[i]);
+    }
   }
+ 
 
   if(output.size() < 3)
   {
@@ -767,7 +816,8 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(mafString  xmlFile)
   m_URISRBFile = output[output.size() - 2];
   
   wxSetWorkingDirectory(oldDir);
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 
   return MAF_OK;
 }
@@ -776,9 +826,11 @@ int lhpOpDownloadVME::ReconstructMSF(mafString xmlFile)
 //-------------------------------------------------------------------
 {
   wxString oldDir = wxGetCwd();
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
   wxString command2execute;
   command2execute.Clear();
@@ -800,12 +852,14 @@ int lhpOpDownloadVME::ReconstructMSF(mafString xmlFile)
 
   command2execute.Append(directoryWorkAroundMSF);
   command2execute.Append(" ");
-  //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   long pid = wxExecute(command2execute, wxEXEC_SYNC);
   
   wxSetWorkingDirectory(oldDir);
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 
   return MAF_OK;
 }
@@ -979,9 +1033,11 @@ bool lhpOpDownloadVME::IsLHPBuilderVersionUpToDate()
 {
   wxBusyInfo("Checking if  your software is up-to-date in order to upload, please wait...");
   wxString oldDir = wxGetCwd();
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
   // get manual tags
   wxString command2execute;
@@ -996,7 +1052,8 @@ bool lhpOpDownloadVME::IsLHPBuilderVersionUpToDate()
     command2execute.Append(m_ProxyPort.GetCStr());
   }
 
-  //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   wxArrayString output;
   wxArrayString errors;
@@ -1007,22 +1064,27 @@ bool lhpOpDownloadVME::IsLHPBuilderVersionUpToDate()
     return MAF_ERROR;
   }
 
-  mafLogMessage("Command Output Messages:");
-  for (int i = 0; i < output.size(); i++)
+  if (m_DebugMode)
   {
-    mafLogMessage(output[i]);
-  }
+    mafLogMessage("Command Output Messages:");
+    for (int i = 0; i < output.size(); i++)
+    {
+      mafLogMessage(output[i]);
+    }
 
-  mafLogMessage("Command Errors Messages:");
-  for (int i = 0; i < errors.size(); i++)
-  {
-    mafLogMessage(errors[i]);
+    mafLogMessage("Command Errors Messages:");
+    for (int i = 0; i < errors.size(); i++)
+    {
+      mafLogMessage(errors[i]);
+    }
   }
+  
 
   wxString result = output[output.size() - 1];
 
   wxSetWorkingDirectory(oldDir);
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 
   if (result == "UpToDate")
   {

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-13 08:48:53 $
-Version:   $Revision: 1.26.2.8 $
+Date:      $Date: 2008-11-13 11:30:48 $
+Version:   $Revision: 1.26.2.9 $
 Authors:   Roberto Mucci , Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -103,6 +103,7 @@ mafOp(label)
 	m_OpType  = OPTYPE_OP;
 	m_Canundo = false;
   m_HasLink = false;
+  m_DebugMode = false;
   m_LinkNode.clear();
   m_LinkName.clear();
   m_User = NULL;
@@ -224,6 +225,7 @@ void lhpOpEditTag::OpRun()
     if (!isDebug.compare("1") || !isDebug.compare("True"))
     {
       m_PythonExe ="python.exe ";
+      m_DebugMode = true;
     }
     debugFile.close();
   }
@@ -253,9 +255,11 @@ void lhpOpEditTag::LoadConnectionConfigurationFile()
 //----------------------------------------------------------------------------
 {
   wxString oldDir = wxGetCwd();
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
   // open auto tags file and try to handle tags using tags factory 
   ifstream configurationFile;
@@ -264,7 +268,8 @@ void lhpOpEditTag::LoadConnectionConfigurationFile()
   if (!configurationFile) {
     wxString message = m_ConnectionConfigurationFileName.GetCStr();
     message.Append(" not found! Unable to open connection configuration file: default values will be used");
-    mafLogMessage(message.c_str());
+    if (m_DebugMode)
+      mafLogMessage(message.c_str());
   }
   else
   {
@@ -283,13 +288,15 @@ void lhpOpEditTag::LoadConnectionConfigurationFile()
     message.Append("m_ProxyPort: ");
     message.Append(m_ProxyPort.GetCStr());
 
-    mafLogMessage(message.c_str());
+    if (m_DebugMode)
+      mafLogMessage(message.c_str());
 
     configurationFile.close();
   }
 
   wxSetWorkingDirectory(oldDir);
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 
 }
 //----------------------------------------------------------------------------
@@ -303,7 +310,8 @@ void lhpOpEditTag::OnEvent(mafEventBase *maf_event)
     case ID_SUBDICTIONARY:
     {
     //    // nothing to do for the moment...
-      mafLogMessage("You choosed dictionary number %i", m_SubdictionaryId);
+      if (m_DebugMode)
+        mafLogMessage("You choosed dictionary number %i", m_SubdictionaryId);
     }
     break;
     
@@ -400,7 +408,8 @@ int lhpOpEditTag::EditTags()
   }
 
   wxString oldDir = wxGetCwd();
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
   wxBusyCursor wait;
 
@@ -418,7 +427,8 @@ int lhpOpEditTag::EditTags()
   command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //vme id
   command2execute.Append(wxString::Format("%s", m_CsvName.c_str())); //manualTagFile
 
-  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
   long pid = -1;
   if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
   {
@@ -428,7 +438,8 @@ int lhpOpEditTag::EditTags()
     return MAF_ERROR;
   }
 
-  mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
+  if (m_DebugMode)
+    mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
     command2execute.c_str(), pid);
 
   ImportMSF();
@@ -446,7 +457,8 @@ int lhpOpEditTag::EditTags()
   {
     std::ostringstream stringStream;
     stringStream << "Skipping propagation..."  << std::endl;
-    mafLogMessage(stringStream.str().c_str());
+    if (m_DebugMode)
+      mafLogMessage(stringStream.str().c_str());
   }
   return MAF_OK;
 }
@@ -568,9 +580,11 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
 {
   
   wxString oldDir = wxGetCwd();
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
   m_MasterXMLDictionaryFileName = this->GetXMLDictionaryFileName(m_MasterXMLDictionaryFilePrefix);
   if (m_MasterXMLDictionaryFileName == "NOT FOUND")
@@ -623,12 +637,14 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
     m_DictionaryToProcessFileName = m_MasterXMLDictionaryFileName;
     std::ostringstream stringStream;
     stringStream << "Not using subdictionaries..."  << std::endl;
-    mafLogMessage(stringStream.str().c_str());
+    if (m_DebugMode)
+      mafLogMessage(stringStream.str().c_str());
     // nothing to do...continue...
   }  
   else
   {
-    mafLogMessage("this case is not handled...");
+    if (m_DebugMode)
+      mafLogMessage("this case is not handled...");
     return MAF_ERROR;
   }
   
@@ -645,7 +661,8 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
   {
       std::ostringstream stringStream;
       stringStream << "Not using FA dictionary..."  << std::endl;
-      mafLogMessage(stringStream.str().c_str());
+      if (m_DebugMode)
+        mafLogMessage(stringStream.str().c_str());
   }
 
   // get auto tags
@@ -656,7 +673,8 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
   command2execute.Append(" auto_tags ");
   command2execute.Append(m_AutoTagsListFromXMLDictionaryFileName.GetCStr());
   
-  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   long pid = -1;
   if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
@@ -670,7 +688,8 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
   if ( !command2execute )
     return MAF_ERROR;
 
-  mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+  if (m_DebugMode)
+    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
     command2execute.c_str(), pid);
 
   // get manual tags
@@ -682,7 +701,8 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
   command2execute.Append(" manual_tags ");
   command2execute.Append(m_ManualTagsListFromXMLDictionaryFileName.GetCStr());
 
-  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   pid = -1;
   if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
@@ -696,7 +716,8 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
   if ( !command2execute )
     return MAF_ERROR;
 
-  mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+  if (m_DebugMode)
+    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
     command2execute.c_str(), pid);
 
   // cleanup
@@ -772,7 +793,8 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
       else
       {
         m_UnhandledAutoTagsListFromFactory.Add(tagName.GetCStr());
-        mafLogMessage(_("Cannot handle \"%s\" tag!, this tag will become manual"),tagName.GetCStr());
+        if (m_DebugMode)
+          mafLogMessage(_("Cannot handle \"%s\" tag!, this tag will become manual"),tagName.GetCStr());
       }      
     }
   }
@@ -886,18 +908,21 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
   }
   
   
-  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   pid = wxExecute(command2execute, wxEXEC_SYNC);
 
   if ( !command2execute )
     return MAF_ERROR;
 
-  mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+  if (m_DebugMode)
+    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
     command2execute.c_str(), pid);
 
   wxSetWorkingDirectory(oldDir);
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 
   return MAF_OK;
 }
@@ -908,9 +933,11 @@ bool lhpOpEditTag::IsLHPBuilderVersionUpToDate()
 {
   wxBusyInfo("Checking if  your software is up-to-date in order to upload, please wait...");
   wxString oldDir = wxGetCwd();
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
   // get manual tags
   wxString command2execute;
@@ -923,7 +950,8 @@ bool lhpOpEditTag::IsLHPBuilderVersionUpToDate()
   command2execute.Append(" ");
   command2execute.Append(m_ProxyPort.GetCStr());
   
-  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   wxArrayString output;
   wxArrayString errors;
@@ -936,23 +964,28 @@ bool lhpOpEditTag::IsLHPBuilderVersionUpToDate()
     return MAF_ERROR;
   }
 
-  mafLogMessage("Command Output Messages:");
-  for (int i = 0; i < output.size(); i++)
+  if (m_DebugMode)
   {
-    mafLogMessage(output[i]);
-  }
-  
-  mafLogMessage("Command Errors Messages:");
-  for (int i = 0; i < errors.size(); i++)
-  {
-    mafLogMessage(errors[i]);
+    mafLogMessage("Command Output Messages:");
+    for (int i = 0; i < output.size(); i++)
+    {
+      mafLogMessage(output[i]);
+    }
+    
+    mafLogMessage("Command Errors Messages:");
+    for (int i = 0; i < errors.size(); i++)
+    {
+      mafLogMessage(errors[i]);
+    }
   }
   
 
   wxString result = output[output.size() - 1];
   
   wxSetWorkingDirectory(oldDir);
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 
   if (result == "UpToDate")
   {
@@ -971,9 +1004,11 @@ mafString lhpOpEditTag::GetXMLDictionaryFileName( mafString dictionaryFileNamePr
   mafString dictionaryFileName = "NOT FOUND";
   wxString oldDir = wxGetCwd();
 
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
   wxArrayString files;
   wxString filePattern = dictionaryFileNamePrefix ;
@@ -991,6 +1026,7 @@ mafString lhpOpEditTag::GetXMLDictionaryFileName( mafString dictionaryFileNamePr
     }
     mafLogMessage(stringStream.str().c_str());
     mafLogMessage("Too much dictionaries found! exiting...");
+
     return dictionaryFileName;
   }
   else
@@ -999,12 +1035,16 @@ mafString lhpOpEditTag::GetXMLDictionaryFileName( mafString dictionaryFileNamePr
     dictionaryFileName = files[0];
     int pos = dictionaryFileName.FindLast("\\");
     dictionaryFileName.Erase(0, pos);
-    mafLogMessage("Found dictionary!");
-    mafLogMessage(dictionaryFileName.GetCStr());
+    if (m_DebugMode)
+    {
+      mafLogMessage("Found dictionary!");
+      mafLogMessage(dictionaryFileName.GetCStr());
+    }
   }
   
   wxSetWorkingDirectory(oldDir);
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   
   return dictionaryFileName;
 }
@@ -1050,11 +1090,14 @@ int lhpOpEditTag::AssembleMasterWithSubdictionary()
 //----------------------------------------------------------------------------
 {
   wxString oldDir = wxGetCwd();
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
-
-  mafLogMessage("Assembling dictionaries...");
+  if (m_DebugMode)
+  {
+    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+    mafLogMessage("Assembling dictionaries...");
+  }
 
   m_SubXMLDictionaryFileName = this->GetXMLDictionaryFileName(m_SubXMLDictionaryFilePrefix);
   if (m_SubXMLDictionaryFileName == "NOT FOUND")
@@ -1076,7 +1119,8 @@ int lhpOpEditTag::AssembleMasterWithSubdictionary()
   command2execute.Append(" ");
   command2execute.Append(m_AssembledXMLDictionaryFileName);
 
-  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   wxArrayString output;
   wxArrayString errors;
@@ -1089,20 +1133,24 @@ int lhpOpEditTag::AssembleMasterWithSubdictionary()
     return MAF_ERROR;
   }
 
-  mafLogMessage("Command Output Messages:");
-  for (int i = 0; i < output.size(); i++)
+  if (m_DebugMode)
   {
-    mafLogMessage(output[i]);
-  }
+    mafLogMessage("Command Output Messages:");
+    for (int i = 0; i < output.size(); i++)
+    {
+      mafLogMessage(output[i]);
+    }
 
-  mafLogMessage("Command Errors Messages:");
-  for (int i = 0; i < errors.size(); i++)
-  {
-    mafLogMessage(errors[i]);
+    mafLogMessage("Command Errors Messages:");
+    for (int i = 0; i < errors.size(); i++)
+    {
+      mafLogMessage(errors[i]);
+    }
   }
   
   wxSetWorkingDirectory(oldDir);
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 
   return MAF_OK;
 }
@@ -1133,7 +1181,8 @@ int lhpOpEditTag::AppendFADictionary()
   command2execute.Append(assembledWithFaDictionaryFileName);
 
   m_DictionaryToProcessFileName = assembledWithFaDictionaryFileName;
-  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  if (m_DebugMode)
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   wxArrayString output;
   wxArrayString errors;
@@ -1161,7 +1210,8 @@ void lhpOpEditTag::PropagateTagsToChoosedVMES()
 
   std::ostringstream stringStream;
   stringStream << "Vector size: "<< size  << std::endl;
-  mafLogMessage(stringStream.str().c_str());
+  if (m_DebugMode)
+    mafLogMessage(stringStream.str().c_str());
 
   // for each vme different from the input one
   // copy input edited tags into it
@@ -1205,13 +1255,15 @@ void lhpOpEditTag::PropagateTagsToChoosedVMES()
     }
 
     stringStream << foundTxt << " " << stringToSearch << " in "<< tagName <<  std::endl;
-    mafLogMessage(stringStream.str().c_str());
+    if (m_DebugMode)
+      mafLogMessage(stringStream.str().c_str());
   }
 
   std::vector<mafNode *>::iterator nodeVectorIterator = nodeVector.begin();
   stringStream.clear();
   stringStream << "The following vme were checked: " << std::endl;
-  mafLogMessage(stringStream.str().c_str());
+  if (m_DebugMode)
+    mafLogMessage(stringStream.str().c_str());
 
 
   // for each target vme excluding the input
@@ -1221,19 +1273,22 @@ void lhpOpEditTag::PropagateTagsToChoosedVMES()
     assert(targetVme);
     std::ostringstream stringStream;
     stringStream << "vme name: " << targetVme->GetName()  << std::endl;
-    mafLogMessage(stringStream.str().c_str());
+    if (m_DebugMode)
+      mafLogMessage(stringStream.str().c_str());
 
     if (targetVme == m_Input)
     {
       std::ostringstream stringStream;
       stringStream << "Skipping input vme!"  << std::endl;
-      mafLogMessage(stringStream.str().c_str());
+      if (m_DebugMode)
+        mafLogMessage(stringStream.str().c_str());
     } 
     else
     {
       std::ostringstream stringStream;
       stringStream << "Copying to "  << targetVme->GetName() << std::endl;
-      mafLogMessage(stringStream.str().c_str());
+      if (m_DebugMode)
+        mafLogMessage(stringStream.str().c_str());
 
       // get the target vme tag array
       mafTagArray *targetTagArray = targetVme->GetTagArray();
@@ -1247,7 +1302,8 @@ void lhpOpEditTag::PropagateTagsToChoosedVMES()
         std::string val = tagsToBeCopiedDictionaryIterator->second;
         std::ostringstream stringStream;
         stringStream << "Copying " << key << " " << val << " to " << targetVme->GetName() << std::endl;
-        mafLogMessage(stringStream.str().c_str());
+        if (m_DebugMode)
+          mafLogMessage(stringStream.str().c_str());
         targetTagArray->SetTag(key.c_str(), val.c_str());
         tagsToBeCopiedDictionaryIterator++;
       }

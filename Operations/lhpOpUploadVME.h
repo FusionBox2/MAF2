@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-10-22 09:53:16 $
-Version:   $Revision: 1.33 $
+Date:      $Date: 2008-11-13 11:30:49 $
+Version:   $Revision: 1.33.2.1 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -84,6 +84,9 @@ public:
 
   /** Load configuration file for connection*/
   void SaveConnectionConfigurationFile();
+
+  /** Set debug modality */
+  void SetDebugMode(bool debugMode){m_DebugMode = debugMode;};
 
 
   /** Upload a single VME*/
@@ -169,6 +172,7 @@ private:
   FILE *m_ProxyFile;
   bool m_HasLink;
   bool m_HasChild;
+  bool m_DebugMode;
 
   std::vector<mafNode*> m_LinkNode;
   std::vector<mafString> m_LinkName;

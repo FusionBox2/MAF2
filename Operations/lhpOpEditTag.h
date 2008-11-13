@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.h,v $
 Language:  C++
-Date:      $Date: 2008-10-30 14:20:15 $
-Version:   $Revision: 1.11.2.1 $
+Date:      $Date: 2008-11-13 11:30:48 $
+Version:   $Revision: 1.11.2.2 $
 Authors:   Roberto Mucci , Stefano Perticoni 
 ==========================================================================
 Copyright (c) 2002/2007
@@ -155,6 +155,7 @@ private:
   FILE *m_ProxyFile;
   mafNode *m_Parent;
   bool m_HasLink;
+  bool m_DebugMode;
 
   std::vector<mafNode*> m_LinkNode;
   std::vector<mafString> m_LinkName;

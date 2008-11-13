@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.h,v $
 Language:  C++
-Date:      $Date: 2008-10-22 09:52:51 $
-Version:   $Revision: 1.13 $
+Date:      $Date: 2008-11-13 11:30:49 $
+Version:   $Revision: 1.13.2.1 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -147,6 +147,7 @@ private:
   int AssembleDictionaries();
 
   bool m_WithChild;
+  bool m_DebugMode;
  
   mafString m_listURIFileName;
   mafString m_ServiceURL;

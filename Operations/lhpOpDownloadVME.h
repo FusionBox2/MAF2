@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-10-22 09:51:29 $
-Version:   $Revision: 1.9 $
+Date:      $Date: 2008-11-13 11:30:48 $
+Version:   $Revision: 1.9.2.1 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -141,6 +141,7 @@ protected:
 
   bool m_FillLinkVector;
   bool m_WholeMsfDownload;
+  bool m_DebugMode;
 
   bool m_ENTERED;
   bool m_ENTERED2;
