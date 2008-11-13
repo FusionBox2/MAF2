@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-13 11:30:49 $
-Version:   $Revision: 1.94.2.6 $
+Date:      $Date: 2008-11-13 17:33:22 $
+Version:   $Revision: 1.94.2.7 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -368,7 +368,7 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
 
   //------Edit Tag----------------------------//
   wxString command2execute;
-  command2execute = m_PythonwExe;
+  command2execute = m_PythonExe;
   // script for client
   m_FileName = "lhpEditVMETag.py ";
   command2execute.Append(m_FileName.GetCStr());
@@ -463,8 +463,11 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
   {
     //PROCESS EXIST, ONLY CALL CLIENT
     wxString command2execute;
-    command2execute = m_PythonwExe;
-    //command2execute = "pythonw.exe ";
+    if (m_DebugMode)
+      command2execute = m_PythonExe;
+    else
+      command2execute = m_PythonwExe;
+  
     m_FileName = "Client.py ";
     command2execute.Append(m_FileName.GetCStr());
     command2execute.Append("127.0.0.1 "); //server address (localhost)
@@ -506,8 +509,11 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
   {
     //PROCESS NOT EXIST, CREATE SERVER AND CALL CLIENT
     wxString command2execute;
-    command2execute = m_PythonExe;
-    //command2execute = "pythonw.exe ";
+    if (m_DebugMode)
+      command2execute = m_PythonExe;
+    else
+      command2execute = m_PythonwExe;
+
     m_FileName = "ThreadedClient.py ";
     command2execute.Append(m_FileName.GetCStr());
     command2execute.Append("50000");
