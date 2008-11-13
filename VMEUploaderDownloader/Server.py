@@ -107,7 +107,7 @@ def createServer(observer = None, port = 50000, numberOfClients = 10):
 	for s in mythreads:
 	  s.join()
 	
-    print 'threads all ended'
+	print 'threads all ended'
 	
 if __name__ == '__main__':
   createServer()
