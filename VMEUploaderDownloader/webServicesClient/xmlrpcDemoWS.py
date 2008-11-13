@@ -9,9 +9,10 @@ from base64 import encodestring, decodestring
 import xml.dom.minidom as xd
 
 from HttpsProxy import *
-from Debug import Debug
 import os
 import urllib, urllib2, base64, re, os, cookielib, sys
+
+Debug = False
 
 class xmlrpc_demoWS:
     """"""
@@ -23,7 +24,6 @@ class xmlrpc_demoWS:
         self.Username = ''
         self.Password = ''
         self.ServerURL = ''
-        #self.ServerURL = 'http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/'
 
 
     def post_multipart(self, bod='search', url='', username='', password='', **kw):
@@ -62,6 +62,19 @@ class xmlrpc_demoWS:
        </param>
        </params>
      </methodCall>'''% (kw['download'])
+
+        self.xmlDownloadCheck = \
+    '''<?xml version="1.0"?>
+     <methodCall>
+      <methodName>XMLDownloadCheck</methodName>
+       <params>
+       <param>
+       <value><struct>
+       %s
+       </struct></value>
+       </param>
+       </params>
+     </methodCall>''' % (kw['listitems'])
 
         self.xmlDelete = \
     '''<?xml version="1.0"?>
@@ -160,6 +173,8 @@ class xmlrpc_demoWS:
             body = self.xmlUpload
         elif bod == 'xmldownload':
             body = self.xmlDownload
+        elif bod == 'xmldownloadcheck':
+            body = self.xmlDownloadCheck
         elif bod == 'xmldelete':
             body = self.xmlDelete
         elif bod == 'listbasket':
@@ -177,8 +192,7 @@ class xmlrpc_demoWS:
         elif bod == 'createresource':
             body = self.createResource
 
-        if Debug:
-            print "++++++\n" + body + "\n"
+        if Debug: print "++++++\n" + body + "\n"
 
         #####################
         self.cj = cookielib.CookieJar()
@@ -192,8 +206,7 @@ class xmlrpc_demoWS:
 
         if proxy_url != '' and proxy_port != '':
 
-            if Debug:
-                print "You are using proxy: " + p
+            if Debug: print "You are using proxy: " + p
 
             self.opener = \
               urllib2.build_opener(
@@ -206,8 +219,7 @@ class xmlrpc_demoWS:
 
         urllib2.install_opener(self.opener)  
 
-        if Debug:
-            print "Connecting to URL: " + url
+        if Debug: print "Connecting to URL: " + url
 
         req = urllib2.Request(url=url,data=body)
 
@@ -221,11 +233,10 @@ class xmlrpc_demoWS:
         req.add_header('content-length', str(len(body)))
 
         # open the url
-        if Debug:
-            print 'Sending body: ... \n%s\n' % (str(body))
+        if Debug: print 'Sending body: ... \n%s\n' % (str(body))
         response = urllib2.urlopen(req)
 
-        #print 'Sending body: ... '
+        #if Debug: print 'Sending body: ... '
         if bod == 'xmldownload':
             res = response.read()
             dom = xd.parseString(res)
@@ -270,9 +281,8 @@ class xmlrpc_demoWS:
         # development server
         url = self.ServerURL
 
-        if Debug:
-            print "COMMAND: %s" % command
-        
+        if Debug: print "COMMAND: %s" % command
+
         args['listitems'] = ''
 
         if command == 'xmlupload':
@@ -292,6 +302,17 @@ class xmlrpc_demoWS:
             args['upload'] = ''
             args['filename'] = ''
             args['download'] = filename
+        elif command == 'xmldownloadcheck':
+            args['id'] = ''
+            args['title'] = ''
+            args['description'] = ''
+            args['upload'] = ''
+            args['filename'] = ''
+            args['download'] = ''
+            for item in filename.split(":"):
+                args['listitems'] += \
+                 '<member><name>%s</name><value><string>%s</string></value></member>' % \
+                 (item.split(',')[0],item.split(',')[1])
         elif command == 'xmldelete':
             args['id'] = ''
             args['title'] = ''
@@ -361,11 +382,10 @@ class xmlrpc_demoWS:
             args['download'] = ''
             args['listitems'] = ''
         else:
-            print 'Error: command not found\n'
+            if Debug: print 'Error: command not found\n'
             sys.exit(1)
 
-        if Debug:
-            print command, url, username, password, str(args)
+        if Debug: print command, url, username, password, str(args)
         #ws = xmlrpc_demoWS(**args)
         return self.post_multipart(command, url, username, password, **args)
 
@@ -383,7 +403,7 @@ gettitle -
 ''' % sys.argv[0]
 
     if len(sys.argv) not in (2,3):
-        print 'Error :\n' + usage_msg
+        if Debug: print 'Error :\n' + usage_msg
         sys.exit(1)
 
     command = sys.argv[1]
@@ -391,10 +411,12 @@ gettitle -
         filename = sys.argv[2]
     else: filename = ''
 
+    if Debug: print "---", filename
+
     ws = xmlrpc_demoWS()
     if sys.argv[1] in ('xmlread','xmledit','gettitle'):
         ws.setServer(ws.ServerURL + filename.split(',')[0])
-    print ws.run(command, filename)
+    if Debug: print ws.run(command, filename)
 
 #    args = {}
 #
@@ -431,8 +453,8 @@ gettitle -
 #        args['filename'] = filename
 #        args['download'] = ''
 #    else:
-#        print 'Error :\n' + usage_msg
+#        if Debug: print 'Error :\n' + usage_msg
 #        sys.exit(1)
 #
 #    ws = xmlrpc_demoWS(**args)
-#    print ws.post_multipart(sys.argv[1], url, username, password)
+#    if Debug: print ws.post_multipart(sys.argv[1], url, username, password)
