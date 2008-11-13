@@ -53,8 +53,8 @@ pop $R1
 
 ; MUI Settings
 !define MUI_ABORTWARNING
-!define MUI_ICON "@LHPBUILDER_INSTALLER_DIR_WIN@\LHPBuilder.ico"
-!define MUI_UNICON "@LHPBUILDER_INSTALLER_DIR_WIN@\LHPBuilderUninstall.ico"
+!define MUI_ICON "@LHPBUILDER_INSTALLER_DIR_WIN@\PSLoader.ico"
+!define MUI_UNICON "@LHPBUILDER_INSTALLER_DIR_WIN@\PSLoaderUninstall.ico"
 
 ; Welcome page
 !insertmacro MUI_PAGE_WELCOME

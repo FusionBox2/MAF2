@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: psLoaderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-10 17:19:55 $
-  Version:   $Revision: 1.1.2.4 $
+  Date:      $Date: 2008-11-13 17:57:07 $
+  Version:   $Revision: 1.1.2.5 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -250,15 +250,14 @@ bool psLoaderApp::OnInit()
 
 
   mafPics.Initialize();
-  #include "pic/lhpBuilder/FRAME_ICON16x16.xpm"
+  #include "pic/psLoader/FRAME_ICON16x16.xpm"
   mafADDPIC(FRAME_ICON16x16);
   
-  #include "pic/lhpBuilder/FRAME_ICON32x32.xpm"
+  #include "pic/psLoader/FRAME_ICON32x32.xpm"
   mafADDPIC(FRAME_ICON32x32);
     
-  #include "pic/lhpBuilder/MDICHILD_ICON.xpm"
+  #include "pic/psLoader/MDICHILD_ICON.xpm"
   mafADDPIC(MDICHILD_ICON);
-
 
   int result;
  
@@ -453,7 +452,7 @@ bool psLoaderApp::OnInit()
   //-------------------------------------------------------------
 
   wxBitmap splashBitmap;
-  splashBitmap.LoadFile("../Splash/SPLASH_SCREEN.bmp", wxBITMAP_TYPE_BMP);
+  splashBitmap.LoadFile("../Splash/PSloaderSplash.bmp", wxBITMAP_TYPE_BMP);
   m_Logic->ShowSplashScreen(splashBitmap); 
 
   // show the application
