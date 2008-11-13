@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-12 13:39:08 $
-Version:   $Revision: 1.26.2.7 $
+Date:      $Date: 2008-11-13 08:48:53 $
+Version:   $Revision: 1.26.2.8 $
 Authors:   Roberto Mucci , Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -650,7 +650,7 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
 
   // get auto tags
   wxString command2execute;
-  command2execute.Append(m_PythonExe.GetCStr());
+  command2execute.Append("python.exe ");
   command2execute.Append(" lhpXMLDictionaryParser.py ");
   command2execute.Append(m_DictionaryToProcessFileName.GetCStr());
   command2execute.Append(" auto_tags ");
@@ -675,7 +675,7 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
 
   // get manual tags
   command2execute.Clear();
-  command2execute = m_PythonExe;
+  command2execute = "python.exe ";
   
   command2execute.Append(" lhpXMLDictionaryParser.py ");
   command2execute.Append(m_DictionaryToProcessFileName.GetCStr());
