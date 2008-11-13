@@ -154,16 +154,19 @@ class UploadHandler:
                        
         #---MD5 check-point-----------------------------------#
         if(self.isBinaryDataPresent == True and self.binarySendResult == True):
-            print "Local checksum=  " + self.localChksum
-            print "Remote checksum= " + self.remoteChksum
+            if Debug:
+                print "Local checksum=  " + self.localChksum
+                print "Remote checksum= " + self.remoteChksum
             if (self.localChksum == self.remoteChksum):
-                print " "
-                print "-------MD5 checksum control successful!-----------"
-                print " "
+                if Debug:
+                    print " "
+                    print "-------MD5 checksum control successful!-----------"
+                    print " "
             else:
-                print " "
-                print "-------Error: MD5 checksum control unsuccessful!--------"
-                print " "
+                if Debug:
+                    print " "
+                    print "-------Error: MD5 checksum control unsuccessful!--------"
+                    print " "
                 percentage = 120 #120 for 'error!'
                 lista = [self.observer,percentage]
                 self.block.acquire()  
@@ -193,7 +196,7 @@ class UploadHandler:
               print "Uploaded XML on Biomedtown: " + self.XMLName
               print "Uploaded by: " + self.currentUser
               print "In server url: " + self.urlServer
-          print "--------Upload successful :D :D :D --------"
+              print "--------Upload successful :D :D :D --------"
           
           if Debug:
               print "--------cleaning up cache directories--------"
@@ -490,7 +493,8 @@ class UploadHandler:
         try:
             result = instance.Upload(filename,'https://ws-lhdl.cineca.it/mafSRBUpload.cgi',self.proxyHost,self.proxyPort)
         except:
-            print "--------Error calling mafSRBUpload.cgi-----------"
+            if Debug:
+                print "--------Error calling mafSRBUpload.cgi-----------"
             return
             
         self.remoteChksum = result.chksum

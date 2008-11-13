@@ -132,7 +132,8 @@ class DownloadHandler:
 
             #-----MD5 check-point-----#
             self.localChksum = self.md5(self.dirCache+self.srbData)
-            print "Local checksum=  " + self.localChksum
+            if Debug:
+                print "Local checksum=  " + self.localChksum
             
             try:
                 self.remoteChksum = self.retrieveTagValue('L0000_resource_data_Dataset_LocalFileCheckSum')
@@ -146,12 +147,14 @@ class DownloadHandler:
                 self.block.release()
                 return
             self.remoteChksum = self.remoteChksum.lower()
-            print "Remote checksum= " + self.remoteChksum
+            if Debug:
+                print "Remote checksum= " + self.remoteChksum
             
             if (self.localChksum == self.remoteChksum):
-                print " "
-                print "MD5 checksum control successful!"
-                print " "
+                if Debug:
+                    print " "
+                    print "MD5 checksum control successful!"
+                    print " "
                 self.block.acquire()
                 if(DownloadHandler.queue):
                     percentage = 110 #110 for 'Completed!'
@@ -160,9 +163,10 @@ class DownloadHandler:
                 self.block.release()
                 self.moveFileInMSFDirectory()
             else:
-                print " "
-                print "Error: MD5 checksum control unsuccessful!"
-                print " "
+                if Debug:
+                    print " "
+                    print "Error: MD5 checksum control unsuccessful!"
+                    print " "
                 self.block.acquire()
                 if(DownloadHandler.queue):
                     percentage = 120 #110 for 'Error!'

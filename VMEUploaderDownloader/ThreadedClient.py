@@ -45,17 +45,20 @@ class ThreadedClient:
         self.periodicProcedure = periodicProcedure
         #create server
         thread.start_new_thread(Server.createServer,(self,self.port,1))
-        print "create server"
+        if Debug:
+            print "create server"
         #lock file
         self.lock = Lock.Lock(sys.path[0] + "\\activeLock.lhp")
-        print "create lock"
+        if Debug:
+            print "create lock"
         # Create the queue
         self.queue = Queue.Queue()
 
         # Set up the GUI part
         guiFactory = GuiFactory.GuiFactory()
         self.gui = (guiFactory.createGui(stringAppType))(master, self.queue, self.endApplication)
-        print "create gui"
+        if Debug:
+            print "create gui"
         # Set up the thread to do asynchronous I/O
         # More can be made if necessary
         

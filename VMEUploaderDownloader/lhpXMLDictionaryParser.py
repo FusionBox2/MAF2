@@ -68,7 +68,7 @@ class lhpXMLDictionaryParser:
         ...]
         """
         self.TagArrayTagList = []
-        self.__GetTagArrayTagsInternal(self.DictionaryDOMDocumentRoot, sys.stdout, 0)
+        self.__GetTagArrayTagsInternal(self.DictionaryDOMDocumentRoot, 0)
         return self.TagArrayTagList
     
     def GetVMETagArrayAutoTagNamesList(self):
@@ -81,7 +81,7 @@ class lhpXMLDictionaryParser:
         ...]
         """
         self.TagArrayAutoTagList = []
-        self.__GetTagArrayAutoTagsInternal(self.DictionaryDOMDocumentRoot, sys.stdout, 0)
+        self.__GetTagArrayAutoTagsInternal(self.DictionaryDOMDocumentRoot, 0)
         return self.TagArrayAutoTagList
     
     
@@ -95,7 +95,7 @@ class lhpXMLDictionaryParser:
         ...]
         """
         self.TagArrayManualTagList = []
-        self.__GetTagArrayManualTagsInternal(self.DictionaryDOMDocumentRoot, sys.stdout, 0)
+        self.__GetTagArrayManualTagsInternal(self.DictionaryDOMDocumentRoot, 0)
         return self.TagArrayManualTagList
     
     def GetVMETagArrayTagNameFromNode(self, node):
@@ -282,25 +282,25 @@ class lhpXMLDictionaryParser:
         if node.parentNode:
            self.__GetParent(node.parentNode)       
     
-    def __GetTagArrayTagsInternal(self, parent, outFile, level):  
+    def __GetTagArrayTagsInternal(self, parent, level):  
         self.TagArrayTagList.append(self.GetVMETagArrayTagNameFromNode(parent))
         if parent.childNodes:
             for node in parent.childNodes:
-                self.__GetTagArrayTagsInternal(node, sys.stdout, level)
+                self.__GetTagArrayTagsInternal(node, level)
     
-    def __GetTagArrayAutoTagsInternal(self, parent, outFile, level):  
+    def __GetTagArrayAutoTagsInternal(self, parent, level):  
         if self.IsAuto(parent) == True:    
             self.TagArrayAutoTagList.append(self.GetVMETagArrayTagNameFromNode(parent))
         if parent.childNodes:
             for node in parent.childNodes:
-                self.__GetTagArrayAutoTagsInternal(node, sys.stdout, level)
+                self.__GetTagArrayAutoTagsInternal(node, level)
     
-    def __GetTagArrayManualTagsInternal(self, parent, outFile, level):  
+    def __GetTagArrayManualTagsInternal(self, parent, level):  
         if self.IsAuto(parent) == False:    
             self.TagArrayManualTagList.append(self.GetVMETagArrayTagNameFromNode(parent))
         if parent.childNodes:
             for node in parent.childNodes:
-                self.__GetTagArrayManualTagsInternal(node, sys.stdout, level)
+                self.__GetTagArrayManualTagsInternal(node, level)
     
     def __GetTagsListInternal(self, parent):
         self.TagsList.append(self.GetNodeName(parent))

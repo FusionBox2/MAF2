@@ -79,9 +79,10 @@ class lhpAuthenticationControl:
 
         urllib2.install_opener(self.opener)  
         
-        print "Performing user authentication:"
-        print "Connecting to self.Host: " + self.Host            
-        print "Retrieving: " + self.AuthenticationHTMLPageSelector 
+        if Debug:
+            print "Performing user authentication:"
+            print "Connecting to self.Host: " + self.Host            
+            print "Retrieving: " + self.AuthenticationHTMLPageSelector 
         
         url = self.AuthenticationHTMLPageSelector 
 

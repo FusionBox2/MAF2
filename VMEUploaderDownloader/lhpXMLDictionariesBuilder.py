@@ -5,7 +5,7 @@
 #-----------------------------------------------------------------------------
 
 import sys, string
-import Debug
+from Debug import Debug
 from xml.dom import minidom
 from xml.dom import Node
 import Enum
