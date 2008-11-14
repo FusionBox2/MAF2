@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: psLoaderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-13 17:57:07 $
-  Version:   $Revision: 1.1.2.5 $
+  Date:      $Date: 2008-11-14 08:57:33 $
+  Version:   $Revision: 1.1.2.6 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -452,7 +452,7 @@ bool psLoaderApp::OnInit()
   //-------------------------------------------------------------
 
   wxBitmap splashBitmap;
-  splashBitmap.LoadFile("../Splash/PSloaderSplash.bmp", wxBITMAP_TYPE_BMP);
+  splashBitmap.LoadFile("../Splash/PSLoaderSplash.bmp", wxBITMAP_TYPE_BMP);
   m_Logic->ShowSplashScreen(splashBitmap); 
 
   // show the application
