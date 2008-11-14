@@ -57,6 +57,20 @@ SET(PROJECT_SRCS
 	openMAF/vtkMAF/vtkMAFDataArrayLayout.h
 	openMAF/vtkMAF/vtkMAFMultiFileDataProvider.cpp
 	openMAF/vtkMAF/vtkMAFMultiFileDataProvider.h
+	
+	openMAF/mafDbg.h
+	openMAF/Operators/mafOpMeshDeformation.cpp
+	openMAF/Operators/mafOpMeshDeformation.h
+	openMAF/vtkMAF/vtkMAFPolyDataDeformation.cpp
+	openMAF/vtkMAF/vtkMAFPolyDataDeformation.h
+	openMAF/vtkMAF/vtkMAFPolyDataDeformation_M1.cpp
+	openMAF/vtkMAF/vtkMAFPolyDataDeformation_M1.h
+	openMAF/vtkMAF/vtkMAFPolyDataDeformation_M2.cpp
+	openMAF/vtkMAF/vtkMAFPolyDataDeformation_M2.h
+	Medical/VME/medVMEMuscleWrapper.cpp	
+	Medical/VME/medVMEMuscleWrapper.h
+	Medical/Operations/medOpCreateMuscleWrapper.cpp	
+	Medical/Operations/medOpCreateMuscleWrapper.h
 )
 
 # List libraries that are needed by this project.

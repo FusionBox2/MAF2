@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-13 17:57:07 $
-  Version:   $Revision: 1.71.2.4 $
+  Date:      $Date: 2008-11-14 17:11:46 $
+  Version:   $Revision: 1.71.2.5 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -155,6 +155,11 @@
 #endif
 #include "lhpVisualPipeSurfaceScalar.h"
 
+//BES: 14.11.2008 - added muscle wrapping
+#include "BES_Beta/Medical/Operations/medOpCreateMuscleWrapper.h"
+#include "BES_Beta/Medical/VME/medVMEMuscleWrapper.h"
+#include "BES_Beta/OpenMAF/Operators/mafOpMeshDeformation.h"
+
 #include <vtkTimerLog.h>
 
 
@@ -281,6 +286,9 @@ bool lhpBuilderApp::OnInit()
   mafPlugNode<lhpVMESurfaceScalarVarying>("VME representing surface with attached time varying mafVMEScalar");
 #endif
 
+  //BES: 14.11.2008 - some stupid VME to demonstrate muscle wrapping
+  mafPlugNode<medVMEMuscleWrapper>("Procedural VME representing muscle deformed according to its action lines");
+
   mafPlugPipe<lhpVisualPipeSurfaceScalar>("Visual pipe to render a surface with its scalar values");
 
   m_Logic = new lhpBuilderLogic();
@@ -360,8 +368,10 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new medOpRegisterClusters("Register Landmark Cloud"),"Modify/Fuse");
   m_Logic->Plug(new mafOpCreateMeter("Distance Meter"),"Create/Derive");
   m_Logic->Plug(new medOpCreateWrappedMeter("Wrapped Meter"),"Create/Derive");
+  m_Logic->Plug(new medOpCreateMuscleWrapper("Muscle Wrapper"),"Create/Derive"); //BES: 14.11.2008
  // m_Logic->Plug(new mmoEditMetadata("Metadata Editor"),"Modify");
 	m_Logic->Plug(new mafOpFilterSurface("Filter Surface"),"Modify");
+  m_Logic->Plug(new mafOpMeshDeformation("Deform Surface"), "Modify");
 	m_Logic->Plug(new mafOpExtractIsosurface("Extract Isosurface"),"Create/Derive");
   m_Logic->Plug(new medOpSurfaceMirror("Surface Mirror"),"Modify");
 	m_Logic->Plug(new mafOpCrop("Crop Volume"),"Modify");
