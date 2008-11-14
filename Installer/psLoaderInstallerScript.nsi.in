@@ -101,7 +101,7 @@ Section "create product directory structure" SEC01
   ; File "@LHPBUILDER_EXECUTABLE_OUTPUT_PATH_WIN@\${PRODUCT_EXE_NAME}.manifest"
   CreateDirectory "$INSTDIR\Splash"
   SetOutPath "$INSTDIR\Splash"
-  File "@LHPBUILDER_INSTALLER_DIR_WIN@\SPLASH_SCREEN.bmp"
+  File "@LHPBUILDER_INSTALLER_DIR_WIN@\PSLoaderSplash.bmp"
   CreateDirectory "$INSTDIR\Config"
   CreateDirectory "$INSTDIR\data"
   CreateDirectory "$INSTDIR\data\external"
@@ -246,7 +246,7 @@ Section Uninstall
   Delete "$INSTDIR\Layout\layout.mly"
   Delete "$INSTDIR\Config\Dictionary\dictionary.dic"
   Delete "$INSTDIR\Config\Dictionary\dicom3.dic"
-  Delete "$INSTDIR\Splash\SPLASH_SCREEN.bmp"
+  Delete "$INSTDIR\Splash\PSLoaderSplash.bmp"
 
   Delete "$INSTDIR\Config\ExternalPythonVersion\PythonControl.bat"
   Delete "$INSTDIR\Config\ExternalPythonVersion\PythonScriptVersion.py"
