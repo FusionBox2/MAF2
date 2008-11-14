@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-11-13 11:30:48 $
-Version:   $Revision: 1.9.2.1 $
+Date:      $Date: 2008-11-14 16:06:32 $
+Version:   $Revision: 1.9.2.2 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -129,10 +129,14 @@ protected:
   /** Download the whole MSF */
   int DownloadTree(mafNode *node);
 
+  /** Call WS to send to the repository information about VMEs correctly downloaded */
+  int DownloadCheck(bool failed = false);
+
   mafNode *m_NodeDownloaded;
   std::vector<mafNode*> m_DerivedNodeVector;
   std::vector<mafNode*> m_LinkNodeVector;
   std::vector<mafString> m_DownloadedURIVector;
+  std::vector<mafString> m_CheckURIVector; //vector of dataresource that application tryed to download
   std::vector<mafNode*> m_DownloadedNodeVector;
   mafVMEGroup *m_RootGroup;
   mafVMEGroup *m_Group;

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-14 15:19:16 $
-Version:   $Revision: 1.40.2.3 $
+Date:      $Date: 2008-11-14 16:06:32 $
+Version:   $Revision: 1.40.2.4 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -100,6 +100,7 @@ mafOp(label)
   m_LinkNodeVector.clear();
   m_DownloadedURIVector.clear();
   m_DownloadedNodeVector.clear();
+  m_CheckURIVector.clear();
   m_Group = NULL;
   m_RootGroup = NULL;
   m_User = NULL;
@@ -135,6 +136,7 @@ lhpOpDownloadVME::~lhpOpDownloadVME()
   m_LinkNodeVector.clear();
   m_DownloadedURIVector.clear();
   m_DownloadedNodeVector.clear();
+  m_CheckURIVector.clear();
   mafDEL(m_Group);
   mafDEL(m_RootGroup);
 }
@@ -402,6 +404,8 @@ void lhpOpDownloadVME::OpDo()
       }
     }
   }
+  //All VME successfuly downloaded!!
+  DownloadCheck();
 }
 //----------------------------------------------------------------------------
 int lhpOpDownloadVME::DownloadTree(mafNode *node)   
@@ -455,19 +459,23 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
     }
     if (!alreadyDownloaded)
     {
+      m_CheckURIVector.push_back(listVME[i].c_str()); 
       if(!CreateIncomingDirectory())
       {
         wxMessageBox("Unable to create Incoming Directory");
+        DownloadCheck(true);
         return MAF_ERROR;
       }
 
       if(!CreateIncomingCache())
       {
         wxMessageBox("Unable to create a temporary cache, remember that msf must be saved locally");
+        DownloadCheck(true);
         return MAF_ERROR;
       }
       if(DownloadSelectedXMLFromBasket(listVME[i]) != MAF_OK)
       {
+        DownloadCheck(true);
         return MAF_ERROR;
       }
 
@@ -475,6 +483,7 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
       if(ReconstructMSF(listVME[i]) != MAF_OK)
       {
         wxMessageBox("Unable to reconstruct msf");
+        DownloadCheck(true);
         return MAF_ERROR;
       }
 
@@ -524,7 +533,7 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
       {
         //PROCESS NOT EXIST, CREATE SERVER AND CALL CLIENT
         wxString command2execute;
-        command2execute = m_PythonExe.GetCStr();
+        command2execute = m_PythonwExe.GetCStr();
         m_FileName = "ThreadedClient.py ";
         command2execute.Append(m_FileName.GetCStr());
         command2execute.Append("50000");
@@ -569,6 +578,7 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
       if(ImportMSF(parentNode) != MAF_OK)
       {
         wxMessageBox("Unable to import msf");
+        DownloadCheck(true);
         return MAF_ERROR;;
       }
     }
@@ -768,7 +778,7 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(mafString  xmlFile)
   // get manual tags
   wxString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonwExe.GetCStr();
+  command2execute = m_PythonExe.GetCStr();
   command2execute.Append(" downloadSingleXML.py ");
   command2execute.Append(m_User->GetName());
   command2execute.Append(" ");
@@ -807,7 +817,7 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(mafString  xmlFile)
   }
  
 
-  if(output.size() < 3)
+  if(output.size() < 2)
   {
     return MAF_ERROR;
   }
@@ -1028,6 +1038,66 @@ int lhpOpDownloadVME::ImportMSF(mafNode *parentNode)
   return MAF_OK;
 }
 //----------------------------------------------------------------------------
+int lhpOpDownloadVME::DownloadCheck(bool failed)
+//----------------------------------------------------------------------------
+{
+  mafString checkParameter;
+  for (int m = 0; m < m_CheckURIVector.size(); m++)
+  {
+    if (m != 0)
+      checkParameter.Append(":");
+    if (m == m_DownloadedURIVector.size()-1 && failed)
+    {
+      //if failed, last VME genereted an error
+      checkParameter.Append(m_CheckURIVector[m]);
+      checkParameter.Append(",");
+      checkParameter.Append("error");
+    }
+    else
+    {
+      checkParameter.Append(m_CheckURIVector[m]);
+      checkParameter.Append(",");
+      checkParameter.Append("success");
+    }
+  }
+
+  wxString oldDir = wxGetCwd();
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  if (m_DebugMode)
+    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+
+  wxString command2execute;
+  command2execute.Clear();
+  command2execute = m_PythonwExe.GetCStr();
+
+  command2execute.Append("lhpDownloadVmeCheck.py ");
+  command2execute.Append(m_User->GetName());
+  command2execute.Append(" ");
+  command2execute.Append(m_User->GetPwd());
+  command2execute.Append(" ");
+  command2execute.Append(m_ServiceURL.GetCStr());
+  command2execute.Append(" ");
+  command2execute.Append(checkParameter.GetCStr());
+  if (m_DebugMode)
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+
+  long pid = -1;
+  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  {
+    wxMessageBox("Error in lhpDownloadVmeCheck.py");
+    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), pid);
+    return MAF_ERROR;
+  }
+
+  wxSetWorkingDirectory(oldDir);
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+
+  return MAF_OK;
+}
+
+//----------------------------------------------------------------------------
 bool lhpOpDownloadVME::IsLHPBuilderVersionUpToDate()
 //----------------------------------------------------------------------------
 {
@@ -1060,7 +1130,7 @@ bool lhpOpDownloadVME::IsLHPBuilderVersionUpToDate()
   long pid = -1;
   if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
-    wxMessageBox("Error in lhpDictionaryVersionChecker.py. Uploading stopped");
+    wxMessageBox("Error in lhpDictionaryVersionChecker.py. Download stopped");
     return MAF_ERROR;
   }
 
