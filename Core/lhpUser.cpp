@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpUser.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-11 12:57:15 $
-Version:   $Revision: 1.11.2.1 $
+Date:      $Date: 2008-11-14 11:39:23 $
+Version:   $Revision: 1.11.2.2 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004
@@ -101,7 +101,7 @@ bool lhpUser::ExecuteAuthenticationScript()
   wxString command2execute;
   command2execute.Clear();
   //command2execute = m_PythonwExe;
-  command2execute = m_PythonExe;
+  command2execute = m_PythonwExe;
 
   command2execute.Append(" lhpAuthenticationControl.py ");
   command2execute.Append(m_Username.GetCStr());
