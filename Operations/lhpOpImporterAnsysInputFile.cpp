@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterAnsysInputFile.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-07-25 12:19:11 $
-  Version:   $Revision: 1.6 $
+  Date:      $Date: 2008-11-14 15:17:05 $
+  Version:   $Revision: 1.6.2.1 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -46,6 +46,8 @@ lhpOpImporterAnsysInputFile::lhpOpImporterAnsysInputFile(const wxString &label) 
 mafOp(label)
 //----------------------------------------------------------------------------
 {
+  m_PythonExe = "python.exe ";
+  m_PythonwExe = "pythonw.exe ";
   m_OpType  = OPTYPE_IMPORTER;
   m_Canundo = true;
   m_ImporterType = 0;
@@ -108,12 +110,11 @@ int lhpOpImporterAnsysInputFile::Read()
   
   // execute the Python reader
   wxString command2execute;
-  // command2execute = "python.exe ansysreaderpath filename";
   // mafLogMessage(wxGetCwd());
 
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 
-  command2execute = "python.exe";
+  command2execute = m_PythonExe.GetCStr();
   command2execute.Append(" \"\"");
   command2execute.Append(m_AnsysPythonImporterFullPathFileName.c_str());
   command2execute.Append(" \"");

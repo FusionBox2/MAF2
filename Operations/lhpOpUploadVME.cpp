@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-13 17:33:22 $
-Version:   $Revision: 1.94.2.7 $
+Date:      $Date: 2008-11-14 15:17:05 $
+Version:   $Revision: 1.94.2.8 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -108,7 +108,6 @@ mafOp(label)
   m_SubId = -1;
   m_User = NULL;
 
-  //m_PythonExe ="C:\\Python25\\python.exe ";
   m_PythonExe ="python.exe ";
   m_PythonwExe ="pythonw.exe ";
   m_CacheDir = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\UploadCache\\").c_str();
@@ -368,7 +367,7 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
 
   //------Edit Tag----------------------------//
   wxString command2execute;
-  command2execute = m_PythonExe;
+  command2execute = m_PythonExe.GetCStr();
   // script for client
   m_FileName = "lhpEditVMETag.py ";
   command2execute.Append(m_FileName.GetCStr());
@@ -416,7 +415,7 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
   }
 
   command2execute.Clear();
-  command2execute = m_PythonExe;
+  command2execute = m_PythonExe.GetCStr();
   command2execute.Append("lhpGetXMLURI.py ");
   command2execute.Append(m_User->GetName());
   command2execute.Append(" ");
@@ -464,9 +463,9 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     //PROCESS EXIST, ONLY CALL CLIENT
     wxString command2execute;
     if (m_DebugMode)
-      command2execute = m_PythonExe;
+      command2execute = m_PythonExe.GetCStr();
     else
-      command2execute = m_PythonwExe;
+      command2execute = m_PythonwExe.GetCStr();
   
     m_FileName = "Client.py ";
     command2execute.Append(m_FileName.GetCStr());
@@ -510,9 +509,9 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     //PROCESS NOT EXIST, CREATE SERVER AND CALL CLIENT
     wxString command2execute;
     if (m_DebugMode)
-      command2execute = m_PythonExe;
+      command2execute = m_PythonExe.GetCStr();
     else
-      command2execute = m_PythonwExe;
+      command2execute = m_PythonwExe.GetCStr();
 
     m_FileName = "ThreadedClient.py ";
     command2execute.Append(m_FileName.GetCStr());
@@ -529,7 +528,7 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
 
     mafSleep(5000);
     command2execute.clear();
-    command2execute = m_PythonwExe;
+    command2execute = m_PythonwExe.GetCStr();
     m_FileName = "Client.py ";
     command2execute.Append(m_FileName.GetCStr());
     command2execute.Append("127.0.0.1 "); //server address (localhost)
@@ -920,7 +919,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
 
   // get manual tags
   command2execute.Clear();
-  command2execute = m_PythonwExe;
+  command2execute = m_PythonwExe.GetCStr();
   
   command2execute.Append(" lhpXMLDictionaryParser.py ");
   command2execute.Append(dictionaryToProcessFileName.GetCStr());
@@ -1152,7 +1151,7 @@ bool lhpOpUploadVME::IsLHPBuilderVersionUpToDate()
   // get manual tags
   wxString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonwExe;
+  command2execute = m_PythonwExe.GetCStr();
 
   command2execute.Append(" lhpDictionaryVersionChecker.py ");
   command2execute.Append(" ");
@@ -1286,7 +1285,7 @@ int lhpOpUploadVME::AssembleDictionaries()
   // get manual tags
   wxString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonwExe;
+  command2execute = m_PythonwExe.GetCStr();
 
   command2execute.Append(" lhpXMLDictionariesBuilder.py ");
   command2execute.Append(m_MasterXMLDictionaryFileName);

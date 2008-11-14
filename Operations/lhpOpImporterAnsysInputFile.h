@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterAnsysInputFile.h,v $
   Language:  C++
-  Date:      $Date: 2007-11-03 18:22:09 $
-  Version:   $Revision: 1.1 $
+  Date:      $Date: 2008-11-14 15:17:05 $
+  Version:   $Revision: 1.1.2.1 $
   Authors:   Stefano Perticoni   
 ==========================================================================
   Copyright (c) 2002/2004
@@ -95,6 +95,9 @@ protected:
   wxString m_MaterialsFileName;
 
   long m_Pid;
+  
+  mafString m_PythonExe; //>python  executable
+  mafString m_PythonwExe; //>pythonw  executable
 
 };
 #endif

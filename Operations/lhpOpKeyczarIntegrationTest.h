@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpKeyczarIntegrationTest.h,v $
   Language:  C++
-  Date:      $Date: 2008-10-29 16:56:37 $
-  Version:   $Revision: 1.1.2.1 $
+  Date:      $Date: 2008-11-14 15:17:05 $
+  Version:   $Revision: 1.1.2.2 $
   Authors:   Stefano Perticoni   
 ==========================================================================
   Copyright (c) 2002/2004
@@ -52,6 +52,8 @@ protected:
   int Execute();
   virtual void CreateGui();  
   
+  mafString m_PythonExe; //>python  executable
+  mafString m_PythonwExe; //>pythonw  executable
 
 };
 #endif

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpKeyczarIntegrationTest.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-10-29 16:56:37 $
-  Version:   $Revision: 1.1.2.1 $
+  Date:      $Date: 2008-11-14 15:17:05 $
+  Version:   $Revision: 1.1.2.2 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -40,7 +40,8 @@ mafOp(label)
   m_OpType  = OPTYPE_OP;
   m_Canundo = false;
   
-  
+  m_PythonExe = "python.exe ";
+  m_PythonwExe = "pythonw.exe ";  
 }
 
 //----------------------------------------------------------------------------
@@ -91,7 +92,9 @@ int lhpOpKeyczarIntegrationTest::Execute()
 
   mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
-  command2execute = "cmd.exe /K \"python.exe keyczart.py\"";
+  command2execute = "cmd.exe /K \"";
+  command2execute.Append(m_PythonExe.GetCStr());
+  command2execute.Append(" keyczart.py\"");
   mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   long pid = wxExecute(command2execute, wxEXEC_SYNC);

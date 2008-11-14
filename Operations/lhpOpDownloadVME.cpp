@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-13 11:30:48 $
-Version:   $Revision: 1.40.2.2 $
+Date:      $Date: 2008-11-14 15:19:16 $
+Version:   $Revision: 1.40.2.3 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -496,7 +496,7 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
       {
         //PROCESS EXIST, ONLY CALL CLIENT
         wxString command2execute;
-        command2execute = m_PythonwExe;
+        command2execute = m_PythonwExe.GetCStr();
         // script for client
         m_FileName = "Client.py ";
         command2execute.Append(m_FileName.GetCStr());
@@ -524,7 +524,7 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
       {
         //PROCESS NOT EXIST, CREATE SERVER AND CALL CLIENT
         wxString command2execute;
-        command2execute = m_PythonExe;
+        command2execute = m_PythonExe.GetCStr();
         m_FileName = "ThreadedClient.py ";
         command2execute.Append(m_FileName.GetCStr());
         command2execute.Append("50000");
@@ -540,7 +540,7 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
         mafSleep(5000);
 
         command2execute.clear();
-        command2execute = m_PythonwExe;
+        command2execute = m_PythonwExe.GetCStr();
         m_FileName = "Client.py ";
         command2execute.Append(m_FileName.GetCStr());
         command2execute.Append("127.0.0.1 "); //server address (localhost)
@@ -693,7 +693,7 @@ int lhpOpDownloadVME::CreateFileListFromBasket()
   // gui for selecting vme
   wxString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonwExe;
+  command2execute = m_PythonwExe.GetCStr();
 
   command2execute.Append(" downloadSelectorApp.py ");
   command2execute.Append(m_User->GetName());
@@ -768,7 +768,7 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(mafString  xmlFile)
   // get manual tags
   wxString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonwExe;
+  command2execute = m_PythonwExe.GetCStr();
   command2execute.Append(" downloadSingleXML.py ");
   command2execute.Append(m_User->GetName());
   command2execute.Append(" ");
@@ -834,7 +834,7 @@ int lhpOpDownloadVME::ReconstructMSF(mafString xmlFile)
 
   wxString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonwExe;
+  command2execute = m_PythonwExe.GetCStr();
 
   command2execute.Append(" msfReconstructor.py ");
 
@@ -1042,7 +1042,7 @@ bool lhpOpDownloadVME::IsLHPBuilderVersionUpToDate()
   // get manual tags
   wxString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonwExe;
+  command2execute = m_PythonwExe.GetCStr();
   command2execute.Append(" lhpDictionaryVersionChecker.py ");
   command2execute.Append(" ");
   if( !m_ProxyURL.Equals("") )

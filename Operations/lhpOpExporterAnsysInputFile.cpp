@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpExporterAnsysInputFile.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-07-25 12:36:47 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2008-11-14 15:17:04 $
+  Version:   $Revision: 1.9.2.1 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -47,6 +47,9 @@ lhpOpExporterAnsysInputFile::lhpOpExporterAnsysInputFile(const wxString &label) 
 mafOp(label)
 //----------------------------------------------------------------------------
 {
+  m_PythonExe = "python.exe ";
+  m_PythonwExe = "pythonw.exe ";
+
   m_OpType  = OPTYPE_EXPORTER;
   m_Canundo = true;
   m_ImporterType = 0;
@@ -147,7 +150,7 @@ See the log area for more details. ");
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 
   // read cache files and create ansys file
-  command2execute = "python.exe ";
+  command2execute = m_PythonExe.GetCStr();
   command2execute.Append(" \"\"");
   command2execute.Append(m_AnsysPythonExporterFullPathFileName.c_str());
   command2execute.Append(" \"");

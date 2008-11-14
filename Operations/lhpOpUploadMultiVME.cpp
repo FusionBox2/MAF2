@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-13 11:30:48 $
-Version:   $Revision: 1.27.2.2 $
+Date:      $Date: 2008-11-14 15:17:05 $
+Version:   $Revision: 1.27.2.3 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -221,7 +221,6 @@ void lhpOpUploadMultiVME::OpRun()
     isDebug = isDebug.substr(pos+1);
     if (!isDebug.compare("1") || !isDebug.compare("True"))
     {
-      //m_PythonExe ="python.exe "; //debugging mode
       m_DebugMode = true;
     }
     debugFile.close();
@@ -408,7 +407,7 @@ int lhpOpUploadMultiVME::AssembleDictionaries()
   // get manual tags
   wxString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonExe;
+  command2execute = m_PythonExe.GetCStr();
 
   command2execute.Append(" lhpXMLDictionariesBuilder.py ");
   command2execute.Append(m_MasterXMLDictionaryFileName);
@@ -477,7 +476,7 @@ bool lhpOpUploadMultiVME::isBinaryDataPresent(mafNode *node)
   // get manual tags
   wxString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonExe;
+  command2execute = m_PythonExe.GetCStr();
 
   command2execute.Append(" lhpCheckBinaryName.py ");
   command2execute.Append("\"");
@@ -736,7 +735,7 @@ int lhpOpUploadMultiVME::SetVMELinks(mafNode *node)
     //Add URI tag to link VME uploaded
     wxString command2execute;
     command2execute.Clear();
-    command2execute = m_PythonExe;
+    command2execute = m_PythonExe.GetCStr();
 
     command2execute.Append("lhpEditRemoteTag.py ");
     command2execute.Append(m_User->GetName());
@@ -947,7 +946,7 @@ bool lhpOpUploadMultiVME::IsLHPBuilderVersionUpToDate()
   // get manual tags
   wxString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonExe;
+  command2execute = m_PythonExe.GetCStr();
 
   command2execute.Append(" lhpDictionaryVersionChecker.py ");
   command2execute.Append(" ");

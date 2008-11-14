@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-13 17:32:29 $
-Version:   $Revision: 1.26.2.10 $
+Date:      $Date: 2008-11-14 15:17:04 $
+Version:   $Revision: 1.26.2.11 $
 Authors:   Roberto Mucci , Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -108,8 +108,9 @@ mafOp(label)
   m_LinkName.clear();
   m_User = NULL;
 
+  m_PythonwExe ="pythonw.exe ";
+  m_PythonExe ="python.exe ";
 
-  m_PythonExe ="pythonw.exe ";
   m_CacheDir = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\UploadCache\\").c_str();
   m_OutgoingDir = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\Outgoing\\").c_str();
 
@@ -224,7 +225,7 @@ void lhpOpEditTag::OpRun()
     isDebug = isDebug.substr(pos+1);
     if (!isDebug.compare("1") || !isDebug.compare("True"))
     {
-      m_PythonExe ="python.exe ";
+      m_PythonwExe = m_PythonExe.GetCStr();
       m_DebugMode = true;
     }
     debugFile.close();
@@ -415,7 +416,7 @@ int lhpOpEditTag::EditTags()
 
   //PROCESS EXIST, ONLY CALL CLIENT
   wxString command2execute;
-  command2execute = m_PythonExe;
+  command2execute = m_PythonwExe.GetCStr();
   // script for client
   m_FileName = "lhpEditVMETag.py ";
   command2execute.Append(m_FileName.GetCStr());
@@ -667,7 +668,7 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
 
   // get auto tags
   wxString command2execute;
-  command2execute.Append("python.exe ");
+  command2execute.Append(m_PythonExe.GetCStr());
   command2execute.Append(" lhpXMLDictionaryParser.py ");
   command2execute.Append(m_DictionaryToProcessFileName.GetCStr());
   command2execute.Append(" auto_tags ");
@@ -694,8 +695,7 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
 
   // get manual tags
   command2execute.Clear();
-  command2execute = "python.exe ";
-  
+  command2execute = m_PythonExe.GetCStr();  
   command2execute.Append(" lhpXMLDictionaryParser.py ");
   command2execute.Append(m_DictionaryToProcessFileName.GetCStr());
   command2execute.Append(" manual_tags ");
@@ -892,7 +892,7 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
   {
     // launch new editor
     command2execute.Clear();
-    command2execute.Append(m_PythonExe.GetCStr());
+    command2execute.Append(m_PythonwExe.GetCStr());
     command2execute.Append(" lhpMetadataEditor.py ");
     command2execute.Append(m_CsvName.c_str()); 
     command2execute.Append(" ");
@@ -902,7 +902,7 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
   {
     // launch old editor
     command2execute.Clear();
-    command2execute.Append(m_PythonExe.GetCStr());
+    command2execute.Append(m_PythonwExe.GetCStr());
     command2execute.Append(" CSVOMATIC.py ");
     command2execute.Append(m_CsvName.c_str());
   }
@@ -942,7 +942,7 @@ bool lhpOpEditTag::IsLHPBuilderVersionUpToDate()
   // get manual tags
   wxString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonExe;
+  command2execute = m_PythonwExe.GetCStr();
 
   command2execute.Append(" lhpDictionaryVersionChecker.py ");
   command2execute.Append(" ");
@@ -1108,7 +1108,7 @@ int lhpOpEditTag::AssembleMasterWithSubdictionary()
   // get manual tags
   wxString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonExe;
+  command2execute = m_PythonwExe.GetCStr();
 
   command2execute.Append(" lhpXMLDictionariesBuilder.py ");
   command2execute.Append(m_MasterXMLDictionaryFileName);
@@ -1168,7 +1168,7 @@ int lhpOpEditTag::AppendFADictionary()
   }
 
   wxString command2execute;
-  command2execute = m_PythonExe;
+  command2execute = m_PythonwExe.GetCStr();
 
   mafString assembledWithFaDictionaryFileName = "assembledWithFA.xml";
   command2execute.Append(" lhpXMLDictionariesBuilder.py ");
