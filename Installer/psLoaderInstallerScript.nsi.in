@@ -79,7 +79,7 @@ pop $R1
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "@LHPBUILDER_INSTALLER_EXECUTABLE_OUTPUT_DIR_WIN@\Setup_${PRODUCT_NAME}_@LHPBUILDER_VERSION@.exe"
 ;InstallDir "$PROGRAMFILES\LHPBuilder"
-InstallDir "$PROGRAMFILES\b3c_software\PSLoader"
+InstallDir "C:\b3c_software\PSLoader"
 InstallDirRegKey HKCU "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
 ShowUnInstDetails show
