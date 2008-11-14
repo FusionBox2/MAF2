@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: psLoaderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-14 08:57:33 $
-  Version:   $Revision: 1.1.2.6 $
+  Date:      $Date: 2008-11-14 16:21:13 $
+  Version:   $Revision: 1.1.2.7 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -347,8 +347,8 @@ bool psLoaderApp::OnInit()
   //------------------------- Operations -------------------------
 //  m_Logic->Plug(new mafOpValidateTree());
   m_Logic->Plug(new mafOpCreateGroup("Group"),"Create/New");
-  m_Logic->Plug(new lhpOpCreateSurfaceScalar("Surface Scalar"),"Create/Derive");
-  m_Logic->Plug(new mmoLnSurf("Lineset and surface"),"Create/Derive");
+    // m_Logic->Plug(new lhpOpCreateSurfaceScalar("Surface Scalar"),"Create/Derive");
+    // m_Logic->Plug(new mmoLnSurf("Lineset and surface"),"Create/Derive");
 	m_Logic->Plug(new mafOpCreateRefSys("Refsys"),"Create/New");
   m_Logic->Plug(new mafOpCreateSlicer("Slicer"),"Create/Derive");
 	m_Logic->Plug(new mafOpCreateSurfaceParametric("Parametric Surface"),"Create/New");
@@ -356,7 +356,7 @@ bool psLoaderApp::OnInit()
   m_Logic->Plug(new medOpFreezeVME("Freeze VME"),"Create/Derive");
 //  m_Logic->Plug(new medOpRegisterClusters("Register Landmark Cloud"),"Modify/Fuse");
   m_Logic->Plug(new mafOpCreateMeter("Distance Meter"),"Create/Derive");
-  m_Logic->Plug(new medOpCreateWrappedMeter("Wrapped Meter"),"Create/Derive");
+    // m_Logic->Plug(new medOpCreateWrappedMeter("Wrapped Meter"),"Create/Derive");
 // // m_Logic->Plug(new mmoEditMetadata("Metadata Editor"),"Modify");
 //	m_Logic->Plug(new mafOpFilterSurface("Filter Surface"),"Modify");
 	m_Logic->Plug(new mafOpExtractIsosurface("Extract Isosurface"),"Create/Derive");
@@ -370,10 +370,10 @@ bool psLoaderApp::OnInit()
 //  m_Logic->Plug(new lhpOpMove(),"Modify");    
 //  m_Logic->Plug(new mafOpImporterVMEDataSetAttributes("VME DataSet Attributes Adder"),"Modify");
 //  m_Logic->Plug(new medOpClassicICPRegistration("Register Surface"),"Modify/Fuse");
-  m_Logic->Plug(new mmoAFSys("AFRefsys"),"Create/Derive");
+    // m_Logic->Plug(new mmoAFSys("AFRefsys"),"Create/Derive");
   m_Logic->Plug(new mmoAverageLM("Average landmark"),"Create/Derive");
-  m_Logic->Plug(new mmoStickPalpation("Wand palpated landmark"),"Create/Derive");
-  m_Logic->Plug(new mmoHelAxis("Helical axis"),"Create/Derive");
+    // m_Logic->Plug(new mmoStickPalpation("Wand palpated landmark"),"Create/Derive");
+    // m_Logic->Plug(new mmoHelAxis("Helical axis"),"Create/Derive");
 //  m_Logic->Plug(new mmoTimeReduce("Time reduce"),"Modify");
 //  m_Logic->Plug(new mmoBuildHierarchy("Make hierarchical"),"Modify/Fuse");
 //  m_Logic->Plug(new lhpOpBonemat("Bonemat"),"Modify");
