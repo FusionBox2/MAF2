@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-14 15:17:05 $
-  Version:   $Revision: 1.29.2.3 $
+  Date:      $Date: 2008-11-17 16:13:05 $
+  Version:   $Revision: 1.29.2.4 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -230,43 +230,18 @@ void lhpTagHandler_L0000_resource_data_Size_FileSize::HandleAutoTag(lhpTagHandle
 
   bool fileOpened = false;
   mafString fileToComputeLength = temp;
-  if(extension == "zvtk")
+ 
+  fstream fp;
+  fp.open(fileToComputeLength);
+
+  if(fp.fail() == false)
   {
-    wxFileInputStream in(fileToComputeLength.GetCStr());
-    wxZipInputStream zip(in);
-    if (!in || !zip)
-    {
-      ;
-    }
-    else
-    {
-      wxZipEntry *entry = NULL;
-
-      // call GetNextEntry() until the required internal name is found
-      // to be re-factored for efficiency reasons.
-
-      do 
-      {
-        entry = zip.GetNextEntry();
-        if(entry)
-          length += entry->GetSize();
-      } while(entry != NULL);
-    }
+    fp.seekg(0, ios::end);
+    length = fp.tellg();
+    fp.close();
+    fileOpened = true;
   }
-  else
-  {
-    
-    fstream fp;
-    fp.open(fileToComputeLength);
 
-    if(fp.fail() == false)
-    {
-      fp.seekg(0, ios::end);
-      length = fp.tellg();
-      fp.close();
-      fileOpened = true;
-    }
-  }
 
   //Process with length
 	if(fileOpened) cargo->SetTagHandlerGeneratedString(wxString::Format("%d",length));
