@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-17 13:07:45 $
-Version:   $Revision: 1.40.2.5 $
+Date:      $Date: 2008-11-17 13:20:16 $
+Version:   $Revision: 1.40.2.6 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -170,7 +170,7 @@ mafOp* lhpOpDownloadVME::Copy()
 void lhpOpDownloadVME::OpRun()
 //----------------------------------------------------------------------------
 {
-  
+    
   // get python interpreters
   mafEvent eventGetPythonExe;
   eventGetPythonExe.SetSender(this);
@@ -194,6 +194,16 @@ void lhpOpDownloadVME::OpRun()
     m_PythonwExe.Erase(0);
     m_PythonwExe = eventGetPythonwExe.GetString()->GetCStr();
     m_PythonwExe.Append(" ");
+  }
+  
+  //Get User values
+  mafEvent eventGetUser;
+  eventGetUser.SetSender(this);
+  eventGetUser.SetId(ID_REQUEST_USER);
+  mafEventMacro(eventGetUser);
+  if(eventGetUser.GetMafObject() != NULL) //if proxy string contains something != ""
+  {
+    m_User = (lhpUser*)eventGetUser.GetMafObject();
   }
 
   //Get Proxy values
