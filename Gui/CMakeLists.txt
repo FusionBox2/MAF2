@@ -10,6 +10,8 @@ PROJECT(lhpGui)
 SET(PROJECT_SRCS
   lhpGUINetworkConnectionSettings.cpp
   lhpGUINetworkConnectionSettings.h
+  lhpPythonSettings.cpp
+  lhpPythonSettings.h
 )
 
 

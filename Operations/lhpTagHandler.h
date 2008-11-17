@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandler.h,v $
   Language:  C++
-  Date:      $Date: 2008-01-08 16:06:42 $
-  Version:   $Revision: 1.4 $
+  Date:      $Date: 2008-11-17 13:07:45 $
+  Version:   $Revision: 1.4.2.1 $
   Authors:   Stefano Perticoni - Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -61,14 +61,27 @@ public:
 
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo){mafLogMessage("Please write handling code for this tag!");};  
   const char *GetTagName(){return m_TagName;};
+  
+    /** Set python.exe interpreter used at runtime*/
+  void SetPythonExe(const char *pythonExe){m_PythonExe = pythonExe;};
+  
+  /** Get python.exe interpreter used at runtime*/
+  mafString &GetPythonExe(){return m_PythonExe;};
 
+  /** Set pythonw.exe interpreter used at runtime*/
+  void SetPythonwExe(const char *pythonwExe){m_PythonwExe = pythonwExe;};
+
+	/** Get pythonw.exe interpreter used at runtime*/
+  mafString &GetPythonwExe() {return m_PythonwExe;};
+
+  
 protected:
   virtual void ExtractTagName();
   mafString m_TagName;
 
-	//for python script
-	mafString m_PythonExe;
-	mafString m_PythonwExe;
+  mafString   m_PythonExe;///< python.exe full path
+  mafString   m_PythonwExe;///< pythonw.exe full path
+
 	mafString m_PythonUploadFullPath;
 
   lhpTagHandler();

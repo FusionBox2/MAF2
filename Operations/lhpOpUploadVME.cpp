@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-14 15:17:05 $
-Version:   $Revision: 1.94.2.8 $
+Date:      $Date: 2008-11-17 13:07:45 $
+Version:   $Revision: 1.94.2.9 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -108,8 +108,9 @@ mafOp(label)
   m_SubId = -1;
   m_User = NULL;
 
-  m_PythonExe ="python.exe ";
-  m_PythonwExe ="pythonw.exe ";
+  m_PythonExe = "python.exe_UNDEFINED";
+  m_PythonwExe = "pythonw.exe_UNDEFINED";  
+
   m_CacheDir = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\UploadCache\\").c_str();
   m_OutgoingDir = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\Outgoing\\").c_str();
 
@@ -139,7 +140,6 @@ mafOp(label)
   m_ManualTagsList.Clear();
   
   m_SubdictionaryId = NO_SUBDICTIONARY; // default to none
-  m_ConnectionConfigurationFileName = "vmeUploaderConnectionConfiguration.conf" ;
 
   m_ProxyURL = "";
   m_ProxyPort = "0";
@@ -168,6 +168,31 @@ bool lhpOpUploadVME::Accept(mafNode* vme)
 void lhpOpUploadVME::OpRun()
 //----------------------------------------------------------------------------
 {
+  // get python interpreters
+  mafEvent eventGetPythonExe;
+  eventGetPythonExe.SetSender(this);
+  eventGetPythonExe.SetId(ID_REQUEST_PYTHON_EXE_INTERPRETER);
+  mafEventMacro(eventGetPythonExe);
+
+  if(eventGetPythonExe.GetString())
+  {
+    m_PythonExe.Erase(0);
+    m_PythonExe = eventGetPythonExe.GetString()->GetCStr();
+    m_PythonExe.Append(" ");
+  }
+
+  mafEvent eventGetPythonwExe;
+  eventGetPythonwExe.SetSender(this);
+  eventGetPythonwExe.SetId(ID_REQUEST_PYTHONW_EXE_INTERPRETER);
+  mafEventMacro(eventGetPythonwExe);
+
+  if(eventGetPythonwExe.GetString())
+  {
+    m_PythonwExe.Erase(0);
+    m_PythonwExe = eventGetPythonwExe.GetString()->GetCStr();
+    m_PythonwExe.Append(" ");
+  }
+
   //Get Proxy values
   mafEvent event;
   event.SetSender(this);
@@ -180,9 +205,6 @@ void lhpOpUploadVME::OpRun()
     port << event.GetArg();
     m_ProxyURL = *event.GetString();
     m_ProxyPort = port;
-
-    // load the connection configuration file:
-    this->SaveConnectionConfigurationFile();
   }
   else
   {
@@ -192,12 +214,6 @@ void lhpOpUploadVME::OpRun()
     wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
     if (m_DebugMode)
       mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
-
-    //if file exists , delete it
-    if(wxFileExists(m_ConnectionConfigurationFileName.GetCStr()))
-    {
-      wxRemoveFile(m_ConnectionConfigurationFileName.GetCStr());
-    }
 
     wxSetWorkingDirectory(oldDir);
   }
@@ -215,60 +231,36 @@ void lhpOpUploadVME::OpRun()
 
   
 }
-//------------------------------------------------------------
-void lhpOpUploadVME::SaveConnectionConfigurationFile()
-//------------------------------------------------------------
-{
-  wxString oldDir = wxGetCwd();
-  if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
-
-  //if file exists , delete it
-  if(wxFileExists(m_ConnectionConfigurationFileName.GetCStr()))
-  {
-    wxRemoveFile(m_ConnectionConfigurationFileName.GetCStr());
-  }
-
-  // open auto tags file and try to handle tags using tags factory 
-  ofstream configurationFile;
-
-  configurationFile.open(m_ConnectionConfigurationFileName.GetCStr());
-  if (!configurationFile) {
-    wxString message = m_ConnectionConfigurationFileName.GetCStr();
-    message.Append(" not found! Unable to write configuration connection file");
-    mafLogMessage(message.c_str());
-  }
-  else
-  {
-    configurationFile << m_ProxyURL;   
-    configurationFile << "\n";
-    configurationFile << m_ProxyPort;
-
-    wxString message = m_ConnectionConfigurationFileName.GetCStr();
-    message.Append("Found connection configuration file: using connection parameters");
-    message.Append("m_ProxyURL: ");
-    message.Append(m_ProxyURL.GetCStr());
-    message.Append("m_ProxyPort: ");
-    message.Append(m_ProxyPort.GetCStr());
-
-    if (m_DebugMode)
-      mafLogMessage(message.c_str());
-
-    configurationFile.close();
-  }
-
-  wxSetWorkingDirectory(oldDir);
-  if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-}
 
 //----------------------------------------------------------------------------
 int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool withChild, mafString msfListFile)   
 //----------------------------------------------------------------------------
 {
+  // get python interpreters
+  mafEvent eventGetPythonExe;
+  eventGetPythonExe.SetSender(this);
+  eventGetPythonExe.SetId(ID_REQUEST_PYTHON_EXE_INTERPRETER);
+  mafEventMacro(eventGetPythonExe);
+
+  if(eventGetPythonExe.GetString())
+  {
+    m_PythonExe.Erase(0);
+    m_PythonExe = eventGetPythonExe.GetString()->GetCStr();
+    m_PythonExe.Append(" ");
+  }
+
+  mafEvent eventGetPythonwExe;
+  eventGetPythonwExe.SetSender(this);
+  eventGetPythonwExe.SetId(ID_REQUEST_PYTHONW_EXE_INTERPRETER);
+  mafEventMacro(eventGetPythonwExe);
+
+  if(eventGetPythonwExe.GetString())
+  {
+    m_PythonwExe.Erase(0);
+    m_PythonwExe = eventGetPythonwExe.GetString()->GetCStr();
+    m_PythonwExe.Append(" ");
+  }
+
   mafSleep(2000); //to avoid DB conflicts..
 
   //Get User values
@@ -997,12 +989,14 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
       
       lhpFactoryTagHandler *tagsFactory  = lhpFactoryTagHandler::GetInstance();
       assert(tagsFactory!=NULL);
-      lhpTagHandler *obj = NULL;
-      obj = tagsFactory->CreateTagHandlerInstance("lhpTagHandler_" + tagName);
+      lhpTagHandler *tagHandler = NULL;
+      tagHandler = tagsFactory->CreateTagHandlerInstance("lhpTagHandler_" + tagName);
       
-      if (obj)
+      if (tagHandler)
       {
-        obj->HandleAutoTag(parametersCargo);
+        tagHandler->SetPythonExe(m_PythonExe.GetCStr());
+        tagHandler->SetPythonwExe(m_PythonwExe.GetCStr());
+        tagHandler->HandleAutoTag(parametersCargo);
         wxString tagValue = "\"";
         tagValue.Append(tagName.GetCStr());
         tagValue.Append("\",\"");

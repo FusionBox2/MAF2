@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpUser.h,v $
 Language:  C++
-Date:      $Date: 2008-10-23 08:02:10 $
-Version:   $Revision: 1.6 $
+Date:      $Date: 2008-11-17 13:08:31 $
+Version:   $Revision: 1.6.2.1 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004
@@ -17,7 +17,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 //----------------------------------------------------------------------------
 #include "mafString.h"
 #include "mafUser.h"
-
+#include "mafObserver.h"
 //----------------------------------------------------------------------------
 // forward declarations
 //----------------------------------------------------------------------------
@@ -29,8 +29,11 @@ customized at application level according to custom requests.
 class lhpUser : public mafUser
 {
 public:
-  lhpUser();
+  lhpUser(mafObserver *listener = NULL);
   virtual ~lhpUser();
+
+  void SetListener(mafObserver *Listener)	{m_Listener = Listener;};
+  mafObserver *GetListener() {return m_Listener;};
 
   /** Function to be customized at application level.
   By default open Login Dialog if the user did not inserted any information.*/
@@ -59,5 +62,8 @@ protected:
 
   mafString m_ProxyURL;
   mafString m_ProxyPort;
+
+  mafObserver *m_Listener;
+
 };
 #endif

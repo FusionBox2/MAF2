@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterAnsysInputFile.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-14 15:17:05 $
-  Version:   $Revision: 1.6.2.1 $
+  Date:      $Date: 2008-11-17 13:07:45 $
+  Version:   $Revision: 1.6.2.2 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -18,6 +18,7 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
+#include "lhpBuilderDecl.h"
 #include "lhpOpImporterAnsysInputFile.h"
 
 #include "wx/busyinfo.h"
@@ -46,8 +47,8 @@ lhpOpImporterAnsysInputFile::lhpOpImporterAnsysInputFile(const wxString &label) 
 mafOp(label)
 //----------------------------------------------------------------------------
 {
-  m_PythonExe = "python.exe ";
-  m_PythonwExe = "pythonw.exe ";
+  m_PythonExe = "python.exe_UNDEFINED";
+  m_PythonwExe = "pythonw.exe_UNDEFINED";
   m_OpType  = OPTYPE_IMPORTER;
   m_Canundo = true;
   m_ImporterType = 0;
@@ -91,8 +92,34 @@ mafOp* lhpOpImporterAnsysInputFile::Copy()
 void lhpOpImporterAnsysInputFile::OpRun()   
 //----------------------------------------------------------------------------
 {
+  // get python interpreters
+  mafEvent eventGetPythonExe;
+  eventGetPythonExe.SetSender(this);
+  eventGetPythonExe.SetId(ID_REQUEST_PYTHON_EXE_INTERPRETER);
+  mafEventMacro(eventGetPythonExe);
+
+  if(eventGetPythonExe.GetString())
+  {
+    m_PythonExe.Erase(0);
+    m_PythonExe = eventGetPythonExe.GetString()->GetCStr();
+    m_PythonExe.Append(" ");
+  }
+
+  mafEvent eventGetPythonwExe;
+  eventGetPythonwExe.SetSender(this);
+  eventGetPythonwExe.SetId(ID_REQUEST_PYTHONW_EXE_INTERPRETER);
+  mafEventMacro(eventGetPythonwExe);
+
+  if(eventGetPythonwExe.GetString())
+  {
+    m_PythonwExe.Erase(0);
+    m_PythonwExe = eventGetPythonwExe.GetString()->GetCStr();
+    m_PythonwExe.Append(" ");
+  }
+
+
   CreateGui();
-    // ShowGui();
+    
 }
 //----------------------------------------------------------------------------
 int lhpOpImporterAnsysInputFile::Read()

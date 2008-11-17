@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderLogic.h,v $
   Language:  C++
-  Date:      $Date: 2008-10-22 12:00:35 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2008-11-17 13:08:46 $
+  Version:   $Revision: 1.5.2.1 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
@@ -21,6 +21,7 @@
 // forward reference
 //----------------------------------------------------------------------------
 class lhpGUINetworkConnectionSettings;
+class lhpPythonSettings;
 class lhpUser;
 
 //----------------------------------------------------------------------------
@@ -49,6 +50,7 @@ protected:
   virtual void VmeAdded(mafNode *vme);
 
   lhpGUINetworkConnectionSettings *m_NetworkConnectionSettings;
+  lhpPythonSettings *m_PythonSettings;
   lhpUser  *m_User;
 };
 #endif

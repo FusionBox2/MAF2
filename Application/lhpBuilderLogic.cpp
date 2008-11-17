@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderLogic.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-10-22 12:00:35 $
-  Version:   $Revision: 1.9 $
+  Date:      $Date: 2008-11-17 13:08:46 $
+  Version:   $Revision: 1.9.2.1 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
@@ -27,6 +27,7 @@
 #include "mafOpManager.h"
 #include "mafGUISettingsDialog.h"
 #include "lhpGUINetworkConnectionSettings.h"
+#include "lhpPythonSettings.h"
 #include "lhpUser.h"
 
 //----------------------------------------------------------------------------
@@ -34,12 +35,14 @@ lhpBuilderLogic::lhpBuilderLogic()
 //----------------------------------------------------------------------------
 {
   m_NetworkConnectionSettings = new lhpGUINetworkConnectionSettings(this);
-  m_User = new lhpUser();
+  m_PythonSettings = new lhpPythonSettings(this);
+  m_User = new lhpUser(this);
 }
 //----------------------------------------------------------------------------
 lhpBuilderLogic::~lhpBuilderLogic()
 //----------------------------------------------------------------------------
 {
+  cppDEL(m_PythonSettings);
   cppDEL(m_NetworkConnectionSettings);
 }
 //----------------------------------------------------------------------------
@@ -79,7 +82,26 @@ void lhpBuilderLogic::OnEvent(mafEventBase *maf_event)
         e->SetMafObject((mafObject*)m_User);
       }
       break;
-		default:
+    case ID_REQUEST_PYTHON_EXE_INTERPRETER:
+      {
+        if(m_PythonSettings->GetPythonExe())
+        {
+          e->SetString(&m_PythonSettings->GetPythonExe());
+        }
+      }
+      break;
+    
+    case ID_REQUEST_PYTHONW_EXE_INTERPRETER:
+      {
+        if(m_PythonSettings->GetPythonwExe())
+        {
+
+          e->SetString(&m_PythonSettings->GetPythonwExe());
+        }
+      }
+      break;
+
+    default:
 			mafLogicWithManagers::OnEvent(maf_event);
 			break; 
 		} // end switch case
@@ -108,6 +130,10 @@ void lhpBuilderLogic::Configure()
   if(m_SettingsDialog)
   {
     m_SettingsDialog->AddPage(m_NetworkConnectionSettings->GetGui(), m_NetworkConnectionSettings->GetLabel());
+  }
+  if (m_PythonSettings)
+  {
+    m_SettingsDialog->AddPage(m_PythonSettings->GetGui(), m_PythonSettings->GetLabel());
   }
 }
 //----------------------------------------------------------------------------

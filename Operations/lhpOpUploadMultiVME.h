@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.h,v $
 Language:  C++
-Date:      $Date: 2008-11-13 11:30:49 $
-Version:   $Revision: 1.13.2.1 $
+Date:      $Date: 2008-11-17 13:07:45 $
+Version:   $Revision: 1.13.2.2 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -109,8 +109,6 @@ protected:
   mafString m_AssembledXMLDictionaryFileName;
   mafString m_SubDictionaryBuildingCommand;
   
- 
-  mafString m_ConnectionConfigurationFileName;
   mafString m_ProxyURL;
   mafString m_ProxyPort;
 
@@ -143,7 +141,6 @@ private:
   /** Check if a binary data is associated to the VME */
   bool isBinaryDataPresent(mafNode *node);
 
-  void SaveConnectionConfigurationFile();
   int AssembleDictionaries();
 
   bool m_WithChild;

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-14 15:17:05 $
-Version:   $Revision: 1.27.2.3 $
+Date:      $Date: 2008-11-17 13:07:45 $
+Version:   $Revision: 1.27.2.4 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -105,8 +105,8 @@ mafOp(label)
   //m_ServiceURL = "http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/";
   m_ServiceURL = "https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/";
  
+  m_PythonExe = "python.exe_UNDEFINED";
 
-  m_PythonExe ="python.exe ";
   m_PythonUploadFullPath  = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\").c_str();
 
   m_MasterXMLDictionaryFileName = "UNDEFINED";
@@ -117,7 +117,6 @@ mafOp(label)
   m_listURIFileName = " ";
 
   m_SubdictionaryId = 0; // NO_SUBDICTIONARY; 
-  m_ConnectionConfigurationFileName = "vmeUploaderConnectionConfiguration.conf" ;
   SetListener(this);
 }
 
@@ -161,6 +160,19 @@ mafOp* lhpOpUploadMultiVME::Copy()
 void lhpOpUploadMultiVME::OpRun()
 //----------------------------------------------------------------------------
 {
+  // get python interpreters
+  mafEvent eventGetPythonExe;
+  eventGetPythonExe.SetSender(this);
+  eventGetPythonExe.SetId(ID_REQUEST_PYTHON_EXE_INTERPRETER);
+  mafEventMacro(eventGetPythonExe);
+
+  if(eventGetPythonExe.GetString())
+  {
+    m_PythonExe.Erase(0);
+    m_PythonExe = eventGetPythonExe.GetString()->GetCStr();
+    m_PythonExe.Append(" ");
+  }
+
   //Get User values
   mafEvent event;
   event.SetSender(this);
@@ -182,9 +194,6 @@ void lhpOpUploadMultiVME::OpRun()
     port << event.GetArg();
     m_ProxyURL = *event.GetString();
     m_ProxyPort = port;
-
-    // load the connection configuration file:
-    this->SaveConnectionConfigurationFile();
   }
   else
   {
@@ -194,13 +203,6 @@ void lhpOpUploadMultiVME::OpRun()
     wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
     if (m_DebugMode)
       mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
-
-    //if file exists , delete it
-    if(wxFileExists(m_ConnectionConfigurationFileName.GetCStr()))
-    {
-      wxRemoveFile(m_ConnectionConfigurationFileName.GetCStr());
-    }
-    wxSetWorkingDirectory(oldDir);
   }
 
   int result = OP_RUN_CANCEL;
@@ -333,55 +335,6 @@ void lhpOpUploadMultiVME::OpDo()
   {
     delete wait;
   }
-}
-//------------------------------------------------------------
-void lhpOpUploadMultiVME::SaveConnectionConfigurationFile()
-//------------------------------------------------------------
-{
-  wxString oldDir = wxGetCwd();
-  if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
-
-  //if file exists , delete it
-  if(wxFileExists(m_ConnectionConfigurationFileName.GetCStr()))
-  {
-    wxRemoveFile(m_ConnectionConfigurationFileName.GetCStr());
-  }
-
-  // open auto tags file and try to handle tags using tags factory 
-  ofstream configurationFile;
-
-  configurationFile.open(m_ConnectionConfigurationFileName.GetCStr());
-  if (!configurationFile) {
-    wxString message = m_ConnectionConfigurationFileName.GetCStr();
-    message.Append(" not found! Unable to write configuration connection file");
-    mafLogMessage(message.c_str());
-  }
-  else
-  {
-    configurationFile << m_ProxyURL;   
-    configurationFile << "\n";
-    configurationFile << m_ProxyPort;
-
-    wxString message = m_ConnectionConfigurationFileName.GetCStr();
-    message.Append("Found connection configuration file: using connection parameters");
-    message.Append("m_ProxyURL: ");
-    message.Append(m_ProxyURL.GetCStr());
-    message.Append("m_ProxyPort: ");
-    message.Append(m_ProxyPort.GetCStr());
-
-    if (m_DebugMode)
-      mafLogMessage(message.c_str());
-
-    configurationFile.close();
-  }
-
-  wxSetWorkingDirectory(oldDir);
-  if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 }
 
 //----------------------------------------------------------------------------

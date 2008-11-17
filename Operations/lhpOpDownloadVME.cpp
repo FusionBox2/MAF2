@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-14 16:06:32 $
-Version:   $Revision: 1.40.2.4 $
+Date:      $Date: 2008-11-17 13:07:45 $
+Version:   $Revision: 1.40.2.5 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -105,9 +105,9 @@ mafOp(label)
   m_RootGroup = NULL;
   m_User = NULL;
 
-  //m_PythonExe ="C:\\Python25\\python.exe ";
-  m_PythonExe ="python.exe ";
-  m_PythonwExe ="pythonw.exe ";
+  m_PythonExe = "python.exe_UNDEFINED";
+  m_PythonwExe = "pythonw.exe_UNDEFINED";  
+
   m_CurrentCache = m_CacheDir = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\UploadCache\\").c_str();
   m_IncomingDir = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\Incoming\\").c_str();
 
@@ -120,7 +120,7 @@ mafOp(label)
   m_IncomingCompletePath = "";
   
   m_BasketListFileName = "ToDownload.txt" ;
-  m_ConnectionConfigurationFileName = "vmeUploaderConnectionConfiguration.conf" ;
+  
   m_BinaryRealName = "";
   m_URISRBFile = "";
   m_URISRBFileSize = "0";
@@ -170,17 +170,34 @@ mafOp* lhpOpDownloadVME::Copy()
 void lhpOpDownloadVME::OpRun()
 //----------------------------------------------------------------------------
 {
-  //Get User values
-  mafEvent event;
-  event.SetSender(this);
-  event.SetId(ID_REQUEST_USER);
-  mafEventMacro(event);
-  if(event.GetMafObject() != NULL) //if proxy string contains something != ""
+  
+  // get python interpreters
+  mafEvent eventGetPythonExe;
+  eventGetPythonExe.SetSender(this);
+  eventGetPythonExe.SetId(ID_REQUEST_PYTHON_EXE_INTERPRETER);
+  mafEventMacro(eventGetPythonExe);
+
+  if(eventGetPythonExe.GetString())
   {
-    m_User = (lhpUser*)event.GetMafObject();
+    m_PythonExe.Erase(0);
+    m_PythonExe = eventGetPythonExe.GetString()->GetCStr();
+    m_PythonExe.Append(" ");
+  }
+
+  mafEvent eventGetPythonwExe;
+  eventGetPythonwExe.SetSender(this);
+  eventGetPythonwExe.SetId(ID_REQUEST_PYTHONW_EXE_INTERPRETER);
+  mafEventMacro(eventGetPythonwExe);
+
+  if(eventGetPythonwExe.GetString())
+  {
+    m_PythonwExe.Erase(0);
+    m_PythonwExe = eventGetPythonwExe.GetString()->GetCStr();
+    m_PythonwExe.Append(" ");
   }
 
   //Get Proxy values
+  mafEvent event;
   event.SetSender(this);
   event.SetId(ID_REQUEST_PROXY);
   mafEventMacro(event);
@@ -190,10 +207,7 @@ void lhpOpDownloadVME::OpRun()
     mafString port;
     port << event.GetArg();
     m_ProxyURL = *event.GetString();
-    m_ProxyPort = port;
-
-    // load the connection configuration file:
-    this->SaveConnectionConfigurationFile();
+    m_ProxyPort = port; 
   }
   else
   {
@@ -204,11 +218,6 @@ void lhpOpDownloadVME::OpRun()
     if (m_DebugMode)
       mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
-    //if file exists , delete it
-    if(wxFileExists(m_ConnectionConfigurationFileName.GetCStr()))
-    {
-      wxRemoveFile(m_ConnectionConfigurationFileName.GetCStr());
-    }
     wxSetWorkingDirectory(oldDir);
   }
 
@@ -231,7 +240,6 @@ void lhpOpDownloadVME::OpRun()
     isDebug = isDebug.substr(pos+1);
     if (!isDebug.compare("1") || !isDebug.compare("True"))
     {
-      //m_PythonExe ="python.exe "; //debugging mode
       m_DebugMode = true;
     }
     debugFile.close();
@@ -259,55 +267,6 @@ void lhpOpDownloadVME::OpRun()
     OpStop(result);
     return;
   }
-
-}
-//------------------------------------------------------------
-void lhpOpDownloadVME::SaveConnectionConfigurationFile()
-//------------------------------------------------------------
-{
-  wxString oldDir = wxGetCwd();
-  if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
-
-  //if file exists , delete it
-  if(wxFileExists(m_ConnectionConfigurationFileName.GetCStr()))
-  {
-    wxRemoveFile(m_ConnectionConfigurationFileName.GetCStr());
-  }
-
-  // open auto tags file and try to handle tags using tags factory 
-  ofstream configurationFile;
-  configurationFile.open(m_ConnectionConfigurationFileName.GetCStr());
-  if (!configurationFile) {
-    wxString message = m_ConnectionConfigurationFileName.GetCStr();
-    message.Append(" not found! Unable to write configuration connection file");
-    mafLogMessage(message.c_str());
-  }
-  else
-  {
-    configurationFile << m_ProxyURL;   
-    configurationFile << "\n";
-    configurationFile << m_ProxyPort;
-     
-    wxString message = m_ConnectionConfigurationFileName.GetCStr();
-    message.Append("Found connection configuration file: using connection parameters");
-    message.Append("m_ProxyURL: ");
-    message.Append(m_ProxyURL.GetCStr());
-    message.Append("m_ProxyPort: ");
-    message.Append(m_ProxyPort.GetCStr());
-
-    if (m_DebugMode)
-      mafLogMessage(message.c_str());
-
-    configurationFile.close();
-  }
-
-  wxSetWorkingDirectory(oldDir);
-  if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 
 }
 //----------------------------------------------------------------------------
