@@ -139,11 +139,10 @@ Section "create product directory structure" SEC01
   File /R  "@LHPBUILDER_INSTALLER_DIR_WIN@\..\VMEUploaderDownloader\"
 
   ;build the fat installer?
-  StrCmp "@LHPBUILDER_BUILD_FAT_INSTALLER@" "ON" fat nonFat
+  !define _BUILD_FAT_INSTALLER_@LHPBUILDER_BUILD_FAT_INSTALLER@
   
   ;Fat Installer with Python and WxPython   
-  fat:  
-  ; MessageBox MB_OK "Will build fat installer"
+  !ifdef _BUILD_FAT_INSTALLER_ON
   
   ; copy Python stuff to target installation dir     
   CreateDirectory "$INSTDIR\Python"
@@ -155,11 +154,10 @@ Section "create product directory structure" SEC01
   ExecWait "installpy.bat $INSTDIR\Python\Python25" $0
   ExecWait "installwx.bat $INSTDIR\Python\Python25\Lib\site-packages\" $0
   
-  goto AfterSecurityStuff
-  
+  !endif
+ 
+  !ifdef _BUILD_FAT_INSTALLER_OFF 
   ;Slim installer: Python should be on the client machine   
-  nonFat:
-  ; MessageBox MB_OK "Will build nonFat installer"
     
   ;message if python is not installed
   SetOutPath "$INSTDIR\Config\ExternalPythonVersion"
@@ -183,8 +181,6 @@ Section "create product directory structure" SEC01
      Delete "$INSTDIR\Config\ExternalPythonVersion\pythonVersion.txt"
   NOTExists:
   
-  SecurityStuff:
-  
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;security stuff
   CreateDirectory "$INSTDIR\Security"
@@ -206,8 +202,7 @@ Section "create product directory structure" SEC01
   ; end security stuff
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;v
     
-  AfterSecurityStuff:
-  
+  !endif
   
   SetOutPath "$INSTDIR\bin"
 SectionEnd
