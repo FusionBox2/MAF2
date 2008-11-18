@@ -78,9 +78,12 @@ pop $R1
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "@LHPBUILDER_INSTALLER_EXECUTABLE_OUTPUT_DIR_WIN@\Setup_${PRODUCT_NAME}_@LHPBUILDER_VERSION@.exe"
+
 ;InstallDir "$PROGRAMFILES\LHPBuilder"
+; InstallDir "$PROGRAMFILES\b3c_software\PSLoader"
 InstallDir "C:\b3c_software\PSLoader"
 InstallDirRegKey HKCU "${PRODUCT_DIR_REGKEY}" ""
+
 ShowInstDetails show
 ShowUnInstDetails show
 
@@ -135,6 +138,29 @@ Section "create product directory structure" SEC01
   SetOutPath "$INSTDIR\VMEUploaderDownloader"
   File /R  "@LHPBUILDER_INSTALLER_DIR_WIN@\..\VMEUploaderDownloader\"
 
+  ;build the fat installer?
+  StrCmp "@LHPBUILDER_BUILD_FAT_INSTALLER@" "ON" fat nonFat
+  
+  ;Fat Installer with Python and WxPython   
+  fat:  
+  ; MessageBox MB_OK "Will build fat installer"
+  
+  ; copy Python stuff to target installation dir     
+  CreateDirectory "$INSTDIR\Python"
+  SetOutPath "$INSTDIR\Python"
+  File /R  "@LHPBUILDER_INSTALLER_DIR_WIN@\..\Python\"
+  
+  ; install python and wxPython in Python/Python25 folder
+  SetOutPath "$INSTDIR\Python"
+  ExecWait "installpy.bat $INSTDIR\Python\Python25" $0
+  ExecWait "installwx.bat $INSTDIR\Python\Python25\Lib\site-packages\" $0
+  
+  goto AfterSecurityStuff
+  
+  ;Slim installer: Python should be on the client machine   
+  nonFat:
+  ; MessageBox MB_OK "Will build nonFat installer"
+    
   ;message if python is not installed
   SetOutPath "$INSTDIR\Config\ExternalPythonVersion"
   ExecWait "PythonControl.bat" $0
@@ -157,6 +183,8 @@ Section "create product directory structure" SEC01
      Delete "$INSTDIR\Config\ExternalPythonVersion\pythonVersion.txt"
   NOTExists:
   
+  SecurityStuff:
+  
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;security stuff
   CreateDirectory "$INSTDIR\Security"
@@ -178,7 +206,7 @@ Section "create product directory structure" SEC01
   ; end security stuff
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;v
     
-  
+  AfterSecurityStuff:
   
   
   SetOutPath "$INSTDIR\bin"

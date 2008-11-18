@@ -14,7 +14,7 @@ file.write(version)
 file.close() # this is icing, you can just exit and this will be
 
 if(version != "2.5"):
-  print "############ Warning : Python Version must be 2.5.0 ##############"
+  print "############ Warning : Python Version must be 2.5 ##############"
   print "############ Check that python 2.5 is installed and is present in PATH environment variable ##############"
   print "############ Several features can't work with different versions  ##############"
   updatePythonVersion.openPythonDownloadPage()

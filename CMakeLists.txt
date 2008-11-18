@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2008-11-10 14:16:15 $
-#   Version:   $Revision: 1.33.2.3 $
+#   Date:      $Date: 2008-11-18 14:40:03 $
+#   Version:   $Revision: 1.33.2.4 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -343,7 +343,10 @@ IF (WIN32)
   STRING(REPLACE "/" "\\" LHPBUILDER_INSTALLER_EXECUTABLE_OUTPUT_DIR_WIN ${LHPBUILDER_INSTALLER_EXECUTABLE_OUTPUT_DIR})
   SET(LHPBUILDER_INSTALLER_EXECUTABLE_OUTPUT_DIR_WIN ${LHPBUILDER_INSTALLER_EXECUTABLE_OUTPUT_DIR_WIN} CACHE INTERNAL "get the executable  from this directory")
   # MESSAGE("variable LHPBUILDER_INSTALLER_EXECUTABLE_OUTPUT_DIR_WIN = " ${LHPBUILDER_INSTALLER_EXECUTABLE_OUTPUT_DIR_WIN})
-  
+    
+  # Build the Fat Installer ie the installer containing python and wxPython distributions 
+  SET(LHPBUILDER_BUILD_FAT_INSTALLER "OFF" CACHE BOOL "Build the fat installer containing python and wxPython distributions")
+    
   # lhpBuilder
   CONFIGURE_FILE(${LHPBUILDER_INSTALLER_DIR}/LHPBuilderInstallerScript.nsi.in  ${LHPBUILDER_EXECUTABLE_OUTPUT_PATH}/LHPBuilderInstallerScript.nsi @ONLY)
   
