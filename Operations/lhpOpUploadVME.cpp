@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-17 13:07:45 $
-Version:   $Revision: 1.94.2.9 $
+Date:      $Date: 2008-11-18 11:09:18 $
+Version:   $Revision: 1.94.2.10 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -140,6 +140,7 @@ mafOp(label)
   m_ManualTagsList.Clear();
   
   m_SubdictionaryId = NO_SUBDICTIONARY; // default to none
+  m_ConnectionConfigurationFileName = "vmeUploaderConnectionConfiguration.conf" ;
 
   m_ProxyURL = "";
   m_ProxyPort = "0";
@@ -205,6 +206,9 @@ void lhpOpUploadVME::OpRun()
     port << event.GetArg();
     m_ProxyURL = *event.GetString();
     m_ProxyPort = port;
+
+    // load the connection configuration file:
+    this->SaveConnectionConfigurationFile();
   }
   else
   {
@@ -214,6 +218,12 @@ void lhpOpUploadVME::OpRun()
     wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
     if (m_DebugMode)
       mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+
+    //if file exists , delete it
+    if(wxFileExists(m_ConnectionConfigurationFileName.GetCStr()))
+    {
+      wxRemoveFile(m_ConnectionConfigurationFileName.GetCStr());
+    }
 
     wxSetWorkingDirectory(oldDir);
   }
@@ -230,6 +240,55 @@ void lhpOpUploadVME::OpRun()
   }
 
   
+}
+//------------------------------------------------------------
+void lhpOpUploadVME::SaveConnectionConfigurationFile()
+//------------------------------------------------------------
+{
+  wxString oldDir = wxGetCwd();
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  if (m_DebugMode)
+    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+
+  //if file exists , delete it
+  if(wxFileExists(m_ConnectionConfigurationFileName.GetCStr()))
+  {
+    wxRemoveFile(m_ConnectionConfigurationFileName.GetCStr());
+  }
+
+  // open auto tags file and try to handle tags using tags factory 
+  ofstream configurationFile;
+
+  configurationFile.open(m_ConnectionConfigurationFileName.GetCStr());
+  if (!configurationFile) {
+    wxString message = m_ConnectionConfigurationFileName.GetCStr();
+    message.Append(" not found! Unable to write configuration connection file");
+    mafLogMessage(message.c_str());
+  }
+  else
+  {
+    configurationFile << m_ProxyURL;   
+    configurationFile << "\n";
+    configurationFile << m_ProxyPort;
+
+    wxString message = m_ConnectionConfigurationFileName.GetCStr();
+    message.Append("Found connection configuration file: using connection parameters");
+    message.Append("m_ProxyURL: ");
+    message.Append(m_ProxyURL.GetCStr());
+    message.Append("m_ProxyPort: ");
+    message.Append(m_ProxyPort.GetCStr());
+
+    if (m_DebugMode)
+      mafLogMessage(message.c_str());
+
+    configurationFile.close();
+  }
+
+  wxSetWorkingDirectory(oldDir);
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 }
 
 //----------------------------------------------------------------------------

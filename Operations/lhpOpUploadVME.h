@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-11-17 13:07:45 $
-Version:   $Revision: 1.33.2.2 $
+Date:      $Date: 2008-11-18 11:09:18 $
+Version:   $Revision: 1.33.2.3 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -82,6 +82,9 @@ public:
   /** Set subDictionray. */
   void SetDictionary(int subDictionary);   
 
+  /** Load configuration file for connection*/
+  void SaveConnectionConfigurationFile();
+
   /** Set debug modality */
   void SetDebugMode(bool debugMode){m_DebugMode = debugMode;};
 
@@ -148,6 +151,7 @@ protected:
 
   lhpUser  *m_User;
   
+  mafString m_ConnectionConfigurationFileName;
   mafString m_ProxyURL;
   mafString m_ProxyPort;
   mafString m_ServiceURL;

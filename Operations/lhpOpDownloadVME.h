@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-11-17 13:07:45 $
-Version:   $Revision: 1.9.2.3 $
+Date:      $Date: 2008-11-18 11:09:18 $
+Version:   $Revision: 1.9.2.4 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -99,6 +99,9 @@ protected:
   /** This method checks if process exists and if there is a lock file */
   bool ExistsRunningProcess();
 
+  /** Load configuration file for connection*/
+  void SaveConnectionConfigurationFile();
+
   /** launch a script that open a selector after list all vme in basket, select them with a checklistbox */
   int CreateFileListFromBasket();
 
@@ -172,6 +175,7 @@ protected:
   mafString m_URISRBFile;
   mafString m_URISRBFileSize;
 
+  mafString m_ConnectionConfigurationFileName;
   mafString m_ProxyURL;
   mafString m_ProxyPort;
   mafString m_ServiceURL;

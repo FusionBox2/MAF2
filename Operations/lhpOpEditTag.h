@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.h,v $
 Language:  C++
-Date:      $Date: 2008-11-17 13:07:45 $
-Version:   $Revision: 1.11.2.3 $
+Date:      $Date: 2008-11-18 11:09:18 $
+Version:   $Revision: 1.11.2.4 $
 Authors:   Roberto Mucci , Stefano Perticoni 
 ==========================================================================
 Copyright (c) 2002/2007
@@ -136,6 +136,7 @@ protected:
 
   lhpUser  *m_User;
   
+  mafString m_ConnectionConfigurationFileName;
   mafString m_ProxyURL;
   mafString m_ProxyPort;
 
@@ -143,6 +144,7 @@ private:
   mafString GetXMLDictionaryFileName(mafString dictionaryFileNamePrefix);
   void CreateGui();
   int AssembleMasterWithSubdictionary();
+  void LoadConnectionConfigurationFile();
   int m_SubdictionaryId;
   wxArrayString m_AutoTagsList;
   wxArrayString m_ManualTagsList;
