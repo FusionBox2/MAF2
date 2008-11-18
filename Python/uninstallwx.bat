@@ -1,0 +1,1 @@
+.\Python25\Lib\site-packages\wx-2.8-msw-unicode\unins000.exe /SILENT

@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderLogic.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-17 13:08:46 $
-  Version:   $Revision: 1.9.2.1 $
+  Date:      $Date: 2008-11-18 14:41:02 $
+  Version:   $Revision: 1.9.2.2 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
@@ -35,7 +35,7 @@ lhpBuilderLogic::lhpBuilderLogic()
 //----------------------------------------------------------------------------
 {
   m_NetworkConnectionSettings = new lhpGUINetworkConnectionSettings(this);
-  m_PythonSettings = new lhpPythonSettings(this);
+  m_PythonSettings = new lhpGUIPythonSettings(this);
   m_User = new lhpUser(this);
 }
 //----------------------------------------------------------------------------

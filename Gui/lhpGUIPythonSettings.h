@@ -1,8 +1,8 @@
 /*=========================================================================
 Program:   LHPBuilder
-Module:    $RCSfile: lhpPythonSettings.h,v $
+Module:    $RCSfile: lhpGUIPythonSettings.h,v $
 Language:  C++
-Date:      $Date: 2008-11-17 13:07:31 $
+Date:      $Date: 2008-11-18 14:40:32 $
 Version:   $Revision: 1.1.2.1 $
 Authors:   Stefano Perticoni
 ==========================================================================
@@ -26,11 +26,11 @@ CINECA - Interuniversity Consortium (www.cineca.it)
   - Pythonw.exe interpreter full path
 
 */
-class lhpPythonSettings : public mafGUISettings
+class lhpGUIPythonSettings : public mafGUISettings
 {
 public:
-	lhpPythonSettings(mafObserver *Listener, const mafString &label = _("Python Settings"));
-	~lhpPythonSettings(); 
+	lhpGUIPythonSettings(mafObserver *Listener, const mafString &label = _("Python Settings"));
+	~lhpGUIPythonSettings(); 
 
   enum APP_SETTINGS_WIDGET_ID
   {

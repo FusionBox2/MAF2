@@ -2,8 +2,8 @@
 Program:   LHPBuilder
 Module:    $RCSfile: lhpGUIPythonSettings.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-18 14:40:32 $
-Version:   $Revision: 1.1.2.1 $
+Date:      $Date: 2008-11-18 14:49:16 $
+Version:   $Revision: 1.1.2.2 $
 Authors:   Stefano Perticoni
 ==========================================================================
 Copyright (c) 2008
@@ -19,7 +19,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
-#include "lhpPythonSettings.h"
+#include "lhpGUIPythonSettings.h"
 #include "mafCrypt.h"
 
 #include "mafDecl.h"
