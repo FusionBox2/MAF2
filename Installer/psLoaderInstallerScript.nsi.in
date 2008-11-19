@@ -91,7 +91,7 @@ Section "create product directory structure" SEC01
   ;build the fat installer?
   !define _BUILD_FAT_INSTALLER_@LHPBUILDER_BUILD_FAT_INSTALLER@
   
-  IfFileExists "$INSTDIR\Python\Python25\python.exe" uninstall skipUninstall
+  IfFileExists "$INSTDIR\Python\Python25\Lib\" uninstall skipUninstall
   
   uninstall:
   ExecWait "uninstallwx.bat $INSTDIR\Python\Python25" $0
