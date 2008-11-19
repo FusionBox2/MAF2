@@ -98,7 +98,7 @@ Section "create product directory structure" SEC01
   ExecWait "uninstallwx.bat $INSTDIR\Python\Python25" $0
   ExecWait "uninstallpy.bat $INSTDIR\Python\Python25" $0
   
-  skipUnnstall:
+  skipUninstall:
   !endif
   
   RMDir /R "$INSTDIR"
@@ -289,7 +289,7 @@ Section Uninstall
   ExecWait "uninstallwx.bat $INSTDIR\Python\Python25" $0
   ExecWait "uninstallpy.bat $INSTDIR\Python\Python25" $0
   
-  skipUnnstall:
+  skipUninstall:
   !endif
   
   Delete "$INSTDIR\Config\ExternalPythonVersion\PythonControl.bat"
