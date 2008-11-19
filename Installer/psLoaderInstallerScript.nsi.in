@@ -91,7 +91,6 @@ Section "create product directory structure" SEC01
   ;build the fat installer?
   !define _BUILD_FAT_INSTALLER_@LHPBUILDER_BUILD_FAT_INSTALLER@
   
-  !ifdef _BUILD_FAT_INSTALLER_ON
   IfFileExists "$INSTDIR\Python\Python25\python.exe" uninstall skipUninstall
   
   uninstall:
@@ -99,7 +98,6 @@ Section "create product directory structure" SEC01
   ExecWait "uninstallpy.bat $INSTDIR\Python\Python25" $0
   
   skipUninstall:
-  !endif
   
   RMDir /R "$INSTDIR"
   SetOutPath "$INSTDIR"
