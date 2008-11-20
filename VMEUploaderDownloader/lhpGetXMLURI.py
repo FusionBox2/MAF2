@@ -44,13 +44,15 @@ class lhpGetXMLURI:
         try:
             out = ws.run('createresource')[1]
         except:
-            print "-----------Error calling createresource service------------"
+            if Debug:
+                print "-----------Error calling createresource service------------"
             return
             
         
         dom = xd.parseString(out)
         if dom.getElementsByTagName("fault"):
-            print "-----------Error in createresource service------------"
+            if Debug:
+                print "-----------Error in createresource service------------"
             for el in dom.getElementsByTagName("string"):
                 for node in el.childNodes:  
                     error = node.data

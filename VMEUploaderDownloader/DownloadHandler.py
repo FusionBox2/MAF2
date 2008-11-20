@@ -50,7 +50,8 @@ class DownloadHandler:
             if Debug:
                 print "Inside Download Thread"
         except:
-            print "-------Error calling mafSRBDownload.cgi----------" 
+            if Debug:
+                print "-------Error calling mafSRBDownload.cgi----------" 
             self.block.acquire()
             if(DownloadHandler.queue):
                 percentage = 120 #110 for 'Error!'
@@ -93,7 +94,8 @@ class DownloadHandler:
             try:
               file = open(self.dirCache+"configuration.conf","r")
             except:
-              print "------Unable to Open ConfigurationFile-----------"
+              if Debug:
+                  print "------Unable to Open ConfigurationFile-----------"
               return
             
             fullPathInMSF = file.read()
@@ -138,7 +140,8 @@ class DownloadHandler:
             try:
                 self.remoteChksum = self.retrieveTagValue('L0000_resource_data_Dataset_LocalFileCheckSum')
             except:
-                print "------------Checksum not found------------"
+                if Debug:
+                    print "------------Checksum not found------------"
                 self.block.acquire()
                 if(DownloadHandler.queue):
                     percentage = 120 #110 for 'Error!'
@@ -192,7 +195,8 @@ class DownloadHandler:
         try:
             fd = open(fileName,"rb")
         except IOError:
-            print "Unable to open the file in readmode:", filename
+            if Debug:
+                print "Unable to open the file in readmode:", filename
             return
         content = fd.readlines()
         fd.close()

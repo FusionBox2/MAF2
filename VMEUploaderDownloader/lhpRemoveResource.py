@@ -31,8 +31,9 @@ class lhpRemoveResource:
            Removes a XML resource on repository
         """
         self.proxyHost, self.proxyPort = retriveProxyParameters()
-        print "->"+ self.proxyHost + "<-"
-        print "->"+ str(self.proxyPort) + "<-"
+        if Denug:
+            print "->"+ self.proxyHost + "<-"
+            print "->"+ str(self.proxyPort) + "<-"
         
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
         ws.setCredentials(self.userName, self.password)
@@ -53,11 +54,13 @@ class lhpRemoveResource:
         
         dom = xd.parseString(out)
         if dom.getElementsByTagName("fault"):
-            print "-----------Error in xmldelete service------------"
+            if Debug:
+                print "-----------Error in xmldelete service------------"
             for el in dom.getElementsByTagName("string"):
                 for node in el.childNodes:  
                     error = node.data
-            print error
+            if Debug:
+                print error
             return
 
   

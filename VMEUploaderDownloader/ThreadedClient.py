@@ -185,7 +185,9 @@ class ThreadedClient:
         self.vmeName = []
         dom = xd.parseString(out)
         if dom.getElementsByTagName("fault"):
-            print "------Error in gettitle service-------"
+            if Debug:
+                if Debug:
+                    print "------Error in gettitle service-------"
             for el in dom.getElementsByTagName("string"):
                 for node in el.childNodes:  
                     error = node.data

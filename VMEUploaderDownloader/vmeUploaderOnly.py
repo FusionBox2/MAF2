@@ -213,7 +213,8 @@ class vmeUploaderOnly:
         try:
             fd = open(fileName,"rb")
         except IOError:
-            print "Unable to open the file in read mode: " + filename
+            if Debug:
+                print "Unable to open the file in read mode: " + filename
             return
         content = fd.readlines()
         fd.close()

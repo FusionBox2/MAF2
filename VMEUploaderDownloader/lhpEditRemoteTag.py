@@ -60,7 +60,8 @@ class lhpEditRemoteTag:
         
         dom = xd.parseString(out)
         if dom.getElementsByTagName("fault"):
-            print "Error editing tags on repository"
+            if Debug:
+                print "Error editing tags on repository"
             return
        
   

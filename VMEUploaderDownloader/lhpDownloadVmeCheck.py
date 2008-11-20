@@ -53,7 +53,8 @@ class lhpDownloadVmeCheck:
         
         dom = xd.parseString(out)
         if dom.getElementsByTagName("fault"):
-            print "Error sending check information to repository"
+            if Debug:
+                print "Error sending check information to repository"
             return
        
   

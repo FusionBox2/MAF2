@@ -236,7 +236,8 @@ class UploadHandler:
           self.block.acquire()  
           UploadHandler.queue.put(lista)
           self.block.release()
-          print "--------Error uploading binary data----------------"
+          if Debug:
+              print "--------Error uploading binary data----------------"
 
                   
     def createOutgoingDir(self):
@@ -302,7 +303,8 @@ class UploadHandler:
         try:
             result = instance.ListSrbDir(serviceUrl, self.proxyHost, self.proxyPort)
         except:
-            print "------Error calling mafSRBUploadURI.cgi----------"  
+            if Debug:
+                print "------Error calling mafSRBUploadURI.cgi----------"  
             return ""
         if result == "":
             percentage = 120 #120 for 'error!'
@@ -341,7 +343,8 @@ class UploadHandler:
         try:
             out = ws.run('xmlupload', self.XMLURI, self.vmeName)[1]
         except:
-            print "-----------Error in xmlupload service------------"
+            if Debug:
+                print "-----------Error in xmlupload service------------"
             
             percentage = 120 #120 for 'error!'
             lista = [self.observer,percentage]
@@ -354,7 +357,8 @@ class UploadHandler:
         
         dom = xd.parseString(out)
         if dom.getElementsByTagName("fault"):
-            print "-----------Error in xmlupload service------------"
+            if Debug:
+                print "-----------Error in xmlupload service------------"
             for el in dom.getElementsByTagName("string"):
                 for node in el.childNodes:  
                     error = node.data
@@ -388,7 +392,8 @@ class UploadHandler:
                         pass
                     if(counter == 3):
 
-                        print "----------Can not write in " + self.msfList + "-----------"
+                        if Debug:
+                            print "----------Can not write in " + self.msfList + "-----------"
                         msfList.close()
                         os.remove(sys.path[0] + '\\' + self.msfListFile)
                         return
@@ -421,7 +426,8 @@ class UploadHandler:
                         pass
                     if(counter == 3):
 
-                        print "----------Can not write in " + self.msfList + "-----------"
+                        if Debug:
+                            print "----------Can not write in " + self.msfList + "-----------"
                         msfList.close()
                         os.remove(sys.path[0] + '\\' + self.msfListFile)
                         return            
@@ -580,13 +586,15 @@ class UploadHandler:
                         try:
                             out = ws.run('xmldelete', line)[1]
                         except:
-                            print "-----Error in xmldelete service---------" 
+                            if Debug:
+                                print "-----Error in xmldelete service---------" 
                             continue
                             
             
                         dom = xd.parseString(out)
                         if dom.getElementsByTagName("fault"):
-                            print "-----------Error in xmldelete service------------"
+                            if Debug:
+                                print "-----------Error in xmldelete service------------"
                             for el in dom.getElementsByTagName("string"):
                                 for node in el.childNodes:  
                                     error = node.data
