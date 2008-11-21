@@ -357,9 +357,16 @@ def execute(frame, nb, log,arg):
 
 
 if __name__ == '__main__':
+    # USAGE lhpMetadataEditor argv1 argv2 argv3
+    # argv[1]: input csv file name
+    # argv[2]: input xml dictionary file name
+    # argv[3]: if present output generated csv  will be written to that file otherwise
+    # input csv will be used 
     
+    # a file named handledAutoTagsList.csv must be present in the same dir to gather auto filled tags
+    # (refactor note: this file name could be passed as parameters)
+   
     import sys,os
     import runLHPMetadataEditor
-    # list: ['D:\\vapps_merge_target\\LHPBuilder_Parabuild_Binary\\VMEUploaderDownloader\\lhpMetadataEditor.py'
-    print sys.argv[1]     # , 'Surface_Parametric_id18_tag.csv']
+    
     runLHPMetadataEditor.main(['', os.path.basename(sys.argv[0])] + sys.argv[1:])
