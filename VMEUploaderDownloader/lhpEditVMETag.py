@@ -90,24 +90,26 @@ class lhpEditVMETag:
             # get the vme node
             outVmeNode = msfDOMParserInstance.GetVmeNodeById(rootNode, vmeId)
 
+
         # get the tagArray node
         outVmeTagArrayNode = msfDOMParserInstance.GetVmeTagArrayNode(outVmeNode)
 
+  
         # get the tags list from vme tag array node
 
         vmeTagList = msfDOMParserInstance.GetTagNames(outVmeTagArrayNode)
+
 
         if Debug:            
             print vmeTagList
 
         
         # AUTO TAGS
-           
+        
         if Debug:
             print self.HandledAutoTagsListFileName
-                  
         autoTagsReader = csv.reader(open(self.HandledAutoTagsListFileName, "r"))
-    
+        
         autoTagsDictionary = {}
          
         try:
@@ -141,8 +143,7 @@ class lhpEditVMETag:
         
         # create a list of keys
         
-        
-        unhandledPlusManualTagsReader = csv.reader(open(self.UnhandledPlusManualTagsListFileName, "r"))     
+        unhandledPlusManualTagsReader = csv.reader(open(self.UnhandledPlusManualTagsListFileName, "r"))       
     
         unhandledPlusManualTagsDictionary  = {}
 
@@ -288,7 +289,7 @@ def run(inputMSFDirectory, vmeToExtractId, unhandledPlusManualTagsListFileName):
      lhpEditVMETagInstance = lhpEditVMETag()
      lhpEditVMETagInstance.InputMSFDirectory = inputMSFDirectory
      lhpEditVMETagInstance.HandledAutoTagsListFileName = curDir + r'\handledAutoTagsList.csv'
-     lhpEditVMETagInstance.UnhandledPlusManualTagsListFileName = inputMSFDirectory + unhandledPlusManualTagsListFileName
+     lhpEditVMETagInstance.UnhandledPlusManualTagsListFileName = curDir + '\\' + unhandledPlusManualTagsListFileName
      lhpEditVMETagInstance.VmeToExtractID = int(vmeToExtractId)
      lhpEditVMETagInstance.OutputVMEXMLName = "OutputXML.xml"
      #lhpEditVMETagInstance.OutputVMEXMLName = curDir + r'\Outgoing'

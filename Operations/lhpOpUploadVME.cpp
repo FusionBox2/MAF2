@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-20 09:12:07 $
-Version:   $Revision: 1.94.2.11 $
+Date:      $Date: 2008-11-21 11:15:28 $
+Version:   $Revision: 1.94.2.12 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -118,7 +118,6 @@ mafOp(label)
   m_FileName = "";
 
   m_MsfDir = "";
-  m_CsvName = "manualTagFile.csv";
 
   //m_ServiceURL = "http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/";
   m_ServiceURL ="https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/";
@@ -390,18 +389,6 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     return MAF_ERROR;
   }
 
-  if(!CreateBaseCacheAndOutgoingDirectories())
-  {
-    wxMessageBox("Unable to create Cache Base Directory. Uploading stopped");
-    return MAF_ERROR;
-  }
-
-  if(!CreateCache())
-  {
-    wxMessageBox("Unable to create a temporary cache, remember that msf must be saved locally. Uploading stopped");
-    return MAF_ERROR;
-  }
-
   int ret = this->GeneratesTagsListsFromXMLDictionary();
   if (ret == MAF_ERROR)
   {
@@ -417,15 +404,21 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     m_Input->GetTagArray()->SetTag(rootTag);
   }
 
+  if(!CreateBaseCacheAndOutgoingDirectories())
+  {
+    wxMessageBox("Unable to create Cache Base Directory. Uploading stopped");
+    return MAF_ERROR;
+  }
 
+  if(!CreateCache())
+  {
+    wxMessageBox("Unable to create a temporary cache, remember that msf must be saved locally. Uploading stopped");
+    return MAF_ERROR;
+  }
 
   //------Edit Tag----------------------------//
   wxString command2execute;
-
-  if (m_DebugMode)
-    command2execute = m_PythonExe.GetCStr();
-  else
-    command2execute = m_PythonwExe.GetCStr();
+  command2execute = m_PythonExe.GetCStr();
   // script for client
   m_FileName = "lhpEditVMETag.py ";
   command2execute.Append(m_FileName.GetCStr());
@@ -553,9 +546,8 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     command2execute.Append(wxString::Format("%s ", uploadWithChild.GetCStr())); //upload with children?
     command2execute.Append(wxString::Format("%s ", msfListFile.GetCStr())); //file to be used for rollback operation, in case of error in msf upload
     command2execute.Append(wxString::Format("%s ", XMLURI.GetCStr())); //XML resource URI
-    wxString name = m_Input->GetName();
-    name.Replace(" ", "??");
-    command2execute.Append(wxString::Format("%s ", name.c_str())); //vme name
+    m_NodeName.Replace(" ", "??");
+    command2execute.Append(wxString::Format("%s ",m_NodeName)); //vme name
 
     m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
 
@@ -587,11 +579,7 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
 
     mafSleep(5000);
     command2execute.clear();
-    if (m_DebugMode)
-      command2execute = m_PythonExe.GetCStr();
-    else
-      command2execute = m_PythonwExe.GetCStr();
-
+    command2execute = m_PythonwExe.GetCStr();
     m_FileName = "Client.py ";
     command2execute.Append(m_FileName.GetCStr());
     command2execute.Append("127.0.0.1 "); //server address (localhost)
@@ -620,9 +608,8 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     command2execute.Append(wxString::Format("%s ", uploadWithChild.GetCStr())); //upload with children?
     command2execute.Append(wxString::Format("%s ", msfListFile.GetCStr())); //file to be used for rollback operation, in case of error in msf upload
     command2execute.Append(wxString::Format("%s ", XMLURI.GetCStr())); //XML resource URI
-    wxString name = m_Input->GetName();
-    name.Replace(" ", "??");
-    command2execute.Append(wxString::Format("%s ", name.c_str())); //vme name
+    m_NodeName.Replace(" ", "??");
+    command2execute.Append(wxString::Format("%s ", m_NodeName)); //vme name
 
     m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
     
@@ -631,7 +618,8 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
         command2execute.c_str(), m_Pid);
   }
 
-
+  //remove csv file with tags
+  wxRemoveFile(m_CsvName);
   wxSetWorkingDirectory(oldDir);
 
 
@@ -715,6 +703,12 @@ int lhpOpUploadVME::ImportMSF()
     }
   }
 
+  //remove csv file
+  wxString lockPath = m_PythonUploadFullPath;
+  lockPath += m_CsvName.c_str();
+  if (wxFileExists(lockPath))
+    wxRemoveFile(lockPath); //fileName
+
   //remove msf created by phyton tag editor
   remove(msfCompletePath);
   mafDEL(storage);
@@ -760,7 +754,7 @@ bool lhpOpUploadVME::CreateCache()
 {
   bool copied = false;
   //control cache subdir
-  wxString currentSubdir;
+  mafString currentSubdir;
   currentSubdir = m_CacheDir + m_CacheSubdir.GetCStr();
   while(wxDirExists(currentSubdir))
   {
@@ -791,12 +785,9 @@ bool lhpOpUploadVME::CreateCache()
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(currentSubdir.c_str());
+  wxSetWorkingDirectory(currentSubdir.GetCStr());
 
   currentSubdir = m_Input->GetName();
-  currentSubdir.Replace(":", "__");
-  currentSubdir.Replace("/", "___");
-
   currentSubdir.Append(".msf");
 
   // restore due attributes
@@ -846,8 +837,7 @@ bool lhpOpUploadVME::CreateCache()
 
   mafVMEStorage *storage;
   storage = mafVMEStorage::New();
-  //Substitute character
-  storage->SetURL(currentSubdir.c_str());
+  storage->SetURL(currentSubdir.GetCStr());
 
   mafVMERoot *root;
   root = storage->GetRoot();
@@ -957,12 +947,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
 
   // get auto tags
   wxString command2execute;
-
-  if (m_DebugMode)
-    command2execute = m_PythonExe.GetCStr();
-  else
-    command2execute = m_PythonwExe.GetCStr();
-
+  command2execute.Append(m_PythonwExe.GetCStr());
   command2execute.Append(" lhpXMLDictionaryParser.py ");
   command2execute.Append(dictionaryToProcessFileName.GetCStr());
   command2execute.Append(" auto_tags ");
@@ -985,10 +970,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
 
   // get manual tags
   command2execute.Clear();
-  if (m_DebugMode)
-    command2execute = m_PythonExe.GetCStr();
-  else
-    command2execute = m_PythonwExe.GetCStr();
+  command2execute = m_PythonwExe.GetCStr();
   
   command2execute.Append(" lhpXMLDictionaryParser.py ");
   command2execute.Append(dictionaryToProcessFileName.GetCStr());
@@ -1111,7 +1093,15 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
   // open auto tags file and try to handle tags using tags factory 
   ofstream unhandledPlusManualTagsFile;
 
-  unhandledPlusManualTagsFile.open(m_CurrentCache + m_CsvName.c_str());
+  m_CsvName = m_Input->GetName();
+  m_NodeName = m_CsvName;
+  //m_CsvName.Replace(" ", "?"); //replace blank spaces in VME name
+  m_CsvName.Replace(" ", "_");
+  m_CsvName << "_id";
+  m_CsvName << wxString::Format("%d",m_Input->GetId());
+  m_CsvName << "_tag.csv";
+  
+  unhandledPlusManualTagsFile.open(m_CsvName.c_str());
 
   if (!unhandledPlusManualTagsFile) {
     mafLogMessage("Unable to create file");
@@ -1214,10 +1204,7 @@ bool lhpOpUploadVME::IsLHPBuilderVersionUpToDate()
   // get manual tags
   wxString command2execute;
   command2execute.Clear();
-  if (m_DebugMode)
-    command2execute = m_PythonExe.GetCStr();
-  else
-    command2execute = m_PythonwExe.GetCStr();
+  command2execute = m_PythonwExe.GetCStr();
 
   command2execute.Append(" lhpDictionaryVersionChecker.py ");
   command2execute.Append(" ");
@@ -1351,10 +1338,7 @@ int lhpOpUploadVME::AssembleDictionaries()
   // get manual tags
   wxString command2execute;
   command2execute.Clear();
-  if (m_DebugMode)
-    command2execute = m_PythonExe.GetCStr();
-  else
-    command2execute = m_PythonwExe.GetCStr();;
+  command2execute = m_PythonwExe.GetCStr();
 
   command2execute.Append(" lhpXMLDictionariesBuilder.py ");
   command2execute.Append(m_MasterXMLDictionaryFileName);
