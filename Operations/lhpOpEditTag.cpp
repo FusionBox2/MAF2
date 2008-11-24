@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-24 10:45:39 $
-Version:   $Revision: 1.26.2.14 $
+Date:      $Date: 2008-11-24 16:27:52 $
+Version:   $Revision: 1.26.2.15 $
 Authors:   Roberto Mucci , Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -968,7 +968,7 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
   }
   
   
-  if (m_DebugMode)
+    // if (m_DebugMode)
     mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   pid = wxExecute(command2execute, wxEXEC_SYNC);
@@ -1123,10 +1123,11 @@ void lhpOpEditTag::CreateGui()
     m_Gui->Button(ID_PROPAGATE,"test propagate");
   }
   
-  m_Gui->Divider(2);
+  // Default editor is Metadata Editor
+  /*m_Gui->Divider(2);
   const wxString metadataEditor[] = {"Metadata Editor","CSV Editor"};
   m_Gui->Label("Choose editor");
-  m_Gui->Combo(ID_METADATA_EDITOR, "", &m_MetadataEditorId, 2, metadataEditor);
+  m_Gui->Combo(ID_METADATA_EDITOR, "", &m_MetadataEditorId, 2, metadataEditor);*/
 
   m_Gui->Divider(2);
   m_Gui->Label("Use subdictionary");
