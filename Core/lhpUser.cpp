@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpUser.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-17 13:08:31 $
-Version:   $Revision: 1.11.2.3 $
+Date:      $Date: 2008-11-24 11:43:10 $
+Version:   $Revision: 1.11.2.4 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004
@@ -137,7 +137,7 @@ bool lhpUser::ExecuteAuthenticationScript()
   
   //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
-  mafLogMessage("Authenticating user (Timeout to 15 seconds). Please wait...");
+  mafLogMessage("Authenticating user (Timeout to 30 seconds). Please wait...");
   long pid = wxExecute(command2execute, wxEXEC_SYNC);
 
   wxArrayString output;

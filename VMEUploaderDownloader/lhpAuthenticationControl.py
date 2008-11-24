@@ -95,7 +95,7 @@ class lhpAuthenticationControl:
 
        
          # timeout in seconds
-        self.Timeout = 15
+        self.Timeout = 30
         socket.setdefaulttimeout(self.Timeout)
         
         try:
