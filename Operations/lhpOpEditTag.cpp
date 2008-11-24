@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-18 11:09:18 $
-Version:   $Revision: 1.26.2.13 $
+Date:      $Date: 2008-11-24 10:45:39 $
+Version:   $Revision: 1.26.2.14 $
 Authors:   Roberto Mucci , Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -116,8 +116,9 @@ mafOp(label)
 
   m_PythonUploadFullPath  = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\").c_str();
   m_FileName = "";
-
+  m_CsvName = "manualTagFile.csv";
   m_MsfDir = "";
+
 
   m_MasterXMLDictionaryFilePrefix = "lhpXMLDictionary_";
   m_MasterXMLDictionaryFileName = "UNDEFINED";
@@ -420,6 +421,12 @@ int lhpOpEditTag::EditTags()
     return MAF_ERROR;
   }
 
+  if(!CreateCache())
+  {
+    wxMessageBox("Unable to create a temporary cache. Editing stopped");
+    return MAF_ERROR;
+  }
+
   int ret = this->GeneratesTagsListsFromXMLDictionary();
   if (ret == MAF_ERROR)
   {
@@ -449,8 +456,14 @@ int lhpOpEditTag::EditTags()
   command2execute.Append(m_FileName.GetCStr());
 
   //workaround to understanding directory argument
-  wxString directoryWorkAround = m_MsfDir;
-  directoryWorkAround.Replace(" ", "?");
+  wxString directoryWorkAround = m_CurrentCache;
+  directoryWorkAround.Replace(" ", "??");
+  command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
+
+  //workaround to understanding directory argument
+  directoryWorkAround = m_MsfDir;
+  directoryWorkAround.Replace(" ", "??");
+
   command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
   command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //vme id
   command2execute.Append(wxString::Format("%s", m_CsvName.c_str())); //manualTagFile
@@ -569,6 +582,30 @@ int lhpOpEditTag::ImportMSF()
 
   mafDEL(storage);
   return MAF_OK;
+}
+
+//----------------------------------------------------------------------------
+bool lhpOpEditTag::CreateCache()
+//----------------------------------------------------------------------------
+{
+  bool result = false;
+  //control cache subdir
+  wxString currentSubdir;
+  currentSubdir = m_CacheDir + m_CacheSubdir.GetCStr();
+  while(wxDirExists(currentSubdir))
+  {
+    int number = atoi(m_CacheSubdir.GetCStr());
+    number += 1;
+    m_CacheSubdir = "";
+    m_CacheSubdir << number;
+    currentSubdir = m_CacheDir + m_CacheSubdir.GetCStr();
+  }
+  currentSubdir = currentSubdir + "\\";
+  if(wxMkDir(currentSubdir) == 0)
+    result = true;
+
+  m_CurrentCache = currentSubdir;
+  return result;
 }
 
 //----------------------------------------------------------------------------
@@ -850,19 +887,10 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
 
   
   // generates manual tag file 
-
   // open auto tags file and try to handle tags using tags factory 
   ofstream unhandledPlusManualTagsFile;
 
-  m_CsvName = m_Input->GetName();
-  m_NodeName = m_CsvName;
-  m_CsvName.Replace(" ", "?"); //replace blank spaces in VME name
-  m_CsvName.Replace("?", "_");
-  m_CsvName << "_id";
-  m_CsvName << wxString::Format("%d",m_Input->GetId());
-  m_CsvName << "_tag.csv";
-  
-  unhandledPlusManualTagsFile.open(m_CsvName.c_str());
+  unhandledPlusManualTagsFile.open(m_CurrentCache + m_CsvName.c_str());
 
   if (!unhandledPlusManualTagsFile) {
     mafLogMessage("Unable to create file");
@@ -916,6 +944,8 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
   }
 
   unhandledPlusManualTagsFile.close();
+
+
   
   if (m_MetadataEditorId == 0)
   {
@@ -926,12 +956,13 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
     command2execute.Append(m_CsvName.c_str()); 
     command2execute.Append(" ");
     command2execute.Append(m_DictionaryToProcessFileName.GetCStr());
+    command2execute.Append(wxString::Format(" %s", m_CurrentCache.GetCStr())); //manualTagFile
   } 
   else
   {
     // launch old editor
     command2execute.Clear();
-    command2execute.Append(m_PythonwExe.GetCStr());
+    command2execute.Append(m_PythonExe.GetCStr());
     command2execute.Append(" CSVOMATIC.py ");
     command2execute.Append(m_CsvName.c_str());
   }
