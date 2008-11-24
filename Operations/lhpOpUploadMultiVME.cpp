@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-18 11:09:18 $
-Version:   $Revision: 1.27.2.5 $
+Date:      $Date: 2008-11-24 10:47:19 $
+Version:   $Revision: 1.27.2.6 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -602,6 +602,8 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
           m_UploadVME->SetInput(childToUpload);
           URI = "";
 
+          GetUploadError();
+
           if (m_UploadVME->UploadVME(URI, hasBinary, childToUpload->GetNumberOfChildren()!=0, msfFileName) == MAF_ERROR)
           {
             return;
@@ -632,6 +634,8 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
   //upload VME Root
   m_UploadVME->SetInput(node);
   URI = "";
+
+  GetUploadError();
 
   if (m_UploadVME->UploadVME(URI, false, node->GetNumberOfChildren()!=0, msfFileName) == MAF_ERROR)
   {

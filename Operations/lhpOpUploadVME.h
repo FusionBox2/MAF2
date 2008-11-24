@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-11-18 11:09:18 $
-Version:   $Revision: 1.33.2.3 $
+Date:      $Date: 2008-11-24 10:47:19 $
+Version:   $Revision: 1.33.2.4 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -116,6 +116,9 @@ protected:
   /** This method creates on filesystem a cache with msf and binary data that must be uploaded */
   bool CreateCache();
 
+  /** This method copies in cache the msf and binary data that must be uploaded */
+  bool CopyInCache();
+
   /** This method checks if process exists and if there is a lock file */
   bool ExistsRunningProcess();
 
@@ -124,7 +127,7 @@ protected:
   
   mafString m_CacheDir; //>cache superdirectory
   static mafString m_CacheSubdir; //>cache subdirectory
-  mafString m_CurrentCache; //>current cache directory
+  wxString m_CurrentCache; //>current cache directory
   
   mafString m_OutgoingDir; //directoyr for xml and binary to send
 
