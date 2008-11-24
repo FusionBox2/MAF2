@@ -56,14 +56,18 @@ class lhpEditRemoteTag:
             print "->"+ str(ws.ProxyPort) + "<-"
             print self.parameter      
         
-        out = ws.run("xmledit", self.parameter)[1]
-        
+        try:
+            out = ws.run("xmledit", self.parameter)[1]
+        except:
+            if Debug:
+                print "-----------Error in xmledit service------------"
+               
         dom = xd.parseString(out)
         if dom.getElementsByTagName("fault"):
             if Debug:
                 print "Error editing tags on repository"
             return
-       
+   
   
   
 def main():

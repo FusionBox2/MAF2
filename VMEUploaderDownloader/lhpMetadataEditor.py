@@ -13,6 +13,7 @@ import csv
 import  wx
 import  wx.gizmos   as  gizmos
 import  images
+import time
 import lhpXMLDictionaryParser
 import msfParser
 from xml.dom import minidom
@@ -21,7 +22,6 @@ import lhpMetadataEditorTextEntryDialog#----------------------------------------
 class MetadataEditorPanel(wx.Panel):
     def __init__(self, parent, log, arg):
         
-         
         # tegs in iput vme csv        
         self.TagsToBeSavedList = []
         self.TagsThatCanBeEditedDictionary = {}
@@ -34,16 +34,17 @@ class MetadataEditorPanel(wx.Panel):
         curDir = os.getcwd()        
         if Debug:
             print " current directory is: " + curDir
-        
+
                 
-        self.inputUnhandledPlusManualCSVFileName = os.getcwd() + r'\\' + str(arg[0]) # to be used to save on exit    
+        self.inputUnhandledPlusManualCSVFileName = str(arg[2]) + str(arg[0]) # to be used to save on exit    
+
         if Debug:
             print self.inputUnhandledPlusManualCSVFileName
         assert(os.path.exists(self.inputUnhandledPlusManualCSVFileName))
         
-        if len(arg) ==  2:
+        if len(arg) ==  3:
             self.OutputCSVFileName  = self.inputUnhandledPlusManualCSVFileName
-        elif len(arg) ==  3:
+        elif len(arg) ==  4:
             self.OutputCSVFileName = os.getcwd() + r'\\' + str(arg[2])
             
         
@@ -85,6 +86,8 @@ class MetadataEditorPanel(wx.Panel):
         
         # load xml dictionary (already assembled if composed)
         self.inputXMLDictionaryFileName = os.getcwd() + r'\\' + str(arg[1]) # to be used to save on exit    
+        print "here3"
+        time.sleep(5)
         assert(os.path.exists(self.inputXMLDictionaryFileName))
         
         self.lhpXMLDictionaryParserInstance = lhpXMLDictionaryParser.lhpXMLDictionaryParser()
@@ -360,7 +363,8 @@ if __name__ == '__main__':
     # USAGE lhpMetadataEditor argv1 argv2 argv3
     # argv[1]: input csv file name
     # argv[2]: input xml dictionary file name
-    # argv[3]: if present output generated csv  will be written to that file otherwise
+    # argv[3]: csv file path
+    # argv[4]: if present output generated csv  will be written to that file otherwise
     # input csv will be used 
     
     # a file named handledAutoTagsList.csv must be present in the same dir to gather auto filled tags
@@ -368,5 +372,6 @@ if __name__ == '__main__':
    
     import sys,os
     import runLHPMetadataEditor
+      
     
     runLHPMetadataEditor.main(['', os.path.basename(sys.argv[0])] + sys.argv[1:])
