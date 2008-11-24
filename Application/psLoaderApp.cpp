@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: psLoaderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-14 16:21:13 $
-  Version:   $Revision: 1.1.2.7 $
+  Date:      $Date: 2008-11-24 15:39:51 $
+  Version:   $Revision: 1.1.2.8 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -310,9 +310,9 @@ bool psLoaderApp::OnInit()
   m_Logic->Plug(new mafOpImporterMSF1x("MAF 1.x"),"Other");
   m_Logic->Plug(new mafOpImporterBBF("BFF (VolumeLarge)"),"Other");
   m_Logic->Plug(new mafOpImporterRAWVolume_BES("Raw Volume"),"Images");
-  m_Logic->Plug(new mafOpImporterRAWVolume("Raw Volume Legacy"),"Images");
+    // m_Logic->Plug(new mafOpImporterRAWVolume("Raw Volume Legacy"),"Images");
   m_Logic->Plug(new medOpImporterRAWImages_BES("Raw Images"),"Images");
-  m_Logic->Plug(new medOpImporterRAWImages("Raw Images Legacy"),"Images");
+    // m_Logic->Plug(new medOpImporterRAWImages("Raw Images Legacy"),"Images");
   m_Logic->Plug(new mafOpImporterImage("Images"),"Images");
   m_Logic->Plug(new medOpImporterLandmark("Landmark"),"Motion Analysis");
 	m_Logic->Plug(new medOpImporterLandmarkWS("ASCII trajectories (VWs)"),"Motion Analysis");
@@ -350,7 +350,7 @@ bool psLoaderApp::OnInit()
     // m_Logic->Plug(new lhpOpCreateSurfaceScalar("Surface Scalar"),"Create/Derive");
     // m_Logic->Plug(new mmoLnSurf("Lineset and surface"),"Create/Derive");
 	m_Logic->Plug(new mafOpCreateRefSys("Refsys"),"Create/New");
-  m_Logic->Plug(new mafOpCreateSlicer("Slicer"),"Create/Derive");
+    // m_Logic->Plug(new mafOpCreateSlicer("Slicer"),"Create/Derive");
 	m_Logic->Plug(new mafOpCreateSurfaceParametric("Parametric Surface"),"Create/New");
 	m_Logic->Plug(new mafOpAddLandmark("Add Landmark \tCtrl+A"),"Create/New");
   m_Logic->Plug(new medOpFreezeVME("Freeze VME"),"Create/Derive");
@@ -371,14 +371,14 @@ bool psLoaderApp::OnInit()
 //  m_Logic->Plug(new mafOpImporterVMEDataSetAttributes("VME DataSet Attributes Adder"),"Modify");
 //  m_Logic->Plug(new medOpClassicICPRegistration("Register Surface"),"Modify/Fuse");
     // m_Logic->Plug(new mmoAFSys("AFRefsys"),"Create/Derive");
-  m_Logic->Plug(new mmoAverageLM("Average landmark"),"Create/Derive");
+    // m_Logic->Plug(new mmoAverageLM("Average landmark"),"Create/Derive");
     // m_Logic->Plug(new mmoStickPalpation("Wand palpated landmark"),"Create/Derive");
     // m_Logic->Plug(new mmoHelAxis("Helical axis"),"Create/Derive");
 //  m_Logic->Plug(new mmoTimeReduce("Time reduce"),"Modify");
 //  m_Logic->Plug(new mmoBuildHierarchy("Make hierarchical"),"Modify/Fuse");
 //  m_Logic->Plug(new lhpOpBonemat("Bonemat"),"Modify");
 //  m_Logic->Plug(new medOpIterativeRegistration("Iterative Registration"),"Modify/Fuse");
-//  m_Logic->Plug(new mafOpOpenExternalFile("Open with external program"),"Manage"); 
+  m_Logic->Plug(new mafOpOpenExternalFile("Open with external program"),"Manage"); 
   m_Logic->Plug(new medOpCreateLabeledVolume("Labeled Volume"),"Create/Derive");
 //  m_Logic->Plug(new lhpOpUploadVME("Upload VME"),"Manage");
   m_Logic->Plug(new lhpOpUploadMultiVME("Upload VME"),"Manage");
@@ -440,9 +440,9 @@ bool psLoaderApp::OnInit()
   mafViewIntGraph *vgraph = new mafViewIntGraph("Biomechanical graph");
   m_Logic->Plug(vgraph);
 
-  medViewSlicer *slicerView = new medViewSlicer("Slicer");
+ /* medViewSlicer *slicerView = new medViewSlicer("Slicer");
   slicerView->PackageView();
-  m_Logic->Plug(slicerView);
+  m_Logic->Plug(slicerView);*/
 
   //temporary for testing
   //mafViewSingleSliceCompound *sliceView = new mafViewSingleSliceCompound("Test Slice");
