@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.h,v $
 Language:  C++
-Date:      $Date: 2008-11-24 10:45:39 $
-Version:   $Revision: 1.11.2.5 $
+Date:      $Date: 2008-11-25 13:26:13 $
+Version:   $Revision: 1.11.2.6 $
 Authors:   Roberto Mucci , Stefano Perticoni 
 ==========================================================================
 Copyright (c) 2002/2007
@@ -94,6 +94,9 @@ protected:
 
   /** Generate auto tags and manual tags list from XML lhdl dictionary*/
   int GeneratesTagsListsFromXMLDictionary();
+
+  /* Base Cache creation directory*/
+  bool CreateBaseCacheDirectories();
 
   /** This method creates on filesystem a cache with manual tag cvs file */
   bool CreateCache();

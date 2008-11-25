@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-24 16:27:52 $
-Version:   $Revision: 1.26.2.15 $
+Date:      $Date: 2008-11-25 13:26:13 $
+Version:   $Revision: 1.26.2.16 $
 Authors:   Roberto Mucci , Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -421,6 +421,12 @@ int lhpOpEditTag::EditTags()
     return MAF_ERROR;
   }
 
+  if(!CreateBaseCacheDirectories())
+  {
+    wxMessageBox("Unable to create Cache Base Directory.");
+    return MAF_ERROR;
+  }
+
   if(!CreateCache())
   {
     wxMessageBox("Unable to create a temporary cache. Editing stopped");
@@ -582,6 +588,26 @@ int lhpOpEditTag::ImportMSF()
 
   mafDEL(storage);
   return MAF_OK;
+}
+
+//----------------------------------------------------------------------------
+bool lhpOpEditTag::CreateBaseCacheDirectories()
+//----------------------------------------------------------------------------
+{
+  bool resultCache = false;
+
+  wxString existCache = m_CacheDir.GetCStr();
+  if ( wxDirExists(existCache) )
+  {
+    resultCache = true;
+  }
+  else
+  {
+    wxMkDir(existCache);
+    if ( wxDirExists(existCache) ) resultCache = true;
+  }
+
+  return resultCache;
 }
 
 //----------------------------------------------------------------------------
