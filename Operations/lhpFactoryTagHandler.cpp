@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpFactoryTagHandler.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-25 09:02:44 $
-  Version:   $Revision: 1.14.2.4 $
+  Date:      $Date: 2008-11-25 10:43:27 $
+  Version:   $Revision: 1.14.2.5 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -77,6 +77,7 @@ lhpFactoryTagHandler::lhpFactoryTagHandler()
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_Access_Policy1_GroupID, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_Access_Policy1_Price, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_Access_Policy1_Usage, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_Access_Publishing_PublishingStatus, "");
 
 
   //DICOM

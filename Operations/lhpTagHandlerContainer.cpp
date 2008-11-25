@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-25 09:02:44 $
-  Version:   $Revision: 1.29.2.6 $
+  Date:      $Date: 2008-11-25 10:43:27 $
+  Version:   $Revision: 1.29.2.7 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -641,7 +641,7 @@ void lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_IsNatural::Handle
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
-  mafString value;
+  mafString value = "false";
 
   mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute("TrialAttribute");
   if (trial != NULL)
@@ -838,6 +838,20 @@ void lhpTagHandler_L0000_resource_Access_Policy1_Usage::HandleAutoTag(lhpTagHand
   cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
 }
 
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_Access_Publishing_PublishingStatus)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_Access_Publishing_PublishingStatus::lhpTagHandler_L0000_resource_Access_Publishing_PublishingStatus()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_Access_Publishing_PublishingStatus::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("private");
+}
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource)
 //------------------------------------------------------------------------------------
