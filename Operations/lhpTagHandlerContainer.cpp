@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-25 10:43:27 $
-  Version:   $Revision: 1.29.2.7 $
+  Date:      $Date: 2008-11-25 14:41:15 $
+  Version:   $Revision: 1.29.2.8 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -513,6 +513,7 @@ void lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeRootName::HandleAutoTag(lhpTag
   cargo->SetTagHandlerGeneratedString(value);
 }
 
+
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeChildURI1);
 //------------------------------------------------------------------------------------
 lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeChildURI1::lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeChildURI1()
@@ -554,9 +555,15 @@ lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeTreeCreationDate::lhpTagHandler_L00
 void lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeTreeCreationDate::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-  // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+  mafVME *vme = cargo->GetInputVme();
+  mafString value;
 
+  if(vme->GetRoot()->GetTagArray()->IsTagPresent("Creation_Date"))
+  {
+    value = vme->GetRoot()->GetTagArray()->GetTag("Creation_Date")->GetValue();
+  }
+
+  cargo->SetTagHandlerGeneratedString(value.GetCStr());
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Operation);
