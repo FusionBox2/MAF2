@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-25 08:17:01 $
-  Version:   $Revision: 1.29.2.5 $
+  Date:      $Date: 2008-11-25 09:02:44 $
+  Version:   $Revision: 1.29.2.6 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -746,6 +746,96 @@ void lhpTagHandler_L0000_resource_data_Ownership_OwnerID::HandleAutoTag(lhpTagHa
 
   // tag handling code
   cargo->SetTagHandlerGeneratedString(value);
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Quality_QualityScore1_URL)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Quality_QualityScore1_URL::lhpTagHandler_L0000_resource_data_Quality_QualityScore1_URL()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Quality_QualityScore1_URL::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Quality_QualityScore1_Score)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Quality_QualityScore1_Score::lhpTagHandler_L0000_resource_data_Quality_QualityScore1_Score()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Quality_QualityScore1_Score::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Quality_QualityScore1_ScoreDate)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Quality_QualityScore1_ScoreDate::lhpTagHandler_L0000_resource_data_Quality_QualityScore1_ScoreDate()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Quality_QualityScore1_ScoreDate::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_Access_Policy1_GroupID)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_Access_Policy1_GroupID::lhpTagHandler_L0000_resource_Access_Policy1_GroupID()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_Access_Policy1_GroupID::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_Access_Policy1_Price)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_Access_Policy1_Price::lhpTagHandler_L0000_resource_Access_Policy1_Price()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_Access_Policy1_Price::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_Access_Policy1_Usage)
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_Access_Policy1_Usage::lhpTagHandler_L0000_resource_Access_Policy1_Usage()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_Access_Policy1_Usage::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
 }
 
 

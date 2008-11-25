@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.h,v $
   Language:  C++
-  Date:      $Date: 2008-11-25 08:17:01 $
-  Version:   $Revision: 1.14.2.3 $
+  Date:      $Date: 2008-11-25 09:02:44 $
+  Version:   $Revision: 1.14.2.4 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -311,12 +311,73 @@ class lhpTagHandler_L0000_resource_data_Tracebility_Ownership_OwnerID: public lh
   
 };
 
+
 class lhpTagHandler_L0000_resource_data_Ownership_OwnerID: public lhpTagHandler
 {
 public:
   mafTypeMacro(lhpTagHandler_L0000_resource_data_Ownership_OwnerID,mafObject);
 
   lhpTagHandler_L0000_resource_data_Ownership_OwnerID();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Quality_QualityScore1_URL: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Quality_QualityScore1_URL,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Quality_QualityScore1_URL();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Quality_QualityScore1_Score: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Quality_QualityScore1_Score,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Quality_QualityScore1_Score();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Quality_QualityScore1_ScoreDate: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Quality_QualityScore1_ScoreDate,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Quality_QualityScore1_ScoreDate();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_Access_Policy1_GroupID: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_Access_Policy1_GroupID,mafObject);
+
+  lhpTagHandler_L0000_resource_Access_Policy1_GroupID();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_Access_Policy1_Price: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_Access_Policy1_Price,mafObject);
+
+  lhpTagHandler_L0000_resource_Access_Policy1_Price();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_Access_Policy1_Usage: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_Access_Policy1_Usage,mafObject);
+
+  lhpTagHandler_L0000_resource_Access_Policy1_Usage();
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
