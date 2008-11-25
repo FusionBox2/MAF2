@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-24 10:47:19 $
-Version:   $Revision: 1.94.2.13 $
+Date:      $Date: 2008-11-25 14:00:55 $
+Version:   $Revision: 1.94.2.14 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -953,12 +953,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
 
   // get auto tags
   wxString command2execute;
-
-  if (m_DebugMode)
-    command2execute = m_PythonExe.GetCStr();
-  else
-    command2execute = m_PythonwExe.GetCStr();
-
+  command2execute = m_PythonExe.GetCStr();
   command2execute.Append(" lhpXMLDictionaryParser.py ");
   command2execute.Append(dictionaryToProcessFileName.GetCStr());
   command2execute.Append(" auto_tags ");
@@ -981,11 +976,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
 
   // get manual tags
   command2execute.Clear();
-  if (m_DebugMode)
-    command2execute = m_PythonExe.GetCStr();
-  else
-    command2execute = m_PythonwExe.GetCStr();
-  
+  command2execute = m_PythonExe.GetCStr();
   command2execute.Append(" lhpXMLDictionaryParser.py ");
   command2execute.Append(dictionaryToProcessFileName.GetCStr());
   command2execute.Append(" manual_tags ");
