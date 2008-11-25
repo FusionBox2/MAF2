@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-25 14:00:55 $
-Version:   $Revision: 1.94.2.14 $
+Date:      $Date: 2008-11-25 14:34:19 $
+Version:   $Revision: 1.94.2.15 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -647,7 +647,7 @@ int lhpOpUploadVME::ImportMSF()
   //msf name created by phyton tag editor is standard: OutputMSF.lhp
   mafString msfPythonFileName;
   mafString msfCompletePath;
-  msfPythonFileName.Append(m_CurrentCache.c_str());
+  msfPythonFileName.Append(m_MsfDir.GetCStr());
   msfPythonFileName.Append("/");
   msfPythonFileName.Append("OutputMSF");
   int fileNumber = 0;
