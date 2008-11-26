@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-24 10:47:19 $
-Version:   $Revision: 1.27.2.6 $
+Date:      $Date: 2008-11-26 12:57:27 $
+Version:   $Revision: 1.27.2.7 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -297,11 +297,15 @@ void lhpOpUploadMultiVME::OpDo()
   {
     return;
   }
-  
-  wxBusyInfo *wait;
+
+  wxInfoFrame *wait;
   if(!m_TestMode)
   {
-    wait = new wxBusyInfo("Please wait, uploading VME");
+    wait = new wxInfoFrame(NULL, "Please wait, uploading VME");
+    wait->SetWindowStyleFlag(wxSTAY_ON_TOP); //to keep wait message on top
+    wait->Show(true);
+    wait->Refresh();
+    wait->Update();
   }
 
   //If VMERoot has been chosen, than upload only itself with its children
@@ -509,6 +513,7 @@ bool lhpOpUploadMultiVME::isBinaryDataPresent(mafNode *node)
     return MAF_ERROR;
   }
 
+
   wxString result = output[output.size() - 1];
 
   //if result == "", no binary data has been found
@@ -664,7 +669,9 @@ void lhpOpUploadMultiVME::UploadMultiVME(mafNode *node)
       return;
     }
   }
+
   hasBinary = isBinaryDataPresent(node);
+
   m_UploadVME->SetInput(node);
   URI = "";
   if (m_UploadVME->UploadVME(URI, hasBinary, false, "noMsf") == MAF_ERROR)
