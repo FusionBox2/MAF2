@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-25 13:26:13 $
-Version:   $Revision: 1.26.2.16 $
+Date:      $Date: 2008-11-27 12:48:07 $
+Version:   $Revision: 1.26.2.17 $
 Authors:   Roberto Mucci , Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -137,11 +137,6 @@ mafOp(label)
   m_ManualTagsList.Clear();
   
   m_SubdictionaryId = NO_SUBDICTIONARY; // default to none
-  m_ConnectionConfigurationFileName = "vmeUploaderConnectionConfiguration.conf" ;
-
-
-  m_ProxyURL = "";
-  m_ProxyPort = "";
 
   m_MetadataEditorId = 0;
   m_UseFADictionary = 0;
@@ -166,17 +161,17 @@ mafOp* lhpOpEditTag::Copy()
 bool lhpOpEditTag::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  lhpUser *user = NULL;
-  //Get User values
-  mafEvent event;
-  event.SetSender(this);
-  event.SetId(ID_REQUEST_USER);
-  mafEventMacro(event);
-  if(event.GetMafObject() != NULL) //if proxy string contains something != ""
-  {
-    user = (lhpUser*)event.GetMafObject();
-  }
-  return (user != NULL && user->IsAuthenticated() && vme != NULL);
+  //lhpUser *user = NULL;
+  ////Get User values
+  //mafEvent event;
+  //event.SetSender(this);
+  //event.SetId(ID_REQUEST_USER);
+  //mafEventMacro(event);
+  //if(event.GetMafObject() != NULL) //if proxy string contains something != ""
+  //{
+  //  user = (lhpUser*)event.GetMafObject();
+  //}
+  return (vme != NULL);
 }
 
 //----------------------------------------------------------------------------
@@ -214,28 +209,10 @@ void lhpOpEditTag::OpRun()
   eventGetUser.SetSender(this);
   eventGetUser.SetId(ID_REQUEST_USER);
   mafEventMacro(eventGetUser);
-  if(eventGetUser.GetMafObject() != NULL) //if proxy string contains something != ""
+  if(eventGetUser.GetMafObject() != NULL) 
   {
     m_User = (lhpUser*)eventGetUser.GetMafObject();
   }
-
-  //Get Proxy values
-  mafEvent eventGetProxy;
-  eventGetProxy.SetSender(this);
-  eventGetProxy.SetId(ID_REQUEST_PROXY);
-  mafEventMacro(eventGetProxy);
-
-  if(eventGetProxy.GetString())
-  {
-    mafString port;
-    port << eventGetProxy.GetArg();
-    m_ProxyURL = *eventGetProxy.GetString();
-    m_ProxyPort = port;
-  }
-
-  int result = OP_RUN_CANCEL;
-
-  bool upToDate = false;
 
   mafString DebugPath = m_PythonUploadFullPath;
   DebugPath.Append("\\Debug.py");
@@ -259,75 +236,11 @@ void lhpOpEditTag::OpRun()
     debugFile.close();
   }
   
-  if (DEBUG_TAGS_PROPAGATION)
-  {
-    upToDate = true;
-  }
-  else
-  {
-    upToDate = this->IsLHPBuilderVersionUpToDate();
-  }
-  
-  if(upToDate)
-  {
-    CreateGui();
-    ShowGui();
-  }
-  else
-  {
-    OpStop(result);
-  }  
-}
-
-//----------------------------------------------------------------------------
-void lhpOpEditTag::LoadConnectionConfigurationFile()
-//----------------------------------------------------------------------------
-{
-  wxString oldDir = wxGetCwd();
-  if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
-
-  // open auto tags file and try to handle tags using tags factory 
-  ifstream configurationFile;
-
-  configurationFile.open(m_ConnectionConfigurationFileName.GetCStr());
-  if (!configurationFile) {
-    wxString message = m_ConnectionConfigurationFileName.GetCStr();
-    message.Append(" not found! Unable to open connection configuration file: default values will be used");
-    if (m_DebugMode)
-      mafLogMessage(message.c_str());
-  }
-  else
-  {
-    std::string tmp;
-
-    configurationFile >> tmp;
-    m_ProxyURL = tmp.c_str();
-    
-    configurationFile >> tmp;
-    m_ProxyPort = tmp.c_str();
-     
-    wxString message = m_ConnectionConfigurationFileName.GetCStr();
-    message.Append("Found connection configuration file: using connection parameters");
-    message.Append("m_ProxyURL: ");
-    message.Append(m_ProxyURL.GetCStr());
-    message.Append("m_ProxyPort: ");
-    message.Append(m_ProxyPort.GetCStr());
-
-    if (m_DebugMode)
-      mafLogMessage(message.c_str());
-
-    configurationFile.close();
-  }
-
-  wxSetWorkingDirectory(oldDir);
-  if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  CreateGui();
+  ShowGui();
 
 }
+
 //----------------------------------------------------------------------------
 void lhpOpEditTag::OnEvent(mafEventBase *maf_event) 
 //----------------------------------------------------------------------------
@@ -1013,75 +926,6 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
   return MAF_OK;
 }
 
-//----------------------------------------------------------------------------
-bool lhpOpEditTag::IsLHPBuilderVersionUpToDate()
-//----------------------------------------------------------------------------
-{
-  wxBusyInfo("Checking if  your software is up-to-date in order to upload, please wait...");
-  wxString oldDir = wxGetCwd();
-  if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
-
-  // get manual tags
-  wxString command2execute;
-  command2execute.Clear();
-  command2execute = m_PythonwExe.GetCStr();
-
-  command2execute.Append(" lhpDictionaryVersionChecker.py ");
-  command2execute.Append(" ");
-  command2execute.Append(m_ProxyURL.GetCStr());
-  command2execute.Append(" ");
-  command2execute.Append(m_ProxyPort.GetCStr());
-  
-  if (m_DebugMode)
-    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
-
-  wxArrayString output;
-  wxArrayString errors;
-  long pid = -1;
-  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
-  {
-    wxMessageBox("Error in lhpDictionaryVersionChecker.py");
-    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-      command2execute.c_str(), pid);
-    return MAF_ERROR;
-  }
-
-  if (m_DebugMode)
-  {
-    mafLogMessage("Command Output Messages:");
-    for (int i = 0; i < output.size(); i++)
-    {
-      mafLogMessage(output[i]);
-    }
-    
-    mafLogMessage("Command Errors Messages:");
-    for (int i = 0; i < errors.size(); i++)
-    {
-      mafLogMessage(errors[i]);
-    }
-  }
-  
-
-  wxString result = output[output.size() - 1];
-  
-  wxSetWorkingDirectory(oldDir);
-
-  if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-
-  if (result == "UpToDate")
-  {
-    return true;
-  } 
-  else
-  {
-    return false;
-  }  
-}
 
 //----------------------------------------------------------------------------
 mafString lhpOpEditTag::GetXMLDictionaryFileName( mafString dictionaryFileNamePrefix )

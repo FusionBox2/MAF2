@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.h,v $
 Language:  C++
-Date:      $Date: 2008-11-25 13:26:13 $
-Version:   $Revision: 1.11.2.6 $
+Date:      $Date: 2008-11-27 12:48:07 $
+Version:   $Revision: 1.11.2.7 $
 Authors:   Roberto Mucci , Stefano Perticoni 
 ==========================================================================
 Copyright (c) 2002/2007
@@ -89,9 +89,6 @@ protected:
   /** Propagate tags to other vmes choosed through a tree checkbox */
   void PropagateTagsToChoosedVMES();
 
-  /** check if lhbbuilder software version is up to date in order to a allow vme uploading */
-  bool IsLHPBuilderVersionUpToDate();
-
   /** Generate auto tags and manual tags list from XML lhdl dictionary*/
   int GeneratesTagsListsFromXMLDictionary();
 
@@ -142,15 +139,10 @@ protected:
 
   lhpUser  *m_User;
   
-  mafString m_ConnectionConfigurationFileName;
-  mafString m_ProxyURL;
-  mafString m_ProxyPort;
-
 private:
   mafString GetXMLDictionaryFileName(mafString dictionaryFileNamePrefix);
   void CreateGui();
   int AssembleMasterWithSubdictionary();
-  void LoadConnectionConfigurationFile();
   int m_SubdictionaryId;
   wxArrayString m_AutoTagsList;
   wxArrayString m_ManualTagsList;
@@ -158,7 +150,6 @@ private:
   wxArrayString m_HandledAutoTagsListFromFactory; ///< tags handled by the factory  
   wxString m_CsvName;
   wxString m_NodeName;
-  FILE *m_ProxyFile;
   mafNode *m_Parent;
   bool m_HasLink;
   bool m_DebugMode;
