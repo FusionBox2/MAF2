@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-27 09:00:45 $
-Version:   $Revision: 1.27.2.8 $
+Date:      $Date: 2008-11-27 15:37:16 $
+Version:   $Revision: 1.27.2.9 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -256,7 +256,6 @@ void lhpOpUploadMultiVME::OpRun()
 
   bool upToDate = false;
   upToDate = this->IsLHPBuilderVersionUpToDate();
-
   if (upToDate)
   {
     mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
@@ -273,7 +272,7 @@ void lhpOpUploadMultiVME::OpRun()
     mafString msfDir = temp;  
 
     if (msfDir == "")
-      wxMessageBox("Msf must be saved locally. Upload stopped");
+      wxMessageBox("Msf must be saved locally. Upload stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     else
       result = OP_RUN_OK;
 
@@ -323,11 +322,18 @@ void lhpOpUploadMultiVME::OpDo()
       nodeNoName = m_NodeVector[i]->FindInTreeByName("");
       if  (nodeNoName != NULL)
       {
-        wxMessageBox("Tree contains VME without name. Upload Stopped.");
+        wxMessageBox("Tree contains VME without name. Upload Stopped.", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
         return;
       }
 
-      UploadTree(m_NodeVector[i]);
+      if (UploadTree(m_NodeVector[i]) == MAF_ERROR)
+      {
+        if(!m_TestMode)
+        {
+          delete wait;
+        }
+        return;
+      }
       break;
     }
   }
@@ -338,10 +344,17 @@ void lhpOpUploadMultiVME::OpDo()
     {
       if (strcmp(m_NodeVector[i]->GetName(), "") == 0)
       {
-        wxMessageBox("Can not upload VME without name.");
+        wxMessageBox("Can not upload VME without name.", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
         return;
       }
-      UploadMultiVME(m_NodeVector[i]);
+      if (UploadMultiVME(m_NodeVector[i]) == MAF_ERROR)
+      {
+        if(!m_TestMode)
+        {
+          delete wait;
+        }
+        return;
+      }
     }
   }
 
@@ -442,7 +455,7 @@ int lhpOpUploadMultiVME::AssembleDictionaries()
   long pid = -1;
   if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
-    wxMessageBox("Error in lhpXMLDictionariesBuilder.py. Uploading stopped");
+    wxMessageBox("Error in lhpXMLDictionariesBuilder.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
       command2execute.c_str(), pid);
     return MAF_ERROR;
@@ -506,7 +519,7 @@ bool lhpOpUploadMultiVME::isBinaryDataPresent(mafNode *node)
   long pid = -1;
   if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
-    wxMessageBox("Error in lhpCheckBinaryName.py. Uploading stopped");
+    wxMessageBox("Error in lhpCheckBinaryName.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
       command2execute.c_str(), pid);
     return MAF_ERROR;
@@ -525,7 +538,7 @@ bool lhpOpUploadMultiVME::isBinaryDataPresent(mafNode *node)
 
 
 //----------------------------------------------------------------------------
-void lhpOpUploadMultiVME::UploadTree(mafNode *node)   
+int lhpOpUploadMultiVME::UploadTree(mafNode *node)   
 //----------------------------------------------------------------------------
 {
   //creates a file with a list of upload xml, to be used by
@@ -606,18 +619,24 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
           m_UploadVME->SetInput(childToUpload);
           URI = "";
 
-          GetUploadError();
+          if (GetUploadError())
+          {
+            RemoveResources(m_UploadedURIVector);
+            return MAF_ERROR;
+          }
 
           if (m_UploadVME->UploadVME(URI, hasBinary, childToUpload->GetNumberOfChildren()!=0, msfFileName) == MAF_ERROR)
           {
-            return;
+            RemoveResources(m_UploadedURIVector);
+            return MAF_ERROR;
           }
           m_UploadedNodeVector.push_back(childToUpload);
           m_EmptyNodeVector.push_back(childToUpload);
           m_UploadedURIVector.push_back(URI);
           if (SaveChildURIFile(childToUpload, URI) == MAF_ERROR)
           {
-            return;
+            RemoveResources(m_UploadedURIVector);
+            return MAF_ERROR;
           }
         }
       }
@@ -642,23 +661,30 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
   m_UploadVME->SetInput(node);
   URI = "";
 
-  GetUploadError();
+  if (GetUploadError())
+  {
+    RemoveResources(m_UploadedURIVector);
+    return MAF_ERROR;
+  }
 
   if (m_UploadVME->UploadVME(URI, false, node->GetNumberOfChildren()!=0, msfFileName) == MAF_ERROR)
   {
-    return;
+    RemoveResources(m_UploadedURIVector);
+    return MAF_ERROR;
   }
   m_UploadedNodeVector.push_back(node);
   m_UploadedURIVector.push_back(URI);
   if (SetVMELinks(node) == MAF_ERROR)
   {
-    return;
+    RemoveResources(m_UploadedURIVector);
+    return MAF_ERROR;
   }
+  return MAF_OK;
   
 }
 
 //----------------------------------------------------------------------------
-void lhpOpUploadMultiVME::UploadMultiVME(mafNode *node)   
+int lhpOpUploadMultiVME::UploadMultiVME(mafNode *node)   
 //----------------------------------------------------------------------------
 {  
   bool hasBinary = false;
@@ -668,7 +694,7 @@ void lhpOpUploadMultiVME::UploadMultiVME(mafNode *node)
   {
     if (UploadVMELinks(node) == MAF_ERROR)
     {
-      return;
+      return MAF_ERROR;
     }
   }
 
@@ -678,8 +704,12 @@ void lhpOpUploadMultiVME::UploadMultiVME(mafNode *node)
   URI = "";
   if (m_UploadVME->UploadVME(URI, hasBinary, false, "noMsf") == MAF_ERROR)
   {
-    return;
+    m_UploadedURIVector.clear();
+    m_UploadedURIVector.push_back(URI);
+    RemoveResources(m_UploadedURIVector);
+    return MAF_ERROR;
   }
+  return MAF_OK;
 }
 //----------------------------------------------------------------------------
 bool lhpOpUploadMultiVME::GetUploadError()   
@@ -702,13 +732,71 @@ bool lhpOpUploadMultiVME::GetUploadError()
         errorMessage.Append(buf.c_str());
       }
 
-      wxMessageBox(wxString::Format("Error in MSF upload.\n%s\nUpload MSF stopped.\nVME already uploaded will be removed from repository.",errorMessage.GetCStr()));
+      wxMessageBox(wxString::Format("Error in MSF upload.\n%s\nUpload MSF stopped.\nVME already uploaded will be removed from repository.",errorMessage.GetCStr()), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
       errorFile.close();
       wxRemoveFile(m_PythonUploadFullPath + "ErrorFound.lhp");
       errorFound = true;
     }
   }
   return errorFound;
+}
+
+//----------------------------------------------------------------------------
+bool lhpOpUploadMultiVME::RemoveResources(std::vector<mafString> vectorURI)   
+//----------------------------------------------------------------------------
+{
+  wxString oldDir = wxGetCwd();
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+
+  wxString command2execute;
+
+  //WAIT MESSAGE:
+  wxInfoFrame *wait;
+  if(!m_TestMode)
+  {
+    wait = new wxInfoFrame(NULL, "Please wait, removing uploaded VME");
+    wait->SetWindowStyleFlag(wxSTAY_ON_TOP); //to keep wait message on top
+    wait->Show(true);
+    wait->Refresh();
+    wait->Update();
+  }
+
+  for (int i = 0; i < m_UploadedURIVector.size(); i++)
+  {
+    command2execute.Clear();
+    command2execute = m_PythonExe.GetCStr();
+
+    // script for client
+    command2execute.Append(" lhpRemoveResource.py ");
+    command2execute.Append(m_User->GetName());
+    command2execute.Append(" ");
+    command2execute.Append(m_User->GetPwd());
+    command2execute.Append(" ");
+    command2execute.Append(m_UploadedURIVector[i].GetCStr());
+
+    if (m_DebugMode)
+      mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+
+    long pid = -1;
+    if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+    {
+      wxMessageBox("Can't edit MSF. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+      if (m_DebugMode)
+        mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
+        command2execute.c_str(), pid);
+      if(!m_TestMode)
+      {
+        delete wait;
+      }
+      return MAF_ERROR;
+    }
+  } 
+  if(!m_TestMode)
+  {
+    delete wait;
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -781,7 +869,7 @@ int lhpOpUploadMultiVME::SetVMELinks(mafNode *node)
     long pid = -1;
     if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
     {
-      wxMessageBox("Error in lhpEditRemoteTag.py. Uploading stopped");
+      wxMessageBox("Error in lhpEditRemoteTag.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
       mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
         command2execute.c_str(), pid);
       return MAF_ERROR;
@@ -819,7 +907,7 @@ int lhpOpUploadMultiVME::UploadVMELinks(mafNode *derived)
         link = (mafNode*)((mafVMELandmarkCloud *)link)->GetLandmark(i->second.m_NodeSubId);
       }
       hasBinary = isBinaryDataPresent(link);
-      wxMessageBox(wxString::Format("Link found! Upload VME: %s", link->GetName()));
+      wxMessageBox(wxString::Format("Link found! Upload VME: %s", link->GetName()), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
 
       //Verify if the link has some link!!
       if (link->GetNumberOfLinks() != 0)
@@ -831,18 +919,21 @@ int lhpOpUploadMultiVME::UploadVMELinks(mafNode *derived)
       }
       m_UploadVME->SetInput(link);
 
-        URI = "";
-        if (m_UploadVME->UploadVME(URI, hasBinary, false, "noMsf") == MAF_ERROR)
-        {
-          return MAF_ERROR;
-        }
-        m_UploadedNodeVector.push_back(link);
-        linkURI.push_back(URI);
+      URI = "";
+      if (m_UploadVME->UploadVME(URI, hasBinary, false, "noMsf") == MAF_ERROR)
+      {
+        m_UploadedURIVector.clear();
+        m_UploadedURIVector.push_back(URI);
+        RemoveResources(m_UploadedURIVector);
+        return MAF_ERROR;
+      }
+      m_UploadedNodeVector.push_back(link);
+      linkURI.push_back(URI);
     }
   }
   if (SaveLinkURIFile(derived, linkURI) == MAF_ERROR)
   {
-    wxMessageBox("Unable to write list of link binary URI. Uploading stopped.");
+    wxMessageBox("Unable to write list of link binary URI. Uploading stopped.", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     return MAF_ERROR;
   }
   return MAF_OK;
@@ -1010,7 +1101,7 @@ bool lhpOpUploadMultiVME::IsLHPBuilderVersionUpToDate()
   long pid = -1;
   if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
-    wxMessageBox("Error in lhpDictionaryVersionChecker.py. Uploading stopped");
+    wxMessageBox("Error in lhpDictionaryVersionChecker.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
       command2execute.c_str(), pid);
     return false;
