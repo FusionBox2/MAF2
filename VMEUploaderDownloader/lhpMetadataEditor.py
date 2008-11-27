@@ -21,7 +21,8 @@ class MetadataEditorPanel(wx.Panel):
         self.TagsThatCanBeEditedDictionary = {}        
         self.InTreeButNotInUnhandledPlusManual = []
         self.tagsToBeSkippedFromTreeRendering = ["L0000"]
-        
+        self.folderToBeSkippedFromTreeRendering = ["L0000_resource_service"]
+
         curDir = os.getcwd()        
         if Debug:
             print " current directory is: " + curDir
@@ -293,6 +294,19 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
             msfTagName =  pi.GetVMETagArrayTagNameFromNode(xmlDictNode)  
             guiTreeNodeName = pi.GetNodeName(xmlDictNode)
             
+        msfTagValue = ""
+        
+        f2s = self.folderToBeSkippedFromTreeRendering
+        
+        if  len(f2s) != 0 and f2s.count(msfTagName) == 1:
+            print  " removing: " + msfTagName
+            f2s.remove(msfTagName)
+            xmlDictNode = xmlDictNode.nextSibling
+            msfTagName =  pi.GetVMETagArrayTagNameFromNode(xmlDictNode)  
+            guiTreeNodeName = pi.GetNodeName(xmlDictNode)
+            
+            return
+        
         msfTagValue = ""
         
         
