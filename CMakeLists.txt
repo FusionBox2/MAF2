@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2008-11-24 15:25:50 $
-#   Version:   $Revision: 1.33.2.5 $
+#   Date:      $Date: 2008-11-27 16:34:11 $
+#   Version:   $Revision: 1.33.2.6 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -215,7 +215,7 @@ IF(DOWNLOAD_DICTIONARY)
     SET(LHPBUILDER_FA_DICTIONARY_SELECTOR "/biomed_town/LHDL/users/swclient/dictionaries/FA_onto" CACHE INTERNAL "LHPBuilder dictionary selector")
     SET(LHPBUILDER_XML_FA_DICTIONARY "lhpXMLFASourceSubdictionary" CACHE INTERNAL "LHPBuilder xml FA dictionary")
     
-    EXEC_PROGRAM("python.exe" "${LHP_SOURCE_DIR}/VMEUploaderDownloader" ARGS "lhpCSVDictionaryDownloader.py ${LHPBUILDER_DICTIONARY_HOST} ${LHPBUILDER_FA_DICTIONARY_SELECTOR} ${LHPBUILDER_XML_FA_DICTIONARY}"  RETURN_VALUE RET)
+    EXEC_PROGRAM("python.exe" "${LHP_SOURCE_DIR}/VMEUploaderDownloader" ARGS "lhpFAOntoCSVDictionaryDownloader.py ${LHPBUILDER_DICTIONARY_HOST} ${LHPBUILDER_FA_DICTIONARY_SELECTOR} ${LHPBUILDER_XML_FA_DICTIONARY}"  RETURN_VALUE RET)
 
     
     IF(${RET} MATCHES "0")

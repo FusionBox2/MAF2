@@ -50,11 +50,10 @@ class MetadataEditorPanel(wx.Panel):
             for row in unhandledPlusManualTagsReader:
                 self.unhandledPlusManualDict[row[0].strip()] = str(row[1].strip())
                 
-        except csv.Error, e:
+        except csv.Error:
 #            sys.exit('file %s, line %d: %s' % (filename, unhandledPlusManualTagsReader.line_num, e))
              pass
                    
-        unhandledPlusManualTagsList = sorted(self.unhandledPlusManualDict.keys())
         
         # read handledAutoTagsList.csv ie tags filled from the factory to be displayed read only        
         self.factoryFilledTagsCSVFileName = os.getcwd() + r'\\' + "handledAutoTagsList.csv"     
@@ -70,11 +69,10 @@ class MetadataEditorPanel(wx.Panel):
             for row in factoryFilledTagsReader:
                 self.factoryFilledTagsDict[row[0].strip()] = str(row[1].strip())
                 
-        except csv.Error, e:
+        except csv.Error:
 #            sys.exit('file %s, line %d: %s' % (filename, factoryFilledTagsReader.line_num, e))
              pass
                    
-        factoryFiledTagsList = sorted(self.factoryFilledTagsDict.keys())
         
         # load xml dictionary (already assembled if composed)
         self.inputXMLDictionaryFileName = os.getcwd() + r'\\' + str(arg[1]) # to be used to save on exit    
@@ -166,7 +164,6 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
         
     def SaveOnExit(self):
         
-        rootId = self.tree.GetRootItem()
         childId = None
         listValuesFromTree = []
         for tag in self.TagsToBeSavedList:
@@ -286,21 +283,20 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
         
         msfTagName = msfTagName.strip()
         
-        toBeSkipped = self.TagsToBeSkippedFromTreeRendering
+        tagsSkipList = self.TagsToBeSkippedFromTreeRendering
         
-        if  len(toBeSkipped) != 0 and toBeSkipped.count(msfTagName) == 1:
-            toBeSkipped.remove(msfTagName)
+        if  len(tagsSkipList) != 0 and tagsSkipList.count(msfTagName) == 1:
+            tagsSkipList.remove(msfTagName)
             xmlDictNode = xmlDictNode.childNodes[0]
             msfTagName =  pi.GetVMETagArrayTagNameFromNode(xmlDictNode)  
             guiTreeNodeName = pi.GetNodeName(xmlDictNode)
             
-        msfTagValue = ""
         
-        f2s = self.folderToBeSkippedFromTreeRendering
+        foldersSkipList = self.folderToBeSkippedFromTreeRendering
         
-        if  len(f2s) != 0 and f2s.count(msfTagName) == 1:
+        if  len(foldersSkipList) != 0 and foldersSkipList.count(msfTagName) == 1:
             print  " removing: " + msfTagName
-            f2s.remove(msfTagName)
+            foldersSkipList.remove(msfTagName)
             xmlDictNode = xmlDictNode.nextSibling
             msfTagName =  pi.GetVMETagArrayTagNameFromNode(xmlDictNode)  
             guiTreeNodeName = pi.GetNodeName(xmlDictNode)

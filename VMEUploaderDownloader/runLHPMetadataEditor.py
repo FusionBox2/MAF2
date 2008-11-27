@@ -12,7 +12,7 @@
 # Author:       Robin Dunn
 #
 # Created:      6-March-2000
-# RCS-ID:       $Id: runLHPMetadataEditor.py,v 1.2 2008-10-03 12:49:38 ior01 Exp $
+# RCS-ID:       $Id: runLHPMetadataEditor.py,v 1.2.2.1 2008-11-27 16:33:21 ior01 Exp $
 # Copyright:    (c) 2000 by Total Control Software
 # Licence:      wxWindows license
 #----------------------------------------------------------------------------
@@ -65,7 +65,11 @@ class RunMetaDataEditor(wx.App, wx.lib.mixins.inspection.InspectionMixin):
         menu = wx.Menu()
         item = menu.Append(-1, "E&xit\tCtrl-Q", "Exit Editor")
         self.Bind(wx.EVT_MENU, self.OnExitApp, item)
+        
         menuBar.Append(menu, "&File")
+
+        menuNavigate = wx.Menu()
+        menuBar.Append(menuNavigate, "&Navigate")
 
         ns = {}
         ns['wx'] = wx

@@ -22,7 +22,9 @@ import os
 import urllib, urllib2, base64, re, os, cookielib, sys
 
 class lhpCSVDictionaryDownloader:
-      
+    """Download selected csv dictionary from biomedtown and convert it to xml\
+    See main() comments for further details"""
+
     def __init__(self):
         
         # URL
