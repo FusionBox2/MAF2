@@ -104,7 +104,19 @@ class vmeUploaderOnly:
             os.chdir(sys.path[0])
             #cicle on file with list of child URI
             list = ''
-            fileName = str(self.vmeName)+ str(self.originalId) + ".childURI"
+            fileName = str(self.vmeName)
+            fileName = fileName.replace('/', '_')
+            fileName = fileName.replace('\\', '_')
+            fileName = fileName.replace(':', '_')
+            fileName = fileName.replace('*', '_')
+            fileName = fileName.replace('?', '_')
+            fileName = fileName.replace('\"', '_')
+            fileName = fileName.replace('<', '_')
+            fileName = fileName.replace('>', '_')
+            fileName = fileName.replace('!', '_')
+            fileName = fileName.replace('|', '_')
+
+            fileName = fileName + str(self.originalId) + ".childURI"
             if Debug:
                 print "file name: " + fileName 
             if(os.path.exists(fileName)):
@@ -138,7 +150,20 @@ class vmeUploaderOnly:
             os.chdir(sys.path[0])
             #cicle on file with list of link URI
             list = ''
-            fileName = self.vmeName + str(self.originalId) + ".linkURI"
+            fileName = self.vmeName 
+            fileName = str(self.vmeName)
+            fileName = fileName.replace('/', '_')
+            fileName = fileName.replace('\\', '_')
+            fileName = fileName.replace(':', '_')
+            fileName = fileName.replace('*', '_')
+            fileName = fileName.replace('?', '_')
+            fileName = fileName.replace('\"', '_')
+            fileName = fileName.replace('<', '_')
+            fileName = fileName.replace('>', '_')
+            fileName = fileName.replace('!', '_')
+            fileName = fileName.replace('|', '_')
+            fileName = fileName + str(self.originalId) + ".linkURI"
+            
             if(os.path.exists(fileName)):
                 file = open(fileName,"r")
 

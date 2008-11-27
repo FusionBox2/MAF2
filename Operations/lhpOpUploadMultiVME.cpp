@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-26 12:57:27 $
-Version:   $Revision: 1.27.2.7 $
+Date:      $Date: 2008-11-27 09:00:45 $
+Version:   $Revision: 1.27.2.8 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -114,7 +114,6 @@ mafOp(label)
   m_SubXMLDictionaryFileName = "UNDEFINED";
   m_AssembledXMLDictionaryFileName = "assembledXMLDictionary.xml";
   m_SubDictionaryBuildingCommand = "UNDEFINED";
-  m_listURIFileName = " ";
 
   m_SubdictionaryId = 0; // NO_SUBDICTIONARY; 
   m_ConnectionConfigurationFileName = "vmeUploaderConnectionConfiguration.conf" ;
@@ -616,7 +615,10 @@ void lhpOpUploadMultiVME::UploadTree(mafNode *node)
           m_UploadedNodeVector.push_back(childToUpload);
           m_EmptyNodeVector.push_back(childToUpload);
           m_UploadedURIVector.push_back(URI);
-          SaveChildURIFile(childToUpload, URI);
+          if (SaveChildURIFile(childToUpload, URI) == MAF_ERROR)
+          {
+            return;
+          }
         }
       }
       else
@@ -850,6 +852,7 @@ int lhpOpUploadMultiVME::UploadVMELinks(mafNode *derived)
 int lhpOpUploadMultiVME::SaveLinkURIFile(mafNode *node, std::vector<mafString> linkURI)
 //------------------------------------------------------------
 {
+  wxString listURIFileName;
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
@@ -857,11 +860,20 @@ int lhpOpUploadMultiVME::SaveLinkURIFile(mafNode *node, std::vector<mafString> l
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
-  m_listURIFileName = node->GetName();
-  m_listURIFileName.Append(wxString::Format("%d",node->GetId()));
-  m_listURIFileName.Append(".linkURI");
+  listURIFileName = node->GetName();
+  listURIFileName.Append(wxString::Format("%d",node->GetId()));
+  listURIFileName.Replace("/","_");
+  listURIFileName.Replace("\\","_");
+  listURIFileName.Replace(":","_");
+  listURIFileName.Replace("*","_");
+  listURIFileName.Replace("?","_");
+  listURIFileName.Replace("\"","_");
+  listURIFileName.Replace("<","_");
+  listURIFileName.Replace(">","_");
+  listURIFileName.Replace("!","_");
+  listURIFileName.Append(".linkURI");
   wxString lockPath = m_PythonUploadFullPath;
-  lockPath += m_listURIFileName.GetCStr();
+  lockPath += listURIFileName.c_str();
   //if file exists , delete it
   if (wxFileExists(lockPath))
     wxRemoveFile(lockPath);
@@ -894,6 +906,7 @@ int lhpOpUploadMultiVME::SaveLinkURIFile(mafNode *node, std::vector<mafString> l
 int lhpOpUploadMultiVME::SaveChildURIFile(mafNode* node, mafString URI)
 //------------------------------------------------------------
 {
+  wxString listURIFileName;
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
@@ -901,12 +914,22 @@ int lhpOpUploadMultiVME::SaveChildURIFile(mafNode* node, mafString URI)
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
-  m_listURIFileName = node->GetParent()->GetName();
-  m_listURIFileName.Append(wxString::Format("%d",node->GetParent()->GetId()));
-  m_listURIFileName.Append(".childURI");
-  wxString lockPath = m_PythonUploadFullPath;
-  lockPath += m_listURIFileName.GetCStr();
+  listURIFileName = node->GetParent()->GetName();
+  listURIFileName.Append(wxString::Format("%d",node->GetParent()->GetId()));
+  listURIFileName.Replace("/","_");
+  listURIFileName.Replace("\\","_");
+  listURIFileName.Replace(":","_");
+  listURIFileName.Replace("*","_");
+  listURIFileName.Replace("?","_");
+  listURIFileName.Replace("\"","_");
+  listURIFileName.Replace("<","_");
+  listURIFileName.Replace(">","_");
+  listURIFileName.Replace("!","_");
+  listURIFileName.Replace("|","_");
+  listURIFileName.Append(".childURI");
 
+  wxString lockPath = m_PythonUploadFullPath;
+  lockPath += listURIFileName.c_str();
   //Check if file named "lockPath" has been created by this operation
   bool myFile = false;
   for (int n = 0; n < m_FileCreatedVector.size(); n++)
@@ -921,8 +944,8 @@ int lhpOpUploadMultiVME::SaveChildURIFile(mafNode* node, mafString URI)
    //if file exists and is not created by this operation, delete it
   if (!myFile)
   {
-    if (wxFileExists(lockPath))
-      wxRemoveFile(lockPath);
+    if (wxFileExists(lockPath.c_str()))
+      wxRemoveFile(lockPath.c_str());
   }
 
   m_FileCreatedVector.push_back(lockPath);
