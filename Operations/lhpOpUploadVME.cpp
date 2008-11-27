@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-25 14:34:19 $
-Version:   $Revision: 1.94.2.15 $
+Date:      $Date: 2008-11-27 15:38:05 $
+Version:   $Revision: 1.94.2.16 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -334,7 +334,7 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
   //check if vme has a name
   if(strcmp(m_Input->GetName(), "") == 0)
   {
-    wxMessageBox("Can not upload VME without name.");
+    wxMessageBox("Can not upload VME without name.", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     return MAF_ERROR;
   }
 
@@ -384,26 +384,26 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
 
   if (m_MsfDir == "")
   {
-    wxMessageBox("Can't edit VME tags: msf must be saved locally. Uploading stopped");
+    wxMessageBox("Can't edit VME tags: msf must be saved locally. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     return MAF_ERROR;
   }
 
   if(!CreateBaseCacheAndOutgoingDirectories())
   {
-    wxMessageBox("Unable to create Cache Base Directory. Uploading stopped");
+    wxMessageBox("Unable to create Cache Base Directory. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     return MAF_ERROR;
   }
 
   if(!CreateCache())
   {
-    wxMessageBox("Unable to create a temporary cache, remember that msf must be saved locally. Uploading stopped");
+    wxMessageBox("Unable to create a temporary cache, remember that msf must be saved locally. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     return MAF_ERROR;
   }
 
   int ret = this->GeneratesTagsListsFromXMLDictionary();
   if (ret == MAF_ERROR)
   {
-    wxMessageBox("Problems generating tags list! Uploading stopped");
+    wxMessageBox("Problems generating tags list! Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     return ret;
   } 
 
@@ -446,7 +446,7 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
   long pid = -1;
   if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
   {
-    wxMessageBox("Can't edit MSF. Uploading stopped");
+    wxMessageBox("Can't edit MSF. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     if (m_DebugMode)
       mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
       command2execute.c_str(), pid);
@@ -460,7 +460,7 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
   mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
   if(!CopyInCache())
   {
-    wxMessageBox("Unable to create a temporary cache, remember that msf must be saved locally. Uploading stopped");
+    wxMessageBox("Unable to create a temporary cache, remember that msf must be saved locally. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     return MAF_ERROR;
   }
 
@@ -480,7 +480,7 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
   pid = -1;
   if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
-    wxMessageBox("Error in lhpGetXMLURI.py. Uploading stopped");
+    wxMessageBox("Error in lhpGetXMLURI.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     if (m_DebugMode)
       mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
       command2execute.c_str(), pid);
@@ -965,7 +965,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
   long pid = -1;
   if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
   {
-    wxMessageBox("Error in lhpXMLDictionaryParser.py. Uploading stopped");
+    wxMessageBox("Error in lhpXMLDictionaryParser.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     if (m_DebugMode)
      mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
       command2execute.c_str(), pid);
@@ -988,7 +988,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
   pid = -1;
   if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
   {
-    wxMessageBox("Error in lhpXMLDictionaryParser.py. Uploading stopped");
+    wxMessageBox("Error in lhpXMLDictionaryParser.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     if (m_DebugMode)
       mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
       command2execute.c_str(), pid);
@@ -1155,6 +1155,8 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   return MAF_OK;
 }
+
+
 //----------------------------------------------------------------------------
 bool lhpOpUploadVME::CreateBaseCacheAndOutgoingDirectories()
 //----------------------------------------------------------------------------
@@ -1223,7 +1225,7 @@ bool lhpOpUploadVME::IsLHPBuilderVersionUpToDate()
   long pid = -1;
   if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
-    wxMessageBox("Error in lhpDictionaryVersionChecker.py. Uploading stopped");
+    wxMessageBox("Error in lhpDictionaryVersionChecker.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     return false;
   }
 
@@ -1360,7 +1362,7 @@ int lhpOpUploadVME::AssembleDictionaries()
   long pid = -1;
   if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
-    wxMessageBox("Error in lhpXMLDictionariesBuilder.py. Uploading stopped");
+    wxMessageBox("Error in lhpXMLDictionariesBuilder.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     return MAF_ERROR;
   }
   
