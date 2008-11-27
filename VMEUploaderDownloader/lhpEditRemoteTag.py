@@ -56,17 +56,22 @@ class lhpEditRemoteTag:
             print "->"+ str(ws.ProxyPort) + "<-"
             print self.parameter      
         
+        # timeout in seconds
+        self.Timeout = 30
+        socket.setdefaulttimeout(self.Timeout)
         try:
             out = ws.run("xmledit", self.parameter)[1]
         except:
             if Debug:
                 print "-----------Error in xmledit service------------"
+            sys.exit(1)    
+            
                
         dom = xd.parseString(out)
         if dom.getElementsByTagName("fault"):
             if Debug:
                 print "Error editing tags on repository"
-            return
+            sys.exit(1)
    
   
   

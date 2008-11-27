@@ -41,12 +41,18 @@ class lhpGetXMLURI:
         ws.setServer(self.URL)
         ws.ProxyURL = self.proxyHost
         ws.ProxyPort = self.proxyPort
+        
+        # timeout in seconds
+        self.Timeout = 30
+        socket.setdefaulttimeout(self.Timeout)
+        
         try:
             out = ws.run('createresource')[1]
         except:
             if Debug:
                 print "-----------Error calling createresource service------------"
-            return
+            sys.exit(1)
+           
             
         
         dom = xd.parseString(out)
@@ -58,7 +64,7 @@ class lhpGetXMLURI:
                     error = node.data
             if Debug:
                 print error
-            return
+            sys.exit(1)
         for el in dom.getElementsByTagName("string"):
             for node in el.childNodes:  
                 XMLURI = node.data
