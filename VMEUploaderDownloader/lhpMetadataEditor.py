@@ -5,39 +5,30 @@
 #-----------------------------------------------------------------------------
 
 from Debug import Debug
-from xml.dom.minidom import Childless, Node
-from test.test_new import argcount
-import this
 import os
 import csv
 import  wx
 import  wx.gizmos   as  gizmos
-import  images
 import time
 import lhpXMLDictionaryParser
-import msfParser
 from xml.dom import minidom
 import lhpMetadataEditorTextEntryDialog#----------------------------------------------------------------------
 
 class MetadataEditorPanel(wx.Panel):
     def __init__(self, parent, log, arg):
         
-        # tegs in iput vme csv        
         self.TagsToBeSavedList = []
-        self.TagsThatCanBeEditedDictionary = {}
-        
-        # tags in tree but not in input vme csv 
-        # for example this could be tags erroneusly filled by the factory
+        self.TagsThatCanBeEditedDictionary = {}        
         self.InTreeButNotInUnhandledPlusManual = []
+        self.tagsToBeSkippedFromTreeRendering = ["L0000"]
         
-        # load msf infos
         curDir = os.getcwd()        
         if Debug:
             print " current directory is: " + curDir
 
                 
-        self.inputUnhandledPlusManualCSVFileName = str(arg[2]) + str(arg[0]) # to be used to save on exit    
-
+        self.inputUnhandledPlusManualCSVFileName = str(arg[2]) + str(arg[0]) 
+        
         if Debug:
             print self.inputUnhandledPlusManualCSVFileName
         assert(os.path.exists(self.inputUnhandledPlusManualCSVFileName))
@@ -48,8 +39,8 @@ class MetadataEditorPanel(wx.Panel):
             self.OutputCSVFileName = os.getcwd() + r'\\' + str(arg[2])
             
         
-        # read unhandledPlusManual tags ie manual tags plus
-        # tags the factory cannot fill (factory methods not yet implemented)
+        # read unhandledPlusManual tags ie manual tags plus tags the factory cannot fill
+        # so the user is required to do so (for factory methods not yet implemented)
         unhandledPlusManualTagsReader = csv.reader(open(self.inputUnhandledPlusManualCSVFileName, "r"))
         
         self.unhandledPlusManualDict = {}
@@ -86,7 +77,7 @@ class MetadataEditorPanel(wx.Panel):
         
         # load xml dictionary (already assembled if composed)
         self.inputXMLDictionaryFileName = os.getcwd() + r'\\' + str(arg[1]) # to be used to save on exit    
-        print "here3"
+ 
         time.sleep(5)
         assert(os.path.exists(self.inputXMLDictionaryFileName))
         
@@ -99,7 +90,6 @@ class MetadataEditorPanel(wx.Panel):
         self.log = log
         wx.Panel.__init__(self, parent, -1)
         
-        # wx.Panel.SetSize(1024,768)
         self.Bind(wx.EVT_SIZE, self.OnSize)
         
         
@@ -142,7 +132,6 @@ class MetadataEditorPanel(wx.Panel):
         for columnName in interval:     
             self.tree.AddColumn(str(columnName))
                     
-        # create some columns         
         self.tree.SetMainColumn(0) # the one with the tree in it...
         self.tree.SetColumnWidth(0, 250)
 
@@ -152,7 +141,10 @@ class MetadataEditorPanel(wx.Panel):
         self.tree.SetColumnWidth(1, 150)
         self.tree.SetColumnWidth(2, 150)
         self.tree.SetColumnWidth(10, 400)      
-  
+        
+        # self.tree.SelectItem()
+        # self.tree.EnsureVisible()
+        
         self.root = self.tree.AddRoot("LHDL Master Dictionary")
         self.tree.SetItemImage(self.root, self.folderImageID)
         
@@ -293,7 +285,16 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
         
         msfTagName = msfTagName.strip()
         
+        toBeSkipped = self.tagsToBeSkippedFromTreeRendering
+        
+        if  len(toBeSkipped) != 0 and toBeSkipped.count(msfTagName) == 1:
+            toBeSkipped.remove(msfTagName)
+            xmlDictNode = xmlDictNode.childNodes[0]
+            msfTagName =  pi.GetVMETagArrayTagNameFromNode(xmlDictNode)  
+            guiTreeNodeName = pi.GetNodeName(xmlDictNode)
+            
         msfTagValue = ""
+        
         
         assert isinstance(xmlDictNode , minidom.Node)
        
@@ -360,11 +361,11 @@ def execute(frame, nb, log,arg):
 
 
 if __name__ == '__main__':
-    # USAGE lhpMetadataEditor argv1 argv2 argv3
-    # argv[1]: input csv file name
-    # argv[2]: input xml dictionary file name
-    # argv[3]: csv file path
-    # argv[4]: if present output generated csv  will be written to that file otherwise
+    # USAGE lhpMetadataEditor argv0 argv1 argv2 arg3
+    # arg[0]: input csv file name
+    # arg[1]: input xml dictionary file name
+    # arg[2]: csv file path (Cache Directory)
+    # arg[3]: if present output generated csv  will be written to that file otherwise
     # input csv will be used 
     
     # a file named handledAutoTagsList.csv must be present in the same dir to gather auto filled tags
@@ -372,6 +373,5 @@ if __name__ == '__main__':
    
     import sys,os
     import runLHPMetadataEditor
-      
-    
+          
     runLHPMetadataEditor.main(['', os.path.basename(sys.argv[0])] + sys.argv[1:])
