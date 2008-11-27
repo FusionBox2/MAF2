@@ -1,7 +1,7 @@
 import  wx.lib.masked             as  masked
 from sre_parse import isdigit
 from tokenize import Number
-
+import re
 import lhpMetadataEditor
 import  wx
 import lhpXMLDictionaryParser
@@ -292,8 +292,25 @@ class TextObjectValidator(wx.PyValidator):
         
          elif self.ValidationType == "URI":
             print "validating string"
-            pass
-        
+            urlfinders = [\
+            re.compile("([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}|(((news|telnet|nttp|file|http|ftp|https)://)|(www|ftp)[-A-Za-z0-9]*\\.)[-A-Za-z0-9\\.]+)(:[0-9]*)?/[-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]*[^]'\\.}>\\),\\\"]"),\
+            re.compile("([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}|(((news|telnet|nttp|file|http|ftp|https)://)|(www|ftp)[-A-Za-z0-9]*\\.)[-A-Za-z0-9\\.]+)(:[0-9]*)?"),\
+            re.compile("(~/|/|\\./)([-A-Za-z0-9_\\$\\.\\+\\!\\*\\(\\),;:@&=\\?/~\\#\\%]|\\\\)+"),\
+            re.compile("'\\<((mailto:)|)[-A-Za-z0-9\\.]+@[-A-Za-z0-9\\.]+"),]\
+            
+            result = None
+            for ex in urlfinders:
+                result = ex.match(text)
+                if result != None:
+                    return True
+                
+            wx.MessageBox("You must write a valid URI!", "Error")
+            textCtrl.SetBackgroundColour("yellow")
+            textCtrl.SetFocus()
+            textCtrl.Refresh()
+             
+            return False
+            
          elif self.ValidationType == "integer":
             print "validating integer"
             for c in text:
