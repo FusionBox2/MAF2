@@ -20,7 +20,7 @@ class MetadataEditorPanel(wx.Panel):
         self.TagsToBeSavedList = []
         self.TagsThatCanBeEditedDictionary = {}        
         self.InTreeButNotInUnhandledPlusManual = []
-        self.tagsToBeSkippedFromTreeRendering = ["L0000"]
+        self.TagsToBeSkippedFromTreeRendering = ["L0000"]
         self.folderToBeSkippedFromTreeRendering = ["L0000_resource_service"]
 
         curDir = os.getcwd()        
@@ -286,7 +286,7 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
         
         msfTagName = msfTagName.strip()
         
-        toBeSkipped = self.tagsToBeSkippedFromTreeRendering
+        toBeSkipped = self.TagsToBeSkippedFromTreeRendering
         
         if  len(toBeSkipped) != 0 and toBeSkipped.count(msfTagName) == 1:
             toBeSkipped.remove(msfTagName)
