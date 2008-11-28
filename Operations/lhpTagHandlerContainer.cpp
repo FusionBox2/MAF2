@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-25 14:41:15 $
-  Version:   $Revision: 1.29.2.8 $
+  Date:      $Date: 2008-11-28 09:55:02 $
+  Version:   $Revision: 1.29.2.9 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -703,6 +703,82 @@ void lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Parameters::Handl
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Operation);
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Operation::lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Operation()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Operation::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+}
+
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_ModifyDate);
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_ModifyDate::lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_ModifyDate()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_ModifyDate::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Application);
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Application::lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Application()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Application::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_OperatorID);
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_OperatorID::lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_OperatorID()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_OperatorID::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Parameters);
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Parameters::lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Parameters()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Parameters::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
 }
 
 

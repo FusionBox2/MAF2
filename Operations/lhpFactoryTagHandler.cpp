@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpFactoryTagHandler.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-25 10:43:27 $
-  Version:   $Revision: 1.14.2.5 $
+  Date:      $Date: 2008-11-28 09:55:02 $
+  Version:   $Revision: 1.14.2.6 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -65,6 +65,13 @@ lhpFactoryTagHandler::lhpFactoryTagHandler()
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_IsNatural, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_OperatorID, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Parameters, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_Ownership, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_Ownership_OwnerID, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Operation, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_ModifyDate, "")
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Application, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_OperatorID, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Parameters, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_Ownership, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_Ownership_OwnerID, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource, "");

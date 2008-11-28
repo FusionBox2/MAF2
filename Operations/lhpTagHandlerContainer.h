@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.h,v $
   Language:  C++
-  Date:      $Date: 2008-11-25 10:43:27 $
-  Version:   $Revision: 1.14.2.5 $
+  Date:      $Date: 2008-11-28 09:55:02 $
+  Version:   $Revision: 1.14.2.6 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -287,6 +287,56 @@ public:
   mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Parameters,mafObject);
 
   lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Parameters();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Operation: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Operation,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Operation();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_ModifyDate: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_ModifyDate,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_ModifyDate();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Application: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Application,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Application();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_OperatorID: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_OperatorID,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_OperatorID();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Parameters: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Parameters,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Parameters();
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
