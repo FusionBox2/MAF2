@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2008-11-27 16:34:11 $
-#   Version:   $Revision: 1.33.2.6 $
+#   Date:      $Date: 2008-11-28 11:00:42 $
+#   Version:   $Revision: 1.33.2.7 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -177,6 +177,7 @@ IF(DOWNLOAD_DICTIONARY)
     IF(${RET} MATCHES "0")
         MESSAGE(STATUS "XML master dictionary generated correctly!")
     ELSE(${RET} MATCHES "0")
+        MESSAGE("PROBLEMS WITH MASTER DICTIONARY! PLEASE CHECK IT!")
         SET(ERROR 1)
     ENDIF(${RET} MATCHES "0")
 #     MESSAGE("variable LHPBUILDER_XML_DICTIONARY = " ${LHPBUILDER_XML_DICTIONARY})
@@ -193,6 +194,7 @@ IF(DOWNLOAD_DICTIONARY)
     IF(${RET} MATCHES "0")
         MESSAGE(STATUS "XML dicom subdictionary generated correctly!")
     ELSE(${RET} MATCHES "0")
+        MESSAGE("PROBLEMS WITH DICOM DICTIONARY! PLEASE CHECK IT!")
         SET(ERROR 1)
     ENDIF(${RET} MATCHES "0")
 
@@ -207,6 +209,7 @@ IF(DOWNLOAD_DICTIONARY)
     IF(${RET} MATCHES "0")
         MESSAGE(STATUS "XML motion analysis dictionary generated correctly!")
     ELSE(${RET} MATCHES "0")
+        MESSAGE("PROBLEMS WITH MOTION ANALYSIS DICTIONARY! PLEASE CHECK IT!")
         SET(ERROR 1)
     ENDIF(${RET} MATCHES "0")
 
@@ -221,6 +224,7 @@ IF(DOWNLOAD_DICTIONARY)
     IF(${RET} MATCHES "0")
         MESSAGE(STATUS "XML FA dictionary generated correctly!")
     ELSE(${RET} MATCHES "0")
+        MESSAGE("PROBLEMS WITH FA DICTIONARY! PLEASE CHECK IT!")
         SET(ERROR 1)
     ENDIF(${RET} MATCHES "0")
 
@@ -235,6 +239,7 @@ IF(DOWNLOAD_DICTIONARY)
     IF(${RET} MATCHES "0")
         MESSAGE(STATUS "XML MicroCT dictionary generated correctly!")
     ELSE(${RET} MATCHES "0")
+        MESSAGE(STATUS "PROBLEMS WITH MICROCT DICTIONARY! PLEASE CHECK IT!")
         SET(ERROR 1)
     ENDIF(${RET} MATCHES "0")
         
