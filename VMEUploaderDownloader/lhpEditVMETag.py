@@ -312,8 +312,8 @@ if __name__ == '__main__':
         print 'Error :\n' + usage_msg
         sys.exit(1)
         
-    inputCacheDirectory = sys.argv[1].replace("?", " ")
-    inputMSFDirectory = sys.argv[2].replace("?", " ")
+    inputCacheDirectory = sys.argv[1].replace("??", " ")
+    inputMSFDirectory = sys.argv[2].replace("??", " ")
     vmeToExtractId = sys.argv[3]
     unhandledPlusManualTagsListFileName = sys.argv[4]
     
