@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-27 12:48:07 $
-Version:   $Revision: 1.26.2.17 $
+Date:      $Date: 2008-11-28 16:20:11 $
+Version:   $Revision: 1.26.2.18 $
 Authors:   Roberto Mucci , Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -93,6 +93,10 @@ enum lhpOpUploadVME_ID
   ID_METADATA_EDITOR,
   ID_USEFADICTIONARY,
   ID_PROPAGATE,
+  ID_USE_DICOM_SUBDICTIONARY,
+  ID_USE_FA_SUBDICTIONARY,
+  ID_USE_MA_SUBDICTIONARY,
+  ID_USE_MICROCT_SUBDICTIONARY,
 };
 
 //----------------------------------------------------------------------------
@@ -141,6 +145,12 @@ mafOp(label)
   m_MetadataEditorId = 0;
   m_UseFADictionary = 0;
   m_DictionaryToProcessFileName = "UNDEFINED";
+
+  m_UseDicomSubdictionary = 0;
+  m_UseFASubdictionary = 0;
+  m_UseMicroCTSubdictionary = 0;
+  m_UseMASubdictionary = 0;
+
 }
 
 //----------------------------------------------------------------------------
@@ -251,7 +261,6 @@ void lhpOpEditTag::OnEvent(mafEventBase *maf_event)
     {
     case ID_SUBDICTIONARY:
     {
-    //    // nothing to do for the moment...
       if (m_DebugMode)
         mafLogMessage("You choosed dictionary number %i", m_SubdictionaryId);
     }
@@ -590,90 +599,14 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
-  m_MasterXMLDictionaryFileName = this->GetXMLDictionaryFileName(m_MasterXMLDictionaryFilePrefix);
-  if (m_MasterXMLDictionaryFileName == "NOT FOUND")
-  {
-    return MAF_ERROR;
-  }
+  mafString outputDict = "UNDEFINED";
+  BuildXMLEditorInputDictionary(outputDict);
   
-  m_DictionaryToProcessFileName = m_MasterXMLDictionaryFileName;
-
-  // handle sub dictionaries creation...
-  if (m_SubdictionaryId == DICOM_SUBDICTIONARY)
-  {
-    // build dicom
-    m_SubXMLDictionaryFilePrefix = "lhpXMLDicomSourceSubdictionary_";
-    m_SubDictionaryBuildingCommand = "dicom";
-    if (this->AssembleMasterWithSubdictionary() == MAF_ERROR)
-    {
-      return MAF_ERROR;
-    }
-    m_DictionaryToProcessFileName = m_AssembledXMLDictionaryFileName;
-  } 
-  else if (m_SubdictionaryId == MOTION_ANALYSIS_SUBDICTIONARY)
-  {
-    // build motion analysis
-    m_SubXMLDictionaryFilePrefix = "lhpXMLMotionAnalysisSourceSubdictionary_";
-    m_SubDictionaryBuildingCommand = "motion_analysis";
-    // build sub dictionary code
-    if (this->AssembleMasterWithSubdictionary() == MAF_ERROR)
-    {
-      return MAF_ERROR;
-    }
-
-    m_DictionaryToProcessFileName = m_AssembledXMLDictionaryFileName;
-  }
-  else if (m_SubdictionaryId == MICROCT_SUBDICTIONARY)
-  {
-    // build micro ct
-    m_SubXMLDictionaryFilePrefix = "lhpXMLMicroCTSourceSubdictionary_";
-    m_SubDictionaryBuildingCommand = "micro_ct";
-    // build sub dictionary code
-    if (this->AssembleMasterWithSubdictionary() == MAF_ERROR)
-    {
-      return MAF_ERROR;
-    }
-
-    m_DictionaryToProcessFileName = m_AssembledXMLDictionaryFileName;
-  }
-  else if (m_SubdictionaryId == NO_SUBDICTIONARY)
-  {
-    m_DictionaryToProcessFileName = m_MasterXMLDictionaryFileName;
-    std::ostringstream stringStream;
-    stringStream << "Not using subdictionaries..."  << std::endl;
-    if (m_DebugMode)
-      mafLogMessage(stringStream.str().c_str());
-    // nothing to do...continue...
-  }  
-  else
-  {
-    if (m_DebugMode)
-      mafLogMessage("this case is not handled...");
-    return MAF_ERROR;
-  }
-  
-  if (m_UseFADictionary)
-  {
-    int result = AppendFADictionary();
-
-    if (result == MAF_ERROR)
-    {
-      return MAF_ERROR;
-    } 
-  } 
-  else
-  {
-      std::ostringstream stringStream;
-      stringStream << "Not using FA dictionary..."  << std::endl;
-      if (m_DebugMode)
-        mafLogMessage(stringStream.str().c_str());
-  }
-
   // get auto tags
   wxString command2execute;
   command2execute.Append(m_PythonExe.GetCStr());
   command2execute.Append(" lhpXMLDictionaryParser.py ");
-  command2execute.Append(m_DictionaryToProcessFileName.GetCStr());
+  command2execute.Append(outputDict.GetCStr());
   command2execute.Append(" auto_tags ");
   command2execute.Append(m_AutoTagsListFromXMLDictionaryFileName.GetCStr());
   
@@ -946,7 +879,12 @@ mafString lhpOpEditTag::GetXMLDictionaryFileName( mafString dictionaryFileNamePr
 
   wxDir::GetAllFiles(wxGetWorkingDirectory(), &files, filePattern, wxDIR_FILES);
   
-  if (files.size() != 1)
+  if (files.size() == 0)
+  {
+    mafLogMessage(dictionaryFileNamePrefix.GetCStr());
+    mafLogMessage("dictionary not found! exiting...");
+  }
+  else if (files.size() > 1)
   {
     std::ostringstream stringStream;
     
@@ -1000,119 +938,45 @@ void lhpOpEditTag::CreateGui()
   m_Gui->Combo(ID_METADATA_EDITOR, "", &m_MetadataEditorId, 2, metadataEditor);*/
 
   m_Gui->Divider(2);
-  m_Gui->Label("Use subdictionary");
-  wxString subDictionariesList[4] = {"none", "motionAnalysis", "dicom","microCT"};
-  m_Gui->Combo(ID_SUBDICTIONARY,"",&m_SubdictionaryId,4,subDictionariesList);
-
+  m_Gui->Label("Use Dicom subdictionary");
+  m_Gui->Bool(ID_USE_DICOM_SUBDICTIONARY, "", &m_UseDicomSubdictionary);
   m_Gui->Divider(2);
-  m_Gui->Label("Use FA ontology");
-  m_Gui->Bool(ID_USEFADICTIONARY,_(""),&m_UseFADictionary);
+  m_Gui->Label("Use Motion Analysis subdictionary");
+  m_Gui->Bool(ID_USE_MA_SUBDICTIONARY, "", &m_UseMASubdictionary);
+  m_Gui->Divider(2);
+  m_Gui->Label("Use MicroCT subdictionary");
+  m_Gui->Bool(ID_USE_MICROCT_SUBDICTIONARY, "", &m_UseMicroCTSubdictionary);
+  m_Gui->Divider(2);
+  m_Gui->Label("Use Functional Anatomy subdictionary");
+  m_Gui->Bool(ID_USE_FA_SUBDICTIONARY, "", &m_UseFASubdictionary);
+  m_Gui->Divider(2);
   m_Gui->Divider();
   m_Gui->Divider();
 
   m_Gui->OkCancel(); 
-  m_Gui->Label("");
+  
   m_Gui->Update();
 
 }
-
-//----------------------------------------------------------------------------
-int lhpOpEditTag::AssembleMasterWithSubdictionary()
-//----------------------------------------------------------------------------
+int lhpOpEditTag::AppendChildDictionary( const char *sourceXMLDictionaryFileName,\
+    const char *childXMLDictionaryToAppendFileName, const char *pythonString,\
+    const char *outputXMLFN )
 {
-  wxString oldDir = wxGetCwd();
-  if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  if (m_DebugMode)
-  {
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
-    mafLogMessage("Assembling dictionaries...");
-  }
 
-  m_SubXMLDictionaryFileName = this->GetXMLDictionaryFileName(m_SubXMLDictionaryFilePrefix);
-  if (m_SubXMLDictionaryFileName == "NOT FOUND")
-  {
-    return MAF_ERROR;
-  }
-
-  // get manual tags
   wxString command2execute;
-  command2execute.Clear();
   command2execute = m_PythonwExe.GetCStr();
-
-  command2execute.Append(" lhpXMLDictionariesBuilder.py ");
-  command2execute.Append(m_MasterXMLDictionaryFileName);
-  command2execute.Append(" ");
-  command2execute.Append(m_SubXMLDictionaryFileName);
-  command2execute.Append(" ");
-  command2execute.Append(m_SubDictionaryBuildingCommand);
-  command2execute.Append(" ");
-  command2execute.Append(m_AssembledXMLDictionaryFileName);
-
-  if (m_DebugMode)
-    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
-
-  wxArrayString output;
-  wxArrayString errors;
-  long pid = -1;
-  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
-  {
-    wxMessageBox("Error in lhpXMLDictionariesBuilder.py");
-    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-      command2execute.c_str(), pid);
-    return MAF_ERROR;
-  }
-
-  if (m_DebugMode)
-  {
-    mafLogMessage("Command Output Messages:");
-    for (int i = 0; i < output.size(); i++)
-    {
-      mafLogMessage(output[i]);
-    }
-
-    mafLogMessage("Command Errors Messages:");
-    for (int i = 0; i < errors.size(); i++)
-    {
-      mafLogMessage(errors[i]);
-    }
-  }
   
-  wxSetWorkingDirectory(oldDir);
-  if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-
-  return MAF_OK;
-}
-
-int lhpOpEditTag::AppendFADictionary()
-{
-  mafString faDictionaryFilePrefix = "lhpXMLFASourceSubdictionary_";
-  mafString faDictionaryFileName = this->GetXMLDictionaryFileName(faDictionaryFilePrefix).GetCStr();
-  if (faDictionaryFileName == "NOT FOUND")
-  { 
-    std::ostringstream stringStream;
-    stringStream << "No FA dictionary found. Exiting..."  << std::endl;
-    mafLogMessage(stringStream.str().c_str());
-    return MAF_ERROR;
-  }
-
-  wxString command2execute;
-  command2execute = m_PythonwExe.GetCStr();
-
-  mafString assembledWithFaDictionaryFileName = "assembledWithFA.xml";
   command2execute.Append(" lhpXMLDictionariesBuilder.py ");
-  command2execute.Append(m_DictionaryToProcessFileName);
+  command2execute.Append(sourceXMLDictionaryFileName);
   command2execute.Append(" ");
-  command2execute.Append(faDictionaryFileName);
+  command2execute.Append(childXMLDictionaryToAppendFileName);
   command2execute.Append(" ");
-  command2execute.Append("functional_anatomy");
+  command2execute.Append(pythonString);
   command2execute.Append(" ");
-  command2execute.Append(assembledWithFaDictionaryFileName);
+  command2execute.Append(outputXMLFN);
 
-  m_DictionaryToProcessFileName = assembledWithFaDictionaryFileName;
-  if (m_DebugMode)
+  m_DictionaryToProcessFileName = outputXMLFN;
+  // if (m_DebugMode)
     mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   wxArrayString output;
@@ -1244,4 +1108,101 @@ void lhpOpEditTag::PropagateTagsToChoosedVMES()
     nodeVectorIterator++;
   }
   return;
+}
+
+int lhpOpEditTag::BuildXMLEditorInputDictionary( mafString &generatedXMLDictionaryFileName )
+{
+  m_MasterXMLDictionaryFileName = this->GetXMLDictionaryFileName(m_MasterXMLDictionaryFilePrefix);
+  if (m_MasterXMLDictionaryFileName == "NOT FOUND")
+  {
+    return MAF_ERROR;
+  }
+
+  m_DictionaryToProcessFileName = m_MasterXMLDictionaryFileName;
+
+  mafString inputDict = m_MasterXMLDictionaryFileName;
+  mafString outputDict = inputDict;
+
+  if (m_UseDicomSubdictionary == 1)
+  { 
+
+    mafString dicomSubDictionaryAppendingCommand = "dicom";   
+    mafString dicomSubDictionaryFilePrefix = "lhpXMLDicomSourceSubdictionary_";
+    mafString dicomSubDictionaryFileName = this->GetXMLDictionaryFileName(dicomSubDictionaryFilePrefix).GetCStr();
+
+    outputDict = "assembledWithDicom.xml";
+
+    if (this->\
+      AppendChildDictionary(inputDict,dicomSubDictionaryFileName\
+      , dicomSubDictionaryAppendingCommand, outputDict)
+      == MAF_ERROR)
+    {
+      return MAF_ERROR;
+    }
+
+    inputDict = outputDict;
+  } 
+
+  if (m_UseMASubdictionary == 1)
+  { 
+    mafString maSubDictionaryAppendingCommand = "motion_analysis";   
+    mafString maSubDictionaryFilePrefix = "lhpXMLMotionAnalysisSourceSubdictionary_";
+    mafString maSubDictionaryFileName = this->GetXMLDictionaryFileName(maSubDictionaryFilePrefix).GetCStr();
+
+    outputDict = "assembledWithMA.xml";
+
+    if (this->\
+      AppendChildDictionary(inputDict,maSubDictionaryFileName\
+      , maSubDictionaryAppendingCommand, outputDict)
+      == MAF_ERROR)
+    {
+      return MAF_ERROR;
+    }  
+
+    inputDict = outputDict;
+  }
+
+  if (m_UseMicroCTSubdictionary == 1)
+  {
+    // build micro ct
+
+    mafString microCTSubDictionaryBuildingCommand = "micro_ct";
+
+    mafString microCTSubDictionaryFilePrefix = "lhpXMLMicroCTSourceSubdictionary_";
+    mafString microCTSubDictionaryFileName = this->GetXMLDictionaryFileName(microCTSubDictionaryFilePrefix).GetCStr();
+
+    outputDict = "assembledWithMicroCT.xml";
+
+    if (this->\
+      AppendChildDictionary(inputDict,microCTSubDictionaryFileName\
+      , microCTSubDictionaryBuildingCommand, outputDict)
+      == MAF_ERROR)
+    {
+      return MAF_ERROR;
+    }
+
+    inputDict = outputDict;
+  }
+
+  if (m_UseFASubdictionary == 1)
+  {
+    mafString faSubDictionaryFilePrefix = "lhpXMLFASourceSubdictionary_";
+    mafString faSubDictionaryFileName = this->GetXMLDictionaryFileName(faSubDictionaryFilePrefix).GetCStr();
+
+    mafString outputDict = "assembledWithFA.xml";
+    mafString s = "functional_anatomy";
+
+    int result = AppendChildDictionary(m_DictionaryToProcessFileName, \
+      faSubDictionaryFileName.GetCStr(), s, outputDict);
+
+    if (result == MAF_ERROR)
+    {
+      return MAF_ERROR;
+    } 
+
+    inputDict = outputDict;
+  }
+
+  generatedXMLDictionaryFileName = inputDict;
+  return MAF_OK;
 }

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.h,v $
 Language:  C++
-Date:      $Date: 2008-11-27 12:48:07 $
-Version:   $Revision: 1.11.2.7 $
+Date:      $Date: 2008-11-28 16:20:11 $
+Version:   $Revision: 1.11.2.8 $
 Authors:   Roberto Mucci , Stefano Perticoni 
 ==========================================================================
 Copyright (c) 2002/2007
@@ -89,16 +89,19 @@ protected:
   /** Propagate tags to other vmes choosed through a tree checkbox */
   void PropagateTagsToChoosedVMES();
 
-  /** Generate auto tags and manual tags list from XML lhdl dictionary*/
+  /** Generate auto tags and manual tags list from XML editor input dictionary*/
   int GeneratesTagsListsFromXMLDictionary();
 
+  /** Build the input XML dictionary for the editor */
+  int BuildXMLEditorInputDictionary(mafString &outputFileName);
+ 
   /* Base Cache creation directory*/
   bool CreateBaseCacheDirectories();
 
   /** This method creates on filesystem a cache with manual tag cvs file */
   bool CreateCache();
 
-  int AppendFADictionary();
+  int AppendChildDictionary(const char *sourceXMLDictionaryFileName, const char *d2aFN, const char *pythonString, const char *outputXMLFN);
 
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
 	virtual void OpStop(int result);
@@ -142,7 +145,7 @@ protected:
 private:
   mafString GetXMLDictionaryFileName(mafString dictionaryFileNamePrefix);
   void CreateGui();
-  int AssembleMasterWithSubdictionary();
+
   int m_SubdictionaryId;
   wxArrayString m_AutoTagsList;
   wxArrayString m_ManualTagsList;
@@ -171,5 +174,10 @@ private:
 
   mafString m_InputDictionaryFileName;
   mafString m_DictionaryToProcessFileName  ;
+
+  int m_UseDicomSubdictionary;
+  int m_UseFASubdictionary;
+  int m_UseMASubdictionary;
+  int m_UseMicroCTSubdictionary;
 };
 #endif
