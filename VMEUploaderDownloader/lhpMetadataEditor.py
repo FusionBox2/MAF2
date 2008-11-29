@@ -309,14 +309,24 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
         assert isinstance(xmlDictNode , minidom.Node)
        
         img = None
-        if xmlDictNode.hasChildNodes():
-            # GROUPING NODE
+        # render tag node as folder
+        if pi.GetValueType(xmlDictNode) == "tag": 
             msfTagValue = " "
             img = self.folderImageID
+        
+        # manual nodes
         elif self.unhandledPlusManualDict.has_key(msfTagName):
             msfTagValue = self.unhandledPlusManualDict[msfTagName]
             img = self.manualTagImageID
             self.TagsThatCanBeEditedDictionary[msfTagName] = ""
+            
+            # apply default value for boolean nodes
+            if pi.GetValueType(xmlDictNode) == "bool":
+
+               if msfTagValue == "enter a value":
+                  msfTagValue = str(pi.GetDefaultValue(xmlDictNode))
+#       
+        # factory filed node
         elif self.factoryFilledTagsDict.has_key(msfTagName):
             msfTagValue = self.factoryFilledTagsDict[msfTagName]
             img = self.factoryTagImageID
@@ -324,7 +334,8 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
             msfTagValue = str(msfTagName) + " NOT FOUND IN UNHPLUSMAN AND FACTORY FILLED!!!!!!! \
             CHECK FOR THIS STRANGE BEHAVIOR!!!!!"
             return
-                 
+        
+                  
         attrDict =  pi.GetAttributesDictionary(xmlDictNode)
         
         columnNames = pi.DictionaryColumnLabels.irange(pi.DictionaryColumnLabels.ValueType \
@@ -385,3 +396,4 @@ if __name__ == '__main__':
     import runLHPMetadataEditor
           
     runLHPMetadataEditor.main(['', os.path.basename(sys.argv[0])] + sys.argv[1:])
+
