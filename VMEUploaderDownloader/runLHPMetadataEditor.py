@@ -12,7 +12,7 @@
 # Author:       Robin Dunn
 #
 # Created:      6-March-2000
-# RCS-ID:       $Id: runLHPMetadataEditor.py,v 1.2.2.3 2008-12-01 14:11:01 ior01 Exp $
+# RCS-ID:       $Id: runLHPMetadataEditor.py,v 1.2.2.4 2008-12-01 16:36:25 ior01 Exp $
 # Copyright:    (c) 2000 by Total Control Software
 # Licence:      wxWindows license
 #----------------------------------------------------------------------------
@@ -79,6 +79,9 @@ class RunMetaDataEditor(wx.App, wx.lib.mixins.inspection.InspectionMixin):
         frame.Show(True)
         frame.Bind(wx.EVT_CLOSE, self.OnCloseFrame)
 
+        menuNavigate = wx.Menu()
+        menuBar.Append(menuNavigate, "&Navigate")
+        
         win = self.moduleToRun.execute(frame, frame, Log(),self.arg)
 
         
@@ -101,11 +104,8 @@ class RunMetaDataEditor(wx.App, wx.lib.mixins.inspection.InspectionMixin):
         
         # fill navigate tree
         if hasattr(self.window, "AvailableDictionaries"): 
-            ad = self.window.AvailableDictionaries
-                            
-            menuNavigate = wx.Menu()
-            menuBar.Append(menuNavigate, "&Navigate")
-        
+            ad = self.window.AvailableDictionaries                
+            
             if ad.has_key("Dicom"):
                 item = menuNavigate.Append(-1, "Dicom\tAlt-D", "Goto Dicom")
                 self.Bind(wx.EVT_MENU, self.OnDicom, item)
