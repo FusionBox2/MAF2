@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: psLoaderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-24 15:39:51 $
-  Version:   $Revision: 1.1.2.8 $
+  Date:      $Date: 2008-12-01 13:47:02 $
+  Version:   $Revision: 1.1.2.9 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -339,7 +339,7 @@ bool psLoaderApp::OnInit()
 	m_Logic->Plug(new mafOpExporterRAW("Raw"), "Images");
   m_Logic->Plug(new mafOpExporterBmp("Bmp"), "Images");
   m_Logic->Plug(new medOpExporterLandmark("Landmark"), "Motion Analysis");
-  m_Logic->Plug(new medOpExporterWrappedMeter("Wrapped Meter"), "Other");
+    // m_Logic->Plug(new medOpExporterWrappedMeter("Wrapped Meter"), "Other");
   m_Logic->Plug(new medOpExporterMeters("Meters"), "Other");
   m_Logic->Plug(new lhpOpExporterAnsysInputFile("Ansys Input File"),"Finite Element");
   //-------------------------------------------------------------
