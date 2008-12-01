@@ -5,6 +5,9 @@
 #-----------------------------------------------------------------------------
 
 from Debug import Debug
+from wxPython._misc import wxMessageBox
+from wxPython._core import wxCANCEL, wxYES
+from wxPython._windows import wxMessageDialog
 import os
 import csv
 import  wx
@@ -12,7 +15,9 @@ import  wx.gizmos   as  gizmos
 import time
 import lhpXMLDictionaryParser
 from xml.dom import minidom
-import lhpMetadataEditorTextEntryDialog#----------------------------------------------------------------------
+import lhpMetadataEditorTextEntryDialog
+
+Debug = 1
 
 class MetadataEditorPanel(wx.Panel):
     def __init__(self, parent, log, arg):
@@ -21,8 +26,18 @@ class MetadataEditorPanel(wx.Panel):
         self.TagsThatCanBeEditedDictionary = {}        
         self.InTreeButNotInUnhandledPlusManual = []
         self.TagsToBeSkippedFromTreeRendering = ["L0000"]
-        self.folderToBeSkippedFromTreeRendering = ["L0000_resource_service"]
-
+        self.FolderToBeSkippedFromTreeRendering = ["L0000_resource_service"]
+        self.ManualTagDefaultValue = "enter a value"
+        
+        self.DictionariesParentNodes = {\
+                  "L0000_resource_data_Source_MASource":"MA",\
+                  "L0000_resource_data_Source_DicomSource":"Dicom",\
+                  "L0000_resource_data_Source_MicroCTSource":"MicroCT",\
+                  "L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy":"FunctionalAnatomy"\
+                  }
+        
+        self.AvailableDictionaries = {}
+        
         curDir = os.getcwd()        
         if Debug:
             print " current directory is: " + curDir
@@ -161,8 +176,34 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
             if Debug:
                 print item
         
+    def OnMicroCT(self):
+        itemId = self.AvailableDictionaries["MicroCT"]
+        self.tree.SelectItem(itemId)
+        self.tree.EnsureVisible(itemId)
+    
+    def OnMA(self):
+        itemId = self.AvailableDictionaries["MA"]
+        self.tree.SelectItem(itemId)
+        self.tree.EnsureVisible(itemId)
+    
+    def OnFunctionalAnatomy(self):
+        itemId = self.AvailableDictionaries["FunctionalAnatomy"]
+        self.tree.SelectItem(itemId)
+        self.tree.EnsureVisible(itemId)
+        
+    def OnDicom(self):
+        itemId = self.AvailableDictionaries["Dicom"]
+        self.tree.SelectItem(itemId)
+        self.tree.EnsureVisible(itemId)
         
     def SaveOnExit(self):
+        
+        dlg = wx.MessageDialog(None, 'Do you want to save your changes?', 'Question', wx.YES_NO | wx.YES_DEFAULT | wx.ICON_QUESTION)
+        res = dlg.ShowModal()
+        print res
+        
+        if res == 5104:  # "NO"
+            return
         
         childId = None
         listValuesFromTree = []
@@ -282,19 +323,18 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
         msfTagName =  pi.GetVMETagArrayTagNameFromNode(xmlDictNode)  
         
         msfTagName = msfTagName.strip()
-        
+            
         tagsSkipList = self.TagsToBeSkippedFromTreeRendering
         
-        if  len(tagsSkipList) != 0 and tagsSkipList.count(msfTagName) == 1:
+        if  len(tagsSkipList) != 0 and msfTagName in tagsSkipList:
             tagsSkipList.remove(msfTagName)
             xmlDictNode = xmlDictNode.childNodes[0]
             msfTagName =  pi.GetVMETagArrayTagNameFromNode(xmlDictNode)  
             guiTreeNodeName = pi.GetNodeName(xmlDictNode)
-            
+                
+        foldersSkipList = self.FolderToBeSkippedFromTreeRendering
         
-        foldersSkipList = self.folderToBeSkippedFromTreeRendering
-        
-        if  len(foldersSkipList) != 0 and foldersSkipList.count(msfTagName) == 1:
+        if  len(foldersSkipList) != 0 and msfTagName in foldersSkipList:
             print  " removing: " + msfTagName
             foldersSkipList.remove(msfTagName)
             xmlDictNode = xmlDictNode.nextSibling
@@ -323,7 +363,7 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
             # apply default value for boolean nodes
             if pi.GetValueType(xmlDictNode) == "bool":
 
-               if msfTagValue == "enter a value":
+               if msfTagValue == self.ManualTagDefaultValue:
                   msfTagValue = str(pi.GetDefaultValue(xmlDictNode))
 #       
         # factory filed node
@@ -342,6 +382,10 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
         , pi.DictionaryColumnLabels.Notes)
          
         childId = self.tree.AppendItem(guiTreeParent, str(guiTreeNodeName),img)  
+        
+        if self.DictionariesParentNodes.has_key(msfTagName):
+            if xmlDictNode.hasChildNodes():
+                self.AvailableDictionaries[self.DictionariesParentNodes[msfTagName]] = childId
         
         if self.unhandledPlusManualDict.has_key(msfTagName):               
             self.TagsToBeSavedList.append([msfTagName, msfTagValue, childId])

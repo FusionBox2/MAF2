@@ -12,7 +12,7 @@
 # Author:       Robin Dunn
 #
 # Created:      6-March-2000
-# RCS-ID:       $Id: runLHPMetadataEditor.py,v 1.2.2.1 2008-11-27 16:33:21 ior01 Exp $
+# RCS-ID:       $Id: runLHPMetadataEditor.py,v 1.2.2.2 2008-12-01 13:31:19 ior01 Exp $
 # Copyright:    (c) 2000 by Total Control Software
 # Licence:      wxWindows license
 #----------------------------------------------------------------------------
@@ -68,9 +68,7 @@ class RunMetaDataEditor(wx.App, wx.lib.mixins.inspection.InspectionMixin):
         
         menuBar.Append(menu, "&File")
 
-        menuNavigate = wx.Menu()
-        menuBar.Append(menuNavigate, "&Navigate")
-
+        
         ns = {}
         ns['wx'] = wx
         ns['app'] = self
@@ -83,6 +81,7 @@ class RunMetaDataEditor(wx.App, wx.lib.mixins.inspection.InspectionMixin):
 
         win = self.moduleToRun.execute(frame, frame, Log(),self.arg)
 
+        
         # a window will be returned if the demo does not create
         # its own top-level window
         if win:
@@ -99,8 +98,35 @@ class RunMetaDataEditor(wx.App, wx.lib.mixins.inspection.InspectionMixin):
             frame.Destroy()
             return True
 
+        
+        # fill navigate tree
+        if hasattr(self.window, "AvailableDictionaries"): 
+            print len(self.window.AvailableDictionaries)
+            ad = self.window.AvailableDictionaries
+            # draw the dict menus
+                
+            menuNavigate = wx.Menu()
+            menuBar.Append(menuNavigate, "&Navigate")
+        
+            if ad.has_key("Dicom"):
+                item = menuNavigate.Append(-1, "Dicom\tAlt-D", "Goto Dicom")
+                self.Bind(wx.EVT_MENU, self.OnDicom, item)
+    
+            if ad.has_key("MicroCT"):
+                item = menuNavigate.Append(-1, "MicroCT\tAlt-M", "Goto MicroCT")
+                self.Bind(wx.EVT_MENU, self.OnMicroCT, item)
+            
+            if ad.has_key("MA"):
+                item = menuNavigate.Append(-1, "Motion Analysis\tAlt-A", "Goto Motion Analysis")
+                self.Bind(wx.EVT_MENU, self.OnMA, item)
+            
+            if ad.has_key("FunctionalAnatomy"):
+                item = menuNavigate.Append(-1, "FunctionalAnatomy\tAlt-F", "Goto FAOnto")
+                self.Bind(wx.EVT_MENU, self.OnFunctionalAnatomy, item)
+
         self.SetTopWindow(frame)
         self.frame = frame
+        
         #wx.Log_SetActiveTarget(wx.LogStderr())
         #wx.Log_SetTraceMask(wx.TraceMessages)
 
@@ -123,6 +149,25 @@ class RunMetaDataEditor(wx.App, wx.lib.mixins.inspection.InspectionMixin):
                     
         return True
 
+    def OnDicom(self, evt):
+        if hasattr(self.window, "OnDicom"):   
+            self.window.OnDicom()        
+        pass
+
+    def OnFunctionalAnatomy(self, evt):
+        if hasattr(self.window, "OnFunctionalAnatomy"):   
+            self.window.OnFunctionalAnatomy()        
+        pass
+
+    def OnMicroCT(self, evt):
+        if hasattr(self.window, "OnMicroCT"):   
+            self.window.OnMicroCT()        
+        pass
+    
+    def OnMA(self, evt):
+        if hasattr(self.window, "OnMA"):   
+            self.window.OnMA()        
+        pass
 
     def OnExitApp(self, evt):     
         if hasattr(self.window, "SaveOnExit"):   
