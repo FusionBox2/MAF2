@@ -17,8 +17,6 @@ import lhpXMLDictionaryParser
 from xml.dom import minidom
 import lhpMetadataEditorTextEntryDialog
 
-Debug = 1
-
 class MetadataEditorPanel(wx.Panel):
     def __init__(self, parent, log, arg):
         
@@ -200,7 +198,6 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
         
         dlg = wx.MessageDialog(None, 'Do you want to save your changes?', 'Question', wx.YES_NO | wx.YES_DEFAULT | wx.ICON_QUESTION)
         res = dlg.ShowModal()
-        print res
         
         if res == 5104:  # "NO"
             return
