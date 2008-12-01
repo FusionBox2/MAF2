@@ -12,7 +12,7 @@
 # Author:       Robin Dunn
 #
 # Created:      6-March-2000
-# RCS-ID:       $Id: runLHPMetadataEditor.py,v 1.2.2.4 2008-12-01 16:36:25 ior01 Exp $
+# RCS-ID:       $Id: runLHPMetadataEditor.py,v 1.2.2.5 2008-12-01 17:10:07 ior01 Exp $
 # Copyright:    (c) 2000 by Total Control Software
 # Licence:      wxWindows license
 #----------------------------------------------------------------------------
@@ -119,7 +119,7 @@ class RunMetaDataEditor(wx.App, wx.lib.mixins.inspection.InspectionMixin):
                 self.Bind(wx.EVT_MENU, self.OnMA, item)
             
             if ad.has_key("FunctionalAnatomy"):
-                item = menuNavigate.Append(-1, "FunctionalAnatomy\tAlt-F", "Goto FAOnto")
+                item = menuNavigate.Append(-1, "FunctionalAnatomy\tAlt-O", "Goto FAOnto")
                 self.Bind(wx.EVT_MENU, self.OnFunctionalAnatomy, item)
 
         self.SetTopWindow(frame)
@@ -167,17 +167,14 @@ class RunMetaDataEditor(wx.App, wx.lib.mixins.inspection.InspectionMixin):
             self.window.OnMA()        
         pass
 
-    def OnExitApp(self, evt):     
-        if hasattr(self.window, "SaveOnExit"):   
-            self.window.SaveOnExit()
-        
+    def OnExitApp(self, evt):             
         self.frame.Close(True)
 
 
     def OnCloseFrame(self, evt):
         if hasattr(self.window, "SaveOnExit"):   
-            self.window.SaveOnExit()
-        
+           self.window.SaveOnExit()
+
         if hasattr(self, "window") and hasattr(self.window, "ShutdownDemo"):
             self.window.ShutdownDemo()
         evt.Skip()

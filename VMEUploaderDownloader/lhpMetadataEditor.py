@@ -20,6 +20,8 @@ import lhpMetadataEditorTextEntryDialog
 class MetadataEditorPanel(wx.Panel):
     def __init__(self, parent, log, arg):
         
+        busy = wx.BusyInfo("One moment please, populating gui..")
+        
         self.TagsToBeSavedList = []
         self.TagsThatCanBeEditedDictionary = {}        
         self.InTreeButNotInUnhandledPlusManual = []
@@ -90,7 +92,7 @@ class MetadataEditorPanel(wx.Panel):
         # load xml dictionary (already assembled if composed)
         self.inputXMLDictionaryFileName = os.getcwd() + r'\\' + str(arg[1]) # to be used to save on exit    
  
-        time.sleep(5)
+        #time.sleep(5)
         assert(os.path.exists(self.inputXMLDictionaryFileName))
         
         self.lhpXMLDictionaryParserInstance = lhpXMLDictionaryParser.lhpXMLDictionaryParser()
