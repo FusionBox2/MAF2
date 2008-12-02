@@ -41,7 +41,6 @@ class lhpAuthenticationControlTest(unittest.TestCase):
             password = '2bf5ZM'
             print "trying to authenticate user: " + username + " with password: " + password 
        
-        
         lhpAuthenticationControl.run(username, password)
                 
 if __name__ == '__main__':
