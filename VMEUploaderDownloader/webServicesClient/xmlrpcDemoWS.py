@@ -278,6 +278,9 @@ class xmlrpc_demoWS:
     def setServer(self, serverURL):
         self.ServerURL = serverURL  
     
+    def setProxy(self, proxyUrl, proxyPort):
+        self.ProxyURL = proxyUrl
+        self.ProxyPort = proxyPort
         
     def run(self, command, filename='', title='', description=''):
         """"""
