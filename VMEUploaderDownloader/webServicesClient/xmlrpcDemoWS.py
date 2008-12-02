@@ -25,7 +25,6 @@ class xmlrpc_demoWS:
         self.Password = ''
         self.ServerURL = ''
 
-
     def post_multipart(self, bod='search', url='', username='', password='', **kw):
         """
         Return the server's response page.
@@ -167,6 +166,16 @@ class xmlrpc_demoWS:
        </params>
      </methodCall>'''
 
+        self.authService = \
+    '''<?xml version="1.0"?>
+     <methodCall>
+      <methodName>authService</methodName>
+       <params>
+       <param>
+       </param>
+       </params>
+     </methodCall>'''
+
         wh_file = ''
 
         if bod == 'xmlupload':
@@ -191,6 +200,8 @@ class xmlrpc_demoWS:
             body = self.getTitle
         elif bod == 'createresource':
             body = self.createResource
+        elif bod == 'authservice':
+            body = self.authService
 
         if Debug: print "++++++\n" + body + "\n"
 
@@ -381,6 +392,14 @@ class xmlrpc_demoWS:
             args['filename'] = ''
             args['download'] = ''
             args['listitems'] = ''
+        elif command == 'authservice':
+            args['id'] = ''
+            args['title'] = ''
+            args['description'] = ''
+            args['upload'] = ''
+            args['filename'] = ''
+            args['download'] = ''
+            args['listitems'] = ''
         else:
             if Debug: print 'Error: command not found\n'
             sys.exit(1)
@@ -400,6 +419,8 @@ listBasket - list user's basket items
 xmlread -
 xmledit -
 gettitle -
+createresource -
+authservice - 
 ''' % sys.argv[0]
 
     if len(sys.argv) not in (2,3):
@@ -416,45 +437,4 @@ gettitle -
     ws = xmlrpc_demoWS()
     if sys.argv[1] in ('xmlread','xmledit','gettitle'):
         ws.setServer(ws.ServerURL + filename.split(',')[0])
-    if Debug: print ws.run(command, filename)
-
-#    args = {}
-#
-#    # username and password of a test user
-#    username = 'pippo'
-#    password = 'pluto'
-#
-#    #url = 'http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository'
-#    url = 'http://devel.fec.cineca.it:12680/town/Members/portal_admin/test-lhp2'
-#
-#    filename = sys.argv[2]
-#
-#    if sys.argv[1] == 'xmlupload':
-#        args['download'] = ''
-#        f = file(filename,'rb')
-#        args['upload'] = f.read()
-#        args['id'] = f.name
-#        args['title'] = f.name
-#        args['description'] = f.name
-#        args['filename'] = ''
-#        f.close()
-#    elif sys.argv[1] == 'xmldownload':
-#        args['id'] = ''
-#        args['title'] = ''
-#        args['description'] = ''
-#        args['upload'] = ''
-#        args['filename'] = ''
-#        args['download'] = filename
-#    elif sys.argv[1] == 'delete':
-#        args['id'] = ''
-#        args['title'] = ''
-#        args['description'] = ''
-#        args['upload'] = ''
-#        args['filename'] = filename
-#        args['download'] = ''
-#    else:
-#        if Debug: print 'Error :\n' + usage_msg
-#        sys.exit(1)
-#
-#    ws = xmlrpc_demoWS(**args)
-#    if Debug: print ws.post_multipart(sys.argv[1], url, username, password)
+    print ws.run(command, filename)
