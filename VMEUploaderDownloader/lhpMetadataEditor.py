@@ -3,11 +3,12 @@
 # code is changing very fast so don't rely on it :P
 # author: Stefano Perticoni
 #-----------------------------------------------------------------------------
-
+from wx.lib.wordwrap import wordwrap
 from Debug import Debug
 from wxPython._misc import wxMessageBox
 from wxPython._core import wxCANCEL, wxYES
 from wxPython._windows import wxMessageDialog
+from wx.lib.wordwrap import wordwrap
 import os
 import csv
 import  wx
@@ -276,9 +277,11 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
        
         elif self.tree.GetItemImage(evt.GetItem()) == self.factoryTagImageID:
             
-            dlg = wx.MessageDialog(self,  'You are not allowed to edit me, I`m factory filled :D',
-                               'Warning',
-                               wx.OK | wx.ICON_WARNING
+            
+            dlg = wx.MessageDialog(self,  wordwrap(selectedTagValue\
+                               ,350, wx.ClientDC(self)),\
+                               'Factory tag',
+                               wx.OK | wx.ICON_ASTERISK
                                #wx.YES_NO | wx.NO_DEFAULT | wx.CANCEL | wx.ICON_INFORMATION
                                )
             dlg.ShowModal()
