@@ -198,12 +198,6 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
         
     def SaveOnExit(self):
         
-        dlg = wx.MessageDialog(None, 'Do you want to save your changes?', 'Question', wx.YES_NO | wx.YES_DEFAULT | wx.ICON_QUESTION)
-        res = dlg.ShowModal()
-        
-        if res == 5104:  # "NO"
-            return
-        
         childId = None
         listValuesFromTree = []
         for tag in self.TagsToBeSavedList:

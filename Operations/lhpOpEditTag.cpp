@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-28 16:20:11 $
-Version:   $Revision: 1.26.2.18 $
+Date:      $Date: 2008-12-02 10:15:59 $
+Version:   $Revision: 1.26.2.19 $
 Authors:   Roberto Mucci , Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -408,28 +408,43 @@ int lhpOpEditTag::EditTags()
   }
 
   if (m_DebugMode)
-    mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
+    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
     command2execute.c_str(), pid);
 
-  ImportMSF();
-  mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
+  int save = wxMessageBox(wxString::Format("Do you want to save your changes?"),\
+    "Save changes", wxYES | wxNO | wxCENTRE | wxICON_QUESTION);
 
-  // show dialog for tag propagation...
-  int propagate = wxMessageBox(wxString::Format("Propagate edited tags to other VMEs?"),\
-  "Propagate Tags", wxYES | wxNO | wxCENTRE | wxICON_QUESTION);
-  
-  if (propagate == wxYES)
+  if (save == wxYES)
   {
-    PropagateTagsToChoosedVMES();
+    ImportMSF();
+    mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
+
+    // show dialog for tag propagation...
+    int propagate = wxMessageBox(wxString::Format("Propagate edited tags to other VMEs?"),\
+      "Propagate Tags", wxYES | wxNO | wxCENTRE | wxICON_QUESTION);
+
+    if (propagate == wxYES)
+    {
+      PropagateTagsToChoosedVMES();
+    } 
+    else if (propagate == wxNO)
+    {
+      std::ostringstream stringStream;
+      stringStream << "Skipping propagation..."  << std::endl;
+      if (m_DebugMode)
+        mafLogMessage(stringStream.str().c_str());
+    }
   } 
-  else if (propagate == wxNO)
+  else if (save == wxNO)
   {
     std::ostringstream stringStream;
-    stringStream << "Skipping propagation..."  << std::endl;
+    stringStream << "Skipping saving..."  << std::endl;
     if (m_DebugMode)
       mafLogMessage(stringStream.str().c_str());
   }
+
   return MAF_OK;
+  
 }
 
 //-------------------------------------------------------------------
