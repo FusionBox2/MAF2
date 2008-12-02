@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-14 17:11:46 $
-  Version:   $Revision: 1.71.2.5 $
+  Date:      $Date: 2008-12-02 12:11:06 $
+  Version:   $Revision: 1.71.2.6 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -146,6 +146,11 @@
 
 #include "medOpImporterDicomXA.h"
 
+#include "medOpComputeWrapping.h"
+#include "medVMEComputeWrapping.h"
+#include "medPipeComputeWrapping.h"
+
+
 //temporary for testing
 #include "mafViewSingleSliceCompound.h"
 
@@ -282,6 +287,9 @@ bool lhpBuilderApp::OnInit()
   mafPlugNode<mafVMEHelAxis>("VME representing helical axis");
   mafPlugNode<mafVMEVolumeLarge>("VME storing large volume datasets with one scalar component");
 
+mafPlugNode<medVMEComputeWrapping>("Generalized another VME Meter with wrapping geometry");
+mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
+
 #ifdef MAF_USE_ITK
   mafPlugNode<lhpVMESurfaceScalarVarying>("VME representing surface with attached time varying mafVMEScalar");
 #endif
@@ -386,6 +394,7 @@ bool lhpBuilderApp::OnInit()
   m_Logic->Plug(new mmoAFSys("AFRefsys"),"Create/Derive");
   m_Logic->Plug(new mmoAverageLM("Average landmark"),"Create/Derive");
   m_Logic->Plug(new mmoStickPalpation("Wand palpated landmark"),"Create/Derive");
+  m_Logic->Plug(new medOpComputeWrapping("Compute Wrapping"),"Create/Derive");
   m_Logic->Plug(new mmoHelAxis("Helical axis"),"Create/Derive");
   m_Logic->Plug(new mmoTimeReduce("Time reduce"),"Modify");
   m_Logic->Plug(new mmoBuildHierarchy("Make hierarchical"),"Modify/Fuse");
