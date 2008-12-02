@@ -7,6 +7,8 @@ class AuthServiceTest(unittest.TestCase):
     def test(self):
 
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
+        ws.setServer("http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/")
+        ws.setCredentials("lhpparabuild","2bf5ZM")
 
         res = "<?xml version='1.0'?>\n<methodResponse>\n<params>\n<param>\n<value><boolean>1</boolean></value>\n</param>\n</params>\n</methodResponse>\n"
 
