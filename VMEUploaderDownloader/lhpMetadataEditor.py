@@ -3,11 +3,7 @@
 # code is changing very fast so don't rely on it :P
 # author: Stefano Perticoni
 #-----------------------------------------------------------------------------
-from wx.lib.wordwrap import wordwrap
 from Debug import Debug
-from wxPython._misc import wxMessageBox
-from wxPython._core import wxCANCEL, wxYES
-from wxPython._windows import wxMessageDialog
 from wx.lib.wordwrap import wordwrap
 import os
 import csv
