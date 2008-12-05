@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpKeyczarIntegrationTest.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-17 13:07:45 $
-  Version:   $Revision: 1.1.2.3 $
+  Date:      $Date: 2008-12-05 14:58:57 $
+  Version:   $Revision: 1.1.2.4 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -139,6 +139,8 @@ int lhpOpKeyczarIntegrationTest::Execute()
     command2execute.c_str(), pid);
 
   wxSetWorkingDirectory(oldDir);
+  int result = OP_RUN_OK;
+  mafEventMacro(mafEvent(this,result));
   
   return MAF_OK;
 }
@@ -155,8 +157,6 @@ void lhpOpKeyczarIntegrationTest::CreateGui()
 {
   mafString wildcard = "inp files (*.inp)|*.inp|All Files (*.*)|*.*";
 
-  int result = OP_RUN_OK;
-  mafEventMacro(mafEvent(this,result));
 }
 //----------------------------------------------------------------------------
 void lhpOpKeyczarIntegrationTest::OnEvent(mafEventBase *maf_event) 
