@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: psLoaderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-12-01 13:47:02 $
-  Version:   $Revision: 1.1.2.9 $
+  Date:      $Date: 2008-12-05 10:30:05 $
+  Version:   $Revision: 1.1.2.10 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -308,7 +308,7 @@ bool psLoaderApp::OnInit()
   m_Logic->Plug(new mafOpImporterVTK("VTK"),"Other");
   m_Logic->Plug(new mafOpImporterMSF("MSF"),"Other");
   m_Logic->Plug(new mafOpImporterMSF1x("MAF 1.x"),"Other");
-  m_Logic->Plug(new mafOpImporterBBF("BFF (VolumeLarge)"),"Other");
+    // m_Logic->Plug(new mafOpImporterBBF("BFF (VolumeLarge)"),"Other");
   m_Logic->Plug(new mafOpImporterRAWVolume_BES("Raw Volume"),"Images");
     // m_Logic->Plug(new mafOpImporterRAWVolume("Raw Volume Legacy"),"Images");
   m_Logic->Plug(new medOpImporterRAWImages_BES("Raw Images"),"Images");
@@ -340,7 +340,7 @@ bool psLoaderApp::OnInit()
   m_Logic->Plug(new mafOpExporterBmp("Bmp"), "Images");
   m_Logic->Plug(new medOpExporterLandmark("Landmark"), "Motion Analysis");
     // m_Logic->Plug(new medOpExporterWrappedMeter("Wrapped Meter"), "Other");
-  m_Logic->Plug(new medOpExporterMeters("Meters"), "Other");
+    // m_Logic->Plug(new medOpExporterMeters("Meters"), "Other");
   m_Logic->Plug(new lhpOpExporterAnsysInputFile("Ansys Input File"),"Finite Element");
   //-------------------------------------------------------------
 
@@ -355,11 +355,11 @@ bool psLoaderApp::OnInit()
 	m_Logic->Plug(new mafOpAddLandmark("Add Landmark \tCtrl+A"),"Create/New");
   m_Logic->Plug(new medOpFreezeVME("Freeze VME"),"Create/Derive");
 //  m_Logic->Plug(new medOpRegisterClusters("Register Landmark Cloud"),"Modify/Fuse");
-  m_Logic->Plug(new mafOpCreateMeter("Distance Meter"),"Create/Derive");
+    // m_Logic->Plug(new mafOpCreateMeter("Distance Meter"),"Create/Derive");
     // m_Logic->Plug(new medOpCreateWrappedMeter("Wrapped Meter"),"Create/Derive");
 // // m_Logic->Plug(new mmoEditMetadata("Metadata Editor"),"Modify");
 //	m_Logic->Plug(new mafOpFilterSurface("Filter Surface"),"Modify");
-	m_Logic->Plug(new mafOpExtractIsosurface("Extract Isosurface"),"Create/Derive");
+	  // m_Logic->Plug(new mafOpExtractIsosurface("Extract Isosurface"),"Create/Derive");
 //  m_Logic->Plug(new medOpSurfaceMirror("Surface Mirror"),"Modify");
 //	m_Logic->Plug(new mafOpCrop("Crop Volume"),"Modify");
 //	m_Logic->Plug(new medOpVolumeResample("Volume Resample"),"Modify");
@@ -379,14 +379,14 @@ bool psLoaderApp::OnInit()
 //  m_Logic->Plug(new lhpOpBonemat("Bonemat"),"Modify");
 //  m_Logic->Plug(new medOpIterativeRegistration("Iterative Registration"),"Modify/Fuse");
   m_Logic->Plug(new mafOpOpenExternalFile("Open with external program"),"Manage"); 
-  m_Logic->Plug(new medOpCreateLabeledVolume("Labeled Volume"),"Create/Derive");
+    // m_Logic->Plug(new medOpCreateLabeledVolume("Labeled Volume"),"Create/Derive");
 //  m_Logic->Plug(new lhpOpUploadVME("Upload VME"),"Manage");
   m_Logic->Plug(new lhpOpUploadMultiVME("Upload VME"),"Manage");
   m_Logic->Plug(new lhpOpEditTag("Edit Tag VME"),"Manage");
   m_Logic->Plug(new lhpOpDownloadVME("Download VME"),"Manage");
 //  
   m_Logic->Plug(new mafOpDecomposeTimeVarVME("Decompose Time"),"Create/Derive");
-  m_Logic->Plug(new mafOpLabelExtractor("Extract Label"),"Create/Derive");
+    // m_Logic->Plug(new mafOpLabelExtractor("Extract Label"),"Create/Derive");
 //  m_Logic->Plug(new lhpOpMultiscaleExplore("Multiscale Viewer"),"Manage");
 //  m_Logic->Plug(new medOpMML("Register from template"),"Modify");
 //  m_Logic->Plug(new lhpOpKeyczarIntegrationTest("Security Libraries Integration"),"Test");
@@ -403,10 +403,10 @@ bool psLoaderApp::OnInit()
 
 
   // View DRR
-  mafViewVTK *vdrr = new mafViewVTK("DRR");
-  vdrr->PlugVisualPipe("mafVMEVolumeGray","medPipeVolumeDRR",MUTEX);
-  vdrr->PlugVisualPipe("mafVMEVolumeLarge","medPipeVolumeDRR",MUTEX);
-  m_Logic->Plug(vdrr);
+  //mafViewVTK *vdrr = new mafViewVTK("DRR");
+  //vdrr->PlugVisualPipe("mafVMEVolumeGray","medPipeVolumeDRR",MUTEX);
+  //vdrr->PlugVisualPipe("mafVMEVolumeLarge","medPipeVolumeDRR",MUTEX);
+  //m_Logic->Plug(vdrr);
 
   // View Analog graph
   mafViewVTK *graph = new mafViewVTK("Analog Graph", CAMERA_PERSPECTIVE, false);
@@ -414,9 +414,9 @@ bool psLoaderApp::OnInit()
   m_Logic->Plug(graph);
 
   //View Global Slice
-  mafViewGlobalSliceCompound *GlobalSlice = new mafViewGlobalSliceCompound("Global Slice");
-  GlobalSlice->PackageView();
-  m_Logic->Plug(GlobalSlice);
+  //mafViewGlobalSliceCompound *GlobalSlice = new mafViewGlobalSliceCompound("Global Slice");
+  //GlobalSlice->PackageView();
+  //m_Logic->Plug(GlobalSlice);
 
   mafViewVTK *viso = new mafViewVTK("Isosurface");
   viso->PlugVisualPipe("mafVMEVolumeGray", "mafPipeIsosurface",MUTEX);
@@ -437,8 +437,8 @@ bool psLoaderApp::OnInit()
   vsurface->PlugVisualPipe("mafVMELandmark", "medPipeTrajectories");
 	m_Logic->Plug(vsurface);
 
-  mafViewIntGraph *vgraph = new mafViewIntGraph("Biomechanical graph");
-  m_Logic->Plug(vgraph);
+  //mafViewIntGraph *vgraph = new mafViewIntGraph("Biomechanical graph");
+  //m_Logic->Plug(vgraph);
 
  /* medViewSlicer *slicerView = new medViewSlicer("Slicer");
   slicerView->PackageView();

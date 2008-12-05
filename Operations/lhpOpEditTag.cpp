@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-12-02 10:15:59 $
-Version:   $Revision: 1.26.2.19 $
+Date:      $Date: 2008-12-05 10:30:31 $
+Version:   $Revision: 1.26.2.20 $
 Authors:   Roberto Mucci , Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -65,6 +65,7 @@ MafMedical is partially based on OpenMAF.
 
 #include "lhpFactoryTagHandler.h"
 #include "vtkPolyData.h"
+#include "mafTagArray.h"
 
 #include <list>
 #include <string>
@@ -188,6 +189,8 @@ bool lhpOpEditTag::Accept(mafNode* vme)
 void lhpOpEditTag::OpRun()
 //----------------------------------------------------------------------------
 { 
+  LoadUsedDictionariesFromTags();
+
   // get python interpreters
   mafEvent eventGetPythonExe;
   eventGetPythonExe.SetSender(this);
@@ -275,6 +278,7 @@ void lhpOpEditTag::OnEvent(mafEventBase *maf_event)
 
     case wxOK:
       {
+        StoreUsedDictionariesToTags();
         this->OpStop(OP_RUN_OK);
         return;
       }
@@ -1220,4 +1224,42 @@ int lhpOpEditTag::BuildXMLEditorInputDictionary( mafString &generatedXMLDictiona
 
   generatedXMLDictionaryFileName = inputDict;
   return MAF_OK;
+}
+
+void lhpOpEditTag::LoadUsedDictionariesFromTags()
+{
+  mafTagItem tag;
+
+  m_Input->GetTagArray()->GetTag("USE_DICOM_SUBDICTIONARY", tag);
+  mafString value;
+  value = tag.GetValue();
+  m_UseDicomSubdictionary = value == "1" ? 1 : 0 ;
+
+  m_Input->GetTagArray()->GetTag("USE_FA_SUBDICTIONARY", tag);
+  value = tag.GetValue();
+  m_UseFASubdictionary = value == "1" ? 1 : 0 ;
+
+  m_Input->GetTagArray()->GetTag("USE_MA_SUBDICTIONARY", tag);
+  value = tag.GetValue();
+  m_UseMASubdictionary = value == "1" ? 1 : 0 ;
+  
+  m_Input->GetTagArray()->GetTag("USE_MICROCT_SUBDICTIONARY", tag);
+  value = tag.GetValue();
+  m_UseMicroCTSubdictionary = value == "1" ? 1 : 0 ;
+}
+
+void lhpOpEditTag::StoreUsedDictionariesToTags()
+{
+  mafString value;
+  value = m_UseDicomSubdictionary  == 1 ? "1" : "0" ;
+  m_Input->GetTagArray()->SetTag("USE_DICOM_SUBDICTIONARY", value.GetCStr());
+  
+  value = m_UseFASubdictionary  == 1 ? "1" : "0" ;
+  m_Input->GetTagArray()->SetTag("USE_FA_SUBDICTIONARY",value.GetCStr());
+
+  value = m_UseMASubdictionary  == 1 ? "1" : "0" ;
+  m_Input->GetTagArray()->SetTag("USE_MA_SUBDICTIONARY",value.GetCStr());
+
+  value = m_UseMicroCTSubdictionary  == 1 ? "1" : "0" ;
+  m_Input->GetTagArray()->SetTag("USE_MICROCT_SUBDICTIONARY",value.GetCStr());
 }

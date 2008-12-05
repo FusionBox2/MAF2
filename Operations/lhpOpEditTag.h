@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.h,v $
 Language:  C++
-Date:      $Date: 2008-11-28 16:20:11 $
-Version:   $Revision: 1.11.2.8 $
+Date:      $Date: 2008-12-05 10:30:31 $
+Version:   $Revision: 1.11.2.9 $
 Authors:   Roberto Mucci , Stefano Perticoni 
 ==========================================================================
 Copyright (c) 2002/2007
@@ -75,6 +75,7 @@ public:
 	/** Builds operation's interface by calling CreateOpDialog() method. */
 	void OpRun();
 
+  void LoadUsedDictionariesFromTags();
 	/** Execute the operation. */
 	virtual void OpDo();
 
@@ -145,7 +146,7 @@ protected:
 private:
   mafString GetXMLDictionaryFileName(mafString dictionaryFileNamePrefix);
   void CreateGui();
-
+  void StoreUsedDictionariesToTags();
   int m_SubdictionaryId;
   wxArrayString m_AutoTagsList;
   wxArrayString m_ManualTagsList;
