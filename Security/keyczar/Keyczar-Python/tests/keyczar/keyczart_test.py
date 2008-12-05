@@ -22,9 +22,14 @@ Testcases to test behavior of Keyczart.
 
 import unittest
 
-from keyczar import readers
-from keyczar import keyczart
-from keyczar import keyinfo
+import keyczar
+import readers
+import keyczart
+import keyinfo
+
+#from keyczar import readers
+#from keyczar import keyczart
+#from keyczar import keyinfo
 
 class KeyczartTest(unittest.TestCase):
   

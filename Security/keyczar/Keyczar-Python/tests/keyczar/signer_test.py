@@ -1,3 +1,4 @@
+
 #!/usr/bin/python2.4
 #
 # Copyright 2008 Google Inc.
@@ -23,9 +24,14 @@ Testcases to test behavior of Keyczar Signers.
 import os
 import unittest
 
-from keyczar import errors
-from keyczar import keyczar
-from keyczar import util
+import keyczar
+import util
+import readers
+import errors
+#
+#from keyczar import errors
+#from keyczar import keyczar
+#from keyczar import util
 
 TEST_DATA = os.path.realpath(os.path.join(os.getcwd(), "..", "..", "testdata"))
 

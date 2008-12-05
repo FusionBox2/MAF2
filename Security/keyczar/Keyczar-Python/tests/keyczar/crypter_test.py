@@ -22,11 +22,15 @@ Testcases to test behavior of Keyczar Crypters.
 
 import os
 import unittest
+import keyczar
+import util
+import readers
+import errors
 
-from keyczar import errors
-from keyczar import keyczar
-from keyczar import readers
-from keyczar import util
+#from keyczar import errors
+#from keyczar import keyczar
+#from keyczar import readers
+#from keyczar import util
 
 TEST_DATA = os.path.realpath(os.path.join(os.getcwd(), "..", "..", "testdata"))
 
