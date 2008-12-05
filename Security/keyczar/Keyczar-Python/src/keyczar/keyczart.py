@@ -37,6 +37,8 @@ KEYSETS = [('aes', keyinfo.DECRYPT_AND_ENCRYPT, None, None),
            ('rsa-sign', keyinfo.SIGN_AND_VERIFY, 'rsa', None),
            ('dsa', keyinfo.SIGN_AND_VERIFY, 'dsa', None)]
 
+mock = None  # mock reader used for testing purposes, disabled when set to None
+
 class _Name(object):
   
   def __init__(self, name):
@@ -88,8 +90,9 @@ def GetFlag(flag):
     raise errors.KeyczarError("Unknown flag")
 
 def Create(loc, name, purpose, asymmetric=None):
-  if loc is None:
+  if mock is None and loc is None:  # not testing
     raise errors.KeyczarError("Location missing")
+  
   kmd = None
   if purpose == keyinfo.SIGN_AND_VERIFY:
     if asymmetric is None:
@@ -105,10 +108,14 @@ def Create(loc, name, purpose, asymmetric=None):
       kmd = keydata.KeyMetadata(name, purpose, keyinfo.RSA_PRIV)
   else:
     raise errors.KeyczarError("Missing or unsupported purpose")
-  name = os.path.join(loc, "meta")
-  if os.path.exists(name):
-    raise errors.KeyczarError("File already exists")
-  util.WriteFile(str(kmd), name)
+  
+  if mock is not None:  # just testing, update mock object
+    mock.kmd = kmd
+  else:
+    fname = os.path.join(loc, "meta")
+    if os.path.exists(fname):
+      raise errors.KeyczarError("File already exists")
+    util.WriteFile(str(kmd), fname)
 
 def AddKey(loc, status, crypter=None, size=None):
   czar = CreateGenericKeyczar(loc, crypter)
@@ -118,10 +125,10 @@ def AddKey(loc, status, crypter=None, size=None):
   UpdateGenericKeyczar(czar, loc, crypter)
 
 def PubKey(loc, dest):
-  if dest is None:
+  if mock is None and dest is None:  # not required when testing
     raise errors.KeyczarError("Must define destination")
   czar = CreateGenericKeyczar(loc)
-  czar.PublicKeyExport(dest)
+  czar.PublicKeyExport(dest, mock)  # supply mock for testing if enabled
 
 def Promote(loc, num):
   czar = CreateGenericKeyczar(loc)
@@ -143,7 +150,10 @@ def Revoke(loc, num):
     raise errors.KeyczarError("Missing version")
   czar.Revoke(num)
   UpdateGenericKeyczar(czar, loc)
-  os.remove(os.path.join(loc, str(num)))  # remove key file
+  if mock is not None:  # testing, update mock
+    mock.RemoveKey(num)
+  else:
+    os.remove(os.path.join(loc, str(num)))  # remove key file
 
 def GenKeySet(loc):
   print "Generating private key sets..."
@@ -224,6 +234,8 @@ Optional flags are in [brackets]. The notation (a|b|c) means "a", "b", and "c"
 are the valid choices'''
 
 def CreateGenericKeyczar(loc, crypter=None):
+  if mock is not None:
+    return keyczar.GenericKeyczar(mock)
   if loc is None:
     raise errors.KeyczarError("Need location")
   else:
@@ -233,13 +245,18 @@ def CreateGenericKeyczar(loc, crypter=None):
     return keyczar.GenericKeyczar(reader)
 
 def UpdateGenericKeyczar(czar, loc, encrypter=None):
-  czar.Write(loc, encrypter)
+  if mock is not None:  # update key data
+    mock.kmd = czar.metadata
+    for v in czar.versions:
+      mock.SetKey(v.version_number, czar.GetKey(v))
+  else:
+    czar.Write(loc, encrypter)
 
 def main(argv):
   if len(argv) == 0:
     Usage()
   else:
-    cmd = GetCommand(argv[0])
+    cmd = GetCommand(argv[0])   
     flags = {}
     for arg in argv:
       if arg.startswith("--"):
@@ -248,30 +265,40 @@ def main(argv):
           [flag, val] = arg.split("=")
           flags[GetFlag(flag)] = val
         except ValueError:
+          print "Flags incorrectly formatted"
           Usage()
+    
+    try:
+      version = int(flags.get(VERSION, -1))
+      size = int(flags.get(SIZE, -1))
+      # -1 if non-existent
+    except ValueError:
+      print "Size and version flags require an integer"
+      Usage()
+    
+    loc = flags.get(LOCATION)  # all commands need location
+    
     if cmd == CREATE:
       purpose = {'crypt': keyinfo.DECRYPT_AND_ENCRYPT,
                  'sign': keyinfo.SIGN_AND_VERIFY}.get(flags.get(PURPOSE))
-      Create(flags.get(LOCATION), flags.get(NAME, 'Test'), purpose, 
-             flags.get(ASYMMETRIC))
+      Create(loc, flags.get(NAME, 'Test'), purpose, flags.get(ASYMMETRIC))
     elif cmd == ADDKEY:
-      if flags.has_key(CRYPTER):
+      status = keyinfo.GetStatus(flags.get(STATUS, 'ACTIVE').upper())
+      if CRYPTER in flags:
         crypter = keyczar.Encrypter.Read(flags[CRYPTER])
       else:
         crypter = None
-      AddKey(flags.get(LOCATION), 
-             keyinfo.GetStatus(flags.get(STATUS, 'ACTIVE')), 
-             int(flags.get(SIZE, -1)), crypter)
+      AddKey(loc, status, crypter, size)
     elif cmd == PUBKEY:
-      PubKey(flags.get(LOCATION), flags.get(DESTINATION))
+      PubKey(loc, flags.get(DESTINATION))
     elif cmd == PROMOTE:
-      Promote(flags.get(LOCATION), int(flags.get(VERSION, -1)))
+      Promote(loc, version)
     elif cmd == DEMOTE:
-      Demote(flags.get(LOCATION), int(flags.get(VERSION, -1)))
+      Demote(loc, version)
     elif cmd == REVOKE:
-      Revoke(flags.get(LOCATION), int(flags.get(VERSION, -1)))
+      Revoke(loc, version)
     elif cmd == GENKEY:
-      GenKeySet(flags.get(LOCATION))
+      GenKeySet(loc)
     else:
       Usage()
 
