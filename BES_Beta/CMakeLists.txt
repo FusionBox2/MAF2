@@ -71,6 +71,10 @@ SET(PROJECT_SRCS
 	Medical/VME/medVMEMuscleWrapper.h
 	Medical/Operations/medOpCreateMuscleWrapper.cpp	
 	Medical/Operations/medOpCreateMuscleWrapper.h
+	Medical/vtkMAF/vtkMAFMuscleDecomposition.cpp	
+	Medical/vtkMAF/vtkMAFMuscleDecomposition.h	
+	Medical/vtkMAF/vtkMAFMuscleFibers.cpp	
+	Medical/vtkMAF/vtkMAFMuscleFibers.h	
 )
 
 # List libraries that are needed by this project.

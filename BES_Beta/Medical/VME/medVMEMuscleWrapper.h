@@ -2,15 +2,15 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: medVMEMuscleWrapper.h,v $
   Language:  C++
-  Date:      $Date: 2008-11-14 17:10:09 $
-  Version:   $Revision: 1.1.2.1 $
+  Date:      $Date: 2008-12-08 13:07:52 $
+  Version:   $Revision: 1.1.2.2 $
   Authors:   Josef Kohout
 ==========================================================================
   Copyright (c) 2001/2005 
   CINECA - Interuniversity Consortium (www.cineca.it)
 =========================================================================*/
-#ifndef __mafVMEMuscleWrapper_h
-#define __mafVMEMuscleWrapper_h
+#ifndef __medVMEMuscleWrapper_h
+#define __medVMEMuscleWrapper_h
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
@@ -22,6 +22,7 @@
 //----------------------------------------------------------------------------
 // forward declarations :
 //----------------------------------------------------------------------------
+class vtkPoints;
 class vtkPolyData;
 class vtkMAFPolyDataDeformation;
 
@@ -38,7 +39,17 @@ public:
     ID_RESTPOSE_WRAPPER2_LINK,
     ID_DYNAMIC_WRAPPER1_LINK,
     ID_DYNAMIC_WRAPPER2_LINK,
+    ID_FIBERS_ORIGIN_LINK,
+    ID_FIBERS_INSERTION_LINK,
     ID_DEFORMATIONMODE,
+
+    ID_GENERATE_FIBERS,
+    ID_FIBERS_TEMPLATE,     //template type
+    ID_FIBERS_RESOLUTION,   //resolution
+    ID_FIBERS_NUMFIB,       //number of fibers    
+
+	ID_FIBERS_SMOOTH,	//smooth computed fibres
+	ID_FIBERS_DEBUG_SHOWTEMPLATE,	//show template but not projection
 
     ID_LAST,
   };
@@ -50,6 +61,8 @@ public:
     LNK_RESTPOSE_WRAPPER2,
     LNK_DYNPOSE_WRAPPER1,
     LNK_DYNPOSE_WRAPPER2,
+    LNK_FIBERS_ORIGIN,
+    LNK_FIBERS_INSERTION,
     
     LNK_LAST,
   };
@@ -62,6 +75,15 @@ public:
     DEM_WARPING,            //Simple warping
   };
 
+  enum FIBER_TEMPLATES
+  {
+    FT_PARALLEL = 0,
+    FT_PENNATE,
+    FT_CURVED,
+    FT_FANNED,
+    FT_RECTUS,
+  };
+
   const static char* MUSCLEWRAPPER_LINK_NAMES[];  
   const static int MAX_WRAPPERS = 2;
 
@@ -69,18 +91,26 @@ protected:
   mafString m_RestPoseMuscleVmeName;                    //<name of VME with muscle geometry in the rest pose
   mafString m_RestPoseWrapperVmeNames[MAX_WRAPPERS];    //<name of VME with poly-line representing action lines of the muscle in the rest pose
   mafString m_WrapperVmeNames[MAX_WRAPPERS];            //<name of VME with poly-line representing action lines of the muscle in the current pose
+  mafString m_OIVmeNames[2];                            //<name of VMEs with landmarks representing origin and insertion areas
 
   vtkPolyData* m_PolyData;            //<output polydata
   bool m_bNeedUpdate;                 //<true, if the deformation must be reexecuted
   bool m_bDoNotUpdate;                //<true, if the InternalUpdate routine should terminate immediately
 
   int m_DeformerType;                     //<deformation mode to be used (DEM_WARPING by the default)
-  mafVME* m_CurVMEs[1 + 2*MAX_WRAPPERS];  //<VMEs currently associated with the wrapper
+  mafVME* m_CurVMEs[3 + 2*MAX_WRAPPERS];  //<VMEs currently associated with the wrapper
   vtkPolyData* m_OldCurves[2*MAX_WRAPPERS];
 
+  int m_VisMode;    //<non-zero, if the output are fibers instead of deformed mesh
+  int m_FbTemplate;   //<fiber template geometry
+  int m_FbNumFib;     //<number of fibers
+  int m_FbResolution; //<resolution
+  int m_FbSmooth;		//<non-zero, if fibres should be smoothed
+  int m_FbDebugShowTemplate;	//<non-zero, if template fibres should be displayed, but not mapped ones
 public:
   static bool VMEAcceptMuscle(mafNode *node);
   static bool VMEAcceptWrapper(mafNode *node);  
+  static bool VMEAcceptOIAreas(mafNode *node);
   
   /** Precess events coming from other objects */ 
   virtual void OnEvent(mafEventBase *maf_event);
@@ -126,6 +156,12 @@ public:
   /** Gets the second action line VME in its current pose */
   mafVME* GetWrapper2VME();    
 
+  /** Gets the origin area VME in its current pose */
+  mafVME* GetFibersOriginVME();
+
+  /** Gets the insertion area VME in its current pose */
+  mafVME* GetFibersInsertionVME();
+
   /** Return pointer to material attribute. */
   mmaMaterial *GetMaterial();
    
@@ -161,6 +197,12 @@ protected:
   template< class T >
   void DeformMuscle(vtkPolyData* pMuscle, vtkPolyData** pCurves);
 
+  /** Generates fibers for the given muscle */
+  void GenerateFibers(vtkPolyData* pMuscle);
+
+  /** Creates points form landmark cloud vme, landmark, etc.
+  N.B. the caller is responsible for deleting the returned object. */
+  vtkPoints* CreatePointsFromVME(mafVME* vme);
 private:
   medVMEMuscleWrapper(const medVMEMuscleWrapper&); // Not implemented
   void operator=(const medVMEMuscleWrapper&); // Not implemented

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: medVMEMuscleWrapper.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-14 17:10:09 $
-Version:   $Revision: 1.1.2.1 $
+Date:      $Date: 2008-12-08 13:07:52 $
+Version:   $Revision: 1.1.2.2 $
 Authors:   Josef Kohout
 ==========================================================================
 Copyright (c) 2001/2005 
@@ -26,6 +26,9 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "mafDataPipeCustom.h"
 #include "mafGUI.h"
 #include "mafStorageElement.h"
+#include "mafVMELandmarkCloud.h"
+#include "mafVMELandmark.h"
+#include "mafTransform.h"
 
 #include "vtkMAFDataPipe.h"
 #include "vtkMAFSmartPointer.h"
@@ -36,6 +39,8 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "../vtkMAF/vtkMAFPolyDataDeformation.h"
 #include "../vtkMAF/vtkMAFPolyDataDeformation_M1.h"
 #include "../vtkMAF/vtkMAFPolyDataDeformation_M2.h"
+
+#include "../vtkMAF/vtkMAFMuscleDecomposition.h"
 #include "vtkTubeFilter.h"
 
 #ifdef _DEBUG
@@ -53,7 +58,16 @@ const /*static*/ char* medVMEMuscleWrapper::MUSCLEWRAPPER_LINK_NAMES[] = {
   "MuscleVME_RP",
   "WrapperVME1_RP", "WrapperVME2_RP",
   "WrapperVME1", "WrapperVME2",
+  "OAreaVME", "IAreaVME",
 };
+
+#define DEFAULT_OUTPUT_MODE   1   //1 = generates fibers, 0 - deformed surface
+#define DEFAULT_DEFORM_METHOD DEM_WARPING
+#define DEFAULT_FIBERS_TYPE   FT_PENNATE
+#define DEFAULT_FIBERS_NUM    50
+#define DEFAULT_FIBERS_RES    14
+#define DEFAULT_FIBERS_SMOOTH	1
+
 
 //-------------------------------------------------------------------------
 medVMEMuscleWrapper::medVMEMuscleWrapper()
@@ -63,7 +77,14 @@ medVMEMuscleWrapper::medVMEMuscleWrapper()
   memset(m_OldCurves, 0, sizeof(m_OldCurves));
 
   m_PolyData = vtkPolyData::New();
-  m_DeformerType = DEM_WARPING;
+  m_DeformerType = DEFAULT_DEFORM_METHOD;
+  
+  m_VisMode = DEFAULT_OUTPUT_MODE;
+  m_FbResolution = DEFAULT_FIBERS_RES;
+  m_FbNumFib = DEFAULT_FIBERS_NUM;
+  m_FbTemplate = DEFAULT_FIBERS_TYPE; //FT_PENNATE
+  m_FbSmooth = DEFAULT_FIBERS_SMOOTH;
+  m_FbDebugShowTemplate = 0;
   
   m_bNeedUpdate = true;
   m_bDoNotUpdate = false;
@@ -108,6 +129,9 @@ int medVMEMuscleWrapper::DeepCopy(mafNode *a)
     }
     
     m_DeformerType = wrapper->m_DeformerType;    
+    m_FbTemplate = wrapper->m_FbTemplate;
+    m_FbNumFib = wrapper->m_FbNumFib;
+    m_FbResolution = wrapper->m_FbResolution;
     m_bNeedUpdate = true;
     return MAF_OK;
   }  
@@ -243,6 +267,12 @@ void medVMEMuscleWrapper::InternalUpdate()
       assert(pPoly != NULL);
       pPoly->Update();      
 
+      if (m_VisMode)
+      {
+        //we will just generate fibers
+        GenerateFibers(pPoly);
+      }
+      else
      {
         //get curves
         vtkPolyData* pCurves[4];
@@ -358,6 +388,70 @@ void medVMEMuscleWrapper::DeformMuscle(vtkPolyData* pMuscle, vtkPolyData** pCurv
   }
 }
 
+#include "mafVMESurface.h"
+//------------------------------------------------------------------------
+//Generates fibers for the given muscle
+void medVMEMuscleWrapper::GenerateFibers(vtkPolyData* pMuscle)
+//------------------------------------------------------------------------
+{
+  vtkMAFMuscleFibers* pFibres = NULL;
+  switch (m_FbTemplate)
+  {
+  case FT_PARALLEL: pFibres = vtkMAFParallelMuscleFibers::New(); break;
+  case FT_PENNATE: pFibres = vtkMAFPennateMuscleFibers::New(); break;
+  case FT_CURVED: pFibres = vtkMAFCurvedMuscleFibers::New(); break;
+  case FT_FANNED: pFibres = vtkMAFFannedMuscleFibers::New(); break;
+  case FT_RECTUS: pFibres = vtkMAFRectusMuscleFibers::New(); break;
+  }
+
+  if (pFibres == NULL)
+    return;
+
+  vtkPoints* ori_points = CreatePointsFromVME(m_CurVMEs[5]);
+  vtkPoints* ins_points = CreatePointsFromVME(m_CurVMEs[6]);
+
+  vtkMAFMuscleDecomposition* pMD = vtkMAFMuscleDecomposition::New();
+  pMD->SetInput(pMuscle);
+  pMD->SetFibersTemplate(pFibres);
+  pMD->SetNumberOfFibres(m_FbNumFib);
+  pMD->SetResolution(m_FbResolution);
+  pMD->SetOriginArea(ori_points);
+  pMD->SetInsertionArea(ins_points);
+  pMD->SetSmoothFibers(m_FbSmooth);
+  pMD->SetDebugOutputMode(m_FbDebugShowTemplate);
+  pMD->Update();
+
+  vtkDEL(ori_points);
+  vtkDEL(ins_points);
+
+  vtkTubeFilter* pTube = vtkTubeFilter::New();
+  pTube->SetInput(pMD->GetOutput());
+  //pTube->UseDefaultNormalOff();        
+  //pTube->SetCapping(true);
+  pTube->SetNumberOfSides(8);
+  pTube->SetRadius(0.25); //0.01);
+  pTube->SetOutput(m_PolyData);
+  pTube->Update();
+
+  pTube->SetOutput(NULL);
+  pTube->Delete();
+  pMD->Delete();
+  pFibres->Delete();
+
+//#define _DEBUG_SAVE_VME
+#ifdef _DEBUG_SAVE_VME
+  //this code saves the output as a new VME
+  mafVMESurface* VME;
+  mafNEW(VME);
+  VME->ReparentTo(this);
+  VME->SetData(m_PolyData, 0);
+  VME->SetName(wxString::Format("CONTOURS_%d", m_FbResolution));  
+  
+  mafEvent ev(this, VME_ADD, VME);
+  this->ForwardUpEvent(ev);
+#endif
+}
+
 //-------------------------------------------------------------------------
 mafGUI* medVMEMuscleWrapper::CreateGui()
 //-------------------------------------------------------------------------
@@ -390,6 +484,33 @@ mafGUI* medVMEMuscleWrapper::CreateGui()
         _("accurate ROI mapping (M2)"),_("simple warping (M3)"), };
   m_Gui->Combo(ID_DEFORMATIONMODE, _("Def. mode"), &m_DeformerType, 3,
     szModes, _("Selects the algorithm to be used for the deformation."));
+
+  m_Gui->Divider(1);
+  
+  m_Gui->Bool(ID_GENERATE_FIBERS, _("Generate fibers"), &m_VisMode, 1,
+    _("If checked, the output are muscle fibers instead of deformed surface."));
+
+  wxString szFibers[5] = {_("parallel"),_("pennate"),_("curved"), _("fanned"), _("rectus femoris")};
+  m_Gui->Combo(ID_FIBERS_TEMPLATE, _("Fib. type"), &m_FbTemplate, 5,
+    szFibers, _("Selects the geometry type of fibers for the current muscle."));
+
+  m_Gui->Integer(ID_FIBERS_NUMFIB, _("Num. fibers"), &m_FbNumFib, 1, 10000, 
+    _("Specifies the number of fibers to be created within muscle volume."));
+
+  m_Gui->Integer(ID_FIBERS_RESOLUTION, _("Resolution"), &m_FbResolution, 1, 499, 
+    _("Specifies the resolution of fiber."));
+
+  m_Gui->Bool(ID_FIBERS_SMOOTH, _("Smooth fibers"), &m_FbSmooth, 1,
+	  _("If checked, a smoothing process is applied on the generated fibers"));
+
+  m_Gui->Bool(ID_FIBERS_DEBUG_SHOWTEMPLATE, _("Show template"), &m_FbDebugShowTemplate, 1,
+	  _("If checked, the output is a set of fibres with a cube - target cube"));
+
+  m_Gui->Button(ID_FIBERS_ORIGIN_LINK, &m_OIVmeNames[0],
+    _("Origin"), _("Select the VME (a single landmark or a landmark cloud) representing the origin area."));
+
+  m_Gui->Button(ID_FIBERS_INSERTION_LINK, &m_OIVmeNames[1],
+    _("Insertion"), _("Select the VME (a single landmark or a landmark cloud) representing the insertion area."));
 
   InternalUpdate();  
   return m_Gui;
@@ -424,6 +545,16 @@ void medVMEMuscleWrapper::UpdateLinks()
     m_WrapperVmeNames[1] = szNone;
   else
     m_WrapperVmeNames[1] = m_CurVMEs[4]->GetName();
+
+  if ((m_CurVMEs[5] = GetFibersOriginVME()) == NULL)
+    m_OIVmeNames[0] = szNone;
+  else
+    m_OIVmeNames[0] = m_CurVMEs[5]->GetName();
+
+  if ((m_CurVMEs[6] = GetFibersInsertionVME()) == NULL)
+    m_OIVmeNames[1] = szNone;
+  else
+    m_OIVmeNames[1] = m_CurVMEs[6]->GetName();
 }
 
 //------------------------------------------------------------------------
@@ -491,12 +622,12 @@ void medVMEMuscleWrapper::OnEvent(mafEventBase *maf_event)
   if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
   {
     int nId = e->GetId();
-    if (nId >= ID_RESTPOSE_MUSCLE_LINK && nId <= ID_DYNAMIC_WRAPPER2_LINK)
+    if (nId >= ID_RESTPOSE_MUSCLE_LINK && nId <= ID_FIBERS_INSERTION_LINK)
     {      
       OnSelectLink(e);
       return;
     }
-    else if (nId == ID_DEFORMATIONMODE)
+    else if (nId >= ID_DEFORMATIONMODE && nId <= ID_FIBERS_DEBUG_SHOWTEMPLATE)
     {
       m_bNeedUpdate = true;
       InternalUpdate();
@@ -528,6 +659,8 @@ void medVMEMuscleWrapper::OnEvent(mafEventBase *maf_event)
   ev->SetId(VME_CHOOSE);  
   if (nLinkId == LNK_RESTPOSE_MUSCLE)
     ev->SetArg((long)&medVMEMuscleWrapper::VMEAcceptMuscle);
+  else if (nLinkId == LNK_FIBERS_ORIGIN || nLinkId == LNK_FIBERS_INSERTION)
+    ev->SetArg((long)&medVMEMuscleWrapper::VMEAcceptOIAreas);
   else
     ev->SetArg((long)&medVMEMuscleWrapper::VMEAcceptWrapper);
   ev->SetString(&title);
@@ -564,7 +697,7 @@ void medVMEMuscleWrapper::OnEvent(mafEventBase *maf_event)
   }
 
   return false;
-};
+}
 
 //------------------------------------------------------------------------
 /*static*/ bool medVMEMuscleWrapper::VMEAcceptWrapper(mafNode *node) 
@@ -580,7 +713,16 @@ void medVMEMuscleWrapper::OnEvent(mafEventBase *maf_event)
   }
 
   return false;
-};
+}
+
+//------------------------------------------------------------------------
+/*static*/ bool medVMEMuscleWrapper::VMEAcceptOIAreas(mafNode *node) 
+//------------------------------------------------------------------------
+{
+  mafVME* vme = mafVME::SafeDownCast(node);
+  return vme != NULL && 
+    (vme->IsA("mafVMELandmarkCloud") || vme->IsA("mafVMELandmark"));    
+}
 
 #pragma region GetVMEs
 //-------------------------------------------------------------------------
@@ -623,7 +765,106 @@ mafVME *medVMEMuscleWrapper::GetWrapper2VME()
     MUSCLEWRAPPER_LINK_NAMES[LNK_DYNPOSE_WRAPPER2]
   ));
 }
+
+//-------------------------------------------------------------------------
+//Gets the origin area VME in its current pose
+mafVME* medVMEMuscleWrapper::GetFibersOriginVME()
+//-------------------------------------------------------------------------
+{
+  return mafVME::SafeDownCast(GetLink(
+    MUSCLEWRAPPER_LINK_NAMES[LNK_FIBERS_ORIGIN]
+  ));
+}
+
+//-------------------------------------------------------------------------
+//Gets the insertion area VME in its current pose
+mafVME* medVMEMuscleWrapper::GetFibersInsertionVME()
+//-------------------------------------------------------------------------
+{
+  return mafVME::SafeDownCast(GetLink(
+    MUSCLEWRAPPER_LINK_NAMES[LNK_FIBERS_INSERTION]
+  ));
+}
 #pragma endregion
+
+//------------------------------------------------------------------------
+//Creates points form landmark cloud vme, landmark, etc.
+//N.B. the caller is responsible for deleting the returned object.
+vtkPoints* medVMEMuscleWrapper::CreatePointsFromVME(mafVME* vme)
+//------------------------------------------------------------------------
+{
+  vtkPoints* pRet = NULL;
+
+  mafVMELandmarkCloud* cloud = mafVMELandmarkCloud::SafeDownCast(vme);
+  if (cloud != NULL)
+  {
+    int N = cloud->GetNumberOfLandmarks();
+    if (N != 0)
+    {
+      pRet = vtkPoints::New();
+      pRet->SetNumberOfPoints(N);
+      for (int i = 0; i < N; i++) 
+      {
+        double x[3];
+        cloud->GetLandmarkPosition(i, x);
+
+        pRet->SetPoint(i, x);
+      }
+    }
+  }
+  else
+  {
+    mafVMELandmark* landmark = mafVMELandmark::SafeDownCast(vme);
+    if (landmark != NULL)
+    {
+      double x[3];
+      landmark->GetPoint(x);
+
+      pRet = vtkPoints::New();
+      pRet->InsertNextPoint(x);
+    }
+    else if (vme != NULL)
+    {
+      //general data
+      vtkDataSet* ds = vme->GetOutput()->GetVTKData();
+      if (ds != NULL)
+      {
+        int N = ds->GetNumberOfPoints();
+        if (N != 0)
+        {
+          pRet = vtkPoints::New();
+          pRet->SetNumberOfPoints(N);
+          for (int i = 0; i < N; i++) {
+            pRet->SetPoint(i, ds->GetPoint(i));
+          }
+        }
+      }
+    }
+  }
+  
+  if (pRet != NULL)
+  {
+    //coordinates are local => they do not change when the surface to which
+    //those landmarks are pinned moves => we need to get absolute positions
+    mafTransform* transform;
+    
+    mafNEW(transform);
+    transform->SetMatrix(*vme->GetOutput()->GetAbsMatrix());
+    
+    int N = pRet->GetNumberOfPoints();
+    for (int i = 0; i < N; i++)
+    {
+      double x[3];
+      transform->TransformPoint(pRet->GetPoint(i), x);
+      pRet->SetPoint(i, x);
+    }
+
+    
+    mafDEL(transform);
+  }
+
+  return pRet;
+}
 
 //------------------------------------------------------------------------
 //Creates a new polydata without duplicate vertices and edges that might be in the input.
@@ -730,7 +971,12 @@ vtkPolyData* medVMEMuscleWrapper::FixPolyline(vtkPolyData* input)
 {
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
+    parent->StoreInteger("VisualMode", m_VisMode);
     parent->StoreInteger("DeformMode", m_DeformerType);
+    parent->StoreInteger("Fibers_Type", m_FbTemplate);
+    parent->StoreInteger("Fibers_Num", m_FbNumFib);
+    parent->StoreInteger("Fibers_Res", m_FbResolution);
+	parent->StoreInteger("Fibers_Smooth", m_FbSmooth);
     return MAF_OK;
   }
   return MAF_ERROR;
@@ -742,8 +988,23 @@ vtkPolyData* medVMEMuscleWrapper::FixPolyline(vtkPolyData* input)
 {
   if (Superclass::InternalRestore(node)==MAF_OK)
   {    
+    if (node->RestoreInteger("VisualMode", m_VisMode) != MAF_OK)
+      m_VisMode = DEFAULT_VISUAL_MODE;
+
     if (node->RestoreInteger("DeformMode", m_DeformerType) != MAF_OK)
-      m_DeformerType = DEM_WARPING;      
+      m_DeformerType = DEFAULT_DEFORM_METHOD;    
+
+    if (node->RestoreInteger("Fibers_Type", m_FbTemplate) != MAF_OK)
+      m_FbTemplate = DEFAULT_FIBERS_TYPE;
+
+    if (node->RestoreInteger("Fibers_Num", m_FbNumFib) != MAF_OK)
+      m_FbNumFib = DEFAULT_FIBERS_NUM;
+
+    if (node->RestoreInteger("Fibers_Res", m_FbResolution) != MAF_OK)
+      m_FbResolution = DEFAULT_FIBERS_RES;
+
+	if (node->RestoreInteger("Fibers_Smooth", m_FbSmooth) != MAF_OK)
+		m_FbSmooth = DEFAULT_FIBERS_SMOOTH;
 
     m_bNeedUpdate = true;
     return MAF_OK;
