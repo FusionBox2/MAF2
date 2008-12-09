@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFMuscleDecomposition.h,v $ 
   Language: C++ 
-  Date: $Date: 2008-12-08 13:08:31 $ 
-  Version: $Revision: 1.1.2.1 $ 
+  Date: $Date: 2008-12-09 12:36:55 $ 
+  Version: $Revision: 1.1.2.2 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -64,10 +64,13 @@ protected:
   vtkPoints* OriginArea;                 //<origin area points for the input muscle
   vtkPoints* InsertionArea;              //<insertion area points for the input muscle
 
-  int NumberOfFibres; //<number of fibres to be generated; default = 50
-  int Resolution;     //<number of segments per fibre; default = 9
-  int SmoothFibers;		//<non-zero, if fibres are smoothed (default)
+  int NumberOfFibres;   //<number of fibres to be generated; default = 50
+  int Resolution;       //<number of segments per fibre; default = 9
+  int SmoothFibers;		  //<non-zero, if fibres are smoothed (default)
+  int SmoothSteps;      //<number of smoothing iterations
+  double SmoothFactor;  //<smoothing weight (lower values mean more smoothed, higher less), default is 4
   int DebugOutputMode;	//<0 = full process (default), 1 = no projection of target cube into muscle volume
+  
 
 public:
   /** Gets the number of muscle fibres to be generated */
@@ -108,6 +111,19 @@ public:
 
   /** Defines whether the generated fibres should be smoothed (non-zero) */
   vtkBooleanMacro(SmoothFibers, int);
+
+  /** Gets the number of smoothing iteration steps (default is 5) */
+  vtkGetMacro(SmoothSteps, int);
+
+  /** Sets the number of smoothing iteration steps (default is 5)*/
+  vtkSetMacro(SmoothSteps, int);
+
+  /** Gets the smoothing weight; lower values mean more smoothed fibers, default is 4 */
+  vtkGetMacro(SmoothFactor, double);
+
+  /** Sets the smoothing weight; lower values mean more smoothed fibers, default is 4 */
+  vtkSetMacro(SmoothFactor, double);
+
 
   /** Gets debug output mode (0 = full process (default), 1 = no projection of target cube into muscle volume)*/
   vtkGetMacro(DebugOutputMode, int);
@@ -207,6 +223,9 @@ protected:
   coordinates are stored in pPoints buffer.*/
   void MapPoints(VCoord* pPoints, int nPoints, 
     VCoord* pPolyTemplate, VCoord* pPolyTarget, int nPolyPoints);
+
+  /** Smooth the fiber defined by the given points. */
+  void SmoothFiber(VCoord* pPoints, int nPoints);
 
 private:
   vtkMAFMuscleDecomposition(const vtkMAFMuscleDecomposition&);  // Not implemented.

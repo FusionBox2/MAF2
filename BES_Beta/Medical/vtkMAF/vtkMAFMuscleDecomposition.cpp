@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFMuscleDecomposition.cpp,v $ 
   Language: C++ 
-  Date: $Date: 2008-12-08 13:08:31 $ 
-  Version: $Revision: 1.1.2.1 $ 
+  Date: $Date: 2008-12-09 12:36:54 $ 
+  Version: $Revision: 1.1.2.2 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -21,11 +21,19 @@
 #include "vtkPlane.h"
 #include "vtkCutter.h"
 
-#define _USE_MATH_DEFINES
 #include <math.h>
 #include <float.h>
 
-vtkCxxRevisionMacro(vtkMAFMuscleDecomposition, "$Revision: 1.1.2.1 $");
+#ifndef M_PI
+#define M_PI       3.14159265358979323846
+#endif
+
+#ifndef M_PI_2
+#define M_PI_2     1.57079632679489661923
+#endif
+
+
+vtkCxxRevisionMacro(vtkMAFMuscleDecomposition, "$Revision: 1.1.2.2 $");
 vtkStandardNewMacro(vtkMAFMuscleDecomposition);
 
 #include "mafMemDbg.h"
@@ -42,6 +50,8 @@ vtkMAFMuscleDecomposition::vtkMAFMuscleDecomposition()
   this->InsertionArea = NULL;
 
   this->SmoothFibers = 1;
+  this->SmoothSteps = 5;
+  this->SmoothFactor = 4.0;
   this->DebugOutputMode = 0;
 }
 
@@ -457,8 +467,8 @@ void vtkMAFMuscleDecomposition::MapPoints(VCoord* pPoints, int nPoints,
 //------------------------------------------------------------------------
 {
   const static double eps_zero = 1e-8;
+/*
 
-/*  
   _RPT0(_CRT_WARN, "====== TEMPLATE POLYGON ======\n");
   for (int i = 0; i < nPolyPoints; i++)
   {
@@ -517,17 +527,18 @@ void vtkMAFMuscleDecomposition::MapPoints(VCoord* pPoints, int nPoints,
     {
       int i_plus = (i + 1) % nPolyPoints;
       D_i[i] = vtkMath::Dot(s_i[i], s_i[i_plus]);         
-      A_i[i] = 0.5*(
+      A_i[i] = fabs(0.5*(
         (s_i[i][1] - s_i[i][0])*(s_i[i_plus][2] - s_i[i_plus][0]) -
         (s_i[i][2] - s_i[i][0])*(s_i[i_plus][1] - s_i[i_plus][0])
-        );
-      
+        ));   //it may happen that area is negative; this is caused by 
+              //a) points do not lie on a common plane - see the tolerance in ExecuteData
+              //b) numeric reasons
 
       //if s_i and s_i+ does not form a triangle (colinear)
       //v lies on line supported by the edge vi, vi+1
       //if, moreover, D_i is negative, the angle is > 90 degrees
-      //which logically implies that the point lies on the edge
-      if (fabs(A_i[i]) <= eps_zero && D_i[i] < 0.0)
+      //which logically implies that the point lies on the edge      
+      if (A_i[i] <= eps_zero && D_i[i] < 0.0)
       {
         //v lies on an edge of polygon
         double dblDen = r_i[i] + r_i[i_plus];
@@ -584,7 +595,41 @@ next_point:
     _RPT3(_CRT_WARN, "%.2f,%.2f,%.2f\n",
       pPoints[i][0],  pPoints[i][1], pPoints[i][2]);
   }
-*/
+  */
+}
+
+//------------------------------------------------------------------------
+//Smooth the fiber defined by the given points.
+void vtkMAFMuscleDecomposition::SmoothFiber(VCoord* pPoints, int nPoints)
+//------------------------------------------------------------------------
+{
+  if (nPoints <= 3)
+    return; //cannot smooth
+
+  double dblTotalW = this->SmoothFactor + 2;
+  for (int i = 0; i < SmoothSteps; i++)
+  { 
+    double x[3];  //buffer for one point
+    for (int k = 0; k < 3; k++){
+      x[k] = pPoints[0][k];
+    }
+
+    //for every inner point Pj of the curve, we set its coordinates into:
+    //Pj' = 1/6*(Pj-1 + 4*Pj + Pj+1)  -- see Coons curve
+    for (int j = 1; j < nPoints - 1; j++)
+    {
+      //j+1 is at iteration i-1
+      //j-1 is at iteration i-1 and its iteration i is in x and should be saved now
+      //j is at iteration i-1 and its iteration should be stored in x
+      for (int k = 0; k < 3; k++)
+      {
+        double dblTmp = x[k];
+        x[k] = (pPoints[j - 1][k] + this->SmoothFactor*pPoints[j][k] + 
+          pPoints[j + 1][k]) / dblTotalW;
+        pPoints[j - 1][k] = dblTmp;
+      }
+    } //end for points
+  } //end for SmoothSteps
 }
 
 
@@ -861,22 +906,10 @@ next_point:
       } //end for i (points)
 
       if (DebugOutputMode == 0)
-	  {
-      MapPoints(pTrPoints, iEndPos - iStartPos, 
-        pTemplatePoly, pTargetPoly, nPoints);
-
-		  //TODO: remove this
-		  double bnds[6];
-		  input->GetBounds(bnds);
-		  for (int i = iStartPos, nIndex = 0; i < iEndPos; i++, nIndex++)
-		  {
-			  for (int j = 0; j < 3; j++) {
-				assert(pTrPoints[nIndex][j] >= bnds[2*j] &&
-					pTrPoints[nIndex][j] <= bnds[2*j + 1]);
-			  }
-		  }
-
-	  }
+      {
+        MapPoints(pTrPoints, iEndPos - iStartPos, 
+          pTemplatePoly, pTargetPoly, nPoints);      
+      }
 
       //store results
       for (int i = iStartPos, nIndex = 0; i < iEndPos; i++, nIndex++)
@@ -901,6 +934,42 @@ next_point:
   cutPlane->Delete();
 #pragma endregion Computation of Target Fibres by Projection
 
+#pragma region Cleaning Fibres
+  //we are going to remove all INF coordinates  
+  for (int i = 0, nIndex = 0; i < NumberOfFibres; i++)
+  {
+    //starting at nIndex and ending at nIndex + Resolution
+    //are points for one curve, all INF points are to be moved at the end
+
+    int nNextValidPoint = nIndex;
+    int nLastPoint = nIndex + Resolution;
+    while (nIndex <= nLastPoint)
+    {
+      if (pFVerts[nIndex][iPlane] != DBL_MAX)
+      {
+        if (nIndex != nNextValidPoint)
+        {
+          //there are some invalid points prior to this one, move this to that place
+          for (int k = 0; k < 3; k++){
+            pFVerts[nNextValidPoint][k] = pFVerts[nIndex][k];
+          }
+        }
+
+        nNextValidPoint++;
+      }
+
+      nIndex++;
+    }
+
+    //now invalidate every point after valid points
+    while (nNextValidPoint <= nLastPoint) 
+    {
+      pFVerts[nNextValidPoint][iPlane] = DBL_MAX;
+      nNextValidPoint++;
+    }   
+  } //end for i
+
+#pragma endregion Cleaning Fibres
   
 #pragma region Saving the Target Fibres into Output PolyData
   //save the result 
@@ -912,21 +981,28 @@ next_point:
   vtkIdType* pIds = new vtkIdType[Resolution + 1];
 
   nIndex = 0;
-  int nValidPtIndex = 0;  
+  int nValidPtIndex = 0;    
   for (int i = 0; i < NumberOfFibres; i++)
   {
+    //get number of points in the current fibre
     int nValidPoints = 0;
-    for (int j = 0; j <= Resolution; j++, nIndex++)
-    {   
-      if (pFVerts[nIndex][iPlane] != DBL_MAX)
-      {
-        pPoints->SetPoint(nValidPtIndex, pFVerts[nIndex]);
-        pIds[nValidPoints] = nValidPtIndex++;
+    while (nValidPoints <= Resolution && 
+      pFVerts[nIndex + nValidPoints][iPlane] != DBL_MAX) {
         nValidPoints++;
-      }
-    } //end for j
+    }
 
+    if (this->SmoothFibers != 0){
+      SmoothFiber(&pFVerts[nIndex], nValidPoints);
+    }
+
+    for (int j = 0; j < nValidPoints; j++, nIndex++)
+    {         
+      pPoints->SetPoint(nValidPtIndex, pFVerts[nIndex]);
+      pIds[j] = nValidPtIndex++;        
+    } //end for j
+    
     pCells->InsertNextCell(nValidPoints, pIds);
+    nIndex += (Resolution + 1 - nValidPoints);  //advance to the next
   } //end for i
   
   delete[] pIds;    
