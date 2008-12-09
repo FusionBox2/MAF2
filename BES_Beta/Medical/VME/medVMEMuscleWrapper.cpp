@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: medVMEMuscleWrapper.cpp,v $
 Language:  C++
-Date:      $Date: 2008-12-08 13:07:52 $
-Version:   $Revision: 1.1.2.2 $
+Date:      $Date: 2008-12-09 12:37:12 $
+Version:   $Revision: 1.1.2.3 $
 Authors:   Josef Kohout
 ==========================================================================
 Copyright (c) 2001/2005 
@@ -67,6 +67,8 @@ const /*static*/ char* medVMEMuscleWrapper::MUSCLEWRAPPER_LINK_NAMES[] = {
 #define DEFAULT_FIBERS_NUM    50
 #define DEFAULT_FIBERS_RES    14
 #define DEFAULT_FIBERS_SMOOTH	1
+#define DEFAULT_FIBERS_SMOOTHSTEPS	5
+#define DEFAULT_FIBERS_SMOOTHWEIGHT	4
 
 
 //-------------------------------------------------------------------------
@@ -84,8 +86,10 @@ medVMEMuscleWrapper::medVMEMuscleWrapper()
   m_FbNumFib = DEFAULT_FIBERS_NUM;
   m_FbTemplate = DEFAULT_FIBERS_TYPE; //FT_PENNATE
   m_FbSmooth = DEFAULT_FIBERS_SMOOTH;
+  m_FbSmoothSteps = DEFAULT_FIBERS_SMOOTHSTEPS;
+  m_FbSmoothWeight = DEFAULT_FIBERS_SMOOTHWEIGHT;
   m_FbDebugShowTemplate = 0;
-  
+
   m_bNeedUpdate = true;
   m_bDoNotUpdate = false;
 
@@ -128,7 +132,7 @@ int medVMEMuscleWrapper::DeepCopy(mafNode *a)
         this->SetLink(MUSCLEWRAPPER_LINK_NAMES[i], linked_node);
     }
     
-    m_DeformerType = wrapper->m_DeformerType;    
+    m_DeformerType = wrapper->m_DeformerType;
     m_FbTemplate = wrapper->m_FbTemplate;
     m_FbNumFib = wrapper->m_FbNumFib;
     m_FbResolution = wrapper->m_FbResolution;
@@ -273,7 +277,7 @@ void medVMEMuscleWrapper::InternalUpdate()
         GenerateFibers(pPoly);
       }
       else
-     {
+      {
         //get curves
         vtkPolyData* pCurves[4];
         for (int i = 0; i < 4; i++)
@@ -418,6 +422,8 @@ void medVMEMuscleWrapper::GenerateFibers(vtkPolyData* pMuscle)
   pMD->SetOriginArea(ori_points);
   pMD->SetInsertionArea(ins_points);
   pMD->SetSmoothFibers(m_FbSmooth);
+  pMD->SetSmoothSteps(m_FbSmoothSteps);
+  pMD->SetSmoothFactor(m_FbSmoothWeight);
   pMD->SetDebugOutputMode(m_FbDebugShowTemplate);
   pMD->Update();
 
@@ -502,6 +508,12 @@ mafGUI* medVMEMuscleWrapper::CreateGui()
 
   m_Gui->Bool(ID_FIBERS_SMOOTH, _("Smooth fibers"), &m_FbSmooth, 1,
 	  _("If checked, a smoothing process is applied on the generated fibers"));
+
+  m_Gui->Integer(ID_FIBERS_SMOOTH_STEPS, _("Steps"), &m_FbSmoothSteps, 1, 100,
+    _("Specifies the number of smoothing iterations (higher value means more smoothed fibres)"));
+
+  m_Gui->Double(ID_FIBERS_SMOOTH_WEIGHT, _("Weigth"), &m_FbSmoothWeight, 0.0, MAXDOUBLE,
+    -1, _("Specifies the smoothing weight (lower value means more smoothed fibres)"));
 
   m_Gui->Bool(ID_FIBERS_DEBUG_SHOWTEMPLATE, _("Show template"), &m_FbDebugShowTemplate, 1,
 	  _("If checked, the output is a set of fibres with a cube - target cube"));
@@ -972,11 +984,13 @@ vtkPolyData* medVMEMuscleWrapper::FixPolyline(vtkPolyData* input)
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
     parent->StoreInteger("VisualMode", m_VisMode);
-    parent->StoreInteger("DeformMode", m_DeformerType);
+    parent->StoreInteger("DeformMode", m_DeformerType);    
     parent->StoreInteger("Fibers_Type", m_FbTemplate);
     parent->StoreInteger("Fibers_Num", m_FbNumFib);
     parent->StoreInteger("Fibers_Res", m_FbResolution);
-	parent->StoreInteger("Fibers_Smooth", m_FbSmooth);
+    parent->StoreInteger("Fibers_Smooth", m_FbSmooth);
+    parent->StoreInteger("Smooth_Steps", m_FbSmoothSteps);    
+    parent->StoreDouble("Smooth_Weight", m_FbSmoothWeight);  
     return MAF_OK;
   }
   return MAF_ERROR;
@@ -1003,8 +1017,14 @@ vtkPolyData* medVMEMuscleWrapper::FixPolyline(vtkPolyData* input)
     if (node->RestoreInteger("Fibers_Res", m_FbResolution) != MAF_OK)
       m_FbResolution = DEFAULT_FIBERS_RES;
 
-	if (node->RestoreInteger("Fibers_Smooth", m_FbSmooth) != MAF_OK)
-		m_FbSmooth = DEFAULT_FIBERS_SMOOTH;
+    if (node->RestoreInteger("Fibers_Smooth", m_FbSmooth) != MAF_OK)
+      m_FbSmooth = DEFAULT_FIBERS_SMOOTH;
+
+    if (node->RestoreInteger("Smooth_Steps", m_FbSmoothSteps) != MAF_OK)
+      m_FbSmoothSteps = DEFAULT_FIBERS_SMOOTHSTEPS;
+
+    if (node->RestoreDouble("Smooth_Weight", m_FbSmoothWeight) != MAF_OK)
+      m_FbSmoothWeight = DEFAULT_FIBERS_SMOOTHWEIGHT;
 
     m_bNeedUpdate = true;
     return MAF_OK;

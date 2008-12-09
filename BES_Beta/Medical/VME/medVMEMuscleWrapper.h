@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: medVMEMuscleWrapper.h,v $
   Language:  C++
-  Date:      $Date: 2008-12-08 13:07:52 $
-  Version:   $Revision: 1.1.2.2 $
+  Date:      $Date: 2008-12-09 12:37:12 $
+  Version:   $Revision: 1.1.2.3 $
   Authors:   Josef Kohout
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -48,8 +48,10 @@ public:
     ID_FIBERS_RESOLUTION,   //resolution
     ID_FIBERS_NUMFIB,       //number of fibers    
 
-	ID_FIBERS_SMOOTH,	//smooth computed fibres
-	ID_FIBERS_DEBUG_SHOWTEMPLATE,	//show template but not projection
+    ID_FIBERS_SMOOTH,	//smooth computed fibres
+    ID_FIBERS_SMOOTH_STEPS,   //number of smooth steps
+    ID_FIBERS_SMOOTH_WEIGHT,   //smoothing weight
+    ID_FIBERS_DEBUG_SHOWTEMPLATE,	//show template but not projection
 
     ID_LAST,
   };
@@ -101,11 +103,13 @@ protected:
   mafVME* m_CurVMEs[3 + 2*MAX_WRAPPERS];  //<VMEs currently associated with the wrapper
   vtkPolyData* m_OldCurves[2*MAX_WRAPPERS];
 
-  int m_VisMode;    //<non-zero, if the output are fibers instead of deformed mesh
+  int m_VisMode;      //<non-zero, if the output are fibers instead of deformed mesh
   int m_FbTemplate;   //<fiber template geometry
   int m_FbNumFib;     //<number of fibers
   int m_FbResolution; //<resolution
-  int m_FbSmooth;		//<non-zero, if fibres should be smoothed
+  int m_FbSmooth;		  //<non-zero, if fibres should be smoothed
+  int m_FbSmoothSteps;  //<number of smoothing steps (higher means more smoothed)
+  double m_FbSmoothWeight; //<smoothing weight (lower means more smoothed)
   int m_FbDebugShowTemplate;	//<non-zero, if template fibres should be displayed, but not mapped ones
 public:
   static bool VMEAcceptMuscle(mafNode *node);
