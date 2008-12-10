@@ -27,6 +27,10 @@ class Server(threading.Thread):
     # is run(); threading.Thread.start() calls threading.Thread.run(),
     # which is always overridden, as we are doing here
   
+  def runningControl(self, data):
+      """ Create a list of parameters arrived by client """
+      
+      
   def decompose(self, data):
       """ Create a list of parameters arrived by client """
       #0 modality "UPLOAD" or "DOWNLOAD"
@@ -40,14 +44,15 @@ class Server(threading.Thread):
       #8 vme with child (UPLOAD)
       #9 file for upload rollback (UPLOAD)
       #10 XML resource URI (UPLOAD)
-      #11 vme Name (UPLAOD)
+      #11 isLast VME? (UPLOAD)
+      #12 vme Name (UPLAOD)
       
       arguments = data.split(" ") 
       sendList = []
       count = 0
       lastArgument = ""
       for i in arguments:
-        if(count < 11):
+        if(count < 12):
           sendList.append(i)
         else:
           if(lastArgument != ''):
@@ -57,7 +62,7 @@ class Server(threading.Thread):
         count = count + 1
       sendList.append(lastArgument)
       if (sendList[0] == "UPLOAD"):
-           sendList[11] = sendList[11].replace("??", " ") # VME name with spaces arrives with "??" instead of them
+           sendList[12] = sendList[12].replace("??", " ") # VME name with spaces arrives with "??" instead of them
       sendList[2] = sendList[2].replace("??", " ") # directory with spaces arrives with "??" instead of them
       if Debug:
           print sendList[2]
