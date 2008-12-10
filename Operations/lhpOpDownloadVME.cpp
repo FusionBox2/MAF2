@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-18 11:48:24 $
-Version:   $Revision: 1.40.2.7 $
+Date:      $Date: 2008-12-10 14:18:05 $
+Version:   $Revision: 1.40.2.8 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -104,6 +104,8 @@ mafOp(label)
   m_Group = NULL;
   m_RootGroup = NULL;
   m_User = NULL;
+  m_DownloadCounter = 0;
+     
 
   m_PythonExe = "python.exe_UNDEFINED";
   m_PythonwExe = "pythonw.exe_UNDEFINED";  
@@ -113,7 +115,7 @@ mafOp(label)
 
   m_PythonUploadFullPath  = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\").c_str();
   m_FileName = "";
-  m_ServiceURL = "https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2";
+  m_ServiceURL = "https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/";
   //m_ServiceURL = "http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/";
 
   m_MsfDir = "";
@@ -145,7 +147,7 @@ lhpOpDownloadVME::~lhpOpDownloadVME()
 bool lhpOpDownloadVME::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  lhpUser *user = NULL;
+  /*lhpUser *user = NULL;
   //Get User values
   mafEvent event;
   event.SetSender(this);
@@ -155,7 +157,8 @@ bool lhpOpDownloadVME::Accept(mafNode* vme)
   {
     user = (lhpUser*)event.GetMafObject();
   }
-  return (user != NULL && user->IsAuthenticated() && vme != NULL);
+  return (user != NULL && user->IsAuthenticated() && vme != NULL);*/
+  return true;
 }
 
 //----------------------------------------------------------------------------
@@ -375,7 +378,7 @@ void lhpOpDownloadVME::OpDo()
   }
 
   //Download VME form the basket
-  if (DownloadVME(m_BasketListURI) != MAF_OK)
+  if (DownloadVME(m_BasketListURI, m_Group) != MAF_OK)
   {
     return;
   }
@@ -385,7 +388,7 @@ void lhpOpDownloadVME::OpDo()
     m_FillLinkVector = true;
 
     //Download VME link
-    if (DownloadVME(m_ListLinkURI) != MAF_OK)
+    if (DownloadVME(m_ListLinkURI, m_Group) != MAF_OK)
     {
       return;
     }
@@ -438,9 +441,9 @@ int lhpOpDownloadVME::DownloadTree(mafNode *node)
 //----------------------------------------------------------------------------
 {
   int result = MAF_ERROR;
-  wxArrayString listChildURI = GetChildURI(node);
+  m_ListChildURI = GetChildURI(node);
 
-  int numChild = listChildURI.size();
+  int numChild = m_ListChildURI.size();
 
   //No child
   if (numChild == 0)
@@ -454,13 +457,19 @@ int lhpOpDownloadVME::DownloadTree(mafNode *node)
     node = m_RootGroup;
   }
 
-  result = DownloadVME(listChildURI, node);
+  result = DownloadVME(m_ListChildURI, node);
   return result;
 }
 //----------------------------------------------------------------------------
 int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)   
 //----------------------------------------------------------------------------
 {
+  mafString isLast = "false";
+  if (parentNode != NULL  && (m_Group != NULL && parentNode->Equals(m_Group) ||  m_RootGroup != NULL && parentNode->Equals(m_RootGroup)))
+  {
+    m_DownloadCounter += 1;
+  }
+  
   for (int i = 0; i < listVME.size(); i++)
   {
     bool alreadyDownloaded = false;
@@ -550,6 +559,34 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
         command2execute.Append(wxString::Format("%s ",listVME[i].c_str())); //XML URI NAME
         command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //SRB DATA NAME
 
+        //Code to understand if is last VME
+        if (!m_WholeMsfDownload)
+        {
+          bool check = false;
+          if (m_BasketListURI.size() == 1 && !CheckIsRoot(listVME[i].c_str()))
+            check = true;
+
+          else if (parentNode != NULL && parentNode->Equals(m_Group) && (i+1 == listVME.size()))
+            check = true;
+
+          else if ((i+1 == listVME.size()) && m_ListLinkURI.IsEmpty() && !CheckIsRoot(listVME[i].c_str()))
+            check = true;
+
+          if (check && !CheckRemoteLink(listVME[i].c_str()))
+            isLast = "true";
+        }
+        else if (parentNode != NULL && parentNode->Equals(m_RootGroup) && (i+1 == listVME.size()) && m_DownloadCounter  == m_BasketListURI.size())
+        {
+          if (!CheckRemoteLink(listVME[i].c_str()) && !CheckRemoteChild(listVME[i].c_str()))
+            isLast = "true";
+        }
+        else if (m_FillLinkVector && (i+1 == listVME.size()))
+        {
+          if (!CheckRemoteLink(listVME[i].c_str()) )
+            isLast = "true";
+        }
+        command2execute.Append(wxString::Format("%s",isLast.GetCStr())); //is last VME
+
         if (m_DebugMode)
           mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
         m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
@@ -559,7 +596,10 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
       {
         //PROCESS NOT EXIST, CREATE SERVER AND CALL CLIENT
         wxString command2execute;
-        command2execute = m_PythonwExe.GetCStr();
+        if (m_DebugMode)
+          command2execute = m_PythonExe.GetCStr();
+        else
+          command2execute = m_PythonwExe.GetCStr();
         m_FileName = "ThreadedClient.py ";
         command2execute.Append(m_FileName.GetCStr());
         command2execute.Append("50000");
@@ -592,6 +632,34 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
         command2execute.Append(wxString::Format("%s ",m_ServiceURL.GetCStr())); //dev repository
         command2execute.Append(wxString::Format("%s ",listVME[i].c_str())); //XML URI NAME
         command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //SRB DATA NAME
+
+        //Code to understand if is last VME
+        if (!m_WholeMsfDownload)
+        {
+          bool check = false;
+          if (m_BasketListURI.size() == 1 && !CheckIsRoot(listVME[i].c_str()))
+            check = true;
+
+          else if (parentNode != NULL && parentNode->Equals(m_Group) && (i+1 == listVME.size()))
+            check = true;
+
+          else if ((i+1 == listVME.size()) && m_ListLinkURI.IsEmpty() && !CheckIsRoot(listVME[i].c_str()))
+            check = true;
+
+          if (check && !CheckRemoteLink(listVME[i].c_str()))
+            isLast = "true";
+        }
+        else if (parentNode != NULL && parentNode->Equals(m_RootGroup) && (i+1 == listVME.size()) && m_DownloadCounter  == m_BasketListURI.size())
+        {
+          if (!CheckRemoteLink(listVME[i].c_str()) && !CheckRemoteChild(listVME[i].c_str()))
+            isLast = "true";
+        }
+        else if (m_FillLinkVector && (i+1 == listVME.size()))
+        {
+          if (!CheckRemoteLink(listVME[i].c_str()) )
+            isLast = "true";
+        }
+        command2execute.Append(wxString::Format("%s",isLast.GetCStr())); //is last VME
 
         if (m_DebugMode)
           mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
@@ -842,7 +910,6 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(mafString  xmlFile)
     }
   }
  
-
   if(output.size() < 2)
   {
     return MAF_ERROR;
@@ -970,6 +1037,202 @@ void lhpOpDownloadVME::GetLinkURI(mafNode *node)
     }
 
   }
+}
+//-------------------------------------------------------------------
+bool lhpOpDownloadVME::CheckRemoteLink(mafString URI)
+//-------------------------------------------------------------------
+{
+  bool containLink = false;
+  wxString oldDir = wxGetCwd();
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  if (m_DebugMode)
+  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+
+  wxString command2execute;
+  command2execute.Clear();
+  command2execute = m_PythonExe.GetCStr();
+
+  command2execute.Append("lhpReadRemoteTag.py ");
+  command2execute.Append(m_User->GetName());
+  command2execute.Append(" ");
+  command2execute.Append(m_User->GetPwd());
+  command2execute.Append(" ");
+  command2execute.Append(m_ServiceURL.GetCStr());
+  command2execute.Append(" ");
+  command2execute.Append(URI.GetCStr());
+  command2execute.Append(",");
+  command2execute.Append("L0000_resource_MAF_Procedural_VMElinkURI1");
+
+  if (m_DebugMode)
+  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+
+  wxArrayString output;
+  wxArrayString errors;
+  long pid = -1;
+  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
+  {
+    wxMessageBox("Error in lhpReadRemoteTag.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+    if (m_DebugMode)
+      mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), pid);
+    return MAF_ERROR;
+  }
+
+  if (m_DebugMode)
+  {
+    mafLogMessage("Command Output Messages:");
+    for (int i = 0; i < output.size(); i++)
+    {
+      mafLogMessage(output[i]);
+    }
+
+    mafLogMessage("Command Errors Messages:");
+    for (int i = 0; i < errors.size(); i++)
+    {
+      mafLogMessage(errors[i]);
+    }
+  }
+
+  wxString link= output[output.size() - 1];
+  if (link.Contains("dataresource-"))
+    containLink = true;
+
+
+  wxSetWorkingDirectory(oldDir);
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  return containLink;
+}
+
+//-------------------------------------------------------------------
+bool lhpOpDownloadVME::CheckRemoteChild(mafString URI)
+//-------------------------------------------------------------------
+{
+  bool containChild = false;
+  wxString oldDir = wxGetCwd();
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  if (m_DebugMode)
+    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+
+  wxString command2execute;
+  command2execute.Clear();
+  command2execute = m_PythonExe.GetCStr();
+
+  command2execute.Append("lhpReadRemoteTag.py ");
+  command2execute.Append(m_User->GetName());
+  command2execute.Append(" ");
+  command2execute.Append(m_User->GetPwd());
+  command2execute.Append(" ");
+  command2execute.Append(m_ServiceURL.GetCStr());
+  command2execute.Append(" ");
+  command2execute.Append(URI.GetCStr());
+  command2execute.Append(",");
+  command2execute.Append("L0000_resource_MAF_TreeInfo_VmeChildURI1");
+
+  if (m_DebugMode)
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+
+  wxArrayString output;
+  wxArrayString errors;
+  long pid = -1;
+  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
+  {
+    wxMessageBox("Error in lhpReadRemoteTag.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+    if (m_DebugMode)
+      mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), pid);
+    return MAF_ERROR;
+  }
+
+  if (m_DebugMode)
+  {
+    mafLogMessage("Command Output Messages:");
+    for (int i = 0; i < output.size(); i++)
+    {
+      mafLogMessage(output[i]);
+    }
+
+    mafLogMessage("Command Errors Messages:");
+    for (int i = 0; i < errors.size(); i++)
+    {
+      mafLogMessage(errors[i]);
+    }
+  }
+
+  wxString child= output[output.size() - 1];
+  if (child.Contains("dataresource-"))
+    containChild = true;
+
+
+  wxSetWorkingDirectory(oldDir);
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  return containChild;
+}
+//-------------------------------------------------------------------
+bool lhpOpDownloadVME::CheckIsRoot(mafString URI)
+//-------------------------------------------------------------------
+{
+  bool isRoot = false;
+  wxString oldDir = wxGetCwd();
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  if (m_DebugMode)
+    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+
+  wxString command2execute;
+  command2execute.Clear();
+  command2execute = m_PythonExe.GetCStr();
+
+  command2execute.Append("lhpReadRemoteTag.py ");
+  command2execute.Append(m_User->GetName());
+  command2execute.Append(" ");
+  command2execute.Append(m_User->GetPwd());
+  command2execute.Append(" ");
+  command2execute.Append(m_ServiceURL.GetCStr());
+  command2execute.Append(" ");
+  command2execute.Append(URI.GetCStr());
+  command2execute.Append(",");
+  command2execute.Append("L0000_resource_MAF_VmeType");
+
+  if (m_DebugMode)
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+
+  wxArrayString output;
+  wxArrayString errors;
+  long pid = -1;
+  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
+  {
+    wxMessageBox("Error in lhpReadRemoteTag.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+    if (m_DebugMode)
+      mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), pid);
+    return MAF_ERROR;
+  }
+
+  if (m_DebugMode)
+  {
+    mafLogMessage("Command Output Messages:");
+    for (int i = 0; i < output.size(); i++)
+    {
+      mafLogMessage(output[i]);
+    }
+
+    mafLogMessage("Command Errors Messages:");
+    for (int i = 0; i < errors.size(); i++)
+    {
+      mafLogMessage(errors[i]);
+    }
+  }
+
+  wxString child= output[output.size() - 1];
+  if (child.CompareTo("mafVMERoot") == 0)
+    isRoot = true;
+
+
+  wxSetWorkingDirectory(oldDir);
+  if (m_DebugMode)
+    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  return isRoot;
 }
 //-------------------------------------------------------------------
 int lhpOpDownloadVME::ImportMSF(mafNode *parentNode)

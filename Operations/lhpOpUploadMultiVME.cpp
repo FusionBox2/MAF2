@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-27 15:37:16 $
-Version:   $Revision: 1.27.2.9 $
+Date:      $Date: 2008-12-10 14:17:07 $
+Version:   $Revision: 1.27.2.10 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -340,6 +340,7 @@ void lhpOpUploadMultiVME::OpDo()
   
   if (!rootChosen)
   {
+    bool isLast = false;
     for (int i = 0; i < m_NodeVector.size(); i++)
     {
       if (strcmp(m_NodeVector[i]->GetName(), "") == 0)
@@ -347,7 +348,12 @@ void lhpOpUploadMultiVME::OpDo()
         wxMessageBox("Can not upload VME without name.", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
         return;
       }
-      if (UploadMultiVME(m_NodeVector[i]) == MAF_ERROR)
+
+      //check if is last VME
+      if (i+1 == m_NodeVector.size())
+        isLast = true;
+
+      if (UploadMultiVME(m_NodeVector[i], isLast) == MAF_ERROR)
       {
         if(!m_TestMode)
         {
@@ -624,8 +630,9 @@ int lhpOpUploadMultiVME::UploadTree(mafNode *node)
             RemoveResources(m_UploadedURIVector);
             return MAF_ERROR;
           }
+          
 
-          if (m_UploadVME->UploadVME(URI, hasBinary, childToUpload->GetNumberOfChildren()!=0, msfFileName) == MAF_ERROR)
+          if (m_UploadVME->UploadVME(URI, hasBinary, childToUpload->GetNumberOfChildren()!=0, msfFileName, false) == MAF_ERROR)
           {
             RemoveResources(m_UploadedURIVector);
             return MAF_ERROR;
@@ -635,7 +642,7 @@ int lhpOpUploadMultiVME::UploadTree(mafNode *node)
           m_UploadedURIVector.push_back(URI);
           if (SaveChildURIFile(childToUpload, URI) == MAF_ERROR)
           {
-            RemoveResources(m_UploadedURIVector);
+            
             return MAF_ERROR;
           }
         }
@@ -667,7 +674,7 @@ int lhpOpUploadMultiVME::UploadTree(mafNode *node)
     return MAF_ERROR;
   }
 
-  if (m_UploadVME->UploadVME(URI, false, node->GetNumberOfChildren()!=0, msfFileName) == MAF_ERROR)
+  if (m_UploadVME->UploadVME(URI, false, node->GetNumberOfChildren()!=0, msfFileName, true) == MAF_ERROR)
   {
     RemoveResources(m_UploadedURIVector);
     return MAF_ERROR;
@@ -684,7 +691,7 @@ int lhpOpUploadMultiVME::UploadTree(mafNode *node)
 }
 
 //----------------------------------------------------------------------------
-int lhpOpUploadMultiVME::UploadMultiVME(mafNode *node)   
+int lhpOpUploadMultiVME::UploadMultiVME(mafNode *node, bool isLast)   
 //----------------------------------------------------------------------------
 {  
   bool hasBinary = false;
@@ -702,7 +709,7 @@ int lhpOpUploadMultiVME::UploadMultiVME(mafNode *node)
 
   m_UploadVME->SetInput(node);
   URI = "";
-  if (m_UploadVME->UploadVME(URI, hasBinary, false, "noMsf") == MAF_ERROR)
+  if (m_UploadVME->UploadVME(URI, hasBinary, false, "noMsf", isLast) == MAF_ERROR)
   {
     m_UploadedURIVector.clear();
     m_UploadedURIVector.push_back(URI);
@@ -766,7 +773,7 @@ bool lhpOpUploadMultiVME::RemoveResources(std::vector<mafString> vectorURI)
   for (int i = 0; i < m_UploadedURIVector.size(); i++)
   {
     command2execute.Clear();
-    command2execute = m_PythonExe.GetCStr();
+    command2execute = "pythonw.exe ";
 
     // script for client
     command2execute.Append(" lhpRemoveResource.py ");
@@ -782,7 +789,7 @@ bool lhpOpUploadMultiVME::RemoveResources(std::vector<mafString> vectorURI)
     long pid = -1;
     if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
     {
-      wxMessageBox("Can't edit MSF. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+      wxMessageBox("Error in lhpRemoveResource. Can non remove uploaded resource", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
       if (m_DebugMode)
         mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
         command2execute.c_str(), pid);
@@ -920,7 +927,7 @@ int lhpOpUploadMultiVME::UploadVMELinks(mafNode *derived)
       m_UploadVME->SetInput(link);
 
       URI = "";
-      if (m_UploadVME->UploadVME(URI, hasBinary, false, "noMsf") == MAF_ERROR)
+      if (m_UploadVME->UploadVME(URI, hasBinary, false, "noMsf", false) == MAF_ERROR)
       {
         m_UploadedURIVector.clear();
         m_UploadedURIVector.push_back(URI);

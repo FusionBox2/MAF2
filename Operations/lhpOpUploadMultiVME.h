@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.h,v $
 Language:  C++
-Date:      $Date: 2008-11-27 15:37:16 $
-Version:   $Revision: 1.13.2.5 $
+Date:      $Date: 2008-12-10 14:17:07 $
+Version:   $Revision: 1.13.2.6 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -120,7 +120,7 @@ private:
   mafString GetXMLDictionaryFileName(mafString dictionaryFileNamePrefix);
 
   /** Upload one or more than one VME chosen from a check list box */
-  int UploadMultiVME(mafNode *node);
+  int UploadMultiVME(mafNode *node, bool isLast);
 
   /** Upload of node and all its children*/
   int UploadTree(mafNode *node);
