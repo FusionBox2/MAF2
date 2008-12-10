@@ -81,8 +81,9 @@ def main():
        sys.argv = []
        sys.argv.append("testuser") #substitute
        sys.argv.append("6w8DHF") #substitute
+       #sys.argv.append('http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/') #substitute
        sys.argv.append('http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/') #substitute
-       sys.argv.append('dataresource-3976,L0000_resource_MAF_Procedural_VMElinkURI1,dataresource-3978 dataresource-3977 ') #xml test present in repository
+       sys.argv.append('dataresource-7511,L0000_resource_MAF_Procedural_VMElinkURI1,dataresource-3978 dataresource-3977 ') #xml test present in repository
        
        edit = lhpEditRemoteTag()
        edit.EditTag()

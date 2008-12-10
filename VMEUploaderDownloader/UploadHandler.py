@@ -10,13 +10,15 @@ import threading, thread, CustomThread
 import fileUtilities
 import urllib
 import msvcrt
+import wx
+import fileinput
 from lhpDefines import *
 from Debug import Debug
 
 
 class UploadHandler:
     queue = None
-    def __init__(self, queue, observer , dirCache, id, usr , pwd, urlServer, originalId, hasLink, withChild, msfListFile, XMLURI, vmeName):
+    def __init__(self, queue, observer , dirCache, id, usr , pwd, urlServer, originalId, hasLink, withChild, msfListFile, XMLURI, isLast, vmeName):
         UploadHandler.queue = queue
         self.observer = observer
         self.dirCache = dirCache
@@ -32,6 +34,7 @@ class UploadHandler:
         self.binaryName = ''
         self.remoteTemporaryBinaryFileSize = 0
         self.BinaryURI = "NOT PRESENT"
+        self.isLast = isLast
         self.block = threading.Lock()
         self.threads = []
         self.hasLink = hasLink
@@ -45,6 +48,8 @@ class UploadHandler:
         self.uri = ""
         self.proxyHost = ""
         self.proxyPort = 0
+        
+        
             
     def upload(self):
         self.proxyHost, self.proxyPort = retriveProxyParameters()
@@ -80,7 +85,7 @@ class UploadHandler:
                 """
                 percentage = -1
                 while(1):
-                    lista = [self.observer,percentage]
+                    lista = [self.observer,percentage, isLast]
                     #print self.BinaryURI
                     time.sleep(0.1)
                     self.block.acquire()
@@ -99,8 +104,8 @@ class UploadHandler:
                 """
                 
                 #launch external XML editor
-                if Debug:
-                    self.launchXMLEditor(self.dirOutgoing)
+                #if Debug:
+                #    self.launchXMLEditor(self.dirOutgoing)
         
                 #self.remoteTemporaryBinaryFileSize = self.getRemoteTemporaryBinaryFileSize()
                 #send file
@@ -188,6 +193,110 @@ class UploadHandler:
           self.block.acquire()  
           UploadHandler.queue.put(lista)
           self.block.release()
+          allEnded = False
+ 
+          
+          if (self.isLast == "false"):
+              #replace status for resource correctly uploaded
+              if(os.path.exists(sys.path[0] + '\\status.lhp')):
+                    while 1:
+                        size = os.path.getsize(sys.path[0] + '\\status.txt')
+                        statusFile = open(sys.path[0] + '\\status.txt', 'a')
+                        try:
+                            msvcrt.locking(statusFile.fileno(), msvcrt.LK_RLCK, size)
+                            statusFile.write('ended\n')
+                            statusFile.close()
+                            break
+                        except:
+                            counter = counter+1 #to avoid deadlock
+                            statusFile.close()
+                            pass
+                        if(counter == 10):
+                            if Debug:
+                                print "----------Can not read in status.txt-----------"
+                            pass
+                        
+    
+          else:
+              if(os.path.exists(sys.path[0] + '\\status.txt')):
+                  while 1:
+                        size = os.path.getsize(sys.path[0] + '\\status.txt')
+                        statusFile = open(sys.path[0] + '\\status.txt', 'a')
+                        try:
+                            msvcrt.locking(statusFile.fileno(), msvcrt.LK_RLCK, size)
+                            statusFile.write('lastEnded\n')
+                            statusFile.close()  
+                            break                                      
+                        except:
+                            counter = counter+1 #to avoid deadlock
+                            statusFile.close()
+                            if(counter == 10):
+                                if Debug:
+                                  print "----------Can not read in status.lhp-----------"
+                                pass
+          processStarted = 0
+          processEnded = 0
+          startedCount = 0
+          endedCount = 0
+          lastStartedCount = 0
+          lastEndedCount = 0
+          lastStarted = False
+          size = os.path.getsize(sys.path[0] + '\\status.txt')
+          statusFile = open(sys.path[0] + '\\status.txt', 'r')
+          try:
+              msvcrt.locking(statusFile.fileno(), msvcrt.LK_RLCK, size)
+              for line in statusFile:
+                  if line == "started\n":
+                      startedCount += 1
+                      if processStarted == 0:
+                          processStarted += 1
+                      if lastStarted == True:
+                          processStarted += 1
+                          lastStarted = False
+                  elif line == "ended\n":
+                      endedCount +=1   
+                  elif line == "lastStarted\n":
+                      lastStarted = True
+                      lastStartedCount += 1
+                      if processStarted == 0:
+                          processStarted += 1
+                  elif line == "lastEnded\n":
+                      lastEndedCount +=1
+                      processEnded += 1
+                      
+                      
+              statusFile.close()  
+              
+              if Debug:
+                  print "here1"       
+                  print "processStarted :" + str(processStarted)     
+                  print "processEnded :" + str(processEnded)     
+                  print "startedCount :" + str(startedCount)     
+                  print "endedCount :" + str(endedCount)     
+                  print "lastStartedCount :" + str(lastStartedCount)     
+                  print "lastEndedCount :" + str(lastEndedCount)                   
+              if processStarted == processEnded and startedCount == endedCount and lastStartedCount == lastEndedCount:
+                  allEnded = True
+
+          except:
+              counter = counter+1 #to avoid deadlock
+              statusFile.close()
+              if(counter == 10):
+                  if Debug:
+                        print "----------Can not read in status.txt-----------"
+                  pass                  
+          if allEnded == True:
+              self.block.acquire()  
+              percentage = 130 #130 for 'ALL COMPLETE!'
+              lista = [self.observer,percentage]
+              UploadHandler.queue.put(lista)
+              self.block.release()
+              if(os.path.exists(sys.path[0] + '\\status.txt')):
+                  os.remove(sys.path[0] + '\\status.txt')
+                  if Debug:
+                      print "status.txt removed" 
+                  
+    
         
         
           if Debug:
@@ -229,6 +338,7 @@ class UploadHandler:
                 print "cannot remove " + str(self.dirOutgoing)
           if Debug:
               print "--------clean up cache directories successful--------"
+              
           
         else:
           percentage = 120 #120 for 'error!'
@@ -238,6 +348,7 @@ class UploadHandler:
           self.block.release()
           if Debug:
               print "--------Error uploading binary data----------------"
+              
 
                   
     def createOutgoingDir(self):
@@ -388,7 +499,7 @@ class UploadHandler:
                         break
                     except:
                         counter = counter+1 #to avoid deadlock
-                        msfList1.close()
+                        msfList.close()
                         pass
                     if(counter == 3):
 
@@ -422,7 +533,7 @@ class UploadHandler:
                         break
                     except:
                         counter = counter+1 #to avoid deadlock
-                        msfList1.close()
+                        msfList.close()
                         pass
                     if(counter == 3):
 
@@ -628,9 +739,10 @@ class UploadHandler:
     
     
 		
-def createUploadHandler(queue, observer, dirCache, id , usr , pwd, urlServer, originalId, hasLink, withChild, msfListFile, XMLURI, vmeName):
-    uploadHandler = UploadHandler(queue,observer, dirCache, id, usr , pwd, urlServer, originalId, hasLink, withChild, msfListFile, XMLURI, vmeName)
+def createUploadHandler(queue, observer, dirCache, id , usr , pwd, urlServer, originalId, hasLink, withChild, msfListFile, XMLURI, isLast, vmeName):
+    uploadHandler = UploadHandler(queue,observer, dirCache, id, usr , pwd, urlServer, originalId, hasLink, withChild, msfListFile, XMLURI, isLast, vmeName)
     uploadHandler.upload()
+    
     
 if __name__ == '__main__':
   createUploadHandler()

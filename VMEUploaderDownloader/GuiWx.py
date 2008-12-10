@@ -1,7 +1,13 @@
 import wx
 import CustomGaugeWx
 import Queue , time
-import  wx.lib.scrolledpanel as scrolled
+import os, sys
+import wx.lib.scrolledpanel as scrolled
+import subprocess
+import threading, thread, CustomThread
+from Debug import Debug
+
+
 
 # GAUGE
 NOT_PULSE = 0
@@ -13,6 +19,8 @@ class GuiPart(wx.Frame):
         wx.Frame.__init__(self, None, -1, style = wx.DEFAULT_FRAME_STYLE|wx.RESIZE_BORDER|wx.MAXIMIZE_BOX)
         self.master = master
         self.queue = queue 
+        self.complete = 0 #set to 1 when all VME ahve benn uploaded
+        
         # Set up the GUI
         self.SetTitle("Upload / DownLoad Manager")
         self.scrolledPanel = scrolled.ScrolledPanel(self, -1, size=(140, 300),
@@ -35,6 +43,9 @@ class GuiPart(wx.Frame):
         self.downloadNumber = 0
         #self.SetStatusText("Upload :" + str(self.uploadNumber) + "    " + "Download :" + str(self.downloadNumber))
 
+        # responds to exit symbol x on frame title bar
+        self.Bind(wx.EVT_CLOSE, self.OnClose)
+        
         #wx.EVT_BUTTON(self,10,self.OnCreateBar)
         self.EVT_RESULT(self.OnCreateBar)
         self.Show()
@@ -54,7 +65,18 @@ class GuiPart(wx.Frame):
    
     def OnCreateBar(self, event):
         self.__createBar()
-    
+        
+    def OnClose(self, event):
+        if (self.complete != 1):
+            answer = wx.MessageBox("Uploader/Downloader is still working. Quit?", "Confirm", wx.STAY_ON_TOP | wx.OK | wx.CANCEL )
+            if (answer == wx.OK):
+                self.Destroy()    
+                answer.Destroy()
+ 
+        if (self.complete == 1):
+            self.Destroy()
+            
+
     def __createBar(self):
         self.bars.append(CustomGaugeWx.CustomGaugeWx(self.scrolledPanel, len(self.bars), 100, (160, (len(self.bars)+1) * 50), (self.staticLine.GetSize()[0]/2.0, 25), gaugeModality = self.ModalityGauge ,gaugePulse = NOT_PULSE))
         self.fgs1.Add(self.bars[len(self.bars)-1],flag=wx.CENTER)
@@ -104,10 +126,19 @@ class GuiPart(wx.Frame):
                    #here calculate time 
                    lista[0].SetEndingLabel(str(lista[1]))
                 if(lista[1] == 110):
+                    self.complete = 0
                     lista[0].SetEndingLabel('Completed!')
+                    self.queue.task_done(0)
                 self.Refresh()
                 if(lista[1] == 120):
+                    self.complete = 0
                     lista[0].SetEndingLabel('Error!')
+                    self.queue.task_done(0)
+                self.Refresh()
+                if(lista[1] == 130):
+                    wx.MessageBox("Upload/Download Complete!", wx.MessageBoxCaptionStr, wx.STAY_ON_TOP | wx.OK)
+                    self.complete = 1
+                    self.queue.task_done(0)
                 self.Refresh()
 
             except:
@@ -121,7 +152,8 @@ class GuiPart(wx.Frame):
                         finished = False
                         self.uploadNumber += 1
                 #self.SetStatusText('Upload :' + str(self.uploadNumber) + '    ' + 'Download :' + str(self.downloadNumber))
-                if (finished == False): self.timer.Start(milliseconds=self.timeToCall, oneShot=True)
+                if (finished == False): 
+                    self.timer.Start(milliseconds=self.timeToCall, oneShot=True)
             except:
 			    pass
 

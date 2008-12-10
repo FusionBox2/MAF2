@@ -3,16 +3,18 @@ from webServicesClient import MtomDownload
 import DownloadHandler
 import os, sys, string, time, re ,shutil
 import hashlib
+import msvcrt
 import xml.dom.minidom as xd
 from stat import ST_SIZE 
 import threading, thread, CustomThread
 from lhpDefines import *
 from Debug import Debug
+import wx
 
 
 class DownloadHandler:
     queue = None
-    def __init__(self, queue, observer, dirCache, srbData, usr , pwd, urlServer, fileSize):
+    def __init__(self, queue, observer, dirCache, srbData, usr , pwd, urlServer, isLast, fileSize):
         DownloadHandler.queue = queue
         self.observer = observer
         self.dirCache = dirCache
@@ -21,6 +23,7 @@ class DownloadHandler:
         self.currentPassword = pwd
         self.urlServer = urlServer
         self.fileSize = fileSize
+        self.isLast = isLast
         self.block = threading.Lock()
         self.localChksum = ""
         self.remoteChksum = ""
@@ -54,7 +57,7 @@ class DownloadHandler:
                 print "-------Error calling mafSRBDownload.cgi----------" 
             self.block.acquire()
             if(DownloadHandler.queue):
-                percentage = 120 #110 for 'Error!'
+                percentage = 120 #120 for 'Error!'           
                 lista = [self.observer,percentage]
                 DownloadHandler.queue.put(lista)
             self.block.release()
@@ -158,36 +161,143 @@ class DownloadHandler:
                     print " "
                     print "MD5 checksum control successful!"
                     print " "
-                self.block.acquire()
                 if(DownloadHandler.queue):
+                    self.block.acquire()
                     percentage = 110 #110 for 'Completed!'
                     lista = [self.observer,percentage]
                     DownloadHandler.queue.put(lista)
-                self.block.release()
-                self.moveFileInMSFDirectory()
+                    self.block.release()
+                    self.moveFileInMSFDirectory()    
+   
             else:
                 if Debug:
                     print " "
                     print "Error: MD5 checksum control unsuccessful!"
                     print " "
-                self.block.acquire()
+                
                 if(DownloadHandler.queue):
-                    percentage = 120 #110 for 'Error!'
+                    self.block.acquire()
+                    percentage = 120 #120 for 'Error!'
                     lista = [self.observer,percentage]
                     DownloadHandler.queue.put(lista)
-                self.block.release()
-                return
-                
-                
-        else:
-            self.block.acquire()
+                    self.block.release()                      
+                return 
+        else: 
             if(DownloadHandler.queue):
+                self.block.acquire()
                 percentage = 110 #110 for 'Completed!'
                 lista = [self.observer,percentage]
                 DownloadHandler.queue.put(lista)
-            self.block.release()            
+                self.block.release() 
+                
+        if Debug:
+            print "IsLast: " + str(self.isLast)
+        if (self.isLast == "false"):
+            #replace status for resource correctly downloaded
+            if(os.path.exists(sys.path[0] + '\\status.lhp')):
+                while 1:
+                    size = os.path.getsize(sys.path[0] + '\\status.txt')
+                    statusFile = open(sys.path[0] + '\\status.txt', 'a')
+                    try:
+                        msvcrt.locking(statusFile.fileno(), msvcrt.LK_RLCK, size)
+                        statusFile.write('ended\n')
+                        statusFile.close()
+                        break
+                    except:
+                        counter = counter+1 #to avoid deadlock
+                        statusFile.close()
+                        pass
+                    if(counter == 10):
+                        if Debug:
+                            print "----------Can not read in status.txt-----------"
+                        pass
+        else:
+            if(os.path.exists(sys.path[0] + '\\status.txt')):
+                print "herehhere"
+                while 1:
+                    size = os.path.getsize(sys.path[0] + '\\status.txt')
+                    statusFile = open(sys.path[0] + '\\status.txt', 'a')
+                    try:
+                        msvcrt.locking(statusFile.fileno(), msvcrt.LK_RLCK, size)
+                        print "here!"
+                        statusFile.write('lastEnded\n')
+                        statusFile.close()
+                        break                                      
+                    except:
+                        counter = counter+1 #to avoid deadlock
+                        statusFile.close()
+                        if(counter == 10):
+                            if Debug:
+                                  print "----------Can not read in status.lhp-----------"
+                            pass
         
-        pass
+        processStarted = 0
+        processEnded = 0
+        startedCount = 0
+        endedCount = 0
+        lastStartedCount = 0
+        lastEndedCount = 0
+        lastStarted = False
+        size = os.path.getsize(sys.path[0] + '\\status.txt')
+        statusFile = open(sys.path[0] + '\\status.txt', 'r')
+        try:
+            msvcrt.locking(statusFile.fileno(), msvcrt.LK_RLCK, size)
+            for line in statusFile:
+                if line == "started\n":
+                    startedCount += 1
+                    if processStarted == 0:
+                        processStarted += 1
+                    if lastStarted == True:
+                        processStarted += 1
+                        #lastEnded = False
+                        lastStarted = False
+                elif line == "ended\n":
+                    endedCount +=1   
+                elif line == "lastStarted\n":
+                    lastStarted = True
+                    lastStartedCount += 1
+                    if processStarted == 0:
+                        processStarted += 1
+                elif line == "lastEnded\n":
+                    #lastEnded = True
+                    lastEndedCount +=1
+                    processEnded += 1
+                  
+                  
+            statusFile.close()  
+            
+            if Debug:
+                print "here1"       
+                print "processStarted :" + str(processStarted)     
+                print "processEnded :" + str(processEnded)     
+                print "startedCount :" + str(startedCount)     
+                print "endedCount :" + str(endedCount)     
+                print "lastStartedCount :" + str(lastStartedCount)     
+                print "lastEndedCount :" + str(lastEndedCount)                   
+            if processStarted == processEnded and startedCount == endedCount and lastStartedCount == lastEndedCount:
+                print "here2"
+                allEnded = True
+
+        except:
+            counter = counter+1 #to avoid deadlock
+            statusFile.close()
+            if(counter == 10):
+                if Debug:
+                      print "----------Can not read in status.txt-----------"
+                pass           
+        print "allEnded :" + str(allEnded)                
+        if allEnded == True:
+            print "here3"
+            self.block.acquire()  
+            percentage = 130 #130 for 'ALL COMPLETE!'
+            lista = [self.observer,percentage]
+            DownloadHandler.queue.put(lista)
+            self.block.release()
+            if(os.path.exists(sys.path[0] + '\\status.txt')):
+                os.remove(sys.path[0] + '\\status.txt')
+                if Debug:
+                    print "status.txt removed"
+    
         
     def md5(self,fileName):
         #Compute md5 hash of the specified file
@@ -226,8 +336,8 @@ class DownloadHandler:
 
 
                       
-def createDownloadHandler(queue, observer, dirCache, srbData, usr , pwd, urlServer, fileSize):
-    downloadHandler = DownloadHandler(queue, observer, dirCache, srbData, usr, pwd, urlServer, fileSize)
+def createDownloadHandler(queue, observer, dirCache, srbData, usr , pwd, urlServer, isLast, fileSize):
+    downloadHandler = DownloadHandler(queue, observer, dirCache, srbData, usr, pwd, urlServer, isLast, fileSize)
     downloadHandler.download()
     
 if __name__ == '__main__':
