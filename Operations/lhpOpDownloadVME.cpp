@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-12-10 14:18:05 $
-Version:   $Revision: 1.40.2.8 $
+Date:      $Date: 2008-12-10 15:09:57 $
+Version:   $Revision: 1.40.2.9 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -147,7 +147,7 @@ lhpOpDownloadVME::~lhpOpDownloadVME()
 bool lhpOpDownloadVME::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  /*lhpUser *user = NULL;
+  lhpUser *user = NULL;
   //Get User values
   mafEvent event;
   event.SetSender(this);
@@ -157,8 +157,7 @@ bool lhpOpDownloadVME::Accept(mafNode* vme)
   {
     user = (lhpUser*)event.GetMafObject();
   }
-  return (user != NULL && user->IsAuthenticated() && vme != NULL);*/
-  return true;
+  return (user != NULL && user->IsAuthenticated() && vme != NULL);
 }
 
 //----------------------------------------------------------------------------
