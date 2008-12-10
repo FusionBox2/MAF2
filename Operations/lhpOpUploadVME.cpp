@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-27 15:38:05 $
-Version:   $Revision: 1.94.2.16 $
+Date:      $Date: 2008-12-10 14:15:07 $
+Version:   $Revision: 1.94.2.17 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -291,7 +291,7 @@ void lhpOpUploadVME::SaveConnectionConfigurationFile()
 }
 
 //----------------------------------------------------------------------------
-int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool withChild, mafString msfListFile)   
+int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool withChild, mafString msfListFile, bool isLast)   
 //----------------------------------------------------------------------------
 {
   // get python interpreters
@@ -339,13 +339,19 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
   }
 
   mafString hasLink = "false";
+  mafString isLastResource = "true";
   mafString uploadWithChild = "false";
   m_HasLink = false;
 
   if (withChild)
   {
     uploadWithChild = "true";
+  }
+  if (!isLast)
+  {
+    isLastResource = "false";
   }  
+
   
   if (m_Input->GetNumberOfLinks() != 0)
   {
@@ -414,8 +420,6 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     rootTag.SetName("ROOT_TAG");
     m_Input->GetTagArray()->SetTag(rootTag);
   }
-
-
 
   //------Edit Tag----------------------------//
   wxString command2execute;
@@ -545,6 +549,7 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     command2execute.Append(wxString::Format("%s ", uploadWithChild.GetCStr())); //upload with children?
     command2execute.Append(wxString::Format("%s ", msfListFile.GetCStr())); //file to be used for rollback operation, in case of error in msf upload
     command2execute.Append(wxString::Format("%s ", XMLURI.GetCStr())); //XML resource URI
+    command2execute.Append(wxString::Format("%s ", isLastResource.GetCStr())); //true if is last VME to be uploaded
     wxString name = m_Input->GetName();
     name.Replace(" ", "??");
     command2execute.Append(wxString::Format("%s ", name.c_str())); //vme name
@@ -611,6 +616,7 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
     command2execute.Append(wxString::Format("%s ", uploadWithChild.GetCStr())); //upload with children?
     command2execute.Append(wxString::Format("%s ", msfListFile.GetCStr())); //file to be used for rollback operation, in case of error in msf upload
     command2execute.Append(wxString::Format("%s ", XMLURI.GetCStr())); //XML resource URI
+    command2execute.Append(wxString::Format("%s ", isLastResource.GetCStr())); //true if is last VME to be uploaded
     wxString name = m_Input->GetName();
     name.Replace(" ", "??");
     command2execute.Append(wxString::Format("%s ", name.c_str())); //vme name
@@ -634,7 +640,7 @@ void lhpOpUploadVME::OpDo()
 {
   mafString URI;
 
-  if (UploadVME(URI, "", false, "noMsf") == MAF_ERROR)
+  if (UploadVME(URI, "", false, "noMsf", true) == MAF_ERROR)
   {
     return;
   }
