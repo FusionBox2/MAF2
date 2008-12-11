@@ -91,15 +91,59 @@ Section "create product directory structure" SEC01
   ;build the fat installer?
   !define _BUILD_FAT_INSTALLER_@LHPBUILDER_BUILD_FAT_INSTALLER@
     
-  IfFileExists "$INSTDIR\Python\Python25\Lib\*.*" uninstall skipUninstall
+  ;remove old file and directories but not the data folder  
+  Delete "$INSTDIR\${PRODUCT_NAME}.url"
+  Delete "$INSTDIR\uninst.exe"
+  Delete "$INSTDIR\Bin\${PRODUCT_EXE_NAME}.manifest"
+  Delete "$INSTDIR\Bin\${PRODUCT_EXE_NAME}"
+
+  Delete "$INSTDIR\bin\C3D_Reader.dll"
+  Delete "$INSTDIR\bin\LicenseAurion.dll"
+
+  Delete "$INSTDIR\Layout\layout.mly"
+  Delete "$INSTDIR\Config\Dictionary\dictionary.dic"
+  Delete "$INSTDIR\Config\Dictionary\dicom3.dic"
+  Delete "$INSTDIR\Splash\SPLASH_SCREEN.bmp"
+
+  !ifdef _BUILD_FAT_INSTALLER_ON
+  IfFileExists "$INSTDIR\Python\Python25\python.exe" uninstall skipUninstall
   
   uninstall:
   ExecWait "uninstallwx.bat $INSTDIR\Python\Python25" $0
   ExecWait "uninstallpy.bat $INSTDIR\Python\Python25" $0
   
   skipUninstall:
+  !endif
   
-  RMDir /R "$INSTDIR"
+  Delete "$INSTDIR\Config\ExternalPythonVersion\PythonControl.bat"
+  Delete "$INSTDIR\Config\ExternalPythonVersion\PythonScriptVersion.py"
+  Delete "$INSTDIR\Config\ExternalPythonVersion\updatePythonVersion.py"
+
+  IfFileExists "$INSTDIR\Config\ExternalPythonVersion\updatePythonVersion.pyc" fileExists fileNOTExists
+  fileExists:
+     Delete "$INSTDIR\Config\ExternalPythonVersion\updatePythonVersion.pyc"
+
+  fileNOTExists:
+
+  Delete "$SMPROGRAMS\b3c_software\lhpBuilder\Uninstall.lnk"
+  Delete "$SMPROGRAMS\b3c_software\lhpBuilder\Website.lnk"
+  Delete "$DESKTOP\lhpBuilder.lnk"
+  Delete "$SMPROGRAMS\b3c_software\lhpBuilder\lhpBuilder.lnk"
+
+  RMDir /R "$INSTDIR\VMEUploaderDownloader"
+  RMDir /R "$INSTDIR\ASCIIParser"
+  RMDir /R "$INSTDIR\CDBParser"
+  RMDir "$INSTDIR\Splash"
+  RMDir "$INSTDIR\Layout"
+  RMDir "$INSTDIR\Config\Dictionary"
+  RMDir "$INSTDIR\Config\ExternalPythonVersion"
+  RMDir "$INSTDIR\bin"
+  RMDir "$INSTDIR\Config"
+    
+  RMDir "$SMPROGRAMS\b3c_software\lhpBuilder"
+  RMDir "$INSTDIR"
+  ;end remove old file and directories but not the data folder
+  
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
   CreateDirectory "$INSTDIR\bin"
