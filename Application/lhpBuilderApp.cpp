@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-12-10 16:46:22 $
-  Version:   $Revision: 1.71.2.7 $
+  Date:      $Date: 2008-12-12 11:07:45 $
+  Version:   $Revision: 1.71.2.8 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -450,6 +450,12 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   viso->PlugVisualPipe("medVMELabeledVolume", "mafPipeIsosurface",MUTEX);
   viso->PlugVisualPipe("mafVMEVolumeLarge","mafPipeIsosurface",MUTEX);
   m_Logic->Plug(viso);
+
+  mafViewVTK *visoGPU = new mafViewVTK("Isosurface (GPU)");
+  visoGPU->PlugVisualPipe("mafVMEVolumeGray", "mafPipeIsosurfaceGPU",MUTEX);   //BES: 13.11.2008 - GPU support, mafPipeIsosurfaceGPU to be merged with mafPipeIsosurface in future 
+  visoGPU->PlugVisualPipe("medVMELabeledVolume", "mafPipeIsosurfaceGPU",MUTEX);
+  visoGPU->PlugVisualPipe("mafVMEVolumeLarge", "mafPipeIsosurfaceGPU",MUTEX);
+  m_Logic->Plug(visoGPU);
 
   mafViewOrthoSlice *viewOrthoSlice = new mafViewOrthoSlice("OrthoSlice");
   viewOrthoSlice->PackageView();
