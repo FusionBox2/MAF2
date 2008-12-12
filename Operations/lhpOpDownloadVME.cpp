@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-12-10 15:09:57 $
-Version:   $Revision: 1.40.2.9 $
+Date:      $Date: 2008-12-12 08:20:37 $
+Version:   $Revision: 1.40.2.10 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -376,19 +376,55 @@ void lhpOpDownloadVME::OpDo()
     return;
   }
 
+  wxInfoFrame *wait;
+  if(!m_TestMode)
+  {
+    wait = new wxInfoFrame(NULL, "Please wait, downloading VME");
+    wait->SetWindowStyleFlag(wxSTAY_ON_TOP); //to keep wait message on top
+    wait->Show(true);
+    wait->Refresh();
+    wait->Update();
+  }
+
   //Download VME form the basket
   if (DownloadVME(m_BasketListURI, m_Group) != MAF_OK)
   {
+    if(!m_TestMode)
+    {
+      delete wait;
+    }
     return;
   }
 
-  if (m_ListLinkURI.size() != 0)
+  if (m_ListLinkURIInTree.size() != 0)
+  {
+    for (int i = 0; i < m_ListLinkURIInTree.size(); i++)
+    {
+      //Check if VME has been already downloaded
+      for (int c = 0; c < m_DownloadedURIVector.size(); c++)
+      {
+        mafString VMEname = m_ListLinkURIInTree[i].c_str();
+        if (m_DownloadedURIVector[c].Equals(VMEname))
+        {
+          //Fill vector of link, with node already downloaded
+          m_LinkNodeVector.push_back(m_DownloadedNodeVector[c]);
+        }
+      }
+    }
+  }
+
+
+ if (m_ListLinkURI.size() != 0 || m_ListLinkURIInTree.size() != 0)
   {
     m_FillLinkVector = true;
 
     //Download VME link
     if (DownloadVME(m_ListLinkURI, m_Group) != MAF_OK)
     {
+      if(!m_TestMode)
+      {
+        delete wait;
+      }
       return;
     }
     int counter = 0;
@@ -434,6 +470,10 @@ void lhpOpDownloadVME::OpDo()
   }
   //All VME successfuly downloaded!!
   DownloadCheck();
+  if(!m_TestMode)
+  {
+    delete wait;
+  }
 }
 //----------------------------------------------------------------------------
 int lhpOpDownloadVME::DownloadTree(mafNode *node)   
@@ -464,46 +504,26 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
 //----------------------------------------------------------------------------
 {
   mafString isLast = "false";
-  if (parentNode != NULL  && (m_Group != NULL && parentNode->Equals(m_Group) ||  m_RootGroup != NULL && parentNode->Equals(m_RootGroup)))
-  {
-    m_DownloadCounter += 1;
-  }
-  
+
   for (int i = 0; i < listVME.size(); i++)
   {
-    bool alreadyDownloaded = false;
-    //Check if VME has been already downloaded
-    for (int c = 0; c < m_DownloadedURIVector.size(); c++)
+    for (int c = 0; c < m_BasketListURI.size(); c++)
     {
-      mafString VMEname = listVME[i].c_str();
-      if (m_DownloadedURIVector[c].Equals(VMEname))
-      {
-        if (m_WholeMsfDownload || m_FillLinkVector)
-        {
-          alreadyDownloaded = true;
-        }
-        
-        if (m_FillLinkVector)
-        {
-          //Fill vector of link, with node already downloaded
-          m_LinkNodeVector.push_back(m_DownloadedNodeVector[c]);
-        }
-        break;
-      }
+      if (m_BasketListURI[c].CompareTo(listVME[i].c_str()) == 0)
+        m_DownloadCounter +=1;
     }
-    if (!alreadyDownloaded)
-    {
+
       m_CheckURIVector.push_back(listVME[i].c_str()); 
       if(!CreateIncomingDirectory())
       {
-        wxMessageBox("Unable to create Incoming Directory");
+        wxMessageBox("Unable to create Incoming Directory", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
         DownloadCheck(true);
         return MAF_ERROR;
       }
 
       if(!CreateIncomingCache())
       {
-        wxMessageBox("Unable to create a temporary cache, remember that msf must be saved locally");
+        wxMessageBox("Unable to create a temporary cache, remember that msf must be saved locally", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
         DownloadCheck(true);
         return MAF_ERROR;
       }
@@ -516,7 +536,7 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
       //reconstruct msf
       if(ReconstructMSF(listVME[i]) != MAF_OK)
       {
-        wxMessageBox("Unable to reconstruct msf");
+        wxMessageBox("Unable to reconstruct msf", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
         DownloadCheck(true);
         return MAF_ERROR;
       }
@@ -559,10 +579,10 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
         command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //SRB DATA NAME
 
         //Code to understand if is last VME
-        if (!m_WholeMsfDownload)
+        if (!m_WholeMsfDownload )
         {
           bool check = false;
-          if (m_BasketListURI.size() == 1 && !CheckIsRoot(listVME[i].c_str()))
+          if (m_BasketListURI.size() == 1 && !CheckIsRoot(listVME[i].c_str()) && !m_FillLinkVector)
             check = true;
 
           else if (parentNode != NULL && parentNode->Equals(m_Group) && (i+1 == listVME.size()))
@@ -571,18 +591,71 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
           else if ((i+1 == listVME.size()) && m_ListLinkURI.IsEmpty() && !CheckIsRoot(listVME[i].c_str()))
             check = true;
 
-          if (check && !CheckRemoteLink(listVME[i].c_str()))
+          wxArrayString URI = CheckRemoteLink(listVME[i].c_str());
+          if (check && URI.IsEmpty())
             isLast = "true";
+
         }
         else if (parentNode != NULL && parentNode->Equals(m_RootGroup) && (i+1 == listVME.size()) && m_DownloadCounter  == m_BasketListURI.size())
         {
-          if (!CheckRemoteLink(listVME[i].c_str()) && !CheckRemoteChild(listVME[i].c_str()))
+          wxArrayString URI = CheckRemoteLink(listVME[i].c_str());
+          if (URI.IsEmpty() && !CheckRemoteChild(listVME[i].c_str()))
             isLast = "true";
+          else
+          {
+            bool alreadyDownloaded = false;
+            isLast = "true";
+            //Check if VME has been already downloaded
+            for (int i = 0 ; i < URI.size(); i++)
+            {
+              alreadyDownloaded = false;
+              for (int c = 0; c < m_DownloadedURIVector.size(); c++)
+              {
+                mafString VMEname = URI[i].c_str();
+                if (m_DownloadedURIVector[c].Equals(VMEname))
+                {
+                  alreadyDownloaded = true;
+                  break;
+                }
+              }
+              if (alreadyDownloaded = false)
+              {
+                isLast = "false";
+                break;
+              }
+            }
+          }
+          
         }
         else if (m_FillLinkVector && (i+1 == listVME.size()))
         {
-          if (!CheckRemoteLink(listVME[i].c_str()) )
+          wxArrayString URI = CheckRemoteLink(listVME[i].c_str());
+          if (URI.IsEmpty())
             isLast = "true";
+          else
+          {
+            bool alreadyDownloaded = false;
+            isLast = "true";
+            //Check if VME has been already downloaded
+            for (int i = 0 ; i < URI.size(); i++)
+            {
+              alreadyDownloaded = false;
+              for (int c = 0; c < m_DownloadedURIVector.size(); c++)
+              {
+                mafString VMEname = URI[i].c_str();
+                if (m_DownloadedURIVector[c].Equals(VMEname))
+                {
+                  alreadyDownloaded = true;
+                  break;
+                }
+              }
+              if (alreadyDownloaded = false)
+              {
+                isLast = "false";
+                break;
+              }
+            }
+          }
         }
         command2execute.Append(wxString::Format("%s",isLast.GetCStr())); //is last VME
 
@@ -633,10 +706,10 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
         command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //SRB DATA NAME
 
         //Code to understand if is last VME
-        if (!m_WholeMsfDownload)
+        if (!m_WholeMsfDownload )
         {
           bool check = false;
-          if (m_BasketListURI.size() == 1 && !CheckIsRoot(listVME[i].c_str()))
+          if (m_BasketListURI.size() == 1 && !CheckIsRoot(listVME[i].c_str()) && !m_FillLinkVector)
             check = true;
 
           else if (parentNode != NULL && parentNode->Equals(m_Group) && (i+1 == listVME.size()))
@@ -645,18 +718,71 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
           else if ((i+1 == listVME.size()) && m_ListLinkURI.IsEmpty() && !CheckIsRoot(listVME[i].c_str()))
             check = true;
 
-          if (check && !CheckRemoteLink(listVME[i].c_str()))
+          wxArrayString URI = CheckRemoteLink(listVME[i].c_str());
+          if (check && URI.IsEmpty())
             isLast = "true";
+
         }
         else if (parentNode != NULL && parentNode->Equals(m_RootGroup) && (i+1 == listVME.size()) && m_DownloadCounter  == m_BasketListURI.size())
         {
-          if (!CheckRemoteLink(listVME[i].c_str()) && !CheckRemoteChild(listVME[i].c_str()))
+          wxArrayString URI = CheckRemoteLink(listVME[i].c_str());
+          if (URI.IsEmpty() && !CheckRemoteChild(listVME[i].c_str()))
             isLast = "true";
+          else
+          {
+            bool alreadyDownloaded = false;
+            isLast = "true";
+            //Check if VME has been already downloaded
+            for (int i = 0 ; i < URI.size(); i++)
+            {
+              alreadyDownloaded = false;
+              for (int c = 0; c < m_DownloadedURIVector.size(); c++)
+              {
+                mafString VMEname = URI[i].c_str();
+                if (m_DownloadedURIVector[c].Equals(VMEname))
+                {
+                  alreadyDownloaded = true;
+                  break;
+                }
+              }
+              if (alreadyDownloaded = false)
+              {
+                isLast = "false";
+                break;
+              }
+            }
+          }
+
         }
         else if (m_FillLinkVector && (i+1 == listVME.size()))
         {
-          if (!CheckRemoteLink(listVME[i].c_str()) )
+          wxArrayString URI = CheckRemoteLink(listVME[i].c_str());
+          if (URI.IsEmpty())
             isLast = "true";
+          else
+          {
+            bool alreadyDownloaded = false;
+            isLast = "true";
+            //Check if VME has been already downloaded
+            for (int i = 0 ; i < URI.size(); i++)
+            {
+              alreadyDownloaded = false;
+              for (int c = 0; c < m_DownloadedURIVector.size(); c++)
+              {
+                mafString VMEname = URI[i].c_str();
+                if (m_DownloadedURIVector[c].Equals(VMEname))
+                {
+                  alreadyDownloaded = true;
+                  break;
+                }
+              }
+              if (alreadyDownloaded = false)
+              {
+                isLast = "false";
+                break;
+              }
+            }
+          }
         }
         command2execute.Append(wxString::Format("%s",isLast.GetCStr())); //is last VME
 
@@ -670,11 +796,11 @@ int lhpOpDownloadVME::DownloadVME(wxArrayString listVME, mafNode *parentNode)
       //import msf in the current tree
       if(ImportMSF(parentNode) != MAF_OK)
       {
-        wxMessageBox("Unable to import msf");
+        wxMessageBox("Unable to import msf", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
         DownloadCheck(true);
         return MAF_ERROR;;
       }
-    }
+    
   }
   return MAF_OK;
 }
@@ -890,7 +1016,7 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(mafString  xmlFile)
   long pid = -1;
   if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
-    wxMessageBox(wxString::Format("Error in downloadSingleXML.py trying to download '%s'.\nMSF download stopped.",xmlFile.GetCStr()));
+    wxMessageBox(wxString::Format("Error in downloadSingleXML.py trying to download '%s'.\nMSF download stopped.",xmlFile.GetCStr()), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     return MAF_ERROR;
   }
 
@@ -1023,7 +1149,10 @@ void lhpOpDownloadVME::GetLinkURI(mafNode *node)
       {
         name.Trim(false);
         name.Trim();
-        m_ListLinkURI.Add(name);
+        if (m_WholeMsfDownload)
+          m_ListLinkURIInTree.Add(name);
+        else
+          m_ListLinkURI.Add(name);
       }
       linkURI.erase(0, count+1);
     }
@@ -1031,17 +1160,18 @@ void lhpOpDownloadVME::GetLinkURI(mafNode *node)
     {
       if (linkURI.rfind("dataresource-") != std::string::npos)
       {
-        m_ListLinkURI.Add(linkURI.c_str());
+        if (m_WholeMsfDownload)
+          m_ListLinkURIInTree.Add(linkURI.c_str());
+        else
+          m_ListLinkURI.Add(linkURI.c_str());
       }
     }
-
   }
 }
 //-------------------------------------------------------------------
-bool lhpOpDownloadVME::CheckRemoteLink(mafString URI)
+wxArrayString lhpOpDownloadVME::CheckRemoteLink(mafString URI)
 //-------------------------------------------------------------------
 {
-  bool containLink = false;
   wxString oldDir = wxGetCwd();
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
   if (m_DebugMode)
@@ -1092,15 +1222,37 @@ bool lhpOpDownloadVME::CheckRemoteLink(mafString URI)
     }
   }
 
-  wxString link= output[output.size() - 1];
-  if (link.Contains("dataresource-"))
-    containLink = true;
-
+  wxString name;
+  int count;
+  wxArrayString URIArray;
+  wxString linkURI= output[output.size() - 1];
+  if (linkURI.rfind("dataresource-") != std::string::npos)
+  {
+    while (linkURI.find_first_of(' ') != -1)
+    {
+      count = linkURI.find_first_of(' ');
+      name = (linkURI.substr(0, count)).c_str();
+      if (!name.IsEmpty())
+      {
+        name.Trim(false);
+        name.Trim();
+        URIArray.Add(name);
+      }
+      linkURI.erase(0, count+1);
+    }
+    if (!linkURI.empty())
+    {
+      if (linkURI.rfind("dataresource-") != std::string::npos)
+      {
+        URIArray.Add(linkURI.c_str());
+      }
+    }
+  }
 
   wxSetWorkingDirectory(oldDir);
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  return containLink;
+  return URIArray;
 }
 
 //-------------------------------------------------------------------
@@ -1161,7 +1313,6 @@ bool lhpOpDownloadVME::CheckRemoteChild(mafString URI)
   wxString child= output[output.size() - 1];
   if (child.Contains("dataresource-"))
     containChild = true;
-
 
   wxSetWorkingDirectory(oldDir);
   if (m_DebugMode)
@@ -1288,13 +1439,15 @@ int lhpOpDownloadVME::ImportMSF(mafNode *parentNode)
     return MAF_OK;
   }
 
+
   m_DownloadedNodeVector.push_back(m_NodeDownloaded);
 
   if (m_NodeDownloaded->GetNumberOfLinks() != 0)
   {
-    wxMessageBox(wxString::Format("Link found! VME link will be downloaded"));
+    if (!m_WholeMsfDownload)
+      wxMessageBox(wxString::Format("Link found! VME link will be downloaded"), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     GetLinkURI(m_NodeDownloaded);
-    m_DerivedNodeVector.push_back(m_NodeDownloaded);    
+    m_DerivedNodeVector.push_back(m_NodeDownloaded);  
   }
 
   if (m_FillLinkVector)
@@ -1372,7 +1525,7 @@ int lhpOpDownloadVME::DownloadCheck(bool failed)
   long pid = -1;
   if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
   {
-    wxMessageBox("Error in lhpDownloadVmeCheck.py");
+    wxMessageBox("Error in lhpDownloadVmeCheck.py", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
       command2execute.c_str(), pid);
     return MAF_ERROR;
@@ -1418,7 +1571,7 @@ bool lhpOpDownloadVME::IsLHPBuilderVersionUpToDate()
   long pid = -1;
   if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
-    wxMessageBox("Error in lhpDictionaryVersionChecker.py. Download stopped");
+    wxMessageBox("Error in lhpDictionaryVersionChecker.py. Download stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     return MAF_ERROR;
   }
 

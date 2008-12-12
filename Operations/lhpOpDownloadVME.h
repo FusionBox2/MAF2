@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-12-10 14:18:05 $
-Version:   $Revision: 1.9.2.5 $
+Date:      $Date: 2008-12-12 08:20:37 $
+Version:   $Revision: 1.9.2.6 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -133,7 +133,7 @@ protected:
   int DownloadCheck(bool failed = false);
 
   /** Call WS to check if resource that will be downloaded contains link */
-  bool CheckRemoteLink(mafString URI);
+  wxArrayString CheckRemoteLink(mafString URI);
 
   /** Call WS to check if resource that will be downloaded contains child */
   bool CheckRemoteChild(mafString URI);
@@ -184,6 +184,7 @@ protected:
   mafString m_BasketListFileName; 
   wxArrayString m_BasketListURI;
   wxArrayString m_ListLinkURI;
+  wxArrayString m_ListLinkURIInTree;
   wxArrayString m_ListChildURI;
 
   mafString m_BinaryRealName;
