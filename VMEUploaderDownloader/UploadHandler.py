@@ -195,26 +195,24 @@ class UploadHandler:
           self.block.release()
           allEnded = False
  
-          
           if (self.isLast == "false"):
               #replace status for resource correctly uploaded
-              if(os.path.exists(sys.path[0] + '\\status.lhp')):
-                    while 1:
+              if(os.path.exists(sys.path[0] + '\\status.txt')):
+                  while 1:
                         size = os.path.getsize(sys.path[0] + '\\status.txt')
                         statusFile = open(sys.path[0] + '\\status.txt', 'a')
                         try:
                             msvcrt.locking(statusFile.fileno(), msvcrt.LK_RLCK, size)
                             statusFile.write('ended\n')
-                            statusFile.close()
-                            break
+                            statusFile.close()  
+                            break                                      
                         except:
                             counter = counter+1 #to avoid deadlock
                             statusFile.close()
-                            pass
-                        if(counter == 10):
-                            if Debug:
-                                print "----------Can not read in status.txt-----------"
-                            pass
+                            if(counter == 10):
+                                if Debug:
+                                  print "----------Can not read in status.lhp-----------"
+                                pass
                         
     
           else:
@@ -268,7 +266,6 @@ class UploadHandler:
               statusFile.close()  
               
               if Debug:
-                  print "here1"       
                   print "processStarted :" + str(processStarted)     
                   print "processEnded :" + str(processEnded)     
                   print "startedCount :" + str(startedCount)     

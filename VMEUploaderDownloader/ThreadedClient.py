@@ -171,11 +171,10 @@ class ThreadedClient:
                     except:
                         counter = counter+1 #to avoid deadlock
                         statusFile.close()
-                        pass
-                    if(counter == 10):
-                        if Debug:
-                            print "----------Can not write in status.txt-----------"
-                        pass
+                        if(counter == 10):
+                            if Debug:
+                                print "----------Can not write in status.txt-----------"
+                            pass
 
             UploadHandler.createUploadHandler(self.queue, observer, dirCache, id, usr, pwd, urlServer, originalId, hasLink, withChild, msfListFile, XMLURI, isLast, vmeName)
         
@@ -210,11 +209,10 @@ class ThreadedClient:
                     except:
                         counter = counter+1 #to avoid deadlock
                         statusFile.close()
-                        pass
-                    if(counter == 10):
-                        if Debug:
-                            print "----------Can not write in status.txt-----------"
-                        pass
+                        if(counter == 10):
+                            if Debug:
+                                print "----------Can not write in status.txt-----------"
+                            pass
             DownloadHandler.createDownloadHandler(self.queue ,observer, dirCache , srbData, usr, pwd, urlServer, isLast, filesize)
         except:
             pass
