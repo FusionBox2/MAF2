@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFMuscleDecomposition.cpp,v $ 
   Language: C++ 
-  Date: $Date: 2008-12-09 12:36:54 $ 
-  Version: $Revision: 1.1.2.2 $ 
+  Date: $Date: 2008-12-12 12:57:51 $ 
+  Version: $Revision: 1.1.2.3 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -33,7 +33,7 @@
 #endif
 
 
-vtkCxxRevisionMacro(vtkMAFMuscleDecomposition, "$Revision: 1.1.2.2 $");
+vtkCxxRevisionMacro(vtkMAFMuscleDecomposition, "$Revision: 1.1.2.3 $");
 vtkStandardNewMacro(vtkMAFMuscleDecomposition);
 
 #include "mafMemDbg.h"
@@ -315,6 +315,100 @@ int* vtkMAFMuscleDecomposition::GetSortedEdges(vtkPolyData* contour)
 }
 
 //------------------------------------------------------------------------
+//Returns the coordinates of surface point that is the closest to the given plane.
+void vtkMAFMuscleDecomposition::FindClosestPoint(
+  vtkPolyData* input, const double* origin, const double* normal, double* x)
+//------------------------------------------------------------------------
+{
+  //the distance between a point Q and plane P*n + d = 0 can be computed as
+  //(Q-P)*n assuming that n is normalized or, according to Schneider:
+	//Geometric Tools for Computer Graphics. pg. 376, also as Q*n + d
+	//(assuming n is normalized). N.B. the latter formula is signed
+  double d = -vtkMath::Dot(origin, normal);
+  
+  int iMinDist = 0;
+  double dblMinDist = DBL_MAX;
+
+  int nPoints = input->GetNumberOfPoints();
+  for (int i = 0; i < nPoints; i++)
+  {
+    const double* pcoords = input->GetPoint(i);
+    double dblDist = fabs(normal[0]*pcoords[0] + normal[1]*pcoords[1] + 
+      normal[2]*pcoords[2] + d);
+
+    if (dblDist < dblMinDist)
+    {
+      dblMinDist = dblDist;
+      iMinDist = i;
+    }
+  }
+
+  //retrieve the point
+  input->GetPoint(iMinDist, x);
+}
+
+//------------------------------------------------------------------------
+//Adds new points into pContourPoints [in/out] so they form a polygon of at
+//least 4 vertices. Returns the new number of points in the list. N.B,
+//pContourPoints must be capable to hold at least 4 vertices
+int vtkMAFMuscleDecomposition::FixPolygon(VCoord* pContourPoints, int nPoints)
+//------------------------------------------------------------------------
+{
+  if (nPoints >= 4)
+    return nPoints;
+
+  if (nPoints == 1)
+  {
+    //all four points are the same
+    for (int k = 0; k < 3; k++){
+      pContourPoints[3][k] = pContourPoints[2][k] = pContourPoints[1][k] = pContourPoints[0][k];      
+    }
+  }
+  else if (nPoints == 2)
+  {
+    //we just create additional two points to have rectangle collapsed into an edge
+    for (int k = 0; k < 3; k++)
+    {
+      pContourPoints[2][k] = pContourPoints[1][k];
+      pContourPoints[3][k] = pContourPoints[0][k];
+    }
+  }
+  else
+  {
+    //just subdivide one edge (the longest one)
+    int iMax = 0;
+    double dblMax = 0.0;
+    for (int k = 0; k < 3; k++)
+    {
+      double dblLen = vtkMath::Distance2BetweenPoints(
+        pContourPoints[k], pContourPoints[(k + 1) % 3]);
+      if (dblLen > dblMax)
+      {
+        dblMax = dblLen;
+        iMax = 0;
+      }
+    }
+
+    //we need to make space for our new point
+    for (int i = 2; i > iMax; i--)
+    {
+      for (int k = 0; k < 3; k++){
+        pContourPoints[i + 1][k] = pContourPoints[i][k];
+      }
+    }
+     
+    //add the point
+    for (int k = 0; k < 3; k++){
+      pContourPoints[iMax + 1][k] = 0.5*(pContourPoints[iMax][k] + 
+        pContourPoints[(iMax + 2) % 4][k]);
+    }
+  }
+
+  return 4;
+}
+
+
+//------------------------------------------------------------------------
 //Divides the rectangle defined by one point and two vectors into
 //nPoints edges such that the total square error between lengths of
 //contour and rectangle edges is minimized. The routine stores beginning
@@ -323,6 +417,21 @@ void vtkMAFMuscleDecomposition::DivideRectangle(double* origin, double* u, doubl
               int nPoints, VCoord* pContourPoints, VCoord* pOutRectPoints)
 //------------------------------------------------------------------------
 {
+  if (nPoints == 4)
+  {
+    //we won't do anything (makes a little sense to map 4 to 4)
+    for (int i = 0; i < 3; i++)
+    {
+      pOutRectPoints[0][i] = origin[i];
+      pOutRectPoints[1][i] = origin[i] + u[i];
+      pOutRectPoints[2][i] = origin[i] + u[i] + v[i];
+      pOutRectPoints[3][i] = origin[i] + v[i];
+    }
+
+    return;
+  }
+
+
   //compute contour edges lengths
   double dblCLen = 0.0;
   double* pELens = new double[nPoints];
@@ -440,21 +549,6 @@ void vtkMAFMuscleDecomposition::DivideRectangle(double* origin, double* u, doubl
   }
 
   delete[] pELens;
-
-  //_RPT0(_CRT_WARN, "====== RECTANGLE - REL. COORDS ======\n");
-  //_RPT3(_CRT_WARN, "%.2f,%.2f,%.2f\n", 0.0, 0.0, 0.0);
-  //_RPT3(_CRT_WARN, "%.2f,%.2f,%.2f\n", u[0], u[1], v[2]);
-  //_RPT3(_CRT_WARN, "%.2f,%.2f,%.2f\n", u[0] + v[0], u[1] + v[1], v[2] + v[2]);
-  //_RPT3(_CRT_WARN, "%.2f,%.2f,%.2f\n", v[0], v[1], v[2]);
-
-  //_RPT0(_CRT_WARN, "====== DIVIDED RECTANGLE - REL. COORDS ======\n");
-  //for (int i = 0; i < nPoints; i++)
-  //{
-  //  _RPT3(_CRT_WARN, "%.2f,%.2f,%.2f\n",
-  //    pOutRectPoints[i][0] - origin[0],  
-  //    pOutRectPoints[i][1] - origin[1],
-  //    pOutRectPoints[i][2] - origin[2]);
-  //}
 }
 
 //------------------------------------------------------------------------
@@ -747,262 +841,235 @@ void vtkMAFMuscleDecomposition::SmoothFiber(VCoord* pPoints, int nPoints)
   //and iPlane is the index of longest axis
 #pragma endregion Template Cube and Target Cube Construction
   
-#pragma region Computation of Target Fibres by Projection
-  //sort points according to their coordinate in this axis, which will help
-  //us to reduce the number of required cuts (slow) by exploiting the
-  //coherence of the data
-  int* pOrder = SortPoints(pFVerts, nFVerts, iPlane);  
-  
-  //construct mesh cutter
-  vtkPlane* cutPlane = vtkPlane::New();
-  cutPlane->SetNormal(lfNorm.uvw[iPlane]);
+#pragma region Computation of Target Fibres by Projection  
+  if (this->DebugOutputMode != 0)
+  {
+    //just transformation of point x (onto target cube)                
+    for (int i = 0; i < nFVerts; i++)
+    {  
+      double x[3];
+      for (int k = 0; k < 3; k++){
+        x[k] = lf.O[k] + lf.uvw[0][k]*pFVerts[i][0] + 
+          lf.uvw[1][k]*pFVerts[i][1] + lf.uvw[2][k]*pFVerts[i][2];
+      }
 
-  vtkCutter* cutter = vtkCutter::New();
-  cutter->SetCutFunction(cutPlane);
-  cutter->SetInput(input);  
+      for (int k = 0; k < 3; k++){
+        pFVerts[i][k] = x[k];
+      }
+    }//end for i (points)
+  } 
+  else
+  {
+    //we need to perform projection
+
+    //sort points according to their coordinate in this axis, which will help
+    //us to reduce the number of required cuts (slow) by exploiting the
+    //coherence of the data
+    int* pOrder = SortPoints(pFVerts, nFVerts, iPlane);  
+
+    //construct mesh cutter
+    vtkPlane* cutPlane = vtkPlane::New();
+    cutPlane->SetNormal(lfNorm.uvw[iPlane]);
+
+    vtkCutter* cutter = vtkCutter::New();
+    cutter->SetCutFunction(cutPlane);
+    cutter->SetInput(input);  
 
 #ifdef _DEBUG_CREATE_CONTOURS
-  vtkPoints* pPoints = vtkPoints::New();
-  vtkCellArray* pCells = vtkCellArray::New();
+    vtkPoints* pPoints = vtkPoints::New();
+    vtkCellArray* pCells = vtkCellArray::New();
 #endif
-  
-  
-  VCoord* pTrPoints = new VCoord[nFVerts];  //to avoid allocation and deallocation inside the loop
-  
-  int nInvalidPoints = 0;
-  int iStartPos = 0;
-  while (iStartPos < nFVerts)
-  {
-    //tolerance - points within this tolerance uses the same cutting plane
-    const static double dblTolerance = 0.005;
 
-    double dblAvgCoord = pFVerts[pOrder[iStartPos]][iPlane];
+    VCoord* pTrPoints = new VCoord[nFVerts];  //to avoid allocation and deallocation inside the loop
     
-    int iEndPos = iStartPos + 1;  //exclusive
-    while (iEndPos < nFVerts &&
-      pFVerts[pOrder[iStartPos]][iPlane] + dblTolerance > pFVerts[pOrder[iEndPos]][iPlane])
+    int iStartPos = 0;
+    while (iStartPos < nFVerts)
     {
-      dblAvgCoord +=  pFVerts[pOrder[iEndPos]][iPlane];
-      iEndPos++;
-    }
+      //tolerance - points within this tolerance uses the same cutting plane
+      const static double dblTolerance = 0.005;
 
-    dblAvgCoord /= (iEndPos - iStartPos);
+      double dblAvgCoord = pFVerts[pOrder[iStartPos]][iPlane];
 
-    //all points at iStartPos - iEndPos-1 will be projected using the same
-    //plane (constructed in their average); find the origin of the
-    //rectangle created by the intersection of target cube and plane with
-    //normal lf.uvw[iPlane] going through transformed dblAvgCoord
-    double origin[3];
-    for (int j = 0; j < 3; j++){
-      origin[j] = lf.O[j] + lf.uvw[iPlane][j]*dblAvgCoord;
-    }
+      int iEndPos = iStartPos + 1;  //exclusive
+      while (iEndPos < nFVerts &&
+        pFVerts[pOrder[iStartPos]][iPlane] + dblTolerance > pFVerts[pOrder[iEndPos]][iPlane])
+      {
+        dblAvgCoord +=  pFVerts[pOrder[iEndPos]][iPlane];
+        iEndPos++;
+      }
 
-    cutPlane->SetOrigin(origin);
-    cutter->Update();   //cut the mesh by the plane => we should have a contour
+      dblAvgCoord /= (iEndPos - iStartPos);
+
+      //all points at iStartPos - iEndPos-1 will be projected using the same
+      //plane (constructed in their average); find the origin of the
+      //rectangle created by the intersection of target cube and plane with
+      //normal lf.uvw[iPlane] going through transformed dblAvgCoord
+      double origin[3];
+      for (int j = 0; j < 3; j++){
+        origin[j] = lf.O[j] + lf.uvw[iPlane][j]*dblAvgCoord;
+      }
+
+      cutPlane->SetOrigin(origin);
+      cutter->Update();   //cut the mesh by the plane => we should have a contour
 
 #pragma region Projection
-    vtkPolyData* contour = vtkPolyData::SafeDownCast(cutter->GetOutput());            
-    int nPoints = contour->GetNumberOfPoints();
-    if (nPoints == 0)
-    {
-      //due to some numeric problems, there is no intersection
-      //mark every point as invalid
-      for (int i = iStartPos; i < iEndPos; i++)
+      vtkPolyData* contour = vtkPolyData::SafeDownCast(cutter->GetOutput());            
+      int nPoints = contour->GetNumberOfPoints();
+      if (nPoints == 0)
       {
-        pFVerts[pOrder[i]][iPlane] = DBL_MAX; //invalid
-        nInvalidPoints++;
-      }
-    }
-    else if (nPoints == 1)
-    {
-      //singular case - to be handled separately
-      const double* pcoords = contour->GetPoint(0);
-      for (int i = iStartPos; i < iEndPos; i++)
-      {
-        for (int j = 0; j < 3; j++){
-          pFVerts[pOrder[i]][j] = pcoords[j];
-        }        
-      }
-    }
-    else
-    { 
-      //we have a general (expected) case      
-      
-      //find the point on the contour that is the closest to our origin
-      //from this point we will do our mapping
-      VCoord* pTargetPolyBuf = new VCoord[2*nPoints];  //twice because of mapping
-      VCoord* pTargetPoly = pTargetPolyBuf;
-      
-      //unfortunately, points on the contour are not ordered
-      //so we will need to do this first
-      int* pEdgesOrder = GetSortedEdges(contour);     
-
-      int iMapStartPos = 0;
-      double dblMinDist = DBL_MAX;
-      for (int j = 0; j < nPoints; j++)
-      {
-        contour->GetPoint(pEdgesOrder[2*j], pTargetPoly[j]);
-        double dblDist = vtkMath::Distance2BetweenPoints(origin, pTargetPoly[j]);
-        if (dblDist < dblMinDist)
+        //due to some numeric problems, there is no intersection
+        //find the closest point to the given plane and this will be our intersection
+        double x[3];
+        FindClosestPoint(input, origin, lfNorm.uvw[iPlane], x);
+        for (int i = iStartPos; i < iEndPos; i++)
         {
-          iMapStartPos = j;
-          dblMinDist = dblDist;
-        }        
-      }
-
-      //we need to shift pTargetPoly so, the closest point is the first one
-      if (iMapStartPos != 0)
-      {        
-        memcpy(pTargetPoly + nPoints, pTargetPoly, iMapStartPos*sizeof(VCoord));
-        pTargetPoly += iMapStartPos;
-      }
-
-      delete[] pEdgesOrder; //no longer needed      
-
-        
-      //_RPT0(_CRT_WARN, "====== CONTOUR - REL. COORDS ======\n");
-      //for (int i = 0; i < nPoints; i++)
-      //{
-      //  _RPT3(_CRT_WARN, "%.2f,%.2f,%.2f\n",
-      //    pTargetPoly[(i + iMapStartPos) % nPoints][0] - origin[0],  
-      //    pTargetPoly[(i + iMapStartPos) % nPoints][1] - origin[1],
-      //    pTargetPoly[(i + iMapStartPos) % nPoints][2] - origin[2]);        
-      //}
-
-#ifdef _DEBUG_CREATE_CONTOURS
-      //we save contours instead of fibers
-      int nShift = pPoints->GetNumberOfPoints();
-      for (int i = 0; i < nPoints; i++){
-        pPoints->InsertNextPoint(pTargetPoly[(i + iMapStartPos) % nPoints]);
-      }
-
-      vtkIdType ptIds[2] = {nShift, nShift + 1};
-      for (int i = 1; i < nPoints; i++)
-      {
-        pCells->InsertNextCell(2, ptIds);
-        ptIds[0]++; ptIds[1]++;
-      }
-#endif
-
-      //TODO: handle singular case when target has 2 or 3 points only
-
-            
-      //divide the rectangle into nPoints segments         
-      VCoord* pTemplatePoly = new VCoord[nPoints];
-      DivideRectangle(origin, lf.uvw[iPlane2], lf.uvw[iPlane3],
-        nPoints, pTargetPoly, pTemplatePoly);
-                              
-
-      //so we can now perform "warping" of points from template cube      
-      for (int i = iStartPos, nIndex = 0; i < iEndPos; i++, nIndex++)
-      {
-        //transformation of point x (onto target cube)                
-        for (int k = 0; k < 3; k++){
-          pTrPoints[nIndex][k] = lf.O[k] + 
-            lf.uvw[0][k]*pFVerts[pOrder[i]][0] + 
-            lf.uvw[1][k]*pFVerts[pOrder[i]][1] + 
-            lf.uvw[2][k]*pFVerts[pOrder[i]][2];
-        }
-      } //end for i (points)
-
-      if (DebugOutputMode == 0)
-      {
-        MapPoints(pTrPoints, iEndPos - iStartPos, 
-          pTemplatePoly, pTargetPoly, nPoints);      
-      }
-
-      //store results
-      for (int i = iStartPos, nIndex = 0; i < iEndPos; i++, nIndex++)
-      {
-        for (int j = 0; j < 3; j++){
-          pFVerts[pOrder[i]][j] = pTrPoints[nIndex][j];
+          for (int j = 0; j < 3; j++){
+            pFVerts[pOrder[i]][j] = x[j];
+          }
         }
       }
-      
-      delete[] pTargetPolyBuf;
-      delete[] pTemplatePoly;      
-    } // end else (nPoints > 1)
-#pragma endregion Projection
-
-    iStartPos = iEndPos;
-  } //end while
-
-  delete[] pTrPoints;
-  delete[] pOrder;  //no longer needed
-
-  cutter->Delete();
-  cutPlane->Delete();
-#pragma endregion Computation of Target Fibres by Projection
-
-#pragma region Cleaning Fibres
-  //we are going to remove all INF coordinates  
-  for (int i = 0, nIndex = 0; i < NumberOfFibres; i++)
-  {
-    //starting at nIndex and ending at nIndex + Resolution
-    //are points for one curve, all INF points are to be moved at the end
-
-    int nNextValidPoint = nIndex;
-    int nLastPoint = nIndex + Resolution;
-    while (nIndex <= nLastPoint)
-    {
-      if (pFVerts[nIndex][iPlane] != DBL_MAX)
+      else if (nPoints == 1)
       {
-        if (nIndex != nNextValidPoint)
+        //singular case - to be handled separately
+        const double* pcoords = contour->GetPoint(0);
+        for (int i = iStartPos; i < iEndPos; i++)
         {
-          //there are some invalid points prior to this one, move this to that place
-          for (int k = 0; k < 3; k++){
-            pFVerts[nNextValidPoint][k] = pFVerts[nIndex][k];
+          for (int j = 0; j < 3; j++){
+            pFVerts[pOrder[i]][j] = pcoords[j];
+          }        
+        }
+      }
+      else
+      { 
+        //we have a general (expected) case      
+
+        //find the point on the contour that is the closest to our origin
+        //from this point we will do our mapping
+        VCoord* pTargetPolyBuf = new VCoord[2*(nPoints + 2)];  //twice because of mapping, +2 because of fix - see later
+        VCoord* pTargetPoly = pTargetPolyBuf;
+
+        //unfortunately, points on the contour are not ordered
+        //so we will need to do this first
+        int* pEdgesOrder = GetSortedEdges(contour);     
+
+        int iMapStartPos = 0;
+        double dblMinDist = DBL_MAX;
+        for (int j = 0; j < nPoints; j++)
+        {
+          contour->GetPoint(pEdgesOrder[2*j], pTargetPoly[j]);
+          double dblDist = vtkMath::Distance2BetweenPoints(origin, pTargetPoly[j]);
+          if (dblDist < dblMinDist)
+          {
+            iMapStartPos = j;
+            dblMinDist = dblDist;
           }
         }
 
-        nNextValidPoint++;
-      }
+        //we need to shift pTargetPoly so, the closest point is the first one
+        if (iMapStartPos != 0)
+        {        
+          memcpy(pTargetPoly + nPoints, pTargetPoly, iMapStartPos*sizeof(VCoord));
+          pTargetPoly += iMapStartPos;
+        }
 
-      nIndex++;
-    }
+        delete[] pEdgesOrder; //no longer needed      
 
-    //now invalidate every point after valid points
-    while (nNextValidPoint <= nLastPoint) 
-    {
-      pFVerts[nNextValidPoint][iPlane] = DBL_MAX;
-      nNextValidPoint++;
-    }   
-  } //end for i
 
-#pragma endregion Cleaning Fibres
-  
+        //_RPT0(_CRT_WARN, "====== CONTOUR - REL. COORDS ======\n");
+        //for (int i = 0; i < nPoints; i++)
+        //{
+        //  _RPT3(_CRT_WARN, "%.2f,%.2f,%.2f\n",
+        //    pTargetPoly[(i + iMapStartPos) % nPoints][0] - origin[0],  
+        //    pTargetPoly[(i + iMapStartPos) % nPoints][1] - origin[1],
+        //    pTargetPoly[(i + iMapStartPos) % nPoints][2] - origin[2]);        
+        //}
+
+#ifdef _DEBUG_CREATE_CONTOURS
+        //we save contours instead of fibers
+        int nShift = pPoints->GetNumberOfPoints();
+        for (int i = 0; i < nPoints; i++){
+          pPoints->InsertNextPoint(pTargetPoly[(i + iMapStartPos) % nPoints]);
+        }
+
+        vtkIdType ptIds[2] = {nShift, nShift + 1};
+        for (int i = 1; i < nPoints; i++)
+        {
+          pCells->InsertNextCell(2, ptIds);
+          ptIds[0]++; ptIds[1]++;
+        }
+#endif
+
+        //divide the rectangle into nPoints segments 
+        //so we have the template polygon
+        VCoord* pTemplatePoly = new VCoord[nPoints + 2];  //min is 4      
+        nPoints = FixPolygon(pTargetPoly, nPoints);
+
+        DivideRectangle(origin, lf.uvw[iPlane2], lf.uvw[iPlane3],
+          nPoints, pTargetPoly, pTemplatePoly);      
+
+
+        //so we can now perform "warping" of points from template cube      
+        for (int i = iStartPos, nIndex = 0; i < iEndPos; i++, nIndex++)
+        {
+          //transformation of point x (onto target cube)                
+          for (int k = 0; k < 3; k++){
+            pTrPoints[nIndex][k] = lf.O[k] + 
+              lf.uvw[0][k]*pFVerts[pOrder[i]][0] + 
+              lf.uvw[1][k]*pFVerts[pOrder[i]][1] + 
+              lf.uvw[2][k]*pFVerts[pOrder[i]][2];
+          }
+        } //end for i (points)
+
+        MapPoints(pTrPoints, iEndPos - iStartPos, 
+          pTemplatePoly, pTargetPoly, nPoints);             
+
+        //store results
+        for (int i = iStartPos, nIndex = 0; i < iEndPos; i++, nIndex++)
+        {
+          for (int j = 0; j < 3; j++){
+            pFVerts[pOrder[i]][j] = pTrPoints[nIndex][j];
+          }
+        }      
+
+        delete[] pTemplatePoly;
+        delete[] pTargetPolyBuf;           
+      } // end else (nPoints > 1)
+#pragma endregion Projection
+
+      iStartPos = iEndPos;
+    } //end while
+
+    delete[] pTrPoints;
+    delete[] pOrder;  //no longer needed
+
+    cutter->Delete();
+    cutPlane->Delete();
+  } //end if (DebugOutputMode)
+#pragma endregion Computation of Target Fibres by Projection
+ 
 #pragma region Saving the Target Fibres into Output PolyData
   //save the result 
 #ifndef _DEBUG_CREATE_CONTOURS  
   vtkPoints* pPoints = vtkPoints::New();
-  pPoints->SetNumberOfPoints(nFVerts - nInvalidPoints);    
+  pPoints->SetNumberOfPoints(nFVerts);    
 
   vtkCellArray* pCells = vtkCellArray::New();  
   vtkIdType* pIds = new vtkIdType[Resolution + 1];
 
-  nIndex = 0;
-  int nValidPtIndex = 0;    
+  nIndex = 0;  
   for (int i = 0; i < NumberOfFibres; i++)
   {
-    //get number of points in the current fibre
-    int nValidPoints = 0;
-    while (nValidPoints <= Resolution && 
-      pFVerts[nIndex + nValidPoints][iPlane] != DBL_MAX) {
-        nValidPoints++;
-    }
-
     if (this->SmoothFibers != 0){
-      SmoothFiber(&pFVerts[nIndex], nValidPoints);
+      SmoothFiber(&pFVerts[nIndex], Resolution + 1);
     }
 
-    for (int j = 0; j < nValidPoints; j++, nIndex++)
+    for (int j = 0; j <= Resolution; j++)
     {         
-      pPoints->SetPoint(nValidPtIndex, pFVerts[nIndex]);
-      pIds[j] = nValidPtIndex++;        
+      pPoints->SetPoint(nIndex, pFVerts[nIndex]);
+      pIds[j] = nIndex++;        
     } //end for j
     
-    pCells->InsertNextCell(nValidPoints, pIds);
-    nIndex += (Resolution + 1 - nValidPoints);  //advance to the next
+    pCells->InsertNextCell(Resolution + 1, pIds);    
   } //end for i
   
   delete[] pIds;    

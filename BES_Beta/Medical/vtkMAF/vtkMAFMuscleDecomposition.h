@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFMuscleDecomposition.h,v $ 
   Language: C++ 
-  Date: $Date: 2008-12-09 12:36:55 $ 
-  Version: $Revision: 1.1.2.2 $ 
+  Date: $Date: 2008-12-12 12:57:51 $ 
+  Version: $Revision: 1.1.2.3 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -197,6 +197,10 @@ protected:
   int FindBestMatch(vtkPoints* template_O, vtkPoints* template_I,
     int nLFS, LOCAL_FRAME* pLFS, vtkPoints* target_O, vtkPoints* target_I);
 
+  /** Returns the coordinates of surface point that is the closest to the given plane. */
+  void FindClosestPoint(vtkPolyData* input, const double* origin, 
+    const double* normal, double* x);
+
   /** Sorts the given points according to their iCoord coordinate.
   The resulting order is returned and the user is responsible for its
   deallocation when it is no longer needed. pPoints array is not touched. */
@@ -208,6 +212,11 @@ protected:
   deallocation) is s1,s2,s2,s3,s3,s4, ... sn,s1 - for instance:
   0,2,2,3,3,4,4,6,0 */
   int* GetSortedEdges(vtkPolyData* contour);
+
+  /** Adds new points into pContourPoints [in/out] so they form a polygon of at least 4 vertices. 
+  Returns the new number of points in the list. 
+  N.B, pContourPoints must be capable to hold at least 4 vertices.*/
+  int FixPolygon(VCoord* pContourPoints, int nPoints);
 
   /** Divides the rectangle defined by one point and two vectors into
   nPoints edges such that the total square error between lengths of
