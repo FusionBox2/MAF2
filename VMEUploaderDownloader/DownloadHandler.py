@@ -213,13 +213,11 @@ class DownloadHandler:
                         pass
         else:
             if(os.path.exists(sys.path[0] + '\\status.txt')):
-                print "herehhere"
                 while 1:
                     size = os.path.getsize(sys.path[0] + '\\status.txt')
                     statusFile = open(sys.path[0] + '\\status.txt', 'a')
                     try:
                         msvcrt.locking(statusFile.fileno(), msvcrt.LK_RLCK, size)
-                        print "here!"
                         statusFile.write('lastEnded\n')
                         statusFile.close()
                         break                                      
@@ -266,8 +264,7 @@ class DownloadHandler:
                   
             statusFile.close()  
             
-            if Debug:
-                print "here1"       
+            if Debug:     
                 print "processStarted :" + str(processStarted)     
                 print "processEnded :" + str(processEnded)     
                 print "startedCount :" + str(startedCount)     
@@ -275,7 +272,6 @@ class DownloadHandler:
                 print "lastStartedCount :" + str(lastStartedCount)     
                 print "lastEndedCount :" + str(lastEndedCount)                   
             if processStarted == processEnded and startedCount == endedCount and lastStartedCount == lastEndedCount:
-                print "here2"
                 allEnded = True
 
         except:
@@ -284,10 +280,8 @@ class DownloadHandler:
             if(counter == 10):
                 if Debug:
                       print "----------Can not read in status.txt-----------"
-                pass           
-        print "allEnded :" + str(allEnded)                
+                pass                    
         if allEnded == True:
-            print "here3"
             self.block.acquire()  
             percentage = 130 #130 for 'ALL COMPLETE!'
             lista = [self.observer,percentage]
