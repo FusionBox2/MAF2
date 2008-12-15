@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.h,v $
   Language:  C++
-  Date:      $Date: 2008-12-15 10:29:51 $
-  Version:   $Revision: 1.14.2.7 $
+  Date:      $Date: 2008-12-15 11:15:25 $
+  Version:   $Revision: 1.14.2.8 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -231,6 +231,16 @@ class lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeChildURI1: public lhpTagHandl
   
 };
 
+class lhpTagHandler_L0000_resource_MAF_Procedural: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_MAF_Procedural,mafObject);
+
+  lhpTagHandler_L0000_resource_MAF_Procedural();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
 class lhpTagHandler_L0000_resource_MAF_Procedural_VMElinkURI1: public lhpTagHandler
 {
 public:
@@ -252,132 +262,132 @@ class lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeTreeCreationDate: public lhpT
 };
 
 
-class lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Operation: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_Operation: public lhpTagHandler
 {
 public:
-  mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Operation,mafObject);
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_Operation,mafObject);
 
-  lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Operation();
+  lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_Operation();
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
 
-class lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_CreationDate: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_CreationDate: public lhpTagHandler
 {
 public:
-  mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_CreationDate,mafObject);
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_CreationDate,mafObject);
 
-  lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_CreationDate();
+  lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_CreationDate();
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
 
-class lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Application: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_Application: public lhpTagHandler
 {
 public:
-  mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Application,mafObject);
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_Application,mafObject);
 
-  lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Application();
+  lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_Application();
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
 
-class lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_IsNatural: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_IsNatural: public lhpTagHandler
 {
 public:
-  mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_IsNatural,mafObject);
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_IsNatural,mafObject);
 
-  lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_IsNatural();
+  lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_IsNatural();
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
 
-class lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_OperatorID: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_OperatorID: public lhpTagHandler
 {
 public:
-  mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_OperatorID,mafObject);
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_OperatorID,mafObject);
 
-  lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_OperatorID();
+  lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_OperatorID();
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
 
-class lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Parameters: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_Parameters: public lhpTagHandler
 {
 public:
-  mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Parameters,mafObject);
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_Parameters,mafObject);
 
-  lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Parameters();
+  lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_Parameters();
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
 
-class lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Operation: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_Operation: public lhpTagHandler
 {
 public:
-  mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Operation,mafObject);
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_Operation,mafObject);
 
-  lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Operation();
+  lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_Operation();
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
 
-class lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_ModifyDate: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_ModifyDate: public lhpTagHandler
 {
 public:
-  mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_ModifyDate,mafObject);
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_ModifyDate,mafObject);
 
-  lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_ModifyDate();
+  lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_ModifyDate();
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
 
-class lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Application: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_Application: public lhpTagHandler
 {
 public:
-  mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Application,mafObject);
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_Application,mafObject);
 
-  lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Application();
+  lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_Application();
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
 
-class lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_OperatorID: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_OperatorID: public lhpTagHandler
 {
 public:
-  mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_OperatorID,mafObject);
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_OperatorID,mafObject);
 
-  lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_OperatorID();
+  lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_OperatorID();
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
 
-class lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Parameters: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_Parameters: public lhpTagHandler
 {
 public:
-  mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Parameters,mafObject);
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_Parameters,mafObject);
 
-  lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Parameters();
+  lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_Parameters();
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
 
-class lhpTagHandler_L0000_resource_data_Tracebility_Ownership: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_Traceability_Ownership: public lhpTagHandler
 {
   public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_Ownership,mafObject);
+    mafTypeMacro(lhpTagHandler_L0000_resource_data_Traceability_Ownership,mafObject);
 
-    lhpTagHandler_L0000_resource_data_Tracebility_Ownership();
+    lhpTagHandler_L0000_resource_data_Traceability_Ownership();
     virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };
 
-class lhpTagHandler_L0000_resource_data_Tracebility_Ownership_OwnerID: public lhpTagHandler
+class lhpTagHandler_L0000_resource_data_Traceability_Ownership_OwnerID: public lhpTagHandler
 {
   public:
-    mafTypeMacro(lhpTagHandler_L0000_resource_data_Tracebility_Ownership_OwnerID,mafObject);
+    mafTypeMacro(lhpTagHandler_L0000_resource_data_Traceability_Ownership_OwnerID,mafObject);
 
-    lhpTagHandler_L0000_resource_data_Tracebility_Ownership_OwnerID();
+    lhpTagHandler_L0000_resource_data_Traceability_Ownership_OwnerID();
     virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
   
 };

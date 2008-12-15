@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpFactoryTagHandler.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-12-15 10:29:51 $
-  Version:   $Revision: 1.14.2.7 $
+  Date:      $Date: 2008-12-15 11:15:25 $
+  Version:   $Revision: 1.14.2.8 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -59,23 +59,24 @@ lhpFactoryTagHandler::lhpFactoryTagHandler()
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeRootURI, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeRootName, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeChildURI1, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_MAF_Procedural, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_MAF_Procedural_VMElinkURI1, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeTreeCreationDate, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Operation, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_CreationDate, "")
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Application, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_IsNatural, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_OperatorID, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_CreateEvent_Parameters, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_Ownership, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_Ownership_OwnerID, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Operation, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_ModifyDate, "")
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Application, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_OperatorID, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_ModifyEvent1_Parameters, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_Ownership, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Tracebility_Ownership_OwnerID, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_Operation, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_CreationDate, "")
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_Application, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_IsNatural, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_OperatorID, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_Parameters, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Traceability_Ownership, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Traceability_Ownership_OwnerID, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_Operation, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_ModifyDate, "")
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_Application, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_OperatorID, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_Parameters, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Traceability_Ownership, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Traceability_Ownership_OwnerID, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_MASource, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_MicroCTSource, "");
