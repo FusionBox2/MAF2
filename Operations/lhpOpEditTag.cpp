@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-12-05 10:30:31 $
-Version:   $Revision: 1.26.2.20 $
+Date:      $Date: 2008-12-15 10:31:06 $
+Version:   $Revision: 1.26.2.21 $
 Authors:   Roberto Mucci , Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -248,6 +248,7 @@ void lhpOpEditTag::OpRun()
     }
     debugFile.close();
   }
+  mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
   
   CreateGui();
   ShowGui();
