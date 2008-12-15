@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-28 09:55:02 $
-  Version:   $Revision: 1.29.2.9 $
+  Date:      $Date: 2008-12-15 10:29:51 $
+  Version:   $Revision: 1.29.2.10 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -23,6 +23,7 @@
 #include <wx/zstream.h>
 #include <wx/wfstream.h>
 #include <wx/fs_zip.h>
+#include <wx/dir.h>
 
 #include "mafTagArray.h"
 #include "mafVME.h"
@@ -48,6 +49,71 @@
 
 using namespace std; 
 
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_DictionaryURI);
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_DictionaryURI::lhpTagHandler_L0000_resource_DictionaryURI()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_DictionaryURI::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/LHDL_dictionary");
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_DictionaryVersion);
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_DictionaryVersion::lhpTagHandler_L0000_resource_DictionaryVersion()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_DictionaryVersion::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafString dictionaryFileNamePrefix = "lhpXMLDictionary_";
+  mafString dictionaryFileName = "NOT FOUND";
+  wxString oldDir = wxGetCwd();
+
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+
+  wxArrayString files;
+  wxString filePattern = dictionaryFileNamePrefix ;
+  filePattern.Append("*.xml");
+
+  wxDir::GetAllFiles(wxGetWorkingDirectory(), &files, filePattern, wxDIR_FILES);
+
+  if (files.size() == 0)
+  {
+    // tag handling code
+    cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+  }
+  if (files.size() != 1)
+  {
+    // tag handling code
+    cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+  }
+  else
+  {
+    assert(files.size() == 1);
+    dictionaryFileName = files[0];
+    int pos = dictionaryFileName.FindLast("\\");
+    dictionaryFileName.Erase(0, pos);
+  }
+
+  wxSetWorkingDirectory(oldDir);
+
+  int pos = dictionaryFileName.FindLast("_");
+  dictionaryFileName.Erase(0, pos);
+  pos = dictionaryFileName.FindLast(".");
+  dictionaryFileName.Erase(pos);
+  cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+}
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_DataType_Field);
 //------------------------------------------------------------------------------------
@@ -948,7 +1014,7 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource::HandleAutoTag(lhpTagH
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/dicomsource/view?searchterm=DicomSource");
+  cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/DicomSource");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource)
@@ -963,18 +1029,18 @@ void lhpTagHandler_L0000_resource_data_Source_MASource::HandleAutoTag(lhpTagHand
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/MAsource/view?searchterm=MASource");
+  cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/MASource");
 }
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource_General_SamplingFrequency)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource_MASource_General_SamplingFrequency)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_MASource_General_SamplingFrequency::lhpTagHandler_L0000_resource_data_Source_MASource_General_SamplingFrequency()
+lhpTagHandler_L0000_resource_data_Source_MASource_MASource_General_SamplingFrequency::lhpTagHandler_L0000_resource_data_Source_MASource_MASource_General_SamplingFrequency()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_MASource_General_SamplingFrequency::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_MASource_MASource_General_SamplingFrequency::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1000,15 +1066,15 @@ void lhpTagHandler_L0000_resource_data_Source_MASource_General_SamplingFrequency
   }
 }
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource_DataType_IsLandmark_NumberOfLandmarks)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DataType_IsLandmark_NumberOfLandmarks)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_MASource_DataType_IsLandmark_NumberOfLandmarks::lhpTagHandler_L0000_resource_data_Source_MASource_DataType_IsLandmark_NumberOfLandmarks()
+lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DataType_IsLandmark_NumberOfLandmarks::lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DataType_IsLandmark_NumberOfLandmarks()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_MASource_DataType_IsLandmark_NumberOfLandmarks::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DataType_IsLandmark_NumberOfLandmarks::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafString value;
@@ -1033,7 +1099,7 @@ void lhpTagHandler_L0000_resource_data_Source_MicroCTSource::HandleAutoTag(lhpTa
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/MicroCTSource/view?searchterm=MicroCTSource");
+  cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/MicroCTSource");
 }
 
 
@@ -1122,15 +1188,15 @@ void L0000_resource_Access_Publishing_PublishingStatus::HandleAutoTag(lhpTagHand
 //////////
 //DICOM///
 //////////
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_StudyDate)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_StudyDate)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_StudyDate::lhpTagHandler_L0000_resource_data_Source_DicomSource_StudyDate()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_StudyDate::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_StudyDate()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_StudyDate::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_StudyDate::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1145,15 +1211,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_StudyDate::HandleAutoT
 
 }
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Modality)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Modality)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_Modality::lhpTagHandler_L0000_resource_data_Source_DicomSource_Modality()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Modality::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Modality()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_Modality::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Modality::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1168,15 +1234,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Modality::HandleAutoTa
 
 }
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Manufacturer)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Manufacturer)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_Manufacturer::lhpTagHandler_L0000_resource_data_Source_DicomSource_Manufacturer()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Manufacturer::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Manufacturer()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_Manufacturer::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Manufacturer::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1192,15 +1258,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Manufacturer::HandleAu
 
 }
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_InstitutionName)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_InstitutionName)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_InstitutionName::lhpTagHandler_L0000_resource_data_Source_DicomSource_InstitutionName()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_InstitutionName::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_InstitutionName()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_InstitutionName::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_InstitutionName::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1216,15 +1282,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_InstitutionName::Handl
 }
 
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_StationName)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_StationName)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_StationName::lhpTagHandler_L0000_resource_data_Source_DicomSource_StationName()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_StationName::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_StationName()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_StationName::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_StationName::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1240,15 +1306,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_StationName::HandleAut
 }
 
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_ManufacturerModelName)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ManufacturerModelName)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_ManufacturerModelName::lhpTagHandler_L0000_resource_data_Source_DicomSource_ManufacturerModelName()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ManufacturerModelName::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ManufacturerModelName()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_ManufacturerModelName::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ManufacturerModelName::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1264,15 +1330,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_ManufacturerModelName:
 }
 
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_PatientID)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PatientID)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_PatientID::lhpTagHandler_L0000_resource_data_Source_DicomSource_PatientID()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PatientID::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PatientID()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_PatientID::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PatientID::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1288,15 +1354,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_PatientID::HandleAutoT
 }
 
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_PatientSex)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PatientSex)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_PatientSex::lhpTagHandler_L0000_resource_data_Source_DicomSource_PatientSex()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PatientSex::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PatientSex()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_PatientSex::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PatientSex::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1312,15 +1378,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_PatientSex::HandleAuto
 }
 
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_ScanOptions)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ScanOptions)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_ScanOptions::lhpTagHandler_L0000_resource_data_Source_DicomSource_ScanOptions()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ScanOptions::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ScanOptions()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_ScanOptions::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ScanOptions::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1336,15 +1402,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_ScanOptions::HandleAut
 }
 
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_KVP)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_KVP)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_KVP::lhpTagHandler_L0000_resource_data_Source_DicomSource_KVP()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_KVP::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_KVP()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_KVP::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_KVP::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1360,15 +1426,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_KVP::HandleAutoTag(lhp
 }
 
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DataCollectionDiameter)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DataCollectionDiameter)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_DataCollectionDiameter::lhpTagHandler_L0000_resource_data_Source_DicomSource_DataCollectionDiameter()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DataCollectionDiameter::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DataCollectionDiameter()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_DataCollectionDiameter::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DataCollectionDiameter::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1384,15 +1450,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DataCollectionDiameter
 }
 
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_ReconstructionDiameter)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ReconstructionDiameter)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_ReconstructionDiameter::lhpTagHandler_L0000_resource_data_Source_DicomSource_ReconstructionDiameter()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ReconstructionDiameter::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ReconstructionDiameter()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_ReconstructionDiameter::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ReconstructionDiameter::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1409,15 +1475,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_ReconstructionDiameter
 }
 
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DistanceSourceToDetector)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DistanceSourceToDetector)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_DistanceSourceToDetector::lhpTagHandler_L0000_resource_data_Source_DicomSource_DistanceSourceToDetector()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DistanceSourceToDetector::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DistanceSourceToDetector()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_DistanceSourceToDetector::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DistanceSourceToDetector::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1433,15 +1499,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DistanceSourceToDetect
 }
 
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DistanceSourceToPatient)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DistanceSourceToPatient)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_DistanceSourceToPatient::lhpTagHandler_L0000_resource_data_Source_DicomSource_DistanceSourceToPatient()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DistanceSourceToPatient::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DistanceSourceToPatient()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_DistanceSourceToPatient::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DistanceSourceToPatient::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1457,15 +1523,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DistanceSourceToPatien
 }
 
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_GantryDetectorTilt)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_GantryDetectorTilt)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_GantryDetectorTilt::lhpTagHandler_L0000_resource_data_Source_DicomSource_GantryDetectorTilt()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_GantryDetectorTilt::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_GantryDetectorTilt()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_GantryDetectorTilt::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_GantryDetectorTilt::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1481,15 +1547,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_GantryDetectorTilt::Ha
 }
 
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_TableHeight)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_TableHeight)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_TableHeight::lhpTagHandler_L0000_resource_data_Source_DicomSource_TableHeight()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_TableHeight::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_TableHeight()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_TableHeight::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_TableHeight::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1505,15 +1571,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_TableHeight::HandleAut
 }
 
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_RotationDirection)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_RotationDirection)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_RotationDirection::lhpTagHandler_L0000_resource_data_Source_DicomSource_RotationDirection()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_RotationDirection::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_RotationDirection()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_RotationDirection::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_RotationDirection::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1529,15 +1595,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_RotationDirection::Han
 }
 
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_ExposureTime)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ExposureTime)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_ExposureTime::lhpTagHandler_L0000_resource_data_Source_DicomSource_ExposureTime()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ExposureTime::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ExposureTime()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_ExposureTime::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ExposureTime::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1553,15 +1619,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_ExposureTime::HandleAu
 }
 
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_XRayTubeCurrent)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_XRayTubeCurrent)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_XRayTubeCurrent::lhpTagHandler_L0000_resource_data_Source_DicomSource_XRayTubeCurrent()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_XRayTubeCurrent::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_XRayTubeCurrent()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_XRayTubeCurrent::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_XRayTubeCurrent::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1577,15 +1643,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_XRayTubeCurrent::Handl
 }
 
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Exposure)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Exposure)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_Exposure::lhpTagHandler_L0000_resource_data_Source_DicomSource_Exposure()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Exposure::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Exposure()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_Exposure::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Exposure::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1601,15 +1667,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_Exposure::HandleAutoTa
 }
 
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_FilterType)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_FilterType)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_FilterType::lhpTagHandler_L0000_resource_data_Source_DicomSource_FilterType()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_FilterType::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_FilterType()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_FilterType::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_FilterType::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1624,15 +1690,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_FilterType::HandleAuto
 
 }
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_FocalSpot)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_FocalSpot)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_FocalSpot::lhpTagHandler_L0000_resource_data_Source_DicomSource_FocalSpot()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_FocalSpot::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_FocalSpot()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_FocalSpot::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_FocalSpot::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1647,15 +1713,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_FocalSpot::HandleAutoT
 
 }
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_ConvolutionKernel)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ConvolutionKernel)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_ConvolutionKernel::lhpTagHandler_L0000_resource_data_Source_DicomSource_ConvolutionKernel()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ConvolutionKernel::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ConvolutionKernel()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_ConvolutionKernel::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ConvolutionKernel::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1670,15 +1736,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_ConvolutionKernel::Han
 
 }
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_PatientPosition)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PatientPosition)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_PatientPosition::lhpTagHandler_L0000_resource_data_Source_DicomSource_PatientPosition()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PatientPosition::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PatientPosition()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_PatientPosition::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PatientPosition::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1693,15 +1759,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_PatientPosition::Handl
 
 }
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_StudyID)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_StudyID)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_StudyID::lhpTagHandler_L0000_resource_data_Source_DicomSource_StudyID()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_StudyID::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_StudyID()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_StudyID::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_StudyID::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1716,15 +1782,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_StudyID::HandleAutoTag
 
 }
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_ImagePositionPatient)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ImagePositionPatient)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_ImagePositionPatient::lhpTagHandler_L0000_resource_data_Source_DicomSource_ImagePositionPatient()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ImagePositionPatient::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ImagePositionPatient()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_ImagePositionPatient::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ImagePositionPatient::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1739,15 +1805,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_ImagePositionPatient::
 
 }
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_PixelSpacing)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PixelSpacing)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_PixelSpacing::lhpTagHandler_L0000_resource_data_Source_DicomSource_PixelSpacing()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PixelSpacing::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PixelSpacing()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_PixelSpacing::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PixelSpacing::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1762,15 +1828,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_PixelSpacing::HandleAu
 
 }
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_PixelPaddingValue)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PixelPaddingValue)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_PixelPaddingValue::lhpTagHandler_L0000_resource_data_Source_DicomSource_PixelPaddingValue()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PixelPaddingValue::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PixelPaddingValue()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_PixelPaddingValue::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PixelPaddingValue::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1785,15 +1851,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_PixelPaddingValue::Han
 
 }
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_WindowCenter)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_WindowCenter)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_WindowCenter::lhpTagHandler_L0000_resource_data_Source_DicomSource_WindowCenter()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_WindowCenter::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_WindowCenter()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_WindowCenter::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_WindowCenter::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1808,15 +1874,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_WindowCenter::HandleAu
 
 }
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_WindowWidth)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_WindowWidth)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_WindowWidth::lhpTagHandler_L0000_resource_data_Source_DicomSource_WindowWidth()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_WindowWidth::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_WindowWidth()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_WindowWidth::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_WindowWidth::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1835,15 +1901,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_WindowWidth::HandleAut
 
 }
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_RescaleIntercept)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_RescaleIntercept)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_RescaleIntercept::lhpTagHandler_L0000_resource_data_Source_DicomSource_RescaleIntercept()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_RescaleIntercept::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_RescaleIntercept()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_RescaleIntercept::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_RescaleIntercept::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
@@ -1858,15 +1924,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_RescaleIntercept::Hand
 
 }
 
-mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_RescaleSlope)
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_RescaleSlope)
 //------------------------------------------------------------------------------------
-lhpTagHandler_L0000_resource_data_Source_DicomSource_RescaleSlope::lhpTagHandler_L0000_resource_data_Source_DicomSource_RescaleSlope()
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_RescaleSlope::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_RescaleSlope()
 //------------------------------------------------------------------------------------
 {
   ExtractTagName();
 }
 //------------------------------------------------------------------------------------
-void lhpTagHandler_L0000_resource_data_Source_DicomSource_RescaleSlope::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_RescaleSlope::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();

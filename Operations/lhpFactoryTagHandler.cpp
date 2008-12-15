@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpFactoryTagHandler.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-28 09:55:02 $
-  Version:   $Revision: 1.14.2.6 $
+  Date:      $Date: 2008-12-15 10:29:51 $
+  Version:   $Revision: 1.14.2.7 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -38,6 +38,8 @@ lhpFactoryTagHandler::lhpFactoryTagHandler()
 //------------------------------------------------------------------------------
 {
   //lhpPlugTagHandlerMacro(lhpTagHandler,"General tag handler");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_DictionaryURI, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_DictionaryVersion, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_DataType_Field, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_DataType_Dimension, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_DataType_VolumeType, "");
@@ -88,43 +90,43 @@ lhpFactoryTagHandler::lhpFactoryTagHandler()
 
 
   //DICOM
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_StudyDate, ""); 
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Modality, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Manufacturer, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_InstitutionName, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_StationName, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_ManufacturerModelName, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_PatientID, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_PatientSex, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_ScanOptions, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_KVP, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DataCollectionDiameter, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_ReconstructionDiameter, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DistanceSourceToDetector, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DistanceSourceToPatient, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_GantryDetectorTilt, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_TableHeight, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_RotationDirection, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_ExposureTime, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_XRayTubeCurrent, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_Exposure, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_FilterType, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_FocalSpot, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_ConvolutionKernel, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_PatientPosition, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_StudyID, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_ImagePositionPatient, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_PixelSpacing, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_PixelPaddingValue, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_WindowCenter, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_WindowWidth, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_RescaleIntercept, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_RescaleSlope, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_StudyDate, ""); 
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Modality, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Manufacturer, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_InstitutionName, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_StationName, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ManufacturerModelName, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PatientID, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PatientSex, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ScanOptions, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_KVP, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DataCollectionDiameter, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ReconstructionDiameter, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DistanceSourceToDetector, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DistanceSourceToPatient, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_GantryDetectorTilt, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_TableHeight, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_RotationDirection, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ExposureTime, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_XRayTubeCurrent, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Exposure, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_FilterType, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_FocalSpot, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ConvolutionKernel, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PatientPosition, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_StudyID, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ImagePositionPatient, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PixelSpacing, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PixelPaddingValue, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_WindowCenter, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_WindowWidth, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_RescaleIntercept, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_RescaleSlope, "");
   // END DICOM
 
   //MA
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_MASource_General_SamplingFrequency, "");
-  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_MASource_DataType_IsLandmark_NumberOfLandmarks, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_MASource_MASource_General_SamplingFrequency, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DataType_IsLandmark_NumberOfLandmarks, "");
   
 
   //END MA
