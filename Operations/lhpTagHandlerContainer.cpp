@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-12-15 11:15:25 $
-  Version:   $Revision: 1.29.2.11 $
+  Date:      $Date: 2008-12-15 14:14:58 $
+  Version:   $Revision: 1.29.2.12 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -911,10 +911,7 @@ lhpTagHandler_L0000_resource_data_Ownership_OwnerID::lhpTagHandler_L0000_resourc
 void lhpTagHandler_L0000_resource_data_Ownership_OwnerID::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-  mafString value = cargo->GetInputUser()->GetName();
-
-  // tag handling code
-  cargo->SetTagHandlerGeneratedString(value);
+  cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Quality_QualityScore1_URL)

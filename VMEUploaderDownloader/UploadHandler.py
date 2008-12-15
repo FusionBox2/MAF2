@@ -374,7 +374,7 @@ class UploadHandler:
         upl.withChild = self.withChild
         upl.vmeName = self.vmeName
         upl.hasBinary = self.isBinaryDataPresent
-        upl.binaryName = self.binaryName
+        upl.user = self.currentUser
         if(self.msfListFile != 'noMsf'):
             upl.IsUploadMSF = True
             

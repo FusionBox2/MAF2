@@ -37,6 +37,7 @@ class vmeUploaderOnly:
         self.IsUploadMSF = False
         self.binaryName = ''
         self.localChksum = ""
+        self.user = ""
         
     def Upload(self):
         self.__Parse()
@@ -97,6 +98,12 @@ class vmeUploaderOnly:
         day = msfDOMParserInstance.GetTagNodeText(nodeURI)
         if Debug:
             print day
+            
+        nodeURI = msfDOMParserInstance.GetTagNodeByTagName(outVmeTagArrayNode, "L0000_resource_data_Ownership_OwnerID")
+        msfDOMParserInstance.SetTagNodeText(nodeURI, self.user)    
+        user = msfDOMParserInstance.GetTagNodeText(nodeURI)
+        if Debug:
+            print user
         
        # print "has child? " + self.withChild
         if (self.withChild == "true"):   
@@ -185,8 +192,7 @@ class vmeUploaderOnly:
                 errorFile.write(fileName + ' not Found\n')
                 errorFile.close() 
                 return 
-            
-        
+
 
         # for the moment cannot remove anything
         # msfDOMParserInstance.RemoveTagsByList(outVmeTagArrayNode, a)
@@ -220,6 +226,9 @@ class vmeUploaderOnly:
             chksum = msfDOMParserInstance.GetTagNodeText(nodeURI)
             if Debug:
                 print chksum
+
+        
+    
 
         
         os.chdir(oldDir)
