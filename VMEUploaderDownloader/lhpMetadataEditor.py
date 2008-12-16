@@ -354,10 +354,14 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
             
             # apply default value for boolean nodes
             if pi.GetValueType(xmlDictNode) == "bool":
-
-               if msfTagValue == self.ManualTagDefaultValue:
-                  msfTagValue = str(pi.GetDefaultValue(xmlDictNode))
-#       
+                               
+               if str(msfTagValue) == str(self.ManualTagDefaultValue):
+                  newValueFromDefaultColumn = str(pi.GetDefaultValue(xmlDictNode))
+                          
+                  if newValueFromDefaultColumn != "None":
+                      
+                      msfTagValue = newValueFromDefaultColumn
+       
         # factory filed node
         elif self.factoryFilledTagsDict.has_key(msfTagName):
             msfTagValue = self.factoryFilledTagsDict[msfTagName]
