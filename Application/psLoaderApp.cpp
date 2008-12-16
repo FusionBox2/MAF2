@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: psLoaderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-12-05 10:30:05 $
-  Version:   $Revision: 1.1.2.10 $
+  Date:      $Date: 2008-12-16 14:37:36 $
+  Version:   $Revision: 1.1.2.11 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -303,7 +303,7 @@ bool psLoaderApp::OnInit()
 
   //------------------------- Importers -------------------------
   m_Logic->Plug(new mmoDICOMImporter_BES("DICOM"),"Images");
-  m_Logic->Plug(new medOpImporterDicomXA("DICOM XA"),"Images");
+    // m_Logic->Plug(new medOpImporterDicomXA("DICOM XA"),"Images");
   m_Logic->Plug(new mafOpImporterSTL("STL"),"Geometries");
   m_Logic->Plug(new mafOpImporterVTK("VTK"),"Other");
   m_Logic->Plug(new mafOpImporterMSF("MSF"),"Other");
