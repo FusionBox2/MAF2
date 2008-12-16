@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2008-12-16 15:10:23 $
-#   Version:   $Revision: 1.33.2.9 $
+#   Date:      $Date: 2008-12-16 17:05:50 $
+#   Version:   $Revision: 1.33.2.10 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -356,13 +356,13 @@ IF (WIN32)
   # lhpBuilder
   CONFIGURE_FILE(${LHPBUILDER_INSTALLER_DIR}/LHPBuilderInstallerScript.nsi.in  ${LHPBUILDER_EXECUTABLE_OUTPUT_PATH}/LHPBuilderInstallerScript.nsi @ONLY)
   
-	IF (BUILD_SUBAPPS)
-	  # psLoader
-	  CONFIGURE_FILE(${LHPBUILDER_INSTALLER_DIR}/psLoaderInstallerScript.nsi.in  ${LHPBUILDER_EXECUTABLE_OUTPUT_PATH}/psLoaderInstallerScript.nsi @ONLY)
+  # psLoader
+  CONFIGURE_FILE(${LHPBUILDER_INSTALLER_DIR}/psLoaderInstallerScript.nsi.in  ${LHPBUILDER_EXECUTABLE_OUTPUT_PATH}/psLoaderInstallerScript.nsi @ONLY)
 	  
-	  # psLoaderPlus
-	  CONFIGURE_FILE(${LHPBUILDER_INSTALLER_DIR}/psLoaderPlusInstallerScript.nsi.in  ${LHPBUILDER_EXECUTABLE_OUTPUT_PATH}/psLoaderPlusInstallerScript.nsi @ONLY)
-	ENDIF (BUILD_SUBAPPS)
+  IF (BUILD_SUBAPPS)  
+	# psLoaderPlus
+	CONFIGURE_FILE(${LHPBUILDER_INSTALLER_DIR}/psLoaderPlusInstallerScript.nsi.in  ${LHPBUILDER_EXECUTABLE_OUTPUT_PATH}/psLoaderPlusInstallerScript.nsi @ONLY)
+  ENDIF (BUILD_SUBAPPS)
       
   SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE " )
   
