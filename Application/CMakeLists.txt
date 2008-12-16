@@ -70,6 +70,44 @@ IF (WIN32)
   SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/MANIFEST")
 ENDIF (WIN32)
 
+
+PROJECT (psLoaderPlus)
+
+SET(PROJECT_SRCS 
+	psLoaderPlusApp.cpp
+	psLoaderPlusApp.h
+	lhpBuilderLogic.cpp
+	lhpBuilderLogic.h
+	lhpBuilderDecl.h
+)
+
+IF (NOT EXECUTABLE_OUTPUT_PATH)
+  SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin/ CACHE INTERNAL 
+  "Single output directory for building all executables.")
+ENDIF (NOT EXECUTABLE_OUTPUT_PATH)
+
+IF (WIN32)
+	IF(${CMAKE_GENERATOR} STREQUAL "Visual Studio 9 2008" OR ${CMAKE_GENERATOR} STREQUAL "Visual Studio 8 2005")
+	  SET(NO_MANIFEST 1)
+	ELSE(${CMAKE_GENERATOR} STREQUAL "Visual Studio 9 2008" OR ${CMAKE_GENERATOR} STREQUAL "Visual Studio 8 2005")
+	  SET(NO_MANIFEST 0)
+	ENDIF(${CMAKE_GENERATOR} STREQUAL "Visual Studio 9 2008" OR ${CMAKE_GENERATOR} STREQUAL "Visual Studio 8 2005")
+	
+	CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/PSLoaderPlusApplication.rc.in ${PROJECT_BINARY_DIR}/PSLoaderPlusApplication.rc @ONLY)
+  ADD_EXECUTABLE(${PROJECT_NAME} WIN32 ${PROJECT_SRCS} "${PROJECT_BINARY_DIR}/PSLoaderPlusApplication.rc")
+ELSE (WIN32)
+  ADD_EXECUTABLE(${PROJECT_NAME} ${PROJECT_SRCS} )
+ENDIF (WIN32)
+
+SET(PROJECT_LIBS
+  lhpCommon lhpCore lhpGui lhpOperations lhpViews lhpVME vtkLHP C3D_Reader BES_Beta
+)
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
+IF (WIN32)
+  SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/MANIFEST")
+ENDIF (WIN32)
+
+
 IF(MAF_FOUND)
 	#####################################################################################
 	#### Copy GPU shaders to the executable output path of the application.
