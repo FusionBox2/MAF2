@@ -96,6 +96,16 @@ class xmlrpc_demoWS:
        </params>
      </methodCall>'''
 
+        self.listSandbox= \
+    '''<?xml version="1.0"?>
+     <methodCall>
+      <methodName>listSandbox</methodName>
+       <params>
+       <param>
+       </param>
+       </params>
+     </methodCall>'''
+
         self.updateBasket = \
     '''<?xml version="1.0"?>
      <methodCall>
@@ -188,6 +198,8 @@ class xmlrpc_demoWS:
             body = self.xmlDelete
         elif bod == 'listbasket':
             body = self.listBasket
+        elif bod == 'listsandbox':
+            body = self.listSandbox
         elif bod == 'updatebasket':
             body = self.updateBasket
         elif bod == 'deletefrombasket':
@@ -403,6 +415,13 @@ class xmlrpc_demoWS:
             args['filename'] = ''
             args['download'] = ''
             args['listitems'] = ''
+        elif command == 'listsandbox':
+            args['id'] = ''
+            args['title'] = ''
+            args['description'] = ''
+            args['upload'] = ''
+            args['filename'] = ''
+            args['download'] = ''
         else:
             if Debug: print 'Error: command not found\n'
             sys.exit(1)
@@ -424,6 +443,7 @@ xmledit -
 gettitle -
 createresource -
 authservice - 
+listsandbox - 
 ''' % sys.argv[0]
 
     if len(sys.argv) not in (2,3):
