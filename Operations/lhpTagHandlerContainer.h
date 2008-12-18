@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.h,v $
   Language:  C++
-  Date:      $Date: 2008-12-15 11:15:25 $
-  Version:   $Revision: 1.14.2.8 $
+  Date:      $Date: 2008-12-18 13:09:17 $
+  Version:   $Revision: 1.14.2.9 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -473,7 +473,25 @@ public:
 
 };
 
+class lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy_FunctionalAnatomy_DictionaryURI: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy_FunctionalAnatomy_DictionaryURI,mafObject);
 
+  lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy_FunctionalAnatomy_DictionaryURI();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy_FunctionalAnatomy_DictionaryVersion: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy_FunctionalAnatomy_DictionaryVersion,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy_FunctionalAnatomy_DictionaryVersion();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
 
 class lhpTagHandler_L0000_resource_data_Source_DicomSource: public lhpTagHandler
 {
@@ -485,12 +503,52 @@ public:
 
 };
 
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DictionaryURI: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DictionaryURI,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DictionaryURI();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DictionaryVersion: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DictionaryVersion,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DictionaryVersion();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
 class lhpTagHandler_L0000_resource_data_Source_MASource: public lhpTagHandler
 {
 public:
   mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource,mafObject);
 
   lhpTagHandler_L0000_resource_data_Source_MASource();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryURI: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryURI,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryURI();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryVersion: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryVersion,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryVersion();
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };
@@ -523,6 +581,26 @@ public:
   mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_MicroCTSource,mafObject);
 
   lhpTagHandler_L0000_resource_data_Source_MicroCTSource();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_DictionaryURI: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_DictionaryURI,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_DictionaryURI();
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
+
+};
+
+class lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_DictionaryVersion: public lhpTagHandler
+{
+public:
+  mafTypeMacro(lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_DictionaryVersion,mafObject);
+
+  lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_DictionaryVersion();
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo);
 
 };

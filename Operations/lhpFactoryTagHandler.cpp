@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpFactoryTagHandler.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-12-15 11:15:25 $
-  Version:   $Revision: 1.14.2.8 $
+  Date:      $Date: 2008-12-18 13:09:17 $
+  Version:   $Revision: 1.14.2.9 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -79,6 +79,8 @@ lhpFactoryTagHandler::lhpFactoryTagHandler()
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Traceability_Ownership_OwnerID, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_MASource, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_DictionaryURI, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_DictionaryVersion, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_MicroCTSource, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Ownership_OwnerID, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Quality_QualityScore1_URL, "");
@@ -88,9 +90,13 @@ lhpFactoryTagHandler::lhpFactoryTagHandler()
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_Access_Policy1_Price, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_Access_Policy1_Usage, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_Access_Publishing_PublishingStatus, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy_FunctionalAnatomy_DictionaryURI, ""); 
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy_FunctionalAnatomy_DictionaryVersion, ""); 
 
 
   //DICOM
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DictionaryURI, ""); 
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DictionaryVersion, ""); 
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_StudyDate, ""); 
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Modality, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Manufacturer, "");
@@ -126,6 +132,8 @@ lhpFactoryTagHandler::lhpFactoryTagHandler()
   // END DICOM
 
   //MA
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryURI, "");
+  lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryVersion, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_MASource_MASource_General_SamplingFrequency, "");
   lhpPlugTagHandlerMacro(lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DataType_IsLandmark_NumberOfLandmarks, "");
   

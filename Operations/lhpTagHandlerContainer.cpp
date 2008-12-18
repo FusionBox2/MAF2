@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-12-15 14:14:58 $
-  Version:   $Revision: 1.29.2.12 $
+  Date:      $Date: 2008-12-18 13:09:17 $
+  Version:   $Revision: 1.29.2.13 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -1019,6 +1019,72 @@ void lhpTagHandler_L0000_resource_Access_Publishing_PublishingStatus::HandleAuto
   cargo->SetTagHandlerGeneratedString("private");
 }
 
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy_FunctionalAnatomy_DictionaryURI);
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy_FunctionalAnatomy_DictionaryURI::lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy_FunctionalAnatomy_DictionaryURI()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy_FunctionalAnatomy_DictionaryURI::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/FA_onto");
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy_FunctionalAnatomy_DictionaryVersion);
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy_FunctionalAnatomy_DictionaryVersion::lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy_FunctionalAnatomy_DictionaryVersion()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy_FunctionalAnatomy_DictionaryVersion::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafString dictionaryFileNamePrefix = "lhpXMLFASourceSubdictionary_";
+  mafString dictionaryFileName = "NOT FOUND";
+  wxString oldDir = wxGetCwd();
+
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+
+  wxArrayString files;
+  wxString filePattern = dictionaryFileNamePrefix ;
+  filePattern.Append("*.xml");
+
+  wxDir::GetAllFiles(wxGetWorkingDirectory(), &files, filePattern, wxDIR_FILES);
+
+  if (files.size() == 0)
+  {
+    // tag handling code
+    cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+  }
+  if (files.size() != 1)
+  {
+    // tag handling code
+    cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+  }
+  else
+  {
+    assert(files.size() == 1);
+    dictionaryFileName = files[0];
+    int pos = dictionaryFileName.FindLast("\\");
+    dictionaryFileName.Erase(0, pos);
+  }
+
+  wxSetWorkingDirectory(oldDir);
+
+  int pos = dictionaryFileName.FindLast("_");
+  dictionaryFileName.Erase(0, pos);
+  pos = dictionaryFileName.FindLast(".");
+  dictionaryFileName.Erase(pos);
+  cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+}
+
+
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource)
 //------------------------------------------------------------------------------------
 lhpTagHandler_L0000_resource_data_Source_DicomSource::lhpTagHandler_L0000_resource_data_Source_DicomSource()
@@ -1034,6 +1100,72 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource::HandleAutoTag(lhpTagH
   cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/DicomSource");
 }
 
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DictionaryURI);
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DictionaryURI::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DictionaryURI()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DictionaryURI::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/DicomSource");
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DictionaryVersion);
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DictionaryVersion::lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DictionaryVersion()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DictionaryVersion::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafString dictionaryFileNamePrefix = "lhpXMLDicomSourceSubdictionary_";
+  mafString dictionaryFileName = "NOT FOUND";
+  wxString oldDir = wxGetCwd();
+
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+
+  wxArrayString files;
+  wxString filePattern = dictionaryFileNamePrefix ;
+  filePattern.Append("*.xml");
+
+  wxDir::GetAllFiles(wxGetWorkingDirectory(), &files, filePattern, wxDIR_FILES);
+
+  if (files.size() == 0)
+  {
+    // tag handling code
+    cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+  }
+  if (files.size() != 1)
+  {
+    // tag handling code
+    cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+  }
+  else
+  {
+    assert(files.size() == 1);
+    dictionaryFileName = files[0];
+    int pos = dictionaryFileName.FindLast("\\");
+    dictionaryFileName.Erase(0, pos);
+  }
+
+  wxSetWorkingDirectory(oldDir);
+
+  int pos = dictionaryFileName.FindLast("_");
+  dictionaryFileName.Erase(0, pos);
+  pos = dictionaryFileName.FindLast(".");
+  dictionaryFileName.Erase(pos);
+  cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+}
+
+
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource)
 //------------------------------------------------------------------------------------
 lhpTagHandler_L0000_resource_data_Source_MASource::lhpTagHandler_L0000_resource_data_Source_MASource()
@@ -1048,6 +1180,72 @@ void lhpTagHandler_L0000_resource_data_Source_MASource::HandleAutoTag(lhpTagHand
   // tag handling code
   cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/MASource");
 }
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryURI);
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryURI::lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryURI()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryURI::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/MASource");
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryVersion);
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryVersion::lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryVersion()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryVersion::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafString dictionaryFileNamePrefix = "lhpXMLMotionAnalysisSourceSubdictionary_";
+  mafString dictionaryFileName = "NOT FOUND";
+  wxString oldDir = wxGetCwd();
+
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+
+  wxArrayString files;
+  wxString filePattern = dictionaryFileNamePrefix ;
+  filePattern.Append("*.xml");
+
+  wxDir::GetAllFiles(wxGetWorkingDirectory(), &files, filePattern, wxDIR_FILES);
+
+  if (files.size() == 0)
+  {
+    // tag handling code
+    cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+  }
+  if (files.size() != 1)
+  {
+    // tag handling code
+    cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+  }
+  else
+  {
+    assert(files.size() == 1);
+    dictionaryFileName = files[0];
+    int pos = dictionaryFileName.FindLast("\\");
+    dictionaryFileName.Erase(0, pos);
+  }
+
+  wxSetWorkingDirectory(oldDir);
+
+  int pos = dictionaryFileName.FindLast("_");
+  dictionaryFileName.Erase(0, pos);
+  pos = dictionaryFileName.FindLast(".");
+  dictionaryFileName.Erase(pos);
+  cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+}
+
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource_MASource_General_SamplingFrequency)
 //------------------------------------------------------------------------------------
@@ -1117,6 +1315,71 @@ void lhpTagHandler_L0000_resource_data_Source_MicroCTSource::HandleAutoTag(lhpTa
 {
   // tag handling code
   cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/MicroCTSource");
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_DictionaryURI);
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_DictionaryURI::lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_DictionaryURI()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_DictionaryURI::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/MicroCTSource");
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_DictionaryVersion);
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_DictionaryVersion::lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_DictionaryVersion()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_DictionaryVersion::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  mafString dictionaryFileNamePrefix = "lhpXMLMicroCTSourceSubdictionary_";
+  mafString dictionaryFileName = "NOT FOUND";
+  wxString oldDir = wxGetCwd();
+
+  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+
+  wxArrayString files;
+  wxString filePattern = dictionaryFileNamePrefix ;
+  filePattern.Append("*.xml");
+
+  wxDir::GetAllFiles(wxGetWorkingDirectory(), &files, filePattern, wxDIR_FILES);
+
+  if (files.size() == 0)
+  {
+    // tag handling code
+    cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+  }
+  if (files.size() != 1)
+  {
+    // tag handling code
+    cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+  }
+  else
+  {
+    assert(files.size() == 1);
+    dictionaryFileName = files[0];
+    int pos = dictionaryFileName.FindLast("\\");
+    dictionaryFileName.Erase(0, pos);
+  }
+
+  wxSetWorkingDirectory(oldDir);
+
+  int pos = dictionaryFileName.FindLast("_");
+  dictionaryFileName.Erase(0, pos);
+  pos = dictionaryFileName.FindLast(".");
+  dictionaryFileName.Erase(pos);
+  cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
 }
 
 
