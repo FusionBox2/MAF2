@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: psLoaderPlusApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-12-16 15:09:38 $
-  Version:   $Revision: 1.1.2.1 $
+  Date:      $Date: 2008-12-18 09:22:10 $
+  Version:   $Revision: 1.1.2.2 $
   Authors:   Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -54,12 +54,12 @@
 #include "mafOpExporterBmp.h"
 #include "mafOpCreateGroup.h"
 #include "mafOpCreateMeter.h"
-#include "medOpCreateWrappedMeter.h"
+//#include "medOpCreateWrappedMeter.h"
 #include "mafOpCreateSlicer.h"
 #include "mafOpCreateRefSys.h"
 #include "mafOpFilterSurface.h"
 #include "mafOpEditMetadata.h"
-#include "mafOp2DMeasure.h"
+//#include "mafOp2DMeasure.h"
 #include "mafOpReparentTo.h"
 //BES: 22.7.2008 - Large Volume - to be merged 
 #include "BES_Beta/Medical/Operations/mmoDICOMImporter_BES.h"
@@ -68,38 +68,38 @@
 #include "mafOpImporterImage.h"
 #include "mafOpImporterSTL.h"
 #include "mafOpExporterSTL.h"
-#include "mafOpExporterVTK.h"
+//#include "mafOpExporterVTK.h"
 #include "mafOpImporterVTK.h"
 #include "mafOpImporterMSF1x.h"
 #include "mafOpImporterVRML.h"
-#include "mafOpCreateVolume.h"
-#include "mafOpVOIDensityEditor.h"
-#include "BES_Beta/openMAF/Operators/mafOpImporterBBF.h"
+//#include "mafOpCreateVolume.h"
+//#include "mafOpVOIDensityEditor.h"
+//#include "BES_Beta/openMAF/Operators/mafOpImporterBBF.h"
 //BES: 23.6.2008 - Large Volume - to be merged 
 #include "BES_Beta/openMAF/Operators/mafOpImporterRAWVolume_BES.h"
-#include "mafOpImporterRAWVolume.h"
+//#include "mafOpImporterRAWVolume.h"
 #include "mafOpExporterRaw.h"
 //BES: 11.7.2008 - Large Volume - to be merged 
 #include "BES_Beta/Medical/Operations/medOpImporterRAWImages_BES.h"
-#include "medOpImporterRAWImages.h"
+//#include "medOpImporterRAWImages.h"
 #include "mafOpExtractIsosurface.h"
 #include "mafOpCrop.h"
-#include "mafOpVOIDensity.h"
+//#include "mafOpVOIDensity.h"
 #include "medOpVolumeResample.h"
 #include "mafOpAddLandmark.h"
 #include "medOpRegisterClusters.h"
 #include "mafOpCreateSurfaceParametric.h"
-#include "mmoBuildHierarchy.h"
+//#include "mmoBuildHierarchy.h"
 #include "mmoTimeReduce.h"
 #include "mmoINPExporter.h"
 #include "mmoMTRExporter.h"
 #include "mmoINPImporter.h"
 #include "mmoMTRImporter.h"
-#include "mmoLnSurf.h"
-#include "mmoAFSys.h"
-#include "mmoAverageLM.h"
-#include "mmoHelAxis.h"
-#include "mmoStickPalpation.h"
+//#include "mmoLnSurf.h"
+//#include "mmoAFSys.h"
+//#include "mmoAverageLM.h"
+//#include "mmoHelAxis.h"
+//#include "mmoStickPalpation.h"
 #include "medOpScaleDataset.h"
 #include "medOpMove.h"
 //#include "mafOpMAFTransform.h"
@@ -112,25 +112,25 @@
 #include "medOpExporterMeters.h"
 #include "medOpClassicICPRegistration.h"
 #include "mafOpImporterMesh.h"
-#include "mafOpImporterVMEDataSetAttributes.h"
+//#include "mafOpImporterVMEDataSetAttributes.h"
 #include "medOpImporterLandmark.h"
 #include "medOpImporterLandmarkWS.h"
-#include "lhpOpBonemat.h"
+//#include "lhpOpBonemat.h"
 #include "lhpOpImporterAnsysInputFile.h"
 #include "lhpOpExporterAnsysInputFile.h"
 #include "lhpOpImporterAnsysCDBFile.h"
 #include "medOpFreezeVME.h"
-#include "medOpExporterWrappedMeter.h"
-#include "medOpIterativeRegistration.h"
+//#include "medOpExporterWrappedMeter.h"
+//#include "medOpIterativeRegistration.h"
 #include "medOpCreateLabeledVolume.h"
-#include "lhpOpUploadVME.h"
+//#include "lhpOpUploadVME.h"
 #include "lhpOpUploadMultiVME.h"
 #include "lhpOpEditTag.h"
-#include "lhpOpKeyczarIntegrationTest.h"
+//#include "lhpOpKeyczarIntegrationTest.h"
 #include "lhpOpDownloadVME.h"
 #include "medOpSurfaceMirror.h"
 #include "medOpImporterAnalogWS.h"
-#include "medOpMML.h"
+//#include "medOpMML.h"
 #include "mafViewVTK.h"
 #include "mafViewCompound.h"
 #include "mafViewRXCT.h"
@@ -142,30 +142,30 @@
 #include "mafViewImageCompound.h"
 #include "mafViewIntGraph.h"
 #include "medViewSlicer.h"
-#include "lhpOpMultiscaleExplore.h"
+//#include "lhpOpMultiscaleExplore.h"
 
-#include "mafOpValidateTree.h"
+//#include "mafOpValidateTree.h"
 
 #include "medOpImporterDicomXA.h"
 
-#include "medOpComputeWrapping.h"
+//#include "medOpComputeWrapping.h"
 #include "medVMEComputeWrapping.h"
 #include "medPipeComputeWrapping.h"
 
 
 //temporary for testing
-#include "mafViewSingleSliceCompound.h"
+//#include "mafViewSingleSliceCompound.h"
 
 #ifdef MAF_USE_ITK
-#include "lhpOpCreateSurfaceScalar.h"
+//#include "lhpOpCreateSurfaceScalar.h"
 #include "lhpVMESurfaceScalarVarying.h"
 #endif
 #include "lhpVisualPipeSurfaceScalar.h"
 
 //BES: 14.11.2008 - added muscle wrapping
-#include "BES_Beta/Medical/Operations/medOpCreateMuscleWrapper.h"
+//#include "BES_Beta/Medical/Operations/medOpCreateMuscleWrapper.h"
 #include "BES_Beta/Medical/VME/medVMEMuscleWrapper.h"
-#include "BES_Beta/OpenMAF/Operators/mafOpMeshDeformation.h"
+//#include "BES_Beta/OpenMAF/Operators/mafOpMeshDeformation.h"
 
 #include <vtkTimerLog.h>
 
