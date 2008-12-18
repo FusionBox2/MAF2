@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2008-12-16 17:05:50 $
-#   Version:   $Revision: 1.33.2.10 $
+#   Date:      $Date: 2008-12-18 10:31:14 $
+#   Version:   $Revision: 1.33.2.11 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -362,6 +362,12 @@ IF (WIN32)
   IF (BUILD_SUBAPPS)  
 	# psLoaderPlus
 	CONFIGURE_FILE(${LHPBUILDER_INSTALLER_DIR}/psLoaderPlusInstallerScript.nsi.in  ${LHPBUILDER_EXECUTABLE_OUTPUT_PATH}/psLoaderPlusInstallerScript.nsi @ONLY)
+	
+	# Builder
+	CONFIGURE_FILE(${LHPBUILDER_INSTALLER_DIR}/BuilderInstallerScript.nsi.in  ${LHPBUILDER_EXECUTABLE_OUTPUT_PATH}/BuilderInstallerScript.nsi @ONLY)
+	
+	# Bonemat
+	CONFIGURE_FILE(${LHPBUILDER_INSTALLER_DIR}/BonematInstallerScript.nsi.in  ${LHPBUILDER_EXECUTABLE_OUTPUT_PATH}/BonematInstallerScript.nsi @ONLY)
   ENDIF (BUILD_SUBAPPS)
       
   SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE " )
