@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpUser.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-24 11:43:10 $
-Version:   $Revision: 1.11.2.4 $
+Date:      $Date: 2008-12-18 10:37:05 $
+Version:   $Revision: 1.11.2.5 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004
@@ -157,7 +157,7 @@ bool lhpUser::ExecuteAuthenticationScript()
     mafLogMessage(output[i]);
   }
 
-  mafLogMessage("Command Errors Messages \(if any...\):");
+  mafLogMessage("Command Errors Messages (if any...):");
   for (int i = 0; i < errors.size(); i++)
   {
     mafLogMessage(errors[i]);
