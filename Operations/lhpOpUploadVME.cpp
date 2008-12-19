@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-12-10 14:15:07 $
-Version:   $Revision: 1.94.2.17 $
+Date:      $Date: 2008-12-19 16:36:37 $
+Version:   $Revision: 1.94.2.18 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -1214,7 +1214,15 @@ bool lhpOpUploadVME::IsLHPBuilderVersionUpToDate()
   else
     command2execute = m_PythonwExe.GetCStr();
 
+  // get application name
+  mafEvent eventGetApplicationName;
+  eventGetApplicationName.SetSender(this);
+  eventGetApplicationName.SetId(ID_REQUEST_APPLICATION_NAME);
+  mafEventMacro(eventGetApplicationName);
+  mafString appName = eventGetApplicationName.GetString()->GetCStr();  
+
   command2execute.Append(" lhpDictionaryVersionChecker.py ");
+  command2execute.Append(appName.GetCStr());
   command2execute.Append(" ");
   if( !m_ProxyURL.Equals("") )
   {

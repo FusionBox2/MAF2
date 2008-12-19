@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-12-10 14:17:07 $
-Version:   $Revision: 1.27.2.10 $
+Date:      $Date: 2008-12-19 16:36:37 $
+Version:   $Revision: 1.27.2.11 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -255,7 +255,7 @@ void lhpOpUploadMultiVME::OpRun()
   m_UploadVME->SetListener(this->GetListener());
 
   bool upToDate = false;
-  upToDate = this->IsLHPBuilderVersionUpToDate();
+  upToDate = this->IsSoftwareVersionUpToDate();
   if (upToDate)
   {
     mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
@@ -1077,7 +1077,7 @@ void lhpOpUploadMultiVME::OpStop(int result)
 }
 
 //----------------------------------------------------------------------------
-bool lhpOpUploadMultiVME::IsLHPBuilderVersionUpToDate()
+bool lhpOpUploadMultiVME::IsSoftwareVersionUpToDate()
 //----------------------------------------------------------------------------
 {
   wxBusyInfo("Checking if  your software is up-to-date in order to upload, please wait...");
@@ -1088,12 +1088,20 @@ bool lhpOpUploadMultiVME::IsLHPBuilderVersionUpToDate()
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
+  // get application name
+  mafEvent eventGetApplicationName;
+  eventGetApplicationName.SetSender(this);
+  eventGetApplicationName.SetId(ID_REQUEST_APPLICATION_NAME);
+  mafEventMacro(eventGetApplicationName);
+  mafString appName = eventGetApplicationName.GetString()->GetCStr();  
+
   // get manual tags
   wxString command2execute;
   command2execute.Clear();
   command2execute = m_PythonExe.GetCStr();
 
   command2execute.Append(" lhpDictionaryVersionChecker.py ");
+  command2execute.Append(appName.GetCStr());
   command2execute.Append(" ");
   command2execute.Append(m_ProxyURL.GetCStr());
   command2execute.Append(" ");

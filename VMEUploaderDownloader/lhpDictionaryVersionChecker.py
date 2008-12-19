@@ -28,8 +28,11 @@ class lhpDictionaryVersionChecker:
         # URL
         self.Host = "www.biomedtown.org"
         self.DictionaryDownloadHTMLPageSelector = "https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries"
-        self.RemoteWarningPage = r"http://www.biomedtown.org/biomed_town/LHDL/users/swclient/DictionaryCheck/"
         
+        # Warning web pages: default is UNDEFINED
+        self.RemoteWarningPage = "UNDEFINED"        
+        self.LhpBuilderRemoteWarningPage = r"http://www.biomedtown.org/biomed_town/LHDL/users/swclient/DictionaryCheck/"
+        self.PSLoaderRemoteWarningPage = r"https://www.biomedtown.org/biomed_town/LHDL/users/repository/DictionaryCheck/"
         
         # authentication
         self.Username = 'lhpparabuild'
@@ -39,6 +42,10 @@ class lhpDictionaryVersionChecker:
         self.DictionaryDownloadHTMLPageFileName = "DictionaryDownloadHTMLPage.htm"
         self.DictionaryCreationDate = "YYYYMMDDHHMM"
     
+        # application name
+        
+        self.ApplicationName = "UNDEFINED"
+        
         # proxy
         self.ProxyURL = ''
         self.ProxyPort = ''
@@ -58,12 +65,19 @@ class lhpDictionaryVersionChecker:
         
         remoteDate = self.GetRemoteDictionaryDate()
         
+        if self.ApplicationName == "PSLoader":
+            self.RemoteWarningPage = self.PSLoaderRemoteWarningPage
+        elif self.ApplicationName == "LHPBuilder":
+            self.RemoteWarningPage = self.LhpBuilderRemoteWarningPage
+        else:
+            self.RemoteWarningPage = "No page defined yet!"
+            
         if remoteDate > localDate:
-            print "Your LHPBuilder software is not up to date and you're not allowed to upload with it! Please download the latest version."
+            print "Your software client is not up to date and you're not allowed to upload with it! Please download the latest version."
             webbrowser.open(self.RemoteWarningPage)
             return False
         else:
-            print "Your LHPBuilder software is up to date! You can safely upload your VME!"
+            print "Your software client is up to date! You can safely upload your VME!"
             return  True
         
     def RemoveOldDictionaries(self, prefix):
@@ -272,10 +286,11 @@ class lhpDictionaryVersionChecker:
             
             parsedLineNumber += 1
         
-def run(proxyURL = '', proxyPort = ''):                                            
+def run(applicationName = "UNDEFINED", proxyURL = '', proxyPort = ''):                                            
     
     # get the dictionary creation date
     dictVC = lhpDictionaryVersionChecker()
+    dictVC.ApplicationName = applicationName
     dictVC.ProxyURL = proxyURL
     dictVC.ProxyPort = proxyPort
     if dictVC.IsDictionaryUpToDate() == True:
@@ -285,18 +300,20 @@ def run(proxyURL = '', proxyPort = ''):
     
 if __name__ == '__main__':    
 
-    if len(sys.argv) != 1 and len(sys.argv) != 3:
+    if len(sys.argv) != 2 and len(sys.argv) != 4:
         print """
-        usage: python.exe lhpDictionaryVersionChecker.py proxyURL proxyPort
+        usage: python.exe lhpDictionaryVersionChecker.py applicationName proxyURL proxyPort
         The last two arguments are optional: if a proxy is not provided it will not be used
         """
         sys.exit(-1)
+    
+    applicationName = sys.argv[1]
         
-    if len(sys.argv) == 1:
+    if len(sys.argv) == 2:
         proxyURL = ''
         proxyPort = ''
     else:
-        proxyURL = sys.argv[1]
-        proxyPort = sys.argv[2]
+        proxyURL = sys.argv[2]
+        proxyPort = sys.argv[3]
     
-    run(proxyURL,proxyPort)
+    run(applicationName, proxyURL, proxyPort)

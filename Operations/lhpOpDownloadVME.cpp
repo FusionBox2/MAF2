@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-12-12 09:59:02 $
-Version:   $Revision: 1.40.2.11 $
+Date:      $Date: 2008-12-19 16:36:37 $
+Version:   $Revision: 1.40.2.12 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -83,7 +83,7 @@ long lhpOpDownloadVME::m_Pid = -1;
 mafString lhpOpDownloadVME::m_CacheSubdir = "0";
 enum lhpOpDownloadVME_ID
 {
-  ID_TEST = MINID, 
+  ID_USE_DICOM_SUBDICTIONARY = MINID, 
 };
 
 //----------------------------------------------------------------------------
@@ -1550,12 +1550,20 @@ bool lhpOpDownloadVME::IsLHPBuilderVersionUpToDate()
   wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+  
+  // get application name
+  mafEvent eventGetApplicationName;
+  eventGetApplicationName.SetSender(this);
+  eventGetApplicationName.SetId(ID_REQUEST_APPLICATION_NAME);
+  mafEventMacro(eventGetApplicationName);
+  mafString appName = eventGetApplicationName.GetString()->GetCStr();  
 
   // get manual tags
   wxString command2execute;
   command2execute.Clear();
   command2execute = m_PythonwExe.GetCStr();
   command2execute.Append(" lhpDictionaryVersionChecker.py ");
+  command2execute.Append(appName.GetCStr());
   command2execute.Append(" ");
   if( !m_ProxyURL.Equals("") )
   {

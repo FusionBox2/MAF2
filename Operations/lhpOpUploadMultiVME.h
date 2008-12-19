@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.h,v $
 Language:  C++
-Date:      $Date: 2008-12-10 14:17:07 $
-Version:   $Revision: 1.13.2.6 $
+Date:      $Date: 2008-12-19 16:36:37 $
+Version:   $Revision: 1.13.2.7 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -86,7 +86,7 @@ public:
 protected:
   
   /** check if lhpbuilder software version is up to date in order to a allow vme uploading */
-  bool IsLHPBuilderVersionUpToDate();
+  bool IsSoftwareVersionUpToDate();
 
   /** Try to handle auto tags through tags factory and convert unhandled 
   to manual tags is to be filled by the user*/
