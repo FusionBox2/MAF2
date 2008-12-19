@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: BuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-12-18 09:24:14 $
-  Version:   $Revision: 1.1.2.1 $
+  Date:      $Date: 2008-12-19 15:12:15 $
+  Version:   $Revision: 1.1.2.2 $
   Authors:   Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -354,7 +354,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   m_Logic->Plug(new mafOpExporterSTL("STL"),"Geometries");
   m_Logic->Plug(new mmoINPExporter("INP"),"Geometries");
   m_Logic->Plug(new mmoMTRExporter("MTR"), "Geometries");
-  //m_Logic->Plug(new mafOpExporterVTK("VTK"), "Other");
+  m_Logic->Plug(new mafOpExporterVTK("VTK"), "Other");
 	m_Logic->Plug(new mafOpExporterRAW("Raw"), "Images");
   m_Logic->Plug(new mafOpExporterBmp("Bmp"), "Images");
   m_Logic->Plug(new medOpExporterLandmark("Landmark"), "Motion Analysis");
