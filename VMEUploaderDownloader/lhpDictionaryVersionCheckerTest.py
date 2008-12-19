@@ -42,6 +42,9 @@ class lhpDictionaryVersionCheckerTest(unittest.TestCase):
     def testRunPSLoader(self):        
         lhpDictionaryVersionChecker.run("PSLoader")
     
+    def testRunUnknownApp(self):        
+        lhpDictionaryVersionChecker.run("pippo")
+    
     def testGetDictionaryCreationDate(self):
         dd = lhpDictionaryVersionChecker.lhpDictionaryVersionChecker()
         dt = dd.GetRemoteDictionaryDate()

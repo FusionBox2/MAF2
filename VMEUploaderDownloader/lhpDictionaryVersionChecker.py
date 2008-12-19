@@ -31,6 +31,7 @@ class lhpDictionaryVersionChecker:
         
         # Warning web pages: default is UNDEFINED
         self.RemoteWarningPage = "UNDEFINED"        
+        self.UnknownPageURI = "www.NoPageDefinedYet.com"
         self.LhpBuilderRemoteWarningPage = r"http://www.biomedtown.org/biomed_town/LHDL/users/swclient/DictionaryCheck/"
         self.PSLoaderRemoteWarningPage = r"https://www.biomedtown.org/biomed_town/LHDL/users/repository/DictionaryCheck/"
         
@@ -70,7 +71,7 @@ class lhpDictionaryVersionChecker:
         elif self.ApplicationName == "LHPBuilder":
             self.RemoteWarningPage = self.LhpBuilderRemoteWarningPage
         else:
-            self.RemoteWarningPage = "No page defined yet!"
+            self.RemoteWarningPage = self.UnknownPageURI
             
         if remoteDate > localDate:
             print "Your software client is not up to date and you're not allowed to upload with it! Please download the latest version."
