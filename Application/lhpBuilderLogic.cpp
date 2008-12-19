@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderLogic.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-18 15:12:20 $
-  Version:   $Revision: 1.9.2.3 $
+  Date:      $Date: 2008-12-19 17:16:27 $
+  Version:   $Revision: 1.9.2.4 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
@@ -62,6 +62,12 @@ void lhpBuilderLogic::OnEvent(mafEventBase *maf_event)
 				mafLogMessage(wxString::Format("%s",m_Revision.GetCStr()));
 			}
 			break;
+      case ID_REQUEST_APPLICATION_NAME:
+      {
+        e->SetString(&m_AppTitle);
+      }
+      break;
+
     case ID_MSF_DATA_CACHE:
       {
         //comunicate to operation msf directory
