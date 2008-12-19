@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: psLoaderPlusApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-12-18 09:22:10 $
-  Version:   $Revision: 1.1.2.2 $
+  Date:      $Date: 2008-12-19 15:06:56 $
+  Version:   $Revision: 1.1.2.3 $
   Authors:   Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -59,7 +59,7 @@
 #include "mafOpCreateRefSys.h"
 #include "mafOpFilterSurface.h"
 #include "mafOpEditMetadata.h"
-//#include "mafOp2DMeasure.h"
+#include "mafOp2DMeasure.h"
 #include "mafOpReparentTo.h"
 //BES: 22.7.2008 - Large Volume - to be merged 
 #include "BES_Beta/Medical/Operations/mmoDICOMImporter_BES.h"
@@ -68,7 +68,7 @@
 #include "mafOpImporterImage.h"
 #include "mafOpImporterSTL.h"
 #include "mafOpExporterSTL.h"
-//#include "mafOpExporterVTK.h"
+#include "mafOpExporterVTK.h"
 #include "mafOpImporterVTK.h"
 #include "mafOpImporterMSF1x.h"
 #include "mafOpImporterVRML.h"
@@ -354,7 +354,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   m_Logic->Plug(new mafOpExporterSTL("STL"),"Geometries");
   m_Logic->Plug(new mmoINPExporter("INP"),"Geometries");
   m_Logic->Plug(new mmoMTRExporter("MTR"), "Geometries");
-  //m_Logic->Plug(new mafOpExporterVTK("VTK"), "Other");
+  m_Logic->Plug(new mafOpExporterVTK("VTK"), "Other");
 	m_Logic->Plug(new mafOpExporterRAW("Raw"), "Images");
   m_Logic->Plug(new mafOpExporterBmp("Bmp"), "Images");
   m_Logic->Plug(new medOpExporterLandmark("Landmark"), "Motion Analysis");
@@ -389,7 +389,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   m_Logic->Plug(new medOpSurfaceMirror("Surface Mirror"),"Modify");
 	m_Logic->Plug(new mafOpCrop("Crop Volume"),"Modify");
 	m_Logic->Plug(new medOpVolumeResample("Volume Resample"),"Modify");
-	//m_Logic->Plug(new mafOp2DMeasure("2D Measure"),"Measure");
+	m_Logic->Plug(new mafOp2DMeasure("2D Measure"),"Measure");
 	//m_Logic->Plug(new mafOpVOIDensity("VOI Density"),"Measure");
   m_Logic->Plug(new mafOpReparentTo("Reparent to...  \tCtrl+R"),"Modify/Fuse");
   m_Logic->Plug(new lhpOpScaleDataset(),"Modify");
