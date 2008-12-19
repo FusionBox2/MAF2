@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: BonematApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-12-18 10:34:23 $
-  Version:   $Revision: 1.1.2.1 $
+  Date:      $Date: 2008-12-19 14:54:01 $
+  Version:   $Revision: 1.1.2.2 $
   Authors:   Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -110,7 +110,7 @@
 //#include "medOpExporterMeters.h"
 //#include "medOpClassicICPRegistration.h"
 #include "mafOpImporterMesh.h"
-//#include "mafOpImporterVMEDataSetAttributes.h"
+#include "mafOpImporterVMEDataSetAttributes.h"
 //#include "medOpImporterLandmark.h"
 //#include "medOpImporterLandmarkWS.h"
 #include "lhpOpBonemat.h"
@@ -368,7 +368,7 @@ bool BonematApp::OnInit()
 //  m_Logic->Plug(new mafOpReparentTo("Reparent to...  \tCtrl+R"),"Modify/Fuse");
 //  m_Logic->Plug(new lhpOpScaleDataset(),"Modify");
     m_Logic->Plug(new lhpOpMove(),"Modify");    
-//  m_Logic->Plug(new mafOpImporterVMEDataSetAttributes("VME DataSet Attributes Adder"),"Modify");
+    m_Logic->Plug(new mafOpImporterVMEDataSetAttributes("VME DataSet Attributes Adder"),"Modify");
 //  m_Logic->Plug(new medOpClassicICPRegistration("Register Surface"),"Modify/Fuse");
     // m_Logic->Plug(new mmoAFSys("AFRefsys"),"Create/Derive");
     // m_Logic->Plug(new mmoAverageLM("Average landmark"),"Create/Derive");
