@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderLogic.h,v $
   Language:  C++
-  Date:      $Date: 2008-11-18 14:41:02 $
-  Version:   $Revision: 1.5.2.2 $
+  Date:      $Date: 2008-12-23 11:17:09 $
+  Version:   $Revision: 1.5.2.3 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
@@ -45,10 +45,13 @@ public:
   /** Get user credentials */
   void GetCredentials();
 
+  /** Superclass override with subapps specific contextual menu */
+  void ViewContextualMenu(bool vme_menu);
+
 protected:
   /** Respond to a VME_ADDED evt. propagate evt. to SideBar,ViewManager,ecc.. */
   virtual void VmeAdded(mafNode *vme);
-
+  
   lhpGUINetworkConnectionSettings *m_NetworkConnectionSettings;
   lhpGUIPythonSettings *m_PythonSettings;
   lhpUser  *m_User;

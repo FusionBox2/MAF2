@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderLogic.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-12-19 17:16:27 $
-  Version:   $Revision: 1.9.2.4 $
+  Date:      $Date: 2008-12-23 11:17:09 $
+  Version:   $Revision: 1.9.2.5 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
@@ -29,6 +29,11 @@
 #include "lhpGUINetworkConnectionSettings.h"
 #include "lhpGUIPythonSettings.h"
 #include "lhpUser.h"
+
+#include "psLoaderGUIContextualMenu.h"
+#include "mafViewManager.h"
+#include "mafGUIMDIChild.h"
+#include "mafGUIMDIFrame.h"
 
 //----------------------------------------------------------------------------
 lhpBuilderLogic::lhpBuilderLogic()
@@ -163,4 +168,24 @@ void lhpBuilderLogic::GetCredentials()
   }
   m_OpManager->SetMafUser(m_User);
 
+}
+
+//----------------------------------------------------------------------------
+void lhpBuilderLogic::ViewContextualMenu(bool vme_menu)
+//----------------------------------------------------------------------------
+{
+  if (m_AppTitle == "PSLoader")
+  {
+    psLoaderGUIContextualMenu *contextMenu = new psLoaderGUIContextualMenu();
+    contextMenu->SetListener(this);
+    mafView *v = m_ViewManager->GetSelectedView();
+    mafGUIMDIChild *c = (mafGUIMDIChild *)m_Win->GetActiveChild();
+    if(c != NULL)
+      contextMenu->ShowContextualMenu(c,v,vme_menu);
+    cppDEL(contextMenu);
+  }
+  else
+  {
+    medLogicWithManagers::ViewContextualMenu(vme_menu);
+  }
 }
