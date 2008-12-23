@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-12-15 10:31:06 $
-Version:   $Revision: 1.26.2.21 $
+Date:      $Date: 2008-12-23 12:49:50 $
+Version:   $Revision: 1.26.2.22 $
 Authors:   Roberto Mucci , Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -279,7 +279,6 @@ void lhpOpEditTag::OnEvent(mafEventBase *maf_event)
 
     case wxOK:
       {
-        StoreUsedDictionariesToTags();
         this->OpStop(OP_RUN_OK);
         return;
       }
@@ -421,7 +420,8 @@ int lhpOpEditTag::EditTags()
 
   if (save == wxYES)
   {
-    ImportMSF();
+    CopyEditorTagsIntoOriginalMSF();
+    StoreUsedDictionariesToTags();
     mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
 
     // show dialog for tag propagation...
@@ -453,7 +453,7 @@ int lhpOpEditTag::EditTags()
 }
 
 //-------------------------------------------------------------------
-int lhpOpEditTag::ImportMSF()
+int lhpOpEditTag::CopyEditorTagsIntoOriginalMSF()
 //-------------------------------------------------------------------
 {
   //msf name created by phyton tag editor is standard: OutputMSF.lhp
