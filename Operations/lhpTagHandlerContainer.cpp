@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-12-18 13:09:17 $
-  Version:   $Revision: 1.29.2.13 $
+  Date:      $Date: 2009-01-07 10:46:20 $
+  Version:   $Revision: 1.29.2.14 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -1017,6 +1017,21 @@ void lhpTagHandler_L0000_resource_Access_Publishing_PublishingStatus::HandleAuto
 {
   // tag handling code
   cargo->SetTagHandlerGeneratedString("private");
+}
+
+mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy);
+//------------------------------------------------------------------------------------
+lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy::lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy()
+//------------------------------------------------------------------------------------
+{
+  ExtractTagName();
+}
+//------------------------------------------------------------------------------------
+void lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
+//------------------------------------------------------------------------------------
+{
+  // tag handling code
+  cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/FA_onto");
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy_FunctionalAnatomy_DictionaryURI);
