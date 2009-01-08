@@ -11,8 +11,6 @@ from Debug import Debug
 import wx
 import time
 
-Debug = 1
-
 class DownloadHandler:
     queue = None
     def __init__(self, queue, observer, dirCache, srbData, usr , pwd, urlServer, isLast, fileSize):
