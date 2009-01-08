@@ -9,7 +9,8 @@ class CustomGaugeWx(wx.BoxSizer):
        
         self.sizer1 = wx.BoxSizer(wx.HORIZONTAL)
         self.initialLabel = wx.StaticText(parent, -1, label = "123456789101213" ,pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.ALIGN_LEFT)      
-        self.endingLabel = wx.StaticText(parent, -1, label = "")
+        self.endingLabel = wx.StaticText(parent, -1, label = "             ")
+        self.remainingTimeLabel = wx.StaticText(parent, -1, label = "             ")
         self.gauge = wx.Gauge(parent, id, range, pos, size, style = wx.ALIGN_CENTER , validator=wx.DefaultValidator, name=wx.GaugeNameStr)
         self.png = None
 
@@ -27,8 +28,10 @@ class CustomGaugeWx(wx.BoxSizer):
         self.sizer1.Add(self.initialLabel, 0, wx.ALIGN_LEFT | wx.ALIGN_CENTRE_VERTICAL)
         self.sizer1.Add(self.image, 0, wx.ALIGN_CENTER | wx.ALIGN_CENTRE_VERTICAL)
         self.sizer1.Add(self.gauge, 0, wx.ALIGN_CENTER )
-        self.sizer1.AddSpacer(5)
+        self.sizer1.AddSpacer(40)
         self.sizer1.Add(self.endingLabel, 1, wx.ALIGN_RIGHT | wx.ALIGN_CENTRE_VERTICAL)
+        self.sizer1.AddSpacer(40)
+        self.sizer1.Add(self.remainingTimeLabel, 1, wx.ALIGN_RIGHT | wx.ALIGN_CENTRE_VERTICAL)
         
         self.AddSpacer(5)
         self.line = wx.StaticLine(parent, -1, size = (self.gauge.GetSize()[0]*2 , 2))
@@ -51,6 +54,9 @@ class CustomGaugeWx(wx.BoxSizer):
     
     def SetEndingLabel(self, label):
         self.endingLabel.SetLabel(label)
+        
+    def SetRemainingTimeLabel(self, label):
+        self.remainingTimeLabel.SetLabel(label)
 
 def test():
     app = wx.PySimpleApp()    

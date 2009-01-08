@@ -1,6 +1,5 @@
 import vmeDownloader
 from webServicesClient import MtomDownload
-import DownloadHandler
 import os, sys, string, time, re ,shutil
 import hashlib
 import msvcrt
@@ -10,7 +9,9 @@ import threading, thread, CustomThread
 from lhpDefines import *
 from Debug import Debug
 import wx
+import time
 
+Debug = 1
 
 class DownloadHandler:
     queue = None
@@ -119,14 +120,69 @@ class DownloadHandler:
         if(self.srbData != "."):
             thread.start_new_thread(self.__download,()) #here start download thread
             percentage = -1
+            previousTime = time.time()
+            previousFileDimension = 0
+            totalDataDownloaded = 0
+            totalTime = 0
+            lastSpeed = 0
+            
             while(1):
-              percentage = 100 * float(self.controlLocalFileDimension())/float(self.fileSize)
+              currentFileDimension = self.controlLocalFileDimension()
+              percentage = 100 * float(currentFileDimension)/float(self.fileSize)
+              
+              currentTime = time.time()
+              elapsedTime = currentTime - previousTime
+              transferredDimension = currentFileDimension-previousFileDimension
+              totalDataDownloaded = totalDataDownloaded + transferredDimension                 
+              totalTime = totalTime + elapsedTime
+              remainingTime = "unknown"
+              remainingData = float(self.fileSize) - float(totalDataDownloaded)
+              
+              if elapsedTime != 0:
+                 lastSpeed = transferredDimension / elapsedTime 
+           
+              previousTime = currentTime
+              previousFileDimension = currentFileDimension
+                
+              if lastSpeed != 0:
+                 remainingTime = remainingData / lastSpeed                     
+              
               if Debug:
-                  print percentage
+                  print  ""
+                  print  "########################################"
+                  print "in time: "  + str(elapsedTime) 
+                  
+                  print "transferred: " + str(transferredDimension)
+                  print ""
+                  
+                  print "percent transferred:" + str(percentage)  + "%"
+                  
+                  print "and data transferred: " + str(totalDataDownloaded) 
+                  
+                  print "in total time: " + str(totalTime)
+                                    
+                  print str(remainingData) + " remaining"
+                  
+                  print ""
+                  
+                  if elapsedTime != 0:
+                    print "last speed: " + str(lastSpeed)
+                  else:
+                    print "last speed: unknown"  
+                  
+                
+                  if lastSpeed != 0:
+                     print "remaining time: " + str(remainingTime)                                          
+                  else:
+                     print "remaining time: unknown"
+                     
+                    
+                  print  "########################################"
+                  
               time.sleep(0.3)
               self.block.acquire()
               if(DownloadHandler.queue):
-                  lista = [self.observer,percentage]
+                  lista = [self.observer,percentage, remainingTime]
                   DownloadHandler.queue.put(lista)
               self.block.release()
               if(percentage >= 100):

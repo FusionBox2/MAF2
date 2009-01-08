@@ -8,7 +8,6 @@ import threading, thread, CustomThread
 from Debug import Debug
 
 
-
 # GAUGE
 NOT_PULSE = 0
 PULSE = 1
@@ -16,7 +15,7 @@ PULSE = 1
 
 class GuiPart(wx.Frame):
     def __init__(self, master, queue, endCommand):
-        wx.Frame.__init__(self, None, -1, style = wx.DEFAULT_FRAME_STYLE|wx.RESIZE_BORDER|wx.MAXIMIZE_BOX)
+        wx.Frame.__init__(self, None, -1, size=(500, 400), style = wx.DEFAULT_FRAME_STYLE|wx.RESIZE_BORDER|wx.MAXIMIZE_BOX)
         self.master = master
         self.queue = queue 
         self.complete = 0 #set to 1 when all VME ahve benn uploaded
@@ -118,13 +117,20 @@ class GuiPart(wx.Frame):
                 #lista is composed by observer (the gauge) and a value
                 #if value is -1 or gauge as option gaugepulse, is pulsing
                 #else set the value of the progress
-                
+                                
+                    
                 if(lista[0].gaugePulse == 0 and lista[1] != -1):
                    lista[0].gauge.SetValue(int(lista[1]))
+                   if len(lista) == 3:
+                    remainingTime = round(float(lista[2]),1)
+                    lista[0].SetRemainingTimeLabel(str(remainingTime) + 's left')
+                   
                 else:
                    lista[0].gauge.Pulse()
-                   #here calculate time 
+                   #here calculate time
+                    
                    lista[0].SetEndingLabel(str(lista[1]))
+                    
                 if(lista[1] == 110):
                     self.complete = 0
                     lista[0].SetEndingLabel('Completed!')
