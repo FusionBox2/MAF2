@@ -6,6 +6,7 @@ class MtomUploadTest(unittest.TestCase):
     """"""
     def testUpload(self):
         testFile = "..\\vmeUploaderTestData\\uploadSpeedProbeData\\uploadSpeedProbeData.vtk"
+        testFileSize = 69.462
         instanceURI = MtomUploadURI.MtomUploadURI()
         serviceUrl = 'https://ws-lhdl.cineca.it/mafSRBUploadURI.cgi'
         binaryURI = "NOT PRESENT"
@@ -27,7 +28,7 @@ class MtomUploadTest(unittest.TestCase):
         
         tElapsed = endT-startT
         
-        speed = 69.462 / tElapsed
+        speed = testFileSize / tElapsed
         
         print str(speed)
         
