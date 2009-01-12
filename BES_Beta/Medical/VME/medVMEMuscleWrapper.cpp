@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: medVMEMuscleWrapper.cpp,v $
 Language:  C++
-Date:      $Date: 2008-12-12 12:56:26 $
-Version:   $Revision: 1.1.2.4 $
+Date:      $Date: 2009-01-12 12:56:45 $
+Version:   $Revision: 1.1.2.5 $
 Authors:   Josef Kohout
 ==========================================================================
 Copyright (c) 2001/2005 
@@ -86,7 +86,7 @@ medVMEMuscleWrapper::medVMEMuscleWrapper()
   m_FbSmoothSteps = DEFAULT_FIBERS_SMOOTHSTEPS;
   m_FbSmoothWeight = DEFAULT_FIBERS_SMOOTHWEIGHT;
   m_FbDebugShowTemplate = 0;
-
+  
   m_bLinksRestored = false;
   m_bNeedUpdate = false;
   m_bDoNotUpdate = false;
@@ -522,7 +522,9 @@ void medVMEMuscleWrapper::InternalUpdate()
   if (m_bDoNotUpdate)
     return;
 
-  if (!m_bLinksRestored)  //this happen when the user just checks VME without its selection  
+  //this happens when the user just checks VME without its selection  
+  //or deletes some linked VME from VME tree
+  if (!m_bLinksRestored)
     RestoreMeterLinks();  //so we restore links      
 
   //update curves of every Wrapper, if needed
@@ -1370,8 +1372,9 @@ void medVMEMuscleWrapper::OnEvent(mafEventBase *maf_event)
         if (nId == ID_FIBERS_SMOOTH)
           UpdateControls();
       }
-      else
-        bEventHandled = false;
+      else             
+        bEventHandled = false;      
+      
       break;
     } //end switch
 
@@ -1389,8 +1392,16 @@ void medVMEMuscleWrapper::OnEvent(mafEventBase *maf_event)
     if (bEventHandled)
       return;    
   }
-
+  
   Superclass::OnEvent(maf_event);
+
+  if (maf_event->GetId() == NODE_DETACHED_FROM_TREE)
+  {
+    m_bNeedUpdate = true;
+    m_bLinksRestored = false; 
+
+    Modified();
+  }
 }
 
 //------------------------------------------------------------------------
@@ -1529,8 +1540,10 @@ bool medVMEMuscleWrapper::SelectVme(mafString title,
   mafVME* vme = mafVME::SafeDownCast(node);
   if (vme != NULL)
   {    
-    if (vme->GetOutput()->IsA("mafVMEOutputMeter") ||
-      vme->GetOutput()->IsA("mafVMEOutputWrappedMeter")
+    if (
+      vme->GetOutput()->IsA("mafVMEOutputMeter") ||
+      vme->GetOutput()->IsA("medVMEOutputWrappedMeter") ||
+      vme->GetOutput()->IsA("medVMEOutputComputeWrapping")  //TODO: why we cannot live with medVMEOutputWrappedMeter only?
       )      
       return true;
   }

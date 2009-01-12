@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: medVMEMuscleWrapper.h,v $
   Language:  C++
-  Date:      $Date: 2008-12-12 12:56:26 $
-  Version:   $Revision: 1.1.2.4 $
+  Date:      $Date: 2009-01-12 12:56:45 $
+  Version:   $Revision: 1.1.2.5 $
   Authors:   Josef Kohout
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -107,6 +107,8 @@ protected:
   int m_nWrappers;                //<number of wrappers in m_pWrappers
   WRAPPER_ITEM* m_pWrappers;      //<list of wrappers
   bool m_bLinksRestored;          //<true, if links has been restored and the changes can be saved
+  
+
     
   vtkPolyData* m_PolyData;        //<output polydata
   bool m_bNeedUpdate;             //<true, if the deformation must be reexecuted
