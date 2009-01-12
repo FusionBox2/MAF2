@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: medVMEMuscleWrapper.cpp,v $
 Language:  C++
-Date:      $Date: 2009-01-12 12:56:45 $
-Version:   $Revision: 1.1.2.5 $
+Date:      $Date: 2009-01-12 15:41:57 $
+Version:   $Revision: 1.1.2.6 $
 Authors:   Josef Kohout
 ==========================================================================
 Copyright (c) 2001/2005 
@@ -141,37 +141,12 @@ int medVMEMuscleWrapper::DeepCopy(mafNode *a)
   if (Superclass::DeepCopy(a)==MAF_OK)
   {
     medVMEMuscleWrapper *wrapper = medVMEMuscleWrapper::SafeDownCast(a);
-    
-    m_MuscleVme = wrapper->m_MuscleVme;
-    m_MuscleVmeName = wrapper->m_MuscleVmeName;
-    for (int i = 0; i < 2; i++)
-    {
-      m_OIVME[i] = wrapper->m_OIVME[i];
+
+    for (int i = 0; i < 2; i++){    
       m_OIVMEName[i] = wrapper->m_OIVMEName[i];
     }
 
-    DeleteAllWrappers();
-
-    WRAPPER_ITEM* pLastItem = NULL;
-    WRAPPER_ITEM* pSrcItem = wrapper->m_pWrappers;
-    while (pSrcItem != NULL)
-    {
-      WRAPPER_ITEM* pItem = new WRAPPER_ITEM;
-      memset(pItem, 0, sizeof(WRAPPER_ITEM));
-
-      for (int i = 0; i < 2; i++){
-        pItem->pVmeRP_CP[i] = pSrcItem->pVmeRP_CP[i];
-      }
-
-      if (NULL == (pItem->pLast = pLastItem))
-        m_pWrappers = pItem;
-      else
-        pLastItem->pNext = pItem;
-
-      pLastItem = pItem;
-      pSrcItem = pSrcItem->pNext;
-    }
-
+    m_nWrappers = wrapper->m_nWrappers;        
     m_InputMode = wrapper->m_InputMode;
     m_VisMode = wrapper->m_VisMode;
     m_FbTemplate = wrapper->m_FbTemplate;
@@ -183,6 +158,17 @@ int medVMEMuscleWrapper::DeepCopy(mafNode *a)
     m_FbDebugShowTemplate = wrapper->m_FbDebugShowTemplate;
 
     m_bNeedUpdate = true;
+    
+    //DeepCopy copied links => restore internal data
+    RestoreMeterLinks();
+
+    //BES: 12.1.2009 - DataPipe has NULL input now (although it was set in ctor)
+    //=> we need to reassign input for the data pipe
+    mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
+    if (dpipe != NULL){
+      dpipe->SetInput(m_PolyData);
+    }    
+    
     return MAF_OK;
   }  
   return MAF_ERROR;
@@ -1431,7 +1417,6 @@ void medVMEMuscleWrapper::AddWrapper(WRAPPER_ITEM* pItem)
     pItem->pLast = pPrev;
     pPrev->pNext = pItem;
   }
-
   
   wxString szName[2];
   for (int i = 0; i < 2; i++)
@@ -1446,6 +1431,9 @@ void medVMEMuscleWrapper::AddWrapper(WRAPPER_ITEM* pItem)
   m_WrappersCtrl->SetItemState(nCount, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED,
     wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
   m_WrappersCtrl->EnsureVisible(nCount);
+
+  //and save changes into Links
+  StoreMeterLinks(); 
 }
 
 //------------------------------------------------------------------------
@@ -1476,6 +1464,9 @@ void medVMEMuscleWrapper::RemoveWrapper(int nIndex)
       wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
     m_WrappersCtrl->EnsureVisible(nIndex);
   }
+
+  //and save changes into Links
+  StoreMeterLinks();
 }
 
 //------------------------------------------------------------------------
