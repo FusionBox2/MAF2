@@ -15,7 +15,7 @@ PULSE = 1
 
 class GuiPart(wx.Frame):
     def __init__(self, master, queue, endCommand):
-        wx.Frame.__init__(self, None, -1, size=(500, 400), style = wx.DEFAULT_FRAME_STYLE|wx.RESIZE_BORDER|wx.MAXIMIZE_BOX)
+        wx.Frame.__init__(self, None, -1, size=(640, 400), style = wx.DEFAULT_FRAME_STYLE|wx.RESIZE_BORDER|wx.MAXIMIZE_BOX)
         self.master = master
         self.queue = queue 
         self.complete = 0 #set to 1 when all VME ahve benn uploaded
@@ -24,7 +24,8 @@ class GuiPart(wx.Frame):
         self.SetTitle("Upload / DownLoad Manager")
         self.scrolledPanel = scrolled.ScrolledPanel(self, -1, size=(140, 300),
                                  style = wx.TAB_TRAVERSAL|wx.SUNKEN_BORDER, name="panel1" )
-        self.fgs1 = wx.BoxSizer(wx.VERTICAL)
+        
+        self.verticalBoxSizer = wx.BoxSizer(wx.VERTICAL)
         
         self.bars = []
         self.endingBars = []
@@ -32,10 +33,10 @@ class GuiPart(wx.Frame):
         self.staticLabel = wx.StaticText(self.scrolledPanel, -1,  'Uploads (and Downloads)', (150,15), (200,25))
         self.staticLine = wx.StaticLine(self.scrolledPanel, -1, (25,35), (360,2))
        
-        self.fgs1.Add(self.staticLabel, 0,  wx.ALIGN_CENTER_HORIZONTAL)
-        self.fgs1.Add(self.staticLine, 0 , wx.ALIGN_CENTER_HORIZONTAL)
+        self.verticalBoxSizer.Add(self.staticLabel, 0,  wx.ALIGN_CENTER_HORIZONTAL)
+        self.verticalBoxSizer.Add(self.staticLine, 0 , wx.ALIGN_CENTER_HORIZONTAL)
     
-        self.scrolledPanel.SetSizer( self.fgs1 )
+        self.scrolledPanel.SetSizer( self.verticalBoxSizer )
     
         self.CreateStatusBar()
         self.uploadNumber = 0
@@ -77,13 +78,17 @@ class GuiPart(wx.Frame):
             
 
     def __createBar(self):
-        self.bars.append(CustomGaugeWx.CustomGaugeWx(self.scrolledPanel, len(self.bars), 100, (160, (len(self.bars)+1) * 50), (self.staticLine.GetSize()[0]/2.0, 25), gaugeModality = self.ModalityGauge ,gaugePulse = NOT_PULSE))
-        self.fgs1.Add(self.bars[len(self.bars)-1],flag=wx.CENTER)
+        self.bars.append(CustomGaugeWx.CustomGaugeWx(self.scrolledPanel, len(self.bars),\
+        100, (160, (len(self.bars)+1) * 50),\
+        (self.staticLine.GetSize()[0]/2.0, 25),\
+        gaugeModality = self.ModalityGauge ,gaugePulse = NOT_PULSE))
+        
+        self.verticalBoxSizer.Add(self.bars[len(self.bars)-1],flag=wx.CENTER)
         
         #self.scrolledPanel.SetAutoLayout(1)
         self.scrolledPanel.SetupScrolling()
         self.Refresh()
-
+        
         self.barCreated = True
         if(self.timer.IsRunning() == False): self.timer.Start(milliseconds=self.timeToCall, oneShot=True)
         pass
@@ -123,16 +128,18 @@ class GuiPart(wx.Frame):
                    lista[0].gauge.SetValue(int(lista[1]))
                    if len(lista) == 3:
                     remainingTime = round(float(lista[2]),1)
-                    lista[0].SetRemainingTimeLabel(str(remainingTime) + 's left')
-                   
-                else:
-                   lista[0].gauge.Pulse()
-                   #here calculate time
+                    if remainingTime != -10:
+                        lista[0].SetRemainingTimeLabel(str(remainingTime) + 's left')
+                    else:
+                        lista[0].SetRemainingTimeLabel("almost done...")
                     
+                else:
+                   lista[0].gauge.Pulse() 
                    lista[0].SetEndingLabel(str(lista[1]))
                     
                 if(lista[1] == 110):
                     self.complete = 0
+                    lista[0].SetRemainingTimeLabel("0.0s left")
                     lista[0].SetEndingLabel('Completed!')
                     self.queue.task_done(0)
                 self.Refresh()

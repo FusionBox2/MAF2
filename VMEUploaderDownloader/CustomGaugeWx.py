@@ -4,6 +4,7 @@ import sys
 class CustomGaugeWx(wx.BoxSizer):
     def __init__(self, parent, id = -1,  range = 100, pos = wx.DefaultPosition, size=wx.DefaultSize, style= wx.GA_HORIZONTAL, validator=wx.DefaultValidator, name=wx.GaugeNameStr, title="123456789101213" , orient = wx.VERTICAL, gaugeModality = "UPDATE", gaugePulse = 0):
         wx.BoxSizer.__init__(self,orient)
+        
         self.gaugeModality = gaugeModality #bar is for upload "UPLOAD" or download "DOWNLOAD"
         self.gaugePulse = gaugePulse #if 0 Gauge is not in pulsing mode 
        
