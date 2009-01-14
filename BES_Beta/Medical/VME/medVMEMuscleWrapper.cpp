@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: medVMEMuscleWrapper.cpp,v $
 Language:  C++
-Date:      $Date: 2009-01-12 15:41:57 $
-Version:   $Revision: 1.1.2.6 $
+Date:      $Date: 2009-01-14 12:07:58 $
+Version:   $Revision: 1.1.2.7 $
 Authors:   Josef Kohout
 ==========================================================================
 Copyright (c) 2001/2005 
@@ -633,15 +633,23 @@ void medVMEMuscleWrapper::DeformMuscle(vtkPolyData* pMuscle)
   int nCurves = 0;
   pDeformer->SetNumberOfSkeletons(0);
 
+  //BES: 14.1.2009 - added correspondence to avoid problems when rest pose is 
+  //very different from the current pose
+  vtkIdList* pCorrespondence = vtkIdList::New();
+  pCorrespondence->InsertNextId(0);
+  pCorrespondence->InsertNextId(0);
+
   WRAPPER_ITEM* pItem = m_pWrappers;
   while (pItem != NULL)
   {    
     if (pItem->pCurves[0] != NULL && pItem->pCurves[1] != NULL) {
-      pDeformer->SetNthSkeleton(nCurves++, pItem->pCurves[0], pItem->pCurves[1], NULL);          
+      pDeformer->SetNthSkeleton(nCurves++, pItem->pCurves[0], pItem->pCurves[1], pCorrespondence);          
     }
     
     pItem = pItem->pNext;
   }
+
+  pCorrespondence->Delete();
   
   //if we have no valid pair of curves, just pass original muscle data
   if (nCurves == 0)
