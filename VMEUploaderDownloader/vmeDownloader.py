@@ -92,9 +92,9 @@ class MSFBuilder:
             
 	outputDoc = msfOutputDoc.documentElement
 	
-	if Debug:    
-	    outFile = open('newDocumentToStoreAsMSF.txt', 'w')
-	    domP.PrintDOMTree(outputDoc,outFile)
+	#f Debug:    
+	#   outFile = open('newDocumentToStoreAsMSF.txt', 'w')
+	#   domP.PrintDOMTree(outputDoc,outFile)
         
         if(isRoot == False):
             # create the msfParser
