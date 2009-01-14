@@ -114,7 +114,7 @@ class UploadHandler:
                 percentageUploaded = 0
                 timeStep = 0.5
                 
-                uploadSpeed = GetHeuristicUploadSpeedEstimateInKBPerSecond("..\\..")
+                uploadSpeed = self.GetHeuristicUploadSpeedEstimateInKBPerSecond("..\\..")
                 
                 tStart = time.time() 
                 
@@ -757,50 +757,47 @@ class UploadHandler:
         return os.stat(self.dirOutgoing + "\\" + self.getBinaryFile()).st_size
     
         
-def GetHeuristicUploadSpeedEstimateInKBPerSecond(dataDirPath="."):
-    
-    testFile = str(dataDirPath) + "\\vmeUploaderTestData\\uploadSpeedProbeData\\uploadSpeedProbeData.vtk"
-    testFileSize = os.stat(testFile).st_size
-    instanceURI = MtomUploadURI.MtomUploadURI()
-    serviceUrl = 'https://ws-lhdl.cineca.it/mafSRBUploadURI.cgi'
-    binaryURI = "NOT PRESENT"
-    proxyHost = ""
-    proxyPort = 0
-     
-    freename = instanceURI.ListSrbDir(serviceUrl, proxyHost, proxyPort)
-    
-    if Debug:
-        print "testFile: " + testFile
-        print "freeName: " + freename
-        print "size: " + str(testFileSize)
+    def GetHeuristicUploadSpeedEstimateInKBPerSecond(self, dataDirPath="."):
         
-    shutil.copyfile(testFile, freename)
-    instanceUP = MtomUpload.MtomUpload()
+        testFile = str(dataDirPath) + "\\vmeUploaderTestData\\uploadSpeedProbeData\\uploadSpeedProbeData.vtk"
+        testFileSize = os.stat(testFile).st_size
+        instanceURI = MtomUploadURI.MtomUploadURI()
+        serviceUrl = 'https://ws-lhdl.cineca.it/mafSRBUploadURI.cgi'
+        binaryURI = "NOT PRESENT"
+        freename = instanceURI.ListSrbDir(serviceUrl, self.proxyHost, self.proxyPort)
+        
+        if Debug:
+            print "testFile: " + testFile
+            print "freeName: " + freename
+            print "size: " + str(testFileSize)
+            
+        shutil.copyfile(testFile, freename)
+        instanceUP = MtomUpload.MtomUpload()
+        
+        startT = time.time()
+       
+        result = instanceUP.Upload(freename, 'https://ws-lhdl-dev.cineca.it:12443/mafSRBUpload.cgi', self.proxyHost, self.proxyPort)
+        
+        endT = time.time()
+        
+        tElapsed = endT - startT
+        
+        speed = testFileSize / tElapsed
+        
+        shutil.move(freename, testFile)
+        
+        checksum = result.chksum
+        uri = result.uriFile
     
-    startT = time.time()
-   
-    result = instanceUP.Upload(freename, 'https://ws-lhdl-dev.cineca.it:12443/mafSRBUpload.cgi', proxyHost, proxyPort)
-    
-    endT = time.time()
-    
-    tElapsed = endT - startT
-    
-    speed = testFileSize / tElapsed
-    
-    shutil.move(freename, testFile)
-    
-    checksum = result.chksum
-    uri = result.uriFile
-
-    heuristicSpeedInBytes = speed
-    
-    if Debug:
-        print "result: " + str(result)        
-        print "cheksum: " + str(checksum)
-        print "uri: " + str(uri)
-        print "speed:" + str(heuristicSpeedInBytes)
-    
-    return heuristicSpeedInBytes
+        heuristicSpeedInBytes = speed
+        
+        if Debug:
+            print "result: " + str(result)        
+            print "cheksum: " + str(checksum)
+            print "uri: " + str(uri)
+            print "speed:" + str(heuristicSpeedInBytes)
+        
+        return heuristicSpeedInBytes
 
 		
 def createUploadHandler(queue, observer, dirCache, id , usr , pwd, urlServer, originalId, hasLink, withChild, msfListFile, XMLURI, isLast, vmeName):

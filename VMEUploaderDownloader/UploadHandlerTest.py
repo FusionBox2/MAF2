@@ -25,11 +25,13 @@ class UploadHandlerTest(unittest.TestCase):
         uploadHandler = UploadHandler.UploadHandler(\
             queue,observer, dirCache, id , "testuser", "GRDPt8",server, "unhandledPlusManualTagsList.csv"\
         , False, False, "noMsf", "dataresource-8000", "true", "pippo")
+        
+        # Test heuristic speed estimate
+        print "heuristic speed  estimate: " + str(\
+        uploadHandler.GetHeuristicUploadSpeedEstimateInKBPerSecond())
+        
         uploadHandler.upload()
         
-    def estHeuristicUploadSpeedEstimation(self):
-        print UploadHandler.GetHeuristicUploadSpeedEstimateInKBPerSecond()
-
 if __name__ == '__main__':
     unittest.main()
     
