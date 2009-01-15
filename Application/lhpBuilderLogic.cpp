@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderLogic.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-12-23 11:17:09 $
-  Version:   $Revision: 1.9.2.5 $
+  Date:      $Date: 2009-01-15 11:19:05 $
+  Version:   $Revision: 1.9.2.6 $
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
@@ -26,7 +26,6 @@
 #include "mafOp.h"
 #include "mafOpManager.h"
 #include "mafGUISettingsDialog.h"
-#include "lhpGUINetworkConnectionSettings.h"
 #include "lhpGUIPythonSettings.h"
 #include "lhpUser.h"
 
@@ -39,7 +38,6 @@
 lhpBuilderLogic::lhpBuilderLogic()
 //----------------------------------------------------------------------------
 {
-  m_NetworkConnectionSettings = new lhpGUINetworkConnectionSettings(this);
   m_PythonSettings = new lhpGUIPythonSettings(this);
   m_User = new lhpUser(this);
 }
@@ -48,7 +46,6 @@ lhpBuilderLogic::~lhpBuilderLogic()
 //----------------------------------------------------------------------------
 {
   cppDEL(m_PythonSettings);
-  cppDEL(m_NetworkConnectionSettings);
 }
 //----------------------------------------------------------------------------
 void lhpBuilderLogic::OnEvent(mafEventBase *maf_event)
@@ -77,15 +74,6 @@ void lhpBuilderLogic::OnEvent(mafEventBase *maf_event)
       {
         //comunicate to operation msf directory
         e->SetString(&m_VMEManager->GetFileName());
-      }
-      break;
-    case ID_REQUEST_PROXY:
-      {
-        if(m_NetworkConnectionSettings->GetProxyFlag())
-        {
-          e->SetString(&m_NetworkConnectionSettings->GetProxyHost());
-          e->SetArg(m_NetworkConnectionSettings->GetProxyPort());
-        }
       }
       break;
     case ID_REQUEST_USER:
@@ -138,10 +126,6 @@ void lhpBuilderLogic::Configure()
 //----------------------------------------------------------------------------
 {
   mafLogicWithManagers::Configure(); // create the GUI - and calls CreateMenu
-  if(m_SettingsDialog)
-  {
-    m_SettingsDialog->AddPage(m_NetworkConnectionSettings->GetGui(), m_NetworkConnectionSettings->GetLabel());
-  }
   if (m_PythonSettings)
   {
     m_SettingsDialog->AddPage(m_PythonSettings->GetGui(), m_PythonSettings->GetLabel());
@@ -151,14 +135,6 @@ void lhpBuilderLogic::Configure()
 void lhpBuilderLogic::GetCredentials()
 //----------------------------------------------------------------------------
 {
-  if(m_NetworkConnectionSettings->GetProxyFlag())
-  {
-    m_User->SetProxyURL(m_NetworkConnectionSettings->GetProxyHost());;
-    mafString port;
-    port << m_NetworkConnectionSettings->GetProxyPort();
-    m_User->SetProxyPort(port);
-  }
-
   bool retry = false;
   retry = m_User->CheckUserCredentials();
 
@@ -167,7 +143,6 @@ void lhpBuilderLogic::GetCredentials()
     retry = m_User->CheckUserCredentials();
   }
   m_OpManager->SetMafUser(m_User);
-
 }
 
 //----------------------------------------------------------------------------
