@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.h,v $
 Language:  C++
-Date:      $Date: 2008-12-12 08:20:37 $
-Version:   $Revision: 1.9.2.6 $
+Date:      $Date: 2009-01-15 11:08:39 $
+Version:   $Revision: 1.9.2.7 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -141,8 +141,11 @@ protected:
   /** Call WS to check if resource that will be downloaded is a mafVMERoot*/
   bool CheckIsRoot(mafString URI);
 
+  /** Rename old binary file into new name taking care of new VME id*/
+  void UpdateBinaryFile();
 
-
+  /** Rename old binary file into new name taking care of new VME id for animated VME*/
+  void UpdateAnimatedBinaryFile();
 
 
   mafNode *m_NodeDownloaded;

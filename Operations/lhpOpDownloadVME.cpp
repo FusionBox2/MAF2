@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-12-19 16:36:37 $
-Version:   $Revision: 1.40.2.12 $
+Date:      $Date: 2009-01-15 11:08:38 $
+Version:   $Revision: 1.40.2.13 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -51,6 +51,11 @@ MafMedical is partially based on OpenMAF.
 #include <wx/dir.h>
 #include <wx/file.h>
 #include <wx/busyinfo.h>
+#include <wx/zipstrm.h>
+#include <wx/zstream.h>
+#include <wx/sstream.h>
+#include <wx/wfstream.h>
+#include <wx/fs_zip.h>
 
 #include "lhpOpDownloadVME.h"
 
@@ -63,6 +68,8 @@ MafMedical is partially based on OpenMAF.
 #include "medVMEWrappedMeter.h"
 #include "mafTagArray.h"
 
+#include "mafVMEItem.h"
+#include "mafDataVector.h"
 #include "mafVMEStorage.h"
 #include "mafVMERoot.h"
 #include "mafVMEGroup.h"
@@ -210,20 +217,12 @@ void lhpOpDownloadVME::OpRun()
   }
 
   //Get Proxy values
-  mafEvent event;
-  event.SetSender(this);
-  event.SetId(ID_REQUEST_PROXY);
-  mafEventMacro(event);
-
-  if(event.GetString()) //if proxy string contains something != ""
+  if(m_User->GetProxyFlag())
   {
-    mafString port;
-    port << event.GetArg();
-    m_ProxyURL = *event.GetString();
-    m_ProxyPort = port;
-
+    m_ProxyURL = m_User->GetProxyHost();
+    m_ProxyPort = m_User->GetProxyPort();
     // load the connection configuration file:
-    this->SaveConnectionConfigurationFile();
+    this->SaveConnectionConfigurationFile(); 
   }
   else
   {
@@ -1064,7 +1063,6 @@ int lhpOpDownloadVME::ReconstructMSF(mafString xmlFile)
   wxString command2execute;
   command2execute.Clear();
   command2execute = m_PythonwExe.GetCStr();
-
   command2execute.Append(" msfReconstructor.py ");
 
   wxString directoryWorkAround = m_IncomingCompletePath;
@@ -1435,11 +1433,11 @@ int lhpOpDownloadVME::ImportMSF(mafNode *parentNode)
     {
       return MAF_ERROR;
     }
+
     m_WholeMsfDownload = false;
     mafDEL(storage);
     return MAF_OK;
   }
-
 
   m_DownloadedNodeVector.push_back(m_NodeDownloaded);
 
@@ -1466,6 +1464,13 @@ int lhpOpDownloadVME::ImportMSF(mafNode *parentNode)
   if (parentNode != NULL)
   {
     m_NodeDownloaded->ReparentTo(parentNode);
+    if (((mafVME *)m_NodeDownloaded)->IsAnimated())
+      UpdateAnimatedBinaryFile();
+    else
+      UpdateBinaryFile();
+
+    
+
     if (DownloadTree(m_NodeDownloaded) != MAF_OK)
     {
       return MAF_ERROR;
@@ -1474,11 +1479,158 @@ int lhpOpDownloadVME::ImportMSF(mafNode *parentNode)
   else
   {
     m_NodeDownloaded->ReparentTo(m_Group);
+    if (((mafVME *)m_NodeDownloaded)->IsAnimated())
+      UpdateAnimatedBinaryFile();
+    else
+      UpdateBinaryFile();
   }
 
   mafDEL(storage);
   return MAF_OK;
 }
+
+//----------------------------------------------------------------------------
+void lhpOpDownloadVME::UpdateBinaryFile()
+//----------------------------------------------------------------------------
+{
+  if (m_NodeDownloaded->IsA("mafVMEGeneric"))
+  {
+    mafDataVector *dv = ((mafVMEGeneric*)m_NodeDownloaded)->GetDataVector();
+    mafDataVector::DataMap::iterator it;
+    mafString newMSFFileName = ((mafVMERoot *)m_Input->GetRoot())->GetStorage()->GetURL();
+    wxString oldItemURL, newItemURL, tmpURL;
+    wxString path, name, ext;
+    wxString oldItemPath, oldItemName, oldItemExt;
+
+   
+    wxSplitPath(newMSFFileName.GetCStr(), &path, &name, &ext);
+    it = dv->Begin();
+    mafVMEItem *item=it->second;
+    oldItemURL = item->GetURL();
+    wxSplitPath(oldItemURL, &oldItemPath, &oldItemName, &oldItemExt);
+
+    dv->UpdateVectorId();
+    item->UpdateItemId();
+    int newId = item->GetId();
+
+    newItemURL = name << '.' << newId << '.' << oldItemExt;
+    item->SetURL(newItemURL);        
+   
+    wxString absOldItemURL = m_IncomingCompletePath.GetCStr();
+    absOldItemURL += oldItemURL.c_str();
+    wxString absNewItemURL = path;
+    absNewItemURL += "/";
+    absNewItemURL += newItemURL.c_str();
+
+    //Call python module to copy binary data when downloaded
+    wxString oldDir = wxGetCwd();
+    wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+    if (m_DebugMode)
+      mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+
+    wxString command2execute;
+    command2execute.Clear();
+    command2execute = m_PythonwExe.GetCStr();
+
+    command2execute.Append("binaryImporter.py ");
+    command2execute.Append("false"); //false if it is not animated
+    command2execute.Append(" ");
+    
+    command2execute.Append(mafString(absOldItemURL).ParsePathName());
+    command2execute.Append(" ");
+    command2execute.Append(mafString(absNewItemURL).ParsePathName());
+
+    if (m_DebugMode)
+      mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+    m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
+    wxSetWorkingDirectory(oldDir);
+ 
+    if (m_DebugMode)
+      mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  }
+  
+}
+
+//----------------------------------------------------------------------------
+ void lhpOpDownloadVME::UpdateAnimatedBinaryFile()
+//----------------------------------------------------------------------------
+{
+  if (m_NodeDownloaded->IsA("mafVMEGeneric"))
+  {
+    mafDataVector *dv = ((mafVMEGeneric*)m_NodeDownloaded)->GetDataVector();
+    mafDataVector::Iterator it;
+    mafString newMSFFileName = ((mafVMERoot *)m_Input->GetRoot())->GetStorage()->GetURL();
+    wxString path, name, ext;
+    wxString oldArchiveURL, newArchiveURL, tmpURL;
+    wxString oldItemURL, newItemURL;
+    wxString oldArchivePath, oldArchiveName, oldArchiveExt;
+    
+    wxSplitPath(newMSFFileName.GetCStr(), &path, &name, &ext);
+    it = dv->Begin();
+    mafVMEItem *item=it->second;
+    oldArchiveURL = item->GetArchiveFileName();
+    wxSplitPath(oldArchiveURL, &oldArchivePath, &oldArchiveName, &oldArchiveExt);
+    dv->UpdateVectorId();
+    int newId = dv->GetVectorID();
+
+    newArchiveURL = name;
+    newArchiveURL += '.';
+    newArchiveURL += mafString(newId);
+    newArchiveURL += '.';
+    newArchiveURL += oldArchiveExt;
+
+    item->SetArchiveFileName(mafString(newArchiveURL.c_str()));
+
+    wxString absOldArchiveURL = m_IncomingCompletePath.GetCStr();
+    absOldArchiveURL += oldArchiveURL;
+
+    wxString absNewArchiveURL = path;
+    absNewArchiveURL += '/';
+    absNewArchiveURL += newArchiveURL;
+
+    for (it = dv->Begin(); it!= dv->End(); it++)
+    {
+      mafVMEItem *item=it->second;
+      oldItemURL = item->GetURL();
+      int pos = oldItemURL.find_first_of('.');
+      if (pos != -1)
+      {
+        tmpURL = oldItemURL.SubString(pos,oldItemURL.size());
+      }
+      newItemURL = name + tmpURL;
+      item->SetArchiveFileName(mafString(newArchiveURL.c_str()));
+      item->SetURL(newItemURL);  
+    }
+
+    //Call python module to copy binary data when downloaded
+    wxString oldDir = wxGetCwd();
+    wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+    if (m_DebugMode)
+      mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+
+    wxString command2execute;
+    command2execute.Clear();
+    command2execute = m_PythonwExe.GetCStr();
+
+    command2execute.Append("binaryImporter.py ");
+    command2execute.Append("true"); //true if it is animated
+    command2execute.Append(" ");
+    command2execute.Append(absOldArchiveURL);
+    command2execute.Append(" ");
+    command2execute.Append(absNewArchiveURL);
+    if (m_DebugMode)
+      mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+
+    if (m_DebugMode)
+      mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+    m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
+    wxSetWorkingDirectory(oldDir);
+
+    if (m_DebugMode)
+      mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  }
+}
+
 //----------------------------------------------------------------------------
 int lhpOpDownloadVME::DownloadCheck(bool failed)
 //----------------------------------------------------------------------------
