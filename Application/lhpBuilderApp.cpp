@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-12-12 11:07:45 $
-  Version:   $Revision: 1.71.2.8 $
+  Date:      $Date: 2009-01-15 15:29:46 $
+  Version:   $Revision: 1.71.2.9 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -72,8 +72,8 @@
 #include "mafOpImporterVTK.h"
 #include "mafOpImporterMSF1x.h"
 #include "mafOpImporterVRML.h"
-#include "mafOpCreateVolume.h"
-#include "mafOpVOIDensityEditor.h"
+//#include "mafOpCreateVolume.h"
+//#include "mafOpVOIDensityEditor.h"
 #include "BES_Beta/openMAF/Operators/mafOpImporterBBF.h"
 //BES: 23.6.2008 - Large Volume - to be merged 
 #include "BES_Beta/openMAF/Operators/mafOpImporterRAWVolume_BES.h"
@@ -366,7 +366,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   //------------------------- Operations -------------------------
   m_Logic->Plug(new mafOpValidateTree());
   m_Logic->Plug(new mafOpCreateGroup("Group"),"Create/New");
-  m_Logic->Plug(new mafOpCreateVolume("Constant Volume"),"Create/New");
+  //m_Logic->Plug(new mafOpCreateVolume("Constant Volume"),"Create/New");
 
 #ifdef MAF_USE_ITK
   m_Logic->Plug(new lhpOpCreateSurfaceScalar("Surface Scalar"),"Create/Derive");
@@ -380,10 +380,12 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   m_Logic->Plug(new medOpRegisterClusters("Register Landmark Cloud"),"Modify/Fuse");
   m_Logic->Plug(new mafOpCreateMeter("Distance Meter"),"Create/Derive");
   m_Logic->Plug(new medOpCreateWrappedMeter("Wrapped Meter"),"Create/Derive");
+  m_Logic->Plug(new medOpComputeWrapping("Multi-Obj Wrapped Meter"),"Create/Derive");//15-1-2009
+
   m_Logic->Plug(new medOpCreateMuscleWrapper("Muscle Wrapper"),"Create/Derive"); //BES: 14.11.2008
  // m_Logic->Plug(new mmoEditMetadata("Metadata Editor"),"Modify");
 	m_Logic->Plug(new mafOpFilterSurface("Filter Surface"),"Modify");
-  m_Logic->Plug(new mafOpVOIDensityEditor("Volume Density"),"Modify");
+  //m_Logic->Plug(new mafOpVOIDensityEditor("Volume Density"),"Modify");
   m_Logic->Plug(new mafOpMeshDeformation("Deform Surface"), "Modify");
 	m_Logic->Plug(new mafOpExtractIsosurface("Extract Isosurface"),"Create/Derive");
   m_Logic->Plug(new medOpSurfaceMirror("Surface Mirror"),"Modify");
@@ -399,7 +401,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   m_Logic->Plug(new mmoAFSys("AFRefsys"),"Create/Derive");
   m_Logic->Plug(new mmoAverageLM("Average landmark"),"Create/Derive");
   m_Logic->Plug(new mmoStickPalpation("Wand palpated landmark"),"Create/Derive");
-  m_Logic->Plug(new medOpComputeWrapping("Compute Wrapping"),"Create/Derive");
+
   m_Logic->Plug(new mmoHelAxis("Helical axis"),"Create/Derive");
   m_Logic->Plug(new mmoTimeReduce("Time reduce"),"Modify");
   m_Logic->Plug(new mmoBuildHierarchy("Make hierarchical"),"Modify/Fuse");
