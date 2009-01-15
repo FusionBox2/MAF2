@@ -98,6 +98,12 @@ SET(PROJECT_SRCS
 	
 	lhpOpImporterC3D.cpp
 	lhpOpImporterC3D.h
+
+	lhpOpComputeTensor.cpp
+	lhpOpComputeTensor.h
+	lhpCOmputeTensor.cpp
+	lhpComputeTensor.h
+        
 )
 
 IF (MAF_USE_ITK)
