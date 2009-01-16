@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpUser.cpp,v $
 Language:  C++
-Date:      $Date: 2008-12-18 10:37:05 $
-Version:   $Revision: 1.11.2.5 $
+Date:      $Date: 2009-01-16 08:39:49 $
+Version:   $Revision: 1.11.2.6 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004
@@ -43,8 +43,6 @@ lhpUser::lhpUser(mafObserver *listener)
   // otherwise proceed
   // cmake must copy all pythons dir to binary directory ( should alert the user )
 
-  m_ProxyURL = "";
-  m_ProxyPort = "";
   m_IsAuthenticated = false;
  
 }
@@ -127,12 +125,12 @@ bool lhpUser::ExecuteAuthenticationScript()
   command2execute.Append(" ");
   command2execute.Append(m_Password.GetCStr());
   
-  if(!m_ProxyURL.Equals(""))
+  if(m_ProxyFlag != 0 && !m_ProxyHost.Equals(""))
   {
     command2execute.Append(" ");
-    command2execute.Append(m_ProxyURL.GetCStr());
+    command2execute.Append(m_ProxyHost.GetCStr());
     command2execute.Append(" ");
-    command2execute.Append(m_ProxyPort.GetCStr());
+    command2execute.Append(wxString::Format("%d ",m_ProxyPort));
   }
   
   //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
