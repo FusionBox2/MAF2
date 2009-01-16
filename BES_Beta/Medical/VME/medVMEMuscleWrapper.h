@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: medVMEMuscleWrapper.h,v $
   Language:  C++
-  Date:      $Date: 2009-01-12 12:56:45 $
-  Version:   $Revision: 1.1.2.5 $
+  Date:      $Date: 2009-01-16 14:11:47 $
+  Version:   $Revision: 1.1.2.6 $
   Authors:   Josef Kohout
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -58,6 +58,8 @@ public:
     ID_FIBERS_SMOOTH_STEPS,   //number of smooth steps
     ID_FIBERS_SMOOTH_WEIGHT,   //smoothing weight
     ID_FIBERS_DEBUG_SHOWTEMPLATE,	//show template but not projection
+    ID_FIBERS_DEBUG_SHOWFITTING,	//show fitting process
+    ID_FIBERS_DEBUG_SHOWFITTINGRES,	//show fitting process
 
     ID_LAST,
   };
@@ -124,6 +126,8 @@ protected:
   int m_FbSmoothSteps;  //<number of smoothing steps (higher means more smoothed)
   double m_FbSmoothWeight; //<smoothing weight (lower means more smoothed)
   int m_FbDebugShowTemplate;	//<non-zero, if template fibres should be displayed, but not mapped ones
+  int m_FbDebugShowFitting; //<non-zero, if fitting process should be visualized (debug)
+  int m_FbDebugShowFittingRes;
 
 #pragma region GUI
   wxStaticText* m_SmLabel1;

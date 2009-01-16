@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: medVMEMuscleWrapper.cpp,v $
 Language:  C++
-Date:      $Date: 2009-01-14 12:07:58 $
-Version:   $Revision: 1.1.2.7 $
+Date:      $Date: 2009-01-16 14:11:47 $
+Version:   $Revision: 1.1.2.8 $
 Authors:   Josef Kohout
 ==========================================================================
 Copyright (c) 2001/2005 
@@ -86,6 +86,8 @@ medVMEMuscleWrapper::medVMEMuscleWrapper()
   m_FbSmoothSteps = DEFAULT_FIBERS_SMOOTHSTEPS;
   m_FbSmoothWeight = DEFAULT_FIBERS_SMOOTHWEIGHT;
   m_FbDebugShowTemplate = 0;
+  m_FbDebugShowFitting = 0;
+  m_FbDebugShowFittingRes = 0;
   
   m_bLinksRestored = false;
   m_bNeedUpdate = false;
@@ -508,6 +510,8 @@ void medVMEMuscleWrapper::InternalUpdate()
   if (m_bDoNotUpdate)
     return;
 
+  m_bDoNotUpdate = true;  //prevent recursion
+
   //this happens when the user just checks VME without its selection  
   //or deletes some linked VME from VME tree
   if (!m_bLinksRestored)
@@ -597,13 +601,12 @@ void medVMEMuscleWrapper::InternalUpdate()
      
       DeformMuscle(pPoly);
     } //end if muscle exists
-
-    m_bDoNotUpdate = true;  //prevent recursion
-    GetOutput()->Update();  //this calls recursively our update    
-    m_bDoNotUpdate = false;
-
+    
+    GetOutput()->Update();  //this calls recursively our update        
     m_bNeedUpdate = false;
   } //if (m_bNeedUpdate)  
+
+  m_bDoNotUpdate = false;
 }
 
 //------------------------------------------------------------------------
@@ -716,7 +719,11 @@ void medVMEMuscleWrapper::GenerateFibers(vtkPolyData* pMuscle)
   pMD->SetSmoothFibers(m_FbSmooth);
   pMD->SetSmoothSteps(m_FbSmoothSteps);
   pMD->SetSmoothFactor(m_FbSmoothWeight);
-  pMD->SetDebugOutputMode(m_FbDebugShowTemplate);
+  pMD->SetDebugMode(
+    m_FbDebugShowTemplate*vtkMAFMuscleDecomposition::dbgDoNotProjectFibres |
+    m_FbDebugShowFitting*vtkMAFMuscleDecomposition::dbgVisualizeFitting |
+    m_FbDebugShowFittingRes*vtkMAFMuscleDecomposition::dbgVisualizeFittingResult
+    );
 
   if (m_FbThickness == 0.0)
     pMD->SetOutput(m_PolyData);
@@ -784,6 +791,7 @@ vtkPoints* medVMEMuscleWrapper::CreatePointsFromVME(mafVME* vme)
 //------------------------------------------------------------------------
 {
   vtkPoints* pRet = NULL;
+  bool bDoNotTransform = false;
 
   mafVMELandmarkCloud* cloud = mafVMELandmarkCloud::SafeDownCast(vme);
   if (cloud != NULL)
@@ -829,10 +837,12 @@ vtkPoints* medVMEMuscleWrapper::CreatePointsFromVME(mafVME* vme)
           }
         }
       }
+
+      bDoNotTransform = true;
     }
   }
 
-  if (pRet != NULL)
+  if (pRet != NULL && !bDoNotTransform)
   {
     //coordinates are local => they do not change when the surface to which
     //those landmarks are pinned moves => we need to get absolute positions
@@ -841,14 +851,21 @@ vtkPoints* medVMEMuscleWrapper::CreatePointsFromVME(mafVME* vme)
     mafNEW(transform);
     transform->SetMatrix(*vme->GetOutput()->GetAbsMatrix());
 
+    double x[3];
     int N = pRet->GetNumberOfPoints();
     for (int i = 0; i < N; i++)
-    {
-      double x[3];
+    {      
       transform->TransformPoint(pRet->GetPoint(i), x);
       pRet->SetPoint(i, x);
     }
 
+    transform->SetMatrix(GetOutput()->GetAbsTransform()->GetMatrix());
+    transform->Invert();
+    for (int i = 0; i < N; i++)
+    {    
+      transform->TransformPoint(pRet->GetPoint(i), x);
+      pRet->SetPoint(i, x);
+    }
 
     mafDEL(transform);
   }
@@ -1213,8 +1230,15 @@ mafGUI* medVMEMuscleWrapper::CreateGui()
 
   wxCheckBox* checkBox11 = new wxCheckBox( m_Gui, ID_FIBERS_DEBUG_SHOWTEMPLATE, wxT("Show template"), wxDefaultPosition, wxDefaultSize, 0 );
   checkBox11->SetToolTip( wxT("If checked, the output is a set of fibres with a cube - target cube") );
-
   sbSizer15->Add( checkBox11, 0, wxALL, 5 );
+
+  wxCheckBox* chckDebug2 = new wxCheckBox( m_Gui, ID_FIBERS_DEBUG_SHOWFITTING, wxT("Show fitting"), wxDefaultPosition, wxDefaultSize, 0 );
+  chckDebug2->SetToolTip( wxT("If checked, the fitting process is visualized") );
+  sbSizer15->Add( chckDebug2, 0, wxALL, 5 );
+
+  wxCheckBox* chckDebug3 = new wxCheckBox( m_Gui, ID_FIBERS_DEBUG_SHOWFITTINGRES, wxT("Show fitting result"), wxDefaultPosition, wxDefaultSize, 0 );
+  chckDebug3->SetToolTip( wxT("If checked, the fitting process is visualized") );
+  sbSizer15->Add( chckDebug3, 0, wxALL, 5 );
 #pragma endregion Fibers Options
 
   bSizer18->Add( sbSizer15, 0, wxEXPAND, 1 );
@@ -1263,6 +1287,8 @@ mafGUI* medVMEMuscleWrapper::CreateGui()
   m_SmStepsCtrl->SetValidator(mafGUIValidator(this, ID_FIBERS_SMOOTH_STEPS, m_SmStepsCtrl, &m_FbSmoothSteps, 1, 100));
   m_SmWeightCtrl->SetValidator(mafGUIValidator(this, ID_FIBERS_SMOOTH_WEIGHT, m_SmWeightCtrl, &m_FbSmoothWeight, 0.0, MAXDOUBLE, -1));
   checkBox11->SetValidator(mafGUIValidator(this, ID_FIBERS_DEBUG_SHOWTEMPLATE, checkBox11, &m_FbDebugShowTemplate));  
+  chckDebug2->SetValidator(mafGUIValidator(this, ID_FIBERS_DEBUG_SHOWFITTING, chckDebug2, &m_FbDebugShowFitting));  
+  chckDebug3->SetValidator(mafGUIValidator(this, ID_FIBERS_DEBUG_SHOWFITTINGRES, chckDebug3, &m_FbDebugShowFittingRes));  
 
   m_Gui->Add(bSizer18);
   m_Gui->FitGui();
@@ -1359,7 +1385,7 @@ void medVMEMuscleWrapper::OnEvent(mafEventBase *maf_event)
       break;
 
     default:
-      if (nId >= ID_GENERATE_FIBERS && nId <= ID_FIBERS_DEBUG_SHOWTEMPLATE)
+      if (nId >= ID_GENERATE_FIBERS && nId <= ID_FIBERS_DEBUG_SHOWFITTINGRES)
       {
         bNeedUpdate = nId == ID_GENERATE_FIBERS || m_VisMode != 0;      
 
