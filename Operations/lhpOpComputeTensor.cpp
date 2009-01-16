@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpComputeTensor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-01-15 17:17:35 $
-Version:   $Revision: 1.1.2.1 $
+Date:      $Date: 2009-01-16 12:15:11 $
+Version:   $Revision: 1.1.2.2 $
 Authors:   Gregor Klajnsek
 ==========================================================================
 Copyright (c) 2001/2005 
@@ -99,7 +99,7 @@ mafOp(label)
   m_IsoMapper = NULL;
 
   // variables
-  m_InterpolationType = INTERPOLATION_POINT_CENTROID;
+  m_InterpolationType = INTERPOLATION_POINT_GAUSS;
   m_bCreateOutput = false;
   m_bAddScalarsToOutput = false; 
   m_bAddTensorsToOutput = false;
