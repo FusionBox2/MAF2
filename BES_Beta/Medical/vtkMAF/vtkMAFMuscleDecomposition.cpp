@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFMuscleDecomposition.cpp,v $ 
   Language: C++ 
-  Date: $Date: 2008-12-12 12:57:51 $ 
-  Version: $Revision: 1.1.2.3 $ 
+  Date: $Date: 2009-01-16 14:12:10 $ 
+  Version: $Revision: 1.1.2.4 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -33,7 +33,7 @@
 #endif
 
 
-vtkCxxRevisionMacro(vtkMAFMuscleDecomposition, "$Revision: 1.1.2.3 $");
+vtkCxxRevisionMacro(vtkMAFMuscleDecomposition, "$Revision: 1.1.2.4 $");
 vtkStandardNewMacro(vtkMAFMuscleDecomposition);
 
 #include "mafMemDbg.h"
@@ -52,7 +52,7 @@ vtkMAFMuscleDecomposition::vtkMAFMuscleDecomposition()
   this->SmoothFibers = 1;
   this->SmoothSteps = 5;
   this->SmoothFactor = 4.0;
-  this->DebugOutputMode = 0;
+  this->DebugMode = dbgNone;
 }
 
 vtkMAFMuscleDecomposition::~vtkMAFMuscleDecomposition()
@@ -842,7 +842,7 @@ void vtkMAFMuscleDecomposition::SmoothFiber(VCoord* pPoints, int nPoints)
 #pragma endregion Template Cube and Target Cube Construction
   
 #pragma region Computation of Target Fibres by Projection  
-  if (this->DebugOutputMode != 0)
+  if ((this->DebugMode & dbgDoNotProjectFibres) == dbgDoNotProjectFibres)
   {
     //just transformation of point x (onto target cube)                
     for (int i = 0; i < nFVerts; i++)
@@ -1044,7 +1044,7 @@ void vtkMAFMuscleDecomposition::SmoothFiber(VCoord* pPoints, int nPoints)
 
     cutter->Delete();
     cutPlane->Delete();
-  } //end if (DebugOutputMode)
+  } //end if (DebugMode)
 #pragma endregion Computation of Target Fibres by Projection
  
 #pragma region Saving the Target Fibres into Output PolyData
@@ -1415,6 +1415,10 @@ int vtkMAFMuscleDecomposition::FindBestMatch(vtkPoints* template_O, vtkPoints* t
       } //end for j (points in template)      
     } //end for i (templates)
     
+    if ((this->DebugMode & dbgVisualizeFitting) == dbgVisualizeFitting)
+      DebugVisualizeFitting(iSys, nLFS, pLFS[iSys], 
+        template_O, template_I, target_O, target_I, dblScore);
+
     if (dblScore < dblBestLFScore)
     {
       dblBestLFScore = dblScore;
@@ -1425,6 +1429,11 @@ int vtkMAFMuscleDecomposition::FindBestMatch(vtkPoints* template_O, vtkPoints* t
   for (int i = 0; i < 4; i++) {
     delete[] pPoints[i];
   }
+
+  if ((this->DebugMode & dbgVisualizeFittingResult) == dbgVisualizeFittingResult)
+    DebugVisualizeFitting(iBestLF, nLFS, pLFS[iBestLF], 
+    template_O, template_I, target_O, target_I, dblBestLFScore, true);
+
   return iBestLF;
 }
 
@@ -1500,5 +1509,400 @@ void vtkMAFMuscleDecomposition::ComputeFittingOB(vtkPoints* points, LOCAL_FRAME&
   tempO->Delete();  
   delete[] pLFS;
   //and we have it here 
+}
+
+
+#include "vtkRenderWindow.h"
+#include "vtkRenderWindowInteractor.h"
+#include "vtkActor.h"
+#include "vtkActor2D.h"
+#include "vtkPolyDataMapper.h"
+#include "vtkTextMapper.h"
+#include "vtkRenderer.h"
+#include "vtkProperty.h"
+#include "vtkProperty2D.h"
+#include "vtkInteractorStyleTrackballCamera.h"
+#include "vtkSphereSource.h"
+#include "vtkGlyph3D.h"
+#include "vtkTubeFilter.h"
+#include "vtkCubeSource.h"
+
+//------------------------------------------------------------------------
+//Creates an external rendering window and displays the fitted cube
+void vtkMAFMuscleDecomposition::DebugVisualizeFitting(
+  int nIndex, int nCount, LOCAL_FRAME& lfs, 
+  vtkPoints* template_O, vtkPoints* template_I, 
+  vtkPoints* target_O, vtkPoints* target_I, double dblScore, bool bBestOne)
+//------------------------------------------------------------------------
+{
+  //Prepare Target
+#pragma region Input Mesh
+  vtkPolyDataMapper* pMapper = vtkPolyDataMapper::New();
+  pMapper->SetInput(GetInput()) ;
+
+  vtkActor* pActorMuscle = vtkActor::New();
+  pActorMuscle->SetMapper( pMapper );
+  pActorMuscle->GetProperty()->SetColor(0.7, 0, 0.4);
+  pActorMuscle->GetProperty()->SetOpacity(0.5);
+  pMapper->Delete();
+#pragma endregion Input Mesh
+
+#pragma region Target OI Areas
+  vtkSphereSource* pSphere = vtkSphereSource::New();
+  pSphere->SetRadius(GetInput()->GetLength() / 800);
+  
+  vtkPolyData* pTarget_O = vtkPolyData::New();
+  pTarget_O->SetPoints(target_O);
+
+  vtkGlyph3D* pTarget_O_Gl = vtkGlyph3D::New();
+  pTarget_O_Gl->SetInput(pTarget_O);
+  pTarget_O_Gl->SetSource(pSphere->GetOutput());
+  pTarget_O_Gl->SetScaleModeToDataScalingOff();
+  pTarget_O_Gl->SetRange(0.0,1.0);
+  
+  pMapper = vtkPolyDataMapper::New();
+  pMapper->SetInput(pTarget_O_Gl->GetOutput()) ;
+  pTarget_O_Gl->Delete();
+
+  vtkActor* pActorTarget_O = vtkActor::New();
+  pActorTarget_O->SetMapper( pMapper );
+  pActorTarget_O->GetProperty()->SetColor(1, 0, 0);  
+  pMapper->Delete();
+
+  vtkPolyData* pTarget_I = vtkPolyData::New();
+  pTarget_I->SetPoints(target_I);
+
+  vtkGlyph3D* pTarget_I_Gl = vtkGlyph3D::New();
+  pTarget_I_Gl->SetInput(pTarget_I);
+  pTarget_I_Gl->SetSource(pSphere->GetOutput());
+  pTarget_I_Gl->SetScaleModeToDataScalingOff();
+  pTarget_I_Gl->SetRange(0.0,1.0);
+
+  pMapper = vtkPolyDataMapper::New();
+  pMapper->SetInput(pTarget_I_Gl->GetOutput()) ;
+  pTarget_I_Gl->Delete();
+
+  vtkActor* pActorTarget_I = vtkActor::New();
+  pActorTarget_I->SetMapper( pMapper );
+  pActorTarget_I->GetProperty()->SetColor(0, 0, 1);  
+  pMapper->Delete();
+
+  pSphere->Delete();
+#pragma endregion Target OI Areas
+
+ #pragma region Target Cube
+  vtkPoints* pCubePts = vtkPoints::New();  
+
+  double x[3];
+  pCubePts->InsertNextPoint(lfs.O);
+  for (int k = 0; k < 3; k++){
+    x[k] = lfs.O[k] + lfs.uvw[0][k];
+  }
+
+  pCubePts->InsertNextPoint(x);
+  for (int k = 0; k < 3; k++){
+    x[k] += lfs.uvw[1][k];
+  }
+
+  pCubePts->InsertNextPoint(x);
+  for (int k = 0; k < 3; k++){
+    x[k] += lfs.uvw[2][k];
+  }
+
+  pCubePts->InsertNextPoint(x);
+  for (int k = 0; k < 3; k++){
+    x[k] -= lfs.uvw[1][k];
+  }
+
+  pCubePts->InsertNextPoint(x);
+  for (int k = 0; k < 3; k++){
+    x[k] -= lfs.uvw[0][k];
+  }
+
+  pCubePts->InsertNextPoint(x);
+  for (int k = 0; k < 3; k++){
+    x[k] += lfs.uvw[1][k];
+  }
+
+  pCubePts->InsertNextPoint(x);
+  for (int k = 0; k < 3; k++){
+    x[k] -= lfs.uvw[2][k];
+  }
+  pCubePts->InsertNextPoint(x);
+  
+  vtkCellArray* pCells = vtkCellArray::New();
+  vtkIdType CELLS[6*4] = {
+    0,1,4,5,
+    1,2,3,4,
+    2,7,6,3,
+    7,0,5,6,
+    5,4,3,6,
+    0,7,2,1,
+  };
+
+  for (int k = 0; k < 6; k++){
+    pCells->InsertNextCell(4, &CELLS[k*4]); 
+  }
+  
+  vtkPolyData* pCubeSrc = vtkPolyData::New();
+  pCubeSrc->SetPoints(pCubePts);
+  pCubeSrc->SetLines(pCells);
+  pCubePts->Delete();
+  pCells->Delete();
+
+  vtkTubeFilter* pTube = vtkTubeFilter::New();
+  pTube->SetInput(pCubeSrc);
+  pTube->SetNumberOfSides(12);
+  pTube->SetRadius(GetInput()->GetLength() / 1000);    
+  pCubeSrc->Delete();
+  
+  pMapper = vtkPolyDataMapper::New();
+  pMapper->SetInput(pTube->GetOutput());
+  pTube->Delete();
+
+  vtkActor* pActorCube = vtkActor::New();
+  pActorCube->SetMapper(pMapper);
+  pActorCube->GetProperty()->SetColor(1, 1, 1); 
+  pMapper->Delete();
+#pragma endregion Target Cube
+
+
+#pragma region Template OI Areas
+  vtkPoints* tmpIn[2] = { template_O, template_I };
+  vtkActor* pActorTemplate_OI[2];
+  vtkActor* pActorTemplate_OI2[2];
+  
+  vtkCubeSource* pGlyph = vtkCubeSource::New();
+  pGlyph->SetXLength(GetInput()->GetLength() / 300);
+  pGlyph->SetYLength(GetInput()->GetLength() / 300);
+  pGlyph->SetZLength(GetInput()->GetLength() / 300);
+
+  const char* FibTemplNames[] = {
+    "vtkMAFPennateMuscleFibers", "vtkMAFFannedMuscleFibers", NULL,
+  };
+
+  int nFibTempl = 0;
+  while (FibTemplNames[nFibTempl] != NULL)
+  {
+    if (strcmp(this->FibersTemplate->GetClassName(), FibTemplNames[nFibTempl]) == 0)
+      break;
+
+    nFibTempl++;
+  }  
+
+  vtkIdType Pennate_O[] = {5, 0, 1, 3, 2, 0};
+  vtkIdType Pennate_I[] = {5, 0, 1, 3, 2, 0};
+  vtkIdType Fanned_O[] = {5, 0, 1, 3, 2, 0};
+  vtkIdType Fanned_I[] = {
+    14, 0, 4, 6, 1, 3, 9, 7, 2, 0, 
+    4, 6, 9, 7, 4
+    //5, 0, 1, 3, 2, 0
+  };
+  vtkIdType* Connectivity[] = { 
+    Pennate_O, Pennate_I, Fanned_O, Fanned_I, NULL, NULL };
+  
+  for (int i = 0; i < 2; i++)
+  {
+    pActorTemplate_OI[i] = NULL;
+
+    int nPoints = tmpIn[i]->GetNumberOfPoints();
+    if (nPoints == 0)
+      continue; //invalid matching, skip it
+
+    pCubePts = vtkPoints::New();
+    for (int j = 0; j < nPoints; j++)
+    {        
+      //transform point j
+      //NOTE: fiber templates use left hand oriented coordinate system
+      double x[3];      
+      double* pCoords = tmpIn[i]->GetPoint(j);
+      for (int k = 0; k < 3; k++){
+        x[k] = lfs.O[k] + lfs.uvw[0][k]*pCoords[0] +
+          lfs.uvw[1][k]*pCoords[2] + lfs.uvw[2][k]*pCoords[1];
+      }
+
+      pCubePts->InsertNextPoint(x);
+    }
+    
+    
+    pCells = vtkCellArray::New();    
+    vtkIdType* pCell = Connectivity[2*nFibTempl + i];
+    if (pCell != 0){
+      pCells->InsertNextCell(*pCell, &pCell[1]);
+    }
+    else
+    {
+      vtkIdType cell[2];
+      for (int j = 0; j < nPoints / 2 - 1; j++) //front
+      {
+        cell[0] = j; cell[1] = j + 1;
+        pCells->InsertNextCell(2, cell);
+      }    
+
+      for (int j = nPoints / 2; j < nPoints - 1; j++) //back
+      {
+        cell[0] = j; cell[1] = j + 1;
+        pCells->InsertNextCell(2, cell);
+      }
+
+      cell[0] = nPoints / 2 - 1; cell[1] = nPoints - 1;
+      pCells->InsertNextCell(2, cell);
+
+      cell[0] = nPoints / 2; cell[1] = 0;
+      pCells->InsertNextCell(2, cell);
+    }
+
+    pCubeSrc = vtkPolyData::New();
+    pCubeSrc->SetPoints(pCubePts);
+    pCubeSrc->SetLines(pCells);
+    pCubePts->Delete();
+    pCells->Delete();
+
+    vtkGlyph3D* pTemplGl = vtkGlyph3D::New();
+    pTemplGl->SetInput(pCubeSrc);
+    pTemplGl->SetSource(pGlyph->GetOutput());
+    pTemplGl->SetScaleModeToDataScalingOff();
+    pTemplGl->SetRange(0.0,1.0);
+
+
+    pTube = vtkTubeFilter::New();
+    pTube->SetInput(pCubeSrc);
+    pTube->SetNumberOfSides(12);
+    pTube->SetRadius(GetInput()->GetLength() / 800);
+    pCubeSrc->Delete();
+
+    pMapper = vtkPolyDataMapper::New();
+    pMapper->SetInput(pTemplGl->GetOutput());
+    pTemplGl->Delete();
+
+    pActorTemplate_OI[i] = vtkActor::New();
+    pActorTemplate_OI[i]->SetMapper(pMapper);
+    if (i == 0)    
+      pActorTemplate_OI[i]->GetProperty()->SetColor(1, 0, 0); //origin = red    
+    else    
+      pActorTemplate_OI[i]->GetProperty()->SetColor(0, 0, 1); //insertion = blue
+    pMapper->Delete();
+
+    pMapper = vtkPolyDataMapper::New();
+    pMapper->SetInput(pTube->GetOutput());
+    pTube->Delete();
+
+    pActorTemplate_OI2[i] = vtkActor::New();
+    pActorTemplate_OI2[i]->SetMapper(pMapper);
+    if (i == 0)    
+      pActorTemplate_OI2[i]->GetProperty()->SetColor(1, 0, 0); //origin = red    
+    else    
+      pActorTemplate_OI2[i]->GetProperty()->SetColor(0, 0, 1); //insertion = blue
+    pMapper->Delete();
+  }
+
+  pGlyph->Delete();
+#pragma endregion Template OI Areas
+
+
+#pragma region Text
+  char szText[MAX_PATH];
+  sprintf(szText, "#%d (out of %d) - score = %.2f", nIndex, nCount, dblScore);
+  if (bBestOne)
+    strcat(szText, " (BEST ONE)");
+
+  vtkTextMapper* pMapperText = vtkTextMapper::New();  
+  pMapperText->SetInput(szText);
+
+  vtkActor2D* pActorText = vtkActor2D::New();
+  pActorText->SetPosition(50,3); //20 because of coordinate symbols
+  pActorText->SetMapper(pMapperText);
+  pMapperText->Delete();
+
+  if (bBestOne)
+    pActorText->GetProperty()->SetColor(1, 0, 0);
+  else
+    pActorText->GetProperty()->SetColor(0.7, 0.7, 0.7);    //dark grey
+#pragma endregion Text
+
+  ////rest pose line
+  //pCubePts = vtkPoints::New();
+  //pCubePts->InsertNextPoint(372.37295532226562, 199.37110900878906, -351.57867431640625);
+  //pCubePts->InsertNextPoint(303.95245361328125, 264.46154785156250, -831.90948486328125);
+  //pCubePts->InsertNextPoint(336.69342041015625, 280.55499267578125, -920.14941406250000);
+
+  //vtkIdType cl[3] = {0, 1, 2};
+  //pCells = vtkCellArray::New();
+  //pCells->InsertNextCell(3, cl);
+
+  //pCubeSrc = vtkPolyData::New();
+  //pCubeSrc->SetPoints(pCubePts);
+  //pCubeSrc->SetLines(pCells);
+  //pCubePts->Delete();
+  //pCells->Delete();
+  //
+  //vtkTubeFilter* pTube = vtkTubeFilter::New();
+  //pTube->SetInput(pCubeSrc);
+  //pTube->SetNumberOfSides(12);
+  //pTube->SetRadius(GetInput()->GetLength() / 1000);
+  //pCubeSrc->Delete();
+
+  //vtkPolyDataMapper* pMapper = vtkPolyDataMapper::New();
+  //pMapper->SetInput(pTube->GetOutput());
+  //pTube->Delete();
+
+  //vtkActor* pActorAL = vtkActor::New();
+  //pActorAL->SetMapper(pMapper);
+  //pActorAL->GetProperty()->SetColor(1,1,0); //yellow
+  //pMapper->Delete();
+
+
+  //----------------------------------------------------------------------------
+  // Render
+  //----------------------------------------------------------------------------
+  vtkRenderer *ren1= vtkRenderer::New();
+  ren1->AddActor( pActorMuscle );
+  ren1->AddActor( pActorTarget_O );
+  ren1->AddActor( pActorTarget_I );
+  ren1->AddActor( pActorCube );
+  ren1->AddActor( pActorText );
+  ren1->AddActor( pActorTemplate_OI[0] );
+  ren1->AddActor( pActorTemplate_OI[1] );
+  ren1->AddActor( pActorTemplate_OI2[0] );
+  ren1->AddActor( pActorTemplate_OI2[1] );
+  //ren1->AddActor(pActorAL);
+  ren1->SetBackground( 0, 0, 0 );
+
+  vtkRenderWindow *renWin = vtkRenderWindow::New();
+  renWin->AddRenderer( ren1 );
+  renWin->SetSize( 640, 480 );
+
+  vtkRenderWindowInteractor *iren = vtkRenderWindowInteractor::New();
+  iren->SetRenderWindow(renWin);
+  vtkInteractorStyleTrackballCamera *style = vtkInteractorStyleTrackballCamera::New();
+  iren->SetInteractorStyle(style);
+
+  iren->Initialize();
+  iren->Start();
+
+  //Remove data
+  iren->SetInteractorStyle(NULL);
+  style->Delete();
+  iren->Delete();
+  renWin->Delete();
+  //ren1->RemoveAllProps();
+  ren1->Delete();
+
+  pActorMuscle->Delete();
+  pActorTarget_I->Delete();
+  pActorTarget_O->Delete();
+    
+  pTarget_O->SetPoints(NULL);
+  pTarget_O->Delete();
+  pTarget_I->SetPoints(NULL);
+  pTarget_I->Delete();
+  
+  pActorCube->Delete();  
+  pActorTemplate_OI[0]->Delete();
+  pActorTemplate_OI[1]->Delete();
+  pActorTemplate_OI2[0]->Delete();
+  pActorTemplate_OI2[1]->Delete();
+  pActorText->Delete();
+  //pActorAL->Delete();
 }
 #pragma endregion 

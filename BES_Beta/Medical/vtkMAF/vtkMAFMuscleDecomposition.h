@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFMuscleDecomposition.h,v $ 
   Language: C++ 
-  Date: $Date: 2008-12-12 12:57:51 $ 
-  Version: $Revision: 1.1.2.3 $ 
+  Date: $Date: 2009-01-16 14:12:11 $ 
+  Version: $Revision: 1.1.2.4 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -69,7 +69,16 @@ protected:
   int SmoothFibers;		  //<non-zero, if fibres are smoothed (default)
   int SmoothSteps;      //<number of smoothing iterations
   double SmoothFactor;  //<smoothing weight (lower values mean more smoothed, higher less), default is 4
-  int DebugOutputMode;	//<0 = full process (default), 1 = no projection of target cube into muscle volume
+  int DebugMode;	//<masked debug mode - see below
+
+public:
+  typedef enum DebugModeFlags
+  {
+    dbgNone = 0,                  //no extra things
+    dbgVisualizeFitting = 1,      //visualizes in an external renderer the cube fitting process
+    dbgVisualizeFittingResult = 2,//visualizes in an external renderer the result of cube fitting process
+    dbgDoNotProjectFibres = 4,    //does not project fibres 
+  };
   
 
 public:
@@ -125,11 +134,11 @@ public:
   vtkSetMacro(SmoothFactor, double);
 
 
-  /** Gets debug output mode (0 = full process (default), 1 = no projection of target cube into muscle volume)*/
-  vtkGetMacro(DebugOutputMode, int);
+  /** Gets debug mode (see Dbg enums)*/
+  vtkGetMacro(DebugMode, int);
 
-  /** Sets debug output mode (0 = full process (default), 1 = no projection of target cube into muscle volume) */
-  vtkSetMacro(DebugOutputMode, int);
+  /** Sets debug mode (see Dbg enums) */
+  vtkSetMacro(DebugMode, int);
 protected:
   /** 
   By default, UpdateInformation calls this method to copy information
@@ -235,6 +244,12 @@ protected:
 
   /** Smooth the fiber defined by the given points. */
   void SmoothFiber(VCoord* pPoints, int nPoints);
+
+  /** Creates an external rendering window and displays the fitted cube */
+  void DebugVisualizeFitting(int nIndex, int nCount, LOCAL_FRAME& lfs, 
+    vtkPoints* template_O, vtkPoints* template_I, 
+    vtkPoints* target_O, vtkPoints* target_I, double dblScore, 
+    bool bBestOne = false);
 
 private:
   vtkMAFMuscleDecomposition(const vtkMAFMuscleDecomposition&);  // Not implemented.
