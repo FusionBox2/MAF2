@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2008-12-19 16:36:37 $
-Version:   $Revision: 1.94.2.18 $
+Date:      $Date: 2009-01-16 08:26:37 $
+Version:   $Revision: 1.94.2.19 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -196,18 +196,10 @@ void lhpOpUploadVME::OpRun()
   }
 
   //Get Proxy values
-  mafEvent event;
-  event.SetSender(this);
-  event.SetId(ID_REQUEST_PROXY);
-  mafEventMacro(event);
-
-  if(event.GetString()) //if proxy string contains something != ""
+  if(m_User->GetProxyFlag())
   {
-    mafString port;
-    port << event.GetArg();
-    m_ProxyURL = *event.GetString();
-    m_ProxyPort = port;
-
+    m_ProxyURL = m_User->GetProxyHost();
+    m_ProxyPort = m_User->GetProxyPort();
     // load the connection configuration file:
     this->SaveConnectionConfigurationFile();
   }
