@@ -12,7 +12,7 @@ class CustomGaugeWx(wx.BoxSizer):
        
         self.sizer1 = wx.BoxSizer(wx.VERTICAL)
         self.vmeNameStaticText = wx.StaticText(parent, -1, label = "123456789012345678901234567890" ,pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.ALIGN_LEFT)      
-        self.endingLabel = wx.StaticText(parent, -1, label = "             ")
+        self.endingLabel = wx.StaticText(parent, -1, label = "Initializing file transfer process. Please wait")
         self.remainingTimeLabel = wx.StaticText(parent, -1, label = "             ")
         self.gauge = wx.Gauge(parent, id, range, pos, size, style = wx.ALIGN_CENTER , validator=wx.DefaultValidator, name=wx.GaugeNameStr)
         self.png = None
@@ -26,18 +26,18 @@ class CustomGaugeWx(wx.BoxSizer):
         self.sizer1.Add(self.vmeNameStaticText)
         if Debug:
             print self.vmeNameStaticText
-        self.sizer1.AddSpacer(10)
+        self.sizer1.AddSpacer(5)
         self.sizer1.Add(self.image)
-        self.sizer1.AddSpacer(10)
+        self.sizer1.AddSpacer(5)
         self.sizer1.Add(self.gauge)
-        self.sizer1.AddSpacer(10)
-        self.sizer1.Add(self.endingLabel)
-        self.sizer1.AddSpacer(10)
+        self.sizer1.AddSpacer(5)
         self.sizer1.Add(self.remainingTimeLabel)
-        self.sizer1.AddSpacer(10)
+        self.sizer1.AddSpacer(5)
+        self.sizer1.Add(self.endingLabel)
+        self.sizer1.AddSpacer(5)   
         self.line = wx.StaticLine(parent, -1, size = (self.gauge.GetSize()[0]*2 , 2))
         self.Add(self.sizer1, 0)
-        self.AddSpacer(10)
+        self.AddSpacer(5)
         self.Add(self.line)
         
     
@@ -49,7 +49,7 @@ class CustomGaugeWx(wx.BoxSizer):
         
     def SetRemainingTimeLabel(self, label):
         self.remainingTimeLabel.SetLabel(label)
-
+        
 def test():
     app = wx.PySimpleApp()    
     frame = wx.Frame(None, -1)

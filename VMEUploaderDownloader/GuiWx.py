@@ -127,11 +127,16 @@ class GuiPart(wx.Frame):
                 if(lista[0].gaugePulse == 0 and lista[1] != -1):
                    lista[0].gauge.SetValue(int(lista[1]))
                    if len(lista) == 3:
-                    remainingTime = round(float(lista[2]),1)
+                    remainingTime = round(float(lista[2]))
                     if remainingTime != -10:
-                        lista[0].SetRemainingTimeLabel(str(remainingTime) + 's left')
+                        hms = self.SecondsToHMS(remainingTime)
+                        hmsString = str(int(hms[0])) + "h:" + str(int(hms[1])) + "m:" +\
+                        str(int(hms[2])) + "s:"
+                        lista[0].SetRemainingTimeLabel(str(hmsString) + ' left')
+                        lista[0].SetEndingLabel('File transfer in progress. Please wait')
                     else:
                         lista[0].SetRemainingTimeLabel("almost done...")
+                        lista[0].SetEndingLabel('File transfer in progress. Please Wait')
                     
                 else:
                    lista[0].gauge.Pulse() 
@@ -139,7 +144,7 @@ class GuiPart(wx.Frame):
                     
                 if(lista[1] == 110):
                     self.complete = 0
-                    lista[0].SetRemainingTimeLabel("0.0s left")
+                    lista[0].SetRemainingTimeLabel("0h:0m:0s left")
                     lista[0].SetEndingLabel('Completed!')
                     self.queue.task_done(0)
                 self.Refresh()
@@ -169,6 +174,12 @@ class GuiPart(wx.Frame):
                     self.timer.Start(milliseconds=self.timeToCall, oneShot=True)
             except:
 			    pass
+    
+    def SecondsToHMS(self,t):
+        """Convert time t in seconds to hours minutes seconds."""
+        hours, t = divmod(t, 60*60)
+        minutes, seconds = divmod(t, 60)
+        return (hours, minutes, seconds)
 
 def test():
     def endFunction(): print "ending"
