@@ -131,7 +131,7 @@ class GuiPart(wx.Frame):
                     if remainingTime != -10:
                         hms = self.SecondsToHMS(remainingTime)
                         hmsString = str(int(hms[0])) + "h:" + str(int(hms[1])) + "m:" +\
-                        str(int(hms[2])) + "s:"
+                        str(int(hms[2])) + "s"
                         lista[0].SetRemainingTimeLabel(str(hmsString) + ' left')
                         lista[0].SetEndingLabel('File transfer in progress. Please wait')
                     else:
