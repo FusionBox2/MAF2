@@ -21,8 +21,8 @@ class binaryImporter:
     def __init__(self):
         
         self.isAnimated = sys.argv[0]
-        self.absOldItemURL = sys.argv[1]
-        self.absNewItemURL = sys.argv[2]
+        self.absOldItemURL = sys.argv[1].replace("???", " ") #URL with spaces arrives with "???" instead of them
+        self.absNewItemURL = sys.argv[2].replace("???", " ") #URL with spaces arrives with "???" instead of them
         pass
         
     def CopyBinary(self):
