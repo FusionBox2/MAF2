@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2009-01-16 08:28:02 $
-Version:   $Revision: 1.27.2.12 $
+Date:      $Date: 2009-01-19 12:55:30 $
+Version:   $Revision: 1.27.2.13 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -55,6 +55,7 @@ MafMedical is partially based on OpenMAF.
 #include "lhpOpUploadMultiVME.h"
 #include "lhpOpUploadVME.h"
 
+#include "mafVMERoot.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafGUI.h"
 
@@ -260,7 +261,7 @@ void lhpOpUploadMultiVME::OpRun()
 
     wxString temp;
     temp.Append((*event.GetString()).GetCStr());
-    mafString msfFile = temp;
+    m_MsfFile = temp;
     temp = temp.BeforeLast('/');
     mafString msfDir = temp;  
 
@@ -317,6 +318,23 @@ void lhpOpUploadMultiVME::OpDo()
       {
         wxMessageBox("Tree contains VME without name. Upload Stopped.", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
         return;
+      }
+      //Check if Root VME has a name different from "Root"
+      wxString RootName = m_NodeVector[i]->GetName();
+      if  (RootName.CompareTo("root") == 0)
+      {
+        wxString path, name, ext;
+        wxString newRootName = m_MsfFile;
+        wxSplitPath(newRootName, &path, &name, &ext);
+        wxMessageBox(wxString::Format("Root name will be modified with the name of the MSF: %s ",name), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+        m_NodeVector[i]->SetName(name.c_str());
+        m_NodeVector[i]->Modified();
+        ((mafVMERoot *)m_NodeVector[i])->Update();
+
+        mafEvent ev(this,VME_MODIFIED,m_NodeVector[i]);
+        mafEventMacro(ev);
+
+        //m_NodeVector[i]->Update();
       }
 
       if (UploadTree(m_NodeVector[i]) == MAF_ERROR)
