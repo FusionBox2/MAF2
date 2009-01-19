@@ -15,13 +15,13 @@ PULSE = 1
 
 class GuiPart(wx.Frame):
     def __init__(self, master, queue, endCommand):
-        wx.Frame.__init__(self, None, -1, size=(640, 400), style = wx.DEFAULT_FRAME_STYLE|wx.RESIZE_BORDER|wx.MAXIMIZE_BOX)
+        wx.Frame.__init__(self, None, -1, size=(500, 700), style = wx.DEFAULT_FRAME_STYLE|wx.RESIZE_BORDER|wx.MAXIMIZE_BOX)
         self.master = master
         self.queue = queue 
         self.complete = 0 #set to 1 when all VME ahve benn uploaded
         
         # Set up the GUI
-        self.SetTitle("Upload / DownLoad Manager")
+        self.SetTitle("Upload / Download Manager")
         self.scrolledPanel = scrolled.ScrolledPanel(self, -1, size=(140, 300),
                                  style = wx.TAB_TRAVERSAL|wx.SUNKEN_BORDER, name="panel1" )
         
@@ -30,9 +30,9 @@ class GuiPart(wx.Frame):
         self.bars = []
         self.endingBars = []
         #self.console = wx.Button(self.scrolledPanel, 10,  'Waiting...', (150,0), (100,25))
-        self.staticLabel = wx.StaticText(self.scrolledPanel, -1,  'Uploads (and Downloads)', (150,15), (200,25))
+        self.staticLabel = wx.StaticText(self.scrolledPanel, -1,  '', (150,15), (200,25))
         self.staticLine = wx.StaticLine(self.scrolledPanel, -1, (25,35), (360,2))
-       
+        
         self.verticalBoxSizer.Add(self.staticLabel, 0,  wx.ALIGN_CENTER_HORIZONTAL)
         self.verticalBoxSizer.Add(self.staticLine, 0 , wx.ALIGN_CENTER_HORIZONTAL)
     
