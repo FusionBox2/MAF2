@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2009-01-15 11:08:38 $
-Version:   $Revision: 1.40.2.13 $
+Date:      $Date: 2009-01-19 12:54:58 $
+Version:   $Revision: 1.40.2.14 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -1535,10 +1535,14 @@ void lhpOpDownloadVME::UpdateBinaryFile()
     command2execute.Append("binaryImporter.py ");
     command2execute.Append("false"); //false if it is not animated
     command2execute.Append(" ");
-    
-    command2execute.Append(mafString(absOldItemURL).ParsePathName());
+
+    absOldItemURL.Replace(" ", "???");
+    command2execute.Append(absOldItemURL);
+
     command2execute.Append(" ");
-    command2execute.Append(mafString(absNewItemURL).ParsePathName());
+
+    absNewItemURL.Replace(" ", "???");
+    command2execute.Append(absNewItemURL);
 
     if (m_DebugMode)
       mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
@@ -1615,8 +1619,13 @@ void lhpOpDownloadVME::UpdateBinaryFile()
     command2execute.Append("binaryImporter.py ");
     command2execute.Append("true"); //true if it is animated
     command2execute.Append(" ");
+
+
+    absOldArchiveURL.Replace(" ", "???");
     command2execute.Append(absOldArchiveURL);
     command2execute.Append(" ");
+
+    absNewArchiveURL.Replace(" ", "???");
     command2execute.Append(absNewArchiveURL);
     if (m_DebugMode)
       mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
