@@ -15,13 +15,13 @@ PULSE = 1
 
 class GuiPart(wx.Frame):
     def __init__(self, master, queue, endCommand):
-        wx.Frame.__init__(self, None, -1, size=(500, 700), style = wx.DEFAULT_FRAME_STYLE|wx.RESIZE_BORDER|wx.MAXIMIZE_BOX)
+        wx.Frame.__init__(self, None, -1, size=(380, 400), style = wx.DEFAULT_FRAME_STYLE|wx.RESIZE_BORDER|wx.MAXIMIZE_BOX)
         self.master = master
         self.queue = queue 
         self.complete = 0 #set to 1 when all VME ahve benn uploaded
         
         # Set up the GUI
-        self.SetTitle("Upload / Download Manager")
+        self.SetTitle("Upload Download Manager")
         self.scrolledPanel = scrolled.ScrolledPanel(self, -1, size=(140, 300),
                                  style = wx.TAB_TRAVERSAL|wx.SUNKEN_BORDER, name="panel1" )
         
