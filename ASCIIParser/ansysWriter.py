@@ -35,8 +35,6 @@ class ansysWriter:
         self.AnsysHeader = r"""/TITLE,
 /COM,lhpBuilder generated
 /PREP7
-DOF,  DELETE,        ,        ,        ,        ,        ,        ,        ,        ,        
-/NOPR                                                                          
 
 """
         
