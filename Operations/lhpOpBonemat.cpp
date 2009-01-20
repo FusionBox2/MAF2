@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpBonemat.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-07-25 12:19:11 $
-  Version:   $Revision: 1.16 $
+  Date:      $Date: 2009-01-20 16:21:36 $
+  Version:   $Revision: 1.16.2.1 $
   Authors:   Daniele Giunchi, Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -729,7 +729,7 @@ int lhpOpBonemat::HUIntegration()
   // just to test that equals is working
   assert(inputMeshABSMatrix.Equals(&inputMeshABSMatrix));
 
-  bool inputMeshABSMatrixEqualToIdenity = inputMeshABSMatrix.Equals(&identityMatrix);
+  bool inputMeshABSMatrixEqualToIdentity = inputMeshABSMatrix.Equals(&identityMatrix);
 
   vtkUnstructuredGrid *inputUnstructuredGrid = inMesh->GetUnstructuredGridOutput()->GetUnstructuredGridData();
   assert(inputUnstructuredGrid);
@@ -742,7 +742,7 @@ int lhpOpBonemat::HUIntegration()
   vtkTransformFilter *transformFilter = NULL;
   vtkUnstructuredGrid *inputUGTransformed = NULL;
 
-  if (inputMeshABSMatrixEqualToIdenity)
+  if (inputMeshABSMatrixEqualToIdentity)
   {
     // do not transform geometry
     if (DEBUG_MODE)
@@ -1261,14 +1261,16 @@ int lhpOpBonemat::HUIntegration()
   outputUG->Modified();
   outputUG->Update();
 
-  if (inputMeshABSMatrixEqualToIdenity)
+  if (inputMeshABSMatrixEqualToIdentity)
   {
     // nothing to do
   } 
   else
   {
-    // copy back old, not transformed, geometry     
-    outputUG->GetPoints()->DeepCopy(inputUnstructuredGrid->GetPoints());
+    // copy back old, not transformed, geometry in output data     
+    vtkUnstructuredGrid *inputUG = \
+    inMesh->GetUnstructuredGridOutput()->GetUnstructuredGridData();
+    outputUG->GetPoints()->DeepCopy(inputUG->GetPoints());
   }
 
   // input modified in place
@@ -1340,7 +1342,7 @@ int lhpOpBonemat::YoungModuleIntegration()
   // just to test that equals is working
   assert(inputMeshABSMatrix.Equals(&inputMeshABSMatrix));
 
-  bool inputMeshABSMatrixEqualToIdenity = inputMeshABSMatrix.Equals(&identityMatrix);
+  bool inputMeshABSMatrixEqualToIdentity = inputMeshABSMatrix.Equals(&identityMatrix);
 
   vtkUnstructuredGrid *inputUnstructuredGrid = inMesh->GetUnstructuredGridOutput()->GetUnstructuredGridData();
   assert(inputUnstructuredGrid);
@@ -1353,7 +1355,7 @@ int lhpOpBonemat::YoungModuleIntegration()
   vtkTransformFilter *transformFilter = NULL;
   vtkUnstructuredGrid *inputUGTransformed = NULL;
 
-  if (inputMeshABSMatrixEqualToIdenity)
+  if (inputMeshABSMatrixEqualToIdentity)
   {
     // do not transform geometry
     if (DEBUG_MODE)
@@ -2143,14 +2145,16 @@ int lhpOpBonemat::YoungModuleIntegration()
   outputUG->Modified();
   outputUG->Update();
 
-  if (inputMeshABSMatrixEqualToIdenity)
+  if (inputMeshABSMatrixEqualToIdentity)
   {
     // nothing to do
   } 
   else
   {
-    // copy back old, not transformed, geometry     
-    outputUG->GetPoints()->DeepCopy(inputUnstructuredGrid->GetPoints());
+    // copy back old, not transformed, geometry in output data     
+    vtkUnstructuredGrid *inputUG = \
+    inMesh->GetUnstructuredGridOutput()->GetUnstructuredGridData();
+    outputUG->GetPoints()->DeepCopy(inputUG->GetPoints());
   }
 
   // input modified in place
