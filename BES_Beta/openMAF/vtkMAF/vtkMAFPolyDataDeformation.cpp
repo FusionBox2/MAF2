@@ -2,8 +2,8 @@
 Program: Multimod Application Framework RELOADED 
 Module: $RCSfile: vtkMAFPolyDataDeformation.cpp,v $ 
 Language: C++ 
-Date: $Date: 2009-01-23 14:54:46 $ 
-Version: $Revision: 1.1.2.2 $ 
+Date: $Date: 2009-01-23 16:19:41 $ 
+Version: $Revision: 1.1.2.3 $ 
 Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
 ========================================================================== 
 Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -19,7 +19,6 @@ See the COPYINGS file for license details
 #include "vtkCellArray.h"
 #include "vtkCellLocator.h"
 #include "vtkGenericCell.h"
-#include "vtkMAFVoronoi3D.h"
 #include "vtkUnstructuredGrid.h"
 #include "vtkUnstructuredGridToPolyDataFilter.h"
 #include "vtkPointData.h"
@@ -36,7 +35,7 @@ See the COPYINGS file for license details
 
 
 
-vtkCxxRevisionMacro(vtkMAFPolyDataDeformation, "$Revision: 1.1.2.2 $");
+vtkCxxRevisionMacro(vtkMAFPolyDataDeformation, "$Revision: 1.1.2.3 $");
 vtkStandardNewMacro(vtkMAFPolyDataDeformation);
 
 #include "mafMemDbg.h"
