@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2009-01-16 12:00:15 $
-  Version:   $Revision: 1.71.2.10 $
+  Date:      $Date: 2009-01-23 13:50:51 $
+  Version:   $Revision: 1.71.2.11 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -420,7 +420,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   m_Logic->Plug(new lhpOpMultiscaleExplore("Multiscale Viewer"),"Manage");
   m_Logic->Plug(new medOpMML("Register from template"),"Modify");
   m_Logic->Plug(new lhpOpKeyczarIntegrationTest("Security Libraries Integration"),"Test");
-  m_Logic->Plug(new lhpOpComputeTensor("Compute Tensors"), "Manage");
+  m_Logic->Plug(new lhpOpComputeTensor("Compute Tensors"), "Modify");
   
   
   //-------------------------------------------------------------
