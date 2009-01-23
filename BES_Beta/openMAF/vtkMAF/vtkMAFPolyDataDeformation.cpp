@@ -2,8 +2,8 @@
 Program: Multimod Application Framework RELOADED 
 Module: $RCSfile: vtkMAFPolyDataDeformation.cpp,v $ 
 Language: C++ 
-Date: $Date: 2008-11-14 17:10:57 $ 
-Version: $Revision: 1.1.2.1 $ 
+Date: $Date: 2009-01-23 14:54:46 $ 
+Version: $Revision: 1.1.2.2 $ 
 Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
 ========================================================================== 
 Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -19,6 +19,7 @@ See the COPYINGS file for license details
 #include "vtkCellArray.h"
 #include "vtkCellLocator.h"
 #include "vtkGenericCell.h"
+#include "vtkMAFVoronoi3D.h"
 #include "vtkUnstructuredGrid.h"
 #include "vtkUnstructuredGridToPolyDataFilter.h"
 #include "vtkPointData.h"
@@ -35,7 +36,7 @@ See the COPYINGS file for license details
 
 
 
-vtkCxxRevisionMacro(vtkMAFPolyDataDeformation, "$Revision: 1.1.2.1 $");
+vtkCxxRevisionMacro(vtkMAFPolyDataDeformation, "$Revision: 1.1.2.2 $");
 vtkStandardNewMacro(vtkMAFPolyDataDeformation);
 
 #include "mafMemDbg.h"
@@ -541,9 +542,20 @@ vtkMAFPolyDataDeformation::~vtkMAFPolyDataDeformation()
 
 //------------------------------------------------------------------------
 //Specifies the n-th control skeleton.
-/*virtual*/ void vtkMAFPolyDataDeformation
-::SetNthSkeleton( int idx, vtkPolyData* original, 
-                 vtkPolyData* modified, vtkIdList* correspondence )
+//If RSO points are specified, they are used during the computation of LFs
+//of curves of both skeletons. A local fame is defined by its origin point 
+//and three vectors u, v and w. Vector u is the tangent vector (it goes in
+//the direction of polyline) and vectors v,w are perpendicular to this vector.
+//As there is infinite number of u,v,w configurations, the algorithm uses the
+//given RSO point to get a unique one (v lies in the plane defined by u and RSO). 
+//If RSO is not specified, v is chosen to lie in the plane closest to the u vector.
+//When RSO points are not specified (or they are specified incorrectly), 
+//the deformed object might be unrealistically rotated against other objects 
+//in the scene, if the skeleton of object to deform tends to rotate (simple edge, 
+//or only one skeleton for object). 
+/*virtual*/ void vtkMAFPolyDataDeformation::SetNthSkeleton( int idx, 
+            vtkPolyData* original, vtkPolyData* modified, vtkIdList* correspondence,
+                                         double* original_rso, double* modified_rso)
 //------------------------------------------------------------------------
 {
   _VERIFY_RET(idx >= 0);
@@ -580,6 +592,30 @@ vtkMAFPolyDataDeformation::~vtkMAFPolyDataDeformation()
 
     if (NULL != (m_Skeletons[idx].pCCList = correspondence))
       m_Skeletons[idx].pCCList->Register(this);
+
+    this->Modified();
+  }
+
+  if (m_Skeletons[idx].RSOValid[0] != (original_rso != NULL))
+  {
+    if (m_Skeletons[idx].RSOValid[0] = (original_rso != NULL)) 
+    {
+      m_Skeletons[idx].RSO[0][0] = original_rso[0];
+      m_Skeletons[idx].RSO[0][1] = original_rso[1];
+      m_Skeletons[idx].RSO[0][2] = original_rso[2];
+    }
+
+    this->Modified();
+  }
+
+  if (m_Skeletons[idx].RSOValid[1] != (modified_rso != NULL))
+  {
+    if (m_Skeletons[idx].RSOValid[1] = (modified_rso != NULL)) 
+    {
+      m_Skeletons[idx].RSO[1][0] = modified_rso[0];
+      m_Skeletons[idx].RSO[1][1] = modified_rso[1];
+      m_Skeletons[idx].RSO[1][2] = modified_rso[2];
+    }
 
     this->Modified();
   }
@@ -676,14 +712,22 @@ vtkMAFPolyDataDeformation::~vtkMAFPolyDataDeformation()
   input->BuildCells(); input->BuildLinks();
   
   //for every curve, we need to compute its ROI, i.e., vertices that are mapped for this curve 
+  int iCurSkel = 0;
   int nCount = (int)m_SuperSkeleton->m_pOC_Skel->m_Vertices.size();
   for (int iStartPos = 0; iStartPos < nCount; )
   {
     CSkeletonVertex* pOC_Curve = m_SuperSkeleton->m_pOC_Skel->m_Vertices[iStartPos];
     iStartPos += GetNumberOfCurveVertices(pOC_Curve);
 
+    while (m_SuperSkeleton->m_pSkelPositions[iCurSkel] < iStartPos) {
+      iCurSkel++; //advance to the next skeleton
+    }
+
     //compute local frames for both curves, original and deformed one
-    ComputeLFS(pOC_Curve);
+    ComputeLFS(pOC_Curve, 
+      (m_Skeletons[iCurSkel].RSOValid[0] ? m_Skeletons[iCurSkel].RSO[0] : NULL),
+      (m_Skeletons[iCurSkel].RSOValid[1] ? m_Skeletons[iCurSkel].RSO[1] : NULL)
+      );
   }  
 
   //let us parametrize the mesh
@@ -765,14 +809,22 @@ bool vtkMAFPolyDataDeformation::CreateSuperSkeleton()
   DestroySuperSkeleton();
 
   //combine every control skeleton to create match
+  int* pSkelPoints = new int[m_NumberOfSkeletons];
   for (int i = 0; i < m_NumberOfSkeletons; i++)
   {
     CreateSuperSkeleton(m_Skeletons[i].pPolyLines[0], 
       m_Skeletons[i].pPolyLines[1], m_Skeletons->pCCList, dblEdgeFactor);
+
+    pSkelPoints[i] = (m_SuperSkeleton != NULL) ? (int)m_SuperSkeleton->m_pOC_Skel->m_Vertices.size() : 0;      
   } 
 
-  if (m_SuperSkeleton == NULL)
-    return false;
+  if (m_SuperSkeleton != NULL)
+    m_SuperSkeleton->m_pSkelPositions = pSkelPoints;
+  else
+  {
+    delete[] pSkelPoints;
+    return false;    
+  }
 
   int nCount = (int)m_SuperSkeleton->m_pOC_Skel->m_Vertices.size();
   if (nCount == 0)
@@ -1543,7 +1595,9 @@ void vtkMAFPolyDataDeformation::AddCurveToSuperSkeleton(CSkeletonVertex* pOCCurv
 //The algorithm is based on the paper: Blanco FR, Oliveira MM: Instant mesh deformation.
 //In: Proceedings of the 2008 symposium on Interactive 3D graphics and games,
 //Redwood City, California, 2008, ptEnd. 71-78
-void vtkMAFPolyDataDeformation::ComputeLFS(CSkeletonVertex* pOC)
+//
+//ROS_OC and ROS_DC defines the plane to compute the first LF - see SetNthSkeleton
+void vtkMAFPolyDataDeformation::ComputeLFS(CSkeletonVertex* pOC, double* ROS_OC, double* ROS_DC)
 //------------------------------------------------------------------------
 {
   CSkeletonVertex* pDC = pOC->m_pMatch;
@@ -1556,24 +1610,39 @@ void vtkMAFPolyDataDeformation::ComputeLFS(CSkeletonVertex* pOC)
     lf.u[i] = pNextVertex->m_Coords[i] - pOC->m_Coords[i];    
   }
 
-  //v is a projection into one of of XZ, XY or YZ plane + 90 degrees rotation
-  //the optimal plane is the one closest to the plane where u lies
-  int iPlane = 0;
-  for (int i = 1; i < 3; i++) {
-    if (fabs(lf.u[i]) < fabs(lf.u[iPlane]))
-      iPlane = i; //new minimum
-  }
-    
-  int i1 = (iPlane + 1) % 3;
-  int i2 = (iPlane + 2) % 3;
-  lf.v[i1] = lf.u[i2];
-  lf.v[i2] = -lf.u[i1];
-  lf.v[iPlane] = 0.0;
+  if (ROS_OC != NULL)
+  {
+    //Ref.Sys. point for OC is specified => together with u, it defines
+    //the optimal plane for the vector v
+    for (int i = 0; i < 3; i++){
+      lf.v[i] = ROS_OC[i] - pOC->m_Coords[i]; 
+    }
 
-  //w is perpendicular to both vectors
-  lf.w[i1] = 0.0;
-  lf.w[i2] = 0.0;
-  lf.w[iPlane] = lf.u[i1]*lf.u[i1] + lf.u[i2]*lf.u[i2];
+    //w is perpendicular to both vectors
+    vtkMath::Cross(lf.u, lf.v, lf.w);
+    vtkMath::Cross(lf.w, lf.u, lf.v);
+  }
+  else
+  {
+    //v is a projection into one of of XZ, XY or YZ plane + 90 degrees rotation
+    //the optimal plane is the one closest to the plane where u lies
+    int iPlane = 0;
+    for (int i = 1; i < 3; i++) {
+      if (fabs(lf.u[i]) < fabs(lf.u[iPlane]))
+        iPlane = i; //new minimum
+    }
+      
+    int i1 = (iPlane + 1) % 3;
+    int i2 = (iPlane + 2) % 3;
+    lf.v[i1] = lf.u[i2];
+    lf.v[i2] = -lf.u[i1];
+    lf.v[iPlane] = 0.0;
+
+    //w is perpendicular to both vectors
+    lf.w[i1] = 0.0;
+    lf.w[i2] = 0.0;
+    lf.w[iPlane] = lf.u[i1]*lf.u[i1] + lf.u[i2]*lf.u[i2];
+  } 
 
   vtkMath::Normalize(lf.u);
   vtkMath::Normalize(lf.v);
@@ -1584,45 +1653,64 @@ void vtkMAFPolyDataDeformation::ComputeLFS(CSkeletonVertex* pOC)
   CSkeletonVertex::LOCAL_FRAME& dlf = pDC->m_LF;
   pNextVertex = GetNextCurveVertex(pDC);
   for (int i = 0; i < 3; i++) {  
-    dlf.u[i] = pNextVertex->m_Coords[i] - pDC->m_Coords[i];
+    dlf.u[i] = pNextVertex->m_Coords[i] - pDC->m_Coords[i];  
   }
+
   vtkMath::Normalize(dlf.u);  
-  double dblMaxR = 0.0;
-  for (int i = 0; i < 3; i++) 
+  if (ROS_DC != NULL)
   {
-    double dblR = fabs(dlf.u[i] - lf.u[i]);
-    if (dblMaxR < dblR)
-      dblMaxR = dblR;
-  }
-
-
-  if (dblMaxR < 1e-5)
-  {
-    //lf.u and dlf.u are colinear vectors => use the same system
-    pDC->m_LF = pOC->m_LF;
-  }
-  else
-  {  
-    //vectors v' and w' of the deformed curve are obtained 
-    //from v and w of the original curve by rotating them around 
-    //the vector r = u x u' by angle between u and u'    
-    double r[3], M[3][3];
-    vtkMath::Cross(dlf.u, lf.u, r); 
-    vtkMath::Normalize(r);
-    BuildGeneralRotationMatrix(r, vtkMath::Dot(lf.u, dlf.u), M);    
-
-    for (int i = 0; i < 3; i++) 
-    {  
-      dlf.w[i] = dlf.v[i] = 0.0;
-      for (int j = 0; j < 3; j++)
-      {
-        dlf.v[i] += lf.v[j]*M[j][i];
-        dlf.w[i] += lf.w[j]*M[j][i];
-      }
+    //Ref.Sys. point for OC is specified => together with u, it defines
+    //the optimal plane for the vector v
+    for (int i = 0; i < 3; i++){
+      dlf.v[i] = ROS_DC[i] - pDC->m_Coords[i]; 
     }
 
+    //w is perpendicular to both vectors
+    vtkMath::Cross(dlf.u, dlf.v, dlf.w);
+    vtkMath::Cross(dlf.w, dlf.u, dlf.v);
     vtkMath::Normalize(dlf.v);
     vtkMath::Normalize(dlf.w);
+  }
+  else
+  {
+    //Ref. Sys. point not specified => get the DLF from LF by minimizing rotation
+    double dblMaxR = 0.0;
+    for (int i = 0; i < 3; i++) 
+    {
+      double dblR = fabs(dlf.u[i] - lf.u[i]);
+      if (dblMaxR < dblR)
+        dblMaxR = dblR;
+    }
+
+
+    if (dblMaxR < 1e-5)
+    {
+      //lf.u and dlf.u are colinear vectors => use the same system
+      pDC->m_LF = pOC->m_LF;
+    }
+    else
+    {  
+      //vectors v' and w' of the deformed curve are obtained 
+      //from v and w of the original curve by rotating them around 
+      //the vector r = u x u' by angle between u and u'    
+      double r[3], M[3][3];
+      vtkMath::Cross(dlf.u, lf.u, r); 
+      vtkMath::Normalize(r);
+      BuildGeneralRotationMatrix(r, vtkMath::Dot(lf.u, dlf.u), M);    
+
+      for (int i = 0; i < 3; i++) 
+      {  
+        dlf.w[i] = dlf.v[i] = 0.0;
+        for (int j = 0; j < 3; j++)
+        {
+          dlf.v[i] += lf.v[j]*M[j][i];
+          dlf.w[i] += lf.w[j]*M[j][i];
+        }
+      }
+
+      vtkMath::Normalize(dlf.v);
+      vtkMath::Normalize(dlf.w);
+    }
   }
 
   //and now compute LF for every other vertex of both curves

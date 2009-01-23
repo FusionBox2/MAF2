@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: medVMEMuscleWrapper.h,v $
   Language:  C++
-  Date:      $Date: 2009-01-16 14:11:47 $
-  Version:   $Revision: 1.1.2.6 $
+  Date:      $Date: 2009-01-23 14:54:27 $
+  Version:   $Revision: 1.1.2.7 $
   Authors:   Josef Kohout
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -36,8 +36,12 @@ public:
   enum MUSCLEWRAPPER_WIDGET_ID
   {
     ID_INPUTMODE = Superclass::ID_LAST,
+    ID_USE_REFSYS,
+    
     ID_SELECT_RP,
     ID_SELECT_CP,
+    ID_SELECT_RP_REFSYS_LINK,
+    ID_SELECT_CP_REFSYS_LINK,
     ID_ADDWRAPPER,
     ID_LIST_WRAPPERS,
     ID_REMOVEWRAPPER, 
@@ -45,6 +49,8 @@ public:
     ID_RESTPOSE_MUSCLE_LINK,
     ID_RESTPOSE_WRAPPER_LINK,
     ID_CURRENTPOSE_WRAPPER_LINK,
+    ID_RESTPOSE_REFSYS_LINK,    
+    ID_CURRENTPOSE_REFSYS_LINK,    
     ID_FIBERS_ORIGIN_LINK,
     ID_FIBERS_INSERTION_LINK,    
 
@@ -69,8 +75,10 @@ public:
     LNK_RESTPOSE_MUSCLE = 0,    
     LNK_RESTPOSE_WRAPPERx,    
     LNK_DYNPOSE_WRAPPERx,    
+    LNK_RESTPOSE_REFSYSx,    
+    LNK_DYNPOSE_REFSYSx,
     LNK_FIBERS_ORIGIN,
-    LNK_FIBERS_INSERTION,
+    LNK_FIBERS_INSERTION,    
     
     LNK_LAST,
   };
@@ -90,14 +98,20 @@ protected:
   typedef struct WRAPPER_ITEM 
   {    
     mafVME* pVmeRP_CP[2];           //<VME with poly-line representing action lines of the muscle in the rest/current pose
+    mafVME* pVmeRefSys_RP_CP[2];    //<VME with reference system
     unsigned long VMECheckSums[2];  //<checksums of these VMEs to prevent recalculation of everything
     
-    vtkPolyData* pCurves[2];        //<the refined curves (valid as long as VMEChecksums of pVmeRP_CP are correct
+    vtkPolyData* pCurves[2];        //<the refined curves (valid as long as VMEChecksums of pVmeRP_CP are correct)
+    double RefSysOrigin[2][3];      //<and origins of their associated referenced systems (ignored, if pVmeRefSys_RP_CP is NULL)
+    bool RefSysOriginValid[2];      //<false, if the coordinates are not available
 
     WRAPPER_ITEM* pNext;
     WRAPPER_ITEM* pLast;
   };
   
+  mafVME* m_RefSysVme[2];         //<VMEs with the reference system
+  mafString m_RefSysVmeName[2];   //<and their name to be shown in GUI  
+
   mafVME* m_MuscleVme;            //<the VME with muscle geometry in the rest pose  
   mafString m_MuscleVmeName;      //<and its name to be shown in GUI  
 
@@ -110,7 +124,6 @@ protected:
   WRAPPER_ITEM* m_pWrappers;      //<list of wrappers
   bool m_bLinksRestored;          //<true, if links has been restored and the changes can be saved
   
-
     
   vtkPolyData* m_PolyData;        //<output polydata
   bool m_bNeedUpdate;             //<true, if the deformation must be reexecuted
@@ -118,6 +131,7 @@ protected:
   
   int m_InputMode;    //<0 = simple, 1 = advanced
   int m_VisMode;      //<non-zero, if the output are fibers instead of deformed mesh
+  int m_UseRefSys;    //<non-zero, if the reference systems should be used whenever applicable
   int m_FbTemplate;   //<fiber template geometry
   int m_FbNumFib;     //<number of fibers
   int m_FbResolution; //<resolution
@@ -140,11 +154,15 @@ protected:
   wxButton* m_BttnAddWrapper;
   wxListCtrl* m_WrappersCtrl;  
   wxButton* m_BttnRemoveWrapper;
+  wxStaticText* m_LabelRP_RS;
+  wxTextCtrl* m_RPRefSysVmeCtrl;
+  wxButton* m_BttnSelectRPRefSys;
 #pragma endregion GUI
 public:
   static bool VMEAcceptMuscle(mafNode *node);
   static bool VMEAcceptWrapper(mafNode *node);  
   static bool VMEAcceptOIAreas(mafNode *node);
+  static bool VMEAcceptRefSys(mafNode *node);
   
   /** Precess events coming from other objects */ 
   virtual void OnEvent(mafEventBase *maf_event);
@@ -183,6 +201,12 @@ public:
   
   /** Gets the nIndex action line VME in its current pose */
   mafVME* GetWrapperVME(int nIndex);
+  
+  /** Gets the reference system VME for the nIndex action line in its rest pose. */
+  mafVME* GetWrapperRefSysVME_RP(int nIndex);
+
+  /** Gets the reference system VME for the nIndex action line in its current pose. */
+  mafVME* GetWrapperRefSysVME(int nIndex);
 
   /** Gets the origin area VME in its current pose */
   mafVME* GetFibersOriginVME();
@@ -221,9 +245,10 @@ protected:
 
   /** Creates a new polydata without duplicate vertices and edges that might be in the input. */
   vtkPolyData* FixPolyline(vtkPolyData* input);
-
-  /** Returns true, if curves are identical (although they are different objects) */
-  bool CheckCurves(vtkPolyData** pOldCurves, vtkPolyData** pNewCurves);
+  
+  /** Gets the origin of the specified vme.
+  Returns false, if the vme is invalid. */
+  bool GetRefSysVMEOrigin(mafVME* vme, double* origin);
 
   /** Deforms the muscle according to existing wrappers.
   It also invokes the generation of fibers, if required. */  
@@ -239,8 +264,9 @@ protected:
   /** Compute checksum for VTK polydata. */
   unsigned long ComputeCheckSum(vtkPolyData* pPoly);
 
-  /** Adds a new wrapper into the list of wrappers and GUI list */
-  void AddWrapper(mafVME* pRP, mafVME* pCP);
+  /** Adds a new wrapper into the list of wrappers and GUI list.
+  pxP_RS denotes reference systems used for corresponding wrappers (optional). */
+  void AddWrapper(mafVME* pRP, mafVME* pCP, mafVME* pRP_RS = NULL, mafVME* pCP_RS = NULL);
 
   /** //Adds a new wrapper into the list of wrappers and GUI list */
   void AddWrapper(WRAPPER_ITEM* pItem);

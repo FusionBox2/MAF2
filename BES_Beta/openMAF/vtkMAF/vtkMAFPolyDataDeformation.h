@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFPolyDataDeformation.h,v $ 
   Language: C++ 
-  Date: $Date: 2008-11-14 17:10:57 $ 
-  Version: $Revision: 1.1.2.1 $ 
+  Date: $Date: 2009-01-23 14:54:46 $ 
+  Version: $Revision: 1.1.2.2 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -220,15 +220,19 @@ protected:
   public:
     CSkeleton* m_pOC_Skel;    //<original skeleton (it is linked to deformed)
     CSkeleton* m_pDC_Skel;    //<deformed skeleton (it is linked to original)
+
+    int* m_pSkelPositions;    //<stores where in m_pxC_Skel starts next skeleton (not curves)
   public:
     CSuperSkeleton() {
       m_pOC_Skel = new CSkeleton();
       m_pDC_Skel = new CSkeleton();
+      m_pSkelPositions = NULL;
     }
 
     ~CSuperSkeleton() {
       delete m_pOC_Skel;
       delete m_pDC_Skel;
+      delete m_pSkelPositions;
     }
   };
 
@@ -295,6 +299,9 @@ protected:
   {  
     vtkPolyData* pPolyLines[2];    //<polyline curves (0 = original, 1 = deformed)
     vtkIdList* pCCList;            //<list of correspondences between curves
+
+    bool RSOValid[2];              //<specifies, if RSO is valid
+    double RSO[2][3];              //<RSO point
   } CONTROL_SKELETON;
 
   CONTROL_SKELETON* m_Skeletons;   //<input array of skeletons
@@ -362,9 +369,21 @@ public:
   Old skeletons are copied (and preserved) */
   virtual void SetNumberOfSkeletons(int nCount);
 
-  /** Specifies the n-th control skeleton. */
+  /** Specifies the n-th control skeleton. 
+  If RSO points are specified, they are used during the computation of LFs
+  of curves of both skeletons. A local fame is defined by its origin point 
+  and three vectors u, v and w. Vector u is the tangent vector (it goes in
+  the direction of polyline) and vectors v,w are perpendicular to this vector.
+  As there is infinite number of u,v,w configurations, the algorithm uses the
+  given RSO point to get a unique one (v lies in the plane defined by u and RSO). 
+  If RSO is not specified, v is chosen to lie in the plane closest to the u vector.
+  When RSO points are not specified (or they are specified incorrectly), 
+  the deformed object might be unrealistically rotated against other objects 
+  in the scene, if the skeleton of object to deform tends to rotate (simple edge, 
+  or only one skeleton for object). */
   virtual void SetNthSkeleton(int idx, vtkPolyData* original, 
-    vtkPolyData* modified, vtkIdList* correspondence);
+    vtkPolyData* modified, vtkIdList* correspondence = NULL, 
+    double* original_rso = NULL, double* modified_rso = NULL);
 
   /** Return this object's modified time. */  
   /*virtual*/ unsigned long int GetMTime();
@@ -496,8 +515,10 @@ protected:
 
   The algorithm is based on the paper: Blanco FR, Oliveira MM: Instant mesh deformation.
   In: Proceedings of the 2008 symposium on Interactive 3D graphics and games,
-  Redwood City, California, 2008, pp. 71-78 */
-  void ComputeLFS(CSkeletonVertex* pOC);  
+  Redwood City, California, 2008, pp. 71-78 
+  
+  ROS_OC and ROS_DC defines the plane to compute the first LF - see SetNthSkeleton*/
+  void ComputeLFS(CSkeletonVertex* pOC, double* ROS_OC = NULL, double* ROS_DC = NULL);  
 
   /** Computes an approximate geodesic distance between two points.
   If the straight line between both points does not intersect the input mesh,

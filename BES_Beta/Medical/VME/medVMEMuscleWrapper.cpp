@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: medVMEMuscleWrapper.cpp,v $
 Language:  C++
-Date:      $Date: 2009-01-16 14:11:47 $
-Version:   $Revision: 1.1.2.8 $
+Date:      $Date: 2009-01-23 14:54:27 $
+Version:   $Revision: 1.1.2.9 $
 Authors:   Josef Kohout
 ==========================================================================
 Copyright (c) 2001/2005 
@@ -49,11 +49,14 @@ mafCxxTypeMacro(medVMEMuscleWrapper)
 //-------------------------------------------------------------------------
 
 const /*static*/ char* medVMEMuscleWrapper::MUSCLEWRAPPER_LINK_NAMES[] = {
-  "MuscleVME_RP", "WrapperVME_RP_", "WrapperVME_CP_", "OAreaVME", "IAreaVME",
+  "MuscleVME_RP", "WrapperVME_RP_", "WrapperVME_CP_", 
+  "RefSysVME_RP_", "RefSysVME_CP_",
+  "OAreaVME", "IAreaVME", 
 };
 
 #define DEFAULT_INPUT_MODE    1   //0 = simple, 1 = advanced
 #define DEFAULT_OUTPUT_MODE   1   //1 = generates fibers, 0 - deformed surface
+#define DEFAULT_USEREFSYSVAL  1
 #define DEFAULT_FIBERS_TYPE   FT_PENNATE
 #define DEFAULT_FIBERS_NUM    50
 #define DEFAULT_FIBERS_RES    14
@@ -67,10 +70,10 @@ medVMEMuscleWrapper::medVMEMuscleWrapper()
 //-------------------------------------------------------------------------
 {  
   m_PolyData = vtkPolyData::New();
-    
+  
   m_MuscleVme = NULL;
   for (int i = 0; i < 2; i++){
-    m_WrappersVme[i] = m_OIVME[i] = NULL;    
+    m_RefSysVme[i] = m_WrappersVme[i] = m_OIVME[i] = NULL;    
   }
   
   m_nWrappers = 0;
@@ -78,6 +81,7 @@ medVMEMuscleWrapper::medVMEMuscleWrapper()
     
   m_InputMode = DEFAULT_INPUT_MODE;
   m_VisMode = DEFAULT_OUTPUT_MODE;
+  m_UseRefSys = DEFAULT_USEREFSYSVAL;
   m_FbResolution = DEFAULT_FIBERS_RES;
   m_FbNumFib = DEFAULT_FIBERS_NUM;
   m_FbTemplate = DEFAULT_FIBERS_TYPE; //FT_PENNATE
@@ -146,11 +150,13 @@ int medVMEMuscleWrapper::DeepCopy(mafNode *a)
 
     for (int i = 0; i < 2; i++){    
       m_OIVMEName[i] = wrapper->m_OIVMEName[i];
+      m_RefSysVmeName[i] = wrapper->m_RefSysVmeName[i];
     }
 
     m_nWrappers = wrapper->m_nWrappers;        
     m_InputMode = wrapper->m_InputMode;
     m_VisMode = wrapper->m_VisMode;
+    m_UseRefSys = wrapper->m_UseRefSys;
     m_FbTemplate = wrapper->m_FbTemplate;
     m_FbNumFib = wrapper->m_FbNumFib;
     m_FbResolution = wrapper->m_FbResolution;
@@ -188,6 +194,7 @@ bool medVMEMuscleWrapper::Equals(mafVME *vme)
     m_OIVME[0] != wrapper->m_OIVME[0] ||
     m_OIVME[1] != wrapper->m_OIVME[1] ||
     m_InputMode != wrapper->m_InputMode ||
+    m_UseRefSys != wrapper->m_UseRefSys ||
     m_VisMode != wrapper->m_VisMode ||
     m_FbTemplate != wrapper->m_FbTemplate ||
     m_FbNumFib != wrapper->m_FbNumFib ||
@@ -206,6 +213,9 @@ bool medVMEMuscleWrapper::Equals(mafVME *vme)
     for (int i = 0; i < 2; i++)
     {
       if (pSrcItem->pVmeRP_CP[i] != pItem->pVmeRP_CP[i])
+        return false;
+
+      if (pSrcItem->pVmeRefSys_RP_CP[i] != pItem->pVmeRefSys_RP_CP[i])
         return false;
     }
 
@@ -303,9 +313,11 @@ void medVMEMuscleWrapper::StoreMeterLinks()
       if (
         i->first.Equals(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_MUSCLE]) ||
         i->first.Equals(MUSCLEWRAPPER_LINK_NAMES[LNK_FIBERS_ORIGIN]) ||
-        i->first.Equals(MUSCLEWRAPPER_LINK_NAMES[LNK_FIBERS_INSERTION]) ||
+        i->first.Equals(MUSCLEWRAPPER_LINK_NAMES[LNK_FIBERS_INSERTION]) ||        
         i->first.StartsWith(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_WRAPPERx]) ||
-        i->first.StartsWith(MUSCLEWRAPPER_LINK_NAMES[LNK_DYNPOSE_WRAPPERx])
+        i->first.StartsWith(MUSCLEWRAPPER_LINK_NAMES[LNK_DYNPOSE_WRAPPERx]) ||
+        i->first.StartsWith(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_REFSYSx]) ||
+        i->first.StartsWith(MUSCLEWRAPPER_LINK_NAMES[LNK_DYNPOSE_REFSYSx])
         )
       {
         RemoveLink(i->first);
@@ -318,14 +330,16 @@ void medVMEMuscleWrapper::StoreMeterLinks()
   //create links, so they can be stored
   StoreMeterLink(m_MuscleVme, LNK_RESTPOSE_MUSCLE);
   StoreMeterLink(m_OIVME[0], LNK_FIBERS_ORIGIN);
-  StoreMeterLink(m_OIVME[1], LNK_FIBERS_INSERTION);
+  StoreMeterLink(m_OIVME[1], LNK_FIBERS_INSERTION);  
 
   int nId = 0;
   WRAPPER_ITEM* pItem = m_pWrappers;
   while (pItem != NULL)
   {
     StoreMeterLink(pItem->pVmeRP_CP[0], LNK_RESTPOSE_WRAPPERx, nId);
-    StoreMeterLink(pItem->pVmeRP_CP[1], LNK_DYNPOSE_WRAPPERx, nId);
+    StoreMeterLink(pItem->pVmeRP_CP[1], LNK_DYNPOSE_WRAPPERx, nId);  
+    StoreMeterLink(pItem->pVmeRefSys_RP_CP[0], LNK_RESTPOSE_REFSYSx, nId);
+    StoreMeterLink(pItem->pVmeRefSys_RP_CP[1], LNK_DYNPOSE_REFSYSx, nId);
     nId++;
 
     pItem = pItem->pNext;
@@ -358,7 +372,7 @@ void medVMEMuscleWrapper::RestoreMeterLinks()
   m_MuscleVme = RestoreMeterLink(LNK_RESTPOSE_MUSCLE);
   m_OIVME[0] = RestoreMeterLink(LNK_FIBERS_ORIGIN);
   m_OIVME[1] = RestoreMeterLink(LNK_FIBERS_INSERTION);
-
+  
   DeleteAllWrappers();  //delete wrappers, if they exist (should not be necessary)
 
   WRAPPER_ITEM* pLastItem = NULL;
@@ -369,6 +383,8 @@ void medVMEMuscleWrapper::RestoreMeterLinks()
 
     pItem->pVmeRP_CP[0] = RestoreMeterLink(LNK_RESTPOSE_WRAPPERx, nId);
     pItem->pVmeRP_CP[1] = RestoreMeterLink(LNK_DYNPOSE_WRAPPERx, nId);      
+    pItem->pVmeRefSys_RP_CP[0] = RestoreMeterLink(LNK_RESTPOSE_REFSYSx, nId);
+    pItem->pVmeRefSys_RP_CP[1] = RestoreMeterLink(LNK_DYNPOSE_REFSYSx, nId);
 
     if (NULL == (pItem->pLast = pLastItem))
       m_pWrappers = pItem;
@@ -392,7 +408,8 @@ void medVMEMuscleWrapper::RestoreMeterLinks()
   {
     parent->StoreInteger("Wrappers_Num", m_nWrappers);
     parent->StoreInteger("InputMode", m_InputMode);
-    parent->StoreInteger("VisualMode", m_VisMode);    
+    parent->StoreInteger("VisualMode", m_VisMode);   
+    parent->StoreInteger("UseRefSys", m_UseRefSys);
     parent->StoreInteger("Fibers_Type", m_FbTemplate);
     parent->StoreInteger("Fibers_Num", m_FbNumFib);
     parent->StoreInteger("Fibers_Res", m_FbResolution);
@@ -419,6 +436,9 @@ void medVMEMuscleWrapper::RestoreMeterLinks()
 
     if (node->RestoreInteger("VisualMode", m_VisMode) != MAF_OK)
       m_VisMode = DEFAULT_VISUAL_MODE; 
+
+    if (node->RestoreInteger("UseRefSys", m_UseRefSys) != MAF_OK)
+      m_UseRefSys = DEFAULT_USEREFSYSVAL;
 
     if (node->RestoreInteger("Fibers_Type", m_FbTemplate) != MAF_OK)
       m_FbTemplate = DEFAULT_FIBERS_TYPE;
@@ -484,6 +504,34 @@ mafVME *medVMEMuscleWrapper::GetWrapperVME(int nIndex)
 }
 
 //-------------------------------------------------------------------------
+mafVME *medVMEMuscleWrapper::GetWrapperRefSysVME_RP(int nIndex)
+//-------------------------------------------------------------------------
+{
+  WRAPPER_ITEM* pItem = m_pWrappers;
+  while (nIndex != 0 && pItem != NULL) 
+  {
+    pItem = pItem->pNext;
+    nIndex--;
+  }  
+
+  return pItem == NULL ? NULL : pItem->pVmeRefSys_RP_CP[0];
+}
+
+//-------------------------------------------------------------------------
+mafVME *medVMEMuscleWrapper::GetWrapperRefSysVME(int nIndex)
+//-------------------------------------------------------------------------
+{
+  WRAPPER_ITEM* pItem = m_pWrappers;
+  while (nIndex != 0 && pItem != NULL) 
+  {
+    pItem = pItem->pNext;
+    nIndex--;
+  }  
+
+  return pItem == NULL ? NULL : pItem->pVmeRefSys_RP_CP[1];
+}
+
+//-------------------------------------------------------------------------
 //Gets the origin area VME in its current pose
 mafVME* medVMEMuscleWrapper::GetFibersOriginVME()
 //-------------------------------------------------------------------------
@@ -529,26 +577,23 @@ void medVMEMuscleWrapper::InternalUpdate()
       (pItem->pVmeRP_CP[0] != NULL && pItem->pVmeRP_CP[1] != NULL))
     {           
       for (int i = 0; i < 2; i++)
-      { 
+      {         
         vtkPolyData* pPoly;
-        if (m_InputMode != 0 || i != 0)
-        {
-          //RP in advanced mode or CP
-          pPoly = vtkPolyData::SafeDownCast(pItem->pVmeRP_CP[i]->GetOutput()->GetVTKData());
-          pPoly->Update();    //force update
-        }
-        else
+        vtkDataSet* pRefSys = NULL;
+        
+        double t;
+        int iPos = i;        
+        if (m_InputMode == 0 && i == 0) 
         {
           //RP in simple mode => we need to get the data for time 0
-          double t = pItem->pVmeRP_CP[1]->GetTimeStamp();
+          t = pItem->pVmeRP_CP[iPos = 1]->GetTimeStamp();
           SetVmeTimeStamp(pItem->pVmeRP_CP[1], 0);
-          
-          pPoly = vtkPolyData::SafeDownCast(pItem->pVmeRP_CP[1]->GetOutput()->GetVTKData());
-          pPoly->Update();    //force update
-                  
-          SetVmeTimeStamp(pItem->pVmeRP_CP[1], t);
         }
 
+        //get control curve from the associated VME
+        pPoly = vtkPolyData::SafeDownCast(pItem->pVmeRP_CP[iPos]->GetOutput()->GetVTKData());
+        pPoly->Update();    //force update        
+          
         unsigned long nNewCheckSum = ComputeCheckSum(pPoly);
         if (nNewCheckSum != pItem->VMECheckSums[i])
         {
@@ -563,6 +608,38 @@ void medVMEMuscleWrapper::InternalUpdate()
           pItem->VMECheckSums[i] = nNewCheckSum;
           bCurvesUpdated = true;
         }      
+
+        //process ref.sys.
+        double RSO[3];
+        bool bRSOValid = GetRefSysVMEOrigin(pItem->pVmeRefSys_RP_CP[iPos], RSO);
+        if (!bRSOValid) 
+        {
+          //the current RefSys is not valid
+          if (pItem->RefSysOriginValid[i])
+          {
+            pItem->RefSysOriginValid[i] = false;
+            bCurvesUpdated = true;                                
+          }
+        }
+        else
+        {
+          //we have here valid RefSys, check if it is different from the existing one
+          if (!pItem->RefSysOriginValid[i] ||
+            pItem->RefSysOrigin[i][0] != RSO[0] ||
+            pItem->RefSysOrigin[i][1] != RSO[1] ||
+            pItem->RefSysOrigin[i][2] != RSO[2]
+          )
+          {            
+            pItem->RefSysOrigin[i][0] = RSO[0];
+            pItem->RefSysOrigin[i][1] = RSO[1];
+            pItem->RefSysOrigin[i][2] = RSO[2];
+            pItem->RefSysOriginValid[i] = true;
+          }
+        }
+
+        if (m_InputMode == 0 && i == 0) { //restore timestamp
+          SetVmeTimeStamp(pItem->pVmeRP_CP[1], t);
+        }
       } //end for
     } //end if
 
@@ -646,7 +723,11 @@ void medVMEMuscleWrapper::DeformMuscle(vtkPolyData* pMuscle)
   while (pItem != NULL)
   {    
     if (pItem->pCurves[0] != NULL && pItem->pCurves[1] != NULL) {
-      pDeformer->SetNthSkeleton(nCurves++, pItem->pCurves[0], pItem->pCurves[1], pCorrespondence);          
+      pDeformer->SetNthSkeleton(nCurves++, 
+        pItem->pCurves[0], pItem->pCurves[1], pCorrespondence,
+        (pItem->RefSysOriginValid[0] ? pItem->RefSysOrigin[0] : NULL),
+        (pItem->RefSysOriginValid[1] ? pItem->RefSysOrigin[1] : NULL)
+        );          
     }
     
     pItem = pItem->pNext;
@@ -972,7 +1053,45 @@ vtkPolyData* medVMEMuscleWrapper::FixPolyline(vtkPolyData* input)
   return pRet;
 }
 
+//------------------------------------------------------------------------
+//Gets the origin of the specified vme.
+//Returns false, if the vme is invalid.
+bool medVMEMuscleWrapper::GetRefSysVMEOrigin(mafVME* vme, double* origin)
+//------------------------------------------------------------------------
+{
+  if (vme == NULL || vme->GetOutput() == NULL)
+    return false;
+
+  vtkDataSet* ds = vme->GetOutput()->GetVTKData();
+  if (ds == NULL)
+    return false;
+
+  ds->Update();
+  ds->GetCenter(origin);
+/*
+  mafTransform* transform;
+
+  mafNEW(transform);
+  transform->SetMatrix(*vme->GetOutput()->GetAbsMatrix());
+
+  double rxyz[3], x[3] = {0, 0, 0};  
+  vme->GetOutput()->GetAbsPose(x, rxyz);
+
+  vme->GetOutput()->GetVTKData()->GetCenter(x);
+  transform->TransformPoint(x, x);
+
+  transform->SetMatrix(GetOutput()->GetAbsTransform()->GetMatrix());
+  transform->Invert();
+
+  transform->TransformPoint(x, origin);    
+  mafDEL(transform);
+*/
+  return true;
+}
+
 #pragma region GUI and Events Handling
+#include <wx/tooltip.h>
+
 //-------------------------------------------------------------------------
 mafGUI* medVMEMuscleWrapper::CreateGui()
 //-------------------------------------------------------------------------
@@ -983,7 +1102,7 @@ mafGUI* medVMEMuscleWrapper::CreateGui()
   RestoreMeterLinks();
   m_MuscleVmeName = m_MuscleVme == NULL ? wxT("") : m_MuscleVme->GetName();
   for (int i = 0; i < 2; i++){
-    m_OIVMEName[i] = m_OIVME[i] == NULL ? wxT("") : m_OIVME[i]->GetName();
+    m_OIVMEName[i] = m_OIVME[i] == NULL ? wxT("") : m_OIVME[i]->GetName();    
   }
 
 #pragma region Generated Code from wxFormBuilder  
@@ -1004,13 +1123,27 @@ mafGUI* medVMEMuscleWrapper::CreateGui()
     "for the rest pose (they may not change in the time) and for the current pose.") );
 
   sbSizer14->Add( radioBox1, 0, wxALL|wxEXPAND, 1 );
+  
+  wxBoxSizer* bSizer30;
+  bSizer30 = new wxBoxSizer( wxHORIZONTAL );
+  wxCheckBox* chckUseRefSys = new wxCheckBox( m_Gui, ID_USE_REFSYS, wxT("Use RS"), 
+    wxDefaultPosition, wxDefaultSize, 0 );
+  chckUseRefSys->SetToolTip( wxT("If checked the deformation algorithm will use the origin "
+    "of RS VME specified for wrappers whenever it is available. It allows handing of cases "
+    "when objects in the scene (e.g. bones) rotated around the axis given by the rest "
+    "wrapper (assuming simple edge wrapper). In these cases, the deformed muscle is "
+    "unrealistically rotated. Note that the same problem (but in a smaller scope) might "
+    "appear even in cases when objects are rotated around an arbitrary axis. "
+    "Hence, it is recommended to specify RS always (it should be the muscle underlaying bone).") );
+  bSizer30->Add( chckUseRefSys, 1, wxALL, 5 );
 
   wxCheckBox* checkBox9 = new wxCheckBox( m_Gui, ID_GENERATE_FIBERS, 
     wxT("Generate fibers"), wxDefaultPosition, wxDefaultSize, 0 );
   checkBox9->SetToolTip( 
     wxT("If checked, the output are muscle fibers instead of deformed surface.") );
 
-  sbSizer14->Add( checkBox9, 0, wxALL, 5 );
+  bSizer30->Add( checkBox9, 0, wxALL, 5 );
+  sbSizer14->Add( bSizer30, 1, wxEXPAND, 1 );
   bSizer18->Add( sbSizer14, 0, wxEXPAND, 1 );
 
   wxStaticBoxSizer* sbSizer8 = new wxStaticBoxSizer( 
@@ -1093,6 +1226,43 @@ mafGUI* medVMEMuscleWrapper::CreateGui()
 
   bSizer51->Add( bttnSelCP, 0, wxALL|wxALIGN_CENTER_VERTICAL, 1 );
   sbSizer13->Add( bSizer51, 0, wxEXPAND, 1 );
+
+  wxBoxSizer* bSizer29 = new wxBoxSizer( wxHORIZONTAL );
+  m_LabelRP_RS = new wxStaticText( m_Gui, wxID_ANY, wxT("RP RS:"), 
+    wxDefaultPosition, wxSize( 35,-1 ), wxALIGN_RIGHT );  
+  m_LabelRP_RS->Enable( false );
+  bSizer29->Add( m_LabelRP_RS, 0, wxALL|wxALIGN_CENTER_VERTICAL, 1 );
+
+  m_RPRefSysVmeCtrl = new wxTextCtrl( m_Gui, ID_RESTPOSE_REFSYS_LINK, 
+    wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
+  m_RPRefSysVmeCtrl->Enable( false );
+  bSizer29->Add( m_RPRefSysVmeCtrl, 1, wxALL, 1 );
+
+  m_BttnSelectRPRefSys = new wxButton( m_Gui, ID_SELECT_RP_REFSYS_LINK, 
+    wxT("Select"), wxDefaultPosition, wxSize( 50,-1 ), 0 );
+  m_BttnSelectRPRefSys->Enable( false );
+  m_BttnSelectRPRefSys->SetToolTip( 
+    wxT("[OPTIONAL] Selects a VME that serves as a reference coordinate system for "
+    "deformation (see Use RS option).") );
+  bSizer29->Add( m_BttnSelectRPRefSys, 0, wxALL, 1 );
+  sbSizer13->Add( bSizer29, 1, wxEXPAND, 1 );
+
+  wxBoxSizer* bSizer291 = new wxBoxSizer( wxHORIZONTAL );
+  bSizer291->Add( new wxStaticText( m_Gui, wxID_ANY, wxT("CP RS:"), wxDefaultPosition, 
+    wxSize( 35,-1 ), wxALIGN_RIGHT ), 0, wxALL|wxALIGN_CENTER_VERTICAL, 1 );
+
+  wxTextCtrl* CPRefSysVmeCtrl = new wxTextCtrl( m_Gui, ID_CURRENTPOSE_REFSYS_LINK, 
+    wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
+  bSizer291->Add( CPRefSysVmeCtrl, 1, wxALL, 1 );
+
+  wxButton* bttnSelectCPRefSys = new wxButton( m_Gui, ID_SELECT_CP_REFSYS_LINK, 
+    wxT("Select"), wxDefaultPosition, wxSize( 50,-1 ), 0 );
+  bttnSelectCPRefSys->SetToolTip( 
+    wxT("[OPTIONAL] Selects a VME that serves as a reference coordinate system for "
+    "deformation (see Use RS option).") );
+
+  bSizer291->Add( bttnSelectCPRefSys, 0, wxALL, 1 );
+  sbSizer13->Add( bSizer291, 1, wxEXPAND, 1 );
 
   wxBoxSizer* bSizer12 = new wxBoxSizer( wxHORIZONTAL );  
   bSizer12->Add( new wxPanel( m_Gui, wxID_ANY, wxDefaultPosition, wxDefaultSize, 
@@ -1246,8 +1416,8 @@ mafGUI* medVMEMuscleWrapper::CreateGui()
 #pragma endregion
 
   //create headers for the listctrl
-  wxString cols[2] = { wxT("RP"), wxT("CP") };
-  for (int i = 0; i < 2; i++){
+  wxString cols[4] = { wxT("RP"), wxT("CP"), wxT("RP_RS"), wxT("CP_RS") };
+  for (int i = 0; i < 4; i++){
     m_WrappersCtrl->InsertColumn(i, cols[i]);
   }
 
@@ -1262,17 +1432,21 @@ mafGUI* medVMEMuscleWrapper::CreateGui()
   //validators for the first part
   radioBox1->SetValidator(mafGUIValidator(this, ID_INPUTMODE, radioBox1, &m_InputMode));
   checkBox9->SetValidator(mafGUIValidator(this, ID_GENERATE_FIBERS, checkBox9, &m_VisMode));
+  chckUseRefSys->SetValidator(mafGUIValidator(this, ID_USE_REFSYS, chckUseRefSys, &m_UseRefSys));
   MuscleCtrl->SetValidator(mafGUIValidator(this, wxID_ANY, MuscleCtrl, &m_MuscleVmeName));
   bttnSelectMuscle->SetValidator(mafGUIValidator(this, ID_RESTPOSE_MUSCLE_LINK, bttnSelectMuscle));
 
   //validators for Wrappers
-
   m_BttnSelRP->SetValidator(mafGUIValidator(this, ID_SELECT_RP, m_BttnSelRP));
   bttnSelCP->SetValidator(mafGUIValidator(this, ID_SELECT_CP, bttnSelCP));
+  m_BttnSelectRPRefSys->SetValidator(mafGUIValidator(this, ID_SELECT_RP_REFSYS_LINK, m_BttnSelectRPRefSys));
+  bttnSelectCPRefSys->SetValidator(mafGUIValidator(this, ID_SELECT_CP_REFSYS_LINK, bttnSelectCPRefSys));  
   m_BttnAddWrapper->SetValidator(mafGUIValidator(this, ID_ADDWRAPPER, m_BttnAddWrapper));
   m_BttnRemoveWrapper->SetValidator(mafGUIValidator(this, ID_REMOVEWRAPPER, m_BttnRemoveWrapper));
   m_RPNameCtrl->SetValidator(mafGUIValidator(this, ID_RESTPOSE_WRAPPER_LINK, m_RPNameCtrl, &m_WrappersVmeName[0]));
   CPNameCtrl->SetValidator(mafGUIValidator(this, ID_CURRENTPOSE_WRAPPER_LINK, CPNameCtrl, &m_WrappersVmeName[1]));
+  m_RPRefSysVmeCtrl->SetValidator(mafGUIValidator(this, ID_RESTPOSE_REFSYS_LINK, m_RPRefSysVmeCtrl, &m_RefSysVmeName[0]));
+  CPRefSysVmeCtrl->SetValidator(mafGUIValidator(this, ID_CURRENTPOSE_REFSYS_LINK, CPRefSysVmeCtrl, &m_RefSysVmeName[1]));
 
   //validators for Fiber Options
   OAreaName->SetValidator(mafGUIValidator(this, wxID_ANY, OAreaName, &m_OIVMEName[0]));
@@ -1289,6 +1463,8 @@ mafGUI* medVMEMuscleWrapper::CreateGui()
   checkBox11->SetValidator(mafGUIValidator(this, ID_FIBERS_DEBUG_SHOWTEMPLATE, checkBox11, &m_FbDebugShowTemplate));  
   chckDebug2->SetValidator(mafGUIValidator(this, ID_FIBERS_DEBUG_SHOWFITTING, chckDebug2, &m_FbDebugShowFitting));  
   chckDebug3->SetValidator(mafGUIValidator(this, ID_FIBERS_DEBUG_SHOWFITTINGRES, chckDebug3, &m_FbDebugShowFittingRes));  
+
+  radioBox1->GetToolTip()->GetWindow()->SetMaxSize(wxSize(1600, 75));
 
   m_Gui->Add(bSizer18);
   m_Gui->FitGui();
@@ -1329,6 +1505,16 @@ void medVMEMuscleWrapper::OnEvent(mafEventBase *maf_event)
         (long)&medVMEMuscleWrapper::VMEAcceptMuscle, m_MuscleVme, m_MuscleVmeName);
       break;
 
+    case ID_SELECT_RP_REFSYS_LINK:
+      SelectVme(_("Choose the reference system for the rest pose wrapper"),
+        (long)&medVMEMuscleWrapper::VMEAcceptRefSys, m_RefSysVme[0], m_RefSysVmeName[0]);
+      break;
+
+    case ID_SELECT_CP_REFSYS_LINK:
+      SelectVme(_("Choose the reference system for the rest pose wrapper"),
+        (long)&medVMEMuscleWrapper::VMEAcceptRefSys, m_RefSysVme[1], m_RefSysVmeName[1]);
+      break;
+
     case ID_SELECT_RP:
       if (SelectVme(_("Choose wrapper vme link (in the rest pose)"),
         (long)&medVMEMuscleWrapper::VMEAcceptWrapper, m_WrappersVme[0], m_WrappersVmeName[0])
@@ -1341,12 +1527,16 @@ void medVMEMuscleWrapper::OnEvent(mafEventBase *maf_event)
         (long)&medVMEMuscleWrapper::VMEAcceptWrapper, m_WrappersVme[1], m_WrappersVmeName[1])
         )
           m_BttnAddWrapper->Enable(m_InputMode == 0 || m_WrappersVme[0] != NULL);      
-      break;
+      break;    
 
     case ID_ADDWRAPPER:
-      AddWrapper(m_WrappersVme[0], m_WrappersVme[1]);
-      m_WrappersVme[0] = m_WrappersVme[1] = NULL;
-      m_WrappersVmeName[0] = m_WrappersVmeName[1] = wxT("");
+      AddWrapper(m_WrappersVme[0], m_WrappersVme[1], m_RefSysVme[0], m_RefSysVme[1]);
+      for (int i = 0; i < 2; i++)
+      {
+        m_RefSysVme[i] = m_WrappersVme[i] = NULL;
+        m_RefSysVmeName[i] = m_WrappersVmeName[i] = wxT("");
+      }
+            
       m_BttnAddWrapper->Enable(FALSE);
       m_Gui->Update();
 
@@ -1426,7 +1616,9 @@ void medVMEMuscleWrapper::OnEvent(mafEventBase *maf_event)
 
 //------------------------------------------------------------------------
 //Adds a new wrapper into the list of wrappers and GUI list
-void medVMEMuscleWrapper::AddWrapper(mafVME* pRP, mafVME* pCP)
+//pxP_RS denotes reference systems used for corresponding wrappers (optional). 
+void medVMEMuscleWrapper::AddWrapper(mafVME* pRP, mafVME* pCP,
+                                     mafVME* pRP_RS, mafVME* pCP_RS)
 //------------------------------------------------------------------------
 {
   WRAPPER_ITEM* pItem = new WRAPPER_ITEM;
@@ -1434,6 +1626,8 @@ void medVMEMuscleWrapper::AddWrapper(mafVME* pRP, mafVME* pCP)
   
   pItem->pVmeRP_CP[0] = pRP;
   pItem->pVmeRP_CP[1] = pCP;
+  pItem->pVmeRefSys_RP_CP[0] = pRP_RS;
+  pItem->pVmeRefSys_RP_CP[1] = pCP_RS;
 
   AddWrapper(pItem);
 }
@@ -1452,15 +1646,21 @@ void medVMEMuscleWrapper::AddWrapper(WRAPPER_ITEM* pItem)
     pPrev->pNext = pItem;
   }
   
-  wxString szName[2];
+  wxString szName[4];
   for (int i = 0; i < 2; i++)
   {
     if (pItem->pVmeRP_CP[i] != NULL)
       szName[i] = pItem->pVmeRP_CP[i]->GetName();
+
+    if (pItem->pVmeRefSys_RP_CP[i] != NULL)
+      szName[2+i] = pItem->pVmeRefSys_RP_CP[i]->GetName();
   }  
 
   m_WrappersCtrl->InsertItem(nCount, szName[0]);
-  m_WrappersCtrl->SetItem(nCount, 1, szName[1]);
+  for (int i = 1; i <= 3; i++){
+    m_WrappersCtrl->SetItem(nCount, i, szName[i]);
+  }  
+  
   m_WrappersCtrl->SetItemData(nCount, (long)pItem);
   m_WrappersCtrl->SetItemState(nCount, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED,
     wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
@@ -1513,6 +1713,10 @@ void medVMEMuscleWrapper::UpdateControls()
   m_BttnSelRP->Enable(m_InputMode != 0);
   m_BttnAddWrapper->Enable(m_WrappersVme[1] != NULL &&
                            (m_InputMode == 0 || m_WrappersVme[0] != NULL));
+
+  m_LabelRP_RS->Enable(m_InputMode != 0);
+  m_RPRefSysVmeCtrl->Enable(m_InputMode != 0);
+  m_BttnSelectRPRefSys->Enable(m_InputMode != 0);
 
   m_SmLabel1->Enable(m_FbSmooth != 0);
   m_SmLabel2->Enable(m_FbSmooth != 0);
@@ -1583,6 +1787,13 @@ bool medVMEMuscleWrapper::SelectVme(mafString title,
   mafVME* vme = mafVME::SafeDownCast(node);
   return vme != NULL && 
     (vme->IsA("mafVMELandmarkCloud") || vme->IsA("mafVMELandmark"));    
+}
+
+//------------------------------------------------------------------------
+/*static*/ bool medVMEMuscleWrapper::VMEAcceptRefSys(mafNode *node) 
+//------------------------------------------------------------------------
+{  
+  return mafVME::SafeDownCast(node) != NULL;
 }
 #pragma endregion Accept VME Routines
 #pragma endregion GUI and Events Handling
