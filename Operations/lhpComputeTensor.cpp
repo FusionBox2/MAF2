@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpComputeTensor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-01-15 17:17:35 $
-Version:   $Revision: 1.1.2.1 $
+Date:      $Date: 2009-01-23 13:48:42 $
+Version:   $Revision: 1.1.2.2 $
 Authors:   Gregor Klajnsek
 ==========================================================================
 Copyright (c) 2001/2005 
@@ -100,6 +100,47 @@ bool ComputeTensor(vtkImageData* volume, vtkRectilinearGrid* displacementVectors
   tensors->Delete();
   return true;
 }
+
+
+//------------------------------------------------------------------------------
+bool ComputeEigenvalues(vtkImageData* tensorVolume)
+//------------------------------------------------------------------------------
+{
+  vtkDoubleArray* tensorArray =  vtkDoubleArray::SafeDownCast(tensorVolume->GetPointData()->GetTensors());
+  if (!tensorArray)
+    return false;
+  int numTensors = tensorArray->GetNumberOfTuples();
+
+  vtkDoubleArray* eigenvalueArray = vtkDoubleArray::New();
+  eigenvalueArray->SetNumberOfComponents(3);
+  eigenvalueArray->SetNumberOfTuples(numTensors);
+
+  double Tensor[3][3];  // matrix representing the current tensor
+  double Evalues[3];        // array of eigenvalues
+  double Evectors[3][3];     // matrix representing the eigenvectors
+
+  for (int i=0; i<numTensors; i++)
+    {
+    tensorArray->GetTuple(i, (double*)Tensor);
+    // calculate eigenvalues
+    vtkMath::Diagonalize3x3(Tensor, Evalues, Evectors);
+    eigenvalueArray->SetTuple(i, Evalues);
+    }
+  
+  // set the tensors to the Volume dataset
+  tensorVolume->GetPointData()->SetVectors(eigenvalueArray);
+  tensorVolume->Update();
+  eigenvalueArray->Delete();
+  return true;
+}
+
+
+
+
+
+
+
+
 
 
 /**
@@ -658,18 +699,24 @@ void CreateGaussPointMatrix(double matrix[8][8])
 /** TODO: Add comment
 */
 //------------------------------------------------------------------------------
-void TransformComponentToScalars(vtkImageData *volume, int component, int min, int max)
+void TransformComponentToScalars(vtkImageData *volume, vtkDataArray* dataArray, int component, int min, int max, int type)
 //------------------------------------------------------------------------------
 {
-  vtkDataArray *tensors = volume->GetPointData()->GetTensors();
-  if (!tensors)
+  if (!volume)
     return;
+  
+  if (!dataArray)
+    {
+    volume->GetPointData()->GetScalars()->Reset();
+    return;
+    }
+
 
   // perform sanity checks
-  int numTuples = tensors->GetNumberOfTuples();
+  int numTuples = dataArray->GetNumberOfTuples();
   if (numTuples <= 0)
     return; 
-  int numComponents = tensors->GetNumberOfComponents();
+  int numComponents = dataArray->GetNumberOfComponents();
   if (numComponents <= component)     // invalid component index
     return;
   if (min > max) // swap
@@ -679,70 +726,68 @@ void TransformComponentToScalars(vtkImageData *volume, int component, int min, i
   // run through the volume and get min and max values and the range
   double value[9];              // tensors have 9 components
   double origMin, origMax;
-  tensors->GetTuple(0, value);
+  dataArray->GetTuple(0, value);
   origMin = origMax = value[component];
 
+  /*  
   for (int i=1; i<numTuples; i++)
   {
-    tensors->GetTuple(i, value);
+    dataArray->GetTuple(i, value);
     if (value[component] < origMin)
       origMin = value[component];
     if (value[component] > origMax)
       origMax = value[component];
-  }
-  double origRange = origMax-origMin;
+  }*/
+  double tensorRange[2];
+  dataArray->GetRange(tensorRange);
+  origMin = tensorRange[0];
+  origMax = tensorRange[1];
 
-  // create new volume
-  //vtkIntArray *newScalars = vtkIntArray::New();
-  vtkUnsignedShortArray *newScalars = vtkUnsignedShortArray::New();
+  double origRange = origMax-origMin;
   double factor  = (max-min)/origRange;
-  for (int i=0; i<numTuples; i++)
-  {
-    tensors->GetTuple(i, value);
-    int cvalue = min + (int)(factor * value[component] + 0.5);
-    newScalars->InsertValue(i, cvalue);
-    //newScalars->InserTupleValue(i, cvalue);
-  }
+
+
+  // create new array of scalars that represent the volume - choose the appropriate data type according to the parameter type
+  // fast solution, but not best looking
+  vtkDataArray* createdArray = NULL;
+  if (type == 0)
+    {
+      vtkUnsignedShortArray *newScalars = vtkUnsignedShortArray::New();
+      for (int i=0; i<numTuples; i++)
+      {
+        dataArray->GetTuple(i, value);
+        int cvalue = min + (int)(factor * value[component] + 0.5);
+        newScalars->InsertValue(i, cvalue);
+      }
+      createdArray = newScalars;
+    } 
+  else 
+    {
+    vtkIntArray *newScalars = vtkIntArray::New();
+    for (int i=0; i<numTuples; i++)
+    {
+      dataArray->GetTuple(i, value);
+      int cvalue = min + (int)(factor * value[component] + 0.5);
+      newScalars->InsertValue(i, cvalue);
+    }
+    createdArray = newScalars;
+  } 
 
   // replace the old array
-  volume->GetPointData()->SetScalars(newScalars);
+  volume->GetPointData()->SetScalars(createdArray);
   volume->Update();
-  //scalars->Delete(); - automatically deleted during a call to setScalars
-  newScalars->Delete();
+  createdArray->Delete();
 }
 
 
 //------------------------------------------------------------------------------
-void GetArrayLimits(vtkImageData *volume, int& min, int& max)
+void GetArrayLimits(vtkDataArray* dataArray, int& min, int& max)
 //------------------------------------------------------------------------------
 {
-  vtkDataArray *scalars = volume->GetPointData()->GetScalars();
-  if (!scalars)
+  double range[2];
+  if (!dataArray)
     return;
-
-  // perform sanity checks
-  int numTuples = scalars->GetNumberOfTuples();
-  if (numTuples <= 0)
-    return; 
-  int numComponents = scalars->GetNumberOfComponents();
-  if (numComponents != 1)     // invalid component index
-    return;
-
-
-  // run through the volume and get min and max values and the range
-  double value;              // tensors have 9 components
-  double origMin, origMax;
-  scalars->GetTuple(0, &value);
-  origMin = origMax = value;
-
-  for (int i=1; i<numTuples; i++)
-  {
-    scalars->GetTuple(i, &value);
-    if (value < origMin)
-      origMin = value;
-    if (value > origMax)
-      origMax = value;
-  }
-  min = origMin;
-  max = origMax;
+  dataArray->GetRange(range);
+  min = range[0];
+  max = range[1];
 }

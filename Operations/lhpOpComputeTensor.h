@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpComputeTensor.h,v $
 Language:  C++
-Date:      $Date: 2009-01-15 17:17:35 $
-Version:   $Revision: 1.1.2.1 $
+Date:      $Date: 2009-01-23 13:48:42 $
+Version:   $Revision: 1.1.2.2 $
 Authors:   Gregor Klajnsek
 ==========================================================================
 Copyright (c) 2001/2005 
@@ -124,6 +124,7 @@ public:
   void SetDisplacementVectorsView();
   void SetTensorView();
   void TensorComponentChange();
+  void SetOutputType(int trigger);
 
 protected:
   mafVMEVolumeGray *m_VmeData;           // VME that contains the input scalar dataset
@@ -149,7 +150,8 @@ protected:
   int m_InterpolationType;         // which sampling will be used when we calculate the tensor field
   int m_bCreateOutput;             // will we create an output dataset that will store the tensor field - needed?
   int m_bAddScalarsToOutput;       // will we also fill the values of the selected component into the output dataset - needed?
-  int m_bAddTensorsToOutput;   
+  int m_bAddTensorsToOutput;  
+  int m_bAddEigenvaluesToOutput;   
   int m_IsosurfaceValue;
 
   int m_bShowOutline;              // should we show the outline of the volume
@@ -185,6 +187,7 @@ protected:
   wxStaticText* m_staticTextOutput;
   wxCheckBox* m_checkBoxCreateOutput;
   wxCheckBox* m_checkBoxFillTensorArray;
+  wxCheckBox* m_checkBoxFillVectorArray;
   wxCheckBox* m_checkBoxFillScalarArray;
   wxButton* m_buttonOK;
   wxButton* m_buttonCancel;
