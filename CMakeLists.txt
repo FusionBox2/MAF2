@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2008-12-18 10:31:14 $
-#   Version:   $Revision: 1.33.2.11 $
+#   Date:      $Date: 2009-01-26 16:05:36 $
+#   Version:   $Revision: 1.33.2.12 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -91,7 +91,12 @@ IF(MAF_FOUND)
   ADD_SUBDIRECTORY(BES_Beta)
   
   # Configuring Doxygen documentation  
-  SUBDIRS (Documentation)
+  
+  OPTION(BUILD_DOCUMENTATION "Build the doxygen documentation" OFF)
+  
+  IF(BUILD_DOCUMENTATION)
+      SUBDIRS (Docs)
+  ENDIF(BUILD_DOCUMENTATION)
   
   SUBDIRS(Aurion/C3DReader/share)
   INCLUDE("${PROJECT_SOURCE_DIR}/CMakeModules/FindC3DReaderAPI.cmake")
