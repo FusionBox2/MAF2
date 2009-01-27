@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: medVMEMuscleWrapper.h,v $
   Language:  C++
-  Date:      $Date: 2009-01-23 14:54:27 $
-  Version:   $Revision: 1.1.2.7 $
+  Date:      $Date: 2009-01-27 16:00:38 $
+  Version:   $Revision: 1.1.2.8 $
   Authors:   Josef Kohout
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -18,6 +18,7 @@
 #include "mafVMEOutputPolyline.h"
 #include "mafVMEVolumeGray.h"
 #include "mafEvent.h"
+#include "mafTransform.h"
 #include <wx/listctrl.h>
 
 //----------------------------------------------------------------------------
@@ -109,6 +110,8 @@ protected:
     WRAPPER_ITEM* pLast;
   };
   
+  mafTransform *m_Transform;      ///< pose matrix for the output (taken from input muscle)
+
   mafVME* m_RefSysVme[2];         //<VMEs with the reference system
   mafString m_RefSysVmeName[2];   //<and their name to be shown in GUI  
 
