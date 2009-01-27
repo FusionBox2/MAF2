@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: medVMEMuscleWrapper.cpp,v $
 Language:  C++
-Date:      $Date: 2009-01-23 14:54:27 $
-Version:   $Revision: 1.1.2.9 $
+Date:      $Date: 2009-01-27 12:50:41 $
+Version:   $Revision: 1.1.2.10 $
 Authors:   Josef Kohout
 ==========================================================================
 Copyright (c) 2001/2005 
@@ -1068,6 +1068,20 @@ bool medVMEMuscleWrapper::GetRefSysVMEOrigin(mafVME* vme, double* origin)
 
   ds->Update();
   ds->GetCenter(origin);
+
+  //transform the origin coordinates
+  mafTransform* transform;
+
+  mafNEW(transform);
+  transform->SetMatrix(*vme->GetOutput()->GetAbsMatrix());  
+  transform->TransformPoint(origin, origin);
+
+  transform->SetMatrix(GetOutput()->GetAbsTransform()->GetMatrix());
+  transform->Invert();
+  transform->TransformPoint(origin, origin);  
+
+  mafDEL(transform);
+
 /*
   mafTransform* transform;
 
@@ -1428,6 +1442,8 @@ mafGUI* medVMEMuscleWrapper::CreateGui()
     AddWrapper(pItem);
     pItem = pItem->pNext;
   }
+
+  m_BttnRemoveWrapper->Enable(m_nWrappers > 0);
 
   //validators for the first part
   radioBox1->SetValidator(mafGUIValidator(this, ID_INPUTMODE, radioBox1, &m_InputMode));
