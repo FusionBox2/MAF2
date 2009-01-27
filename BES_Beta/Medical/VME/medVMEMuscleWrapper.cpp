@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: medVMEMuscleWrapper.cpp,v $
 Language:  C++
-Date:      $Date: 2009-01-27 12:50:41 $
-Version:   $Revision: 1.1.2.10 $
+Date:      $Date: 2009-01-27 13:38:31 $
+Version:   $Revision: 1.1.2.11 $
 Authors:   Josef Kohout
 ==========================================================================
 Copyright (c) 2001/2005 
@@ -29,7 +29,6 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "mafStorageElement.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafVMELandmark.h"
-#include "mafTransform.h"
 
 #include "vtkMAFDataPipe.h"
 #include "vtkMAFSmartPointer.h"
@@ -97,7 +96,9 @@ medVMEMuscleWrapper::medVMEMuscleWrapper()
   m_bNeedUpdate = false;
   m_bDoNotUpdate = false;
 
+  mafNEW(m_Transform);
   mafVMEOutputSurface *output = mafVMEOutputSurface::New(); // an output with no data  
+  output->SetTransform(m_Transform); // force my transform in the output
   SetOutput(output);  
 
   DependsOnLinkedNodeOn();
@@ -119,6 +120,7 @@ medVMEMuscleWrapper::~medVMEMuscleWrapper()
   DeleteAllWrappers();  
 
   vtkDEL(m_PolyData);
+  mafDEL(m_Transform);  
   SetOutput(NULL);  
 }
 
@@ -147,6 +149,7 @@ int medVMEMuscleWrapper::DeepCopy(mafNode *a)
   if (Superclass::DeepCopy(a)==MAF_OK)
   {
     medVMEMuscleWrapper *wrapper = medVMEMuscleWrapper::SafeDownCast(a);
+    m_Transform->SetMatrix(wrapper->m_Transform->GetMatrix());
 
     for (int i = 0; i < 2; i++){    
       m_OIVMEName[i] = wrapper->m_OIVMEName[i];
@@ -202,7 +205,9 @@ bool medVMEMuscleWrapper::Equals(mafVME *vme)
     m_FbSmooth != wrapper->m_FbSmooth ||
     m_FbSmoothSteps != wrapper->m_FbSmoothSteps ||
     m_FbSmoothWeight != wrapper->m_FbSmoothWeight ||
-    m_FbDebugShowTemplate != wrapper->m_FbDebugShowTemplate
+    m_FbDebugShowTemplate != wrapper->m_FbDebugShowTemplate ||
+
+    !(m_Transform->GetMatrix() == wrapper->m_Transform->GetMatrix())
     )
     return false;
 
@@ -231,6 +236,8 @@ void medVMEMuscleWrapper::SetMatrix(const mafMatrix &mat)
 //-------------------------------------------------------------------------
 {  
   //ignored, nothing to do
+  m_Transform->SetMatrix(mat);
+  Modified();
 }
 
 //-------------------------------------------------------------------------
@@ -416,7 +423,9 @@ void medVMEMuscleWrapper::RestoreMeterLinks()
     parent->StoreDouble("Fibers_Thickness", m_FbThickness);
     parent->StoreInteger("Fibers_Smooth", m_FbSmooth);
     parent->StoreInteger("Smooth_Steps", m_FbSmoothSteps);    
-    parent->StoreDouble("Smooth_Weight", m_FbSmoothWeight);    
+    parent->StoreDouble("Smooth_Weight", m_FbSmoothWeight); 
+
+    parent->StoreMatrix("Transform",&m_Transform->GetMatrix());
     return MAF_OK;
   }
   return MAF_ERROR;
@@ -461,6 +470,11 @@ void medVMEMuscleWrapper::RestoreMeterLinks()
     if (node->RestoreDouble("Smooth_Weight", m_FbSmoothWeight) != MAF_OK)
       m_FbSmoothWeight = DEFAULT_FIBERS_SMOOTHWEIGHT;
     
+    mafMatrix matrix;
+    if (node->RestoreMatrix("Transform",&matrix)==MAF_OK) {    
+      m_Transform->SetMatrix(matrix);
+    }
+
     m_bNeedUpdate = true;
     return MAF_OK;
   }
@@ -872,7 +886,6 @@ vtkPoints* medVMEMuscleWrapper::CreatePointsFromVME(mafVME* vme)
 //------------------------------------------------------------------------
 {
   vtkPoints* pRet = NULL;
-  bool bDoNotTransform = false;
 
   mafVMELandmarkCloud* cloud = mafVMELandmarkCloud::SafeDownCast(vme);
   if (cloud != NULL)
@@ -917,16 +930,15 @@ vtkPoints* medVMEMuscleWrapper::CreatePointsFromVME(mafVME* vme)
             pRet->SetPoint(i, ds->GetPoint(i));
           }
         }
-      }
-
-      bDoNotTransform = true;
+      }      
     }
   }
 
-  if (pRet != NULL && !bDoNotTransform)
+  if (pRet != NULL)
   {
-    //coordinates are local => they do not change when the surface to which
-    //those landmarks are pinned moves => we need to get absolute positions
+    //returned coordinates are local, so we will need to convert them to 
+    //absolute (world coordinates) and from them to local coordinates 
+    //of our output (corresponds to the coordinate system of input muscle)
     mafTransform* transform;
 
     mafNEW(transform);
@@ -1069,7 +1081,9 @@ bool medVMEMuscleWrapper::GetRefSysVMEOrigin(mafVME* vme, double* origin)
   ds->Update();
   ds->GetCenter(origin);
 
-  //transform the origin coordinates
+  //returned coordinates are local, so we will need to convert them to 
+  //absolute (world coordinates) and from them to local coordinates 
+  //of our output (corresponds to the coordinate system of input muscle)
   mafTransform* transform;
 
   mafNEW(transform);
@@ -1517,8 +1531,14 @@ void medVMEMuscleWrapper::OnEvent(mafEventBase *maf_event)
     
 
     case ID_RESTPOSE_MUSCLE_LINK:
-      bNeedUpdate = SelectVme(_("Choose muscle vme link (in the rest pose)"),
-        (long)&medVMEMuscleWrapper::VMEAcceptMuscle, m_MuscleVme, m_MuscleVmeName);
+      {
+        if (bNeedUpdate = SelectVme(_("Choose muscle vme link (in the rest pose)"),
+          (long)&medVMEMuscleWrapper::VMEAcceptMuscle, m_MuscleVme, m_MuscleVmeName))
+        {
+          //new muscle is here => we need to pass its matrix to our output
+          this->SetMatrix(*m_MuscleVme->GetOutput()->GetMatrix());
+        }
+      }
       break;
 
     case ID_SELECT_RP_REFSYS_LINK:
