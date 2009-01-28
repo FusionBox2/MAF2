@@ -85,15 +85,11 @@ class lhpReadRemoteTag:
   
 def main():
     
+    usage_msg = '''Usage: %s user, password, URL, resource, tag ''' % sys.argv[0]
     if(len(sys.argv) < 5): #for test
-       sys.argv = []
-       sys.argv.append("rmucci") #substitute
-       sys.argv.append("10&bass!") #substitute
-       sys.argv.append('https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/') #substitute
-       sys.argv.append('dataresource-7346,L0000_resource_MAF_TreeInfo_VmeChildURI1') #xml test present in repository
-       
-       read = lhpReadRemoteTag()
-       read.ReadTag()
+        print 'Error :\n' + usage_msg
+        sys.exit(1)
+
        
     if(len(sys.argv) >= 5):
         sys.argv = sys.argv[1:]
