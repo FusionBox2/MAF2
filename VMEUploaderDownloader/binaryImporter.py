@@ -63,16 +63,11 @@ class binaryImporter:
   
 def main():
     
-    if(len(sys.argv) <3): #for test
-        sys.argv = []
-        sys.argv.append("true") #substitute
-        sys.argv.append('D:/Devel/2005/BIN_lhpBuilder_2005/VMEUploaderDownloader/Incoming/3/0.0.zvtk') #substitute
-        sys.argv.append('D:/Cineca/Profili/rmucci/Desktop/5/5.0.zvtk') #substitute
-        
-        importer = binaryImporter()
-        importer.CopyBinary()
-        #add code to remove resource created
-        return
+    usage_msg = '''Usage: %s isAnimated, absOldItemURL, absNewItemURL ''' % sys.argv[0]
+    if(len(sys.argv) <3): 
+         print 'Error :\n' + usage_msg
+         sys.exit(1)
+
        
     if(len(sys.argv) >= 3):
         sys.argv = sys.argv[1:]
