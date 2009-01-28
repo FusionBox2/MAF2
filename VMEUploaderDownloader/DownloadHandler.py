@@ -28,6 +28,7 @@ class DownloadHandler:
         self.remoteChksum = ""
         self.proxyHost = ""
         self.proxyPort = 0
+        self.downloadFinished = False
         pass
     
     def __download(self):
@@ -61,7 +62,7 @@ class DownloadHandler:
                 DownloadHandler.queue.put(lista)
             self.block.release()
             return
-        
+        self.downloadFinished = True
         os.chdir(oldDir)    
         
         pass
@@ -133,7 +134,7 @@ class DownloadHandler:
               currentTime = time.time()
               elapsedTime = currentTime - previousTime
               transferredDimension = currentFileDimension-previousFileDimension
-              totalDataDownloaded = totalDataDownloaded + transferredDimension                 
+              totalDataDownloaded = currentFileDimension#totalDataDownloaded + transferredDimension                 
               totalTime = totalTime + elapsedTime
               remainingTime = "unknown"
               remainingData = float(self.fileSize) - float(totalDataDownloaded)
@@ -176,7 +177,6 @@ class DownloadHandler:
                   else:
                      print "remaining time: unknown"
                      
-                    
                   print  "########################################"
                   
               time.sleep(0.3)
@@ -185,7 +185,8 @@ class DownloadHandler:
                   lista = [self.observer,percentage, remainingTime]
                   DownloadHandler.queue.put(lista)
               self.block.release()
-              if(percentage >= 100):
+              
+              if(percentage >= 100 or self.downloadFinished == True):
                   break
             
             if Debug:

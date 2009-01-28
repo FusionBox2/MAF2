@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2009-01-19 12:54:58 $
-Version:   $Revision: 1.40.2.14 $
+Date:      $Date: 2009-01-28 09:51:15 $
+Version:   $Revision: 1.40.2.15 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -1034,7 +1034,7 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(mafString  xmlFile)
       mafLogMessage(errors[i]);
     }
   }
- 
+
   if(output.size() < 2)
   {
     return MAF_ERROR;
@@ -1042,7 +1042,7 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(mafString  xmlFile)
 
   m_URISRBFileSize = output[output.size() - 1];
   m_URISRBFile = output[output.size() - 2];
-  
+
   wxSetWorkingDirectory(oldDir);
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
@@ -1566,7 +1566,7 @@ void lhpOpDownloadVME::UpdateBinaryFile()
     mafString newMSFFileName = ((mafVMERoot *)m_Input->GetRoot())->GetStorage()->GetURL();
     wxString path, name, ext;
     wxString oldArchiveURL, newArchiveURL, tmpURL;
-    wxString oldItemURL, newItemURL;
+    wxString oldItemURL, oldItemExt, oldItemPath, newItemURL;
     wxString oldArchivePath, oldArchiveName, oldArchiveExt;
     
     wxSplitPath(newMSFFileName.GetCStr(), &path, &name, &ext);
@@ -1584,6 +1584,7 @@ void lhpOpDownloadVME::UpdateBinaryFile()
     newArchiveURL += oldArchiveExt;
 
     item->SetArchiveFileName(mafString(newArchiveURL.c_str()));
+    
 
     wxString absOldArchiveURL = m_IncomingCompletePath.GetCStr();
     absOldArchiveURL += oldArchiveURL;
@@ -1596,14 +1597,16 @@ void lhpOpDownloadVME::UpdateBinaryFile()
     {
       mafVMEItem *item=it->second;
       oldItemURL = item->GetURL();
-      int pos = oldItemURL.find_first_of('.');
-      if (pos != -1)
-      {
-        tmpURL = oldItemURL.SubString(pos,oldItemURL.size());
-      }
-      newItemURL = name + tmpURL;
+      wxSplitPath(oldItemURL, &oldItemPath, &oldItemURL, &oldItemExt);
+      item->UpdateItemId();
+      newId = item->GetId();
+      newItemURL = name;
+      newItemURL += '.';
+      newItemURL += mafString(newId);
+      newItemURL += '.';
+      newItemURL += oldItemExt;
+      item->SetURL(newItemURL);
       item->SetArchiveFileName(mafString(newArchiveURL.c_str()));
-      item->SetURL(newItemURL);  
     }
 
     //Call python module to copy binary data when downloaded
