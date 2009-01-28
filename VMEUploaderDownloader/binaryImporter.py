@@ -40,15 +40,17 @@ class binaryImporter:
         
         else:
             baseName = os.path.split(self.absNewItemURL)
+            id = baseName[1].split('.')[1]          
             baseName = baseName[1].split('.')[0]
             fileIn = zipfile.ZipFile(self.absOldItemURL, "r")
             fileOut = zipfile.ZipFile(self.absNewItemURL, "w")
             now = time.localtime(time.time())[:6]
-
+            
             for name in fileIn.namelist():
                 data = fileIn.read(name)
-                name = name.split('.',1)[1]
-                newName = baseName + '.' + name
+                ext = name.split('.')[2]    
+                id = int(id) + 1
+                newName = baseName + '.' + str(id) + '.' + ext
                 info = zipfile.ZipInfo(newName)
                 info.date_time = now
                 info.compress_type = zipfile.ZIP_DEFLATED
