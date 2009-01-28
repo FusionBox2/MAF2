@@ -53,8 +53,7 @@ class lhpGetXMLURI:
                 print "-----------Error calling createresource service------------"
             sys.exit(1)
            
-            
-        
+
         dom = xd.parseString(out)
         if dom.getElementsByTagName("fault"):
             if Debug:
@@ -62,6 +61,7 @@ class lhpGetXMLURI:
             for el in dom.getElementsByTagName("string"):
                 for node in el.childNodes:  
                     error = node.data
+            wx.MessageBox(error, wx.MessageBoxCaptionStr, wx.STAY_ON_TOP | wx.OK)
             if Debug:
                 print error
             sys.exit(1)
@@ -75,16 +75,11 @@ class lhpGetXMLURI:
   
 def main():
     
+    usage_msg = '''Usage: %s user, password, URL ''' % sys.argv[0]
     if(len(sys.argv) != 4): #for test
-        sys.argv = []
-        sys.argv.append("testuser") #substitute
-        sys.argv.append("6w8DHF") #substitute
-        sys.argv.append("http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/") #substitute
-        
-        getURI = lhpGetXMLURI()
-        getURI.XMLURI = getURI.getURI()
-        #add code to remove resource created
-        return
+        print 'Error :\n' + usage_msg
+        sys.exit(1)
+       
        
     if(len(sys.argv) == 4):
         sys.argv = sys.argv[1:]
