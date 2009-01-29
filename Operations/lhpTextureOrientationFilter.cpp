@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpTextureOrientationFilter.cpp,v $
 Language:  C++
-Date:      $Date: 2009-01-29 16:36:58 $
-Version:   $Revision: 1.1.2.1 $
+Date:      $Date: 2009-01-29 17:17:54 $
+Version:   $Revision: 1.1.2.2 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -42,7 +42,7 @@ using namespace lhpTextureOrientation ;
 
 //----------------------------------------------------------------------------
 // mandatory vtk macro
-vtkCxxRevisionMacro(lhpTextureOrientationFilter, "$Revision: 1.1.2.1 $");
+vtkCxxRevisionMacro(lhpTextureOrientationFilter, "$Revision: 1.1.2.2 $");
 
 
 //----------------------------------------------------------------------------
@@ -466,7 +466,8 @@ void lhpTextureOrientationFilter::PrintResults(ostream& os)
             for (int ix = 0 ;  ix < this->m_numx ;  ix++, ituple++){
               double *x = points->GetPoint(ituple) ;
               double *vec = DA->GetTuple3(ituple) ;
-              os << "x = " << x[0] << " " << x[1] << " " << x[2] << "\t" << "vector = " << vec[0] << " " << vec[1] << " " << vec[2] << std::endl ;
+              os << "x, " << x[0] << ", " << x[1] << ", " << x[2] << ",\t" 
+                << "vector, " << vec[0] << ", " << vec[1] << ", " << vec[2] << std::endl ;
             }
             os << std::endl ;
           }
