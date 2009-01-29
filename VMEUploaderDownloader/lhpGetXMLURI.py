@@ -61,7 +61,6 @@ class lhpGetXMLURI:
             for el in dom.getElementsByTagName("string"):
                 for node in el.childNodes:  
                     error = node.data
-            wx.MessageBox(error, wx.MessageBoxCaptionStr, wx.STAY_ON_TOP | wx.OK)
             if Debug:
                 print error
             sys.exit(1)
