@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpMultiscaleExplore.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-25 12:19:11 $
-Version:   $Revision: 1.7 $
+Date:      $Date: 2009-01-29 16:34:31 $
+Version:   $Revision: 1.7.2.1 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -45,7 +45,6 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "vtkMatrix4x4.h"
 
 #include "lhpMultiscaleUtility.h"
-
 #include "lhpMultiscaleActorCoordsUtility.h"
 #include "lhpMultiscaleActor.h"
 #include "lhpMultiscaleCallbacks.h"
@@ -63,31 +62,39 @@ mafCxxTypeMacro(lhpOpMultiscaleExplore);
 //----------------------------------------------------------------------------
 
 
-//----------------------------------------------------------------------------
-// widget ID's
-//----------------------------------------------------------------------------
-enum MULTISCALE_IDS
+namespace lhpMultiscale
 {
-  ID_ADDVME = MINID,
-  ID_SCALEVALUETXT,
-  ID_SCALEUNITSTXT,
-  ID_ZOOMOUT,
-  ID_CAMERARESET,
-  ID_GOBACK,
-  ID_OK,
-  ID_CANCEL,
-  ID_DEBUG,
-  ID_START_RENDER,  // vtk start render event
-  ID_MOUSE_CLICK,   // vtk mouse click event
-  ID_POS_SLIDER,
-  ID_POS_VALUE_TXT,
-  ID_CHANGE_VIEW,
-  ID_OPACITY_VALUE_TXT,
-  ID_OPACITY_SLIDER,
-  ID_VIEW_COMBO,
-  ID_BASE_UNITS
-};
+  //----------------------------------------------------------------------------
+  // widget ID's
+  //----------------------------------------------------------------------------
+  enum MULTISCALE_IDS
+  {
+    ID_ADDVME = MINID,
+    ID_SCALEVALUETXT,
+    ID_SCALEUNITSTXT,
+    ID_ZOOMOUT,
+    ID_CAMERARESET,
+    ID_GOBACK,
+    ID_OK,
+    ID_CANCEL,
+    ID_DEBUG,
+    ID_START_RENDER,  // vtk start render event
+    ID_MOUSE_CLICK,   // vtk mouse click event
+    ID_POS_SLIDER,
+    ID_POS_VALUE_TXT,
+    ID_CHANGE_VIEW,
+    ID_OPACITY_VALUE_TXT,
+    ID_OPACITY_SLIDER,
+    ID_VIEW_COMBO,
+    ID_BASE_UNITS
+  };
+}
 
+
+//----------------------------------------------------------------------------
+// Use multiscale namespace
+//----------------------------------------------------------------------------
+using namespace lhpMultiscale ;
 
 
 //----------------------------------------------------------------------------
@@ -1398,7 +1405,7 @@ void lhpOpMultiscaleExplore::OnPick(vtkRenderer* renderer, int tokenId)
   vtkActor* token = MSU->GetMultiscaleActor(tokenId)->GetActor() ;
 
   // temporarily allow the token to change screen size so we can see it zoom
-  ScreenSizeMode saveMode = MSU->GetMultiscaleActor(tokenId)->GetScreenSizeMode() ;
+  lhpMultiscale::ScreenSizeMode saveMode = MSU->GetMultiscaleActor(tokenId)->GetScreenSizeMode() ;
   MSU->GetMultiscaleActor(tokenId)->SetScreenSizeMode(VARIABLE_SIZE) ;
 
   if (ntouching == 0){

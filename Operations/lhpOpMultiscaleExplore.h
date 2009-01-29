@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpMultiscaleExplore.h,v $
 Language:  C++
-Date:      $Date: 2008-07-25 12:19:11 $
-Version:   $Revision: 1.6 $
+Date:      $Date: 2009-01-29 16:34:31 $
+Version:   $Revision: 1.6.2.1 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -165,11 +165,12 @@ protected:
   void InitSliceParams(int viewIndex, double *bounds) ;
 
   /** Move the global slice */
-  void lhpOpMultiscaleExplore::UpdateSlicePosition() ;
+  //void lhpOpMultiscaleExplore::UpdateSlicePosition() ;
+  void UpdateSlicePosition() ;
 
   /** Update the view direction.
   This also recalculates the slice position */
-  void lhpOpMultiscaleExplore::UpdateViewAxis(double *bounds) ;
+  void UpdateViewAxis(double *bounds) ;
 
   /** Set the slider range to fit the given bounds */
   void SetSliderRange(double *bounds) ;

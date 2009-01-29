@@ -41,6 +41,7 @@ SET(PROJECT_SRCS
     lhpOpImporterAnsysCDBFile.cpp
 	lhpOpImporterAnsysCDBFile.h
 	
+	# multiscale files
 	lhpOpMultiscaleExplore.cpp
 	lhpOpMultiscaleExplore.h
 	lhpMultiscaleActor.cpp
@@ -59,6 +60,32 @@ SET(PROJECT_SRCS
 	lhpMultiscaleVectorMath.h
 	lhpMultiscaleVisualPipes.cpp
 	lhpMultiscaleVisualPipes.h
+
+	# texture orientation files
+	lhpCooccurrenceMatrixFilter.cpp
+	lhpCooccurrenceMatrixFilter.h
+	lhpHistogram1D.cpp
+	lhpHistogram1D.h
+	lhpHistogramEqualizationFilter.cpp
+	lhpHistogramEqualizationFilter.h
+	lhpIsotropicSampleTable.cpp
+	lhpIsotropicSampleTable.h
+	lhpMatrixVectorMath.cpp
+	lhpMatrixVectorMath.h
+	lhpOpTextureOrientation.cpp
+	lhpOpTextureOrientation.h
+	lhpTextureOrientationCalculator.cpp
+	lhpTextureOrientationCalculator.h
+	lhpTextureOrientationCallbacks.cpp
+	lhpTextureOrientationCallbacks.h
+	lhpTextureOrientationFilter.cpp
+	lhpTextureOrientationFilter.h
+	lhpTextureOrientationVectorGlyphPipe.cpp
+	lhpTextureOrientationVectorGlyphPipe.h
+	lhpTextureOrientationSlicePipe.cpp
+	lhpTextureOrientationSlicePipe.h
+	lhpTextureOrientationUseful.cpp
+	lhpTextureOrientationUseful.h
 	
 	lhpProceduralDataset.cxx
 	lhpProceduralDataset.h

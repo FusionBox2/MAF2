@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpMultiscaleUtility.h,v $
 Language:  C++
-Date:      $Date: 2008-01-28 16:36:30 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2009-01-29 16:34:31 $
+Version:   $Revision: 1.2.2.1 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -63,17 +63,19 @@ private:
 } ;
 
 
-/*******************************************************************************
-Id's of base units
-*******************************************************************************/
-enum MULTISCALE_BASE_UNIT_IDS
-{
-  ID_METRES,
-  ID_CENTIMETRES,
-  ID_MILLIMETRES,
-  ID_MICRONS,
-  ID_NANOMETRES
-} ;
+namespace lhpMultiscale{
+  /*******************************************************************************
+  Id's of base units
+  *******************************************************************************/
+  enum BaseUnitsId
+  {
+    ID_METRES,
+    ID_CENTIMETRES,
+    ID_MILLIMETRES,
+    ID_MICRONS,
+    ID_NANOMETRES
+  } ;
+}
 
 
 
@@ -113,7 +115,7 @@ public:
   /** Create multiscale actor from vtk pipe and add to list.
   Type is data actor or token.
   NB If you add actors after having saved the camera view, you must call SaveInitialView() again. */
-  void AddMultiscaleActor(lhpMultiscalePipeline *pipeline, MultiscaleActorType type) ;
+  void AddMultiscaleActor(lhpMultiscalePipeline *pipeline, lhpMultiscale::MultiscaleActorType type) ;
 
   /** Get ith multiscale actor */
   lhpMultiscaleActor* GetMultiscaleActor(int i) ;

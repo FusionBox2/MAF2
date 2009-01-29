@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpMultiscaleActor.cpp,v $
 Language:  C++
-Date:      $Date: 2008-01-28 16:36:30 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2009-01-29 16:34:31 $
+Version:   $Revision: 1.2.2.1 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -24,11 +24,17 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include <assert.h>
 #include <iostream>
 
+//------------------------------------------------------------------------------
+using namespace lhpMultiscale ;
+//------------------------------------------------------------------------------
+
+
+
 
 //------------------------------------------------------------------------------
 // Constructor
-lhpMultiscaleActor::lhpMultiscaleActor(lhpMultiscalePipeline *pipeline, MultiscaleActorType actortype)
-: m_pipeline(pipeline), m_type(actortype), m_scaleStatus(UNKNOWN_SCALE), m_attention(true)
+lhpMultiscaleActor::lhpMultiscaleActor(lhpMultiscalePipeline *pipeline, lhpMultiscale::MultiscaleActorType actortype)
+: m_pipeline(pipeline), m_type(actortype), m_ScaleStatus(UNKNOWN_SCALE), m_attention(true)
 //------------------------------------------------------------------------------
 {
   // screen size behaviour: set the data actors to variable and the tokens to limited
@@ -69,7 +75,7 @@ void lhpMultiscaleActor::PrintSelf(std::ostream& os, vtkIndent indent)
   os << "\t" ;
 
   os << "size-mode = " ;
-  switch(m_screenSizeMode){
+  switch(m_ScreenSizeMode){
     case VARIABLE_SIZE:
       os << "VAR    " ;
       break ;
@@ -86,7 +92,7 @@ void lhpMultiscaleActor::PrintSelf(std::ostream& os, vtkIndent indent)
   os << "\t" ;
 
   os << "scale-status = " ;
-  switch(m_scaleStatus){
+  switch(m_ScaleStatus){
     case UNKNOWN_SCALE:
       os << "UNKNOWN   " ;
       break ;

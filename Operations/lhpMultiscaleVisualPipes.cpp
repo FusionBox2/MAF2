@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpMultiscaleVisualPipes.cpp,v $
 Language:  C++
-Date:      $Date: 2008-07-03 12:24:12 $
-Version:   $Revision: 1.5 $
+Date:      $Date: 2009-01-29 16:34:31 $
+Version:   $Revision: 1.5.2.1 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -39,6 +39,11 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 
 #include <cstdlib>
 #include <ostream>
+
+//------------------------------------------------------------------------------
+using namespace lhpMultiscale ;
+//------------------------------------------------------------------------------
+
 
 
 //------------------------------------------------------------------------------

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpMultiscaleVisualPipes.h,v $
 Language:  C++
-Date:      $Date: 2008-07-03 12:24:12 $
-Version:   $Revision: 1.4 $
+Date:      $Date: 2009-01-29 16:34:31 $
+Version:   $Revision: 1.4.2.1 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -27,24 +27,27 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "vtkTexture.h"
 #include <ostream>
 
-//----------------------------------------------------------------------------
-///< Types of multiscale actor
-//----------------------------------------------------------------------------
-enum MultiscalePipeType {
-  MSCALE_SURFACE_PIPE = 0,
-  MSCALE_TOKEN_PIPE,
-  MSCALE_SLICE_PIPE
-} ;
 
-//----------------------------------------------------------------------------
-///< Index of slice direction
-//----------------------------------------------------------------------------
-enum MultiscaleViewId
-{
-  ID_XY = 0,
-  ID_XZ,
-  ID_YZ
-} ;
+namespace lhpMultiscale{
+  //----------------------------------------------------------------------------
+  ///< Types of multiscale actor
+  //----------------------------------------------------------------------------
+  enum PipeType {
+    MSCALE_SURFACE_PIPE = 0,
+    MSCALE_TOKEN_PIPE,
+    MSCALE_SLICE_PIPE
+  } ;
+
+  //----------------------------------------------------------------------------
+  ///< Index of slice direction
+  //----------------------------------------------------------------------------
+  enum ViewId
+  {
+    ID_XY = 0,
+    ID_XZ,
+    ID_YZ
+  } ;
+}
 
 
 
@@ -60,8 +63,8 @@ public:
   virtual vtkActor* GetActor() = 0 ;
 
   /** get and set type of pipe */
-  virtual void SetType(MultiscalePipeType pipeType) {m_pipeType = pipeType ;}
-  virtual MultiscalePipeType GetType() {return m_pipeType ;}
+  virtual void SetType(lhpMultiscale::PipeType pipeType) {m_pipeType = pipeType ;}
+  virtual lhpMultiscale::PipeType GetType() {return m_pipeType ;}
 
   /** Get and set the visibility of the pipe */
   virtual int GetVisibility() = 0 ;
@@ -71,7 +74,7 @@ public:
   virtual void PrintSelf(std::ostream& os, vtkIndent indent) = 0 ;
 
 private:
-  MultiscalePipeType m_pipeType ;
+  lhpMultiscale::PipeType m_pipeType ;
 };
 
 

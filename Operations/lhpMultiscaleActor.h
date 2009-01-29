@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpMultiscaleActor.h,v $
 Language:  C++
-Date:      $Date: 2008-01-28 16:36:30 $
-Version:   $Revision: 1.2 $
+Date:      $Date: 2009-01-29 16:34:31 $
+Version:   $Revision: 1.2.2.1 $
 Authors:   Nigel McFarlane
 ==========================================================================
 Copyright (c) 2002/2004
@@ -19,26 +19,28 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include <iostream>
 
 
-/** types of multiscale actor */
-enum MultiscaleActorType {
-  MSCALE_DATA_ACTOR = 0,   ///< visual data actor
-  MSCALE_TOKEN             ///< token representing single data actor
-} ;
+namespace lhpMultiscale{
+  /** types of multiscale actor */
+  enum MultiscaleActorType {
+    MSCALE_DATA_ACTOR = 0,   ///< visual data actor
+    MSCALE_TOKEN             ///< token representing single data actor
+  } ;
 
-/** screen size mode for tokens */
-enum ScreenSizeMode {
-  VARIABLE_SIZE = 0,             ///< size fully variable
-  FIXED_SIZE,                    ///< size constant
-  LIMITED_SIZE                   ///< size varies between max and min
-} ;
+  /** screen size mode for tokens */
+  enum ScreenSizeMode {
+    VARIABLE_SIZE = 0,             ///< size fully variable
+    FIXED_SIZE,                    ///< size constant
+    LIMITED_SIZE                   ///< size varies between max and min
+  } ;
 
-/** status of size relative to scale thresholds */
-enum ScaleStatus {
-  UNKNOWN_SCALE = 0,              ///< unknown
-  TOO_SMALL,                      ///< actor below size threshold
-  IN_SCALE,                       ///< actor size in visible range
-  TOO_LARGE                       ///< actor size larger than scale
-} ;
+  /** status of size relative to scale thresholds */
+  enum ScaleStatus {
+    UNKNOWN_SCALE = 0,              ///< unknown
+    TOO_SMALL,                      ///< actor below size threshold
+    IN_SCALE,                       ///< actor size in visible range
+    TOO_LARGE                       ///< actor size larger than scale
+  } ;
+}
 
 
 
@@ -62,7 +64,7 @@ class lhpMultiscaleActor
 {
 public:
   /** Constructor */
-  lhpMultiscaleActor(lhpMultiscalePipeline *pipeline, MultiscaleActorType actortype) ;
+  lhpMultiscaleActor(lhpMultiscalePipeline *pipeline, lhpMultiscale::MultiscaleActorType actortype) ;
 
   /** Print self */
   void PrintSelf(std::ostream& os, vtkIndent indent) ;
@@ -78,15 +80,15 @@ public:
   int GetVisibility() {return m_pipeline->GetVisibility() ;}
 
   /** Get the type of actor - data or token */
-  MultiscaleActorType GetActorType() {return m_type ;}
+  lhpMultiscale::MultiscaleActorType GetActorType() {return m_type ;}
 
   /** Get/set the status of the actor relative to the size threshold */
-  ScaleStatus GetScaleStatus() {return m_scaleStatus ;}
-  void SetScaleStatus(ScaleStatus scaleStatus) {m_scaleStatus = scaleStatus ;}
+  lhpMultiscale::ScaleStatus GetScaleStatus() {return m_ScaleStatus ;}
+  void SetScaleStatus(lhpMultiscale::ScaleStatus status) {m_ScaleStatus = status ;}
 
   /** Get/set the behaviour of the actor's screen size to fixed, variable or limited */
-  ScreenSizeMode GetScreenSizeMode() {return m_screenSizeMode ;}
-  void SetScreenSizeMode(ScreenSizeMode mode) {m_screenSizeMode = mode ;}
+  lhpMultiscale::ScreenSizeMode GetScreenSizeMode() {return m_ScreenSizeMode ;}
+  void SetScreenSizeMode(lhpMultiscale::ScreenSizeMode mode) {m_ScreenSizeMode = mode ;}
 
   /** Get/set attention flag.
   The attention flag distinguishes actors which you are currently interested in from those you are not.
@@ -96,9 +98,9 @@ public:
 
 private:
   lhpMultiscalePipeline *m_pipeline ;           ///< pointer to vtk pipeline containing actor
-  MultiscaleActorType m_type ;                  ///< type of actor - data-actor, token or group
-  ScaleStatus m_scaleStatus ;                   ///< status of size relative to scale thresholds
-  ScreenSizeMode m_screenSizeMode ;             ///< controls behaviour of screen size
+  lhpMultiscale::MultiscaleActorType m_type ;                  ///< type of actor - data-actor, token or group
+  lhpMultiscale::ScaleStatus m_ScaleStatus ;                   ///< status of size relative to scale thresholds
+  lhpMultiscale::ScreenSizeMode m_ScreenSizeMode ;             ///< controls behaviour of screen size
   bool m_attention ;                            ///< flag indicating if actor has current attention
 } ;
 
