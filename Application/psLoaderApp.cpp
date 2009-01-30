@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: psLoaderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-12-16 14:37:36 $
-  Version:   $Revision: 1.1.2.11 $
+  Date:      $Date: 2009-01-30 13:44:35 $
+  Version:   $Revision: 1.1.2.12 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -316,7 +316,7 @@ bool psLoaderApp::OnInit()
   m_Logic->Plug(new mafOpImporterImage("Images"),"Images");
   m_Logic->Plug(new medOpImporterLandmark("Landmark"),"Motion Analysis");
 	m_Logic->Plug(new medOpImporterLandmarkWS("ASCII trajectories (VWs)"),"Motion Analysis");
-  m_Logic->Plug(new lhpOpImporterC3D("C3D"),"Motion Analysis");  
+  //m_Logic->Plug(new lhpOpImporterC3D("C3D"),"Motion Analysis");  
   m_Logic->Plug(new medOpImporterMotionData<mafVMERawMotionData>("Raw Motion Data", "RAW Motion Data (*.MAN)|*.MAN", "Dictionary (*.txt)|*.txt"), "Motion Analysis");
   // m_Logic->Plug(new mmoLandmarkImporter("Landmark")); //Old Importer
   m_Logic->Plug(new medOpImporterGRFWS("ASCII Force Plates (VWs)"), "Motion Analysis");
