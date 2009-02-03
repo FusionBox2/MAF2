@@ -483,13 +483,16 @@ class UploadHandler:
     #    self.__removeSRBData(self.BinaryURI)
         
         dom = xd.parseString(out)
+
         if dom.getElementsByTagName("fault"):
             if Debug:
                 print "-----------Error in xmlupload service------------"
             for el in dom.getElementsByTagName("string"):
                 for node in el.childNodes:  
                     error = node.data
-
+            if (error.find('QuotaError: Over Quota') != -1):
+                wx.MessageBox("Over quota! Data uploaded will be removed.", wx.MessageBoxCaptionStr, wx.STAY_ON_TOP | wx.OK)
+            
             if Debug:
                 print error 
             percentage = 120 #120 for 'error!'
@@ -529,7 +532,7 @@ class UploadHandler:
             
    
   #          self.__removeSRBData(self.BinaryURI)
-            return
+            sys.exit(1)
         for el in dom.getElementsByTagName("string"):
             for node in el.childNodes:  
                 self.XMLName = node.data
