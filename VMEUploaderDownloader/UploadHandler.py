@@ -405,7 +405,7 @@ class UploadHandler:
             UploadHandler.queue.put(lista)
             self.block.release()
             self.removeUploadedXml()
-            return
+            sys.exit(1)
             
         
         #get size of binary locally
@@ -444,7 +444,7 @@ class UploadHandler:
             errorFile.close() 
             if(self.msfListFile != "noMsf"):
                 self.removeUploadedXml()
-                return
+                sys.exit(1)
                              
         self.BinaryURI = result
         #print 'Inside FreeResource Thread ' + self.BinaryURI
@@ -478,7 +478,7 @@ class UploadHandler:
             self.block.acquire()  
             UploadHandler.queue.put(lista)
             self.block.release()
-            return
+            sys.exit(1)
             #
     #    self.__removeSRBData(self.BinaryURI)
         
@@ -490,7 +490,7 @@ class UploadHandler:
             for el in dom.getElementsByTagName("string"):
                 for node in el.childNodes:  
                     error = node.data
-            if (error.find('QuotaError: Over Quota') != -1): 
+            if (error.find('Over Quota') != -1):
                 wx.MessageBox("Over quota! Data uploaded will be removed.", wx.MessageBoxCaptionStr, wx.STAY_ON_TOP | wx.OK)
             
             if Debug:
@@ -526,7 +526,7 @@ class UploadHandler:
                             print "----------Can not write in " + self.msfList + "-----------"
                         msfList.close()
                         os.remove(sys.path[0] + '\\' + self.msfListFile)
-                        return
+                        sys.exit(1)
             if(self.msfListFile != "noMsf"):
                 self.removeUploadedXml()
             
@@ -560,7 +560,7 @@ class UploadHandler:
                             print "----------Can not write in " + self.msfList + "-----------"
                         msfList.close()
                         os.remove(sys.path[0] + '\\' + self.msfListFile)
-                        return            
+                        sys.exit(1)            
                 
         if(str(self.id) == '-1'):
             if(os.path.exists(sys.path[0] + '\\' + self.msfListFile)):
@@ -631,7 +631,7 @@ class UploadHandler:
         except:
             if Debug:
                 print "--------Error calling mafSRBUpload.cgi-----------"
-            return
+            sys.exit(1)
             
         self.remoteChksum = result.chksum
         self.remoteChksum = self.remoteChksum.lower()
@@ -686,7 +686,7 @@ class UploadHandler:
             if Debug:
                 print "SIZE Thread Finished "
         except:
-            return
+            sys.exit(1)
         self.block.acquire()
         self.existThread = 0
         self.block.release() 
