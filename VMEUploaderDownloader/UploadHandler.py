@@ -490,7 +490,7 @@ class UploadHandler:
             for el in dom.getElementsByTagName("string"):
                 for node in el.childNodes:  
                     error = node.data
-            if (error.find('QuotaError: Over Quota') != -1):
+            if (error.find('QuotaError: Over Quota') != -1): 
                 wx.MessageBox("Over quota! Data uploaded will be removed.", wx.MessageBoxCaptionStr, wx.STAY_ON_TOP | wx.OK)
             
             if Debug:
