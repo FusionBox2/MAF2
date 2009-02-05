@@ -493,7 +493,7 @@ class UploadHandler:
             if (error.find('Over Quota') != -1):
                 wx.MessageBox("Over quota! Data uploaded will be removed.", wx.MessageBoxCaptionStr, wx.STAY_ON_TOP | wx.OK)
             
-            if Debug:
+            if Debug: 
                 print error 
             percentage = 120 #120 for 'error!'
             lista = [self.observer, percentage]
