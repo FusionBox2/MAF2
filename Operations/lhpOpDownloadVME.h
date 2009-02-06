@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.h,v $
 Language:  C++
-Date:      $Date: 2009-01-15 11:08:39 $
-Version:   $Revision: 1.9.2.7 $
+Date:      $Date: 2009-02-06 09:01:01 $
+Version:   $Revision: 1.9.2.8 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -60,10 +60,16 @@ class lhpOpDownloadVME: public mafOp
 {
 public:
 
-	lhpOpDownloadVME(wxString label = "Download Vme");
+	lhpOpDownloadVME(wxString label = "Download Vme", int fromSandbox = FROM_BASKET);
 	~lhpOpDownloadVME(); 
 
 	mafTypeMacro(lhpOpDownloadVME, mafOp);
+
+  enum REPOSITORY_VALUES
+  {
+    FROM_BASKET = 0,
+    FROM_SANDBOX = 1,
+  };
 
 	mafOp* Copy();
 
@@ -167,6 +173,7 @@ protected:
   bool m_ENTERED2;
 
   int m_DownloadCounter;
+  int m_FromSendbox;
 
  
   mafString m_CacheDir; //>cache superdirectory

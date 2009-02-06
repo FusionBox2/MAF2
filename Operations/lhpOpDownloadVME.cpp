@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2009-01-28 09:51:15 $
-Version:   $Revision: 1.40.2.15 $
+Date:      $Date: 2009-02-06 09:01:01 $
+Version:   $Revision: 1.40.2.16 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -88,13 +88,15 @@ mafCxxTypeMacro(lhpOpDownloadVME);
 //static variables
 long lhpOpDownloadVME::m_Pid = -1;
 mafString lhpOpDownloadVME::m_CacheSubdir = "0";
-enum lhpOpDownloadVME_ID
+
+/*enum lhpOpDownloadVME_ID
 {
   ID_USE_DICOM_SUBDICTIONARY = MINID, 
-};
+};*/
+
 
 //----------------------------------------------------------------------------
-lhpOpDownloadVME::lhpOpDownloadVME(wxString label) :
+lhpOpDownloadVME::lhpOpDownloadVME(wxString label, int fromSandbox) :
 mafOp(label)
 //----------------------------------------------------------------------------
 {
@@ -112,6 +114,7 @@ mafOp(label)
   m_RootGroup = NULL;
   m_User = NULL;
   m_DownloadCounter = 0;
+  m_FromSendbox = fromSandbox;
      
 
   m_PythonExe = "python.exe_UNDEFINED";
@@ -173,7 +176,7 @@ mafOp* lhpOpDownloadVME::Copy()
 //----------------------------------------------------------------------------
 {
 	/** return a copy of itself, needs to put it into the undo stack */
-	return new lhpOpDownloadVME(m_Label);
+	return new lhpOpDownloadVME(m_Label, m_FromSendbox);
 }
 
 //----------------------------------------------------------------------------
@@ -928,6 +931,9 @@ int lhpOpDownloadVME::CreateFileListFromBasket()
   command2execute.Append(m_User->GetName());
   command2execute.Append(" ");
   command2execute.Append(m_User->GetPwd());
+  command2execute.Append(" ");
+  command2execute.Append(wxString::Format("%d",m_FromSendbox));
+
 
   wxBusyInfo *wait;
   if(!m_TestMode)
@@ -1009,7 +1015,6 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(mafString  xmlFile)
   wxString directoryWorkAround = m_IncomingCompletePath;
   directoryWorkAround.Replace(" ", "?");
   command2execute.Append(directoryWorkAround);
-
 
   wxArrayString output;
   wxArrayString errors;
