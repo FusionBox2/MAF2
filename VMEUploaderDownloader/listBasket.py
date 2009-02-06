@@ -5,10 +5,11 @@ from lhpDefines import *
 from Debug import Debug
 
 class listBasket:
-    def __init__(self):
+    def __init__(self, fromSandbox):
         self.IdList = [] #create original list of basket vmes
         self.IdListSelected = [] #this list will be copied from handle object
         self.fileName = "ToDownload.txt"
+        self.fromSandbox = fromSandbox
         self.currentUser = ''
         self.currentPassword = ''
         self.Result = None
@@ -32,12 +33,17 @@ class listBasket:
         ws.ProxyURL = self.proxyHost
         ws.ProxyPort = self.proxyPort
 
+
         if Debug:
             print "->"+ ws.ProxyURL + "<-"
             print "->"+ str(ws.ProxyPort) + "<-"
         
         try:
-            self.Result = ws.run('listbasket')[1]
+            if  self.fromSandbox == 0:
+                self.Result = ws.run('listbasket')[1]
+            else:
+                self.Result = ws.run('listsandbox')[1] 
+                
         except Exception, e:
              print "ERROR %s" % str(e)
         self.__createListFromReultingXML()
@@ -74,7 +80,7 @@ class listBasket:
         pass
 
 def test():
-    lb = listBasket()
+    lb = listBasket(0)
     lb.getListFromBasket()
     print "Id List: " + str(lb.IdList)
 

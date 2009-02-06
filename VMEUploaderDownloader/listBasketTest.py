@@ -11,7 +11,7 @@ class listBasketTest(unittest.TestCase):
         self.user = 'testuser' #substitute
         self.pwd  = '6w8DHF' #substitute
         
-        self.lBasket = listBasket.listBasket()
+        self.lBasket = listBasket.listBasket(0)
         self.lBasket.SetCredentials(self.user, self.pwd)
         
         print " current directory is: " + self.curDir
