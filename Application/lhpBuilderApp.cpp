@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2009-01-29 16:45:12 $
-  Version:   $Revision: 1.71.2.12 $
+  Date:      $Date: 2009-02-06 09:17:23 $
+  Version:   $Revision: 1.71.2.13 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -414,7 +414,8 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   //m_Logic->Plug(new lhpOpUploadVME("Upload VME"),"Manage");
   m_Logic->Plug(new lhpOpUploadMultiVME("Upload VME"),"Manage");
   m_Logic->Plug(new lhpOpEditTag("Edit Tag VME"),"Manage");
-  m_Logic->Plug(new lhpOpDownloadVME("Download VME"),"Manage");
+  m_Logic->Plug(new lhpOpDownloadVME("Download VME", lhpOpDownloadVME::FROM_BASKET),"Manage");
+  m_Logic->Plug(new lhpOpDownloadVME("Download VME form sandbox",lhpOpDownloadVME::FROM_SANDBOX),"Manage");
   
   m_Logic->Plug(new mafOpDecomposeTimeVarVME("Decompose Time"),"Create/Derive");
   m_Logic->Plug(new mafOpLabelExtractor("Extract Label"),"Create/Derive");
