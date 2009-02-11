@@ -9,23 +9,34 @@ class DownloadHandlerTest(unittest.TestCase):
         self.curDir = os.getcwd()        
         print " current directory is: " + self.curDir
        
+    
     def testCreateDownloadHandlerAndDownloadFromSRB(self):
         
-        queue = Queue.Queue()
-        observer = None
-        dirCache = self.curDir + r'\msf_test_import_export_VME\\'  #dir  where read msf
-        id = 5
-        if(os.path.exists(dirCache) == False): os.mkdir(dirCache)
-        urlServer = 'https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2'
-        usr = 'testuser' #substitute 
-        pwd = '6w8DHF' #substitute
-        srbData = 'data_4085'
-        fileSize = 437
-        downloadHandler = DownloadHandler.DownloadHandler(queue, observer, dirCache, srbData\
-                                                           , usr , pwd, urlServer, True , fileSize)
-                    
-        downloadHandler.download()
-        self.assertTrue(True)
-    
+        # set to true to run as a stand-alone test
+        testUnedrCoverageLeakingModule =  False
+        
+        if testUnedrCoverageLeakingModule:
+            print """skipping testCreateDownloadHandlerAndDownloadFromSRB!: 
+DownloadHandler.DownloadHandler has problems under coverageleaking.py under Windows.
+This test is working under Windows a stand-alone unittest"""            
+            pass
+        else:
+            queue = Queue.Queue()
+            observer = None
+            dirCache = self.curDir + r'\msf_test_import_export_VME\\'  #dir  where read msf
+            id = 5
+            if(os.path.exists(dirCache) == False): os.mkdir(dirCache)
+            urlServer = 'https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2'
+            usr = 'testuser' #substitute 
+            pwd = '6w8DHF' #substitute
+            srbData = 'data_4085'
+            fileSize = 437
+            downloadHandler = DownloadHandler.DownloadHandler(queue, observer, dirCache, srbData\
+                                                               , usr , pwd, urlServer, True , fileSize)
+                        
+            downloadHandler.download()
+            print "testCreateDownloadHandlerAndDownloadFromSRB successful!"
+            self.assertTrue(True)
+            
 if __name__ == '__main__':
     unittest.main()
