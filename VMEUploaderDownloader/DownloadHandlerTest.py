@@ -13,7 +13,7 @@ class DownloadHandlerTest(unittest.TestCase):
     def testCreateDownloadHandlerAndDownloadFromSRB(self):
         
         # set to true to run as a stand-alone test
-        testUnedrCoverageLeakingModule =  False
+        testUnedrCoverageLeakingModule =  True
         
         if testUnedrCoverageLeakingModule:
             print """skipping testCreateDownloadHandlerAndDownloadFromSRB!: 
