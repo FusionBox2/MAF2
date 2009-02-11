@@ -17,10 +17,8 @@ class downloadSingleXMLTest(unittest.TestCase):
         #2 pwd
         #3 xml file name to download
         #4 where download it
-        downloadSingleXML.main()
+        downloadSingleXML.main()        
+        self.assertTrue(True)
         
-        pass
-    
-    
 if __name__ == '__main__':
     unittest.main()

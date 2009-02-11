@@ -30,7 +30,7 @@ class lhpCSVDictionaryDownloaderTest(unittest.TestCase):
       
     def setUp(self):
         
-        print "Beware:  In order to work run this est must be launched from VMEUploaderDownloader dir!"
+        print "Beware:  In order to work run this test must be launched from VMEUploaderDownloader dir!"
         
         curDir = os.getcwd()        
         

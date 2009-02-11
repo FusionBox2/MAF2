@@ -4,7 +4,7 @@ import time
 
 class MtomUploadTest(unittest.TestCase):
     """"""
-    def testUpload(self):
+    def testUploadAndEstimateBandwidth(self):
         testFile = "..\\vmeUploaderTestData\\uploadSpeedProbeData\\uploadSpeedProbeData.vtk"
         testFileSize = 69.462
         instanceURI = MtomUploadURI.MtomUploadURI()

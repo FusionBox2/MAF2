@@ -9,21 +9,23 @@ class DownloadHandlerTest(unittest.TestCase):
         self.curDir = os.getcwd()        
         print " current directory is: " + self.curDir
        
-    def testCreateDownloadHandler(self):
+    def testCreateDownloadHandlerAndDownloadFromSRB(self):
         
         queue = Queue.Queue()
         observer = None
         dirCache = self.curDir + r'\msf_test_import_export_VME\\'  #dir  where read msf
         id = 5
         if(os.path.exists(dirCache) == False): os.mkdir(dirCache)
-        urlServer = 'http://devel.fec.cineca.it:12680/town/Members/portal_admin/test-lhp2'
+        urlServer = 'https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2'
         usr = 'testuser' #substitute 
         pwd = '6w8DHF' #substitute
-        srbData = 'Data_1'
-        fileSize = 9708
+        srbData = 'data_4085'
+        fileSize = 437
         downloadHandler = DownloadHandler.DownloadHandler(queue, observer, dirCache, srbData\
                                                            , usr , pwd, urlServer, True , fileSize)
+                    
         downloadHandler.download()
+        self.assertTrue(True)
     
 if __name__ == '__main__':
     unittest.main()

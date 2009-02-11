@@ -188,9 +188,7 @@ class ThreadedClient:
         One important thing to remember is that the thread has to yield
         control.
         """
-        #try:
-            #UploadHandler.createDownloadHandler(self.queue, observer, dirCache , id, usr, pwd, urlServer)
-        #except:
+   
         try:
             statusFile = open(sys.path[0] + '\\status.txt', 'a')
             statusFile.close()
