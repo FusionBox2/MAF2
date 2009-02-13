@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2009-01-19 12:55:30 $
-Version:   $Revision: 1.27.2.13 $
+Date:      $Date: 2009-02-13 13:54:24 $
+Version:   $Revision: 1.27.2.14 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -800,7 +800,7 @@ bool lhpOpUploadMultiVME::RemoveResources(std::vector<mafString> vectorURI)
     long pid = -1;
     if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
     {
-      wxMessageBox("Error in lhpRemoveResource. Can non remove uploaded resource", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+      wxMessageBox("Error in lhpRemoveResource. Can not remove uploaded resource", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
       if (m_DebugMode)
         mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
         command2execute.c_str(), pid);
