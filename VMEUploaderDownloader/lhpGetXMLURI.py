@@ -61,6 +61,11 @@ class lhpGetXMLURI:
             for el in dom.getElementsByTagName("string"):
                 for node in el.childNodes:  
                     error = node.data
+                if (error.find('Over Quota') != -1):
+                    overQuota = "OverQuota"
+                    print overQuota
+                    return overQuota
+                
             if Debug:
                 print error
             sys.exit(1)
