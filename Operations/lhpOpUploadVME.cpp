@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2009-01-16 08:26:37 $
-Version:   $Revision: 1.94.2.19 $
+Date:      $Date: 2009-02-13 13:54:49 $
+Version:   $Revision: 1.94.2.20 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -499,6 +499,12 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
   }
 
   XMLURI = output[output.size() - 1];
+
+  if (XMLURI == "OverQuota")
+  {
+    wxMessageBox("Over Quota!. Uploading stopped.", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+    return MAF_ERROR;
+  }
 
   wxSetWorkingDirectory(oldDir);
   if (m_DebugMode)
