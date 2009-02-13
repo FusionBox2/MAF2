@@ -29,6 +29,7 @@ class listBasket:
         
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
         ws.setServer('https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2')
+        #ws.setServer('http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2')
         ws.setCredentials(self.currentUser, self.currentPassword)
         ws.ProxyURL = self.proxyHost
         ws.ProxyPort = self.proxyPort
