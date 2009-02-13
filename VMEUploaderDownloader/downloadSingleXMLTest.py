@@ -52,7 +52,6 @@ class downloadSingleXMLTest(unittest.TestCase):
        sys.argv.append("6w8DHF") #substitute
        sys.argv.append('dataresource-8660') #xml test present in repository
        sys.argv.append(os.getcwd()+"\\testDownload\\")
-       sys.argv.append(os.getcwd()+"\\testDownload\\")
        result = downloadSingleXML.main()
        
        
