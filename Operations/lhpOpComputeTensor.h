@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpComputeTensor.h,v $
 Language:  C++
-Date:      $Date: 2009-01-23 13:48:42 $
-Version:   $Revision: 1.1.2.2 $
+Date:      $Date: 2009-02-17 11:43:12 $
+Version:   $Revision: 1.1.2.3 $
 Authors:   Gregor Klajnsek
 ==========================================================================
 Copyright (c) 2001/2005 
@@ -31,6 +31,8 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "vtkImageData.h"
 #include "vtkContourFilter.h"
 #include "vtkPolyDataMapper.h"
+#include "vtkColorTransferFunction.h"
+#include "vtkPiecewiseFunction.h"
 
 #include <wx/statline.h>
 
@@ -65,14 +67,13 @@ public:
   /** Builds operation's interface. */
   void OpRun();
 
+    
+
   /** Create new VME which will hold tensor values, return MAF_OK on success. */
   virtual int ComputeTensors();
 
-  /** Create GUI */
-  void CreateGui();
 
   /** Create operation dialog and visual pipe*/
-  void CreateOpDialogNew();
   void CreateOpDialog();
 
   /** Delete operation dialog */
@@ -85,11 +86,14 @@ public:
   void UpdateCamera();
   
 
+  /** Checks if the sizes and number of points of the datasets with volume and vectors match */
+  bool DatasetsMatch();
+
   /** Creates the dataset that the operation will produce on finish */
   void CreateOutputDataset();
 
   /** TODO: Add coment */
-  void UpdateScalarsInTensorDataset();
+  void UpdateScalarsInRenderingVolume(bool bStartArrayAtZero = true, int typeOfOutputArray = 0);
 
   /** TODO: Add coment */
   void UpdateIsosurface();
@@ -113,13 +117,21 @@ public:
   /** /TODO: comment */
   void CreateTensorGlyphPipeline();
 
+  /** /TODO: comment */
+  double CalculateScalingFactor(vtkImageData* volume, vtkDataArray* dataArray);  
 
+  /** /TODO: comment */
+  void PrepareArrayForVolumeRendering();
+
+  /** /TODO: comment */
+  void UpdateTransferFunctions();
   
 
 
 
   /** Handling events sent from the GUI */
   virtual void OnEvent(mafEventBase *maf_event); 
+  void SetRenderVolumeVisibilityAndUpdateContent();
   void SetDataView();
   void SetDisplacementVectorsView();
   void SetTensorView();
@@ -128,23 +140,24 @@ public:
 
 protected:
   mafVMEVolumeGray *m_VmeData;           // VME that contains the input scalar dataset
-  mafVMEVolumeRGB *m_VmeDisplacements;   // VME that contains the displacement vectors for the dataset 
+  mafVMEVolume *m_VmeDisplacements;   // VME that contains the displacement vectors for the dataset 
   mafVMEVolumeGray *m_VmeTensors;        // VME that contains calculated tensor field
   
 
   
   // vtkDatasets - required for rendering
+  vtkDoubleArray*   m_ArrayForVolumeRendering; // TODO: add comment
   vtkActor*         m_OutlineBox;          // vtkActor used for showing an outline of the data 
-  vtkImageData*     m_DataVolume;          // scalar dataset created from the input scalar volume - required?
   vtkActor*         m_DataIsosurfaceActor; // vtkActor used if we are rendering the input volume as isosurface
-  vtkVolume*        m_DataVolumeActor;     // vtkVolume used if we are rendering the input volume as volume 
-  vtkImageData*     m_TensorVolume;        // tensor volume that is used in visualization
-  vtkVolume*        m_TensorVolumeActor;   // vtkVolume used for rendering one component of a tensor volume
+  vtkImageData*     m_RenderVolume;        // the volume that is used in visualization
+  vtkVolume*        m_RenderVolumeActor;   // vtkVolume used for rendering the m_RenderVolume
   vtkActor*         m_TensorGlyphActor;    // vtkActor used if we are rendering tensors as a tensor glyph
   vtkActor*         m_VectorGlyphActor;    // vtkActor used if we are rendering displacement vectors
   vtkActor*         m_VectorHedgehogActor;    // vtkActor used if we are rendering displacement vectors
   vtkContourFilter* m_ContourFilter;       // for creating the isosurface TODO: update comment
   vtkPolyDataMapper *m_IsoMapper;          // for creating the isosurface TODO: update comment  
+  vtkColorTransferFunction *m_colorTransferFunction; 
+  vtkPiecewiseFunction *m_opacityTransferFunction;
 
   // control variables 
   int m_InterpolationType;         // which sampling will be used when we calculate the tensor field

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpComputeTensor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-01-23 16:53:46 $
-Version:   $Revision: 1.1.2.4 $
+Date:      $Date: 2009-02-17 11:43:12 $
+Version:   $Revision: 1.1.2.5 $
 Authors:   Gregor Klajnsek
 ==========================================================================
 Copyright (c) 2001/2005 
@@ -38,7 +38,6 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 
 #include "mafTagArray.h"
 #include "vtkImageData.h"
-#include "vtkRectilinearGrid.h"
 #include "vtkRenderWindow.h"
 #include "vtkContourFilter.h"
 #include "vtkPolyDataMapper.h"
@@ -66,7 +65,6 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 
 
 
-
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(lhpOpComputeTensor);
 //----------------------------------------------------------------------------
@@ -85,17 +83,19 @@ mafOp(label)
   m_VmeTensors = NULL;
   
   // vtkComponents
+  m_ArrayForVolumeRendering = NULL;
   m_OutlineBox = NULL;
-  m_DataVolume = NULL;
   m_DataIsosurfaceActor = NULL;
-  m_DataVolumeActor = NULL;
-  m_TensorVolume = NULL;
-  m_TensorVolumeActor = NULL;
+  m_RenderVolume = NULL;
+  m_RenderVolumeActor = NULL;
   m_TensorGlyphActor = NULL;
   m_VectorGlyphActor = NULL;
   m_VectorHedgehogActor = NULL;
   m_ContourFilter = NULL;
   m_IsoMapper = NULL;
+  m_colorTransferFunction = NULL;
+  m_opacityTransferFunction = NULL;
+
 
   // variables
   m_InterpolationType = INTERPOLATION_POINT_GAUSS;
@@ -152,10 +152,13 @@ void lhpOpComputeTensor::OpRun()
   mafVMEVolumeGray* vmeData = mafVMEVolumeGray::SafeDownCast(m_Input) ;
   
   // Look for a dataset containing displacement vectors
-  mafVMEVolumeRGB* vmeDisplacements= NULL;
+  mafVMEVolume* vmeDisplacements= NULL;
   for (int i=0; i< vmeData->GetNumberOfChildren() && vmeDisplacements == NULL; )
     if (vmeData->GetChild(i)->IsMAFType(mafVMEVolumeRGB))
        vmeDisplacements = mafVMEVolumeRGB::SafeDownCast(vmeData->GetChild(i));
+    else if (vmeData->GetChild(i)->IsMAFType(mafVMEVolumeGray))
+       vmeDisplacements = mafVMEVolumeGray::SafeDownCast(vmeData->GetChild(i));
+ 
   
   // check the validity of attributes and report error message
   // TODO: use wxWidgets instead of windows message boxes
@@ -163,18 +166,29 @@ void lhpOpComputeTensor::OpRun()
     MessageBox(NULL, "The original dataset is not of the correct type", "OpComputeTensor", MB_OK);
   if (vmeDisplacements == NULL)
     MessageBox(NULL, "Could not find displacement vectors", "OpComputeTensor", MB_OK);
-
-  if (!vmeData || !vmeDisplacements)
+  
+  if (!vmeData || !vmeDisplacements )
     {
     mafEventMacro(mafEvent(this,OP_RUN_CANCEL)); // TODO: terminated? or just cancel?
     return;     // TODO: this breaks the selection in the lhpBuilder
     }
-    //OpStop() 
 
-  // fill in the data and show the GUI
+  // fill in the data and check if the datasets match
   m_VmeData = vmeData;
   m_VmeDisplacements = vmeDisplacements;
+
+  if (!DatasetsMatch())
+    {
+    MessageBox(NULL, "The datasets do not match!", "OpComputeTensor", MB_OK);
+    mafEventMacro(mafEvent(this,OP_RUN_CANCEL)); // TODO: terminated? or just cancel?
+    return;     // TODO: this breaks the selection in the lhpBuilder
+    }
+
+
+  // run the computation
   ComputeTensors();
+
+  // show the GUI
   CreateOpDialog();
   
   int result;
@@ -196,6 +210,36 @@ void lhpOpComputeTensor::OpRun()
 }
 
 
+
+//----------------------------------------------------------------------------
+bool lhpOpComputeTensor::DatasetsMatch()
+//----------------------------------------------------------------------------
+  {
+  // Get the VTK datasets from the VMEs
+  vtkImageData *volume = vtkImageData::SafeDownCast(m_VmeData->GetOutput()->GetVTKData());
+  vtkDataSet* vectors = m_VmeDisplacements->GetOutput()->GetVTKData();
+  if (!volume || !vectors)
+    return false;
+
+  // update the data before running the computation
+  volume->Update();
+  vectors->Update();
+
+  // check if the number of points matches
+  if (volume->GetNumberOfPoints() != vectors->GetNumberOfPoints())
+    return false;
+
+  // check if the bounds match - DISABLED FOR THE MOMENT
+  /*double *boundsVolume = volume->GetBounds();
+  double *boundsVectors = vectors->GetBounds(); 
+  for (int i=0; i<6; i++)
+    if (boundsVolume[i] != boundsVectors[i])
+      return false;
+  */
+  return true;
+  }
+
+
 //----------------------------------------------------------------------------
 int lhpOpComputeTensor::ComputeTensors()
 //----------------------------------------------------------------------------
@@ -208,10 +252,9 @@ int lhpOpComputeTensor::ComputeTensors()
 
   // Get the VTK datasets from the VMEs
   vtkImageData *volume = vtkImageData::SafeDownCast(m_VmeData->GetOutput()->GetVTKData());
-  vtkRectilinearGrid* vectors = vtkRectilinearGrid::SafeDownCast(m_VmeDisplacements->GetOutput()->GetVTKData());
+  vtkDataSet* vectors = m_VmeDisplacements->GetOutput()->GetVTKData();
   if (!volume || !vectors)
     return MAF_ERROR;
-  
 
   // update the data before running the computation
   volume->Update();
@@ -219,14 +262,14 @@ int lhpOpComputeTensor::ComputeTensors()
 
   // calculate tensor
   mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(m_VmeTensors->GetDataVector()->GetItem(0));
-  m_TensorVolume = vtkImageData::SafeDownCast(item->GetData());
-  m_TensorVolume->Update();
+  m_RenderVolume = vtkImageData::SafeDownCast(item->GetData());
+  m_RenderVolume->Update();
 
   bool bSamplingInGaussPoints = false;
   if (m_InterpolationType == INTERPOLATION_POINT_GAUSS)
     bSamplingInGaussPoints = true;
-  ComputeTensor(volume, vectors, m_TensorVolume, bSamplingInGaussPoints);
-  ComputeEigenvalues(m_TensorVolume);
+  ComputeTensor(volume, vectors, m_RenderVolume, bSamplingInGaussPoints);
+  ComputeEigenvalues(m_RenderVolume);
   m_VmeTensors->Update();
   return MAF_OK;
 }
@@ -243,27 +286,32 @@ void lhpOpComputeTensor::CreateOutputDataset()
     if (m_bAddScalarsToOutput)
       {
       // TODO: comments
-      vtkImageData *volume = vtkImageData::SafeDownCast(m_VmeData->GetOutput()->GetVTKData());
-      int min, max;
-      GetArrayLimits(volume->GetPointData()->GetScalars(), min, max);
+      //vtkImageData *volume = vtkImageData::SafeDownCast(m_VmeData->GetOutput()->GetVTKData());
+      //double *range = volume->GetPointData()->GetScalars()->GetRange();
+      //int min = (int)range[0], max = (int)range[1];
+      
       // TODO: this should be changed when we update the user interface
-      if (m_SelectedTensorComponent < 9)
-        TransformComponentToScalars(m_TensorVolume, m_TensorVolume->GetPointData()->GetTensors(), m_SelectedTensorComponent, min, max,1);
+      // TODO: SHOULD WE USE THE 'VISUALIZATION' ARRAY HERE?
+      /*if (m_SelectedTensorComponent < 9)
+        TransformComponentToScalars(m_RenderVolume, m_RenderVolume->GetPointData()->GetTensors(), m_SelectedTensorComponent, min, max,1);
       else
-        TransformComponentToScalars(m_TensorVolume, m_TensorVolume->GetPointData()->GetVectors(), m_SelectedTensorComponent-9, min, max,1);
+        TransformComponentToScalars(m_RenderVolume, m_RenderVolume->GetPointData()->GetVectors(), m_SelectedTensorComponent-9, min, max,1);*/
+      PrepareArrayForVolumeRendering();
+      UpdateScalarsInRenderingVolume(false, 1);            
+
       }
     else
-      m_TensorVolume->GetPointData()->GetScalars()->Reset(); // Reset the scalar array so that it does not include any values
+      m_RenderVolume->GetPointData()->GetScalars()->Reset(); // Reset the scalar array so that it does not include any values
       
 
     // if the user does not need the tensor values
     if (!m_bAddTensorsToOutput)
-      m_TensorVolume->GetPointData()->SetTensors(NULL);
+      m_RenderVolume->GetPointData()->SetTensors(NULL);
 
     // clear the Eigenvalues from the data array ...
     if (!m_bAddEigenvaluesToOutput)
-      m_TensorVolume->GetPointData()->SetVectors(NULL);
-    m_TensorVolume->Update();
+      m_RenderVolume->GetPointData()->SetVectors(NULL);
+    m_RenderVolume->Update();
     m_VmeTensors->Update();
    
 
@@ -283,22 +331,29 @@ void lhpOpComputeTensor::CreateOutputDataset()
 
 
 //----------------------------------------------------------------------------
-void lhpOpComputeTensor::UpdateScalarsInTensorDataset()
+void lhpOpComputeTensor::UpdateScalarsInRenderingVolume(bool bStartArrayAtZero, int typeOfOutputArray)
 //----------------------------------------------------------------------------
-{
+  {
   // TODO: We currently take the range from the input dataset and scale the tensor values accordingly. 
   // Is this solution good enough? This also can 'hide' the range of the tensor components
   vtkImageData *volume = vtkImageData::SafeDownCast(m_VmeData->GetOutput()->GetVTKData());
-  int min, max;
-  GetArrayLimits(volume->GetPointData()->GetScalars(), min, max);
-  // TODO: if we move eigenvalues to other dataset we will have to change this code
-  if (m_SelectedTensorComponent < 9)
-    TransformComponentToScalars(m_TensorVolume, m_TensorVolume->GetPointData()->GetTensors(), m_SelectedTensorComponent, 0, max - min);
+  double *range = volume->GetPointData()->GetScalars()->GetRange();
+  int min = range[0], max = range[1];
+
+  if (!m_ArrayForVolumeRendering)
+    {
+    m_ArrayForVolumeRendering = vtkDoubleArray::New();
+    m_ArrayForVolumeRendering->SetNumberOfComponents(1);
+    m_ArrayForVolumeRendering->SetNumberOfTuples(m_RenderVolume->GetNumberOfPoints());
+    }
+  // prepare the array
+  PrepareArrayForVolumeRendering();
+  double* origRange = m_ArrayForVolumeRendering->GetRange();
+  if (bStartArrayAtZero)
+    SetArrayToVolume(m_RenderVolume, m_ArrayForVolumeRendering, origRange[0], origRange[1], 0, max-min, typeOfOutputArray);
   else
-    TransformComponentToScalars(m_TensorVolume, m_TensorVolume->GetPointData()->GetVectors(), m_SelectedTensorComponent - 9, 0, max - min);
-  //TransformComponentToScalars(m_TensorVolume, m_SelectedTensorComponent, 0, 65535);
-  m_TensorVolume->Update();
-}
+    SetArrayToVolume(m_RenderVolume, m_ArrayForVolumeRendering, origRange[0], origRange[1], min, max, typeOfOutputArray);
+  }
 
 
 
@@ -331,27 +386,6 @@ enum COMPUTE_TENSOR_WIDGET_ID
   ID_TEXTBOX_ISOSURFACE_VALUE
 };
 
-
-//----------------------------------------------------------------------------
-// tabbed gui - now obsolete
-void lhpOpComputeTensor::CreateGui() 
-//----------------------------------------------------------------------------
-{
-  m_Gui = new mafGUI(this);
-
-  wxString sampling_choices[2] = {"Centroid","Gauss"};
-  m_Gui->Radio(ID_INTERPOLATION,"Interpolation points:",&m_InterpolationType,2,sampling_choices);
-
-  m_Gui->Divider();
-
-  wxString component_choices[9] = {"1","2","3","4","5","6","7","8","9"};
-  m_Gui->Radio(ID_COMPONENT,"Selected component for visualization:",&m_SelectedTensorComponent,9,component_choices);
-
-
-  m_Gui->OkCancel();
-  ShowGui();
-}
-
 //----------------------------------------------------------------------------
 void lhpOpComputeTensor::OnEvent(mafEventBase *maf_event)
 //----------------------------------------------------------------------------
@@ -370,7 +404,7 @@ void lhpOpComputeTensor::OnEvent(mafEventBase *maf_event)
         break;
 
       case ID_RADIOBOX_DATA_RENDERING:
-        // TODO: Add handler function
+        SetDataView();
         break;
 
       case ID_RADIOBOX_VECTOR_RENDERING:
@@ -452,22 +486,23 @@ void lhpOpComputeTensor::SetDisplacementVectorsView()
       if (m_VectorHedgehogActor)
         m_VectorHedgehogActor->SetVisibility(m_bShowVectors);
       else
-      {
-        if (m_VectorGlyphActor)
-        {
-          m_Rwi->m_RenFront->RemoveActor(m_VectorGlyphActor);
-          vtkDEL(m_VectorGlyphActor);
-        }
-      CreateVectorHedgehogPipeline();
-      }
-
+       {
+       wxBusyCursor wait_cursor;
+       if (m_VectorGlyphActor)
+         {
+         m_Rwi->m_RenFront->RemoveActor(m_VectorGlyphActor);
+         vtkDEL(m_VectorGlyphActor);
+         }
+       CreateVectorHedgehogPipeline();
+       }
     }
   else if (m_VectorDataVisualizationType == RENDER_AS_GLYPH)
     {
     if (m_VectorGlyphActor)
-        m_VectorGlyphActor->SetVisibility(m_bShowVectors);
+      m_VectorGlyphActor->SetVisibility(m_bShowVectors);
     else
       {
+      wxBusyCursor wait_cursor;      
       if (m_VectorHedgehogActor)
         {
         m_Rwi->m_RenFront->RemoveActor(m_VectorHedgehogActor);
@@ -484,9 +519,9 @@ void lhpOpComputeTensor::SetDisplacementVectorsView()
 void lhpOpComputeTensor::TensorComponentChange()
 //----------------------------------------------------------------------------
   {
-  if (m_TensorDataVisualizationType != RENDER_AS_VOLUME)
-    return;
-  UpdateScalarsInTensorDataset();
+  wxBusyCursor wait_cursor;      
+  UpdateScalarsInRenderingVolume();
+  UpdateTransferFunctions();
   m_Rwi->CameraUpdate();
   }
 
@@ -498,6 +533,7 @@ void lhpOpComputeTensor::UpdateIsosurface()
   if (m_InpuDataVisualizationType != RENDER_AS_ISOSURFACE)  
     return;         
 
+  wxBusyCursor wait_cursor;      
   if (m_ContourFilter && m_IsoMapper && m_DataIsosurfaceActor)
     {
     m_ContourFilter->SetValue(0, m_IsosurfaceValue);
@@ -512,33 +548,35 @@ void lhpOpComputeTensor::UpdateIsosurface()
 void lhpOpComputeTensor::SetTensorView()
 //----------------------------------------------------------------------------
   {
+  wxBusyCursor wait_cursor;      
   if (m_TensorDataVisualizationType == RENDER_AS_ELLIPSOIDS)
     {
-    if (m_TensorGlyphActor)
+    // disable component selection
+    m_radioBoxTensorComponent->Enable(false);
+
+    // update volume view
+    SetRenderVolumeVisibilityAndUpdateContent();
+
+   // create glyph actor if necessary or just set visibility
+   if (!m_TensorGlyphActor)
+     CreateTensorGlyphPipeline();     
+   else
       m_TensorGlyphActor->SetVisibility(m_bShowTensors);
-    else
-      {
-      if (m_TensorVolumeActor)
-        {
-        m_Rwi->m_RenFront->RemoveActor(m_TensorVolumeActor);
-        vtkDEL(m_TensorVolumeActor);
-        }
-      CreateTensorGlyphPipeline();     
-      }
     }
   else if (m_TensorDataVisualizationType == RENDER_AS_VOLUME)
     {
-    if (m_TensorVolumeActor) 
-      m_TensorVolumeActor->SetVisibility(m_bShowTensors);
-    else
+    // enable component selection 
+    m_radioBoxTensorComponent->Enable(true);
+
+    // remove the glyph actor 
+    if (m_TensorGlyphActor)
       {
-      if (m_TensorGlyphActor)
-        {
-        m_Rwi->m_RenFront->RemoveActor(m_TensorGlyphActor);
-        vtkDEL(m_TensorGlyphActor);
-        }
-      CreateTensorVolumePipeline();
+      m_Rwi->m_RenFront->RemoveActor(m_TensorGlyphActor);
+      vtkDEL(m_TensorGlyphActor);
       }
+
+    // update volume view
+    SetRenderVolumeVisibilityAndUpdateContent();
     }
   m_Rwi->CameraUpdate();
   }
@@ -548,10 +586,58 @@ void lhpOpComputeTensor::SetTensorView()
 void lhpOpComputeTensor::SetDataView()
 //----------------------------------------------------------------------------
   {
-  // TODO: Update code when we add the volume actor for the input data
-  if (m_DataIsosurfaceActor)
-    m_DataIsosurfaceActor->SetVisibility(m_bShowInputDataset);
+  wxBusyCursor wait_cursor;      
+  if (m_InpuDataVisualizationType == RENDER_AS_VOLUME)
+    {
+    // disable the isosurface slider
+    m_sliderIsosurfaceValue->Enable(false);
+    m_textCtrlIsosurfaceValue->Enable(false);
+    m_staticTextIsosurfaceValue->Enable(false);
+
+    // delete isosurface pipeline
+    if (m_DataIsosurfaceActor)
+      {
+      m_Rwi->m_RenFront->RemoveActor(m_DataIsosurfaceActor);
+      vtkDEL(m_DataIsosurfaceActor);
+      vtkDEL(m_ContourFilter);
+      vtkDEL(m_IsoMapper);
+      }
+
+    // update volume view 
+    SetRenderVolumeVisibilityAndUpdateContent();
+    }
+  else if (m_InpuDataVisualizationType == RENDER_AS_ISOSURFACE)
+    {
+    // enable the isosurface slider
+    m_sliderIsosurfaceValue->Enable(true);
+    m_textCtrlIsosurfaceValue->Enable(true);
+    m_staticTextIsosurfaceValue->Enable(true);
+
+
+    // update volume view
+    SetRenderVolumeVisibilityAndUpdateContent();
+
+    // create the isosurface actor if necessary or just set visibility    
+    if (!m_DataIsosurfaceActor) 
+      CreateDataIsosurfacePipeline(); 
+    else
+      m_DataIsosurfaceActor->SetVisibility(m_bShowInputDataset);
+    }
   m_Rwi->CameraUpdate();
+  }
+
+//----------------------------------------------------------------------------
+void lhpOpComputeTensor::SetRenderVolumeVisibilityAndUpdateContent()
+//----------------------------------------------------------------------------
+  {
+  if (m_InpuDataVisualizationType == RENDER_AS_ISOSURFACE && m_TensorDataVisualizationType == RENDER_AS_ELLIPSOIDS)
+    m_RenderVolumeActor->VisibilityOff();
+  else 
+    {
+    m_RenderVolumeActor->VisibilityOn();
+    UpdateScalarsInRenderingVolume();
+    UpdateTransferFunctions();
+    }
   }
 
 
@@ -571,8 +657,9 @@ void lhpOpComputeTensor::CreateOpDialog()
   m_Rwi->Show(true);
   m_Rwi->m_RwiBase->SetMouse(m_Mouse) ;
 
-  UpdateScalarsInTensorDataset();
+  UpdateScalarsInRenderingVolume();
   CreateVisualPipes();
+  UpdateTransferFunctions();
   m_Dialog->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
 
@@ -611,7 +698,6 @@ void lhpOpComputeTensor::CreateOpDialog()
   int m_radioBoxDataRenderNChoices = sizeof( m_radioBoxDataRenderChoices ) / sizeof( wxString );
   m_radioBoxDataRender = new wxRadioBox( m_Dialog, ID_RADIOBOX_DATA_RENDERING, wxT("Render"), wxDefaultPosition, wxDefaultSize, m_radioBoxDataRenderNChoices, m_radioBoxDataRenderChoices, 1, wxRA_SPECIFY_ROWS );
   m_radioBoxDataRender->SetSelection( 1 );
-  m_radioBoxDataRender->Enable( false );
 
   bSizerDataBox->Add( m_radioBoxDataRender, 0, wxALL, 5 );
 
@@ -786,14 +872,15 @@ void lhpOpComputeTensor::DeleteOpDialog()
   // delete vtk components
 
   //vtkDEL(m_TensorVolume);
+  vtkDEL(m_ArrayForVolumeRendering);
   vtkDEL(m_OutlineBox);
-  vtkDEL(m_DataVolume);
   vtkDEL(m_DataIsosurfaceActor);
   vtkDEL(m_ContourFilter);
   vtkDEL(m_IsoMapper);
 
-  vtkDEL(m_DataVolumeActor);
-  vtkDEL(m_TensorVolumeActor);
+  vtkDEL(m_RenderVolumeActor);
+  vtkDEL(m_colorTransferFunction);
+  vtkDEL(m_opacityTransferFunction);
   vtkDEL(m_TensorGlyphActor);
   vtkDEL(m_VectorGlyphActor);
   vtkDEL(m_VectorHedgehogActor);
@@ -878,65 +965,50 @@ void lhpOpComputeTensor::CreateDataIsosurfacePipeline()
 
 
 //----------------------------------------------------------------------------
-// TODO: decide if we are going to use vtkXRayVolumeMapper (supports vtkIntArray) 
-// or vtkVolumeTextureMapper2D (supports vtkUnsignedChar && vtkUnsignedShort) 
-// - requires additional changed copy of data (vtkUnsignedShort shifted to have minimum value at 0?)
 void lhpOpComputeTensor::CreateTensorVolumePipeline()
 //----------------------------------------------------------------------------
 {
-  vtkImageData *volume = m_TensorVolume; 
+  vtkImageData *volume = m_RenderVolume; 
   double sr[2];
   volume->GetScalarRange(sr);
   
   // create transfer function for mapping scalar value to opacity
-  vtkPiecewiseFunction *opacityTransferFunction = vtkPiecewiseFunction::New();
-  opacityTransferFunction->AddPoint(sr[0],0.0);
-  opacityTransferFunction->AddPoint(sr[1]/2.0, 1.0);
+  m_opacityTransferFunction = vtkPiecewiseFunction::New();
+  m_opacityTransferFunction->AddPoint(sr[0],0.0);
+  m_opacityTransferFunction->AddPoint(sr[1]/2.0, 1.0);
+  m_opacityTransferFunction->AddPoint(sr[0]/2.0, 0.0);
 
   // create transfer function for mapping scalar value to color
-  vtkColorTransferFunction *colorTransferFunction = vtkColorTransferFunction::New();
+  m_colorTransferFunction = vtkColorTransferFunction::New();
   double range = sr[1] - sr[0];
   //range = 65535; // TODO: fix the pallete
-  colorTransferFunction->AddRGBPoint( sr[0], 0.0, 0.0, 0.0);
-  colorTransferFunction->AddRGBPoint( sr[0] + range / 5.0 * 1, 0.0, 0.0, 0.0);
-  colorTransferFunction->AddRGBPoint( sr[0] + range / 5.0 * 2, 1.0, 0.0, 0.0);
-  colorTransferFunction->AddRGBPoint( sr[0] + range /5.0 * 3, 0.0, 0.0, 1.0);
-  colorTransferFunction->AddRGBPoint( sr[0] + range /5.0 * 4, 0.0, 1.0, 0.0);
-  colorTransferFunction->AddRGBPoint( sr[1], 0.0, 0.2, 0.0);
+  m_colorTransferFunction->AddRGBPoint( sr[0], 0.0, 0.0, 0.0);
+  m_colorTransferFunction->AddRGBPoint( sr[0] + range / 5.0 * 1, 0.0, 0.0, 0.0);
+  m_colorTransferFunction->AddRGBPoint( sr[0] + range / 5.0 * 2, 1.0, 0.0, 0.0);
+  m_colorTransferFunction->AddRGBPoint( sr[0] + range /5.0 * 3, 0.0, 0.0, 1.0);
+  m_colorTransferFunction->AddRGBPoint( sr[0] + range /5.0 * 4, 0.0, 1.0, 0.0);
+  m_colorTransferFunction->AddRGBPoint( sr[1], 0.0, 0.2, 0.0);
 
   // the property describes how the data will look
   vtkVolumeProperty *volumeProperty = vtkVolumeProperty::New();
-  volumeProperty->SetColor(colorTransferFunction);
-  volumeProperty->SetScalarOpacity(opacityTransferFunction);
+  volumeProperty->SetColor(m_colorTransferFunction);
+  volumeProperty->SetScalarOpacity(m_opacityTransferFunction);
   volumeProperty->SetInterpolationTypeToNearest();
  
 
-  // the mapper and ray casting function
-  /*vtkVolumeRayCastCompositeFunction *compositeFunction = vtkVolumeRayCastCompositeFunction::New();
-  vtkVolumeRayCastMapper *volumeMapper = vtkVolumeRayCastMapper::New();
-  volumeMapper->SetVolumeRayCastFunction(compositeFunction);
-  volumeMapper->SetInput(volume);
-  compositeFunction->Delete();*/
   vtkVolumeTextureMapper2D *volumeMapper = vtkVolumeTextureMapper2D::New();
-  //vtkMAFVolumeTextureMapper2D *volumeMapper = vtkMAFVolumeTextureMapper2D::New();
   volumeMapper->SetInput(volume);
-
-  // vtkXRayVolumeMapper works!
-  /*vtkXRayVolumeMapper *volumeMapper = vtkXRayVolumeMapper::New();
-  volumeMapper->SetInput(volume);*/
 
   // create the 'actor' and the property
-  m_TensorVolumeActor = vtkVolume::New();
-  m_TensorVolumeActor->SetMapper(volumeMapper);
-  m_TensorVolumeActor->SetProperty(volumeProperty);
-  m_TensorVolumeActor->SetVisibility(m_bShowTensors);
+  m_RenderVolumeActor = vtkVolume::New();
+  m_RenderVolumeActor->SetMapper(volumeMapper);
+  m_RenderVolumeActor->SetProperty(volumeProperty);
+  m_RenderVolumeActor->SetVisibility(m_bShowTensors);
 
   // render
-  m_Rwi->m_RenFront->AddVolume(m_TensorVolumeActor);
+  m_Rwi->m_RenFront->AddVolume(m_RenderVolumeActor);
 
   // cleanup
-  vtkDEL(colorTransferFunction);
-  vtkDEL(opacityTransferFunction);
   vtkDEL(volumeProperty);
   vtkDEL(volumeMapper);
 }
@@ -947,7 +1019,7 @@ void lhpOpComputeTensor::CreateTensorVolumePipeline()
 void lhpOpComputeTensor::CreateVectorHedgehogPipeline()
 //----------------------------------------------------------------------------
 {
-  vtkRectilinearGrid *vectors = vtkRectilinearGrid::SafeDownCast(m_VmeDisplacements->GetOutput()->GetVTKData());
+  vtkDataSet *vectors = m_VmeDisplacements->GetOutput()->GetVTKData();
    
   // create vector as a hedgehog (set of lines)
   vtkHedgeHog *hedgehog = vtkHedgeHog::New();
@@ -976,14 +1048,14 @@ void lhpOpComputeTensor::CreateVectorHedgehogPipeline()
 void lhpOpComputeTensor::CreateVectorGlyphPipeline()
 //----------------------------------------------------------------------------
 {
-  vtkRectilinearGrid *vectors = vtkRectilinearGrid::SafeDownCast(m_VmeDisplacements->GetOutput()->GetVTKData());
+  vtkDataSet *vectorVolume = m_VmeDisplacements->GetOutput()->GetVTKData();
 
   vtkConeSource *cone = vtkConeSource::New();
   cone->SetResolution(3);
   cone->SetHeight(4);
 
   vtkGlyph3D  *glyph = vtkGlyph3D::New();
-  glyph->SetInput(vectors);
+  glyph->SetInput(vectorVolume);
   glyph->SetSource(cone->GetOutput());
   glyph->SetVectorModeToUseVector();
   glyph->SetScaleModeToScaleByVector();
@@ -1006,13 +1078,33 @@ void lhpOpComputeTensor::CreateVectorGlyphPipeline()
   cone->Delete();
 }
 
+//----------------------------------------------------------------------------
+double lhpOpComputeTensor::CalculateScalingFactor(vtkImageData* volume, vtkDataArray* dataArray)
+//----------------------------------------------------------------------------
+  {
+  double* range = dataArray->GetRange();
+  double max = range[1];
+
+  double* spacing = volume->GetSpacing();
+  double cellMin = spacing[0];
+  if (spacing[1] < cellMin)
+    cellMin = spacing[1];
+  if (spacing[2] < cellMin)
+    cellMin = spacing[2];
+
+  double scalingFactor = 1.0;
+  if (max != 0.0) 
+    scalingFactor = cellMin / max;
+  return scalingFactor;
+  }
+
 
 //----------------------------------------------------------------------------
 // TODO: description
 void lhpOpComputeTensor::CreateTensorGlyphPipeline()
 //----------------------------------------------------------------------------
 {
-  vtkImageData* volume = m_TensorVolume;
+  vtkImageData* volume = m_RenderVolume;
 
   vtkSphereSource* sphere = vtkSphereSource::New();
   sphere->SetThetaResolution(3);
@@ -1022,7 +1114,7 @@ void lhpOpComputeTensor::CreateTensorGlyphPipeline()
   vtkTensorGlyph* ellipsoids = vtkTensorGlyph::New();
   ellipsoids->SetInput(volume);         // here we should input our tensors
   ellipsoids->SetSource(sphere->GetOutput());
-  ellipsoids->SetScaleFactor(1000.0);
+  ellipsoids->SetScaleFactor(CalculateScalingFactor(volume, volume->GetPointData()->GetVectors()));
   ellipsoids->ClampScalingOff();
 
   // normal calculation is quite slooow ...
@@ -1049,3 +1141,80 @@ void lhpOpComputeTensor::CreateTensorGlyphPipeline()
   ellipsoids->Delete();
   sphere->Delete();
 }
+
+
+
+//----------------------------------------------------------------------------
+// TODO: description
+void lhpOpComputeTensor::PrepareArrayForVolumeRendering()
+//----------------------------------------------------------------------------
+  {
+  assert(m_ArrayForVolumeRendering);
+  if (!m_ArrayForVolumeRendering)
+    return;
+
+  vtkDoubleArray *tmpArray1 = vtkDoubleArray::New();
+  tmpArray1->SetNumberOfComponents(1);
+  tmpArray1->SetNumberOfTuples(m_ArrayForVolumeRendering->GetNumberOfTuples());
+  
+  SetAllElementsOfArrayToZero(m_ArrayForVolumeRendering); 
+  
+  // insert original data
+  if (m_InpuDataVisualizationType == RENDER_AS_VOLUME && m_bShowInputDataset)
+    {
+    tmpArray1->CopyComponent(0, m_VmeData->GetOutput()->GetVTKData()->GetPointData()->GetScalars(), 0);
+    ScaleArray(tmpArray1, 0.0, 100.0);
+    SuperimposeArray(m_ArrayForVolumeRendering, tmpArray1, SUPERIMPOSITION_ADD);
+    }
+
+
+  // insert tensor component values or eigenvalues if necessary
+  if (m_TensorDataVisualizationType == RENDER_AS_SCALAR_VOLUME && m_bShowTensors)
+    {
+    if (m_SelectedTensorComponent < 9)
+      tmpArray1->CopyComponent(0, m_RenderVolume->GetPointData()->GetTensors(), m_SelectedTensorComponent);
+    else
+      tmpArray1->CopyComponent(0, m_RenderVolume->GetPointData()->GetVectors(), m_SelectedTensorComponent - 9);
+    tmpArray1->Modified();
+
+    if (m_InpuDataVisualizationType == RENDER_AS_VOLUME && m_bShowInputDataset)
+      SuperimposeArray(m_ArrayForVolumeRendering, tmpArray1, SUPERIMPOSITION_MULTIPLY);
+    else
+      SuperimposeArray(m_ArrayForVolumeRendering, tmpArray1, SUPERIMPOSITION_ADD);
+    }
+  
+  tmpArray1->Delete();
+  }
+
+
+//----------------------------------------------------------------------------
+// TODO: description
+void lhpOpComputeTensor::UpdateTransferFunctions()
+//----------------------------------------------------------------------------
+  {
+  assert(m_colorTransferFunction);
+  assert(m_opacityTransferFunction);
+  if (!m_opacityTransferFunction || !m_opacityTransferFunction)
+    return;
+
+  double *sr = m_RenderVolume->GetScalarRange();
+  double range = sr[1] - sr[0];
+
+  // create transfer function for mapping scalar value to opacity
+  m_opacityTransferFunction->RemoveAllPoints();
+  m_opacityTransferFunction->AddPoint(sr[0],0.0);
+  m_opacityTransferFunction->AddPoint(sr[1]/2.0, 1.0);
+  m_opacityTransferFunction->AddPoint(sr[0]/2.0, 0.0);
+
+  m_colorTransferFunction->RemoveAllPoints();
+  //range = 65535; // TODO: fix the pallete
+  //m_colorTransferFunction->AddRGBPoint( sr[0], 0.0, 0.0, 0.0);
+  //m_colorTransferFunction->AddRGBPoint( sr[1], 1.0, 1.0, 1.0);*/
+  m_colorTransferFunction->AddRGBPoint( sr[0], 0.0, 0.0, 0.0);
+  m_colorTransferFunction->AddRGBPoint( sr[0] + range / 5.0 * 1, 0.0, 0.0, 0.0);
+  m_colorTransferFunction->AddRGBPoint( sr[0] + range / 5.0 * 2, 1.0, 0.0, 0.0);
+  m_colorTransferFunction->AddRGBPoint( sr[0] + range / 5.0 * 3, 0.0, 0.0, 1.0);
+  m_colorTransferFunction->AddRGBPoint( sr[0] + range / 5.0 * 4, 0.0, 1.0, 0.0);
+  m_colorTransferFunction->AddRGBPoint( sr[1], 0.0, 0.2, 0.0);
+
+  }
