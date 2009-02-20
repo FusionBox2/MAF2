@@ -15,21 +15,20 @@ PULSE = 1
 
 class GuiPart(wx.Frame):
     def __init__(self, master, queue, endCommand):
-        wx.Frame.__init__(self, None, -1, size=(380, 400), style = wx.DEFAULT_FRAME_STYLE|wx.RESIZE_BORDER|wx.MAXIMIZE_BOX)
+        wx.Frame.__init__(self, None, -1, size=(425, 400), style = wx.DEFAULT_FRAME_STYLE|wx.RESIZE_BORDER|wx.MAXIMIZE_BOX)
         self.master = master
         self.queue = queue 
-        self.complete = 0 #set to 1 when all VME ahve benn uploaded
+        self.complete = 0 #set to 1 when all VME have benn uploaded
         
         # Set up the GUI
-        self.SetTitle("Upload Download Manager")
-        self.scrolledPanel = scrolled.ScrolledPanel(self, -1, size=(140, 300),
+        self.SetTitle("Upload Download")
+        self.scrolledPanel = scrolled.ScrolledPanel(self, -1, size=(140, 400),
                                  style = wx.TAB_TRAVERSAL|wx.SUNKEN_BORDER, name="panel1" )
         
         self.verticalBoxSizer = wx.BoxSizer(wx.VERTICAL)
         
         self.bars = []
         self.endingBars = []
-        #self.console = wx.Button(self.scrolledPanel, 10,  'Waiting...', (150,0), (100,25))
         self.staticLabel = wx.StaticText(self.scrolledPanel, -1,  '', (150,15), (200,25))
         self.staticLine = wx.StaticLine(self.scrolledPanel, -1, (25,35), (360,2))
         
@@ -41,14 +40,13 @@ class GuiPart(wx.Frame):
         self.CreateStatusBar()
         self.uploadNumber = 0
         self.downloadNumber = 0
-        #self.SetStatusText("Upload :" + str(self.uploadNumber) + "    " + "Download :" + str(self.downloadNumber))
-
+        
         # responds to exit symbol x on frame title bar
         self.Bind(wx.EVT_CLOSE, self.OnClose)
         
-        #wx.EVT_BUTTON(self,10,self.OnCreateBar)
         self.EVT_RESULT(self.OnCreateBar)
         self.Show()
+        
         # Add more GUI stuff here
         self.quitApplication = endCommand
         
@@ -85,8 +83,8 @@ class GuiPart(wx.Frame):
         
         self.verticalBoxSizer.Add(self.bars[len(self.bars)-1],flag=wx.CENTER)
         
-        #self.scrolledPanel.SetAutoLayout(1)
-        self.scrolledPanel.SetupScrolling()
+        # maintain vertical scrollbar position after refresh
+        self.scrolledPanel.SetupScrolling(scrollToTop = False)
         self.Refresh()
         
         self.barCreated = True
@@ -173,7 +171,7 @@ class GuiPart(wx.Frame):
                 if (finished == False): 
                     self.timer.Start(milliseconds=self.timeToCall, oneShot=True)
             except:
-			    pass
+                pass
     
     def SecondsToHMS(self,t):
         """Convert time t in seconds to hours minutes seconds."""
