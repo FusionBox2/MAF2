@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVME.cpp,v $
 Language:  C++
-Date:      $Date: 2009-02-06 09:01:01 $
-Version:   $Revision: 1.40.2.16 $
+Date:      $Date: 2009-03-02 13:18:57 $
+Version:   $Revision: 1.40.2.17 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -1112,7 +1112,7 @@ wxArrayString lhpOpDownloadVME::GetChildURI(mafNode *node)
 
   std::string listChild = tagChild->GetValue();
 
-  if (listChild.rfind("dataresource-") != std::string::npos)
+  if (listChild.rfind("dataresource") != std::string::npos)
   {
     while (listChild.find_first_of(' ') != -1)
     {
@@ -1143,7 +1143,7 @@ void lhpOpDownloadVME::GetLinkURI(mafNode *node)
 
   std::string linkURI = linkChild->GetValue();
 
-  if (linkURI.rfind("dataresource-") != std::string::npos)
+  if (linkURI.rfind("dataresource") != std::string::npos)
   {
     while (linkURI.find_first_of(' ') != -1)
     {
@@ -1162,7 +1162,7 @@ void lhpOpDownloadVME::GetLinkURI(mafNode *node)
     }
     if (!linkURI.empty())
     {
-      if (linkURI.rfind("dataresource-") != std::string::npos)
+      if (linkURI.rfind("dataresource") != std::string::npos)
       {
         if (m_WholeMsfDownload)
           m_ListLinkURIInTree.Add(linkURI.c_str());
@@ -1230,7 +1230,7 @@ wxArrayString lhpOpDownloadVME::CheckRemoteLink(mafString URI)
   int count;
   wxArrayString URIArray;
   wxString linkURI= output[output.size() - 1];
-  if (linkURI.rfind("dataresource-") != std::string::npos)
+  if (linkURI.rfind("dataresource") != std::string::npos)
   {
     while (linkURI.find_first_of(' ') != -1)
     {
@@ -1246,7 +1246,7 @@ wxArrayString lhpOpDownloadVME::CheckRemoteLink(mafString URI)
     }
     if (!linkURI.empty())
     {
-      if (linkURI.rfind("dataresource-") != std::string::npos)
+      if (linkURI.rfind("dataresource") != std::string::npos)
       {
         URIArray.Add(linkURI.c_str());
       }
@@ -1315,7 +1315,7 @@ bool lhpOpDownloadVME::CheckRemoteChild(mafString URI)
   }
 
   wxString child= output[output.size() - 1];
-  if (child.Contains("dataresource-"))
+  if (child.Contains("dataresource"))
     containChild = true;
 
   wxSetWorkingDirectory(oldDir);
