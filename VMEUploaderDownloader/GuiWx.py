@@ -145,16 +145,53 @@ class GuiPart(wx.Frame):
                     lista[0].SetRemainingTimeLabel("0h:0m:0s left")
                     lista[0].SetEndingLabel('Completed!')
                     self.queue.task_done(0)
-                self.Refresh()
+                
                 if(lista[1] == 120):
                     self.complete = 0
                     lista[0].SetEndingLabel('Error!')
                     self.queue.task_done(0)
+                #self.Refresh()
+                if(lista[1] == 101):
+                    lista[0].SetEndingLabel('Sending XML file')
+                    self.complete = 0
+                    self.queue.task_done(0)
                 self.Refresh()
+                if(lista[1] == 106):
+                    lista[0].SetRemainingTimeLabel("0h:0m:0s left")
+                    lista[0].SetEndingLabel('Upload XML FAILED')
+                    self.complete = 1
+                    self.queue.task_done(0)
+                self.Refresh()
+
+                if(lista[1] == 107):
+                    lista[0].SetEndingLabel('About to send binary file')
+                    self.complete = 0
+                    self.queue.task_done(0)
+                self.Refresh()
+                if(lista[1] == 108):
+                    lista[0].SetEndingLabel('Error while sending binary file')
+                    self.complete = 0
+                    self.queue.task_done(0)
+                self.Refresh()
+                if(lista[1] == 105):
+                    lista[0].SetRemainingTimeLabel("0h:0m:0s left")
+                    lista[0].SetEndingLabel('MD5 Checksum control')
+                    self.complete = 1
+                    self.queue.task_done(0)
+                self.Refresh()
+                if(lista[1] == 109):
+                    lista[0].SetRemainingTimeLabel("0h:0m:0s left")
+                    lista[0].SetEndingLabel('Binary sent')
+                    self.complete = 1
+                    self.queue.task_done(0)
+                self.Refresh()
+                    
+                #self.Refresh()
                 if(lista[1] == 130):
                     wx.MessageBox("Upload/Download Complete!", wx.MessageBoxCaptionStr, wx.STAY_ON_TOP | wx.OK)
                     self.complete = 1
                     self.queue.task_done(0)
+                
                 self.Refresh()
 
             except:

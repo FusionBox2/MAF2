@@ -21,6 +21,7 @@ class lhpGetXMLURI:
         self.userName = sys.argv[0]
         self.password = sys.argv[1]
         self.URL = sys.argv[2]
+        
 
           
         # proxy
@@ -31,6 +32,7 @@ class lhpGetXMLURI:
         """ 
            Creates an empty resource on repository and return the URI
         """
+        maxTry = 5
         self.proxyHost, self.proxyPort = retriveProxyParameters()
         if Debug:
             print "->"+ self.proxyHost + "<-"
@@ -41,40 +43,48 @@ class lhpGetXMLURI:
         ws.setServer(self.URL)
         ws.ProxyURL = self.proxyHost
         ws.ProxyPort = self.proxyPort
+        XMLURI = -1
         
         # timeout in seconds
-        self.Timeout = 30
+        self.Timeout = 90
         socket.setdefaulttimeout(self.Timeout)
         
-        try:
-            out = ws.run('createresource')[1]
-        except:
-            if Debug:
-                print "-----------Error calling createresource service------------"
-            sys.exit(1)
-           
-
-        dom = xd.parseString(out)
-        if dom.getElementsByTagName("fault"):
-            if Debug:
-                print "-----------Error in createresource service------------"
+        for c in range(0,maxTry):
+            try:
+                out = ws.run('createresource')[1]
+            except:
+                if Debug:
+                    print "-----------Error calling createresource service------------"
+                time.sleep(3)
+                continue
+        
+            dom = xd.parseString(out)
+            if dom.getElementsByTagName("fault"):
+                if Debug:
+                    print "-----------Error in createresource service------------"
+                for el in dom.getElementsByTagName("string"):
+                    for node in el.childNodes:  
+                        error = node.data
+                    if (error.find('Over Quota') != -1):
+                        overQuota = "OverQuota"
+                        print overQuota
+                        return overQuota
+                    
+                if Debug:
+                    print error
+                    
             for el in dom.getElementsByTagName("string"):
                 for node in el.childNodes:  
-                    error = node.data
-                if (error.find('Over Quota') != -1):
-                    overQuota = "OverQuota"
-                    print overQuota
-                    return overQuota
-                
-            if Debug:
-                print error
-            sys.exit(1)
-        for el in dom.getElementsByTagName("string"):
-            for node in el.childNodes:  
-                XMLURI = node.data
-        pass
+                    XMLURI = node.data
+            if XMLURI == -1:
+                continue
+            else:
+                break
     
         print XMLURI
+        if  XMLURI == -1:
+            sys.exit(1)
+            #todo best
         return XMLURI
   
 def main():

@@ -48,6 +48,7 @@ class UploadHandler:
         self.uri = ""
         self.proxyHost = ""
         self.proxyPort = 0
+        self.maxTry = 5
         
         
             
@@ -59,7 +60,7 @@ class UploadHandler:
        
         self.createOutgoingDir()
         
-        self.binarySendResult = False
+        self.binarySendResult = None
         self.isBinaryDataPresent = self.isBinaryPresent()      
         
         #Check if VME has a binary data        
@@ -164,7 +165,7 @@ class UploadHandler:
                     UploadHandler.queue.put(lista)
                     self.block.release()
                     
-                    if(self.binarySendResult == True):
+                    if(self.binarySendResult != None):
                         self.block.acquire()
                         lista = [self.observer, 90, -10]
                         UploadHandler.queue.put(lista)
@@ -176,6 +177,11 @@ class UploadHandler:
             self.binarySendResult = True
                        
         #---MD5 check-point-----------------------------------#
+        percentage = 105 #105 "MD5 Checksum control"
+        lista = [self.observer, percentage]
+        self.block.acquire()  
+        UploadHandler.queue.put(lista)
+        self.block.release()
         if(self.isBinaryDataPresent == True and self.binarySendResult == True):
             if Debug:
                 print "Local checksum=  " + self.localChksum
@@ -457,6 +463,8 @@ class UploadHandler:
             print "Sending Thread Finished"
 		
     def sendXMLFile(self):
+        overQuota = 0
+        self.XMLName = -1
         os.rename(self.dirOutgoing + "\\" + self.getXMLFile(), self.dirOutgoing + "\\" + self.XMLURI)
         oldDir = os.getcwd()
         os.chdir(self.dirOutgoing)
@@ -467,39 +475,55 @@ class UploadHandler:
         ws.ProxyURL = self.proxyHost
         ws.ProxyPort = self.proxyPort
         
-        try:
-            out = ws.run('xmlupload', self.XMLURI, self.vmeName)[1]
-        except:
-            if Debug:
-                print "-----------Error in xmlupload service------------"
-            
-            percentage = 120 #120 for 'error!'
-            lista = [self.observer, percentage]
-            self.block.acquire()  
-            UploadHandler.queue.put(lista)
-            self.block.release()
-            sys.exit(1)
-            #
-    #    self.__removeSRBData(self.BinaryURI)
+        percentage = 101
+        lista = [self.observer, percentage]
+        self.block.acquire()  
+        UploadHandler.queue.put(lista)
+        self.block.release()
         
-        dom = xd.parseString(out)
+        for c in range(0,self.maxTry):
+            
+            try:
+                out = ws.run('xmlupload', self.XMLURI, self.vmeName)[1]
+            except:
+                if Debug:
+                    print "-----------Error in xmlupload service------------"
+                time.sleep(1)     
+                continue 
 
-        if dom.getElementsByTagName("fault"):
-            if Debug:
-                print "-----------Error in xmlupload service------------"
+            dom = xd.parseString(out)
+    
+            if dom.getElementsByTagName("fault"):
+                if Debug:
+                    print "-----------Error in xmlupload service------------"
+                for el in dom.getElementsByTagName("string"):
+                    for node in el.childNodes:  
+                        error = node.data
+                if (error.find('Over Quota') != -1):
+                    wx.MessageBox("Over quota! Data uploaded will be removed.", wx.MessageBoxCaptionStr, wx.STAY_ON_TOP | wx.OK)
+                    overQuota = 1
+                    break
+                time.sleep(1)
+                continue
+
             for el in dom.getElementsByTagName("string"):
                 for node in el.childNodes:  
-                    error = node.data
-            if (error.find('Over Quota') != -1):
-                wx.MessageBox("Over quota! Data uploaded will be removed.", wx.MessageBoxCaptionStr, wx.STAY_ON_TOP | wx.OK)
+                    self.XMLName = node.data
+            if self.XMLName == -1:
+                time.sleep(1)
+                continue
             
-            if Debug: 
-                print error 
-            percentage = 120 #120 for 'error!'
-            lista = [self.observer, percentage]
+            else:
+                break
+            
+        if self.XMLName == -1 or overQuota == 1:
+            lista = [self.observer, 106]
             self.block.acquire()  
             UploadHandler.queue.put(lista)
             self.block.release()
+            
+            if Debug:
+                print error 
             #write a file used by builder to catch error and stop MSF upload
             errorFile = open(sys.path[0] + '\\ErrorFound.lhp', 'a')
             errorFile.write('Error in xmlupload service uploading VME: ' + self.vmeName + '.')
@@ -528,15 +552,9 @@ class UploadHandler:
                         os.remove(sys.path[0] + '\\' + self.msfListFile)
                         sys.exit(1)
             if(self.msfListFile != "noMsf"):
-                self.removeUploadedXml()
-            
-   
-  #          self.__removeSRBData(self.BinaryURI)
+                self.removeUploadedXml() 
             sys.exit(1)
-        for el in dom.getElementsByTagName("string"):
-            for node in el.childNodes:  
-                self.XMLName = node.data
-        pass
+            
     
         counter = 0
         if(self.msfListFile != 'noMsf' and str(self.id) != '-1'):
@@ -621,28 +639,53 @@ class UploadHandler:
         oldDir = os.getcwd()
         os.chdir(self.dirOutgoing)
         
+        lista = [self.observer, 107]
+        self.block.acquire()  
+        UploadHandler.queue.put(lista)
+        self.block.release()
+        
         if Debug:
             print "->" + self.proxyHost + "<-"
             print "->" + str(self.proxyPort) + "<-"
         
         instance = MtomUpload.MtomUpload()
-        try:
-            result = instance.Upload(filename, 'https://ws-lhdl.cineca.it/mafSRBUpload.cgi', self.proxyHost, self.proxyPort)
-        except:
-            if Debug:
-                print "--------Error calling mafSRBUpload.cgi-----------"
-            sys.exit(1)
-            
-        self.remoteChksum = result.chksum
-        self.remoteChksum = self.remoteChksum.lower()
-        if Debug:
-            print "Remote checksum: " + str(self.remoteChksum)
-        self.uri = result.uriFile
-        if Debug:
-            print "URI File: " + str(result.uriFile)
-        self.binarySendResult = True
-        os.chdir(oldDir)
         
+        fileSent = 0
+        for c in range(0,self.maxTry):
+            try:
+                result = instance.Upload(filename, 'https://ws-lhdl.cineca.it/mafSRBUpload.cgi', self.proxyHost, self.proxyPort)
+                fileSent = 1
+                break
+            except:
+                if Debug:
+                    print "--------Error calling mafSRBUpload.cgi-----------"
+                time.sleep(1)
+                continue
+                #sys.exit(1)
+                
+        if fileSent:   
+            lista = [self.observer, 109]
+            self.block.acquire()  
+            UploadHandler.queue.put(lista)
+            self.block.release()     
+            self.remoteChksum = result.chksum
+            self.remoteChksum = self.remoteChksum.lower()
+            if Debug:
+                print "Remote checksum: " + str(self.remoteChksum)
+            self.uri = result.uriFile
+            if Debug:
+                print "URI File: " + str(result.uriFile)
+            self.binarySendResult = True
+            os.chdir(oldDir)
+        else:
+            self.binarySendResult = False
+            lista = [self.observer, 108]
+            self.block.acquire()  
+            UploadHandler.queue.put(lista)
+            self.block.release()
+            sys.exit(1)
+        
+            
   #  def __removeSRBData(self,filename):
   #      
   #      oldDir = os.getcwd()
@@ -762,42 +805,41 @@ class UploadHandler:
         
     def GetHeuristicUploadSpeedEstimateInKBPerSecond(self, dataDirPath="."):
         
-        testFile = str(dataDirPath) + "\\vmeUploaderTestData\\uploadSpeedProbeData\\uploadSpeedProbeData.vtk"
-        testFileSize = os.stat(testFile).st_size
-        instanceURI = MtomUploadURI.MtomUploadURI()
-        serviceUrl = 'https://ws-lhdl.cineca.it/mafSRBUploadURI.cgi'
-        binaryURI = "NOT PRESENT"
-        freename = instanceURI.ListSrbDir(serviceUrl, self.proxyHost, self.proxyPort)
-        
-        if Debug:
-            print "testFile: " + testFile
-            print "freeName: " + freename
-            print "size: " + str(testFileSize)
+        try:
+            testFile = str(dataDirPath) + "\\vmeUploaderTestData\\uploadSpeedProbeData\\uploadSpeedProbeData.vtk"
+            testFileSize = os.stat(testFile).st_size
+            instanceURI = MtomUploadURI.MtomUploadURI()
+            serviceUrl = 'https://ws-lhdl.cineca.it/mafSRBUploadURI.cgi'
+            binaryURI = "NOT PRESENT"
+            freename = instanceURI.ListSrbDir(serviceUrl, self.proxyHost, self.proxyPort)
             
-        shutil.copyfile(testFile, freename)
-        instanceUP = MtomUpload.MtomUpload()
+            if Debug:
+                print "testFile: " + testFile
+                print "freeName: " + freename
+                print "size: " + str(testFileSize)
+                
+            shutil.copyfile(testFile, freename)
+            instanceUP = MtomUpload.MtomUpload()
+            
+            startT = time.time()
+            
         
-        startT = time.time()
-       
-        result = instanceUP.Upload(freename, 'https://ws-lhdl-dev.cineca.it:12443/mafSRBUpload.cgi', self.proxyHost, self.proxyPort)
+            result = instanceUP.Upload(freename, 'https://ws-lhdl-dev.cineca.it:12443/mafSRBUpload.cgi', self.proxyHost, self.proxyPort)
+            endT = time.time()
+            
+            tElapsed = endT - startT
+            
+            speed = testFileSize / tElapsed
+            
+            shutil.move(freename, testFile)
+
         
-        endT = time.time()
-        
-        tElapsed = endT - startT
-        
-        speed = testFileSize / tElapsed
-        
-        shutil.move(freename, testFile)
-        
-        checksum = result.chksum
-        uri = result.uriFile
-    
-        heuristicSpeedInBytes = speed
+            heuristicSpeedInBytes = speed
+        except:
+            heuristicSpeedInBytes = 1000
+            
         
         if Debug:
-            print "result: " + str(result)        
-            print "cheksum: " + str(checksum)
-            print "uri: " + str(uri)
             print "speed:" + str(heuristicSpeedInBytes)
         
         return heuristicSpeedInBytes
