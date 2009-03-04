@@ -60,6 +60,10 @@ class lhpAuthenticationControl:
         
         if Debug:
             print "Performing user authentication:"
+            
+         # timeout in seconds
+        self.Timeout = 30
+        socket.setdefaulttimeout(self.Timeout)
            
         try:
 
