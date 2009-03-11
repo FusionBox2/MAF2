@@ -123,7 +123,13 @@ class GuiPart(wx.Frame):
                                 
                     
                 if(lista[0].gaugePulse == 0 and lista[1] != -1):
-                   lista[0].gauge.SetValue(int(lista[1]))
+                   if lista[1] == 109: #binary sent
+                       lista[0].gauge.SetValue(85)
+                   elif lista[1] == 101: #sending xml file
+                       lista[0].gauge.SetValue(90)
+                   elif lista[1] != 107: #not to complete bar for "About to send binary file"
+                       lista[0].gauge.SetValue(int(lista[1]))
+                       
                    if len(lista) == 3:
                     remainingTime = round(float(lista[2]))
                     if remainingTime != -10:

@@ -471,7 +471,7 @@ class UploadHandler:
         
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
         ws.setCredentials(self.currentUser, self.currentPassword)
-        ws.setServer(self.urlServer)
+        ws.setServer("%s/%s" % (self.urlServer,self.XMLURI ))
         ws.ProxyURL = self.proxyHost
         ws.ProxyPort = self.proxyPort
         
@@ -484,10 +484,10 @@ class UploadHandler:
         for c in range(0,self.maxTry):
             
             try:
-                out = ws.run('xmlupload', self.XMLURI, self.vmeName)[1]
-            except:
+                out = ws.run('xmluploadDataresource', self.XMLURI, self.vmeName)[1]
+            except BaseException, e:
                 if Debug:
-                    print "-----------Error in xmlupload service------------"
+                    print "-----------Error in xmlupload service------------" + str(e)
                 time.sleep(1)     
                 continue 
 

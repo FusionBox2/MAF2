@@ -50,6 +50,27 @@ class xmlrpc_demoWS:
        </param>
        </params>
      </methodCall>'''% (kw['id'], kw['title'], kw['description'], string.replace(encodestring(kw['upload']),"\012",""))
+     
+        self.xmlUploadDataresource = \
+    '''<?xml version="1.0"?>
+     <methodCall>
+      <methodName>XMLUploadDataresource</methodName>
+       <params>
+       <param>
+        <value><string>%s</string></value>
+       </param>
+       <param>
+        <value><string>%s</string></value>
+       </param>
+       <param>
+        <value><string>%s</string></value>
+       </param>
+       <param>
+        <value><string>%s</string></value>
+       </param>
+       </params>
+     </methodCall>'''% (kw['id'], kw['title'], kw['description'], string.replace(encodestring(kw['upload']),"\012",""))
+
 
         self.xmlDownload = \
     '''<?xml version="1.0"?>
@@ -190,6 +211,8 @@ class xmlrpc_demoWS:
 
         if bod == 'xmlupload':
             body = self.xmlUpload
+        elif bod == 'xmluploadDataresource':
+            body = self.xmlUploadDataresource
         elif bod == 'xmldownload':
             body = self.xmlDownload
         elif bod == 'xmldownloadcheck':
@@ -241,6 +264,8 @@ class xmlrpc_demoWS:
               urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cj))
 
         urllib2.install_opener(self.opener)  
+        
+        
 
         if Debug: print "Connecting to URL: " + url
 
@@ -311,7 +336,18 @@ class xmlrpc_demoWS:
 
         args['listitems'] = ''
 
-        if command == 'xmlupload':
+        if command == 'xmluploadDataresource':
+            args['download'] = ''
+            f = file(filename,'rb')
+            args['upload'] = f.read()
+            #args['id'] = '' #f.name
+            args['id'] = f.name
+            args['title'] = title
+            args['description'] = description
+            args['filename'] = ''
+            f.close()
+            #self.setServer(ws.ServerURL + '/' + f.name)
+        elif command == 'xmlupload':
             args['download'] = ''
             f = file(filename,'rb')
             args['upload'] = f.read()
@@ -458,6 +494,6 @@ listsandbox -
     if Debug: print "---", filename
 
     ws = xmlrpc_demoWS()
-    if sys.argv[1] in ('xmlread','xmledit','gettitle'):
+    if sys.argv[1] in ('xmlread','xmledit','gettitle','xmluploadDataresource'):
         ws.setServer(ws.ServerURL + filename.split(',')[0])
     print ws.run(command, filename)
