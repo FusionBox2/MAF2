@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2009-02-23 13:29:32 $
-  Version:   $Revision: 1.71.2.14 $
+  Date:      $Date: 2009-03-26 17:16:13 $
+  Version:   $Revision: 1.71.2.15 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -145,7 +145,7 @@
 #include "lhpOpMultiscaleExplore.h"
 #include "lhpOpTextureOrientation.h"
 #include "lhpOpComputeTensor.h"
-
+#include "medOpCropDeformableROI.h"
 #include "mafOpValidateTree.h"
 
 #include "medOpImporterDicomXA.h"
@@ -397,7 +397,8 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
 	m_Logic->Plug(new mafOpVOIDensity("VOI Density"),"Measure");
   m_Logic->Plug(new mafOpReparentTo("Reparent to...  \tCtrl+R"),"Modify/Fuse");
   m_Logic->Plug(new lhpOpScaleDataset(),"Modify");
-  m_Logic->Plug(new lhpOpMove(),"Modify");    
+  m_Logic->Plug(new lhpOpMove(),"Modify");
+  m_Logic->Plug(new medOpCropDeformableROI(_("Masking")),_("Modify"));
   m_Logic->Plug(new mafOpImporterVMEDataSetAttributes("VME DataSet Attributes Adder"),"Modify");
   m_Logic->Plug(new medOpClassicICPRegistration("Register Surface"),"Modify/Fuse");
   m_Logic->Plug(new mmoAFSys("AFRefsys"),"Create/Derive");
