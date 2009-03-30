@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: psLoaderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2009-01-30 13:44:35 $
-  Version:   $Revision: 1.1.2.12 $
+  Date:      $Date: 2009-03-30 14:26:06 $
+  Version:   $Revision: 1.1.2.13 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -121,11 +121,7 @@
 #include "medOpExporterWrappedMeter.h"
 #include "medOpIterativeRegistration.h"
 #include "medOpCreateLabeledVolume.h"
-#include "lhpOpUploadVME.h"
-#include "lhpOpUploadMultiVME.h"
-#include "lhpOpEditTag.h"
 #include "lhpOpKeyczarIntegrationTest.h"
-#include "lhpOpDownloadVME.h"
 #include "medOpSurfaceMirror.h"
 #include "medOpImporterAnalogWS.h"
 #include "medOpMML.h"
@@ -143,7 +139,6 @@
 #include "lhpOpMultiscaleExplore.h"
 
 #include "mafOpValidateTree.h"
-
 #include "medOpImporterDicomXA.h"
 
 //temporary for testing
@@ -156,6 +151,18 @@
 #include "lhpVisualPipeSurfaceScalar.h"
 
 #include <vtkTimerLog.h>
+
+// VMEUploaderDownloader (Production)
+#include "lhpOpUploadVME.h"
+#include "lhpOpUploadMultiVME.h"
+#include "lhpOpEditTag.h"
+#include "lhpOpDownloadVME.h"
+
+// VMEUploaderDownloader Refactor Target
+#include "lhpOpUploadVMERefactor.h"
+#include "lhpOpUploadMultiVMERefactor.h"
+#include "lhpOpEditTagRefactor.h"
+#include "lhpOpDownloadVMERefactor.h"
 
 
 // TODO: REFACTOR THIS 
@@ -380,11 +387,7 @@ bool psLoaderApp::OnInit()
 //  m_Logic->Plug(new medOpIterativeRegistration("Iterative Registration"),"Modify/Fuse");
   m_Logic->Plug(new mafOpOpenExternalFile("Open with external program"),"Manage"); 
     // m_Logic->Plug(new medOpCreateLabeledVolume("Labeled Volume"),"Create/Derive");
-//  m_Logic->Plug(new lhpOpUploadVME("Upload VME"),"Manage");
-  m_Logic->Plug(new lhpOpUploadMultiVME("Upload VME"),"Manage");
-  m_Logic->Plug(new lhpOpEditTag("Edit Tag VME"),"Manage");
-  m_Logic->Plug(new lhpOpDownloadVME("Download VME"),"Manage");
-//  
+    
   m_Logic->Plug(new mafOpDecomposeTimeVarVME("Decompose Time"),"Create/Derive");
     // m_Logic->Plug(new mafOpLabelExtractor("Extract Label"),"Create/Derive");
 //  m_Logic->Plug(new lhpOpMultiscaleExplore("Multiscale Viewer"),"Manage");
@@ -392,7 +395,20 @@ bool psLoaderApp::OnInit()
 //  m_Logic->Plug(new lhpOpKeyczarIntegrationTest("Security Libraries Integration"),"Test");
 //
 //  
-//  
+//
+  // Upload Download VME (Production)  
+  m_Logic->Plug(new lhpOpUploadMultiVMERefactor("Upload VME"),"Manage");
+  m_Logic->Plug(new lhpOpEditTagRefactor("Edit Tag VME"),"Manage");
+  m_Logic->Plug(new lhpOpDownloadVMERefactor("Download VME"),"Manage");
+  // m_Logic->Plug(new lhpOpUploadVMERefactor("Upload VME"),"Manage");
+
+  // Upload Download VME Refactor Target
+  m_Logic->Plug(new lhpOpUploadMultiVMERefactor("Upload Multi VME Refactor"),"Devel");
+  m_Logic->Plug(new lhpOpEditTagRefactor("Edit Tag VME Refactor"),"Devel");
+  m_Logic->Plug(new lhpOpDownloadVMERefactor("Download Multi VME Refactor"),"Devel");
+  m_Logic->Plug(new lhpOpUploadVMERefactor("Upload VME Refactor"),"Devel");
+
+  //
   //-------------------------------------------------------------
 
   //------------------------- Views -------------------------

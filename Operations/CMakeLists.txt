@@ -3,6 +3,11 @@ PROJECT(lhpOperations)
 # Set your list of sources here.
 SET(PROJECT_SRCS
 	#to be moved in core; need to solve some linking problems
+	
+	#
+	# VMEUploaderDownloader (Production)
+	#
+
 	lhpFactoryTagHandler.cpp
 	lhpFactoryTagHandler.h
 	
@@ -18,17 +23,47 @@ SET(PROJECT_SRCS
 	lhpOpUploadVME.cpp
 	lhpOpUploadVME.h
 	
-	lhpOpEditTag.cpp
-	lhpOpEditTag.h
-	
-	lhpOpKeyczarIntegrationTest.cpp
-	lhpOpKeyczarIntegrationTest.h
-
 	lhpOpUploadMultiVME.cpp
 	lhpOpUploadMultiVME.h
 	
 	lhpOpDownloadVME.cpp
 	lhpOpDownloadVME.h
+	
+	lhpOpEditTag.cpp
+	lhpOpEditTag.h
+	
+	#
+	# VMEUploaderDownloader Refactor Target
+	#
+	
+	lhpFactoryTagHandlerRefactor.cpp
+	lhpFactoryTagHandlerRefactor.h
+	
+	lhpTagHandlerRefactor.cpp
+	lhpTagHandlerRefactor.h
+	
+	lhpOpUploadVMERefactor.cpp
+	lhpOpUploadVMERefactor.h
+	
+	lhpOpUploadMultiVMERefactor.cpp
+	lhpOpUploadMultiVMERefactor.h
+	
+	lhpOpDownloadVMERefactor.cpp
+	lhpOpDownloadVMERefactor.h
+	
+	lhpOpEditTagRefactor.cpp
+	lhpOpEditTagRefactor.h
+	
+	#######################################
+	
+	#
+	# Google KeyCZar Integration Test
+	#
+
+	lhpOpKeyczarIntegrationTest.cpp
+	lhpOpKeyczarIntegrationTest.h
+
+	#######################################
 	
 	#
 	lhpOpBonemat.cpp
