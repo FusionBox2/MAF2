@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<MSF Version="2.0">
+  <Root Crypting="0" Id="-1" MaxNodeId="12" Name="root" Type="mafVMERoot">
+    <Attributes NumberOfItems="2">
+      <Item NumberOfTags="0" Type="mafTagArray">
+        <Name>LHDL</Name>
+      </Item>
+      <Item NumberOfTags="3" Type="mafTagArray">
+        <Name>TagArray</Name>
+        <TItem Mult="1" Name="APP_STAMP" Type="STR">
+          <TItem>
+            <TC>LHPBuilder</TC>
+          </TItem>
+        </TItem>
+        <TItem Mult="1" Name="Msf_metadata_user_frustration" Type="NUM">
+          <TItem>
+            <TC>1000000</TC>
+          </TItem>
+        </TItem>
+        <TItem Mult="1" Name="Tree_quality_check" Type="STR">
+          <TItem>
+            <TC>It often crashes :-)</TC>
+          </TItem>
+        </TItem>
+      </Item>
+    </Attributes>
+    <Links NumberOfLinks="0"/>
+    <Children NumberOfItems="1">
+    </Children>
+    <MaxItemId>48</MaxItemId>
+    <Transform TimeStamp="0">1 0 0 0 
+0 1 0 0 
+0 0 1 0 
+0 0 0 1 
+</Transform>
+  </Root>
+</MSF>
