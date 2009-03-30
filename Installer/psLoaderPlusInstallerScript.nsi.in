@@ -133,7 +133,6 @@ Section "create product directory structure" SEC01
   Delete "$SMPROGRAMS\b3c_software\psLoaderPlus\psLoaderPlus.lnk"
 
   RMDir /R "$INSTDIR\VMEUploaderDownloader"
-  RMDir /R "$INSTDIR\VMEUploaderDownloaderRefactor"
   RMDir /R "$INSTDIR\ASCIIParser"
   RMDir /R "$INSTDIR\CDBParser"
   RMDir "$INSTDIR\Splash"
@@ -195,10 +194,6 @@ Section "create product directory structure" SEC01
   CreateDirectory "$INSTDIR\VMEUploaderDownloader"
   SetOutPath "$INSTDIR\VMEUploaderDownloader"
   File /R  "@LHPBUILDER_INSTALLER_DIR_WIN@\..\VMEUploaderDownloader\"
-
-  CreateDirectory "$INSTDIR\VMEUploaderDownloaderRefactor"
-  SetOutPath "$INSTDIR\VMEUploaderDownloaderRefactor"
-  File /R  "@LHPBUILDER_INSTALLER_DIR_WIN@\..\VMEUploaderDownloaderRefactor\"
   
   ;Fat Installer with Python and WxPython   
   !ifdef _BUILD_FAT_INSTALLER_ON
