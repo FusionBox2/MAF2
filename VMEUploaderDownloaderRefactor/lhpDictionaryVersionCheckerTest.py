@@ -36,10 +36,14 @@ class lhpDictionaryVersionCheckerTest(unittest.TestCase):
         print " current directory is: " + curDir
           
     
-    def estRun(self):
-            
-        lhpDictionaryVersionChecker.run()
-        
+    def testRunLHPBuilder(self):            
+        lhpDictionaryVersionChecker.run("LHPBuilder")
+    
+    def testRunPSLoader(self):        
+        lhpDictionaryVersionChecker.run("PSLoader")
+    
+    def testRunUnknownApp(self):        
+        lhpDictionaryVersionChecker.run("pippo")
     
     def testGetDictionaryCreationDate(self):
         dd = lhpDictionaryVersionChecker.lhpDictionaryVersionChecker()

@@ -13,19 +13,24 @@ class App(wx.App):
         wx.InitAllImageHandlers()
         self.user = sys.argv[0]
         self.password = sys.argv[1]
-        self.main = downloadSelectorFrame.downloadSelectorFrame(None,-1,title='Download from Basket of ' + self.user ,app = self)
+        self.fromSandbox = sys.argv[2]
+        
+        if  int(self.fromSandbox) == 0:
+            self.main = downloadSelectorFrame.downloadSelectorFrame(None,-1,title='Download from Basket of ' + self.user ,app = self)
+        else:
+            self.main = downloadSelectorFrame.downloadSelectorFrame(None,-1,title='Download from Sandbox of ' + self.user ,app = self)
+            
         self.main.Show()
         self.SetTopWindow(self.main)
         return 1
 
 def main():
-    if(len(sys.argv) != 3):
-       sys.argv = []
-       sys.argv.append("Program")
-       sys.argv.append("testuser")
-       sys.argv.append("GRDPt8")
+    usage_msg = '''Usage: %s user, password, fromBasket''' % sys.argv[0]
+    if(len(sys.argv) != 4):
+       print 'Error :\n' + usage_msg
+       sys.exit(1)
        
-    if(len(sys.argv) == 3):
+    if(len(sys.argv) == 4):
         sys.argv = sys.argv[1:]
         #print sys.argv
         application = App(0)

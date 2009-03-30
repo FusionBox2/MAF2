@@ -1,3 +1,4 @@
+from Debug import Debug
 def retriveProxyParameters():
   proxyHost = ""
   proxyPort = 0
@@ -11,6 +12,7 @@ def retriveProxyParameters():
   except:
       pass
 
-  print proxyHost
-  print proxyPort
+  if Debug:
+      print proxyHost
+      print proxyPort
   return (proxyHost,proxyPort)

@@ -3,50 +3,57 @@
 # code is changing very fast so don't rely on it :P
 # author: Stefano Perticoni
 #-----------------------------------------------------------------------------
-
 from Debug import Debug
-from xml.dom.minidom import Childless, Node
-from test.test_new import argcount
-import this
+from wx.lib.wordwrap import wordwrap
 import os
 import csv
 import  wx
 import  wx.gizmos   as  gizmos
-import  images
+import time
 import lhpXMLDictionaryParser
-import msfParser
 from xml.dom import minidom
-import lhpMetadataEditorTextEntryDialog#----------------------------------------------------------------------
+import lhpMetadataEditorTextEntryDialog
 
 class MetadataEditorPanel(wx.Panel):
     def __init__(self, parent, log, arg):
         
-         
-        # tegs in iput vme csv        
+        busy = wx.BusyInfo("One moment please, populating gui..")
+        
         self.TagsToBeSavedList = []
-        self.TagsThatCanBeEditedDictionary = {}
-        
-        # tags in tree but not in input vme csv 
-        # for example this could be tags erroneusly filled by the factory
+        self.TagsThatCanBeEditedDictionary = {}        
         self.InTreeButNotInUnhandledPlusManual = []
+        self.TagsToBeSkippedFromTreeRendering = ["L0000"]
+        self.FolderToBeSkippedFromTreeRendering = ["L0000_resource_service"]
+        self.ManualTagDefaultValue = "enter a value"
         
-        # load msf infos
+        self.DictionariesParentNodes = {\
+                  "L0000_resource_data_Source_MASource":"MA",\
+                  "L0000_resource_data_Source_DicomSource":"Dicom",\
+                  "L0000_resource_data_Source_MicroCTSource":"MicroCT",\
+                  "L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy":"FunctionalAnatomy"\
+                  }
+        
+        self.AvailableDictionaries = {}
+        
         curDir = os.getcwd()        
-        print " current directory is: " + curDir
-        
+        if Debug:
+            print " current directory is: " + curDir
+
                 
-        self.inputUnhandledPlusManualCSVFileName = os.getcwd() + r'\\' + str(arg[0]) # to be used to save on exit    
-        print self.inputUnhandledPlusManualCSVFileName
+        self.inputUnhandledPlusManualCSVFileName = str(arg[2]) + str(arg[0]) 
+        
+        if Debug:
+            print self.inputUnhandledPlusManualCSVFileName
         assert(os.path.exists(self.inputUnhandledPlusManualCSVFileName))
         
-        if len(arg) ==  2:
+        if len(arg) ==  3:
             self.OutputCSVFileName  = self.inputUnhandledPlusManualCSVFileName
-        elif len(arg) ==  3:
+        elif len(arg) ==  4:
             self.OutputCSVFileName = os.getcwd() + r'\\' + str(arg[2])
             
         
-        # read unhandledPlusManual tags ie manual tags plus
-        # tags the factory cannot fill (factory methods not yet implemented)
+        # read unhandledPlusManual tags ie manual tags plus tags the factory cannot fill
+        # so the user is required to do so (for factory methods not yet implemented)
         unhandledPlusManualTagsReader = csv.reader(open(self.inputUnhandledPlusManualCSVFileName, "r"))
         
         self.unhandledPlusManualDict = {}
@@ -55,15 +62,15 @@ class MetadataEditorPanel(wx.Panel):
             for row in unhandledPlusManualTagsReader:
                 self.unhandledPlusManualDict[row[0].strip()] = str(row[1].strip())
                 
-        except csv.Error, e:
+        except csv.Error:
 #            sys.exit('file %s, line %d: %s' % (filename, unhandledPlusManualTagsReader.line_num, e))
              pass
                    
-        unhandledPlusManualTagsList = sorted(self.unhandledPlusManualDict.keys())
         
         # read handledAutoTagsList.csv ie tags filled from the factory to be displayed read only        
         self.factoryFilledTagsCSVFileName = os.getcwd() + r'\\' + "handledAutoTagsList.csv"     
-        print self.factoryFilledTagsCSVFileName
+        if Debug:
+            print self.factoryFilledTagsCSVFileName
         assert(os.path.exists(self.factoryFilledTagsCSVFileName))
        
         factoryFilledTagsReader = csv.reader(open(self.factoryFilledTagsCSVFileName, "r"))
@@ -74,14 +81,15 @@ class MetadataEditorPanel(wx.Panel):
             for row in factoryFilledTagsReader:
                 self.factoryFilledTagsDict[row[0].strip()] = str(row[1].strip())
                 
-        except csv.Error, e:
+        except csv.Error:
 #            sys.exit('file %s, line %d: %s' % (filename, factoryFilledTagsReader.line_num, e))
              pass
                    
-        factoryFiledTagsList = sorted(self.factoryFilledTagsDict.keys())
         
         # load xml dictionary (already assembled if composed)
         self.inputXMLDictionaryFileName = os.getcwd() + r'\\' + str(arg[1]) # to be used to save on exit    
+ 
+        #time.sleep(5)
         assert(os.path.exists(self.inputXMLDictionaryFileName))
         
         self.lhpXMLDictionaryParserInstance = lhpXMLDictionaryParser.lhpXMLDictionaryParser()
@@ -93,7 +101,6 @@ class MetadataEditorPanel(wx.Panel):
         self.log = log
         wx.Panel.__init__(self, parent, -1)
         
-        # wx.Panel.SetSize(1024,768)
         self.Bind(wx.EVT_SIZE, self.OnSize)
         
         
@@ -136,7 +143,6 @@ class MetadataEditorPanel(wx.Panel):
         for columnName in interval:     
             self.tree.AddColumn(str(columnName))
                     
-        # create some columns         
         self.tree.SetMainColumn(0) # the one with the tree in it...
         self.tree.SetColumnWidth(0, 250)
 
@@ -146,7 +152,10 @@ class MetadataEditorPanel(wx.Panel):
         self.tree.SetColumnWidth(1, 150)
         self.tree.SetColumnWidth(2, 150)
         self.tree.SetColumnWidth(10, 400)      
-  
+        
+        # self.tree.SelectItem()
+        # self.tree.EnsureVisible()
+        
         self.root = self.tree.AddRoot("LHDL Master Dictionary")
         self.tree.SetItemImage(self.root, self.folderImageID)
         
@@ -156,16 +165,36 @@ class MetadataEditorPanel(wx.Panel):
         self.tree.GetMainWindow().Bind(wx.EVT_RIGHT_UP, self.OnRightUp)
         self.tree.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.OnActivate)
     
-        print """self.InTreeButNotInUnhandledPlusManual: 
+        if Debug:
+            print """self.InTreeButNotInUnhandledPlusManual: 
 tags in tree but not in UnhandledPlusManual: should be removed from the factory"""
         
         for item in self.InTreeButNotInUnhandledPlusManual:
-            print item
+            if Debug:
+                print item
         
+    def OnMicroCT(self):
+        itemId = self.AvailableDictionaries["MicroCT"]
+        self.tree.SelectItem(itemId)
+        self.tree.EnsureVisible(itemId)
+    
+    def OnMA(self):
+        itemId = self.AvailableDictionaries["MA"]
+        self.tree.SelectItem(itemId)
+        self.tree.EnsureVisible(itemId)
+    
+    def OnFunctionalAnatomy(self):
+        itemId = self.AvailableDictionaries["FunctionalAnatomy"]
+        self.tree.SelectItem(itemId)
+        self.tree.EnsureVisible(itemId)
+        
+    def OnDicom(self):
+        itemId = self.AvailableDictionaries["Dicom"]
+        self.tree.SelectItem(itemId)
+        self.tree.EnsureVisible(itemId)
         
     def SaveOnExit(self):
         
-        rootId = self.tree.GetRootItem()
         childId = None
         listValuesFromTree = []
         for tag in self.TagsToBeSavedList:
@@ -184,16 +213,18 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
         setDiff = unhPlusManualSet.difference(tagsToBeSavedSet)
         setDiff2 = tagsToBeSavedSet.difference(unhPlusManualSet)
         
-        print setDiff
-        print setDiff2
+        if Debug:
+            print setDiff
+            print setDiff2
         
         toBeSaved = len(self.TagsToBeSavedList) 
         unhandledPlusMan = len(self.unhandledPlusManualDict.keys())
-        print "unhandledPlusManual list lenght: " + str(unhandledPlusMan)
-        print "toBeSaved dict size: "  + str(toBeSaved)
+        if Debug:
+            print "unhandledPlusManual list lenght: " + str(unhandledPlusMan)
+            print "toBeSaved dict size: "  + str(toBeSaved)
         
-        print "unhandledPlusManualSet size: " + str(len(unhPlusManualSet))
-        print "toBeSavedSet size: "  + str(len(tagsToBeSavedSet))
+            print "unhandledPlusManualSet size: " + str(len(unhPlusManualSet))
+            print "toBeSavedSet size: "  + str(len(tagsToBeSavedSet))
         
 #        assert(toBeSaved == unhandledPlusMan)
         
@@ -213,7 +244,8 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
         tagName = self.tree.GetItemText(evt.GetItem())
         selectedTag = self.tree.GetItemText(evt.GetItem(), 2)
         selectedTagValue = self.tree.GetItemText(evt.GetItem(), 1)
-        print selectedTag
+        if Debug:
+            print selectedTag
         if self.TagsThatCanBeEditedDictionary.has_key(selectedTag):
         
             dlg = lhpMetadataEditorTextEntryDialog.Dialog(self, -1, tagName, size=(350, 200),
@@ -227,21 +259,25 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
             if val == wx.ID_OK:
                self.log.WriteText("You pressed OK\n")
                if dlg.TextControl: 
-                    print "assigning: " + dlg.TextControl.GetValue()
+                    if Debug:
+                        print "assigning: " + dlg.TextControl.GetValue()
                     self.tree.SetItemText(evt.GetItem(),dlg.TextControl.GetValue(), 1)
             
             else:
                self.log.WriteText("You pressed Cancel\n")
                if dlg.TextControl: 
-                    print "discarding: " + dlg.TextControl.GetValue()
+                    if Debug:
+                        print "discarding: " + dlg.TextControl.GetValue()
     
             dlg.Destroy()
        
         elif self.tree.GetItemImage(evt.GetItem()) == self.factoryTagImageID:
             
-            dlg = wx.MessageDialog(self,  'You are not allowed to edit me, I`m factory filled :D',
-                               'Warning',
-                               wx.OK | wx.ICON_WARNING
+            
+            dlg = wx.MessageDialog(self,  wordwrap(selectedTagValue\
+                               ,350, wx.ClientDC(self)),\
+                               'Factory tag',
+                               wx.OK | wx.ICON_ASTERISK
                                #wx.YES_NO | wx.NO_DEFAULT | wx.CANCEL | wx.ICON_INFORMATION
                                )
             dlg.ShowModal()
@@ -279,20 +315,54 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
         msfTagName =  pi.GetVMETagArrayTagNameFromNode(xmlDictNode)  
         
         msfTagName = msfTagName.strip()
+            
+        tagsSkipList = self.TagsToBeSkippedFromTreeRendering
+        
+        if  len(tagsSkipList) != 0 and msfTagName in tagsSkipList:
+            tagsSkipList.remove(msfTagName)
+            xmlDictNode = xmlDictNode.childNodes[0]
+            msfTagName =  pi.GetVMETagArrayTagNameFromNode(xmlDictNode)  
+            guiTreeNodeName = pi.GetNodeName(xmlDictNode)
+                
+        foldersSkipList = self.FolderToBeSkippedFromTreeRendering
+        
+        if  len(foldersSkipList) != 0 and msfTagName in foldersSkipList:
+            print  " removing: " + msfTagName
+            foldersSkipList.remove(msfTagName)
+            xmlDictNode = xmlDictNode.nextSibling
+            msfTagName =  pi.GetVMETagArrayTagNameFromNode(xmlDictNode)  
+            guiTreeNodeName = pi.GetNodeName(xmlDictNode)
+            
+            return
         
         msfTagValue = ""
+        
         
         assert isinstance(xmlDictNode , minidom.Node)
        
         img = None
-        if xmlDictNode.hasChildNodes():
-            # GROUPING NODE
+        # render tag node as folder
+        if pi.GetValueType(xmlDictNode) == "tag": 
             msfTagValue = " "
             img = self.folderImageID
+        
+        # manual nodes
         elif self.unhandledPlusManualDict.has_key(msfTagName):
             msfTagValue = self.unhandledPlusManualDict[msfTagName]
             img = self.manualTagImageID
             self.TagsThatCanBeEditedDictionary[msfTagName] = ""
+            
+            # apply default value for boolean nodes
+            if pi.GetValueType(xmlDictNode) == "bool":
+                               
+               if str(msfTagValue) == str(self.ManualTagDefaultValue):
+                  newValueFromDefaultColumn = str(pi.GetDefaultValue(xmlDictNode))
+                          
+                  if newValueFromDefaultColumn != "None":
+                      
+                      msfTagValue = newValueFromDefaultColumn
+       
+        # factory filed node
         elif self.factoryFilledTagsDict.has_key(msfTagName):
             msfTagValue = self.factoryFilledTagsDict[msfTagName]
             img = self.factoryTagImageID
@@ -300,7 +370,8 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
             msfTagValue = str(msfTagName) + " NOT FOUND IN UNHPLUSMAN AND FACTORY FILLED!!!!!!! \
             CHECK FOR THIS STRANGE BEHAVIOR!!!!!"
             return
-                 
+        
+                  
         attrDict =  pi.GetAttributesDictionary(xmlDictNode)
         
         columnNames = pi.DictionaryColumnLabels.irange(pi.DictionaryColumnLabels.ValueType \
@@ -308,11 +379,16 @@ tags in tree but not in UnhandledPlusManual: should be removed from the factory"
          
         childId = self.tree.AppendItem(guiTreeParent, str(guiTreeNodeName),img)  
         
+        if self.DictionariesParentNodes.has_key(msfTagName):
+            if xmlDictNode.hasChildNodes():
+                self.AvailableDictionaries[self.DictionariesParentNodes[msfTagName]] = childId
+        
         if self.unhandledPlusManualDict.has_key(msfTagName):               
             self.TagsToBeSavedList.append([msfTagName, msfTagValue, childId])
         
         elif self.factoryFilledTagsDict.has_key(msfTagName):
-            print "I`m " + str(msfTagName) + " The factory was so kind to fill me :D!"
+            if Debug:
+                print "I`m " + str(msfTagName) + " The factory was so kind to fill me :D!"
         else:
            
             # not in unhandledPlusManual
@@ -346,9 +422,18 @@ def execute(frame, nb, log,arg):
 
 
 if __name__ == '__main__':
+    # USAGE lhpMetadataEditor argv0 argv1 argv2 arg3
+    # arg[0]: input csv file name
+    # arg[1]: input xml dictionary file name
+    # arg[2]: csv file path (Cache Directory)
+    # arg[3]: if present output generated csv  will be written to that file otherwise
+    # input csv will be used 
     
+    # a file named handledAutoTagsList.csv must be present in the same dir to gather auto filled tags
+    # (refactor note: this file name could be passed as parameters)
+   
     import sys,os
     import runLHPMetadataEditor
-    # list: ['D:\\vapps_merge_target\\LHPBuilder_Parabuild_Binary\\VMEUploaderDownloader\\lhpMetadataEditor.py'
-    print sys.argv[1]     # , 'Surface_Parametric_id18_tag.csv']
+          
     runLHPMetadataEditor.main(['', os.path.basename(sys.argv[0])] + sys.argv[1:])
+

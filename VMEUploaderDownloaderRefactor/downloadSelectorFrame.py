@@ -9,7 +9,14 @@ import listBasket
 class downloadSelectorFrame(wx.Frame):
     def __init__(self,parent,id = -1,title='',pos = wx.Point(1,1),size = wx.Size(410,210),style = wx.DEFAULT_FRAME_STYLE,name = 'frame', app = None):
         self.App = app
-        self.lBasket = listBasket.listBasket()
+        if title.find('Sandbox') != -1:
+            self.fromSandbox = 1
+        else:
+            self.fromSandbox = 0          
+                
+                
+            
+        self.lBasket = listBasket.listBasket(self.fromSandbox)
         self.lBasket.SetCredentials(self.App.user, self.App.password)
         pre=wx.PreFrame()
         self.OnPreCreate()

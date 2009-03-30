@@ -3,6 +3,7 @@
 import threading
 from time import time, ctime, sleep
 import random
+from Debug import Debug
 
 class CustomThread(threading.Thread):
    
@@ -19,8 +20,10 @@ class CustomThread(threading.Thread):
         #pass
         
     def run(self):
-        print 'starting', self.name, 'at:', ctime(time())      
+        if Debug:
+            print 'starting', self.name, 'at:', ctime(time())      
         self.res = apply(self.func, self.args)
              
-        print self.name, 'finished at:', ctime(time())
+        if Debug:
+            print self.name, 'finished at:', ctime(time())
         #print self.name, 'result :' , self.getResult()

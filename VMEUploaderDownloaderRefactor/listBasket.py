@@ -2,12 +2,14 @@ from webServicesClient import xmlrpcDemoWS
 import xml.dom.minidom as xd
 import os, time
 from lhpDefines import *
+from Debug import Debug
 
 class listBasket:
-    def __init__(self):
+    def __init__(self, fromSandbox):
         self.IdList = [] #create original list of basket vmes
         self.IdListSelected = [] #this list will be copied from handle object
         self.fileName = "ToDownload.txt"
+        self.fromSandbox = fromSandbox
         self.currentUser = ''
         self.currentPassword = ''
         self.Result = None
@@ -27,18 +29,24 @@ class listBasket:
         
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
         ws.setServer('https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2')
+        #ws.setServer('http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2')
         ws.setCredentials(self.currentUser, self.currentPassword)
         ws.ProxyURL = self.proxyHost
         ws.ProxyPort = self.proxyPort
-        #print "->"+ self.currentUser + "<-"
-        #print "->"+ self.currentPassword + "<-"
-        print "->"+ ws.ProxyURL + "<-"
-        print "->"+ str(ws.ProxyPort) + "<-"
+
+
+        if Debug:
+            print "->"+ ws.ProxyURL + "<-"
+            print "->"+ str(ws.ProxyPort) + "<-"
         
         try:
-            self.Result = ws.run('listbasket')[1]
+            if  self.fromSandbox == 0:
+                self.Result = ws.run('listbasket')[1]
+            else:
+                self.Result = ws.run('listsandbox')[1] 
+                
         except Exception, e:
-             print "ERRORE %s" % str(e)
+             print "ERROR %s" % str(e)
         self.__createListFromReultingXML()
         #print self.IdList
         pass
@@ -73,7 +81,7 @@ class listBasket:
         pass
 
 def test():
-    lb = listBasket()
+    lb = listBasket(0)
     lb.getListFromBasket()
     print "Id List: " + str(lb.IdList)
 

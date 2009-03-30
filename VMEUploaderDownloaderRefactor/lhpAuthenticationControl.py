@@ -4,6 +4,8 @@
 # author: Stefano Perticoni <s.perticoni@scsolutions.it>
 #-----------------------------------------------------------------------------
 
+from webServicesClient import xmlrpcDemoWS
+
 import httplib, urlparse, string
 from base64 import encodestring, decodestring
 
@@ -13,28 +15,21 @@ import StringIO
 from datetime import *
 from time import *
 
+import socket
 import os
 
 import urllib, urllib2, base64, re, os, cookielib, sys
 from HttpsProxy import *
 
+Debug = 1
+
 class lhpAuthenticationControl:
       
     def __init__(self, userName = "", password = ""):
-        
-        # URL
-        self.Host = "www.biomedtown.org"
-        self.Repository = ""
-
-        self.AuthenticationHTMLPageSelector = "https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2"
-        self.RemoteWarningPage = r"https://www.biomedtown.org/biomed_town/LHDL/users/swclient/DictionaryCheck/"
-        
+                
         # authentication
         self.Username = userName
         self.Password = password
-
-        #result
-        self.AuthenticationHTMLPageFileName = "AuthenticationControlHTMLPage.htm"    
 
         # proxy
         self.ProxyURL = ''
@@ -52,13 +47,7 @@ class lhpAuthenticationControl:
         """ 
            Authentication for user and password
         """
-        
-        print "Connecting to self.Host: " + self.Host            
-        print "Retrieving: " + self.AuthenticationHTMLPageSelector
-        
-        # build opener
-        self.cj = cookielib.CookieJar()
-        
+                 
         proxy_url = self.ProxyURL
         proxy_port = self.ProxyPort        
         
@@ -67,80 +56,37 @@ class lhpAuthenticationControl:
         if proxy_url != '' and proxy_port != '':
             
             if Debug:
-                print "You are using proxy: " + p
-
-            self.opener = \
-              urllib2.build_opener(
-              ConnectHTTPHandler(proxy=p),
-              ConnectHTTPSHandler(proxy=p),
-              urllib2.HTTPCookieProcessor(self.cj))
-        else:
-            self.opener = \
-              urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cj))
-
-
-        urllib2.install_opener(self.opener)  
+                print "You are using proxy: " + p  
         
-        print "Connecting to self.Host: " + self.Host            
-        print "Retrieving: " + self.AuthenticationHTMLPageSelector 
-        
-        url = self.AuthenticationHTMLPageSelector 
-
-        req = urllib2.Request(url)
-
-        # Basic authentication code
-        base64string = encodestring('%s:%s' % (self.Username, self.Password))[:-1]
-        authheader =  "Basic %s" % base64string
-        req.add_header("Authorization", authheader)
-
-        # open the url
-        fd = urllib2.urlopen(req)
-       
-        file = open(self.AuthenticationHTMLPageFileName, 'w' )       
-        for content in fd:
-            file.write(content)
-        file.close()
-
         if Debug:
-            f2 = open(self.AuthenticationHTMLPageFileName , 'r')
-            for line in f2:
-                print line
-            f2.close()
-        
-        diskFile = open(self.AuthenticationHTMLPageFileName, 'r')
-        file = StringIO.StringIO()
-        fileLinesNumber = 0
-        # read all the file in memory
-        for curr in diskFile.readlines() :
-            fileLinesNumber += 1
-            file.write(curr)
-        
-        if Debug:           
-            print "Input HTML file contains: " + str(fileLinesNumber) + " lines" 
-        
-        # go to the beginning of file
-        file.seek(0)
-        
-        parsedLineNumber = 0
-         
-        # parse the file structure and gather informations
-        #
-        result = True
-        while 1:
-            # file first-line
-            line = file.readline() 
-            if re.search("You are not authorized to access this resource.", line):
-              result = False
-  
-            if not line:
-              break
-        
-        return result
+            print "Performing user authentication:"
             
+         # timeout in seconds
+        self.Timeout = 30
+        socket.setdefaulttimeout(self.Timeout)
+           
+        try:
+
+            ws = xmlrpcDemoWS.xmlrpc_demoWS()
+            ws.setServer("https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/")
+            ws.setCredentials(self.Username , self.Password)
+            
+            if proxy_url != '' and proxy_port != '':
+                ws.setProxy(proxy_url, proxy_port)
+                
+            res = "<?xml version='1.0'?>\n<methodResponse>\n<params>\n<param>\n<value><boolean>1</boolean></value>\n</param>\n</params>\n</methodResponse>\n"
+            out = ws.run('authservice')
+           
+        except urllib2.URLError:
+            
+            print "Authorization problem!" 
+            print "Please check your connection settings!"
+            return False
+        
+        return True          
         
 def run(userName, password, proxyURL = '', proxyPort = ''):                                            
     
-    # get the dictionary creation date
     auth = lhpAuthenticationControl(userName, password)
     auth.ProxyURL = proxyURL
     auth.ProxyPort = proxyPort

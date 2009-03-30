@@ -1,5 +1,5 @@
 """ A  basic widget for showing the progress being made in a task. """
-# $Id: ProgressBarViewTk.py,v 1.1 2009-03-30 14:23:42 ior01 Exp $
+# $Id: ProgressBarViewTk.py,v 1.1.2.1 2009-03-30 15:26:31 ior01 Exp $
 
 # Code is derived from:
 # http://www.faqts.com/knowledge_base/view.phtml/aid/2718/fid/264

@@ -4,6 +4,7 @@
 # python clnt.py server_address port_number
 import socket # networking module
 import sys
+from Debug import Debug
 
 # create Internet TCP socket
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -24,17 +25,20 @@ if (modality == "UPLOAD"):
     withChild = sys.argv[11] #vme with child (UPLOAD)
     msfListFile = sys.argv[12] #file for upload rollback (UPLOAD)
     XMLURI = sys.argv[13] #XML resource URI (UPLOAD)
-
+    isLast = sys.argv[14] #is last VME?(UPLOAD)
             
     name = ""
     count = 0
     for i in sys.argv:
-      if(count > 13):
+      if(count > 14):
         if(name == ""):
           name = i
         else:
           name = name + ' ' + i #vme name if UPLOAD
       count = count + 1
+      
+else:
+    isLastDown = sys.argv[11] #is last VME?(DOWNLOAD)
       
 
 
@@ -46,13 +50,14 @@ s.connect((host, port))
 
 # compose message
 if (modality == "UPLOAD"):
-    k = modality + ' ' + id + ' ' + msf + ' ' + user + ' ' + password + ' ' + urlServer + ' '  + originalId + ' ' + hasLink + ' ' + withChild + ' ' + msfListFile + ' ' + XMLURI + ' ' + name
+    k = modality + ' ' + id + ' ' + msf + ' ' + user + ' ' + password + ' ' + urlServer + ' '  + originalId + ' ' + hasLink + ' ' + withChild + ' ' + msfListFile + ' ' + XMLURI + ' ' + isLast + ' ' + name
 else:
-    k = modality + ' ' + id + ' ' + msf + ' ' + user + ' ' + password + ' ' + urlServer + ' '  + originalId + ' ' + hasLink
+    k = modality + ' ' + id + ' ' + msf + ' ' + user + ' ' + password + ' ' + urlServer + ' '  + originalId + ' ' + hasLink + ' ' + isLastDown
      
 s.sendall(k) # send k to server
 # if stop signal, then leave loop
 v = s.recv(1024) # receive v from server (up to 1024 bytes)
-print v
+if Debug:
+    print v
 
 s.close() # close socket

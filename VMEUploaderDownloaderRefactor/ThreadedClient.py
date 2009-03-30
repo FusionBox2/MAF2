@@ -19,9 +19,11 @@ import random
 import Queue
 import UploadHandler, DownloadHandler
 from webServicesClient import xmlrpcDemoWS
+from Debug import Debug
 import xml.dom.minidom as xd
 from lhpDefines import *
 import thread
+import msvcrt
 import Server
 import Lock
 import sys, os
@@ -44,20 +46,27 @@ class ThreadedClient:
         self.periodicProcedure = periodicProcedure
         #create server
         thread.start_new_thread(Server.createServer,(self,self.port,1))
-        print "create server"
+        if Debug:
+            print "create server"
         #lock file
         self.lock = Lock.Lock(sys.path[0] + "\\activeLock.lhp")
-        print "create lock"
+        if Debug:
+            print "create lock"
         # Create the queue
         self.queue = Queue.Queue()
 
         # Set up the GUI part
         guiFactory = GuiFactory.GuiFactory()
         self.gui = (guiFactory.createGui(stringAppType))(master, self.queue, self.endApplication)
-        print "create gui"
+        if Debug:
+            print "create gui"
         # Set up the thread to do asynchronous I/O
         # More can be made if necessary
         
+        if(os.path.exists(sys.path[0] + '\\status.txt')):
+           os.remove(sys.path[0] + '\\status.txt')
+           if Debug:
+               print "status.txt removed" 
 
         # Start the periodic call in the GUI to check if the queue contains
         # anything
@@ -65,11 +74,11 @@ class ThreadedClient:
 
     def periodicCall(self):
         """
-        Check every 100 ms if there is something new in the queue.
+        Check every 1000 ms if there is something new in the queue.
         """
         if(self.periodicProcedure):        
             self.gui.processIncoming()
-            self.periodicProcedure(100, self.periodicCall)
+            self.periodicProcedure(1000, self.periodicCall)
         
     def createThread(self, tuplaFromServer):
         #now is only implemented update
@@ -86,7 +95,8 @@ class ThreadedClient:
         #8 is withChild (UPLOAD)
         #9 file for upload rollback (UPLOAD)
         #10 is XML resource URI (UPLOAD)
-        #11 is vme name (UPLOAD)
+        #11 is last VME?(UPLOAD)
+        #12 is vme name (UPLOAD)
         
         if(tuplaFromServer[0] == "UPLOAD"):
            self.createThreadForUpdate(tuplaFromServer)
@@ -107,11 +117,12 @@ class ThreadedClient:
         #8 is withChild
         #9 file for upload rollback (UPLOAD)        
         #10 is XML resource URI
-        #11 is vme name
+        #11 is last VME?(UPLOAD)
+        #12 is vme name
         
         self.gui.createBar(tuplaFromServer[0])
-        self.gui.createLabel(tuplaFromServer[11]) #tupla[10] is vme name         
-        self.threads.append(CustomThread.CustomThread(func=self.workerThreadUpload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[2], tuplaFromServer[1],tuplaFromServer[3],tuplaFromServer[4], tuplaFromServer[5], tuplaFromServer[6], tuplaFromServer[7], tuplaFromServer[8], tuplaFromServer[9], tuplaFromServer[10], tuplaFromServer[11])))
+        self.gui.createLabel(tuplaFromServer[12]) #tupla[12] is vme name         
+        self.threads.append(CustomThread.CustomThread(func=self.workerThreadUpload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[2], tuplaFromServer[1],tuplaFromServer[3],tuplaFromServer[4], tuplaFromServer[5], tuplaFromServer[6], tuplaFromServer[7], tuplaFromServer[8], tuplaFromServer[9], tuplaFromServer[10], tuplaFromServer[11], tuplaFromServer[12])))
         self.threads[len(self.threads)-1].start()
     
     def createThreadForDownload(self, tuplaFromServer):
@@ -122,8 +133,9 @@ class ThreadedClient:
         #3 is usr
         #4 is pwd
         #5 is serverUrl
-        #6 is is XML data URI 
-        #7 is is SRB data URI 
+        #6 is XML data URI 
+        #7 is SRB data URI 
+        #8 is last VME? 
         
         self.userName = tuplaFromServer[3]
         self.password = tuplaFromServer[4]
@@ -131,41 +143,83 @@ class ThreadedClient:
         self.gui.createBar(tuplaFromServer[0])
         self.gui.createLabel(vmeName)    
                
-        self.threads.append(CustomThread.CustomThread(func=self.workerThreadDownload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[2], tuplaFromServer[7], tuplaFromServer[3],tuplaFromServer[4],tuplaFromServer[5],tuplaFromServer[1])))
+        self.threads.append(CustomThread.CustomThread(func=self.workerThreadDownload, args = (self.gui.bars[len(self.gui.bars)-1],tuplaFromServer[2], tuplaFromServer[7], tuplaFromServer[3],tuplaFromServer[4],tuplaFromServer[5],tuplaFromServer[8],tuplaFromServer[1])))
         self.threads[len(self.threads)-1].start()
         
-    def workerThreadUpload(self, observer, dirCache , id, usr, pwd, urlServer, originalId, hasLink, withChild, msfListFile, XMLURI, vmeName):
+    def workerThreadUpload(self, observer, dirCache , id, usr, pwd, urlServer, originalId, hasLink, withChild, msfListFile, XMLURI, isLast, vmeName):
         """
         This is where we handle the asynchronous I/O. For example, it may be
         a 'select()'.
         One important thing to remember is that the thread has to yield
         control.
-        """
-      
+        """      
         try:
-            UploadHandler.createUploadHandler(self.queue, observer, dirCache, id, usr, pwd, urlServer, originalId, hasLink, withChild, msfListFile, XMLURI, vmeName)
+            statusFile = open(sys.path[0] + '\\status.txt', 'a')
+            statusFile.close()
+            while 1:
+                    size = os.path.getsize(sys.path[0] + '\\status.txt')
+                    statusFile = open(sys.path[0] + '\\status.txt', 'a')
+                    try:
+                        msvcrt.locking(statusFile.fileno(), msvcrt.LK_RLCK, size)
+                        if (isLast == "true"):
+                            statusFile.write('lastStarted\n')
+                        else:
+                            statusFile.write('started\n')
+
+                        statusFile.close()
+                        break
+                    except:
+                        counter = counter+1 #to avoid deadlock
+                        statusFile.close()
+                        if(counter == 10):
+                            if Debug:
+                                print "----------Can not write in status.txt-----------"
+                            pass
+
+            UploadHandler.createUploadHandler(self.queue, observer, dirCache, id, usr, pwd, urlServer, originalId, hasLink, withChild, msfListFile, XMLURI, isLast, vmeName)
+        
         except:
             pass
         
-    def workerThreadDownload(self, observer, dirCache , srbData, usr, pwd, urlServer, filesize):
+    def workerThreadDownload(self, observer, dirCache , srbData, usr, pwd, urlServer, isLast, filesize):
         """
         This is where we handle the asynchronous I/O. For example, it may be
         a 'select()'.
         One important thing to remember is that the thread has to yield
         control.
         """
-        #try:
-            #UploadHandler.createDownloadHandler(self.queue, observer, dirCache , id, usr, pwd, urlServer)
-        #except:
+   
         try:
-            DownloadHandler.createDownloadHandler(self.queue ,observer, dirCache , srbData, usr, pwd, urlServer, filesize)
+            statusFile = open(sys.path[0] + '\\status.txt', 'a')
+            statusFile.close()
+            while 1:
+                    size = os.path.getsize(sys.path[0] + '\\status.txt')
+                    statusFile = open(sys.path[0] + '\\status.txt', 'a')
+                    try:
+                        msvcrt.locking(statusFile.fileno(), msvcrt.LK_RLCK, size)
+                        if (isLast == "true"):
+                            statusFile.write('lastStarted\n')
+                        else:
+                            statusFile.write('started\n')
+
+                        statusFile.close()
+                        break
+                    except:
+                        counter = counter+1 #to avoid deadlock
+                        statusFile.close()
+                        if(counter == 10):
+                            if Debug:
+                                print "----------Can not write in status.txt-----------"
+                            pass
+            DownloadHandler.createDownloadHandler(self.queue ,observer, dirCache , srbData, usr, pwd, urlServer, isLast, filesize)
         except:
             pass
         
     def GetVmeName(self, XMLUri):
         self.proxyHost, self.proxyPort = retriveProxyParameters()
-        print "->"+ self.proxyHost + "<-"
-        print "->"+ str(self.proxyPort) + "<-"
+        if Debug:
+            print "->"+ self.proxyHost + "<-"
+            print "->"+ str(self.proxyPort) + "<-"
         
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
         ws.setServer('https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/' + XMLUri)
@@ -173,17 +227,21 @@ class ThreadedClient:
         ws.ProxyURL = self.proxyHost
         ws.ProxyPort = self.proxyPort
     
-        print "XML URI = " + XMLUri 
+        if Debug:
+            print "XML URI = " + XMLUri 
         out = ws.run('gettitle', XMLUri)[1]
         
         self.vmeName = []
         dom = xd.parseString(out)
         if dom.getElementsByTagName("fault"):
-            print "------Error in gettitle service-------"
+            if Debug:
+                if Debug:
+                    print "------Error in gettitle service-------"
             for el in dom.getElementsByTagName("string"):
                 for node in el.childNodes:  
                     error = node.data
-            print error
+            if Debug:
+                print error
             
             #write a file used by builder to catch error 
             errorFile = open(os.getcwd() + '\\ErrorFound.lhp', 'w')
@@ -196,7 +254,8 @@ class ThreadedClient:
                 self.vmeName.append(node.data)            
         pass
         
-        print "VME Name: " + self.vmeName[0]
+        if Debug:
+            print "VME Name: " + self.vmeName[0]
         return self.vmeName[0]
         
 

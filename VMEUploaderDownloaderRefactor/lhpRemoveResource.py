@@ -31,8 +31,9 @@ class lhpRemoveResource:
            Removes a XML resource on repository
         """
         self.proxyHost, self.proxyPort = retriveProxyParameters()
-        print "->"+ self.proxyHost + "<-"
-        print "->"+ str(self.proxyPort) + "<-"
+        if Debug:
+            print "->"+ self.proxyHost + "<-"
+            print "->"+ str(self.proxyPort) + "<-"
         
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
         ws.setCredentials(self.userName, self.password)
@@ -41,24 +42,35 @@ class lhpRemoveResource:
         ws.ProxyURL = self.proxyHost
         ws.ProxyPort = self.proxyPort
         
+        # timeout in seconds
+        self.Timeout = 30
+        socket.setdefaulttimeout(self.Timeout)
+        
         #check if resource exists on repository
         url = 'https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/' + self.resourceToRemove
+        
         page = urllib.urlopen(url)
         pagedata = page.read()
         result = pagedata.find('Resource not found')
         if(result != -1):
             return
-        
-        out = ws.run('xmldelete', self.resourceToRemove)[1]
+        try:
+            out = ws.run('xmldelete', self.resourceToRemove)[1]
+        except:
+            if Debug:
+                print "-----------Error in xmldelete service------------"
+            sys.exit(1)
         
         dom = xd.parseString(out)
         if dom.getElementsByTagName("fault"):
-            print "-----------Error in xmldelete service------------"
+            if Debug:
+                print "-----------Error in xmldelete service------------"
             for el in dom.getElementsByTagName("string"):
                 for node in el.childNodes:  
                     error = node.data
-            print error
-            return
+            if Debug:
+                print error
+            sys.exit(1)
 
   
 def main():

@@ -5,7 +5,7 @@
 #-----------------------------------------------------------------------------
 
 import sys, string
-import Debug
+from Debug import Debug
 from xml.dom import minidom
 from xml.dom import Node
 import Enum
@@ -38,7 +38,7 @@ class lhpXMLDictionariesBuilder:
         motionAnalysisRootNode = motionAnalysisSubictionaryDomDocument.documentElement
         
         # get motionAnalysys parent node
-        motionAnalysisTypeNode = msfDOMParserInstance.GetNodeByNodeName(motionAnalysisRootNode,"Type")
+        motionAnalysisTypeNode = msfDOMParserInstance.GetNodeByNodeName(motionAnalysisRootNode,"MASource")
         
         assert(motionAnalysisTypeNode != None)
        
@@ -66,7 +66,7 @@ class lhpXMLDictionariesBuilder:
         motionAnalysisRootNode = motionAnalysisSubictionaryDomDocument.documentElement
         
         # get motionAnalysys parent node
-        motionAnalysisTypeNode = msfDOMParserInstance.GetNodeByNodeName(motionAnalysisRootNode,"Type")
+        motionAnalysisTypeNode = msfDOMParserInstance.GetNodeByNodeName(motionAnalysisRootNode,"DicomSource")
         
         assert(motionAnalysisTypeNode != None)
        
@@ -94,7 +94,7 @@ class lhpXMLDictionariesBuilder:
         motionAnalysisRootNode = FASubictionaryDomDocument.documentElement
         
         # get motionAnalysys parent node
-        FATypeNode = msfDOMParserInstance.GetNodeByNodeName(motionAnalysisRootNode,"Type")
+        FATypeNode = msfDOMParserInstance.GetNodeByNodeName(motionAnalysisRootNode,"FunctionalAnatomy")
         
         assert(FATypeNode != None)
        
@@ -120,7 +120,7 @@ class lhpXMLDictionariesBuilder:
         MicroCTSourceSubictionaryDomDocument = minidom.parse(self.subDictionaryFileName)
         microCTRootNode = MicroCTSourceSubictionaryDomDocument.documentElement
         
-        microCTSourceTypeNode = msfDOMParserInstance.GetNodeByNodeName(microCTRootNode,"Type")
+        microCTSourceTypeNode = msfDOMParserInstance.GetNodeByNodeName(microCTRootNode,"MicroCTSource")
         
         assert(microCTSourceTypeNode != None)
        

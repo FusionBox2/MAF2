@@ -30,7 +30,7 @@ class lhpCSVDictionaryDownloaderTest(unittest.TestCase):
       
     def setUp(self):
         
-        print "Beware:  In order to work run this est must be launched from VMEUploaderDownloader dir!"
+        print "Beware:  In order to work run this test must be launched from VMEUploaderDownloader dir!"
         
         curDir = os.getcwd()        
         
@@ -49,7 +49,7 @@ class lhpCSVDictionaryDownloaderTest(unittest.TestCase):
     def testDownloadDicomSubdictionaryHTTPS(self):
                 
         host = "www.biomedtown.org"
-        selector = "/biomed_town/LHDL/users/swclient/dictionaries/dicomsource"
+        selector = "/biomed_town/LHDL/users/swclient/dictionaries/DicomSource"
         
         outputXMLDictionaryFileName = "lhpXMLDicomSubdictionary"
         
@@ -58,7 +58,7 @@ class lhpCSVDictionaryDownloaderTest(unittest.TestCase):
     def testDownloadMASourceSubdictionaryHTTPS(self):
         
         host = "www.biomedtown.org"
-        selector = "/biomed_town/LHDL/users/swclient/dictionaries/MAsource"
+        selector = "/biomed_town/LHDL/users/swclient/dictionaries/MASource"
         
         outputXMLDictionaryFileName = "lhpXMLMAsourceSubdictionary"
         

@@ -68,7 +68,7 @@ class lhpXMLDictionaryParser:
         ...]
         """
         self.TagArrayTagList = []
-        self.__GetTagArrayTagsInternal(self.DictionaryDOMDocumentRoot, sys.stdout, 0)
+        self.__GetTagArrayTagsInternal(self.DictionaryDOMDocumentRoot, 0)
         return self.TagArrayTagList
     
     def GetVMETagArrayAutoTagNamesList(self):
@@ -81,7 +81,7 @@ class lhpXMLDictionaryParser:
         ...]
         """
         self.TagArrayAutoTagList = []
-        self.__GetTagArrayAutoTagsInternal(self.DictionaryDOMDocumentRoot, sys.stdout, 0)
+        self.__GetTagArrayAutoTagsInternal(self.DictionaryDOMDocumentRoot, 0)
         return self.TagArrayAutoTagList
     
     
@@ -95,7 +95,7 @@ class lhpXMLDictionaryParser:
         ...]
         """
         self.TagArrayManualTagList = []
-        self.__GetTagArrayManualTagsInternal(self.DictionaryDOMDocumentRoot, sys.stdout, 0)
+        self.__GetTagArrayManualTagsInternal(self.DictionaryDOMDocumentRoot, 0)
         return self.TagArrayManualTagList
     
     def GetVMETagArrayTagNameFromNode(self, node):
@@ -144,10 +144,12 @@ class lhpXMLDictionaryParser:
                         return False
                     else:
                         # tag with no Editable attribute is manual
-                        print "Editable tag not found for: " + attrName + "tag"
+                        if Debug:
+                            print "Editable tag not found for: " + attrName + "tag"
                         return False
             # tags with no attributes at all is manual
-            print "Tag: " + node.nodeName + " has no attributes... "
+            if Debug:
+                print "Tag: " + node.nodeName + " has no attributes... "
             return False
     
     def GetAttributesDictionary(self, node):
@@ -169,7 +171,8 @@ class lhpXMLDictionaryParser:
             if Debug:
                 print "Node name: " + node.nodeName
             attrs = node.attributes     
-            print attrs.keys                        
+            if Debug:
+                print attrs.keys                        
             for attribute in attrs.keys():
                 attrNode = attrs.get(attribute)
                 attrValue = attrNode.nodeValue
@@ -243,7 +246,8 @@ class lhpXMLDictionaryParser:
 
     def PrintXMLDictionary(self):
         """ print XML dictionary to standard output """
-        self.PrintXML(self.DictionaryDOMDocumentRoot, sys.stdout)
+        if Debug:
+            self.PrintXML(self.DictionaryDOMDocumentRoot, sys.stdout)
        
     def PrintXML(self, parent, outFile):
         """ Print XML starting from given parent node to output file outFile"""
@@ -278,25 +282,25 @@ class lhpXMLDictionaryParser:
         if node.parentNode:
            self.__GetParent(node.parentNode)       
     
-    def __GetTagArrayTagsInternal(self, parent, outFile, level):  
+    def __GetTagArrayTagsInternal(self, parent, level):  
         self.TagArrayTagList.append(self.GetVMETagArrayTagNameFromNode(parent))
         if parent.childNodes:
             for node in parent.childNodes:
-                self.__GetTagArrayTagsInternal(node, sys.stdout, level)
+                self.__GetTagArrayTagsInternal(node, level)
     
-    def __GetTagArrayAutoTagsInternal(self, parent, outFile, level):  
+    def __GetTagArrayAutoTagsInternal(self, parent, level):  
         if self.IsAuto(parent) == True:    
             self.TagArrayAutoTagList.append(self.GetVMETagArrayTagNameFromNode(parent))
         if parent.childNodes:
             for node in parent.childNodes:
-                self.__GetTagArrayAutoTagsInternal(node, sys.stdout, level)
+                self.__GetTagArrayAutoTagsInternal(node, level)
     
-    def __GetTagArrayManualTagsInternal(self, parent, outFile, level):  
+    def __GetTagArrayManualTagsInternal(self, parent, level):  
         if self.IsAuto(parent) == False:    
             self.TagArrayManualTagList.append(self.GetVMETagArrayTagNameFromNode(parent))
         if parent.childNodes:
             for node in parent.childNodes:
-                self.__GetTagArrayManualTagsInternal(node, sys.stdout, level)
+                self.__GetTagArrayManualTagsInternal(node, level)
     
     def __GetTagsListInternal(self, parent):
         self.TagsList.append(self.GetNodeName(parent))
@@ -340,7 +344,8 @@ class lhpXMLDictionaryParser:
         the VmeRootURI named dom node is returned if it exists otherwise None"""
         assert(self.DictionaryDOMDocument)
         splitted = split(vmeTagArrayTagName, '_')
-        print splitted
+        if Debug:
+            print splitted
         
         currentParent = self.DictionaryDOMDocument
         

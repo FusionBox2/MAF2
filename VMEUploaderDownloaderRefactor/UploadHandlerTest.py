@@ -2,6 +2,7 @@ import UploadHandler
 import unittest
 import os , Queue
 
+      
 class UploadHandlerTest(unittest.TestCase):
       
     def setUp(self):  
@@ -11,8 +12,7 @@ class UploadHandlerTest(unittest.TestCase):
        
     def testCreateUploadHandler(self):
         #TODO to make the test fail otherwise  it's an infinite loop: needs fixing
-        self.assertFalse(True)
-        
+        self.assertFalse(False)
         
         queue = Queue.Queue()
         observer = None
@@ -24,9 +24,14 @@ class UploadHandlerTest(unittest.TestCase):
         server = 'http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2'
         uploadHandler = UploadHandler.UploadHandler(\
             queue,observer, dirCache, id , "testuser", "GRDPt8",server, "unhandledPlusManualTagsList.csv"\
-        , False, False, "dataresource-3000", "pippo")
+        , False, False, "noMsf", "dataresource-8000", "true", "pippo")
+        
+        # Test heuristic speed estimate
+        print "heuristic speed  estimate: " + str(\
+        uploadHandler.GetHeuristicUploadSpeedEstimateInKBPerSecond())
+        
         uploadHandler.upload()
-    
+        
 if __name__ == '__main__':
     unittest.main()
     

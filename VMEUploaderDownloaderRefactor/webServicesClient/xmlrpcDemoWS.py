@@ -25,7 +25,6 @@ class xmlrpc_demoWS:
         self.Password = ''
         self.ServerURL = ''
 
-
     def post_multipart(self, bod='search', url='', username='', password='', **kw):
         """
         Return the server's response page.
@@ -51,6 +50,27 @@ class xmlrpc_demoWS:
        </param>
        </params>
      </methodCall>'''% (kw['id'], kw['title'], kw['description'], string.replace(encodestring(kw['upload']),"\012",""))
+     
+        self.xmlUploadDataresource = \
+    '''<?xml version="1.0"?>
+     <methodCall>
+      <methodName>XMLUploadDataresource</methodName>
+       <params>
+       <param>
+        <value><string>%s</string></value>
+       </param>
+       <param>
+        <value><string>%s</string></value>
+       </param>
+       <param>
+        <value><string>%s</string></value>
+       </param>
+       <param>
+        <value><string>%s</string></value>
+       </param>
+       </params>
+     </methodCall>'''% (kw['id'], kw['title'], kw['description'], string.replace(encodestring(kw['upload']),"\012",""))
+
 
         self.xmlDownload = \
     '''<?xml version="1.0"?>
@@ -91,6 +111,16 @@ class xmlrpc_demoWS:
     '''<?xml version="1.0"?>
      <methodCall>
       <methodName>listBasket</methodName>
+       <params>
+       <param>
+       </param>
+       </params>
+     </methodCall>'''
+
+        self.listSandbox= \
+    '''<?xml version="1.0"?>
+     <methodCall>
+      <methodName>listSandbox</methodName>
        <params>
        <param>
        </param>
@@ -167,10 +197,22 @@ class xmlrpc_demoWS:
        </params>
      </methodCall>'''
 
+        self.authService = \
+    '''<?xml version="1.0"?>
+     <methodCall>
+      <methodName>authService</methodName>
+       <params>
+       <param>
+       </param>
+       </params>
+     </methodCall>'''
+
         wh_file = ''
 
         if bod == 'xmlupload':
             body = self.xmlUpload
+        elif bod == 'xmluploadDataresource':
+            body = self.xmlUploadDataresource
         elif bod == 'xmldownload':
             body = self.xmlDownload
         elif bod == 'xmldownloadcheck':
@@ -179,6 +221,8 @@ class xmlrpc_demoWS:
             body = self.xmlDelete
         elif bod == 'listbasket':
             body = self.listBasket
+        elif bod == 'listsandbox':
+            body = self.listSandbox
         elif bod == 'updatebasket':
             body = self.updateBasket
         elif bod == 'deletefrombasket':
@@ -191,6 +235,8 @@ class xmlrpc_demoWS:
             body = self.getTitle
         elif bod == 'createresource':
             body = self.createResource
+        elif bod == 'authservice':
+            body = self.authService
 
         if Debug: print "++++++\n" + body + "\n"
 
@@ -218,6 +264,8 @@ class xmlrpc_demoWS:
               urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cj))
 
         urllib2.install_opener(self.opener)  
+        
+        
 
         if Debug: print "Connecting to URL: " + url
 
@@ -267,6 +315,9 @@ class xmlrpc_demoWS:
     def setServer(self, serverURL):
         self.ServerURL = serverURL  
     
+    def setProxy(self, proxyUrl, proxyPort):
+        self.ProxyURL = proxyUrl
+        self.ProxyPort = proxyPort
         
     def run(self, command, filename='', title='', description=''):
         """"""
@@ -285,7 +336,18 @@ class xmlrpc_demoWS:
 
         args['listitems'] = ''
 
-        if command == 'xmlupload':
+        if command == 'xmluploadDataresource':
+            args['download'] = ''
+            f = file(filename,'rb')
+            args['upload'] = f.read()
+            #args['id'] = '' #f.name
+            args['id'] = f.name
+            args['title'] = title
+            args['description'] = description
+            args['filename'] = ''
+            f.close()
+            #self.setServer(ws.ServerURL + '/' + f.name)
+        elif command == 'xmlupload':
             args['download'] = ''
             f = file(filename,'rb')
             args['upload'] = f.read()
@@ -381,6 +443,21 @@ class xmlrpc_demoWS:
             args['filename'] = ''
             args['download'] = ''
             args['listitems'] = ''
+        elif command == 'authservice':
+            args['id'] = ''
+            args['title'] = ''
+            args['description'] = ''
+            args['upload'] = ''
+            args['filename'] = ''
+            args['download'] = ''
+            args['listitems'] = ''
+        elif command == 'listsandbox':
+            args['id'] = ''
+            args['title'] = ''
+            args['description'] = ''
+            args['upload'] = ''
+            args['filename'] = ''
+            args['download'] = ''
         else:
             if Debug: print 'Error: command not found\n'
             sys.exit(1)
@@ -400,6 +477,9 @@ listBasket - list user's basket items
 xmlread -
 xmledit -
 gettitle -
+createresource -
+authservice - 
+listsandbox - 
 ''' % sys.argv[0]
 
     if len(sys.argv) not in (2,3):
@@ -414,47 +494,6 @@ gettitle -
     if Debug: print "---", filename
 
     ws = xmlrpc_demoWS()
-    if sys.argv[1] in ('xmlread','xmledit','gettitle'):
+    if sys.argv[1] in ('xmlread','xmledit','gettitle','xmluploadDataresource'):
         ws.setServer(ws.ServerURL + filename.split(',')[0])
-    if Debug: print ws.run(command, filename)
-
-#    args = {}
-#
-#    # username and password of a test user
-#    username = 'pippo'
-#    password = 'pluto'
-#
-#    #url = 'http://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository'
-#    url = 'http://devel.fec.cineca.it:12680/town/Members/portal_admin/test-lhp2'
-#
-#    filename = sys.argv[2]
-#
-#    if sys.argv[1] == 'xmlupload':
-#        args['download'] = ''
-#        f = file(filename,'rb')
-#        args['upload'] = f.read()
-#        args['id'] = f.name
-#        args['title'] = f.name
-#        args['description'] = f.name
-#        args['filename'] = ''
-#        f.close()
-#    elif sys.argv[1] == 'xmldownload':
-#        args['id'] = ''
-#        args['title'] = ''
-#        args['description'] = ''
-#        args['upload'] = ''
-#        args['filename'] = ''
-#        args['download'] = filename
-#    elif sys.argv[1] == 'delete':
-#        args['id'] = ''
-#        args['title'] = ''
-#        args['description'] = ''
-#        args['upload'] = ''
-#        args['filename'] = filename
-#        args['download'] = ''
-#    else:
-#        if Debug: print 'Error :\n' + usage_msg
-#        sys.exit(1)
-#
-#    ws = xmlrpc_demoWS(**args)
-#    if Debug: print ws.post_multipart(sys.argv[1], url, username, password)
+    print ws.run(command, filename)

@@ -14,10 +14,9 @@ import StringIO
 import urllib, urllib2, base64, re, os, cookielib, sys
 from HttpsProxy import *
 
-class lhpEditRemoteTag:
+class lhpReadRemoteTag:
       
-    def __init__(self):
-                        
+    def __init__(self):              
         self.userName = sys.argv[0]
         self.password = sys.argv[1]
         self.URL = sys.argv[2]
@@ -29,14 +28,16 @@ class lhpEditRemoteTag:
             if(self.parameter == ""):
               self.parameter = i
             else:
-              self.parameter = self.parameter + ' ' + i #vme name if UPLOAD, dataURI if DOWNLOAD
+              self.parameter = self.parameter + ' ' + i 
           count = count + 1
+          print self.parameter
+
   
         # proxy
         self.proxyHost = ''
         self.ProxyPort = ''
         
-    def EditTag(self):
+    def ReadTag(self):
         """ 
            Edit tag of a remote resource
         """
@@ -60,7 +61,7 @@ class lhpEditRemoteTag:
         self.Timeout = 30
         socket.setdefaulttimeout(self.Timeout)
         try:
-            out = ws.run("xmledit", self.parameter)[1]
+            out = ws.run("xmlread", self.parameter)[1]
         except:
             if Debug:
                 print "-----------Error in xmledit service------------"
@@ -70,10 +71,17 @@ class lhpEditRemoteTag:
         dom = xd.parseString(out)
         if dom.getElementsByTagName("fault"):
             if Debug:
-                print "Error editing tags on repository"
+                print "Error reading tags on repository"
             sys.exit(1)
+            
+        for el in dom.getElementsByTagName("string"):
+            for node in el.childNodes:  
+                returnTag = node.data
+        pass
+    
+        print returnTag
+        return returnTag
    
-  
   
 def main():
     
@@ -81,13 +89,13 @@ def main():
     if(len(sys.argv) < 5): #for test
         print 'Error :\n' + usage_msg
         sys.exit(1)
-      
+
        
     if(len(sys.argv) >= 5):
         sys.argv = sys.argv[1:]
         #print sys.argv
-        edit = lhpEditRemoteTag()
-        edit.EditTag()
+        read = lhpReadRemoteTag()
+        read.ReadTag()
 
 if __name__ == '__main__':
     main()

@@ -9,6 +9,7 @@ import xml.dom.minidom as xd
 import os, time
 from lhpDefines import *
 import StringIO
+from Debug import Debug
 
 import urllib, urllib2, base64, re, os, cookielib, sys
 from HttpsProxy import *
@@ -20,6 +21,7 @@ class lhpGetXMLURI:
         self.userName = sys.argv[0]
         self.password = sys.argv[1]
         self.URL = sys.argv[2]
+        
 
           
         # proxy
@@ -30,50 +32,68 @@ class lhpGetXMLURI:
         """ 
            Creates an empty resource on repository and return the URI
         """
+        maxTry = 5
         self.proxyHost, self.proxyPort = retriveProxyParameters()
-        print "->"+ self.proxyHost + "<-"
-        print "->"+ str(self.proxyPort) + "<-"
+        if Debug:
+            print "->"+ self.proxyHost + "<-"
+            print "->"+ str(self.proxyPort) + "<-"
         
         ws = xmlrpcDemoWS.xmlrpc_demoWS()
         ws.setCredentials(self.userName, self.password)
         ws.setServer(self.URL)
         ws.ProxyURL = self.proxyHost
         ws.ProxyPort = self.proxyPort
-        try:
-            out = ws.run('createresource')[1]
-        except:
-            print "-----------Error calling createresource service------------"
-            return
-            
+        XMLURI = -1
         
-        dom = xd.parseString(out)
-        if dom.getElementsByTagName("fault"):
-            print "-----------Error in createresource service------------"
+        # timeout in seconds
+        self.Timeout = 90
+        socket.setdefaulttimeout(self.Timeout)
+        
+        for c in range(0,maxTry):
+            try:
+                out = ws.run('createresource')[1]
+            except:
+                if Debug:
+                    print "-----------Error calling createresource service------------"
+                time.sleep(3)
+                continue
+        
+            dom = xd.parseString(out)
+            if dom.getElementsByTagName("fault"):
+                if Debug:
+                    print "-----------Error in createresource service------------"
+                for el in dom.getElementsByTagName("string"):
+                    for node in el.childNodes:  
+                        error = node.data
+                    if (error.find('Over Quota') != -1):
+                        overQuota = "OverQuota"
+                        print overQuota
+                        return overQuota
+                    
+                if Debug:
+                    print error
+                    
             for el in dom.getElementsByTagName("string"):
                 for node in el.childNodes:  
-                    error = node.data
-            print error
-            return
-        for el in dom.getElementsByTagName("string"):
-            for node in el.childNodes:  
-                XMLURI = node.data
-        pass
+                    XMLURI = node.data
+            if XMLURI == -1:
+                continue
+            else:
+                break
     
         print XMLURI
+        if  XMLURI == -1:
+            sys.exit(1)
+            #todo best
         return XMLURI
   
 def main():
     
+    usage_msg = '''Usage: %s user, password, URL ''' % sys.argv[0]
     if(len(sys.argv) != 4): #for test
-        sys.argv = []
-        sys.argv.append("testuser") #substitute
-        sys.argv.append("6w8DHF") #substitute
-        sys.argv.append("http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/") #substitute
-        
-        getURI = lhpGetXMLURI()
-        getURI.XMLURI = getURI.getURI()
-        #add code to remove resource created
-        return
+        print 'Error :\n' + usage_msg
+        sys.exit(1)
+       
        
     if(len(sys.argv) == 4):
         sys.argv = sys.argv[1:]
