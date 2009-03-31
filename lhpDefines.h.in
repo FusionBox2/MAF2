@@ -6,4 +6,6 @@
 //--------------------------------------------------------------------------
 #define LHP_DATA_ROOT "@LHP_DATA_ROOT@"
 
+#define LHP_SOURCE_DIR "@LHP_SOURCE_DIR@"
+
 #endif // __lhpDefines_h

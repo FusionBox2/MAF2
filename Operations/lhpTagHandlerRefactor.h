@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerRefactor.h,v $
   Language:  C++
-  Date:      $Date: 2009-03-30 21:04:18 $
-  Version:   $Revision: 1.1.2.1 $
+  Date:      $Date: 2009-03-31 16:43:23 $
+  Version:   $Revision: 1.1.2.2 $
   Authors:   Stefano Perticoni - Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -82,7 +82,7 @@ protected:
   mafString   m_PythonExe;///< python.exe full path
   mafString   m_PythonwExe;///< pythonw.exe full path
 
-	mafString m_PythonUploadFullPath;
+	mafString m_VMEUploaderDownloaderDir;
 
   lhpTagHandlerRefactor();
 };

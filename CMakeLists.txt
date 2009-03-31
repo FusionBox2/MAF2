@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2009-01-26 16:05:36 $
-#   Version:   $Revision: 1.33.2.12 $
+#   Date:      $Date: 2009-03-31 16:44:10 $
+#   Version:   $Revision: 1.33.2.13 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -161,7 +161,7 @@ ENDIF (MAF_FOUND)
 #-----------------------------------------------------------------------------
 # LHPBUILDER dictionary download stuff
 #-----------------------------------------------------------------------------
-OPTION(DOWNLOAD_DICTIONARY "Generate XML lhpBuilder dictionary" ON)
+OPTION(DOWNLOAD_DICTIONARY "Generate XML lhpBuilder dictionary in VMEUploaderDownloader dir" ON)
 
 IF(DOWNLOAD_DICTIONARY)
    
@@ -268,11 +268,127 @@ with this setting.
     ENDIF(${ERROR} MATCHES "0")
     
 ELSE(DOWNLOAD_DICTIONARY)
-         MESSAGE("You have choosed not to generate XML dictionary!
-Please notice that some functions of LHPBUilder will not be available
+         MESSAGE("You have choosed not to generate XML dictionaries for the VMEUploaderDownloader directory!
+Please notice that some functions of LHPBuilder in the Operations->Manage Submenu will not work
 with this setting.")
 #   
 ENDIF(DOWNLOAD_DICTIONARY)
+
+#-----------------------------------------------------------------------------
+# VMEUploaderDownloader Refactor dictionary download stuff
+#-----------------------------------------------------------------------------
+OPTION(DOWNLOAD_DICTIONARY_FOR_VMEUPDOWN_REFACTOR "Generate XML lhpBuilder dictionary in VMEUploaderDownloaderRefactor dir" OFF)
+
+IF(DOWNLOAD_DICTIONARY_FOR_VMEUPDOWN_REFACTOR)
+   
+   # MASTER DICTIONARY
+   
+    SET(ERROR 0)    
+    #  MESSAGE("variable DOWNLOAD_DICTIONARY_FOR_VMEUPDOWN_REFACTOR = " ${DOWNLOAD_DICTIONARY_FOR_VMEUPDOWN_REFACTOR})
+    SET(LHPBUILDER_DICTIONARY_HOST "www.biomedtown.org" CACHE INTERNAL "LHPBuilder dictionary host")
+    SET(LHPBUILDER_MASTER_DICTIONARY_SELECTOR "/biomed_town/LHDL/users/swclient/dictionaries/LHDL_dictionary" CACHE INTERNAL "LHPBuilder dictionary selector")
+    SET(LHPBUILDER_XML_MASTER_DICTIONARY "lhpXMLDictionary" CACHE INTERNAL "LHPBuilder xml master dictionary")
+    
+#     MESSAGE("variable LHP_SOURCE_DIR = " ${LHP_SOURCE_DIR})
+
+#     This line contains OUTPUT_VARIABLE OUTPUT_VALUE 
+#     EXEC_PROGRAM("python.exe" "${LHP_SOURCE_DIR}/VMEUploaderDownloader" ARGS "lhpCSVDictionaryDownloader.py ${LHPBUILDER_DICTIONARY_HOST} ${LHPBUILDER_DICTIONARY_SELECTOR} ${LHP_SOURCE_DIR}/${LHPBUILDER_XML_DICTIONARY}" OUTPUT_VARIABLE OUTPUT_VALUE RETURN_VALUE RETURN)
+    
+    SET(RET -1)
+    EXEC_PROGRAM("python.exe" "${LHP_SOURCE_DIR}/VMEUploaderDownloaderRefactor" ARGS "lhpCSVDictionaryDownloader.py ${LHPBUILDER_DICTIONARY_HOST} ${LHPBUILDER_MASTER_DICTIONARY_SELECTOR} ${LHPBUILDER_XML_MASTER_DICTIONARY}"  RETURN_VALUE RET)
+    
+    IF(${RET} MATCHES "0")
+        MESSAGE(STATUS "XML master dictionary generated correctly!")
+    ELSE(${RET} MATCHES "0")
+        MESSAGE("PROBLEMS WITH MASTER DICTIONARY! PLEASE CHECK IT!")
+        SET(ERROR 1)
+    ENDIF(${RET} MATCHES "0")
+#     MESSAGE("variable LHPBUILDER_XML_DICTIONARY = " ${LHPBUILDER_XML_DICTIONARY})
+#     MESSAGE("variable  OUTPUT = " ${OUTPUT_VALUE})
+#     MESSAGE("variable  RET = " ${RET})
+
+    # DICOM DICTIONARY
+       
+    SET(LHPBUILDER_DICOM_DICTIONARY_SELECTOR "/biomed_town/LHDL/users/swclient/dictionaries/DicomSource" CACHE INTERNAL "LHPBuilder dictionary selector")
+    SET(LHPBUILDER_XML_DICOM_DICTIONARY "lhpXMLDicomSourceSubdictionary" CACHE INTERNAL "LHPBuilder xml dicom dictionary")
+        
+    EXEC_PROGRAM("python.exe" "${LHP_SOURCE_DIR}/VMEUploaderDownloaderRefactor" ARGS "lhpCSVDictionaryDownloader.py ${LHPBUILDER_DICTIONARY_HOST} ${LHPBUILDER_DICOM_DICTIONARY_SELECTOR} ${LHPBUILDER_XML_DICOM_DICTIONARY}"  RETURN_VALUE RET)
+    
+    IF(${RET} MATCHES "0")
+        MESSAGE(STATUS "XML dicom subdictionary generated correctly!")
+    ELSE(${RET} MATCHES "0")
+        MESSAGE("PROBLEMS WITH DICOM DICTIONARY! PLEASE CHECK IT!")
+        SET(ERROR 1)
+    ENDIF(${RET} MATCHES "0")
+
+    # MOTIONANALYSIS DICTIONARY
+    
+    SET(LHPBUILDER_MOTIONANALYSIS_DICTIONARY_SELECTOR "/biomed_town/LHDL/users/swclient/dictionaries/MASource" CACHE INTERNAL "LHPBuilder dictionary selector")
+    SET(LHPBUILDER_XML_MOTIONANALYSIS_DICTIONARY "lhpXMLMotionAnalysisSourceSubdictionary" CACHE INTERNAL "LHPBuilder xml motion analysis dictionary")
+    
+    EXEC_PROGRAM("python.exe" "${LHP_SOURCE_DIR}/VMEUploaderDownloaderRefactor" ARGS "lhpCSVDictionaryDownloader.py ${LHPBUILDER_DICTIONARY_HOST} ${LHPBUILDER_MOTIONANALYSIS_DICTIONARY_SELECTOR} ${LHPBUILDER_XML_MOTIONANALYSIS_DICTIONARY}"  RETURN_VALUE RET)
+    
+    IF(${RET} MATCHES "0")
+        MESSAGE(STATUS "XML motion analysis dictionary generated correctly!")
+    ELSE(${RET} MATCHES "0")
+        MESSAGE("PROBLEMS WITH MOTION ANALYSIS DICTIONARY! PLEASE CHECK IT!")
+        SET(ERROR 1)
+    ENDIF(${RET} MATCHES "0")
+
+    # FA DICTIONARY
+    
+    SET(LHPBUILDER_FA_DICTIONARY_SELECTOR "/biomed_town/LHDL/users/swclient/dictionaries/FA_onto" CACHE INTERNAL "LHPBuilder dictionary selector")
+    SET(LHPBUILDER_XML_FA_DICTIONARY "lhpXMLFASourceSubdictionary" CACHE INTERNAL "LHPBuilder xml FA dictionary")
+    
+    EXEC_PROGRAM("python.exe" "${LHP_SOURCE_DIR}/VMEUploaderDownloaderRefactor" ARGS "lhpFAOntoCSVDictionaryDownloader.py ${LHPBUILDER_DICTIONARY_HOST} ${LHPBUILDER_FA_DICTIONARY_SELECTOR} ${LHPBUILDER_XML_FA_DICTIONARY}"  RETURN_VALUE RET)
+
+    
+    IF(${RET} MATCHES "0")
+        MESSAGE(STATUS "XML FA dictionary generated correctly!")
+    ELSE(${RET} MATCHES "0")
+        MESSAGE("PROBLEMS WITH FA DICTIONARY! PLEASE CHECK IT!")
+        SET(ERROR 1)
+    ENDIF(${RET} MATCHES "0")
+
+    # MICROCT DICTIONARY
+    
+    SET(LHPBUILDER_MICROCT_DICTIONARY_SELECTOR "/biomed_town/LHDL/users/swclient/dictionaries/MicroCTSource" CACHE INTERNAL "LHPBuilder dictionary selector")
+    SET(LHPBUILDER_XML_MICROCT_DICTIONARY "lhpXMLMicroCTSourceSubdictionary" CACHE INTERNAL "LHPBuilder xml MicroCT dictionary")
+    
+    EXEC_PROGRAM("python.exe" "${LHP_SOURCE_DIR}/VMEUploaderDownloaderRefactor" ARGS "lhpCSVDictionaryDownloader.py ${LHPBUILDER_DICTIONARY_HOST} ${LHPBUILDER_MICROCT_DICTIONARY_SELECTOR} ${LHPBUILDER_XML_MICROCT_DICTIONARY}"  RETURN_VALUE RET)
+
+    
+    IF(${RET} MATCHES "0")
+        MESSAGE(STATUS "XML MicroCT dictionary generated correctly!")
+    ELSE(${RET} MATCHES "0")
+        MESSAGE(STATUS "PROBLEMS WITH MICROCT DICTIONARY! PLEASE CHECK IT!")
+        SET(ERROR 1)
+    ENDIF(${RET} MATCHES "0")
+        
+    IF(${ERROR} MATCHES "0")
+        MESSAGE(STATUS "XML dictionary generated correctly!")
+    ELSE(${ERROR} MATCHES "0")
+        MESSAGE("Problems generating XML dictionary!
+
+        
+In order for the generation to work you need to:
+1: Be connected to the Internet
+1: Have python 2.5 installed
+2: Have python 2.5 python.exe in your PATH as default python version
+
+If You don't want to this message to appear you can set DOWNLOAD_DICTIONARY_FOR_VMEUPDOWN_REFACTOR
+to false. Please notice that some functions ol LHPBuilder will not be available
+with this setting.
+")
+#         MESSAGE(${OUTPUT_VALUE})
+    ENDIF(${ERROR} MATCHES "0")
+    
+ELSE(DOWNLOAD_DICTIONARY_FOR_VMEUPDOWN_REFACTOR)
+         MESSAGE("You have choosed not to generate XML dictionaries for the VMEUploaderDownloaderRefactor directory!
+Please notice that some functions of LHPBuilder in the Operations->Devel submenu will not
+work with this setting.")
+#   
+ENDIF(DOWNLOAD_DICTIONARY_FOR_VMEUPDOWN_REFACTOR)
 
 #-----------------------------------------------------------------------------
 # Security stuff.  

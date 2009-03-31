@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTag.cpp,v $
 Language:  C++
-Date:      $Date: 2008-12-23 12:49:50 $
-Version:   $Revision: 1.26.2.22 $
+Date:      $Date: 2009-03-31 16:43:23 $
+Version:   $Revision: 1.26.2.23 $
 Authors:   Roberto Mucci , Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -116,10 +116,10 @@ mafOp(label)
   m_PythonExe = "python.exe_UNDEFINED";
   m_PythonwExe = "pythonw.exe_UNDEFINED";  
 
-  m_CacheDir = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\UploadCache\\").c_str();
-  m_OutgoingDir = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\Outgoing\\").c_str();
+  m_CacheDir = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloader\\UploadCache\\").c_str();
+  m_OutgoingDir = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloader\\Outgoing\\").c_str();
 
-  m_PythonUploadFullPath  = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\").c_str();
+  m_VMEUploaderDownloaderDir  = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloader\\").c_str();
   m_FileName = "";
   m_CsvName = "manualTagFile.csv";
   m_MsfDir = "";
@@ -227,7 +227,7 @@ void lhpOpEditTag::OpRun()
     m_User = (lhpUser*)eventGetUser.GetMafObject();
   }
 
-  mafString DebugPath = m_PythonUploadFullPath;
+  mafString DebugPath = m_VMEUploaderDownloaderDir;
   DebugPath.Append("\\Debug.py");
   if (wxFileExists(DebugPath.GetCStr()))
   {
@@ -377,7 +377,7 @@ int lhpOpEditTag::EditTags()
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
   wxBusyCursor wait;
 
   //PROCESS EXIST, ONLY CALL CLIENT
@@ -520,7 +520,7 @@ int lhpOpEditTag::CopyEditorTagsIntoOriginalMSF()
   }
 
   //remove csv file
-  wxString lockPath = m_PythonUploadFullPath;
+  wxString lockPath = m_VMEUploaderDownloaderDir;
   lockPath += m_CsvName.c_str();
   if (wxFileExists(lockPath))
     wxRemoveFile(lockPath); //fileName
@@ -613,10 +613,10 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
 {
   
   wxString oldDir = wxGetCwd();
-  if (m_DebugMode)
+  // if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
-  if (m_DebugMode)
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+  // if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
   mafString outputDict = "UNDEFINED";
@@ -889,7 +889,7 @@ mafString lhpOpEditTag::GetXMLDictionaryFileName( mafString dictionaryFileNamePr
 
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVMERefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-03-30 14:25:12 $
-Version:   $Revision: 1.1.2.1 $
+Date:      $Date: 2009-03-31 16:43:23 $
+Version:   $Revision: 1.1.2.2 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -120,10 +120,10 @@ mafOp(label)
   m_PythonExe = "python.exe_UNDEFINED";
   m_PythonwExe = "pythonw.exe_UNDEFINED";  
 
-  m_CurrentCache = m_CacheDir = (mafGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\UploadCache\\").c_str();
-  m_IncomingDir = (mafGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\Incoming\\").c_str();
+  m_CurrentCache = m_CacheDir = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\UploadCache\\").c_str();
+  m_IncomingDir = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\Incoming\\").c_str();
 
-  m_PythonUploadFullPath  = (mafGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\").c_str();
+  m_VMEUploaderDownloaderDir  = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\").c_str();
   m_FileName = "";
   m_ServiceURL = "https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/";
   //m_ServiceURL = "http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/";
@@ -232,7 +232,7 @@ void lhpOpDownloadVMERefactor::OpRun()
     wxString oldDir = wxGetCwd();
     if (m_DebugMode)
       mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-    wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+    wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
     if (m_DebugMode)
       mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -246,7 +246,7 @@ void lhpOpDownloadVMERefactor::OpRun()
 
   int result = OP_RUN_CANCEL;
 
-  mafString DebugPath = m_PythonUploadFullPath;
+  mafString DebugPath = m_VMEUploaderDownloaderDir;
   DebugPath.Append("\\Debug.py");
   if (wxFileExists(DebugPath.GetCStr()))
   {
@@ -299,7 +299,7 @@ void lhpOpDownloadVMERefactor::SaveConnectionConfigurationFile()
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -547,7 +547,7 @@ int lhpOpDownloadVMERefactor::DownloadVME(wxArrayString listVME, mafNode *parent
       wxString oldDir = wxGetCwd();
       if (m_DebugMode)
         mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-      wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+      wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
       if (m_DebugMode)
         mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
       wxBusyCursor wait;
@@ -864,7 +864,7 @@ bool lhpOpDownloadVMERefactor::ExistsRunningProcess()
   bool result = false;
   
   wxFile lockFile;
-  wxString lockpath = m_PythonUploadFullPath;
+  wxString lockpath = m_VMEUploaderDownloaderDir;
   lockpath += "activeLock.lhp";
   if (wxFileExists(lockpath))
   {
@@ -918,7 +918,7 @@ int lhpOpDownloadVMERefactor::CreateFileListFromBasket()
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -961,7 +961,7 @@ int lhpOpDownloadVMERefactor::RetrieveInformationFromBasketListFile()
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -996,7 +996,7 @@ int lhpOpDownloadVMERefactor::DownloadSelectedXMLFromBasket(mafString  xmlFile)
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -1061,7 +1061,7 @@ int lhpOpDownloadVMERefactor::ReconstructMSF(mafString xmlFile)
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -1177,7 +1177,7 @@ wxArrayString lhpOpDownloadVMERefactor::CheckRemoteLink(mafString URI)
 //-------------------------------------------------------------------
 {
   wxString oldDir = wxGetCwd();
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
   if (m_DebugMode)
   mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -1265,7 +1265,7 @@ bool lhpOpDownloadVMERefactor::CheckRemoteChild(mafString URI)
 {
   bool containChild = false;
   wxString oldDir = wxGetCwd();
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -1329,7 +1329,7 @@ bool lhpOpDownloadVMERefactor::CheckIsRoot(mafString URI)
 {
   bool isRoot = false;
   wxString oldDir = wxGetCwd();
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -1529,7 +1529,7 @@ void lhpOpDownloadVMERefactor::UpdateBinaryFile()
 
     //Call python module to copy binary data when downloaded
     wxString oldDir = wxGetCwd();
-    wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+    wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
     if (m_DebugMode)
       mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -1616,7 +1616,7 @@ void lhpOpDownloadVMERefactor::UpdateBinaryFile()
 
     //Call python module to copy binary data when downloaded
     wxString oldDir = wxGetCwd();
-    wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+    wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
     if (m_DebugMode)
       mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -1673,7 +1673,7 @@ int lhpOpDownloadVMERefactor::DownloadCheck(bool failed)
   }
 
   wxString oldDir = wxGetCwd();
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -1716,7 +1716,7 @@ bool lhpOpDownloadVMERefactor::IsLHPBuilderVersionUpToDate()
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
   

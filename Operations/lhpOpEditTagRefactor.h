@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTagRefactor.h,v $
 Language:  C++
-Date:      $Date: 2009-03-30 21:04:18 $
-Version:   $Revision: 1.1.2.1 $
+Date:      $Date: 2009-03-31 16:43:23 $
+Version:   $Revision: 1.1.2.2 $
 Authors:   Roberto Mucci , Stefano Perticoni 
 ==========================================================================
 Copyright (c) 2002/2007
@@ -121,7 +121,7 @@ protected:
   
   mafString m_OutgoingDir; //directoyr for xml and binary to send
 
-  mafString m_PythonUploadFullPath; //>directory where the scripts are
+  mafString m_VMEUploaderDownloaderDir; //>directory where the scripts are
   mafString m_FileName; //>script file name
   mafString m_PythonExe; //>python  executable
   mafString m_PythonwExe; //>pythonw  executable

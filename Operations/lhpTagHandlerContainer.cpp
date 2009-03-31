@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2009-01-07 10:46:20 $
-  Version:   $Revision: 1.29.2.14 $
+  Date:      $Date: 2009-03-31 16:43:23 $
+  Version:   $Revision: 1.29.2.15 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -80,7 +80,7 @@ void lhpTagHandler_L0000_resource_DictionaryVersion::HandleAutoTag(lhpTagHandler
   mafString dictionaryFileName = "NOT FOUND";
   wxString oldDir = wxGetCwd();
 
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
 
   wxArrayString files;
   wxString filePattern = dictionaryFileNamePrefix ;
@@ -247,7 +247,7 @@ void lhpTagHandler_L0000_resource_data_Size_FileSize::HandleAutoTag(lhpTagHandle
 	//here put code for filename
 	wxString oldDir = wxGetCwd();
 	mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-	wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+	wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
 	mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
 	// get manual tags
@@ -1064,7 +1064,7 @@ void lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Descrip
   mafString dictionaryFileName = "NOT FOUND";
   wxString oldDir = wxGetCwd();
 
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
 
   wxArrayString files;
   wxString filePattern = dictionaryFileNamePrefix ;
@@ -1145,7 +1145,7 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Dictionary
   mafString dictionaryFileName = "NOT FOUND";
   wxString oldDir = wxGetCwd();
 
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
 
   wxArrayString files;
   wxString filePattern = dictionaryFileNamePrefix ;
@@ -1226,7 +1226,7 @@ void lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryVersio
   mafString dictionaryFileName = "NOT FOUND";
   wxString oldDir = wxGetCwd();
 
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
 
   wxArrayString files;
   wxString filePattern = dictionaryFileNamePrefix ;
@@ -1362,7 +1362,7 @@ void lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_Dictio
   mafString dictionaryFileName = "NOT FOUND";
   wxString oldDir = wxGetCwd();
 
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
 
   wxArrayString files;
   wxString filePattern = dictionaryFileNamePrefix ;

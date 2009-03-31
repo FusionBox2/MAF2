@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerRefactor.cpp,v $
   Language:  C++
-  Date:      $Date: 2009-03-30 14:25:12 $
-  Version:   $Revision: 1.1.2.1 $
+  Date:      $Date: 2009-03-31 16:43:23 $
+  Version:   $Revision: 1.1.2.2 $
   Authors:   Stefano Perticoni - Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -20,6 +20,7 @@
 
 #include "lhpTagHandlerRefactor.h"
 #include "mafDecl.h"
+#include "lhpBuilderDecl.h"
 
 mafCxxTypeMacro(lhpTagHandlerInputOutputParametersCargoRefactor);
 //------------------------------------------------------------------------
@@ -41,7 +42,7 @@ lhpTagHandlerRefactor::lhpTagHandlerRefactor()
 {
 	m_PythonExe ="python.exe ";
 	m_PythonwExe ="pythonw.exe ";
-	m_PythonUploadFullPath  = (mafGetApplicationDirectory() + "\\..\\VMEUploaderDownloaderRefactor\\").c_str();
+	m_VMEUploaderDownloaderDir  = (lhpUtils::lhpGetApplicationDirectory() + "\\..\\VMEUploaderDownloaderRefactor\\");
 }
 
 //------------------------------------------------------------------------

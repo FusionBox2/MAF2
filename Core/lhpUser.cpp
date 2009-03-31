@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpUser.cpp,v $
 Language:  C++
-Date:      $Date: 2009-01-16 08:39:49 $
-Version:   $Revision: 1.11.2.6 $
+Date:      $Date: 2009-03-31 16:45:36 $
+Version:   $Revision: 1.11.2.7 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004
@@ -36,13 +36,8 @@ lhpUser::lhpUser(mafObserver *listener)
   m_Listener = listener;
   m_PythonExe = "python.exe_UNDEFINED";
   m_PythonwExe = "pythonw.exe_UNDEFINED";
-  m_PythonUploadFullPath  = (mafGetApplicationDirectory() + "\\VMEUploaderDownloader\\").c_str();
+  m_VMEUploaderDownloaderDir  = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloader\\").c_str();
   
-  // cmake must check if the Python stuff exists already
-  // if not install it
-  // otherwise proceed
-  // cmake must copy all pythons dir to binary directory ( should alert the user )
-
   m_IsAuthenticated = false;
  
 }
@@ -112,7 +107,7 @@ bool lhpUser::ExecuteAuthenticationScript()
   
   wxString oldDir = wxGetCwd();
   mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_PythonUploadFullPath.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
   mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
   // get manual tags

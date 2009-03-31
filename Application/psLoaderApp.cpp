@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: psLoaderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2009-03-30 14:26:06 $
-  Version:   $Revision: 1.1.2.13 $
+  Date:      $Date: 2009-03-31 16:43:52 $
+  Version:   $Revision: 1.1.2.14 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -397,10 +397,10 @@ bool psLoaderApp::OnInit()
 //  
 //
   // Upload Download VME (Production)  
-  m_Logic->Plug(new lhpOpUploadMultiVMERefactor("Upload VME"),"Manage");
-  m_Logic->Plug(new lhpOpEditTagRefactor("Edit Tag VME"),"Manage");
-  m_Logic->Plug(new lhpOpDownloadVMERefactor("Download VME"),"Manage");
-  // m_Logic->Plug(new lhpOpUploadVMERefactor("Upload VME"),"Manage");
+  m_Logic->Plug(new lhpOpUploadMultiVME("Upload VME"),"Manage");
+  m_Logic->Plug(new lhpOpEditTag("Edit Tag VME"),"Manage");
+  m_Logic->Plug(new lhpOpDownloadVME("Download VME"),"Manage");
+  // m_Logic->Plug(new lhpOpUploadVME("Upload VME"),"Manage");
 
   // Upload Download VME Refactor Target
   m_Logic->Plug(new lhpOpUploadMultiVMERefactor("Upload Multi VME Refactor"),"Devel");

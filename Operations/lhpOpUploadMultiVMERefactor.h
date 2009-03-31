@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVMERefactor.h,v $
 Language:  C++
-Date:      $Date: 2009-03-30 21:04:18 $
-Version:   $Revision: 1.1.2.1 $
+Date:      $Date: 2009-03-31 16:43:23 $
+Version:   $Revision: 1.1.2.2 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -100,7 +100,7 @@ protected:
   mafString m_CacheDir; //>cache superdirectory
   static mafString m_CacheSubdir; //>cache subdirectory
 
-  mafString m_PythonUploadFullPath; //>directory where the scripts are
+  mafString m_VMEUploaderDownloaderDir; //>directory where the scripts are
   mafString m_PythonExe; //>python  executable
   mafString m_MsfDir; //>directory of original msf
   mafString m_MasterXMLDictionaryFileName;

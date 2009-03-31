@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandler.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-01-08 16:06:42 $
-  Version:   $Revision: 1.3 $
+  Date:      $Date: 2009-03-31 16:43:23 $
+  Version:   $Revision: 1.3.2.1 $
   Authors:   Stefano Perticoni - Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -20,6 +20,7 @@
 
 #include "lhpTagHandler.h"
 #include "mafDecl.h"
+#include "lhpBuilderDecl.h"
 
 mafCxxTypeMacro(lhpTagHandlerInputOutputParametersCargo);
 //------------------------------------------------------------------------
@@ -41,7 +42,7 @@ lhpTagHandler::lhpTagHandler()
 {
 	m_PythonExe ="python.exe ";
 	m_PythonwExe ="pythonw.exe ";
-	m_PythonUploadFullPath  = (mafGetApplicationDirectory() + "\\..\\VMEUploaderDownloader\\").c_str();
+	m_VMEUploaderDownloaderDir  = (lhpUtils::lhpGetApplicationDirectory() + "\\..\\VMEUploaderDownloader\\").c_str();
 }
 
 //------------------------------------------------------------------------
