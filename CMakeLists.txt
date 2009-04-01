@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2009-03-31 16:44:10 $
-#   Version:   $Revision: 1.33.2.13 $
+#   Date:      $Date: 2009-04-01 10:47:42 $
+#   Version:   $Revision: 1.33.2.14 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -156,11 +156,56 @@ ELSE (MAF_FOUND)
   MESSAGE (FATAL_ERROR "MAF library not found, cannot build application!!")
 ENDIF (MAF_FOUND)
 
+#-----------------------------------------------------------------------------
+# Python and wxPython correct versions check
+#-----------------------------------------------------------------------------
 
+EXEC_PROGRAM("python.exe" "${LHP_SOURCE_DIR}/Installer" ARGS "-V" OUTPUT_VARIABLE O RETURN_VALUE R)
+
+# check for python 2.5.1 existence
+IF(${O} MATCHES "Python 2.5.1")
+    MESSAGE(STATUS "Found Python 2.5.1")
+    
+    EXEC_PROGRAM("python.exe" "${LHP_SOURCE_DIR}/Installer" ARGS "wxPythonExistenceCheck.py" OUTPUT_VARIABLE O RETURN_VALUE R)        
+    
+    # check for wxPython 2.8.9.1 existence
+    IF(${O} MATCHES "2.8.9.1")
+       
+       MESSAGE(STATUS "Found wxPython 2.8.9.1 (msw-unicode)")
+        
+    ELSE(${O} MATCHES "2.8.9.1")
+       
+        MESSAGE("Problems finding wxPython 2.8.9.1 (msw-unicode)
+Please go to: 
+
+https://www.biomedtown.org/biomed_town/LHDL/users/repository/wikis/GetTheSoftware
+
+and follow the Python and wxPython installation istructions for PSLoader slim installer
+in order to have a working developer environment.
+You can skip this step but application network facilities will not work. 
+")
+
+        
+   ENDIF(${O} MATCHES "2.8.9.1")
+    
+ELSE(${O} MATCHES "Python 2.5.1")
+    
+    MESSAGE("Problems finding Python 2.5.1
+Please go to: 
+
+https://www.biomedtown.org/biomed_town/LHDL/users/repository/wikis/GetTheSoftware
+
+and follow the Python and wxPython installation istructions for PSLoader slim installer
+in order to have a working developer environment.
+You can skip this step but application network facilities will not work.
+")
+    
+ENDIF(${O} MATCHES "Python 2.5.1")
 
 #-----------------------------------------------------------------------------
 # LHPBUILDER dictionary download stuff
 #-----------------------------------------------------------------------------
+
 OPTION(DOWNLOAD_DICTIONARY "Generate XML lhpBuilder dictionary in VMEUploaderDownloader dir" ON)
 
 IF(DOWNLOAD_DICTIONARY)
@@ -257,8 +302,16 @@ IF(DOWNLOAD_DICTIONARY)
         
 In order for the generation to work you need to:
 1: Be connected to the Internet
-1: Have python 2.5 installed
-2: Have python 2.5 python.exe in your PATH as default python version
+1: Have python 2.5.1 installed
+2: Have python 2.5.1 python.exe in your PATH as default python version
+
+Please go to: 
+
+https://www.biomedtown.org/biomed_town/LHDL/users/repository/wikis/GetTheSoftware
+
+and follow the Python and wxPython installation istructions for PSLoader slim installer
+in order to have a working developer environment.
+You can skip this step but application network facilities will not work. 
 
 If You don't want to this message to appear you can set DOWNLOAD_DICTIONARY
 to false. Please notice that some functions ol LHPBuilder will not be available
