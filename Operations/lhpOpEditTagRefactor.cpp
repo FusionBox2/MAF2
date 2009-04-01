@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTagRefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-03-31 16:43:23 $
-Version:   $Revision: 1.1.2.2 $
+Date:      $Date: 2009-04-01 13:51:22 $
+Version:   $Revision: 1.1.2.3 $
 Authors:   Roberto Mucci , Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -53,7 +53,7 @@ MafMedical is partially based on OpenMAF.
 #include <wx/busyinfo.h>
 
 #include "lhpOpEditTagRefactor.h"
-#include "lhpTagHandlerRefactor.h"
+#include "lhpTagHandler.h"
 
 #include "mafTagArray.h"
 
@@ -64,7 +64,7 @@ MafMedical is partially based on OpenMAF.
 #include "mafVMEStorage.h"
 #include "mafVMERoot.h"
 
-#include "lhpFactoryTagHandlerRefactor.h"
+#include "lhpFactoryTagHandler.h"
 #include "vtkPolyData.h"
 #include "mafTagArray.h"
 
@@ -720,7 +720,7 @@ int lhpOpEditTagRefactor::GeneratesTagsListsFromXMLDictionary()
 
   mafString tagName = "";
   
-  lhpTagHandlerInputOutputParametersCargoRefactor *parametersCargo = lhpTagHandlerInputOutputParametersCargoRefactor::New();
+  lhpTagHandlerInputOutputParametersCargo *parametersCargo = lhpTagHandlerInputOutputParametersCargo::New();
   parametersCargo->SetInputVme(mafVME::SafeDownCast(m_Input));
   parametersCargo->SetInputUser(m_User);
 	parametersCargo->SetInputMSF(m_MsfFile);
@@ -732,9 +732,9 @@ int lhpOpEditTagRefactor::GeneratesTagsListsFromXMLDictionary()
     if (tagName != "")
     {
       
-      lhpFactoryTagHandlerRefactor *tagsFactory  = lhpFactoryTagHandlerRefactor::GetInstance();
+      lhpFactoryTagHandler *tagsFactory  = lhpFactoryTagHandler::GetInstance();
       assert(tagsFactory!=NULL);
-      lhpTagHandlerRefactor *tagHandler = NULL;
+      lhpTagHandler *tagHandler = NULL;
       tagHandler = tagsFactory->CreateTagHandlerInstance("lhpTagHandler_" + tagName);
    
       if (tagHandler)

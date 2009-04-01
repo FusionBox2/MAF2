@@ -36,12 +36,6 @@ SET(PROJECT_SRCS
 	# VMEUploaderDownloader Refactor Target
 	#
 	
-	lhpFactoryTagHandlerRefactor.cpp
-	lhpFactoryTagHandlerRefactor.h
-	
-	lhpTagHandlerRefactor.cpp
-	lhpTagHandlerRefactor.h
-	
 	lhpOpUploadVMERefactor.cpp
 	lhpOpUploadVMERefactor.h
 	
@@ -53,6 +47,7 @@ SET(PROJECT_SRCS
 	
 	lhpOpEditTagRefactor.cpp
 	lhpOpEditTagRefactor.h
+	
 	
 	#######################################
 	

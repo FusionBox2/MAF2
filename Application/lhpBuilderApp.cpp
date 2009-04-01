@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2009-03-26 17:16:13 $
-  Version:   $Revision: 1.71.2.15 $
+  Date:      $Date: 2009-04-01 13:55:38 $
+  Version:   $Revision: 1.71.2.16 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -157,6 +157,12 @@
 
 //temporary for testing
 #include "mafViewSingleSliceCompound.h"
+
+// VMEUploaderDownloader Refactor Target
+#include "lhpOpUploadVMERefactor.h"
+#include "lhpOpUploadMultiVMERefactor.h"
+#include "lhpOpEditTagRefactor.h"
+#include "lhpOpDownloadVMERefactor.h"
 
 #ifdef MAF_USE_ITK
 #include "lhpOpCreateSurfaceScalar.h"
@@ -427,6 +433,11 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
 
   m_Logic->Plug(new lhpOpTextureOrientation("Texture Orientation"),"Create/Derive");
 
+  // Upload Download VME Refactor Target
+  m_Logic->Plug(new lhpOpUploadMultiVMERefactor("Upload Multi VME Refactor"),"Devel");
+  m_Logic->Plug(new lhpOpEditTagRefactor("Edit Tag VME Refactor"),"Devel");
+  m_Logic->Plug(new lhpOpDownloadVMERefactor("Download Multi VME Refactor"),"Devel");
+  m_Logic->Plug(new lhpOpUploadVMERefactor("Upload VME Refactor"),"Devel");
   
   
   //-------------------------------------------------------------

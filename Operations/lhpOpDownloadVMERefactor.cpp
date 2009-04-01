@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpDownloadVMERefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-03-31 16:43:23 $
-Version:   $Revision: 1.1.2.2 $
+Date:      $Date: 2009-04-01 13:51:22 $
+Version:   $Revision: 1.1.2.3 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -74,7 +74,7 @@ MafMedical is partially based on OpenMAF.
 #include "mafVMERoot.h"
 #include "mafVMEGroup.h"
 
-#include "lhpFactoryTagHandlerRefactor.h"
+#include "lhpFactoryTagHandler.h"
 #include "vtkPolyData.h"
 
 #include <string>

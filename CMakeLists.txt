@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2009-04-01 10:47:42 $
-#   Version:   $Revision: 1.33.2.14 $
+#   Date:      $Date: 2009-04-01 13:54:22 $
+#   Version:   $Revision: 1.33.2.15 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -330,7 +330,7 @@ ENDIF(DOWNLOAD_DICTIONARY)
 #-----------------------------------------------------------------------------
 # VMEUploaderDownloader Refactor dictionary download stuff
 #-----------------------------------------------------------------------------
-OPTION(DOWNLOAD_DICTIONARY_FOR_VMEUPDOWN_REFACTOR "Generate XML lhpBuilder dictionary in VMEUploaderDownloaderRefactor dir" OFF)
+OPTION(DOWNLOAD_DICTIONARY_FOR_VMEUPDOWN_REFACTOR "Generate XML lhpBuilder dictionary in VMEUploaderDownloaderRefactor dir" ON)
 
 IF(DOWNLOAD_DICTIONARY_FOR_VMEUPDOWN_REFACTOR)
    
