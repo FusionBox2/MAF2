@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterAnsysInputFile.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-17 13:07:45 $
-  Version:   $Revision: 1.6.2.2 $
+  Date:      $Date: 2009-04-01 15:10:21 $
+  Version:   $Revision: 1.6.2.3 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -57,12 +57,12 @@ mafOp(label)
   m_ElementsFileName = "";
   m_MaterialsFileName = "";
   m_AnsysInputFileName = "";
-  m_CacheDir = (mafGetApplicationDirectory() + "\\Data\\AnsysReaderCache").c_str();
+  m_CacheDir = (lhpUtils::lhpGetApplicationDirectory() + "\\Data\\AnsysReaderCache");
   m_AnsysInputFileNameFullPath		= "";
-  m_FileDir = (mafGetApplicationDirectory() + "/Data/External/").c_str();
+  m_FileDir = (lhpUtils::lhpGetApplicationDirectory() + "/Data/External/");
   
   // This is for deploy: need to work on PYTHONPATH to solve issues with Python modules execution path...
-  m_AnsysPythonImporterFullPathFileName = (mafGetApplicationDirectory() + "\\ASCIIParser\\ansysReader.py").c_str();
+  m_AnsysPythonImporterFullPathFileName = (lhpUtils::lhpGetApplicationDirectory() + "\\ASCIIParser\\ansysReader.py");
   
   // This is for local testing: 
   // m_AnsysPythonImporterFullPathFileName = "D:\\vapps\\LHPBuilder_Parabuild\\ASCIIParser\\ansysReader.py";

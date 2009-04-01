@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterAnsysCDBFile.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-11-17 13:07:45 $
-  Version:   $Revision: 1.1.2.6 $
+  Date:      $Date: 2009-04-01 15:10:21 $
+  Version:   $Revision: 1.1.2.7 $
   Authors:   Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -59,12 +59,12 @@ mafOp(label)
   m_ElementsFileName = "";
   m_MaterialsFileName = "";
   m_AnsysInputFileName = "";
-  m_CacheDir = (mafGetApplicationDirectory() + "\\Data\\AnsysReaderCache").c_str();
+  m_CacheDir = (lhpUtils::lhpGetApplicationDirectory() + "\\Data\\AnsysReaderCache").c_str();
   m_AnsysInputFileNameFullPath		= "";
-  m_FileDir = (mafGetApplicationDirectory() + "/Data/External/").c_str();
+  m_FileDir = (lhpUtils::lhpGetApplicationDirectory() + "/Data/External/").c_str();
   
   // This is for deploy: need to work on PYTHONPATH to solve issues with Python modules execution path...
-  m_AnsysPythonImporterFullPathFileName = (mafGetApplicationDirectory() + "\\CDBParser\\ansysCDBReader.py").c_str();
+  m_AnsysPythonImporterFullPathFileName = (lhpUtils::lhpGetApplicationDirectory() + "\\CDBParser\\ansysCDBReader.py").c_str();
   
   // This is for local testing: 
   // m_AnsysPythonImporterFullPathFileName = "D:\\vapps\\LHPBuilder_Parabuild\\CDBParser\\ansysCDBReader.py";
