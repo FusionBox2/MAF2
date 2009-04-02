@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVMERefactor.h,v $
 Language:  C++
-Date:      $Date: 2009-03-31 16:43:23 $
-Version:   $Revision: 1.1.2.2 $
+Date:      $Date: 2009-04-02 15:55:16 $
+Version:   $Revision: 1.1.2.3 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -90,7 +90,7 @@ public:
 
 
   /** Upload a single VME*/
-  int UploadVME(mafString &binaryURI, bool isBinaryDataPresent, bool withChild, mafString msfListFile, bool isLast);
+  int UploadInputVME(mafString &outXMLResourceURI, bool isBinaryDataPresent, bool withChild, mafString xmlDataResourcesRollBackFile, bool isLast);
 
   /** Save information information about VME link*/
   void SaveLinkInfo();
@@ -117,7 +117,7 @@ protected:
   bool CreateCache();
 
   /** This method copies in cache the msf and binary data that must be uploaded */
-  bool CopyInCache();
+  bool CopyInputVMEInCache();
 
   /** This method checks if process exists and if there is a lock file */
   bool ExistsRunningProcess();
@@ -132,7 +132,7 @@ protected:
   mafString m_OutgoingDir; //directoyr for xml and binary to send
 
   mafString m_VMEUploaderDownloaderDir; //>directory where the scripts are
-  mafString m_FileName; //>script file name
+  
   mafString m_PythonExe; //>python  executable
   mafString m_PythonwExe; //>pythonw  executable
   mafString m_MsfDir; //>directory of original msf
@@ -157,7 +157,7 @@ protected:
   mafString m_ConnectionConfigurationFileName;
   mafString m_ProxyURL;
   mafString m_ProxyPort;
-  mafString m_ServiceURL;
+  mafString m_RepositoryServiceURL;
 
 private:
   mafString GetXMLDictionaryFileName(mafString dictionaryFileNamePrefix);

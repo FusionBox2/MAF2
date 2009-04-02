@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVMERefactor.h,v $
 Language:  C++
-Date:      $Date: 2009-03-31 16:43:23 $
-Version:   $Revision: 1.1.2.2 $
+Date:      $Date: 2009-04-02 15:55:16 $
+Version:   $Revision: 1.1.2.3 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -120,13 +120,13 @@ private:
   mafString GetXMLDictionaryFileName(mafString dictionaryFileNamePrefix);
 
   /** Upload one or more than one VME chosen from a check list box */
-  int UploadMultiVME(mafNode *node, bool isLast);
+  int UploadMultiVME(mafNode *vme, bool isLast);
 
   /** Upload of node and all its children*/
   int UploadTree(mafNode *node);
 
   /** Upload linked VME */
-  int UploadVMELinks(mafNode *derived);   
+  int UploadVMELinks(mafNode *vme);   
 
   /** Search for python uploader error */
   bool GetUploadError();   
@@ -141,10 +141,10 @@ private:
   int SetVMELinks(mafNode *node);
 
   /** Check if a binary data is associated to the VME */
-  bool isBinaryDataPresent(mafNode *node);
+  bool HasBinaryData(mafNode *node);
 
-  /** Remove uploaded reosurces in case of error during msf uploading */
-  bool RemoveResources(std::vector<mafString> vectorURI);  
+  /** Remove uploaded reosurces in case of error during whole msf uploading */
+  bool RemoveXMLResources(std::vector<mafString> vectorURI);  
 
   void SaveConnectionConfigurationFile();
 
@@ -154,13 +154,13 @@ private:
   bool m_DebugMode;
  
   mafString m_ServiceURL;
-  mafString m_MsfFile;
+  mafString m_MSFFileNameFullPath; ///< full path of the .msf file
 
-  lhpOpUploadVMERefactor *m_UploadVME;
-  std::vector<mafNode*> m_NodeVector;
+  lhpOpUploadVMERefactor *m_OpUploadVME;
+  std::vector<mafNode*> m_VMEToBeUploadedVector; ///< vme to be uploaded from gui
   std::vector<mafNode*> m_EmptyNodeVector;
   std::vector<mafNode*> m_UploadedNodeVector;
-  std::vector<mafString> m_UploadedURIVector;
+  std::vector<mafString> m_UploadedXMLURIVector;
   std::vector<mafString> m_FileCreatedVector;
   std::vector<int> m_NodeDerivedId;
 
