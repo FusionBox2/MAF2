@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVMERefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-04-02 15:55:16 $
-Version:   $Revision: 1.1.2.4 $
+Date:      $Date: 2009-04-03 15:50:14 $
+Version:   $Revision: 1.1.2.5 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -97,7 +97,7 @@ mafOp(label)
   m_WithChild = false;
   m_DebugMode = false;
   m_User = NULL;
-  m_UploadedXMLURIVector.clear();
+  m_AlreadyUploadedXMLURIVector.clear();
   m_UploadedNodeVector.clear();
   m_EmptyNodeVector.clear();
   m_FileCreatedVector.clear();
@@ -125,7 +125,7 @@ mafOp(label)
 lhpOpUploadMultiVMERefactor::~lhpOpUploadMultiVMERefactor()
 //----------------------------------------------------------------------------
 {
-  m_UploadedXMLURIVector.clear();
+  m_AlreadyUploadedXMLURIVector.clear();
   m_UploadedNodeVector.clear();
   m_EmptyNodeVector.clear();
   m_FileCreatedVector.clear();
@@ -554,18 +554,17 @@ bool lhpOpUploadMultiVMERefactor::HasBinaryData(mafNode *node)
 
 
 //----------------------------------------------------------------------------
-int lhpOpUploadMultiVMERefactor::UploadTree(mafNode *node)   
-//----------------------------------------------------------------------------
+int lhpOpUploadMultiVMERefactor::UploadTree( mafNode *vme )
 {
   //creates a file with a list of uploaded xml dataresources, to be used by
   //python to remove xml uploaded in case of msf upload error
   int number = 0;
-  mafString TmpFileName = "msfList";
-  mafString xmlDataResourcesRollBackFile = TmpFileName;
+  mafString tmpFileName = "msfList";
+  mafString xmlDataResourcesRollBackFile = tmpFileName;
 
   while(wxFileExists(m_VMEUploaderDownloaderDir + xmlDataResourcesRollBackFile.GetCStr() + ".lhp"))
   {
-    xmlDataResourcesRollBackFile = TmpFileName;
+    xmlDataResourcesRollBackFile = tmpFileName;
     xmlDataResourcesRollBackFile << number;
     number++;
   }
@@ -585,7 +584,7 @@ int lhpOpUploadMultiVMERefactor::UploadTree(mafNode *node)
   mafNode *childToUpload = NULL;
   
   const mafNode::mafChildrenVector *children;
-  children = node->GetChildren();
+  children = vme->GetChildren();
   childrenVector.push_back(children);
   numVmeChild = children->size();
   if (numVmeChild != 0)
@@ -637,22 +636,25 @@ int lhpOpUploadMultiVMERefactor::UploadTree(mafNode *node)
 
           if (GetUploadError())
           {
-            RemoveXMLResources(m_UploadedXMLURIVector);
+            RemoveAlreadyUploadedXMLResources(m_AlreadyUploadedXMLURIVector);
             return MAF_ERROR;
           }
           
+          m_OpUploadVME->SetIsBinaryDataPresent(false);
+          m_OpUploadVME->SetWithChild(vme->GetNumberOfChildren()!=0);
+          m_OpUploadVME->SetInputXMLDataResourcesRollBackFile(xmlDataResourcesRollBackFile);
+          m_OpUploadVME->SetIsLast(true);
 
-          if (m_OpUploadVME->UploadInputVME(xmlResourceURI, hasBinaryData, \
-          childToUpload->GetNumberOfChildren()!=0, xmlDataResourcesRollBackFile, false)\
+          if (m_OpUploadVME->Upload()\
           == MAF_ERROR)
           {
-            RemoveXMLResources(m_UploadedXMLURIVector);
+            RemoveAlreadyUploadedXMLResources(m_AlreadyUploadedXMLURIVector);
             return MAF_ERROR;
           }
           m_UploadedNodeVector.push_back(childToUpload);
           m_EmptyNodeVector.push_back(childToUpload);
-          m_UploadedXMLURIVector.push_back(xmlResourceURI);
-          if (SaveChildURIFile(childToUpload, xmlResourceURI) == MAF_ERROR)
+          m_AlreadyUploadedXMLURIVector.push_back(m_OpUploadVME->GetOutXMLResourceURI());
+          if (SaveChildURIFile(childToUpload, m_OpUploadVME->GetOutXMLResourceURI()) == MAF_ERROR)
           {
             
             return MAF_ERROR;
@@ -677,25 +679,31 @@ int lhpOpUploadMultiVMERefactor::UploadTree(mafNode *node)
   }
 
   //upload VME Root
-  m_OpUploadVME->SetInput(node);
+  m_OpUploadVME->SetInput(vme);
   xmlResourceURI = "";
 
   if (GetUploadError())
   {
-    RemoveXMLResources(m_UploadedXMLURIVector);
+    RemoveAlreadyUploadedXMLResources(m_AlreadyUploadedXMLURIVector);
     return MAF_ERROR;
   }
 
-  if (m_OpUploadVME->UploadInputVME(xmlResourceURI, false, node->GetNumberOfChildren()!=0, xmlDataResourcesRollBackFile, true) == MAF_ERROR)
+  
+  m_OpUploadVME->SetIsBinaryDataPresent(false);
+  m_OpUploadVME->SetWithChild(vme->GetNumberOfChildren()!=0);
+  m_OpUploadVME->SetInputXMLDataResourcesRollBackFile(xmlDataResourcesRollBackFile);
+  m_OpUploadVME->SetIsLast(true);
+
+  if (m_OpUploadVME->Upload() == MAF_ERROR)
   {
-    RemoveXMLResources(m_UploadedXMLURIVector);
+    RemoveAlreadyUploadedXMLResources(m_AlreadyUploadedXMLURIVector);
     return MAF_ERROR;
   }
-  m_UploadedNodeVector.push_back(node);
-  m_UploadedXMLURIVector.push_back(xmlResourceURI);
-  if (SetVMELinks(node) == MAF_ERROR)
+  m_UploadedNodeVector.push_back(vme);
+  m_AlreadyUploadedXMLURIVector.push_back(m_OpUploadVME->GetOutXMLResourceURI());
+  if (SetVMELinks(vme) == MAF_ERROR)
   {
-    RemoveXMLResources(m_UploadedXMLURIVector);
+    RemoveAlreadyUploadedXMLResources(m_AlreadyUploadedXMLURIVector);
     return MAF_ERROR;
   }
   return MAF_OK;
@@ -720,11 +728,17 @@ int lhpOpUploadMultiVMERefactor::UploadMultiVME( mafNode *vme, bool isLast )
   m_OpUploadVME->SetInput(vme);
   xmlURI = "";
 
-  if (m_OpUploadVME->UploadInputVME(xmlURI, hasBinary, false, "noMsf", isLast) == MAF_ERROR)
+  
+  m_OpUploadVME->SetIsBinaryDataPresent(hasBinary);
+  m_OpUploadVME->SetWithChild(false);
+  m_OpUploadVME->SetInputXMLDataResourcesRollBackFile("noMSF");
+  m_OpUploadVME->SetIsLast(true);
+
+  if (m_OpUploadVME->Upload() == MAF_ERROR)
   {
-    m_UploadedXMLURIVector.clear();
-    m_UploadedXMLURIVector.push_back(xmlURI);
-    RemoveXMLResources(m_UploadedXMLURIVector);
+    m_AlreadyUploadedXMLURIVector.clear();
+    m_AlreadyUploadedXMLURIVector.push_back(m_OpUploadVME->GetOutXMLResourceURI());
+    RemoveAlreadyUploadedXMLResources(m_AlreadyUploadedXMLURIVector);
     return MAF_ERROR;
   }
   return MAF_OK;
@@ -759,7 +773,7 @@ bool lhpOpUploadMultiVMERefactor::GetUploadError()
 }
 
 //----------------------------------------------------------------------------
-bool lhpOpUploadMultiVMERefactor::RemoveXMLResources(std::vector<mafString> xmlURIVector)   
+bool lhpOpUploadMultiVMERefactor::RemoveAlreadyUploadedXMLResources(std::vector<mafString> xmlURIVector)   
 //----------------------------------------------------------------------------
 {
   wxString oldDir = wxGetCwd();
@@ -831,7 +845,7 @@ int lhpOpUploadMultiVMERefactor::SetVMELinks(mafNode *node)
     {
       if (m_UploadedNodeVector[c]->Equals(derived) && m_UploadedNodeVector[c]->GetId() == derived->GetId())
       {
-        vmeURI = m_UploadedXMLURIVector[c];
+        vmeURI = m_AlreadyUploadedXMLURIVector[c];
         int count = vmeURI.find_first_of("'");
         vmeURI.erase(0, count+1);
         count = vmeURI.find_first_of("'");
@@ -849,8 +863,8 @@ int lhpOpUploadMultiVMERefactor::SetVMELinks(mafNode *node)
         {
           if (m_UploadedNodeVector[c]->Equals(link) && m_UploadedNodeVector[c]->GetId() == link->GetId())
           {
-            m_UploadedXMLURIVector[c];
-            listURI.Append(m_UploadedXMLURIVector[c]);
+            m_AlreadyUploadedXMLURIVector[c];
+            listURI.Append(m_AlreadyUploadedXMLURIVector[c]);
             listURI.Append(" ");
             break;
           }
@@ -937,11 +951,17 @@ int lhpOpUploadMultiVMERefactor::UploadVMELinks( mafNode *derived )
       m_OpUploadVME->SetInput(link);
 
       xmlURI = "";
-      if (m_OpUploadVME->UploadInputVME(xmlURI, hasBinaryData, false, "noMsf", false) == MAF_ERROR)
+
+      m_OpUploadVME->SetIsBinaryDataPresent(hasBinaryData);
+      m_OpUploadVME->SetWithChild(false);
+      m_OpUploadVME->SetInputXMLDataResourcesRollBackFile("noMsf");
+      m_OpUploadVME->SetIsLast(false);
+
+      if (m_OpUploadVME->Upload() == MAF_ERROR)
       {
-        m_UploadedXMLURIVector.clear();
-        m_UploadedXMLURIVector.push_back(xmlURI);
-        RemoveXMLResources(m_UploadedXMLURIVector);
+        m_AlreadyUploadedXMLURIVector.clear();
+        m_AlreadyUploadedXMLURIVector.push_back(m_OpUploadVME->GetOutXMLResourceURI());
+        RemoveAlreadyUploadedXMLResources(m_AlreadyUploadedXMLURIVector);
         return MAF_ERROR;
       }
       m_UploadedNodeVector.push_back(link);

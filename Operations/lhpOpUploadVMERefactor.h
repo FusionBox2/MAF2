@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVMERefactor.h,v $
 Language:  C++
-Date:      $Date: 2009-04-02 15:55:16 $
-Version:   $Revision: 1.1.2.3 $
+Date:      $Date: 2009-04-03 15:50:14 $
+Version:   $Revision: 1.1.2.4 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -88,17 +88,40 @@ public:
   /** Set debug modality */
   void SetDebugMode(bool debugMode){m_DebugMode = debugMode;};
 
+  /** Upload */
+  int Upload();
+  
+  /** api refactoring in progress... */
 
-  /** Upload a single VME*/
-  int UploadInputVME(mafString &outXMLResourceURI, bool isBinaryDataPresent, bool withChild, mafString xmlDataResourcesRollBackFile, bool isLast);
+  mafString GetOutXMLResourceURI() {return m_OutXMLResourceURI;};
+
+  void SetIsBinaryDataPresent(bool present) {m_IsBinaryDataPresent = present;};
+  bool GetIsBinaryDataPresent() {return m_IsBinaryDataPresent;};
+  
+  void SetWithChild(bool withChild) {m_WithChild = withChild;};
+  bool GetWitChild() {return m_WithChild;};
+  
+  void SetInputXMLDataResourcesRollBackFile(mafString file) {m_InputXMLDataResourcesRollBackFile = file;};
+  mafString GetInputXMLDataResourcesRollBackFile() {return m_InputXMLDataResourcesRollBackFile;};
+
+  void SetIsLast(bool isLast) {m_IsLast = isLast;};
+  bool GetIsLast() {return m_IsLast;};
+
+  /** end api refactoring in progress... */
+
+protected:
+  
+  bool m_WithChild;
+  bool m_IsLast;
+  mafString m_InputXMLDataResourcesRollBackFile;
+  bool m_IsBinaryDataPresent;
+  mafString m_OutXMLResourceURI;
 
   /** Save information information about VME link*/
   void SaveLinkInfo();
 
-protected:
-  
-  /** check if lhbbuilder software version is up to date in order to a allow vme uploading */
-  bool IsLHPBuilderVersionUpToDate();
+  /** check if client software version is up to date in order to a allow vme uploading */
+  bool IsClientSoftwareVersionUpToDate();
 
   /** Generate auto tags and manual tags list from XML lhdl dictionary*/
   int GeneratesTagsListsFromXMLDictionary();
@@ -159,6 +182,7 @@ protected:
   mafString m_ProxyPort;
   mafString m_RepositoryServiceURL;
 
+
 private:
   mafString GetXMLDictionaryFileName(mafString dictionaryFileNamePrefix);
   int AssembleDictionaries();
@@ -180,6 +204,7 @@ private:
   std::vector<mafNode*> m_LinkNode;
   std::vector<mafString> m_LinkName;
 
-  
+
 };
+
 #endif

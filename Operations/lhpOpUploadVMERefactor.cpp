@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVMERefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-04-02 15:55:16 $
-Version:   $Revision: 1.1.2.4 $
+Date:      $Date: 2009-04-03 15:50:14 $
+Version:   $Revision: 1.1.2.5 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -225,7 +225,7 @@ void lhpOpUploadVMERefactor::OpRun()
 
   bool upToDate = false;
 
-  upToDate = this->IsLHPBuilderVersionUpToDate();
+  upToDate = this->IsClientSoftwareVersionUpToDate();
   if(upToDate)
   {
     mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
@@ -283,8 +283,7 @@ void lhpOpUploadVMERefactor::SaveConnectionConfigurationFile()
 }
 
 //----------------------------------------------------------------------------
-int lhpOpUploadVMERefactor::UploadInputVME( mafString &outXMLResourceURI, \
-bool isBinaryDataPresent, bool withChild, mafString xmlDataResourcesRollBackFile, bool isLast )
+int lhpOpUploadVMERefactor::Upload()
 {
   // get python interpreters
   mafEvent eventGetPythonExe;
@@ -335,11 +334,11 @@ bool isBinaryDataPresent, bool withChild, mafString xmlDataResourcesRollBackFile
   mafString uploadWithChildren = "false";
   m_HasLink = false;
 
-  if (withChild)
+  if (m_WithChild)
   {
     uploadWithChildren = "true";
   }
-  if (!isLast)
+  if (!m_IsLast)
   {
     isLastResource = "false";
   }  
@@ -501,9 +500,9 @@ bool isBinaryDataPresent, bool withChild, mafString xmlDataResourcesRollBackFile
     }
   }
 
-  outXMLResourceURI = output[output.size() - 1];
+  m_OutXMLResourceURI = output[output.size() - 1];
 
-  if (outXMLResourceURI == "OverQuota")
+  if (m_OutXMLResourceURI == "OverQuota")
   {
     wxMessageBox("Over Quota!. Uploading stopped.", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     return MAF_ERROR;
@@ -548,8 +547,8 @@ bool isBinaryDataPresent, bool withChild, mafString xmlDataResourcesRollBackFile
     command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //id in original tree
     command2execute.Append(wxString::Format("%s ", hasLink.GetCStr())); //has link?
     command2execute.Append(wxString::Format("%s ", uploadWithChildren.GetCStr())); //upload with children?
-    command2execute.Append(wxString::Format("%s ", xmlDataResourcesRollBackFile.GetCStr())); //file to be used for rollback operation, in case of error in msf upload
-    command2execute.Append(wxString::Format("%s ", outXMLResourceURI.GetCStr())); //XML resource URI
+    command2execute.Append(wxString::Format("%s ", m_InputXMLDataResourcesRollBackFile.GetCStr())); //file to be used for rollback operation, in case of error in msf upload
+    command2execute.Append(wxString::Format("%s ", m_OutXMLResourceURI.GetCStr())); //XML resource URI
     command2execute.Append(wxString::Format("%s ", isLastResource.GetCStr())); //true if is last VME to be uploaded
     wxString name = m_Input->GetName();
     name.Replace(" ", "??");
@@ -616,8 +615,8 @@ bool isBinaryDataPresent, bool withChild, mafString xmlDataResourcesRollBackFile
     command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //id in original tree
     command2execute.Append(wxString::Format("%s ", hasLink.GetCStr())); //has link?
     command2execute.Append(wxString::Format("%s ", uploadWithChildren.GetCStr())); //upload with children?
-    command2execute.Append(wxString::Format("%s ", xmlDataResourcesRollBackFile.GetCStr())); //file to be used for rollback operation, in case of error in msf upload
-    command2execute.Append(wxString::Format("%s ", outXMLResourceURI.GetCStr())); //XML resource URI
+    command2execute.Append(wxString::Format("%s ", m_InputXMLDataResourcesRollBackFile.GetCStr())); //file to be used for rollback operation, in case of error in msf upload
+    command2execute.Append(wxString::Format("%s ", m_OutXMLResourceURI.GetCStr())); //XML resource URI
     command2execute.Append(wxString::Format("%s ", isLastResource.GetCStr())); //true if is last VME to be uploaded
     wxString name = m_Input->GetName();
     name.Replace(" ", "??");
@@ -640,12 +639,13 @@ bool isBinaryDataPresent, bool withChild, mafString xmlDataResourcesRollBackFile
 void lhpOpUploadVMERefactor::OpDo()   
 //----------------------------------------------------------------------------
 {
-  mafString URI;
 
-  if (UploadInputVME(URI, "", false, "noMsf", true) == MAF_ERROR)
+  /*mafString URI;
+
+  if (Upload(URI, "", false, "noMsf", true) == MAF_ERROR)
   {
     return;
-  }
+  }*/
 }
 
 //-------------------------------------------------------------------
@@ -1197,7 +1197,7 @@ bool lhpOpUploadVMERefactor::CreateBaseCacheAndOutgoingDirectories()
 }
 
 //----------------------------------------------------------------------------
-bool lhpOpUploadVMERefactor::IsLHPBuilderVersionUpToDate()
+bool lhpOpUploadVMERefactor::IsClientSoftwareVersionUpToDate()
 //----------------------------------------------------------------------------
 {
   wxBusyInfo("Checking if  your software is up-to-date in order to upload, please wait...");

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVMERefactor.h,v $
 Language:  C++
-Date:      $Date: 2009-04-02 15:55:16 $
-Version:   $Revision: 1.1.2.3 $
+Date:      $Date: 2009-04-03 15:50:14 $
+Version:   $Revision: 1.1.2.4 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -123,7 +123,7 @@ private:
   int UploadMultiVME(mafNode *vme, bool isLast);
 
   /** Upload of node and all its children*/
-  int UploadTree(mafNode *node);
+  int UploadTree(mafNode *vme);
 
   /** Upload linked VME */
   int UploadVMELinks(mafNode *vme);   
@@ -144,7 +144,7 @@ private:
   bool HasBinaryData(mafNode *node);
 
   /** Remove uploaded reosurces in case of error during whole msf uploading */
-  bool RemoveXMLResources(std::vector<mafString> vectorURI);  
+  bool RemoveAlreadyUploadedXMLResources(std::vector<mafString> xmlUploadedResourcesVectorURI);  
 
   void SaveConnectionConfigurationFile();
 
@@ -160,7 +160,7 @@ private:
   std::vector<mafNode*> m_VMEToBeUploadedVector; ///< vme to be uploaded from gui
   std::vector<mafNode*> m_EmptyNodeVector;
   std::vector<mafNode*> m_UploadedNodeVector;
-  std::vector<mafString> m_UploadedXMLURIVector;
+  std::vector<mafString> m_AlreadyUploadedXMLURIVector;
   std::vector<mafString> m_FileCreatedVector;
   std::vector<int> m_NodeDerivedId;
 
