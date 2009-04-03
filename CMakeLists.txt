@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2009-04-01 13:54:22 $
-#   Version:   $Revision: 1.33.2.15 $
+#   Date:      $Date: 2009-04-03 10:05:05 $
+#   Version:   $Revision: 1.33.2.16 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -322,7 +322,7 @@ with this setting.
     
 ELSE(DOWNLOAD_DICTIONARY)
          MESSAGE("You have choosed not to generate XML dictionaries for the VMEUploaderDownloader directory!
-Please notice that some functions of LHPBuilder in the Operations->Manage Submenu will not work
+Please notice that some operations in the Operations->Manage Submenu will not work
 with this setting.")
 #   
 ENDIF(DOWNLOAD_DICTIONARY)
@@ -438,7 +438,7 @@ with this setting.
     
 ELSE(DOWNLOAD_DICTIONARY_FOR_VMEUPDOWN_REFACTOR)
          MESSAGE("You have choosed not to generate XML dictionaries for the VMEUploaderDownloaderRefactor directory!
-Please notice that some functions of LHPBuilder in the Operations->Devel submenu will not
+Please notice that some operations in the Operations->Devel submenu will not
 work with this setting.")
 #   
 ENDIF(DOWNLOAD_DICTIONARY_FOR_VMEUPDOWN_REFACTOR)
