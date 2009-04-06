@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.h,v $
 Language:  C++
-Date:      $Date: 2009-03-31 16:43:23 $
-Version:   $Revision: 1.13.2.9 $
+Date:      $Date: 2009-04-06 16:10:13 $
+Version:   $Revision: 1.13.2.10 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -59,6 +59,9 @@ class lhpOpUploadVME;
 // lhpOpUploadMultiVME :
 //----------------------------------------------------------------------------
 /**Upload multiple VME using lhpOpUploadVME.*/
+// TODO: REFACTOR THIS 
+// BEWARE Heavy Refactoring in progress!!!!!!!!!!!!
+
 class lhpOpUploadMultiVME: public mafOp
 {
 public:

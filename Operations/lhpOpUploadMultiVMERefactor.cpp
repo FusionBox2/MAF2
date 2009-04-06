@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVMERefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-04-03 15:50:14 $
-Version:   $Revision: 1.1.2.5 $
+Date:      $Date: 2009-04-06 16:10:13 $
+Version:   $Revision: 1.1.2.6 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -653,8 +653,8 @@ int lhpOpUploadMultiVMERefactor::UploadTree( mafNode *vme )
           }
           m_UploadedNodeVector.push_back(childToUpload);
           m_EmptyNodeVector.push_back(childToUpload);
-          m_AlreadyUploadedXMLURIVector.push_back(m_OpUploadVME->GetOutXMLResourceURI());
-          if (SaveChildURIFile(childToUpload, m_OpUploadVME->GetOutXMLResourceURI()) == MAF_ERROR)
+          m_AlreadyUploadedXMLURIVector.push_back(m_OpUploadVME->GetRemoteXMLResourceURI());
+          if (SaveChildURIFile(childToUpload, m_OpUploadVME->GetRemoteXMLResourceURI()) == MAF_ERROR)
           {
             
             return MAF_ERROR;
@@ -700,7 +700,7 @@ int lhpOpUploadMultiVMERefactor::UploadTree( mafNode *vme )
     return MAF_ERROR;
   }
   m_UploadedNodeVector.push_back(vme);
-  m_AlreadyUploadedXMLURIVector.push_back(m_OpUploadVME->GetOutXMLResourceURI());
+  m_AlreadyUploadedXMLURIVector.push_back(m_OpUploadVME->GetRemoteXMLResourceURI());
   if (SetVMELinks(vme) == MAF_ERROR)
   {
     RemoveAlreadyUploadedXMLResources(m_AlreadyUploadedXMLURIVector);
@@ -737,7 +737,7 @@ int lhpOpUploadMultiVMERefactor::UploadMultiVME( mafNode *vme, bool isLast )
   if (m_OpUploadVME->Upload() == MAF_ERROR)
   {
     m_AlreadyUploadedXMLURIVector.clear();
-    m_AlreadyUploadedXMLURIVector.push_back(m_OpUploadVME->GetOutXMLResourceURI());
+    m_AlreadyUploadedXMLURIVector.push_back(m_OpUploadVME->GetRemoteXMLResourceURI());
     RemoveAlreadyUploadedXMLResources(m_AlreadyUploadedXMLURIVector);
     return MAF_ERROR;
   }
@@ -960,7 +960,7 @@ int lhpOpUploadMultiVMERefactor::UploadVMELinks( mafNode *derived )
       if (m_OpUploadVME->Upload() == MAF_ERROR)
       {
         m_AlreadyUploadedXMLURIVector.clear();
-        m_AlreadyUploadedXMLURIVector.push_back(m_OpUploadVME->GetOutXMLResourceURI());
+        m_AlreadyUploadedXMLURIVector.push_back(m_OpUploadVME->GetRemoteXMLResourceURI());
         RemoveAlreadyUploadedXMLResources(m_AlreadyUploadedXMLURIVector);
         return MAF_ERROR;
       }

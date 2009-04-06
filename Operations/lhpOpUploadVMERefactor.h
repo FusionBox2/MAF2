@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVMERefactor.h,v $
 Language:  C++
-Date:      $Date: 2009-04-03 15:50:14 $
-Version:   $Revision: 1.1.2.4 $
+Date:      $Date: 2009-04-06 16:10:13 $
+Version:   $Revision: 1.1.2.5 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -55,7 +55,10 @@ class mafVME;
 //----------------------------------------------------------------------------
 // lhpOpUploadVMERefactor :
 //----------------------------------------------------------------------------
-/**Upload VME*/
+/**Upload Single VME */
+// TODO: REFACTOR THIS 
+// BEWARE Heavy Refactoring in progress!!!!!!!!!!!!
+
 class lhpOpUploadVMERefactor: public mafOp
 {
 public:
@@ -73,49 +76,52 @@ public:
 	/** Builds operation's interface by calling CreateOpDialog() method. */
 	void OpRun();
 
-	/** Execute the operation. */
+	/** Execute the opereation. */
 	virtual void OpDo();
 
   /** Set Current Working Msf Directory*/
   void SetMsfDir(mafString msfDir){m_MsfDir = msfDir;};
 
-  /** Set subDictionray. */
-  void SetDictionary(int subDictionary);   
-
-  /** Load configuration file for connection*/
-  void SaveConnectionConfigurationFile();
-
   /** Set debug modality */
   void SetDebugMode(bool debugMode){m_DebugMode = debugMode;};
 
-  /** Upload */
-  int Upload();
-  
-  /** api refactoring in progress... */
-
-  mafString GetOutXMLResourceURI() {return m_OutXMLResourceURI;};
-
+  /** Has XML file to upload some binary data associated? Default to false */
   void SetIsBinaryDataPresent(bool present) {m_IsBinaryDataPresent = present;};
   bool GetIsBinaryDataPresent() {return m_IsBinaryDataPresent;};
   
+  /** Upload also vme children? Default to false */
   void SetWithChild(bool withChild) {m_WithChild = withChild;};
   bool GetWitChild() {return m_WithChild;};
-  
+
+  /** File to store uploaded XML resources URI for rollback */
   void SetInputXMLDataResourcesRollBackFile(mafString file) {m_InputXMLDataResourcesRollBackFile = file;};
   mafString GetInputXMLDataResourcesRollBackFile() {return m_InputXMLDataResourcesRollBackFile;};
 
+  /** Is this the last resource that will feed the uploader in one instance of the 
+  multiple upload operation? */
   void SetIsLast(bool isLast) {m_IsLast = isLast;};
   bool GetIsLast() {return m_IsLast;};
 
-  /** end api refactoring in progress... */
+  /** Upload */
+  int Upload();
+
+  /** Return the remote URI where the XML resource has been stored after calling Upload()*/
+  mafString GetRemoteXMLResourceURI() {return m_RemoteXMLResourceURI;};
+
 
 protected:
   
+  /** Load configuration file for connection*/
+  void SaveConnectionConfigurationFile();
+  
+  /** Set subDictionary. */
+  void SetDictionary(int subDictionary);   
+
   bool m_WithChild;
   bool m_IsLast;
   mafString m_InputXMLDataResourcesRollBackFile;
   bool m_IsBinaryDataPresent;
-  mafString m_OutXMLResourceURI;
+  mafString m_RemoteXMLResourceURI;
 
   /** Save information information about VME link*/
   void SaveLinkInfo();

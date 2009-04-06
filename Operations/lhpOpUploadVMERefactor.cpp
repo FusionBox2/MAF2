@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVMERefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-04-03 15:50:14 $
-Version:   $Revision: 1.1.2.5 $
+Date:      $Date: 2009-04-06 16:10:13 $
+Version:   $Revision: 1.1.2.6 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -145,6 +145,14 @@ mafOp(label)
 
   m_ProxyURL = "";
   m_ProxyPort = "0";
+
+
+  m_WithChild = false;
+  m_IsLast = true;
+  m_InputXMLDataResourcesRollBackFile = "m_InputXMLDataResourcesRollBackFile_UNDEFINED.txt";
+  m_IsBinaryDataPresent = false;
+  m_RemoteXMLResourceURI = "m_RemoteXMLResourceURI_UNDEFINED.txt";
+
 }
 
 //----------------------------------------------------------------------------
@@ -500,9 +508,9 @@ int lhpOpUploadVMERefactor::Upload()
     }
   }
 
-  m_OutXMLResourceURI = output[output.size() - 1];
+  m_RemoteXMLResourceURI = output[output.size() - 1];
 
-  if (m_OutXMLResourceURI == "OverQuota")
+  if (m_RemoteXMLResourceURI == "OverQuota")
   {
     wxMessageBox("Over Quota!. Uploading stopped.", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     return MAF_ERROR;
@@ -548,7 +556,7 @@ int lhpOpUploadVMERefactor::Upload()
     command2execute.Append(wxString::Format("%s ", hasLink.GetCStr())); //has link?
     command2execute.Append(wxString::Format("%s ", uploadWithChildren.GetCStr())); //upload with children?
     command2execute.Append(wxString::Format("%s ", m_InputXMLDataResourcesRollBackFile.GetCStr())); //file to be used for rollback operation, in case of error in msf upload
-    command2execute.Append(wxString::Format("%s ", m_OutXMLResourceURI.GetCStr())); //XML resource URI
+    command2execute.Append(wxString::Format("%s ", m_RemoteXMLResourceURI.GetCStr())); //XML resource URI
     command2execute.Append(wxString::Format("%s ", isLastResource.GetCStr())); //true if is last VME to be uploaded
     wxString name = m_Input->GetName();
     name.Replace(" ", "??");
@@ -616,7 +624,7 @@ int lhpOpUploadVMERefactor::Upload()
     command2execute.Append(wxString::Format("%s ", hasLink.GetCStr())); //has link?
     command2execute.Append(wxString::Format("%s ", uploadWithChildren.GetCStr())); //upload with children?
     command2execute.Append(wxString::Format("%s ", m_InputXMLDataResourcesRollBackFile.GetCStr())); //file to be used for rollback operation, in case of error in msf upload
-    command2execute.Append(wxString::Format("%s ", m_OutXMLResourceURI.GetCStr())); //XML resource URI
+    command2execute.Append(wxString::Format("%s ", m_RemoteXMLResourceURI.GetCStr())); //XML resource URI
     command2execute.Append(wxString::Format("%s ", isLastResource.GetCStr())); //true if is last VME to be uploaded
     wxString name = m_Input->GetName();
     name.Replace(" ", "??");
