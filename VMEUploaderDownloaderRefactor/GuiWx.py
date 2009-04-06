@@ -21,7 +21,7 @@ class GuiPart(wx.Frame):
         self.complete = 0 #set to 1 when all VME have benn uploaded
         
         # Set up the GUI
-        self.SetTitle("Upload Download")
+        self.SetTitle("Upload Download Refactor")
         self.scrolledPanel = scrolled.ScrolledPanel(self, -1, size=(140, 400),
                                  style = wx.TAB_TRAVERSAL|wx.SUNKEN_BORDER, name="panel1" )
         
