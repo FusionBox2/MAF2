@@ -28,9 +28,9 @@ class lhpEditVMETag:
         curDir = sys.path[0]
         self.InputMSFDirectory = "No input cache dir"
         self.InputMSFDirectory = "No input msf dir"
-        self.msfFileName = "MSF Name"
+        self.msfFileName = "No MSF Name"
         self.UnhandledPlusManualTagsListFileName = "No UnhandledPlusManualTagsListFile!"
-        self.HandledAutoTagsListFileName = "HandledAutoTagsListFile!" 
+        self.HandledAutoTagsListFileName = "No HandledAutoTagsListFile!" 
         self.VmeToExtractID = 1
         self.OutputFolderName = "No output msf dir"
         self.OutputVMEXMLName = "OutputXML.xml"  #xml with tag edited
@@ -284,16 +284,15 @@ class lhpEditVMETag:
             print "\nWritten output MSF file " + self.OutputMSFFileName + " in directory " + self.OutputFolderName
 
             
-def run(inputCacheDirectory, inputMSFDirectory, vmeToExtractId, unhandledPlusManualTagsListFileName):                                        
+def run(inputCacheDirectory, inputMSFDirectory, vmeToExtractId, unhandledPlusManualTagsListFileName,handledAutoTagsListFileName):                                        
      curDir = sys.path[0]
      lhpEditVMETagInstance = lhpEditVMETag()
      lhpEditVMETagInstance.InputCacheDirectory = inputCacheDirectory
      lhpEditVMETagInstance.InputMSFDirectory = inputMSFDirectory
-     lhpEditVMETagInstance.HandledAutoTagsListFileName = curDir + r'\handledAutoTagsList.csv'
+     lhpEditVMETagInstance.HandledAutoTagsListFileName = curDir + '\\' + handledAutoTagsListFileName
      lhpEditVMETagInstance.UnhandledPlusManualTagsListFileName = inputCacheDirectory + unhandledPlusManualTagsListFileName
      lhpEditVMETagInstance.VmeToExtractID = int(vmeToExtractId)
      lhpEditVMETagInstance.OutputVMEXMLName = "OutputXML.xml"
-     #lhpEditVMETagInstance.OutputVMEXMLName = curDir + r'\Outgoing'
      lhpEditVMETagInstance.OutputFolderName = inputMSFDirectory #put out xml in the msf directoty
      lhpEditVMETagInstance.FakeRootMSFFileName = curDir + r'\applicationData\fakeRoot.xml'
      lhpEditVMETagInstance.FakeMSFFileName = curDir + r'\applicationData\fakeMSF.xml'
@@ -303,11 +302,14 @@ def run(inputCacheDirectory, inputMSFDirectory, vmeToExtractId, unhandledPlusMan
 if __name__ == '__main__':    
     import sys
     usage_msg = '''Usage: %s
-    inputMSFDirectory, vmeToExtractId,
-     unhandledPlusManualTagsListFileName
+    inputCacheDirectory 
+    inputMSFDirectory 
+    vmeToExtractId
+    unhandledPlusManualTagsListFileName 
+    handledAutoTagsListFileName
     ''' % sys.argv[0]
     
-    if len(sys.argv) != 5:
+    if len(sys.argv) != 6:
         print 'Error :\n' + usage_msg
         sys.exit(1)
         
@@ -315,12 +317,15 @@ if __name__ == '__main__':
     inputMSFDirectory = sys.argv[2].replace("??", " ")
     vmeToExtractId = sys.argv[3]
     unhandledPlusManualTagsListFileName = sys.argv[4]
+    handledAutoTagsListFileName = sys.argv[5]
     
     print "\ninput cache Directory: " + inputMSFDirectory
     print "\ninput MSF Directory: " + inputMSFDirectory
     print "\ninput vme Id: " + vmeToExtractId
-    print "\nlhdl dictionary: " + unhandledPlusManualTagsListFileName
+    print "\nunhandledPlusManualTagsListFileName: " + unhandledPlusManualTagsListFileName
+    print "\nhandledAutoTagsListFileName: " + handledAutoTagsListFileName
     
-    run(inputCacheDirectory, inputMSFDirectory, vmeToExtractId, unhandledPlusManualTagsListFileName)
+    run(inputCacheDirectory, inputMSFDirectory, vmeToExtractId, unhandledPlusManualTagsListFileName,
+        handledAutoTagsListFileName)
 
  

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVMERefactor.h,v $
 Language:  C++
-Date:      $Date: 2009-04-06 16:10:13 $
-Version:   $Revision: 1.1.2.5 $
+Date:      $Date: 2009-04-07 10:35:28 $
+Version:   $Revision: 1.1.2.6 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -76,7 +76,7 @@ public:
 	/** Builds operation's interface by calling CreateOpDialog() method. */
 	void OpRun();
 
-	/** Execute the opereation. */
+	/** Execute the operation. */
 	virtual void OpDo();
 
   /** Set Current Working Msf Directory*/
@@ -200,7 +200,7 @@ private:
   wxArrayString m_ManualTagsList;
   wxArrayString m_UnhandledAutoTagsListFromFactory; ///< the factory was not able to handle these tags
   wxArrayString m_HandledAutoTagsListFromFactory; ///< tags handled by the factory  
-  wxString m_CsvName;
+  wxString m_UnhandledPlusManualTagsFile;
   wxString m_NodeName;
   FILE *m_ProxyFile;
   bool m_HasLink;

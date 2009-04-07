@@ -25,8 +25,6 @@ class lhpEditVMETagTest(unittest.TestCase):
         
         tag = lhpEditVMETag.lhpEditVMETag()
         tag.InputMSFDirectory = curDir + r'\msf_test_import_export_VME'
-        #tag.OutputFolderName = curDir + r'\msf_test_import_export_VME'
-        #tag.OutputFolderName = curDir + r'\Outgoing\0'
         tag.OutputFolderName = curDir + r'\msf_test_import_export_VME'
         tag.UnhandledPlusManualTagsListFileName = curDir + r'\unhandledPlusManualTagsList.csv'
         tag.HandledAutoTagsListFileName = curDir + r'\handledAutoTagsList.csv'
