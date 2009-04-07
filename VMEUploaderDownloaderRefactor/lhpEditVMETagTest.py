@@ -33,8 +33,7 @@ class lhpEditVMETagTest(unittest.TestCase):
         tag.FakeRootMSFFileName = curDir + r'\applicationData\fakeRoot.xml'
         tag.FakeMSFFileName = curDir + r'\applicationData\fakeMSF.xml'
         tag.VmeToExtractID = 1   
-        tag.ParseInput()
-        tag.ParseOutput()
+        tag.BuildOutputMSF()
         
         
 if __name__ == '__main__':

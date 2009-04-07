@@ -22,8 +22,7 @@ import urllib, urllib2, base64, re, os, cookielib, sys
 from HttpsProxy import *
 
 class lhpEditVMETag:
-    """Edit VME tags and save them into original msf"""
-    
+    """Edit VME tags and save them into original msf"""    
     
     def __init__(self):
         curDir = sys.path[0]
@@ -45,7 +44,6 @@ class lhpEditVMETag:
         
     def ParseInput(self):
         #Create an xml from msf to edit
-
         
         msfDOMParserInstance = msfParser.msfParser()
 
@@ -225,8 +223,10 @@ class lhpEditVMETag:
         if Debug:
             print "\nWritten XML file " + self.OutputVMEXMLName + " with tag edited in directory " + self.OutputFolderName
         
-    def ParseOutput(self):
-        #Create an msf from xml created in ParseInput
+    def BuildOutputMSF(self):
+        
+        self.ParseInput()
+        
         self.InputVMEXMLFileName = self.OutputVMEXMLName
         
         domP = msfParser.msfParser()
@@ -298,8 +298,7 @@ def run(inputCacheDirectory, inputMSFDirectory, vmeToExtractId, unhandledPlusMan
      lhpEditVMETagInstance.FakeRootMSFFileName = curDir + r'\applicationData\fakeRoot.xml'
      lhpEditVMETagInstance.FakeMSFFileName = curDir + r'\applicationData\fakeMSF.xml'
 
-     lhpEditVMETagInstance.ParseInput()
-     lhpEditVMETagInstance.ParseOutput() 
+     lhpEditVMETagInstance.BuildOutputMSF() 
     
 if __name__ == '__main__':    
     import sys
