@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterAnsysInputFile.cpp,v $
   Language:  C++
-  Date:      $Date: 2009-04-01 15:10:21 $
-  Version:   $Revision: 1.6.2.3 $
+  Date:      $Date: 2009-04-10 13:50:21 $
+  Version:   $Revision: 1.6.2.4 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -18,6 +18,7 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
+#include "lhpUtils.h"
 #include "lhpBuilderDecl.h"
 #include "lhpOpImporterAnsysInputFile.h"
 

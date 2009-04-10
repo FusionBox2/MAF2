@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTagRefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-04-01 13:51:22 $
-Version:   $Revision: 1.1.2.3 $
+Date:      $Date: 2009-04-10 13:50:21 $
+Version:   $Revision: 1.1.2.4 $
 Authors:   Roberto Mucci , Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -46,6 +46,7 @@ MafMedical is partially based on OpenMAF.
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 #include "lhpBuilderDecl.h"
+#include "lhpUtils.h"
 
 #include <wx/process.h>
 #include <wx/dir.h>

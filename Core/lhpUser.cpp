@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpUser.cpp,v $
 Language:  C++
-Date:      $Date: 2009-03-31 16:45:36 $
-Version:   $Revision: 1.11.2.7 $
+Date:      $Date: 2009-04-10 13:51:20 $
+Version:   $Revision: 1.11.2.8 $
 Authors:   Daniele Giunchi
 ==========================================================================
 Copyright (c) 2002/2004
@@ -17,6 +17,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 // Failing in doing this will result in a run-time error saying:
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
+#include "lhpUtils.h"
 
 #include "lhpBuilderDecl.h"
 #include "lhpUser.h"

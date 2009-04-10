@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandler.cpp,v $
   Language:  C++
-  Date:      $Date: 2009-03-31 16:43:23 $
-  Version:   $Revision: 1.3.2.1 $
+  Date:      $Date: 2009-04-10 13:50:21 $
+  Version:   $Revision: 1.3.2.2 $
   Authors:   Stefano Perticoni - Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -18,6 +18,7 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------------
 
+#include "lhpUtils.h"
 #include "lhpTagHandler.h"
 #include "mafDecl.h"
 #include "lhpBuilderDecl.h"

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpBuilderDecl.h,v $
 Language:  C++
-Date:      $Date: 2009-04-01 10:47:17 $
-Version:   $Revision: 1.3.2.5 $
+Date:      $Date: 2009-04-10 13:49:14 $
+Version:   $Revision: 1.3.2.6 $
 Authors:   Daniele Giunchi , Stefano Perticoni
 ==========================================================================
 Copyright (c) 2001/2005 
@@ -27,14 +27,4 @@ enum LHP_MAIN_EVENT_ID
   ID_REQUEST_PYTHONW_EXE_INTERPRETER,
 };
 
-class lhpUtils
-{
-public:
-
-  /** In DEBUG mode return LHPBuilder source code directory in WIN32 path format. 
-  In RELEASE mode it returns the Application installation directory in WIN32 path format (same as mafGetApplicationDirectory)*/
-
-  static wxString lhpGetApplicationDirectory();
-
-};
 #endif

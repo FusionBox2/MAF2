@@ -14,6 +14,8 @@ forarray.h
 VecProc.h
 vectors.h
 splines.h
+lhpUtils.h
+lhpUtils.cpp
 )
 
 # Create the library.

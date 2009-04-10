@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpExporterAnsysInputFile.cpp,v $
   Language:  C++
-  Date:      $Date: 2009-04-01 15:10:21 $
-  Version:   $Revision: 1.9.2.3 $
+  Date:      $Date: 2009-04-10 13:50:21 $
+  Version:   $Revision: 1.9.2.4 $
   Authors:   Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -19,6 +19,7 @@
 //----------------------------------------------------------------------------
 
 #include "lhpBuilderDecl.h"
+#include "lhpUtils.h"
 #include "lhpOpExporterAnsysInputFile.h"
 
 #include "wx/busyinfo.h"

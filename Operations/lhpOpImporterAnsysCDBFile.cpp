@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpOpImporterAnsysCDBFile.cpp,v $
   Language:  C++
-  Date:      $Date: 2009-04-01 15:10:21 $
-  Version:   $Revision: 1.1.2.7 $
+  Date:      $Date: 2009-04-10 13:50:21 $
+  Version:   $Revision: 1.1.2.8 $
   Authors:   Daniele Giunchi
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -11,7 +11,6 @@
 =========================================================================*/
 
 #include "mafDefines.h" 
-#include "lhpBuilderDecl.h"
 //----------------------------------------------------------------------------
 // NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
 // This force to include Window,wxWidgets and VTK exactly in this order.
@@ -20,6 +19,8 @@
 //----------------------------------------------------------------------------
 
 #include "lhpBuilderDecl.h"
+#include "lhpUtils.h"
+
 #include "lhpOpImporterAnsysCDBFile.h"
 
 #include "wx/busyinfo.h"

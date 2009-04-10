@@ -6,7 +6,7 @@ SET(PROJECT_SRCS
 	lhpBuilderLogic.cpp
 	lhpBuilderLogic.h
 	lhpBuilderDecl.h
-	lhpBuilderDecl.cpp
+	
 )
 
 IF (NOT EXECUTABLE_OUTPUT_PATH)
@@ -43,7 +43,7 @@ SET(PROJECT_SRCS
 	lhpBuilderLogic.cpp
 	lhpBuilderLogic.h
 	lhpBuilderDecl.h
-	lhpBuilderDecl.cpp
+	
 )
 
 IF (NOT EXECUTABLE_OUTPUT_PATH)
@@ -82,7 +82,7 @@ SET(PROJECT_SRCS
 	lhpBuilderLogic.cpp
 	lhpBuilderLogic.h
 	lhpBuilderDecl.h
-	lhpBuilderDecl.cpp
+	
 )
 
 IF (NOT EXECUTABLE_OUTPUT_PATH)
@@ -119,7 +119,7 @@ SET(PROJECT_SRCS
 	lhpBuilderLogic.cpp
 	lhpBuilderLogic.h
 	lhpBuilderDecl.h
-	lhpBuilderDecl.cpp
+	
 )
 
 IF (NOT EXECUTABLE_OUTPUT_PATH)
@@ -157,7 +157,7 @@ SET(PROJECT_SRCS
 	lhpBuilderLogic.cpp
 	lhpBuilderLogic.h
 	lhpBuilderDecl.h
-	lhpBuilderDecl.cpp
+	
 )
 
 IF (NOT EXECUTABLE_OUTPUT_PATH)
