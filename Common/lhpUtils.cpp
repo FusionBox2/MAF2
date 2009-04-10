@@ -2,13 +2,15 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpUtils.cpp,v $
 Language:  C++
-Date:      $Date: 2009-04-10 13:49:43 $
-Version:   $Revision: 1.1.2.1 $
+Date:      $Date: 2009-04-10 19:12:06 $
+Version:   $Revision: 1.1.2.2 $
 Authors:   Stefano Perticoni
 ==========================================================================
 Copyright (c) 2001/2005 
 CINECA - Interuniversity Consortium (www.cineca.it)
 =========================================================================*/
+
+#include "mafDecl.h"
 
 #include "lhpUtils.h"
 #include "lhpDefines.h"
