@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVMERefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-04-10 13:50:21 $
-Version:   $Revision: 1.1.2.8 $
+Date:      $Date: 2009-04-14 15:09:33 $
+Version:   $Revision: 1.1.2.9 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -82,7 +82,7 @@ mafCxxTypeMacro(lhpOpUploadVMERefactor);
 //----------------------------------------------------------------------------
 //static variables
 long lhpOpUploadVMERefactor::m_Pid = -1;
-mafString lhpOpUploadVMERefactor::m_CacheSubdir = "0";
+mafString lhpOpUploadVMERefactor::m_CacheChildLocalFolderName = "0";
 
 enum  m_SubdictionaryId_VALUES
 {
@@ -113,13 +113,13 @@ mafOp(label)
   m_PythonExe = "python.exe_UNDEFINED";
   m_PythonwExe = "pythonw.exe_UNDEFINED";  
 
-  m_CacheDir = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\UploadCache\\").c_str();
+  m_CachesParentABSFolderName = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\UploadCache\\").c_str();
   m_OutgoingDir = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\Outgoing\\").c_str();
 
-  m_VMEUploaderDownloaderDir  = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\").c_str();
+  m_VMEUploaderDownloaderABSFolderName  = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\").c_str();
 
-  m_MsfDir = "";
-  m_UnhandledPlusManualTagsFile = "manualTagFile.csv";
+  m_MsfABSFolder = "";
+  m_UnhandledPlusManualTagsLocalFileName = "manualTagFile.csv";
 
   //m_RepositoryServiceURL = "http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/";
   m_RepositoryServiceURL ="https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/";
@@ -132,9 +132,9 @@ mafOp(label)
   m_AssembledXMLDictionaryFileName = "assembledXMLDictionary.xml";
   m_SubDictionaryBuildingCommand = "UNDEFINED";
 
-  m_AutoTagsListFromXMLDictionaryFileName = "autoTagsList.txt";
-  m_ManualTagsListFromXMLDictionaryFileName = "manualTagsList.txt";
-  m_HandledAutoTagsFileName = "handledAutoTagsList.csv";
+  m_AutoTagsListFromXMLDictionaryLocalFileName = "autoTagsList.txt";
+  m_ManualTagsListFromXMLDictionaryLocalFileName = "manualTagsList.txt";
+  m_HandledAutoTagsLocalFileName = "handledAutoTagsList.csv";
  
 
   m_HandledAutoTagsListFromFactory.Clear();
@@ -218,7 +218,7 @@ void lhpOpUploadVMERefactor::OpRun()
     wxString oldDir = wxGetCwd();
     if (m_DebugMode)
       mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-    wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+    wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolderName.GetCStr());
     if (m_DebugMode)
       mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -249,7 +249,7 @@ void lhpOpUploadVMERefactor::SaveConnectionConfigurationFile()
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolderName.GetCStr());
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -366,12 +366,12 @@ int lhpOpUploadVMERefactor::Upload()
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolderName.GetCStr());
 
   //if already exist file with binary URI, remove it
   wxString fileName = m_Input->GetName();
   fileName << wxString::Format("%d", m_Input->GetId());
-  wxString lockPath = m_VMEUploaderDownloaderDir;
+  wxString lockPath = m_VMEUploaderDownloaderABSFolderName;
   lockPath += fileName;
   if (wxFileExists(lockPath))
     wxRemoveFile(lockPath); //fileName
@@ -383,11 +383,11 @@ int lhpOpUploadVMERefactor::Upload()
 
   wxString temp;
   temp.Append((*event.GetString()).GetCStr());
-  m_MsfFile = temp;
+  m_MsfABSFileName = temp;
   temp = temp.BeforeLast('/');
-  m_MsfDir = temp;  
+  m_MsfABSFolder = temp;  
 
-  if (m_MsfDir == "")
+  if (m_MsfABSFolder == "")
   {
     wxMessageBox("Can't edit VME tags: msf must be saved locally. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     return MAF_ERROR;
@@ -432,19 +432,19 @@ int lhpOpUploadVMERefactor::Upload()
   mafString pythonScriptName = "lhpEditVMETag.py ";
 
   //workaround to understanding directory argument
-  wxString msfCacheDirectoryWorkaround = m_CurrentCache;
+  wxString msfCacheDirectoryWorkaround = m_CurrentCacheChildABSFolderName;
   msfCacheDirectoryWorkaround.Replace(" ", "??");
   
   //workaround to understanding directory argument
-  wxString msfDirectoryWorkaround = m_MsfDir;
+  wxString msfDirectoryWorkaround = m_MsfABSFolder;
   msfDirectoryWorkaround.Replace(" ", "??");
 
   command2execute.Append(pythonScriptName.GetCStr());
   command2execute.Append(wxString::Format("%s ",msfCacheDirectoryWorkaround)); //cache directory
   command2execute.Append(wxString::Format("%s ",msfDirectoryWorkaround)); //MSF directory
   command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //vme id
-  command2execute.Append(wxString::Format("%s ", m_UnhandledPlusManualTagsFile.c_str())); //manualTagFile
-  command2execute.Append(wxString::Format("%s", m_HandledAutoTagsFileName.GetCStr())); //autoTagFile
+  command2execute.Append(wxString::Format("%s ", m_UnhandledPlusManualTagsLocalFileName.c_str())); //manualTagFile
+  command2execute.Append(wxString::Format("%s", m_HandledAutoTagsLocalFileName.GetCStr())); //autoTagFile
 
   if (m_DebugMode)
     mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
@@ -547,7 +547,7 @@ int lhpOpUploadVMERefactor::Upload()
     }
    
     //workaround to understanding directory argument
-    wxString directoryWorkAround = m_CurrentCache;
+    wxString directoryWorkAround = m_CurrentCacheChildABSFolderName;
     directoryWorkAround.Replace(" ", "??");
     command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
     command2execute.Append(wxString::Format("%s ",m_User->GetName())); //user
@@ -615,7 +615,7 @@ int lhpOpUploadVMERefactor::Upload()
     }
 
     //workaround to understanding directory argument
-    wxString directoryWorkAround = m_CurrentCache;
+    wxString directoryWorkAround = m_CurrentCacheChildABSFolderName;
     directoryWorkAround.Replace(" ", "??");
     command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
     command2execute.Append(wxString::Format("%s ",m_User->GetName())); //user
@@ -658,7 +658,7 @@ int lhpOpUploadVMERefactor::ImportMSF()
   //msf name created by phyton tag editor is standard: OutputMSF.lhp
   mafString msfPythonFileName;
   mafString msfFullPath;
-  msfPythonFileName.Append(m_MsfDir.GetCStr());
+  msfPythonFileName.Append(m_MsfABSFolder.GetCStr());
   msfPythonFileName.Append("/");
   msfPythonFileName.Append("OutputMSF");
   int fileNumber = 0;
@@ -764,20 +764,20 @@ bool lhpOpUploadVMERefactor::CreateCache()
   bool result = false;
   //control cache subdir
   wxString currentSubdir;
-  currentSubdir = m_CacheDir + m_CacheSubdir.GetCStr();
+  currentSubdir = m_CachesParentABSFolderName + m_CacheChildLocalFolderName.GetCStr();
   while(wxDirExists(currentSubdir))
   {
-    int number = atoi(m_CacheSubdir.GetCStr());
+    int number = atoi(m_CacheChildLocalFolderName.GetCStr());
     number += 1;
-    m_CacheSubdir = "";
-    m_CacheSubdir << number;
-    currentSubdir = m_CacheDir + m_CacheSubdir.GetCStr();
+    m_CacheChildLocalFolderName = "";
+    m_CacheChildLocalFolderName << number;
+    currentSubdir = m_CachesParentABSFolderName + m_CacheChildLocalFolderName.GetCStr();
   }
   currentSubdir = currentSubdir + "\\";
   if(wxMkDir(currentSubdir) == 0)
     result = true;
 
-  m_CurrentCache = currentSubdir;
+  m_CurrentCacheChildABSFolderName = currentSubdir;
   return result;
 }
 //----------------------------------------------------------------------------
@@ -792,7 +792,7 @@ bool lhpOpUploadVMERefactor::CopyInputVMEInCache()
     externalFileName.append(".");
     externalFileName.append(((mafVMEExternalData *)m_Input)->GetExtension());
     wxString externalFilePath = ((mafVMEExternalData *)m_Input)->GetAbsoluteFileName();
-    wxString externalCopiedName =  m_CurrentCache + "\\" + externalFileName;
+    wxString externalCopiedName =  m_CurrentCacheChildABSFolderName + "\\" + externalFileName;
     if(wxFileExists(externalFilePath))
     {
       copied = wxCopyFile(externalFilePath, externalCopiedName);
@@ -802,9 +802,9 @@ bool lhpOpUploadVMERefactor::CopyInputVMEInCache()
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_CurrentCache.c_str());
+  wxSetWorkingDirectory(m_CurrentCacheChildABSFolderName.c_str());
 
-  wxString msfname = m_CacheSubdir;
+  wxString msfname = m_CacheChildLocalFolderName;
   msfname.Append(".msf");
 
   // restore due attributes
@@ -880,7 +880,7 @@ bool lhpOpUploadVMERefactor::ExistsRunningProcess()
   bool result = false;
   
   wxFile lockFile;
-  wxString lockpath = m_VMEUploaderDownloaderDir;
+  wxString lockpath = m_VMEUploaderDownloaderABSFolderName;
   lockpath += "activeLock.lhp";
   if (wxFileExists(lockpath))
   {
@@ -915,7 +915,7 @@ int lhpOpUploadVMERefactor::GeneratesTagsListsFromXMLDictionary()
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolderName.GetCStr());
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -925,7 +925,7 @@ int lhpOpUploadVMERefactor::GeneratesTagsListsFromXMLDictionary()
     return MAF_ERROR;
   }
   
-  mafString dictionaryToProcessFileName;
+  mafString dictionaryToProcessLocalFileName;
 
   // handle sub dictionaries creation...
   if (m_SubdictionaryId == DICOM_SUBDICTIONARY)
@@ -937,7 +937,7 @@ int lhpOpUploadVMERefactor::GeneratesTagsListsFromXMLDictionary()
     {
       return MAF_ERROR;
     }
-    dictionaryToProcessFileName = m_AssembledXMLDictionaryFileName;
+    dictionaryToProcessLocalFileName = m_AssembledXMLDictionaryFileName;
   } 
   else if (m_SubdictionaryId == MOTION_ANALYSIS_SUBDICTIONARY)
   {
@@ -950,11 +950,11 @@ int lhpOpUploadVMERefactor::GeneratesTagsListsFromXMLDictionary()
       return MAF_ERROR;
     }
 
-    dictionaryToProcessFileName = m_AssembledXMLDictionaryFileName;
+    dictionaryToProcessLocalFileName = m_AssembledXMLDictionaryFileName;
   }
   else if (m_SubdictionaryId == NO_SUBDICTIONARY)
   {
-    dictionaryToProcessFileName = m_MasterXMLDictionaryFileName;
+    dictionaryToProcessLocalFileName = m_MasterXMLDictionaryFileName;
     // nothing to do...continue...
   }  
   else
@@ -967,9 +967,9 @@ int lhpOpUploadVMERefactor::GeneratesTagsListsFromXMLDictionary()
   wxString command2execute;
   command2execute = m_PythonExe.GetCStr();
   command2execute.Append(" lhpXMLDictionaryParser.py ");
-  command2execute.Append(dictionaryToProcessFileName.GetCStr());
+  command2execute.Append(dictionaryToProcessLocalFileName.GetCStr());
   command2execute.Append(" auto_tags ");
-  command2execute.Append(m_AutoTagsListFromXMLDictionaryFileName.GetCStr());
+  command2execute.Append(m_AutoTagsListFromXMLDictionaryLocalFileName.GetCStr());
   
   if (m_DebugMode)
     mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
@@ -990,9 +990,9 @@ int lhpOpUploadVMERefactor::GeneratesTagsListsFromXMLDictionary()
   command2execute.Clear();
   command2execute = m_PythonExe.GetCStr();
   command2execute.Append(" lhpXMLDictionaryParser.py ");
-  command2execute.Append(dictionaryToProcessFileName.GetCStr());
+  command2execute.Append(dictionaryToProcessLocalFileName.GetCStr());
   command2execute.Append(" manual_tags ");
-  command2execute.Append(m_ManualTagsListFromXMLDictionaryFileName.GetCStr());
+  command2execute.Append(m_ManualTagsListFromXMLDictionaryLocalFileName.GetCStr());
 
   if (m_DebugMode)
     mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
@@ -1018,9 +1018,9 @@ int lhpOpUploadVMERefactor::GeneratesTagsListsFromXMLDictionary()
   // open auto tags file and try to handle tags using tags factory 
   ifstream inManualTagsFile;
 
-  inManualTagsFile.open(m_ManualTagsListFromXMLDictionaryFileName.GetCStr());
+  inManualTagsFile.open(m_ManualTagsListFromXMLDictionaryLocalFileName.GetCStr());
   if (!inManualTagsFile) {
-    wxString message = m_ManualTagsListFromXMLDictionaryFileName.GetCStr();
+    wxString message = m_ManualTagsListFromXMLDictionaryLocalFileName.GetCStr();
     message.Append(" not found! Unable to open XML dictionary file");
     mafLogMessage(message.c_str());
     return MAF_ERROR; // terminate with error
@@ -1037,7 +1037,7 @@ int lhpOpUploadVMERefactor::GeneratesTagsListsFromXMLDictionary()
   // open auto tags file and try to handle tags using tags factory 
   ifstream inAutoTagsFile;
 
-  inAutoTagsFile.open(m_AutoTagsListFromXMLDictionaryFileName.GetCStr());
+  inAutoTagsFile.open(m_AutoTagsListFromXMLDictionaryLocalFileName.GetCStr());
   if (!inAutoTagsFile) {
     mafLogMessage("Unable to open file");
     return MAF_ERROR; // terminate with error
@@ -1054,7 +1054,7 @@ int lhpOpUploadVMERefactor::GeneratesTagsListsFromXMLDictionary()
   lhpTagHandlerInputOutputParametersCargo *parametersCargo = lhpTagHandlerInputOutputParametersCargo::New();
   parametersCargo->SetInputVme(mafVME::SafeDownCast(m_Input));
   parametersCargo->SetInputUser(m_User);
-	parametersCargo->SetInputMSF(m_MsfFile);
+	parametersCargo->SetInputMSF(m_MsfABSFileName);
 
   for (int i = 0; i < m_AutoTagsList.size(); i++)
   {
@@ -1096,7 +1096,7 @@ int lhpOpUploadVMERefactor::GeneratesTagsListsFromXMLDictionary()
   // open auto tags file and try to handle tags using tags factory 
   ofstream handledAutoTagsFile;
 
-  handledAutoTagsFile.open(m_HandledAutoTagsFileName.GetCStr());
+  handledAutoTagsFile.open(m_HandledAutoTagsLocalFileName.GetCStr());
 
   for (int i = 0; i < m_HandledAutoTagsListFromFactory.size(); i++)
   {
@@ -1110,7 +1110,7 @@ int lhpOpUploadVMERefactor::GeneratesTagsListsFromXMLDictionary()
   // open auto tags file and try to handle tags using tags factory 
   ofstream unhandledPlusManualTagsFile;
 
-  unhandledPlusManualTagsFile.open(m_CurrentCache + m_UnhandledPlusManualTagsFile.c_str());
+  unhandledPlusManualTagsFile.open(m_CurrentCacheChildABSFolderName + m_UnhandledPlusManualTagsLocalFileName.c_str());
 
   if (!unhandledPlusManualTagsFile) {
     mafLogMessage("Unable to create file");
@@ -1175,7 +1175,7 @@ bool lhpOpUploadVMERefactor::CreateBaseCacheAndOutgoingDirectories()
 {
   bool resultCache = false, resultOutgoing = false;
 
-  wxString existCache = m_CacheDir.GetCStr();
+  wxString existCache = m_CachesParentABSFolderName.GetCStr();
   if ( wxDirExists(existCache) )
   {
      resultCache = true;
@@ -1208,7 +1208,7 @@ bool lhpOpUploadVMERefactor::IsClientSoftwareVersionUpToDate()
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolderName.GetCStr());
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -1278,7 +1278,6 @@ bool lhpOpUploadVMERefactor::IsClientSoftwareVersionUpToDate()
   {
     return false;
   }  
-
 }
 
 //----------------------------------------------------------------------------
@@ -1290,7 +1289,7 @@ mafString lhpOpUploadVMERefactor::GetXMLDictionaryFileName( mafString dictionary
 
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolderName.GetCStr());
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -1344,7 +1343,7 @@ int lhpOpUploadVMERefactor::AssembleDictionaries()
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolderName.GetCStr());
   if (m_DebugMode)
   {
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );

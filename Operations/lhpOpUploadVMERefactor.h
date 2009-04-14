@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVMERefactor.h,v $
 Language:  C++
-Date:      $Date: 2009-04-07 10:35:28 $
-Version:   $Revision: 1.1.2.6 $
+Date:      $Date: 2009-04-14 15:09:33 $
+Version:   $Revision: 1.1.2.7 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -80,7 +80,7 @@ public:
 	virtual void OpDo();
 
   /** Set Current Working Msf Directory*/
-  void SetMsfDir(mafString msfDir){m_MsfDir = msfDir;};
+  void SetMsfDir(mafString msfDir){m_MsfABSFolder = msfDir;};
 
   /** Set debug modality */
   void SetDebugMode(bool debugMode){m_DebugMode = debugMode;};
@@ -94,7 +94,7 @@ public:
   bool GetWitChild() {return m_WithChild;};
 
   /** File to store uploaded XML resources URI for rollback */
-  void SetInputXMLDataResourcesRollBackFile(mafString file) {m_InputXMLDataResourcesRollBackFile = file;};
+  void SetXMLUploadedResourcesRollBackLocalFileName(mafString file) {m_InputXMLDataResourcesRollBackFile = file;};
   mafString GetInputXMLDataResourcesRollBackFile() {return m_InputXMLDataResourcesRollBackFile;};
 
   /** Is this the last resource that will feed the uploader in one instance of the 
@@ -154,18 +154,18 @@ protected:
   /** Import Edited MSF*/
   int ImportMSF();
   
-  mafString m_CacheDir; //>cache superdirectory
-  static mafString m_CacheSubdir; //>cache subdirectory
-  wxString m_CurrentCache; //>current cache directory
+  mafString m_CachesParentABSFolderName; //>cache subfolders parent directory
+  static mafString m_CacheChildLocalFolderName; //>cache subdirectory
+  wxString m_CurrentCacheChildABSFolderName; //>current cache subdirectory
   
-  mafString m_OutgoingDir; //directoyr for xml and binary to send
+  mafString m_OutgoingDir; //directory for xml and binary to send
 
-  mafString m_VMEUploaderDownloaderDir; //>directory where the scripts are
+  mafString m_VMEUploaderDownloaderABSFolderName; //>directory where the scripts are
   
   mafString m_PythonExe; //>python  executable
   mafString m_PythonwExe; //>pythonw  executable
-  mafString m_MsfDir; //>directory of original msf
-	mafString m_MsfFile; //>absolute path of original msf
+  mafString m_MsfABSFolder; //>directory of original msf
+	mafString m_MsfABSFileName; //>absolute path of original msf
   
   static long m_Pid; //> pid of the server process
 
@@ -176,10 +176,10 @@ protected:
   mafString m_AssembledXMLDictionaryFileName;
   mafString m_SubDictionaryBuildingCommand;
 
-  mafString m_HandledAutoTagsFileName;
-  mafString m_AutoTagsListFromXMLDictionaryFileName; 
-  mafString m_ManualTagsListFromXMLDictionaryFileName;
-  mafString m_UnhandledPlusManualTagsFileName;
+  mafString m_HandledAutoTagsLocalFileName;
+  mafString m_AutoTagsListFromXMLDictionaryLocalFileName; 
+  mafString m_ManualTagsListFromXMLDictionaryLocalFileName;
+  
 
   lhpUser  *m_User;
   
@@ -200,7 +200,7 @@ private:
   wxArrayString m_ManualTagsList;
   wxArrayString m_UnhandledAutoTagsListFromFactory; ///< the factory was not able to handle these tags
   wxArrayString m_HandledAutoTagsListFromFactory; ///< tags handled by the factory  
-  wxString m_UnhandledPlusManualTagsFile;
+  wxString m_UnhandledPlusManualTagsLocalFileName;
   wxString m_NodeName;
   FILE *m_ProxyFile;
   bool m_HasLink;

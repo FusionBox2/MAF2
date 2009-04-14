@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVMERefactor.h,v $
 Language:  C++
-Date:      $Date: 2009-04-03 15:50:14 $
-Version:   $Revision: 1.1.2.4 $
+Date:      $Date: 2009-04-14 15:09:33 $
+Version:   $Revision: 1.1.2.5 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -79,6 +79,8 @@ public:
 	/** Execute the operation. */
 	virtual void OpDo();
 
+  void Upload();
+
   /** Set Current Working Msf Directory*/
   void SetMsfDir(mafString msfDir){m_MsfDir = msfDir;};
 
@@ -100,7 +102,7 @@ protected:
   mafString m_CacheDir; //>cache superdirectory
   static mafString m_CacheSubdir; //>cache subdirectory
 
-  mafString m_VMEUploaderDownloaderDir; //>directory where the scripts are
+  mafString m_VMEUploaderDownloaderABSFolder; //>directory where the scripts are
   mafString m_PythonExe; //>python  executable
   mafString m_MsfDir; //>directory of original msf
   mafString m_MasterXMLDictionaryFileName;
@@ -120,10 +122,10 @@ private:
   mafString GetXMLDictionaryFileName(mafString dictionaryFileNamePrefix);
 
   /** Upload one or more than one VME chosen from a check list box */
-  int UploadMultiVME(mafNode *vme, bool isLast);
+  int UploadVMEWithItsLinks(mafNode *vme, bool isLast);
 
   /** Upload of node and all its children*/
-  int UploadTree(mafNode *vme);
+  int UploadNodeWithItsChildren(mafNode *vme);
 
   /** Upload linked VME */
   int UploadVMELinks(mafNode *vme);   
@@ -138,7 +140,7 @@ private:
   int SaveChildURIFile(mafNode* node, mafString URI);
 
   /** Edit VME tag with VME link URI */
-  int SetVMELinks(mafNode *node);
+  int AddLinksURIToDerivedVMEMetadata(mafNode *derived);
 
   /** Check if a binary data is associated to the VME */
   bool HasBinaryData(mafNode *node);
@@ -154,15 +156,15 @@ private:
   bool m_DebugMode;
  
   mafString m_ServiceURL;
-  mafString m_MSFFileNameFullPath; ///< full path of the .msf file
+  mafString m_OpenMSFFileNameFullPath; ///< full path of the .msf file
 
   lhpOpUploadVMERefactor *m_OpUploadVME;
   std::vector<mafNode*> m_VMEToBeUploadedVector; ///< vme to be uploaded from gui
   std::vector<mafNode*> m_EmptyNodeVector;
-  std::vector<mafNode*> m_UploadedNodeVector;
+  std::vector<mafNode*> m_AlreadyUploadedVMEVector;
   std::vector<mafString> m_AlreadyUploadedXMLURIVector;
   std::vector<mafString> m_FileCreatedVector;
-  std::vector<int> m_NodeDerivedId;
+  std::vector<int> m_DerivedVMEsIdVector;
 
   mafNode *m_UploadingNode;
   int m_NodeCounter;

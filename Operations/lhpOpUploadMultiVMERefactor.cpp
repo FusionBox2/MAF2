@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVMERefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-04-10 13:50:21 $
-Version:   $Revision: 1.1.2.7 $
+Date:      $Date: 2009-04-14 15:09:33 $
+Version:   $Revision: 1.1.2.8 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -99,17 +99,17 @@ mafOp(label)
   m_DebugMode = false;
   m_User = NULL;
   m_AlreadyUploadedXMLURIVector.clear();
-  m_UploadedNodeVector.clear();
+  m_AlreadyUploadedVMEVector.clear();
   m_EmptyNodeVector.clear();
   m_FileCreatedVector.clear();
-  m_NodeDerivedId.clear();
+  m_DerivedVMEsIdVector.clear();
 
   //m_ServiceURL = "http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/";
   m_ServiceURL = "https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/";
  
   m_PythonExe = "python.exe_UNDEFINED";
 
-  m_VMEUploaderDownloaderDir  = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\").c_str();
+  m_VMEUploaderDownloaderABSFolder  = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\").c_str();
 
   m_MasterXMLDictionaryFileName = "UNDEFINED";
   m_SubXMLDictionaryFilePrefix = "UNDEFINED" ;
@@ -127,10 +127,10 @@ lhpOpUploadMultiVMERefactor::~lhpOpUploadMultiVMERefactor()
 //----------------------------------------------------------------------------
 {
   m_AlreadyUploadedXMLURIVector.clear();
-  m_UploadedNodeVector.clear();
+  m_AlreadyUploadedVMEVector.clear();
   m_EmptyNodeVector.clear();
   m_FileCreatedVector.clear();
-  m_NodeDerivedId.clear();
+  m_DerivedVMEsIdVector.clear();
 }
 
 //----------------------------------------------------------------------------
@@ -198,7 +198,7 @@ void lhpOpUploadMultiVMERefactor::OpRun()
     wxString oldDir = wxGetCwd();
     if (m_DebugMode)
       mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-    wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+    wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.GetCStr());
     if (m_DebugMode)
       mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -212,7 +212,7 @@ void lhpOpUploadMultiVMERefactor::OpRun()
 
   int result = OP_RUN_CANCEL;
 
-  mafString DebugPath = m_VMEUploaderDownloaderDir;
+  mafString DebugPath = m_VMEUploaderDownloaderABSFolder;
   DebugPath.Append("\\Debug.py");
   if (wxFileExists(DebugPath.GetCStr()))
   {
@@ -262,11 +262,11 @@ void lhpOpUploadMultiVMERefactor::OpRun()
 
     wxString temp;
     temp.Append((*event.GetString()).GetCStr());
-    m_MSFFileNameFullPath = temp;
+    m_OpenMSFFileNameFullPath = temp;
     temp = temp.BeforeLast('/');
-    mafString msfDir = temp;  
+    mafString openMsfABSFolder = temp;  
 
-    if (msfDir == "")
+    if (openMsfABSFolder == "")
       wxMessageBox("Msf must be saved locally. Upload stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     else
       result = OP_RUN_OK;
@@ -283,102 +283,8 @@ void lhpOpUploadMultiVMERefactor::OpRun()
 void lhpOpUploadMultiVMERefactor::OpDo()   
 //----------------------------------------------------------------------------
 {
-  bool rootChosen = false;
-  int res = wxMessageBox("All Vmes will be uploaded with their metadata.\nPlease check before uploading. Completion of curation can be done in the sandbox.", wxMessageBoxCaptionStr, wxOK | wxCANCEL);
-  //returns 4 for OK, 16 for CANCEL
-  if (res == 16)
-  {
-    return;
-  }
-
-  wxInfoFrame *wait;
-  if(!m_TestMode)
-  {
-    wait = new wxInfoFrame(NULL, "Please wait, uploading VME");
-    wait->SetWindowStyleFlag(wxSTAY_ON_TOP); //to keep wait message on top
-    wait->Show(true);
-    wait->Refresh();
-    wait->Update();
-  }
-
-  //If VMERoot has been chosen, than upload only itself with its children
-  for (int i = 0; i < m_VMEToBeUploadedVector.size(); i++)
-  {
-    if (m_VMEToBeUploadedVector[i]->IsA("mafVMERoot"))
-    {
-      rootChosen = true;
-      //if exists, remove error file form python
-      if (wxFileExists(m_VMEUploaderDownloaderDir + "ErrorFound.lhp"))
-      {
-        wxRemoveFile(m_VMEUploaderDownloaderDir + "ErrorFound.lhp");
-      }
-      //Check if are present VME without name
-      mafNode *vmeWithNoName = NULL;
-      vmeWithNoName = m_VMEToBeUploadedVector[i]->FindInTreeByName("");
-      if  (vmeWithNoName != NULL)
-      {
-        wxMessageBox("Tree contains VME without name. Upload Stopped.", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
-        return;
-      }
-
-      wxString rootName = m_VMEToBeUploadedVector[i]->GetName();
-      if  (rootName.CompareTo("root") == 0)
-      {
-        wxString path, newRootName, ext;
-        wxString msfFullPathName = m_MSFFileNameFullPath;
-        wxSplitPath(msfFullPathName, &path, &newRootName, &ext);
-        wxMessageBox(wxString::Format("Root name will be modified with the name as the MSF: %s ",newRootName), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
-        m_VMEToBeUploadedVector[i]->SetName(newRootName.c_str());
-        m_VMEToBeUploadedVector[i]->Modified();
-        ((mafVMERoot *)m_VMEToBeUploadedVector[i])->Update();
-
-        mafEvent ev(this,VME_MODIFIED,m_VMEToBeUploadedVector[i]);
-        mafEventMacro(ev);
-
-      }
-
-      if (UploadTree(m_VMEToBeUploadedVector[i]) == MAF_ERROR)
-      {
-        if(!m_TestMode)
-        {
-          delete wait;
-        }
-        return;
-      }
-      break;
-    }
-  }
-  
-  if (!rootChosen)
-  {
-    bool isLast = false;
-    for (int i = 0; i < m_VMEToBeUploadedVector.size(); i++)
-    {
-      if (strcmp(m_VMEToBeUploadedVector[i]->GetName(), "") == 0)
-      {
-        wxMessageBox("Can not upload VME without name.", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
-        return;
-      }
-
-      //check if is last VME
-      if (i+1 == m_VMEToBeUploadedVector.size())
-        isLast = true;
-
-      if (UploadMultiVME(m_VMEToBeUploadedVector[i], isLast) == MAF_ERROR)
-      {
-        if(!m_TestMode)
-        {
-          delete wait;
-        }
-        return;
-      }
-    }
-  }
-
-  if(!m_TestMode)
-  {
-    delete wait;
-  }
+  Upload();
+  return;
 }
 //------------------------------------------------------------
 void lhpOpUploadMultiVMERefactor::SaveConnectionConfigurationFile()
@@ -387,7 +293,7 @@ void lhpOpUploadMultiVMERefactor::SaveConnectionConfigurationFile()
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.GetCStr());
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -437,7 +343,7 @@ int lhpOpUploadMultiVMERefactor::AssembleDictionaries()
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.GetCStr());
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -517,7 +423,7 @@ bool lhpOpUploadMultiVMERefactor::HasBinaryData(mafNode *node)
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.GetCStr());
 
   // get manual tags
   wxString command2execute;
@@ -555,24 +461,25 @@ bool lhpOpUploadMultiVMERefactor::HasBinaryData(mafNode *node)
 
 
 //----------------------------------------------------------------------------
-int lhpOpUploadMultiVMERefactor::UploadTree( mafNode *vme )
+int lhpOpUploadMultiVMERefactor::UploadNodeWithItsChildren( mafNode *vme )
 {
   //creates a file with a list of uploaded xml dataresources, to be used by
   //python to remove xml uploaded in case of msf upload error
   int number = 0;
   mafString tmpFileName = "msfList";
-  mafString xmlDataResourcesRollBackFile = tmpFileName;
+  mafString xmlDataResourcesRollBackLocalFileName = tmpFileName;
 
-  while(wxFileExists(m_VMEUploaderDownloaderDir + xmlDataResourcesRollBackFile.GetCStr() + ".lhp"))
+  while(wxFileExists(m_VMEUploaderDownloaderABSFolder + xmlDataResourcesRollBackLocalFileName.GetCStr() + ".lhp"))
   {
-    xmlDataResourcesRollBackFile = tmpFileName;
-    xmlDataResourcesRollBackFile << number;
+    xmlDataResourcesRollBackLocalFileName = tmpFileName;
+    xmlDataResourcesRollBackLocalFileName << number;
     number++;
   }
-  mafString msfFilePath = m_VMEUploaderDownloaderDir + xmlDataResourcesRollBackFile.GetCStr() + ".lhp";
+
+  mafString msfFilePath = m_VMEUploaderDownloaderABSFolder + xmlDataResourcesRollBackLocalFileName.GetCStr() + ".lhp";
   FILE *file = fopen(msfFilePath,"w");
   fclose(file);
-  xmlDataResourcesRollBackFile << ".lhp";
+  xmlDataResourcesRollBackLocalFileName << ".lhp";
 
   std::vector<const mafNode::mafChildrenVector*> childrenVector;
   childrenVector.clear();
@@ -616,9 +523,10 @@ int lhpOpUploadMultiVMERefactor::UploadTree( mafNode *vme )
         childToUpload = children->at(i);
 
         //Check if VME has been already uploaded
-        for (int c = 0; c < m_UploadedNodeVector.size(); c++)
+        for (int c = 0; c < m_AlreadyUploadedVMEVector.size(); c++)
         {
-          if (m_UploadedNodeVector[c]->Equals(children->at(i)) && m_UploadedNodeVector[c]->GetId() == children->at(i)->GetId())
+          if (m_AlreadyUploadedVMEVector[c]->Equals(children->at(i)) && \
+              m_AlreadyUploadedVMEVector[c]->GetId() == children->at(i)->GetId())
           {
             alreadyUploaded = true;
             break;
@@ -629,8 +537,9 @@ int lhpOpUploadMultiVMERefactor::UploadTree( mafNode *vme )
         {
           if (childToUpload->GetNumberOfLinks() != 0)
           {
-            m_NodeDerivedId.push_back(childToUpload->GetId());
+            m_DerivedVMEsIdVector.push_back(childToUpload->GetId());
           }
+
           hasBinaryData = HasBinaryData(childToUpload);
           m_OpUploadVME->SetInput(childToUpload);
           xmlResourceURI = "";
@@ -643,7 +552,7 @@ int lhpOpUploadMultiVMERefactor::UploadTree( mafNode *vme )
           
           m_OpUploadVME->SetIsBinaryDataPresent(false);
           m_OpUploadVME->SetWithChild(vme->GetNumberOfChildren()!=0);
-          m_OpUploadVME->SetInputXMLDataResourcesRollBackFile(xmlDataResourcesRollBackFile);
+          m_OpUploadVME->SetXMLUploadedResourcesRollBackLocalFileName(xmlDataResourcesRollBackLocalFileName);
           m_OpUploadVME->SetIsLast(true);
 
           if (m_OpUploadVME->Upload()\
@@ -652,10 +561,12 @@ int lhpOpUploadMultiVMERefactor::UploadTree( mafNode *vme )
             RemoveAlreadyUploadedXMLResources(m_AlreadyUploadedXMLURIVector);
             return MAF_ERROR;
           }
-          m_UploadedNodeVector.push_back(childToUpload);
+
+          m_AlreadyUploadedVMEVector.push_back(childToUpload);
           m_EmptyNodeVector.push_back(childToUpload);
           m_AlreadyUploadedXMLURIVector.push_back(m_OpUploadVME->GetRemoteXMLResourceURI());
-          if (SaveChildURIFile(childToUpload, m_OpUploadVME->GetRemoteXMLResourceURI()) == MAF_ERROR)
+          if (SaveChildURIFile(childToUpload, m_OpUploadVME->GetRemoteXMLResourceURI()) \
+          == MAF_ERROR)
           {
             
             return MAF_ERROR;
@@ -692,7 +603,7 @@ int lhpOpUploadMultiVMERefactor::UploadTree( mafNode *vme )
   
   m_OpUploadVME->SetIsBinaryDataPresent(false);
   m_OpUploadVME->SetWithChild(vme->GetNumberOfChildren()!=0);
-  m_OpUploadVME->SetInputXMLDataResourcesRollBackFile(xmlDataResourcesRollBackFile);
+  m_OpUploadVME->SetXMLUploadedResourcesRollBackLocalFileName(xmlDataResourcesRollBackLocalFileName);
   m_OpUploadVME->SetIsLast(true);
 
   if (m_OpUploadVME->Upload() == MAF_ERROR)
@@ -700,18 +611,21 @@ int lhpOpUploadMultiVMERefactor::UploadTree( mafNode *vme )
     RemoveAlreadyUploadedXMLResources(m_AlreadyUploadedXMLURIVector);
     return MAF_ERROR;
   }
-  m_UploadedNodeVector.push_back(vme);
+
+  m_AlreadyUploadedVMEVector.push_back(vme);
   m_AlreadyUploadedXMLURIVector.push_back(m_OpUploadVME->GetRemoteXMLResourceURI());
-  if (SetVMELinks(vme) == MAF_ERROR)
+  
+  if (AddLinksURIToDerivedVMEMetadata(vme) == MAF_ERROR)
   {
     RemoveAlreadyUploadedXMLResources(m_AlreadyUploadedXMLURIVector);
     return MAF_ERROR;
   }
+  
   return MAF_OK;
   
 }
 
-int lhpOpUploadMultiVMERefactor::UploadMultiVME( mafNode *vme, bool isLast )
+int lhpOpUploadMultiVMERefactor::UploadVMEWithItsLinks( mafNode *vme, bool isLast )
 {  
   bool hasBinary = false;
   mafString xmlURI;
@@ -729,10 +643,9 @@ int lhpOpUploadMultiVMERefactor::UploadMultiVME( mafNode *vme, bool isLast )
   m_OpUploadVME->SetInput(vme);
   xmlURI = "";
 
-  
   m_OpUploadVME->SetIsBinaryDataPresent(hasBinary);
   m_OpUploadVME->SetWithChild(false);
-  m_OpUploadVME->SetInputXMLDataResourcesRollBackFile("noMSF");
+  m_OpUploadVME->SetXMLUploadedResourcesRollBackLocalFileName("noMSF");
   m_OpUploadVME->SetIsLast(true);
 
   if (m_OpUploadVME->Upload() == MAF_ERROR)
@@ -742,16 +655,17 @@ int lhpOpUploadMultiVMERefactor::UploadMultiVME( mafNode *vme, bool isLast )
     RemoveAlreadyUploadedXMLResources(m_AlreadyUploadedXMLURIVector);
     return MAF_ERROR;
   }
+
   return MAF_OK;
 }
 
 bool lhpOpUploadMultiVMERefactor::GetUploadError()   
 {
   bool errorFound = false;
-  if (wxFileExists(m_VMEUploaderDownloaderDir + "ErrorFound.lhp"))
+  if (wxFileExists(m_VMEUploaderDownloaderABSFolder + "ErrorFound.lhp"))
   {
     mafString errorMessage;
-    std::ifstream errorFile(m_VMEUploaderDownloaderDir + "ErrorFound.lhp", std::ios::in);
+    std::ifstream errorFile(m_VMEUploaderDownloaderABSFolder + "ErrorFound.lhp", std::ios::in);
     if (errorFile!=NULL)
     {
       std::string buf;
@@ -764,9 +678,10 @@ bool lhpOpUploadMultiVMERefactor::GetUploadError()
         errorMessage.Append(buf.c_str());
       }
 
-      wxMessageBox(wxString::Format("Error in MSF upload.\n%s\nUpload MSF stopped.\nVME already uploaded will be removed from repository.",errorMessage.GetCStr()), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+      wxMessageBox(wxString::Format("Error in MSF upload.\n%s\nUpload MSF stopped.\nVME already uploaded \
+will be removed from repository.",errorMessage.GetCStr()), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
       errorFile.close();
-      wxRemoveFile(m_VMEUploaderDownloaderDir + "ErrorFound.lhp");
+      wxRemoveFile(m_VMEUploaderDownloaderABSFolder + "ErrorFound.lhp");
       errorFound = true;
     }
   }
@@ -780,7 +695,7 @@ bool lhpOpUploadMultiVMERefactor::RemoveAlreadyUploadedXMLResources(std::vector<
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.GetCStr());
 
   wxString command2execute;
 
@@ -832,19 +747,21 @@ bool lhpOpUploadMultiVMERefactor::RemoveAlreadyUploadedXMLResources(std::vector<
 }
 
 //----------------------------------------------------------------------------
-int lhpOpUploadMultiVMERefactor::SetVMELinks(mafNode *node)   
-//----------------------------------------------------------------------------
+int lhpOpUploadMultiVMERefactor::AddLinksURIToDerivedVMEMetadata( mafNode *derived )
 {  
   wxString vmeURI;
   mafString listURI;
-  mafNode *derived;
-  for (int n = 0; n < m_NodeDerivedId.size(); n++)
+  mafNode *currentDerivedVME;
+
+  for (int i = 0; i < m_DerivedVMEsIdVector.size(); i++)
   {
-    derived = node->FindInTreeById(m_NodeDerivedId[n]);
+    currentDerivedVME = derived->FindInTreeById(m_DerivedVMEsIdVector[i]);
+
     //find URI of this VME
-    for (int c = 0; c < m_UploadedNodeVector.size(); c++)
+    for (int c = 0; c < m_AlreadyUploadedVMEVector.size(); c++)
     {
-      if (m_UploadedNodeVector[c]->Equals(derived) && m_UploadedNodeVector[c]->GetId() == derived->GetId())
+      if (m_AlreadyUploadedVMEVector[c]->Equals(currentDerivedVME) && \
+          m_AlreadyUploadedVMEVector[c]->GetId() == currentDerivedVME->GetId())
       {
         vmeURI = m_AlreadyUploadedXMLURIVector[c];
         int count = vmeURI.find_first_of("'");
@@ -855,14 +772,16 @@ int lhpOpUploadMultiVMERefactor::SetVMELinks(mafNode *node)
       }
     }
 
-    for (mafNode::mafLinksMap::iterator i = derived->GetLinks()->begin(); i != derived->GetLinks()->end(); i++)
+    for (mafNode::mafLinksMap::iterator i = currentDerivedVME->GetLinks()->begin(); \
+      i != currentDerivedVME->GetLinks()->end(); i++)
     {
       if (i->second.m_Node != NULL)
       {
         mafNode *link = i->second.m_Node;
-        for (int c = 0; c < m_UploadedNodeVector.size(); c++)
+        for (int c = 0; c < m_AlreadyUploadedVMEVector.size(); c++)
         {
-          if (m_UploadedNodeVector[c]->Equals(link) && m_UploadedNodeVector[c]->GetId() == link->GetId())
+          if (m_AlreadyUploadedVMEVector[c]->Equals(link) && \
+              m_AlreadyUploadedVMEVector[c]->GetId() == link->GetId())
           {
             m_AlreadyUploadedXMLURIVector[c];
             listURI.Append(m_AlreadyUploadedXMLURIVector[c]);
@@ -874,7 +793,7 @@ int lhpOpUploadMultiVMERefactor::SetVMELinks(mafNode *node)
     }
 
     wxString oldDir = wxGetCwd();
-    wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+    wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.GetCStr());
     if (m_DebugMode)
       mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -955,7 +874,7 @@ int lhpOpUploadMultiVMERefactor::UploadVMELinks( mafNode *derived )
 
       m_OpUploadVME->SetIsBinaryDataPresent(hasBinaryData);
       m_OpUploadVME->SetWithChild(false);
-      m_OpUploadVME->SetInputXMLDataResourcesRollBackFile("noMsf");
+      m_OpUploadVME->SetXMLUploadedResourcesRollBackLocalFileName("noMsf");
       m_OpUploadVME->SetIsLast(false);
 
       if (m_OpUploadVME->Upload() == MAF_ERROR)
@@ -965,7 +884,7 @@ int lhpOpUploadMultiVMERefactor::UploadVMELinks( mafNode *derived )
         RemoveAlreadyUploadedXMLResources(m_AlreadyUploadedXMLURIVector);
         return MAF_ERROR;
       }
-      m_UploadedNodeVector.push_back(link);
+      m_AlreadyUploadedVMEVector.push_back(link);
       linkURI.push_back(xmlURI);
     }
   }
@@ -985,7 +904,7 @@ int lhpOpUploadMultiVMERefactor::SaveLinkURIFile(mafNode *node, std::vector<mafS
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.GetCStr());
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -1001,7 +920,7 @@ int lhpOpUploadMultiVMERefactor::SaveLinkURIFile(mafNode *node, std::vector<mafS
   listURIFileName.Replace(">","_");
   listURIFileName.Replace("!","_");
   listURIFileName.Append(".linkURI");
-  wxString lockPath = m_VMEUploaderDownloaderDir;
+  wxString lockPath = m_VMEUploaderDownloaderABSFolder;
   lockPath += listURIFileName.c_str();
   //if file exists , delete it
   if (wxFileExists(lockPath))
@@ -1039,7 +958,7 @@ int lhpOpUploadMultiVMERefactor::SaveChildURIFile(mafNode* node, mafString URI)
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.GetCStr());
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -1057,7 +976,7 @@ int lhpOpUploadMultiVMERefactor::SaveChildURIFile(mafNode* node, mafString URI)
   listURIFileName.Replace("|","_");
   listURIFileName.Append(".childURI");
 
-  wxString lockPath = m_VMEUploaderDownloaderDir;
+  wxString lockPath = m_VMEUploaderDownloaderABSFolder;
   lockPath += listURIFileName.c_str();
   //Check if file named "lockPath" has been created by this operation
   bool myFile = false;
@@ -1115,7 +1034,7 @@ bool lhpOpUploadMultiVMERefactor::IsSoftwareVersionUpToDate()
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.GetCStr());
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -1193,7 +1112,7 @@ mafString lhpOpUploadMultiVMERefactor::GetXMLDictionaryFileName( mafString dicti
 
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.GetCStr());
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
@@ -1226,4 +1145,106 @@ mafString lhpOpUploadMultiVMERefactor::GetXMLDictionaryFileName( mafString dicti
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   
   return dictionaryFileName;
+}
+
+void lhpOpUploadMultiVMERefactor::Upload()
+{
+  bool rootChosen = false;
+  int res = wxMessageBox("All Vmes will be uploaded with their metadata.\nPlease check before uploading. Completion of curation can be done in the sandbox.", wxMessageBoxCaptionStr, wxOK | wxCANCEL);
+  //returns 4 for OK, 16 for CANCEL
+  if (res == 16)
+  {
+    return;
+  }
+
+  wxInfoFrame *wait;
+  if(!m_TestMode)
+  {
+    wait = new wxInfoFrame(NULL, "Please wait, uploading VME");
+    wait->SetWindowStyleFlag(wxSTAY_ON_TOP); //to keep wait message on top
+    wait->Show(true);
+    wait->Refresh();
+    wait->Update();
+  }
+
+  //If VMERoot has been chosen, than upload only itself with its children
+  for (int i = 0; i < m_VMEToBeUploadedVector.size(); i++)
+  {
+    if (m_VMEToBeUploadedVector[i]->IsA("mafVMERoot"))
+    {
+      rootChosen = true;
+      //if exists, remove error file form python
+      if (wxFileExists(m_VMEUploaderDownloaderABSFolder + "ErrorFound.lhp"))
+      {
+        wxRemoveFile(m_VMEUploaderDownloaderABSFolder + "ErrorFound.lhp");
+      }
+
+      //Check if are present VME without name
+      mafNode *vmeWithNoName = NULL;
+      vmeWithNoName = m_VMEToBeUploadedVector[i]->FindInTreeByName("");
+
+      if  (vmeWithNoName != NULL)
+      {
+        wxMessageBox("Tree contains VME without name. Upload Stopped.", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+        return;
+      }
+
+      wxString rootName = m_VMEToBeUploadedVector[i]->GetName();
+      if  (rootName.CompareTo("root") == 0)
+      {
+        wxString path, newRootName, ext;
+        wxString msfFullPathName = m_OpenMSFFileNameFullPath;
+        wxSplitPath(msfFullPathName, &path, &newRootName, &ext);
+        wxMessageBox(wxString::Format("Root name will be modified with the name as the MSF: %s ",newRootName), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+        m_VMEToBeUploadedVector[i]->SetName(newRootName.c_str());
+        m_VMEToBeUploadedVector[i]->Modified();
+        ((mafVMERoot *)m_VMEToBeUploadedVector[i])->Update();
+
+        mafEvent ev(this,VME_MODIFIED,m_VMEToBeUploadedVector[i]);
+        mafEventMacro(ev);
+
+      }
+
+      if (UploadNodeWithItsChildren(m_VMEToBeUploadedVector[i]) == MAF_ERROR)
+      {
+        if(!m_TestMode)
+        {
+          delete wait;
+        }
+        return;
+      }
+      break;
+    }
+  }
+
+  if (!rootChosen)
+  {
+    bool isLast = false;
+    for (int i = 0; i < m_VMEToBeUploadedVector.size(); i++)
+    {
+      if (strcmp(m_VMEToBeUploadedVector[i]->GetName(), "") == 0)
+      {
+        wxMessageBox("Can not upload VME without name.", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+        return;
+      }
+
+      //check if is last VME
+      if (i+1 == m_VMEToBeUploadedVector.size())
+        isLast = true;
+
+      if (UploadVMEWithItsLinks(m_VMEToBeUploadedVector[i], isLast) == MAF_ERROR)
+      {
+        if(!m_TestMode)
+        {
+          delete wait;
+        }
+        return;
+      }
+    }
+  }
+
+  if(!m_TestMode)
+  {
+    delete wait;
+  }
 }
