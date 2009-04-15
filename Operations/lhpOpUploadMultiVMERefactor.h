@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVMERefactor.h,v $
 Language:  C++
-Date:      $Date: 2009-04-14 15:09:33 $
-Version:   $Revision: 1.1.2.5 $
+Date:      $Date: 2009-04-15 16:31:40 $
+Version:   $Revision: 1.1.2.6 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -127,25 +127,32 @@ private:
   /** Upload of node and all its children*/
   int UploadNodeWithItsChildren(mafNode *vme);
 
-  /** Upload linked VME */
+  /** TODO: REFACTOR TO PYTHON  
+  Upload linked VME */
   int UploadVMELinks(mafNode *vme);   
 
-  /** Search for python uploader error */
+  /** TODO: REFACTOR TO PYTHON 
+  Search for python uploader error */
   bool GetUploadError();   
 
-  /** Write a file with URI information about VME link uploaded */
-  int SaveLinkURIFile(mafNode *node, std::vector<mafString> linkURI);
+  /** TODO: REFACTOR TO PYTHON 
+  Write a file with URI information about VME link uploaded */
+  int SaveLinksURIFile(mafNode *node, std::vector<mafString> linkURI);
 
-  /** Write a file with URI information about VME children uploaded */
-  int SaveChildURIFile(mafNode* node, mafString URI);
+  /** TODO: REFACTOR TO PYTHON  
+  Write a file with URI information about VME children uploaded */
+  int SaveChildrenURIFile(mafNode* node, mafString URI);
 
-  /** Edit VME tag with VME link URI */
+  /** TODO: REFACTOR TO PYTHON  
+  Add VME links URI to derived vme metadata */
   int AddLinksURIToDerivedVMEMetadata(mafNode *derived);
 
-  /** Check if a binary data is associated to the VME */
+  /** TODO: REFACTOR TO PYTHON 
+  Check if a binary data is associated to the VME */
   bool HasBinaryData(mafNode *node);
-
-  /** Remove uploaded reosurces in case of error during whole msf uploading */
+  
+  /**  TODO: REFACTOR TO PYTHON  
+  Remove uploaded reosurces in case of error during whole msf uploading */
   bool RemoveAlreadyUploadedXMLResources(std::vector<mafString> xmlUploadedResourcesVectorURI);  
 
   void SaveConnectionConfigurationFile();

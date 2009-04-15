@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVMERefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-04-14 15:09:33 $
-Version:   $Revision: 1.1.2.8 $
+Date:      $Date: 2009-04-15 16:31:40 $
+Version:   $Revision: 1.1.2.9 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -466,12 +466,13 @@ int lhpOpUploadMultiVMERefactor::UploadNodeWithItsChildren( mafNode *vme )
   //creates a file with a list of uploaded xml dataresources, to be used by
   //python to remove xml uploaded in case of msf upload error
   int number = 0;
-  mafString tmpFileName = "msfList";
-  mafString xmlDataResourcesRollBackLocalFileName = tmpFileName;
+  mafString rollBackLocalFileName = "msfList";
+  mafString xmlDataResourcesRollBackLocalFileName = rollBackLocalFileName;
 
-  while(wxFileExists(m_VMEUploaderDownloaderABSFolder + xmlDataResourcesRollBackLocalFileName.GetCStr() + ".lhp"))
+  while(wxFileExists(\
+m_VMEUploaderDownloaderABSFolder + xmlDataResourcesRollBackLocalFileName.GetCStr() + ".lhp"))
   {
-    xmlDataResourcesRollBackLocalFileName = tmpFileName;
+    xmlDataResourcesRollBackLocalFileName = rollBackLocalFileName;
     xmlDataResourcesRollBackLocalFileName << number;
     number++;
   }
@@ -565,7 +566,7 @@ int lhpOpUploadMultiVMERefactor::UploadNodeWithItsChildren( mafNode *vme )
           m_AlreadyUploadedVMEVector.push_back(childToUpload);
           m_EmptyNodeVector.push_back(childToUpload);
           m_AlreadyUploadedXMLURIVector.push_back(m_OpUploadVME->GetRemoteXMLResourceURI());
-          if (SaveChildURIFile(childToUpload, m_OpUploadVME->GetRemoteXMLResourceURI()) \
+          if (SaveChildrenURIFile(childToUpload, m_OpUploadVME->GetRemoteXMLResourceURI()) \
           == MAF_ERROR)
           {
             
@@ -888,7 +889,7 @@ int lhpOpUploadMultiVMERefactor::UploadVMELinks( mafNode *derived )
       linkURI.push_back(xmlURI);
     }
   }
-  if (SaveLinkURIFile(derived, linkURI) == MAF_ERROR)
+  if (SaveLinksURIFile(derived, linkURI) == MAF_ERROR)
   {
     wxMessageBox("Unable to write list of link binary URI. Uploading stopped.", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     return MAF_ERROR;
@@ -897,7 +898,7 @@ int lhpOpUploadMultiVMERefactor::UploadVMELinks( mafNode *derived )
 }
 
 //------------------------------------------------------------
-int lhpOpUploadMultiVMERefactor::SaveLinkURIFile(mafNode *node, std::vector<mafString> linkURI)
+int lhpOpUploadMultiVMERefactor::SaveLinksURIFile(mafNode *node, std::vector<mafString> linkURI)
 //------------------------------------------------------------
 {
   wxString listURIFileName;
@@ -951,7 +952,7 @@ int lhpOpUploadMultiVMERefactor::SaveLinkURIFile(mafNode *node, std::vector<mafS
 }
 
 //------------------------------------------------------------
-int lhpOpUploadMultiVMERefactor::SaveChildURIFile(mafNode* node, mafString URI)
+int lhpOpUploadMultiVMERefactor::SaveChildrenURIFile(mafNode* node, mafString URI)
 //------------------------------------------------------------
 {
   wxString listURIFileName;
@@ -1149,7 +1150,7 @@ mafString lhpOpUploadMultiVMERefactor::GetXMLDictionaryFileName( mafString dicti
 
 void lhpOpUploadMultiVMERefactor::Upload()
 {
-  bool rootChosen = false;
+  bool rootSelected = false;
   int res = wxMessageBox("All Vmes will be uploaded with their metadata.\nPlease check before uploading. Completion of curation can be done in the sandbox.", wxMessageBoxCaptionStr, wxOK | wxCANCEL);
   //returns 4 for OK, 16 for CANCEL
   if (res == 16)
@@ -1167,20 +1168,23 @@ void lhpOpUploadMultiVMERefactor::Upload()
     wait->Update();
   }
 
-  //If VMERoot has been chosen, than upload only itself with its children
+  //Check if VMERoot has been chosen, than upload only the root with its children
+  
+  // root selected?
   for (int i = 0; i < m_VMEToBeUploadedVector.size(); i++)
   {
     if (m_VMEToBeUploadedVector[i]->IsA("mafVMERoot"))
     {
-      rootChosen = true;
+      rootSelected = true;
       //if exists, remove error file form python
       if (wxFileExists(m_VMEUploaderDownloaderABSFolder + "ErrorFound.lhp"))
       {
         wxRemoveFile(m_VMEUploaderDownloaderABSFolder + "ErrorFound.lhp");
       }
 
-      //Check if are present VME without name
+      //Check if VME without name are present
       mafNode *vmeWithNoName = NULL;
+
       vmeWithNoName = m_VMEToBeUploadedVector[i]->FindInTreeByName("");
 
       if  (vmeWithNoName != NULL)
@@ -1202,9 +1206,9 @@ void lhpOpUploadMultiVMERefactor::Upload()
 
         mafEvent ev(this,VME_MODIFIED,m_VMEToBeUploadedVector[i]);
         mafEventMacro(ev);
-
       }
-
+      
+      // upload root with its children vmes
       if (UploadNodeWithItsChildren(m_VMEToBeUploadedVector[i]) == MAF_ERROR)
       {
         if(!m_TestMode)
@@ -1217,9 +1221,11 @@ void lhpOpUploadMultiVMERefactor::Upload()
     }
   }
 
-  if (!rootChosen)
+  // root not selected  =>
+  if (!rootSelected)
   {
     bool isLast = false;
+    // for each selected vme:
     for (int i = 0; i < m_VMEToBeUploadedVector.size(); i++)
     {
       if (strcmp(m_VMEToBeUploadedVector[i]->GetName(), "") == 0)

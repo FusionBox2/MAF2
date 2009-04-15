@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVMERefactor.h,v $
 Language:  C++
-Date:      $Date: 2009-04-14 15:09:33 $
-Version:   $Revision: 1.1.2.7 $
+Date:      $Date: 2009-04-15 16:31:40 $
+Version:   $Revision: 1.1.2.8 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -93,9 +93,10 @@ public:
   void SetWithChild(bool withChild) {m_WithChild = withChild;};
   bool GetWitChild() {return m_WithChild;};
 
-  /** File to store uploaded XML resources URI for rollback */
-  void SetXMLUploadedResourcesRollBackLocalFileName(mafString file) {m_InputXMLDataResourcesRollBackFile = file;};
-  mafString GetInputXMLDataResourcesRollBackFile() {return m_InputXMLDataResourcesRollBackFile;};
+  /** TODO: REFACTOR TO PYTHON  
+  File to store uploaded XML resources URI for rollback */
+  void SetXMLUploadedResourcesRollBackLocalFileName(mafString file) {m_XMLUploadedResourcesRollBackLocalFileName = file;};
+  mafString GetXMLUploadedResourcesRollBackLocalFileName() {return m_XMLUploadedResourcesRollBackLocalFileName;};
 
   /** Is this the last resource that will feed the uploader in one instance of the 
   multiple upload operation? */
@@ -105,9 +106,9 @@ public:
   /** Upload */
   int Upload();
 
-  /** Return the remote URI where the XML resource has been stored after calling Upload()*/
+  /** TODO: REFACTOR TO PYTHON 
+  Return the remote URI where the XML resource has been stored after calling Upload()*/
   mafString GetRemoteXMLResourceURI() {return m_RemoteXMLResourceURI;};
-
 
 protected:
   
@@ -119,7 +120,7 @@ protected:
 
   bool m_WithChild;
   bool m_IsLast;
-  mafString m_InputXMLDataResourcesRollBackFile;
+  mafString m_XMLUploadedResourcesRollBackLocalFileName;
   bool m_IsBinaryDataPresent;
   mafString m_RemoteXMLResourceURI;
 
@@ -140,7 +141,7 @@ protected:
 	virtual void OpStop(int result);
 
   /* Base Cache and Outgoing creation directory*/
-  bool CreateBaseCacheAndOutgoingDirectories();
+  bool CreateMasterCacheAndOutgoingFolders();
 
   /** This method creates on filesystem a cache with msf and binary data that must be uploaded */
   bool CreateCache();
@@ -154,11 +155,11 @@ protected:
   /** Import Edited MSF*/
   int ImportMSF();
   
-  mafString m_CachesParentABSFolderName; //>cache subfolders parent directory
-  static mafString m_CacheChildLocalFolderName; //>cache subdirectory
+  mafString m_CacheMasterFolderABSName; //>cache subfolders parent directory
+  static mafString m_CacheChildFolderLocalName; //>cache subdirectory
   wxString m_CurrentCacheChildABSFolderName; //>current cache subdirectory
   
-  mafString m_OutgoingDir; //directory for xml and binary to send
+  mafString m_OutgoingFolderABSName; //directory for xml and binary to send
 
   mafString m_VMEUploaderDownloaderABSFolderName; //>directory where the scripts are
   

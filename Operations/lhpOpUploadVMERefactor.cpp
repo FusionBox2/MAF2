@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVMERefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-04-14 15:09:33 $
-Version:   $Revision: 1.1.2.9 $
+Date:      $Date: 2009-04-15 16:31:40 $
+Version:   $Revision: 1.1.2.10 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -82,7 +82,7 @@ mafCxxTypeMacro(lhpOpUploadVMERefactor);
 //----------------------------------------------------------------------------
 //static variables
 long lhpOpUploadVMERefactor::m_Pid = -1;
-mafString lhpOpUploadVMERefactor::m_CacheChildLocalFolderName = "0";
+mafString lhpOpUploadVMERefactor::m_CacheChildFolderLocalName = "0";
 
 enum  m_SubdictionaryId_VALUES
 {
@@ -113,8 +113,8 @@ mafOp(label)
   m_PythonExe = "python.exe_UNDEFINED";
   m_PythonwExe = "pythonw.exe_UNDEFINED";  
 
-  m_CachesParentABSFolderName = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\UploadCache\\").c_str();
-  m_OutgoingDir = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\Outgoing\\").c_str();
+  m_CacheMasterFolderABSName = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\UploadCache\\").c_str();
+  m_OutgoingFolderABSName = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\Outgoing\\").c_str();
 
   m_VMEUploaderDownloaderABSFolderName  = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\").c_str();
 
@@ -151,7 +151,7 @@ mafOp(label)
 
   m_WithChild = false;
   m_IsLast = true;
-  m_InputXMLDataResourcesRollBackFile = "m_InputXMLDataResourcesRollBackFile_UNDEFINED.txt";
+  m_XMLUploadedResourcesRollBackLocalFileName = "m_InputXMLDataResourcesRollBackFile_UNDEFINED.txt";
   m_IsBinaryDataPresent = false;
   m_RemoteXMLResourceURI = "m_RemoteXMLResourceURI_UNDEFINED.txt";
 
@@ -351,7 +351,6 @@ int lhpOpUploadVMERefactor::Upload()
     isLastResource = "false";
   }  
 
-  
   if (m_Input->GetNumberOfLinks() != 0)
   {
     m_HasLink = true;
@@ -393,7 +392,7 @@ int lhpOpUploadVMERefactor::Upload()
     return MAF_ERROR;
   }
 
-  if(!CreateBaseCacheAndOutgoingDirectories())
+  if(!CreateMasterCacheAndOutgoingFolders())
   {
     wxMessageBox("Unable to create Cache Base Directory. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     return MAF_ERROR;
@@ -556,7 +555,7 @@ int lhpOpUploadVMERefactor::Upload()
     command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //id in original tree
     command2execute.Append(wxString::Format("%s ", hasLink.GetCStr())); //has link?
     command2execute.Append(wxString::Format("%s ", uploadWithChildren.GetCStr())); //upload with children?
-    command2execute.Append(wxString::Format("%s ", m_InputXMLDataResourcesRollBackFile.GetCStr())); //file to be used for rollback operation, in case of error in msf upload
+    command2execute.Append(wxString::Format("%s ", m_XMLUploadedResourcesRollBackLocalFileName.GetCStr())); //file to be used for rollback operation, in case of error in msf upload
     command2execute.Append(wxString::Format("%s ", m_RemoteXMLResourceURI.GetCStr())); //XML resource URI
     command2execute.Append(wxString::Format("%s ", isLastResource.GetCStr())); //true if is last VME to be uploaded
     wxString name = m_Input->GetName();
@@ -624,7 +623,7 @@ int lhpOpUploadVMERefactor::Upload()
     command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //id in original tree
     command2execute.Append(wxString::Format("%s ", hasLink.GetCStr())); //has link?
     command2execute.Append(wxString::Format("%s ", uploadWithChildren.GetCStr())); //upload with children?
-    command2execute.Append(wxString::Format("%s ", m_InputXMLDataResourcesRollBackFile.GetCStr())); //file to be used for rollback operation, in case of error in msf upload
+    command2execute.Append(wxString::Format("%s ", m_XMLUploadedResourcesRollBackLocalFileName.GetCStr())); //file to be used for rollback operation, in case of error in msf upload
     command2execute.Append(wxString::Format("%s ", m_RemoteXMLResourceURI.GetCStr())); //XML resource URI
     command2execute.Append(wxString::Format("%s ", isLastResource.GetCStr())); //true if is last VME to be uploaded
     wxString name = m_Input->GetName();
@@ -764,14 +763,14 @@ bool lhpOpUploadVMERefactor::CreateCache()
   bool result = false;
   //control cache subdir
   wxString currentSubdir;
-  currentSubdir = m_CachesParentABSFolderName + m_CacheChildLocalFolderName.GetCStr();
+  currentSubdir = m_CacheMasterFolderABSName + m_CacheChildFolderLocalName.GetCStr();
   while(wxDirExists(currentSubdir))
   {
-    int number = atoi(m_CacheChildLocalFolderName.GetCStr());
+    int number = atoi(m_CacheChildFolderLocalName.GetCStr());
     number += 1;
-    m_CacheChildLocalFolderName = "";
-    m_CacheChildLocalFolderName << number;
-    currentSubdir = m_CachesParentABSFolderName + m_CacheChildLocalFolderName.GetCStr();
+    m_CacheChildFolderLocalName = "";
+    m_CacheChildFolderLocalName << number;
+    currentSubdir = m_CacheMasterFolderABSName + m_CacheChildFolderLocalName.GetCStr();
   }
   currentSubdir = currentSubdir + "\\";
   if(wxMkDir(currentSubdir) == 0)
@@ -804,7 +803,7 @@ bool lhpOpUploadVMERefactor::CopyInputVMEInCache()
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   wxSetWorkingDirectory(m_CurrentCacheChildABSFolderName.c_str());
 
-  wxString msfname = m_CacheChildLocalFolderName;
+  wxString msfname = m_CacheChildFolderLocalName;
   msfname.Append(".msf");
 
   // restore due attributes
@@ -1170,34 +1169,35 @@ int lhpOpUploadVMERefactor::GeneratesTagsListsFromXMLDictionary()
 
 
 //----------------------------------------------------------------------------
-bool lhpOpUploadVMERefactor::CreateBaseCacheAndOutgoingDirectories()
+bool lhpOpUploadVMERefactor::CreateMasterCacheAndOutgoingFolders()
 //----------------------------------------------------------------------------
 {
-  bool resultCache = false, resultOutgoing = false;
+  bool cacheMasterFolderCreated = false, outgoingFolderCreated = false;
 
-  wxString existCache = m_CachesParentABSFolderName.GetCStr();
-  if ( wxDirExists(existCache) )
+  wxString cacheMasterFolderABSName = m_CacheMasterFolderABSName.GetCStr();
+  if ( wxDirExists(cacheMasterFolderABSName) )
   {
-     resultCache = true;
+     cacheMasterFolderCreated = true;
+  }
+
+  else
+  {
+    wxMkDir(cacheMasterFolderABSName);
+    if ( wxDirExists(cacheMasterFolderABSName) ) cacheMasterFolderCreated = true;
+  }
+
+  wxString outgoingFolderABSName = m_OutgoingFolderABSName.GetCStr();
+  if ( wxDirExists(outgoingFolderABSName) )
+  {
+    outgoingFolderCreated = true;
   }
   else
   {
-    wxMkDir(existCache);
-    if ( wxDirExists(existCache) ) resultCache = true;
+    wxMkDir(outgoingFolderABSName);
+    if ( wxDirExists(outgoingFolderABSName) ) outgoingFolderCreated = true;
   }
 
-  wxString existOutgoing = m_OutgoingDir.GetCStr();
-  if ( wxDirExists(existOutgoing) )
-  {
-    resultOutgoing = true;
-  }
-  else
-  {
-    wxMkDir(existOutgoing);
-    if ( wxDirExists(existOutgoing) ) resultOutgoing = true;
-  }
-
-  return resultCache && resultOutgoing;
+  return cacheMasterFolderCreated && outgoingFolderCreated;
 }
 
 //----------------------------------------------------------------------------
