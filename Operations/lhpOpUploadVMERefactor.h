@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVMERefactor.h,v $
 Language:  C++
-Date:      $Date: 2009-04-15 16:31:40 $
-Version:   $Revision: 1.1.2.8 $
+Date:      $Date: 2009-04-16 17:36:25 $
+Version:   $Revision: 1.1.2.9 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -80,7 +80,7 @@ public:
 	virtual void OpDo();
 
   /** Set Current Working Msf Directory*/
-  void SetMsfDir(mafString msfDir){m_MsfABSFolder = msfDir;};
+  void SetMsfDir(mafString msfDir){m_MSFFileABSFolder = msfDir;};
 
   /** Set debug modality */
   void SetDebugMode(bool debugMode){m_DebugMode = debugMode;};
@@ -106,6 +106,11 @@ public:
   /** Upload */
   int Upload();
 
+  int GetXMLURIForUpload();
+  int PythonEditVMETags();
+  void GetMSFFileABSFolder();
+
+  void GetPythonInterpretersAndUser();
   /** TODO: REFACTOR TO PYTHON 
   Return the remote URI where the XML resource has been stored after calling Upload()*/
   mafString GetRemoteXMLResourceURI() {return m_RemoteXMLResourceURI;};
@@ -125,13 +130,15 @@ protected:
   mafString m_RemoteXMLResourceURI;
 
   /** Save information information about VME link*/
-  void SaveLinkInfo();
+  void StoreInputVMELinkInfo();
 
   /** check if client software version is up to date in order to a allow vme uploading */
   bool IsClientSoftwareVersionUpToDate();
 
-  /** Generate auto tags and manual tags list from XML lhdl dictionary*/
-  int GeneratesTagsListsFromXMLDictionary();
+  /** Generate auto tags and manual tags list files from XML lhdl dictionary*/
+  int GeneratesHandledAndUnhandledPlusManualTagsFileFromXMLDictionary();
+
+  int FillAutoTagsAndManualTagsIVARs();
 
   /** Try to handle auto tags through tags factory and convert unhandled 
   to manual tags ie to be filled by the user*/
@@ -143,21 +150,22 @@ protected:
   /* Base Cache and Outgoing creation directory*/
   bool CreateMasterCacheAndOutgoingFolders();
 
-  /** This method creates on filesystem a cache with msf and binary data that must be uploaded */
-  bool CreateCache();
+  /** This method creates on filesystem a cache with msf and binary data that must be uploaded.
+  Return true if succeed */
+  bool CreateChildCache();
 
   /** This method copies in cache the msf and binary data that must be uploaded */
-  bool CopyInputVMEInCache();
+  bool CopyInputVMEInCurrentChildCache();
 
   /** This method checks if process exists and if there is a lock file */
   bool ExistsRunningProcess();
 
   /** Import Edited MSF*/
-  int ImportMSF();
+  int CopyPythonEditedVMETagsIntoOriginalVME();
   
   mafString m_CacheMasterFolderABSName; //>cache subfolders parent directory
   static mafString m_CacheChildFolderLocalName; //>cache subdirectory
-  wxString m_CurrentCacheChildABSFolderName; //>current cache subdirectory
+  wxString m_CurrentCacheChildABSFolder; //>current cache subdirectory
   
   mafString m_OutgoingFolderABSName; //directory for xml and binary to send
 
@@ -165,8 +173,8 @@ protected:
   
   mafString m_PythonExe; //>python  executable
   mafString m_PythonwExe; //>pythonw  executable
-  mafString m_MsfABSFolder; //>directory of original msf
-	mafString m_MsfABSFileName; //>absolute path of original msf
+  mafString m_MSFFileABSFolder; //>directory of original msf
+	mafString m_MSFFileABSFileName; //>absolute path of original msf
   
   static long m_Pid; //> pid of the server process
 
@@ -192,7 +200,7 @@ protected:
 
 private:
   mafString GetXMLDictionaryFileName(mafString dictionaryFileNamePrefix);
-  int AssembleDictionaries();
+ 
   int m_SubId;
   mafVME *m_CacheVme;
 

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVMERefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-04-15 16:31:40 $
-Version:   $Revision: 1.1.2.10 $
+Date:      $Date: 2009-04-16 17:36:25 $
+Version:   $Revision: 1.1.2.11 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -118,12 +118,11 @@ mafOp(label)
 
   m_VMEUploaderDownloaderABSFolderName  = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\").c_str();
 
-  m_MsfABSFolder = "";
+  m_MSFFileABSFolder = "";
   m_UnhandledPlusManualTagsLocalFileName = "manualTagFile.csv";
 
   //m_RepositoryServiceURL = "http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/";
   m_RepositoryServiceURL ="https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/";
-
 
   m_MasterXMLDictionaryFilePrefix = "lhpXMLDictionary_";
   m_MasterXMLDictionaryFileName = "UNDEFINED";
@@ -136,7 +135,6 @@ mafOp(label)
   m_ManualTagsListFromXMLDictionaryLocalFileName = "manualTagsList.txt";
   m_HandledAutoTagsLocalFileName = "handledAutoTagsList.csv";
  
-
   m_HandledAutoTagsListFromFactory.Clear();
   m_UnhandledAutoTagsListFromFactory.Clear();
   m_AutoTagsList.Clear();
@@ -148,13 +146,11 @@ mafOp(label)
   m_ProxyURL = "";
   m_ProxyPort = "0";
 
-
   m_WithChild = false;
   m_IsLast = true;
   m_XMLUploadedResourcesRollBackLocalFileName = "m_InputXMLDataResourcesRollBackFile_UNDEFINED.txt";
   m_IsBinaryDataPresent = false;
   m_RemoteXMLResourceURI = "m_RemoteXMLResourceURI_UNDEFINED.txt";
-
 }
 
 //----------------------------------------------------------------------------
@@ -294,41 +290,7 @@ void lhpOpUploadVMERefactor::SaveConnectionConfigurationFile()
 
 int lhpOpUploadVMERefactor::Upload()
 {
-  mafEvent eventGetPythonExe;
-  eventGetPythonExe.SetSender(this);
-  eventGetPythonExe.SetId(ID_REQUEST_PYTHON_EXE_INTERPRETER);
-  mafEventMacro(eventGetPythonExe);
-
-  if(eventGetPythonExe.GetString())
-  {
-    m_PythonExe.Erase(0);
-    m_PythonExe = eventGetPythonExe.GetString()->GetCStr();
-    m_PythonExe.Append(" ");
-  }
-
-  mafEvent eventGetPythonwExe;
-  eventGetPythonwExe.SetSender(this);
-  eventGetPythonwExe.SetId(ID_REQUEST_PYTHONW_EXE_INTERPRETER);
-  mafEventMacro(eventGetPythonwExe);
-
-  if(eventGetPythonwExe.GetString())
-  {
-    m_PythonwExe.Erase(0);
-    m_PythonwExe = eventGetPythonwExe.GetString()->GetCStr();
-    m_PythonwExe.Append(" ");
-  }
-
-  mafSleep(3000); //to avoid DB conflicts..
-
-  //Get User values
-  mafEvent event;
-  event.SetSender(this);
-  event.SetId(ID_REQUEST_USER);
-  mafEventMacro(event);
-  if(event.GetMafObject() != NULL) //if proxy string contains something != ""
-  {
-    m_User = (lhpUser*)event.GetMafObject();
-  }
+  GetPythonInterpretersAndUser();
 
   //check if vme has a name
   if(strcmp(m_Input->GetName(), "") == 0)
@@ -355,7 +317,7 @@ int lhpOpUploadVMERefactor::Upload()
   {
     m_HasLink = true;
     hasLink = "true";
-    SaveLinkInfo();
+    StoreInputVMELinkInfo();
 
     //remove links that will be linked again after
     m_Input->RemoveAllLinks();
@@ -375,18 +337,9 @@ int lhpOpUploadVMERefactor::Upload()
   if (wxFileExists(lockPath))
     wxRemoveFile(lockPath); //fileName
 
-  //logic comunicate the msf directory
-  event.SetSender(this);
-  event.SetId(ID_MSF_DATA_CACHE);
-  mafEventMacro(event);
+  GetMSFFileABSFolder();
 
-  wxString temp;
-  temp.Append((*event.GetString()).GetCStr());
-  m_MsfABSFileName = temp;
-  temp = temp.BeforeLast('/');
-  m_MsfABSFolder = temp;  
-
-  if (m_MsfABSFolder == "")
+  if (m_MSFFileABSFolder == "")
   {
     wxMessageBox("Can't edit VME tags: msf must be saved locally. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     return MAF_ERROR;
@@ -398,13 +351,13 @@ int lhpOpUploadVMERefactor::Upload()
     return MAF_ERROR;
   }
 
-  if(!CreateCache())
+  if(!CreateChildCache())
   {
     wxMessageBox("Unable to create a temporary cache, remember that msf must be saved locally. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     return MAF_ERROR;
   }
 
-  int ret = this->GeneratesTagsListsFromXMLDictionary();
+  int ret = this->GeneratesHandledAndUnhandledPlusManualTagsFileFromXMLDictionary();
   if (ret == MAF_ERROR)
   {
     wxMessageBox("Problems generating tags list! Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
@@ -419,101 +372,31 @@ int lhpOpUploadVMERefactor::Upload()
     m_Input->GetTagArray()->SetTag(rootTag);
   }
 
-  //------Edit Tag----------------------------//
-  wxString command2execute;
+   int result = PythonEditVMETags();
+   if (result == MAF_ERROR)
+   {
+     return result;
+   }
 
-  if (m_DebugMode)
-    command2execute = m_PythonExe.GetCStr();
-  else
-    command2execute = m_PythonwExe.GetCStr();
-  // script for client
-
-  mafString pythonScriptName = "lhpEditVMETag.py ";
-
-  //workaround to understanding directory argument
-  wxString msfCacheDirectoryWorkaround = m_CurrentCacheChildABSFolderName;
-  msfCacheDirectoryWorkaround.Replace(" ", "??");
-  
-  //workaround to understanding directory argument
-  wxString msfDirectoryWorkaround = m_MsfABSFolder;
-  msfDirectoryWorkaround.Replace(" ", "??");
-
-  command2execute.Append(pythonScriptName.GetCStr());
-  command2execute.Append(wxString::Format("%s ",msfCacheDirectoryWorkaround)); //cache directory
-  command2execute.Append(wxString::Format("%s ",msfDirectoryWorkaround)); //MSF directory
-  command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //vme id
-  command2execute.Append(wxString::Format("%s ", m_UnhandledPlusManualTagsLocalFileName.c_str())); //manualTagFile
-  command2execute.Append(wxString::Format("%s", m_HandledAutoTagsLocalFileName.GetCStr())); //autoTagFile
-
-  if (m_DebugMode)
-    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
-  long pid = -1;
-  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
-  {
-    wxMessageBox("Can't edit MSF. Uploading stopped!", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
-    mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
-    command2execute.c_str(), pid);
-    return MAF_ERROR;
-  }
-
-  //------Edit Tag----------------------------//
- 
   //import msf generated by python to get tag edited  
-  ImportMSF();
+  result = CopyPythonEditedVMETagsIntoOriginalVME();
+  if (result == MAF_ERROR)
+  {
+    return result;
+  }
 
   mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
 
-  if(!CopyInputVMEInCache())
+  if(!CopyInputVMEInCurrentChildCache())
   {
     wxMessageBox("Unable to create a temporary cache, remember that msf must be saved locally. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     return MAF_ERROR;
   }
 
-  command2execute.Clear();
-  command2execute = m_PythonExe.GetCStr();
-  command2execute.Append("lhpGetXMLURI.py ");
-  command2execute.Append(m_User->GetName());
-  command2execute.Append(" ");
-  command2execute.Append(m_User->GetPwd());
-  command2execute.Append(" ");
-  command2execute.Append(m_RepositoryServiceURL.GetCStr());
-  
-  if (m_DebugMode)
-    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
-
-  wxArrayString output;
-  wxArrayString errors;
-  pid = -1;
-  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
+  result = GetXMLURIForUpload();
+  if (result == MAF_ERROR)
   {
-    wxMessageBox("Error in lhpGetXMLURI.py. Cannot retrieve XML resource URI from repository! Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
-    if (m_DebugMode)
-      mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-      command2execute.c_str(), pid);
-    return MAF_ERROR;
-  }
-
-  if (m_DebugMode)
-  {
-     mafLogMessage("Command Output Messages:");
-    for (int i = 0; i < output.size(); i++)
-    {
-      mafLogMessage(output[i]);
-    }
-
-    mafLogMessage("Command Errors Messages:");
-    for (int i = 0; i < errors.size(); i++)
-    {
-      mafLogMessage(errors[i]);
-    }
-  }
-
-  m_RemoteXMLResourceURI = output[output.size() - 1];
-
-  if (m_RemoteXMLResourceURI == "OverQuota")
-  {
-    wxMessageBox("Over Quota!. Uploading stopped.", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
-    return MAF_ERROR;
+    return result;
   }
 
   wxSetWorkingDirectory(oldDir);
@@ -528,8 +411,8 @@ int lhpOpUploadVMERefactor::Upload()
       command2execute = m_PythonExe.GetCStr();
     else
       command2execute = m_PythonwExe.GetCStr();
-  
-    pythonScriptName = "Client.py ";
+    
+    mafString pythonScriptName = "Client.py ";
     command2execute.Append(pythonScriptName.GetCStr());
     command2execute.Append("127.0.0.1 "); //server address (localhost)
     command2execute.Append("50000 "); //port address (50000)
@@ -546,7 +429,7 @@ int lhpOpUploadVMERefactor::Upload()
     }
    
     //workaround to understanding directory argument
-    wxString directoryWorkAround = m_CurrentCacheChildABSFolderName;
+    wxString directoryWorkAround = m_CurrentCacheChildABSFolder;
     directoryWorkAround.Replace(" ", "??");
     command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
     command2execute.Append(wxString::Format("%s ",m_User->GetName())); //user
@@ -578,12 +461,13 @@ int lhpOpUploadVMERefactor::Upload()
     else
       command2execute = m_PythonwExe.GetCStr();
 
-    pythonScriptName = "ThreadedClient.py ";
+    mafString pythonScriptName = "ThreadedClient.py ";
     command2execute.Append(pythonScriptName.GetCStr());
     command2execute.Append("50000");
     if (m_DebugMode)
       mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
+    // create server
     m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
 
     if (m_DebugMode)
@@ -614,7 +498,7 @@ int lhpOpUploadVMERefactor::Upload()
     }
 
     //workaround to understanding directory argument
-    wxString directoryWorkAround = m_CurrentCacheChildABSFolderName;
+    wxString directoryWorkAround = m_CurrentCacheChildABSFolder;
     directoryWorkAround.Replace(" ", "??");
     command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
     command2execute.Append(wxString::Format("%s ",m_User->GetName())); //user
@@ -630,6 +514,7 @@ int lhpOpUploadVMERefactor::Upload()
     name.Replace(" ", "??");
     command2execute.Append(wxString::Format("%s ", name.c_str())); //vme name
 
+    // create client
     m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
     
     if (m_DebugMode)
@@ -637,12 +522,12 @@ int lhpOpUploadVMERefactor::Upload()
         command2execute.c_str(), m_Pid);
   }
 
-
   wxSetWorkingDirectory(oldDir);
 
 
   return MAF_OK;
 }
+
 //----------------------------------------------------------------------------
 void lhpOpUploadVMERefactor::OpDo()   
 //----------------------------------------------------------------------------
@@ -651,33 +536,34 @@ void lhpOpUploadVMERefactor::OpDo()
 }
 
 //-------------------------------------------------------------------
-int lhpOpUploadVMERefactor::ImportMSF()
+int lhpOpUploadVMERefactor::CopyPythonEditedVMETagsIntoOriginalVME()
 //-------------------------------------------------------------------
 {
   //msf name created by phyton tag editor is standard: OutputMSF.lhp
-  mafString msfPythonFileName;
-  mafString msfFullPath;
-  msfPythonFileName.Append(m_MsfABSFolder.GetCStr());
-  msfPythonFileName.Append("/");
-  msfPythonFileName.Append("OutputMSF");
-  int fileNumber = 0;
-  msfFullPath = msfPythonFileName;
 
-  while(wxFileExists(msfFullPath.Append(".msf").GetCStr()))
+  mafString MSFCreatedByPythonABSFileName;
+  mafString MSFToRestoreABSFileName;
+  MSFCreatedByPythonABSFileName.Append(m_MSFFileABSFolder.GetCStr());
+  MSFCreatedByPythonABSFileName.Append("/");
+  MSFCreatedByPythonABSFileName.Append("OutputMSF");
+  int fileNumber = 0;
+  MSFToRestoreABSFileName = MSFCreatedByPythonABSFileName;
+
+  while(wxFileExists(MSFToRestoreABSFileName.Append(".msf").GetCStr()))
   {
-    msfFullPath = msfPythonFileName;
-    msfFullPath << fileNumber;
+    MSFToRestoreABSFileName = MSFCreatedByPythonABSFileName;
+    MSFToRestoreABSFileName << fileNumber;
     fileNumber++;   
   }
 
-  msfPythonFileName.Append(".lhp");
-  int result = rename(msfPythonFileName, msfFullPath);
+  MSFCreatedByPythonABSFileName.Append(".lhp");
+  int result = rename(MSFCreatedByPythonABSFileName, MSFToRestoreABSFileName);
   if ( result != 0 )
     return MAF_ERROR;
 
   mafVMEStorage *storage;
   storage = mafVMEStorage::New();
-  storage->SetURL(msfFullPath.GetCStr());
+  storage->SetURL(MSFToRestoreABSFileName.GetCStr());
 
   mafVMERoot *root;
   root = storage->GetRoot();
@@ -718,13 +604,13 @@ int lhpOpUploadVMERefactor::ImportMSF()
   }
 
   //remove msf created by phyton tag editor
-  remove(msfFullPath);
+  remove(MSFToRestoreABSFileName);
   mafDEL(storage);
   return MAF_OK;
 }
 
 //----------------------------------------------------------------------------
-void lhpOpUploadVMERefactor::SaveLinkInfo()   
+void lhpOpUploadVMERefactor::StoreInputVMELinkInfo()   
 //----------------------------------------------------------------------------
 {
   m_LinkNode.clear();
@@ -743,12 +629,8 @@ void lhpOpUploadVMERefactor::SaveLinkInfo()
     }
   }
 }
-//----------------------------------------------------------------------------
-void lhpOpUploadVMERefactor::SetDictionary(int subDictionary)   
-//----------------------------------------------------------------------------
-{
-  m_SubdictionaryId = subDictionary;
-}
+
+
 //----------------------------------------------------------------------------
 void lhpOpUploadVMERefactor::OpStop(int result)   
 //----------------------------------------------------------------------------
@@ -757,7 +639,7 @@ void lhpOpUploadVMERefactor::OpStop(int result)
 	mafEventMacro(mafEvent(this,result));
 }
 //----------------------------------------------------------------------------
-bool lhpOpUploadVMERefactor::CreateCache()
+bool lhpOpUploadVMERefactor::CreateChildCache()
 //----------------------------------------------------------------------------
 {
   bool result = false;
@@ -776,11 +658,11 @@ bool lhpOpUploadVMERefactor::CreateCache()
   if(wxMkDir(currentSubdir) == 0)
     result = true;
 
-  m_CurrentCacheChildABSFolderName = currentSubdir;
+  m_CurrentCacheChildABSFolder = currentSubdir;
   return result;
 }
 //----------------------------------------------------------------------------
-bool lhpOpUploadVMERefactor::CopyInputVMEInCache()
+bool lhpOpUploadVMERefactor::CopyInputVMEInCurrentChildCache()
 //----------------------------------------------------------------------------
 {
   bool copied = false;
@@ -791,7 +673,7 @@ bool lhpOpUploadVMERefactor::CopyInputVMEInCache()
     externalFileName.append(".");
     externalFileName.append(((mafVMEExternalData *)m_Input)->GetExtension());
     wxString externalFilePath = ((mafVMEExternalData *)m_Input)->GetAbsoluteFileName();
-    wxString externalCopiedName =  m_CurrentCacheChildABSFolderName + "\\" + externalFileName;
+    wxString externalCopiedName =  m_CurrentCacheChildABSFolder + "\\" + externalFileName;
     if(wxFileExists(externalFilePath))
     {
       copied = wxCopyFile(externalFilePath, externalCopiedName);
@@ -801,7 +683,7 @@ bool lhpOpUploadVMERefactor::CopyInputVMEInCache()
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_CurrentCacheChildABSFolderName.c_str());
+  wxSetWorkingDirectory(m_CurrentCacheChildABSFolder.c_str());
 
   wxString msfname = m_CacheChildFolderLocalName;
   msfname.Append(".msf");
@@ -908,152 +790,25 @@ bool lhpOpUploadVMERefactor::ExistsRunningProcess()
   return result;
 }
 //----------------------------------------------------------------------------
-int lhpOpUploadVMERefactor::GeneratesTagsListsFromXMLDictionary()
+int lhpOpUploadVMERefactor::GeneratesHandledAndUnhandledPlusManualTagsFileFromXMLDictionary()
 //----------------------------------------------------------------------------
 {
   wxString oldDir = wxGetCwd();
-  if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolderName.GetCStr());
-  if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
-  m_MasterXMLDictionaryFileName = this->GetXMLDictionaryFileName(m_MasterXMLDictionaryFilePrefix);
-  if (m_MasterXMLDictionaryFileName == "NOT FOUND")
+  int result = FillAutoTagsAndManualTagsIVARs();  
+  if (result == MAF_ERROR)
   {
     return MAF_ERROR;
   }
-  
-  mafString dictionaryToProcessLocalFileName;
 
-  // handle sub dictionaries creation...
-  if (m_SubdictionaryId == DICOM_SUBDICTIONARY)
-  {
-    // build dicom
-    m_SubXMLDictionaryFilePrefix = "lhpXMLDicomSourceSubdictionary_";
-    m_SubDictionaryBuildingCommand = "dicom";
-    if (this->AssembleDictionaries() == MAF_ERROR)
-    {
-      return MAF_ERROR;
-    }
-    dictionaryToProcessLocalFileName = m_AssembledXMLDictionaryFileName;
-  } 
-  else if (m_SubdictionaryId == MOTION_ANALYSIS_SUBDICTIONARY)
-  {
-    // build motion analysis
-    m_SubXMLDictionaryFilePrefix = "lhpXMLMotionAnalysisSourceSubdictionary_";
-    m_SubDictionaryBuildingCommand = "motion_analysis";
-    // build sub dictionary code
-    if (this->AssembleDictionaries() == MAF_ERROR)
-    {
-      return MAF_ERROR;
-    }
+  // ------- handledAutoTagsFile -------
 
-    dictionaryToProcessLocalFileName = m_AssembledXMLDictionaryFileName;
-  }
-  else if (m_SubdictionaryId == NO_SUBDICTIONARY)
-  {
-    dictionaryToProcessLocalFileName = m_MasterXMLDictionaryFileName;
-    // nothing to do...continue...
-  }  
-  else
-  {
-    mafLogMessage("this case is not handled...");
-    return MAF_ERROR;
-  }
-
-  // get auto tags
-  wxString command2execute;
-  command2execute = m_PythonExe.GetCStr();
-  command2execute.Append(" lhpXMLDictionaryParser.py ");
-  command2execute.Append(dictionaryToProcessLocalFileName.GetCStr());
-  command2execute.Append(" auto_tags ");
-  command2execute.Append(m_AutoTagsListFromXMLDictionaryLocalFileName.GetCStr());
-  
-  if (m_DebugMode)
-    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
-
-  long pid = -1;
-  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
-  {
-    wxMessageBox("Error in lhpXMLDictionaryParser.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
-    if (m_DebugMode)
-     mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-      command2execute.c_str(), pid);
-    return MAF_ERROR;
-  }
-  if ( !command2execute )
-    return MAF_ERROR;
-
-  // get manual tags
-  command2execute.Clear();
-  command2execute = m_PythonExe.GetCStr();
-  command2execute.Append(" lhpXMLDictionaryParser.py ");
-  command2execute.Append(dictionaryToProcessLocalFileName.GetCStr());
-  command2execute.Append(" manual_tags ");
-  command2execute.Append(m_ManualTagsListFromXMLDictionaryLocalFileName.GetCStr());
-
-  if (m_DebugMode)
-    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
-
-  pid = -1;
-  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
-  {
-    wxMessageBox("Error in lhpXMLDictionaryParser.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
-    if (m_DebugMode)
-      mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-      command2execute.c_str(), pid);
-    return MAF_ERROR;
-  }
-  if ( !command2execute )
-    return MAF_ERROR;
-
-
-  // cleanup
-  m_AutoTagsList.Clear();
-  m_ManualTagsList.Clear();
-  m_UnhandledAutoTagsListFromFactory.Clear();
-
-  // open auto tags file and try to handle tags using tags factory 
-  ifstream inManualTagsFile;
-
-  inManualTagsFile.open(m_ManualTagsListFromXMLDictionaryLocalFileName.GetCStr());
-  if (!inManualTagsFile) {
-    wxString message = m_ManualTagsListFromXMLDictionaryLocalFileName.GetCStr();
-    message.Append(" not found! Unable to open XML dictionary file");
-    mafLogMessage(message.c_str());
-    return MAF_ERROR; // terminate with error
-  }
-
-  std::string mtag;
-
-  while (inManualTagsFile >> mtag) 
-  {
-    m_ManualTagsList.Add(mtag.c_str());
-  }
-  inManualTagsFile.close();
-
-  // open auto tags file and try to handle tags using tags factory 
-  ifstream inAutoTagsFile;
-
-  inAutoTagsFile.open(m_AutoTagsListFromXMLDictionaryLocalFileName.GetCStr());
-  if (!inAutoTagsFile) {
-    mafLogMessage("Unable to open file");
-    return MAF_ERROR; // terminate with error
-  }
-
-  std::string atag;
-  while (inAutoTagsFile >> atag) 
-  {
-    m_AutoTagsList.Add(atag.c_str());
-  }
-  inAutoTagsFile.close();
   mafString tagName = "";
   
   lhpTagHandlerInputOutputParametersCargo *parametersCargo = lhpTagHandlerInputOutputParametersCargo::New();
   parametersCargo->SetInputVme(mafVME::SafeDownCast(m_Input));
   parametersCargo->SetInputUser(m_User);
-	parametersCargo->SetInputMSF(m_MsfABSFileName);
+	parametersCargo->SetInputMSF(m_MSFFileABSFileName);
 
   for (int i = 0; i < m_AutoTagsList.size(); i++)
   {
@@ -1091,7 +846,6 @@ int lhpOpUploadVMERefactor::GeneratesTagsListsFromXMLDictionary()
   // clean up
   parametersCargo->Delete();
 
-  // generates handled auto file
   // open auto tags file and try to handle tags using tags factory 
   ofstream handledAutoTagsFile;
 
@@ -1105,11 +859,12 @@ int lhpOpUploadVMERefactor::GeneratesTagsListsFromXMLDictionary()
   
   handledAutoTagsFile.close();
 
-  // generates manual tag file 
+  // ------- unhandledPlusManualTagsFile -------
+
   // open auto tags file and try to handle tags using tags factory 
   ofstream unhandledPlusManualTagsFile;
 
-  unhandledPlusManualTagsFile.open(m_CurrentCacheChildABSFolderName + m_UnhandledPlusManualTagsLocalFileName.c_str());
+  unhandledPlusManualTagsFile.open(m_CurrentCacheChildABSFolder + m_UnhandledPlusManualTagsLocalFileName.c_str());
 
   if (!unhandledPlusManualTagsFile) {
     mafLogMessage("Unable to create file");
@@ -1121,7 +876,9 @@ int lhpOpUploadVMERefactor::GeneratesTagsListsFromXMLDictionary()
 
   bool tagFound;
   mafString tagValue = "";
-  // write unhandled auto
+
+  
+  // write unhandled tags
   for (int i = 0; i < m_UnhandledAutoTagsListFromFactory.size(); i++)
   {
     tagFound = false;
@@ -1141,7 +898,7 @@ int lhpOpUploadVMERefactor::GeneratesTagsListsFromXMLDictionary()
       unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\",\"enter a value\"" << std::endl ;
   }
 
-  // write manuals
+  // write manual tags
   for (int i = 0; i < m_ManualTagsList.size(); i++)
   {
     tagFound = false;
@@ -1160,8 +917,11 @@ int lhpOpUploadVMERefactor::GeneratesTagsListsFromXMLDictionary()
     if (!tagFound)
       unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\",\"enter a value\"" << std::endl ;
   }
+
   unhandledPlusManualTagsFile.close();
+
   wxSetWorkingDirectory(oldDir);
+  
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   return MAF_OK;
@@ -1336,55 +1096,130 @@ mafString lhpOpUploadVMERefactor::GetXMLDictionaryFileName( mafString dictionary
   return dictionaryFileName;
 }
 
-//----------------------------------------------------------------------------
-int lhpOpUploadVMERefactor::AssembleDictionaries()
-//----------------------------------------------------------------------------
+
+void lhpOpUploadVMERefactor::GetPythonInterpretersAndUser()
 {
-  wxString oldDir = wxGetCwd();
-  if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolderName.GetCStr());
-  if (m_DebugMode)
+  mafEvent eventGetPythonExe;
+  eventGetPythonExe.SetSender(this);
+  eventGetPythonExe.SetId(ID_REQUEST_PYTHON_EXE_INTERPRETER);
+  mafEventMacro(eventGetPythonExe);
+
+  if(eventGetPythonExe.GetString())
   {
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
-    mafLogMessage("Assembling dictionaries...");
+    m_PythonExe.Erase(0);
+    m_PythonExe = eventGetPythonExe.GetString()->GetCStr();
+    m_PythonExe.Append(" ");
   }
 
-  m_SubXMLDictionaryFileName = this->GetXMLDictionaryFileName(m_SubXMLDictionaryFilePrefix);
-  if (m_SubXMLDictionaryFileName == "NOT FOUND")
+  mafEvent eventGetPythonwExe;
+  eventGetPythonwExe.SetSender(this);
+  eventGetPythonwExe.SetId(ID_REQUEST_PYTHONW_EXE_INTERPRETER);
+  mafEventMacro(eventGetPythonwExe);
+
+  if(eventGetPythonwExe.GetString())
   {
-    return MAF_ERROR;
+    m_PythonwExe.Erase(0);
+    m_PythonwExe = eventGetPythonwExe.GetString()->GetCStr();
+    m_PythonwExe.Append(" ");
   }
 
-  // get manual tags
+  mafSleep(3000); //to avoid DB conflicts..
+
+  //Get User values
+  mafEvent event;
+  event.SetSender(this);
+  event.SetId(ID_REQUEST_USER);
+  mafEventMacro(event);
+  if(event.GetMafObject() != NULL) //if proxy string contains something != ""
+  {
+    m_User = (lhpUser*)event.GetMafObject();
+  }
+}
+
+void lhpOpUploadVMERefactor::GetMSFFileABSFolder()
+{
+  //logic comunicate the msf directory
+  mafEvent event;
+  event.SetSender(this);
+  event.SetId(ID_MSF_DATA_CACHE);
+  mafEventMacro(event);
+
+  wxString temp;
+  temp.Append((*event.GetString()).GetCStr());
+  m_MSFFileABSFileName = temp;
+  temp = temp.BeforeLast('/');
+  m_MSFFileABSFolder = temp;
+}
+
+int lhpOpUploadVMERefactor::PythonEditVMETags()
+{
   wxString command2execute;
-  command2execute.Clear();
+
   if (m_DebugMode)
     command2execute = m_PythonExe.GetCStr();
   else
-    command2execute = m_PythonwExe.GetCStr();;
+    command2execute = m_PythonwExe.GetCStr();
+  // script for client
 
-  command2execute.Append(" lhpXMLDictionariesBuilder.py ");
-  command2execute.Append(m_MasterXMLDictionaryFileName);
+  mafString pythonScriptName = "lhpEditVMETag.py ";
+
+  //workaround to understanding directory argument
+  wxString msfCurrentCacheChildWorkaroundABSFolder = m_CurrentCacheChildABSFolder;
+  msfCurrentCacheChildWorkaroundABSFolder.Replace(" ", "??");
+
+  //workaround to understanding directory argument
+  wxString msfFileDirectoryWorkaroundABSFolder = m_MSFFileABSFolder;
+  msfFileDirectoryWorkaroundABSFolder.Replace(" ", "??");
+
+  command2execute.Append(pythonScriptName.GetCStr());
+  command2execute.Append(wxString::Format("%s ",msfCurrentCacheChildWorkaroundABSFolder)); //cache child directory
+  command2execute.Append(wxString::Format("%s ",msfFileDirectoryWorkaroundABSFolder)); //MSF directory
+  command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //vme id
+  command2execute.Append(wxString::Format("%s ", m_UnhandledPlusManualTagsLocalFileName.c_str())); //manualTagFile
+  command2execute.Append(wxString::Format("%s", m_HandledAutoTagsLocalFileName.GetCStr())); //autoTagFile
+
+  if (m_DebugMode)
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  long pid = -1;
+  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  {
+    wxMessageBox("Can't edit MSF. Uploading stopped!", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+    mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), pid);
+    return MAF_ERROR;
+  }
+
+  return MAF_OK;
+}
+
+int lhpOpUploadVMERefactor::GetXMLURIForUpload()
+{
+  // Get XML URI upload target
+  wxString command2execute;
+  command2execute = m_PythonExe.GetCStr();
+  command2execute.Append("lhpGetXMLURI.py ");
+  command2execute.Append(m_User->GetName());
   command2execute.Append(" ");
-  command2execute.Append(m_SubXMLDictionaryFileName);
+  command2execute.Append(m_User->GetPwd());
   command2execute.Append(" ");
-  command2execute.Append(m_SubDictionaryBuildingCommand);
-  command2execute.Append(" ");
-  command2execute.Append(m_AssembledXMLDictionaryFileName);
+  command2execute.Append(m_RepositoryServiceURL.GetCStr());
 
   if (m_DebugMode)
     mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   wxArrayString output;
   wxArrayString errors;
+
   long pid = -1;
   if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
-    wxMessageBox("Error in lhpXMLDictionariesBuilder.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+    wxMessageBox("Error in lhpGetXMLURI.py. Cannot retrieve XML resource URI from repository! Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+    if (m_DebugMode)
+      mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), pid);
     return MAF_ERROR;
   }
-  
+
   if (m_DebugMode)
   {
     mafLogMessage("Command Output Messages:");
@@ -1400,9 +1235,121 @@ int lhpOpUploadVMERefactor::AssembleDictionaries()
     }
   }
 
-  wxSetWorkingDirectory(oldDir);
+  m_RemoteXMLResourceURI = output[output.size() - 1];
+
+  if (m_RemoteXMLResourceURI == "OverQuota")
+  {
+    wxMessageBox("Over Quota!. Uploading stopped.", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+    return MAF_ERROR;
+  }
+
+  return MAF_OK;
+}
+
+int lhpOpUploadVMERefactor::FillAutoTagsAndManualTagsIVARs()
+{
+
   if (m_DebugMode)
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolderName.GetCStr());
+  if (m_DebugMode)
+    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+
+  m_MasterXMLDictionaryFileName = this->GetXMLDictionaryFileName(m_MasterXMLDictionaryFilePrefix);
+  if (m_MasterXMLDictionaryFileName == "NOT FOUND")
+  {
+    return MAF_ERROR;
+  }
+
+  mafString dictionaryToProcessLocalFileName = m_MasterXMLDictionaryFileName;
+
+  // generate auto tags file
+  wxString command2execute;
+  command2execute = m_PythonExe.GetCStr();
+  command2execute.Append(" lhpXMLDictionaryParser.py ");
+  command2execute.Append(dictionaryToProcessLocalFileName.GetCStr());
+  command2execute.Append(" auto_tags ");
+  command2execute.Append(m_AutoTagsListFromXMLDictionaryLocalFileName.GetCStr());
+
+  if (m_DebugMode)
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+
+  long pid = -1;
+  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  {
+    wxMessageBox("Error in lhpXMLDictionaryParser.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+    if (m_DebugMode)
+      mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), pid);
+    return MAF_ERROR;
+  }
+  if ( !command2execute )
+    return MAF_ERROR;
+
+  // generate manual tags file
+  command2execute.Clear();
+  command2execute = m_PythonExe.GetCStr();
+  command2execute.Append(" lhpXMLDictionaryParser.py ");
+  command2execute.Append(dictionaryToProcessLocalFileName.GetCStr());
+  command2execute.Append(" manual_tags ");
+  command2execute.Append(m_ManualTagsListFromXMLDictionaryLocalFileName.GetCStr());
+
+  if (m_DebugMode)
+    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+
+  pid = -1;
+  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  {
+    wxMessageBox("Error in lhpXMLDictionaryParser.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+    if (m_DebugMode)
+      mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+      command2execute.c_str(), pid);
+    return MAF_ERROR;
+  }
+  if ( !command2execute )
+    return MAF_ERROR;
+
+
+  // cleanup
+  m_AutoTagsList.Clear();
+  m_ManualTagsList.Clear();
+  m_UnhandledAutoTagsListFromFactory.Clear();
+
+  // fill m_ManualTagsList
+  ifstream inManualTagsFile;
+
+  inManualTagsFile.open(m_ManualTagsListFromXMLDictionaryLocalFileName.GetCStr());
+  if (!inManualTagsFile) {
+    wxString message = m_ManualTagsListFromXMLDictionaryLocalFileName.GetCStr();
+    message.Append(" not found! Unable to open XML dictionary file");
+    mafLogMessage(message.c_str());
+    return MAF_ERROR; // terminate with error
+  }
+
+  std::string mtag;
+
+  while (inManualTagsFile >> mtag) 
+  {
+    m_ManualTagsList.Add(mtag.c_str());
+  }
+
+  inManualTagsFile.close();
+
+  // fill m_AutoTagsList
+  ifstream inAutoTagsFile;
+
+  inAutoTagsFile.open(m_AutoTagsListFromXMLDictionaryLocalFileName.GetCStr());
+  if (!inAutoTagsFile) {
+    mafLogMessage("Unable to open file");
+    return MAF_ERROR; // terminate with error
+  }
+
+  std::string atag;
+  while (inAutoTagsFile >> atag) 
+  {
+    m_AutoTagsList.Add(atag.c_str());
+  }
+  inAutoTagsFile.close();
 
   return MAF_OK;
 }
