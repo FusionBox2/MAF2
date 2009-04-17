@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVMERefactor.h,v $
 Language:  C++
-Date:      $Date: 2009-04-15 16:31:40 $
-Version:   $Revision: 1.1.2.6 $
+Date:      $Date: 2009-04-17 17:54:50 $
+Version:   $Revision: 1.1.2.7 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -87,9 +87,6 @@ public:
 
 protected:
   
-  /** check if lhpbuilder software version is up to date in order to a allow vme uploading */
-  bool IsSoftwareVersionUpToDate();
-
   /** Try to handle auto tags through tags factory and convert unhandled 
   to manual tags is to be filled by the user*/
   void HandleAutoTagsTroughFactory();
@@ -156,8 +153,6 @@ private:
   bool RemoveAlreadyUploadedXMLResources(std::vector<mafString> xmlUploadedResourcesVectorURI);  
 
   void SaveConnectionConfigurationFile();
-
-  int AssembleDictionaries();
 
   bool m_WithChild;
   bool m_DebugMode;

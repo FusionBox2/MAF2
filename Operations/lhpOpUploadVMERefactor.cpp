@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVMERefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-04-16 17:36:25 $
-Version:   $Revision: 1.1.2.11 $
+Date:      $Date: 2009-04-17 17:54:50 $
+Version:   $Revision: 1.1.2.12 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -125,7 +125,7 @@ mafOp(label)
   m_RepositoryServiceURL ="https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/";
 
   m_MasterXMLDictionaryFilePrefix = "lhpXMLDictionary_";
-  m_MasterXMLDictionaryFileName = "UNDEFINED";
+  m_MasterXMLDictionaryLocalFileName = "UNDEFINED";
   m_SubXMLDictionaryFilePrefix = "UNDEFINED" ;
   m_SubXMLDictionaryFileName = "UNDEFINED";
   m_AssembledXMLDictionaryFileName = "assembledXMLDictionary.xml";
@@ -176,31 +176,8 @@ bool lhpOpUploadVMERefactor::Accept(mafNode* vme)
 void lhpOpUploadVMERefactor::OpRun()
 //----------------------------------------------------------------------------
 {
-  // get python interpreters
-  mafEvent eventGetPythonExe;
-  eventGetPythonExe.SetSender(this);
-  eventGetPythonExe.SetId(ID_REQUEST_PYTHON_EXE_INTERPRETER);
-  mafEventMacro(eventGetPythonExe);
-
-  if(eventGetPythonExe.GetString())
-  {
-    m_PythonExe.Erase(0);
-    m_PythonExe = eventGetPythonExe.GetString()->GetCStr();
-    m_PythonExe.Append(" ");
-  }
-
-  mafEvent eventGetPythonwExe;
-  eventGetPythonwExe.SetSender(this);
-  eventGetPythonwExe.SetId(ID_REQUEST_PYTHONW_EXE_INTERPRETER);
-  mafEventMacro(eventGetPythonwExe);
-
-  if(eventGetPythonwExe.GetString())
-  {
-    m_PythonwExe.Erase(0);
-    m_PythonwExe = eventGetPythonwExe.GetString()->GetCStr();
-    m_PythonwExe.Append(" ");
-  }
-
+  GetPythonInterpreters();
+  
   //Get Proxy values
   if(m_User->GetProxyFlag())
   {
@@ -290,8 +267,6 @@ void lhpOpUploadVMERefactor::SaveConnectionConfigurationFile()
 
 int lhpOpUploadVMERefactor::Upload()
 {
-  GetPythonInterpretersAndUser();
-
   //check if vme has a name
   if(strcmp(m_Input->GetName(), "") == 0)
   {
@@ -447,9 +422,11 @@ int lhpOpUploadVMERefactor::Upload()
 
     m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
 
-    if (m_DebugMode)
       mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
       command2execute.c_str(), m_Pid);
+
+    assert(true);
+
   }
   else
   {
@@ -795,12 +772,6 @@ int lhpOpUploadVMERefactor::GeneratesHandledAndUnhandledPlusManualTagsFileFromXM
 {
   wxString oldDir = wxGetCwd();
 
-  int result = FillAutoTagsAndManualTagsIVARs();  
-  if (result == MAF_ERROR)
-  {
-    return MAF_ERROR;
-  }
-
   // ------- handledAutoTagsFile -------
 
   mafString tagName = "";
@@ -972,6 +943,8 @@ bool lhpOpUploadVMERefactor::IsClientSoftwareVersionUpToDate()
   if (m_DebugMode)
     mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
 
+  GetPythonInterpretersAndClientSoftwareUser();
+
   // get manual tags
   wxString command2execute;
   command2execute.Clear();
@@ -1032,6 +1005,14 @@ bool lhpOpUploadVMERefactor::IsClientSoftwareVersionUpToDate()
 
   if (result == "UpToDate")
   {
+    int result = FillAutoTagsAndManualTagsVARsFromXMLMasterDictionaryFile(m_PythonExe,
+    m_VMEUploaderDownloaderABSFolderName,m_MasterXMLDictionaryFilePrefix, 
+    m_AutoTagsList, m_ManualTagsList);
+    if (result == MAF_ERROR)
+    {
+      return false;
+    }
+
     return true;
   } 
   else
@@ -1041,17 +1022,12 @@ bool lhpOpUploadVMERefactor::IsClientSoftwareVersionUpToDate()
 }
 
 //----------------------------------------------------------------------------
-mafString lhpOpUploadVMERefactor::GetXMLDictionaryFileName( mafString dictionaryFileNamePrefix )
-//----------------------------------------------------------------------------
+mafString lhpOpUploadVMERefactor::GetXMLMasterDictionaryFileName( mafString dictionaryAbsFolder, mafString dictionaryFileNamePrefix )
 {
   mafString dictionaryFileName = "NOT FOUND";
   wxString oldDir = wxGetCwd();
 
-  if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolderName.GetCStr());
-  if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+  wxSetWorkingDirectory(dictionaryAbsFolder.GetCStr());
 
   wxArrayString files;
   wxString filePattern = dictionaryFileNamePrefix ;
@@ -1082,22 +1058,16 @@ mafString lhpOpUploadVMERefactor::GetXMLDictionaryFileName( mafString dictionary
     dictionaryFileName = files[0];
     int pos = dictionaryFileName.FindLast("\\");
     dictionaryFileName.Erase(0, pos);
-    if (m_DebugMode)
-    {
-      mafLogMessage("Found dictionary!");
-      mafLogMessage(dictionaryFileName.GetCStr());
-    }
+    mafLogMessage("Found dictionary!");
+    mafLogMessage(dictionaryFileName.GetCStr());
   }
   
   wxSetWorkingDirectory(oldDir);
-  if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
   
   return dictionaryFileName;
 }
 
-
-void lhpOpUploadVMERefactor::GetPythonInterpretersAndUser()
+void lhpOpUploadVMERefactor::GetPythonInterpretersAndClientSoftwareUser()
 {
   mafEvent eventGetPythonExe;
   eventGetPythonExe.SetSender(this);
@@ -1130,7 +1100,7 @@ void lhpOpUploadVMERefactor::GetPythonInterpretersAndUser()
   event.SetSender(this);
   event.SetId(ID_REQUEST_USER);
   mafEventMacro(event);
-  if(event.GetMafObject() != NULL) //if proxy string contains something != ""
+  if(event.GetMafObject() != NULL) 
   {
     m_User = (lhpUser*)event.GetMafObject();
   }
@@ -1245,82 +1215,74 @@ int lhpOpUploadVMERefactor::GetXMLURIForUpload()
 
   return MAF_OK;
 }
+int lhpOpUploadVMERefactor::FillAutoTagsAndManualTagsVARsFromXMLMasterDictionaryFile( mafString pythonInterpreter, mafString vmeUpDownDirAbsFolder, mafString xmlDictionaryLocalFilePrefix, wxArrayString &outAutoTags, wxArrayString &outManualTags )
+{  
+  wxSetWorkingDirectory(vmeUpDownDirAbsFolder.GetCStr());
 
-int lhpOpUploadVMERefactor::FillAutoTagsAndManualTagsIVARs()
-{
-
-  if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolderName.GetCStr());
-  if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
-
-  m_MasterXMLDictionaryFileName = this->GetXMLDictionaryFileName(m_MasterXMLDictionaryFilePrefix);
-  if (m_MasterXMLDictionaryFileName == "NOT FOUND")
+  xmlDictionaryLocalFilePrefix = GetXMLMasterDictionaryFileName(vmeUpDownDirAbsFolder, xmlDictionaryLocalFilePrefix);
+  if (xmlDictionaryLocalFilePrefix == "NOT FOUND")
   {
     return MAF_ERROR;
   }
 
-  mafString dictionaryToProcessLocalFileName = m_MasterXMLDictionaryFileName;
+  mafString dictionaryToProcessLocalFileName = xmlDictionaryLocalFilePrefix;
 
   // generate auto tags file
+  mafString autoTagsListFromXMLDictionaryLocalFileName = "autoTagsList.txt";
+
   wxString command2execute;
-  command2execute = m_PythonExe.GetCStr();
+  command2execute = pythonInterpreter.GetCStr();
   command2execute.Append(" lhpXMLDictionaryParser.py ");
   command2execute.Append(dictionaryToProcessLocalFileName.GetCStr());
   command2execute.Append(" auto_tags ");
-  command2execute.Append(m_AutoTagsListFromXMLDictionaryLocalFileName.GetCStr());
+  command2execute.Append(autoTagsListFromXMLDictionaryLocalFileName.GetCStr());
 
-  if (m_DebugMode)
-    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   long pid = -1;
+
   if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Error in lhpXMLDictionaryParser.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
-    if (m_DebugMode)
-      mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
       command2execute.c_str(), pid);
     return MAF_ERROR;
   }
   if ( !command2execute )
     return MAF_ERROR;
 
+  mafString manualTagsListFromXMLDictionaryLocalFileName = "manualTagsList.txt";
+
   // generate manual tags file
   command2execute.Clear();
-  command2execute = m_PythonExe.GetCStr();
+  command2execute = pythonInterpreter.GetCStr();
   command2execute.Append(" lhpXMLDictionaryParser.py ");
   command2execute.Append(dictionaryToProcessLocalFileName.GetCStr());
   command2execute.Append(" manual_tags ");
-  command2execute.Append(m_ManualTagsListFromXMLDictionaryLocalFileName.GetCStr());
+  command2execute.Append(manualTagsListFromXMLDictionaryLocalFileName.GetCStr());
 
-  if (m_DebugMode)
-    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
   pid = -1;
   if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Error in lhpXMLDictionaryParser.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
-    if (m_DebugMode)
-      mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-      command2execute.c_str(), pid);
+    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
+    command2execute.c_str(), pid);
     return MAF_ERROR;
   }
   if ( !command2execute )
     return MAF_ERROR;
 
+  outAutoTags.Clear();
+  outManualTags.Clear();
 
-  // cleanup
-  m_AutoTagsList.Clear();
-  m_ManualTagsList.Clear();
-  m_UnhandledAutoTagsListFromFactory.Clear();
-
-  // fill m_ManualTagsList
+  // fill output manualTagsArrayString
   ifstream inManualTagsFile;
 
-  inManualTagsFile.open(m_ManualTagsListFromXMLDictionaryLocalFileName.GetCStr());
+  inManualTagsFile.open(manualTagsListFromXMLDictionaryLocalFileName.GetCStr());
   if (!inManualTagsFile) {
-    wxString message = m_ManualTagsListFromXMLDictionaryLocalFileName.GetCStr();
+    wxString message = manualTagsListFromXMLDictionaryLocalFileName.GetCStr();
     message.Append(" not found! Unable to open XML dictionary file");
     mafLogMessage(message.c_str());
     return MAF_ERROR; // terminate with error
@@ -1330,15 +1292,15 @@ int lhpOpUploadVMERefactor::FillAutoTagsAndManualTagsIVARs()
 
   while (inManualTagsFile >> mtag) 
   {
-    m_ManualTagsList.Add(mtag.c_str());
+    outManualTags.Add(mtag.c_str());
   }
 
   inManualTagsFile.close();
 
-  // fill m_AutoTagsList
+  // fill output autoTagsArrayString
   ifstream inAutoTagsFile;
 
-  inAutoTagsFile.open(m_AutoTagsListFromXMLDictionaryLocalFileName.GetCStr());
+  inAutoTagsFile.open(autoTagsListFromXMLDictionaryLocalFileName.GetCStr());
   if (!inAutoTagsFile) {
     mafLogMessage("Unable to open file");
     return MAF_ERROR; // terminate with error
@@ -1347,9 +1309,37 @@ int lhpOpUploadVMERefactor::FillAutoTagsAndManualTagsIVARs()
   std::string atag;
   while (inAutoTagsFile >> atag) 
   {
-    m_AutoTagsList.Add(atag.c_str());
+    outAutoTags.Add(atag.c_str());
   }
   inAutoTagsFile.close();
 
   return MAF_OK;
+}
+
+void lhpOpUploadVMERefactor::GetPythonInterpreters()
+{
+  // get python interpreters
+  mafEvent eventGetPythonExe;
+  eventGetPythonExe.SetSender(this);
+  eventGetPythonExe.SetId(ID_REQUEST_PYTHON_EXE_INTERPRETER);
+  mafEventMacro(eventGetPythonExe);
+
+  if(eventGetPythonExe.GetString())
+  {
+    m_PythonExe.Erase(0);
+    m_PythonExe = eventGetPythonExe.GetString()->GetCStr();
+    m_PythonExe.Append(" ");
+  }
+
+  mafEvent eventGetPythonwExe;
+  eventGetPythonwExe.SetSender(this);
+  eventGetPythonwExe.SetId(ID_REQUEST_PYTHONW_EXE_INTERPRETER);
+  mafEventMacro(eventGetPythonwExe);
+
+  if(eventGetPythonwExe.GetString())
+  {
+    m_PythonwExe.Erase(0);
+    m_PythonwExe = eventGetPythonwExe.GetString()->GetCStr();
+    m_PythonwExe.Append(" ");
+  }
 }

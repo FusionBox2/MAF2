@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVMERefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-04-15 16:31:40 $
-Version:   $Revision: 1.1.2.9 $
+Date:      $Date: 2009-04-17 17:54:50 $
+Version:   $Revision: 1.1.2.10 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -250,7 +250,8 @@ void lhpOpUploadMultiVMERefactor::OpRun()
   m_OpUploadVME->SetListener(this->GetListener());
 
   bool upToDate = false;
-  upToDate = this->IsSoftwareVersionUpToDate();
+  upToDate = m_OpUploadVME->IsClientSoftwareVersionUpToDate();
+
   if (upToDate)
   {
     mafEventMacro(mafEvent(this, MENU_FILE_SAVE));
@@ -337,74 +338,6 @@ void lhpOpUploadMultiVMERefactor::SaveConnectionConfigurationFile()
 }
 
 //----------------------------------------------------------------------------
-int lhpOpUploadMultiVMERefactor::AssembleDictionaries()
-//----------------------------------------------------------------------------
-{
-  wxString oldDir = wxGetCwd();
-  if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.GetCStr());
-  if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
-
-  if (m_DebugMode)
-    mafLogMessage("Assembling dictionaries...");
-
-  m_SubXMLDictionaryFileName = this->GetXMLDictionaryFileName(m_SubXMLDictionaryFilePrefix);
-  if (m_SubXMLDictionaryFileName == "NOT FOUND")
-  {
-    return MAF_ERROR;
-  }
-
-  // get manual tags
-  wxString command2execute;
-  command2execute.Clear();
-  command2execute = m_PythonExe.GetCStr();
-
-  command2execute.Append(" lhpXMLDictionariesBuilder.py ");
-  command2execute.Append(m_MasterXMLDictionaryFileName);
-  command2execute.Append(" ");
-  command2execute.Append(m_SubXMLDictionaryFileName);
-  command2execute.Append(" ");
-  command2execute.Append(m_SubDictionaryBuildingCommand);
-  command2execute.Append(" ");
-  command2execute.Append(m_AssembledXMLDictionaryFileName);
-
-  if (m_DebugMode)
-    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
-
-  wxArrayString output;
-  wxArrayString errors;
-  long pid = -1;
-  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
-  {
-    wxMessageBox("Error in lhpXMLDictionariesBuilder.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
-    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-      command2execute.c_str(), pid);
-    return MAF_ERROR;
-  }
-
-  if (m_DebugMode)
-  {
-    mafLogMessage("Command Output Messages:");
-    for (int i = 0; i < output.size(); i++)
-    {
-      mafLogMessage(output[i]);
-    }
-    mafLogMessage("Command Errors Messages:");
-    for (int i = 0; i < errors.size(); i++)
-    {
-      mafLogMessage(errors[i]);
-    }
-  }
-
-  wxSetWorkingDirectory(oldDir);
-  if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-
-  return MAF_OK;
-}
-//----------------------------------------------------------------------------
 bool lhpOpUploadMultiVMERefactor::HasBinaryData(mafNode *node) 
 //----------------------------------------------------------------------------
 {
@@ -465,12 +398,13 @@ int lhpOpUploadMultiVMERefactor::UploadNodeWithItsChildren( mafNode *vme )
 {
   //creates a file with a list of uploaded xml dataresources, to be used by
   //python to remove xml uploaded in case of msf upload error
+  
   int number = 0;
   mafString rollBackLocalFileName = "msfList";
   mafString xmlDataResourcesRollBackLocalFileName = rollBackLocalFileName;
 
   while(wxFileExists(\
-m_VMEUploaderDownloaderABSFolder + xmlDataResourcesRollBackLocalFileName.GetCStr() + ".lhp"))
+  m_VMEUploaderDownloaderABSFolder + xmlDataResourcesRollBackLocalFileName.GetCStr() + ".lhp"))
   {
     xmlDataResourcesRollBackLocalFileName = rollBackLocalFileName;
     xmlDataResourcesRollBackLocalFileName << number;
@@ -487,7 +421,7 @@ m_VMEUploaderDownloaderABSFolder + xmlDataResourcesRollBackLocalFileName.GetCStr
   bool hasBinaryData = false;
   bool alreadyUploaded = false;
   bool emptyNode = false;
-  mafString xmlResourceURI;
+
   int numVmeChild = 0;
   int i = 0;
   mafNode *childToUpload = NULL;
@@ -498,6 +432,12 @@ m_VMEUploaderDownloaderABSFolder + xmlDataResourcesRollBackLocalFileName.GetCStr
   numVmeChild = children->size();
   if (numVmeChild != 0)
     childToUpload = children->at(0);
+
+    std::ostringstream stringStream;
+    stringStream << "childToUpload:" << childToUpload->GetName() << std::endl;
+    mafLogMessage(stringStream.str().c_str());
+          
+  // upload children...
   while (numVmeChild != 0)
   {
     i = 0;
@@ -524,7 +464,7 @@ m_VMEUploaderDownloaderABSFolder + xmlDataResourcesRollBackLocalFileName.GetCStr
         childToUpload = children->at(i);
 
         //Check if VME has been already uploaded
-        for (int c = 0; c < m_AlreadyUploadedVMEVector.size(); c++)
+        for (int c = 0; c < m_AlreadyUploadedVMEVector.size(); c++) 
         {
           if (m_AlreadyUploadedVMEVector[c]->Equals(children->at(i)) && \
               m_AlreadyUploadedVMEVector[c]->GetId() == children->at(i)->GetId())
@@ -543,7 +483,6 @@ m_VMEUploaderDownloaderABSFolder + xmlDataResourcesRollBackLocalFileName.GetCStr
 
           hasBinaryData = HasBinaryData(childToUpload);
           m_OpUploadVME->SetInput(childToUpload);
-          xmlResourceURI = "";
 
           if (GetUploadError())
           {
@@ -551,10 +490,10 @@ m_VMEUploaderDownloaderABSFolder + xmlDataResourcesRollBackLocalFileName.GetCStr
             return MAF_ERROR;
           }
           
-          m_OpUploadVME->SetIsBinaryDataPresent(false);
-          m_OpUploadVME->SetWithChild(vme->GetNumberOfChildren()!=0);
+          m_OpUploadVME->SetIsBinaryDataPresent(hasBinaryData);
+          m_OpUploadVME->SetWithChild(childToUpload->GetNumberOfChildren()!=0);
           m_OpUploadVME->SetXMLUploadedResourcesRollBackLocalFileName(xmlDataResourcesRollBackLocalFileName);
-          m_OpUploadVME->SetIsLast(true);
+          m_OpUploadVME->SetIsLast(false);
 
           if (m_OpUploadVME->Upload()\
           == MAF_ERROR)
@@ -591,19 +530,17 @@ m_VMEUploaderDownloaderABSFolder + xmlDataResourcesRollBackLocalFileName.GetCStr
     numVmeChild = children->size();
   }
 
-  //upload VME Root
+  // finally upload VME Root
   m_OpUploadVME->SetInput(vme);
-  xmlResourceURI = "";
 
   if (GetUploadError())
   {
     RemoveAlreadyUploadedXMLResources(m_AlreadyUploadedXMLURIVector);
     return MAF_ERROR;
   }
-
   
   m_OpUploadVME->SetIsBinaryDataPresent(false);
-  m_OpUploadVME->SetWithChild(vme->GetNumberOfChildren()!=0);
+  m_OpUploadVME->SetWithChild(false);
   m_OpUploadVME->SetXMLUploadedResourcesRollBackLocalFileName(xmlDataResourcesRollBackLocalFileName);
   m_OpUploadVME->SetIsLast(true);
 
@@ -628,7 +565,7 @@ m_VMEUploaderDownloaderABSFolder + xmlDataResourcesRollBackLocalFileName.GetCStr
 
 int lhpOpUploadMultiVMERefactor::UploadVMEWithItsLinks( mafNode *vme, bool isLast )
 {  
-  bool hasBinary = false;
+  bool hasBinaryData = false;
   mafString xmlURI;
 
   if (vme->GetNumberOfLinks() != 0)
@@ -639,12 +576,12 @@ int lhpOpUploadMultiVMERefactor::UploadVMEWithItsLinks( mafNode *vme, bool isLas
     }
   }
 
-  hasBinary = HasBinaryData(vme);
+  hasBinaryData = HasBinaryData(vme);
 
   m_OpUploadVME->SetInput(vme);
   xmlURI = "";
 
-  m_OpUploadVME->SetIsBinaryDataPresent(hasBinary);
+  m_OpUploadVME->SetIsBinaryDataPresent(hasBinaryData);
   m_OpUploadVME->SetWithChild(false);
   m_OpUploadVME->SetXMLUploadedResourcesRollBackLocalFileName("noMSF");
   m_OpUploadVME->SetIsLast(true);
@@ -879,7 +816,8 @@ int lhpOpUploadMultiVMERefactor::UploadVMELinks( mafNode *derived )
       m_OpUploadVME->SetIsLast(false);
 
       if (m_OpUploadVME->Upload() == MAF_ERROR)
-      {
+      { 
+
         m_AlreadyUploadedXMLURIVector.clear();
         m_AlreadyUploadedXMLURIVector.push_back(m_OpUploadVME->GetRemoteXMLResourceURI());
         RemoveAlreadyUploadedXMLResources(m_AlreadyUploadedXMLURIVector);
@@ -1025,83 +963,6 @@ void lhpOpUploadMultiVMERefactor::OpStop(int result)
 //----------------------------------------------------------------------------
 {
 	mafEventMacro(mafEvent(this,result));
-}
-
-//----------------------------------------------------------------------------
-bool lhpOpUploadMultiVMERefactor::IsSoftwareVersionUpToDate()
-//----------------------------------------------------------------------------
-{
-  wxBusyInfo("Checking if  your software is up-to-date in order to upload, please wait...");
-  wxString oldDir = wxGetCwd();
-  if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.GetCStr());
-  if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
-
-  // get application name
-  mafEvent eventGetApplicationName;
-  eventGetApplicationName.SetSender(this);
-  eventGetApplicationName.SetId(ID_REQUEST_APPLICATION_NAME);
-  mafEventMacro(eventGetApplicationName);
-  mafString appName = eventGetApplicationName.GetString()->GetCStr();  
-
-  // get manual tags
-  wxString command2execute;
-  command2execute.Clear();
-  command2execute = m_PythonExe.GetCStr();
-
-  command2execute.Append(" lhpDictionaryVersionChecker.py ");
-  command2execute.Append(appName.GetCStr());
-  command2execute.Append(" ");
-  command2execute.Append(m_ProxyURL.GetCStr());
-  command2execute.Append(" ");
-  command2execute.Append(m_ProxyPort.GetCStr());
-
-  if (m_DebugMode)
-    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
-
-
-  wxArrayString output;
-  wxArrayString errors;
-  long pid = -1;
-  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
-  {
-    wxMessageBox("Error in lhpDictionaryVersionChecker.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
-    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-      command2execute.c_str(), pid);
-    return false;
-  }
-
-  if (m_DebugMode)
-  {
-    mafLogMessage("Command Output Messages:");
-    for (int i = 0; i < output.size(); i++)
-    {
-      mafLogMessage(output[i]);
-    }
-    mafLogMessage("Command Errors Messages:");
-    for (int i = 0; i < errors.size(); i++)
-    {
-      mafLogMessage(errors[i]);
-    }
-  }
-
-  wxString result = output[output.size() - 1];
-  
-  wxSetWorkingDirectory(oldDir);
-  if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-
-  if (result == "UpToDate")
-  {
-    return true;
-  } 
-  else
-  {
-    return false;
-  }  
-  
 }
 
 //--------------------------------------------------------------------------------------------

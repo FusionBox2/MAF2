@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVMERefactor.h,v $
 Language:  C++
-Date:      $Date: 2009-04-16 17:36:25 $
-Version:   $Revision: 1.1.2.9 $
+Date:      $Date: 2009-04-17 17:54:50 $
+Version:   $Revision: 1.1.2.10 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -76,8 +76,12 @@ public:
 	/** Builds operation's interface by calling CreateOpDialog() method. */
 	void OpRun();
 
+  void GetPythonInterpreters();
 	/** Execute the operation. */
 	virtual void OpDo();
+  
+  /** check if client software version is up to date in order to a allow vme uploading */
+  bool IsClientSoftwareVersionUpToDate();
 
   /** Set Current Working Msf Directory*/
   void SetMsfDir(mafString msfDir){m_MSFFileABSFolder = msfDir;};
@@ -106,17 +110,18 @@ public:
   /** Upload */
   int Upload();
 
+  /** TODO: REFACTOR TO PYTHON 
+  Return the remote URI where the XML resource has been stored after calling Upload()*/
+  mafString GetRemoteXMLResourceURI() {return m_RemoteXMLResourceURI;};
+  
+protected:
+  
   int GetXMLURIForUpload();
   int PythonEditVMETags();
   void GetMSFFileABSFolder();
 
-  void GetPythonInterpretersAndUser();
-  /** TODO: REFACTOR TO PYTHON 
-  Return the remote URI where the XML resource has been stored after calling Upload()*/
-  mafString GetRemoteXMLResourceURI() {return m_RemoteXMLResourceURI;};
+  void GetPythonInterpretersAndClientSoftwareUser();
 
-protected:
-  
   /** Load configuration file for connection*/
   void SaveConnectionConfigurationFile();
   
@@ -132,13 +137,15 @@ protected:
   /** Save information information about VME link*/
   void StoreInputVMELinkInfo();
 
-  /** check if client software version is up to date in order to a allow vme uploading */
-  bool IsClientSoftwareVersionUpToDate();
-
   /** Generate auto tags and manual tags list files from XML lhdl dictionary*/
   int GeneratesHandledAndUnhandledPlusManualTagsFileFromXMLDictionary();
 
-  int FillAutoTagsAndManualTagsIVARs();
+  static mafString GetXMLMasterDictionaryFileName(mafString  dictionaryAbsFolder, mafString dictionaryFileNamePrefix);
+  
+  static int FillAutoTagsAndManualTagsVARsFromXMLMasterDictionaryFile(\
+    mafString pythonInterpreter, \
+    mafString vmeUpDownDirAbsFolder, mafString xmlDictionaryLocalFilePrefix, \
+    wxArrayString &outAutoTags, wxArrayString &outManualTags);
 
   /** Try to handle auto tags through tags factory and convert unhandled 
   to manual tags ie to be filled by the user*/
@@ -179,7 +186,7 @@ protected:
   static long m_Pid; //> pid of the server process
 
   mafString m_MasterXMLDictionaryFilePrefix; 
-  mafString m_MasterXMLDictionaryFileName;
+  mafString m_MasterXMLDictionaryLocalFileName;
   mafString m_SubXMLDictionaryFilePrefix;
   mafString m_SubXMLDictionaryFileName;
   mafString m_AssembledXMLDictionaryFileName;
@@ -197,9 +204,9 @@ protected:
   mafString m_ProxyPort;
   mafString m_RepositoryServiceURL;
 
-
+  
 private:
-  mafString GetXMLDictionaryFileName(mafString dictionaryFileNamePrefix);
+
  
   int m_SubId;
   mafVME *m_CacheVme;
