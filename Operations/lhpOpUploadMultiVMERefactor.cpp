@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVMERefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-04-17 17:54:50 $
-Version:   $Revision: 1.1.2.10 $
+Date:      $Date: 2009-04-18 11:22:28 $
+Version:   $Revision: 1.1.2.11 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -393,8 +393,7 @@ bool lhpOpUploadMultiVMERefactor::HasBinaryData(mafNode *node)
 }
 
 
-//----------------------------------------------------------------------------
-int lhpOpUploadMultiVMERefactor::UploadNodeWithItsChildren( mafNode *vme )
+int lhpOpUploadMultiVMERefactor::UploadVMEWithItsChildren( mafNode *vme )
 {
   //creates a file with a list of uploaded xml dataresources, to be used by
   //python to remove xml uploaded in case of msf upload error
@@ -463,7 +462,7 @@ int lhpOpUploadMultiVMERefactor::UploadNodeWithItsChildren( mafNode *vme )
         children = childrenVector.back();
         childToUpload = children->at(i);
 
-        //Check if VME has been already uploaded
+        //Check if children has been already uploaded:
         for (int c = 0; c < m_AlreadyUploadedVMEVector.size(); c++) 
         {
           if (m_AlreadyUploadedVMEVector[c]->Equals(children->at(i)) && \
@@ -473,7 +472,8 @@ int lhpOpUploadMultiVMERefactor::UploadNodeWithItsChildren( mafNode *vme )
             break;
           }
         }
-
+        
+        // if children not uploaded already:
         if (!alreadyUploaded)
         {
           if (childToUpload->GetNumberOfLinks() != 0)
@@ -481,7 +481,6 @@ int lhpOpUploadMultiVMERefactor::UploadNodeWithItsChildren( mafNode *vme )
             m_DerivedVMEsIdVector.push_back(childToUpload->GetId());
           }
 
-          hasBinaryData = HasBinaryData(childToUpload);
           m_OpUploadVME->SetInput(childToUpload);
 
           if (GetUploadError())
@@ -490,6 +489,7 @@ int lhpOpUploadMultiVMERefactor::UploadNodeWithItsChildren( mafNode *vme )
             return MAF_ERROR;
           }
           
+          hasBinaryData = HasBinaryData(childToUpload);
           m_OpUploadVME->SetIsBinaryDataPresent(hasBinaryData);
           m_OpUploadVME->SetWithChild(childToUpload->GetNumberOfChildren()!=0);
           m_OpUploadVME->SetXMLUploadedResourcesRollBackLocalFileName(xmlDataResourcesRollBackLocalFileName);
@@ -1070,7 +1070,7 @@ void lhpOpUploadMultiVMERefactor::Upload()
       }
       
       // upload root with its children vmes
-      if (UploadNodeWithItsChildren(m_VMEToBeUploadedVector[i]) == MAF_ERROR)
+      if (UploadVMEWithItsChildren(m_VMEToBeUploadedVector[i]) == MAF_ERROR)
       {
         if(!m_TestMode)
         {

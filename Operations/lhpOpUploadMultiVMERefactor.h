@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVMERefactor.h,v $
 Language:  C++
-Date:      $Date: 2009-04-17 17:54:50 $
-Version:   $Revision: 1.1.2.7 $
+Date:      $Date: 2009-04-18 11:22:28 $
+Version:   $Revision: 1.1.2.8 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -122,7 +122,7 @@ private:
   int UploadVMEWithItsLinks(mafNode *vme, bool isLast);
 
   /** Upload of node and all its children*/
-  int UploadNodeWithItsChildren(mafNode *vme);
+  int UploadVMEWithItsChildren(mafNode *vme);
 
   /** TODO: REFACTOR TO PYTHON  
   Upload linked VME */
