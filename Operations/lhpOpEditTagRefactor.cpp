@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTagRefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-04-10 13:50:21 $
-Version:   $Revision: 1.1.2.4 $
+Date:      $Date: 2009-04-21 12:11:30 $
+Version:   $Revision: 1.1.2.5 $
 Authors:   Roberto Mucci , Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -123,7 +123,7 @@ mafOp(label)
 
   m_VMEUploaderDownloaderDir  = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\").c_str();
   m_FileName = "";
-  m_CsvName = "manualTagFile.csv";
+  m_UnhandledPlusManualTagsLocalFileName = "manualTagFile.csv";
   m_MsfDir = "";
 
 
@@ -136,7 +136,7 @@ mafOp(label)
 
   m_AutoTagsListFromXMLDictionaryFileName = "autoTagsList.txt";
   m_ManualTagsListFromXMLDictionaryFileName = "manualTagsList.txt";
-  m_HandledAutoTagsFileName = "handledAutoTagsList.csv";
+  m_HandledAutoTagsLocalFileName = "handledAutoTagsList.csv";
 
   m_HandledAutoTagsListFromFactory.Clear();
   m_UnhandledAutoTagsListFromFactory.Clear();
@@ -400,7 +400,9 @@ int lhpOpEditTagRefactor::EditTags()
 
   command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
   command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //vme id
-  command2execute.Append(wxString::Format("%s", m_CsvName.c_str())); //manualTagFile
+  command2execute.Append(wxString::Format("%s ", m_UnhandledPlusManualTagsLocalFileName.c_str())); //manualTagFile
+  command2execute.Append(wxString::Format("%s", m_HandledAutoTagsLocalFileName.GetCStr())); //autoTagFile
+
 
   if (m_DebugMode)
     mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
@@ -523,7 +525,7 @@ int lhpOpEditTagRefactor::CopyEditorTagsIntoOriginalMSF()
 
   //remove csv file
   wxString lockPath = m_VMEUploaderDownloaderDir;
-  lockPath += m_CsvName.c_str();
+  lockPath += m_UnhandledPlusManualTagsLocalFileName.c_str();
   if (wxFileExists(lockPath))
     wxRemoveFile(lockPath); //fileName
 
@@ -769,7 +771,7 @@ int lhpOpEditTagRefactor::GeneratesTagsListsFromXMLDictionary()
   // open auto tags file and try to handle tags using tags factory 
   ofstream handledAutoTagsFile;
 
-  handledAutoTagsFile.open(m_HandledAutoTagsFileName.GetCStr());
+  handledAutoTagsFile.open(m_HandledAutoTagsLocalFileName.GetCStr());
 
   for (int i = 0; i < m_HandledAutoTagsListFromFactory.size(); i++)
   {
@@ -784,7 +786,7 @@ int lhpOpEditTagRefactor::GeneratesTagsListsFromXMLDictionary()
   // open auto tags file and try to handle tags using tags factory 
   ofstream unhandledPlusManualTagsFile;
 
-  unhandledPlusManualTagsFile.open(m_CurrentCache + m_CsvName.c_str());
+  unhandledPlusManualTagsFile.open(m_CurrentCache + m_UnhandledPlusManualTagsLocalFileName.c_str());
 
   if (!unhandledPlusManualTagsFile) {
     mafLogMessage("Unable to create file");
@@ -847,7 +849,7 @@ int lhpOpEditTagRefactor::GeneratesTagsListsFromXMLDictionary()
     command2execute.Clear();
     command2execute.Append(m_PythonwExe.GetCStr());
     command2execute.Append(" lhpMetadataEditor.py ");
-    command2execute.Append(m_CsvName.c_str()); 
+    command2execute.Append(m_UnhandledPlusManualTagsLocalFileName.c_str()); 
     command2execute.Append(" ");
     command2execute.Append(m_DictionaryToProcessFileName.GetCStr());
     command2execute.Append(wxString::Format(" %s", m_CurrentCache.GetCStr())); //manualTagFile
@@ -858,7 +860,7 @@ int lhpOpEditTagRefactor::GeneratesTagsListsFromXMLDictionary()
     command2execute.Clear();
     command2execute.Append(m_PythonExe.GetCStr());
     command2execute.Append(" CSVOMATIC.py ");
-    command2execute.Append(m_CsvName.c_str());
+    command2execute.Append(m_UnhandledPlusManualTagsLocalFileName.c_str());
   }
   
   

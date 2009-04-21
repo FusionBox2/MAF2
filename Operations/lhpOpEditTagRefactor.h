@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTagRefactor.h,v $
 Language:  C++
-Date:      $Date: 2009-03-31 16:43:23 $
-Version:   $Revision: 1.1.2.2 $
+Date:      $Date: 2009-04-21 12:11:30 $
+Version:   $Revision: 1.1.2.3 $
 Authors:   Roberto Mucci , Stefano Perticoni 
 ==========================================================================
 Copyright (c) 2002/2007
@@ -135,7 +135,7 @@ protected:
   mafString m_AssembledXMLDictionaryFileName;
   mafString m_SubDictionaryBuildingCommand;
 
-  mafString m_HandledAutoTagsFileName;
+  mafString m_HandledAutoTagsLocalFileName;
   mafString m_AutoTagsListFromXMLDictionaryFileName; 
   mafString m_ManualTagsListFromXMLDictionaryFileName;
   mafString m_UnhandledPlusManualTagsFileName;
@@ -155,7 +155,7 @@ private:
   wxArrayString m_ManualTagsList;
   wxArrayString m_UnhandledAutoTagsListFromFactory; ///< the factory was not able to handle these tags
   wxArrayString m_HandledAutoTagsListFromFactory; ///< tags handled by the factory  
-  wxString m_CsvName;
+  wxString m_UnhandledPlusManualTagsLocalFileName;
   wxString m_NodeName;
   mafNode *m_Parent;
   bool m_HasLink;
