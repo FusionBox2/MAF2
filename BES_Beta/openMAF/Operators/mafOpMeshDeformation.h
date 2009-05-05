@@ -2,8 +2,8 @@
 Program:   @neufuse
 Module:    $RCSfile: mafOpMeshDeformation.h,v $
 Language:  C++
-Date:      $Date: 2008-11-17 11:54:38 $
-Version:   $Revision: 1.1.2.1 $
+Date:      $Date: 2009-05-05 11:55:44 $
+Version:   $Revision: 1.1.2.2 $
 Authors:   Josef Kohout
 ==========================================================================
 Copyright (c) 2007
@@ -14,7 +14,7 @@ SCS s.r.l. - BioComputing Competence Centre (www.scsolutions.it - www.b3c.it)
 #define __mafOpMeshDeformation_H__
 
 #include "mafOp.h"
-#include "mmiCameraMove.h"
+#include "mmiVTKPicker.h"
 
 #define DEBUG_mafOpMeshDeformation
 //----------------------------------------------------------------------------
@@ -131,70 +131,6 @@ protected:
   } MESH;
 
 #pragma endregion //Help structures
-
-#pragma region //PICKER
-  /** implements mouse move of camera in the scene or perform continuous
-  cell picking when using CTRL modifier.
-  
-  If CTRL modifier is pressed a pick is performed, which according to the
-  current context leads to various events sent to the listener
-
-  1) CRTL + left mouse button down
-  If any VTK object is picked using vtkCellPicker, then VME_PICKING event is 
-  issued with the following parameters:
-    Bool = false
-    VtkObj = reference to vtkCellPicker that performed the picking
-
-  2) left mouse button up
-  If any VTK object was picked during CTRL + left mouse down, then 
-  VME_PICKED event is issued with parameters:
-    VtkObj = reference to original vtkCellPicker
-
-  3) mouse move
-  If ContinuousPicking is enabled (by default it is disabled) and
-  any VTK object was picked during CTRL + left mouse down, 
-  then VME_PICKING event is issued with the following parameters:
-    Bool = true
-    VtkObj = reference to vtkPoints containing the new position of
-             point picked during CTRL + left mouse down  
-  */
-  class mmiVTKPicker : public mmiCameraMove
-  {
-  public:
-    mafTypeMacro(mmiVTKPicker,mmiCameraMove);
-
-    /** Enables/disables continuous picking */
-    inline void SetContinuousPicking(bool bValue) {
-      m_ContinuousPicking = bValue;
-    }
-
-    /** Enables/disables continuous picking */
-    inline bool GetContinuousPicking() {
-      return m_ContinuousPicking;
-    }
-
-    /** redefined not to move the camera if something has been picked */
-    virtual void OnMouseMove();
-
-    /** redefined to pick cell if CTRL modifier is pressed */
-    virtual void OnLeftButtonDown(mafEventInteraction *e);
-
-    /** redefined to end pick modality */
-    virtual void OnLeftButtonUp();
-
-  protected:
-    mmiVTKPicker() {      
-      m_ContinuousPicking = false;
-      m_Picker = NULL;
-    }
-    virtual ~mmiVTKPicker();          
-
-  protected:
-    vtkCellPicker* m_Picker;      //<picker to be used for the picking
-    bool m_ContinuousPicking;     //<true, if events are sent during mouse move
-  };
-
-#pragma endregion //PICKER
 
 public:
 	mafOpMeshDeformation(const wxString &label = "Mesh deformation");

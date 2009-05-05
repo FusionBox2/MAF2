@@ -2,8 +2,8 @@
 Program:   @neufuse
 Module:    $RCSfile: mafOpMeshDeformation.cpp,v $
 Language:  C++
-Date:      $Date: 2008-11-17 11:54:38 $
-Version:   $Revision: 1.1.2.1 $
+Date:      $Date: 2009-05-05 11:55:44 $
+Version:   $Revision: 1.1.2.2 $
 Authors:   Josef Kohout
 ==========================================================================
 Copyright (c) 2007
@@ -25,8 +25,6 @@ SCS s.r.l. - BioComputing Competence Centre (www.scsolutions.it - www.b3c.it)
 #include "mafRWIBase.h"
 #include "mafRWI.h"
 #include "mmdMouse.h"
-#include "mafInteractor.h"
-#include "mafEventInteraction.h"
 #include "mafEvent.h"
 
 #include "mafGUIButton.h"
@@ -41,7 +39,6 @@ SCS s.r.l. - BioComputing Competence Centre (www.scsolutions.it - www.b3c.it)
 #include "medVMEPolyLineGraph.h"
 #include "mafPolylineGraph.h"
 
-#include "vtkCamera.h"
 #include "vtkRenderWindow.h"
 #include "vtkPolyDataMapper.h"
 #include "vtkAppendPolyData.h"
@@ -54,8 +51,8 @@ SCS s.r.l. - BioComputing Competence Centre (www.scsolutions.it - www.b3c.it)
 #include "vtkSphereSource.h"
 #include "vtkProperty.h"
 #include "vtkCellArray.h"
-#include "vtkPointPicker.h"
 #include "vtkCellPicker.h"
+
 #include "vtkMath.h"
 #include "../vtkMAF/vtkMAFPolyDataDeformation.h"
 #include "../vtkMAF/vtkMAFPolyDataDeformation_M1.h"
@@ -72,134 +69,6 @@ SCS s.r.l. - BioComputing Competence Centre (www.scsolutions.it - www.b3c.it)
 #include "mafMemDbg.h"
 #include "../mafDbg.h"
 
-
-#pragma region //PICKER
-//------------------------------------------------------------------------------
-mafCxxTypeMacro(mafOpMeshDeformation::mmiVTKPicker)
-//------------------------------------------------------------------------------
-
-mafOpMeshDeformation::mmiVTKPicker::~mmiVTKPicker()
-{
-  vtkDEL(m_Picker);
-}
-
-//----------------------------------------------------------------------------
-void mafOpMeshDeformation::mmiVTKPicker::OnLeftButtonDown(mafEventInteraction *e) 
-//----------------------------------------------------------------------------
-{
-  //if we debug OnLeftButtonDown, it happens usually that OnLeftButtonUp
-  //is not executed and, therefore, we have still some picker
-  //we will fix it here
-  if (m_Picker != NULL)
-  {
-    mafEventMacro(mafEvent(this, VME_PICKED, m_Picker));
-    vtkDEL(m_Picker);
-  }
-
-  if (e->GetModifier(MAF_CTRL_KEY)) 
-  {    
-    // perform picking
-    int x = m_LastMousePose[0];
-    int y = m_LastMousePose[1];
-
-    if (m_Renderer != NULL)
-    {
-      vtkNEW(m_Picker);
-      m_Picker->SetTolerance(0.001); 
-
-      if (m_Picker->Pick(x,y,0,m_Renderer) == 0) {
-        vtkDEL(m_Picker);   //nothing was picked
-      }
-      else
-      {   
-        //picking successful               
-        mafEvent ev(this, VME_PICKING, m_Picker);
-        ev.SetBool(false);
-        mafEventMacro(ev);
-      }
-    }
-  }
-  else
-  {   
-    Superclass::OnLeftButtonDown(e);
-  }
-}
-//----------------------------------------------------------------------------
-void mafOpMeshDeformation::mmiVTKPicker::OnLeftButtonUp()
-//----------------------------------------------------------------------------
-{
-  if (m_Picker != NULL)
-  {
-    mafEventMacro(mafEvent(this, VME_PICKED, m_Picker));
-    vtkDEL(m_Picker);
-  }
-  
-  Superclass::OnLeftButtonUp();
-}
-
-//----------------------------------------------------------------------------
-void mafOpMeshDeformation::mmiVTKPicker::OnMouseMove() 
-//----------------------------------------------------------------------------
-{  
-  // if something has been picked do not move the camera
-  if (m_Picker != NULL)
-  {    
-    //if the continuous picking is allowed, compute the new position of picked 
-    //point (stored in m_Picker)
-    if (m_ContinuousPicking)
-    {
-      double cameraPos[3], pointOrigPos[3], pointNewPos[3];
-      vtkCamera* camera = m_Renderer->GetActiveCamera();
-      camera->GetPosition(cameraPos);
-      
-      //convert the current 2d selection point into world coordinates
-      double cameraFP[4]; cameraFP[3] = 1.0;
-      camera->GetFocalPoint(cameraFP);
-      m_Renderer->SetWorldPoint(cameraFP);
-      m_Renderer->WorldToDisplay(); //project focal point
-
-      double selPoint[3];
-      selPoint[0] = m_MousePose[0];
-      selPoint[1] = m_MousePose[1];
-      selPoint[2] = m_Renderer->GetDisplayPoint()[2];
-      m_Renderer->SetDisplayPoint(selPoint);
-      m_Renderer->DisplayToWorld();
-
-      //and get the result
-      double* wcoords = m_Renderer->GetWorldPoint();
-      for (int i = 0; i < 3; i++) 
-      {
-        //convert coordinates from homogeneous coordinates to Cartesian
-        //and create a vector from cameraPos to this point
-        pointNewPos[i] = (wcoords[i] / wcoords[3]) - cameraPos[i];
-      }
-
-      //normalize the vector
-      vtkMath::Normalize(pointNewPos);      
-
-      //get the original picked position and its distance from the origin of projection
-      m_Picker->GetPickedPositions()->GetPoint(0, pointOrigPos);
-      double dblDist = sqrt(vtkMath::Distance2BetweenPoints(cameraPos, pointOrigPos));           
-
-      //and compute the new coordinates
-      for (int i = 0; i < 3; i++) {
-        pointNewPos[i] = cameraPos[i] + pointNewPos[i]*dblDist;        
-      }
-
-      vtkMAFSmartPointer< vtkPoints > points;      
-      points->InsertNextPoint(pointNewPos);
-
-      mafEvent ev(this, VME_PICKING, points);
-      ev.SetBool(true);        //continuous picking      
-      mafEventMacro(ev);
-    }    
-  }
-  else
-  {
-    Superclass::OnMouseMove();
-  }
-}
-#pragma endregion //PICKER
 
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(mafOpMeshDeformation);
