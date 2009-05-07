@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2009-04-03 09:15:04 $
-  Version:   $Revision: 1.71.2.17 $
+  Date:      $Date: 2009-05-07 07:37:15 $
+  Version:   $Revision: 1.71.2.18 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -72,8 +72,8 @@
 #include "mafOpImporterVTK.h"
 #include "mafOpImporterMSF1x.h"
 #include "mafOpImporterVRML.h"
-//#include "mafOpCreateVolume.h"
-//#include "mafOpVOIDensityEditor.h"
+#include "mafOpCreateVolume.h"
+#include "mafOpVOIDensityEditor.h"
 #include "BES_Beta/openMAF/Operators/mafOpImporterBBF.h"
 //BES: 23.6.2008 - Large Volume - to be merged 
 #include "BES_Beta/openMAF/Operators/mafOpImporterRAWVolume_BES.h"
@@ -374,7 +374,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   //------------------------- Operations -------------------------
   m_Logic->Plug(new mafOpValidateTree());
   m_Logic->Plug(new mafOpCreateGroup("Group"),"Create/New");
-  //m_Logic->Plug(new mafOpCreateVolume("Constant Volume"),"Create/New");
+  m_Logic->Plug(new mafOpCreateVolume("Constant Volume"),"Create/New");
 
 #ifdef MAF_USE_ITK
   m_Logic->Plug(new lhpOpCreateSurfaceScalar("Surface Scalar"),"Create/Derive");
@@ -393,7 +393,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   m_Logic->Plug(new medOpCreateMuscleWrapper("Muscle Wrapper"),"Create/Derive"); //BES: 14.11.2008
  // m_Logic->Plug(new mmoEditMetadata("Metadata Editor"),"Modify");
 	m_Logic->Plug(new mafOpFilterSurface("Filter Surface"),"Modify");
-  //m_Logic->Plug(new mafOpVOIDensityEditor("Volume Density"),"Modify");
+  m_Logic->Plug(new mafOpVOIDensityEditor("Volume Density"),"Modify");
   m_Logic->Plug(new mafOpMeshDeformation("Deform Surface"), "Modify");
 	m_Logic->Plug(new mafOpExtractIsosurface("Extract Isosurface"),"Create/Derive");
   m_Logic->Plug(new medOpSurfaceMirror("Surface Mirror"),"Modify");
