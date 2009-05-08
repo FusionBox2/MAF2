@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.h,v $
   Language:  C++
-  Date:      $Date: 2008-10-17 07:38:50 $
-  Version:   $Revision: 1.5 $
+  Date:      $Date: 2009-05-08 09:23:51 $
+  Version:   $Revision: 1.5.2.1 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -14,7 +14,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "lhpBuilderLogic.h" 
+#include "lhpBuilderLogic.h"
 #include "mafEvent.h"
 #include "mafObserver.h"
 
