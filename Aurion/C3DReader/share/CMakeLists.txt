@@ -67,7 +67,7 @@ MESSAGE(STATUS
 )
 
 CONFIGURE_FILE("${NEW_INSTALLATION_DIRECTORY}/C3DReaderAPIConfig.cmake.in"
-               "${NEW_INSTALLATION_DIRECTORY}/C3DReaderAPIConfig.cmake")
+               "${NEW_INSTALLATION_DIRECTORY}/C3DReaderAPIConfig.cmake" IMMEDIATE)
 
 # Rewrite the old_installation_directory.txt to contain the
 # new directory for the next time the library will be moved.

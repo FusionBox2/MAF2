@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2009-04-03 10:05:05 $
-#   Version:   $Revision: 1.33.2.16 $
+#   Date:      $Date: 2009-05-08 06:59:28 $
+#   Version:   $Revision: 1.33.2.17 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -98,7 +98,7 @@ IF(MAF_FOUND)
       SUBDIRS (Docs)
   ENDIF(BUILD_DOCUMENTATION)
   
-  SUBDIRS(Aurion/C3DReader/share)
+  ADD_SUBDIRECTORY(Aurion/C3DReader/share)
   INCLUDE("${PROJECT_SOURCE_DIR}/CMakeModules/FindC3DReaderAPI.cmake")
 
   IF(C3DReaderAPI_FOUND)
