@@ -2,18 +2,10 @@ PROJECT(BES_Beta)
 
 # Set your list of sources here.
 SET(PROJECT_SRCS
-	Medical_AneuFuse/VME/medPipeVolumeMIP_BES.cpp
-	Medical_AneuFuse/VME/medPipeVolumeMIP_BES.h
-	Medical_AneuFuse/VME/medPipeVolumeVR_BES.cpp
-	Medical_AneuFuse/VME/medPipeVolumeVR_BES.h
 	Medical/Operations/medOpImporterRAWImages_BES.cpp
 	Medical/Operations/medOpImporterRAWImages_BES.h
 	Medical/Operations/mmoDICOMImporter_BES.cpp
-	Medical/Operations/mmoDICOMImporter_BES.h
-	openMAF_AneuFuse/vtkMAF/vtkMAFVolumeRayCastMapper.cxx
-	openMAF_AneuFuse/vtkMAF/vtkMAFVolumeRayCastMapper.h
-	openMAF_AneuFuse/vtkMAF/vtkMAFVolumeTextureMapper2D.cxx 
-	openMAF_AneuFuse/vtkMAF/vtkMAFVolumeTextureMapper2D.h
+	Medical/Operations/mmoDICOMImporter_BES.h	
 	openMAF/Interaction/mafGizmoROI_BES.cpp
 	openMAF/Interaction/mafGizmoROI_BES.h     
 	openMAF/IO/mafBrickedFile.cpp
