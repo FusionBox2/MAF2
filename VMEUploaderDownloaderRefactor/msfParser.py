@@ -211,6 +211,7 @@ class msfParser:
         #the URL position.
         isExternal = 0
         
+        
         attrs = inputVme.attributes
         for attrName in attrs.keys():
             attrNode = attrs.get(attrName)
@@ -540,6 +541,10 @@ class msfParser:
             self.__GetVmeNodeByIdInternal(node, vmeId)
             
     def GetVmeNodeById(self, vmeTreeRootNode, vmeId):
+        
+        if (vmeId  == -1):
+            return vmeTreeRootNode
+        
         self.__GetVmeNodeByIdInternal(vmeTreeRootNode, vmeId)
         # return vme node given its Id and the root node 
         return self.__OutputVme

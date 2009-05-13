@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVMERefactor.h,v $
 Language:  C++
-Date:      $Date: 2009-04-17 17:54:50 $
-Version:   $Revision: 1.1.2.10 $
+Date:      $Date: 2009-05-13 14:52:46 $
+Version:   $Revision: 1.1.2.11 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -62,32 +62,12 @@ class mafVME;
 class lhpOpUploadVMERefactor: public mafOp
 {
 public:
-
-	lhpOpUploadVMERefactor(wxString label = "Upload Vme");
-	~lhpOpUploadVMERefactor(); 
-
-	mafTypeMacro(lhpOpUploadVMERefactor, mafOp);
-
-	mafOp* Copy();
-
-	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode* vme);
-
-	/** Builds operation's interface by calling CreateOpDialog() method. */
-	void OpRun();
-
-  void GetPythonInterpreters();
-	/** Execute the operation. */
-	virtual void OpDo();
   
   /** check if client software version is up to date in order to a allow vme uploading */
   bool IsClientSoftwareVersionUpToDate();
 
   /** Set Current Working Msf Directory*/
   void SetMsfDir(mafString msfDir){m_MSFFileABSFolder = msfDir;};
-
-  /** Set debug modality */
-  void SetDebugMode(bool debugMode){m_DebugMode = debugMode;};
 
   /** Has XML file to upload some binary data associated? Default to false */
   void SetIsBinaryDataPresent(bool present) {m_IsBinaryDataPresent = present;};
@@ -113,9 +93,30 @@ public:
   /** TODO: REFACTOR TO PYTHON 
   Return the remote URI where the XML resource has been stored after calling Upload()*/
   mafString GetRemoteXMLResourceURI() {return m_RemoteXMLResourceURI;};
-  
+
+  lhpOpUploadVMERefactor(wxString label = "Upload Vme");
+  ~lhpOpUploadVMERefactor(); 
+
+  mafTypeMacro(lhpOpUploadVMERefactor, mafOp);
+
+  /** Set debug modality */
+  void SetDebugMode(bool debugMode){m_DebugMode = debugMode;};
+
+  mafOp* Copy();
+
+  /** Return true for the acceptable vme type. */
+  bool Accept(mafNode* vme);
+
+  /** Builds operation's interface by calling CreateOpDialog() method. */
+  void OpRun();
+
+  /** Execute the operation. */
+  virtual void OpDo();
+
 protected:
   
+  void GetPythonInterpreters();
+
   int GetXMLURIForUpload();
   int PythonEditVMETags();
   void GetMSFFileABSFolder();

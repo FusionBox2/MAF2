@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVMERefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-04-18 11:22:28 $
-Version:   $Revision: 1.1.2.11 $
+Date:      $Date: 2009-05-13 14:52:46 $
+Version:   $Revision: 1.1.2.12 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -342,7 +342,7 @@ bool lhpOpUploadMultiVMERefactor::HasBinaryData(mafNode *node)
 //----------------------------------------------------------------------------
 {
   bool ret = false;
-  //create cache: logic comunicate the msf directory
+
   mafEvent event;
   event.SetSender(this);
   event.SetId(ID_MSF_DATA_CACHE);
@@ -363,7 +363,7 @@ bool lhpOpUploadMultiVMERefactor::HasBinaryData(mafNode *node)
   command2execute.Clear();
   command2execute = m_PythonExe.GetCStr();
 
-  command2execute.Append(" lhpCheckBinaryName.py ");
+  command2execute.Append(" lhpVMEBinaryDataChecker.py ");
   command2execute.Append("\"");
   command2execute.Append(msfFile.GetCStr());
   command2execute.Append("\"");
@@ -371,16 +371,16 @@ bool lhpOpUploadMultiVMERefactor::HasBinaryData(mafNode *node)
   command2execute.Append(wxString::Format("%d ",node->GetId()));
 
   wxArrayString output;
-  wxArrayString errors;
+  wxArrayString errors; 
+
   long pid = -1;
   if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
-    wxMessageBox("Error in lhpCheckBinaryName.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+    wxMessageBox("Error in lhpVMEBinaryDataChecker.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
       command2execute.c_str(), pid);
     return MAF_ERROR;
   }
-
 
   wxString result = output[output.size() - 1];
 
@@ -539,6 +539,7 @@ int lhpOpUploadMultiVMERefactor::UploadVMEWithItsChildren( mafNode *vme )
     return MAF_ERROR;
   }
   
+  
   m_OpUploadVME->SetIsBinaryDataPresent(false);
   m_OpUploadVME->SetWithChild(false);
   m_OpUploadVME->SetXMLUploadedResourcesRollBackLocalFileName(xmlDataResourcesRollBackLocalFileName);
@@ -682,6 +683,8 @@ bool lhpOpUploadMultiVMERefactor::RemoveAlreadyUploadedXMLResources(std::vector<
   {
     delete wait;
   }
+
+  return MAF_OK;
 }
 
 //----------------------------------------------------------------------------
