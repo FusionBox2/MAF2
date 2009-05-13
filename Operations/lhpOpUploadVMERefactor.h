@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVMERefactor.h,v $
 Language:  C++
-Date:      $Date: 2009-05-13 14:52:46 $
-Version:   $Revision: 1.1.2.11 $
+Date:      $Date: 2009-05-13 16:47:07 $
+Version:   $Revision: 1.1.2.12 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -68,10 +68,6 @@ public:
 
   /** Set Current Working Msf Directory*/
   void SetMsfDir(mafString msfDir){m_MSFFileABSFolder = msfDir;};
-
-  /** Has XML file to upload some binary data associated? Default to false */
-  void SetIsBinaryDataPresent(bool present) {m_IsBinaryDataPresent = present;};
-  bool GetIsBinaryDataPresent() {return m_IsBinaryDataPresent;};
   
   /** Upload also vme children? Default to false */
   void SetWithChild(bool withChild) {m_WithChild = withChild;};
@@ -170,7 +166,11 @@ protected:
 
   /** Import Edited MSF*/
   int CopyPythonEditedVMETagsIntoOriginalVME();
-  
+   
+  /** TODO: REFACTOR TO PYTHON 
+  Check if a binary data is associated to the VME */
+  bool HasBinaryData(mafNode *node);
+
   mafString m_CacheMasterFolderABSName; //>cache subfolders parent directory
   static mafString m_CacheChildFolderLocalName; //>cache subdirectory
   wxString m_CurrentCacheChildABSFolder; //>current cache subdirectory

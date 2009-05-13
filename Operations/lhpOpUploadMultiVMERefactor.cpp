@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVMERefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-05-13 14:52:46 $
-Version:   $Revision: 1.1.2.12 $
+Date:      $Date: 2009-05-13 16:47:07 $
+Version:   $Revision: 1.1.2.13 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -337,61 +337,6 @@ void lhpOpUploadMultiVMERefactor::SaveConnectionConfigurationFile()
     mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
 }
 
-//----------------------------------------------------------------------------
-bool lhpOpUploadMultiVMERefactor::HasBinaryData(mafNode *node) 
-//----------------------------------------------------------------------------
-{
-  bool ret = false;
-
-  mafEvent event;
-  event.SetSender(this);
-  event.SetId(ID_MSF_DATA_CACHE);
-  mafEventMacro(event);
-
-  wxString temp;
-  temp.Append((*event.GetString()).GetCStr());
-  mafString msfFile = temp;  
-  
-
-  wxString oldDir = wxGetCwd();
-  if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.GetCStr());
-
-  // get manual tags
-  wxString command2execute;
-  command2execute.Clear();
-  command2execute = m_PythonExe.GetCStr();
-
-  command2execute.Append(" lhpVMEBinaryDataChecker.py ");
-  command2execute.Append("\"");
-  command2execute.Append(msfFile.GetCStr());
-  command2execute.Append("\"");
-  command2execute.Append(" ");
-  command2execute.Append(wxString::Format("%d ",node->GetId()));
-
-  wxArrayString output;
-  wxArrayString errors; 
-
-  long pid = -1;
-  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
-  {
-    wxMessageBox("Error in lhpVMEBinaryDataChecker.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
-    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-      command2execute.c_str(), pid);
-    return MAF_ERROR;
-  }
-
-  wxString result = output[output.size() - 1];
-
-  //if result == "", no binary data has been found
-  if (result != "")
-  {
-    ret = true;
-  }
-  return ret;
-}
-
 
 int lhpOpUploadMultiVMERefactor::UploadVMEWithItsChildren( mafNode *vme )
 {
@@ -489,8 +434,6 @@ int lhpOpUploadMultiVMERefactor::UploadVMEWithItsChildren( mafNode *vme )
             return MAF_ERROR;
           }
           
-          hasBinaryData = HasBinaryData(childToUpload);
-          m_OpUploadVME->SetIsBinaryDataPresent(hasBinaryData);
           m_OpUploadVME->SetWithChild(childToUpload->GetNumberOfChildren()!=0);
           m_OpUploadVME->SetXMLUploadedResourcesRollBackLocalFileName(xmlDataResourcesRollBackLocalFileName);
           m_OpUploadVME->SetIsLast(false);
@@ -538,9 +481,7 @@ int lhpOpUploadMultiVMERefactor::UploadVMEWithItsChildren( mafNode *vme )
     RemoveAlreadyUploadedXMLResources(m_AlreadyUploadedXMLURIVector);
     return MAF_ERROR;
   }
-  
-  
-  m_OpUploadVME->SetIsBinaryDataPresent(false);
+    
   m_OpUploadVME->SetWithChild(false);
   m_OpUploadVME->SetXMLUploadedResourcesRollBackLocalFileName(xmlDataResourcesRollBackLocalFileName);
   m_OpUploadVME->SetIsLast(true);
@@ -577,12 +518,9 @@ int lhpOpUploadMultiVMERefactor::UploadVMEWithItsLinks( mafNode *vme, bool isLas
     }
   }
 
-  hasBinaryData = HasBinaryData(vme);
-
   m_OpUploadVME->SetInput(vme);
   xmlURI = "";
 
-  m_OpUploadVME->SetIsBinaryDataPresent(hasBinaryData);
   m_OpUploadVME->SetWithChild(false);
   m_OpUploadVME->SetXMLUploadedResourcesRollBackLocalFileName("noMSF");
   m_OpUploadVME->SetIsLast(true);
@@ -798,7 +736,6 @@ int lhpOpUploadMultiVMERefactor::UploadVMELinks( mafNode *derived )
         link = (mafNode*)((mafVMELandmarkCloud *)link)->GetLandmark(i->second.m_NodeSubId);
       }
 
-      hasBinaryData = HasBinaryData(link);
       wxMessageBox(wxString::Format("Link found! Upload VME: %s", link->GetName()), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
 
       //Verify if the link has some link!!
@@ -813,7 +750,6 @@ int lhpOpUploadMultiVMERefactor::UploadVMELinks( mafNode *derived )
 
       xmlURI = "";
 
-      m_OpUploadVME->SetIsBinaryDataPresent(hasBinaryData);
       m_OpUploadVME->SetWithChild(false);
       m_OpUploadVME->SetXMLUploadedResourcesRollBackLocalFileName("noMsf");
       m_OpUploadVME->SetIsLast(false);

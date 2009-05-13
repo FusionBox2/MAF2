@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2009-05-13 15:09:51 $
-  Version:   $Revision: 1.29.2.16 $
+  Date:      $Date: 2009-05-13 16:47:07 $
+  Version:   $Revision: 1.29.2.17 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -242,7 +242,7 @@ void lhpTagHandler_L0000_resource_data_Size_FileSize::HandleAutoTag(lhpTagHandle
 	mafString id ;
 	id << cargo->GetInputVme()->GetId();
 
-  if(cargo->GetInputVme()->GetId() == -1) return;
+  if(cargo->GetInputVme()->GetId() == -1) return; 
 
 	//here put code for filename
 	wxString oldDir = wxGetCwd();

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVMERefactor.h,v $
 Language:  C++
-Date:      $Date: 2009-04-18 11:22:28 $
-Version:   $Revision: 1.1.2.8 $
+Date:      $Date: 2009-05-13 16:47:07 $
+Version:   $Revision: 1.1.2.9 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -143,10 +143,6 @@ private:
   /** TODO: REFACTOR TO PYTHON  
   Add VME links URI to derived vme metadata */
   int AddLinksURIToDerivedVMEMetadata(mafNode *derived);
-
-  /** TODO: REFACTOR TO PYTHON 
-  Check if a binary data is associated to the VME */
-  bool HasBinaryData(mafNode *node);
   
   /**  TODO: REFACTOR TO PYTHON  
   Remove uploaded reosurces in case of error during whole msf uploading */

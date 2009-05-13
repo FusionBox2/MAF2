@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVMERefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-04-17 17:54:50 $
-Version:   $Revision: 1.1.2.12 $
+Date:      $Date: 2009-05-13 16:47:07 $
+Version:   $Revision: 1.1.2.13 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -267,6 +267,7 @@ void lhpOpUploadVMERefactor::SaveConnectionConfigurationFile()
 
 int lhpOpUploadVMERefactor::Upload()
 {
+
   //check if vme has a name
   if(strcmp(m_Input->GetName(), "") == 0)
   {
@@ -1343,3 +1344,4 @@ void lhpOpUploadVMERefactor::GetPythonInterpreters()
     m_PythonwExe.Append(" ");
   }
 }
+
