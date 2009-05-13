@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: medVMEMuscleWrapper.h,v $
   Language:  C++
-  Date:      $Date: 2009-01-27 16:00:38 $
-  Version:   $Revision: 1.1.2.8 $
+  Date:      $Date: 2009-05-13 13:01:43 $
+  Version:   $Revision: 1.1.2.9 $
   Authors:   Josef Kohout
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -300,6 +300,20 @@ protected:
 
   /** Sets the new time for the given vme and ALL vmes linked to it */
   void SetVmeTimeStamp(mafVME* vme, double t);
+
+  /** Transform the given inPoints having inTransform matrix into
+  outPoints that have outTransform matrix (i.e., transforms coordinates
+  from one reference system into another one. */
+  void TransformPoints(vtkPoints* inPoints, vtkPoints* outPoints, 
+    const mafMatrix* inTransform, const mafMatrix* outTransform);
+
+  /** Transform the coordinates of the inoutPoints that are given in the 
+  reference system described by inTransform into the coordinates in the
+  output reference system (i.e., output of this VME) */
+  inline void TransformPoints(vtkPoints* inoutPoints, const mafMatrix* inTransform){
+    TransformPoints(inoutPoints, inoutPoints, inTransform,
+      &GetOutput()->GetAbsTransform()->GetMatrix());
+  }
 private:
   medVMEMuscleWrapper(const medVMEMuscleWrapper&); // Not implemented
   void operator=(const medVMEMuscleWrapper&); // Not implemented

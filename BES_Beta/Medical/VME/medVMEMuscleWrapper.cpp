@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: medVMEMuscleWrapper.cpp,v $
 Language:  C++
-Date:      $Date: 2009-01-27 13:38:31 $
-Version:   $Revision: 1.1.2.11 $
+Date:      $Date: 2009-05-13 13:01:43 $
+Version:   $Revision: 1.1.2.12 $
 Authors:   Josef Kohout
 ==========================================================================
 Copyright (c) 2001/2005 
@@ -619,6 +619,9 @@ void medVMEMuscleWrapper::InternalUpdate()
           //Pts: 0(318,305,-467), 1(379,292,-824), 2(388,310, -871), 3(379,292,-824)
           //Edges: 0-1,1-2,2-3 => vertex 1 and 3 are redundant
           pItem->pCurves[i] = FixPolyline(pPoly);
+
+          //transform coordinates into output reference system
+          TransformPoints(pItem->pCurves[i]->GetPoints(), pItem->pVmeRP_CP[i]->GetOutput()->GetAbsMatrix());
           pItem->VMECheckSums[i] = nNewCheckSum;
           bCurvesUpdated = true;
         }      
@@ -687,10 +690,22 @@ void medVMEMuscleWrapper::InternalUpdate()
         pPoly = vtkPolyData::SafeDownCast(m_MuscleVme->GetOutput()->GetVTKData());
         pPoly->Update();    //force update
 
-        m_MuscleVme->SetTimeStamp(t);
+        m_MuscleVme->SetTimeStamp(t);      
       }
+
+      //BES: 13.5.2009 - transform muscle points
+      vtkPoints* pTrPoints = pPoly->GetPoints()->NewInstance();
+      pTrPoints->DeepCopy(pPoly->GetPoints());
+      TransformPoints(pTrPoints, m_MuscleVme->GetOutput()->GetAbsMatrix());
      
-      DeformMuscle(pPoly);
+      vtkPolyData* pTransformedMuscle = vtkPolyData::New();
+      pTransformedMuscle->ShallowCopy(pPoly);
+      pTransformedMuscle->SetPoints(pTrPoints);
+      pTrPoints->Delete();
+      
+      DeformMuscle(pTransformedMuscle);
+
+      pTransformedMuscle->Delete();
     } //end if muscle exists
     
     GetOutput()->Update();  //this calls recursively our update        
@@ -939,28 +954,7 @@ vtkPoints* medVMEMuscleWrapper::CreatePointsFromVME(mafVME* vme)
     //returned coordinates are local, so we will need to convert them to 
     //absolute (world coordinates) and from them to local coordinates 
     //of our output (corresponds to the coordinate system of input muscle)
-    mafTransform* transform;
-
-    mafNEW(transform);
-    transform->SetMatrix(*vme->GetOutput()->GetAbsMatrix());
-
-    double x[3];
-    int N = pRet->GetNumberOfPoints();
-    for (int i = 0; i < N; i++)
-    {      
-      transform->TransformPoint(pRet->GetPoint(i), x);
-      pRet->SetPoint(i, x);
-    }
-
-    transform->SetMatrix(GetOutput()->GetAbsTransform()->GetMatrix());
-    transform->Invert();
-    for (int i = 0; i < N; i++)
-    {    
-      transform->TransformPoint(pRet->GetPoint(i), x);
-      pRet->SetPoint(i, x);
-    }
-
-    mafDEL(transform);
+    TransformPoints(pRet, vme->GetOutput()->GetAbsMatrix());   
   }
 
   return pRet;
@@ -1083,38 +1077,40 @@ bool medVMEMuscleWrapper::GetRefSysVMEOrigin(mafVME* vme, double* origin)
 
   //returned coordinates are local, so we will need to convert them to 
   //absolute (world coordinates) and from them to local coordinates 
-  //of our output (corresponds to the coordinate system of input muscle)
-  mafTransform* transform;
+  //of our output (corresponds to the coordinate system of input muscle)  
+  mafTransform transform;  
+  transform.SetMatrix(*vme->GetOutput()->GetAbsMatrix());  
+  transform.TransformPoint(origin, origin);
 
-  mafNEW(transform);
-  transform->SetMatrix(*vme->GetOutput()->GetAbsMatrix());  
-  transform->TransformPoint(origin, origin);
-
-  transform->SetMatrix(GetOutput()->GetAbsTransform()->GetMatrix());
-  transform->Invert();
-  transform->TransformPoint(origin, origin);  
-
-  mafDEL(transform);
-
-/*
-  mafTransform* transform;
-
-  mafNEW(transform);
-  transform->SetMatrix(*vme->GetOutput()->GetAbsMatrix());
-
-  double rxyz[3], x[3] = {0, 0, 0};  
-  vme->GetOutput()->GetAbsPose(x, rxyz);
-
-  vme->GetOutput()->GetVTKData()->GetCenter(x);
-  transform->TransformPoint(x, x);
-
-  transform->SetMatrix(GetOutput()->GetAbsTransform()->GetMatrix());
-  transform->Invert();
-
-  transform->TransformPoint(x, origin);    
-  mafDEL(transform);
-*/
+  transform.SetMatrix(GetOutput()->GetAbsTransform()->GetMatrix());
+  transform.Invert();
+  transform.TransformPoint(origin, origin);  
   return true;
+}
+
+//------------------------------------------------------------------------
+//Transform the given inPoints having inTransform matrix into
+//outPoints that have outTransform matrix (i.e., transforms coordinates
+//from one reference system into another one.
+void medVMEMuscleWrapper::TransformPoints(
+  vtkPoints* inPoints, vtkPoints* outPoints, 
+  const mafMatrix* inTransform, const mafMatrix* outTransform)
+//------------------------------------------------------------------------
+{
+  mafTransform transform;
+  transform.SetMatrix(*outTransform);  
+  transform.Invert();
+
+  transform.Concatenate(*inTransform, 0);
+
+  double x[3];
+  int N = inPoints->GetNumberOfPoints();
+  outPoints->SetNumberOfPoints(N);
+  for (int i = 0; i < N; i++)
+  {      
+    transform.TransformPoint(inPoints->GetPoint(i), x);
+    outPoints->SetPoint(i, x);
+  }
 }
 
 #pragma region GUI and Events Handling
