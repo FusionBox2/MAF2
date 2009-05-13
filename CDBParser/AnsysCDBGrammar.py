@@ -8,7 +8,7 @@ from pyparsing import Word, alphas, nums, ZeroOrMore, ParseException, Group, del
      alphanums, Literal,Dict, Suppress
 
 #generic
-double = Word( nums + "." + "-") 
+double = Word( nums + "." + "-" + "E"  ) 
 
 # CDB NODES grammar
 #start section
