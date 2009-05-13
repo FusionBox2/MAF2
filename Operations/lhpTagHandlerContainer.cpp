@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpTagHandlerContainer.cpp,v $
   Language:  C++
-  Date:      $Date: 2009-03-31 16:43:23 $
-  Version:   $Revision: 1.29.2.15 $
+  Date:      $Date: 2009-05-13 15:09:51 $
+  Version:   $Revision: 1.29.2.16 $
   Authors:   Stefano Perticoni - Daniele Giunchi - Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -255,7 +255,7 @@ void lhpTagHandler_L0000_resource_data_Size_FileSize::HandleAutoTag(lhpTagHandle
 	command2execute.Clear();
 	command2execute = m_PythonwExe.GetCStr();
 
-	command2execute.Append(" lhpCheckBinaryName.py ");
+	command2execute.Append(" lhpVMEBinaryDataChecker.py ");
   command2execute.Append("\"");
 	command2execute.Append(inputMSF.GetCStr());
   command2execute.Append("\"");

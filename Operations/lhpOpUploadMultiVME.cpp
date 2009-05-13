@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVME.cpp,v $
 Language:  C++
-Date:      $Date: 2009-04-10 13:50:21 $
-Version:   $Revision: 1.27.2.16 $
+Date:      $Date: 2009-05-13 15:09:51 $
+Version:   $Revision: 1.27.2.17 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -525,7 +525,7 @@ bool lhpOpUploadMultiVME::isBinaryDataPresent(mafNode *node)
   command2execute.Clear();
   command2execute = m_PythonExe.GetCStr();
 
-  command2execute.Append(" lhpCheckBinaryName.py ");
+  command2execute.Append(" lhpVMEBinaryDataChecker.py ");
   command2execute.Append("\"");
   command2execute.Append(msfFile.GetCStr());
   command2execute.Append("\"");
@@ -537,7 +537,7 @@ bool lhpOpUploadMultiVME::isBinaryDataPresent(mafNode *node)
   long pid = -1;
   if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
-    wxMessageBox("Error in lhpCheckBinaryName.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+    wxMessageBox("Error in lhpVMEBinaryDataChecker.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
       command2execute.c_str(), pid);
     return MAF_ERROR;
