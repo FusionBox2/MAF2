@@ -2,7 +2,7 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: medOpCreateMuscleWrapper.h,v $
   Language:  C++
-  Date:      $Date: 2008-11-17 11:55:43 $
+  Date:      $Date: 2009-05-14 14:08:01 $
   Version:   $Revision: 1.1.2.1 $
   Authors:   Josef Kohout
 ==========================================================================

@@ -13,6 +13,9 @@ SET(PROJECT_SRCS
 	
 	lhpVisualPipeSurfaceScalar.cpp
 	lhpVisualPipeSurfaceScalar.h
+	
+	medVMEMuscleWrapper.cpp	
+	medVMEMuscleWrapper.h	
 )
 
 IF (MAF_USE_ITK)

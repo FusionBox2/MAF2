@@ -161,6 +161,8 @@ SET(PROJECT_SRCS
 	lhpCOmputeTensor.cpp
 	lhpComputeTensor.h
         
+    medOpCreateMuscleWrapper.cpp	
+	medOpCreateMuscleWrapper.h
 )
 
 IF (MAF_USE_ITK)

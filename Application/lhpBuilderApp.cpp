@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2009-05-07 07:37:15 $
-  Version:   $Revision: 1.71.2.18 $
+  Date:      $Date: 2009-05-14 14:09:27 $
+  Version:   $Revision: 1.71.2.19 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -171,8 +171,8 @@
 #include "lhpVisualPipeSurfaceScalar.h"
 
 //BES: 14.11.2008 - added muscle wrapping
-#include "BES_Beta/Medical/Operations/medOpCreateMuscleWrapper.h"
-#include "BES_Beta/Medical/VME/medVMEMuscleWrapper.h"
+#include "medOpCreateMuscleWrapper.h"
+#include "medVMEMuscleWrapper.h"
 #include "BES_Beta/OpenMAF/Operators/mafOpMeshDeformation.h"
 
 #include <vtkTimerLog.h>

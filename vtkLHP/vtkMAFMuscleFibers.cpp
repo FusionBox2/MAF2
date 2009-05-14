@@ -2,7 +2,7 @@
 Program: Multimod Application Framework RELOADED 
 Module: $RCSfile: vtkMAFMuscleFibers.cpp,v $ 
 Language: C++ 
-Date: $Date: 2008-12-08 13:08:31 $ 
+Date: $Date: 2009-05-14 14:07:11 $ 
 Version: $Revision: 1.1.2.1 $ 
 Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
 ========================================================================== 

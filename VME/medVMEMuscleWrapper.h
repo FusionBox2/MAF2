@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: medVMEMuscleWrapper.h,v $
   Language:  C++
-  Date:      $Date: 2009-05-13 13:01:43 $
-  Version:   $Revision: 1.1.2.9 $
+  Date:      $Date: 2009-05-14 14:07:35 $
+  Version:   $Revision: 1.1.2.1 $
   Authors:   Josef Kohout
 ==========================================================================
   Copyright (c) 2001/2005 

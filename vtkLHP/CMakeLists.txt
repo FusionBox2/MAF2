@@ -8,7 +8,11 @@ PROJECT(vtkLHP)
 # Set your list of sources here.  Do not change the name of the
 # vtkMED_SRCS variable.
 SET(vtkLHP_SRCS
-# source files list here...
+# source files list here...	
+	vtkMAFMuscleDecomposition.cpp	
+	vtkMAFMuscleDecomposition.h	
+	vtkMAFMuscleFibers.cpp	
+	vtkMAFMuscleFibers.h	
 )
 
 # List the kits from VTK that are needed by this project.
