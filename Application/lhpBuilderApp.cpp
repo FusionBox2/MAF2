@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2009-05-14 15:36:23 $
-  Version:   $Revision: 1.71.2.21 $
+  Date:      $Date: 2009-05-14 16:50:07 $
+  Version:   $Revision: 1.71.2.22 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -58,9 +58,7 @@
 #include "mafOpEditMetadata.h"
 #include "mafOp2DMeasure.h"
 #include "mafOpReparentTo.h"
-//BES: 22.7.2008 - Large Volume - to be merged 
-#include "mmoDICOMImporter_BES.h"
-//#include "mmoDICOMImporter.h"
+#include "mmoDICOMImporter.h"
 #include "mafOpReparentTo.h"
 #include "mafOpImporterImage.h"
 #include "mafOpImporterSTL.h"
@@ -76,8 +74,6 @@
 #include "mafOpImporterRAWVolume_BES.h"
 #include "mafOpImporterRAWVolume.h"
 #include "mafOpExporterRaw.h"
-//BES: 11.7.2008 - Large Volume - to be merged 
-#include "medOpImporterRAWImages_BES.h"
 #include "medOpImporterRAWImages.h"
 #include "mafOpExtractIsosurface.h"
 #include "mafOpCrop.h"
@@ -326,7 +322,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
 	}
 
   //------------------------- Importers -------------------------
-  m_Logic->Plug(new mmoDICOMImporter_BES("DICOM"),"Images");
+  m_Logic->Plug(new mmoDICOMImporter("DICOM"),"Images");
   m_Logic->Plug(new medOpImporterDicomXA("DICOM XA"),"Images");
   m_Logic->Plug(new mafOpImporterSTL("STL"),"Geometries");
   m_Logic->Plug(new mafOpImporterVTK("VTK"),"Other");
@@ -335,8 +331,8 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   m_Logic->Plug(new mafOpImporterBBF("BFF (VolumeLarge)"),"Other");
   m_Logic->Plug(new mafOpImporterRAWVolume_BES("Raw Volume"),"Images");
   m_Logic->Plug(new mafOpImporterRAWVolume("Raw Volume Legacy"),"Images");
-  m_Logic->Plug(new medOpImporterRAWImages_BES("Raw Images"),"Images");
-  m_Logic->Plug(new medOpImporterRAWImages("Raw Images Legacy"),"Images");
+  m_Logic->Plug(new medOpImporterRAWImages("Raw Images"),"Images");
+  //m_Logic->Plug(new medOpImporterRAWImages("Raw Images Legacy"),"Images");
   m_Logic->Plug(new mafOpImporterImage("Images"),"Images");
   m_Logic->Plug(new medOpImporterLandmark("Landmark"),"Motion Analysis");
 	m_Logic->Plug(new medOpImporterLandmarkWS("ASCII trajectories (VWs)"),"Motion Analysis");
