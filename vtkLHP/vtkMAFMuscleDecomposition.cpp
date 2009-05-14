@@ -2,8 +2,8 @@
   Program: Multimod Application Framework RELOADED 
   Module: $RCSfile: vtkMAFMuscleDecomposition.cpp,v $ 
   Language: C++ 
-  Date: $Date: 2009-05-14 14:07:11 $ 
-  Version: $Revision: 1.1.2.1 $ 
+  Date: $Date: 2009-05-14 15:57:25 $ 
+  Version: $Revision: 1.1.2.2 $ 
   Authors: Josef Kohout (Josef.Kohout *AT* beds.ac.uk)
   ========================================================================== 
   Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
@@ -33,11 +33,11 @@
 #endif
 
 
-vtkCxxRevisionMacro(vtkMAFMuscleDecomposition, "$Revision: 1.1.2.1 $");
+vtkCxxRevisionMacro(vtkMAFMuscleDecomposition, "$Revision: 1.1.2.2 $");
 vtkStandardNewMacro(vtkMAFMuscleDecomposition);
 
 #include "mafMemDbg.h"
-#include "../mafDbg.h"
+#include "mafDbg.h"
 
 
 vtkMAFMuscleDecomposition::vtkMAFMuscleDecomposition()

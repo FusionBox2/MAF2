@@ -9,10 +9,14 @@ PROJECT(vtkLHP)
 # vtkMED_SRCS variable.
 SET(vtkLHP_SRCS
 # source files list here...	
+
+)
+
+SET(vtkMED_SRCS
 	vtkMAFMuscleDecomposition.cpp	
 	vtkMAFMuscleDecomposition.h	
 	vtkMAFMuscleFibers.cpp	
-	vtkMAFMuscleFibers.h	
+	vtkMAFMuscleFibers.h
 )
 
 # List the kits from VTK that are needed by this project.
