@@ -5,13 +5,17 @@
 
 
 from pyparsing import Word, alphas, nums, ZeroOrMore, ParseException, Group, delimitedList,\
-     alphanums, Literal,Dict, Suppress
-
+     alphanums, Literal,Dict, Suppress , Combine , oneOf, Optional
 
 # NODES grammar
 nodeHeader = "N,"
 nodeId = Word( alphanums ) + Suppress(",")
-double = Word( alphanums + "." + "-" + "E") 
+
+double = Combine(Optional(oneOf("+ -")) + Word(nums) + "." + \
+               Optional(Word(nums)) + \
+               Optional(oneOf("e E")+Optional(oneOf("+ -")) +Word(nums)))
+
+
 # BEWARE: this node grammar skips rotaded nodes! only note coordinates are parsed
 nodeCoords = double + Suppress(",") + double + Suppress(",") + double
 

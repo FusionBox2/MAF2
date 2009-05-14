@@ -5,11 +5,12 @@
 
 
 from pyparsing import Word, alphas, nums, ZeroOrMore, ParseException, Group, delimitedList,\
-     alphanums, Literal,Dict, Suppress
+     alphanums, Literal,Dict, Suppress , Combine , oneOf, Optional
 
-#generic
-double = Word( nums + "." + "-" + "E"  ) 
-
+double = Combine(Optional(oneOf("+ -")) + Word(nums) + "." + \
+               Optional(Word(nums)) + \
+               Optional(oneOf("e E")+Optional(oneOf("+ -")) +Word(nums)))
+               
 # CDB NODES grammar
 #start section
 #first line NBLOCK,6,SOLID
