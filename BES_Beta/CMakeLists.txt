@@ -49,15 +49,6 @@ SET(PROJECT_SRCS
 	openMAF/vtkMAF/vtkMAFDataArrayLayout.h
 	openMAF/vtkMAF/vtkMAFMultiFileDataProvider.cpp
 	openMAF/vtkMAF/vtkMAFMultiFileDataProvider.h
-		
-	openMAF/Operators/mafOpMeshDeformation.cpp
-	openMAF/Operators/mafOpMeshDeformation.h
-	openMAF/vtkMAF/vtkMAFPolyDataDeformation.cpp
-	openMAF/vtkMAF/vtkMAFPolyDataDeformation.h
-	openMAF/vtkMAF/vtkMAFPolyDataDeformation_M1.cpp
-	openMAF/vtkMAF/vtkMAFPolyDataDeformation_M1.h
-	openMAF/vtkMAF/vtkMAFPolyDataDeformation_M2.cpp
-	openMAF/vtkMAF/vtkMAFPolyDataDeformation_M2.h	
 )
 
 # List libraries that are needed by this project.

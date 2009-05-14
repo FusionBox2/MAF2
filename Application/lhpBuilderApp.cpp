@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2009-05-14 14:09:27 $
-  Version:   $Revision: 1.71.2.19 $
+  Date:      $Date: 2009-05-14 14:16:42 $
+  Version:   $Revision: 1.71.2.20 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -173,7 +173,7 @@
 //BES: 14.11.2008 - added muscle wrapping
 #include "medOpCreateMuscleWrapper.h"
 #include "medVMEMuscleWrapper.h"
-#include "BES_Beta/OpenMAF/Operators/mafOpMeshDeformation.h"
+#include "mafOpMeshDeformation.h"
 
 #include <vtkTimerLog.h>
 
