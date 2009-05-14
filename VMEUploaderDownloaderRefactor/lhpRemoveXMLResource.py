@@ -14,7 +14,7 @@ import urllib
 import urllib, urllib2, base64, re, os, cookielib, sys
 from HttpsProxy import *
 
-class lhpRemoveResource:
+class lhpRemoveXMLResource:
       
     def __init__(self):
         
@@ -75,13 +75,14 @@ class lhpRemoveResource:
   
 def main():
     
+    # TODO REFACTOR: extract test class
     if(len(sys.argv) != 4): #for test
         sys.argv = []
         sys.argv.append("testuser") #substitute
         sys.argv.append("6w8DHF") #substitute
         sys.argv.append("dataresource-3775") #substitute
         
-        remove = lhpRemoveResource()
+        remove = lhpRemoveXMLResource()
         remove.removeResource()
         #add code to remove resource created
         return
@@ -89,7 +90,7 @@ def main():
     if(len(sys.argv) == 4):
         sys.argv = sys.argv[1:]
         #print sys.argv
-        remove = lhpRemoveResource()
+        remove = lhpRemoveXMLResource()
         remove.removeResource()
 
 if __name__ == '__main__':

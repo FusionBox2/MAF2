@@ -1,7 +1,6 @@
 import vmeUploaderOnly
 from webServicesClient import MtomUpload, MtomUploadURI, MtomSRBSize , xmlrpcDemoWS
 import msfParser
-import lhpRemoveResource
 from xml.dom import minidom
 from xml.dom import Node
 import xml.dom.minidom as xd

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVMERefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-05-13 16:47:07 $
-Version:   $Revision: 1.1.2.13 $
+Date:      $Date: 2009-05-14 15:32:59 $
+Version:   $Revision: 1.1.2.14 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -593,7 +593,7 @@ bool lhpOpUploadMultiVMERefactor::RemoveAlreadyUploadedXMLResources(std::vector<
     command2execute = "pythonw.exe ";
 
     // remove XML resource from repository
-    command2execute.Append(" lhpRemoveResource.py ");
+    command2execute.Append(" lhpRemoveXMLResource.py ");
     command2execute.Append(m_User->GetName());
     command2execute.Append(" ");
     command2execute.Append(m_User->GetPwd());
@@ -606,7 +606,7 @@ bool lhpOpUploadMultiVMERefactor::RemoveAlreadyUploadedXMLResources(std::vector<
     long pid = -1;
     if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
     {
-      wxMessageBox("Error in lhpRemoveResource. Can not remove uploaded resource", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+      wxMessageBox("Error in lhpRemoveXMLResource. Can not remove uploaded resource", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
       if (m_DebugMode)
         mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
         command2execute.c_str(), pid);
