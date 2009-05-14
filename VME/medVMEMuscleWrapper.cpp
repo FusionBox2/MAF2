@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: medVMEMuscleWrapper.cpp,v $
 Language:  C++
-Date:      $Date: 2009-05-14 14:07:35 $
-Version:   $Revision: 1.1.2.1 $
+Date:      $Date: 2009-05-14 14:25:17 $
+Version:   $Revision: 1.1.2.2 $
 Authors:   Josef Kohout
 ==========================================================================
 Copyright (c) 2001/2005 
@@ -36,7 +36,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "vtkMath.h"
 #include "vtkPoints.h"
 #include "vtkCellArray.h"
-#include "../vtkMAF/vtkMAFPolyDataDeformation.h"
+#include "vtkMAFPolyDataDeformation.h"
 #include "vtkMAFMuscleDecomposition.h"
 #include "vtkTubeFilter.h"
 
