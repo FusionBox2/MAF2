@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2009-05-14 14:16:42 $
-  Version:   $Revision: 1.71.2.20 $
+  Date:      $Date: 2009-05-14 15:36:23 $
+  Version:   $Revision: 1.71.2.21 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -43,9 +43,6 @@
 #include "medPipeTrajectories.h" 
 #include "mafVMEAFRefSys.h" 
 #include "mafVMEHelAxis.h" 
-//BES: 23.6.2008 - Large Volume - to be merged 
-#include "BES_Beta/openMAF/VME/mafVMEVolumeLarge.h"
-
 #include "mafOpDecomposeTimeVarVME.h"
 #include "mafOpImporterMSF.h"
 #include "mafOpImporterExternalFile.h"
@@ -62,7 +59,7 @@
 #include "mafOp2DMeasure.h"
 #include "mafOpReparentTo.h"
 //BES: 22.7.2008 - Large Volume - to be merged 
-#include "BES_Beta/Medical/Operations/mmoDICOMImporter_BES.h"
+#include "mmoDICOMImporter_BES.h"
 //#include "mmoDICOMImporter.h"
 #include "mafOpReparentTo.h"
 #include "mafOpImporterImage.h"
@@ -74,13 +71,13 @@
 #include "mafOpImporterVRML.h"
 #include "mafOpCreateVolume.h"
 #include "mafOpVOIDensityEditor.h"
-#include "BES_Beta/openMAF/Operators/mafOpImporterBBF.h"
+#include "mafOpImporterBBF.h"
 //BES: 23.6.2008 - Large Volume - to be merged 
-#include "BES_Beta/openMAF/Operators/mafOpImporterRAWVolume_BES.h"
+#include "mafOpImporterRAWVolume_BES.h"
 #include "mafOpImporterRAWVolume.h"
 #include "mafOpExporterRaw.h"
 //BES: 11.7.2008 - Large Volume - to be merged 
-#include "BES_Beta/Medical/Operations/medOpImporterRAWImages_BES.h"
+#include "medOpImporterRAWImages_BES.h"
 #include "medOpImporterRAWImages.h"
 #include "mafOpExtractIsosurface.h"
 #include "mafOpCrop.h"

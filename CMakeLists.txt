@@ -2,8 +2,8 @@
 #   Program:   lhpBuilder
 #   Module:    $RCSfile: CMakeLists.txt,v $
 #   Language:  CMake
-#   Date:      $Date: 2009-05-08 06:59:28 $
-#   Version:   $Revision: 1.33.2.17 $
+#   Date:      $Date: 2009-05-14 15:36:13 $
+#   Version:   $Revision: 1.33.2.18 $
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
@@ -71,14 +71,7 @@ IF(MAF_FOUND)
   INCLUDE_DIRECTORIES(BEFORE ".")
   INCLUDE_DIRECTORIES("${LHP_BINARY_DIR}" "${LHP_SOURCE_DIR}/Application" "${LHP_SOURCE_DIR}/Core" "${LHP_SOURCE_DIR}/Common" "${LHP_SOURCE_DIR}/Gui"
                       "${LHP_SOURCE_DIR}/Operations" "${LHP_SOURCE_DIR}/VME" "${LHP_SOURCE_DIR}/Views" "${LHP_SOURCE_DIR}/vtkLHP" 
-                      "${LHP_BINARY_DIR}/vtkLHP")
-  INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/BES_Beta/Medical_AneuFuse/VME)
-  INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/BES_Beta/openMAF_AneuFuse/vtkMAF)  
-  INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/BES_Beta/openMAF/Interaction)
-  INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/BES_Beta/openMAF/IO)
-  INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/BES_Beta/openMAF/Operators)
-  INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/BES_Beta/openMAF/VME)
-  INCLUDE_DIRECTORIES(${LHP_SOURCE_DIR}/BES_Beta/openMAF/vtkMAF)                     
+                      "${LHP_BINARY_DIR}/vtkLHP")  
   
   SUBDIRS (Core)
   SUBDIRS (vtkLHP)
@@ -88,8 +81,7 @@ IF(MAF_FOUND)
   SUBDIRS (Operations)
   SUBDIRS (Views)
   SUBDIRS (VME)
-  ADD_SUBDIRECTORY(BES_Beta)
-  
+    
   # Configuring Doxygen documentation  
   
   OPTION(BUILD_DOCUMENTATION "Build the doxygen documentation" OFF)

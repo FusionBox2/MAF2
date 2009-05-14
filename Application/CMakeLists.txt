@@ -28,7 +28,7 @@ ELSE (WIN32)
 ENDIF (WIN32)
 
 SET(PROJECT_LIBS
-  lhpCommon lhpCore lhpGui lhpOperations lhpViews lhpVME vtkLHP C3D_Reader BES_Beta
+  lhpCommon lhpCore lhpGui lhpOperations lhpViews lhpVME vtkLHP C3D_Reader 
 )
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
 IF (WIN32)
@@ -65,7 +65,7 @@ ELSE (WIN32)
 ENDIF (WIN32)
 
 SET(PROJECT_LIBS
-  lhpCommon lhpCore lhpGui lhpOperations lhpViews lhpVME vtkLHP C3D_Reader BES_Beta
+  lhpCommon lhpCore lhpGui lhpOperations lhpViews lhpVME vtkLHP C3D_Reader 
 )
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
 IF (WIN32)
@@ -104,7 +104,7 @@ ELSE (WIN32)
 ENDIF (WIN32)
 
 SET(PROJECT_LIBS
-  lhpCommon lhpCore lhpGui lhpOperations lhpViews lhpVME vtkLHP C3D_Reader BES_Beta
+  lhpCommon lhpCore lhpGui lhpOperations lhpViews lhpVME vtkLHP C3D_Reader 
 )
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
 IF (WIN32)
@@ -141,7 +141,7 @@ ELSE (WIN32)
 ENDIF (WIN32)
 
 SET(PROJECT_LIBS
-  lhpCommon lhpCore lhpGui lhpOperations lhpViews lhpVME vtkLHP C3D_Reader BES_Beta
+  lhpCommon lhpCore lhpGui lhpOperations lhpViews lhpVME vtkLHP C3D_Reader 
 )
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
 IF (WIN32)
@@ -179,7 +179,7 @@ ELSE (WIN32)
 ENDIF (WIN32)
 
 SET(PROJECT_LIBS
-  lhpCommon lhpCore lhpGui lhpOperations lhpViews lhpVME vtkLHP C3D_Reader BES_Beta
+  lhpCommon lhpCore lhpGui lhpOperations lhpViews lhpVME vtkLHP C3D_Reader 
 )
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
 IF (WIN32)
