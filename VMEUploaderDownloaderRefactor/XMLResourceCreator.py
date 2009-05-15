@@ -14,8 +14,9 @@ from Debug import Debug
 import urllib, urllib2, base64, re, os, cookielib, sys
 from HttpsProxy import *
 
-class lhpGetXMLURI:
-      
+class XMLResourceCreator:
+    """Creates an empty resource on repository"""
+  
     def __init__(self):
                         
         self.userName = sys.argv[0]
@@ -28,9 +29,9 @@ class lhpGetXMLURI:
         self.proxyHost = ''
         self.ProxyPort = ''
         
-    def getURI(self):
+    def CreateEmptyXMLResource(self):
         """ 
-           Creates an empty resource on repository and return the URI
+           Creates an empty XML resource on repository and return the URI
         """
         maxTry = 5
         self.proxyHost, self.proxyPort = retriveProxyParameters()
@@ -98,8 +99,8 @@ def main():
     if(len(sys.argv) == 4):
         sys.argv = sys.argv[1:]
         #print sys.argv
-        getURI = lhpGetXMLURI()
-        getURI.XMLURI = getURI.getURI()
+        getURI = XMLResourceCreator()
+        getURI.XMLURI = getURI.CreateEmptyXMLResource()
         
         print getURI.XMLURI
 

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVMERefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-05-13 16:47:07 $
-Version:   $Revision: 1.1.2.13 $
+Date:      $Date: 2009-05-15 10:45:56 $
+Version:   $Revision: 1.1.2.14 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -1168,7 +1168,7 @@ int lhpOpUploadVMERefactor::GetXMLURIForUpload()
   // Get XML URI upload target
   wxString command2execute;
   command2execute = m_PythonExe.GetCStr();
-  command2execute.Append("lhpGetXMLURI.py ");
+  command2execute.Append("XMLResourceCreator.py ");
   command2execute.Append(m_User->GetName());
   command2execute.Append(" ");
   command2execute.Append(m_User->GetPwd());
@@ -1184,7 +1184,7 @@ int lhpOpUploadVMERefactor::GetXMLURIForUpload()
   long pid = -1;
   if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
   {
-    wxMessageBox("Error in lhpGetXMLURI.py. Cannot retrieve XML resource URI from repository! Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+    wxMessageBox("Error in XMLResourceCreator.py. Cannot retrieve XML resource URI! Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     if (m_DebugMode)
       mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
       command2execute.c_str(), pid);

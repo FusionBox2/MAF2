@@ -4,7 +4,7 @@
 # author: Roberto Mucci <r.mucci@cineca.it>
 #-----------------------------------------------------------------------------
 
-import lhpGetXMLURI
+import lhpXMLResourceCreator
 import os, time, shutil
 from lhpDefines import *
 import StringIO
@@ -25,8 +25,8 @@ class lhpGetXMLURITest(unittest.TestCase):
         sys.argv.append("testuser") #substitute
         sys.argv.append("6w8DHF") #substitute
         sys.argv.append("http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/") #substitute
-        getURI = lhpGetXMLURI.lhpGetXMLURI()
-        getURI.getURI()
+        resourceCreator = lhpXMLResourceCreator.XMLResourceCreator()
+        resourceCreator.CreateEmptyXMLResource()
 
 
 
