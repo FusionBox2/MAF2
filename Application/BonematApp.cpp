@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: BonematApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2008-12-19 14:54:01 $
-  Version:   $Revision: 1.1.2.2 $
+  Date:      $Date: 2009-05-15 07:48:47 $
+  Version:   $Revision: 1.1.2.3 $
   Authors:   Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -44,7 +44,7 @@
 #include "mafVMEAFRefSys.h" 
 #include "mafVMEHelAxis.h" 
 //BES: 23.6.2008 - Large Volume - to be merged 
-#include "BES_Beta/openMAF/VME/mafVMEVolumeLarge.h"
+#include "mafVMEVolumeLarge.h"
 
 #include "mafOpDecomposeTimeVarVME.h"
 //#include "mafOpImporterMSF.h"
@@ -61,9 +61,7 @@
 //#include "mafOpEditMetadata.h"
 //#include "mafOp2DMeasure.h"
 //#include "mafOpReparentTo.h"
-//BES: 22.7.2008 - Large Volume - to be merged 
-#include "BES_Beta/Medical/Operations/mmoDICOMImporter_BES.h"
-//#include "mmoDICOMImporter.h"
+#include "mmoDICOMImporter.h"
 //#include "mafOpReparentTo.h"
 //#include "mafOpImporterImage.h"
 //#include "mafOpImporterSTL.h"
@@ -74,12 +72,10 @@
 //#include "mafOpImporterVRML.h"
 //#include "BES_Beta/openMAF/Operators/mafOpImporterBBF.h"
 //BES: 23.6.2008 - Large Volume - to be merged 
-#include "BES_Beta/openMAF/Operators/mafOpImporterRAWVolume_BES.h"
+#include "mafOpImporterRAWVolume_BES.h"
 //#include "mafOpImporterRAWVolume.h"
 //#include "mafOpExporterRaw.h"
-//BES: 11.7.2008 - Large Volume - to be merged 
-#include "BES_Beta/Medical/Operations/medOpImporterRAWImages_BES.h"
-//#include "medOpImporterRAWImages.h"
+#include "medOpImporterRAWImages.h"
 //#include "mafOpExtractIsosurface.h"
 //#include "mafOpCrop.h"
 //#include "mafOpVOIDensity.h"
@@ -302,7 +298,7 @@ bool BonematApp::OnInit()
 	}
 
   //------------------------- Importers -------------------------
-  m_Logic->Plug(new mmoDICOMImporter_BES("DICOM"),"Images");
+  m_Logic->Plug(new mmoDICOMImporter("DICOM"),"Images");
     // m_Logic->Plug(new medOpImporterDicomXA("DICOM XA"),"Images");
   //m_Logic->Plug(new mafOpImporterSTL("STL"),"Geometries");
   //m_Logic->Plug(new mafOpImporterVTK("VTK"),"Other");
@@ -311,7 +307,7 @@ bool BonematApp::OnInit()
     // m_Logic->Plug(new mafOpImporterBBF("BFF (VolumeLarge)"),"Other");
   m_Logic->Plug(new mafOpImporterRAWVolume_BES("Raw Volume"),"Images");
     // m_Logic->Plug(new mafOpImporterRAWVolume("Raw Volume Legacy"),"Images");
-  m_Logic->Plug(new medOpImporterRAWImages_BES("Raw Images"),"Images");
+  m_Logic->Plug(new medOpImporterRAWImages("Raw Images"),"Images");
     // m_Logic->Plug(new medOpImporterRAWImages("Raw Images Legacy"),"Images");
   //m_Logic->Plug(new mafOpImporterImage("Images"),"Images");
   //m_Logic->Plug(new medOpImporterLandmark("Landmark"),"Motion Analysis");
