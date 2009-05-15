@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: BuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2009-05-15 07:48:47 $
-  Version:   $Revision: 1.1.2.3 $
+  Date:      $Date: 2009-05-15 10:01:19 $
+  Version:   $Revision: 1.1.2.4 $
   Authors:   Roberto Mucci
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -72,7 +72,6 @@
 #include "mafOpImporterVRML.h"
 //#include "mafOpCreateVolume.h"
 //#include "mafOpVOIDensityEditor.h"
-//#include "BES_Beta/openMAF/Operators/mafOpImporterBBF.h"
 //BES: 23.6.2008 - Large Volume - to be merged 
 #include "mafOpImporterRAWVolume_BES.h"
 //#include "mafOpImporterRAWVolume.h"
