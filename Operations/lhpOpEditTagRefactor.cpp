@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpEditTagRefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-04-21 12:11:30 $
-Version:   $Revision: 1.1.2.5 $
+Date:      $Date: 2009-05-15 16:12:23 $
+Version:   $Revision: 1.1.2.6 $
 Authors:   Roberto Mucci , Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2007
@@ -389,12 +389,12 @@ int lhpOpEditTagRefactor::EditTags()
   m_FileName = "lhpEditVMETag.py ";
   command2execute.Append(m_FileName.GetCStr());
 
-  //workaround to understanding directory argument
+  //workaround to understand directory argument
   wxString directoryWorkAround = m_CurrentCache;
   directoryWorkAround.Replace(" ", "??");
   command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
 
-  //workaround to understanding directory argument
+  //workaround to understand directory argument
   directoryWorkAround = m_MsfDir;
   directoryWorkAround.Replace(" ", "??");
 

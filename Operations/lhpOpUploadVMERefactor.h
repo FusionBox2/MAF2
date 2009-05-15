@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVMERefactor.h,v $
 Language:  C++
-Date:      $Date: 2009-05-13 16:47:07 $
-Version:   $Revision: 1.1.2.12 $
+Date:      $Date: 2009-05-15 16:12:24 $
+Version:   $Revision: 1.1.2.13 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -113,8 +113,10 @@ protected:
   
   void GetPythonInterpreters();
 
-  int GetXMLURIForUpload();
-  int PythonEditVMETags();
+  /** Create an XML Resource on the repository: return MAF_OK or MAF_ERROR */
+  int CreateXMLResource();
+
+  int BuildMSFForVMEToBeUploaded();
   void GetMSFFileABSFolder();
 
   void GetPythonInterpretersAndClientSoftwareUser();
@@ -151,8 +153,8 @@ protected:
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
 	virtual void OpStop(int result);
 
-  /* Base Cache and Outgoing creation directory*/
-  bool CreateMasterCacheAndOutgoingFolders();
+  /* Check for Master Cache and Outgoing directories: create them if non existent*/
+  bool MasterCacheFolderAndOutgoingFolderAvailable();
 
   /** This method creates on filesystem a cache with msf and binary data that must be uploaded.
   Return true if succeed */
@@ -165,7 +167,7 @@ protected:
   bool ExistsRunningProcess();
 
   /** Import Edited MSF*/
-  int CopyPythonEditedVMETagsIntoOriginalVME();
+  int CopyTagsIntoOriginalVME();
    
   /** TODO: REFACTOR TO PYTHON 
   Check if a binary data is associated to the VME */

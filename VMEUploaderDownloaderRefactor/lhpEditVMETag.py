@@ -47,7 +47,7 @@ class lhpEditVMETag:
         
         msfDOMParserInstance = msfParser.msfParser()
 
-        # Search the MSF file inside given the given directory
+        # Search the MSF file given the InputMSFDirectory directory
         os.chdir(self.InputMSFDirectory)
         files = os.listdir(self.InputMSFDirectory)
         
@@ -67,8 +67,8 @@ class lhpEditVMETag:
             print self.msfFileName
         
 
-        domDocument = minidom.parse(self.msfFileName)
-        msfRootNode = domDocument.documentElement
+        msfFileDOMDocument = minidom.parse(self.msfFileName)
+        msfRootNode = msfFileDOMDocument.documentElement
 
 
  
@@ -132,7 +132,7 @@ class lhpEditVMETag:
     
         # add new and updated autotags
         # "TAGNAME" , "TAGTEXT"
-        msfDOMParserInstance.AddTagsFromDictionary(domDocument,outVmeTagArrayNode, autoTagsDictionary)
+        msfDOMParserInstance.AddTagsFromDictionary(msfFileDOMDocument,outVmeTagArrayNode, autoTagsDictionary)
     
         # UNHANDLED AUTO + MANUAL TAGS
         
@@ -198,7 +198,7 @@ class lhpEditVMETag:
             print tagsToBeAnnotatedManuallyMap
         
 
-        msfDOMParserInstance.AddTagsFromDictionary(domDocument,outVmeTagArrayNode, tagsToBeAnnotatedManuallyMap)
+        msfDOMParserInstance.AddTagsFromDictionary(msfFileDOMDocument,outVmeTagArrayNode, tagsToBeAnnotatedManuallyMap)
         
 
         tagsToBeRemoved  = vmeTagListSet.difference(tagsToBeExported)
@@ -302,11 +302,11 @@ def run(inputCacheDirectory, inputMSFDirectory, vmeToExtractId, unhandledPlusMan
 if __name__ == '__main__':    
     import sys
     usage_msg = '''Usage: %s
-    inputCacheDirectory 
-    inputMSFDirectory 
-    vmeToExtractId
-    unhandledPlusManualTagsListFileName 
-    handledAutoTagsListFileName
+    InputCacheDirectoryABSFolder 
+    InputMSFDirectoryABSFolder 
+    InputVMEId
+    InputUnhandledPlusManualTagsListFileName 
+    InputHandledAutoTagsListFileName
     ''' % sys.argv[0]
     
     if len(sys.argv) != 6:
