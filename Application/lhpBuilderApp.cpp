@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2009-05-14 16:50:07 $
-  Version:   $Revision: 1.71.2.22 $
+  Date:      $Date: 2009-05-18 15:31:53 $
+  Version:   $Revision: 1.71.2.23 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -140,6 +140,7 @@
 #include "lhpOpComputeTensor.h"
 #include "medOpCropDeformableROI.h"
 #include "mafOpValidateTree.h"
+#include "mafOpApplyTrajectory.h"
 
 #include "medOpImporterDicomXA.h"
 
@@ -388,6 +389,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
 	m_Logic->Plug(new mafOpFilterSurface("Filter Surface"),"Modify");
   m_Logic->Plug(new mafOpVOIDensityEditor("Volume Density"),"Modify");
   m_Logic->Plug(new mafOpMeshDeformation("Deform Surface"), "Modify");
+  m_Logic->Plug(new mafOpApplyTrajectory("Apply Trajectory"), "Modify");
 	m_Logic->Plug(new mafOpExtractIsosurface("Extract Isosurface"),"Create/Derive");
   m_Logic->Plug(new medOpSurfaceMirror("Surface Mirror"),"Modify");
 	m_Logic->Plug(new mafOpCrop("Crop Volume"),"Modify");
