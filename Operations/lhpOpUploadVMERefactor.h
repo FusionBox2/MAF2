@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVMERefactor.h,v $
 Language:  C++
-Date:      $Date: 2009-05-15 16:12:24 $
-Version:   $Revision: 1.1.2.13 $
+Date:      $Date: 2009-05-20 08:10:55 $
+Version:   $Revision: 1.1.2.14 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -65,9 +65,6 @@ public:
   
   /** check if client software version is up to date in order to a allow vme uploading */
   bool IsClientSoftwareVersionUpToDate();
-
-  /** Set Current Working Msf Directory*/
-  void SetMsfDir(mafString msfDir){m_MSFFileABSFolder = msfDir;};
   
   /** Upload also vme children? Default to false */
   void SetWithChild(bool withChild) {m_WithChild = withChild;};
@@ -110,7 +107,10 @@ public:
   virtual void OpDo();
 
 protected:
-  
+
+  /** Set Current Working Msf Directory*/
+  void SetMsfDir(mafString msfDir){m_MSFFileABSFolder = msfDir;};
+
   void GetPythonInterpreters();
 
   /** Create an XML Resource on the repository: return MAF_OK or MAF_ERROR */
@@ -229,7 +229,8 @@ private:
   std::vector<mafNode*> m_LinkNode;
   std::vector<mafString> m_LinkName;
 
-
+  /** test friend */
+  friend class lhpOpUploadMultiVMERefactorTest;
 };
 
 #endif

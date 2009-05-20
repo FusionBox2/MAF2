@@ -3,6 +3,7 @@ PROJECT (OPERATIONS_TEST)
 LINK_LIBRARIES (lhpVME)
 LINK_LIBRARIES(lhpOperations C3D_Reader)
 LINK_LIBRARIES(lhpCommon)
+LINK_LIBRARIES(lhpCore)
 
 #-----------------------------------------------------------------------------
 # tests using cppunit testing framework
@@ -10,6 +11,11 @@ LINK_LIBRARIES(lhpCommon)
 
 # ADD_EXECUTABLE(myTest myTest.h myTest.cpp)
 # ADD_TEST(myTest ${LHPBUILDER_EXECUTABLE_OUTPUT_PATH}/myTest)
+
+
+ADD_EXECUTABLE(lhpOpUploadMultiVMERefactorTest lhpOpUploadMultiVMERefactorTest.h lhpOpUploadMultiVMERefactorTest.cpp)
+# TO BE FIXED: Cannot run without a desktop session at the moment 
+#ADD_TEST(lhpOpUploadMultiVMERefactorTest ${LHPBUILDER_EXECUTABLE_OUTPUT_PATH}/lhpOpUploadMultiVMERefactorTest)
 
 ADD_EXECUTABLE(lhpOpMultiscaleExploreTest lhpOpMultiscaleExploreTest.h lhpOpMultiscaleExploreTest.cpp)
 ADD_TEST(lhpOpMultiscaleExploreTest ${LHPBUILDER_EXECUTABLE_OUTPUT_PATH}/lhpOpMultiscaleExploreTest)

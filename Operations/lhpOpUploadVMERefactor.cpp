@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadVMERefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-05-15 16:12:23 $
-Version:   $Revision: 1.1.2.15 $
+Date:      $Date: 2009-05-20 08:10:55 $
+Version:   $Revision: 1.1.2.16 $
 Authors:   Daniele Giunchi, Stefano Perticoni, Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -150,7 +150,7 @@ mafOp(label)
   m_IsLast = true;
   m_XMLUploadedResourcesRollBackLocalFileName = "m_InputXMLDataResourcesRollBackFile_UNDEFINED.txt";
   m_IsBinaryDataPresent = false;
-  m_RemoteXMLResourceURI = "m_RemoteXMLResourceURI_UNDEFINED.txt";
+  m_RemoteXMLResourceURI = "m_RemoteXMLResourceURI_UNDEFINED.txt: you need to call Upload to fill this ivar!";
 }
 
 //----------------------------------------------------------------------------
@@ -312,8 +312,12 @@ int lhpOpUploadVMERefactor::Upload()
   lockPath += fileName;
   if (wxFileExists(lockPath))
     wxRemoveFile(lockPath); //fileName
-
-  GetMSFFileABSFolder();
+  
+  if (GetTestMode() == false)
+  { 
+    GetMSFFileABSFolder();
+  }
+  
 
   if (m_MSFFileABSFolder == "")
   {
@@ -374,10 +378,6 @@ int lhpOpUploadVMERefactor::Upload()
   {
     return result;
   }
-
-  wxSetWorkingDirectory(oldDir);
-  if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str());
  
   if ( ExistsRunningProcess() )
   {
@@ -432,7 +432,8 @@ int lhpOpUploadVMERefactor::Upload()
   else
   {
     //PROCESS NOT EXIST, CREATE SERVER AND CALL CLIENT
-   
+    mafLogMessage(wxGetCwd())   ;
+
     wxString command2execute;
     if (m_DebugMode)
       command2execute = m_PythonExe.GetCStr();
@@ -501,7 +502,6 @@ int lhpOpUploadVMERefactor::Upload()
   }
 
   wxSetWorkingDirectory(oldDir);
-
 
   return MAF_OK;
 }

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVMERefactor.h,v $
 Language:  C++
-Date:      $Date: 2009-05-13 16:47:07 $
-Version:   $Revision: 1.1.2.9 $
+Date:      $Date: 2009-05-20 08:10:55 $
+Version:   $Revision: 1.1.2.10 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -80,13 +80,15 @@ public:
 	virtual void OpDo();
 
   void Upload();
+  
+  /** Load VMEs to upload from a txt file containing their IDs */
+  int LoadInputVMEsIdsFile(const char *fileName);
+
+protected:
 
   /** Set Current Working Msf Directory*/
   void SetMsfDir(mafString msfDir){m_MsfDir = msfDir;};
 
-
-protected:
-  
   /** Try to handle auto tags through tags factory and convert unhandled 
   to manual tags is to be filled by the user*/
   void HandleAutoTagsTroughFactory();
@@ -149,7 +151,6 @@ private:
   bool RemoveAlreadyUploadedXMLResources(std::vector<mafString> xmlUploadedResourcesVectorURI);  
 
   void SaveConnectionConfigurationFile();
-
   bool m_WithChild;
   bool m_DebugMode;
  
@@ -163,12 +164,14 @@ private:
   std::vector<mafString> m_AlreadyUploadedXMLURIVector;
   std::vector<mafString> m_FileCreatedVector;
   std::vector<int> m_DerivedVMEsIdVector;
+  std::vector<int> m_VMEsToUploadIdsVector;
 
   mafNode *m_UploadingNode;
   int m_NodeCounter;
   int m_SubdictionaryId;
 
-
+  /** test friend */
+  friend class lhpOpUploadMultiVMERefactorTest;
 
 };
 #endif

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVMERefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-05-14 15:32:59 $
-Version:   $Revision: 1.1.2.14 $
+Date:      $Date: 2009-05-20 08:10:55 $
+Version:   $Revision: 1.1.2.15 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -97,13 +97,13 @@ mafOp(label)
 	m_Canundo = false;
   m_WithChild = false;
   m_DebugMode = false;
-  m_User = NULL;
   m_AlreadyUploadedXMLURIVector.clear();
   m_AlreadyUploadedVMEVector.clear();
   m_EmptyNodeVector.clear();
   m_FileCreatedVector.clear();
   m_DerivedVMEsIdVector.clear();
-
+  m_VMEsToUploadIdsVector.clear();
+  m_OpUploadVME = NULL;
   //m_ServiceURL = "http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/";
   m_ServiceURL = "https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/";
  
@@ -131,6 +131,9 @@ lhpOpUploadMultiVMERefactor::~lhpOpUploadMultiVMERefactor()
   m_EmptyNodeVector.clear();
   m_FileCreatedVector.clear();
   m_DerivedVMEsIdVector.clear();
+  
+  // this is crashing the app
+  // cppDEL(m_OpUploadVME);
 }
 
 //----------------------------------------------------------------------------
@@ -162,6 +165,13 @@ mafOp* lhpOpUploadMultiVMERefactor::Copy()
 void lhpOpUploadMultiVMERefactor::OpRun()
 //----------------------------------------------------------------------------
 {
+  if (GetTestMode() == true)
+  {
+    m_OpUploadVME = new lhpOpUploadVMERefactor("vmeUploader");
+  } 
+  else
+  {
+
   // get python interpreters
   mafEvent eventGetPythonExe;
   eventGetPythonExe.SetSender(this);
@@ -278,6 +288,9 @@ void lhpOpUploadMultiVMERefactor::OpRun()
   {
     OpStop(result);
   }
+  
+  }
+  
 }
 
 //----------------------------------------------------------------------------
@@ -950,12 +963,21 @@ mafString lhpOpUploadMultiVMERefactor::GetXMLDictionaryFileName( mafString dicti
 
 void lhpOpUploadMultiVMERefactor::Upload()
 {
+  
   bool rootSelected = false;
-  int res = wxMessageBox("All Vmes will be uploaded with their metadata.\nPlease check before uploading. Completion of curation can be done in the sandbox.", wxMessageBoxCaptionStr, wxOK | wxCANCEL);
-  //returns 4 for OK, 16 for CANCEL
-  if (res == 16)
+
+  if (GetTestMode() == true)
   {
-    return;
+    mafLogMessage("All Vmes will be uploaded with their metadata.\nPlease check before uploading. Completion of curation can be done in the sandbox.");
+  }
+  else
+  {
+    int res = wxMessageBox("All Vmes will be uploaded with their metadata.\nPlease check before uploading. Completion of curation can be done in the sandbox.", wxMessageBoxCaptionStr, wxOK | wxCANCEL);
+    //returns 4 for OK, 16 for CANCEL
+    if (res == 16)
+    {
+      return;
+    }
   }
 
   wxInfoFrame *wait;
@@ -1053,4 +1075,44 @@ void lhpOpUploadMultiVMERefactor::Upload()
   {
     delete wait;
   }
+
+ // cppDEL(m_OpUploadVME);
+}
+
+int lhpOpUploadMultiVMERefactor::LoadInputVMEsIdsFile(const char *vmeIdsFileName)
+{
+  std::ifstream inputFile(vmeIdsFileName, std::ios::in);
+
+  if (inputFile == NULL) {
+    std::cerr << "Error opening " << vmeIdsFileName << "\n";
+    assert(false);
+    return MAF_ERROR;
+  }
+
+  int buf;
+  
+  m_VMEsToUploadIdsVector.clear();
+
+  while(inputFile >> buf)
+  {
+    m_VMEsToUploadIdsVector.push_back(buf);
+  }
+
+  inputFile.close();
+
+  assert(m_Input);
+
+  mafNode *root = m_Input->GetRoot();
+  assert(root);
+
+  m_VMEToBeUploadedVector.clear();
+
+  for (int i = 0; i < m_VMEsToUploadIdsVector.size(); i++) 
+  {
+    mafNode *node = root->FindInTreeById(m_VMEsToUploadIdsVector[i]);
+    m_VMEToBeUploadedVector.push_back(node);
+    assert(node);
+  }
+
+  return MAF_OK ;
 }
