@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVMERefactor.h,v $
 Language:  C++
-Date:      $Date: 2009-05-20 08:10:55 $
-Version:   $Revision: 1.1.2.10 $
+Date:      $Date: 2009-05-22 10:49:42 $
+Version:   $Revision: 1.1.2.11 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -81,8 +81,12 @@ public:
 
   void Upload();
   
-  /** Load VMEs to upload from a txt file containing their IDs */
-  int LoadInputVMEsIdsFile(const char *fileName);
+  /** Load VMEs to upload from a txt file containing their IDs*/
+  int LoadVMEsToUploadIdsVectorFromFile(const char *fileName);
+  
+  /** Set VMEs to upload from a vector containing their IDs*/
+  int SetVMEsToUploadIdsVector(std::vector<int> vmeIDsVector);
+  std::vector<int> GetVMEsToUploadIdsVector() {return m_VMEsToUploadIdsVector;};
 
 protected:
 

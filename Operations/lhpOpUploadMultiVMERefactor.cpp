@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVMERefactor.cpp,v $
 Language:  C++
-Date:      $Date: 2009-05-20 08:10:55 $
-Version:   $Revision: 1.1.2.15 $
+Date:      $Date: 2009-05-22 10:49:42 $
+Version:   $Revision: 1.1.2.16 $
 Authors:   Roberto Mucci
 ==========================================================================
 Copyright (c) 2002/2007
@@ -1079,7 +1079,7 @@ void lhpOpUploadMultiVMERefactor::Upload()
  // cppDEL(m_OpUploadVME);
 }
 
-int lhpOpUploadMultiVMERefactor::LoadInputVMEsIdsFile(const char *vmeIdsFileName)
+int lhpOpUploadMultiVMERefactor::LoadVMEsToUploadIdsVectorFromFile(const char *vmeIdsFileName)
 {
   std::ifstream inputFile(vmeIdsFileName, std::ios::in);
 
@@ -1112,6 +1112,49 @@ int lhpOpUploadMultiVMERefactor::LoadInputVMEsIdsFile(const char *vmeIdsFileName
     mafNode *node = root->FindInTreeById(m_VMEsToUploadIdsVector[i]);
     m_VMEToBeUploadedVector.push_back(node);
     assert(node);
+    if (node == NULL)
+    {
+      std::ostringstream stringStream;
+      stringStream << "Node with id: " << m_VMEToBeUploadedVector[i] << \
+        " does not exist in VME tree. Exiting with MAF_ERROR" << std::endl;
+      mafLogMessage(stringStream.str().c_str());
+      m_VMEToBeUploadedVector.clear();
+      return MAF_ERROR;
+    }
+  }
+
+
+  return MAF_OK ;
+}
+
+int lhpOpUploadMultiVMERefactor::SetVMEsToUploadIdsVector( std::vector<int> vmeIDsVector )
+{
+
+  m_VMEsToUploadIdsVector.clear();
+
+  m_VMEsToUploadIdsVector = vmeIDsVector;
+
+  assert(m_Input);
+
+  mafNode *root = m_Input->GetRoot();
+  assert(root);
+
+  m_VMEToBeUploadedVector.clear();
+
+  for (int i = 0; i < m_VMEsToUploadIdsVector.size(); i++) 
+  {
+    mafNode *node = root->FindInTreeById(m_VMEsToUploadIdsVector[i]);
+    m_VMEToBeUploadedVector.push_back(node);
+    assert(node);
+    if (node == NULL)
+    {
+        std::ostringstream stringStream;
+        stringStream << "Node with id: " << m_VMEToBeUploadedVector[i] << \
+        " does not exist in VME tree. Exiting with MAF_ERROR" << std::endl;
+        mafLogMessage(stringStream.str().c_str());
+        m_VMEToBeUploadedVector.clear();
+        return MAF_ERROR;
+    }
   }
 
   return MAF_OK ;
