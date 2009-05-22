@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVMERefactorTest.h,v $
 Language:  C++
-Date:      $Date: 2009-05-20 08:10:19 $
-Version:   $Revision: 1.1.2.1 $
+Date:      $Date: 2009-05-22 10:50:06 $
+Version:   $Revision: 1.1.2.2 $
 Authors:   Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2004 
@@ -39,14 +39,18 @@ class lhpOpUploadMultiVMERefactorTest : public CPPUNIT_NS::TestFixture
     CPPUNIT_TEST(TestConstructorDestructor);
     CPPUNIT_TEST(TestPrintSelf);
     CPPUNIT_TEST(TestLoadInputVMEsIdsFile);
-    CPPUNIT_TEST(TestUploadManyVMETypesWithSmallData);
+    CPPUNIT_TEST(TestUpload15DifferentVMETypesWithSmallData);
+    CPPUNIT_TEST(TestUpload2DifferentVMETypesWithSmallData);
+    CPPUNIT_TEST(TestSetGetVMEsToUploadIdsVector);
     CPPUNIT_TEST_SUITE_END();
 
   protected:
 		void TestPrintSelf();
     void TestConstructorDestructor();
     void TestLoadInputVMEsIdsFile();
-    void TestUploadManyVMETypesWithSmallData();
+    void TestSetGetVMEsToUploadIdsVector();
+    void TestUpload15DifferentVMETypesWithSmallData();
+    void TestUpload2DifferentVMETypesWithSmallData();
 };
 
 

@@ -2,8 +2,8 @@
 Program:   Multimod Application Framework
 Module:    $RCSfile: lhpOpUploadMultiVMERefactorTest.cpp,v $
 Language:  C++
-Date:      $Date: 2009-05-20 08:10:19 $
-Version:   $Revision: 1.1.2.1 $
+Date:      $Date: 2009-05-22 10:50:06 $
+Version:   $Revision: 1.1.2.2 $
 Authors:   Stefano Perticoni
 ==========================================================================
 Copyright (c) 2002/2004 
@@ -101,7 +101,7 @@ void lhpOpUploadMultiVMERefactorTest::TestLoadInputVMEsIdsFile()
   lhpOpUploadMultiVMERefactor *opUploadMultiVME = new lhpOpUploadMultiVMERefactor("lhpOpUploadMultiVMERefactor");  
   opUploadMultiVME->TestModeOn();
   opUploadMultiVME->SetInput(vmeRoot);
-  opUploadMultiVME->LoadInputVMEsIdsFile(vmeIdsFileName.c_str());
+  opUploadMultiVME->LoadVMEsToUploadIdsVectorFromFile(vmeIdsFileName.c_str());
 
   int vmeNum = opUploadMultiVME->m_VMEsToUploadIdsVector.size();   
   CPPUNIT_ASSERT_EQUAL(vmeNum, 15);
@@ -119,7 +119,6 @@ void lhpOpUploadMultiVMERefactorTest::TestLoadInputVMEsIdsFile()
     cout << vmeIds[i] << " " << node << std::endl;
     CPPUNIT_ASSERT(node);
   }
-
     
   assert(true);
 
@@ -127,7 +126,7 @@ void lhpOpUploadMultiVMERefactorTest::TestLoadInputVMEsIdsFile()
 }
 
 
-void lhpOpUploadMultiVMERefactorTest::TestUploadManyVMETypesWithSmallData()
+void lhpOpUploadMultiVMERefactorTest::TestUpload15DifferentVMETypesWithSmallData()
 {
   int result = medVMEFactory::Initialize();
   CPPUNIT_ASSERT(result == MAF_OK);
@@ -194,7 +193,7 @@ void lhpOpUploadMultiVMERefactorTest::TestUploadManyVMETypesWithSmallData()
   //ws.Password = 'GRDPt8'
 
   opUploadMultiVME->m_OpUploadVME->m_MSFFileABSFolder = msfABSFolder ;
-  opUploadMultiVME->LoadInputVMEsIdsFile(vmeIdsFileName.c_str());
+  opUploadMultiVME->LoadVMEsToUploadIdsVectorFromFile(vmeIdsFileName.c_str());
 
   int vmeNum = opUploadMultiVME->m_VMEsToUploadIdsVector.size();   
   CPPUNIT_ASSERT_EQUAL(vmeNum, 15);
@@ -216,9 +215,126 @@ void lhpOpUploadMultiVMERefactorTest::TestUploadManyVMETypesWithSmallData()
 
   opUploadMultiVME->Upload();
   cppDEL(opUploadMultiVME);
+  cppDEL(user);
 
-  assert(true);
+  CPPUNIT_ASSERT(true);  
+}
+
+
+void lhpOpUploadMultiVMERefactorTest::TestSetGetVMEsToUploadIdsVector()
+{
+  
+  wxString msfFileName = LHP_DATA_ROOT;
+  msfFileName.append("/lhpOpUploadMultiVMERefactorTest/testMSFWithManyVMETypesAndSmallData/msf_test_import_export_VME.msf");
+
+  mafVMEStorage loadStorage;
+  loadStorage.SetURL(msfFileName);
+
+  mafVMERoot *vmeRoot = loadStorage.GetRoot();
+  loadStorage.Restore();
+
+  lhpOpUploadMultiVMERefactor *opUploadMultiVME = new lhpOpUploadMultiVMERefactor("lhpOpUploadMultiVMERefactor");  
+  opUploadMultiVME->TestModeOn();
+  opUploadMultiVME->SetInput(vmeRoot);
+
+  std::vector<int> vmeIdsVector;
+  vmeIdsVector.push_back(1);
+  vmeIdsVector.push_back(4);
+
+  opUploadMultiVME->SetVMEsToUploadIdsVector(vmeIdsVector);  
+  
+  for (int i = 0; i < vmeIdsVector.size(); i++) 
+  {
+    CPPUNIT_ASSERT_EQUAL(opUploadMultiVME->m_VMEsToUploadIdsVector[i], vmeIdsVector[i]);
+  }
+
+  for (int i = 0; i < 2; i++) 
+  {
+    mafNode *node = vmeRoot->FindInTreeById(vmeIdsVector[i]);
+    cout << vmeIdsVector[i] << " " << node << std::endl;
+    CPPUNIT_ASSERT(node);
+  }
+  
+  CPPUNIT_ASSERT(opUploadMultiVME->GetVMEsToUploadIdsVector() == vmeIdsVector);
+
+  cppDEL(opUploadMultiVME);
+
+}
+
+void lhpOpUploadMultiVMERefactorTest::TestUpload2DifferentVMETypesWithSmallData()
+{
+  int result = medVMEFactory::Initialize();
+  CPPUNIT_ASSERT(result == MAF_OK);
+
+  wxString msfFileName = LHP_DATA_ROOT;
+  msfFileName.append("/lhpOpUploadMultiVMERefactorTest/testMSFWithManyVMETypesAndSmallData/msf_test_import_export_VME.msf");
+
+  mafVMEStorage loadStorage;
+  loadStorage.SetURL(msfFileName);
+
+  mafVMERoot *vmeRoot = loadStorage.GetRoot();
+  loadStorage.Restore();
+
+  wxInitialize();
+
+  lhpOpUploadMultiVMERefactor *opUploadMultiVME = new lhpOpUploadMultiVMERefactor("lhpOpUploadMultiVMERefactor");  
+  opUploadMultiVME->TestModeOn();
+  opUploadMultiVME->m_PythonExe = "python.exe ";
+  opUploadMultiVME->SetInput(vmeRoot);
+
+  std::vector<int> vmeIdsVector;
+  vmeIdsVector.push_back(1);
+  vmeIdsVector.push_back(4);
+  opUploadMultiVME->SetVMEsToUploadIdsVector(vmeIdsVector);  
+  
+  opUploadMultiVME->OpRun();
+
+  wxString msfABSFolder = LHP_DATA_ROOT;
+  msfABSFolder.append("/lhpOpUploadMultiVMERefactorTest/testMSFWithManyVMETypesAndSmallData/");
+
+  wxString VMEUploaderDownloaderABSFolderName = LHP_DATA_ROOT;
+  VMEUploaderDownloaderABSFolderName.append("/../../VMEUploaderDownloaderRefactor");
+  CPPUNIT_ASSERT(wxDirExists(VMEUploaderDownloaderABSFolderName));
+
+  opUploadMultiVME->m_OpUploadVME->TestModeOn();
+  opUploadMultiVME->m_OpUploadVME->m_VMEUploaderDownloaderABSFolderName = VMEUploaderDownloaderABSFolderName;
+  opUploadMultiVME->m_OpUploadVME->m_PythonExe = "python.exe ";
+  opUploadMultiVME->m_OpUploadVME->m_PythonwExe = "pythonw.exe ";
+
+  lhpUser *user = new lhpUser(NULL);
+  int proxyFlag = 0;
+  mafString proxyHost = "";
+  mafString proxyPort = "";
+  int rememberMe = 0;
+  user->SetCredentials(mafString("testuser"),mafString("6w8DHF"),proxyFlag,proxyHost,proxyPort,rememberMe);
+  opUploadMultiVME->m_OpUploadVME->m_User = user;
+  opUploadMultiVME->m_User = user;
+  
+  opUploadMultiVME->m_OpUploadVME->m_MSFFileABSFolder = msfABSFolder ;
+  
+  int vmeNum = opUploadMultiVME->m_VMEsToUploadIdsVector.size();   
+  CPPUNIT_ASSERT_EQUAL(vmeNum, 2);
+
+  for (int i = 0; i < vmeIdsVector.size(); i++) 
+  {
+    CPPUNIT_ASSERT_EQUAL(opUploadMultiVME->m_VMEsToUploadIdsVector[i], vmeIdsVector[i]);
+  }
+
+
+  CPPUNIT_ASSERT(wxFileExists(msfFileName));
+
+  for (int i = 0; i < vmeIdsVector.size(); i++) 
+  {
+    mafNode *node = vmeRoot->FindInTreeById(vmeIdsVector[i]);
+    cout << vmeIdsVector[i] << " " << node << std::endl;
+    CPPUNIT_ASSERT(node);
+  }
+
+  opUploadMultiVME->Upload();
+  cppDEL(opUploadMultiVME);
 
   cppDEL(user);
-  cppDEL(opUploadMultiVME);
+
+  CPPUNIT_ASSERT(true);
 }
+
