@@ -2,8 +2,8 @@
   Program:   Multimod Application Framework
   Module:    $RCSfile: lhpBuilderApp.cpp,v $
   Language:  C++
-  Date:      $Date: 2009-05-18 15:31:53 $
-  Version:   $Revision: 1.71.2.23 $
+  Date:      $Date: 2009-05-29 09:41:31 $
+  Version:   $Revision: 1.71.2.24 $
   Authors:   Paolo Quadrani , Stefano Perticoni
 ==========================================================================
   Copyright (c) 2001/2005 
@@ -381,8 +381,8 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   m_Logic->Plug(new medOpFreezeVME("Freeze VME"),"Create/Derive");
   m_Logic->Plug(new medOpRegisterClusters("Register Landmark Cloud"),"Modify/Fuse");
   m_Logic->Plug(new mafOpCreateMeter("Distance Meter"),"Create/Derive");
-  m_Logic->Plug(new medOpCreateWrappedMeter("Wrapped Meter"),"Create/Derive");
-  m_Logic->Plug(new medOpComputeWrapping("Multi-Obj Wrapped Meter"),"Create/Derive");//15-1-2009
+  //m_Logic->Plug(new medOpCreateWrappedMeter("Wrapped Meter"),"Create/Derive");
+  m_Logic->Plug(new medOpComputeWrapping("Wrapped Action Line"),"Create/Derive");//15-1-2009
 
   m_Logic->Plug(new medOpCreateMuscleWrapper("Muscle Wrapper"),"Create/Derive"); //BES: 14.11.2008
  // m_Logic->Plug(new mmoEditMetadata("Metadata Editor"),"Modify");
