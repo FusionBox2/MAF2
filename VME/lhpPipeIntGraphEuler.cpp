@@ -130,7 +130,7 @@ bool lhpPipeIntGraphEuler::StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTimeS
 
     //vRot.w= _Conventions[(nVarID - GDT_EUL_ROTXXYZs) / 3];
 
-    GetLocalMatrix(m_Vme, ts, mLTM, m_Proximal);
+    GetLocalMatrix(mafVME::SafeDownCast(m_Node), ts, mLTM);
     mafTransfMatrixToEuler(&mLTM, &vRot, _Conventions[(nVarID - GDT_EUL_ROTXXYZs) / 3]);
 
     vRot.x *= mafMatrix3x3::RadiansToDegrees();

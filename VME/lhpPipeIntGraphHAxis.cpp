@@ -109,14 +109,14 @@ bool lhpPipeIntGraphHAxis::StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTimeS
 
   if(GDT_HA_DIRX <= nVarID && nVarID <= GDT_HA_DIRZ)
   {
-    V3d<double> dir = mafVMEHelAxis::SafeDownCast(m_Vme)->GetDirection();
+    V3d<double> dir = mafVMEHelAxis::SafeDownCast(m_Node)->GetDirection();
     SetValue(GDT_HA_DIRX, dir.x);
     SetValue(GDT_HA_DIRY, dir.y);
     SetValue(GDT_HA_DIRZ, dir.z);
   }
   else if(GDT_HA_PNTX <= nVarID && nVarID <= GDT_HA_PNTZ)
   {
-    V3d<double> pnt= mafVMEHelAxis::SafeDownCast(m_Vme)->GetStartPoint();
+    V3d<double> pnt= mafVMEHelAxis::SafeDownCast(m_Node)->GetStartPoint();
     SetValue(GDT_HA_PNTX, pnt.x);
     SetValue(GDT_HA_PNTY, pnt.y);
     SetValue(GDT_HA_PNTZ, pnt.z);
@@ -130,13 +130,13 @@ bool lhpPipeIntGraphHAxis::StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTimeS
     {
       oldVal= GetValue(GDT_HA_ANG);
     }
-    newVal= mafVMEHelAxis::SafeDownCast(m_Vme)->GetAngle();
+    newVal= mafVMEHelAxis::SafeDownCast(m_Node)->GetAngle();
     newVal= Fix180Difference(oldVal, newVal);
     SetValue(GDT_HA_ANG, newVal);
   }
   else if(GDT_HA_TRL== nVarID)
   {
-    SetValue(GDT_HA_TRL, mafVMEHelAxis::SafeDownCast(m_Vme)->GetTranslation());
+    SetValue(GDT_HA_TRL, mafVMEHelAxis::SafeDownCast(m_Node)->GetTranslation());
   }
   return true;
 }

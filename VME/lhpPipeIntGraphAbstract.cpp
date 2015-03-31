@@ -44,9 +44,9 @@ lhpPipeIntGraphAbstract::lhpPipeIntGraphAbstract()
 lhpPipeIntGraphAbstract::~lhpPipeIntGraphAbstract()
 //----------------------------------------------------------------------------
 {
-  if (m_Vme)
+  if (m_Node)
   {
-    m_Vme->RemoveObserver(this);
+    m_Node->RemoveObserver(this);
   }
   mafViewIntGraph *vgraph = mafViewIntGraph::SafeDownCast(m_View);
   if(vgraph && vgraph->GetRenderWindow())
@@ -65,7 +65,7 @@ void lhpPipeIntGraphAbstract::Create(mafNode *node, mafView *view)
   mafViewIntGraph *vgraph = mafViewIntGraph::SafeDownCast(m_View);
   if(vgraph)
     vgraph->GetRenderWindow()->AddGraphData(m_Graph);
-  m_Vme->AddObserver(this);
+  m_Node->AddObserver(this);
 }
 
 //----------------------------------------------------------------------------

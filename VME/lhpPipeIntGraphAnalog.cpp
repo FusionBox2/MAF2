@@ -65,7 +65,6 @@ lhpPipeIntGraphAnalog::lhpPipeIntGraphAnalog()
 
   m_NumberOfSignals = 0;
   m_TimeStamp = 0;
-  m_EmgPlot = NULL;
 
   m_Limited = 0;
   m_Start   = 0.0;
@@ -83,26 +82,29 @@ void lhpPipeIntGraphAnalog::Create(mafNode *node, mafView *view)
 {
   Superclass::Create(node, view);
 
-  m_EmgPlot = medVMEAnalog::SafeDownCast(m_Vme);
-  m_NumberOfSignals = m_EmgPlot->GetScalarOutput()->GetScalarData().rows()-1; //1 row is for time information
-  //m_DataMin = m_EmgPlot->GetScalarOutput()->GetScalarData().min_value();
-  //m_DataMax = m_EmgPlot->GetScalarOutput()->GetScalarData().max_value();
-  m_TimeStamp = m_EmgPlot->GetScalarOutput()->GetScalarData().columns();
+  medVMEAnalog *emgPlot = medVMEAnalog::SafeDownCast(m_Node);
+  if(emgPlot)
+  {
+    m_NumberOfSignals = emgPlot->GetScalarOutput()->GetScalarData().rows()-1; //1 row is for time information
+    //m_DataMin = emgPlot->GetScalarOutput()->GetScalarData().min_value();
+    //m_DataMax = emgPlot->GetScalarOutput()->GetScalarData().max_value();
+    m_TimeStamp = emgPlot->GetScalarOutput()->GetScalarData().columns();
+  }
 
   delete m_Graph;
   m_Graph = new mafGraphDataImpl(this, 8888.8888, m_TimeStamp);
   m_Graph->AddXVar(0);
 
 
-  mafTagItem *tag_Signals = m_Vme->GetTagArray()->GetTag("SIGNALS_NAME");
+  mafTagItem *tag_Signals = m_Node->GetTagArray()->GetTag("SIGNALS_NAME");
   bool tagPresent = (tag_Signals != NULL);
   if (!tagPresent)
   {
     mafTagItem tag_Sig;
     tag_Sig.SetName("SIGNALS_NAME");
     tag_Sig.SetNumberOfComponents(m_NumberOfSignals);
-    m_Vme->GetTagArray()->SetTag(tag_Sig);
-    mafTagItem *tag_Signals = m_Vme->GetTagArray()->GetTag("SIGNALS_NAME");
+    m_Node->GetTagArray()->SetTag(tag_Sig);
+    mafTagItem *tag_Signals = m_Node->GetTagArray()->GetTag("SIGNALS_NAME");
   }
   mafString name;
   m_Names.push_back("Time");
@@ -184,7 +186,9 @@ void lhpPipeIntGraphAnalog::UpdateGUIChecks()
     m_CheckBoxYder->CheckItem(i, false);
   for(unsigned int i = 0; i < m_Graph->GetXDim(); i++)
   {
-    const mafGraphData *pg = mafViewIntGraph::SafeDownCast(m_View)->GetRenderWindow()->GetXParam();
+    const mafGraphData *pg = NULL;
+    if(mafViewIntGraph *vgraph = mafViewIntGraph::SafeDownCast(m_View))
+      pg = vgraph->GetRenderWindow()->GetXParam();
     if(pg == m_Graph)
       m_CheckBoxXval->CheckItem(m_Graph->GetXID(0), true);
     else if(pg == NULL)
@@ -222,12 +226,14 @@ void lhpPipeIntGraphAnalog::OnEvent(mafEventBase *maf_event)
         m_Gui->Update();
         if(m_CheckBoxXval->IsItemChecked(itemId))
         {
-          mafViewIntGraph *vgraph = mafViewIntGraph::SafeDownCast(m_View);
-          m_Graph->SetXVar(0, itemId);
-          if(itemId != 0)
-            vgraph->GetRenderWindow()->SetXParam(m_Graph);
-          else 
-            vgraph->GetRenderWindow()->SetXParam(NULL);
+          if(mafViewIntGraph *vgraph = mafViewIntGraph::SafeDownCast(m_View))
+          {
+            m_Graph->SetXVar(0, itemId);
+            if(itemId != 0)
+              vgraph->GetRenderWindow()->SetXParam(m_Graph);
+            else 
+              vgraph->GetRenderWindow()->SetXParam(NULL);
+          }
         }
         mafEventMacro(mafEvent(this,CAMERA_UPDATE));
       }
@@ -294,7 +300,10 @@ void lhpPipeIntGraphAnalog::StoreValueByIdx(int nVarID, int nGraphIndex, mafTime
 void lhpPipeIntGraphAnalog::GrabData()
 //----------------------------------------------------------------------------
 {
-  const vnl_matrix<double>& matr = m_EmgPlot->GetScalarOutput()->GetScalarData();
+  medVMEAnalog *emgPlot = medVMEAnalog::SafeDownCast(m_Node);
+  if(!emgPlot)
+    return;
+  const vnl_matrix<double>& matr = emgPlot->GetScalarOutput()->GetScalarData();
   if(m_Graph->GetYDim() + m_Graph->GetXDim() == 0)
     return;
   for(int i = 0; i < m_TimeStamp; i++)

@@ -247,10 +247,10 @@ void lhpPipeIntGraphFixed::GrabData()
   if(m_ForcedWholeRange || m_WholeRange)
   {
     m_PrevStamp = -1;
-    m_Vme->Update();
-    mafTimeStamp ts = m_Vme->GetOutput()->GetTimeStamp();
+    mafVME::SafeDownCast(m_Node)->Update();
+    mafTimeStamp ts = mafVME::SafeDownCast(m_Node)->GetOutput()->GetTimeStamp();
     std::vector<mafTimeStamp> stamps;
-    m_Vme->GetAbsTimeStamps(stamps);
+    mafVME::SafeDownCast(m_Node)->GetAbsTimeStamps(stamps);
     for(unsigned i = 0; i < stamps.size(); i++)
     {
       //m_Vme->SetTimeStamp(stamps[i]);
@@ -268,8 +268,8 @@ void lhpPipeIntGraphFixed::GrabData()
     return;
   }
 
-  m_Vme->Update();
-  mafTimeStamp ts = m_Vme->GetOutput()->GetTimeStamp();
+  mafVME::SafeDownCast(m_Node)->Update();
+  mafTimeStamp ts = mafVME::SafeDownCast(m_Node)->GetOutput()->GetTimeStamp();
 
   if(ts != m_PrevStamp)
   {

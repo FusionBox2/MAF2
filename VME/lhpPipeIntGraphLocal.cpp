@@ -150,7 +150,7 @@ bool lhpPipeIntGraphLocal::StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTimeS
   {
     mafMatrix mLTM;
     V4d<double>    vPos, vRot;
-    GetLocalMatrix(m_Vme, ts, mLTM, m_Proximal);
+    GetLocalMatrix(mafVME::SafeDownCast(m_Node), ts, mLTM, m_Proximal);
     mafTransfInverseTransformUpright(&mLTM, &vPos, &vRot);
 
     SetValue(GDT_LTM_POSX, vPos.x);

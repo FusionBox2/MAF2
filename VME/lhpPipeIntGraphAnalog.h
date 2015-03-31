@@ -83,7 +83,6 @@ protected:
   int                                   m_NumberOfSignals;
   int                                   m_TimeStamp;
   std::vector<mafString>                m_Names;
-  medVMEAnalog                          *m_EmgPlot;
   mafTimeStamp                          m_Start;
   mafTimeStamp                          m_End;
   int                                   m_Limited;

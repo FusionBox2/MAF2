@@ -41,7 +41,7 @@ void mafGraphDataImpl::GetIDDesc(unsigned index, unsigned int deriv, char *sDesc
     _snprintf(sDescript, nLength, "%s%s, %s", (deriv == 0) ? val : der, m_Pipe->GetVarTitle(0), m_Pipe->GetVarUnit(0));
     return;
   }
-  _snprintf(sDescript,nLength,"%s%s %s, %s", (deriv == 0) ? val : der, m_Pipe->m_Vme->GetName(), m_Pipe->GetVarTitle(GetID(index)), m_Pipe->GetVarUnit(GetID(index)));
+  _snprintf(sDescript,nLength,"%s%s %s, %s", (deriv == 0) ? val : der, m_Pipe->m_Node->GetName(), m_Pipe->GetVarTitle(GetID(index)), m_Pipe->GetVarUnit(GetID(index)));
   return;
 }
 

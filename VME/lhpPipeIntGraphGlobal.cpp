@@ -97,7 +97,7 @@ bool lhpPipeIntGraphGlobal::StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTime
     mafMatrix mat;
     V4d<double> vPos, vRot;
     //get full trio in proper convention and axises
-    GetGlobalMatrix(m_Vme, ts, mat);
+    GetGlobalMatrix(mafVME::SafeDownCast(m_Node), ts, mat);
     mafTransfInverseTransformUpright(&mat, &vPos, &vRot);
 
     SetValue(GDT_GTM_POSX, vPos.x);

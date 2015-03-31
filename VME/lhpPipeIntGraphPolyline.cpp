@@ -44,7 +44,7 @@ const char *lhpPipeIntGraphPolyline::GetVarTitle(int i) const
   }
   if(i < Superclass::GDT_LAST)
     return Superclass::GetVarTitle(i);
-  if(mafVMEMeter *m = mafVMEMeter::SafeDownCast(m_Vme))
+  if(mafVMEMeter *m = mafVMEMeter::SafeDownCast(m_Node))
   {
     if(m->GetMeterMode() == mafVMEMeter::LINE_ANGLE)
       return "Angle";
@@ -61,7 +61,7 @@ const char *lhpPipeIntGraphPolyline::GetVarUnit(int i)const
   }
   if(i < Superclass::GDT_LAST)
     return Superclass::GetVarUnit(i);
-  if(mafVMEMeter *m = mafVMEMeter::SafeDownCast(m_Vme))
+  if(mafVMEMeter *m = mafVMEMeter::SafeDownCast(m_Node))
   {
     if(m->GetMeterMode() == mafVMEMeter::LINE_ANGLE)
       return "deg";
@@ -79,7 +79,7 @@ double lhpPipeIntGraphPolyline::GetVarDerivativeCoef(int i)const
   }
   if(i < Superclass::GDT_LAST)
     return Superclass::GetVarDerivativeCoef(i);
-  if(mafVMEMeter *m = mafVMEMeter::SafeDownCast(m_Vme))
+  if(mafVMEMeter *m = mafVMEMeter::SafeDownCast(m_Node))
   {
     if(m->GetMeterMode() == mafVMEMeter::LINE_ANGLE)
       return mafMatrix3x3::DegreesToRadians();
@@ -119,14 +119,14 @@ bool lhpPipeIntGraphPolyline::StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTi
 
   if(GDT_LENGTH == nVarID)
   {
-    mafVMEOutputPolyline *output = mafVMEOutputPolyline::SafeDownCast(m_Vme->GetOutput());
+    mafVMEOutputPolyline *output = mafVMEOutputPolyline::SafeDownCast(mafVME::SafeDownCast(m_Node)->GetOutput());
     wxASSERT(output != NULL);
     if(output != NULL)
     {
-      medVMEComputeWrapping *cwrap   = medVMEComputeWrapping::SafeDownCast(m_Vme);
-      medVMEWrappedMeter    *wrapped = medVMEWrappedMeter::SafeDownCast(m_Vme);
-      mafVMEMeter           *meter   = mafVMEMeter::SafeDownCast(m_Vme);
-      lhpVMELeverArm        *lever   = lhpVMELeverArm::SafeDownCast(m_Vme);
+      medVMEComputeWrapping *cwrap   = medVMEComputeWrapping::SafeDownCast(m_Node);
+      medVMEWrappedMeter    *wrapped = medVMEWrappedMeter::SafeDownCast(m_Node);
+      mafVMEMeter           *meter   = mafVMEMeter::SafeDownCast(m_Node);
+      lhpVMELeverArm        *lever   = lhpVMELeverArm::SafeDownCast(m_Node);
       if(wrapped != NULL)
         SetValue(GDT_LENGTH, wrapped->GetDistance());
       else if (meter != NULL)
