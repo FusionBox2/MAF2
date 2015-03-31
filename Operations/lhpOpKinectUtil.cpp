@@ -116,25 +116,57 @@ mafCxxTypeMacro(medOpImporterLandmarkAccU)
 
 namespace
 {
-  bool RunProgram(char *commandline)
+  bool RunProgram(const char *wDir, const char *commandline, const char *outFilePath)
   {
-
     STARTUPINFO si;
     PROCESS_INFORMATION pi;
 
+    SECURITY_ATTRIBUTES sa;
+    //HANDLE hOutFile;
+    ZeroMemory( &sa, sizeof(sa) );
+
     ZeroMemory( &si, sizeof(si) );
     si.cb = sizeof(si);
+    si.wShowWindow = SW_HIDE;
+    si.dwFlags = STARTF_USESHOWWINDOW;// | STARTF_USESTDHANDLES ;
     ZeroMemory( &pi, sizeof(pi) );
 
+    sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+    sa.bInheritHandle = true;
+    /*char *fnm = strdup(outFilePath);
+    for(char *fnmit = fnm;*fnmit; fnmit++)
+    {
+      if((*fnmit) == '/')
+        *fnmit = '\\';
+    }
+
+    hOutFile  = CreateFile(fnm,
+      FILE_SHARE_WRITE,
+      0,
+      &sa, // provide SECURITY_ATTRIBUTES
+      CREATE_ALWAYS,
+      FILE_ATTRIBUTE_NORMAL,
+      NULL);
+    free(fnm);
+
+    // Assign StartInfo StdOutput to file handle
+    si.hStdOutput = hOutFile ;*/
+
+    char *szCmdline = strdup(commandline);
+    for(char *fnmit = szCmdline;*fnmit; fnmit++)
+    {
+      if((*fnmit) == '/')
+        *fnmit = '\\';
+    }
     // Start the child process. 
-    if( !CreateProcess( NULL,   // No module name (use command line)
-      commandline,        // Command line
+    if( !CreateProcess(NULL,   // No module name (use command line)
+      szCmdline,        // Command line
       NULL,           // Process handle not inheritable
       NULL,           // Thread handle not inheritable
       FALSE,          // Set handle inheritance to FALSE
       0,              // No creation flags
       NULL,           // Use parent's environment block
-      NULL,           // Use parent's starting directory 
+      NULL,//wDir,           // Use parent's starting directory 
       &si,            // Pointer to STARTUPINFO structure
       &pi )           // Pointer to PROCESS_INFORMATION structure
       ) 
@@ -145,10 +177,11 @@ namespace
 
     // Wait until child process exits.
     WaitForSingleObject( pi.hProcess, INFINITE );
-
     // Close process and thread handles. 
     CloseHandle( pi.hProcess );
     CloseHandle( pi.hThread );
+    //CloseHandle(hOutFile);
+    free(szCmdline);
     return true;
   }
 
@@ -1830,10 +1863,10 @@ bool lhpOpKinectUtil::Import()
     mafString commandline = apppath;
     commandline += " -logging" + filetoprd;
     if(wxExecute(commandline.GetCStr(), wxEXEC_SYNC) != 0)
-    return false;
+      return false;
     /*system(commandline.GetCStr());
     if(!RunProgram(const_cast<char*>(commandline.GetCStr())))
-      return false;*/
+    return false;*/
 
     filestxt = filetoprd;
     filestxt += "\\Files.txt";
@@ -1984,8 +2017,12 @@ bool lhpOpKinectUtil::Import()
           commandline = mtlbTmp;
           commandline += "/KinVic_Opt_ShV_2012.exe KV_Local_Param_Inp_Shv_K.m LL_Model_S035_K.dat UpL_Model_S035_K.dat >a.log";
           wxSetWorkingDirectory(mtlbTmp.GetCStr());
-          if(wxExecute(commandline.GetCStr(), wxEXEC_SYNC) == 0)
-          //if(!RunProgram(const_cast<char*>(commandline.GetCStr())))
+          mafString tmpOut;
+          tmpOut = mtlbTmp;
+          tmpOut += "/tmp.tmp";
+          wxBusyInfo *busy = new wxBusyInfo("Optimization. Please wait...");
+          //if(wxExecute(commandline.GetCStr(), wxEXEC_SYNC) == 0)
+          if(RunProgram(mtlbTmp.GetCStr(), commandline.GetCStr(), tmpOut.GetCStr()))
           {
             if(mafVMEGroup *grp = ModelImport(modelPath, imported))
             {
@@ -2000,6 +2037,7 @@ bool lhpOpKinectUtil::Import()
               }
             }
           }
+          delete busy;
           mafRemoveDirectory(modelPath);
         }
       }
