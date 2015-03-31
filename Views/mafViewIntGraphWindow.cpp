@@ -203,8 +203,8 @@ void mafViewIntGraphWindow::GetOptimalSplits(double rMin, double rMax, double rC
   }
   else
   {
-    v = 4;
-    s = mlt / 2;
+    v = 5;
+    s = mlt / 10;
   }
   SplitsStep    = s;
   BigSplitIndex = v;
