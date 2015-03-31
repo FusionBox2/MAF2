@@ -92,6 +92,16 @@ int mafVMEAFRefSys::DeepCopy(mafNode *a)
     m_lmMapping = vme_ref_sys->m_lmMapping;
     m_BoneID    = vme_ref_sys->m_BoneID;
     m_Active    = vme_ref_sys->m_Active;
+    for(unsigned i = 0; i < m_vm->getInputs().size(); i++)
+    {
+      if(m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
+      {
+      }
+      else
+      {
+        m_vm->getInputs()[i].second->GetScalar() = vme_ref_sys->m_vm->getInputs()[i].second->GetScalar();
+      }
+    }
     return MAF_OK;
   }  
   return MAF_ERROR;
