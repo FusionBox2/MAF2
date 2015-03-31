@@ -20,6 +20,7 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafString.h"
+#include "mafObject.h"
 
 //----------------------------------------------------------------------------
 // forward declarations
@@ -29,9 +30,10 @@
 This is intended as starting point for user managing. Method for Check User Credentials can be redefined to be
 customized at application level according to custom requests.
 */
-class MAF_EXPORT mafUser
+class MAF_EXPORT mafUser : public mafObject
 {
 public:
+  mafTypeMacro(mafUser, mafObject);
   mafUser();
   virtual ~mafUser();
 
