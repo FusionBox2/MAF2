@@ -74,6 +74,7 @@
 //BES: 23.6.2008 - Large Volume - to be merged 
 #include "mafOpImporterRAWVolume_BES.h"
 #include "mafOpImporterRAWVolume.h"
+#include "lhpOpKinectUtil.h"
 #include "mafOpExporterRaw.h"
 #include "medOpImporterRAWImages.h"
 #include "mafOpExtractIsosurface.h"
@@ -87,6 +88,7 @@
 #include "mafOpCreateSurfaceParametric.h"
 #include "lhpOpBuildHierarchy.h"
 #include "lhpOpTimeReduce.h"
+#include "lhpOpTimeShift.h"
 #include "lhpOpINPExporter.h"
 #include "lhpOpMTRExporter.h"
 #include "lhpOpINPImporter.h"
@@ -608,6 +610,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
     m_Logic->Plug(new lhpOpImporterAnsysCDBFile("Ansys CDB File"), "Finite Element");	
     m_Logic->Plug(new mafOpImporterExternalFile("External data"), "Other");
     m_Logic->Plug(new medOpImporterAnalogWS("ASCII Analog (VWs)"), "Motion Analysis");
+    m_Logic->Plug(new lhpOpKinectUtil("Kinect"),"Motion Analysis");  
     m_Logic->Plug(new lhpOpImporterRSScan("RSScan"), "Finite Element");	
   }
 
@@ -680,6 +683,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
 
     m_Logic->Plug(new lhpOpHelAxis("Helical axis"),"Create/Derive");
     m_Logic->Plug(new lhpOpTimeReduce("Time reduce"),"Modify");
+    m_Logic->Plug(new lhpOpTimeShift("Time shift"),"Modify");
     m_Logic->Plug(new lhpOpLMProj(true, "Landmark Cloud Projection"),"Create/Derive");
     m_Logic->Plug(new lhpOpSolidify("Solidify Landmark Cloud"),"Create/Derive");
     m_Logic->Plug(new lhpOpSoftReg("Soft tissue registration"),"Create/Derive");

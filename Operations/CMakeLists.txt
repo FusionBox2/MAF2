@@ -203,8 +203,11 @@ SET(PROJECT_SRCS
 	lhpOpComputeTensor.h
 	lhpCOmputeTensor.cpp
 	lhpComputeTensor.h
-        
-    medOpCreateMuscleWrapper.cpp	
+	lhpOpKinectUtil.cpp
+	lhpOpKinectUtil.h
+	lhpOpTimeShift.cpp
+	lhpOpTimeShift.h        
+	medOpCreateMuscleWrapper.cpp	
 	medOpCreateMuscleWrapper.h
 )
 
