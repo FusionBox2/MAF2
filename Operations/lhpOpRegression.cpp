@@ -1015,8 +1015,8 @@ bool lhpOpRegression::RegressionFemur(bool right)
         m_Cloud->SetLandmark(m_NewIndexes[indx++], V4.x, V4.y, V4.z, kframes[nI]);
     }
 
-    if(nI > 0)
-      continue;
+    //if(nI > 0)
+    //  continue;
 
     mafMatrix mGlobal, mGlobalInv, mLocal, mLocalInv;
     m_Cloud->GetOutput()->GetAbsMatrix(mGlobal, kframes[nI]);
@@ -1136,14 +1136,20 @@ bool lhpOpRegression::RegressionFemur(bool right)
       TransformPoint(mLocal, center);
       if(!right)
         center.x = - center.x;
-      AddSphere("Head", center.components, radius);
+      if(kframes.size() <= 1)
+        AddSphere("Head", center.components, radius);
       TransformPoint(mGlobalInv, center);
-      LMAdding LMdata;
-      LMdata.m_Pelvic = false;
-      LMdata.m_Name  = (right) ? "RFCH" : "LFCH";
-      LMdata.m_Index = -1;
-      LMdata.m_Pos = center;
-      m_LMAdd.push_back(LMdata);
+      if(nI == 0)
+      {
+        LMAdding LMdata;
+        LMdata.m_Pelvic = true;
+        LMdata.m_Name  = (right) ? "RFCH" : "LFCH";
+        LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
+        LMdata.m_Pos = center;
+        m_LMAdd.push_back(LMdata);
+        m_NewIndexes.push_back(LMdata.m_Index);
+      }
+      m_Cloud->SetLandmark(m_NewIndexes[indx++], center.x, center.y, center.z, kframes[nI]);
     }
 
     V3d<double> MC, LC;
@@ -1230,14 +1236,20 @@ bool lhpOpRegression::RegressionFemur(bool right)
       mFin.SetElement(0, 3, center[0]);
       mFin.SetElement(1, 3, center[1]);
       mFin.SetElement(2, 3, center[2]);
-      AddEllipsoid("Lat_Cond", mFin, radius);
+      if(kframes.size() <= 1)
+        AddEllipsoid("Lat_Cond", mFin, radius);
       TransformPoint(mGlobalInv, center);
-      LMAdding LMdata;
-      LMdata.m_Pelvic = false;
-      LMdata.m_Name  = (right) ? "RFLC" : "LFLC";
-      LMdata.m_Index = -1;
-      LMdata.m_Pos = center;
-      m_LMAdd.push_back(LMdata);
+      if(nI == 0)
+      {
+        LMAdding LMdata;
+        LMdata.m_Pelvic = true;
+        LMdata.m_Name  = (right) ? "RFLC" : "LFLC";
+        LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
+        LMdata.m_Pos = center;
+        m_LMAdd.push_back(LMdata);
+        m_NewIndexes.push_back(LMdata.m_Index);
+      }
+      m_Cloud->SetLandmark(m_NewIndexes[indx++], center.x, center.y, center.z, kframes[nI]);
       LC = center;
     }
 
@@ -1325,24 +1337,37 @@ bool lhpOpRegression::RegressionFemur(bool right)
       mFin.SetElement(0, 3, center[0]);
       mFin.SetElement(1, 3, center[1]);
       mFin.SetElement(2, 3, center[2]);
-      AddEllipsoid("Med_Cond", mFin, radius);
+      if(kframes.size() <= 1)
+        AddEllipsoid("Med_Cond", mFin, radius);
       TransformPoint(mGlobalInv, center);
-      LMAdding LMdata;
-      LMdata.m_Pelvic = false;
-      LMdata.m_Name  = (right) ? "RFMC" : "LFMC";
-      LMdata.m_Index = -1;
-      LMdata.m_Pos = center;
-      m_LMAdd.push_back(LMdata);
+      if(nI == 0)
+      {
+        LMAdding LMdata;
+        LMdata.m_Pelvic = true;
+        LMdata.m_Name  = (right) ? "RFMC" : "LFMC";
+        LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
+        LMdata.m_Pos = center;
+        m_LMAdd.push_back(LMdata);
+        m_NewIndexes.push_back(LMdata.m_Index);
+      }
+      m_Cloud->SetLandmark(m_NewIndexes[indx++], center.x, center.y, center.z, kframes[nI]);
       MC = center;
     }
     if(m_Approximate[5] && m_Approximate[6])
     {
-      LMAdding LMdata;
-      LMdata.m_Pelvic = false;
-      LMdata.m_Name  = (right) ? "RFBC" : "LFBC";
-      LMdata.m_Index = -1;
-      LMdata.m_Pos = (LC + MC) / 2;
-      m_LMAdd.push_back(LMdata);
+      if(nI == 0)
+      {
+        LMAdding LMdata;
+        LMdata.m_Pelvic = true;
+        LMdata.m_Name  = (right) ? "RFBC" : "LFBC";
+        LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
+        LMdata.m_Pos = (LC + MC) / 2;
+        m_LMAdd.push_back(LMdata);
+        m_NewIndexes.push_back(LMdata.m_Index);
+      }
+      V3d<double> center;
+      center = (LC + MC) / 2;
+      m_Cloud->SetLandmark(m_NewIndexes[indx++], center.x, center.y, center.z, kframes[nI]);
     }
     if(m_Approximate[7])
     {
@@ -1371,16 +1396,24 @@ bool lhpOpRegression::RegressionFemur(bool right)
         center.x = - center.x;
         normal.x = - normal.x;
       }
-      AddPlane("Lat_Patella", center.components, normal.components);
-      AddArrow("Lat_Patella", center.components, normal.components);
+      if(kframes.size() <= 1)
+      {
+        AddPlane("Lat_Patella", center.components, normal.components);
+        AddArrow("Lat_Patella", center.components, normal.components);
+      }
       TransformPoint(mGlobalInv, center);
-      LMAdding LMdata;
-      LMdata.m_Pelvic = false;
-      //LMdata.m_Name  = "Groove";
-      LMdata.m_Name  = (right) ? "RFLP" : "LFLP";
-      LMdata.m_Index = -1;
-      LMdata.m_Pos = center;
-      m_LMAdd.push_back(LMdata);
+      if(nI == 0)
+      {
+        LMAdding LMdata;
+        LMdata.m_Pelvic = true;
+        //LMdata.m_Name  = "Groove";
+        LMdata.m_Name  = (right) ? "RFLP" : "LFLP";
+        LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
+        LMdata.m_Pos = center;
+        m_LMAdd.push_back(LMdata);
+        m_NewIndexes.push_back(LMdata.m_Index);
+      }
+      m_Cloud->SetLandmark(m_NewIndexes[indx++], center.x, center.y, center.z, kframes[nI]);
     }
     if(m_Approximate[8])
     {
@@ -1409,16 +1442,24 @@ bool lhpOpRegression::RegressionFemur(bool right)
         center.x = - center.x;
         normal.x = - normal.x;
       }
-      AddPlane("Med_Patella", center.components, normal.components);
-      AddArrow("Med_Patella", center.components, normal.components);
+      if(kframes.size() <= 1)
+      {
+        AddPlane("Med_Patella", center.components, normal.components);
+        AddArrow("Med_Patella", center.components, normal.components);
+      }
       TransformPoint(mGlobalInv, center);
-      LMAdding LMdata;
-      LMdata.m_Pelvic = false;
-      //LMdata.m_Name  = "Groove";
-      LMdata.m_Name  = (right) ? "RFMP" : "LFMP";
-      LMdata.m_Index = -1;
-      LMdata.m_Pos = center;
-      m_LMAdd.push_back(LMdata);
+      if(nI == 0)
+      {
+        LMAdding LMdata;
+        LMdata.m_Pelvic = true;
+        //LMdata.m_Name  = "Groove";
+        LMdata.m_Name  = (right) ? "RFMP" : "LFMP";
+        LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
+        LMdata.m_Pos = center;
+        m_LMAdd.push_back(LMdata);
+        m_NewIndexes.push_back(LMdata.m_Index);
+      }
+      m_Cloud->SetLandmark(m_NewIndexes[indx++], center.x, center.y, center.z, kframes[nI]);
     }
     if(m_Approximate[9])
     {
@@ -1447,16 +1488,23 @@ bool lhpOpRegression::RegressionFemur(bool right)
         center.x = - center.x;
         normal.x = - normal.x;
       }
-      AddPlane("Sulcus", center.components, normal.components);
-      AddArrow("Sulcus", center.components, normal.components);
+      if(kframes.size() <= 1)
+      {
+        AddPlane("Sulcus", center.components, normal.components);
+        AddArrow("Sulcus", center.components, normal.components);
+      }
       TransformPoint(mGlobalInv, center);
-      LMAdding LMdata;
-      LMdata.m_Pelvic = false;
-      //LMdata.m_Name  = "Groove";
-      LMdata.m_Name  = (right) ? "RFSC" : "LFSC";
-      LMdata.m_Index = -1;
-      LMdata.m_Pos = center;
-      m_LMAdd.push_back(LMdata);
+      {
+        LMAdding LMdata;
+        LMdata.m_Pelvic = true;
+        //LMdata.m_Name  = "Groove";
+        LMdata.m_Name  = (right) ? "RFSC" : "LFSC";
+        LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
+        LMdata.m_Pos = center;
+        m_LMAdd.push_back(LMdata);
+        m_NewIndexes.push_back(LMdata.m_Index);
+      }
+      m_Cloud->SetLandmark(m_NewIndexes[indx++], center.x, center.y, center.z, kframes[nI]);
     }
    }
   return true;
@@ -1869,226 +1917,263 @@ bool lhpOpRegression::RegressionHumerus(bool right)
     return false;
   }
 
-  V3d<double> AL2, AL5, AL7;
-  cloud->GetLandmark(ind2, AL2.components);
-  cloud->GetLandmark(ind5, AL5.components);
-  cloud->GetLandmark(ind7, AL7.components);
-  mafMatrix mGlobal, mGlobalInv, mLocal, mLocalInv;
-  cloud->GetOutput()->GetAbsMatrix(mGlobal);
-  mGlobalInv = mGlobal;
-  mGlobalInv.Invert();
-  TransformPoint(mGlobal, AL2);
-  TransformPoint(mGlobal, AL5);
-  TransformPoint(mGlobal, AL7);
-  if(!right)
+
+  std::vector<mafTimeStamp> kframes;
+
+  std::vector<int> m_NewIndexes;
+
+  if(!m_Cloud->IsOpen())
+    m_Cloud->GetDataTimeStamps(kframes);
+  else if(m_Cloud->GetNumberOfLandmarks() > 0)
+    m_Cloud->GetLandmark(0)->GetMatrixTimeStamps(kframes);
+
+  if(kframes.size() == 0)
+    return false;
+
+  for(int nI = 0; nI < kframes.size(); nI++)
   {
-    AL2.x = - AL2.x;
-    AL5.x = - AL5.x;
-    AL7.x = - AL7.x;
-  }
-  HumerusLocalFrame(AL2, AL5, AL7, mLocal);
-  mLocalInv = mLocal;
-  mLocalInv.Invert();
-
-  TransformPoint(mLocalInv, AL2);
-  TransformPoint(mLocalInv, AL5);
-  TransformPoint(mLocalInv, AL7);
-
-  double norm1 = MatrixNorm(AL2, AL5, AL7);
-  double norm2 = MatrixStdDev(AL2, AL5, AL7);
-
-  int  usedALs[] = {1, 4, 6};
-  double sz1min, sz1max;
-  double sz2min, sz2max;
-  for(unsigned i = 0; i < 78; i++)
-  {
-    Mat_DP nrmmat(3, 3);
-    for(unsigned j = 0; j < 3; j ++)
+    int indx = 0;
+    V3d<double> AL2, AL5, AL7;
+    cloud->GetLandmark(ind2, AL2.components, kframes[nI]);
+    cloud->GetLandmark(ind5, AL5.components, kframes[nI]);
+    cloud->GetLandmark(ind7, AL7.components, kframes[nI]);
+    mafMatrix mGlobal, mGlobalInv, mLocal, mLocalInv;
+    cloud->GetOutput()->GetAbsMatrix(mGlobal);
+    mGlobalInv = mGlobal;
+    mGlobalInv.Invert();
+    TransformPoint(mGlobal, AL2);
+    TransformPoint(mGlobal, AL5);
+    TransformPoint(mGlobal, AL7);
+    if(!right)
     {
-      for(unsigned k = 0; k < 3; k++)
-      {
-        nrmmat[j][k] = HumerusData[i][3 * usedALs[j] + k];
-      }
+      AL2.x = - AL2.x;
+      AL5.x = - AL5.x;
+      AL7.x = - AL7.x;
     }
-    double sz1 = MatrixNorm  (V3d<double>(HumerusData[i] + 3 * usedALs[0]), V3d<double>(HumerusData[i] + 3 * usedALs[1]), V3d<double>(HumerusData[i] + 3 * usedALs[2]));
-    double sz2 = MatrixStdDev(V3d<double>(HumerusData[i] + 3 * usedALs[0]), V3d<double>(HumerusData[i] + 3 * usedALs[1]), V3d<double>(HumerusData[i] + 3 * usedALs[2]));
-    if(i == 0 || sz1 > sz1max)
-      sz1max = sz1;
-    if(i == 0 || sz1 < sz1min)
-      sz1min = sz1;
-    if(i == 0 || sz2 > sz2max)
-      sz2max = sz2;
-    if(i == 0 || sz2 < sz2min)
-      sz2min = sz2;
-  }
-  if(norm1 < (1.0 - DeltaAllowed) * sz1min || norm1 > (1.0 + DeltaAllowed) * sz1max)
-  {
-    if(wxNO == wxMessageBox(wxString::Format("Source data size %lf is outside of database range (%lf, %lf). Do you want to continue?", norm1, sz1min, sz1max), "Warning.", wxYES_NO | wxCENTRE | wxICON_WARNING))
-    {
-      return false;
-    }
-  }
-  std::vector<double> distances1;
-  std::vector<double> distances2;
+    HumerusLocalFrame(AL2, AL5, AL7, mLocal);
+    mLocalInv = mLocal;
+    mLocalInv.Invert();
 
-  for(unsigned i = 0; i < 78; i++)
-  {
-    Mat_DP nrmmat(3, 3);
-    for(unsigned j = 0; j < 3; j ++)
-    {
-      for(unsigned k = 0; k < 3; k++)
-      {
-        nrmmat[j][k] = HumerusData[i][3 * usedALs[j] + k];
-      }
-    }
-    double sz1 = MatrixNorm  (V3d<double>(HumerusData[i] + 3 * usedALs[0]) - AL2, 
-                              V3d<double>(HumerusData[i] + 3 * usedALs[1]) - AL5, 
-                              V3d<double>(HumerusData[i] + 3 * usedALs[2]) - AL7);
-    double sz2 = MatrixStdDev(V3d<double>(HumerusData[i] + 3 * usedALs[0]) - AL2, 
-                              V3d<double>(HumerusData[i] + 3 * usedALs[1]) - AL5, 
-                              V3d<double>(HumerusData[i] + 3 * usedALs[2]) - AL7);
-    distances1.push_back(sz1);
-    distances2.push_back(sz2);
-  }
+    TransformPoint(mLocalInv, AL2);
+    TransformPoint(mLocalInv, AL5);
+    TransformPoint(mLocalInv, AL7);
 
-  Mat_DP matrVec(234, 6);
-  Mat_DP matrScl(78, 4);
-  Vec_DP weightsVec(234);
-  Vec_DP weightsScl(78);
+    double norm1 = MatrixNorm(AL2, AL5, AL7);
+    double norm2 = MatrixStdDev(AL2, AL5, AL7);
 
-
-  for(unsigned i = 0; i < 78; i++)
-  {
-    for(unsigned j = 0; j < 3; j++)
-    {
-      V3d<double> tmp(HumerusData[i]+ 3 * usedALs[j]);
-      matrScl[i][j] = sqrt(tmp.length2());
-      for(unsigned k = 0; k < 3; k++)
-      {
-        matrVec[3 * i + k][j] = HumerusData[i][3 * usedALs[j] + k];
-      }
-    }
-    matrScl[i][3] = 1.0;
-    for(unsigned j = 0; j < 3; j++)
-    {
-      for(unsigned k = 0; k < 3; k++)
-      {
-        if(j == k)
-          matrVec[3 * i + k][3 + j] = 1.0;
-        else
-          matrVec[3 * i + k][3 + j] = 0.0;
-      }
-    }
-  }
-  for(unsigned i = 0; i < 78; i++)
-  {
-    weightsVec[3 * i + 0] = 1.0 / (1.0 + distances1[i]);
-    weightsVec[3 * i + 1] = 1.0 / (1.0 + distances1[i]);
-    weightsVec[3 * i + 2] = 1.0 / (1.0 + distances1[i]);
-    weightsScl[i]         = 1.0 / (1.0 + distances1[i]);
-  }
-
-
-
-  if(m_Approximate[0])
-  {
-    Vec_DP resVec(234);
-    Vec_DP resScl(78);
-    Vec_DP coefsVec(6);
-    Vec_DP coefsScl(4);
+    int  usedALs[] = {1, 4, 6};
+    double sz1min, sz1max;
+    double sz2min, sz2max;
     for(unsigned i = 0; i < 78; i++)
     {
-      for(unsigned j = 0; j < 3; j++)
-        resVec[3 * i + j] = HumerusData[i][27 + j];
-      resScl[i] = HumerusData[i][30];
+      Mat_DP nrmmat(3, 3);
+      for(unsigned j = 0; j < 3; j ++)
+      {
+        for(unsigned k = 0; k < 3; k++)
+        {
+          nrmmat[j][k] = HumerusData[i][3 * usedALs[j] + k];
+        }
+      }
+      double sz1 = MatrixNorm  (V3d<double>(HumerusData[i] + 3 * usedALs[0]), V3d<double>(HumerusData[i] + 3 * usedALs[1]), V3d<double>(HumerusData[i] + 3 * usedALs[2]));
+      double sz2 = MatrixStdDev(V3d<double>(HumerusData[i] + 3 * usedALs[0]), V3d<double>(HumerusData[i] + 3 * usedALs[1]), V3d<double>(HumerusData[i] + 3 * usedALs[2]));
+      if(i == 0 || sz1 > sz1max)
+        sz1max = sz1;
+      if(i == 0 || sz1 < sz1min)
+        sz1min = sz1;
+      if(i == 0 || sz2 > sz2max)
+        sz2max = sz2;
+      if(i == 0 || sz2 < sz2min)
+        sz2min = sz2;
     }
-    FindRegCoefs(matrVec, weightsVec, resVec, coefsVec);
-    FindRegCoefs(matrScl, weightsScl, resScl, coefsScl);
-    V3d<double> center;
-    double radius;
-    center = coefsVec[0] * AL2 + coefsVec[1] * AL5 + coefsVec[2] * AL7 + V3d<double>(coefsVec[3], coefsVec[4], coefsVec[5]);
-    radius = coefsScl[0] * sqrt(AL2.length2()) + coefsScl[1] * sqrt(AL5.length2()) + coefsScl[2] * sqrt(AL7.length2()) + coefsScl[3];
-    TransformPoint(mLocal, center);
-    if(!right)
-      center.x = - center.x;
-    AddSphere("Head", center.components, radius);
-    TransformPoint(mGlobalInv, center);
-    LMAdding LMdata;
-    LMdata.m_Pelvic = false;
-    //LMdata.m_Name  = "Head";
-    LMdata.m_Name  = (right) ? "RHCH" : "LHCH";
-    LMdata.m_Index = -1;
-    LMdata.m_Pos = center;
-    m_LMAdd.push_back(LMdata);
-  }
-  if(m_Approximate[1])
-  {
-    Vec_DP resVec(234);
-    Vec_DP resScl(78);
-    Vec_DP coefsVec(6);
-    Vec_DP coefsScl(4);
+    if(norm1 < (1.0 - DeltaAllowed) * sz1min || norm1 > (1.0 + DeltaAllowed) * sz1max)
+    {
+      if(wxNO == wxMessageBox(wxString::Format("Source data size %lf is outside of database range (%lf, %lf). Do you want to continue?", norm1, sz1min, sz1max), "Warning.", wxYES_NO | wxCENTRE | wxICON_WARNING))
+      {
+        return false;
+      }
+    }
+    std::vector<double> distances1;
+    std::vector<double> distances2;
+
     for(unsigned i = 0; i < 78; i++)
     {
-      for(unsigned j = 0; j < 3; j++)
-        resVec[3 * i + j] = HumerusData[i][31 + j];
-      resScl[i] = HumerusData[i][34];
+      Mat_DP nrmmat(3, 3);
+      for(unsigned j = 0; j < 3; j ++)
+      {
+        for(unsigned k = 0; k < 3; k++)
+        {
+          nrmmat[j][k] = HumerusData[i][3 * usedALs[j] + k];
+        }
+      }
+      double sz1 = MatrixNorm  (V3d<double>(HumerusData[i] + 3 * usedALs[0]) - AL2, 
+        V3d<double>(HumerusData[i] + 3 * usedALs[1]) - AL5, 
+        V3d<double>(HumerusData[i] + 3 * usedALs[2]) - AL7);
+      double sz2 = MatrixStdDev(V3d<double>(HumerusData[i] + 3 * usedALs[0]) - AL2, 
+        V3d<double>(HumerusData[i] + 3 * usedALs[1]) - AL5, 
+        V3d<double>(HumerusData[i] + 3 * usedALs[2]) - AL7);
+      distances1.push_back(sz1);
+      distances2.push_back(sz2);
     }
-    FindRegCoefs(matrVec, weightsVec, resVec, coefsVec);
-    FindRegCoefs(matrScl, weightsScl, resScl, coefsScl);
-    V3d<double> center;
-    double radius;
-    center = coefsVec[0] * AL2 + coefsVec[1] * AL5 + coefsVec[2] * AL7 + V3d<double>(coefsVec[3], coefsVec[4], coefsVec[5]);
-    radius = coefsScl[0] * sqrt(AL2.length2()) + coefsScl[1] * sqrt(AL5.length2()) + coefsScl[2] * sqrt(AL7.length2()) + coefsScl[3];
-    TransformPoint(mLocal, center);
-    if(!right)
-      center.x = - center.x;
-    AddSphere("Condyle", center.components, radius);
-    TransformPoint(mGlobalInv, center);
-    LMAdding LMdata;
-    LMdata.m_Pelvic = false;
-    //LMdata.m_Name  = "Condyle";
-    LMdata.m_Name  = (right) ? "RHCO" : "LHCO";
-    LMdata.m_Index = -1;
-    LMdata.m_Pos = center;
-    m_LMAdd.push_back(LMdata);
-  }
-  if(m_Approximate[2])
-  {
-    Vec_DP resVec1(234);
-    Vec_DP resVec2(234);
-    Vec_DP coefsVec1(6);
-    Vec_DP coefsVec2(6);
+
+    Mat_DP matrVec(234, 6);
+    Mat_DP matrScl(78, 4);
+    Vec_DP weightsVec(234);
+    Vec_DP weightsScl(78);
+
+
     for(unsigned i = 0; i < 78; i++)
     {
       for(unsigned j = 0; j < 3; j++)
       {
-        resVec1[3 * i + j] = HumerusData[i][21 + j];
-        resVec2[3 * i + j] = HumerusData[i][24 + j];
+        V3d<double> tmp(HumerusData[i]+ 3 * usedALs[j]);
+        matrScl[i][j] = sqrt(tmp.length2());
+        for(unsigned k = 0; k < 3; k++)
+        {
+          matrVec[3 * i + k][j] = HumerusData[i][3 * usedALs[j] + k];
+        }
+      }
+      matrScl[i][3] = 1.0;
+      for(unsigned j = 0; j < 3; j++)
+      {
+        for(unsigned k = 0; k < 3; k++)
+        {
+          if(j == k)
+            matrVec[3 * i + k][3 + j] = 1.0;
+          else
+            matrVec[3 * i + k][3 + j] = 0.0;
+        }
       }
     }
-    FindRegCoefs(matrVec, weightsVec, resVec1, coefsVec1);
-    FindRegCoefs(matrVec, weightsVec, resVec2, coefsVec2);
-    V3d<double> center;
-    V3d<double> normal;
-    center = coefsVec1[0] * AL2 + coefsVec1[1] * AL5 + coefsVec1[2] * AL7 + V3d<double>(coefsVec1[3], coefsVec1[4], coefsVec1[5]);
-    normal = coefsVec2[0] * AL2 + coefsVec2[1] * AL5 + coefsVec2[2] * AL7 + V3d<double>(coefsVec2[3], coefsVec2[4], coefsVec2[5]);
-    TransformPoint(mLocal, center);
-    TransformVector(mLocal, normal);
-    if(!right)
+    for(unsigned i = 0; i < 78; i++)
     {
-      center.x = - center.x;
-      normal.x = - normal.x;
+      weightsVec[3 * i + 0] = 1.0 / (1.0 + distances1[i]);
+      weightsVec[3 * i + 1] = 1.0 / (1.0 + distances1[i]);
+      weightsVec[3 * i + 2] = 1.0 / (1.0 + distances1[i]);
+      weightsScl[i]         = 1.0 / (1.0 + distances1[i]);
     }
-    AddPlane("Groove", center.components, normal.components);
-    AddArrow("Groove", center.components, normal.components);
-    TransformPoint(mGlobalInv, center);
-    LMAdding LMdata;
-    LMdata.m_Pelvic = false;
-    //LMdata.m_Name  = "Groove";
-    LMdata.m_Name  = (right) ? "RHGR" : "LHGR";
-    LMdata.m_Index = -1;
-    LMdata.m_Pos = center;
-    m_LMAdd.push_back(LMdata);
+
+
+
+    if(m_Approximate[0])
+    {
+      Vec_DP resVec(234);
+      Vec_DP resScl(78);
+      Vec_DP coefsVec(6);
+      Vec_DP coefsScl(4);
+      for(unsigned i = 0; i < 78; i++)
+      {
+        for(unsigned j = 0; j < 3; j++)
+          resVec[3 * i + j] = HumerusData[i][27 + j];
+        resScl[i] = HumerusData[i][30];
+      }
+      FindRegCoefs(matrVec, weightsVec, resVec, coefsVec);
+      FindRegCoefs(matrScl, weightsScl, resScl, coefsScl);
+      V3d<double> center;
+      double radius;
+      center = coefsVec[0] * AL2 + coefsVec[1] * AL5 + coefsVec[2] * AL7 + V3d<double>(coefsVec[3], coefsVec[4], coefsVec[5]);
+      radius = coefsScl[0] * sqrt(AL2.length2()) + coefsScl[1] * sqrt(AL5.length2()) + coefsScl[2] * sqrt(AL7.length2()) + coefsScl[3];
+      TransformPoint(mLocal, center);
+      if(!right)
+        center.x = - center.x;
+      if(kframes.size() <= 1)
+        AddSphere("Head", center.components, radius);
+      TransformPoint(mGlobalInv, center);
+      if(nI == 0)
+      {
+        LMAdding LMdata;
+        LMdata.m_Pelvic = true;
+        //LMdata.m_Name  = "Head";
+        LMdata.m_Name  = (right) ? "RHCH" : "LHCH";
+        LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
+        LMdata.m_Pos = center;
+        m_LMAdd.push_back(LMdata);
+        m_NewIndexes.push_back(LMdata.m_Index);
+      }
+      m_Cloud->SetLandmark(m_NewIndexes[indx++], center.x, center.y, center.z, kframes[nI]);
+    }
+    if(m_Approximate[1])
+    {
+      Vec_DP resVec(234);
+      Vec_DP resScl(78);
+      Vec_DP coefsVec(6);
+      Vec_DP coefsScl(4);
+      for(unsigned i = 0; i < 78; i++)
+      {
+        for(unsigned j = 0; j < 3; j++)
+          resVec[3 * i + j] = HumerusData[i][31 + j];
+        resScl[i] = HumerusData[i][34];
+      }
+      FindRegCoefs(matrVec, weightsVec, resVec, coefsVec);
+      FindRegCoefs(matrScl, weightsScl, resScl, coefsScl);
+      V3d<double> center;
+      double radius;
+      center = coefsVec[0] * AL2 + coefsVec[1] * AL5 + coefsVec[2] * AL7 + V3d<double>(coefsVec[3], coefsVec[4], coefsVec[5]);
+      radius = coefsScl[0] * sqrt(AL2.length2()) + coefsScl[1] * sqrt(AL5.length2()) + coefsScl[2] * sqrt(AL7.length2()) + coefsScl[3];
+      TransformPoint(mLocal, center);
+      if(!right)
+        center.x = - center.x;
+      if(kframes.size() <= 1)
+      AddSphere("Condyle", center.components, radius);
+      TransformPoint(mGlobalInv, center);
+      if(nI == 0)
+      {
+        LMAdding LMdata;
+        LMdata.m_Pelvic = true;
+        //LMdata.m_Name  = "Condyle";
+        LMdata.m_Name  = (right) ? "RHCO" : "LHCO";
+        LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
+        LMdata.m_Pos = center;
+        m_LMAdd.push_back(LMdata);
+        m_NewIndexes.push_back(LMdata.m_Index);
+      }
+      m_Cloud->SetLandmark(m_NewIndexes[indx++], center.x, center.y, center.z, kframes[nI]);
+    }
+    if(m_Approximate[2])
+    {
+      Vec_DP resVec1(234);
+      Vec_DP resVec2(234);
+      Vec_DP coefsVec1(6);
+      Vec_DP coefsVec2(6);
+      for(unsigned i = 0; i < 78; i++)
+      {
+        for(unsigned j = 0; j < 3; j++)
+        {
+          resVec1[3 * i + j] = HumerusData[i][21 + j];
+          resVec2[3 * i + j] = HumerusData[i][24 + j];
+        }
+      }
+      FindRegCoefs(matrVec, weightsVec, resVec1, coefsVec1);
+      FindRegCoefs(matrVec, weightsVec, resVec2, coefsVec2);
+      V3d<double> center;
+      V3d<double> normal;
+      center = coefsVec1[0] * AL2 + coefsVec1[1] * AL5 + coefsVec1[2] * AL7 + V3d<double>(coefsVec1[3], coefsVec1[4], coefsVec1[5]);
+      normal = coefsVec2[0] * AL2 + coefsVec2[1] * AL5 + coefsVec2[2] * AL7 + V3d<double>(coefsVec2[3], coefsVec2[4], coefsVec2[5]);
+      TransformPoint(mLocal, center);
+      TransformVector(mLocal, normal);
+      if(!right)
+      {
+        center.x = - center.x;
+        normal.x = - normal.x;
+      }
+      if(kframes.size() <= 1)
+      {
+        AddPlane("Groove", center.components, normal.components);
+        AddArrow("Groove", center.components, normal.components);
+      }
+      TransformPoint(mGlobalInv, center);
+      if(nI == 0)
+      {
+        LMAdding LMdata;
+        LMdata.m_Pelvic = true;
+        //LMdata.m_Name  = "Groove";
+        LMdata.m_Name  = (right) ? "RHGR" : "LHGR";
+        LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
+        LMdata.m_Pos = center;
+        m_LMAdd.push_back(LMdata);
+        m_NewIndexes.push_back(LMdata.m_Index);
+      }
+      m_Cloud->SetLandmark(m_NewIndexes[indx++], center.x, center.y, center.z, kframes[nI]);
+    }
   }
   return true;
 }
@@ -2128,195 +2213,226 @@ bool lhpOpRegression::RegressionScapula(bool right)
     wxMessageBox(msgbuf, "Error");
     return false;
   }
-  V3d<double> AL1, AL2, AL4;
-  cloud->GetLandmark(ind1, AL1.components);
-  cloud->GetLandmark(ind2, AL2.components);
-  cloud->GetLandmark(ind4, AL4.components);
-  mafMatrix mGlobal, mGlobalInv, mLocal, mLocalInv;
-  cloud->GetOutput()->GetAbsMatrix(mGlobal);
-  mGlobalInv = mGlobal;
-  mGlobalInv.Invert();
-  TransformPoint(mGlobal, AL1);
-  TransformPoint(mGlobal, AL2);
-  TransformPoint(mGlobal, AL4);
-  if(!right)
+
+  std::vector<mafTimeStamp> kframes;
+
+  std::vector<int> m_NewIndexes;
+
+  if(!m_Cloud->IsOpen())
+    m_Cloud->GetDataTimeStamps(kframes);
+  else if(m_Cloud->GetNumberOfLandmarks() > 0)
+    m_Cloud->GetLandmark(0)->GetMatrixTimeStamps(kframes);
+
+  if(kframes.size() == 0)
+    return false;
+
+  for(int nI = 0; nI < kframes.size(); nI++)
   {
-    AL1.x = - AL1.x;
-    AL2.x = - AL2.x;
-    AL4.x = - AL4.x;
-  }
-  ScapulaLocalFrame(AL1, AL2, AL4, mLocal);
-  mLocalInv = mLocal;
-  mLocalInv.Invert();
-
-  TransformPoint(mLocalInv, AL1);
-  TransformPoint(mLocalInv, AL2);
-  TransformPoint(mLocalInv, AL4);
-
-  double norm1 = MatrixNorm(AL1, AL2, AL4);
-  double norm2 = MatrixStdDev(AL1, AL2, AL4);
-
-  int  usedALs[] = {0, 1, 3};
-  double sz1min, sz1max;
-  double sz2min, sz2max;
-  for(unsigned i = 0; i < 57; i++)
-  {
-    Mat_DP nrmmat(3, 3);
-    for(unsigned j = 0; j < 3; j ++)
-    {
-      for(unsigned k = 0; k < 3; k++)
-      {
-        nrmmat[j][k] = ScapulaData[i][3 * usedALs[j] + k];
-      }
-    }
-    double sz1 = MatrixNorm  (V3d<double>(ScapulaData[i] + 3 * usedALs[0]), V3d<double>(ScapulaData[i] + 3 * usedALs[1]), V3d<double>(ScapulaData[i] + 3 * usedALs[2]));
-    double sz2 = MatrixStdDev(V3d<double>(ScapulaData[i] + 3 * usedALs[0]), V3d<double>(ScapulaData[i] + 3 * usedALs[1]), V3d<double>(ScapulaData[i] + 3 * usedALs[2]));
-    if(i == 0 || sz1 > sz1max)
-      sz1max = sz1;
-    if(i == 0 || sz1 < sz1min)
-      sz1min = sz1;
-    if(i == 0 || sz2 > sz2max)
-      sz2max = sz2;
-    if(i == 0 || sz2 < sz2min)
-      sz2min = sz2;
-  }
-  if(norm1 < (1.0 - DeltaAllowed) * sz1min || norm1 > (1.0 + DeltaAllowed) * sz1max)
-  {
-    if(wxNO == wxMessageBox(wxString::Format("Source data size %lf is outside of database range (%lf, %lf). Do you want to continue?", norm1, sz1min, sz1max), "Warning.", wxYES_NO | wxCENTRE | wxICON_WARNING))
-    {
-      return false;
-    }
-  }
-  std::vector<double> distances1;
-  std::vector<double> distances2;
-
-  for(unsigned i = 0; i < 57; i++)
-  {
-    Mat_DP nrmmat(3, 3);
-    for(unsigned j = 0; j < 3; j ++)
-    {
-      for(unsigned k = 0; k < 3; k++)
-      {
-        nrmmat[j][k] = ScapulaData[i][3 * usedALs[j] + k];
-      }
-    }
-    double sz1 = MatrixNorm  (V3d<double>(ScapulaData[i] + 3 * usedALs[0]) - AL1, 
-      V3d<double>(ScapulaData[i] + 3 * usedALs[1]) - AL2, 
-      V3d<double>(ScapulaData[i] + 3 * usedALs[2]) - AL4);
-    double sz2 = MatrixStdDev(V3d<double>(ScapulaData[i] + 3 * usedALs[0]) - AL1, 
-      V3d<double>(ScapulaData[i] + 3 * usedALs[1]) - AL2, 
-      V3d<double>(ScapulaData[i] + 3 * usedALs[2]) - AL4);
-    distances1.push_back(sz1);
-    distances2.push_back(sz2);
-  }
-
-  Mat_DP matrVec(171, 6);
-  Mat_DP matrScl(57, 4);
-  Vec_DP weightsVec(171);
-  Vec_DP weightsScl(57);
-
-
-  for(unsigned i = 0; i < 57; i++)
-  {
-    for(unsigned j = 0; j < 3; j++)
-    {
-      V3d<double> tmp(ScapulaData[i]+ 3 * usedALs[j]);
-      matrScl[i][j] = sqrt(tmp.length2());
-      for(unsigned k = 0; k < 3; k++)
-      {
-        matrVec[3 * i + k][j] = ScapulaData[i][3 * usedALs[j] + k];
-      }
-    }
-    matrScl[i][3] = 1.0;
-    for(unsigned j = 0; j < 3; j++)
-    {
-      for(unsigned k = 0; k < 3; k++)
-      {
-        if(j == k)
-          matrVec[3 * i + k][3 + j] = 1.0;
-        else
-          matrVec[3 * i + k][3 + j] = 0.0;
-      }
-    }
-  }
-  for(unsigned i = 0; i < 57; i++)
-  {
-    weightsVec[3 * i + 0] = 1.0 / (1.0 + distances1[i]);
-    weightsVec[3 * i + 1] = 1.0 / (1.0 + distances1[i]);
-    weightsVec[3 * i + 2] = 1.0 / (1.0 + distances1[i]);
-    weightsScl[i]         = 1.0 / (1.0 + distances1[i]);
-  }
-
-  if(m_Approximate[0])
-  {
-    Vec_DP resVec(171);
-    Vec_DP resScl(57);
-    Vec_DP coefsVec(6);
-    Vec_DP coefsScl(4);
-    for(unsigned i = 0; i < 57; i++)
-    {
-      for(unsigned j = 0; j < 3; j++)
-        resVec[3 * i + j] = ScapulaData[i][30 + j];
-      resScl[i] = ScapulaData[i][33];
-    }
-    FindRegCoefs(matrVec, weightsVec, resVec, coefsVec);
-    FindRegCoefs(matrScl, weightsScl, resScl, coefsScl);
-    V3d<double> center;
-    double radius;
-    center = coefsVec[0] * AL1 + coefsVec[1] * AL2 + coefsVec[2] * AL4 + V3d<double>(coefsVec[3], coefsVec[4], coefsVec[5]);
-    radius = coefsScl[0] * sqrt(AL1.length2()) + coefsScl[1] * sqrt(AL2.length2()) + coefsScl[2] * sqrt(AL4.length2()) + coefsScl[3];
-    TransformPoint(mLocal, center);
+    int indx = 0;
+    V3d<double> AL1, AL2, AL4;
+    cloud->GetLandmark(ind1, AL1.components, kframes[nI]);
+    cloud->GetLandmark(ind2, AL2.components, kframes[nI]);
+    cloud->GetLandmark(ind4, AL4.components, kframes[nI]);
+    mafMatrix mGlobal, mGlobalInv, mLocal, mLocalInv;
+    cloud->GetOutput()->GetAbsMatrix(mGlobal);
+    mGlobalInv = mGlobal;
+    mGlobalInv.Invert();
+    TransformPoint(mGlobal, AL1);
+    TransformPoint(mGlobal, AL2);
+    TransformPoint(mGlobal, AL4);
     if(!right)
     {
-      center.x = - center.x;
+      AL1.x = - AL1.x;
+      AL2.x = - AL2.x;
+      AL4.x = - AL4.x;
     }
-    AddSphere("GlenoidCavity", center.components, radius);
-    TransformPoint(mGlobalInv, center);
-    LMAdding LMdata;
-    LMdata.m_Pelvic = false;
-    //LMdata.m_Name  = "GlenoidCavity";
-    LMdata.m_Name  = (right) ? "RSGC" : "LSGC";
-    LMdata.m_Index = -1;
-    LMdata.m_Pos = center;
-    m_LMAdd.push_back(LMdata);
-  }
-  if(m_Approximate[1])
-  {
-    Vec_DP resVec1(171);
-    Vec_DP resVec2(171);
-    Vec_DP coefsVec1(6);
-    Vec_DP coefsVec2(6);
+    ScapulaLocalFrame(AL1, AL2, AL4, mLocal);
+    mLocalInv = mLocal;
+    mLocalInv.Invert();
+
+    TransformPoint(mLocalInv, AL1);
+    TransformPoint(mLocalInv, AL2);
+    TransformPoint(mLocalInv, AL4);
+
+    double norm1 = MatrixNorm(AL1, AL2, AL4);
+    double norm2 = MatrixStdDev(AL1, AL2, AL4);
+
+    int  usedALs[] = {0, 1, 3};
+    double sz1min, sz1max;
+    double sz2min, sz2max;
+    for(unsigned i = 0; i < 57; i++)
+    {
+      Mat_DP nrmmat(3, 3);
+      for(unsigned j = 0; j < 3; j ++)
+      {
+        for(unsigned k = 0; k < 3; k++)
+        {
+          nrmmat[j][k] = ScapulaData[i][3 * usedALs[j] + k];
+        }
+      }
+      double sz1 = MatrixNorm  (V3d<double>(ScapulaData[i] + 3 * usedALs[0]), V3d<double>(ScapulaData[i] + 3 * usedALs[1]), V3d<double>(ScapulaData[i] + 3 * usedALs[2]));
+      double sz2 = MatrixStdDev(V3d<double>(ScapulaData[i] + 3 * usedALs[0]), V3d<double>(ScapulaData[i] + 3 * usedALs[1]), V3d<double>(ScapulaData[i] + 3 * usedALs[2]));
+      if(i == 0 || sz1 > sz1max)
+        sz1max = sz1;
+      if(i == 0 || sz1 < sz1min)
+        sz1min = sz1;
+      if(i == 0 || sz2 > sz2max)
+        sz2max = sz2;
+      if(i == 0 || sz2 < sz2min)
+        sz2min = sz2;
+    }
+    if(norm1 < (1.0 - DeltaAllowed) * sz1min || norm1 > (1.0 + DeltaAllowed) * sz1max)
+    {
+      if(wxNO == wxMessageBox(wxString::Format("Source data size %lf is outside of database range (%lf, %lf). Do you want to continue?", norm1, sz1min, sz1max), "Warning.", wxYES_NO | wxCENTRE | wxICON_WARNING))
+      {
+        return false;
+      }
+    }
+    std::vector<double> distances1;
+    std::vector<double> distances2;
+
+    for(unsigned i = 0; i < 57; i++)
+    {
+      Mat_DP nrmmat(3, 3);
+      for(unsigned j = 0; j < 3; j ++)
+      {
+        for(unsigned k = 0; k < 3; k++)
+        {
+          nrmmat[j][k] = ScapulaData[i][3 * usedALs[j] + k];
+        }
+      }
+      double sz1 = MatrixNorm  (V3d<double>(ScapulaData[i] + 3 * usedALs[0]) - AL1, 
+        V3d<double>(ScapulaData[i] + 3 * usedALs[1]) - AL2, 
+        V3d<double>(ScapulaData[i] + 3 * usedALs[2]) - AL4);
+      double sz2 = MatrixStdDev(V3d<double>(ScapulaData[i] + 3 * usedALs[0]) - AL1, 
+        V3d<double>(ScapulaData[i] + 3 * usedALs[1]) - AL2, 
+        V3d<double>(ScapulaData[i] + 3 * usedALs[2]) - AL4);
+      distances1.push_back(sz1);
+      distances2.push_back(sz2);
+    }
+
+    Mat_DP matrVec(171, 6);
+    Mat_DP matrScl(57, 4);
+    Vec_DP weightsVec(171);
+    Vec_DP weightsScl(57);
+
+
     for(unsigned i = 0; i < 57; i++)
     {
       for(unsigned j = 0; j < 3; j++)
       {
-        resVec1[3 * i + j] = ScapulaData[i][24 + j];
-        resVec2[3 * i + j] = ScapulaData[i][27 + j];
+        V3d<double> tmp(ScapulaData[i]+ 3 * usedALs[j]);
+        matrScl[i][j] = sqrt(tmp.length2());
+        for(unsigned k = 0; k < 3; k++)
+        {
+          matrVec[3 * i + k][j] = ScapulaData[i][3 * usedALs[j] + k];
+        }
+      }
+      matrScl[i][3] = 1.0;
+      for(unsigned j = 0; j < 3; j++)
+      {
+        for(unsigned k = 0; k < 3; k++)
+        {
+          if(j == k)
+            matrVec[3 * i + k][3 + j] = 1.0;
+          else
+            matrVec[3 * i + k][3 + j] = 0.0;
+        }
       }
     }
-    FindRegCoefs(matrVec, weightsVec, resVec1, coefsVec1);
-    FindRegCoefs(matrVec, weightsVec, resVec2, coefsVec2);
-    V3d<double> center;
-    V3d<double> normal;
-    center = coefsVec1[0] * AL1 + coefsVec1[1] * AL2 + coefsVec1[2] * AL4 + V3d<double>(coefsVec1[3], coefsVec1[4], coefsVec1[5]);
-    normal = coefsVec2[0] * AL1 + coefsVec2[1] * AL2 + coefsVec2[2] * AL4 + V3d<double>(coefsVec2[3], coefsVec2[4], coefsVec2[5]);
-    TransformPoint(mLocal, center);
-    TransformVector(mLocal, normal);
-    if(!right)
+    for(unsigned i = 0; i < 57; i++)
     {
-      center.x = - center.x;
-      normal.x = - normal.x;
+      weightsVec[3 * i + 0] = 1.0 / (1.0 + distances1[i]);
+      weightsVec[3 * i + 1] = 1.0 / (1.0 + distances1[i]);
+      weightsVec[3 * i + 2] = 1.0 / (1.0 + distances1[i]);
+      weightsScl[i]         = 1.0 / (1.0 + distances1[i]);
     }
-    AddPlane("Acro_clav", center.components, normal.components);
-    AddArrow("Acro_clav", center.components, normal.components);
-    TransformPoint(mGlobalInv, center);
-    LMAdding LMdata;
-    LMdata.m_Pelvic = false;
-    //LMdata.m_Name  = "Acro_clav";
-    LMdata.m_Name  = (right) ? "RSAC" : "LSAC";
-    LMdata.m_Index = -1;
-    LMdata.m_Pos = center;
-    m_LMAdd.push_back(LMdata);
+
+    if(m_Approximate[0])
+    {
+      Vec_DP resVec(171);
+      Vec_DP resScl(57);
+      Vec_DP coefsVec(6);
+      Vec_DP coefsScl(4);
+      for(unsigned i = 0; i < 57; i++)
+      {
+        for(unsigned j = 0; j < 3; j++)
+          resVec[3 * i + j] = ScapulaData[i][30 + j];
+        resScl[i] = ScapulaData[i][33];
+      }
+      FindRegCoefs(matrVec, weightsVec, resVec, coefsVec);
+      FindRegCoefs(matrScl, weightsScl, resScl, coefsScl);
+      V3d<double> center;
+      double radius;
+      center = coefsVec[0] * AL1 + coefsVec[1] * AL2 + coefsVec[2] * AL4 + V3d<double>(coefsVec[3], coefsVec[4], coefsVec[5]);
+      radius = coefsScl[0] * sqrt(AL1.length2()) + coefsScl[1] * sqrt(AL2.length2()) + coefsScl[2] * sqrt(AL4.length2()) + coefsScl[3];
+      TransformPoint(mLocal, center);
+      if(!right)
+      {
+        center.x = - center.x;
+      }
+      if(kframes.size() <= 1)
+        AddSphere("GlenoidCavity", center.components, radius);
+      TransformPoint(mGlobalInv, center);
+      if(nI == 0)
+      {
+        LMAdding LMdata;
+        LMdata.m_Pelvic = true;
+        //LMdata.m_Name  = "GlenoidCavity";
+        LMdata.m_Name  = (right) ? "RSGC" : "LSGC";
+        LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
+        LMdata.m_Pos = center;
+        m_LMAdd.push_back(LMdata);
+        m_NewIndexes.push_back(LMdata.m_Index);
+      }
+      m_Cloud->SetLandmark(m_NewIndexes[indx++], center.x, center.y, center.z, kframes[nI]);
+    }
+    if(m_Approximate[1])
+    {
+      Vec_DP resVec1(171);
+      Vec_DP resVec2(171);
+      Vec_DP coefsVec1(6);
+      Vec_DP coefsVec2(6);
+      for(unsigned i = 0; i < 57; i++)
+      {
+        for(unsigned j = 0; j < 3; j++)
+        {
+          resVec1[3 * i + j] = ScapulaData[i][24 + j];
+          resVec2[3 * i + j] = ScapulaData[i][27 + j];
+        }
+      }
+      FindRegCoefs(matrVec, weightsVec, resVec1, coefsVec1);
+      FindRegCoefs(matrVec, weightsVec, resVec2, coefsVec2);
+      V3d<double> center;
+      V3d<double> normal;
+      center = coefsVec1[0] * AL1 + coefsVec1[1] * AL2 + coefsVec1[2] * AL4 + V3d<double>(coefsVec1[3], coefsVec1[4], coefsVec1[5]);
+      normal = coefsVec2[0] * AL1 + coefsVec2[1] * AL2 + coefsVec2[2] * AL4 + V3d<double>(coefsVec2[3], coefsVec2[4], coefsVec2[5]);
+      TransformPoint(mLocal, center);
+      TransformVector(mLocal, normal);
+      if(!right)
+      {
+        center.x = - center.x;
+        normal.x = - normal.x;
+      }
+      if(kframes.size() <= 1)
+      {
+        AddPlane("Acro_clav", center.components, normal.components);
+        AddArrow("Acro_clav", center.components, normal.components);
+      }
+      TransformPoint(mGlobalInv, center);
+      if(nI == 0)
+      {
+        LMAdding LMdata;
+        LMdata.m_Pelvic = true;
+        //LMdata.m_Name  = "Acro_clav";
+        LMdata.m_Name  = (right) ? "RSAC" : "LSAC";
+        LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
+        LMdata.m_Pos = center;
+        m_LMAdd.push_back(LMdata);
+        m_NewIndexes.push_back(LMdata.m_Index);
+      }
+      m_Cloud->SetLandmark(m_NewIndexes[indx++], center.x, center.y, center.z, kframes[nI]);
+    }
   }
   return true;
 }
@@ -2356,200 +2472,233 @@ bool lhpOpRegression::RegressionClavicle(bool right)
     wxMessageBox(msgbuf, "Error");
     return false;
   }
-  V3d<double> AL1, AL2, AL5;
-  cloud->GetLandmark(ind1, AL1.components);
-  cloud->GetLandmark(ind2, AL2.components);
-  cloud->GetLandmark(ind5, AL5.components);
-  mafMatrix mGlobal, mGlobalInv, mLocal, mLocalInv;
-  cloud->GetOutput()->GetAbsMatrix(mGlobal);
-  mGlobalInv = mGlobal;
-  mGlobalInv.Invert();
-  TransformPoint(mGlobal, AL1);
-  TransformPoint(mGlobal, AL2);
-  TransformPoint(mGlobal, AL5);
-  if(!right)
+
+  std::vector<mafTimeStamp> kframes;
+
+  std::vector<int> m_NewIndexes;
+
+  if(!m_Cloud->IsOpen())
+    m_Cloud->GetDataTimeStamps(kframes);
+  else if(m_Cloud->GetNumberOfLandmarks() > 0)
+    m_Cloud->GetLandmark(0)->GetMatrixTimeStamps(kframes);
+
+  if(kframes.size() == 0)
+    return false;
+
+  for(int nI = 0; nI < kframes.size(); nI++)
   {
-    AL1.x = - AL1.x;
-    AL2.x = - AL2.x;
-    AL5.x = - AL5.x;
-  }
-  ClavicleLocalFrame(AL1, AL2, AL5, mLocal);
-  mLocalInv = mLocal;
-  mLocalInv.Invert();
-
-  TransformPoint(mLocalInv, AL1);
-  TransformPoint(mLocalInv, AL2);
-  TransformPoint(mLocalInv, AL5);
-
-  double norm1 = MatrixNorm(AL1, AL2, AL5);
-  double norm2 = MatrixStdDev(AL1, AL2, AL5);
-
-  int  usedALs[] = {0, 1, 4};
-  double sz1min, sz1max;
-  double sz2min, sz2max;
-  for(unsigned i = 0; i < 42; i++)
-  {
-    Mat_DP nrmmat(3, 3);
-    for(unsigned j = 0; j < 3; j ++)
+    int indx = 0;
+    V3d<double> AL1, AL2, AL5;
+    cloud->GetLandmark(ind1, AL1.components, kframes[nI]);
+    cloud->GetLandmark(ind2, AL2.components, kframes[nI]);
+    cloud->GetLandmark(ind5, AL5.components, kframes[nI]);
+    mafMatrix mGlobal, mGlobalInv, mLocal, mLocalInv;
+    cloud->GetOutput()->GetAbsMatrix(mGlobal);
+    mGlobalInv = mGlobal;
+    mGlobalInv.Invert();
+    TransformPoint(mGlobal, AL1);
+    TransformPoint(mGlobal, AL2);
+    TransformPoint(mGlobal, AL5);
+    if(!right)
     {
-      for(unsigned k = 0; k < 3; k++)
+      AL1.x = - AL1.x;
+      AL2.x = - AL2.x;
+      AL5.x = - AL5.x;
+    }
+    ClavicleLocalFrame(AL1, AL2, AL5, mLocal);
+    mLocalInv = mLocal;
+    mLocalInv.Invert();
+
+    TransformPoint(mLocalInv, AL1);
+    TransformPoint(mLocalInv, AL2);
+    TransformPoint(mLocalInv, AL5);
+
+    double norm1 = MatrixNorm(AL1, AL2, AL5);
+    double norm2 = MatrixStdDev(AL1, AL2, AL5);
+
+    int  usedALs[] = {0, 1, 4};
+    double sz1min, sz1max;
+    double sz2min, sz2max;
+    for(unsigned i = 0; i < 42; i++)
+    {
+      Mat_DP nrmmat(3, 3);
+      for(unsigned j = 0; j < 3; j ++)
       {
-        nrmmat[j][k] = ScapulaData[i][3 * usedALs[j] + k];
+        for(unsigned k = 0; k < 3; k++)
+        {
+          nrmmat[j][k] = ScapulaData[i][3 * usedALs[j] + k];
+        }
+      }
+      double sz1 = MatrixNorm  (V3d<double>(ScapulaData[i] + 3 * usedALs[0]), V3d<double>(ScapulaData[i] + 3 * usedALs[1]), V3d<double>(ScapulaData[i] + 3 * usedALs[2]));
+      double sz2 = MatrixStdDev(V3d<double>(ScapulaData[i] + 3 * usedALs[0]), V3d<double>(ScapulaData[i] + 3 * usedALs[1]), V3d<double>(ScapulaData[i] + 3 * usedALs[2]));
+      if(i == 0 || sz1 > sz1max)
+        sz1max = sz1;
+      if(i == 0 || sz1 < sz1min)
+        sz1min = sz1;
+      if(i == 0 || sz2 > sz2max)
+        sz2max = sz2;
+      if(i == 0 || sz2 < sz2min)
+        sz2min = sz2;
+    }
+    if(norm1 < (1.0 - DeltaAllowed) * sz1min || norm1 > (1.0 + DeltaAllowed) * sz1max)
+    {
+      if(wxNO == wxMessageBox(wxString::Format("Source data size %lf is outside of database range (%lf, %lf). Do you want to continue?", norm1, sz1min, sz1max), "Warning.", wxYES_NO | wxCENTRE | wxICON_WARNING))
+      {
+        return false;
       }
     }
-    double sz1 = MatrixNorm  (V3d<double>(ScapulaData[i] + 3 * usedALs[0]), V3d<double>(ScapulaData[i] + 3 * usedALs[1]), V3d<double>(ScapulaData[i] + 3 * usedALs[2]));
-    double sz2 = MatrixStdDev(V3d<double>(ScapulaData[i] + 3 * usedALs[0]), V3d<double>(ScapulaData[i] + 3 * usedALs[1]), V3d<double>(ScapulaData[i] + 3 * usedALs[2]));
-    if(i == 0 || sz1 > sz1max)
-      sz1max = sz1;
-    if(i == 0 || sz1 < sz1min)
-      sz1min = sz1;
-    if(i == 0 || sz2 > sz2max)
-      sz2max = sz2;
-    if(i == 0 || sz2 < sz2min)
-      sz2min = sz2;
-  }
-  if(norm1 < (1.0 - DeltaAllowed) * sz1min || norm1 > (1.0 + DeltaAllowed) * sz1max)
-  {
-    if(wxNO == wxMessageBox(wxString::Format("Source data size %lf is outside of database range (%lf, %lf). Do you want to continue?", norm1, sz1min, sz1max), "Warning.", wxYES_NO | wxCENTRE | wxICON_WARNING))
-    {
-      return false;
-    }
-  }
-  std::vector<double> distances1;
-  std::vector<double> distances2;
+    std::vector<double> distances1;
+    std::vector<double> distances2;
 
-  for(unsigned i = 0; i < 42; i++)
-  {
-    Mat_DP nrmmat(3, 3);
-    for(unsigned j = 0; j < 3; j ++)
+    for(unsigned i = 0; i < 42; i++)
     {
-      for(unsigned k = 0; k < 3; k++)
+      Mat_DP nrmmat(3, 3);
+      for(unsigned j = 0; j < 3; j ++)
       {
-        nrmmat[j][k] = ClavicleData[i][3 * usedALs[j] + k];
+        for(unsigned k = 0; k < 3; k++)
+        {
+          nrmmat[j][k] = ClavicleData[i][3 * usedALs[j] + k];
+        }
       }
+      double sz1 = MatrixNorm  (V3d<double>(ClavicleData[i] + 3 * usedALs[0]) - AL1, 
+        V3d<double>(ClavicleData[i] + 3 * usedALs[1]) - AL2, 
+        V3d<double>(ClavicleData[i] + 3 * usedALs[2]) - AL5);
+      double sz2 = MatrixStdDev(V3d<double>(ClavicleData[i] + 3 * usedALs[0]) - AL1, 
+        V3d<double>(ClavicleData[i] + 3 * usedALs[1]) - AL2, 
+        V3d<double>(ClavicleData[i] + 3 * usedALs[2]) - AL5);
+      distances1.push_back(sz1);
+      distances2.push_back(sz2);
     }
-    double sz1 = MatrixNorm  (V3d<double>(ClavicleData[i] + 3 * usedALs[0]) - AL1, 
-      V3d<double>(ClavicleData[i] + 3 * usedALs[1]) - AL2, 
-      V3d<double>(ClavicleData[i] + 3 * usedALs[2]) - AL5);
-    double sz2 = MatrixStdDev(V3d<double>(ClavicleData[i] + 3 * usedALs[0]) - AL1, 
-      V3d<double>(ClavicleData[i] + 3 * usedALs[1]) - AL2, 
-      V3d<double>(ClavicleData[i] + 3 * usedALs[2]) - AL5);
-    distances1.push_back(sz1);
-    distances2.push_back(sz2);
-  }
 
-  Mat_DP matrVec(126, 6);
-  Mat_DP matrScl(42, 4);
-  Vec_DP weightsVec(126);
-  Vec_DP weightsScl(42);
+    Mat_DP matrVec(126, 6);
+    Mat_DP matrScl(42, 4);
+    Vec_DP weightsVec(126);
+    Vec_DP weightsScl(42);
 
 
-  for(unsigned i = 0; i < 42; i++)
-  {
-    for(unsigned j = 0; j < 3; j++)
-    {
-      V3d<double> tmp(ClavicleData[i]+ 3 * usedALs[j]);
-      matrScl[i][j] = sqrt(tmp.length2());
-      for(unsigned k = 0; k < 3; k++)
-      {
-        matrVec[3 * i + k][j] = ClavicleData[i][3 * usedALs[j] + k];
-      }
-    }
-    matrScl[i][3] = 1.0;
-    for(unsigned j = 0; j < 3; j++)
-    {
-      for(unsigned k = 0; k < 3; k++)
-      {
-        if(j == k)
-          matrVec[3 * i + k][3 + j] = 1.0;
-        else
-          matrVec[3 * i + k][3 + j] = 0.0;
-      }
-    }
-  }
-  for(unsigned i = 0; i < 42; i++)
-  {
-    weightsVec[3 * i + 0] = 1.0 / (1.0 + distances1[i]);
-    weightsVec[3 * i + 1] = 1.0 / (1.0 + distances1[i]);
-    weightsVec[3 * i + 2] = 1.0 / (1.0 + distances1[i]);
-    weightsScl[i]         = 1.0 / (1.0 + distances1[i]);
-  }
-
-  if(m_Approximate[0])
-  {
-    Vec_DP resVec1(126);
-    Vec_DP resVec2(126);
-    Vec_DP coefsVec1(6);
-    Vec_DP coefsVec2(6);
     for(unsigned i = 0; i < 42; i++)
     {
       for(unsigned j = 0; j < 3; j++)
       {
-        resVec1[3 * i + j] = ClavicleData[i][15 + j];
-        resVec2[3 * i + j] = ClavicleData[i][18 + j];
+        V3d<double> tmp(ClavicleData[i]+ 3 * usedALs[j]);
+        matrScl[i][j] = sqrt(tmp.length2());
+        for(unsigned k = 0; k < 3; k++)
+        {
+          matrVec[3 * i + k][j] = ClavicleData[i][3 * usedALs[j] + k];
+        }
       }
-    }
-    FindRegCoefs(matrVec, weightsVec, resVec1, coefsVec1);
-    FindRegCoefs(matrVec, weightsVec, resVec2, coefsVec2);
-    V3d<double> center;
-    V3d<double> normal;
-    center = coefsVec1[0] * AL1 + coefsVec1[1] * AL2 + coefsVec1[2] * AL5 + V3d<double>(coefsVec1[3], coefsVec1[4], coefsVec1[5]);
-    normal = coefsVec2[0] * AL1 + coefsVec2[1] * AL2 + coefsVec2[2] * AL5 + V3d<double>(coefsVec2[3], coefsVec2[4], coefsVec2[5]);
-    TransformPoint(mLocal, center);
-    TransformVector(mLocal, normal);
-    if(!right)
-    {
-      center.x = - center.x;
-      normal.x = - normal.x;
-    }
-    AddPlane("Ster_clav", center.components, normal.components);
-    AddArrow("Ster_clav", center.components, normal.components);
-    TransformPoint(mGlobalInv, center);
-    LMAdding LMdata;
-    LMdata.m_Pelvic = false;
-    //LMdata.m_Name  = "Ster_clav";
-    LMdata.m_Name  = (right) ? "RCSC" : "LCSC";
-    LMdata.m_Index = -1;
-    LMdata.m_Pos = center;
-    m_LMAdd.push_back(LMdata);
-  }
-  if(m_Approximate[1])
-  {
-    Vec_DP resVec1(126);
-    Vec_DP resVec2(126);
-    Vec_DP coefsVec1(6);
-    Vec_DP coefsVec2(6);
-    for(unsigned i = 0; i < 42; i++)
-    {
+      matrScl[i][3] = 1.0;
       for(unsigned j = 0; j < 3; j++)
       {
-        resVec1[3 * i + j] = ClavicleData[i][21 + j];
-        resVec2[3 * i + j] = ClavicleData[i][24 + j];
+        for(unsigned k = 0; k < 3; k++)
+        {
+          if(j == k)
+            matrVec[3 * i + k][3 + j] = 1.0;
+          else
+            matrVec[3 * i + k][3 + j] = 0.0;
+        }
       }
     }
-    FindRegCoefs(matrVec, weightsVec, resVec1, coefsVec1);
-    FindRegCoefs(matrVec, weightsVec, resVec2, coefsVec2);
-    V3d<double> center;
-    V3d<double> normal;
-    center = coefsVec1[0] * AL1 + coefsVec1[1] * AL2 + coefsVec1[2] * AL5 + V3d<double>(coefsVec1[3], coefsVec1[4], coefsVec1[5]);
-    normal = coefsVec2[0] * AL1 + coefsVec2[1] * AL2 + coefsVec2[2] * AL5 + V3d<double>(coefsVec2[3], coefsVec2[4], coefsVec2[5]);
-    TransformPoint(mLocal, center);
-    TransformVector(mLocal, normal);
-    if(!right)
+    for(unsigned i = 0; i < 42; i++)
     {
-      center.x = - center.x;
-      normal.x = - normal.x;
+      weightsVec[3 * i + 0] = 1.0 / (1.0 + distances1[i]);
+      weightsVec[3 * i + 1] = 1.0 / (1.0 + distances1[i]);
+      weightsVec[3 * i + 2] = 1.0 / (1.0 + distances1[i]);
+      weightsScl[i]         = 1.0 / (1.0 + distances1[i]);
     }
-    AddPlane("Acro_clav", center.components, normal.components);
-    AddArrow("Acro_clav", center.components, normal.components);
-    TransformPoint(mGlobalInv, center);
-    LMAdding LMdata;
-    LMdata.m_Pelvic = false;
-    //LMdata.m_Name  = "Acro_clav";
-    LMdata.m_Name  = (right) ? "RCAC" : "LCAC";
-    LMdata.m_Index = -1;
-    LMdata.m_Pos = center;
-    m_LMAdd.push_back(LMdata);
+
+    if(m_Approximate[0])
+    {
+      Vec_DP resVec1(126);
+      Vec_DP resVec2(126);
+      Vec_DP coefsVec1(6);
+      Vec_DP coefsVec2(6);
+      for(unsigned i = 0; i < 42; i++)
+      {
+        for(unsigned j = 0; j < 3; j++)
+        {
+          resVec1[3 * i + j] = ClavicleData[i][15 + j];
+          resVec2[3 * i + j] = ClavicleData[i][18 + j];
+        }
+      }
+      FindRegCoefs(matrVec, weightsVec, resVec1, coefsVec1);
+      FindRegCoefs(matrVec, weightsVec, resVec2, coefsVec2);
+      V3d<double> center;
+      V3d<double> normal;
+      center = coefsVec1[0] * AL1 + coefsVec1[1] * AL2 + coefsVec1[2] * AL5 + V3d<double>(coefsVec1[3], coefsVec1[4], coefsVec1[5]);
+      normal = coefsVec2[0] * AL1 + coefsVec2[1] * AL2 + coefsVec2[2] * AL5 + V3d<double>(coefsVec2[3], coefsVec2[4], coefsVec2[5]);
+      TransformPoint(mLocal, center);
+      TransformVector(mLocal, normal);
+      if(!right)
+      {
+        center.x = - center.x;
+        normal.x = - normal.x;
+      }
+      if(kframes.size() <= 1)
+      {
+        AddPlane("Ster_clav", center.components, normal.components);
+        AddArrow("Ster_clav", center.components, normal.components);
+      }
+      TransformPoint(mGlobalInv, center);
+      if(nI == 0)
+      {
+        LMAdding LMdata;
+        LMdata.m_Pelvic = true;
+        //LMdata.m_Name  = "Ster_clav";
+        LMdata.m_Name  = (right) ? "RCSC" : "LCSC";
+        LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
+        LMdata.m_Pos = center;
+        m_LMAdd.push_back(LMdata);
+        m_NewIndexes.push_back(LMdata.m_Index);
+      }
+      m_Cloud->SetLandmark(m_NewIndexes[indx++], center.x, center.y, center.z, kframes[nI]);
+    }
+    if(m_Approximate[1])
+    {
+      Vec_DP resVec1(126);
+      Vec_DP resVec2(126);
+      Vec_DP coefsVec1(6);
+      Vec_DP coefsVec2(6);
+      for(unsigned i = 0; i < 42; i++)
+      {
+        for(unsigned j = 0; j < 3; j++)
+        {
+          resVec1[3 * i + j] = ClavicleData[i][21 + j];
+          resVec2[3 * i + j] = ClavicleData[i][24 + j];
+        }
+      }
+      FindRegCoefs(matrVec, weightsVec, resVec1, coefsVec1);
+      FindRegCoefs(matrVec, weightsVec, resVec2, coefsVec2);
+      V3d<double> center;
+      V3d<double> normal;
+      center = coefsVec1[0] * AL1 + coefsVec1[1] * AL2 + coefsVec1[2] * AL5 + V3d<double>(coefsVec1[3], coefsVec1[4], coefsVec1[5]);
+      normal = coefsVec2[0] * AL1 + coefsVec2[1] * AL2 + coefsVec2[2] * AL5 + V3d<double>(coefsVec2[3], coefsVec2[4], coefsVec2[5]);
+      TransformPoint(mLocal, center);
+      TransformVector(mLocal, normal);
+      if(!right)
+      {
+        center.x = - center.x;
+        normal.x = - normal.x;
+      }
+      if(kframes.size() <= 1)
+      {
+        AddPlane("Acro_clav", center.components, normal.components);
+        AddArrow("Acro_clav", center.components, normal.components);
+      }
+      TransformPoint(mGlobalInv, center);
+      if(nI == 0)
+      {
+        LMAdding LMdata;
+        LMdata.m_Pelvic = true;
+        //LMdata.m_Name  = "Acro_clav";
+        LMdata.m_Name  = (right) ? "RCAC" : "LCAC";
+        LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
+        LMdata.m_Pos = center;
+        m_LMAdd.push_back(LMdata);
+        m_NewIndexes.push_back(LMdata.m_Index);
+      }
+      m_Cloud->SetLandmark(m_NewIndexes[indx++], center.x, center.y, center.z, kframes[nI]);
+    }
   }
   return true;
 }
