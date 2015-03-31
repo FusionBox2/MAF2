@@ -1600,6 +1600,14 @@ static  bool _mafTransfInverseTransformUpright(DiMatrix const *mpIn, DiV4d *vpPo
   return (TRUE);
 } // end of _mafTransfInverseTransformUpright;
 
+double sign_hlp(double v)
+{
+  if (v > 0.)
+    return 1.;
+  if (v < 0.)
+    return -1.;
+  return 0.;
+}
 /**
 
  * detailed description
@@ -1657,6 +1665,55 @@ bool mafTransfInverseTransformUpright(DiMatrix const *mpIn, DiV4d *vpPos, DiV4d 
   DiMatrixCopy(mpMat, &mB);
   //init rotation part
   DiV4dCopy(vp4GZero, vpRot);
+
+
+  double    a = double(0.5) * (_MATR_EL(2, 1) - _MATR_EL(1, 2));
+  double    b = double(0.5) * (_MATR_EL(0, 2) - _MATR_EL(2, 0));
+  double    c = double(0.5) * (_MATR_EL(1, 0) - _MATR_EL(0, 1));
+  double    s = sqrt(a * a + b * b + c * c);
+  double    co = double(0.5) * (_MATR_EL(0, 0) + _MATR_EL(1, 1) + _MATR_EL(2, 2) - 1);
+  double    fi = atan2(s, co);
+  double    t;
+
+  if (co < -1.)
+    co = -1.;
+  if (co > 1.)
+    co = 1.;
+  double v = double(1) - co;
+
+  if (s > double(0.1e-12))
+  {
+    vpRot->x = a / s;
+    vpRot->y = b / s;
+    vpRot->z = c / s;
+  }
+  else if (fabs(fi) > double(0.1e-12) && co > 0)
+  {
+    t = double(1) / v;
+    vpRot->x = sign_hlp(_MATR_EL(2, 1) - _MATR_EL(1, 2)) * sqrt(abs((_MATR_EL(0, 0) - co) * t));
+    vpRot->y = sign_hlp(_MATR_EL(0, 2) - _MATR_EL(2, 0)) * sqrt(abs((_MATR_EL(1, 1) - co) * t));
+    vpRot->z = sign_hlp(_MATR_EL(1, 0) - _MATR_EL(0, 1)) * sqrt(abs((_MATR_EL(2, 2) - co) * t));
+  }
+  else if (fabs(fi) > double(0.1e-12) && co < 0)
+  {
+    t = double(1) / v;
+    vpRot->x = sqrt(abs((_MATR_EL(0, 0) - co) * t));
+    vpRot->y = sqrt(abs((_MATR_EL(1, 1) - co) * t));
+    vpRot->z = sqrt(abs((_MATR_EL(2, 2) - co) * t));
+
+    if (_MATR_EL(2, 1) - _MATR_EL(1, 2) >= 0)
+      s = double(1);
+    else
+      s = double(-1);
+    vpRot->x = vpRot->x * s;
+    vpRot->y = vpRot->y * sign_hlp(_MATR_EL(1, 0) + _MATR_EL(0, 1)) * s;
+    vpRot->z = vpRot->z * sign_hlp(_MATR_EL(2, 1) + _MATR_EL(0, 2)) * s;
+  }
+  vpRot->x *= fi;
+  vpRot->y *= fi;
+  vpRot->z *= fi;
+  return TRUE;
+
   //access
   mpMat        = &mB;
   rCosQuat     = 0.5f * (_MATR_EL(0,0) + _MATR_EL(1,1) + _MATR_EL(2,2) - 1.0f); // cos(q)
