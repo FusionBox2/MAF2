@@ -49,7 +49,6 @@ mafCxxTypeMacro(lhpVisualPipeSurfaceScalar);
 
 //----------------------------------------------------------------------------
 lhpVisualPipeSurfaceScalar::lhpVisualPipeSurfaceScalar()
-:mafPipe()
 //----------------------------------------------------------------------------
 {
   m_Actor           = NULL;
