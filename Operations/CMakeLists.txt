@@ -207,6 +207,8 @@ SET(PROJECT_SRCS
 	lhpOpKinectUtil.h
 	lhpOpKinectAFs.cpp
 	lhpOpKinectAFs.h
+	lhpOpKinectModel.cpp
+	lhpOpKinectModel.h
 	lhpOpTimeShift.cpp
 	lhpOpTimeShift.h        
 	medOpCreateMuscleWrapper.cpp	
