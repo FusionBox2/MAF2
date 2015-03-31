@@ -572,7 +572,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
 		m_Logic->SetRevision(revision);
 	}
   //------------------------- Editors -------------------------
-  m_Logic->Plug(new mafOpDelete(_("Delete")), "");
+  m_Logic->Plug(new mafOpDelete(_("Delete   \tCtrl+Shift+D")), "");
   m_Logic->Plug(new mafOpCut(_("Cut   \tCtrl+Shift+X")), "");
   m_Logic->Plug(new mafOpCopy(_("Copy  \tCtrl+Shift+C")), "");
   m_Logic->Plug(new mafOpPaste(_("Paste \tCtrl+Shift+V")), "");
