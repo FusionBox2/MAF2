@@ -864,6 +864,7 @@ bool lhpFusionBoxApp::OnInit()
   LibHandle C3DLib      = NULL;
   bool fullVersion      = true;
 
+  lhpPipeIntGraphAbstract::s_WholeRange = true;
   C3DLib = mafDynamicLoader::OpenLibrary("C3D_Reader");
   if(C3DLib)
   {
