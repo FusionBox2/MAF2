@@ -29,6 +29,7 @@
 #include "mafGUITree.h"
 #include "mafDecl.h"
 #include "mafPics.h"
+#include "mafNode.h"
 //----------------------------------------------------------------------------
 // EVENT_TABLE
 //----------------------------------------------------------------------------
@@ -37,6 +38,40 @@ BEGIN_EVENT_TABLE(mafGUITree,wxPanel)
     EVT_TREE_SEL_CHANGED(ID_TREE, mafGUITree::OnSelectionChanged)
     EVT_SIZE(mafGUITree::OnSize)
 END_EVENT_TABLE()
+
+IMPLEMENT_DYNAMIC_CLASS(mafGUITree::mafTreeCtrlSortable, wxTreeCtrl)
+int mafGUITree::mafTreeCtrlSortable::OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2)
+{
+  if(!m_Alphabetical)
+  {
+    mafNode *n1 = (mafNode*)((mafGUITree::mafGUITreeItemData*)GetItemData(item1))->GetNode();
+    mafNode *n2 = (mafNode*)((mafGUITree::mafGUITreeItemData*)GetItemData(item2))->GetNode();
+    if(n1 == NULL || n2 == NULL)
+      return 0;
+    if(n1->GetParent() == NULL || n2->GetParent() == NULL)
+      return 0;
+    if(n1 == n2 || n1->GetParent() != n2->GetParent())
+      return 0;
+    mafNode *p = n1->GetParent();
+    for(unsigned j = 0; j < p->GetNumberOfChildren(); j++)
+    {
+      if(n1 == p->GetChild(j))
+        return -1;
+      else if(n2 == p->GetChild(j))
+        return  1;
+    }
+  }
+  return wxTreeCtrl::OnCompareItems(item1, item2);
+}
+
+void mafGUITree::SetAutoSort(bool enable)
+{
+  m_Autosort=enable;
+  if(m_NodeTree)
+  {
+    m_NodeTree->SetAlphabetical(m_Autosort);
+  }
+};
 
 //----------------------------------------------------------------------------
 mafGUITree::mafGUITree( wxWindow* parent,wxWindowID id, bool CloseButton, bool HideTitle)
@@ -49,7 +84,7 @@ mafGUITree::mafGUITree( wxWindow* parent,wxWindowID id, bool CloseButton, bool H
   m_PreventNotify = false;
   m_Autosort	    = false;
 
-  m_NodeTree = new wxTreeCtrl(this,ID_TREE,wxDefaultPosition,wxSize(100,100),wxNO_BORDER | wxTR_HAS_BUTTONS );
+  m_NodeTree = new mafTreeCtrlSortable(this,m_Autosort,ID_TREE,wxDefaultPosition,wxSize(100,100),wxNO_BORDER | wxTR_HAS_BUTTONS );
   m_Sizer->Add(m_NodeTree,1,wxEXPAND);
 
   //default image list
@@ -454,6 +489,93 @@ void mafGUITree::SortChildren(long node_id)
     m_NodeTree->SortChildren(m_NodeTree->GetRootItem());
   else
     m_NodeTree->SortChildren(ItemFromNode(node_id));
+}
+class mafGUITreeTraversal
+{
+public:
+  mafGUITreeTraversal(wxTreeCtrl *tree)
+  {
+    m_tree = tree;
+  }
+
+  // do traverse the tree: visit all items (recursively by default) under the
+  // given one; return true if all items were traversed or false if the
+  // traversal was aborted because OnVisit returned false
+  bool DoTraverse(const wxTreeItemId& root, bool recursively = true);
+
+  // override this function to do whatever is needed for each item, return
+  // false to stop traversing
+  virtual bool OnVisit(const wxTreeItemId& item) = 0;
+
+protected:
+  wxTreeCtrl *GetTree() const { return m_tree; }
+
+private:
+  bool Traverse(const wxTreeItemId& root, bool recursively);
+
+  wxTreeCtrl *m_tree;
+
+  mafGUITreeTraversal(const mafGUITreeTraversal&);
+  mafGUITreeTraversal& operator=(const mafGUITreeTraversal&);
+};
+
+// ----------------------------------------------------------------------------
+// tree traversal
+// ----------------------------------------------------------------------------
+
+bool mafGUITreeTraversal::DoTraverse(const wxTreeItemId& root, bool recursively)
+{
+  return Traverse(root, recursively);
+}
+
+bool mafGUITreeTraversal::Traverse(const wxTreeItemId& root, bool recursively)
+{
+  wxTreeItemIdValue cookie;
+  wxTreeItemId child = m_tree->GetFirstChild(root, cookie);
+  while ( child.IsOk() )
+  {
+    // depth first traversal
+    if(recursively) 
+      Traverse(child, true);
+    else 
+      OnVisit(child);
+    child = m_tree->GetNextChild(root, cookie);
+  }
+  OnVisit(root);
+  return true;
+}
+
+// internal class for counting tree items
+class mafGUITraverseSort : public mafGUITreeTraversal
+{
+public:
+  mafGUITraverseSort(wxTreeCtrl *tree, const wxTreeItemId& root, bool recursively) : mafGUITreeTraversal(tree)
+  {
+    DoTraverse(root, recursively);
+  }
+  virtual bool OnVisit(const wxTreeItemId& item)
+  {
+    GetTree()->SortChildren(item);
+    return true;
+  }
+private:
+  mafGUITraverseSort(const mafGUITraverseSort&);
+  mafGUITraverseSort& operator=(const mafGUITraverseSort&);
+};
+
+
+//----------------------------------------------------------------------------
+void mafGUITree::SortSubTree(long node_id)
+//----------------------------------------------------------------------------
+{
+  if(node_id == 0)
+  {
+    mafGUITraverseSort(m_NodeTree, m_NodeTree->GetRootItem(), true);
+  }
+  else
+  {
+    mafGUITraverseSort(m_NodeTree, ItemFromNode(node_id), true);
+  }
 }
 //----------------------------------------------------------------------------
 void mafGUITree::CollapseNode(long node_id)

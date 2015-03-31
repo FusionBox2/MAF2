@@ -146,8 +146,12 @@ public:
       give node_id = 0 to specify the root. */
   void SortChildren(long node_id =0);
 
+  /** Sort the subtree of node_id.
+  give node_id = 0 to specify the root. */
+  void SortSubTree(long node_id =0);
+
   /** if autosort is on - the tree is always kept sorted */
-  void SetAutoSort(bool enable) {m_Autosort=enable;};
+  void SetAutoSort(bool enable);
 
   /** Get the autosort flag. */
   bool GetAutoSort() {return m_Autosort;};
@@ -195,7 +199,6 @@ protected:
   bool               m_PreventNotify;
   bool               m_Autosort;
   long               m_NodeRoot;
-  wxTreeCtrl        *m_NodeTree;         
   wxImageList       *m_NodeImages;       
   wxHashTable       *m_NodeTable;        
   mafObserver       *m_Listener;     
@@ -211,6 +214,28 @@ protected:
 	protected:
 			long m_NodeId;
 	};
+  class mafTreeCtrlSortable : public wxTreeCtrl
+  {
+    DECLARE_DYNAMIC_CLASS(mafTreeCtrlSortable)
+  public:
+    // creation
+    // --------
+    mafTreeCtrlSortable():wxTreeCtrl(),m_Alphabetical(false){}
+
+    mafTreeCtrlSortable(wxWindow *parent, bool alphabetical = false, wxWindowID id = wxID_ANY,
+      const wxPoint& pos = wxDefaultPosition,
+      const wxSize& size = wxDefaultSize,
+      long style = wxTR_HAS_BUTTONS | wxTR_LINES_AT_ROOT,
+      const wxValidator& validator = wxDefaultValidator,
+      const wxString& name = wxTreeCtrlNameStr):wxTreeCtrl(parent,id,pos,size,style,validator,name),m_Alphabetical(alphabetical){}
+    virtual int OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2);
+    bool GetAlphabetical(){return m_Alphabetical;}
+    void SetAlphabetical(bool alphabetical){m_Alphabetical = alphabetical;}
+  private:
+    bool m_Alphabetical;
+  };
+  mafTreeCtrlSortable        *m_NodeTree;         
+
 	//----------------------------------------------------------------------------
 	// mafGUITreeTableElement:
 	/// specialized HashTable element used in mafGUITree to store a reference to a wxTreeItemId 
