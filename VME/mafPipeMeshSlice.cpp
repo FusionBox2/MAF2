@@ -74,7 +74,6 @@ mafCxxTypeMacro(mafPipeMeshSlice);
 
 //----------------------------------------------------------------------------
 mafPipeMeshSlice::mafPipeMeshSlice()
-:mafPipe()
 //----------------------------------------------------------------------------
 {
 	m_Mapper          = NULL;

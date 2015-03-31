@@ -67,7 +67,6 @@ mafCxxTypeMacro(mafPipeSurfaceSlice);
 
 //----------------------------------------------------------------------------
 mafPipeSurfaceSlice::mafPipeSurfaceSlice()
-:mafPipe()
 //----------------------------------------------------------------------------
 {
   m_Texture         = NULL;

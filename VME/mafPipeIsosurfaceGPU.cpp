@@ -51,7 +51,6 @@ mafCxxTypeMacro(mafPipeIsosurfaceGPU);
 
 //----------------------------------------------------------------------------
 mafPipeIsosurfaceGPU::mafPipeIsosurfaceGPU() 
-: mafPipe()
 //----------------------------------------------------------------------------
 {
 	m_Volume          = NULL;

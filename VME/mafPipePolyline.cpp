@@ -73,7 +73,6 @@ mafCxxTypeMacro(mafPipePolyline);
 
 //----------------------------------------------------------------------------
 mafPipePolyline::mafPipePolyline()
-:mafPipe()
 //----------------------------------------------------------------------------
 {
 	m_Representation  = -1; // line by default

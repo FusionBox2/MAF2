@@ -56,7 +56,6 @@ mafCxxTypeMacro(mafPipeVolumeProjected);
 
 //----------------------------------------------------------------------------
 mafPipeVolumeProjected::mafPipeVolumeProjected()
-:mafPipe()
 //----------------------------------------------------------------------------
 {
   m_CamPosition = CAMERA_RX_FRONT;

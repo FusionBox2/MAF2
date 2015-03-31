@@ -63,7 +63,6 @@ mafCxxTypeMacro(mafPipeVolumeSlice);
 
 //----------------------------------------------------------------------------
 mafPipeVolumeSlice::mafPipeVolumeSlice()
-:mafPipe()
 //----------------------------------------------------------------------------
 { 
   for(int i = 0; i<3; i++)

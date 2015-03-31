@@ -53,7 +53,6 @@ mafCxxTypeMacro(mafVisualPipeVolumeRayCasting);
 
 //----------------------------------------------------------------------------
 mafVisualPipeVolumeRayCasting::mafVisualPipeVolumeRayCasting() 
-: mafPipe()
 //----------------------------------------------------------------------------
 {
   m_Mapper = NULL;

@@ -68,7 +68,6 @@ mafCxxTypeMacro(mafPipePolylineSlice);
 
 //----------------------------------------------------------------------------
 mafPipePolylineSlice::mafPipePolylineSlice()
-:mafPipe()
 //----------------------------------------------------------------------------
 {
   m_Mapper          = NULL;

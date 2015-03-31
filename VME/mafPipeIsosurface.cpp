@@ -52,7 +52,6 @@ mafCxxTypeMacro(mafPipeIsosurface);
 
 //----------------------------------------------------------------------------
 mafPipeIsosurface::mafPipeIsosurface() 
-: mafPipe()
 //----------------------------------------------------------------------------
 {
 	m_Volume          = NULL;

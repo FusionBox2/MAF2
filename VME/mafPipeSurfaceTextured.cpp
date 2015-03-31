@@ -60,7 +60,6 @@ mafCxxTypeMacro(mafPipeSurfaceTextured);
 
 //----------------------------------------------------------------------------
 mafPipeSurfaceTextured::mafPipeSurfaceTextured()
-:mafPipe()
 //----------------------------------------------------------------------------
 {
   m_Texture         = NULL;

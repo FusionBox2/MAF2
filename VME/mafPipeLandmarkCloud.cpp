@@ -55,7 +55,6 @@ mafCxxTypeMacro(mafPipeLandmarkCloud);
 
 //----------------------------------------------------------------------------
 mafPipeLandmarkCloud::mafPipeLandmarkCloud()
-:mafPipe()
 //----------------------------------------------------------------------------
 {
   m_Landmark = NULL;

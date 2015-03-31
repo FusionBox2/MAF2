@@ -51,7 +51,6 @@ mafCxxTypeMacro(mafPipeScalarMatrix);
 
 //----------------------------------------------------------------------------
 mafPipeScalarMatrix::mafPipeScalarMatrix()
-:mafPipe()
 //----------------------------------------------------------------------------
 {
   m_CubeAxes  = NULL;
