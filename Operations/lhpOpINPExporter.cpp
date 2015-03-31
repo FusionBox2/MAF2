@@ -189,16 +189,16 @@ void lhpOpINPExporter::ExportingTraverse(const char *dirName, mafNode* node)
     fn += node->GetName();
     fn += ".inp";
     ExportOneSurface(fn.c_str(), mafVMEOutputSurface::SafeDownCast(mafVME::SafeDownCast(node)->GetOutput()));
-    return;
   }
   int numberChildren = node->GetNumberOfChildren();
+  wxString fn = dirName;
+  fn += "\\";
+  fn += node->GetName().GetCStr();
+  if(numberChildren > 0)
+    mafDirMake(fn.c_str());
   for (int i= 0; i< numberChildren; i++)
   {
     mafNode *child = node->GetChild(i);
-    wxString fn = dirName;
-    fn += "\\";
-    fn += node->GetName().GetCStr();
-    mafDirMake(fn.c_str());
     ExportingTraverse(fn.c_str(), child);
   }
 }
