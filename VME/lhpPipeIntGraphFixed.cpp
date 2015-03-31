@@ -165,6 +165,8 @@ void lhpPipeIntGraphFixed::OnEvent(mafEventBase *maf_event)
           else 
             vgraph->GetRenderWindow()->SetXParam(NULL);
         }
+        if(m_ForcedWholeRange || m_WholeRange)
+          GrabData();
         mafEventMacro(mafEvent(this,CAMERA_UPDATE));
       }
       break;
@@ -184,6 +186,8 @@ void lhpPipeIntGraphFixed::OnEvent(mafEventBase *maf_event)
               m_Graph->RemYVar(i);
           }
         }
+        if(m_ForcedWholeRange || m_WholeRange)
+          GrabData();
         mafEventMacro(mafEvent(this,CAMERA_UPDATE));
       }
       break;
@@ -203,6 +207,8 @@ void lhpPipeIntGraphFixed::OnEvent(mafEventBase *maf_event)
               m_Graph->RemYVar(i);
           }
         }
+        if(m_ForcedWholeRange || m_WholeRange)
+          GrabData();
         mafEventMacro(mafEvent(this,CAMERA_UPDATE));
       }
       break;
@@ -216,7 +222,8 @@ void lhpPipeIntGraphFixed::OnEvent(mafEventBase *maf_event)
     if(!m_InGrabData)
     {
       m_InGrabData = true;
-      GrabData();
+      if(!m_ForcedWholeRange && ! m_WholeRange)
+        GrabData();
       m_InGrabData = false;
     }
   }

@@ -218,6 +218,8 @@ void lhpPipeIntGraphAnalog::OnEvent(mafEventBase *maf_event)
               vgraph->GetRenderWindow()->SetXParam(NULL);
           }
         }
+        if(m_ForcedWholeRange || m_WholeRange)
+          GrabData();
         mafEventMacro(mafEvent(this,CAMERA_UPDATE));
       }
       break;
@@ -237,6 +239,8 @@ void lhpPipeIntGraphAnalog::OnEvent(mafEventBase *maf_event)
               m_Graph->RemYVar(i);
           }
         }
+        if(m_ForcedWholeRange || m_WholeRange)
+          GrabData();
         mafEventMacro(mafEvent(this,CAMERA_UPDATE));
       }
       break;
@@ -256,6 +260,8 @@ void lhpPipeIntGraphAnalog::OnEvent(mafEventBase *maf_event)
               m_Graph->RemYVar(i);
           }
         }
+        if(m_ForcedWholeRange || m_WholeRange)
+          GrabData();
         mafEventMacro(mafEvent(this,CAMERA_UPDATE));
       }
       break;
