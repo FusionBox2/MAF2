@@ -55,11 +55,6 @@ public:
   void SetName(const char *name);
   const char *GetName() const;
 
-  /** defined to allow the definition of MakeCopy(). For mafAttribute abstract base class return NULL */
-  mafObject *NewObjectInstance() const {return NULL;}
-  /** defined to allow the definition of MakeCopy(). For mafAttribute abstract base class return NULL */
-  mafAttribute *NewInstance() const {return mafAttribute::SafeDownCast(NewObjectInstance());}
-
   /** dump the object to output stream */
   virtual void Print(std::ostream& os, const int tabs=0) const;
 protected:

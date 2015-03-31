@@ -72,11 +72,6 @@ public:
 
   enum VME_ITEM_IO_ERRORS {MAF_NO_IO=MAF_USER_RETURN_VALUE+1};
 
-  /** defined to allow DataVector copy */
-  static mafObject *NewObject() {return NULL;}
-  /** defined to allow DataVector copy */
-  mafVMEItem *NewInstance() {return (mafVMEItem *)NewObjectInstance();}
-
   virtual void Print(std::ostream& os, const int indent=0) const;
 
   /** Get the TimeStamp of this dataset*/
