@@ -100,7 +100,6 @@ void psLoaderGUIContextualMenu::ShowContextualMenu(wxFrame *child, mafView *view
 	if(vme_menu)
 	{
 		this->Append(CONTEXTUAL_MENU_HIDE_VME, "Hide");
-		this->Append(CONTEXTUAL_MENU_DELETE_VME, "Delete");
 		// this->Append(CONTEXTUAL_MENU_TRANSFORM, "Move\tCtrl+T");
     this->AppendSeparator();
     this->Append(CONTEXTUAL_MENU_VME_PIPE,"visual props");
@@ -217,10 +216,6 @@ void psLoaderGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
       }
     }
     break;
-		case CONTEXTUAL_MENU_DELETE_VME:
-			//send the event to simulate the cut started by the menu button.
-			mafEventMacro(mafEvent(this, MENU_OP, (long)OP_CUT));
-		break;
 		case CONTEXTUAL_MENU_TRANSFORM:
 		{
 			mafString s = "Move\tCtrl+T";
