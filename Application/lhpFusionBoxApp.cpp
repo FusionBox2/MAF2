@@ -263,6 +263,56 @@ private:
 };
 
 
+
+class lhpOpCreateLMCLines: public mafOp
+{
+public:
+  mafTypeMacro(lhpOpCreateLMCLines, mafOp);
+  lhpOpCreateLMCLines(const wxString &label = "CreateObject"):mafOp(label)
+  {
+    m_OpType  = OPTYPE_OP;
+    m_Canundo = true;
+    m_Created = NULL;
+  }
+  ~lhpOpCreateLMCLines() 
+  {
+    mafDEL(m_Created);
+  }
+
+  mafOp* Copy(){return new lhpOpCreateLMCLines(m_Label);}
+
+  bool Accept(mafNode *node){return (node != NULL);}
+  void OpRun()
+  {
+    mafNEW(m_Created);
+    m_Created->SetName("Cloud lines");
+    m_Output = m_Created;
+    mafEventMacro(mafEvent(this,OP_RUN_OK));
+  }
+  void OpDo();
+  void OpUndo();
+
+protected: 
+  lhpVMELMCLines *m_Created;
+};
+
+mafCxxTypeMacro(lhpOpCreateLMCLines);
+
+void lhpOpCreateLMCLines::OpDo()
+{
+  m_Output->ReparentTo(m_Input);
+  mafVMELandmarkCloud *lmc = mafVMELandmarkCloud::SafeDownCast(m_Input);
+  if(m_Created && lmc)
+  {
+    m_Created->SetCloud(lmc);
+  }
+}
+void lhpOpCreateLMCLines::OpUndo()
+{
+  if(m_Created)
+    m_Created->SetCloud(NULL);
+  m_Output->ReparentTo(NULL);
+}
 //----------------------------------------------------------------------------
 void lhpOpMoveSeq::TransfMatr(mafMatrix& convMatrix, mafTimeStamp tsSkip)
 //----------------------------------------------------------------------------
@@ -573,7 +623,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   m_Logic->Plug(new mafOpReparentTo("Reparent to...  \tCtrl+R"),"Modify/Fuse");
   m_Logic->Plug(new lhpOpMove(),"Modify");
   m_Logic->Plug(new lhpOpAverageLM("Average landmark"),"Create/Derive");
-  m_Logic->Plug(new lhpOpCreateObject<lhpVMELMCLines>("Cloud lines", "Cloud lines"),"Create/Derive");
+  m_Logic->Plug(new lhpOpCreateLMCLines("Cloud lines"),"Create/Derive");
   m_Logic->Plug(new lhpOpJoinSurf("JoinSurface"),"Create/Derive");
   m_Logic->Plug(new lhpOpMergeClouds("Merge clouds"),"Create/Derive");
   if(fullVersion)

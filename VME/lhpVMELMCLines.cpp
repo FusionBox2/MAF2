@@ -179,37 +179,38 @@ void lhpVMELMCLines::InternalUpdate() //Multi
 //-----------------------------------------------------------------------
 {
   mafVMELandmarkCloud *vme = GetPointsCloudLink();
-  if(vme == NULL) 
-    return;
-  vme->Update();
 
   mafTimeStamp ts = GetTimeStamp();
 
   std::vector<V3d<double> >  src;
 
-  mafMatrix trf;
-  vme->GetOutput()->GetAbsMatrix(trf, ts);
-  m_TmpTransform->SetMatrix(trf);
+  if(vme)
+  {
+    mafMatrix trf;
+    vme->Update();
+    vme->GetOutput()->GetAbsMatrix(trf, ts);
+    m_TmpTransform->SetMatrix(trf);
 
 
-  int NumLMs = vme->GetNumberOfLandmarks();
-  src.resize(NumLMs);
-  for(unsigned i = 0; i < NumLMs; i++)
-  {
-    vme->GetLandmark(i, src[i].components, ts);
-  }
-  if(m_Looped)
-    src.push_back(src[0]);
-  for(unsigned i = 0; i < src.size(); i++)
-  {
-    m_TmpTransform->TransformPoint(src[i].components, src[i].components);
-  }
+    int NumLMs = vme->GetNumberOfLandmarks();
+    src.resize(NumLMs);
+    for(unsigned i = 0; i < NumLMs; i++)
+    {
+      vme->GetLandmark(i, src[i].components, ts);
+    }
+    if(m_Looped)
+      src.push_back(src[0]);
+    for(unsigned i = 0; i < src.size(); i++)
+    {
+      m_TmpTransform->TransformPoint(src[i].components, src[i].components);
+    }
 
-  m_TmpTransform->SetMatrix(GetOutput()->GetAbsTransform()->GetMatrix());
-  m_TmpTransform->Invert();
-  for(unsigned i = 0; i < src.size(); i++)
-  {
-    m_TmpTransform->TransformPoint(src[i].components, src[i].components);
+    m_TmpTransform->SetMatrix(GetOutput()->GetAbsTransform()->GetMatrix());
+    m_TmpTransform->Invert();
+    for(unsigned i = 0; i < src.size(); i++)
+    {
+      m_TmpTransform->TransformPoint(src[i].components, src[i].components);
+    }
   }
 
 
@@ -319,7 +320,7 @@ mafGUI* lhpVMELMCLines::CreateGui()
 
   mafVME *polyline_vme = GetPointsCloudLink();
   m_PointsCloudName = polyline_vme ? polyline_vme->GetName() : _("none");
-  m_Gui->Button(ID_PNTS_CLOUD_LINK,&m_PointsCloudName,_("Points"), _("Select the Points cloud to create the Spline"));
+  m_Gui->Button(ID_PNTS_CLOUD_LINK,_("Points"), _("Select the Points cloud to create the Spline"));
   m_Gui->Label("Points: ", &m_PointsCloudName);
   m_Gui->Bool(ID_LOOPED, _("Looped"), &m_Looped);
 
@@ -335,6 +336,27 @@ bool lhpVMELMCLines::PolylineAccept(mafNode *node)
   return(node != NULL && node->IsA("mafVMELandmarkCloud"));
 }
 
+void lhpVMELMCLines::SetCloud(mafVMELandmarkCloud *cloud)
+{
+  if(cloud)
+  {
+    SetPointsCloudLink(cloud);
+    m_PointsCloudName = cloud->GetName();
+  }
+  else
+  {
+    RemoveLink("PointsCloud");
+    m_PointsCloudName = _("none");
+  }
+
+  InternalUpdate();
+  Modified();
+  GetPolylineOutput()->Update();
+  mafEvent cam_event(this,CAMERA_UPDATE);
+  ForwardUpEvent(cam_event);
+  if(m_Gui)
+    m_Gui->Update();
+}
 
 //-------------------------------------------------------------------------
 void lhpVMELMCLines::OnEvent(mafEventBase *maf_event)
@@ -358,18 +380,8 @@ void lhpVMELMCLines::OnEvent(mafEventBase *maf_event)
             vme = mafVMELandmarkCloud::SafeDownCast(e->GetVme());
             if(vme != NULL)
             {
-              SetPointsCloudLink(vme);
-              m_PointsCloudName = vme->GetName();
+              SetCloud(vme);
             }
-          }
-          if(vme)
-          {
-            InternalUpdate();
-            Modified();
-            GetPolylineOutput()->Update();
-            mafEvent cam_event(this,CAMERA_UPDATE);
-            ForwardUpEvent(cam_event);
-            m_Gui->Update();
           }
           break;
         }

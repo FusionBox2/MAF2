@@ -85,6 +85,11 @@ public:
   void SetPointsCloudLink(mafNode *n);
 
   /** 
+  Set links for the Polyline*/
+  void SetCloud(mafVMELandmarkCloud *cloud);
+
+
+  /** 
   Get links for the Polyline*/
   mafVMELandmarkCloud *GetPointsCloudLink();
 
