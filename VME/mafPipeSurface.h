@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include :
 //----------------------------------------------------------------------------
-#include "mafPipe.h"
+#include "mafPipeVTK.h"
 
 //----------------------------------------------------------------------------
 // forward refs :
@@ -51,10 +51,10 @@ Shared documentation:
 https://docs.google.com/a/scsitaly.com/document/d/1j_AtB2aB3cwph6Tpi4QzjQYysOxPMbXBCgE3ZyLiS3M/edit?hl=en#
 
 */
-class MAF_EXPORT mafPipeSurface : public mafPipe
+class MAF_EXPORT mafPipeSurface : public mafPipeVTK
 {
 public:
-  mafTypeMacro(mafPipeSurface,mafPipe);
+  mafTypeMacro(mafPipeSurface,mafPipeVTK);
 
                mafPipeSurface();
   virtual     ~mafPipeSurface();

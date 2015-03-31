@@ -17,7 +17,7 @@
 #ifndef __mafPipeIsosurfaceGPU_H__
 #define __mafPipeIsosurfaceGPU_H__
 
-#include "mafPipe.h"
+#include "mafPipeVTK.h"
 #include "vtkMAFContourVolumeMapperGPU.h"
 
 //----------------------------------------------------------------------------
@@ -40,10 +40,10 @@ class mafVMESurface;
 threshold value. The value is extracted according to the scalar values present 
 into the volume data. The iso-surface is extracted in real time and can be changed 
 also the opacity value of the surface extracted.*/
-class MAF_EXPORT mafPipeIsosurfaceGPU : public mafPipe 
+class MAF_EXPORT mafPipeIsosurfaceGPU : public mafPipeVTK 
 {
 public:
-	mafTypeMacro(mafPipeIsosurfaceGPU, mafPipe);
+	mafTypeMacro(mafPipeIsosurfaceGPU, mafPipeVTK);
 
 	mafPipeIsosurfaceGPU();
 	virtual  ~mafPipeIsosurfaceGPU();

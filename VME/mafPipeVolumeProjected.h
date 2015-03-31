@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "mafPipe.h"
+#include "mafPipeVTK.h"
 
 //----------------------------------------------------------------------------
 // forward refs :
@@ -36,10 +36,10 @@ class vtkPolyDataMapper;
 //----------------------------------------------------------------------------
 /** This visual pipe allows to represent a volume data as an image projecting its
 scalar values along a specified axes.*/
-class MAF_EXPORT mafPipeVolumeProjected : public mafPipe
+class MAF_EXPORT mafPipeVolumeProjected : public mafPipeVTK
 {
 public:
-  mafTypeMacro(mafPipeVolumeProjected,mafPipe);
+  mafTypeMacro(mafPipeVolumeProjected,mafPipeVTK);
 
            mafPipeVolumeProjected();
   virtual ~mafPipeVolumeProjected();

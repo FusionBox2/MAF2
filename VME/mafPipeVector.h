@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include :
 //----------------------------------------------------------------------------
-#include "mafPipe.h"
+#include "mafPipeVTK.h"
 
 //----------------------------------------------------------------------------
 // forward refs :
@@ -36,21 +36,16 @@ class vtkConeSource;
 class vtkActor;
 class mafVMEVector;
 class mafMatrixVector;
-
-#ifdef MAF_EXPORTS
-#include "mafDllMacros.h"
-EXPORT_STL_VECTOR(MAF_EXPORT,mafTimeStamp);
-#endif
   
 //----------------------------------------------------------------------------
 // mafPipeVector :
 //----------------------------------------------------------------------------
 /** Visual pipe for mafVMEVector: creates two platforms and visualize data stored 
 in mafVMEVector as two arrows.*/
-class MAF_EXPORT mafPipeVector : public mafPipe
+class MAF_EXPORT mafPipeVector : public mafPipeVTK
 {
 public:
-  mafTypeMacro(mafPipeVector,mafPipe);
+  mafTypeMacro(mafPipeVector,mafPipeVTK);
 
                mafPipeVector();
   virtual     ~mafPipeVector();

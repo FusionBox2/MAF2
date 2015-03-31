@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include :
 //----------------------------------------------------------------------------
-#include "mafPipe.h"
+#include "mafPipeVTK.h"
 
 //----------------------------------------------------------------------------
 // forward refs :
@@ -38,10 +38,10 @@ class mafGUILutSwatch;
 //----------------------------------------------------------------------------
 // mafPipeMesh :
 //----------------------------------------------------------------------------
-class MAF_EXPORT mafPipeMesh : public mafPipe
+class MAF_EXPORT mafPipeMesh : public mafPipeVTK
 {
 public:
-	mafTypeMacro(mafPipeMesh,mafPipe);
+	mafTypeMacro(mafPipeMesh,mafPipeVTK);
 
 	mafPipeMesh();
 	virtual     ~mafPipeMesh();

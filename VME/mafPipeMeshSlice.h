@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include :
 //----------------------------------------------------------------------------
-#include "mafPipe.h"
+#include "mafPipeVTK.h"
 
 //----------------------------------------------------------------------------
 // forward refs :
@@ -46,10 +46,10 @@ class mafGUILutSwatch;
 // TODO: REFACTOR THIS (Note by Stefano) 
 // This class need some cleanup: there are really too many Update methods in cpp file...
 
-class MAF_EXPORT mafPipeMeshSlice : public mafPipe
+class MAF_EXPORT mafPipeMeshSlice : public mafPipeVTK
 {
 public:
-	mafTypeMacro(mafPipeMeshSlice,mafPipe);
+	mafTypeMacro(mafPipeMeshSlice,mafPipeVTK);
 
 	mafPipeMeshSlice();
 	virtual     ~mafPipeMeshSlice();

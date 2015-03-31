@@ -17,7 +17,7 @@
 #ifndef __mafPipeMeter_H__
 #define __mafPipeMeter_H__
 
-#include "mafPipe.h"
+#include "mafPipeVTK.h"
 //----------------------------------------------------------------------------
 // forward refs :
 //----------------------------------------------------------------------------
@@ -34,10 +34,10 @@ class mafGUIMaterialButton;
 //----------------------------------------------------------------------------
 // mafPipeMeter :
 //----------------------------------------------------------------------------
-class MAF_EXPORT mafPipeMeter : public mafPipe
+class MAF_EXPORT mafPipeMeter : public mafPipeVTK
 {
 public:
-  mafTypeMacro(mafPipeMeter,mafPipe);
+  mafTypeMacro(mafPipeMeter,mafPipeVTK);
 
                mafPipeMeter();
   virtual     ~mafPipeMeter ();

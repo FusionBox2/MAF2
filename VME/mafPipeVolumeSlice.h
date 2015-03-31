@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "mafPipe.h"
+#include "mafPipeVTK.h"
 
 //----------------------------------------------------------------------------
 // forward refs :
@@ -58,10 +58,10 @@ enum SLICE_DIRECTION_ID
 position of a plane representing the cutter. The default position of the slice is the center 
 of the volume data. The visual pipe can also render 3 different slices centered in a origin point
 and oriented along 3 different axes.*/
-class MAF_EXPORT mafPipeVolumeSlice : public mafPipe
+class MAF_EXPORT mafPipeVolumeSlice : public mafPipeVTK
 {
 public:
-  mafTypeMacro(mafPipeVolumeSlice,mafPipe);
+  mafTypeMacro(mafPipeVolumeSlice,mafPipeVTK);
 
 	mafPipeVolumeSlice();
   virtual ~mafPipeVolumeSlice();

@@ -17,7 +17,7 @@
 #ifndef __mafPipeScalar_H__
 #define __mafPipeScalar_H__
 
-#include "mafPipe.h"
+#include "mafPipeVTK.h"
 //----------------------------------------------------------------------------
 // forward refs :
 //----------------------------------------------------------------------------
@@ -28,10 +28,10 @@ class vtkActor;
 // mafPipeScalar :
 //----------------------------------------------------------------------------
 /** Visual pipe that visually represents the VTK representation of mafVMEScalar.*/
-class MAF_EXPORT mafPipeScalar : public mafPipe
+class MAF_EXPORT mafPipeScalar : public mafPipeVTK
 {
 public:
-  mafTypeMacro(mafPipeScalar,mafPipe);
+  mafTypeMacro(mafPipeScalar,mafPipeVTK);
 
                mafPipeScalar();
   virtual     ~mafPipeScalar ();

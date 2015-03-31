@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include :
 //----------------------------------------------------------------------------
-#include "mafPipe.h"
+#include "mafPipeVTK.h"
 
 
 //----------------------------------------------------------------------------
@@ -43,10 +43,10 @@ class vtkAppendPolyData;
 //----------------------------------------------------------------------------
 // mafPipePolylineSlice :
 //----------------------------------------------------------------------------
-class MAF_EXPORT mafPipePolylineSlice : public mafPipe
+class MAF_EXPORT mafPipePolylineSlice : public mafPipeVTK
 {
 public:
-  mafTypeMacro(mafPipePolylineSlice,mafPipe);
+  mafTypeMacro(mafPipePolylineSlice,mafPipeVTK);
 
                mafPipePolylineSlice();
   virtual     ~mafPipePolylineSlice ();

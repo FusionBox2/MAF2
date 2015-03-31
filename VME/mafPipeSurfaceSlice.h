@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include :
 //----------------------------------------------------------------------------
-#include "mafPipe.h"
+#include "mafPipeVTK.h"
 #include "mafVMEImage.h"
 
 //----------------------------------------------------------------------------
@@ -43,10 +43,10 @@ class vtkMAFToLinearTransform;
 //----------------------------------------------------------------------------
 /** Visual pipe that allow to visualize a surface polydata sliced according to 
 a slicing plain. The result effect is the contour of the surface cut by the plain.*/
-class MAF_EXPORT mafPipeSurfaceSlice : public mafPipe
+class MAF_EXPORT mafPipeSurfaceSlice : public mafPipeVTK
 {
 public:
-  mafTypeMacro(mafPipeSurfaceSlice,mafPipe);
+  mafTypeMacro(mafPipeSurfaceSlice,mafPipeVTK);
 
                mafPipeSurfaceSlice();
   virtual     ~mafPipeSurfaceSlice ();

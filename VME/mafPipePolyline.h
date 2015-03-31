@@ -17,7 +17,7 @@
 #ifndef __mafPipePolyline_H__
 #define __mafPipePolyline_H__
 
-#include "mafPipe.h"
+#include "mafPipeVTK.h"
 //----------------------------------------------------------------------------
 // forward refs :
 //----------------------------------------------------------------------------
@@ -51,11 +51,11 @@ EXPORT_STL_VECTOR(MAF_EXPORT,vtkCaptionActor2D*);
   It is also possible to create a spline of the polyline or visualize polyline resulted by a
   deformation of the original one.
 */
-class MAF_EXPORT mafPipePolyline : public mafPipe
+class MAF_EXPORT mafPipePolyline : public mafPipeVTK
 {
 public:
   /** RTTI Macro. */
-	mafTypeMacro(mafPipePolyline,mafPipe);
+	mafTypeMacro(mafPipePolyline,mafPipeVTK);
 
   /** constructor.*/
 	mafPipePolyline();

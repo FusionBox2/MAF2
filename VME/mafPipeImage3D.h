@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include :
 //----------------------------------------------------------------------------
-#include "mafPipe.h"
+#include "mafPipeVTK.h"
 
 //----------------------------------------------------------------------------
 // forward refs :
@@ -42,11 +42,11 @@ class vtkMAFAssembly;
 Class Name: mafPipeImage3D.
 
 */
-class MAF_EXPORT mafPipeImage3D : public mafPipe
+class MAF_EXPORT mafPipeImage3D : public mafPipeVTK
 {
 public:
   /** RTTI macro.*/
-  mafTypeMacro(mafPipeImage3D,mafPipe);
+  mafTypeMacro(mafPipeImage3D,mafPipeVTK);
 
    /** constructor. */
            mafPipeImage3D();

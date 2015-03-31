@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include :
 //----------------------------------------------------------------------------
-#include "mafPipe.h"
+#include "mafPipeVTK.h"
 #include "mafVMEImage.h"
 #include "mafAxes.h"
 
@@ -40,10 +40,10 @@ class vtkActor;
 //----------------------------------------------------------------------------
 /** Visual pipe used to render VTK polydata and allowing to manage scalar visibility,
 lookup table and textures applied to the polydata.*/
-class MAF_EXPORT mafPipeSurfaceTextured : public mafPipe
+class MAF_EXPORT mafPipeSurfaceTextured : public mafPipeVTK
 {
 public:
-  mafTypeMacro(mafPipeSurfaceTextured,mafPipe);
+  mafTypeMacro(mafPipeSurfaceTextured,mafPipeVTK);
 
                mafPipeSurfaceTextured();
   virtual     ~mafPipeSurfaceTextured();

@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include :
 //----------------------------------------------------------------------------
-#include "mafPipe.h"
+#include "mafPipeVTK.h"
 
 //----------------------------------------------------------------------------
 // forward refs :
@@ -32,10 +32,10 @@ class vtkMAFAdaptiveVolumeMapper;
 //----------------------------------------------------------------------------
 // mafVisualPipeVolumeRayCasting :
 //----------------------------------------------------------------------------
-class MAF_EXPORT mafVisualPipeVolumeRayCasting : public mafPipe 
+class MAF_EXPORT mafVisualPipeVolumeRayCasting : public mafPipeVTK 
 {
 public:
-  mafTypeMacro(mafVisualPipeVolumeRayCasting, mafPipe);
+  mafTypeMacro(mafVisualPipeVolumeRayCasting, mafPipeVTK);
 
   mafVisualPipeVolumeRayCasting();
   virtual ~mafVisualPipeVolumeRayCasting();

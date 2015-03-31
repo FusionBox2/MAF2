@@ -17,7 +17,7 @@
 #ifndef __mafPipeBox_H__
 #define __mafPipeBox_H__
 
-#include "mafPipe.h"
+#include "mafPipeVTK.h"
 //----------------------------------------------------------------------------
 // forward refs :
 //----------------------------------------------------------------------------
@@ -31,10 +31,10 @@ class mafAxes;
 //----------------------------------------------------------------------------
 // mafPipeBox :
 //----------------------------------------------------------------------------
-class MAF_EXPORT mafPipeBox : public mafPipe
+class MAF_EXPORT mafPipeBox : public mafPipeVTK
 {
 public:
-  mafTypeMacro(mafPipeBox,mafPipe);
+  mafTypeMacro(mafPipeBox,mafPipeVTK);
 
                mafPipeBox();
   virtual     ~mafPipeBox ();

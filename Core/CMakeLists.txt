@@ -103,6 +103,8 @@ IF (MAF_USE_VTK)
   mafLogicWithManagers.h
   mafPipe.cpp
   mafPipe.h
+  mafPipeVTK.cpp
+  mafPipeVTK.h
   mafPipeBox.cpp
   mafPipeBox.h
   mafPipeFactory.cpp

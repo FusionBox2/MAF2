@@ -17,7 +17,7 @@
 #ifndef __mafPipeIsosurface_H__
 #define __mafPipeIsosurface_H__
 
-#include "mafPipe.h"
+#include "mafPipeVTK.h"
 
 //----------------------------------------------------------------------------
 // forward refs :
@@ -39,11 +39,11 @@ class mafVMESurface;
 threshold value. The value is extracted according to the scalar values present 
 into the volume data. The iso-surface is extracted in real time and can be changed 
 also the opacity value of the surface extracted.*/
-class MAF_EXPORT mafPipeIsosurface : public mafPipe 
+class MAF_EXPORT mafPipeIsosurface : public mafPipeVTK 
 {
 public:
   /** RTTI macro */
-	mafTypeMacro(mafPipeIsosurface, mafPipe);
+	mafTypeMacro(mafPipeIsosurface, mafPipeVTK);
 
   /** constructor */
 	mafPipeIsosurface();

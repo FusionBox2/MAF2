@@ -17,7 +17,7 @@
 #ifndef __mafPipeScalarMatrix_H__
 #define __mafPipeScalarMatrix_H__
 
-#include "mafPipe.h"
+#include "mafPipeVTK.h"
 //----------------------------------------------------------------------------
 // forward refs :
 //----------------------------------------------------------------------------
@@ -27,10 +27,10 @@ class vtkActor;
 //----------------------------------------------------------------------------
 // mafPipeScalarMatrix :
 //----------------------------------------------------------------------------
-class MAF_EXPORT mafPipeScalarMatrix : public mafPipe
+class MAF_EXPORT mafPipeScalarMatrix : public mafPipeVTK
 {
 public:
-  mafTypeMacro(mafPipeScalarMatrix,mafPipe);
+  mafTypeMacro(mafPipeScalarMatrix,mafPipeVTK);
 
                mafPipeScalarMatrix();
   virtual     ~mafPipeScalarMatrix ();

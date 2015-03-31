@@ -17,7 +17,7 @@
 #ifndef __mafPipeGizmo_H__
 #define __mafPipeGizmo_H__
 
-#include "mafPipe.h"
+#include "mafPipeVTK.h"
 #include "mafOBB.h"
 
 //----------------------------------------------------------------------------
@@ -33,10 +33,10 @@ class mafGizmoInterface;
 // mafPipeGizmo :
 //----------------------------------------------------------------------------
 /** Visual pipe used to render a mafVMEGizmo. This show simply the polydata present into the VME.*/
-class MAF_EXPORT mafPipeGizmo : public mafPipe
+class MAF_EXPORT mafPipeGizmo : public mafPipeVTK
 {
 public:
-  mafTypeMacro(mafPipeGizmo,mafPipe);
+  mafTypeMacro(mafPipeGizmo,mafPipeVTK);
 
                mafPipeGizmo();
   virtual     ~mafPipeGizmo ();

@@ -17,7 +17,7 @@
 #ifndef __mafPipeLandmarkCloud_H__
 #define __mafPipeLandmarkCloud_H__
 
-#include "mafPipe.h"
+#include "mafPipeVTK.h"
 //----------------------------------------------------------------------------
 // forward refs :
 //----------------------------------------------------------------------------
@@ -39,10 +39,10 @@ spheres each one centered to the landmark position. The visual pipe is observer 
 the landmark cloud and according to the Open/Close cloud status the visual pipe
 switch the mode to manage the data contained into the cloud (cloud close) or into the
 landmarks (cloud open).*/
-class MAF_EXPORT mafPipeLandmarkCloud : public mafPipe
+class MAF_EXPORT mafPipeLandmarkCloud : public mafPipeVTK
 {
 public:
-  mafTypeMacro(mafPipeLandmarkCloud,mafPipe);
+  mafTypeMacro(mafPipeLandmarkCloud,mafPipeVTK);
 
                mafPipeLandmarkCloud();
   virtual     ~mafPipeLandmarkCloud ();

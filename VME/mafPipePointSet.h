@@ -17,7 +17,7 @@
 #ifndef __mafPipePointSet_H__
 #define __mafPipePointSet_H__
 
-#include "mafPipe.h"
+#include "mafPipeVTK.h"
 //----------------------------------------------------------------------------
 // forward refs :
 //----------------------------------------------------------------------------
@@ -29,10 +29,10 @@ class vtkProperty;
 //----------------------------------------------------------------------------
 // mafPipePointSet :
 //----------------------------------------------------------------------------
-class MAF_EXPORT mafPipePointSet : public mafPipe
+class MAF_EXPORT mafPipePointSet : public mafPipeVTK
 {
 public:
-  mafTypeMacro(mafPipePointSet,mafPipe);
+  mafTypeMacro(mafPipePointSet,mafPipeVTK);
 
                mafPipePointSet();
   virtual     ~mafPipePointSet ();
