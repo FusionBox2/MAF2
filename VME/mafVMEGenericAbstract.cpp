@@ -400,17 +400,6 @@ void mafVMEGenericAbstract::OnEvent(mafEventBase *maf_event)
         //Superclass::OnEvent(maf_event);
     }
   }
-  else if (maf_event->GetChannel()==MCH_DOWN)
-  {
-    if (maf_event->GetId() == mafVMEStorage::MSF_FILENAME_CHANGED)
-    {
-      // force the data vector to save its data to file
-      if(GetDataVector())
-      {
-        GetDataVector()->Modified();
-      }
-    } 
-  }
 
   Superclass::OnEvent(maf_event);
 }

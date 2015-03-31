@@ -24,8 +24,6 @@
 #include "mmuIdFactory.h"
 #include "mafEventIO.h"
 
-MAF_ID_IMP(mafVMEStorage::MSF_FILENAME_CHANGED);
-
 //------------------------------------------------------------------------------
 // mmuMSFDocument
 //------------------------------------------------------------------------------

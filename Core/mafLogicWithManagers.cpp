@@ -1728,8 +1728,18 @@ bool mafLogicWithManagers::OnFileSaveAs()
 
   if(m_Storage && m_MSFFile != m_Storage->GetURL())
   {
-    mafEventBase e(this,mafVMEStorage::MSF_FILENAME_CHANGED, NULL, MCH_DOWN);
-    root->OnEvent(&e);
+    mafNodeIterator *iter = root->NewIterator();
+    for(mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+    {
+      if(mafVMEGenericAbstract *vga = mafVMEGenericAbstract::SafeDownCast(node))
+      {
+        if (mafDataVector *dv = vga->GetDataVector())
+        {
+          dv->Modified();
+        }
+      }
+    }
+    iter->Delete();
   }
 
   if(!m_Storage)

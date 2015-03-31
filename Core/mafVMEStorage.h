@@ -50,7 +50,6 @@ protected:
 class MAF_EXPORT mafVMEStorage: public mafStorage, public mafBaseEventHandler, public mafEventSender
 {
 public:
-  MAF_ID_DEC(MSF_FILENAME_CHANGED);
   mafTypeMacro(mafVMEStorage,mafStorage)
 
   mafVMEStorage();
