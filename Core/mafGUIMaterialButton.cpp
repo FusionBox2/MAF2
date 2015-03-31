@@ -43,10 +43,10 @@ enum MATERIAL_BUTTON_WIDGET_ID
 };
 
 //----------------------------------------------------------------------------
-mafGUIMaterialButton::mafGUIMaterialButton(mafVME *vme, mafObserver *listener)
+mafGUIMaterialButton::mafGUIMaterialButton(mafVME *vme, mafBaseEventHandler *listener)
 //----------------------------------------------------------------------------
 {
-	m_Listener = listener;
+	SetListener(listener);
 
 	SetVME(vme);
 

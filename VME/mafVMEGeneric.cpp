@@ -28,6 +28,7 @@
 #include "mafDataPipeInterpolatorVTK.h"
 #include "mafVMEItemVTK.h"
 #include "vtkDataSet.h"
+#include "mafEvent.h"
 //-------------------------------------------------------------------------
 mafCxxTypeMacro(mafVMEGeneric)
 //-------------------------------------------------------------------------

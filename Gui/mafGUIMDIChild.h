@@ -24,6 +24,7 @@
 //#define MAX_CUSTOM_ID 20  //todo: SIL. 7-4-2005: ---- what is this ?
 
 #include "mafEvent.h"
+#include "mafEventSender.h"
 //----------------------------------------------------------------------------
 // forward references;
 //----------------------------------------------------------------------------
@@ -34,15 +35,13 @@ class mafView;
   Represents the child frame in a MDI system. In MAF it is used in combination with views that support
   viewport and eventually a gui area in which some widgets can be used, like windowing widgets.
 */
-class MAF_EXPORT mafGUIMDIChild: public wxMDIChildFrame
+class MAF_EXPORT mafGUIMDIChild: public wxMDIChildFrame, public mafEventSender
 {
 public:
   /** constructor. */
   mafGUIMDIChild(wxMDIParentFrame* parent, mafView *view); 
   /** destructor. */
   virtual ~mafGUIMDIChild();
-  /** Set the listener object, i.e. the object receiving events sent by this object */
-  void SetListener(mafObserver *Listener) {m_Listener = Listener;};
   
   /** 
   Allow to set the flag to avoid closing the view. 
@@ -70,7 +69,6 @@ protected:
 
   wxWindow		*m_Win;
   mafView     *m_View;
-  mafObserver *m_Listener;
   bool         m_AllowCloseFlag;
   bool         m_EnableResize;
 

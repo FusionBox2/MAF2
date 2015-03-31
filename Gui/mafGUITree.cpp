@@ -78,7 +78,6 @@ mafGUITree::mafGUITree( wxWindow* parent,wxWindowID id, bool CloseButton, bool H
 :mafGUINamedPanel(parent,id,CloseButton,HideTitle)
 //----------------------------------------------------------------------------
 {
-  m_Listener    = NULL;
   m_NodeImages  = NULL;
   m_NodeTable   = NULL;
   m_PreventNotify = false;

@@ -27,6 +27,7 @@
 #include "wx/event.h"
 #include "math.h"
 #include "mafGUIRangeSlider.h"
+#include "mafEvent.h"
 
 #define min(x0, x1) (((x0) < (x1)) ? (x0) : (x1))
 #define max(x0, x1) (((x0) > (x1)) ? (x0) : (x1))
@@ -51,7 +52,6 @@ mafGUIRangeSlider::mafGUIRangeSlider(wxWindow *parent, wxWindowID id, const wxPo
 { 
   this->Initialize();
   m_BorderWidgetRadius = 3;
-  m_Listener = NULL;
   m_RangeValueLabel = new wxStaticText(this,-1,"");
 }
 //----------------------------------------------------------------------------

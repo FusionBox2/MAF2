@@ -45,7 +45,7 @@ public:
 
   mafTypeMacro(mafViewScalar, mafViewVTK);
 
-  virtual mafView*  Copy(mafObserver *Listener);
+  virtual mafView*  Copy(mafBaseEventHandler *Listener);
   virtual void			OnEvent(mafEventBase *maf_event);
 
   /** IDs for the GUI */

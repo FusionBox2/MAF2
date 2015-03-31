@@ -21,7 +21,8 @@
 // includes :
 //----------------------------------------------------------------------------
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 
 //----------------------------------------------------------------------------
 // forward references :
@@ -42,14 +43,13 @@ EXPORT_STL_VECTOR(MAF_EXPORT,long);
 // mafViewManager :
 //----------------------------------------------------------------------------
 /** An implementation of mafViewManager with [D]ynamic view [C]reation feature */
-class MAF_EXPORT mafViewManager: public mafObserver
+class MAF_EXPORT mafViewManager: public mafBaseEventHandler, public mafEventSender
 {
 
 public:
   mafViewManager();
  ~mafViewManager(); 
-  void SetListener(mafObserver *Listener) {m_Listener = Listener;};
-  void SetRemoteListener(mafObserver *Listener) {m_RemoteListener = Listener;};
+  void SetRemoteListener(mafBaseEventHandler *Listener) {m_RemoteListener = Listener;};
   virtual void OnEvent(mafEventBase *maf_event);
 
   /** Fill the main menù with plugged views. */
@@ -148,8 +148,7 @@ protected:
   mafView       *m_ViewTemplate[MAXVIEW];   // view template vector
   int            m_TemplateNum;       // number of template
 
-  mafObserver   *m_Listener;
-  mafObserver   *m_RemoteListener;
+  mafBaseEventHandler   *m_RemoteListener;
   mafVMERoot    *m_RootVme;
   mafNode       *m_SelectedVme;
   mafView       *m_SelectedView;

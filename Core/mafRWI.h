@@ -19,7 +19,8 @@
 // Include :
 //----------------------------------------------------------------------------
 #include "mafRWIBase.h"
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
+#include "mafEventSender.h"
 #include "mafAxes.h"
 
 //----------------------------------------------------------------------------
@@ -51,14 +52,12 @@ enum RWI_LAYERS
 //----------------------------------------------------------------------------
 // mafRWI :
 //----------------------------------------------------------------------------
-class MAF_EXPORT mafRWI : public mafObserver
+class MAF_EXPORT mafRWI : public mafBaseEventHandler, public mafEventSender
 {
 public:
 	mafRWI();
 	mafRWI(wxWindow *parent, RWI_LAYERS layers = ONE_LAYER, bool use_grid = false, bool show_axes = false, bool show_ruler = false, int stereo = 0, bool show_orientator = false, int axesType = mafAxes::TRIAD) ;
 	virtual	~mafRWI();
-
-	virtual void SetListener(mafObserver *Listener) {m_Listener = Listener;};
 
 	virtual void OnEvent(mafEventBase *maf_event);
 
@@ -199,7 +198,6 @@ protected:
 	vtkMAFTextOrientator     *m_Orientator;
 	int          m_ShowProfilingInformation;
 	int          m_ShowOrientator;
-	mafObserver  *m_Listener;
 
 
 	vtkMAFProfilingActor *m_ProfilingActor;

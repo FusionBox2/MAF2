@@ -74,7 +74,7 @@ class mafMatrix;
 class MAF_EXPORT mafGizmoRotate : public mafGizmoInterface 
 {
 public:
-           mafGizmoRotate(mafVME *input, mafObserver* listener = NULL, bool buildGUI = true);
+           mafGizmoRotate(mafVME *input, mafBaseEventHandler* listener = NULL, bool buildGUI = true);
   virtual ~mafGizmoRotate(); 
 
   /** 

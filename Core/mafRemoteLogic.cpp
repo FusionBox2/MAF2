@@ -49,10 +49,10 @@
 #endif
 
 //----------------------------------------------------------------------------
-mafRemoteLogic::mafRemoteLogic(mafObserver *Listener, mafViewManager *view_manager, mafOpManager *operation_manager)
+mafRemoteLogic::mafRemoteLogic(mafBaseEventHandler *Listener, mafViewManager *view_manager, mafOpManager *operation_manager)
 //----------------------------------------------------------------------------
 {
-  m_Listener          = Listener;
+  SetListener(Listener);
   m_ViewManager       = view_manager;
   m_OperationManager  = operation_manager;
   

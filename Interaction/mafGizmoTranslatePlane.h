@@ -45,7 +45,7 @@ class vtkTubeFilter;
 class MAF_EXPORT mafGizmoTranslatePlane: public mafGizmoInterface 
 {
 public:
-           mafGizmoTranslatePlane(mafVME *input, mafObserver *listener = NULL);
+           mafGizmoTranslatePlane(mafVME *input, mafBaseEventHandler *listener = NULL);
   virtual ~mafGizmoTranslatePlane(); 
   
   /** 
@@ -56,9 +56,6 @@ public:
   //----------------------------------------------------------------------------
   // events handling 
   //----------------------------------------------------------------------------
-  
-  /** Set the event receiver object*/
-  void  SetListener(mafObserver *Listener) {m_Listener = Listener;};
   
   /** Events handling*/        
   virtual void OnEvent(mafEventBase *maf_event);
@@ -194,9 +191,6 @@ protected:
   /** Gizmo color setting facilities for gizmo segments;*/
   void SetColor(int part, double col[3]);
   void SetColor(int part, double colR, double colG, double colB);
-  /**
-  Register the event receiver object*/
-  mafObserver *m_Listener;
 
   /** Hide/show the square */
   void ShowSquare(bool show);

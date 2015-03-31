@@ -22,7 +22,8 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 #include "mafVMEGizmo.h"
 
 //----------------------------------------------------------------------------
@@ -48,10 +49,10 @@ class mafMatrix;
    Bounding box gizmo for highlighting a region of interest.
    @sa mafGizmoROI               
 */
-class MAF_EXPORT mafGizmoBoundingBox: public mafObserver 
+class MAF_EXPORT mafGizmoBoundingBox: public mafBaseEventHandler, public mafEventSender
 {
 public:
-           mafGizmoBoundingBox(mafVME *input, mafObserver *listener = NULL,mafVME* parent=NULL);
+           mafGizmoBoundingBox(mafVME *input, mafBaseEventHandler *listener = NULL,mafVME* parent=NULL);
   virtual ~mafGizmoBoundingBox(); 
   
   /** Set the gizmo generating vme; the gizmo will be centered on this vme*/
@@ -61,9 +62,6 @@ public:
   //----------------------------------------------------------------------------
   // events handling 
   //----------------------------------------------------------------------------
-  
-  /** Set the event receiver object*/
-  void  SetListener(mafObserver *Listener) {m_Listener = Listener;};
   
   /** Events handling*/        
   virtual void OnEvent(mafEventBase *maf_event);
@@ -99,8 +97,6 @@ protected:
   /** Set gizmo color*/
   void SetColor(double colR, double colG, double colB);
   
-	mafObserver *m_Listener;///<Register the event receiver object
-
 	mafVME *m_InputVme;///<Register input vme
 
   vtkOutlineSource *m_BoxOutline;

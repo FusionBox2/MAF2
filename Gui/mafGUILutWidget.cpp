@@ -51,7 +51,6 @@ mafGUILutWidget::mafGUILutWidget(wxWindow* parent, wxWindowID id, const wxPoint&
 :wxPanel(parent,id,pos,size,style)         
 //----------------------------------------------------------------------------
 {
-	m_Listener = NULL;
   m_Lut = NULL;
 
   m_Dragging = false;

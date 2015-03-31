@@ -29,7 +29,6 @@
 #include "mafGUIMaterialButton.h"
 #include "mafAxes.h"
 #include "mmaMaterial.h"
-#include "mafEventSource.h"
 #include "mafVMESurface.h"
 
 #include "vtkMAFSmartPointer.h"
@@ -119,7 +118,7 @@ void mafPipeSurface::Create(mafSceneNode *n)
   assert(data);
   data->Update();
 
-  m_Vme->GetEventSource()->AddObserver(this);
+  m_Vme->AddObserver(this);
 
   vtkDataSetAttributes *dataAttribute = NULL;
   if(m_SelectedDataAttribute == 0) // Point data
@@ -319,7 +318,7 @@ void mafPipeSurface::CreateNormalsPipe()
 mafPipeSurface::~mafPipeSurface()
 //----------------------------------------------------------------------------
 {
-  m_Vme->GetEventSource()->RemoveObserver(this);
+  m_Vme->RemoveObserver(this);
 
 	if(m_Actor)
 		m_AssemblyFront->RemovePart(m_Actor);

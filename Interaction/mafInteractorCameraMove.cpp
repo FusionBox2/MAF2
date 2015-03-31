@@ -20,6 +20,7 @@
 #include "mafDeviceButtonsPadMouse.h"
 #include "mafAvatar3D.h"
 #include "mafInteractor.h"
+#include "mafEvent.h"
 
 #include "mafEventInteraction.h"
 #include "vtkMath.h"

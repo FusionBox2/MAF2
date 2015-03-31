@@ -20,7 +20,8 @@
 //----------------------------------------------------------------------------
 // Include :
 //----------------------------------------------------------------------------
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
+#include "mafEventSender.h"
 #include "mafString.h"
 #include "mafViewCompound.h"
 #include "vtkRenderWindowInteractor.h"
@@ -57,7 +58,7 @@ mafRWIBase behave differently, and you
 must explicitly destroy them by calling "Delete()"
 BEFORE wxWindow destroy it (using "delete"). 
 */
-class MAF_EXPORT mafRWIBase : public wxWindow, public vtkRenderWindowInteractor
+class MAF_EXPORT mafRWIBase : public wxWindow, public vtkRenderWindowInteractor, public mafEventSender
 {
   DECLARE_DYNAMIC_CLASS(mafRWIBase)
 
@@ -73,8 +74,6 @@ public:
 	      const wxSize &size = wxDefaultSize, long style = wxWANTS_CHARS , const wxString &name = wxPanelNameStr);
   ~mafRWIBase();
   static mafRWIBase * New();
-
-  void SetListener(mafObserver *listener) {m_Listener = listener;};
 
 	/** Notify mouse click on a view. */
   void NotifyClick();
@@ -193,7 +192,6 @@ protected:
   vtkCamera *m_Camera;
   mafDeviceButtonsPadMouse  *m_Mouse;
   bool       m_CustomInteractorStyle;
-  mafObserver *m_Listener;
 
   int m_LastX;
   int m_LastY;

@@ -51,7 +51,7 @@
 #include "vtkProperty.h"
 
 //----------------------------------------------------------------------------
-mafGizmoRotateFan::mafGizmoRotateFan(mafVME *input, mafObserver *listener)
+mafGizmoRotateFan::mafGizmoRotateFan(mafVME *input, mafBaseEventHandler *listener)
 //----------------------------------------------------------------------------
 {
   m_StartTheta = m_EndTheta = 0;
@@ -59,7 +59,7 @@ mafGizmoRotateFan::mafGizmoRotateFan(mafVME *input, mafObserver *listener)
 
   // default axis is X
   m_ActiveAxis  = X;
-  m_Listener  = listener;
+  SetListener(listener);
   m_InputVme    = input;
 
   // get the input vme abs matrix
@@ -437,7 +437,7 @@ void mafGizmoRotateFan::SetRefSysMatrix(mafMatrix *matrix)
 }
 
 
-void mafGizmoRotateFan::SetMediator(mafObserver *mediator)
+void mafGizmoRotateFan::SetMediator(mafBaseEventHandler *mediator)
 {
 	mafGizmoInterface::SetMediator(mediator);
 	m_GizmoFan->SetMediator(mediator);

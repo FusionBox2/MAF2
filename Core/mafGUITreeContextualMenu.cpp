@@ -87,7 +87,6 @@ mafGUITreeContextualMenu::mafGUITreeContextualMenu()
 	m_ViewActive  = NULL;
   m_VmeActive   = NULL;
   m_NodeActive  = NULL;
-  m_Listener    = NULL;
   m_NodeTree    = NULL;
   m_SceneGraph  = NULL;
 

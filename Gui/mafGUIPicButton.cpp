@@ -40,10 +40,10 @@ END_EVENT_TABLE()
 
 IMPLEMENT_DYNAMIC_CLASS(mafGUIPicButton,wxBitmapButton)
 //----------------------------------------------------------------------------
-mafGUIPicButton::mafGUIPicButton(wxWindow *parent, wxString BitmapId, wxWindowID id, mafObserver *listener, int offset)
+mafGUIPicButton::mafGUIPicButton(wxWindow *parent, wxString BitmapId, wxWindowID id, mafBaseEventHandler *listener, int offset)
 //----------------------------------------------------------------------------
 {
-  m_Listener = listener;
+  SetListener(listener);
   m_Id = id;
 
   wxBitmap b = mafPictureFactory::GetPictureFactory()->GetBmp(BitmapId);
@@ -54,10 +54,10 @@ mafGUIPicButton::mafGUIPicButton(wxWindow *parent, wxString BitmapId, wxWindowID
   SetBitmap(BitmapId,id);
 }
 //----------------------------------------------------------------------------
-mafGUIPicButton::mafGUIPicButton(wxWindow *parent, wxBitmap *b, wxWindowID id, mafObserver *listener, int offset)
+mafGUIPicButton::mafGUIPicButton(wxWindow *parent, wxBitmap *b, wxWindowID id, mafBaseEventHandler *listener, int offset)
 //----------------------------------------------------------------------------
 {
-  m_Listener = listener;
+  SetListener(listener);
   m_Id = id;
 
   wxSize size(b->GetWidth()+offset,b->GetHeight()+offset);
@@ -89,10 +89,4 @@ void mafGUIPicButton::SetBitmap(wxString BitmapId, wxWindowID id )
   //SetBitmapDisabled(mafGrayScale(b));
   m_Id = id;
   Refresh();
-}
-//----------------------------------------------------------------------------
-void mafGUIPicButton::SetListener(mafObserver *listener)
-//----------------------------------------------------------------------------
-{
-	m_Listener = listener;
 }

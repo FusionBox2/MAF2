@@ -73,7 +73,7 @@ public:
   Redefine this method to package the compounded view */
   virtual void PackageView() {};
 
-  virtual mafView *Copy(mafObserver *Listener, bool lightCopyEnabled = false);
+  virtual mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
   
   /** 
   Create the plugged sub-view and call virtual method CreateGuiView() */

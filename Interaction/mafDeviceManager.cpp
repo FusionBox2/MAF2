@@ -67,7 +67,6 @@ mafDeviceManager::mafDeviceManager()
 mafDeviceManager::~mafDeviceManager()
 //------------------------------------------------------------------------------
 {
-  m_Listener = NULL;
   mafDEL(m_DeviceSet);
 }
 

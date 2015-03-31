@@ -19,7 +19,8 @@
 
 #include <wx/socket.h>
 
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
+#include "mafEventSender.h"
 
 //----------------------------------------------------------------------------
 // forward reference
@@ -28,6 +29,7 @@ class mafDeviceButtonsPadMouseRemote;
 class mafViewManager;
 class mafOpManager;
 class mafDeviceClientMAF;
+class mafNode;
 
 //----------------------------------------------------------------------------
 // mafRemoteLogic :
@@ -35,10 +37,10 @@ class mafDeviceClientMAF;
 /** This class is used to manage remote messages to be sent to the server or received from it and allow
 to reproduce locally remote messages coming from server.
 */
-class MAF_EXPORT mafRemoteLogic : public mafObserver
+class MAF_EXPORT mafRemoteLogic : public mafBaseEventHandler, public mafEventSender
 {
 public:
-	mafRemoteLogic(mafObserver *Listener, mafViewManager *view_manager, mafOpManager *operation_manager);
+	mafRemoteLogic(mafBaseEventHandler *Listener, mafViewManager *view_manager, mafOpManager *operation_manager);
 	~mafRemoteLogic(); 
 
   /** Used to receive events from the Client Unit.*/
@@ -70,7 +72,6 @@ public:
   void SynchronizeApplication();
 
 protected:
-  mafObserver     *m_Listener;          ///< MAF local listener
   mafViewManager  *m_ViewManager;       ///< Object listened
   mafOpManager    *m_OperationManager;  ///< Object listened
   mafDeviceClientMAF    *m_ClientUnit;        ///< Used to connect the application to a remote server

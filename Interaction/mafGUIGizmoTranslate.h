@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
 #include "mafGUIGizmoInterface.h"
 
 //----------------------------------------------------------------------------
@@ -40,7 +40,7 @@ class MAF_EXPORT mafGUIGizmoTranslate : public mafGUIGizmoInterface
 {
 public:
 
-  mafGUIGizmoTranslate(mafObserver *listener = NULL, bool testMode = false);
+  mafGUIGizmoTranslate(mafBaseEventHandler *listener = NULL, bool testMode = false);
 	~mafGUIGizmoTranslate(); 
 
   void OnEvent(mafEventBase *maf_event);

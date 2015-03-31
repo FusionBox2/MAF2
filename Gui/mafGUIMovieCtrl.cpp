@@ -51,7 +51,6 @@ mafGUIMovieCtrl::mafGUIMovieCtrl( wxWindow* parent,wxWindowID id)
 m_Timer(NULL, ID_TIMER)         
 //----------------------------------------------------------------------------
 {
-  m_Listener = NULL;
   m_Timer.SetOwner(this, ID_TIMER);
   
   m_Frame    = 0;

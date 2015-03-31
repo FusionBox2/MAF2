@@ -34,6 +34,7 @@ class vtkDataSet;
 class vtkDataReader;
 class vtkDataSetWriter;
 class vtkCallbackCommand;
+class vtkObject;
 
 
 /** mafVMEItemVTK - store the single VTK dataset stored into a mafDataVector

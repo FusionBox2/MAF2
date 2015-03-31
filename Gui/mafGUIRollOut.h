@@ -20,7 +20,8 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafString.h"
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
+#include "mafEventSender.h"
 
 //----------------------------------------------------------------------------
 // class forward :
@@ -36,7 +37,7 @@ The main gui and the rolled out gui are passed through the constructor and the c
 plug the title bar with the picture button on the main gui and then plug the sub-gui
 that can be shown/hidden by pressing on the picture button on the left of the title.
 */
-class MAF_EXPORT mafGUIRollOut: public wxPanel
+class MAF_EXPORT mafGUIRollOut: public wxPanel, public mafEventSender
 {
 public:
            mafGUIRollOut(mafGUI *parent, mafString title, mafGUI *roll_gui, int id = -1, bool rollOutOpen = true);
@@ -46,8 +47,6 @@ public:
   void RollOut(bool open = true);
 
 
-  void SetListener(mafObserver *listener) {m_Listener = listener;};
-
 protected:
   /** Answer the click on the Picture button to open/close the roll out gui.*/
   void OnRollOut(wxCommandEvent &event);
@@ -55,7 +54,6 @@ protected:
   mafGUI *m_MainGui; ///< Gui on which will be plugged the RollOut gui.
   mafGUI *m_RollGui; ///< Child gui that will be rolled out.
   mafGUIPicButton *m_RollOutButton; ///< Picture button representing the icon to open/close the roll out gui.
-  mafObserver *m_Listener;
   DECLARE_EVENT_TABLE()
 };
 #endif

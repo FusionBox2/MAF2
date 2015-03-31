@@ -43,7 +43,7 @@ class vtkTransform;
 class MAF_EXPORT mafGizmoTranslateAxis: public mafGizmoInterface 
 {
 public:
-           mafGizmoTranslateAxis(mafVME *input, mafObserver *listener = NULL, mafString name = "");
+           mafGizmoTranslateAxis(mafVME *input, mafBaseEventHandler *listener = NULL, mafString name = "");
   virtual ~mafGizmoTranslateAxis(); 
   
   /** 
@@ -54,9 +54,6 @@ public:
   //----------------------------------------------------------------------------
   // events handling 
   //----------------------------------------------------------------------------
-  
-  /** Set the event receiver object*/
-  void  SetListener(mafObserver *Listener) {m_Listener = Listener;};
   
   /** Events handling*/        
   virtual void OnEvent(mafEventBase *maf_event);
@@ -174,10 +171,6 @@ protected:
   void SetColor(int part, double colR, double colG, double colB);
   void SetColor(double cylCol[3], double coneCol[3]);
   void SetColor(double cylR, double cylG, double cylB, double coneR, double coneG, double coneB);
-
-  /**
-  Register the event receiver object*/
-  mafObserver *m_Listener;
 
   /** test friend */
   friend class mafGizmoTranslateAxisTest;

@@ -36,12 +36,12 @@
 #include "vtkRenderer.h"
 
 //----------------------------------------------------------------------------
-mafTextKit::mafTextKit(wxWindow* parent, vtkRenderer *renderer, mafObserver *Listener)
+mafTextKit::mafTextKit(wxWindow* parent, vtkRenderer *renderer, mafBaseEventHandler *Listener)
 //----------------------------------------------------------------------------
 {
 	m_TextRenderer = renderer;
 	
-	m_Listener		= Listener;
+	SetListener(Listener);
 	m_ParentPanel = parent;
   m_ShowText = 1;
   m_TextAlign = 0;

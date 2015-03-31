@@ -20,7 +20,8 @@
 // includes :
 //----------------------------------------------------------------------------
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 #include "mafNode.h"
 #include "mafNodeRoot.h"
 #include "mafGUIFileHistory.h"
@@ -38,13 +39,12 @@ class mafNodeStorage;
 //----------------------------------------------------------------------------
 // mafNodeManager :
 //----------------------------------------------------------------------------
-class MAF_EXPORT mafNodeManager: public mafObserver
+class MAF_EXPORT mafNodeManager: public mafBaseEventHandler, public mafEventSender
 {
 public:
     mafNodeManager();
   ~mafNodeManager(); 
 
-  void SetListener(mafObserver *Listener) {m_Listener = Listener;};
   void OnEvent(mafEventBase *maf_event);
  
   /** 
@@ -119,7 +119,6 @@ protected:
   bool m_Modified;
 
   mafNodeRoot     *m_Root;
-  mafObserver     *m_Listener;
   wxConfigBase		*m_Config;
   mafGUIFileHistory	 m_FileHistory;
 

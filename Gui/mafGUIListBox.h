@@ -21,7 +21,8 @@
 #include <wx/laywin.h>
 #include <wx/listctrl.h>
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
+#include "mafEventSender.h"
 #include "mafGUIPanel.h"
 
 //----------------------------------------------------------------------------
@@ -32,7 +33,7 @@ mafEvent(this, widget_id, item_id, checked)
 */
 //----------------------------------------------------------------------------
 
-class mafGUIListBox: public mafGUIPanel
+class mafGUIListBox: public mafGUIPanel, public mafEventSender
 {
 public:
     mafGUIListBox(wxWindow* parent, 
@@ -53,7 +54,6 @@ public:
   void SetItemLabel(wxString label);
 	wxString GetStringSelection() {return m_ListBox->GetStringSelection();};
 	int GetNumberOfItems()	{return m_ListBox->GetCount();};
-  void SetListener(mafObserver *listener) {m_Listener = listener;};
   void Select(int id);
 
   wxListBox *m_ListBox;
@@ -63,7 +63,6 @@ protected:
   void OnSize(wxSizeEvent& event);
 
   wxString     m_ItemSelected;
-	mafObserver *m_Listener;
   bool         m_PreventNotify;
 
   DECLARE_EVENT_TABLE()

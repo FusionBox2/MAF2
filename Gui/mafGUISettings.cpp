@@ -31,10 +31,10 @@
 //#include "mafMemDbg.h"
 
 //----------------------------------------------------------------------------
-mafGUISettings::mafGUISettings(mafObserver *Listener, const mafString &label)
+mafGUISettings::mafGUISettings(mafBaseEventHandler *Listener, const mafString &label)
 //----------------------------------------------------------------------------
 {
-  m_Listener = Listener;
+  SetListener(Listener);
   m_Label    = label;
 
   m_Gui = NULL;

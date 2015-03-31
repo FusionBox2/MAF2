@@ -114,11 +114,11 @@ BEGIN_EVENT_TABLE(mafGUI,mafGUIPanel)
 END_EVENT_TABLE()
 
 //----------------------------------------------------------------------------
-mafGUI::mafGUI(mafObserver *listener) :
+mafGUI::mafGUI(mafBaseEventHandler *listener) :
 mafGUIPanel(mafGetFrame(),-1,dp,wxDefaultSize,wxNO_BORDER | wxCLIP_CHILDREN | wxTAB_TRAVERSAL)
 //----------------------------------------------------------------------------
 {
-	 m_Listener = listener;
+	 SetListener(listener);
 
    m_UseBackgroundColor = false;  
    m_BackgroundColor = wxColour(251,251,253); 

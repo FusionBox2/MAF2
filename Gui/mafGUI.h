@@ -24,7 +24,8 @@
 #include "mafDecl.h"
 #include "mafGUIPanel.h"
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 #include <map>
 
 #ifdef MAF_EXPORTS
@@ -104,15 +105,12 @@ two member functions : GetModuleID and GetWidgetId. GetWidgetId increments an in
 \sa GetWidgetId GetModuleId MAFWidgetId m_WidgetTableID
 */
 //----------------------------------------------------------------------------
-class MAF_EXPORT mafGUI: public mafGUIPanel, public mafObserver
+class MAF_EXPORT mafGUI: public mafGUIPanel, public mafBaseEventHandler, public mafEventSender
 {
 public:
-           mafGUI(mafObserver *listener);
+           mafGUI(mafBaseEventHandler *listener);
   virtual ~mafGUI();
     
-  /** Set the Listener that will receive event-notification, the Listener can be changed any time  */
-  void SetListener(mafObserver *listener)   {m_Listener = listener;}; 
-
   /** Separator widget. */
 	void Divider(long style = 0);
 
@@ -308,7 +306,6 @@ public:
   void Reparent(wxWindow *parent);
 
 protected:
-  mafObserver  *m_Listener;     
   wxBoxSizer   *m_Sizer;
 
   wxColour      m_BackgroundColor;

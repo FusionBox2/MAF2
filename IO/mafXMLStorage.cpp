@@ -131,7 +131,7 @@ void mafXMLStorage::SetURL(const char *name)
 }
 
 //------------------------------------------------------------------------------
-int mafXMLStorage::ResolveInputURL(const char * url, mafString &filename, mafObserver *observer)
+int mafXMLStorage::ResolveInputURL(const char * url, mafString &filename, mafBaseEventHandler *observer)
 //------------------------------------------------------------------------------
 {
   // currently no real URL support

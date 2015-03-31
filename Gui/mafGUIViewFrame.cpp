@@ -55,7 +55,6 @@ mafGUIViewFrame::mafGUIViewFrame( wxFrame* parent,
 //----------------------------------------------------------------------------
 : wxFrame(parent, id, title, pos, size, style)
 {
-  m_Listener = NULL;
   m_ClientWin = NULL;
 }
 //----------------------------------------------------------------------------

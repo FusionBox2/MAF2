@@ -63,7 +63,6 @@ mafGUIFrame::mafGUIFrame(const wxString& title, const wxPoint& pos, const wxSize
 : wxFrame((wxFrame *)NULL, -1, title, pos, size, wxDEFAULT_FRAME_STYLE|wxCLIP_CHILDREN)
 {
   mafSetFrame( this );
-  m_Listener = NULL;
   m_ClientWin= NULL;
   CreateStatusbar();
   Centre();

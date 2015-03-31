@@ -33,7 +33,7 @@ const bool DEBUG_MODE = false;
 #include "mafVMELandmark.h"
 #include "mafMatrixVector.h"
 #include "mafVMEItemVTK.h"
-#include "mafEventSource.h"
+#include "mafEventSender.h"
 #include "mafVMEOutputLandmarkCloud.h"
 #include "mafGUI.h"
 #include "mmaMaterial.h"
@@ -640,7 +640,7 @@ void mafVMELandmarkCloud::SetRadius(double rad, bool force_update)
 
   m_Radius = rad;
   Modified();
-  GetEventSource()->InvokeEvent(this, mafVMELandmarkCloud::CLOUD_RADIUS_MODIFIED);
+  InvokeEvent(this, mafVMELandmarkCloud::CLOUD_RADIUS_MODIFIED);
 }
 
 //-------------------------------------------------------------------------
@@ -660,7 +660,7 @@ void mafVMELandmarkCloud::SetSphereResolution(int res, bool force_update)
   m_SphereResolution = res;
   Modified();
 
-  GetEventSource()->InvokeEvent(this, mafVMELandmarkCloud::CLOUD_SPHERE_RES);
+  InvokeEvent(this, mafVMELandmarkCloud::CLOUD_SPHERE_RES);
 }
 
 //-------------------------------------------------------------------------
@@ -891,7 +891,7 @@ void mafVMELandmarkCloud::Close()
   }
     
   Modified();
-  GetEventSource()->InvokeEvent(this, mafVMELandmarkCloud::CLOUD_OPEN_CLOSE);
+  InvokeEvent(this, mafVMELandmarkCloud::CLOUD_OPEN_CLOSE);
   ForwardUpEvent(&mafEvent(this,PROGRESSBAR_HIDE));
 
   if (busyCursor)
@@ -982,7 +982,7 @@ void mafVMELandmarkCloud::Open()
   // change the state to open to enable extra features
   SetState(OPEN_CLOUD);
   Modified();
-  GetEventSource()->InvokeEvent(this, mafVMELandmarkCloud::CLOUD_OPEN_CLOSE);
+  InvokeEvent(this, mafVMELandmarkCloud::CLOUD_OPEN_CLOSE);
 
   
   ForwardUpEvent(&mafEvent(this,PROGRESSBAR_HIDE));

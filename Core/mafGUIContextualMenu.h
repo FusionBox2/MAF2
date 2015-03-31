@@ -17,26 +17,25 @@
 #ifndef __mafGUIContextualMenu_H__
 #define __mafGUIContextualMenu_H__
 
+#include "mafEventSender.h"
+
 //----------------------------------------------------------------------------
 // forward references;
 //----------------------------------------------------------------------------
 class mafView;
 class mafEvent;
-class mafObserver;
 
 /**
   class name: mafGUIContextualMenu
   Class that handle menu' opened with right button click of the mouse over the view.
 */
-class MAF_EXPORT mafGUIContextualMenu : public wxMenu
+class MAF_EXPORT mafGUIContextualMenu : public wxMenu, public mafEventSender
 {
 public:
   /** constructor  */
   mafGUIContextualMenu();
   /** destructor  */
   virtual ~mafGUIContextualMenu();
-  /** function for setting the listener of events coming from another object*/
-  void SetListener(mafObserver *Listener) {m_Listener = Listener;};
 
 	/**  Visualize contextual menù for the MDI child and selected view. */
   void ShowContextualMenu(wxFrame *child, mafView *view, bool vme_menu);		
@@ -44,7 +43,6 @@ public:
 protected:
   wxFrame     *m_ChildViewActive;
   mafView     *m_ViewActive;
-  mafObserver *m_Listener;
 
 	/**  Answer contextual menù's selection. */
 	void OnContextualViewMenu(wxCommandEvent& event);

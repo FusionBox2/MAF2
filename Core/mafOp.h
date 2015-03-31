@@ -20,7 +20,8 @@
 //----------------------------------------------------------------------------
 #include "mafDefines.h" //important: mafDefines should always be included as first
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 #include "mafObject.h"
 
 //----------------------------------------------------------------------------
@@ -48,7 +49,7 @@ enum OPERATIONS_TYPE_ID
 //----------------------------------------------------------------------------
 /**
 */
-class MAF_EXPORT mafOp: public mafObserver, public mafObject
+class MAF_EXPORT mafOp: public mafBaseEventHandler, public mafEventSender, public mafObject
 {
 public:
   mafTypeMacro(mafOp, mafObject);
@@ -56,7 +57,6 @@ public:
 					mafOp();
 					mafOp(const wxString &label);
 	virtual	~mafOp(); 
-					void SetListener(mafObserver *Listener)	{m_Listener = Listener;};
           
 					/** Return the type of the operation: OPTYPE_OP, OPTYPE_IMPORTER, OPTYPE_EXPORTER, OPTYPE_EDIT or OPTYPE_STATECHANGER*/
 					int GetType();
@@ -179,7 +179,6 @@ protected:
 	bool 						m_Canundo; ///< Flag to establish if the operation define the UnDo method or not.
 	int 						m_OpType; ///< Store the type of the operation: OPTYPE_OP, OPTYPE_IMPORTER, OPTYPE_EXPORTER
 	bool						m_InputPreserving; ///< Flag to say if the operation change the input data (m_InputPreserving = false) or not.
-	mafObserver    *m_Listener;
   mafDeviceButtonsPadMouse       *m_Mouse;
   bool            m_CollaborateStatus;
   mafGUISettings *m_SettingPanel;

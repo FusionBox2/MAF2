@@ -29,7 +29,7 @@
 #include "mafVMELandmark.h"
 #include "mmaMeter.h"
 #include "mmaMaterial.h"
-#include "mafEventSource.h"
+#include "mafEventSender.h"
 #include "mafTransform.h"
 #include "mafStorageElement.h"
 #include "mafIndent.h"
@@ -347,10 +347,10 @@ void mafVMEMeter::InternalUpdate()
       m_Distance = -1;
 
     GetOutput()->Update();
-    m_EventSource->InvokeEvent(this, VME_OUTPUT_DATA_UPDATE);
+    InvokeEvent(this, VME_OUTPUT_DATA_UPDATE);
 
     if(GetMeterMeasureType() == mafVMEMeter::ABSOLUTE_MEASURE && GetMeterAttributes()->m_ThresholdEvent > 0 && m_Distance >= 0 && m_Distance >= threshold)
-      m_EventSource->InvokeEvent(this,LENGTH_THRESHOLD_EVENT);
+      InvokeEvent(this,LENGTH_THRESHOLD_EVENT);
   }
   else if (GetMeterMode() == mafVMEMeter::LINE_DISTANCE)
   {
@@ -478,10 +478,10 @@ void mafVMEMeter::InternalUpdate()
       m_Distance = -1;
 
     GetOutput()->Update();
-    m_EventSource->InvokeEvent(this, VME_OUTPUT_DATA_UPDATE);
+    InvokeEvent(this, VME_OUTPUT_DATA_UPDATE);
 
     if(GetMeterMeasureType() == mafVMEMeter::ABSOLUTE_MEASURE && GetMeterAttributes()->m_ThresholdEvent > 0 && m_Distance >= 0 && m_Distance >= threshold)
-      m_EventSource->InvokeEvent(this, LENGTH_THRESHOLD_EVENT);
+      InvokeEvent(this, LENGTH_THRESHOLD_EVENT);
   }
   else if (GetMeterMode() == mafVMEMeter::LINE_ANGLE)
   {
@@ -608,10 +608,10 @@ void mafVMEMeter::InternalUpdate()
       m_Angle = 0;
 
     GetOutput()->Update();
-    m_EventSource->InvokeEvent(this, VME_OUTPUT_DATA_UPDATE);
+    InvokeEvent(this, VME_OUTPUT_DATA_UPDATE);
 
     if(GetMeterMeasureType() == mafVMEMeter::ABSOLUTE_MEASURE && GetMeterAttributes()->m_ThresholdEvent > 0 && m_Angle > 0 && m_Angle >= threshold)
-      m_EventSource->InvokeEvent(this,LENGTH_THRESHOLD_EVENT);
+      InvokeEvent(this,LENGTH_THRESHOLD_EVENT);
   }
 
   m_Goniometer->Update();

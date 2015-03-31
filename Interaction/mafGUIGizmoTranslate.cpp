@@ -37,10 +37,10 @@
 #include "mafMatrix.h"
 
 //----------------------------------------------------------------------------
-mafGUIGizmoTranslate::mafGUIGizmoTranslate(mafObserver *listener, bool testMode)
+mafGUIGizmoTranslate::mafGUIGizmoTranslate(mafBaseEventHandler *listener, bool testMode)
 //----------------------------------------------------------------------------
 {
-  m_Listener = listener;
+  SetListener(listener);
 
   m_Position[0] = m_Position[1] = m_Position[2] = 0;
 

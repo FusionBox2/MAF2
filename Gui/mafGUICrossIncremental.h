@@ -21,7 +21,8 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafGUIPanel.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 #include "mafString.h"
 
 //----------------------------------------------------------------------------
@@ -50,7 +51,7 @@ It can use two accumulator variable that are updated. It needed absolutely step 
 After modification, it returns to listener an event with in Arg the sign of increment.
 */
 //----------------------------------------------------------------------------
-class MAF_EXPORT mafGUICrossIncremental: public mafGUIPanel , public mafObserver
+class MAF_EXPORT mafGUICrossIncremental: public mafGUIPanel, public mafBaseEventHandler, public mafEventSender
 {
 public:
   mafGUICrossIncremental(wxWindow* parent, 
@@ -99,7 +100,6 @@ public:
 	
 	void EnableStep(bool value);
 
-  void SetListener(mafObserver *Listener) {m_Listener = Listener;};
   void OnEvent(mafEventBase *maf_event);
 
   int IsIncrement(){return m_Increment;};
@@ -147,7 +147,6 @@ private:
   int m_Increment;
 
   double            *m_StepVariable;
-  mafObserver*      m_Listener;
 	int               m_IdLayout;
 
   bool m_IsComboStep;

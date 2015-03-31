@@ -21,7 +21,8 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 
 //----------------------------------------------------------------------------
 // forward references :
@@ -40,7 +41,7 @@ class mafGUI;
   - enforce superclass implementation by using pure virtuals
 */
 
-class MAF_EXPORT mafGUIGizmoInterface : public mafObserver
+class MAF_EXPORT mafGUIGizmoInterface : public mafBaseEventHandler, public mafEventSender
 {
 public:
 
@@ -67,9 +68,8 @@ public:
 protected:
   virtual void CreateGui() {};
   
-  mafGUIGizmoInterface(mafObserver *listener = NULL);
+  mafGUIGizmoInterface(mafBaseEventHandler *listener = NULL);
 
-  mafObserver *m_Listener;
   mafGUI      *m_Gui;    
   bool m_TestMode;
 

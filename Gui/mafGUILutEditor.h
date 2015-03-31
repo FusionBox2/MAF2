@@ -19,6 +19,8 @@
 
 #include "mafDecl.h"
 #include "mafEvent.h"
+#include "mafBaseEventHandler.h"
+#include "mafEventSender.h"
 #include "mafLUTLibrary.h"
 
 #include "mafGUILutWidget.h"
@@ -43,21 +45,20 @@
 
 @sa mafColor mafGUIColorSwatch mafGUIColorWidget mafGUILutPreset mafGUILutSwatch mafGUILutWidget
 */
-class mafGUILutEditor: public wxPanel, public mafObserver
+class mafGUILutEditor: public wxPanel, public mafBaseEventHandler, public mafEventSender
 {
 public:
   mafGUILutEditor(wxWindow* parent, wxWindowID id = -1, const wxPoint& pos = wxDefaultPosition, 
                const wxSize& size = wxSize(300,800), long style = wxTAB_TRAVERSAL);
   virtual ~mafGUILutEditor(); 
 
-  virtual void SetListener(mafObserver *Listener) {m_Listener = Listener;};
   void OnEvent(mafEventBase *maf_event);
 
   /** Assign the external lookup table to the widget.*/
   void SetLut(vtkLookupTable *lut);
 
   /** Show the dialog.*/
-  static void ShowLutDialog(vtkLookupTable *lut, mafObserver *listener = NULL, int id = MINID);
+  static void ShowLutDialog(vtkLookupTable *lut, mafBaseEventHandler *listener = NULL, int id = MINID);
 
 protected:
 
@@ -72,8 +73,6 @@ protected:
   void CopyLut(vtkLookupTable *from, vtkLookupTable *to);
 	
   //void OnComboSelection(wxCommandEvent &event);
-  
-  mafObserver *m_Listener;
 
   int          m_Preset; ///< Index of lookup table preset.
   int          m_UserPreset;

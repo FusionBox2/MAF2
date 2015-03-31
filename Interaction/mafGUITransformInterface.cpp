@@ -44,7 +44,6 @@ mafGUITransformInterface::mafGUITransformInterface()
 //----------------------------------------------------------------------------
 {
   m_CurrentTime = -1;
-  m_Listener = NULL;
   m_InputVME = NULL;
   m_Gui = NULL;
   m_RefSysVME = m_InputVME;

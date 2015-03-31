@@ -191,7 +191,7 @@ mafOp* mafOpExporterMSF::Copy()
 //----------------------------------------------------------------------------
 {
   mafOpExporterMSF *cp= new mafOpExporterMSF(m_Label);
-  cp->m_Listener    = m_Listener;
+  cp->SetListener(GetListener());
   cp->m_MSFFile     = m_MSFFile;
   cp->m_MSFFileDir  = m_MSFFileDir;
   return cp;

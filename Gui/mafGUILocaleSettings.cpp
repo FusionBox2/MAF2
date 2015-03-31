@@ -29,7 +29,7 @@
 #include "mafGUIDialog.h"
 
 //----------------------------------------------------------------------------
-mafGUILocaleSettings::mafGUILocaleSettings(mafObserver *Listener, const mafString &label):
+mafGUILocaleSettings::mafGUILocaleSettings(mafBaseEventHandler *Listener, const mafString &label):
 mafGUISettings(Listener, label)
 //----------------------------------------------------------------------------
 {

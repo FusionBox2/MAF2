@@ -27,7 +27,7 @@
 #include "mafSceneNode.h"
 #include "mafGUI.h"
 #include "mafGUIMaterialButton.h"
-#include "mafEventSource.h"
+#include "mafEventSender.h"
 #include "mmaMaterial.h"
 
 #include "mafVMELandmark.h"
@@ -89,7 +89,7 @@ void mafPipeLandmarkCloud::Create(mafSceneNode *n)
   double r = 0;
   int resolution = 15;
 
-  m_Vme->GetEventSource()->AddObserver(this);
+  m_Vme->AddObserver(this);
 
   assert(m_Vme->IsMAFType(mafVMELandmarkCloud) || m_Vme->IsMAFType(mafVMELandmark));
   
@@ -124,7 +124,7 @@ mafPipeLandmarkCloud::~mafPipeLandmarkCloud()
 {
   if (m_Vme)
   {
-  	m_Vme->GetEventSource()->RemoveObserver(this);
+  	m_Vme->RemoveObserver(this);
   }
 
   if (m_Cloud && m_Cloud->IsOpen())

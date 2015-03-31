@@ -16,13 +16,13 @@
 #ifndef __mafGUITreeContextualMenu_H__
 #define __mafGUITreeContextualMenu_H__
 
+#include "mafEventSender.h"
 //----------------------------------------------------------------------------
 // forward references;
 //----------------------------------------------------------------------------
 class mafView;
 class mafGUIMDIChild;
 class mafEvent;
-class mafObserver;
 class mafGUICheckTree;
 class mafNode;
 class mafSceneGraph;
@@ -34,12 +34,11 @@ class mafVME;
 /** Used to create and manage contextual menu' for tree widget used in side bar
 @sa mafGUIContextualMenu
 */
-class MAF_EXPORT mafGUITreeContextualMenu : public wxMenu
+class MAF_EXPORT mafGUITreeContextualMenu : public wxMenu, public mafEventSender
 {
 public:
   mafGUITreeContextualMenu();
   virtual ~mafGUITreeContextualMenu();
-  void SetListener(mafObserver *Listener) {m_Listener = Listener;};
 
   /** Create a contextual menu*/
   virtual void CreateContextualMenu(mafGUICheckTree *tree, mafView *view, mafNode *vme, bool vme_menu);
@@ -52,7 +51,6 @@ protected:
   mafVME        *m_VmeActive;
   mafNode       *m_NodeActive;
   mafGUICheckTree  *m_NodeTree;
-  mafObserver   *m_Listener;
 
   mafSceneGraph *m_SceneGraph;
   

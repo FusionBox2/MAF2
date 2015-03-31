@@ -80,7 +80,7 @@ class mafMatrix;
 class MAF_EXPORT mafGizmoTranslate : public mafGizmoInterface 
 {
 public:
-           mafGizmoTranslate(mafVME *input, mafObserver* listener = NULL, bool BuildGUI = true);
+           mafGizmoTranslate(mafVME *input, mafBaseEventHandler* listener = NULL, bool BuildGUI = true);
   virtual ~mafGizmoTranslate(); 
 
   /** 

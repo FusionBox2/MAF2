@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
 #include "mafGUITransformInterface.h"
 #include "mafInteractorCompositorMouse.h"
 
@@ -44,7 +44,7 @@ class mafVME;
 class MAF_EXPORT mafGUITransformMouse : public mafGUITransformInterface
 {
 public:
-  mafGUITransformMouse(mafVME *input, mafObserver *listener = NULL, bool testMode = false);
+  mafGUITransformMouse(mafVME *input, mafBaseEventHandler *listener = NULL, bool testMode = false);
 	~mafGUITransformMouse(); 
 
   // constraints enum

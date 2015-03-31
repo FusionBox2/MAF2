@@ -119,7 +119,6 @@ mafRWIBase::mafRWIBase(wxWindow *parent, wxWindowID id, const wxPoint &pos,
   
   m_Camera    = NULL;
   m_Mouse     = NULL;
-  m_Listener  = NULL;
   
   m_StereoMovieDir     = "";
   m_StereoMovieFrameCounter = 0;
@@ -318,10 +317,8 @@ void mafRWIBase::OnLeftMouseDoubleClick(wxMouseEvent &event)
     e.SetChannel(MCH_OUTPUT);
     if(m_Mouse) 
       m_Mouse->OnEvent(&e);
-    else if (m_Listener)
-    {
-      m_Listener->OnEvent(&e);
-    }
+    else
+      mafEventSender::InvokeEvent(&e);
   }
 }
 //----------------------------------------------------------------------------
@@ -336,7 +333,7 @@ void mafRWIBase::OnLeftMouseButtonDown(wxMouseEvent &event)
   if (m_CustomInteractorStyle)
   {
     SetEventInformation(event.GetX(),m_Height - event.GetY() - 1,event.ControlDown(),event.ShiftDown());
-    InvokeEvent(vtkCommand::LeftButtonPressEvent,NULL);
+    vtkRenderWindowInteractor::InvokeEvent(vtkCommand::LeftButtonPressEvent,NULL);
   }
   else
   {
@@ -349,10 +346,8 @@ void mafRWIBase::OnLeftMouseButtonDown(wxMouseEvent &event)
     e.SetChannel(MCH_OUTPUT);
     if(m_Mouse) 
       m_Mouse->OnEvent(&e);
-    else if (m_Listener)
-    {
-      m_Listener->OnEvent(&e);
-    }
+    else
+      mafEventSender::InvokeEvent(&e);
   }
 }
 //----------------------------------------------------------------------------
@@ -367,7 +362,7 @@ void mafRWIBase::OnMiddleMouseButtonDown(wxMouseEvent &event)
   if (m_CustomInteractorStyle)
   {
     SetEventInformation(event.GetX(),m_Height - event.GetY() - 1,event.ControlDown(),event.ShiftDown());
-    InvokeEvent(vtkCommand::MiddleButtonPressEvent,NULL);
+    vtkRenderWindowInteractor::InvokeEvent(vtkCommand::MiddleButtonPressEvent,NULL);
   }
   else
   {
@@ -380,10 +375,8 @@ void mafRWIBase::OnMiddleMouseButtonDown(wxMouseEvent &event)
     e.SetChannel(MCH_OUTPUT);
     if(m_Mouse) 
       m_Mouse->OnEvent(&e);
-    else if (m_Listener)
-    {
-      m_Listener->OnEvent(&e);
-    }
+    else
+      mafEventSender::InvokeEvent(&e);
   }
 }
 //----------------------------------------------------------------------------
@@ -398,7 +391,7 @@ void mafRWIBase::OnRightMouseButtonDown(wxMouseEvent &event)
   if (m_CustomInteractorStyle)
   {
     SetEventInformation(event.GetX(),m_Height - event.GetY() - 1,event.ControlDown(),event.ShiftDown());
-    InvokeEvent(vtkCommand::RightButtonPressEvent,NULL);
+    vtkRenderWindowInteractor::InvokeEvent(vtkCommand::RightButtonPressEvent,NULL);
   }
   else
   {
@@ -411,10 +404,8 @@ void mafRWIBase::OnRightMouseButtonDown(wxMouseEvent &event)
     e.SetChannel(MCH_OUTPUT);
     if(m_Mouse) 
       m_Mouse->OnEvent(&e);
-    else if (m_Listener)
-    {
-      m_Listener->OnEvent(&e);
-    }
+    else
+      mafEventSender::InvokeEvent(&e);
   }
 }
 //----------------------------------------------------------------------------
@@ -431,7 +422,7 @@ void mafRWIBase::OnLeftMouseButtonUp(wxMouseEvent &event)
 	if (m_CustomInteractorStyle)
   {
 	  SetEventInformation(event.GetX(),m_Height - event.GetY() - 1,event.ControlDown(),event.ShiftDown());
-	  InvokeEvent(vtkCommand::LeftButtonReleaseEvent,NULL);
+    vtkRenderWindowInteractor::InvokeEvent(vtkCommand::LeftButtonReleaseEvent,NULL);
   }
   else
   {
@@ -444,10 +435,8 @@ void mafRWIBase::OnLeftMouseButtonUp(wxMouseEvent &event)
     e.SetChannel(MCH_OUTPUT);
     if(m_Mouse) 
       m_Mouse->OnEvent(&e);
-    else if (m_Listener)
-    {
-      m_Listener->OnEvent(&e);
-    }
+    else
+      mafEventSender::InvokeEvent(&e);
   }
 }
 //----------------------------------------------------------------------------
@@ -464,7 +453,7 @@ void mafRWIBase::OnMiddleMouseButtonUp(wxMouseEvent &event)
   if (m_CustomInteractorStyle)
   {
 	  SetEventInformation(event.GetX(),m_Height - event.GetY() - 1,event.ControlDown(),event.ShiftDown());
-	  InvokeEvent(vtkCommand::MiddleButtonReleaseEvent,NULL);
+    vtkRenderWindowInteractor::InvokeEvent(vtkCommand::MiddleButtonReleaseEvent,NULL);
   }
   else
   {
@@ -477,10 +466,8 @@ void mafRWIBase::OnMiddleMouseButtonUp(wxMouseEvent &event)
     e.SetChannel(MCH_OUTPUT);
     if(m_Mouse) 
       m_Mouse->OnEvent(&e);
-    else if (m_Listener)
-    {
-      m_Listener->OnEvent(&e);
-    }
+    else
+      mafEventSender::InvokeEvent(&e);
   }
 }
 //----------------------------------------------------------------------------
@@ -497,7 +484,7 @@ void mafRWIBase::OnRightMouseButtonUp(wxMouseEvent &event)
   if (m_CustomInteractorStyle)
   {
     SetEventInformation(event.GetX(),m_Height - event.GetY() - 1,event.ControlDown(),event.ShiftDown());
-    InvokeEvent(vtkCommand::RightButtonReleaseEvent,NULL);
+    vtkRenderWindowInteractor::InvokeEvent(vtkCommand::RightButtonReleaseEvent,NULL);
   }
   else
   {
@@ -510,10 +497,8 @@ void mafRWIBase::OnRightMouseButtonUp(wxMouseEvent &event)
     e.SetChannel(MCH_OUTPUT);
     if(m_Mouse) 
       m_Mouse->OnEvent(&e);
-    else if (m_Listener)
-    {
-      m_Listener->OnEvent(&e);
-    }
+    else
+      mafEventSender::InvokeEvent(&e);
   }
 }
 //----------------------------------------------------------------------------
@@ -537,7 +522,7 @@ void mafRWIBase::OnMouseMotion(wxMouseEvent &event)
   if (m_CustomInteractorStyle)
   {
     SetEventInformation(event.GetX(),m_Height - event.GetY() - 1,event.ControlDown(),event.ShiftDown());
-    InvokeEvent(vtkCommand::MouseMoveEvent,NULL);
+    vtkRenderWindowInteractor::InvokeEvent(vtkCommand::MouseMoveEvent,NULL);
   }
   else
   {
@@ -549,10 +534,8 @@ void mafRWIBase::OnMouseMotion(wxMouseEvent &event)
     e.SetChannel(MCH_OUTPUT);
     if(m_Mouse) 
       m_Mouse->OnEvent(&e);
-    else if (m_Listener)
-    {
-      m_Listener->OnEvent(&e);
-    }
+    else
+      mafEventSender::InvokeEvent(&e);
   }
 }
 //----------------------------------------------------------------------------
@@ -563,7 +546,7 @@ void mafRWIBase::OnTimer(wxTimerEvent &event)
 
   if (m_CustomInteractorStyle)
   {
-    InvokeEvent(vtkCommand::TimerEvent,NULL);
+    vtkRenderWindowInteractor::InvokeEvent(vtkCommand::TimerEvent,NULL);
   }
 }
 //----------------------------------------------------------------------------
@@ -575,7 +558,7 @@ void mafRWIBase::OnKeyDown(wxKeyEvent &event)
   if (m_CustomInteractorStyle)
   {
     SetKeyEventInformation(event.ControlDown(),event.ShiftDown(),event.GetKeyCode(), 1, "none");
-    InvokeEvent(vtkCommand::KeyPressEvent,NULL);
+    vtkRenderWindowInteractor::InvokeEvent(vtkCommand::KeyPressEvent,NULL);
   }
   
   event.Skip();
@@ -589,7 +572,7 @@ void mafRWIBase::OnKeyUp(wxKeyEvent &event)
   if (m_CustomInteractorStyle)
   {
     SetKeyEventInformation(event.ControlDown(),event.ShiftDown(),event.GetKeyCode(), 1, "none");
-    InvokeEvent(vtkCommand::KeyReleaseEvent,NULL);
+    vtkRenderWindowInteractor::InvokeEvent(vtkCommand::KeyReleaseEvent,NULL);
   }
 
   event.Skip();
@@ -603,7 +586,7 @@ void mafRWIBase::OnChar(wxKeyEvent &event)
   if (m_CustomInteractorStyle)
   {
     SetKeyEventInformation(event.ControlDown(),event.ShiftDown(),event.GetKeyCode(), 1);
-    InvokeEvent(vtkCommand::CharEvent,NULL);
+    vtkRenderWindowInteractor::InvokeEvent(vtkCommand::CharEvent,NULL);
   }
   else
   {
@@ -669,7 +652,7 @@ void mafRWIBase::OnSize(wxSizeEvent &event)
 	
   if (m_CustomInteractorStyle)
   {
-	  InvokeEvent(vtkCommand::ConfigureEvent,NULL); // mah! - should introduce noise     */
+    vtkRenderWindowInteractor::InvokeEvent(vtkCommand::ConfigureEvent,NULL); // mah! - should introduce noise     */
   }
 }
 //----------------------------------------------------------------------------

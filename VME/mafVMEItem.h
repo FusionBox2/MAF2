@@ -31,7 +31,7 @@
 #include "mafString.h"
 #include "mafMTime.h"
 #include "mafOBB.h"
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
 #include "mafEventBase.h"
 
 //----------------------------------------------------------------------------
@@ -325,7 +325,7 @@ loading data from remote storages.
 
 @sa mafVMEItemVTK mafVMEItemScalar
 */
-class MAF_EXPORT mafVMEItemAsynchObserver : public mafObserver
+class MAF_EXPORT mafVMEItemAsynchObserver : public mafBaseEventHandler
 {
 public:
   MAF_ID_DEC(VME_ITEM_DATA_DOWNLOADED); ///< event used to update the mafVMEItem data when download is finished.

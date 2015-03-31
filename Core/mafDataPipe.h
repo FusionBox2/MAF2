@@ -19,7 +19,7 @@
 // includes :
 //----------------------------------------------------------------------------
 #include "mafReferenceCounted.h"
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
 #include "mafTimeStamped.h"
 #include "mafOBB.h"
 
@@ -47,7 +47,7 @@ class mafVME;
   - rewrite GetOutput()
   - reerite UpdateBounds()
 */
-class MAF_EXPORT mafDataPipe:public mafReferenceCounted, public mafTimeStamped, public mafObserver
+class MAF_EXPORT mafDataPipe:public mafReferenceCounted, public mafTimeStamped, public mafBaseEventHandler
 {
 public:
   mafDataPipe();

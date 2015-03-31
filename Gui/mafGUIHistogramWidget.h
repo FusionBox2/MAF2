@@ -24,6 +24,8 @@
 #include "mafGUIPanel.h"
 #include "mafDecl.h"
 #include "mafEvent.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 
 #include "vtkMAFHistogram.h"
 
@@ -40,7 +42,7 @@ class vtkLookupTable;
 
 //----------------------------------------------------------------------------
 /** mafGUIHistogramWidget : widget that encapsulate render window into a gui*/
-class MAF_EXPORT mafGUIHistogramWidget: public mafGUIPanel, public mafObserver
+class MAF_EXPORT mafGUIHistogramWidget: public mafGUIPanel, public mafBaseEventHandler, public mafEventSender
 {
 public:
   /** Constructor */
@@ -49,10 +51,6 @@ public:
   /** Destructor. */
   virtual ~mafGUIHistogramWidget();
 
-  /** Set the listener for the widget */
-  virtual void SetListener(mafObserver *Listener) {m_Listener = Listener;};
-  
-  /** Main Event handler */
   void OnEvent(mafEventBase *event);
 
   MAF_ID_DEC(RANGE_MODIFIED);
@@ -155,7 +153,6 @@ protected:
   /** Reset to default histogram parameters.*/
   void ResetHistogram();
 
-  mafObserver   *m_Listener;
   double         m_ScaleFactor;
   double         m_LogScaleConstant;
   int            m_HisctogramValue;

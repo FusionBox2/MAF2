@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
 #include "mafGUITransformInterface.h"
 #include "mafTagArray.h"
 //----------------------------------------------------------------------------
@@ -51,7 +51,7 @@ public:
     ID_SCALE_GUI, 
   };
 
-  mafGUISaveRestorePose(mafVME *input, mafObserver *listener = NULL , int typeGui = ID_POSE_GUI, bool testMode = false);
+  mafGUISaveRestorePose(mafVME *input, mafBaseEventHandler *listener = NULL , int typeGui = ID_POSE_GUI, bool testMode = false);
 	~mafGUISaveRestorePose(); 
 
   /** Events handling */

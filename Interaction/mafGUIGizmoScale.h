@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
 #include "mafGUIGizmoInterface.h"
 
 //----------------------------------------------------------------------------
@@ -41,7 +41,7 @@ class MAF_EXPORT mafGUIGizmoScale : public mafGUIGizmoInterface
 {
 public:
 
-  mafGUIGizmoScale(mafObserver *listener = NULL, bool testMode = false);
+  mafGUIGizmoScale(mafBaseEventHandler *listener = NULL, bool testMode = false);
 	~mafGUIGizmoScale(); 
 
   void OnEvent(mafEventBase *maf_event);

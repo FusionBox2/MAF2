@@ -84,8 +84,7 @@ mafNode::mafNode()
   m_Initialized         = false;
   m_DependsOnLinkedNode = false;
   m_Id                  = -1; // invalid ID
-  m_EventSource         = new mafEventSource;
-  m_EventSource->SetChannel(MCH_NODE);
+  SetChannel(MCH_NODE);
   m_Parent              = NULL;
   m_VisibleToTraverse   = true;
 }
@@ -95,13 +94,12 @@ mafNode::~mafNode()
 //-------------------------------------------------------------------------
 {
   // advise observers this is being destroyed
-  m_EventSource->InvokeEvent(this,NODE_DESTROYED);
+  InvokeEvent(this,NODE_DESTROYED);
   RemoveAllChildren();
   RemoveAllLinks();
   RemoveAllAttributes();
   Shutdown();
   //SetParent(NULL);//at this point parent should be already NULL, as the pointer from their is destroyed (referencecount == 0, calling destructor)
-  cppDEL(m_EventSource);
 }
 
 //------------------------------------------------------------------------------
@@ -163,7 +161,7 @@ int mafNode::InternalInitialize()
       {
         // attach linked node to this one
         link.m_Node=node;
-        node->GetEventSource()->AddObserver(this);
+        node->AddObserver(this);
       }
     }    
   }
@@ -236,7 +234,7 @@ void mafNode::ForwardEvent(mafEventBase &maf_event)
 void mafNode::ForwardEvent(mafEventBase *maf_event)
 //----------------------------------------------------------------------------
 {
-  GetEventSource()->InvokeEvent(maf_event);
+  InvokeEvent(maf_event);
   ForwardUpEvent(maf_event);
   ForwardDownEvent(maf_event);
 }
@@ -818,9 +816,9 @@ mafNode *mafNode::CopyTree()
           if(lnk_it->second.m_Node == nodes[i].first)
           {
             //n->SetLink(lnk_it->first, mp_it->second, lnk_it->second.m_NodeSubId);
-            lnk_it->second.m_Node->GetEventSource()->RemoveObserver(n);
+            lnk_it->second.m_Node->RemoveObserver(n);
             lnk_it->second.m_Node = nodes[i].second;
-            lnk_it->second.m_Node->GetEventSource()->AddObserver(n);
+            lnk_it->second.m_Node->AddObserver(n);
           }
         }
       }
@@ -959,7 +957,7 @@ void mafNode::SetLink(const char *name, mafNode *node, mafID sub_id)
    
     // detach old linked node, if present
     if (it->second.m_Node)
-      it->second.m_Node->GetEventSource()->RemoveObserver(this);
+      it->second.m_Node->RemoveObserver(this);
   }
 
   // set the link to the new node
@@ -967,7 +965,7 @@ void mafNode::SetLink(const char *name, mafNode *node, mafID sub_id)
 
   // attach as observer of the linked node to catch events
   // of de/attachment to the tree and destroy event.
-  node->GetEventSource()->AddObserver(this); 
+  node->AddObserver(this); 
   Modified();
 }
 //-------------------------------------------------------------------------
@@ -982,7 +980,7 @@ void mafNode::RemoveLink(const char *name)
     // detach as observer from the linked node
 	if (it->second.m_Node != NULL)
 	{
-		it->second.m_Node->GetEventSource()->RemoveObserver(this);
+		it->second.m_Node->RemoveObserver(this);
 	}
     
     m_Links.erase(it); // remove linked node from links container
@@ -998,7 +996,7 @@ void mafNode::RemoveAllLinks()
   {
     // detach as observer from the linked node
     if(it->second.m_Node)
-      it->second.m_Node->GetEventSource()->RemoveObserver(this);
+      it->second.m_Node->RemoveObserver(this);
   }
   m_Links.clear();
   Modified();
@@ -1074,10 +1072,10 @@ void mafNode::OnEvent(mafEventBase *e)
     {
     case NODE_DETACHED_FROM_TREE:
       ReleaseNodeId(GetId());
-      GetEventSource()->InvokeEvent(&mafEventBase(this, NODE_DETACHED_FROM_TREE));
+      InvokeEvent(&mafEventBase(this, NODE_DETACHED_FROM_TREE));
       break;
     case NODE_ATTACHED_TO_TREE:
-      GetEventSource()->InvokeEvent(&mafEventBase(this, NODE_ATTACHED_TO_TREE));
+      InvokeEvent(&mafEventBase(this, NODE_ATTACHED_TO_TREE));
       break;
     }
     ForwardDownEvent(e);

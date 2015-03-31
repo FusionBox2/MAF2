@@ -40,7 +40,7 @@ class MAF_EXPORT mafGUIApplicationSettings : public mafGUISettings
 {
 public:
   /** constructor .*/
-	mafGUIApplicationSettings(mafObserver *Listener, const mafString &label = _("Application"));
+	mafGUIApplicationSettings(mafBaseEventHandler *Listener, const mafString &label = _("Application"));
   /** destructor .*/
 	~mafGUIApplicationSettings(); 
 

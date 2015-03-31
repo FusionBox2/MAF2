@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
 #include "mafGUITransformInterface.h"
 
 //----------------------------------------------------------------------------
@@ -59,7 +59,7 @@ class MAF_EXPORT mafGUITransformTextEntries : public mafGUITransformInterface
 {
 public:
 
-  mafGUITransformTextEntries(mafVME *input, mafObserver *listener = NULL, bool enableScaling = true, bool testMode = false);
+  mafGUITransformTextEntries(mafVME *input, mafBaseEventHandler *listener = NULL, bool enableScaling = true, bool testMode = false);
 	~mafGUITransformTextEntries(); 
 
   void OnEvent(mafEventBase *maf_event);

@@ -28,7 +28,7 @@
 #include "mafGUI.h"
 
 //----------------------------------------------------------------------------
-mafGUIMeasureUnitSettings::mafGUIMeasureUnitSettings(mafObserver *Listener, const mafString &label):
+mafGUIMeasureUnitSettings::mafGUIMeasureUnitSettings(mafBaseEventHandler *Listener, const mafString &label):
 mafGUISettings(Listener, label)
 //----------------------------------------------------------------------------
 {

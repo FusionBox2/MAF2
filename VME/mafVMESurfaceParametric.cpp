@@ -32,7 +32,7 @@
 #include "mafTagArray.h"
 #include "mafMatrixVector.h"
 #include "mafVMEItemVTK.h"
-#include "mafEventSource.h"
+#include "mafEventSender.h"
 #include "mafTransform.h"
 #include "mafGUI.h"
 #include "mmaMaterial.h"

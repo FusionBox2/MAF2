@@ -23,7 +23,8 @@
 #include <wx/hash.h>
 #include "mafDecl.h"
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 #include "mafGUIPanel.h"
 //----------------------------------------------------------------------------
 // constant :
@@ -55,13 +56,12 @@ enum CrossSplitterDragModes
 Use Put(w,id) to place widgets on the various pane - id should be in 0..3.
 Putting a new pane delete the previous
 */
-class MAF_EXPORT mafGUICrossSplitter: public mafGUIPanel
+class MAF_EXPORT mafGUICrossSplitter: public mafGUIPanel, public mafEventSender
 {
 public:
   mafGUICrossSplitter(wxWindow* parent,wxWindowID id = -1);
   virtual ~mafGUICrossSplitter();
 
-  void SetListener(mafObserver *Listener) {m_Listener = Listener;};
   //void OnEvent(mafEventBase *event);
 
   /** Show/Hide the four panel according to a splitting modality. */
@@ -83,7 +83,6 @@ public:
 	void SetFocusedPanel(wxWindow* w);
 
 protected:
-  mafObserver *m_Listener;
 
   wxCursor *m_CursorWE;
   wxCursor *m_CursorNS;

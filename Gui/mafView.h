@@ -18,7 +18,8 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "mafObserver.h"
+#include "mafEvent.h"
+#include "mafEventSender.h"
 #include "mafObjectWithGUI.h"
 
 //----------------------------------------------------------------------------
@@ -75,7 +76,7 @@ mafView doesn't have a Scenegraph, nor knowledge about VTK /sa mafViewVTK.
 mafView can be the base class for composed Views.
 
 */
-class MAF_EXPORT mafView: public mafObserver, public mafObject, public mafObjectWithGUI
+class MAF_EXPORT mafView: public mafObject, public mafBaseEventHandler, public mafEventSender, public mafObjectWithGUI
 {
 public:
   mafView(const wxString &label = "View");
@@ -83,9 +84,8 @@ public:
 
   mafTypeMacro(mafView, mafObject);
 
-  virtual void			SetListener(mafObserver *Listener) {m_Listener = Listener;};
   virtual void			OnEvent(mafEventBase *maf_event);
-  virtual mafView*  Copy(mafObserver *Listener, bool lightCopyEnabled = false) {m_LightCopyEnabled = lightCopyEnabled; return NULL;};
+  virtual mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) {m_LightCopyEnabled = lightCopyEnabled; return NULL;};
   virtual void      Create() {};
 
   virtual void			VmeAdd(mafNode *vme)															{};
@@ -177,7 +177,6 @@ public:
   vtkCellPicker *GetPicker2D() {return m_Picker2D;};
 
 protected:
-  mafObserver   *m_Listener;
   wxString       m_Label;
   wxString       m_Name;
   wxWindow			*m_Win;

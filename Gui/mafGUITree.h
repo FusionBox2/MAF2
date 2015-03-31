@@ -24,7 +24,8 @@
 #include <wx/treectrl.h>
 #include <wx/hash.h>
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 #include "mafGUINamedPanel.h"
 
 //----------------------------------------------------------------------------
@@ -91,7 +92,7 @@ Deleting an item destroy all the sub-items,leaving the m_NodeTable inconsistent.
 To correctly implement the operation, DeleteNode must call itself recursively on the 
 item subtree, then Delete the item and remove the corresponding m_NodeTable entry. 
 */
-class MAF_EXPORT mafGUITree: public mafGUINamedPanel
+class MAF_EXPORT mafGUITree: public mafGUINamedPanel, public mafEventSender
 {
 public:
                  mafGUITree (wxWindow* parent, wxWindowID id=-1, bool CloseButton = false, bool HideTitle = false); 
@@ -162,9 +163,6 @@ public:
   /** expand the children of node_id */
   void ExpandNode(long node_id);
 
-  /** Set the Listener that will receive event-notification, the Listener can be changed any time  */
-  void SetListener(mafObserver *listener)   {m_Listener=listener;}; 
-
   /** Return the node item from node id. */
   wxTreeItemId ItemFromNode(long node_id);
 
@@ -201,7 +199,6 @@ protected:
   long               m_NodeRoot;
   wxImageList       *m_NodeImages;       
   wxHashTable       *m_NodeTable;        
-  mafObserver       *m_Listener;     
 
 	//----------------------------------------------------------------------------
 	// mafGUITreeItemData :

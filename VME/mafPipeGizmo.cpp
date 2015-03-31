@@ -32,7 +32,7 @@
 #include "vtkMAFAssembly.h"
 #include "vtkMAFSmartPointer.h"
 
-#include "mafEventSource.h"
+#include "mafEventSender.h"
 
 #include "vtkRenderer.h"
 #include "vtkOutlineCornerFilter.h"
@@ -82,7 +82,7 @@ void mafPipeGizmo::Create(mafSceneNode *n)
 	vtkPolyData *data = inputVMEGizmo->GetData();
 	assert(data);
 
-	m_Vme->GetEventSource()->AddObserver(this);
+	m_Vme->AddObserver(this);
 
 	m_Mapper = vtkPolyDataMapper::New();
 	m_Mapper->SetInput(data);
@@ -212,7 +212,7 @@ void mafPipeGizmo::Create(mafSceneNode *n)
 mafPipeGizmo::~mafPipeGizmo()
 //----------------------------------------------------------------------------
 {
-	m_Vme->GetEventSource()->RemoveObserver(this);
+	m_Vme->RemoveObserver(this);
 
 	if (m_Mediator && m_Mediator->GetAlwaysVisible())
 	{

@@ -46,11 +46,11 @@ BEGIN_EVENT_TABLE (mafGUIValidator, wxValidator)
 END_EVENT_TABLE()
 
 //----------------------------------------------------------------------------
-void mafGUIValidator::Init(mafObserver* listener, int mid, wxControl *win)
+void mafGUIValidator::Init(mafBaseEventHandler* listener, int mid, wxControl *win)
 //----------------------------------------------------------------------------
 {
   assert(win);
-  m_Listener = listener;
+  SetListener(listener);
   m_ModuleId = mid;
 	m_DecimalDigits = -1;
 
@@ -97,7 +97,7 @@ bool mafGUIValidator::IsValid()
   // The message KillFocus can arrive to the validator on the time(2).
 
   //TODO if ( !(m_gui && m_gui->IsKindOf(CLASSINFO(mafGUI)))   ) return false;
-  if ( !m_Listener   ) return false;
+  if ( !GetListener()   ) return false;
 
   switch (m_Mode) 
 	{
@@ -189,7 +189,7 @@ bool mafGUIValidator::Copy(const mafGUIValidator& val)
 //----------------------------------------------------------------------------
 {
   wxValidator::Copy(val);
-  m_Listener        = val.m_Listener;     
+  SetListener(val.GetListener());     
   m_ModuleId        = val.m_ModuleId;
 	m_DecimalDigits   = val.m_DecimalDigits;
 
@@ -232,7 +232,7 @@ bool mafGUIValidator::Copy(const mafGUIValidator& val)
   return TRUE;
 }
 //----------------------------------------------------------------------------
-mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxStaticText *win,mafString* var) //String
+mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener, int mid, wxStaticText *win,mafString* var) //String
 //----------------------------------------------------------------------------
 {
   Init(listener,mid,win);
@@ -244,7 +244,7 @@ mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxStaticText *w
   assert(IsValid());
 }
 //----------------------------------------------------------------------------
-mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxStaticText *win, wxString* var) //String
+mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener, int mid, wxStaticText *win, wxString* var) //String
 //----------------------------------------------------------------------------
 {
   Init(listener,mid,win);
@@ -256,7 +256,7 @@ mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxStaticText *w
   assert(IsValid());
 }
 //----------------------------------------------------------------------------
-mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxTextCtrl *win, wxString *var) //String
+mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener, int mid, wxTextCtrl *win, wxString *var) //String
 //----------------------------------------------------------------------------
 {
   Init(listener,mid,win);  
@@ -268,7 +268,7 @@ mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxTextCtrl *win
   assert(IsValid());
 }
 //----------------------------------------------------------------------------
-mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxTextCtrl *win,mafString* var) //String
+mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener, int mid, wxTextCtrl *win,mafString* var) //String
 //----------------------------------------------------------------------------
 {
   Init(listener,mid,win);  
@@ -280,7 +280,7 @@ mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxTextCtrl *win
   assert(IsValid());
 }
 //----------------------------------------------------------------------------
-mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxTextCtrl *win,   int*   var,   int min,   int max)//Integer
+mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener, int mid, wxTextCtrl *win,   int*   var,   int min,   int max)//Integer
 //----------------------------------------------------------------------------
 {
   Init(listener,mid,win);  
@@ -294,7 +294,7 @@ mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxTextCtrl *win
   assert(IsValid());
 }
 //----------------------------------------------------------------------------
-mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxTextCtrl *win, float* var, float min, float max, int dec_digits)//Float
+mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener, int mid, wxTextCtrl *win, float* var, float min, float max, int dec_digits)//Float
 //----------------------------------------------------------------------------
 {
   Init(listener,mid,win);  
@@ -309,7 +309,7 @@ mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxTextCtrl *win
   assert(IsValid());
 }
 //----------------------------------------------------------------------------
-mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxTextCtrl *win, double* var, double min, double max, int dec_digits)//Double
+mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener, int mid, wxTextCtrl *win, double* var, double min, double max, int dec_digits)//Double
 //----------------------------------------------------------------------------
 {
   Init(listener,mid,win);  
@@ -324,7 +324,7 @@ mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxTextCtrl *win
   assert(IsValid());
 }
 //----------------------------------------------------------------------------
-mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxSlider *win, int* var, wxTextCtrl* lab) //Slider     
+mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener, int mid, wxSlider *win, int* var, wxTextCtrl* lab) //Slider     
 //----------------------------------------------------------------------------
 {
   Init(listener,mid,win);  
@@ -337,7 +337,7 @@ mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxSlider *win, 
   assert(IsValid());
 }
 //----------------------------------------------------------------------------
-mafGUIValidator::mafGUIValidator(mafObserver* listener,int mid,wxTextCtrl *win, int* var, wxSlider* lab, int min, int max)
+mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener,int mid,wxTextCtrl *win, int* var, wxSlider* lab, int min, int max)
 //----------------------------------------------------------------------------
 {
   Init(listener,mid,win);
@@ -352,7 +352,7 @@ mafGUIValidator::mafGUIValidator(mafObserver* listener,int mid,wxTextCtrl *win, 
   assert(IsValid());
 }
 //----------------------------------------------------------------------------
-mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, mafGUIFloatSlider  *win, double*  var, wxTextCtrl* lab) //FloatSlider
+mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener, int mid, mafGUIFloatSlider  *win, double*  var, wxTextCtrl* lab) //FloatSlider
 //----------------------------------------------------------------------------
 {
   Init(listener,mid,win);  
@@ -365,7 +365,7 @@ mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, mafGUIFloatSlid
   assert(IsValid());
 }
 //----------------------------------------------------------------------------
-mafGUIValidator::mafGUIValidator(mafObserver* listener,int mid,wxTextCtrl *win, double* var, mafGUIFloatSlider* lab,double min,double max)
+mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener,int mid,wxTextCtrl *win, double* var, mafGUIFloatSlider* lab,double min,double max)
 //----------------------------------------------------------------------------
 {
   Init(listener,mid,win);  
@@ -380,7 +380,7 @@ mafGUIValidator::mafGUIValidator(mafObserver* listener,int mid,wxTextCtrl *win, 
   assert(IsValid());
 }
 //----------------------------------------------------------------------------
-mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxCheckBox *win,   int*   var) //CheckBox    
+mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener, int mid, wxCheckBox *win,   int*   var) //CheckBox    
 //----------------------------------------------------------------------------
 {
   Init(listener,mid,win);
@@ -392,7 +392,7 @@ mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxCheckBox *win
   assert(IsValid());
 }
 //----------------------------------------------------------------------------
-mafGUIValidator::mafGUIValidator(mafObserver* listener,int mid,wxListBox *win)
+mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener,int mid,wxListBox *win)
 //----------------------------------------------------------------------------
 {
   Init(listener,mid,win);  
@@ -402,7 +402,7 @@ mafGUIValidator::mafGUIValidator(mafObserver* listener,int mid,wxListBox *win)
   assert(IsValid());
 }
 //----------------------------------------------------------------------------
-mafGUIValidator::mafGUIValidator(mafObserver* listener,int mid,wxListCtrl *win)
+mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener,int mid,wxListCtrl *win)
 //----------------------------------------------------------------------------
 {
 	Init(listener,mid,win);  
@@ -413,7 +413,7 @@ mafGUIValidator::mafGUIValidator(mafObserver* listener,int mid,wxListCtrl *win)
 }
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
-mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxRadioBox *win,   int*   var) //RadioBox                     
+mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener, int mid, wxRadioBox *win,   int*   var) //RadioBox                     
 //----------------------------------------------------------------------------
 {
   Init(listener,mid,win);  
@@ -425,7 +425,7 @@ mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxRadioBox *win
   assert(IsValid());
 }
 //----------------------------------------------------------------------------
-mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxComboBox *win,   int*   var) //Combo 
+mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener, int mid, wxComboBox *win,   int*   var) //Combo 
 //----------------------------------------------------------------------------
 {
   Init(listener,mid,win);  
@@ -437,7 +437,7 @@ mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxComboBox *win
   assert(IsValid());
 }
 //----------------------------------------------------------------------------
-mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxButton *win) //Button
+mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener, int mid, wxButton *win) //Button
 //----------------------------------------------------------------------------
 {
   Init(listener,mid,win);  
@@ -447,7 +447,7 @@ mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxButton *win) 
   assert(IsValid());
 }
 //----------------------------------------------------------------------------
-mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxButton *win, mafString* var, wxTextCtrl* lab,  bool  openfile, const mafString wildcard)
+mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener, int mid, wxButton *win, mafString* var, wxTextCtrl* lab,  bool  openfile, const mafString wildcard)
 //----------------------------------------------------------------------------
 {
   Init(listener,mid,win);  
@@ -464,7 +464,7 @@ mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxButton *win, 
   assert(IsValid());
 }
 //----------------------------------------------------------------------------
-mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxButton *win, mafString *var, wxTextCtrl* lab)
+mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener, int mid, wxButton *win, mafString *var, wxTextCtrl* lab)
 //----------------------------------------------------------------------------
 {
   Init(listener,mid,win);  
@@ -477,7 +477,7 @@ mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxButton *win, 
   assert(IsValid());
 }
 //----------------------------------------------------------------------------
-mafGUIValidator::mafGUIValidator(mafObserver* listener, int mid, wxButton *win, wxColour* var, wxTextCtrl* lab)
+mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener, int mid, wxButton *win, wxColour* var, wxTextCtrl* lab)
 //----------------------------------------------------------------------------
 {
   Init(listener,mid,win); 

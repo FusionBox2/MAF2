@@ -105,12 +105,12 @@ void mafViewVTK::PlugVisualPipe(mafString vme_type, mafString pipe_type, long vi
   m_PipeMap[vme_type] = plugged_pipe;
 }
 //----------------------------------------------------------------------------
-mafView *mafViewVTK::Copy(mafObserver *Listener, bool lightCopyEnabled)
+mafView *mafViewVTK::Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled)
 //----------------------------------------------------------------------------
 {
   m_LightCopyEnabled = lightCopyEnabled;
   mafViewVTK *v = new mafViewVTK(m_Label, m_CameraPositionId, m_ShowAxes, m_ShowGrid, m_ShowRuler, m_StereoType, m_ShowOrientator, m_AxesType);
-  v->m_Listener = Listener;
+  v->SetListener(Listener);
   v->m_Id = m_Id;
   v->m_PipeMap = m_PipeMap;
   v->Create();

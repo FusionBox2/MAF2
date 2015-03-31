@@ -44,7 +44,7 @@ EXPORT_STL_MAP(MAF_EXPORT,mafTimeStamp, mafAutoPointer<mafVMEItem>);
   - implement deletion of single files in "SingleFileMode"
   - reimplement IsDataModified() mechanism
 */
-class MAF_EXPORT mafDataVector : public mafTimeMap<mafVMEItem>, public mafObserver, public mafStorable, public mafEventSender
+class MAF_EXPORT mafDataVector : public mafTimeMap<mafVMEItem>, public mafBaseEventHandler, public mafStorable, public mafEventSender
 {
 public:
 

@@ -34,7 +34,6 @@ mafGizmoInterface::mafGizmoInterface()
 //----------------------------------------------------------------------------
 { 
   m_InputVME = NULL;
-  m_Listener = NULL;
   m_Modality = G_LOCAL;
   m_RefSysVME = NULL;
   m_Visibility = false;
@@ -62,16 +61,6 @@ void mafGizmoInterface::SendTransformMatrix(mafMatrix* matrix, int eventId, long
   e2s.SetArg(arg);
 
   mafEventMacro(e2s);
-}
-
-mafObserver * mafGizmoInterface::GetListener()
-{
-  return m_Listener;
-}
-
-void mafGizmoInterface::SetListener( mafObserver *listener )
-{
-  m_Listener = listener;
 }
 
 void mafGizmoInterface::SetInput( mafVME *vme )

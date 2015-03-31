@@ -22,7 +22,8 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 #include "mafMatrix.h"
 
 //----------------------------------------------------------------------------
@@ -85,13 +86,13 @@ class vtkPlaneSource;
   @sa mafGizmoROI mafOpCrop 
 */
 
-class MAF_EXPORT mafGizmoHandle: public mafObserver 
+class MAF_EXPORT mafGizmoHandle: public mafBaseEventHandler, public mafEventSender
 {
 public:
 
   /** Create a handle, input vme must be different from NULL and default handle type
   is XMIN */
-  mafGizmoHandle(mafVME *input, mafObserver *listener = NULL,\
+  mafGizmoHandle(mafVME *input, mafBaseEventHandler *listener = NULL,\
     int constraintModality=BOUNDS,mafVME *parent=NULL, bool showShadingPlane = false);
   virtual ~mafGizmoHandle(); 
   
@@ -103,12 +104,6 @@ public:
   // events handling 
   //----------------------------------------------------------------------------
   
-  /** Set the event receiver object*/
-  void SetListener(mafObserver *Listener) {m_Listener = Listener;};
-
-  /** Get the event receiver object*/
-  mafObserver *GetListener() {return m_Listener;};
-
   /** Events handling*/        
   virtual void OnEvent(mafEventBase *maf_event);
     
@@ -230,8 +225,6 @@ protected:
   
   /** Get the gizmo color */
   void GetColor(double color[3]);
-
-  mafObserver *m_Listener; ///<Register the event receiver object
 
   int m_GizmoType; ///<Register the gizmo type
 

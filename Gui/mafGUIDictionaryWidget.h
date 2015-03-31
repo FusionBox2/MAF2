@@ -21,7 +21,8 @@
 /**
 - mafGUIDictionaryWidget is the class that treats dictionaries.
 */
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
+#include "mafEventSender.h"
 #include "mafStorable.h"
 #include "mafDefines.h"
 //----------------------------------------------------------------------------
@@ -30,14 +31,13 @@
 class mafVME;
 class mafGUIListCtrl;
 class mafEvent;
-class mafObserver;
 
 
 /**
   class name : mafGUIDictionaryWidget
   Widget that handle a dictionary object. 
 */
-class MAF_EXPORT mafGUIDictionaryWidget : public mafObserver
+class MAF_EXPORT mafGUIDictionaryWidget : public mafBaseEventHandler, public mafEventSender
 {
 
 public:
@@ -45,8 +45,6 @@ public:
             mafGUIDictionaryWidget(wxWindow *parent, int id);
   /** destructor */
            ~mafGUIDictionaryWidget();
-  /** Set the listener of the events launched */
-  void			SetListener(mafObserver *Listener) {m_Listener = Listener;};
   /** Answer to the messages coming from interface. */
   void      OnEvent(mafEventBase *event);
 
@@ -75,7 +73,6 @@ protected:
 	/** Set the icon of all the items present into the cloud to red or gray according to valid. */
   void ValidateAllItem(bool valid = true);
 
-  mafObserver *m_Listener;
 	wxString     m_File;
   int          m_NumItem;
 	wxString   **m_Items;

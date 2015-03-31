@@ -58,7 +58,7 @@ class mafRefSys;
 class MAF_EXPORT mafGizmoRotateFan : public mafGizmoInterface 
 {
 public:
-           mafGizmoRotateFan(mafVME *input, mafObserver *listener = NULL);
+           mafGizmoRotateFan(mafVME *input, mafBaseEventHandler *listener = NULL);
   virtual ~mafGizmoRotateFan(); 
   
   /** 
@@ -69,9 +69,6 @@ public:
   //----------------------------------------------------------------------------
   // events handling 
   //----------------------------------------------------------------------------
-  
-  /** Set the event receiver object*/
-  void  SetListener(mafObserver *Listener) {m_Listener = Listener;};
   
   /** Events handling*/        
   virtual void OnEvent(mafEventBase *maf_event);
@@ -109,7 +106,7 @@ public:
   void SetAbsPose(mafMatrix *absPose);
   
   /** Superclass override */
-  void SetMediator(mafObserver *mediator);
+  void SetMediator(mafBaseEventHandler *mediator);
 
 protected:
   
@@ -117,10 +114,6 @@ protected:
   /** Register input vme*/
   mafVME *m_InputVme;
 
-  /**
-  Register the event receiver object*/
-  mafObserver *m_Listener;
- 
   /** Register the gizmo axis */
   int m_ActiveAxis;
   

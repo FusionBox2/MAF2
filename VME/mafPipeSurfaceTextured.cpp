@@ -33,7 +33,7 @@
 #include "mafDataVector.h"
 #include "mafVMESurface.h"
 #include "mafVMEGenericAbstract.h"
-#include "mafEventSource.h"
+#include "mafEventSender.h"
 
 #include "vtkMAFSmartPointer.h"
 #include "vtkMAFAssembly.h"
@@ -105,7 +105,7 @@ void mafPipeSurfaceTextured::Create(mafSceneNode *n/*, bool use_axes*/)
   assert(data);
   data->Update();
 
-  m_Vme->GetEventSource()->AddObserver(this);
+  m_Vme->AddObserver(this);
 
   vtkDataArray *scalars = data->GetPointData()->GetScalars();
   double sr[2] = {0,1};
@@ -280,7 +280,7 @@ void mafPipeSurfaceTextured::Create(mafSceneNode *n/*, bool use_axes*/)
 mafPipeSurfaceTextured::~mafPipeSurfaceTextured()
 //----------------------------------------------------------------------------
 {
-  m_Vme->GetEventSource()->RemoveObserver(this);
+  m_Vme->RemoveObserver(this);
 
   if(m_AssemblyBack)
   {

@@ -75,8 +75,8 @@ public:
     which is processed in the main thread, by using the original mafAgentEventQueue 
     mechanism for dispatching.
     @sa SendEvent() for general semantic */
-  void AsyncSendEvent(mafObserver *target,mafEventBase *event, mafID channel=MCH_UP);
-  void AsyncSendEvent(mafObserver *target, void *sender, mafID id, mafID channel=MCH_UP,void *data=NULL);
+  void AsyncSendEvent(mafBaseEventHandler *target,mafEventBase *event, mafID channel=MCH_UP);
+  void AsyncSendEvent(mafBaseEventHandler *target, void *sender, mafID id, mafID channel=MCH_UP,void *data=NULL);
 
   /**
     This function implements asynchronous forward of an event. This happens by queuing 

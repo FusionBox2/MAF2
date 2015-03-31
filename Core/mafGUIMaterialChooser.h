@@ -21,7 +21,7 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
 #include "mafStorable.h"
 #include <vector>
 
@@ -49,7 +49,7 @@ class mafVME;
 //----------------------------------------------------------------------------
 /** mafMaterialChooser let the user Choose one of the predefined materials,
     but also edit material settings, or create a new one. */  
-class MAF_EXPORT mafGUIMaterialChooser : public mafObserver
+class MAF_EXPORT mafGUIMaterialChooser : public mafBaseEventHandler
 {
 
 public:

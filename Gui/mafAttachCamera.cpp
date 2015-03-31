@@ -30,7 +30,7 @@
 #include "mafSceneGraph.h"
 
 #include "mafVME.h"
-#include "mafEventSource.h"
+#include "mafEventSender.h"
 
 #include "vtkMAFSmartPointer.h"
 #include "vtkTransform.h"
@@ -38,14 +38,14 @@
 #include "vtkCamera.h"
 
 //----------------------------------------------------------------------------
-mafAttachCamera::mafAttachCamera(wxWindow* parent, mafRWI *rwi, mafObserver *Listener)
+mafAttachCamera::mafAttachCamera(wxWindow* parent, mafRWI *rwi, mafBaseEventHandler *Listener)
 //----------------------------------------------------------------------------
 {
   m_Gui = NULL;
 
   m_RenderWindow = rwi;
 	
-	m_Listener		= Listener;
+	SetListener(Listener);
 	m_ParentPanel = parent;
 
   m_EnableAttachCamera = 0;
@@ -67,7 +67,7 @@ mafAttachCamera::~mafAttachCamera()
   vtkDEL(m_StartingMatrix);
   if (m_AttachedVme && m_AttachedVme->IsValid())
   {
-    m_AttachedVme->GetEventSource()->RemoveObserver(this);
+    m_AttachedVme->RemoveObserver(this);
   }
 
   if(m_Gui)	
@@ -144,9 +144,9 @@ void mafAttachCamera::SetVme(mafNode *node)
 {
   if (mafVME::SafeDownCast(node) == NULL)
   {
-    if (m_AttachedVme && m_AttachedVme->GetEventSource()->IsObserver(this))
+    if (m_AttachedVme && m_AttachedVme->IsObserver(this))
     {
-      m_AttachedVme->GetEventSource()->RemoveObserver(this);
+      m_AttachedVme->RemoveObserver(this);
     }
     vtkDEL(m_AttachedVmeMatrix);
     m_AttachedVme = NULL;
@@ -178,7 +178,7 @@ void mafAttachCamera::SetVme(mafNode *node)
     m_RenderWindow->CameraUpdate();
   }
 
-  m_AttachedVme->GetEventSource()->AddObserver(this);
+  m_AttachedVme->AddObserver(this);
 }
 //----------------------------------------------------------------------------
 void mafAttachCamera::SetStartingMatrix(mafMatrix *matrix)
@@ -233,7 +233,7 @@ void mafAttachCamera::PrintSelf( ostream& os)
     m_StartingMatrix->PrintSelf(os,NULL);
   }
 
-  os << "m_Listener: " << m_Listener << std::endl;
+  os << "m_Listener: " << GetListener() << std::endl;
   os << "m_Gui: " << m_Gui << std::endl;
   os << "m_RenderWindow: " << m_RenderWindow << std::endl;
   os << "m_ParentPanel: " << m_ParentPanel << std::endl;
@@ -243,16 +243,6 @@ void mafAttachCamera::PrintSelf( ostream& os)
 mafMatrix mafAttachCamera::GetStartingMatrix()
 {
   return mafMatrix(m_StartingMatrix);
-}
-
-void mafAttachCamera::SetListener( mafObserver *Listener )
-{
-  m_Listener = Listener;
-}
-
-mafObserver * mafAttachCamera::GetListener()
-{
-  return m_Listener;
 }
 
 void mafAttachCamera::EnableAttachCamera()

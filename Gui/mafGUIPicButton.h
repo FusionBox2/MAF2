@@ -19,7 +19,8 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 
 //----------------------------------------------------------------------------
 // mafGUIPicButton :
@@ -35,17 +36,14 @@ To create a mafGUIPicButton you must specify
 - ID: the ID of the Event that will be sent to the mafListener --- must be in the range MINID-MAXID or PIC_START-PIC-STOP (see mafDecl.h)
 - obviously you must also specify a Listener */
 //----------------------------------------------------------------------------
-class MAF_EXPORT mafGUIPicButton : public wxBitmapButton
+class MAF_EXPORT mafGUIPicButton : public wxBitmapButton, public mafEventSender
 {
 DECLARE_DYNAMIC_CLASS(mafGUIPicButton)
 
 public:
   mafGUIPicButton() {};
-  mafGUIPicButton(wxWindow *parent, wxString BitmapId, wxWindowID id = 0, mafObserver *listener = NULL, int offset = 0);
-  mafGUIPicButton(wxWindow *parent, wxBitmap *b, wxWindowID id = 0, mafObserver *listener = NULL, int offset = 0);
-
-  /** Set the Listener that will receive event-notification. */
-  void SetListener(mafObserver *listener);
+  mafGUIPicButton(wxWindow *parent, wxString BitmapId, wxWindowID id = 0, mafBaseEventHandler *listener = NULL, int offset = 0);
+  mafGUIPicButton(wxWindow *parent, wxBitmap *b, wxWindowID id = 0, mafBaseEventHandler *listener = NULL, int offset = 0);
 
   /** allow to change the Event-Id at run time */
   void SetEventId(long EventId); 
@@ -64,7 +62,6 @@ protected:
   void OnSetFocus(wxFocusEvent& event) {}; 
 
   int m_Id;
-  mafObserver  *m_Listener;
 
 	DECLARE_EVENT_TABLE()
 };

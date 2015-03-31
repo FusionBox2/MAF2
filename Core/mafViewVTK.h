@@ -57,7 +57,7 @@ public:
   mafTypeMacro(mafViewVTK, mafView);
 
   /** clone the object*/
-  virtual mafView*  Copy(mafObserver *Listener, bool lightCopyEnabled = false);
+  virtual mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
   /** create rwi */
   virtual void Create();
   /** listen to other object events*/

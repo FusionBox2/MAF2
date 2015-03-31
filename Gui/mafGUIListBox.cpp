@@ -44,7 +44,6 @@ mafGUIListBox::mafGUIListBox(wxWindow* parent, wxWindowID id, const wxPoint& pos
 :mafGUIPanel(parent,id,pos,size,style) 
 //----------------------------------------------------------------------------
 {
-  m_Listener = NULL;
   m_PreventNotify = false;
   m_ListBox = new wxListBox(this, ID_CLB, wxDefaultPosition, wxDefaultSize, 0,NULL,wxLB_SINGLE | wxLB_HSCROLL | wxLB_OWNERDRAW );
 }

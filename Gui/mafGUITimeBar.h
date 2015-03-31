@@ -22,7 +22,8 @@
 //----------------------------------------------------------------------------
 #include <wx/datetime.h>
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 #include "mafGUIPanel.h"
 
 //----------------------------------------------------------------------------
@@ -44,12 +45,11 @@ class mafGUISettingsTimeBar;
 // mafGUITimeBar :
 /** mafGUITimeBar is a wxPanel with a set of widget to handle time. */
 //----------------------------------------------------------------------------
-class mafGUITimeBar: public mafGUIPanel , public mafObserver
+class mafGUITimeBar: public mafGUIPanel , public mafBaseEventHandler, public mafEventSender
 {
 public:
   mafGUITimeBar(wxWindow* parent,wxWindowID id = -1,bool CloseButton = false); 
   virtual ~mafGUITimeBar();
-  void SetListener(mafObserver *Listener) {m_Listener = Listener;};
 
   void OnEvent(mafEventBase *maf_event);
   
@@ -86,7 +86,6 @@ protected:
   mafGUIFloatSlider	*m_TimeBarSlider; 
   wxTimer          m_Timer;
 
-  mafObserver     *m_Listener;
   mafGUISettingsTimeBar *m_TimeBarSettings; ///< Settings panel for the time bar.
 
   /** Update the time and send the TIME_SET event to synchronize all the application. */

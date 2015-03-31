@@ -49,12 +49,12 @@
 #include "vtkProperty.h"
 
 //----------------------------------------------------------------------------
-mafGizmoScaleAxis::mafGizmoScaleAxis(mafVME *input, mafObserver *listener)
+mafGizmoScaleAxis::mafGizmoScaleAxis(mafVME *input, mafBaseEventHandler *listener)
 //----------------------------------------------------------------------------
 {
   m_IsaComp[0] = m_IsaComp[1] = NULL;
 
-  m_Listener = listener;
+  SetListener(listener);
   m_InputVme = input;
   
   // default axis is X
@@ -74,13 +74,13 @@ mafGizmoScaleAxis::mafGizmoScaleAxis(mafVME *input, mafObserver *listener)
   m_CylGizmo = mafVMEGizmo::New();
   m_CylGizmo->SetName("CylGizmo");
   m_CylGizmo->SetData(m_RotatePDF[CYLINDER]->GetOutput());
-  m_CylGizmo->SetMediator(m_Listener);
+  m_CylGizmo->SetMediator(GetListener());
 
   // cube gizmo
   m_CubeGizmo = mafVMEGizmo::New();  
   m_CubeGizmo->SetName("CubeGizmo");
   m_CubeGizmo->SetData(m_RotatePDF[CUBE]->GetOutput());
-  m_CubeGizmo->SetMediator(m_Listener);
+  m_CubeGizmo->SetMediator(GetListener());
 
   // assign isa to cylinder and cube
   m_CylGizmo->SetBehavior(m_IsaComp[0]);

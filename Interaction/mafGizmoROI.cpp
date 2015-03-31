@@ -49,12 +49,12 @@ using namespace std;
 
 
 //----------------------------------------------------------------------------
-mafGizmoROI::mafGizmoROI(mafVME *input, mafObserver* listener /* = NULL  */, int constraintModality/* =mafGizmoHandle::BOUNDS */,mafVME* parent/* =NULL */,bool showShadingPlane/* =false */)
+mafGizmoROI::mafGizmoROI(mafVME *input, mafBaseEventHandler* listener /* = NULL  */, int constraintModality/* =mafGizmoHandle::BOUNDS */,mafVME* parent/* =NULL */,bool showShadingPlane/* =false */)
 //----------------------------------------------------------------------------
 {
   assert(input);
   m_InputVME = input;
-  m_Listener = listener;
+  SetListener(listener);
 	m_ConstraintModality = constraintModality;
   //no gizmo component is active at construction
   m_MinimumHandleSize = 0.0;

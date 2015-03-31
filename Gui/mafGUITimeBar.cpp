@@ -61,7 +61,6 @@ mafGUITimeBar::mafGUITimeBar( wxWindow* parent,wxWindowID id,bool CloseButton)
 m_Timer(NULL, ID_TIMER)
 //----------------------------------------------------------------------------
 {
-  m_Listener = NULL;
   m_TimeBarSettings = NULL;
   m_Timer.SetOwner(this, ID_TIMER);
   

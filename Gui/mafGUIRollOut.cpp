@@ -40,7 +40,6 @@ mafGUIRollOut::mafGUIRollOut(mafGUI *parent, mafString title, mafGUI *roll_gui, 
 :wxPanel(parent,id)
 //----------------------------------------------------------------------------
 {
-  m_Listener = NULL;
   wxBoxSizer *topsizer =  new wxBoxSizer( wxHORIZONTAL );
   
   wxString b = rollOutOpen ? "ROLLOUT_OPEN" : "ROLLOUT_CLOSE";

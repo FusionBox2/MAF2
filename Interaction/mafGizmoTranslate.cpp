@@ -43,12 +43,12 @@
 #include "vtkMatrix4x4.h"
 
 //----------------------------------------------------------------------------
-mafGizmoTranslate::mafGizmoTranslate(mafVME* input, mafObserver *listener, bool buildGUI)
+mafGizmoTranslate::mafGizmoTranslate(mafVME* input, mafBaseEventHandler *listener, bool buildGUI)
 //----------------------------------------------------------------------------
 {
   assert(input);
   m_InputVME = input;
-  m_Listener = listener;
+  SetListener(listener);
   m_BuildGUI = buildGUI;
   m_GTAxis[X] = m_GTAxis[Y] = m_GTAxis[Z] = NULL;
   m_GTPlane[XNORMAL] = m_GTPlane[YNORMAL] = m_GTPlane[ZNORMAL] = NULL;

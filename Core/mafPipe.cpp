@@ -47,7 +47,6 @@ mafPipe::mafPipe()
 	m_RenFront      = NULL;
 	m_RenBack       = NULL;
 	m_AlwaysVisibleRenderer = NULL;
-  m_Listener      = NULL;
 	m_Selected = false;
 }
 //----------------------------------------------------------------------------
@@ -73,7 +72,7 @@ void mafPipe::Create(mafSceneNode *n)
 mafPipe::~mafPipe()
 //----------------------------------------------------------------------------
 {
-  m_Listener = NULL;
+  SetListener(NULL);
   cppDEL(m_Gui);
 }
 //-------------------------------------------------------------------------

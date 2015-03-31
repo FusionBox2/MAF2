@@ -21,7 +21,8 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 #include <ostream>
 
 using namespace std;
@@ -44,12 +45,12 @@ This tool has to be updated by calling UpdateCameraMatrix() during CameraUpdate 
 @sa mafViewVTK for an example on how to use it, mafRWI
 
 */
-class MAF_EXPORT mafAttachCamera : public mafObserver
+class MAF_EXPORT mafAttachCamera : public mafBaseEventHandler, public mafEventSender
 {
 public:
 
   /** Attach camera is disabled by default: use EnableAttachCamera() to enable attaching */
-	mafAttachCamera(wxWindow* parent, mafRWI *rwi, mafObserver *Listener = NULL);
+	mafAttachCamera(wxWindow* parent, mafRWI *rwi, mafBaseEventHandler *Listener = NULL);
 	~mafAttachCamera(); 
   
   /** Enable/Disable attach camera to vme */
@@ -75,9 +76,6 @@ public:
 
 	void OnEvent(mafEventBase *maf_event);
   
-	void SetListener(mafObserver *Listener);
-  mafObserver *GetListener();
-
 	/** 
   Returns the mafAttachCamera's GUI */
 	mafGUI *GetGui();
@@ -96,7 +94,6 @@ protected:
   vtkMatrix4x4	*m_StartingMatrix; ///< Matrix given to the Camera to be moved together with m_AttachedVme
 
 
-  mafObserver	*m_Listener;
 	mafGUI			*m_Gui;
 	mafRWI      *m_RenderWindow;
 	wxWindow	  *m_ParentPanel;

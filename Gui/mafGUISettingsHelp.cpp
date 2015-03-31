@@ -31,7 +31,7 @@
 #include <iostream>
 #include <fstream>
 
-mafGUISettingsHelp::mafGUISettingsHelp(mafObserver *Listener, const mafString &label):
+mafGUISettingsHelp::mafGUISettingsHelp(mafBaseEventHandler *Listener, const mafString &label):
 mafGUISettings(Listener, label)
 {
   m_BuildHelpGui = false;

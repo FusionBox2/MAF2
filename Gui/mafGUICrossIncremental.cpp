@@ -72,7 +72,6 @@ mafGUICrossIncremental::mafGUICrossIncremental(wxWindow* parent, wxWindowID id, 
 :mafGUIPanel(parent,id,pos,size,style) 
 //----------------------------------------------------------------------------
 {
-  m_Listener = NULL;
 	m_TopBottomVariable = topBottomVariable; 
 	m_LeftRightVariable = leftRightVariable;
   m_StepVariable = stepVariable;

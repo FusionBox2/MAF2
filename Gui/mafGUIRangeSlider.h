@@ -18,20 +18,18 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
+#include "mafEventSender.h"
 
 /**
   class name: mafGUIRangeSlider 
   Class that handles a slider for visualising or changing range.
 */
-class mafGUIRangeSlider : public wxControl 
+class mafGUIRangeSlider : public wxControl , public mafEventSender
 {
 public:
   /** constructor */
   mafGUIRangeSlider(wxWindow *parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxPanelNameStr);
-
-  /** function for setting the listener of events coming from another object*/
-  void SetListener(mafObserver *listener) {m_Listener = listener;}
 
   /** Get the 'min', 'max' or 'mid' value according to 'i'. */
 	double GetValue(int i) const { return this->m_Value[i]; }
@@ -83,7 +81,6 @@ protected:
   double m_Value[3];
 
   int m_NumberOfWidgets;
-  mafObserver *m_Listener;
 
 private:
   // ui coordinates

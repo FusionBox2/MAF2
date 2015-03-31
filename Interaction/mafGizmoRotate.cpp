@@ -41,13 +41,13 @@
 #include "vtkTransform.h"
 
 //----------------------------------------------------------------------------
-mafGizmoRotate::mafGizmoRotate(mafVME* input, mafObserver *listener, bool buildGUI)
+mafGizmoRotate::mafGizmoRotate(mafVME* input, mafBaseEventHandler *listener, bool buildGUI)
 //----------------------------------------------------------------------------
 {
   assert(input);
   m_BuildGUI = buildGUI;
   m_InputVME    = input;
-  m_Listener  = listener;
+  SetListener(listener);
 
   m_GRFan[X]    = m_GRFan[Y]    = m_GRFan[Z]    = NULL;
   m_GRCircle[X] = m_GRCircle[Y] = m_GRCircle[Z] = NULL;

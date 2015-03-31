@@ -38,7 +38,7 @@
 #include "mafVMEOutputPointSet.h"
 #include "mafVMEOutputLandmarkCloud.h"
 #include "mafVMELandmarkCloud.h"
-#include "mafEventSource.h"
+#include "mafEventSender.h"
 
 #include "vtkMAFSmartPointer.h"
 #include "vtkMAFAssembly.h"
@@ -115,7 +115,7 @@ void mafPipeSurfaceSlice::Create(mafSceneNode *n/*, bool use_axes*/)
   vtkPolyData *data = NULL;
   mmaMaterial *material = NULL;
 
-	m_Vme->GetEventSource()->AddObserver(this);
+	m_Vme->AddObserver(this);
   
   vtkMAFSmartPointer<vtkMAFExtendedGlyph3D> glyph;
 
@@ -310,7 +310,7 @@ void mafPipeSurfaceSlice::Create(mafSceneNode *n/*, bool use_axes*/)
 mafPipeSurfaceSlice::~mafPipeSurfaceSlice()
 //----------------------------------------------------------------------------
 {
-  m_Vme->GetEventSource()->RemoveObserver(this);
+  m_Vme->RemoveObserver(this);
   m_AssemblyFront->RemovePart(m_Actor);
   m_AssemblyFront->RemovePart(m_OutlineActor);
 

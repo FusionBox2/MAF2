@@ -85,7 +85,6 @@ mafGUILutEditor::mafGUILutEditor(wxWindow* parent, wxWindowID id, const wxPoint&
 :wxPanel(parent,id,pos,size,style)         
 //----------------------------------------------------------------------------
 {
-	m_Listener     = NULL;
   m_ExternalLut = NULL;
   m_NumEntry = 256;
   m_ValueRange[0] = 0;
@@ -525,7 +524,7 @@ void mafGUILutEditor::CopyLut(vtkLookupTable *from, vtkLookupTable *to)
   }
 }
 //----------------------------------------------------------------------------
-void mafGUILutEditor::ShowLutDialog(vtkLookupTable *lut, mafObserver *listener, int id)
+void mafGUILutEditor::ShowLutDialog(vtkLookupTable *lut, mafBaseEventHandler *listener, int id)
 //----------------------------------------------------------------------------
 {
   long style = wxDEFAULT_DIALOG_STYLE | wxNO_FULL_REPAINT_ON_RESIZE | wxCLIP_CHILDREN;

@@ -21,7 +21,7 @@
 //----------------------------------------------------------------------------
 // forward declarations
 //----------------------------------------------------------------------------
-class mafObserver;
+class mafView;
 
 /** interactor implementing a picking operation */
 class MAF_EXPORT mafInteractorPicker : public mafInteractor

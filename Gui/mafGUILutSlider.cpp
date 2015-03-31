@@ -142,7 +142,6 @@ mafGUILutSlider::mafGUILutSlider(wxWindow *parent, wxWindowID id, const wxPoint&
 :wxPanel(parent,id,pos,size,wxSUNKEN_BORDER | wxCLIP_CHILDREN )
 //----------------------------------------------------------------------------
 {
-  m_Listener = NULL;
   m_MinValue = 0;
   m_MaxValue = 100;
   m_LowValue = 0;

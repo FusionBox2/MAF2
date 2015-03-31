@@ -19,11 +19,11 @@
 // Include:
 //----------------------------------------------------------------------------
 #include <wx/laywin.h>
+#include "mafEventSender.h"
 
 //----------------------------------------------------------------------------
 // forward reference
 //----------------------------------------------------------------------------
-class mafObserver;
 
 /**
   Class Name: mafGUIFrame.
@@ -32,16 +32,13 @@ class mafObserver;
   toolbar and status bar. Inherit from wxFrame and override several methods of it.
 
 */
-class MAF_EXPORT mafGUIFrame: public wxFrame
+class MAF_EXPORT mafGUIFrame: public wxFrame, public mafEventSender
 {
 public:
   /** constructor. */
   mafGUIFrame (const wxString& title, const wxPoint& pos, const wxSize& size);
   /** destructor. */
   ~mafGUIFrame (); 
-  
-  /** Set the Listener that will receive event-notification. */
-	void SetListener (mafObserver *Listener) {m_Listener = Listener;};
   
   /** Set the window shown on the Client Area, (hide the previous contents). */
 	void Put (wxWindow* w);
@@ -77,7 +74,6 @@ protected:
   /** Create the status bar into the main frame. */
 	void CreateStatusbar();
 
-  mafObserver *m_Listener;
   wxWindow    *m_ClientWin;
 
   /** Event Table Declaration*/

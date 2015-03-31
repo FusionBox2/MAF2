@@ -50,12 +50,12 @@
 #include "vtkProperty.h"
 
 //----------------------------------------------------------------------------
-mafGizmoScaleIsotropic::mafGizmoScaleIsotropic(mafVME *input, mafObserver *listener)
+mafGizmoScaleIsotropic::mafGizmoScaleIsotropic(mafVME *input, mafBaseEventHandler *listener)
 //----------------------------------------------------------------------------
 {
   m_IsaComp = NULL;
 
-  m_Listener = listener;
+  SetListener(listener);
   m_InputVme = input;
   
   // create pipeline stuff
@@ -72,7 +72,7 @@ mafGizmoScaleIsotropic::mafGizmoScaleIsotropic(mafVME *input, mafObserver *liste
   m_CubeGizmo = mafVMEGizmo::New();  
   m_CubeGizmo->SetName("CubeGizmo");
   m_CubeGizmo->SetData(m_Cube->GetOutput());
-  m_CubeGizmo->SetMediator(m_Listener);
+  m_CubeGizmo->SetMediator(GetListener());
 
   // assign isa to cube
   m_CubeGizmo->SetBehavior(m_IsaComp); 

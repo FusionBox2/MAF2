@@ -46,7 +46,6 @@ mafNodeManager::mafNodeManager()
 {
   m_Modified      = false;
 	m_MakeBakFile = true;
-	m_Listener      = NULL;
 //@@	m_storage   = NULL;
 	m_Root          = NULL;
 

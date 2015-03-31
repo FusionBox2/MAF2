@@ -46,7 +46,7 @@
 //#include "mafMemDbg.h"
 
 //----------------------------------------------------------------------------
-mafGUIApplicationLayoutSettings::mafGUIApplicationLayoutSettings(mafObserver *listener, const mafString &label):
+mafGUIApplicationLayoutSettings::mafGUIApplicationLayoutSettings(mafBaseEventHandler *listener, const mafString &label):
 mafGUISettings(listener, label)
 //----------------------------------------------------------------------------
 {

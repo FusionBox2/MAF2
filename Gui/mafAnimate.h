@@ -17,7 +17,8 @@
 #ifndef __mafAnimate_H__
 #define __mafAnimate_H__
 
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 
 class mafNode;
 class mafVME;
@@ -34,14 +35,13 @@ class mafGUIMovieCtrl;
 This component allow to manage camera animation into a view.
 mafAnimate allow to store and retrieve a particular point of view.
 */
-class mafAnimate : public mafObserver
+class mafAnimate : public mafBaseEventHandler, public mafEventSender
 {
 public:
 
-	mafAnimate(vtkRenderer *renderer, mafNode *vme, mafObserver *listener = NULL);
+	mafAnimate(vtkRenderer *renderer, mafNode *vme, mafBaseEventHandler *listener = NULL);
 	~mafAnimate(); 
 	void OnEvent(mafEventBase *maf_event);
-	void SetListener(mafObserver *listener);
 
 	/** Return mafAnimate User Interface */
 	mafGUI *GetGui();
@@ -92,10 +92,6 @@ protected:
 
   /** Store poses to file. */
   void StorePoseToFile(mafString &fileName);
-
-
-
-	mafObserver	*m_Listener;
 
   mafNode *m_Vme;
   mafVME *m_Root;

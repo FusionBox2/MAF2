@@ -146,7 +146,8 @@ MAF_EXPORT void mafSleep(int msec);
 #define mafEvalGroupId(baseClass,id) (baseClass::BaseID+id)
 
 /** mafEventMacro is an handy shortcut to send an Event. */
-#define mafEventMacro(e)  if (m_Listener) {m_Listener->OnEvent(&e);}
+#define mafEventMacro(e)  InvokeEvent(e)
+//if (m_Listener) {m_Listener->OnEvent(&e);}
   
 /** Helper macro used for testing */  
 #define MAF_TEST(a) if (!(a)) \

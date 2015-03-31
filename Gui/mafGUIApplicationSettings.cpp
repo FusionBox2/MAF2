@@ -30,7 +30,7 @@
 #include "mafGUI.h"
 
 //----------------------------------------------------------------------------
-mafGUIApplicationSettings::mafGUIApplicationSettings(mafObserver *Listener, const mafString &label):
+mafGUIApplicationSettings::mafGUIApplicationSettings(mafBaseEventHandler *Listener, const mafString &label):
 mafGUISettings(Listener, label)
 //----------------------------------------------------------------------------
 {

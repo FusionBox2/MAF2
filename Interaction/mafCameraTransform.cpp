@@ -22,7 +22,7 @@
 #include "mafOBB.h"
 #include "mafTransform.h"
 #include "mafTransformFrame.h"
-#include "mafEventSource.h"
+#include "mafEventSender.h"
 
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"

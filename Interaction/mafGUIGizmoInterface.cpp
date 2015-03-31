@@ -27,10 +27,10 @@
 #include "mafGUIGizmoInterface.h"
 
 //----------------------------------------------------------------------------
-mafGUIGizmoInterface::mafGUIGizmoInterface(mafObserver *listener)
+mafGUIGizmoInterface::mafGUIGizmoInterface(mafBaseEventHandler *listener)
 //----------------------------------------------------------------------------
 {
-  m_Listener = listener;
+  SetListener(listener);
   m_Gui = NULL;
   m_TestMode = false;
 }

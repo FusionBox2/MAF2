@@ -30,6 +30,7 @@
 
 #include "mafDirectory.h"
 #include "mafCurlUtility.h"
+#include "mafEvent.h"
 
 //------------------------------------------------------------------------------
 mafCxxTypeMacro(mafRemoteStorage)
@@ -85,7 +86,7 @@ void mafRemoteStorage::SetRemotePort(const int &port)
   m_RemoteFileManager->SetRemotePort(port);
 }
 //------------------------------------------------------------------------------
-int mafRemoteStorage::ResolveInputURL(const char *url, mafString &filename, mafObserver *observer)
+int mafRemoteStorage::ResolveInputURL(const char *url, mafString &filename, mafBaseEventHandler *observer)
 //------------------------------------------------------------------------------
 {
   int res = MAF_OK;

@@ -18,7 +18,7 @@
 
 #include "mafIndent.h"
 #include "mafMatrix.h"
-#include "mafEventSource.h"
+#include "mafEventSender.h"
 
 //#include "vtkPoints.h" //SIL. 23-3-2005: 
 #ifdef MAF_USE_VTK

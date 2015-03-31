@@ -21,7 +21,8 @@
 #include <wx/laywin.h>
 #include <wx/listctrl.h>
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 #include "mafGUIPanel.h"
 
 //----------------------------------------------------------------------------
@@ -32,7 +33,7 @@ mafEvent(this, widget_id, item_id, checked)
 */
 //----------------------------------------------------------------------------
 
-class MAF_EXPORT mafGUIComboBox: public wxComboBox
+class MAF_EXPORT mafGUIComboBox: public wxComboBox, public mafEventSender
 {
 public:
     mafGUIComboBox(wxWindow* parent, 
@@ -44,15 +45,12 @@ public:
 
     virtual  ~mafGUIComboBox();
 
-    void SetListener(mafObserver *listener){m_Listener = listener;}
 #ifdef WIN32
     /*virtual*/ bool MSWCommand(WXUINT param, WXWORD id);
 #endif
     /*virtual*/ void SetSelection(int n);
 
 protected:
-
-  mafObserver *m_Listener;
   int m_OldValue;
   DECLARE_EVENT_TABLE()
 };

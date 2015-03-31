@@ -34,7 +34,7 @@
 #include "mafDataPipe.h"
 #include "mafEventIO.h"
 #include "mafEvent.h"
-#include "mafEventSource.h"
+#include "mafEventSender.h"
 #include "mafTagArray.h"
 #include "mafOBB.h"
 #include "mafTransform.h"
@@ -230,7 +230,7 @@ void mafVME::SetTimeStamp(mafTimeStamp t)
 	InternalSetTimeStamp(t);
 
   // TODO: consider if to add a flag to disable event issuing
-  GetEventSource()->InvokeEvent(this,VME_TIME_SET);
+  InvokeEvent(this,VME_TIME_SET);
 }
 
 //-------------------------------------------------------------------------
@@ -690,7 +690,7 @@ int mafVME::SetMatrixPipe(mafMatrixPipe *mpipe)
       if (m_AbsMatrixPipe)
         m_AbsMatrixPipe->SetVME(this);
 
-      GetEventSource()->InvokeEvent(this,VME_MATRIX_CHANGED);
+      InvokeEvent(this,VME_MATRIX_CHANGED);
 
       return MAF_OK;
     }
@@ -770,7 +770,7 @@ int mafVME::SetDataPipe(mafDataPipe *dpipe)
     }
 
     // advise listeners the data pipe has changed
-    GetEventSource()->InvokeEvent(this,VME_OUTPUT_DATA_CHANGED);
+    InvokeEvent(this,VME_OUTPUT_DATA_CHANGED);
 
     return MAF_OK;
   }
@@ -804,7 +804,7 @@ void mafVME::OnEvent(mafEventBase *maf_event)
 					InternalSetTimeStamp(*pTS);
 				} 
 				else {	//no valid timestamp passed, so this is notification that time has been changed, notify our listeners						
-					GetEventSource()->InvokeEvent(this,VME_TIME_SET);
+					InvokeEvent(this,VME_TIME_SET);
 				}
 				break;
 			}			
@@ -819,11 +819,11 @@ void mafVME::OnEvent(mafEventBase *maf_event)
     {
       case VME_OUTPUT_DATA_PREUPDATE:      
         InternalPreUpdate();  // self process the event
-        GetEventSource()->InvokeEvent(maf_event); // forward event to observers
+        InvokeEvent(maf_event); // forward event to observers
       break;
       case VME_OUTPUT_DATA_UPDATE:
         InternalUpdate();   // self process the event
-        GetEventSource()->InvokeEvent(maf_event); // forward event to observers
+        InvokeEvent(maf_event); // forward event to observers
       break;
       case VME_MATRIX_UPDATE:
 			{
@@ -831,16 +831,16 @@ void mafVME::OnEvent(mafEventBase *maf_event)
 				mafEventBase absEvent(this, VME_ABSMATRIX_UPDATE);
 				if (maf_event->GetSender() == m_AbsMatrixPipe)
 				{
-					GetEventSource()->InvokeEvent(&absEvent);
+					InvokeEvent(&absEvent);
 				}
 				else
         {
-					GetEventSource()->InvokeEvent(maf_event); // forward event to observers
+					InvokeEvent(maf_event); // forward event to observers
         }
 
 				for (int i = 0; i < this->GetNumberOfChildren(); i++)
 				{
-					((mafVME*)GetChild(i))->GetEventSource()->InvokeEvent(&absEvent);
+					((mafVME*)GetChild(i))->InvokeEvent(&absEvent);
 				}
 			}
       break;

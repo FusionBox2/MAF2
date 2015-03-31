@@ -33,7 +33,7 @@
 #include "vtkRenderer.h"
 
 //----------------------------------------------------------------------------
-mafLightKit::mafLightKit(wxWindow* parent, vtkRenderer *r, mafObserver *Listener)
+mafLightKit::mafLightKit(wxWindow* parent, vtkRenderer *r, mafBaseEventHandler *Listener)
 //----------------------------------------------------------------------------
 {
 	m_LightRenderer = r;
@@ -49,7 +49,7 @@ mafLightKit::mafLightKit(wxWindow* parent, vtkRenderer *r, mafObserver *Listener
 	m_SelectedLight	  = NULL;
 	m_LightCounter		= 0;
 
-	m_Listener				= Listener;
+	SetListener(Listener);
 	m_LightParentPanel= parent;
 	
 	CreateGui();

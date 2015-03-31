@@ -49,7 +49,7 @@ template class MAF_EXPORT mafAutoPointer<mafMatrix>;
 class MAF_EXPORT mafGizmoRotateCircle: public mafGizmoInterface
 {
 public:
-           mafGizmoRotateCircle(mafVME *input, mafObserver *listener = NULL, mafString name = "Circle");
+           mafGizmoRotateCircle(mafVME *input, mafBaseEventHandler *listener = NULL, mafString name = "Circle");
   virtual ~mafGizmoRotateCircle(); 
   
    /** 
@@ -60,9 +60,6 @@ public:
   //----------------------------------------------------------------------------
   // events handling 
   //----------------------------------------------------------------------------
-  
-  /** Set the event receiver object*/
-  void  SetListener(mafObserver *Listener);
   
   /** Events handling*/        
   virtual void OnEvent(mafEventBase *maf_event);
@@ -117,7 +114,7 @@ public:
   mafInteractorGenericInterface *GetInteractor();
 
   /** Superclass override */
-  void SetMediator(mafObserver *mediator);
+  void SetMediator(mafBaseEventHandler *mediator);
 
 protected:
 
@@ -182,10 +179,6 @@ protected:
   void SetColor(double col[3]);
   void SetColor(double colR, double colG, double colB);
   
-  /**
-  Register the event receiver object*/
-  mafObserver *m_Listener;
-
   /** Register Gizmo status*/
   bool m_IsActive;
   

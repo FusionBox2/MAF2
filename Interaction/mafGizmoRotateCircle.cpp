@@ -52,7 +52,7 @@
 #include "vtkProperty.h"
 
 //----------------------------------------------------------------------------
-mafGizmoRotateCircle::mafGizmoRotateCircle(mafVME *input, mafObserver *listener, mafString name)
+mafGizmoRotateCircle::mafGizmoRotateCircle(mafVME *input, mafBaseEventHandler *listener, mafString name)
 //----------------------------------------------------------------------------
 {
   this->SetIsActive(false);
@@ -62,7 +62,7 @@ mafGizmoRotateCircle::mafGizmoRotateCircle(mafVME *input, mafObserver *listener,
   m_IsaComp = NULL;
   m_Radius = -1;
 
-  m_Listener = listener;
+  SetListener(listener);
   m_InputVme = input;
 
   //-----------------
@@ -82,7 +82,7 @@ mafGizmoRotateCircle::mafGizmoRotateCircle(mafVME *input, mafObserver *listener,
   m_GizmoCircle = mafVMEGizmo::New();
   m_GizmoCircle->SetName(name);
   m_GizmoCircle->SetData(m_RotatePDF->GetOutput());
-  m_GizmoCircle->SetMediator(m_Listener);
+  m_GizmoCircle->SetMediator(GetListener());
 
   // assign isa to S1 and S2;
   m_GizmoCircle->SetBehavior(m_IsaComp);
@@ -364,11 +364,6 @@ double mafGizmoRotateCircle::GetRadius()
   return m_Radius;
 }
 
-void mafGizmoRotateCircle::SetListener( mafObserver *Listener )
-{
-  m_Listener = Listener;
-}
-
 void mafGizmoRotateCircle::SetIsActive( bool highlight )
 {
   // Yellow (highlighted) gizmo is the active one 
@@ -385,7 +380,7 @@ mafVME * mafGizmoRotateCircle::GetInput()
   return this->m_InputVme;
 }
 
-void mafGizmoRotateCircle::SetMediator(mafObserver *mediator)
+void mafGizmoRotateCircle::SetMediator(mafBaseEventHandler *mediator)
 {
 	// superclass call
 	mafGizmoInterface::SetMediator(mediator);	

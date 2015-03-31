@@ -19,19 +19,19 @@
 
 #include "mafDecl.h"
 #include "mafEvent.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 #include "mafColor.h"
 #include "mafGUIColorSwatch.h"
 /** mafGUIColorWidget : helper class for mafGUILutEditor and mafGUIColorEditor.
     Usage: Create it, set the initial color, set the Listener.
     The listener will be informed when the user has changed the color.
 */
-class MAF_EXPORT mafGUIColorWidget: public wxPanel, public mafObserver
+class MAF_EXPORT mafGUIColorWidget: public wxPanel, public mafBaseEventHandler, public mafEventSender
 {
 public:
   mafGUIColorWidget(wxWindow* parent, wxWindowID id = -1, const wxPoint& pos = wxDefaultPosition, 
            const wxSize& size = wxSize(350,135), long style = wxTAB_TRAVERSAL);
-
-  virtual void SetListener(mafObserver *Listener) {m_Listener = Listener;};
 
   void      SetColor   (mafColor c);
   mafColor  GetColor   (); 
@@ -39,8 +39,6 @@ public:
   void OnEvent( mafEventBase *event );
 
 protected:
-  mafObserver *m_Listener;
-
   wxBitmap m_HsvBmp; //the bitmap with the hsv chooser
   wxPoint  m_HsvPosition;   //position of the hsv chooser  
   int      m_HsvSize;    //size     of the hsv chooser  

@@ -56,7 +56,7 @@ public:
 
   mafTypeMacro(mafViewPlot, mafView);
 
-  virtual mafView*  Copy(mafObserver *Listener, bool lightCopyEnabled = false);
+  virtual mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
   virtual void      Create();
   virtual void			OnEvent(mafEventBase *maf_event);
 

@@ -45,7 +45,7 @@ class vtkTransform;
 class MAF_EXPORT mafGizmoScaleAxis: public mafGizmoInterface 
 {
 public:
-           mafGizmoScaleAxis(mafVME *input, mafObserver *listener = NULL);
+           mafGizmoScaleAxis(mafVME *input, mafBaseEventHandler *listener = NULL);
   virtual ~mafGizmoScaleAxis(); 
   
   /** 
@@ -56,9 +56,6 @@ public:
   //----------------------------------------------------------------------------
   // events handling 
   //----------------------------------------------------------------------------
-  
-  /** Set the event receiver object*/
-  void  SetListener(mafObserver *Listener) {m_Listener = Listener;};
   
   /** Events handling*/        
   virtual void OnEvent(mafEventBase *maf_event);
@@ -161,10 +158,6 @@ protected:
   void SetColor(int part, double colR, double colG, double colB);
   void SetColor(double cylCol[3], double coneCol[3]);
   void SetColor(double cylR, double cylG, double cylB, double coneR, double coneG, double coneB);
-
-  /**
-  Register the event receiver object*/
-  mafObserver *m_Listener;
 
   /** 
   Register the highlight status */

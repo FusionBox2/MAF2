@@ -29,7 +29,7 @@
 class MAF_EXPORT mafGUISettingsHelp : public mafGUISettings
 {
 public:
-	mafGUISettingsHelp(mafObserver *Listener, const mafString &label = _("Help Settings"));
+	mafGUISettingsHelp(mafBaseEventHandler *Listener, const mafString &label = _("Help Settings"));
 	~mafGUISettingsHelp(); 
 
   enum HELP_SETTINGS_WIDGET_ID

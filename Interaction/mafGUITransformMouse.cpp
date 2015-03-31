@@ -43,12 +43,12 @@
 #include "vtkRenderer.h"
 
 //----------------------------------------------------------------------------
-mafGUITransformMouse::mafGUITransformMouse(mafVME *input, mafObserver *listener /* = NULL */, bool testMode /* = false */)
+mafGUITransformMouse::mafGUITransformMouse(mafVME *input, mafBaseEventHandler *listener /* = NULL */, bool testMode /* = false */)
 //----------------------------------------------------------------------------
 {
   assert(input);
 
-  m_Listener = listener;
+  SetListener(listener);
   m_InputVME = input;
   m_TestMode = testMode;
   m_Gui = NULL;

@@ -31,7 +31,7 @@
 #include "mafGUIButton.h"
 #include "mafGUIMovieCtrl.h"
 
-#include "mafEventSource.h"
+#include "mafEventSender.h"
 #include "mafVME.h"
 #include "mafTagArray.h"
 #include "mafTagItem.h"
@@ -44,10 +44,10 @@
 
 
 //----------------------------------------------------------------------------
-mafAnimate::mafAnimate(vtkRenderer *renderer, mafNode *vme, mafObserver *listener)
+mafAnimate::mafAnimate(vtkRenderer *renderer, mafNode *vme, mafBaseEventHandler *listener)
 //----------------------------------------------------------------------------
 {
-	m_Listener	= listener;
+	SetListener(listener);
 	m_Renderer	= renderer;
   m_Tags			= NULL;
   m_StoredPositions = NULL;
@@ -709,12 +709,6 @@ mafGUI * mafAnimate::GetGui()
 //----------------------------------------------------------------------------
 {
   return m_Gui;
-}
-//----------------------------------------------------------------------------
-void mafAnimate::SetListener( mafObserver *listener )
-//----------------------------------------------------------------------------
-{
-  m_Listener = listener;
 }
 //----------------------------------------------------------------------------
 mafTagArray * mafAnimate::GetStoredPositions()

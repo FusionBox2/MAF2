@@ -26,12 +26,12 @@
 #include <wx/listctrl.h>
 #include <wx/hash.h>
 #include "mafEvent.h"
+#include "mafEventSender.h"
 #include "mafGUINamedPanel.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :
 //----------------------------------------------------------------------------
-class mafObserver;
 
 //----------------------------------------------------------------------------
 // Constants :
@@ -49,13 +49,12 @@ enum ITEM_ICONS
 // mafGUIListCtrlBitmap :
 //----------------------------------------------------------------------------
 /** mafGUIListCtrlBitmap allows a simplified use of a wxWindows ListCtrl widget. */
-class mafGUIListCtrlBitmap: public mafGUINamedPanel
+class mafGUIListCtrlBitmap: public mafGUINamedPanel, public mafEventSender
 {
 public:
                  mafGUIListCtrlBitmap (wxWindow* parent, wxWindowID id=-1, bool CloseButton = false, bool HideTitle = false); 
   virtual       ~mafGUIListCtrlBitmap();
   
-	void SetListener(mafObserver *listener)   {m_Listener = listener;}; 
 
   /** Clear the control list. */
   void Reset();
@@ -91,7 +90,6 @@ protected:
   bool         m_PreventNotify;
   wxListCtrl  *m_List;         
   wxImageList *m_Images;       
-  mafObserver *m_Listener;     
 
 DECLARE_EVENT_TABLE()
 }; // end of mafGUIListCtrlBitmap

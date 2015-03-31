@@ -18,7 +18,7 @@
 #define __mafAgent_h
 
 #include "mafReferenceCounted.h"
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
 #include "mafString.h"
 #include "mafEventBase.h"
@@ -33,6 +33,7 @@ EXPORT_STL_VECTOR(MAF_EXPORT,mafEventSource*);
 //----------------------------------------------------------------------------
 class vtkObject;
 class vtkCallbackCommand;
+class mafEventSource;
 
 /** An agent is a computational object with a default I/O interface.
   An agent is a computational object with a conventional events I/O interface,
@@ -45,7 +46,7 @@ class vtkCallbackCommand;
   This class support also bridging of events coming from VTK: a mafAgent can be set as observer of VTK events
   which are tunneled inside MAF events.
   @sa mafEventBase mafAgent mafAgentEventQueue mafAgentThreaded */
-class MAF_EXPORT mafAgent: public mafReferenceCounted, public mafObserver, public mafEventSender
+class MAF_EXPORT mafAgent: public mafReferenceCounted, public mafBaseEventHandler, public mafEventSender
 {
 public:
   mafAbstractTypeMacro(mafAgent,mafReferenceCounted);
@@ -89,8 +90,8 @@ public:
   one listener can be specified, and a broad cast using the VTK Subject/Observer is performed.
   UnPlugListener works for all channels at the same time.
   NULL listeners are ignored.*/
-  void AddObserver(mafObserver *listener,mafID channel=MCH_UP, int priority = 0);
-  void RemoveObserver(mafObserver *listener);
+  void AddObserver(mafBaseEventHandler *listener,mafID channel=MCH_UP, int priority = 0);
+  void RemoveObserver(mafBaseEventHandler *listener);
   void RemoveAllObservers();
   
   /**
@@ -104,7 +105,7 @@ public:
   bool HasObservers(mafID channel);
   
   /** return a list of the observers on a channel */
-  void GetObservers(mafID channel,std::vector<mafObserver *> &olist);
+  void GetObservers(mafID channel,std::vector<mafBaseEventHandler *> &olist);
 
   /**
     Initialize this agent. Subclasses can redefine InternalInitialize() to customize

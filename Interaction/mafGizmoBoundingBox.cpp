@@ -46,11 +46,11 @@
 #include "vtkMath.h"
 
 //----------------------------------------------------------------------------
-mafGizmoBoundingBox::mafGizmoBoundingBox(mafVME *input, mafObserver *listener,mafVME *parent)
+mafGizmoBoundingBox::mafGizmoBoundingBox(mafVME *input, mafBaseEventHandler *listener,mafVME *parent)
 //----------------------------------------------------------------------------
 {
 
-  m_Listener = listener;
+  SetListener(listener);
   m_InputVme = input;
   m_BoxGizmo = NULL;
   m_BoxOutline = NULL;

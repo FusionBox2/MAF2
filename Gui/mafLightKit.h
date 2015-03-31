@@ -21,7 +21,8 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 
 #define MAX_NUM_LIGHT 10
 
@@ -38,14 +39,13 @@ class mafGUI;
 //----------------------------------------------------------------------------
 /**
 */
-class MAF_EXPORT mafLightKit : public mafObserver
+class MAF_EXPORT mafLightKit : public mafBaseEventHandler, public mafEventSender
 {
 public:
-	mafLightKit(wxWindow* parent, vtkRenderer *r, mafObserver *Listener = NULL);
+	mafLightKit(wxWindow* parent, vtkRenderer *r, mafBaseEventHandler *Listener = NULL);
 	~mafLightKit(); 
 	
 	void OnEvent(mafEventBase *maf_event);
-	void SetListener(mafObserver *Listener) {m_Listener = Listener;};
 	void CreateGui();
 
 	/** Returns the mafLightKit's GUI */
@@ -75,8 +75,6 @@ protected:
 
 	/** Enable-Disable interface's widgets. */
 	void EnableWidget(bool enable);
-
-	mafObserver	*m_Listener;
 
 	mafGUIButton  *m_ButtonAdd; 
 	mafGUIButton  *m_ButtonRemove;

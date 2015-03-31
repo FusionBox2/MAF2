@@ -85,7 +85,7 @@
 
 #include "mmaApplicationLayout.h"
 
-#include "mafEventSource.h"
+#include "mafEventSender.h"
 #include "mafDataVector.h"
 #include "mafVMEStorage.h"
 #include "mafRemoteStorage.h"

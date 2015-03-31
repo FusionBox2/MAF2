@@ -42,8 +42,6 @@ mafGUIListCtrlBitmap::mafGUIListCtrlBitmap( wxWindow* parent,wxWindowID id, bool
   SetWindowStyle(wxNO_BORDER);
   SetBackgroundColour(wxColour(255,255,255));
    
-  m_Listener = NULL;
-
   m_Images = new wxImageList(25,25,FALSE,4);
   m_List = new wxListCtrl(this,ID_LIST,wxDefaultPosition,wxSize(100,100) ,wxLC_SMALL_ICON | wxLC_SINGLE_SEL | wxLC_AUTOARRANGE);
 

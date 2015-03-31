@@ -39,7 +39,6 @@ mafOp::mafOp(const wxString &label)
 //----------------------------------------------------------------------------
 {
 	m_Gui       = NULL;
-	m_Listener  = NULL;
 	m_Next      = NULL;
 	m_OpType    = OPTYPE_OP;
   m_OpMenuPath= "";
@@ -61,7 +60,6 @@ mafOp::mafOp()
 //----------------------------------------------------------------------------
 {
 	m_Gui       = NULL;
-	m_Listener  = NULL;
 	m_Next      = NULL;
 	m_OpType    = OPTYPE_OP;
 	m_Canundo   = false;

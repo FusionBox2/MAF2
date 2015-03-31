@@ -41,12 +41,12 @@
 mafString dummyPoseNameUsedForTesting = "dummyPoseNameUsedForTesting";
 
 //----------------------------------------------------------------------------
-mafGUISaveRestorePose::mafGUISaveRestorePose(mafVME *input, mafObserver *listener, int typeGui, bool testMode)
+mafGUISaveRestorePose::mafGUISaveRestorePose(mafVME *input, mafBaseEventHandler *listener, int typeGui, bool testMode)
 //----------------------------------------------------------------------------
 {
   assert(input);
 
-  m_Listener = listener;
+  SetListener(listener);
   m_InputVME = input;
   m_Gui = NULL;
   m_TypeGui = typeGui;

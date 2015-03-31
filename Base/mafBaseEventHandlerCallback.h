@@ -1,43 +1,39 @@
 /*=========================================================================
-
- Program: MAF2
- Module: mafObserverCallback
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
+  Program:   Multimod Application Framework
+  Module:    $RCSfile: mafBaseEventHandlerCallback.h,v $
+  Language:  C++
+  Date:      $Date: 2005-04-26 07:16:02 $
+  Version:   $Revision: 1.3 $
+  Authors:   Marco Petrone
+==========================================================================
+  Copyright (c) 2001/2005 
+  CINECA - Interuniversity Consortium (www.cineca.it)
 =========================================================================*/
-#ifndef __mafObserverCallback_h
-#define __mafObserverCallback_h
+#ifndef __mafBaseEventHandlerCallback_h
+#define __mafBaseEventHandlerCallback_h
 //----------------------------------------------------------------------------
 // includes :
 //----------------------------------------------------------------------------
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
 
 //------------------------------------------------------------------------------
-// mafObserverCallback
+// mafBaseEventHandlerCallback
 //------------------------------------------------------------------------------
 /** Concrete implementation of Observer calling a callback function.
-  mafObserverCallback is a class implementing an "observer" that launches a callback
-  function. It's useful for attaching as observers objects that do not inherit from mafObserver.
+  mafBaseEventHandlerCallback is a class implementing an "observer" that launches a callback
+  function. It's useful for attaching as observers objects that do not inherit from mafBaseEventHandler.
   When an event is rised the callback function is called passing as argument some event content 
   plus event source Data and this class ClientData, that can be set to any value. Usually ClientData
   is used to store the (self) pointer of the class to whom the callback function belongs.
-  @sa mafEventSource mafObserver
+  @sa mafEventSource mafBaseEventHandler
   @todo 
   - create a test
 */
-class MAF_EXPORT mafObserverCallback:public mafObserver
+class MAF_EXPORT mafBaseEventHandlerCallback:public mafBaseEventHandler
 {
 public:
-  mafObserverCallback();
-  virtual ~mafObserverCallback();
+  mafBaseEventHandlerCallback();
+  virtual ~mafBaseEventHandlerCallback();
 
   /** Set function callback to be called by this observer */
   void SetCallback(void (*f)(void *sender, mafID eid, void *calldata));
@@ -49,4 +45,4 @@ protected:
   void (*m_Callback)(void *, mafID, void *);  
 };
 
-#endif /* __mafObserverCallback_h */
+#endif /* __mafBaseEventHandlerCallback_h */

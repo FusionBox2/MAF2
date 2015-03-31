@@ -21,7 +21,7 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
 #include "mafGUIGizmoInterface.h"
 
 //----------------------------------------------------------------------------
@@ -41,7 +41,7 @@ class MAF_EXPORT mafGUIGizmoRotate : public mafGUIGizmoInterface
 {
 public:
 
-  mafGUIGizmoRotate(mafObserver *listener, bool testMode = false);
+  mafGUIGizmoRotate(mafBaseEventHandler *listener, bool testMode = false);
   ~mafGUIGizmoRotate(); 
 
   void OnEvent(mafEventBase *maf_event);

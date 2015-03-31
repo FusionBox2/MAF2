@@ -29,7 +29,7 @@
 #include "mafGUI.h"
 
 //----------------------------------------------------------------------------
-mafGUISettingsStorage::mafGUISettingsStorage(mafObserver *Listener, const mafString &label):
+mafGUISettingsStorage::mafGUISettingsStorage(mafBaseEventHandler *Listener, const mafString &label):
 mafGUISettings(Listener, label)
 //----------------------------------------------------------------------------
 {

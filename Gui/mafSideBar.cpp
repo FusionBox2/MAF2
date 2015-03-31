@@ -39,14 +39,14 @@
 #include "mafVMERoot.h"
 
 //----------------------------------------------------------------------------
-mafSideBar::mafSideBar(wxWindow* parent, int id, mafObserver *Listener, long style)
+mafSideBar::mafSideBar(wxWindow* parent, int id, mafBaseEventHandler *Listener, long style)
 //----------------------------------------------------------------------------
 {
   m_SelectedVme  = NULL;
   m_SelectedView = NULL;
   m_CurrentVmeGui = NULL;
   m_CurrentPipeGui = NULL;
-  m_Listener = Listener;
+  SetListener(Listener);
   m_Style = style;
 
   //splitted panel  

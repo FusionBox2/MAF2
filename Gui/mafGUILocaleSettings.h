@@ -31,7 +31,7 @@ class mafGUILocaleSettings : public mafGUISettings
 {
 public:
   /** constructor */
-	mafGUILocaleSettings(mafObserver *Listener, const mafString &label = _("Interface language"));
+	mafGUILocaleSettings(mafBaseEventHandler *Listener, const mafString &label = _("Interface language"));
   /** destructor */
 	~mafGUILocaleSettings(); 
 

@@ -62,7 +62,6 @@
 mafRWI::mafRWI()
 //----------------------------------------------------------------------------
 {
-	m_Listener= NULL;
 	m_Sg      = NULL;
 	m_RenBack = NULL;
 	m_RenFront= NULL;
@@ -103,7 +102,6 @@ mafRWI::mafRWI()
 mafRWI::mafRWI(wxWindow *parent, RWI_LAYERS layers, bool use_grid, bool show_axes, bool show_ruler, int stereo, bool show_orientator, int axesType)
 //----------------------------------------------------------------------------
 {
-	m_Listener= NULL;
 	m_Sg      = NULL;
 	m_RenBack = NULL;
 	m_RenFront= NULL;

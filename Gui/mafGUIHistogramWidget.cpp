@@ -53,7 +53,6 @@ mafGUIHistogramWidget::mafGUIHistogramWidget(wxWindow* parent, wxWindowID id /* 
 :mafGUIPanel(parent,id,pos,size,style)
 //----------------------------------------------------------------------------
 {
-	m_Listener    = NULL;
   m_Histogram   = NULL;
 	m_HistogramData = NULL;
   m_Gui         = NULL;

@@ -21,7 +21,7 @@
 #include "mafDefines.h"   // mafDefines should alway be included as first
 #include "mafDecl.h"
 #include "mafEventBase.h" // base class for mafEvent
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
 
 //----------------------------------------------------------------------------
 // Forward References:

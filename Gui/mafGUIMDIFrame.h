@@ -23,11 +23,11 @@
 
 #include "mafGUIDockManager.h"
 #include "mafGUIDockSettings.h" // tmp //SIL. 05-jun-2006 : 
+#include "mafEventSender.h"
 
 //----------------------------------------------------------------------------
 // forward reference
 //----------------------------------------------------------------------------
-class mafObserver;
 class vtkProcessObject;
 class vtkViewport;
 class vtkObject;
@@ -39,16 +39,13 @@ class mafGUI;
   Represents the main frame of a MAF Application. On this frame  they'll be plugged  toolbars,  panels, progress bar etc...
   Closing this frame is equal to close the application.
 */
-class MAF_EXPORT mafGUIMDIFrame: public wxMDIParentFrame
+class MAF_EXPORT mafGUIMDIFrame: public wxMDIParentFrame, public mafEventSender
 {
  public:
   /** constructor. */
   mafGUIMDIFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
   /** destructor. */
  ~mafGUIMDIFrame(); 
-  
-  /** Set the listener object, i.e. the object receiving events sent by this object */
-  void SetListener(mafObserver *Listener) {m_Listener = Listener;};
   
   /** Show the Docking Settings Dialog */
   mafGUI* GetDockSettingGui() {return m_DockSettings->GetGui();};  
@@ -164,8 +161,6 @@ protected:
 
 	/** Create the status bar on main application frame. */
   void CreateStatusbar();
-
-  mafObserver *m_Listener;
 
   // added members to handle the progress bar
   bool         *m_Busy;

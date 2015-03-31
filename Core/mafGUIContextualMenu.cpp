@@ -86,7 +86,6 @@ mafGUIContextualMenu::mafGUIContextualMenu()
 {
 	m_ChildViewActive = NULL;
 	m_ViewActive      = NULL;
-  m_Listener        = NULL;
 }
 //----------------------------------------------------------------------------
 mafGUIContextualMenu::~mafGUIContextualMenu()

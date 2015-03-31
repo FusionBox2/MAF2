@@ -21,7 +21,8 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 
 //----------------------------------------------------------------------------
 // forward references :
@@ -38,14 +39,13 @@ class vtkTextMapper;
 mafTextKit is tool to visualize text into a given mafRWI.
 \sa mafRWI
 */
-class MAF_EXPORT mafTextKit : public mafObserver
+class MAF_EXPORT mafTextKit : public mafBaseEventHandler, public mafEventSender
 {
 public:
-	mafTextKit(wxWindow* parent, vtkRenderer *renderer, mafObserver *Listener = NULL);
+	mafTextKit(wxWindow* parent, vtkRenderer *renderer, mafBaseEventHandler *Listener = NULL);
 	~mafTextKit(); 
 	
 	void OnEvent(mafEventBase *maf_event);
-	void SetListener(mafObserver *Listener) {m_Listener = Listener;};
 
   enum TEXT_KIT_ALIGN_MODALITY
   {
@@ -94,7 +94,6 @@ protected:
   vtkTextMapper	*m_TextMapper;
   vtkActor2D    *m_TextActor;
 
-  mafObserver	*m_Listener;
 	mafGUI			*m_Gui;
 	vtkRenderer *m_TextRenderer;
 	wxWindow	  *m_ParentPanel;

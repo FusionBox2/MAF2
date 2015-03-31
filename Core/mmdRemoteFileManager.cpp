@@ -124,7 +124,7 @@ void mmdRemoteFileManager::EnableAuthentication(bool enable)
   m_EnableCertificateAuthentication = enable;
 }
 //----------------------------------------------------------------------------
-int mmdRemoteFileManager::DownloadRemoteFile(mafString remote_filename, mafString &downloaded_filename, mafObserver *observer)
+int mmdRemoteFileManager::DownloadRemoteFile(mafString remote_filename, mafString &downloaded_filename, mafBaseEventHandler *observer)
 //----------------------------------------------------------------------------
 {
   if (observer == NULL)
@@ -184,7 +184,7 @@ int mmdRemoteFileManager::DownloadRemoteFile(mafString remote_filename, mafStrin
   }
 }
 //------------------------------------------------------------------------------
-int mmdRemoteFileManager::UploadLocalFile(mafString local_filename, mafString remote_filename, mafObserver *observer)
+int mmdRemoteFileManager::UploadLocalFile(mafString local_filename, mafString remote_filename, mafBaseEventHandler *observer)
 //------------------------------------------------------------------------------
 {
   if (observer == NULL)

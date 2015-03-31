@@ -21,7 +21,7 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
 //#include "mafString.h"
 #include <vector>
 
@@ -39,7 +39,7 @@ class mafGUIDialog;
   Represent the settings collector dialog. It generates a tree (left parto of the dialogue) with all the settings appended to it.
 In the right part ofg the dialog there is the specific gui setting gui.
  */  
-class MAF_EXPORT mafGUISettingsDialog : public mafObserver
+class MAF_EXPORT mafGUISettingsDialog : public mafBaseEventHandler
 {
 
 public:

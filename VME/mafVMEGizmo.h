@@ -21,7 +21,7 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafVME.h"
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
 //----------------------------------------------------------------------------
 // forward declarations :
 //----------------------------------------------------------------------------
@@ -62,8 +62,8 @@ public:
   single mafVMEGizmos.
   The optional mediator ivar holds a reference to the orchestrator.
   */
-  void SetMediator(mafObserver *mediator) {m_Mediator = mediator;};
-  mafObserver *GetMediator() {return m_Mediator;};
+  void SetMediator(mafBaseEventHandler *mediator) {m_Mediator = mediator;};
+  mafBaseEventHandler *GetMediator() {return m_Mediator;};
 
   /** Compare with another VME-Gizmo. */
   virtual bool Equals(mafVME *vme);
@@ -131,7 +131,7 @@ protected:
   double m_TextColour[3];
   int    m_TextVisibility;
 	
-  mafObserver *m_Mediator;
+  mafBaseEventHandler *m_Mediator;
 
 private:
   mafVMEGizmo(const mafVMEGizmo&); // Not implemented

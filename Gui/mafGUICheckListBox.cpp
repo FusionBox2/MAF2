@@ -51,7 +51,6 @@ mafGUICheckListBox::mafGUICheckListBox(wxWindow* parent, wxWindowID id, const wx
 :mafGUIPanel(parent,id,pos,size,style) 
 //----------------------------------------------------------------------------
 {
-  m_Listener = NULL;
 	m_SelectedItem = -1;
   m_PreventNotify = false;
   m_CheckEvent = false;

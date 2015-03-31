@@ -40,7 +40,7 @@ public:
 
   mafTypeMacro(mafViewHTML, mafView);
 
-	mafView				*Copy(mafObserver *Listener = NULL, bool lightCopyEnabled = false);
+	mafView				*Copy(mafBaseEventHandler *Listener = NULL, bool lightCopyEnabled = false);
   void           Create();
 	mafSceneGraph *GetSceneGraph();
   mafRWIBase    *GetDefaultRWI();

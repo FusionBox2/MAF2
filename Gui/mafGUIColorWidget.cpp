@@ -71,8 +71,6 @@ mafGUIColorWidget::mafGUIColorWidget(wxWindow* parent, wxWindowID id, const wxPo
 :wxPanel(parent,id,pos,size,style)         
 //----------------------------------------------------------------------------
 {
-	m_Listener = NULL;
-
   /*
   m_HsvSize    = 160;                          //size of the hsv chooser  
   m_HsvInnerRadius    = m_HsvSize/2 - m_HsvSize/10;         //inner radius of the h cirle 

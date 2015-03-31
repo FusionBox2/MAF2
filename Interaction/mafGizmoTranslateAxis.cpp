@@ -49,7 +49,7 @@
 #include "vtkProperty.h"
 
 //----------------------------------------------------------------------------
-mafGizmoTranslateAxis::mafGizmoTranslateAxis(mafVME *input, mafObserver *listener, mafString name)
+mafGizmoTranslateAxis::mafGizmoTranslateAxis(mafVME *input, mafBaseEventHandler *listener, mafString name)
 //----------------------------------------------------------------------------
 {
   m_ConeLength = 0.5;
@@ -57,7 +57,7 @@ mafGizmoTranslateAxis::mafGizmoTranslateAxis(mafVME *input, mafObserver *listene
 
   m_IsaComp[0] = m_IsaComp[1] = NULL;
 
-  m_Listener = listener;
+  SetListener(listener);
   m_InputVme = input;
   
   // default axis is X
@@ -80,7 +80,7 @@ mafGizmoTranslateAxis::mafGizmoTranslateAxis(mafVME *input, mafObserver *listene
 	  m_CylGizmo->SetName(name);
   }
   m_CylGizmo->SetData(m_RotatePDF[CYLINDER]->GetOutput());
-  m_CylGizmo->SetMediator(m_Listener);
+  m_CylGizmo->SetMediator(GetListener());
 
   // cone gizmo
   m_ConeGizmo = mafVMEGizmo::New();
@@ -90,7 +90,7 @@ mafGizmoTranslateAxis::mafGizmoTranslateAxis(mafVME *input, mafObserver *listene
      m_ConeGizmo->SetName(name);
   }
   m_ConeGizmo->SetData(m_RotatePDF[CONE]->GetOutput());
-  m_ConeGizmo->SetMediator(m_Listener);
+  m_ConeGizmo->SetMediator(GetListener());
 
   // assign isa to cylinder and cone
   m_CylGizmo->SetBehavior(m_IsaComp[CYLINDER]);

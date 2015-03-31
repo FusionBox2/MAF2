@@ -24,7 +24,8 @@
 #include <wx/hash.h>
 #include "mafDecl.h"
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 #include "mafGUIPanel.h"
 
 //----------------------------------------------------------------------------
@@ -44,13 +45,12 @@ enum FlagSplitterDragModes
 Use Put(w,id) to place widgets on the various pane - id should be in 0..2.
 Putting a new pane delete the previous
 */
-class mafGUIFlagSplitter: public mafGUIPanel
+class mafGUIFlagSplitter: public mafGUIPanel, public mafEventSender
 {
 public:
   mafGUIFlagSplitter(wxWindow* parent,wxWindowID id = -1);
   virtual ~mafGUIFlagSplitter();
 
-  void SetListener(mafObserver *Listener) {m_Listener = Listener;};
   //void OnEvent(mafEventBase *maf_event);
   
 	/** Set the split position and redraw the four panels. */
@@ -60,7 +60,6 @@ public:
   void Put(wxWindow* w,int i);
 
 protected:
-  mafObserver  *m_Listener;
   wxCursor     *m_CursorWE;
   wxPen        *m_Pen;
   

@@ -49,13 +49,13 @@
 #include "vtkProperty.h"
 
 //----------------------------------------------------------------------------
-mafGizmoTranslatePlane::mafGizmoTranslatePlane(mafVME *input, mafObserver *listener)
+mafGizmoTranslatePlane::mafGizmoTranslatePlane(mafVME *input, mafBaseEventHandler *listener)
 //----------------------------------------------------------------------------
 {
   this->SetIsActive(false);
   
   m_IsaComp[0]  = m_IsaComp[1] =  NULL;
-  m_Listener  = listener;
+  SetListener(listener);
   m_InputVme    = input;
   m_Length = 1;
   
@@ -87,7 +87,7 @@ mafGizmoTranslatePlane::mafGizmoTranslatePlane(mafVME *input, mafObserver *liste
     vmeName << i;
     m_Gizmo[i]->SetName(vmeName.GetCStr());
     m_Gizmo[i]->SetData(m_RotatePDF[i]->GetOutput());
-	m_Gizmo[i]->SetMediator(m_Listener);
+	m_Gizmo[i]->SetMediator(GetListener());
   }
 
   // assign isa to S1 and S2;

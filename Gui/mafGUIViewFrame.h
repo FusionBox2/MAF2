@@ -19,7 +19,8 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 #include <wx/laywin.h>
 //----------------------------------------------------------------------------
 // forward reference
@@ -29,7 +30,7 @@ class mafView;
 //----------------------------------------------------------------------------
 // mafGUIViewFrame :
 //----------------------------------------------------------------------------
-class mafGUIViewFrame: public wxFrame , public mafObserver
+class mafGUIViewFrame: public wxFrame , public mafBaseEventHandler, public mafEventSender
 {
 	public:
 	mafGUIViewFrame(wxFrame* parent, 
@@ -41,8 +42,6 @@ class mafGUIViewFrame: public wxFrame , public mafObserver
 							);
        
 	~mafGUIViewFrame(); 
-	
-	void SetListener(mafObserver *Listener) {m_Listener = Listener;};
 	
 	/** Set which is the external view. */
 	void SetView(mafView *view);
@@ -63,7 +62,6 @@ protected:
 	/** Send the event to select the owned view. */
   void OnActivate     (wxActivateEvent &event);
 
-	mafObserver *m_Listener;
 	wxWindow    *m_ClientWin;
 	mafView     *m_View;
 

@@ -19,9 +19,8 @@ mafDynamicLoader.cpp
 mafDynamicLoader.h
 mafEventBase.cpp
 mafEventBase.h
+mafEventSender.cpp
 mafEventSender.h
-mafEventSource.cpp
-mafEventSource.h
 mafIncludeWIN32.h
 mafIncludeWX.h
 mafIndent.cpp
@@ -44,10 +43,10 @@ mafObject.cpp
 mafObject.h
 mafObjectFactory.cpp
 mafObjectFactory.h
-mafObserver.cpp
-mafObserver.h
-mafObserverCallback.cpp
-mafObserverCallback.h
+mafBaseEventHandler.cpp
+mafBaseEventHandler.h
+mafBaseEventHandlerCallback.cpp
+mafBaseEventHandlerCallback.h
 mafReferenceCounted.cpp
 mafReferenceCounted.h
 mafSmartPointer.h

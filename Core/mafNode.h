@@ -21,7 +21,7 @@
 #include "mafReferenceCounted.h"
 #include "mafStorable.h"
 #include "mafSmartPointer.h"
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
 #include "mafTagItem.h"
 #include "mafString.h"
 #include "mafTimeStamped.h"
@@ -29,7 +29,7 @@
 #include "mafDecl.h"
 #include "mafTagArray.h"
 #include "mafObjectWithGUI.h"
-#include "mafEventSource.h"
+#include "mafEventSender.h"
 #include <vector>
 #include <map>
 #include <string>
@@ -99,7 +99,7 @@ EXPORT_STL_MAP(MAF_EXPORT,mafString,mmuNodeLink);
 
   @sa mafNodeRoot
 */
-class MAF_EXPORT mafNode : public mafReferenceCounted, public mafStorable, public mafObserver, public mafTimeStamped, public mafObjectWithGUI
+class MAF_EXPORT mafNode : public mafReferenceCounted, public mafStorable, public mafEventSource, public mafBaseEventHandler, public mafTimeStamped, public mafObjectWithGUI
 {
 public:
   mafTypeMacro(mafNode, mafReferenceCounted);
@@ -309,9 +309,6 @@ public:
   /** redefined to cope with tree registering */
   virtual void UnRegister(void *o);
 
-  /** return a reference to the event source issuing events for this object */
-  mafEventSource *GetEventSource() {return m_EventSource;}
-
   /** Precess events coming from other objects */ 
   virtual void OnEvent(mafEventBase *e);
 
@@ -489,8 +486,6 @@ protected:
   bool m_VisibleToTraverse;         ///< enable/disable traversing visit of this node
   bool m_Initialized;               ///< set true by Initialize()
   bool m_DependsOnLinkedNode;       ///< enable/disable calculation of MTime considering links
-
-  mafEventSource    *m_EventSource; ///< source of events issued by the node
 };
 
 #endif

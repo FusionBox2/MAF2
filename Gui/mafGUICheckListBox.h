@@ -22,11 +22,11 @@
 //----------------------------------------------------------------------------
 #include "mafGUIPanel.h"
 #include "mafString.h"
+#include "mafEventSender.h"
 
 //----------------------------------------------------------------------------
 // Forward refs:
 //----------------------------------------------------------------------------
-class mafObserver;
 
 //----------------------------------------------------------------------------
 // constant
@@ -46,7 +46,7 @@ a CheckList that send mafEventNotification in the form
 mafEvent(this, widget_id, item_id, checked)
 */
 //----------------------------------------------------------------------------
-class MAF_EXPORT mafGUICheckListBox: public mafGUIPanel
+class MAF_EXPORT mafGUICheckListBox: public mafGUIPanel, public mafEventSender
 {
 public:
   mafGUICheckListBox(wxWindow* parent, 
@@ -96,8 +96,6 @@ public:
   /** Set the check mode of the checked listbox to be MODE_CHECK. */
 	void SetCheckModeToCheck() {m_CheckMode = MODE_CHECK;};
 
-  void SetListener(mafObserver *listener) {m_Listener = listener;};
-
   /** Return the index of the item into the checked listbox, otherwise -1 if the item is not present. */
 	int FindItem(wxString label);
 
@@ -127,7 +125,6 @@ protected:
   void OnSize(wxSizeEvent& event);
 
   bool              m_CheckEvent; ///< Flag used to distinguish between Check item and Select item event
-  mafObserver*      m_Listener;
   wxCheckListBox   *m_CheckListBox;
   bool              m_PreventNotify;
 	int               m_CheckMode;

@@ -21,8 +21,9 @@
 //----------------------------------------------------------------------------
 #include "mafDecl.h" // for MINID
 #include "mafObject.h"
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
 #include "mafEvent.h"
+#include "mafEventSender.h"
 #include "mafObjectWithGUI.h"
 
 //----------------------------------------------------------------------------
@@ -45,7 +46,7 @@ class mafGUI;
   creates actors that will be rendered in a render view.
   It can handle a GUI, which events can be catched by OnEvent.
 */
-class MAF_EXPORT mafPipe : public mafObject, public mafObserver, public mafObjectWithGUI
+class MAF_EXPORT mafPipe : public mafObject, public mafBaseEventHandler, public mafEventSender, public mafObjectWithGUI
 {
 public:
   mafTypeMacro(mafPipe,mafObject);
@@ -58,8 +59,6 @@ public:
 
   /** The real setup must be performed here - not in the ctor */
   virtual void Create(mafSceneNode *n);
-
-  void SetListener(mafObserver *listener) {m_Listener = listener;};
 
 	/** Change the visibility of the bounding box actor representing the selection for the vme. */
 	virtual	void Select(bool select)										{};
@@ -77,9 +76,6 @@ public:
     ID_FIRST = MINID,
     ID_LAST
   };
-
-  /* Return Listener */
-  mafObserver *GetListener(){return m_Listener;};
 
   mafVME         *m_Vme;      ///< VME used as input for the visual pipe
 	vtkMAFAssembly *m_AssemblyFront; ///< Assembly used to contain the actor in the front layer
@@ -100,7 +96,5 @@ protected:
   subclass to continue the ID enumeration from it. For appending the widgets in the
   same panel GUI, each CreateGUI() function should first call the superclass' one.*/
   virtual mafGUI  *CreateGui();
-
-  mafObserver *m_Listener;
 };
 #endif

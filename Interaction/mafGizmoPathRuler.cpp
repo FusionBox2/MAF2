@@ -34,12 +34,12 @@
 #include "mafVME.h"
 
 //----------------------------------------------------------------------------
-mafGizmoPathRuler::mafGizmoPathRuler(mafVME *input, mafObserver* listener, \
+mafGizmoPathRuler::mafGizmoPathRuler(mafVME *input, mafBaseEventHandler* listener, \
                  int ticksNumber, int originTickID, double ticksHeigth,double ticksDistance, bool enableShorterTicks)
 {
   assert(input);
   m_InputVME = input;
-  m_Listener = listener;
+  SetListener(listener);
   m_TicksNumber = ticksNumber;
   m_OriginTickID = originTickID;
   m_TicksHeigth = ticksHeigth;

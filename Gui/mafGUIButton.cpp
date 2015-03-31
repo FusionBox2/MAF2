@@ -42,7 +42,6 @@ mafGUIButton::mafGUIButton(wxWindow* parent, wxWindowID id, const wxString& labe
 : wxButton(parent,id,label,pos,size,style)
 //----------------------------------------------------------------------------
 {
-  m_Listener = NULL;
   m_Id = id;
 };
 //----------------------------------------------------------------------------

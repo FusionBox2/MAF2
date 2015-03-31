@@ -20,8 +20,9 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
 #include "mafEvent.h"
+#include "mafEventSender.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :
@@ -37,13 +38,12 @@ class mafGUI;
 /**
 This component allow to manage surface materials.
 */
-class MAF_EXPORT mafGUIMaterialButton : public mafObserver
+class MAF_EXPORT mafGUIMaterialButton : public mafBaseEventHandler, public mafEventSender
 {
 public:
-	mafGUIMaterialButton(mafVME *vme, mafObserver *listener = NULL);
+	mafGUIMaterialButton(mafVME *vme, mafBaseEventHandler *listener = NULL);
 	~mafGUIMaterialButton(); 
 	void OnEvent(mafEventBase *maf_event);
-	void SetListener(mafObserver *listener) {m_Listener = listener;};
 
 	/** Return mafGUIMaterialButton User Interface */
 	mafGUI *GetGui() {return m_Gui;};
@@ -66,7 +66,6 @@ protected:
   wxStaticText *m_MaterialLabel;   // material name label
   mmaMaterial  *m_Material;
 
-  mafObserver *m_Listener;
 	mafGUI			*m_Gui;
   mafVME      *m_Vme;
 };

@@ -33,7 +33,7 @@
 #include "mafVMEPolyline.h"
 #include "mafVMEOutputPolyline.h"
 #include "mafAbsMatrixPipe.h"
-#include "mafEventSource.h"
+#include "mafEventSender.h"
 
 #include "vtkMAFAssembly.h"
 #include "vtkRenderer.h"
@@ -126,7 +126,7 @@ void mafPipePolylineSlice::Create(mafSceneNode *n)
   m_Axes            = NULL;
   m_PolyFilteredLine= NULL;
   
-  m_Vme->GetEventSource()->AddObserver(this);
+  m_Vme->AddObserver(this);
 
   assert(m_Vme->GetOutput()->IsMAFType(mafVMEOutputPolyline));
   mafVMEOutputPolyline *polyline_output = mafVMEOutputPolyline::SafeDownCast(m_Vme->GetOutput());
@@ -256,7 +256,7 @@ void mafPipePolylineSlice::Create(mafSceneNode *n)
 mafPipePolylineSlice::~mafPipePolylineSlice()
 //----------------------------------------------------------------------------
 {
-  m_Vme->GetEventSource()->RemoveObserver(this);
+  m_Vme->RemoveObserver(this);
 
   m_AssemblyFront->RemovePart(m_Actor);
   m_AssemblyFront->RemovePart(m_OutlineActor);

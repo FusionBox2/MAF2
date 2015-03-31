@@ -21,7 +21,7 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
 #include "mafGizmoInterface.h"
 #include "mafGUIGizmoScale.h"
 
@@ -67,7 +67,7 @@ class mafGUI;
 class MAF_EXPORT mafGizmoScale: public mafGizmoInterface 
 {
 public:
-  mafGizmoScale(mafVME *input, mafObserver* listener = NULL , bool buildGUI = true);
+  mafGizmoScale(mafVME *input, mafBaseEventHandler* listener = NULL , bool buildGUI = true);
   virtual ~mafGizmoScale(); 
 
   /** 

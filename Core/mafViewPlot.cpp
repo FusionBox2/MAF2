@@ -61,12 +61,12 @@ void mafViewPlot::PlugVisualPipe(mafString vme_type, mafString pipe_type, long v
   m_PipeMap[vme_type] = plugged_pipe;
 }
 //----------------------------------------------------------------------------
-mafView *mafViewPlot::Copy(mafObserver *Listener, bool lightCopyEnabled)
+mafView *mafViewPlot::Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled)
 //----------------------------------------------------------------------------
 {
   m_LightCopyEnabled = lightCopyEnabled;
   mafViewPlot *v = new mafViewPlot(m_Label);
-  v->m_Listener = Listener;
+  v->SetListener(Listener);
   v->m_Id = m_Id;
   v->m_PipeMap = m_PipeMap;
   v->Create();

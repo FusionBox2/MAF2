@@ -27,6 +27,7 @@
 #include "mafVMEItemVTK.h"
 
 #include "mafEventIO.h"
+#include "mafEvent.h"
 #include "mafIndent.h"
 #include "mafStorage.h"
 #include "mafStorageElement.h"

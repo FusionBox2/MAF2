@@ -75,12 +75,12 @@ mafViewCompound::~mafViewCompound()
   m_ChildViewList.clear();
 }
 //----------------------------------------------------------------------------
-mafView *mafViewCompound::Copy(mafObserver *Listener, bool lightCopyEnabled)
+mafView *mafViewCompound::Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled)
 //----------------------------------------------------------------------------
 {
   m_LightCopyEnabled = lightCopyEnabled;
   mafViewCompound *v = new mafViewCompound(m_Label, m_ViewRowNum, m_ViewColNum);
-  v->m_Listener = Listener;
+  v->SetListener(Listener);
   v->m_Id = m_Id;
   for (int i=0;i<m_PluggedChildViewList.size();i++)
   {

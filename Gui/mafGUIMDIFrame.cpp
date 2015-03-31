@@ -132,7 +132,6 @@ mafGUIMDIFrame::mafGUIMDIFrame(const wxString& title, const wxPoint& pos, const 
   m_MemoryLimitAlert = 50; // 50 MB is the default low limit to alert the user.
   m_UserAlerted = false;
 
-  m_Listener = NULL;
   CreateStatusbar();
   Centre();
 

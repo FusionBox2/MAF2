@@ -42,7 +42,7 @@ class vtkTransform;
 class MAF_EXPORT mafGizmoScaleIsotropic: public mafGizmoInterface 
 {
 public:
-           mafGizmoScaleIsotropic(mafVME *input, mafObserver *listener = NULL);
+           mafGizmoScaleIsotropic(mafVME *input, mafBaseEventHandler *listener = NULL);
   virtual ~mafGizmoScaleIsotropic(); 
   
   /** 
@@ -53,9 +53,6 @@ public:
   //----------------------------------------------------------------------------
   // events handling 
   //----------------------------------------------------------------------------
-  
-  /** Set the event receiver object*/
-  void  SetListener(mafObserver *Listener) {m_Listener = Listener;};
   
   /** Events handling*/        
   virtual void OnEvent(mafEventBase *maf_event);
@@ -119,10 +116,6 @@ protected:
   void SetColor(double col[3]);
   void SetColor(double colR, double colG, double colB);
  
-  /**
-  Register the event receiver object*/
-  mafObserver *m_Listener;
-
   /** friend test */
   friend class mafGizmoScaleIsotropicTest;
 };

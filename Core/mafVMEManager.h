@@ -18,7 +18,8 @@
 //----------------------------------------------------------------------------
 // includes :
 //----------------------------------------------------------------------------
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
+#include "mafEventSender.h"
 #include "mafNode.h"
 #include "mafNodeRoot.h"
 #include "mafVMERoot.h"
@@ -38,7 +39,7 @@ It can add or remove VME to the current tree, add a new tree, load and save a tr
 
 */
 //----------------------------------------------------------------------------
-class MAF_EXPORT mafVMEManager: public mafObserver
+class MAF_EXPORT mafVMEManager: public mafBaseEventHandler, public mafEventSender
 //----------------------------------------------------------------------------
 {
 public:
@@ -47,9 +48,6 @@ public:
 
   /** destructor */
   ~mafVMEManager(); 
-
-  /** Set the event receiver object*/
-  void SetListener(mafObserver *listener) {m_Listener = listener;};
 
   /** Process events coming from other components */
   void OnEvent(mafEventBase *e);
@@ -172,7 +170,6 @@ protected:
 
   bool                m_Modified;         ///< Used to known when the tree has been modified...
 
-  mafObserver*        m_Listener;         ///< Register the event receiver object
   wxConfigBase*       m_Config;           ///< Application configuration for file history management
   wxZipFSHandler      *m_ZipHandler;      ///< Handler for zip archive (used to open zmsf files)
   wxFileSystem        *m_FileSystem;      ///< File system manager

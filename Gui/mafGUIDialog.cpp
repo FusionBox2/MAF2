@@ -55,7 +55,6 @@ mafGUIDialog::mafGUIDialog(const wxString& title,long style)
 : wxDialog()
 //----------------------------------------------------------------------------
 {
-  m_Listener = NULL;
   m_DialogInitialized = false;
   
   long s = wxCAPTION;

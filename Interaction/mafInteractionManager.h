@@ -17,7 +17,7 @@
 #define __mafInteractionManager_h
 
 #include "mafObject.h"
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
 #include "mafStorable.h"
 #include "mafString.h"
@@ -82,7 +82,7 @@ EXPORT_STL_LIST(MAF_EXPORT,mafAutoPointer<mafInteractorPER>);
   @todo
   - check the renderer to be RenFront
 */
-class MAF_EXPORT mafInteractionManager : public mafObject, public mafObserver, public mafEventSender, public mafStorable
+class MAF_EXPORT mafInteractionManager : public mafObject, public mafBaseEventHandler, public mafEventSender, public mafStorable
 {
 public:
   mafInteractionManager();

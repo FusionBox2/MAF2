@@ -28,7 +28,6 @@
 //----------------------------------------------------------------------------
 class mafNode;
 class mafObject;
-class mafObserver;
 class mafStorageElement;
 class mafStorage;
 

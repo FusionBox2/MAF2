@@ -20,7 +20,8 @@
 //----------------------------------------------------------------------------
 #include "mafDecl.h"
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 
 //----------------------------------------------------------------------------
 // forward references :
@@ -34,12 +35,11 @@ class vtkRenderer;
 //----------------------------------------------------------------------------
 // mafSceneGraph :
 //----------------------------------------------------------------------------
-class MAF_EXPORT mafSceneGraph  /*: public mafObserver*/
+class MAF_EXPORT mafSceneGraph :public mafEventSender /*: public mafObserver*/
 {
 public:
 								mafSceneGraph(mafView	*view, vtkRenderer *ren1, vtkRenderer *ren2=NULL, vtkRenderer *ren3 = NULL);
 	virtual			 ~mafSceneGraph();
-  virtual void	SetListener(mafObserver *Listener) {m_Listener = Listener;};
 	//virtual void	OnEvent(mafEvent& e);
 
 	/** Add a vme to the scene graph. */
@@ -126,7 +126,6 @@ protected:
 	mafSceneNode *NodeAdd(mafNode *vme);
 
   mafSceneNode *m_List;      ///< list of visualized node
-  mafObserver	 *m_Listener;
 	mafGUI			 *m_Gui;
 	mafNode      *m_SelectedVme;
   bool         m_InformationPipeModality;

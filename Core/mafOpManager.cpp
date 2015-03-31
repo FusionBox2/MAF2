@@ -85,7 +85,6 @@ but could not be done the undo.
 mafOpManager::mafOpManager()
 //----------------------------------------------------------------------------
 {
-  m_Listener	     = NULL;
   m_RemoteListener = NULL;
   m_RunningOp      = NULL;
 	m_Selected	     = NULL;

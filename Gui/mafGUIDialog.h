@@ -20,7 +20,8 @@
 //----------------------------------------------------------------------------
 #include "wx/dialog.h"
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 #include "mafGUI.h"
 //----------------------------------------------------------------------------
 // Const:
@@ -69,12 +70,11 @@ Example:
 
 @sa mafGUIDialogPreview
 */
-class MAF_EXPORT mafGUIDialog : public wxDialog, public mafObserver  
+class MAF_EXPORT mafGUIDialog : public wxDialog, public mafBaseEventHandler, public mafEventSender  
 {
 public:
 	mafGUIDialog (const wxString& title,	long style = mafCLOSEWINDOW | mafRESIZABLE | mafCLOSE);
 	virtual ~mafGUIDialog (); 
-  void SetListener(mafObserver *Listener) {m_Listener = Listener;};
   void OnEvent(mafEventBase *maf_event);
 
   /** Add a widget to the dialog. */
@@ -122,8 +122,6 @@ public:
   wxButton   *m_OkButton;      ///< Button used to close the dialog with wxID_OK
   wxButton   *m_CancelButton;  ///< Button used to close the dialog with wxID_CANCEL
   wxButton   *m_CloseButton;   ///< Button used to close the dialog with wxID_CLOSE
-
-  mafObserver *m_Listener;
 
 private:
   /** non virtual function, called on Dialog Closing and bound through the event table */

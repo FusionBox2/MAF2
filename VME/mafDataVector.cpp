@@ -35,6 +35,7 @@
 #include "mmuTimeSet.h"
 #include "mafStorageElement.h"
 #include "mafStorage.h"
+#include "mafEvent.h"
 #include "mafEventIO.h"
 #include "mafIndent.h"
 #include "mafVMERoot.h"

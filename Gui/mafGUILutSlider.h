@@ -20,14 +20,14 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
+#include "mafEventSender.h"
 
 //----------------------------------------------------------------------------
 // forward reference :
 //----------------------------------------------------------------------------
 class mafGUILutButt;
 class mafEvent;
-class mafObserver;
 
 //----------------------------------------------------------------------------
 // mafGUILutSlider :
@@ -36,7 +36,7 @@ mafGUILutSlider is a Label that notify user-click using the normal wxEvents.
 It is used on the title bar of mafGUINamedPanel to popup a menu.
 */
 //----------------------------------------------------------------------------
-class MAF_EXPORT mafGUILutSlider : public wxPanel
+class MAF_EXPORT mafGUILutSlider : public wxPanel, public mafEventSender
 {
 public:
   mafGUILutSlider(
@@ -62,8 +62,6 @@ public:
    MAX_BUTTON,
    MIDDLE_BUTTON,
  };
-
-  void SetListener(mafObserver *listener)   {m_Listener=listener;}; 
 
   /** Set the range of the double slider. */
 	void SetRange(double  rmin, double  rmax);
@@ -144,7 +142,6 @@ protected:
   bool m_FloatingPointText; ///< flag used for visualization of decimal in the title of button, default : false
   bool m_FixedText; ///< flag used for visualization of fixed text, default: false
 
-  mafObserver  *m_Listener;     
 DECLARE_EVENT_TABLE()
 };
 #endif    // __mafGUILutSlider_H__

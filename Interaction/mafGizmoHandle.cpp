@@ -58,7 +58,7 @@
 using namespace std;
 
 //----------------------------------------------------------------------------
-mafGizmoHandle::mafGizmoHandle(mafVME *input, mafObserver *listener /* = NULL */, int constraintModality/* =BOUNDS */,mafVME *parent/* =NULL */, bool showShadingPlane /* = true */)
+mafGizmoHandle::mafGizmoHandle(mafVME *input, mafBaseEventHandler *listener /* = NULL */, int constraintModality/* =BOUNDS */,mafVME *parent/* =NULL */, bool showShadingPlane /* = true */)
 //----------------------------------------------------------------------------
 {
 	m_ConstraintModality = constraintModality;
@@ -71,7 +71,7 @@ mafGizmoHandle::mafGizmoHandle(mafVME *input, mafObserver *listener /* = NULL */
 		for(int j=0;j<3;j++)
 			m_BBCenters[i][j]=0;
 
-  m_Listener = listener;
+  SetListener(listener);
   assert(input != NULL);
   m_InputVme = input;
 

@@ -23,7 +23,8 @@
 #include <wx/accel.h>
 #include <wx/menu.h>
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 #include "mafOpContextStack.h"
 
 //----------------------------------------------------------------------------
@@ -51,13 +52,12 @@ EXPORT_STL_VECTOR(MAF_EXPORT,mafOp*);
 // mafOpManager :
 //----------------------------------------------------------------------------
 /**  */
-class MAF_EXPORT mafOpManager: public mafObserver
+class MAF_EXPORT mafOpManager: public mafBaseEventHandler, public mafEventSender
 {
 public:
 	         mafOpManager();
 	virtual ~mafOpManager(); 
-	virtual void SetListener(mafObserver *Listener) {m_Listener = Listener;};
-  virtual void SetRemoteListener(mafObserver *Listener) {m_RemoteListener = Listener;};
+  virtual void SetRemoteListener(mafBaseEventHandler *Listener) {m_RemoteListener = Listener;};
 	virtual void OnEvent(mafEventBase *maf_event);
 
   /** Event IDs used in collaborative modality.*/
@@ -207,8 +207,7 @@ protected:
 
   bool m_CollaborateStatus;  ///< Flag set to know if the application is in collaborative mode or no.
 
-  mafObserver       *m_Listener;
-  mafObserver       *m_RemoteListener; ///< Listener used to send messages to remote applications
+  mafBaseEventHandler       *m_RemoteListener; ///< Listener used to send messages to remote applications
 
   /** test friend */
   friend class mafOpManagerTest;

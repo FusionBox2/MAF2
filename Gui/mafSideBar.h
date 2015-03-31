@@ -23,7 +23,8 @@
 #include <wx/utils.h>
 
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 #include "mafGUICheckTree.h"
 //----------------------------------------------------------------------------
 // forward reference
@@ -41,10 +42,10 @@ class mafGUISplittedPanel;
 //----------------------------------------------------------------------------
 /**
 */
-class MAF_EXPORT mafSideBar
+class MAF_EXPORT mafSideBar : public mafEventSender
 {
 public:
-	mafSideBar(wxWindow* parent, int id, mafObserver *Listener, long style = DOUBLE_NOTEBOOK);
+	mafSideBar(wxWindow* parent, int id, mafBaseEventHandler *Listener, long style = DOUBLE_NOTEBOOK);
 	~mafSideBar(); 
 
   enum SIDEBAR_STYLE
@@ -125,7 +126,6 @@ protected:
 
   mafNode     *m_SelectedVme;
   mafView     *m_SelectedView;
-  mafObserver *m_Listener;
 
   mafGUI *m_NewAppendingGUI;
   mafGUI *m_OldAppendingGUI;

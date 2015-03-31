@@ -37,10 +37,10 @@
 #include "vtkMatrix4x4.h"
 
 //----------------------------------------------------------------------------
-mafGUIGizmoScale::mafGUIGizmoScale(mafObserver *listener, bool testMode)
+mafGUIGizmoScale::mafGUIGizmoScale(mafBaseEventHandler *listener, bool testMode)
 //----------------------------------------------------------------------------
 {
-  m_Listener = listener;
+  SetListener(listener);
   m_TestMode = testMode;
 
   m_Scaling[0] = m_Scaling[1] = m_Scaling[2] = 1;

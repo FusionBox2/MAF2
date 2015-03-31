@@ -17,7 +17,7 @@
 #define __mafVMEStorage_h__
 
 #include "mafXMLStorage.h"
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
 #include "mafUtility.h"
 #include "mafStorable.h"
@@ -45,7 +45,7 @@ protected:
   @todo
     - 
 */  
-class MAF_EXPORT mafVMEStorage: public mafXMLStorage, public mafObserver, public mafEventSender
+class MAF_EXPORT mafVMEStorage: public mafXMLStorage, public mafBaseEventHandler, public mafEventSender
 {
 public:
   MAF_ID_DEC(MSF_FILENAME_CHANGED);

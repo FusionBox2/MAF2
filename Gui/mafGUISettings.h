@@ -17,7 +17,8 @@
 #ifndef __mafGUISettings_H__
 #define __mafGUISettings_H__
 
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
+#include "mafEventSender.h"
 #include <wx/config.h>
 
 //----------------------------------------------------------------------------
@@ -30,19 +31,16 @@ class mafGUI;
   base class for more complex specified classes regarding the setting of application.
   It returns a gui and generally can access to registry keys.
 */
-class MAF_EXPORT mafGUISettings : public mafObserver
+class MAF_EXPORT mafGUISettings : public mafBaseEventHandler, public mafEventSender
 {
 public:
   /** constructor */
-	mafGUISettings(mafObserver *Listener, const mafString &label = _("Settings"));
+	mafGUISettings(mafBaseEventHandler *Listener, const mafString &label = _("Settings"));
   /** destructor */
 	~mafGUISettings(); 
 
   /** Answer to the messages coming from interface. */
   virtual void OnEvent(mafEventBase *maf_event);
-
-  /** Set the listener of the events launched*/
-  void SetListener(mafObserver *Listener) {m_Listener = Listener;};
 
   /** Return the GUI of the setting panel.*/
   mafGUI* GetGui();
@@ -61,7 +59,5 @@ protected:
   mafString m_Label;
 
   wxConfig *m_Config;
-  
-  mafObserver *m_Listener;
 };
 #endif

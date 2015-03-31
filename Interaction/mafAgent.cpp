@@ -11,7 +11,7 @@ Version:   $Revision: 1.10 $
 #include "vtkObjectFactory.h"
 
 #include "mafEventBase.h"
-#include "mafEventSource.h"
+#include "mafEventSender.h"
 #include "mmuIdFactory.h"
 #include <assert.h>
 
@@ -101,7 +101,7 @@ bool mafAgent::HasObservers(mafID channel)
 }
 
 //------------------------------------------------------------------------------
-void mafAgent::GetObservers(mafID channel,std::vector<mafObserver *> &olist)
+void mafAgent::GetObservers(mafID channel,std::vector<mafBaseEventHandler *> &olist)
 //------------------------------------------------------------------------------
 {
   olist.clear();
@@ -110,7 +110,7 @@ void mafAgent::GetObservers(mafID channel,std::vector<mafObserver *> &olist)
       m_Channels[i]->GetObservers(olist);  
 }
 //------------------------------------------------------------------------------
-void mafAgent::AddObserver(mafObserver *listener,mafID channel, int priority)
+void mafAgent::AddObserver(mafBaseEventHandler *listener,mafID channel, int priority)
 //------------------------------------------------------------------------------
 {
   assert(listener);
@@ -143,7 +143,7 @@ void mafAgent::AddObserver(mafObserver *listener,mafID channel, int priority)
 }
 
 //------------------------------------------------------------------------------
-void mafAgent::RemoveObserver(mafObserver *listener)
+void mafAgent::RemoveObserver(mafBaseEventHandler *listener)
 //------------------------------------------------------------------------------
 {  
   assert(listener);

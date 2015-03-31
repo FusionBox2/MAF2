@@ -40,7 +40,6 @@ mafGUIComboBox::mafGUIComboBox(wxWindow* parent, wxWindowID id, wxArrayString ar
 :wxComboBox(parent,id,"",pos,size,array,style) 
 //----------------------------------------------------------------------------
 {
-  m_Listener = NULL;
   m_OldValue = -1;
 }
 //----------------------------------------------------------------------------

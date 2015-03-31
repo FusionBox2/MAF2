@@ -22,7 +22,8 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 
 //----------------------------------------------------------------------------
 // forward references :
@@ -40,7 +41,7 @@ class mafMatrix;
  
   @todo
 */
-class MAF_EXPORT mafGizmoInterface : public mafObserver 
+class MAF_EXPORT mafGizmoInterface : public mafBaseEventHandler, public mafEventSender
 {
 public:
 	
@@ -66,10 +67,10 @@ public:
   For example see mafGizmoTranslate which act as mediator between 3 mafGizmoTranslateAxis and 3 mafGizmoTranslatePlane
   each one wrapping several mafVMEGizmo's
   */
-  void SetMediator(mafObserver *mediator) {m_Mediator = mediator;};
+  void SetMediator(mafBaseEventHandler *mediator) {m_Mediator = mediator;};
   
   /** Return the meditor object */
-  mafObserver *GetMediator() {return m_Mediator;};
+  mafBaseEventHandler *GetMediator() {return m_Mediator;};
 
   /** Enable/Disable gizmo autoscaling (default is false ie no autoscaling): if autoscale is enabled the gizmo will maintain a fixed dimension
   trying to follow camera zoom. Use SetRenderWindowHeightPercentage to set gizmo / renderWindowHeight fixed ratio*/
@@ -91,11 +92,6 @@ public:
   // events handling 
   //----------------------------------------------------------------------------
   
-  /**
-  Set the event receiver object*/
-  void SetListener(mafObserver *listener);
-  mafObserver *GetListener();
-
   /**
   Events handling (not implemented)*/        
   virtual void OnEvent(mafEventBase *maf_event);
@@ -147,7 +143,7 @@ protected:
            mafGizmoInterface();
   virtual ~mafGizmoInterface(); 
 
-  mafObserver *m_Mediator;
+  mafBaseEventHandler *m_Mediator;
 
   mafString m_Name;
 
@@ -158,10 +154,6 @@ protected:
   /** 
   The gizmo interaction mode*/
   int m_Modality;   
-
-  /**
-  Register the event receiver object*/
-  mafObserver *m_Listener;
 
   /** 
   Vme to be used as reference system */

@@ -67,12 +67,12 @@ mafViewHTML::~mafViewHTML()
   */
 }
 //----------------------------------------------------------------------------
-mafView *mafViewHTML::Copy(mafObserver *Listener, bool lightCopyEnabled)
+mafView *mafViewHTML::Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled)
 //----------------------------------------------------------------------------
 {
    m_LightCopyEnabled = lightCopyEnabled;
    mafViewHTML *v = new mafViewHTML(m_Label);
-   v->m_Listener = Listener;
+   v->SetListener(Listener);
    v->m_Id = m_Id;
    v->Create();
 	 return v;

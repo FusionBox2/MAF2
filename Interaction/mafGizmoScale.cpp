@@ -42,13 +42,13 @@ PURPOSE.  See the above copyright notice for more information.
 #include "vtkMath.h"
 
 //----------------------------------------------------------------------------
-mafGizmoScale::mafGizmoScale(mafVME* input, mafObserver *listener , bool buildGUI)
+mafGizmoScale::mafGizmoScale(mafVME* input, mafBaseEventHandler *listener , bool buildGUI)
 	//----------------------------------------------------------------------------
 {
 	assert(input);
 
 	m_InputVME = input;
-	m_Listener = listener;
+	SetListener(listener);
 	m_BuildGUI = buildGUI;
 
 	m_GSAxis[X] = m_GSAxis[Y] = m_GSAxis[Z] = NULL;

@@ -19,19 +19,20 @@
 
 #include "mafDecl.h"
 #include "mafEvent.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 #include "mafColor.h"
 #include "vtkLookupTable.h"
 //----------------------------------------------------------------------------
 /** mafGUILutWidget : Helper class for mafLutEditor
 @sa mafLutEditor
 */
-class mafGUILutWidget: public wxPanel, public mafObserver
+class mafGUILutWidget: public wxPanel, public mafBaseEventHandler, public mafEventSender
 {
 public:
   mafGUILutWidget(wxWindow* parent, wxWindowID id = -1, const wxPoint& pos = wxDefaultPosition, 
            const wxSize& size = wxSize(300,290), long style = wxTAB_TRAVERSAL /*| wxSUNKEN_BORDER */);
 
-  virtual void SetListener(mafObserver *Listener) {m_Listener = Listener;};
   void OnEvent( mafEventBase *event );
 
   void     SetSelectionColor(mafColor col);
@@ -52,7 +53,6 @@ public:
   void SetLut(vtkLookupTable *lut);
 
 protected:
-  mafObserver     *m_Listener;
   vtkLookupTable  *m_Lut;
   
   bool     m_Dragging;

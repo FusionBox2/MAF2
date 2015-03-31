@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 #include "mafDefines.h" //important: mafDefines should always be included as first
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
 #include "mafSideBar.h"
 #include <wx/notebook.h>
 #include <wx/icon.h>
@@ -67,7 +67,7 @@ Proper Initialization must follow this order
 4- Show:
 5- Init: Calls FileOpen or FileNew
 */
-class MAF_EXPORT mafLogicWithGUI: public mafObserver
+class MAF_EXPORT mafLogicWithGUI: public mafBaseEventHandler
 {
 public:
                mafLogicWithGUI(mafGUIMDIFrame *mdiFrame=NULL);

@@ -29,7 +29,7 @@
 #include "mafGUI.h"
 
 //----------------------------------------------------------------------------
-mafGUISettingsTimeBar::mafGUISettingsTimeBar(mafObserver *Listener, const mafString &label):
+mafGUISettingsTimeBar::mafGUISettingsTimeBar(mafBaseEventHandler *Listener, const mafString &label):
 mafGUISettings(Listener, label)
 //----------------------------------------------------------------------------
 {

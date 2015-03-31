@@ -36,11 +36,11 @@
 #include "mafMatrix.h"
 
 //----------------------------------------------------------------------------
-mafGUIGizmoRotate::mafGUIGizmoRotate(mafObserver *listener, bool testMode)
+mafGUIGizmoRotate::mafGUIGizmoRotate(mafBaseEventHandler *listener, bool testMode)
 //----------------------------------------------------------------------------
 {
   m_TestMode = testMode;
-  m_Listener = listener;
+  SetListener(listener);
 
   m_Orientation[0] = m_Orientation[1] = m_Orientation[2] = 0;
 

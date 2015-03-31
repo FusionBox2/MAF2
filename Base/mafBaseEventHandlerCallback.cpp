@@ -1,17 +1,13 @@
 /*=========================================================================
-
- Program: MAF2
- Module: mafObserverCallback
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
+  Program:   Multimod Application Framework
+  Module:    $RCSfile: mafBaseEventHandlerCallback.cpp,v $
+  Language:  C++
+  Date:      $Date: 2005-04-26 07:16:02 $
+  Version:   $Revision: 1.3 $
+  Authors:   Marco Petrone
+==========================================================================
+  Copyright (c) 2001/2005 
+  CINECA - Interuniversity Consortium (www.cineca.it)
 =========================================================================*/
 
 
@@ -25,24 +21,24 @@
 
 
 
-#include "mafObserverCallback.h"
+#include "mafBaseEventHandlerCallback.h"
 #include "mafEventBase.h"
 
 //------------------------------------------------------------------------------
-mafObserverCallback::mafObserverCallback()
+mafBaseEventHandlerCallback::mafBaseEventHandlerCallback()
 //------------------------------------------------------------------------------
 {
   m_Callback    = NULL;
 }
 
 //------------------------------------------------------------------------------
-mafObserverCallback::~mafObserverCallback()
+mafBaseEventHandlerCallback::~mafBaseEventHandlerCallback()
 //------------------------------------------------------------------------------
 {
 }
 
 //------------------------------------------------------------------------------
-void mafObserverCallback::OnEvent(mafEventBase *e)
+void mafBaseEventHandlerCallback::OnEvent(mafEventBase *e)
 //------------------------------------------------------------------------------
 {
   if (m_Callback)
@@ -50,7 +46,7 @@ void mafObserverCallback::OnEvent(mafEventBase *e)
 }
 
 //------------------------------------------------------------------------------
-void mafObserverCallback::SetCallback(void (*f)(void *sender, mafID eid, void *calldata))
+void mafBaseEventHandlerCallback::SetCallback(void (*f)(void *sender, mafID eid, void *calldata))
 //------------------------------------------------------------------------------
 {
   m_Callback = f;

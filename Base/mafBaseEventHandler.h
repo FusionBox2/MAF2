@@ -1,45 +1,40 @@
 /*=========================================================================
-
- Program: MAF2
- Module: mafObserver
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
+  Program:   Multimod Application Framework
+  Module:    $RCSfile: mafBaseEventHandler.h,v $
+  Language:  C++
+  Date:      $Date: 2005-10-18 13:44:26 $
+  Version:   $Revision: 1.4 $
+  Authors:   Marco Petrone
+==========================================================================
+  Copyright (c) 2001/2005 
+  CINECA - Interuniversity Consortium (www.cineca.it)
 =========================================================================*/
-#ifndef __mafObserver_h
-#define __mafObserver_h
+#ifndef __mafBaseEventHandler_h
+#define __mafBaseEventHandler_h
 //----------------------------------------------------------------------------
 // includes :
 //----------------------------------------------------------------------------
-#include "mafObject.h"
-#include "mafEvent.h"
+#include "mafEventBase.h"
 
 //------------------------------------------------------------------------------
-// mafObserver
+// mafBaseEventHandler
 //------------------------------------------------------------------------------
 /** Interface implementing the Observer of the Subject/Observer design pattern.
-  mafObserver is an abstract class implementing the "observer" in the Subject/Observer 
+  mafBaseEventHandler is an abstract class implementing the "observer" in the Subject/Observer 
   design pattern. Objective of this object is to provide an interface for listening to events
   issued by subjects.
   An observer must be registered to a subject to create the communication channel 
   between the two. An observer can "observe" many subjects at the same time.
-  @sa mafEventSource mafObserverCallback
+  @sa mafEventSource mafBaseEventHandlerCallback
 */
-class MAF_EXPORT mafObserver
+class MAF_EXPORT mafBaseEventHandler
 {
 public:
-  mafObserver() {}
-  virtual ~mafObserver() {}
+  mafBaseEventHandler() {}
+  virtual ~mafBaseEventHandler() {}
 
   /** process the events sent by subjects */
   virtual void OnEvent(mafEventBase *e) = 0;
 };
 
-#endif /* __mafObserver_h */
+#endif /* __mafBaseEventHandler_h */

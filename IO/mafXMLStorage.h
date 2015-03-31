@@ -65,7 +65,7 @@ public:
   const char *GetDocumentVersion();
 
   /** resolve an URL and provide local filename to be used as input */
-  virtual int ResolveInputURL(const char * url, mafString &filename, mafObserver *observer = NULL);
+  virtual int ResolveInputURL(const char * url, mafString &filename, mafBaseEventHandler *observer = NULL);
 
   /** resolve an URL and provide a local filename to be used as output */
   virtual int StoreToURL(const char * filename, const char * url);

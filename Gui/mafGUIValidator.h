@@ -22,12 +22,12 @@
 #include "wx/listctrl.h"
 #include "mafDecl.h"
 #include "mafString.h"
+#include "mafEventSender.h"
 
 //-----------------------------------------------------------------------------
 //forward ref
 //-----------------------------------------------------------------------------
 class mafGUIFloatSlider;
-class mafObserver;
 
 //-----------------------------------------------------------------------------
 // constant :
@@ -59,29 +59,29 @@ enum VALIDATOR_MODES
 //-----------------------------------------------------------------------------
 // mafGUIValidator :
 //-----------------------------------------------------------------------------
-class MAF_EXPORT mafGUIValidator : public wxValidator
+class MAF_EXPORT mafGUIValidator : public wxValidator, public mafEventSender
 {
 public:
-  mafGUIValidator (mafObserver* listener,int mid,wxStaticText *win, wxString* var);   //String
-  mafGUIValidator (mafObserver* listener,int mid,wxStaticText *win, mafString* var);  //String
-  mafGUIValidator (mafObserver* listener,int mid,wxTextCtrl   *win,wxString* var);   //String
-  mafGUIValidator (mafObserver* listener,int mid,wxTextCtrl   *win,mafString* var);  //String
-  mafGUIValidator (mafObserver* listener,int mid,wxTextCtrl   *win,   int*		var, int		min=-2147483647-1,			 int		max=2147483647);     //Integer
-  mafGUIValidator (mafObserver* listener,int mid,wxTextCtrl   *win,   float*	var, float	min=-1.0e+38F, float	max=1.0e+38F, int dec_digits = 2);//Float
-  mafGUIValidator (mafObserver* listener,int mid,wxTextCtrl   *win,   double* var, double min=-1.0e+299, double max=1.0e+299, int dec_digits = 2);//Double
-  mafGUIValidator (mafObserver* listener,int mid,wxSlider     *win,   int*   var, wxTextCtrl* lab);
-	mafGUIValidator (mafObserver* listener,int mid,wxTextCtrl   *win,   int*   var, wxSlider* lab, int min=-2147483647-1,	int max=2147483647);
-  mafGUIValidator (mafObserver* listener,int mid,mafGUIFloatSlider *win, double* var, wxTextCtrl* lab);
-	mafGUIValidator (mafObserver* listener,int mid,wxTextCtrl		*win,	 double* var, mafGUIFloatSlider* lab, double min=-1.0e+299, double	max=1.0e+299);
-  mafGUIValidator (mafObserver* listener,int mid,wxCheckBox   *win,   int*   var);
-  mafGUIValidator (mafObserver* listener,int mid,wxRadioBox   *win,   int*   var);
-  mafGUIValidator (mafObserver* listener,int mid,wxComboBox   *win,   int*   var);
-  mafGUIValidator (mafObserver* listener,int mid,wxListBox    *win);
-  mafGUIValidator (mafObserver* listener,int mid,wxListCtrl   *win);
-  mafGUIValidator (mafObserver* listener,int mid,wxButton     *win);
-  mafGUIValidator (mafObserver* listener,int mid,wxButton     *win,mafString* var, wxTextCtrl* lab, bool openfile, const mafString wildcard); // FileOpen/Save
-  mafGUIValidator (mafObserver* listener,int mid,wxButton     *win,mafString* var, wxTextCtrl* lab); // DirOpen
-  mafGUIValidator (mafObserver* listener,int mid,wxButton     *win,wxColour* var, wxTextCtrl* lab);
+  mafGUIValidator (mafBaseEventHandler* listener,int mid,wxStaticText *win, wxString* var);   //String
+  mafGUIValidator (mafBaseEventHandler* listener,int mid,wxStaticText *win, mafString* var);  //String
+  mafGUIValidator (mafBaseEventHandler* listener,int mid,wxTextCtrl   *win,wxString* var);   //String
+  mafGUIValidator (mafBaseEventHandler* listener,int mid,wxTextCtrl   *win,mafString* var);  //String
+  mafGUIValidator (mafBaseEventHandler* listener,int mid,wxTextCtrl   *win,   int*		var, int		min=-2147483647-1,			 int		max=2147483647);     //Integer
+  mafGUIValidator (mafBaseEventHandler* listener,int mid,wxTextCtrl   *win,   float*	var, float	min=-1.0e+38F, float	max=1.0e+38F, int dec_digits = 2);//Float
+  mafGUIValidator (mafBaseEventHandler* listener,int mid,wxTextCtrl   *win,   double* var, double min=-1.0e+299, double max=1.0e+299, int dec_digits = 2);//Double
+  mafGUIValidator (mafBaseEventHandler* listener,int mid,wxSlider     *win,   int*   var, wxTextCtrl* lab);
+	mafGUIValidator (mafBaseEventHandler* listener,int mid,wxTextCtrl   *win,   int*   var, wxSlider* lab, int min=-2147483647-1,	int max=2147483647);
+  mafGUIValidator (mafBaseEventHandler* listener,int mid,mafGUIFloatSlider *win, double* var, wxTextCtrl* lab);
+	mafGUIValidator (mafBaseEventHandler* listener,int mid,wxTextCtrl		*win,	 double* var, mafGUIFloatSlider* lab, double min=-1.0e+299, double	max=1.0e+299);
+  mafGUIValidator (mafBaseEventHandler* listener,int mid,wxCheckBox   *win,   int*   var);
+  mafGUIValidator (mafBaseEventHandler* listener,int mid,wxRadioBox   *win,   int*   var);
+  mafGUIValidator (mafBaseEventHandler* listener,int mid,wxComboBox   *win,   int*   var);
+  mafGUIValidator (mafBaseEventHandler* listener,int mid,wxListBox    *win);
+  mafGUIValidator (mafBaseEventHandler* listener,int mid,wxListCtrl   *win);
+  mafGUIValidator (mafBaseEventHandler* listener,int mid,wxButton     *win);
+  mafGUIValidator (mafBaseEventHandler* listener,int mid,wxButton     *win,mafString* var, wxTextCtrl* lab, bool openfile, const mafString wildcard); // FileOpen/Save
+  mafGUIValidator (mafBaseEventHandler* listener,int mid,wxButton     *win,mafString* var, wxTextCtrl* lab); // DirOpen
+  mafGUIValidator (mafBaseEventHandler* listener,int mid,wxButton     *win,wxColour* var, wxTextCtrl* lab);
 
   mafGUIValidator(const mafGUIValidator& val) {Copy(val);};
  ~mafGUIValidator() {};
@@ -96,7 +96,7 @@ public:
 //	float RoundValue(float f_in);
 //	double RoundValue(double d_in);
 
-  void Init(mafObserver* listener, int mid, wxControl *win);
+  void Init(mafBaseEventHandler* listener, int mid, wxControl *win);
   void OnChar(wxKeyEvent& event);
   void OnKillFocus(wxFocusEvent& event);
   void OnScrollEvent(wxScrollEvent& event);
@@ -141,7 +141,6 @@ protected:
   
   WidgetDataType  m_WidgetData; ///< Used in Collaborative Mode and contains the active widget informations
 
-  mafObserver    *m_Listener;
   int             m_ModuleId;
 	int							m_DecimalDigits; ///< Number of decimal digits to consider and to show into the widget.
   mafString       m_Wildcard;

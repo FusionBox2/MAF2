@@ -43,14 +43,14 @@
 #include "vtkMatrix4x4.h"
 
 //----------------------------------------------------------------------------
-mafGUITransformTextEntries::mafGUITransformTextEntries(mafVME *input, mafObserver *listener, bool enableScaling, bool testMode)
+mafGUITransformTextEntries::mafGUITransformTextEntries(mafVME *input, mafBaseEventHandler *listener, bool enableScaling, bool testMode)
 //----------------------------------------------------------------------------
 {
   assert(input);
 
   m_EnableScaling = enableScaling;
   m_CurrentTime = -1;
-  m_Listener = listener;
+  SetListener(listener);
   m_InputVME = input;
   m_Gui = NULL;
   

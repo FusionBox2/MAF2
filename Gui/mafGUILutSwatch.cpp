@@ -57,7 +57,6 @@ mafGUILutSwatch::mafGUILutSwatch(wxWindow* parent, wxWindowID id, const wxPoint&
 :wxPanel(parent,id,pos,size,style)         
 //----------------------------------------------------------------------------
 {
-	m_Listener = NULL;
   m_Editable = false;
   SetLut(NULL);
 
@@ -116,7 +115,7 @@ void mafGUILutSwatch::OnLeftMouseButtonDown(wxMouseEvent &event)
       Refresh();
     }
 
-    mafGUILutEditor::ShowLutDialog(m_Lut,m_Listener, GetId() );
+    mafGUILutEditor::ShowLutDialog(m_Lut,GetListener(), GetId() );
     Update();
     Refresh();
   }

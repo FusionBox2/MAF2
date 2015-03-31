@@ -212,7 +212,7 @@ void mafAgentThreaded::AsyncInvokeEvent(mafEventBase *event, mafID channel)
 }
 
 //------------------------------------------------------------------------------
-void mafAgentThreaded::AsyncSendEvent(mafObserver *target,mafEventBase *event, mafID channel)
+void mafAgentThreaded::AsyncSendEvent(mafBaseEventHandler *target,mafEventBase *event, mafID channel)
 //------------------------------------------------------------------------------
 {
   if (event&&target&&target!=this)
@@ -254,7 +254,7 @@ void mafAgentThreaded::SignalNewMessage()
 #endif
 }
 //----------------------------------------------------------------------------
-void mafAgentThreaded::AsyncSendEvent(mafObserver *target, void *sender, mafID id, mafID channel,void *data)
+void mafAgentThreaded::AsyncSendEvent(mafBaseEventHandler *target, void *sender, mafID id, mafID channel,void *data)
 //----------------------------------------------------------------------------
 {
   AsyncSendEvent(target,&mafEventBase(sender,id,data,channel),channel);

@@ -51,7 +51,6 @@ mafSceneGraph::mafSceneGraph(mafView *view, vtkRenderer *ren1, vtkRenderer *ren2
 	m_View      = view;
 
   m_Gui          = NULL;
-  m_Listener     = NULL;
   m_List         = NULL;
 	m_SelectedVme  = NULL;
 

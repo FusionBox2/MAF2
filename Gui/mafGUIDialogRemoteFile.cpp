@@ -36,11 +36,11 @@
 #include <curl/easy.h>
 
 //----------------------------------------------------------------------------
-mafGUIDialogRemoteFile::mafGUIDialogRemoteFile(mafObserver *listener,const wxString &title, long style)
+mafGUIDialogRemoteFile::mafGUIDialogRemoteFile(mafBaseEventHandler *listener,const wxString &title, long style)
 : mafGUIDialog(title, style)
 //----------------------------------------------------------------------------
 {
-	m_Listener	      = listener;
+	SetListener(listener);
   m_RemoteFilesList = NULL;
 
   curl_global_init(CURL_GLOBAL_DEFAULT);

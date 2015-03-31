@@ -56,7 +56,6 @@ mafViewManager::mafViewManager()
   m_SelectedRWI = NULL;
 
   m_ViewList          = NULL;
-  m_Listener          = NULL;
   m_RemoteListener    = NULL;
   m_SelectedVme       = NULL;
   m_SelectedView      = NULL;

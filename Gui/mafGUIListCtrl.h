@@ -25,7 +25,8 @@
 #include <wx/hash.h>
 
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 #include "mafGUINamedPanel.h"
 //----------------------------------------------------------------------------
 // Constants :
@@ -45,12 +46,11 @@ enum ITEM_ICONS
 // mafGUIListCtrl :
 //----------------------------------------------------------------------------
 /** mafGUIListCtrl allows a simplified use of a wxWindows ListCtrl widget. */
-class mafGUIListCtrl: public mafGUINamedPanel
+class mafGUIListCtrl: public mafGUINamedPanel, public mafEventSender
 {
 public:
                  mafGUIListCtrl (wxWindow* parent, wxWindowID id=-1, bool CloseButton = false, bool HideTitle = false); 
   virtual       ~mafGUIListCtrl();
-  void           SetListener  (mafObserver *listener)   {m_Listener=listener;}; 
 
   /** Clear the control list. */
 	void Reset();
@@ -89,7 +89,6 @@ protected:
   bool          m_PreventNotify;
   wxListCtrl   *m_List;         
   wxImageList  *m_Images;       
-  mafObserver  *m_Listener;     
 
 DECLARE_EVENT_TABLE()
 }; // end of mafGUIListCtrl

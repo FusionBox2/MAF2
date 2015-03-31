@@ -76,11 +76,11 @@ mafViewScalar::~mafViewScalar()
   vtkDEL(m_Lut);
 }
 //----------------------------------------------------------------------------
-mafView *mafViewScalar::Copy(mafObserver *Listener)
+mafView *mafViewScalar::Copy(mafBaseEventHandler *Listener)
 //----------------------------------------------------------------------------
 {
   mafViewScalar *v = new mafViewScalar(m_Label, m_CameraPositionId, m_ShowAxes, m_ShowGrid, m_ShowRuler,m_StereoType);
-  v->m_Listener = Listener;
+  v->SetListener(GetListener());
   v->m_Id = m_Id;
   v->m_PipeMap = m_PipeMap;
   v->Create();

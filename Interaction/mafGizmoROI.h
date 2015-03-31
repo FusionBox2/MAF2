@@ -22,7 +22,7 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafGizmoInterface.h"
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
 #include "mafGizmoBoundingBox.h"
 #include "mafGizmoHandle.h"
 
@@ -77,7 +77,7 @@ class mafVME;
 class MAF_EXPORT mafGizmoROI: public mafGizmoInterface
 {
 public:
-	mafGizmoROI(mafVME *input, mafObserver* listener = NULL , int constraintModality=mafGizmoHandle::BOUNDS,mafVME* parent=NULL,bool showShadingPlane=false);
+	mafGizmoROI(mafVME *input, mafBaseEventHandler* listener = NULL , int constraintModality=mafGizmoHandle::BOUNDS,mafVME* parent=NULL,bool showShadingPlane=false);
   virtual ~mafGizmoROI(); 
 
   /** Set input vme for the gizmo*/

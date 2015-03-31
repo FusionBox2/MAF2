@@ -94,7 +94,7 @@ mafStorage *mafRoot::GetStorage()
 
   try 
   { 
-    return dynamic_cast<mafStorage *>(m_Listener);
+    return dynamic_cast<mafStorage *>(GetListener());
   } 
   catch (std::bad_cast) 
   { 

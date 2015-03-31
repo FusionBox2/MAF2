@@ -51,7 +51,6 @@ mafView::mafView(const wxString &label)
   m_Name					= "";
 	m_Win						= NULL;
   m_Frame					= NULL;
-	m_Listener			= NULL;
 	m_Next					= NULL;
 	m_Gui					 	= NULL;
 	m_Plugged				= false;

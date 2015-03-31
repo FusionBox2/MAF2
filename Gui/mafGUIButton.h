@@ -19,7 +19,8 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 //----------------------------------------------------------------------------
 // mafGUIButton :
 /**
@@ -31,7 +32,7 @@ mafGUIButton is able to send both wxWindows messages and mafEvents.
 mafEvents are sent if m_Listener in not NULL otherwise wxWindows messages are sent.
 */
 //----------------------------------------------------------------------------
-class MAF_EXPORT mafGUIButton : public wxButton
+class MAF_EXPORT mafGUIButton : public wxButton, public mafEventSender
 {
 
 public:
@@ -39,9 +40,6 @@ public:
             const wxPoint& pos, const wxSize& size = wxDefaultSize, long style = 0);
 
   mafGUIButton(wxWindow *parent, wxWindowID id = 0 );
-
-  /** Set the Listener that will receive event-notification. */
-  void SetListener  (mafObserver *listener)   {m_Listener = listener;}; 
 
 protected:  
 	/** Called to set the button as default. */
@@ -54,7 +52,6 @@ protected:
 	void OnSetFocus(wxFocusEvent& event) {}; 
 
   int m_Id;
-  mafObserver  *m_Listener;     
 
   DECLARE_EVENT_TABLE()
 };

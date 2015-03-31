@@ -20,8 +20,9 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
 #include "mafEvent.h"
+#include "mafEventSender.h"
 
 //----------------------------------------------------------------------------
 // forward references :
@@ -40,7 +41,7 @@ class mafVME;
   @todo
 
 */
-class MAF_EXPORT mafGUITransformInterface : public mafObserver
+class MAF_EXPORT mafGUITransformInterface : public mafBaseEventHandler, public mafEventSender
 {
 public:
 
@@ -80,7 +81,6 @@ protected:
 
   mafVME *m_InputVME;
 
-  mafObserver *m_Listener;
   mafGUI      *m_Gui;
    
   /** Vme to be used as reference system */

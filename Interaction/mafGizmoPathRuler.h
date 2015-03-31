@@ -60,7 +60,7 @@ class MAF_EXPORT mafGizmoPathRuler : public mafGizmoInterface
 {
 public:
   
-  mafGizmoPathRuler(mafVME *input, mafObserver* listener = NULL, int ticksNumber = 1, \
+  mafGizmoPathRuler(mafVME *input, mafBaseEventHandler* listener = NULL, int ticksNumber = 1, \
       int originTickId = 0, double ticksHeigth = 50, double ticksDistance = 20, bool enableShorterTicks = true);
   virtual ~mafGizmoPathRuler(); 
 

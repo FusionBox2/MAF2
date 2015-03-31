@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 #include "mafObject.h"
 #include "mafNode.h"
-#include "mafEventSource.h"
+#include "mafEventSender.h"
 #include <vector>
 
 /** mafNodeIterator - an m-way tree data structure iterator
@@ -34,7 +34,7 @@
   @sa mafNode
   */
 
-class MAF_EXPORT mafNodeIterator : public mafObject
+class MAF_EXPORT mafNodeIterator : public mafObject, public mafEventSource
 {
 public:
   mafTypeMacro(mafNodeIterator,mafObject);
@@ -120,8 +120,6 @@ protected:
   /** Find the right most leaf of the tree*/
   mafNode *FindRightMostLeaf(mafNode *node);
 
-  mafEventSource &GetEventSource() {return m_EventSource;}
-
   /** Callback function. By default send an event through the m_EventSource source. */
   virtual void PreExecute(); 
 
@@ -153,8 +151,6 @@ protected:
   bool            m_IgnoreVisibleToTraverse;
 
   std::vector<mafID> m_CurrentIdx;
-
-  mafEventSource  m_EventSource; ///< Source of events issued during traverse
 
 private:
   mafNodeIterator(const mafNodeIterator&) {} // Not implemented

@@ -200,7 +200,7 @@ void mafInteractorSER::GetDeviceBindings(mafDevice *device,std::vector<mafAction
   
   actions.clear();
 
-  std::vector<mafObserver *> observers;
+  std::vector<mafBaseEventHandler *> observers;
   device->GetObservers(MCH_INPUT,observers);
   
   for (int i=0;i<observers.size();i++)

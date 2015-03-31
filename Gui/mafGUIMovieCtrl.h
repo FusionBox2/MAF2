@@ -21,7 +21,8 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafEventSender.h"
+#include "mafBaseEventHandler.h"
 #include "mafGUIPanel.h"
 
 //----------------------------------------------------------------------------
@@ -40,12 +41,11 @@ class mafGUIValidator;
 // mafGUIMovieCtrl :
 /** mafGUIMovieCtrl is a wxPanel with a set of widget to handle time. */
 //----------------------------------------------------------------------------
-class mafGUIMovieCtrl: public mafGUIPanel , public mafObserver
+class mafGUIMovieCtrl: public mafGUIPanel , public mafBaseEventHandler, public mafEventSender
 {
 public:
   mafGUIMovieCtrl(wxWindow* parent,wxWindowID id = -1);
   virtual ~mafGUIMovieCtrl();
-  void SetListener(mafObserver *Listener) {m_Listener = Listener;};
 
   void OnEvent(mafEventBase *maf_event);
   
@@ -79,8 +79,6 @@ protected:
   wxBoxSizer		  *m_Sizer;
   mafGUIPicButton		*m_TimeBarButtons[MOVIE_BUTTONS_NUM];
   wxTimer          m_Timer;
-
-  mafObserver     *m_Listener;
 
   /** Update the movie ctrl interface. */
   void Update();
