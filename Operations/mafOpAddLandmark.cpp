@@ -147,6 +147,18 @@ void mafOpAddLandmark::SetLandmarkPos(mafVMELandmark* lm, double x, double y, do
 void mafOpAddLandmark::OpRun()
 //----------------------------------------------------------------------------
 {
+  if(mafVME *vm = mafVME::SafeDownCast(m_Input))
+  {
+    if(vm->GetTimeStamp() != 0)
+    {
+      int answer = wxMessageBox(_("The time stamp is not 0, this could cause data corruption, would you like to continue?"),_("Confirm"),wxYES_NO|wxICON_QUESTION,mafGetFrame()); // ask user if will save msf before closing
+      if(answer == wxNO)
+      {
+        mafEventMacro(mafEvent(this,OP_RUN_CANCEL));
+        return;
+      }
+    }
+  }
 	if(m_PickingActiveFlag == true)
 	{
 		if(m_Input->IsMAFType(mafVMESurface) || m_Input->IsMAFType(mafVMEVolumeGray) || m_Input->IsMAFType(mafVMESurfaceParametric))
