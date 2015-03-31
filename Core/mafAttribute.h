@@ -52,8 +52,8 @@ public:
   /** 
     Set the name of this attribute. this is typically used to identify it
     inside the Attributes associative map stored inside a mafNode */
-  void SetName(const char *name);
-  const char *GetName() const;
+  void SetName(const mafString& name);
+  const mafString& GetName() const;
 
   /** dump the object to output stream */
   virtual void Print(std::ostream& os, const int tabs=0) const;

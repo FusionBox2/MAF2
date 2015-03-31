@@ -75,13 +75,13 @@ bool mafAttribute::Equals(const mafAttribute *a) const
 }
 
 //-------------------------------------------------------------------------
-void mafAttribute::SetName(const char *name)
+void mafAttribute::SetName(const mafString& name)
 //-------------------------------------------------------------------------
 {
   m_Name=name;
 }
 //-------------------------------------------------------------------------
-const char *mafAttribute::GetName() const
+const mafString& mafAttribute::GetName() const
 //-------------------------------------------------------------------------
 {
   return m_Name;
