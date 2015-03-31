@@ -197,6 +197,8 @@ SET(PROJECT_SRCS
 	lhpOpRegisterLMScripted.h
 	lhpOpFuseLMScripted.cpp
 	lhpOpFuseLMScripted.h
+	lhpOpFindCentroid.cpp
+	lhpOpFindCentroid.h
 	lhpOpComputeTensor.cpp
 	lhpOpComputeTensor.h
 	lhpCOmputeTensor.cpp

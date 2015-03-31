@@ -159,6 +159,8 @@
 #include "lhpOpEditTagRefactor.h"
 #include "lhpOpDownloadVMERefactor.h"
 
+#include "lhpOpFindCentroid.h"
+
 #ifdef MAF_USE_ITK
 #include "lhpOpCreateSurfaceScalar.h"
 #include "lhpVMESurfaceScalarVarying.h"
@@ -633,6 +635,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
 	m_Logic->Plug(new mafOpCreateSurfaceParametric("Parametric Surface"),"Create/New");
 	m_Logic->Plug(new mafOpAddLandmark("Add Landmark \tCtrl+A"),"Create/New");
   m_Logic->Plug(new mafOpCreateMeter("Meter"),"Create/Derive");
+  m_Logic->Plug(new lhpOpFindCentroid("Geometry centroid"),"Create/Derive");
 
   m_Logic->Plug(new mafOpReparentTo("Reparent to...  \tCtrl+R"),"Modify/Fuse");
   m_Logic->Plug(new lhpOpMove(),"Modify");
