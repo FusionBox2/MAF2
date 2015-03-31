@@ -105,9 +105,10 @@ void lhpOpAFSys::InitPredefined()
   ADD_PREDEF(4PNT_Z, NOTDEFINED);
 }
 
+mafCxxTypeMacro(lhpOpAFSys)
+
 //----------------------------------------------------------------------------
-lhpOpAFSys::lhpOpAFSys(wxString label) :
-mafOp(label)
+lhpOpAFSys::lhpOpAFSys(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType   = OPTYPE_OP;
@@ -128,7 +129,7 @@ lhpOpAFSys::~lhpOpAFSys()
 mafOp* lhpOpAFSys::Copy()   
 //----------------------------------------------------------------------------
 {
-  return new lhpOpAFSys(m_Label);
+  return new lhpOpAFSys(GetLabel());
 }
 
 //----------------------------------------------------------------------------

@@ -44,8 +44,10 @@
 #include "vtkRectilinearGridWriter.h"
 #include "vtkStructuredPointsWriter.h"
 
+mafCxxTypeMacro(lhpOpMTRExporter)
+
 //----------------------------------------------------------------------------
-lhpOpMTRExporter::lhpOpMTRExporter(const wxString& label) : mafOp(label)
+lhpOpMTRExporter::lhpOpMTRExporter(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_EXPORTER;
@@ -329,7 +331,7 @@ void lhpOpMTRExporter::ExportLandmark()
 mafOp* lhpOpMTRExporter::Copy()   
 //----------------------------------------------------------------------------
 {
-  lhpOpMTRExporter *cp = new lhpOpMTRExporter(m_Label);
+  lhpOpMTRExporter *cp = new lhpOpMTRExporter(GetLabel());
   cp->m_Canundo      = m_Canundo;
   cp->m_OpType       = m_OpType;
   cp->SetListener(GetListener());

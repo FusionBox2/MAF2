@@ -51,8 +51,7 @@ mafCxxTypeMacro(lhpOpRepresentInAF);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-lhpOpRepresentInAF::lhpOpRepresentInAF(const wxString& label) :
-mafOp(label)
+lhpOpRepresentInAF::lhpOpRepresentInAF(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType        = OPTYPE_OP;
@@ -69,7 +68,7 @@ lhpOpRepresentInAF::~lhpOpRepresentInAF( )
 mafOp* lhpOpRepresentInAF::Copy()
 //----------------------------------------------------------------------------
 {
-  return new lhpOpRepresentInAF(m_Label);
+  return new lhpOpRepresentInAF(GetLabel());
 }
 //----------------------------------------------------------------------------
 bool lhpOpRepresentInAF::Accept(mafNode* node)

@@ -35,7 +35,8 @@ Each raw represents a landmark and contains the (x,y,z) coordinate.*/
 class lhpOpMTRExporter: public mafOp
 {
 public:
-  lhpOpMTRExporter(const wxString& label = "MTRExporter");
+  mafTypeMacro(lhpOpMTRExporter, mafOp)
+  lhpOpMTRExporter(const mafString& label = "MTRExporter");
   ~lhpOpMTRExporter(); 
   mafOp* Copy();
   void OnEvent(mafEventBase *maf_event);

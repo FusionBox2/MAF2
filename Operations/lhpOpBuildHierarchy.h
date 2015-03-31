@@ -35,6 +35,7 @@ class vtkPoints;
 class lhpOpBuildHierarchy: public mafOp
 {
 public:
+  mafTypeMacro(lhpOpBuildHierarchy, mafOp)
   class mafFrame
   {
   protected:
@@ -68,7 +69,7 @@ public:
     void      SetName(wxString const *str) {delete m_name; m_name = new wxString(*str);}
   };
 
-  lhpOpBuildHierarchy(wxString label = "BuildHierarchy");
+  lhpOpBuildHierarchy(const mafString& label = "BuildHierarchy");
  ~lhpOpBuildHierarchy(); 
 
   virtual void OnEvent(mafEventBase *maf_event);

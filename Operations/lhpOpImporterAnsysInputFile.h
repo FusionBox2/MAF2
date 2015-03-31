@@ -32,7 +32,7 @@ class mafEvent;
 class lhpOpImporterAnsysInputFile : public mafOp
 {
 public:
-	lhpOpImporterAnsysInputFile(const wxString &label = "MeshImporter");
+	lhpOpImporterAnsysInputFile(const mafString& label = "MeshImporter");
 	~lhpOpImporterAnsysInputFile(); 
 	
   mafTypeMacro(lhpOpImporterAnsysInputFile, mafOp);

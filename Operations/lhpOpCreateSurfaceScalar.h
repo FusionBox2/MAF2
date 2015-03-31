@@ -28,7 +28,7 @@ class lhpVMESurfaceScalarVarying;
 class lhpOpCreateSurfaceScalar: public mafOp
 {
 public:
-  lhpOpCreateSurfaceScalar(const wxString &label = "Create surface scalar");
+  lhpOpCreateSurfaceScalar(const mafString& label = "Create surface scalar");
   ~lhpOpCreateSurfaceScalar(); 
 
   mafTypeMacro(lhpOpCreateSurfaceScalar, mafOp);

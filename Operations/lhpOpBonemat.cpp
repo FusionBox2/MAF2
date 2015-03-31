@@ -93,11 +93,10 @@ int compareRO(const void *p1, const void *p2)
   return 0;  
 }
 
-
+mafCxxTypeMacro(lhpOpBonemat)
 
 //----------------------------------------------------------------------------
-lhpOpBonemat::lhpOpBonemat(wxString label) :
-mafOp(label)
+lhpOpBonemat::lhpOpBonemat(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_OP;
@@ -183,7 +182,7 @@ bool lhpOpBonemat::Accept(mafNode *node)
 mafOp* lhpOpBonemat::Copy()   
 //----------------------------------------------------------------------------
 {
-  lhpOpBonemat *cp = new lhpOpBonemat(m_Label);
+  lhpOpBonemat *cp = new lhpOpBonemat(GetLabel());
   return cp;
 }
 //----------------------------------------------------------------------------

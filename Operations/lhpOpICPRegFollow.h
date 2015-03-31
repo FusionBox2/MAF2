@@ -31,7 +31,8 @@ class mafString;
 class lhpOpICPRegFollow: public mafOp
 {
 public:
-	lhpOpICPRegFollow(wxString label);
+  mafTypeMacro(lhpOpICPRegFollow, mafOp)
+	lhpOpICPRegFollow(const mafString& label = "");
 	~lhpOpICPRegFollow(); 
 	void   OnEvent(mafEventBase *maf_event);
 	mafOp* Copy();

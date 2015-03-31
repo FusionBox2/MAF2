@@ -55,7 +55,7 @@ public:
   MAF_EXPORT lhpOpCreateObject *New(){ return (lhpOpCreateObject *)NewObject(); }
   MAF_EXPORT lhpOpCreateObject *NewInstance() const {return (lhpOpCreateObject *)NewObjectInstance();}
 */
-  lhpOpCreateObject(const wxString& name, const wxString &label = "CreateObject"):mafOp(label),m_CreatedName(name)
+  lhpOpCreateObject(const mafString& name, const mafString& label = "CreateObject"):mafOp(label),m_CreatedName(name)
   {
     m_OpType  = OPTYPE_OP;
     m_Canundo = true;
@@ -66,7 +66,7 @@ public:
    mafDEL(m_Created);
  }
 
-  mafOp* Copy(){return new lhpOpCreateObject(m_CreatedName, m_Label);}
+  mafOp* Copy(){return new lhpOpCreateObject(m_CreatedName, GetLabel());}
 
   bool Accept(mafNode *node){return (node != NULL);}
   void OpRun()

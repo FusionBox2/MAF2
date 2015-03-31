@@ -66,7 +66,7 @@ class lhpOpUploadMultiVME: public mafOp
 {
 public:
 
-	lhpOpUploadMultiVME(wxString label = "Upload Multi Vme");
+	lhpOpUploadMultiVME(const mafString& label = "Upload Multi Vme");
 	~lhpOpUploadMultiVME(); 
 
 	mafTypeMacro(lhpOpUploadMultiVME, mafOp);

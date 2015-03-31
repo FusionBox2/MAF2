@@ -39,7 +39,7 @@ mafCxxTypeMacro(lhpOpINPExporter);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-lhpOpINPExporter::lhpOpINPExporter(const wxString &label) : mafOp(label)
+lhpOpINPExporter::lhpOpINPExporter(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType        = OPTYPE_EXPORTER;
@@ -214,7 +214,7 @@ void lhpOpINPExporter::ExportSurface()
 mafOp* lhpOpINPExporter::Copy()   
 //----------------------------------------------------------------------------
 {
-  lhpOpINPExporter *cp = new lhpOpINPExporter(m_Label);
+  lhpOpINPExporter *cp = new lhpOpINPExporter(GetLabel());
   cp->m_File = m_File;
   return cp;
 }

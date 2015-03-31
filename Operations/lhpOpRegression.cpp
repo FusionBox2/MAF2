@@ -613,9 +613,10 @@ namespace
   }
 
 }
+
+mafCxxTypeMacro(lhpOpRegression)
 //----------------------------------------------------------------------------
-lhpOpRegression::lhpOpRegression(const wxString& label) :
-mafOp(label)
+lhpOpRegression::lhpOpRegression(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType         = OPTYPE_OP;
@@ -649,7 +650,7 @@ lhpOpRegression::~lhpOpRegression()
 mafOp* lhpOpRegression::Copy()
 //----------------------------------------------------------------------------
 {
-  return new lhpOpRegression(m_Label);
+  return new lhpOpRegression(GetLabel());
 }
 
 //----------------------------------------------------------------------------

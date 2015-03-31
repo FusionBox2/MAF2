@@ -29,8 +29,7 @@ mafCxxTypeMacro(lhpOpCreateSurfaceScalar);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-lhpOpCreateSurfaceScalar::lhpOpCreateSurfaceScalar(const wxString &label) :
-mafOp(label)
+lhpOpCreateSurfaceScalar::lhpOpCreateSurfaceScalar(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType	= OPTYPE_OP;
@@ -47,7 +46,7 @@ lhpOpCreateSurfaceScalar::~lhpOpCreateSurfaceScalar()
 mafOp* lhpOpCreateSurfaceScalar::Copy()   
 //----------------------------------------------------------------------------
 {
-	return new lhpOpCreateSurfaceScalar(m_Label);
+	return new lhpOpCreateSurfaceScalar(GetLabel());
 }
 //----------------------------------------------------------------------------
 bool lhpOpCreateSurfaceScalar::Accept(mafNode *node)

@@ -34,8 +34,7 @@ mafCxxTypeMacro(medOpCreateMuscleWrapper);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-medOpCreateMuscleWrapper::medOpCreateMuscleWrapper(const wxString &label) :
-mafOp(label)
+medOpCreateMuscleWrapper::medOpCreateMuscleWrapper(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType	= OPTYPE_OP;
@@ -52,7 +51,7 @@ medOpCreateMuscleWrapper::~medOpCreateMuscleWrapper( )
 mafOp* medOpCreateMuscleWrapper::Copy()   
 //----------------------------------------------------------------------------
 {
-	return new medOpCreateMuscleWrapper(m_Label);
+	return new medOpCreateMuscleWrapper(GetLabel());
 }
 //----------------------------------------------------------------------------
 bool medOpCreateMuscleWrapper::Accept(mafNode *node)

@@ -148,8 +148,7 @@ namespace
 
 
 //----------------------------------------------------------------------------
-lhpOpLMProj::lhpOpLMProj(bool internalproj, const wxString& label) :
-mafOp(label)
+lhpOpLMProj::lhpOpLMProj(bool internalproj, const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType             = OPTYPE_OP;
@@ -170,7 +169,7 @@ lhpOpLMProj::~lhpOpLMProj()
 mafOp* lhpOpLMProj::Copy()
 //----------------------------------------------------------------------------
 {
-  lhpOpLMProj *cp = new lhpOpLMProj(m_InternalProjection, m_Label);
+  lhpOpLMProj *cp = new lhpOpLMProj(m_InternalProjection, GetLabel());
   cp->m_Canundo   = m_Canundo;
   cp->m_OpType    = m_OpType;
   cp->SetListener(GetListener());

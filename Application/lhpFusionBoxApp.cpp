@@ -216,13 +216,14 @@
 class lhpOpMove : public medOpMove
 {
 public:
+  mafTypeMacro(lhpOpMove, medOpMove)
 
-  lhpOpMove(const wxString &label = "Move\tCtrl+T"):medOpMove(label){}
+  lhpOpMove(const mafString& label = "Move\tCtrl+T"):Superclass(label){}
   //----------------------------------------------------------------------------
   mafOp* Copy()   
     //----------------------------------------------------------------------------
   {
-    return new lhpOpMove(m_Label);
+    return new lhpOpMove(GetLabel());
   }
 
   /** Return true for the acceptable vme type. */
@@ -250,11 +251,12 @@ public:
 class lhpOpMoveSeq : public lhpOpMove
 {
 public:
-  lhpOpMoveSeq(const wxString &label = "Move Sequence"):lhpOpMove(label){m_EnableScaling = 0;}
+  mafTypeMacro(lhpOpMoveSeq, lhpOpMove)
+  lhpOpMoveSeq(const mafString& label = "Move Sequence"):Superclass(label){m_EnableScaling = 0;}
   mafOp* Copy()   
     //----------------------------------------------------------------------------
   {
-    return new lhpOpMoveSeq(m_Label);
+    return new lhpOpMoveSeq(GetLabel());
   }
   void OpDo();
   void OpUndo();
@@ -269,7 +271,7 @@ class lhpOpCreateLMCLines: public mafOp
 {
 public:
   mafTypeMacro(lhpOpCreateLMCLines, mafOp);
-  lhpOpCreateLMCLines(const wxString &label = "CreateObject"):mafOp(label)
+  lhpOpCreateLMCLines(const mafString& label = "CreateObject"):Superclass(label)
   {
     m_OpType  = OPTYPE_OP;
     m_Canundo = true;
@@ -280,7 +282,7 @@ public:
     mafDEL(m_Created);
   }
 
-  mafOp* Copy(){return new lhpOpCreateLMCLines(m_Label);}
+  mafOp* Copy(){return new lhpOpCreateLMCLines(GetLabel());}
 
   bool Accept(mafNode *node){return (node != NULL);}
   void OpRun()
@@ -297,6 +299,8 @@ protected:
   lhpVMELMCLines *m_Created;
 };
 
+mafCxxTypeMacro(lhpOpMove)
+mafCxxTypeMacro(lhpOpMoveSeq)
 mafCxxTypeMacro(lhpOpCreateLMCLines);
 
 void lhpOpCreateLMCLines::OpDo()

@@ -37,7 +37,7 @@ class mafGUIDialog;
 class lhpOpRegisterLMScripted: public mafOp
 {
 public:
-  lhpOpRegisterLMScripted(wxString label = _("Register Landmark Cloud"));
+  lhpOpRegisterLMScripted(const mafString& label = _("Register Landmark Cloud"));
  ~lhpOpRegisterLMScripted(); 
   virtual void OnEvent(mafEventBase *maf_event);
   

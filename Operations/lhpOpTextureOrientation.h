@@ -26,7 +26,7 @@
 class lhpOpTextureOrientation : public mafOp
 {
 public:
-  lhpOpTextureOrientation(wxString label = "Texture Orientation");
+  lhpOpTextureOrientation(const mafString& label = "Texture Orientation");
   ~lhpOpTextureOrientation(); 
 
   mafTypeMacro(lhpOpTextureOrientation, mafOp);

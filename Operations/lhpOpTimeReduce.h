@@ -35,7 +35,8 @@ class vtkPoints;
 class lhpOpTimeReduce: public mafOp
 {
 public:
-  lhpOpTimeReduce(const wxString& label = "TimeReduce");
+  mafTypeMacro(lhpOpTimeReduce, mafOp)
+  lhpOpTimeReduce(const mafString& label = "TimeReduce");
  ~lhpOpTimeReduce(); 
 
   virtual void OnEvent(mafEventBase *maf_event);

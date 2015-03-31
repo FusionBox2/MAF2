@@ -37,7 +37,8 @@ class mafEvent;
 class lhpOpAFSys: public mafOp
 {
 public:
-  lhpOpAFSys(wxString label = "AFSys");
+  mafTypeMacro(lhpOpAFSys, mafOp)
+  lhpOpAFSys(const mafString& label = "AFSys");
  ~lhpOpAFSys(); 
 
   virtual void OnEvent(mafEventBase *maf_event);

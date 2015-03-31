@@ -87,7 +87,7 @@ public:
   Return the remote URI where the XML resource has been stored after calling Upload()*/
   mafString GetRemoteXMLResourceURI() {return m_RemoteXMLResourceURI;};
 
-  lhpOpUploadVMERefactor(wxString label = "Upload Vme");
+  lhpOpUploadVMERefactor(const mafString& label = "Upload Vme");
   ~lhpOpUploadVMERefactor(); 
 
   mafTypeMacro(lhpOpUploadVMERefactor, mafOp);

@@ -41,7 +41,7 @@ mafCxxTypeMacro(lhpOpMTRULBImporter);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-lhpOpMTRULBImporter:: lhpOpMTRULBImporter(const wxString &label) : mafOp(label)
+ lhpOpMTRULBImporter:: lhpOpMTRULBImporter(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_IMPORTER;
@@ -59,10 +59,10 @@ lhpOpMTRULBImporter:: lhpOpMTRULBImporter(const wxString &label) : mafOp(label)
     mafDEL(m_Groups[i]);
 }  
 //----------------------------------------------------------------------------
-mafOp * mmoMTRULBImporter::Copy()
+mafOp * lhpOpMTRULBImporter::Copy()
 //----------------------------------------------------------------------------
 {
-  lhpOpMTRULBImporter *cp = new  lhpOpMTRULBImporter(m_Label);
+  lhpOpMTRULBImporter *cp = new  lhpOpMTRULBImporter(GetLabel());
   cp->m_Files           = m_Files;
   cp->m_FileDir         = m_FileDir;
   return cp; 

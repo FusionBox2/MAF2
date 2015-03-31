@@ -45,7 +45,7 @@ mafCxxTypeMacro(lhpOpCutSurface);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
- lhpOpCutSurface:: lhpOpCutSurface(const wxString &label) : mafOp(label)
+ lhpOpCutSurface:: lhpOpCutSurface(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType     = OPTYPE_OP;
@@ -74,7 +74,7 @@ bool lhpOpCutSurface::Accept(mafNode* vme)
 mafOp * lhpOpCutSurface::Copy()
 //----------------------------------------------------------------------------
 {
-  return new lhpOpCutSurface(m_Label);
+  return new lhpOpCutSurface(GetLabel());
 }
 
 

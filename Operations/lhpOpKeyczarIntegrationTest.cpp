@@ -34,8 +34,7 @@ mafCxxTypeMacro(lhpOpKeyczarIntegrationTest);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-lhpOpKeyczarIntegrationTest::lhpOpKeyczarIntegrationTest(const wxString &label) :
-mafOp(label)
+lhpOpKeyczarIntegrationTest::lhpOpKeyczarIntegrationTest(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_OP;
@@ -60,7 +59,7 @@ bool lhpOpKeyczarIntegrationTest::Accept(mafNode *node)
 mafOp* lhpOpKeyczarIntegrationTest::Copy()   
 //----------------------------------------------------------------------------
 {
-  lhpOpKeyczarIntegrationTest *cp = new lhpOpKeyczarIntegrationTest(m_Label);
+  lhpOpKeyczarIntegrationTest *cp = new lhpOpKeyczarIntegrationTest(GetLabel());
   return cp;
 }
 //----------------------------------------------------------------------------

@@ -102,8 +102,7 @@ enum lhpOpUploadVME_ID
 };
 
 //----------------------------------------------------------------------------
-lhpOpEditTag::lhpOpEditTag(wxString label) :
-mafOp(label)
+lhpOpEditTag::lhpOpEditTag(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
 	m_OpType  = OPTYPE_OP;
@@ -167,7 +166,7 @@ mafOp* lhpOpEditTag::Copy()
 //----------------------------------------------------------------------------
 {
 	/** return a copy of itself, needs to put it into the undo stack */
-	return new lhpOpEditTag(m_Label);
+	return new lhpOpEditTag(GetLabel());
 }
 //----------------------------------------------------------------------------
 bool lhpOpEditTag::Accept(mafNode* vme)

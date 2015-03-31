@@ -31,7 +31,8 @@ class lhpOpSoftReg: public mafOp
 {
 
 public:
-  lhpOpSoftReg(const wxString& label);
+  mafTypeMacro(lhpOpSoftReg, mafOp)
+  lhpOpSoftReg(const mafString& label="");
  ~lhpOpSoftReg(); 
 
   virtual void OnEvent(mafEventBase *maf_event);

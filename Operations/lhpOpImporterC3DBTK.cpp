@@ -123,8 +123,7 @@ lhpOpImporterC3DBTK::_InternalC3DData::_InternalC3DData()
 }
 
 //----------------------------------------------------------------------------
-lhpOpImporterC3DBTK::lhpOpImporterC3DBTK(const wxString &label) :
-mafOp(label)
+lhpOpImporterC3DBTK::lhpOpImporterC3DBTK(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_IMPORTER;
@@ -183,7 +182,7 @@ bool lhpOpImporterC3DBTK::Accept(mafNode *node)
 mafOp* lhpOpImporterC3DBTK::Copy()   
 //----------------------------------------------------------------------------
 {
-  lhpOpImporterC3DBTK *cp = new lhpOpImporterC3DBTK(m_Label);
+  lhpOpImporterC3DBTK *cp = new lhpOpImporterC3DBTK(GetLabel());
   cp->m_Canundo = m_Canundo;
   cp->m_OpType = m_OpType;
   cp->SetListener(GetListener());

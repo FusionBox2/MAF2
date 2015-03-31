@@ -44,8 +44,7 @@ mafCxxTypeMacro(lhpOpImporterAnsysInputFile);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-lhpOpImporterAnsysInputFile::lhpOpImporterAnsysInputFile(const wxString &label) :
-mafOp(label)
+lhpOpImporterAnsysInputFile::lhpOpImporterAnsysInputFile(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_PythonExe = "python.exe_UNDEFINED";
@@ -86,7 +85,7 @@ bool lhpOpImporterAnsysInputFile::Accept(mafNode *node)
 mafOp* lhpOpImporterAnsysInputFile::Copy()   
 //----------------------------------------------------------------------------
 {
-  lhpOpImporterAnsysInputFile *cp = new lhpOpImporterAnsysInputFile(m_Label);
+  lhpOpImporterAnsysInputFile *cp = new lhpOpImporterAnsysInputFile(GetLabel());
   return cp;
 }
 //----------------------------------------------------------------------------

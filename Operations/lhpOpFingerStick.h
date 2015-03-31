@@ -38,7 +38,8 @@ class vtkWeightedLandmarkTransform;
 class lhpOpFingerStick: public mafOp
 {
 public:
-  lhpOpFingerStick(wxString label);
+  mafTypeMacro(lhpOpFingerStick, mafOp)
+  lhpOpFingerStick(const mafString& label = "");
  ~lhpOpFingerStick(); 
 
  virtual void OnEvent(mafEventBase *maf_event);

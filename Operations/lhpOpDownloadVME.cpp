@@ -98,8 +98,7 @@ mafString lhpOpDownloadVME::m_CacheSubdir = "0";
 
 
 //----------------------------------------------------------------------------
-lhpOpDownloadVME::lhpOpDownloadVME(wxString label, int fromSandbox) :
-mafOp(label)
+lhpOpDownloadVME::lhpOpDownloadVME(const mafString& label, int fromSandbox) : Superclass(label)
 //----------------------------------------------------------------------------
 {
 	m_OpType  = OPTYPE_OP;
@@ -178,7 +177,7 @@ mafOp* lhpOpDownloadVME::Copy()
 //----------------------------------------------------------------------------
 {
 	/** return a copy of itself, needs to put it into the undo stack */
-	return new lhpOpDownloadVME(m_Label, m_FromSendbox);
+	return new lhpOpDownloadVME(GetLabel(), m_FromSendbox);
 }
 
 //----------------------------------------------------------------------------
@@ -1524,7 +1523,7 @@ void lhpOpDownloadVME::UpdateBinaryFile()
     int newId = item->GetId();
 
     newItemURL = name << '.' << newId << '.' << oldItemExt;
-    item->SetURL(newItemURL);        
+    //item->SetURL(newItemURL);        
    
     wxString absOldItemURL = m_IncomingCompletePath.GetCStr();
     absOldItemURL += oldItemURL.c_str();
@@ -1585,7 +1584,7 @@ void lhpOpDownloadVME::UpdateBinaryFile()
     wxSplitPath(newMSFFileName.GetCStr(), &path, &name, &ext);
     it = dv->Begin();
     mafVMEItem *item=it->second;
-    oldArchiveURL = item->GetArchiveFileName();
+    //oldArchiveURL = item->GetArchiveFileName();
     wxSplitPath(oldArchiveURL, &oldArchivePath, &oldArchiveName, &oldArchiveExt);
     dv->UpdateVectorId();
     int newId = dv->GetVectorID();
@@ -1596,7 +1595,7 @@ void lhpOpDownloadVME::UpdateBinaryFile()
     newArchiveURL += '.';
     newArchiveURL += oldArchiveExt;
 
-    item->SetArchiveFileName(mafString(newArchiveURL.c_str()));
+    //item->SetArchiveFileName(mafString(newArchiveURL.c_str()));
     
 
     wxString absOldArchiveURL = m_IncomingCompletePath.GetCStr();
@@ -1618,8 +1617,8 @@ void lhpOpDownloadVME::UpdateBinaryFile()
       newItemURL += mafString(newId);
       newItemURL += '.';
       newItemURL += oldItemExt;
-      item->SetURL(newItemURL);
-      item->SetArchiveFileName(mafString(newArchiveURL.c_str()));
+      //item->SetURL(newItemURL);
+      //item->SetArchiveFileName(mafString(newArchiveURL.c_str()));
     }
 
     //Call python module to copy binary data when downloaded

@@ -33,7 +33,7 @@ class mafEvent;
 class lhpOpImporterRSScan: public mafOp
 {
 public:
-	lhpOpImporterRSScan(const wxString &label = "RSScanImporter");
+	lhpOpImporterRSScan(const mafString& label = "RSScanImporter");
 	~lhpOpImporterRSScan(); 
 	
   mafTypeMacro(lhpOpImporterRSScan, mafOp);

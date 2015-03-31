@@ -99,8 +99,7 @@ using namespace lhpMultiscale ;
 
 //----------------------------------------------------------------------------
 // Constructor
-lhpOpMultiscaleExplore::lhpOpMultiscaleExplore(wxString label) :
-mafOp(label)
+lhpOpMultiscaleExplore::lhpOpMultiscaleExplore(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_OP;
@@ -147,7 +146,7 @@ mafOp* lhpOpMultiscaleExplore::Copy()
 //----------------------------------------------------------------------------
 {
   /** return a copy of itself, needs to put it into the undo stack */
-  return new lhpOpMultiscaleExplore(m_Label);
+  return new lhpOpMultiscaleExplore(GetLabel());
 }
 
 

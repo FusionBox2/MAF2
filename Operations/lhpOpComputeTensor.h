@@ -54,7 +54,7 @@ class mafNode;
 class lhpOpComputeTensor: public mafOp 
 {
 public:
- lhpOpComputeTensor(const wxString &label = "lhpOpComputeTensor");
+ lhpOpComputeTensor(const mafString& label = "lhpOpComputeTensor");
   ~lhpOpComputeTensor(); 
 
   mafTypeMacro(lhpOpComputeTensor, mafOp);

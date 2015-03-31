@@ -49,10 +49,10 @@
 // Constants :
 //----------------------------------------------------------------------------
 
+mafCxxTypeMacro(lhpOpAverageLM)
 
 //----------------------------------------------------------------------------
-lhpOpAverageLM::lhpOpAverageLM(const wxString& label) :
-mafOp(label)
+lhpOpAverageLM::lhpOpAverageLM(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType    = OPTYPE_OP;
@@ -71,7 +71,7 @@ lhpOpAverageLM::~lhpOpAverageLM()
 mafOp* lhpOpAverageLM::Copy()
 //----------------------------------------------------------------------------
 {
-  return new lhpOpAverageLM(m_Label);
+  return new lhpOpAverageLM(GetLabel());
 }
 
 //----------------------------------------------------------------------------

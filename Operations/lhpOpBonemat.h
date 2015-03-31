@@ -34,6 +34,7 @@ class lhpOpBonemat: public mafOp
 {
 public:
 
+  mafTypeMacro(lhpOpBonemat, mafOp)
   /** Set the source volume for mapping*/
   void SetSourceVolume(mafVMEVolumeGray *volume) {m_InputVolume = volume;};
   mafVMEVolumeGray *GetVolume() {return m_InputVolume;};
@@ -68,7 +69,7 @@ public:
   /** Builds operation's interface. */
   void OpRun();
 
-  lhpOpBonemat(wxString label);
+  lhpOpBonemat(const mafString& label= "");
   ~lhpOpBonemat(); 
   mafOp* Copy();
   void OnEvent(mafEventBase *maf_event);

@@ -45,7 +45,7 @@ class mafVMEGroup;
 class lhpOpImporterC3DBTK : public mafOp
 {
 public:
-	lhpOpImporterC3DBTK(const wxString &label = "C3D Importer");
+	lhpOpImporterC3DBTK(const mafString& label = "C3D Importer");
 	~lhpOpImporterC3DBTK(); 
 	
   mafTypeMacro(lhpOpImporterC3DBTK, mafOp);

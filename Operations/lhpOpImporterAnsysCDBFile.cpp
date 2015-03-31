@@ -45,8 +45,7 @@ mafCxxTypeMacro(lhpOpImporterAnsysCDBFile);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-lhpOpImporterAnsysCDBFile::lhpOpImporterAnsysCDBFile(const wxString &label) :
-mafOp(label)
+lhpOpImporterAnsysCDBFile::lhpOpImporterAnsysCDBFile(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_PythonExe = "python.exe_UNDEFINED";
@@ -88,7 +87,7 @@ bool lhpOpImporterAnsysCDBFile::Accept(mafNode *node)
 mafOp* lhpOpImporterAnsysCDBFile::Copy()   
 //----------------------------------------------------------------------------
 {
-  lhpOpImporterAnsysCDBFile *cp = new lhpOpImporterAnsysCDBFile(m_Label);
+  lhpOpImporterAnsysCDBFile *cp = new lhpOpImporterAnsysCDBFile(GetLabel());
   return cp;
 }
 //----------------------------------------------------------------------------

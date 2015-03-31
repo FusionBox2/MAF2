@@ -36,7 +36,7 @@ mafCxxTypeMacro(lhpOpHelAxis);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-lhpOpHelAxis::lhpOpHelAxis(wxString label) : mafOp(label)
+lhpOpHelAxis::lhpOpHelAxis(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType            = OPTYPE_OP;
@@ -55,7 +55,7 @@ lhpOpHelAxis::~lhpOpHelAxis()
 mafOp* lhpOpHelAxis::Copy()   
 //----------------------------------------------------------------------------
 {
-  return new lhpOpHelAxis(m_Label);
+  return new lhpOpHelAxis(GetLabel());
 }
 
 //----------------------------------------------------------------------------

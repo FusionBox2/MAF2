@@ -31,7 +31,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 class lhpOpSolidify: public mafOp
 {
 public:
-  lhpOpSolidify(wxString label = "Solidify landmarks cloud");
+  lhpOpSolidify(const mafString& label = "Solidify landmarks cloud");
   ~lhpOpSolidify(); 
   virtual void OnEvent(mafEventBase *maf_event);
   mafOp* Copy();

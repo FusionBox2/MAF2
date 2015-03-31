@@ -35,7 +35,8 @@ class vtkPoints;
 class lhpOpAverageLM: public mafOp
 {
 public:
-  lhpOpAverageLM(const wxString& label);
+  mafTypeMacro(lhpOpAverageLM, mafOp)
+  lhpOpAverageLM(const mafString& label = "");
  ~lhpOpAverageLM(); 
 
   virtual void OnEvent(mafEventBase *maf_event);

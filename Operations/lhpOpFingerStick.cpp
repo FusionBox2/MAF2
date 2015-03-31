@@ -72,6 +72,7 @@ enum
 #define min(a,b)            (((a) < (b)) ? (a) : (b))
 #endif
 
+mafCxxTypeMacro(lhpOpFingerStick)
 
 //----------------------------------------------------------------------------
 // static persistent data:
@@ -184,8 +185,7 @@ bool lhpOpFingerStick::ReadLMDictionary(mafString *fileName)
 
 
 //----------------------------------------------------------------------------
-lhpOpFingerStick::lhpOpFingerStick(wxString label) :
-mafOp(label), m_DictionaryFName("")
+lhpOpFingerStick::lhpOpFingerStick(const mafString& label) : Superclass(label), m_DictionaryFName("")
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_OP;
@@ -243,7 +243,7 @@ lhpOpFingerStick::~lhpOpFingerStick( )
 mafOp* lhpOpFingerStick::Copy()   
 //----------------------------------------------------------------------------
 {
-  return new lhpOpFingerStick(m_Label);
+  return new lhpOpFingerStick(GetLabel());
 }
 
 //----------------------------------------------------------------------------

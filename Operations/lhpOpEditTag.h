@@ -59,7 +59,7 @@ class lhpOpEditTag: public mafOp
 {
 public:
 
-	lhpOpEditTag(wxString label = "Edit VME Tag");
+	lhpOpEditTag(const mafString& label = "Edit VME Tag");
 	~lhpOpEditTag(); 
 
 	mafTypeMacro(lhpOpEditTag, mafOp);

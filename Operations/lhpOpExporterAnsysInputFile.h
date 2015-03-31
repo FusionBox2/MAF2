@@ -33,7 +33,7 @@ grammar based Ansys .inp format writer written in Python */
 class lhpOpExporterAnsysInputFile : public mafOp
 {
 public:
-	lhpOpExporterAnsysInputFile(const wxString &label = "lhpOpExporterAnsysInputFile");
+	lhpOpExporterAnsysInputFile(const mafString& label = "lhpOpExporterAnsysInputFile");
 	~lhpOpExporterAnsysInputFile(); 
 	
   mafTypeMacro(lhpOpExporterAnsysInputFile, mafOp);

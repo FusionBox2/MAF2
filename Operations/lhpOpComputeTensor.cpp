@@ -70,8 +70,7 @@ mafCxxTypeMacro(lhpOpComputeTensor);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-lhpOpComputeTensor::lhpOpComputeTensor(const wxString &label) :
-mafOp(label)
+lhpOpComputeTensor::lhpOpComputeTensor(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_OP;
@@ -132,7 +131,7 @@ lhpOpComputeTensor::~lhpOpComputeTensor()
 mafOp* lhpOpComputeTensor::Copy()   
 //----------------------------------------------------------------------------
 {
-  lhpOpComputeTensor *cp = new lhpOpComputeTensor(m_Label);
+  lhpOpComputeTensor *cp = new lhpOpComputeTensor(GetLabel());
   return cp;
 }
 

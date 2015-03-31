@@ -55,8 +55,7 @@ mafCxxTypeMacro(lhpOpSolidify);
 
 
 //----------------------------------------------------------------------------
-lhpOpSolidify::lhpOpSolidify(wxString label) :
-mafOp(label)
+lhpOpSolidify::lhpOpSolidify(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType             = OPTYPE_OP;
@@ -74,7 +73,7 @@ lhpOpSolidify::~lhpOpSolidify()
 mafOp* lhpOpSolidify::Copy()
 //----------------------------------------------------------------------------
 {
-  lhpOpSolidify *cp = new lhpOpSolidify(m_Label);
+  lhpOpSolidify *cp = new lhpOpSolidify(GetLabel());
   cp->m_Canundo   = m_Canundo;
   cp->m_OpType    = m_OpType;
   cp->SetListener(GetListener());

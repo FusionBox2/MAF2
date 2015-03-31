@@ -36,7 +36,8 @@ class lhpOpRegression: public mafOp
 {
 public:
   static bool Config(LibHandle handle);
-  lhpOpRegression(const wxString& label);
+  mafTypeMacro(lhpOpRegression, mafOp)
+  lhpOpRegression(const mafString& label="");
  ~lhpOpRegression(); 
 
   virtual void OnEvent(mafEventBase *maf_event);

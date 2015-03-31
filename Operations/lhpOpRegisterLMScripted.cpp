@@ -62,8 +62,7 @@ enum ID_REGISTER_CLUSTERS
   AFFINE
 };
 //----------------------------------------------------------------------------
-lhpOpRegisterLMScripted::lhpOpRegisterLMScripted(wxString label) :
-mafOp(label)
+lhpOpRegisterLMScripted::lhpOpRegisterLMScripted(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType           = OPTYPE_OP;
@@ -92,7 +91,7 @@ lhpOpRegisterLMScripted::~lhpOpRegisterLMScripted( )
 mafOp* lhpOpRegisterLMScripted::Copy()   
 //----------------------------------------------------------------------------
 {
-  return new lhpOpRegisterLMScripted(m_Label);
+  return new lhpOpRegisterLMScripted(GetLabel());
 }
 //----------------------------------------------------------------------------
 bool lhpOpRegisterLMScripted::Accept(mafNode* node)

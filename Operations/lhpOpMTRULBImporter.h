@@ -31,7 +31,7 @@ class vtkMatrix4x4;
 class lhpOpMTRULBImporter: public mafOp
 {
 public:
-           lhpOpMTRULBImporter(const wxString &label = "MTRImporter");
+           lhpOpMTRULBImporter(const mafString& label = "MTRImporter");
   virtual ~lhpOpMTRULBImporter();
   
   mafTypeMacro(lhpOpMTRULBImporter, mafOp);

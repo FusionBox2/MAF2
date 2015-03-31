@@ -81,10 +81,10 @@ bool lhpOpSoftReg::BonesSetAccept(mafNode* vme)
 
   return false;
 }
-
+mafCxxTypeMacro(lhpOpSoftReg)
 
 //----------------------------------------------------------------------------
-lhpOpSoftReg::lhpOpSoftReg(const wxString& label) : mafOp(label)
+lhpOpSoftReg::lhpOpSoftReg(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType    = OPTYPE_OP;
@@ -105,7 +105,7 @@ lhpOpSoftReg::~lhpOpSoftReg()
 mafOp* lhpOpSoftReg::Copy()
 //----------------------------------------------------------------------------
 {
-  return new lhpOpSoftReg(m_Label);
+  return new lhpOpSoftReg(GetLabel());
 }
 
 //----------------------------------------------------------------------------

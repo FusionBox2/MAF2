@@ -30,7 +30,7 @@
 class lhpOpRepresentInAF: public mafOp
 {
 public:
-  lhpOpRepresentInAF(const wxString& label = _("Represent in RefSys"));
+  lhpOpRepresentInAF(const mafString& label = _("Represent in RefSys"));
  ~lhpOpRepresentInAF(); 
   virtual void OnEvent(mafEventBase *maf_event);
   

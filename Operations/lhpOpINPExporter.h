@@ -34,7 +34,7 @@ class mafVMEOutputSurface;
 class lhpOpINPExporter: public mafOp
 {
 public:
-  lhpOpINPExporter(const wxString &label = "INPExporter");
+  lhpOpINPExporter(const mafString& label = "INPExporter");
   ~lhpOpINPExporter(); 
 
   mafTypeMacro(lhpOpINPExporter, mafOp);

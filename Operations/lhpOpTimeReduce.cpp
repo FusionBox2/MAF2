@@ -59,9 +59,9 @@ enum
   ID_FORCED_DWORD = 0x7fffffff
 };
 
+mafCxxTypeMacro(lhpOpTimeReduce)
 //----------------------------------------------------------------------------
-lhpOpTimeReduce::lhpOpTimeReduce(const wxString& label) :
-mafOp(label)
+lhpOpTimeReduce::lhpOpTimeReduce(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType    = OPTYPE_OP;
@@ -80,7 +80,7 @@ lhpOpTimeReduce::~lhpOpTimeReduce()
 mafOp* lhpOpTimeReduce::Copy()
 //----------------------------------------------------------------------------
 {
-  lhpOpTimeReduce *op = new lhpOpTimeReduce(m_Label);
+  lhpOpTimeReduce *op = new lhpOpTimeReduce(GetLabel());
   op->m_Delete = m_Delete;
   op->m_Number = m_Number;
   return op;

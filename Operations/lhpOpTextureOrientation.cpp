@@ -104,11 +104,10 @@ namespace lhpTextureOrientation
 using namespace lhpTextureOrientation ;
 
 
-
 //----------------------------------------------------------------------------
 // Constructor
-lhpOpTextureOrientation::lhpOpTextureOrientation(wxString label) :
-mafOp(label), m_Dialog(NULL), m_Rwi(NULL), m_polydata(NULL), m_polydataVME(NULL),
+lhpOpTextureOrientation::lhpOpTextureOrientation(const mafString& label) :
+Superclass(label), m_Dialog(NULL), m_Rwi(NULL), m_polydata(NULL), m_polydataVME(NULL),
 m_externalRenderer(NULL), m_slicePipe(NULL), m_vectorGlyphPipe(NULL),
 m_printButton(NULL), m_progressGauge(NULL), m_progressCallback(NULL),
 m_texWinSize(5), m_texWinStepSize(5), m_outputFormat(VectorFormat)
@@ -148,7 +147,7 @@ mafOp* lhpOpTextureOrientation::Copy()
 //----------------------------------------------------------------------------
 {
   /** return a copy of itself, needs to put it into the undo stack */
-  return new lhpOpTextureOrientation(m_Label);
+  return new lhpOpTextureOrientation(GetLabel());
 }
 
 

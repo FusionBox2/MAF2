@@ -60,7 +60,7 @@ class lhpOpDownloadVME: public mafOp
 {
 public:
 
-	lhpOpDownloadVME(wxString label = "Download Vme", int fromSandbox = FROM_BASKET);
+	lhpOpDownloadVME(const mafString& label = "Download Vme", int fromSandbox = FROM_BASKET);
 	~lhpOpDownloadVME(); 
 
 	mafTypeMacro(lhpOpDownloadVME, mafOp);

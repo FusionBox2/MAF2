@@ -54,8 +54,7 @@ mafCxxTypeMacro(lhpOpRegSurfWithCloud);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-lhpOpRegSurfWithCloud::lhpOpRegSurfWithCloud(wxString label) :
-mafOp(label)
+lhpOpRegSurfWithCloud::lhpOpRegSurfWithCloud(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType      = OPTYPE_OP;
@@ -76,7 +75,7 @@ lhpOpRegSurfWithCloud::~lhpOpRegSurfWithCloud( )
 mafOp* lhpOpRegSurfWithCloud::Copy()   
 //----------------------------------------------------------------------------
 {
-  return new lhpOpRegSurfWithCloud(m_Label);
+  return new lhpOpRegSurfWithCloud(GetLabel());
 }
 //----------------------------------------------------------------------------
 bool lhpOpRegSurfWithCloud::Accept(mafNode* node)

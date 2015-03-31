@@ -39,9 +39,10 @@
 #include "mafVMERoot.h"
 #include "mafClassicICPRegistration.h"
 
+mafCxxTypeMacro(lhpOpICPRegFollow)
+
 //----------------------------------------------------------------------------
-lhpOpICPRegFollow::lhpOpICPRegFollow(wxString label) :
-mafOp(label)
+lhpOpICPRegFollow::lhpOpICPRegFollow(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
 	m_OpType  = OPTYPE_OP;
@@ -68,7 +69,7 @@ lhpOpICPRegFollow::~lhpOpICPRegFollow( )
 mafOp* lhpOpICPRegFollow::Copy()   
 //----------------------------------------------------------------------------
 {
-	return new lhpOpICPRegFollow(m_Label);
+	return new lhpOpICPRegFollow(GetLabel());
 }
 //----------------------------------------------------------------------------
 bool lhpOpICPRegFollow::Accept(mafNode* vme)

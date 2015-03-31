@@ -41,8 +41,7 @@ mafCxxTypeMacro(lhpOpImporterRSScan);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-lhpOpImporterRSScan::lhpOpImporterRSScan(const wxString &label) :
-mafOp(label)
+lhpOpImporterRSScan::lhpOpImporterRSScan(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_IMPORTER;
@@ -75,7 +74,7 @@ bool lhpOpImporterRSScan::Accept(mafNode *node)
 mafOp* lhpOpImporterRSScan::Copy()   
 //----------------------------------------------------------------------------
 {
-  lhpOpImporterRSScan *cp = new lhpOpImporterRSScan(m_Label);
+  lhpOpImporterRSScan *cp = new lhpOpImporterRSScan(GetLabel());
   return cp;
 }
 //----------------------------------------------------------------------------

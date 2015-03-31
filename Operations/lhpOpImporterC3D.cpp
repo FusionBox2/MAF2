@@ -162,14 +162,13 @@ lhpOpImporterC3D::_InternalC3DData::_InternalC3DData()
 }
 
 //----------------------------------------------------------------------------
-lhpOpImporterC3D::lhpOpImporterC3D(const wxString &label) :
-mafOp(label)
+lhpOpImporterC3D::lhpOpImporterC3D(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_IMPORTER;
   m_Canundo = true;
 
-  m_FileDir = (mafGetApplicationDirectory() + "/Data/External/").c_str();
+  m_FileDir = mafGetApplicationDirectory() + "/Data/External/";
   m_DictionaryFileName = "";
 
   //gui
@@ -222,7 +221,7 @@ bool lhpOpImporterC3D::Accept(mafNode *node)
 mafOp* lhpOpImporterC3D::Copy()   
 //----------------------------------------------------------------------------
 {
-  lhpOpImporterC3D *cp = new lhpOpImporterC3D(m_Label);
+  lhpOpImporterC3D *cp = new lhpOpImporterC3D(GetLabel());
   cp->m_Canundo = m_Canundo;
   cp->m_OpType = m_OpType;
   cp->SetListener(GetListener());

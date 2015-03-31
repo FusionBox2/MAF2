@@ -63,7 +63,7 @@ class lhpOpUploadMultiVMERefactor: public mafOp
 {
 public:
 
-	lhpOpUploadMultiVMERefactor(wxString label = "Upload Multi Vme");
+	lhpOpUploadMultiVMERefactor(const mafString& label = "Upload Multi Vme");
 	~lhpOpUploadMultiVMERefactor(); 
 
 	mafTypeMacro(lhpOpUploadMultiVMERefactor, mafOp);

@@ -58,10 +58,10 @@
 // Constants :
 //----------------------------------------------------------------------------
 
+mafCxxTypeMacro(lhpOpLnSurf)
 
 //----------------------------------------------------------------------------
-lhpOpLnSurf::lhpOpLnSurf(const wxString& label) :
-mafOp(label)
+lhpOpLnSurf::lhpOpLnSurf(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType                = OPTYPE_OP;
@@ -92,7 +92,7 @@ lhpOpLnSurf::~lhpOpLnSurf()
 mafOp* lhpOpLnSurf::Copy()
 //----------------------------------------------------------------------------
 {
-  return new lhpOpLnSurf(m_Label);
+  return new lhpOpLnSurf(GetLabel());
 }
 
 //----------------------------------------------------------------------------

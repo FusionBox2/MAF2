@@ -46,7 +46,7 @@ mafCxxTypeMacro(lhpOpMergeClouds);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
- lhpOpMergeClouds:: lhpOpMergeClouds(const wxString &label) : mafOp(label)
+ lhpOpMergeClouds:: lhpOpMergeClouds(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType       = OPTYPE_OP;
@@ -75,7 +75,7 @@ bool lhpOpMergeClouds::Accept(mafNode* vme)
 mafOp * lhpOpMergeClouds::Copy()
 //----------------------------------------------------------------------------
 {
-  lhpOpMergeClouds *cp = new  lhpOpMergeClouds(m_Label);
+  lhpOpMergeClouds *cp = new  lhpOpMergeClouds(GetLabel());
   return cp; 
 }
 

@@ -60,7 +60,7 @@ class lhpOpUploadVME: public mafOp
 {
 public:
 
-	lhpOpUploadVME(wxString label = "Upload Vme");
+	lhpOpUploadVME(const mafString& label = "Upload Vme");
 	~lhpOpUploadVME(); 
 
 	mafTypeMacro(lhpOpUploadVME, mafOp);

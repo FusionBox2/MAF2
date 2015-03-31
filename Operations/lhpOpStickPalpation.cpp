@@ -72,7 +72,7 @@ enum
 //----------------------------------------------------------------------------
 // Forward Refs
 //----------------------------------------------------------------------------
-
+mafCxxTypeMacro(lhpOpStickPalpation)
 
 namespace {
   typedef mafVME *(MatchName)(mafVME *pVME, const char *name);
@@ -249,7 +249,7 @@ namespace {
 
 }
 //----------------------------------------------------------------------------
-lhpOpStickPalpation::lhpOpStickPalpation(const wxString& label) : mafOp(label), m_DictionaryFName("")
+lhpOpStickPalpation::lhpOpStickPalpation(const mafString& label) : Superclass(label), m_DictionaryFName("")
 //----------------------------------------------------------------------------
 {
   m_OpType               = OPTYPE_OP;
@@ -297,7 +297,7 @@ lhpOpStickPalpation::~lhpOpStickPalpation()
 mafOp* lhpOpStickPalpation::Copy()
 //----------------------------------------------------------------------------
 {
-  return new lhpOpStickPalpation(m_Label);
+  return new lhpOpStickPalpation(GetLabel());
 }
 
 //----------------------------------------------------------------------------

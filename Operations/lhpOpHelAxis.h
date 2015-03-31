@@ -30,7 +30,7 @@ class mafVMEHelAxis;
 class lhpOpHelAxis: public mafOp
 {
 public:
-  lhpOpHelAxis(wxString label = "HelAxis");
+  lhpOpHelAxis(const mafString& label = "HelAxis");
  ~lhpOpHelAxis(); 
 
   mafTypeMacro(lhpOpHelAxis, mafOp);

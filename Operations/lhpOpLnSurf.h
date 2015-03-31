@@ -32,7 +32,8 @@ class lhpOpLnSurf: public mafOp
 {
 
 public:
-  lhpOpLnSurf(const wxString& label);
+  mafTypeMacro(lhpOpLnSurf, mafOp)
+  lhpOpLnSurf(const mafString& label="");
  ~lhpOpLnSurf(); 
 
   virtual void OnEvent(mafEventBase *maf_event);

@@ -38,8 +38,7 @@ mafCxxTypeMacro(lhpOpLMMirror);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-lhpOpLMMirror::lhpOpLMMirror(wxString label) :
-mafOp(label)
+lhpOpLMMirror::lhpOpLMMirror(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
 	m_OpType			 		= OPTYPE_OP;
@@ -59,7 +58,7 @@ lhpOpLMMirror::~lhpOpLMMirror( )
 mafOp* lhpOpLMMirror::Copy()   
 //----------------------------------------------------------------------------
 {
-  lhpOpLMMirror *cp = new lhpOpLMMirror(m_Label);
+  lhpOpLMMirror *cp = new lhpOpLMMirror(GetLabel());
   cp->m_Canundo		= m_Canundo;
   cp->m_OpType		= m_OpType;
   cp->SetListener(GetListener());

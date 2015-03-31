@@ -96,8 +96,7 @@ enum lhpOpUploadVME_ID
 };
 
 //----------------------------------------------------------------------------
-lhpOpUploadVME::lhpOpUploadVME(wxString label) :
-mafOp(label)
+lhpOpUploadVME::lhpOpUploadVME(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
 	m_OpType  = OPTYPE_OP;
@@ -159,7 +158,7 @@ mafOp* lhpOpUploadVME::Copy()
 //----------------------------------------------------------------------------
 {
 	/** return a copy of itself, needs to put it into the undo stack */
-	return new lhpOpUploadVME(m_Label);
+	return new lhpOpUploadVME(GetLabel());
 }
 //----------------------------------------------------------------------------
 bool lhpOpUploadVME::Accept(mafNode* vme)

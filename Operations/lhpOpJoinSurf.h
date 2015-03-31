@@ -32,7 +32,7 @@ class mafVMESurface;
 class lhpOpJoinSurf: public mafOp
 {
 public:
-           lhpOpJoinSurf(const wxString &label = "CutSurface");
+           lhpOpJoinSurf(const mafString& label = "CutSurface");
   virtual ~lhpOpJoinSurf();
   
   mafTypeMacro(lhpOpJoinSurf, mafOp);

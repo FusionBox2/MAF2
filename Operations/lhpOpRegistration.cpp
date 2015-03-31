@@ -52,7 +52,7 @@
 //----------------------------------------------------------------------------
 // Forward Refs
 //----------------------------------------------------------------------------
-
+mafCxxTypeMacro(lhpOpRegistration)
 
 
 class RegData
@@ -477,7 +477,7 @@ bool FillRegData(std::map<int, mafVMELandmarkCloud*>& mp, mafTimeStamp tsRef, Re
 
 
 //----------------------------------------------------------------------------
-lhpOpRegistration::lhpOpRegistration(const wxString& label) : mafOp(label)
+lhpOpRegistration::lhpOpRegistration(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType      = OPTYPE_OP;
@@ -505,7 +505,7 @@ lhpOpRegistration::~lhpOpRegistration()
 mafOp* lhpOpRegistration::Copy()   
 //----------------------------------------------------------------------------
 {
-  return new lhpOpRegistration(m_Label);
+  return new lhpOpRegistration(GetLabel());
 }
 
 static bool fillMap(mafVMELandmarkCloud *lmc, int ID, std::map<int, mafVMELandmarkCloud*>& clouds)

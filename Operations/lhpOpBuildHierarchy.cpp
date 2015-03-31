@@ -67,10 +67,10 @@ enum
   ID_FORCED_DWORD = 0x7fffffff
 };
 
+mafCxxTypeMacro(lhpOpBuildHierarchy)
 
 //----------------------------------------------------------------------------
-lhpOpBuildHierarchy::lhpOpBuildHierarchy(wxString label) :
-mafOp(label)
+lhpOpBuildHierarchy::lhpOpBuildHierarchy(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_OP;
@@ -89,7 +89,7 @@ lhpOpBuildHierarchy::~lhpOpBuildHierarchy()
 mafOp* lhpOpBuildHierarchy::Copy()   
 //----------------------------------------------------------------------------
 {
-  return new lhpOpBuildHierarchy(m_Label);
+  return new lhpOpBuildHierarchy(GetLabel());
 }
 
 //----------------------------------------------------------------------------

@@ -35,7 +35,8 @@ class vtkMatrix4x4;
 class lhpOpStickPalpation: public mafOp
 {
 public:
-  lhpOpStickPalpation(const wxString& label = "StickPalpation");
+  mafTypeMacro(lhpOpStickPalpation, mafOp)
+  lhpOpStickPalpation(const mafString& label = "StickPalpation");
  ~lhpOpStickPalpation(); 
 
   virtual void OnEvent(mafEventBase *maf_event);

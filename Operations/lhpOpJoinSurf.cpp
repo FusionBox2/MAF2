@@ -44,7 +44,7 @@ mafCxxTypeMacro(lhpOpJoinSurf);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
- lhpOpJoinSurf:: lhpOpJoinSurf(const wxString &label) : mafOp(label)
+ lhpOpJoinSurf:: lhpOpJoinSurf(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType       = OPTYPE_OP;
@@ -74,7 +74,7 @@ bool lhpOpJoinSurf::Accept(mafNode* vme)
 mafOp * lhpOpJoinSurf::Copy()
 //----------------------------------------------------------------------------
 {
-  lhpOpJoinSurf *cp = new  lhpOpJoinSurf(m_Label);
+  lhpOpJoinSurf *cp = new  lhpOpJoinSurf(GetLabel());
   return cp; 
 }
 

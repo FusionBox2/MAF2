@@ -44,7 +44,7 @@ class lhpOpImporterC3D : public mafOp
 public:
   static bool Config(LibHandle handle);
 
-  lhpOpImporterC3D(const wxString &label = "C3D Importer");
+  lhpOpImporterC3D(const mafString& label = "C3D Importer");
   ~lhpOpImporterC3D(); 
   
   mafTypeMacro(lhpOpImporterC3D, mafOp);

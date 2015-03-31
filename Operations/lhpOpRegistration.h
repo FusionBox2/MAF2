@@ -34,7 +34,8 @@ class RegData;
 class lhpOpRegistration: public mafOp
 {
 public:
-  lhpOpRegistration(const wxString& label = "DSRegistration");
+  mafTypeMacro(lhpOpRegistration, mafOp)
+  lhpOpRegistration(const mafString& label = "DSRegistration");
  ~lhpOpRegistration(); 
 
   virtual void OnEvent(mafEventBase *maf_event);

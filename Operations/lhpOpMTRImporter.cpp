@@ -30,7 +30,7 @@ mafCxxTypeMacro(lhpOpMTRImporter);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
- lhpOpMTRImporter:: lhpOpMTRImporter(const wxString &label) : mafOp(label)
+ lhpOpMTRImporter:: lhpOpMTRImporter(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_IMPORTER;
@@ -51,7 +51,7 @@ mafCxxTypeMacro(lhpOpMTRImporter);
 mafOp * lhpOpMTRImporter::Copy()
 //----------------------------------------------------------------------------
 {
-  lhpOpMTRImporter *cp = new  lhpOpMTRImporter(m_Label);
+  lhpOpMTRImporter *cp = new  lhpOpMTRImporter(GetLabel());
   cp->m_Files   = m_Files;
   cp->m_FileDir = m_FileDir;
   return cp; 
