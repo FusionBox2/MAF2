@@ -15,10 +15,7 @@
 =========================================================================*/
 
 #include "mafStorable.h"
-#include "mafObject.h"
 #include "mafStorageElement.h"
-
-#include <vector>
 
 //------------------------------------------------------------------------------
 int mafStorable::Store(mafStorageElement *parent)
@@ -32,34 +29,4 @@ int mafStorable::Restore(mafStorageElement *element)
 //------------------------------------------------------------------------------
 {
   return InternalRestore(element);
-}
-//------------------------------------------------------------------------------
-mafStorable* mafStorable::SafeCastToObject(mafObject *o)
-//------------------------------------------------------------------------------
-{
-  try 
-  {
-    return dynamic_cast<mafStorable *>(o);
-  } 
-  
-  catch (std::bad_cast) 
-  { 
-    return NULL;
-  } 
-}
-
-//------------------------------------------------------------------------------
-mafObject *mafStorable::CastToObject()
-//------------------------------------------------------------------------------
-{
-  try 
-  {
-    return dynamic_cast<mafObject *>(this);
-  } 
-  
-  catch (std::bad_cast) 
-  { 
-    return NULL;
-  }
-
 }

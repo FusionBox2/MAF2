@@ -22,7 +22,6 @@
 // forward declarations :
 //----------------------------------------------------------------------------
 class mafStorageElement;
-class mafObject;
 
 /** mafStorable is an interface for serializable objects.
   The idea behind this class is to act as in interface to be inherited to
@@ -54,12 +53,6 @@ public:
     means the calling restore loop should have identified the node passed as argument as of type
     to be restored by this object.*/
   int Restore(mafStorageElement *element);
-
-  /** safe cast to mafObject, to be used with double inheritance from mafObject and mafStorable */
-  mafObject *CastToObject();
-
-  /** convenience function for dynamic casting */
-  static mafStorable* SafeCastToObject(mafObject *o);
 
   /** return true if the object should be stored */
   bool IsStorable() {return m_Storable;}
