@@ -1506,7 +1506,7 @@ void lhpOpDownloadVME::UpdateBinaryFile()
     mafDataVector::DataMap::iterator it;
     mafEventIO es(this,NODE_GET_STORAGE);
     m_Input->GetRoot()->OnEvent(&es);
-    mafStorage *storage = es.GetStorage();
+    mafVMEStorage *storage = mafVMEStorage::SafeDownCast(es.GetStorage());
     mafString newMSFFileName = storage->GetURL();
     wxString oldItemURL, newItemURL, tmpURL;
     wxString path, name, ext;
@@ -1575,7 +1575,7 @@ void lhpOpDownloadVME::UpdateBinaryFile()
     mafDataVector::Iterator it;
     mafEventIO es(this,NODE_GET_STORAGE);
     m_Input->GetRoot()->OnEvent(&es);
-    mafStorage *storage = es.GetStorage();
+    mafVMEStorage *storage = mafVMEStorage::SafeDownCast(es.GetStorage());
     mafString newMSFFileName = storage->GetURL();
     wxString path, name, ext;
     wxString oldArchiveURL, newArchiveURL, tmpURL;
