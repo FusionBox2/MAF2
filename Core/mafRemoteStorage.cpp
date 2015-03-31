@@ -215,7 +215,7 @@ int mafRemoteStorage::StoreToURL(const char *filename, const char *url)
   }
   else
   {
-    return mafXMLStorage::StoreToURL(filename,url);
+    return Superclass::StoreToURL(filename,url);
   }
   return save_res;
 }
@@ -262,7 +262,7 @@ int mafRemoteStorage::OpenDirectory(const char *pathname)
   }
   else
   {
-    return mafXMLStorage::OpenDirectory(pathname);
+    return Superclass::OpenDirectory(pathname);
   }
 }
 //------------------------------------------------------------------------------
@@ -302,6 +302,6 @@ const char* mafRemoteStorage::GetTmpFolder()
   }
   else
   {
-    return mafXMLStorage::GetTmpFolder();
+    return Superclass::GetTmpFolder();
   }
 }
