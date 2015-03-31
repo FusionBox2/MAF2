@@ -1468,18 +1468,21 @@ void mafViewIntGraphWindow::CreateGui()
   static mafString choices[] = {wxString("Default"),wxString("Decorative"), wxString("Roman"), wxString("Script"), wxString("Swiss"), wxString("Modern")};
   m_Gui = new mafGUI(this);
 
-  m_Gui->Bool   (ID_SHOW_ROUGH_GRID  ,"Rough Grid"       , &(m_RoughGrid),0);
-  m_Gui->Bool   (ID_SHOW_PRECISE_GRID,"Precise Grid"     , &(m_PreciseGrid),0);
+  m_Gui->Label("Grid");
+  m_Gui->Bool   (ID_SHOW_ROUGH_GRID  ,"Rough"       , &(m_RoughGrid),0);
+  m_Gui->Bool   (ID_SHOW_PRECISE_GRID,"Precise"     , &(m_PreciseGrid),0);
 
-  m_Gui->Integer(ID_TITLE_FONTSIZE , "Legend font size"  , &m_TitleFontSize, 3, 50); 
-  m_Gui->Combo  (ID_TICK_FONTFAMILY, "Legend font family", (int *)&m_TitleFontFamily, mafFF_LAST, choices);
+  m_Gui->Label("Font");
+  m_Gui->Integer(ID_TITLE_FONTSIZE , "Legend"  , &m_TitleFontSize, 3, 50); 
+  m_Gui->Combo  (ID_TICK_FONTFAMILY, "Legend", (int *)&m_TitleFontFamily, mafFF_LAST, choices);
 
-  m_Gui->Integer(ID_TITLE_FONTSIZE , "Tick font size"  , &m_TickFontSize, 3, 50); 
-  m_Gui->Combo  (ID_TICK_FONTFAMILY, "Tick font family", (int *)&m_TickFontFamily, mafFF_LAST, choices);
+  m_Gui->Integer(ID_TITLE_FONTSIZE , "Ticks"  , &m_TickFontSize, 3, 50); 
+  m_Gui->Combo  (ID_TICK_FONTFAMILY, "Ticks", (int *)&m_TickFontFamily, mafFF_LAST, choices);
 
-  m_Gui->Slider (ID_THICK_CURVE    , "Curves thickness", &m_CurveThickness, 1, 5);
-  m_Gui->Slider (ID_THICK_AXIS     , "Axis   thickness", &m_AxisThickness , 1, 5);
-  m_Gui->Slider (ID_THICK_GRID     , "Grid   thickness", &m_GridThickness , 1, 5);
+  m_Gui->Label("Thickness");
+  m_Gui->Slider (ID_THICK_CURVE    , "Curves", &m_CurveThickness, 1, 5);
+  m_Gui->Slider (ID_THICK_AXIS     , "Axes", &m_AxisThickness , 1, 5);
+  m_Gui->Slider (ID_THICK_GRID     , "Grid", &m_GridThickness , 1, 5);
   m_Gui->Update();
 }
 
