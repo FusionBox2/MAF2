@@ -49,13 +49,19 @@ do\
     break;\
   bool up = false;\
   bool down = false;\
+  bool right = false;\
+  bool left = false;\
   if(node->m_Parent != NULL)\
   {\
-    up   = (node != node->m_Parent->GetFirstChild());\
-    down = (node != node->m_Parent->GetLastChild());\
+    up    = (node != node->m_Parent->GetFirstChild());\
+    down  = (node != node->m_Parent->GetLastChild());\
+    left  = (node == node->m_Parent->GetFirstChild() && node->m_Parent->m_Parent != NULL);\
+    right = (node != node->m_Parent->GetFirstChild());\
   }\
   node->m_Gui->Enable(ID_MOVEUP, up);\
   node->m_Gui->Enable(ID_MOVEDN, down);\
+  node->m_Gui->Enable(ID_MOVERIGHT, right);\
+  node->m_Gui->Enable(ID_MOVELEFT, left);\
 }\
 while(0)
 
@@ -1132,6 +1138,34 @@ void mafNode::OnEvent(mafEventBase *e)
             parent->MoveChildDown(this);
         }
         break;
+      case ID_MOVERIGHT:
+        {
+          if(mafNode *parent = GetParent())
+          {
+            if(this != parent->GetFirstChild())
+            {
+              ReparentTo(parent->GetChild(parent->FindNodeIdx(this) - 1));
+              ForwardEvent(mafEvent(this, VME_SELECT, this));
+            }
+          }
+        }
+        break;
+      case ID_MOVELEFT:
+        {
+          if(mafNode *parent = GetParent())
+          {
+            if(mafNode *grandparent = parent->GetParent())
+            {
+              int numChildren = grandparent->GetNumberOfChildren();
+              int parentidx   = grandparent->FindNodeIdx(parent);
+              ReparentTo(grandparent);
+              ForwardEvent(mafEvent(this, VME_SELECT, this));
+              for(int i = 0; i < (numChildren - parentidx - 1); i++)
+                grandparent->MoveChildUp(this);
+            }
+          }
+        }
+        break;
       }
       return;
     }
@@ -1370,6 +1404,7 @@ mafGUI* mafNode::CreateGui()
 	m_Gui->Divider();
 
   m_Gui->Button(ID_MOVEUP, _("UP"), _("Up"), _("Move up in parent list"));
+  m_Gui->TwoButtons(ID_MOVELEFT, ID_MOVERIGHT, _("Move left in tree"), _("Move right in tree"));
   m_Gui->Button(ID_MOVEDN, _("DN"), _("Down"), _("Move down in parent list"));
   m_Gui->Divider();
 

@@ -403,6 +403,8 @@ public:
     ID_PRINT_INFO,
     ID_MOVEUP,
     ID_MOVEDN,
+    ID_MOVERIGHT,
+    ID_MOVELEFT,
 	ID_HELP,
     ID_LAST
   };
