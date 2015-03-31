@@ -20,3 +20,5 @@ KV_Local_Param_Inp_Shv_K            DAT "KV_Local_Param_Inp_Shv_K.m"
 KV_Local_Param_Inp_Shv_V            DAT "KV_Local_Param_Inp_Shv_V.m"
 All_Regr_p_coeffs_2_ALL_Kin_R_Abd_N DAT "All_Regr_p_coeffs_2_ALL_Kin_R_Abd_N.txt"
 All_Regr_p_coeffs_2_ALL_Kin_R_Flx_N DAT "All_Regr_p_coeffs_2_ALL_Kin_R_Flx_N.txt"
+
+SkelModel                           ZMSF "SkelModel.zmsf"
