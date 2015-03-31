@@ -328,33 +328,41 @@ bool lhpOpRegisterLMScripted::RegistrationProcedure()
   mafNode *nreg, *nsrc;
   for(nreg = iterreg->GetFirstNode(), nsrc = itersrc->GetFirstNode(); nreg && nsrc; nreg = iterreg->GetNextNode(), nsrc = itersrc->GetNextNode())
   {
+    while(mafVMEInfoText *vit = mafVMEInfoText::SafeDownCast(nreg))
+      nreg = iterreg->GetNextNode();
     mafVMELandmarkCloud *lmcs = mafVMELandmarkCloud::SafeDownCast(nsrc);
     mafVMELandmarkCloud *lmcr = mafVMELandmarkCloud::SafeDownCast(nreg);
     mafVMELandmarkCloud *lmct = NULL;
     if(lmcs == NULL)//lmcr is of the same type as lmcs
       continue;
+    const char *search_name = nsrc->GetName();
     for(int i = 0; i < m_LMDict.size(); i++)
     {
+      search_name = NULL;
       if(usedEntries[i])
         continue;
       if(mafString(nsrc->GetName()) == mafString(m_LMDict[i].first))
       {
         usedEntries[i] = true;
-        mafNodeIterator *lmitert = m_Target->NewIterator();
-        for(mafNode *lmt = lmitert->GetFirstNode(); lmt; lmt = lmitert->GetNextNode())
-        {
-          mafVMELandmarkCloud *lmtmp = mafVMELandmarkCloud::SafeDownCast(lmt);
-          if(lmtmp == NULL)
-            continue;
-          if(strstr(lmtmp->GetName(), m_LMDict[i].second.c_str()) != NULL)
-          {
-            lmct = lmtmp;
-            break;
-          }
-        }
-        mafDEL(lmitert);
+        search_name = m_LMDict[i].second.c_str();
         break;
       }
+    }
+    if(search_name)
+    {
+      mafNodeIterator *lmitert = m_Target->NewIterator();
+      for(mafNode *lmt = lmitert->GetFirstNode(); lmt; lmt = lmitert->GetNextNode())
+      {
+        mafVMELandmarkCloud *lmtmp = mafVMELandmarkCloud::SafeDownCast(lmt);
+        if(lmtmp == NULL)
+          continue;
+        if(strstr(lmtmp->GetName(), search_name) != NULL)
+        {
+          lmct = lmtmp;
+          break;
+        }
+      }
+      mafDEL(lmitert);
     }
     if(lmct == NULL)
       continue;
@@ -388,8 +396,13 @@ bool lhpOpRegisterLMScripted::RegistrationProcedure()
 
 bool lhpOpRegisterLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandmarkCloud *trg, mafVMELandmarkCloud *reg)
 {
-
-
+  mafVMEInfoText *info;
+  mafNEW(info);
+  wxString name = wxString::Format("Info for registration %s into %s",m_Source->GetName(), m_Target->GetName());
+  info->SetName(name);
+  info->SetPosLabel("Registration residual: ", 0);
+  info->SetPosShow(true, 0);
+  bool infoAdded = false;
 
   if(m_MultiTime)
   {
@@ -410,8 +423,11 @@ bool lhpOpRegisterLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandma
       trg->Update(); //>UpdateAllData();
       if(ExtractMatchingPoints(src, trg, currTime))
       {
+        if(!infoAdded)
+          info->ReparentTo(reg);
+        infoAdded = true;
         double tr = RegisterPoints(src, trg, reg, currTime);
-        //info->SetAbsPose(tr, 0.0, 0.0, 0.0, 0.0, 0.0, currTime);
+        info->SetAbsPose(tr, 0.0, 0.0, 0.0, 0.0, 0.0, currTime);
       }
     }
     timeStamps.clear();
@@ -421,120 +437,16 @@ bool lhpOpRegisterLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandma
   else
   {
     //RegisterPoints(m_Source->GetCurrentTime());
-    ExtractMatchingPoints(src, trg);
-    double tr = RegisterPoints(src, trg, reg);
-    //info->SetAbsPose(tr, 0.0, 0.0, 0.0, 0.0, 0.0);
-  }
-
-  if(m_Registered)
-  {
-    //mafNEW(m_Result);
-    //wxString name = wxString::Format("%s registered into %s",m_Source->GetName(), m_Target->GetName());
-    //m_Result->SetName(name);
-    //mafEventMacro(mafEvent(this, VME_ADD, m_Result));
-    //info->ReparentTo(m_Result);
-    //mafDEL(info);
-  }
-  else
-  {
-    //mafEventMacro(mafEvent(this, VME_REMOVE, info));
-    //mafDEL(info);
-  }
-
-  if(m_Registered)
-  {
-    //conversion from time variant landmark cloud with non time variant landmark to 
-    // non variant landmark cloud with time variant landmark
-    /*if(m_MultiTime)
+    if(ExtractMatchingPoints(src, trg))
     {
-    if(!m_Registered->IsOpen())
-    m_Registered->Open();
-
-
-    std::vector<mafTimeStamp> timeStamps;
-    m_Target->GetLocalTimeStamps(timeStamps);
-    int numTimeStamps = timeStamps.size();
-
-    mafVMELandmarkCloud *landmarkCloudWithTimeVariantLandmarks;
-    mafNEW(landmarkCloudWithTimeVariantLandmarks);
-    mafEventMacro(mafEvent(this, VME_ADD, landmarkCloudWithTimeVariantLandmarks));
-    landmarkCloudWithTimeVariantLandmarks->ReparentTo(m_Result);
-
-    landmarkCloudWithTimeVariantLandmarks->SetName(m_Registered->GetName());
-    landmarkCloudWithTimeVariantLandmarks->Open();
-
-    for (int t = 0; t < numTimeStamps; t++)
-    {
-    double cTime = timeStamps[t];
-    m_Registered->SetTimeStamp(cTime); //Set current time
-    m_Registered->Update(); //>UpdateCurrentData();
-
-
-    for(int i=0; i< m_Registered->GetNumberOfLandmarks(); i++)
-    {
-    mafVMELandmark *landmark = landmarkCloudWithTimeVariantLandmarks->GetLandmark(i);
-    if(landmark == NULL)
-    {
-    mafNEW(landmark);
-    mafEventMacro(mafEvent(this, VME_ADD,landmark));
-    landmark->SetName(m_Registered->GetLandmark(i)->GetName());
-    landmark->ReparentTo(landmarkCloudWithTimeVariantLandmarks);
-    }
-    else
-    {
-    landmark->Register(this);
-    }
-
-    double pos[3], rot[3];
-    m_Registered->GetLandmark(i)->GetOutput()->GetAbsPose(pos,rot,cTime);
-
-    landmarkCloudWithTimeVariantLandmarks->SetLandmarkVisibility(i,m_Registered->GetLandmarkVisibility(i,cTime),cTime);
-    landmark->SetTimeStamp(cTime);
-    landmark->SetAbsPose(pos,rot,cTime);
-
-    //avoid matrix error log for the first creation of landmarks
-    mafMatrix *matrix = landmark->GetMatrixVector()->GetMatrix(cTime);
-    matrix->SetElement(0,0,1);
-    matrix->SetElement(1,1,1);
-    matrix->SetElement(2,2,1);
-
-    landmark->Modified();
-    landmark->Update();
-    mafDEL(landmark);
-    }
-    }
-
-    landmarkCloudWithTimeVariantLandmarks->Update();
-    landmarkCloudWithTimeVariantLandmarks->Close();
-
-    mafDEL(landmarkCloudWithTimeVariantLandmarks);
-
-    m_Registered->Close();
-    timeStamps.clear();
-    }
-    else*/
-    {
-      //m_Registered->SetAbsMatrix(((mafVMELandmarkCloud *)m_Target)->GetAbsMatrixPipe()->GetMatrix());
-      //mafEventMacro(mafEvent(this, VME_ADD, m_Registered));
-      /*std::vector<mafTimeStamp> timeStamps;
-      m_Registered->GetTimeStamps(timeStamps);
-      for(int i=0; i<timeStamps.size();i++)
-      {
-      double value;
-      value = timeStamps[i];
-      value = value;
-      }
-      m_Target->GetTimeStamps(timeStamps);
-      for(int i=0; i<timeStamps.size();i++)
-      {
-      double value;
-      value = timeStamps[i];
-      value = value;
-      }*/
-      //m_Registered->ReparentTo(m_Result);
+      if(!infoAdded)
+        info->ReparentTo(reg);
+      infoAdded = true;
+      double tr = RegisterPoints(src, trg, reg);
+      info->SetAbsPose(tr, 0.0, 0.0, 0.0, 0.0, 0.0);
     }
   }
-
+  mafDEL(info);
   return true;
 }
 
@@ -543,166 +455,6 @@ void lhpOpRegisterLMScripted::OpDo()
 //----------------------------------------------------------------------------
 {
   m_Registered->ReparentTo(m_Input->GetRoot());
-  mafEventMacro(mafEvent(this,TIME_SET,-1.0));
-  return;
-
-
-  /*mafVMEInfoText *info;
-  mafNEW(info);
-  wxString name = wxString::Format("Info for registration %s into %s",m_Source->GetName(), m_Target->GetName());
-  info->SetName(name);
-  info->SetPosLabel("Registration residual: ", 0);
-  info->SetPosShow(true, 0);
-  mafEventMacro(mafEvent(this, VME_ADD, info));*/
-
-  //check for the multi-time registration
-  if(m_MultiTime)
-  {
-    std::vector<mafTimeStamp> timeStamps;
-    m_Target->GetLocalTimeStamps(timeStamps);
-    int numTimeStamps = timeStamps.size();
-
-    //mafProgressBarShowMacro();
-    mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
-    
-    //mafProgressBarSetTextMacro("Multi time registration...");
-    
-    for (int t = 0; t < numTimeStamps; t++)
-    {
-      double currTime = timeStamps[t];
-      long p = t * 100 / numTimeStamps;
-    //  mafProgressBarSetValueMacro(p);
-      mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,p));
-      //Set the new time for the vme used to register the one frame source 
-      m_Target->SetTimeStamp(currTime); //set current time
-      m_Target->Update(); //>UpdateAllData();
-
-      /*if(ExtractMatchingPoints(currTime))
-      {
-        double tr = RegisterPoints(currTime);
-        //info->SetAbsPose(tr, 0.0, 0.0, 0.0, 0.0, 0.0, currTime);
-      }*/
-    }
-    timeStamps.clear();
-
-    mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
-  }
-  else
-  {
-    //RegisterPoints(m_Source->GetCurrentTime());
-    //double tr = RegisterPoints();
-    //info->SetAbsPose(tr, 0.0, 0.0, 0.0, 0.0, 0.0);
-  }
-
-  if(m_Registered)
-  {
-    //mafNEW(m_Result);
-    //wxString name = wxString::Format("%s registered into %s",m_Source->GetName(), m_Target->GetName());
-    //m_Result->SetName(name);
-    //mafEventMacro(mafEvent(this, VME_ADD, m_Result));
-    //info->ReparentTo(m_Result);
-    //mafDEL(info);
-  }
-  else
-  {
-    //mafEventMacro(mafEvent(this, VME_REMOVE, info));
-    //mafDEL(info);
-  }
-
-  if(m_Registered)
-  {
-    //conversion from time variant landmark cloud with non time variant landmark to 
-    // non variant landmark cloud with time variant landmark
-    /*if(m_MultiTime)
-    {
-      if(!m_Registered->IsOpen())
-        m_Registered->Open();
-
-
-      std::vector<mafTimeStamp> timeStamps;
-      m_Target->GetLocalTimeStamps(timeStamps);
-      int numTimeStamps = timeStamps.size();
-
-      mafVMELandmarkCloud *landmarkCloudWithTimeVariantLandmarks;
-      mafNEW(landmarkCloudWithTimeVariantLandmarks);
-      mafEventMacro(mafEvent(this, VME_ADD, landmarkCloudWithTimeVariantLandmarks));
-      landmarkCloudWithTimeVariantLandmarks->ReparentTo(m_Result);
-
-      landmarkCloudWithTimeVariantLandmarks->SetName(m_Registered->GetName());
-      landmarkCloudWithTimeVariantLandmarks->Open();
-
-      for (int t = 0; t < numTimeStamps; t++)
-      {
-        double cTime = timeStamps[t];
-        m_Registered->SetTimeStamp(cTime); //Set current time
-        m_Registered->Update(); //>UpdateCurrentData();
-        
-
-        for(int i=0; i< m_Registered->GetNumberOfLandmarks(); i++)
-        {
-          mafVMELandmark *landmark = landmarkCloudWithTimeVariantLandmarks->GetLandmark(i);
-          if(landmark == NULL)
-          {
-            mafNEW(landmark);
-            mafEventMacro(mafEvent(this, VME_ADD,landmark));
-            landmark->SetName(m_Registered->GetLandmark(i)->GetName());
-            landmark->ReparentTo(landmarkCloudWithTimeVariantLandmarks);
-          }
-          else
-          {
-            landmark->Register(this);
-          }
-
-          double pos[3], rot[3];
-          m_Registered->GetLandmark(i)->GetOutput()->GetAbsPose(pos,rot,cTime);
-          
-          landmarkCloudWithTimeVariantLandmarks->SetLandmarkVisibility(i,m_Registered->GetLandmarkVisibility(i,cTime),cTime);
-          landmark->SetTimeStamp(cTime);
-          landmark->SetAbsPose(pos,rot,cTime);
-
-          //avoid matrix error log for the first creation of landmarks
-          mafMatrix *matrix = landmark->GetMatrixVector()->GetMatrix(cTime);
-          matrix->SetElement(0,0,1);
-          matrix->SetElement(1,1,1);
-          matrix->SetElement(2,2,1);
-
-          landmark->Modified();
-          landmark->Update();
-          mafDEL(landmark);
-        }
-      }
-
-      landmarkCloudWithTimeVariantLandmarks->Update();
-      landmarkCloudWithTimeVariantLandmarks->Close();
-
-      mafDEL(landmarkCloudWithTimeVariantLandmarks);
-
-      m_Registered->Close();
-      timeStamps.clear();
-    }
-    else*/
-    {
-      //m_Registered->SetAbsMatrix(((mafVMELandmarkCloud *)m_Target)->GetAbsMatrixPipe()->GetMatrix());
-      mafEventMacro(mafEvent(this, VME_ADD, m_Registered));
-      /*std::vector<mafTimeStamp> timeStamps;
-      m_Registered->GetTimeStamps(timeStamps);
-      for(int i=0; i<timeStamps.size();i++)
-      {
-        double value;
-        value = timeStamps[i];
-        value = value;
-      }
-      m_Target->GetTimeStamps(timeStamps);
-      for(int i=0; i<timeStamps.size();i++)
-      {
-        double value;
-        value = timeStamps[i];
-        value = value;
-      }*/
-      //m_Registered->ReparentTo(m_Result);
-    }
-    
-  }
 }
 //----------------------------------------------------------------------------
 void lhpOpRegisterLMScripted::OpUndo()
