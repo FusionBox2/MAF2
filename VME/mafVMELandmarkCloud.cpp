@@ -851,7 +851,7 @@ void mafVMELandmarkCloud::Close()
           {
             polydata->DeepCopy(previous_polydata);
           }
-          item_id = m_DataVector->Last();
+          item_id = m_DataVector->FindItem(mat->GetTimeStamp());
         }
         else if (item->GetTimeStamp() == mat->GetTimeStamp())
         { 
