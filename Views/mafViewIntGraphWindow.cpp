@@ -151,16 +151,16 @@ int mafViewIntGraphWindow::Log10Abs(double rValue)
 {
   if(fabs(rValue) > 0)
   {
-    return ((int)log10(fabs(rValue)));
+    return ((int)floor(log10(fabs(rValue))));
   }
   return (0);
 }
 
 //----------------------------------------------------------------------------
-int mafViewIntGraphWindow::GetOptimalSplits(double rMin, double rMax, double rCoef)
+void mafViewIntGraphWindow::GetOptimalSplits(double rMin, double rMax, double rCoef, int& BigSplitIndex, double& SplitsStep)
 //----------------------------------------------------------------------------
 {
-  int nSplitsNumber = SPLITS_NUMBER;
+  /*int nSplitsNumber = SPLITS_NUMBER;
   int nMin,nMax;
 
   nMin = (int)(round(rMin / rCoef));
@@ -176,7 +176,38 @@ int mafViewIntGraphWindow::GetOptimalSplits(double rMin, double rMax, double rCo
   {
     nSplitsNumber = DEFAULT_SPLITS;
   }
-  return (nSplitsNumber);
+  return (nSplitsNumber);*/
+  double s   = rMax - rMin;
+  int    n   = Log10Abs(s);
+  int    val = (int)floor(s * pow(10.,-n));
+  double mlt = pow(10.,n);
+  int    v;
+
+  int    valmin = (int)floor(rMin * pow(10.,-n));
+  int    valmax = (int)floor(rMax * pow(10.,-n));
+
+  if(val == 1)
+  {
+    v = 2;
+    s = mlt / 10;
+  }
+  else if(val < 4)
+  {
+    v = 5;
+    s = mlt / 10;
+  }
+  else if(val < 7)
+  {
+    v = 5;
+    s = mlt / 5;
+  }
+  else
+  {
+    v = 4;
+    s = mlt / 2;
+  }
+  SplitsStep    = s;
+  BigSplitIndex = v;
 }
 
 //----------------------------------------------------------------------------
@@ -304,8 +335,10 @@ void mafViewIntGraphWindow::DrawXAxis(wxDC *pDC, wxRect *prc, double rXMin, doub
 {
   double rX,rY,rStepX;
   int nX,nY,nI;
-  int nSplitsNumber    = SPLITS_NUMBER;
-  int nSubSplitsNumber = SUBSPLITS_NUMBER;
+  int BigSplitIndex;
+  int BigSplitShift = 0;
+  //int nSplitsNumber    = SPLITS_NUMBER;
+  //int nSubSplitsNumber = SUBSPLITS_NUMBER;
   bool  bXUp;
   char sValue[MAXTEXTLEN + 1];
   wxRect  rTextRect;
@@ -325,16 +358,18 @@ void mafViewIntGraphWindow::DrawXAxis(wxDC *pDC, wxRect *prc, double rXMin, doub
 
   pDC->DrawLine(GetIntX(prc,0.f), nY, GetIntX(prc,1.f), nY);
   
-  nSplitsNumber = GetOptimalSplits(rXMin, rXMax, rXCoef);
+  GetOptimalSplits(rXMin, rXMax, rXCoef, BigSplitIndex, rStepX);
+  int mnval = (int)(round(rXMin / rXCoef * 1000) / 1000);
+  BigSplitShift = (abs(mnval) % 5) % BigSplitIndex;
 
-  rStepX = (rXMax - rXMin) / (nSplitsNumber * nSubSplitsNumber);
-  for(nI = 0; nI <= nSplitsNumber * nSubSplitsNumber; nI++)
+  //rStepX = (rXMax - rXMin) / (nSplitsNumber * nSubSplitsNumber);
+  //for(nI = 0; nI <= nSplitsNumber * nSubSplitsNumber; nI++)
+  for(rX = rXMin, nI = 0; rX <= rXMax;)
   {
-    rX = rXMin + rStepX * (nI);
-    sprintf(sValue," %.1f", round(rX / rXCoef * 1000) / 1000);
+    sprintf(sValue," %.0f", round(rX / rXCoef * 1000) / 1000);
     rX  = (rX - rXMin)/(rXMax - rXMin);
     nX = GetIntX(prc,rX);
-    if(nI % nSubSplitsNumber == 0)
+    if(nI % BigSplitIndex == BigSplitShift)
     {
       if(bGrid && nI != 0)
       {
@@ -373,6 +408,8 @@ void mafViewIntGraphWindow::DrawXAxis(wxDC *pDC, wxRect *prc, double rXMin, doub
       }
       pDC->DrawLine(nX, nY + HALFMARK_SIZE, nX, nY - HALFMARK_SIZE);
     }
+    nI++;
+    rX = rXMin + rStepX * (nI);
   }
   pDC->SetPen(wxNullPen);
   cppDEL(pPen);
@@ -387,8 +424,10 @@ void mafViewIntGraphWindow::DrawYAxis(wxDC *pDC, wxRect *prc, double rYMin, doub
 {
   double   rX,rY,rStepY;
   int     nX,nY,nI;
-  int     nSplitsNumber = SPLITS_NUMBER;
-  int     nSubSplitsNumber = SUBSPLITS_NUMBER;
+  int     BigSplitIndex;
+  int     BigSplitShift = 0;
+  //int     nSplitsNumber = SPLITS_NUMBER;
+  //int     nSubSplitsNumber = SUBSPLITS_NUMBER;
   bool    bYLeft;
   char    sValue[MAXTEXTLEN + 1];
   wxRect  rTextRect;
@@ -408,16 +447,18 @@ void mafViewIntGraphWindow::DrawYAxis(wxDC *pDC, wxRect *prc, double rYMin, doub
   
   pDC->DrawLine(nX, GetIntY(prc,0.f), nX, GetIntY(prc,1.f));
 
-  nSplitsNumber = GetOptimalSplits(rYMin, rYMax, rYCoef);
+  GetOptimalSplits(rYMin, rYMax, rYCoef, BigSplitIndex, rStepY);
+  int mnval = (int)(round(rYMin / rYCoef * 1000) / 1000);
+  BigSplitShift = (abs(mnval) % 5) % BigSplitIndex;
 
-  rStepY = (rYMax - rYMin) / (nSplitsNumber * nSubSplitsNumber);
-  for(nI = 0;nI <= nSplitsNumber * nSubSplitsNumber; nI++)
+  //rStepY = (rYMax - rYMin) / (nSplitsNumber * nSubSplitsNumber);
+  //for(nI = 0;nI <= nSplitsNumber * nSubSplitsNumber; nI++)
+  for(rY = rYMin, nI = 0; rY <= rYMax;)
   {
-    rY  = rYMin + rStepY * (nI);
-    sprintf(sValue," %.1f", round(rY / rYCoef * 1000) / 1000);
+    sprintf(sValue," %.0f", round(rY / rYCoef * 1000) / 1000);
     rY  = (rYMax - rY)/(rYMax - rYMin);
     nY  = GetIntY(prc,rY);
-    if(nI % nSubSplitsNumber == 0)
+    if(nI % BigSplitIndex == BigSplitShift)
     {
       if(bGrid && nI != 0)
       {
@@ -456,6 +497,8 @@ void mafViewIntGraphWindow::DrawYAxis(wxDC *pDC, wxRect *prc, double rYMin, doub
       }
       pDC->DrawLine(nX + HALFMARK_SIZE, nY, nX - HALFMARK_SIZE, nY);
     }
+    nI++;
+    rY  = rYMin + rStepY * (nI);
   }
   pDC->SetPen(wxNullPen);
   cppDEL(pPen);
@@ -659,201 +702,6 @@ void mafViewIntGraphWindow::UpdateRanges()
  * @author  Earnol
  * @see     Nothing
  */
-#ifdef ORIGGGGRRRRRRRRR
-//----------------------------------------------------------------------------
-void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
-//----------------------------------------------------------------------------
-{
-  int          nClHeight, nClWidth;
-  wxRect       rTextRect;
-  wxPoint      szTextSize;
-  unsigned int nI;
-  int          nX,nY;
-  unsigned int nSize,nBreakBegin,nBreakEnd;
-  double       rX,rY;
-  double       valX, valY, derX;
-  char         sExp[MAXTEXTLEN + 1];
-  char         sXIDDesc[MAXTEXTLEN + 1];
-  char         sYIDDesc[MAXTEXTLEN + 1];
-  unsigned int nDimX,nDimY,nJ,nYNumber,nXNumber, nXDer, nYDer;
-  wxPoint      pt;
-  wxRect       rcGraphRect;
-  double       rXPow10Marks,rYPow10Marks;
-  double       XMin, XMax, YMin, YMax;
-  wxColor      cOldColor;
-  int          nStartX, nStartY;
-  wxPen        *pPen;
-  wxFont       *pFont;
-
-  pCompatDC->GetSize(&nClWidth, &nClHeight);
-  pPen = new wxPen(wxColor(255,255,255), 1, wxSOLID);
-  pCompatDC->SetPen(*pPen);
-  pCompatDC->DrawRectangle(0, 0, nClWidth, nClHeight);
-  pCompatDC->SetPen(wxNullPen);
-  cppDEL(pPen);
-
-  // do nothing in case we do not need anything
-  if(m_Graphs.size() == 0 || m_Graphs[0] == NULL)
-  {
-    pPen = new wxPen(wxColor(0,0,0), 1, wxSOLID);
-    pCompatDC->SetPen(*pPen);
-    //pCompatDC->DrawLine(0, 0, nClWidth, nClHeight);
-    //pCompatDC->DrawLine(nClWidth, 0, 0, nClHeight);
-    pCompatDC->SetPen(wxNullPen);
-    cppDEL(pPen);
-    return;
-  }
-
-  //access
-  nDimX       = m_Graphs[0]->GetXVarNum();
-  nDimY       = m_Graphs[0]->GetYVarNum();
-  nSize       = m_Graphs[0]->GetSize();
-  nBreakBegin = m_Graphs[0]->GetBreakBegin();
-  nBreakEnd   = m_Graphs[0]->GetBreakEnd();
-  
-  //do not draw if have not enough points
-  if((nSize < 2)||(nDimX == 0)||(nDimY == 0))
-  {
-    pPen = new wxPen(wxColor(0,0,0), 1, wxSOLID);
-    pCompatDC->SetPen(*pPen);
-    //pCompatDC->DrawLine(0, 0, nClWidth, nClHeight);
-    //pCompatDC->DrawLine(nClWidth, 0, 0, nClHeight);
-    pCompatDC->SetPen(wxNullPen);
-    cppDEL(pPen);
-    return;
-  }
-
-  UpdateRanges();
-
-  XMin = m_XMin;
-  XMax = m_XMax;
-  YMin = m_YMin;
-  YMax = m_YMax;
-
-  AdoptMinMaxRange(XMin, XMax, rXPow10Marks);
-  AdoptMinMaxRange(YMin, YMax, rYPow10Marks);
-
-  pFont = new wxFont(m_TitleFontSize, GetFontFamily(m_TitleFontFamily), wxNORMAL, wxLIGHT, false, wxEmptyString, wxFONTENCODING_SYSTEM) ;
-  pCompatDC->SetFont(*pFont);
-  m_TitleFntHeight = pCompatDC->GetCharHeight();
-  rcGraphRect.SetLeft(0);
-  rcGraphRect.SetRight(nClWidth);
-  //set it to N*1.5 graphs 
-  rcGraphRect.SetTop((wxInt32)(SPACING_Y_COEFF * m_TitleFntHeight * nDimY));
-  
-  sXIDDesc[0]='\0';
-  sYIDDesc[0]='\0';
-  
-  pCompatDC->SetFont(wxNullFont);
-  cppDEL(pFont);
-  pFont = new wxFont(m_TickFontSize, GetFontFamily(m_TickFontFamily), wxNORMAL, wxLIGHT, false, wxEmptyString, wxFONTENCODING_SYSTEM) ;
-  pCompatDC->SetFont(*pFont);
-  rcGraphRect.SetBottom(nClHeight - (int)round(1.2 * pCompatDC->GetCharHeight()));
-
-  //drawing axes
-  DrawAxes(pCompatDC, &rcGraphRect, XMin, XMax, YMin, YMax, rXPow10Marks, rYPow10Marks, m_RoughGrid != 0, m_PreciseGrid != 0);
-
-  
-  pCompatDC->SetFont(wxNullFont);
-  cppDEL(pFont);
-  pFont = new wxFont(m_TitleFontSize, GetFontFamily(m_TitleFontFamily), wxNORMAL, wxLIGHT, false, wxEmptyString, wxFONTENCODING_SYSTEM) ;
-  pCompatDC->SetFont(*pFont);
-
-  //drawing graph
-  pt.x = 0;
-  pt.y = 0;
-  for(nJ = 0; nJ < nDimY; nJ++)
-  {
-    pPen = new wxPen(m_ColorTable[nJ % m_ColorTableNumber], m_CurveThickness, wxSOLID);
-    pCompatDC->SetPen(*pPen);
-    cOldColor = pCompatDC->GetTextForeground();
-    pCompatDC->SetTextForeground(m_ColorTable[nJ % m_ColorTableNumber]);
-    nXNumber = m_Graphs[0]->GetIndexX(0);
-    nXDer    = m_Graphs[0]->GetXDer(0);
-    nYNumber = m_Graphs[0]->GetIndexY(nJ);
-    nYDer    = m_Graphs[0]->GetYDer(nJ);
-    //writing captions
-    {
-      m_Graphs[0]->GetIDDesc(nXNumber, nXDer, sXIDDesc, MAXTEXTLEN);
-      m_Graphs[0]->GetIDDesc(nYNumber, nYDer, sYIDDesc, MAXTEXTLEN);
-      if((int)rYPow10Marks != 1 && (int)rXPow10Marks != 1)
-      {
-        sprintf(sExp,"%s, %1.0e (%s, %1.0e) ", sYIDDesc, rYPow10Marks, sXIDDesc, rXPow10Marks);
-      }
-      else  if((int)rYPow10Marks == 1 && (int)rXPow10Marks != 1)
-      {
-        sprintf(sExp,"%s (%s, %1.0e) ", sYIDDesc, sXIDDesc, rXPow10Marks);
-      }
-      else  if((int)rYPow10Marks != 1 && (int)rXPow10Marks == 1)
-      {
-        sprintf(sExp,"%s, %1.0e (%s) ", sYIDDesc, rYPow10Marks, sXIDDesc);
-      }
-      else
-      {
-        sprintf(sExp,"%s (%s) ", sYIDDesc, sXIDDesc);
-      }
-      pCompatDC->GetTextExtent(sExp, &szTextSize.x, &szTextSize.y);
-      rTextRect.SetLeft(pt.x + 35);
-      rTextRect.SetTop(pt.y);
-      rTextRect.SetRight(pt.x + szTextSize.x + 35);
-      rTextRect.SetBottom(m_TitleFntHeight);
-      pCompatDC->DrawText(sExp, rTextRect.GetLeft(), rTextRect.GetTop());
-      //pt.x += szTextSize.x;
-      pt.y += round(m_TitleFntHeight * SPACING_Y_COEFF);
-    }
-    unsigned int nStart  = 0;
-    unsigned int nFinish = nBreakBegin;
-    for(int count = 0; count < 2; count++)
-    {
-      if(nFinish - nStart > 1)
-      {
-        bool previnit = false;
-        for(nI = nStart; nI < nFinish; nI++)
-        {
-          valX = m_Graphs[0]->GetValue(nI,nXNumber, nXDer);
-          valY = m_Graphs[0]->GetValue(nI,nYNumber, nYDer);
-          if(nYDer == 1)
-          {
-            derX  = m_Graphs[0]->GetValue(nI,nXNumber, nYDer) * m_Graphs[0]->GetDerivCoef(nXNumber);
-            /*if(fabs(derX) < DERIV_ABS_MIN)
-              continue;*/
-            valY /= derX;
-            //valY  = fabs(valY);
-          }
-          rX   = (valX - XMin)/(XMax - XMin);
-          rY   = (YMax - valY)/(YMax - YMin);
-          nX   = GetIntX(&rcGraphRect,rX);
-          nY   = GetIntY(&rcGraphRect,rY);
-          if(previnit)
-          {
-            pCompatDC->DrawLine(nStartX, nStartY, nX, nY);
-          }
-          nStartX = nX;
-          nStartY = nY;
-          previnit = true;
-        }
-      }
-      nStart  = nBreakEnd;
-      nFinish = nSize;
-    }
-    pCompatDC->SetTextForeground(cOldColor);
-    pCompatDC->SetPen(wxNullPen);
-    cppDEL(pPen);
-
-    pPen = new wxPen(MARKER_COLOR, 0, wxSOLID);
-    pCompatDC->SetPen(*pPen);
-    pCompatDC->DrawEllipse(nX - MARKER_RADIUS, nY - MARKER_RADIUS, 2 * MARKER_RADIUS, 2 * MARKER_RADIUS);
-    pCompatDC->SetPen(wxNullPen);
-    cppDEL(pPen);
-  }
-  pCompatDC->SetFont(wxNullFont);
-  cppDEL(pFont);
-  return;
-} // end of _saRedraw
-#endif
-
-
-
 //----------------------------------------------------------------------------
 void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
 //----------------------------------------------------------------------------
@@ -1134,6 +982,26 @@ void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
               nStartX = nX;
               nStartY = nY;
               previnit = true;
+              if(nYDer == 0 && t + 1 < nFinish)
+              {
+                double deriv1, deriv1next, valXnext;
+                valXnext = m_Graphs[i]->GetValue(t + 1, 0, 0);
+                m_Graphs[i]->GetValueByParam(deriv1, valX, nYNumber, nYDer + 2);
+                m_Graphs[i]->GetValueByParam(deriv1next, valXnext, nYNumber, nYDer + 2);
+                //if(fabs(deriv1) < 0.001)
+                if(deriv1 * deriv1next < -0.00000001)
+                {
+                  wxBrush *pBrush = new wxBrush(wxColor(0, 0, 0));
+                  wxPen   *pEPen = new wxPen(MARKER_COLOR, 0, wxSOLID);
+                  pCompatDC->SetPen(*pEPen);
+                  pCompatDC->SetBrush(*pBrush);
+                  pCompatDC->DrawEllipse(nX - MARKER_RADIUS, nY - MARKER_RADIUS, 2 * MARKER_RADIUS, 2 * MARKER_RADIUS);
+                  pCompatDC->SetPen(*pPen);
+                  pCompatDC->SetBrush(wxNullBrush);
+                  cppDEL(pEPen);
+                  cppDEL(pBrush);
+                }
+              }
             }
           }
           nStart  = m_Graphs[i]->GetBreakEnd();
@@ -1869,8 +1737,8 @@ wxWindow(mafGetFrame(), -1, wxDefaultPosition, wxDefaultSize, 0, label)
   m_TickFontStyle    = wxNORMAL;
   m_TickFontWeight   = wxLIGHT;
 
-  m_CurveThickness   = 1;
-  m_AxisThickness    = 1;
+  m_CurveThickness   = 2;
+  m_AxisThickness    = 2;
   m_GridThickness    = 1;
 
   m_ColorTable       = new wxColor[DIM(_GraphColors)];

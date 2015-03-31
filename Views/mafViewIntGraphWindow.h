@@ -142,7 +142,7 @@ private:
   int       GetIntX(const wxRect *prc, double rX);
   int       GetIntY(const wxRect *prc, double rY);
   int       Log10Abs(double rValue);
-  int       GetOptimalSplits(double rMin, double rMax, double rCoef);
+  void      GetOptimalSplits(double rMin, double rMax, double rCoef, int& BigSplitIndex, double& SplitsStep);
   void      AdoptMinMaxRange(double& vMin, double& vMax, double& vPow10Marks);
   void      DrawGraph(wxDC *pCompatDC);
   void      DrawAxes(wxDC *pDC, wxRect *prc, double rXMin, double rXMax, double rYMin, double rYMax, double rXCoef, double rYCoef, bool bGrid, bool bPreciseGrid);

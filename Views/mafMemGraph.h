@@ -824,7 +824,7 @@ Memory Graph instantiation with double*/
 class mafMemoryGraph: public mafMemoryGraphBase<double>
 {
 public:
-  mafMemoryGraph(double garbage,unsigned int size = 5000): m_garbage(garbage),  mafMemoryGraphBase(size){}
+  mafMemoryGraph(double garbage,unsigned int size = 50000): m_garbage(garbage),  mafMemoryGraphBase(size){}
   const double&   GetGarbageValue(){return m_garbage;}
 private:
   double m_garbage;
