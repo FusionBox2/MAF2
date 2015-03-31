@@ -19,11 +19,13 @@
 //----------------------------------------------------------------------------
 
 
+#include "mafSceneNode.h"
+#include "mafSceneGraph.h"
 #include "mafGUI.h"
 
 #include "mafPipeVTK.h"
 #include "mafViewVTK.h"
-#include "mafNode.h"
+#include "mafTransformBase.h"
 
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(mafPipeVTK);
@@ -33,6 +35,40 @@ mafCxxTypeMacro(mafPipeVTK);
 mafPipeVTK::mafPipeVTK()
 //----------------------------------------------------------------------------
 {
+  m_Vme           = NULL;
+	m_AssemblyFront	= NULL;
+	m_AssemblyBack	= NULL;
+	m_AlwaysVisibleAssembly = NULL;
+	m_RenFront      = NULL;
+	m_RenBack       = NULL;
+	m_AlwaysVisibleRenderer = NULL;
+}
+//----------------------------------------------------------------------------
+void mafPipeVTK::Create(mafNode *node, mafView *view)
+//----------------------------------------------------------------------------
+{
+  Superclass::Create(node, view);
+  mafViewVTK *viewVTK = mafViewVTK::SafeDownCast(m_View);
+  if(viewVTK)
+  {
+    m_RenFront      = viewVTK->GetFrontRenderer();
+    m_RenBack       = viewVTK->GetBackRenderer();
+    m_AlwaysVisibleRenderer = viewVTK->GetAlwaysVisibleRenderer();
+  }
+
+  m_Vme = mafVME::SafeDownCast(m_Node);
+  mafSceneGraph *sg = viewVTK->GetSceneGraph();
+  mafSceneNode  *n  = NULL;
+  if(sg)
+    n = sg->Vme2Node(m_Vme);
+  if(n)
+  {
+    m_AssemblyFront         = n->m_AssemblyFront;
+    m_AssemblyBack          = n->m_AssemblyBack;
+    m_AlwaysVisibleAssembly = n->m_AlwaysVisibleAssembly;
+  }
+
+  m_Selected = false;
 }
 //----------------------------------------------------------------------------
 mafPipeVTK::~mafPipeVTK()

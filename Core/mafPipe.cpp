@@ -23,15 +23,11 @@
 //----------------------------------------------------------------------------
 
 
-#include "mafSceneNode.h"
-#include "mafSceneGraph.h"
 #include "mafGUI.h"
 
 #include "mafPipe.h"
 #include "mafNode.h"
-#include "mafVME.h"
 #include "mafView.h"
-#include "vtkMAFAssembly.h"
 
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(mafPipe);
@@ -41,37 +37,16 @@ mafCxxTypeMacro(mafPipe);
 mafPipe::mafPipe()
 //----------------------------------------------------------------------------
 {
-	m_Sg            = NULL;
-  m_Vme			      = NULL;
-	m_AssemblyFront	= NULL;
-	m_AssemblyBack	= NULL;
-	m_AlwaysVisibleAssembly = NULL;
-	m_RenFront      = NULL;
-	m_RenBack       = NULL;
-	m_AlwaysVisibleRenderer = NULL;
-	m_Selected = false;
+  m_Node     = NULL;
+  m_View     = NULL;
+  m_Selected = false;
 }
 //----------------------------------------------------------------------------
 void mafPipe::Create(mafNode *node, mafView *view)
 //----------------------------------------------------------------------------
 {
-  m_Vme			 = mafVME::SafeDownCast(node);
+  m_Node     = node;
   m_View     = view;
-  m_Sg       = m_View->GetSceneGraph();
-
-  if(m_Sg)
-  {
-    if(mafSceneNode *n = m_Sg->Vme2Node(m_Vme))
-    {
-      m_AssemblyFront = n->m_AssemblyFront;
-      m_AssemblyBack	= n->m_AssemblyBack;
-      m_AlwaysVisibleAssembly = n->m_AlwaysVisibleAssembly;
-      m_RenFront      = n->m_RenFront;
-      m_RenBack       = n->m_RenBack;
-      m_AlwaysVisibleRenderer = n->m_AlwaysVisibleRenderer;
-    }
-  }
-
   m_Selected = false;
 }
 //----------------------------------------------------------------------------
@@ -88,7 +63,7 @@ mafGUI* mafPipe::CreateGui()
   assert(m_Gui == NULL);
   m_Gui = new mafGUI(this);
 
-  mafString type = "mafPipe" ;
+  mafString type = GetTypeName();
   m_Gui->Label("type :", type);
 	m_Gui->Divider();
   return m_Gui;

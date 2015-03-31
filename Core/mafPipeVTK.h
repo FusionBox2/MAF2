@@ -17,9 +17,10 @@
 //----------------------------------------------------------------------------
 #include "mafDecl.h" // for MINID
 #include "mafPipe.h"
-#include "mafVME.h"
 #include "vtkMAFAssembly.h"
+#include "mafVME.h"
 #include "vtkRenderer.h"
+
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
@@ -40,6 +41,22 @@ public:
   
   mafPipeVTK();
   virtual ~mafPipeVTK();
+
+  /** The real setup must be performed here - not in the ctor */
+  virtual void Create(mafNode *node, mafView *view);
+
+  /** Get assembly front/back */
+  virtual vtkMAFAssembly *GetAssemblyFront(){return m_AssemblyFront;};
+  virtual vtkMAFAssembly *GetAssemblyBack(){return m_AssemblyBack;};
+
+  mafVME         *m_Vme;//it is for compatibility purposes, will be removed later;
+	vtkMAFAssembly *m_AssemblyFront; ///< Assembly used to contain the actor in the front layer
+	vtkMAFAssembly *m_AssemblyBack;  ///< Assembly used to contain the actor in the background layer
+	vtkMAFAssembly *m_AlwaysVisibleAssembly;
+  bool            m_Selected; ///< Flag used to say if the rendered VME is selected.
+  vtkRenderer    *m_RenFront; ///< Renderer associated to the front layer
+  vtkRenderer    *m_RenBack;  ///< Renderer associated to the background layer
+  vtkRenderer		 *m_AlwaysVisibleRenderer; /// < Renderer used to superimpose utility stuff to main render window
 
 protected:
 };

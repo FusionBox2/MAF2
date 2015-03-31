@@ -31,12 +31,6 @@
 //----------------------------------------------------------------------------
 class mafView;
 class mafNode;
-class mafVME;
-class mafSceneNode;
-class mafSceneGraph;
-class vtkMAFAssembly;
-class vtkRenderer;
-class mafGUI;
 
 //----------------------------------------------------------------------------
 // mafPipe :
@@ -67,10 +61,6 @@ public:
 	/** Update the properties according to the vme's tags. */
 	virtual	void UpdateProperty(bool fromTag = false)		{};
 
-  /** Get assembly front/back */
-  virtual vtkMAFAssembly *GetAssemblyFront(){return m_AssemblyFront;};
-  virtual vtkMAFAssembly *GetAssemblyBack(){return m_AssemblyBack;};
-
   /** IDs for the GUI */
   enum VISUAL_PIPE_WIDGET_ID
   {
@@ -78,16 +68,9 @@ public:
     ID_LAST
   };
 
-  mafVME         *m_Vme;      ///< VME used as input for the visual pipe
+  mafNode        *m_Node;      ///< VME used as input for the visual pipe
   mafView        *m_View;
-	vtkMAFAssembly *m_AssemblyFront; ///< Assembly used to contain the actor in the front layer
-	vtkMAFAssembly *m_AssemblyBack;  ///< Assembly used to contain the actor in the background layer
-	vtkMAFAssembly *m_AlwaysVisibleAssembly;
-	mafSceneGraph  *m_Sg;       ///< Pointer to the SceneGraph
   bool            m_Selected; ///< Flag used to say if the rendered VME is selected.
-  vtkRenderer    *m_RenFront; ///< Renderer associated to the front layer
-  vtkRenderer    *m_RenBack;  ///< Renderer associated to the background layer
-  vtkRenderer		 *m_AlwaysVisibleRenderer; /// < Renderer used to superimpose utility stuff to main render window
 
 protected:
   /**

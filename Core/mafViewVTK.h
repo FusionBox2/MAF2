@@ -123,6 +123,7 @@ public:
 
   virtual vtkRenderer     *GetFrontRenderer();
   virtual vtkRenderer     *GetBackRenderer();
+  virtual vtkRenderer     *GetAlwaysVisibleRenderer();
   virtual vtkRenderWindow *GetRenderWindow();
 
   /** 

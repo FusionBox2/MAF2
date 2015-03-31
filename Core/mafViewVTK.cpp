@@ -162,6 +162,12 @@ vtkRenderer *mafViewVTK::GetBackRenderer()
 {
   return m_Rwi->m_RenBack;
 }
+//----------------------------------------------------------------------------
+vtkRenderer *mafViewVTK::GetAlwaysVisibleRenderer()
+//----------------------------------------------------------------------------
+{
+  return m_Rwi->m_AlwaysVisibleRenderer;
+}
 
 //----------------------------------------------------------------------------
 void mafViewVTK::VmeAdd(mafNode *vme)
