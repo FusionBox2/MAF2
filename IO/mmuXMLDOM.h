@@ -18,6 +18,7 @@
 
 #include "mafUtility.h"
 
+#define XERCES_STATIC_LIBRARY
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>

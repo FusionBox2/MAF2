@@ -19,6 +19,7 @@
 //------------------------------------------------------------------------------
 // Include:
 //------------------------------------------------------------------------------
+#define XERCES_STATIC_LIBRARY
 #include <xercesc/sax/ErrorHandler.hpp>
 #include <xercesc/sax/SAXParseException.hpp>
 

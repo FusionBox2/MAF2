@@ -145,7 +145,7 @@ IF (MAF_USE_VTK)
 ENDIF (MAF_USE_VTK)
 
 # List libraries that are needed by this project.
-SET(PROJECT_LIBS mafBase mafIO mafGui mafInteraction mafOperations ${CURL_LIBRARIES})
+SET(PROJECT_LIBS mafBase mafIO mafGui mafInteraction mafOperations ${CURL_LIBRARIES} wldap32)
 
 IF (MAF_USE_VTK)
   SET(PROJECT_LIBS ${PROJECT_LIBS} vtkCommon)

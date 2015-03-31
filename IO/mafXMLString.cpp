@@ -14,6 +14,7 @@
 
 =========================================================================*/
 
+#define XERCES_STATIC_LIBRARY
 #include "mafXMLString.h"
 #include <stddef.h>
 #include <stdlib.h>

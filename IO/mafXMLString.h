@@ -19,7 +19,7 @@
 
 #include "mafConfigure.h"
 
-
+#define XERCES_STATIC_LIBRARY
 #include <xercesc/util/XMLString.hpp>
 
 #ifdef XERCES_CPP_NAMESPACE_USE

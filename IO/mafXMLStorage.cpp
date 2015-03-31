@@ -16,6 +16,7 @@
 
 //#include "mafIncludeWX.h" // to be removed
 
+#define XERCES_STATIC_LIBRARY
 #include "mafXMLStorage.h"
 #include "mafXMLElement.h"
 #include "mafXMLString.h"
