@@ -350,7 +350,7 @@ void lhpOpCutSurface::SetNodeName(mafVME *pVME, mafString *pName)
   if(pVME->GetParent() != NULL)
   {
     *pName = *pName + " parent:";
-    *pName = *pName + pVME->GetParent()->GetName();
+    *pName = *pName + pVME->GetParent()->GetName().GetCStr();
   }
 }
 

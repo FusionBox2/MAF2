@@ -96,7 +96,7 @@ void lhpOpMergeClouds::CreateGui()
 
   for(int j = 0; j < m_MergeClouds.size();j++)
   {
-    m_ListBox->Append(m_MergeClouds[j]->GetName());
+    m_ListBox->Append(m_MergeClouds[j]->GetName().GetCStr());
   }
 
 
@@ -238,7 +238,7 @@ void lhpOpMergeClouds::SetNodeName(mafVME *pVME, mafString *pName)
   if(pVME->GetParent() != NULL)
   {
     *pName = *pName + " parent:";
-    *pName = *pName + pVME->GetParent()->GetName();
+    *pName = *pName + pVME->GetParent()->GetName().GetCStr();
   }
 }
 

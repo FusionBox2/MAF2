@@ -95,7 +95,7 @@ void lhpOpJoinSurf::CreateGui()
 
   for(int j = 0; j < m_JoinSurf.size();j++)
   {
-    m_ListBox->Append(m_JoinSurf[j]->GetName());
+    m_ListBox->Append(m_JoinSurf[j]->GetName().GetCStr());
   }
 
 
@@ -370,7 +370,7 @@ void lhpOpJoinSurf::SetNodeName(mafVME *pVME, mafString *pName)
   if(pVME->GetParent() != NULL)
   {
     *pName = *pName + " parent:";
-    *pName = *pName + pVME->GetParent()->GetName();
+    *pName = *pName + pVME->GetParent()->GetName().GetCStr();
   }
 }
 
