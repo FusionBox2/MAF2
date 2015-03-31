@@ -112,7 +112,9 @@ mafVMERefSysAbstract *GetRefSys(mafVME *vme)
 }
 mafVMEAFRefSys *GetAFRefSys(mafVME *vme)
 {
-  mafVMEAFRefSys *afs = NULL;
+  mafVMEAFRefSys *afs = mafVMEAFRefSys::SafeDownCast(vme);
+  if (afs)
+    return afs;
   mafVMELandmarkCloud *lmc = mafVMELandmarkCloud::SafeDownCast(vme);
   if(lmc == NULL)
     return NULL;
