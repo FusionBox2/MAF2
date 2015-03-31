@@ -324,6 +324,7 @@ bool lhpOpKinectUtil::Import()
   Clear();
 
   mafString filestxt, sessionstxt;
+  std::vector<mafString> sessionsList;
   if(m_ExtApp)
   {
     if(m_ExtAppPath.IsEmpty())
@@ -337,7 +338,7 @@ bool lhpOpKinectUtil::Import()
     filestxt += "\\Files.txt";
     sessionstxt = filetoprd;
     sessionstxt += "\\Sessions.txt";
-    if(!mafFileExists(filetoprd))
+    if(!mafFileExists(filestxt))
       return false;
     m_C3DInputFileNameFullPaths.clear();
 
@@ -348,13 +349,18 @@ bool lhpOpKinectUtil::Import()
       {
         if(!fgets(string, 4096, fp))
           break;
+        int len = strlen(string);
+        for(int i =0; i < len; i++)
+        {
+          if(string[i] == '\n' || string[i] == '\r')
+            string[i] = '\0';
+        }
         mafString fName;
         fName = mafString(string);
         m_C3DInputFileNameFullPaths.push_back(fName);
       }
       fclose(fp);
     }
-    std::vector<mafString>         sessionsList;
     if(FILE* fp = fopen(sessionstxt, "rt"))
     {
       char string[4096];
@@ -362,6 +368,12 @@ bool lhpOpKinectUtil::Import()
       {
         if(!fgets(string, 4096, fp))
           break;
+        int len = strlen(string);
+        for(int i =0; i < len; i++)
+        {
+          if(string[i] == '\n' || string[i] == '\r')
+            string[i] = '\0';
+        }
         mafString fName;
         fName = mafString(string);
         sessionsList.push_back(fName);
@@ -398,6 +410,8 @@ bool lhpOpKinectUtil::Import()
   {
       for(unsigned fileIndex = 0; fileIndex < m_C3DInputFileNameFullPaths.size(); fileIndex++)
         mafFileRemove(m_C3DInputFileNameFullPaths[fileIndex]);
+      for(unsigned sessionIndex = 0; sessionIndex < sessionsList.size(); sessionIndex++)
+        mafDirRemove(sessionsList[sessionIndex]);
       mafFileRemove(filestxt);
       mafFileRemove(sessionstxt);
   }
