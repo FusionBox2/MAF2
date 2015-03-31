@@ -82,6 +82,7 @@
 #include "medOpVolumeResample.h"
 #include "mafOpAddLandmark.h"
 #include "medOpRegisterClusters.h"
+#include "lhpOpFuseLMScripted.h"
 #include "lhpOpRegisterLMScripted.h"
 #include "mafOpCreateSurfaceParametric.h"
 #include "lhpOpBuildHierarchy.h"
@@ -667,6 +668,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
     m_Logic->Plug(new mafOpCreateSlicer("Slicer"),"Create/Derive");
     m_Logic->Plug(new medOpFreezeVME("Freeze VME"),"Create/Derive");
     m_Logic->Plug(new medOpRegisterClusters("Register Landmark Cloud"),"Modify/Fuse");
+    m_Logic->Plug(new lhpOpFuseLMScripted("Fuse LM based model"),"Modify/Fuse");
     m_Logic->Plug(new lhpOpRegisterLMScripted("Register Landmark Cloud Tree"),"Modify/Fuse");
     //m_Logic->Plug(new medOpCreateWrappedMeter("Wrapped Meter"),"Create/Derive");
     m_Logic->Plug(new medOpComputeWrapping("Wrapped Action Line"),"Create/Derive");//15-1-2009

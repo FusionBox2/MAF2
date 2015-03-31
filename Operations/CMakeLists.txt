@@ -195,6 +195,8 @@ SET(PROJECT_SRCS
 	lhpOpSoftReg.h
 	lhpOpRegisterLMScripted.cpp
 	lhpOpRegisterLMScripted.h
+	lhpOpFuseLMScripted.cpp
+	lhpOpFuseLMScripted.h
 	lhpOpComputeTensor.cpp
 	lhpOpComputeTensor.h
 	lhpCOmputeTensor.cpp
