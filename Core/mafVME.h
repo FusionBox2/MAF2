@@ -71,11 +71,6 @@ public:
   mafVME *GetParent() const;
 
   /**
-    This function set the parent for this Node. It has been redefined to update 
-    AbsMatrixPipe input frame. */
-  virtual int SetParent(mafNode *parent);
-
-  /**
     Copy the contents of another VME into this one. Notice that subtrees
     are not copied, i.e. copy is not recursive!
     Concrete class should reimplement this function to verify admitted
@@ -267,6 +262,11 @@ protected:
 
   /** update the matrix */
   virtual void InternalUpdateMatrix() {}
+
+  /**
+  This function set the parent for this Node. It has been redefined to update 
+  AbsMatrixPipe input frame. */
+  virtual int SetParent(mafNode *parent);
 
   /** 
     Set the output and connect it to the VME. This is automatically called

@@ -223,7 +223,7 @@ public:
     function to avoid these problems when reparenting to different trees.
     To move a node into a different tree you better use DeepCopy to copy 
     it into a Node of that tree.*/
-  virtual int ReparentTo(mafNode *parent);
+  int ReparentTo(mafNode *parent);
 
   /** Import all children of another tree into this tree */
   void Import(mafNode *tree);

@@ -449,7 +449,7 @@ mafNode *mafNode::FindInTreeById(const mafID id)
 int mafNode::AddChild(mafNode *node)
 //-------------------------------------------------------------------------
 {
-  return node->SetParent(this);
+  return node->ReparentTo(this);
 }  
 
 //-------------------------------------------------------------------------
