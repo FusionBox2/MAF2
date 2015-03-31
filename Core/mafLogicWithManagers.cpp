@@ -625,6 +625,7 @@ void mafLogicWithManagers::CreateToolbar()
   m_ToolBar->AddTool(MENU_USER_START + 1, mafPictureFactory::GetPictureFactory()->GetBmp("OP_REDO"),  _("redo (ctrl+shift+z)"));
   m_ToolBar->AddSeparator();
 
+  m_ToolBar->AddTool(MENU_USER_START + 2, mafPictureFactory::GetPictureFactory()->GetBmp("OP_DELETE"),  _("delete selected vme (ctrl+shift+d)"));
   m_ToolBar->AddTool(MENU_USER_START + 3, mafPictureFactory::GetPictureFactory()->GetBmp("OP_CUT"),  _("cut selected vme (ctrl+x)"));
   m_ToolBar->AddTool(MENU_USER_START + 4, mafPictureFactory::GetPictureFactory()->GetBmp("OP_COPY"), _("copy selected vme (ctrl+c)"));
   m_ToolBar->AddTool(MENU_USER_START + 5, mafPictureFactory::GetPictureFactory()->GetBmp("OP_PASTE"),_("paste vme (ctrl+v)"));

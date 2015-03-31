@@ -86,6 +86,8 @@ void mafPictureFactory::Initialize()
     mafADDPIC(MDICHILD_ICON);
     #include <pic/OP_COPY.xpm>
     mafADDPIC(OP_COPY);
+    #include <pic/OP_DELETE.xpm>
+    mafADDPIC(OP_DELETE);
     #include <pic/OP_CUT.xpm>
     mafADDPIC(OP_CUT);
     #include <pic/OP_PASTE.xpm>
