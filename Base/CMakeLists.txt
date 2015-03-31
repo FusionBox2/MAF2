@@ -47,8 +47,6 @@ mafObjectFactory.cpp
 mafObjectFactory.h
 mafBaseEventHandler.cpp
 mafBaseEventHandler.h
-mafBaseEventHandlerCallback.cpp
-mafBaseEventHandlerCallback.h
 mafReferenceCounted.cpp
 mafReferenceCounted.h
 mafSmartPointer.h
