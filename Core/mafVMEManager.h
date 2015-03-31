@@ -62,12 +62,6 @@ public:
 	/** Open the msf from file history. */
   int MSFOpen(int file_id);
 
-  /** Open the compressed zmsf filename. */
-  const char *ZIPOpen(mafString filename);
-
-  /** Save the msf tree into a compressed file. */
-  void ZIPSave(mafString file = "");
-  
 	/** Save the msf tree. */
   int MSFSave();
   
@@ -152,9 +146,6 @@ public:
   /** Set the local cache folder in which will be downloaded remote files.*/
   void SetLocalCacheFolder(mafString cache_folder);
 
-  /** Remove temporary directory used for compressed msf files.*/
-  void RemoveTempDirectory();
-
   /** Set the flag for saving binary files associated to time varying VMEs.*/
   void SetSingleBinaryFile(bool singleFile);
 
@@ -162,17 +153,12 @@ public:
   void SetTestMode(bool testmode){m_TestMode = testmode;}; // Losi 02/16/2010 for test class
 
 protected:
-  /** Create a compressed msf file: zmsf.*/
-  bool MakeZip(const mafString &zipname, wxArrayString *files);
-
   /** Set tag with creation date for the node passed as argument.*/
   void AddCreationDate(mafNode *vme);
 
   bool                m_Modified;         ///< Used to known when the tree has been modified...
 
   wxConfigBase*       m_Config;           ///< Application configuration for file history management
-  wxZipFSHandler      *m_ZipHandler;      ///< Handler for zip archive (used to open zmsf files)
-  wxFileSystem        *m_FileSystem;      ///< File system manager
   mafGUIFileHistory	  m_FileHistory;      ///< Used to hold recently opened files
   int                 m_FileHistoryIdx;   ///< Identifier of the file to open
 

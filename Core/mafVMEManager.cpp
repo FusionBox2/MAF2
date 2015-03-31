@@ -48,6 +48,8 @@
 
 #include <fstream>
 
+#include "mafFilesDirs.h"
+
 //----------------------------------------------------------------------------
 mafVMEManager::mafVMEManager()
 //----------------------------------------------------------------------------
@@ -70,8 +72,6 @@ mafVMEManager::mafVMEManager()
   m_SingleBinaryFile = false;
 
   m_Config = wxConfigBase::Get();
-  m_ZipHandler = NULL;
-  m_FileSystem = NULL;
 
   m_TestMode = false;
 }
@@ -84,8 +84,6 @@ mafVMEManager::~mafVMEManager()
 
   m_AppStamp.clear();
   SetListener(NULL);// m_Listener = NULL;
-  m_FileSystem->CleanUpHandlers(); // Handlers are shared trough file systems.
-  cppDEL(m_FileSystem);
   
   mafDEL(m_Storage);
   cppDEL(m_Config);
@@ -175,29 +173,6 @@ void mafVMEManager::SetLocalCacheFolder(mafString cache_folder)
   }
 }
 //----------------------------------------------------------------------------
-void mafVMEManager::RemoveTempDirectory()
-//----------------------------------------------------------------------------
-{
-  if (m_TmpDir != "")
-  {
-    mafString working_dir;
-    working_dir = mafGetApplicationDirectory();
-    wxSetWorkingDirectory(working_dir.GetCStr());
-    if(::wxDirExists(m_TmpDir)) //remove tmp directory due to zip extraction or compression
-    {
-      wxString file_match = m_TmpDir + "/*.*";
-      wxString f = wxFindFirstFile(file_match);
-      while ( !f.IsEmpty() )
-      {
-        ::wxRemoveFile(f);
-        f = wxFindNextFile();
-      }
-      ::wxRmdir(m_TmpDir.GetCStr());
-    }
-    m_TmpDir = "";
-  }
-}
-//----------------------------------------------------------------------------
 void mafVMEManager::MSFNew(bool notify_root_creation)
 //----------------------------------------------------------------------------
 {
@@ -207,7 +182,8 @@ void mafVMEManager::MSFNew(bool notify_root_creation)
     mafEventMacro(mafEvent(this,CLEAR_UNDO_STACK)); // ask logic to clear the undo stack
   }
 
-  RemoveTempDirectory(); // remove the temporary directory
+  mafRemoveDirectory(m_TmpDir); // remove the temporary directory
+  m_TmpDir = "";
 
   m_Modified = false;
 
@@ -328,7 +304,8 @@ int mafVMEManager::MSFOpen(mafString filename)
       ((mafRemoteStorage *)m_Storage)->GetRemoteFileManager()->DownloadRemoteFile(remote_filename, local_filename); // download the remote file in the download cache
       filename = local_filename;
     }
-    unixname = ZIPOpen(filename); // open the zmsf archive and extract it to the temporary directory
+    m_ZipFile = filename;
+    unixname = mafOpenZIP(filename, m_Storage->GetTmpFolder(), m_TmpDir); // open the zmsf archive and extract it to the temporary directory
     if(unixname.IsEmpty())
     {
     	mafMessage(_("Bad or corrupted z" + m_file_extension + " file!"));
@@ -456,204 +433,8 @@ int mafVMEManager::MSFOpen(mafString filename)
     cppDEL(disableAll);
     cppDEL(wait_cursor);
   }
-  return res;
 }
-//----------------------------------------------------------------------------
-const char *mafVMEManager::ZIPOpen(mafString filename)
-//----------------------------------------------------------------------------
-{
-  wxString path, name, ext;
-  
-  m_ZipFile = filename;
-  mafString zip_cache = wxPathOnly(filename.GetCStr()); // get the directory
-  if (zip_cache.IsEmpty())
-  {
-    zip_cache = m_Storage->GetTmpFolder();
-  }
-  
-  zip_cache += "/";
-  zip_cache = wxFileName::CreateTempFileName(zip_cache.GetCStr()); // used to get a valid temporary name for cache directory
-  wxRemoveFile(zip_cache.GetCStr());
-  wxSplitPath(zip_cache.GetCStr(),&path,&name,&ext);
-  zip_cache = path + "/" + name + ext;
-  zip_cache.ParsePathName();
-  
-  if (!wxDirExists(zip_cache.GetCStr()))
-    wxMkdir(zip_cache.GetCStr()); // create a temporary directory in which extract the archive
-  m_TmpDir = zip_cache;
 
-  wxString complete_name, zfile, out_file;
-  wxSplitPath(m_ZipFile.GetCStr(),&path,&name,&ext);
-  complete_name = name + "." + ext;
-  
-  wxFSFile *zfileStream;
-  wxZlibInputStream *zip_is;
-  wxString pkg = "#zip:";
-  wxString header_name = complete_name + pkg;
-  int length_header_name = header_name.Length();
-  bool enable_mid = false;
-  if(m_FileSystem == NULL)m_FileSystem = new wxFileSystem();
-  
-  if(m_ZipHandler == NULL)
-  {
-    m_ZipHandler = new wxZipFSHandler();
-    m_FileSystem->AddHandler(m_ZipHandler); // add the handler that manage zip protocol
-    // (the handler to manage the local files protocol is already added to wxFileSystem)
-  }
-  
-  m_FileSystem->ChangePathTo(m_ZipFile.GetCStr());
-  // extract filename from the zip archive
-  zfile = m_FileSystem->FindFirst(complete_name+pkg+name+"\\*.*");
-  if (zfile == "")
-  {
-    enable_mid = true;
-    // no files found: try to search inside the archive without filename
-    zfile = m_FileSystem->FindFirst(complete_name+pkg+"\\*.*");
-  }
-  if (zfile == "")
-  {
-    // no files found inside the archive
-    RemoveTempDirectory(); // remove the temporary directory
-    return "";
-  }
-  wxSplitPath(zfile,&path,&name,&ext);
-  complete_name = name + "." + ext;
-  if (enable_mid)
-    complete_name = complete_name.Mid(length_header_name);
-  zfileStream = m_FileSystem->OpenFile(zfile);
-  if (zfileStream == NULL) // unable to open the file
-  {
-    RemoveTempDirectory(); // remove the temporary directory
-    return "";
-  }
-  zip_is = (wxZlibInputStream *)zfileStream->GetStream();
-  out_file = m_TmpDir + "\\" + complete_name;
-  char *buf;
-  int s_size;
-  std::ofstream out_file_stream;
-
-  //if(ext == "msf")
-  if(ext.IsSameAs(m_file_extension,true)) 
-  {
-    m_MSFFile = out_file; // the file to extract is the msf
-    out_file_stream.open(out_file, std::ios_base::out);
-  }
-  else
-  {
-    out_file_stream.open(out_file, std::ios_base::binary); // the file to extract is a binary
-  }
-  s_size = zip_is->GetSize();
-  buf = new char[s_size];
-  zip_is->Read(buf,s_size);
-  out_file_stream.write(buf, s_size);
-  out_file_stream.close();
-  delete[] buf;
-  
-  zfileStream->UnRef();
-  delete zfileStream;
-
-  while ((zfile = m_FileSystem->FindNext()) != "")
-  {
-    zfileStream = m_FileSystem->OpenFile(zfile);
-    if (zfileStream == NULL) // unable to open the file
-    {
-      RemoveTempDirectory(); // remove the temporary directory
-      return "";
-    }
-    zip_is = (wxZlibInputStream *)zfileStream->GetStream();
-    wxSplitPath(zfile,&path,&name,&ext);
-    complete_name = name + "." + ext;
-    if (enable_mid)
-      complete_name = complete_name.Mid(length_header_name);
-    out_file = m_TmpDir + "\\" + complete_name;
-    //if(ext == "msf")
-	if(ext.IsSameAs(m_file_extension,true))
-    {
-      m_MSFFile = out_file; // The file to extract is an msf
-      out_file_stream.open(out_file, std::ios_base::out);
-    }
-    else
-      out_file_stream.open(out_file, std::ios_base::binary); // The file to extract is a binary
-    s_size = zip_is->GetSize();
-    buf = new char[s_size];
-    zip_is->Read(buf,s_size);
-    out_file_stream.write(buf, s_size);
-    out_file_stream.close();
-    delete[] buf;
-    zfileStream->UnRef();
-    delete zfileStream;
-  }
-  
-  m_FileSystem->ChangePathTo(m_TmpDir.GetCStr(), TRUE);
-
-  
-  if (m_MSFFile == "") // msf file not extracted
-  {
-    mafMessage(_("compressed archive is not a valid " + m_file_extension + " file!"), _("Error"));
-    return "";
-  }
-
-  // return the extracted msf filename
-  return m_MSFFile.GetCStr();
-}
-//----------------------------------------------------------------------------
-void mafVMEManager::ZIPSave(mafString filename)
-//----------------------------------------------------------------------------
-{
-  m_ZipFile = filename.IsEmpty() ? "" : filename;
-
-  if (m_ZipFile.IsEmpty())
-  {
-    return;
-  }
-
-  wxArrayString files;
-  wxDir::GetAllFiles(m_TmpDir.GetCStr(), &files); // get all files in the temporary directory
-
-  if (!MakeZip(m_ZipFile.GetCStr(),&files))
-  {
-    mafMessage(_("Failed to create compressed archive!"),_("Error"));
-  }
-}
-//----------------------------------------------------------------------------
-bool mafVMEManager::MakeZip(const mafString &zipname, wxArrayString *files)
-//----------------------------------------------------------------------------
-{
-  wxString name, path, short_name, ext;
-  wxFileOutputStream out(zipname.GetCStr());
-  wxZipOutputStream zip(out);
-
-  if (!out || !zip)
-    return false;
-
-  for (size_t i = 0; i < files->GetCount(); i++)
-  {
-    name = files->Item(i);
-    wxSplitPath(name, &path, &short_name, &ext);
-    short_name += ".";
-    short_name += ext;
-
-    if (wxDirExists(name)) 
-    {
-      if (!zip.PutNextDirEntry(name)) // put the file inside the archive
-        return false;
-    }
-    else 
-    {
-      wxFFileInputStream in(name);
-
-      if (in.Ok()) 
-      {
-        wxDateTime dt(wxFileModificationTime(name)); // get the file modification time
-
-        if (!zip.PutNextEntry(short_name, dt, in.GetLength()) || !zip.Write(in) || !in.Eof()) // put the file inside the archive
-          return false;
-      }
-    }
-  }
-
-  return zip.Close() && out.Close();
-}
 //----------------------------------------------------------------------------
 int mafVMEManager::MSFSave()
 //----------------------------------------------------------------------------
@@ -730,7 +511,7 @@ int mafVMEManager::MSFSave()
   // add the msf (or zmsf) to the history
   if (!m_ZipFile.IsEmpty())
   {
-    ZIPSave(m_ZipFile);
+    mafZIPSave(m_ZipFile, m_TmpDir);
     m_FileHistory.AddFileToHistory(m_ZipFile.GetCStr()); // add the zmsf to the file history
   }
   else

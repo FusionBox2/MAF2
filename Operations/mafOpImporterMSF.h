@@ -54,12 +54,6 @@ public:
   This is used when the operation is executed not using user interface. */
   void SetFileName(const char *name) {m_File = name;};
 
-  /** Open the compressed zmsf filename. */
-  const char *ZIPOpen(mafString filename);
-
-  /** Remove temporary directory used for compressed msf files.*/
-  void RemoveTempDirectory();
-
 protected:
   mafString         m_File;
   mafString         m_TmpDir;
