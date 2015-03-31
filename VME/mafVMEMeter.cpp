@@ -70,6 +70,8 @@ mafVMEMeter::mafVMEMeter()
 {
   m_Distance      = -1.0;
   m_Angle         = 0.0;
+
+  m_InfiniteLine  = 0;
   
   m_StartVmeName  = "";
   m_EndVme1Name   = "";
@@ -164,6 +166,7 @@ int mafVMEMeter::DeepCopy(mafNode *a)
 	{
 		mafVMEMeter *meter = mafVMEMeter::SafeDownCast(a);
 		m_Transform->SetMatrix(meter->m_Transform->GetMatrix());
+    m_InfiniteLine = meter->m_InfiniteLine;
 
 		mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
 		if (dpipe)
@@ -436,7 +439,31 @@ void mafVMEMeter::InternalUpdate()
       p2[1] = m_EndPoint2[1];
       p2[2] = m_EndPoint2[2];
 
-      vtkLine::DistanceToLine(start,p1,p2,t,p3);
+      if(!m_InfiniteLine)
+        vtkLine::DistanceToLine(start,p1,p2,t,p3);
+      else
+      {
+        double np1[3], p1p2[3], proj, den;
+
+        for (int i=0; i<3; i++) 
+        {
+          np1[i] = start[i] - p1[i];
+          p1p2[i] = p1[i] - p2[i];
+        }
+
+        proj = 0;
+        if ( (den=vtkMath::Norm(p1p2)) != 0.0 )
+        {
+          for (int i=0; i<3; i++)
+          {
+            p1p2[i] /= den;
+          }
+          proj = vtkMath::Dot(np1,p1p2);
+        }
+        for (int i=0; i<3; i++) 
+          p3[i] = p1[i] + proj * p1p2[i];
+
+      }
 
       // compute distance between start and closest point
       m_Distance = sqrt(vtkMath::Distance2BetweenPoints(start,p3));
@@ -636,6 +663,7 @@ int mafVMEMeter::InternalStore(mafStorageElement *parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
+    parent->StoreInteger("Infinite", m_InfiniteLine);
     parent->StoreMatrix("Transform",&m_Transform->GetMatrix());
     return MAF_OK;
   }
@@ -648,6 +676,7 @@ int mafVMEMeter::InternalRestore(mafStorageElement *node)
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
+    node->RestoreInteger("Infinite", m_InfiniteLine);
     if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
@@ -838,8 +867,11 @@ mafGUI* mafVMEMeter::CreateGui()
   m_Gui->Button(ID_END1_METER_LINK,&m_EndVme1Name,_("End 1"), _("Select the end vme for point distance"));
   m_Gui->Button(ID_END2_METER_LINK,&m_EndVme2Name,_("End 2"), _("Select the vme representing \nthe point for line distance"));
 
+  m_Gui->Bool(ID_INFINITE_LINE, _("Infinite"), &m_InfiniteLine);
+
   if(GetMeterAttributes()->m_MeterMode == POINT_DISTANCE)
     m_Gui->Enable(ID_END2_METER_LINK,false);
+  m_Gui->Enable(ID_INFINITE_LINE, GetMeterAttributes()->m_MeterMode == LINE_DISTANCE);
 
   m_Gui->Bool(ID_PLOT_PROFILE,_("plot profile"),&m_GenerateHistogram);
   m_Gui->Enable(ID_PLOT_PROFILE,GetMeterAttributes()->m_MeterMode == POINT_DISTANCE);
@@ -897,6 +929,11 @@ void mafVMEMeter::OnEvent(mafEventBase *maf_event)
   {
     switch(e->GetId())
     {
+      case ID_INFINITE_LINE:
+        this->Modified();
+        e->SetId(CAMERA_UPDATE);
+        ForwardUpEvent(e);
+        break;
       case ID_START_METER_LINK:
       case ID_END1_METER_LINK:
       case ID_END2_METER_LINK:
@@ -964,6 +1001,7 @@ void mafVMEMeter::OnEvent(mafEventBase *maf_event)
 		  {       
 			  m_Gui->Enable(ID_END2_METER_LINK,true);
 		  }
+      m_Gui->Enable(ID_INFINITE_LINE,GetMeterAttributes()->m_MeterMode == LINE_DISTANCE);
       m_Gui->Enable(ID_PLOT_PROFILE,GetMeterAttributes()->m_MeterMode == POINT_DISTANCE);
       m_Gui->Enable(ID_PLOTTED_VME_LINK, GetMeterAttributes()->m_MeterMode == POINT_DISTANCE);
       this->Modified();

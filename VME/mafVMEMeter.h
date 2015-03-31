@@ -72,6 +72,7 @@ public:
     ID_START_METER_LINK = Superclass::ID_LAST,
     ID_END1_METER_LINK,
     ID_END2_METER_LINK,
+    ID_INFINITE_LINE,
     ID_PLOTTED_VME_LINK,
 	  ID_METER_MODE,
     ID_PLOT_PROFILE,
@@ -260,6 +261,7 @@ protected:
   double m_StartPoint[3];
   double m_EndPoint[3];
   double m_EndPoint2[3];
+  int    m_InfiniteLine;
 
   mafTransform *m_Transform;
 
