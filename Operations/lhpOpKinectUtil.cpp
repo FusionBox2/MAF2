@@ -323,6 +323,7 @@ bool lhpOpKinectUtil::Import()
   bool result = false;
   Clear();
 
+  mafString filestxt, sessionstxt;
   if(m_ExtApp)
   {
     if(m_ExtAppPath.IsEmpty())
@@ -332,12 +333,15 @@ bool lhpOpKinectUtil::Import()
     commandline += " -logging" + filetoprd;
     if(wxExecute(commandline.GetCStr(), wxEXEC_SYNC) != 0)
       return false;
-    filetoprd += "\\Files.txt";
+    filestxt = filetoprd;
+    filestxt += "\\Files.txt";
+    sessionstxt = filetoprd;
+    sessionstxt += "\\Sessions.txt";
     if(!mafFileExists(filetoprd))
       return false;
     m_C3DInputFileNameFullPaths.clear();
 
-    if(FILE* fp = fopen(filetoprd, "rt"))
+    if(FILE* fp = fopen(filestxt, "rt"))
     {
       char string[4096];
       while(!feof(fp))
@@ -347,6 +351,20 @@ bool lhpOpKinectUtil::Import()
         mafString fName;
         fName = mafString(string);
         m_C3DInputFileNameFullPaths.push_back(fName);
+      }
+      fclose(fp);
+    }
+    std::vector<mafString>         sessionsList;
+    if(FILE* fp = fopen(sessionstxt, "rt"))
+    {
+      char string[4096];
+      while(!feof(fp))
+      {
+        if(!fgets(string, 4096, fp))
+          break;
+        mafString fName;
+        fName = mafString(string);
+        sessionsList.push_back(fName);
       }
       fclose(fp);
     }
@@ -377,7 +395,12 @@ bool lhpOpKinectUtil::Import()
     }
   }
   if(m_ExtApp && !m_C3DInputFileNameFullPaths.empty())
-    mafFileRemove(m_C3DInputFileNameFullPaths[0]);
+  {
+      for(unsigned fileIndex = 0; fileIndex < m_C3DInputFileNameFullPaths.size(); fileIndex++)
+        mafFileRemove(m_C3DInputFileNameFullPaths[fileIndex]);
+      mafFileRemove(filestxt);
+      mafFileRemove(sessionstxt);
+  }
   return result;
 }
 
