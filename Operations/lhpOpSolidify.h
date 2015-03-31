@@ -18,6 +18,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 //----------------------------------------------------------------------------
 #include "mafOp.h"
 #include "mafVMELandmarkCloud.h"
+#include "mafVectors.h"
 
 
 //----------------------------------------------------------------------------
@@ -54,6 +55,7 @@ public:
 
   static bool RigidBodyAccept(mafNode* node) {if(node != NULL && node->IsA("mafVMELandmarkCloud") && !((mafVMELandmarkCloud*)node)->IsOpen() && !((mafVMELandmarkCloud*)node)->IsAnimated())return true; return false;}
 
+  static void (*m_SolidificationAlgorithm)(const std::vector<V3d<double> >& gold, std::vector<std::vector<V3d<double> > >& motion, std::vector<std::vector<bool> >& visibility);
 protected:
   void SetNodeName(mafVME *pVME, mafString *pName);
 

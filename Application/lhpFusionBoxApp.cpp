@@ -435,6 +435,7 @@ bool lhpFusionBoxApp::OnInit()
   LibHandle C3DLib      = NULL;
   LibHandle matlabLib   = NULL;
   LibHandle fullControl = NULL;
+  LibHandle solidifier  = NULL;
   bool fullVersion      = false;
 
   fullControl = mafDynamicLoader::OpenLibrary("full_ver");
@@ -491,6 +492,21 @@ bool lhpFusionBoxApp::OnInit()
     }
   }
 
+  solidifier = mafDynamicLoader::OpenLibrary("solidify");
+  if(solidifier)
+  {
+    lhpOpSolidify::m_SolidificationAlgorithm = (void(*)(const std::vector<V3d<double> >& gold, std::vector<std::vector<V3d<double> > >& motion, std::vector<std::vector<bool> >& visibility))mafDynamicLoader::GetSymbolAddress(solidifier, "solidify");
+
+    if(lhpOpSolidify::m_SolidificationAlgorithm)
+    {
+      m_Plugins.push_back(std::make_pair(solidifier, (void(*)())NULL));
+    }
+    else
+    {
+      mafDynamicLoader::CloseLibrary(solidifier);
+      solidifier = NULL;
+    }
+  }
   int result;
  
   result = medVMEFactory::Initialize();
@@ -676,7 +692,8 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
     m_Logic->Plug(new lhpOpHelAxis("Helical axis"),"Create/Derive");
     m_Logic->Plug(new lhpOpTimeReduce("Time reduce"),"Modify");
     m_Logic->Plug(new lhpOpLMProj(true, "Landmark Cloud Projection"),"Create/Derive");
-    m_Logic->Plug(new lhpOpSolidify("Solidify Landmark Cloud"),"Create/Derive");
+    if(lhpOpSolidify::m_SolidificationAlgorithm)
+      m_Logic->Plug(new lhpOpSolidify("Solidify Landmark Cloud"),"Create/Derive");
     m_Logic->Plug(new lhpOpSoftReg("Soft tissue registration"),"Create/Derive");
     m_Logic->Plug(new lhpOpCreateObject<mafVMEBSplineLine>("BSplineLine", "BSplineLine"),"Create/New");
     m_Logic->Plug(new lhpOpCreateObject<mafVMEBSplineSurface>("BSplineSurface", "BSplineSurface"),"Create/New");

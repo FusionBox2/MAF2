@@ -54,6 +54,8 @@ mafCxxTypeMacro(lhpOpSolidify);
 //----------------------------------------------------------------------------
 
 
+void (*lhpOpSolidify::m_SolidificationAlgorithm)(const std::vector<V3d<double> >& gold, std::vector<std::vector<V3d<double> > >& motion, std::vector<std::vector<bool> >& visibility);
+
 //----------------------------------------------------------------------------
 lhpOpSolidify::lhpOpSolidify(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
@@ -157,26 +159,45 @@ void lhpOpSolidify::OpStop(int result)
   newcloud->SetName(ncname);
   //newcloud->DeepCopy(cloud);
   cloud->GetTimeStamps(stmps);
+  std::vector<V3d<double> > gold;
+  std::vector<std::vector<V3d<double> > > motion;
+  std::vector<std::vector<bool> >         visibl;
+  gold.resize(m_Source->GetNumberOfLandmarks());
+  for(int i = 0; i < m_Source->GetNumberOfLandmarks(); i++)
+  {
+    m_Source->GetLandmark(i, gold[i].components);
+  }
+  motion.resize(stmps.size());
+  visibl.resize(stmps.size());
   for(int i = 0; i < stmps.size(); i++)
   {
     mafMatrix m;
     cloud->GetOutput()->GetMatrix(m, stmps[i]);
     m.SetTimeStamp(stmps[i]);
     //newcloud->SetMatrix(m);
+    motion[i].resize(cloud->GetNumberOfLandmarks());
+    visibl[i].resize(cloud->GetNumberOfLandmarks());
     for(int j = 0; j < cloud->GetNumberOfLandmarks(); j++)
     {
       V3d<double> lm;
-      bool        visible;
       cloud->GetLandmark(j, lm.components, stmps[i]);
       V4d<double> lm4, lm41;
       lm4 = V4d<double>(lm[0], lm[1], lm[2], 1.0);
       m.MultiplyPoint(lm4.components, lm41.components);
-      lm = V3d<double>(lm41.components);
+      motion[i][j] = V3d<double>(lm41.components);
+      visibl[i][j] = cloud->GetLandmarkVisibility(j, stmps[i]);
+    }
+  }
+  m_SolidificationAlgorithm(gold, motion, visibl);
+  for(int i = 0; i < stmps.size(); i++)
+  {
+    for(int j = 0; j < cloud->GetNumberOfLandmarks(); j++)
+    {
+      V3d<double> lm = motion[i][j];
       if(newcloud->FindLandmarkIndex(cloud->GetLandmarkName(j)) == -1)
         newcloud->AppendLandmark(cloud->GetLandmarkName(j));
       newcloud->SetLandmark(cloud->GetLandmarkName(j), lm[0], lm[1], lm[2], stmps[i]);
-      visible = cloud->GetLandmarkVisibility(j, stmps[i]);
-      newcloud->SetLandmarkVisibility(cloud->GetLandmarkName(j), visible, stmps[i]);
+      newcloud->SetLandmarkVisibility(cloud->GetLandmarkName(j), visibl[i][j], stmps[i]);
     }
   }
   newcloud->Modified();
