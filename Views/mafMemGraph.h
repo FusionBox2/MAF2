@@ -410,7 +410,7 @@ void mafMemoryGraphBase<T>::AddPoint(const std::vector<T> &point)
   else //add to non empty container
   {
     diff = point[0] - GetValue(GetUsedMemSpace() - 1, 0, 0);
-    if(diff > 0.0) //do not apply to warped points
+    /*if(diff > 0.0) //do not apply to warped points
     {
       noticeableVal = m_PointNoticeCriterion * (m_MaxParam - m_MinParam);
       if((diff + m_UnnoticedRange) < noticeableVal)
@@ -427,7 +427,7 @@ void mafMemoryGraphBase<T>::AddPoint(const std::vector<T> &point)
         m_UnnoticedRange = ((m_UnnoticedRange > noticeableVal) ? noticeableVal : m_UnnoticedRange);
         m_UnnoticedRange = ((m_UnnoticedRange < 0.0) ? 0.0 : m_UnnoticedRange);
       }
-    }
+    }*/
     //update points rect
     length                = m_MaxParam - m_MinParam;
     addGrow               = length * m_RangeGrowStep * 0.01;
@@ -824,7 +824,7 @@ Memory Graph instantiation with double*/
 class mafMemoryGraph: public mafMemoryGraphBase<double>
 {
 public:
-  mafMemoryGraph(double garbage,unsigned int size = 1000): m_garbage(garbage),  mafMemoryGraphBase(size){}
+  mafMemoryGraph(double garbage,unsigned int size = 5000): m_garbage(garbage),  mafMemoryGraphBase(size){}
   const double&   GetGarbageValue(){return m_garbage;}
 private:
   double m_garbage;
