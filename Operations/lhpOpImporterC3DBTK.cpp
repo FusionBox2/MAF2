@@ -396,17 +396,17 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
   mafVMELandmarkCloud *specCloud = NULL;//the only cloud if read without dictionary and NOT_IN_DICTIONARY with
   mafString specCloudName;//name of specCloud
 
-  specCloudName.Append(intData.m_FileName);
+  //specCloudName.Append(intData.m_FileName);
   if(!usingDictionary)//without dictionary create cloud and set its name
   {
     mafNEW(specCloud);
     if(specCloud == NULL)
       return;
-    specCloudName.Append("_TRAJECTORIES");
+    specCloudName.Append("TRAJECTORIES");
     specCloud->SetName(specCloudName);
   }
   else//with dictionary just prepare name, creation only if needed
-    specCloudName.Append("_NOT_IN_DICTIONARY");
+    specCloudName.Append("NOT_IN_DICTIONARY");
 
   mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
   
@@ -455,8 +455,8 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
                   //if created successfully use it
                   if(cld != NULL)
                   {
-                    cldName.Append(intData.m_FileName);
-                    cldName.Append("_");
+                    /*cldName.Append(intData.m_FileName);
+                    cldName.Append("_");*/
                     cldName.Append(nmIt->second);
                     cld->SetName(cldName);
                     intData.m_Clouds[nmIt->second] = cld;
@@ -611,8 +611,8 @@ void lhpOpImporterC3DBTK::ImportAnalog(lhpOpImporterC3DBTK::_InternalC3DData &in
   //name analog vme
   mafNEW(intData.m_VmeAnalog);
   mafString analogVmeName;
-  analogVmeName.Append(intData.m_FileName);
-  analogVmeName.Append("_ANALOG");
+  //analogVmeName.Append(intData.m_FileName);
+  analogVmeName.Append("ANALOG");
   intData.m_VmeAnalog->SetName(analogVmeName);
 
   vnl_matrix<double> analogMatrix;
@@ -735,8 +735,8 @@ void lhpOpImporterC3DBTK::ImportPlatform(lhpOpImporterC3DBTK::_InternalC3DData &
     mafString platformNumber;
     platformNumber << (currentPlatform + 1) ;
     mafString platformName;
-    platformName.Append(intData.m_FileName);
-    platformName.Append("_FORCE_PLATFORM_");
+    //platformName.Append(intData.m_FileName);
+    platformName.Append("FORCE_PLATFORM_");
     platformName.Append(platformNumber);
     intData.m_PlatformList[currentPlatform]->SetName(platformName);
 
@@ -753,8 +753,8 @@ void lhpOpImporterC3DBTK::ImportPlatform(lhpOpImporterC3DBTK::_InternalC3DData &
     mafNEW(force);
     intData.m_ForceList.push_back(force);
     mafString forceName;
-    forceName.Append(intData.m_FileName);
-    forceName.Append("_GRF_");
+    //forceName.Append(intData.m_FileName);
+    forceName.Append("GRF_");
     forceName.Append(platformNumber);
     intData.m_ForceList[currentPlatform]->SetName(forceName);
 
@@ -763,8 +763,8 @@ void lhpOpImporterC3DBTK::ImportPlatform(lhpOpImporterC3DBTK::_InternalC3DData &
     mafNEW(moment);
     intData.m_MomentList.push_back(moment);
     mafString momentName;
-    momentName.Append(intData.m_FileName);
-    momentName.Append("_MOMENT_");
+    //momentName.Append(intData.m_FileName);
+    momentName.Append("MOMENT_");
     momentName.Append(platformNumber);
     intData.m_MomentList[currentPlatform]->SetName(momentName);
 

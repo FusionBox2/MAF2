@@ -548,17 +548,17 @@ void lhpOpImporterC3D::ImportTrajectories(lhpOpImporterC3D::_InternalC3DData &in
   mafVMELandmarkCloud *specCloud = NULL;//the only cloud if read without dictionary and NOT_IN_DICTIONARY with
   mafString specCloudName;//name of specCloud
 
-  specCloudName.Append(intData.m_FileName);
+  //specCloudName.Append(intData.m_FileName);
   if(!usingDictionary)//without dictionary create cloud and set its name
   {
     mafNEW(specCloud);
     if(specCloud == NULL)
       return;
-    specCloudName.Append("_TRAJECTORIES");
+    specCloudName.Append("TRAJECTORIES");
     specCloud->SetName(specCloudName);
   }
   else//with dictionary just prepare name, creation only if needed
-    specCloudName.Append("_NOT_IN_DICTIONARY");
+    specCloudName.Append("NOT_IN_DICTIONARY");
 
 
   mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
