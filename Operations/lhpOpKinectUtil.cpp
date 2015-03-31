@@ -323,13 +323,13 @@ bool lhpOpKinectUtil::Import()
   bool result = false;
   Clear();
 
-  mafString filestxt, sessionstxt;
+  mafString filestxt, sessionstxt, filetoprd;
   std::vector<mafString> sessionsList;
   if(m_ExtApp)
   {
     if(m_ExtAppPath.IsEmpty())
       return false;
-    mafString filetoprd = mafCreateTempFileName("");
+    filetoprd = mafCreateTempFileName("");
     mafString commandline = m_ExtAppPath;
     commandline += " -logging" + filetoprd;
     if(wxExecute(commandline.GetCStr(), wxEXEC_SYNC) != 0)
@@ -408,12 +408,13 @@ bool lhpOpKinectUtil::Import()
   }
   if(m_ExtApp && !m_C3DInputFileNameFullPaths.empty())
   {
-      for(unsigned fileIndex = 0; fileIndex < m_C3DInputFileNameFullPaths.size(); fileIndex++)
-        mafFileRemove(m_C3DInputFileNameFullPaths[fileIndex]);
-      for(unsigned sessionIndex = 0; sessionIndex < sessionsList.size(); sessionIndex++)
-        mafDirRemove(sessionsList[sessionIndex]);
-      mafFileRemove(filestxt);
-      mafFileRemove(sessionstxt);
+    for(unsigned sessionIndex = 0; sessionIndex < sessionsList.size(); sessionIndex++)
+      mafRemoveDirectory(sessionsList[sessionIndex]);
+    mafRemoveDirectory(filetoprd);
+//     for(unsigned fileIndex = 0; fileIndex < m_C3DInputFileNameFullPaths.size(); fileIndex++)
+//       mafFileRemove(m_C3DInputFileNameFullPaths[fileIndex]);
+//     mafFileRemove(filestxt);
+//     mafFileRemove(sessionstxt);
   }
   return result;
 }
