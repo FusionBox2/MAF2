@@ -466,11 +466,11 @@ bool lhpOpRegisterLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandma
   }
   mafDEL(info);
   if(lmcsOpened)
-    src->Close();
+    src->Open();
   if(lmctOpened)
-    trg->Close();
+    trg->Open();
   if(lmcrOpened)
-    registered->Close();
+    registered->Open();
   return true;
 }
 
