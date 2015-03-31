@@ -19,7 +19,7 @@
 #include "mafStorage.h"
 #include "mafParser.h"
 #include "mafUtility.h"
-#include "mafStorable.h"
+#include "mafNodeManager.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :
@@ -32,17 +32,14 @@ class mafMatrixVector;
 
 /** utility class representing the MSF document.
  This class is used by mafMSFImporter to restore MSF 1.x files.*/
-class MAF_EXPORT mmuMSF1xDocument : public mafUtility, public mafStorable
+class MAF_EXPORT mafMSFImporter : public mafUtility, public mafNodeManager
 {
 public:
-  mmuMSF1xDocument():m_Root(NULL) {}
-  virtual ~mmuMSF1xDocument() {}
+  mafMSFImporter(){}
+  virtual ~mafMSFImporter() {}
   virtual int InternalStore(mafStorageElement *node);
   virtual int InternalRestore(mafStorageElement *node);
   
-  void SetRoot(mafVMERoot *root) {m_Root=root;}
-  mafVMERoot *GetRoot() {return m_Root;}
-
   enum MATERIAL_TAG_ID
   {
     MAT_NAME = 0,
@@ -80,34 +77,5 @@ protected:
 
   /** Restore meter attributes */
   void RestoreMeterAttribute(mafVME *vme);
-
-  mafVMERoot *m_Root;
-};
-
-/** A storage class for MSF local files.
-  This is a concrete implementation of storage object for storing MSF local files.
-  @sa mafXMLStorage
-  @todo
-    - 
-*/  
-class MAF_EXPORT mafMSFImporter: public mafStorage
-{
-public:
-  
-  mafTypeMacro(mafMSFImporter,mafStorage)
-
-  mafMSFImporter();
-  virtual ~mafMSFImporter();
-  
-  /** set the root node of this importer */
-  void SetRoot(mafVMERoot *root);
-  
-  /** return the root node attached to this tree */
-  mafVMERoot *GetRoot();
-
-private:
-  
-  /** avoid external objects to set the root */
-  void SetRoot (mafStorable *root);
 };
 #endif // _mafMSFImporter_h_

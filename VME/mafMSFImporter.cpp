@@ -50,7 +50,7 @@
 #include <vector>
 
 //------------------------------------------------------------------------------
-// mmuMSF1xDocument
+// mafMSFImporter
 //------------------------------------------------------------------------------
 namespace {
   bool StartsWith(const char *str1,const char *str2)
@@ -82,7 +82,7 @@ namespace {
 }
 
 //------------------------------------------------------------------------------
-int mmuMSF1xDocument::InternalStore(mafStorageElement *node)
+int mafMSFImporter::InternalStore(mafStorageElement *node)
 //------------------------------------------------------------------------------
 {
   mafErrorMessage("Writing MSF 1.x files is not supported!");
@@ -90,19 +90,23 @@ int mmuMSF1xDocument::InternalStore(mafStorageElement *node)
 }
 
 //------------------------------------------------------------------------------
-int mmuMSF1xDocument::InternalRestore(mafStorageElement *node)
+int mafMSFImporter::InternalRestore(mafStorageElement *node)
 //------------------------------------------------------------------------------
 {
   ///////////////////////////////////////////////
   // code to import the file from old MSF file //
   ///////////////////////////////////////////////
+  mafVMERoot *root = mafVMERoot::New();
+  if(!root)
+    return MAF_ERROR;
+  mafAutoPointer<mafVMERoot> root_ap = root;
   mafString root_name;
   if (node->GetAttribute("Name",root_name))
-    m_Root->SetName(root_name);
+    root->SetName(root_name);
 
   mafID max_item_id;
   if (node->GetAttributeAsInteger("MaxItemId",max_item_id))
-    m_Root->SetMaxItemId(max_item_id);
+    root->SetMaxItemId(max_item_id);
   
 
   const mafStorageElement::ChildrenVector& children = node->GetChildren();
@@ -111,21 +115,21 @@ int mmuMSF1xDocument::InternalRestore(mafStorageElement *node)
   {
     if (children[i]->GetName() == "TArray")
     {
-      if (RestoreTagArray(children[i],m_Root->GetTagArray()) != MAF_OK)
+      if (RestoreTagArray(children[i],root->GetTagArray()) != MAF_OK)
       {
-        mafErrorMacro("MSFImporter: error restoring Tag Array of node: \""<<m_Root->GetName()<<"\"");
+        mafErrorMacro("MSFImporter: error restoring Tag Array of node: \""<<root->GetName()<<"\"");
       }
     }
     else if (children[i]->GetName() == "VME")
     {
-      mafVME *child_vme=RestoreVME(children[i],m_Root);
+      mafVME *child_vme=RestoreVME(children[i],root);
       if (child_vme==NULL)
       {
         mafErrorMacro("Error while restoring a VME (parent is the root)");
       }
       else
       {
-        m_Root->AddChild(child_vme);
+        root->AddChild(child_vme);
 
         child_vme->UnRegister(NULL);
       }
@@ -133,7 +137,7 @@ int mmuMSF1xDocument::InternalRestore(mafStorageElement *node)
   }
   mafNode *n = NULL;
   std::vector<mafNode *> link_list;
-  mafNodeIterator *iter = m_Root->NewIterator();
+  mafNodeIterator *iter = root->NewIterator();
   // iteration for updating VME's ID
   for (n = iter->GetFirstNode(); n; n=iter->GetNextNode())
   {
@@ -146,7 +150,7 @@ int mmuMSF1xDocument::InternalRestore(mafStorageElement *node)
     {
       link_list.push_back(n);
       mafTagItem *tag = n->GetTagArray()->GetTag("VME_ALIAS_PATH");
-      mafNode *linkedVME = this->ParsePath(m_Root, tag->GetValue());
+      mafNode *linkedVME = this->ParsePath(root, tag->GetValue());
       if (linkedVME != NULL)
       {
         mafID sub_id = -1;
@@ -165,10 +169,13 @@ int mmuMSF1xDocument::InternalRestore(mafStorageElement *node)
     link_list[l]->ReparentTo(NULL);
   }
   link_list.clear();
-  return m_Root->Initialize();
+  if(root->Initialize() == MAF_ERROR)
+    return MAF_ERROR;
+  SetRoot(root);
+  return MAF_OK; 
 }
 //------------------------------------------------------------------------------
-mafNode *mmuMSF1xDocument::ParsePath(mafVMERoot *root,const char *path)
+mafNode *mafMSFImporter::ParsePath(mafVMERoot *root,const char *path)
 //------------------------------------------------------------------------------
 {
   const char *str=path;
@@ -219,7 +226,7 @@ mafNode *mmuMSF1xDocument::ParsePath(mafVMERoot *root,const char *path)
 }
 
 //------------------------------------------------------------------------------
-mafVME *mmuMSF1xDocument::RestoreVME(mafStorageElement *node, mafVME *parent)
+mafVME *mafMSFImporter::RestoreVME(mafStorageElement *node, mafVME *parent)
 //------------------------------------------------------------------------------
 {
   mafVME *vme = NULL;
@@ -380,7 +387,7 @@ mafVME *mmuMSF1xDocument::RestoreVME(mafStorageElement *node, mafVME *parent)
 }
 
 //------------------------------------------------------------------------------
-mafVME *mmuMSF1xDocument::CreateVMEInstance(const mafString &name)
+mafVME *mafMSFImporter::CreateVMEInstance(const mafString &name)
 //------------------------------------------------------------------------------
 {
   if (
@@ -456,7 +463,7 @@ mafVME *mmuMSF1xDocument::CreateVMEInstance(const mafString &name)
 }
 
 //------------------------------------------------------------------------------
-void mmuMSF1xDocument::RestoreMeterAttribute(mafVME *vme)
+void mafMSFImporter::RestoreMeterAttribute(mafVME *vme)
 //------------------------------------------------------------------------------
 {
   mafVMEMeter *meter = mafVMEMeter::SafeDownCast(vme);
@@ -533,7 +540,7 @@ void mmuMSF1xDocument::RestoreMeterAttribute(mafVME *vme)
 }
 
 //------------------------------------------------------------------------------
-void mmuMSF1xDocument::RestoreMaterial(mafVME *vme)
+void mafMSFImporter::RestoreMaterial(mafVME *vme)
 //------------------------------------------------------------------------------
 {
   mmaMaterial *material = (mmaMaterial *)vme->GetAttribute("MaterialAttributes");
@@ -565,7 +572,7 @@ void mmuMSF1xDocument::RestoreMaterial(mafVME *vme)
 }
 
 //------------------------------------------------------------------------------
-int mmuMSF1xDocument::RestoreVItem(mafStorageElement *node, mafVME *vme)
+int mafMSFImporter::RestoreVItem(mafStorageElement *node, mafVME *vme)
 //------------------------------------------------------------------------------
 {
   mafTimeStamp item_time;
@@ -626,7 +633,7 @@ int mmuMSF1xDocument::RestoreVItem(mafStorageElement *node, mafVME *vme)
 }
 
 //------------------------------------------------------------------------------
-int mmuMSF1xDocument::RestoreVMatrix(mafStorageElement *node, mafMatrixVector *vmatrix)
+int mafMSFImporter::RestoreVMatrix(mafStorageElement *node, mafMatrixVector *vmatrix)
 //------------------------------------------------------------------------------
 {
   // restore single matrices
@@ -654,7 +661,7 @@ int mmuMSF1xDocument::RestoreVMatrix(mafStorageElement *node, mafMatrixVector *v
 }
 
 //------------------------------------------------------------------------------
-int mmuMSF1xDocument::RestoreTagArray(mafStorageElement *node, mafTagArray *tarray)
+int mafMSFImporter::RestoreTagArray(mafStorageElement *node, mafTagArray *tarray)
 //------------------------------------------------------------------------------
 {
   mafStorageElement::ChildrenVector children;
@@ -719,44 +726,4 @@ int mmuMSF1xDocument::RestoreTagArray(mafStorageElement *node, mafTagArray *tarr
     } // TItem
   }
   return MAF_OK;
-}
-
-//------------------------------------------------------------------------------
-// mafMSFImporter
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-mafCxxTypeMacro(mafMSFImporter)
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-mafMSFImporter::mafMSFImporter()
-//------------------------------------------------------------------------------
-{
-  m_Parser->SetVersion("1.0");
-  m_Parser->SetFileType("MSF");
-  SetDocument(new mmuMSF1xDocument); // create a MSF doc
-}
-
-//------------------------------------------------------------------------------
-mafMSFImporter::~mafMSFImporter()
-//------------------------------------------------------------------------------
-{
-  mafStorable *doc = GetDocument();
-  SetDocument(NULL);
-  cppDEL(doc); // delete the document object
-}
-
-//------------------------------------------------------------------------------
-void mafMSFImporter::SetRoot(mafVMERoot *root)
-//------------------------------------------------------------------------------
-{
-  ((mmuMSF1xDocument *)GetDocument())->SetRoot(root);
-}
-
-//------------------------------------------------------------------------------
-mafVMERoot *mafMSFImporter::GetRoot()
-//------------------------------------------------------------------------------
-{
-  return ((mmuMSF1xDocument *)GetDocument())->GetRoot();
 }

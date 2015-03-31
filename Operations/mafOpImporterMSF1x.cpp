@@ -27,10 +27,14 @@
 #include "mafEvent.h"
 
 #include "mafVME.h"
+#include "mafVMEGeneric.h"
+#include "mafDataVector.h"
 #include "mafVMERoot.h"
 #include "mafTagArray.h"
+#include "mafVMEStorage.h"
 #include "mafMSFImporter.h"
-#include "mafEventIO.h"
+#include "mafVMEGroup.h"
+#include "mafFilesDirs.h"
 
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(mafOpImporterMSF1x);
@@ -43,6 +47,7 @@ mafOpImporterMSF1x::mafOpImporterMSF1x(const mafString& label) : Superclass(labe
   m_OpType  = OPTYPE_IMPORTER;
 	m_Canundo = true;
 	m_File    = "";
+  m_Group   = NULL;
 
   m_FileDir = "";//mafGetApplicationDirectory().c_str();
 }
@@ -50,6 +55,7 @@ mafOpImporterMSF1x::mafOpImporterMSF1x(const mafString& label) : Superclass(labe
 mafOpImporterMSF1x::~mafOpImporterMSF1x( ) 
 //----------------------------------------------------------------------------
 {
+  mafDEL(m_Group);
 }
 //----------------------------------------------------------------------------
 mafOp* mafOpImporterMSF1x::Copy()   
@@ -88,28 +94,46 @@ void mafOpImporterMSF1x::ImportMSF()
   bool success = false;
 //	wxBusyInfo wait("Loading file: ...");
   
-  m_Importer = new mafMSFImporter;
-  m_Importer->SetURL(m_File);
-  m_Importer->SetRoot((mafVMERoot *)m_Input->GetRoot());
+  mafVMEStorage *storage = mafVMEStorage::New();
+  mafMSFImporter manager;
+  storage->SetManager(&manager);
+  storage->SetURL(m_File);
   
   //mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR,preader));
-  mafTagItem item;
-  mafVMERoot *root = (mafVMERoot *)m_Input->GetRoot();
-  root->GetTagArray()->GetTag("APP_STAMP" , item);
 
-  success = (m_Importer->Restore() == MAF_OK);
+  success = (storage->Restore() == MAF_OK);
 
   if(!success)
     mafErrorMessage("I/O Error importing MSF file.");
 
-  mafEventIO es(this,NODE_GET_STORAGE);
-  m_Input->GetRoot()->OnEvent(&es);
-  mafStorage *storage = es.GetStorage();
-  storage->SetURL(m_File.GetCStr());
-  storage->ForceParserURL();
-  ((mafVMERoot *)m_Input->GetRoot())->Update();
+  mafVMERoot *root = mafVMERoot::SafeDownCast(manager.GetRoot());
 
-  root->GetTagArray()->SetTag(mafTagItem("APP_STAMP", item.GetValue(), item.GetType()));
+  mafString path, name, ext;
+  mafSplitPath(m_File.GetCStr(),&path,&name,&ext);
+  mafString group_name = wxString::Format("imported from %s.%s",name.GetCStr(),ext.GetCStr()).c_str();
 
-  cppDEL(m_Importer);
+  mafNEW(m_Group);
+  m_Group->SetName(group_name);
+  m_Group->ReparentTo(m_Input);
+
+  while (mafNode *node = root->GetFirstChild())
+  {
+    node->ReparentTo(m_Group);
+
+    // Losi 03/16/2010 Bug #2049 fix
+    mafVMEGeneric *vme = mafVMEGeneric::SafeDownCast(node);
+    if(vme)
+    {
+      // Update data vector id to avoid duplicates
+      mafDataVector *dataVector = vme->GetDataVector();
+      if(dataVector)
+      {
+        dataVector->UpdateVectorId();
+      }
+    }
+  }
+  m_Group->Update();
+  m_Output = m_Group;
+
+  mafDEL(storage);
 }

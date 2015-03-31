@@ -97,6 +97,7 @@
 #include "mafEventIO.h"
 #include "mafNodeIterator.h"
 #include "mafVMEGenericAbstract.h"
+#include "mafVMERoot.h"
 
 //----------------------------------------------------------------------------
 bool mafLogicWithManagers::AskConfirmAndSave()
@@ -1349,8 +1350,8 @@ bool mafLogicWithManagers::OnFileClose()
     mafRemoveDirectory(m_TmpDir); // remove the temporary directory
     m_TmpDir = "";
   }
-  m_NodeManager->SetListener(this);
   mafDEL(m_Storage);
+  m_NodeManager->SetListener(this);
   VmeSelected(NULL);
   m_NodeManager->SetRoot(NULL);
   m_NodeManager->MSFModified(false);
@@ -1472,7 +1473,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
   if(!m_Storage)
     return false;
   m_Storage->SetListener(this);
-  m_NodeManager->SetListener(m_Storage);
+  m_Storage->SetManager(m_NodeManager);
 
   wxWindowDisabler *disableAll;
   wxBusyCursor *wait_cursor;
@@ -1525,6 +1526,8 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
   int res = m_Storage->Restore();
   if(res != mafStorage::IO_OK && res != mafStorage::IO_WRONG_OBJECT_TYPE)
   {
+    mafDEL(m_Storage);
+    m_NodeManager->SetListener(this);
     if(!m_TestMode) // Losi 02/16/2010 for test class
     {
       cppDEL(disableAll);
@@ -1536,14 +1539,15 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
   {
     mafErrorMessage(_("Errors during file parsing! Look the log area for error messages."));
   }
-  mafVMERoot *root = m_Storage->GetRoot();
+  mafVMERoot *root = mafVMERoot::SafeDownCast(m_NodeManager->GetRoot());
   SetAppTag(root);
   if(!CheckAppTag(root))
   {
     //Application stamp not valid
     mafMessage(_("File not valid for this application!"), _("Warning"));
-    m_NodeManager->SetListener(this);
     mafDEL(m_Storage);
+    m_NodeManager->SetListener(this);
+    m_NodeManager->SetRoot(NULL);
     if(!m_TestMode) // Losi 02/16/2010 for test class
     {
       cppDEL(disableAll);
@@ -1680,6 +1684,9 @@ bool mafLogicWithManagers::OnFileSaveAs()
 {
   if(!m_NodeManager)
     return true;
+  mafVMERoot *root = mafVMERoot::SafeDownCast(m_NodeManager->GetRoot());
+  if(!root)
+    return true;
 
   m_MSFFile = ""; // set filenames to empty so the MSFSave method will ask for them
   m_ZipFile = "";
@@ -1720,8 +1727,6 @@ bool mafLogicWithManagers::OnFileSaveAs()
 
   m_MSFFile = file;
 
-  mafNode *root = m_NodeManager->GetRoot();
-
   if(m_Storage && m_MSFFile != m_Storage->GetURL())
   {
     mafNodeIterator *iter = root->NewIterator();
@@ -1744,8 +1749,7 @@ bool mafLogicWithManagers::OnFileSaveAs()
     if(!m_Storage)
       return false;
     m_Storage->SetListener(this);
-    m_NodeManager->SetListener(m_Storage);
-    m_Storage->SetRoot(mafVMERoot::SafeDownCast(root));
+    m_Storage->SetManager(m_NodeManager);
   }
   m_Storage->SetURL(m_MSFFile);
   Save();

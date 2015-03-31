@@ -20,27 +20,12 @@
 #include "mafParser.h"
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
-#include "mafUtility.h"
 #include "mafStorable.h"
-#include "mafVMERoot.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :
 //----------------------------------------------------------------------------
-
-/** utility class representing the MSF document. */
-class mmuMSFDocument : public mafUtility, public mafStorable
-{
-public:
-  mmuMSFDocument(mafVMERoot *root=NULL):m_Root(root) {}
-  virtual ~mmuMSFDocument() {}
-  virtual int InternalStore(mafStorageElement *node);
-  virtual int InternalRestore(mafStorageElement *node);
-  void SetRoot(mafVMERoot *root);
-  mafVMERoot *GetRoot();
-protected:
-  mafAutoPointer<mafVMERoot> m_Root;
-};
+class mafNodeManager;
 
 /** A storage class for MSF local files.
   This is a concrete implementation of storage object for storing MSF local files.
@@ -56,18 +41,14 @@ public:
   mafVMEStorage();
   virtual ~mafVMEStorage();
   
-  /** return the root node attached to this tree */
-  mafVMERoot *GetRoot();
+  mafNodeManager *GetManager();
 
-  /** 
-    Set the root to this Storage. This is usually not necessary
-    since storage creates the root on its own */
-  void SetRoot (mafVMERoot *root);
+  void SetManager(mafNodeManager *manager);
 
   /** process events coming from tree */
   virtual void OnEvent(mafEventBase *e);
 
 protected:  
-  mmuMSFDocument m_MSFDoc; ///< the VME root node
+  mafNodeManager    *m_NodeManager; ///< the VME root node
 };
 #endif // _mafVMEStorage_h_

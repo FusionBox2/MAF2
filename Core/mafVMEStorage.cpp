@@ -17,65 +17,13 @@
 #include "mafIncludeWX.h" // to be removed
 
 #include "mafVMEStorage.h"
-#include "mafVMERoot.h"
+#include "mafNodeManager.h"
 #include "mafUtility.h"
 #include "mafStorable.h"
 #include "mafStorageElement.h"
 #include "mmuIdFactory.h"
 #include "mafEventIO.h"
-
-//------------------------------------------------------------------------------
-// mmuMSFDocument
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-mafVMERoot *mmuMSFDocument::GetRoot()
-//------------------------------------------------------------------------------
-{
-  return m_Root;
-}
-//------------------------------------------------------------------------------
-void mmuMSFDocument::SetRoot(mafVMERoot *root)
-//------------------------------------------------------------------------------
-{
-  m_Root = root;
-}
-//------------------------------------------------------------------------------
-int mmuMSFDocument::InternalStore(mafStorageElement *node)
-//------------------------------------------------------------------------------
-{
-  // here should write elements specific for the document
-  if(!m_Root)
-    return MAF_ERROR;
-  mafStorageElement *root_elem=node->StoreObject("Root",m_Root);
-  return root_elem?MAF_OK:MAF_ERROR;
-}
-
-//------------------------------------------------------------------------------
-int mmuMSFDocument::InternalRestore(mafStorageElement *node)
-//-------------------------------------------------------
-{
-  // here should restore elements specific for the document
-  SetRoot(NULL);
-  mafObject *obj = node->RestoreObject("Root");
-  if(!obj)
-    return MAF_ERROR; 
-  mafReferenceCounted *rc = mafReferenceCounted::SafeDownCast(obj);
-  if(!rc)
-  {
-    obj->Delete();
-    return MAF_ERROR;
-  }
-  mafAutoPointer<mafReferenceCounted> arc = rc;
-  mafVMERoot *root = mafVMERoot::SafeDownCast(obj);
-  m_Root = root;
-  if(root)
-    return m_Root->Initialize();
-  return MAF_ERROR; 
-}
-
-//------------------------------------------------------------------------------
-// mafVMEStorage
-//------------------------------------------------------------------------------
+#include "mafFilesDirs.h"
 
 //------------------------------------------------------------------------------
 mafCxxTypeMacro(mafVMEStorage)
@@ -85,31 +33,37 @@ mafCxxTypeMacro(mafVMEStorage)
 mafVMEStorage::mafVMEStorage()
 //------------------------------------------------------------------------------
 {
+  m_NodeManager = NULL;
   m_Parser->SetVersion("2.2");
   m_Parser->SetFileType("MSF");
-  SetDocument(&m_MSFDoc); // create a MSF doc and set the root node
+  m_Parser->SetDocument(m_NodeManager); // create a MSF doc and set the root node
 }
 
 //------------------------------------------------------------------------------
 mafVMEStorage::~mafVMEStorage()
 //------------------------------------------------------------------------------
 {
+  SetManager(NULL);
+  mafDEL(m_Parser);
 }
 
 //------------------------------------------------------------------------------
-void mafVMEStorage::SetRoot(mafVMERoot *root)
+void mafVMEStorage::SetManager(mafNodeManager *manager)
 //------------------------------------------------------------------------------
 {
-  m_MSFDoc.SetRoot(root);
-  if(!root)
-    return;
-  root->Initialize();
+  if(m_NodeManager)
+    m_NodeManager->SetListener(NULL);
+  m_NodeManager = manager;
+  if(m_NodeManager)
+    m_NodeManager->SetListener(this);
+  if(m_Parser)
+    m_Parser->SetDocument(m_NodeManager);
 }
 //------------------------------------------------------------------------------
-mafVMERoot *mafVMEStorage::GetRoot()
+mafNodeManager *mafVMEStorage::GetManager()
 //------------------------------------------------------------------------------
 {
-  return m_MSFDoc.GetRoot();
+  return m_NodeManager;
 }
 
 //------------------------------------------------------------------------------

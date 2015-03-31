@@ -33,6 +33,7 @@
 #include "mafVMEStorage.h"
 #include "mafVMERoot.h"
 #include "mafNodeIterator.h"
+#include "mafNodeManager.h"
 
 #include <vector>
 
@@ -103,13 +104,15 @@ int mafOpExporterMSF::ExportMSF()
 		m_MSFFile = dir2 + "\\" + name + "." + ext;
 	}
 
+  mafNodeManager manager;
   mafVMEStorage storage;
-  storage.SetURL(m_MSFFile.GetCStr());
+  storage.SetManager(&manager);
+  storage.SetURL(m_MSFFile);
   mafVMERoot *root;
   mafNEW(root);
   root->SetName("root");
   root->Initialize();
-  storage.SetListener(this);
+  manager.SetRoot(root);
 
   std::vector<idValues> values;
 
@@ -175,20 +178,15 @@ int mafOpExporterMSF::ExportMSF()
 //   n->ReparentTo(storage.GetRoot());
 	//mafNode::CopyTree(m_Input, storage.GetRoot());
   ((mafVME *)root->GetFirstChild())->SetAbsMatrix(*((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());  //Paolo 5-5-2004
-  storage.SetRoot(root);
-  root->SetListener(&storage);
-  if (storage.Store()!=0)
+  mafDEL(root);
+  if (storage.Store() != MAF_OK)
   {
     if (!m_TestMode)
     {
     	wxMessageBox("Error while exporting MSF");
     }
-    root->SetListener(NULL);
-    mafDEL(root);
     return MAF_ERROR;
   }
-  root->SetListener(NULL);
-  mafDEL(root);
   return MAF_OK;
 //  m_Input->ReparentTo(parent);
 }

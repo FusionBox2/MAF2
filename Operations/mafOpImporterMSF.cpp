@@ -34,6 +34,7 @@
 #include "mafVMEGroup.h"
 #include "mafVMEGeneric.h"
 #include "mafDataVector.h"
+#include "mafNodeManager.h"
 
 #include "vtkMAFSmartPointer.h"
 #include "mafFilesDirs.h"
@@ -112,8 +113,10 @@ int mafOpImporterMSF::ImportMSF()
 
   m_MSFFile = unixname; 
   mafVMEStorage *storage;
+  mafNodeManager manager;
   storage = mafVMEStorage::New();
-  storage->SetURL(m_MSFFile.GetCStr());
+  storage->SetManager(&manager);
+  storage->SetURL(m_File);
 
   int res = storage->Restore();
   if (res != MAF_OK)
@@ -123,10 +126,7 @@ int mafOpImporterMSF::ImportMSF()
       mafErrorMessage(_("Errors during file parsing! Look the log area for error messages."));
     //return MAF_ERROR;
   }
-  mafVMERoot *root;
-  root = storage->GetRoot();
-  root->Initialize();
-  root->SetListener(storage);
+  mafVMERoot *root = mafVMERoot::SafeDownCast(manager.GetRoot());
       
   mafString group_name = wxString::Format("imported from %s.%s",name,ext).c_str();
  
@@ -153,7 +153,6 @@ int mafOpImporterMSF::ImportMSF()
   m_Group->Update();
   m_Output = m_Group;
 
-  root->SetListener(NULL);
   mafDEL(storage);
   return MAF_OK;
 }

@@ -27,7 +27,7 @@
 // forward references :
 //----------------------------------------------------------------------------
 class mafNode;
-class mafMSFImporter;
+class mafVMEGroup;
 
 //----------------------------------------------------------------------------
 // mafOpImporterMSF1x :
@@ -60,6 +60,6 @@ protected:
   mafString m_File;
   mafString m_FileDir;
   
-  mafMSFImporter *m_Importer;
+  mafVMEGroup      *m_Group;
 };
 #endif
