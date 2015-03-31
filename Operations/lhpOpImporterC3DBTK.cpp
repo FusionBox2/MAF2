@@ -623,7 +623,7 @@ void lhpOpImporterC3DBTK::ImportAnalog(lhpOpImporterC3DBTK::_InternalC3DData &in
   //For every Sample
   for(int currentSample=0; currentSample < intData.m_NumSamples; currentSample++)
   {
-    mafTimeStamp currentTime = (intData.m_StartFrame + currentSample) * intData.m_AnalogSamplePeriod;
+    mafTimeStamp currentTime = intData.m_StartFrame  * intData.m_TrajectorySamplePeriod+ currentSample * intData.m_AnalogSamplePeriod;
     
     analogMatrix.put(0,currentSample, currentTime); //fill first row with timeframe, every column is a time
 
@@ -819,7 +819,7 @@ void lhpOpImporterC3DBTK::ImportPlatform(lhpOpImporterC3DBTK::_InternalC3DData &
       intData.m_MomentY = fpwc->GetItem(currentPlatform)->GetMoment()->GetValues().col(1)(currentSample);
       intData.m_MomentZ = fpwc->GetItem(currentPlatform)->GetMoment()->GetValues().col(2)(currentSample);
 
-      currentTime = (intData.m_StartFrame + currentSample) * intData.m_VectogramSamplePeriod;
+      currentTime = intData.m_StartFrame * intData.m_TrajectorySamplePeriod + currentSample * intData.m_VectogramSamplePeriod;
 
       //force      
       pointsForce->Reset();
