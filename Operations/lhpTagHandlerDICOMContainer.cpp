@@ -60,9 +60,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("StudyDate"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("StudyDate"))
   {
-    vme->GetTagArray()->GetTag("StudyDate")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -87,9 +87,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("Modality"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("Modality"))
   {
-    vme->GetTagArray()->GetTag("Modality")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -113,9 +113,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("Manufacturer"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("Manufacturer"))
   {
-    vme->GetTagArray()->GetTag("Manufacturer")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -139,9 +139,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("InstitutionName"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("InstitutionName"))
   {
-    vme->GetTagArray()->GetTag("InstitutionName")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -165,9 +165,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("StationName"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("StationName"))
   {
-    vme->GetTagArray()->GetTag("StationName")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -191,9 +191,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("ManufacturerModelName"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("ManufacturerModelName"))
   {
-    vme->GetTagArray()->GetTag("ManufacturerModelName")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -217,9 +217,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("PatientID"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("PatientID"))
   {
-    vme->GetTagArray()->GetTag("PatientID")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -243,9 +243,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("PatientSex"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("PatientSex"))
   {
-    vme->GetTagArray()->GetTag("PatientSex")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -269,9 +269,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("ScanOptions"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("ScanOptions"))
   {
-    vme->GetTagArray()->GetTag("ScanOptions")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -295,9 +295,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("KVP"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("KVP"))
   {
-    vme->GetTagArray()->GetTag("KVP")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -321,9 +321,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("DataCollectionDiameter"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("DataCollectionDiameter"))
   {
-    vme->GetTagArray()->GetTag("DataCollectionDiameter")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -347,9 +347,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("ReconstructionDiameter"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("ReconstructionDiameter"))
   {
-    vme->GetTagArray()->GetTag("ReconstructionDiameter")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -373,9 +373,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("DistanceSourceToDetector"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("DistanceSourceToDetector"))
   {
-    vme->GetTagArray()->GetTag("DistanceSourceToDetector")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -399,9 +399,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("DistanceSourceToPatient"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("DistanceSourceToPatient"))
   {
-    vme->GetTagArray()->GetTag("DistanceSourceToPatient")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -425,9 +425,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("GantryDetectorTilt"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("GantryDetectorTilt"))
   {
-    vme->GetTagArray()->GetTag("GantryDetectorTilt")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -451,9 +451,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("TableHeight"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("TableHeight"))
   {
-    vme->GetTagArray()->GetTag("TableHeight")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -477,9 +477,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("RotationDirection"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("RotationDirection"))
   {
-    vme->GetTagArray()->GetTag("RotationDirection")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -503,9 +503,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("ExposureTime"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("ExposureTime"))
   {
-    vme->GetTagArray()->GetTag("ExposureTime")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -529,9 +529,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("XRayTubeCurrent"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("XRayTubeCurrent"))
   {
-    vme->GetTagArray()->GetTag("XRayTubeCurrent")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -555,9 +555,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("Exposure"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("Exposure"))
   {
-    vme->GetTagArray()->GetTag("Exposure")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -581,9 +581,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("FilterType"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("FilterType"))
   {
-    vme->GetTagArray()->GetTag("FilterType")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -607,9 +607,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("FocalSpot"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("FocalSpot"))
   {
-    vme->GetTagArray()->GetTag("FocalSpot")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -633,9 +633,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("ConvolutionKernel"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("ConvolutionKernel"))
   {
-    vme->GetTagArray()->GetTag("ConvolutionKernel")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -659,9 +659,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("PatientPosition"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("PatientPosition"))
   {
-    vme->GetTagArray()->GetTag("PatientPosition")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -685,9 +685,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("StudyID"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("StudyID"))
   {
-    vme->GetTagArray()->GetTag("StudyID")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -711,9 +711,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("ImagePositionPatient"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("ImagePositionPatient"))
   {
-    vme->GetTagArray()->GetTag("ImagePositionPatient")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -737,9 +737,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("PixelSpacing"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("PixelSpacing"))
   {
-    vme->GetTagArray()->GetTag("PixelSpacing")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -763,9 +763,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("PixelPaddingValue"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("PixelPaddingValue"))
   {
-    vme->GetTagArray()->GetTag("PixelPaddingValue")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -789,9 +789,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("WindowCenter"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("WindowCenter"))
   {
-    vme->GetTagArray()->GetTag("WindowCenter")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -815,9 +815,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("WindowWidth"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("WindowWidth"))
   {
-    vme->GetTagArray()->GetTag("WindowWidth")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -841,9 +841,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("RescaleIntercept"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("RescaleIntercept"))
   {
-    vme->GetTagArray()->GetTag("RescaleIntercept")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {
@@ -867,9 +867,9 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(vme->GetTagArray()->IsTagPresent("RescaleSlope"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("RescaleSlope"))
   {
-    vme->GetTagArray()->GetTag("RescaleSlope")->GetValueAsSingleString(value);
+    ti->GetValueAsSingleString(value);
   }
   else
   {

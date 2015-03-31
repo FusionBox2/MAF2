@@ -478,7 +478,12 @@ void mafViewIntGraph::savePlotGen(void)
     mafVME *vme = mafVME::SafeDownCast(n->m_Vme);
     if(vme)
     {
-      vme->GetTagArray()->SetTag(mafTagItem(mafINTGG_SAVEINFO_TAG, const_cast<const char **>(pSave->GetData()), pSave->GetStringNumber()));
+      std::vector<mafString> strv;
+      char **sttr = pSave->GetData();
+      int nm = pSave->GetStringNumber();
+      for(int i = 0; i < nm; i++)
+        strv.push_back(mafString(sttr[i]));
+      vme->GetTagArray()->SetTag(mafTagItem(mafINTGG_SAVEINFO_TAG, strv));
       mafEventMacro(mafEvent(this,VME_MODIFIED, vme));
     }
   }
@@ -488,16 +493,15 @@ void mafViewIntGraph::savePlotGen(void)
 void mafViewIntGraph::loadPlotGen(void)
 //----------------------------------------------------------------------------
 {
-  mafTagItem        Tag;
   //load general settings
   for(mafSceneNode *n = m_Sg->GetNodeList(); n != NULL; n = n->m_Next)
   {
     mafVME *vme = mafVME::SafeDownCast(n->m_Vme);
-    if(vme && vme->GetTagArray()->IsTagPresent(mafINTGG_SAVEINFO_TAG))
+    if(vme)
     {
-      if(vme->GetTagArray()->GetTag(mafINTGG_SAVEINFO_TAG, Tag))
+      if(mafTagItem *ti = vme->GetTagArray()->GetTag(mafINTGG_SAVEINFO_TAG))
       {
-        m_RenderWindow->LoadSettings(&mafStringSet(Tag.GetNumberOfComponents(), Tag.GetComponents()));
+        m_RenderWindow->LoadSettings(&mafStringSet(ti->GetNumberOfComponents(), &ti->GetComponents()));
         UpdateGui();
         break;
       }

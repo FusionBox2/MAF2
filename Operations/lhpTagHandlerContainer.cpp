@@ -644,9 +644,9 @@ void lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeTreeCreationDate::HandleAutoTa
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetRoot()->GetTagArray()->IsTagPresent("Creation_Date"))
+  if(mafTagItem *ti = vme->GetRoot()->GetTagArray()->GetTag("Creation_Date"))
   {
-    value = vme->GetRoot()->GetTagArray()->GetTag("Creation_Date")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1497,9 +1497,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_StudyDate:
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("StudyDate"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("StudyDate"))
   {
-    value = vme->GetTagArray()->GetTag("StudyDate")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1520,9 +1520,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Modality::
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("Modality"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("Modality"))
   {
-    value = vme->GetTagArray()->GetTag("Modality")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1543,9 +1543,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Manufactur
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("Manufacturer"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("Manufacturer"))
   {
-    value = vme->GetTagArray()->GetTag("Manufacturer")->GetValue();
+    value = ti->GetValue();
   }
 
 
@@ -1567,9 +1567,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Institutio
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("InstitutionName"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("InstitutionName"))
   {
-    value = vme->GetTagArray()->GetTag("InstitutionName")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1591,9 +1591,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_StationNam
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("StationName"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("StationName"))
   {
-    value = vme->GetTagArray()->GetTag("StationName")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1615,9 +1615,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Manufactur
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("ManufacturerModelName"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("ManufacturerModelName"))
   {
-    value = vme->GetTagArray()->GetTag("ManufacturerModelName")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1639,9 +1639,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PatientID:
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("PatientID"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("PatientID"))
   {
-    value = vme->GetTagArray()->GetTag("PatientID")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1663,9 +1663,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PatientSex
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("PatientSex"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("PatientSex"))
   {
-    value = vme->GetTagArray()->GetTag("PatientSex")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1687,9 +1687,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ScanOption
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("ScanOptions"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("ScanOptions"))
   {
-    value = vme->GetTagArray()->GetTag("ScanOptions")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1711,9 +1711,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_KVP::Handl
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("KVP"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("KVP"))
   {
-    value = vme->GetTagArray()->GetTag("KVP")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1735,9 +1735,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DataCollec
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("DataCollectionDiameter"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("DataCollectionDiameter"))
   {
-    value = vme->GetTagArray()->GetTag("DataCollectionDiameter")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1759,9 +1759,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Reconstruc
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("ReconstructionDiameter"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("ReconstructionDiameter"))
   {
-    value = vme->GetTagArray()->GetTag("ReconstructionDiameter")->GetValue();
+    value = ti->GetValue();
   }
   else
 
@@ -1784,9 +1784,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DistanceSo
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("DistanceSourceToDetector"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("DistanceSourceToDetector"))
   {
-    value = vme->GetTagArray()->GetTag("DistanceSourceToDetector")->GetValue();
+    value = ti->GetValue();
   }
  
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1808,9 +1808,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DistanceSo
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("DistanceSourceToPatient"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("DistanceSourceToPatient"))
   {
-    value = vme->GetTagArray()->GetTag("DistanceSourceToPatient")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1832,9 +1832,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_GantryDete
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("GantryDetectorTilt"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("GantryDetectorTilt"))
   {
-    value = vme->GetTagArray()->GetTag("GantryDetectorTilt")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1856,9 +1856,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_TableHeigh
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("TableHeight"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("TableHeight"))
   {
-    value = vme->GetTagArray()->GetTag("TableHeight")->GetValue();
+    value = ti->GetValue();
   }
  
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1880,9 +1880,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_RotationDi
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("RotationDirection"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("RotationDirection"))
   {
-    value = vme->GetTagArray()->GetTag("RotationDirection")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1904,9 +1904,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ExposureTi
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("ExposureTime"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("ExposureTime"))
   {
-    value = vme->GetTagArray()->GetTag("ExposureTime")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1928,9 +1928,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_XRayTubeCu
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("XrayTubeCurrent"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("XrayTubeCurrent"))
   {
-    value = vme->GetTagArray()->GetTag("XrayTubeCurrent")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1952,9 +1952,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Exposure::
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("Exposure"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("Exposure"))
   {
-    value = vme->GetTagArray()->GetTag("Exposure")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1976,9 +1976,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_FilterType
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("FilterType"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("FilterType"))
   {
-    value = vme->GetTagArray()->GetTag("FilterType")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -1999,9 +1999,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_FocalSpot:
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("FocalSpot"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("FocalSpot"))
   {
-    value = vme->GetTagArray()->GetTag("FocalSpot")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -2022,9 +2022,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Convolutio
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("ConvolutionKernel"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("ConvolutionKernel"))
   {
-    value = vme->GetTagArray()->GetTag("ConvolutionKernel")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -2045,9 +2045,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PatientPos
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("PatientPosition"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("PatientPosition"))
   {
-    value = vme->GetTagArray()->GetTag("PatientPosition")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -2068,9 +2068,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_StudyID::H
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("StudyID"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("StudyID"))
   {
-    value = vme->GetTagArray()->GetTag("StudyID")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -2091,9 +2091,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ImagePosit
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("ImagePositionPatient"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("ImagePositionPatient"))
   {
-    value = vme->GetTagArray()->GetTag("ImagePositionPatient")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -2114,9 +2114,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PixelSpaci
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("PixelSpacing"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("PixelSpacing"))
   {
-    value = vme->GetTagArray()->GetTag("PixelSpacing")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -2137,9 +2137,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PixelPaddi
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("PixelPaddingValue"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("PixelPaddingValue"))
   {
-    value = vme->GetTagArray()->GetTag("PixelPaddingValue")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -2160,9 +2160,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_WindowCent
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("WindowCenter"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("WindowCenter"))
   {
-    value = vme->GetTagArray()->GetTag("WindowCenter")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -2183,9 +2183,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_WindowWidt
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("WindowWidth"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("WindowWidth"))
   {
-    value = vme->GetTagArray()->GetTag("WindowWidth")->GetValue();
+    value = ti->GetValue();
   }
   else
   {
@@ -2210,9 +2210,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_RescaleInt
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("RescaleIntercept"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("RescaleIntercept"))
   {
-    value = vme->GetTagArray()->GetTag("RescaleIntercept")->GetValue();
+    value = ti->GetValue();
   }
 
   cargo->SetTagHandlerGeneratedString(value.GetCStr());
@@ -2233,9 +2233,9 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_RescaleSlo
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(vme->GetTagArray()->IsTagPresent("RescaleSlope"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("RescaleSlope"))
   {
-    value = vme->GetTagArray()->GetTag("RescaleSlope")->GetValue();
+    value = ti->GetValue();
   }
 
 

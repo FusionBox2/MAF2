@@ -1110,7 +1110,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
     return MAF_ERROR; // terminate with error
   }
 
-  std::vector<std::string> tagList;
+  std::vector<mafString> tagList;
   m_Input->GetTagArray()->GetTagList(tagList);
 
   bool tagFound;
@@ -1123,9 +1123,9 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
 
     for (int n = 0; n < tagList.size(); n++)
     {
-      if (tagName.Equals(tagList[n].c_str()))
+      if (tagName.Equals(tagList[n]))
       {
-        tagValue =  m_Input->GetTagArray()->GetTag(tagList[n].c_str())->GetValue();
+        tagValue =  m_Input->GetTagArray()->GetTag(tagList[n])->GetValue();
         unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\",\"" << tagValue.GetCStr() << "\"" << std::endl ;
         tagFound = true;
         break;
@@ -1143,9 +1143,9 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
 
     for (int n = 0; n < tagList.size(); n++)
     {
-      if (tagName.Equals(tagList[n].c_str()))
+      if (tagName.Equals(tagList[n]))
       {
-        tagValue =  m_Input->GetTagArray()->GetTag(tagList[n].c_str())->GetValue();
+        tagValue =  m_Input->GetTagArray()->GetTag(tagList[n])->GetValue();
         unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\",\"" << tagValue.GetCStr() << "\"" << std::endl ;
         tagFound = true;
         break; 

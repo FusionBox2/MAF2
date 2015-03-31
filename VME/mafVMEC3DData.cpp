@@ -401,8 +401,8 @@ int mafVMEC3DData::Read_C3D_Data(unsigned short	num_markers,				// number of mar
       const char *newSegName;
 
       // searching in dictionary for c3DLMNamesTagArray(i)...
-      if (dictionaryTagArray->IsTagPresent(c3DLMNamesTagArray->at(i)))
-        newSegName = dictionaryTagArray->GetTag(c3DLMNamesTagArray->at(i))->GetComponent(0);
+      if (mafTagItem *ti = dictionaryTagArray->GetTag(c3DLMNamesTagArray->at(i)))
+        newSegName = ti->GetComponent(0);
       else
         newSegName = "NOT_IN_DICTIONARY";
       {// (tag found)

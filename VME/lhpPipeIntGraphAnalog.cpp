@@ -94,18 +94,19 @@ void lhpPipeIntGraphAnalog::Create(mafSceneNode *n)
   m_Graph->AddXVar(0);
 
 
-  bool tagPresent = m_Vme->GetTagArray()->IsTagPresent("SIGNALS_NAME");
+  mafTagItem *tag_Signals = m_Vme->GetTagArray()->GetTag("SIGNALS_NAME");
+  bool tagPresent = (tag_Signals != NULL);
   if (!tagPresent)
   {
     mafTagItem tag_Sig;
     tag_Sig.SetName("SIGNALS_NAME");
     tag_Sig.SetNumberOfComponents(m_NumberOfSignals);
     m_Vme->GetTagArray()->SetTag(tag_Sig);
+    mafTagItem *tag_Signals = m_Vme->GetTagArray()->GetTag("SIGNALS_NAME");
   }
   mafString name;
   m_Names.push_back("Time");
 
-  mafTagItem *tag_Signals = m_Vme->GetTagArray()->GetTag("SIGNALS_NAME");
   for (int n = 0; n < m_NumberOfSignals; n++)
   {
     if (tagPresent)
@@ -116,7 +117,7 @@ void lhpPipeIntGraphAnalog::Create(mafSceneNode *n)
     {
       name  = "analog_";
       name += wxString::Format("%d", n);
-      tag_Signals->SetValue(name.GetCStr(), n);
+      tag_Signals->SetValue(name, n);
     }
     m_Names.push_back(name);
   }

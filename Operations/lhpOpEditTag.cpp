@@ -790,7 +790,7 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
     return MAF_ERROR; // terminate with error
   }
 
-  std::vector<std::string> tagList;
+  std::vector<mafString> tagList;
   m_Input->GetTagArray()->GetTagList(tagList);
 
   bool tagFound;
@@ -803,9 +803,9 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
 
     for (int n = 0; n < tagList.size(); n++)
     {
-      if (tagName.Equals(tagList[n].c_str()))
+      if (tagName.Equals(tagList[n]))
       {
-        tagValue =  m_Input->GetTagArray()->GetTag(tagList[n].c_str())->GetValue();
+        tagValue =  m_Input->GetTagArray()->GetTag(tagList[n])->GetValue();
         unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\",\"" << tagValue.GetCStr() << "\"" << std::endl ;
         tagFound = true;
         break;
@@ -824,9 +824,9 @@ int lhpOpEditTag::GeneratesTagsListsFromXMLDictionary()
 
     for (int n = 0; n < tagList.size(); n++)
     {
-      if (tagName.Equals(tagList[n].c_str()))
+      if (tagName.Equals(tagList[n]))
       {
-        tagValue =  m_Input->GetTagArray()->GetTag(tagList[n].c_str())->GetValue();
+        tagValue =  m_Input->GetTagArray()->GetTag(tagList[n])->GetValue();
         unhandledPlusManualTagsFile << "\"" << tagName.GetCStr() << "\",\"" << tagValue.GetCStr() << "\"" << std::endl ;
         tagFound = true;
         break; 
@@ -1033,8 +1033,8 @@ void lhpOpEditTag::PropagateTagsToChoosedVMES()
   // copy input edited tags into it
 
   // get L000 tags from the vme tag array
-  std::vector<std::string> tagNamesVector;
-  std::vector<std::string>::iterator tagNamesVectorIterator;
+  std::vector<mafString> tagNamesVector;
+  std::vector<mafString>::iterator tagNamesVectorIterator;
 
   std::map<std::string, std::string> tagsToBeCopiedDictionary;
   std::map<std::string, std::string>::iterator tagsToBeCopiedDictionaryIterator;
@@ -1046,7 +1046,7 @@ void lhpOpEditTag::PropagateTagsToChoosedVMES()
 
   for (int i = 0; i < size; i++) 
   { 
-    std::string tagName = tagNamesVector[i];
+    std::string tagName = tagNamesVector[i].GetCStr();
     std::string stringToSearch = "L0000";
 
     bool found = false;
@@ -1120,7 +1120,7 @@ void lhpOpEditTag::PropagateTagsToChoosedVMES()
         stringStream << "Copying " << key << " " << val << " to " << targetVme->GetName() << std::endl;
         if (m_DebugMode)
           mafLogMessage(stringStream.str().c_str());
-        targetTagArray->SetTag(key.c_str(), val.c_str());
+        targetTagArray->SetTag(mafTagItem(key.c_str(), val.c_str()));
         tagsToBeCopiedDictionaryIterator++;
       }
 
@@ -1254,14 +1254,14 @@ void lhpOpEditTag::StoreUsedDictionariesToTags()
 {
   mafString value;
   value = m_UseDicomSubdictionary  == 1 ? "1" : "0" ;
-  m_Input->GetTagArray()->SetTag("USE_DICOM_SUBDICTIONARY", value.GetCStr());
+  m_Input->GetTagArray()->SetTag(mafTagItem("USE_DICOM_SUBDICTIONARY", value));
   
   value = m_UseFASubdictionary  == 1 ? "1" : "0" ;
-  m_Input->GetTagArray()->SetTag("USE_FA_SUBDICTIONARY",value.GetCStr());
+  m_Input->GetTagArray()->SetTag(mafTagItem("USE_FA_SUBDICTIONARY",value));
 
   value = m_UseMASubdictionary  == 1 ? "1" : "0" ;
-  m_Input->GetTagArray()->SetTag("USE_MA_SUBDICTIONARY",value.GetCStr());
+  m_Input->GetTagArray()->SetTag(mafTagItem("USE_MA_SUBDICTIONARY",value));
 
   value = m_UseMicroCTSubdictionary  == 1 ? "1" : "0" ;
-  m_Input->GetTagArray()->SetTag("USE_MICROCT_SUBDICTIONARY",value.GetCStr());
+  m_Input->GetTagArray()->SetTag(mafTagItem("USE_MICROCT_SUBDICTIONARY",value));
 }

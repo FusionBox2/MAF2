@@ -677,25 +677,27 @@ void lhpVMESurfaceScalarVarying::FillScalarsName(bool new_scalars)
 //-------------------------------------------------------------------------
 {
   medVMEAnalog *scalar = medVMEAnalog::SafeDownCast(GetScalarLink());
-  if (scalar != NULL && scalar->GetTagArray()->IsTagPresent("SIGNALS_NAME"))
+  if (scalar != NULL)
   {
-    m_ScalarsAvailableList->Clear();
-    mafTagItem *tag_Signals = scalar->GetTagArray()->GetTag("SIGNALS_NAME");
-    for (int s = 0; s < tag_Signals->GetNumberOfComponents(); s++)
+     if(mafTagItem *tag_Signals = scalar->GetTagArray()->GetTag("SIGNALS_NAME"))
     {
-      m_ScalarsAvailableList->AddItem(s,tag_Signals->GetValue(s),false);
-    }
-    if (new_scalars)
-    {
-      mafVMEOutputScalarMatrix *output = scalar->GetScalarOutput();
-      vnl_matrix<double> mat = output->GetScalarData();
-      vnl_matrix<double> mat_scalars = mat.get_n_rows(1, mat.rows()-1);
+      m_ScalarsAvailableList->Clear();
+      for (int s = 0; s < tag_Signals->GetNumberOfComponents(); s++)
+      {
+        m_ScalarsAvailableList->AddItem(s,tag_Signals->GetValue(s).GetCStr(),false);
+      }
+      if (new_scalars)
+      {
+        mafVMEOutputScalarMatrix *output = scalar->GetScalarOutput();
+        vnl_matrix<double> mat = output->GetScalarData();
+        vnl_matrix<double> mat_scalars = mat.get_n_rows(1, mat.rows()-1);
 
-      m_ScalarRange[0] = mat_scalars.min_value();
-      m_ScalarRange[1] = mat_scalars.max_value();
-      mmaMaterial *material = GetMaterial();
-      material->m_ColorLut->SetTableRange(m_ScalarRange);
-      material->m_ColorLut->Build();
+        m_ScalarRange[0] = mat_scalars.min_value();
+        m_ScalarRange[1] = mat_scalars.max_value();
+        mmaMaterial *material = GetMaterial();
+        material->m_ColorLut->SetTableRange(m_ScalarRange);
+        material->m_ColorLut->Build();
+      }
     }
   }
   if (m_Gui != NULL)
