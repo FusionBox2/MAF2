@@ -130,9 +130,9 @@ lhpOpKinectUtil::lhpOpKinectUtil(bool extapp, const mafString& label) : Supercla
   m_Canundo   = false;
   m_FileDir = mafGetApplicationDirectory() + "/Data/External/";
   m_DictionaryFileName = "";
-  m_ExtAppPath         = "SkeletalViewerBart.exe";
+  m_ExtAppPath         = "SkeletalViewer.exe";
   m_ExtAppPathModel    = "LLOptim.exe";
-  m_Scale  = 1000.0;
+  m_Scale  = 1.0;
   m_Freq   = 30.0;
   m_AFs    = false;
   m_Model  = true;
@@ -328,15 +328,28 @@ bool lhpOpKinectUtil::Import()
     if(m_ExtAppPath.IsEmpty())
       return false;
     mafString filetoprd = mafCreateTempFileName("");
-    filetoprd += ".txt";
     mafString commandline = m_ExtAppPath;
-    commandline += " " + filetoprd;
+    commandline += " -logging" + filetoprd;
     if(wxExecute(commandline.GetCStr(), wxEXEC_SYNC) != 0)
       return false;
+    filetoprd += "\\Files.txt";
     if(!mafFileExists(filetoprd))
       return false;
     m_C3DInputFileNameFullPaths.clear();
-    m_C3DInputFileNameFullPaths.push_back(filetoprd);
+
+    if(FILE* fp = fopen(filetoprd, "rt"))
+    {
+      char string[4096];
+      while(!feof(fp))
+      {
+        if(!fgets(string, 4096, fp))
+          break;
+        mafString fName;
+        fName = mafString(string);
+        m_C3DInputFileNameFullPaths.push_back(fName);
+      }
+      fclose(fp);
+    }
   }
 
   for(unsigned fileIndex = 0; fileIndex < m_C3DInputFileNameFullPaths.size(); fileIndex++)
@@ -345,7 +358,11 @@ bool lhpOpKinectUtil::Import()
     if(imported != NULL)
     {
       if(m_ExtApp)
-        imported->SetName("KinectCaptured");
+      {
+        mafString path, name, ext;
+        mafSplitPath(m_C3DInputFileNameFullPaths[fileIndex], &path, &name, &ext);
+        imported->SetName(name);
+      }
       result = true;
       m_Imported.push_back(imported);
       if(m_AFs)
