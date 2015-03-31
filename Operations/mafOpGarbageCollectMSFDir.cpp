@@ -28,7 +28,7 @@
 #include "mafEvent.h"
 #include "mafGUI.h"
 
-#include "mafStorage.h"
+#include "mafVMEStorage.h"
 #include "mafEventIO.h"
 #include "mafDataVector.h"
 #include "mafVMEItem.h"
@@ -231,7 +231,7 @@ mafString mafOpGarbageCollectMSFDir::GetMSFDirAbsPath(mafNode *anyTreeNode)
 
   mafEventIO es(this,NODE_GET_STORAGE);
   root->OnEvent(&es);
-  mafStorage *storage = es.GetStorage();
+  mafVMEStorage *storage = mafVMEStorage::SafeDownCast(es.GetStorage());
   assert(storage);
 
   mafString msfABSPath = ""; // empty by default
@@ -255,7 +255,7 @@ mafString mafOpGarbageCollectMSFDir::GetMSFXMLFileAbsFileName(mafNode *anyTreeNo
 
   mafEventIO es(this,NODE_GET_STORAGE);
   root->OnEvent(&es);
-  mafStorage *storage = es.GetStorage();
+  mafVMEStorage *storage = mafVMEStorage::SafeDownCast(es.GetStorage());
   assert(storage);
 
   wxString msfXMLFileAbsFileName = ""; // empty by default

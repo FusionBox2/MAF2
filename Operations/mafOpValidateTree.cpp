@@ -28,7 +28,7 @@
 #include "mafEvent.h"
 #include "mafGUI.h"
 
-#include "mafStorage.h"
+#include "mafVMEStorage.h"
 #include "mafEventIO.h"
 #include "mafDataVector.h"
 #include "mafVMEItem.h"
@@ -165,7 +165,7 @@ int mafOpValidateTree::ValidateTree()
         {
           mafEventIO e(this,NODE_GET_STORAGE);
           vme->ForwardUpEvent(e);
-          mafStorage *storage = e.GetStorage();
+          mafVMEStorage *storage = mafVMEStorage::SafeDownCast(e.GetStorage());
           if (storage != NULL)
           {
             m_MSFPath = storage->GetURL();
@@ -201,7 +201,7 @@ int mafOpValidateTree::ValidateTree()
             {
               mafEventIO e(this,NODE_GET_STORAGE);
               vme->ForwardUpEvent(e);
-              mafStorage *storage = e.GetStorage();
+              mafVMEStorage *storage = mafVMEStorage::SafeDownCast(e.GetStorage());
               if (storage != NULL)
               {
                 m_MSFPath = storage->GetURL();
