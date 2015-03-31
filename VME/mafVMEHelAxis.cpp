@@ -845,7 +845,7 @@ void mafVMEHelAxis::InternalUpdate()
   else
     m_AngleFactor = 1.0;
   //m_AngleFactor = angle;
-  UpdateScaleFactor();
+  UpdateLengthFactor();
   SetAbsMatrix(mtr, tsTime);
 }
 
@@ -911,28 +911,45 @@ void mafVMEHelAxis::UpdateCS()
 }
 
 //-------------------------------------------------------------------------
-double mafVMEHelAxis::GetScaleFactor()
+double mafVMEHelAxis::GetLengthFactor()
 //-------------------------------------------------------------------------
 {
-  return m_ScaleFactor;
+  return m_LengthFactor;
 }
 //-------------------------------------------------------------------------
-void mafVMEHelAxis::SetScaleFactor(double scale)
+double mafVMEHelAxis::GetRadiusFactor()
 //-------------------------------------------------------------------------
 {
-  m_ScaleFactor = scale;
+  return m_RadiusFactor;
+}
+//-------------------------------------------------------------------------
+void mafVMEHelAxis::SetLengthFactor(double scale)
+//-------------------------------------------------------------------------
+{
+  m_LengthFactor = scale;
   if (m_Gui)
   {
     m_Gui->Update();
   }
-  UpdateScaleFactor();
+  UpdateLengthFactor();
 }
 //-------------------------------------------------------------------------
-void mafVMEHelAxis::UpdateScaleFactor()
+void mafVMEHelAxis::SetRadiusFactor(double scale)
+//-------------------------------------------------------------------------
+{
+  m_RadiusFactor = scale;
+  if (m_Gui)
+  {
+    m_Gui->Update();
+  }
+  UpdateLengthFactor();
+}
+//-------------------------------------------------------------------------
+void mafVMEHelAxis::UpdateLengthFactor()
 //-------------------------------------------------------------------------
 {
   m_ScaleAxisTransform->Identity();
-  m_ScaleAxisTransform->Scale(m_AngleFactor * m_ScaleFactor,m_AngleFactor * m_ScaleFactor,m_AngleFactor * m_ScaleFactor);
+  m_ScaleAxisTransform->Scale(m_AngleFactor * m_RadiusFactor,m_AngleFactor * m_RadiusFactor,m_AngleFactor * m_LengthFactor);
   m_ScaleAxisTransform->Update();
   m_ScaleAxis->Update();
   Modified();
@@ -961,7 +978,8 @@ mafVMEHelAxis::mafVMEHelAxis() : mafVME()
 
   DependsOnLinkedNodeOn();
 
-  m_ScaleFactor  = 1.0;
+  m_LengthFactor = 1.0;
+  m_RadiusFactor = 1.0;
   m_AngleFactor  = 1.0;
   m_MinAngle     = 5.0;
   m_MinTime      = 0.0;
@@ -1044,7 +1062,7 @@ mafVMEHelAxis::mafVMEHelAxis() : mafVME()
   m_Axes->Update();
 
   m_ScaleAxisTransform = vtkTransform::New();
-  m_ScaleAxisTransform->Scale(m_ScaleFactor,m_ScaleFactor,m_ScaleFactor);
+  m_ScaleAxisTransform->Scale(m_RadiusFactor,m_RadiusFactor,m_LengthFactor);
   m_ScaleAxisTransform->Update();
 
   vtkMAFSmartPointer<vtkPolyData> axes_surface;
@@ -1144,7 +1162,10 @@ int mafVMEHelAxis::InternalStore(mafStorageElement *parent)
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
     parent->StoreMatrix("Transform",&m_Transform->GetMatrix());
-    parent->StoreDouble("ScaleFactor", m_ScaleFactor);
+    //code for backward compatibility
+    parent->StoreDouble("ScaleFactor", m_LengthFactor);
+    parent->StoreDouble("RadiusFactor", m_RadiusFactor);
+    parent->StoreDouble("LengthFactor", m_LengthFactor);
     parent->StoreDouble("MinAngle", m_MinAngle);
     parent->StoreDouble("MinTime", m_MinTime);
     parent->StoreDouble("MaxTime", m_MaxTime);
@@ -1165,14 +1186,19 @@ int mafVMEHelAxis::InternalRestore(mafStorageElement *node)
     if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
-      node->RestoreDouble("ScaleFactor", m_ScaleFactor);
+      //code for backward compatibility
+      node->RestoreDouble("ScaleFactor", m_LengthFactor);
+      m_RadiusFactor = m_LengthFactor;
+      node->RestoreDouble("RadiusFactor", m_RadiusFactor);
+      node->RestoreDouble("LengthFactor", m_LengthFactor);
       node->RestoreDouble("MinAngle", m_MinAngle);
       node->RestoreDouble("MinTime", m_MinTime);
       node->RestoreDouble("MaxTime", m_MaxTime);
       node->RestoreInteger("Mode", m_Mode);
       node->RestoreInteger("AligningMode", m_AligningMode);
       m_MeanChanges = 1;
-      SetScaleFactor(m_ScaleFactor);
+      SetRadiusFactor(m_RadiusFactor);
+      SetLengthFactor(m_LengthFactor);
       return MAF_OK;
     }
   }
@@ -1207,9 +1233,16 @@ void mafVMEHelAxis::OnEvent(mafEventBase *maf_event)
       this->ForwardUpEvent(cam_event);
       break;
     }
-  case ID_SCALE_FACTOR:
+  case ID_LENGTH_FACTOR:
     {
-      SetScaleFactor(m_ScaleFactor);
+      SetLengthFactor(m_LengthFactor);
+      mafEvent cam_event(this,CAMERA_UPDATE);
+      this->ForwardUpEvent(cam_event);
+      break;
+    }
+  case ID_RADIUS_FACTOR:
+    {
+      SetRadiusFactor(m_RadiusFactor);
       mafEvent cam_event(this,CAMERA_UPDATE);
       this->ForwardUpEvent(cam_event);
       break;
@@ -1237,7 +1270,8 @@ mafGUI *mafVMEHelAxis::CreateGui()
   const wxString align_choices[] = {_("None"), _("XYZ"), _("XZY"), _("YZX"), _("YXZ"), _("ZXY"), _("ZYX")};
   m_Gui = Superclass::CreateGui();
   m_Gui->Show(false);
-  m_Gui->Double(ID_SCALE_FACTOR,_("scale"),&m_ScaleFactor);
+  m_Gui->Double(ID_RADIUS_FACTOR,_("radius scale"),&m_RadiusFactor);
+  m_Gui->Double(ID_LENGTH_FACTOR,_("length scale"),&m_LengthFactor);
   m_Gui->Double(ID_MIN_ANGLE, _("Min angle"), &m_MinAngle, 0.0);
   m_Gui->Combo(ID_MODE, _("Mode"), &m_Mode, 3, mode_choices, _("Select mode"));
   m_Gui->Combo(ID_ALIGNING, _("Align"), &m_AligningMode, 7, align_choices, _("Select aligning"));
@@ -1281,5 +1315,6 @@ void mafVMEHelAxis::Print(std::ostream& os, const int tabs)// const
 {
   Superclass::Print(os,tabs);
   mafIndent indent(tabs);
-  os<<indent<<"Scale: "<<indent<<m_ScaleFactor;
+  os<<indent<<"RadiusScale: "<<indent<<m_RadiusFactor;
+  os<<indent<<"LengthScale: "<<indent<<m_LengthFactor;
 }

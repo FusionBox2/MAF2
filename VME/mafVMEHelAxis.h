@@ -13,8 +13,6 @@
 #ifndef __mafVMEHelAxis_h
 #define __mafVMEHelAxis_h
 
-#include "lhpDefines.h"
-
 //-----------------------------------------------------------------------
 // Includes:
 //-----------------------------------------------------------------------
@@ -45,7 +43,8 @@ public:
   enum 
   {
     ID_NAME_REF_SYS = Superclass::ID_LAST,
-    ID_SCALE_FACTOR,
+    ID_LENGTH_FACTOR,
+    ID_RADIUS_FACTOR,
     ID_MIN_ANGLE,
     ID_MIN_TIME,
     ID_MAX_TIME,
@@ -72,10 +71,14 @@ public:
   static char ** GetIcon();
 
   /** Used to change the axes size */
-  void SetScaleFactor(double scale);
+  void SetLengthFactor(double scale);
+  /** Used to change the axes size */
+  void SetRadiusFactor(double scale);
 
   /** Return the axes size */
-  double GetScaleFactor();
+  double GetLengthFactor();
+  /** Return the axes size */
+  double GetRadiusFactor();
 
   const V3d<double>& GetDirection(){return m_Direction;}
   const V3d<double>& GetStartPoint(){return m_StartPoint;}
@@ -122,7 +125,7 @@ protected:
   bool AlignAxis(const V3d<double>& direction, const mafMatrix& prox, int mode);
 
   /** Used to change the axes size */
-  void UpdateScaleFactor();
+  void UpdateLengthFactor();
 
   vtkArrowSource             *m_ZArrow;
   vtkSphereSource            *m_CenterSphere;
@@ -138,7 +141,8 @@ protected:
 
   vtkAppendPolyData          *m_Axes;
 
-  double                     m_ScaleFactor;
+  double                     m_LengthFactor;
+  double                     m_RadiusFactor;
   double                     m_AngleFactor;
 
   double                     m_MinAngle;
