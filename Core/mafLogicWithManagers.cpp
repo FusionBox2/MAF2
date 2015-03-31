@@ -1350,11 +1350,11 @@ bool mafLogicWithManagers::OnFileClose(bool force)
     mafRemoveDirectory(m_TmpDir); // remove the temporary directory
     m_TmpDir = "";
   }
+  m_NodeManager->SetRoot(NULL);
+  m_NodeManager->MSFModified(false);
   mafDEL(m_Storage);
   m_NodeManager->SetListener(this);
   VmeSelected(NULL);
-  m_NodeManager->SetRoot(NULL);
-  m_NodeManager->MSFModified(false);
   m_MSFFile = "";
   m_ZipFile = ""; 
   UpdateFrameTitle();
