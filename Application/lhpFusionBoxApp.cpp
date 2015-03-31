@@ -717,7 +717,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   }
   
   //-------------------------------------------------------------
-  bool view_visibility = fullVersion;
+  bool view_visibility = 0;//fullVersion;
   //------------------------- Views -------------------------
   //View Arbitrary Slice
   mafViewArbitrarySlice *ArbitraryView = new mafViewArbitrarySlice("Arbitrary");
