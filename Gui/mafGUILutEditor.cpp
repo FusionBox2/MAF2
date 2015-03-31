@@ -149,7 +149,7 @@ mafGUILutEditor::mafGUILutEditor(wxWindow* parent, wxWindowID id, const wxPoint&
   mafGUIButton    *butt;
   
   lab = new wxStaticText(this, -1, _("Presets LUT"), dp, wxSize(LW,LH), wxALIGN_RIGHT );
-	m_PresetCombo = new wxComboBox(this, ID_PRESET, "", dp, wxSize(DW,-1), lutPresetNum+1, presetsLutNames.GetStringArray(), wxCB_READONLY);
+	m_PresetCombo = new wxComboBox(this, ID_PRESET, "", dp, wxSize(DW,-1), presetsLutNames, wxCB_READONLY);
   sz = new wxBoxSizer(wxHORIZONTAL);
   sz->Add( lab,  1, wxRIGHT, LM);
 	sz->Add( m_PresetCombo,0, wxRIGHT, HM);
@@ -202,7 +202,7 @@ mafGUILutEditor::mafGUILutEditor(wxWindow* parent, wxWindowID id, const wxPoint&
   buttonRemoveFromUserLUTS->SetValidator( mafGUIValidator(this,ID_REMOVE_FROM_ULIB,buttonRemoveFromUserLUTS) );  
 
   wxStaticText *staticTextSelectUserLut = new wxStaticText (this, -1, _("select user LUT"), dp, wxSize(LW,LH), wxALIGN_RIGHT );
-  m_UserPresetCombo = new wxComboBox  (this, ID_USER_PRESET, "", dp, wxSize(DW,-1), userLutPresetNum, userLutNames.GetStringArray(), wxCB_READONLY);
+  m_UserPresetCombo = new wxComboBox  (this, ID_USER_PRESET, "", dp, wxSize(DW,-1), userLutNames, wxCB_READONLY);
 
   wxBoxSizer   *selectUserLutsHSizer;
 

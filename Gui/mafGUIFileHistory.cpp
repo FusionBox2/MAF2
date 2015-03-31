@@ -32,6 +32,18 @@
 static const wxChar *s_MRUEntryFormat = wxT("&%d %s");
 #define NUMBER_OF_RECENT_FILE 9
 
+static inline wxChar* MYcopystring(const wxString& s)
+{
+    wxChar* copy = new wxChar[s.length() + 1];
+    return wxStrcpy(copy, s.c_str());
+}
+
+static inline wxChar* MYcopystring(const wxChar* s)
+{
+    wxChar* copy = new wxChar[wxStrlen(s) + 1];
+    return wxStrcpy(copy, s);
+}
+
 //----------------------------------------------------------------------------
 mafGUIFileHistory::mafGUIFileHistory() :wxFileHistory(NUMBER_OF_RECENT_FILE)
 //----------------------------------------------------------------------------
@@ -76,7 +88,7 @@ void mafGUIFileHistory::AddFileToHistory(const wxString& file)
   {
     m_fileHistory[i] = m_fileHistory[i-1];
   }
-  m_fileHistory[0] = copystring(file);
+  m_fileHistory[0] = MYcopystring(file);
 
   for(i = 0; i < m_fileHistoryN; i++)
     if(m_fileHistory[i])
