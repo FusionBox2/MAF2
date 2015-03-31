@@ -221,6 +221,128 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
   return MSFFile;
 }
 //----------------------------------------------------------------------------
+void mafOpenZIP(const mafString& filename, const mafString& temp_directory)
+//----------------------------------------------------------------------------
+{
+  wxZipFSHandler      *zipHandler = NULL;      ///< Handler for zip archive (used to open zmsf files)
+  wxFileSystem        *fileSystem = NULL;      ///< File system manager
+
+  wxString path, name, ext;
+
+  mafString zipFile = filename;
+  std::vector<mafString> extractedFiles;
+
+  wxString complete_name, zfile, out_file;
+  wxSplitPath(zipFile.GetCStr(),&path,&name,&ext);
+  complete_name = name + "." + ext;
+
+  wxFSFile *zfileStream;
+  wxZlibInputStream *zip_is;
+  wxString pkg = "#zip:";
+  wxString header_name = complete_name + pkg;
+  int length_header_name = header_name.Length();
+  bool enable_mid = false;
+  if(fileSystem == NULL)
+    fileSystem = new wxFileSystem();
+
+  if(zipHandler == NULL)
+  {
+    zipHandler = new wxZipFSHandler();
+    fileSystem->AddHandler(zipHandler); // add the handler that manage zip protocol
+    // (the handler to manage the local files protocol is already added to wxFileSystem)
+  }
+
+  fileSystem->ChangePathTo(zipFile.GetCStr());
+  // extract filename from the zip archive
+  zfile = fileSystem->FindFirst(complete_name+pkg+name+"\\*.*");
+  if (zfile == "")
+  {
+    enable_mid = true;
+    // no files found: try to search inside the archive without filename
+    zfile = fileSystem->FindFirst(complete_name+pkg+"\\*.*");
+  }
+  /*if (zfile == "")
+    return;*/
+  for(; zfile != ""; zfile = fileSystem->FindNext())
+  {
+    zfileStream = fileSystem->OpenFile(zfile);
+    if (zfileStream == NULL) // unable to open the file
+    {
+      for(std::vector<mafString>::iterator it = extractedFiles.begin(); it != extractedFiles.end(); ++it)
+      {
+        wxRemoveFile((*it).GetCStr());
+      }
+      return;
+    }
+    wxSplitPath(zfile,&path,&name,&ext);
+    complete_name = name + "." + ext;
+    if (enable_mid)
+      complete_name = complete_name.Mid(length_header_name);
+    zip_is = (wxZlibInputStream *)zfileStream->GetStream();
+    out_file = temp_directory + "\\" + complete_name;
+    char *buf;
+    int s_size;
+    std::ofstream out_file_stream;
+    out_file_stream.open(out_file, std::ios_base::binary); // the file to extract is a binary
+    s_size = zip_is->GetSize();
+    buf = new char[s_size];
+    zip_is->Read(buf,s_size);
+    out_file_stream.write(buf, s_size);
+    out_file_stream.close();
+    delete[] buf;
+    zfileStream->UnRef();
+    delete zfileStream;
+    extractedFiles.push_back(out_file);
+  }
+  fileSystem->ChangePathTo(temp_directory.GetCStr(), TRUE);
+  fileSystem->CleanUpHandlers(); // Handlers are shared trough file systems.
+  cppDEL(fileSystem);
+}
+
+//----------------------------------------------------------------------------
+void mafExtractZIP(const mafString& filename, const mafString& temp_directory, const mafString& entry_name)
+//----------------------------------------------------------------------------
+{
+  wxFileInputStream in(filename.GetCStr());
+  wxZipInputStream zip(in);
+  if (!in || !zip)
+    return;
+  wxZipEntry *entry = NULL;
+  // convert the local name we are looking for into the internal format
+  wxString name = wxZipEntry::GetInternalName(entry_name.GetCStr());
+
+  // call GetNextEntry() until the required internal name is found
+  // to be re-factored for efficiency reasons.
+  do 
+  {
+    if (entry)
+    {
+      delete entry;
+      entry = NULL;
+    }
+    entry = zip.GetNextEntry();
+  } while(entry != NULL && entry->GetInternalName() != name);
+
+  if (entry != NULL) 
+  {
+    // read the entry's data...
+    wxString out_file;
+    char *buf;
+    int s_size;
+    std::ofstream out_file_stream;
+    out_file = temp_directory + "/" + entry_name;
+    out_file_stream.open(out_file, std::ios_base::binary); // the file to extract is a binary
+    s_size = entry->GetSize();
+    buf = new char[s_size];
+    zip.Read(buf, s_size);
+    out_file_stream.write(buf, s_size);
+    out_file_stream.close();
+    delete[] buf;
+    delete entry;
+    entry = NULL;
+  }
+}
+//----------------------------------------------------------------------------
 bool mafMakeZip(const mafString &zipname, const std::vector<mafString>& files)
 //----------------------------------------------------------------------------
 {
