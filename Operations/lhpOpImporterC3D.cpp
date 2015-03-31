@@ -126,19 +126,6 @@ lhpOpImporterC3D::_InternalC3DData::_InternalC3DData()
   m_NumEvents = 0;
   m_NumPlatforms = 0;
 
-  m_TrajectoryName = NULL;
-  m_ChannelName = NULL;
-  m_AngleName = NULL; 
-  m_MomentName = NULL;
-  m_PowerName = NULL;
-  m_EventContext = NULL;
-
-  m_TrajectoryUnit = NULL;
-  m_ChannelUnit = NULL;
-  m_AngleUnit = NULL;
-  m_MomentUnit = NULL;
-  m_PowerUnit = NULL;
-
   m_X = 0;
   m_Y = 0;
   m_Z = 0;
@@ -159,6 +146,10 @@ lhpOpImporterC3D::_InternalC3DData::_InternalC3DData()
 
   m_CenterX = 0;
   m_CenterY = 0;
+
+  m_OriginX = 0;
+  m_OriginY = 0;
+  m_OriginZ = 0;
 }
 
 //----------------------------------------------------------------------------

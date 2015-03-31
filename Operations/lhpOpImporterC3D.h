@@ -210,18 +210,18 @@ protected:
     int m_NumEvents;
     int m_NumPlatforms;
 
-    char *m_TrajectoryName;
-    char *m_ChannelName;
-    char *m_AngleName; 
-    char *m_MomentName;
-    char *m_PowerName;
-    char *m_EventContext;
+    mafString m_TrajectoryName;
+    mafString m_ChannelName;
+    mafString m_AngleName; 
+    mafString m_MomentName;
+    mafString m_PowerName;
+    mafString m_EventContext;
 
-    char *m_TrajectoryUnit;
-    char *m_ChannelUnit;
-    char *m_AngleUnit;
-    char *m_MomentUnit;
-    char *m_PowerUnit;
+    mafString m_TrajectoryUnit;
+    mafString m_ChannelUnit;
+    mafString m_AngleUnit;
+    mafString m_MomentUnit;
+    mafString m_PowerUnit;
     
     double m_X;
     double m_Y;
@@ -243,6 +243,10 @@ protected:
     
     double m_CenterX;
     double m_CenterY;
+
+    double m_OriginX;
+    double m_OriginY;
+    double m_OriginZ;
   };
 
   std::vector<_InternalC3DData> m_intData;

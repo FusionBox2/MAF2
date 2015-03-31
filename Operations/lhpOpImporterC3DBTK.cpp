@@ -129,7 +129,7 @@ lhpOpImporterC3DBTK::lhpOpImporterC3DBTK(const mafString& label) : Superclass(la
   m_OpType  = OPTYPE_IMPORTER;
   m_Canundo = true;
 
-  m_FileDir = (mafGetApplicationDirectory() + "/Data/External/").c_str();
+  m_FileDir = mafGetApplicationDirectory() + "/Data/External/";
   m_DictionaryFileName = "";
 
   //gui
@@ -193,8 +193,33 @@ mafOp* lhpOpImporterC3DBTK::Copy()
 void lhpOpImporterC3DBTK::OpRun()   
 //----------------------------------------------------------------------------
 {
+  mafString wildcard = "c3d files (*.c3d)|*.c3d";
+
+  m_C3DInputFileNameFullPaths.clear();
+  {
+    mafGetOpenMultiFiles(m_FileDir,wildcard, m_C3DInputFileNameFullPaths);
+  }
+
+  if(m_C3DInputFileNameFullPaths.size() == 0) 
+  {
+    mafEventMacro(mafEvent(this,OP_RUN_CANCEL));
+  }
+  else if (!m_TestMode)
+  {
   CreateGui();
   ShowGui();
+}
+  else
+  {
+    if(Import())
+    {
+      mafEventMacro(mafEvent(this,OP_RUN_OK));
+    }
+    else
+    {
+      mafEventMacro(mafEvent(this,OP_RUN_CANCEL));
+    }
+  }
 }
 //----------------------------------------------------------------------------
 int lhpOpImporterC3DBTK::OpenC3D(const mafString &fullFileName)
@@ -270,6 +295,9 @@ void lhpOpImporterC3DBTK::Initialize(const mafString &fullFileName, lhpOpImporte
   intData.m_VideoRate = m_Acq->GetPointFrequency();
   intData.m_LengthMs = (long)((intData.m_NumFrames/intData.m_VideoRate)*1000); //is necessary because we need of msec and not of sec
   
+  intData.m_StartFrame = m_Acq->GetFirstFrame() - 1;
+  intData.m_EndFrame   = m_Acq->GetLastFrame() - 1;
+
   intData.m_TrajectorySamplePeriod = ((double)intData.m_LengthMs/(double)intData.m_NumFrames) / 1000.0;
   intData.m_AnalogSamplePeriod = ((double)intData.m_LengthMs/(double)intData.m_NumSamples) / 1000.0;
   intData.m_VectogramSamplePeriod = intData.m_AnalogSamplePeriod;
@@ -289,7 +317,7 @@ mafVMEGroup *lhpOpImporterC3DBTK::ImportSingleFile(const mafString &fullFileName
     Initialize(fullFileName, intData);
 
 		//fill data structures
-    if(m_ImportTrajectoriesFlag || m_ImportAnalogFlag || m_ImportPlatformFlag || m_ImportEventFlag) 
+		if(m_ImportTrajectoriesFlag || m_ImportAnalogFlag || m_ImportPlatformFlag || m_ImportEventFlag) 
     {
       mafNEW(intData.m_VmeGroup);
       mafString resultName;
@@ -402,7 +430,7 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
       case btk::Point::Force:
       case btk::Point::Marker:
         {
-          strcpy (intData.m_TrajectoryName, m_Acq->GetPoint(currentTrajectory)->GetLabel().c_str());
+          intData.m_TrajectoryName = m_Acq->GetPoint(currentTrajectory)->GetLabel().c_str();
 
           //control if m_Trajectory is not a phantom landmark(camera reflexes)
           if(intData.m_TrajectoryName[0] != '*')
@@ -475,7 +503,7 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
               }
             }
 
-            strcpy (intData.m_TrajectoryUnit, m_Acq->GetPointUnit().c_str());
+            intData.m_TrajectoryUnit = m_Acq->GetPointUnit().c_str();
 
             bool visibility = m_Acq->GetPoint(currentTrajectory)->GetResiduals().coeffRef(currentFrame) != -1;
             if(visibility)
@@ -491,15 +519,10 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
 
 
             if(currentFrame == 0)
-            {
-              addTo->AppendLandmark(intData.m_X,intData.m_Y,intData.m_Z,intData.m_TrajectoryName);
-            }
-            else
-            {
-              addTo->SetLandmark(intData.m_TrajectoryName,intData.m_X,intData.m_Y,intData.m_Z,currentFrame * intData.m_TrajectorySamplePeriod);
-            }
+              addTo->AppendLandmark(intData.m_TrajectoryName);
+            addTo->SetLandmark(intData.m_TrajectoryName,intData.m_X,intData.m_Y,intData.m_Z,(intData.m_StartFrame + currentFrame) * intData.m_TrajectorySamplePeriod);
 
-            addTo->SetLandmarkVisibility(intData.m_TrajectoryName,visibility,currentFrame * intData.m_TrajectorySamplePeriod);
+            addTo->SetLandmarkVisibility(intData.m_TrajectoryName,visibility,(intData.m_StartFrame + currentFrame) * intData.m_TrajectorySamplePeriod);
 
             intData.m_NumTrajectories++;
           }
@@ -507,9 +530,9 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
         break;
       case btk::Point::Angle:
 
-        strcpy (intData.m_AngleName, m_Acq->GetPoint(currentTrajectory)->GetLabel().c_str());
+        intData.m_AngleName = m_Acq->GetPoint(currentTrajectory)->GetLabel().c_str();
         
-        strcpy (intData.m_AngleUnit, m_Acq->GetPointUnit().c_str());
+        intData.m_AngleUnit = m_Acq->GetPointUnit().c_str();
         
         if(m_Acq->GetPoint(currentTrajectory)->GetResiduals().coeffRef(currentFrame) != -1)
         {
@@ -521,9 +544,9 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
         break;
       case btk::Point::Moment:
 
-        strcpy (intData.m_MomentName, m_Acq->GetPoint(currentTrajectory)->GetLabel().c_str());
+        intData.m_MomentName = m_Acq->GetPoint(currentTrajectory)->GetLabel().c_str();
 
-        strcpy (intData.m_MomentUnit, m_Acq->GetPointUnit().c_str());
+        intData.m_MomentUnit = m_Acq->GetPointUnit().c_str();
         
         if(m_Acq->GetPoint(currentTrajectory)->GetResiduals().coeffRef(currentFrame) != -1)
         {
@@ -535,9 +558,9 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
         break;
       case btk::Point::Power:
 
-        strcpy (intData.m_PowerName, m_Acq->GetPoint(currentTrajectory)->GetLabel().c_str());
+        intData.m_PowerName = m_Acq->GetPoint(currentTrajectory)->GetLabel().c_str();
         
-        strcpy (intData.m_PowerUnit, m_Acq->GetPointUnit().c_str());
+        intData.m_PowerUnit = m_Acq->GetPointUnit().c_str();
         
         if(m_Acq->GetPoint(currentTrajectory)->GetResiduals().coeffRef(currentFrame) != -1)
         {
@@ -547,11 +570,6 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
         }
         intData.m_NumPowers++;
         break;
-      default:
-        {
-          //wxMessageBox("ok");
-          break;
-        }
       }
     }
 
@@ -605,7 +623,7 @@ void lhpOpImporterC3DBTK::ImportAnalog(lhpOpImporterC3DBTK::_InternalC3DData &in
   //For every Sample
   for(int currentSample=0; currentSample < intData.m_NumSamples; currentSample++)
   {
-    mafTimeStamp currentTime = currentSample * intData.m_AnalogSamplePeriod;
+    mafTimeStamp currentTime = (intData.m_StartFrame + currentSample) * intData.m_AnalogSamplePeriod;
     
     analogMatrix.put(0,currentSample, currentTime); //fill first row with timeframe, every column is a time
 
@@ -613,9 +631,9 @@ void lhpOpImporterC3DBTK::ImportAnalog(lhpOpImporterC3DBTK::_InternalC3DData &in
     for(int currentChannel=0; currentChannel < intData.m_NumChannels; currentChannel++)
     {
 
-      strcpy (intData.m_ChannelName, m_Acq->GetAnalog(currentChannel)->GetLabel().c_str());
+      intData.m_ChannelName = m_Acq->GetAnalog(currentChannel)->GetLabel().c_str();
       intData.m_AnalogValue = m_Acq->GetAnalog(currentChannel)->GetValues()(currentSample, 0);
-      strcpy (intData.m_ChannelUnit, m_Acq->GetAnalog(currentChannel)->GetUnit().c_str());
+      intData.m_ChannelUnit = m_Acq->GetAnalog(currentChannel)->GetUnit().c_str();
 
       if(currentSample == 0) channelsNameList.push_back(intData.m_ChannelName);
 
@@ -801,7 +819,7 @@ void lhpOpImporterC3DBTK::ImportPlatform(lhpOpImporterC3DBTK::_InternalC3DData &
       intData.m_MomentY = fpwc->GetItem(currentPlatform)->GetMoment()->GetValues().col(1)(currentSample);
       intData.m_MomentZ = fpwc->GetItem(currentPlatform)->GetMoment()->GetValues().col(2)(currentSample);
 
-      currentTime = currentSample * intData.m_VectogramSamplePeriod;
+      currentTime = (intData.m_StartFrame + currentSample) * intData.m_VectogramSamplePeriod;
 
       //force      
       pointsForce->Reset();
@@ -870,10 +888,8 @@ void lhpOpImporterC3DBTK::ImportEvent(lhpOpImporterC3DBTK::_InternalC3DData &int
   //For every event
   for(int currentEvent=0; currentEvent<intData.m_NumEvents; currentEvent++)
   {
-    //event context
-    strcpy (intData.m_EventContext, m_Acq->GetEvent(currentEvent)->GetContext().c_str());
-    //event value in seconds
-    intData.m_EventValue = m_Acq->GetEvent(currentEvent)->GetTime();
+    intData.m_EventContext = m_Acq->GetEvent(currentEvent)->GetContext().c_str();//event context
+    intData.m_EventValue = m_Acq->GetEvent(currentEvent)->GetTime();              //event value in seconds
   }
 }
 //----------------------------------------------------------------------------
@@ -895,14 +911,6 @@ enum C3D_IMPORTER_ID
 void lhpOpImporterC3DBTK::CreateGui()
 //----------------------------------------------------------------------------
 {
-  mafString wildcard = "c3d files (*.c3d)|*.c3d";
-
-  m_C3DInputFileNameFullPaths.clear();
-  {
-    mafGetOpenMultiFiles(m_FileDir,wildcard, m_C3DInputFileNameFullPaths);
-  }
-
-  //mafEventMacro(mafEvent(this,result));
 	m_Gui = new mafGUI(this);
 	m_Gui->Label("Select:", true);
 

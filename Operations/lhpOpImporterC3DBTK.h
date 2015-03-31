@@ -199,23 +199,25 @@ protected:
 	  int m_NumMoments; 
 	  int m_NumPowers; 
 	  int m_NumFrames; 
+	  int m_StartFrame;
+	  int m_EndFrame;
 	  int m_NumChannels;
 	  int m_NumSamples;
 	  int m_NumEvents;
 	  int m_NumPlatforms;
 
-    char m_TrajectoryName[100];
-	  char m_ChannelName[100];
-	  char m_AngleName[100];
-	  char m_MomentName[100];
-	  char m_PowerName[100];
-	  char m_EventContext[100];
+    mafString m_TrajectoryName;
+	  mafString m_ChannelName;
+	  mafString m_AngleName;
+	  mafString m_MomentName;
+	  mafString m_PowerName;
+	  mafString m_EventContext;
 
-	  char m_TrajectoryUnit[100];
-	  char m_ChannelUnit[100];
-	  char m_AngleUnit[100];
-	  char m_MomentUnit[100];
-	  char m_PowerUnit[100];
+	  mafString m_TrajectoryUnit;
+	  mafString m_ChannelUnit;
+	  mafString m_AngleUnit;
+	  mafString m_MomentUnit;
+	  mafString m_PowerUnit;
   	
 	  double m_X;
 	  double m_Y;
