@@ -650,7 +650,14 @@ char *mafString::ParsePathName(char *str)
 
  // for Windows platforms parse the string to substitute "/" and "\\" with the right one.
 #ifdef _WIN32
-  for (unsigned int i=0;i<Length(str);i++)
+  mafID length = Length(str);
+  unsigned start = 0;
+  if(length >=2)
+  {
+    if(str[0] == '\\' && str[1] == '\\')
+      start = 2;
+  }
+  for (unsigned int i=start;i<length;i++)
   {
     if (str[i]=='\\')
       str[i]='/';

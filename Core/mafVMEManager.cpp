@@ -323,19 +323,7 @@ int mafVMEManager::MSFOpen(mafString filename)
     wxSetWorkingDirectory(m_TmpDir.GetCStr());
   }
   
-  // convert to unix format
-  mafString sub_unixname;
-  if (unixname.StartsWith("\\\\"))
-  {
-    // prevent to revert the remote mounted disk back slash characters.
-    sub_unixname = unixname;
-    sub_unixname.Erase(0,1);
-    sub_unixname.ParsePathName();
-    unixname = "\\\\";
-    unixname += sub_unixname;
-  }
-  else
-    unixname.ParsePathName();
+  unixname.ParsePathName();
 
   m_MSFFile = unixname; 
   m_Storage->SetURL(m_MSFFile.GetCStr());
@@ -476,19 +464,7 @@ int mafVMEManager::MSFSave()
 			file = file_dir + "/" + name + "." + ext;
 		}
 
-    // convert to unix format
-    mafString sub_unixname;
-    if (file.StartsWith("\\\\"))
-    {
-      // prevent to revert the remote mounted disk back slash characters.
-      sub_unixname = file;
-      sub_unixname.Erase(0,1);
-      sub_unixname.ParsePathName();
-      file = "\\\\";
-      file += sub_unixname;
-    }
-    else
-      file.ParsePathName();
+    file.ParsePathName();
 
     m_MSFFile = file.GetCStr();
   }

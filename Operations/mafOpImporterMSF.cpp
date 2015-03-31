@@ -109,17 +109,7 @@ int mafOpImporterMSF::ImportMSF()
     wxSetWorkingDirectory(m_TmpDir.GetCStr());
   }
 
-  mafString sub_unixname;
-  if (unixname.StartsWith("\\\\"))
-  {
-    sub_unixname = unixname;
-    sub_unixname.Erase(0,1);
-    sub_unixname.ParsePathName();
-    unixname = "\\\\";
-    unixname += sub_unixname;
-  }
-  else
-    unixname.ParsePathName(); // convert to unix format
+  unixname.ParsePathName(); // convert to unix format
 
   m_MSFFile = unixname; 
   mafVMEStorage *storage;
