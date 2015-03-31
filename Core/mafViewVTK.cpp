@@ -183,11 +183,14 @@ int  mafViewVTK::GetNodeStatus(mafNode *vme)
   if (!m_PipeMap.empty())
   {
     mafString vme_type = vme->GetTypeName();
-    if(m_PipeMap[vme_type].m_Visibility == NON_VISIBLE)
+    auto it = m_PipeMap.find(vme_type);
+    if(it == m_PipeMap.end())
+      return status;
+    if(it->second.m_Visibility == NON_VISIBLE)
     {
       status = NODE_NON_VISIBLE;
     }
-    else if (m_PipeMap[vme_type].m_Visibility == MUTEX)
+    else if(it->second.m_Visibility == MUTEX)
     {
       mafSceneNode *n = m_Sg->Vme2Node(vme);
       if (n != NULL)
@@ -268,10 +271,11 @@ void mafViewVTK::GetVisualPipeName(mafNode *node, mafString &pipe_name)
     // custom visualization for the view should be considered only
     // if we are not in editing mode.
     mafString vme_type = v->GetTypeName();
-    if (!m_PipeMap.empty())
+    auto it = m_PipeMap.find(vme_type);
+    if (it != m_PipeMap.end())
     {
       // pick up the visual pipe from the view's visual pipe map
-      pipe_name = m_PipeMap[vme_type].m_PipeName;
+      pipe_name = it->second.m_PipeName;
     }
   }
 
