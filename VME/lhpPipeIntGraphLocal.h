@@ -51,6 +51,8 @@ public:
     ID_LAST
   };
 
+  virtual void Create(mafNode *node, mafView *view);
+
   enum GRAPH_IDS
   {
   //LTM

@@ -72,6 +72,12 @@ lhpPipeIntGraphLocal::lhpPipeIntGraphLocal()
   m_Proximal = NULL;
   m_ProximalName = "";
 }
+void lhpPipeIntGraphLocal::Create(mafNode *node, mafView *view)
+{
+  Superclass::Create(node, view);
+  SetProximal(AutoSelectProximal(mafVME::SafeDownCast(node)));
+}
+
 //----------------------------------------------------------------------------
 lhpPipeIntGraphLocal::~lhpPipeIntGraphLocal()
 //----------------------------------------------------------------------------
@@ -106,7 +112,7 @@ void lhpPipeIntGraphLocal::OnEvent(mafEventBase *maf_event)
     }
     if(ID_RESETPARENT == e->GetId())
     {
-      SetProximal(NULL);
+      SetProximal(AutoSelectProximal(mafVME::SafeDownCast(m_Node)));
       return;
     }
   }
@@ -134,6 +140,8 @@ mafGUI *lhpPipeIntGraphLocal::CreateGui()
 bool lhpPipeIntGraphLocal::StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTimeStamp prevts)
 //----------------------------------------------------------------------------
 {
+  if(m_Proximal == NULL)
+    SetProximal(AutoSelectProximal(mafVME::SafeDownCast(m_Node)));
   if(nVarID >= GDT_LAST)
   {
     wxASSERT(false);
@@ -150,7 +158,7 @@ bool lhpPipeIntGraphLocal::StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTimeS
   {
     mafMatrix mLTM;
     V4d<double>    vPos, vRot;
-    GetLocalMatrix(mafVME::SafeDownCast(m_Node), ts, mLTM, m_Proximal);
+    GetLocalMatrix(m_Vme, ts, mLTM, m_Proximal);
     mafTransfInverseTransformUpright(&mLTM, &vPos, &vRot);
 
     SetValue(GDT_LTM_POSX, vPos.x);
