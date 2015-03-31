@@ -22,6 +22,7 @@
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
 #include "mafNode.h"
+#include "mafStorable.h"
 
 #ifdef MAF_EXPORTS
 #include "mafDllMacros.h"
@@ -39,7 +40,7 @@ It can add or remove VME to the current tree, add a new tree.
 
 */
 //----------------------------------------------------------------------------
-class MAF_EXPORT mafNodeManager: public mafBaseEventHandler, public mafEventSender
+class MAF_EXPORT mafNodeManager: public mafBaseEventHandler, public mafEventSender, public mafStorable
 //----------------------------------------------------------------------------
 {
 public:
@@ -72,6 +73,11 @@ public:
   mafNode *GetRoot();
    /** Set the tree's root. */
   bool SetRoot(mafNode *root);
+
+  virtual int InternalStore(mafStorageElement *node);
+
+  virtual int InternalRestore(mafStorageElement *node);
+
 protected:
   bool                m_Modified;         ///< Used to known when the tree has been modified...
   mafAutoPointer<mafNode> m_Root;
