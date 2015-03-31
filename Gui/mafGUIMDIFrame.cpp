@@ -142,13 +142,13 @@ mafGUIMDIFrame::mafGUIMDIFrame(const wxString& title, const wxPoint& pos, const 
   SetIcons(ib);
 
 #ifdef MAF_USE_VTK
-  m_ProgressCallback= mafGUIMDIFrameCallback::New(); 
+  vtkNEW(m_ProgressCallback); 
   m_ProgressCallback->SetFrame(this);
   m_ProgressCallback->SetMode(0);
-  m_StartCallback = mafGUIMDIFrameCallback::New();; 
+  vtkNEW(m_StartCallback);
   m_StartCallback->SetFrame(this);
   m_StartCallback->SetMode(1);
-  m_EndCallback = mafGUIMDIFrameCallback::New(); 
+  vtkNEW(m_EndCallback);
   m_EndCallback->SetFrame(this);
   m_EndCallback->SetMode(2);
 #endif //MAF_USE_VTK
