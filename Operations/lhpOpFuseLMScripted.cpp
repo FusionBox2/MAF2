@@ -92,13 +92,6 @@ bool lhpOpFuseLMScripted::Accept(mafNode* node)
 {
   if(!node) return false;
   return true;
-  //if( node->IsA("mafVMELandmarkCloud") && !((mafVMELandmarkCloud*)node)->IsOpen() )
-  if(ClosedCloudAccept(node))
-  {
-    if(!mafVMELandmarkCloud::SafeDownCast(node)->IsAnimated())
-      return true;
-  }
-  return false;
 };
 //----------------------------------------------------------------------------
 // widget id's
@@ -395,7 +388,10 @@ bool lhpOpFuseLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandmarkCl
     trg->Open();
   if(!lmcrOpened)
     registered->Open();
-  std::vector<unsigned> mapping(src->GetNumberOfLandmarks(), trg->GetNumberOfLandmarks());
+  std::vector<unsigned> mapping;
+  mapping.resize(src->GetNumberOfLandmarks());
+  for(std::vector<unsigned>::iterator it = mapping.begin(); it != mapping.end(); ++it)
+    *it = trg->GetNumberOfLandmarks();
 
   for(unsigned i = 0; i < src->GetNumberOfLandmarks(); i++)
   {
@@ -405,7 +401,6 @@ bool lhpOpFuseLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandmarkCl
         mapping[i] = j;
     }
   }
-
 
   if(m_MultiTime)
   {

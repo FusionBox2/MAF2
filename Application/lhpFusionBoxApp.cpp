@@ -75,6 +75,7 @@
 #include "mafOpImporterRAWVolume_BES.h"
 #include "mafOpImporterRAWVolume.h"
 #include "lhpOpKinectUtil.h"
+#include "lhpOpKinectAFs.h"
 #include "mafOpExporterRaw.h"
 #include "medOpImporterRAWImages.h"
 #include "mafOpExtractIsosurface.h"
@@ -610,7 +611,8 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
     m_Logic->Plug(new lhpOpImporterAnsysCDBFile("Ansys CDB File"), "Finite Element");	
     m_Logic->Plug(new mafOpImporterExternalFile("External data"), "Other");
     m_Logic->Plug(new medOpImporterAnalogWS("ASCII Analog (VWs)"), "Motion Analysis");
-    m_Logic->Plug(new lhpOpKinectUtil("Kinect"),"Motion Analysis");  
+    m_Logic->Plug(new lhpOpKinectUtil(false, "Kinect"),"Motion Analysis");  
+    m_Logic->Plug(new lhpOpKinectUtil(true, "Kinect App"),"Motion Analysis");  
     m_Logic->Plug(new lhpOpImporterRSScan("RSScan"), "Finite Element");	
   }
 
@@ -679,6 +681,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
     m_Logic->Plug(new mafOpImporterVMEDataSetAttributes("VME DataSet Attributes Adder"),"Modify");
     m_Logic->Plug(new medOpClassicICPRegistration("Register Surface"),"Modify/Fuse");
     m_Logic->Plug(new lhpOpAFSys("AFRefsys"),"Create/Derive");
+    m_Logic->Plug(new lhpOpKinectAFs("Kinect Refsys"),"Create/Derive");
     m_Logic->Plug(new lhpOpStickPalpation("Wand palpated landmark"),"Create/Derive");
 
     m_Logic->Plug(new lhpOpHelAxis("Helical axis"),"Create/Derive");

@@ -21,6 +21,7 @@
 #include "mafDecl.h"
 #include "lhpOpHelAxis.h"
 #include "mafVMEHelAxis.h"
+#include "mafVMELandmarkCloud.h"
 
 
 //----------------------------------------------------------------------------
@@ -73,6 +74,14 @@ void lhpOpHelAxis::OpRun()
 {
   mafNEW(m_HelicalSys);
   m_HelicalSys->SetName("Helical_axis");
+  mafVMELandmarkCloud *lmc;
+  mafNEW(lmc);
+  lmc->SetName("HA_Points");
+  lmc->AppendLandmark(0, 0,    0, "Pivot");
+  lmc->AppendLandmark(0, 0,  100, "PntFrt");
+  lmc->AppendLandmark(0, 0, -100, "PntBck");
+  lmc->ReparentTo(m_HelicalSys);
+  mafDEL(lmc);
   mafEventMacro(mafEvent(this,OP_RUN_OK)); 
 }
 

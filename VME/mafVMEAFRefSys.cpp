@@ -479,7 +479,18 @@ bool mafVMEAFRefSys::UpdateVM(mafTimeStamp ts)
         if(lmcLink != NULL)
         {
           SetRefSysLink(m_vm->getInputs()[i].first.c_str(), lmcLink);
-          ind = lmcLink->FindLandmarkIndex(it->second.GetCStr());
+          mafString refname;
+          refname = it->second.Lower();
+          int numberOfLandmarks = lmcLink->GetNumberOfLandmarks();
+          for(int i = 0; i < numberOfLandmarks; i++)
+          {
+            mafString lm_name = lmcLink->GetLandmarkName(i).Lower();
+            if(lm_name == refname)
+            {
+              ind = i;
+              break;
+            }
+          }
         }
       }
       if(lmcLink == NULL || ind == -1 || !lmcLink->GetLandmarkVisibility(ind, ts))

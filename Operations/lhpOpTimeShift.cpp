@@ -53,8 +53,7 @@
 enum 
 {
   ID_DEFAULT = MINID,
-  ID_NUMBER,
-  ID_DELETE,
+  ID_SHIFTVAL,
   ID_LAST,
   ID_FORCED_DWORD = 0x7fffffff
 };
@@ -66,8 +65,7 @@ lhpOpTimeShift::lhpOpTimeShift(const mafString& label) : Superclass(label)
 {
   m_OpType    = OPTYPE_OP;
   m_Canundo   = false;
-  m_Delete    = false;
-  m_Number    = 2;
+  m_Shift     = 0.0;
 }
 
 //----------------------------------------------------------------------------
@@ -81,8 +79,7 @@ mafOp* lhpOpTimeShift::Copy()
 //----------------------------------------------------------------------------
 {
   lhpOpTimeShift *op = new lhpOpTimeShift(GetLabel());
-  op->m_Delete = m_Delete;
-  op->m_Number = m_Number;
+  op->m_Shift = m_Shift;
   return op;
 }
 
@@ -93,10 +90,6 @@ bool lhpOpTimeShift::Accept(mafNode* vme)
   if(!vme) return false;
 
   if(mafVMEGenericAbstract::SafeDownCast(vme) == NULL)
-  {
-    return false;
-  }
-  if(!mafVMEGenericAbstract::SafeDownCast(vme)->IsAnimated())
   {
     return false;
   }
@@ -128,9 +121,8 @@ void lhpOpTimeShift::CreateGui()
     m_Gui = new mafGUI(this);
     m_Gui->SetListener(this);
     m_Gui->Label(strng);
-    m_Gui->Label("Each frame number");
-    m_Gui->Integer(ID_NUMBER, "", &(m_Number), 1, nFrames, "This is frame index");
-    m_Gui->Bool(ID_DELETE, "will be deleted", &m_Delete, 1, "This is indication to delete or to save frames indicated");
+    m_Gui->Label("Shift for, s");
+    m_Gui->Double(ID_SHIFTVAL, "", &m_Shift);
     m_Gui->OkCancel();
   }
   ShowGui();
@@ -167,11 +159,7 @@ void lhpOpTimeShift::OnEvent(mafEventBase *maf_event)
       OpStop(OP_RUN_CANCEL);
       break;
     }
-    case ID_DELETE:
-      {
-        break;
-      }
-    case ID_NUMBER:
+    case ID_SHIFTVAL:
       {
         break;
       }
@@ -192,49 +180,20 @@ void lhpOpTimeShift::OpDo()
   std::vector<mafTimeStamp> kframes;
   mafVMEGenericAbstract *vme = mafVMEGenericAbstract::SafeDownCast(m_Input);
 
-  if(m_Number == 0)
-    return;
-  if(m_Number == 1)
-    return;
+  mafMatrixVector *mv = vme->GetMatrixVector();
+  mafDataVector   *dv = vme->GetDataVector();
 
-  vme->GetLocalTimeStamps(kframes);
-  if(m_Number == kframes.size() && m_Delete)
-    return;
+  for(mafMatrixVector::Iterator it = mv->Begin(); it != mv->End(); ++it)
+  {
+    //it->first += m_Shift;
+    //it->second->SetTimeStamp(it->second->GetTimeStamp() + m_Shift);
+  }
+  for(mafDataVector::Iterator it = dv->Begin(); it != dv->End(); ++it)
+  {
+    //it->first += m_Shift;
+    //it->second->SetTimeStamp(it->second->GetTimeStamp() + m_Shift);
+  }
 
-  if(m_Delete)
-  {
-    mafMatrixVector *mv = vme->GetMatrixVector();
-    mafDataVector   *dv = vme->GetDataVector();
-    for(int i = 0; i < kframes.size(); i++)
-    {
-      if(i % m_Number == m_Number - 1)
-      {
-        mafMatrixVector::TimeMap::iterator itm = mv->FindItem(kframes[i]);
-        mafDataVector::TimeMap::iterator   itd = dv->FindItem(kframes[i]);
-        if(itm != mv->End())
-          mv->RemoveItem(itm);
-        if(itd != dv->End())
-          dv->RemoveItem(itd);
-      }
-    }
-  }
-  else
-  {
-    mafMatrixVector *mv = vme->GetMatrixVector();
-    mafDataVector   *dv = vme->GetDataVector();
-    for(int i = 0; i < kframes.size(); i++)
-    {
-      if(i % m_Number != m_Number - 1)
-      {
-        mafMatrixVector::TimeMap::iterator itm = mv->FindItem(kframes[i]);
-        mafDataVector::TimeMap::iterator   itd = dv->FindItem(kframes[i]);
-        if(itm != mv->End())
-          mv->RemoveItem(itm);
-        if(itd != dv->End())
-          dv->RemoveItem(itd);
-      }
-    }
-  }
   return;
 }
 

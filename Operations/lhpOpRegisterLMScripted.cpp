@@ -99,13 +99,6 @@ bool lhpOpRegisterLMScripted::Accept(mafNode* node)
 {
   if(!node) return false;
   return true;
-  //if( node->IsA("mafVMELandmarkCloud") && !((mafVMELandmarkCloud*)node)->IsOpen() )
-  if(ClosedCloudAccept(node))
-  {
-    if(!mafVMELandmarkCloud::SafeDownCast(node)->IsAnimated())
-      return true;
-  }
-  return false;
 };
 //----------------------------------------------------------------------------
 // widget id's
@@ -678,35 +671,3 @@ void lhpOpRegisterLMScripted::OnChooseTargetVme(mafNode *vme)
   m_Gui->Enable(wxOK,true);
   m_Gui->Update();
 }
-
-
-
-
-//----------------------------------------------------------------------------
-/*void lhpOpRegisterLMScripted::OpDo()
-//----------------------------------------------------------------------------
-{
-  for(unsigned i = 0; i < m_OutputVMEs.size(); i++)
-  {
-    if (m_OutputVMEs[i])
-    {
-      m_OutputVMEs[i]->ReparentTo(m_Input);
-      mafEventMacro(mafEvent(this, VME_ADD, m_OutputVMEs[i]));
-    }
-  }
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
-}
-
-//----------------------------------------------------------------------------
-void lhpOpRegisterLMScripted::OpUndo()   
-//----------------------------------------------------------------------------
-{
-  for(unsigned i = 0; i < m_OutputVMEs.size(); i++)
-  {
-    if (m_OutputVMEs[i])
-    {
-      mafEventMacro(mafEvent(this, VME_REMOVE, m_OutputVMEs[i]));
-    }
-  }
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
-}*/
