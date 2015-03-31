@@ -986,8 +986,8 @@ void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
               {
                 double deriv1, deriv1next, valXnext;
                 valXnext = m_Graphs[i]->GetValue(t + 1, 0, 0);
-                m_Graphs[i]->GetValueByParam(deriv1, valX, nYNumber, nYDer + 2);
-                m_Graphs[i]->GetValueByParam(deriv1next, valXnext, nYNumber, nYDer + 2);
+                m_Graphs[i]->GetValueByParam(deriv1, valX, nYNumber, nYDer + 1);
+                m_Graphs[i]->GetValueByParam(deriv1next, valXnext, nYNumber, nYDer + 1);
                 //if(fabs(deriv1) < 0.001)
                 if(deriv1 * deriv1next < -0.00000001)
                 {
