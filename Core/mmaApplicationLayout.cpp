@@ -31,6 +31,7 @@
 #include "mafStorageElement.h"
 #include "mafIndent.h"
 #include "mafNode.h"
+#include "mafViewVTK.h"
 #include "mafSceneGraph.h"
 #include "mafSceneNode.h"
 #include "mafRWIBase.h"
@@ -310,17 +311,20 @@ void mmaApplicationLayout::AddView(mafView *v, bool vme_visibility)
         info.m_VisibleVmes.push_back(idx);
       }
     }
-    info.m_CameraParameters[0] = v->GetRWI()->GetCamera()->GetViewUp()[0];
-    info.m_CameraParameters[1] = v->GetRWI()->GetCamera()->GetViewUp()[1];
-    info.m_CameraParameters[2] = v->GetRWI()->GetCamera()->GetViewUp()[2];
+    if(mafViewVTK *vvtk = mafViewVTK::SafeDownCast(v))
+    {
+      info.m_CameraParameters[0] = vvtk->GetRWI()->GetCamera()->GetViewUp()[0];
+      info.m_CameraParameters[1] = vvtk->GetRWI()->GetCamera()->GetViewUp()[1];
+      info.m_CameraParameters[2] = vvtk->GetRWI()->GetCamera()->GetViewUp()[2];
 
-    info.m_CameraParameters[3] = v->GetRWI()->GetCamera()->GetPosition()[0];
-    info.m_CameraParameters[4] = v->GetRWI()->GetCamera()->GetPosition()[1];
-    info.m_CameraParameters[5] = v->GetRWI()->GetCamera()->GetPosition()[2];
+      info.m_CameraParameters[3] = vvtk->GetRWI()->GetCamera()->GetPosition()[0];
+      info.m_CameraParameters[4] = vvtk->GetRWI()->GetCamera()->GetPosition()[1];
+      info.m_CameraParameters[5] = vvtk->GetRWI()->GetCamera()->GetPosition()[2];
 
-    info.m_CameraParameters[6] = v->GetRWI()->GetCamera()->GetFocalPoint()[0];
-    info.m_CameraParameters[7] = v->GetRWI()->GetCamera()->GetFocalPoint()[1];
-    info.m_CameraParameters[8] = v->GetRWI()->GetCamera()->GetFocalPoint()[2];
+      info.m_CameraParameters[6] = vvtk->GetRWI()->GetCamera()->GetFocalPoint()[0];
+      info.m_CameraParameters[7] = vvtk->GetRWI()->GetCamera()->GetFocalPoint()[1];
+      info.m_CameraParameters[8] = vvtk->GetRWI()->GetCamera()->GetFocalPoint()[2];
+    }
   }
   m_LayoutViewList.push_back(info);
 }
