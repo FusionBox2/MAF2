@@ -45,7 +45,7 @@ mafAttributeTraceability::~mafAttributeTraceability()
 }
 
 //----------------------------------------------------------------------------
-void mafAttributeTraceability::AddTraceabilityEvent(mafString trialEvent, mafString operationName, mafString parmaters, mafString date, mafString appStamp, mafString operatorID, mafString isNatural)
+void mafAttributeTraceability::AddTraceabilityEvent(const mafString& trialEvent, const mafString& operationName, const mafString& parmaters, const mafString& date, const mafString& appStamp, const mafString& operatorID, const mafString& isNatural)
 //----------------------------------------------------------------------------
 {  
   m_Traceability traceability;

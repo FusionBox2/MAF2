@@ -50,7 +50,7 @@ public:
   mafTypeMacro(mafAttributeTraceability,mafAttribute);
 
   /** add a create event */
-  void AddTraceabilityEvent(mafString m_TrialEvent, mafString operationName, mafString parmaters, mafString date, mafString appStamp, mafString operatorID, mafString isNatural = "");
+  void AddTraceabilityEvent(const mafString& m_TrialEvent, const mafString& operationName, const mafString& parmaters, const mafString& date, const mafString& appStamp, const mafString& operatorID, const mafString& isNatural = "");
  
   /** remove a traceability event */
   void RemoveTraceabilityEvent(); 
