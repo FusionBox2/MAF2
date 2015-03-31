@@ -65,28 +65,24 @@ ENDIF (MAF_USE_ITK)
 # wxWindows Library
 #
 IF (MAF_USE_WX)
-  MFL_SUBPROJECT(WXWIN wxWin)
 ENDIF (MAF_USE_WX)
 
 #
 # XercesC Library
 #
 IF (MAF_USE_XercesC)
-  MFL_SUBPROJECT(XercesC XercesC)
 ENDIF(MAF_USE_XercesC)
 
 #
 # cURL Library
 #
 IF (MAF_USE_CURL)
-  MFL_SUBPROJECT(CURL CURL)
 ENDIF(MAF_USE_CURL)
 
 #
 # Crypto Library
 #
 IF (MAF_USE_CRYPTO)
-  MFL_SUBPROJECT(CRYPTO CRYPTO)
 ENDIF(MAF_USE_CRYPTO)
 
 #

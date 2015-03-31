@@ -59,10 +59,11 @@ ENDIF (MAF_USE_CURL)
 # wxWindows library
 #
 IF (MAF_USE_WX)
-  SET(WX_DIR @WX_DIR@)
-  find_package(WX REQUIRED)
-  INCLUDE(${WX_CONFIG})
-  INCLUDE(${WX_USE_FILE})
+  SET(wxWidgets_ROOT_DIR @wxWidgets_ROOT_DIR@)
+  SET(wxWidgets_LIB_DIR @wxWidgets_LIB_DIR@)
+  find_package(wxWidgets COMPONENTS base net core adv html REQUIRED)
+  INCLUDE("${wxWidgets_USE_FILE}")
+  LINK_LIBRARIES(${wxWidgets_LIBRARIES})
 ENDIF (MAF_USE_WX)
 
 #
