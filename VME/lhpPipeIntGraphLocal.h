@@ -43,6 +43,14 @@ public:
   lhpPipeIntGraphLocal();
   virtual     ~lhpPipeIntGraphLocal();
 
+  /** IDs for the GUI */
+  enum PIPE_INT_GRAPH_OVPGES
+  {
+    ID_PARENT = Superclass::ID_LAST,
+    ID_RESETPARENT,
+    ID_LAST
+  };
+
   enum GRAPH_IDS
   {
   //LTM
@@ -61,7 +69,15 @@ public:
   virtual const char   *GetVarUnit(int i) const;
   virtual double       GetVarDerivativeCoef(int i) const;
 
+  /** Answer events coming from the Gui and from cloud */
+  void OnEvent(mafEventBase *maf_event);
+
 protected:
+  /** Create the Gui for the visual pipe that allow the user to change the pipe's parameters.*/
+  virtual mafGUI *CreateGui();
   virtual bool StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTimeStamp prevts);
+  void SetProximal(mafVME *proximal);
+  mafVME *m_Proximal;
+  mafString m_ProximalName;
 };
 #endif // _lhpPipeIntGraphLocal_H_

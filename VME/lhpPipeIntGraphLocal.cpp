@@ -69,11 +69,65 @@ lhpPipeIntGraphLocal::lhpPipeIntGraphLocal()
 {
   m_vars.resize(GDT_LAST);
   InvalidateAllVars();
+  m_Proximal = NULL;
+  m_ProximalName = "";
 }
 //----------------------------------------------------------------------------
 lhpPipeIntGraphLocal::~lhpPipeIntGraphLocal()
 //----------------------------------------------------------------------------
 {
+  SetProximal(NULL);
+}
+void lhpPipeIntGraphLocal::SetProximal(mafVME *proximal)
+{
+  if(m_Proximal)
+    m_Proximal->GetEventSource()->RemoveObserver(this);
+  m_Proximal = proximal;
+  m_ProximalName = (m_Proximal) ? m_Proximal->GetName() : "";
+  if(m_Proximal)
+    m_Proximal->GetEventSource()->AddObserver(this);
+  if(m_Gui)
+    m_Gui->Update();
+}
+//----------------------------------------------------------------------------
+void lhpPipeIntGraphLocal::OnEvent(mafEventBase *maf_event)
+//----------------------------------------------------------------------------
+{
+  if(mafEvent *e = mafEvent::SafeDownCast(maf_event))
+  {
+    if(ID_PARENT == e->GetId())
+    {
+      mafString s(_("Choose cloud"));
+      mafEvent e(this,VME_CHOOSE, &s, NULL/*, (long)&lhpOpRegisterLMScripted::ClosedCloudAccept*/);
+      mafEventMacro(e);
+      mafVME *vme = mafVME::SafeDownCast(e.GetVme());
+      SetProximal(vme);
+      return;
+    }
+    if(ID_RESETPARENT == e->GetId())
+    {
+      SetProximal(NULL);
+      return;
+    }
+  }
+  if(maf_event->GetSender() == m_Proximal)
+  {
+    if(NODE_DESTROYED == maf_event->GetId() || NODE_DETACHED_FROM_TREE == maf_event->GetId())
+      m_Proximal = NULL;
+  }
+  Superclass::OnEvent(maf_event);
+}
+/** Create the Gui for the visual pipe that allow the user to change the pipe's parameters.*/
+//----------------------------------------------------------------------------
+mafGUI *lhpPipeIntGraphLocal::CreateGui()
+//----------------------------------------------------------------------------
+{
+  Superclass::CreateGui();
+  m_Gui->Label(_("Parent :"),true);
+  m_Gui->Label(&m_ProximalName);
+  m_Gui->Button(ID_PARENT,_("parent "));
+  m_Gui->Button(ID_RESETPARENT,_("reset parent"));
+  return m_Gui;
 }
 
 //----------------------------------------------------------------------------
@@ -96,7 +150,7 @@ bool lhpPipeIntGraphLocal::StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTimeS
   {
     mafMatrix mLTM;
     V4d<double>    vPos, vRot;
-    GetLocalMatrix(m_Vme, ts, mLTM);
+    GetLocalMatrix(m_Vme, ts, mLTM, m_Proximal);
     mafTransfInverseTransformUpright(&mLTM, &vPos, &vRot);
 
     SetValue(GDT_LTM_POSX, vPos.x);

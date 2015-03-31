@@ -129,36 +129,18 @@ mafVMEAFRefSys *GetAFRefSys(mafVME *vme)
 void GetGlobalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat)
 //----------------------------------------------------------------------------
 {
-  DiMatrixIdentity(pMat);
-  if(vme == NULL)
-    return;
-
   mafMatrix      matrix;
-  mafVMEAFRefSys *afs = GetAFRefSys(vme);
-  if(afs == NULL)
-    vme->GetOutput()->GetAbsMatrix(matrix, ts);
-  else
-    afs->CalculateMatrix(matrix, ts);
+  GetGlobalMatrix(vme, ts, matrix);
   mflMatrixToDi(matrix.GetVTKMatrix(), pMat);
 }
 
 //----------------------------------------------------------------------------
-void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat)
+void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat, mafVME *parent = NULL)
 //----------------------------------------------------------------------------
 {
-  DiMatrix pmatrix;
-  DiMatrix cmatrix;
-  DiMatrix pInv;
-
-  DiMatrixIdentity(pMat);
-  if(vme == NULL)
-    return;
-
-  GetGlobalMatrix(vme->GetParent(), ts, &pmatrix);//in case of GetParent == NULL Global matrix is filled as identity
-  GetGlobalMatrix(vme,              ts, &cmatrix);
-
-  DiMatrixInvert(&pmatrix, &pInv);
-  DiMatrixMultiply(&cmatrix, &pInv, pMat);
+  mafMatrix      matrix;
+  GetLocalMatrix(vme, ts, matrix, parent);
+  mflMatrixToDi(matrix.GetVTKMatrix(), pMat);
 }
 
 //----------------------------------------------------------------------------
@@ -177,7 +159,7 @@ void GetGlobalMatrix(mafVME *vme, mafTimeStamp ts, mafMatrix& matrix)
 }
 
 //----------------------------------------------------------------------------
-void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, mafMatrix& matrix)
+void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, mafMatrix& matrix, mafVME *parent)
 //----------------------------------------------------------------------------
 {
   mafMatrix pmatrix;
@@ -187,7 +169,10 @@ void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, mafMatrix& matrix)
   if(vme == NULL)
     return;
 
-  GetGlobalMatrix(vme->GetParent(), ts, pmatrix);//in case of GetParent == NULL Global matrix is filled as identity
+  if(parent == NULL)
+    parent = vme->GetParent();
+
+  GetGlobalMatrix(parent, ts, pmatrix);//in case of GetParent == NULL Global matrix is filled as identity
   GetGlobalMatrix(vme,              ts, cmatrix);
 
   pmatrix.Invert();
@@ -214,7 +199,7 @@ int FindParentID(int id)
     return mafVMEAFRefSys::ID_AFS_NOTDEFINED;
   }
 }
-void OVP_GES(mafVME *vme, mafTimeStamp ts, mafTimeStamp tsRef, DiV4d *vOVPPos, DiV4d *vOVPRot, DiV4d *vGESPos, DiV4d *vGESRot)
+void OVP_GES(mafVME *vme, mafTimeStamp ts, mafTimeStamp tsRef, DiV4d *vOVPPos, DiV4d *vOVPRot, DiV4d *vGESPos, DiV4d *vGESRot, mafVME *parent)
 {
   DiV4d vOVPPosInt;
   DiV4d vOVPRotInt;
@@ -236,8 +221,8 @@ void OVP_GES(mafVME *vme, mafTimeStamp ts, mafTimeStamp tsRef, DiV4d *vOVPPos, D
   DiMatrix mRefLTM;
   DiV4d    vTm;
   DiV4d    vOVPRefPos;
-  GetLocalMatrix(vme, ts,    &mLTM);
-  GetLocalMatrix(vme, tsRef, &mRefLTM);
+  GetLocalMatrix(vme, ts,    &mLTM, parent);
+  GetLocalMatrix(vme, tsRef, &mRefLTM, parent);
   mafTransfInverseTransformUpright(&mLTM, &vTm, vOVPRotOut);
 
   mafVMEAFRefSys *vmeSys = GetAFRefSys(vme);
@@ -250,7 +235,8 @@ void OVP_GES(mafVME *vme, mafTimeStamp ts, mafTimeStamp tsRef, DiV4d *vOVPPos, D
     DiV4dCopy(vOVPPosOut, vGESPosOut);
     return;
   }
-  mafVME *parent = vme->GetParent();
+  if(parent == NULL)
+    parent = vme->GetParent();
   if(parent == NULL)
     return;
   mafVMEAFRefSys *parentSys = GetAFRefSys(parent);

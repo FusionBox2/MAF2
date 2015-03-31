@@ -125,7 +125,7 @@ bool lhpPipeIntGraphOVPGES::StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTime
   {
     V4d<double> vOVPRot, vOVPPos;
     V4d<double> vGESRot, vGESPos;
-    OVP_GES(m_Vme, ts, m_RefStamp, &vOVPPos, &vOVPRot, &vGESPos, &vGESRot);
+    OVP_GES(m_Vme, ts, m_RefStamp, &vOVPPos, &vOVPRot, &vGESPos, &vGESRot, m_Proximal);
     SetValue(GDT_OVP_ROTX, vOVPRot.x * mafMatrix3x3::RadiansToDegrees());
     SetValue(GDT_OVP_ROTY, vOVPRot.y * mafMatrix3x3::RadiansToDegrees());
     SetValue(GDT_OVP_ROTZ, vOVPRot.z * mafMatrix3x3::RadiansToDegrees());

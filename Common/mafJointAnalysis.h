@@ -23,11 +23,11 @@ mafVMEAFRefSys *GetAFRefSys(mafVME *vme);
 //void GetGlobalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat);
 void GetGlobalMatrix(mafVME *vme, mafTimeStamp ts, mafMatrix& matrix);
 //void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat);
-void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, mafMatrix& matrix);
+void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, mafMatrix& matrix, mafVME *parent = NULL);
 
 void SetOVP(mafVME *vme, mafTimeStamp ts, mafTimeStamp tsRef, V4d<double> *vOVPPos, V4d<double> *vOVPRot);
 int FindParentID(int id);
-void OVP_GES(mafVME *vme, mafTimeStamp ts, mafTimeStamp tsRef, V4d<double> *vOVPPos, V4d<double> *vOVPRot, V4d<double> *vGESPos, V4d<double> *vGESRot);
+void OVP_GES(mafVME *vme, mafTimeStamp ts, mafTimeStamp tsRef, V4d<double> *vOVPPos, V4d<double> *vOVPRot, V4d<double> *vGESPos, V4d<double> *vGESRot, mafVME *parent = NULL);
 int MatrixToHelicalAxis(const mafMatrix &matrix, double helical_axis[3],double point[3], double& phi,double& t);
 
 bool mafTransfInverseTransformUpright(mafMatrix const *mpIn, V4d<double> *vpPos, V4d<double> *vpRot);
