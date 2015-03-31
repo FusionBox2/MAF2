@@ -25,6 +25,14 @@
 #include "wx/dir.h"
 #include "mafDirectory.h"
 
+mafString mafStripMenuCodes(const mafString& com)
+{
+  mafString tmp;
+  tmp = wxStripMenuCodes(wxString(com.GetCStr())).c_str();
+  return tmp;
+}
+
+
 bool mafDirMake(const mafString& directory)
 {
   return wxMkdir(directory.GetCStr());

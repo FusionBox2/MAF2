@@ -15,6 +15,8 @@
 
 #include "mafString.h"
 
+MAF_EXPORT mafString mafStripMenuCodes(const mafString& com);
+
 MAF_EXPORT bool mafDirMake(const mafString& directory);
 MAF_EXPORT bool mafDirRemove(const mafString& directory);
 MAF_EXPORT bool mafDirExists(const mafString& directory);
