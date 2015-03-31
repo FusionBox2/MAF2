@@ -545,11 +545,6 @@ int mafVMEItemVTK::InternalStoreData(const char *url)
       case MEMORY:
         found = false;
       break;
-      case TMP_FILE:
-        found = false;
-        filename = url; // use directly the url as a tmp file
-        mafErrorMacro("Unsupported I/O Mode");
-      return MAF_ERROR;
       case DEFAULT:
         if (mafString::IsEmpty(url))
         {

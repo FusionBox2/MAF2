@@ -123,19 +123,17 @@ public:
   /** Restore data to storage. . */
   virtual int RestoreData();
 
-  enum VME_ITEM_WRITE_MODALITIY {DEFAULT,TMP_FILE,MEMORY};
+  enum VME_ITEM_WRITE_MODALITIY {DEFAULT,MEMORY};
 
   /** 
     Set the modality for writing the data: 
     - DEFAULT to the URL
-    - TMP_FILE to a local files specified with SetTmpFile()
     - MEMORY store into memory
   */
   virtual void SetIOMode(const int mode) {m_IOMode = mode;}
   int GetIOMode(){return m_IOMode;};
 
   void SetIOModeToDefault() {SetIOMode(DEFAULT);}
-  void SetIOModeToTmpFile() {SetIOMode(TMP_FILE);}
   void SetIOModeToMemory() {SetIOMode(MEMORY);}
 
   /** Extract the item filename from the archive and copy the string into the m_InputMemory*/
@@ -243,12 +241,6 @@ public:
   /** Serialize the data into the compressed archive.*/
   virtual bool StoreToArchive(wxZipOutputStream &zip) = 0;
 
-  /** Set temp file name for the item.*/
-  void SetTempFileName(mafString &tmp) {m_TmpFileName = tmp;};
-
-  /** Return the temp file name used by the item.*/
-  const char *GetTempFileName() {return m_TmpFileName.GetCStr();};
-
   /** Update Item Id  */
   void UpdateItemId();
 
@@ -310,7 +302,6 @@ protected:
   bool          m_IsLoadingData; ///< Set when item is loading data to prevent setting DataModified to true
 
   mafString     m_ArchiveFileName; ///< Filename of the archive if single file mode is enabled
-  mafString     m_TmpFileName;///< file name used for local cache
   int           m_IOMode;     ///< IO modality to be used for store/restore data
   const char *  m_InputMemory;///< pointer to memory storing data to be read
   unsigned long m_InputMemorySize;  ///< size of memory storing data to be read

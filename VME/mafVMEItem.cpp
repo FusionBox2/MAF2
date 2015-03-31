@@ -72,7 +72,6 @@ mafVMEItem::mafVMEItem()
   m_IsLoadingData   = false;
 
   m_ArchiveFileName = "";
-  m_TmpFileName     = "";
   m_ChecksumMD5     = "";
 }
 
