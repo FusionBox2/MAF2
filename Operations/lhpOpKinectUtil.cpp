@@ -47,6 +47,7 @@
 #include "mafVMELandmarkCloud.h"
 #include "mafVMERoot.h"
 #include "mafVMEItemVTK.h"
+#include "lhpVMEKMInfo.h"
 #include "medOpImporterLandmark.h"
 #include <fstream>
 #include <sstream>
@@ -849,7 +850,7 @@ namespace
       "Dummy",//                 24:26;
       "RightKnee",//(Data(:,27:29));
       "Dummy",//                 30:32;
-      "RightFoot",//(Data(:,33:35));
+      "RightAnkle",//(Data(:,33:35));
       "Dummy",//                 36:38;
       "Dummy",//                 39:41;
       "LeftHip",//(Data(:,42:44));
@@ -860,7 +861,7 @@ namespace
       "Dummy",//                 57:59;
       "LeftKnee",//(Data(:,60:62));
       "Dummy",//                 63:65;
-      "LeftFoot",//(Data(:,66:68));
+      "LeftAnkle",//(Data(:,66:68));
       "Dummy",//                 69:14;
       "Dummy",//                 72:14;
       "Dummy",//                 75:14;
@@ -876,17 +877,17 @@ namespace
       "RightClavicle",//(Data(:,105:107));
       "RightScapula",//(Data(:,108:110));
       "Dummy",//                 111:14;
-      "RightHumerus",//(Data(:,114:116));
+      "RightShoulder",//(Data(:,114:116));
       "RightElbow",//(Data(:,117:119));
-      "RightRadius",//(Data(:,120:122));
-      "RightHand",//(Data(:,123:125));
+      "RightForearm",//(Data(:,120:122));
+      "RightWrist",//(Data(:,123:125));
       "LeftClavicle",//(Data(:,126:128));
       "LeftScapula",//(Data(:,129:131));
       "Dummy",//                 132:14;
-      "LeftHumerus",//(Data(:,135:137));
+      "LeftShoulder",//(Data(:,135:137));
       "LeftElbow",//(Data(:,138:140));
-      "LeftRadius",//(Data(:,141:143));
-      "LeftHand",//(Data(:,144:146));
+      "LeftForearm",//(Data(:,141:143));
+      "LeftWrist",//(Data(:,144:146));
       "Dummy",//                 147:14;
       "Dummy",//                 150:62;
     };
@@ -944,11 +945,11 @@ namespace
             mafString chName;
             chName = chNameShV[currentChannel / 3];
             if(currentChannel % 3 == 0)
-              chName += " X";
+              chName += " FlexExt";
             else if(currentChannel % 3 == 1)
-              chName += " Y";
+              chName += " RotExtInt";
             else if(currentChannel % 3 == 2)
-              chName += " Z";
+              chName += " AbdAdd";
             channelsNameList.push_back(chName);
           }
 
@@ -1796,6 +1797,11 @@ bool lhpOpKinectUtil::Import()
           {
             if(mafVMEGroup *grp = ModelImport(modelPath, imported))
             {
+              lhpVMEKMInfo *kmi;
+              mafNEW(kmi);
+              kmi->SetName(mafFileNameFromPath(importName) + "_GeneralInfo");
+              kmi->ReparentTo(imported);
+              mafDEL(kmi);
               if(m_Simple)
               {
                 mafNode *finReg = RegScripted(skeletalGroup, grp);
