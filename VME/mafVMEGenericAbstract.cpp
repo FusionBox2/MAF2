@@ -266,63 +266,6 @@ void mafVMEGenericAbstract::GetLocalTimeBounds(mafTimeStamp tbounds[2])
 }
 
 //-----------------------------------------------------------------------
-int mafVMEGenericAbstract::ReparentTo(mafNode *parent)
-//-----------------------------------------------------------------------
-{
-  if (CanReparentTo(parent) && !IsInTree(parent))
-  {
-    // When we re-parent to a different tree, or we simply
-    // cut a tree, before traverse the sub tree to read data into memory
-    // future release should read one item at once, write it
-    // to disk and then release the data, or better simply copy the file
-    // into the new place, this to be able to manage HUGE datasets.
-    if (parent /*== NULL||*/ && this->GetRoot() != parent->GetRoot())
-    {
-      mafNodeIterator *iter=this->NewIterator();
-      for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
-      {
-        if (mafVMEGenericAbstract *vme = mafVMEGenericAbstract::SafeDownCast(node))
-        {
-          mafDataVector *dvector = vme->GetDataVector();
-          if(dvector)
-          {
-            for (int i = 0; i < dvector->GetNumberOfItems(); i++)
-            {
-              mafVMEItem *item = dvector->GetItemByIndex(i);
-              assert(item);
-              if (item)
-              {
-                // read the data from disk and if data is present 
-                // set the Id to -1 to advise the reader to write
-                // it again on disk. Also remove the old file name...
-                item->UpdateData();
-                if (item->IsDataPresent())
-                {
-                  item->SetId(-1);
-                  item->SetURL("");
-                  dvector->Modified(); // Alert the data vector that the item is changed.
-                }
-              }
-              else
-              {
-                mafErrorMacro("found a NULL item in the node!!!!");
-              }
-            }
-          }
-        }
-      }
-      iter->Delete();
-      if (m_DataVector)
-      {
-        m_DataVector->Modified();
-      }
-    }
-    return Superclass::ReparentTo(parent);
-  }
-  return MAF_ERROR;
-}
-
-//-----------------------------------------------------------------------
 int mafVMEGenericAbstract::InternalStore(mafStorageElement *parent)
 //-----------------------------------------------------------------------
 {  
@@ -398,6 +341,38 @@ void mafVMEGenericAbstract::OnEvent(mafEventBase *maf_event)
       break;
       //default:
         //Superclass::OnEvent(maf_event);
+    }
+  }
+  if(maf_event->GetChannel() == MCH_DOWN)
+  {
+    if(maf_event->GetId() == NODE_ATTACHED_TO_TREE)
+    {
+      mafDataVector *dvector = GetDataVector();
+      if(!dvector)
+      {
+        Superclass::OnEvent(maf_event);
+        return;
+      }
+      for (int i = 0; i < dvector->GetNumberOfItems(); i++)
+      {
+        mafVMEItem *item = dvector->GetItemByIndex(i);
+        assert(item);
+        if(!item)
+        {
+          mafErrorMacro("found a NULL item in the node!!!!");
+          continue;
+        }
+        // read the data from disk and if data is present 
+        // set the Id to -1 to advise the reader to write
+        // it again on disk. Also remove the old file name...
+        item->UpdateData();
+        if (item->IsDataPresent())
+        {
+          item->SetId(-1);
+          item->SetURL("");
+          dvector->Modified(); // Alert the data vector that the item is changed.
+        }
+      }
     }
   }
 

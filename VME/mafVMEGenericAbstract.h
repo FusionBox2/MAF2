@@ -75,16 +75,6 @@ public:
   virtual bool Equals(mafVME *vme);
 
   /**
-    Reparent this VME into a different place of the same tree
-    or into a different tree. If the tree is not the same, the data of
-    all items of all sub vme is read into memory and Id is reset to -1, 
-    to allow the VMEStorage to write new data as new files on file.
-    In case of error during operation return NULL, otherwise return
-    this node pointer: this is to be compatible with nodes that during
-    reparenting make copy of the VME (mafVMEGenericAbstractRoot)*/
-  virtual int ReparentTo(mafNode *parent);
-
-  /**  
     Return the matrix vector associated with this VME. Matrix vector is an array of
     time stamped 4x4 matrices, used to generate the output VME pose matrix. The matrix
     vector is made persistent by saving it in the MSF-XML file (or other kind of storage
