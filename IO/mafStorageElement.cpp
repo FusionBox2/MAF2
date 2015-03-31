@@ -55,11 +55,9 @@ mafStorageElement::~mafStorageElement()
 }
 
 //------------------------------------------------------------------------------
-mafStorageElement *mafStorageElement::FindNestedElement(const char *name)
+mafStorageElement *mafStorageElement::FindNestedElement(const mafString& name)
 //------------------------------------------------------------------------------
 {
-  mafString node_name(name); // no memory copy, thanks mafString :-)
-
   // force children list creation
   ChildrenVector &children=GetChildren();
   
@@ -67,7 +65,7 @@ mafStorageElement *mafStorageElement::FindNestedElement(const char *name)
   for (unsigned int i=0;i<children.size();i++)
   {
     mafStorageElement *node=children[i];
-    if (node_name==node->GetName())
+    if (name==node->GetName())
       return node;
   }
 
@@ -75,11 +73,9 @@ mafStorageElement *mafStorageElement::FindNestedElement(const char *name)
 }
 
 //------------------------------------------------------------------------------
-bool mafStorageElement::GetNestedElementsByName(const char *name,std::vector<mafStorageElement *> &list)
+bool mafStorageElement::GetNestedElementsByName(const mafString& name,std::vector<mafStorageElement *> &list)
 //------------------------------------------------------------------------------
 {
-  mafString node_name(name); // no memory copy, thanks mafString :-)
-
   // force children list creation
   ChildrenVector &children=GetChildren();
   list.clear();
@@ -88,7 +84,7 @@ bool mafStorageElement::GetNestedElementsByName(const char *name,std::vector<maf
   for (unsigned int i=0;i<children.size();i++)
   {
     mafStorageElement *node=children[i];
-    if (node_name==node->GetName())
+    if (name==node->GetName())
     {
       list.push_back(node);
     }
@@ -99,7 +95,7 @@ bool mafStorageElement::GetNestedElementsByName(const char *name,std::vector<maf
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::StoreObjectVector(const char *name,const std::vector<mafObject *> &vector,const char *items_name)
+int mafStorageElement::StoreObjectVector(const mafString& name,const std::vector<mafObject *> &vector,const mafString& items_name)
 //------------------------------------------------------------------------------
 {
   assert(name);
@@ -129,7 +125,7 @@ int mafStorageElement::StoreObjectVector(const char *name,const std::vector<mafO
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreObjectVector(const char *name,std::vector<mafObject *> &vector,const char *items_name)
+int mafStorageElement::RestoreObjectVector(const mafString& name,std::vector<mafObject *> &vector,const mafString& items_name)
 //------------------------------------------------------------------------------
 {
   assert(name);
@@ -146,7 +142,7 @@ int mafStorageElement::RestoreObjectVector(const char *name,std::vector<mafObjec
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreObjectVector(mafStorageElement *subnode,std::vector<mafObject *> &vector,const char *items_name)
+int mafStorageElement::RestoreObjectVector(mafStorageElement *subnode,std::vector<mafObject *> &vector,const mafString& items_name)
 //------------------------------------------------------------------------------
 {
   assert(subnode);
@@ -198,7 +194,7 @@ int mafStorageElement::RestoreObjectVector(mafStorageElement *subnode,std::vecto
 }
 
 //------------------------------------------------------------------------------
-mafStorageElement *mafStorageElement::StoreObject(const char *name,mafStorable *storable, const char *type_name)
+mafStorageElement *mafStorageElement::StoreObject(const mafString& name,mafStorable *storable, const mafString& type_name)
 //------------------------------------------------------------------------------
 {
   assert(storable);
@@ -220,7 +216,7 @@ mafStorageElement *mafStorageElement::StoreObject(const char *name,mafStorable *
   return NULL;
 }
 //------------------------------------------------------------------------------
-mafStorageElement *mafStorageElement::StoreObject(const char *name,mafObject *object)
+mafStorageElement *mafStorageElement::StoreObject(const mafString& name,mafObject *object)
 //------------------------------------------------------------------------------
 {
   assert(name);
@@ -249,7 +245,7 @@ mafStorageElement *mafStorageElement::StoreObject(const char *name,mafObject *ob
   return NULL;
 }
 //------------------------------------------------------------------------------
-mafString mafStorageElement::UpgradeAttribute(const char *attribute)
+mafString mafStorageElement::UpgradeAttribute(const mafString& attribute)
 //------------------------------------------------------------------------------
 {
   mafString att_name;
@@ -346,7 +342,7 @@ mafObject *mafStorageElement::RestoreObject()
 }
 
 //------------------------------------------------------------------------------
-mafObject *mafStorageElement::RestoreObject(const char *name)
+mafObject *mafStorageElement::RestoreObject(const mafString& name)
 //------------------------------------------------------------------------------
 {
   mafStorageElement *element=FindNestedElement(name);
@@ -355,7 +351,7 @@ mafObject *mafStorageElement::RestoreObject(const char *name)
 
 
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreObject(const char *name,mafStorable * object)
+int mafStorageElement::RestoreObject(const mafString& name,mafStorable * object)
 //------------------------------------------------------------------------------
 {
   mafStorageElement *element=FindNestedElement(name);
@@ -369,20 +365,20 @@ int mafStorageElement::RestoreObject(const char *name,mafStorable * object)
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::StoreDouble(const char *name,const double &value)
+int mafStorageElement::StoreDouble(const mafString& name,const double &value)
 //------------------------------------------------------------------------------
 {
   return StoreText(name,mafString(value));
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::StoreInteger(const char *name,const int &value)
+int mafStorageElement::StoreInteger(const mafString& name,const int &value)
 //------------------------------------------------------------------------------
 {
   return StoreText(name,mafString(value));
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreDouble(const char *name,double &value)
+int mafStorageElement::RestoreDouble(const mafString& name,double &value)
 //------------------------------------------------------------------------------
 {
   mafString tmp;
@@ -424,7 +420,7 @@ int mafStorageElement::RestoreInteger(int &value)
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreInteger(const char *name,int &value)
+int mafStorageElement::RestoreInteger(const mafString& name,int &value)
 //------------------------------------------------------------------------------
 {
   mafString tmp;
@@ -453,7 +449,7 @@ int mafStorageElement::RestoreText(char *&buffer)
 
 
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreMatrix(const char *name,mafMatrix *matrix)
+int mafStorageElement::RestoreMatrix(const mafString& name,mafMatrix *matrix)
 //------------------------------------------------------------------------------
 {
   mafStorageElement *elem=FindNestedElement(name);
@@ -468,7 +464,7 @@ int mafStorageElement::RestoreMatrix(const char *name,mafMatrix *matrix)
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(const char *name,double *comps,unsigned int num)
+int mafStorageElement::RestoreVectorN(const mafString& name,double *comps,unsigned int num)
 //------------------------------------------------------------------------------
 {
   mafStorageElement *elem=FindNestedElement(name);
@@ -482,7 +478,7 @@ int mafStorageElement::RestoreVectorN(const char *name,double *comps,unsigned in
   return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(const char *name,int *comps,unsigned int num)
+int mafStorageElement::RestoreVectorN(const mafString& name,int *comps,unsigned int num)
 //------------------------------------------------------------------------------
 {
   mafStorageElement *elem=FindNestedElement(name);
@@ -496,7 +492,7 @@ int mafStorageElement::RestoreVectorN(const char *name,int *comps,unsigned int n
   return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(const char *name,std::vector<double> &comps,unsigned int num)
+int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<double> &comps,unsigned int num)
 //------------------------------------------------------------------------------
 {
   mafStorageElement *elem=FindNestedElement(name);
@@ -510,7 +506,7 @@ int mafStorageElement::RestoreVectorN(const char *name,std::vector<double> &comp
   return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(const char *name,std::vector<int> &comps,unsigned int num)
+int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<int> &comps,unsigned int num)
 //------------------------------------------------------------------------------
 {
   mafStorageElement *elem=FindNestedElement(name);
@@ -524,7 +520,7 @@ int mafStorageElement::RestoreVectorN(const char *name,std::vector<int> &comps,u
   return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(const char *name,std::vector<mafString> &comps,unsigned int num,const char *tag)
+int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<mafString> &comps,unsigned int num,const mafString& tag)
 //------------------------------------------------------------------------------
 {
   mafStorageElement *elem=FindNestedElement(name);
@@ -539,7 +535,7 @@ int mafStorageElement::RestoreVectorN(const char *name,std::vector<mafString> &c
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreText(const char *name,char *&buffer)
+int mafStorageElement::RestoreText(const mafString& name,char *&buffer)
 //------------------------------------------------------------------------------
 {
   mafStorageElement *elem=FindNestedElement(name);
@@ -553,7 +549,7 @@ int mafStorageElement::RestoreText(const char *name,char *&buffer)
   return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreText(const char *name,mafString &buffer)
+int mafStorageElement::RestoreText(const mafString& name,mafString &buffer)
 //------------------------------------------------------------------------------
 {
   mafStorageElement *elem=FindNestedElement(name);
@@ -567,7 +563,7 @@ int mafStorageElement::RestoreText(const char *name,mafString &buffer)
   return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
-bool mafStorageElement::GetAttributeAsDouble(const char *name,double &value)
+bool mafStorageElement::GetAttributeAsDouble(const mafString& name,double &value)
 //------------------------------------------------------------------------------
 {
   mafString tmp;
@@ -580,7 +576,7 @@ bool mafStorageElement::GetAttributeAsDouble(const char *name,double &value)
 }
 
 //------------------------------------------------------------------------------
-bool mafStorageElement::GetAttributeAsInteger(const char *name,mafID &value)
+bool mafStorageElement::GetAttributeAsInteger(const mafString& name,mafID &value)
 //------------------------------------------------------------------------------
 {
   mafString tmp;
@@ -593,13 +589,13 @@ bool mafStorageElement::GetAttributeAsInteger(const char *name,mafID &value)
 }
 
 //------------------------------------------------------------------------------
-void mafStorageElement::SetAttribute(const char *name,const mafID value)
+void mafStorageElement::SetAttribute(const mafString& name,const mafID value)
 //------------------------------------------------------------------------------
 {
   SetAttribute(name,mafString(value));
 }
 //------------------------------------------------------------------------------
-void mafStorageElement::SetAttribute(const char *name,const double value)
+void mafStorageElement::SetAttribute(const mafString& name,const double value)
 //------------------------------------------------------------------------------
 {
   SetAttribute(name,mafString(value));

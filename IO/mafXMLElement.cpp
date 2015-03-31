@@ -38,7 +38,7 @@ mafXMLElement::mafXMLElement(mmuXMLDOMElement *element,mafXMLElement *parent,maf
   assert(element);
   assert(element->m_XMLElement);
   m_DOMElement = element;
-  m_Name = new mafXMLString(element->m_XMLElement->getTagName());
+  m_Name = mafXMLString(element->m_XMLElement->getTagName());
 }
 
 //------------------------------------------------------------------------------
@@ -47,7 +47,6 @@ mafXMLElement::~mafXMLElement()
 {
   // the XML element is destroyed by its creator (the DOMDocument)
   cppDEL(m_DOMElement);
-  cppDEL(m_Name);
 }
 
 //------------------------------------------------------------------------------
@@ -150,16 +149,16 @@ mmuXMLDOMElement *mafXMLElement::GetXMLElement()
 }
 
 //------------------------------------------------------------------------------
-mafXMLElement *mafXMLElement::FindNestedXMLElement(const char *name)
+mafXMLElement *mafXMLElement::FindNestedXMLElement(const mafString& name)
 //------------------------------------------------------------------------------
 {
   return (mafXMLElement *)FindNestedElement(name);
 }
 //------------------------------------------------------------------------------
-const char *mafXMLElement::GetName()
+const mafString& mafXMLElement::GetName()
 //------------------------------------------------------------------------------
 {
-  return *m_Name;
+  return m_Name;
 }
 
 //------------------------------------------------------------------------------
@@ -203,14 +202,14 @@ mafStorageElement::ChildrenVector &mafXMLElement::GetChildren()
 }
 
 //------------------------------------------------------------------------------
-mafStorageElement *mafXMLElement::AppendChild(const char *name)
+mafStorageElement *mafXMLElement::AppendChild(const mafString& name)
 //------------------------------------------------------------------------------
 {
  return AppendXMLChild(name); 
 }
 
 //------------------------------------------------------------------------------
-mafXMLElement *mafXMLElement::AppendXMLChild(const char *name)
+mafXMLElement *mafXMLElement::AppendXMLChild(const mafString& name)
 //------------------------------------------------------------------------------
 {
   XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *child_element=GetXMLStorage()->GetXMLDOM()->m_XMLDoc->createElement(mafXMLString(name));
@@ -221,7 +220,7 @@ mafXMLElement *mafXMLElement::AppendXMLChild(const char *name)
 }
 
 //------------------------------------------------------------------------------
-void mafXMLElement::SetAttribute(const char *name,const char *value)
+void mafXMLElement::SetAttribute(const mafString& name,const mafString& value)
 //------------------------------------------------------------------------------
 {
   assert(name);
@@ -231,7 +230,7 @@ void mafXMLElement::SetAttribute(const char *name,const char *value)
 }
 
 //------------------------------------------------------------------------------
-bool mafXMLElement::GetAttribute(const char *name, mafString &value)
+bool mafXMLElement::GetAttribute(const mafString& name, mafString &value)
 //------------------------------------------------------------------------------
 {
   assert(name);
@@ -245,7 +244,7 @@ bool mafXMLElement::GetAttribute(const char *name, mafString &value)
 }
 
 //------------------------------------------------------------------------------
-void mafXMLElement::WriteXMLText(const char *text)
+void mafXMLElement::WriteXMLText(const mafString& text)
 //------------------------------------------------------------------------------
 {
   XERCES_CPP_NAMESPACE_QUALIFIER DOMText *text_node=GetXMLStorage()->GetXMLDOM()->m_XMLDoc->createTextNode(mafXMLString(text));
@@ -253,7 +252,7 @@ void mafXMLElement::WriteXMLText(const char *text)
 }
 
 //------------------------------------------------------------------------------
-int mafXMLElement::StoreText(const char *name, const char *text)
+int mafXMLElement::StoreText(const mafString& name, const mafString& text)
 //------------------------------------------------------------------------------
 {
   assert(text);
@@ -265,7 +264,7 @@ int mafXMLElement::StoreText(const char *name, const char *text)
 }
 
 //------------------------------------------------------------------------------
-int mafXMLElement::StoreMatrix(const char *name,const mafMatrix *matrix)
+int mafXMLElement::StoreMatrix(const mafString& name,const mafMatrix *matrix)
 //------------------------------------------------------------------------------
 {
   assert(matrix);
@@ -328,7 +327,7 @@ void InternalStoreVectorN(mafXMLElement *element,const std::vector<T> &comps,int
 }
 
 //------------------------------------------------------------------------------
-int mafXMLElement::StoreVectorN(const char *name,double *comps,int num)
+int mafXMLElement::StoreVectorN(const mafString& name,double *comps,int num)
 //------------------------------------------------------------------------------
 {
   assert(comps);
@@ -337,7 +336,7 @@ int mafXMLElement::StoreVectorN(const char *name,double *comps,int num)
 }
 
 //------------------------------------------------------------------------------
-int mafXMLElement::StoreVectorN(const char *name,int *comps,int num)
+int mafXMLElement::StoreVectorN(const mafString& name,int *comps,int num)
 //------------------------------------------------------------------------------
 {
   assert(comps);
@@ -345,7 +344,7 @@ int mafXMLElement::StoreVectorN(const char *name,int *comps,int num)
   return MAF_OK;
 }
 //------------------------------------------------------------------------------
-int mafXMLElement::StoreVectorN(const char *name,const std::vector<double> &comps,int num)
+int mafXMLElement::StoreVectorN(const mafString& name,const std::vector<double> &comps,int num)
 //------------------------------------------------------------------------------
 {
   InternalStoreVectorN(this,comps,num,name);
@@ -353,14 +352,14 @@ int mafXMLElement::StoreVectorN(const char *name,const std::vector<double> &comp
 }
 
 //------------------------------------------------------------------------------
-int mafXMLElement::StoreVectorN(const char *name,const std::vector<int> &comps,int num)
+int mafXMLElement::StoreVectorN(const mafString& name,const std::vector<int> &comps,int num)
 //------------------------------------------------------------------------------
 {
   InternalStoreVectorN(this,comps,num,name);
   return MAF_OK;
 }
 //------------------------------------------------------------------------------
-int mafXMLElement::StoreVectorN(const char *name,const std::vector<mafString> &comps,int num,const char *tag)
+int mafXMLElement::StoreVectorN(const mafString& name,const std::vector<mafString> &comps,int num,const mafString& tag)
 //------------------------------------------------------------------------------
 {
   assert(name);
@@ -487,7 +486,7 @@ int mafXMLElement::RestoreVectorN(std::vector<int> &comps,unsigned int num)
   return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
-int mafXMLElement::RestoreVectorN(std::vector<mafString> &comps,unsigned int num,const char *tag)
+int mafXMLElement::RestoreVectorN(std::vector<mafString> &comps,unsigned int num,const mafString& tag)
 //------------------------------------------------------------------------------
 {
   assert(tag);

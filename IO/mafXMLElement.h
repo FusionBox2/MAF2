@@ -45,24 +45,24 @@ public:
   virtual ~mafXMLElement();
 
   /** get the name of this XML element */
-  virtual const char *GetName();
+  virtual const mafString& GetName();
 
   /** Store a generic text into an XML document */
-  virtual int StoreText(const char *name, const char *text);
+  virtual int StoreText(const mafString& name, const mafString& text);
 
   /** Store a matrix into an XML document */
-  virtual int StoreMatrix(const char *name,const mafMatrix *matrix);
+  virtual int StoreMatrix(const mafString& name,const mafMatrix *matrix);
 
   /** Store a vectorN into an XML document */
-  virtual int StoreVectorN(const char *name,const std::vector<double> &comps,int num);
-  virtual int StoreVectorN(const char *name,double *comps,int num);
+  virtual int StoreVectorN(const mafString& name,const std::vector<double> &comps,int num);
+  virtual int StoreVectorN(const mafString& name,double *comps,int num);
 
   /** Store a vectorN into an XML document */
-  virtual int StoreVectorN(const char *name,const std::vector<int> &comps,int num);
-  virtual int StoreVectorN(const char *name,int *comps,int num);
+  virtual int StoreVectorN(const mafString& name,const std::vector<int> &comps,int num);
+  virtual int StoreVectorN(const mafString& name,int *comps,int num);
 
   /** Store a vectorN into an XML document */
-  virtual int StoreVectorN(const char *name,const std::vector<mafString> &comps,int num,const char *tag);
+  virtual int StoreVectorN(const mafString& name,const std::vector<mafString> &comps,int num,const mafString& tag);
 
   /** Store 8bit binary data. Not yet supported. */
   //virtual int StoreData(const char *name,const char *data, const int size);
@@ -94,7 +94,7 @@ public:
   virtual int RestoreVectorN(int *comps,unsigned int num);
 
   /** Restore a vectorN from an XML document */
-  virtual int RestoreVectorN(std::vector<mafString> &comps,unsigned int num,const char *tag);
+  virtual int RestoreVectorN(std::vector<mafString> &comps,unsigned int num,const mafString& tag);
 
   /** Restore a generic text string from an XML document */
   virtual int RestoreText(mafString &buffer);
@@ -114,11 +114,11 @@ public:
     Create a new XML child element and return its pointer. This is the only way to create a new
     XML element. The first element (the root) is automatically created by storage object and
     is the DOM document root element */
-  virtual mafStorageElement *AppendChild(const char *name);
-  mafXMLElement *AppendXMLChild(const char *name);
+  virtual mafStorageElement *AppendChild(const mafString& name);
+  mafXMLElement *AppendXMLChild(const mafString& name);
 
   /** Find a nested XML element by Name */
-  mafXMLElement *FindNestedXMLElement(const char *name);
+  mafXMLElement *FindNestedXMLElement(const mafString& name);
 
   /** return DOM-XML element stored inside this mafXMLElement */
   mmuXMLDOMElement *GetXMLElement();
@@ -127,16 +127,16 @@ public:
     Append an XML attribute to this element. Attribute 'name' and
     'value' must be passed as argument. This utility function takes care
     of string conversion problems. */
-  virtual void SetAttribute(const char *name,const char *value);
+  virtual void SetAttribute(const mafString& name,const mafString& value);
 
   /** 
     Return find an attribute given its name and return its value.
     Return false if not found. This function takes care of string
     conversion problems. */
-  virtual bool GetAttribute(const char *name,mafString &value);
+  virtual bool GetAttribute(const mafString& name,mafString &value);
 
   /** this writes text inside a DOM-XML element */
-  void WriteXMLText(const char *text);
+  void WriteXMLText(const mafString& text);
 
   /** Internally used to extract vector values from Text data */
   int ParseData(std::vector<double> &vector,int size);
@@ -145,12 +145,12 @@ public:
   int ParseData(int *vector,int size);
 
   /** return true if an element with that name exists */
-  bool ExistElement(const char *name);
+  bool ExistElement(const mafString& name);
 
 protected:
 
   mmuXMLDOMElement *m_DOMElement; ///< XML element wrapped by this object (USING PIMPL due to Internal Compile errors of VS7)
-  mafXMLString  *m_Name; ///< Convenient copy of etagName
+  mafString  m_Name; ///< Convenient copy of etagName
 
 };
 #endif // _mafXMLElement_h_

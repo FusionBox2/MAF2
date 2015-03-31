@@ -17,6 +17,7 @@
 #define __mafStorageElement_h__
 
 #include "mafDefines.h"
+#include "mafString.h"
 #include <vector>
 //----------------------------------------------------------------------------
 // forward declarations :
@@ -24,7 +25,6 @@
 class mafParser;
 class mafStorable;
 class mafMatrix;
-class mafString;
 class mafObject;
 
 
@@ -48,39 +48,39 @@ public:
   virtual ~mafStorageElement();
 
   /** get the name of this element. The element name is set at creation time (@sa AppendChild()) */
-  virtual const char *GetName()=0;
+  virtual const mafString& GetName()=0;
 
   /** 
     Set an attribute of this element. Attribute 'name' and
     'value' must be passed as argument. */
-  virtual void SetAttribute(const char *name,const char *value)=0;
-  void SetAttribute(const char *name,const mafID value);
-  void SetAttribute(const char *name,const double value);
+  virtual void SetAttribute(const mafString& name,const mafString& value)=0;
+  void SetAttribute(const mafString& name,const mafID value);
+  void SetAttribute(const mafString& name,const double value);
 
   /** Return an attribute value given its name. Return false if not found. */
-  virtual bool GetAttribute(const char *name,mafString &value)=0;
+  virtual bool GetAttribute(const mafString& name,mafString &value)=0;
   
   /** 
     Return an attribute value given its name, converting it to double.
     Return false if attribute is not found. */
-  bool GetAttributeAsDouble(const char *name,double &value);
+  bool GetAttributeAsDouble(const mafString& name,double &value);
 
   /** 
     Return an attribute value given its name, converting it to integer.
     Return false if attribute is not found. */
-  bool GetAttributeAsInteger(const char *name,mafID &value);
+  bool GetAttributeAsInteger(const mafString& name,mafID &value);
 
   /** Used to upgrade attribute value from previous MSF file version.*/
-  mafString UpgradeAttribute(const char *attribute);
+  mafString UpgradeAttribute(const mafString& attribute);
 
-  virtual int StoreText(const char *name, const char *text)=0;
-  virtual int StoreMatrix(const char *name,const mafMatrix *matrix)=0;
-  virtual int StoreVectorN(const char *name, double *comps,int num)=0;
-  virtual int StoreVectorN(const char *name, int *comps,int num)=0;
-  virtual int StoreVectorN(const char *name, const std::vector<double> &comps,int num)=0;
-  virtual int StoreVectorN(const char *name, const std::vector<int> &comps,int num)=0;
+  virtual int StoreText(const mafString& name, const mafString& text)=0;
+  virtual int StoreMatrix(const mafString& name,const mafMatrix *matrix)=0;
+  virtual int StoreVectorN(const mafString& name, double *comps,int num)=0;
+  virtual int StoreVectorN(const mafString& name, int *comps,int num)=0;
+  virtual int StoreVectorN(const mafString& name, const std::vector<double> &comps,int num)=0;
+  virtual int StoreVectorN(const mafString& name, const std::vector<int> &comps,int num)=0;
   /** store a vector of strings into an XML element, and stores single items in "tag" sub elements */
-  virtual int StoreVectorN(const char *name, const std::vector<mafString> &comps,int num,const char *tag)=0;
+  virtual int StoreVectorN(const mafString& name, const std::vector<mafString> &comps,int num,const mafString& tag)=0;
 
   /** Store 8bit binary data. Not yet supported. */
   //virtual int StoreData(const char *name, const char *data, const int size)=0;
@@ -96,15 +96,15 @@ public:
   /** Restore 32bit binary data. Not yet supported. */
   //virtual int RestoreData32(const char *name,long *data, const int size)=0;
  
-  int RestoreMatrix(const char *name,mafMatrix *matrix);
-  int RestoreVectorN(const char *name,double *comps,unsigned int num);
-  int RestoreVectorN(const char *name,int *comps,unsigned int num);
-  int RestoreVectorN(const char *name,std::vector<double> &comps,unsigned int num);
-  int RestoreVectorN(const char *name,std::vector<int> &comps,unsigned int num);
+  int RestoreMatrix(const mafString& name,mafMatrix *matrix);
+  int RestoreVectorN(const mafString& name,double *comps,unsigned int num);
+  int RestoreVectorN(const mafString& name,int *comps,unsigned int num);
+  int RestoreVectorN(const mafString& name,std::vector<double> &comps,unsigned int num);
+  int RestoreVectorN(const mafString& name,std::vector<int> &comps,unsigned int num);
   /** restore a vector of strings from an XML element, where single items are stored in "tag" sub elements */
-  int RestoreVectorN(const char *name,std::vector<mafString> &comps,unsigned int num,const char *tag);
-  int RestoreText(const char *name,char *&buffer);
-  int RestoreText(const char *name,mafString &buffer);
+  int RestoreVectorN(const mafString& name,std::vector<mafString> &comps,unsigned int num,const mafString& tag);
+  int RestoreText(const mafString& name,char *&buffer);
+  int RestoreText(const mafString& name,mafString &buffer);
 
 
   virtual int RestoreMatrix(mafMatrix *matrix)=0;
@@ -113,17 +113,17 @@ public:
   virtual int RestoreVectorN(std::vector<double> &comps,unsigned int num)=0;
   virtual int RestoreVectorN(std::vector<int> &comps,unsigned int num)=0;
   /** restore a vector of strings from an XML element, where single items are stored in "tag" sub elements */
-  virtual int RestoreVectorN(std::vector<mafString> &comps,unsigned int num,const char *tag)=0;
+  virtual int RestoreVectorN(std::vector<mafString> &comps,unsigned int num,const mafString& tag)=0;
   virtual int RestoreText(mafString &buffer)=0;
 
   virtual int RestoreText(char *&buffer);
   
-  int StoreDouble(const char *name,const double &value);
-  int RestoreDouble(const char *name,double &value);
+  int StoreDouble(const mafString& name,const double &value);
+  int RestoreDouble(const mafString& name,double &value);
   int RestoreDouble(double &value);
 
-  int StoreInteger(const char *name, const int &value);
-  int RestoreInteger(const char *name,int &value);
+  int StoreInteger(const mafString& name, const int &value);
+  int RestoreInteger(const mafString& name,int &value);
   int RestoreInteger(int &value);
   
   /**
@@ -133,10 +133,10 @@ public:
     object is always created by means of New(), this way in case of smart object it can be registered.
     The object to be restored must be both a mafObject (to stay in the object factory) and a mafStorable
     to support Restore() method.*/  
-  int RestoreObject(const char *name,mafStorable * object);
+  int RestoreObject(const mafString& name,mafStorable * object);
 
   /** Restore object from given element. @sa RestoreObject(const char *name,mafObject *&) */
-  mafObject *RestoreObject(const char *name);
+  mafObject *RestoreObject(const mafString& name);
 
   /** Restore object from given element. @sa RestoreObject(const char *name,mafObject *&) */
   mafObject *RestoreObject();
@@ -146,17 +146,17 @@ public:
     attribute with name 'Type' storing the object name. Then the function calls the Store function of the
     object. The object must be a storable object to support Store() interface. The newly stored element is
     returned if OK, NULL in case of problems */
-  mafStorageElement *StoreObject(const char *name,mafObject *object);
+  mafStorageElement *StoreObject(const mafString& name,mafObject *object);
 
   /** 
     Store a vector of objects. Objects must be both mafObject and mafStorable @sa StoreObject() */
-  virtual int StoreObjectVector(const char *name,const std::vector<mafObject *> &vector,const char *items_name="Item");
+  int StoreObjectVector(const mafString& name,const std::vector<mafObject *> &vector,const mafString& items_name="Item");
 
   /** Restore a vector of objects. Objects must be both mafObject and mafStorable @sa RestoreObject() */
-  virtual int RestoreObjectVector(const char *name,std::vector<mafObject *> &vector,const char *items_name="Item");
+  int RestoreObjectVector(const mafString& name,std::vector<mafObject *> &vector,const mafString& items_name="Item");
 
   /** Restore a vector of objects. Objects must be both mafObject and mafStorable @sa RestoreObject() */
-  virtual int RestoreObjectVector(mafStorageElement *element,std::vector<mafObject *> &vector,const char *items_name="Item");
+  int RestoreObjectVector(mafStorageElement *element,std::vector<mafObject *> &vector,const mafString& items_name="Item");
 
   /** return a pointer to the storage who created this element */
   mafParser *GetStorage() {return m_Storage;}
@@ -167,10 +167,10 @@ public:
   /** 
     Create a new child element and return its pointer. This is the only way to create a new
     element. The first element (the root) is automatically created by storage object. */
-  virtual mafStorageElement *AppendChild(const char *name) = 0;
+  virtual mafStorageElement *AppendChild(const mafString& name) = 0;
   
   /** Find a nested element by Name */
-  virtual mafStorageElement *FindNestedElement(const char *name);
+  virtual mafStorageElement *FindNestedElement(const mafString& name);
 
   typedef std::vector<mafStorageElement *> ChildrenVector;
 
@@ -181,14 +181,14 @@ public:
   
   /** 
     Return the list of all children with a given name. return true if at least one found. */ 
-  virtual bool GetNestedElementsByName(const char *name,std::vector<mafStorageElement *> &list);
+  virtual bool GetNestedElementsByName(const mafString& name,std::vector<mafStorageElement *> &list);
 
 protected:
   /** elements can be created only by means of AppendChild() or FindNestedElement() */
   mafStorageElement(mafStorageElement *parent,mafParser *storage);
 
   /** commodity function to store a storable object creating on the fly the element to store it inside. */
-  mafStorageElement *StoreObject(const char *name,mafStorable *storable, const char *type_name);
+  mafStorageElement *StoreObject(const mafString& name,mafStorable *storable, const mafString& type_name);
 
   void SetStorage(mafParser *storage) {m_Storage = storage;}
   void SetParent(mafStorageElement *element) {m_Parent = element;}
