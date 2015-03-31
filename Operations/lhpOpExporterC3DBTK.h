@@ -67,12 +67,13 @@ public:
   void SetFileName(const char *file_name) {m_File = file_name;};
 
 protected:
-  void ExportingTraverse(std::ostream &out, const char *dirName, mafNode* node);
-  void ExportOneCloud(btk::Acquisition::Pointer, mafVMELandmarkCloud* cloud);
+  void ExportingTraverse(mafNode *vme, std::vector<mafVMELandmarkCloud*>& clouds);
+  bool ExportClouds(btk::Acquisition::Pointer, std::vector<mafVMELandmarkCloud*>& clouds);
 
   mafString	m_File;
   mafString	m_FileDir;
   int       m_GlobalPos;
+  int       m_Subtree;
 };
 #ifdef IMPORTER_PROTO_FOR_EXPORT
 class lhpOpExporterC3DBTK : public mafOp
