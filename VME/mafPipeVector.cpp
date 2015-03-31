@@ -83,10 +83,10 @@ mafPipeVector::mafPipeVector()
   m_AllBunch = 0;
 }
 //----------------------------------------------------------------------------
-void mafPipeVector::Create(mafSceneNode *n)
+void mafPipeVector::Create(mafNode *node, mafView *view)
 //----------------------------------------------------------------------------
 {  
-  Superclass::Create(n);
+  Superclass::Create(node, view);
   m_Selected = false;
 
   mafVMEOutputPolyline *out_polyline = mafVMEOutputPolyline::SafeDownCast(m_Vme->GetOutput());

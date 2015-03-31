@@ -37,7 +37,7 @@ public:
                mafPipePointSet();
   virtual     ~mafPipePointSet ();
 
-  virtual void Create(mafSceneNode *n);
+  virtual void Create(mafNode *node, mafView *view);
 
 	/** Change the visibility of the bounding box actor representing the selection for the vme. */
   virtual void Select     (bool select); 

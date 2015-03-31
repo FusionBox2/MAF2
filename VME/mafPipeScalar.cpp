@@ -57,10 +57,10 @@ mafPipeScalar::mafPipeScalar()
   m_Actor     = NULL;
 }
 //----------------------------------------------------------------------------
-void mafPipeScalar::Create(mafSceneNode *n)
+void mafPipeScalar::Create(mafNode *node, mafView *view)
 //----------------------------------------------------------------------------
 {
-  Superclass::Create(n);
+  Superclass::Create(node, view);
   
   m_Selected = false;
 

@@ -61,10 +61,10 @@ mafPipeBox::mafPipeBox()
   m_BoundsMode = 0;
 }
 //----------------------------------------------------------------------------
-void mafPipeBox::Create(mafSceneNode *n/*, bool use_axes*/)
+void mafPipeBox::Create(mafNode *node, mafView *view/*, bool use_axes*/)
 //----------------------------------------------------------------------------
 {
-  Superclass::Create(n);
+  Superclass::Create(node, view);
   
   m_Selected = false;
   m_Box             = NULL;

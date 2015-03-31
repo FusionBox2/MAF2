@@ -83,10 +83,10 @@ mafPipeSurfaceTextured::mafPipeSurfaceTextured()
   m_SelectionVisibility = 1;
 }
 //----------------------------------------------------------------------------
-void mafPipeSurfaceTextured::Create(mafSceneNode *n/*, bool use_axes*/)
+void mafPipeSurfaceTextured::Create(mafNode *node, mafView *view/*, bool use_axes*/)
 //----------------------------------------------------------------------------
 {
-  Superclass::Create(n);
+  Superclass::Create(node, view);
   
   m_Selected = false;
   m_Texture         = NULL;

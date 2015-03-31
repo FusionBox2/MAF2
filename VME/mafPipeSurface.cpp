@@ -97,10 +97,10 @@ mafPipeSurface::mafPipeSurface()
   m_SelectedDataAttribute = 0;  // (added by Losi 2011/04/08 to allow scalars array selection)
 }
 //----------------------------------------------------------------------------
-void mafPipeSurface::Create(mafSceneNode *n)
+void mafPipeSurface::Create(mafNode *node, mafView *view)
 //----------------------------------------------------------------------------
 {
-  Superclass::Create(n);
+  Superclass::Create(node, view);
   
   m_Selected = false;
   m_Mapper          = NULL;

@@ -177,7 +177,7 @@ void mafViewPlot::VmeCreatePipe(mafNode *vme)
       pipe->SetListener(this);
       mafSceneNode *n = m_Sg->Vme2Node(vme);
       assert(n && !n->m_Pipe);
-      pipe->Create(n);
+      pipe->Create(vme, this);
       n->m_Pipe = (mafPipe*)pipe;
     }
     else

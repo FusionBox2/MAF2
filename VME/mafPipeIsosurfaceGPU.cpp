@@ -69,10 +69,10 @@ mafPipeIsosurfaceGPU::mafPipeIsosurfaceGPU()
   m_BoundingBoxVisibility = true;
 }
 //----------------------------------------------------------------------------
-void mafPipeIsosurfaceGPU::Create(mafSceneNode *n)
+void mafPipeIsosurfaceGPU::Create(mafNode *node, mafView *view)
 //----------------------------------------------------------------------------
 {
-	Superclass::Create(n);
+	Superclass::Create(node, view);
 
 	assert(m_Vme->GetOutput()->IsA("mafVMEOutputVolume"));
 

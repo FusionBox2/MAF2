@@ -47,7 +47,7 @@ public:
   /** Parameter to initialize a non default projection (X axes) */
   void InitializeProjectParameters(int cam_position);
   
-  virtual void Create(mafSceneNode *n);
+  virtual void Create(mafNode *node, mafView *view);
 
 	/** Show-Hide the RX bounding box actor. */
   void Select     (bool select);

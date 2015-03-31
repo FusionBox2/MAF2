@@ -76,10 +76,10 @@ mafPipeMeter::mafPipeMeter()
   m_MaterialButton    = NULL;
 }
 //----------------------------------------------------------------------------
-void mafPipeMeter::Create(mafSceneNode *n/*, bool use_axes*/)
+void mafPipeMeter::Create(mafNode *node, mafView *view/*, bool use_axes*/)
 //----------------------------------------------------------------------------
 {
-  Superclass::Create(n);
+  Superclass::Create(node, view);
   
   m_Selected          = false;
   m_DataMapper        = NULL;

@@ -29,6 +29,7 @@
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
+class mafView;
 class mafNode;
 class mafVME;
 class mafSceneNode;
@@ -58,7 +59,7 @@ public:
   virtual void OnEvent(mafEventBase *maf_event)           {};
 
   /** The real setup must be performed here - not in the ctor */
-  virtual void Create(mafSceneNode *n);
+  virtual void Create(mafNode *node, mafView *view);
 
 	/** Change the visibility of the bounding box actor representing the selection for the vme. */
 	virtual	void Select(bool select)										{};
@@ -78,6 +79,7 @@ public:
   };
 
   mafVME         *m_Vme;      ///< VME used as input for the visual pipe
+  mafView        *m_View;
 	vtkMAFAssembly *m_AssemblyFront; ///< Assembly used to contain the actor in the front layer
 	vtkMAFAssembly *m_AssemblyBack;  ///< Assembly used to contain the actor in the background layer
 	vtkMAFAssembly *m_AlwaysVisibleAssembly;

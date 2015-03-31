@@ -44,7 +44,7 @@ public:
   virtual void Select(bool select); 
 
   /** Create the VTK rendering pipeline*/
-  virtual void Create(mafSceneNode *n);
+  virtual void Create(mafNode *node, mafView *view);
 
 protected:
   /** Create the Gui for the visual pipe that allow the user to change the pipe's parameters.*/

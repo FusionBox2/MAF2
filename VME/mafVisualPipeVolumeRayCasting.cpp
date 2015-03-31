@@ -73,10 +73,10 @@ mafVisualPipeVolumeRayCasting::~mafVisualPipeVolumeRayCasting()
 }
 
 //----------------------------------------------------------------------------
-void mafVisualPipeVolumeRayCasting::Create(mafSceneNode *n)
+void mafVisualPipeVolumeRayCasting::Create(mafNode *node, mafView *view)
 //----------------------------------------------------------------------------
 {
-  Superclass::Create(n);
+  Superclass::Create(node, view);
 
   m_Selected = false;
 

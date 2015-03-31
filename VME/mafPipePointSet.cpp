@@ -49,10 +49,10 @@ mafPipePointSet::mafPipePointSet()
 {
 }
 //----------------------------------------------------------------------------
-void mafPipePointSet::Create(mafSceneNode *n)
+void mafPipePointSet::Create(mafNode *node, mafView *view)
 //----------------------------------------------------------------------------
 {
-  Superclass::Create(n);
+  Superclass::Create(node, view);
 
   m_Selected = false;
   m_Vme->GetOutput()->Update();

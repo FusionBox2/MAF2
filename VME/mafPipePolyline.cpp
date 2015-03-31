@@ -110,10 +110,10 @@ mafPipePolyline::mafPipePolyline()
   m_TextIdentifierBorderVisibility = FALSE;
 }
 //----------------------------------------------------------------------------
-void mafPipePolyline::Create(mafSceneNode *n)
+void mafPipePolyline::Create(mafNode *node, mafView *view)
 //----------------------------------------------------------------------------
 {
-	Superclass::Create(n);
+	Superclass::Create(node, view);
 
 	m_Selected = false;
 

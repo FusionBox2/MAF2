@@ -96,10 +96,10 @@ mafPipeMesh::mafPipeMesh()
 	m_Border = 1;
 }
 //----------------------------------------------------------------------------
-void mafPipeMesh::Create(mafSceneNode *n)
+void mafPipeMesh::Create(mafNode *node, mafView *view)
 //----------------------------------------------------------------------------
 {
-	Superclass::Create(n);
+	Superclass::Create(node, view);
 
 	m_Selected = false;
 	m_Mapper          = NULL;

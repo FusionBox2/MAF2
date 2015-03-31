@@ -48,7 +48,7 @@ public:
   virtual     ~mafPipeLandmarkCloud ();
 
   /** Create the VTK rendering pipeline*/
-  virtual void Create(mafSceneNode *n);
+  virtual void Create(mafNode *node, mafView *view);
 
   /** Answer events coming from the Gui and from cloud */
   void OnEvent(mafEventBase *maf_event);

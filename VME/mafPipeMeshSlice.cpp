@@ -113,10 +113,10 @@ mafPipeMeshSlice::mafPipeMeshSlice()
   m_Border = 1;
 }
 //----------------------------------------------------------------------------
-void mafPipeMeshSlice::Create(mafSceneNode *n)
+void mafPipeMeshSlice::Create(mafNode *node, mafView *view)
 //----------------------------------------------------------------------------
 {
-	Superclass::Create(n);
+	Superclass::Create(node, view);
 
 	m_Selected = false;
 	m_Mapper          = NULL;

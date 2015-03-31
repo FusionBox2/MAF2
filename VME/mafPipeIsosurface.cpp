@@ -68,10 +68,10 @@ mafPipeIsosurface::mafPipeIsosurface()
   m_BoundingBoxVisibility = true;
 }
 //----------------------------------------------------------------------------
-void mafPipeIsosurface::Create(mafSceneNode *n)
+void mafPipeIsosurface::Create(mafNode *node, mafView *view)
 //----------------------------------------------------------------------------
 {
-	Superclass::Create(n);
+	Superclass::Create(node, view);
 
 	assert(m_Vme->GetOutput()->IsA("mafVMEOutputVolume"));
 

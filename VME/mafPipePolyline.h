@@ -66,7 +66,7 @@ public:
 	virtual void OnEvent(mafEventBase *maf_event);
 
   /** create the pipeline. */
-	virtual void Create(mafSceneNode *n);
+	virtual void Create(mafNode *node, mafView *view);
   /** when vme is selected, it can be catch the event in select funztion. */
 	virtual void Select(bool select); 
 

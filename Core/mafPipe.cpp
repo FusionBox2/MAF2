@@ -29,6 +29,8 @@
 
 #include "mafPipe.h"
 #include "mafNode.h"
+#include "mafVME.h"
+#include "mafView.h"
 #include "vtkMAFAssembly.h"
 
 //----------------------------------------------------------------------------
@@ -50,23 +52,27 @@ mafPipe::mafPipe()
 	m_Selected = false;
 }
 //----------------------------------------------------------------------------
-void mafPipe::Create(mafSceneNode *n)
+void mafPipe::Create(mafNode *node, mafView *view)
 //----------------------------------------------------------------------------
 {
-  if (n != NULL)
+  m_Vme			 = mafVME::SafeDownCast(node);
+  m_View     = view;
+  m_Sg       = m_View->GetSceneGraph();
+
+  if(m_Sg)
   {
-	  m_Sg       = n->m_Sg;
-	  m_Vme			 = n->m_Vme->IsA("mafVME") ? ((mafVME*)n->m_Vme) : NULL;
-	  
-	  m_AssemblyFront = n->m_AssemblyFront;
-	  m_AssemblyBack	= n->m_AssemblyBack;
-	  m_AlwaysVisibleAssembly = n->m_AlwaysVisibleAssembly;
-	  m_RenFront      = n->m_RenFront;
-	  m_RenBack       = n->m_RenBack;
-	  m_AlwaysVisibleRenderer = n->m_AlwaysVisibleRenderer;
-	
-	  m_Selected = false;
+    if(mafSceneNode *n = m_Sg->Vme2Node(m_Vme))
+    {
+      m_AssemblyFront = n->m_AssemblyFront;
+      m_AssemblyBack	= n->m_AssemblyBack;
+      m_AlwaysVisibleAssembly = n->m_AlwaysVisibleAssembly;
+      m_RenFront      = n->m_RenFront;
+      m_RenBack       = n->m_RenBack;
+      m_AlwaysVisibleRenderer = n->m_AlwaysVisibleRenderer;
+    }
   }
+
+  m_Selected = false;
 }
 //----------------------------------------------------------------------------
 mafPipe::~mafPipe()

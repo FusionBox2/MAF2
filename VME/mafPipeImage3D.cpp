@@ -65,10 +65,10 @@ mafPipeImage3D::mafPipeImage3D()
   m_GhostActor        = NULL;
 }
 //----------------------------------------------------------------------------
-void mafPipeImage3D::Create(mafSceneNode *n)
+void mafPipeImage3D::Create(mafNode *node, mafView *view)
 //----------------------------------------------------------------------------
 {
-  Superclass::Create(n);
+  Superclass::Create(node, view);
   m_UsedAssembly = m_AssemblyBack ? m_AssemblyBack : m_AssemblyFront;
 
   m_ImagePlane        = NULL;

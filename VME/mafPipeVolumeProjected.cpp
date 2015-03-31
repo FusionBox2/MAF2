@@ -72,10 +72,10 @@ void mafPipeVolumeProjected::InitializeProjectParameters(int cam_position)
     m_CamPosition = CAMERA_RX_FRONT;
 }
 //----------------------------------------------------------------------------
-void mafPipeVolumeProjected::Create(mafSceneNode *n)
+void mafPipeVolumeProjected::Create(mafNode *node, mafView *view)
 //----------------------------------------------------------------------------
 {
-  Superclass::Create(n); // Always call this to initialize m_Vme, m_AssemblyFront, ... vars
+  Superclass::Create(node, view); // Always call this to initialize m_Vme, m_AssemblyFront, ... vars
   m_UsedAssembly = m_AssemblyBack ? m_AssemblyBack : m_AssemblyFront;
 
 	assert(m_Vme->GetOutput()->IsA("mafVMEOutputVolume"));
