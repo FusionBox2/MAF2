@@ -201,6 +201,7 @@
 #include "lhpOpRegSurfWithCloud.h"
 #include "lhpOpRepresentInAF.h"
 #include "lhpOpImporterC3DBTK.h" 
+#include "lhpOpExporterC3DBTK.h" 
 #include "lhpOpLMMirror.h"
 #include "lhpOpLMProj.h"
 #include "lhpOpSolidify.h"
@@ -626,6 +627,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   m_Logic->Plug(new mafOpExporterBmp("Bmp"), "Images");
   m_Logic->Plug(new lhpOpMTRExporter("MTR"), "Motion Analysis");
   m_Logic->Plug(new medOpExporterLandmark("Landmark"), "Motion Analysis");
+  m_Logic->Plug(new lhpOpExporterC3DBTK("C3D BTK"),"Motion Analysis");  
   if(fullVersion)
   {
     m_Logic->Plug(new mafOpExporterRAW("Raw"), "Images");
