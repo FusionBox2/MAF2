@@ -651,7 +651,7 @@ void mafRWIBase::OnSize(wxSizeEvent &event)
   }
 }
 //----------------------------------------------------------------------------
-wxBitmap *mafRWIBase::GetImage(int magnification)
+void mafRWIBase::GetImage(wxBitmap& bitmap, int magnification)
 //----------------------------------------------------------------------------
 {
 	int dim[3];
@@ -675,10 +675,9 @@ wxBitmap *mafRWIBase::GetImage(int magnification)
 
   //translate to a wxBitmap
   wxImage  *img = new wxImage(dim[0],dim[1],buffer,TRUE);
-  wxBitmap *bmp = new wxBitmap(img,24);
+  bitmap = wxBitmap(img,24);
   delete img;
   delete buffer;
-  return bmp;
 }
 //----------------------------------------------------------------------------
 void mafRWIBase::SaveImage(mafString filename, int magnification , int forceExtension)

@@ -36,7 +36,6 @@ class wxKeyEvent;
 class wxSizeEvent;
 class vtkInteractorObserver;
 class vtkCamera;
-class mafDeviceButtonsPadMouse;
 class vtkImageAppend;
 class vtkPNGWriter;
 class vtkWindowToImageFilter;
@@ -109,7 +108,7 @@ public:
   void TerminateApp();
 	/** 
   Return an image of the render window. */
-  wxBitmap* GetImage(int magnification = 1);
+  void GetImage(wxBitmap& bitmap, int magnification = 1);
 	/** 
   Save an image of the render window. */
   void SaveImage(mafString filename = "", int magnification = 1, int forceExtension = -1);

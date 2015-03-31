@@ -487,7 +487,7 @@ void mafViewVTK::Print(wxDC *dc, wxRect margins)
 void mafViewVTK::GetImage(wxBitmap &bmp, int magnification)
 //----------------------------------------------------------------------------
 {
-  bmp = *m_Rwi->m_RwiBase->GetImage(magnification);
+  m_Rwi->m_RwiBase->GetImage(bmp, magnification);
 }
 //----------------------------------------------------------------------------
 void mafViewVTK::LinkView(bool link_camera)
