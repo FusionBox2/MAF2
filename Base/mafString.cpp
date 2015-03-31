@@ -62,7 +62,7 @@ mafString::mafString(const char *src):m_CStr(NULL),m_ConstCStr(""),m_Size(0)
 mafString::mafString(const double &num):m_CStr(NULL),m_ConstCStr(""),m_Size(0)
 //----------------------------------------------------------------------------
 {
-  NPrintf(32,"%.16g",num); // only 16 digits are represented to avoid dirty bits
+  NFormat(32,"%.16g",num); // only 16 digits are represented to avoid dirty bits
 }
 #ifdef MAF_USE_WX
 //----------------------------------------------------------------------------
@@ -91,7 +91,7 @@ mafString &mafString::operator=(const char *src)
 mafString &mafString::operator=(const double &num)
 //----------------------------------------------------------------------------
 {
-  NPrintf(32,"%.16g",num);
+  NFormat(32,"%.16g",num);
   return *this;
 }
 #ifdef MAF_USE_WX
@@ -130,7 +130,7 @@ mafString &mafString::operator<<( int d )
 //----------------------------------------------------------------------------
 {
   mafString tmp;
-  tmp.NPrintf(100,"%d",d);
+  tmp.NFormat(100,"%d",d);
   Append(tmp);
   return *this;
 }
@@ -139,7 +139,7 @@ mafString &mafString::operator<<( long d )
 //----------------------------------------------------------------------------
 {
   mafString tmp;
-  tmp.NPrintf(100,"%d",d);
+  tmp.NFormat(100,"%d",d);
   Append(tmp);
   return *this;
 }
@@ -148,7 +148,7 @@ mafString &mafString::operator<<( float d )
 //----------------------------------------------------------------------------
 {
   mafString tmp;
-  tmp.NPrintf(100,"%.7g",d);
+  tmp.NFormat(100,"%.7g",d);
   Append(tmp);
   return *this;
 }
@@ -157,7 +157,7 @@ mafString &mafString::operator<<( double d )
 //----------------------------------------------------------------------------
 {
   mafString tmp;
-  tmp.NPrintf(100,"%.16g",d);
+  tmp.NFormat(100,"%.16g",d);
   Append(tmp);
   return *this;
 }
@@ -170,7 +170,7 @@ mafString &mafString::operator<<( mafMatrix mat )
 		for(int j=0; j<4;j++)
 		{
 			mafString tmp;
-			tmp.NPrintf(100,"%.16g ",mat.GetElement(i,j));
+			tmp.NFormat(100,"%.16g ",mat.GetElement(i,j));
 			Append(tmp);
 		}
 	}
@@ -885,7 +885,7 @@ int mafString::FindLastChr(const int c) const
 }
 
 //----------------------------------------------------------------------------
-void mafString::Printf(const char *format, ...)
+void mafString::Format(const char *format, ...)
 //----------------------------------------------------------------------------
 {
   SetSize(0); // release old memory
@@ -895,7 +895,7 @@ void mafString::Printf(const char *format, ...)
 }
 
 //----------------------------------------------------------------------------
-void mafString::NPrintf(unsigned long size, const char *format, ...)
+void mafString::NFormat(unsigned long size, const char *format, ...)
 //----------------------------------------------------------------------------
 {
   SetSize(0); // release old memory

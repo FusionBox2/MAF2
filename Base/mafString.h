@@ -204,10 +204,10 @@ public:
 
   /** Format given arguments according to format string. Format string format is
       that of vsprintf function */
-  void Printf(const char *format, ...);
+  void Format(const char *format, ...);
 
   /** like Printf but faster (you can specify output string size) */ 
-  void NPrintf(unsigned long size, const char *format, ...);
+  void NFormat(unsigned long size, const char *format, ...);
 
   /** this allows to convert a mafString to const char *. */
   operator const char*() const {return GetCStr();}

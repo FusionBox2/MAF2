@@ -537,9 +537,9 @@ int mafVMEMeshAnsysTextImporter::ParseMaterialsFile(vtkUnstructuredGrid *grid, c
 						mafString matLabel;
 						mafString rangeLabel;
 						mafString applyLabel;
-						matLabel.Printf(" Material N. %d has no property %s defined", (int)mat_prop_values_vec[j][0], mat_prop_name_vec[propIndex].c_str());
-						rangeLabel.Printf(" %s current Range is (%.4f,%.4f)",mat_prop_name_vec[propIndex].c_str(), mat_prop_values_min_vec[propIndex], mat_prop_values_max_vec[propIndex]);
-						applyLabel.Printf("Apply to all %s",mat_prop_name_vec[propIndex].c_str());
+						matLabel.Format(" Material N. %d has no property %s defined", (int)mat_prop_values_vec[j][0], mat_prop_name_vec[propIndex].c_str());
+						rangeLabel.Format(" %s current Range is (%.4f,%.4f)",mat_prop_name_vec[propIndex].c_str(), mat_prop_values_min_vec[propIndex], mat_prop_values_max_vec[propIndex]);
+						applyLabel.Format("Apply to all %s",mat_prop_name_vec[propIndex].c_str());
 															
 						//Create GUI
 						mafGUI *dialogGui;
