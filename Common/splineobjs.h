@@ -4,7 +4,7 @@
 #include <vector>
 #include "bbasis.h"
 #include "arrays.h"
-#include "vectors.h"
+#include "mafVectors.h"
 #include "nrtypes_nr.h"
 #include "nr.h"
 

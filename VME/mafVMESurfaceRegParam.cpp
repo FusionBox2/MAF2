@@ -50,7 +50,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "vtkTransformPolyDataFilter.h"
 
 #include <vector>
-#include "vectors.h"
+#include "mafVectors.h"
 
 const bool DEBUG_MODE = true;
 

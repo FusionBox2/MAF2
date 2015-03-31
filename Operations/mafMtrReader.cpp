@@ -27,7 +27,7 @@
 #include "vtkPolyData.h"
 #include "assert.h"
 #include <vector>
-#include <vectors.h>
+#include "mafVectors.h"
 #include <forarray.h>
 #include <splines.h>
 #include "createSplineSurf.h"

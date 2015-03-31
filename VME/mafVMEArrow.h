@@ -21,7 +21,7 @@
 #include "mafVME.h"
 #include "mafVmeOutput.h"
 #include "mafVMEGeneric.h"
-#include "vectors.h"
+#include "mafVectors.h"
 
 //-----------------------------------------------------------------------
 // class forwarding

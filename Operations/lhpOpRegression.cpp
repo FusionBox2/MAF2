@@ -45,7 +45,7 @@
 #include "mafJointAnalysis.h"
 #include "mafTransform.h"
 
-#include "vectors.h"
+#include "mafVectors.h"
 
 #include "nr.h"
 

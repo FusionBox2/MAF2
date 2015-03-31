@@ -38,7 +38,7 @@
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkTransform.h"
 
-#include "vectors.h"
+#include "mafVectors.h"
 
 
 //----------------------------------------------------------------------------

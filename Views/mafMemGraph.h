@@ -14,7 +14,7 @@
 #define __mafMemoryGraph_H__
 
 #include <vector>
-#include "vectors.h"
+#include "mafVectors.h"
 #include "splines.h"
 
 //----------------------------------------------------------------------------

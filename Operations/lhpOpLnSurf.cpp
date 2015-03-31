@@ -42,7 +42,7 @@
 #include "vtkCellArray.h"
 #include "vtkCellData.h"
 #include "vtkPolyData.h"
-#include <vectors.h>
+#include "mafVectors.h"
 #include "forarray.h"
 #include "splines.h"
 #include "createSplineSurf.h"

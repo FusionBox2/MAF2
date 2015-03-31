@@ -36,7 +36,7 @@
 #include "mafStorageElement.h"
 #include "mafMatrix3x3.h"
 #include "mafJointAnalysis.h"
-#include "vectors.h"
+#include "mafVectors.h"
 
 #include "vtkMAFSmartPointer.h"
 #include "vtkObjectFactory.h"

@@ -37,7 +37,7 @@
 
 #include "vtkPolyData.h"
 #include "vtkMEDPolyDataMirror.h"
-#include "vectors.h"
+#include "mafVectors.h"
 #include <vector>
 
 

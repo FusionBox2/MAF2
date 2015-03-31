@@ -48,7 +48,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include <vcl_vector.h>
 #include <vcl_algorithm.h>
 
-#include <vectors.h>
+#include "mafVectors.h"
 
 //----------------------------------------------------------------------------
 // constants

@@ -35,7 +35,6 @@ mafPlotMath.cpp
 mafPlotMath.h
 forarray.h
 VecProc.h
-vectors.h
 splines.h
 lhpUtils.h
 lhpUtils.cpp

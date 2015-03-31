@@ -18,7 +18,7 @@
 #endif
 
 #include "vtkMatrix4x4.h"
-#include "vectors.h"
+#include "mafVectors.h"
 
 #define FLT_EPSILON     1.192092896e-07F        /* smallest such that 1.0+FLT_EPSILON != 1.0 */
 

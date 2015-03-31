@@ -14,7 +14,7 @@
 #define SPLINES_HEADER
 
 #include "forarray.h"
-#include "vectors.h"
+#include "mafVectors.h"
 #include <limits>
 
 #ifndef max_val

@@ -22,7 +22,7 @@
 #include "mafVMEOutputPolyline.h"
 #include "mafVMEVolumeGray.h"
 #include "mafEvent.h"
-#include "vectors.h"
+#include "mafVectors.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :

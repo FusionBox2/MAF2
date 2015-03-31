@@ -16,7 +16,7 @@
 #include "mafVME.h"
 #include "mafVMEAFRefSys.h"
 #include "mafVMERefSysAbstract.h"
-#include "vectors.h"
+#include "mafVectors.h"
 
 mafVMERefSysAbstract *GetRefSys(mafVME *vme);
 mafVMEAFRefSys *GetAFRefSys(mafVME *vme);

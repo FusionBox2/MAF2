@@ -49,7 +49,7 @@
 #include "vtkTransform.h"
 #include "vtkTransformPolyDataFilter.h"
 
-#include "vectors.h"
+#include "mafVectors.h"
 
 //----------------------------------------------------------------------------
 // Constants :
