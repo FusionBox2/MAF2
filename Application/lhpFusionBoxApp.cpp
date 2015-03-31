@@ -147,7 +147,7 @@
 #include "medOpComputeWrapping.h"
 #include "medVMEComputeWrapping.h"
 #include "medPipeComputeWrapping.h"
-
+#include "medGUIDicomSettings.h"
 
 //temporary for testing
 #include "mafViewSingleSliceCompound.h"
@@ -582,7 +582,11 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   m_Logic->Plug(new lhpOpImporterC3DBTK("C3D BTK"),"Motion Analysis");  
   if(fullVersion)
   {
-    m_Logic->Plug(new medOpImporterDicomOffis("DICOM"),"Images");
+    medGUIDicomSettings *dicomSettings=new medGUIDicomSettings(NULL,"DICOM");
+    medOpImporterDicomOffis *dimp = new medOpImporterDicomOffis("DICOM");
+    dimp->SetSetting(dicomSettings);
+    m_Logic->Plug(dimp,"DICOM Suite");
+    //m_Logic->Plug(new medOpImporterDicomOffis("DICOM"),"Images");
     m_Logic->Plug(new mafOpImporterVTK("VTK"),"Other");
     m_Logic->Plug(new mafOpImporterMSF1x("MAF 1.x"),"Other");
     m_Logic->Plug(new mafOpImporterBBF("BFF (VolumeLarge)"),"Other");
