@@ -156,6 +156,8 @@ SET(PROJECT_SRCS
 	lhpOpImporterC3D.cpp
 	lhpOpImporterC3D.h
 
+	lhpOpImporterC3DBTK.cpp
+	lhpOpImporterC3DBTK.h
 	lhpOpICPRegFollow.cpp
 	lhpOpICPRegFollow.h
 	lhpOpImporterRSScan.cpp

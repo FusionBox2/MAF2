@@ -192,6 +192,7 @@
 #include "lhpOpRegistration.h"
 #include "lhpOpRegSurfWithCloud.h"
 #include "lhpOpRepresentInAF.h"
+#include "lhpOpImporterC3DBTK.h" 
 #include "lhpOpLMMirror.h"
 #include "lhpOpLMProj.h"
 #include "lhpOpSolidify.h"
@@ -519,6 +520,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   m_Logic->Plug(new lhpOpINPImporter("INP/INP_AF"), "Geometries");
   m_Logic->Plug(new lhpOpMTRImporter("MTR"), "Geometries");
   m_Logic->Plug(new lhpOpMTRULBImporter("MTR (ULB)"), "Geometries");
+  m_Logic->Plug(new lhpOpImporterC3DBTK("C3D BTK"),"Motion Analysis");  
   if(fullVersion)
   {
     m_Logic->Plug(new medOpImporterDicomOffis("DICOM"),"Images");
