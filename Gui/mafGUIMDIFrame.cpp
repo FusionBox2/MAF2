@@ -60,7 +60,7 @@ class mafGUIMDIFrameCallback : public vtkCommand
 
         if(m_mode==0) // ProgressEvent-Callback
         {
-          ::wxSafeYield(NULL,true); //fix on bug #2082 
+          mafYield(); //fix on bug #2082 
           m_Frame->ProgressBarSetVal(po->GetProgress()*100);
           //mafLogMessage("progress = %g", po->GetProgress()*100);
         }
@@ -444,7 +444,7 @@ void mafGUIMDIFrame::ProgressBarSetVal(int progress)
   {
     m_Gauge->SetValue(progress);
     SetStatusText(wxString::Format(" %d%% ",progress),3);
-    ::wxSafeYield(NULL,true); //fix on bug #2082
+    mafYield(); //fix on bug #2082
   }
 }
 //-----------------------------------------------------------
