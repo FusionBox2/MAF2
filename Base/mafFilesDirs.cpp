@@ -178,6 +178,8 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
   }
   if (zfile == "")
   {
+    fileSystem->RemoveHandler(zipHandler);
+    cppDEL(zipHandler);
     cppDEL(fileSystem);
     mafRemoveDirectory(tmpDir); // remove the temporary directory
     tmpDir = "";
@@ -193,6 +195,8 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
     zfileStream = fileSystem->OpenFile(zfile);
     if (zfileStream == NULL) // unable to open the file
     {
+      fileSystem->RemoveHandler(zipHandler);
+      cppDEL(zipHandler);
       cppDEL(fileSystem);
       mafRemoveDirectory(tmpDir); // remove the temporary directory
       tmpDir = "";
@@ -228,7 +232,8 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
     mafMessage(_("compressed archive is not a valid msf file!"), _("Error"));
     return "";
   }
-  fileSystem->CleanUpHandlers(); // Handlers are shared trough file systems.
+  fileSystem->RemoveHandler(zipHandler);
+  cppDEL(zipHandler);
   cppDEL(fileSystem);
 
   // return the extracted msf filename
@@ -286,7 +291,7 @@ void mafOpenZIP(const mafString& filename, const mafString& temp_directory)
       {
         mafFileRemove(*it);
       }
-      return;
+      break;
     }
     mafSplitPath(zfile,&path,&name,&ext);
     complete_name = name + "." + ext;
@@ -309,7 +314,8 @@ void mafOpenZIP(const mafString& filename, const mafString& temp_directory)
     extractedFiles.push_back(out_file);
   }
   fileSystem->ChangePathTo(temp_directory.GetCStr(), TRUE);
-  fileSystem->CleanUpHandlers(); // Handlers are shared trough file systems.
+  fileSystem->RemoveHandler(zipHandler);
+  cppDEL(zipHandler);
   cppDEL(fileSystem);
 }
 void mafExtractZIP(const mafString& filename, const mafString& entry_name, void *& buffer, size_t& size)

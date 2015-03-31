@@ -1,0 +1,13 @@
+448a451,462
+> wxFileSystemHandler* wxFileSystem::RemoveHandler(wxFileSystemHandler *handler)
+> {
+>     // if handler has already been removed (or deleted)
+>     // we return NULL. This is by design in case
+>     // CleanUpHandlers() is called before RemoveHandler
+>     // is called, as we cannot control the order
+>     // which modules are unloaded
+>     if (!m_Handlers.DeleteObject(handler))
+>         return NULL;
+> 
+>     return handler;
+> }
