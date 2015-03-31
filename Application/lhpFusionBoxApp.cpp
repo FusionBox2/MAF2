@@ -413,7 +413,7 @@ IMPLEMENT_APP(lhpFusionBoxApp)
 //BEGIN_EVENT_TABLE(lhpFusionBoxApp, wxApp)
 //  EVT_IDLE(lhpFusionBoxApp::OnIdle)
 //END_EVENT_TABLE()
-
+#ifdef FULL_COMMON_FB
 
 //--------------------------------------------------------------------------------
 bool lhpFusionBoxApp::OnInit()
@@ -646,6 +646,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   m_Logic->Plug(new lhpOpFindCentroid("Geometry centroid"),"Create/Derive");
 
   m_Logic->Plug(new mafOpReparentTo("Reparent to...  \tCtrl+R"),"Modify/Fuse");
+  m_Logic->Plug(new mafOpReparentTo("Local reparent to...", false),"Modify/Fuse");
   m_Logic->Plug(new lhpOpMove(),"Modify");
   m_Logic->Plug(new lhpOpAverageLM("Average landmark"),"Create/Derive");
   m_Logic->Plug(new lhpOpCreateLMCLines("Cloud lines"),"Create/Derive");
@@ -842,3 +843,234 @@ int lhpFusionBoxApp::OnExit()
 //  vtkDataArrayMemMng::GetDataArrayMemMng()->UnlockAllMemory(0);
 //  event.Skip();
 //}
+#else
+//--------------------------------------------------------------------------------
+bool lhpFusionBoxApp::OnInit()
+  //--------------------------------------------------------------------------------
+{
+  mafPictureFactory::GetPictureFactory()->Initialize();	
+
+#include "pic/lhpBuilder/FRAME_ICON16x16.xpm"
+  mafADDPIC(FRAME_ICON16x16);
+#include "pic/lhpBuilder/FRAME_ICON32x32.xpm"
+  mafADDPIC(FRAME_ICON32x32);
+#include "pic/lhpBuilder/MDICHILD_ICON.xpm"
+  mafADDPIC(MDICHILD_ICON);
+
+  LibHandle C3DLib      = NULL;
+  bool fullVersion      = true;
+
+  C3DLib = mafDynamicLoader::OpenLibrary("C3D_Reader");
+  if(C3DLib)
+  {
+    if(lhpOpImporterC3D::Config(C3DLib))
+    {
+      m_Plugins.push_back(std::make_pair(C3DLib, (void(*)())NULL));
+    }
+    else
+    {
+      mafDynamicLoader::CloseLibrary(C3DLib);
+      C3DLib = NULL;
+    }
+  }
+
+  int result;
+
+  result = medVMEFactory::Initialize();
+  assert(result == MAF_OK);
+
+  result = medPipeFactoryVME::Initialize();
+  assert(result==MAF_OK);
+
+  result = mafInteractionFactory::Initialize();
+  assert(result==MAF_OK);
+
+
+  mafPlugNode<mafVMERawMotionData>("VME representing raw motion data");
+  mafPlugNode<mafVMEAFRefSys>("VME representing anatomical frame");
+  mafPlugNode<mafVMEHelAxis>("VME representing helical axis");
+  mafPlugNode<mafVMEC3DData>("VME representing C3D data");
+  mafPlugNode<mafVMEPGDData>("VME representing PGD data");
+  mafPlugNode<mafVMEArrow>("VME representing helical axis");
+  mafPlugNode<lhpVMELeverArm>("VME representing lever arm");
+  mafPlugNode<lhpVMELMCLines>("VME representing lines between landmarks of cloud");
+  mafPlugNode<mafVMEBSplineLine>("VME representing B-spline line");
+  mafPlugNode<mafVMEBSplineSurface>("VME representing B-spline surface");
+  mafPlugNode<mafVMEBSplineVolume>("VME representing B-spline volume");
+  mafPlugNode<mafVMESurfaceRegParam>("VME representing regression parametric surface");
+  mafPlugNode<mafVMEVolumeLarge>("VME storing large volume datasets with one scalar component");
+
+  mafPlugNode<medVMEComputeWrapping>("Generalized another VME Meter with wrapping geometry");
+  mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
+
+#ifdef MAF_USE_ITK
+  mafPlugNode<lhpVMESurfaceScalarVarying>("VME representing surface with attached time varying mafVMEScalar");
+#endif
+
+  //BES: 14.11.2008 - some stupid VME to demonstrate muscle wrapping
+  mafPlugNode<medVMEMuscleWrapper>("Procedural VME representing muscle deformed according to its action lines");
+
+  mafPlugPipe<lhpVisualPipeSurfaceScalar>("Visual pipe to render a surface with its scalar values");
+  mafPlugPipe<lhpPipeIntGraph>("Visual pipe for biomechanical graph");
+  mafPlugPipe<lhpPipeIntGraphHAxis>("Visual pipe for helical axis in a biomechanical graph");
+  mafPlugPipe<lhpPipeIntGraphPolyline>("Visual pipe for polyline in a biomechanical graph");
+  mafPlugPipe<lhpPipeIntGraphAnalog>("Visual pipe for analog data in a biomechanical graph");
+  mafPlugPipe<lhpPipeLeverArm>("Visual pipe for lever arm");
+
+  m_Logic = new lhpBuilderLogic();
+  m_Logic->GetTopWin()->SetTitle("LHPFusionBox");
+  m_Logic->Configure();
+  SetTopWindow(mafGetFrame());  
+
+  wxString regKeyName;
+  regKeyName = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\lhpFusionBox";
+  wxRegKey RegKey(regKeyName);
+  if(RegKey.Exists())
+  {
+    RegKey.Create();
+    wxString revision;
+    RegKey.QueryValue(wxString("DisplayVersion"), revision);
+    m_Logic->SetRevision(revision);
+  }
+  else
+  {
+    wxString revision="0.1";
+    m_Logic->SetRevision(revision);
+  }
+  //------------------------- Editors -------------------------
+  m_Logic->Plug(new mafOpDelete(_("Delete   \tCtrl+Shift+D")), "");
+  m_Logic->Plug(new mafOpCut(_("Cut   \tCtrl+Shift+X")), "");
+  m_Logic->Plug(new mafOpCopy(_("Copy  \tCtrl+Shift+C")), "");
+  m_Logic->Plug(new mafOpPaste(_("Paste \tCtrl+Shift+V")), "");
+  //------------------------- Importers -------------------------
+  m_Logic->Plug(new mafOpImporterSTL("STL"),"Geometries");
+  m_Logic->Plug(new mafOpImporterMSF("MSF"),"Other");
+  m_Logic->Plug(new medOpImporterLandmark("Landmark"),"Motion Analysis");
+  m_Logic->Plug(new lhpOpINPImporter("INP/INP_AF"), "Geometries");
+  m_Logic->Plug(new lhpOpImporterC3DBTK("C3D BTK"),"Motion Analysis");  
+  if(C3DLib)
+    m_Logic->Plug(new lhpOpImporterC3D("C3D"),"Motion Analysis");  
+  m_Logic->Plug(new lhpOpKinectUtil(false, "Kinect", true),"Motion Analysis");  
+  m_Logic->Plug(new lhpOpKinectUtil(true, "Kinect App", true),"Motion Analysis");  
+
+  //-------------------------------------------------------------
+
+  //------------------------- Exporters -------------------------
+  m_Logic->Plug(new mafOpExporterSTL("STL"),"Geometries");
+  m_Logic->Plug(new lhpOpINPExporter("INP"),"Geometries");
+  m_Logic->Plug(new medOpExporterLandmark("Landmark"), "Motion Analysis");
+  m_Logic->Plug(new lhpOpExporterC3DBTK("C3D BTK"),"Motion Analysis");  
+
+  //------------------------- Operations -------------------------
+  m_Logic->Plug(new mafOpCreateGroup("Group"),"Create/New");
+
+  m_Logic->Plug(new mafOpReparentTo("Reparent to...  \tCtrl+R"),"Modify/Fuse");
+  m_Logic->Plug(new mafOpReparentTo("Local reparent to...", false),"Modify/Fuse");
+
+  if(fullVersion)
+  {
+    m_Logic->Plug(new mafOpCreateRefSys("Refsys"),"Create/New");
+    m_Logic->Plug(new medOpRegisterClusters("Register Landmark Cloud"),"Modify/Fuse");
+    m_Logic->Plug(new lhpOpFuseLMScripted("Fuse LM based model"),"Modify/Fuse");
+    m_Logic->Plug(new lhpOpRegisterLMScripted("Register Landmark Cloud Tree"),"Modify/Fuse");
+    m_Logic->Plug(new lhpOpAFSys("AFRefsys"),"Create/Derive");
+    m_Logic->Plug(new lhpOpKinectAFs("Kinect Refsys"),"Create/Derive");
+
+    m_Logic->Plug(new lhpOpKinectModel("KinectModel"),"Modify");  
+
+  }
+
+  //-------------------------------------------------------------
+  bool view_visibility = 0;//fullVersion;
+  //------------------------- Views -------------------------
+  //View Arbitrary Slice
+  mafViewArbitrarySlice *ArbitraryView = new mafViewArbitrarySlice("Arbitrary");
+  ArbitraryView->PackageView();
+  m_Logic->Plug(ArbitraryView, view_visibility);
+
+
+  // View DRR
+  mafViewVTK *vdrr = new mafViewVTK("DRR");
+  vdrr->PlugVisualPipe("mafVMEVolumeGray","medPipeVolumeDRR",MUTEX);
+  vdrr->PlugVisualPipe("mafVMEVolumeLarge","medPipeVolumeDRR",MUTEX);
+  m_Logic->Plug(vdrr, view_visibility);
+
+  // View Analog graph
+  mafViewVTK *graph = new mafViewVTK("Analog Graph", CAMERA_PERSPECTIVE, false);
+  graph->PlugVisualPipe("medVMEAnalog", "medPipeGraph",MUTEX);
+  m_Logic->Plug(graph, view_visibility);
+
+  //View Global Slice
+  mafViewGlobalSliceCompound *GlobalSlice = new mafViewGlobalSliceCompound("Global Slice");
+  GlobalSlice->PackageView();
+  m_Logic->Plug(GlobalSlice, view_visibility);
+
+  mafViewVTK *viso = new mafViewVTK("Isosurface");
+  viso->PlugVisualPipe("mafVMEVolumeGray", "mafPipeIsosurface",MUTEX);
+  viso->PlugVisualPipe("medVMELabeledVolume", "mafPipeIsosurface",MUTEX);
+  viso->PlugVisualPipe("mafVMEVolumeLarge","mafPipeIsosurface",MUTEX);
+  m_Logic->Plug(viso, view_visibility);
+
+  mafViewVTK *visoGPU = new mafViewVTK("Isosurface (GPU)");
+  visoGPU->PlugVisualPipe("mafVMEVolumeGray", "mafPipeIsosurfaceGPU",MUTEX);   //BES: 13.11.2008 - GPU support, mafPipeIsosurfaceGPU to be merged with mafPipeIsosurface in future 
+  visoGPU->PlugVisualPipe("medVMELabeledVolume", "mafPipeIsosurfaceGPU",MUTEX);
+  visoGPU->PlugVisualPipe("mafVMEVolumeLarge", "mafPipeIsosurfaceGPU",MUTEX);
+  m_Logic->Plug(visoGPU, view_visibility);
+
+  mafViewOrthoSlice *viewOrthoSlice = new mafViewOrthoSlice("OrthoSlice");
+  viewOrthoSlice->PackageView();
+  m_Logic->Plug(viewOrthoSlice, view_visibility);
+
+  mafViewRXCT *vrxctl = new mafViewRXCT("RXCT");
+  vrxctl->PackageView();
+  m_Logic->Plug(vrxctl, view_visibility);
+
+  mafViewVTK *vsurface = new mafViewVTK("Surface");
+  vsurface->PlugVisualPipe("mafVMESurface","mafPipeSurface");
+  vsurface->PlugVisualPipe("mafVMELandmark", "medPipeTrajectories");
+  m_Logic->Plug(vsurface);
+
+  mafViewIntGraph *vgraph = new mafViewIntGraph("Biomechanical graph");
+  vgraph->PlugVisualPipe("mafVMEHelAxis","lhpPipeIntGraphHAxis");
+  vgraph->PlugVisualPipe("medVMEComputeWrapping","lhpPipeIntGraphPolyline");
+  vgraph->PlugVisualPipe("medVMEWrappedMeter","lhpPipeIntGraphPolyline");
+  vgraph->PlugVisualPipe("mafVMEMeter","lhpPipeIntGraphPolyline");
+  vgraph->PlugVisualPipe("lhpVMELeverArm","lhpPipeIntGraphPolyline");
+  vgraph->PlugVisualPipe("mafVMEVector","lhpPipeIntGraphPolyline");
+  vgraph->PlugVisualPipe("medVMEAnalog","lhpPipeIntGraphAnalog");
+  m_Logic->Plug(vgraph);
+
+  medViewSlicer *slicerView = new medViewSlicer("Slicer");
+  slicerView->PackageView();
+  m_Logic->Plug(slicerView, view_visibility);
+
+  //temporary for testing
+  //mafViewSingleSliceCompound *sliceView = new mafViewSingleSliceCompound("Test Slice");
+  //sliceView->PackageView();
+  //m_Logic->Plug(sliceView);
+
+  m_Logic->Show();
+  m_Logic->GetCredentials();
+
+  m_Logic->Init(0,NULL); // calls FileNew - which create the root
+
+  return TRUE;
+}
+//--------------------------------------------------------------------------------
+int lhpFusionBoxApp::OnExit()
+  //--------------------------------------------------------------------------------
+{
+  cppDEL(m_Logic);
+
+  //this hack is fixing VTK internal memory leak
+  vtkTimerLog::CleanupLog();
+  for(unsigned i = 0; i < m_Plugins.size(); i++)
+  {
+    if(m_Plugins[i].second)
+      m_Plugins[i].second();
+    mafDynamicLoader::CloseLibrary(m_Plugins[i].first);
+  }
+  return 0;
+}
+
+#endif
