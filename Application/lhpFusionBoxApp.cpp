@@ -755,7 +755,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
 
   mafViewOrthoSlice *viewOrthoSlice = new mafViewOrthoSlice("OrthoSlice");
   viewOrthoSlice->PackageView();
-  m_Logic->Plug(viewOrthoSlice, view_visibility);
+  m_Logic->Plug(viewOrthoSlice/*, view_visibility*/);
 
   mafViewRXCT *vrxctl = new mafViewRXCT("RXCT");
   vrxctl->PackageView();
