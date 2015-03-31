@@ -82,7 +82,7 @@ mafCxxTypeMacro(mafViewIntGraph);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafViewIntGraph::mafViewIntGraph(const wxString &label)
+mafViewIntGraph::mafViewIntGraph(const mafString& label)
 :mafView(label)
 //----------------------------------------------------------------------------
 {
@@ -114,7 +114,7 @@ void mafViewIntGraph::PlugVisualPipe(mafString vme_type, mafString pipe_type, lo
 mafView *mafViewIntGraph::Copy(mafBaseEventHandler *Listener)
 //----------------------------------------------------------------------------
 {
-  mafViewIntGraph *v = new mafViewIntGraph(m_Label);
+  mafViewIntGraph *v = new mafViewIntGraph(GetLabel());
   v->SetListener(Listener);
   v->m_Id = m_Id;
   v->m_PipeMap = m_PipeMap;
@@ -128,7 +128,7 @@ mafView *mafViewIntGraph::Copy(mafBaseEventHandler *Listener)
 void mafViewIntGraph::Create()
 //----------------------------------------------------------------------------
 {
-  m_RenderWindow = new mafViewIntGraphWindow(m_Label);
+  m_RenderWindow = new mafViewIntGraphWindow(GetLabel().GetCStr());
   m_Win          = m_RenderWindow;
 
   m_Sg  = new lhpPlotGraph(this);
@@ -430,7 +430,7 @@ void mafViewIntGraph::Print(std::ostream& os, const int tabs)// const
   mafIndent indent(tabs);
 
   os << indent << "mafViewIntGraph " << '\t' << this << "\n";
-  os << indent << "Name: " << '\t' << m_Label << "\n";
+  os << indent << "Name: " << '\t' << GetLabel() << "\n";
   os << indent << "View ID: " << '\t' << m_Id << "\n";
   os << indent << "View Mult: " << '\t' << m_Mult << "\n";
   os << indent << "Visible VME counter: " << '\t' << m_NumberOfVisibleVme << "\n";

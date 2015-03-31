@@ -283,7 +283,7 @@ void psLoaderGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
     break;
 		case CONTEXTUAL_MENU_RENAME_VIEW:
 		{
-			wxTextEntryDialog *dlg = new wxTextEntryDialog(m_ChildViewActive,"please enter a name", "VIEW NAME", m_ViewActive->GetName());
+			wxTextEntryDialog *dlg = new wxTextEntryDialog(m_ChildViewActive,"please enter a name", "VIEW NAME", m_ViewActive->GetName().GetCStr());
 			int result = dlg->ShowModal(); 
 			wxString name = dlg->GetValue();
 			cppDEL(dlg);
