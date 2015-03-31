@@ -107,9 +107,10 @@ void lhpViewInfo::PlugVisualPipe(mafString vme_type, mafString pipe_type, long v
 }
 
 //----------------------------------------------------------------------------
-mafView *lhpViewInfo::Copy(mafBaseEventHandler *Listener)
+mafView *lhpViewInfo::Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled)
 //----------------------------------------------------------------------------
 {
+  m_LightCopyEnabled = lightCopyEnabled;
   lhpViewInfo *v = new lhpViewInfo(GetLabel());
   v->SetListener(Listener);
   v->m_Id = m_Id;

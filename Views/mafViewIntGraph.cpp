@@ -111,9 +111,10 @@ void mafViewIntGraph::PlugVisualPipe(mafString vme_type, mafString pipe_type, lo
 }
 
 //----------------------------------------------------------------------------
-mafView *mafViewIntGraph::Copy(mafBaseEventHandler *Listener)
+mafView *mafViewIntGraph::Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled)
 //----------------------------------------------------------------------------
 {
+  m_LightCopyEnabled = lightCopyEnabled;
   mafViewIntGraph *v = new mafViewIntGraph(GetLabel());
   v->SetListener(Listener);
   v->m_Id = m_Id;

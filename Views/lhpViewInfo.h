@@ -51,7 +51,7 @@ public:
   mafTypeMacro(lhpViewInfo, mafView);
 
   virtual void      OnEvent(mafEventBase *maf_event);
-  virtual mafView*  Copy(mafBaseEventHandler *Listener);
+  virtual mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
   virtual void      Create();
   /** Add the vme to the view's scene-graph*/
   virtual void VmeAdd(mafNode *vme);
