@@ -30,6 +30,8 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 
 #include <fstream>
 
+mafCxxTypeMacro(lhpUser);
+
 //----------------------------------------------------------------------------
 lhpUser::lhpUser(mafBaseEventHandler *listener)
 //----------------------------------------------------------------------------

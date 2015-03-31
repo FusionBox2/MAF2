@@ -30,6 +30,7 @@ customized at application level according to custom requests.
 class lhpUser : public mafUser, public mafEventSender
 {
 public:
+  mafTypeMacro(lhpUser, mafUser);
   lhpUser(mafBaseEventHandler *listener = NULL);
   virtual ~lhpUser();
 
