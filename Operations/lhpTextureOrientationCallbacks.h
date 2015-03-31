@@ -28,6 +28,7 @@ Throws maf event id back to listener->OnEvent().
 class lhpTextureOrientationProgressCallback : public vtkCommand, public mafEventSender
 {
 public:
+  vtkTypeMacro(lhpTextureOrientationProgressCallback, vtkCommand);
   static lhpTextureOrientationProgressCallback *New() { return new lhpTextureOrientationProgressCallback ; }
   void Execute(vtkObject *caller, unsigned long eventId, void* calldata) ;
 

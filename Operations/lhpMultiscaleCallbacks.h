@@ -28,6 +28,7 @@ Throws maf event id back to listener->OnEvent().
 class vtkStartRenderCallback: public vtkCommand, public mafEventSender
 {
 public:
+  vtkTypeMacro(vtkStartRenderCallback, vtkCommand);
   static vtkStartRenderCallback *New() { return new vtkStartRenderCallback; }
   void Execute(vtkObject *caller, unsigned long, void*) ;
 
@@ -50,6 +51,7 @@ Throws maf event id back to listener->OnEvent().
 class vtkMouseClickCallback: public vtkCommand, public mafEventSender
 {
 public:
+  vtkTypeMacro(vtkMouseClickCallback, vtkCommand);
   static vtkMouseClickCallback *New() { return new vtkMouseClickCallback; }
   void Execute(vtkObject *caller, unsigned long, void*) ;
 

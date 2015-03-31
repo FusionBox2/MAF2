@@ -18,6 +18,7 @@ See the COPYINGS file for license details
 #include "vtkIdList.h"
 
 vtkCxxRevisionMacro(vtkMAFMuscleFibers, "$Revision: 1.1.2.2 $");
+vtkInstantiatorNewMacro(vtkMAFMuscleFibers);
 
 #include "mafMemDbg.h"
 #include "mafDbg.h"
