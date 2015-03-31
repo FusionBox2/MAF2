@@ -391,7 +391,7 @@ template <class T>
 void mafMemoryGraphBase<T>::AddPoint(const std::vector<T> &point)
 {
   T            diff;
-  T            noticeableVal;
+  //T            noticeableVal;
   T            length;
   T            addGrow;
 

@@ -58,7 +58,7 @@ virtual char* Get##name () { \
   return this->m_##name; \
   } 
 
-class VTK_IO_EXPORT mafMTRReader: public vtkPolyDataSource 
+class MAF_EXPORT mafMTRReader: public vtkPolyDataSource 
 {
 public:
   static const int SetNotDefined = -1;

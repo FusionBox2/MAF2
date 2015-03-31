@@ -21,7 +21,7 @@
 //----------------------------------------------------------------------------
 // class mafINPWriter
 //----------------------------------------------------------------------------
-class VTK_IO_EXPORT mafINPWriter : public vtkPolyDataWriter
+class MAF_EXPORT mafINPWriter : public vtkPolyDataWriter
 {
 public:
   static mafINPWriter *New();

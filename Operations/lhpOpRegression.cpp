@@ -47,7 +47,7 @@
 
 #include "mafVectors.h"
 
-#include "nr.h"
+#include "../Common/nr.h"
 
 //----------------------------------------------------------------------------
 // Constants :

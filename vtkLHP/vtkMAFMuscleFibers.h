@@ -13,13 +13,14 @@ See the COPYINGS file for license details
 #ifndef vtkMAFMuscleFibers_h__
 #define vtkMAFMuscleFibers_h__
 
+#include "vtkLHPConfigure.h"
 #include "vtkObject.h"
 #include "vtkPoints.h"
 
 #pragma region vtkMAFMuscleFibers
 //abstract class for all muscle fibers geometries
 //IMPORTANT NOTE: fiber templates use left hand oriented coordinate system
-class VTK_GRAPHICS_EXPORT vtkMAFMuscleFibers : public vtkObject
+class VTK_vtkLHP_EXPORT vtkMAFMuscleFibers : public vtkObject
 {
 public:  
   vtkTypeRevisionMacro(vtkMAFMuscleFibers, vtkObject);  

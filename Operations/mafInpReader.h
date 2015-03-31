@@ -57,7 +57,7 @@ virtual char* Get##name () { \
 //----------------------------------------------------------------------------
 // class mafINPReader
 //----------------------------------------------------------------------------
-class VTK_IO_EXPORT mafINPReader: public vtkPolyDataSource 
+class MAF_EXPORT mafINPReader: public vtkPolyDataSource 
 {
 public:
   vtkTypeRevisionMacro(mafINPReader, vtkPolyDataSource);

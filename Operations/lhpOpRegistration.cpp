@@ -36,7 +36,7 @@
 #include "mafVMELandmarkCloud.h"
 #include "mafJointAnalysis.h"
 #include "mafPlotMath.h"
-#include "nr.h"
+#include "../Common/nr.h"
 
 //----------------------------------------------------------------------------
 // Required for MSVC
