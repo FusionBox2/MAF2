@@ -60,6 +60,7 @@ MafMedical is partially based on OpenMAF.
 #include "mafGUI.h"
 #include "lhpUser.h"
 #include "mafNode.h"
+#include "mafNodeManager.h"
 #include "mafVMEGenericAbstract.h"
 #include "mafVMEStorage.h"
 #include "mafVMERoot.h"
@@ -478,7 +479,9 @@ int lhpOpEditTag::CopyEditorTagsIntoOriginalMSF()
 
 
   mafVMEStorage *storage;
+  mafNodeManager manager;
   storage = mafVMEStorage::New();
+  storage->SetManager(&manager);
   storage->SetURL(msfCompletePath.GetCStr());
 
   int res = storage->Restore();
@@ -489,10 +492,7 @@ int lhpOpEditTag::CopyEditorTagsIntoOriginalMSF()
       mafErrorMessage(_("Errors during file parsing! Look the log area for error messages."));
     return MAF_ERROR;
   }
-  mafVMERoot *root;
-  root = storage->GetRoot();
-  root->Initialize();
-  root->SetListener(storage);
+  mafVMERoot *root = mafVMERoot::SafeDownCast(manager.GetRoot());
   if (m_Input->IsA("mafVMERoot"))
   {
     //copy tags from MSF genereted by python editor, to orginal MSF.
@@ -527,7 +527,6 @@ int lhpOpEditTag::CopyEditorTagsIntoOriginalMSF()
   //remove msf created by phyton tag editor
   remove(msfCompletePath); 
 
-  root->SetListener(NULL);
   mafDEL(storage);
   return MAF_OK;
 }

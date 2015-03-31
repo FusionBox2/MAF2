@@ -63,6 +63,7 @@ MafMedical is partially based on OpenMAF.
 #include "mafGUI.h"
 #include "lhpUser.h"
 #include "mafNode.h"
+#include "mafNodeManager.h"
 #include "mafVMEGenericAbstract.h"
 #include "mafOpImporterMSF.h"
 #include "mafVMELandmarkCloud.h"
@@ -1405,7 +1406,9 @@ int lhpOpDownloadVMERefactor::ImportMSF(mafNode *parentNode)
   }
 
   mafVMEStorage *storage;
+  mafNodeManager manager;
   storage = mafVMEStorage::New();
+  storage->SetManager(&manager);
   storage->SetURL(msfFileName.GetCStr());
 
   int res = storage->Restore();
@@ -1416,10 +1419,7 @@ int lhpOpDownloadVMERefactor::ImportMSF(mafNode *parentNode)
       mafErrorMessage(_("Errors during file parsing! Look the log area for error messages."));
     return MAF_ERROR;
   }
-  mafVMERoot *root;
-  root = storage->GetRoot();
-  root->Initialize();
-  root->SetListener(storage);
+  mafVMERoot *root = mafVMERoot::SafeDownCast(manager.GetRoot());
 
   m_NodeDownloaded = root->GetFirstChild();
   if (m_NodeDownloaded == NULL)
@@ -1490,7 +1490,6 @@ int lhpOpDownloadVMERefactor::ImportMSF(mafNode *parentNode)
       UpdateBinaryFile();
   }
 
-  root->SetListener(NULL);
   mafDEL(storage);
   return MAF_OK;
 }

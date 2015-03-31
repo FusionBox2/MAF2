@@ -59,6 +59,7 @@ MafMedical is partially based on OpenMAF.
 #include "mafGUI.h"
 #include "lhpUser.h"
 #include "mafNode.h"
+#include "mafNodeManager.h"
 #include "mafVMEGenericAbstract.h"
 #include "mafTagArray.h"
 #include "mafVMEStorage.h"
@@ -539,7 +540,9 @@ int lhpOpUploadVMERefactor::CopyTagsIntoOriginalVME()
     return MAF_ERROR;
 
   mafVMEStorage *storage;
+  mafNodeManager manager;
   storage = mafVMEStorage::New();
+  storage->SetManager(&manager);
   storage->SetURL(MSFToRestoreABSFileName.GetCStr());
 
   int res = storage->Restore();
@@ -550,10 +553,7 @@ int lhpOpUploadVMERefactor::CopyTagsIntoOriginalVME()
       mafErrorMessage(_("Errors during file parsing! Look the log area for error messages."));
     return MAF_ERROR;
   }
-  mafVMERoot *root;
-  root = storage->GetRoot();
-  root->Initialize();
-  root->SetListener(storage);
+  mafVMERoot *root = mafVMERoot::SafeDownCast(manager.GetRoot());
   if (m_Input->IsA("mafVMERoot"))
   {
     //copy tags from MSF genereted by python editor, to orginal MSF.
@@ -581,7 +581,6 @@ int lhpOpUploadVMERefactor::CopyTagsIntoOriginalVME()
 
   //remove msf created by phyton tag editor
   remove(MSFToRestoreABSFileName);
-  root->SetListener(NULL);
   mafDEL(storage);
   return MAF_OK;
 }
@@ -711,16 +710,17 @@ bool lhpOpUploadVMERefactor::CopyInputVMEInCurrentChildCache()
   }
 
   mafVMEStorage *storage;
+  mafNodeManager manager;
   storage = mafVMEStorage::New();
   //Substitute character
+  storage->SetManager(&manager);
   storage->SetURL(msfname.c_str());
 
   mafVMERoot *root;
   mafNEW(root);
   root->Initialize();
   root->SetName("Root");
-  root->SetListener(storage);
-  storage->SetRoot(root);
+  manager.SetRoot(root);
 
   if (m_CacheVme->IsA("mafVMERoot"))
     root->DeepCopy(m_CacheVme);
@@ -730,7 +730,6 @@ bool lhpOpUploadVMERefactor::CopyInputVMEInCurrentChildCache()
   storage->Store();
   wxSetWorkingDirectory(oldDir);
 
-  root->SetListener(NULL);
   mafDEL(storage);
   mafDEL(root);
   copied = true;
