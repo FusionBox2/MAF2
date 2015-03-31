@@ -101,10 +101,12 @@ void lhpBuilderLogic::OnEvent(mafEventBase *maf_event)
       break;
 
     default:
-			mafLogicWithManagers::OnEvent(maf_event);
+			medLogicWithManagers::OnEvent(maf_event);
 			break; 
 		} // end switch case
+    return;
 	} // end if SafeDowncast
+  medLogicWithManagers::OnEvent(maf_event);
 }
 //----------------------------------------------------------------------------
 void lhpBuilderLogic::VmeAdded(mafNode *vme)
