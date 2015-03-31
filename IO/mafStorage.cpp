@@ -18,6 +18,7 @@
 #include "mafStorable.h"
 #include "mafDirectory.h"
 #include "mafXMLStorage.h"
+#include "mafFilesDirs.h"
 
 //------------------------------------------------------------------------------
 mafCxxTypeMacro(mafStorage);
@@ -93,21 +94,21 @@ void mafStorage::ForceParserURL()
 }
 
 //------------------------------------------------------------------------------
-const char *mafStorage::GetURL()
+const mafString& mafStorage::GetURL()
 //------------------------------------------------------------------------------
 {
   return m_URL;
 }
 
 //------------------------------------------------------------------------------
-const char *mafStorage::GetPareserURL()
+const mafString& mafStorage::GetParserURL()
 //------------------------------------------------------------------------------
 {
   return m_ParserURL;
 }
 
 //----------------------------------------------------------------------------
-bool mafStorage::IsFileInDirectory(const char *filename)
+bool mafStorage::IsFileInDirectory(const mafString& filename)
 //----------------------------------------------------------------------------
 {
   return m_FilesDictionary.find(filename)!=m_FilesDictionary.end();
@@ -129,7 +130,7 @@ mafStorable *mafStorage::GetDocument()
   return m_Parser->GetDocument();
 }
 //------------------------------------------------------------------------------
-const char* mafStorage::GetTmpFolder()
+const mafString& mafStorage::GetTmpFolder()
 //------------------------------------------------------------------------------
 {
   if (m_TmpFolder.IsEmpty())
@@ -154,11 +155,11 @@ const char* mafStorage::GetTmpFolder()
 }
 
 //----------------------------------------------------------------------------
-int mafStorage::OpenDirectory(const char *pathname)
+int mafStorage::OpenDirectory(const mafString& pathname)
 //----------------------------------------------------------------------------
 {
   mafDirectory dir;
-  if (mafString::IsEmpty(pathname))
+  if (pathname.IsEmpty())
   {
     if (!dir.Load("."))
       return MAF_ERROR;
@@ -173,8 +174,8 @@ int mafStorage::OpenDirectory(const char *pathname)
 
   for (int i=0;i<dir.GetNumberOfFiles();i++)
   {
-    const char *fullname=dir.GetFile(i);  
-    const char *filename=mafString::BaseName(fullname);
+    const mafString& fullname=dir.GetFile(i);  
+    const mafString& filename=mafString::BaseName(fullname);
     m_FilesDictionary.insert(filename);
   }
 
@@ -182,7 +183,7 @@ int mafStorage::OpenDirectory(const char *pathname)
 }
 
 //------------------------------------------------------------------------------
-void mafStorage::SetURL(const char *name)
+void mafStorage::SetURL(const mafString& name)
 //------------------------------------------------------------------------------
 {
   if (m_URL!=name)
@@ -210,7 +211,7 @@ void mafStorage::GetTmpFile(mafString &filename)
   m_TmpFileNames.insert(filename);
 }
 //------------------------------------------------------------------------------
-void mafStorage::ReleaseTmpFile(const char *filename)
+void mafStorage::ReleaseTmpFile(const mafString& filename)
 //------------------------------------------------------------------------------
 {
   std::set<mafString>::iterator it=m_TmpFileNames.find(filename);
@@ -219,23 +220,20 @@ void mafStorage::ReleaseTmpFile(const char *filename)
     m_TmpFileNames.erase(it);
   }
 
-#ifdef MAF_USE_WX
   // remove file from disk if present
-  wxRemoveFile(filename);
-#endif
-
+  mafFileRemove(filename);
 }
 //------------------------------------------------------------------------------
-int mafStorage::ResolveInputURL(const char * url, mafString &filename, mafBaseEventHandler *observer)
+int mafStorage::ResolveInputURL(const mafString& url, mafString &filename, mafBaseEventHandler *observer)
 //------------------------------------------------------------------------------
 {
   // currently no real URL support
-  wxString path;
-  path=wxPathOnly(url);
+  mafString path;
+  path=mafPathOnly(url);
   if (path.IsEmpty())
   {
-    wxString base_path;
-    base_path=wxPathOnly(m_ParserURL.GetCStr());
+    mafString base_path;
+    base_path=mafPathOnly(m_ParserURL);
 
     filename=base_path;
 
@@ -249,24 +247,27 @@ int mafStorage::ResolveInputURL(const char * url, mafString &filename, mafBaseEv
     filename=url;
   }
 
-  bool file_exist = wxFileExists(filename.GetCStr());
+  bool file_exist = mafFileExists(filename);
   return file_exist ? MAF_OK : MAF_WAIT;
 }
 //------------------------------------------------------------------------------
-int mafStorage::StoreToURL(const char * filename, const char * url)
+int mafStorage::StoreToURL(const mafString& filename, const mafString& url)
 //------------------------------------------------------------------------------
 {
-  assert(url); // NULL url not yet supported
-
+  if(url.IsEmpty())
+  {
+    assert(false);
+    return MAF_ERROR;
+  }
   // currently no real URL support
-  wxString path;
-  path=wxPathOnly(url);
+  mafString path;
+  path=mafPathOnly(url);
 
   if (path.IsEmpty())
   {
     // if local file prepend base_path
-    wxString base_path,fullpathname;
-    base_path=wxPathOnly(m_URL.GetCStr());
+    mafString base_path,fullpathname;
+    base_path=mafPathOnly(m_URL);
     if (!base_path.IsEmpty())
     {
       fullpathname=base_path+"/"+url;
@@ -283,19 +284,19 @@ int mafStorage::StoreToURL(const char * filename, const char * url)
     }
 
     // currently only local files are supported
-    return wxRenameFile(filename,fullpathname)?MAF_OK:MAF_ERROR;
+    return mafFileRename(filename,fullpathname)?MAF_OK:MAF_ERROR;
   }
   else
   {
     // remove old file if present
-    wxRemoveFile(url);
+    mafFileRemove(url);
     // currently only local files are supported
-    return wxRenameFile(filename,url)?MAF_OK:MAF_ERROR;
+    return mafFileRename(filename,url)?MAF_OK:MAF_ERROR;
   } 
 }
 
 //------------------------------------------------------------------------------
-int mafStorage::ReleaseURL(const char *url)
+int mafStorage::ReleaseURL(const mafString& url)
 //------------------------------------------------------------------------------
 {
   // add to list of files to be deleted
@@ -305,24 +306,24 @@ int mafStorage::ReleaseURL(const char *url)
 
 
 //------------------------------------------------------------------------------
-int mafStorage::DeleteURL(const char *url)
+int mafStorage::DeleteURL(const mafString& url)
 //------------------------------------------------------------------------------
 {
   // currently no real URL support
-  wxString path;
-  path=wxPathOnly(url);
+  mafString path;
+  path=mafPathOnly(url);
 
   if (path.IsEmpty())
   {
     // if local file prepend base_path
-    wxString base_path,fullpathname;
-    base_path=wxPathOnly(m_URL.GetCStr());
+    mafString base_path,fullpathname;
+    base_path=mafPathOnly(m_URL);
     fullpathname=base_path+"/"+url;
 
     if (IsFileInDirectory(url))
     {
       // remove old file if present
-      wxRemoveFile(fullpathname);
+      mafFileRemove(fullpathname);
       return MAF_OK;
     }
 
@@ -330,7 +331,7 @@ int mafStorage::DeleteURL(const char *url)
   }
   else
   {
-    return (wxRemoveFile(url)?MAF_OK:MAF_ERROR);
+    return (mafFileRemove(url)?MAF_OK:MAF_ERROR);
   }
 
 }

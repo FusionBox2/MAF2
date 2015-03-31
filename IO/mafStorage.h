@@ -116,18 +116,18 @@ public:
   virtual ~mafStorage();
 
   /** Set the URL of the document to be read or written */
-  virtual void SetURL(const char *name);
+  virtual void SetURL(const mafString& name);
 
   /** Force Copy storage URL to parser URL (used by the MAF1.x importer) */
   void ForceParserURL();
 
   /** Return the URL of the document to be read or written */
-  const char *GetURL();
+  const mafString& GetURL();
   
   /** 
     Return the name of the last read file, this is internally used when writing to
     a new file to read and copy information between the old and new file */
-  const char *GetPareserURL();
+  const mafString& GetParserURL();
 
   /** perform storing. the argument is the tag of the document node */
   int Store();
@@ -142,7 +142,7 @@ public:
   mafStorable *GetDocument();
 
   /** resolve an URL and provide local filename to be used as input */
-  virtual int ResolveInputURL(const char * url, mafString &filename, mafBaseEventHandler *observer = NULL);
+  virtual int ResolveInputURL(const mafString& url, mafString &filename, mafBaseEventHandler *observer = NULL);
 
   /** resolve an URL and provide a local filename to be used as output */
   //virtual bool ResolveOutputURL(const mafCString url, mafString &filename)=0;
@@ -150,13 +150,13 @@ public:
   /** 
     store a file to an URL. This API transfer a tmp local file to URL.
     If no URL is specified use the storage URL as a base URL. */
-  virtual int StoreToURL(const char *filename, const char *url=NULL);
+  virtual int StoreToURL(const mafString& filename, const mafString& url);
 
   /** 
     Remove a file from the specified URL. Used when a file in the storage
     is no more necessary. If the specified URL is a local file name try 
     to prepend the storage URL as a base URL name.*/
-  virtual int ReleaseURL(const char *url);
+  virtual int ReleaseURL(const mafString& url);
 
   /** 
     Return a name of file to be used as tmp file during store/restore.
@@ -164,27 +164,27 @@ public:
   virtual void GetTmpFile(mafString &filename);
 
   /** remove the tmp file */
-  void ReleaseTmpFile(const char *filename);
+  void ReleaseTmpFile(const mafString& filename);
 
   /** 
     Check if a file is present in the storage directory. The directory list is 
     open when Store() is called and directory data is updated at that time. */
-  bool IsFileInDirectory(const char *filename);
+  bool IsFileInDirectory(const mafString& filename);
 
   /** 
     Set the folder where to store tmp files. If not specified the storage 
     will automatically use a default folder, like the current directory 
     or the storage file folder. */
-  virtual void SetTmpFolder(const char *folder) {m_TmpFolder=folder;}
+  virtual void SetTmpFolder(const mafString& folder) {m_TmpFolder=folder;}
 
   /** return the folder where tmp files are stored */
-  virtual const char* GetTmpFolder();
+  virtual const mafString& GetTmpFolder();
 
   void SetErrorCode(int err) {m_ErrorCode=err;}
   int GetErrorCode() {return m_ErrorCode;}
 
   /** remove the file from URL */
-  virtual int DeleteURL(const char *url);
+  virtual int DeleteURL(const mafString& url);
 
   /** empty the garbage collector list deleting old files */
   virtual void EmptyGarbageCollector();
@@ -198,7 +198,7 @@ protected:
   virtual int InternalRestore();
 
   /** populate the list of files in the storage folder */
-  virtual int OpenDirectory(const char *dir_name);
+  virtual int OpenDirectory(const mafString& dir_name);
 
   std::set<mafString> m_GarbageCollector; ///< collect URL to be released
   mafString  m_DefaultTmpFolder; ///< used to store the current default tmp folder

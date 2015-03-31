@@ -31,6 +31,7 @@
 #include "mafDirectory.h"
 #include "mafCurlUtility.h"
 #include "mafEvent.h"
+#include "mafFilesDirs.h"
 
 //------------------------------------------------------------------------------
 mafCxxTypeMacro(mafRemoteStorage)
@@ -86,16 +87,16 @@ void mafRemoteStorage::SetRemotePort(const int &port)
   m_RemoteFileManager->SetRemotePort(port);
 }
 //------------------------------------------------------------------------------
-int mafRemoteStorage::ResolveInputURL(const char *url, mafString &filename, mafBaseEventHandler *observer)
+int mafRemoteStorage::ResolveInputURL(const mafString& url, mafString &filename, mafBaseEventHandler *observer)
 //------------------------------------------------------------------------------
 {
   int res = MAF_OK;
-  wxString path;
-  path = wxPathOnly(url);
+  mafString path;
+  path = mafPathOnly(url);
   if (path.IsEmpty())
   {
-    wxString base_path;
-    base_path = wxPathOnly(m_ParserURL.GetCStr());
+    mafString base_path;
+    base_path = mafPathOnly(m_ParserURL);
 
     filename = base_path;
 
@@ -119,35 +120,35 @@ int mafRemoteStorage::ResolveInputURL(const char *url, mafString &filename, mafB
     mafString local_filename;
     //res = DownloadRemoteFile(filename, local_filename);
     //---------------------------------- Build folder into the local cache to put the downloaded file
-    wxString path, name, ext, tmpFolder;
-    wxString baseName = wxFileNameFromPath(filename.GetCStr());
-    wxSplitPath(baseName,&path,&name,&ext);
+    mafString path, name, ext, tmpFolder;
+    mafString baseName = mafFileNameFromPath(filename);
+    mafSplitPath(baseName,&path,&name,&ext);
 
     if (ext == "msf")
     {
       m_RemoteMSF = filename;
       tmpFolder = GetTmpFolder();//m_LocalCacheFolder;
       tmpFolder += "\\";
-      tmpFolder += name.c_str();
+      tmpFolder += name;
 
-      if (!wxDirExists(tmpFolder))
+      if (!mafDirExists(tmpFolder))
       {
-        wxMkdir(tmpFolder);
+        mafDirMake(tmpFolder);
       }
       m_LocalMSFFolder = tmpFolder;
     }
 
     local_filename = m_LocalMSFFolder;
     local_filename += "\\";
-    local_filename += wxFileNameFromPath(filename.GetCStr()).c_str();
+    local_filename += mafFileNameFromPath(filename);
 
-    if (wxFileExists(local_filename.GetCStr()))
+    if (mafFileExists(local_filename))
     {
       return MAF_OK;
     }
     //-----------------------------------------------
     res = m_RemoteFileManager->DownloadRemoteFile(filename, local_filename);
-    m_RemoteRepository = wxPathOnly(filename.GetCStr()).c_str();
+    m_RemoteRepository = mafPathOnly(filename);
     filename = local_filename;
   }
   else
@@ -158,112 +159,106 @@ int mafRemoteStorage::ResolveInputURL(const char *url, mafString &filename, mafB
   return res;
 }
 //------------------------------------------------------------------------------
-int mafRemoteStorage::StoreToURL(const char *filename, const char *url)
+int mafRemoteStorage::StoreToURL(const mafString& filename, const mafString& url)
 //------------------------------------------------------------------------------
 {
+  if (!m_IsRemoteMSF)
+    return Superclass::StoreToURL(filename, url);
   int save_res = MAF_ERROR;
-  if (m_IsRemoteMSF)
+  if(url.IsEmpty())
   {
-    assert(url); // NULL url not yet supported
+    assert(false);
+    return MAF_ERROR;
+  }
 
-    // currently no real URL support
-    wxString path, base_path, fullpathname;
-    path = wxPathOnly(url);
+  // currently no real URL support
+  mafString path, base_path, fullpathname;
+  path = mafPathOnly(url);
 
-    if (path.IsEmpty())
+  if (path.IsEmpty())
+  {
+    // if local file prepends base_path
+    base_path = m_LocalMSFFolder;
+    if (!base_path.IsEmpty())
     {
-      // if local file prepends base_path
-      base_path = m_LocalMSFFolder.GetCStr();
-      if (!base_path.IsEmpty())
-      {
-        fullpathname = base_path + "/" + url;
-      }
-      else
-      {
-        fullpathname = url;
-      }
-
-      if (IsFileInDirectory(url)) // IsFileInDirectory accepts URL specifications
-      {
-        // remove old file if present.
-        // With remote files should be sufficient overwrite it by uploading the new one.
-        if (IsFileInLocalDirectory(url))
-        {
-          DeleteURL(url);
-        }
-      }
-
-      // currently only local files are supported
-      save_res = wxRenameFile(filename, fullpathname) ? MAF_OK : MAF_ERROR;
+      fullpathname = base_path + "/" + url;
     }
     else
     {
-      wxString baseName = wxFileNameFromPath(url);
-      fullpathname = m_LocalMSFFolder;
-      fullpathname += "\\";
-      fullpathname += baseName;
-      // remove old file if present
-      wxRemoveFile(fullpathname);
-      // currently only local files are supported
-      save_res = wxRenameFile(filename, fullpathname) ? MAF_OK : MAF_ERROR;
+      fullpathname = url;
     }
-    if (save_res == MAF_OK && !m_RemoteRepository.IsEmpty())
+
+    if (IsFileInDirectory(url)) // IsFileInDirectory accepts URL specifications
     {
-      mafString remote_file = m_RemoteRepository + "/" + wxFileNameFromPath(url);
-      save_res = m_RemoteFileManager->UploadLocalFile(fullpathname.c_str(), remote_file);
+      // remove old file if present.
+      // With remote files should be sufficient overwrite it by uploading the new one.
+      if (IsFileInLocalDirectory(url))
+      {
+        DeleteURL(url);
+      }
     }
+
+    // currently only local files are supported
+    save_res = mafFileRename(filename, fullpathname) ? MAF_OK : MAF_ERROR;
   }
   else
   {
-    return Superclass::StoreToURL(filename,url);
+    mafString baseName = mafFileNameFromPath(url);
+    fullpathname = m_LocalMSFFolder;
+    fullpathname += "\\";
+    fullpathname += baseName;
+    // remove old file if present
+    mafFileRemove(fullpathname);
+    // currently only local files are supported
+    save_res = mafFileRename(filename, fullpathname) ? MAF_OK : MAF_ERROR;
+  }
+  if (save_res == MAF_OK && !m_RemoteRepository.IsEmpty())
+  {
+    mafString remote_file = m_RemoteRepository + "/" + mafFileNameFromPath(url);
+    save_res = m_RemoteFileManager->UploadLocalFile(fullpathname, remote_file);
   }
   return save_res;
 }
 //----------------------------------------------------------------------------
-bool mafRemoteStorage::IsFileInLocalDirectory(const char *filename)
+bool mafRemoteStorage::IsFileInLocalDirectory(const mafString& filename)
 //----------------------------------------------------------------------------
 {
   return m_LocalFilesDictionary.find(filename)!=m_LocalFilesDictionary.end();
 }
 
 //----------------------------------------------------------------------------
-int mafRemoteStorage::OpenDirectory(const char *pathname)
+int mafRemoteStorage::OpenDirectory(const mafString& pathname)
 //----------------------------------------------------------------------------
 {
-  if (m_IsRemoteMSF)
+  if (!m_IsRemoteMSF)
+    return Superclass::OpenDirectory(pathname);
+  mafString baseName = wxFileNameFromPath(m_RemoteMSF.GetCStr());
+  mafString path, name, ext;
+  mafString query_string;
+  mafSplitPath(baseName,&path,&name,&ext);
+  query_string = m_RemoteRepository;
+  query_string += "/";
+  query_string += "msfList?prefix=";
+  query_string += name;
+
+  struct msfTreeSearchReult chunk;
+  chunk.memory=NULL; // we expect realloc(NULL, size) to work 
+  chunk.size = 0;    // no data at this point 
+
+  int res = m_RemoteFileManager->ListRemoteDirectory(query_string, chunk);
+  if (res == MAF_OK)
   {
-    wxString baseName = wxFileNameFromPath(m_RemoteMSF.GetCStr());
-    wxString path, name, ext;
-    mafString query_string;
-    wxSplitPath(baseName,&path,&name,&ext);
-    query_string = m_RemoteRepository;
-    query_string += "/";
-    query_string += "msfList?prefix=";
-    query_string += name;
-
-    struct msfTreeSearchReult chunk;
-    chunk.memory=NULL; // we expect realloc(NULL, size) to work 
-    chunk.size = 0;    // no data at this point 
-
-    int res = m_RemoteFileManager->ListRemoteDirectory(query_string, chunk);
-    if (res == MAF_OK)
+    m_FilesDictionary.clear();
+    wxString msf_list = chunk.memory;
+    wxStringTokenizer tkz(msf_list, "\n");
+    while (tkz.HasMoreTokens())
     {
-      m_FilesDictionary.clear();
-      wxString msf_list = chunk.memory;
-      wxStringTokenizer tkz(msf_list, "\n");
-      while (tkz.HasMoreTokens())
-      {
-        m_FilesDictionary.insert(tkz.GetNextToken().c_str());
-      }
+      m_FilesDictionary.insert(tkz.GetNextToken().c_str());
     }
-    else
-      return MAF_ERROR;
-    return OpenLocalMSFDirectory();
   }
   else
-  {
-    return Superclass::OpenDirectory(pathname);
-  }
+    return MAF_ERROR;
+  return OpenLocalMSFDirectory();
 }
 //------------------------------------------------------------------------------
 int mafRemoteStorage::OpenLocalMSFDirectory()
@@ -284,24 +279,14 @@ int mafRemoteStorage::OpenLocalMSFDirectory()
   return MAF_OK;
 }
 //------------------------------------------------------------------------------
-const char* mafRemoteStorage::GetTmpFolder()
+const mafString& mafRemoteStorage::GetTmpFolder()
 //------------------------------------------------------------------------------
 {
-  if (m_IsRemoteMSF)
-  {
-    if (m_TmpFolder.IsEmpty())
-    {
-      m_DefaultTmpFolder = m_LocalMSFFolder;
-      m_DefaultTmpFolder << "/";
-      return m_DefaultTmpFolder;
-    }
-    else
-    {
-      return Superclass::GetTmpFolder();
-    }
-  }
-  else
-  {
+  if(!m_IsRemoteMSF)
     return Superclass::GetTmpFolder();
-  }
+  if(!m_TmpFolder.IsEmpty())
+    return Superclass::GetTmpFolder();
+  m_DefaultTmpFolder = m_LocalMSFFolder;
+  m_DefaultTmpFolder << "/";
+  return m_DefaultTmpFolder;
 }

@@ -46,15 +46,15 @@ public:
   void Initialize();
 
   /** resolve an URL download remote file and provide local filename to be used as input */
-  virtual int ResolveInputURL(const char *url, mafString &filename, mafBaseEventHandler *observer = NULL);
+  virtual int ResolveInputURL(const mafString& url, mafString& filename, mafBaseEventHandler *observer = NULL);
 
   /** resolve an URL and provide a local filename to be used as output, then it is uploaded to the original remote msf */
-  virtual int StoreToURL(const char *filename, const char *url);
+  virtual int StoreToURL(const mafString& filename, const mafString& url);
 
   /** populate the list of file in the local cache directory */
-  virtual int OpenDirectory(const char *pathname);
+  virtual int OpenDirectory(const mafString& pathname);
 
-  virtual const char* GetTmpFolder();
+  virtual const mafString& GetTmpFolder();
 
   /** Set the user name to be used to connect through a given protocol. 
   If no user name is set, anonymous is used.*/
@@ -76,7 +76,7 @@ protected:
   int OpenLocalMSFDirectory();
 
   /** Check if a file is into the local MSF cache folder. */
-  bool IsFileInLocalDirectory(const char *filename);
+  bool IsFileInLocalDirectory(const mafString& filename);
 
   mafString m_HostName;
   mafString m_LocalMSFFolder;
