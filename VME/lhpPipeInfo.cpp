@@ -61,29 +61,29 @@ void lhpPipeInfo::FillPage()
         "<table border=\"1\">\
         <tr><th colspan=\"2\">%s</th></tr>\
         <tr><td colspan=\"2\">Right shoulder</th></tr>\
-        <tr><td style=\"width:60%%;\">Flexion(+)/Extension(-)/Speed</td><td>%f / %f / %f</td></tr>\
-        <tr><td style=\"width:60%%;\">Adduction(+)/Abduction(-)/Speed</td><td>%f / %f / %f</td></tr>\
-        <tr><td style=\"width:60%%;\">Internal rotation(+)/External rotation(-)/Speed</td><td>%f / %f / %f</td></tr>\
+        <tr><td style=\"width:60%%;\">Flexion(+)/Extension(-)/Speed</td><td>%.0f / %.0f / %.0f</td></tr>\
+        <tr><td style=\"width:60%%;\">Adduction(+)/Abduction(-)/Speed</td><td>%.0f / %.0f / %.0f</td></tr>\
+        <tr><td style=\"width:60%%;\">Internal rotation(+)/External rotation(-)/Speed</td><td>%.0f / %.0f / %.0f</td></tr>\
         <tr><td colspan=\"2\">Left shoulder</th></tr>\
-        <tr><td style=\"width:60%%;\">Flexion(+)/Extension(-)/Speed</td><td>%f / %f / %f</td></tr>\
-        <tr><td style=\"width:60%%;\">Adduction(+)/Abduction(-)/Speed</td><td>%f / %f / %f</td></tr>\
-        <tr><td style=\"width:60%%;\">Internal rotation(+)/External rotation(-)/Speed</td><td>%f / %f / %f</td></tr>\
+        <tr><td style=\"width:60%%;\">Flexion(+)/Extension(-)/Speed</td><td>%.0f / %.0f / %.0f</td></tr>\
+        <tr><td style=\"width:60%%;\">Adduction(+)/Abduction(-)/Speed</td><td>%.0f / %.0f / %.0f</td></tr>\
+        <tr><td style=\"width:60%%;\">Internal rotation(+)/External rotation(-)/Speed</td><td>%.0f / %.0f / %.0f</td></tr>\
         <tr><td colspan=\"2\">Ratio shoulder (right/left)</th></tr>\
-        <tr><td style=\"width:60%%;\">Flexion(+)/Extension(-)/Speed</td><td>%f / %f / %f</td></tr>\
-        <tr><td style=\"width:60%%;\">Adduction(+)/Abduction(-)/Speed</td><td>%f / %f / %f</td></tr>\
-        <tr><td style=\"width:60%%;\">Internal rotation(+)/External rotation(-)/Speed</td><td>%f / %f / %f</td></tr>\
+        <tr><td style=\"width:60%%;\">Flexion(+)/Extension(-)/Speed</td><td>%.0f / %.0f / %.0f</td></tr>\
+        <tr><td style=\"width:60%%;\">Adduction(+)/Abduction(-)/Speed</td><td>%.0f / %.0f / %.0f</td></tr>\
+        <tr><td style=\"width:60%%;\">Internal rotation(+)/External rotation(-)/Speed</td><td>%.0f / %.0f / %.0f</td></tr>\
         <tr><td colspan=\"2\">Right elbow</th></tr>\
-        <tr><td style=\"width:60%%;\">Flexion(+)/Extension(-)/Speed</td><td>%f / %f / %f</td></tr>\
-        <tr><td style=\"width:60%%;\">Adduction(+)/Abduction(-)/Speed</td><td>%f / %f / %f</td></tr>\
-        <tr><td style=\"width:60%%;\">Internal rotation(+)/External rotation(-)/Speed</td><td>%f / %f / %f</td></tr>\
+        <tr><td style=\"width:60%%;\">Flexion(+)/Extension(-)/Speed</td><td>%.0f / %.0f / %.0f</td></tr>\
+        <tr><td style=\"width:60%%;\">Adduction(+)/Abduction(-)/Speed</td><td>%.0f / %.0f / %.0f</td></tr>\
+        <tr><td style=\"width:60%%;\">Internal rotation(+)/External rotation(-)/Speed</td><td>%.0f / %.0f / %.0f</td></tr>\
         <tr><td colspan=\"2\">Left elbow</th></tr>\
-        <tr><td style=\"width:60%%;\">Flexion(+)/Extension(-)/Speed</td><td>%f / %f / %f</td></tr>\
-        <tr><td style=\"width:60%%;\">Adduction(+)/Abduction(-)/Speed</td><td>%f / %f / %f</td></tr>\
-        <tr><td style=\"width:60%%;\">Internal rotation(+)/External rotation(-)/Speed</td><td>%f / %f / %f</td></tr>\
+        <tr><td style=\"width:60%%;\">Flexion(+)/Extension(-)/Speed</td><td>%.0f / %.0f / %.0f</td></tr>\
+        <tr><td style=\"width:60%%;\">Adduction(+)/Abduction(-)/Speed</td><td>%.0f / %.0f / %.0f</td></tr>\
+        <tr><td style=\"width:60%%;\">Internal rotation(+)/External rotation(-)/Speed</td><td>%.0f / %.0f / %.0f</td></tr>\
         <tr><td colspan=\"2\">Ratio elbow (right/left)</th></tr>\
-        <tr><td style=\"width:60%%;\">Flexion(+)/Extension(-)/Speed</td><td>%f / %f / %f</td></tr>\
-        <tr><td style=\"width:60%%;\">Adduction(+)/Abduction(-)/Speed</td><td>%f / %f / %f</td></tr>\
-        <tr><td style=\"width:60%%;\">Internal rotation(+)/External rotation(-)/Speed</td><td>%f / %f / %f</td></tr>\
+        <tr><td style=\"width:60%%;\">Flexion(+)/Extension(-)/Speed</td><td>%.0f / %.0f / %.0f</td></tr>\
+        <tr><td style=\"width:60%%;\">Adduction(+)/Abduction(-)/Speed</td><td>%.0f / %.0f / %.0f</td></tr>\
+        <tr><td style=\"width:60%%;\">Internal rotation(+)/External rotation(-)/Speed</td><td>%.0f / %.0f / %.0f</td></tr>\
         </table>", m_Node->GetName().GetCStr(), 
         values[0], values[1], values[2],
         values[3], values[4], values[5],

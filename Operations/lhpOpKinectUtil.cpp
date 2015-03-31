@@ -921,7 +921,7 @@ namespace
       analog->SetName(target->GetName() + "_Graph");
 
       vnl_matrix<double> analogMatrix;
-      analogMatrix.set_size(rmatrix[0].size() - 1 - 25 * 3, rmatrix.size()); //set dimensions
+      analogMatrix.set_size((rmatrix[0].size() - 2 - 25 * 3) * 2 + 1, rmatrix.size()); //set dimensions
 
       std::vector<mafString> channelsNameList; //string array for channel name
 
@@ -932,7 +932,8 @@ namespace
         mafTimeStamp currentTime = rmatrix[currentSample][1];
 
         analogMatrix.put(0, currentSample, currentTime); //fill first row with timeframe, every column is a time
-
+      }
+      {
         //For every channel
         int skipped = 0;
         for(int currentChannel = 0; currentChannel < rmatrix[0].size() - 2; currentChannel++)
@@ -947,7 +948,6 @@ namespace
             skipped++;
             continue;
           }
-          if(currentSample == 0) 
           {
             mafString chName;
             chName = chNameShV[currentChannel / 3];
@@ -958,9 +958,33 @@ namespace
             else if(currentChannel % 3 == 2)
               chName += " AbdAdd";
             channelsNameList.push_back(chName);
+            chName += "Speed";
+            channelsNameList.push_back(chName);
           }
 
-          analogMatrix.put(currentChannel + 1 - skipped, currentSample, rmatrix[currentSample][currentChannel + 2] * (180. / 3.14159265358979323846)); //fill following rows with values, every channel is a row
+          ForArray<double> tX, tY, tS, tZ, tA;
+          int sz = rmatrix.size();
+          tX.assign(sz, 0.0);
+          tY.assign(sz, 0.0);
+          tS.assign(sz, 0.0);
+          tZ.assign(sz, 0.0);
+          tA.assign(sz, 0.0);
+
+          for(int currentSample=0; currentSample < rmatrix.size(); currentSample++)
+          {
+            tX[currentSample] = rmatrix[currentSample][1];
+            tY[currentSample] = rmatrix[currentSample][currentChannel + 2] * (180. / 3.14159265358979323846);
+            tS[currentSample] = 0.;
+          }
+
+          double tmp[3];
+          Smspline<double>(sz, 2, 0, tX, tY, tS, 0, 0, tA, tZ, 0, tmp[0], tmp[1], tmp[2]);
+          for(int currentSample=0; currentSample < rmatrix.size(); currentSample++)
+          {
+            Smspline<double>(sz, 2, 1, tX, tY, tS, 0, 0, tA, tZ, rmatrix[currentSample][1], tmp[0], tmp[1], tmp[2]);
+            analogMatrix.put((currentChannel - skipped) * 2 + 1, currentSample, tmp[0]); //fill following rows with values, every channel is a row
+            analogMatrix.put((currentChannel - skipped) * 2 + 2, currentSample, tmp[1]); //fill following rows with values, every channel is a row
+          }
         }
 
       }
@@ -971,74 +995,116 @@ namespace
           mafTimeStamp currentTime = analogMatrix.get(0, currentSample);
 
           double tmp;
-          tmp = analogMatrix.get(40, currentSample);
+          tmp = analogMatrix.get(79, currentSample);
           if(currentSample == 0 || tmp > kmi->GetValue(0))
             kmi->SetValue(0, tmp);
           if(currentSample == 0 || tmp < kmi->GetValue(1))
             kmi->SetValue(1, tmp);
+          tmp = fabs(analogMatrix.get(80, currentSample));
+          if(currentSample == 0 || tmp < kmi->GetValue(2))
+            kmi->SetValue(2, tmp);
 
-          tmp = analogMatrix.get(41, currentSample);
+          tmp = analogMatrix.get(81, currentSample);
           if(currentSample == 0 || tmp > kmi->GetValue(6))
             kmi->SetValue(6, tmp);
           if(currentSample == 0 || tmp < kmi->GetValue(7))
             kmi->SetValue(7, tmp);
+          tmp = fabs(analogMatrix.get(82, currentSample));
+          if(currentSample == 0 || tmp < kmi->GetValue(8))
+            kmi->SetValue(8, tmp);
 
-          tmp = analogMatrix.get(42, currentSample);
+          tmp = analogMatrix.get(83, currentSample);
           if(currentSample == 0 || tmp > kmi->GetValue(3))
             kmi->SetValue(3, tmp);
           if(currentSample == 0 || tmp < kmi->GetValue(4))
             kmi->SetValue(4, tmp);
+          tmp = fabs(analogMatrix.get(84, currentSample));
+          if(currentSample == 0 || tmp < kmi->GetValue(5))
+            kmi->SetValue(5, tmp);
 
-          tmp = analogMatrix.get(58, currentSample);
+
+          tmp = analogMatrix.get(115, currentSample);
           if(currentSample == 0 || tmp > kmi->GetValue(9))
             kmi->SetValue(9, tmp);
           if(currentSample == 0 || tmp < kmi->GetValue(10))
             kmi->SetValue(10, tmp);
-          tmp = analogMatrix.get(59, currentSample);
+          tmp = fabs(analogMatrix.get(116, currentSample));
+          if(currentSample == 0 || tmp < kmi->GetValue(11))
+            kmi->SetValue(11, tmp);
+
+          tmp = analogMatrix.get(117, currentSample);
           if(currentSample == 0 || tmp > kmi->GetValue(15))
             kmi->SetValue(15, tmp);
           if(currentSample == 0 || tmp < kmi->GetValue(16))
             kmi->SetValue(16, tmp);
-          tmp = analogMatrix.get(60, currentSample);
+          tmp = fabs(analogMatrix.get(118, currentSample));
+          if(currentSample == 0 || tmp < kmi->GetValue(17))
+            kmi->SetValue(17, tmp);
+
+          tmp = analogMatrix.get(119, currentSample);
           if(currentSample == 0 || tmp > kmi->GetValue(12))
             kmi->SetValue(12, tmp);
           if(currentSample == 0 || tmp < kmi->GetValue(13))
             kmi->SetValue(13, tmp);
+          tmp = fabs(analogMatrix.get(120, currentSample));
+          if(currentSample == 0 || tmp < kmi->GetValue(14))
+            kmi->SetValue(14, tmp);
 
 
-
-          tmp = analogMatrix.get(43, currentSample);
+          tmp = analogMatrix.get(85, currentSample);
           if(currentSample == 0 || tmp > kmi->GetValue(27))
             kmi->SetValue(27, tmp);
           if(currentSample == 0 || tmp < kmi->GetValue(28))
             kmi->SetValue(28, tmp);
-          tmp = analogMatrix.get(44, currentSample);
+          tmp = fabs(analogMatrix.get(86, currentSample));
+          if(currentSample == 0 || tmp < kmi->GetValue(29))
+            kmi->SetValue(29, tmp);
+
+          tmp = analogMatrix.get(87, currentSample);
           if(currentSample == 0 || tmp > kmi->GetValue(33))
             kmi->SetValue(33, tmp);
           if(currentSample == 0 || tmp < kmi->GetValue(34))
             kmi->SetValue(34, tmp);
-          tmp = analogMatrix.get(45, currentSample);
+          tmp = fabs(analogMatrix.get(88, currentSample));
+          if(currentSample == 0 || tmp < kmi->GetValue(35))
+            kmi->SetValue(35, tmp);
+
+          tmp = analogMatrix.get(89, currentSample);
           if(currentSample == 0 || tmp > kmi->GetValue(30))
             kmi->SetValue(30, tmp);
           if(currentSample == 0 || tmp < kmi->GetValue(31))
             kmi->SetValue(31, tmp);
+          tmp = fabs(analogMatrix.get(90, currentSample));
+          if(currentSample == 0 || tmp < kmi->GetValue(32))
+            kmi->SetValue(32, tmp);
 
 
-          tmp = analogMatrix.get(61, currentSample);
+          tmp = analogMatrix.get(121, currentSample);
           if(currentSample == 0 || tmp > kmi->GetValue(36))
             kmi->SetValue(36, tmp);
           if(currentSample == 0 || tmp < kmi->GetValue(37))
             kmi->SetValue(37, tmp);
-          tmp = analogMatrix.get(62, currentSample);
+          tmp = fabs(analogMatrix.get(122, currentSample));
+          if(currentSample == 0 || tmp < kmi->GetValue(38))
+            kmi->SetValue(38, tmp);
+
+          tmp = analogMatrix.get(123, currentSample);
           if(currentSample == 0 || tmp > kmi->GetValue(42))
             kmi->SetValue(42, tmp);
           if(currentSample == 0 || tmp < kmi->GetValue(43))
             kmi->SetValue(43, tmp);
-          tmp = analogMatrix.get(63, currentSample);
+          tmp = fabs(analogMatrix.get(124, currentSample));
+          if(currentSample == 0 || tmp < kmi->GetValue(44))
+            kmi->SetValue(44, tmp);
+
+          tmp = analogMatrix.get(125, currentSample);
           if(currentSample == 0 || tmp > kmi->GetValue(39))
             kmi->SetValue(39, tmp);
           if(currentSample == 0 || tmp < kmi->GetValue(40))
             kmi->SetValue(40, tmp);
+          tmp = fabs(analogMatrix.get(126, currentSample));
+          if(currentSample == 0 || tmp < kmi->GetValue(41))
+            kmi->SetValue(41, tmp);
         }
       }
 
