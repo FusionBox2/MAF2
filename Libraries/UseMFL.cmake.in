@@ -37,11 +37,10 @@ ENDIF (MAF_USE_VTK)
 # XercesC library
 #
 IF (MAF_USE_XercesC)
-  SET(CXerces_DIR @CXerces_DIR@)
-  find_package(CXerces REQUIRED)
-  SET(CXerces_USE_FILE "${CXerces_DIR}/UseXercesC.cmake")
-  INCLUDE(${CXerces_CONFIG})
-  INCLUDE(${CXerces_USE_FILE})
+  SET(XercesC_INCLUDE_DIR @XercesC_INCLUDE_DIR@)
+  SET(XercesC_LIBRARY @XercesC_LIBRARY@)
+  find_package(XercesC REQUIRED)
+  INCLUDE_DIRECTORIES(${XercesC_INCLUDE_DIRS})
 ENDIF (MAF_USE_XercesC)
 
 #

@@ -83,7 +83,7 @@ int mafXMLParser::InternalStore()
 
   if (m_DOM->m_XMLImplement)
   {
-    m_DOM->m_XMLSerializer = ( (XERCES_CPP_NAMESPACE_QUALIFIER DOMImplementationLS*)m_DOM->m_XMLImplement )->createDOMWriter();
+    m_DOM->m_XMLSerializer = ( (XERCES_CPP_NAMESPACE_QUALIFIER DOMImplementationLS*)m_DOM->m_XMLImplement )->createLSSerializer();
 
     m_DOM->m_XMLTarget = new XERCES_CPP_NAMESPACE_QUALIFIER LocalFileFormatTarget(m_URL);
 
@@ -91,10 +91,11 @@ int mafXMLParser::InternalStore()
     m_DOM->m_XMLSerializer->setNewLine( mafXMLString("\r") );
 
     // set serializer features 
- 	  m_DOM->m_XMLSerializer->setFeature(XERCES_CPP_NAMESPACE_QUALIFIER XMLUni::fgDOMWRTSplitCdataSections, false);
-  	m_DOM->m_XMLSerializer->setFeature(XERCES_CPP_NAMESPACE_QUALIFIER XMLUni::fgDOMWRTDiscardDefaultContent, false);
-  	m_DOM->m_XMLSerializer->setFeature(XERCES_CPP_NAMESPACE_QUALIFIER XMLUni::fgDOMWRTFormatPrettyPrint, true);
-  	m_DOM->m_XMLSerializer->setFeature(XERCES_CPP_NAMESPACE_QUALIFIER XMLUni::fgDOMWRTBOM, false);
+    XERCES_CPP_NAMESPACE_QUALIFIER DOMConfiguration  *config = m_DOM->m_XMLSerializer->getDomConfig();
+    config->setParameter(XERCES_CPP_NAMESPACE_QUALIFIER XMLUni::fgDOMWRTSplitCdataSections, false);
+    config->setParameter(XERCES_CPP_NAMESPACE_QUALIFIER XMLUni::fgDOMWRTDiscardDefaultContent, false);
+    config->setParameter(XERCES_CPP_NAMESPACE_QUALIFIER XMLUni::fgDOMWRTFormatPrettyPrint, true);
+  	config->setParameter(XERCES_CPP_NAMESPACE_QUALIFIER XMLUni::fgDOMWRTBOM, false);
 
     try
     {
@@ -102,11 +103,13 @@ int mafXMLParser::InternalStore()
       m_DOM->m_XMLDoc = m_DOM->m_XMLImplement->createDocument( NULL, mafXMLString(m_FileType), NULL ); // NO URI and NO DTD
       if (m_DOM->m_XMLDoc)
       {
+        XERCES_CPP_NAMESPACE_QUALIFIER DOMLSOutput *theOutputDesc = m_DOM->m_XMLImplement->createLSOutput();
         // output related nodes are prefixed with "svg"
         // to distinguish them from input nodes.
-	      m_DOM->m_XMLDoc->setEncoding( mafXMLString("UTF-8") );
-	      m_DOM->m_XMLDoc->setStandalone(true);
-	      m_DOM->m_XMLDoc->setVersion( mafXMLString("1.0") );
+ 	      theOutputDesc->setEncoding( mafXMLString("UTF-8") );
+        theOutputDesc->setByteStream(m_DOM->m_XMLTarget);
+	      m_DOM->m_XMLDoc->setXmlStandalone(true);
+	      m_DOM->m_XMLDoc->setXmlVersion( mafXMLString("1.0") );
 
         // extract root element and wrap it with an mafXMLElement object
         XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *root = m_DOM->m_XMLDoc->getDocumentElement();
@@ -124,9 +127,10 @@ int mafXMLParser::InternalStore()
         m_Document->Store(documentElement);
 
         // write the tree to disk
-        m_DOM->m_XMLSerializer->writeNode(m_DOM->m_XMLTarget, *(m_DOM->m_XMLDoc));
+        m_DOM->m_XMLSerializer->write(m_DOM->m_XMLDoc, theOutputDesc);
 
         // destroy all intermediate objects
+        theOutputDesc->release();
         cppDEL (documentElement);  
         cppDEL (m_DOM->m_XMLTarget);
         cppDEL (m_DOM->m_XMLDoc);
