@@ -451,11 +451,16 @@ mafVME *lhpOpKinectUtil::ImportSingleFile(const mafString &fullFileName)
   cloud->SetRadius(15);
 
   int current_lm = 0;
-  int initValue = (rmatrix[0].size() % 3 == 1) ? 1 : 0;
+  int initValue = (rmatrix[0].size() % 3);
   timeStamps.resize(rmatrix.size());
   for (int i = 0; i < rmatrix.size(); i++)
   {
-    timeStamps[i] = (initValue == 1) ? rmatrix[i][0] : i / m_Freq;
+    if(initValue == 0)
+      timeStamps[i] = i / m_Freq;
+    else if(initValue == 1)
+      timeStamps[i] = rmatrix[i][0];
+    else //if(initValue == 2)
+      timeStamps[i] = rmatrix[i][1];
   }
 
   for (int j = initValue; j < rmatrix[0].size(); j += 3)
