@@ -40,6 +40,7 @@
 #include "mafMatrixVector.h"
 #include "mafDataVector.h"
 #include "mafVME.h"
+#include "mafVMEGroup.h"
 #include "mafVMESurface.h"
 #include "mafVMELandmark.h"
 #include "mafVMELandmarkCloud.h"
@@ -251,47 +252,6 @@ void lhpOpKinectModel::CreateGui()
   m_Gui->OkCancel();
 }
 
-
-void ExportOneCloud(std::ostream &out, mafVMELandmarkCloud* cloud)
-{
-  std::vector<mafTimeStamp> timeStamps;
-  cloud->GetLocalTimeStamps(timeStamps);
-  int numberLandmark = cloud->GetNumberOfLandmarks();
-
-  // if cloud is closed , open it
-  bool initState = cloud->IsOpen();
-  if(!initState)
-    cloud->Open();
-
-  mafString lmName = "";
-  double t;
-  // pick up the values and write them into the file
-  for (int index = 0; index < timeStamps.size(); index++)
-  {
-    char numbs[1000];
-    t = timeStamps[index];
-    out << "Time";
-    sprintf(numbs, " %16lf\n", t);
-    out << numbs;
-    for(int j=0; j < numberLandmark; j++)
-    {
-      lmName = cloud->GetLandmarkName(j);
-
-      double invec[4];
-      cloud->GetLandmark(j, invec, timeStamps[index]);
-      invec[3] = 1.0;
-      out << lmName;
-      sprintf(numbs, " %16lf %16lf %16lf \n", invec[0], invec[1], invec[2]);
-      out << numbs;
-    }
-  }
-
-  if(!initState)
-    cloud->Close();
-}
-
-
-
 //----------------------------------------------------------------------------
 bool lhpOpKinectModel::Import()
 //----------------------------------------------------------------------------
@@ -301,39 +261,6 @@ bool lhpOpKinectModel::Import()
 
   if(m_ExtAppPath.IsEmpty())
     return false;
-
-  /*mafString files[] ={"UpLCla.txt",
-                      "UpLHan.txt",
-                      "UpLHum.txt",
-                      "UpLRad.txt",
-                      "UpLSca.txt",
-                      "UpLUln.txt",
-                      "UpRHan.txt",
-                      "UpRRad.txt",
-                      "UpCerv.txt",
-                      "UpLumb.txt",
-                      "UpPelv.txt",
-                      "UpRCla.txt",
-                      "UpRHum.txt",
-                      "UpRSca.txt",
-                      "UpRUln.txt",
-                      "UpSkul.txt",
-                      "UpThor.txt"};
-  mafString path = "Z:\\ShV\\Kinect_UpL_01feb2011\\";
-  for(int i = 0; i < DIM(files); i++)
-  {
-    mafString fpath;
-    fpath = path;
-    fpath += files[i];
-    if(!mafFileExists(fpath))
-      continue;
-    medOpImporterLandmark *imp = new medOpImporterLandmark();
-    imp->SetInput(m_Input->GetParent());
-    imp->SetFileName(fpath);
-    imp->Read();
-    imp->OpDo();
-    delete imp;
-  }*/
 
   std::vector<mafTimeStamp> timeStamps;
   mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(m_Input);
@@ -475,10 +402,11 @@ bool lhpOpKinectModel::Import()
                        "R_Pate.txt",
                        "R_Foot.txt",
                        "R_Shan.txt",
+                       "R_Thg1.txt",
                        "R_Thg2.txt",
                        "R_Thg3.txt",
-                       "Pelvis.txt",
-                       "R_Thg1.txt"};
+                       "Pelvis.txt"};
+  mafVMEGroup *grp = NULL;
   for(int i = 0; i < DIM(files); i++)
   {
     mafString fpath;
@@ -490,14 +418,19 @@ bool lhpOpKinectModel::Import()
     imp->SetFileName(fpath);
     imp->Read();
     std::vector<mafVME*>& res = imp->GetResults();
+    if(grp == NULL && !res.empty())
+    {
+      mafNEW(grp);
+      grp->SetName("KinectModel");
+    }
     for(std::vector<mafVME*>::iterator it = res.begin(); it != res.end(); ++it)
     {
-      m_Imported.push_back(*it);
-      (*it)->Register(this);
+      (*it)->ReparentTo(grp);
     }
     delete imp;
   }
-
+  if(grp)
+    m_Imported.push_back(grp);
   return true;
 }
 
