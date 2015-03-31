@@ -26,7 +26,6 @@
 #include "mmdRemoteFileManager.h"
 #include <wx/tokenzr.h>
 
-#include "mafRemoteStorage.h"
 #include "mafDirectory.h"
 #include "mmuIdFactory.h"
 
