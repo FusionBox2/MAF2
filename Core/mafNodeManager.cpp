@@ -27,6 +27,7 @@
 #include "mafNodeManager.h"
 #include "mafDecl.h"
 #include "mafNode.h"
+#include "mafRoot.h"
 #include "mafNodeIterator.h"
 #include "mafEvent.h"
 
@@ -67,22 +68,22 @@ void mafNodeManager::OnEvent(mafEventBase *maf_event)
 }
 
 //----------------------------------------------------------------------------
-mafNodeRoot *mafNodeManager::GetRoot()
+mafNode *mafNodeManager::GetRoot()
 //----------------------------------------------------------------------------
 {
   return m_Root;
 }
 
 //----------------------------------------------------------------------------
-bool mafNodeManager::SetRoot(mafNodeRoot *root)
+bool mafNodeManager::SetRoot(mafNode *root)
 //----------------------------------------------------------------------------
 {
   NotifyRemove(m_Root);
-  if(m_Root)
-    m_Root->SetListener(NULL);
+  if(mafRoot *rt = mafRoot::SafeDownCast(GetRoot()))
+    rt->SetListener(NULL);
   m_Root = root;
-  if(m_Root)
-    m_Root->SetListener(this);
+  if(mafRoot *rt = mafRoot::SafeDownCast(GetRoot()))
+    rt->SetListener(this);
   NotifyAdd(m_Root);
   return true;
 }

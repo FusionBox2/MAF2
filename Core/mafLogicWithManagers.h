@@ -25,7 +25,7 @@
 #include "mafEvent.h"
 #include "mafLogicWithGUI.h"
 #include "mafGUIVMEChooser.h"
-#include "mafVMEManager.h"
+#include "mafNodeManager.h"
 #include "mafGUIFileHistory.h"
 #include "mafVMEStorage.h"
 
@@ -273,7 +273,7 @@ protected:
   virtual void UpdateFrameTitle();
 
   mafSideBar             *m_SideBar;
-  mafVMEManager          *m_VMEManager;
+  mafNodeManager         *m_NodeManager;
   mafViewManager         *m_ViewManager;
   mafOpManager           *m_OpManager;
   mafInteractionManager  *m_InteractionManager;

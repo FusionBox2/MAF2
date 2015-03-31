@@ -28,7 +28,6 @@
 #include "mafGUI.h"
 #include "mafGUIMDIFrame.h"
 #include "mafViewManager.h"
-#include "mafVMEManager.h"
 #include "mafViewVTK.h"
 #include "mafRWIBase.h"
 

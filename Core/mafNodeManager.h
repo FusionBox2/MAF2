@@ -22,7 +22,6 @@
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
 #include "mafNode.h"
-#include "mafNodeRoot.h"
 
 #ifdef MAF_EXPORTS
 #include "mafDllMacros.h"
@@ -70,12 +69,12 @@ public:
 	/** Send the event VME_ADDED to inform logic that the vme and its subtree are added to the tree. */
   void NotifyAdd(mafNode *n);
 	/** Return the tree's root. */
-  mafNodeRoot *GetRoot();
+  mafNode *GetRoot();
    /** Set the tree's root. */
-  bool SetRoot(mafNodeRoot *root);
+  bool SetRoot(mafNode *root);
 protected:
   bool                m_Modified;         ///< Used to known when the tree has been modified...
-  mafAutoPointer<mafNodeRoot> m_Root;
+  mafAutoPointer<mafNode> m_Root;
 
   /** friend test class */
   friend class mafNodeManagerTest; // Losi 02/16/2010 for test class

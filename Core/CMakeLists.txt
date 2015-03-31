@@ -71,8 +71,6 @@ SET(PROJECT_SRCS
   mafUser.h
   mafVME.cpp
   mafVME.h
-  mafVMEManager.cpp
-  mafVMEManager.h
   mafVMEOutput.cpp
   mafVMEOutput.h
   mafVMEOutputNULL.cpp

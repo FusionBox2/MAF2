@@ -102,7 +102,7 @@
 bool mafLogicWithManagers::AskConfirmAndSave()
 //----------------------------------------------------------------------------
 {
-  if (m_VMEManager&& m_VMEManager->MSFIsModified()) // check if the msf has been modified
+  if (m_NodeManager&& m_NodeManager->MSFIsModified()) // check if the msf has been modified
   {
     int answer = wxMessageBox(_("your work is modified, would you like to save it?"),_("Confirm"),wxYES_NO|wxCANCEL|wxICON_QUESTION,mafGetFrame()); // ask user if will save msf before closing
     if(answer == wxCANCEL)
@@ -157,7 +157,7 @@ mafLogicWithManagers::mafLogicWithManagers(mafGUIMDIFrame *mdiFrame/*=NULL*/)
 
   m_CameraLinkingObserverFlag = false;
   
-  m_VMEManager  = NULL;
+  m_NodeManager  = NULL;
   m_ViewManager = NULL;
   m_OpManager   = NULL;
   m_InteractionManager = NULL;
@@ -324,8 +324,8 @@ void mafLogicWithManagers::Configure()
 
   if(m_UseVMEManager)
   {
-    m_VMEManager = new mafVMEManager();
-    m_VMEManager->SetListener(this); 
+    m_NodeManager = new mafNodeManager();
+    m_NodeManager->SetListener(this); 
   }
 
 // currently mafInteraction is strictly dependent on VTK (marco)
@@ -465,7 +465,7 @@ void mafLogicWithManagers::Plug(mafOp *op, wxString menuPath, bool canUndo, mafG
 void mafLogicWithManagers::Show()
 //----------------------------------------------------------------------------
 {
-  if(m_VMEManager && m_RecentFileMenu)
+  if(m_NodeManager && m_RecentFileMenu)
   {
     m_FileHistory.UseMenu(m_RecentFileMenu);
     m_FileHistory.Load(*m_Config); // Loads file history from registry
@@ -502,7 +502,7 @@ mafUser *mafLogicWithManagers::GetUser()
 void mafLogicWithManagers::Init(int argc, char **argv)
 //----------------------------------------------------------------------------
 {
-  if(m_VMEManager)
+  if(m_NodeManager)
   {
     if(argc > 1 )
 	  {
@@ -1343,7 +1343,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
 bool mafLogicWithManagers::OnFileClose()
 //----------------------------------------------------------------------------
 {
-  if(!m_VMEManager)
+  if(!m_NodeManager)
     return true;
   if(!AskConfirmAndSave())
     return false;
@@ -1353,11 +1353,11 @@ bool mafLogicWithManagers::OnFileClose()
     mafRemoveDirectory(m_TmpDir); // remove the temporary directory
     m_TmpDir = "";
   }
-  m_VMEManager->SetListener(this);
+  m_NodeManager->SetListener(this);
   mafDEL(m_Storage);
   VmeSelected(NULL);
-  m_VMEManager->SetRoot(NULL);
-  m_VMEManager->MSFModified(false);
+  m_NodeManager->SetRoot(NULL);
+  m_NodeManager->MSFModified(false);
   m_MSFFile = "";
   m_ZipFile = ""; 
   UpdateFrameTitle();
@@ -1367,7 +1367,7 @@ bool mafLogicWithManagers::OnFileClose()
 void mafLogicWithManagers::OnFileNew()
 //----------------------------------------------------------------------------
 {
-  if(!m_VMEManager)
+  if(!m_NodeManager)
     return;
   if(!OnFileClose())
     return;
@@ -1377,12 +1377,12 @@ void mafLogicWithManagers::OnFileNew()
   //Add the application stamps
   SetAppTag(root);
   AddCreationDate(root);
-  m_VMEManager->SetRoot(root);
+  m_NodeManager->SetRoot(root);
   VmeSelected(root);
   root->SetTreeTime(0.0); // set the tree time
   UpdateFrameTitle();
   mafDEL(root);
-  m_VMEManager->MSFModified(false);
+  m_NodeManager->MSFModified(false);
 }
 //----------------------------------------------------------------------------
 void mafLogicWithManagers::OnFileUpload(const char *remote_file, unsigned int upload_flag)
@@ -1401,7 +1401,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
 //----------------------------------------------------------------------------
 {
   //!!remember upgrade of data to current VERSION!!!!!!!!!!!!!!!!!!!!!!!
-  if(!m_VMEManager)
+  if(!m_NodeManager)
     return false;
 
   if(!AskConfirmAndSave())
@@ -1476,7 +1476,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
   if(!m_Storage)
     return false;
   m_Storage->SetListener(this);
-  m_VMEManager->SetListener(m_Storage);
+  m_NodeManager->SetListener(m_Storage);
 
   wxWindowDisabler *disableAll;
   wxBusyCursor *wait_cursor;
@@ -1508,7 +1508,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
     if(unixname.IsEmpty())
     {
       mafMessage(_("Bad or corrupted zmsf file!"));
-      m_VMEManager->SetListener(this);
+      m_NodeManager->SetListener(this);
       mafDEL(m_Storage);
       if(!m_TestMode) // Losi 02/16/2010 for test class
       {
@@ -1546,7 +1546,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
   {
     //Application stamp not valid
     mafMessage(_("File not valid for this application!"), _("Warning"));
-    m_VMEManager->SetListener(this);
+    m_NodeManager->SetListener(this);
     mafDEL(m_Storage);
     if(!m_TestMode) // Losi 02/16/2010 for test class
     {
@@ -1556,7 +1556,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
     return false;
   }
   root->Initialize();
-  m_VMEManager->SetRoot(root);
+  m_NodeManager->SetRoot(root);
   VmeSelected(root);
   mafTimeStamp b[2] = {0.0, 0.0};
   root->GetOutput()->GetTimeBounds(b);
@@ -1611,12 +1611,12 @@ void mafLogicWithManagers::OnFileHistory(int fileId)
 void mafLogicWithManagers::Save()
 //----------------------------------------------------------------------------
 {
-  if(!m_VMEManager)
+  if(!m_NodeManager)
     return;
 	mafString save_default_folder = m_StorageSettings->GetDefaultSaveFolder();
 	save_default_folder.ParsePathName();
 	m_MSFDir = save_default_folder;
-  mafVMERoot *root = m_VMEManager->GetRoot();
+  mafVMERoot *root = mafVMERoot::SafeDownCast(m_NodeManager->GetRoot());
   if(!root)
     return;
   if(m_MSFFile.IsEmpty())
@@ -1649,7 +1649,7 @@ void mafLogicWithManagers::Save()
 
   m_MakeBakFile = true;
   UpdateFrameTitle();
-  m_VMEManager->MSFModified(false);
+  m_NodeManager->MSFModified(false);
   m_FileHistory.Save(*m_Config);
   if(!m_TestMode) // Losi 02/16/2010 for test class 
   {
@@ -1660,12 +1660,12 @@ void mafLogicWithManagers::Save()
 bool mafLogicWithManagers::OnFileSave()
 //----------------------------------------------------------------------------
 {
-  if(!m_VMEManager)
+  if(!m_NodeManager)
     return true;
 	mafString save_default_folder = m_StorageSettings->GetDefaultSaveFolder();
 	save_default_folder.ParsePathName();
 	m_MSFDir = save_default_folder;
-  mafVMERoot *root = m_VMEManager->GetRoot();
+  mafVMERoot *root = mafVMERoot::SafeDownCast(m_NodeManager->GetRoot());
   if(!root)
     return true;;
 
@@ -1682,7 +1682,7 @@ bool mafLogicWithManagers::OnFileSave()
 bool mafLogicWithManagers::OnFileSaveAs()
 //----------------------------------------------------------------------------
 {
-  if(!m_VMEManager)
+  if(!m_NodeManager)
     return true;
 
   m_MSFFile = ""; // set filenames to empty so the MSFSave method will ask for them
@@ -1724,7 +1724,7 @@ bool mafLogicWithManagers::OnFileSaveAs()
 
   m_MSFFile = file;
 
-  mafVMERoot *root = m_VMEManager->GetRoot();
+  mafNode *root = m_NodeManager->GetRoot();
 
   if(m_Storage && m_MSFFile != m_Storage->GetURL())
   {
@@ -1738,8 +1738,8 @@ bool mafLogicWithManagers::OnFileSaveAs()
     if(!m_Storage)
       return false;
     m_Storage->SetListener(this);
-    m_VMEManager->SetListener(m_Storage);
-    m_Storage->SetRoot(root);
+    m_NodeManager->SetListener(m_Storage);
+    m_Storage->SetRoot(mafVMERoot::SafeDownCast(root));
   }
   m_Storage->SetURL(m_MSFFile.GetCStr());
   Save();
@@ -1780,7 +1780,7 @@ void mafLogicWithManagers::OnQuit()
   return;*/
 
   cppDEL(m_RemoteLogic);
-  cppDEL(m_VMEManager);
+  cppDEL(m_NodeManager);
   cppDEL(m_MaterialChooser);
 // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
@@ -1789,7 +1789,7 @@ void mafLogicWithManagers::OnQuit()
   cppDEL(m_ViewManager);
   cppDEL(m_OpManager);
 
-  // must be deleted after m_VMEManager
+  // must be deleted after m_NodeManager
   cppDEL(m_SideBar);
 
   mafLogicWithGUI::OnQuit();
@@ -1818,10 +1818,10 @@ void mafLogicWithManagers::VmeSelect(mafEvent& e)	//modified by Paolo 10-9-2003
   if(node == NULL)
   {
     //node can be selected by its ID
-    if(m_VMEManager)
+    if(m_NodeManager)
     {
 		  long vme_id = e.GetArg();
-		  mafVMERoot *root = this->m_VMEManager->GetRoot();
+		  mafVMERoot *root = mafVMERoot::SafeDownCast(m_NodeManager->GetRoot());
 		  if (root)
 		  {
 			  node = root->FindInTreeById(vme_id);
@@ -1880,22 +1880,22 @@ void mafLogicWithManagers::VmeModified(mafNode *vme)
   bool vme_in_tree = vme->IsVisible();
   if(m_SideBar && vme_in_tree)
     m_SideBar->VmeModified(vme);
-	if(m_VMEManager) m_VMEManager->MSFModified(true);
+	if(m_NodeManager) m_NodeManager->MSFModified(true);
 }
 //----------------------------------------------------------------------------
 void mafLogicWithManagers::VmeAdd(mafNode *vme)
 //----------------------------------------------------------------------------
 {
-  if(m_VMEManager)
-    m_VMEManager->VmeAdd(vme);
+  if(m_NodeManager)
+    m_NodeManager->VmeAdd(vme);
 }
 //----------------------------------------------------------------------------
 void mafLogicWithManagers::VmeAdded(mafNode *vme)
 //----------------------------------------------------------------------------
 {
-  if(m_VMEManager)
+  if(m_NodeManager)
   {
-    if (mafVMERoot *root = m_VMEManager->GetRoot())
+    if (mafVMERoot *root = mafVMERoot::SafeDownCast(m_NodeManager->GetRoot()))
     {
       if (mafVME *vmenode = mafVME::SafeDownCast(vme))
       {
@@ -1920,7 +1920,7 @@ void mafLogicWithManagers::RestoreLayout()
 //----------------------------------------------------------------------------
 {
   // Retrieve the saved layout.
-  mafNode *vme = m_VMEManager->GetRoot();
+  mafNode *vme = m_NodeManager->GetRoot();
   mmaApplicationLayout *app_layout = mmaApplicationLayout::SafeDownCast(vme->GetAttribute("ApplicationLayout"));
   if (app_layout)
   {
@@ -1939,8 +1939,8 @@ void mafLogicWithManagers::RestoreLayout()
 void mafLogicWithManagers::VmeRemove(mafNode *vme)
 //----------------------------------------------------------------------------
 {
-  if(m_VMEManager)
-    m_VMEManager->VmeRemove(vme);
+  if(m_NodeManager)
+    m_NodeManager->VmeRemove(vme);
 }
 //----------------------------------------------------------------------------
 void mafLogicWithManagers::VmeRemoving(mafNode *vme)
@@ -2099,9 +2099,9 @@ void mafLogicWithManagers::ViewCreated(mafView *v)
 void mafLogicWithManagers::TimeSet(double t)
 //----------------------------------------------------------------------------
 {
-  if(m_VMEManager)
+  if(m_NodeManager)
   {
-    if(mafVMERoot *root = m_VMEManager->GetRoot())
+    if(mafVMERoot *root = mafVMERoot::SafeDownCast(m_NodeManager->GetRoot()))
       root->SetTreeTime(t);
   }
   if(m_ViewManager)
@@ -2114,10 +2114,10 @@ void mafLogicWithManagers::UpdateTimeBounds()
 //----------------------------------------------------------------------------
 {
   double min, max; 
-  if(m_VMEManager)
+  if(m_NodeManager)
   {
     mafTimeStamp b[2] = {0, 0};
-    if(mafVMERoot *root = m_VMEManager->GetRoot())
+    if(mafVMERoot *root = mafVMERoot::SafeDownCast(m_NodeManager->GetRoot()))
       root->GetOutput()->GetTimeBounds(b);
     min = b[0];
     max = b[1];
@@ -2147,7 +2147,7 @@ void mafLogicWithManagers::VmeChooseMaterial(mafVME *vme, bool updateProperty)
   {
     this->m_ViewManager->PropertyUpdate(updateProperty);
     this->m_ViewManager->CameraUpdate();
-    this->m_VMEManager->MSFModified(true);
+    this->m_NodeManager->MSFModified(true);
   }
 }
 //----------------------------------------------------------------------------
@@ -2156,7 +2156,7 @@ void mafLogicWithManagers::VmeUpdateProperties(mafVME *vme, bool updatePropertyF
 {
   this->m_ViewManager->PropertyUpdate(updatePropertyFromTag);
   this->m_ViewManager->CameraUpdate();
-  this->m_VMEManager->MSFModified(true);
+  this->m_NodeManager->MSFModified(true);
 }
 //----------------------------------------------------------------------------
 void mafLogicWithManagers::FindVME()
@@ -2241,7 +2241,7 @@ void mafLogicWithManagers::ImportExternalFile(mafString &filename)
   if (ext == "vtk")
   {
     mafOpImporterVTK *vtkImporter = new mafOpImporterVTK("importer");
-    vtkImporter->SetInput(m_VMEManager->GetRoot());
+    vtkImporter->SetInput(m_NodeManager->GetRoot());
     vtkImporter->SetListener(m_OpManager);
     vtkImporter->SetFileName(filename.GetCStr());
     vtkImporter->ImportVTK();
@@ -2251,7 +2251,7 @@ void mafLogicWithManagers::ImportExternalFile(mafString &filename)
   else if (ext == "stl")
   {
     mafOpImporterSTL *stlImporter = new mafOpImporterSTL("importer");
-    stlImporter->SetInput(m_VMEManager->GetRoot());
+    stlImporter->SetInput(m_NodeManager->GetRoot());
     stlImporter->SetListener(m_OpManager);
     stlImporter->SetFileName(filename.GetCStr());
     stlImporter->ImportSTL();
