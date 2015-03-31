@@ -146,7 +146,7 @@ bool lhpPipeIntGraphLocal::StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTimeS
   }
 
   //LTM
-  if(GDT_LTM_POSX <= nVarID && nVarID <= GDT_LTM_ROTZ)
+  /*if(GDT_LTM_POSX <= nVarID && nVarID <= GDT_LTM_ROTZ)
   {
     mafMatrix mLTM;
     V4d<double>    vPos, vRot;
@@ -159,7 +159,7 @@ bool lhpPipeIntGraphLocal::StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTimeS
     SetValue(GDT_LTM_ROTX, vRot.x * mafMatrix3x3::RadiansToDegrees());
     SetValue(GDT_LTM_ROTY, vRot.y * mafMatrix3x3::RadiansToDegrees());
     SetValue(GDT_LTM_ROTZ, vRot.z * mafMatrix3x3::RadiansToDegrees());
-  }
+  }*/
   return true;
 }
 

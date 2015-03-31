@@ -54,7 +54,8 @@ public:
   enum GRAPH_IDS
   {
   //LTM
-  GDT_LTM_POSX   = Superclass::GDT_LAST,
+  GDT_LAST   = Superclass::GDT_LAST,
+  /*GDT_LTM_POSX   = Superclass::GDT_LAST,
   GDT_LTM_POSY   ,
   GDT_LTM_POSZ   ,
   GDT_LTM_ROTX   ,
@@ -62,7 +63,7 @@ public:
   GDT_LTM_ROTZ   ,
 
   //control
-  GDT_LAST
+  GDT_LAST*/
   };
 
   virtual const char   *GetVarTitle(int i) const;
