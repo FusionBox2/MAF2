@@ -91,49 +91,33 @@ void mafVMEGroup::OnEvent(mafEventBase *maf_event)
 {
   if (maf_event->GetChannel()==MCH_UP)
   {
-    switch (maf_event->GetId())
+    mafID eid = maf_event->GetId();
+    if(eid == NODE_ATTACHED_TO_TREE)
     {
-      case NODE_ATTACHED_TO_TREE:
+      mafNode *n = mafNode::SafeDownCast((mafObject *)maf_event->GetSender());
+      if (n)
       {
-        mafNode *n = mafNode::SafeDownCast((mafObject *)maf_event->GetSender());
-        if (n)
+        mafNode *parent = n->GetParent();
+        if (parent == this)
         {
-          mafNode *parent = n->GetParent();
-          if (parent == this)
-          {
-            //mafMessage("Ask for shared GUI!!");
-          }
+          //mafMessage("Ask for shared GUI!!");
         }
-        Superclass::OnEvent(maf_event);
       }
-      break;
-      case NODE_DETACHED_FROM_TREE:
+    }
+    else if(eid == NODE_DETACHED_FROM_TREE)
+    {
+      mafNode *n = mafNode::SafeDownCast((mafObject *)maf_event->GetSender());
+      if (n)
       {
-        mafNode *n = mafNode::SafeDownCast((mafObject *)maf_event->GetSender());
-        if (n)
+        mafNode *parent = n->GetParent();
+        if (parent == this)
         {
-          mafNode *parent = n->GetParent();
-          if (parent == this)
-          {
-            //mafMessage("Remove shared GUI!!");
-          }
+          //mafMessage("Remove shared GUI!!");
         }
-        Superclass::OnEvent(maf_event);
       }
-      break;
-      default:
-        Superclass::OnEvent(maf_event);//ForwardUpEvent(maf_event);
     }
   }
-  else if (maf_event->GetChannel()==MCH_DOWN)
-  {
-    ForwardDownEvent(maf_event);
-    return;
-  }
-  else if (maf_event->GetChannel() == MCH_NODE)
-  {
-	  Superclass::OnEvent(maf_event);
-  }
+  Superclass::OnEvent(maf_event);
 }
 
 //-------------------------------------------------------------------------
