@@ -658,14 +658,14 @@ void mafAvatar3D::CreateGui()
 {
   Superclass::CreateGui();
   // this should be moved to avatar settings!!!
-  wxString mappings[mafCameraTransform::NUM_OF_MAPPINGS];
+  mafString mappings[mafCameraTransform::NUM_OF_MAPPINGS];
   mappings[mafCameraTransform::MAX_SCALE]="max scale";
   mappings[mafCameraTransform::MIN_SCALE]="min scale";
   mappings[mafCameraTransform::FIT_X]="fit X";
   mappings[mafCameraTransform::FIT_Y]="fit Y";
   mappings[mafCameraTransform::ANISOTROPIC]="anisotropic";
 
-  wxString coords_system[3];
+  mafString coords_system[3];
   coords_system[mafAvatar3D::WORLD_COORDS]="world coords";
   coords_system[mafAvatar3D::TRACKER_COORDS]="tracker coords";
   coords_system[mafAvatar3D::CANONICAL_COORDS]="canonical coords";

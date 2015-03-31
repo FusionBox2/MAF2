@@ -93,10 +93,10 @@ void mafGUITransformMouse::CreateGui()
   m_Gui->Divider();
 
   // rotation axes
-  wxString rot_axes[5] = {"x", "y", "z", "view","normal view"};
+  mafString rot_axes[5] = {"x", "y", "z", "view","normal view"};
 
   // translation axes
-	wxString translation_type[10] = {"x", "y", "z", "view","normal view", "xy", "xz", "yz", "surface snap","surface snap with normal || x"}; 
+	mafString translation_type[10] = {"x", "y", "z", "view","normal view", "xy", "xz", "yz", "surface snap","surface snap with normal || x"}; 
 
   // rotation constraints
   m_Gui->Label("rotation constraints");

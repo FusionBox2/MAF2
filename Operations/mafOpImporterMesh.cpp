@@ -145,7 +145,7 @@ void mafOpImporterMesh::CreateGui()
   m_Gui = new mafGUI(this);
   m_Gui->SetListener(this);
 
-  wxString TypeOfImporter[2]={"Ansys Text","ToDo"};
+  mafString TypeOfImporter[2]={"Ansys Text","ToDo"};
   m_Gui->Label(_("Importer type"), true);
   m_Gui->Combo(ID_Importer_Type,"",&m_ImporterType,1,TypeOfImporter);
   m_Gui->Divider(2);

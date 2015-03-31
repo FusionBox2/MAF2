@@ -115,16 +115,16 @@ public:
 	void Divider(long style = 0);
 
   /** Label widget. */
-  void Label(mafString label,bool bold = false, bool multiline = false);
+  void Label(const mafString& label,bool bold = false, bool multiline = false);
 
   /** Label widget. */
   void Label(mafString *var ,bool bold = false, bool multiline = false);
 
   /** Double label widget. */
-	void Label(mafString label1,mafString label2, bool bold_label = false, bool bold_var = false);
+	void Label(const mafString& label1,const mafString& label2, bool bold_label = false, bool bold_var = false);
 
   /** Double label widget. */
-  void Label(mafString label1,mafString *var, bool bold_label = false, bool bold_var = false);
+  void Label(const mafString& label1,mafString *var, bool bold_label = false, bool bold_var = false);
 
   //---------------------------------------------
   /** Label widget. */
@@ -141,114 +141,111 @@ public:
   //---------------------------------------------
 
   /** String entry widget. */
-  void String(int id,wxString label,wxString *var, wxString tooltip = "", bool multiline = false, bool password = false);
+  void String(int id,const mafString& label,mafString *var, const mafString& tooltip = "", bool multiline = false, bool password = false);
 
-  /** String entry widget. */
-  void String(int id,mafString label,mafString *var, mafString tooltip = "", bool multiline = false, bool password = false);
-  
   /** Integer entry widget. */
-  void Integer(int id,mafString label,int *var, int min = MININT, int max = MAXINT, mafString tooltip = "", bool labelAlwaysEnable = false);
+  void Integer(int id,const mafString& label,int *var, int min = MININT, int max = MAXINT, const mafString& tooltip = "", bool labelAlwaysEnable = false);
 
   /** Float entry widget. */
-  void Float(int id,mafString label,float *var, float min = MINFLOAT, float max = MAXFLOAT, int flag=0, int decimal_digit = -1, mafString tooltip = "");
+  void Float(int id,const mafString& label,float *var, float min = MINFLOAT, float max = MAXFLOAT, int flag=0, int decimal_digit = -1, const mafString& tooltip = "");
 
   /** Double entry widget. */
-  void Double(int id,mafString label,double *var, double	min = MINDOUBLE, double max = MAXDOUBLE, int decimal_digit = -1, mafString tooltip = "", bool labelAlwaysEnable = false);
+  void Double(int id,const mafString& label,double *var, double	min = MINDOUBLE, double max = MAXDOUBLE, int decimal_digit = -1, const mafString& tooltip = "", bool labelAlwaysEnable = false);
 
   /** Integer vector3 entry widget. */
-  void Vector(int id,wxString label, int var[3], int min = MININT, int max = MAXINT, wxString tooltip = "", wxColour *bg_colour = NULL);
+  void Vector(int id,const mafString& label, int var[3], int min = MININT, int max = MAXINT, const mafString& tooltip = "", wxColour *bg_colour = NULL);
 
   /** Integer vector3 entry widget. */
-  void Vector(int id,wxString label, int var[3], int minx, int maxx, int miny, int maxy, int minz, int maxz, wxString tooltip = "", wxColour *bg_colour = NULL);
+  void Vector(int id,const mafString& label, int var[3], int minx, int maxx, int miny, int maxy, int minz, int maxz, const mafString& tooltip = "", wxColour *bg_colour = NULL);
 
   /** Float vector3 entry widget. */
-  void Vector(int id,wxString label, float var[3], float min = MINFLOAT, float max = MAXFLOAT, int decimal_digit = -1, wxString tooltip = "", wxColour *bg_colour = NULL);
+  void Vector(int id,const mafString& label, float var[3], float min = MINFLOAT, float max = MAXFLOAT, int decimal_digit = -1, const mafString& tooltip = "", wxColour *bg_colour = NULL);
 
   /** Float vector3 entry widget. */
-  void Vector(int id,wxString label, float var[3], float minx, float maxx, float miny, float maxy, float minz, float maxz, int decimal_digit = -1, wxString tooltip = "", wxColour *bg_colour = NULL);
+  void Vector(int id,const mafString& label, float var[3], float minx, float maxx, float miny, float maxy, float minz, float maxz, int decimal_digit = -1, const mafString& tooltip = "", wxColour *bg_colour = NULL);
 
   /** Double vector3 entry widget. */
-  void Vector(int id,wxString label, double var[3], double min = MINFLOAT, double max = MAXFLOAT, int decimal_digit = -1, wxString tooltip = "", wxColour *bg_colour = NULL);
+  void Vector(int id,const mafString& label, double var[3], double min = MINFLOAT, double max = MAXFLOAT, int decimal_digit = -1, const mafString& tooltip = "", wxColour *bg_colour = NULL);
 
   /** Double vector3 entry widget. */
-  void Vector(int id,wxString label, double var[3], double minx, double maxx, double miny, double maxy, double minz, double maxz, int decimal_digit = -1, wxString tooltip = "", wxColour *bg_colour = NULL);
+  void Vector(int id,const mafString& label, double var[3], double minx, double maxx, double miny, double maxy, double minz, double maxz, int decimal_digit = -1, const mafString& tooltip = "", wxColour *bg_colour = NULL);
 
   /** Double vectorN entry widget. */
-  void VectorN(int id,wxString label, double *var, int num_elem = 3, double min = MINFLOAT, double max = MAXFLOAT, int decimal_digit = -1, wxString tooltip = "");
+  void VectorN(int id,const mafString& label, double *var, int num_elem = 3, double min = MINFLOAT, double max = MAXFLOAT, int decimal_digit = -1, const mafString& tooltip = "");
   
   /** Int vectorN entry widget. */
-  void VectorN(int id,wxString label, int *var,int num_elem = 3,int min = MININT, int max = MAXINT, wxString tooltip = "");
+  void VectorN(int id,const mafString& label, int *var,int num_elem = 3,int min = MININT, int max = MAXINT, const mafString& tooltip = "");
 
   /** Checkbutton widget. */
-  void Bool(int id, mafString label, int *var, int flag = 0, mafString tooltip = ""	);
+  void Bool(int id, const mafString& label, int *var, int flag = 0, const mafString& tooltip = ""	);
 
   /** Checkbutton grid widget. */
   void BoolGrid(int numRows, int numColumns, std::vector<int> &ids, std::vector<const char*> &labelsRows,std::vector<const char*> &labelsColumns, int *var, mafString tooltip = ""	);
 
   /** Radiobutton widget. */
-  void Radio(int id,wxString label, int *var, int numchoices = 0, const wxString choices[] = NULL, int dim = 1, wxString tooltip = "", int style = wxRA_SPECIFY_COLS);
+  void Radio(int id,const mafString& label, int *var, int numchoices = 0, const mafString choices[] = NULL, int dim = 1, const mafString& tooltip = "", int style = wxRA_SPECIFY_COLS);
 
   /** Combo widget. */
-  wxComboBox *Combo(int id,mafString label, int *var, int numchoices = 0, const wxString choices[] = NULL, mafString tooltip = "");
+  wxComboBox *Combo(int id,const mafString& label, int *var, int numchoices = 0, const mafString choices[] = NULL, const mafString& tooltip = "");
 
   /** File open dialog widget. */
-  void FileOpen(int id,mafString label,mafString *var, const mafString wildcard = "", mafString tooltip = "");
+  void FileOpen(int id,const mafString& label,mafString *var, const mafString& wildcard = "", const mafString& tooltip = "");
 
   /** File save dialog widget. */
-  void FileSave(int id,mafString label,mafString *var, const mafString wildcard = "", mafString tooltip = "", bool enableTextCtrl = true);
+  void FileSave(int id,const mafString& label,mafString *var, const mafString& wildcard = "", const mafString& tooltip = "", bool enableTextCtrl = true);
 
   /** Dir Open dialog widget. */
-  void DirOpen(int id,mafString label,mafString *var, mafString tooltip = "");
+  void DirOpen(int id,const mafString& label,mafString *var, const mafString& tooltip = "");
 
   /** Color dialog widget. */
-  void Color(int id,wxString label,wxColour *var, wxString tooltip = "");
+  void Color(int id,const mafString& label,wxColour *var, const mafString& tooltip = "");
 
   #ifdef MAF_USE_VTK //:::::::::::::::::::::::::::::::::
   /** LookupTable dialog widget. */
-  mafGUILutSwatch *Lut(int id,wxString label,vtkLookupTable *lut);
+  mafGUILutSwatch *Lut(int id,const mafString& label,vtkLookupTable *lut);
   #endif //:::::::::::::::::::::::::::::::::
 
   /** Button widget. */
-  void Button(int id,mafString button_text,mafString label="", mafString tooltip=""); 
+  void Button(int id,const mafString& button_text,const mafString& label="", const mafString& tooltip=""); 
   
   /** Button widget with variable label. */
-  void Button(int id,mafString *label,mafString button_text, mafString tooltip=""); 
+  void Button(int id,mafString *label,const mafString& button_text, const mafString& tooltip=""); 
 
 	/** Widget with 4 buttons and a text array disposed like a cross.*/
-  mafGUICrossIncremental *CrossIncremental(int id,const char* label, double *stepVariable, double *topBottomVariable, double *leftRightVariable, int modality ,wxString tooltip ="", bool boldLabel = true, bool comboStep = false, int digits = -1, mafString *buttonUpDown_text = NULL, mafString *buttonLeftRight_text = NULL);
+  mafGUICrossIncremental *CrossIncremental(int id,const mafString& label, double *stepVariable, double *topBottomVariable, double *leftRightVariable, int modality ,const mafString& tooltip ="", bool boldLabel = true, bool comboStep = false, int digits = -1, mafString *buttonUpDown_text = NULL, mafString *buttonLeftRight_text = NULL);
 
   /** two generic Buttons widget. */
-  void TwoButtons(int firstID, int secondID, const char* label1, const char* label2, int alignment = wxALL, int width = -1);
+  void TwoButtons(int firstID, int secondID, const mafString& label1, const mafString& label2, int alignment = wxALL, int width = -1);
 
   /** Multiple Generic Buttons widget. */
-  void MultipleButtons(int numButtons, int numColumns, std::vector<int> &ids, std::vector<const char*> &labels, int alignment = wxALL );
+  void MultipleButtons(int numButtons, int numColumns, std::vector<int> &ids, const std::vector<mafString> &labels, int alignment = wxALL );
 
   /** Ok-Cancel Button widget. */
   void OkCancel(int alignment = wxALL);
 
   /** Integer slider widget. */
-	wxSlider *Slider(int id, wxString label, int *var,int min = MININT, int max = MAXINT, wxString tooltip = "",bool showText=true);
+	wxSlider *Slider(int id, const mafString& label, int *var,int min = MININT, int max = MAXINT, const mafString& tooltip = "",bool showText=true);
 
   /** Float slider widget.*/
-  mafGUIFloatSlider *FloatSlider(int id, wxString label, double *var,double min, double max, wxSize size = wxDefaultSize, wxString tooltip = "", bool textBoxEnable = true);
+  mafGUIFloatSlider *FloatSlider(int id, const mafString& label, double *var,double min, double max, wxSize size = wxDefaultSize, const mafString& tooltip = "", bool textBoxEnable = true);
 
   /** Float slider widget.*/
-  mafGUIFloatSlider *FloatSlider(int id, double *var, double min, double max, wxString minLab, wxString maxLab, wxSize size = wxDefaultSize, wxString tooltip = "", bool textBoxEnable = true);
+  mafGUIFloatSlider *FloatSlider(int id, double *var, double min, double max, const mafString& minLab, const mafString& maxLab, wxSize size = wxDefaultSize, const mafString& tooltip = "", bool textBoxEnable = true);
 
   /** Checked listbox widget. */
-  mafGUICheckListBox *CheckList(int id, wxString label = "", int height = 60, wxString tooltip = "");
+  mafGUICheckListBox *CheckList(int id, const mafString& label = "", int height = 60, const mafString& tooltip = "");
 
   /** Listbox widget. */
-	wxListBox *ListBox(int id, wxString label = "", int height = 60, wxString tooltip = "", long lbox_style = 0, int width = -1);
+	wxListBox *ListBox(int id, const mafString& label = "", int height = 60, const mafString& tooltip = "", long lbox_style = 0, int width = -1);
 
   /** ListCtrl widget. */
-	wxListCtrl *ListCtrl(int id, wxString label = "", int height = 60, wxString tooltip = "", long lbox_style = 0, int width = -1);
+	wxListCtrl *ListCtrl(int id, const mafString& label = "", int height = 60, const mafString& tooltip = "", long lbox_style = 0, int width = -1);
 
   /** Grid widget. */
-	wxGrid *Grid(int id, wxString label = "", int height = 60, int row = 2,int cols = 2, wxString tooltip = "");
+	wxGrid *Grid(int id, const mafString& label = "", int height = 60, int row = 2,int cols = 2, const mafString& tooltip = "");
 
   /** Create a roll out gui.*/
-  mafGUIRollOut *RollOut(int id, mafString title, mafGUI *roll_gui, bool rollOutOpen = true);
+  mafGUIRollOut *RollOut(int id, const mafString& title, mafGUI *roll_gui, bool rollOutOpen = true);
 
   /** Add window to gui sizer. */
   void Add(wxWindow* window,int option = 0, int flag = wxEXPAND, int border = 0)  {window->Reparent(this); window->Show(true); m_Sizer->Add(window,option,flag,border);};

@@ -199,8 +199,8 @@ void mafViewHTML::OnEvent(mafEventBase *maf_event)
        OnForward();
 		break;
     case ID_URL:
-      if(m_Url != wxEmptyString)
-	      m_Html->LoadPage(m_Url);
+      if(!m_Url.IsEmpty())
+	      m_Html->LoadPage(m_Url.GetCStr());
     break;
     default:
       mafEventMacro(*maf_event);

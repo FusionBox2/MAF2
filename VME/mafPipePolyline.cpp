@@ -343,16 +343,16 @@ mafGUI *mafPipePolyline::CreateGui()
 
   if(numberOfArrays)
   {
-	  m_ScalarsName = new wxString[numberOfArrays];
+	  m_ScalarsName = new mafString[numberOfArrays];
 
     for(int i=0;i<numberOfArrays;i++)
 	    m_ScalarsName[i]=m_Vme->GetOutput()->GetVTKData()->GetPointData()->GetArrayName(i);
 
-	  m_Glyph->SelectInputScalars(m_ScalarsName[m_Scalar].c_str());
+	  m_Glyph->SelectInputScalars(m_ScalarsName[m_Scalar].GetCStr());
 	  m_Glyph->Modified();
   }
 
-	const wxString representation_string[] = {_("line"), _("tube"), _("sphere"), _("unconnected sphere")};
+	const mafString representation_string[] = {_("line"), _("tube"), _("sphere"), _("unconnected sphere")};
 	int num_choices = 4;
 	m_Gui = new mafGUI(this);
 	m_Gui->Combo(ID_SCALAR,"",&m_Scalar,numberOfArrays,m_ScalarsName);
@@ -496,7 +496,7 @@ void mafPipePolyline::UpdateScalars()
 	vtkDataSet *data = polyline_output->GetVTKData();
   data->Update();
 
-	data->GetPointData()->SetActiveScalars(m_ScalarsName[m_Scalar].c_str());
+	data->GetPointData()->SetActiveScalars(m_ScalarsName[m_Scalar].GetCStr());
 	polyline_output->Update();
 	m_Vme->Modified();
 
@@ -517,7 +517,7 @@ void mafPipePolyline::UpdateScalars()
 		vtkPolyData *outputVTK = vtkPolyData::SafeDownCast(item->GetData());
 		if(outputVTK)
 		{
-			outputVTK->GetPointData()->SetActiveScalars(m_ScalarsName[m_Scalar].c_str());
+			outputVTK->GetPointData()->SetActiveScalars(m_ScalarsName[m_Scalar].GetCStr());
 			outputVTK->Update();
 			outputVTK->Modified();
 		}

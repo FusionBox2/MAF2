@@ -82,10 +82,10 @@ protected:
   mafVMEVolumeRGB *m_ImportedImageAsVolume;
 
   std::vector<mafString>	m_Files;
-	wxString      m_FileDirectory;
-  wxString      m_FilePrefix;
-  wxString      m_FilePattern;
-  wxString      m_FileExtension;
+	mafString      m_FileDirectory;
+  mafString      m_FilePrefix;
+  mafString      m_FilePattern;
+  mafString      m_FileExtension;
   int           m_FileOffset;
   int           m_FileSpacing;
   int           m_NumFiles;

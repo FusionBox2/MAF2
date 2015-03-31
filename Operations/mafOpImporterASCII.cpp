@@ -137,7 +137,7 @@ enum ASCII_IMPORTER_ID
 void mafOpImporterASCII::OpRun()
 //----------------------------------------------------------------------------
 {
-  wxString scalar_order[2] = {_("row"), _("columns")};
+  mafString scalar_order[2] = {_("row"), _("columns")};
   
   m_Gui = new mafGUI(this);
   m_Gui->Combo(ID_ASCII_DATA_ORDER,_("order"),&m_ScalarOrder,2,scalar_order,_("Select the order of how are stored the scalars."));

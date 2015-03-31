@@ -89,7 +89,7 @@ protected:
   float    m_RadiusFactorAfter;
   float    m_StdDevAfter[3];
   int      m_SamplingRate[3];
-	wxString m_SurfaceName;
+	mafString m_SurfaceName;
 
   vtkStructuredPoints *m_OutputData;
   vtkDataSet          *m_Ds;

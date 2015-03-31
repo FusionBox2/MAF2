@@ -559,16 +559,16 @@ void mafPipeMesh::UpdateActiveScalarsInVMEDataVectorItems()
   
   if(m_ActiveScalarType == POINT_TYPE)
   {
-    m_Vme->GetOutput()->GetVTKData()->GetPointData()->SetActiveScalars(m_ScalarsVTKName[m_ScalarIndex].c_str());
+    m_Vme->GetOutput()->GetVTKData()->GetPointData()->SetActiveScalars(m_ScalarsVTKName[m_ScalarIndex].GetCStr());
     m_Vme->GetOutput()->GetVTKData()->GetPointData()->GetScalars()->Modified();
-    m_LinearizationFilter->GetOutput()->GetPointData()->SetActiveScalars(m_ScalarsVTKName[m_ScalarIndex].c_str());
+    m_LinearizationFilter->GetOutput()->GetPointData()->SetActiveScalars(m_ScalarsVTKName[m_ScalarIndex].GetCStr());
     m_LinearizationFilter->GetOutput()->GetPointData()->GetScalars()->Modified();
   }
   else if(m_ActiveScalarType == CELL_TYPE)
   {
-    m_Vme->GetOutput()->GetVTKData()->GetCellData()->SetActiveScalars(m_ScalarsVTKName[m_ScalarIndex].c_str());
+    m_Vme->GetOutput()->GetVTKData()->GetCellData()->SetActiveScalars(m_ScalarsVTKName[m_ScalarIndex].GetCStr());
     m_Vme->GetOutput()->GetVTKData()->GetCellData()->GetScalars()->Modified();
-    m_LinearizationFilter->GetOutput()->GetCellData()->SetActiveScalars(m_ScalarsVTKName[m_ScalarIndex].c_str());
+    m_LinearizationFilter->GetOutput()->GetCellData()->SetActiveScalars(m_ScalarsVTKName[m_ScalarIndex].GetCStr());
     m_LinearizationFilter->GetOutput()->GetCellData()->GetScalars()->Modified();
 
   }
@@ -587,7 +587,7 @@ void mafPipeMesh::UpdateActiveScalarsInVMEDataVectorItems()
     {
       if(m_ActiveScalarType == POINT_TYPE)
       {
-        wxString scalarsToActivate = m_ScalarsVTKName[m_ScalarIndex].c_str();
+        wxString scalarsToActivate = m_ScalarsVTKName[m_ScalarIndex].GetCStr();
         vtkDataArray *scalarsArray = outputVTK->GetPointData()->GetArray(scalarsToActivate);
 
         if (scalarsArray == NULL)
@@ -599,12 +599,12 @@ void mafPipeMesh::UpdateActiveScalarsInVMEDataVectorItems()
           continue;
         }
 
-        outputVTK->GetPointData()->SetActiveScalars(m_ScalarsVTKName[m_ScalarIndex].c_str());
+        outputVTK->GetPointData()->SetActiveScalars(m_ScalarsVTKName[m_ScalarIndex].GetCStr());
         outputVTK->GetPointData()->GetScalars()->Modified();
       }
       else if(m_ActiveScalarType == CELL_TYPE)
       {
-        wxString scalarsToActivate = m_ScalarsVTKName[m_ScalarIndex].c_str();
+        wxString scalarsToActivate = m_ScalarsVTKName[m_ScalarIndex].GetCStr();
         vtkDataArray *scalarsArray = outputVTK->GetCellData()->GetArray(scalarsToActivate);
         
         if (scalarsArray == NULL)
@@ -698,8 +698,8 @@ void mafPipeMesh::CreateFieldDataControlArrays()
     }
   }
 
-  m_ScalarsInComboBoxNames = new wxString[count];
-  m_ScalarsVTKName = new wxString[count];
+  m_ScalarsInComboBoxNames = new mafString[count];
+  m_ScalarsVTKName = new mafString[count];
 
   for(int j=0;j<count;j++)
   {

@@ -696,7 +696,7 @@ void mafPipeMeshSlice::UpdateLUTAndMapperFromNewActiveScalars()
   data->Update();
   double sr[2];
 
-  mafString activeScalarName = m_ScalarsVTKName[m_ScalarIndex].c_str();
+  mafString activeScalarName = m_ScalarsVTKName[m_ScalarIndex].GetCStr();
 
   if(m_ActiveScalarType == POINT_TYPE)
     data->GetPointData()->GetScalars(activeScalarName.GetCStr())->GetRange(sr);
@@ -767,8 +767,8 @@ void mafPipeMeshSlice::CreateFieldDataControlArrays()
     }
   }
 
-  m_ScalarsName = new wxString[count];
-  m_ScalarsVTKName = new wxString[count];
+  m_ScalarsName = new mafString[count];
+  m_ScalarsVTKName = new mafString[count];
 
   for(int j=0;j<count;j++)
   {
@@ -795,7 +795,7 @@ void mafPipeMeshSlice::UpdateVtkPolyDataNormalFilterActiveScalar()
 
   if(m_ActiveScalarType == POINT_TYPE)
   {
-    mafString activeScalarName = m_ScalarsVTKName[m_ScalarIndex].c_str();
+    mafString activeScalarName = m_ScalarsVTKName[m_ScalarIndex].GetCStr();
     int res = pd->GetPointData()->SetActiveScalars(activeScalarName.GetCStr());
     
     if (res == -1)
@@ -814,7 +814,7 @@ void mafPipeMeshSlice::UpdateVtkPolyDataNormalFilterActiveScalar()
   }
   else if(m_ActiveScalarType == CELL_TYPE)
   {
-    mafString activeScalarName = m_ScalarsVTKName[m_ScalarIndex].c_str();
+    mafString activeScalarName = m_ScalarsVTKName[m_ScalarIndex].GetCStr();
     int res = pd->GetCellData()->SetActiveScalars(activeScalarName.GetCStr());
 
     if (res == -1)

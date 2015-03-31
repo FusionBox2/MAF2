@@ -561,7 +561,7 @@ void mafOpMAFTransform::CreateGui()
   
   // enable/disable gizmo interaction
   m_Gui->Label("interaction modality", true);
-  wxString interactionModality[2] = {"mouse", "gizmo"};
+  mafString interactionModality[2] = {"mouse", "gizmo"};
   m_Gui->Combo(ID_SHOW_GIZMO,"",&m_UseGizmo,2,interactionModality);
 
   m_Gui->Divider(2);
@@ -569,7 +569,7 @@ void mafOpMAFTransform::CreateGui()
   m_Gui->Label("left mouse: interact through gizmo");
 
   // choose active gizmo
-  wxString available_gizmos[3] = {"translate", "rotate", "scale"};
+  mafString available_gizmos[3] = {"translate", "rotate", "scale"};
   m_Gui->Combo(ID_CHOOSE_GIZMO_COMBO, "", &m_ActiveGizmo, 3, available_gizmos);
   m_Gui->Divider(2);
   m_Gui->Label("step parameters:",true);
@@ -656,7 +656,7 @@ void mafOpMAFTransform::CreateGui()
   m_Gui->Divider(2);
   m_Gui->Label("preferences", true);
   m_Gui->Label("scale handling when done");
-  wxString scaleHandling[2] = {"discard", "apply to data"};
+  mafString scaleHandling[2] = {"discard", "apply to data"};
   m_Gui->Combo(ID_SHOW_GIZMO,"",&m_EnableScaling,2,scaleHandling);
 
 

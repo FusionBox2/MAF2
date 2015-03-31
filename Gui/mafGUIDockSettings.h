@@ -64,6 +64,6 @@ protected:
   int m_AllowFloating;
   int m_AllowActivePane;
   int m_CaptionMode;
-  wxString m_CaptionModeLabels[3];
+  mafString m_CaptionModeLabels[3];
 };
 #endif

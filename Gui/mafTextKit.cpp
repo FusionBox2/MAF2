@@ -98,7 +98,7 @@ enum TEXT_KIT_WIDGET_ID
 void mafTextKit::CreateGui()
 //----------------------------------------------------------------------------
 {
-  wxString align[9] = {"upper left","upper center","upper right",
+  mafString align[9] = {"upper left","upper center","upper right",
                        "center left","center","center right",
                        "lower left","lower center","lower right"};
 

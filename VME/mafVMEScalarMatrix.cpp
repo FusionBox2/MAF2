@@ -128,7 +128,7 @@ int mafVMEScalarMatrix::SetData(vnl_matrix<double> &data, mafTimeStamp t)
 mafGUI* mafVMEScalarMatrix::CreateGui()
 //-------------------------------------------------------------------------
 {
-  wxString type_array[3] = {_("time"), _("progress number"), _("scalar ID")};
+  mafString type_array[3] = {_("time"), _("progress number"), _("scalar ID")};
   
   m_Gui = mafNode::CreateGui(); // Called to show info about vmes' type and name
   m_Gui->SetListener(this);

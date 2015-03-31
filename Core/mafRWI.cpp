@@ -978,7 +978,7 @@ enum RWI_WIDGET_ID
 mafGUI *mafRWI::CreateGui()
 //-------------------------------------------------------------------------
 {
-	wxString grid_normal[3] = {"X axes","Y axes","Z axes"};
+	mafString grid_normal[3] = {"X axes","Y axes","Z axes"};
 
 	assert(m_Gui == NULL);
 	m_Gui = new mafGUI(this);

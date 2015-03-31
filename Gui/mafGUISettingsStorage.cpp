@@ -64,7 +64,7 @@ mafGUISettingsStorage::~mafGUISettingsStorage()
 void mafGUISettingsStorage::CreateGui()
 //----------------------------------------------------------------------------
 {
-  wxString remoteStorageArray[2] = {"Local", "HTTP"}; // "SRB"};
+  mafString remoteStorageArray[2] = {"Local", "HTTP"}; // "SRB"};
   m_Gui = new mafGUI(this);
   m_Gui->Label(_("Storage general settings"));
   //m_Gui->Bool(ID_SINGLE_FILE, _("single file mode"), &m_SingleFileFlag,1);

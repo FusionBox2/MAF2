@@ -198,7 +198,7 @@ void mafOpImporterVMEDataSetAttributes::CreateGui()
   m_Gui->FileOpen (ID_TSFileName,	"",	&m_TSFileName, wildcard);
   m_Gui->Divider();
 
-  wxString attributeType[2]={"point data","cell data"};
+  mafString attributeType[2]={"point data","cell data"};
   m_Gui->Label("Importer type",true);
   m_Gui->Combo(ID_AttributeType,"",&m_AttributeType,2,attributeType);
   m_Gui->Divider(2);

@@ -46,7 +46,7 @@ mafGUILocaleSettings::~mafGUILocaleSettings()
 void mafGUILocaleSettings::CreateGui()
 //----------------------------------------------------------------------------
 {
-  wxString lang_array[8] = {"English","French","German","Italian","Spanish","Russian","Polish","Czech"};
+  mafString lang_array[8] = {"English","French","German","Italian","Spanish","Russian","Polish","Czech"};
 
   m_Gui = new mafGUI(this);   
   m_Gui->Label(_("User Interface Language"));

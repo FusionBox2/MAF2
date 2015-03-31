@@ -75,7 +75,7 @@ void mafGUIApplicationSettings::CreateGui()
   EnableItems();
   m_Gui->Label(_("changes will take effect when the \napplication restart"),false,true);
   m_Gui->Label("");
-  wxString id_array[3] = {_("JPG") , _("BMP"), _("PNG")};
+  mafString id_array[3] = {_("JPG") , _("BMP"), _("PNG")};
   m_Gui->Combo(IMAGE_TYPE_ID,_("image type"), &m_ImageTypeId,3,id_array);
   m_Gui->Divider(2);
 }

@@ -392,7 +392,7 @@ mafGUI *mafPipeSurface::CreateGui()
   //// (added by Losi 2011/04/08 to allow scalars array selection)
   // Get the surface's scalars array
   // Scalars data type selection (point data or cell data)
-  wxString scalarsDataTypes[2];
+  mafString scalarsDataTypes[2];
   scalarsDataTypes[0] = "points";
   scalarsDataTypes[1] = "cells";
   m_Gui->Combo(ID_SCALARS_DATA_TYPE_SELECTION,"scalars ty.",&m_SelectedDataAttribute,2,scalarsDataTypes,"Determine the visible scalars data type (points data or cell data)");
@@ -403,13 +403,14 @@ mafGUI *mafPipeSurface::CreateGui()
   // Scalars array selection
   // if(data->GetPointData()->GetNumberOfArrays()>0)
   // {
-  wxArrayString scalarsArrayNames;
+  std::vector<mafString> scalarsArrayNames;
   for(int i = 0; i < dataAttribute->GetNumberOfArrays(); i++)
   {
-    scalarsArrayNames.Add(dataAttribute->GetArrayName(i));
+    mafString tmp;
+    tmp = dataAttribute->GetArrayName(i);
+    scalarsArrayNames.push_back(tmp);
   }
-  wxCArrayString scalarsCArrayNames = wxCArrayString(scalarsArrayNames); // Use this class because wxArrayString::GetStringsArray() is a deprecated method
-  m_ScalarsArraySelection = m_Gui->Combo(ID_SCALARS_ARRAY_SELECTION,"scalars ar.",&m_SelectedScalarsArray,scalarsCArrayNames.GetCount(),scalarsCArrayNames.GetStrings(),"Determine the visible scalars array");
+  m_ScalarsArraySelection = m_Gui->Combo(ID_SCALARS_ARRAY_SELECTION,"scalars ar.",&m_SelectedScalarsArray,scalarsArrayNames.size(), scalarsArrayNames.data(),"Determine the visible scalars array");
   m_Gui->Enable(ID_SCALARS_ARRAY_SELECTION, m_ScalarVisibility != 0 && dataAttribute->GetNumberOfArrays() > 0);
   // }
   ////

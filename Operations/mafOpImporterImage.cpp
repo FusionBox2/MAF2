@@ -38,6 +38,7 @@
 #include "vtkJPEGReader.h"
 #include "vtkPNGReader.h"
 #include "vtkTIFFReader.h"
+#include "mafFilesDirs.h"
 
 #include <algorithm>
 
@@ -117,7 +118,7 @@ void mafOpImporterImage::OpRun()
     m_Files.clear();
 	  m_Gui = new mafGUI(this);
   
-    mafGetOpenMultiFiles(m_FileDirectory.c_str(),wildc.GetCStr(),m_Files);
+    mafGetOpenMultiFiles(m_FileDirectory,wildc,m_Files);
   }
 
   m_NumFiles = m_Files.size();
@@ -128,7 +129,7 @@ void mafOpImporterImage::OpRun()
   }
   else
   {
-    wxSplitPath(m_Files[0].GetCStr(),&m_FileDirectory,&m_FilePrefix,&m_FileExtension);
+    mafSplitPath(m_Files[0].GetCStr(),&m_FileDirectory,&m_FilePrefix,&m_FileExtension);
     
     if (!m_TestMode)
     {

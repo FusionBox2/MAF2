@@ -146,8 +146,8 @@ protected:
   /** Update the visualization with changed scalar*/
   void UpdateVisualizationWithNewSelectedScalars();
 
-  wxString                *m_ScalarsInComboBoxNames;
-  wxString                *m_ScalarsVTKName;
+  mafString                *m_ScalarsInComboBoxNames;
+  mafString                *m_ScalarsVTKName;
 
   mafGUIMaterialButton       *m_MaterialButton;
 

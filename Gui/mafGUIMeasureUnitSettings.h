@@ -69,7 +69,7 @@ protected:
   double       m_ScaleFactor;
   mafString    m_DataUnitName;
   mafString    m_VisualUnitName;
-  wxString     m_DefaultUnits[5];
+  mafString    m_DefaultUnits[5];
   double       m_DefaultFactors[5];
   int          m_ChoosedDataUnit;
   int          m_ChoosedVisualUnit;

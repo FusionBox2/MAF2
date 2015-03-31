@@ -280,7 +280,7 @@ mafGUI* mafViewCompound::CreateGui()
   mafString childview_tooltip;
   childview_tooltip = "set the default child view";
 
-  wxString layout_choices[4] = {"default","layout 1","layout 2", "custom"};
+  mafString layout_choices[4] = {"default","layout 1","layout 2", "custom"};
 
   assert(m_Gui == NULL);
   m_Gui = new mafGUI(this);

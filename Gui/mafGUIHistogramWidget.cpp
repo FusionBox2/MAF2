@@ -172,7 +172,7 @@ void mafGUIHistogramWidget::GetThresholds(double *lower, double *upper)
 void mafGUIHistogramWidget::CreateGui()
 //----------------------------------------------------------------------------
 {
-  wxString represent[3] = {"points", "lines", "bar"};
+  mafString represent[3] = {"points", "lines", "bar"};
   m_Gui = new mafGUI(this);
   m_Gui->Show(true);
 

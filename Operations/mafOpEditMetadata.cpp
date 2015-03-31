@@ -125,7 +125,7 @@ void mafOpEditMetadata::OpRun()
       SelectTag(m_MetadataList->GetString(0).c_str());
     }
 
-    wxString tag_type[2] = {_("numeric"),_("string")};
+    mafString tag_type[2] = {_("numeric"),_("string")};
 
     m_Gui->Button(ID_ADD_METADATA,_("Add"));
     m_Gui->Button(ID_REMOVE_METADATA,_("Remove"));

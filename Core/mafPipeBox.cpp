@@ -200,7 +200,7 @@ void mafPipeBox::UpdateProperty(bool fromTag)
 mafGUI *mafPipeBox::CreateGui()
 //-------------------------------------------------------------------------
 {
-  const wxString box_type[] = {_("3D"), _("4D"),_("3D Subtree"),_("4D Subtree")};
+  mafString box_type[] = {_("3D"), _("4D"),_("3D Subtree"),_("4D Subtree")};
   int num_choices = 4;
 
   assert(m_Gui == NULL);

@@ -76,6 +76,6 @@ protected:
 	mafGUI *CreateGui();
 
   wxHtmlWindow *m_Html;
-  wxString m_Url;
+  mafString m_Url;
 };
 #endif

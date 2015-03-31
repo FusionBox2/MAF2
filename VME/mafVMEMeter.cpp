@@ -824,7 +824,7 @@ mafGUI* mafVMEMeter::CreateGui()
 //-------------------------------------------------------------------------
 {
   int num_mode = 3;
-  const wxString mode_choices_string[] = {_("point distance"), _("line distance"), _("line angle")};
+  const mafString mode_choices_string[] = {_("point distance"), _("line distance"), _("line angle")};
 
   m_Gui = mafNode::CreateGui(); // Called to show info about vmes' type and name
   m_Gui->SetListener(this);

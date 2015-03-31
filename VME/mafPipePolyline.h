@@ -208,7 +208,7 @@ protected:
   mafGUIMaterialButton        *m_MaterialButton;
   std::vector<vtkCaptionActor2D *> m_CaptionActorList;
   
-	wxString *m_ScalarsName;
+	mafString *m_ScalarsName;
   
 	int m_Scalar;
 	int m_ScalarDim;

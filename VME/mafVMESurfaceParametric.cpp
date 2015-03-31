@@ -282,7 +282,7 @@ mafGUI* mafVMESurfaceParametric::CreateGui()
   mafVME::CreateGui();
   if(m_Gui)
   {
-    wxString geometryType[6] = {"Sphere", "Cone", "Cylinder", "Cube", "Plane", "Ellipsoid"};
+    mafString geometryType[6] = {"Sphere", "Cone", "Cylinder", "Cube", "Plane", "Ellipsoid"};
     m_Gui->Combo(ID_GEOMETRY_TYPE, "", &m_GeometryType, 6, geometryType);
     m_Gui->Divider(2);
 
@@ -653,7 +653,7 @@ void mafVMESurfaceParametric::CreateGuiCylinder()
   m_GuiCylinder->Double(CHANGE_VALUE_CYLINDER,_("Height"), &m_CylinderHeight);
   m_GuiCylinder->Double(CHANGE_VALUE_CYLINDER,_("Radius"), &m_CylinderRadius);
   m_GuiCylinder->Double(CHANGE_VALUE_CYLINDER,_("Resolution"), &m_CylinderRes);
-  wxString orientationArray[3] = {_("X axis"),_("Y axis"),_("Z axis")};
+  mafString orientationArray[3] = {_("X axis"),_("Y axis"),_("Z axis")};
   m_GuiCylinder->Radio(CHANGE_VALUE_CYLINDER,"Orientation", &m_CylinderOrientationAxis, 3,orientationArray);
   assert(m_Gui);
   m_Gui->AddGui(m_GuiCylinder);
@@ -668,7 +668,7 @@ void mafVMESurfaceParametric::CreateGuiCone()
   m_GuiCone->Double(CHANGE_VALUE_CONE,_("Radius"), &m_ConeRadius);
   m_GuiCone->Double(CHANGE_VALUE_CONE,_("Resolution"), &m_ConeRes);
   m_GuiCone->Bool(CHANGE_VALUE_CONE,"Cap", &m_ConeCapping); // Open or closed cone
-  wxString orientationArray[3] = {_("X axis"),_("Y axis"),_("Z axis")};
+  mafString orientationArray[3] = {_("X axis"),_("Y axis"),_("Z axis")};
   m_GuiCone->Radio(CHANGE_VALUE_CONE,"Orientation", &m_ConeOrientationAxis, 3,orientationArray);
   assert(m_Gui);
   m_Gui->AddGui(m_GuiCone);
@@ -694,7 +694,7 @@ void mafVMESurfaceParametric::CreateGuiEllipsoid()
   m_GuiEllipsoid->Double(CHANGE_VALUE_ELLIPSOID,_("Z Length"), &m_EllipsoidZLenght);
   m_GuiEllipsoid->Double(CHANGE_VALUE_ELLIPSOID,_("Phi res"), &m_EllipsoidPhiRes);
   m_GuiEllipsoid->Double(CHANGE_VALUE_ELLIPSOID,_("Theta res"), &m_EllipsoidTheRes);
-  wxString orientationArray[3] = {_("X axis"),_("Y axis"),_("Z axis")};
+  mafString orientationArray[3] = {_("X axis"),_("Y axis"),_("Z axis")};
   m_GuiEllipsoid->Radio(CHANGE_VALUE_ELLIPSOID,"Orientation", &m_EllipsoidOrientationAxis, 3,orientationArray);
   assert(m_Gui);
   m_Gui->AddGui(m_GuiEllipsoid);
