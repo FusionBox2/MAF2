@@ -106,9 +106,11 @@ int mafOpExporterMSF::ExportMSF()
 
   mafVMEStorage storage;
   storage.SetURL(m_MSFFile.GetCStr());
-  storage.GetRoot()->SetName("root");
+  mafVMERoot *root;
+  mafNEW(root);
+  root->SetName("root");
+  root->Initialize();
   storage.SetListener(this);
-  storage.GetRoot()->Initialize();
 
   std::vector<idValues> values;
 
@@ -122,9 +124,9 @@ int mafOpExporterMSF::ExportMSF()
   iter->Delete();
 //  mafVME *parent = (mafVME *)m_Input->GetParent();
 //  m_Input->ReparentTo(storage.GetRoot());
-  mafNode::CopyTree(m_Input,storage.GetRoot());
+  mafNode::CopyTree(m_Input,root);
 
-  iter = storage.GetRoot()->GetFirstChild()->NewIterator();
+  iter = root->GetFirstChild()->NewIterator();
   int index = 0;
   for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
@@ -138,7 +140,7 @@ int mafOpExporterMSF::ExportMSF()
   iter->Delete();
 
   std::vector<mafString> linkToEliminate;
-  iter = storage.GetRoot()->GetFirstChild()->NewIterator();
+  iter = root->GetFirstChild()->NewIterator();
   for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
     linkToEliminate.clear();
@@ -173,16 +175,21 @@ int mafOpExporterMSF::ExportMSF()
 //   n->Register(NULL);
 //   n->ReparentTo(storage.GetRoot());
 	//mafNode::CopyTree(m_Input, storage.GetRoot());
-  ((mafVME *)storage.GetRoot()->GetFirstChild())->SetAbsMatrix(*((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());  //Paolo 5-5-2004
+  ((mafVME *)root->GetFirstChild())->SetAbsMatrix(*((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());  //Paolo 5-5-2004
+  storage.SetRoot(root);
+  root->SetListener(&storage);
   if (storage.Store()!=0)
   {
     if (!m_TestMode)
     {
     	wxMessageBox("Error while exporting MSF");
     }
+    root->SetListener(NULL);
+    mafDEL(root);
     return MAF_ERROR;
   }
-
+  root->SetListener(NULL);
+  mafDEL(root);
   return MAF_OK;
 //  m_Input->ReparentTo(parent);
 }

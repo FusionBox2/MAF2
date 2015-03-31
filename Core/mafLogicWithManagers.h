@@ -26,6 +26,9 @@
 #include "mafLogicWithGUI.h"
 #include "mafGUIVMEChooser.h"
 #include "mafVMEManager.h"
+#include "mafGUIFileHistory.h"
+#include "mafVMEStorage.h"
+
 
 //----------------------------------------------------------------------------
 // forward reference
@@ -132,8 +135,8 @@ public:
   /** Set the application stamp for the application, 
   if set to OPEN_ALL_DATA let's the application to open all msf file. 
   As default the application stamp is the name of the application and it is set into the Show() method. */
-  void SetApplicationStamp(mafString &app_stamp);
-  void SetApplicationStamp(std::vector<mafString> app_stamp);
+  void SetApplicationStamp(const mafString &app_stamp);
+  void SetApplicationStamp(const std::vector<mafString>& app_stamp);
 
   /** Allow to set the flag for views to by External to the main frame or to by child of parent frame. */
   void SetExternalViewFlag(bool external = false);
@@ -159,6 +162,7 @@ public:
   void SetFileExtension(mafString &extension) {m_Extension = extension;};
 
 protected:
+  bool AskConfirmAndSave();
   void EnableOperations(bool enable = true);
   //---------------------------------------------------------
   // Description:
@@ -174,9 +178,6 @@ protected:
   /** Redefined to add View,Op,Import,Export menu */
   virtual void CreateMenu();
 
-  /** create a new storage object */
-  virtual void CreateStorage(mafEvent *e);
-
   /** Redefined to add Print buttons */
   virtual void CreateToolbar();
 
@@ -187,7 +188,7 @@ protected:
   /** FILE OPEN evt. handler. 
   By default (file_to_open = NULL) it ask the user to choose a file to open,
   otherwise it open the given one.*/
-	virtual void OnFileOpen(const char *file_to_open = NULL);
+	virtual bool OnFileOpen(const mafString& file_to_open = "");
   /** FILE UPLOAD evt. handler 
   By default (remote_file = NULL) AND the entire msf is uploaded and only the remote directory is asked to the user, 
   otherwise given parameters are managed to upload the file correctly. 'upload_flag' can be:
@@ -195,11 +196,15 @@ protected:
   UPLOAD_COMPRESSED_VME, UPLOAD_COMPRESSED_SUBTREE, UPLOAD_COMPRESSED_TREE.*/
   virtual void OnFileUpload(const char *remote_file, unsigned int upload_flag = UPLOAD_TREE);
   /** FILE HISTORY evt. handler */
-	virtual void OnFileHistory(int menuId);
+	virtual void OnFileHistory(int fileId);
   /** FILE SAVE evt. handler */
-  virtual void OnFileSave();
+  virtual void Save();
+  /** FILE SAVE evt. handler */
+  virtual bool OnFileSave();
   /** FILE SAVEAS evt. handler */
-  virtual void OnFileSaveAs();
+  virtual bool OnFileSaveAs();
+  /** FILE CLOSE evt. handler */
+  virtual bool OnFileClose();
   /** Called on Quit event. */
   virtual void OnQuit();
 
@@ -210,7 +215,7 @@ protected:
   /** Respond to a VME_SELECT evt. Instantiate the 'Select' operation. */
 	virtual void VmeSelect(mafEvent &e);
   /** Respond to a VME_SELECTED evt. Update the selection on the tree and view representation. */
-	virtual void VmeSelected(mafNode *vme);
+	virtual void VmeSelected(mafNode *vme, bool remote = true);
   /** Respond to a VME_DCLICKED evt. Manage the 'Double click' on Selected VME. */
   virtual void VmeDoubleClicked(mafEvent &e);
 	/** Respond to a VME_SHOW evt. Show/Hide the vme. */
@@ -284,6 +289,8 @@ protected:
   wxMenu *m_RecentFileMenu;
   wxMenu *m_OpMenu;
   wxMenu *m_ViewMenu; 
+  mafGUIFileHistory	  m_FileHistory;      ///< Used to hold recently opened files
+  wxConfigBase*       m_Config;           ///< Application configuration for file history management
   wxMenu *m_EditMenu; 
   wxMenu *m_ViewListMenu; 
 
@@ -302,6 +309,25 @@ protected:
   mafString m_Extension;
 
   mafUser *m_User; ///< Applications' user
+  bool     m_TestMode;
+
+  bool                    m_MakeBakFile;      ///< Flag used to create or not the backup file of the saved msf.
+  mafString               m_MSFDir;           ///< Directory name in which is present the msf file.
+  std::vector<mafString> m_AppStamp;      ///< Application stamps for our application.
+  bool                    m_SingleBinaryFile; ///< used to store binary files associated to time varying VMEs as multiple files or not.
+  mafVMEStorage*          m_Storage;          ///< Associated storage
+
+  int                     m_FileHistoryIdx;   ///< Identifier of the file to open
+  mafString               m_MSFFile;          ///< File name of the data associated to the tree.
+  mafString               m_ZipFile;          ///< File name of compressed archive in which save the data associated to the tree.
+  mafString               m_TmpDir;           ///< Temporary directory for zmsf extraction
+
+  /** Set the filename for the current tree. */
+  void SetDirName (const mafString& dirname) {m_MSFDir = dirname;};
+
+  /** Set the flag for saving binary files associated to time varying VMEs.*/
+  void SetSingleBinaryFile(bool singleFile);
+
   struct mafMenuElems
   {
     mafMenuElems(bool op, int id, mafID command):m_op(op), m_id(id), m_command(command){}
@@ -313,5 +339,11 @@ protected:
 
   long m_UserCommandIndex;
   mafID GetNewMenuId();
+  /** Set tag with creation date for the node passed as argument.*/
+  void AddCreationDate(mafNode *vme);
+  /** Set tag with application stamp.*/
+  bool SetAppTag(mafNode *vme);
+  /** Check tag with application stamp to assure compatibility.*/
+  bool CheckAppTag(mafNode *vme);
 };
 #endif

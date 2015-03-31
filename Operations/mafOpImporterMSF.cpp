@@ -115,10 +115,6 @@ int mafOpImporterMSF::ImportMSF()
   mafVMEStorage *storage;
   storage = mafVMEStorage::New();
   storage->SetURL(m_MSFFile.GetCStr());
-  mafVMERoot *root;
-  root = storage->GetRoot();
-  root->Initialize();
-  root->SetName("RootB");
 
   int res = storage->Restore();
   if (res != MAF_OK)
@@ -128,6 +124,10 @@ int mafOpImporterMSF::ImportMSF()
       mafErrorMessage(_("Errors during file parsing! Look the log area for error messages."));
     //return MAF_ERROR;
   }
+  mafVMERoot *root;
+  root = storage->GetRoot();
+  root->Initialize();
+  root->SetListener(storage);
       
   wxString group_name = wxString::Format("imported from %s.%s",name,ext);
  
@@ -154,6 +154,7 @@ int mafOpImporterMSF::ImportMSF()
   m_Group->Update();
   m_Output = m_Group;
 
+  root->SetListener(NULL);
   mafDEL(storage);
   return MAF_OK;
 }

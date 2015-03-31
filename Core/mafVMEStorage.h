@@ -21,11 +21,11 @@
 #include "mafEventSender.h"
 #include "mafUtility.h"
 #include "mafStorable.h"
+#include "mafVMERoot.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :
 //----------------------------------------------------------------------------
-class mafVMERoot;
 
 /** utility class representing the MSF document. */
 class mmuMSFDocument : public mafUtility, public mafStorable
@@ -35,8 +35,10 @@ public:
   virtual ~mmuMSFDocument() {}
   virtual int InternalStore(mafStorageElement *node);
   virtual int InternalRestore(mafStorageElement *node);
+  void SetRoot(mafVMERoot *root);
+  mafVMERoot *GetRoot();
 protected:
-  mafVMERoot *m_Root;
+  mafAutoPointer<mafVMERoot> m_Root;
 };
 
 /** A storage class for MSF local files.
@@ -62,8 +64,6 @@ public:
     since storage creates the root on its own */
   void SetRoot (mafVMERoot *root);
 
-  virtual void SetURL(const char *name);
-
   /** process events coming from tree */
   virtual void OnEvent(mafEventBase *e);
 
@@ -74,6 +74,6 @@ protected:
   /** Do not allow changing the file version from external objects. */
   void SetVersion(const char *version) {Superclass::SetVersion(version);}
 
-  mafVMERoot *m_Root; ///< the VME root node
+  mmuMSFDocument m_MSFDoc; ///< the VME root node
 };
 #endif // _mafVMEStorage_h_
