@@ -13,7 +13,7 @@
 #ifndef __lhpVisualPipeSurfaceScalar_H__
 #define __lhpVisualPipeSurfaceScalar_H__
 
-#include "mafPipe.h"
+#include "mafPipeVTK.h"
 //----------------------------------------------------------------------------
 // forward refs :
 //----------------------------------------------------------------------------
@@ -28,10 +28,10 @@ class mmaMaterial;
 This show simply the polydata present into the VME with its associated scalar. The visual pipe offers also the possibility
 to change the LUT of the VME through the Gui.
 @sa lhpVMESurfaceScalarVarying*/
-class lhpVisualPipeSurfaceScalar : public mafPipe
+class lhpVisualPipeSurfaceScalar : public mafPipeVTK
 {
 public:
-  mafTypeMacro(lhpVisualPipeSurfaceScalar,mafPipe);
+  mafTypeMacro(lhpVisualPipeSurfaceScalar,mafPipeVTK);
 
                lhpVisualPipeSurfaceScalar();
   virtual     ~lhpVisualPipeSurfaceScalar ();

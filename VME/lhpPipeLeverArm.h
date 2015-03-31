@@ -15,7 +15,7 @@
 
 #include "lhpDefines.h"
 
-#include "mafPipe.h"
+#include "mafPipeVTK.h"
 //----------------------------------------------------------------------------
 // forward refs :
 //----------------------------------------------------------------------------
@@ -32,10 +32,10 @@ class mafGUIMaterialButton;
 //----------------------------------------------------------------------------
 // lhpPipeLeverArm :
 //----------------------------------------------------------------------------
-class lhpPipeLeverArm : public mafPipe
+class lhpPipeLeverArm : public mafPipeVTK
 {
 public:
-  mafTypeMacro(lhpPipeLeverArm,mafPipe);
+  mafTypeMacro(lhpPipeLeverArm,mafPipeVTK);
 
                lhpPipeLeverArm();
   virtual     ~lhpPipeLeverArm ();
