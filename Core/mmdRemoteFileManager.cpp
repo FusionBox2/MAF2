@@ -61,6 +61,7 @@ mmdRemoteFileManager::mmdRemoteFileManager()
   m_TotalTime   = 0.0;
   m_LocalStream = NULL;
   m_Headerlist  = NULL;
+  m_Curl = curl_easy_init();
 
   m_UserName = ""; // blank user name means anonymous user.
   m_Pwd = "";
@@ -72,6 +73,9 @@ mmdRemoteFileManager::mmdRemoteFileManager()
 mmdRemoteFileManager::~mmdRemoteFileManager()
 //------------------------------------------------------------------------------
 {
+  curl_easy_cleanup(m_Curl);
+  curl_global_cleanup();
+
 }
 //------------------------------------------------------------------------------
 void mmdRemoteFileManager::SetUsername(const mafString &usr)
