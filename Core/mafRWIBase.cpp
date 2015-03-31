@@ -100,6 +100,8 @@ BEGIN_EVENT_TABLE(mafRWIBase, wxWindow)
   EVT_IDLE(mafRWIBase::OnIdle)
 END_EVENT_TABLE()
 //----------------------------------------------------------------------------
+vtkInstantiatorNewMacro(mafRWIBase)
+//----------------------------------------------------------------------------
 mafRWIBase::mafRWIBase() : wxWindow(), vtkRenderWindowInteractor(), m_Timer(this, ID_mafRWIBase_TIMER)
 //----------------------------------------------------------------------------
 {
