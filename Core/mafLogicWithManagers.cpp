@@ -1555,8 +1555,8 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
     }
     return false;
   }
-  root->Initialize();
-  m_NodeManager->SetRoot(root);
+  //root->Initialize();
+  //m_NodeManager->SetRoot(root);
   VmeSelected(root);
   mafTimeStamp b[2] = {0.0, 0.0};
   root->GetOutput()->GetTimeBounds(b);
