@@ -183,11 +183,7 @@ bool mafVMEMeter::Equals(mafVME *vme)
   bool ret = false;
   if (Superclass::Equals(vme))
   {
-    ret = m_Transform->GetMatrix() == ((mafVMEMeter *)vme)->m_Transform->GetMatrix() && \
-          GetLink("StartVME") == ((mafVMEMeter *)vme)->GetLink("StartVME") && \
-          GetLink("EndVME1") == ((mafVMEMeter *)vme)->GetLink("EndVME1") && \
-          GetLink("EndVME2") == ((mafVMEMeter *)vme)->GetLink("EndVME2") && \
-          GetLink("PlottedVME") == ((mafVMEMeter *)vme)->GetLink("EndVME2");
+    ret = m_Transform->GetMatrix() == ((mafVMEMeter *)vme)->m_Transform->GetMatrix();
   }
   return ret;
 }
