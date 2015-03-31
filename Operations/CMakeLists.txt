@@ -139,7 +139,7 @@ IF (MAF_USE_ITK)
 ENDIF (MAF_USE_ITK)
 
 # List libraries that are needed by this project.
-SET(PROJECT_LIBS "mafVME" "mafInteraction")
+SET(PROJECT_LIBS "mafInteraction")
 
 IF (MAF_USE_VTK)
   SET(PROJECT_LIBS ${PROJECT_LIBS} vtkCommon vtkMAF)

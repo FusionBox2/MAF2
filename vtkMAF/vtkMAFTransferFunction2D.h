@@ -33,7 +33,7 @@
 
 #define VTK_TRANSFER_FUNCTION_2D 20
 
-struct tfWidget {
+struct VTK_vtkMAF_EXPORT tfWidget {
   char   Name[32];
 
   int    GradientInterpolationOrder; // 0 - no interpolation, 1 linear
@@ -60,7 +60,7 @@ struct tfWidget {
   void   SetGradientRange(double from, double to, double center) { Range[1][0] = from; Range[1][1] = to; Range[1][2] = center; }
 
   bool   Inside(double val, double grad) const { return (val >= this->Range[0][0] && val <= this->Range[0][1] && grad >= this->Range[1][0] && grad <= this->Range[1][1]); }
-  VTK_vtkMAF_EXPORT double  Attenuation(double val, double grad) const;
+  double  Attenuation(double val, double grad) const;
 
   void   Update();
   };
