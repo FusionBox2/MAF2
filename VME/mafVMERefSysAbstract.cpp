@@ -408,7 +408,19 @@ void mafVMERefSysAbstract::SetRefSysLink(const char *link_name, mafNode *n)
   }
   if (n->IsMAFType(mafVMELandmark))
   {
-    SetLink(link_name,n->GetParent(),((mafVMELandmarkCloud *)n->GetParent())->FindLandmarkIndex(n->GetName()));
+    mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(n->GetParent());
+    mafString refname(link_name);
+    refname = refname.Lower();
+    int numberOfLandmarks = cloud->GetNumberOfLandmarks();
+    for(int i = 0; i < numberOfLandmarks; i++)
+    {
+      mafString lm_name = cloud->GetLandmarkName(i).Lower();
+      if(lm_name == refname)
+      {
+        SetLink(link_name,n->GetParent(), i);
+        break;
+      }
+    }
   }
   else
   {

@@ -29,10 +29,12 @@
 #include <wx/fs_zip.h>
 
 #include "mafEvent.h"
+#include "mafNodeIterator.h"
 #include "mafVMEStorage.h"
 #include "mafVMERoot.h"
 #include "mafVMEGroup.h"
 #include "mafVMEGeneric.h"
+#include "mafVMEItemVTK.h"
 #include "mafDataVector.h"
 #include "mafNodeManager.h"
 
@@ -128,8 +130,31 @@ int mafOpImporterMSF::ImportMSF()
   }
   mafVMERoot *root = mafVMERoot::SafeDownCast(manager.GetRoot());
       
-  mafString group_name = wxString::Format("imported from %s.%s",name,ext).c_str();
+  mafString group_name = wxString::Format("imported from %s.%s",name.GetCStr(),ext.GetCStr()).c_str();
+
+  mafNodeIterator *iter = root->NewIterator();
+  for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+  {
+    if(node == root)
+      continue;
+    mafVMEGenericAbstract *vmeWithDataVector = mafVMEGenericAbstract::SafeDownCast(node);
+    if (vmeWithDataVector)
+    {
+      mafDataVector *dataVector = vmeWithDataVector->GetDataVector();
+      if(dataVector)
+      {
+        for(mafDataVector::Iterator it = dataVector->Begin(); it != dataVector->End(); ++it)
+        {
+          if(mafVMEItemVTK *vitem = mafVMEItemVTK::SafeDownCast(it->second))
+            vitem->GetData();
+        }
+      }
+    }
+  }
+  iter->Delete();
  
+
+
   mafNEW(m_Group);
   m_Group->SetName(group_name);
   m_Group->ReparentTo(m_Input);
