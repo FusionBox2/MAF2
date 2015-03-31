@@ -354,6 +354,8 @@ bool lhpOpKinectUtil::Import()
         {
           if(string[i] == '\n' || string[i] == '\r')
             string[i] = '\0';
+          if(string[i] == '\\')
+            string[i] = '/';
         }
         mafString fName;
         fName = mafString(string);
@@ -373,6 +375,8 @@ bool lhpOpKinectUtil::Import()
         {
           if(string[i] == '\n' || string[i] == '\r')
             string[i] = '\0';
+          if(string[i] == '\\')
+            string[i] = '/';
         }
         mafString fName;
         fName = mafString(string);
@@ -384,14 +388,30 @@ bool lhpOpKinectUtil::Import()
 
   for(unsigned fileIndex = 0; fileIndex < m_C3DInputFileNameFullPaths.size(); fileIndex++)
   {
+    if(!mafFileExists(m_C3DInputFileNameFullPaths[fileIndex]))
+      continue;
     mafVME *imported = ImportSingleFile(m_C3DInputFileNameFullPaths[fileIndex]);
     if(imported != NULL)
     {
       if(m_ExtApp)
       {
         mafString path, name, ext;
+        mafString pref, resname;
+        pref = mafString("");
         mafSplitPath(m_C3DInputFileNameFullPaths[fileIndex], &path, &name, &ext);
-        imported->SetName(name);
+        for(std::vector<mafString>::iterator it = sessionsList.begin(); it != sessionsList.end(); ++it)
+        {
+          if(*it == path)
+          {
+            mafString spath, sname, sext;
+            mafSplitPath(*it, &spath, &sname, &sext);
+            pref = sname + "_";
+            break;
+          }
+        }
+        resname  = pref;
+        resname += name;
+        imported->SetName(resname);
       }
       result = true;
       m_Imported.push_back(imported);
