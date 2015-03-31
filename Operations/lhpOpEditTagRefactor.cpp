@@ -485,11 +485,6 @@ int lhpOpEditTagRefactor::CopyEditorTagsIntoOriginalMSF()
   storage = mafVMEStorage::New();
   storage->SetURL(msfCompletePath.GetCStr());
 
-  mafVMERoot *root;
-  root = storage->GetRoot();
-  root->Initialize();
-  root->SetName("RootB");
-  
   int res = storage->Restore();
   if (res != MAF_OK)
   {
@@ -498,6 +493,10 @@ int lhpOpEditTagRefactor::CopyEditorTagsIntoOriginalMSF()
       mafErrorMessage(_("Errors during file parsing! Look the log area for error messages."));
     return MAF_ERROR;
   }
+  mafVMERoot *root;
+  root = storage->GetRoot();
+  root->Initialize();
+  root->SetListener(storage);
   if (m_Input->IsA("mafVMERoot"))
   {
     //copy tags from MSF genereted by python editor, to orginal MSF.
@@ -532,6 +531,7 @@ int lhpOpEditTagRefactor::CopyEditorTagsIntoOriginalMSF()
   //remove msf created by phyton tag editor
   remove(msfCompletePath); 
 
+  root->SetListener(NULL);
   mafDEL(storage);
   return MAF_OK;
 }

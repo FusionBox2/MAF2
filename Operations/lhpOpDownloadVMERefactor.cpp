@@ -1409,11 +1409,6 @@ int lhpOpDownloadVMERefactor::ImportMSF(mafNode *parentNode)
   storage = mafVMEStorage::New();
   storage->SetURL(msfFileName.GetCStr());
 
-  mafVMERoot *root;
-  root = storage->GetRoot();
-  root->Initialize();
-  root->SetName("RootB");
-
   int res = storage->Restore();
   if (res != MAF_OK)
   {
@@ -1422,6 +1417,10 @@ int lhpOpDownloadVMERefactor::ImportMSF(mafNode *parentNode)
       mafErrorMessage(_("Errors during file parsing! Look the log area for error messages."));
     return MAF_ERROR;
   }
+  mafVMERoot *root;
+  root = storage->GetRoot();
+  root->Initialize();
+  root->SetListener(storage);
 
   m_NodeDownloaded = root->GetFirstChild();
   if (m_NodeDownloaded == NULL)
@@ -1492,6 +1491,7 @@ int lhpOpDownloadVMERefactor::ImportMSF(mafNode *parentNode)
       UpdateBinaryFile();
   }
 
+  root->SetListener(NULL);
   mafDEL(storage);
   return MAF_OK;
 }

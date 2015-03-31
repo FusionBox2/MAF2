@@ -543,11 +543,6 @@ int lhpOpUploadVMERefactor::CopyTagsIntoOriginalVME()
   storage = mafVMEStorage::New();
   storage->SetURL(MSFToRestoreABSFileName.GetCStr());
 
-  mafVMERoot *root;
-  root = storage->GetRoot();
-  root->Initialize();
-  root->SetName("RootB");
-
   int res = storage->Restore();
   if (res != MAF_OK)
   {
@@ -556,6 +551,10 @@ int lhpOpUploadVMERefactor::CopyTagsIntoOriginalVME()
       mafErrorMessage(_("Errors during file parsing! Look the log area for error messages."));
     return MAF_ERROR;
   }
+  mafVMERoot *root;
+  root = storage->GetRoot();
+  root->Initialize();
+  root->SetListener(storage);
   if (m_Input->IsA("mafVMERoot"))
   {
     //copy tags from MSF genereted by python editor, to orginal MSF.
@@ -583,6 +582,7 @@ int lhpOpUploadVMERefactor::CopyTagsIntoOriginalVME()
 
   //remove msf created by phyton tag editor
   remove(MSFToRestoreABSFileName);
+  root->SetListener(NULL);
   mafDEL(storage);
   return MAF_OK;
 }
@@ -717,9 +717,11 @@ bool lhpOpUploadVMERefactor::CopyInputVMEInCurrentChildCache()
   storage->SetURL(msfname.c_str());
 
   mafVMERoot *root;
-  root = storage->GetRoot();
+  mafNEW(root);
   root->Initialize();
   root->SetName("Root");
+  root->SetListener(storage);
+  storage->SetRoot(root);
 
   if (m_CacheVme->IsA("mafVMERoot"))
     root->DeepCopy(m_CacheVme);
@@ -729,6 +731,9 @@ bool lhpOpUploadVMERefactor::CopyInputVMEInCurrentChildCache()
   storage->Store();
   wxSetWorkingDirectory(oldDir);
 
+  root->SetListener(NULL);
+  mafDEL(storage);
+  mafDEL(root);
   copied = true;
   return copied;
 }

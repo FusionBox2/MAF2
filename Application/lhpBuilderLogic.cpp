@@ -73,7 +73,7 @@ void lhpBuilderLogic::OnEvent(mafEventBase *maf_event)
     case ID_MSF_DATA_CACHE:
       {
         //comunicate to operation msf directory
-        e->SetString(&m_VMEManager->GetFileName());
+        e->SetString(&m_MSFFile);
       }
       break;
     case ID_REQUEST_USER:
