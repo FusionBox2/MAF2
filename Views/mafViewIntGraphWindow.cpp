@@ -991,6 +991,7 @@ void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
   }
 
   bool previnit = false;
+  double valY = 0;
   if(m_XGraph != NULL)
   {
     varIndex = 0;
@@ -1014,7 +1015,6 @@ void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
           {
             double valX   = m_XGraph->GetValue(nI, m_XGraph->GetIndexX(0), m_XGraph->GetXDer(0));
             double paramt = m_XGraph->GetValue(nI, 0, 0);
-            double valY;
             unsigned int der = m_Graphs[i]->GetYDer(nJ);
             if(m_Graphs[i]->GetValueByParam(valY, paramt, m_Graphs[i]->GetIndexY(nJ), der))
             {
@@ -1052,6 +1052,13 @@ void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
           pPen = new wxPen(MARKER_COLOR, 0, wxSOLID);
           pCompatDC->SetPen(*pPen);
           pCompatDC->DrawEllipse(nX - MARKER_RADIUS, nY - MARKER_RADIUS, 2 * MARKER_RADIUS, 2 * MARKER_RADIUS);
+          sprintf(sExp,"%.1f", valY / rYPow10Marks);
+          pCompatDC->GetTextExtent(sExp, &szTextSize.x, &szTextSize.y);
+          rTextRect.SetLeft(nX + MARKER_RADIUS + 5);
+          rTextRect.SetTop(nY + MARKER_RADIUS);
+          rTextRect.SetRight(nX + MARKER_RADIUS + szTextSize.x + 5);
+          rTextRect.SetBottom(/*nY + MARKER_RADIUS + */m_TitleFntHeight);
+          pCompatDC->DrawText(sExp, rTextRect.GetLeft(), rTextRect.GetTop());
           pCompatDC->SetPen(wxNullPen);
           cppDEL(pPen);
         }
@@ -1088,7 +1095,6 @@ void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
           for(unsigned t = nStart; t < nFinish; t++)
           {
             double valX;
-            double valY;
             valX = m_Graphs[i]->GetValue(t, 0, 0);
             if(m_Graphs[i]->GetValueByParam(valY, valX, nYNumber, nYDer))
             {
@@ -1122,6 +1128,13 @@ void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
           pPen = new wxPen(MARKER_COLOR, 0, wxSOLID);
           pCompatDC->SetPen(*pPen);
           pCompatDC->DrawEllipse(nX - MARKER_RADIUS, nY - MARKER_RADIUS, 2 * MARKER_RADIUS, 2 * MARKER_RADIUS);
+          sprintf(sExp,"%.1f", valY / rYPow10Marks);
+          pCompatDC->GetTextExtent(sExp, &szTextSize.x, &szTextSize.y);
+          rTextRect.SetLeft(nX - MARKER_RADIUS - szTextSize.x - 5);
+          rTextRect.SetTop(nY + MARKER_RADIUS);
+          rTextRect.SetRight(nX - MARKER_RADIUS);
+          rTextRect.SetBottom(/*nY + MARKER_RADIUS + */m_TitleFntHeight);
+          pCompatDC->DrawText(sExp, rTextRect.GetLeft(), rTextRect.GetTop());
           pCompatDC->SetPen(wxNullPen);
           cppDEL(pPen);
         }
