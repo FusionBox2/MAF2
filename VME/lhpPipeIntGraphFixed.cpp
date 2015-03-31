@@ -71,10 +71,10 @@ lhpPipeIntGraphFixed::~lhpPipeIntGraphFixed()
 }
 
 //----------------------------------------------------------------------------
-void lhpPipeIntGraphFixed::Create(mafSceneNode *n)
+void lhpPipeIntGraphFixed::Create(mafNode *node, mafView *view)
 //----------------------------------------------------------------------------
 {
-  Superclass::Create(n);
+  Superclass::Create(node, view);
 }
 //----------------------------------------------------------------------------
 void lhpPipeIntGraphFixed::Select(bool sel)
@@ -129,7 +129,7 @@ void lhpPipeIntGraphFixed::UpdateGUIChecks()
     m_CheckBoxYder->CheckItem(i, false);
   for(unsigned int i = 0; i < m_Graph->GetXDim(); i++)
   {
-    const mafGraphData *pg = m_View->GetRenderWindow()->GetXParam();
+    const mafGraphData *pg = mafViewIntGraph::SafeDownCast(m_View)->GetRenderWindow()->GetXParam();
     if(pg == m_Graph)
       m_CheckBoxXval->CheckItem(m_Graph->GetXID(0), true);
     else if(pg == NULL)
@@ -159,10 +159,11 @@ void lhpPipeIntGraphFixed::OnEvent(mafEventBase *maf_event)
         if(m_CheckBoxXval->IsItemChecked(itemId))
         {
           m_Graph->SetXVar(0, itemId);
+          mafViewIntGraph *vgraph = mafViewIntGraph::SafeDownCast(m_View);
           if(itemId != 0)
-            m_View->GetRenderWindow()->SetXParam(m_Graph);
+            vgraph->GetRenderWindow()->SetXParam(m_Graph);
           else 
-            m_View->GetRenderWindow()->SetXParam(NULL);
+            vgraph->GetRenderWindow()->SetXParam(NULL);
         }
         mafEventMacro(mafEvent(this,CAMERA_UPDATE));
       }

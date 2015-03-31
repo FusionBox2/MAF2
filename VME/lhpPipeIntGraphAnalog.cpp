@@ -78,10 +78,10 @@ lhpPipeIntGraphAnalog::~lhpPipeIntGraphAnalog()
 }
 
 //----------------------------------------------------------------------------
-void lhpPipeIntGraphAnalog::Create(mafSceneNode *n)
+void lhpPipeIntGraphAnalog::Create(mafNode *node, mafView *view)
 //----------------------------------------------------------------------------
 {
-  Superclass::Create(n);
+  Superclass::Create(node, view);
 
   m_EmgPlot = medVMEAnalog::SafeDownCast(m_Vme);
   m_NumberOfSignals = m_EmgPlot->GetScalarOutput()->GetScalarData().rows()-1; //1 row is for time information
@@ -184,7 +184,7 @@ void lhpPipeIntGraphAnalog::UpdateGUIChecks()
     m_CheckBoxYder->CheckItem(i, false);
   for(unsigned int i = 0; i < m_Graph->GetXDim(); i++)
   {
-    const mafGraphData *pg = m_View->GetRenderWindow()->GetXParam();
+    const mafGraphData *pg = mafViewIntGraph::SafeDownCast(m_View)->GetRenderWindow()->GetXParam();
     if(pg == m_Graph)
       m_CheckBoxXval->CheckItem(m_Graph->GetXID(0), true);
     else if(pg == NULL)
@@ -222,11 +222,12 @@ void lhpPipeIntGraphAnalog::OnEvent(mafEventBase *maf_event)
         m_Gui->Update();
         if(m_CheckBoxXval->IsItemChecked(itemId))
         {
+          mafViewIntGraph *vgraph = mafViewIntGraph::SafeDownCast(m_View);
           m_Graph->SetXVar(0, itemId);
           if(itemId != 0)
-            m_View->GetRenderWindow()->SetXParam(m_Graph);
+            vgraph->GetRenderWindow()->SetXParam(m_Graph);
           else 
-            m_View->GetRenderWindow()->SetXParam(NULL);
+            vgraph->GetRenderWindow()->SetXParam(NULL);
         }
         mafEventMacro(mafEvent(this,CAMERA_UPDATE));
       }

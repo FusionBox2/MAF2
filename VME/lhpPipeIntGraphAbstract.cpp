@@ -48,21 +48,23 @@ lhpPipeIntGraphAbstract::~lhpPipeIntGraphAbstract()
   {
     m_Vme->RemoveObserver(this);
   }
-  if(m_View->GetRenderWindow())
+  mafViewIntGraph *vgraph = mafViewIntGraph::SafeDownCast(m_View);
+  if(vgraph && vgraph->GetRenderWindow())
   {
-    m_View->GetRenderWindow()->RemGraphData(m_Graph);
-    m_View->GetRenderWindow()->SetXParam(NULL);
+    vgraph->GetRenderWindow()->RemGraphData(m_Graph);
+    vgraph->GetRenderWindow()->SetXParam(NULL);
   }
   cppDEL(m_Graph);
 }
 
 //----------------------------------------------------------------------------
-void lhpPipeIntGraphAbstract::Create(mafSceneNode *n)
+void lhpPipeIntGraphAbstract::Create(mafNode *node, mafView *view)
 //----------------------------------------------------------------------------
 {
-  Superclass::Create(n);
-  m_View = mafViewIntGraph::SafeDownCast(n->m_Sg->m_View);
-  m_View->GetRenderWindow()->AddGraphData(m_Graph);
+  Superclass::Create(node, view);
+  mafViewIntGraph *vgraph = mafViewIntGraph::SafeDownCast(m_View);
+  if(vgraph)
+    vgraph->GetRenderWindow()->AddGraphData(m_Graph);
   m_Vme->AddObserver(this);
 }
 

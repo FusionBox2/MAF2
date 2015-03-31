@@ -55,10 +55,10 @@ lhpVisualPipeSurfaceScalar::lhpVisualPipeSurfaceScalar()
   m_OutlineActor    = NULL;
 }
 //----------------------------------------------------------------------------
-void lhpVisualPipeSurfaceScalar::Create(mafSceneNode *n)
+void lhpVisualPipeSurfaceScalar::Create(mafNode *node, mafView *view)
 //----------------------------------------------------------------------------
 {
-  Superclass::Create(n);
+  Superclass::Create(node, view);
   
   m_Selected = false;
   m_Actor           = NULL;

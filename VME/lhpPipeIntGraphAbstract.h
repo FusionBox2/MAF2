@@ -39,7 +39,7 @@ public:
   virtual     ~lhpPipeIntGraphAbstract();
 
   /** Create the VTK rendering pipeline*/
-  virtual void Create(mafSceneNode *n);
+  virtual void Create(mafNode *node, mafView *view);
 
   /** Answer events coming from the Gui and from cloud */
   void OnEvent(mafEventBase *maf_event);
@@ -67,7 +67,6 @@ protected:
   virtual mafGUI *CreateGui();
 
   mafGraphDataImpl                      *m_Graph;
-  mafViewIntGraph                       *m_View;
   int                                   m_ForcedWholeRange;
   int                                   m_WholeRange;
 };  

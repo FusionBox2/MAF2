@@ -47,7 +47,7 @@ public:
   };
 
   /** Create the VTK rendering pipeline*/
-  virtual void Create(mafSceneNode *n);
+  virtual void Create(mafNode *node, mafView *view);
 
   /** Manage the actor selection by showing the corner box around the actor when the corresponding VME is selected.*/
   virtual void Select(bool select); 
