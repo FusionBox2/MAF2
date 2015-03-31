@@ -272,8 +272,9 @@ protected:
 
   mafTransform *m_Transform;
 
-  vtkLineSource     *m_LineSource;
+  vtkLineSource     *m_LineSource1;
   vtkLineSource     *m_LineSource2;
+  vtkLineSource     *m_LineSource3;
   vtkAppendPolyData *m_Goniometer;
   vtkPolyData       *m_PolyData;
   mafTransform      *m_TmpTransform;

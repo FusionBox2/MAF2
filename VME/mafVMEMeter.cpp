@@ -40,6 +40,7 @@
 #include "vtkMAFSmartPointer.h"
 #include "mafRWI.h"
 #include "mafGUIDialogPreview.h"
+#include "mafVectors.h"
 
 #include "vtkMAFDataPipe.h"
 #include "vtkMath.h"
@@ -85,14 +86,16 @@ mafVMEMeter::mafVMEMeter()
   output->SetTransform(m_Transform); // force my transform in the output
   SetOutput(output);
 
-  vtkNEW(m_LineSource);
+  vtkNEW(m_LineSource1);
   vtkNEW(m_LineSource2);
+  vtkNEW(m_LineSource3);
   vtkNEW(m_Goniometer);
   vtkNEW(m_PolyData);
   
 
-  m_Goniometer->AddInput(m_LineSource->GetOutput());
+  m_Goniometer->AddInput(m_LineSource1->GetOutput());
   m_Goniometer->AddInput(m_LineSource2->GetOutput());
+  m_Goniometer->AddInput(m_LineSource3->GetOutput());
 
   m_PolyData->DeepCopy(m_Goniometer->GetOutput());
 
@@ -147,8 +150,9 @@ mafVMEMeter::~mafVMEMeter()
 //-------------------------------------------------------------------------
 {
   mafDEL(m_Transform);
-  vtkDEL(m_LineSource);
+  vtkDEL(m_LineSource1);
   vtkDEL(m_LineSource2);
+  vtkDEL(m_LineSource3);
   vtkDEL(m_Goniometer);
   mafDEL(m_TmpTransform);
   vtkDEL(m_PolyData);
@@ -335,12 +339,15 @@ void mafVMEMeter::InternalUpdate()
       double local_end[3];
       m_TmpTransform->TransformPoint(m_EndPoint,local_end);
 
-      m_LineSource2->SetPoint1(local_end[0],local_end[1],local_end[2]);
+      m_LineSource3->SetPoint1(local_end[0], local_end[1], local_end[2]);
+      m_LineSource3->SetPoint2(local_end[0], local_end[1], local_end[2]);
+      m_LineSource3->Update();
+      m_LineSource2->SetPoint1(local_end[0], local_end[1], local_end[2]);
       m_LineSource2->SetPoint2(local_end[0],local_end[1],local_end[2]);
       m_LineSource2->Update();
-      m_LineSource->SetPoint1(local_start[0],local_start[1],local_start[2]);
-      m_LineSource->SetPoint2(local_end[0],local_end[1],local_end[2]);
-      m_LineSource->Update();
+      m_LineSource1->SetPoint1(local_start[0],local_start[1],local_start[2]);
+      m_LineSource1->SetPoint2(local_end[0],local_end[1],local_end[2]);
+      m_LineSource1->Update();
       m_Goniometer->Modified();
 
       GenerateHistogram(m_GenerateHistogram);
@@ -358,12 +365,13 @@ void mafVMEMeter::InternalUpdate()
   {
     mafVME *start_vme = GetStartVME();
     mafVME *end1_vme  = GetEnd1VME();
-    mafVME *end2_vme  = GetEnd2VME();
+    mafVME *start2_vme = GetStart2VME();
+    mafVME *end2_vme = GetEnd2VME();
 
-    bool start_ok = true, end1_ok = true, end2_ok = true;
+    bool start_ok = true, start2_ok = true, end1_ok = true, end2_ok = true;
     double orientation[3];
 
-    if (start_vme && end1_vme && end2_vme)
+    if(start_vme && (start2_vme || !m_LineAngle2) && end1_vme && end2_vme)
     {
       // start is a landmark, consider also visibility
       /*if (mflVMELandmark *start_landmark = mflVMELandmark::SafeDownCast(start_vme))
@@ -381,6 +389,22 @@ void mafVMEMeter::InternalUpdate()
       {
         start_vme->GetOutput()->Update();  
         start_vme->GetOutput()->GetAbsPose(m_StartPoint, orientation, currTs);
+      }
+      if(m_LineAngle2)
+      {
+        if(start2_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("StartVME2") != -1)
+        {
+          ((mafVMELandmarkCloud *)start2_vme)->GetLandmark(GetLinkSubId("StartVME2"), m_StartPoint2, currTs);
+          mafMatrix tm;
+          start2_vme->GetOutput()->GetAbsMatrix(tm, currTs);
+          m_TmpTransform->SetMatrix(tm);
+          m_TmpTransform->TransformPoint(m_StartPoint2, m_StartPoint2);
+        }
+        else
+        {
+          start2_vme->GetOutput()->Update();
+          start2_vme->GetOutput()->GetAbsPose(m_StartPoint2, orientation, currTs);
+        }
       }
 
       // end is a landmark, consider also visibility
@@ -422,17 +446,31 @@ void mafVMEMeter::InternalUpdate()
     else
     {
       start_ok = false;
-      end1_ok  = false;
+      start2_ok = false;
+      end1_ok = false;
       end2_ok  = false;
     }
 
-    if (start_ok && end1_ok && end2_ok)
+    if(start_ok && start2_ok && end1_ok && end2_ok)
     {
-      double start[3],p1[3],p2[3],p3[3],t;
+      double start[3], start2[3], p1[3], p2[3], p3[3], p4[3], t;
 
       start[0] = m_StartPoint[0];
       start[1] = m_StartPoint[1];
       start[2] = m_StartPoint[2];
+
+      if(m_LineAngle2)
+      {
+        start2[0] = m_StartPoint2[0];
+        start2[1] = m_StartPoint2[1];
+        start2[2] = m_StartPoint2[2];
+      }
+      else
+      {
+        p4[0] = start2[0] = m_StartPoint[0];
+        p4[1] = start2[1] = m_StartPoint[1];
+        p4[2] = start2[2] = m_StartPoint[2];
+      }
 
       p1[0] = m_EndPoint[0];
       p1[1] = m_EndPoint[1];
@@ -442,34 +480,76 @@ void mafVMEMeter::InternalUpdate()
       p2[1] = m_EndPoint2[1];
       p2[2] = m_EndPoint2[2];
 
-      if(!m_InfiniteLine)
-        vtkLine::DistanceToLine(start,p1,p2,t,p3);
+      if(m_LineAngle2)
+      {
+        V3d<double> origin(p1);
+        V3d<double> direct = V3d<double>(p2) - origin;
+        V3d<double> pivot(start);
+        V3d<double> haxis = V3d<double>(start2) -V3d<double>(start);
+
+
+        double alph = 0.0;
+        double beta = 0.0;
+
+        double hal2 = haxis.length2();
+        double dil2 = direct.length2();
+        if(hal2 > 1e-6 && dil2 > 1e-6)
+        {
+        haxis /= sqrt(hal2);
+        direct /= sqrt(dil2);
+
+        double dircos = haxis * direct;
+        if(fabs(dircos) < 1.0 - 1e-6)
+        {
+        beta = (pivot - origin) * direct;
+        beta += ((origin - pivot) * haxis) * dircos;
+        beta /= 1 - dircos * dircos;
+        }
+        alph = (origin - pivot) * haxis + beta * dircos;
+        }
+
+        V3d<double> SP = pivot + alph * haxis;
+        V3d<double> EP = origin + beta * direct;
+
+        for(int i = 0; i < 3; i++)
+        {
+          p3[i] = EP[i];
+          p4[i] = SP[i];
+        }
+      }
       else
       {
-        double np1[3], p1p2[3], proj, den;
-
-        for (int i=0; i<3; i++) 
+        if(!m_InfiniteLine)
+          vtkLine::DistanceToLine(start, p1, p2, t, p3);
+        else
         {
-          np1[i] = start[i] - p1[i];
-          p1p2[i] = p1[i] - p2[i];
-        }
+          double np1[3], p1p2[3], proj, den;
 
-        proj = 0;
-        if ( (den=vtkMath::Norm(p1p2)) != 0.0 )
-        {
-          for (int i=0; i<3; i++)
+          for(int i = 0; i < 3; i++)
           {
-            p1p2[i] /= den;
+            np1[i] = start[i] - p1[i];
+            p1p2[i] = p1[i] - p2[i];
           }
-          proj = vtkMath::Dot(np1,p1p2);
-        }
-        for (int i=0; i<3; i++) 
-          p3[i] = p1[i] + proj * p1p2[i];
 
+          proj = 0;
+          if((den = vtkMath::Norm(p1p2)) != 0.0)
+          {
+            for(int i = 0; i < 3; i++)
+            {
+              p1p2[i] /= den;
+            }
+            proj = vtkMath::Dot(np1, p1p2);
+          }
+          for(int i = 0; i < 3; i++)
+          {
+            p3[i] = p1[i] + proj * p1p2[i];
+            p4[i] = start[i];
+          }
+        }
       }
 
       // compute distance between start and closest point
-      m_Distance = sqrt(vtkMath::Distance2BetweenPoints(start,p3));
+      m_Distance = sqrt(vtkMath::Distance2BetweenPoints(p4, p3));
 
       if(GetMeterMeasureType() == mafVMEMeter::RELATIVE_MEASURE)
         m_Distance -= GetMeterAttributes()->m_InitMeasure;
@@ -480,9 +560,15 @@ void mafVMEMeter::InternalUpdate()
       m_TmpTransform->Invert();
       m_TmpTransform->TransformPoint(start,local_start);
 
+      double local_start2[3];
+      m_TmpTransform->TransformPoint(start2, local_start2);
+
       // compute end point in local coordinate system
       double local_closest[3];
       m_TmpTransform->TransformPoint(p3,local_closest);
+
+      double local_closest2[3];
+      m_TmpTransform->TransformPoint(p4, local_closest2);
 
       double local_p1[3];
       m_TmpTransform->TransformPoint(p1,local_p1);
@@ -490,14 +576,17 @@ void mafVMEMeter::InternalUpdate()
       double local_p2[3];
       m_TmpTransform->TransformPoint(p2,local_p2);
 
-      m_LineSource->SetPoint1(local_start);
-      m_LineSource->SetPoint2(local_closest);
-      m_LineSource->Update();
+      m_LineSource1->SetPoint1(local_p1);
+      m_LineSource1->SetPoint2(local_p2);
+      m_LineSource1->Update();
 
-      m_LineSource2->SetPoint1(local_p1);
-      m_LineSource2->SetPoint2(local_p2);
+      m_LineSource2->SetPoint1(local_closest);
+      m_LineSource2->SetPoint2(local_closest2);
       m_LineSource2->Update();
 
+      m_LineSource3->SetPoint1(local_start);
+      m_LineSource3->SetPoint2(local_start2);
+      m_LineSource3->Update();
       m_Goniometer->Modified();
     }
     else
@@ -653,13 +742,16 @@ void mafVMEMeter::InternalUpdate()
       double local_end2[3];
       m_TmpTransform->TransformPoint(p2,local_end2);
 
-      m_LineSource->SetPoint1(local_start);
-      m_LineSource->SetPoint2(local_end1);
-      m_LineSource->Update();
+      m_LineSource1->SetPoint1(local_start);
+      m_LineSource1->SetPoint2(local_end1);
+      m_LineSource1->Update();
 
       m_LineSource2->SetPoint1(local_start2);
       m_LineSource2->SetPoint2(local_end2);
       m_LineSource2->Update();
+      m_LineSource3->SetPoint1(local_end2);
+      m_LineSource3->SetPoint2(local_end2);
+      m_LineSource3->Update();
 
       m_Goniometer->Modified();
     }
@@ -912,7 +1004,7 @@ mafGUI* mafVMEMeter::CreateGui()
   if(GetMeterAttributes()->m_MeterMode == POINT_DISTANCE)
     m_Gui->Enable(ID_END2_METER_LINK,false);
   m_Gui->Enable(ID_INFINITE_LINE, GetMeterAttributes()->m_MeterMode == LINE_DISTANCE);
-  m_Gui->Enable(ID_LINE_ANGLE2, GetMeterAttributes()->m_MeterMode == LINE_ANGLE);
+  m_Gui->Enable(ID_LINE_ANGLE2, GetMeterAttributes()->m_MeterMode == LINE_ANGLE || GetMeterAttributes()->m_MeterMode == LINE_DISTANCE);
   m_Gui->Enable(ID_START2_METER_LINK, GetMeterAttributes()->m_MeterMode == LINE_ANGLE && m_LineAngle2);
 
   m_Gui->Bool(ID_PLOT_PROFILE,_("plot profile"),&m_GenerateHistogram);
@@ -1061,7 +1153,7 @@ void mafVMEMeter::OnEvent(mafEventBase *maf_event)
 		  else if(GetMeterAttributes()->m_MeterMode ==  LINE_DISTANCE)
 		  { 
 			  m_Gui->Enable(ID_END2_METER_LINK,true);
-        m_Gui->Enable(ID_LINE_ANGLE2, false);
+        m_Gui->Enable(ID_LINE_ANGLE2, true);
         m_Gui->Enable(ID_START2_METER_LINK, false);
 		  }
 		  else if(GetMeterAttributes()->m_MeterMode ==  LINE_ANGLE)
