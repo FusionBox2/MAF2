@@ -1215,22 +1215,21 @@ bool lhpOpRegression::RegressionFemur(bool right)
       radius[0] = coefsSclX[0] * sqrt(FTC.length2()) + coefsSclX[1] * sqrt(FME.length2()) + coefsSclX[2] * sqrt(FLE.length2()) + coefsSclX[3];
       radius[1] = coefsSclY[0] * sqrt(FTC.length2()) + coefsSclY[1] * sqrt(FME.length2()) + coefsSclY[2] * sqrt(FLE.length2()) + coefsSclY[3];
       radius[2] = coefsSclZ[0] * sqrt(FTC.length2()) + coefsSclZ[1] * sqrt(FME.length2()) + coefsSclZ[2] * sqrt(FLE.length2()) + coefsSclZ[3];
-      if(!right)
-      {
-        center.x = - center.x;
-        ori.x    = -ori.x;
-      }
       mafMatrix mFin;
       mafTransform *mT = NULL;
       ori /= sqrt(ori.length2());
+      TransformPoint(mLocal, center);
+      TransformVector(mLocal, ori);
+      if(!right)
+      {
+        ori.x = -ori.x;
+        center.x = -center.x;
+      }
       mT->HelicalAxisToMatrix(ori.components, angle, mFin);
-
       mFin.SetElement(0, 3, center[0]);
       mFin.SetElement(1, 3, center[1]);
       mFin.SetElement(2, 3, center[2]);
-      mafMatrix::Multiply4x4(mLocal, mFin, mFin);
       AddEllipsoid("Lat_Cond", mFin, radius);
-      TransformPoint(mLocal, center);
       TransformPoint(mGlobalInv, center);
       LMAdding LMdata;
       LMdata.m_Pelvic = false;
@@ -1311,22 +1310,21 @@ bool lhpOpRegression::RegressionFemur(bool right)
       radius[0] = coefsSclX[0] * sqrt(FTC.length2()) + coefsSclX[1] * sqrt(FME.length2()) + coefsSclX[2] * sqrt(FLE.length2()) + coefsSclX[3];
       radius[1] = coefsSclY[0] * sqrt(FTC.length2()) + coefsSclY[1] * sqrt(FME.length2()) + coefsSclY[2] * sqrt(FLE.length2()) + coefsSclY[3];
       radius[2] = coefsSclZ[0] * sqrt(FTC.length2()) + coefsSclZ[1] * sqrt(FME.length2()) + coefsSclZ[2] * sqrt(FLE.length2()) + coefsSclZ[3];
-      if(!right)
-      {
-        center.x = - center.x;
-        ori.x    = -ori.x;
-      }
       mafMatrix mFin;
       mafTransform *mT = NULL;
       ori /= sqrt(ori.length2());
+      TransformPoint(mLocal, center);
+      TransformVector(mLocal, ori);
+      if(!right)
+      {
+        ori.x = -ori.x;
+        center.x = -center.x;
+      }
       mT->HelicalAxisToMatrix(ori.components, angle, mFin);
-
       mFin.SetElement(0, 3, center[0]);
       mFin.SetElement(1, 3, center[1]);
       mFin.SetElement(2, 3, center[2]);
-      mafMatrix::Multiply4x4(mLocal, mFin, mFin);
       AddEllipsoid("Med_Cond", mFin, radius);
-      TransformPoint(mLocal, center);
       TransformPoint(mGlobalInv, center);
       LMAdding LMdata;
       LMdata.m_Pelvic = false;
