@@ -28,6 +28,7 @@
 #include "mafVME.h"
 #include "mafGraphIDDesc.h"
 
+bool lhpPipeIntGraphAbstract::s_WholeRange = false;
 
 mafCxxAbstractTypeMacro(lhpPipeIntGraphAbstract);
 
@@ -36,7 +37,7 @@ lhpPipeIntGraphAbstract::lhpPipeIntGraphAbstract()
 //----------------------------------------------------------------------------
 {
   m_ForcedWholeRange = false;
-  m_WholeRange       = false;
+  m_WholeRange       = s_WholeRange;
   m_Graph = new mafGraphDataImpl(this, 8888.8888, 1000);
   m_Graph->AddXVar(0);
 }
@@ -75,7 +76,7 @@ mafGUI *lhpPipeIntGraphAbstract::CreateGui()
   assert(m_Gui == NULL);
   m_Gui = new mafGUI(this);
 
-  m_Gui->Bool(ID_WHOLE_RANGE, _("Whole range"), &m_WholeRange);
+  //m_Gui->Bool(ID_WHOLE_RANGE, _("Whole range"), &m_WholeRange);
   return m_Gui;
 }
 

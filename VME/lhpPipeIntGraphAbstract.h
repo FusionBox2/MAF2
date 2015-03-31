@@ -33,6 +33,7 @@ class mafGUICheckListBox;
 class lhpPipeIntGraphAbstract : public mafPipe
 {
 public:
+  static bool s_WholeRange;
   mafAbstractTypeMacro(lhpPipeIntGraphAbstract, mafPipe);
   
   lhpPipeIntGraphAbstract();
