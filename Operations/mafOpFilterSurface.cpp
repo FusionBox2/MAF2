@@ -45,8 +45,7 @@ mafCxxTypeMacro(mafOpFilterSurface);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpFilterSurface::mafOpFilterSurface(const wxString &label) :
-mafOp(label)
+mafOpFilterSurface::mafOpFilterSurface(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
 	m_OpType	= OPTYPE_OP;
@@ -88,7 +87,7 @@ bool mafOpFilterSurface::Accept(mafNode *node)
 mafOp *mafOpFilterSurface::Copy()   
 //----------------------------------------------------------------------------
 {
-  return (new mafOpFilterSurface(m_Label));
+  return new mafOpFilterSurface(GetLabel());
 }
 //----------------------------------------------------------------------------
 // Constants:
@@ -212,7 +211,7 @@ void mafOpFilterSurface::OnEvent(mafEventBase *maf_event)
 	  {
 			mafEvent helpEvent;
 			helpEvent.SetSender(this);
-			mafString operationLabel = this->m_Label;
+			mafString operationLabel = GetLabel();
 			helpEvent.SetString(&operationLabel);
 			helpEvent.SetId(OPEN_HELP_PAGE);
 			mafEventMacro(helpEvent);

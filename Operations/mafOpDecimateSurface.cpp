@@ -46,8 +46,7 @@ mafCxxTypeMacro(mafOpDecimateSurface);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpDecimateSurface::mafOpDecimateSurface(const wxString label) :
-mafOp(label)
+mafOpDecimateSurface::mafOpDecimateSurface(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
 	m_OpType	= OPTYPE_OP;
@@ -84,7 +83,7 @@ bool mafOpDecimateSurface::Accept(mafNode *node)
 mafOp *mafOpDecimateSurface::Copy()   
 //----------------------------------------------------------------------------
 {
-  return (new mafOpDecimateSurface(m_Label));
+  return new mafOpDecimateSurface(GetLabel());
 }
 //----------------------------------------------------------------------------
 // Constants:

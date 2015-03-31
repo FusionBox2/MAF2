@@ -40,8 +40,7 @@ mafCxxTypeMacro(mafOpFilterVolume);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpFilterVolume::mafOpFilterVolume(const wxString &label) 
-:mafOp(label)
+mafOpFilterVolume::mafOpFilterVolume(const mafString& label) : Superclass (label)
 //----------------------------------------------------------------------------
 {
 	m_OpType	= OPTYPE_OP;
@@ -81,7 +80,7 @@ bool mafOpFilterVolume::Accept(mafNode *node)
 mafOp *mafOpFilterVolume::Copy()
 //----------------------------------------------------------------------------
 {
-  return (new mafOpFilterVolume(m_Label));
+  return (new mafOpFilterVolume(GetLabel()));
 }
 //----------------------------------------------------------------------------
 // Constants:

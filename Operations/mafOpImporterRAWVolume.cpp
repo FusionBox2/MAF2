@@ -54,7 +54,7 @@ mafCxxTypeMacro(mafOpImporterRAWVolume);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpImporterRAWVolume::mafOpImporterRAWVolume(const wxString &label) : mafOp(label)
+mafOpImporterRAWVolume::mafOpImporterRAWVolume(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
 	m_OpType			= OPTYPE_IMPORTER;
@@ -101,7 +101,7 @@ mafOpImporterRAWVolume::~mafOpImporterRAWVolume()
 mafOp *mafOpImporterRAWVolume::Copy()
 //----------------------------------------------------------------------------
 {
-	return new mafOpImporterRAWVolume(m_Label);
+	return new mafOpImporterRAWVolume(GetLabel());
 }
 //----------------------------------------------------------------------------
 // Constants :

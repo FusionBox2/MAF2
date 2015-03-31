@@ -45,7 +45,7 @@ class MAF_EXPORT mafOpImporterVMEDataSetAttributes: public mafOp
 {
 public:
 
-	mafOpImporterVMEDataSetAttributes(const wxString &label = "mafOpImporterVMEDataSetAttributes");
+	mafOpImporterVMEDataSetAttributes(const mafString& label = "mafOpImporterVMEDataSetAttributes");
 	~mafOpImporterVMEDataSetAttributes(); 
 	
   mafTypeMacro(mafOpImporterVMEDataSetAttributes, mafOp);

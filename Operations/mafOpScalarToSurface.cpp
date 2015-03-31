@@ -46,8 +46,7 @@ mafCxxTypeMacro(mafOpScalarToSurface);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpScalarToSurface::mafOpScalarToSurface(const wxString &label) :
-mafOp(label)
+mafOpScalarToSurface::mafOpScalarToSurface(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType	= OPTYPE_OP;
@@ -67,7 +66,7 @@ mafOpScalarToSurface::~mafOpScalarToSurface()
 mafOp* mafOpScalarToSurface::Copy()   
 //----------------------------------------------------------------------------
 {
-	return new mafOpScalarToSurface(m_Label);
+	return new mafOpScalarToSurface(GetLabel());
 }
 
 //----------------------------------------------------------------------------

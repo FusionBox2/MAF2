@@ -41,7 +41,7 @@ class MAF_EXPORT mafOpImporterRAWVolume: public mafOp
 {
 public:
              
-            	 mafOpImporterRAWVolume(const wxString &label = "RAWImporterVolume");
+            	 mafOpImporterRAWVolume(const mafString& label = "RAWImporterVolume");
 	virtual     ~mafOpImporterRAWVolume();
 	virtual void OnEvent(mafEventBase *maf_event);
 	

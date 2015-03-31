@@ -36,7 +36,7 @@ class mafMSFImporter;
 class MAF_EXPORT mafOpImporterMSF1x: public mafOp
 {
 public:
-  mafOpImporterMSF1x(const wxString &label = "MSF1xImporter");
+  mafOpImporterMSF1x(const mafString& label = "MSF1xImporter");
  ~mafOpImporterMSF1x(); 
   
   mafTypeMacro(mafOpImporterMSF1x, mafOp);

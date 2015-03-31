@@ -42,8 +42,7 @@ mafCxxTypeMacro(mafOpExporterSTL);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpExporterSTL::mafOpExporterSTL(const wxString &label) :
-mafOp(label)
+mafOpExporterSTL::mafOpExporterSTL(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_EXPORTER;
@@ -187,7 +186,7 @@ void mafOpExporterSTL::ExportSurface()
 mafOp* mafOpExporterSTL::Copy()   
 //----------------------------------------------------------------------------
 {
-  mafOpExporterSTL *cp = new mafOpExporterSTL(m_Label);
+  mafOpExporterSTL *cp = new mafOpExporterSTL(GetLabel());
   cp->m_File = m_File;
   return cp;
 }

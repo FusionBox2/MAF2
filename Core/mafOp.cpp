@@ -35,14 +35,13 @@ mafCxxTypeMacro(mafOp);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOp::mafOp(const wxString &label)
+mafOp::mafOp(const mafString &label) : m_Label(label)
 //----------------------------------------------------------------------------
 {
 	m_Gui       = NULL;
 	m_Next      = NULL;
 	m_OpType    = OPTYPE_OP;
 	m_Canundo   = false;
-	m_Label     = label;
   m_Guih      = NULL;
 	m_Input     = NULL;
   m_Output    = NULL;

@@ -65,8 +65,7 @@ mafCxxTypeMacro(mafOpImporterImage);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpImporterImage::mafOpImporterImage(const wxString &label) :
-mafOp(label)
+mafOpImporterImage::mafOpImporterImage(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_IMPORTER;
@@ -169,7 +168,7 @@ void mafOpImporterImage::OpRun()
 mafOp* mafOpImporterImage::Copy()   
 //----------------------------------------------------------------------------
 {
-  return (new mafOpImporterImage(m_Label));
+  return (new mafOpImporterImage(GetLabel()));
 }
 //----------------------------------------------------------------------------
 void mafOpImporterImage::OpStop(int result)

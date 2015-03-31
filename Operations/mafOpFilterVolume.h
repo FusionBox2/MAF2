@@ -32,7 +32,7 @@ class mafEvent;
 class MAF_EXPORT mafOpFilterVolume: public mafOp
 {
 public:
-	mafOpFilterVolume(const wxString &label = "FilterVolume");
+	mafOpFilterVolume(const mafString& label = "FilterVolume");
 	~mafOpFilterVolume(); 
 	virtual void OnEvent(mafEventBase *maf_event);
 	

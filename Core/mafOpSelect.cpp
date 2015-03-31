@@ -45,16 +45,23 @@
 static mafAutoPointer<mafNode> m_Clipboard = NULL;
 int  mafOpEdit::m_NumOperations(0); 
 
+mafCxxTypeMacro(mafOpPaste)
+mafCxxTypeMacro(mafOpDelete)
+mafCxxTypeMacro(mafOpCut)
+mafCxxTypeMacro(mafOpCopy)
+mafCxxTypeMacro(mafOpEdit)
+mafCxxTypeMacro(mafOpSelect)
+
+
 //////////////////
 // mafOpSelect ://
 //////////////////
 //----------------------------------------------------------------------------
-mafOpSelect::mafOpSelect(wxString label) 
+mafOpSelect::mafOpSelect(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_Canundo = true; 
   m_OpType  = OPTYPE_EDIT; 
-  m_Label   = label;
   m_NewNodeSelected = NULL;
   m_OldNodeSelected = NULL;
 }
@@ -108,8 +115,7 @@ void mafOpSelect::OpUndo()
 // mafOpEdit: //
 ////////////////
 //----------------------------------------------------------------------------
-mafOpEdit::mafOpEdit(wxString label)
-: m_Backup(NULL)
+mafOpEdit::mafOpEdit(const mafString& label): Superclass(label), m_Backup(NULL)
 //----------------------------------------------------------------------------
 {
   m_Canundo = true; 
@@ -176,10 +182,9 @@ void mafOpEdit::OpRun()
 // mafOpCut ://
 ///////////////
 //----------------------------------------------------------------------------
-mafOpCut::mafOpCut(wxString label) 
+mafOpCut::mafOpCut(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
-  m_Label=label;
   m_SelectionParent = NULL; 
 }
 //----------------------------------------------------------------------------
@@ -191,7 +196,7 @@ mafOpCut::~mafOpCut()
 mafOp* mafOpCut::Copy() 
 //----------------------------------------------------------------------------
 {
-  return new mafOpCut(m_Label);
+  return new mafOpCut(GetLabel());
 }
 //----------------------------------------------------------------------------
 bool mafOpCut::Accept(mafNode* vme)
@@ -312,10 +317,9 @@ Restore the Selection
 // mafOpDelete ://
 //////////////////
 //----------------------------------------------------------------------------
-mafOpDelete::mafOpDelete(wxString label) 
+mafOpDelete::mafOpDelete(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
-  m_Label           = label;
   m_SelectionParent = NULL; 
   m_Canundo         = false;
 }
@@ -328,7 +332,7 @@ mafOpDelete::~mafOpDelete()
 mafOp* mafOpDelete::Copy() 
 //----------------------------------------------------------------------------
 {
-  return new mafOpDelete(m_Label);
+  return new mafOpDelete(GetLabel());
 }
 //----------------------------------------------------------------------------
 bool mafOpDelete::Accept(mafNode* vme)
@@ -399,10 +403,9 @@ void mafOpDelete::OpUndo()
 // mafOpCopy ://
 ////////////////
 //----------------------------------------------------------------------------
-mafOpCopy::mafOpCopy(wxString label) 
+mafOpCopy::mafOpCopy(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
-  m_Label=label;
 }
 //----------------------------------------------------------------------------
 mafOpCopy::~mafOpCopy()
@@ -413,7 +416,7 @@ mafOpCopy::~mafOpCopy()
 mafOp* mafOpCopy::Copy()
 //----------------------------------------------------------------------------
 {
-  return new mafOpCopy(m_Label);
+  return new mafOpCopy(GetLabel());
 }
 //----------------------------------------------------------------------------
 bool mafOpCopy::Accept(mafNode* vme)
@@ -456,17 +459,16 @@ restore previous clipboard
 // mafOpPaste ://
 /////////////////
 //----------------------------------------------------------------------------
-mafOpPaste::mafOpPaste(wxString label) 
+mafOpPaste::mafOpPaste(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
-  m_Label=label;
   m_PastedVme = NULL; 
 }
 //----------------------------------------------------------------------------
 mafOp* mafOpPaste::Copy() 
 //----------------------------------------------------------------------------
 {                    
-  return new mafOpPaste(m_Label);
+  return new mafOpPaste(GetLabel());
 }
 //----------------------------------------------------------------------------
 bool mafOpPaste::Accept(mafNode* vme)       

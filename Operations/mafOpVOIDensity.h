@@ -31,7 +31,7 @@ class vtkDoubleArray;
 class MAF_EXPORT mafOpVOIDensity: public mafOp
 {
 public:
-	mafOpVOIDensity(const wxString &label = "VOIDensity");
+	mafOpVOIDensity(const mafString& label = "VOIDensity");
 	~mafOpVOIDensity(); 
 	virtual void OnEvent(mafEventBase *maf_event);
   

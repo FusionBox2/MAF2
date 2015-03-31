@@ -58,8 +58,7 @@ mafCxxTypeMacro(mafOpClipSurface);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpClipSurface::mafOpClipSurface(const wxString &label) :
-mafOp(label)
+mafOpClipSurface::mafOpClipSurface(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType	= OPTYPE_OP;
@@ -122,7 +121,7 @@ mafOpClipSurface::~mafOpClipSurface()
 mafOp* mafOpClipSurface::Copy()   
 //----------------------------------------------------------------------------
 {
-	return new mafOpClipSurface(m_Label);
+	return new mafOpClipSurface(GetLabel());
 }
 
 //----------------------------------------------------------------------------

@@ -33,7 +33,7 @@ class mafOp;
 class MAF_EXPORT mafOpImporterExternalFile: public mafOp
 {
 public:
-  mafOpImporterExternalFile(const wxString &label = "ExternalFileImporter");
+  mafOpImporterExternalFile(const mafString &label = "ExternalFileImporter");
  ~mafOpImporterExternalFile(); 
 
   mafTypeMacro(mafOpImporterExternalFile, mafOp);

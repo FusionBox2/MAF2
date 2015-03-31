@@ -53,8 +53,7 @@ mafCxxTypeMacro(mafOpTransformInterface);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpTransformInterface::mafOpTransformInterface(const wxString &label) :
-mafOp(label)
+mafOpTransformInterface::mafOpTransformInterface(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType = OPTYPE_OP;
@@ -116,7 +115,7 @@ void mafOpTransformInterface::PostMultiplyEventMatrix(mafEventBase *maf_event)
 mafOp* mafOpTransformInterface::Copy()   
 //----------------------------------------------------------------------------
 {
-  return new mafOpTransformInterface(m_Label);
+  return new mafOpTransformInterface(GetLabel());
 }
 
 //----------------------------------------------------------------------------

@@ -57,7 +57,7 @@ class mafNode;
 class MAF_EXPORT mafOpTransformInterface : public mafOp
 {
 public:
-  mafOpTransformInterface(const wxString &label = "TransformInterface");
+  mafOpTransformInterface(const mafString& label = "TransformInterface");
   virtual ~mafOpTransformInterface(); 
  
   /** Return true for the acceptable vme type. */

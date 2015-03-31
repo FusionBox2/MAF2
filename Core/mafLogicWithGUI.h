@@ -122,8 +122,8 @@ public:
 
 protected:
   /** Fill the application menu.	*/
-  void AddToMenu(const wxString& name, long id, wxMenu* path_menu, const wxString& menuPath ="");
-  void SetAccelerator(const wxString& name, long id);
+  void AddToMenu(const mafString& name, long id, wxMenu* path_menu, const mafString& menuPath ="");
+  void SetAccelerator(const mafString& name, long id);
   /** Add the main menu.*/
   void AddMenu();
   /** Add the toolbar.*/

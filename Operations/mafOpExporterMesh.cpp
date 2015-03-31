@@ -41,8 +41,7 @@ mafCxxTypeMacro(mafOpExporterMesh);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpExporterMesh::mafOpExporterMesh(const wxString &label) :
-mafOp(label)
+mafOpExporterMesh::mafOpExporterMesh(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_EXPORTER;
@@ -69,7 +68,7 @@ mafOp* mafOpExporterMesh::Copy()
 //----------------------------------------------------------------------------
 {
   // Copy the operation
-  mafOpExporterMesh *cp = new mafOpExporterMesh(m_Label);
+  mafOpExporterMesh *cp = new mafOpExporterMesh(GetLabel());
   return cp;
 }
 //----------------------------------------------------------------------------

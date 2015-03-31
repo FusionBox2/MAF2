@@ -428,10 +428,8 @@ void mafLogicWithManagers::Plug(mafOp *op, wxString menuPath, bool canUndo, mafG
 {
   if(m_OpManager) 
   {
-    wxString fullLabel = op->m_Label;
-    wxString st = op->m_Label.c_str();
-    wxString menu_codes=wxStripMenuCodes(st);
-    op->m_Label = menu_codes.c_str();
+    mafString fullLabel = op->GetLabel();
+    op->SetLabel(mafStripMenuCodes(fullLabel));
     long id = m_OpManager->OpAdd(op/*, canUndo/*, setting*/);
     wxMenu *path_menu = m_OpMenu;
     if(op->GetType() == OPTYPE_IMPORTER)
@@ -1669,10 +1667,10 @@ bool mafLogicWithManagers::OnFileSave()
   if(!root)
     return true;;
 
-  mafString tmpMSFFile = m_MSFFile;
-  if(m_Storage)
-    tmpMSFFile = m_Storage->GetURL();
-  assert(tmpMSFFile == m_MSFFile);
+  if(m_Storage && m_Storage->GetURL() != m_MSFFile)
+  {
+    assert(false);
+  }
   if(m_MSFFile.IsEmpty()) 
     return OnFileSaveAs();
   Save();

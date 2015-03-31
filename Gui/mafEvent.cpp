@@ -101,7 +101,7 @@ void mafEvent::Log()
   if(m_width)  s << " width= " << m_width;
   if(m_height) s << " height= " << m_height;
   if(m_Vme)    s << " vme= "   << (long)m_Vme <<" : " << m_Vme->GetName();
-  if(m_Op)     s << " op= "    << (long)m_Op  <<" : " << m_Op->m_Label;
+  if(m_Op)     s << " op= "    << (long)m_Op  <<" : " << m_Op->GetLabel();
 #ifdef MAF_USE_WX
   if(m_Win)    s << " win= "   << (long)m_Win;
   if(m_UpdateUIEvent)   s << " ui_evt= "<< (long)m_UpdateUIEvent;

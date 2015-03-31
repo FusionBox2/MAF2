@@ -36,8 +36,7 @@ mafCxxTypeMacro(mafOpCreateRefSys);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpCreateRefSys::mafOpCreateRefSys(const wxString &label) :
-mafOp(label)
+mafOpCreateRefSys::mafOpCreateRefSys(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType	= OPTYPE_OP;
@@ -57,7 +56,7 @@ mafOpCreateRefSys::~mafOpCreateRefSys()
 mafOp* mafOpCreateRefSys::Copy()   
 //----------------------------------------------------------------------------
 {
-	return new mafOpCreateRefSys(m_Label);
+	return new mafOpCreateRefSys(GetLabel());
 }
 
 //----------------------------------------------------------------------------

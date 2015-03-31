@@ -44,8 +44,7 @@ mafCxxTypeMacro(mafOpImporterVMEDataSetAttributes);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpImporterVMEDataSetAttributes::mafOpImporterVMEDataSetAttributes(const wxString &label) :
-mafOp(label)
+mafOpImporterVMEDataSetAttributes::mafOpImporterVMEDataSetAttributes(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_OP;
@@ -81,7 +80,7 @@ bool mafOpImporterVMEDataSetAttributes::Accept(mafNode *node)
 mafOp* mafOpImporterVMEDataSetAttributes::Copy()   
 //----------------------------------------------------------------------------
 {
-  mafOpImporterVMEDataSetAttributes *cp = new mafOpImporterVMEDataSetAttributes(m_Label);
+  mafOpImporterVMEDataSetAttributes *cp = new mafOpImporterVMEDataSetAttributes(GetLabel());
   return cp;
 }
 //----------------------------------------------------------------------------
@@ -237,7 +236,7 @@ void mafOpImporterVMEDataSetAttributes::OnEvent(mafEventBase *maf_event)
 	{
 		mafEvent helpEvent;
 		helpEvent.SetSender(this);
-		mafString operationLabel = this->m_Label;
+		mafString operationLabel = GetLabel();
 		helpEvent.SetString(&operationLabel);
 		helpEvent.SetId(OPEN_HELP_PAGE);
 		mafEventMacro(helpEvent);

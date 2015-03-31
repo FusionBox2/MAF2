@@ -31,7 +31,7 @@ class mafVMESlicer;
 class MAF_EXPORT mafOpCreateSlicer: public mafOp
 {
 public:
-  mafOpCreateSlicer(const wxString &label = "CreateSlicer");
+  mafOpCreateSlicer(const mafString& label = "CreateSlicer");
  ~mafOpCreateSlicer(); 
 
   mafTypeMacro(mafOpCreateSlicer, mafOp);

@@ -49,7 +49,7 @@ class MAF_EXPORT mafOpValidateTree: public mafOp
 {
 public:
   /** constructor */
-  mafOpValidateTree(const wxString &label = "Validate Tree");
+  mafOpValidateTree(const mafString& label = "Validate Tree");
   /** destructor */
   ~mafOpValidateTree(); 
   

@@ -51,7 +51,7 @@ class vtkMAFClipSurfaceBoundingBox;
 class MAF_EXPORT mafOpClipSurface: public mafOp
 {
 public:
-  mafOpClipSurface(const wxString &label = "ClipSurface");
+  mafOpClipSurface(const mafString& label = "ClipSurface");
   ~mafOpClipSurface(); 
 	virtual void OnEvent(mafEventBase *maf_event);
 

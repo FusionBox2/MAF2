@@ -49,9 +49,10 @@
 
 #include <fstream>
 
+mafCxxTypeMacro(mafOpExporterRAW)
+
 //----------------------------------------------------------------------------
-mafOpExporterRAW::mafOpExporterRAW(const wxString &label) :
-mafOp(label)
+mafOpExporterRAW::mafOpExporterRAW(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType = OPTYPE_EXPORTER;
@@ -481,7 +482,7 @@ void mafOpExporterRAW::OpUndo()
 mafOp* mafOpExporterRAW::Copy()   
 //----------------------------------------------------------------------------
 {
-    mafOpExporterRAW *cp = new mafOpExporterRAW(m_Label);
+    mafOpExporterRAW *cp = new mafOpExporterRAW(GetLabel());
     return cp;
 }
 

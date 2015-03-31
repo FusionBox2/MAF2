@@ -35,7 +35,7 @@ class mafNode;
 class MAF_EXPORT mafOpExporterSTL: public mafOp
 {
 public:
-  mafOpExporterSTL(const wxString &label = "STLExporter");
+  mafOpExporterSTL(const mafString& label = "STLExporter");
  ~mafOpExporterSTL(); 
   
   mafTypeMacro(mafOpExporterSTL, mafOp);

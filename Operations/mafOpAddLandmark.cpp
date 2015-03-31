@@ -46,8 +46,7 @@ mafCxxTypeMacro(mafOpAddLandmark);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpAddLandmark::mafOpAddLandmark(const wxString &label) :
-mafOp(label)
+mafOpAddLandmark::mafOpAddLandmark(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
 	m_OpType			= OPTYPE_OP;
@@ -83,7 +82,7 @@ mafOpAddLandmark::~mafOpAddLandmark()
 mafOp* mafOpAddLandmark::Copy()   
 //----------------------------------------------------------------------------
 {
-	mafOpAddLandmark *op = new mafOpAddLandmark(m_Label);
+	mafOpAddLandmark *op = new mafOpAddLandmark(GetLabel());
   op->m_OpType = m_OpType;
 	op->m_Canundo = m_Canundo;
 	op->m_PickingActiveFlag = m_PickingActiveFlag;

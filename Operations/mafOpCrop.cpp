@@ -47,8 +47,7 @@ mafCxxTypeMacro(mafOpCrop);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpCrop::mafOpCrop(const wxString &label, bool showShadingPlane)
-: mafOp(label)
+mafOpCrop::mafOpCrop(const mafString& label, bool showShadingPlane) : Superclass(label)
 //----------------------------------------------------------------------------
 {
 	m_OpType	= OPTYPE_OP;
@@ -79,7 +78,7 @@ mafOpCrop::~mafOpCrop()
 mafOp *mafOpCrop::Copy()
 //----------------------------------------------------------------------------
 {
-	return new mafOpCrop(m_Label,m_ShowShadingPlane);
+	return new mafOpCrop(GetLabel(),m_ShowShadingPlane);
 }
 //----------------------------------------------------------------------------
 bool mafOpCrop::Accept(mafNode* node)
@@ -422,7 +421,7 @@ void mafOpCrop::OnEvent(mafEventBase *maf_event)
 			{
 				mafEvent helpEvent;
 				helpEvent.SetSender(this);
-				mafString operationLabel = this->m_Label;
+				mafString operationLabel = GetLabel();
 				helpEvent.SetString(&operationLabel);
 				helpEvent.SetId(OPEN_HELP_PAGE);
 				mafEventMacro(helpEvent);

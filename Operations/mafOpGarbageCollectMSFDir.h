@@ -50,7 +50,7 @@ class MAF_EXPORT mafOpGarbageCollectMSFDir: public mafOp
 {
 public:
   /** constructor */
-  mafOpGarbageCollectMSFDir(const wxString &label = "Garbage Collect MSF Tree");
+  mafOpGarbageCollectMSFDir(const mafString& label = "Garbage Collect MSF Tree");
   
   /** destructor */
   ~mafOpGarbageCollectMSFDir(); 

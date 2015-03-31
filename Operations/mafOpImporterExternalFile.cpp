@@ -34,8 +34,7 @@ mafCxxTypeMacro(mafOpImporterExternalFile);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpImporterExternalFile::mafOpImporterExternalFile(const wxString &label) :
-mafOp(label)
+mafOpImporterExternalFile::mafOpImporterExternalFile(const mafString &label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_IMPORTER;
@@ -55,7 +54,7 @@ mafOpImporterExternalFile::~mafOpImporterExternalFile( )
 mafOp* mafOpImporterExternalFile::Copy()   
 //----------------------------------------------------------------------------
 {
-  mafOpImporterExternalFile *cp =  new mafOpImporterExternalFile(m_Label);
+  mafOpImporterExternalFile *cp =  new mafOpImporterExternalFile(GetLabel());
   cp->m_File = m_File;
   return cp;
 }

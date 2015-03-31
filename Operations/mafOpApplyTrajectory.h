@@ -49,7 +49,7 @@ public:
   };
 
   /** Contructor. */
-	mafOpApplyTrajectory(const wxString &label = "Apply trajectory");
+	mafOpApplyTrajectory(const mafString& label = "Apply trajectory");
 
   /** Desctructor. */
 	~mafOpApplyTrajectory(); 

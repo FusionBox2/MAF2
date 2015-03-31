@@ -38,8 +38,7 @@ mafCxxTypeMacro(mafOpCreateSurfaceParametric);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpCreateSurfaceParametric::mafOpCreateSurfaceParametric(const wxString &label) :
-mafOp(label)
+mafOpCreateSurfaceParametric::mafOpCreateSurfaceParametric(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType	= OPTYPE_OP;
@@ -56,7 +55,7 @@ mafOpCreateSurfaceParametric::~mafOpCreateSurfaceParametric( )
 mafOp* mafOpCreateSurfaceParametric::Copy()   
 //----------------------------------------------------------------------------
 {
-	return new mafOpCreateSurfaceParametric(m_Label);
+	return new mafOpCreateSurfaceParametric(GetLabel());
 }
 //----------------------------------------------------------------------------
 bool mafOpCreateSurfaceParametric::Accept(mafNode *node)

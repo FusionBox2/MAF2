@@ -38,8 +38,9 @@ template class MAF_EXPORT mafAutoPointer<mafNode>;
 class MAF_EXPORT mafOpSelect: public mafOp
 {
 public:
+  mafTypeMacro(mafOpSelect, mafOp)
     /** Constructor. */
-    mafOpSelect(wxString label=_("Select"));
+    mafOpSelect(const mafString& label=_("Select"));
     /** Destructor. */
    ~mafOpSelect(); 
     /** check if node can be input of the operation. */
@@ -69,8 +70,9 @@ protected:
 class MAF_EXPORT mafOpEdit: public mafOp
 {
 public:
+  mafTypeMacro(mafOpEdit, mafOp)
     /** Constructor. */
-    mafOpEdit(wxString label="");
+    mafOpEdit(const mafString& label="");
     /** Destructor. */
     ~mafOpEdit(); 
     /** Builds operation's interface. */
@@ -102,8 +104,9 @@ protected:
 class MAF_EXPORT mafOpCut: public mafOpEdit
 {
 public:
+  mafTypeMacro(mafOpCut, mafOpEdit)
     /** Constructor. */
-    mafOpCut(wxString label=_("Cut"));
+    mafOpCut(const mafString& label=_("Cut"));
     /** Destructor. */
     ~mafOpCut();
     /** check if node can be input of the operation. */
@@ -129,8 +132,9 @@ Operation which perform delete on a node input.
 class MAF_EXPORT mafOpDelete: public mafOpEdit
 {
 public:
+  mafTypeMacro(mafOpDelete, mafOpEdit)
   /** Constructor. */
-  mafOpDelete(wxString label=_("Delete"));
+  mafOpDelete(const mafString& label=_("Delete"));
   /** Destructor. */
   ~mafOpDelete();
   /** check if node can be input of the operation. */
@@ -151,8 +155,9 @@ protected:
 class MAF_EXPORT mafOpCopy: public mafOpEdit
 {
 public:
+  mafTypeMacro(mafOpCopy, mafOpEdit)
     /** Constructor. */
-    mafOpCopy(wxString label=_("Copy"));
+    mafOpCopy(const mafString& label=_("Copy"));
     /** Destructor. */
     ~mafOpCopy();
     /** check if node can be input of the operation. */
@@ -171,8 +176,9 @@ public:
 class MAF_EXPORT mafOpPaste: public mafOpEdit
 {
 public:
+  mafTypeMacro(mafOpPaste, mafOpEdit)
     /** Constructor. */
-    mafOpPaste(wxString label=_("Paste"));
+    mafOpPaste(const mafString& label=_("Paste"));
     /** check if node can be input of the operation. */
     bool Accept(mafNode* vme);
     /** execute the operation.  */    

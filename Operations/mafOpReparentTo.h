@@ -37,7 +37,7 @@ class mafGUI;
 class MAF_EXPORT mafOpReparentTo: public mafOp
 {
 public:
-  mafOpReparentTo(const wxString &label = "ReparentTo");
+  mafOpReparentTo(const mafString& label = "ReparentTo");
  ~mafOpReparentTo(); 
   
   mafTypeMacro(mafOpReparentTo, mafOp);

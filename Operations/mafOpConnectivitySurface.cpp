@@ -46,8 +46,7 @@ mafCxxTypeMacro(mafOpConnectivitySurface);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpConnectivitySurface::mafOpConnectivitySurface(const wxString &label) :
-mafOp(label)
+mafOpConnectivitySurface::mafOpConnectivitySurface(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
 	m_OpType	= OPTYPE_OP;
@@ -83,7 +82,7 @@ bool mafOpConnectivitySurface::Accept(mafNode *node)
 mafOp *mafOpConnectivitySurface::Copy()   
 //----------------------------------------------------------------------------
 {
-  return (new mafOpConnectivitySurface(m_Label));
+  return new mafOpConnectivitySurface(GetLabel());
 }
 //----------------------------------------------------------------------------
 // Constants:

@@ -36,7 +36,7 @@ class MAF_EXPORT mafOpVolumeResample: public mafOp
 {
 public:
              
-            	 mafOpVolumeResample(const wxString &label = "VolumeResample");
+            	 mafOpVolumeResample(const mafString& label = "VolumeResample");
 	virtual     ~mafOpVolumeResample();
 	virtual void OnEvent(mafEventBase *maf_event);
 	

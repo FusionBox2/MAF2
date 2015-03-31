@@ -43,11 +43,11 @@ Transform a vme using constrains
 class MAF_EXPORT mafOpMAFTransform : public mafOpTransformInterface
 {
 public:
-  mafOpMAFTransform(const wxString &label = "Transform  \tCtrl+T");
+  mafOpMAFTransform(const mafString& label = "Transform  \tCtrl+T");
  ~mafOpMAFTransform(); 
   virtual void OnEvent(mafEventBase *maf_event);
   
-  mafTypeMacro(mafOpMAFTransform, mafOp);
+  mafTypeMacro(mafOpMAFTransform, mafOpTransformInterface);
 
   mafOp* Copy();
 

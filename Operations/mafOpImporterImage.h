@@ -43,7 +43,7 @@ EXPORT_STL_VECTOR(MAF_EXPORT,std::string);
 class MAF_EXPORT mafOpImporterImage: public mafOp
 {
 public:
-  mafOpImporterImage(const wxString &label = "ImageImporter");
+  mafOpImporterImage(const mafString& label = "ImageImporter");
  ~mafOpImporterImage(); 
 	virtual void OnEvent(mafEventBase *maf_event);
   

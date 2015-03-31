@@ -56,8 +56,7 @@ mafCxxTypeMacro(mafOpBooleanSurface);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpBooleanSurface::mafOpBooleanSurface(const wxString &label) :
-mafOp(label)
+mafOpBooleanSurface::mafOpBooleanSurface(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
 	m_OpType	= OPTYPE_OP;
@@ -114,7 +113,7 @@ bool mafOpBooleanSurface::Accept(mafNode *node)
 mafOp *mafOpBooleanSurface::Copy()   
 //----------------------------------------------------------------------------
 {
-	return (new mafOpBooleanSurface(m_Label));
+	return (new mafOpBooleanSurface(GetLabel()));
 }
 //----------------------------------------------------------------------------
 // Constants:

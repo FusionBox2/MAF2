@@ -44,9 +44,10 @@
 
 #include <fstream>
 
+mafCxxTypeMacro(mafOpExporterBmp)
+
 //----------------------------------------------------------------------------
-mafOpExporterBmp::mafOpExporterBmp(const wxString &label) :
-mafOp(label)
+mafOpExporterBmp::mafOpExporterBmp(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType = OPTYPE_EXPORTER;
@@ -119,7 +120,7 @@ void mafOpExporterBmp::OpUndo()
 mafOp* mafOpExporterBmp::Copy()   
 //----------------------------------------------------------------------------
 {
-    mafOpExporterBmp *cp = new mafOpExporterBmp(m_Label);
+    mafOpExporterBmp *cp = new mafOpExporterBmp(GetLabel());
     return cp;
 }
 //----------------------------------------------------------------------------

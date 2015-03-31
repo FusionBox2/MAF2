@@ -81,8 +81,7 @@ mafCxxTypeMacro(mafOpExtractIsosurface);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpExtractIsosurface::mafOpExtractIsosurface(const wxString &label) :
-mafOp(label)
+mafOpExtractIsosurface::mafOpExtractIsosurface(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_OP;
@@ -154,7 +153,7 @@ mafOp* mafOpExtractIsosurface::Copy()
 //----------------------------------------------------------------------------
 {
   /** return a copy of itself, needs to put it into the undo stack */
-  return new mafOpExtractIsosurface(m_Label);
+  return new mafOpExtractIsosurface(GetLabel());
 }
 //----------------------------------------------------------------------------
 bool mafOpExtractIsosurface::Accept(mafNode* vme)
@@ -667,7 +666,7 @@ void mafOpExtractIsosurface::OnEvent(mafEventBase *maf_event)
 		{
 			mafEvent helpEvent;
 			helpEvent.SetSender(this);
-			mafString operationLabel = this->m_Label;
+			mafString operationLabel = GetLabel();
 			helpEvent.SetString(&operationLabel);
 			helpEvent.SetId(OPEN_HELP_PAGE);
 			mafEventMacro(helpEvent);

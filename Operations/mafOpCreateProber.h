@@ -32,7 +32,7 @@ class mafEvent;
 class MAF_EXPORT mafOpCreateProber: public mafOp
 {
 public:
-  mafOpCreateProber(const wxString &label = "CreateProber");
+  mafOpCreateProber(const mafString& label = "CreateProber");
  ~mafOpCreateProber(); 
 
   mafTypeMacro(mafOpCreateProber, mafOp);

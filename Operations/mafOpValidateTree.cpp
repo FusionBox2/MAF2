@@ -47,8 +47,7 @@ mafCxxTypeMacro(mafOpValidateTree);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpValidateTree::mafOpValidateTree(const wxString &label) :
-mafOp(label)
+mafOpValidateTree::mafOpValidateTree(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType	= OPTYPE_OP;
@@ -64,7 +63,7 @@ mafOpValidateTree::~mafOpValidateTree()
 mafOp* mafOpValidateTree::Copy()   
 //----------------------------------------------------------------------------
 {
-	return new mafOpValidateTree(m_Label);
+	return new mafOpValidateTree(GetLabel());
 }
 //----------------------------------------------------------------------------
 void mafOpValidateTree::OpRun()
@@ -234,7 +233,7 @@ int mafOpValidateTree::ValidateTree()
                 ErrorLog(mafOpValidateTree::URL_EMPTY, vme->GetName());
                 result = mafOpValidateTree::VALIDATE_ERROR;
               }
-              archiveFilename = item->GetArchiveFileName();
+              //archiveFilename = item->GetArchiveFileName();
               singleFileMode = dv->GetSingleFileMode();
               if (singleFileMode && archiveFilename.IsEmpty())
               {

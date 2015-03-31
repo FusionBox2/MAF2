@@ -42,8 +42,7 @@ mafCxxTypeMacro(mafOp2DMeasure);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOp2DMeasure::mafOp2DMeasure(const wxString &label) 
-:mafOp(label)
+mafOp2DMeasure::mafOp2DMeasure(const mafString& label) :mafOp(label)
 //----------------------------------------------------------------------------
 {
 	m_OpType	= OPTYPE_OP;
@@ -82,7 +81,7 @@ bool mafOp2DMeasure::Accept(mafNode *node)
 mafOp* mafOp2DMeasure::Copy()
 //----------------------------------------------------------------------------
 {
-	return (new mafOp2DMeasure(m_Label));
+	return (new mafOp2DMeasure(GetLabel()));
 }
 //----------------------------------------------------------------------------
 void mafOp2DMeasure::OpRun()   
@@ -189,7 +188,7 @@ void mafOp2DMeasure::OnEvent(mafEventBase *maf_event)
 		{
 			mafEvent helpEvent;
 			helpEvent.SetSender(this);
-			mafString operationLabel = this->m_Label;
+			mafString operationLabel = GetLabel();
 			helpEvent.SetString(&operationLabel);
 			helpEvent.SetId(OPEN_HELP_PAGE);
 			mafEventMacro(helpEvent);

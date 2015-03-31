@@ -33,8 +33,7 @@ mafCxxTypeMacro(mafOpExplodeCollapse);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpExplodeCollapse::mafOpExplodeCollapse(const wxString &label) :
-mafOp(label)
+mafOpExplodeCollapse::mafOpExplodeCollapse(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType = OPTYPE_OP;
@@ -55,7 +54,7 @@ bool mafOpExplodeCollapse::Accept(mafNode *node)
 mafOp* mafOpExplodeCollapse::Copy()   
 //----------------------------------------------------------------------------
 {
-  mafOpExplodeCollapse *cp = new mafOpExplodeCollapse(m_Label);
+  mafOpExplodeCollapse *cp = new mafOpExplodeCollapse(GetLabel());
   return cp;
 }
 //----------------------------------------------------------------------------

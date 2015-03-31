@@ -32,7 +32,7 @@ class mafEvent;
 class MAF_EXPORT mafOpFilterSurface: public mafOp
 {
 public:
-	mafOpFilterSurface(const wxString &label = "FilterSurface");
+	mafOpFilterSurface(const mafString& label = "FilterSurface");
 	~mafOpFilterSurface(); 
 	virtual void OnEvent(mafEventBase *maf_event);
 

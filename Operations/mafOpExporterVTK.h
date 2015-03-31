@@ -34,7 +34,7 @@ class mafVME;
 class MAF_EXPORT mafOpExporterVTK: public mafOp
 {
 public:
-  mafOpExporterVTK(const wxString &label = "VTKExporter");
+  mafOpExporterVTK(const mafString& label = "VTKExporter");
  ~mafOpExporterVTK(); 
   
   mafTypeMacro(mafOpExporterVTK, mafOp);

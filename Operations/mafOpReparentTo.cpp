@@ -43,7 +43,7 @@ mafCxxTypeMacro(mafOpReparentTo);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpReparentTo::mafOpReparentTo(const wxString &label) : mafOp(label)
+mafOpReparentTo::mafOpReparentTo(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType    = OPTYPE_OP;
@@ -66,7 +66,7 @@ bool mafOpReparentTo::Accept(mafNode *node)
 mafOp* mafOpReparentTo::Copy()   
 //----------------------------------------------------------------------------
 {
-  mafOpReparentTo *cp = new mafOpReparentTo(m_Label);
+  mafOpReparentTo *cp = new mafOpReparentTo(GetLabel());
 	cp->m_OldParent = m_OldParent;
   return cp;
 }

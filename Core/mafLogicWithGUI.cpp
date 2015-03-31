@@ -387,13 +387,13 @@ void mafLogicWithGUI::EnableItem(int item, bool enable)
 }
 
 //----------------------------------------------------------------------------
-void mafLogicWithGUI::AddToMenu(const wxString& name, long id, wxMenu* path_menu, const wxString& menuPath)
+void mafLogicWithGUI::AddToMenu(const mafString& name, long id, wxMenu* path_menu, const mafString& menuPath)
 //----------------------------------------------------------------------------
 {
   if (menuPath != "")
   {
     wxString op_path = "";
-    wxStringTokenizer path_tkz(menuPath, "/");
+    wxStringTokenizer path_tkz(menuPath.GetCStr(), "/");
     while ( path_tkz.HasMoreTokens() )
     {
       op_path = path_tkz.GetNextToken();
@@ -416,12 +416,12 @@ void mafLogicWithGUI::AddToMenu(const wxString& name, long id, wxMenu* path_menu
   SetAccelerator(name, id);
 }
 //----------------------------------------------------------------------------
-void mafLogicWithGUI::SetAccelerator(const wxString& name, long id)
+void mafLogicWithGUI::SetAccelerator(const mafString& name, long id)
 //----------------------------------------------------------------------------
 {
   wxString accelerator, flag = "", extra_flag = "", key_code = "";
   int flag_num;
-  accelerator = name;
+  accelerator = name.GetCStr();
   wxStringTokenizer tkz(accelerator, "\t");
   int token = tkz.CountTokens();
 

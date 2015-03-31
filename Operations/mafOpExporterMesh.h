@@ -35,7 +35,7 @@ class mafVMEMesh;
 class MAF_EXPORT mafOpExporterMesh: public mafOp
 {
 public:
-	mafOpExporterMesh(const wxString &label = "MeshExporter");
+	mafOpExporterMesh(const mafString& label = "MeshExporter");
 	~mafOpExporterMesh(); 
 	
   mafTypeMacro(mafOpExporterMesh, mafOp);

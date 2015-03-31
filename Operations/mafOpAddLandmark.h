@@ -47,7 +47,7 @@ EXPORT_STL_VECTOR(MAF_EXPORT,mafVMELandmark*);
 class MAF_EXPORT mafOpAddLandmark: public mafOp
 {
 public:
-	mafOpAddLandmark(const wxString &label = "AddLandmark");
+	mafOpAddLandmark(const mafString& label = "AddLandmark");
 	~mafOpAddLandmark(); 
 	virtual void OnEvent(mafEventBase *maf_event);
 

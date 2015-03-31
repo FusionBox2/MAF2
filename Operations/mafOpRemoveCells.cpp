@@ -70,8 +70,7 @@ mafCxxTypeMacro(mafOpRemoveCells);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpRemoveCells::mafOpRemoveCells(wxString label) :
-mafOp(label)
+mafOpRemoveCells::mafOpRemoveCells(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_OP;
@@ -128,7 +127,7 @@ mafOp* mafOpRemoveCells::Copy()
 //----------------------------------------------------------------------------
 {
   /** return a copy of itself, needs to put it into the undo stack */
-  return new mafOpRemoveCells(m_Label);
+  return new mafOpRemoveCells(GetLabel());
 }
 //----------------------------------------------------------------------------
 bool mafOpRemoveCells::Accept(mafNode* vme)

@@ -45,7 +45,7 @@ to the user and no data will be imported.*/
 class MAF_EXPORT mafOpImporterVTK: public mafOp 
 {
 public:
-  mafOpImporterVTK(const wxString &label = "VTKImporter");
+  mafOpImporterVTK(const mafString& label = "VTKImporter");
  ~mafOpImporterVTK(); 
   
   mafTypeMacro(mafOpImporterVTK, mafOp);

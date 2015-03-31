@@ -39,7 +39,7 @@ Extract data is based on geometric connectivity.*/
 class MAF_EXPORT mafOpConnectivitySurface: public mafOp
 {
 public:
-	mafOpConnectivitySurface(const wxString &label = "Connectivity Surface");
+	mafOpConnectivitySurface(const mafString& label = "Connectivity Surface");
 	~mafOpConnectivitySurface(); 
 	virtual void OnEvent(mafEventBase *maf_event);
 

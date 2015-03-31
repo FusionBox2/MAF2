@@ -64,7 +64,7 @@ class MAF_EXPORT mafOpExtractIsosurface: public mafOp
 {
 public:
 
-  mafOpExtractIsosurface(const wxString &label = "Extract Isosurface");
+  mafOpExtractIsosurface(const mafString& label = "Extract Isosurface");
  ~mafOpExtractIsosurface(); 
 	
   mafTypeMacro(mafOpExtractIsosurface, mafOp);

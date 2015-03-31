@@ -38,8 +38,7 @@ mafCxxTypeMacro(mafOpCreateMeter);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpCreateMeter::mafOpCreateMeter(const wxString &label) :
-mafOp(label)
+mafOpCreateMeter::mafOpCreateMeter(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType	= OPTYPE_OP;
@@ -56,7 +55,7 @@ mafOpCreateMeter::~mafOpCreateMeter( )
 mafOp* mafOpCreateMeter::Copy()   
 //----------------------------------------------------------------------------
 {
-	return new mafOpCreateMeter(m_Label);
+	return new mafOpCreateMeter(GetLabel());
 }
 //----------------------------------------------------------------------------
 bool mafOpCreateMeter::Accept(mafNode *node)

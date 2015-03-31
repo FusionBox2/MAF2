@@ -53,8 +53,7 @@ mafCxxTypeMacro(mafOpImporterVTK);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpImporterVTK::mafOpImporterVTK(const wxString &label) :
-mafOp(label)
+mafOpImporterVTK::mafOpImporterVTK(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_IMPORTER;
@@ -91,7 +90,7 @@ mafOpImporterVTK::~mafOpImporterVTK()
 mafOp* mafOpImporterVTK::Copy()   
 //----------------------------------------------------------------------------
 {
-  mafOpImporterVTK *cp = new mafOpImporterVTK(m_Label);
+  mafOpImporterVTK *cp = new mafOpImporterVTK(GetLabel());
   cp->m_File			= m_File;
   return cp;
 }

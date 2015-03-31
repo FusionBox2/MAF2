@@ -55,8 +55,7 @@ mafCxxTypeMacro(mafOpVOIDensityEditor);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpVOIDensityEditor::mafOpVOIDensityEditor(const wxString &label) 
-: mafOp(label)
+mafOpVOIDensityEditor::mafOpVOIDensityEditor(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
 	m_OpType	= OPTYPE_OP;
@@ -79,7 +78,7 @@ mafOpVOIDensityEditor::~mafOpVOIDensityEditor()
 mafOp* mafOpVOIDensityEditor::Copy()
 //----------------------------------------------------------------------------
 {
-	return (new mafOpVOIDensityEditor(m_Label));
+	return (new mafOpVOIDensityEditor(GetLabel()));
 }
 //----------------------------------------------------------------------------
 bool mafOpVOIDensityEditor::Accept(mafNode* Node)
@@ -140,7 +139,7 @@ void mafOpVOIDensityEditor::OnEvent(mafEventBase *maf_event)
 			{
 				mafEvent helpEvent;
 				helpEvent.SetSender(this);
-				mafString operationLabel = this->m_Label;
+				mafString operationLabel = GetLabel();
 				helpEvent.SetString(&operationLabel);
 				helpEvent.SetId(OPEN_HELP_PAGE);
 				mafEventMacro(helpEvent);

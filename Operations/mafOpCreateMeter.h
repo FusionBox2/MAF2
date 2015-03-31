@@ -32,7 +32,7 @@ class mafEvent;
 class MAF_EXPORT mafOpCreateMeter: public mafOp
 {
 public:
-  mafOpCreateMeter(const wxString &label = "CreateMeter");
+  mafOpCreateMeter(const mafString& label = "CreateMeter");
   ~mafOpCreateMeter(); 
 
   mafTypeMacro(mafOpCreateMeter, mafOp);

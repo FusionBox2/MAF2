@@ -60,8 +60,7 @@ mafCxxTypeMacro(mafOpLabelExtractor);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpLabelExtractor::mafOpLabelExtractor(const wxString& label) :
-mafOp(label)
+mafOpLabelExtractor::mafOpLabelExtractor(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType	= OPTYPE_OP;
@@ -97,7 +96,7 @@ mafOpLabelExtractor::~mafOpLabelExtractor()
 mafOp* mafOpLabelExtractor::Copy()
 //----------------------------------------------------------------------------
 {
-  return (new mafOpLabelExtractor(m_Label));
+  return (new mafOpLabelExtractor(GetLabel()));
 }
 //----------------------------------------------------------------------------
 bool mafOpLabelExtractor::Accept(mafNode *vme)
@@ -232,7 +231,7 @@ void mafOpLabelExtractor::OnEvent(mafEventBase *maf_event)
 		{
 			mafEvent helpEvent;
 			helpEvent.SetSender(this);
-			mafString operationLabel = this->m_Label;
+			mafString operationLabel = GetLabel();
 			helpEvent.SetString(&operationLabel);
 			helpEvent.SetId(OPEN_HELP_PAGE);
 			mafEventMacro(helpEvent);

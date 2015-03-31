@@ -32,7 +32,7 @@ class mafEvent;
 class MAF_EXPORT mafOpCreateSurfaceParametric: public mafOp
 {
 public:
-  mafOpCreateSurfaceParametric(const wxString &label = "Create Parametric Surface");
+  mafOpCreateSurfaceParametric(const mafString& label = "Create Parametric Surface");
   ~mafOpCreateSurfaceParametric(); 
 
   mafTypeMacro(mafOpCreateSurfaceParametric, mafOp);

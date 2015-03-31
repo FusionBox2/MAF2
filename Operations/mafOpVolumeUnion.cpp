@@ -51,8 +51,7 @@ mafCxxTypeMacro(mafOpVolumeUnion);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpVolumeUnion::mafOpVolumeUnion(const wxString &label)
-: mafOp(label)
+mafOpVolumeUnion::mafOpVolumeUnion(const mafString &label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
 	m_OpType	= OPTYPE_OP;
@@ -92,7 +91,7 @@ mafOpVolumeUnion::~mafOpVolumeUnion()
 mafOp *mafOpVolumeUnion::Copy()
 //----------------------------------------------------------------------------
 {
-	return new mafOpVolumeUnion(m_Label);
+	return new mafOpVolumeUnion(GetLabel());
 }
 //----------------------------------------------------------------------------
 bool mafOpVolumeUnion::Accept(mafNode* node)
@@ -574,7 +573,7 @@ void mafOpVolumeUnion::OnEvent(mafEventBase *maf_event)
 			{
 				mafEvent helpEvent;
 				helpEvent.SetSender(this);
-				mafString operationLabel = this->m_Label;
+				mafString operationLabel = this->GetLabel();
 				helpEvent.SetString(&operationLabel);
 				helpEvent.SetId(OPEN_HELP_PAGE);
 				mafEventMacro(helpEvent);

@@ -55,7 +55,7 @@ public:
   mafTypeMacro(mafOp, mafObject);
 
 					mafOp();
-					mafOp(const wxString &label);
+					mafOp(const mafString &label);
 	virtual	~mafOp(); 
           
 					/** Return the type of the operation: OPTYPE_OP, OPTYPE_IMPORTER, OPTYPE_EXPORTER, OPTYPE_EDIT or OPTYPE_STATECHANGER*/
@@ -114,7 +114,9 @@ public:
 	/** Stop operation with CANCEL condition. */
 	virtual void ForceStopWithCancel();
 
-	wxString				m_Label; ///< Label of the operation that will appear on the SideBar tab.
+  const mafString& GetLabel(){return m_Label;}
+  void SetLabel(const mafString& label){m_Label = label;}
+
 	int							m_Id; ///< Index of the operation referring to the operation list.
 	mafOp					 *m_Next; ///< Pointer to the next operation in the operation's list.
 
@@ -172,5 +174,8 @@ protected:
   bool            m_CollaborateStatus;
   mafGUISettings *m_SettingPanel;
   bool            m_TestMode; ///< Flag used with cppunitTest: put this flag at true when executing tests to avoid busy-info or splash screen to be created, default is false.
+
+private:
+	mafString				m_Label; ///< Label of the operation that will appear on the SideBar tab.
 };
 #endif

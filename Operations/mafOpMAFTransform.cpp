@@ -74,8 +74,7 @@ mafCxxTypeMacro(mafOpMAFTransform);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpMAFTransform::mafOpMAFTransform(const wxString &label) :
-mafOpTransformInterface(label)
+mafOpMAFTransform::mafOpMAFTransform(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType = OPTYPE_OP;
@@ -115,7 +114,7 @@ bool mafOpMAFTransform::Accept(mafNode* vme)
 mafOp* mafOpMAFTransform::Copy()   
 //----------------------------------------------------------------------------
 {
-  return new mafOpMAFTransform(m_Label);
+  return new mafOpMAFTransform(GetLabel());
 }
 
 //----------------------------------------------------------------------------

@@ -51,8 +51,7 @@ mafCxxTypeMacro(mafOpVOIDensity);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpVOIDensity::mafOpVOIDensity(const wxString &label) 
-: mafOp(label)
+mafOpVOIDensity::mafOpVOIDensity(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
 	m_OpType	= OPTYPE_OP;
@@ -84,7 +83,7 @@ mafOpVOIDensity::~mafOpVOIDensity()
 mafOp* mafOpVOIDensity::Copy()
 //----------------------------------------------------------------------------
 {
-	return (new mafOpVOIDensity(m_Label));
+	return (new mafOpVOIDensity(GetLabel()));
 }
 //----------------------------------------------------------------------------
 bool mafOpVOIDensity::Accept(mafNode* Node)
@@ -176,7 +175,7 @@ void mafOpVOIDensity::OnEvent(mafEventBase *maf_event)
 			{
 				mafEvent helpEvent;
 				helpEvent.SetSender(this);
-				mafString operationLabel = this->m_Label;
+				mafString operationLabel = GetLabel();
 				helpEvent.SetString(&operationLabel);
 				helpEvent.SetId(OPEN_HELP_PAGE);
 				mafEventMacro(helpEvent);

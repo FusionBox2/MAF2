@@ -51,8 +51,7 @@ mafCxxTypeMacro(mafOpGarbageCollectMSFDir);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpGarbageCollectMSFDir::mafOpGarbageCollectMSFDir(const wxString &label) :
-mafOp(label)
+mafOpGarbageCollectMSFDir::mafOpGarbageCollectMSFDir(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType	= OPTYPE_OP;
@@ -67,7 +66,7 @@ mafOpGarbageCollectMSFDir::~mafOpGarbageCollectMSFDir()
 mafOp* mafOpGarbageCollectMSFDir::Copy()   
 //----------------------------------------------------------------------------
 {
-	return new mafOpGarbageCollectMSFDir(m_Label);
+	return new mafOpGarbageCollectMSFDir(GetLabel());
 }
 //----------------------------------------------------------------------------
 void mafOpGarbageCollectMSFDir::OpRun()

@@ -36,7 +36,7 @@ class mafEvent;
 class MAF_EXPORT mafOpExporterMSF: public mafOp
 {
 public:
-  mafOpExporterMSF(const wxString &label = "MSFExporter");
+  mafOpExporterMSF(const mafString& label = "MSFExporter");
  ~mafOpExporterMSF(); 
   
   mafTypeMacro(mafOpExporterMSF, mafOp);

@@ -32,7 +32,7 @@ class mafEvent;
 class MAF_EXPORT mafOpDecimateSurface: public mafOp
 {
 public:
-	mafOpDecimateSurface(const wxString label = "FilterSurface");
+	mafOpDecimateSurface(const mafString& label = "FilterSurface");
 	~mafOpDecimateSurface(); 
 	virtual void OnEvent(mafEventBase *maf_event);
 

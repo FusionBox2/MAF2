@@ -47,7 +47,7 @@ EXPORT_STL_VECTOR(MAF_EXPORT,bool);
 class MAF_EXPORT mafOpLabelExtractor: public mafOp
 {
 public:
-  mafOpLabelExtractor(const wxString& label = "LabelExtractor");
+  mafOpLabelExtractor(const mafString& label = "LabelExtractor");
  ~mafOpLabelExtractor(); 
 
   mafTypeMacro(mafOpLabelExtractor, mafOp);

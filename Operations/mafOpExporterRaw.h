@@ -37,7 +37,8 @@ class mafString;
 class MAF_EXPORT mafOpExporterRAW: public mafOp
 {
 public:
-  mafOpExporterRAW(const wxString &label);
+  mafTypeMacro(mafOpExporterRAW, mafOp)
+  mafOpExporterRAW(const mafString& label = "");
  ~mafOpExporterRAW(); 
   mafOp* Copy();
 
@@ -70,7 +71,7 @@ public:
 protected:
   void OpStop(int result);
 
-  wxString		m_ProposedDirectory;///<Default directory where to save file .raw
+  mafString		m_ProposedDirectory;///<Default directory where to save file .raw
   mafString		m_FileName;///<Name of the file/files where the exporter will save raw data
 	mafString		m_FileNameZ;///<Name of the file txt where save z coordinates
   int		m_SingleFile;///<Flag: false if the exporter will create a single file; true if the exporter will create raw slices

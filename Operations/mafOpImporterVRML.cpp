@@ -131,7 +131,7 @@ mafCxxTypeMacro(mafOpImporterVRML);
 	}
 */
 //----------------------------------------------------------------------------
- mafOpImporterVRML:: mafOpImporterVRML(const wxString &label) : mafOp(label)
+ mafOpImporterVRML:: mafOpImporterVRML(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
 	m_OpType	= OPTYPE_IMPORTER;
@@ -151,7 +151,7 @@ mafCxxTypeMacro(mafOpImporterVRML);
 mafOp * mafOpImporterVRML::Copy()
 //----------------------------------------------------------------------------
 {
-  mafOpImporterVRML *cp = new  mafOpImporterVRML(m_Label);
+  mafOpImporterVRML *cp = new  mafOpImporterVRML(GetLabel());
 	cp->m_File		= m_File;
   cp->m_FileDir = m_FileDir;
   return cp; 
@@ -176,7 +176,7 @@ void  mafOpImporterVRML::OpRun()
   mafEventMacro(mafEvent(this,result));
 }
 //----------------------------------------------------------------------------
-void  mafOpImporterVRML::SetFileName(const char *file_name)
+void  mafOpImporterVRML::SetFileName(const mafString& file_name)
 //----------------------------------------------------------------------------
 {
   m_File = file_name;

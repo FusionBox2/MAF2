@@ -386,15 +386,15 @@ void mafOpManager::OpDo(mafOp *op)
 
   if (in_node != NULL)
   {
-    mafLogMessage("executed operation '%s' on input data: %s",op->m_Label.c_str(), in_node->GetName());
+    mafLogMessage("executed operation '%s' on input data: %s",op->GetLabel().GetCStr(), in_node->GetName());
   }
   else
   {
-    mafLogMessage("executed operation '%s'",op->m_Label.c_str());
+    mafLogMessage("executed operation '%s'",op->GetLabel().GetCStr());
   }
   if (out_node != NULL)
   {
-    mafLogMessage("operation '%s' generate %s as output",op->m_Label.c_str(), out_node->GetName());
+    mafLogMessage("operation '%s' generate %s as output",op->GetLabel().GetCStr(), out_node->GetName());
   }
 
   if (op->GetType() != OPTYPE_EDIT)
@@ -551,7 +551,7 @@ void mafOpManager::OpUndo()
   mafNode *out_node = op->GetOutput();
   if (in_node != NULL)
   {
-    mafLogMessage("undo = %s on input data: %s",op->m_Label.c_str(), in_node->GetName());
+    mafLogMessage("undo = %s on input data: %s",op->GetLabel().GetCStr(), in_node->GetName());
     mafAttributeTraceability *traceability = (mafAttributeTraceability *)in_node->GetAttribute("TrialAttribute");
     if (traceability != NULL)
     {
@@ -563,7 +563,7 @@ void mafOpManager::OpUndo()
   }
   else
   {
-    mafLogMessage("undo = %s",op->m_Label.c_str());
+    mafLogMessage("undo = %s",op->GetLabel().GetCStr());
   }
 
   if (out_node != NULL)
@@ -603,11 +603,11 @@ void mafOpManager::OpRedo()
   mafString parameters = op->GetParameters();
   if (in_node != NULL)
   {
-    mafLogMessage("redo = %s on input data: %s",op->m_Label.c_str(), in_node->GetName());
+    mafLogMessage("redo = %s on input data: %s",op->GetLabel().GetCStr(), in_node->GetName());
   }
   else
   {
-    mafLogMessage("redo = %s",op->m_Label.c_str());
+    mafLogMessage("redo = %s",op->GetLabel().GetCStr());
   }
 	op->OpDo();
   

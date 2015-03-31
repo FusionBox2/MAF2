@@ -55,7 +55,7 @@ mafCxxTypeMacro(mafOpVolumeResample);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpVolumeResample::mafOpVolumeResample(const wxString &label) : mafOp(label)
+mafOpVolumeResample::mafOpVolumeResample(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
 	m_OpType	= OPTYPE_OP;
@@ -275,7 +275,7 @@ void mafOpVolumeResample::GizmoDelete()
 mafOp *mafOpVolumeResample::Copy()
 //----------------------------------------------------------------------------
 {
-	return new mafOpVolumeResample(m_Label);
+	return new mafOpVolumeResample(GetLabel());
 }
 //----------------------------------------------------------------------------
 void mafOpVolumeResample::OpRun()   

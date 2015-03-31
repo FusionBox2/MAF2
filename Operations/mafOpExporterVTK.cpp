@@ -47,8 +47,7 @@ mafCxxTypeMacro(mafOpExporterVTK);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpExporterVTK::mafOpExporterVTK(const wxString &label) :
-mafOp(label)
+mafOpExporterVTK::mafOpExporterVTK(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_EXPORTER;
@@ -77,7 +76,7 @@ bool mafOpExporterVTK::Accept(mafNode *node)
 mafOp* mafOpExporterVTK::Copy()   
 //----------------------------------------------------------------------------
 {
-  mafOpExporterVTK *cp = new mafOpExporterVTK(m_Label);
+  mafOpExporterVTK *cp = new mafOpExporterVTK(GetLabel());
   cp->m_File = m_File;
   return cp;
 }

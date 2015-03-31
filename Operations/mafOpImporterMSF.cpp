@@ -43,8 +43,7 @@ mafCxxTypeMacro(mafOpImporterMSF);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpImporterMSF::mafOpImporterMSF(const wxString &label) :
-mafOp(label)
+mafOpImporterMSF::mafOpImporterMSF(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_IMPORTER;
@@ -64,7 +63,7 @@ mafOpImporterMSF::~mafOpImporterMSF()
 mafOp* mafOpImporterMSF::Copy()   
 //----------------------------------------------------------------------------
 {
-  mafOpImporterMSF *cp = new mafOpImporterMSF(m_Label);
+  mafOpImporterMSF *cp = new mafOpImporterMSF(GetLabel());
   cp->m_File			= m_File;
   return cp;
 }

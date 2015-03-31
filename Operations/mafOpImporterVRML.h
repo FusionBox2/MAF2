@@ -41,7 +41,7 @@ class mafVMEGroup;
 class MAF_EXPORT mafOpImporterVRML: public mafOp
 {
 public:
-           mafOpImporterVRML(const wxString &label = "VRMLImporter");
+           mafOpImporterVRML(const mafString& label = "VRMLImporter");
 	virtual ~mafOpImporterVRML();
 	
   mafTypeMacro(mafOpImporterVRML, mafOp);
@@ -55,7 +55,7 @@ public:
   void OpRun();
 
   /** Set the filename for the .vrl to import */
-  void SetFileName(const char *file_name);
+  void SetFileName(const mafString& file_name);
 
   /** Import vrml data. */
   void ImportVRML();

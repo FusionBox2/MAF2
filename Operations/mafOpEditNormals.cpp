@@ -47,8 +47,7 @@ mafCxxTypeMacro(mafOpEditNormals);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpEditNormals::mafOpEditNormals(const wxString &label) :
-mafOp(label)
+mafOpEditNormals::mafOpEditNormals(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
 	m_OpType	= OPTYPE_OP;
@@ -83,7 +82,7 @@ bool mafOpEditNormals::Accept(mafNode *node)
 mafOp *mafOpEditNormals::Copy()   
 //----------------------------------------------------------------------------
 {
-	return (new mafOpEditNormals(m_Label));
+	return new mafOpEditNormals(GetLabel());
 }
 //----------------------------------------------------------------------------
 // Constants:

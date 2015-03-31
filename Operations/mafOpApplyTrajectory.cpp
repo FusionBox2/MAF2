@@ -52,14 +52,13 @@ mafCxxTypeMacro(mafOpApplyTrajectory);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpApplyTrajectory::mafOpApplyTrajectory(const wxString &label) :
-mafOp(label)
+mafOpApplyTrajectory::mafOpApplyTrajectory(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
 	m_OpType	= OPTYPE_OP;
 	m_Canundo	= true;
 	m_File		= "";
-	m_FileDir = (mafGetApplicationDirectory() + "/Data/").c_str();
+	m_FileDir = mafGetApplicationDirectory() + "/Data/";
   m_OriginalMatrix = NULL;
   m_VME = NULL;
 }
@@ -76,7 +75,7 @@ mafOpApplyTrajectory::~mafOpApplyTrajectory()
 mafOp* mafOpApplyTrajectory::Copy()   
 //----------------------------------------------------------------------------
 {
-	mafOpApplyTrajectory *cp = new mafOpApplyTrajectory(m_Label);
+	mafOpApplyTrajectory *cp = new mafOpApplyTrajectory(GetLabel());
 	cp->m_Canundo = m_Canundo;
 	cp->m_OpType = m_OpType;
   cp->SetListener(GetListener());
@@ -217,7 +216,7 @@ void mafOpApplyTrajectory::OnEvent(mafEventBase *maf_event)
 		{
 			mafEvent helpEvent;
 			helpEvent.SetSender(this);
-			mafString operationLabel = this->m_Label;
+			mafString operationLabel = GetLabel();
 			helpEvent.SetString(&operationLabel);
 			helpEvent.SetId(OPEN_HELP_PAGE);
 			mafEventMacro(helpEvent);

@@ -38,8 +38,7 @@ mafCxxTypeMacro(mafOpCreateSlicer);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpCreateSlicer::mafOpCreateSlicer(const wxString &label) :
-mafOp(label)
+mafOpCreateSlicer::mafOpCreateSlicer(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType	= OPTYPE_OP;
@@ -58,7 +57,7 @@ mafOpCreateSlicer::~mafOpCreateSlicer()
 mafOp* mafOpCreateSlicer::Copy()   
 //----------------------------------------------------------------------------
 {
-	return new mafOpCreateSlicer(m_Label);
+	return new mafOpCreateSlicer(GetLabel());
 }
 //----------------------------------------------------------------------------
 bool mafOpCreateSlicer::Accept(mafNode *node)

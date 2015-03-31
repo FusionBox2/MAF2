@@ -45,8 +45,7 @@ mafCxxTypeMacro(mafOpImporterMesh);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpImporterMesh::mafOpImporterMesh(const wxString &label) :
-mafOp(label)
+mafOpImporterMesh::mafOpImporterMesh(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_IMPORTER;
@@ -74,7 +73,7 @@ bool mafOpImporterMesh::Accept(mafNode *node)
 mafOp* mafOpImporterMesh::Copy()   
 //----------------------------------------------------------------------------
 {
-  mafOpImporterMesh *cp = new mafOpImporterMesh(m_Label);
+  mafOpImporterMesh *cp = new mafOpImporterMesh(GetLabel());
   return cp;
 }
 //----------------------------------------------------------------------------

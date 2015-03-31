@@ -37,7 +37,8 @@ compatible with microCT software. */
 class MAF_EXPORT mafOpExporterBmp: public mafOp
 {
 public:
-  mafOpExporterBmp(const wxString &label);
+  mafTypeMacro(mafOpExporterBmp, mafOp)
+  mafOpExporterBmp(const mafString& label = "");
  ~mafOpExporterBmp(); 
   mafOp* Copy();
 

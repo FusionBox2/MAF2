@@ -38,8 +38,7 @@ mafCxxTypeMacro(mafOpCreateProber);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpCreateProber::mafOpCreateProber(const wxString &label) :
-mafOp(label)
+mafOpCreateProber::mafOpCreateProber(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType	= OPTYPE_OP;
@@ -56,7 +55,7 @@ mafOpCreateProber::~mafOpCreateProber( )
 mafOp* mafOpCreateProber::Copy()   
 //----------------------------------------------------------------------------
 {
-	return new mafOpCreateProber(m_Label);
+	return new mafOpCreateProber(GetLabel());
 }
 //----------------------------------------------------------------------------
 bool mafOpCreateProber::Accept(mafNode *node)

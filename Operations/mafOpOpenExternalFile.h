@@ -32,7 +32,7 @@ class mafEvent;
 class MAF_EXPORT mafOpOpenExternalFile: public mafOp
 {
 public:
-  mafOpOpenExternalFile(const wxString &label = "OpenExternalFile");
+  mafOpOpenExternalFile(const mafString& label = "OpenExternalFile");
  ~mafOpOpenExternalFile();
 
  mafTypeMacro(mafOpOpenExternalFile, mafOp);

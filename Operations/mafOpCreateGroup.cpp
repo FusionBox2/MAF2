@@ -35,8 +35,7 @@ mafCxxTypeMacro(mafOpCreateGroup);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpCreateGroup::mafOpCreateGroup(const wxString &label) :
-mafOp(label)
+mafOpCreateGroup::mafOpCreateGroup(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType	= OPTYPE_OP;
@@ -53,7 +52,7 @@ mafOpCreateGroup::~mafOpCreateGroup()
 mafOp* mafOpCreateGroup::Copy()   
 //----------------------------------------------------------------------------
 {
-	return new mafOpCreateGroup(m_Label);
+	return new mafOpCreateGroup(GetLabel());
 }
 //----------------------------------------------------------------------------
 bool mafOpCreateGroup::Accept(mafNode *node)

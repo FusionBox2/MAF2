@@ -37,8 +37,7 @@ mafCxxTypeMacro(mafOpImporterMSF1x);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpImporterMSF1x::mafOpImporterMSF1x(const wxString &label) :
-mafOp(label)
+mafOpImporterMSF1x::mafOpImporterMSF1x(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_IMPORTER;
@@ -57,7 +56,7 @@ mafOp* mafOpImporterMSF1x::Copy()
 //----------------------------------------------------------------------------
 {
   //non devo incrementare l'id counter --- vfc le operazioni sono gia inserite nei menu;
-  mafOpImporterMSF1x *cp = new mafOpImporterMSF1x(m_Label);
+  mafOpImporterMSF1x *cp = new mafOpImporterMSF1x(GetLabel());
   cp->m_File			= m_File;
   return cp;
 }

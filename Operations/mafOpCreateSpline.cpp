@@ -38,8 +38,7 @@ mafCxxTypeMacro(mafOpCreateSpline);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpCreateSpline::mafOpCreateSpline(const wxString &label) :
-mafOp(label)
+mafOpCreateSpline::mafOpCreateSpline(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType	= OPTYPE_OP;
@@ -56,7 +55,7 @@ mafOpCreateSpline::~mafOpCreateSpline( )
 mafOp* mafOpCreateSpline::Copy()   
 //----------------------------------------------------------------------------
 {
-	return new mafOpCreateSpline(m_Label);
+	return new mafOpCreateSpline(GetLabel());
 }
 //----------------------------------------------------------------------------
 bool mafOpCreateSpline::Accept(mafNode *node)

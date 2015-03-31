@@ -40,8 +40,7 @@ mafCxxTypeMacro(mafOpEditMetadata);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpEditMetadata::mafOpEditMetadata(const wxString &label) :
-mafOp(label)
+mafOpEditMetadata::mafOpEditMetadata(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType	= OPTYPE_OP;
@@ -71,7 +70,7 @@ mafOpEditMetadata::~mafOpEditMetadata()
 mafOp* mafOpEditMetadata::Copy()
 //----------------------------------------------------------------------------
 {
-	return new mafOpEditMetadata(m_Label);
+	return new mafOpEditMetadata(GetLabel());
 }
 
 //----------------------------------------------------------------------------
@@ -190,7 +189,7 @@ void mafOpEditMetadata::OnEvent(mafEventBase *maf_event)
 		{
 			mafEvent helpEvent;
 			helpEvent.SetSender(this);
-			mafString operationLabel = this->m_Label;
+			mafString operationLabel = GetLabel();
 			helpEvent.SetString(&operationLabel);
 			helpEvent.SetId(OPEN_HELP_PAGE);
 			mafEventMacro(helpEvent);
