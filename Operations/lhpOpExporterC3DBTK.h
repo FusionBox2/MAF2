@@ -67,8 +67,8 @@ public:
   void SetFileName(const char *file_name) {m_File = file_name;};
 
 protected:
-  void ExportingTraverse(mafNode *vme, std::vector<mafVMELandmarkCloud*>& clouds);
-  bool ExportClouds(btk::Acquisition::Pointer, std::vector<mafVMELandmarkCloud*>& clouds);
+  void ExportingTraverse(mafNode *vme, std::vector<mafVMELandmarkCloud*>& clouds, std::vector<medVMEAnalog*>& analogs);
+  bool ExportClouds(btk::Acquisition::Pointer, std::vector<mafVMELandmarkCloud*>& clouds, std::vector<medVMEAnalog*>& analogs);
 
   mafString	m_File;
   mafString	m_FileDir;

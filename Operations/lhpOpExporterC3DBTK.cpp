@@ -36,6 +36,7 @@
 #include "mafVMESurface.h"
 #include "mafVMEVector.h"
 #include "medVMEAnalog.h"
+#include "mafVMEOutputScalarMatrix.h"
 #include "mafTagArray.h"
 
 #include <vtkCubeSource.h>
@@ -100,6 +101,8 @@ void lhpOpExporterC3DBTK::OpRun()
   m_Gui->Label("absolute matrix",true);
   m_Gui->Bool(ID_ABS_POSITION,"apply",&m_GlobalPos,0);
   if(mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(m_Input))
+    m_Gui->Bool(ID_SUBTREE,"Subtree",&m_Subtree,0);
+  else if(medVMEAnalog *analog = medVMEAnalog::SafeDownCast(m_Input))
     m_Gui->Bool(ID_SUBTREE,"Subtree",&m_Subtree,0);
   m_Gui->OkCancel();
   m_Gui->Divider();
@@ -369,7 +372,7 @@ void oips()
 
 
 
-bool lhpOpExporterC3DBTK::ExportClouds(btk::Acquisition::Pointer target, std::vector<mafVMELandmarkCloud*>& clouds)
+bool lhpOpExporterC3DBTK::ExportClouds(btk::Acquisition::Pointer target, std::vector<mafVMELandmarkCloud*>& clouds, std::vector<medVMEAnalog*>& analogs)
 {
   std::vector<mafTimeStamp> timeStamps;
   int numberLandmark = 0;
@@ -388,7 +391,25 @@ bool lhpOpExporterC3DBTK::ExportClouds(btk::Acquisition::Pointer target, std::ve
     mmuTimeSet::Merge(timeStamps, lmcTimeStamps, timeStamps);
   }
 
-  if(numberLandmark == 0)
+  int numberAnalog = 0;
+  for(int i = 0; i < analogs.size(); i++)
+  {
+    medVMEAnalog *analog = analogs[i];
+
+    const vnl_matrix<double>& matr = analog->GetScalarOutput()->GetScalarData();
+    std::vector<mafTimeStamp> aTimeStamps;
+    if(matr.rows() > 0)
+    {
+      numberAnalog += matr.rows() - 1;
+      for(int i = 0; i < matr.columns(); i++)
+      {
+        aTimeStamps.push_back(matr(0, i));
+      }
+    }
+    mmuTimeSet::Merge(timeStamps, aTimeStamps, timeStamps);
+  }
+
+  if(numberLandmark == 0 && numberAnalog == 0)
     return false;
 
   if(timeStamps.empty())
@@ -401,14 +422,14 @@ bool lhpOpExporterC3DBTK::ExportClouds(btk::Acquisition::Pointer target, std::ve
     freq /= (*(timeStamps.rbegin()) - *(timeStamps.begin()));
   }
 
-  target->Init(numberLandmark, timeStamps.size());
+  target->Init(numberLandmark, timeStamps.size(), numberAnalog);
   target->SetPointFrequency(freq);
   int firstFrame = (int)((*(timeStamps.begin())) * freq);
   target->SetFirstFrame(firstFrame);
   target->SetPointUnit();
 
-  btk::PointCollection::Pointer targetPoints = btk::PointCollection::New();//target->GetPoints();
-  /*
+  /*btk::PointCollection::Pointer targetPoints = btk::PointCollection::New();//target->GetPoints();
+  
   targetP->SetValues(sourceP->GetValues().block(lb-this->m_FirstFrame,0,numFramePoint,3));
   targetP->SetResiduals(sourceP->GetResiduals().block(lb-this->m_FirstFrame,0,numFramePoint,1));
   targetP->SetMasks(sourceP->GetMasks().block(lb-this->m_FirstFrame,0,numFramePoint,1));
@@ -467,10 +488,53 @@ bool lhpOpExporterC3DBTK::ExportClouds(btk::Acquisition::Pointer target, std::ve
       cloud->Close();
   }
 
+  int analogIndex = 0;
+  for(int i = 0; i < analogs.size(); i++)
+  {
+    medVMEAnalog *analog = analogs[i];
+    mafTagItem   *namesTag = analog->GetTagArray()->GetTag("SIGNALS_NAME");
+
+    const vnl_matrix<double>& matr = analog->GetScalarOutput()->GetScalarData();
+    std::vector<mafTimeStamp> aTimeStamps;
+    int aNumberCh = 0;
+    if(matr.rows() > 0)
+    {
+      aNumberCh = matr.rows() - 1;
+    }
+
+    int analogIndexDep = analogIndex;
+    for(int j = 0; j < aNumberCh; j++)
+    {
+      btk::Analog::Pointer targetA = target->GetAnalog(analogIndex);
+      analogIndex++;
+      targetA->SetLabel(namesTag->GetValue(j).GetCStr());
+    }
+    analogIndex = analogIndexDep;
+
+    for (int index = 0; index < timeStamps.size(); index++)
+    {
+      double t = timeStamps[index];
+      analogIndex = analogIndexDep;
+
+      int ti = 0;
+      for(ti = 0; ti < matr.columns() - 1; ti++)
+      {
+        if(t < matr.get(0, ti + 1))
+          break;
+      }
+      for(int j = 0; j < aNumberCh; j++)
+      {
+        btk::Analog::Pointer targetA = target->GetAnalog(analogIndex);
+        analogIndex++;
+        targetA->GetValues()(index) = matr.get(j + 1, ti);
+      }
+    }
+  }
+
   return true;
 }
 
-void lhpOpExporterC3DBTK::ExportingTraverse(mafNode *node, std::vector<mafVMELandmarkCloud*>& clouds)
+void lhpOpExporterC3DBTK::ExportingTraverse(mafNode *node, std::vector<mafVMELandmarkCloud*>& clouds, std::vector<medVMEAnalog*>& analogs)
 {
   if(node == NULL)
     return;
@@ -478,11 +542,15 @@ void lhpOpExporterC3DBTK::ExportingTraverse(mafNode *node, std::vector<mafVMELan
   {
     clouds.push_back(lmc);
   }
+  if(medVMEAnalog *an = medVMEAnalog::SafeDownCast(node))
+  {
+    analogs.push_back(an);
+  }
   int numberChildren = node->GetNumberOfChildren();
   for (int i= 0; i< numberChildren; i++)
   {
     //mafNode *child = node->GetChild(i);
-    ExportingTraverse(node->GetChild(i), clouds);
+    ExportingTraverse(node->GetChild(i), clouds, analogs);
   }
 }
 //----------------------------------------------------------------------------
@@ -498,18 +566,23 @@ void lhpOpExporterC3DBTK::ExportLandmark()
   const char    *fileName = (m_File);
 
   std::vector<mafVMELandmarkCloud*> clouds;
+  std::vector<medVMEAnalog*>        analogs;
   if(m_Input->IsMAFType(mafVMELandmarkCloud) && !m_Subtree)
   {
     clouds.push_back(mafVMELandmarkCloud::SafeDownCast(m_Input));
   }
+  else if(m_Input->IsMAFType(medVMEAnalog) && !m_Subtree)
+  {
+    analogs.push_back(medVMEAnalog::SafeDownCast(m_Input));
+  }
   else
   {
-    ExportingTraverse(m_Input, clouds);
+    ExportingTraverse(m_Input, clouds, analogs);
   }
-  if(!clouds.empty())
+  if(!clouds.empty() || !analogs.empty())
   {
     btk::Acquisition::Pointer target = btk::Acquisition::New();
-    if(ExportClouds(target, clouds))
+    if(ExportClouds(target, clouds, analogs))
     {
       btk::AcquisitionFileWriter::Pointer writer = btk::AcquisitionFileWriter::New();
       writer->SetFilename(fileName);
