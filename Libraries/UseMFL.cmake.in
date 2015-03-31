@@ -27,7 +27,7 @@ SET (MFL_SOURCE_PATH @MFL_SOURCE_DIR@)
 # VTK library
 #
 IF (MAF_USE_VTK)
-  INCLUDE (@MFL_BINARY_DIR@/modules/FindVTK.cmake)
+  find_package(VTK)
   IF (VTK_FOUND)
     MESSAGE(STATUS "USE_MFL: Usining VTK library: ${VTK_USE_FILE}")
     INCLUDE(${VTK_USE_FILE})
@@ -93,7 +93,7 @@ ENDIF (MAF_USE_WX)
 # ITK library
 #
 IF (MAF_USE_ITK)
-  INCLUDE (@MFL_BINARY_DIR@/modules/FindITK.cmake)
+  find_package(ITK)
   IF (ITK_FOUND)
     MESSAGE(STATUS "USE_MFL: Usining ITK library: ${ITK_USE_FILE}")
     INCLUDE(${ITK_USE_FILE})

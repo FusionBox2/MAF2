@@ -46,14 +46,12 @@ MFL_SUBPROJECT (MFL_MODULES modules)
 # this is to build VTK inside the MAF tree
 #
 IF (MAF_USE_VTK)
-  MFL_SUBPROJECT(VTK VTK)
 ENDIF (MAF_USE_VTK)
 
 #
 # this is to build ITK inside the MAF tree
 #
 IF (MAF_USE_ITK)
-  MFL_SUBPROJECT(ITK ITK)
 ENDIF (MAF_USE_ITK)
 
 #
