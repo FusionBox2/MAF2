@@ -1,6 +1,6 @@
 /*=========================================================================
   Program:   Multimod Application Framework
-  Module:    $RCSfile: lhpBuilderApp.h,v $
+  Module:    $RCSfile: lhpFusionBoxApp.h,v $
   Language:  C++
   Date:      $Date: 2009-05-08 09:23:51 $
   Version:   $Revision: 1.5.2.1 $
@@ -9,8 +9,8 @@
   Copyright (c) 2001/2005 
   CINECA - Interuniversity Consortium (www.cineca.it)
 =========================================================================*/
-#ifndef __lhpBuilderApp_H__
-#define __lhpBuilderApp_H__
+#ifndef __lhpFusionBoxApp_H__
+#define __lhpFusionBoxApp_H__
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
@@ -24,7 +24,7 @@
 //----------------------------------------------------------------------------
 class lhpUser;
 
-class lhpBuilderApp : public wxApp
+class lhpFusionBoxApp : public wxApp
 {
 public:
   bool OnInit();
@@ -40,5 +40,5 @@ protected:
   std::vector<std::pair<LibHandle, void(*)() > > m_Plugins;
 
 };
-DECLARE_APP(lhpBuilderApp)
+DECLARE_APP(lhpFusionBoxApp)
 #endif 

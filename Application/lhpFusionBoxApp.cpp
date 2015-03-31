@@ -1,6 +1,6 @@
 /*=========================================================================
   Program:   Multimod Application Framework
-  Module:    $RCSfile: lhpBuilderApp.cpp,v $
+  Module:    $RCSfile: lhpFusionBoxApp.cpp,v $
   Language:  C++
   Date:      $Date: 2009-05-29 09:41:31 $
   Version:   $Revision: 1.71.2.24 $
@@ -18,7 +18,7 @@
 // Failing in doing this will result in a run-time error saying:
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
-#include "lhpBuilderApp.h"
+#include "lhpFusionBoxApp.h"
 
 #include <wx/datetime.h>
 #include <wx/config.h>
@@ -344,16 +344,16 @@ public:
 // Create the Application
 //--------------------------------------------------------------------------------
 
-IMPLEMENT_APP(lhpBuilderApp)
+IMPLEMENT_APP(lhpFusionBoxApp)
 
 ////BES: 14.5.2008 - OnIdle to unlock blocks
-//BEGIN_EVENT_TABLE(lhpBuilderApp, wxApp)
-//  EVT_IDLE(lhpBuilderApp::OnIdle)
+//BEGIN_EVENT_TABLE(lhpFusionBoxApp, wxApp)
+//  EVT_IDLE(lhpFusionBoxApp::OnIdle)
 //END_EVENT_TABLE()
 
 
 //--------------------------------------------------------------------------------
-bool lhpBuilderApp::OnInit()
+bool lhpFusionBoxApp::OnInit()
 //--------------------------------------------------------------------------------
 {
   ////BES: 14.5.2008 - initialize the manager (with default settings)
@@ -482,7 +482,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   m_Logic = new lhpBuilderLogic();
   if(fullVersion)
   {
-    m_Logic->GetTopWin()->SetTitle("LHPBuilder");
+    m_Logic->GetTopWin()->SetTitle("LHPFusionBox");
   }
   else
   {
@@ -493,7 +493,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
 
   wxString regKeyName;
   if(fullVersion)
-    regKeyName = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\lhpBuilder";
+    regKeyName = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\lhpFusionBox";
   else
     regKeyName = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\ULBViewer";
   wxRegKey RegKey(regKeyName);
@@ -741,7 +741,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   return TRUE;
 }
 //--------------------------------------------------------------------------------
-int lhpBuilderApp::OnExit()
+int lhpFusionBoxApp::OnExit()
 //--------------------------------------------------------------------------------
 {
   cppDEL(m_Logic);
@@ -757,7 +757,7 @@ int lhpBuilderApp::OnExit()
   return 0;
 }
 
-//void lhpBuilderApp::OnIdle( wxIdleEvent &event )
+//void lhpFusionBoxApp::OnIdle( wxIdleEvent &event )
 //{ 
 //  vtkDataArrayMemMng::GetDataArrayMemMng()->UnlockAllMemory(0);
 //  event.Skip();
