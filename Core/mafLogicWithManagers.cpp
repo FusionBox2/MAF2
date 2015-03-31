@@ -501,578 +501,666 @@ void mafLogicWithManagers::UpdateFrameTitle()
 void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
 //----------------------------------------------------------------------------
 {
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
+  mafEvent *e = mafEvent::SafeDownCast(maf_event);
+  if(!e)
+    return;
+  mafID eventId = e->GetId();
+  /*if (mafDataVector::GetSingleFileDataId() == eventId)
   {
-    /*if (e->GetId() == mafDataVector::SINGLE_FILE_DATA)
+    e->SetBool(m_StorageSettings->GetSingleFileStatus()!= 0);
+    return;
+  }*/
+  // ###############################################################
+  // commands related to FILE MENU  
+  if(MENU_FILE_NEW == eventId)
+  {
+    OnFileNew();
+    return; 
+  }
+  if(MENU_FILE_OPEN == eventId)
+  {
+    mafString *filename = e->GetString();
+    if(filename)
+      OnFileOpen((*filename).GetCStr());
+    else
+      OnFileOpen();
+    UpdateFrameTitle();
+    return; 
+  }
+  if(IMPORT_FILE == eventId)
+  {
+    mafString *filename = e->GetString();
+    if(filename)
     {
-      e->SetBool(m_StorageSettings->GetSingleFileStatus()!= 0);
+      ImportExternalFile(*filename);
+    }
+    return;
+  }
+  if(wxID_FILE1 <= eventId && eventId <= wxID_FILE9)
+  {
+    OnFileHistory(e->GetId());
+    return;
+  }
+  if(MENU_FILE_SAVE == eventId)
+  {
+    OnFileSave();
+    return; 
+  }
+  if(MENU_FILE_SAVEAS == eventId)
+  {
+    OnFileSaveAs();
+    return;
+  }
+  if(MENU_FILE_UPLOAD == eventId)
+  {
+    /*  Re-think about it!!
+    wxString remote_path = "";
+    wxString remote_file = "";
+    bool valid_dir = false;
+    wxString msg = _("Insert remote directory on remote host: ") + m_StorageSettings->GetRemoteHostName();
+    do 
+    {
+      remote_path = wxGetTextFromUser(msg,_("Remote directory choose"),"/mafstorage/pub/");
+      if (!remote_path.IsEmpty())
+      {
+        remote_file = m_StorageSettings->GetRemoteHostName();
+        remote_file << remote_path;
+      }
+      else
+        return;
+      wxString dir_check = remote_file[remote_file.Length()-1];
+      valid_dir = dir_check.IsSameAs("/") || dir_check.IsSameAs("\\");
+      if (!valid_dir)
+      {
+        wxMessageBox(_("Not valid path!! It should ends with '/'"), _("Warning"));
+      }
+    } while(!valid_dir);
+
+    // for now upload the entire msf
+    remote_file += wxFileNameFromPath(m_VMEManager->GetFileName());
+    OnFileUpload(remote_file.c_str());
+    */
+    return;
+  }
+
+  if(MENU_FILE_PRINT == eventId)
+  {
+    if (m_ViewManager && m_PrintSupport)
+      m_PrintSupport->OnPrint(m_ViewManager->GetSelectedView());
+    return;
+  }
+  if(MENU_FILE_PRINT_PREVIEW == eventId)
+  {
+    if (m_ViewManager && m_PrintSupport)
+      m_PrintSupport->OnPrintPreview(m_ViewManager->GetSelectedView());
+    return;
+  }
+  if(MENU_FILE_PRINT_SETUP == eventId)
+  {
+    if (m_PrintSupport)
+      m_PrintSupport->OnPrintSetup();
+    return;
+  }
+  if(MENU_FILE_PRINT_PAGE_SETUP == eventId)
+  {
+    if (m_PrintSupport)
+      m_PrintSupport->OnPageSetup();
+    return;
+  }
+  if(MENU_FILE_QUIT == eventId)
+  {
+    OnQuit();		
+    return; 
+  }
+  // ###############################################################
+  // commands related to VME
+  if(MENU_EDIT_FIND_VME == eventId)
+  {
+    FindVME();
+    return;
+  }
+  if(VME_SELECT == eventId)
+  {
+    VmeSelect(*e);		
+    return;
+  }
+  if(VME_SELECTED == eventId)
+  {
+    VmeSelected(e->GetVme());
+    return;
+  }
+  if(VME_DCLICKED == eventId)
+  {
+    VmeDoubleClicked(*e);
+    return;
+  }
+  if(VME_SHOW == eventId)
+  {
+    VmeShow(e->GetVme(), e->GetBool());
+    if(m_RemoteLogic && (e->GetSender() != m_RemoteLogic) && m_RemoteLogic->IsSocketConnected())
+    {
+      m_RemoteLogic->VmeShow(e->GetVme(), e->GetBool());
+    }
+    return;
+  }
+  if(VME_MODIFIED == eventId)
+  {
+    VmeModified(e->GetVme());
+    if(!m_PlugTimebar && ((mafVME*)e->GetVme())->IsAnimated())
+      m_Win->ShowDockPane("timebar",!m_Win->DockPaneIsShown("timebar") );
+    return; 
+  }
+  if(VME_ADD == eventId)
+  {
+    VmeAdd(e->GetVme());
+    return; 
+  }
+  if(VME_ADDED == eventId)
+  {
+    VmeAdded(e->GetVme());
+    return; 
+  }
+  if(VME_REMOVE == eventId)
+  {
+    VmeRemove(e->GetVme());
+    return; 
+  }
+  if(VME_REMOVING == eventId)
+  {
+    VmeRemoving(e->GetVme());
+    return; 
+  }
+  if(VME_CHOOSE == eventId)
+  {
+    mafString *s = e->GetString();
+    if(s != NULL)
+    {
+      std::vector<mafNode*> nodeVector = VmeChoose(e->GetArg(), REPRESENTATION_AS_TREE, *s, e->GetBool());
+      if (!e->GetBool())
+      {
+        if (nodeVector.size() != 0)
+        {
+          e->SetVme(nodeVector[0]);
+        }
+        else
+        {
+          e->SetVme(NULL);
+        }
+      }
+      else
+      {
+        e->SetVmeVector(nodeVector);
+      }
+    }
+    else
+    {
+      std::vector<mafNode*> nodeVector = VmeChoose(e->GetArg(), REPRESENTATION_AS_TREE, "Choose Node", e->GetBool());
+      if (!e->GetBool())
+      {
+        if (nodeVector.size() != 0)
+        {
+          e->SetVme(nodeVector[0]);
+        }
+        else
+        {
+          e->SetVme(NULL);
+        }
+      }
+      else
+      {
+        e->SetVmeVector(nodeVector);
+      }
+    }
+    return;
+  }
+  if(VME_CHOOSE_MATERIAL == eventId)
+  {
+    VmeChooseMaterial((mafVME *)e->GetVme(), e->GetBool());
+    return;
+  }
+  if(VME_VISUAL_MODE_CHANGED == eventId)
+  {
+    mafVME *vme = (mafVME *)e->GetVme();
+    VmeShow(vme, false);
+    VmeShow(vme, true);
+    return;
+  }
+  if(UPDATE_PROPERTY == eventId)
+  {
+    VmeUpdateProperties((mafVME *)e->GetVme(), e->GetBool());
+    return;
+  }
+  if(SHOW_CONTEXTUAL_MENU == eventId)
+  {
+    if (e->GetSender() == m_SideBar->GetTree())
+      TreeContextualMenu(*e);
+    else
+      ViewContextualMenu(e->GetBool());
+    return;
+  }
+  // ###############################################################
+  // commands related to OP
+  if(MENU_OP == eventId)
+  {
+    if(m_OpManager) 
+    {
+      m_OpManager->OpRun(e->GetArg());
+      if(/*m_OpManager->GetRunningOperation() && */m_RemoteLogic && m_RemoteLogic->IsSocketConnected() && !m_OpManager->m_FromRemote)
+      {
+        mafEvent re(this, mafOpManager::RUN_OPERATION_EVENT, e->GetArg());
+        re.SetChannel(REMOTE_COMMAND_CHANNEL);
+        m_RemoteLogic->OnEvent(&re);
+      }
+    }
+    return;
+  }
+  if(PARSE_STRING == eventId)
+  {
+    if(this->m_OpManager->Running())
+    {
+      wxMessageBox("There is an other operation running!!");
       return;
-    }*/
-    switch(e->GetId())
+    }
+    int menuId, opId;
+    mafString *s = e->GetString();
+    menuId = m_MenuBar->FindMenu(_("Operations"));
+    opId = m_MenuBar->GetMenu(menuId)->FindItem(s->GetCStr());
+    m_OpManager->OpRun(opId);
+    return;
+  }
+  if(MENU_OPTION_APPLICATION_SETTINGS == eventId)
+  {
+    if (m_OpManager)
     {
-      // ###############################################################
-      // commands related to FILE MENU  
-      case MENU_FILE_NEW:
-        OnFileNew();
-      break; 
-      case MENU_FILE_OPEN:
-      {
-        mafString *filename = e->GetString();
-        if(filename)
-          OnFileOpen((*filename).GetCStr());
-        else
-          OnFileOpen();
-        UpdateFrameTitle();
-      }
-      break; 
-      case IMPORT_FILE:
-      {
-        mafString *filename = e->GetString();
-        if(filename)
-        {
-          ImportExternalFile(*filename);
-        }
-      }
-      break;
-      case wxID_FILE1:
-      case wxID_FILE2:
-      case wxID_FILE3:
-      case wxID_FILE4:
-      case wxID_FILE5:
-      case wxID_FILE6:
-      case wxID_FILE7:
-      case wxID_FILE8:
-      case wxID_FILE9:
-        OnFileHistory(e->GetId());
-      break;
-      case MENU_FILE_SAVE:
-        OnFileSave();
-      break; 
-      case MENU_FILE_SAVEAS:
-        OnFileSaveAs();
-      break;
-      case MENU_FILE_UPLOAD:
-      {
-        /*  Re-think about it!!
-        wxString remote_path = "";
-        wxString remote_file = "";
-        bool valid_dir = false;
-        wxString msg = _("Insert remote directory on remote host: ") + m_StorageSettings->GetRemoteHostName();
-        do 
-        {
-          remote_path = wxGetTextFromUser(msg,_("Remote directory choose"),"/mafstorage/pub/");
-          if (!remote_path.IsEmpty())
-          {
-            remote_file = m_StorageSettings->GetRemoteHostName();
-            remote_file << remote_path;
-          }
-          else
-            return;
-          wxString dir_check = remote_file[remote_file.Length()-1];
-          valid_dir = dir_check.IsSameAs("/") || dir_check.IsSameAs("\\");
-          if (!valid_dir)
-          {
-            wxMessageBox(_("Not valid path!! It should ends with '/'"), _("Warning"));
-          }
-        } while(!valid_dir);
+      m_OpManager->WarningIfCantUndo(m_ApplicationSettings->GetWarnUserFlag());
+      return;
+    }
+  }
+  if(CLEAR_UNDO_STACK == eventId)
+  {
+    if (!m_OpManager->Running())
+    {
+      m_OpManager->ClearUndoStack();
+    }
+    return;
+  }
+  if(OP_RUN_STARTING == eventId)
+  {
+    mafGUIMDIChild *c = (mafGUIMDIChild *)m_Win->GetActiveChild();
+    if (c != NULL)
+      c->SetAllowCloseWindow(false);
+    OpRunStarting();
+    return; 
+  }
+  if(OP_RUN_TERMINATED == eventId)
+  {
+    mafGUIMDIChild *c = (mafGUIMDIChild *)m_Win->GetActiveChild();
+    if (c != NULL)
+      c->SetAllowCloseWindow(true);
+    OpRunTerminated();
+    return; 
+  }
+  if(OP_SHOW_GUI == eventId)
+  {
+    OpShowGui(!e->GetBool(), (mafGUIPanel*)e->GetWin());
+    return; 
+  }
+  if(OP_HIDE_GUI == eventId)
+  {
+    OpHideGui(e->GetBool());
+    return;
+  }
+  if(OP_FORCE_STOP == eventId)
+  {
+    m_OpManager->StopCurrentOperation();
+    return;
+  }
+  // ###############################################################
+  // commands related to VIEWS
+  if(VIEW_CREATE == eventId)
+  {
+    ViewCreate(e->GetArg());
+    return;
+  }
+  if(VIEW_CREATED == eventId)
+  {
+    ViewCreated(e->GetView());
+    return;
+  }
+  if(VIEW_RESIZE == eventId)
+  {
+    mafView *view = NULL;
+    const char *viewStr=e->GetString()->GetCStr();
+    view=m_ViewManager->GetFromList(viewStr);
+    if(view) 
+    {
+      view->GetFrame()->SetSize(e->GetWidth(),e->GetHeight());
+      view->GetFrame()->SetPosition(wxPoint(e->GetX(),e->GetY()));
+    }
+  }
+  if(VIEW_DELETE == eventId)
+  {
 
-        // for now upload the entire msf
-        remote_file += wxFileNameFromPath(m_VMEManager->GetFileName());
-        OnFileUpload(remote_file.c_str());
-        */
-      }
-      break;
-      case MENU_FILE_PRINT:
-        if (m_ViewManager && m_PrintSupport)
-          m_PrintSupport->OnPrint(m_ViewManager->GetSelectedView());
-      break;
-      case MENU_FILE_PRINT_PREVIEW:
-        if (m_ViewManager && m_PrintSupport)
-          m_PrintSupport->OnPrintPreview(m_ViewManager->GetSelectedView());
-      break;
-      case MENU_FILE_PRINT_SETUP:
-        if (m_PrintSupport)
-          m_PrintSupport->OnPrintSetup();
-      break;
-      case MENU_FILE_PRINT_PAGE_SETUP:
-        if (m_PrintSupport)
-          m_PrintSupport->OnPageSetup();
-      break;
-      case MENU_FILE_QUIT:
-        OnQuit();		
-      break; 
-        // ###############################################################
-        // commands related to VME
-      case MENU_EDIT_FIND_VME:
-        FindVME();
-      break;
-      case VME_SELECT:	
-        VmeSelect(*e);		
-      break; 
-      case VME_SELECTED: 
-        VmeSelected(e->GetVme());
-      break;
-      case VME_DCLICKED:
-        VmeDoubleClicked(*e);
-      break;
-      case VME_SHOW:
-        VmeShow(e->GetVme(), e->GetBool());
-        if(m_RemoteLogic && (e->GetSender() != m_RemoteLogic) && m_RemoteLogic->IsSocketConnected())
-        {
-          m_RemoteLogic->VmeShow(e->GetVme(), e->GetBool());
-        }
-      break;
-      case VME_MODIFIED:
-        VmeModified(e->GetVme());
-				if(!m_PlugTimebar && ((mafVME*)e->GetVme())->IsAnimated())
-					m_Win->ShowDockPane("timebar",!m_Win->DockPaneIsShown("timebar") );
-      break; 
-      case VME_ADD:
-        VmeAdd(e->GetVme());
-      break; 
-      case VME_ADDED:
-        VmeAdded(e->GetVme());
-      break; 
-      case VME_REMOVE:
-        VmeRemove(e->GetVme());
-      break; 
-      case VME_REMOVING:
-        VmeRemoving(e->GetVme());
-      break; 
-      case VME_CHOOSE:
-      {
-        mafString *s = e->GetString();
-        if(s != NULL)
-        {
-          std::vector<mafNode*> nodeVector = VmeChoose(e->GetArg(), REPRESENTATION_AS_TREE, *s, e->GetBool());
-          if (!e->GetBool())
-          {
-            if (nodeVector.size() != 0)
-            {
-              e->SetVme(nodeVector[0]);
-            }
-            else
-            {
-              e->SetVme(NULL);
-            }
-          }
-          else
-          {
-            e->SetVmeVector(nodeVector);
-          }
-        }
-        else
-        {
-          std::vector<mafNode*> nodeVector = VmeChoose(e->GetArg(), REPRESENTATION_AS_TREE, "Choose Node", e->GetBool());
-          if (!e->GetBool())
-          {
-            if (nodeVector.size() != 0)
-            {
-              e->SetVme(nodeVector[0]);
-            }
-            else
-            {
-              e->SetVme(NULL);
-            }
-          }
-          else
-          {
-            e->SetVmeVector(nodeVector);
-          }
-        }
-      }
-      break;
-      case VME_CHOOSE_MATERIAL:
-        VmeChooseMaterial((mafVME *)e->GetVme(), e->GetBool());
-      break;
-      case VME_VISUAL_MODE_CHANGED:
-      {
-        mafVME *vme = (mafVME *)e->GetVme();
-        VmeShow(vme, false);
-        VmeShow(vme, true);
-      }
-      break;
-      case UPDATE_PROPERTY:
-        VmeUpdateProperties((mafVME *)e->GetVme(), e->GetBool());
-        break;
-      case SHOW_CONTEXTUAL_MENU:
-        if (e->GetSender() == m_SideBar->GetTree())
-          TreeContextualMenu(*e);
-        else
-          ViewContextualMenu(e->GetBool());
-      break;
-        // ###############################################################
-        // commands related to OP
-      case MENU_OP:
-        if(m_OpManager) 
-        {
-          m_OpManager->OpRun(e->GetArg());
-          if(/*m_OpManager->GetRunningOperation() && */m_RemoteLogic && m_RemoteLogic->IsSocketConnected() && !m_OpManager->m_FromRemote)
-          {
-            mafEvent re(this, mafOpManager::RUN_OPERATION_EVENT, e->GetArg());
-            re.SetChannel(REMOTE_COMMAND_CHANNEL);
-            m_RemoteLogic->OnEvent(&re);
-          }
-        }
-      break;
-      case PARSE_STRING:
-        {
-          if(this->m_OpManager->Running())
-          {
-            wxMessageBox("There is an other operation running!!");
-            return;
-          }
-          int menuId, opId;
-          mafString *s = e->GetString();
-          menuId = m_MenuBar->FindMenu(_("Operations"));
-          opId = m_MenuBar->GetMenu(menuId)->FindItem(s->GetCStr());
-          m_OpManager->OpRun(opId);
-        }
-      break;
-      case MENU_OPTION_APPLICATION_SETTINGS:
-        if (m_OpManager)
-        {
-          m_OpManager->WarningIfCantUndo(m_ApplicationSettings->GetWarnUserFlag());
-        }
-      break;
-      case CLEAR_UNDO_STACK:
-        if (!m_OpManager->Running())
-        {
-          m_OpManager->ClearUndoStack();
-        }
-      break;
-      case OP_RUN_STARTING:
-      {
-        mafGUIMDIChild *c = (mafGUIMDIChild *)m_Win->GetActiveChild();
-        if (c != NULL)
-          c->SetAllowCloseWindow(false);
-        OpRunStarting();
-      }
-      break; 
-      case OP_RUN_TERMINATED:
-      {
-        mafGUIMDIChild *c = (mafGUIMDIChild *)m_Win->GetActiveChild();
-        if (c != NULL)
-          c->SetAllowCloseWindow(true);
-        OpRunTerminated();
-      }
-      break; 
-      case OP_SHOW_GUI:
-        OpShowGui(!e->GetBool(), (mafGUIPanel*)e->GetWin());
-      break; 
-      case OP_HIDE_GUI:
-        OpHideGui(e->GetBool());
-      break; 
-      case OP_FORCE_STOP:
-        m_OpManager->StopCurrentOperation();
-      break;
-        // ###############################################################
-        // commands related to VIEWS
-      case VIEW_CREATE:
-        ViewCreate(e->GetArg());
-      break;
-      case VIEW_CREATED:
-        ViewCreated(e->GetView());
-      break;
-	  case VIEW_RESIZE:
-		  {
-			  mafView *view = NULL;
-			  const char *viewStr=e->GetString()->GetCStr();
-			  view=m_ViewManager->GetFromList(viewStr);
-			  if(view) 
-			  {
-				  view->GetFrame()->SetSize(e->GetWidth(),e->GetHeight());
-				  view->GetFrame()->SetPosition(wxPoint(e->GetX(),e->GetY()));
-			  }
-		  }
-	  break;
-      case VIEW_DELETE:
-      {
-
-        if(m_PlugSidebar)
-		   this->m_SideBar->ViewDeleted(e->GetView());
+    if(m_PlugSidebar)
+      this->m_SideBar->ViewDeleted(e->GetView());
 
 #ifdef MAF_USE_VTK
-        // currently mafInteraction is strictly dependent on VTK (marco)
-        if(m_InteractionManager)
-          m_InteractionManager->ViewSelected(NULL);
+    // currently mafInteraction is strictly dependent on VTK (marco)
+    if(m_InteractionManager)
+      m_InteractionManager->ViewSelected(NULL);
 #endif
 
-        if (m_ViewManager)
-        {
-          EnableItem(CAMERA_RESET, false);
-          EnableItem(CAMERA_FIT,   false);
-          EnableItem(CAMERA_FLYTO, false);
+    if (m_ViewManager)
+    {
+      EnableItem(CAMERA_RESET, false);
+      EnableItem(CAMERA_FIT,   false);
+      EnableItem(CAMERA_FLYTO, false);
 
-          EnableItem(MENU_FILE_PRINT, false);
-          EnableItem(MENU_FILE_PRINT_PREVIEW, false);
-          EnableItem(MENU_FILE_PRINT_SETUP, false);
-          EnableItem(MENU_FILE_PRINT_PAGE_SETUP, false);
-        }
-      }
-      if (m_OpManager)
+      EnableItem(MENU_FILE_PRINT, false);
+      EnableItem(MENU_FILE_PRINT_PREVIEW, false);
+      EnableItem(MENU_FILE_PRINT_SETUP, false);
+      EnableItem(MENU_FILE_PRINT_PAGE_SETUP, false);
+    }
+    if (m_OpManager)
+    {
+      m_OpManager->RefreshMenu();
+    }
+    return;
+  }
+  if(VIEW_SELECT == eventId)
+  {
+    ViewSelect();
+    if (m_OpManager)
+    {
+      mafGUIMDIChild *c = (mafGUIMDIChild *)m_Win->GetActiveChild();
+      if (c != NULL)
+        c->SetAllowCloseWindow(!m_OpManager->Running());
+    }
+    return;
+  }
+  if(VIEW_MAXIMIZE == eventId)
+  {
+    if (m_RemoteLogic && m_RemoteLogic->IsSocketConnected() && !m_ViewManager->m_FromRemote)
+    {
+      m_RemoteLogic->RemoteMessage(*e->GetString());
+    }
+    return;
+  }
+  if(VIEW_SELECTED == eventId)
+  {
+    e->SetBool(m_ViewManager->GetSelectedView() != NULL);
+    e->SetView(m_ViewManager->GetSelectedView());
+    return;
+  }
+  if(VIEW_SAVE_IMAGE == eventId)
+  {
+    mafViewCompound *v = mafViewCompound::SafeDownCast(m_ViewManager->GetSelectedView());
+    if (v && e->GetBool())
+    {
+      v->GetRWI()->SaveAllImages(v->GetLabel(),v, m_ApplicationSettings->GetImageTypeId());
+    }
+    else
+    {
+      mafView *v = m_ViewManager->GetSelectedView();
+      if (v)
       {
-        m_OpManager->RefreshMenu();
+        v->GetRWI()->SaveImage(v->GetLabel());
       }
-      break;	
-      case VIEW_SELECT:
-      {
-        ViewSelect();
-        if (m_OpManager)
-        {
-          mafGUIMDIChild *c = (mafGUIMDIChild *)m_Win->GetActiveChild();
-          if (c != NULL)
-            c->SetAllowCloseWindow(!m_OpManager->Running());
-        }
-      }
-      break;
-      case VIEW_MAXIMIZE:
-        if (m_RemoteLogic && m_RemoteLogic->IsSocketConnected() && !m_ViewManager->m_FromRemote)
-        {
-          m_RemoteLogic->RemoteMessage(*e->GetString());
-        }
-      break;
-      case VIEW_SELECTED:
-        e->SetBool(m_ViewManager->GetSelectedView() != NULL);
-        e->SetView(m_ViewManager->GetSelectedView());
-      break;
-      case VIEW_SAVE_IMAGE:
-      {
-				mafViewCompound *v = mafViewCompound::SafeDownCast(m_ViewManager->GetSelectedView());
-        if (v && e->GetBool())
-        {
-          v->GetRWI()->SaveAllImages(v->GetLabel(),v, m_ApplicationSettings->GetImageTypeId());
-        }
-        else
-        {
-          mafView *v = m_ViewManager->GetSelectedView();
-          if (v)
-          {
-            v->GetRWI()->SaveImage(v->GetLabel());
-          }
-        }
-      }
-      break;
-      case LAYOUT_LOAD:
-        RestoreLayout();
-      break;
-      case CAMERA_RESET:
-        if(m_ViewManager) m_ViewManager->CameraReset();
-      break; 
-      case CAMERA_FIT:
-        if(m_ViewManager) m_ViewManager->CameraReset(true);
-      break;
-      case CAMERA_FLYTO:
-        if(m_ViewManager) m_ViewManager->CameraFlyToMode();
-// currently mafInteraction is strictly dependent on VTK (marco)
+    }
+    return;
+  }
+  if(LAYOUT_LOAD == eventId)
+  {
+    RestoreLayout();
+    return;
+  }
+  if(CAMERA_RESET == eventId)
+  {
+    if(m_ViewManager) m_ViewManager->CameraReset();
+    return; 
+  }
+  if(CAMERA_FIT == eventId)
+  {
+    if(m_ViewManager) m_ViewManager->CameraReset(true);
+    return;
+  }
+  if(CAMERA_FLYTO == eventId)
+  {
+    if(m_ViewManager) m_ViewManager->CameraFlyToMode();
+    // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
-        if(m_InteractionManager) m_InteractionManager->CameraFlyToMode();  //modified by Marco. 15-9-2004 fly to with devices.
+    if(m_InteractionManager) m_InteractionManager->CameraFlyToMode();  //modified by Marco. 15-9-2004 fly to with devices.
 #endif
-      break;
-      case LINK_CAMERA_TO_INTERACTOR:
-      {
-// currently mafInteraction is strictly dependent on VTK (marco)
+    return;
+  }
+  if(LINK_CAMERA_TO_INTERACTOR == eventId)
+  {
+    // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
-        if (m_InteractionManager == NULL || m_InteractionManager->GetPER() == NULL)
-          return;
+    if (m_InteractionManager == NULL || m_InteractionManager->GetPER() == NULL)
+      return;
 
-        vtkCamera *cam = vtkCamera::SafeDownCast(e->GetVtkObj());
-        bool link_camera = e->GetBool();
-        if (!link_camera) 
-        {
-          if (cam) 
-            m_InteractionManager->GetPER()->LinkCameraRemove(cam);
-          else
-            m_InteractionManager->GetPER()->LinkCameraRemoveAll();
+    vtkCamera *cam = vtkCamera::SafeDownCast(e->GetVtkObj());
+    bool link_camera = e->GetBool();
+    if (!link_camera) 
+    {
+      if (cam) 
+        m_InteractionManager->GetPER()->LinkCameraRemove(cam);
+      else
+        m_InteractionManager->GetPER()->LinkCameraRemoveAll();
 
-          if (m_CameraLinkingObserverFlag) 
-          {
-            m_InteractionManager->GetPER()->GetCameraMouseInteractor()->RemoveObserver(this);
-            m_CameraLinkingObserverFlag = false;
-          }
-        }
-        else if (cam) 
-        {
-          if (!m_CameraLinkingObserverFlag) 
-          {
-            m_InteractionManager->GetPER()->GetCameraMouseInteractor()->AddObserver(this);
-            m_CameraLinkingObserverFlag = true;
-          }
-          m_InteractionManager->GetPER()->LinkCameraAdd(cam);
-        }
+      if (m_CameraLinkingObserverFlag) 
+      {
+        m_InteractionManager->GetPER()->GetCameraMouseInteractor()->RemoveObserver(this);
+        m_CameraLinkingObserverFlag = false;
       }
+    }
+    else if (cam) 
+    {
+      if (!m_CameraLinkingObserverFlag) 
+      {
+        m_InteractionManager->GetPER()->GetCameraMouseInteractor()->AddObserver(this);
+        m_CameraLinkingObserverFlag = true;
+      }
+      m_InteractionManager->GetPER()->LinkCameraAdd(cam);
+    }
 #endif
-      break;
-      case TIME_SET:
-        TimeSet(e->GetDouble());
-      break;
-      // ###############################################################
-      // commands related to interaction manager
-      case ID_APP_SETTINGS:
-        m_SettingsDialog->ShowModal();
-      break;
-      case mafGUIMeasureUnitSettings::MEASURE_UNIT_UPDATED:
-        UpdateMeasureUnit();
-      break;
-      case CAMERA_PRE_RESET:
-// currently mafInteraction is strictly dependent on VTK (marco)
+    return;
+  }
+  if(TIME_SET == eventId)
+  {
+    TimeSet(e->GetDouble());
+    return;
+  }
+  // ###############################################################
+  // commands related to interaction manager
+  if(ID_APP_SETTINGS == eventId)
+  {
+    m_SettingsDialog->ShowModal();
+    return;
+  }
+  if(mafGUIMeasureUnitSettings::MEASURE_UNIT_UPDATED == eventId)
+  {
+    UpdateMeasureUnit();
+    return;
+  }
+  if(CAMERA_PRE_RESET == eventId)
+  {
+    // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
-        if(m_InteractionManager) 
-        {
-          vtkRenderer *ren = (vtkRenderer*)e->GetVtkObj();
-          //assert(ren);
-          m_InteractionManager->PreResetCamera(ren);
-          //mafLogMessage("CAMERA_PRE_RESET");
-        }
+    if(m_InteractionManager) 
+    {
+      vtkRenderer *ren = (vtkRenderer*)e->GetVtkObj();
+      //assert(ren);
+      m_InteractionManager->PreResetCamera(ren);
+      //mafLogMessage("CAMERA_PRE_RESET");
+    }
 #endif
-      break;
-      case CAMERA_POST_RESET:
-// currently mafInteraction is strictly dependent on VTK (marco)
+    return;
+  }
+  if(CAMERA_POST_RESET == eventId)
+  {
+    // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
-        if(m_InteractionManager) 
-        {
-          vtkRenderer *ren = (vtkRenderer*)e->GetVtkObj();
-          //assert(ren); //modified by Marco. 2-11-2004 Commented out to allow reset camera of all cameras.
-          m_InteractionManager->PostResetCamera(ren);
-          //mafLogMessage("CAMERA_POST_RESET");
-        }
+    if(m_InteractionManager) 
+    {
+      vtkRenderer *ren = (vtkRenderer*)e->GetVtkObj();
+      //assert(ren); //modified by Marco. 2-11-2004 Commented out to allow reset camera of all cameras.
+      m_InteractionManager->PostResetCamera(ren);
+      //mafLogMessage("CAMERA_POST_RESET");
+    }
 #endif
-      break;
-      case CAMERA_UPDATE:
-        if(m_ViewManager) m_ViewManager->CameraUpdate();
-// currently mafInteraction is strictly dependent on VTK (marco)
+    return;
+  }
+  if(CAMERA_UPDATE == eventId)
+  {
+    if(m_ViewManager) m_ViewManager->CameraUpdate();
+    // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
 		//PERFORMANCE WARNING : if view manager exist this will cause another camera update!!
 		// An else could be added to reduce CAMERA_UPDATE by a 2 factor. This has been done for the HipOp vertical App showing
 		// big performance improvement in composite views creation.
-        if(m_InteractionManager) m_InteractionManager->CameraUpdate(e->GetView());
+    if(m_InteractionManager) m_InteractionManager->CameraUpdate(e->GetView());
 #endif
-      break;
-      case CAMERA_SYNCHRONOUS_UPDATE:     
-        m_ViewManager->CameraUpdate();
-      break;
-      case INTERACTOR_ADD:
-// currently mafInteraction is strictly dependent on VTK (marco)
+    return;
+  }
+  if(CAMERA_SYNCHRONOUS_UPDATE == eventId)     
+  {
+    m_ViewManager->CameraUpdate();
+    return;
+  }
+  // ###############################################################
+  // commands related to interaction manager
+  if(INTERACTOR_ADD == eventId)
+  {
+    // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
-        if(m_InteractionManager)
-        {
-          mafInteractor *interactor = mafInteractor::SafeDownCast(e->GetMafObject());
-          assert(interactor);
-          mafString *action_name = e->GetString();
-          m_InteractionManager->BindAction(*action_name,interactor);
-        }
+    if(m_InteractionManager)
+    {
+      mafInteractor *interactor = mafInteractor::SafeDownCast(e->GetMafObject());
+      assert(interactor);
+      mafString *action_name = e->GetString();
+      m_InteractionManager->BindAction(*action_name,interactor);
+    }
 #endif
-      break;
-      case INTERACTOR_REMOVE:
-// currently mafInteraction is strictly dependent on VTK (marco)
+    return;
+  }
+  if(INTERACTOR_REMOVE == eventId)
+  {
+    // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
-        if(m_InteractionManager) 
-        {
-          mafInteractor *interactor = mafInteractor::SafeDownCast(e->GetMafObject());
-          assert(interactor);
-          mafString *action_name = e->GetString();
-          m_InteractionManager->UnBindAction(*action_name,interactor);
-        }
+    if(m_InteractionManager) 
+    {
+      mafInteractor *interactor = mafInteractor::SafeDownCast(e->GetMafObject());
+      assert(interactor);
+      mafString *action_name = e->GetString();
+      m_InteractionManager->UnBindAction(*action_name,interactor);
+    }
 #endif
-      break;
-      case PER_PUSH:
-// currently mafInteraction is strictly dependent on VTK (marco)
+    return;
+  }
+  if(PER_PUSH == eventId)
+  {
+    // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
-        if(m_InteractionManager)
-        {
-          mafInteractorPER *per = mafInteractorPER::SafeDownCast(e->GetMafObject());
-          assert(per);
-          m_InteractionManager->PushPER(per);
-        }
+    if(m_InteractionManager)
+    {
+      mafInteractorPER *per = mafInteractorPER::SafeDownCast(e->GetMafObject());
+      assert(per);
+      m_InteractionManager->PushPER(per);
+    }
 #endif
-      break; 
-      case PER_POP:
-// currently mafInteraction is strictly dependent on VTK (marco)
+    return; 
+  }
+  if(PER_POP == eventId)
+  {
+    // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
-        if(m_InteractionManager) m_InteractionManager->PopPER();
+    if(m_InteractionManager) m_InteractionManager->PopPER();
 #endif
-      break;
-      case DEVICE_ADD:
-        m_InteractionManager->AddDeviceToTree((mafDevice *)e->GetMafObject());
-      break;
-      case DEVICE_REMOVE:
-        m_InteractionManager->RemoveDeviceFromTree((mafDevice *)e->GetMafObject());
-      break;
-      case DEVICE_GET:
-      break;
-      case CREATE_STORAGE:
-        CreateStorage(e);
-      break;
-      case COLLABORATE_ENABLE:
-      {
-        bool collaborate = e->GetBool();
-        if (collaborate)
-        {
-          m_RemoteLogic->SetRemoteMouse(m_InteractionManager->GetRemoteMouseDevice());
-          m_Mouse->AddObserver(m_RemoteLogic, REMOTE_COMMAND_CHANNEL);
-          if(m_RemoteLogic->IsSocketConnected())  //check again, because if no server is present
-          {                                       //no synchronization is necessary
-            m_RemoteLogic->SynchronizeApplication();
-          }
-        }
-        else
-        {
-          if (m_RemoteLogic != NULL)
-          {
-            m_RemoteLogic->SetRemoteMouse(NULL);
-            m_RemoteLogic->Disconnect();
-            m_Mouse->RemoveObserver(m_RemoteLogic);
-          }
-        }
-        m_ViewManager->Collaborate(collaborate);
-        m_OpManager->Collaborate(collaborate);
-        m_Mouse->Collaborate(collaborate);
+    return;
+  }
+  if(DEVICE_ADD == eventId)
+  {
+    m_InteractionManager->AddDeviceToTree((mafDevice *)e->GetMafObject());
+    return;
+  }
+  if(DEVICE_REMOVE == eventId)
+  {
+    m_InteractionManager->RemoveDeviceFromTree((mafDevice *)e->GetMafObject());
+    return;
+  }
+  if(DEVICE_GET == eventId)
+  {
+    return;
+  }
+  if(CREATE_STORAGE == eventId)
+  {
+    CreateStorage(e);
+    return;
+  }
+  if(COLLABORATE_ENABLE == eventId)
+  {
+    bool collaborate = e->GetBool();
+    if (collaborate)
+    {
+      m_RemoteLogic->SetRemoteMouse(m_InteractionManager->GetRemoteMouseDevice());
+      m_Mouse->AddObserver(m_RemoteLogic, REMOTE_COMMAND_CHANNEL);
+      if(m_RemoteLogic->IsSocketConnected())  //check again, because if no server is present
+      {                                       //no synchronization is necessary
+        m_RemoteLogic->SynchronizeApplication();
       }
-      break;
-			case ABOUT_APPLICATION:
-			{
-				wxString message = m_AppTitle.GetCStr();
-				message += _(" Application ");
-				message += m_Revision;
-				wxMessageBox(message, "About Application");
-			}
-			break;
-
-			case HELP_HOME:
-				{
-					if (m_HelpSettings)
-					{
-						m_HelpSettings->OpenHelpPage("HELP_HOME");
-					}	
-				}
-				break;
-
-			case GET_BUILD_HELP_GUI:
-			{	
-				int buildGui = -1;
-				if (m_HelpSettings == NULL)
-				{
-					buildGui = false;
-					e->SetArg(buildGui);
-				}
-				else
-				{
-					buildGui = m_HelpSettings->GetBuildHelpGui();
-				}
-				e->SetArg(buildGui);
-			}
-			break;
-
-			case OPEN_HELP_PAGE:
-			{
-				// open help for entity
-				wxString entity = e->GetString()->GetCStr();
-				m_HelpSettings->OpenHelpPage(entity);
-			}
-			break;
-
-      default:
-        mafLogicWithGUI::OnEvent(maf_event);
+    }
+    else
+    {
+      if (m_RemoteLogic != NULL)
+      {
+        m_RemoteLogic->SetRemoteMouse(NULL);
+        m_RemoteLogic->Disconnect();
+        m_Mouse->RemoveObserver(m_RemoteLogic);
+      }
+    }
+    m_ViewManager->Collaborate(collaborate);
+    m_OpManager->Collaborate(collaborate);
+    m_Mouse->Collaborate(collaborate);
+    return;
+  }
+  if(ABOUT_APPLICATION == eventId)
+  {
+    wxString message = m_AppTitle.GetCStr();
+    message += _(" Application ");
+    message += m_Revision;
+    wxMessageBox(message, "About Application");
+    return;
+  }
+  if(HELP_HOME == eventId)
+  {
+    if (m_HelpSettings)
+    {
+      m_HelpSettings->OpenHelpPage("HELP_HOME");
+    }
+  }
+  if(GET_BUILD_HELP_GUI == eventId)
+  {
+    int buildGui = -1;
+    if (m_HelpSettings == NULL)
+    {
+      buildGui = false;
+      e->SetArg(buildGui);
+    }
+    else
+    {
+      buildGui = m_HelpSettings->GetBuildHelpGui();
+    }
+    e->SetArg(buildGui);
+  }
+  if(OPEN_HELP_PAGE == eventId)
+  {
+  // open help for entity
+    wxString entity = e->GetString()->GetCStr();
+    m_HelpSettings->OpenHelpPage(entity);
+  }
+  mafLogicWithGUI::OnEvent(maf_event);
       break; 
     } // end switch case
   } // end if SafeDowncast
