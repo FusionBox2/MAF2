@@ -25,7 +25,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "mafGUIDialog.h"
 #include "mafRWIBase.h"
 #include "mafRWI.h"
-#include "mmdMouse.h"
+#include "mafDeviceButtonsPadMouse.h"
 #include "mafGUIButton.h"
 #include "mafGUIFloatSlider.h"
 #include "mafGUIValidator.h"
@@ -935,7 +935,7 @@ void lhpOpMultiscaleExplore::OnEvent(mafEventBase *maf_event)
     }
   }
   else{
-    if (e->GetId() == mmdMouse::MOUSE_DCLICK)
+    if (e->GetId() == mafDeviceButtonsPadMouse::GetMouseDClickId())
       mafLogMessage("double click !") ;
   }
 }

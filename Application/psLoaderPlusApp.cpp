@@ -61,7 +61,7 @@
 #include "mafOpEditMetadata.h"
 #include "mafOp2DMeasure.h"
 #include "mafOpReparentTo.h"
-#include "mmoDICOMImporter.h"
+#include "medOpImporterDicomOffis.h"
 #include "mafOpReparentTo.h"
 #include "mafOpImporterImage.h"
 #include "mafOpImporterSTL.h"
@@ -141,8 +141,6 @@
 //#include "lhpOpMultiscaleExplore.h"
 
 //#include "mafOpValidateTree.h"
-
-#include "medOpImporterDicomXA.h"
 
 //#include "medOpComputeWrapping.h"
 #include "medVMEComputeWrapping.h"
@@ -257,7 +255,7 @@ bool psLoaderPlusApp::OnInit()
   //vtkDataArrayMemMng::InitializeManagerUnSafeMode();  
 
 
-  mafPics.Initialize();	
+  mafPictureFactory::GetPictureFactory()->Initialize();	
  
   #include "pic/lhpBuilder/FRAME_ICON16x16.xpm"
   mafADDPIC(FRAME_ICON16x16);
@@ -317,8 +315,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
 	}
 
   //------------------------- Importers -------------------------
-  m_Logic->Plug(new mmoDICOMImporter("DICOM"),"Images");
-  m_Logic->Plug(new medOpImporterDicomXA("DICOM XA"),"Images");
+  m_Logic->Plug(new medOpImporterDicomOffis("DICOM"),"Images");
   m_Logic->Plug(new mafOpImporterSTL("STL"),"Geometries");
   m_Logic->Plug(new mafOpImporterVTK("VTK"),"Other");
   m_Logic->Plug(new mafOpImporterMSF("MSF"),"Other");

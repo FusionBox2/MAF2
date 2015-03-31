@@ -2286,7 +2286,7 @@ int lhpOpBonemat::LoadConfigurationFile( const char *configurationFileName )
 {
   std::ifstream inputFile(configurationFileName, std::ios::in);
 
-  if (inputFile == NULL) {
+  if (!inputFile) {
     std::cerr << "Error opening " << configurationFileName << "\n";
     assert(false);
     return MAF_ERROR;
@@ -2297,7 +2297,7 @@ int lhpOpBonemat::LoadConfigurationFile( const char *configurationFileName )
 
   std::ofstream LoadConfigurationFileCache(LoadConfigurationFileCacheFileName.GetCStr(), std::ios::out);
 
-  if (LoadConfigurationFileCache == NULL) 
+  if (!LoadConfigurationFileCache) 
   {
     if (GetTestMode() == false)
     {
@@ -2329,8 +2329,8 @@ int lhpOpBonemat::LoadConfigurationFile( const char *configurationFileName )
 
   std::ifstream inputFileFromCache(LoadConfigurationFileCacheFileName.GetCStr(), std::ios::in);
 
-  if (inputFileFromCache == NULL) {
-    std::cerr << "Error opening " << inputFileFromCache << "\n";
+  if (!inputFileFromCache) {
+    std::cerr << "Error opening " << LoadConfigurationFileCacheFileName << "\n";
     assert(false);
     return MAF_ERROR;
   }
@@ -2555,7 +2555,7 @@ int lhpOpBonemat::SaveConfigurationFile( const char *configurationFileName )
 
   std::ofstream outputFile(configurationFileName, std::ios::out);
 
-  if (outputFile == NULL) 
+  if (!outputFile) 
   {
     if (GetTestMode() == false)
     {

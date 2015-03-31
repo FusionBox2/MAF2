@@ -36,7 +36,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "vtkMath.h"
 #include "vtkPoints.h"
 #include "vtkCellArray.h"
-#include "vtkMAFPolyDataDeformation.h"
+#include "vtkMEDPolyDataDeformation.h"
 #include "vtkMAFMuscleDecomposition.h"
 #include "vtkTubeFilter.h"
 
@@ -737,7 +737,7 @@ void medVMEMuscleWrapper::SetVmeTimeStamp(mafVME* vme, double t)
 void medVMEMuscleWrapper::DeformMuscle(vtkPolyData* pMuscle)
 //------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer< vtkMAFPolyDataDeformation > pDeformer;
+  vtkMAFSmartPointer< vtkMEDPolyDataDeformation > pDeformer;
   
   int nCurves = 0;
   pDeformer->SetNumberOfSkeletons(0);

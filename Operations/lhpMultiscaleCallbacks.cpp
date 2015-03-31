@@ -22,7 +22,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "vtkRenderWindowInteractor.h"
 #include "mafEvent.h"
 #include "lhpMultiscaleCallbacks.h"
-#include "mmdMouse.h"
+#include "mafDeviceButtonsPadMouse.h"
 
 
 //------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ void lhpMultiscaleDoubleClickCallback::OnEvent(mafEventBase *event)
   mafID id=event->GetId();
   mafID ch=event->GetChannel();
   if (ch==MCH_INPUT){
-    if (id == mmdMouse::MOUSE_DCLICK){}
+    if (id == mafDeviceButtonsPadMouse::GetMouseDClickId()){}
 
     mafLogMessage("double click !") ;
     mafEvent e(this, m_id) ;

@@ -61,7 +61,7 @@
 #include "mafOpEditMetadata.h"
 #include "mafOp2DMeasure.h"
 #include "mafOpReparentTo.h"
-#include "mmoDICOMImporter.h"
+#include "medOpImporterDicomOffis.h"
 #include "mafOpReparentTo.h"
 #include "mafOpImporterImage.h"
 #include "mafOpImporterSTL.h"
@@ -141,8 +141,6 @@
 
 //#include "mafOpValidateTree.h"
 
-#include "medOpImporterDicomXA.h"
-
 //#include "medOpComputeWrapping.h"
 #include "medVMEComputeWrapping.h"
 #include "medPipeComputeWrapping.h"
@@ -160,7 +158,7 @@
 //BES: 14.11.2008 - added muscle wrapping
 #include "medOpCreateMuscleWrapper.h"
 #include "medVMEMuscleWrapper.h"
-#include "mafOpMeshDeformation.h"
+#include "medOpMeshDeformation.h"
 
 #include <vtkTimerLog.h>
 
@@ -256,7 +254,7 @@ bool BuilderApp::OnInit()
   //vtkDataArrayMemMng::InitializeManagerUnSafeMode();  
 
 
-  mafPics.Initialize();	
+  mafPictureFactory::GetPictureFactory()->Initialize();	
  
   #include "pic/lhpBuilder/FRAME_ICON16x16.xpm"
   mafADDPIC(FRAME_ICON16x16);
@@ -316,8 +314,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
 	}
 
   //------------------------- Importers -------------------------
-  m_Logic->Plug(new mmoDICOMImporter("DICOM"),"Images");
-  m_Logic->Plug(new medOpImporterDicomXA("DICOM XA"),"Images");
+  m_Logic->Plug(new medOpImporterDicomOffis("DICOM"),"Images");
   m_Logic->Plug(new mafOpImporterSTL("STL"),"Geometries");
   m_Logic->Plug(new mafOpImporterVTK("VTK"),"Other");
   m_Logic->Plug(new mafOpImporterMSF("MSF"),"Other");
@@ -379,7 +376,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
  // m_Logic->Plug(new mmoEditMetadata("Metadata Editor"),"Modify");
 	m_Logic->Plug(new mafOpFilterSurface("Filter Surface"),"Modify");
   //m_Logic->Plug(new mafOpVOIDensityEditor("Volume Density"),"Modify");
-  m_Logic->Plug(new mafOpMeshDeformation("Deform Surface"), "Modify");
+  m_Logic->Plug(new medOpMeshDeformation("Deform Surface"), "Modify");
 	m_Logic->Plug(new mafOpExtractIsosurface("Extract Isosurface"),"Create/Derive");
   m_Logic->Plug(new medOpSurfaceMirror("Surface Mirror"),"Modify");
 	m_Logic->Plug(new mafOpCrop("Crop Volume"),"Modify");

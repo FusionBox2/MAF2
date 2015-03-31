@@ -556,7 +556,7 @@ bool lhpOpUploadMultiVMERefactor::GetUploadError()
   {
     mafString errorMessage;
     std::ifstream errorFile(m_VMEUploaderDownloaderABSFolder + "ErrorFound.lhp", std::ios::in);
-    if (errorFile!=NULL)
+    if (errorFile)
     {
       std::string buf;
       getline(errorFile, buf);
@@ -1083,7 +1083,7 @@ int lhpOpUploadMultiVMERefactor::LoadVMEsToUploadIdsVectorFromFile(const char *v
 {
   std::ifstream inputFile(vmeIdsFileName, std::ios::in);
 
-  if (inputFile == NULL) {
+  if (!inputFile) {
     std::cerr << "Error opening " << vmeIdsFileName << "\n";
     assert(false);
     return MAF_ERROR;

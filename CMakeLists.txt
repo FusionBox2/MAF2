@@ -7,8 +7,7 @@
 #   Authors:   Stefano Perticoni
 # ==========================================================================
 
-SET (CMAKE_BACKWARDS_COMPATIBILITY "2.0" CACHE INTERNAL "This project is for CMake 2.0")
-CMAKE_MINIMUM_REQUIRED(VERSION 2.0) 
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4) 
 
 PROJECT (LHP)
 
@@ -34,6 +33,20 @@ SET (EXECUTABLE_OUTPUT_PATH ${LHP_BINARY_DIR}/bin/ CACHE INTERNAL
 MARK_AS_ADVANCED (
   LIBRARY_OUTPUT_PATH 
 )
+
+#-----------------------------------------------------------------------------
+# This enables support for Visual Studio Edit & Continue, OpenMP, and parallel compilation
+#-----------------------------------------------------------------------------
+IF (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
+	#Add OpenMP Support
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /openmp")
+
+	#Add support for Edit & Continue
+	SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /ZI")
+	IF (NOT ${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 17.0)
+		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+	ENDIF (NOT ${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 17.0)
+ENDIF (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
 
 #-----------------------------------------------------------------------------
 # Options for lhpBuilder building

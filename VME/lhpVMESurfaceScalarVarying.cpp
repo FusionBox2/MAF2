@@ -23,7 +23,7 @@
 #include "mafGUI.h"
 #include "mafGUICheckListBox.h"
 
-#include "mmiPicker.h"
+#include "mafInteractorPicker.h"
 
 #include "mmaMaterial.h"
 

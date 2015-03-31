@@ -18,6 +18,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
+#include <algorithm>
 
 #include "lhpCooccurrenceMatrixFilter.h"
 #include "lhpTextureOrientationUseful.h"

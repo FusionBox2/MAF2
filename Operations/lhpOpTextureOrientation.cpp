@@ -18,6 +18,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
+#include <algorithm>
 #include "wx/busyinfo.h"
 
 #include "mafDecl.h"
@@ -25,7 +26,6 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "mafGUIDialog.h"
 #include "mafRWIBase.h"
 #include "mafRWI.h"
-#include "mmdMouse.h"
 #include "mafGUIButton.h"
 #include "mafGUIFloatSlider.h"
 #include "mafGUIValidator.h"
@@ -479,7 +479,7 @@ void lhpOpTextureOrientation::OnEvent(mafEventBase *maf_event)
       { 
         // print the results to file
         fstream outputStream ;
-        outputStream.open((char*)m_outputFilename.GetData(), fstream.out | fstream.app) ;
+        outputStream.open((char*)m_outputFilename.GetData(), fstream::out | fstream::app) ;
         m_vectorGlyphPipe->PrintResults(outputStream) ;
         outputStream.close() ;
         break ;

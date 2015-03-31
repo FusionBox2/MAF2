@@ -739,7 +739,7 @@ bool lhpOpUploadMultiVME::GetUploadError()
   {
     mafString errorMessage;
     std::ifstream errorFile(m_VMEUploaderDownloaderDir + "ErrorFound.lhp", std::ios::in);
-    if (errorFile!=NULL)
+    if (errorFile)
     {
       std::string buf;
       getline(errorFile, buf);
