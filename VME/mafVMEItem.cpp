@@ -211,9 +211,9 @@ void mafVMEItem::Print(std::ostream& os, const int tabs) const
 {
   mafIndent indent(tabs);
 
-  os << indent << GetTypeName() <<" Contents:\n";
-
   Superclass::Print(os,indent);
+
+  os << indent << "Contents:"<<std::endl;
 
   os << indent << "DataType: " << "\""<<m_DataType<<"\""<<std::endl;
 
