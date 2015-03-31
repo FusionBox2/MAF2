@@ -1109,8 +1109,18 @@ void mafGUIValidator::OnButton(wxCommandEvent& event)
 		if(m_Mode != VAL_BUTTON) 
     {
         mafYield(); // update gui to let the dialogs disappear
+        wxTopLevelWindow *tlw = wxDynamicCast(wxGetTopLevelParent(m_Button), wxTopLevelWindow);
 
-        ( (wxPanel*)m_Button->GetParent() )->SetDefaultItem(NULL);
+        if (tlw)
+        {
+          if (tlw->GetDefaultItem() == m_Button)
+          {
+            //
+            // Don't leave the panel with invalid default item
+            //
+            tlw->SetDefaultItem(NULL);
+          }
+        }
 
         mafYield(); 
     }

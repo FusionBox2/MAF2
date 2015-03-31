@@ -312,7 +312,7 @@ void mafLogicWithManagers::Configure()
   if(this->m_PlugSidebar)
   {
     m_SideBar = new mafSideBar(m_Win,MENU_VIEW_SIDEBAR,this,m_SidebarStyle);
-    m_Win->AddDockPane(m_SideBar->m_Notebook , wxPaneInfo()
+    m_Win->AddDockPane(m_SideBar->m_Notebook, wxAuiPaneInfo()
       .Name("sidebar")
       .Caption(wxT("ControlBar"))
       .Right()

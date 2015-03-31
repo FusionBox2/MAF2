@@ -197,13 +197,13 @@ void mafGUIApplicationLayoutSettings::SaveTreeLayout()
     }
     m_Layout->SetVisibilityVme(m_VisibilityVme);
     m_Layout->SetApplicationInfo(frame->IsMaximized(), pos, size);
-    wxPaneInfo toolbar = m_Win->GetDockManager().GetPane("toolbar");
+    wxAuiPaneInfo toolbar = m_Win->GetDockManager().GetPane("toolbar");
     bool toolbar_vis = toolbar.IsShown();
     m_Layout->SetInterfaceElementVisibility("toolbar", toolbar_vis);
-    wxPaneInfo sidebar = m_Win->GetDockManager().GetPane("sidebar");
+    wxAuiPaneInfo sidebar = m_Win->GetDockManager().GetPane("sidebar");
     bool sidebar_vis = sidebar.IsShown();
     m_Layout->SetInterfaceElementVisibility("sidebar", sidebar_vis);
-    wxPaneInfo logbar = m_Win->GetDockManager().GetPane("logbar");
+    wxAuiPaneInfo logbar = m_Win->GetDockManager().GetPane("logbar");
     bool logbar_vis = logbar.IsShown();
     m_Layout->SetInterfaceElementVisibility("logbar", logbar_vis);
     m_Layout->SetLayoutName("Layout"); //m_DefaultLayout.GetCStr()
@@ -299,13 +299,13 @@ void mafGUIApplicationLayoutSettings::AddLayout()
     m_Layout->SetVisibilityVme(0);
    
     m_Layout->SetApplicationInfo(frame->IsMaximized(), pos, size);
-    wxPaneInfo toolbar = m_Win->GetDockManager().GetPane("toolbar");
+    wxAuiPaneInfo toolbar = m_Win->GetDockManager().GetPane("toolbar");
     bool toolbar_vis = toolbar.IsShown();
     m_Layout->SetInterfaceElementVisibility("toolbar", toolbar_vis);
-    wxPaneInfo sidebar = m_Win->GetDockManager().GetPane("sidebar");
+    wxAuiPaneInfo sidebar = m_Win->GetDockManager().GetPane("sidebar");
     bool sidebar_vis = sidebar.IsShown();
     m_Layout->SetInterfaceElementVisibility("sidebar", sidebar_vis);
-    wxPaneInfo logbar = m_Win->GetDockManager().GetPane("logbar");
+    wxAuiPaneInfo logbar = m_Win->GetDockManager().GetPane("logbar");
     bool logbar_vis = logbar.IsShown();
     m_Layout->SetInterfaceElementVisibility("logbar", logbar_vis);
     m_Layout->SetLayoutName("Layout"); //m_DefaultLayout.GetCStr()

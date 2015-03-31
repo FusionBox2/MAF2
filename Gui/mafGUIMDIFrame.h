@@ -58,7 +58,7 @@ class MAF_EXPORT mafGUIMDIFrame: public wxMDIParentFrame, public mafEventSender
 
   /** add a new Dockable Pane containig the given Window.
      pane_info specify the Pane settings */
-  void AddDockPane(wxWindow *window, wxPaneInfo& pane_info, const wxString &menu = _("&View"), const wxString &subMenu = wxEmptyString);
+  void AddDockPane(wxWindow *window, wxAuiPaneInfo& pane_info, const wxString &menu = _("&View"), const wxString &subMenu = wxEmptyString);
   
   /** remove a Dockable Pane  - the contained window is not destroyed */
   void RemoveDockPane(wxString pane_name);

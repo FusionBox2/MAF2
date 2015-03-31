@@ -24,7 +24,7 @@
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
-class wxFrameManager;
+class wxAuiManager;
 
 /**
   class name: mafGUIDockSettings
@@ -34,7 +34,7 @@ class mafGUIDockSettings: public mafGUISettings
 {
 public:
  /** constructor */
- mafGUIDockSettings(wxFrameManager& mgr, const mafString &label = _("User Interface Preferences"));
+ mafGUIDockSettings(wxAuiManager& mgr, const mafString &label = _("User Interface Preferences"));
  /** destructor */
  virtual ~mafGUIDockSettings();
 
@@ -45,7 +45,7 @@ protected:
   /** Create the GUI for the setting panel.*/
   void CreateGui();
 
-  wxFrameManager& m_Mgr;
+  wxAuiManager& m_Mgr;
 
   int      m_PaneBorderSize;
   int      m_SashSize;
