@@ -40,7 +40,7 @@ void mafNodeRoot::OnEvent(mafEventBase *e)
 {
   if (e->GetChannel()==MCH_UP)
   {
-    mafNodeRoot::OnRootEvent(e);
+    mafRoot::InvokeEvent(e);
   }
   else
   {

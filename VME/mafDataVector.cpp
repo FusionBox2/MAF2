@@ -213,7 +213,9 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
   // the DataVector ID
   parent->SetAttribute("VectorID",mafString(m_VectorID));
 
-  mafStorage *storage = root->GetStorage();
+  mafEventIO es(this,NODE_GET_STORAGE);
+  InvokeEvent(es);
+  mafStorage *storage = es.GetStorage();
   assert(storage);
 
   // define base file name for data files

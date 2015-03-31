@@ -15,10 +15,8 @@
 =========================================================================*/
 
 #include "mafRoot.h"
-#include "mafNode.h"
+#include "mafObject.h"
 #include "mafStorageElement.h"
-#include "mafStorage.h"
-#include "mafEventIO.h"
 #include "mafIndent.h"
 
 //-------------------------------------------------------------------------
@@ -65,41 +63,6 @@ int mafRoot::RestoreRoot(mafStorageElement *element)
   SetMaxNodeId(max_id);
 
   return MAF_OK;
-}
-
-//-------------------------------------------------------------------------
-void mafRoot::OnRootEvent(mafEventBase *e)
-//-------------------------------------------------------------------------
-{
-  if (e->GetChannel()==MCH_UP)
-  {
-    if (e->GetId()==NODE_GET_STORAGE)
-    {
-      // return the storage pointer: here the hypothesis sis the root node listener is a storage.
-      mafEventIO *io_event=mafEventIO::SafeDownCast(e);
-      io_event->SetStorage(GetStorage());
-    }
-    else
-    {
-      InvokeEvent(e);
-    }
-  }
-}
-
-//-------------------------------------------------------------------------
-mafStorage *mafRoot::GetStorage()
-//-------------------------------------------------------------------------
-{
-  //return (typeid(m_Listener)==typeid(mafStorage *))?(mafStorage *)m_Listener:NULL;
-
-  try 
-  { 
-    return dynamic_cast<mafStorage *>(GetListener());
-  } 
-  catch (std::bad_cast) 
-  { 
-    return NULL;
-  }
 }
 
 //-------------------------------------------------------------------------

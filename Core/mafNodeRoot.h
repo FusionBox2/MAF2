@@ -40,7 +40,7 @@ public:
   virtual void Print(std::ostream& os, const int tabs=0);// const;
 
   /** allow only a NULL parent */
-  virtual bool CanReparentTo(mafNode *parent) {return mafRoot::CanReparentTo(parent);}
+  virtual bool CanReparentTo(mafNode *parent) {return parent==NULL;}
 
   void OnEvent(mafEventBase *e);
 

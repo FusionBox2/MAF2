@@ -30,6 +30,7 @@
 #include "mafVMERoot.h"
 #include "mafTagArray.h"
 #include "mafMSFImporter.h"
+#include "mafEventIO.h"
 
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(mafOpImporterMSF1x);
@@ -102,8 +103,11 @@ void mafOpImporterMSF1x::ImportMSF()
   if(!success)
     mafErrorMessage("I/O Error importing MSF file.");
 
-  ((mafVMERoot *)m_Input->GetRoot())->GetStorage()->SetURL(m_File.GetCStr());
-  ((mafVMERoot *)m_Input->GetRoot())->GetStorage()->ForceParserURL();
+  mafEventIO es(this,NODE_GET_STORAGE);
+  m_Input->GetRoot()->OnEvent(&es);
+  mafStorage *storage = es.GetStorage();
+  storage->SetURL(m_File.GetCStr());
+  storage->ForceParserURL();
   ((mafVMERoot *)m_Input->GetRoot())->Update();
 
   root->GetTagArray()->SetTag(mafTagItem("APP_STAMP", item.GetValue(), item.GetType()));

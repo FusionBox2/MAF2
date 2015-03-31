@@ -135,14 +135,14 @@ void mafVMERoot::OnEvent(mafEventBase *maf_event)
       else
       {
         // Bug Fixing for the root GUI event management
-        mafVME::OnEvent(maf_event);
+        Superclass::OnEvent(maf_event);
       }
       mafEvent ev(this,VME_MODIFIED,this);
-      mafRoot::OnRootEvent(&ev);
+      mafRoot::InvokeEvent(&ev);
     }
     else
     {
-      mafRoot::OnRootEvent(maf_event);
+      mafRoot::InvokeEvent(maf_event);
     }
   }
   else if (maf_event->GetChannel()==MCH_UP)
@@ -156,8 +156,8 @@ void mafVMERoot::OnEvent(mafEventBase *maf_event)
         }
       break;
       default:
-        mafRoot::OnRootEvent(maf_event);
-    };
+        mafRoot::InvokeEvent(maf_event);
+    }
   }
   else
   {

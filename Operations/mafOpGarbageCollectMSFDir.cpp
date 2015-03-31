@@ -40,6 +40,7 @@
 #include <algorithm>
 #include <iterator> 
 #include "mafOpValidateTree.h"
+#include "mafEventIO.h"
 
 //----------------------------------------------------------------------------
 // Constants :
@@ -228,7 +229,9 @@ mafString mafOpGarbageCollectMSFDir::GetMSFDirAbsPath(mafNode *anyTreeNode)
   mafVMERoot* root = mafVMERoot::SafeDownCast(anyTreeNode->GetRoot());
   assert(root);
 
-  mafStorage *storage = root->GetStorage();
+  mafEventIO es(this,NODE_GET_STORAGE);
+  root->OnEvent(&es);
+  mafStorage *storage = es.GetStorage();
   assert(storage);
 
   mafString msfABSPath = ""; // empty by default
@@ -250,7 +253,9 @@ mafString mafOpGarbageCollectMSFDir::GetMSFXMLFileAbsFileName(mafNode *anyTreeNo
   mafVMERoot* root = mafVMERoot::SafeDownCast(anyTreeNode->GetRoot());
   assert(root);
 
-  mafStorage *storage = root->GetStorage();
+  mafEventIO es(this,NODE_GET_STORAGE);
+  root->OnEvent(&es);
+  mafStorage *storage = es.GetStorage();
   assert(storage);
 
   wxString msfXMLFileAbsFileName = ""; // empty by default

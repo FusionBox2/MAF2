@@ -22,14 +22,11 @@
 //----------------------------------------------------------------------------
 #include "mafDefines.h"
 #include "mafEventSender.h"
-#include "mafVMEOutputNULL.h"
 //----------------------------------------------------------------------------
 // forward declarations
 //----------------------------------------------------------------------------
-class mafNode;
 class mafObject;
 class mafStorageElement;
-class mafStorage;
 
 /** mafRoot - this class represent an interface for the root nodes of a MAF tree
   mafRoot is an interface class to specialize node to become a root node. It forces
@@ -60,18 +57,8 @@ public:
   void SetMaxNodeId(mafID id) { m_MaxNodeId=id;}
   void ResetMaxNodeId() { this->SetMaxNodeId(0);}
 
-  /** 
-    root node cannot be reparented. Root nodes should redefine CanReparent
-    to call this function. */
-  virtual bool CanReparentTo(mafNode *parent) {return parent==NULL;}
-
   static mafRoot* SafeDownCast(mafObject *o);
 
-  /** process event for the root node */
-  void OnRootEvent(mafEventBase *e);
-
-  mafStorage *GetStorage();
-  
 protected:
   mafRoot();
   virtual ~mafRoot();

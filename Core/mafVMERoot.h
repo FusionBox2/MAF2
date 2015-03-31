@@ -80,7 +80,7 @@ public:
   virtual void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes);
 
   /** allow only a NULL parent */
-  virtual bool CanReparentTo(mafNode *parent) {return mafRoot::CanReparentTo(parent);}
+  virtual bool CanReparentTo(mafNode *parent) {return parent==NULL;}
 
   void OnEvent(mafEventBase *maf_event);
 

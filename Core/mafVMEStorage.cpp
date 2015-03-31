@@ -22,6 +22,7 @@
 #include "mafStorable.h"
 #include "mafStorageElement.h"
 #include "mmuIdFactory.h"
+#include "mafEventIO.h"
 
 MAF_ID_IMP(mafVMEStorage::MSF_FILENAME_CHANGED);
 
@@ -127,6 +128,13 @@ void mafVMEStorage::OnEvent(mafEventBase *e)
   // default forward events to 
   if (e->GetChannel()==MCH_UP)
   {
+    if (e->GetId()==NODE_GET_STORAGE)
+    {
+      // return the storage pointer: here the hypothesis sis the root node listener is a storage.
+      mafEventIO *io_event=mafEventIO::SafeDownCast(e);
+      io_event->SetStorage(this);
+      return;
+    }
     // by default send events to listener
     InvokeEvent(e);
   }
