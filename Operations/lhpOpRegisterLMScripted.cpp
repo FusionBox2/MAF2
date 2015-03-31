@@ -422,9 +422,6 @@ bool lhpOpRegisterLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandma
     registered->Close();
 
 
-  mafVMEGenericAbstract *reg = registered;
-  if(mafVMESurface *srf = mafVMESurface::SafeDownCast(registered->GetParent()))
-    reg = srf;
   if(m_MultiTime)
   {
     std::vector<mafTimeStamp> timeStamps;
@@ -445,9 +442,9 @@ bool lhpOpRegisterLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandma
       if(ExtractMatchingPoints(src, trg, currTime))
       {
         if(!infoAdded)
-          info->ReparentTo(reg);
+          info->ReparentTo(registered);
         infoAdded = true;
-        double tr = RegisterPoints(src, trg, reg, currTime);
+        double tr = RegisterPoints(src, trg, registered, currTime);
         info->SetAbsPose(tr, 0.0, 0.0, 0.0, 0.0, 0.0, currTime);
       }
     }
@@ -461,9 +458,9 @@ bool lhpOpRegisterLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandma
     if(ExtractMatchingPoints(src, trg))
     {
       if(!infoAdded)
-        info->ReparentTo(reg);
+        info->ReparentTo(registered);
       infoAdded = true;
-      double tr = RegisterPoints(src, trg, reg);
+      double tr = RegisterPoints(src, trg, registered);
       info->SetAbsPose(tr, 0.0, 0.0, 0.0, 0.0, 0.0);
     }
   }
@@ -556,7 +553,7 @@ int lhpOpRegisterLMScripted::ExtractMatchingPoints(mafVMELandmarkCloud *src, maf
   return ncp;
 }
 //----------------------------------------------------------------------------
-double lhpOpRegisterLMScripted::RegisterPoints(mafVMELandmarkCloud *src, mafVMELandmarkCloud *trg, mafVMEGenericAbstract *reg, double currTime)
+double lhpOpRegisterLMScripted::RegisterPoints(mafVMELandmarkCloud *src, mafVMELandmarkCloud *trg, mafVMELandmarkCloud *reg, double currTime)
 //----------------------------------------------------------------------------
 {
   double deviation = 0.0;
@@ -615,13 +612,20 @@ double lhpOpRegisterLMScripted::RegisterPoints(mafVMELandmarkCloud *src, mafVMEL
   
   //post-multiply the registration matrix by the abs matrix of the target to position the
   //registered  at the correct position in the space
+
+  vtkMatrix4x4 *regt_matrix = vtkMatrix4x4::New();
+  regt_matrix->Identity();
+  RegisterTransform->GetMatrix(regt_matrix);
+  vtkDEL(RegisterTransform);
+
   mafMatrix *mat;
   mafNEW(mat);
   mat->Identity();
   trg->GetOutput()->GetAbsMatrix(*mat,currTime);  //modified by Marco. 2-2-2004
-  vtkMatrix4x4::Multiply4x4(mat->GetVTKMatrix(),RegisterTransform->GetMatrix(),t_matrix);
+
+  vtkMatrix4x4::Multiply4x4(mat->GetVTKMatrix(),regt_matrix,t_matrix);
   mafDEL(mat);
-  vtkDEL(RegisterTransform);
+  vtkDEL(regt_matrix);
 
   int numLandmarks = trg->GetNumberOfVisibleLandmarks(currTime);
 
@@ -631,15 +635,31 @@ double lhpOpRegisterLMScripted::RegisterPoints(mafVMELandmarkCloud *src, mafVMEL
     return deviation;
   }
 
-  reg->SetTimeStamp(currTime);
+  mafVMEGenericAbstract *registering = reg;
+  if(mafVMESurface *srf = mafVMESurface::SafeDownCast(reg->GetParent()))
+  {
+    mafMatrix t2, t2inv;
+    reg->GetOutput()->GetMatrix(t2, currTime);
+    mafMatrix::Invert(t2, t2inv);
+    vtkMatrix4x4 *r_matrix = vtkMatrix4x4::New();
+    r_matrix->Identity();
+    vtkMatrix4x4::Multiply4x4(t_matrix, t2inv.GetVTKMatrix(), r_matrix);
+    vtkMatrix4x4 *tmpm = r_matrix;
+    r_matrix = t_matrix;
+    t_matrix = tmpm;
+    vtkDEL(r_matrix);
+    registering = srf;
+  }
+
+  registering->SetTimeStamp(currTime);
   mafMatrix temp;
   temp.SetVTKMatrix(t_matrix);
   temp.SetTimeStamp(currTime);
   temp.Modified();
-  reg->GetOutput()->Update();
-  reg->SetAbsMatrix(temp);
-  reg->Modified();
-  reg->Update();
+  registering->GetOutput()->Update();
+  registering->SetAbsMatrix(temp);
+  registering->Modified();
+  registering->Update();
   vtkDEL(t_matrix);
   return deviation;
 }

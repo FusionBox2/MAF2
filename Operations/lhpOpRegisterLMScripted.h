@@ -68,7 +68,7 @@ protected:
   
   /** Register the source  on the target  according 
   to the registration method selected: rigid, similar or affine. */
-  double RegisterPoints(mafVMELandmarkCloud *src, mafVMELandmarkCloud *trg, mafVMEGenericAbstract *reg, double currTime = -1);
+  double RegisterPoints(mafVMELandmarkCloud *src, mafVMELandmarkCloud *trg, mafVMELandmarkCloud *reg, double currTime = -1);
 
   /** Check the correctness of the vme's type. */
   void OnChooseTargetVme(mafNode *vme);
