@@ -154,6 +154,9 @@ public:
   void SetPathName(const char *str);
   void SetPathName(mafString *str);
 
+  mafString Upper()const;
+  mafString Lower()const;
+
   /**
     parse the given string to substitute each (back)slash
     character with the right pathname separator.*/
@@ -216,6 +219,13 @@ public:
 
   /** direct access to string single elements for reading */
   const char operator [] (const int i) const;
+
+  const bool operator!=(const mafString& src) const;
+  const bool operator==(const mafString& src) const;
+  const bool operator<(const mafString& src) const;
+  const bool operator>(const mafString& src) const;
+  const bool operator<=(const mafString& src) const;
+  const bool operator>=(const mafString& src) const;
 
   const bool operator==(const char *src) const;
   const bool operator!=(const char *src) const;

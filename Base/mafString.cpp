@@ -675,6 +675,39 @@ char *mafString::ParsePathName()
   return mafString::ParsePathName(this);
 }
 
+mafString mafString::Upper()const
+{
+  mafString tmp(GetCStr());
+  tmp.ForceDuplicate();
+
+  if (mafString::IsEmpty(tmp.GetCStr()))
+    return tmp;
+
+
+  mafID length = Length(tmp.GetCStr());
+  for (unsigned int i=0;i<length;i++)
+  {
+    tmp.m_CStr[i] = toupper(tmp.m_CStr[i]);
+  }
+  return tmp;
+}
+mafString mafString::Lower()const
+{
+  mafString tmp(GetCStr());
+  tmp.ForceDuplicate();
+
+  if (mafString::IsEmpty(tmp.GetCStr()))
+    return tmp;
+
+
+  mafID length = Length(tmp.GetCStr());
+  for (unsigned int i=0;i<length;i++)
+  {
+    tmp.m_CStr[i] = tolower(tmp.m_CStr[i]);
+  }
+  return tmp;
+}
+
 //----------------------------------------------------------------------------
 void mafString::SetPathName(const char *str)
 //----------------------------------------------------------------------------
@@ -731,6 +764,32 @@ void mafString::ExtractPathName()
     Set("");
   }*/
 }
+
+const bool mafString::operator!=(const mafString& src) const
+{
+  return !Equals(src.GetCStr());
+}
+const bool mafString::operator==(const mafString& src) const
+{
+  return Equals(src.GetCStr());
+}
+const bool mafString::operator<(const mafString& src) const
+{
+  return Compare(src.GetCStr()) < 0;
+}
+const bool mafString::operator>(const mafString& src) const
+{
+  return Compare(src.GetCStr()) > 0;
+}
+const bool mafString::operator<=(const mafString& src) const
+{
+  return Compare(src.GetCStr()) <= 0;
+}
+const bool mafString::operator>=(const mafString& src) const
+{
+  return Compare(src.GetCStr()) >= 0;
+}
+
 
 //----------------------------------------------------------------------------
 const bool mafString::operator==(const char *src) const
