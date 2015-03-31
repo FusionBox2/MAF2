@@ -829,6 +829,31 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
       m_Win->ShowDockPane("timebar",!m_Win->DockPaneIsShown("timebar") );
     return; 
   }
+  if(VME_EXPAND == eventId)
+  {
+    VmeExpand(e->GetVme());
+    return; 
+  }
+  if(VME_COLLAPSE == eventId)
+  {
+    VmeCollapse(e->GetVme());
+    return; 
+  }
+  if(VME_EXPANDSUBTREE == eventId)
+  {
+    VmeExpandSubTree(e->GetVme());
+    return; 
+  }
+  if(VME_COLLAPSESUBTREE == eventId)
+  {
+    VmeCollapseSubTree(e->GetVme());
+    return; 
+  }
+  if(VME_EXPANDVISIBLE == eventId)
+  {
+    VmeExpandVisible(e->GetVme());
+    return; 
+  }
   if(VME_ADD == eventId)
   {
     VmeAdd(e->GetVme());
@@ -1948,6 +1973,30 @@ void mafLogicWithManagers::RestoreLayout()
     m_ApplicationLayoutSettings->SetVisibilityVME(false);
   }
 }
+
+
+void mafLogicWithManagers::VmeExpand(mafNode *vme)
+{
+  m_SideBar->VmeExpand(vme);
+}
+void mafLogicWithManagers::VmeCollapse(mafNode *vme)
+{
+  m_SideBar->VmeCollapse(vme);
+}
+void mafLogicWithManagers::VmeExpandSubTree(mafNode *vme)
+{
+  m_SideBar->VmeExpandSubTree(vme);
+}
+void mafLogicWithManagers::VmeCollapseSubTree(mafNode *vme)
+{
+  m_SideBar->VmeCollapseSubTree(vme);
+}
+void mafLogicWithManagers::VmeExpandVisible(mafNode *vme)
+{
+  m_SideBar->VmeExpandVisible(vme);
+}
+
+
 //----------------------------------------------------------------------------
 void mafLogicWithManagers::VmeRemove(mafNode *vme)
 //----------------------------------------------------------------------------

@@ -228,6 +228,26 @@ void mafGUICheckTree::VmeRemove(mafNode *vme)
     m_SelectedNode = NULL;
   }
 }
+void mafGUICheckTree::VmeExpand(mafNode *vme)
+{
+  this->ExpandNode((long)vme);
+}
+void mafGUICheckTree::VmeCollapse(mafNode *vme)
+{
+  this->CollapseNode((long)vme);
+}
+void mafGUICheckTree::VmeExpandSubTree(mafNode *vme)
+{
+  this->ExpandNodeSubTree((long)vme);
+}
+void mafGUICheckTree::VmeCollapseSubTree(mafNode *vme)
+{
+  this->CollapseNodeSubTree((long)vme);
+}
+void mafGUICheckTree::VmeExpandVisible(mafNode *vme)
+{
+  this->ExpandNodeVisible((long)vme);
+}
 //----------------------------------------------------------------------------
 void mafGUICheckTree::VmeSelected(mafNode *vme)   
 //----------------------------------------------------------------------------

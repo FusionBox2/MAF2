@@ -54,6 +54,11 @@ public:
     DOUBLE_NOTEBOOK
   };
 
+  void VmeExpand(mafNode *vme);
+  void VmeCollapse(mafNode *vme);
+  void VmeExpandSubTree(mafNode *vme);
+  void VmeCollapseSubTree(mafNode *vme);
+  void VmeExpandVisible(mafNode *vme);
   // Description:
 	// Add a new vme into the tree.
 	void VmeAdd(mafNode *vme);

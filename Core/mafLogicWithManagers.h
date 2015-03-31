@@ -223,6 +223,17 @@ protected:
 	virtual void VmeModified(mafNode *vme);
   /** Respond to a VME_ADD evt. Add a new vme to the tree. */
 	virtual void VmeAdd(mafNode *vme);
+
+
+  virtual void VmeExpand(mafNode *vme);
+  virtual void VmeCollapse(mafNode *vme);
+  virtual void VmeExpandSubTree(mafNode *vme);
+  virtual void VmeCollapseSubTree(mafNode *vme);
+  virtual void VmeExpandVisible(mafNode *vme);
+
+
+
+
   /** Respond to a VME_ADDED evt. propagate evt. to SideBar,ViewManager,ecc.. */
 	virtual void VmeAdded(mafNode *vme);
   /** Respond to a VME_REMOVE evt. Remove a vme from the tree. */

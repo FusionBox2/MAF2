@@ -173,6 +173,27 @@ void mafSideBar::EnableSelect(bool enable)
 {
 	m_Tree->EnableSelect(enable);
 }
+void mafSideBar::VmeExpand(mafNode *vme)
+{
+	m_Tree->VmeExpand(vme);
+}
+void mafSideBar::VmeCollapse(mafNode *vme)
+{
+	m_Tree->VmeCollapse(vme);
+}
+void mafSideBar::VmeExpandSubTree(mafNode *vme)
+{
+	m_Tree->VmeExpandSubTree(vme);
+}
+void mafSideBar::VmeCollapseSubTree(mafNode *vme)
+{
+	m_Tree->VmeCollapseSubTree(vme);
+}
+void mafSideBar::VmeExpandVisible(mafNode *vme)
+{
+	m_Tree->VmeExpandVisible(vme);
+}
+
 //----------------------------------------------------------------------------
 void mafSideBar::VmeAdd(mafNode *vme)
 //----------------------------------------------------------------------------

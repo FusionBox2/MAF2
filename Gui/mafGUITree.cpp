@@ -30,6 +30,8 @@
 #include "mafDecl.h"
 #include "mafPics.h"
 #include "mafNode.h"
+
+#include <list>
 //----------------------------------------------------------------------------
 // EVENT_TABLE
 //----------------------------------------------------------------------------
@@ -595,4 +597,63 @@ void mafGUITree::ExpandNode(long node_id)
   item = ItemFromNode(node_id);
   if(!item.IsOk()) return;
   m_NodeTree->Expand(item);
+}
+namespace
+{
+  void CollapseAllChildren(wxTreeCtrl *tree, wxTreeItemId& item)
+  {
+    wxTreeItemIdValue cookie;
+    for(wxTreeItemId idCurr = tree->GetFirstChild(item, cookie); idCurr.IsOk(); idCurr = tree->GetNextChild(item, cookie))
+    {
+      CollapseAllChildren(tree, idCurr);
+    }
+    if(item != tree->GetRootItem() || !tree->HasFlag(wxTR_HIDE_ROOT))
+      tree->Collapse(item);
+  }
+  void ExpandAllChildren(wxTreeCtrl *tree, wxTreeItemId& item)
+  {
+    if(item != tree->GetRootItem() || !tree->HasFlag(wxTR_HIDE_ROOT))
+      tree->Expand(item);
+    wxTreeItemIdValue cookie;
+    for(wxTreeItemId idCurr = tree->GetFirstChild(item, cookie); idCurr.IsOk(); idCurr = tree->GetNextChild(item, cookie))
+    {
+      ExpandAllChildren(tree, idCurr);
+    }
+  }
+}
+//----------------------------------------------------------------------------
+void mafGUITree::CollapseNodeSubTree(long node_id)
+//----------------------------------------------------------------------------
+{
+  if( !NodeExist(node_id) ) return;
+  wxTreeItemId  item;
+  item = ItemFromNode(node_id);
+  if(!item.IsOk()) return;
+
+  m_NodeTree->Freeze();
+  CollapseAllChildren(m_NodeTree, item);
+  m_NodeTree->Thaw();
+}
+//----------------------------------------------------------------------------
+void mafGUITree::ExpandNodeSubTree(long node_id)
+//----------------------------------------------------------------------------
+{
+  if( !NodeExist(node_id) ) return;
+  wxTreeItemId  item;
+  item = ItemFromNode(node_id);
+  if(!item.IsOk()) return;
+
+  m_NodeTree->Freeze();
+  ExpandAllChildren(m_NodeTree, item);
+  m_NodeTree->Thaw();
+}
+//----------------------------------------------------------------------------
+void mafGUITree::ExpandNodeVisible(long node_id)
+//----------------------------------------------------------------------------
+{
+  if( !NodeExist(node_id) ) return;
+  wxTreeItemId  item;
+  item = ItemFromNode(node_id);
+  if(!item.IsOk()) return;
+  m_NodeTree->EnsureVisible(item);
 }

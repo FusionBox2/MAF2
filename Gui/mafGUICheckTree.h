@@ -49,6 +49,11 @@ public:
   /** destructor .*/
   virtual       ~mafGUICheckTree();
 
+  void VmeExpand(mafNode *vme);
+  void VmeCollapse(mafNode *vme);
+  void VmeExpandSubTree(mafNode *vme);
+  void VmeCollapseSubTree(mafNode *vme);
+  void VmeExpandVisible(mafNode *vme);
   /** Add the vme to the checked tree and create the related icon. */
 	void VmeAdd(mafNode *n);
 

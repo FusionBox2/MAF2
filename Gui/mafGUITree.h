@@ -163,6 +163,14 @@ public:
   /** expand the children of node_id */
   void ExpandNode(long node_id);
 
+  /** collapse the children of node_id */
+  void CollapseNodeSubTree(long node_id);
+
+  /** expand the children of node_id */
+  void ExpandNodeSubTree(long node_id);
+
+  void ExpandNodeVisible(long node_id);
+
   /** Return the node item from node id. */
   wxTreeItemId ItemFromNode(long node_id);
 
