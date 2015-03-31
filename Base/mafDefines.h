@@ -76,6 +76,20 @@ class mafDeviceButtonsPadMouse;
 MAF_EXPORT mafDeviceButtonsPadMouse *GetGlobalMouse();
 MAF_EXPORT void SetGlobalMouse(mafDeviceButtonsPadMouse *);
 
+typedef char                   mafChar;
+typedef wchar_t                mafWChar;
+typedef signed char            mafInt8;
+typedef short int              mafInt16;
+typedef long int               mafInt32;
+typedef long long int          mafInt64;
+typedef unsigned char          mafUInt8;
+typedef unsigned short         mafUInt16;
+typedef unsigned long int      mafUInt32;
+typedef unsigned long long int mafUInt64;
+typedef float                  mafFloat;
+typedef double                 mafDouble;
+typedef double                 mafReal;
+
 //------------------------------------------------------------------------------
 // Global Functions
 //------------------------------------------------------------------------------
