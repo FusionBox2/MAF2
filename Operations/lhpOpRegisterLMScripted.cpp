@@ -27,6 +27,7 @@
 #include "wx/arrimpl.cpp"
 #include <wx/wxprec.h>
 
+#include <list>
 #include "mafEvent.h"
 #include "mafGUI.h"
 
@@ -301,6 +302,25 @@ void lhpOpRegisterLMScripted::OnEvent(mafEventBase *maf_event)
   }
 }
 
+namespace
+{
+  void FillTraverseList(mafNode *node, std::list<mafNode*>& traverse)
+  {
+    std::list<mafNode*> tmp;
+    tmp.push_back(node);
+    while(!tmp.empty())
+    {
+      mafNode *x = *(tmp.begin());
+      tmp.pop_front();
+      if(!x->IsVisible())
+        continue;
+      traverse.push_back(x);
+      for(int i = 0; i < x->GetNumberOfChildren(); i++)
+        tmp.push_back(x->GetChild(i));
+    }
+  }
+}
+
 bool lhpOpRegisterLMScripted::RegistrationProcedure()
 {
   wxBusyInfo *wait;
@@ -323,13 +343,18 @@ bool lhpOpRegisterLMScripted::RegistrationProcedure()
   usedEntries.resize(m_LMDict.size());
   for(int i = 0; i < m_LMDict.size(); i++)
     usedEntries[0] = false;
-  mafNodeIterator *itersrc = m_Source->NewIterator();
-  mafNodeIterator *iterreg = m_Registered->NewIterator();
-  mafNode *nreg, *nsrc;
-  for(nreg = iterreg->GetFirstNode(), nsrc = itersrc->GetFirstNode(); nreg && nsrc; nreg = iterreg->GetNextNode(), nsrc = itersrc->GetNextNode())
+  std::list<mafNode*> srcTrav;
+  std::list<mafNode*> regTrav;
+  FillTraverseList(m_Source, srcTrav);
+  FillTraverseList(m_Registered, regTrav);
+
+  std::list<mafNode*>::iterator itsrc, itreg;
+  for(itsrc = srcTrav.begin(), itreg = regTrav.begin(); itsrc != srcTrav.end() && itreg != regTrav.end(); ++itsrc, ++itreg)
   {
-    while(mafVMEInfoText *vit = mafVMEInfoText::SafeDownCast(nreg))
-      nreg = iterreg->GetNextNode();
+    mafNode *nsrc = *itsrc;
+    mafNode *nreg = *itreg;
+    //while(mafVMEInfoText *vit = mafVMEInfoText::SafeDownCast(nreg))
+    //  nreg = iterreg->GetNextNode();
     mafVMELandmarkCloud *lmcs = mafVMELandmarkCloud::SafeDownCast(nsrc);
     mafVMELandmarkCloud *lmcr = mafVMELandmarkCloud::SafeDownCast(nreg);
     mafVMELandmarkCloud *lmct = NULL;
@@ -366,26 +391,9 @@ bool lhpOpRegisterLMScripted::RegistrationProcedure()
     }
     if(lmct == NULL)
       continue;
-    bool lmcsOpened = lmcs->IsOpen();
-    bool lmctOpened = lmct->IsOpen();
-    bool lmcrOpened = lmcr->IsOpen();
-    if(lmcsOpened)
-      lmcs->Close();
-    if(lmctOpened)
-      lmct->Close();
-    if(lmcrOpened)
-      lmcr->Close();
     bool res = ProcessNode(lmcs, lmct, lmcr);
     processed = processed || res;
-    if(lmcsOpened)
-      lmcs->Close();
-    if(lmctOpened)
-      lmct->Close();
-    if(lmcrOpened)
-      lmcr->Close();
   }
-  mafDEL(itersrc);
-  mafDEL(iterreg);
 
   if(!m_TestMode)
   {
@@ -403,6 +411,17 @@ bool lhpOpRegisterLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandma
   info->SetPosLabel("Registration residual: ", 0);
   info->SetPosShow(true, 0);
   bool infoAdded = false;
+
+  bool lmcsOpened = src->IsOpen();
+  bool lmctOpened = trg->IsOpen();
+  bool lmcrOpened = registered->IsOpen();
+  if(lmcsOpened)
+    src->Close();
+  if(lmctOpened)
+    trg->Close();
+  if(lmcrOpened)
+    registered->Close();
+
 
   mafVMEGenericAbstract *reg = registered;
   if(mafVMESurface *srf = mafVMESurface::SafeDownCast(registered->GetParent()))
@@ -450,6 +469,12 @@ bool lhpOpRegisterLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandma
     }
   }
   mafDEL(info);
+  if(lmcsOpened)
+    src->Close();
+  if(lmctOpened)
+    trg->Close();
+  if(lmcrOpened)
+    registered->Close();
   return true;
 }
 
