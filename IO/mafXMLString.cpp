@@ -141,7 +141,7 @@ const XMLCh mafXMLString::operator [] (const int i) const
 }
 
 //------------------------------------------------------------------------------
-const char *mafXMLString::GetCStr()
+const char *mafXMLString::GetCStr()const
 //------------------------------------------------------------------------------
 {
   if (m_WStr)

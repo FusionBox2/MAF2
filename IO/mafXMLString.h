@@ -48,14 +48,14 @@ public:
 	const XMLCh* Begin() const;
 	const XMLCh* End() const;
 	int Size() const;
-  const char *GetCStr();
+  const char *GetCStr()const;
 	XMLCh & operator [] (const int i);
 	const XMLCh operator [] (const int i) const;
 	operator const XMLCh * () const { return m_WStr; };
   operator const char * () {return GetCStr();}
 protected:
   XMLCh *m_WStr;
-  char *m_CStr;
+  mutable char *m_CStr;
 };
 
 #endif
