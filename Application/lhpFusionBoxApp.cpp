@@ -43,6 +43,7 @@
 #include "medPipeTrajectories.h" 
 #include "mafVMEAFRefSys.h" 
 #include "mafVMEHelAxis.h" 
+#include "mafOpSelect.h"
 #include "mafOpDecomposeTimeVarVME.h"
 #include "mafOpImporterMSF.h"
 #include "mafOpImporterExternalFile.h"
@@ -559,7 +560,11 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
 		wxString revision="0.1";
 		m_Logic->SetRevision(revision);
 	}
-
+  //------------------------- Editors -------------------------
+  m_Logic->Plug(new mafOpDelete(_("Delete")), "");
+  m_Logic->Plug(new mafOpCut(_("Cut   \tCtrl+Shift+X")), "");
+  m_Logic->Plug(new mafOpCopy(_("Copy  \tCtrl+Shift+C")), "");
+  m_Logic->Plug(new mafOpPaste(_("Paste \tCtrl+Shift+V")), "");
   //------------------------- Importers -------------------------
   m_Logic->Plug(new mafOpImporterSTL("STL"),"Geometries");
   m_Logic->Plug(new mafOpImporterMSF("MSF"),"Other");
