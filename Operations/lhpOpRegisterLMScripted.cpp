@@ -394,7 +394,7 @@ bool lhpOpRegisterLMScripted::RegistrationProcedure()
   return processed;
 }
 
-bool lhpOpRegisterLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandmarkCloud *trg, mafVMELandmarkCloud *reg)
+bool lhpOpRegisterLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandmarkCloud *trg, mafVMELandmarkCloud *registered)
 {
   mafVMEInfoText *info;
   mafNEW(info);
@@ -404,6 +404,9 @@ bool lhpOpRegisterLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandma
   info->SetPosShow(true, 0);
   bool infoAdded = false;
 
+  mafVMEGenericAbstract *reg = registered;
+  if(mafVMESurface *srf = mafVMESurface::SafeDownCast(registered->GetParent()))
+    reg = srf;
   if(m_MultiTime)
   {
     std::vector<mafTimeStamp> timeStamps;
@@ -529,7 +532,7 @@ int lhpOpRegisterLMScripted::ExtractMatchingPoints(mafVMELandmarkCloud *src, maf
   return ncp;
 }
 //----------------------------------------------------------------------------
-double lhpOpRegisterLMScripted::RegisterPoints(mafVMELandmarkCloud *src, mafVMELandmarkCloud *trg, mafVMELandmarkCloud *reg, double currTime)
+double lhpOpRegisterLMScripted::RegisterPoints(mafVMELandmarkCloud *src, mafVMELandmarkCloud *trg, mafVMEGenericAbstract *reg, double currTime)
 //----------------------------------------------------------------------------
 {
   double deviation = 0.0;
