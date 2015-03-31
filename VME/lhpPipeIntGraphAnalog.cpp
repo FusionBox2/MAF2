@@ -66,6 +66,10 @@ lhpPipeIntGraphAnalog::lhpPipeIntGraphAnalog()
   m_NumberOfSignals = 0;
   m_TimeStamp = 0;
   m_EmgPlot = NULL;
+
+  m_Limited = 0;
+  m_Start   = 0.0;
+  m_End     = 0.0;
 }
 //----------------------------------------------------------------------------
 lhpPipeIntGraphAnalog::~lhpPipeIntGraphAnalog()
@@ -140,6 +144,10 @@ mafGUI *lhpPipeIntGraphAnalog::CreateGui()
   wxString name;
   bool checked = false;
 
+  m_Gui->Bool(ID_LIMITED, _("Limit"), &m_Limited);
+  m_Gui->Double(ID_START,_("min time"),&m_Start);
+  m_Gui->Double(ID_END,_("max time"),&m_End);
+
   m_CheckBoxXval = m_Gui->CheckList(ID_CHECK_BOXXVAL,_("X value"),100,_("Choose value for X axis"));
   m_CheckBoxYval = m_Gui->CheckList(ID_CHECK_BOXYVAL,_("Y values"),100,_("Choose values for Y axis"));
   m_CheckBoxYder = m_Gui->CheckList(ID_CHECK_BOXYDER,_("Y derivs"),100,_("Choose values for Y axis"));
@@ -152,6 +160,8 @@ mafGUI *lhpPipeIntGraphAnalog::CreateGui()
     m_CheckBoxYval->AddItem(n, name, checked);
     m_CheckBoxYder->AddItem(n, name, checked);
   }
+  m_Gui->Enable(ID_START,m_Limited != 0);
+  m_Gui->Enable(ID_END,m_Limited != 0);
   return m_Gui;
 }
 //----------------------------------------------------------------------------
@@ -196,6 +206,15 @@ void lhpPipeIntGraphAnalog::OnEvent(mafEventBase *maf_event)
   {
     switch(e->GetId()) 
     {
+    case ID_LIMITED:
+      m_Gui->Enable(ID_START,m_Limited != 0);
+      m_Gui->Enable(ID_END,m_Limited != 0);
+    case ID_START:
+    case ID_END:
+      m_Graph->Clean();
+      GrabData();
+      mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+      break;
     case ID_CHECK_BOXXVAL:
       {
         itemId = e->GetArg();
@@ -278,6 +297,9 @@ void lhpPipeIntGraphAnalog::GrabData()
     return;
   for(int i = 0; i < m_TimeStamp; i++)
   {
+    double ts = matr.get(0, i);
+    if(m_Limited && (m_Start > ts || m_End < ts))
+      continue;
     for(unsigned j = 0; j < m_Graph->GetDim(); j++)
     {
       m_Graph->SetAddCoord(j, matr.get(m_Graph->GetID(j), i));

@@ -55,6 +55,9 @@ public:
     ID_CHECK_BOXXVAL = Superclass::ID_LAST,
     ID_CHECK_BOXYVAL,
     ID_CHECK_BOXYDER,
+    ID_LIMITED,
+    ID_START,
+    ID_END,
     ID_LAST
   };
 
@@ -81,6 +84,9 @@ protected:
   int                                   m_TimeStamp;
   std::vector<mafString>                m_Names;
   medVMEAnalog                          *m_EmgPlot;
+  mafTimeStamp                          m_Start;
+  mafTimeStamp                          m_End;
+  int                                   m_Limited;
 
 };  
 #endif // _lhpPipeIntGraphAnalog_H_
