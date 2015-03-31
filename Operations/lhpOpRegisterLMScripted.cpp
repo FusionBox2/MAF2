@@ -311,6 +311,53 @@ namespace
         tmp.push_back(x->GetChild(i));
     }
   }
+
+  mafNode *CopyTreeTimeStamp(mafNode *src)
+  {
+    if(src == NULL)
+      return NULL;
+
+    mafNode *result = src->CopyTree();
+
+    std::list<mafNode*> tmp;
+    tmp.push_back(result);
+    while(!tmp.empty())
+    {
+      mafNode *x = *(tmp.begin());
+      tmp.pop_front();
+      /*if(mafVMEGenericAbstract *gvme = mafVMEGenericAbstract::SafeDownCast(x))
+      {
+        mafTimeStamp ts = gvme->GetTimeStamp();
+        if(mafMatrixVector *mv = gvme->GetMatrixVector())
+        {
+          mafMatrix *matrix = gvme->GetOutput().GetMatrix()->GetNearestMatrix(ts);
+          if(matrix)
+          {
+            mafMatrix mat = *matrix;
+            mat.SetTimeStamp(ts);
+            mv->SetMatrix(mat);
+          }
+        }
+      }
+      if(mafDataVector *dv = oldVme->GetDataVector())
+      {
+        vmeItem = dv->GetNearestItem(timeSt);
+        if (vmeItem)
+        {
+          if(mafVMEItem *vmeItemCopy = vmeItem->NewInstance())
+          {
+          vmeItemCopy->DeepCopy(vmeItem);
+          vmeGeneric->GetDataVector()->AppendItem(vmeItemCopy);
+          oldTime = vmeItem->GetTimeStamp();
+          }
+        }
+      }*/
+
+      for(int i = 0; i < x->GetNumberOfChildren(); i++)
+        tmp.push_back(x->GetChild(i));
+    }
+    return result;
+  }
 }
 
 bool lhpOpRegisterLMScripted::RegistrationProcedure()
@@ -324,7 +371,7 @@ bool lhpOpRegisterLMScripted::RegistrationProcedure()
   if(m_Registered == NULL)
   {
     wxString name = wxString::Format("%s registered on %s",m_Source->GetName().GetCStr(), m_Target->GetName().GetCStr());
-    m_Registered= mafVME::SafeDownCast(m_Source->CopyTree());
+    m_Registered= mafVME::SafeDownCast(CopyTreeTimeStamp(m_Source));
     m_Registered->Register(this);
     m_Registered->SetName(name);
   }
