@@ -55,7 +55,6 @@ void PrintSelf(std::ostream& os,const int indent);
   based on the m_CurrentPath, computed at runtime by the mflVMEStorage class,
   which knows about the full path for the MSF file itself.*/
   mafString GetAbsoluteFileName();
-  void GetAbsoluteFileName(char *fname);
 
   /** TODO: REFACTOR THIS 
   This API is not clear */

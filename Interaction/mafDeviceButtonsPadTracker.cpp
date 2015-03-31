@@ -425,7 +425,7 @@ void mafDeviceButtonsPadTracker::CanonicalToTracker(mafTransform *trans)
 }
 
 //----------------------------------------------------------------------------
-int mafDeviceButtonsPadTracker::AvatarChooser(wxString &avatar_name,wxString &avatar_type)
+int mafDeviceButtonsPadTracker::AvatarChooser(mafString& avatar_name,mafString& avatar_type)
 //----------------------------------------------------------------------------
 {
   mafInteractionFactory *iFactory=mafInteractionFactory::GetInstance();
@@ -446,7 +446,7 @@ int mafDeviceButtonsPadTracker::AvatarChooser(wxString &avatar_name,wxString &av
   std::set<std::string>::const_iterator it=avatars->begin();
   for (int id=0;it!=avatars->end();id++,it++)
   {
-    avatar_types[id].Set(it->c_str());
+    avatar_types[id] = it->c_str();
     avatar_names[id]=iFactory->GetAvatarDescription(it->c_str());
   }
 
@@ -538,7 +538,7 @@ void mafDeviceButtonsPadTracker::OnEvent(mafEventBase *event)
         break;
       case ID_AVATAR_SELECT:
         {
-          wxString avatar_name,avatar_type;
+          mafString avatar_name,avatar_type;
           int sel=AvatarChooser(avatar_name,avatar_type);
 
           if (sel>=0)

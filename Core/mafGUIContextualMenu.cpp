@@ -289,14 +289,14 @@ void mafGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
 		{
 			wxTextEntryDialog *dlg = new wxTextEntryDialog(m_ChildViewActive,"please enter a name", "VIEW NAME", m_ViewActive->GetName().GetCStr());
 			int result = dlg->ShowModal(); 
-			wxString name = dlg->GetValue();
+			mafString name = dlg->GetValue().c_str();
 			cppDEL(dlg);
 			if(result != wxID_OK) return;
 			m_ViewActive->SetName(name);
 			if(name == "")
         m_ChildViewActive->SetTitle(wxStripMenuCodes(m_ViewActive->GetLabel()));
 			else
-				m_ChildViewActive->SetTitle(name);
+				m_ChildViewActive->SetTitle(name.GetCStr());
 		}
 		break;
 	}

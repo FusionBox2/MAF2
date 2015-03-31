@@ -487,7 +487,7 @@ void mafInteractor2DAngle::DrawMeasureTool(double x, double y)
     CalculateMeasure();
     m_RendererVector.push_back(m_CurrentRenderer);
 
-    if(mafString::Equals("*Error*",m_MeterVector[m_MeterVector.size()-1]->GetText()))
+    if(mafString("*Error*") == m_MeterVector[m_MeterVector.size()-1]->GetText())
     {
       wxMessageBox(_("Impossible to measure the angle.\n Both the lines must have length > 0!"));
     }  

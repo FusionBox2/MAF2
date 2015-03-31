@@ -36,6 +36,7 @@
 #include "mafVMEVolumeGray.h"
 #include "mafVMEVolumeRGB.h"
 #include "mafVMEMesh.h"
+#include "mafFilesDirs.h"
 
 #include "mafTagArray.h"
 #include "vtkMAFSmartPointer.h"
@@ -160,8 +161,8 @@ int mafOpImporterVTK::ImportVTK()
   
   if (preader->GetNumberOfOutputs()>0)
   {
-    wxString path, name, ext;
-    wxSplitPath(m_File.c_str(),&path,&name,&ext);
+    mafString path, name, ext;
+    mafSplitPath(m_File,&path,&name,&ext);
 
     vtkDataSet *data = vtkDataSet::SafeDownCast(preader->GetOutputs()[0]);
     if (data)
@@ -218,7 +219,7 @@ int mafOpImporterVTK::ImportVTK()
       tag_Nature.SetValue("NATURAL");
       m_Output->GetTagArray()->SetTag(tag_Nature);
       m_Output->ReparentTo(m_Input);
-      m_Output->SetName(name.c_str());
+      m_Output->SetName(name);
 
       success = true;
     }

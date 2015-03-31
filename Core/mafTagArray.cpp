@@ -217,7 +217,7 @@ int mafTagArray::InternalRestore(mafStorageElement *node)
     int idx=0;
     for (int i=0;(idx < numAttrs) && (i < children.size()) && (ret == MAF_OK);i++)
     {
-      if (mafString().Set(children[i]->GetName())=="TItem")
+      if (children[i]->GetName() == "TItem")
       {
         mafTagItem new_titem;
         ret=new_titem.Restore(children[i]);

@@ -93,8 +93,8 @@ int mafOpImporterMSF::ImportMSF()
 //----------------------------------------------------------------------------
 {
   mafString unixname = m_File;
-  wxString path, name, ext;
-  wxSplitPath(m_File.GetCStr(),&path,&name,&ext);
+  mafString path, name, ext;
+  mafSplitPath(m_File,&path,&name,&ext);
 
   if(ext == "zmsf")
   {
@@ -128,7 +128,7 @@ int mafOpImporterMSF::ImportMSF()
   root->Initialize();
   root->SetListener(storage);
       
-  wxString group_name = wxString::Format("imported from %s.%s",name,ext);
+  mafString group_name = wxString::Format("imported from %s.%s",name,ext).c_str();
  
   mafNEW(m_Group);
   m_Group->SetName(group_name);

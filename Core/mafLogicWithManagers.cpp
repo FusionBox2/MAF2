@@ -232,9 +232,9 @@ bool mafLogicWithManagers::SetAppTag(mafNode *vme)
 void mafLogicWithManagers::AddCreationDate(mafNode *vme)
 //----------------------------------------------------------------------------
 {
-  wxString dateAndTime;
+  mafString dateAndTime;
   wxDateTime time = wxDateTime::UNow(); // get time with millisecond precision
-  dateAndTime  = wxString::Format("%02d/%02d/%02d %02d:%02d:%02d",time.GetDay(), time.GetMonth()+1, time.GetYear(), time.GetHour(), time.GetMinute(),time.GetSecond());
+  dateAndTime  = wxString::Format("%02d/%02d/%02d %02d:%02d:%02d",time.GetDay(), time.GetMonth()+1, time.GetYear(), time.GetHour(), time.GetMinute(),time.GetSecond()).c_str();
 
   mafTagItem tag_creationDate;
   tag_creationDate.SetName("Creation_Date");
@@ -1749,7 +1749,7 @@ bool mafLogicWithManagers::OnFileSaveAs()
     m_NodeManager->SetListener(m_Storage);
     m_Storage->SetRoot(mafVMERoot::SafeDownCast(root));
   }
-  m_Storage->SetURL(m_MSFFile.GetCStr());
+  m_Storage->SetURL(m_MSFFile);
   Save();
   // add the msf (or zmsf) to the history
   if (!m_ZipFile.IsEmpty())

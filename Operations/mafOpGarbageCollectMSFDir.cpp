@@ -244,7 +244,7 @@ mafString mafOpGarbageCollectMSFDir::GetMSFDirAbsPath(mafNode *anyTreeNode)
   wxString tmp = msfABSPath.GetCStr();
   tmp.Replace("/","\\");
 
-  return tmp;
+  return tmp.c_str();
 }
 
 mafString mafOpGarbageCollectMSFDir::GetMSFXMLFileAbsFileName(mafNode *anyTreeNode)
@@ -266,7 +266,7 @@ mafString mafOpGarbageCollectMSFDir::GetMSFXMLFileAbsFileName(mafNode *anyTreeNo
 
   msfXMLFileAbsFileName.Replace("/","\\");
 
-  return msfXMLFileAbsFileName;
+  return msfXMLFileAbsFileName.c_str();
 }
 
 int mafOpGarbageCollectMSFDir::GarbageCollect()

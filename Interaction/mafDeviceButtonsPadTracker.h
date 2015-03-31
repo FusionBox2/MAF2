@@ -204,7 +204,7 @@ protected:
   /** add pose matrix to the event */ 
   virtual void SendButtonEvent(mafEventInteraction *event);
 
-  int AvatarChooser(wxString &avatar_name,wxString &avatar_type);
+  int AvatarChooser(mafString& avatar_name,mafString& avatar_type);
 
   mafMatrix*            m_LastPoseMatrix; ///< stores the last pose matrix
   int                   m_LastPose;       ///< Flag used when last pose has not been served yet

@@ -52,6 +52,34 @@
 //------------------------------------------------------------------------------
 // mmuMSF1xDocument
 //------------------------------------------------------------------------------
+namespace {
+  bool StartsWith(const char *str1,const char *str2)
+  {
+    if ( !str1 || !str2 || strlen(str1) < strlen(str2) )
+    {
+      return false;
+    }
+    return !strncmp(str1, str2, strlen(str2));
+  }
+  int Compare(const char* str1, const char* str2)
+    //----------------------------------------------------------------------------
+  {
+    if (!str1&&!str2)
+      return 0;
+
+    if ( !str1&&str2 )
+    {
+      return -1;
+    }
+
+    if ( !str2&&str1 )
+    {
+      return 1;
+    }
+    return strcmp(str1, str2);
+  }
+
+}
 
 //------------------------------------------------------------------------------
 int mmuMSF1xDocument::InternalStore(mafStorageElement *node)
@@ -146,12 +174,12 @@ mafNode *mmuMSF1xDocument::ParsePath(mafVMERoot *root,const char *path)
   const char *str=path;
   mafNode *node=NULL;
 
-  if (mafString::StartsWith(str,"/MSF"))
+  if (StartsWith(str,"/MSF"))
   {
     str+=4; // jump to next token
 
     node=root;
-    for (;mafString::StartsWith(str,"/VME[");)
+    for (;StartsWith(str,"/VME[");)
     {
       int idx;
       if (sscanf(str,"/VME[%d]",&idx)==EOF)
@@ -181,7 +209,7 @@ mafNode *mmuMSF1xDocument::ParsePath(mafVMERoot *root,const char *path)
     }
 
     // if string was not yet finished... parse error!!!
-    if ((*str!=0)&&(!mafString::Compare(str,"/")))
+    if ((*str!=0)&&(!Compare(str,"/")))
     {
       mafErrorMacro("Error Parsing XPATH string: \""<<str<<"\"");
       return NULL;

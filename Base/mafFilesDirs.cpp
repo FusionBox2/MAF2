@@ -12,6 +12,7 @@
 #include "mafDefines.h"
 #include "mafDecl.h"
 #include "mafFilesDirs.h"
+#include <list>
 
 #include <fstream>
 
@@ -240,19 +241,19 @@ void mafOpenZIP(const mafString& filename, const mafString& temp_directory)
   wxZipFSHandler      *zipHandler = NULL;      ///< Handler for zip archive (used to open zmsf files)
   wxFileSystem        *fileSystem = NULL;      ///< File system manager
 
-  wxString path, name, ext;
+  mafString path, name, ext;
 
   mafString zipFile = filename;
-  std::vector<mafString> extractedFiles;
+  std::list<mafString> extractedFiles;
 
-  wxString complete_name, zfile, out_file;
-  wxSplitPath(zipFile.GetCStr(),&path,&name,&ext);
+  mafString complete_name, zfile, out_file;
+  mafSplitPath(zipFile,&path,&name,&ext);
   complete_name = name + "." + ext;
 
   wxFSFile *zfileStream;
   wxZlibInputStream *zip_is;
   wxString pkg = "#zip:";
-  wxString header_name = complete_name + pkg;
+  wxString header_name = complete_name.GetCStr() + pkg;
   int length_header_name = header_name.Length();
   bool enable_mid = false;
   if(fileSystem == NULL)
@@ -278,19 +279,19 @@ void mafOpenZIP(const mafString& filename, const mafString& temp_directory)
     return;*/
   for(; zfile != ""; zfile = fileSystem->FindNext())
   {
-    zfileStream = fileSystem->OpenFile(zfile);
+    zfileStream = fileSystem->OpenFile(zfile.GetCStr());
     if (zfileStream == NULL) // unable to open the file
     {
-      for(std::vector<mafString>::iterator it = extractedFiles.begin(); it != extractedFiles.end(); ++it)
+      for(std::list<mafString>::iterator it = extractedFiles.begin(); it != extractedFiles.end(); ++it)
       {
-        wxRemoveFile((*it).GetCStr());
+        mafFileRemove(*it);
       }
       return;
     }
-    wxSplitPath(zfile,&path,&name,&ext);
+    mafSplitPath(zfile,&path,&name,&ext);
     complete_name = name + "." + ext;
     if (enable_mid)
-      complete_name = complete_name.Mid(length_header_name);
+      complete_name = wxString(complete_name.GetCStr()).Mid(length_header_name).c_str();
     zip_is = (wxZlibInputStream *)zfileStream->GetStream();
     out_file = temp_directory + "\\" + complete_name;
     char *buf;

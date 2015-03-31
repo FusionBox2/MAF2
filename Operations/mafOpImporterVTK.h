@@ -66,8 +66,8 @@ public:
   void SetFileName(const char *name) {m_File = name;};
 
 protected:
-  wxString m_File;
-  wxString m_FileDir;
+  mafString m_File;
+  mafString m_FileDir;
   
   mafVMELandmarkCloud *m_VmeLandmarkCloud;
   //mafVMEPointSet   *m_VmePointSet;

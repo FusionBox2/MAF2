@@ -162,7 +162,7 @@ enum MATERIAL_PROPERTY_ID
 void mafGUIMaterialChooser::CreateGUI() 
 //----------------------------------------------------------------------------
 {
-	wxString wildcard = "xml file (*.xml)|*.xml|all files (*.*)|*.*";
+	mafString wildcard = "xml file (*.xml)|*.xml|all files (*.*)|*.*";
 
   int x_pos,y_pos,w,h;
   mafGetFrame()->GetPosition(&x_pos,&y_pos);

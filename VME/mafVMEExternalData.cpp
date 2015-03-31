@@ -164,13 +164,6 @@ mafString mafVMEExternalData::GetCurrentPath()
 }
 
 //-------------------------------------------------------------------------
-void mafVMEExternalData::GetAbsoluteFileName(char *fname)
-//-------------------------------------------------------------------------
-{
-  mafString::Copy(fname,this->GetAbsoluteFileName().GetCStr());
-}
-
-//-------------------------------------------------------------------------
 void mafVMEExternalData::SetMimeType(const char *mimetype)
 //-------------------------------------------------------------------------
 {

@@ -101,7 +101,7 @@ protected:
 	vtkRenderer		*m_Renderer;
 	mafGUI				*m_Gui;
 
-	wxString			 m_SelectedPosition;
+	mafString			 m_SelectedPosition;
 	wxListBox			*m_PositionList;
 	mafGUIButton			*m_StorePositionButton; 
 	mafGUIButton			*m_DeletePositionButton;

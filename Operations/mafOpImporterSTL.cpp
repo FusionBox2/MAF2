@@ -32,6 +32,7 @@
 #include "mafVMESurface.h"
 #include "mafSmartPointer.h"
 #include "vtkMAFSmartPointer.h"
+#include "mafFilesDirs.h"
 
 #include "vtkSTLReader.h"
 #include "vtkPolyData.h"
@@ -253,8 +254,8 @@ void mafOpImporterSTL::ImportSTL()
     reader->SetFileName(fn);
 	  reader->Update();
 
-    wxString path, name, ext;
-    wxSplitPath(fn.GetCStr(),&path,&name,&ext);
+    mafString path, name, ext;
+    mafSplitPath(fn.GetCStr(),&path,&name,&ext);
 
     mafVMESurface *importedSTL;
     mafNEW(importedSTL);

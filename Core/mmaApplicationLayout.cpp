@@ -207,7 +207,7 @@ int mmaApplicationLayout::InternalStore(mafStorageElement *parent)
 
         view_camera_parameters = "VIEW_CAMERA_PARAMETERS_";
         view_camera_parameters << i;
-        parent->StoreVectorN(view_camera_parameters.GetCStr(),info.m_CameraParameters, 9);
+        parent->StoreVectorN(view_camera_parameters,info.m_CameraParameters, 9);
       }
     }
     return MAF_OK;
@@ -274,7 +274,7 @@ int mmaApplicationLayout::InternalRestore(mafStorageElement *node)
 
         view_camera_parameters = "VIEW_CAMERA_PARAMETERS_";
         view_camera_parameters << i;
-        node->RestoreVectorN(view_camera_parameters.GetCStr(),info.m_CameraParameters, 9);
+        node->RestoreVectorN(view_camera_parameters,info.m_CameraParameters, 9);
       }
       m_LayoutViewList.push_back(info);
     }

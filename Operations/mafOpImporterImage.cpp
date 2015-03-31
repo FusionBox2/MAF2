@@ -231,12 +231,12 @@ void mafOpImporterImage::BuildImageSequence()
 //----------------------------------------------------------------------------
 {
 	long time;
-  wxString path, name, ext;
+  mafString path, name, ext;
 
 	mafNEW(m_ImportedImage);
   
-  wxSplitPath(m_Files[0].GetCStr(),&path,&name,&ext);
-  if(name.IsNumber())
+  mafSplitPath(m_Files[0],&path,&name,&ext);
+  if(wxString(name.GetCStr()).IsNumber())
     std::sort(m_Files.begin(),m_Files.end(),CompareNumber);
   else
     std::sort(m_Files.begin(),m_Files.end());
@@ -252,10 +252,10 @@ void mafOpImporterImage::BuildImageSequence()
       mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,progress_value));
     }
 
-    wxSplitPath(m_Files[i].GetCStr(),&path,&name,&ext);
-		ext.MakeUpper();
-		if(name.IsNumber())
-			name.ToLong(&time);
+    mafSplitPath(m_Files[i],&path,&name,&ext);
+		ext = wxString(ext.GetCStr()).MakeUpper().c_str();
+		if(wxString(name.GetCStr()).IsNumber())
+			wxString(name.GetCStr()).ToLong(&time);
 		else
 			time = i;
 

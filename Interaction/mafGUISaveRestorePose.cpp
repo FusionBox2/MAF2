@@ -192,17 +192,17 @@ void mafGUISaveRestorePose::StorePose()
   pose_name.Trim();
   pose_name.Trim(FALSE);
 
-  wxString AbsPos_tagName = "STORED_ABS_POS_" + pose_name;
+  mafString AbsPos_tagName = "STORED_ABS_POS_" + pose_name;
 
   mafTagArray *tagArray = m_InputVME->GetTagArray();
-  if(tagArray->GetTag(AbsPos_tagName.c_str())) 
+  if(tagArray->GetTag(AbsPos_tagName)) 
   {
 		wxString msg = "this name is already used, do you want to overwrite it ?";
 		int res = wxMessageBox(msg,"Store Position", wxOK|wxCANCEL|wxICON_QUESTION, NULL);
 		if(res == wxCANCEL) return;
 
     //remove item to be overwritten
-		tagArray->DeleteTag(AbsPos_tagName.c_str());
+		tagArray->DeleteTag(AbsPos_tagName);
 	}
 	
   StorePoseHelper(AbsPos_tagName);
@@ -215,18 +215,18 @@ void mafGUISaveRestorePose::StorePose()
 //----------------------------------------------------------------------------
 void mafGUISaveRestorePose::RemovePose( int absPoseListBoxID )
 {
-  wxString pose_name;
+  mafString pose_name;
 
   if (m_TestMode == false)
   {
-    pose_name = m_PositionsList->GetString(absPoseListBoxID);
+    pose_name = m_PositionsList->GetString(absPoseListBoxID).c_str();
   }
   else if (m_TestMode == true)
   {
-    pose_name = dummyPoseNameUsedForTesting.GetCStr();
+    pose_name = dummyPoseNameUsedForTesting;
   }
   
-  wxString AbsPos_tagName = "STORED_ABS_POS_" + pose_name;
+  mafString AbsPos_tagName = "STORED_ABS_POS_" + pose_name;
 
   RemovePoseHelper(AbsPos_tagName);
   
@@ -238,11 +238,11 @@ void mafGUISaveRestorePose::RemovePose( int absPoseListBoxID )
 //----------------------------------------------------------------------------
 void mafGUISaveRestorePose::RestorePose( int absPoseListBoxID )
 {
-  wxString pose_name;
+  mafString pose_name;
 
   if (m_TestMode == false)
   {
-    pose_name = m_PositionsList->GetString(absPoseListBoxID);
+    pose_name = m_PositionsList->GetString(absPoseListBoxID).c_str();
   }
   else if (m_TestMode == true)
   {

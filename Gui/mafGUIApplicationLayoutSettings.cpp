@@ -246,24 +246,25 @@ void mafGUIApplicationLayoutSettings::InitializeSettings()
 void mafGUIApplicationLayoutSettings::AddLayout()
 //----------------------------------------------------------------------------
 {
-  wxString name;
+  mafString name;
   
-  wxTextEntryDialog *dlg = new wxTextEntryDialog(NULL,_("please enter a name"), _("New Layout"), name );
+  wxTextEntryDialog *dlg = new wxTextEntryDialog(NULL,_("please enter a name"), _("New Layout"), name.GetCStr());
   dlg->SetValue(_("new layout"));
   int result = dlg->ShowModal(); 
-  name = dlg->GetValue();
+  name = dlg->GetValue().c_str();
   cppDEL(dlg);
   if(result != wxID_OK) return;
 
   //check for equal names
-  if(m_List->FindString(name) != -1)
+  int idx = m_List->FindString(name.GetCStr());
+  if(idx != -1)
   {
     wxString msg = _("this name is already used, do you wanto to overwrite this layout ?");
     int res = wxMessageBox(msg,_("Save Layout"), wxOK|wxCANCEL|wxICON_QUESTION, NULL);
     if(res == wxCANCEL) return;
 
     // delete old child which will be substituted
-    m_List->Delete(m_List->FindString(name));
+    m_List->Delete(idx);
     mafNode *root = ((mafNode *)m_XMLStorage->GetDocument());
     mafSmartPointer<mafNodeLayout> child;
     root->RemoveChild(root->FindInTreeByName(name));
@@ -314,7 +315,7 @@ void mafGUIApplicationLayoutSettings::AddLayout()
     {
       m_Layout->AddView(*it);
     }
-    m_List->Append(name);
+    m_List->Append(name.GetCStr());
 
     //restore the original visibility
     m_Layout->SetVisibilityVme(m_VisibilityVme);
@@ -329,7 +330,7 @@ void mafGUIApplicationLayoutSettings::RemoveLayout()
   if(m_SelectedItem != -1)
   {   
     // delete old child which will be substituted
-    wxString name = m_List->GetString(m_SelectedItem);
+    mafString name = m_List->GetString(m_SelectedItem).c_str();
     mafNode *root = ((mafNode *)m_XMLStorage->GetDocument());
     if(mafString(((mafNodeLayout *)root->FindInTreeByName(name))->GetLayout()->GetLayoutName()) == mafString("Default"))
       m_DefaultLayoutName = " - ";
@@ -425,7 +426,7 @@ void mafGUIApplicationLayoutSettings::ApplyLayout()
     return;
   }
 
-  wxString name = m_List->GetString(m_SelectedItem);
+  mafString name = m_List->GetString(m_SelectedItem).c_str();
 
   // Retrieve the saved layout.
   mafNode *root = ((mafNode *)m_XMLStorage->GetDocument());

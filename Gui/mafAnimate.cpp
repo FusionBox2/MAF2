@@ -292,10 +292,10 @@ void mafAnimate::FlyTo()
 {
   assert(m_Tags && m_Renderer && m_PositionList);
   m_SelectedPosition = m_PositionList->GetStringSelection();
-  wxString flyto_tagName = "FLY_TO_" + m_SelectedPosition;
-  mafTagItem *item = m_Tags->GetTag(flyto_tagName.c_str());
+  mafString flyto_tagName = "FLY_TO_" + m_SelectedPosition;
+  mafTagItem *item = m_Tags->GetTag(flyto_tagName);
   if(item == NULL)
-    item = m_Tags->GetTag(m_SelectedPosition.c_str()); // support old style
+    item = m_Tags->GetTag(m_SelectedPosition); // support old style
 
   vtkCamera *camera = m_Renderer->GetActiveCamera();
 
@@ -556,7 +556,7 @@ void mafAnimate::StoreViewPoint()
   item.SetComponent(par_scale,9);
 	m_Tags->SetTag(item);
 
-	m_PositionList->Append(m_SelectedPosition);
+	m_PositionList->Append(m_SelectedPosition.GetCStr());
   SetCurrentSelection(m_PositionList->GetCount() - 1);
 }
 //----------------------------------------------------------------------------
@@ -566,40 +566,40 @@ void mafAnimate::RenameViewPoint()
 	assert(m_SelectedPosition != "");
 
 	// prompt user for the new name -----------------------
-	wxTextEntryDialog *dlg = new wxTextEntryDialog(NULL,"please enter a name", "Rename Camera Position",m_SelectedPosition );
+	wxTextEntryDialog *dlg = new wxTextEntryDialog(NULL,"please enter a name", "Rename Camera Position",m_SelectedPosition.GetCStr());
   int result = dlg->ShowModal(); 
-  wxString name = dlg->GetValue();
+  mafString name = dlg->GetValue().c_str();
   cppDEL(dlg);
 	if(result != wxID_OK) return;
 
   if(name == m_SelectedPosition) return; // user doesn't give a different name, skip
 
   // test if is it unique -----------------------
-	wxString flyto_tagName = "FLY_TO_" + name;
-  if(m_Tags->GetTag(flyto_tagName.c_str()))
+	mafString flyto_tagName = "FLY_TO_" + name;
+  if(m_Tags->GetTag(flyto_tagName))
 	{
 		wxString msg = "this name is already used, do you want to overwrite it ?";
 		int res = wxMessageBox(msg,"Rename Camera Position", wxOK|wxCANCEL|wxICON_QUESTION, NULL);
 		if(res == wxCANCEL) return;
 
     //remove item to be overwritten
-		m_Tags->DeleteTag(flyto_tagName.c_str());
-		m_PositionList->Delete(m_PositionList->FindString(name));
+		m_Tags->DeleteTag(flyto_tagName);
+		m_PositionList->Delete(m_PositionList->FindString(name.GetCStr()));
 	}
 
-	wxString flyto_oldTagName = "FLY_TO_" + m_SelectedPosition;
-  mafTagItem *item = m_Tags->GetTag(flyto_oldTagName.c_str());
+	mafString flyto_oldTagName = "FLY_TO_" + m_SelectedPosition;
+  mafTagItem *item = m_Tags->GetTag(flyto_oldTagName);
   assert(item  && item->GetNumberOfComponents() == 10);
 
   mafTagItem itemNew;
   itemNew.DeepCopy(item);
-	itemNew.SetName(flyto_tagName.c_str());	
+	itemNew.SetName(flyto_tagName);	
   m_Tags->DeleteTag(flyto_oldTagName);
   m_Tags->SetTag(itemNew);
 
 	int n = m_PositionList->GetSelection();
 	if(n >= 0) 
-    m_PositionList->SetString(n, name);
+    m_PositionList->SetString(n, name.GetCStr());
 
   m_SelectedPosition = name;
 	m_Gui->Update();
@@ -617,7 +617,7 @@ void mafAnimate::DeleteViewPoint(int pos /*= 0*/)
 
 	m_PositionList->Delete(pos);
 
-	wxString flyto_tagName = "FLY_TO_" + m_SelectedPosition;
+	mafString flyto_tagName = "FLY_TO_" + m_SelectedPosition;
   if(m_Tags->GetTag(flyto_tagName))
 	  m_Tags->DeleteTag(flyto_tagName);
 

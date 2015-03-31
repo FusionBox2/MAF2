@@ -325,7 +325,7 @@ void mafOpConnectivitySurface::OnVtkConnect()
 			mafVMESurface *surf;
 			mafNEW(surf);
 			surf->SetData(clean->GetOutput(),surf->GetTimeStamp());
-			surf->SetName(wxString::Format("%d_extr",region));
+			surf->SetName(wxString::Format("%d_extr",region).c_str());
 			m_ExtractedVmes.push_back(surf);
 		}
 	}
