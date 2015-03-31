@@ -50,3 +50,8 @@ double mafGraphDataImpl::GetDerivCoef(unsigned index) const
 {
   return m_Pipe->GetVarDerivativeCoef(GetID(index));
 }
+
+double mafGraphDataImpl::GetTime() const 
+{
+  return ((mafVME*)(m_Pipe->m_Node))->GetTimeStamp();
+}

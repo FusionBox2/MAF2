@@ -66,6 +66,7 @@ public:
   virtual unsigned GetBreakEnd()  const = 0;
   virtual double   GetDerivCoef(unsigned index) const = 0;
   virtual void     GetIDDesc(unsigned index, unsigned int deriv, char *sDescript,unsigned int nLength) const = 0;
+  virtual double   GetTime() const = 0;
 };
 
 //----------------------------------------------------------------------------
