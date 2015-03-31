@@ -48,13 +48,6 @@ SET(PROJECT_SRCS
   mafVMEScalar.h
 )
 
-IF (MAF_USE_CRYPTO)
-SET(PROJECT_SRCS  ${PROJECT_SRCS}
-  mafCrypt.cpp
-  mafCrypt.h
-  )
-ENDIF (MAF_USE_CRYPTO)
-
 IF (MAF_USE_ITK)
 SET(PROJECT_SRCS  ${PROJECT_SRCS}
   mafPipeScalarMatrix.cpp
@@ -175,10 +168,6 @@ SUBDIRS(DataPipes)
 # List libraries that are needed by this project.
 #SET(PROJECT_LIBS mafCore vtkMAF)
 SET(PROJECT_LIBS mafDataPipes)
-
-IF (MAF_USE_CRYPTO)
-  SET(PROJECT_LIBS ${PROJECT_LIBS} Crypto)
-ENDIF (MAF_USE_CRYPTO)
 
 IF (MAF_USE_VTK)
   SET(PROJECT_LIBS ${PROJECT_LIBS} vtkIO vtkRendering vtkGraphics vtkHybrid)
