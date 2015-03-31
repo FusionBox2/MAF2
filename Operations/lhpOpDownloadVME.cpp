@@ -74,6 +74,7 @@ MafMedical is partially based on OpenMAF.
 #include "mafVMEStorage.h"
 #include "mafVMERoot.h"
 #include "mafVMEGroup.h"
+#include "mafEventIO.h"
 
 #include "lhpFactoryTagHandler.h"
 #include "vtkPolyData.h"
@@ -1503,7 +1504,10 @@ void lhpOpDownloadVME::UpdateBinaryFile()
   {
     mafDataVector *dv = ((mafVMEGeneric*)m_NodeDownloaded)->GetDataVector();
     mafDataVector::DataMap::iterator it;
-    mafString newMSFFileName = ((mafVMERoot *)m_Input->GetRoot())->GetStorage()->GetURL();
+    mafEventIO es(this,NODE_GET_STORAGE);
+    m_Input->GetRoot()->OnEvent(&es);
+    mafStorage *storage = es.GetStorage();
+    mafString newMSFFileName = storage->GetURL();
     wxString oldItemURL, newItemURL, tmpURL;
     wxString path, name, ext;
     wxString oldItemPath, oldItemName, oldItemExt;
@@ -1569,7 +1573,10 @@ void lhpOpDownloadVME::UpdateBinaryFile()
   {
     mafDataVector *dv = ((mafVMEGeneric*)m_NodeDownloaded)->GetDataVector();
     mafDataVector::Iterator it;
-    mafString newMSFFileName = ((mafVMERoot *)m_Input->GetRoot())->GetStorage()->GetURL();
+    mafEventIO es(this,NODE_GET_STORAGE);
+    m_Input->GetRoot()->OnEvent(&es);
+    mafStorage *storage = es.GetStorage();
+    mafString newMSFFileName = storage->GetURL();
     wxString path, name, ext;
     wxString oldArchiveURL, newArchiveURL, tmpURL;
     wxString oldItemURL, oldItemExt, oldItemPath, newItemURL;
