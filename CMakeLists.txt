@@ -105,10 +105,6 @@ SET (CONFIGURE_ERROR 0)
 #-----------------------------------------------------------------------------
 INCLUDE (${CMAKE_ROOT}/Modules/FindThreads.cmake)
 
-# Create the header to configure the classes.
-CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/mafConfigure.h.in
-             ${PROJECT_BINARY_DIR}/mafConfigure.h
-             @ONLY)
 
 #-----------------------------------------------------------------------------
 # Check if MFL is inside the MAF tree.
@@ -368,6 +364,10 @@ MARK_AS_ADVANCED(
    USE_MFL_FILE
 )
 
+# Create the header to configure the classes.
+CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/mafConfigure.h.in
+             ${PROJECT_BINARY_DIR}/mafConfigure.h
+             @ONLY)
 
 #-----------------------------------------------------------------------------
 # MAF_PARABUILD deploy stuff.  
