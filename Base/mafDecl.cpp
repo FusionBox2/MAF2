@@ -75,7 +75,11 @@ mafString  mafGetDirName(const mafString& initial, const mafString& title, wxWin
   dialog.SetReturnCode(wxID_OK);
   int result = dialog.ShowModal();
   mafYield(); // wait for the dialog to disappear
-  return  (result == wxID_OK) ? dialog.GetPath().c_str() : "";
+  if(result != wxID_OK)
+    return "";
+  mafString res = dialog.GetPath().c_str();
+  res.ParsePathName();
+  return res;
 }
 
 //----------------------------------------------------------------------------
@@ -95,7 +99,11 @@ mafString mafGetOpenFile(const mafString& initial, const mafString& wild, const 
   dialog.SetReturnCode(wxID_OK);
 	int result = dialog.ShowModal();
   mafYield(); // wait for the dialog to disappear
-  return  (result == wxID_OK) ? dialog.GetPath().c_str() : "";
+  if(result != wxID_OK)
+    return "";
+  mafString res = dialog.GetPath().c_str();
+  res.ParsePathName();
+  return res;
 }
 
 //----------------------------------------------------------------------------
@@ -116,7 +124,11 @@ void mafGetOpenMultiFiles(const mafString& initial, const mafString& wild, std::
   wxArrayString wxfiles;
 	(result == wxID_OK) ? dialog.GetPaths(wxfiles) : wxfiles.Empty();
 	for (int i=0;i<wxfiles.GetCount();i++)
-	  files.push_back(wxfiles[i].c_str());
+  {
+    mafString f = wxfiles[i].c_str();
+    f.ParsePathName();
+    files.push_back(f);
+  }
 }
 //----------------------------------------------------------------------------
 mafString mafGetSaveFile(const mafString& initial, const mafString& wild, const mafString& title, wxWindow *parent)
@@ -133,7 +145,11 @@ mafString mafGetSaveFile(const mafString& initial, const mafString& wild, const 
   dialog.SetReturnCode(wxID_OK);
 	int result = dialog.ShowModal();
   mafYield(); // wait for the dialog to disappear
-  return  (result == wxID_OK) ? dialog.GetPath().c_str() : "";
+  if(result != wxID_OK)
+    return "";
+  mafString res = dialog.GetPath().c_str();
+  res.ParsePathName();
+  return res;
 }
 //----------------------------------------------------------------------------
 mafString mafGetApplicationDirectory()
@@ -147,7 +163,9 @@ mafString mafGetApplicationDirectory()
 		app_dir = wxGetCwd();
 		wxSetWorkingDirectory(cd);
 	}
-	return app_dir.c_str();
+  mafString dir = app_dir.c_str();
+  dir.ParsePathName();
+	return dir;
 }
 //----------------------------------------------------------------------------
 bool IsRemote(const mafString& filename, mafString &protocol_used)

@@ -76,6 +76,7 @@ mafString mafCreateTempFileName(const mafString& base)
   mafString name;
   name = wxFileName::CreateTempFileName(base.GetCStr()); // used to get a valid temporary name for cache directory
   mafFileRemove(name);
+  name.ParsePathName();
   return name;
 }
 void mafSplitPath(const mafString& fullname, mafString* path, mafString* name, mafString* ext)
