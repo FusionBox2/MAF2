@@ -116,6 +116,42 @@ mafCxxTypeMacro(medOpImporterLandmarkAccU)
 
 namespace
 {
+  bool RunProgram(char *commandline)
+  {
+
+    STARTUPINFO si;
+    PROCESS_INFORMATION pi;
+
+    ZeroMemory( &si, sizeof(si) );
+    si.cb = sizeof(si);
+    ZeroMemory( &pi, sizeof(pi) );
+
+    // Start the child process. 
+    if( !CreateProcess( NULL,   // No module name (use command line)
+      commandline,        // Command line
+      NULL,           // Process handle not inheritable
+      NULL,           // Thread handle not inheritable
+      FALSE,          // Set handle inheritance to FALSE
+      0,              // No creation flags
+      NULL,           // Use parent's environment block
+      NULL,           // Use parent's starting directory 
+      &si,            // Pointer to STARTUPINFO structure
+      &pi )           // Pointer to PROCESS_INFORMATION structure
+      ) 
+    {
+      //printf( "CreateProcess failed (%d).\n", GetLastError() );
+      return false;
+    }
+
+    // Wait until child process exits.
+    WaitForSingleObject( pi.hProcess, INFINITE );
+
+    // Close process and thread handles. 
+    CloseHandle( pi.hProcess );
+    CloseHandle( pi.hThread );
+    return true;
+  }
+
   mafVMEGroup *ImportMSFFile(mafString& m_File)
   {
     mafString unixname = m_File;
@@ -1794,7 +1830,11 @@ bool lhpOpKinectUtil::Import()
     mafString commandline = apppath;
     commandline += " -logging" + filetoprd;
     if(wxExecute(commandline.GetCStr(), wxEXEC_SYNC) != 0)
-      return false;
+    return false;
+    /*system(commandline.GetCStr());
+    if(!RunProgram(const_cast<char*>(commandline.GetCStr())))
+      return false;*/
+
     filestxt = filetoprd;
     filestxt += "\\Files.txt";
     sessionstxt = filetoprd;
@@ -1945,6 +1985,7 @@ bool lhpOpKinectUtil::Import()
           commandline += "/KinVic_Opt_ShV_2012.exe KV_Local_Param_Inp_Shv_K.m LL_Model_S035_K.dat UpL_Model_S035_K.dat >a.log";
           wxSetWorkingDirectory(mtlbTmp.GetCStr());
           if(wxExecute(commandline.GetCStr(), wxEXEC_SYNC) == 0)
+          //if(!RunProgram(const_cast<char*>(commandline.GetCStr())))
           {
             if(mafVMEGroup *grp = ModelImport(modelPath, imported))
             {
