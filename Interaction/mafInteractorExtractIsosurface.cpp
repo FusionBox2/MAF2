@@ -20,6 +20,7 @@
 #include "mafDeviceButtonsPadMouse.h"
 #include "mafAvatar3D.h"
 #include "mafInteractor.h"
+#include "mafViewVTK.h"
 #include "mafRWIBase.h"
 #include "mafEventInteraction.h"
 #include "mafEvent.h"
@@ -125,9 +126,10 @@ void mafInteractorExtractIsosurface::PickIsoValue(mafDevice *device)
   if( mouse && m_Renderer)
   {
     double pos_picked[3];
-    if (mouse->GetRWI()->GetPicker()->Pick(x,y,0,m_Renderer))
+    mafViewVTK *vvtk = mafViewVTK::SafeDownCast(mouse->GetView());
+    if (vvtk->GetRWI()->GetPicker()->Pick(x,y,0,m_Renderer))
     {
-      mouse->GetRWI()->GetPicker()->GetPickPosition(pos_picked);
+      vvtk->GetRWI()->GetPicker()->GetPickPosition(pos_picked);
       vtkPoints *p = vtkPoints::New();
       p->SetNumberOfPoints(1);
       p->SetPoint(0,pos_picked);

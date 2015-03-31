@@ -35,6 +35,7 @@
 
 #include "mafEventInteraction.h"
 
+#include "mafViewVTK.h"
 #include "mafRWIBase.h"
 #include "mafVME.h"
 #include "mafTransform.h"
@@ -152,14 +153,15 @@ void mafInteractorPicker::SendPickingInformation(mafView *v, double *mouse_pos, 
   vtkCellPicker *cellPicker;
   vtkNEW(cellPicker);
   cellPicker->SetTolerance(0.001);
-  if (v)
+
+  if (mafViewVTK *vvtk = mafViewVTK::SafeDownCast(v))
   {
     /*mafViewCompound *vc = mafViewCompound::SafeDownCast(v);
     if (vc)
       v = vc->GetSubView();*/ // the code is integrated into the GetRWI method of the mafViewCompound, so it is not necessary!
     if(mouse_flag)
     {
-      vtkRendererCollection *rc = v->GetRWI()->GetRenderWindow()->GetRenderers();
+      vtkRendererCollection *rc = vvtk->GetRWI()->GetRenderWindow()->GetRenderers();
       vtkRenderer *r = NULL;
       rc->InitTraversal();
       while(r = rc->GetNextItem())
