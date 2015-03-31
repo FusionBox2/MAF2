@@ -358,6 +358,8 @@ int mafVMEItemVTK::InternalRestoreData()
     mafEventIO e(this,NODE_GET_STORAGE);
     mafEventMacro(e);
     mafStorage *storage = e.GetStorage();
+    if(!storage)
+      return MAF_WAIT;
     assert(storage);
     
     int resolvedURL = MAF_OK;
@@ -536,6 +538,8 @@ int mafVMEItemVTK::InternalStoreData(const char *url)
     mafEventIO e(this,NODE_GET_STORAGE);
     mafEventMacro(e);
     mafStorage *storage=e.GetStorage();
+    if(!storage)
+      return MAF_NO_IO;
     assert(storage);
 
     switch (m_IOMode)
