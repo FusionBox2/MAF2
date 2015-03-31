@@ -100,12 +100,12 @@ void lhpOpINPExporter::OnEvent(mafEventBase *maf_event)
       {
         if(mafVME::SafeDownCast(m_Input)->GetOutput()->IsMAFType(mafVMEOutputSurface))
         {
-          mafString FileDir = mafGetApplicationDirectory().c_str();
+          mafString FileDir = mafGetApplicationDirectory();
           FileDir << "\\";
           FileDir << m_Input->GetName();
           FileDir << ".inp";
           mafString wildc = "INP (*.inp)|*.inp";
-          m_File = mafGetSaveFile(FileDir.GetCStr(), wildc.GetCStr()).c_str();
+          m_File = mafGetSaveFile(FileDir.GetCStr(), wildc.GetCStr());
           if(m_File!="")
           {
             ExportSurface();
@@ -116,7 +116,7 @@ void lhpOpINPExporter::OnEvent(mafEventBase *maf_event)
         }
         else
         {
-          wxString f = mafGetDirName(mafGetApplicationDirectory().c_str()).c_str();
+          wxString f = mafGetDirName(mafGetApplicationDirectory()).GetCStr();
 
           if(f != "") 
           {

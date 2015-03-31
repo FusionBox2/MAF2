@@ -897,17 +897,10 @@ void lhpOpImporterC3DBTK::CreateGui()
 //----------------------------------------------------------------------------
 {
   mafString wildcard = "c3d files (*.c3d)|*.c3d";
-  std::vector<std::string> files;
-  mafString f;
 
   m_C3DInputFileNameFullPaths.clear();
   {
-    mafGetOpenMultiFiles(m_FileDir,wildcard, files);
-    for(unsigned i = 0; i < files.size(); i++)
-    {
-      f = files[i].c_str();
-      m_C3DInputFileNameFullPaths.push_back(f);
-    }
+    mafGetOpenMultiFiles(m_FileDir,wildcard, m_C3DInputFileNameFullPaths);
   }
 
   //mafEventMacro(mafEvent(this,result));

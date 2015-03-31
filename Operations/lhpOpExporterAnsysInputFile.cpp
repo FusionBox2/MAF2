@@ -292,7 +292,7 @@ void lhpOpExporterAnsysInputFile::OnOK()
   }
 
   wxString f;
-  f = mafGetSaveFile(m_FileDir,wildcard).c_str(); 
+  f = mafGetSaveFile(m_FileDir,wildcard).GetCStr(); 
   if(!f.IsEmpty())
   {
     m_AnsysOutputFileNameFullPath = f;

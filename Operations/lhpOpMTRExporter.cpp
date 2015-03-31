@@ -113,7 +113,7 @@ void lhpOpMTRExporter::OnEvent(mafEventBase *maf_event)
           proposed += ".mtr";
           wxString wildc = "FARO MTR file (*.mtr)|*.mtr";
 
-          wxString f = mafGetSaveFile(proposed,wildc).c_str(); 
+          wxString f = mafGetSaveFile(proposed,wildc).GetCStr(); 
 
           if(f != "") 
           {
@@ -131,8 +131,8 @@ void lhpOpMTRExporter::OnEvent(mafEventBase *maf_event)
 
             proposed += m_Input->GetName();
             proposed += ".mtr";
-            wxString wildc = "FARO MTR file (*.mtr)|*.mtr";
-            wxString f = mafGetSaveFile(proposed,wildc).c_str(); 
+            mafString wildc = "FARO MTR file (*.mtr)|*.mtr";
+            wxString f = mafGetSaveFile(proposed,wildc).GetCStr(); 
 
             if(f != "") 
             {
@@ -143,7 +143,7 @@ void lhpOpMTRExporter::OnEvent(mafEventBase *maf_event)
           }
           else
           {
-            wxString f = mafGetDirName(proposed).c_str();
+            wxString f = mafGetDirName(proposed).GetCStr();
 
             if(f != "") 
             {

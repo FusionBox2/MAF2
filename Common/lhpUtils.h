@@ -14,6 +14,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #define __lhpUtils_H__
 
 #include "mafDefines.h"
+#include "mafString.h"
 
 class lhpUtils
 {
@@ -22,7 +23,7 @@ public:
   /** In DEBUG mode return LHPBuilder source code directory in WIN32 path format. 
   In RELEASE mode it returns the Application installation directory in WIN32 path format (same as mafGetApplicationDirectory)*/
 
-  static wxString lhpGetApplicationDirectory();
+  static mafString lhpGetApplicationDirectory();
 
 };
 #endif

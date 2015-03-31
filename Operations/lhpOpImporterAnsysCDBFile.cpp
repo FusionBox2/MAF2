@@ -226,7 +226,7 @@ void lhpOpImporterAnsysCDBFile::CreateGui()
   m_AnsysInputFileNameFullPath = "";
   
   wxString f;
-  f = mafGetOpenFile(m_FileDir,wildcard).c_str(); 
+  f = mafGetOpenFile(m_FileDir,wildcard).GetCStr(); 
   if(!f.IsEmpty() && wxFileExists(f))
   {
     m_AnsysInputFileNameFullPath = f;

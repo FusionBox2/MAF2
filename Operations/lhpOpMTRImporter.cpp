@@ -38,7 +38,7 @@ mafCxxTypeMacro(lhpOpMTRImporter);
   m_Canundo = true;
   //m_Group   = NULL;
 
-  m_FileDir = mafGetApplicationDirectory().c_str();
+  m_FileDir = mafGetApplicationDirectory();
 }
 //----------------------------------------------------------------------------
  lhpOpMTRImporter::~lhpOpMTRImporter()
@@ -62,18 +62,11 @@ void  lhpOpMTRImporter::OpRun()
 //----------------------------------------------------------------------------
 {
   mafString vrml_wildc  = "MTR FARO data (*.mtr)|*.mtr";
-  std::vector<std::string> files;
-  mafString f;
 
   m_Files.clear();
   //if (m_File.IsEmpty())
   {
-    mafGetOpenMultiFiles(m_FileDir.GetCStr(),vrml_wildc.GetCStr(), files);
-    for(unsigned i = 0; i < files.size(); i++)
-    {
-      f = files[i].c_str();
-      m_Files.push_back(f);
-    }
+    mafGetOpenMultiFiles(m_FileDir.GetCStr(),vrml_wildc.GetCStr(), m_Files);
   }
 
   int result = OP_RUN_CANCEL;

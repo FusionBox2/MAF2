@@ -15,16 +15,15 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "lhpUtils.h"
 #include "lhpDefines.h"
 
-wxString lhpUtils::lhpGetApplicationDirectory()
+mafString lhpUtils::lhpGetApplicationDirectory()
 {
 #ifndef _DEBUG
              // RELEASE 
-             wxString applicationDirectory = mafGetApplicationDirectory().c_str();
-             return applicationDirectory;
+             return mafGetApplicationDirectory();
 
 #else
              // DEBUG
-             wxString sourceDir = LHP_SOURCE_DIR;
+             mafString sourceDir = LHP_SOURCE_DIR;
 
              for (unsigned int i=0;i<sourceDir.Length();i++)
              {

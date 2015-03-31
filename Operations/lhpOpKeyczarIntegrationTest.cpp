@@ -103,7 +103,7 @@ int lhpOpKeyczarIntegrationTest::Execute()
   
   // This is for deploy: need to work on PYTHONPATH to solve issues with Python modules execution path...
   wxString keyCZarToolFullPath = "NONE";
-  keyCZarToolFullPath = mafGetApplicationDirectory().c_str();
+  keyCZarToolFullPath = mafGetApplicationDirectory().GetCStr();
   keyCZarToolFullPath.Append("\\Security\\keyczar\\Keyczar-Python\\src\\keyczar");
 
   wxArrayString output;

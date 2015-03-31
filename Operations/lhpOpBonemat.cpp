@@ -468,11 +468,11 @@ int lhpOpBonemat::SaveConfigurationFileAs()
 //----------------------------------------------------------------------------
 {
   mafString initialFileName;
-  initialFileName = mafGetApplicationDirectory().c_str();
+  initialFileName = mafGetApplicationDirectory();
   initialFileName.Append("\\newConfigurationFile.conf");
 
   mafString wildc = "configuration file (*.conf)|*.conf";
-  mafString newFileName = mafGetSaveFile(initialFileName.GetCStr(), wildc).c_str();
+  mafString newFileName = mafGetSaveFile(initialFileName.GetCStr(), wildc);
  
   if (newFileName == "") return MAF_ERROR;
 
@@ -670,16 +670,16 @@ int lhpOpBonemat::OpenConfigurationFile()
 {
   mafString wildcconf = "conf Data (*.conf)|*.conf";
 
-  std::string initial = mafGetApplicationDirectory().c_str();
+  mafString initial = mafGetApplicationDirectory();
 
-  std::string returnString = mafGetOpenFile("", wildcconf);
+  mafString returnString = mafGetOpenFile("", wildcconf);
 
   if (returnString == "")
   {
     return 1;
   }
 
-  m_ConfigurationFileName = returnString.c_str();  
+  m_ConfigurationFileName = returnString;  
   
   int result = LoadConfigurationFile(m_ConfigurationFileName.GetCStr());
 
