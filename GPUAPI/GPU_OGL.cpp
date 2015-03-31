@@ -199,7 +199,7 @@ bool mafGPUOGL::IsExtSupported(const char* extension)
 //------------------------------------------------------------------------
 //Creates OpenGL rendering context. 
 //Called from CreateShaders, returns false, if the context could not be created
-bool mafGPUOGL::CreateRenderingContext(wxString* err)
+bool mafGPUOGL::CreateRenderingContext(char* err)
 //------------------------------------------------------------------------
 {
   //create OpenGL rendering window
@@ -246,7 +246,7 @@ void mafGPUOGL::DestroyRenderingContext()
 //Initializes simple vertex and fragment shader 
 //if a shader is not specified, the parameter vs or ps must be NULL
 //returns false, if an error occurs and the description of the error in err parameter
-bool mafGPUOGL::CreateShaders(const char* vs, const char* ps, wxString* err)
+bool mafGPUOGL::CreateShaders(const char* vs, const char* ps, char* err)
 //------------------------------------------------------------------------
 {
 #ifndef _WIN32
@@ -288,8 +288,7 @@ bool mafGPUOGL::CreateShaders(const char* vs, const char* ps, wxString* err)
     {
       if (err != NULL)
       {        
-        glGetInfoLogARB(m_vs_ps[i], MAX_PATH, NULL, err->GetWriteBuf(MAX_PATH + 1));
-        err->UngetWriteBuf();
+        glGetInfoLogARB(m_vs_ps[i], MAX_PATH, NULL, err);
       }
 
       return false;
@@ -310,8 +309,7 @@ bool mafGPUOGL::CreateShaders(const char* vs, const char* ps, wxString* err)
   {
     if (err != NULL)
     {        
-      glGetInfoLogARB(m_progObj, MAX_PATH, NULL, err->GetWriteBuf(MAX_PATH + 1));
-      err->UngetWriteBuf();
+      glGetInfoLogARB(m_progObj, MAX_PATH, NULL, err);
     }
 
     return false;
@@ -353,7 +351,7 @@ void mafGPUOGL::DestroyShaders()
 //Every successive rendering will go through custom program
 //Returns false, if the program could not be loaded. 
 //------------------------------------------------------------------------
-bool mafGPUOGL::BeginExecute(wxString* err)
+bool mafGPUOGL::BeginExecute(char* err)
 {
 #ifndef _WIN32
   return false;
@@ -375,8 +373,7 @@ bool mafGPUOGL::BeginExecute(wxString* err)
     {
       if (err != NULL)
       {        
-        glGetInfoLogARB(m_progObj, MAX_PATH, NULL, err->GetWriteBuf(MAX_PATH + 1));
-        err->UngetWriteBuf();
+        glGetInfoLogARB(m_progObj, MAX_PATH, NULL, err);
       }
 
       EndExecute();
@@ -548,7 +545,7 @@ void mafGPUOGL::SetParameter(const char* paramname, int ivector[3])
 //It calls BeginExecution, InitializeComputation, RunComputation, 
 //FinalizeComputation and EndExecution  
 //Returns false, if the program could not be executed.
-bool mafGPUOGL::ExecuteProgram(wxString* err)
+bool mafGPUOGL::ExecuteProgram(char* err)
 //------------------------------------------------------------------------
 {
   //switch to our rendering context
@@ -585,7 +582,7 @@ void mafGPUOGL::GetResult(void* pBuffer, GLenum data_type, bool bGetVector)
 
 #ifdef _DEBUG
   GLenum err = glGetError();
-  assert(err == GL_NO_ERROR);
+  //assert(err == GL_NO_ERROR);
 
   //static int nCurImage = 0;
   //gltWriteTGA(wxString::Format("g:\\pokus_%02d_GPU.tga", nCurImage), 0);
@@ -604,7 +601,7 @@ void mafGPUOGL::GetResult(void* pBuffer, GLenum data_type, bool bGetVector)
 //------------------------------------------------------------------------
 //Creates OpenGL rendering window
 //Returns false, if the OpenGL rendering window could not be created.
-bool mafGPUOGL::CreateRenderingWindow(wxString* err)
+bool mafGPUOGL::CreateRenderingWindow(char* err)
 //------------------------------------------------------------------------
 {
   if (m_hRWnd == NULL)
@@ -690,7 +687,7 @@ bool mafGPUOGL::CreateRenderingWindow(wxString* err)
 void mafGPUOGL::DestroyRenderingWindow()
 //------------------------------------------------------------------------
 {
-  assert(m_nGPUGLContextRef == 0);
+  //assert(m_nGPUGLContextRef == 0);
   if (m_hRWndGL != NULL)
   {   
     //wglMakeCurrent (NULL, NULL);   
@@ -720,7 +717,7 @@ void mafGPUOGL::DestroyRenderingWindow()
 
 //------------------------------------------------------------------------
 //Formats Windows LastError into err
-void mafGPUOGL::GetLastErrorText(wxString* err)
+void mafGPUOGL::GetLastErrorText(char* err)
 //------------------------------------------------------------------------
 {
   if (err != NULL)
@@ -738,7 +735,7 @@ void mafGPUOGL::GetLastErrorText(wxString* err)
       (LPTSTR) &lpMsgBuf,
       0, NULL );
 
-    err->Printf("%s", lpMsgBuf);
+    sprintf(err, "%s", lpMsgBuf);
     LocalFree(lpMsgBuf);
   }
 }
