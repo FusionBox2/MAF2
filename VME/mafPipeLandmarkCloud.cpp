@@ -47,6 +47,8 @@
 #include "vtkPolyData.h"
 #include "vtkDataSet.h"
 #include "vtkRenderer.h"
+#include "vtkProperty2D.h"
+#include "vtkCaptionActor2D.h"
 
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(mafPipeLandmarkCloud);
@@ -66,6 +68,7 @@ mafPipeLandmarkCloud::mafPipeLandmarkCloud()
   m_CloudMapper   = NULL;
   m_CloudActor    = NULL;
   m_CloudSelectionActor     = NULL;
+  m_Caption           = NULL;
 
   m_Radius = 1.0;
   m_ScalarVisibility = FALSE;
@@ -84,6 +87,7 @@ void mafPipeLandmarkCloud::Create(mafNode *node, mafView *view)
   m_CloudMapper   = NULL;
   m_CloudActor    = NULL;
   m_CloudSelectionActor     = NULL;
+  m_Caption           = NULL;
 
   double r = 0;
   int resolution = 15;
@@ -173,6 +177,12 @@ mafGUI *mafPipeLandmarkCloud::CreateGui()
 void mafPipeLandmarkCloud::UpdateProperty(bool fromTag)
 //----------------------------------------------------------------------------
 {
+  if(m_Landmark)
+  {
+    double pos[3], rot[3];
+    m_Landmark->GetOutput()->GetAbsPose(pos, rot);
+    m_Caption->SetAttachmentPoint(pos[0],pos[1],pos[2]);
+  }
 /*	double r = 10;
   double resolution = 15;
 
@@ -349,11 +359,37 @@ void mafPipeLandmarkCloud::CreateClosedCloudPipe(vtkDataSet *data, double radius
   {
     m_RenFront->AddActor(m_CloudSelectionActor);
   }
+  if(m_Landmark)
+  {
+    vtkNEW(m_Caption);
+    m_Caption->SetPosition(25,10);
+    m_Caption->ThreeDimensionalLeaderOff();
+    m_Caption->GetProperty()->SetColor(m_Landmark->GetMaterial()->m_Diffuse);
+    m_Caption->SetHeight(0.05);
+    m_Caption->SetWidth(0.35);
+    m_Caption->BorderOff();
+    wxString dis;
+    dis = wxString::Format("%s",m_Landmark->GetName().GetCStr());
+    m_Caption->SetCaption(dis.c_str());
+
+    m_Caption->SetVisibility(1);
+    double pos[3], rot[3];
+    m_Landmark->GetOutput()->GetAbsPose(pos, rot);
+    m_Caption->SetAttachmentPoint(pos[0],pos[1],pos[2]);
+    if (m_RenFront)
+      m_RenFront->AddActor2D(m_Caption);
+  }
 }
 //----------------------------------------------------------------------------
 void mafPipeLandmarkCloud::RemoveClosedCloudPipe()
 //----------------------------------------------------------------------------
 {
+  if(m_Landmark)
+  {
+    if (m_RenFront)
+      m_RenFront->RemoveActor2D(m_Caption);
+    vtkDEL(m_Caption);
+  }
   if(m_CloudActor)
   {
     if (m_AssemblyFront)

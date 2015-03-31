@@ -30,6 +30,7 @@ class mafVMELandmarkCloud;
 class mafVMELandmark;
 class vtkDataSet;
 class mafGUIMaterialButton;
+class vtkCaptionActor2D;
 
 //----------------------------------------------------------------------------
 // mafPipeLandmarkCloud :
@@ -68,6 +69,7 @@ public:
   };
 
 protected:
+  vtkCaptionActor2D      *m_Caption;
   vtkSphereSource			   *m_SphereSource;
   vtkPolyDataNormals     *m_Normals;
   vtkMAFExtendedGlyph3D     *m_Glyph;
