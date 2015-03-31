@@ -613,8 +613,12 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
     m_Logic->Plug(new lhpOpImporterAnsysCDBFile("Ansys CDB File"), "Finite Element");	
     m_Logic->Plug(new mafOpImporterExternalFile("External data"), "Other");
     m_Logic->Plug(new medOpImporterAnalogWS("ASCII Analog (VWs)"), "Motion Analysis");
-    m_Logic->Plug(new lhpOpKinectUtil(false, "Kinect"),"Motion Analysis");  
-    m_Logic->Plug(new lhpOpKinectUtil(true, "Kinect App"),"Motion Analysis");  
+    m_Logic->Plug(new lhpOpKinectUtil(false, "Kinect Full",  false, true, true ),"Motion Analysis");  
+    m_Logic->Plug(new lhpOpKinectUtil(false, "Kinect Lower", false, true, false),"Motion Analysis");  
+    m_Logic->Plug(new lhpOpKinectUtil(false, "Kinect Upper", false, false, true),"Motion Analysis");  
+    m_Logic->Plug(new lhpOpKinectUtil(true, "Kinect App Full",  false, true, true ),"Motion Analysis");  
+    m_Logic->Plug(new lhpOpKinectUtil(true, "Kinect App Lower", false, true, false),"Motion Analysis");  
+    m_Logic->Plug(new lhpOpKinectUtil(true, "Kinect App Upper", false, false, true),"Motion Analysis");  
     m_Logic->Plug(new lhpOpImporterRSScan("RSScan"), "Finite Element");	
   }
 
@@ -950,8 +954,12 @@ bool lhpFusionBoxApp::OnInit()
   m_Logic->Plug(new lhpOpImporterC3DBTK("C3D BTK"),"Motion Analysis");  
   if(C3DLib)
     m_Logic->Plug(new lhpOpImporterC3D("C3D"),"Motion Analysis");  
-  m_Logic->Plug(new lhpOpKinectUtil(false, "Kinect", true),"Motion Analysis");  
-  m_Logic->Plug(new lhpOpKinectUtil(true, "Kinect App", true),"Motion Analysis");  
+  m_Logic->Plug(new lhpOpKinectUtil(false, "Kinect Full",  true, true, true ),"Motion Analysis");  
+  m_Logic->Plug(new lhpOpKinectUtil(false, "Kinect Lower", true, true, false),"Motion Analysis");  
+  m_Logic->Plug(new lhpOpKinectUtil(false, "Kinect Upper", true, false, true),"Motion Analysis");  
+  m_Logic->Plug(new lhpOpKinectUtil(true, "Kinect App Full",  true, true, true ),"Motion Analysis");  
+  m_Logic->Plug(new lhpOpKinectUtil(true, "Kinect App Lower", true, true, false),"Motion Analysis");  
+  m_Logic->Plug(new lhpOpKinectUtil(true, "Kinect App Upper", true, false, true),"Motion Analysis");  
 
   //-------------------------------------------------------------
 
