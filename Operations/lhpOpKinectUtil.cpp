@@ -384,17 +384,18 @@ namespace
 
 mafCxxTypeMacro(lhpOpKinectUtil)
 //----------------------------------------------------------------------------
-lhpOpKinectUtil::lhpOpKinectUtil(bool extapp, const mafString& label) : Superclass(label)
+lhpOpKinectUtil::lhpOpKinectUtil(bool extapp, const mafString& label, bool simple) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType    = OPTYPE_IMPORTER;
+  m_Simple    = simple;
   m_Canundo   = false;
   m_FileDir = mafGetApplicationDirectory() + "/Data/External/";
   m_DictionaryFileName = "";
   m_Scale  = 1.0;
   m_Freq   = 30.0;
   m_AFs    = false;
-  m_Model  = false;
+  m_Model  = simple;//false;
   m_ExtApp = extapp;
   m_TypeOfRefs = 0;
   m_TakeScaled = 1;
@@ -416,7 +417,7 @@ lhpOpKinectUtil::~lhpOpKinectUtil()
 mafOp* lhpOpKinectUtil::Copy()
 //----------------------------------------------------------------------------
 {
-  lhpOpKinectUtil *op = new lhpOpKinectUtil(m_ExtApp, GetLabel());
+  lhpOpKinectUtil *op = new lhpOpKinectUtil(m_ExtApp, GetLabel(), m_Simple);
   op->m_Canundo = m_Canundo;
   op->m_OpType = m_OpType;
   op->SetListener(GetListener());
@@ -447,7 +448,7 @@ void lhpOpKinectUtil::OpRun()
       return;
     }
   }
-  if (!m_TestMode)
+  if (!m_TestMode && !m_Simple)
   {
     CreateGui();
     ShowGui();

@@ -36,7 +36,7 @@ class lhpOpKinectUtil: public mafOp
 {
 public:
   mafTypeMacro(lhpOpKinectUtil, mafOp)
-  lhpOpKinectUtil(bool extapp = false, const mafString& label = "KinectUtil");
+  lhpOpKinectUtil(bool extapp = false, const mafString& label = "KinectUtil", bool simple = false);
  ~lhpOpKinectUtil(); 
 
   virtual void OnEvent(mafEventBase *maf_event);
@@ -60,6 +60,7 @@ protected:
   void DestroyDictionary();
 
   std::vector<mafString>         m_C3DInputFileNameFullPaths;
+  bool                           m_Simple;
   mafString                      m_FileDir;
   mafString                      m_FileSuffix;
   int                            m_TakeScaled;
