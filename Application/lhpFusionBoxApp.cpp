@@ -772,6 +772,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   vgraph->PlugVisualPipe("medVMEWrappedMeter","lhpPipeIntGraphPolyline");
   vgraph->PlugVisualPipe("mafVMEMeter","lhpPipeIntGraphPolyline");
   vgraph->PlugVisualPipe("lhpVMELeverArm","lhpPipeIntGraphPolyline");
+  vgraph->PlugVisualPipe("mafVMEVector","lhpPipeIntGraphPolyline");
   vgraph->PlugVisualPipe("medVMEAnalog","lhpPipeIntGraphAnalog");
   m_Logic->Plug(vgraph);
 
