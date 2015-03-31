@@ -223,22 +223,6 @@ void mafNode::ForwardDownEvent(mafEventBase *maf_event)
   }
 }
 
-//----------------------------------------------------------------------------
-void mafNode::ForwardEvent(mafEventBase &maf_event)
-//----------------------------------------------------------------------------
-{
-  ForwardEvent(&maf_event);
-}
-
-//----------------------------------------------------------------------------
-void mafNode::ForwardEvent(mafEventBase *maf_event)
-//----------------------------------------------------------------------------
-{
-  InvokeEvent(maf_event);
-  ForwardUpEvent(maf_event);
-  ForwardDownEvent(maf_event);
-}
-
 //-------------------------------------------------------------------------
 void mafNode::SetName(const mafString& name)
 //-------------------------------------------------------------------------
@@ -246,7 +230,9 @@ void mafNode::SetName(const mafString& name)
   m_Name=name; // force string copy
   Modified();
   mafEvent ev(this,VME_MODIFIED,this);
-  ForwardEvent(ev);
+  InvokeEvent(ev);
+  ForwardUpEvent(ev);
+  ForwardDownEvent(ev);
 } 
 
 //-------------------------------------------------------------------------
@@ -609,7 +595,11 @@ int mafNode::SetParent(mafNode *parent)
   if(old_root != NULL)
   {
     if(new_root != old_root)
-      ForwardEvent(&mafEventBase(this, NODE_DETACHED_FROM_TREE));
+    {
+      InvokeEvent(&mafEventBase(this, NODE_DETACHED_FROM_TREE));
+      ForwardUpEvent(&mafEventBase(this, NODE_DETACHED_FROM_TREE));
+      OnEvent(&mafEventBase(this, NODE_DETACHED_FROM_TREE, NULL, MCH_DOWN));
+    }
     int idx = m_Parent->FindNodeIdx(this);
     if(idx == -1)
     {
@@ -644,7 +634,11 @@ int mafNode::SetParent(mafNode *parent)
     UpdateUpDownAvailability(prev);
     m_Parent->Modified();
     if(new_root != old_root)
-      ForwardEvent(&mafEventBase(this,NODE_ATTACHED_TO_TREE));
+    {
+      InvokeEvent(&mafEventBase(this, NODE_ATTACHED_TO_TREE));
+      ForwardUpEvent(&mafEventBase(this, NODE_ATTACHED_TO_TREE));
+      OnEvent(&mafEventBase(this, NODE_ATTACHED_TO_TREE, NULL, MCH_DOWN));
+    }
   }
   UpdateUpDownAvailability(this);
   Modified();
@@ -1145,7 +1139,7 @@ void mafNode::OnEvent(mafEventBase *e)
             if(this != parent->GetFirstChild())
             {
               ReparentTo(parent->GetChild(parent->FindNodeIdx(this) - 1));
-              ForwardEvent(mafEvent(this, VME_SELECT, this));
+              ForwardUpEvent(mafEvent(this, VME_SELECT, this));
             }
           }
         }
@@ -1159,7 +1153,7 @@ void mafNode::OnEvent(mafEventBase *e)
               int numChildren = grandparent->GetNumberOfChildren();
               int parentidx   = grandparent->FindNodeIdx(parent);
               ReparentTo(grandparent);
-              ForwardEvent(mafEvent(this, VME_SELECT, this));
+              ForwardUpEvent(mafEvent(this, VME_SELECT, this));
               for(int i = 0; i < (numChildren - parentidx - 1); i++)
                 grandparent->MoveChildUp(this);
             }

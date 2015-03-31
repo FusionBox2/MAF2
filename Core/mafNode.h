@@ -382,10 +382,6 @@ public:
   mafLinksMap *GetLinks() {return &m_Links;}
 
   /** used to send an event up in the tree */
-  void ForwardEvent(mafEventBase *maf_event);
-  void ForwardEvent(mafEventBase &maf_event);
-
-  /** used to send an event up in the tree */
   void ForwardUpEvent(mafEventBase *maf_event);
   void ForwardUpEvent(mafEventBase &maf_event);
 
