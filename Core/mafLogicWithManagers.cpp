@@ -1520,8 +1520,8 @@ void mafLogicWithManagers::VmeAdded(mafNode *vme)
   if(m_ViewManager)
     m_ViewManager->VmeAdd(vme);
   bool vme_in_tree = true;
-  vme_in_tree = !vme->GetTagArray()->IsTagPresent("VISIBLE_IN_THE_TREE") || 
-    (vme->GetTagArray()->IsTagPresent("VISIBLE_IN_THE_TREE") && vme->GetTagArray()->GetTag("VISIBLE_IN_THE_TREE")->GetValueAsDouble() != 0);
+  vme_in_tree = !vme->GetTagArray()->GetTag("VISIBLE_IN_THE_TREE") || 
+    (vme->GetTagArray()->GetTag("VISIBLE_IN_THE_TREE") && vme->GetTagArray()->GetTag("VISIBLE_IN_THE_TREE")->GetValueAsDouble() != 0);
   if(m_SideBar && vme_in_tree)
     m_SideBar->VmeAdd(vme);
   if(m_PlugTimebar)
@@ -1563,8 +1563,8 @@ void mafLogicWithManagers::VmeRemoving(mafNode *vme)
 //----------------------------------------------------------------------------
 {
   bool vme_in_tree = true;
-  vme_in_tree = !vme->GetTagArray()->IsTagPresent("VISIBLE_IN_THE_TREE") || 
-    (vme->GetTagArray()->IsTagPresent("VISIBLE_IN_THE_TREE") && vme->GetTagArray()->GetTag("VISIBLE_IN_THE_TREE")->GetValueAsDouble() != 0);
+  vme_in_tree = !vme->GetTagArray()->GetTag("VISIBLE_IN_THE_TREE") || 
+    (vme->GetTagArray()->GetTag("VISIBLE_IN_THE_TREE") && vme->GetTagArray()->GetTag("VISIBLE_IN_THE_TREE")->GetValueAsDouble() != 0);
   if(m_SideBar && vme_in_tree)
     m_SideBar->VmeRemove(vme);
 	if(m_ViewManager)

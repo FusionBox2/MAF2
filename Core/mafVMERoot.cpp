@@ -120,9 +120,9 @@ void mafVMERoot::OnEvent(mafEventBase *maf_event)
     {
       if (e->GetId() == ID_APPLICATION_STAMP)
       {
-        if(GetTagArray()->IsTagPresent("APP_STAMP"))
+        if(mafTagItem *ti = GetTagArray()->GetTag("APP_STAMP"))
         {
-          GetTagArray()->GetTag("APP_STAMP")->SetValue(m_ApplicationStamp);
+          ti->SetValue(m_ApplicationStamp);
         }
         else
         {
@@ -220,9 +220,9 @@ void mafVMERoot::Update()
 //-------------------------------------------------------------------------
 {
   mafVME::Update();
-  if(GetTagArray()->IsTagPresent("APP_STAMP"))
+  if(mafTagItem *ti = GetTagArray()->GetTag("APP_STAMP"))
   {
-    m_ApplicationStamp = GetTagArray()->GetTag("APP_STAMP")->GetValue();
+    m_ApplicationStamp = ti->GetValue();
     if (m_Gui)
     {
       m_Gui->Update();
@@ -237,9 +237,9 @@ mafGUI *mafVMERoot::CreateGui()
   assert(m_Gui == NULL);
   mafNode::CreateGui();
 
-  if(GetTagArray()->IsTagPresent("APP_STAMP"))
+  if(mafTagItem *ti = GetTagArray()->GetTag("APP_STAMP"))
   {
-    m_ApplicationStamp = GetTagArray()->GetTag("APP_STAMP")->GetValue();
+    m_ApplicationStamp = ti->GetValue();
   }
   m_Gui->String(ID_APPLICATION_STAMP, "app stamp", &m_ApplicationStamp, "Tag to associate a msf file \nto a particular application.");
   m_Gui->Divider();

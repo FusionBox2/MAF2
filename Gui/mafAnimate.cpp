@@ -520,7 +520,7 @@ void mafAnimate::StoreViewPoint()
 	
 	// test if is it unique -----------------------
   wxString flyto_tagName = "FLY_TO_" + name;
-	if(m_Tags->IsTagPresent(flyto_tagName.c_str()))
+	if(m_Tags->GetTag(flyto_tagName.c_str()))
 	{
 		wxString msg = "this name is already used, do you want to overwrite it ?";
 		int res = wxMessageBox(msg,"Store Camera Position", wxOK|wxCANCEL|wxICON_QUESTION, NULL);
@@ -576,7 +576,7 @@ void mafAnimate::RenameViewPoint()
 
   // test if is it unique -----------------------
 	wxString flyto_tagName = "FLY_TO_" + name;
-  if(m_Tags->IsTagPresent(flyto_tagName.c_str()))
+  if(m_Tags->GetTag(flyto_tagName.c_str()))
 	{
 		wxString msg = "this name is already used, do you want to overwrite it ?";
 		int res = wxMessageBox(msg,"Rename Camera Position", wxOK|wxCANCEL|wxICON_QUESTION, NULL);
@@ -618,7 +618,7 @@ void mafAnimate::DeleteViewPoint(int pos /*= 0*/)
 	m_PositionList->Delete(pos);
 
 	wxString flyto_tagName = "FLY_TO_" + m_SelectedPosition;
-  if(m_Tags->IsTagPresent(flyto_tagName))
+  if(m_Tags->GetTag(flyto_tagName))
 	  m_Tags->DeleteTag(flyto_tagName);
 
 	m_SelectedPosition = "";
@@ -651,12 +651,12 @@ void mafAnimate::RetrieveStoredPositions(bool update_listbox /*= true*/)
   mafDEL(m_StoredPositions); // Initialize the tag array.
   mafNEW(m_StoredPositions);
   
-  std::vector<std::string> tag_list;
+  std::vector<mafString> tag_list;
   m_Tags->GetTagList(tag_list);
 
   for(int t=0; t<tag_list.size(); t++)
   {
-    mafTagItem *item = m_Tags->GetTag(tag_list[t].c_str());
+    mafTagItem *item = m_Tags->GetTag(tag_list[t]);
     if(item && ((item->GetNumberOfComponents() == 9) || (item->GetNumberOfComponents() == 10)))
     {
       wxString name = item->GetName();
@@ -677,12 +677,12 @@ void mafAnimate::SetStoredPositions(mafTagArray *positions)
 //----------------------------------------------------------------------------
 {
   ResetKit();
-  std::vector<std::string> tag_list;
+  std::vector<mafString> tag_list;
   positions->GetTagList(tag_list);
 
   for(int t=0; t<tag_list.size(); t++)
   {
-    mafTagItem *item = positions->GetTag(tag_list[t].c_str());
+    mafTagItem *item = positions->GetTag(tag_list[t]);
     m_Tags->SetTag(*item);
   }
   

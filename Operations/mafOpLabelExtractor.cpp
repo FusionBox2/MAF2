@@ -70,7 +70,6 @@ mafOp(label)
 	m_Vme = NULL;
   m_Ds = NULL;
   m_OutputData = NULL;
-  m_TagLabel = NULL;
 	m_ValLabel     = 0;
 	m_SurfaceName  = "label 0";
   m_SmoothVolume = 0;
@@ -123,21 +122,6 @@ enum LABEL_EXTRACTOR_WIDGET_ID
 	ID_HELP,
 };
 
-//-----------------------------------------------------------------------
-bool mafOpLabelExtractor::RetrieveTag()
-//----------------------------------------------------------------------
-{ 
-  bool tagPresent = m_Input->GetTagArray()->IsTagPresent("LABELS");
-  if (tagPresent)
-  {
-    m_TagLabel = new mafTagItem;
-    m_TagLabel = m_Input->GetTagArray()->GetTag( "LABELS" );
-    return tagPresent;
-  }
-  else
-    return !tagPresent;
-}
-
 //----------------------------------------------------------------------------
 void mafOpLabelExtractor::OpRun()   
 //----------------------------------------------------------------------------
@@ -175,15 +159,14 @@ void mafOpLabelExtractor::OpRun()
     LIST myList;     
     LIST::iterator myListIter;   
 
-    // If there is a tag named "LABELS" then I have to load the labels in the correct position in the listbox
-    if  (RetrieveTag())
+    if  (const mafTagItem *tagLabel = m_Input->GetTagArray()->GetTag( "LABELS" ))
     {
-      int noc = m_TagLabel->GetNumberOfComponents();
+      int noc = tagLabel->GetNumberOfComponents();
       if(noc != 0)
       {
         for ( unsigned int i = 0; i < noc; i++ )
         {
-          wxString label = m_TagLabel->GetValue( i );
+          wxString label = tagLabel->GetValue( i );
           if ( label != "" )
           {
             myList.push_back( label );
@@ -195,7 +178,7 @@ void mafOpLabelExtractor::OpRun()
         {
           for ( unsigned int j = 0; j < noc; j++ )
           {
-            wxString component = m_TagLabel->GetValue( j );
+            wxString component = tagLabel->GetValue( j );
             if ( component != "" )
             {
               wxString labelName = *myListIter;

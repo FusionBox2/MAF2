@@ -22,7 +22,6 @@
 #include "mafStorable.h"
 #include "mafString.h"
 #include <vector>
-#include <string>
 #include <iosfwd>
 
 #ifdef MAF_EXPORTS
@@ -33,7 +32,6 @@ EXPORT_STL_VECTOR(MAF_EXPORT,mafString);
 //----------------------------------------------------------------------------
 // constants
 //----------------------------------------------------------------------------
-enum MAF_TAG_IDS {MAF_MISSING_TAG=0,MAF_NUMERIC_TAG,MAF_STRING_TAG};
 
 //----------------------------------------------------------------------------
 // forward declarations
@@ -49,13 +47,14 @@ public:
   mafTagItem();
   ~mafTagItem();
 
+  enum MAF_TAG_IDS {MAF_MISSING_TAG=0,MAF_NUMERIC_TAG,MAF_STRING_TAG};
   /** Constructors for with implicit Tag type...*/
-  mafTagItem(const char *name, const char *value, int t=MAF_STRING_TAG);
-  mafTagItem(const char *name, const char **values, int numcomp, int t=MAF_STRING_TAG);
-  mafTagItem(const char *name, const std::vector<mafString> &values, int numcomp, int t=MAF_STRING_TAG);
-  mafTagItem(const char *name, const double value);
-  mafTagItem(const char *name, const double *value, int numcomp);
-  mafTagItem(const char *name, const std::vector<double> &values, int numcomp);
+  mafTagItem(const mafString& name, const mafString& value, int t=MAF_STRING_TAG);
+  mafTagItem(const mafString& name, const mafString *values, int numcomp, int t=MAF_STRING_TAG);
+  mafTagItem(const mafString& name, const std::vector<mafString>& values, int t=MAF_STRING_TAG);
+  mafTagItem(const mafString& name, double value);
+  mafTagItem(const mafString& name, const double *value, int numcomp);
+  mafTagItem(const mafString& name, const std::vector<double>& values);
 
   mafTagItem(const mafTagItem& p);
   void operator=(const mafTagItem& p);
@@ -66,30 +65,30 @@ public:
   virtual void Print(std::ostream& os, const int indent=0) const;
 
   /** Set/Get the name of this Tag*/
-  void SetName(const char *name);
-  const char *GetName() const;
+  void SetName(const mafString& name);
+  const mafString& GetName() const;
 
   /**
     Set the Value of this Tag. In case the component is specified the function operates
     on that component, otherwise it works on component 0. */
-  void SetValue(const mafString value,int component=0);
+  void SetValue(const mafString& value,int component=0);
   /** same as SetValue() */
-  void SetComponent(const mafString value,int component=0);
+  void SetComponent(const mafString& value,int component=0);
 
   /** Set Tag value converting automatically to string and setting the type to NUMERIC. */
-  void SetValue(const double value , int component=0);
+  void SetValue(double value , int component=0);
   /** Set Tag value converting automatically to string and setting the type to NUMERIC. */
-  void SetComponent(const double value , int component=0);
+  void SetComponent(double value , int component=0);
   
   /** Set array of components at a once */
-  void SetComponents(const char **values, int numcomp);
+  void SetComponents(const mafString *values, int numcomp);
   /** Set array of components at a once */
-  void SetComponents(const std::vector<mafString> components);
+  void SetComponents(const std::vector<mafString>& components);
 
   /** same as SetComponents() */
-  void SetValues(const std::vector<mafString> values);
+  void SetValues(const std::vector<mafString>& values);
   /** same as SetComponents() */
-  void SetValues(const char **values, int numcomp);
+  void SetValues(const mafString *values, int numcomp);
 
   /** Remove a value  */
   void RemoveValue(int component); //Added by Mucci 22/10/2007
@@ -97,36 +96,35 @@ public:
   /** Set array of components at a once, specifying an array of numeric values. */
   void SetValues(const double *values, int numcomp);
   /** Set array of components at a once, specifying an array of numeric values. */
-  void SetValues(const std::vector<double> values);
+  void SetValues(const std::vector<double>& values);
   
   /** Set array of components at a once, specifying an array of numeric values. */
   void SetComponents(const double *components, int numcomp);
 
   /** Set array of components at a once, specifying an array of numeric values. */
-  void SetComponents(const std::vector<double> components);
+  void SetComponents(const std::vector<double>& components);
 
   /**
     return the value stored in this item. By default the function 
     work on the first component, but specifying the component number
     it's possible to retain the specific component.*/
-  const char *GetValue(int component=0) const;
+  const mafString& GetValue(int component=0) const;
 
   /** same as GetValue() */
-  const char *GetComponent(int comp) const;
+  const mafString& GetComponent(int comp) const;
 
   /** return the value stored in this item converting to a double. */
   double GetValueAsDouble(int component=0) const;
   double GetComponentAsDouble(int comp) const;
 
   /** return all the array of values */
-  const std::vector<mafString> *GetComponents() const {return &m_Components;};
+  const std::vector<mafString>& GetComponents() const {return m_Components;};
 
   /**
     return the array of values as a single string, representing
     the array of components as a tuple of the form:
     "( <component1>, <component2>,...)" */
   void GetValueAsSingleString(mafString &str) const;
-  void GetValueAsSingleString(std::string &str) const;
   
 
   /** 
@@ -147,7 +145,6 @@ public:
     is present. Custom ids can be defined by applications and a reported by this
     functions as numerical strings. */
   void GetTypeAsString(mafString &value) const;
-  void GetTypeAsString(std::string &value) const;
 
   /**
     Set the NumberOfComponents of the value corresponding to this Tag.

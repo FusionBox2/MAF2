@@ -106,7 +106,7 @@ void mafOpImporterMSF1x::ImportMSF()
   ((mafVMERoot *)m_Input->GetRoot())->GetStorage()->ForceParserURL();
   ((mafVMERoot *)m_Input->GetRoot())->Update();
 
-  root->GetTagArray()->SetTag("APP_STAMP", item.GetValue(), item.GetType());
+  root->GetTagArray()->SetTag(mafTagItem("APP_STAMP", item.GetValue(), item.GetType()));
 
   cppDEL(m_Importer);
 }

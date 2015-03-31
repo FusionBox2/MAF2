@@ -146,14 +146,14 @@ void mafViewHTML::VmeCreatePipe(mafNode *vme)
   wxString body;
   mafNode *ExternalNote = NULL;
   bool found = false;
-  if(vme->GetTagArray()->IsTagPresent("HTML_INFO"))
-    body = vme->GetTagArray()->GetTag("HTML_INFO")->GetValue();
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag("HTML_INFO"))
+    body = ti->GetValue();
   else
     return;
   for(int i = 0; i < vme->GetNumberOfChildren(); i++)
   {
     ExternalNote = vme->GetChild(i);
-    if(ExternalNote->GetTagArray()->IsTagPresent("HTML_INFO"))
+    if(ExternalNote->GetTagArray()->GetTag("HTML_INFO"))
     {
       found = true;
       break;

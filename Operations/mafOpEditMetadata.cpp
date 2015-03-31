@@ -98,7 +98,7 @@ void mafOpEditMetadata::OpRun()
   m_TagArray = m_Input->GetTagArray();
   mafNEW(m_OldTagArray);
   m_OldTagArray->DeepCopy(m_TagArray);
-  std::vector<std::string> tag_list;
+  std::vector<mafString> tag_list;
   m_TagArray->GetTagList(tag_list);
 
   if(!m_TestMode)
@@ -117,7 +117,7 @@ void mafOpEditMetadata::OpRun()
 
     m_MetadataList = m_Gui->ListBox(ID_METADATA_LIST,"",120);
     for (int t=0; t<tag_list.size();t++)
-      m_MetadataList->Insert(tag_list[t].c_str(),0);
+      m_MetadataList->Insert(tag_list[t].GetCStr(),0);
 
     if (!m_MetadataList->IsEmpty())
     {
@@ -346,7 +346,7 @@ void mafOpEditMetadata::AddNewTag(mafString &name)
   m_SelectedTag->SetNumberOfComponents(m_TagMulteplicity);
   m_SelectedTag->SetComponent(m_TagValueAsDouble,m_TagComponent);
   bool tag_present = false;
-  while (m_TagArray->IsTagPresent(new_name.c_str()))
+  while (m_TagArray->GetTag(new_name.c_str()))
   {
     tag_present = true;
     new_name = m_TagName;
@@ -378,10 +378,10 @@ void mafOpEditMetadata::OpUndo()
   // Paolo 22/11/2006: DeepCopy copy the tags coming from the m_OldTagArray but
   // if in m_TagArray there are other tags they will be present also after the DeepCopy
   // => DeepCopy do not produce equals tag array in this case! Perhaps the 
-  std::vector<std::string> tag_list;
+  std::vector<mafString> tag_list;
   m_TagArray->GetTagList(tag_list);
   for (int t=0; t<tag_list.size();t++)
-    m_TagArray->DeleteTag(tag_list[t].c_str());
+    m_TagArray->DeleteTag(tag_list[t]);
   
   m_TagArray->DeepCopy(m_OldTagArray);
 }

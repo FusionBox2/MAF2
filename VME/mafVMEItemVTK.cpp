@@ -725,7 +725,7 @@ int mafVMEItemVTK::CheckFile(const char *filename)
   std::string chk_result;
   mafCalculateteChecksum(filename, chk_result);
   m_ChecksumMD5 = chk_result.c_str();
-  if(!GetTagArray()->IsTagPresent("MD5Checksum"))
+  if(!GetTagArray()->GetTag("MD5Checksum"))
   {
     mafTagItem ti;
     ti.SetName("MD5Checksum");
@@ -751,7 +751,7 @@ int mafVMEItemVTK::CheckFile(const char *input_string, int input_len)
   std::string chk_result;
   mafCalculateteChecksum(input_string, input_len, chk_result);
   m_ChecksumMD5 = chk_result.c_str();
-  if(!GetTagArray()->IsTagPresent("MD5Checksum"))
+  if(!GetTagArray()->GetTag("MD5Checksum"))
   {
     mafTagItem ti;
     ti.SetName("MD5Checksum");

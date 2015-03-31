@@ -98,16 +98,18 @@ void mafVMEExternalData::SetFileName(const char *filename)
 const char* mafVMEExternalData::GetExtension()
 //-------------------------------------------------------------------------
 {
-  mafTagItem *item=this->GetTagArray()->GetTag("EXTDATA_EXTENSION");
-  return item->GetValue();
+  if(mafTagItem *item=this->GetTagArray()->GetTag("EXTDATA_EXTENSION"))
+    return item->GetValue();
+  return NULL;
 }
 
 //-------------------------------------------------------------------------
 const char *mafVMEExternalData::GetFileName()
 //-------------------------------------------------------------------------
 {
-  mafTagItem* item=this->GetTagArray()->GetTag("EXTDATA_FILENAME");
-  return item->GetValue();
+  if(mafTagItem* item=this->GetTagArray()->GetTag("EXTDATA_FILENAME"))
+    return item->GetValue();
+  return NULL;
 }
 
 //-------------------------------------------------------------------------
@@ -182,8 +184,9 @@ void mafVMEExternalData::SetMimeType(const char *mimetype)
 const char* mafVMEExternalData::GetMimeType()
 //-------------------------------------------------------------------------
 {
-  mafTagItem *item=this->GetTagArray()->GetTag("EXTDATA_MIMETYPE");
-  return item->GetValue();  
+  if(mafTagItem *item=this->GetTagArray()->GetTag("EXTDATA_MIMETYPE"))
+    return item->GetValue();
+  return NULL;
 }
 
 //-----------------------------------------------------------------------

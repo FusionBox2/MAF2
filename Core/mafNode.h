@@ -208,7 +208,7 @@ public:
   int FindNodeIdx(const char *name, bool onlyVisible=false);
 
   /** Find a node in all the subtrees matching the given TagName/TagValue pair.*/
-  mafNode *FindInTreeByTag(const char *name,const char *value="",int type=MAF_STRING_TAG); 
+  mafNode *FindInTreeByTag(const mafTagItem& tag); 
   
   /** Find a node in all the subtrees matching the given VME Name.*/
   mafNode *FindInTreeByName(const char *name, bool match_case = true, bool whole_word = true);

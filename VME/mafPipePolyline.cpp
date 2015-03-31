@@ -709,7 +709,7 @@ void mafPipePolyline::InitializeFromTag()
 //----------------------------------------------------------------------------
 {
 	mafTagItem *item = NULL;
-	if (!m_Vme->GetTagArray()->IsTagPresent("REPRESENTATION"))
+	if (!m_Vme->GetTagArray()->GetTag("REPRESENTATION"))
 	{
 		item = new mafTagItem();
 		item->SetName("REPRESENTATION");
@@ -723,7 +723,7 @@ void mafPipePolyline::InitializeFromTag()
 	  m_Representation = (int)item->GetValueAsDouble();
   }
 
-	if (!m_Vme->GetTagArray()->IsTagPresent("SPHERE_RADIUS"))
+	if (!m_Vme->GetTagArray()->GetTag("SPHERE_RADIUS"))
 	{
 		item = new mafTagItem();
 		item->SetName("SPHERE_RADIUS");
@@ -734,7 +734,7 @@ void mafPipePolyline::InitializeFromTag()
 	item = m_Vme->GetTagArray()->GetTag("SPHERE_RADIUS");
 	m_SphereRadius = item->GetValueAsDouble();
 
-	if (!m_Vme->GetTagArray()->IsTagPresent("SPHERE_RESOLUTION"))
+	if (!m_Vme->GetTagArray()->GetTag("SPHERE_RESOLUTION"))
 	{
 		item = new mafTagItem();
 		item->SetName("SPHERE_RESOLUTION");
@@ -745,7 +745,7 @@ void mafPipePolyline::InitializeFromTag()
 	item = m_Vme->GetTagArray()->GetTag("SPHERE_RESOLUTION");
 	m_SphereResolution = item->GetValueAsDouble();
 
-	if (!m_Vme->GetTagArray()->IsTagPresent("TUBE_RADIUS"))
+	if (!m_Vme->GetTagArray()->GetTag("TUBE_RADIUS"))
 	{
 		item = new mafTagItem();
 		item->SetName("TUBE_RADIUS");
@@ -756,7 +756,7 @@ void mafPipePolyline::InitializeFromTag()
 	item = m_Vme->GetTagArray()->GetTag("TUBE_RADIUS");
 	m_TubeRadius = item->GetValueAsDouble();
 
-	if (!m_Vme->GetTagArray()->IsTagPresent("TUBE_RESOLUTION"))
+	if (!m_Vme->GetTagArray()->GetTag("TUBE_RESOLUTION"))
 	{
 		item = new mafTagItem();
 		item->SetName("TUBE_RESOLUTION");
@@ -767,7 +767,7 @@ void mafPipePolyline::InitializeFromTag()
 	item = m_Vme->GetTagArray()->GetTag("TUBE_RESOLUTION");
 	m_TubeResolution = item->GetValueAsDouble();
 
-	if (!m_Vme->GetTagArray()->IsTagPresent("TUBE_CAPPING"))
+	if (!m_Vme->GetTagArray()->GetTag("TUBE_CAPPING"))
 	{
 		item = new mafTagItem();
 		item->SetName("TUBE_CAPPING");
@@ -778,7 +778,7 @@ void mafPipePolyline::InitializeFromTag()
 	item = m_Vme->GetTagArray()->GetTag("TUBE_CAPPING");
 	m_Capping = (int)item->GetValueAsDouble();
 
-  if (!m_Vme->GetTagArray()->IsTagPresent("SPLINE_MODE"))
+  if (!m_Vme->GetTagArray()->GetTag("SPLINE_MODE"))
   {
     item = new mafTagItem();
     item->SetName("SPLINE_MODE");

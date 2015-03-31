@@ -186,7 +186,7 @@ void mafGUIDialogTransferFunction2D::ShowModal(mafVME *vme)
   int threadID = threader->SpawnThread((vtkThreadFunctionType)CreatePipe, this);
 
 	// Check for stored transfer function in volume vme
-	if(m_Vme->GetTagArray()->IsTagPresent("VOLUME_TRANSFER_FUNCTION"))
+	if(m_Vme->GetTagArray()->GetTag("VOLUME_TRANSFER_FUNCTION"))
 		LoadTransferFunction();
 
   int x_pos,y_pos,w,h;
@@ -1033,7 +1033,9 @@ void mafGUIDialogTransferFunction2D::ResizePreviewWindow()
 void mafGUIDialogTransferFunction2D::LoadTransferFunction()
 //----------------------------------------------------------------------------
 {
-	wxString string =	m_Vme->GetTagArray()->GetTag("VOLUME_TRANSFER_FUNCTION")->GetValue();
+	wxString string;
+  if(mafTagItem *ti = m_Vme->GetTagArray()->GetTag("VOLUME_TRANSFER_FUNCTION"))
+    string = ti->GetValue();
   vtkMAFTransferFunction2D *newf = vtkMAFTransferFunction2D::New();
 	newf->DeepCopy(this->m_TransferFunction);
 	if (newf->LoadFromString(string.c_str()))
@@ -1048,7 +1050,7 @@ void mafGUIDialogTransferFunction2D::SaveTransferFunction()
 {
 	if (this->m_TransferFunction->GetNumberOfWidgets() > 0) 
 	{
-		if(m_Vme->GetTagArray()->IsTagPresent("VOLUME_TRANSFER_FUNCTION"))
+		if(m_Vme->GetTagArray()->GetTag("VOLUME_TRANSFER_FUNCTION"))
 			m_Vme->GetTagArray()->DeleteTag("VOLUME_TRANSFER_FUNCTION");
     mafTagItem tfTAG;
 		tfTAG.SetName("VOLUME_TRANSFER_FUNCTION");

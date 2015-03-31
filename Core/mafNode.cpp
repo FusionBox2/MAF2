@@ -392,16 +392,16 @@ int mafNode::FindNodeIdx(const char *name, bool onlyVisible /*=false*/)
   return -1;
 }
 //-------------------------------------------------------------------------
-mafNode *mafNode::FindInTreeByTag(const char *name,const char *value,int type)
+mafNode *mafNode::FindInTreeByTag(const mafTagItem& tag)
 //-------------------------------------------------------------------------
 {
-  mafTagItem *titem=GetTagArray()->GetTag(name);
-  if (titem&&mafCString(titem->GetName())==name)
+  const mafTagItem *titem=GetTagArray()->GetTag(tag.GetName());
+  if (titem && tag == *titem)
     return this;
 
   for (unsigned i=0;i<m_Children.size();i++)
   {
-    if (mafNode *node=m_Children[i]->FindInTreeByTag(name,value,type))
+    if (mafNode *node=m_Children[i]->FindInTreeByTag(tag))
       return node;
   }
   return NULL;

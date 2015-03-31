@@ -59,9 +59,6 @@ public:
   bool Accept(mafNode *vme);
   void OpRun();
 
-  /** If labels tags are present retrieve them. */
-  bool RetrieveTag();
-
   /** Fill the vector of label. */
   void FillLabelVector(wxString name, bool checked = TRUE);
 
@@ -98,7 +95,6 @@ protected:
   vtkDataSet          *m_Ds;
 	mafVMESurface       *m_Vme;
   mafGUICheckListBox     *m_LabelCheckBox;
-  mafTagItem          *m_TagLabel;
 
 };
 #endif

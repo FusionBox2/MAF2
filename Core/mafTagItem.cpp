@@ -45,7 +45,7 @@ mafTagItem::~mafTagItem()
 }
 
 //-------------------------------------------------------------------------
-mafTagItem::mafTagItem(const char *name,  const char *value, int t)
+mafTagItem::mafTagItem(const mafString& name, const mafString& value, int t)
 //-------------------------------------------------------------------------
 {
   Initialize();
@@ -55,7 +55,7 @@ mafTagItem::mafTagItem(const char *name,  const char *value, int t)
 }
 
 //-------------------------------------------------------------------------
-mafTagItem::mafTagItem(const char *name, const char **values, int numcomp, int t)
+mafTagItem::mafTagItem(const mafString& name, const mafString *values, int numcomp, int t)
 //-------------------------------------------------------------------------
 {
   Initialize();
@@ -65,7 +65,7 @@ mafTagItem::mafTagItem(const char *name, const char **values, int numcomp, int t
 }
 
 //-------------------------------------------------------------------------
-mafTagItem::mafTagItem(const char *name, const std::vector<mafString> &values, int numcomp, int t)
+mafTagItem::mafTagItem(const mafString& name, const std::vector<mafString>& values, int t)
 //-------------------------------------------------------------------------
 {
   Initialize();
@@ -75,7 +75,7 @@ mafTagItem::mafTagItem(const char *name, const std::vector<mafString> &values, i
 }
 
 //-------------------------------------------------------------------------
-mafTagItem::mafTagItem(const char *name, const double value)
+mafTagItem::mafTagItem(const mafString& name, double value)
 //-------------------------------------------------------------------------
 {
   Initialize();
@@ -84,7 +84,7 @@ mafTagItem::mafTagItem(const char *name, const double value)
 }
 
 //-------------------------------------------------------------------------
-mafTagItem::mafTagItem(const char *name, const double *value, int numcomp)
+mafTagItem::mafTagItem(const mafString& name, const double *value, int numcomp)
 //-------------------------------------------------------------------------
 {
   Initialize();
@@ -94,7 +94,7 @@ mafTagItem::mafTagItem(const char *name, const double *value, int numcomp)
 }
 
 //-------------------------------------------------------------------------
-mafTagItem::mafTagItem(const char *name, const std::vector<double> &values, int numcomp)
+mafTagItem::mafTagItem(const mafString& name, const std::vector<double>& values)
 //-------------------------------------------------------------------------
 {
   Initialize();
@@ -108,15 +108,9 @@ void mafTagItem::DeepCopy(const mafTagItem *item)
 //-------------------------------------------------------------------------
 {
   assert(item);
-  this->SetName(item->GetName());
-  this->SetNumberOfComponents(item->GetNumberOfComponents());
-  for (int i=0;i<GetNumberOfComponents();i++)
-  {
-    this->SetValue(item->GetValue(i),i);
-  }
-
-  this->SetType(item->GetType());
-
+  SetName(item->GetName());
+  SetComponents(item->GetComponents());
+  SetType(item->GetType());
 }
 //-------------------------------------------------------------------------
 void mafTagItem::operator=(const mafTagItem& p)
@@ -148,14 +142,14 @@ bool mafTagItem::operator!=(const mafTagItem& p) const
 }
 
 //-------------------------------------------------------------------------
-void mafTagItem::SetName(const char *name)
+void mafTagItem::SetName(const mafString& name)
 //-------------------------------------------------------------------------
 {
   m_Name=name;
 }
 
 //-------------------------------------------------------------------------
-const char *mafTagItem::GetName() const
+const mafString& mafTagItem::GetName() const
 //-------------------------------------------------------------------------
 {
   return m_Name;
@@ -171,21 +165,21 @@ void mafTagItem::SetValue(double value,int component)
 }
 
 //-------------------------------------------------------------------------
-void mafTagItem::SetComponent(const mafString value,int component)
+void mafTagItem::SetComponent(const mafString& value,int component)
 //-------------------------------------------------------------------------
 {
   SetValue(value,component);
 }
 
 //-------------------------------------------------------------------------
-void mafTagItem::SetComponent(const double value , int component)
+void mafTagItem::SetComponent(double value , int component)
 //-------------------------------------------------------------------------
 {
   SetValue(value,component);
 }
 
 //-------------------------------------------------------------------------
-void mafTagItem::SetValue(const mafString value,int component)
+void mafTagItem::SetValue(const mafString& value,int component)
 //-------------------------------------------------------------------------
 {
   if (component>=GetNumberOfComponents())
@@ -195,7 +189,7 @@ void mafTagItem::SetValue(const mafString value,int component)
 }
 
 //-------------------------------------------------------------------------
-void mafTagItem::SetValues(const char **values, int numcomp)
+void mafTagItem::SetValues(const mafString *values, int numcomp)
 //-------------------------------------------------------------------------
 {
   // if the number of component differs, reallocate memory
@@ -212,20 +206,10 @@ void mafTagItem::SetValues(const char **values, int numcomp)
 }
 
 //-------------------------------------------------------------------------
-void mafTagItem::SetValues(const std::vector<mafString> values)
+void mafTagItem::SetValues(const std::vector<mafString>& values)
 //-------------------------------------------------------------------------
 {
-  // if the number of component differs, reallocate memory
-  if (values.size()!=GetNumberOfComponents())
-  {
-    this->SetNumberOfComponents(values.size());
-  }
-
-  // copy data
-  for (int i=0;i<values.size();i++)
-  {
-    this->SetValue(values[i],i);
-  }
+  m_Components = values;
 }
 
 //-------------------------------------------------------------------------
@@ -246,7 +230,7 @@ void mafTagItem::SetValues(const double *values, int numcomp)
 }
 
 //-------------------------------------------------------------------------
-void mafTagItem::SetValues(const std::vector<double> values)
+void mafTagItem::SetValues(const std::vector<double>& values)
 //-------------------------------------------------------------------------
 {
   // if the number of component differs, reallocate memory
@@ -263,14 +247,14 @@ void mafTagItem::SetValues(const std::vector<double> values)
 }
 
 //-------------------------------------------------------------------------
-void mafTagItem::SetComponents(const char **values, int numcomp)
+void mafTagItem::SetComponents(const mafString *values, int numcomp)
 //-------------------------------------------------------------------------
 {
   SetValues(values,numcomp);
 }
 
 //-------------------------------------------------------------------------
-void mafTagItem::SetComponents(const std::vector<mafString> components)
+void mafTagItem::SetComponents(const std::vector<mafString>& components)
 //-------------------------------------------------------------------------
 {
   SetValues(components);
@@ -284,24 +268,20 @@ void mafTagItem::SetComponents(const double *components, int numcomp)
 }
 
 //-------------------------------------------------------------------------
-void mafTagItem::SetComponents(const std::vector<double> components)
+void mafTagItem::SetComponents(const std::vector<double>& components)
 //-------------------------------------------------------------------------
 {
   SetValues(components);
 }
 
 //-------------------------------------------------------------------------
-const char *mafTagItem::GetValue(int component) const
+const mafString& mafTagItem::GetValue(int component) const
 //-------------------------------------------------------------------------
 {
+  static mafString empty("");
   if (GetNumberOfComponents()>component)
-  {
     return m_Components[component];
-  }
-  else
-  {
-    return NULL;
-  }
+  return empty;
 }
 
 //-------------------------------------------------------------------------
@@ -309,18 +289,11 @@ void mafTagItem::RemoveValue(int component)
 //-------------------------------------------------------------------------
 {
   if (GetNumberOfComponents()>component)
-  {
-    
     m_Components.erase(m_Components.begin() + component);
-  }
-  else
-  {
-    return;
-  }
 }
 
 //-------------------------------------------------------------------------
-const char *mafTagItem::GetComponent(int comp) const
+const mafString& mafTagItem::GetComponent(int comp) const
 //-------------------------------------------------------------------------
 {
   return GetValue(comp);
@@ -330,15 +303,9 @@ const char *mafTagItem::GetComponent(int comp) const
 double mafTagItem::GetValueAsDouble(int component) const
 //-------------------------------------------------------------------------
 {
-  const char *tmp=this->GetValue(component);
-  if (tmp)
-  {
-    return atof(tmp);
-  }
-  else
-  {
+  if (GetNumberOfComponents()<=component)
     return 0;
-  }
+  return atof(GetValue(component).GetCStr());
 }
 
 //-------------------------------------------------------------------------
@@ -406,15 +373,6 @@ void mafTagItem::GetValueAsSingleString(mafString &str) const
 }
 
 //-------------------------------------------------------------------------
-void mafTagItem::GetValueAsSingleString(std::string &str) const
-//-------------------------------------------------------------------------
-{
-  mafString tmp;
-  GetValueAsSingleString(tmp);
-  str=tmp;
-}
-
-//-------------------------------------------------------------------------
 void mafTagItem::GetTypeAsString(mafString &str) const
 //-------------------------------------------------------------------------
 {
@@ -432,15 +390,6 @@ void mafTagItem::GetTypeAsString(mafString &str) const
   default:
     str = "UNK";
   }
-}
-
-//-------------------------------------------------------------------------
-void mafTagItem::GetTypeAsString(std::string &str) const
-//-------------------------------------------------------------------------
-{
-  mafString tmp;
-  GetTypeAsString(tmp);
-  str=tmp;
 }
 
 //-------------------------------------------------------------------------

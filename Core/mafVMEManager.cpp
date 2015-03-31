@@ -378,7 +378,7 @@ int mafVMEManager::MSFOpen(mafString filename)
   root_node->SetTreeTime(b[0]); // Set tree time to the starting time
   
 	////////////////////////////////  Application Stamp managing ////////////////////
-	if(!root_node->GetTagArray()->IsTagPresent("APP_STAMP"))
+	if(!root_node->GetTagArray()->GetTag("APP_STAMP"))
 	{
 		//update the old data files to support Application Stamp
 		mafTagItem tag_appstamp;
@@ -388,7 +388,8 @@ int mafVMEManager::MSFOpen(mafString filename)
 	}
 	
 	mafString app_stamp;
-  app_stamp << root_node->GetTagArray()->GetTag("APP_STAMP")->GetValue();
+  if(mafTagItem *ti = root_node->GetTagArray()->GetTag("APP_STAMP"))
+    app_stamp = root_node->GetTagArray()->GetTag("APP_STAMP")->GetValue();
   // First check for compatibility with all stored App stamps
   bool stamp_found = false;
   bool stamp_data_manager_found = false;

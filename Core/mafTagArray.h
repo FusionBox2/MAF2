@@ -53,15 +53,15 @@ public:
 
   /**
     Get a particular tag item. The returned object is returned by reference. */
-  mafTagItem *GetTag(const char *name);
+  const mafTagItem *GetTag(const mafString& name) const;
+
+  /**
+  Get a particular tag item. The returned object is returned by reference. */
+  mafTagItem *GetTag(const mafString& name);
 
   /**
     Get a particular tag item. The object value is copied in the given item argument. */
-  bool GetTag(const char *name,mafTagItem &item);
-
-  /**
-    return true if the give TAG exists. */
-  bool IsTagPresent(const char *name);
+  bool GetTag(const mafString& name,mafTagItem &item) const;
 
   /**
     This function searches for an item with same Tag name of the given one and 
@@ -69,18 +69,12 @@ public:
     and not referenced. */
   void SetTag(const mafTagItem &value);
 
-  /**
-    This function searches for an item with given name and if it doesn't exist
-    append a new one to the Array, setting the value to the given value. The given
-    strings are copied and not referenced */
-  void SetTag(const char *name, const char *value,int type=MAF_MISSING_TAG);
-
   /** Remove an item from the array */
-  void DeleteTag(const char *name);
+  void DeleteTag(const mafString& name);
   
   /**
     Return the list of Tag names as an array of strings. */
-  void GetTagList(std::vector<std::string> &list);
+  void GetTagList(std::vector<mafString> &list) const;
   
   /**
   Compare two tag arrays. Order of items is significative for
@@ -95,12 +89,12 @@ public:
 	/**
 	Search the tag array for tags of a given type and 
 	put in the array pointers to them   */
-	void GetTagsByType(int type, std::vector<mafTagItem *> &array);
+	//void GetTagsByType(int type, std::vector<mafTagItem *> &array);
 
   /** return the number of tags stored in this object */
   int GetNumberOfTags() const;
 
-  typedef std::map<std::string,mafTagItem> mmuTagsMap;
+  typedef std::map<mafString,mafTagItem> mmuTagsMap;
 
   /** return the container of the tags stored in this attribute */
   mmuTagsMap *GetTagsContainer() {return &m_Tags;}
@@ -119,7 +113,7 @@ protected:
 
 //-------------------------------------------------------------------------
 template <class TType>
-inline TType mafRestoreNumericFromTag(mafTagArray *array,const char *name, TType &variable, TType unset_value, TType default_value)
+inline TType mafRestoreNumericFromTag(mafTagArray *array,const mafString& name, TType &variable, TType unset_value, TType default_value)
 //-------------------------------------------------------------------------
 {
   if (variable==unset_value)
@@ -139,7 +133,7 @@ inline TType mafRestoreNumericFromTag(mafTagArray *array,const char *name, TType
 
 //-------------------------------------------------------------------------
 template <class TType>
-inline TType mafRestoreStringFromTag(mafTagArray *array,const char *name, TType &variable, const char *unset_value, const char *default_value)
+inline TType mafRestoreStringFromTag(mafTagArray *array,const mafString& name, TType &variable, const mafString& unset_value, const mafString& default_value)
 //-------------------------------------------------------------------------
 {
   if (variable==unset_value)

@@ -151,11 +151,11 @@ void mafGUISaveRestorePose::FillListBoxWithABSPosesStoredInInputVME()
 {
 	mafTagArray *tag_array = m_InputVME->GetTagArray();
   int n = tag_array->GetNumberOfTags();
-  std::vector<std::string> tag_list;
+  std::vector<mafString> tag_list;
   tag_array->GetTagList(tag_list);
 	for(int t=0; t<n; t++)
 	{
-	  mafTagItem *item = tag_array->GetTag(tag_list[t].c_str());
+	  mafTagItem *item = tag_array->GetTag(tag_list[t]);
 		if(item->GetNumberOfComponents() == 16)
 		{
 			wxString name = item->GetName();
@@ -195,7 +195,7 @@ void mafGUISaveRestorePose::StorePose()
   wxString AbsPos_tagName = "STORED_ABS_POS_" + pose_name;
 
   mafTagArray *tagArray = m_InputVME->GetTagArray();
-  if(tagArray->IsTagPresent(AbsPos_tagName.c_str())) 
+  if(tagArray->GetTag(AbsPos_tagName.c_str())) 
   {
 		wxString msg = "this name is already used, do you want to overwrite it ?";
 		int res = wxMessageBox(msg,"Store Position", wxOK|wxCANCEL|wxICON_QUESTION, NULL);
@@ -260,9 +260,8 @@ void mafGUISaveRestorePose::RestorePoseHelper( mafString pose_name )
   wxString AbsPos_tagName = "STORED_ABS_POS_" + pose_name;
   int comp = 0;
   mafMatrix abs_pose;
-  if (m_InputVME->GetTagArray()->IsTagPresent(AbsPos_tagName.c_str()))
+  if(mafTagItem *item = m_InputVME->GetTagArray()->GetTag(AbsPos_tagName.c_str()))
   {
-    mafTagItem *item = m_InputVME->GetTagArray()->GetTag(AbsPos_tagName.c_str());
     for (int r=0; r<4; r++)
       for (int c=0; c<4; c++)
         abs_pose.SetElement(r,c,item->GetComponentAsDouble(comp++));
@@ -309,6 +308,6 @@ void mafGUISaveRestorePose::StorePoseHelper( mafString absPoseTagName )
 void mafGUISaveRestorePose::RemovePoseHelper( mafString absPoseTagName )
 {
   assert(m_InputVME);
-  if (m_InputVME->GetTagArray()->IsTagPresent(absPoseTagName.GetCStr()))
+  if (m_InputVME->GetTagArray()->GetTag(absPoseTagName.GetCStr()))
     m_InputVME->GetTagArray()->DeleteTag(absPoseTagName.GetCStr());
 }

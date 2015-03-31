@@ -273,11 +273,9 @@ void mafOpManager::OpRun(mafOp *op, void *op_param)
   }
 
 	//Code to manage operation's Input Preserving
-  mafTagItem *ti = NULL;
   mafString tag_nature = "";
-  if (m_Selected->GetTagArray()->IsTagPresent("VME_NATURE"))
+  if(const mafTagItem *ti = m_Selected->GetTagArray()->GetTag("VME_NATURE"))
   {
-    ti = m_Selected->GetTagArray()->GetTag("VME_NATURE");
     tag_nature = ti->GetValue();
   }
   
@@ -292,8 +290,10 @@ void mafOpManager::OpRun(mafOp *op, void *op_param)
       synthetic_vme->ReparentTo(m_Selected->GetParent());
       synthetic_name.Append(m_Selected->GetName());
       synthetic_vme->SetName(synthetic_name);
-      ti = synthetic_vme->GetTagArray()->GetTag("VME_NATURE");
-      ti->SetValue("SYNTHETIC");
+      if(mafTagItem *ti = synthetic_vme->GetTagArray()->GetTag("VME_NATURE"))
+      	ti->SetValue("SYNTHETIC");
+      else
+        synthetic_vme->GetTagArray()->SetTag(mafTagItem("VME_NATURE", "SYNTHETIC"));
       mafEventMacro(mafEvent(this,VME_SHOW,m_Selected,false));
       m_NaturalNode = m_Selected;
       mafEventMacro(mafEvent(this,VME_SELECT,synthetic_vme,true));
@@ -450,8 +450,8 @@ void mafOpManager::FillTraceabilityAttribute(mafOp *op, mafNode *in_node, mafNod
       in_node->SetAttribute("TrialAttribute", traceability);
     }
 
-    if(in_node->GetRoot()->GetTagArray()->IsTagPresent("APP_STAMP"))
-      appStamp = in_node->GetRoot()->GetTagArray()->GetTag("APP_STAMP")->GetValue();
+    if(mafTagItem *ti = in_node->GetRoot()->GetTagArray()->GetTag("APP_STAMP"))
+      appStamp = ti->GetValue();
 
 
 #ifdef _WIN32
@@ -468,9 +468,9 @@ void mafOpManager::FillTraceabilityAttribute(mafOp *op, mafNode *in_node, mafNod
     appStamp.Append(revision.c_str());
 #endif
    
-    if(in_node->GetTagArray()->IsTagPresent("VME_NATURE"))
+    if(mafTagItem *ti = in_node->GetTagArray()->GetTag("VME_NATURE"))
     {
-      isNatural = in_node->GetTagArray()->GetTag("VME_NATURE")->GetValue();
+      isNatural = ti->GetValue();
       if (isNatural.Compare("NATURAL") == 0)
         isNatural = "true";
       else
@@ -504,12 +504,12 @@ void mafOpManager::FillTraceabilityAttribute(mafOp *op, mafNode *in_node, mafNod
             trialEvent = "Create";
         }
 
-        if(in_node->GetRoot()->GetTagArray()->IsTagPresent("APP_STAMP"))
-          appStamp = in_node->GetRoot()->GetTagArray()->GetTag("APP_STAMP")->GetValue();
+        if(mafTagItem *ti = in_node->GetRoot()->GetTagArray()->GetTag("APP_STAMP"))
+          appStamp = ti->GetValue();
 
-        if(in_node->GetTagArray()->IsTagPresent("VME_NATURE"))
+        if(mafTagItem *ti = in_node->GetTagArray()->GetTag("VME_NATURE"))
         {
-          isNatural = in_node->GetTagArray()->GetTag("VME_NATURE")->GetValue();
+          isNatural = ti->GetValue();
           if (isNatural.Compare("NATURAL") == 0 )
             isNatural = "true";
           else

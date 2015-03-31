@@ -181,8 +181,7 @@ int mafVMELandmarkCloud::GetNumberOfLandmarks()
   {
     if (m_NumberOfLandmarks < 0)
     {
-      mafTagItem *item = GetTagArray()->GetTag(MAF_LMC_ITEMS_NUMBER_TAG);
-      if (item)
+      if(mafTagItem *item = GetTagArray()->GetTag(MAF_LMC_ITEMS_NUMBER_TAG))
       {
         m_NumberOfLandmarks = item->GetValueAsDouble();
       }
@@ -192,12 +191,11 @@ int mafVMELandmarkCloud::GetNumberOfLandmarks()
         // old MSF files
         mafTagArray *tarray=GetTagArray();
         m_NumberOfLandmarks=0;
-        std::vector<std::string> tag_list;
+        std::vector<mafString> tag_list;
         tarray->GetTagList(tag_list);
         for (int i = 0; i < tag_list.size(); i++)
         {
-          mafString name = tag_list[i].c_str();
-          if (name.StartsWith("LM_NAME_"))
+          if (tag_list[i].StartsWith("LM_NAME_"))
           {
             m_NumberOfLandmarks++;
           }
@@ -540,7 +538,7 @@ const char *mafVMELandmarkCloud::GetLandmarkName(int idx)
     mafString tag = "LM_NAME_";
     tag << idx;
     mafTagItem *item = GetTagArray()->GetTag(tag.GetCStr());
-    return item ? item->GetValue() : NULL;
+    return item ? item->GetValue().GetCStr() : NULL;
   }
   else
   {

@@ -115,7 +115,7 @@ int mmuMSF1xDocument::InternalRestore(mafStorageElement *node)
   // iteration for setting up linked vme
   for (n = iter->GetFirstNode(); n;n=iter->GetNextNode())
   {
-    if (n->IsMAFType(mafVMEGeneric) && n->GetTagArray()->IsTagPresent("mflVMELink"))
+    if (n->IsMAFType(mafVMEGeneric) && n->GetTagArray()->GetTag("mflVMELink"))
     {
       link_list.push_back(n);
       mafTagItem *tag = n->GetTagArray()->GetTag("VME_ALIAS_PATH");
@@ -123,9 +123,9 @@ int mmuMSF1xDocument::InternalRestore(mafStorageElement *node)
       if (linkedVME != NULL)
       {
         mafID sub_id = -1;
-        if (n->GetTagArray()->IsTagPresent("SUBLINK_ID"))
+        if (mafTagItem *ti = n->GetTagArray()->GetTag("SUBLINK_ID"))
         {
-          sub_id = (mafID)n->GetTagArray()->GetTag("SUBLINK_ID")->GetValueAsDouble();
+          sub_id = (mafID)ti->GetValueAsDouble();
         }
         n->GetParent()->SetLink(n->GetName(), linkedVME, sub_id);
       }
@@ -228,11 +228,11 @@ mafVME *mmuMSF1xDocument::RestoreVME(mafStorageElement *node, mafVME *parent)
           // here should process VME-specific tags //
           ///////////////////////////////////////////
           mafTagArray *ta = vme->GetTagArray();
-          if (ta->IsTagPresent("material"))
+          if (ta->GetTag("material"))
           {
             RestoreMaterial(vme);
           }
-          if (ta->IsTagPresent("MAF_TOOL_VME"))
+          if (ta->GetTag("MAF_TOOL_VME"))
           {
             ta->DeleteTag("MAF_TOOL_VME");
           }
@@ -301,33 +301,33 @@ mafVME *mmuMSF1xDocument::RestoreVME(mafStorageElement *node, mafVME *parent)
             }
             
           }
-          else if ((vme->IsMAFType(mafVMEMeter) || vme->IsMAFType(mafVMEProber)) && child_vme->GetTagArray()->IsTagPresent("mflVMELink"))
+          else if ((vme->IsMAFType(mafVMEMeter) || vme->IsMAFType(mafVMEProber)) && child_vme->GetTagArray()->GetTag("mflVMELink"))
           {
             // this is a particular case for mafVMEMeter, in which the links are changed name
             if (mafCString(child_vme->GetName()) == "StartLink")
             {
               child_vme->SetName("StartVME");
-              if (vme->GetTagArray()->IsTagPresent("MFL_METER_START_VME_ID"))
+              if (vme->GetTagArray()->GetTag("MFL_METER_START_VME_ID"))
               {
-                child_vme->GetTagArray()->SetTag("SUBLINK_ID",vme->GetTagArray()->GetTag("MFL_METER_START_VME_ID")->GetValue());
+                child_vme->GetTagArray()->SetTag(mafTagItem("SUBLINK_ID",vme->GetTagArray()->GetTag("MFL_METER_START_VME_ID")->GetValue()));
                 vme->GetTagArray()->DeleteTag("MFL_METER_START_VME_ID");
               }
             }
             else if (mafCString(child_vme->GetName()) == "EndLink1")
             {
               child_vme->SetName("EndVME1");
-              if (vme->GetTagArray()->IsTagPresent("MFL_METER_END_VME_1_ID"))
+              if (vme->GetTagArray()->GetTag("MFL_METER_END_VME_1_ID"))
               {
-                child_vme->GetTagArray()->SetTag("SUBLINK_ID",vme->GetTagArray()->GetTag("MFL_METER_END_VME_1_ID")->GetValue());
+                child_vme->GetTagArray()->SetTag(mafTagItem("SUBLINK_ID",vme->GetTagArray()->GetTag("MFL_METER_END_VME_1_ID")->GetValue()));
                 vme->GetTagArray()->DeleteTag("MFL_METER_END_VME_1_ID");
               }
             }
             else if (mafCString(child_vme->GetName()) == "EndLink2")
             {
               child_vme->SetName("EndVME2");
-              if (vme->GetTagArray()->IsTagPresent("MFL_METER_END_VME_2_ID"))
+              if (vme->GetTagArray()->GetTag("MFL_METER_END_VME_2_ID"))
               {
-                child_vme->GetTagArray()->SetTag("SUBLINK_ID",vme->GetTagArray()->GetTag("MFL_METER_END_VME_2_ID")->GetValue());
+                child_vme->GetTagArray()->SetTag(mafTagItem("SUBLINK_ID",vme->GetTagArray()->GetTag("MFL_METER_END_VME_2_ID")->GetValue()));
                 vme->GetTagArray()->DeleteTag("MFL_METER_END_VME_2_ID");
               }
             }
@@ -366,7 +366,7 @@ mafVME *mmuMSF1xDocument::CreateVMEInstance(mafString &name)
   else if (name == "mflVMELink")
   {
     mafVME *link = mafVMEGeneric::New();
-    link->GetTagArray()->SetTag("mflVMELink","1");
+    link->GetTagArray()->SetTag(mafTagItem("mflVMELink","1"));
     return link;
   }
   else if (name == "mflVMEExternalData")
@@ -438,17 +438,16 @@ void mmuMSF1xDocument::RestoreMeterAttribute(mafVME *vme)
     mmaMeter *meter_attrib = meter->GetMeterAttributes();
     mafTagArray *meter_ta  = meter->GetTagArray();
     int num_tags = meter_ta->GetNumberOfTags();
-    std::vector<std::string> tag_list;
+    std::vector<mafString> tag_list;
     meter_ta->GetTagList(tag_list);
     mafTagItem *ti = NULL;
-    mafString tag_name;
     double component;
     for (int t=0; t<num_tags; t++)
     {
-      tag_name = tag_list[t].c_str();
-      if (tag_name.Equals("MFL_METER_END_VME_1_ID") || 
-          tag_name.Equals("MFL_METER_START_VME_ID") ||
-          tag_name.Equals("MFL_METER_END_VME_2_ID"))
+      const mafString& tag_name = tag_list[t];
+      if (tag_list[t].Equals("MFL_METER_END_VME_1_ID") || 
+          tag_list[t].Equals("MFL_METER_START_VME_ID") ||
+          tag_list[t].Equals("MFL_METER_END_VME_2_ID"))
       {
         continue;
       }
@@ -501,7 +500,7 @@ void mmuMSF1xDocument::RestoreMeterAttribute(mafVME *vme)
       }
       else
         continue;
-      meter_ta->DeleteTag(tag_name.GetCStr());
+      meter_ta->DeleteTag(tag_name);
     }
   }
 }
@@ -566,14 +565,14 @@ int mmuMSF1xDocument::RestoreVItem(mafStorageElement *node, mafVME *vme)
               // here should process VMEItem-specific tags //
               ///////////////////////////////////////////////
               mafTagArray *ta = vitem->GetTagArray();
-              if (ta->IsTagPresent("MFL_CRYPTING"))
+              if (ta->GetTag("MFL_CRYPTING"))
               {
                 mafTagItem *ti = ta->GetTag("MFL_CRYPTING");
                 vme->SetCrypting((int)ti->GetValueAsDouble());
                 vitem->SetCrypting((int)ti->GetValueAsDouble() != 0);
                 ta->DeleteTag("MFL_CRYPTING");
               }
-              if (ta->IsTagPresent("VTK_DATASET_BOUNDS"))
+              if (ta->GetTag("VTK_DATASET_BOUNDS"))
               {
                 double *b = vitem->GetBounds();
                 mafTagItem *ti = ta->GetTag("VTK_DATASET_BOUNDS");
@@ -653,15 +652,15 @@ int mmuMSF1xDocument::RestoreTagArray(mafStorageElement *node, mafTagArray *tarr
     
             if (tag_type=="NUM")
             {
-              titem.SetType(MAF_NUMERIC_TAG);
+              titem.SetType(mafTagItem::MAF_NUMERIC_TAG);
             }
             else if (tag_type=="STR")
             {
-              titem.SetType(MAF_STRING_TAG);
+              titem.SetType(mafTagItem::MAF_STRING_TAG);
             }
             else if (tag_type=="MIS")
             {
-              titem.SetType(MAF_MISSING_TAG);
+              titem.SetType(mafTagItem::MAF_MISSING_TAG);
             }
             else
             {

@@ -74,21 +74,30 @@ void mafTagArray::DeepCopy(const mafAttribute *a)
 }
 
 //-------------------------------------------------------------------------
-mafTagItem *mafTagArray::GetTag(const char *name)
+const mafTagItem *mafTagArray::GetTag(const mafString& name) const
 //-------------------------------------------------------------------------
 {
-  mmuTagsMap::iterator it=m_Tags.find(name);
+  mmuTagsMap::const_iterator it=m_Tags.find(name);
   if (it!=m_Tags.end())
-    return &((*it).second);
-
+    return &(it->second);
   return NULL;
 }
 
 //-------------------------------------------------------------------------
-bool mafTagArray::GetTag(const char *name,mafTagItem &item)
+mafTagItem *mafTagArray::GetTag(const mafString& name)
 //-------------------------------------------------------------------------
 {
-  mafTagItem *tmp_item=GetTag(name);
+  mmuTagsMap::iterator it=m_Tags.find(name);
+  if (it!=m_Tags.end())
+    return &(it->second);
+  return NULL;
+}
+
+//-------------------------------------------------------------------------
+bool mafTagArray::GetTag(const mafString& name,mafTagItem &item) const
+//-------------------------------------------------------------------------
+{
+  const mafTagItem *tmp_item=GetTag(name);
   if (tmp_item)
   {
     item=*tmp_item;
@@ -100,38 +109,14 @@ bool mafTagArray::GetTag(const char *name,mafTagItem &item)
 }
 
 //-------------------------------------------------------------------------
-bool mafTagArray::IsTagPresent(const char *name)
-//-------------------------------------------------------------------------
-{
-  mmuTagsMap::iterator it=m_Tags.find(name);
-  return it!=m_Tags.end();
-}
-
-//-------------------------------------------------------------------------
 void mafTagArray::SetTag(const mafTagItem &value)
 //-------------------------------------------------------------------------
 {
-  mafTagItem *tmp_item=GetTag(value.GetName());
-  if (tmp_item)
-  {
-    *tmp_item=value;
-  }
-  else
-  {
-    m_Tags[value.GetName()]=value;
-  }
+  m_Tags[value.GetName()] = value;
 }
 
 //-------------------------------------------------------------------------
-void mafTagArray::SetTag(const char *name, const char *value,int type)
-//-------------------------------------------------------------------------
-{
-  mafTagItem tmp(name,value,type);
-  m_Tags[name]=tmp;
-}
-
-//-------------------------------------------------------------------------
-void mafTagArray::DeleteTag(const char *name)
+void mafTagArray::DeleteTag(const mafString& name)
 //-------------------------------------------------------------------------
 {
   mmuTagsMap::iterator it=m_Tags.find(name);
@@ -140,16 +125,15 @@ void mafTagArray::DeleteTag(const char *name)
 }
 
 //-------------------------------------------------------------------------
-void mafTagArray::GetTagList(std::vector<std::string> &list)
+void mafTagArray::GetTagList(std::vector<mafString> &list) const
 //-------------------------------------------------------------------------
 {
   list.clear();
   list.resize(GetNumberOfTags());
-  int i=0;
-  for (mmuTagsMap::iterator it=m_Tags.begin();it!=m_Tags.end();it++,i++)
+  int i = 0;
+  for (mmuTagsMap::const_iterator it=m_Tags.begin();it!=m_Tags.end();it++)
   {
-    mafTagItem &titem=it->second;
-    list[i]=titem.GetName();
+    list[i++] = it->second.GetName();
   }
 }
 
@@ -181,7 +165,7 @@ bool mafTagArray::Equals(const mafTagArray *array) const
 }
 
 //-------------------------------------------------------------------------
-void mafTagArray::GetTagsByType(int type, std::vector<mafTagItem *> &array)
+/*void mafTagArray::GetTagsByType(int type, std::vector<mafTagItem *> &array)
 //-------------------------------------------------------------------------
 {
   array.clear();
@@ -193,7 +177,7 @@ void mafTagArray::GetTagsByType(int type, std::vector<mafTagItem *> &array)
       array.push_back(&(it->second));
     }
   }
-}
+}*/
 //-------------------------------------------------------------------------
 int mafTagArray::GetNumberOfTags() const
 //-------------------------------------------------------------------------

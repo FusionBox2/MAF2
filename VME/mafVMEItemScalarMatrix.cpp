@@ -301,8 +301,7 @@ int mafVMEItemScalarMatrix::UpdateReader(mafString &filename)
 {
   vnl_matrix<double> data;
 
-  mafTagItem *item = m_TagArray->GetTag("SCALAR_MATRIX_DIMENSIONS");
-  if (item) 
+  if(mafTagItem *item = m_TagArray->GetTag("SCALAR_MATRIX_DIMENSIONS"))
   {
     int r,c;
     r = (int)item->GetComponentAsDouble(0);
