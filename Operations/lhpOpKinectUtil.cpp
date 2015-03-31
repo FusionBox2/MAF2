@@ -946,7 +946,7 @@ namespace
 
       lhpVMEKMInfo *kmi = lhpVMEKMInfo::New();
       kmi->Register(NULL);
-      kmi->SetName(target->GetName() + "_GeneralInfo");
+      kmi->SetName(target->GetName());// + "_GeneralInfo");
       kmi->ReparentTo(target);
 
       medVMEAnalog *analog = medVMEAnalog::New();
