@@ -25,7 +25,6 @@
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
-class mafDeviceButtonsPadMouse;
 class mafSceneGraph;
 class mafGUI;
 class mafRWIBase;
@@ -120,8 +119,6 @@ public:
   /** 
   Set the size of the windowing double slider according to the size of the view. */
   virtual void OnLayout();
-
-  virtual void SetMouse(mafDeviceButtonsPadMouse *mouse);
 
   virtual mafSceneGraph *GetSceneGraph();
   virtual mafRWIBase    *GetRWI();
@@ -229,8 +226,6 @@ protected:
   wxSize  m_Size; ///< size of the compound view
   mafGUI *m_GuiView;
   wxWindow *m_GuiViewWindow;
-  mafDeviceButtonsPadMouse *m_Mouse;
-
 
   std::vector<mafView *> m_ChildViewList; ///< Child views vector
   std::vector<mafView *> m_PluggedChildViewList; ///< Plugged Child views vector

@@ -72,6 +72,9 @@ enum MAF_EXPORT MAF_RETURN_VALUES_ID
 //------------------------------------------------------------------------------
 // Global Variables
 //------------------------------------------------------------------------------
+class mafDeviceButtonsPadMouse;
+MAF_EXPORT mafDeviceButtonsPadMouse *GetGlobalMouse();
+MAF_EXPORT void SetGlobalMouse(mafDeviceButtonsPadMouse *);
 
 //------------------------------------------------------------------------------
 // Global Functions

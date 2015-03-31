@@ -136,14 +136,6 @@ void mafViewVTK::Create()
   //m_Picker2D->InitializePickList();
 }
 //----------------------------------------------------------------------------
-void mafViewVTK::SetMouse(mafDeviceButtonsPadMouse *mouse)
-//----------------------------------------------------------------------------
-{
-  assert(m_Rwi->m_RwiBase);
-  m_Rwi->m_RwiBase->SetMouse(mouse);
-}
-
-//----------------------------------------------------------------------------
 vtkRenderWindow *mafViewVTK::GetRenderWindow()
 //----------------------------------------------------------------------------
 { 

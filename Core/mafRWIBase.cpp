@@ -120,7 +120,6 @@ mafRWIBase::mafRWIBase(wxWindow *parent, wxWindowID id, const wxPoint &pos,
   m_Width = m_Height = 10;
   
   m_Camera    = NULL;
-  m_Mouse     = NULL;
   
   m_StereoMovieDir     = "";
   m_StereoMovieFrameCounter = 0;
@@ -152,12 +151,6 @@ mafRWIBase * mafRWIBase::New()
 //----------------------------------------------------------------------------
 {
   return new mafRWIBase();
-}
-//----------------------------------------------------------------------------
-void mafRWIBase::SetMouse(mafDeviceButtonsPadMouse *mouse)
-//----------------------------------------------------------------------------
-{
-  m_Mouse = mouse;
 }
 //----------------------------------------------------------------------------
 void mafRWIBase::Initialize()
@@ -317,7 +310,7 @@ void mafRWIBase::OnLeftMouseDoubleClick(wxMouseEvent &event)
     e.SetModifier(MAF_CTRL_KEY,event.ControlDown());
     e.SetModifier(MAF_ALT_KEY,event.AltDown());
     e.SetChannel(MCH_OUTPUT);
-    if(m_Mouse) 
+    if(mafDeviceButtonsPadMouse *m_Mouse = GetGlobalMouse()) 
       m_Mouse->OnEvent(&e);
     else
       mafEventSender::InvokeEvent(&e);
@@ -346,7 +339,7 @@ void mafRWIBase::OnLeftMouseButtonDown(wxMouseEvent &event)
     e.SetModifier(MAF_CTRL_KEY,event.ControlDown());
     e.SetModifier(MAF_ALT_KEY,event.AltDown());
     e.SetChannel(MCH_OUTPUT);
-    if(m_Mouse) 
+    if(mafDeviceButtonsPadMouse *m_Mouse = GetGlobalMouse()) 
       m_Mouse->OnEvent(&e);
     else
       mafEventSender::InvokeEvent(&e);
@@ -375,7 +368,7 @@ void mafRWIBase::OnMiddleMouseButtonDown(wxMouseEvent &event)
     e.SetModifier(MAF_CTRL_KEY,event.ControlDown());
     e.SetModifier(MAF_ALT_KEY,event.AltDown());
     e.SetChannel(MCH_OUTPUT);
-    if(m_Mouse) 
+    if(mafDeviceButtonsPadMouse *m_Mouse = GetGlobalMouse()) 
       m_Mouse->OnEvent(&e);
     else
       mafEventSender::InvokeEvent(&e);
@@ -404,7 +397,7 @@ void mafRWIBase::OnRightMouseButtonDown(wxMouseEvent &event)
     e.SetModifier(MAF_CTRL_KEY,event.ControlDown());
     e.SetModifier(MAF_ALT_KEY,event.AltDown());
     e.SetChannel(MCH_OUTPUT);
-    if(m_Mouse) 
+    if(mafDeviceButtonsPadMouse *m_Mouse = GetGlobalMouse()) 
       m_Mouse->OnEvent(&e);
     else
       mafEventSender::InvokeEvent(&e);
@@ -435,7 +428,7 @@ void mafRWIBase::OnLeftMouseButtonUp(wxMouseEvent &event)
     e.SetModifier(MAF_CTRL_KEY,event.ControlDown());
     e.SetModifier(MAF_ALT_KEY,event.AltDown());
     e.SetChannel(MCH_OUTPUT);
-    if(m_Mouse) 
+    if(mafDeviceButtonsPadMouse *m_Mouse = GetGlobalMouse()) 
       m_Mouse->OnEvent(&e);
     else
       mafEventSender::InvokeEvent(&e);
@@ -466,7 +459,7 @@ void mafRWIBase::OnMiddleMouseButtonUp(wxMouseEvent &event)
     e.SetModifier(MAF_CTRL_KEY,event.ControlDown());
     e.SetModifier(MAF_ALT_KEY,event.AltDown());
     e.SetChannel(MCH_OUTPUT);
-    if(m_Mouse) 
+    if(mafDeviceButtonsPadMouse *m_Mouse = GetGlobalMouse()) 
       m_Mouse->OnEvent(&e);
     else
       mafEventSender::InvokeEvent(&e);
@@ -497,7 +490,7 @@ void mafRWIBase::OnRightMouseButtonUp(wxMouseEvent &event)
     e.SetModifier(MAF_CTRL_KEY,event.ControlDown());
     e.SetModifier(MAF_ALT_KEY,event.AltDown());
     e.SetChannel(MCH_OUTPUT);
-    if(m_Mouse) 
+    if(mafDeviceButtonsPadMouse *m_Mouse = GetGlobalMouse()) 
       m_Mouse->OnEvent(&e);
     else
       mafEventSender::InvokeEvent(&e);
@@ -534,7 +527,7 @@ void mafRWIBase::OnMouseMotion(wxMouseEvent &event)
     e.SetModifier(MAF_CTRL_KEY,event.ControlDown());
     e.SetModifier(MAF_ALT_KEY,event.AltDown());
     e.SetChannel(MCH_OUTPUT);
-    if(m_Mouse) 
+    if(mafDeviceButtonsPadMouse *m_Mouse = GetGlobalMouse()) 
       m_Mouse->OnEvent(&e);
     else
       mafEventSender::InvokeEvent(&e);
@@ -592,7 +585,7 @@ void mafRWIBase::OnChar(wxKeyEvent &event)
   }
   else
   {
-    if(m_Mouse) 
+    if(mafDeviceButtonsPadMouse *m_Mouse = GetGlobalMouse()) 
     {
       mafEvent e(this,mafDeviceButtonsPadMouse::GetMouseCharEventId(),(long) event.GetKeyCode());
       e.SetChannel(MCH_OUTPUT);

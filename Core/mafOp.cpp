@@ -45,7 +45,6 @@ mafOp::mafOp(const mafString &label) : m_Label(label)
   m_Guih      = NULL;
 	m_Input     = NULL;
   m_Output    = NULL;
-  m_Mouse     = NULL;
   m_SettingPanel = NULL;
   m_Compatibility     = 0xFFFF;
   m_InputPreserving = true;
@@ -64,7 +63,6 @@ mafOp::mafOp()
   m_Guih      = NULL;
 	m_Input     = NULL;
   m_Output    = NULL;
-  m_Mouse     = NULL;
 	m_Compatibility     = 0xFFFF;
   m_InputPreserving = true;
   m_CollaborateStatus = false;
@@ -207,12 +205,6 @@ void mafOp::ForceStopWithCancel()
 {
   mafEvent e(this, OP_RUN_CANCEL);
   OnEvent(&e);
-}
-//----------------------------------------------------------------------------
-void mafOp::SetMouse(mafDeviceButtonsPadMouse *mouse)
-//----------------------------------------------------------------------------
-{
-  m_Mouse = mouse;
 }
 //----------------------------------------------------------------------------
 void mafOp::OpStop(int result)

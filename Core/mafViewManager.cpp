@@ -355,7 +355,6 @@ void mafViewManager::ViewInsert(mafView *view)
 //----------------------------------------------------------------------------
 {
 	view->SetListener(this);
-  view->SetMouse(m_Mouse); // set the mouse for the specified view
   if(m_RootVme != NULL)
   {
     mafNodeIterator *iter = m_RootVme->NewIterator(); // iterate over inserted vme
@@ -383,8 +382,6 @@ void mafViewManager::ViewDelete(mafView *view)
 
   if(m_SelectedView == view)
   {
-    if(m_SelectedRWI)
-      m_SelectedRWI->SetMouse(NULL); // update the selected view rwi
     m_SelectedRWI = NULL;
     m_SelectedView = NULL;
   }
@@ -416,8 +413,6 @@ void mafViewManager::ViewDeleteAll()
 {
   if(m_SelectedView)
   {
-    if(m_SelectedRWI) 
-      m_SelectedRWI->SetMouse(NULL);
     m_SelectedRWI = NULL;
     m_SelectedView = NULL;
   }

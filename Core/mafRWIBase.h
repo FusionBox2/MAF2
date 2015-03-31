@@ -78,9 +78,6 @@ public:
 	/** Notify mouse click on a view. */
   void NotifyClick();
 
-  /** set the mouse device to which forward events from the view */
-  void SetMouse(mafDeviceButtonsPadMouse *mouse);
-
   /** Set the directory for the Stereo Movie*/
   void SetStereoMovieDirectory(const char *dir);
 
@@ -190,7 +187,6 @@ protected:
   
   mafString  m_SaveDir;
   vtkCamera *m_Camera;
-  mafDeviceButtonsPadMouse  *m_Mouse;
   bool       m_CustomInteractorStyle;
 
   int m_LastX;

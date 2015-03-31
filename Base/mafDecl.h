@@ -31,6 +31,9 @@
 //----------------------------------------------------------------------------
 class wxColour;
 class wxWindow;
+class mafDeviceButtonsPadMouse;
+MAF_EXPORT mafDeviceButtonsPadMouse *GetGlobalMouse();
+MAF_EXPORT void SetGlobalMouse(mafDeviceButtonsPadMouse *);
 
 //----------------------------------------------------------------------------
 // constant

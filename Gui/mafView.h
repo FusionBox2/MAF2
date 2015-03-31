@@ -99,7 +99,6 @@ public:
 
   virtual void			CameraReset(mafNode *node = NULL)  											{};
   virtual void			CameraUpdate()																					{};
-  virtual void      SetMouse(mafDeviceButtonsPadMouse *mouse)                               {};
   virtual mafRWIBase *GetRWI()                                              {return NULL;};
   virtual mafSceneGraph *GetSceneGraph()                                    {return NULL;};
   virtual void      GetImage(wxBitmap &bmp, int magnification = 1)          {};

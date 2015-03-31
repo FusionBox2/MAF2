@@ -44,6 +44,10 @@
 // MAF_ID_IMP(mafDeviceButtonsPadMouse::MOUSE_CHAR_EVENT)
 // MAF_ID_IMP(mafDeviceButtonsPadMouse::MOUSE_DCLICK)
 
+MAF_EXPORT mafDeviceButtonsPadMouse *GlobalMouse = NULL;
+MAF_EXPORT mafDeviceButtonsPadMouse *GetGlobalMouse(){return GlobalMouse;}
+MAF_EXPORT void SetGlobalMouse(mafDeviceButtonsPadMouse *mouse){GlobalMouse = mouse;}
+
 //------------------------------------------------------------------------------
 mafCxxTypeMacro(mafDeviceButtonsPadMouse)
 //------------------------------------------------------------------------------

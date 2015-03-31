@@ -30,7 +30,6 @@
 //----------------------------------------------------------------------------
 class mafNode;
 class mafOp;
-class mafDeviceButtonsPadMouse;
 class mafGUISettings;
 class mafGUISettingsDialog;
 class mafUser;
@@ -107,11 +106,6 @@ public:
   /** Return an instance of operation from id.*/
   mafOp *GetOperationById(int id);
 
-  /** 
-  Initialize the action for the mouse device. */
-  void SetMouse(mafDeviceButtonsPadMouse *mouse);
-
-
   /** Turn On/Off the collaboration status. */
   void Collaborate(bool status);
 
@@ -149,7 +143,6 @@ protected:
   void FillTraceabilityAttribute(mafOp *op, mafNode *in_node, mafNode *out_node);
 
 
-  mafDeviceButtonsPadMouse          *m_Mouse; ///< Pointer to the mouse devices.
   bool               m_Warn; ///< Flag to warn the user when an operation that can not undo is starting.
 	mafOpContextStack  m_Context;
   mafOp             *m_RunningOp; ///< Pointer to the current running operation.

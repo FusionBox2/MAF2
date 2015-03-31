@@ -115,9 +115,6 @@ public:
 
   mafPipeMap m_PipeMap; ///< Map used to store visual pipeline associated with vme types
 
-  /** Set the mouse device to use inside the view */
-  void SetMouse(mafDeviceButtonsPadMouse *mouse);
-
   /** Print this view.*/
   virtual void Print(wxDC *dc, wxRect margins);
 

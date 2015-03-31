@@ -56,7 +56,6 @@ mafViewCompound::mafViewCompound(const mafString& label, int num_row, int num_co
   m_GuiView = NULL;
   m_GuiViewWindow = NULL;
   m_SubViewMaximized = -1;
-  m_Mouse = NULL;
   m_LayoutConfiguration = GRID_LAYOUT;
 }
 //----------------------------------------------------------------------------
@@ -434,20 +433,10 @@ void mafViewCompound::LayoutSubView(int width, int height)
   }
 }
 //----------------------------------------------------------------------------
-void mafViewCompound::SetMouse(mafDeviceButtonsPadMouse *mouse)
-//----------------------------------------------------------------------------
-{
-  m_Mouse = mouse;
-  for(int i=0; i<m_NumOfChildView; i++)
-  {
-    ((mafViewVTK *)m_ChildViewList[i])->SetMouse(mouse);
-  }
-}
-//----------------------------------------------------------------------------
 mafView *mafViewCompound::GetSubView()
 //----------------------------------------------------------------------------
 {
-  mafRWIBase *rwi = m_Mouse->GetRWI();
+  mafRWIBase *rwi = GetGlobalMouse()->GetRWI();
   if (rwi)
   {
     for(int i=0; i<m_NumOfChildView; i++)
@@ -481,7 +470,7 @@ mafView *mafViewCompound::GetSubView(int idx)
 int mafViewCompound::GetSubViewIndex()
 //----------------------------------------------------------------------------
 {
-  mafRWIBase *rwi = m_Mouse->GetRWI();
+  mafRWIBase *rwi = GetGlobalMouse()->GetRWI();
   if (rwi)
   {
     for(int i=0; i<m_NumOfChildView; i++)

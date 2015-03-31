@@ -223,7 +223,6 @@ void mafOpRemoveCells::CreateOpDialog()
   m_Rwi->m_RenderWindow->SetDesiredUpdateRate(0.0001f);
   m_Rwi->SetSize(0,0,800,800);
   m_Rwi->Show(true);
-  m_Rwi->m_RwiBase->SetMouse(m_Mouse);
 
   m_Rwi->m_RenFront->AddActor(m_PolydataActor);
 
@@ -241,7 +240,7 @@ void mafOpRemoveCells::CreateOpDialog()
   mafNEW(m_SelectCellInteractor);
 
   m_SelectCellInteractor->SetListener(this);
-  m_Mouse->AddObserver(m_SelectCellInteractor, MCH_INPUT);
+  GetGlobalMouse()->AddObserver(m_SelectCellInteractor, MCH_INPUT);
 
  
   wxPoint p = wxDefaultPosition;
@@ -325,7 +324,7 @@ void mafOpRemoveCells::CreateSurfacePipeline()
 void mafOpRemoveCells::DeleteOpDialog()
 //----------------------------------------------------------------------------
 {
-  m_Mouse->RemoveObserver(m_SelectCellInteractor);
+  GetGlobalMouse()->RemoveObserver(m_SelectCellInteractor);
 
   mafDEL(m_SelectCellInteractor);
 

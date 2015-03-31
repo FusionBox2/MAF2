@@ -30,7 +30,6 @@
 class mafNode;
 class mafGUI;
 class mafGUIHolder;
-class mafDeviceButtonsPadMouse;
 class mafGUISettings;
 //----------------------------------------------------------------------------
 // constants :
@@ -127,10 +126,6 @@ public:
   //MARCO 7/05/04
   virtual const char **GetActions() {return NULL;}; 
 
-  /** Initialize the mouse device. */
-  void SetMouse(mafDeviceButtonsPadMouse *mouse);
-  mafDeviceButtonsPadMouse *GetMouse(){return m_Mouse;};
-
   /** Turn On/Off the collaboration status. */
   void Collaborate(bool status);
 
@@ -170,7 +165,6 @@ protected:
 	bool 						m_Canundo; ///< Flag to establish if the operation define the UnDo method or not.
 	int 						m_OpType; ///< Store the type of the operation: OPTYPE_OP, OPTYPE_IMPORTER, OPTYPE_EXPORTER
 	bool						m_InputPreserving; ///< Flag to say if the operation change the input data (m_InputPreserving = false) or not.
-  mafDeviceButtonsPadMouse       *m_Mouse;
   bool            m_CollaborateStatus;
   mafGUISettings *m_SettingPanel;
   bool            m_TestMode; ///< Flag used with cppunitTest: put this flag at true when executing tests to avoid busy-info or splash screen to be created, default is false.

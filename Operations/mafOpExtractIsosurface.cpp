@@ -255,10 +255,9 @@ void mafOpExtractIsosurface::CreateOpDialog()
   m_Rwi->m_RenderWindow->AddRenderer(m_PIPRen);
   m_Rwi->m_RenderWindow->SetDesiredUpdateRate(0.0001f);
   m_Rwi->Show(true);
-  m_Rwi->m_RwiBase->SetMouse(m_Mouse);
   mafNEW(m_DensityPicker);
   m_DensityPicker->SetListener(this);	
-  m_Mouse->AddObserver(m_DensityPicker, MCH_INPUT);
+  GetGlobalMouse()->AddObserver(m_DensityPicker, MCH_INPUT);
   m_PIPRen->SetViewport(.6, .01, .99, .4);
   m_PIPRen->GetActiveCamera()->SetFocalPoint(0,0,0);
   m_PIPRen->GetActiveCamera()->SetPosition(0,0,-70);
@@ -620,7 +619,7 @@ void mafOpExtractIsosurface::CreateSlicePipeline()
 void mafOpExtractIsosurface::DeleteOpDialog()
 //----------------------------------------------------------------------------
 {
-  m_Mouse->RemoveObserver(m_DensityPicker);
+  GetGlobalMouse()->RemoveObserver(m_DensityPicker);
 
   m_Rwi->m_RenFront->RemoveActor(m_ContourActor);
   m_Rwi->m_RenFront->RemoveActor(m_Box);

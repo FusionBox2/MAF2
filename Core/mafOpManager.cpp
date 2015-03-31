@@ -37,7 +37,6 @@
 #include "mafOpSelect.h"
 #include "mafGUISettingsDialog.h"
 #include "mafAttributeTraceability.h"
-#include "mafDeviceButtonsPadMouse.h"
 
 #include "mafStorage.h"
 #include "mafEventIO.h"
@@ -312,7 +311,6 @@ void mafOpManager::OpRun(mafOp *op, void *op_param)
 	m_RunningOp->SetSetting(op->GetSetting());
   m_RunningOp->SetListener(this);
 	m_RunningOp->SetInput(m_Selected);
-  m_RunningOp->SetMouse(m_Mouse);
   m_RunningOp->Collaborate(m_CollaborateStatus);
   if (op_param != NULL)
   {
@@ -687,12 +685,6 @@ bool mafOpManager::ForceStopWithCancel()
   m_RunningOp->ForceStopWithCancel();
 
   return m_RunningOp != to_be_killed;
-}
-//----------------------------------------------------------------------------
-void mafOpManager::SetMouse(mafDeviceButtonsPadMouse *mouse)
-//----------------------------------------------------------------------------
-{
-  m_Mouse = mouse;
 }
 //----------------------------------------------------------------------------
 void mafOpManager::Collaborate(bool status)

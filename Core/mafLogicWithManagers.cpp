@@ -336,7 +336,7 @@ void mafLogicWithManagers::Configure()
     m_InteractionManager->SetListener(this);
     mafPlugDevice<mmdRemoteFileManager>("mmdRemoteFileManager");
 
-    m_Mouse = m_InteractionManager->GetMouseDevice();
+    SetGlobalMouse(m_InteractionManager->GetMouseDevice());
     //SIL m_InteractionManager->GetClientDevice()->AddObserver(this, MCH_INPUT);
   }
 #endif
@@ -345,14 +345,12 @@ void mafLogicWithManagers::Configure()
   {
     m_ViewManager = new mafViewManager();
     m_ViewManager->SetListener(this);
-    m_ViewManager->SetMouse(m_Mouse);
   }
 
   if(m_UseOpManager)
   {
     m_OpManager = new mafOpManager();
     m_OpManager->SetListener(this);
-    m_OpManager->SetMouse(m_Mouse);
     m_OpManager->WarningIfCantUndo(m_ApplicationSettings->GetWarnUserFlag());
   }
   
@@ -1280,7 +1278,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
     if (collaborate)
     {
       m_RemoteLogic->SetRemoteMouse(m_InteractionManager->GetRemoteMouseDevice());
-      m_Mouse->AddObserver(m_RemoteLogic, REMOTE_COMMAND_CHANNEL);
+      GetGlobalMouse()->AddObserver(m_RemoteLogic, REMOTE_COMMAND_CHANNEL);
       if(m_RemoteLogic->IsSocketConnected())  //check again, because if no server is present
       {                                       //no synchronization is necessary
         m_RemoteLogic->SynchronizeApplication();
@@ -1292,12 +1290,12 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
       {
         m_RemoteLogic->SetRemoteMouse(NULL);
         m_RemoteLogic->Disconnect();
-        m_Mouse->RemoveObserver(m_RemoteLogic);
+        GetGlobalMouse()->RemoveObserver(m_RemoteLogic);
       }
     }
     m_ViewManager->Collaborate(collaborate);
     m_OpManager->Collaborate(collaborate);
-    m_Mouse->Collaborate(collaborate);
+    GetGlobalMouse()->Collaborate(collaborate);
     return;
   }
   if(ABOUT_APPLICATION == eventId)
@@ -1792,6 +1790,7 @@ void mafLogicWithManagers::OnQuit()
   cppDEL(m_MaterialChooser);
 // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
+  SetGlobalMouse(NULL);
   cppDEL(m_InteractionManager);
 #endif
   cppDEL(m_ViewManager);

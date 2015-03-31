@@ -31,7 +31,6 @@
 //----------------------------------------------------------------------------
 class mafLightKit;
 class mafVME;
-class mafDeviceButtonsPadMouse;
 class vtkRenderWindow;
 class vtkRenderer;
 class mafAttachCamera;
@@ -153,9 +152,6 @@ public:
   void PlugVisualPipe(const mafString& vme_type, const mafString& pipe_type, long visibility = VISIBLE);
 
   mafPipeMap m_PipeMap; ///< Map used to store visual pipeline associated with vme types
-
-  /** Set the mouse device to use inside the view */
-  void SetMouse(mafDeviceButtonsPadMouse *mouse);
 
   /** Print this view.*/
   virtual void Print(wxDC *dc, wxRect margins);

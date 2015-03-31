@@ -41,7 +41,6 @@ class mafVME;
 class mafInteractionManager;
 class mafPrintSupport;
 class mafRemoteLogic;
-class mafDeviceButtonsPadMouse;
 class mafGUISettingsDialog;
 class mafGUIApplicationLayoutSettings;
 class mafGUISettings;
@@ -281,8 +280,6 @@ protected:
   
   mafGUIMaterialChooser  *m_MaterialChooser;
   mafPrintSupport     *m_PrintSupport;
-
-  mafDeviceButtonsPadMouse            *m_Mouse;
 
   wxMenu *m_ImportMenu; 
   wxMenu *m_ExportMenu; 
