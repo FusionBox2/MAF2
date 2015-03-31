@@ -77,8 +77,7 @@ int mmuMSF1xDocument::InternalRestore(mafStorageElement *node)
     m_Root->SetMaxItemId(max_item_id);
   
 
-  mafStorageElement::ChildrenVector children;
-  children = node->GetChildren();
+  const mafStorageElement::ChildrenVector& children = node->GetChildren();
 
   for (int i=0;i<children.size();i++)
   {

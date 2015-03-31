@@ -143,7 +143,7 @@ int mafAction::InternalRestore(mafStorageElement *node)
  
   SetName(name);
 
-  mafStorageElement::ChildrenVector &children=node->GetChildren();
+  const mafStorageElement::ChildrenVector &children=node->GetChildren();
   for (int i=0;i<children.size();i++)
   {
     mafStorageElement *subnode = children[i];

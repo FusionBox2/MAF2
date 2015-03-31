@@ -212,7 +212,7 @@ int mafTagArray::InternalRestore(mafStorageElement *node)
     mafID numAttrs=-1;
     node->GetAttributeAsInteger("NumberOfTags",numAttrs);
   
-    mafStorageElement::ChildrenVector &children=node->GetChildren();
+    const mafStorageElement::ChildrenVector &children=node->GetChildren();
     int ret=MAF_OK;
     int idx=0;
     for (int i=0;(idx < numAttrs) && (i < children.size()) && (ret == MAF_OK);i++)
