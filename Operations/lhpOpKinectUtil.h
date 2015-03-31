@@ -60,8 +60,6 @@ protected:
   void DestroyDictionary();
 
   std::vector<mafString>         m_C3DInputFileNameFullPaths;
-  mafString                      m_ExtAppPath;
-  mafString                      m_ExtAppPathModel;
   mafString                      m_FileDir;
   mafString                      m_FileSuffix;
   int                            m_TakeScaled;

@@ -50,6 +50,8 @@
 #include <vcl_fstream.h>
 #include <vcl_string.h>
 
+#include "resource.h"
+
 //----------------------------------------------------------------------------
 // Required for MSVC
 //----------------------------------------------------------------------------
@@ -63,8 +65,6 @@
 enum 
 {
   ID_DEFAULT = MINID,
-  ID_EXTAPPPATH,
-  ID_EXTAPPPATHMODEL,
   ID_LOAD_DICT,
   ID_CLEAR_DICT,
   ID_FREQ,
@@ -77,8 +77,283 @@ enum
   ID_FORCED_DWORD = 0x7fffffff
 };
 
+class medOpImporterLandmarkAccU : public medOpImporterLandmark
+{
+public:
+  mafTypeMacro(medOpImporterLandmarkAccU, medOpImporterLandmark);
+  medOpImporterLandmarkAccU(const mafString& label = "") : medOpImporterLandmark(label){}
+  std::vector<mafVME*>& GetResults(){return m_Results;}
+};
+
+mafCxxTypeMacro(medOpImporterLandmarkAccU)
+
+
+
 namespace 
 {
+  void extractTool(const mafString& tmpPath)
+  {
+    const char *resNames[]=    {"IDR_EXE2", "LL_Model_S035_K",                    
+      "LL_Model_S035_V",                     
+      "TR72_3FN_MATL_LL_K",                  
+      "TR72_3FN_MATL_LL_V",                  
+      "TR72_3FN_MATL_UL_K",                  
+      "TR72_3FN_MATL_UL_V",                  
+      "UpL_Model_S035_K",                    
+      "UpL_Model_S035_V",                    
+
+      "KV_Local_Param_Inp_Shv_K",            
+      "KV_Local_Param_Inp_Shv_V",            
+      "All_Regr_p_coeffs_2_ALL_Kin_R_Abd_N", 
+      "All_Regr_p_coeffs_2_ALL_Kin_R_Flx_N"};
+
+    const char *names[]=
+    {"KinVic_Opt_ShV_2012.exe","LL_Model_S035_K.dat",
+    "LL_Model_S035_V.dat",
+    "TR72_3FN_MATL_LL_K.DAT",
+    "TR72_3FN_MATL_LL_V.DAT",
+    "TR72_3FN_MATL_UL_K.DAT",
+    "TR72_3FN_MATL_UL_V.DAT",
+    "UpL_Model_S035_K.dat",
+    "UpL_Model_S035_V.dat",
+
+    "KV_Local_Param_Inp_Shv_K.m",
+    "KV_Local_Param_Inp_Shv_V.m",
+    "All_Regr_p_coeffs_2_ALL_Kin_R_Abd_N.txt",
+    "All_Regr_p_coeffs_2_ALL_Kin_R_Flx_N.txt"};
+
+
+
+    HINSTANCE hInstance = wxGetInstance();
+
+    for(int i = 0; i < 13; i++)
+    {
+      mafString apppath;
+      apppath = tmpPath;
+      apppath += "\\";
+      apppath += names[i];
+      HRSRC hrSrc = FindResource(hInstance, resNames[i], i==0?"EXE":"DAT");
+      HGLOBAL exef = LoadResource(hInstance, hrSrc);
+      size_t sz = SizeofResource(hInstance, hrSrc);
+      void *buf = LockResource(exef);
+      FILE *exeF = fopen(apppath.GetCStr(), "wb");
+      fwrite(buf, 1, sz, exeF);
+      fclose(exeF);
+    }
+  }
+
+  void writeParams(const mafString& tmpPath, const mafString& inputPath, const mafString& inputFile, const mafString& staticFile, const mafString& outputPath)
+  {
+    mafString mtlbopt;
+    mtlbopt = tmpPath;
+
+    mafString fullName;
+    fullName = mtlbopt;
+    fullName += "\\KV_Local_Param_Inp_Shv_K.m";
+
+    mafString kinectDirName;
+    kinectDirName = inputPath;
+
+    mafString outKinectDirName;
+    outKinectDirName = outputPath;
+
+    std::ofstream strm;
+    strm.open(fullName, std::ios::out);
+    strm << "%%% function KV_Local_Param_Inp_Shv" << endl;
+    strm << endl;
+    strm << "%%%%% ===========================================" << endl;
+    strm << "%%%  Disp_Debug_Yes = 0; %%% 0 1" << endl;
+    strm << "%%%  " << endl;
+    strm << "Disp_Debug_Yes = 1; %%% 0 1" << endl;
+    strm << endl;
+    strm << "%%%%% ===========================================" << endl;
+    strm << "%%% " << endl;
+    strm << "KV_Input_Kinect = 1; %%% 1-Kinect; 0-Vicon" << endl;
+    strm << "%%% KV_Input_Kinect = 0; %%% 1-Kinect; 0-Vicon" << endl;
+    strm << endl;
+    strm << "%%% OLD  Vicon_P1_In_YES = 1; %%% 1-P1_protcl; 0-P0_protcl(OPTIMIZ)" << endl;
+    strm << "%%% OLD  Vicon_P1_In_YES = 0; %%% 1-P1_protcl; 0-P0_protcl(OPTIMIZ)" << endl;
+    strm << endl;
+    strm << "%%% " << endl;
+    strm << "Vicon_P1_In_YES =  [1 1 1 1 1]; %%% 1-P1_protcl; 0-P0_protcl(OPTIMIZ)  %%% P1_all: R_L_Legs(1 2) Trx(3) R_L_Hands(4 5) [1 1 1 1 1]-MAIN" << endl;
+    strm << "%%% Vicon_P1_In_YES =  [0 0 0 0 0]; %%% 1-P1_protcl; 0-P0_protcl(OPTIMIZ)  %%% P0_all: R_L_Legs(1 2) Trx(3) R_L_Hands(4 5) [0 0 0 0 0]-All OPT" << endl;
+    strm << "%%% Vicon_P1_In_YES =  [1 1 1 0 0]; %%% 1-P1_protcl; 0-P0_protcl(OPTIMIZ)  %%% P1_R_L_Legs(1 2) P1_Trx(3) P0_R_L_Hands(4 5) [1 1 1 0 0]-test" << endl;
+    strm << "%%%%% ===========================================" << endl;
+    strm << "%%% " << endl;
+    strm << "Reduced_Output_Kinect_Yes = 0; %%% 0-MAIN 1-analysis 'Opt_5_Bds'(see below)" << endl;
+    strm << "%%% Reduced_Output_Kinect_Yes = 1; %%% 0-MAIN 1-analysis 'Opt_5_Bds'(see below)" << endl;
+    strm << "%%%%% ===========================================" << endl;
+    strm << "Dir_Name_Data = '"; 
+    
+    for(int i = 0; i < kinectDirName.Length(); i++)
+    {
+      if(kinectDirName[i] == '/')
+        strm << '\\';
+      else
+       strm << kinectDirName[i];
+    }
+    
+    strm << "\\';" << endl;
+    strm << endl;
+    strm << "%%%%% ===========================================" << endl;
+    strm << "Dir_Name_Results = '";
+    
+    for(int i = 0; i < outKinectDirName.Length(); i++)
+    {
+      if(outKinectDirName[i] == '/')
+        strm << '\\';
+      else 
+        strm << outKinectDirName[i]; 
+    }
+    
+    strm << "'; %%% 'test'  'test_06'  'test_07'" << endl;
+    strm << endl;
+    strm << "%%%%% ===========================================" << endl;
+    strm << "Static_Pose_Yes = 1; %%% 0 1-Scale from static pose" << endl;
+    strm << "FN_Kin_Data_Inp_Static = '" << staticFile.GetCStr() << "'; %%% Serge Squat 21may2012 SVSJ" << endl;
+    strm << "%%%%% ===========================================" << endl;
+    strm << "FN_Kin_Data_Inp = '" << inputFile.GetCStr() << "'; %%% Serge Squat 21may2012 SVSJ" << endl;
+    strm << "%%%%% ===========================================" << endl;
+    strm << "%%% " << endl;
+    strm << "Save_Model_Yes = 0; %%% 0-MAIN 1" << endl;
+    strm << "%%% Save_Model_Yes = 1; %%% 0-MAIN 1" << endl;
+    strm << "%%% " << endl;
+    strm << "Load_Model_Yes = 1; %%% 0-Requred ASCII:[TR72_3FN_MATL_LL.DAT, TR72_3FN_MATL_UL.DAT];  1-MAIN" << endl;
+    strm << "%%% Load_Model_Yes = 0; %%% 0-Requred ASCII:[TR72_3FN_MATL_LL.DAT, TR72_3FN_MATL_UL.DAT];  1-MAIN" << endl;
+    strm << "if Save_Model_Yes, Load_Model_Yes = 0; end" << endl;
+    strm << "%%%%% ===========================================" << endl;
+    strm << "%%% " << endl;
+    strm << "Opt_5_Bds = [1 1 1 1 1]; %%% R_L_Legs(1 2) Trx(3) R_L_Hands(4 5) [1 1 1 1 1]-MAIN" << endl;
+    strm << "%%% Opt_5_Bds = [0 0 0 0 1]; %%% L_Hand(5) [0 0 0 0 1]-Test " << endl;
+    strm << "%%% Opt_5_Bds = [1 0 0 0 1]; %%% R_Leg L_Hand(1 5) [1 0 0 0 1]-Test " << endl;
+    strm << "%%% Opt_5_Bds = [1 0 0 0 0]; %%% R_Leg (1 ) [1 0 0 0 0]-Test " << endl;
+    strm << "%%% Opt_5_Bds = [0 1 0 0 0]; %%% L_Leg (2 ) [0 1 0 0 0]-Test " << endl;
+    strm << "%%% Opt_5_Bds = [1 1 0 0 0]; %%% RL_Leg (1 2) [1 1 0 0 0]-Test " << endl;
+    strm << "%%% Opt_5_Bds = [0 0 0 1 1]; %%% R_L_Hands(4 5) [0 0 0 1 1]-Test " << endl;
+    strm << "%%% Opt_5_Bds = [0 0 1 1 1]; %%% Trx(3) R_L_Hands(4 5) [0 0 1 1 1]-Test " << endl;
+    strm << "%%% Opt_5_Bds = [1 1 0 0 0]; %%% R_L_Legs(1 2) [1 1 0 0 0]-Test " << endl;
+    strm << "%%%%% ===========================================" << endl;
+    strm << "%%% " << endl;
+    strm << "H_time_Refram = 0.1; %%% Normal Speed, e.g. SVSJ Squat_S02 21may2012" << endl;
+    strm << "%%% H_time_Refram = 0.04; %%% Fast Speed, e.g. SVSJ Jump_S10 21may2012" << endl;
+    strm << "%%% H_time_Refram = 0.01; %%% VERY Fast Speed, THEN(!!!) capturing frec(e.g.33fps) will be USED" << endl;
+    strm << "%%%%% ===========================================" << endl;
+    strm << "Equal_Frec_25_Yes = 1; %%% 0 1-MAIN; for Output reframing" << endl;
+    strm << "%%% if Equal_Frec_25_Yes == 1, Frec_New = 100; h_Time = 1/Frec_New; end %%% 100 FPS" << endl;
+    strm << "%%% if Equal_Frec_25_Yes == 1, Frec_New = 25; h_Time = 1/Frec_New; end %%% 25 FPS" << endl;
+    strm << "%%% " << endl;
+    strm << "if Equal_Frec_25_Yes == 1, Frec_New = 10; h_Time = 1/Frec_New; end %%% 100 FPS" << endl;
+    strm << "%%%%% ===========================================" << endl;
+    strm << "%%% " << endl;
+    strm << "Thorax_Root_Yes = 0; %%% 1 0-MAIN" << endl;
+    strm << "%%% Thorax_Root_Yes = 1; %%% 1 0-MAIN" << endl;
+    strm << "if sum(Opt_5_Bds(1:3),2) == 0, Thorax_Root_Yes = 1; end " << endl;
+    strm << endl;
+    strm << "%%%%% ===========================================" << endl;
+    strm << "%%% " << endl;
+    strm << "Kinect_In_YES = 1; %%% 0 1-Kinect Data" << endl;
+    strm << "%%% Kinect_In_YES = 0; %%% 0-Vicon Data 1" << endl;
+    strm << "%%% Kinect_In_YES = KV_Input_Kinect;" << endl;
+    strm << "IFLag_AL_Fout = 1; %%% 0 1-MAIN" << endl;
+    strm << "LL_OPT_YES = 1; %%% 0 1-MAIN" << endl;
+    strm << "UpL_OPT_YES = 1; %%% 0 1-MAIN" << endl;
+    strm << "DoFs_Smooth_Yes = 1; %%% 0 1-MAIN" << endl;
+    strm << "DoFs_Corr_Yes = 1; %%% 0 1-MAIN" << endl;
+    strm << "Should_LR_Corr_Yes = 1; %%% 0 1-MAIN" << endl;
+    strm << "Surfl_Yes = 0; %%% 1-Trx_Ellipsoid_Fig1, 0-MAIN" << endl;
+    strm << "%%% Par_Smth_30 = 30; %%% 10-MAIN smoothing param for OVP spline" << endl;
+    strm << "%%% " << endl;
+    strm << "Par_Smth_30 = 100; %%% 10-MAIN smoothing param for OVP spline" << endl;
+    strm << "%%%%% ===========================================" << endl;
+    strm << "x0_Poly_Apprx_Yes = [1 1 1 1 1]; %%% 1 0" << endl;
+    strm << "%%% N_Polyn = [3 3 3 3 3]; %%% [2-5] polyn" << endl;
+    strm << "%%% " << endl;
+    strm << "N_Polyn = [3 3 3 4 4]; %%% [2-5] polyn" << endl;
+    strm << "%%% Mult_T5 = [0.5 0.5 0.5 0.0 0.0]; %%% [0.0-1.0]" << endl;
+    strm << "%%% " << endl;
+    strm << "Mult_T5 = [0.5 0.5 0.5 0.3 0.3]; %%% [0.0-1.0]" << endl;
+    strm << "%%% Mult_T5 = [0.5 0.5 0.5 0.5 0.5]; %%% [0.0-1.0]" << endl;
+    strm << "%%%%% ===========================================" << endl;
+    strm << "%%% " << endl;
+    strm << "Bord_Delt = 0.0001;" << endl;
+    strm << "%%%%% ===========================================" << endl;
+    strm << "%%% " << endl;
+    strm << "Start_Fr_N = 1; " << endl;
+    strm << "%%% Start_Fr_N = 263;" << endl;
+    strm << "%%% Start_Fr_N = 201;" << endl;
+    strm << "%%% Start_Fr_N = 301; %%% UP" << endl;
+    strm << "%%% " << endl;
+    strm << "Decim_Frm = 4;" << endl;
+    strm << "%%% Vic_Pelv_4ALs = [0 1 1 1]; %%%  !!! LIAS LIPS  RIAS RIPS " << endl;
+    strm << "%%% " << endl;
+    strm << "Vic_Pelv_4ALs = [1 1 1 1]; %%% MAIN  !!! LIAS LIPS  RIAS RIPS " << endl;
+    strm << "%%%%% ===========================================" << endl;
+    strm << endl;
+    strm << "%%% end %%% %%% function KV_Local_Param_Inp_Shv" << endl;
+    strm.close();
+  }
+  mafVMEGroup *ModelImport(const mafString& path)
+  {
+    mafString files[] = {
+      "L_Foot.txt",
+      "L_Pate.txt",
+      "L_Shan.txt",
+      "L_Thg1.txt",
+      "L_Thg2.txt",
+      "L_Thg3.txt",
+      "R_Pate.txt",
+      "R_Foot.txt",
+      "R_Shan.txt",
+      "R_Thg1.txt",
+      "R_Thg2.txt",
+      "R_Thg3.txt",
+      "Pelvis.txt",
+      "UpCerv.txt",
+      "UpLCla.txt",
+      "UpLHan.txt",
+      "UpLHum.txt",
+      "UpLRad.txt",
+      "UpLSca.txt",
+      "UpLUln.txt",
+      "UpLumb.txt",
+      "UpPelv.txt",
+      "UpRCla.txt",
+      "UpRHan.txt",
+      "UpRHum.txt",
+      "UpRRad.txt",
+      "UpRSca.txt",
+      "UpRUln.txt",
+      "UpSkul.txt",
+      "UpThor.txt",
+    };
+
+    mafVMEGroup *grp = NULL;
+    for(int i = 0; i < DIM(files); i++)
+    {
+      mafString fpath;
+      fpath = path;
+      fpath += "\\";
+      fpath += files[i];
+      if(!mafFileExists(fpath))
+        continue;
+      medOpImporterLandmarkAccU *imp = new medOpImporterLandmarkAccU();
+      imp->SetFileName(fpath);
+      imp->Read();
+      std::vector<mafVME*>& res = imp->GetResults();
+      if(grp == NULL && !res.empty())
+      {
+        grp = mafVMEGroup::New();
+        grp->Register(NULL);
+        grp->SetName("KinectModel");
+      }
+      for(std::vector<mafVME*>::iterator it = res.begin(); it != res.end(); ++it)
+      {
+        (*it)->ReparentTo(grp);
+      }
+      delete imp;
+    }
+    return grp;
+  }
   bool parsefloat(std::istream& istr, double& val)
   {
     /*std::stack<int> symbs;
@@ -107,18 +382,6 @@ namespace
   }
 }
 
-
-class medOpImporterLandmarkAccU : public medOpImporterLandmark
-{
-public:
-  mafTypeMacro(medOpImporterLandmarkAccU, medOpImporterLandmark);
-  medOpImporterLandmarkAccU(const mafString& label = "") : medOpImporterLandmark(label){}
-  std::vector<mafVME*>& GetResults(){return m_Results;}
-};
-
-mafCxxTypeMacro(medOpImporterLandmarkAccU)
-
-
 mafCxxTypeMacro(lhpOpKinectUtil)
 //----------------------------------------------------------------------------
 lhpOpKinectUtil::lhpOpKinectUtil(bool extapp, const mafString& label) : Superclass(label)
@@ -128,12 +391,10 @@ lhpOpKinectUtil::lhpOpKinectUtil(bool extapp, const mafString& label) : Supercla
   m_Canundo   = false;
   m_FileDir = mafGetApplicationDirectory() + "/Data/External/";
   m_DictionaryFileName = "";
-  m_ExtAppPath         = "SkeletalViewer.exe";
-  m_ExtAppPathModel    = "LLOptim.exe";
   m_Scale  = 1.0;
   m_Freq   = 30.0;
   m_AFs    = false;
-  m_Model  = true;
+  m_Model  = false;
   m_ExtApp = extapp;
   m_TypeOfRefs = 0;
   m_TakeScaled = 1;
@@ -234,16 +495,10 @@ void lhpOpKinectUtil::OnEvent(mafEventBase *maf_event)
       else
         m_FileSuffix = "";
       break;
-    case ID_EXTAPPPATH:
-    case ID_EXTAPPPATHMODEL:
-      break;
     case ID_FREQ:
       break;
     case ID_AFS:
       m_Gui->Enable(ID_TYPEOFREFS, (m_AFs != 0));
-      break;
-    case ID_MODEL:
-      m_Gui->Enable(ID_EXTAPPPATHMODEL, (m_Model != 0));
       break;
     case ID_TYPEOFREFS:
       break;
@@ -295,7 +550,6 @@ void lhpOpKinectUtil::CreateGui()
   m_Gui = new mafGUI(this);
   if(m_ExtApp)
   {
-    m_Gui->FileOpen(ID_EXTAPPPATH, "Ext app", &m_ExtAppPath, "*.exe");
     m_Gui->Bool(ID_FSUFFIX, "Scaled", &m_TakeScaled);
   }
   m_Gui->Double(ID_SCALE, _("Scale"), &m_Scale, 0.0);
@@ -304,12 +558,10 @@ void lhpOpKinectUtil::CreateGui()
   m_Gui->Combo(ID_TYPEOFREFS, "Type",&m_TypeOfRefs, 2, refs_names);
   m_Gui->Label("");
   m_Gui->Bool(ID_MODEL, _("Model"), &m_Model);
-  m_Gui->FileOpen(ID_EXTAPPPATHMODEL, "Mod app", &m_ExtAppPathModel, "*.exe");
   m_Gui->FileOpen(ID_LOAD_DICT, "LM list",  &m_DictionaryFileName, "*.txt");
   m_Gui->Button(ID_CLEAR_DICT, "Clean", "", "Press to cancel using list" );  
   m_Gui->Enable(ID_CLEAR_DICT, (m_DictionaryFileName != ""));
   m_Gui->Enable(ID_TYPEOFREFS, (m_AFs != 0));
-  m_Gui->Enable(ID_EXTAPPPATHMODEL, (m_Model != 0));
 
   m_Gui->OkCancel();
 }
@@ -320,14 +572,38 @@ bool lhpOpKinectUtil::Import()
   bool result = false;
   Clear();
 
-  mafString filestxt, sessionstxt, filetoprd;
-  std::vector<mafString> sessionsList;
+  mafString filestxt, sessionstxt, filetoprd, apppath;
+  std::vector<std::pair<mafString, mafVME*> > sessionsList;
+  bool storageExists = false;
   if(m_ExtApp)
   {
-    if(m_ExtAppPath.IsEmpty())
-      return false;
-    filetoprd = mafCreateTempFileName("");
-    mafString commandline = m_ExtAppPath;
+    /*if(m_ExtAppPath.IsEmpty())
+      return false;*/
+    if(mafDirExists("C:\\KinectStorage"))
+    {
+      storageExists = true;
+      filetoprd = "C:\\KinectStorage";
+    }
+    else
+    {
+      filetoprd = mafCreateTempFileName("");
+    }
+
+    apppath = filetoprd;
+    if(!storageExists)
+      mafDirMake(filetoprd);
+    apppath += "\\mrkless.exe";
+
+    HINSTANCE hInstance = wxGetInstance();
+    HRSRC hrSrc = FindResource(hInstance, "IDR_EXE1", _T("EXE"));
+    HGLOBAL exef = LoadResource(hInstance, hrSrc);
+    size_t sz = SizeofResource(hInstance, hrSrc);
+    void *buf = LockResource(exef);
+    FILE *exeF = fopen(apppath.GetCStr(), "wb");
+    fwrite(buf, 1, sz, exeF);
+    fclose(exeF);
+
+    mafString commandline = apppath;
     commandline += " -logging" + filetoprd;
     if(wxExecute(commandline.GetCStr(), wxEXEC_SYNC) != 0)
       return false;
@@ -377,11 +653,22 @@ bool lhpOpKinectUtil::Import()
         }
         mafString fName;
         fName = mafString(string);
-        sessionsList.push_back(fName);
+        sessionsList.push_back(std::make_pair(fName, (mafVME*)nullptr));
       }
       fclose(fp);
     }
   }
+
+  mafString mtlbTmp, modelPath;
+  if(m_Model)
+  {
+    mtlbTmp = mafCreateTempFileName("");
+    mafDirMake(mtlbTmp);
+    extractTool(mtlbTmp);
+    modelPath = mtlbTmp;
+    modelPath += "\\Model";
+  }
+
 
   for(unsigned fileIndex = 0; fileIndex < m_C3DInputFileNameFullPaths.size(); fileIndex++)
   {
@@ -405,24 +692,82 @@ bool lhpOpKinectUtil::Import()
     {
       if(m_ExtApp)
       {
-        mafString pref, resname;
-        pref = mafString("");
-        for(std::vector<mafString>::iterator it = sessionsList.begin(); it != sessionsList.end(); ++it)
+        //mafString pref, resname;
+        //pref = mafString("");
+        for(std::vector<std::pair<mafString, mafVME*> >::iterator it = sessionsList.begin(); it != sessionsList.end(); ++it)
         {
-          if(*it == path)
+          if(it->first == path)
           {
-            mafString spath, sname, sext;
-            mafSplitPath(*it, &spath, &sname, &sext);
-            pref = sname + "_";
+            if(!it->second)
+            {
+              mafString spath, sname, sext;
+              mafSplitPath(it->first, &spath, &sname, &sext);
+              //pref = sname + "_";
+              mafVMEGroup *grp;
+              mafNEW(grp);
+              it->second = grp;
+              grp->SetName(sname);
+              m_Imported.push_back(grp);
+            }
+            imported->ReparentTo(it->second);
+            mafVME *tmp = imported;
+            mafDEL(tmp);
             break;
           }
         }
-        resname  = pref;
-        resname += name;
-        imported->SetName(resname);
+        //resname  = pref;
+        //resname += name;
+        imported->SetName(name);
+      }
+      else
+      {
+        m_Imported.push_back(imported);
+      }
+      if(m_Model)
+      {
+        mafString nmext, staticName, fullSName, anthroFile;
+        nmext = name;
+        nmext += ".";
+        nmext += ext;
+        if(importName.FindFirst("_Scaled") != -1)
+          staticName = "Static_Scaled.txt";
+        else
+          staticName = "Static.txt";
+        fullSName = path;
+        fullSName += "/";
+        fullSName += staticName;
+
+        anthroFile = path;
+        anthroFile += "/";
+        anthroFile += "AnthropometryKinect.m";
+        if(mafFileExists(fullSName) && mafFileExists(anthroFile))
+        {
+          mafString newAnthro;
+          newAnthro = mtlbTmp;
+          newAnthro += "/";
+          newAnthro += "AnthropometryKinect.m";
+          mafFileCopy(anthroFile, newAnthro);
+          mafDirMake(modelPath);
+          writeParams(mtlbTmp, path, nmext, staticName, modelPath);
+
+
+          mafString commandline;
+          commandline = mtlbTmp;
+          commandline += "/KinVic_Opt_ShV_2012.exe KV_Local_Param_Inp_Shv_K.m LL_Model_S035_K.dat UpL_Model_S035_K.dat";
+          wxSetWorkingDirectory(mtlbTmp.GetCStr());
+          if(wxExecute(commandline.GetCStr(), wxEXEC_SYNC) == 0)
+          {
+            mafVMEGroup *grp = ModelImport(modelPath);
+            if(grp)
+            {
+              grp->ReparentTo(imported);
+              mafDEL(grp);
+            }
+          }
+          mafRemoveDirectory(modelPath);
+        }
       }
       result = true;
-      m_Imported.push_back(imported);
       if(m_AFs)
       {
         lhpOpKinectAFs opafs;
@@ -434,15 +779,22 @@ bool lhpOpKinectUtil::Import()
       }
     }
   }
-  if(m_ExtApp && !m_C3DInputFileNameFullPaths.empty())
+  if(m_ExtApp)
   {
-    for(unsigned sessionIndex = 0; sessionIndex < sessionsList.size(); sessionIndex++)
-      mafRemoveDirectory(sessionsList[sessionIndex]);
-    mafRemoveDirectory(filetoprd);
-//     for(unsigned fileIndex = 0; fileIndex < m_C3DInputFileNameFullPaths.size(); fileIndex++)
-//       mafFileRemove(m_C3DInputFileNameFullPaths[fileIndex]);
-//     mafFileRemove(filestxt);
-//     mafFileRemove(sessionstxt);
+    if(!storageExists)
+    {
+      mafRemoveDirectory(filetoprd);
+    }
+    else
+    {
+      mafFileRemove(apppath);
+      mafFileRemove(filestxt);
+      mafFileRemove(sessionstxt);
+    }
+  }
+  if(m_Model)
+  {
+    mafRemoveDirectory(mtlbTmp);
   }
   return result;
 }
@@ -567,12 +919,15 @@ mafVME *lhpOpKinectUtil::ImportSingleFile(const mafString &fullFileName)
         m_Scale * rmatrix[i][j + 1],
         m_Scale * rmatrix[i][j + 2], 
         timeStamps[i]);
-    }	
+    }
 
-  }						
-  if(!cloud || !m_Model || m_ExtAppPathModel.IsEmpty())
-    return cloud;
+  }
+  return cloud;
+}
+#ifdef TMP_EXPORT
 
+void TmpExport()
+{
   int    numframes = timeStamps.size();
 
   mafString pelv_names[] = {"LASI", "RASI", "RPSI", "LPSI"};
@@ -703,57 +1058,9 @@ mafVME *lhpOpKinectUtil::ImportSingleFile(const mafString &fullFileName)
   outF1.close();
   outF2.close();
   outF3.close();
-
-  mafString commandline = m_ExtAppPathModel;
-  wxSetWorkingDirectory(path.GetCStr());
-  commandline += " TR72_3FN.DAT rtk__out.dat";
-  if(wxExecute(commandline.GetCStr(), wxEXEC_SYNC) != 0)
-    return false;
-
-  mafString files[] = {"L_Foot.txt",
-    "L_Pate.txt",
-    "L_Shan.txt",
-    "L_Thg1.txt",
-    "L_Thg2.txt",
-    "L_Thg3.txt",
-    "R_Pate.txt",
-    "R_Foot.txt",
-    "R_Shan.txt",
-    "R_Thg1.txt",
-    "R_Thg2.txt",
-    "R_Thg3.txt",
-    "Pelvis.txt"};
-
-  mafVMEGroup *grp = NULL;
-  for(int i = 0; i < DIM(files); i++)
-  {
-    mafString fpath;
-    fpath = path;
-    fpath += files[i];
-    if(!mafFileExists(fpath))
-      continue;
-    medOpImporterLandmarkAccU *imp = new medOpImporterLandmarkAccU();
-    imp->SetFileName(fpath);
-    imp->Read();
-    std::vector<mafVME*>& res = imp->GetResults();
-    if(grp == NULL && !res.empty())
-    {
-      mafNEW(grp);
-      grp->SetName("KinectModel");
-    }
-    for(std::vector<mafVME*>::iterator it = res.begin(); it != res.end(); ++it)
-    {
-      (*it)->ReparentTo(grp);
-    }
-    delete imp;
-  }
-  if(grp)
-  {
-    grp->ReparentTo(cloud);
-    mafDEL(grp);
-  }
-  return cloud;
 }
+#endif
+
 
 //----------------------------------------------------------------------------
 void lhpOpKinectUtil::Clear()

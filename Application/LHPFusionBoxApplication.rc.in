@@ -2,3 +2,21 @@
 
 #include <wx/msw/wx.rc>
 IDI_ICON1 ICON DISCARDABLE "LHPFusionBoxApplication.ico"
+
+IDR_EXE1  EXE              "mrkless.exe"
+
+IDR_EXE2  EXE              "KinVic_Opt_ShV_2012.exe"
+
+LL_Model_S035_K                     DAT "LL_Model_S035_K.dat"   
+LL_Model_S035_V                     DAT "LL_Model_S035_V.dat"   
+TR72_3FN_MATL_LL_K                  DAT "TR72_3FN_MATL_LL_K.DAT"
+TR72_3FN_MATL_LL_V                  DAT "TR72_3FN_MATL_LL_V.DAT"
+TR72_3FN_MATL_UL_K                  DAT "TR72_3FN_MATL_UL_K.DAT"
+TR72_3FN_MATL_UL_V                  DAT "TR72_3FN_MATL_UL_V.DAT"
+UpL_Model_S035_K                    DAT "UpL_Model_S035_K.dat"  
+UpL_Model_S035_V                    DAT "UpL_Model_S035_V.dat"  
+
+KV_Local_Param_Inp_Shv_K            DAT "KV_Local_Param_Inp_Shv_K.m"
+KV_Local_Param_Inp_Shv_V            DAT "KV_Local_Param_Inp_Shv_V.m"
+All_Regr_p_coeffs_2_ALL_Kin_R_Abd_N DAT "All_Regr_p_coeffs_2_ALL_Kin_R_Abd_N.txt"
+All_Regr_p_coeffs_2_ALL_Kin_R_Flx_N DAT "All_Regr_p_coeffs_2_ALL_Kin_R_Flx_N.txt"
