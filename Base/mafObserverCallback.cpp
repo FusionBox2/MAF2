@@ -26,12 +26,7 @@
 
 
 #include "mafObserverCallback.h"
-#include "mafEventSource.h"
 #include "mafEventBase.h"
-
-//------------------------------------------------------------------------------
-mafCxxTypeMacro(mafObserverCallback)
-//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 mafObserverCallback::mafObserverCallback()

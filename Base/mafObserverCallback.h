@@ -18,7 +18,6 @@
 //----------------------------------------------------------------------------
 // includes :
 //----------------------------------------------------------------------------
-#include "mafObject.h"
 #include "mafObserver.h"
 
 //------------------------------------------------------------------------------
@@ -34,13 +33,11 @@
   @todo 
   - create a test
 */
-class MAF_EXPORT mafObserverCallback:public mafObject, public mafObserver
+class MAF_EXPORT mafObserverCallback:public mafObserver
 {
 public:
   mafObserverCallback();
   virtual ~mafObserverCallback();
-
-  mafTypeMacro(mafObserverCallback,mafObject);
 
   /** Set function callback to be called by this observer */
   void SetCallback(void (*f)(void *sender, mafID eid, void *calldata));
