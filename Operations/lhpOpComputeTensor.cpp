@@ -654,7 +654,6 @@ void lhpOpComputeTensor::CreateOpDialog()
   m_Rwi->m_RenderWindow->SetDesiredUpdateRate(0.0001f);
   m_Rwi->SetSize(0,0,400,400);
   m_Rwi->Show(true);
-  m_Rwi->m_RwiBase->SetMouse(m_Mouse) ;
 
   UpdateScalarsInRenderingVolume();
   CreateVisualPipes();
