@@ -54,9 +54,6 @@ public:
   mafTimeMapScalar();  
   virtual ~mafTimeMapScalar();
 
-  mafTimeMapScalar(const mafTimeMapScalar<T>&);  
-  void operator=(const mafTimeMapScalar<T>&);
-
   /** set the TypeName of the kind of item accepted by this container */
   void SetItemTypeName(const char *tname) {m_ItemTypeName = tname;}
   const char *GetItemTypeName() {return m_ItemTypeName;}
@@ -152,5 +149,9 @@ public:
 protected:
   TimeMapScalars  m_TimeMap;        ///< the set storing the scalars
   mafString       m_ItemTypeName;   ///< the name of the item type accepted by this container
+
+private:
+  mafTimeMapScalar(const mafTimeMapScalar<T>&);  
+  void operator=(const mafTimeMapScalar<T>&);
 };
 #endif

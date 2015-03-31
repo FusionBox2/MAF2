@@ -50,9 +50,6 @@ public:
   mafTimeMap();  
   virtual ~mafTimeMap();
 
-  mafTimeMap(const mafTimeMap<T>&);  
-  void operator=(const mafTimeMap<T>&);
-
   //mafAbstractTypeMacro(mafTimeMap<T>,mafObject);
 
   /** set the TypeName of the kind of item accepted by this container */
@@ -158,5 +155,9 @@ public:
 protected:
   TimeMap         m_TimeMap;        ///< the set storing the datasets
   mafString       m_ItemTypeName;   ///< the name of the item type accepted by this container
+
+private:
+  mafTimeMap(const mafTimeMap<T>&);  
+  void operator=(const mafTimeMap<T>&);
 };
 #endif
