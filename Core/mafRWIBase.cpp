@@ -801,51 +801,10 @@ void mafRWIBase::SaveImage(mafString filename, int magnification , int forceExte
   {
     vtkMAFSmartPointer<vtkBMPWriter> w;
     w->SetInput(w2i->GetOutput());
+    w->SetPixelPerMeterX(pixelXMeterX);
+    w->SetPixelPerMeterY(pixelXMeterY);
     w->SetFileName(filename.GetCStr());
     w->Write();
-
-    // bitmap header
-    /*
-    offset    size    description
-      0       2       signature, must be 4D42 hex
-      2       4       size of BMP file in bytes (unreliable)
-      6       2       reserved, must be zero
-      8       2       reserved, must be zero
-      10      4       offset to start of image data in bytes
-      14      4       size of BITMAPINFOHEADER structure, must be 40
-      18      4       image width in pixels
-      22      4       image height in pixels
-      26      2       number of planes in the image, must be 1
-      28      2       number of bits per pixel (1, 4, 8, or 24)
-      30      4       compression type (0=none, 1=RLE-8, 2=RLE-4)
-      34      4       size of image data in bytes (including padding)
-    * 38      4       horizontal resolution in pixels per meter (unreliable)
-    * 42      4       vertical resolution in pixels per meter (unreliable)
-      46      4       number of colors in image, or zero
-      50      4       number of important colors, or zero
-
-    * needed values
-    */
-#ifdef WIN32
-    //open file
-    fstream myFile (filename.GetCStr(), ios::in | ios::out | ios::binary);
-    myFile.seekp (38);
-    myFile.write ((char*)&pixelXMeterX, 4);
-    myFile.write ((char*)&pixelXMeterY, 4);
-    myFile.close();
-
-    FILE *fp = fopen(filename.GetCStr(), "rb");
-    if(!fp) return ;
-
-    BITMAPFILEHEADER bmfh={0};
-    BITMAPINFOHEADER bmih={0};
-//    DWORD index;
-//    BYTE ch;
-
-    fread(&bmfh,sizeof(bmfh),1,fp);  //read bitmap file header
-    fread(&bmih,sizeof(bmih),1,fp);  //read bitmap info header 
-    fclose(fp);
-#endif
   }
   else if (ext == "jpg")
   {
@@ -1047,51 +1006,10 @@ void mafRWIBase::RecursiveSaving(mafString filename, mafViewCompound *v,int magn
       {
         vtkMAFSmartPointer<vtkBMPWriter> w;
         w->SetInput(w2i->GetOutput());
+        w->SetPixelPerMeterX(pixelXMeterX);
+        w->SetPixelPerMeterY(pixelXMeterY);
         w->SetFileName(temp.c_str());
         w->Write();
-
-        // bitmap header
-        /*
-        offset    size    description
-        0       2       signature, must be 4D42 hex
-        2       4       size of BMP file in bytes (unreliable)
-        6       2       reserved, must be zero
-        8       2       reserved, must be zero
-        10      4       offset to start of image data in bytes
-        14      4       size of BITMAPINFOHEADER structure, must be 40
-        18      4       image width in pixels
-        22      4       image height in pixels
-        26      2       number of planes in the image, must be 1
-        28      2       number of bits per pixel (1, 4, 8, or 24)
-        30      4       compression type (0=none, 1=RLE-8, 2=RLE-4)
-        34      4       size of image data in bytes (including padding)
-        * 38      4       horizontal resolution in pixels per meter (unreliable)
-        * 42      4       vertical resolution in pixels per meter (unreliable)
-        46      4       number of colors in image, or zero
-        50      4       number of important colors, or zero
-
-        * needed values
-        */
-#ifdef WIN32
-        //open file
-        fstream myFile (temp.c_str(), ios::in | ios::out | ios::binary);
-        myFile.seekp (38);
-        myFile.write ((char*)&pixelXMeterX, 4);
-        myFile.write ((char*)&pixelXMeterY, 4);
-        myFile.close();
-
-        FILE *fp = fopen(temp.c_str(), "rb");
-        if(!fp) return ;
-
-        BITMAPFILEHEADER bmfh={0};
-        BITMAPINFOHEADER bmih={0};
-        //    DWORD index;
-        //    BYTE ch;
-
-        fread(&bmfh,sizeof(bmfh),1,fp);  //read bitmap file header
-        fread(&bmih,sizeof(bmih),1,fp);  //read bitmap info header 
-        fclose(fp);
-#endif
       }
       else if (extension == "jpg")
       {
