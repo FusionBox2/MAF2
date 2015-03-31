@@ -372,7 +372,6 @@ void lhpOpCutSurface::OpDo()
   if(m_OutSurface)
   {
     m_OutSurface->ReparentTo(m_Input->GetRoot());
-    mafEventMacro(mafEvent(this, VME_ADD, m_OutSurface));
   }
   mafEventMacro(mafEvent(this,CAMERA_UPDATE));
 }
@@ -383,7 +382,7 @@ void lhpOpCutSurface::OpUndo()
 {
   if(m_OutSurface)
   {
-    mafEventMacro(mafEvent(this, VME_REMOVE, m_OutSurface));
+    m_OutSurface->ReparentTo(NULL);
   }
   mafEventMacro(mafEvent(this,CAMERA_UPDATE));
 }

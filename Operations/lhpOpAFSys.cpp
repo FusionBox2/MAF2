@@ -230,7 +230,7 @@ void lhpOpAFSys::OpStop(int result)
     HideGui();
     if(m_RefSys->GetParent())
     {
-      mafEventMacro(mafEvent(this, VME_REMOVE, m_RefSys));
+      m_RefSys->ReparentTo(NULL);
     }
     mafEventMacro(mafEvent(this,result));
   }
@@ -327,7 +327,6 @@ void lhpOpAFSys::OpDo()
   assert(m_RefSys);
   m_RefSys->ReparentTo(m_Input);
   m_RefSys->SetScaleFactor(100.0);
-  mafEventMacro(mafEvent(this, VME_ADD, m_RefSys));
   m_RefSys->SetActive(1);
 }
 //----------------------------------------------------------------------------
@@ -335,6 +334,6 @@ void lhpOpAFSys::OpUndo()
 //----------------------------------------------------------------------------
 {
   assert(m_RefSys);
-  mafEventMacro(mafEvent(this, VME_REMOVE, m_RefSys));
+  m_RefSys->ReparentTo(NULL);
 }
 
