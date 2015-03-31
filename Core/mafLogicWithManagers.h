@@ -104,7 +104,7 @@ public:
 
   /**  Plug a new operation and its undo flag: if the operation does not support
   undo the undo flag has no effect */
-	virtual void Plug(mafOp *op, wxString menuPath = "", bool canUndo = true, mafGUISettings *setting = NULL);
+	virtual void Plug(mafOp *op, const mafString& menuPath = "", bool canUndo = true, mafGUISettings *setting = NULL);
 	
   /** Configure the application.
   At this point are plugged all the managers, the side-bar docking panel. 

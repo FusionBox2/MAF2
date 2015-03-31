@@ -79,7 +79,7 @@ mafView can be the base class for composed Views.
 class MAF_EXPORT mafView: public mafObject, public mafBaseEventHandler, public mafEventSender, public mafObjectWithGUI
 {
 public:
-  mafView(const wxString &label = "View");
+  mafView(const mafString& label = "View");
   virtual ~mafView(); 
 
   mafTypeMacro(mafView, mafObject);
@@ -118,12 +118,12 @@ public:
   virtual int GetNodeStatus(mafNode *vme) {return NODE_NON_VISIBLE;};
   
   /** return the current pipe for the specified vme (if any exist at this moment) */
-  virtual mafPipe* GetNodePipe(mafNode *vme) {return NULL;};
+  virtual mafPipe* GetNodePipe(mafNode *vme) {return NULL;}
 
-  wxString  GetLabel() {return m_Label;};
-  wxString  GetName()  {return m_Name;};
-  void      SetLabel(wxString label)  {m_Label = label;};
-  void      SetName(wxString name)    {m_Name = name;};
+  const mafString& GetLabel() {return m_Label;}
+  const mafString& GetName() {return m_Name;}
+  void SetLabel(const mafString& label) {m_Label = label;}
+  void SetName(const mafString& name) {m_Name = name;}
 
   virtual wxWindow*	GetWindow(){return m_Win;};
   virtual wxFrame*	GetFrame() {return m_Frame;};
@@ -177,8 +177,6 @@ public:
   vtkCellPicker *GetPicker2D() {return m_Picker2D;};
 
 protected:
-  wxString       m_Label;
-  wxString       m_Name;
   wxWindow			*m_Win;
   wxFrame				*m_Frame;
 
@@ -221,5 +219,8 @@ protected:
   double m_Normal[3];
 
   bool m_LightCopyEnabled;
+private:
+  mafString       m_Label;
+  mafString       m_Name;
 };
 #endif

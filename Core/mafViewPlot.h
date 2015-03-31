@@ -51,7 +51,7 @@ mafViewPlot is a View that got a mafXYPlot and plot curves on a plane.
 class MAF_EXPORT mafViewPlot: public mafView
 {
 public:
-  mafViewPlot(const wxString &label = "plot View");
+  mafViewPlot(const mafString& label = "plot View");
   virtual ~mafViewPlot();
 
   mafTypeMacro(mafViewPlot, mafView);

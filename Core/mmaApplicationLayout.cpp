@@ -289,7 +289,7 @@ void mmaApplicationLayout::AddView(mafView *v, bool vme_visibility)
   ViewLayoutInfo info;
   info.m_Id = v->m_Id;
   info.m_Mult = v->m_Mult;
-  info.m_Label = v->GetLabel().c_str();
+  info.m_Label = v->GetLabel();
   wxFrame *frame = v->GetFrame();
   info.m_Maximized = frame->IsMaximized();
   wxRect r = frame->GetRect();

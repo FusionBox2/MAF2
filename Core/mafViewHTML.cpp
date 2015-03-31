@@ -48,7 +48,7 @@ mafCxxTypeMacro(mafViewHTML);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafViewHTML::mafViewHTML(const wxString &label, int camera_position, bool show_axes, bool show_grid, int stereo)
+mafViewHTML::mafViewHTML(const mafString& label, int camera_position, bool show_axes, bool show_grid, int stereo)
 :mafView(label)
 //----------------------------------------------------------------------------
 {
@@ -71,7 +71,7 @@ mafView *mafViewHTML::Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled)
 //----------------------------------------------------------------------------
 {
    m_LightCopyEnabled = lightCopyEnabled;
-   mafViewHTML *v = new mafViewHTML(m_Label);
+   mafViewHTML *v = new mafViewHTML(GetLabel());
    v->SetListener(Listener);
    v->m_Id = m_Id;
    v->Create();

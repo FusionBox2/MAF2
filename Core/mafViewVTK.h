@@ -50,7 +50,7 @@ class MAF_EXPORT mafViewVTK: public mafView
 public:
 
   /** constructor */
-  mafViewVTK(const wxString &label = "vtkView", int camera_position = CAMERA_PERSPECTIVE, bool show_axes = true, bool show_grid = false, bool show_ruler = false, int stereo = 0, bool show_orientator = false, int axesType = mafAxes::TRIAD);
+  mafViewVTK(const mafString& label = "vtkView", int camera_position = CAMERA_PERSPECTIVE, bool show_axes = true, bool show_grid = false, bool show_ruler = false, int stereo = 0, bool show_orientator = false, int axesType = mafAxes::TRIAD);
   /** constructor */
   virtual ~mafViewVTK(); 
   /** RTTI macro */
@@ -149,7 +149,7 @@ public:
   typedef std::map<mafString, mafVisualPipeInfo> mafPipeMap;
 
   /** Plug a visual pipe for a particular vme. It is used also to plug custom pipe.*/
-  void PlugVisualPipe(mafString vme_type, mafString pipe_type, long visibility = VISIBLE);
+  void PlugVisualPipe(const mafString& vme_type, const mafString& pipe_type, long visibility = VISIBLE);
 
   mafPipeMap m_PipeMap; ///< Map used to store visual pipeline associated with vme types
 

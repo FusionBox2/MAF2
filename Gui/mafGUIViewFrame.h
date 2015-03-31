@@ -35,7 +35,7 @@ class mafGUIViewFrame: public wxFrame , public mafBaseEventHandler, public mafEv
 	public:
 	mafGUIViewFrame(wxFrame* parent, 
 							wxWindowID id, 
-							const wxString& title,
+							const mafString& title,
 							const wxPoint& pos = wxDefaultPosition, 
 							const wxSize& size = wxDefaultSize, 
 							long style = wxDEFAULT_FRAME_STYLE|wxCLIP_CHILDREN 

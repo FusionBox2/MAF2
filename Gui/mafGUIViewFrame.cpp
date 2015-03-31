@@ -47,13 +47,13 @@ END_EVENT_TABLE()
 //----------------------------------------------------------------------------
 mafGUIViewFrame::mafGUIViewFrame( wxFrame* parent, 
                             wxWindowID id, 
-                            const wxString& title,
+                            const mafString& title,
                             const wxPoint& pos, 
                             const wxSize& size, 
                             long style 
                             )
 //----------------------------------------------------------------------------
-: wxFrame(parent, id, title, pos, size, style)
+: wxFrame(parent, id, title.GetCStr(), pos, size, style)
 {
   m_ClientWin = NULL;
 }

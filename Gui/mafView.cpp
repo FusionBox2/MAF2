@@ -44,11 +44,9 @@ mafCxxTypeMacro(mafView);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafView::mafView(const wxString &label)
+mafView::mafView(const mafString& label):m_Label(label), m_Name("")
 //----------------------------------------------------------------------------
 {
-	m_Label					= label;
-  m_Name					= "";
 	m_Win						= NULL;
   m_Frame					= NULL;
 	m_Gui					 	= NULL;

@@ -38,7 +38,7 @@ mafCxxTypeMacro(mafViewPlot);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafViewPlot::mafViewPlot(const wxString &label)
+mafViewPlot::mafViewPlot(const mafString& label)
 :mafView(label)
 //----------------------------------------------------------------------------
 {
@@ -65,7 +65,7 @@ mafView *mafViewPlot::Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled)
 //----------------------------------------------------------------------------
 {
   m_LightCopyEnabled = lightCopyEnabled;
-  mafViewPlot *v = new mafViewPlot(m_Label);
+  mafViewPlot *v = new mafViewPlot(GetLabel());
   v->SetListener(Listener);
   v->m_Id = m_Id;
   v->m_PipeMap = m_PipeMap;

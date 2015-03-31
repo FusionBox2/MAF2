@@ -295,7 +295,7 @@ void mafRemoteLogic::RemoteMessage(mafString &cmd, bool to_server)
       {
         send_msg = true;
         sync_cmd << m_CommandSeparator;
-        sync_cmd << (*it)->GetLabel().c_str();
+        sync_cmd << (*it)->GetLabel().GetCStr();
       }
 
       if(send_msg)

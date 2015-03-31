@@ -61,7 +61,7 @@ mafCxxTypeMacro(mafViewVTK);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafViewVTK::mafViewVTK(const wxString &label, int camera_position, bool show_axes, bool show_grid, bool show_ruler, int stereo, bool show_orientator, int axesType)
+mafViewVTK::mafViewVTK(const mafString& label, int camera_position, bool show_axes, bool show_grid, bool show_ruler, int stereo, bool show_orientator, int axesType)
 :mafView(label)
 //----------------------------------------------------------------------------
 {
@@ -96,7 +96,7 @@ mafViewVTK::~mafViewVTK()
   cppDEL(m_Rwi);
 }
 //----------------------------------------------------------------------------
-void mafViewVTK::PlugVisualPipe(mafString vme_type, mafString pipe_type, long visibility)
+void mafViewVTK::PlugVisualPipe(const mafString& vme_type, const mafString& pipe_type, long visibility)
 //----------------------------------------------------------------------------
 {
   mafVisualPipeInfo plugged_pipe;
@@ -109,7 +109,7 @@ mafView *mafViewVTK::Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled)
 //----------------------------------------------------------------------------
 {
   m_LightCopyEnabled = lightCopyEnabled;
-  mafViewVTK *v = new mafViewVTK(m_Label, m_CameraPositionId, m_ShowAxes, m_ShowGrid, m_ShowRuler, m_StereoType, m_ShowOrientator, m_AxesType);
+  mafViewVTK *v = new mafViewVTK(GetLabel(), m_CameraPositionId, m_ShowAxes, m_ShowGrid, m_ShowRuler, m_StereoType, m_ShowOrientator, m_AxesType);
   v->SetListener(Listener);
   v->m_Id = m_Id;
   v->m_PipeMap = m_PipeMap;
@@ -512,7 +512,7 @@ void mafViewVTK::Print(std::ostream& os, const int tabs)// const
   mafIndent indent(tabs);
 
   os << indent << "mafViewVTK " << '\t' << this << "\n";
-  os << indent << "Name: " << '\t' << m_Label << "\n";
+  os << indent << "Name: " << '\t' << GetLabel() << "\n";
   os << indent << "View ID: " << '\t' << m_Id << "\n";
   os << indent << "View Mult: " << '\t' << m_Mult << "\n";
   os << indent << "Visible VME counter: " << '\t' << m_NumberOfVisibleVme << "\n";

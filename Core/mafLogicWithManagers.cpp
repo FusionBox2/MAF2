@@ -415,7 +415,7 @@ void mafLogicWithManagers::Plug(mafView* view, bool visibleInMenu)
         m_ViewMenu->AppendSeparator();
         m_ViewMenu->Append(0,_("Add View"),m_ViewListMenu);
       }
-      wxString s = wxString::Format("%s",view->GetLabel().c_str());
+      wxString s = wxString::Format("%s",view->GetLabel().GetCStr());
       mafID command = GetNewMenuId();
       m_ViewListMenu->Append(command, s, (wxMenu *)NULL, s );
       m_MenuElems.push_back(mafMenuElems(false, id, command));
@@ -423,7 +423,7 @@ void mafLogicWithManagers::Plug(mafView* view, bool visibleInMenu)
   }
 }
 //----------------------------------------------------------------------------
-void mafLogicWithManagers::Plug(mafOp *op, wxString menuPath, bool canUndo, mafGUISettings *setting)
+void mafLogicWithManagers::Plug(mafOp *op, const mafString& menuPath, bool canUndo, mafGUISettings *setting)
 //----------------------------------------------------------------------------
 {
   if(m_OpManager) 
