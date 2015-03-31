@@ -401,20 +401,20 @@ MAF_EXPORT void mafSetFrame(wxWindow* frame);
 MAF_EXPORT void mafYield();
 
 /** show the Dir Selection Dialog Box */
-MAF_EXPORT std::string  mafGetDirName(const char * initial, const char * title = "Select Directory", wxWindow *parent = NULL);
+MAF_EXPORT mafString  mafGetDirName(const mafString& initial, const mafString& title = "Select Directory", wxWindow *parent = NULL);
 
 /** show the File Open Dialog Box */
-MAF_EXPORT std::string  mafGetOpenFile(const char * initial, const char * wildcard, const char * title = "Open File", wxWindow *parent = NULL);
+MAF_EXPORT mafString mafGetOpenFile(const mafString& initial, const mafString& wildcard, const mafString& title = "Open File", wxWindow *parent = NULL);
 
 /** show the File Open Dialog Box for multiple file selection */
-MAF_EXPORT void mafGetOpenMultiFiles(const char * initial, const char * wildcard, std::vector<std::string> &files, const char * title = "Open Files", wxWindow *parent = NULL);
+MAF_EXPORT void mafGetOpenMultiFiles(const mafString& initial, const mafString& wildcard, std::vector<mafString>& files, const mafString& title = "Open Files", wxWindow *parent = NULL);
 
 /** show the File Save Dialog Box */
-MAF_EXPORT std::string  mafGetSaveFile(const char * initial, const char * wildcard, const char * title = "Save File", wxWindow *parent = NULL);
+MAF_EXPORT mafString mafGetSaveFile(const mafString& initial, const mafString& wildcard, const mafString& title = "Save File", wxWindow *parent = NULL);
 
 /** return true if the filename use a protocol like ftp, http or https.
   Write into 'protocol_used' parameter the protocol used by the file.*/
-MAF_EXPORT bool IsRemote(mafString filename, mafString &protocol_used);
+MAF_EXPORT bool IsRemote(const mafString& filename, mafString &protocol_used);
 
 /** return a random wxColour from a palette of 16 */
 MAF_EXPORT wxColour  mafRandomColor();
@@ -426,10 +426,10 @@ MAF_EXPORT wxBitmap mafGrayScale(wxBitmap bmp);
 MAF_EXPORT wxBitmap mafRedScale(wxBitmap bmp);
 
 /** return the application start-up directory */
-MAF_EXPORT std::string  mafGetApplicationDirectory();
+MAF_EXPORT mafString mafGetApplicationDirectory();
 
 /** translate an event-id into a readable string */
-MAF_EXPORT std::string  mafIdString(int id);
+MAF_EXPORT mafString mafIdString(int id);
 
 MAF_EXPORT float RoundValue(float f_in, int decimal_digits = 2);
 MAF_EXPORT double RoundValue(double d_in, int decimal_digits = 2);

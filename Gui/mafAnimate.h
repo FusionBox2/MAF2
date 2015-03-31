@@ -88,10 +88,10 @@ protected:
 
 
   /** Load poses from file. */
-  void LoadPoseFromFile(mafString &fileName);
+  void LoadPoseFromFile(const mafString &fileName);
 
   /** Store poses to file. */
-  void StorePoseToFile(mafString &fileName);
+  void StorePoseToFile(const mafString &fileName);
 
   mafNode *m_Vme;
   mafVME *m_Root;

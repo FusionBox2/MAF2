@@ -59,7 +59,7 @@ mafVMEManager::mafVMEManager()
   m_LoadingFlag = false;
   m_FileHistoryIdx = -1;
 
-  mafString msfDir = mafGetApplicationDirectory().c_str();
+  mafString msfDir = mafGetApplicationDirectory();
   msfDir.ParsePathName();
 	m_MSFDir   = msfDir;
 	m_MSFFile  = "";
@@ -180,9 +180,9 @@ void mafVMEManager::RemoveTempDirectory()
 {
   if (m_TmpDir != "")
   {
-    wxString working_dir;
-    working_dir = mafGetApplicationDirectory().c_str();
-    wxSetWorkingDirectory(working_dir);
+    mafString working_dir;
+    working_dir = mafGetApplicationDirectory();
+    wxSetWorkingDirectory(working_dir.GetCStr());
     if(::wxDirExists(m_TmpDir)) //remove tmp directory due to zip extraction or compression
     {
       wxString file_match = m_TmpDir + "/*.*";
@@ -671,7 +671,7 @@ int mafVMEManager::MSFSave()
     // ask for the new file name.
     wxString wildc = _("MAF Storage Format file (*."+ m_file_extension +")|*."
 		              + m_file_extension +"|Compressed file (*.z"+ m_file_extension +")|*.z" + m_file_extension + "");
-    mafString file = mafGetSaveFile(m_MSFDir, wildc.c_str()).c_str();
+    mafString file = mafGetSaveFile(m_MSFDir, wildc.c_str());
     if(file.IsEmpty())
       return MAF_ERROR;
    

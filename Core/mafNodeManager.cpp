@@ -49,7 +49,7 @@ mafNodeManager::mafNodeManager()
 //@@	m_storage   = NULL;
 	m_Root          = NULL;
 
-	m_MsfDir   = mafGetApplicationDirectory().c_str();
+	m_MsfDir   = mafGetApplicationDirectory();
   m_MsfDir   += "/Data/MSF/";
 	m_MsfFile   = "";
 	m_ZipFile   = "";
@@ -445,13 +445,13 @@ bool mafNodeManager::AskConfirmAndSave()
 	return go;
 }
 //----------------------------------------------------------------------------
-void mafNodeManager::SetApplicationStamp(wxString appstamp)
+void mafNodeManager::SetApplicationStamp(const mafString& appstamp)
 //----------------------------------------------------------------------------
 {
   m_AppStamp.push_back(appstamp);
 }
 //----------------------------------------------------------------------------
-void mafNodeManager::SetApplicationStamp(std::vector<wxString> appstamp)
+void mafNodeManager::SetApplicationStamp(const std::vector<mafString>& appstamp)
 //----------------------------------------------------------------------------
 {
   for (int i=0; i<appstamp.size();i++)

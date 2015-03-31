@@ -119,7 +119,7 @@ void mafOpExporterSTL::OnEvent(mafEventBase *maf_event)
             m_FileDir << this->m_Input->GetName();
             m_FileDir << ".stl";
             mafString wildc = "STL (*.stl)|*.stl";
-            m_File = mafGetSaveFile(m_FileDir.GetCStr(), wildc.GetCStr()).c_str();
+            m_File = mafGetSaveFile(m_FileDir.GetCStr(), wildc.GetCStr());
           }
 
 					if(m_File.IsEmpty())

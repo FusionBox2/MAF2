@@ -65,11 +65,11 @@ public:
 
   /** Add ASCII filename to the files list to be imported. 
   This is used when the operation is executed not using user interface. */
-  void AddFileName(std::string &file);
+  void AddFileName(const mafString& file);
 
   /** Set the ASCII filename to be imported. 
   This is used when the operation is executed not using user interface. */
-  void SetFileName(std::string &file);
+  void SetFileName(const mafString& file);
 
 protected:
   /** Fill the file list getting the list of files matching the specified pattern.*/
@@ -80,7 +80,7 @@ protected:
     COLUMN_DAtA
   };
 
-  std::vector<std::string> m_Files; ///< List of files representing the scalar data.
+  std::vector<mafString> m_Files; ///< List of files representing the scalar data.
   mafString m_FileDir; ///< Directory where are located the files.
 
   mafVMEScalarMatrix *m_ScalarData;

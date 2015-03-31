@@ -67,7 +67,7 @@ void mafOpImporterExternalFile::OpRun()
   mafString f;
   if (m_File.IsEmpty())
   {
-    f = mafGetOpenFile(m_FileDir.GetCStr(),wildc.GetCStr()).c_str();
+    f = mafGetOpenFile(m_FileDir.GetCStr(),wildc.GetCStr());
     m_File = f;
   }
   

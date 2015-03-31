@@ -59,7 +59,7 @@ mafOpImporterRAWVolume::mafOpImporterRAWVolume(const wxString &label) : mafOp(la
 {
 	m_OpType			= OPTYPE_IMPORTER;
 	m_Canundo			= true;
-	m_RawFile			= mafGetApplicationDirectory().c_str();
+	m_RawFile			= mafGetApplicationDirectory();
 	m_VolumeGray	= NULL;
   m_VolumeRGB   = NULL;
   m_GuiSlider   = NULL;
@@ -294,10 +294,10 @@ void mafOpImporterRAWVolume::	OnEvent(mafEventBase *maf_event)
       break;
 	    case ID_COORD:
 			{
-				wxString dir = mafGetApplicationDirectory().c_str();
+				mafString dir = mafGetApplicationDirectory();
 				dir += _("/Data/External");
-				wxString wildc =_("Z_coordinates (*.txt)|*.txt");
-				wxString file = mafGetOpenFile(dir,wildc,_("Open Z coordinates file")).c_str();
+				mafString wildc =_("Z_coordinates (*.txt)|*.txt");
+				mafString file = mafGetOpenFile(dir,wildc,_("Open Z coordinates file"));
 				if(!file.IsEmpty())
 				{
 					m_CoordFile = file;

@@ -112,7 +112,7 @@ mafID mafEventBase::GetId()
       sender_type << (long)m_Sender;
       sender_type << ")";
     }
-    mafString id_name = mafIdString(m_Id).c_str();
+    mafString id_name = mafIdString(m_Id);
     mafString msg = sender_type + "  ID: " + id_name;
     mafLogMessage(msg);
   }

@@ -68,7 +68,7 @@ void mafOpImporterMSF1x::OpRun()
 	mafString f;
   if(m_File.IsEmpty())
 	{
-		f = mafGetOpenFile(m_FileDir, wildc.GetCStr(), "Choose MSF file").c_str();
+		f = mafGetOpenFile(m_FileDir, wildc.GetCStr(), "Choose MSF file");
 		m_File = f;
 	}
 

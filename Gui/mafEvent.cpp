@@ -90,7 +90,7 @@ void mafEvent::Log()
 {
   mafString s = "[EV]";
                s << " sender= "<< (long)m_Sender;
-               s << " ID= "    << mafIdString(m_Id).c_str();
+               s << " ID= "    << mafIdString(m_Id);
   if(m_Arg)    s << " arg= "   << m_Arg;
   if(m_Bool)   s << " bool= "  << (int)m_Bool;
   if(m_Double)  s << " double= " << m_Double;
@@ -199,7 +199,7 @@ void mafEvent::Init(void *sender, int id, long arg)
       sender_type << (long)sender;
       sender_type << ")";
     }
-    mafString id_name = mafIdString(id).c_str();
+    mafString id_name = mafIdString(id);
     mafString msg = sender_type + "  ID: " + id_name;
     mafLogMessage(msg);
   }

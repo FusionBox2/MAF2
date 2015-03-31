@@ -1274,7 +1274,7 @@ void mafLogicWithManagers::OnFileOpen(const char *file_to_open)
   {
 	  if(m_VMEManager->AskConfirmAndSave())
 	  {
-      wxString file;
+      mafString file;
       if (m_StorageSettings->GetStorageType() == mafGUISettingsStorage::HTTP)
       {
         if (file_to_open != NULL)
@@ -1287,7 +1287,7 @@ void mafLogicWithManagers::OnFileOpen(const char *file_to_open)
           remoteFile.ShowModal();
           file = remoteFile.GetFile().GetCStr();
           mafString protocol;
-          if (IsRemote(file.c_str(),protocol))
+          if (IsRemote(file,protocol))
           {
             m_VMEManager->SetHost(remoteFile.GetHost());
             m_VMEManager->SetRemotePort(remoteFile.GetPort());//
@@ -1298,16 +1298,19 @@ void mafLogicWithManagers::OnFileOpen(const char *file_to_open)
       }
       else      
       {
-		    wxString wildc = _("MAF Storage Format file (*." + m_Extension + ")|*." + m_Extension 
-				                   +"|Compressed file (*.z" + m_Extension + ")|*.z" + m_Extension + "");
-		    //wxString wildc    = _("MAF Storage Format file (*.msf)|*.msf|Compressed file (*.zmsf)|*.zmsf");
+		    mafString wildc = "MAF Storage Format file (*.";
+		    wildc += m_Extension;
+		    wildc += ")|*.";
+		    wildc += m_Extension;
+			wildc += "|Compressed file (*.z" + m_Extension + ")|*.z" + m_Extension + "";
+		    //mafString wildc    = _("MAF Storage Format file (*.msf)|*.msf|Compressed file (*.zmsf)|*.zmsf");
         if (file_to_open != NULL)
         {
           file = file_to_open;
         }
         else
         {
-          file = mafGetOpenFile("", wildc).c_str();
+          file = mafGetOpenFile("", wildc);
         }
       }
 

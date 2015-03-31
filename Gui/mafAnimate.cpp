@@ -180,7 +180,7 @@ void mafAnimate::OnEvent(mafEventBase *maf_event)
   
   if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
   {
-    wxString wildcard = "xml file (*.xml)|*.xml|all files (*.*)|*.*";
+    mafString wildcard = "xml file (*.xml)|*.xml|all files (*.*)|*.*";
     mafString fileName = "";
     switch(e->GetId())
     {
@@ -209,7 +209,7 @@ void mafAnimate::OnEvent(mafEventBase *maf_event)
         EnableWidgets();
         break;
       case ID_IMPORT:
-        fileName = mafGetOpenFile("", wildcard).c_str();
+        fileName = mafGetOpenFile("", wildcard);
         if (fileName != "")
         {
           LoadPoseFromFile(fileName);
@@ -217,7 +217,7 @@ void mafAnimate::OnEvent(mafEventBase *maf_event)
         }
       break;
       case ID_EXPORT:
-        fileName = mafGetSaveFile("", wildcard).c_str();
+        fileName = mafGetSaveFile("", wildcard);
         if (fileName != "")
           StorePoseToFile(fileName);
       break;
@@ -242,7 +242,7 @@ void mafAnimate::EnableWidgets()
   m_AnimatePlayer->SetFrameBounds(0,m_PositionList->GetCount()-1);
 }
 //----------------------------------------------------------------------------
-void mafAnimate::LoadPoseFromFile(mafString &fileName)
+void mafAnimate::LoadPoseFromFile(const mafString &fileName)
 //----------------------------------------------------------------------------
 {
   mafTagArray *newCam = new mafTagArray();
@@ -260,7 +260,7 @@ void mafAnimate::LoadPoseFromFile(mafString &fileName)
   cppDEL(newCam);
 }
 //----------------------------------------------------------------------------
-void mafAnimate::StorePoseToFile(mafString &fileName)
+void mafAnimate::StorePoseToFile(const mafString &fileName)
 //----------------------------------------------------------------------------
 {	
   int i = 0;

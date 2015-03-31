@@ -169,8 +169,8 @@ void mafOpImporterASCII::OnEvent(mafEventBase *maf_event)
     {
       case ID_ASCII_FILE:
       {
-        wxString wildc = "(*.*)|*.*";
-        mafGetOpenMultiFiles(m_FileDir.GetCStr(),wildc.c_str(),m_Files);
+        mafString wildc = "(*.*)|*.*";
+        mafGetOpenMultiFiles(m_FileDir,wildc,m_Files);
       }
       break;
       case wxOK:
@@ -210,7 +210,7 @@ int mafOpImporterASCII::ImportASCII()
   mafASCIIImporterUtility utility;
   for (int t=0; t<m_Files.size(); t++)
   {
-    if(utility.ReadFile(m_Files[t].c_str()) == MAF_OK)
+    if(utility.ReadFile(m_Files[t].GetCStr()) == MAF_OK)
     {
       import_result = MAF_OK;
       m_ScalarData->SetData(utility.GetMatrix(),t);
@@ -227,14 +227,14 @@ int mafOpImporterASCII::ImportASCII()
   return import_result;
 }
 //----------------------------------------------------------------------------
-void mafOpImporterASCII::SetFileName(std::string &file)
+void mafOpImporterASCII::SetFileName(const mafString& file)
 //----------------------------------------------------------------------------
 {
   m_Files.clear();
   AddFileName(file);
 }
 //----------------------------------------------------------------------------
-void mafOpImporterASCII::AddFileName(std::string &file)
+void mafOpImporterASCII::AddFileName(const mafString& file)
 //----------------------------------------------------------------------------
 {
   m_Files.push_back(file);

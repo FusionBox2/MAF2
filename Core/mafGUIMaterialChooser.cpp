@@ -76,7 +76,7 @@ mafGUIMaterialChooser::mafGUIMaterialChooser(wxString dialog_title)
 	m_ListCtrlMaterial= NULL;
 	m_RWI					    = NULL;
 
-  m_Filename = mafGetApplicationDirectory().c_str();
+  m_Filename = mafGetApplicationDirectory();
   m_Filename += "/mat_library.xml";
   
   //initialize first material 

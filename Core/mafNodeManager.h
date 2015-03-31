@@ -94,10 +94,10 @@ public:
 	bool AskConfirmAndSave();
  
 	/** Set the filename for the current tree. */
-  void SetFileName (wxString& filename) {m_MsfFile = filename;};
+  void SetFileName (const mafString& filename) {m_MsfFile = filename;};
  
 	/** Get the filename of the current tree. */
-  wxString& GetFileName () {return m_MsfFile;};
+  const mafString& GetFileName () {return m_MsfFile;};
  
 	/** Link to the main menù the file history manager. */
   void SetFileHistoryMenu(wxMenu *menu);
@@ -106,8 +106,8 @@ public:
   mafNodeRoot *GetRoot() { return m_Root;};		
 
   /** Set the application stamp; this is the mark of the specific vertical application (is often equal to the application name). */
-  void SetApplicationStamp(wxString appstamp);
-  void SetApplicationStamp(std::vector<wxString> appstamp);
+  void SetApplicationStamp(const mafString& appstamp);
+  void SetApplicationStamp(const std::vector<mafString>& appstamp);
 
 	/** Set the flag for .bak file generation on saving .msf file. */
 	void MakeBakFileOnSave(bool bakfile = true) {m_MakeBakFile = bakfile;}
@@ -123,12 +123,12 @@ protected:
   mafGUIFileHistory	 m_FileHistory;
 
   bool      m_MakeBakFile;
-  wxString  m_MsfDir;
-  wxString  m_Wildc;
-  std::vector<wxString>  m_AppStamp;
-  wxString  m_MsfFile;
-  wxString  m_ZipFile;
-  wxString  m_MergeFile;
+  mafString  m_MsfDir;
+  mafString  m_Wildc;
+  std::vector<mafString>  m_AppStamp;
+  mafString  m_MsfFile;
+  mafString  m_ZipFile;
+  mafString  m_MergeFile;
 
   /*
   bool m_Crypting;

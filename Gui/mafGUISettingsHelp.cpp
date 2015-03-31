@@ -35,7 +35,7 @@ mafGUISettingsHelp::mafGUISettingsHelp(mafBaseEventHandler *Listener, const mafS
 mafGUISettings(Listener, label)
 {
   m_BuildHelpGui = false;
-  m_HelpFileName = mafGetApplicationDirectory().c_str();
+  m_HelpFileName = mafGetApplicationDirectory();
   m_HelpFileName.Append("\\Help\\Help.txt");   
   InitializeSettings();
 }
@@ -115,7 +115,7 @@ void mafGUISettingsHelp::InitializeSettings()
   m_Config->Flush();
 }
 
-void mafGUISettingsHelp::OpenHelpPage( wxString entity )
+void mafGUISettingsHelp::OpenHelpPage(const mafString& entity )
 {
 	std::string helpFileName = m_HelpFileName;
 	assert(wxFileExists(helpFileName.c_str()));
@@ -134,9 +134,11 @@ void mafGUISettingsHelp::OpenHelpPage( wxString entity )
 		std::getline(lineStream,currentLineHelpLink,',');
 		wxString trimmedCurrentLineHelpLink = wxString(currentLineHelpLink.c_str()).Trim().Trim(false);
 
-		entity.Replace("\t","");
+    wxString entitywx;
+    entitywx = entity.GetCStr();
+		entitywx.Replace("\t","");
 
-		if (strcmp(entity.c_str() , trimmedCurrentLineEntityName.c_str()) == 0)
+		if (strcmp(entitywx.c_str() , trimmedCurrentLineEntityName.c_str()) == 0)
 		{
 			wxLaunchDefaultBrowser(trimmedCurrentLineHelpLink);
 			return;

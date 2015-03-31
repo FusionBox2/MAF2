@@ -92,9 +92,8 @@ void mafOpExporterRAW::OpRun()
 	m_ProposedDirectory += ".raw";
 	if(!m_TestMode)
 	{
-		wxString wildc = "raw file (*.raw)|*.raw";
-		wxString file = mafGetSaveFile(m_ProposedDirectory,wildc).c_str(); 
-		m_FileName = file;
+		mafString wildc = "raw file (*.raw)|*.raw";
+		m_FileName = mafGetSaveFile(m_ProposedDirectory,wildc);
 
 		//Crete GUI
 		m_Gui = new mafGUI(this);
@@ -275,13 +274,13 @@ void mafOpExporterRAW::SaveVolume()
 			if(!m_TestMode)
 			{
 				//saving the z coordinates in a file
-				wxString proposed = mafGetApplicationDirectory().c_str();
+				mafString proposed = mafGetApplicationDirectory();
 				proposed += _("/Data/External/");
 				proposed += _("Z_coordinates_");
 				proposed += m_Input->GetName();
 				proposed += _(".txt");
-				wxString wildc = _("txt file (*.txt)|*.txt");
-				wxString file = mafGetSaveFile(proposed,wildc).c_str();   
+				mafString wildc = _("txt file (*.txt)|*.txt");
+				mafString file = mafGetSaveFile(proposed,wildc);   
 				nome = (file);
 				f_out.open(nome);
 			}
@@ -364,13 +363,13 @@ void mafOpExporterRAW::SaveVolume()
 			if(!m_TestMode)
 			{
 				//saving the z coordinates in a file
-				wxString proposed = mafGetApplicationDirectory().c_str();
+				mafString proposed = mafGetApplicationDirectory();
 				proposed += _("/Data/External/");
 				proposed += _("Z_coordinates_");
 				proposed += m_Input->GetName();
 				proposed += _(".txt");
-				wxString wildc = _("txt file (*.txt)|*.txt");
-				wxString file = mafGetSaveFile(proposed,wildc).c_str();   
+				mafString wildc = _("txt file (*.txt)|*.txt");
+				mafString file = mafGetSaveFile(proposed,wildc);   
 				nome = (file);
 				std::ofstream f_out;
 				f_out.open(nome);

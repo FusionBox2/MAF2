@@ -161,13 +161,9 @@ void  mafOpImporterVRML::OpRun()
 //----------------------------------------------------------------------------
 {
 	mafString vrml_wildc	= "VRML Data (*.wrl)|*.wrl";
-  mafString f;
 
   if (m_File.IsEmpty())
-  {
-    f = mafGetOpenFile(m_FileDir.GetCStr(),vrml_wildc.GetCStr()).c_str(); 	
-    m_File = f;
-  }
+    m_File = mafGetOpenFile(m_FileDir.GetCStr(),vrml_wildc.GetCStr()); 	
 
   int result = OP_RUN_CANCEL;
 

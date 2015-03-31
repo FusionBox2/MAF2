@@ -103,7 +103,7 @@ void mafOpImporterVTK::OpRun()
   mafString f;
   if (m_File.IsEmpty())
   {
-    f = mafGetOpenFile(m_FileDir, wildc, _("Choose VTK file")).c_str();
+    f = mafGetOpenFile(m_FileDir, wildc, _("Choose VTK file"));
     m_File = f;
   }
 

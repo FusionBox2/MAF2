@@ -74,13 +74,13 @@ void mafGUIListCtrl::Reset ()
   m_List->SetColumnWidth( 0,1000 );
 }
 //----------------------------------------------------------------------------
-bool mafGUIListCtrl::AddItem (long item_id, wxString label, ITEM_ICONS icon)
+bool mafGUIListCtrl::AddItem (long item_id, const mafString& label, ITEM_ICONS icon)
 //----------------------------------------------------------------------------
 {
   long id =  m_List->FindItem(-1, item_id);
   if(id != -1)
     return false;
-  long tmp = m_List->InsertItem(item_id,label,icon); 
+  long tmp = m_List->InsertItem(item_id,label.GetCStr(),icon); 
   m_List->SetItemData(tmp, item_id);
   return true;
 }
@@ -100,12 +100,12 @@ void mafGUIListCtrl::DeselectItem(long item_id)
    m_List->SetItemState(item_id,0,wxLIST_STATE_SELECTED);
 }
 //----------------------------------------------------------------------------
-bool mafGUIListCtrl::SetItemLabel (long item_id, wxString label)
+bool mafGUIListCtrl::SetItemLabel (long item_id, const mafString& label)
 //----------------------------------------------------------------------------
 {
   long id =  m_List->FindItem(-1, item_id);
   if (id == -1) return false;
-  m_List->SetItemText(id,label);
+  m_List->SetItemText(id,label.GetCStr());
   return true;
 }
 //----------------------------------------------------------------------------
@@ -172,11 +172,11 @@ void mafGUIListCtrl::OnSelectionChanged(wxListEvent& event)
   event.Skip();
 }
 //----------------------------------------------------------------------------
-void mafGUIListCtrl::SetColumnLabel(int col, wxString label)
+void mafGUIListCtrl::SetColumnLabel(int col, const mafString&label)
 //----------------------------------------------------------------------------
 {
   wxListItem li;
   li.m_mask = wxLIST_MASK_TEXT;
-  li.m_text = label;
+  li.m_text = label.GetCStr();
   m_List->SetColumn(col,li);
 }

@@ -236,7 +236,7 @@ void mafGUIApplicationLayoutSettings::InitializeSettings()
   }
   else
   {
-    wxString layout_dir  = mafGetApplicationDirectory().c_str();
+    wxString layout_dir  = mafGetApplicationDirectory().GetCStr();
     layout_dir << "\\Layout\\layout.mly";
     m_Config->Write("DefaultLayoutFile", layout_dir);
     m_Config->Flush();
@@ -362,7 +362,7 @@ void mafGUIApplicationLayoutSettings::LoadLayout(bool fileDefault)
   if(fileDefault)
     file = m_DefaultLayoutFile;
   else
-    file = mafGetOpenFile("", _("All Files (*.*)|*.*"), _("Open Layout File"), GetGui()).c_str();
+    file = mafGetOpenFile("", _("All Files (*.*)|*.*"), _("Open Layout File"), GetGui());
 
   if(file.IsEmpty())
     return;

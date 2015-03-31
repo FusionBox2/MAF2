@@ -99,9 +99,9 @@ mafInteractionManager::mafInteractionManager()
   m_CurrentRenderer   = NULL;
   m_ActionsList       = NULL;
   m_Bindings          = NULL;
-  m_SettingFileName = mafGetApplicationDirectory().c_str();
+  m_SettingFileName = mafGetApplicationDirectory();
   m_SettingFileName.Append("Config/Presets");
-  if(!::wxDirExists(m_SettingFileName)) m_SettingFileName = mafGetApplicationDirectory().c_str();
+  if(!::wxDirExists(m_SettingFileName)) m_SettingFileName = mafGetApplicationDirectory();
   
   mafNEW(m_DeviceManager);
   m_DeviceManager->SetListener(this);

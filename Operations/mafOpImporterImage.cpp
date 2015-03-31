@@ -44,14 +44,14 @@
 //----------------------------------------------------------------------------
 // Global Function (locale to this file) to sort the filenames
 //----------------------------------------------------------------------------
-bool CompareNumber(std::string first, std::string second)
+bool CompareNumber(const mafString& first, const mafString& second)
 {
 	wxString first_path, first_name, first_ext;
 	wxString second_path, second_name, second_ext;
 	long first_num, second_num;
 
-	wxSplitPath(first.c_str(),&first_path,&first_name,&first_ext);
-	wxSplitPath(second.c_str(),&second_path,&second_name,&second_ext);
+	wxSplitPath(first.GetCStr(),&first_path,&first_name,&first_ext);
+	wxSplitPath(second.GetCStr(),&second_path,&second_name,&second_ext);
 
 	first_name.ToLong(&first_num);
 	second_name.ToLong(&second_num);
@@ -128,7 +128,7 @@ void mafOpImporterImage::OpRun()
   }
   else
   {
-    wxSplitPath(m_Files[0].c_str(),&m_FileDirectory,&m_FilePrefix,&m_FileExtension);
+    wxSplitPath(m_Files[0].GetCStr(),&m_FileDirectory,&m_FilePrefix,&m_FileExtension);
     
     if (!m_TestMode)
     {
@@ -235,7 +235,7 @@ void mafOpImporterImage::BuildImageSequence()
 
 	mafNEW(m_ImportedImage);
   
-  wxSplitPath(m_Files[0].c_str(),&path,&name,&ext);
+  wxSplitPath(m_Files[0].GetCStr(),&path,&name,&ext);
   if(name.IsNumber())
     std::sort(m_Files.begin(),m_Files.end(),CompareNumber);
   else
@@ -252,7 +252,7 @@ void mafOpImporterImage::BuildImageSequence()
       mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,progress_value));
     }
 
-    wxSplitPath(m_Files[i].c_str(),&path,&name,&ext);
+    wxSplitPath(m_Files[i].GetCStr(),&path,&name,&ext);
 		ext.MakeUpper();
 		if(name.IsNumber())
 			name.ToLong(&time);
@@ -262,33 +262,33 @@ void mafOpImporterImage::BuildImageSequence()
 		if(ext == "BMP")
 		{
 			vtkMAFSmartPointer<vtkBMPReader> r;
-			r->SetFileName(m_Files[i].c_str());
+			r->SetFileName(m_Files[i].GetCStr());
 			r->Update();
       m_ImportedImage->SetData(r->GetOutput(),time);
 		} 
 		else if (ext == "JPG" || ext == "JPEG" )
 		{
 			vtkMAFSmartPointer<vtkJPEGReader> r;
-			r->SetFileName(m_Files[i].c_str());
+			r->SetFileName(m_Files[i].GetCStr());
 			r->Update();
       m_ImportedImage->SetData(r->GetOutput(),time);
 		}
 		else if (ext == "PNG")
 		{
 			vtkMAFSmartPointer<vtkPNGReader> r;
-			r->SetFileName(m_Files[i].c_str());
+			r->SetFileName(m_Files[i].GetCStr());
 			r->Update();
       m_ImportedImage->SetData(r->GetOutput(),time);
 		}
 		else if (ext == "TIF" || ext == "TIFF" )
 		{
 			vtkMAFSmartPointer<vtkTIFFReader> r;
-			r->SetFileName(m_Files[i].c_str());
+			r->SetFileName(m_Files[i].GetCStr());
 			r->Update();
       m_ImportedImage->SetData(r->GetOutput(),time);
 		}
 		else
-			wxMessageBox("unable to import %s, unrecognized type",m_Files[i].c_str());
+			wxMessageBox("unable to import %s, unrecognized type",m_Files[i].GetCStr());
 	}
 
   if(m_NumFiles > 1)
@@ -317,7 +317,7 @@ void mafOpImporterImage::BuildVolume()
   if(m_FileExtension.Upper() == "BMP")
 	{
     vtkBMPReader *r = vtkBMPReader::New();
-    r->SetFileName(m_Files[0].c_str());
+    r->SetFileName(m_Files[0].GetCStr());
     r->UpdateInformation();
     r->GetDataExtent(extent);
     r->Delete();
@@ -341,7 +341,7 @@ void mafOpImporterImage::BuildVolume()
 	else if (m_FileExtension.Upper() == "JPG" || m_FileExtension.Upper() == "JPEG")
 	{
 		vtkJPEGReader *r = vtkJPEGReader::New();
-    r->SetFileName(m_Files[0].c_str());
+    r->SetFileName(m_Files[0].GetCStr());
     r->UpdateInformation();
     r->GetDataExtent(extent);
     r->Delete();
@@ -364,7 +364,7 @@ void mafOpImporterImage::BuildVolume()
 	else if (m_FileExtension.Upper() == "PNG")
 	{
 		vtkPNGReader *r = vtkPNGReader::New();
-    r->SetFileName(m_Files[0].c_str());
+    r->SetFileName(m_Files[0].GetCStr());
     r->UpdateInformation();
     r->GetDataExtent(extent);
     r->Delete();
@@ -387,7 +387,7 @@ void mafOpImporterImage::BuildVolume()
 	else if (m_FileExtension.Upper() == "TIF" || m_FileExtension.Upper() == "TIFF" )
 	{
 		vtkTIFFReader *r = vtkTIFFReader::New();
-    r->SetFileName(m_Files[0].c_str());
+    r->SetFileName(m_Files[0].GetCStr());
     r->UpdateInformation();
     r->GetDataExtent(extent);
     r->Delete();
@@ -409,7 +409,7 @@ void mafOpImporterImage::BuildVolume()
 	}
 	else
   {
-		mafLogMessage("unable to import %s, unrecognized type", m_Files[0].c_str());
+		mafLogMessage("unable to import %s, unrecognized type", m_Files[0].GetCStr());
     mafDEL(m_ImportedImageAsVolume);
   }
   

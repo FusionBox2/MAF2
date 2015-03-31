@@ -91,7 +91,7 @@ void mafOpExporterMesh::OpRun()
   {
     m_FileDir << this->m_Input->GetName();
     m_FileDir << ".lis";
-    m_File = mafGetSaveFile(m_FileDir.GetCStr(), wildc.GetCStr()).c_str();
+    m_File = mafGetSaveFile(m_FileDir, wildc);
   }
 
   // Generate the three output files

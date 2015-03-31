@@ -92,14 +92,14 @@ void mafGUIDictionaryWidget::OnEvent(mafEventBase *maf_event)
 void mafGUIDictionaryWidget::LoadDictionary()
 //----------------------------------------------------------------------------
 {
-  wxString wild_dict	= "Dictionary file (*.dic)|*.dic|All files (*.*)|*.*";
-  wxString m_dict		  = mafGetApplicationDirectory().c_str();
+  mafString wild_dict	= "Dictionary file (*.dic)|*.dic|All files (*.*)|*.*";
+  mafString m_dict		  = mafGetApplicationDirectory();
   m_dict = m_dict + "\\Config\\Dictionary\\";
-	wxString file       = mafGetOpenFile(m_dict,wild_dict,"Choose Dictionary File",m_List).c_str(); 
+	mafString file       = mafGetOpenFile(m_dict,wild_dict,"Choose Dictionary File",m_List); 
 	if(file != "") LoadDictionary(file);
 }
 //----------------------------------------------------------------------------
-void mafGUIDictionaryWidget::LoadDictionary(wxString file)
+void mafGUIDictionaryWidget::LoadDictionary(const mafString& file)
 //----------------------------------------------------------------------------
 {
   m_File = file;
@@ -118,13 +118,13 @@ void mafGUIDictionaryWidget::LoadDictionary(wxString file)
 	if(m_NumItem) delete [] m_Items;
 
   m_NumItem = storeDict->m_StrVector.size();
-  m_Items = new wxString*[m_NumItem];
+  m_Items = new mafString*[m_NumItem];
 
   m_List->Reset();
   m_List->SetColumnLabel(0, "names already in use are displayed with the red icon");
   for(int i=0; i<m_NumItem; i++)
   {
-     m_Items[i] = new wxString(storeDict->m_StrVector[i]);
+     m_Items[i] = new mafString(storeDict->m_StrVector[i]);
      m_List->AddItem(i,*m_Items[i]);
   }
   
@@ -140,7 +140,7 @@ void mafGUIDictionaryWidget::SetCloud(mafVME *vme)
 }
 //----------------------------------------------------------------------------
 // SIL - to be removed
-void mafGUIDictionaryWidget::ValidateItem(wxString item, bool valid)
+void mafGUIDictionaryWidget::ValidateItem(const mafString& item, bool valid)
 //----------------------------------------------------------------------------
 {
   ITEM_ICONS icon = (valid) ? ITEM_GRAY : ITEM_RED;

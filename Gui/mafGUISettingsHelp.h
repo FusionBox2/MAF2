@@ -47,7 +47,7 @@ public:
   /** Get python.exe interpreter used at runtime*/
   bool GetBuildHelpGui(){return m_BuildHelpGui;};
 
-  void OpenHelpPage( wxString entity );
+  void OpenHelpPage(const mafString& entity);
 
 protected:
   /** Create the GUI for the setting panel.*/
@@ -60,7 +60,7 @@ protected:
   void EnableItems(bool enable);
   
   int m_BuildHelpGui;
-  wxString m_HelpFileName;
+  mafString m_HelpFileName;
 
 };
 #endif

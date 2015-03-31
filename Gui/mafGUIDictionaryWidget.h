@@ -51,31 +51,28 @@ public:
   /** Set the reference cloud. */
   void SetCloud(mafVME *vme);
   
-	/** Return choosed item. */
-  wxString ChooseItem();
-  
 	/** Load dictionary opening file dialog. */
   void LoadDictionary();
   
 	/** Load dictionary from file. */
-  void LoadDictionary(wxString file);
+  void LoadDictionary(const mafString& file);
   
 	/** Return dictionary GUI. */
-  wxWindow *GetWidget() {return (wxWindow *)m_List;};
+  wxWindow *GetWidget() {return (wxWindow *)m_List;}
 
   /** Return file name dictionary */
-  const char* GetDictionaryFileName(){return m_File;};
+  const mafString& GetDictionaryFileName(){return m_File;}
 
 protected:
 	/** Set the icon of the item to red or gray according to valid. */
-  void ValidateItem(wxString item, bool valid = true);
+  void ValidateItem(const mafString& item, bool valid = true);
   
 	/** Set the icon of all the items present into the cloud to red or gray according to valid. */
   void ValidateAllItem(bool valid = true);
 
-	wxString     m_File;
+	mafString    m_File;
   int          m_NumItem;
-	wxString   **m_Items;
+	mafString    **m_Items;
   mafGUIListCtrl *m_List;
   mafVME      *m_Vme;
 };

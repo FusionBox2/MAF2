@@ -64,7 +64,7 @@ void mafOpExporterMSF::OpRun()
 	mafString f;
   if (m_MSFFile.IsEmpty())
   {
-    f = mafGetSaveFile(m_MSFFileDir.GetCStr(),wildc.GetCStr()).c_str(); 
+    f = mafGetSaveFile(m_MSFFileDir.GetCStr(),wildc.GetCStr()); 
     m_MSFFile = f;
   }
 

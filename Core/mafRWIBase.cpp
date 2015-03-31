@@ -717,7 +717,7 @@ void mafRWIBase::SaveImage(mafString filename, int magnification , int forceExte
     }
 */    
     file.Append(filename);
-    file = mafGetSaveFile(file,wildc).c_str(); 
+    file = mafGetSaveFile(file,wildc).GetCStr(); 
     if(file.IsEmpty()) 
       return;
     filename = file.c_str();
@@ -922,7 +922,7 @@ void mafRWIBase::SaveImageRecursive(mafString filename, mafViewCompound *v,int m
     }
 
     file.Append(filename);
-    file = mafGetSaveFile(file,wildc).c_str(); 
+    file = mafGetSaveFile(file,wildc).GetCStr(); 
     if(file.IsEmpty()) 
       return;
     filename = file.c_str();
@@ -1170,7 +1170,7 @@ void mafRWIBase::SaveAllImages(mafString filename, mafViewCompound *v, int force
       filename = mafString(name);
     }
     file.Append(filename);
-    file = mafGetSaveFile(file,wildc).c_str(); 
+    file = mafGetSaveFile(file,wildc); 
     if(file.IsEmpty())
       return;
     filename = file;

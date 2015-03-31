@@ -67,10 +67,10 @@ mafVmeBaseTypes mafGetBaseType(mafVME* vme)
 */
 
 //----------------------------------------------------------------------------
-std::string  mafGetDirName(const char * initial, const char * title, wxWindow *parent)
+mafString  mafGetDirName(const mafString& initial, const mafString& title, wxWindow *parent)
 //----------------------------------------------------------------------------
 {
-  wxDirDialog dialog(parent, title, initial, wxDD_DEFAULT_STYLE | wxDD_NEW_DIR_BUTTON);
+  wxDirDialog dialog(parent, title.GetCStr(), initial.GetCStr(), wxDD_DEFAULT_STYLE | wxDD_NEW_DIR_BUTTON);
 
   dialog.SetReturnCode(wxID_OK);
   int result = dialog.ShowModal();
@@ -79,7 +79,7 @@ std::string  mafGetDirName(const char * initial, const char * title, wxWindow *p
 }
 
 //----------------------------------------------------------------------------
-std::string mafGetOpenFile(const char *initial, const char * wild, const char * title, wxWindow *parent)
+mafString mafGetOpenFile(const mafString& initial, const mafString& wild, const mafString& title, wxWindow *parent)
 //----------------------------------------------------------------------------
 {
   wxString path, name, ext;
@@ -87,10 +87,10 @@ std::string mafGetOpenFile(const char *initial, const char * wild, const char * 
 
   if(name != "" && ext != "") name = wxString::Format("%s.%s",name.c_str(),ext.c_str());
 
-  wxString wildcard=wild;
+  mafString wildcard=wild;
   wildcard+="|All Files (*.*)|*.*";
  
-	wxFileDialog dialog(parent, title, path, name, wildcard, wxOPEN|wxFILE_MUST_EXIST|wxHIDE_READONLY);
+	wxFileDialog dialog(parent, title.GetCStr(), path, name, wildcard.GetCStr(), wxOPEN|wxFILE_MUST_EXIST|wxHIDE_READONLY);
 
   dialog.SetReturnCode(wxID_OK);
 	int result = dialog.ShowModal();
@@ -99,16 +99,16 @@ std::string mafGetOpenFile(const char *initial, const char * wild, const char * 
 }
 
 //----------------------------------------------------------------------------
-void mafGetOpenMultiFiles(const char * initial, const char * wild, std::vector<std::string> &files, const char * title, wxWindow *parent)
+void mafGetOpenMultiFiles(const mafString& initial, const mafString& wild, std::vector<mafString>& files, const mafString& title, wxWindow *parent)
 //----------------------------------------------------------------------------
 {
   wxString path, name, ext;
   wxSplitPath(initial,&path,&name,&ext);
   if(name != "" && ext != "") name = wxString::Format("%s.%s",name.c_str(),ext.c_str());
-  wxString wildcard = wild;
+  mafString wildcard = wild;
   wildcard += "|All Files (*.*)|*.*";
  
-	wxFileDialog dialog(parent, title, path, name, wildcard, wxOPEN|wxFILE_MUST_EXIST|wxHIDE_READONLY|wxMULTIPLE);
+	wxFileDialog dialog(parent, title.GetCStr(), path, name, wildcard.GetCStr(), wxOPEN|wxFILE_MUST_EXIST|wxHIDE_READONLY|wxMULTIPLE);
 
   dialog.SetReturnCode(wxID_OK);
 	int result = dialog.ShowModal();
@@ -119,24 +119,24 @@ void mafGetOpenMultiFiles(const char * initial, const char * wild, std::vector<s
 	  files.push_back(wxfiles[i].c_str());
 }
 //----------------------------------------------------------------------------
-std::string mafGetSaveFile(const char * initial, const char * wild, const char * title, wxWindow *parent)
+mafString mafGetSaveFile(const mafString& initial, const mafString& wild, const mafString& title, wxWindow *parent)
 //----------------------------------------------------------------------------
 {
   wxString path, name, ext;
   wxSplitPath(initial,&path,&name,&ext);
   if(name != "" && ext != "") name = wxString::Format("%s.%s",name.c_str(),ext.c_str());
-  wxString wildcard = wild;
-  wxString defaultname = "newMAFfile";
+  mafString wildcard = wild;
+  mafString defaultname = "newMAFfile";
   wildcard += "|All Files (*.*)|*.*";
-  //wxFileDialog dialog(parent,title, path, name, wildcard, wxSAVE|wxOVERWRITE_PROMPT|wxHIDE_READONLY);
-  wxFileDialog dialog(parent,title, initial, defaultname, wildcard, wxSAVE|wxOVERWRITE_PROMPT|wxHIDE_READONLY);
+  //wxFileDialog dialog(parent,title.GetCStr(), path, name, wildcard.GetCStr(), wxSAVE|wxOVERWRITE_PROMPT|wxHIDE_READONLY);
+  wxFileDialog dialog(parent,title.GetCStr(), initial.GetCStr(), defaultname.GetCStr(), wildcard.GetCStr(), wxSAVE|wxOVERWRITE_PROMPT|wxHIDE_READONLY);
   dialog.SetReturnCode(wxID_OK);
 	int result = dialog.ShowModal();
   mafYield(); // wait for the dialog to disappear
   return  (result == wxID_OK) ? dialog.GetPath().c_str() : "";
 }
 //----------------------------------------------------------------------------
-std::string mafGetApplicationDirectory()
+mafString mafGetApplicationDirectory()
 //----------------------------------------------------------------------------
 {
 	static wxString app_dir = "";
@@ -150,7 +150,7 @@ std::string mafGetApplicationDirectory()
 	return app_dir.c_str();
 }
 //----------------------------------------------------------------------------
-bool IsRemote(mafString filename, mafString &protocol_used)
+bool IsRemote(const mafString& filename, mafString &protocol_used)
 //----------------------------------------------------------------------------
 {
   bool is_remote = false;
@@ -272,10 +272,10 @@ wxColour mafRandomColor()
   };
 }
 //----------------------------------------------------------------------------
-std::string  mafIdString(int id)
+mafString  mafIdString(int id)
 //----------------------------------------------------------------------------
 {
-    wxString s;
+    mafString s;
     switch(id)
     {
      case MENU_START:           s="MENU_START"; break; 
@@ -483,7 +483,7 @@ std::string  mafIdString(int id)
       s << id;
      break;
     }
-    return s.c_str(); 
+    return s; 
 }
 //----------------------------------------------------------------------------
 int* GetMAFExpertMode()
