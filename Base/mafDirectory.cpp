@@ -46,9 +46,10 @@ mafDirectory::~mafDirectory()
 #include <sys/types.h>
 
 //------------------------------------------------------------------------------
-bool mafDirectory::Load(const char* name)
+bool mafDirectory::Load(const mafString& namestr)
 //------------------------------------------------------------------------------
 {
+  const char *name = namestr.GetCStr();
   char* buf;
   int n = static_cast<int>( strlen(name) );
   if ( name[n - 1] == '/' ) 
@@ -92,9 +93,10 @@ bool mafDirectory::Load(const char* name)
 #include <dirent.h>
 
 //------------------------------------------------------------------------------
-bool mafDirectory::Load(const char* name)
+bool mafDirectory::Load(const mafString& namestr)
 //------------------------------------------------------------------------------
 {
+  const char *name = namestr.GetCStr();
   DIR* dir = opendir(name);
   if ( !dir ) 
   {
@@ -112,14 +114,15 @@ bool mafDirectory::Load(const char* name)
 #endif
 
 //------------------------------------------------------------------------------
-const char* mafDirectory::GetFile(int index)
+const mafString& mafDirectory::GetFile(int index)const
 //------------------------------------------------------------------------------
 {
+  static mafString empty("");
   if ( index >= m_Files.size() )
   {
     //mafGenericOutputMacro( << "Bad index for GetFile on maf::mafDirectory\n");
-    return 0;
+    return empty;
   }
   
-  return m_Files[index].c_str();
+  return m_Files[index];
 }
