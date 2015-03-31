@@ -127,8 +127,7 @@ void mafDataPipeInterpolator::UpdateBounds()
   if (m_CurrentItem)
   { 
     if ( (!m_Bounds.IsValid())||(m_CurrentItem!=old_item)|| \
-      (m_CurrentItem->GetMTime()>m_Bounds.GetMTime())|| \
-      (m_CurrentItem && m_CurrentItem->GetUpdateTime()>m_Bounds.GetMTime()))
+      (m_CurrentItem->GetMTime()>m_Bounds.GetMTime()))
     {
         m_Bounds.DeepCopy(m_CurrentItem->GetBounds());
     }

@@ -270,8 +270,6 @@ void mafVMEItemVTK::SetData(vtkDataSet *data)
 
     m_Data=data;
 
-    m_UpdateTime.Modified();  //modified by Marco. 3-2-2004
-
     Modified();
 
     if (!m_IsLoadingData)

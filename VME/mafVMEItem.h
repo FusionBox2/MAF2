@@ -212,9 +212,6 @@ public:
   /** Return true if the data is not present on disk and has been downloaded.*/
   virtual bool IsWaitingData() {return m_IsLoadingData;};
   
-  /** return time the data has been updated*/
-  unsigned long GetUpdateTime() {return m_UpdateTime.GetMTime();}
-  
   /** return true if data has been saved encrypted */
   bool GetCrypting();
   
@@ -298,7 +295,6 @@ protected:
   mafTimeStamp  m_TimeStamp;  ///< time stamp of this dataset
   mafString     m_DataType;   ///< the dataset type expressed as a string 
   mafOBB        m_Bounds;     ///< spatial bounds for this dataset
-  mafMTime      m_UpdateTime; ///< store modification timestamp for last update
   bool          m_IsLoadingData; ///< Set when item is loading data to prevent setting DataModified to true
 
   mafString     m_ArchiveFileName; ///< Filename of the archive if single file mode is enabled

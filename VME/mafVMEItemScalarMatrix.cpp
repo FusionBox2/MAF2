@@ -167,7 +167,6 @@ void mafVMEItemScalarMatrix::SetData(vnl_matrix<double> &data)
     m_Data = data;
     m_ScalarBouns[0] = m_Data.min_value();
     m_ScalarBouns[1] = m_Data.max_value();
-    m_UpdateTime.Modified();
 
     Modified();
 
