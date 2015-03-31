@@ -330,7 +330,7 @@ bool lhpOpRegisterLMScripted::RegistrationProcedure()
 
   if(m_Registered == NULL)
   {
-    wxString name = wxString::Format("%s registered on %s",m_Source->GetName(), m_Target->GetName());
+    wxString name = wxString::Format("%s registered on %s",m_Source->GetName().GetCStr(), m_Target->GetName().GetCStr());
     m_Registered= mafVME::SafeDownCast(m_Source->CopyTree());
     m_Registered->Register(this);
     m_Registered->SetName(name);
@@ -405,7 +405,7 @@ bool lhpOpRegisterLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandma
 {
   mafVMEInfoText *info;
   mafNEW(info);
-  wxString name = wxString::Format("Info for registration %s into %s",m_Source->GetName(), m_Target->GetName());
+  wxString name = wxString::Format("Info for registration %s into %s",m_Source->GetName().GetCStr(), m_Target->GetName().GetCStr());
   info->SetName(name);
   info->SetPosLabel("Registration residual: ", 0);
   info->SetPosShow(true, 0);
