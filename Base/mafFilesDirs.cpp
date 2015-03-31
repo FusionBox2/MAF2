@@ -303,6 +303,37 @@ void mafOpenZIP(const mafString& filename, const mafString& temp_directory)
   fileSystem->CleanUpHandlers(); // Handlers are shared trough file systems.
   cppDEL(fileSystem);
 }
+void mafExtractZIP(const mafString& filename, const mafString& entry_name, void *& buffer, size_t& size)
+{
+  wxFileInputStream in(filename.GetCStr());
+  wxZipInputStream zip(in);
+  if (!in || !zip)
+    return;
+  wxZipEntry *entry = NULL;
+  // convert the local name we are looking for into the internal format
+  wxString name = wxZipEntry::GetInternalName(entry_name.GetCStr());
+
+  // call GetNextEntry() until the required internal name is found
+  // to be re-factored for efficiency reasons.
+  do 
+  {
+    if (entry)
+    {
+      delete entry;
+      entry = NULL;
+    }
+    entry = zip.GetNextEntry();
+  } while(entry != NULL && entry->GetInternalName() != name);
+
+  if (entry != NULL) 
+  {
+    size = entry->GetSize();
+    buffer = new char[size];
+    zip.Read(buffer, size);
+    delete entry;
+    entry = NULL;
+  }
+}
 
 //----------------------------------------------------------------------------
 void mafExtractZIP(const mafString& filename, const mafString& temp_directory, const mafString& entry_name)
