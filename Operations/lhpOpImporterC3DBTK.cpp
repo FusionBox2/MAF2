@@ -138,6 +138,8 @@ lhpOpImporterC3DBTK::lhpOpImporterC3DBTK(const mafString& label) : Superclass(la
   m_ImportAnalogFlag = TRUE;
   m_ImportPlatformFlag = TRUE;
   m_ImportEventFlag = FALSE;
+
+  m_DefaultRadius = 5;
 }
 
 //----------------------------------------------------------------------------
@@ -431,6 +433,7 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
     mafNEW(specCloud);
     if(specCloud == NULL)
       return;
+	specCloud->SetRadius(m_DefaultRadius);
     specCloudName.Append("TRAJECTORIES");
     specCloud->SetName(specCloudName);
   }
@@ -492,6 +495,7 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
                     cldName.Append("_");*/
                     cldName.Append(nmIt->second);
                     cld->SetName(cldName);
+					cld->SetRadius(m_DefaultRadius);
                     intData.m_Clouds[nmIt->second] = cld;
                     addTo = cld;
                   }
@@ -531,6 +535,7 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
                   }
                   //select this cloud for using
                   specCloud->SetName(specCloudName);
+				  specCloud->SetRadius(m_DefaultRadius);
                   addTo = specCloud;
                 }
               }

@@ -180,6 +180,8 @@ protected:
   int m_ImportPlatformFlag;
   int m_ImportEventFlag;
 
+  double    m_DefaultRadius;
+
   //vmes
   struct _InternalC3DData
   {
