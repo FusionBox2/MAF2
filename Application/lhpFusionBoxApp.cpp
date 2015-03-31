@@ -766,7 +766,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   // View Analog graph
   mafViewVTK *graph = new mafViewVTK("Analog Graph", CAMERA_PERSPECTIVE, false);
   graph->PlugVisualPipe("medVMEAnalog", "medPipeGraph",MUTEX);
-  m_Logic->Plug(graph, view_visibility);
+  m_Logic->Plug(graph/*, view_visibility*/);
 
   //View Global Slice
   mafViewGlobalSliceCompound *GlobalSlice = new mafViewGlobalSliceCompound("Global Slice");

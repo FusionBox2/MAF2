@@ -154,6 +154,10 @@ private:
   wxInt32   m_ColorTableNumber;
   double    m_XMin, m_XMax, m_YMin, m_YMax;
   bool      m_RangeInit;
+  int      m_ForceRanges;
+  double    m_YForceMin;
+  double    m_YForceMax;
+
 };
 
 wxChar const *GetListSeparator();

@@ -116,7 +116,10 @@ enum
   ID_THICK_AXIS       ,
   ID_THICK_GRID       ,
   ID_SHOW_ROUGH_GRID  ,
-  ID_SHOW_PRECISE_GRID
+  ID_SHOW_PRECISE_GRID,
+  ID_FORCE_YRANGES,
+  ID_YMINRANGE,
+  ID_YMAXRANGE
 };
 
 //----------------------------------------------------------------------------
@@ -651,8 +654,8 @@ void mafViewIntGraphWindow::UpdateRanges()
               continue;
             derX *= m_XGraph->GetDerivCoef(m_XGraph->GetIndexX(0));
           }
-          /*if(fabs(derX) < DERIV_ABS_MIN)
-          continue;*/
+          if(fabs(derX) < DERIV_ABS_MIN)
+            continue;
           curVal /= derX;
         }
 
@@ -755,8 +758,18 @@ void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
 
   XMin = m_XMin;
   XMax = m_XMax;
-  YMin = m_YMin;
-  YMax = m_YMax;
+  if(m_ForceRanges)
+  {
+    YMin = m_YForceMin;
+    YMax = m_YForceMax;
+  }
+  else
+  {
+    YMin = m_YMin;
+    YMax = m_YMax;
+  }
+
+
 
   AdoptMinMaxRange(XMin, XMax, rXPow10Marks);
   AdoptMinMaxRange(YMin, YMax, rYPow10Marks);
@@ -865,16 +878,23 @@ void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
             double valX   = m_XGraph->GetValue(nI, m_XGraph->GetIndexX(0), m_XGraph->GetXDer(0));
             double paramt = m_XGraph->GetValue(nI, 0, 0);
             unsigned int der = m_Graphs[i]->GetYDer(nJ);
-            if(m_Graphs[i]->GetValueByParam(valY, paramt, m_Graphs[i]->GetIndexY(nJ), der))
+            double vtmp;
+            if(m_Graphs[i]->GetValueByParam(vtmp, paramt, m_Graphs[i]->GetIndexY(nJ), der))
             {
               if(der == 1)
               {
                 double derX = m_XGraph->GetValue(nI, m_XGraph->GetIndexX(0), 1);
-                derX *= m_XGraph->GetDerivCoef(m_XGraph->GetIndexX(0));
-                /*if(fabs(derX) < DERIV_ABS_MIN)
-                continue;*/
-                valY /= derX;
+                if(fabs(derX) < DERIV_ABS_MIN)
+                  continue;
+                vtmp  = fabs(vtmp / derX);
+                vtmp /= m_XGraph->GetDerivCoef(m_XGraph->GetIndexX(0));
+                if(YMin <= vtmp && vtmp <= YMax)
+                  valY = vtmp;
+                else
+                  continue;
               }
+              else 
+                valY = vtmp;
 
               double rX   = (valX - XMin) /( XMax - XMin);
               double rY   = (YMax - valY) / (YMax - YMin);
@@ -982,7 +1002,7 @@ void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
               nStartX = nX;
               nStartY = nY;
               previnit = true;
-              if(nYDer == 0 && t + 1 < nFinish)
+              /*if(nYDer == 0 && t + 1 < nFinish)
               {
                 double deriv1, deriv1next, valXnext;
                 valXnext = m_Graphs[i]->GetValue(t + 1, 0, 0);
@@ -1001,7 +1021,7 @@ void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
                   cppDEL(pEPen);
                   cppDEL(pBrush);
                 }
-              }
+              }*/
             }
           }
           nStart  = m_Graphs[i]->GetBreakEnd();
@@ -1392,6 +1412,9 @@ void mafViewIntGraphWindow::CreateGui()
   m_Gui->Slider (ID_THICK_CURVE    , "Curves", &m_CurveThickness, 1, 5);
   m_Gui->Slider (ID_THICK_AXIS     , "Axes", &m_AxisThickness , 1, 5);
   m_Gui->Slider (ID_THICK_GRID     , "Grid", &m_GridThickness , 1, 5);
+  m_Gui->Bool   (ID_FORCE_YRANGES, "Force ranges", &m_ForceRanges);
+  m_Gui->Double(ID_YMINRANGE, "Y Min", &m_YForceMin);
+  m_Gui->Double(ID_YMAXRANGE, "Y Min", &m_YForceMax);
   m_Gui->Update();
 }
 
@@ -1461,6 +1484,9 @@ void mafViewIntGraphWindow::OnEvent(mafEventBase *maf_event)
       case ID_THICK_GRID:
       case ID_SHOW_ROUGH_GRID:
       case ID_SHOW_PRECISE_GRID:
+      case ID_FORCE_YRANGES:
+      case ID_YMINRANGE:
+      case ID_YMAXRANGE:
         Update();
         break;
     }
@@ -1752,6 +1778,12 @@ wxWindow(mafGetFrame(), -1, wxDefaultPosition, wxDefaultSize, 0, label)
 
   m_RangeInit        = false;
   m_Gui              = NULL;
+
+  m_ForceRanges = false;
+  m_YForceMin   = 0.;
+  m_YForceMax   = 1.;
+
+
   CreateGui();
 }
 

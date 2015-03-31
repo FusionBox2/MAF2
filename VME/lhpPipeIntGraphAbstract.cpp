@@ -38,7 +38,7 @@ lhpPipeIntGraphAbstract::lhpPipeIntGraphAbstract()
 {
   m_ForcedWholeRange = false;
   m_WholeRange       = s_WholeRange;
-  m_Graph = new mafGraphDataImpl(this, 8888.8888, 1000);
+  m_Graph = new mafGraphDataImpl(this, 8888.8888, 50000);
   m_Graph->AddXVar(0);
 }
 //----------------------------------------------------------------------------

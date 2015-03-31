@@ -32,7 +32,7 @@ class lhpPipeIntGraphAbstract;
 class mafGraphDataImpl: public mafGraphData, public mafMemoryGraph
 {
 public:
-  mafGraphDataImpl(lhpPipeIntGraphAbstract *pipe, double garbage,unsigned int size = 1000);
+  mafGraphDataImpl(lhpPipeIntGraphAbstract *pipe, double garbage,unsigned int size = 50000);
   virtual double   GetValue(unsigned int point,unsigned int coord, unsigned int deriv = 0) const {return (*this)(point, coord, deriv);}
   virtual bool     GetValueByParam(double& res, double param,unsigned int coord, unsigned int deriv = 0) const {return mafMemoryGraph::GetValueByParam(res, param, coord, deriv);}
   virtual unsigned GetVarNum() const{return GetDim();}
