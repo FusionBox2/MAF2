@@ -25,10 +25,15 @@ void GetGlobalMatrix(mafVME *vme, mafTimeStamp ts, mafMatrix& matrix);
 //void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat);
 void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, mafMatrix& matrix, mafVME *parent = NULL);
 
+mafVME *AutoSelectProximal(mafVME *distal);
+
 void SetOVP(mafVME *vme, mafTimeStamp ts, mafTimeStamp tsRef, V4d<double> *vOVPPos, V4d<double> *vOVPRot);
 int FindParentID(int id);
 void OVP_GES(mafVME *vme, mafTimeStamp ts, mafTimeStamp tsRef, V4d<double> *vOVPPos, V4d<double> *vOVPRot, V4d<double> *vGESPos, V4d<double> *vGESRot, mafVME *parent = NULL);
 int MatrixToHelicalAxis(const mafMatrix &matrix, double helical_axis[3],double point[3], double& phi,double& t);
+
+void GetMeanAxis(mafVME *proximal, mafVME *distal, mafTimeStamp tsMinTime, mafTimeStamp tsMaxTime, double minAngle, V3d<double>& Direction, V3d<double>& StartPoint, double& resang);
+void GetMomentAxis(mafVME *proximal, mafVME *distal, mafTimeStamp tsTime, double minAngle, V3d<double>& helicalAxis, V3d<double>& point, double& angle, double& translationAmount, mafTimeStamp tsTimeTo = -1);
 
 bool mafTransfInverseTransformUpright(mafMatrix const *mpIn, V4d<double> *vpPos, V4d<double> *vpRot);
 bool mafTransfMatrixToEuler(mafMatrix const *mpR, V4d<double> *vpR, int conv);

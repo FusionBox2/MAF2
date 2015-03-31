@@ -52,6 +52,8 @@ public:
     ID_MODE,
     ID_ALIGNING,
     ID_PRINT,
+    ID_PARENT,
+    ID_RESETPARENT,
     ID_LAST
   };
 
@@ -92,16 +94,12 @@ public:
   interpolates on the fly according to the matrix interpolator.*/
   virtual void SetMatrix(const mafMatrix &mat);
 
-  void GetShowTransform(mafTimeStamp ts, const V3d<double>& helicalAxis, const V3d<double>& point, mafMatrix& globalMatrix);
-
   void CalculateMatrix(mafMatrix &mtr, mafTimeStamp tsTime);
   /**
   Return the list of timestamps for this VME. Timestamps list is 
   obtained merging timestamps for matrixes and VME items*/
   virtual void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes){kframes.clear();}
 
-  virtual void GetMeanAxis(mafTimeStamp tsMinTime, mafTimeStamp tsMaxTime, V3d<double>& Direction, V3d<double>& StartPoint, double& resang);
-  virtual void GetMomentAxis(mafTimeStamp tsTime, V3d<double>& helicalAxis, V3d<double>& point, double& angle, double& translationAmount, mafTimeStamp tsTimeTo = -1);
 protected:
   mafVMEHelAxis();
   virtual ~mafVMEHelAxis();
@@ -163,6 +161,12 @@ protected:
   mafString                  m_StrTrl;
 
   int                        m_MeanChanges;
+
+  mafVME                     *GetProximal();
+  mafVME                     *GetDistal();
+
+  void                       SetProximal(mafVME *proximal);
+  mafString                  m_ProximalName;
 
   mafTransform               *m_Transform; ///< pose matrix for the slicer plane
 private:

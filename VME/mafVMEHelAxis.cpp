@@ -52,320 +52,12 @@
 #include "vtkPointData.h"
 #include "vtkUnsignedCharArray.h"
 
-#include "nr.h"
-
-
-namespace
-{
-//----------------------------------------------------------------------------
-int ExtractMatchingPoints(mafVMELandmarkCloud *src, mafTimeStamp srctime, mafTimeStamp trgtime, const mafMatrix& mpar1, const mafMatrix& mpar2, vtkPoints *pSrc, vtkPoints *pTrg)
-//----------------------------------------------------------------------------
-{
-  double lmsrc[4];
-  double lmtrg[4];
-  double lmsrctrf[4];
-  double lmtrgtrf[4];
-  int    i;
-  int    npSource    = src->GetNumberOfLandmarks();
-  int    npTarget    = npSource;
-  int    ncp         = 0;
-
-  mafMatrix mcur;
-  mafMatrix mnxt;
-
-  mafMatrix mparcur;
-  mafMatrix mparnxt;
-
-  mparcur = mpar1;
-  mparnxt = mpar2;
-
-  mparcur.Invert();
-  mparnxt.Invert();
-
-  src->GetOutput()->GetAbsMatrix(mcur, srctime);
-  src->GetOutput()->GetAbsMatrix(mnxt, trgtime);
-
-  pSrc->Reset();
-  pTrg->Reset();
-
-  for(i = 0; i < npSource; i++)
-  {
-    if(!src->GetLandmarkVisibility(i,srctime) || !src->GetLandmarkVisibility(i,trgtime))
-      continue;
-
-    //add new points to arrays if no one is zero (zero indicates that data are invalid)
-    src->GetLandmark(i, lmsrc, srctime);
-    src->GetLandmark(i, lmtrg, trgtime);
-
-    lmsrc[3] = 1.0;
-    lmtrg[3] = 1.0;
-    mcur.MultiplyPoint(lmsrc, lmsrctrf);
-    mnxt.MultiplyPoint(lmtrg, lmtrgtrf);
-
-    mparcur.MultiplyPoint(lmsrctrf, lmsrc);
-    mparnxt.MultiplyPoint(lmtrgtrf, lmtrg);
-
-    pSrc->InsertNextPoint(lmsrc);
-    pTrg->InsertNextPoint(lmtrg);
-    ncp++;
-  }
-
-  return ncp;
-}
-//----------------------------------------------------------------------------
-double RegisterPoints(vtkPoints *pSrc, vtkPoints *pTrg, vtkMatrix4x4 *res_matrix)
-//----------------------------------------------------------------------------
-{
-  int i;
-  double deviation = 0.0;
-  double dx, dy, dz;
-  assert(pSrc && pTrg);
-
-  vtkWeightedLandmarkTransform *RegisterTransform = vtkWeightedLandmarkTransform::New();
-
-  //setup transform calculator
-  RegisterTransform->SetSourceLandmarks(pSrc);
-  RegisterTransform->SetTargetLandmarks(pTrg);
-
-  RegisterTransform->SetModeToRigidBody();// Similarity();
-  //calculate transform
-  RegisterTransform->Update();
-  RegisterTransform->GetMatrix(res_matrix);
-
-  //calculate deviation
-  for(i = 0; i < pSrc->GetNumberOfPoints(); i++)
-  {
-    double coord[4];
-    double result[4];
-    double target[3];
-    pSrc->GetPoint(i, coord);
-    coord[3] = 1.0;
-
-    pTrg->GetPoint(i, target);
-
-    //transform point
-    res_matrix->MultiplyPoint(coord, result);
-
-    dx = target[0] - result[0];
-    dy = target[1] - result[1];
-    dz = target[2] - result[2];
-
-    deviation += dx * dx + dy * dy + dz * dz;
-  }
-  if(pSrc->GetNumberOfPoints() != 0)
-    deviation /= pSrc->GetNumberOfPoints();
-  deviation = sqrt(deviation);
-
-  vtkDEL(RegisterTransform);
-  return deviation;
-}
-
-void findTransform(mafVMELandmarkCloud *src, mafTimeStamp srctime, mafTimeStamp trgtime, const mafMatrix& mpar1, const mafMatrix& mpar2, mafMatrix& result)
-{
-  vtkPoints    *pointsCur = vtkPoints::New();
-  vtkPoints    *pointsNxt = vtkPoints::New();
-  ExtractMatchingPoints(src, srctime, trgtime, mpar1, mpar2, pointsCur, pointsNxt);
-  RegisterPoints(pointsCur, pointsNxt, result.GetVTKMatrix());
-  vtkDEL(pointsCur);
-  vtkDEL(pointsNxt);
-}
-
-void GetLocalTransform(mafVME *vme, mafTimeStamp ts1, mafTimeStamp ts2, mafMatrix& transf)
-{
-  mafMatrix     mt;
-  mafMatrix     mt1;
-  mafMatrix     tmp;
-
-  transf.Identity();
-  if(vme == NULL)
-    return;
-
-
-  mafVMELandmarkCloud *lm = mafVMELandmarkCloud::SafeDownCast(vme);
-  if(lm != NULL && GetAFRefSys(vme) == NULL)
-  {
-    mafMatrix mpar1, mpar2;
-    mpar1.Identity();
-    mpar2.Identity();
-    if(lm->GetParent() != NULL)
-    {
-      GetGlobalMatrix(lm->GetParent(), ts1, mpar1);
-      GetGlobalMatrix(lm->GetParent(), ts2, mpar2);
-    }
-    findTransform(lm, ts1, ts2, mpar1, mpar2, transf);
-    return;
-  }
-
-  GetLocalMatrix(vme, ts1, mt);
-  GetLocalMatrix(vme, ts2, mt1);
-  mt.Invert();
-  mafMatrix::Multiply4x4(mt1, mt, transf);
-}
-
-bool MultiplyMatVec(Mat_I_DP& m, Vec_I_DP& vi, Vec_O_DP& vo)
-{
-  assert(m.ncols() == vi.size());
-  assert(m.nrows() == vo.size());
-  if((m.ncols() != vi.size()) || (m.nrows() != vo.size()))
-    return false;
-  for(int i = 0; i < vo.size(); i++)
-  {
-    vo[i] = 0.0;
-    for(int j = 0; j < vi.size(); j++)
-    {
-      vo[i] += m[i][j] * vi[j];
-    }
-  }
-  return true;
-}
-
-bool MultiplyMatrix(Mat_I_DP& i1, Mat_I_DP& i2, Mat_O_DP& o)
-{
-  assert(i1.ncols() == i2.nrows());
-  assert(i1.nrows() == o.nrows());
-  assert(i2.ncols() == o.ncols());
-  if((i1.ncols() != i2.nrows()) || (i1.nrows() != o.nrows()) || (i2.ncols() != o.ncols()))
-    return false;
-  for(int i = 0; i < o.nrows(); i++)
-  {
-    for(int j = 0; j < o.ncols(); j++)
-    {
-      o[i][j] = 0.0;
-      for(int k = 0; k < i1.ncols(); k++)
-      {
-        o[i][j] += i1[i][k] * i2[k][j];
-      }
-    }
-  }
-  return true;
-}
-
-bool AddMatrix(Mat_I_DP& i1, Mat_I_DP& i2, Mat_O_DP& o)
-{
-  assert(i1.nrows() == i2.nrows());
-  assert(i1.ncols() == i2.ncols());
-  assert(i2.nrows() == o.nrows());
-  assert(i2.ncols() == o.ncols());
-  if((i1.nrows() != i2.nrows()) || (i1.ncols() != i2.ncols()) || (i2.nrows() != o.nrows()) || (i2.ncols() != o.ncols()))
-    return false;
-  for(int i = 0; i < o.nrows(); i++)
-  {
-    for(int j = 0; j < o.ncols(); j++)
-    {
-      o[i][j] = i1[i][j] + i2[i][j];
-    }
-  }
-  return true;
-}
-
-bool SubMatrix(Mat_I_DP& i1, Mat_I_DP& i2, Mat_O_DP& o)
-{
-  assert(i1.nrows() == i2.nrows());
-  assert(i1.ncols() == i2.ncols());
-  assert(i2.nrows() == o.nrows());
-  assert(i2.ncols() == o.ncols());
-  if((i1.nrows() != i2.nrows()) || (i1.ncols() != i2.ncols()) || (i2.nrows() != o.nrows()) || (i2.ncols() != o.ncols()))
-    return false;
-  for(int i = 0; i < o.nrows(); i++)
-  {
-    for(int j = 0; j < o.ncols(); j++)
-    {
-      o[i][j] = i1[i][j] - i2[i][j];
-    }
-  }
-  return true;
-}
-
-bool IdentityMatrix(Mat_IO_DP& mi)
-{
-  assert(mi.nrows() == mi.ncols());
-  if(mi.nrows() != mi.ncols())
-    return false;
-  for(int i = 0; i < mi.nrows(); i++)
-  {
-    for(int j = 0; j < mi.ncols(); j++)
-    {
-      if(i == j)
-        mi[i][j] = 1.0;
-      else
-        mi[i][j] = 0.0;
-    }
-  }
-  return true;
-}
-
-
-bool TransposeMatrix(Mat_I_DP& mi, Mat_O_DP& o)
-{
-  assert(mi.ncols() == o.nrows());
-  assert(mi.nrows() == o.ncols());
-  if((mi.ncols() != o.nrows()) || (mi.nrows() != o.ncols()))
-    return false;
-  for(int i = 0; i < o.nrows(); i++)
-  {
-    for(int j = 0; j < o.ncols(); j++)
-    {
-      o[i][j] = mi[j][i];
-    }
-  }
-  return true;
-}
-
-bool VecMatrix(Vec_I_DP& vi, Mat_O_DP& o)
-{
-  assert(vi.size() == o.nrows());
-  assert(o.ncols() == 1);
-  if((vi.size() != o.nrows()) || (o.ncols() != 1))
-    return false;
-  for(int i = 0; i < o.nrows(); i++)
-  {
-    o[i][0] = vi[i];
-  }
-  return true;
-}
-
-
-bool MaxEigen(int N, int NDIM, Mat_I_DP& A, double EPS, Vec_O_DP& E_vec, double& E_lam, int& Ier, int& K_iter)
-{
-  Ier = 1001;
-  assert(E_vec.size() == 3);
-  if(E_vec.size() != 3)
-    return false;
-  for(int i = 0; i < 3; i++)
-    E_vec[i] = sqrt(1.0 * N);
-  K_iter = 0;
-  double R, S = 1.0 + EPS;
-  while(S > EPS && K_iter <= Ier)
-  {
-    K_iter = K_iter + 1;
-    Vec_DP Wrk(E_vec);
-    MultiplyMatVec(A, Wrk, E_vec);
-    R = sqrt(E_vec[0] * E_vec[0] + E_vec[1] * E_vec[1] + E_vec[2] * E_vec[2]);
-    if(R <= EPS)
-    {
-      Ier = 1; 
-      return true;
-    }
-    R = 1.0 / R;
-    for(int i = 0; i < 3; i++)
-      E_vec[i] *= R;
-    for(int i = 0; i < 3; i++)
-      Wrk[i] -= E_vec[i];
-    S = sqrt(Wrk[0] * Wrk[0] + Wrk[1] * Wrk[1] + Wrk[2] * Wrk[2]);
-  }
-  if(S <= EPS)
-    Ier = 0;
-  E_lam = R;
-
-  return true;
-}
-}
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(mafVMEHelAxis)
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-void mafVMEHelAxis::GetShowTransform(mafTimeStamp ts, const V3d<double>& helicalAxis, const V3d<double>& point, mafMatrix& globalMatrix)
+void GetShowTransform(mafVME *proximal, mafTimeStamp ts, const V3d<double>& helicalAxis, const V3d<double>& point, mafMatrix& globalMatrix)
 //----------------------------------------------------------------------------
 {
   mafMatrix mShowHelical;
@@ -411,410 +103,49 @@ void mafVMEHelAxis::GetShowTransform(mafTimeStamp ts, const V3d<double>& helical
   mafMatrix tmp;
 
   tmp.Identity();
-  if(GetParent() != NULL && GetParent()->GetParent() != NULL)
-    GetGlobalMatrix(GetParent()->GetParent(), ts, tmp);
+  if(proximal != NULL)
+    GetGlobalMatrix(proximal, ts, tmp);
 
   mafMatrix::Multiply4x4(tmp, mShowHelical, globalMatrix);
   globalMatrix.SetTimeStamp(ts);
 }
 
-//----------------------------------------------------------------------------
-void mafVMEHelAxis::GetMomentAxis(mafTimeStamp tsTime, V3d<double>& helicalAxis, V3d<double>& point, double& angle, double& translationAmount, mafTimeStamp tsTimeTo)
-//----------------------------------------------------------------------------
-{
-  mafMatrix                 mt;
-  mafMatrix                 mtNxt;
-  std::vector<mafTimeStamp> timeStamps;
-
-  mafTimeStamp tscur, tsnxt;
-  bool         inited = false;
-
-  helicalAxis       = V3d<double>(1.0, 0.0, 0.0);
-  point             = V3d<double>(0.0, 0.0, 0.0);
-  angle             = 0;
-  translationAmount = 0;
-
-  if(GetParent() == NULL)
-    return;
-
-  size_t       cur, nxt;
-  GetParent()->GetAbsTimeStamps(timeStamps);
-  if(timeStamps.size() == 0)
-    return;
-
-  cur   = 0;
-  while((cur + 1 < timeStamps.size()) && (timeStamps[cur + 1] <= tsTime))
-    cur++;
-  tscur = timeStamps[cur];
-
-  nxt = cur + 1;
-  while(nxt < timeStamps.size() && (timeStamps[nxt] < tsTimeTo))
-    nxt++;
-  tscur = timeStamps[cur];
-
-  for(/*nxt = cur + 1*/; nxt < timeStamps.size(); nxt++)
-  {
-    tsnxt = timeStamps[nxt];
-    GetLocalTransform(GetParent(), tscur, tsnxt, mt);
-
-    angle       = 0.0;
-    helicalAxis = V3d<double>(1.0, 0.0, 0.0);
-    double cq = 0.5 * (mt.GetElement(0, 0) + mt.GetElement(1, 1) + mt.GetElement(2, 2) - 1.0);
-    if(fabs(cq) < 1.0)
-      angle = fabs(acos(cq) * mafMatrix3x3::RadiansToDegrees());
-
-    if(angle >= m_MinAngle)
-    {
-      MatrixToHelicalAxis(mt, helicalAxis.components, point.components, angle, translationAmount);
-    }
-    if(angle < 0)
-    {
-      helicalAxis       = -helicalAxis;
-      angle             = -angle;
-      translationAmount = -translationAmount;
-    }
-    if(angle >= m_MinAngle)
-      break;
-  }
-
-  return;
-  if(nxt >= timeStamps.size())
-    return;
-
-  V3d<double> haxisNxt;
-  V3d<double> pointNxt;
-  double      angleNxt;
-  double      transNxt;
-
-  Mat_DP Qt_t(0.0, 3, 3);
-  Vec_DP Qv_t(0.0, 3);
-  unsigned tstart = 0;
-  unsigned tend   = 0;
-
-  Vec_DP rc(0.0, 3);
-  Mat_DP Qmatr(0.0, 3, 3);
-  Vec_O_INT vidx(3);
-  DP dp;
-
-  {
-    Mat_DP R(0.0, 3, 3);
-    Mat_DP E(0.0, 3, 3);
-    Mat_DP Q(0.0, 3, 3);
-    Mat_DP Q1(0.0, 3, 3);
-    IdentityMatrix(E);
-    for(int i = 0; i < 3; i++)
-    {
-      for(int j = 0; j < 3; j++)
-      {
-        R[i][j] = mt.GetElement(i, j);
-      }
-    }
-    SubMatrix(R, E, Q);
-    TransposeMatrix(Q, Q1);
-
-    Mat_DP Qt(0.0, 3, 3);
-    Mat_DP Qtt(Qt_t);
-    Vec_DP Qv(0.0, 3);
-    Vec_DP v(0.0, 3);
-    v[0] = mt.GetElement(0, 3);
-    v[1] = mt.GetElement(1, 3);
-    v[2] = mt.GetElement(2, 3);
-    MultiplyMatrix(Q, Q1, Qt);
-    MultiplyMatVec(Q1, v, Qv);
-    AddMatrix(Qtt, Qt, Qt_t);
-    Qv_t[0] -= Qv[0];
-    Qv_t[1] -= Qv[1];
-    Qv_t[2] -= Qv[2];
-  }
-
-
-  bool adjFound = false;
-
-  cur = nxt;
-  tscur = timeStamps[cur];
-  for(nxt = cur + 1; nxt < timeStamps.size(); nxt++)
-  {
-    tsnxt = timeStamps[nxt];
-    GetLocalTransform(GetParent(), tscur, tsnxt, mtNxt);
-
-    angleNxt = 0.0;
-    haxisNxt = V3d<double>(1.0, 0.0, 0.0);
-    double cq = 0.5 * (mt.GetElement(0, 0) + mt.GetElement(1, 1) + mt.GetElement(2, 2) - 1.0);
-    if(fabs(cq) < 1.0)
-      angleNxt = fabs(acos(cq) * mafMatrix3x3::RadiansToDegrees());
-
-    if(angleNxt >= m_MinAngle)
-    {
-      MatrixToHelicalAxis(mtNxt, haxisNxt.components, pointNxt.components, angleNxt, transNxt);
-    }
-    if(angleNxt < 0)
-    {
-      haxisNxt = -haxisNxt;
-      angleNxt = -angleNxt;
-      transNxt = -transNxt;
-    }
-    if(angleNxt >= m_MinAngle)
-    {
-      adjFound = true;
-      break;
-    }
-  }
-
-  for(nxt = cur; (!adjFound) && nxt > 0; nxt--)
-  {
-    tsnxt = timeStamps[nxt - 1];
-    GetLocalTransform(GetParent(), tsnxt, tscur, mtNxt);
-
-    angleNxt = 0.0;
-    haxisNxt = V3d<double>(1.0, 0.0, 0.0);
-    double cq = 0.5 * (mt.GetElement(0, 0) + mt.GetElement(1, 1) + mt.GetElement(2, 2) - 1.0);
-    if(fabs(cq) < 1.0)
-      angleNxt = fabs(acos(cq) * mafMatrix3x3::RadiansToDegrees());
-
-    if(angleNxt >= m_MinAngle)
-    {
-      MatrixToHelicalAxis(mtNxt, haxisNxt.components, pointNxt.components, angleNxt, transNxt);
-    }
-    if(angleNxt < 0)
-    {
-      haxisNxt = -haxisNxt;
-      angleNxt = -angleNxt;
-      transNxt = -transNxt;
-    }
-    if(angleNxt >= m_MinAngle)
-    {
-      adjFound = true;
-      break;
-    }
-  }
-
-  if(!adjFound)
-    return;
-
-  {
-    Mat_DP R(0.0, 3, 3);
-    Mat_DP E(0.0, 3, 3);
-    Mat_DP Q(0.0, 3, 3);
-    Mat_DP Q1(0.0, 3, 3);
-    IdentityMatrix(E);
-    for(int i = 0; i < 3; i++)
-    {
-      for(int j = 0; j < 3; j++)
-      {
-        R[i][j] = mtNxt.GetElement(i, j);
-      }
-    }
-    SubMatrix(R, E, Q);
-    TransposeMatrix(Q, Q1);
-
-    Mat_DP Qt(0.0, 3, 3);
-    Mat_DP Qtt(Qt_t);
-    Vec_DP Qv(0.0, 3);
-    Vec_DP v(0.0, 3);
-    v[0] = mtNxt.GetElement(0, 3);
-    v[1] = mtNxt.GetElement(1, 3);
-    v[2] = mtNxt.GetElement(2, 3);
-    MultiplyMatrix(Q, Q1, Qt);
-    MultiplyMatVec(Q1, v, Qv);
-    AddMatrix(Qtt, Qt, Qt_t);
-    Qv_t[0] -= Qv[0];
-    Qv_t[1] -= Qv[1];
-    Qv_t[2] -= Qv[2];
-
-    rc    = Qv_t;
-    Qmatr = Qt_t;
-    NR::ludcmp(Qmatr, vidx, dp);
-    NR::lubksb(Qmatr, vidx, rc);
-    point = V3d<double>(rc[0], rc[1], rc[2]);
-  }
-}
-
-void mafVMEHelAxis::GetMeanAxis(mafTimeStamp tsMinTime, mafTimeStamp tsMaxTime, V3d<double>& Direction, V3d<double>& StartPoint, double& resang)
-{
-  std::vector<mafTimeStamp> stamps;
-  unsigned                  taken = 0;
-
-  Direction  = V3d<double>(1.0, 0, 0);
-  StartPoint = V3d<double>(0, 0, 0);
-  resang     = 0.0;
-  if(GetParent() == NULL)
-    return;
-
-
-  mafVME *vme = GetParent();
-  vme->GetAbsTimeStamps(stamps);
-
-  Mat_DP Qt_t(0.0, 3, 3);
-  Mat_DP R_MHA(0.0, 3, 3);
-  Vec_DP Qv_t(0.0, 3);
-  unsigned tstart = 0;
-  unsigned tend   = 0;
-
-  Vec_DP rc(0.0, 3);
-  Mat_DP Qmatr(0.0, 3, 3);
-  Vec_O_INT vidx(3);
-  DP dp;
-
-  unsigned start_index;
-  unsigned end_index;
-  for(start_index = 0; start_index < stamps.size(); start_index++)
-  {
-    if(stamps[start_index] >= tsMinTime)
-      break;
-  }
-  for(end_index = stamps.size(); end_index > 0; end_index--)
-  {
-    if(stamps[end_index - 1] <= tsMaxTime)
-      break;
-  }
-  tstart = start_index;
-  for(unsigned t = start_index + 1; t < end_index; t++)
-  {
-    mafMatrix mt;
-    tend = t;
-    GetLocalTransform(vme, stamps[tstart], stamps[tend], mt);
-    V3d<double> helicalAxis; 
-    V3d<double> point; 
-    double angle; 
-    double translationAmount;
-
-    helicalAxis = V3d<double>(1.0, 0.0, 0.0);
-    angle       = 0.0;
-    double cq = 0.5 * (mt.GetElement(0, 0) + mt.GetElement(1, 1) + mt.GetElement(2, 2) - 1.0);
-    if(fabs(cq) < 1.0)
-      angle = fabs(acos(cq) * mafMatrix3x3::RadiansToDegrees());
-
-
-    if(angle >= m_MinAngle)
-      MatrixToHelicalAxis(mt, helicalAxis.components, point.components, angle, translationAmount);
-    else
-      continue;
-    if(angle < 0)
-    {
-      helicalAxis       = -helicalAxis;
-      angle             = -angle;
-      translationAmount = -translationAmount;
-    }
-
-    tstart = tend;
-    taken++;
-
-    Mat_DP R(0.0, 3, 3);
-    Mat_DP E(0.0, 3, 3);
-    Mat_DP Q(0.0, 3, 3);
-    Mat_DP Q1(0.0, 3, 3);
-    IdentityMatrix(E);
-    for(int i = 0; i < 3; i++)
-    {
-      for(int j = 0; j < 3; j++)
-      {
-        R[i][j] = mt.GetElement(i, j);
-      }
-    }
-    SubMatrix(R, E, Q);
-    TransposeMatrix(Q, Q1);
-
-    Mat_DP Qt(0.0, 3, 3);
-    Mat_DP Qtt(Qt_t);
-    Vec_DP Qv(0.0, 3);
-    Vec_DP v(0.0, 3);
-    Vec_DP u(0.0, 3);
-    Mat_DP um(0.0, 3, 1);
-    Mat_DP umt(0.0, 1, 3);
-    Mat_DP uut(0.0, 3, 3);
-    Mat_DP RMH(0.0, 3, 3);
-    Mat_DP RMHA(R_MHA);
-    v[0] = mt.GetElement(0, 3);
-    v[1] = mt.GetElement(1, 3);
-    v[2] = mt.GetElement(2, 3);
-    MultiplyMatrix(Q, Q1, Qt);
-    MultiplyMatVec(Q1, v, Qv);
-    AddMatrix(Qtt, Qt, Qt_t);
-    Qv_t[0] -= Qv[0];
-    Qv_t[1] -= Qv[1];
-    Qv_t[2] -= Qv[2];
-
-    u[0] = helicalAxis[0];
-    u[1] = helicalAxis[1];
-    u[2] = helicalAxis[2];
-    VecMatrix(u, um);
-    TransposeMatrix(um, umt);
-    MultiplyMatrix(um, umt, uut);
-    SubMatrix(E, uut, RMH);
-    AddMatrix(RMHA, RMH, R_MHA);
-  }
-  if(taken >= 2)
-  {
-    rc    = Qv_t;
-    Qmatr = Qt_t;
-    NR::ludcmp(Qmatr, vidx, dp);
-    NR::lubksb(Qmatr, vidx, rc);
-
-    Vec_DP e1(0.0, 3);
-    Vec_DP e2(0.0, 3);
-    Vec_DP e3(0.0, 3);
-    e1[0] = 1.0;
-    e2[1] = 1.0;
-    e3[2] = 1.0;
-
-    Mat_DP RMHAMatr(R_MHA);
-
-    NR::ludcmp(RMHAMatr, vidx, dp);
-    NR::lubksb(RMHAMatr, vidx, e1);
-    NR::lubksb(RMHAMatr, vidx, e2);
-    NR::lubksb(RMHAMatr, vidx, e3);
-    for(int i = 0; i < 3; i++)
-    {
-      RMHAMatr[i][0] = e1[i];
-      RMHAMatr[i][1] = e2[i];
-      RMHAMatr[i][2] = e3[i];
-    }
-
-    Vec_DP E_vec(0.0, 3);
-    double E_lam;
-    int Ier, K_iter;
-    MaxEigen(3, 3, RMHAMatr, 1e-7, E_vec, E_lam, Ier, K_iter);
-    Direction  = V3d<double>(E_vec[0], E_vec[1], E_vec[2]);
-    Direction /= sqrt(Direction.length2());
-    StartPoint = V3d<double>(rc[0], rc[1], rc[2]);
-  }
-
-  if(taken == 0)
-    resang = 0.0;
-  else
-    resang = 1.0;
-}
-
-
 void mafVMEHelAxis::InternalUpdate()
 {
   mafMatrix mtr;
   mafTimeStamp tsTime = GetTimeStamp();
+  mafVME *proximal = GetProximal();
+  mafVME *distal   = GetDistal();
+  if(!proximal)
+  {
+    proximal = AutoSelectProximal(distal);
+    SetProximal(proximal);
+  }
   if(m_Mode == 0)
   {
-    GetMomentAxis(tsTime, m_Direction, m_StartPoint, m_Angle, m_Translation);
+    GetMomentAxis(proximal, distal, tsTime, m_MinAngle, m_Direction, m_StartPoint, m_Angle, m_Translation);
   }
   else if(m_Mode == 1)
   {
     if(m_MeanChanges)
     {
       m_MeanChanges = 0;
-      GetMeanAxis(m_MinTime, m_MaxTime, m_Direction, m_StartPoint, m_Angle);
+      GetMeanAxis(proximal, distal, m_MinTime, m_MaxTime, m_MinAngle, m_Direction, m_StartPoint, m_Angle);
       m_Translation = 0.0;
     }
   }
   else /*if(m_Mode == 2)*/
   {
-    GetMomentAxis(m_RefTime, m_Direction, m_StartPoint, m_Angle, m_Translation, tsTime);
+    GetMomentAxis(proximal, distal, m_RefTime, m_MinAngle, m_Direction, m_StartPoint, m_Angle, m_Translation, tsTime);
   }
 
 
   //adjust orientation of axis according to proximal segment orientation
   mafMatrix proxMatr;
   proxMatr.Identity();
-  if(GetParent() != NULL && GetParent()->GetParent() != NULL)
+  if(proximal != NULL)
   {
-    GetGlobalMatrix(GetParent()->GetParent(), tsTime, proxMatr);
+    GetGlobalMatrix(proximal, tsTime, proxMatr);
   }
 
 
@@ -839,7 +170,7 @@ void mafVMEHelAxis::InternalUpdate()
     m_Gui->Update();
   }
 
-  GetShowTransform(tsTime, m_Direction, m_StartPoint, mtr);
+  GetShowTransform(proximal, tsTime, m_Direction, m_StartPoint, mtr);
   if(m_Angle == 0.0)
     m_AngleFactor = 0.0;
   else
@@ -1079,6 +410,7 @@ mafVMEHelAxis::mafVMEHelAxis() : mafVME()
   //SetData(m_ScaleAxis->GetOutput(), -1);
 
   dpipe->SetInput(m_ScaleAxis->GetOutput());
+  m_ProximalName = "";
 }
 
 //-------------------------------------------------------------------------
@@ -1205,6 +537,32 @@ int mafVMEHelAxis::InternalRestore(mafStorageElement *node)
   return MAF_ERROR;
 }
 
+void mafVMEHelAxis::SetProximal(mafVME *vme)
+{
+  if(vme)
+  {
+    SetLink("ProximalSegment", vme);
+    m_ProximalName = vme->GetName();
+  }
+  else 
+  {
+    RemoveLink("ProximalSegment");
+    m_ProximalName = "";
+  }
+  if(m_Gui)
+    m_Gui->Update();
+}
+
+mafVME *mafVMEHelAxis::GetProximal()
+{
+  if(mafVME *vme = mafVME::SafeDownCast(GetLink("ProximalSegment")))
+    return vme;
+  return NULL;
+}
+mafVME *mafVMEHelAxis::GetDistal()
+{
+  return GetParent();
+}
 
 //----------------------------------------------------------------------------
 void mafVMEHelAxis::OnEvent(mafEventBase *maf_event)
@@ -1254,6 +612,20 @@ void mafVMEHelAxis::OnEvent(mafEventBase *maf_event)
       this->ForwardUpEvent(cam_event);
       break;
     }
+  case ID_PARENT:
+  {
+    mafString s(_("Choose cloud"));
+    mafEvent e(this,VME_CHOOSE, &s, NULL/*, (long)&lhpOpRegisterLMScripted::ClosedCloudAccept*/);
+    mafEventMacro(e);
+    mafVME *vme = mafVME::SafeDownCast(e.GetVme());
+    SetProximal(vme);
+    break;
+  }
+  case ID_RESETPARENT:
+  {
+    SetProximal(AutoSelectProximal(GetDistal()));
+    break;
+  }
   default:
     {
       Superclass::OnEvent(maf_event);
@@ -1275,6 +647,13 @@ mafGUI *mafVMEHelAxis::CreateGui()
   m_Gui->Double(ID_MIN_ANGLE, _("Min angle"), &m_MinAngle, 0.0);
   m_Gui->Combo(ID_MODE, _("Mode"), &m_Mode, 3, mode_choices, _("Select mode"));
   m_Gui->Combo(ID_ALIGNING, _("Align"), &m_AligningMode, 7, align_choices, _("Select aligning"));
+
+  m_Gui->Label(_("Parent :"),true);
+  if(mafVME *vme = GetProximal())
+    m_ProximalName = vme->GetName();
+  m_Gui->Label(&m_ProximalName);
+  m_Gui->Button(ID_PARENT,_("parent "));
+  m_Gui->Button(ID_RESETPARENT,_("reset parent"));
 
   m_Gui->Double(ID_MIN_TIME, _("Min time"), &m_MinTime, 0.0);
   m_Gui->Double(ID_MAX_TIME, _("Max time"), &m_MaxTime);
