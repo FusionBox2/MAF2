@@ -70,11 +70,9 @@ enum
   ID_FREQ,
   ID_AFS,
   ID_TYPEOFREFS,
+  ID_FSUFFIX,
   ID_MODEL,
   ID_SCALE,
-  ID_SCALE1,
-  ID_SCALE2,
-  ID_SCALE3,
   ID_LAST,
   ID_FORCED_DWORD = 0x7fffffff
 };
@@ -136,11 +134,13 @@ lhpOpKinectUtil::lhpOpKinectUtil(bool extapp, const mafString& label) : Supercla
   m_Freq   = 30.0;
   m_AFs    = false;
   m_Model  = true;
-  m_Scale1 = 1.0;
-  m_Scale2 = 1.0;
-  m_Scale3 = 1.0;
   m_ExtApp = extapp;
   m_TypeOfRefs = 0;
+  m_TakeScaled = 1;
+  if(m_TakeScaled)
+    m_FileSuffix = "_Scaled";
+  else
+    m_FileSuffix = "";
   DictionaryUpdate();
 }
 
@@ -228,6 +228,12 @@ void lhpOpKinectUtil::OnEvent(mafEventBase *maf_event)
       this->OpStop(OP_RUN_CANCEL);
     }
     break;
+    case ID_FSUFFIX:
+      if(m_TakeScaled)
+        m_FileSuffix = "_Scaled";
+      else
+        m_FileSuffix = "";
+      break;
     case ID_EXTAPPPATH:
     case ID_EXTAPPPATHMODEL:
       break;
@@ -238,16 +244,10 @@ void lhpOpKinectUtil::OnEvent(mafEventBase *maf_event)
       break;
     case ID_MODEL:
       m_Gui->Enable(ID_EXTAPPPATHMODEL, (m_Model != 0));
-      m_Gui->Enable(ID_SCALE1, (m_Model != 0));
-      m_Gui->Enable(ID_SCALE2, (m_Model != 0));
-      m_Gui->Enable(ID_SCALE3, (m_Model != 0));
       break;
     case ID_TYPEOFREFS:
       break;
     case ID_SCALE:
-    case ID_SCALE1:
-    case ID_SCALE2:
-    case ID_SCALE3:
       break;
     case ID_CLEAR_DICT:
       {
@@ -294,7 +294,10 @@ void lhpOpKinectUtil::CreateGui()
   mafString refs_names[] = {"Flexion", "Abduction"};
   m_Gui = new mafGUI(this);
   if(m_ExtApp)
+  {
     m_Gui->FileOpen(ID_EXTAPPPATH, "Ext app", &m_ExtAppPath, "*.exe");
+    m_Gui->Bool(ID_FSUFFIX, "Scaled", &m_TakeScaled);
+  }
   m_Gui->Double(ID_SCALE, _("Scale"), &m_Scale, 0.0);
   m_Gui->Double(ID_FREQ, _("Freq"), &m_Freq, 0.000001);
   m_Gui->Bool(ID_AFS, _("AFs"), &m_AFs);
@@ -302,17 +305,11 @@ void lhpOpKinectUtil::CreateGui()
   m_Gui->Label("");
   m_Gui->Bool(ID_MODEL, _("Model"), &m_Model);
   m_Gui->FileOpen(ID_EXTAPPPATHMODEL, "Mod app", &m_ExtAppPathModel, "*.exe");
-  m_Gui->Double(ID_SCALE1, _("Scale1"), &m_Scale1, 0.0);
-  m_Gui->Double(ID_SCALE2, _("Scale2"), &m_Scale2, 0.0);
-  m_Gui->Double(ID_SCALE3, _("Scale3"), &m_Scale3, 0.0);
   m_Gui->FileOpen(ID_LOAD_DICT, "LM list",  &m_DictionaryFileName, "*.txt");
   m_Gui->Button(ID_CLEAR_DICT, "Clean", "", "Press to cancel using list" );  
   m_Gui->Enable(ID_CLEAR_DICT, (m_DictionaryFileName != ""));
   m_Gui->Enable(ID_TYPEOFREFS, (m_AFs != 0));
   m_Gui->Enable(ID_EXTAPPPATHMODEL, (m_Model != 0));
-  m_Gui->Enable(ID_SCALE1, (m_Model != 0));
-  m_Gui->Enable(ID_SCALE2, (m_Model != 0));
-  m_Gui->Enable(ID_SCALE3, (m_Model != 0));
 
   m_Gui->OkCancel();
 }
@@ -388,17 +385,28 @@ bool lhpOpKinectUtil::Import()
 
   for(unsigned fileIndex = 0; fileIndex < m_C3DInputFileNameFullPaths.size(); fileIndex++)
   {
-    if(!mafFileExists(m_C3DInputFileNameFullPaths[fileIndex]))
+    mafString path, name, ext;
+    mafString importName;
+    mafSplitPath(m_C3DInputFileNameFullPaths[fileIndex], &path, &name, &ext);
+    importName = m_C3DInputFileNameFullPaths[fileIndex];
+    if(m_ExtApp)
+    {
+      importName = path;
+      importName += "/";
+      importName += name;
+      importName += m_FileSuffix;
+      importName += ".";
+      importName += ext;
+    }
+    if(!mafFileExists(importName))
       continue;
-    mafVME *imported = ImportSingleFile(m_C3DInputFileNameFullPaths[fileIndex]);
+    mafVME *imported = ImportSingleFile(importName);
     if(imported != NULL)
     {
       if(m_ExtApp)
       {
-        mafString path, name, ext;
         mafString pref, resname;
         pref = mafString("");
-        mafSplitPath(m_C3DInputFileNameFullPaths[fileIndex], &path, &name, &ext);
         for(std::vector<mafString>::iterator it = sessionsList.begin(); it != sessionsList.end(); ++it)
         {
           if(*it == path)
@@ -625,7 +633,7 @@ mafVME *lhpOpKinectUtil::ImportSingleFile(const mafString &fullFileName)
   if(FILE *fp = fopen(params.GetCStr(), "wt"))
   {
     fputs("Scale_Kin/Anthr, Scale_Kin/S035 \n", fp);
-    fprintf(fp, "%f, %f, %f\n", m_Scale1, m_Scale2, m_Scale3);
+    //fprintf(fp, "%f, %f, %f\n", m_Scale1, m_Scale2, m_Scale3);
     fputs("tk,NSolu \n", fp);
     fprintf(fp, "%f , %d\n", lasttimestamp, numframes);
     fclose(fp);

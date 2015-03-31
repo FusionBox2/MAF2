@@ -63,6 +63,8 @@ protected:
   mafString                      m_ExtAppPath;
   mafString                      m_ExtAppPathModel;
   mafString                      m_FileDir;
+  mafString                      m_FileSuffix;
+  int                            m_TakeScaled;
   mafString                      m_DictionaryFileName;
   std::vector<mafString>         m_dictionaryStruct;
   double                         m_Scale;
@@ -70,9 +72,6 @@ protected:
   bool                           m_ExtApp;
   int                            m_AFs;
   int                            m_Model;
-  double                         m_Scale1;
-  double                         m_Scale2;
-  double                         m_Scale3;
   int                            m_TypeOfRefs;
   std::vector<mafVME*>           m_Imported;
 private:
