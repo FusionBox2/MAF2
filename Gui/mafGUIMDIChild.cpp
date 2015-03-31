@@ -70,7 +70,7 @@ mafGUIMDIChild::mafGUIMDIChild(wxMDIParentFrame* parent,mafView *view)
   m_Win->Show(true);
 
   SetIcon(mafPictureFactory::GetPictureFactory()->GetIcon("MDICHILD_ICON"));
-	SetTitle(wxStripMenuCodes(m_View->GetLabel()));
+	SetTitle(wxStripMenuCodes(m_View->GetLabel().GetCStr()));
 }
 //----------------------------------------------------------------------------
 mafGUIMDIChild::~mafGUIMDIChild()

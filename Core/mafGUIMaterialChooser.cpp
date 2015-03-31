@@ -167,7 +167,7 @@ void mafGUIMaterialChooser::CreateGUI()
   int x_pos,y_pos,w,h;
   mafGetFrame()->GetPosition(&x_pos,&y_pos);
   m_Dialog = new wxDialog(mafGetFrame(),-1,"Choose Material",
-	wxDefaultPosition,wxDefaultSize,wxDIALOG_MODAL | wxCAPTION | wxTHICK_FRAME );
+	wxDefaultPosition,wxDefaultSize,wxCAPTION | wxRESIZE_BORDER );
   m_Dialog->GetSize(&w,&h);
   m_Dialog->SetSize(x_pos+5,y_pos+5,w,h);
   //m_Dialog->SetMinSize(wxSize(w,h));

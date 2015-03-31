@@ -167,7 +167,7 @@ void mafOp::ShowGui()
   m_Guih = new mafGUIHolder(mafGetFrame(),-1);
   m_Guih->Put(m_Gui);
 	
-  wxString menu_codes=wxStripMenuCodes(m_Label);
+  wxString menu_codes=wxStripMenuCodes(m_Label.GetCStr());
   wxString title = wxString::Format(" %s parameters:",menu_codes.c_str());
   m_Guih->SetTitle(title);
   mafEventMacro(mafEvent(this,OP_SHOW_GUI,(wxWindow *)m_Guih));
