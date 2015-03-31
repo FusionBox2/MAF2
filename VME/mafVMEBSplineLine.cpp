@@ -448,8 +448,8 @@ mafVMELandmarkCloud *mafVMEBSplineLine::GetPointsCloudLink()
 mafGUI* mafVMEBSplineLine::CreateGui()
 //-------------------------------------------------------------------------
 {
-  const wxString mode_choices_string[] = {_("Direct"),_("Maximal influence"), _("Interpolate")};
-  const wxString submode_choices_string[] = {_("1st derivative"),_("2nd derivative"), _("Periodic")};
+  const mafString mode_choices_string[] = {_("Direct"),_("Maximal influence"), _("Interpolate")};
+  const mafString submode_choices_string[] = {_("1st derivative"),_("2nd derivative"), _("Periodic")};
 
   mafID sub_id = -1;
 

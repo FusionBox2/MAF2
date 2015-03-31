@@ -340,7 +340,7 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Divider(2);
   m_Gui->Label("Correction of the calibration",true);
   m_Gui->Label("RhoAsh = a + b * RhoQCT",false);
-  const wxString densityChoicesRoCalibration[] = {"one interval", "three intervals"};
+  const mafString densityChoicesRoCalibration[] = {"one interval", "three intervals"};
   m_Gui->Combo(ID_TYPE_RHOQCT_CORRECTION,"", &m_RhoCalibrationCorrectionType,2,densityChoicesRoCalibration);  
   m_Gui->Divider();
 
@@ -377,7 +377,7 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Label("density-elasticity relationship", true);
   m_Gui->Label("E = a + b * RhoAsh^c", false);
   
-  const wxString densityChoices[] = {"one interval", "three intervals"};
+  const mafString densityChoices[] = {"one interval", "three intervals"};
   m_Gui->Combo(ID_RHOASH_DENSITY_INTERVALS_NUMBER,"", &m_DensityIntervalsNumber,2,densityChoices);  
   m_Gui->Divider(2);
   
@@ -427,7 +427,7 @@ void lhpOpBonemat::CreateGui()
 
 
   m_Gui->Divider(); 
-  const wxString choices[] = {"HU integration", "E integration"};
+  const mafString choices[] = {"HU integration", "E integration"};
   m_Gui->Label("Young's modulus ( E ) calculation modality","",TRUE);
   m_Gui->Combo(ID_YOUNG_MODULE_CALCULATION_MODALITY, "", &m_YoungModuleCalculationModality, 2, choices);
   m_Gui->Label("integration steps");

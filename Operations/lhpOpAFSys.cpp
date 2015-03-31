@@ -206,7 +206,7 @@ void lhpOpAFSys::CreateGui()
   m_Gui = new mafGUI(this);
   m_Gui->SetListener(this);
 
-  std::vector<wxString> list;
+  std::vector<mafString> list;
   for(unsigned i = 0; i < m_predefinedScripts.size(); i++)
   {
     list.push_back(m_predefinedScripts[i].m_Name.GetCStr());

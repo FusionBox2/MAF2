@@ -700,7 +700,7 @@ void lhpOpRegression::CreateGui()
 void lhpOpRegression::CreateGuiBase()
 //----------------------------------------------------------------------------
 {
-  const wxString mode_choices_string[] = {_("Pelvis"),_("Right Humerus"),_("Left Humerus"),_("Right Scapula"),_("Left Scapula"),_("Right Clavicle"),_("Left Clavicle"),_("Right Femur"),_("Left Femur")};
+  const mafString mode_choices_string[] = {_("Pelvis"),_("Right Humerus"),_("Left Humerus"),_("Right Scapula"),_("Left Scapula"),_("Right Clavicle"),_("Left Clavicle"),_("Right Femur"),_("Left Femur")};
   int bonenum = 9;
   if(m_Gui == NULL)
   {

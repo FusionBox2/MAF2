@@ -1266,8 +1266,8 @@ void mafVMEHelAxis::OnEvent(mafEventBase *maf_event)
 mafGUI *mafVMEHelAxis::CreateGui()
 //----------------------------------------------------------------------------
 {
-  const wxString mode_choices[] = {_("Instant"), _("Mean"), _("Relative")};
-  const wxString align_choices[] = {_("None"), _("XYZ"), _("XZY"), _("YZX"), _("YXZ"), _("ZXY"), _("ZYX")};
+  const mafString mode_choices[] = {_("Instant"), _("Mean"), _("Relative")};
+  const mafString align_choices[] = {_("None"), _("XYZ"), _("XZY"), _("YZX"), _("YXZ"), _("ZXY"), _("ZYX")};
   m_Gui = Superclass::CreateGui();
   m_Gui->Show(false);
   m_Gui->Double(ID_RADIUS_FACTOR,_("radius scale"),&m_RadiusFactor);

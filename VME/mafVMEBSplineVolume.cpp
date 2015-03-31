@@ -394,7 +394,7 @@ char** mafVMEBSplineVolume::GetIcon()
 mafGUI* mafVMEBSplineVolume::CreateGui()
 //-------------------------------------------------------------------------
 {
-  const wxString mode_choices_string[] = {_("Direct"),_("Maximal influence")};//, _("Interpolate")};
+  const mafString mode_choices_string[] = {_("Direct"),_("Maximal influence")};//, _("Interpolate")};
 
   mafID sub_id = -1;
 

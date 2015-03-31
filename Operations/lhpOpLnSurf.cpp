@@ -120,7 +120,7 @@ bool lhpOpLnSurf::Accept(mafNode* vme)
 void lhpOpLnSurf::OpRun()   
 //----------------------------------------------------------------------------
 {
-  const wxString choices_string[] = {_("Lines and surface"), _("Surface"), _("Lines")}; 
+  const mafString choices_string[] = {_("Lines and surface"), _("Surface"), _("Lines")}; 
   if(m_Gui == NULL)
   {
     m_Gui = new mafGUI(this);

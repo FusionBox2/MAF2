@@ -1465,7 +1465,7 @@ void  mafViewIntGraphWindow::RemGraphData(const mafGraphData *pGraphData)
 void mafViewIntGraphWindow::CreateGui()
 //----------------------------------------------------------------------------
 {
-  static wxString choices[] = {wxString("Default"),wxString("Decorative"), wxString("Roman"), wxString("Script"), wxString("Swiss"), wxString("Modern")};
+  static mafString choices[] = {wxString("Default"),wxString("Decorative"), wxString("Roman"), wxString("Script"), wxString("Swiss"), wxString("Modern")};
   m_Gui = new mafGUI(this);
 
   m_Gui->Bool   (ID_SHOW_ROUGH_GRID  ,"Rough Grid"       , &(m_RoughGrid),0);

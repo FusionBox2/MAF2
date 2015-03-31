@@ -247,7 +247,7 @@ int mafVMEAFRefSys::InternalRestore(mafStorageElement *node)
 mafGUI* mafVMEAFRefSys::CreateGui()
 //-------------------------------------------------------------------------
 {
-	const wxString bone_choices_string[] = {_("Undefined"),_("Pelvis"), _("Right thigh"), _("Left thigh"), _("Right shank"), _("Left shank"), _("Right foot"), _("Left foot")};
+	const mafString bone_choices_string[] = {_("Undefined"),_("Pelvis"), _("Right thigh"), _("Left thigh"), _("Right shank"), _("Left shank"), _("Right foot"), _("Left foot")};
   m_Gui = Superclass::CreateGui();
   m_Gui->Show(false);
 

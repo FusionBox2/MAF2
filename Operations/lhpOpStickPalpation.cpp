@@ -342,7 +342,7 @@ void lhpOpStickPalpation::OpRun()
 void lhpOpStickPalpation::CreateGui()
 //----------------------------------------------------------------------------
 {
-  const wxString choices_string[] = {_("rigid"), _("similarity"), _("affine")}; 
+  const mafString choices_string[] = {_("rigid"), _("similarity"), _("affine")}; 
   if(m_Gui == NULL)
   {
     m_Gui = new mafGUI(this);
