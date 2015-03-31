@@ -21,9 +21,9 @@
 mafVMERefSysAbstract *GetRefSys(mafVME *vme);
 mafVMEAFRefSys *GetAFRefSys(mafVME *vme);
 //void GetGlobalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat);
-void GetGlobalMatrix(mafVME *vme, mafTimeStamp ts, mafMatrix& matrix);
+void GetGlobalMatrix(mafVME *vme, mafTimeStamp ts, mafMatrix& matrix, bool useRefSys = true);
 //void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat);
-void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, mafMatrix& matrix, mafVME *parent = NULL);
+void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, mafMatrix& matrix, mafVME *parent = NULL, bool useRefSys = true);
 
 mafVME *AutoSelectProximal(mafVME *distal);
 

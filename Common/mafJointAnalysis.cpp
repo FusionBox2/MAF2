@@ -151,13 +151,18 @@ void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, DiMatrix *pMat, mafVME *parent
 }
 
 //----------------------------------------------------------------------------
-void GetGlobalMatrix(mafVME *vme, mafTimeStamp ts, mafMatrix& matrix)
+void GetGlobalMatrix(mafVME *vme, mafTimeStamp ts, mafMatrix& matrix, bool useRefSys)
 //----------------------------------------------------------------------------
 {
   matrix.Identity();
   if(vme == NULL)
     return;
 
+  if(!useRefSys)
+  {
+    vme->GetOutput()->GetAbsMatrix(matrix, ts);
+    return;
+  }
   mafVMEAFRefSys *afs = GetAFRefSys(vme);
   if(afs == NULL)
     vme->GetOutput()->GetAbsMatrix(matrix, ts);
@@ -166,7 +171,7 @@ void GetGlobalMatrix(mafVME *vme, mafTimeStamp ts, mafMatrix& matrix)
 }
 
 //----------------------------------------------------------------------------
-void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, mafMatrix& matrix, mafVME *parent)
+void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, mafMatrix& matrix, mafVME *parent, bool useRefSys)
 //----------------------------------------------------------------------------
 {
   mafMatrix pmatrix;
@@ -179,8 +184,8 @@ void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, mafMatrix& matrix, mafVME *par
   if(parent == NULL)
     parent = vme->GetParent();
 
-  GetGlobalMatrix(parent, ts, pmatrix);//in case of GetParent == NULL Global matrix is filled as identity
-  GetGlobalMatrix(vme,              ts, cmatrix);
+  GetGlobalMatrix(parent, ts, pmatrix, useRefSys);//in case of GetParent == NULL Global matrix is filled as identity
+  GetGlobalMatrix(vme,    ts, cmatrix, useRefSys);
 
   pmatrix.Invert();
   mafMatrix::Multiply4x4(pmatrix, cmatrix, matrix);
@@ -874,15 +879,15 @@ namespace
 
 
     mafVMELandmarkCloud *lm = mafVMELandmarkCloud::SafeDownCast(vme);
-    if(lm != NULL && GetAFRefSys(vme) == NULL)
+    if(lm != NULL)// && GetAFRefSys(vme) == NULL)
     {
       mafMatrix mpar1, mpar2;
       mpar1.Identity();
       mpar2.Identity();
       if(proximalVME != NULL)
       {
-        GetGlobalMatrix(proximalVME, ts1, mpar1);
-        GetGlobalMatrix(proximalVME, ts2, mpar2);
+        GetGlobalMatrix(proximalVME, ts1, mpar1, false);
+        GetGlobalMatrix(proximalVME, ts2, mpar2, false);
       }
       findTransform(lm, ts1, ts2, mpar1, mpar2, transf);
       return;

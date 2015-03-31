@@ -51,9 +51,10 @@ public:
     ID_REF_TIME,
     ID_MODE,
     ID_ALIGNING,
-    ID_PRINT,
-    ID_PARENT,
-    ID_RESETPARENT,
+    ID_PROXIMAL,
+    ID_RESETPROXIMAL,
+    ID_DISTAL,
+    ID_RESETDISTAL,
     ID_LAST
   };
 
@@ -166,7 +167,9 @@ protected:
   mafVME                     *GetDistal();
 
   void                       SetProximal(mafVME *proximal);
+  void                       SetDistal(mafVME *distal);
   mafString                  m_ProximalName;
+  mafString                  m_DistalName;
 
   mafTransform               *m_Transform; ///< pose matrix for the slicer plane
 private:

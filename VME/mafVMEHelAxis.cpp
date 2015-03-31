@@ -104,7 +104,7 @@ void GetShowTransform(mafVME *proximal, mafTimeStamp ts, const V3d<double>& heli
 
   tmp.Identity();
   if(proximal != NULL)
-    GetGlobalMatrix(proximal, ts, tmp);
+    GetGlobalMatrix(proximal, ts, tmp, false);
 
   mafMatrix::Multiply4x4(tmp, mShowHelical, globalMatrix);
   globalMatrix.SetTimeStamp(ts);
@@ -116,11 +116,11 @@ void mafVMEHelAxis::InternalUpdate()
   mafTimeStamp tsTime = GetTimeStamp();
   mafVME *proximal = GetProximal();
   mafVME *distal   = GetDistal();
-  if(!proximal)
+  /*if(!proximal)
   {
     proximal = AutoSelectProximal(distal);
     SetProximal(proximal);
-  }
+  }*/
   if(m_Mode == 0)
   {
     GetMomentAxis(proximal, distal, tsTime, m_MinAngle, m_Direction, m_StartPoint, m_Angle, m_Translation);
@@ -141,11 +141,14 @@ void mafVMEHelAxis::InternalUpdate()
 
 
   //adjust orientation of axis according to proximal segment orientation
+  bool useRF = false;
+  if(m_AligningMode != 0)
+    useRF = true;
   mafMatrix proxMatr;
   proxMatr.Identity();
   if(proximal != NULL)
   {
-    GetGlobalMatrix(proximal, tsTime, proxMatr);
+    GetGlobalMatrix(proximal, tsTime, proxMatr, useRF);
   }
 
 
@@ -411,6 +414,7 @@ mafVMEHelAxis::mafVMEHelAxis() : mafVME()
 
   dpipe->SetInput(m_ScaleAxis->GetOutput());
   m_ProximalName = "";
+  m_DistalName = "";
 }
 
 //-------------------------------------------------------------------------
@@ -539,6 +543,8 @@ int mafVMEHelAxis::InternalRestore(mafStorageElement *node)
 
 void mafVMEHelAxis::SetProximal(mafVME *vme)
 {
+  return;
+  assert(false);
   if(vme)
   {
     SetLink("ProximalSegment", vme);
@@ -553,15 +559,35 @@ void mafVMEHelAxis::SetProximal(mafVME *vme)
     m_Gui->Update();
 }
 
+void mafVMEHelAxis::SetDistal(mafVME *vme)
+{
+  if(vme)
+  {
+    SetLink("DistalSegment", vme);
+    m_DistalName = vme->GetName();
+  }
+  else 
+  {
+    RemoveLink("DistalSegment");
+    m_DistalName = "";
+  }
+  if(m_Gui)
+    m_Gui->Update();
+}
+
 mafVME *mafVMEHelAxis::GetProximal()
 {
+  return GetParent();
   if(mafVME *vme = mafVME::SafeDownCast(GetLink("ProximalSegment")))
     return vme;
   return NULL;
 }
 mafVME *mafVMEHelAxis::GetDistal()
 {
-  return GetParent();
+  //return GetParent();
+  if(mafVME *vme = mafVME::SafeDownCast(GetLink("DistalSegment")))
+    return vme;
+  return NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -612,20 +638,35 @@ void mafVMEHelAxis::OnEvent(mafEventBase *maf_event)
       this->ForwardUpEvent(cam_event);
       break;
     }
-  case ID_PARENT:
+  case ID_PROXIMAL:
+    {
+      mafString s(_("Choose cloud"));
+      mafEvent e(this,VME_CHOOSE, &s, NULL/*, (long)&lhpOpRegisterLMScripted::ClosedCloudAccept*/);
+      this->ForwardUpEvent(e);
+      mafVME *vme = mafVME::SafeDownCast(e.GetVme());
+      SetProximal(vme);
+      break;
+    }
+  case ID_DISTAL:
   {
     mafString s(_("Choose cloud"));
     mafEvent e(this,VME_CHOOSE, &s, NULL/*, (long)&lhpOpRegisterLMScripted::ClosedCloudAccept*/);
     this->ForwardUpEvent(e);
     mafVME *vme = mafVME::SafeDownCast(e.GetVme());
-    SetProximal(vme);
+    SetDistal(vme);
     break;
   }
-  case ID_RESETPARENT:
+  case ID_RESETPROXIMAL:
   {
-    SetProximal(AutoSelectProximal(GetDistal()));
+    //SetProximal(AutoSelectProximal(GetDistal()));
+    SetProximal(NULL);
     break;
   }
+  case ID_RESETDISTAL:
+    {
+      SetDistal(NULL);
+      break;
+    }
   default:
     {
       Superclass::OnEvent(maf_event);
@@ -648,18 +689,24 @@ mafGUI *mafVMEHelAxis::CreateGui()
   m_Gui->Combo(ID_MODE, _("Mode"), &m_Mode, 3, mode_choices, _("Select mode"));
   m_Gui->Combo(ID_ALIGNING, _("Align"), &m_AligningMode, 7, align_choices, _("Select aligning"));
 
-  m_Gui->Label(_("Parent :"),true);
+  m_Gui->Label(_("Proximal :"),true);
   if(mafVME *vme = GetProximal())
     m_ProximalName = vme->GetName();
   m_Gui->Label(&m_ProximalName);
-  m_Gui->Button(ID_PARENT,_("parent "));
-  m_Gui->Button(ID_RESETPARENT,_("reset parent"));
+  //m_Gui->Button(ID_PROXIMAL,_("Proximal"));
+  //m_Gui->Button(ID_RESETPROXIMAL,_("Reset proximal"));
+
+  m_Gui->Label(_("Distal :"),true);
+  if(mafVME *vme = GetDistal())
+    m_DistalName = vme->GetName();
+  m_Gui->Label(&m_DistalName);
+  m_Gui->Button(ID_DISTAL,_("Distal"));
+  m_Gui->Button(ID_RESETDISTAL,_("Reset distal"));
 
   m_Gui->Double(ID_MIN_TIME, _("Min time"), &m_MinTime, 0.0);
   m_Gui->Double(ID_MAX_TIME, _("Max time"), &m_MaxTime);
   m_Gui->Double(ID_REF_TIME, _("Ref time"), &m_RefTime);
   m_Gui->Divider();
-  m_Gui->Button(ID_PRINT, "print", "debug info" );
   m_Gui->Enable(ID_MIN_TIME, m_Mode == 1);
   m_Gui->Enable(ID_MAX_TIME, m_Mode == 1);
   m_Gui->Enable(ID_REF_TIME, m_Mode == 2);
