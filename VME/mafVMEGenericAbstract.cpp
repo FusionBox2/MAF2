@@ -72,9 +72,8 @@ mafVMEGenericAbstract::~mafVMEGenericAbstract()
 int mafVMEGenericAbstract::DeepCopy(mafNode *a)
 //-------------------------------------------------------------------------
 { 
-  if (Superclass::DeepCopy(a)==MAF_OK)
+  if(mafVMEGenericAbstract *vme=mafVMEGenericAbstract::SafeDownCast(a))
   {
-    mafVMEGenericAbstract *vme=(mafVMEGenericAbstract *)a;
     m_MatrixVector->DeepCopy(vme->GetMatrixVector());
 
     if (vme->GetDataVector())
@@ -84,6 +83,9 @@ int mafVMEGenericAbstract::DeepCopy(mafNode *a)
       m_DataVector->DeepCopy(vme->GetDataVector()); // copy data
       m_DataVector->SetListener(this);
     }
+  }
+  if (Superclass::DeepCopy(a)==MAF_OK)
+  {
     return MAF_OK;
   }
   return MAF_ERROR;
@@ -119,9 +121,8 @@ int mafVMEGenericAbstract::DeepCopyVmeLarge(mafNode *a)
 int mafVMEGenericAbstract::ShallowCopy(mafVME *a)
 //-------------------------------------------------------------------------
 {  
-  if (Superclass::ShallowCopy(a)==MAF_OK)
+  if(mafVMEGenericAbstract *vme=mafVMEGenericAbstract::SafeDownCast(a))
   {
-    mafVMEGenericAbstract *vme=(mafVMEGenericAbstract *)a;
     m_MatrixVector->DeepCopy(vme->GetMatrixVector());    
     
     // shallow copy data array
@@ -129,6 +130,9 @@ int mafVMEGenericAbstract::ShallowCopy(mafVME *a)
     {
       m_DataVector->ShallowCopy(vme->GetDataVector());
     }
+  }
+  if (Superclass::ShallowCopy(a)==MAF_OK)
+  {
     return MAF_OK;
   }
   return MAF_ERROR;
