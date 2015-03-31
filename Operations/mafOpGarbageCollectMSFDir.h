@@ -73,15 +73,15 @@ public:
 
 protected: 
   
-  int GetFilesToRemove(set<string> &filesToRemoveSet);
+  int GetFilesToRemove(set<std::string> &filesToRemoveSet);
 
   /** 
   Return s1 - s2 */
-  set<string> SetDifference( set<string> &s1, set<string> &s2 );
+  set<std::string> SetDifference( set<std::string> &s1, set<std::string> &s2 );
  
-  set<string> GetMSFDirABSFileNamesSet();
+  set<std::string> GetMSFDirABSFileNamesSet();
 
-  void PrintSet(set<string> inputSet);
+  void PrintSet(set<std::string> inputSet);
 
   /** Log errors into the log area according to the error number reported.*/
   void ErrorLog(int error_num, const char *node_name, const char *description = NULL);
@@ -91,7 +91,7 @@ protected:
   mafString GetMSFXMLFileAbsFileName(mafNode *anyTreeNode);
  
   /** files linked to vme in trees */
-  set<string> m_MSFTreeBinaryFilesSet;
-  set<string> m_MSFDirABSFileNamesSet;
+  set<std::string> m_MSFTreeBinaryFilesSet;
+  set<std::string> m_MSFDirABSFileNamesSet;
 };
 #endif

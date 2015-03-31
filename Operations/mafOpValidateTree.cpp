@@ -312,7 +312,7 @@ void mafOpValidateTree::ErrorLog(int error_num, const char *node_name, const cha
   }
 }
 
-int mafOpValidateTree::GetMSFTreeABSFileNamesSet( set<string> &fileNamesSet )
+int mafOpValidateTree::GetMSFTreeABSFileNamesSet( set<std::string> &fileNamesSet )
 {
   int result = this->ValidateTree(); // needed to fill m_MSFTreeBinaryFilesSet ivar
   

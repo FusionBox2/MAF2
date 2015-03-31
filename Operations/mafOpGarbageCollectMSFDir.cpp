@@ -98,7 +98,7 @@ Proceed?";
   mafEventMacro(mafEvent(this,OP_RUN_OK));
 }
 
-int mafOpGarbageCollectMSFDir::GetFilesToRemove( set<string> &filesToRemoveSet )
+int mafOpGarbageCollectMSFDir::GetFilesToRemove( set<std::string> &filesToRemoveSet)
 {
   assert(m_Input);
   mafOpValidateTree* validateTree = new mafOpValidateTree();
@@ -123,12 +123,12 @@ int mafOpGarbageCollectMSFDir::GetFilesToRemove( set<string> &filesToRemoveSet )
     return MAF_ERROR;
   }
   
-  set<string> msfTreeFiles;
+  set<std::string> msfTreeFiles;
   result = validateTree->GetMSFTreeABSFileNamesSet(msfTreeFiles);
 
   if (result == MAF_OK)
   {
-    set<string> msfDirFiles = this->GetMSFDirABSFileNamesSet();
+    set<std::string> msfDirFiles = this->GetMSFDirABSFileNamesSet();
 
     // add the msf file name:
     wxString msfXMLFileABSFileName = GetMSFXMLFileAbsFileName(m_Input);
@@ -158,9 +158,9 @@ int mafOpGarbageCollectMSFDir::GetFilesToRemove( set<string> &filesToRemoveSet )
   return MAF_OK;
 }
 
-void mafOpGarbageCollectMSFDir::PrintSet( set<string> inputSet )
+void mafOpGarbageCollectMSFDir::PrintSet( set<std::string> inputSet)
 {
-  set<string>::iterator iter;
+  set<std::string>::iterator iter;
   iter = inputSet.begin();
 
   ostringstream stringStream;
@@ -175,7 +175,7 @@ void mafOpGarbageCollectMSFDir::PrintSet( set<string> inputSet )
   mafLogMessage(stringStream.str().c_str());
 }
 
-set<string> mafOpGarbageCollectMSFDir::GetMSFDirABSFileNamesSet()
+set<std::string> mafOpGarbageCollectMSFDir::GetMSFDirABSFileNamesSet()
 {
   assert(m_Input);
   mafString msfABSPath = GetMSFDirAbsPath(m_Input);
@@ -213,9 +213,9 @@ set<string> mafOpGarbageCollectMSFDir::GetMSFDirABSFileNamesSet()
   return m_MSFDirABSFileNamesSet;
 }
 
-set<string> mafOpGarbageCollectMSFDir::SetDifference( set<string> &s1, set<string> &s2 )
+set<std::string> mafOpGarbageCollectMSFDir::SetDifference( set<std::string> &s1, set<std::string> &s2 )
 {
-  set<string> result;
+  set<std::string> result;
   set_difference(s1.begin(), s1.end(), \
     s2.begin(), s2.end(),
     inserter(result, result.end()));
@@ -271,10 +271,10 @@ mafString mafOpGarbageCollectMSFDir::GetMSFXMLFileAbsFileName(mafNode *anyTreeNo
 
 int mafOpGarbageCollectMSFDir::GarbageCollect()
 {
-  set<string> filesToRemove;
+  set<std::string> filesToRemove;
   int errorCode = GetFilesToRemove(filesToRemove);
   
-  set<string>::iterator iter;
+  set<std::string>::iterator iter;
   iter = filesToRemove.begin();
 
   ostringstream stringStream;
@@ -282,7 +282,7 @@ int mafOpGarbageCollectMSFDir::GarbageCollect()
 
   while( iter != filesToRemove.end() ) 
   {
-    string fileToRemove = *iter;
+    std::string fileToRemove = *iter;
     stringStream << "Deleting: " << fileToRemove << endl;
     
     bool result = wxRemoveFile(wxString(fileToRemove.c_str()));
