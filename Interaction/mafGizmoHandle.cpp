@@ -183,8 +183,8 @@ mafGizmoHandle::~mafGizmoHandle()
 	
   mafDEL(m_IsaComp);	//m_IsaGen is released automatically
 
-  mafEventMacro(mafEvent(this, VME_REMOVE, m_BoxGizmo)); //m_BoxGizmo is released
-  mafEventMacro(mafEvent(this, VME_REMOVE, m_ShadingPlaneGizmo)); //m_ShadingPlaneGizmo is released
+  m_BoxGizmo->ReparentTo(NULL);
+  m_ShadingPlaneGizmo->ReparentTo(NULL);
 
   vtkDEL(m_Cube);
 }

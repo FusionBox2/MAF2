@@ -81,11 +81,7 @@ void mafOpCreateRefSys::OpRun()
 void mafOpCreateRefSys::OpDo()
 //----------------------------------------------------------------------------
 {
+  m_RefSys->ReparentTo(m_Input);
   if (!m_Input->IsMAFType(mafVMERoot))
-  {
-    m_RefSys->ReparentTo(m_Input);
     m_RefSys->SetAbsMatrix(*((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
-  }
-  else
-    mafEventMacro(mafEvent(this, VME_ADD, m_RefSys));
 }

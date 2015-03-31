@@ -193,7 +193,7 @@ void mafOpConnectivitySurface::OpUndo()
 //----------------------------------------------------------------------------
 {
 	for(int vmeShowed = 0; vmeShowed < m_ExtractedVmes.size(); vmeShowed++)
-		mafEventMacro(mafEvent(this,VME_REMOVE,m_ExtractedVmes[vmeShowed]));
+		m_ExtractedVmes[vmeShowed]->ReparentTo(NULL);
 }
 //----------------------------------------------------------------------------
 void mafOpConnectivitySurface::OnEvent(mafEventBase *maf_event)

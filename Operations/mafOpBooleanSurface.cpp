@@ -194,7 +194,7 @@ void mafOpBooleanSurface::OpDo()
 void mafOpBooleanSurface::OpUndo()
 //----------------------------------------------------------------------------
 {
-	 mafEventMacro(mafEvent(this,VME_REMOVE,m_ResultVME));
+  m_ResultVME->ReparentTo(NULL);
 }
 //----------------------------------------------------------------------------
 void mafOpBooleanSurface::OnEvent(mafEventBase *maf_event)
@@ -775,13 +775,13 @@ void mafOpBooleanSurface::OpStop(int result)
 	if(m_ImplicitPlaneGizmo)
 	{
 		m_ImplicitPlaneGizmo->SetBehavior(NULL);
-		mafEventMacro(mafEvent(this, VME_REMOVE, m_ImplicitPlaneGizmo));
+    m_ImplicitPlaneGizmo->ReparentTo(NULL);
 	}
 	mafDEL(m_ImplicitPlaneGizmo);
 
   if(result == OP_RUN_CANCEL)
 	{
-	  mafEventMacro(mafEvent(this,VME_REMOVE,m_ResultVME));
+    m_ResultVME->ReparentTo(NULL);
 	}
 
 	HideGui();

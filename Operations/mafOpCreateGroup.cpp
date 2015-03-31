@@ -74,8 +74,5 @@ void mafOpCreateGroup::OpRun()
 void mafOpCreateGroup::OpDo()
 //----------------------------------------------------------------------------
 {
-  if (!m_Input->IsMAFType(mafVMERoot))
-    m_Group->ReparentTo(mafVME::SafeDownCast(m_Input));
-  else
-    mafEventMacro(mafEvent(this, VME_ADD, m_Group));
+  m_Group->ReparentTo(m_Input);
 }

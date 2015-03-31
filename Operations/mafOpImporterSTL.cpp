@@ -180,7 +180,7 @@ void mafOpImporterSTL::OpUndo()
   {
     if (m_ImportedSTLs[i])
     {
-      mafEventMacro(mafEvent(this, VME_REMOVE, m_ImportedSTLs[i]));
+      m_ImportedSTLs[i]->ReparentTo(NULL);
     }
   }
   mafEventMacro(mafEvent(this,CAMERA_UPDATE));

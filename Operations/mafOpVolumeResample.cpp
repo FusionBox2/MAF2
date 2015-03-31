@@ -266,7 +266,7 @@ void mafOpVolumeResample::GizmoDelete()
 //----------------------------------------------------------------------------
 {	
 	//add the gizmo to the views
-	mafEventMacro(mafEvent(this, VME_REMOVE, m_ResampleBoxVme));
+  m_ResampleBoxVme->ReparentTo(NULL);
   vtkDEL(m_ResampleBox);
   mafDEL(m_ResampleBoxVme);
 	mafEventMacro(mafEvent(this, CAMERA_UPDATE));
@@ -431,7 +431,7 @@ void mafOpVolumeResample::OpUndo()
 //----------------------------------------------------------------------------
 {   
 	assert(m_ResampledVme);
-	mafEventMacro(mafEvent(this,VME_REMOVE,m_ResampledVme));
+  m_ResampledVme->ReparentTo(NULL);
 }
 //----------------------------------------------------------------------------
 // Constants :

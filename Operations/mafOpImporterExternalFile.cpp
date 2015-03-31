@@ -107,5 +107,5 @@ void mafOpImporterExternalFile::OpUndo()
 //----------------------------------------------------------------------------
 {
   assert(m_Vme);
-	mafEventMacro(mafEvent(this,VME_REMOVE,m_Vme));
+  m_Vme->ReparentTo(NULL);
 }
