@@ -131,6 +131,7 @@ lhpOpImporterC3DBTK::lhpOpImporterC3DBTK(const mafString& label) : Superclass(la
 
   m_FileDir = mafGetApplicationDirectory() + "/Data/External/";
   m_DictionaryFileName = "";
+  m_LMRenameFileName = "";
 
   //gui
   m_ImportTrajectoriesFlag = TRUE;
@@ -270,6 +271,34 @@ void lhpOpImporterC3DBTK::DestroyDictionary()
 //----------------------------------------------------------------------------
 {
   m_dictionaryStruct.clear();
+}
+//----------------------------------------------------------------------------
+bool lhpOpImporterC3DBTK::LoadLMRename()
+//----------------------------------------------------------------------------
+{
+  vcl_string landmarkName, segmentName;
+  vcl_ifstream LMRenameInputStream(m_LMRenameFileName, std::ios::in);
+
+  if(LMRenameInputStream.is_open() == 0)
+    return false;
+  while(LMRenameInputStream >> landmarkName)	
+  {
+    LMRenameInputStream >> segmentName;			
+    std::map<mafString, mafString>::iterator it = m_LMRenameStruct.find(landmarkName.c_str());
+    if(it != m_LMRenameStruct.end())
+    {
+      m_LMRenameStruct.clear();
+      return false;
+    }
+    m_LMRenameStruct[landmarkName.c_str()] = segmentName.c_str();
+  }
+  return true;
+}
+//----------------------------------------------------------------------------
+void lhpOpImporterC3DBTK::DestroyLMRename()
+//----------------------------------------------------------------------------
+{
+  m_LMRenameStruct.clear();
 }
 //----------------------------------------------------------------------------
 void lhpOpImporterC3DBTK::Initialize(const mafString &fullFileName, lhpOpImporterC3DBTK::_InternalC3DData &intData)
@@ -431,6 +460,10 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
       case btk::Point::Marker:
         {
           intData.m_TrajectoryName = m_Acq->GetPoint(currentTrajectory)->GetLabel().c_str();
+		  std::map<mafString, mafString>::iterator renIt = m_LMRenameStruct.find(intData.m_TrajectoryName);
+		  //trajectory name found
+		  if(renIt != m_LMRenameStruct.end())
+			  intData.m_TrajectoryName = renIt->second;
 
           //control if m_Trajectory is not a phantom landmark(camera reflexes)
           if(intData.m_TrajectoryName[0] != '*')
@@ -904,6 +937,8 @@ enum C3D_IMPORTER_ID
   ID_IMPORT_EVENT,
   ID_LOAD_DICT,
   ID_CLEAR_DICT,
+  ID_LOAD_LMREN,
+  ID_CLEAR_LMREN,
   ID_OK,
   ID_CANCEL,
 };
@@ -919,10 +954,14 @@ void lhpOpImporterC3DBTK::CreateGui()
   m_Gui->Bool(ID_IMPORT_PLATFORM,_("Force Plate Data"),&m_ImportPlatformFlag,1);
   //m_Gui->Bool(ID_IMPORT_EVENT,_("Auto Crop"),&m_ImportEventFlag,1);
   m_Gui->Label("");
-  m_Gui->FileOpen(ID_LOAD_DICT, "Dictionary",  &m_DictionaryFileName, "*.txt");
+  m_Gui->FileOpen(ID_LOAD_LMREN, "Renamer",  &m_LMRenameFileName, "*.txt");
+  m_Gui->Button(ID_CLEAR_LMREN, "Clean", "", "Press to cancel using LM renamer" );  
+  m_Gui->Label("");
+  m_Gui->FileOpen(ID_LOAD_DICT, "Segment",  &m_DictionaryFileName, "*.txt");
   m_Gui->Button(ID_CLEAR_DICT, "Clean", "", "Press to cancel using dictionary" );  
 
   m_Gui->Enable(ID_CLEAR_DICT, (m_DictionaryFileName != ""));
+  m_Gui->Enable(ID_CLEAR_LMREN, (m_LMRenameFileName != ""));
 
 	m_Gui->OkCancel();
 }
@@ -943,6 +982,26 @@ void lhpOpImporterC3DBTK::DictionaryUpdate()
   if(m_Gui)
   {
     m_Gui->Enable(ID_CLEAR_DICT, !emptyName);
+    m_Gui->Update();
+  }
+}
+//----------------------------------------------------------------------------
+void lhpOpImporterC3DBTK::LMRenameUpdate() 
+//----------------------------------------------------------------------------
+{
+  bool emptyName = (m_LMRenameFileName == "");
+  DestroyLMRename();
+  if(!emptyName)
+  {
+    if(!LoadLMRename())
+    {
+      wxLogMessage("Error reading LM renamer.");
+      m_LMRenameFileName = "";
+    }
+  }
+  if(m_Gui)
+  {
+    m_Gui->Enable(ID_CLEAR_LMREN, !emptyName);
     m_Gui->Update();
   }
 }
@@ -979,6 +1038,15 @@ void lhpOpImporterC3DBTK::OnEvent(mafEventBase *maf_event)
       case ID_LOAD_DICT:
         {
           DictionaryUpdate();
+          break;
+        }
+      case ID_CLEAR_LMREN:
+        {
+          m_LMRenameFileName = "";
+        }//WARNING! NO break operator here, execution will continue in ID_LOAD_DICT
+      case ID_LOAD_LMREN:
+        {
+          LMRenameUpdate();
           break;
         }
       case ID_IMPORT_TRAJECTORIES:

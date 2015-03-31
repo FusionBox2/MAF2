@@ -79,6 +79,9 @@ public:
   void SetDictionaryFileName(const char *fileDict){m_DictionaryFileName = fileDict;DictionaryUpdate();}
   const char * GetDictionaryFileName() {return m_DictionaryFileName;}
 
+  void SetLMRenameFileName(const char *fileDict){m_LMRenameFileName = fileDict;LMRenameUpdate();}
+  const char * GetLMRenameFileName() {return m_LMRenameFileName;}
+
   /* Get Group representing result of import */
   mafVMEGroup *GetGroup(){if(m_intData.empty()) return NULL; return m_intData[0].m_VmeGroup;}
 
@@ -145,13 +148,22 @@ protected:
   mafVMEGroup* ImportSingleFile(const mafString &fullFileName, _InternalC3DData &intData);
 
   /** Do actions necessary on dictionary name changing*/
-  void lhpOpImporterC3DBTK::DictionaryUpdate();
+  void DictionaryUpdate();
 
   /** Load dictionary from specified file*/
-  bool lhpOpImporterC3DBTK::LoadDictionary();
+  bool LoadDictionary();
 
   /** Destroy dictionary*/
-  void lhpOpImporterC3DBTK::DestroyDictionary();
+  void DestroyDictionary();
+
+  /** Do actions necessary on dictionary name changing*/
+  void LMRenameUpdate();
+
+  /** Load dictionary from specified file*/
+  bool LoadLMRename();
+
+  /** Destroy dictionary*/
+  void DestroyLMRename();
 
   btk::Acquisition::Pointer m_Acq;
   btk::ForcePlatformCollection::Pointer m_Pfc;
@@ -161,6 +173,8 @@ protected:
   mafString                      m_FileDir;
   mafString                      m_DictionaryFileName;
   std::map<mafString, mafString> m_dictionaryStruct;
+  mafString                      m_LMRenameFileName;
+  std::map<mafString, mafString> m_LMRenameStruct;
 	int m_ImportTrajectoriesFlag;
   int m_ImportAnalogFlag;
   int m_ImportPlatformFlag;
