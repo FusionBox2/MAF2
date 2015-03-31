@@ -156,7 +156,7 @@ void mafEventSourceBase::InvokeEvent(mafEventBase *e)
     mafBaseEventHandler *observer=(*it).second;
     observer->OnEvent(e);
   }
-  else for (it=m_Observers->m_List.begin();it!=m_Observers->m_List.end();it++)
+  else for (it=m_Observers->m_List.begin();it!=m_Observers->m_List.end();)
   {
     // Set the event channel (if neccessary).
     // Must set it at each iteration since it could have
@@ -166,6 +166,7 @@ void mafEventSourceBase::InvokeEvent(mafEventBase *e)
 
     // rise an event to observers
     mafBaseEventHandler *observer=(*it).second;
+    it++;
     observer->OnEvent(e);
   }
   
