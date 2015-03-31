@@ -72,8 +72,10 @@ mafVMEMeter::mafVMEMeter()
   m_Angle         = 0.0;
 
   m_InfiniteLine  = 0;
+  m_LineAngle2    = 0;
   
   m_StartVmeName  = "";
+  m_StartVme2Name  = "";
   m_EndVme1Name   = "";
   m_EndVme2Name   = "";
   m_ProbeVmeName   = "";
@@ -167,6 +169,7 @@ int mafVMEMeter::DeepCopy(mafNode *a)
 		mafVMEMeter *meter = mafVMEMeter::SafeDownCast(a);
 		m_Transform->SetMatrix(meter->m_Transform->GetMatrix());
     m_InfiniteLine = meter->m_InfiniteLine;
+    m_LineAngle2   = meter->m_LineAngle2;
 
 		mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
 		if (dpipe)
@@ -509,13 +512,14 @@ void mafVMEMeter::InternalUpdate()
   else if (GetMeterMode() == mafVMEMeter::LINE_ANGLE)
   {
     mafVME *start_vme = GetStartVME();
+    mafVME *start2_vme = GetStart2VME();
     mafVME *end1_vme  = GetEnd1VME();
     mafVME *end2_vme  = GetEnd2VME();
 
     double orientation[3];
 
-    bool start_ok = true, end1_ok = true, end2_ok = true;
-    if (start_vme && end1_vme && end2_vme)
+    bool start_ok = true, start2_ok = true, end1_ok = true, end2_ok = true;
+    if (start_vme && (start2_vme || !m_LineAngle2) && end1_vme && end2_vme)
     {
       // start is a landmark, consider also visibility
       /*if (mflVMELandmark *start_landmark = mflVMELandmark::SafeDownCast(start_vme))
@@ -533,6 +537,23 @@ void mafVMEMeter::InternalUpdate()
       {
         start_vme->GetOutput()->Update();  
         start_vme->GetOutput()->GetAbsPose(m_StartPoint, orientation, currTs);
+      }
+
+      if(m_LineAngle2)
+      {
+        if(start2_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("StartVME2") != -1)
+        {
+          ((mafVMELandmarkCloud *)start2_vme)->GetLandmark(GetLinkSubId("StartVME2"),m_StartPoint2,currTs);
+          mafMatrix tm;
+          start2_vme->GetOutput()->GetAbsMatrix(tm, currTs);
+          m_TmpTransform->SetMatrix(tm);
+          m_TmpTransform->TransformPoint(m_StartPoint2,m_StartPoint2);
+        }
+        else
+        {
+          start2_vme->GetOutput()->Update();  
+          start2_vme->GetOutput()->GetAbsPose(m_StartPoint2, orientation, currTs);
+        }
       }
 
       /*if(mflVMELandmark *end1_landmark = mflVMELandmark::SafeDownCast(end1_vme))
@@ -571,17 +592,30 @@ void mafVMEMeter::InternalUpdate()
     }
     else
     {
-      start_ok = false;
-      end1_ok  = false;
-      end2_ok  = false;
+      start_ok  = false;
+      start2_ok = false;
+      end1_ok   = false;
+      end2_ok   = false;
     }
-    if (start_ok && end1_ok && end2_ok)
+    if (start_ok && start2_ok && end1_ok && end2_ok)
     {
-      double start[3],p1[3],p2[3], v1[3], v2[3], vn1, vn2, s;
+      double start[3],start2[3], p1[3],p2[3], v1[3], v2[3], vn1, vn2, s;
 
       start[0] = m_StartPoint[0];
       start[1] = m_StartPoint[1];
       start[2] = m_StartPoint[2];
+      if(m_LineAngle2)
+      {
+        start2[0] = m_StartPoint2[0];
+        start2[1] = m_StartPoint2[1];
+        start2[2] = m_StartPoint2[2];
+      }
+      else
+      {
+        start2[0] = m_StartPoint[0];
+        start2[1] = m_StartPoint[1];
+        start2[2] = m_StartPoint[2];
+      }
       p1[0] = m_EndPoint[0];
       p1[1] = m_EndPoint[1];
       p1[2] = m_EndPoint[2];
@@ -591,9 +625,9 @@ void mafVMEMeter::InternalUpdate()
       v1[0] = p1[0] - start[0];
       v1[1] = p1[1] - start[1];
       v1[2] = p1[2] - start[2];
-      v2[0] = p2[0] - start[0];
-      v2[1] = p2[1] - start[1];
-      v2[2] = p2[2] - start[2];
+      v2[0] = p2[0] - start2[0];
+      v2[1] = p2[1] - start2[1];
+      v2[2] = p2[2] - start2[2];
       vn1 = vtkMath::Norm(v1);
       vn2 = vtkMath::Norm(v2);
       s = vtkMath::Dot(v1,v2);
@@ -612,6 +646,8 @@ void mafVMEMeter::InternalUpdate()
       m_TmpTransform->Invert();
       m_TmpTransform->TransformPoint(start,local_start);
 
+      double local_start2[3];
+      m_TmpTransform->TransformPoint(start2,local_start2);
       double local_end1[3];
       m_TmpTransform->TransformPoint(p1,local_end1);
       double local_end2[3];
@@ -621,7 +657,7 @@ void mafVMEMeter::InternalUpdate()
       m_LineSource->SetPoint2(local_end1);
       m_LineSource->Update();
 
-      m_LineSource2->SetPoint1(local_start);
+      m_LineSource2->SetPoint1(local_start2);
       m_LineSource2->SetPoint2(local_end2);
       m_LineSource2->Update();
 
@@ -664,6 +700,7 @@ int mafVMEMeter::InternalStore(mafStorageElement *parent)
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
     parent->StoreInteger("Infinite", m_InfiniteLine);
+    parent->StoreInteger("LineAngle2", m_LineAngle2);
     parent->StoreMatrix("Transform",&m_Transform->GetMatrix());
     return MAF_OK;
   }
@@ -677,6 +714,7 @@ int mafVMEMeter::InternalRestore(mafStorageElement *node)
   {
     mafMatrix matrix;
     node->RestoreInteger("Infinite", m_InfiniteLine);
+    node->RestoreInteger("LineAngle2", m_LineAngle2);
     if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
@@ -865,13 +903,17 @@ mafGUI* mafVMEMeter::CreateGui()
   
   m_Gui->Button(ID_START_METER_LINK,&m_StartVmeName,_("Start"), _("Select the start vme for the meter"));
   m_Gui->Button(ID_END1_METER_LINK,&m_EndVme1Name,_("End 1"), _("Select the end vme for point distance"));
+  m_Gui->Button(ID_START2_METER_LINK,&m_StartVme2Name,_("Start2"), _("Select the start vme for the second line"));
   m_Gui->Button(ID_END2_METER_LINK,&m_EndVme2Name,_("End 2"), _("Select the vme representing \nthe point for line distance"));
 
   m_Gui->Bool(ID_INFINITE_LINE, _("Infinite"), &m_InfiniteLine);
+  m_Gui->Bool(ID_LINE_ANGLE2, _("2 lines angle"), &m_LineAngle2);
 
   if(GetMeterAttributes()->m_MeterMode == POINT_DISTANCE)
     m_Gui->Enable(ID_END2_METER_LINK,false);
   m_Gui->Enable(ID_INFINITE_LINE, GetMeterAttributes()->m_MeterMode == LINE_DISTANCE);
+  m_Gui->Enable(ID_LINE_ANGLE2, GetMeterAttributes()->m_MeterMode == LINE_ANGLE);
+  m_Gui->Enable(ID_START2_METER_LINK, GetMeterAttributes()->m_MeterMode == LINE_ANGLE && m_LineAngle2);
 
   m_Gui->Bool(ID_PLOT_PROFILE,_("plot profile"),&m_GenerateHistogram);
   m_Gui->Enable(ID_PLOT_PROFILE,GetMeterAttributes()->m_MeterMode == POINT_DISTANCE);
@@ -889,6 +931,7 @@ void mafVMEMeter::UpdateLinks()
 {
   mafID sub_id = -1;
   mafVME *start_vme = GetStartVME();
+  mafVME *start_vme2 = GetStart2VME();
   mafVME *end_vme1 = GetEnd1VME();
   mafVME *end_vme2 = GetEnd2VME();
   mafVME *probedVme = GetPlottedVME();
@@ -900,6 +943,14 @@ void mafVMEMeter::UpdateLinks()
   }
   else
     m_StartVmeName = start_vme ? start_vme->GetName() : _("none");
+
+  if (start_vme2 && start_vme2->IsMAFType(mafVMELandmarkCloud))
+  {
+    sub_id = GetLinkSubId("Start2VME");
+    m_StartVme2Name = (sub_id != -1) ? ((mafVMELandmarkCloud *)start_vme2)->GetLandmarkName(sub_id) : _("none");
+  }
+  else
+    m_StartVme2Name = start_vme2 ? start_vme2->GetName() : _("none");
 
   if (end_vme1 && end_vme1->IsMAFType(mafVMELandmarkCloud))
   {
@@ -929,12 +980,19 @@ void mafVMEMeter::OnEvent(mafEventBase *maf_event)
   {
     switch(e->GetId())
     {
+      case ID_LINE_ANGLE2:
+        m_Gui->Enable(ID_START2_METER_LINK, m_LineAngle2 != 0);
+        this->Modified();
+        e->SetId(CAMERA_UPDATE);
+        ForwardUpEvent(e);
+        break;
       case ID_INFINITE_LINE:
         this->Modified();
         e->SetId(CAMERA_UPDATE);
         ForwardUpEvent(e);
         break;
       case ID_START_METER_LINK:
+      case ID_START2_METER_LINK:
       case ID_END1_METER_LINK:
       case ID_END2_METER_LINK:
       {
@@ -951,6 +1009,11 @@ void mafVMEMeter::OnEvent(mafEventBase *maf_event)
           {
             SetMeterLink("StartVME", n);
             m_StartVmeName = n->GetName();
+          }
+          else if (button_id == ID_START2_METER_LINK)
+          {
+            SetMeterLink("StartVME2", n);
+            m_StartVme2Name = n->GetName();
           }
           else if (button_id == ID_END1_METER_LINK)
           {
@@ -992,14 +1055,20 @@ void mafVMEMeter::OnEvent(mafEventBase *maf_event)
 		  if(GetMeterAttributes()->m_MeterMode == POINT_DISTANCE)
 		  {  
         m_Gui->Enable(ID_END2_METER_LINK,false);
+        m_Gui->Enable(ID_LINE_ANGLE2, false);
+        m_Gui->Enable(ID_START2_METER_LINK, false);
 		  }
 		  else if(GetMeterAttributes()->m_MeterMode ==  LINE_DISTANCE)
 		  { 
 			  m_Gui->Enable(ID_END2_METER_LINK,true);
+        m_Gui->Enable(ID_LINE_ANGLE2, false);
+        m_Gui->Enable(ID_START2_METER_LINK, false);
 		  }
 		  else if(GetMeterAttributes()->m_MeterMode ==  LINE_ANGLE)
 		  {       
 			  m_Gui->Enable(ID_END2_METER_LINK,true);
+        m_Gui->Enable(ID_LINE_ANGLE2, true);
+        m_Gui->Enable(ID_START2_METER_LINK, m_LineAngle2 != 0);
 		  }
       m_Gui->Enable(ID_INFINITE_LINE,GetMeterAttributes()->m_MeterMode == LINE_DISTANCE);
       m_Gui->Enable(ID_PLOT_PROFILE,GetMeterAttributes()->m_MeterMode == POINT_DISTANCE);
@@ -1060,6 +1129,12 @@ mafVME *mafVMEMeter::GetStartVME()
 //-------------------------------------------------------------------------
 {
   return mafVME::SafeDownCast(GetLink("StartVME"));
+}
+//-------------------------------------------------------------------------
+mafVME *mafVMEMeter::GetStart2VME()
+//-------------------------------------------------------------------------
+{
+  return mafVME::SafeDownCast(GetLink("StartVME2"));
 }
 //-------------------------------------------------------------------------
 mafVME *mafVMEMeter::GetEnd1VME()

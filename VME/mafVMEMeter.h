@@ -48,7 +48,7 @@ public:
   {
     POINT_DISTANCE=0,
     LINE_DISTANCE,
-    LINE_ANGLE
+    LINE_ANGLE,
   };
   enum METER_COLOR_TYPE_ID
   {
@@ -70,9 +70,11 @@ public:
   enum METER_WIDGET_ID
   {
     ID_START_METER_LINK = Superclass::ID_LAST,
+    ID_START2_METER_LINK,
     ID_END1_METER_LINK,
     ID_END2_METER_LINK,
     ID_INFINITE_LINE,
+    ID_LINE_ANGLE2,
     ID_PLOTTED_VME_LINK,
 	  ID_METER_MODE,
     ID_PLOT_PROFILE,
@@ -202,6 +204,7 @@ public:
   mmaMeter *GetMeterAttributes();
 
   mafVME *GetStartVME();
+  mafVME *GetStart2VME();
   mafVME *GetEnd1VME();
   mafVME *GetEnd2VME();
   mafVME *GetPlottedVME();
@@ -223,6 +226,8 @@ public:
 
   /** Retrieve StartPoint coordinates*/
   double *GetStartPointCoordinate(){return m_StartPoint;};
+
+  double *GetStart2PointCoordinate(){return m_StartPoint2;};
 
   /** Retrieve EndPoint1 coordinates*/
   double *GetEndPointCoordinate(){return m_EndPoint;};
@@ -259,9 +264,11 @@ protected:
   double m_Distance;
   double m_Angle;
   double m_StartPoint[3];
+  double m_StartPoint2[3];
   double m_EndPoint[3];
   double m_EndPoint2[3];
   int    m_InfiniteLine;
+  int    m_LineAngle2;
 
   mafTransform *m_Transform;
 
@@ -272,6 +279,7 @@ protected:
   mafTransform      *m_TmpTransform;
 
   mafString m_StartVmeName;
+  mafString m_StartVme2Name;
   mafString m_EndVme1Name;
   mafString m_EndVme2Name;
   mafString m_ProbeVmeName;
