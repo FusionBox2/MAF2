@@ -28,7 +28,6 @@
 #include "mafDecl.h"
 #include "mafInteractorGenericMouse.h"
 #include "mafSmartPointer.h"
-#include "mafVector.h"
 #include "mafVMEGizmo.h"
 
 #include "mafMatrix.h"

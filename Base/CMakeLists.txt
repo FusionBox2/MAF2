@@ -8,7 +8,6 @@ DBG_MESSAGE("Configuring project mafCore")
 
 # Set your list of sources here.
 SET(PROJECT_SRCS
-#sorted_vector.h
 mafBase.h
 mafDecl.cpp
 mafDecl.h
@@ -62,8 +61,6 @@ mafTransformBase.cpp
 mafTransformBase.h
 mafTransformFrame.cpp
 mafTransformFrame.h
-mafVector.h
-mafVector.txx
 mafVectors.h
 mafVersion.h
 mmuIdFactory.cpp

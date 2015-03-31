@@ -20,11 +20,8 @@
 //----------------------------------------------------------------------------
 #include "mafObject.h"
 #include "mafNode.h"
-#include "mafVector.h"
-#include "mafVector.txx"
 #include "mafEventSource.h"
-
-template class MAF_EXPORT mafVector<mafID>;
+#include <vector>
 
 /** mafNodeIterator - an m-way tree data structure iterator
   mafNodeIterator is a class to traverse a tree data structure. It allows 
@@ -155,7 +152,7 @@ protected:
   int             m_TraversalDone;
   bool            m_IgnoreVisibleToTraverse;
 
-  mafVector<mafID> m_CurrentIdx;
+  std::vector<mafID> m_CurrentIdx;
 
   mafEventSource  m_EventSource; ///< Source of events issued during traverse
 

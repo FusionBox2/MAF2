@@ -26,9 +26,23 @@
 
 
 #include "mafNodeIterator.h"
-#include "mafVector.txx"
 
 mafCxxTypeMacro(mafNodeIterator)
+
+namespace
+{
+  template <class T>
+  bool Pop(std::vector<T>& vec, T &obj)
+  {
+    if(vec.size() > 0)
+    {
+      obj = vec[vec.size() - 1];
+      vec.pop_back();
+      return true;
+    }
+    return false;
+  }
+}
 
 //----------------------------------------------------------------------------
 mafNodeIterator::mafNodeIterator(mafNode *root)
@@ -95,7 +109,7 @@ int mafNodeIterator::GoToNextNode()
             m_CurrentNode=m_CurrentNode->GetChild(0);
             if (m_CurrentNode)
             {
-              m_CurrentIdx.Push(0);
+              m_CurrentIdx.push_back(0);
               DeeperExecute(m_CurrentNode); //call the deeper-callback
 
               // before doing anything else call the pre-execute
@@ -114,13 +128,13 @@ int mafNodeIterator::GoToNextNode()
 							mafNode *parent=m_CurrentNode->GetParent();
 							if (parent) 
 							{ 
-								m_CurrentIdx.Pop(idx);
+								Pop(m_CurrentIdx, idx);
 								UpperExecute(parent); //call the upper-callback
 
 								while (parent&&parent!=m_RootNode&&idx>=(parent->GetNumberOfChildren()-1))
 								{
 									parent=parent->GetParent();
-									m_CurrentIdx.Pop(idx);
+									Pop(m_CurrentIdx, idx);
 									UpperExecute(parent); //call the upper-callback
 								}
 							}
@@ -136,7 +150,7 @@ int mafNodeIterator::GoToNextNode()
 								// go to root of next brother subtree
 								idx++;
 								m_CurrentNode=parent->GetChild(idx);
-								m_CurrentIdx.Push(idx);
+								m_CurrentIdx.push_back(idx);
 								DeeperExecute(m_CurrentNode); //call the deeper-callback
 
 								// before doing anything else call the pre-execute
@@ -168,7 +182,7 @@ int mafNodeIterator::GoToNextNode()
           if (parent)
           {
             mafID idx;
-            if (!m_CurrentIdx.Pop(idx))
+            if (!Pop(m_CurrentIdx, idx))
             {
               mafErrorMacro("Stack Underflow");
               m_TraversalDone=1; //set the traversal flag
@@ -183,7 +197,7 @@ int mafNodeIterator::GoToNextNode()
               PostExecute(); // call the post-execute
 
               idx++;
-              m_CurrentIdx.Push(idx);
+              m_CurrentIdx.push_back(idx);
               m_CurrentNode=FindLeftMostLeaf(parent->GetChild(idx));
               // the call to the deeper-callback is inside FindLeftMostLeaf
 
@@ -250,7 +264,7 @@ int mafNodeIterator::GoToPreviousNode()
           if (parent)
           {
             mafID idx;
-            if (!m_CurrentIdx.Pop(idx))
+            if (!Pop(m_CurrentIdx, idx))
             {
               mafErrorMacro("Stack Underflow");
               m_TraversalDone=1;
@@ -264,7 +278,7 @@ int mafNodeIterator::GoToPreviousNode()
               PostExecute(); // call the post-execute
 
               idx--;
-              m_CurrentIdx.Push(idx);
+              m_CurrentIdx.push_back(idx);
               m_CurrentNode=FindRightMostLeaf(parent->GetChild(idx));
               //the call to the deeper-callback is inside the FindRightMostLeaf
               
@@ -307,7 +321,7 @@ int mafNodeIterator::GoToPreviousNode()
 
             // go to root of last subtree
             mafID idx=m_CurrentNode->GetNumberOfChildren()-1;
-            m_CurrentIdx.Push(idx);
+            m_CurrentIdx.push_back(idx);
             m_CurrentNode=m_CurrentNode->GetChild(idx);
 
             DeeperExecute(m_CurrentNode);
@@ -318,7 +332,7 @@ int mafNodeIterator::GoToPreviousNode()
             mafNode *parent=m_CurrentNode->GetParent();
 
             mafID idx;
-            if (m_CurrentIdx.Pop(idx))
+            if (Pop(m_CurrentIdx, idx))
             {
               UpperExecute(parent); 
 
@@ -326,7 +340,7 @@ int mafNodeIterator::GoToPreviousNode()
               {
                 parent=parent->GetParent();
 
-                if (!m_CurrentIdx.Pop(idx))
+                if (!Pop(m_CurrentIdx, idx))
                 {
                   mafErrorMacro("Stack Underflow");
                   m_TraversalDone=1;
@@ -354,7 +368,7 @@ int mafNodeIterator::GoToPreviousNode()
                 PostExecute();
 
                 idx--;
-                m_CurrentIdx.Push(idx);
+                m_CurrentIdx.push_back(idx);
                 // go to root of prevoius brother subtree
                 m_CurrentNode=parent->GetChild(idx);
                 DeeperExecute(m_CurrentNode); //call the deeper-callback
@@ -404,7 +418,7 @@ mafNode *mafNodeIterator::FindLeftMostLeaf(mafNode *node)
   while (node&&node->GetNumberOfChildren()>0) 
   {
     node=node->GetChild(0);
-    m_CurrentIdx.Push(0);
+    m_CurrentIdx.push_back(0);
     if (node)
       DeeperExecute(node);
   }
@@ -420,7 +434,7 @@ mafNode *mafNodeIterator::FindRightMostLeaf(mafNode *node)
     DeeperExecute(node);
   while (node&&node->GetNumberOfChildren()>0) 
   {
-    m_CurrentIdx.Push(node->GetNumberOfChildren()-1); // store index of the currently visited node
+    m_CurrentIdx.push_back(node->GetNumberOfChildren()-1); // store index of the currently visited node
     node=node->GetChild(node->GetNumberOfChildren()-1);
     if (node)
       DeeperExecute(node);
@@ -433,7 +447,7 @@ mafNode *mafNodeIterator::FindRightMostLeaf(mafNode *node)
 int mafNodeIterator::GoToFirstNode()
 //----------------------------------------------------------------------------
 {
-  m_CurrentIdx.RemoveAllItems();
+  m_CurrentIdx.clear();
   switch (m_TraversalMode)
   {
     case PreOrder:
@@ -472,7 +486,7 @@ int mafNodeIterator::GoToFirstNode()
 int mafNodeIterator::GoToLastNode()
 //----------------------------------------------------------------------------
 {
-  m_CurrentIdx.RemoveAllItems();
+  m_CurrentIdx.clear();
   switch (m_TraversalMode)
   {
     case PreOrder:
