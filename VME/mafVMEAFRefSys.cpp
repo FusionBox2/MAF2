@@ -98,10 +98,10 @@ int mafVMEAFRefSys::DeepCopy(mafNode *a)
 }
 
 //-------------------------------------------------------------------------
-int mafVMEAFRefSys::ReparentTo(mafNode *newparent)
+int mafVMEAFRefSys::SetParent(mafNode *newparent)
 //-------------------------------------------------------------------------
 {
-  int rep = Superclass::ReparentTo(newparent);
+  int rep = Superclass::SetParent(newparent);
   if(rep != MAF_OK || newparent == NULL || !m_Active)
     return rep;
   for(unsigned j = 0; j < newparent->GetNumberOfChildren(); j++)

@@ -72,9 +72,6 @@ public:
   /** Copy the contents of another VME-RefSys into this one. */
   virtual int DeepCopy(mafNode *a);
 
-  virtual int ReparentTo(mafNode *parent);
-
-
   /** 
   Set Vector virtual machine*/
   void SetVM(VecManVM<double> *vm){m_vm = vm;}
@@ -116,6 +113,8 @@ public:
   virtual void CalculateMatrix(mafMatrix& mat, mafTimeStamp ts = -1);
 
 protected:
+  virtual int SetParent(mafNode *parent);
+
   /** 
   Update vector virtual machine with given timestamp*/
   bool UpdateVM(mafTimeStamp ts);
