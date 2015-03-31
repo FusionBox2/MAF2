@@ -55,9 +55,6 @@ public:
     ID_CHECK_BOXXVAL = Superclass::ID_LAST,
     ID_CHECK_BOXYVAL,
     ID_CHECK_BOXYDER,
-    ID_LIMITED,
-    ID_START,
-    ID_END,
     ID_LAST
   };
 
@@ -68,7 +65,6 @@ public:
 protected:
   virtual void GrabData();
   virtual void UpdateGUIChecks();
-  virtual void StoreValueByIdx(int nVarID, int nGraphIndex, mafTimeStamp ts, mafTimeStamp prevts);
 
   /** Create the Gui for the visual pipe that allow the user to change the pipe's parameters.*/
   virtual mafGUI *CreateGui();
@@ -83,9 +79,7 @@ protected:
   int                                   m_NumberOfSignals;
   int                                   m_TimeStamp;
   std::vector<mafString>                m_Names;
-  mafTimeStamp                          m_Start;
-  mafTimeStamp                          m_End;
-  int                                   m_Limited;
+  int                                   m_InGrabData;
 
 };  
 #endif // _lhpPipeIntGraphAnalog_H_
