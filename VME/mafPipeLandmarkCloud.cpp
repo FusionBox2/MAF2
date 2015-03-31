@@ -73,7 +73,7 @@ mafPipeLandmarkCloud::mafPipeLandmarkCloud()
   m_Radius = 1.0;
   m_ScalarVisibility = FALSE;
   m_RenderingDisplayListFlag = 0;
-  m_Labels        = 1;
+  m_Labels        = 0;
 }
 //----------------------------------------------------------------------------
 void mafPipeLandmarkCloud::Create(mafNode *node, mafView *view)
