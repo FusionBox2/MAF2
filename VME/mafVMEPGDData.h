@@ -58,6 +58,8 @@ public:
 	void DictionaryOn () { this->SetDictionary((int)1);}
 	void DictionaryOff () { this->SetDictionary((int)0);}
 
+  void SetRadius(double radius){m_DefaultRadius = radius;}
+
 protected:
   mafVMEPGDData();
   virtual ~mafVMEPGDData();
@@ -72,8 +74,6 @@ protected:
 	//only the rotation 3x3 submatrix is written.*/
 	void AttVec2Matrix(double RxRyRzIn[3], vtkMatrix4x4 *pMatrix);
 
-
-
   mafString              m_DictionaryFileName; 
   mafString              m_FileName; 
   int                    m_Dictionary;
@@ -83,32 +83,7 @@ protected:
   mafVMELandmarkCloud    *m_PGD_DLCloud;
   std::vector<mafString> *m_PGDLMNamesTagArray;
   FILE                   * m_pPGDFile;
-
-
-  void Read_C3D_Header(
-    unsigned short int	*num_markers, 
-    unsigned short int	*num_channels,
-    unsigned short int	*first_field,
-    unsigned short int	*last_field,
-    float				*scale_factor,
-    unsigned short int	*start_record_num,
-    unsigned short int	*frames_per_field,
-    float				*video_rate,
-    FILE				*infile);
-
-
-  int Read_C3D_Data(
-    unsigned short	num_markers,				// number of marker trajectories
-    unsigned short	num_analog_channels,		// number of analog channels
-    unsigned short	first_field,				// first frame to read
-    unsigned short	last_field,					// last frame to read
-    unsigned short	start_byte,					// starting record number
-    unsigned short	analog_frames_per_field,    // analog samples/ video frame
-    float scale_factor,
-    std::vector<mafString> *lm_names_tagarray,
-    FILE			*infile);
-
-  void Read_C3D_Parameters(std::vector<mafString> *mlabels,   FILE	*infile);
+  double                  m_DefaultRadius;
 
 private:
   mafVMEPGDData(const mafVMEPGDData&);  // Not implemented.

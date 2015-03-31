@@ -64,8 +64,9 @@ mafCxxTypeMacro(mafVMEPGDData)
 mafVMEPGDData::mafVMEPGDData()
 //----------------------------------------------------------------------------
 {
+  m_DefaultRadius = 15;
   mafNEW(m_PGD_DLCloud);
-  m_PGD_DLCloud->SetRadius(15.0);
+  m_PGD_DLCloud->SetRadius(m_DefaultRadius);
   m_PGD_DLCloud->SetDefaultVisibility(0);  //modified by Marco. 3-10-2003
 
   m_Dictionary = 0;
@@ -222,7 +223,7 @@ int mafVMEPGDData::Read()
           //modified by Vladik: 8-03-2005
           //TmpVME->Open();
           TmpVME->SetName(tmpstring);
-          TmpVME->SetRadius(15.0);
+          TmpVME->SetRadius(m_DefaultRadius);
           //mafEventMacro(mafEvent(this,VME_CREATE_CLIENT_DATA,m_cloud));
           AddChild(TmpVME);		
 

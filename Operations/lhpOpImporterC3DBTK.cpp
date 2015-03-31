@@ -139,7 +139,7 @@ lhpOpImporterC3DBTK::lhpOpImporterC3DBTK(const mafString& label) : Superclass(la
   m_ImportPlatformFlag = TRUE;
   m_ImportEventFlag = FALSE;
 
-  m_DefaultRadius = 5;
+  m_DefaultRadius = 10;
 }
 
 //----------------------------------------------------------------------------
@@ -940,6 +940,7 @@ enum C3D_IMPORTER_ID
   ID_IMPORT_ANALOG,
   ID_IMPORT_PLATFORM,
   ID_IMPORT_EVENT,
+  ID_RADIUS,
   ID_LOAD_DICT,
   ID_CLEAR_DICT,
   ID_LOAD_LMREN,
@@ -959,6 +960,8 @@ void lhpOpImporterC3DBTK::CreateGui()
   m_Gui->Bool(ID_IMPORT_PLATFORM,_("Force Plate Data"),&m_ImportPlatformFlag,1);
   //m_Gui->Bool(ID_IMPORT_EVENT,_("Auto Crop"),&m_ImportEventFlag,1);
   m_Gui->Label("");
+  m_Gui->Double(ID_RADIUS, "Radius", &m_DefaultRadius, 0);
+  m_Gui->Divider();
   m_Gui->FileOpen(ID_LOAD_LMREN, "Renamer",  &m_LMRenameFileName, "*.txt");
   m_Gui->Button(ID_CLEAR_LMREN, "Clean", "", "Press to cancel using LM renamer" );  
   m_Gui->Label("");
@@ -1036,6 +1039,8 @@ void lhpOpImporterC3DBTK::OnEvent(mafEventBase *maf_event)
         this->OpStop(OP_RUN_CANCEL);
       }
       break;
+      case ID_RADIUS:
+        break;
       case ID_CLEAR_DICT:
         {
           m_DictionaryFileName = "";
