@@ -240,7 +240,7 @@ void mafNode::ForwardEvent(mafEventBase *maf_event)
 }
 
 //-------------------------------------------------------------------------
-void mafNode::SetName(const char *name)
+void mafNode::SetName(const mafString& name)
 //-------------------------------------------------------------------------
 {
   m_Name=name; // force string copy
@@ -375,7 +375,7 @@ int mafNode::FindNodeIdx(mafNode *a, bool onlyVisible /*=false*/)
 }
 
 //-------------------------------------------------------------------------
-int mafNode::FindNodeIdx(const char *name, bool onlyVisible /*=false*/)
+int mafNode::FindNodeIdx(const mafString& name, bool onlyVisible /*=false*/)
 //-------------------------------------------------------------------------
 {
   int nChild=-1;
@@ -384,7 +384,7 @@ int mafNode::FindNodeIdx(const char *name, bool onlyVisible /*=false*/)
     //if onlyVisible is true we count only Visible VME 
     if (!onlyVisible || m_Children[i].GetPointer()->IsVisible())
       nChild++;
-    if (mafString::Equals(m_Children[i]->GetName(),name))
+    if (m_Children[i]->GetName() == name)
 	  {
 	    return nChild;
 	  }
@@ -407,39 +407,37 @@ mafNode *mafNode::FindInTreeByTag(const mafTagItem& tag)
   return NULL;
 }
 //-------------------------------------------------------------------------
-mafNode *mafNode::FindInTreeByName(const char *name, bool match_case, bool whole_word)
+mafNode *mafNode::FindInTreeByName(const mafString& name, bool match_case, bool whole_word)
 //-------------------------------------------------------------------------
 {
-  wxString word_to_search;
-  word_to_search = name;
-  wxString myName = GetName();
-
-  if (!match_case)
+  if(match_case)
   {
-    word_to_search.MakeLower();
-    myName.MakeLower();
-  }
-
-  if (whole_word)
-  {
-    if (myName == word_to_search)
-    {
+    if(whole_word && GetName() == name)
       return this;
-    }
+    if(!whole_word && GetName().FindFirst(name) != -1)
+      return this;
   }
   else
   {
-    if (myName.Find(word_to_search) != -1)
+    mafString word_to_search;
+    mafString myName;
+    if(match_case)
     {
-      return this;
+      word_to_search = name;
+      myName = GetName();
     }
+    else
+    {
+      word_to_search = name.Lower();
+      myName = GetName().Lower();
+    }
+
+    if(whole_word && myName == word_to_search)
+      return this;
+    if(!whole_word && myName.FindFirst(word_to_search) != -1)
+      return this;
+
   }
-
-  /*
-  if (mafCString(GetName())==name)
-    return this;
-  */
-
   for (unsigned i = 0; i < m_Children.size(); i++)
   {
     if (mafNode *node = m_Children[i]->FindInTreeByName(name, match_case, whole_word))
@@ -853,14 +851,14 @@ mafNode *mafNode::CopyTree(mafNode *vme, mafNode *parent)
 }
 
 //-------------------------------------------------------------------------
-void mafNode::SetAttribute(const char *name,mafAttribute *a)
+void mafNode::SetAttribute(const mafString& name,mafAttribute *a)
 //-------------------------------------------------------------------------
 {
   m_Attributes[name]=a;
 }
 
 //-------------------------------------------------------------------------
-mafAttribute *mafNode::GetAttribute(const char *name)
+mafAttribute *mafNode::GetAttribute(const mafString& name)
 //-------------------------------------------------------------------------
 {
   mafAttributesMap::iterator it=m_Attributes.find(name);
@@ -868,7 +866,7 @@ mafAttribute *mafNode::GetAttribute(const char *name)
 }
 
 //-------------------------------------------------------------------------
-const mafAttribute *mafNode::GetAttribute(const char *name) const
+const mafAttribute *mafNode::GetAttribute(const mafString& name) const
 //-------------------------------------------------------------------------
 {
   mafAttributesMap::const_iterator it=m_Attributes.find(name);
@@ -876,7 +874,7 @@ const mafAttribute *mafNode::GetAttribute(const char *name) const
 }
 
 //-------------------------------------------------------------------------
-void mafNode::RemoveAttribute(const char *name)
+void mafNode::RemoveAttribute(const mafString& name)
 //-------------------------------------------------------------------------
 {
   m_Attributes.erase(m_Attributes.find(name));
@@ -904,11 +902,11 @@ mafTagArray  *mafNode::GetTagArray()
 }
 
 //-------------------------------------------------------------------------
-mafNode *mafNode::GetLink(const char *name)
+mafNode *mafNode::GetLink(const mafString& name)
 //-------------------------------------------------------------------------
 {
   assert(name);
-  mafLinksMap::iterator it = m_Links.find(mafCString(name));
+  mafLinksMap::iterator it = m_Links.find(name);
   if (it != m_Links.end())
   {
     // if the link is still valid return its pointer
@@ -925,11 +923,11 @@ mafNode *mafNode::GetLink(const char *name)
   return NULL;
 }
 //-------------------------------------------------------------------------
-mafID mafNode::GetLinkSubId(const char *name)
+mafID mafNode::GetLinkSubId(const mafString& name)
 //-------------------------------------------------------------------------
 {
   assert(name);
-  mafLinksMap::iterator it = m_Links.find(mafCString(name));
+  mafLinksMap::iterator it = m_Links.find(name);
   if (it != m_Links.end())
   {
     return it->second.m_NodeSubId;
@@ -937,7 +935,7 @@ mafID mafNode::GetLinkSubId(const char *name)
   return -1;
 }
 //-------------------------------------------------------------------------
-void mafNode::SetLink(const char *name, mafNode *node, mafID sub_id)
+void mafNode::SetLink(const mafString& name, mafNode *node, mafID sub_id)
 //-------------------------------------------------------------------------
 {
   assert(name);
@@ -951,7 +949,7 @@ void mafNode::SetLink(const char *name, mafNode *node, mafID sub_id)
 
   mmuNodeLink newlink;
 
-  mafLinksMap::iterator it = m_Links.find(mafString().Set(name));
+  mafLinksMap::iterator it = m_Links.find(name);
 
   if (it != m_Links.end())
   {
@@ -973,11 +971,11 @@ void mafNode::SetLink(const char *name, mafNode *node, mafID sub_id)
   Modified();
 }
 //-------------------------------------------------------------------------
-void mafNode::RemoveLink(const char *name)
+void mafNode::RemoveLink(const mafString& name)
 //-------------------------------------------------------------------------
 {
   assert(name);
-  mafLinksMap::iterator it=m_Links.find(mafCString(name));
+  mafLinksMap::iterator it=m_Links.find(name);
   if (it!=m_Links.end())
   {
     assert(it->second.m_Node);

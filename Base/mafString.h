@@ -287,16 +287,6 @@ protected:
   mafID m_Size;
 };
 
-/**
-     Class Name : mafCString.
-     this string class is thought to simply wrap a c-string: no memory copy.
-*/
-class mafCString : public mafString
-{
-public:
-  /** constructor. */
-  mafCString(const char *str) {Set(str);}
-};
 
 #endif
 

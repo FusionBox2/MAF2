@@ -122,8 +122,8 @@ public:
   
   /**
   The Agent name is used to identify the Agent in a unique way*/
-  virtual void SetName(const char *name) {m_Name=name;}
-  const char *GetName() {return m_Name;}
+  virtual void SetName(const mafString& name) {m_Name=name;}
+  const mafString& GetName() {return m_Name;}
 
 protected:
   mafAgent();

@@ -82,23 +82,23 @@ public:
   The check for duplicates flag is used to inhibit append if the cloud contains a landmark 
   with the same name already. Set this flag to false for faster appending. 
 */
-  int AppendLandmark(const char *name, bool checkForDuplicatedNames = true);
-  int AppendLandmark(double x,double y,double z,const char *name, bool checkForDuplicatedNames = true) {int idx=this->AppendLandmark(name, checkForDuplicatedNames); return this->SetLandmark(idx, x, y, z);}
+  int AppendLandmark(const mafString& name, bool checkForDuplicatedNames = true);
+  int AppendLandmark(double x,double y,double z,const mafString& name, bool checkForDuplicatedNames = true) {int idx=this->AppendLandmark(name, checkForDuplicatedNames); return this->SetLandmark(idx, x, y, z);}
 
   /** Insert the landmark into the cloud */
   int SetLandmark(mafVMELandmark *lm);
   
   /** Set/Get a landmark. In case the specified idx is invalid return MAF_ERROR*/
   int SetLandmark(int idx,double x,double y,double z,mafTimeStamp t=0);
-  int SetLandmark(const char *name,double x,double y,double z,mafTimeStamp t=0) {return this->SetLandmark(this->FindLandmarkIndex(name),x,y,z,t);}
+  int SetLandmark(const mafString& name,double x,double y,double z,mafTimeStamp t=0) {return this->SetLandmark(this->FindLandmarkIndex(name),x,y,z,t);}
   //int SetLandmarkForTimeFrame(int idx,double x,double y,double z,unsigned long tid,mafTimeStamp t);
   int GetLandmark(int idx, double &x,double &y,double &z,mafTimeStamp t=0);
-  int GetLandmark(const char *name, double &x,double &y,double &z,mafTimeStamp t=0) {return this->GetLandmark(this->FindLandmarkIndex(name),x,y,z,t);} 
+  int GetLandmark(const mafString& name, double &x,double &y,double &z,mafTimeStamp t=0) {return this->GetLandmark(this->FindLandmarkIndex(name),x,y,z,t);} 
   int GetLandmark(int idx, double xyz[3],mafTimeStamp t=0);
-  int GetLandmark(const char *name, double xyz[3],mafTimeStamp t=0) {return this->GetLandmark(this->FindLandmarkIndex(name), xyz,t);}
+  int GetLandmark(const mafString& name, double xyz[3],mafTimeStamp t=0) {return this->GetLandmark(this->FindLandmarkIndex(name), xyz,t);}
 
   /** Find the index of a landmark given its name. This only works when cloud is OPEN*/
-  mafVMELandmark *GetLandmark(const char *name);
+  mafVMELandmark *GetLandmark(const mafString& name);
 
   /** Get the landmark by index. This only works when cloud is OPEN*/
   mafVMELandmark *GetLandmark(int idx);
@@ -107,7 +107,7 @@ public:
   void GetLandmarkPosition(int idx, double pos[3], mafTimeStamp t=-1);
 
   /** Find the index of a landmark given its name*/
-  int FindLandmarkIndex(const char *name);
+  int FindLandmarkIndex(const mafString& name);
 
   /** Remove a landmark. In case the id is invalid return MAF_ERROR
   BEWARE: landmark is removed from all the VME-items*/
@@ -120,8 +120,8 @@ public:
 
   /** Set/get the name for idx-th landmark. Return null in case no landmark name 
   was defined for that index.*/
-  virtual const char *GetLandmarkName(int idx);
-  virtual void SetLandmarkName(int idx,const char *name);
+  virtual const mafString& GetLandmarkName(int idx);
+  virtual void SetLandmarkName(int idx,const mafString& name);
   
   /**
   Set/Get the m_Radius of this landmark. The radius is stored as an TAG item: "LM_RADIUS".
@@ -177,14 +177,14 @@ public:
   for the visibility at that time. On the other hand, if visibility is defined
   for some time a position is implicitly defined for that time stamp.*/
   virtual int SetLandmarkVisibility(int idx,bool a,mafTimeStamp t=0);
-  int SetLandmarkVisibility(const char *name,bool a,mafTimeStamp t=0) {return this->SetLandmarkVisibility(this->FindLandmarkIndex(name),a,t);}
+  int SetLandmarkVisibility(const mafString& name,bool a,mafTimeStamp t=0) {return this->SetLandmarkVisibility(this->FindLandmarkIndex(name),a,t);}
   virtual bool GetLandmarkVisibility(int idx,mafTimeStamp t=0);
-  bool GetLandmarkVisibility(const char *name,mafTimeStamp t=0) {return this->GetLandmarkVisibility(this->FindLandmarkIndex(name),t);}
+  bool GetLandmarkVisibility(const mafString& name,mafTimeStamp t=0) {return this->GetLandmarkVisibility(this->FindLandmarkIndex(name),t);}
 
   /**
   Return true if the landmark is visible for the given time (CurrentTime is the default)*/
   bool IsVisible(int idx,mafTimeStamp t=-1) {return this->GetLandmarkVisibility(idx,t);}
-  bool IsVisible(const char *name,mafTimeStamp t=-1) {return this->GetLandmarkVisibility(this->FindLandmarkIndex(name),t);}
+  bool IsVisible(const mafString& name,mafTimeStamp t=-1) {return this->GetLandmarkVisibility(this->FindLandmarkIndex(name),t);}
 
   /**
   Set/Get the default visibility attribute. When default visibility is set to true, the creation 

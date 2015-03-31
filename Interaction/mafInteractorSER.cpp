@@ -56,7 +56,7 @@ int mafInteractorSER::InternalRestore(mafStorageElement *node)
   for (int i=0;i<children.size();i++)
   {
     mafStorageElement *subnode=children[i];
-    if (mafCString(subnode->GetName())!="Action")
+    if (subnode->GetName()!="Action")
     {
       mafErrorMacro("Unexpected element <"<<subnode->GetName()<<">");
       return MAF_ERROR;

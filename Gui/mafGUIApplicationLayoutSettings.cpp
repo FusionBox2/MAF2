@@ -382,7 +382,7 @@ void mafGUIApplicationLayoutSettings::LoadLayout(bool fileDefault)
     {
       if(!vme->IsMAFType(mafVMERoot))
       {
-        m_List->Append(vme->GetName());
+        m_List->Append(vme->GetName().GetCStr());
         if(mafString(((mafNodeLayout *)vme)->GetLayout()->GetLayoutName()) == mafString("Default"))
           m_DefaultLayoutName = ((mafNodeLayout *)vme)->GetName();
       }

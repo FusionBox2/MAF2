@@ -167,10 +167,10 @@ public:
   /**
     Return the type of data stored in this object. The name returned
     is usually the class string name.*/
-  const char *GetDataType() {return m_DataType.GetCStr();};
+  const mafString& GetDataType() {return m_DataType;}
 
   /** Set the data type expressed as string name. */
-  void SetDataType(const char *name) {m_DataType=name;};
+  void SetDataType(const mafString& name) {m_DataType=name;}
 
   /**
   Return the Id of this Item. This Id is unique within the tree and

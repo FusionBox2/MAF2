@@ -123,10 +123,10 @@ public:
 
 
   /** return the name of this node*/
-  const char *GetName() {return m_Name;}
+  const mafString& GetName() {return m_Name;}
 
   /** set node name */
-  void SetName(const char *name);
+  void SetName(const mafString& name);
   
   /**
     Copy the contents of another node into this one. Notice that subtrees
@@ -205,13 +205,13 @@ public:
   /** Find a child index given its name. Search is performed only on first level children not
     in the sub-tree. Return -1 in case of not found or failure.
     If only visible is true return the idx of visible to traverse nodes subset */
-  int FindNodeIdx(const char *name, bool onlyVisible=false);
+  int FindNodeIdx(const mafString& name, bool onlyVisible=false);
 
   /** Find a node in all the subtrees matching the given TagName/TagValue pair.*/
   mafNode *FindInTreeByTag(const mafTagItem& tag); 
   
   /** Find a node in all the subtrees matching the given VME Name.*/
-  mafNode *FindInTreeByName(const char *name, bool match_case = true, bool whole_word = true);
+  mafNode *FindInTreeByName(const mafString& name, bool match_case = true, bool whole_word = true);
 
   /** Find a node in all the subtrees matching the given VME Name.*/
   mafNode *FindInTreeById(const mafID id);
@@ -332,16 +332,16 @@ public:
   const mafAttributesMap *GetAttributes() const {return &m_Attributes;}
 
   /** Set a new attribute. The given attribute is */
-  void SetAttribute(const char *name,mafAttribute *a);
+  void SetAttribute(const mafString& name,mafAttribute *a);
 
   /** return an attribute given the name */
-  mafAttribute *GetAttribute(const char *name);
+  mafAttribute *GetAttribute(const mafString& name);
 
   /** return an attribute given the name */
-  const mafAttribute *GetAttribute(const char *name) const;
+  const mafAttribute *GetAttribute(const mafString& name) const;
 
   /** remove an attibute */
-  void RemoveAttribute(const char *name);
+  void RemoveAttribute(const mafString& name);
 
   /** remove all the attributes of this node */
   void RemoveAllAttributes();
@@ -360,17 +360,17 @@ public:
   /** 
     return the value of a link to another node in the tree. If no link with
     such a name exists return NULL. */
-  mafNode *GetLink(const char *name);
+  mafNode *GetLink(const mafString& name);
 
   /** 
   Return the subId associated with the link (used for mafVMELandmark)*/
-  mafID GetLinkSubId(const char *name);
+  mafID GetLinkSubId(const mafString& name);
 
   /** set a link to another node in the tree */
-  void SetLink(const char *name, mafNode *node, mafID sub_id = -1);
+  void SetLink(const mafString& , mafNode *node, mafID sub_id = -1);
 
   /** remove a link */
-  void RemoveLink(const char *name);
+  void RemoveLink(const mafString& name);
 
   /** return the number of links stored in this Node */
   unsigned GetNumberOfLinks() {return m_Links.size();}

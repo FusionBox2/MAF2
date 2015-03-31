@@ -148,7 +148,7 @@ int mafAction::InternalRestore(mafStorageElement *node)
   {
     mafStorageElement *subnode = children[i];
     assert(subnode);
-    if (mafCString(subnode->GetName()) == "Device")
+    if (subnode->GetName() == "Device")
     {
       mafID id;
       mafString name;

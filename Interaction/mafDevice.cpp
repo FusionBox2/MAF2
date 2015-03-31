@@ -54,7 +54,7 @@ mafDevice::~mafDevice()
 }
 
 //------------------------------------------------------------------------------
-void mafDevice::SetName(const char *name)
+void mafDevice::SetName(const mafString& name)
 //------------------------------------------------------------------------------
 {
   Superclass::SetName(name);

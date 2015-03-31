@@ -136,7 +136,7 @@ int mafDeviceSet::InternalRestore(mafStorageElement *node)
     // the device must be already connected to the
     // device manager
     mafStorageElement *device_node=devices[i];  
-    if (mafCString(device_node->GetName())=="Device")
+    if (device_node->GetName()=="Device")
     {
       if (mafObject *obj=device_node->RestoreObject())
       {
@@ -179,7 +179,7 @@ void mafDeviceSet::AddDevice(mafDevice *device)
 //------------------------------------------------------------------------------
 {
   assert (device);
-  assert (device->GetName()); // all devices must have a name
+  assert (!device->GetName().IsEmpty()); // all devices must have a name
   m_DevicesMutex->Lock();
   m_Devices.push_back(device);
   device->Register(this);
@@ -198,7 +198,7 @@ mafDevice *mafDeviceSet::GetDevice(const char *name)
   for (std::list<mafDevice*>::iterator it=m_Devices.begin();it!=m_Devices.end();it++)
   {
     mafDevice *device=*it;
-    if (mafCString(device->GetName())==name)
+    if (device->GetName()==name)
     {
       m_DevicesMutex->Unlock();
       return device;

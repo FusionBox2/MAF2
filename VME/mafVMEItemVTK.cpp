@@ -387,7 +387,7 @@ int mafVMEItemVTK::ReadData(mafString &filename, int resolvedURL)
   vtkDataSet *data;
   vtkDataReader *reader;
 
-  mafCString datatype = GetDataType();
+  const mafString& datatype = GetDataType();
 
   if (resolvedURL == MAF_OK)
   {

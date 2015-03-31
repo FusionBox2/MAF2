@@ -82,14 +82,14 @@ int mmuMSF1xDocument::InternalRestore(mafStorageElement *node)
 
   for (int i=0;i<children.size();i++)
   {
-    if (mafCString("TArray") == children[i]->GetName())
+    if (children[i]->GetName() == "TArray")
     {
       if (RestoreTagArray(children[i],m_Root->GetTagArray()) != MAF_OK)
       {
         mafErrorMacro("MSFImporter: error restoring Tag Array of node: \""<<m_Root->GetName()<<"\"");
       }
     }
-    else if (mafCString("VME") == children[i]->GetName())
+    else if (children[i]->GetName() == "VME")
     {
       mafVME *child_vme=RestoreVME(children[i],m_Root);
       if (child_vme==NULL)
@@ -247,7 +247,7 @@ mafVME *mmuMSF1xDocument::RestoreVME(mafStorageElement *node, mafVME *parent)
           }
         }
         // restore VME-Item element
-        else if (mafCString("VItem") == children[i]->GetName())
+        else if (children[i]->GetName() == "VItem")
         {
           if (RestoreVItem(children[i],vme) != MAF_OK)
           {
@@ -257,7 +257,7 @@ mafVME *mmuMSF1xDocument::RestoreVME(mafStorageElement *node, mafVME *parent)
         }
 
         // restore MatrixVector element
-        else if (mafCString("VMatrix") == children[i]->GetName())
+        else if (children[i]->GetName()== "VMatrix")
         {
           mafVMEGenericAbstract *vme_generic = mafVMEGenericAbstract::SafeDownCast(vme);
           if (vme_generic && RestoreVMatrix(children[i],vme_generic->GetMatrixVector()) != MAF_OK)
@@ -275,7 +275,7 @@ mafVME *mmuMSF1xDocument::RestoreVME(mafStorageElement *node, mafVME *parent)
         }
         
         // restore children VMEs
-        else if (mafCString("VME") == children[i]->GetName())
+        else if (children[i]->GetName() == "VME")
         {
           mafVME *child_vme=RestoreVME(children[i],vme);
           if (child_vme==NULL)
@@ -304,7 +304,7 @@ mafVME *mmuMSF1xDocument::RestoreVME(mafStorageElement *node, mafVME *parent)
           else if ((vme->IsMAFType(mafVMEMeter) || vme->IsMAFType(mafVMEProber)) && child_vme->GetTagArray()->GetTag("mflVMELink"))
           {
             // this is a particular case for mafVMEMeter, in which the links are changed name
-            if (mafCString(child_vme->GetName()) == "StartLink")
+            if (child_vme->GetName() == "StartLink")
             {
               child_vme->SetName("StartVME");
               if (vme->GetTagArray()->GetTag("MFL_METER_START_VME_ID"))
@@ -313,7 +313,7 @@ mafVME *mmuMSF1xDocument::RestoreVME(mafStorageElement *node, mafVME *parent)
                 vme->GetTagArray()->DeleteTag("MFL_METER_START_VME_ID");
               }
             }
-            else if (mafCString(child_vme->GetName()) == "EndLink1")
+            else if (child_vme->GetName() == "EndLink1")
             {
               child_vme->SetName("EndVME1");
               if (vme->GetTagArray()->GetTag("MFL_METER_END_VME_1_ID"))
@@ -322,7 +322,7 @@ mafVME *mmuMSF1xDocument::RestoreVME(mafStorageElement *node, mafVME *parent)
                 vme->GetTagArray()->DeleteTag("MFL_METER_END_VME_1_ID");
               }
             }
-            else if (mafCString(child_vme->GetName()) == "EndLink2")
+            else if (child_vme->GetName() == "EndLink2")
             {
               child_vme->SetName("EndVME2");
               if (vme->GetTagArray()->GetTag("MFL_METER_END_VME_2_ID"))
@@ -331,11 +331,11 @@ mafVME *mmuMSF1xDocument::RestoreVME(mafStorageElement *node, mafVME *parent)
                 vme->GetTagArray()->DeleteTag("MFL_METER_END_VME_2_ID");
               }
             }
-            else if (mafCString(child_vme->GetName()) == "SurfaceLink")
+            else if (child_vme->GetName() == "SurfaceLink")
             {
               child_vme->SetName("Surface");
             }
-            else if (mafCString(child_vme->GetName()) == "VolumeLink")
+            else if (child_vme->GetName() == "VolumeLink")
             {
               child_vme->SetName("Volume");
             }
@@ -353,7 +353,7 @@ mafVME *mmuMSF1xDocument::RestoreVME(mafStorageElement *node, mafVME *parent)
 }
 
 //------------------------------------------------------------------------------
-mafVME *mmuMSF1xDocument::CreateVMEInstance(mafString &name)
+mafVME *mmuMSF1xDocument::CreateVMEInstance(const mafString &name)
 //------------------------------------------------------------------------------
 {
   if (
@@ -610,7 +610,7 @@ int mmuMSF1xDocument::RestoreVMatrix(mafStorageElement *node, mafMatrixVector *v
 
   for (int i = 0;i<children.size();i++)
   {
-    assert(mafCString("Matrix") == children[i]->GetName());
+    assert(children[i]->GetName() == "Matrix");
 
     mafSmartPointer<mafMatrix> matrix;
     int restored_matrix = children[i]->RestoreMatrix(matrix);
@@ -635,7 +635,7 @@ int mmuMSF1xDocument::RestoreTagArray(mafStorageElement *node, mafTagArray *tarr
 
   for (int i = 0;i<children.size();i++)
   {
-    if (mafCString("TItem") == children[i]->GetName())
+    if (children[i]->GetName()== "TItem")
     {
       mafID num_of_comps;
       if (children[i]->GetAttributeAsInteger("Mult",num_of_comps))
@@ -672,7 +672,7 @@ int mmuMSF1xDocument::RestoreTagArray(mafStorageElement *node, mafTagArray *tarr
             int idx=0;
             for (int n = 0;n<tag_comps.size();n++)
             {
-              if (mafCString("TC")==tag_comps[n]->GetName())
+              if (tag_comps[n]->GetName() == "TC")
               {
                 mafString tc;
                 tag_comps[n]->RestoreText(tc);

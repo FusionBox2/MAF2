@@ -343,7 +343,7 @@ void mafVMELandmarkCloud::RemoveLandmarkName(int idx)
 }
 
 //-------------------------------------------------------------------------
-int mafVMELandmarkCloud::AppendLandmark(const char *name, bool checkForDuplicatedNames)
+int mafVMELandmarkCloud::AppendLandmark(const mafString& name, bool checkForDuplicatedNames)
 //-------------------------------------------------------------------------
 {
   if (checkForDuplicatedNames)
@@ -454,16 +454,13 @@ int mafVMELandmarkCloud::SetLandmark(int idx,double x,double y,double z,mafTimeS
 }
 
 //-------------------------------------------------------------------------
-int mafVMELandmarkCloud::FindLandmarkIndex(const char *name)
+int mafVMELandmarkCloud::FindLandmarkIndex(const mafString& name)
 //-------------------------------------------------------------------------
 {
-  mafString lmname;
   int numberOfLandmarks = GetNumberOfLandmarks();
-
   for (int i = 0; i < numberOfLandmarks; i++)
   {
-    lmname = GetLandmarkName(i);
-    if (lmname == name)
+    if (GetLandmarkName(i) == name)
       return i;
   }
   return -1;
@@ -530,25 +527,26 @@ int mafVMELandmarkCloud::RemoveLandmark(int idx)
   return MAF_OK;
 }
 //-------------------------------------------------------------------------
-const char *mafVMELandmarkCloud::GetLandmarkName(int idx)
+const mafString& mafVMELandmarkCloud::GetLandmarkName(int idx)
 //-------------------------------------------------------------------------
 {
+  static mafString empty("");
   if (GetState() == CLOSED_CLOUD)
   {
     mafString tag = "LM_NAME_";
     tag << idx;
-    mafTagItem *item = GetTagArray()->GetTag(tag.GetCStr());
-    return item ? item->GetValue().GetCStr() : NULL;
+    mafTagItem *item = GetTagArray()->GetTag(tag);
+    return item ? item->GetValue() : empty;
   }
   else
   {
   	mafVME *vme = GetLandmark(idx);
-    return vme ? vme->GetName() : NULL;
+    return vme ? vme->GetName() : empty;
   }
 }
 
 //-------------------------------------------------------------------------
-void mafVMELandmarkCloud::SetLandmarkName(int idx,const char *name)
+void mafVMELandmarkCloud::SetLandmarkName(int idx,const mafString& name)
 //-------------------------------------------------------------------------
 {
   if (GetState() == CLOSED_CLOUD)
@@ -669,7 +667,7 @@ int mafVMELandmarkCloud::GetSphereResolution()
 }
 
 //-------------------------------------------------------------------------
-mafVMELandmark *mafVMELandmarkCloud::GetLandmark(const char *name)
+mafVMELandmark *mafVMELandmarkCloud::GetLandmark(const mafString& name)
 //-------------------------------------------------------------------------
 {
   if (GetState() == OPEN_CLOUD)
@@ -677,7 +675,7 @@ mafVMELandmark *mafVMELandmarkCloud::GetLandmark(const char *name)
     for (int i = 0; i < GetNumberOfChildren(); i++)
     {
       mafVMELandmark *vme = mafVMELandmark::SafeDownCast(GetChild(i));
-      if (vme && mafCString(vme->GetName()) == name)
+      if (vme && vme->GetName() == name)
        return vme;
     }
   }

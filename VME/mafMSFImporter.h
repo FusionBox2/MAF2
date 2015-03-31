@@ -64,7 +64,7 @@ public:
   };
 
 protected:
-  mafVME *CreateVMEInstance(mafString &name);
+  mafVME *CreateVMEInstance(const mafString &name);
   mafVME *RestoreVME(mafStorageElement *node, mafVME *parent);
   int RestoreTagArray(mafStorageElement *node, mafTagArray *tarray);
   int RestoreVItem(mafStorageElement *node, mafVME *vme);

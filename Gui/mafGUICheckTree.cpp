@@ -215,7 +215,7 @@ bool mafGUICheckTree::IsIconChecked(wxTreeItemId item)
 void mafGUICheckTree::VmeAdd(mafNode *vme)   
 //----------------------------------------------------------------------------
 {
-  AddNode((long)vme,(long)vme->GetParent(), vme->GetName(), 0);
+  AddNode((long)vme,(long)vme->GetParent(), vme->GetName().GetCStr(), 0);
 	VmeUpdateIcon(vme);
 }
 //----------------------------------------------------------------------------
@@ -240,7 +240,7 @@ void mafGUICheckTree::VmeSelected(mafNode *vme)
 void mafGUICheckTree::VmeModified(mafNode *vme)
 //----------------------------------------------------------------------------
 {
-  this->SetNodeLabel((long)vme, vme->GetName());
+  this->SetNodeLabel((long)vme, vme->GetName().GetCStr());
 	VmeUpdateIcon(vme);
   SortChildren((long)vme);
 }
