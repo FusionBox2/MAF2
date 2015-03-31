@@ -208,10 +208,10 @@ void mafGUIApplicationLayoutSettings::SaveTreeLayout()
     bool logbar_vis = logbar.IsShown();
     m_Layout->SetInterfaceElementVisibility("logbar", logbar_vis);
     m_Layout->SetLayoutName("Layout"); //m_DefaultLayout.GetCStr()
-    mafView *v = m_ViewManager->GetList();
-    for(; v; v = v->m_Next)
+    const std::list<mafView *>& v = m_ViewManager->GetList();
+    for(std::list<mafView*>::const_iterator it = v.begin(); it != v.end(); ++it)
     {
-      m_Layout->AddView(v);
+      m_Layout->AddView(*it);
     }
     m_Gui->Enable(APPLY_TREE_LAYOUT_ID,true);
   }
@@ -309,10 +309,11 @@ void mafGUIApplicationLayoutSettings::AddLayout()
     bool logbar_vis = logbar.IsShown();
     m_Layout->SetInterfaceElementVisibility("logbar", logbar_vis);
     m_Layout->SetLayoutName("Layout"); //m_DefaultLayout.GetCStr()
-    mafView *v = m_ViewManager->GetList();
-    for(; v; v = v->m_Next)
+
+    const std::list<mafView *>& v = m_ViewManager->GetList();
+    for(std::list<mafView*>::const_iterator it = v.begin(); it != v.end(); ++it)
     {
-      m_Layout->AddView(v);
+      m_Layout->AddView(*it);
     }
     m_List->Append(name);
 

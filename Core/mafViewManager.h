@@ -23,6 +23,7 @@
 #include "mafEvent.h"
 #include "mafEventSender.h"
 #include "mafBaseEventHandler.h"
+#include <list>
 
 //----------------------------------------------------------------------------
 // forward references :
@@ -113,7 +114,7 @@ public:
   mafNode *GetCurrentRoot() {return (mafNode*)m_RootVme;};
 
   /** Return the created view-list. */
-  mafView *GetList() {return m_ViewList;};
+  const std::list<mafView*>& GetList() {return m_ViewList;}
 
   /** Return a view (defined by label) if is present on open wiews list*/
   mafView *GetFromList(const char *label);
@@ -137,7 +138,7 @@ public:
 
 protected:
   mafDeviceButtonsPadMouse      *m_Mouse;
-  mafView       *m_ViewList;  // created view list
+  std::list<mafView*>           m_ViewList;  // created view list
 
   std::vector<mafView*>       m_ViewTemplate;   // view template vector
 

@@ -270,17 +270,17 @@ void mafRemoteLogic::RemoteMessage(mafString &cmd, bool to_server)
     }
     else if (command == "GetViewLayout")
     {
-      mafView *v = m_ViewManager->GetList();
+      const std::list<mafView *>& v = m_ViewManager->GetList();
       bool send_msg = false;
       mafString sync_cmd = "SynchronizeView";
 
-      for(; v; v = v->m_Next) // find previous(view)
+      for(std::list<mafView*>::const_iterator it = v.begin(); it != v.end(); ++it) // find previous(view)
       {
         send_msg = true;
         sync_cmd << m_CommandSeparator;
-        sync_cmd << v->m_Id;
+        sync_cmd << (*it)->m_Id;
         sync_cmd << m_CommandSeparator;
-        sync_cmd << v->m_Mult;
+        sync_cmd << (*it)->m_Mult;
       }
 
       if(send_msg)
@@ -581,17 +581,17 @@ void mafRemoteLogic::SynchronizeApplication()
 //----------------------------------------------------------------------------
 {
   // Send local layout
-  mafView *v = m_ViewManager->GetList();
+  const std::list<mafView *>& v = m_ViewManager->GetList();
   bool send_msg = false;
   mafString cmd = "SynchronizeView";
 
-  for(; v; v = v->m_Next) // find previous(view)
+  for(std::list<mafView*>::const_iterator it = v.begin(); it != v.end(); ++it) // find previous(view)
   {
     send_msg = true;
     cmd << m_CommandSeparator;
-    cmd << v->m_Id - VIEW_START;
+    cmd << (*it)->m_Id - VIEW_START;
     cmd << m_CommandSeparator;
-    cmd << v->m_Mult;
+    cmd << (*it)->m_Mult;
   }
 
   if(send_msg)

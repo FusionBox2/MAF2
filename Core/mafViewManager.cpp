@@ -55,7 +55,6 @@ mafViewManager::mafViewManager()
   m_Mouse       = NULL;
   m_SelectedRWI = NULL;
 
-  m_ViewList          = NULL;
   m_RemoteListener    = NULL;
   m_SelectedVme       = NULL;
   m_SelectedView      = NULL;
@@ -155,8 +154,8 @@ void mafViewManager::ViewSelected(mafView *view/*, mafRWIBase *rwi*/)
 void mafViewManager::VmeAdd(mafNode *n)   
 //----------------------------------------------------------------------------
 {
-  for(mafView* v = m_ViewList; v; v=v->m_Next) 
-    v->VmeAdd(n); // Add the VME in all the views
+  for(std::list<mafView*>::iterator v = m_ViewList.begin(); v != m_ViewList.end(); ++v) 
+    (*v)->VmeAdd(n); // Add the VME in all the views
 
   wxString s;
   s = n->GetTypeName();
@@ -170,8 +169,8 @@ void mafViewManager::VmeAdd(mafNode *n)
 void mafViewManager::VmeRemove(mafNode *n)   
 //----------------------------------------------------------------------------
 {
-  for(mafView* v = m_ViewList; v; v=v->m_Next) 
-    v->VmeRemove(n); // Remove the VME in all the views
+  for(std::list<mafView*>::iterator v = m_ViewList.begin(); v != m_ViewList.end(); ++v) 
+    (*v)->VmeRemove(n); // Remove the VME in all the views
 
 	wxString s(n->GetTypeName());
 	if(s == "mafVMERoot") // Remove the root means remove the tree
@@ -194,12 +193,12 @@ void mafViewManager::VmeSelect(mafNode *n)
 	if(n != m_SelectedVme)
 	{
 		if(m_SelectedVme)
-			for(mafView* v = m_ViewList; v; v=v->m_Next) 
-				v->VmeSelect(m_SelectedVme,false); //deselect the previous selected vme
+      for(std::list<mafView*>::iterator v = m_ViewList.begin(); v != m_ViewList.end(); ++v) 
+				(*v)->VmeSelect(m_SelectedVme,false); //deselect the previous selected vme
 		m_SelectedVme = n; // set the new selected vme
 	}
-	for(mafView* v = m_ViewList; v; v=v->m_Next) 
-    v->VmeSelect(n,true); // select the new one in the views
+  for(std::list<mafView*>::iterator v = m_ViewList.begin(); v != m_ViewList.end(); ++v) 
+    (*v)->VmeSelect(n,true); // select the new one in the views
 	CameraUpdate();
 }
 //----------------------------------------------------------------------------
@@ -224,8 +223,8 @@ void mafViewManager::VmeShow(mafNode *n, bool show)
 void mafViewManager::PropertyUpdate(bool fromTag)
 //----------------------------------------------------------------------------
 {
-  for(mafView* v = m_ViewList; v; v=v->m_Next) 
-		v->VmeUpdateProperty(this->m_SelectedVme, fromTag); // update the vme properties in all views
+  for(std::list<mafView*>::iterator v = m_ViewList.begin(); v != m_ViewList.end(); ++v) 
+		(*v)->VmeUpdateProperty(this->m_SelectedVme, fromTag); // update the vme properties in all views
 }
 //----------------------------------------------------------------------------
 void mafViewManager::CameraReset(bool sel)   
@@ -249,8 +248,8 @@ void mafViewManager::CameraUpdate(bool only_selected)
     m_SelectedView->CameraUpdate(); // Update only the selected view
     return;
   }
-  for(mafView* v = m_ViewList; v; v=v->m_Next) // Update all views
-    v->CameraUpdate();
+  for(std::list<mafView*>::iterator v = m_ViewList.begin(); v != m_ViewList.end(); ++v) // Update all views
+    (*v)->CameraUpdate();
 }
 //----------------------------------------------------------------------------
 void mafViewManager::CameraFlyToMode()
@@ -368,14 +367,7 @@ void mafViewManager::ViewInsert(mafView *view)
   if(m_SelectedVme)
     view->VmeSelect(m_SelectedVme,true); // select the vme in the inserted view
 
-  if(!m_ViewList)
-    m_ViewList = view;
-  else
-  {
-    mafView* v;
-    for(v = m_ViewList; v->m_Next; v = v->m_Next) ; // go on until the end of the list is reached.
-    v->m_Next = view;
-  }
+  m_ViewList.push_back(view);
 }
 //----------------------------------------------------------------------------
 void mafViewManager::ViewDelete(mafView *view)
@@ -405,25 +397,17 @@ void mafViewManager::ViewDelete(mafView *view)
   // set to NULL the pointer into the state matrix
   m_ViewMatrixID[index][view->m_Mult] = NULL;
 
-  if(!m_ViewList) return;
+  if(m_ViewList.empty()) return;
 
   // Remove the specified view from the views' list
-  if(m_ViewList == view)
+  for(std::list<mafView*>::iterator v = m_ViewList.begin(); v != m_ViewList.end(); ++v) 
   {
-    m_ViewList = view->m_Next;
-  }
-  else
-  {
-    for(mafView *v = m_ViewList; v; v = v->m_Next) // find previous(view)
+    if((*v) == view)
     {
-      if(v->m_Next == view)
-      {
-        v->m_Next = view->m_Next;
-        break; 
-      }
+      m_ViewList.erase(v);
+      break;
     }
   }
-
 	mafDEL(view);
 }
 //----------------------------------------------------------------------------
@@ -438,10 +422,11 @@ void mafViewManager::ViewDeleteAll()
     m_SelectedView = NULL;
   }
 
-  while(m_ViewList) // Close all views' frames
+  while(!m_ViewList.empty()) // Close all views' frames
   {
-    m_ViewList->GetFrame()->Show(false);
-    m_ViewList->GetFrame()->Close();
+    mafView *v = *(m_ViewList.begin());
+    v->GetFrame()->Show(false);
+    v->GetFrame()->Close();
   }
 }
 //----------------------------------------------------------------------------
@@ -472,9 +457,10 @@ void mafViewManager::Activate(mafView *view)
 mafView * mafViewManager::GetFromList( const char *label )
 //----------------------------------------------------------------------------
 {
-  mafView *view;
-  for(view = GetList(); view; view=view->m_Next)
-    if (view->GetLabel()==label)
-      break;
-  return view;
+  for(std::list<mafView*>::iterator v = m_ViewList.begin(); v != m_ViewList.end(); ++v) 
+  {
+    if ((*v)->GetLabel()==label)
+      return (*v);
+  }
+  return NULL;
 }

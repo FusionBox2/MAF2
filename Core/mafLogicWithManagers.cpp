@@ -1883,8 +1883,9 @@ bool mafLogicWithManagers::GetExternalViewFlag()
 void mafLogicWithManagers::UpdateMeasureUnit()
 //----------------------------------------------------------------------------
 {
-  for(mafView* v = m_ViewManager->GetList(); v; v=v->m_Next) 
-    v->OptionsUpdate();
+  const std::list<mafView *>& v = m_ViewManager->GetList();
+  for(std::list<mafView*>::const_iterator it = v.begin(); it != v.end(); ++it)
+    (*it)->OptionsUpdate();
 }
 //----------------------------------------------------------------------------
 void mafLogicWithManagers::ImportExternalFile(mafString &filename)

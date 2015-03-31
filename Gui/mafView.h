@@ -199,8 +199,6 @@ protected:
 public:
   int            m_Mult;    ///< Used to store the multiplicity of the view type created (e.g. the 3rd view surface created).
   int            m_Id;      ///< Used to store the view type created (e.g. view surface).
-  bool           m_Plugged; // forget it - it is used from outside 
-  mafView       *m_Next;    // forget it - it is used from outside 
 
   virtual double *GetSlice();
   virtual void    SetSlice(double slice[3]);
