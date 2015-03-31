@@ -77,7 +77,7 @@ mafOp* lhpOpSolidify::Copy()
   lhpOpSolidify *cp = new lhpOpSolidify(m_Label);
   cp->m_Canundo   = m_Canundo;
   cp->m_OpType    = m_OpType;
-  cp->m_Listener  = m_Listener;
+  cp->SetListener(GetListener());
   cp->m_Next      = NULL;
   return cp;
 }

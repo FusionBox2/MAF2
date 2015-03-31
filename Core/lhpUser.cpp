@@ -31,10 +31,10 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include <fstream>
 
 //----------------------------------------------------------------------------
-lhpUser::lhpUser(mafObserver *listener)
+lhpUser::lhpUser(mafBaseEventHandler *listener)
 //----------------------------------------------------------------------------
 {
-  m_Listener = listener;
+  SetListener(listener);
   m_PythonExe = "python.exe_UNDEFINED";
   m_PythonwExe = "pythonw.exe_UNDEFINED";
   m_VMEUploaderDownloaderDir  = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloader\\").c_str();

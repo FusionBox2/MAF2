@@ -30,7 +30,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 class lhpGUINetworkConnectionSettings : public mafGUISettings
 {
 public:
-	lhpGUINetworkConnectionSettings(mafObserver *Listener, const mafString &label = _("Network Connection"));
+	lhpGUINetworkConnectionSettings(mafBaseEventHandler *Listener, const mafString &label = _("Network Connection"));
 	~lhpGUINetworkConnectionSettings(); 
 
   enum APP_SETTINGS_WIDGET_ID

@@ -1801,11 +1801,11 @@ END_EVENT_TABLE()
  * @see     Nothing
  */
 //----------------------------------------------------------------------------
-mafViewIntGraphWindow::mafViewIntGraphWindow(const wxString& label, mafObserver *listener):
+mafViewIntGraphWindow::mafViewIntGraphWindow(const wxString& label, mafBaseEventHandler *listener):
 wxWindow(mafGetFrame(), -1, wxDefaultPosition, wxDefaultSize, 0, label)
 //----------------------------------------------------------------------------
 {
-  m_Listener = listener;
+  SetListener(listener);
   
   m_XGraph           = NULL;
 

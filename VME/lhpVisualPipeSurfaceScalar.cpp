@@ -25,7 +25,7 @@
 
 #include "mmaMaterial.h"
 
-#include "mafEventSource.h"
+#include "mafEventSender.h"
 #include "mafVME.h"
 #include "mafVMEOutputSurface.h"
 #include "lhpVMESurfaceScalarVarying.h"
@@ -69,7 +69,7 @@ void lhpVisualPipeSurfaceScalar::Create(mafSceneNode *n)
   assert(output_surface);
   output_surface->Update();
 
-  m_Vme->GetEventSource()->AddObserver(this);
+  m_Vme->AddObserver(this);
 
   vtkPolyData *data = output_surface->GetSurfaceData();
   data->Update();
@@ -123,7 +123,7 @@ void lhpVisualPipeSurfaceScalar::Create(mafSceneNode *n)
 lhpVisualPipeSurfaceScalar::~lhpVisualPipeSurfaceScalar()
 //----------------------------------------------------------------------------
 {
-  m_Vme->GetEventSource()->RemoveObserver(this);
+  m_Vme->RemoveObserver(this);
 
   m_AssemblyFront->RemovePart(m_Actor);
   m_AssemblyFront->RemovePart(m_OutlineActor);

@@ -165,7 +165,7 @@ void lhpOpAverageLM::OpDo()
   {
     mafOp *OpenOp = new mafOpExplodeCollapse("close cloud");
     OpenOp->SetInput(m_LimbCloud);
-    OpenOp->SetListener(m_Listener);
+    OpenOp->SetListener(GetListener());
     OpenOp->OpDo();
     cppDEL(OpenOp); 
   }
@@ -211,7 +211,7 @@ void lhpOpAverageLM::OpDo()
   {
     mafOp *OpenOp = new mafOpExplodeCollapse("open cloud");
     OpenOp->SetInput(m_LimbCloud);
-    OpenOp->SetListener(m_Listener);
+    OpenOp->SetListener(GetListener());
     OpenOp->OpDo();
     cppDEL(OpenOp); 
   }
@@ -231,7 +231,7 @@ void lhpOpAverageLM::OpUndo()
   {
     mafOp *pCloseOp = new mafOpExplodeCollapse("close cloud");
     pCloseOp->SetInput(m_LimbCloud);
-    pCloseOp->SetListener(m_Listener);
+    pCloseOp->SetListener(GetListener());
     pCloseOp->OpDo();
     cppDEL(pCloseOp); 
   }
@@ -243,7 +243,7 @@ void lhpOpAverageLM::OpUndo()
   {
     mafOp *OpenOp = new mafOpExplodeCollapse("open cloud");
     OpenOp->SetInput(m_LimbCloud);
-    OpenOp->SetListener(m_Listener);
+    OpenOp->SetListener(GetListener());
     OpenOp->OpDo();
     cppDEL(OpenOp); 
   }

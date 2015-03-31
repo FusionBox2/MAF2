@@ -17,7 +17,8 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 //----------------------------------------------------------------------------
 #include "mafString.h"
 #include "mafUser.h"
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
+#include "mafEventSender.h"
 //----------------------------------------------------------------------------
 // forward declarations
 //----------------------------------------------------------------------------
@@ -26,14 +27,11 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 This is intended as starting point for user managing. Method for Check User Credentials can be redefined to be
 customized at application level according to custom requests.
 */
-class lhpUser : public mafUser
+class lhpUser : public mafUser, public mafEventSender
 {
 public:
-  lhpUser(mafObserver *listener = NULL);
+  lhpUser(mafBaseEventHandler *listener = NULL);
   virtual ~lhpUser();
-
-  void SetListener(mafObserver *Listener)	{m_Listener = Listener;};
-  mafObserver *GetListener() {return m_Listener;};
 
   /** Function to be customized at application level.
   By default open Login Dialog if the user did not inserted any information.*/
@@ -51,7 +49,5 @@ protected:
   mafString m_FileName; //>script file name
   mafString m_PythonExe; //>python  executable
   mafString m_PythonwExe; //>python  executable
-  mafObserver *m_Listener;
-
 };
 #endif

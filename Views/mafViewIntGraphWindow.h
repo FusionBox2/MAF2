@@ -19,6 +19,7 @@
 #include "mafString.h"
 #include "mafMemGraph.h"
 #include "mafStringSet.h"
+#include "mafEventSender.h"
 #include "mafGUI.h"
 
 //----------------------------------------------------------------------------
@@ -70,11 +71,11 @@ public:
 //----------------------------------------------------------------------------
 // mafViewIntGraphWindow
 //----------------------------------------------------------------------------
-class mafViewIntGraphWindow: public wxWindow, public mafObserver
+class mafViewIntGraphWindow: public wxWindow, public mafBaseEventHandler, public mafEventSender
 {
   DECLARE_DYNAMIC_CLASS(mafViewIntGraphWindow)
 public:
-  mafViewIntGraphWindow(const wxString& label = "", mafObserver *listener = NULL);
+  mafViewIntGraphWindow(const wxString& label = "", mafBaseEventHandler *listener = NULL);
   ~mafViewIntGraphWindow(void);
 
   int            &GetRoughGrid(void)   {return m_RoughGrid;}
@@ -91,7 +92,6 @@ public:
   mafGUI         *GetGui() {return m_Gui;};
   void           CreateGui();
   void           OnEvent(mafEventBase *maf_event);
-  void           SetListener(mafObserver *listener) {m_Listener = listener;};
   static wxInt32 GetFontFamily(mafViewIntGraphFontFamily fFamily);
   /** Tune curve parameters */
   void           AdjustCurveAppearance(unsigned int nCurve);
@@ -102,7 +102,6 @@ public:
 
 protected:
 
-  mafObserver                       *m_Listener;
   std::vector<const mafGraphData *> m_Graphs;
   const mafGraphData                *m_XGraph;
   unsigned                          m_XIndex;

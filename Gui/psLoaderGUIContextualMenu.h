@@ -13,22 +13,22 @@
 #ifndef __medGUIContextualMenu_H__
 #define __medGUIContextualMenu_H__
 
+#include "mafEventSender.h"
 //----------------------------------------------------------------------------
 // forward references;
 //----------------------------------------------------------------------------
 class mafView;
 class mafEvent;
-class mafObserver;
+class mafBaseEventHandler;
 
 //----------------------------------------------------------------------------
 // medGUIContextualMenu :
 //----------------------------------------------------------------------------
-class psLoaderGUIContextualMenu : public wxMenu
+class psLoaderGUIContextualMenu : public wxMenu, public mafEventSender
 {
 public:
   psLoaderGUIContextualMenu();
   virtual ~psLoaderGUIContextualMenu();
-  void SetListener(mafObserver *Listener) {m_Listener = Listener;};
 
 	/** 
   Visualize contextual menù for the MDI child and selected view. */
@@ -37,7 +37,6 @@ public:
 protected:
   wxFrame     *m_ChildViewActive;
   mafView     *m_ViewActive;
-  mafObserver *m_Listener;
 
 	/** 
   Answer contextual menù's selection. */

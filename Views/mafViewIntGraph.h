@@ -54,7 +54,7 @@ public:
   mafTypeMacro(mafViewIntGraph, mafView);
 
   virtual void      OnEvent(mafEventBase *maf_event);
-  virtual mafView*  Copy(mafObserver *Listener);
+  virtual mafView*  Copy(mafBaseEventHandler *Listener);
   virtual void      Create();
   /** Add the vme to the view's scene-graph*/
   virtual void VmeAdd(mafNode *vme);

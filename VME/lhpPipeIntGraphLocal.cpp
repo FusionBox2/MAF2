@@ -81,11 +81,11 @@ lhpPipeIntGraphLocal::~lhpPipeIntGraphLocal()
 void lhpPipeIntGraphLocal::SetProximal(mafVME *proximal)
 {
   if(m_Proximal)
-    m_Proximal->GetEventSource()->RemoveObserver(this);
+    m_Proximal->RemoveObserver(this);
   m_Proximal = proximal;
   m_ProximalName = (m_Proximal) ? m_Proximal->GetName() : "";
   if(m_Proximal)
-    m_Proximal->GetEventSource()->AddObserver(this);
+    m_Proximal->AddObserver(this);
   if(m_Gui)
     m_Gui->Update();
 }

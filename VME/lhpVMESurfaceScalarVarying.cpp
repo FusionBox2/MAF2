@@ -31,7 +31,7 @@
 #include "mafTagArray.h"
 #include "mafTagItem.h"
 
-#include "mafEventSource.h"
+#include "mafEventSender.h"
 #include "mafTransform.h"
 #include "mafTransformFrame.h"
 #include "mafStorageElement.h"
@@ -186,7 +186,7 @@ void lhpVMESurfaceScalarVarying::InternalUpdate()
   {
     p->GetPointData()->SetScalars(scalars);
   }
-  m_EventSource->InvokeEvent(this, VME_OUTPUT_DATA_UPDATE);
+  InvokeEvent(this, VME_OUTPUT_DATA_UPDATE);
 }
 //-------------------------------------------------------------------------
 int lhpVMESurfaceScalarVarying::DeepCopy(mafNode *a)

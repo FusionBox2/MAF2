@@ -186,7 +186,7 @@ mafOp* lhpOpImporterC3DBTK::Copy()
   lhpOpImporterC3DBTK *cp = new lhpOpImporterC3DBTK(m_Label);
   cp->m_Canundo = m_Canundo;
   cp->m_OpType = m_OpType;
-  cp->m_Listener = m_Listener;
+  cp->SetListener(GetListener());
   //cp->m_intData.m_VmeCloud = m_intData.m_VmeCloud;
   return cp;
 }

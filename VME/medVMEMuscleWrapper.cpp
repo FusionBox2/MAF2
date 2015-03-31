@@ -22,7 +22,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "medVMEMuscleWrapper.h"
 #include "mafVMEOutputSurface.h"
 #include "mmaMaterial.h"
-#include "mafEventSource.h"
+#include "mafEventSender.h"
 #include "mafDataPipeCustom.h"
 #include "mafGUI.h"
 #include "mafGUIValidator.h"

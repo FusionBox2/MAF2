@@ -82,7 +82,6 @@ psLoaderGUIContextualMenu::psLoaderGUIContextualMenu()
 {
 	m_ChildViewActive = NULL;
 	m_ViewActive      = NULL;
-  m_Listener        = NULL;
 }
 //----------------------------------------------------------------------------
 psLoaderGUIContextualMenu::~psLoaderGUIContextualMenu()

@@ -29,7 +29,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 class lhpGUIPythonSettings : public mafGUISettings
 {
 public:
-	lhpGUIPythonSettings(mafObserver *Listener, const mafString &label = _("Python Settings"));
+	lhpGUIPythonSettings(mafBaseEventHandler *Listener, const mafString &label = _("Python Settings"));
 	~lhpGUIPythonSettings(); 
 
   enum APP_SETTINGS_WIDGET_ID

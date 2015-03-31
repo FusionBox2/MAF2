@@ -111,11 +111,11 @@ void mafViewIntGraph::PlugVisualPipe(mafString vme_type, mafString pipe_type, lo
 }
 
 //----------------------------------------------------------------------------
-mafView *mafViewIntGraph::Copy(mafObserver *Listener)
+mafView *mafViewIntGraph::Copy(mafBaseEventHandler *Listener)
 //----------------------------------------------------------------------------
 {
   mafViewIntGraph *v = new mafViewIntGraph(m_Label);
-  v->m_Listener = Listener;
+  v->SetListener(Listener);
   v->m_Id = m_Id;
   v->m_PipeMap = m_PipeMap;
   v->m_IsFrozen       = m_IsFrozen;

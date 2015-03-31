@@ -332,7 +332,7 @@ mafOp* lhpOpMTRExporter::Copy()
   lhpOpMTRExporter *cp = new lhpOpMTRExporter(m_Label);
   cp->m_Canundo      = m_Canundo;
   cp->m_OpType       = m_OpType;
-  cp->m_Listener     = m_Listener;
+  cp->SetListener(GetListener());
   cp->m_Next         = NULL;
   cp->m_File         = m_File;
   cp->m_Input        = m_Input;

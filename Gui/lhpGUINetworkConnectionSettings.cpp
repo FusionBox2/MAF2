@@ -26,7 +26,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "mafGUI.h"
 
 //----------------------------------------------------------------------------
-lhpGUINetworkConnectionSettings::lhpGUINetworkConnectionSettings(mafObserver *Listener, const mafString &label):
+lhpGUINetworkConnectionSettings::lhpGUINetworkConnectionSettings(mafBaseEventHandler *Listener, const mafString &label):
 mafGUISettings(Listener, label)
 //----------------------------------------------------------------------------
 {

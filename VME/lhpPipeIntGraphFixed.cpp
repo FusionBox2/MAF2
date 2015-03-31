@@ -20,7 +20,7 @@
 
 #include "lhpPipeIntGraphFixed.h"
 #include "mafDecl.h"
-#include "mafEventSource.h"
+#include "mafEventSender.h"
 #include "mafViewIntGraph.h"
 #include "mafGUICheckListBox.h"
 

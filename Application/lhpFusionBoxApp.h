@@ -16,7 +16,7 @@
 //----------------------------------------------------------------------------
 #include "lhpBuilderLogic.h"
 #include "mafEvent.h"
-#include "mafObserver.h"
+#include "mafBaseEventHandler.h"
 #include "mafDynamicLoader.h"
 
 //----------------------------------------------------------------------------

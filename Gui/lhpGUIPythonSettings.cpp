@@ -25,7 +25,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "mafDecl.h"
 #include "mafGUI.h"
 
-lhpGUIPythonSettings::lhpGUIPythonSettings(mafObserver *Listener, const mafString &label):
+lhpGUIPythonSettings::lhpGUIPythonSettings(mafBaseEventHandler *Listener, const mafString &label):
 mafGUISettings(Listener, label)
 {
   // Default interpreter will be set at application startup

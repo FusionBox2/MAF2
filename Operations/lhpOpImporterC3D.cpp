@@ -225,7 +225,7 @@ mafOp* lhpOpImporterC3D::Copy()
   lhpOpImporterC3D *cp = new lhpOpImporterC3D(m_Label);
   cp->m_Canundo = m_Canundo;
   cp->m_OpType = m_OpType;
-  cp->m_Listener = m_Listener;
+  cp->SetListener(GetListener());
   //cp->m_intData.m_VmeCloud = m_intData.m_VmeCloud;
   return cp;
 }

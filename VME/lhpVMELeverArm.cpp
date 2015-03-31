@@ -25,7 +25,7 @@
 #include "mafVMELandmark.h"
 #include "mmaMeter.h"
 #include "mmaMaterial.h"
-#include "mafEventSource.h"
+#include "mafEventSender.h"
 #include "mafTransform.h"
 #include "mafStorageElement.h"
 #include "mafIndent.h"
@@ -353,10 +353,10 @@ void lhpVMELeverArm::InternalUpdate()
       m_Distance = -1;
 
     GetOutput()->Update();
-    GetEventSource()->InvokeEvent(this, VME_OUTPUT_DATA_UPDATE);
+    InvokeEvent(this, VME_OUTPUT_DATA_UPDATE);
 
     if(GetMeterMeasureType() == lhpVMELeverArm::ABSOLUTE_MEASURE && GetMeterAttributes()->m_ThresholdEvent > 0 && m_Distance >= 0 && m_Distance >= threshold)
-      GetEventSource()->InvokeEvent(this,LENGTH_THRESHOLD_EVENT);
+      InvokeEvent(this,LENGTH_THRESHOLD_EVENT);
   }
 
   m_Goniometer->Update();

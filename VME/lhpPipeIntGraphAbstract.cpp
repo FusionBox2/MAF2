@@ -20,7 +20,7 @@
 
 #include "lhpPipeIntGraphAbstract.h"
 #include "mafDecl.h"
-#include "mafEventSource.h"
+#include "mafEventSender.h"
 #include "mafViewIntGraph.h"
 #include "mafSceneNode.h"
 #include "mafSceneGraph.h"
@@ -46,7 +46,7 @@ lhpPipeIntGraphAbstract::~lhpPipeIntGraphAbstract()
 {
   if (m_Vme)
   {
-    m_Vme->GetEventSource()->RemoveObserver(this);
+    m_Vme->RemoveObserver(this);
   }
   if(m_View->GetRenderWindow())
   {
@@ -63,7 +63,7 @@ void lhpPipeIntGraphAbstract::Create(mafSceneNode *n)
   Superclass::Create(n);
   m_View = mafViewIntGraph::SafeDownCast(n->m_Sg->m_View);
   m_View->GetRenderWindow()->AddGraphData(m_Graph);
-  m_Vme->GetEventSource()->AddObserver(this);
+  m_Vme->AddObserver(this);
 }
 
 //----------------------------------------------------------------------------

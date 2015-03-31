@@ -711,7 +711,7 @@ bool lhpOpFingerStick::ProcessSingleLM(int lmIndex, double result[3])
   {
     mafOp *pCloseOp = new mafOpExplodeCollapse("close cloud");
     pCloseOp->SetInput(m_PlateCloud);
-    pCloseOp->SetListener(m_Listener);
+    pCloseOp->SetListener(GetListener());
     pCloseOp->OpDo();
     cppDEL(pCloseOp); 
   }
@@ -722,7 +722,7 @@ bool lhpOpFingerStick::ProcessSingleLM(int lmIndex, double result[3])
   {
     mafOp *pCloseOp = new mafOpExplodeCollapse("close cloud");
     pCloseOp->SetInput(m_PlateCalibration);
-    pCloseOp->SetListener(m_Listener);
+    pCloseOp->SetListener(GetListener());
     pCloseOp->OpDo();
     cppDEL(pCloseOp); 
   }
@@ -824,7 +824,7 @@ bool lhpOpFingerStick::ProcessSingleLM(int lmIndex, double result[3])
   {
     mafOp *pCloseOp = new mafOpExplodeCollapse("close cloud");
     pCloseOp->SetInput(m_PalpatorCalibration);
-    pCloseOp->SetListener(m_Listener);
+    pCloseOp->SetListener(GetListener());
     pCloseOp->OpDo();
     cppDEL(pCloseOp); 
   }
@@ -833,7 +833,7 @@ bool lhpOpFingerStick::ProcessSingleLM(int lmIndex, double result[3])
   {
     mafOp *pOpenOp = new mafOpExplodeCollapse("open cloud");
     pOpenOp->SetInput(m_PalpatorCalibration);
-    pOpenOp->SetListener(m_Listener);
+    pOpenOp->SetListener(GetListener());
     pOpenOp->OpDo();
     cppDEL(pOpenOp); 
   }
@@ -842,7 +842,7 @@ bool lhpOpFingerStick::ProcessSingleLM(int lmIndex, double result[3])
   {
     mafOp *pOpenOp = new mafOpExplodeCollapse("open cloud");
     pOpenOp->SetInput(m_PlateCloud);
-    pOpenOp->SetListener(m_Listener);
+    pOpenOp->SetListener(GetListener());
     pOpenOp->OpDo();
     cppDEL(pOpenOp); 
   }
@@ -851,7 +851,7 @@ bool lhpOpFingerStick::ProcessSingleLM(int lmIndex, double result[3])
   {
     mafOp *pOpenOp = new mafOpExplodeCollapse("open cloud");
     pOpenOp->SetInput(m_PlateCalibration);
-    pOpenOp->SetListener(m_Listener);
+    pOpenOp->SetListener(GetListener());
     pOpenOp->OpDo();
     cppDEL(pOpenOp); 
   }
