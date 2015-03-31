@@ -849,9 +849,6 @@ mafGUI* mafVMEMeter::CreateGui()
 
 	m_Gui->Divider();
 
-  InternalUpdate();
-  GetPolylineOutput()->Update();
-
   return m_Gui;
 }
 //-------------------------------------------------------------------------
