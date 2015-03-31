@@ -747,9 +747,13 @@ bool mafNode::Equals(mafNode *node)
   mafLinksMap::iterator lnk_it2;
   for (lnk_it=m_Links.begin(),lnk_it2=node->GetLinks()->begin();lnk_it!=m_Links.end();lnk_it++,lnk_it2++)
   {
+    if (lnk_it2 == node->GetLinks()->end())
+      return false;
+    if (lnk_it->first != lnk_it2->first)
+      return false;
     if (lnk_it->second.m_Node != lnk_it2->second.m_Node)
       return false;
-    if (lnk_it2==node->GetLinks()->end())
+    if (lnk_it->second.m_NodeSubId != lnk_it2->second.m_NodeSubId)
       return false;
   }
 
