@@ -16,7 +16,8 @@
 #ifndef __mafVMEStorage_h__
 #define __mafVMEStorage_h__
 
-#include "mafXMLStorage.h"
+#include "mafStorage.h"
+#include "mafParser.h"
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
 #include "mafUtility.h"

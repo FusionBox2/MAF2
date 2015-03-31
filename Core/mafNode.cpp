@@ -31,6 +31,7 @@
 #include "mafEventIO.h"
 #include "mafStorageElement.h"
 #include "mafStorage.h"
+#include "mafParser.h"
 #include "mafGUI.h"
 #include <wx/tokenzr.h>
 #include <assert.h>

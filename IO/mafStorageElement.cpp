@@ -18,6 +18,7 @@
 #include "mafObjectFactory.h"
 #include "mafStorable.h"
 #include "mafStorageElement.h"
+#include "mafParser.h"
 #include "mafStorage.h"
 #include "mafString.h"
 #include <vector>

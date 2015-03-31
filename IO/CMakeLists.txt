@@ -10,6 +10,8 @@ DBG_MESSAGE("Configuring project mafIO")
 SET(PROJECT_SRCS
   mafCurlUtility.cpp
   mafCurlUtility.h
+  mafParser.cpp
+  mafParser.h
   mafStorable.cpp
   mafStorable.h
   mafStorage.cpp

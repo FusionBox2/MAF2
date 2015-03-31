@@ -16,7 +16,8 @@
 #ifndef __mafMSFImporter_h__
 #define __mafMSFImporter_h__
 
-#include "mafXMLStorage.h"
+#include "mafStorage.h"
+#include "mafParser.h"
 #include "mafUtility.h"
 #include "mafStorable.h"
 

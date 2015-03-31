@@ -16,7 +16,7 @@
 #ifndef __mafXMLStorage_h__
 #define __mafXMLStorage_h__
 
-#include "mafStorage.h"
+#include "mafParser.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :
