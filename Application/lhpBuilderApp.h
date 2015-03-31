@@ -17,6 +17,7 @@
 #include "lhpBuilderLogic.h"
 #include "mafEvent.h"
 #include "mafObserver.h"
+#include "mafDynamicLoader.h"
 
 //----------------------------------------------------------------------------
 // forward references :
@@ -36,6 +37,7 @@ public:
 
 protected:
   lhpBuilderLogic *m_Logic;
+  std::vector<std::pair<LibHandle, void(*)() > > m_Plugins;
 
 };
 DECLARE_APP(lhpBuilderApp)

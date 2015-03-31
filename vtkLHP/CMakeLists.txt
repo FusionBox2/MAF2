@@ -1,18 +1,18 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 1.6)
 
 # Set the project/library name here.  Classes should be declared as
-# "class vtkMED_EXPORT vtkFoo", where vtkMED is the name of the
+# "class vtkLHP_EXPORT vtkFoo", where vtkLHP is the name of the
 # project set here.
 PROJECT(vtkLHP)
 
 # Set your list of sources here.  Do not change the name of the
-# vtkMED_SRCS variable.
+# vtkLHP_SRCS variable.
 SET(vtkLHP_SRCS
 # source files list here...	
 
 )
 
-SET(vtkMED_SRCS
+SET(vtkLHP_SRCS
 	vtkMAFMuscleDecomposition.cpp	
 	vtkMAFMuscleDecomposition.h	
 	vtkMAFMuscleFibers.cpp	
@@ -81,21 +81,21 @@ IF(VTK_FOUND)
   ENDIF (EXISTS ${VTK_DIR}/bin)
 
   # Create the header to configure the classes.
-  CONFIGURE_FILE(${LHP_SOURCE_DIR}/CMakeInput/vtkLHPConfigure.h.in
+  CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/vtkLHPConfigure.h.in
                  ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Configure.h
                  @ONLY IMMEDIATE)
 
   # Create the instantiator for these classes.
   SET(VTK_USE_INSTANTIATOR_NEW 1)
-  VTK_MAKE_INSTANTIATOR2("${PROJECT_NAME}Instantiator" vtkMEDInstantiator_SRCS
-                         ${vtkMED_SRCS}
+  VTK_MAKE_INSTANTIATOR2("${PROJECT_NAME}Instantiator" vtkLHPInstantiator_SRCS
+                         ${vtkLHP_SRCS}
                          EXPORT_MACRO "VTK_${PROJECT_NAME}_EXPORT"
                          HEADER_LOCATION ${PROJECT_BINARY_DIR}
                          INCLUDES "${PROJECT_NAME}Configure.h")
 
   # Create the library.
-  ADD_LIBRARY(${PROJECT_NAME} ${vtkMED_SRCS} ${vtkMEDInstantiator_SRCS})
-  TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${vtkMED_LIBS})
+  ADD_LIBRARY(${PROJECT_NAME} ${vtkLHP_SRCS} ${vtkLHPInstantiator_SRCS})
+  TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${vtkLHP_LIBS})
   # this is necessaty to force MFL compilation....
   IF (MFL_BUILD_TARGETS)
     ADD_DEPENDENCIES(${PROJECT_NAME} ${MFL_BUILD_TARGETS})
@@ -103,16 +103,16 @@ IF(VTK_FOUND)
 
   # Create Tcl wrappers if VTK is wrapped in Tcl.
   IF(VTK_WRAP_TCL)
-    VTK_WRAP_TCL2(${PROJECT_NAME}TCL vtkMEDTCL_SRCS ${vtkMED_SRCS})
-    ADD_LIBRARY(${PROJECT_NAME}TCL ${vtkMEDTCL_SRCS})
+    VTK_WRAP_TCL2(${PROJECT_NAME}TCL vtkLHPTCL_SRCS ${vtkLHP_SRCS})
+    ADD_LIBRARY(${PROJECT_NAME}TCL ${vtkLHPTCL_SRCS})
     TARGET_LINK_LIBRARIES(${PROJECT_NAME}TCL vtkCommonTCL ${PROJECT_NAME})
 
     # Create the list of kits that are required.
     SET(VTKLOCAL_KITS "")
-    FOREACH(c ${vtkMED_LIBS})
+    FOREACH(c ${vtkLHP_LIBS})
       SET(VTKLOCAL_KITS "${VTKLOCAL_KITS} ${c}")
     ENDFOREACH(c)
-    FOREACH(c ${vtkMED_SRCS})
+    FOREACH(c ${vtkLHP_SRCS})
       GET_FILENAME_COMPONENT(VTKLOCAL_LAST_CLASS ${c} NAME_WE)
     ENDFOREACH(c)
 
@@ -134,8 +134,8 @@ IF(VTK_FOUND)
 
   # Create Python wrappers if VTK is wrapped in Python.
   IF(VTK_WRAP_PYTHON)
-    VTK_WRAP_PYTHON2(${PROJECT_NAME}Python vtkMEDPYTHON_SRCS ${vtkMED_SRCS})
-    ADD_LIBRARY(${PROJECT_NAME}Python MODULE ${vtkMEDPYTHON_SRCS})
+    VTK_WRAP_PYTHON2(${PROJECT_NAME}Python vtkLHPPYTHON_SRCS ${vtkLHP_SRCS})
+    ADD_LIBRARY(${PROJECT_NAME}Python MODULE ${vtkLHPPYTHON_SRCS})
     TARGET_LINK_LIBRARIES(${PROJECT_NAME}Python vtkCommonPython ${PROJECT_NAME})
   ENDIF(VTK_WRAP_PYTHON)
 
@@ -144,8 +144,8 @@ IF(VTK_FOUND)
     SET(VTK_WRAP_HINTS "${PROJECT_SOURCE_DIR}/hints")
     SET(VTK_JAVA_HOME ${PROJECT_BINARY_DIR}/java/${PROJECT_NAME})
     MAKE_DIRECTORY(${VTK_JAVA_HOME})
-    VTK_WRAP_JAVA2(${PROJECT_NAME}Java vtkMEDJAVA_SRCS ${vtkMED_SRCS})
-    ADD_LIBRARY(${PROJECT_NAME}Java ${vtkMEDJAVA_SRCS})
+    VTK_WRAP_JAVA2(${PROJECT_NAME}Java vtkLHPJAVA_SRCS ${vtkLHP_SRCS})
+    ADD_LIBRARY(${PROJECT_NAME}Java ${vtkLHPJAVA_SRCS})
     TARGET_LINK_LIBRARIES(${PROJECT_NAME}Java vtkCommonJava ${PROJECT_NAME})
   ENDIF(VTK_WRAP_JAVA)
   

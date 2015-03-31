@@ -26,7 +26,6 @@
 
 #include "mafGUI.h"
 #include "mafVMELandmarkCloud.h"
-#include "mafPlotMath.h"
 #include "mmaMaterial.h"
 #include "mafTransform.h"
 #include "mafIndent.h"
@@ -35,17 +34,18 @@
 #include "mafVMEOutputSurface.h"
 #include "mafDataPipeCustom.h"
 #include "mafStorageElement.h"
+#include "mafMatrix3x3.h"
+#include "mafJointAnalysis.h"
 
-#include "vtkObjectFactory.h"
-#include "vtkMAFSmartPointer.h"
-#include "vtkPolyData.h"
-#include "vtkArrowSource.h"
-#include "vtkTransformPolyDataFilter.h"
-#include "vtkTransform.h"
-#include "vtkAppendPolyData.h"
-#include "vtkPointData.h"
-#include "vtkUnsignedCharArray.h"
-
+#ifndef DIM
+#define DIM(a)  (sizeof((a)) / sizeof(*(a)))
+#endif
+#ifndef max
+#define max(a,b)            (((a) > (b)) ? (a) : (b))
+#endif
+#ifndef min
+#define min(a,b)            (((a) < (b)) ? (a) : (b))
+#endif
 
 //-------------------------------------------------------------------------
 mafCxxTypeMacro(mafVMEAFRefSys)
@@ -55,149 +55,22 @@ mafCxxTypeMacro(mafVMEAFRefSys)
 mafVMEAFRefSys::mafVMEAFRefSys()
 //-------------------------------------------------------------------------
 {
-  mafNEW(m_Transform);
-  mafVMEOutputSurface *output=mafVMEOutputSurface::New(); // an output with no data
-  output->SetTransform(m_Transform); // force my transform in the output
-  SetOutput(output);
-
-  // attach a datapipe which creates a bridge between VTK and MAF
-  mafDataPipeCustom *dpipe = mafDataPipeCustom::New();
-  SetDataPipe(dpipe);
-
-  m_vm = NULL;
-
-  DependsOnLinkedNodeOn();
-
-  m_Active      = 0;
-  m_ScaleFactor = 1.0;
-  m_VMValid     = false;
-  m_BoneID      = ID_AFS_NOTDEFINED;
-
-  vtkUnsignedCharArray *data;
-  float scalar_red[3]   = {255,0,0};
-  float scalar_green[3] = {0,255,0};
-  float scalar_blu[3]   = {0,0,255};
-
-  m_XArrow = vtkArrowSource::New();
-  m_XArrow->SetShaftRadius(m_XArrow->GetTipRadius()/5);
-  m_XArrow->SetTipResolution(40);
-  m_XArrow->SetTipRadius(m_XArrow->GetTipRadius()/2);
-  m_XArrow->Update();
-
-  m_XAxisTransform = vtkTransform::New();
-  m_XAxisTransform->PostMultiply();
-  m_XAxisTransform->Update();
-
-  m_XAxis = vtkTransformPolyDataFilter::New();
-  m_XAxis->SetInput(m_XArrow->GetOutput());
-  m_XAxis->SetTransform(m_XAxisTransform);
-  m_XAxis->Update();	
-
-  int points = m_XArrow->GetOutput()->GetNumberOfPoints();  
-
-  m_YArrow = vtkArrowSource::New();
-  m_YArrow->SetShaftRadius(m_YArrow->GetTipRadius() / 5);
-  m_YArrow->SetTipResolution(40);
-  m_YArrow->SetTipRadius(m_YArrow->GetTipRadius() / 2);
-
-  m_YAxisTransform = vtkTransform::New();
-  m_YAxisTransform->PostMultiply();
-  m_YAxisTransform->RotateZ(90);
-  m_YAxisTransform->Update();
-
-  m_YAxis = vtkTransformPolyDataFilter::New();
-  m_YAxis->SetInput(m_YArrow->GetOutput());
-  m_YAxis->SetTransform(m_YAxisTransform);
-  m_YAxis->Update();
-
-  m_ZArrow = vtkArrowSource::New();
-  m_ZArrow->SetShaftRadius(m_ZArrow->GetTipRadius() / 5);
-  m_ZArrow->SetTipResolution(40);
-  m_ZArrow->SetTipRadius(m_ZArrow->GetTipRadius() / 2);
-  m_ZArrow->Update();
-
-  m_ZAxisTransform = vtkTransform::New();
-  m_ZAxisTransform->PostMultiply();
-  m_ZAxisTransform->RotateY(-90);
-  m_ZAxisTransform->Update();
-
-  m_ZAxis  = vtkTransformPolyDataFilter::New();
-  m_ZAxis->SetInput(m_ZArrow->GetOutput());
-  m_ZAxis->SetTransform(m_ZAxisTransform);
-  m_ZAxis->Update();
-
-  data = vtkUnsignedCharArray::New();
-  data->SetName("AXES");
-  data->SetNumberOfComponents(3);
-  data->SetNumberOfTuples(points * 3);
-  int i;
-  for (i = 0; i < points; i++)
-    data->SetTuple(i, scalar_red);
-  for (i = points; i < 2*points; i++)
-    data->SetTuple(i, scalar_green);
-  for (i = 2*points; i < 3*points; i++)
-    data->SetTuple(i, scalar_blu);
-
-  // this filter do not copy the scalars also if all input 
-  m_Axes = vtkAppendPolyData::New();    
-  m_Axes->AddInput(m_XAxis->GetOutput()); // data has the scalars.
-  m_Axes->AddInput(m_YAxis->GetOutput());
-  m_Axes->AddInput(m_ZAxis->GetOutput());
-
-  m_Axes->Update();
-
-  m_ScaleAxisTransform = vtkTransform::New();
-  m_ScaleAxisTransform->Scale(m_ScaleFactor,m_ScaleFactor,m_ScaleFactor);
-  m_ScaleAxisTransform->Update();
-
-  vtkMAFSmartPointer<vtkPolyData> axes_surface;
-  axes_surface = m_Axes->GetOutput();
-  axes_surface->SetSource(NULL);
-  axes_surface->GetPointData()->SetScalars(data);
-  vtkDEL(data);
-
-  m_ScaleAxis  = vtkTransformPolyDataFilter::New();
-  m_ScaleAxis->SetInput(axes_surface.GetPointer());
-  m_ScaleAxis->SetTransform(m_ScaleAxisTransform);
-  m_ScaleAxis->Update();
-
-  dpipe->SetInput(m_ScaleAxis->GetOutput());
-
+  m_vm      = NULL;
+  m_Active  = 0;
+  m_VMValid = false;
+  m_BoneID  = ID_AFS_NOTDEFINED;
   m_XOffset = 0;
   m_YOffset = 0;
   m_ZOffset = 0;
   m_XRotate = 0;
   m_YRotate = 0;
   m_ZRotate = 0;
-
 }
 
 //-------------------------------------------------------------------------
 mafVMEAFRefSys::~mafVMEAFRefSys()
 //-------------------------------------------------------------------------
 {
-  mafDEL(m_Transform);
-  SetOutput(NULL);
-
-  vtkDEL(m_XArrow);
-  vtkDEL(m_XAxisTransform);
-  m_XAxis->SetTransform(NULL);
-  vtkDEL(m_XAxis);
-
-  vtkDEL(m_YArrow);
-  vtkDEL(m_YAxisTransform);
-  m_YAxis->SetTransform(NULL);
-  vtkDEL(m_YAxis);
-
-  vtkDEL(m_ZArrow);
-  vtkDEL(m_ZAxisTransform);
-  m_ZAxis->SetTransform(NULL);
-  vtkDEL(m_ZAxis);
-
-  vtkDEL(m_Axes);	
-  vtkDEL(m_ScaleAxisTransform);	
-  m_ScaleAxis->SetTransform(NULL);
-  vtkDEL(m_ScaleAxis);
   if(m_vm)
     delete m_vm;
 }
@@ -208,33 +81,39 @@ int mafVMEAFRefSys::DeepCopy(mafNode *a)
   if (Superclass::DeepCopy(a)==MAF_OK)
   {
     mafVMEAFRefSys *vme_ref_sys=mafVMEAFRefSys::SafeDownCast(a);
-    m_Transform->SetMatrix(vme_ref_sys->m_Transform->GetMatrix());
-    SetScaleFactor(vme_ref_sys->GetScaleFactor());
+    m_XOffset = vme_ref_sys->m_XOffset;
+    m_YOffset = vme_ref_sys->m_YOffset;
+    m_ZOffset = vme_ref_sys->m_ZOffset;
+    m_XRotate = vme_ref_sys->m_XRotate;
+    m_YRotate = vme_ref_sys->m_YRotate;
+    m_ZRotate = vme_ref_sys->m_ZRotate;
     m_scriptText = vme_ref_sys->m_scriptText;
     ConvertTextToVM(false);
     m_lmMapping = vme_ref_sys->m_lmMapping;
     m_BoneID    = vme_ref_sys->m_BoneID;
     m_Active    = vme_ref_sys->m_Active;
-    mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
-    if (dpipe)
-    {
-      dpipe->SetInput(m_ScaleAxis->GetOutput());
-    }
     return MAF_OK;
   }  
   return MAF_ERROR;
 }
+
 //-------------------------------------------------------------------------
-bool mafVMEAFRefSys::Equals(mafVME *vme)
+int mafVMEAFRefSys::ReparentTo(mafNode *newparent)
 //-------------------------------------------------------------------------
 {
-  if (Superclass::Equals(vme))
+  int rep = Superclass::ReparentTo(newparent);
+  if(rep != MAF_OK || newparent == NULL || !m_Active)
+    return rep;
+  for(unsigned j = 0; j < newparent->GetNumberOfChildren(); j++)
   {
-    return (m_Transform->GetMatrix() == ((mafVMEAFRefSys *)vme)->m_Transform->GetMatrix() &&
-      m_ScaleFactor == ((mafVMEAFRefSys *)vme)->GetScaleFactor());
+    mafVMEAFRefSys *sys = mafVMEAFRefSys::SafeDownCast(newparent->GetChild(j));
+    if(sys == NULL || sys == this)
+      continue;
+    sys->SetActive(false);
   }
-  return false;
+  return MAF_OK;
 }
+
 
 //----------------------------------------------------------------------------
 void mafVMEAFRefSys::Print(std::ostream& os, const int tabs)// const
@@ -242,103 +121,18 @@ void mafVMEAFRefSys::Print(std::ostream& os, const int tabs)// const
 {
   Superclass::Print(os,tabs);
   mafIndent indent(tabs);
-  mafMatrix m = m_Transform->GetMatrix();
-  m.Print(os,indent.GetNextIndent());
   os<<indent<<"6DOFs: "<<indent<<m_XOffset<<indent<<m_YOffset<<indent<<m_ZOffset<<indent<<m_XRotate<<indent<<m_YRotate<<indent<<m_ZRotate;
   os<<indent<<"Scale: "<<indent<<m_ScaleFactor;
 }
 
-//-------------------------------------------------------------------------
-int mafVMEAFRefSys::InternalInitialize()
-//-------------------------------------------------------------------------
-{
-  if (Superclass::InternalInitialize()==MAF_OK)
-  {
-    // force material allocation
-    GetMaterial();
-    return MAF_OK;
-  }
-  return MAF_ERROR;
-}
-
-//-------------------------------------------------------------------------
-mafVMEOutputSurface *mafVMEAFRefSys::GetSurfaceOutput()
-//-------------------------------------------------------------------------
-{
-  return (mafVMEOutputSurface *)GetOutput();
-}
-
-//-------------------------------------------------------------------------
-void mafVMEAFRefSys::SetMatrix(const mafMatrix &mat)
-//-------------------------------------------------------------------------
-{
-  m_Transform->SetMatrix(mat);
-  Modified();
-}
-
-//-------------------------------------------------------------------------
-bool mafVMEAFRefSys::IsAnimated()
-//-------------------------------------------------------------------------
-{
-  return false;
-}
-
-//-------------------------------------------------------------------------
-void mafVMEAFRefSys::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
-//-------------------------------------------------------------------------
-{
-  kframes.clear();
-}
-
-//-------------------------------------------------------------------------
-void mafVMEAFRefSys::SetRefSysLink(const char *link_name, mafNode *n)
-//-------------------------------------------------------------------------
-{
-  if(n == NULL)
-  {
-    RemoveLink(link_name);
-    return;
-  }
-  if (n->IsMAFType(mafVMELandmark))
-  {
-    SetLink(link_name,n->GetParent(),((mafVMELandmarkCloud *)n->GetParent())->FindLandmarkIndex(n->GetName()));
-  }
-  else
-    SetLink(link_name, n);
-}
 
 
-//-------------------------------------------------------------------------
-void mafVMEAFRefSys::SetScaleFactor(double scale)
-//-------------------------------------------------------------------------
-{
-  m_ScaleFactor = scale;
-  if (m_Gui)
-  {
-    m_Gui->Update();
-  }
-  m_ScaleAxisTransform->Identity();
-  m_ScaleAxisTransform->Scale(m_ScaleFactor,m_ScaleFactor,m_ScaleFactor);
-  m_ScaleAxisTransform->Update();
-  m_ScaleAxis->Update();
-  Update();
-  Modified();
-}
-
-//-------------------------------------------------------------------------
-double mafVMEAFRefSys::GetScaleFactor()
-//-------------------------------------------------------------------------
-{
-  return m_ScaleFactor;
-}
 //-----------------------------------------------------------------------
 int mafVMEAFRefSys::InternalStore(mafStorageElement *parent)
 //-----------------------------------------------------------------------
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent->StoreMatrix("Transform",&m_Transform->GetMatrix());
-    parent->StoreDouble("ScaleFactor", m_ScaleFactor);
     parent->StoreInteger("Active", m_Active);
     parent->StoreInteger("BoneID", m_BoneID);
     parent->StoreDouble("XOffset", m_XOffset);
@@ -410,10 +204,8 @@ int mafVMEAFRefSys::InternalRestore(mafStorageElement *node)
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
-    if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
+    //if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
     {
-      m_Transform->SetMatrix(matrix);
-      node->RestoreDouble("ScaleFactor", m_ScaleFactor);
       node->RestoreInteger("Active", m_Active);
       node->RestoreInteger("BoneID", m_BoneID);
       node->RestoreDouble("XOffset", m_XOffset);
@@ -452,22 +244,6 @@ int mafVMEAFRefSys::InternalRestore(mafStorageElement *node)
 }
 
 //-------------------------------------------------------------------------
-mmaMaterial *mafVMEAFRefSys::GetMaterial()
-//-------------------------------------------------------------------------
-{
-  mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
-  if (material == NULL)
-  {
-    material = mmaMaterial::New();
-    SetAttribute("MaterialAttributes", material);
-    if (m_Output)
-    {
-      ((mafVMEOutputSurface *)m_Output)->SetMaterial(material);
-    }
-  }
-  return material;
-}
-//-------------------------------------------------------------------------
 mafGUI* mafVMEAFRefSys::CreateGui()
 //-------------------------------------------------------------------------
 {
@@ -475,7 +251,6 @@ mafGUI* mafVMEAFRefSys::CreateGui()
   m_Gui = Superclass::CreateGui();
   m_Gui->Show(false);
 
-  m_Gui->Double(ID_SCALE_FACTOR,_("scale"),&m_ScaleFactor);
   m_Gui->Bool(ID_ACTIVE, _("Active"), &m_Active);
   m_Gui->Divider();
 
@@ -511,20 +286,11 @@ mafGUI* mafVMEAFRefSys::CreateGui()
   }
 
   m_Gui->Combo(ID_SELECT_BONEID, "Bone ID", &m_BoneID, DIM(bone_choices_string), bone_choices_string);
-  m_Gui->Button(ID_PRINT, "print", "debug info" );
 
   m_Gui->Update();
 
   return m_Gui;
 }
-
-//----------------------------------------------------------------------------
-bool mafVMEAFRefSys::AcceptLandmark(mafNode *node)
-//----------------------------------------------------------------------------
-{
-  return (node && node->IsMAFType(mafVMELandmark));
-}
-
 
 bool mafVMEAFRefSys::ConvertTextToVM(bool buildMapping)
 {
@@ -609,16 +375,6 @@ void mafVMEAFRefSys::OnEvent(mafEventBase *maf_event)
     }
   case ID_SELECT_BONEID:
     break;
-  case ID_SCALE_FACTOR:
-    {
-      wxLogMessage("ID_SCALE_FACTOR %f", m_ScaleFactor);
-      SetScaleFactor(m_ScaleFactor);
-      GetOutput()->Update();
-      mafEvent cam_event(this,CAMERA_UPDATE);
-      this->ForwardUpEvent(cam_event);
-      Modified();
-      break;
-    }
   case ID_ACTIVE:
     {
       wxLogMessage("ID_ACTIVE %d", m_Active);
@@ -637,7 +393,7 @@ void mafVMEAFRefSys::OnEvent(mafEventBase *maf_event)
           {
             mafString title = "Choose landmark";
             mafEvent e(this,VME_CHOOSE, &title);
-            e.SetArg((long)&mafVMEAFRefSys::AcceptLandmark);
+            e.SetArg((long)&mafVMERefSysAbstract::LandmarkAccept);
             e.SetString(&title);
             e.SetId(VME_CHOOSE);
             ForwardUpEvent(e);
@@ -661,19 +417,6 @@ void mafVMEAFRefSys::OnEvent(mafEventBase *maf_event)
     }
   }
 }
-//-------------------------------------------------------------------------
-char **mafVMEAFRefSys::GetIcon()
-//-------------------------------------------------------------------------
-{
-#include "mafVMESurface.xpm"
-  return mafVMESurface_xpm;
-}
-//-----------------------------------------------------------------------
-void mafVMEAFRefSys::InternalPreUpdate()
-//-----------------------------------------------------------------------
-{
-}
-
 //------------------------------------------------------------------------------
 void mafVMEAFRefSys::GetTransf(double &x, double &y, double &z, double &xr, double &yr, double &zr)
 //------------------------------------------------------------------------------
@@ -697,7 +440,7 @@ void mafVMEAFRefSys::SetTransf(double x, double y, double z, double xr, double y
   m_YRotate = yr;
   m_ZRotate = zr;
   Modified();
-  InternalUpdate();
+  InternalUpdateMatrix();
 }
 
 //-----------------------------------------------------------------------
@@ -765,10 +508,8 @@ void mafVMEAFRefSys::CalculateMatrix(mafMatrix& mat, mafTimeStamp ts)
 {
   bool calculated = UpdateVM(ts);
 
-  DiMatrix       mTran, mTrant, mTrano;
-  vtkMatrix4x4  *mVTK = NULL;
-  mafMatrix      mfMtr;
-  DiV4d          pos, rot;
+  mafMatrix mTran, mTrant;
+  V4d<double>    pos, rot;
 
   V3d<double> x, y, z, p;
 
@@ -809,41 +550,42 @@ void mafVMEAFRefSys::CalculateMatrix(mafMatrix& mat, mafTimeStamp ts)
 
   if(calculated)
   {
-    mTrant.vRight.x = x.x; mTrant.vRight.y = x.y; mTrant.vRight.z = x.z; mTrant.vRight.w = 0.0;
-    mTrant.vUp.x    = y.x; mTrant.vUp.y    = y.y; mTrant.vUp.z    = y.z; mTrant.vUp.w    = 0.0;
-    mTrant.vAt.x    = z.x; mTrant.vAt.y    = z.y; mTrant.vAt.z    = z.z; mTrant.vAt.w    = 0.0;
-    mTrant.vPos.x   = p.x; mTrant.vPos.y   = p.y; mTrant.vPos.z   = p.z; mTrant.vPos.w   = 1.0;
+    mTrant.SetElement(0, 0, x.x);
+    mTrant.SetElement(1, 0, x.y);
+    mTrant.SetElement(2, 0, x.z);
+    mTrant.SetElement(3, 0, 0.0);
+    mTrant.SetElement(0, 1, y.x);
+    mTrant.SetElement(1, 1, y.y);
+    mTrant.SetElement(2, 1, y.z);
+    mTrant.SetElement(3, 1, 0.0);
+    mTrant.SetElement(0, 2, z.x);
+    mTrant.SetElement(1, 2, z.y);
+    mTrant.SetElement(2, 2, z.z);
+    mTrant.SetElement(3, 2, 0.0);
+    mTrant.SetElement(0, 3, p.x);
+    mTrant.SetElement(1, 3, p.y);
+    mTrant.SetElement(2, 3, p.z);
+    mTrant.SetElement(3, 3, 1.0);
   }
   else
   {
-    DiMatrixIdentity(&mTrant);
-    DiMatrixIdentity(&mTrano);
+    mTrant.Identity();
   }
 
 
-  pos.x = (float)m_XOffset;
-  pos.y = (float)m_YOffset;
-  pos.z = (float)m_ZOffset;
+  pos.x = m_XOffset;
+  pos.y = m_YOffset;
+  pos.z = m_ZOffset;
   pos.w = 1;
-  rot.x = (float)m_XRotate * (diPI / 180.0);
-  rot.y = (float)m_YRotate * (diPI / 180.0);
-  rot.z = (float)m_ZRotate * (diPI / 180.0);
+  rot.x = m_XRotate * mafMatrix3x3::DegreesToRadians();
+  rot.y = m_YRotate * mafMatrix3x3::DegreesToRadians();
+  rot.z = m_ZRotate * mafMatrix3x3::DegreesToRadians();
   rot.w = 1;
 
 
   mafTransfComposeMatrixStright(&mTran, &rot, &pos);
-  
-  vtkNEW(mVTK);
-
-  mafTransfRightLeftConv(&mTrant, &mTrano);
-  mafTransfRightLeftConv(&mTran, &mTrant);
-  DiMatrixMultiply(&mTrant, &mTrano, &mTran);
-  DiMatrixCopy(&mTran, &mTrant);
-
-  mVTK->Identity();
-  DiMatrixToVTK(&mTrant, mVTK);
-  mat = mVTK;
-  vtkDEL(mVTK);
+  mafMatrix::Multiply4x4(mTrant, mTran, mat);
+  mat.SetTimeStamp(ts);
 }
 
 //-----------------------------------------------------------------------
@@ -880,16 +622,4 @@ bool mafVMEAFRefSys::GetScalar(const char *name, mafTimeStamp ts, double&  outpu
     return false;
   output = tmp->GetScalar();
   return true;
-}
-
-
-//-----------------------------------------------------------------------
-void mafVMEAFRefSys::InternalUpdate()
-//-----------------------------------------------------------------------
-{
-  mafMatrix mt;
-  CalculateMatrix(mt, GetTimeStamp());
-  SetAbsMatrix(mt, GetTimeStamp());
-  SetScaleFactor(m_ScaleFactor);
-  Modified();
 }

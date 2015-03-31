@@ -13,22 +13,9 @@
 #ifndef __mafMemoryGraph_H__
 #define __mafMemoryGraph_H__
 
-#ifdef _MSC_FULL_VER
-#pragma warning (disable: 4786)
-#endif
-
 #include <vector>
-
-#ifndef DIM
-#define DIM(a)  (sizeof((a)) / sizeof(*(a)))
-#endif
-#ifndef max
-#define max(a,b)            (((a) > (b)) ? (a) : (b))
-#endif
-#ifndef min
-#define min(a,b)            (((a) < (b)) ? (a) : (b))
-#endif
-#define _FitIn(val, from, to)   max(from, min(val, to))
+#include "vectors.h"
+#include "splines.h"
 
 //----------------------------------------------------------------------------
 // forward references
@@ -39,164 +26,106 @@
 /**
 Main class for graph in-memory representation*/
 
-template <class T, class I, class G> class mafMemoryGraphBase
+template <class T> 
+class mafMemoryGraphBase
 {
 public:
-  /*Current MaxMin parameters for both parts of graph */
-  struct mafMemGrTotalRange
-  {
-    T rXMin;
-    T rXMax;
-    T rYMin;
-    T rYMax;
-  };
-  /**
-  Just a handle */
-  typedef mafMemGrTotalRange *mafPMemGrTotalRange;
   /**
   public constructor */
-
-  mafMemoryGraphBase(unsigned int nDimension = 2,unsigned int nSize = 1000);
+  mafMemoryGraphBase(unsigned int size = 1000);
   //and  destructor
-  virtual ~mafMemoryGraphBase(void);
+  virtual ~mafMemoryGraphBase();
   /**
   extract point based on logical index
   nPoint is logical index
   nCoord the actual coordinate index*/
-  T& operator()(unsigned int nPoint,unsigned int nCoord);
+  T operator()(unsigned int point,unsigned int coord, unsigned int deriv = 0) const{if(deriv > 2)deriv = 2;return GetSmoothedValue(point, coord, deriv);/* : /GetValue(point, coord, deriv);*/}
 
   /**
-  Actual constructor work is done here*/
-  void   Init(unsigned int nDimension = 2, unsigned int nSize = 1000);
-  /**
   Remove all elements from in-memory graph container*/
-  void   Clean();
+  void                Clean();
   
   /**
   Support warp break index: needed for visualization*/
-  unsigned int BreakBegin(void)               {return m_BreakBegin;}
-  unsigned int BreakEnd(void)                 {return m_BreakEnd;}
+  unsigned int        BreakBegin() const{return m_BreakBegin;}
+  unsigned int        BreakEnd() const{return m_BreakEnd;}
 
   /**
   Add point as vector to graph storage */
-  void   AddPoint(const std::vector<T> &vrPoint);
+  void   AddPoint(const std::vector<T> &point);
   /**
   Add only one coordinate: other will be undefined!  */
-  void   SetAddCoord(unsigned int nCoord, T rValue);
+  void                SetAddCoord(unsigned int coord, T value);
   
   /**
   Get number of free memory in storage in elements */
-  int  GetFreeMemSpace(void);
+  int                 GetFreeMemSpace() const;
   /**
   Get number of used memory in storage in elements */
-  int  GetUsedMemSpace(void);
-
-  /**
-  Slow: use is to shrink excises when needed from time to time */
-  void   RecalculateRanges();
+  int                 GetUsedMemSpace() const;
 
   //
-  inline unsigned int GetDim()   {    return this->nDim;  }
-
-  inline unsigned int GetXDim()  {    return this->nXDim; }
-
-  inline unsigned int GetYDim()  {    return this->nYDim;  }
+  inline unsigned int GetDim() const {return m_Dim;}
+  inline unsigned int GetXDim()const {return m_XParams.Dim;}
+  inline unsigned int GetYDim()const {return m_YParams.Dim;}
 
   // Following functions works with indexes. Each value can have unique int32 index 
   // that allow user to identify what kind of value stored in certain index
-  inline unsigned int GetXIndex(unsigned int nIndex)
-  {
-    wxASSERT(nIndex<this->nXDim);
-    return this->vnXIndexes[nIndex];
-  }
-  inline unsigned int GetYIndex(unsigned int nIndex)
-  {
-    wxASSERT(nIndex<this->nYDim);
-    return this->vnYIndexes[nIndex];
-  }
+  inline unsigned int GetXIndex(unsigned int index) const{wxASSERT(index < m_XParams.Dim);return m_XParams.Indexes[index];}
+  inline unsigned int GetYIndex(unsigned int index) const{wxASSERT(index < m_YParams.Dim);return m_YParams.Indexes[index];}
 
-  void   SetDim(unsigned int nDimension);
+  inline unsigned int GetXDeriv(unsigned int index) const{wxASSERT(index < m_XParams.Dim);return m_XParams.Derives[index];}
+  inline unsigned int GetYDeriv(unsigned int index) const{wxASSERT(index < m_YParams.Dim);return m_YParams.Derives[index];}
 
-  inline void   SetXDim(unsigned int nDimX)
-  {
-    wxASSERT(nDimX<=this->nDim);
-    this->nXDim = nDimX;
-    return;
-  }
-  inline void   SetYDim(unsigned int nDimY)
-  {
-    wxASSERT(nDimY<=this->nDim);
-    this->nYDim = nDimY;
-    return;
-  }
-
-  inline void   SetXIndex(unsigned int nIndex,unsigned int nXIndex)
-  {
-    wxASSERT(nIndex<this->nXDim);
-    wxASSERT(nXIndex<this->nDim);
-    this->vnXIndexes[nIndex] = nXIndex;
-    return;
-  }
-  inline void   SetYIndex(unsigned int nIndex,unsigned int nYIndex)
-  {
-    wxASSERT(nIndex<this->nYDim);
-    wxASSERT(nYIndex<this->nDim);
-    this->vnYIndexes[nIndex] = nYIndex;
-    return;
-  }
+  inline void         SetXDeriv(unsigned int index,unsigned int XDerive){wxASSERT(index < m_XParams.Dim);m_XParams.Derives[index] = XDerive;}
+  inline void         SetYDeriv(unsigned int index,unsigned int YDerive){wxASSERT(index < m_YParams.Dim);m_YParams.Derives[index] = YDerive;}
  
-  inline const I& GetID(unsigned int nCoord)
-  {
-    return this->vnIDs[nCoord];
-  }
-  inline void SetID(unsigned int nCoord, const I& nID)
-  {
-    wxASSERT(nCoord<this->nDim);
-    this->vnIDs[nCoord] = nID;
-    return;
-  }
+  inline int          GetID(unsigned int coord) const{wxASSERT(coord < m_Dim);return m_IDs[coord];}
+  inline void         SetID(unsigned int coord, int ID){wxASSERT(coord < m_Dim && coord > 0);m_IDs[coord] = ID;}
 
-  inline const I& GetXID(unsigned int nIndex) {return GetID(GetXIndex(nIndex));}
-  inline const I& GetYID(unsigned int nIndex) {return GetID(GetYIndex(nIndex));}
+  inline int          GetXID(unsigned int index) const{wxASSERT(index < m_XParams.Dim);return GetID(m_XParams.Indexes[index]);}
+  inline int          GetYID(unsigned int index) const{wxASSERT(index < m_YParams.Dim);return GetID(m_YParams.Indexes[index]);}
 
-  inline void   SetXID(unsigned int nIndex, const I& nID)
-  {
-    SetID(GetXIndex(nIndex), nID);
-    return;
-  }
-  inline void SetYID(unsigned int nIndex, const I& nID)
-  {
-    SetID(GetYIndex(nIndex), nID);
-    return;
-  }
+  bool                AddYVar(int ID, unsigned int deriv = 0){return AddVar(ID, deriv, m_YParams);}
+  bool                RemYVar(unsigned int coord){return RemVar(coord, m_YParams, m_XParams);}
+  bool                SetYVar(unsigned int index, int ID, unsigned int deriv = 0){return SetVar(index, ID, deriv, m_YParams, m_XParams);}
 
-  inline const G&  GetGraphID(){return this->nGraphID;}
-  inline void   SetGraphID(const G& nID)
-  {
-    this->nGraphID = nID;
-  }
+  bool                AddXVar(int ID, unsigned int deriv = 0){return AddVar(ID, deriv, m_XParams);}
+  bool                RemXVar(unsigned int coord){return RemVar(coord, m_XParams, m_YParams);}
+  bool                SetXVar(unsigned int index, int ID, unsigned int deriv = 0){return SetVar(index, ID, deriv, m_XParams, m_YParams);}
 
-  bool   AddYVar(const I& nID);
-  bool   RemYVar(const I& nID);
-  bool   SetYVar(unsigned int nIndex, const I& nID);
+  void                SetSmooth(bool smooth){m_Smooth = smooth;}
+  bool                GetSmooth() const{return m_Smooth;}
 
-  bool   AddXVar(const I& nID);
-  bool   RemXVar(const I& nID);
-  bool   SetXVar(unsigned int nIndex, const I& nID);
-
-  mafMemGrTotalRange const *GetRange(void);
+  void                SetSmoothParam(const T& param){m_SmoothParam = param;  for(unsigned i = 0; i < m_Dim; i++){m_Smoothed[i] = false;}}
+  T                   GetSmoothParam() const{return m_SmoothParam;}
+protected:
+  T                   GetValue(unsigned int point,unsigned int coord, unsigned int deriv = 0) const;
+  T                   GetSmoothedValue(unsigned int point, unsigned int coord, unsigned int deriv = 0) const;
+  bool                GetValueByParam(T& value, const T& param, unsigned int coord, unsigned int deriv = 0) const;
 private:
-  struct mafMemGrRange
+  struct VarParams
   {
-    T rMin, rMax;
+    std::vector<unsigned int> Indexes;
+    std::vector<unsigned int> Derives;
+    unsigned int              Dim;
   };
-  void      RemovePoints(int nPoints);
-  void      RemovePoint();
-  void      UpdateBreakPosition(void);
-  void      RemovePrevPassPoints(void);
-  virtual T GetGarbageValue(void) = 0;
 
-  bool                                m_Empty;
+  void                SetDim(unsigned int dimension);
+
+  bool                AddVar(int, unsigned int deriv, VarParams& primparam);
+  bool                RemVar(unsigned int coord, VarParams& primparam, VarParams& secparam);
+  bool                SetVar(unsigned int index, int ID, unsigned int deriv, VarParams& primparam, VarParams& secparam);
+
+  void                RemovePoints(int points);
+  void                RemovePoint();
+  void                UpdateBreakPosition();
+  void                RemovePrevPassPoints();
+  unsigned int        GetActualIdx(unsigned int point) const;
+  void                FillSmoothedValues(unsigned int coord) const;
+
+  virtual const T&    GetGarbageValue() = 0;
+
   /// user data is stored here!!! 
   std::vector<std::vector<T> >        m_Points;
   ///last added point sometimes stored here. No user access. For SetAddCoord method.
@@ -205,1216 +134,699 @@ private:
   std::vector<bool>                   m_Filled;
   /// number of already added fields. For SetAddCoord method.
   unsigned int                        m_FilledPoints;
+  /// marks what fields in last added coords are filled. For SetAddCoord method.
+  mutable std::vector<bool>           m_Smoothed;
 
   ///native index of array beginning
-  unsigned int                        nBegin;       
+  unsigned int                        m_Begin;
   ///native index of array end
-  unsigned int                        nEnd;         
+  unsigned int                        m_End;
 
   //normalized index for break
-  unsigned int                        m_BreakBegin; 
+  unsigned int                        m_BreakBegin;
   //normalized index for break end
-  unsigned int                        m_BreakEnd;    
+  unsigned int                        m_BreakEnd;
 
   ///maximum possible number of points
-  unsigned int                        nMaxSize;
+  unsigned int                        m_MaxSize;
   ///number of graphs drawn at once
-  unsigned int                        nDim;
-  ///currently always == 1
-  unsigned int                        nXDim;
-  /// can be almost any :)
-  unsigned int                        nYDim;
+  unsigned int                        m_Dim;
 
-  ///Identification index for user Can be managed by user
-  G                                   nGraphID;
   ///Can be managed by user
-  std::vector<I>                      vnIDs;
-  std::vector<unsigned int>           vnXIndexes;
-  std::vector<unsigned int>           vnYIndexes;
+  std::vector<int>                    m_IDs;
+  VarParams                           m_XParams;
+  VarParams                           m_YParams;
 
-  ///automatically recalculated ranges for visualization
-  std::vector<mafMemGrRange>          vgrRanges;
-  mafMemGrTotalRange                  gtrTotalRange;
+  T                                   m_MinParam, m_MaxParam;
 
   ///internal usage
-  T                                   rUnnoticedRange;
-  ///Slider move support: TODO
-  bool                                bSecondaryBreak;
+  T                                   m_UnnoticedRange;
   //memory graph tunings
-  T                                   rRangeGrowStep;
-  T                                   rPointNoticeCriterion;
-  T                                   rSpaceInRange;
+  T                                   m_SmoothParam;
+  T                                   m_RangeGrowStep;
+  T                                   m_PointNoticeCriterion;
+  T                                   m_SpaceInRange;
 
+  mutable std::vector<ForArray<T> >   m_X;
+  mutable std::vector<ForArray<T> >   m_Y;
+  mutable std::vector<ForArray<T> >   m_S;
+  mutable std::vector<ForArray<T> >   m_Z;
+  mutable std::vector<ForArray<T> >   m_A;
 };
 
-/**
- * detailed description
- *
- * @memo    
- * @return  None
- * @param   nSize
- * @author  Earnol
- * @see     Nothing
- */
-template <class T, class I, class G>
-mafMemoryGraphBase<T, I, G>::mafMemoryGraphBase(unsigned int nDimension, unsigned int nSize)
+template <class T>
+mafMemoryGraphBase<T>::mafMemoryGraphBase(unsigned int size)
 {
-  this->Init(nDimension, nSize);
+  m_MaxSize        = size;
 
-  return;
-} // end of mafMemoryGraphBase<T, I, G>::mafMemoryGraphBase
+  m_Points.resize(size);
 
-/**
- * detailed description
- *
- * @memo    Get number of allocated entries
- * @return  None
- * @author  Earnol
- * @see     Nothing
- */
-template <class T, class I, class G>
-int mafMemoryGraphBase<T, I, G>::GetUsedMemSpace(void)
+  m_XParams.Dim = 0;
+  m_YParams.Dim = 0;
+
+  SetDim(1);
+
+  m_IDs[0]                = 0;
+  m_RangeGrowStep         = 5.0;
+  m_PointNoticeCriterion  = 0.0025;
+  m_SpaceInRange          = 0.000001;
+  m_SmoothParam           = 0.0;
+}
+
+//Get number of free entries
+template <class T>
+int  mafMemoryGraphBase<T>::GetFreeMemSpace() const
 {
-  return this->nMaxSize - this->GetFreeMemSpace();
-} // end of mafMemoryGraphBase<T, I, G>::GetUsedMemSpace
+  return m_MaxSize - GetUsedMemSpace();
+}
 
-/**
- * detailed description
- *
- * @memo    obv.
- * @return  None
- * @param   nI
- * @author  Earnol
- * @see     Nothing
- */
-template <class T, class I, class G>
-T& mafMemoryGraphBase<T, I, G>::operator()(unsigned int nPoint, unsigned int nCoord)
+//Get number of allocated entries
+template <class T>
+int mafMemoryGraphBase<T>::GetUsedMemSpace() const
 {
-  int   nActualIdx;
+  return m_End - m_Begin;
+}
 
-//  wxASSERT(this->nMaxSize > nPoint); //no valid data otherwise
+template <class T>
+unsigned int mafMemoryGraphBase<T>::GetActualIdx(unsigned int point) const
+{
+  return (m_Begin + point) % m_MaxSize;
+}
 
-  nActualIdx = this->nBegin + nPoint;
-  if(nActualIdx >= (int)this->nMaxSize)
+
+template <class T>
+void mafMemoryGraphBase<T>::FillSmoothedValues(unsigned int coord) const
+{
+  if(!m_Smoothed[coord])
   {
-    //perform round warp
-    nActualIdx -= this->nMaxSize;
-    wxASSERT(0 <= nActualIdx && nActualIdx < (int)this->nMaxSize);
+    m_Smoothed[coord] = true;
+
+    unsigned int part_begin = m_BreakEnd;
+    unsigned int part_end   = GetUsedMemSpace();
+    for(int p = 0; p < 2; p++)
+    {
+      unsigned int sz = part_end - part_begin;
+      //arrays to process separately all components of 3D vectors
+      if(sz >= 2)
+      {
+        //initial sizes
+        m_X[2 * coord + p].assign(sz, 0.0);
+        m_Y[2 * coord + p].assign(sz, 0.0);
+        m_S[2 * coord + p].assign(sz, 0.0);
+        m_Z[2 * coord + p].assign(sz, 0.0);
+        m_A[2 * coord + p].assign(sz, 0.0);
+
+        V3d<T> tmp;
+
+        //filling with values from input parameters
+        for(unsigned int k = part_begin; k < part_end; k++)
+        {
+          m_X[2 * coord + p][k - part_begin] = m_Points[GetActualIdx(k)][0];//GetValue(k, 0, 0);
+          m_Y[2 * coord + p][k - part_begin] = m_Points[GetActualIdx(k)][coord];//GetValue(k, coord, 0);
+          m_S[2 * coord + p][k - part_begin] = m_SmoothParam;
+        }
+        //building smoothing 1D splines for each vector component
+        Smspline<T>(sz, 2, 0, m_X[2 * coord + p], m_Y[2 * coord + p], m_S[2 * coord + p], 0, 0, m_A[2 * coord + p], m_Z[2 * coord + p], 0, tmp[0], tmp[1], tmp[2]);
+        /*for(unsigned int k = part_begin; k < part_end; k++)
+        {
+          Smspline<T>(sz, 2, 1, x, y, s, 0, 0, a, z, x[k - part_begin], tmp[0], tmp[1], tmp[2]);
+          m_PointsSmth[GetActualIdx(k)][coord][0] = tmp[0];
+          m_PointsSmth[GetActualIdx(k)][coord][1] = tmp[1];
+          m_PointsSmth[GetActualIdx(k)][coord][2] = tmp[2];
+        }*/
+      }
+      part_begin = 0;
+      part_end   = m_BreakBegin;
+    }
   }
-  //realay actual data
-  return m_Points[nActualIdx][nCoord];
-} // end of mafMemoryGraphBase<T, I, G>::[]
+}
 
 
-/**
- * detailed description
- *
- * @memo    Remove N obsolete points
- * @return  None
- * @param   nPoints
- * @author  Earnol
- * @see     Nothing
- */
-template <class T, class I, class G>
-void   mafMemoryGraphBase<T, I, G>::RemovePoints(int nPoints)
+template <class T>
+T mafMemoryGraphBase<T>::GetValue(unsigned int point, unsigned int coord, unsigned int deriv) const
 {
-  int nI;
+  wxASSERT(deriv <= 2 && deriv >=0);
+  if(deriv == 0)
+    return m_Points[GetActualIdx(point)][coord];
+  return GetSmoothedValue(point, coord, deriv);
+}
 
-  for(nI = 0; nI < nPoints; nI++)
+template <class T>
+T mafMemoryGraphBase<T>::GetSmoothedValue(unsigned int point, unsigned int coord, unsigned int deriv) const
+{
+  T res;
+  bool ok;
+  wxASSERT(deriv <= 2 && deriv >=0);
+  FillSmoothedValues(coord);
+  ok = GetValueByParam(res, m_Points[GetActualIdx(point)][0], coord, deriv);
+  if(!ok)
   {
-    this->RemovePoint();
+    if(deriv == 0)
+      return m_Points[GetActualIdx(point)][coord];
   }
-  return;
-} // end of mafMemoryGraphBase<T, I, G>::RemovePoints
+  //wxASSERT(ok);
+  return res;
+}
 
-/**
- * detailed description
- *
- * @memo    remove one point obsolete for some reasons
- * @return  None
- * @author  Earnol
- * @see     Nothing
- */
-template <class T, class I, class G>
-void   mafMemoryGraphBase<T, I, G>::RemovePoint(void)
+template <class T>
+bool mafMemoryGraphBase<T>::GetValueByParam(T& value, const T& param, unsigned int coord, unsigned int deriv) const
 {
-  unsigned int nI;
+  wxASSERT(deriv <= 2 && deriv >=0);
+  FillSmoothedValues(coord);
+  unsigned int p1_begin = m_BreakEnd;
+  unsigned int p1_end   = GetUsedMemSpace();
+  unsigned int p2_begin = 0;
+  unsigned int p2_end   = m_BreakBegin;
+  if(p1_end - p1_begin >= 2)
+  {
+    if(param >= m_Points[GetActualIdx(p1_begin)][0] && param <= m_Points[GetActualIdx(p1_end - 1)][0])
+    {
+      unsigned p = 0;
+      V3d<T> tmp;
+      Smspline<T>(p1_end - p1_begin, 2, 1, m_X[2 * coord + p], m_Y[2 * coord + p], m_S[2 * coord + p], 0, 0, m_A[2 * coord + p], m_Z[2 * coord + p], param, tmp[0], tmp[1], tmp[2]);
+      value = tmp[deriv];
+      return true;
+    }
+  }
+  if(p2_end - p2_begin >= 2)
+  {
+    if(param >= m_Points[GetActualIdx(p2_begin)][0] && param <= m_Points[GetActualIdx(p2_end - 1)][0])
+    {
+      unsigned p = 1;
+      V3d<T> tmp;
+      Smspline<T>(p2_end - p2_begin, 2, 1, m_X[2 * coord + p], m_Y[2 * coord + p], m_S[2 * coord + p], 0, 0, m_A[2 * coord + p], m_Z[2 * coord + p], param, tmp[0], tmp[1], tmp[2]);
+      value = tmp[deriv];
+      return true;
+    }
+  }
+  return false;
+}
+
+//Remove N obsolete points
+template <class T>
+void   mafMemoryGraphBase<T>::RemovePoints(int points)
+{
+  for(int i = 0; i < points; i++)
+    RemovePoint();
+} // end of mafMemoryGraphBase<T>::RemovePoints
+
+//remove one point obsolete for some reasons
+template <class T>
+void   mafMemoryGraphBase<T>::RemovePoint()
+{
+  unsigned int i;
 
   //access storage
-  
-  if(this->m_Empty)
+  if(GetUsedMemSpace() == 0)
   {
-    wxASSERT(this->nBegin == 0 && this->nEnd == 0);
+    wxASSERT(m_Begin == 0 && m_End == 0);
     //nothing to do here anymore
     return;
   }
-  else if(this->nBegin == this->nEnd)
+  else if(GetUsedMemSpace() == 1)
   {
     //one element case
-    //invalitate it
-    for(nI=0;nI<this->nDim;nI++)
+    //invalidate it
+    for(i = 0;i < m_Dim; i++)
     {
-      m_Points[this->nBegin][nI] = GetGarbageValue();
+      m_Points[m_Begin][i] = GetGarbageValue();
     }
     //remove it
-    this->nBegin = 0;
-    this->nEnd   = 0;
-    this->m_Empty = true;
+    m_Begin = 0;
+    m_End   = 0;
   }
   else
   {
     //have more than two elements here to spare
     //invalidate it
-    for(nI=0;nI<this->nDim;nI++)
+    for(i = 0;i < m_Dim; i++)
     {
-      m_Points[this->nBegin][nI] = GetGarbageValue();
+      m_Points[m_Begin][i] = GetGarbageValue();
     }
-    this->nBegin++;
+    m_Begin++;
     //check warp
-    if(this->nBegin == this->nMaxSize)
+    if(m_Begin == m_MaxSize)
     {
-      this->nBegin = 0;
+      m_Begin = 0;
+      m_End  -= m_MaxSize;
     }
-    if(this->nBegin == this->nEnd)
+    if(m_Begin + 1 == m_End)
     {
       //move it
-      for(nI=0;nI<this->nDim;nI++)
+      for(i = 0;i < m_Dim; i++)
       {
-        m_Points[0][nI] = m_Points[this->nBegin][nI];
+        m_Points[0][i] = m_Points[m_Begin][i];
       }
       //remove it
-      this->nBegin = 0;
-      this->nEnd   = 0;
+      m_Begin = 0;
+      m_End   = 1;
     }
   }
 
-  this->UpdateBreakPosition();
-
-  return;
-} // end of mafMemoryGraphBase<T, I, G>::RemovePoint
+  UpdateBreakPosition();
+}
   
-/**
- * detailed description
- *
- * @memo    Add new point into the class
- * @return  None
- * @param   gpPoint
- * @author  Earnol
- * @see     Nothing
- */
-template <class T, class I, class G>
-void mafMemoryGraphBase<T, I, G>::AddPoint(const std::vector<T> &vrPoint)
+//Add new point into the class
+template <class T>
+void mafMemoryGraphBase<T>::AddPoint(const std::vector<T> &point)
 {
-  T   rDiff;
-  T   rNoticeableVal;
-  T   rLength;
-  T   rAddGrow;
-  unsigned int  nI;
+  T            diff;
+  T            noticeableVal;
+  T            length;
+  T            addGrow;
 
-  if(this->nBegin == this->nEnd && this->m_Empty)
+  for(unsigned i = 0; i < m_Dim; i++)
+  {
+    m_Smoothed[i] = false;
+  }
+
+  if(GetUsedMemSpace() == 0)
   {
     //list is empty: just add to end
-    m_Points[this->nEnd] = vrPoint;
-    this->m_Empty = false;
-    for(nI=0;nI<this->nDim;nI++)
-    {
-      vgrRanges[nI].rMin = vrPoint[nI] - rSpaceInRange;
-      vgrRanges[nI].rMax = vrPoint[nI] + rSpaceInRange;
-      //init axises
-    }
-    if(this->nXDim>0)
-    {
-      this->gtrTotalRange.rXMin=vgrRanges[vnXIndexes[0]].rMin;
-      this->gtrTotalRange.rXMax=vgrRanges[vnXIndexes[0]].rMax;
-      for(nI=1;nI<this->nXDim;nI++)
-      {
-        if(vgrRanges[vnXIndexes[nI]].rMin<this->gtrTotalRange.rXMin)
-        {
-          this->gtrTotalRange.rXMin=vgrRanges[vnXIndexes[nI]].rMin;
-        }
-        if(vgrRanges[vnXIndexes[nI]].rMax>this->gtrTotalRange.rXMax)
-        {
-          this->gtrTotalRange.rXMax=vgrRanges[vnXIndexes[nI]].rMax;
-        }
-      }
-    }
-    if(this->nYDim>0)
-    {
-      this->gtrTotalRange.rYMin=vgrRanges[vnYIndexes[0]].rMin;
-      this->gtrTotalRange.rYMax=vgrRanges[vnYIndexes[0]].rMax;
-      for(nI=1;nI<this->nYDim;nI++)
-      {
-        if(vgrRanges[vnYIndexes[nI]].rMin<this->gtrTotalRange.rYMin)
-        {
-          this->gtrTotalRange.rYMin=vgrRanges[vnYIndexes[nI]].rMin;
-        }
-        if(vgrRanges[vnYIndexes[nI]].rMax>this->gtrTotalRange.rYMax)
-        {
-          this->gtrTotalRange.rYMax=vgrRanges[vnYIndexes[nI]].rMax;
-        }
-      }
-    }
+    m_Points[m_End++] = point;
+    m_MinParam = point[0] - m_SpaceInRange;
+    m_MaxParam = point[0] + m_SpaceInRange;
   }
   else //add to non empty container
   {
-    rDiff = vrPoint[0] - (*this)(this->GetUsedMemSpace() - 1,0);
-    if(rDiff > 0.0f) //do not apply to warped points
+    diff = point[0] - GetValue(GetUsedMemSpace() - 1, 0, 0);
+    if(diff > 0.0) //do not apply to warped points
     {
-      rNoticeableVal = rPointNoticeCriterion * (vgrRanges[0].rMax - vgrRanges[0].rMin);
-      if((rDiff + this->rUnnoticedRange) < rNoticeableVal)
+      noticeableVal = m_PointNoticeCriterion * (m_MaxParam - m_MinParam);
+      if((diff + m_UnnoticedRange) < noticeableVal)
       {
         //this point is not worth to be noticed ==> ignore, bat mark
-        this->rUnnoticedRange += rDiff;
+        m_UnnoticedRange += diff;
         return;
       }
       else
       {
         //adjust marker
-        this->rUnnoticedRange = (rDiff + this->rUnnoticedRange) - rNoticeableVal;
+        m_UnnoticedRange = (diff + m_UnnoticedRange) - noticeableVal;
         //do not affect to much
-        this->rUnnoticedRange = _FitIn(this->rUnnoticedRange, 0.0f, rNoticeableVal);
+        m_UnnoticedRange = ((m_UnnoticedRange > noticeableVal) ? noticeableVal : m_UnnoticedRange);
+        m_UnnoticedRange = ((m_UnnoticedRange < 0.0) ? 0.0 : m_UnnoticedRange);
       }
     }
     //update points rect
-    for(nI=0;nI<this->nDim;nI++)
+    length                = m_MaxParam - m_MinParam;
+    addGrow               = length * m_RangeGrowStep * 0.01;
+    if(point[0] > m_MaxParam)
     {
-      if(vrPoint[nI] > vgrRanges[nI].rMax)
-      {
-        rLength            = vgrRanges[nI].rMax - vgrRanges[nI].rMin;
-        rAddGrow           = rLength * rRangeGrowStep * 0.01f;
-        vgrRanges[nI].rMax = vrPoint[nI] + rAddGrow;
-      }
-      if(vrPoint[nI] < vgrRanges[nI].rMin)
-      {
-        rLength   = vgrRanges[nI].rMax - vgrRanges[nI].rMin;
-        rAddGrow  = rLength * rRangeGrowStep * 0.01f;
-        vgrRanges[nI].rMin = vrPoint[nI] - rAddGrow;
-      }
-      //update graphic axixes
+      m_MaxParam   = point[0] + addGrow;
     }
-    if(this->nXDim>0)
+    if(point[0] < m_MinParam)
     {
-      this->gtrTotalRange.rXMin=vgrRanges[vnXIndexes[0]].rMin;
-      this->gtrTotalRange.rXMax=vgrRanges[vnXIndexes[0]].rMax;
-      for(nI=1;nI<this->nXDim;nI++)
-      {
-        if(vgrRanges[vnXIndexes[nI]].rMin<this->gtrTotalRange.rXMin)
-        {
-          this->gtrTotalRange.rXMin=vgrRanges[vnXIndexes[nI]].rMin;
-        }
-        if(vgrRanges[vnXIndexes[nI]].rMax>this->gtrTotalRange.rXMax)
-        {
-          this->gtrTotalRange.rXMax=vgrRanges[vnXIndexes[nI]].rMax;
-        }
-      }
-    }
-    if(this->nYDim>0)
-    {
-      this->gtrTotalRange.rYMin=vgrRanges[vnYIndexes[0]].rMin;
-      this->gtrTotalRange.rYMax=vgrRanges[vnYIndexes[0]].rMax;
-      for(nI=1;nI<this->nYDim;nI++)
-      {
-        if(vgrRanges[vnYIndexes[nI]].rMin<this->gtrTotalRange.rYMin)
-        {
-          this->gtrTotalRange.rYMin=vgrRanges[vnYIndexes[nI]].rMin;
-        }
-        if(vgrRanges[vnYIndexes[nI]].rMax>this->gtrTotalRange.rYMax)
-        {
-          this->gtrTotalRange.rYMax=vgrRanges[vnYIndexes[nI]].rMax;
-        }
-      }
+      m_MinParam = point[0] - addGrow;
     }
 
     //not empty
     //TBD: Check is this point already exists in container SLOW!
-    //check for available space
-    if(this->GetFreeMemSpace() >= 0)
+    //check end position
+    m_Points[m_End % m_MaxSize] = point;
+    m_End++;
+    if(m_End  % m_MaxSize == m_Begin  % m_MaxSize)
+      m_Begin++;
+    if(m_Begin >= m_MaxSize)
     {
-      //have space
-      //check end position
-      if(this->nBegin <= this->nEnd && this->nEnd < this->nMaxSize - 1)
-      {
-        //non warped and not ready to warp
-        this->nEnd++;
-      }
-      else if(this->nBegin <= this->nEnd && this->nEnd == this->nMaxSize - 1)
-      {
-        //non warped and ready to warp
-        this->nEnd = 0;
-        //shift begin as well if needed
-        if(this->nBegin == this->nEnd)
-        {
-          this->nBegin = this->nEnd + 1;
-        }
-      }
-      else if(this->nBegin > this->nEnd)
-      {
-        //warped
-        this->nEnd++;
-        //check for space
-        if(this->nEnd == this->nBegin)
-        {
-          this->nBegin = this->nEnd + 1;
-        }
-        //check for warp
-        if(this->nBegin == this->nMaxSize)
-        {
-          this->nBegin = 0;
-        }
-      }
-      else
-      {
-        wxASSERT(false);
-      }
-      //store this damned data
-      wxASSERT(this->nEnd >= 0 && this->nEnd <= this->nMaxSize - 1);
-      m_Points[this->nEnd] = vrPoint;
+      m_Begin -= m_MaxSize;
+      m_End   -= m_MaxSize;
     }
-    else
-    {
-      wxASSERT(false);
-    }    
   }
-  this->UpdateBreakPosition();
-  this->RemovePrevPassPoints();
+  UpdateBreakPosition();
+  RemovePrevPassPoints();
   //wxASSERT(!this->bSecondaryBreak);
-  return;
-} // end of mafMemoryGraphBase<T, I, G>::AddPoint
+}
 
 
-template <class T, class I, class G>
-void  mafMemoryGraphBase<T, I, G>::SetAddCoord(unsigned int nCoord, T rValue)
+template <class T>
+void  mafMemoryGraphBase<T>::SetAddCoord(unsigned int coord, T val)
 {
-  unsigned int nI;
-  wxASSERT(nCoord < this->nDim);
-  wxASSERT(!(this->m_Filled[nCoord]));
-
-  this->m_Filled[nCoord] = true;
-  this->m_Coords[nCoord] = rValue;
-  (this->m_FilledPoints)++;
-  if(this->m_FilledPoints == this->nDim)
+  unsigned int i;
+  wxASSERT(coord < m_Dim);
+  wxASSERT(!m_Filled[coord]);
+  m_Coords[coord] = val;
+  if(!m_Filled[coord])
   {
-    this->m_FilledPoints = 0;
-    for(nI=0;nI<this->nDim;nI++)
+    m_Filled[coord] = true;
+    m_FilledPoints++;
+  }
+  if(m_FilledPoints == m_Dim)
+  {
+    m_FilledPoints   = 0;
+    for(i = 0;i < m_Dim;i++)
     {
-      this->m_Filled[nI] = false;
+      m_Filled[i]   = false;
+      m_Smoothed[i] = false;
     }
     AddPoint(m_Coords);
   }
-
-  return;
 }
 
 
-/**
- * detailed description
- *
- * @memo    Remove points from prev. pass
- *          should be called after each one point added
- * @return  None
- * @author  Earnol
- * @see     Nothing
- */
-template <class T, class I, class G>
-void  mafMemoryGraphBase<T, I, G>::RemovePrevPassPoints(void)
+//Remove points from prev. pass
+template <class T>
+void  mafMemoryGraphBase<T>::RemovePrevPassPoints()
 {
-  int   nPoints, nI;
-  unsigned int   nStage, nToRem;
-
-  //init
-  nPoints = this->GetUsedMemSpace();
+  int   points = GetUsedMemSpace();
+  unsigned int stage, NumToRem;
 
   //do not work until having less than 3 points
-  if(nPoints <= 3) 
-  {
+  if(points <= 3) 
     return;
-  }
-  nStage = 0;
-  nToRem = 0;
-  for(nI = nPoints - 2; nI >= 0; nI--)
-  {
-    if((*this)(nI,0) > (*this)(nI+1,0))
-    {
-      nStage++;
-    }
-    if(nStage >= 2 || ((*this)(nPoints - 1, 0) > (*this)(nI,0) && nStage >= 1))
-    {
-      nToRem++;
-    }
-  }
-  this->RemovePoints(nToRem);
-  if(nToRem > 0)
-  {
-    this->UpdateBreakPosition();
-  }
-  return;
-} // end of mafMemoryGraphBase<T, I, G>::RemovePrevPassPoints
 
-/**
- * detailed description
- *
- * @memo    Support state for break index
- * @return  None
- * @author  Earnol
- * @see     Nothing
- */
-template <class T, class I, class G>
-void  mafMemoryGraphBase<T, I, G>::UpdateBreakPosition(void)
-{
-  int   nI, nUsed;
-  bool    bFilled;
-
-  nUsed = this->GetUsedMemSpace();
-  if(this->m_Empty)// || nUsed <= 4)
+  stage    = 0;
+  NumToRem = 0;
+  for(int i = points; i >= 2; i--)
   {
-    //no elements
-    this->m_BreakBegin = this->m_BreakEnd = this->nEnd;
-    return;
-  }
-  else if(this->nBegin == this->nEnd)
-  {
-    //only one element
-    this->m_BreakBegin = this->m_BreakEnd = this->nEnd;
-    return;
-  }
-  else
-  {
-    bFilled = false;
-    this->bSecondaryBreak = false;
-    this->m_BreakBegin = this->m_BreakEnd = this->nEnd;
-    for(nI=0;nI<nUsed-1;nI++)
+    if(GetValue(i - 2, 0, 0) >= GetValue(i - 1, 0, 0))
     {
-      if((*this)(nI,0)>(*this)(nI+1,0))
-      {
-        if(!bFilled)
-        {
-          bFilled = true;
-          this->m_BreakBegin = nI;
-          this->m_BreakEnd   = nI + 1;
-        }
-        else
-        {
-          //wxASSERT(!this->bSecondaryBreak);
-          this->bSecondaryBreak = true;
-        }
-      }
+      stage++;
+    }
+    if(stage >= 2 || (GetValue(points - 1, 0, 0) >= GetValue(i - 2, 0, 0) && stage >= 1))
+    {
+      NumToRem++;
     }
   }
-  return;
-} // end of mafMemoryGraphBase<T, I, G>::UpdateBreakPosition;
-
-/**
- * detailed description
- *
- * @memo    Get number of free entries
- * @return  None
- * @author  Earnol
- * @see     Nothing
- */
-template <class T, class I, class G>
-int  mafMemoryGraphBase<T, I, G>::GetFreeMemSpace(void)
-{
-  int nFree;
-  
-  wxASSERT((this->nBegin == 0 && this->nEnd == 0) || (this->nBegin != this->nEnd));
-
-  if(this->m_Empty)
+  RemovePoints(NumToRem);
+  if(NumToRem > 0)
   {
-    return this->nMaxSize;
+    UpdateBreakPosition();
   }
-  if(this->nBegin <= this->nEnd)
-  {
-    //native order
-    nFree = this->nMaxSize - (this->nEnd - this->nBegin) - 1;
-  }
-  else
-  {
-    //warped order
-    nFree = this->nBegin - this->nEnd - 1;
-  }
-  
-  return nFree;
-} // end of mafMemoryGraphBase<T, I, G>::GetFreeMemSpace;
-
-template <class T, class I, class G>
-typename mafMemoryGraphBase<T, I, G>::mafMemGrTotalRange const *mafMemoryGraphBase<T, I, G>::GetRange(void)
-{
-  return &gtrTotalRange;
 }
 
-/**
- * detailed description
- *
- * @memo    destructor
- * @return  None
- * @author  Earnol
- * @see     Nothing
- */
-template <class T, class I, class G>
-mafMemoryGraphBase<T, I, G>::~mafMemoryGraphBase(void)
+//Support state for break index
+template <class T>
+void  mafMemoryGraphBase<T>::UpdateBreakPosition()
 {
-  return;
-} // end of mafMemoryGraphBase<T, I, G>::~mafMemoryGraphBase
-
-/**
- * detailed description
- *
- * @memo    
- * @return  None
- * @param   nSize
- * @author  Earnol
- * @see     Nothing
- */
-template <class T, class I, class G>
-void mafMemoryGraphBase<T, I, G>::Init(unsigned int nDimension, unsigned int nSize)
-{
-  unsigned int nI;
-
-  wxASSERT(nDimension>=1);
-  this->nDim = nDimension;
-
-  this->nBegin               = 0;
-  this->m_BreakBegin         = 0;
-  this->nEnd                 = 0;
-  this->m_BreakEnd           = 0;
-  this->nMaxSize             = nSize;
-  this->m_Empty              = true;
-  this->bSecondaryBreak      = false;
-
-  m_Points.resize(nSize);
-  for(nI = 0; nI < nSize; nI++)
+  int   NumUsed = GetUsedMemSpace();
+  m_BreakBegin = m_BreakEnd = NumUsed;
+  for(int i = 0;i + 1 < NumUsed; i++)
   {
-    m_Points[nI].resize(nDimension);
+    if(GetValue(i, 0, 0) >= GetValue(i + 1, 0, 0))
+    {
+      m_BreakBegin = m_BreakEnd = i + 1;
+      break;
+    }
   }
-  vgrRanges.resize(nDimension);
-  m_Coords.resize(nDimension);
-  m_Filled.resize(nDimension);
-  vnIDs.resize(nDimension);
-  vnXIndexes.resize(nDimension);
-  vnYIndexes.resize(nDimension);
-
-  nXDim= 0;
-  nYDim= 0;
-
-  nGraphID.zero();
-  this->m_FilledPoints = 0;
-  for(nI=0;nI<this->nDim;nI++)
-  {
-    m_Filled[nI] = false;
-  }
-  //similar points skip system
-  this->rUnnoticedRange = 0.0f;
-
-  return;
-} // end of mafMemoryGraphBase<T, I, G>::Init
-
-
-template <class T, class I, class G>
-void  mafMemoryGraphBase<T, I, G>::SetDim(unsigned int nDimension)
-{
-  unsigned int nI;
-  unsigned int nSize;
-
-  wxASSERT(nDimension>=1);
-  this->nDim = nDimension;
-
-  this->nBegin               = 0;
-  this->m_BreakBegin         = 0;
-  this->nEnd                 = 0;
-  this->m_BreakEnd           = 0;
-  this->m_Empty              = true;
-  this->bSecondaryBreak      = false;
-
-  nSize = m_Points.size();
-
-  for(nI = 0; nI < nSize; nI++)
-  {
-    m_Points[nI].resize(nDimension);
-  }
-  vgrRanges.resize(nDimension);
-  m_Coords.resize(nDimension);
-  m_Filled.resize(nDimension);
-  vnIDs.resize(nDimension);
-  vnXIndexes.resize(nDimension);
-  vnYIndexes.resize(nDimension);
-
-  this->m_FilledPoints = 0;
-  for(nI=0;nI<this->nDim;nI++)
-  {
-    m_Filled[nI] = false;
-  }
-  //similar points skip system
-  this->rUnnoticedRange = 0.0f;
-
-  rRangeGrowStep         = 5.0f;
-  rPointNoticeCriterion  = 0.0025f;
-  rSpaceInRange          = 0.000001f;
-
-  return;
 }
 
-/**
- * detailed description
- *
- * @memo    
- * @return  None
- * @param   nSize
- * @author  Earnol
- * @see     Nothing
- */
-template <class T, class I, class G>
-void mafMemoryGraphBase<T, I, G>::Clean()
+template <class T>
+mafMemoryGraphBase<T>::~mafMemoryGraphBase()
 {
-  unsigned int nI;
+}
 
-  this->nBegin              = 0;
-  this->m_BreakBegin         = 0;
-  this->nEnd                = 0;
-  this->m_BreakEnd           = 0;
-  this->m_Empty              = true;
-  this->bSecondaryBreak     = false;
+template <class T>
+void  mafMemoryGraphBase<T>::SetDim(unsigned int dimension)
+{
+  unsigned int i;
 
-  this->m_FilledPoints = 0;
-  for(nI=0;nI<this->nDim;nI++)
+  wxASSERT(dimension>=1);
+  m_Dim = dimension;
+
+  for(i = 0;i < m_MaxSize;i++)
   {
-    m_Filled[nI] = false;
+    m_Points[i].resize(dimension);
+  }
+
+  m_X.resize(2 * dimension);
+  m_Y.resize(2 * dimension);
+  m_S.resize(2 * dimension);
+  m_Z.resize(2 * dimension);
+  m_A.resize(2 * dimension);
+
+
+  m_Coords.resize(dimension);
+  m_Filled.resize(dimension);
+  m_Smoothed.resize(dimension);
+  m_IDs.resize(dimension);
+  m_XParams.Indexes.resize(3 * dimension);
+  m_YParams.Indexes.resize(3 * dimension);
+  m_XParams.Derives.resize(3 * dimension);
+  m_YParams.Derives.resize(3 * dimension);
+  Clean();
+}
+
+template <class T>
+void mafMemoryGraphBase<T>::Clean()
+{
+  unsigned int i;
+
+  m_Begin          = 0;
+  m_BreakBegin     = 0;
+  m_End            = 0;
+  m_BreakEnd       = 0;
+
+  m_FilledPoints = 0;
+  for(i = 0;i < m_Dim;i++)
+  {
+    m_Filled[i] = false;
+    m_Smoothed[i] = false;
   }
   //similar points skip system
-  this->rUnnoticedRange = 0.0f;
+  m_UnnoticedRange = 0.0f;
+}
 
-  return;
-} // end of mafMemoryGraphBase<T, I, G>::Clean
-
-
-
-
-template <class T, class I, class G>
-bool mafMemoryGraphBase<T, I, G>::AddYVar(const I& nID)
+template <class T>
+bool mafMemoryGraphBase<T>::AddVar(int ID, unsigned int deriv, typename mafMemoryGraphBase::VarParams& primparam)
 {
-  unsigned int nIndex;
-  unsigned int nI;
+  unsigned int index;
+  unsigned int i;
 
-  for(nI = 0; nI < this->nYDim; nI++)//if this variable is already in Y list we have nothing to do, report about error
+  for(i = 0; i < primparam.Dim; i++)//if this variable is already in Y list we have nothing to do, report about error
   {
-    if(nID == this->GetYID(nI))
+    if(ID == GetID(primparam.Indexes[i]) && deriv == primparam.Derives[i])
     {
       return false;
     }
   }
 
-  this->Clean();//clean all stored data
-
-  if(nID == this->GetID(0))//variable number 0 is a parameter for parametric graphs and is always present, special handling
+  index = m_Dim;
+  for(i = 0; i < m_Dim; i++)//check if variable is already in list
   {
-    nIndex = 0;
-  }
-  else
-  {
-    nIndex = this->nDim;
-    for(nI = 0; nI < this->nXDim; nI++)//check if variable is already in list
+    if(ID == GetID(i))
     {
-      if(nID == this->GetXID(nI))
-      {
-        nIndex = this->GetXIndex(nI);
-        break;
-      }
+      index = i;
+      break;
     }
   }
 
-  if(nIndex == this->nDim)//variable not found
+  if(index == m_Dim)//variable not found
   {
-    this->SetDim(this->nDim + 1);//increase only total dimension, Y dimension will be increased later 
-    this->SetID(nIndex, nID);
+    Clean();//clean all stored data
+    SetDim(m_Dim + 1);//increase only total dimension, Y dimension will be increased later 
+    SetID(index, ID);
   }
 
-  this->SetYDim(this->nYDim + 1);
-  this->SetYIndex(this->nYDim - 1, nIndex);
+  primparam.Dim++;
+  primparam.Indexes[primparam.Dim - 1] = index;
+  primparam.Derives[primparam.Dim - 1] = deriv;
   return true;
 }
 
-
-template <class T, class I, class G>
-bool mafMemoryGraphBase<T, I, G>::RemYVar(const I& nID)
+template <class T>
+bool mafMemoryGraphBase<T>::RemVar(unsigned int coord, typename mafMemoryGraphBase::VarParams& primparam, typename mafMemoryGraphBase::VarParams& secparam)
 {
-  unsigned int nIndex, nCoord;
-  unsigned int nI, nJ;
+  unsigned int index;
+  unsigned int i, j;
 
-  if(this->nYDim == 0)
+  if(primparam.Dim == 0)
   {
     return false;
   }
 
-  this->Clean();//clean all stored data
 
-  nIndex = this->nDim;
-  for(nI = 0; nI < this->nYDim; nI++)
-  {
-    if(nID == this->GetYID(nI))
-    {
-      nIndex = this->GetYIndex(nI);
-      nCoord = nI;
-      break;
-    }
-  }
-  wxASSERT(nIndex < this->nDim);
-  if(nIndex == 0)
+  wxASSERT(coord < primparam.Dim);
+  index = primparam.Indexes[coord];
+
+  wxASSERT(index < m_Dim);
+  if(index == 0)
   {
     //<clean only Y indexes>
-    for(nJ = nCoord; nJ < this->nYDim - 1; nJ++)
+    for(j = coord; j < primparam.Dim - 1; j++)
     {
-      this->SetYIndex(nJ, this->GetYIndex(nJ + 1));
+      primparam.Indexes[j] = primparam.Indexes[j + 1];
+      primparam.Derives[j] = primparam.Derives[j + 1];
     }
-    this->SetYDim(this->nYDim - 1);
+    primparam.Dim--;
     return true;
   }
-  for(nI = 0; nI < this->nXDim; nI++)
+  for(i = 0; i < secparam.Dim; i++)
   {
-    if(nIndex == this->GetXIndex(nI))
+    if(index == secparam.Indexes[i])
     {
       //<clean only Y indexes>
-      for(nJ = nCoord; nJ < this->nYDim - 1; nJ++)
+      for(j = coord; j < primparam.Dim - 1; j++)
       {
-        this->SetYIndex(nJ, this->GetYIndex(nJ + 1));
+        primparam.Indexes[j] = primparam.Indexes[j + 1];
+        primparam.Derives[j] = primparam.Derives[j + 1];
       }
-      this->SetYDim(this->nYDim - 1);
+      primparam.Dim--;
       return true;
     }
   }
+  for(i = 0; i < primparam.Dim; i++)
+  {
+    if(index == primparam.Indexes[i] && i != coord)
+    {
+      //<clean only Y indexes>
+      for(j = coord; j < primparam.Dim - 1; j++)
+      {
+        primparam.Indexes[j] = primparam.Indexes[j + 1];
+        primparam.Derives[j] = primparam.Derives[j + 1];
+      }
+      primparam.Dim--;
+      return true;
+    }
+  }
+  Clean();//clean all stored data
+
   //<clean both IDs and Y indexes>
-  for(nI = nCoord; nI < this->nYDim - 1; nI++)//shift Y indexes
+  for(j = coord; j < primparam.Dim - 1; j++)
   {
-    this->SetYIndex(nI, this->GetYIndex(nI + 1));
+    primparam.Indexes[j] = primparam.Indexes[j + 1];
+    primparam.Derives[j] = primparam.Derives[j + 1];
   }
 
-  for(nI = nIndex; nI < this->nDim - 1; nI++)//shift IDs
+  for(i = index; i < m_Dim - 1; i++)//shift IDs
   {
-    this->SetID(nI, this->GetID(nI + 1));
+    SetID(i, GetID(i + 1));
   }
 
-  for(nI = 0; nI < this->nXDim; nI++)//correct X indexes
+  for(i = 0; i < secparam.Dim; i++)//correct X indexes
   {
-    if(nIndex < this->GetXIndex(nI))
+    if(index < secparam.Indexes[i])
     {
-      this->SetXIndex(nI, this->GetXIndex(nI) - 1);
+      secparam.Indexes[i]--;
     }
   }
 
-  for(nI = 0; nI < this->nYDim; nI++)//correct Y indexes
+  for(i = 0; i < primparam.Dim; i++)//correct Y indexes
   {
-    if(nIndex < this->GetYIndex(nI))
+    if(index < primparam.Indexes[i])
     {
-      this->SetYIndex(nI, this->GetYIndex(nI) - 1);
+      primparam.Indexes[i]--;
     }
   }
-  this->SetDim(this->nDim - 1);
-  this->SetYDim(this->nYDim - 1);
+  primparam.Dim--;
+  SetDim(m_Dim - 1);
   return true;
 }
 
-template <class T, class I, class G>
-bool mafMemoryGraphBase<T, I, G>::SetYVar(unsigned int nIndex, const I& nID)
+template <class T>
+bool mafMemoryGraphBase<T>::SetVar(unsigned int index, int ID, unsigned int deriv, typename mafMemoryGraphBase::VarParams& primparam, typename mafMemoryGraphBase::VarParams& secparam)
 {
-  unsigned int nNewIndex, nOldIndex;
-  unsigned int nI;
-  bool   bRemove,bAdd;
-  if(nID == this->GetYID(nIndex))//if we don't want to change it return
+  unsigned int NewIndex, OldIndex;
+  unsigned int i;
+  bool   bRemove, bAdd;
+  if(ID == GetID(primparam.Indexes[index]))//if we don't want to change it return
   {
+    primparam.Derives[index] = deriv;
     return true;
   }
-  for(nI = 0; nI < this->nYDim; nI++)//if we try to set this ID for second time return with error
+  for(i = 0; i < primparam.Dim; i++)//if we try to set this ID for second time return with error
   {
-    if(nID == this->GetYID(nI))
+    if(ID == GetID(primparam.Indexes[i]) && primparam.Derives[i] == deriv)
     {
       return false;
     }
   }
 
-  this->Clean();
-
-  nOldIndex = this->GetYIndex(nIndex);//Index of old coordinate
-  if(nOldIndex == 0)
+  OldIndex = primparam.Indexes[index];//Index of old coordinate
+  if(OldIndex == 0)
   {
     bRemove = false;
   }
   else
   {
     bRemove   = true;
-    for(nI = 0; nI < this->nXDim; nI++)
+    for(i = 0; i < secparam.Dim; i++)
     {
-      if(nOldIndex == this->GetXIndex(nI))
+      if(OldIndex == secparam.Indexes[i])
+      {
+        bRemove = false;
+        break;
+      }
+    }
+    for(i = 0; i < primparam.Dim; i++)
+    {
+      if(OldIndex == primparam.Indexes[i] && i != index)
       {
         bRemove = false;
         break;
       }
     }
   }
-  nNewIndex = this->nDim;
-  for(nI = 0; nI< this->nDim; nI++)//find index for new coordinate
+  NewIndex = m_Dim;
+  for(i = 0; i < m_Dim; i++)//find index for new coordinate
   {
-    if(nID == this->GetID(nI))
+    if(ID == GetID(i))
     {
-      nNewIndex = nI;
+      NewIndex = i;
       break;
     }
   }
-  bAdd = (nNewIndex == this->nDim);
+  bAdd = (NewIndex == m_Dim);
   if(bAdd && bRemove)//add and remove variable, so change only ID
   {
-    this->SetID(nOldIndex, nID);
-  }
-  else if(!bAdd && !bRemove)//neither add nor remove, so change only index
-  {
-    this->SetYIndex(nIndex,nNewIndex);
-  }
-  else if(bAdd && !bRemove)//add but not remove
-  {
-    this->SetDim(this->nDim + 1);
-    this->SetID(nNewIndex, nID);
-    this->SetYIndex(nIndex, nNewIndex);
-  }
-  else//remove but not add
-  {
-    this->SetYIndex(nIndex, nNewIndex);
-    for(nI = nOldIndex; nI < this->nDim - 1; nI++)//shift IDs
-    {
-      this->SetID(nI, this->GetID(nI + 1));
-    }
-
-    for(nI = 0; nI < this->nXDim; nI++)//correct X indexes
-    {
-      if(nOldIndex < this->GetXIndex(nI))
-      {
-        this->SetXIndex(nI, this->GetXIndex(nI) - 1);
-      }
-    }
-
-    for(nI = 0; nI < this->nYDim; nI++)//correct Y indexes
-    {
-      if(nOldIndex < this->GetYIndex(nI))
-      {
-        this->SetYIndex(nI, this->GetYIndex(nI) - 1);
-      }
-    }
-    this->SetDim(this->nDim - 1);
-  }
-  return true;
-}
-
-
-template <class T, class I, class G>
-bool mafMemoryGraphBase<T, I, G>::AddXVar(const I& nID)
-{
-  unsigned int nIndex;
-  unsigned int nI;
-
-  for(nI = 0; nI < this->nXDim; nI++)//if this variable is already in X list we have nothing to do, report about error
-  {
-    if(nID == this->GetXID(nI))
-    {
-      return false;
-    }
-  }
-
-  this->Clean();//clean all stored data
-
-  if(nID == this->GetID(0))//variable number 0 is a parameter for parametric graphsand is always present, special handling
-  {
-    nIndex = 0;
-  }
-  else
-  {
-    nIndex = this->nDim;
-    for(nI = 0; nI < this->nYDim; nI++)//check if variable is already in list
-    {
-      if(nID == this->GetYID(nI))
-      {
-        nIndex = this->GetYIndex(nI);
-        break;
-      }
-    }
-  }
-
-  if(nIndex == this->nDim)//variable not found
-  {
-    this->SetDim(this->nDim + 1);
-    this->SetID(nIndex, nID);
-  }
-
-  this->SetXDim(this->nXDim + 1);
-  this->SetXIndex(this->nXDim - 1, nIndex);
-  return true;
-}
-
-
-template <class T, class I, class G>
-bool mafMemoryGraphBase<T, I, G>::RemXVar(const I& nID)
-{
-  unsigned int nIndex, nCoord;
-  unsigned int nI, nJ;
-
-  if(this->nXDim == 1)
-  {
-    return false;
-  }
-
-  this->Clean();//clean all stored data
-
-  nIndex = this->nDim;
-  for(nI = 0; nI < this->nXDim; nI++)
-  {
-    if(nID == this->GetXID(nI))
-    {
-      nIndex = this->GetXIndex(nI);
-      nCoord = nI;
-      break;
-    }
-  }
-  wxASSERT(nIndex < this->nDim);
-  if(nIndex == 0)
-  {
-    //<clean only X indexes>
-    for(nJ = nCoord; nJ < this->nXDim - 1; nJ++)
-    {
-      this->SetXIndex(nJ, this->GetXIndex(nJ + 1));
-    }
-    this->SetXDim(this->nXDim - 1);
+    Clean();
+    SetID(OldIndex, ID);
+    primparam.Derives[index] = deriv;
     return true;
   }
-  for(nI = 0; nI < this->nYDim; nI++)
+  if(!bAdd && !bRemove)//neither add nor remove, so change only index
   {
-    if(nIndex == this->GetYIndex(nI))
-    {
-      //<clean only X indexes>
-      for(nJ = nCoord; nJ < this->nXDim - 1; nJ++)
-      {
-        this->SetXIndex(nJ, this->GetXIndex(nJ + 1));
-      }
-      this->SetXDim(this->nXDim - 1);
-      return true;
-    }
-  }
-  //<clean both IDs and X indexes>
-  for(nI = nCoord; nI < this->nXDim - 1; nI++)//shift X indexes
-  {
-    this->SetXIndex(nI, this->GetXIndex(nI + 1));
-  }
-
-  for(nI = nIndex; nI < this->nDim - 1; nI++)//shift IDs
-  {
-    this->SetID(nI, this->GetID(nI + 1));
-  }
-
-  for(nI = 0; nI < this->nYDim; nI++)//correct Y indexes
-  {
-    if(nIndex < this->GetYIndex(nI))
-    {
-      this->SetYIndex(nI, this->GetYIndex(nI) - 1);
-    }
-  }
-
-  for(nI = 0; nI < this->nXDim; nI++)//correct X indexes
-  {
-    if(nIndex < this->GetXIndex(nI))
-    {
-      this->SetXIndex(nI, this->GetXIndex(nI) - 1);
-    }
-  }
-  this->SetDim(this->nDim - 1);
-  this->SetXDim(this->nXDim - 1);
-  return true;
-}
-
-template <class T, class I, class G>
-bool mafMemoryGraphBase<T, I, G>::SetXVar(unsigned int nIndex, const I& nID)
-{
-  unsigned int nNewIndex, nOldIndex;
-  unsigned int nI;
-  bool   bRemove,bAdd;
-
-  if(nID == this->GetXID(nIndex))//if we don't want to change it return
-  {
+    primparam.Indexes[index] = NewIndex;
+    primparam.Derives[index] = deriv;
     return true;
   }
-  for(nI = 0; nI < this->nXDim; nI++)//if we try to set this ID for second time return with error
+  if(bAdd && !bRemove)//add but not remove
   {
-    if(nID == this->GetXID(nI))
+    Clean();
+    SetDim(m_Dim + 1);
+    SetID(NewIndex, ID);
+    primparam.Indexes[index] = NewIndex;
+    primparam.Derives[index] = deriv;
+    return true;
+  }
+  //else//remove but not add
+  {
+    Clean();
+    primparam.Indexes[index] = NewIndex;
+    primparam.Derives[index] = deriv;
+    for(i = OldIndex; i < m_Dim - 1; i++)//shift IDs
     {
-      return false;
+      SetID(i, GetID(i + 1));
     }
-  }
 
-  this->Clean();
-
-  nOldIndex = this->GetXIndex(nIndex);//Index of old coordinate
-  if(nOldIndex == 0)
-  {
-    bRemove = false;
-  }
-  else
-  {
-    bRemove   = true;
-    for(nI = 0; nI < this->nYDim; nI++)
+    for(i = 0; i < secparam.Dim; i++)//correct X indexes
     {
-      if(nOldIndex == this->GetYIndex(nI))
+      if(OldIndex < secparam.Indexes[i])
       {
-        bRemove = false;
-        break;
-      }
-    }
-  }
-  nNewIndex = this->nDim;
-  for(nI = 0; nI< this->nDim; nI++)//find index for new coordinate
-  {
-    if(nID == this->GetID(nI))
-    {
-      nNewIndex = nI;
-      break;
-    }
-  }
-  bAdd = (nNewIndex == this->nDim);
-  if(bAdd && bRemove)//add and remove variable, so change only ID
-  {
-    this->SetID(nOldIndex, nID);
-  }
-  else if(!bAdd && !bRemove)//neither add nor remove, so change only index
-  {
-    this->SetXIndex(nIndex,nNewIndex);
-  }
-  else if(bAdd && !bRemove)//add but not remove
-  {
-    this->SetDim(this->nDim + 1);//increase only total dimension, Y dimension will be increased later 
-    this->SetID(nNewIndex, nID);
-    this->SetXIndex(nIndex, nNewIndex);
-  }
-  else//remove but not add
-  {
-    this->SetXIndex(nIndex, nNewIndex);
-    for(nI = nOldIndex; nI < this->nDim - 1; nI++)//shift IDs
-    {
-      this->SetID(nI, this->GetID(nI + 1));
-    }
-
-    for(nI = 0; nI < this->nYDim; nI++)//correct Y indexes
-    {
-      if(nOldIndex < this->GetYIndex(nI))
-      {
-        this->SetYIndex(nI, this->GetYIndex(nI) - 1);
+        secparam.Indexes[i]--;
       }
     }
 
-    for(nI = 0; nI < this->nXDim; nI++)//correct X indexes
+    for(i = 0; i < primparam.Dim; i++)//correct Y indexes
     {
-      if(nOldIndex < this->GetXIndex(nI))
+      if(OldIndex < primparam.Indexes[i])
       {
-        this->SetXIndex(nI, this->GetXIndex(nI) - 1);
+        primparam.Indexes[i]--;
       }
     }
-    this->SetDim(this->nDim - 1);
+    SetDim(m_Dim - 1);
   }
   return true;
 }
-
-
-template <class T, class I, class G>
-void mafMemoryGraphBase<T, I, G>::RecalculateRanges()
-{
-  int nI,nJ;
-  T rMin,rMax,rValue;
-  int nSize;
-
-  nSize = this->GetUsedMemSpace();
-  if(nSize <= 0)
-  {
-    return;
-  }
-  for(nI = 0; nI < this->nDim; nI++)
-  {
-    rMin = (*this)(0, nI);
-    rMax = (*this)(0, nI);
-    for(nJ = 1; nJ < nSize; nJ++)
-    {
-      rValue = (*this)(nJ, nI);
-      if(rValue > rMax)
-      {
-        rMax = rValue;
-      }
-      if(rValue < rMin)
-      {
-        rMin = rValue;
-      }
-    }
-    this->vgrRanges[nI].rMin = rMin;
-    this->vgrRanges[nI].rMax = rMax;
-  }
-  if(this->nXDim>0)
-  {
-    this->gtrTotalRange.rXMin = vgrRanges[vnXIndexes[0]].rMin;
-    this->gtrTotalRange.rXMax = vgrRanges[vnXIndexes[0]].rMax;
-    for(nI = 1; nI < this->nXDim; nI++)
-    {
-      if(vgrRanges[vnXIndexes[nI]].rMin < this->gtrTotalRange.rXMin)
-      {
-        this->gtrTotalRange.rXMin = vgrRanges[vnXIndexes[nI]].rMin;
-      }
-      if(vgrRanges[vnXIndexes[nI]].rMax > this->gtrTotalRange.rXMax)
-      {
-        this->gtrTotalRange.rXMax = vgrRanges[vnXIndexes[nI]].rMax;
-      }
-    }
-  }
-  if(this->nYDim > 0)
-  {
-    this->gtrTotalRange.rYMin=vgrRanges[vnYIndexes[0]].rMin;
-    this->gtrTotalRange.rYMax=vgrRanges[vnYIndexes[0]].rMax;
-    for(nI=1;nI<this->nYDim;nI++)
-    {
-      if(vgrRanges[vnYIndexes[nI]].rMin<this->gtrTotalRange.rYMin)
-      {
-        this->gtrTotalRange.rYMin=vgrRanges[vnYIndexes[nI]].rMin;
-      }
-      if(vgrRanges[vnYIndexes[nI]].rMax>this->gtrTotalRange.rYMax)
-      {
-        this->gtrTotalRange.rYMax=vgrRanges[vnYIndexes[nI]].rMax;
-      }
-    }
-  }
-
-  return;
-}
-
-template <class I, unsigned dimension = 1>
-class mafGraphIDIndex:public std::vector<I>
-{
-public:
-  mafGraphIDIndex():std::vector<I>(dimension){}
-  void zero(){std::vector<I>::assign(size(), 0);}
-  bool isZero()const{for(std::vector<I>::const_iterator iter = begin(); iter < end(); ++iter) if(*iter != I(0)) return false; return true;}
-private:
-  void resize(size_type _Newsize);
-};
-
-typedef mafGraphIDIndex<int, 2> IDType;
-typedef mafGraphIDIndex<int, 1> GraphIDType;
 
 /**
-Memory Graph instantiation with float*/
-class mafMemoryGraph: public mafMemoryGraphBase<double, IDType, GraphIDType>
+Memory Graph instantiation with double*/
+class mafMemoryGraph: public mafMemoryGraphBase<double>
 {
 public:
-  mafMemoryGraph(double garbage, unsigned int nDimension = 2,unsigned int nSize = 1000): m_garbage(garbage),  mafMemoryGraphBase<double, IDType, GraphIDType>(nDimension, nSize){}
-  double   GetGarbageValue(void) { return m_garbage;}
+  mafMemoryGraph(double garbage,unsigned int size = 1000): m_garbage(garbage),  mafMemoryGraphBase(size){}
+  const double&   GetGarbageValue(){return m_garbage;}
 private:
   double m_garbage;
 };
-
-
-#ifdef _MSC_FULL_VER
-#pragma warning (default: 4786)
 #endif
-
-/**   */
-#endif
-
-
-
-

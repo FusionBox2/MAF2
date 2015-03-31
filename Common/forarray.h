@@ -30,7 +30,7 @@ public:
   //constructor by size and value
   ForArray(size_t _Count, const Type &val):m_offset(0),m_vector(_Count + 4, val){}
   //copy constructor
-  ForArray(const ForArray& array):m_offset(array.m_offset),m_vector(array){}
+  ForArray(const ForArray& array):m_offset(array.m_offset),m_vector(array.m_vector){}
   //assign operator
   ForArray &operator=(const ForArray& array){if(this == &array) return (*this);m_offset = array.m_offset; m_vector = array.m_vector; return (*this);}
   //Fortran like indexation

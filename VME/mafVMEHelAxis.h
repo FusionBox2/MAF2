@@ -13,22 +13,26 @@
 #ifndef __mafVMEHelAxis_h
 #define __mafVMEHelAxis_h
 
+#include "lhpDefines.h"
+
 //-----------------------------------------------------------------------
 // Includes:
 //-----------------------------------------------------------------------
 #include "mafVME.h"
 #include "mafVmeOutput.h"
 #include "mafVMEGeneric.h"
-#include "mafVMERefSys.h"
+#include "vectors.h"
 
 //-----------------------------------------------------------------------
 // class forwarding
 //-----------------------------------------------------------------------
 class vtkArrowSource;
+class vtkSphereSource;
 class vtkTransformPolyDataFilter;
 class vtkTransform;
 class vtkAppendPolyData;
 class vtkPolyData;
+class mmaMaterial;
 
 //-----------------------------------------------------------------------
 // class mafVMEHelAxis
@@ -42,6 +46,12 @@ public:
   {
     ID_NAME_REF_SYS = Superclass::ID_LAST,
     ID_SCALE_FACTOR,
+    ID_MIN_ANGLE,
+    ID_MIN_TIME,
+    ID_MAX_TIME,
+    ID_REF_TIME,
+    ID_MODE,
+    ID_ALIGNING,
     ID_PRINT,
     ID_LAST
   };
@@ -51,6 +61,8 @@ public:
   bool     CanReparentTo(mafNode *parent) {return GetParent() == NULL || parent == NULL;}
 
   void     OnEvent(mafEventBase *maf_event);
+  /** Copy the contents of another VME-RefSys into this one. */
+  virtual int DeepCopy(mafNode *a);
   /** Return the suggested pipe-typename for the visualization of this vme */
   virtual mafString GetVisualPipe() {return mafString("mafPipeSurface");};
   /** Return pointer to material attribute. */
@@ -65,6 +77,11 @@ public:
   /** Return the axes size */
   double GetScaleFactor();
 
+  const V3d<double>& GetDirection(){return m_Direction;}
+  const V3d<double>& GetStartPoint(){return m_StartPoint;}
+  double GetAngle(){return m_Angle;}
+  double GetTranslation(){return m_Translation;}
+
   /**
   Set the Pose matrix of the VME. This function modifies the MatrixVector. You can
   set or get the Pose for a specified time. When setting, if the time does not exist
@@ -72,11 +89,16 @@ public:
   interpolates on the fly according to the matrix interpolator.*/
   virtual void SetMatrix(const mafMatrix &mat);
 
+  void GetShowTransform(mafTimeStamp ts, const V3d<double>& helicalAxis, const V3d<double>& point, mafMatrix& globalMatrix);
+
+  void CalculateMatrix(mafMatrix &mtr, mafTimeStamp tsTime);
   /**
   Return the list of timestamps for this VME. Timestamps list is 
   obtained merging timestamps for matrixes and VME items*/
   virtual void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes){kframes.clear();}
 
+  virtual void GetMeanAxis(mafTimeStamp tsMinTime, mafTimeStamp tsMaxTime, V3d<double>& Direction, V3d<double>& StartPoint, double& resang);
+  virtual void GetMomentAxis(mafTimeStamp tsTime, V3d<double>& helicalAxis, V3d<double>& point, double& angle, double& translationAmount, mafTimeStamp tsTimeTo = -1);
 protected:
   mafVMEHelAxis();
   virtual ~mafVMEHelAxis();
@@ -96,7 +118,17 @@ protected:
   /** update the output data structure */
   void UpdateCS();
 
+  /** update the output data structure */
+  bool AlignAxis(const V3d<double>& direction, const mafMatrix& prox, int mode);
+
+  /** Used to change the axes size */
+  void UpdateScaleFactor();
+
   vtkArrowSource             *m_ZArrow;
+  vtkSphereSource            *m_CenterSphere;
+
+  vtkTransformPolyDataFilter *m_Center;
+  vtkTransform               *m_CenterTransform;
 
   vtkTransformPolyDataFilter *m_ZAxis;
   vtkTransform               *m_ZAxisTransform;
@@ -108,6 +140,25 @@ protected:
 
   double                     m_ScaleFactor;
   double                     m_AngleFactor;
+
+  double                     m_MinAngle;
+  double                     m_MinTime;
+  double                     m_MaxTime;
+  double                     m_RefTime;
+  int                        m_Mode;
+  int                        m_AligningMode;
+
+  V3d<double>                m_StartPoint;
+  V3d<double>                m_Direction;
+  double                     m_Angle;
+  double                     m_Translation;
+
+  mafString                  m_StrDir[3];
+  mafString                  m_StrPnt[3];
+  mafString                  m_StrAng;
+  mafString                  m_StrTrl;
+
+  int                        m_MeanChanges;
 
   mafTransform               *m_Transform; ///< pose matrix for the slicer plane
 private:

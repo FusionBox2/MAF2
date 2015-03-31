@@ -103,14 +103,14 @@ IF(MAF_FOUND)
       SUBDIRS (Docs)
   ENDIF(BUILD_DOCUMENTATION)
   
-  ADD_SUBDIRECTORY(Aurion/C3DReader/share)
-  INCLUDE("${PROJECT_SOURCE_DIR}/CMakeModules/FindC3DReaderAPI.cmake")
-
-  IF(C3DReaderAPI_FOUND)
-      INCLUDE(${C3DReaderAPI_USE_FILE})
-  ELSE(C3DReaderAPI_FOUND)
-		#MESSAGE(FATAL_ERROR "Cannot find C3DReaderAPI_PATH")
-  ENDIF(C3DReaderAPI_FOUND)
+#  ADD_SUBDIRECTORY(Aurion/C3DReader/share)
+#  INCLUDE("${PROJECT_SOURCE_DIR}/CMakeModules/FindC3DReaderAPI.cmake")
+#
+#  IF(C3DReaderAPI_FOUND)
+#      INCLUDE(${C3DReaderAPI_USE_FILE})
+#  ELSE(C3DReaderAPI_FOUND)
+#		#MESSAGE(FATAL_ERROR "Cannot find C3DReaderAPI_PATH")
+#  ENDIF(C3DReaderAPI_FOUND)
 
   # Export Build settings and library dependencies
   INCLUDE(CMakeExportBuildSettings)

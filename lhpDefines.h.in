@@ -1,6 +1,8 @@
 #ifndef __lhpDefines_h
 #define __lhpDefines_h
 
+#include "medDefines.h"
+
 //--------------------------------------------------------------------------
 // Data root used to reach data for testing
 //--------------------------------------------------------------------------

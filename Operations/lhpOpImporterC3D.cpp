@@ -44,7 +44,38 @@
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
 
-#include "C3D_Reader.h"
+//#include "C3D_Reader.h"
+
+
+//******************************************
+//definizione codici errori
+//******************************************
+#define NOERROR								 0
+
+#define ERROR_OPEN_FILE						 1
+#define ERROR_READING_PROC_TYPE				 2
+#define ERROR_READING_HEADER				 3
+#define ERROR_READING_PARAM					 4
+#define ERROR_READING_TRIAL_PARAM			 5
+#define ERROR_READING_VIDEO_PARAM			 6
+#define ERROR_READING_ANALOG_PARAM			 7
+#define ERROR_READING_FORCE_PLATFORM_PARAM	 8
+#define ERROR_READING_EVENT_PARAM			 9
+#define ERROR_READING_DATA					10
+#define ERROR_READING_VIDEO_DATA			11
+#define ERROR_READING_ANALOG_DATA			12
+#define ERROR_CLOSE_FILE					13
+
+#define ERROR_NOT_LICENSE					100
+
+//******************************************
+//definizione costanti
+//******************************************
+#define TRAJECTORY				1
+#define ANGLE					2
+#define MOMENT					3
+#define POWER				    4
+
 
 #include <vcl_fstream.h>
 #include <vcl_string.h>
@@ -202,51 +233,101 @@ mafOp* lhpOpImporterC3D::Copy()
 void lhpOpImporterC3D::OpRun()   
 //----------------------------------------------------------------------------
 {
-  CreateGui();
-  ShowGui();
+  mafString wildcard = "c3d files (*.c3d)|*.c3d";
+  std::vector<std::string> files;
+  mafString f;
+
+  m_C3DInputFileNameFullPaths.clear();
+  {
+    mafGetOpenMultiFiles(m_FileDir,wildcard, files);
+    for(unsigned i = 0; i < files.size(); i++)
+    {
+      f = files[i].c_str();
+      m_C3DInputFileNameFullPaths.push_back(f);
+    }
+  }
+
+  if(m_C3DInputFileNameFullPaths.size() == 0) 
+  {
+    mafEventMacro(mafEvent(this,OP_RUN_CANCEL));
+  }
+  else if (!m_TestMode)
+  {
+    CreateGui();
+    ShowGui();
+  }
+  else
+  {
+    if(Import())
+    {
+      mafEventMacro(mafEvent(this,OP_RUN_OK));
+    }
+    else
+    {
+      mafEventMacro(mafEvent(this,OP_RUN_CANCEL));
+    }
+  }
 }
 //----------------------------------------------------------------------------
 int lhpOpImporterC3D::OpenC3D(const mafString &fullFileName)
 //----------------------------------------------------------------------------
 {
   mafLogMessage("C3D_Open");
-	int errcode=C3D_Open(const_cast<char *> (fullFileName.GetCStr()));
-	if(errcode != NOERROR)
-	{
-		if( errcode == ERROR_NOT_LICENSE)
-			wxMessageBox("Not registered Product. Contact Aurion S.r.l.");
-		if( errcode == ERROR_OPEN_FILE)
-			wxMessageBox("Error on opening file");
-		if( errcode == ERROR_READING_PROC_TYPE)
-			wxMessageBox("Error on reading type (PC, DEC, MIPS)");
+  int errcode=C3D_Open(const_cast<char *> (fullFileName.GetCStr()));
+  if(errcode != NOERROR)
+  {
+    if( errcode == ERROR_NOT_LICENSE)
+      wxMessageBox("Not registered Product. Contact Aurion S.r.l.");
+    if( errcode == ERROR_OPEN_FILE)
+      wxMessageBox("Error on opening file");
+    if( errcode == ERROR_READING_PROC_TYPE)
+      wxMessageBox("Error on reading type (PC, DEC, MIPS)");
 
-		errcode = -1;
-	}
+    errcode = -1;
+  }
   return errcode;
 }
 //----------------------------------------------------------------------------
-int lhpOpImporterC3D::ReadHeaderC3D(lhpOpImporterC3D::_InternalC3DData &intData)
+int lhpOpImporterC3D::ReadHeaderC3D(const mafString &fullFileName, lhpOpImporterC3D::_InternalC3DData &intData)
 //----------------------------------------------------------------------------
 {
   mafLogMessage("C3D_Read_Header");
-	int errcode=C3D_Read_Header(&intData.m_LengthMs, &intData.m_VideoRate, &intData.m_AnalogRate);
-	if( errcode != NOERROR)
-	{
-		switch(errcode)
-		{
-		case ERROR_READING_HEADER:
-			wxMessageBox("Error reading header");
-			break;
-		case ERROR_READING_PARAM:
-			wxMessageBox("Error reading parameters");
-			break;
-		case ERROR_READING_TRIAL_PARAM:
-			wxMessageBox("Error reading parameter of trial section");
-			break;
-		}
+  FILE *pC3DFile = fopen(fullFileName, "rb");
+  if(pC3DFile != NULL)
+  {
+    unsigned short int key1;
+    fread(&key1, sizeof key1, 1, pC3DFile); 
+    // Number of 3D points per field, byte = 3,4; word = 2
+    fread(&key1, sizeof key1, 1, pC3DFile); 
+    // Number of analog channels per field byte = 5,6; word = 3
+    fread(&key1, sizeof key1, 1, pC3DFile); 
+    // Field number of first field of video data, byte = 7,8; word = 4
+    fread(&key1, sizeof key1, 1, pC3DFile); 
+    intData.m_StartFrame = key1 - 1;
+    // Field number of last field of video data, byte = 9,10; word = 5  
+    fread(&key1, sizeof key1, 1, pC3DFile); 
+    intData.m_EndFrame = key1 - 1;
+    fclose(pC3DFile);
+  }
 
-		errcode = -1;
-	}	
+  int errcode=C3D_Read_Header(&intData.m_LengthMs, &intData.m_VideoRate, &intData.m_AnalogRate);
+  if( errcode != NOERROR)
+  {
+    switch(errcode)
+    {
+    case ERROR_READING_HEADER:
+      wxMessageBox("Error reading header");
+      break;
+    case ERROR_READING_PARAM:
+      wxMessageBox("Error reading parameters");
+      break;
+    case ERROR_READING_TRIAL_PARAM:
+      wxMessageBox("Error reading parameter of trial section");
+      break;
+    }
+
+    errcode = -1;
+  }  
   return errcode;
 }
 
@@ -259,9 +340,9 @@ bool lhpOpImporterC3D::LoadDictionary()
 
   if(dictionaryInputStream.is_open() == 0)
     return false;
-  while(dictionaryInputStream >> landmarkName)	
+  while(dictionaryInputStream >> landmarkName)  
   {
-    dictionaryInputStream >> segmentName;			
+    dictionaryInputStream >> segmentName;      
     std::map<mafString, mafString>::iterator it = m_dictionaryStruct.find(landmarkName.c_str());
     if(it != m_dictionaryStruct.end())
     {
@@ -289,43 +370,43 @@ int lhpOpImporterC3D::ReadDataC3D()
     wait = new wxBusyInfo("Please wait, loading file");
   }
 
-	int errcode=C3D_Read_Data();	
-	if( errcode != NOERROR)
-	{
-		switch(errcode)
-		{
-		case ERROR_READING_PARAM:
-			wxMessageBox("Error reading parameters");
-			break;
-		case ERROR_READING_TRIAL_PARAM:
-			wxMessageBox("Error reading parameters of trial section");
-			break;
-		case ERROR_READING_VIDEO_PARAM:
-			wxMessageBox("Error reading parameters of cinematic section");
-			break;
-		case ERROR_READING_ANALOG_PARAM:
-			wxMessageBox("Error reading parameters of analog section");
-			break;
-		case ERROR_READING_FORCE_PLATFORM_PARAM:
-			wxMessageBox("Error reading parameters of force plate section");
-			break;
-		case ERROR_READING_EVENT_PARAM:
-			wxMessageBox("Error reading parameters of events section");
-			break;
-		case ERROR_READING_DATA:
-			wxMessageBox("Error reading data");
-			break;
-		case ERROR_READING_VIDEO_DATA:
-			wxMessageBox("Error reading cinematic data");
-			break;			
-		case ERROR_READING_ANALOG_DATA:
-			wxMessageBox("Error reading analog data");
-			break;	
-		default:
-			break;
-		}
+  int errcode=C3D_Read_Data();  
+  if( errcode != NOERROR)
+  {
+    switch(errcode)
+    {
+    case ERROR_READING_PARAM:
+      wxMessageBox("Error reading parameters");
+      break;
+    case ERROR_READING_TRIAL_PARAM:
+      wxMessageBox("Error reading parameters of trial section");
+      break;
+    case ERROR_READING_VIDEO_PARAM:
+      wxMessageBox("Error reading parameters of cinematic section");
+      break;
+    case ERROR_READING_ANALOG_PARAM:
+      wxMessageBox("Error reading parameters of analog section");
+      break;
+    case ERROR_READING_FORCE_PLATFORM_PARAM:
+      wxMessageBox("Error reading parameters of force plate section");
+      break;
+    case ERROR_READING_EVENT_PARAM:
+      wxMessageBox("Error reading parameters of events section");
+      break;
+    case ERROR_READING_DATA:
+      wxMessageBox("Error reading data");
+      break;
+    case ERROR_READING_VIDEO_DATA:
+      wxMessageBox("Error reading cinematic data");
+      break;      
+    case ERROR_READING_ANALOG_DATA:
+      wxMessageBox("Error reading analog data");
+      break;  
+    default:
+      break;
+    }
 
-		errcode = -1;
+    errcode = -1;
 
     if(!m_TestMode)
     {
@@ -333,7 +414,7 @@ int lhpOpImporterC3D::ReadDataC3D()
     }
 
     return errcode;
-	}
+  }
 
   mafLogMessage("C3D_Calculate_Data");
   errcode=C3D_Calculate_Data();
@@ -343,29 +424,35 @@ int lhpOpImporterC3D::ReadDataC3D()
     delete wait;
   }
 
-	return errcode;
+  return errcode;
 }
 //----------------------------------------------------------------------------
 int lhpOpImporterC3D::CloseC3D()
 //----------------------------------------------------------------------------
 {
   mafLogMessage("C3D_Close");
-	int errcode=C3D_Close();
-	if( errcode == ERROR_CLOSE_FILE)
-	{
-		wxMessageBox("Error on closing file");		
-		errcode = -1;
-	}	
+  int errcode=C3D_Close();
+  if( errcode == ERROR_CLOSE_FILE)
+  {
+    wxMessageBox("Error on closing file");    
+    errcode = -1;
+  }  
   return errcode;
 }
 //----------------------------------------------------------------------------
 void lhpOpImporterC3D::Initialize(const mafString &fullFileName, lhpOpImporterC3D::_InternalC3DData &intData)
 //----------------------------------------------------------------------------
 {
-	//initialize class members with read data 
+  //initialize class members with read data 
   //Trajectories
-  intData.m_NumTotTrajectories = getNumTraj();		//number of total trajectories(with angles, moments, powers)
-  intData.m_NumFrames = getTotalFrameTraj();		  //number of frames
+  intData.m_NumTotTrajectories = getNumTraj();    //number of total trajectories(with angles, moments, powers)
+  intData.m_NumFrames = getTotalFrameTraj();      //number of frames
+  if(intData.m_EndFrame - intData.m_StartFrame + 1 != intData.m_NumFrames)
+  {
+    mafLogMessage("C3D frames incorrect");
+    intData.m_StartFrame = 0;
+    intData.m_EndFrame   = intData.m_NumFrames - 1;
+  }
 
   //Analog
   intData.m_NumChannels = getChannelsAnalog();    //channels number
@@ -391,14 +478,14 @@ void lhpOpImporterC3D::Initialize(const mafString &fullFileName, lhpOpImporterC3
 mafVMEGroup *lhpOpImporterC3D::ImportSingleFile(const mafString &fullFileName, lhpOpImporterC3D::_InternalC3DData &intData)
 //----------------------------------------------------------------------------
 {
-	if(OpenC3D(fullFileName)==NOERROR)
-	{
-		//c3d read data
-		if(ReadHeaderC3D(intData)==NOERROR && ReadDataC3D() == NOERROR)
-		{
+  if(OpenC3D(fullFileName)==NOERROR)
+  {
+    //c3d read data
+    if(ReadHeaderC3D(fullFileName, intData)==NOERROR && ReadDataC3D() == NOERROR)
+    {
       Initialize(fullFileName, intData);
 
-			//fill data structures
+      //fill data structures
 
       if(m_ImportTrajectoriesFlag || m_ImportAnalogFlag || m_ImportPlatformFlag || m_ImportEventFlag) 
       {
@@ -418,12 +505,12 @@ mafVMEGroup *lhpOpImporterC3D::ImportSingleFile(const mafString &fullFileName, l
         }
         //intData.m_VmeCloud->ReparentTo(intData.m_VmeGroup);
       }
-			if(m_ImportAnalogFlag) 
+      if(m_ImportAnalogFlag) 
       {
-        ImportAnalog(intData);	
+        ImportAnalog(intData);  
         intData.m_VmeAnalog->ReparentTo(intData.m_VmeGroup);
       }
-			if(m_ImportPlatformFlag) 
+      if(m_ImportPlatformFlag) 
       {
         ImportPlatform(intData);
         for(int currentPlatform = 0; currentPlatform<intData.m_PlatformList.size(); currentPlatform++)
@@ -439,7 +526,7 @@ mafVMEGroup *lhpOpImporterC3D::ImportSingleFile(const mafString &fullFileName, l
       }
     }
     CloseC3D();
-	}
+  }
   return intData.m_VmeGroup;
 }
 
@@ -507,7 +594,7 @@ void lhpOpImporterC3D::ImportTrajectories(lhpOpImporterC3D::_InternalC3DData &in
       {
       case TRAJECTORY:
         {
-          intData.m_TrajectoryName=getNameTraj(currentTrajectory);		//trajectory name
+          intData.m_TrajectoryName=getNameTraj(currentTrajectory);    //trajectory name
 
           //control if m_Trajectory is not a phantom landmark(camera reflexes)
           if(intData.m_TrajectoryName[0] != '*')
@@ -579,13 +666,13 @@ void lhpOpImporterC3D::ImportTrajectories(lhpOpImporterC3D::_InternalC3DData &in
                 }
               }
             }
-            intData.m_TrajectoryUnit=getUnitTraj(currentTrajectory);		//unit measure of trajectory
+            intData.m_TrajectoryUnit=getUnitTraj(currentTrajectory);    //unit measure of trajectory
             bool visibility = isDefinedTraj(currentTrajectory, currentFrame);
             if(visibility)
             {
-              intData.m_X = getXTraj(currentTrajectory, currentFrame);					//component x of the trajectory
-              intData.m_Y = getYTraj(currentTrajectory, currentFrame);					//component y of the trajectory
-              intData.m_Z = getZTraj(currentTrajectory, currentFrame);					//component z of the trajectory
+              intData.m_X = getXTraj(currentTrajectory, currentFrame);          //component x of the trajectory
+              intData.m_Y = getYTraj(currentTrajectory, currentFrame);          //component y of the trajectory
+              intData.m_Z = getZTraj(currentTrajectory, currentFrame);          //component z of the trajectory
             }
             else
             {
@@ -594,50 +681,45 @@ void lhpOpImporterC3D::ImportTrajectories(lhpOpImporterC3D::_InternalC3DData &in
 
 
             if(currentFrame == 0)
-            {
-              addTo->AppendLandmark(intData.m_X,intData.m_Y,intData.m_Z,intData.m_TrajectoryName);
-            }
-            else
-            {
-              addTo->SetLandmark(intData.m_TrajectoryName,intData.m_X,intData.m_Y,intData.m_Z,currentFrame * intData.m_TrajectorySamplePeriod);
-            }
+              addTo->AppendLandmark(intData.m_TrajectoryName);
+            addTo->SetLandmark(intData.m_TrajectoryName,intData.m_X,intData.m_Y,intData.m_Z,(intData.m_StartFrame + currentFrame) * intData.m_TrajectorySamplePeriod);
 
-            addTo->SetLandmarkVisibility(intData.m_TrajectoryName,visibility,currentFrame * intData.m_TrajectorySamplePeriod);
+            addTo->SetLandmarkVisibility(intData.m_TrajectoryName,visibility,(intData.m_StartFrame + currentFrame) * intData.m_TrajectorySamplePeriod);
 
             intData.m_NumTrajectories++;
           }
         }
         break;
       case ANGLE:
-        intData.m_AngleName=getNameTraj(currentTrajectory);		//angle name
-        intData.m_AngleUnit=getUnitTraj(currentTrajectory);		//unit measure of angle
+        intData.m_AngleName=getNameTraj(currentTrajectory);    //angle name
+        intData.m_AngleUnit=getUnitTraj(currentTrajectory);    //unit measure of angle
         if(isDefinedTraj(currentTrajectory, currentFrame))
         {
-          intData.m_X = getXTraj(currentTrajectory, currentFrame);					//component x of angle
-          intData.m_Y = getYTraj(currentTrajectory, currentFrame);					//component y of angle
-          intData.m_Z = getZTraj(currentTrajectory, currentFrame);					//component z of angle
+          intData.m_X = getXTraj(currentTrajectory, currentFrame);          //component x of angle
+          intData.m_Y = getYTraj(currentTrajectory, currentFrame);          //component y of angle
+          intData.m_Z = getZTraj(currentTrajectory, currentFrame);          //component z of angle
         }
         intData.m_NumAngles++;
         break;
       case MOMENT:
-        intData.m_MomentName=getNameTraj(currentTrajectory);		//moment name
-        intData.m_MomentUnit=getUnitTraj(currentTrajectory);		//unit measure of moment
+        intData.m_MomentName=getNameTraj(currentTrajectory);    //moment name
+        intData.m_MomentUnit=getUnitTraj(currentTrajectory);    //unit measure of moment
         if(isDefinedTraj(currentTrajectory, currentFrame))
         {
-          intData.m_X = getXTraj(currentTrajectory, currentFrame);					//component x of the moment
-          intData.m_Y = getYTraj(currentTrajectory, currentFrame);					//component y of the moment
-          intData.m_Z = getZTraj(currentTrajectory, currentFrame);					//component z of the moment
+          intData.m_X = getXTraj(currentTrajectory, currentFrame);          //component x of the moment
+          intData.m_Y = getYTraj(currentTrajectory, currentFrame);          //component y of the moment
+          intData.m_Z = getZTraj(currentTrajectory, currentFrame);          //component z of the moment
         }
         intData.m_NumMoments++;
         break;
       case POWER:
-        intData.m_PowerName=getNameTraj(currentTrajectory);		//power name
-        intData.m_PowerUnit=getUnitTraj(currentTrajectory);		//unit measure of power
+        intData.m_PowerName=getNameTraj(currentTrajectory);    //power name
+        intData.m_PowerUnit=getUnitTraj(currentTrajectory);    //unit measure of power
         if(isDefinedTraj(currentTrajectory, currentFrame))
         {
-          intData.m_X = getXTraj(currentTrajectory, currentFrame);					//component x of power
-          intData.m_Y = getYTraj(currentTrajectory, currentFrame);					//component y of power
-          intData.m_Z = getZTraj(currentTrajectory, currentFrame);					//component z of power
+          intData.m_X = getXTraj(currentTrajectory, currentFrame);          //component x of power
+          intData.m_Y = getYTraj(currentTrajectory, currentFrame);          //component y of power
+          intData.m_Z = getZTraj(currentTrajectory, currentFrame);          //component z of power
         }
         intData.m_NumPowers++;
         break;
@@ -694,16 +776,16 @@ void lhpOpImporterC3D::ImportAnalog(lhpOpImporterC3D::_InternalC3DData &intData)
   //For every Sample
   for(int currentSample=0; currentSample < intData.m_NumSamples; currentSample++)
   {
-    mafTimeStamp currentTime = currentSample * intData.m_AnalogSamplePeriod;
+    mafTimeStamp currentTime = (intData.m_StartFrame + currentSample) * intData.m_AnalogSamplePeriod;
     
     analogMatrix.put(0,currentSample, currentTime); //fill first row with timeframe, every column is a time
 
     //For every channel
     for(int currentChannel=0; currentChannel < intData.m_NumChannels; currentChannel++)
     {
-      intData.m_ChannelName=getNameAnalog(currentChannel);				            //channel name
-      intData.m_AnalogValue=getValueAnalog(currentChannel, currentSample);	  //trajectory value
-      intData.m_ChannelUnit=getUnitAnalog(currentChannel);				            //unit measure of analogic channel
+      intData.m_ChannelName=getNameAnalog(currentChannel);                    //channel name
+      intData.m_AnalogValue=getValueAnalog(currentChannel, currentSample);    //trajectory value
+      intData.m_ChannelUnit=getUnitAnalog(currentChannel);                    //unit measure of analogic channel
 
       if(currentSample == 0) channelsNameList.push_back(intData.m_ChannelName);
 
@@ -750,20 +832,20 @@ void lhpOpImporterC3D::ImportPlatform(lhpOpImporterC3D::_InternalC3DData &intDat
   //For every platform
   for(int currentPlatform=0; currentPlatform<intData.m_NumPlatforms; currentPlatform++)
   {
-    getCenterPlatform(currentPlatform, &intData.m_CenterX, &intData.m_CenterY);	//geometric center coordinate of the platform
-    getCornerPlatform(currentPlatform, 1, &intData.m_X, &intData.m_Y);			//corner coordinate  1
+    getCenterPlatform(currentPlatform, &intData.m_CenterX, &intData.m_CenterY);  //geometric center coordinate of the platform
+    getCornerPlatform(currentPlatform, 1, &intData.m_X, &intData.m_Y);      //corner coordinate  1
     double platformCorner1[2];
     platformCorner1[0] = intData.m_X;
     platformCorner1[1] = intData.m_Y;
-    getCornerPlatform(currentPlatform, 2, &intData.m_X, &intData.m_Y);			//corner coordinate  2
+    getCornerPlatform(currentPlatform, 2, &intData.m_X, &intData.m_Y);      //corner coordinate  2
     double platformCorner2[2];
     platformCorner2[0] = intData.m_X;
     platformCorner2[1] = intData.m_Y;
-    getCornerPlatform(currentPlatform, 3, &intData.m_X, &intData.m_Y);			//corner coordinate  3
+    getCornerPlatform(currentPlatform, 3, &intData.m_X, &intData.m_Y);      //corner coordinate  3
     double platformCorner3[2];
     platformCorner3[0] = intData.m_X;
     platformCorner3[1] = intData.m_Y;
-    getCornerPlatform(currentPlatform, 4, &intData.m_X, &intData.m_Y);			//corner coordinate  4
+    getCornerPlatform(currentPlatform, 4, &intData.m_X, &intData.m_Y);      //corner coordinate  4
     double platformCorner4[2];
     platformCorner4[0] = intData.m_X;
     platformCorner4[1] = intData.m_Y;
@@ -839,18 +921,18 @@ void lhpOpImporterC3D::ImportPlatform(lhpOpImporterC3D::_InternalC3DData &intDat
     mafTimeStamp currentTime = 0;
     for(int currentSample=0; currentSample<intData.m_NumSamples; currentSample++)
     {
-      intData.m_CopX=getCOPX(currentPlatform, currentSample);			//x coordinate of COP
-      intData.m_CopY=getCOPY(currentPlatform, currentSample);			//y coordinate of COP
+      intData.m_CopX=getCOPX(currentPlatform, currentSample);      //x coordinate of COP
+      intData.m_CopY=getCOPY(currentPlatform, currentSample);      //y coordinate of COP
 
-      intData.m_ForceX=getFx(currentPlatform, currentSample);				//x component of force
-      intData.m_ForceY=getFy(currentPlatform, currentSample);				//y component of force
-      intData.m_ForceZ=getFz(currentPlatform, currentSample);				//z component  of force
+      intData.m_ForceX=getFx(currentPlatform, currentSample);        //x component of force
+      intData.m_ForceY=getFy(currentPlatform, currentSample);        //y component of force
+      intData.m_ForceZ=getFz(currentPlatform, currentSample);        //z component  of force
 
-      intData.m_MomentX=getMx(currentPlatform, currentSample);				//x component of moment
-      intData.m_MomentY=getMy(currentPlatform, currentSample);				//y component of moment
-      intData.m_MomentZ=getMz(currentPlatform, currentSample);				//z component of moment
+      intData.m_MomentX=getMx(currentPlatform, currentSample);        //x component of moment
+      intData.m_MomentY=getMy(currentPlatform, currentSample);        //y component of moment
+      intData.m_MomentZ=getMz(currentPlatform, currentSample);        //z component of moment
 
-      currentTime = currentSample * intData.m_VectogramSamplePeriod;
+      currentTime = (intData.m_StartFrame + currentSample) * intData.m_VectogramSamplePeriod;
 
       //force      
       pointsForce->Reset();
@@ -919,8 +1001,8 @@ void lhpOpImporterC3D::ImportEvent(lhpOpImporterC3D::_InternalC3DData &intData)
   //For every event
   for(int currentEvent=0; currentEvent<intData.m_NumEvents; currentEvent++)
   {
-    intData.m_EventContext=getContextEvent(currentEvent);		//event context
-    intData.m_EventValue=getValueEvent(currentEvent);				      //event value in seconds
+    intData.m_EventContext=getContextEvent(currentEvent);    //event context
+    intData.m_EventValue=getValueEvent(currentEvent);              //event value in seconds
   }
 }
 //----------------------------------------------------------------------------
@@ -942,23 +1024,8 @@ enum C3D_IMPORTER_ID
 void lhpOpImporterC3D::CreateGui()
 //----------------------------------------------------------------------------
 {
-  mafString wildcard = "c3d files (*.c3d)|*.c3d";
-  std::vector<std::string> files;
-  mafString f;
-
-  m_C3DInputFileNameFullPaths.clear();
-  {
-    mafGetOpenMultiFiles(m_FileDir,wildcard, files);
-    for(unsigned i = 0; i < files.size(); i++)
-    {
-      f = files[i].c_str();
-      m_C3DInputFileNameFullPaths.push_back(f);
-    }
-  }
-
-  //mafEventMacro(mafEvent(this,result));
-	m_Gui = new mafGUI(this);
-	m_Gui->Label("Select:", true);
+  m_Gui = new mafGUI(this);
+  m_Gui->Label("Select:", true);
 
   m_Gui->Bool(ID_IMPORT_TRAJECTORIES,_("Trajectories"),&m_ImportTrajectoriesFlag,1);
   m_Gui->Bool(ID_IMPORT_ANALOG,_("Analog Data"),&m_ImportAnalogFlag,1);
@@ -970,7 +1037,7 @@ void lhpOpImporterC3D::CreateGui()
 
   m_Gui->Enable(ID_CLEAR_DICT, (m_DictionaryFileName != ""));
 
-	m_Gui->OkCancel();
+  m_Gui->OkCancel();
 }
 //----------------------------------------------------------------------------
 void lhpOpImporterC3D::DictionaryUpdate() 
@@ -1002,20 +1069,20 @@ void lhpOpImporterC3D::OnEvent(mafEventBase *maf_event)
     {
       case wxOK:
       {
-				if(Import())
-				{
-					this->OpStop(OP_RUN_OK);
-				}
-				else
-				{
-					this->OpStop(OP_RUN_CANCEL);
-				}
+        if(Import())
+        {
+          OpStop(OP_RUN_OK);
+        }
+        else
+        {
+          OpStop(OP_RUN_CANCEL);
+        }
         
       }
       break;
       case wxCANCEL:
       {
-        this->OpStop(OP_RUN_CANCEL);
+        OpStop(OP_RUN_CANCEL);
       }
       break;
       case ID_CLEAR_DICT:
@@ -1039,7 +1106,7 @@ void lhpOpImporterC3D::OnEvent(mafEventBase *maf_event)
       default:
         mafEventMacro(*e);
       break;
-    }	
+    }  
   }
 }
 
@@ -1064,3 +1131,80 @@ void lhpOpImporterC3D::OpUndo()
       mafEventMacro(mafEvent(this, VME_REMOVE, m_intData[i].m_VmeGroup));
   }
 }
+
+bool lhpOpImporterC3D::Config(LibHandle handle)
+{
+ if((getNumTraj=(int(*)(void))mafDynamicLoader::GetSymbolAddress(handle,                                  "?getNumTraj@@YAHXZ")) &&
+    (getTotalFrameTraj= (int(*)(void))mafDynamicLoader::GetSymbolAddress(handle,                          "?getTotalFrameTraj@@YAHXZ")) &&
+    (getNameTraj=(char*(*)(int))mafDynamicLoader::GetSymbolAddress(handle,                                "?getNameTraj@@YAPADH@Z")) &&
+    (getUnitTraj= (char*(*)(int))mafDynamicLoader::GetSymbolAddress(handle,                               "?getUnitTraj@@YAPADH@Z")) &&
+    (getTypeTraj= (int(*)(int))mafDynamicLoader::GetSymbolAddress(handle,                                 "?getTypeTraj@@YAHH@Z")) &&
+    (getXTraj= (double(*)(int, int))mafDynamicLoader::GetSymbolAddress(handle,                            "?getXTraj@@YANHH@Z")) &&
+    (getYTraj= (double(*)(int, int))mafDynamicLoader::GetSymbolAddress(handle,                            "?getYTraj@@YANHH@Z")) &&
+    (getZTraj= (double(*)(int, int))mafDynamicLoader::GetSymbolAddress(handle,                            "?getZTraj@@YANHH@Z")) &&
+    (isDefinedTraj= (bool(*)(int, int))mafDynamicLoader::GetSymbolAddress(handle,                         "?isDefinedTraj@@YA_NHH@Z")) &&
+    (getChannelsAnalog= (int(*)(void))mafDynamicLoader::GetSymbolAddress(handle,                          "?getChannelsAnalog@@YAHXZ")) &&
+    (getTotalSamplesAnalog= (int(*)(void))mafDynamicLoader::GetSymbolAddress(handle,                      "?getTotalSamplesAnalog@@YAHXZ")) &&
+    (getNameAnalog= (char*(*)(int))mafDynamicLoader::GetSymbolAddress(handle,                             "?getNameAnalog@@YAPADH@Z")) &&
+    (getUnitAnalog= (char*(*)(int))mafDynamicLoader::GetSymbolAddress(handle,                             "?getUnitAnalog@@YAPADH@Z")) &&
+    (getValueAnalog= (double(*)(int, int))mafDynamicLoader::GetSymbolAddress(handle,                      "?getValueAnalog@@YANHH@Z")) &&
+    (getPlatforms= (int(*)(void))mafDynamicLoader::GetSymbolAddress(handle,                               "?getPlatforms@@YAHXZ")) &&
+    (getCornerPlatform= (void(*)(int, int, double *, double *))mafDynamicLoader::GetSymbolAddress(handle, "?getCornerPlatform@@YAXHHPAN0@Z")) &&
+    (getCenterPlatform= (void(*)(int, double *, double *     ))mafDynamicLoader::GetSymbolAddress(handle, "?getCenterPlatform@@YAXHPAN0@Z")) &&
+    (getCOPX= (double(*)(int, int))mafDynamicLoader::GetSymbolAddress(handle,                             "?getCOPX@@YANHH@Z")) &&
+    (getCOPY= (double(*)(int, int))mafDynamicLoader::GetSymbolAddress(handle,                             "?getCOPY@@YANHH@Z")) &&
+    (getFx= (double(*)(int, int))mafDynamicLoader::GetSymbolAddress(handle,                               "?getFx@@YANHH@Z")) &&
+    (getFy= (double(*)(int, int))mafDynamicLoader::GetSymbolAddress(handle,                               "?getFy@@YANHH@Z")) &&
+    (getFz= (double(*)(int, int))mafDynamicLoader::GetSymbolAddress(handle,                               "?getFz@@YANHH@Z")) &&
+    (getMx= (double(*)(int, int))mafDynamicLoader::GetSymbolAddress(handle,                               "?getMx@@YANHH@Z")) &&
+    (getMy= (double(*)(int, int))mafDynamicLoader::GetSymbolAddress(handle,                               "?getMy@@YANHH@Z")) &&
+    (getMz= (double(*)(int, int))mafDynamicLoader::GetSymbolAddress(handle,                               "?getMz@@YANHH@Z")) &&
+    (getEvents= (int(*)(void))mafDynamicLoader::GetSymbolAddress(handle,                                  "?getEvents@@YAHXZ")) &&
+    (getContextEvent= (char*(*)(int))mafDynamicLoader::GetSymbolAddress(handle,                           "?getContextEvent@@YAPADH@Z")) &&
+    (getValueEvent= (double(*)(int))mafDynamicLoader::GetSymbolAddress(handle,                            "?getValueEvent@@YANH@Z")) &&
+    (C3D_Open= (int(*)(char*))mafDynamicLoader::GetSymbolAddress(handle,                                  "?C3D_Open@@YAHPAD@Z")) &&
+    (C3D_Read_Header= (int(*)(long *, float *, float *))mafDynamicLoader::GetSymbolAddress(handle,        "?C3D_Read_Header@@YAHPAJPAM1@Z")) &&
+    (C3D_Read_Data= (int(*)(void))mafDynamicLoader::GetSymbolAddress(handle,                              "?C3D_Read_Data@@YAHXZ")) &&
+    (C3D_Calculate_Data= (int(*)(void))mafDynamicLoader::GetSymbolAddress(handle,                         "?C3D_Calculate_Data@@YAHXZ")) &&
+    (C3D_Close= (int(*)(void))mafDynamicLoader::GetSymbolAddress(handle,                                  "?C3D_Close@@YAHXZ")))
+    return true;
+  return false;
+}
+
+int (*lhpOpImporterC3D::getNumTraj)(void);
+int (*lhpOpImporterC3D::getTotalFrameTraj)(void);
+char* (*lhpOpImporterC3D::getNameTraj)(int indexTraj);
+char* (*lhpOpImporterC3D::getUnitTraj)(int indexTraj);
+int (*lhpOpImporterC3D::getTypeTraj)(int indexTraj);
+double (*lhpOpImporterC3D::getXTraj)(int indexTraj, int indexFrame);
+double (*lhpOpImporterC3D::getYTraj)(int indexTraj, int indexFrame);
+double (*lhpOpImporterC3D::getZTraj)(int indexTraj, int indexFrame);
+bool (*lhpOpImporterC3D::isDefinedTraj)(int indexTraj, int indexFrame);
+
+int (*lhpOpImporterC3D::getChannelsAnalog)(void);
+int (*lhpOpImporterC3D::getTotalSamplesAnalog)(void);
+char* (*lhpOpImporterC3D::getNameAnalog)(int indexChan);
+char* (*lhpOpImporterC3D::getUnitAnalog)(int indexChan);
+double (*lhpOpImporterC3D::getValueAnalog)(int indexChan, int indexSample);
+
+int (*lhpOpImporterC3D::getPlatforms)(void);
+void (*lhpOpImporterC3D::getCornerPlatform)(int indexPlatform, int indexCorner, double *coordX, double *coordY);
+void (*lhpOpImporterC3D::getCenterPlatform)(int indexPlatform, double *centerX, double *centerY);
+double (*lhpOpImporterC3D::getCOPX)(int indexPlatform, int indexSample);
+double (*lhpOpImporterC3D::getCOPY)(int indexPlatform, int indexSample);
+double (*lhpOpImporterC3D::getFx)(int indexPlatform, int indexSample);
+double (*lhpOpImporterC3D::getFy)(int indexPlatform, int indexSample);
+double (*lhpOpImporterC3D::getFz)(int indexPlatform, int indexSample);
+double (*lhpOpImporterC3D::getMx)(int indexPlatform, int indexSample);
+double (*lhpOpImporterC3D::getMy)(int indexPlatform, int indexSample);
+double (*lhpOpImporterC3D::getMz)(int indexPlatform, int indexSample);
+
+int (*lhpOpImporterC3D::getEvents)(void);
+char* (*lhpOpImporterC3D::getContextEvent)(int indexEvent);
+double (*lhpOpImporterC3D::getValueEvent)(int indexEvent);
+
+int (*lhpOpImporterC3D::C3D_Open)(char* fileName);
+int (*lhpOpImporterC3D::C3D_Read_Header)(long *lengthMs, float *videoRate, float *analogRate);
+int (*lhpOpImporterC3D::C3D_Read_Data)(void);
+int (*lhpOpImporterC3D::C3D_Calculate_Data)(void);
+int (*lhpOpImporterC3D::C3D_Close)(void);

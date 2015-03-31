@@ -9,10 +9,11 @@ Authors:   Stefano Perticoni
 Copyright (c) 2001/2005 
 CINECA - Interuniversity Consortium (www.cineca.it)
 =========================================================================*/
-#include "mafDefines.h"
 
 #ifndef __lhpUtils_H__
 #define __lhpUtils_H__
+
+#include "mafDefines.h"
 
 class lhpUtils
 {

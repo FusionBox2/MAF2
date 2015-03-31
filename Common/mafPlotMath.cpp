@@ -17,10 +17,6 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
-#ifdef __GNUG__
-    #pragma implementation "mafPlotMath.cpp"
-#endif
-
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 #include "wx/textfile.h"
@@ -32,22 +28,7 @@
 #include "vtkTransform.h"
 #include "vtkMath.h"
 
-#ifdef _MSC_FULL_VER
-#pragma warning (disable: 4786)
-#endif
-
-//----------------------------------------------------------------------------
-// defines
-//----------------------------------------------------------------------------
-#define AllTriplets 8
-
-#define DI_SB_CHANGE_SIGN(sbA, sbB)               ((sbB).nUInt = (((sbA).nUInt & 0x7FFFFFFF) | (((sbA).nUInt & 0x80000000) ^ 0x80000000)))
-
-//----------------------------------------------------------------------------
-// constants
-//----------------------------------------------------------------------------
-
-static DiV4d __vGZero = {0.0, 0.0, 0.0, 0.0};
+static DiV4d __vGZero(0.0, 0.0, 0.0, 0.0);
 DiV4d const *vp4GZero = &__vGZero;
 
 //----------------------------------------------------------------------------
@@ -65,7 +46,7 @@ DiV4d const *vp4GZero = &__vGZero;
  * @see     
  */
 //----------------------------------------------------------------------------
-DiVoid DiV4dCrossProduct(const DiV4d *vpVect1, const DiV4d *vpVect2, DiV4d *vpOut)
+void DiV4dCrossProduct(const DiV4d *vpVect1, const DiV4d *vpVect2, DiV4d *vpOut)
 //----------------------------------------------------------------------------
 {
   vpOut->x = vpVect1->y * vpVect2->z - vpVect1->z * vpVect2->y;
@@ -81,7 +62,7 @@ DiVoid DiV4dCrossProduct(const DiV4d *vpVect1, const DiV4d *vpVect2, DiV4d *vpOu
  * @return  none
  * @param   mpM pointer to the matrix to be identitied
  */
-DiVoid DiMatrixIdentity(DiMatrix *mpM)
+void DiMatrixIdentity(DiMatrix *mpM)
 {
   wxASSERT(mpM != NULL);
   
@@ -103,7 +84,7 @@ DiVoid DiMatrixIdentity(DiMatrix *mpM)
  * @param   mpMatrix  matrix to test
  * @see     
  */
-DiVoid DiMatrixTestIntegrity(const DiMatrix *mpMatrix)
+void DiMatrixTestIntegrity(const DiMatrix *mpMatrix)
 {
   
   wxASSERT(mpMatrix != NULL);
@@ -214,7 +195,7 @@ bool DiMatrixTestRotIdentity(const DiMatrix *mpMatrix)
  * @see     DiMatrixScale
  * @see     DiMatrixTranslate
  */
-DiVoid DiMatrixScale(DiMatrix *mpMat, DiV4d *vpScale, DiOpCombainType nOperation)
+void DiMatrixScale(DiMatrix *mpMat, DiV4d *vpScale, DiOpCombainType nOperation)
 {
   wxASSERT(mpMat);
   wxASSERT(vpScale);
@@ -307,7 +288,7 @@ DiVoid DiMatrixScale(DiMatrix *mpMat, DiV4d *vpScale, DiOpCombainType nOperation
  * @see     DiMatrixScale
  * @see     DiMatrixTranslate
  */
-DiVoid DiMatrixTranslate(DiMatrix *mpMat, DiV4d *vpTran, DiOpCombainType nOperation)
+void DiMatrixTranslate(DiMatrix *mpMat, DiV4d *vpTran, DiOpCombainType nOperation)
 {
   wxASSERT(mpMat);
   wxASSERT(vpTran);
@@ -377,7 +358,7 @@ DiVoid DiMatrixTranslate(DiMatrix *mpMat, DiV4d *vpTran, DiOpCombainType nOperat
  * @param   nOperation [in] operation to be perfomed
  * @author  BVS, Miron
  */
-DiVoid _diMatrixRotateAtSinCosLeft(DiMatrix *mpMat, DiFloat rSin, DiFloat rCos, DiOpCombainType nOperation)
+void _diMatrixRotateAtSinCosLeft(DiMatrix *mpMat, double rSin, double rCos, DiOpCombainType nOperation)
 {
   DiV4d vRight;
   DiV4d vUp;
@@ -471,7 +452,7 @@ DiVoid _diMatrixRotateAtSinCosLeft(DiMatrix *mpMat, DiFloat rSin, DiFloat rCos, 
  * @see     DiMatrixRotateUpSinCos
  * @see     DiMatrixRotateUp
  */
-DiVoid DiMatrixRotateAtSinCosLeft(DiMatrix *mpMat, DiFloat rSin, DiFloat rCos, DiOpCombainType nOperation)
+void DiMatrixRotateAtSinCosLeft(DiMatrix *mpMat, double rSin, double rCos, DiOpCombainType nOperation)
 {
   wxASSERT(mpMat);
 
@@ -512,9 +493,9 @@ DiVoid DiMatrixRotateAtSinCosLeft(DiMatrix *mpMat, DiFloat rSin, DiFloat rCos, D
  * @see     DiMatrixRotateUpSinCos
  * @see     DiMatrixRotateUp
  */
-DiVoid DiMatrixRotateAt(DiMatrix *mpMat, DiFloat rAngle, DiOpCombainType nOperation)
+void DiMatrixRotateAt(DiMatrix *mpMat, double rAngle, DiOpCombainType nOperation)
 {
-  DiFloat rSin, rCos;
+  double rSin, rCos;
 
   wxASSERT(mpMat);
 
@@ -555,8 +536,8 @@ DiVoid DiMatrixRotateAt(DiMatrix *mpMat, DiFloat rAngle, DiOpCombainType nOperat
  * @param   nOperation [in] operation to be perfomed
  * @author  BVS, Miron
  */
-DiVoid _diMatrixRotateRightSinCos(DiMatrix *mpMat, DiFloat rSin, 
-                                           DiFloat  rCos, DiOpCombainType nOperation)
+void _diMatrixRotateRightSinCos(DiMatrix *mpMat, double rSin, 
+                                           double  rCos, DiOpCombainType nOperation)
 {
   DiV4d vRight;
   DiV4d vUp;
@@ -647,8 +628,8 @@ DiVoid _diMatrixRotateRightSinCos(DiMatrix *mpMat, DiFloat rSin,
  * @see     DiMatrixRotateUpSinCos
  * @see     DiMatrixRotateUp
  */
-DiVoid DiMatrixRotateRightSinCos(DiMatrix *mpMat, DiFloat rSin, 
-                                 DiFloat  rCos, DiOpCombainType nOperation)
+void DiMatrixRotateRightSinCos(DiMatrix *mpMat, double rSin, 
+                                 double  rCos, DiOpCombainType nOperation)
 {
   wxASSERT(mpMat);
 
@@ -689,9 +670,9 @@ DiVoid DiMatrixRotateRightSinCos(DiMatrix *mpMat, DiFloat rSin,
  * @see     DiMatrixRotateUpSinCos
  * @see     DiMatrixRotateUp
  */
-DiVoid DiMatrixRotateRight(DiMatrix *mpMat, DiFloat rAngle, DiOpCombainType nOperation)
+void DiMatrixRotateRight(DiMatrix *mpMat, double rAngle, DiOpCombainType nOperation)
 {
-  DiFloat rSin, rCos;
+  double rSin, rCos;
 
 
   // TEST START
@@ -732,8 +713,8 @@ DiVoid DiMatrixRotateRight(DiMatrix *mpMat, DiFloat rAngle, DiOpCombainType nOpe
  * @param   nOperation [in] operation to be perfomed
  * @author  BVS, Miron
  */
-DiVoid _diMatrixRotateUpSinCosLeft(DiMatrix *mpMat, DiFloat rSin, 
-                                        DiFloat  rCos, DiOpCombainType nOperation)
+void _diMatrixRotateUpSinCosLeft(DiMatrix *mpMat, double rSin, 
+                                        double  rCos, DiOpCombainType nOperation)
 {
   DiV4d vRight;
   DiV4d vUp;
@@ -819,8 +800,8 @@ DiVoid _diMatrixRotateUpSinCosLeft(DiMatrix *mpMat, DiFloat rSin,
  * @see     DiMatrixRotateUpSinCos
  * @see     DiMatrixRotateUp
  */
-DiVoid DiMatrixRotateUpSinCosLeft(DiMatrix *mpMat, DiFloat rSin, 
-                              DiFloat  rCos, DiOpCombainType nOperation)
+void DiMatrixRotateUpSinCosLeft(DiMatrix *mpMat, double rSin, 
+                              double  rCos, DiOpCombainType nOperation)
 {
   wxASSERT(mpMat);
 
@@ -861,9 +842,9 @@ DiVoid DiMatrixRotateUpSinCosLeft(DiMatrix *mpMat, DiFloat rSin,
  * @see     DiMatrixRotateUpSinCos
  * @see     DiMatrixRotateUp
  */
-DiVoid DiMatrixRotateUp(DiMatrix *mpMat, DiFloat rAngle, DiOpCombainType nOperation)
+void DiMatrixRotateUp(DiMatrix *mpMat, double rAngle, DiOpCombainType nOperation)
 {
-  DiFloat rSin, rCos;
+  double rSin, rCos;
 
 
   // TEST START
@@ -905,10 +886,10 @@ DiVoid DiMatrixRotateUp(DiMatrix *mpMat, DiFloat rAngle, DiOpCombainType nOperat
  * @param   mpDst dest matrix [out]
  */
 //----------------------------------------------------------------------------
-DiVoid  DiMatrixMultiply(const DiMatrix *mpA, const DiMatrix *mpB, DiMatrix *mpOut)
+void  DiMatrixMultiply(const DiMatrix *mpA, const DiMatrix *mpB, DiMatrix *mpOut)
 //----------------------------------------------------------------------------
 {
-  DiInt32     nI;
+  int     nI;
   const DiV4d *vpSrcVector;
   DiV4d       *vpDstVector;
 
@@ -946,7 +927,7 @@ DiVoid  DiMatrixMultiply(const DiMatrix *mpA, const DiMatrix *mpB, DiMatrix *mpO
 } // end of DiMatrixMultiply
 
 //----------------------------------------------------------------------------
-DiVoid  mflMatrixToDi(vtkMatrix4x4 const *pMatrix, DiMatrix *mp)
+void  mflMatrixToDi(vtkMatrix4x4 const *pMatrix, DiMatrix *mp)
 //----------------------------------------------------------------------------
 {
   DiMatrixIdentity(mp);
@@ -969,7 +950,7 @@ DiVoid  mflMatrixToDi(vtkMatrix4x4 const *pMatrix, DiMatrix *mp)
 }
 
 //----------------------------------------------------------------------------
-DiVoid  DiMatrixToVTK(DiMatrix const *mp, vtkMatrix4x4 *pMatrix)
+void  DiMatrixToVTK(DiMatrix const *mp, vtkMatrix4x4 *pMatrix)
 //----------------------------------------------------------------------------
 {
   pMatrix->SetElement(0, 3, -mp->vPos  .x);
@@ -990,22 +971,23 @@ DiVoid  DiMatrixToVTK(DiMatrix const *mp, vtkMatrix4x4 *pMatrix)
 }
 
 
-#define _QUAT_COMP_ASSIGN(idx,val)   *((DiFloat *)qpQuat+(idx)) = (val)
+#define _QUAT_COMP_ASSIGN(idx,val)   *((double *)qpQuat+(idx)) = (val)
 
 #define EPSILON                     0.0004f
 
 #define FPEqualTo(a,b)          (fabs((a)-(b)) < 1e-4)  
 #define FPNotEqualTo(a,b)       (fabs((a)-(b)) > 1e-4)  
 
+#ifdef OLD_COMPOSER
 #define AllTriplets 8
 
 struct EulerAngles
 {
-  DiDouble theta;
-  DiDouble psi;
-  DiDouble phi;
+  double theta;
+  double psi;
+  double phi;
 };
-
+#endif
 #define DET(xx, xy, yx, yy) ((xx) * (yy) - (xy) * (yx))
 
 #define m_X_X mpIn->vRight.x
@@ -1054,15 +1036,15 @@ struct EulerAngles
  * @param   qpQuat
  */
 //----------------------------------------------------------------------------
-DiVoid DiQuatBuildFromMatrix(DiMatrix const *mpMatIn, DiQuaternion *qpQuat)
+void DiQuatBuildFromMatrix(DiMatrix const *mpMatIn, DiQuaternion *qpQuat)
 //----------------------------------------------------------------------------
 {
-  DiFloat         sbTrace;
+  double         sbTrace;
   DiMatrix        mStore;
   DiMatrix const  *mpMat = &mStore;
-  DiFloat         rS, rSub, rV;
-  DiInt32         nI, nJ, nK;
-  static DiInt32  _naNext[3] = {_Y_IDX, _Z_IDX, _X_IDX};
+  double         rS, rSub, rV;
+  int         nI, nJ, nK;
+  static int  _naNext[3] = {_Y_IDX, _Z_IDX, _X_IDX};
 
   wxASSERT(mpMat != NULL);
   wxASSERT(qpQuat != NULL);
@@ -1070,7 +1052,7 @@ DiVoid DiQuatBuildFromMatrix(DiMatrix const *mpMatIn, DiQuaternion *qpQuat)
   // ensure we have a correct picture of matrix and quaternion layouts
   wxASSERT(offsetof(DiMatrix,vRight) + sizeof(DiV4d)==offsetof(DiMatrix,vUp) &&
            offsetof(DiMatrix,vUp) + sizeof(DiV4d)==offsetof(DiMatrix,vAt));
-  wxASSERT(offsetof(DiQuaternion,w) == _W_IDX * sizeof(DiFloat));// fail => _QUAT_COMP_ASSIGN wrong
+  wxASSERT(offsetof(DiQuaternion,w) == _W_IDX * sizeof(double));// fail => _QUAT_COMP_ASSIGN wrong
   //access
   mpMat = mpMatIn;
  
@@ -1127,7 +1109,7 @@ DiVoid DiQuatBuildFromMatrix(DiMatrix const *mpMatIn, DiQuaternion *qpQuat)
     _QUAT_COMP_ASSIGN(nK, rV);
   } // trace cases
 
-  wxASSERT(DiFAbs((qpQuat->x * qpQuat->x + qpQuat->y * qpQuat->y + qpQuat->z * qpQuat->z + qpQuat->w * qpQuat->w) - 1.0f) <  EPSILON * 100);
+  wxASSERT(fabs((qpQuat->x * qpQuat->x + qpQuat->y * qpQuat->y + qpQuat->z * qpQuat->z + qpQuat->w * qpQuat->w) - 1.0f) <  EPSILON * 100);
  
   return;
 } // end of DiQuatBuildFromMatrix
@@ -1142,15 +1124,15 @@ DiVoid DiQuatBuildFromMatrix(DiMatrix const *mpMatIn, DiQuaternion *qpQuat)
  * @param   mpMatrix matrix [out]
  */
 //----------------------------------------------------------------------------
-DiVoid  DiQuatBuildMatrix(DiQuaternion *qpQuat, DiMatrix *mpMatrix)
+void  DiQuatBuildMatrix(DiQuaternion *qpQuat, DiMatrix *mpMatrix)
 //----------------------------------------------------------------------------
 {
-  DiFloat   fXX , fXY , fXZ;
-  DiFloat   fYY , fYZ;
-  DiFloat   fZZ ;
-  DiFloat   fWX , fWY , fWZ;
-  DiFloat   fS;
-  DiFloat   rXX, rYY, rZZ, rDiv;
+  double   fXX , fXY , fXZ;
+  double   fYY , fYZ;
+  double   fZZ ;
+  double   fWX , fWY , fWZ;
+  double   fS;
+  double   rXX, rYY, rZZ, rDiv;
 
   wxASSERT(mpMatrix != NULL);
   wxASSERT(qpQuat != NULL);
@@ -1172,7 +1154,7 @@ DiVoid  DiQuatBuildMatrix(DiQuaternion *qpQuat, DiMatrix *mpMatrix)
   rZZ = qpQuat->z * qpQuat->z;
 
   rDiv = rXX + rYY + rZZ + (qpQuat->w * qpQuat->w);
-  wxASSERT(DiFAbs(rDiv) > 1e-7f);
+  wxASSERT(fabs(rDiv) > 1e-7f);
   fS = 2.0f / rDiv;
   fYY = fS * (rYY);
   fZZ = fS * (rZZ);
@@ -1212,18 +1194,18 @@ DiVoid  DiQuatBuildMatrix(DiQuaternion *qpQuat, DiMatrix *mpMatrix)
  * @author  Earnol
  */
 //----------------------------------------------------------------------------
-static DiFloat _mafIntGraphTransfSign(DiFloat rA, DiFloat rB)
+static double _mafIntGraphTransfSign(double rA, double rB)
 //----------------------------------------------------------------------------
 {
-  DiFloat rRet;
+  double rRet;
 
   if(rB > 0.0f)
   {
-    rRet = DiFAbs(rA);
+    rRet = fabs(rA);
   }
   else if(rB < 0.0f)
   {
-    rRet = -DiFAbs(rA);
+    rRet = -fabs(rA);
   }
   else
   {
@@ -1243,7 +1225,7 @@ static DiFloat _mafIntGraphTransfSign(DiFloat rA, DiFloat rB)
  * @see     Nothing
  */
 //----------------------------------------------------------------------------
-DiBool mafTransfMirrorMatrixYOX(DiMatrix *mpIn, DiMatrix *mpOut)
+bool mafTransfMirrorMatrixYOX(DiMatrix *mpIn, DiMatrix *mpOut)
 //----------------------------------------------------------------------------
 {
   mpOut->vRight.x = -mpIn->vRight.x;
@@ -1283,10 +1265,10 @@ DiBool mafTransfMirrorMatrixYOX(DiMatrix *mpIn, DiMatrix *mpOut)
  * @author  BVS, Miron
  */
 //----------------------------------------------------------------------------
-DiVoid DiMatrixOrtoNormalizeVectSys(DiV4d  *vpMain, DiV4d  *vpSub1, DiV4d  *vpSub2, DiBool bLeftRight)
+void DiMatrixOrtoNormalizeVectSys(DiV4d  *vpMain, DiV4d  *vpSub1, DiV4d  *vpSub2, bool bLeftRight)
 //----------------------------------------------------------------------------
 {
-  DiFloat rMain_Sub1, rSub1Norma, rCoeff;
+  double rMain_Sub1, rSub1Norma, rCoeff;
 
   wxASSERT(DiV4dDotProduct(vpMain, vpMain) > 0.00001f);
   wxASSERT(DiV4dDotProduct(vpSub1, vpSub1) > 0.00001f);
@@ -1337,7 +1319,7 @@ DiVoid DiMatrixOrtoNormalizeVectSys(DiV4d  *vpMain, DiV4d  *vpSub1, DiV4d  *vpSu
  * @author  Earnol
  */
 //----------------------------------------------------------------------------
-DiVoid mafTransfOrtoNormalizeMatrix(DiMatrix *mpMat, DiV4d const*vpRot, DiBool bLeftRight)
+void mafTransfOrtoNormalizeMatrix(DiMatrix *mpMat, DiV4d const*vpRot, bool bLeftRight)
 //----------------------------------------------------------------------------
 {
   DiMatrix mA   ;
@@ -1347,7 +1329,7 @@ DiVoid mafTransfOrtoNormalizeMatrix(DiMatrix *mpMat, DiV4d const*vpRot, DiBool b
   DiV4d    vARot;
   DiV4d    vBRot;
   DiV4d    vCRot;
-  DiFloat rA, rB, rC;
+  double rA, rB, rC;
 
   //compare 1
   DiMatrixCopy(mpMat, &mA);
@@ -1414,14 +1396,14 @@ void mafAttVecToVTKMat(double ThetaIn[3], vtkMatrix4x4 *pMat)
  * @see     Nothing
  */
 //----------------------------------------------------------------------------
-DiBool mafTransfTransformUpright(DiV4d const *vpPos, DiV4d const *vpRot, DiMatrix *mpOut)
+bool mafTransfTransformUpright(DiV4d const *vpPos, DiV4d const *vpRot, DiMatrix *mpOut)
 //----------------------------------------------------------------------------
 {
   DiV4d     vRot;
   DiMatrix  mC;
-  DiDouble  rNorm, rLen;
-  DiDouble  rLCos, rLSin;
-  DiDouble  rLCosPerNorm, rLSinPerLen;
+  double  rNorm, rLen;
+  double  rLCos, rLSin;
+  double  rLCosPerNorm, rLSinPerLen;
   DiMatrix *mpMat;
 
   if(vpRot->x == 0.0f && vpRot->y == 0.0f && vpRot->z == 0.0f)
@@ -1448,7 +1430,7 @@ DiBool mafTransfTransformUpright(DiV4d const *vpPos, DiV4d const *vpRot, DiMatri
     //vRot.x = -vRot.x;
 
     //force entire calculations to double
-    rNorm = ((DiDouble)vRot.x) * vRot.x + vRot.y * vRot.y + vRot.z * vRot.z;
+    rNorm = ((double)vRot.x) * vRot.x + vRot.y * vRot.y + vRot.z * vRot.z;
     rLen = sqrt(rNorm);
     //prepare trigonomery
     rLCos = cos(rLen);
@@ -1461,17 +1443,17 @@ DiBool mafTransfTransformUpright(DiV4d const *vpPos, DiV4d const *vpRot, DiMatri
     rLCosPerNorm = (1.0 - rLCos) / rNorm;
 
     //add first compound
-    _MATR_EL(0,0) = (0.0                     + rLCosPerNorm * (DiDouble)(vRot.x) * vRot.x + rLCos);  
-    _MATR_EL(1,0) = (rLSinPerLen * (-vRot.z) + rLCosPerNorm * (DiDouble)(vRot.x) * vRot.y        );
-    _MATR_EL(2,0) = (rLSinPerLen * vRot.y    + rLCosPerNorm * (DiDouble)(vRot.x) * vRot.z        );
+    _MATR_EL(0,0) = (0.0                     + rLCosPerNorm * (double)(vRot.x) * vRot.x + rLCos);  
+    _MATR_EL(1,0) = (rLSinPerLen * (-vRot.z) + rLCosPerNorm * (double)(vRot.x) * vRot.y        );
+    _MATR_EL(2,0) = (rLSinPerLen * vRot.y    + rLCosPerNorm * (double)(vRot.x) * vRot.z        );
     _MATR_EL(3,0) = ( 0.0                    + 0.0                                          );
-    _MATR_EL(0,1) = (rLSinPerLen * vRot.z    + rLCosPerNorm * (DiDouble)(vRot.y) * vRot.x        );
-    _MATR_EL(1,1) = (0.0                     + rLCosPerNorm * (DiDouble)(vRot.y) * vRot.y + rLCos);
-    _MATR_EL(2,1) = (rLSinPerLen * (-vRot.x) + rLCosPerNorm * (DiDouble)(vRot.y) * vRot.z        );
+    _MATR_EL(0,1) = (rLSinPerLen * vRot.z    + rLCosPerNorm * (double)(vRot.y) * vRot.x        );
+    _MATR_EL(1,1) = (0.0                     + rLCosPerNorm * (double)(vRot.y) * vRot.y + rLCos);
+    _MATR_EL(2,1) = (rLSinPerLen * (-vRot.x) + rLCosPerNorm * (double)(vRot.y) * vRot.z        );
     _MATR_EL(3,1) = (0.0                     + 0.0                                          );
-    _MATR_EL(0,2) = (rLSinPerLen * (-vRot.y) + rLCosPerNorm * (DiDouble)(vRot.z) * vRot.x        );
-    _MATR_EL(1,2) = (rLSinPerLen * (vRot.x)  + rLCosPerNorm * (DiDouble)(vRot.z) * vRot.y        );
-    _MATR_EL(2,2) = (0.0                     + rLCosPerNorm * (DiDouble)(vRot.z) * vRot.z + rLCos);
+    _MATR_EL(0,2) = (rLSinPerLen * (-vRot.y) + rLCosPerNorm * (double)(vRot.z) * vRot.x        );
+    _MATR_EL(1,2) = (rLSinPerLen * (vRot.x)  + rLCosPerNorm * (double)(vRot.z) * vRot.y        );
+    _MATR_EL(2,2) = (0.0                     + rLCosPerNorm * (double)(vRot.z) * vRot.z + rLCos);
     _MATR_EL(3,2) = (0.0                     + 0.0                                          );
   }
   
@@ -1494,16 +1476,16 @@ DiBool mafTransfTransformUpright(DiV4d const *vpPos, DiV4d const *vpRot, DiMatri
 
 
 //----------------------------------------------------------------------------
-static  DiBool _mafTransfInverseTransformUpright(DiMatrix const *mpIn, DiV4d *vpPos, DiV4d *vpRot)
+static  bool _mafTransfInverseTransformUpright(DiMatrix const *mpIn, DiV4d *vpPos, DiV4d *vpRot)
 //----------------------------------------------------------------------------
 {
   DiMatrix mA;
   DiMatrix mB;
-  DiDouble rCosQuat, rArcCosFrom1;
-  DiDouble rQuatCosine, rSinQuat;
+  double rCosQuat, rArcCosFrom1;
+  double rQuatCosine, rSinQuat;
   DiMatrix *mpMat;
-  DiDouble rEps = 1.0e-4f; 
-  DiDouble rGradToRadCoeff = 1.0f;// / diPI * 180.0f;
+  double rEps = 1.0e-4f; 
+  double rGradToRadCoeff = 1.0f;// / diPI * 180.0f;
 
   //init
   mpMat = &mA;
@@ -1531,9 +1513,9 @@ static  DiBool _mafTransfInverseTransformUpright(DiMatrix const *mpIn, DiV4d *vp
   DiV4dCopy(vp4GZero, vpRot);
   //access
   mpMat        = &mB;
-  DiDouble   tmp_x, tmp_y, tmp_z;
-  DiDouble   n_x, n_y, n_z;
-  DiDouble   n_tmp;
+  double   tmp_x, tmp_y, tmp_z;
+  double   n_x, n_y, n_z;
+  double   n_tmp;
   tmp_x = _MATR_EL(2,1)-_MATR_EL(1,2);
   tmp_y = _MATR_EL(0,2)-_MATR_EL(2,0);
   tmp_z = _MATR_EL(1,0)-_MATR_EL(0,1);
@@ -1561,9 +1543,9 @@ static  DiBool _mafTransfInverseTransformUpright(DiMatrix const *mpIn, DiV4d *vp
   rQuatCosine = acos(DiFFitIn(rCosQuat, -1, 1)); // Ordinary case
   if(rQuatCosine > vtkMath::Pi())
   {
-    DiDouble b1_x, b2_x, b3_x;
-    DiDouble b1_y, b2_y, b3_y;
-    DiDouble b1_z, b2_z, b3_z;
+    double b1_x, b2_x, b3_x;
+    double b1_y, b2_y, b3_y;
+    double b1_z, b2_z, b3_z;
     b1_x = 0.5 * (_MATR_EL(0,0) + _MATR_EL(0,0)) - cos(rQuatCosine) * 1;
     b1_y = 0.5 * (_MATR_EL(1,0) + _MATR_EL(0,1)) - cos(rQuatCosine) * 0;
     b1_z = 0.5 * (_MATR_EL(2,0) + _MATR_EL(0,2)) - cos(rQuatCosine) * 0;
@@ -1575,7 +1557,7 @@ static  DiBool _mafTransfInverseTransformUpright(DiMatrix const *mpIn, DiV4d *vp
     b3_x = 0.5 * (_MATR_EL(0,2) + _MATR_EL(2,0)) - cos(rQuatCosine) * 0;
     b3_y = 0.5 * (_MATR_EL(1,2) + _MATR_EL(2,1)) - cos(rQuatCosine) * 0;
     b3_z = 0.5 * (_MATR_EL(2,2) + _MATR_EL(2,2)) - cos(rQuatCosine) * 1;
-    DiDouble b_tmp_x, b_tmp_y, b_tmp_z;
+    double b_tmp_x, b_tmp_y, b_tmp_z;
     b_tmp_x = b1_x * b1_x + b1_y * b1_y + b1_z * b1_z;
     b_tmp_y = b2_x * b2_x + b2_y * b2_y + b2_z * b2_z;
     b_tmp_z = b3_x * b3_x + b3_y * b3_y + b3_z * b3_z;
@@ -1631,24 +1613,24 @@ static  DiBool _mafTransfInverseTransformUpright(DiMatrix const *mpIn, DiV4d *vp
  * @see     Nothing
  */
 //----------------------------------------------------------------------------
-DiBool mafTransfInverseTransformUpright(DiMatrix const *mpIn, DiV4d *vpPos, DiV4d *vpRot)
+bool mafTransfInverseTransformUpright(DiMatrix const *mpIn, DiV4d *vpPos, DiV4d *vpRot)
 //----------------------------------------------------------------------------
 {
   DiMatrix mA;
   DiMatrix mB;
   DiMatrix mC;
-  DiDouble rCosQuat, rArcCosFrom1;
-  DiDouble rTeta, rTetaOut;
-  DiDouble rQuatCosine, rSinQuat, rAQ;
-  DiDouble rAX, rAY, rAZ;
+  double rCosQuat, rArcCosFrom1;
+  double rTeta, rTetaOut;
+  double rQuatCosine, rSinQuat, rAQ;
+  double rAX, rAY, rAZ;
   DiMatrix *mpMat;
-  DiDouble rEps = 1.0e-5f; 
-  DiDouble rGradToRadCoeff = 1.0f;// / diPI * 180.0f;
-  DiInt32  nI, nJ;
-  DiDouble rDLength, rMaxSum, rSum;
-  DiInt32  nIndex;
-  DiDouble rDotTmp;
-  DiDouble rALength;
+  double rEps = 1.0e-5f; 
+  double rGradToRadCoeff = 1.0f;// / diPI * 180.0f;
+  int  nI, nJ;
+  double rDLength, rMaxSum, rSum;
+  int  nIndex;
+  double rDotTmp;
+  double rALength;
 
   //init
   mpMat = &mA;
@@ -1697,11 +1679,11 @@ DiBool mafTransfInverseTransformUpright(DiMatrix const *mpIn, DiV4d *vpPos, DiV4
       {
         rDotTmp          = 0.5f * (_MATR_EL(nI, nJ) + _MATR_EL(nJ, nI));
         mpMat            = &mC;
-        _MATR_EL(nI, nJ) = (float)rDotTmp;
+        _MATR_EL(nI, nJ) = (double)rDotTmp;
         mpMat            = &mB;
       }
       mpMat            = &mC;
-      _MATR_EL(nI, nI) = _MATR_EL(nI, nI) - (float)cos(rQuatCosine);
+      _MATR_EL(nI, nI) = _MATR_EL(nI, nI) - (double)cos(rQuatCosine);
       mpMat            = &mB;
     }
     nIndex  = 0;
@@ -1745,9 +1727,9 @@ DiBool mafTransfInverseTransformUpright(DiMatrix const *mpIn, DiV4d *vpPos, DiV4
   }
 
   //store output
-  vpRot->x = (DiFloat)(rAX*rAQ);
-  vpRot->y = (DiFloat)(rAY*rAQ);
-  vpRot->z = (DiFloat)(rAZ*rAQ);
+  vpRot->x = (double)(rAX*rAQ);
+  vpRot->y = (double)(rAY*rAQ);
+  vpRot->z = (double)(rAZ*rAQ);
   _mafTransfInverseTransformUpright(mpIn, vpPos, vpRot);
   vpRot->w = 1.0f;
 //
@@ -1759,7 +1741,7 @@ DiBool mafTransfInverseTransformUpright(DiMatrix const *mpIn, DiV4d *vpPos, DiV4
 } // end of mafTransfInverseTransformUpright;
 
 
-DiBool CompareVectors(const DiV4d &a, const DiV4d &b)
+bool CompareVectors(const DiV4d &a, const DiV4d &b)
 {
 	return 
 		fabs(a.x - b.x) < 0.001f  &&
@@ -1768,13 +1750,13 @@ DiBool CompareVectors(const DiV4d &a, const DiV4d &b)
 }	
 
 
-DiBool mafTransfEulerToMatrix(DiV4d *vpRot, DiMatrix *mpMat)
+bool mafTransfEulerToMatrix(DiV4d *vpRot, DiMatrix *mpMat, int conv)
 {
   DiQuaternion qQuat;
   DiMatrix mTransp;
 
 
-  mafTransfEulerToQuaternion(vpRot, &qQuat);
+  mafTransfEulerToQuaternion(vpRot, &qQuat, conv);
   DiQuatBuildMatrix(&qQuat, &mTransp);
   DiMatrixTransposeRotationalSubmatrix(&mTransp, mpMat);
   return true;
@@ -1792,16 +1774,16 @@ DiBool mafTransfEulerToMatrix(DiV4d *vpRot, DiMatrix *mpMat)
  * @author  Earnol
  * @see     Nothing
  */
-DiBool mafTransfEulerToQuaternion(DiV4d *vpRotIn, DiQuaternion *qpQuat)
+bool mafTransfEulerToQuaternion(DiV4d *vpRotIn, DiQuaternion *qpQuat, int conv)
 {
-  DiFloat a[3], ti, tj, th, ci, cj, ch, si, sj, sh, cc, cs, sc, ss;
-  DiInt32 i,j,k,h,n,s,f;
-  DiFloat rTmp;
+  double a[3], ti, tj, th, ci, cj, ch, si, sj, sh, cc, cs, sc, ss;
+  int i,j,k,h,n,s,f;
+  double rTmp;
   DiV4d vWork;
   DiV4d *vpRot = &vWork;
 
   vWork = *vpRotIn;
-  EulGetOrd(vpRot->w,i,j,k,h,n,s,f);
+  EulGetOrd(conv,i,j,k,h,n,s,f);
   if (f == EulFrmR) 
   {
     rTmp = vpRot->x; vpRot->x = vpRot->z; vpRot->z = rTmp;
@@ -1840,11 +1822,11 @@ DiBool mafTransfEulerToQuaternion(DiV4d *vpRotIn, DiQuaternion *qpQuat)
  * @author  Earnol
  * @see     Nothing
  */
-DiBool mafTransfIsMatrixOrtoNormalized(DiMatrix *mpMat)
+bool mafTransfIsMatrixOrtoNormalized(DiMatrix *mpMat)
 {
-  DiInt32 nI;
+  int nI;
   DiV4d   *vp;
-  DiFloat rNorm;
+  double rNorm;
   DiV4d   vT;
 
 
@@ -1868,20 +1850,20 @@ DiBool mafTransfIsMatrixOrtoNormalized(DiMatrix *mpMat)
   }
   //check ortogonalization
   rNorm = DiV4dDotProduct(&mpMat->vRight, &mpMat->vUp);
-  if(DiFAbs(rNorm) > 0.001f)
+  if(fabs(rNorm) > 0.001f)
   {
     return (FALSE);
   }
   //check ortogonalization
   rNorm = DiV4dDotProduct(&mpMat->vRight, &mpMat->vAt);
-  if(DiFAbs(rNorm) > 0.001f)
+  if(fabs(rNorm) > 0.001f)
   {
     return (FALSE);
   }
 
   //check ortogonalization
   rNorm = DiV4dDotProduct(&mpMat->vAt, &mpMat->vUp);
-  if(DiFAbs(rNorm) > 0.001f)
+  if(fabs(rNorm) > 0.001f)
   {
     return (FALSE);
   }
@@ -1903,9 +1885,9 @@ DiBool mafTransfIsMatrixOrtoNormalized(DiMatrix *mpMat)
  * @author  Earnol
  * @see     Nothing
  */
-DiBool mafTransfDecomposeMatrix(DiMatrix *mpIn, DiV4d *vpRot, DiV4d *vpPos)
+bool mafTransfDecomposeMatrix(DiMatrix *mpIn, DiV4d *vpRot, DiV4d *vpPos)
 {
-  DiBool bRet;
+  bool bRet;
 
   //init
   bRet = FALSE;
@@ -1917,13 +1899,11 @@ DiBool mafTransfDecomposeMatrix(DiMatrix *mpIn, DiV4d *vpRot, DiV4d *vpPos)
   return (bRet);
 } // end of SaTransfDecomposeMatrix
 
-DiBool mafTransfDecomposeMatrixStright(DiMatrix *mpIn, DiV4d *vpRot, DiV4d *vpPos)
+bool mafTransfDecomposeMatrixStright(DiMatrix *mpIn, DiV4d *vpRot, DiV4d *vpPos)
 {
   DiV4dCopy(&(mpIn->vPos), vpPos);
   vpPos->w = 1.0;
-
-  vpRot->w = EulOrdXYZr;
-  mafTransfMatrixToEuler(mpIn, vpRot);
+  mafTransfMatrixToEuler(mpIn, vpRot, EulOrdXYZr);
   vpRot->w = 1.0;
   return true;
 
@@ -1931,18 +1911,17 @@ DiBool mafTransfDecomposeMatrixStright(DiMatrix *mpIn, DiV4d *vpRot, DiV4d *vpPo
 
 
 
-DiBool mafTransfComposeMatrixStright(DiMatrix *mpIn, DiV4d const *vpRot, DiV4d const *vpPos)
+bool mafTransfComposeMatrixStright(DiMatrix *mpIn, DiV4d const *vpRot, DiV4d const *vpPos)
 {
   DiV4d rloc;
 
   DiV4dCopy(vpRot, &rloc);
-  rloc.w = EulOrdXYZr;
-  mafTransfEulerToMatrix(&rloc, mpIn);
+  mafTransfEulerToMatrix(&rloc, mpIn, EulOrdXYZr);
   DiV4dCopy(vpPos, &(mpIn->vPos));
   mpIn->vPos.w = 1.0;
   return true;
 }
-
+#ifdef OLD_COMPOSER
 /**
  * detailed description
  *
@@ -1954,10 +1933,10 @@ DiBool mafTransfComposeMatrixStright(DiMatrix *mpIn, DiV4d const *vpRot, DiV4d c
  * @author  Earnol
  * @see     Nothing
  */
-DiBool mafTransfDecomposeMatrixStright1(DiMatrix *mpIn, DiV4d *vpRot, DiV4d *vpPos)
+bool mafTransfDecomposeMatrixStright1(DiMatrix *mpIn, DiV4d *vpRot, DiV4d *vpPos)
 {
   DiMatrix  mMat;
-  DiFloat   rCos;
+  double   rCos;
 
   //copy position
   DiV4dCopy(&mpIn->vPos, vpPos);
@@ -2004,7 +1983,7 @@ DiBool mafTransfDecomposeMatrixStright1(DiMatrix *mpIn, DiV4d *vpRot, DiV4d *vpP
   vpRot->w = 1.0f;
   return (TRUE);
 } // end of SaTransfDecomposeMatrixStright
-
+#endif
 /**
  * detailed description
  *
@@ -2016,7 +1995,7 @@ DiBool mafTransfDecomposeMatrixStright1(DiMatrix *mpIn, DiV4d *vpRot, DiV4d *vpP
  * @author  Earnol
  * @see     Nothing
  */
-DiBool mafTransfComposeMatrix(DiMatrix *mpIn, DiV4d *vpRot, DiV4d *vpPos)
+bool mafTransfComposeMatrix(DiMatrix *mpIn, DiV4d *vpRot, DiV4d *vpPos)
 {
 
   //relay
@@ -2024,7 +2003,7 @@ DiBool mafTransfComposeMatrix(DiMatrix *mpIn, DiV4d *vpRot, DiV4d *vpPos)
   wxASSERT(mafTransfIsMatrixOrtoNormalized(mpIn));
   return (TRUE);
 } // end of SaTransfComposeMatrix
-
+#ifdef OLD_COMPOSER
 /**
  * detailed description
  *
@@ -2036,7 +2015,7 @@ DiBool mafTransfComposeMatrix(DiMatrix *mpIn, DiV4d *vpRot, DiV4d *vpPos)
  * @author  Earnol
  * @see     Nothing
  */
-DiBool mafTransfComposeMatrixStright1(DiMatrix *mpIn, DiV4d const *vpRot, DiV4d const *vpPos)
+bool mafTransfComposeMatrixStright1(DiMatrix *mpIn, DiV4d const *vpRot, DiV4d const *vpPos)
 {
   //set rotation
   DiMatrixIdentity(mpIn);
@@ -2049,22 +2028,18 @@ DiBool mafTransfComposeMatrixStright1(DiMatrix *mpIn, DiV4d const *vpRot, DiV4d 
   return (TRUE);
 } // end of SaTransfComposeMatrixStright
 
-inline DiFloat DiD2F(DiDouble rValue)
-{
-  return (DiFloat)rValue;
-} // end of DiD2F
+#endif
 
-
-DiBool mafTransfMatrixToEuler(DiMatrix const *mpMat, DiV4d *vpR)
+bool mafTransfMatrixToEuler(DiMatrix const *mpMat, DiV4d *vpR, int conv)
 {
     int i,j,k,h,n,s,f;
-    DiDouble phi, psi, theta;
+    double phi, psi, theta;
 
-    EulGetOrd(vpR->w,i,j,k,h,n,s,f);
+    EulGetOrd(conv,i,j,k,h,n,s,f);
 
     if(s == EulRepYes) 
     {
-	    DiDouble sy = sqrt((double)_MATR_EL(i,j) * (double)_MATR_EL(i, j) + (double)_MATR_EL(i, k) * (double)_MATR_EL(i, k));
+	    double sy = sqrt((double)_MATR_EL(i,j) * (double)_MATR_EL(i, j) + (double)_MATR_EL(i, k) * (double)_MATR_EL(i, k));
 	    if(sy > 16 * FLT_EPSILON) 
       {
 	      phi = atan2((double)_MATR_EL(i, j), (double)_MATR_EL(i, k));
@@ -2080,7 +2055,7 @@ DiBool mafTransfMatrixToEuler(DiMatrix const *mpMat, DiV4d *vpR)
     } 
     else 
     {
-	    DiDouble cy = sqrt(_MATR_EL(i, i) * _MATR_EL(i, i) + _MATR_EL(j, i) * _MATR_EL(j, i));
+	    double cy = sqrt(_MATR_EL(i, i) * _MATR_EL(i, i) + _MATR_EL(j, i) * _MATR_EL(j, i));
 	    if(cy > 16 * FLT_EPSILON) 
       {
 	      phi = atan2((double)_MATR_EL(k, j), (double)_MATR_EL(k, k));
@@ -2094,25 +2069,25 @@ DiBool mafTransfMatrixToEuler(DiMatrix const *mpMat, DiV4d *vpR)
 	      theta = 0;
     	}
     }
-    vpR->x = DiD2F(phi);
-    vpR->y = DiD2F(psi);
-    vpR->z = DiD2F(theta);
+    vpR->x = phi;
+    vpR->y = psi;
+    vpR->z = theta;
     if(n == EulParOdd)
     {
-      DI_SB_CHANGE_SIGN(Sb(vpR->x), Sb(vpR->x));
-      DI_SB_CHANGE_SIGN(Sb(vpR->y), Sb(vpR->y));
-      DI_SB_CHANGE_SIGN(Sb(vpR->z), Sb(vpR->z));
+      vpR->x = -vpR->x;
+      vpR->y = -vpR->y;
+      vpR->z= - vpR->z;
     }
     if(f == EulFrmR) 
     {
-      DiFloat rTmp = vpR->x; 
+      double rTmp = vpR->x; 
       vpR->x = vpR->z; 
       vpR->z = rTmp;
     }
     return true;
 }
 
-
+#ifdef OLD_COMPOSER
 /**
  * detailed description
  *
@@ -2123,13 +2098,13 @@ DiBool mafTransfMatrixToEuler(DiMatrix const *mpMat, DiV4d *vpR)
  * @author  Earnol
  */
 //----------------------------------------------------------------------------
-DiBool mafTransfMatrixToEuler1(DiMatrix *mpR, DiV4d *vpR)
+bool mafTransfMatrixToEuler1(DiMatrix *mpR, DiV4d *vpR)
 //----------------------------------------------------------------------------
 {
   EulerAngles eulerAngles[AllTriplets];
-  DiInt32     i;
-  DiDouble    theta1, theta2, psi11, psi12, psi21, psi22, phi11, phi12, phi21, phi22;
-  DiDouble    phi, psi1, psi2;
+  int     i;
+  double    theta1, theta2, psi11, psi12, psi21, psi22, phi11, phi12, phi21, phi22;
+  double    phi, psi1, psi2;
   DiMatrix    mA; 
   DiMatrix    *mpMat = &mA;
 
@@ -2295,7 +2270,7 @@ DiBool mafTransfMatrixToEuler1(DiMatrix *mpR, DiV4d *vpR)
   }
   return (FALSE);
 }
-
+#endif
 
 
 /**
@@ -2307,7 +2282,7 @@ DiBool mafTransfMatrixToEuler1(DiMatrix *mpR, DiV4d *vpR)
  * @param   mpMatDst [out] pointer to the destination matrix
  */
 //----------------------------------------------------------------------------
-DiVoid DiMatrixTransposeRotationalSubmatrix(const DiMatrix *mpMatSrc, DiMatrix *mpMatDst)
+void DiMatrixTransposeRotationalSubmatrix(const DiMatrix *mpMatSrc, DiMatrix *mpMatDst)
 //----------------------------------------------------------------------------
 {
   DiMatrixTestIntegrity(mpMatSrc);
@@ -2349,7 +2324,7 @@ DiVoid DiMatrixTransposeRotationalSubmatrix(const DiMatrix *mpMatSrc, DiMatrix *
  * @see     DiMatrixScale
  * @see     DiMatrixTranslate
  */
-DiVoid DiMatrixAdd(const DiMatrix *mpSrc1, const DiMatrix *mpSrc2, DiMatrix *mpDst)
+void DiMatrixAdd(const DiMatrix *mpSrc1, const DiMatrix *mpSrc2, DiMatrix *mpDst)
 {
   wxASSERT(mpDst);
   
@@ -2384,7 +2359,7 @@ DiVoid DiMatrixAdd(const DiMatrix *mpSrc1, const DiMatrix *mpSrc2, DiMatrix *mpD
  * @see     DiMatrixScale
  * @see     DiMatrixTranslate
  */
-DiVoid DiMatrixSubtract(const DiMatrix *mpSrc1, const DiMatrix *mpSrc2, DiMatrix *mpDst)
+void DiMatrixSubtract(const DiMatrix *mpSrc1, const DiMatrix *mpSrc2, DiMatrix *mpDst)
 {
   wxASSERT(mpDst);
   
@@ -2411,11 +2386,11 @@ DiVoid DiMatrixSubtract(const DiMatrix *mpSrc1, const DiMatrix *mpSrc2, DiMatrix
  * @see     
  */
 //----------------------------------------------------------------------------
-DiBool DiMatrixInvert(const DiMatrix *mpIn, DiMatrix *mpOut)
+bool DiMatrixInvert(const DiMatrix *mpIn, DiMatrix *mpOut)
 //----------------------------------------------------------------------------
 {
-  DiFloat d;
-  DiFloat reciprocal_d;
+  double d;
+  double reciprocal_d;
   
   wxASSERT(mpIn);
   wxASSERT(mpOut);
@@ -2503,7 +2478,7 @@ DiBool DiMatrixInvert(const DiMatrix *mpIn, DiMatrix *mpOut)
  * @param   mpDest
  */
 //----------------------------------------------------------------------------
-DiVoid mafTransfRightLeftConv(DiMatrix *mpSource, DiMatrix *mpDest)
+void mafTransfRightLeftConv(DiMatrix *mpSource, DiMatrix *mpDest)
 //----------------------------------------------------------------------------
 {
   //perform mirroring
@@ -2526,7 +2501,7 @@ DiVoid mafTransfRightLeftConv(DiMatrix *mpSource, DiMatrix *mpDest)
  * @param   vpR      angles vector                    OUT
  */
 //----------------------------------------------------------------------------
-DiVoid mafTransfMatrixToGES(DiMatrix *mpParent, DiMatrix *mpChild, DiMatrix *mpBasic, DiV4d *vpR)
+void mafTransfMatrixToGES(DiMatrix *mpParent, DiMatrix *mpChild, DiMatrix *mpBasic, DiV4d *vpR)
 //----------------------------------------------------------------------------
 {
   DiMatrix mDistal  ;
@@ -2541,8 +2516,8 @@ DiVoid mafTransfMatrixToGES(DiMatrix *mpParent, DiMatrix *mpChild, DiMatrix *mpB
   DiV4d    vE1;
   DiV4d    vE2;
   DiV4d    vE3;
-  DiFloat  rE2xp,rE2yp,rE2zd,rE2xd;
-  DiFloat  rFE,rAA,rIE,rBet;
+  double  rE2xp,rE2yp,rE2zd,rE2xd;
+  double  rFE,rAA,rIE,rBet;
 
   DiMatrixCopy(mpParent, &mProximal);
   DiMatrixCopy(mpChild, &mDistal);
@@ -2576,8 +2551,8 @@ DiVoid mafTransfMatrixToGES(DiMatrix *mpParent, DiMatrix *mpChild, DiMatrix *mpB
   rE2xd  =  DiV4dDotProduct(&vE2, &vXD);
   rE2yp  =  DiV4dDotProduct(&vE2, &vYP);
   rE2xp  =  DiV4dDotProduct(&vE2, &vXP);
-  rIE    = -(DiFloat)atan2(rE2zd, rE2xd);
-  rFE    =  (DiFloat)atan2(rE2yp, rE2xp);
+  rIE    = -(double)atan2(rE2zd, rE2xd);
+  rFE    =  (double)atan2(rE2yp, rE2xp);
   rBet   =  DiV4dDotProduct(&vE3, &vE1);
   rAA    =  acos(DiFFitIn(rBet, -1.0, 1.0)) - vtkMath::Pi() * 0.5f;
   vpR->x = rAA;
@@ -2598,13 +2573,13 @@ DiVoid mafTransfMatrixToGES(DiMatrix *mpParent, DiMatrix *mpChild, DiMatrix *mpB
  * @param   vpOut vector [out]
  */
 //----------------------------------------------------------------------------
-DiVoid  DiV4dTransformVectorTo(DiV4d const *vpIn, DiMatrix const *mpMat, DiV4d *vpOut)
+void  DiV4dTransformVectorTo(DiV4d const *vpIn, DiMatrix const *mpMat, DiV4d *vpOut)
 //----------------------------------------------------------------------------
 {
-  DiFloat rScale;
-  DiFloat rImageX;
-  DiFloat rImageY;
-  DiFloat rImageZ;
+  double rScale;
+  double rImageX;
+  double rImageY;
+  double rImageZ;
 
   wxASSERT( mpMat->vRight.w + mpMat->vUp.w + mpMat->vAt.w == 0.f);
 
@@ -2641,7 +2616,7 @@ DiVoid  DiV4dTransformVectorTo(DiV4d const *vpIn, DiMatrix const *mpMat, DiV4d *
  * @param   vpOut   vector [out]
  */
 //----------------------------------------------------------------------------
-DiVoid  DiV4dInverseTransformVectorTo(DiV4d const *vpIn, DiMatrix const *mpMat, DiV4d *vpOut)
+void  DiV4dInverseTransformVectorTo(DiV4d const *vpIn, DiMatrix const *mpMat, DiV4d *vpOut)
 //----------------------------------------------------------------------------
 {
   wxASSERT(vpIn != vpOut);
@@ -2662,12 +2637,12 @@ DiVoid  DiV4dInverseTransformVectorTo(DiV4d const *vpIn, DiMatrix const *mpMat, 
  * @param   vpOut point  [out]
  */
 //----------------------------------------------------------------------------
-DiVoid  DiV4dTransformPointTo(DiV4d const *vpIn, DiMatrix const *mpMat, DiV4d *vpOut)
+void  DiV4dTransformPointTo(DiV4d const *vpIn, DiMatrix const *mpMat, DiV4d *vpOut)
 //----------------------------------------------------------------------------
 {
-  DiFloat rImageX;
-  DiFloat rImageY;
-  DiFloat rImageZ;
+  double rImageX;
+  double rImageY;
+  double rImageZ;
 
   wxASSERT( mpMat->vRight.w + mpMat->vUp.w + mpMat->vAt.w +
             mpMat->vPos.w == 1.f /* 0,0,0 and 1*/);
@@ -2699,42 +2674,6 @@ DiVoid  DiV4dTransformPointTo(DiV4d const *vpIn, DiMatrix const *mpMat, DiV4d *v
 
 
 /**
- * @memo    Calculates landmarks base
- * @return  true on success
- * @param   vpP1          IN
- * @param   vpP2          IN
- * @param   vpP3          IN
- * @param   vpP4          IN
- * @param   vpP5          IN
- * @param   vpX           OUT
- * @param   vpY           OUT
- * @param   vpZ           OUT
- */
-//----------------------------------------------------------------------------
-DiBool mafTransfAFCoords(DiV4d const *vpP1, DiV4d const *vpP2, DiV4d const *vpP3, DiV4d const *vpP4, DiV4d const *vpP5, 
-                        DiV4d *vpX,  DiV4d *vpY,  DiV4d *vpZ)
-//----------------------------------------------------------------------------
-{
-  DiV4d vA;
-  DiV4d vB;
-  DiV4d vR;
-
-  DiV4dSub(vpP2, vpP1, &vA);
-  DiV4dMakeUnit(&vA);
-  DiV4dSub(vpP3, vpP2, &vB);
-  DiV4dMakeUnit(&vB);
-  DiV4dCrossProduct(&vA, &vB, vpX);
-  DiV4dMakeUnit(vpX);
-  DiV4dSub(vpP5, vpP4, &vR);
-  DiV4dMakeUnit(&vR);
-  DiV4dCrossProduct(vpX, &vR, vpY);
-  DiV4dMakeUnit(vpY);
-  DiV4dCrossProduct(vpX, vpY, vpZ);
-  DiV4dMakeUnit(vpZ);
-  return (TRUE);
-}
-
-/**
  * This function is used to transform point with the given matrix
  *
  * @memo    Transform point with the given matrix
@@ -2745,7 +2684,7 @@ DiBool mafTransfAFCoords(DiV4d const *vpP1, DiV4d const *vpP2, DiV4d const *vpP3
  * @see     
  */
 //----------------------------------------------------------------------------
-DiVoid  DiV4dInverseTransformPointTo(DiV4d const *vpIn, DiMatrix const *mpMat, DiV4d *vpOut)
+void  DiV4dInverseTransformPointTo(DiV4d const *vpIn, DiMatrix const *mpMat, DiV4d *vpOut)
 //----------------------------------------------------------------------------
 {
   DiV4d vLPoint;
@@ -2772,12 +2711,12 @@ DiVoid  DiV4dInverseTransformPointTo(DiV4d const *vpIn, DiMatrix const *mpMat, D
  * @see     
  */
 //----------------------------------------------------------------------------
-typedef DiFloat HMatrix[4][4];
+typedef double HMatrix[4][4];
 
-DiFloat Determinant(DiMatrix const * inmat, DiInt32 n)
+double Determinant(DiMatrix const * inmat, int n)
 {
-  DiInt32 i, j, j1, j2;
-  DiFloat d = 0;
+  int i, j, j1, j2;
+  double d = 0;
   HMatrix  m;
   HMatrix  const *a = (HMatrix const *)inmat;
 
@@ -2811,79 +2750,6 @@ DiFloat Determinant(DiMatrix const * inmat, DiInt32 n)
   return d;
 }
 
-DiFloat BuildFourPointSphere(DiV4d *c, DiV4d const *p1, DiV4d const *p2, DiV4d const *p3, DiV4d const *p4)
-{
-  DiV4d listik[4];
-  listik[0] = *p1;
-  listik[1] = *p2;
-  listik[2] = *p3;
-  listik[3] = *p4;
-  return BuildFourPointSphere(*c, listik);
-}
-
-
-DiVoid  BuildSkewSimmetrixMatrix(DiV4d const &c, DiMatrix *mpMat)
-{
-   DiMatrixIdentity(mpMat);
-  _MATR_EL(0, 0) = 0;
-  _MATR_EL(0, 1) = -c.z;
-  _MATR_EL(0, 2) = c.y;
-
-  _MATR_EL(1, 0) = c.z;
-  _MATR_EL(1, 1) = 0;
-  _MATR_EL(1, 2) = -c.x;
-
-  _MATR_EL(2, 0) = -c.y;
-  _MATR_EL(2, 1) = c.x;
-  _MATR_EL(2, 2) = 0;
-}
-
-DiVoid  BuildSquareSkewSimmetrixMatrix(DiV4d const &c, DiMatrix *mpMat)
-{
-   DiMatrixIdentity(mpMat);
-  _MATR_EL(0, 0) = c.x * c.x - 1;
-  _MATR_EL(0, 1) = c.x * c.y;
-  _MATR_EL(0, 2) = c.x * c.z;
-
-  _MATR_EL(1, 0) = c.x * c.y;
-  _MATR_EL(1, 1) = c.y * c.y - 1;
-  _MATR_EL(1, 2) = c.y * c.z;
-
-  _MATR_EL(2, 0) = c.x * c.z;
-  _MATR_EL(2, 1) = c.y * c.z;
-  _MATR_EL(2, 2) = c.z * c.z - 1;
-
-}
-
-
-DiVoid BuildConfluencePoint(DiV4d const *axes, DiV4d const *points, DiInt32 numAxes, DiV4d &vConf)
-{
-  DiMatrix mSum;
-  DiMatrix mInv;
-  DiMatrix mSqr;
-  DiV4d vSkewTrans;   
-  DiV4d vSkewSum;
-  DiInt32 nI;
-
-  DiMatrixIdentity(&mSum);
-  mSum.vAt.z = 0.0f;
-  mSum.vUp.y = 0.0f;
-  mSum.vRight.x = 0.0f;
-  vSkewSum = *vp4GZero;
-  for(nI = 0; nI < numAxes; nI++)
-  {
-    BuildSquareSkewSimmetrixMatrix(axes[nI], &mSqr);
-    DiV4dTransformPointTo(&points[nI], &mSqr, &vSkewTrans);
-    DiV4dAdd(&vSkewSum, &vSkewTrans, &vSkewSum);
-    DiMatrixAdd(&mSum, &mSqr, &mSum);
-  }
-
-  DiMatrixInvert(&mSum, &mInv);
-
-  DiV4dTransformPointTo(&vSkewSum, &mInv, &vConf);
-}
-
-
 // Matrix interpolation
 /**
  * This function fills interpolation data for matrices interpolation:
@@ -2898,7 +2764,7 @@ DiVoid BuildConfluencePoint(DiV4d const *axes, DiV4d const *points, DiInt32 numA
  * @see     DiMatrixBuildInterpolationData
  * @see     DiMatrixBuildInterpolated
  */
-DiVoid DiMatrixBuildInterpolationData(DiMatrix const            *mpCurMatrix, 
+void DiMatrixBuildInterpolationData(DiMatrix const            *mpCurMatrix, 
                                       DiMatrix const            *mpPrevMatrix,
                                       DiMatrixInterpolationData *midpData)
 {
@@ -2907,7 +2773,7 @@ DiVoid DiMatrixBuildInterpolationData(DiMatrix const            *mpCurMatrix,
   // Convert to quaternions
   DiQuatBuildFromMatrix(mpCurMatrix, &(midpData->qtCurQuat));
   DiQuatBuildMatrix(&(midpData->qtCurQuat), &mTmp);
-  wxASSERT(DiFAbs(mTmp.vAt.z - mpCurMatrix->vAt.z) < 1e-3f);
+  wxASSERT(fabs(mTmp.vAt.z - mpCurMatrix->vAt.z) < 1e-3f);
   DiQuatBuildFromMatrix(mpPrevMatrix, &(midpData->qtPrevQuat));
 
   // Save positions
@@ -2929,14 +2795,14 @@ DiVoid DiMatrixBuildInterpolationData(DiMatrix const            *mpCurMatrix,
  * @author  Vlad
  * @see     <see>
  */
-DiVoid  DiQuatInterpSpherLinear(DiQuaternion  *qpA, 
+void  DiQuatInterpSpherLinear(DiQuaternion  *qpA, 
                                 DiQuaternion  *qpB, 
-                                DiFloat       rMix, 
+                                double       rMix, 
                                 DiQuaternion  *qpOut)
 {
-  DiFloat       rOmega, rRecSinOm, rSinTmp;
-  DiFloat       sbCosOm;
-  DiFloat       rKoefA, rKoefB;
+  double       rOmega, rRecSinOm, rSinTmp;
+  double       sbCosOm;
+  double       rKoefA, rKoefB;
 
   wxASSERT(qpA && qpB && qpOut);
 
@@ -2963,7 +2829,7 @@ DiVoid  DiQuatInterpSpherLinear(DiQuaternion  *qpA,
   {// rCosOm is ok
     rOmega = acos(sbCosOm);
     rSinTmp = sin(rOmega);
-    wxASSERT(DiFAbs(rSinTmp) >= 0.00001f);
+    wxASSERT(fabs(rSinTmp) >= 0.00001f);
     rRecSinOm = 1.0f / rSinTmp;
     rSinTmp = sin((1.0f - rMix) * rOmega);
     rKoefA = rSinTmp * rRecSinOm;
@@ -2988,8 +2854,8 @@ DiVoid  DiQuatInterpSpherLinear(DiQuaternion  *qpA,
  * @see     DiMatrixBuildInterpolationData
  * @see     DiMatrixBuildInterpolated
  */
-DiVoid DiMatrixBuildInterpolated(DiMatrixInterpolationData *midpData, 
-                                 DiFloat                   rT,
+void DiMatrixBuildInterpolated(DiMatrixInterpolationData *midpData, 
+                                 double                   rT,
                                  DiMatrix                  *mpNewMatrix)
 {
   DiQuaternion qtNewQuat;
@@ -3012,192 +2878,20 @@ DiVoid DiMatrixBuildInterpolated(DiMatrixInterpolationData *midpData,
 } // end of DiMatrixBuildInterpolated
 
 
-DiVoid DiAlProjectPointOntoPlane(DiV4d const *vpPoint, DiV4d const *vpPlanePoint, DiV4d const *vpPlaneNormal, DiV4d *vpRet)
+void DiAlProjectPointOntoPlane(DiV4d const *vpPoint, DiV4d const *vpPlanePoint, DiV4d const *vpPlaneNormal, DiV4d *vpRet)
 {
   DiV4d vTemp;
 
-  wxASSERT(DiFAbs(DiV4dDotProduct(vpPlaneNormal, vpPlaneNormal) - 1.f) < 0.001f);
+  wxASSERT(fabs(DiV4dDotProduct(vpPlaneNormal, vpPlaneNormal) - 1.f) < 0.001f);
   DiV4dSub(vpPlanePoint, vpPoint, &vTemp);
   DiV4dShiftComb(vpPoint, vpPlaneNormal, DiV4dDotProduct(&vTemp, vpPlaneNormal), vpRet);
 }
 
-
-/*
-based on "The limitations of the instantaneous centre of rotation in joint research" paper
-
-*/
-/*DiVoid BuildInstantaneousRotationCenter(DiMatrix const *mpFirst, DiMatrix const *mpSecond, DiV4d &vConf)
-{
-  DiV4d  vFirst, vSecond;
-//  vThird;
-                                        
-  DiMatrix mPlane;
- 
-  //find average matrix for 
-  DiMatrixInterpolationData intData;
-
-  DiMatrixBuildInterpolationData(mpFirst, mpSecond, &intData);
-  DiMatrixBuildInterpolated(&intData, 0.5f, &mPlane);
-
-
-
-} */
-
-
-/*
- * detailed description
- *
- * @memo    Calculate error
- * @return  None
- * @param   mpCur
- * @param   mpMatrs
- * @param   nMatrNum
- * @param   mpReference
- * @author  Earnol
- * @see     Nothing
- */
-static DiFloat _mafOptimCalcPointTransError(DiMatrix const *mpCur, DiMatrix const *mpMatrs, DiInt32 nMatrNum, DiMatrix const *mpReference)
-{
-  DiFloat             rRes;
-  DiInt32             nI;
-  DiInt32             nFrame;
-  DiMatrix            *mpMat;      //quick access matrix
-  DiMatrix mCurTrMat;
-  DiMatrix mCurTrMatRef;
-  DiMatrix mDifMat;
-  
-  rRes = 0.0f;
-  for(nFrame = 0; nFrame < nMatrNum; nFrame++)
-  {
-    //calculate new reference
-    DiMatrixMultiply(mpCur, mpReference, &mCurTrMatRef);
-    //calculate new frame
-    DiMatrixMultiply(mpCur, mpMatrs + nFrame, &mCurTrMat);
-
-    DiMatrixSubtract(&mCurTrMatRef, &mCurTrMat, &mDifMat);
-    //find error
-    mpMat = &mDifMat;
-    for(nI = _X_IDX; nI <= _Z_IDX; nI++)
-    {
-      rRes += DiFAbs(_MATR_EL(nI, _W_IDX));
-    }
-  }  
-
-  return (rRes);
-} // end of _mafOptimCalcPointTransError
-
-/**
- * detailed description
- *
- * @memo    Run 3 dimensional optimization
- * @return  None
- * @param   mpMatrs       IN: Position matrices
- * @param   nMatrNum      IN: number of them
- * @param   vpStartPoint  IN: zero assumption
- * @param   rEpsilon      IN: accuracy
- * @param   vpPos         OUT: average rotation point  
- * @author  Earnol
- * @see     Nothing
- */
-DiBool mafOptimFindBestRotPoint(DiMatrix const *mpMatrs, DiInt32 nMatrNum, DiMatrix const *mpReference, DiV4d const *vpStartPoint, DiFloat rEpsilon, DiV4d *vpPos)
-{
-  DiFloat             rStep = 1.0f; //set step to 1 meter at the beginning
-  DiMatrix            *mpMat;      //quick access matrix
-  DiV4d vCurP;
-  DiMatrix mCurMat;
-  DiMatrix mTryMat;
-  DiInt32             nDirection;
-  volatile DiFloat    rLastError;
-  volatile DiFloat    rPrevError;
-  DiInt32             nStep;
-  DiBool              bDirFound;
- 
-  
-  wxASSERT(mpMatrs != NULL);
-  mpMat = &mTryMat;
-  wxASSERT(_MATR_EL(0,3) == mpMat->vPos.x);
-  wxASSERT(_MATR_EL(1,3) == mpMat->vPos.y);
-  wxASSERT(_MATR_EL(2,3) == mpMat->vPos.z);
-  wxASSERT(_MATR_EL(3,3) == mpMat->vPos.w);
-
-  DiV4dCopy(vpStartPoint, &vCurP);
-  DiMatrixIdentity(&mCurMat);
-  DiV4dCopy(vpStartPoint, &mCurMat.vPos);
-  //init
-  nStep      = 0;
-  rPrevError = _mafOptimCalcPointTransError(&mCurMat, mpMatrs, nMatrNum, mpReference);
-  while(TRUE)
-  {
-    //self control
-    nStep++;
-    //scan for direction
-    bDirFound = FALSE;
-    for(nDirection = _X_IDX; nDirection <= _Z_IDX; nDirection++)
-    {
-      //try plus
-      DiMatrixCopy(&mCurMat, &mTryMat);
-      _MATR_EL(nDirection, _W_IDX) += rStep;
-      rLastError = _mafOptimCalcPointTransError(&mTryMat, mpMatrs, nMatrNum, mpReference);
-      if(rLastError < rPrevError)
-      {
-        bDirFound = TRUE;
-        break;
-      }
-      //and minus directions
-      DiMatrixCopy(&mCurMat, &mTryMat);
-      _MATR_EL(nDirection, _W_IDX) -= rStep;
-      rLastError = _mafOptimCalcPointTransError(&mTryMat, mpMatrs, nMatrNum, mpReference);
-      if(rLastError < rPrevError)
-      {
-        bDirFound = TRUE;
-        break;
-      }
-    }
-    //exit condition
-    if(rPrevError <= rEpsilon)
-    {
-      break;
-    }
-    if(rStep <= rEpsilon)
-    {
-      break;
-    }
-    //anty break
-    if(rPrevError == rLastError && nStep > 1000)
-    {
-      //step leads un to nowhere
-      break;
-    }
-    //accept or reject step
-    if(bDirFound)
-    {
-      rPrevError = rLastError;
-      DiMatrixCopy(&mTryMat, &mCurMat);
-    }
-    else
-    {
-      rStep *= 0.5f;
-    }
-  }
-  //store result
-  DiV4dCopy(&mCurMat.vPos, vpPos);
-  return (TRUE);
-} // end of SaOptimFindBestRotPoint
-
-
-
-DiVoid BuildInstantaneousRotationCenter(DiMatrix const *mpFirst, DiMatrix const *mpSecond, DiV4d &vConf, DiV4d const &vPrev)
-{
-  mafOptimFindBestRotPoint(mpSecond, 1, mpFirst, &vPrev, 1e-4 ,&vConf);
-
-}
-
-
-DiFloat BuildFourPointSphere(DiV4d &c, DiV4d *p)
+double BuildFourPointSphere(DiV4d &c, DiV4d *p)
 {
 
-  DiInt32 i;
-  DiFloat r, m11, m12, m13, m14, m15;
+  int i;
+  double r, m11, m12, m13, m14, m15;
   HMatrix a;
 
   for (i = 0; i < 4; i++) //find minor 11

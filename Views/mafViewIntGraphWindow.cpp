@@ -24,14 +24,11 @@
 #include "wx/colordlg.h" 
 
 #include <stdio.h>
+#include <set>
 
 #include "mafViewIntGraph.h"
 #include "mafGUI.h"
 
-
-#ifdef _MSC_FULL_VER
-#pragma warning (disable: 4786)
-#endif
 
 //----------------------------------------------------------------------------
 // constants
@@ -73,7 +70,8 @@
 #define MARKER_COLOR (wxColor(0,0,0))
 #define MARKER_RADIUS (4)
 #define NUMBERS_COLOR (wxColor(0,0,0))
-#define SPACING_Y_COEFF 1.5 
+#define SPACING_Y_COEFF 1.5
+#define DERIV_ABS_MIN 0.001
 
 #define ID__CLOSE            40023
 #define ID__RECALCRANGES     40024
@@ -82,7 +80,7 @@
 #define ID__SAVEIMAGE        40027
 #define ID__SAVECSV          40028
 #define ID__ADJUSTCURVE      40029
-#define ID__FIRSTAUTOMENU    40030
+#define ID__FIRSTAUTOMENU    40031
 
 #define MAXTEXTLEN           1024 
 
@@ -193,51 +191,51 @@ mafStringSet *mafViewIntGraphWindow::SaveSettings(void) const
 
   // 1, save plot colors number
   sParam.Printf("%d", m_ColorTableNumber);
-  pSave->GetData()[nCount++] = strdup(sParam.GetData());
+  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
 
   // 3 * m_ColorTableNumber; save table itself
   for(nI = 0; nI < m_ColorTableNumber; nI++)
   {
     sParam.Printf("%d", (wxInt32)m_ColorTable[nI].Red());
-    pSave->GetData()[nCount++] = strdup(sParam.GetData());
+    pSave->GetData()[nCount++] = _strdup(sParam.GetData());
     sParam.Printf("%d", (wxInt32)m_ColorTable[nI].Green());
-    pSave->GetData()[nCount++] = strdup(sParam.GetData());
+    pSave->GetData()[nCount++] = _strdup(sParam.GetData());
     sParam.Printf("%d", (wxInt32)m_ColorTable[nI].Blue());
-    pSave->GetData()[nCount++] = strdup(sParam.GetData());
+    pSave->GetData()[nCount++] = _strdup(sParam.GetData());
   }
   // 4, title font settings
   sParam.Printf("%d", GetTitleFontSize());
-  pSave->GetData()[nCount++] = strdup(sParam.GetData());
+  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
   sParam.Printf("%d", GetTitleFontFamily());
-  pSave->GetData()[nCount++] = strdup(sParam.GetData());
+  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
   sParam.Printf("%d", GetTitleFontStyle());
-  pSave->GetData()[nCount++] = strdup(sParam.GetData());
+  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
   sParam.Printf("%d", GetTitleFontWeight());
-  pSave->GetData()[nCount++] = strdup(sParam.GetData());
+  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
 
   // 4, tick font settings
   sParam.Printf("%d", GetTickFontSize());
-  pSave->GetData()[nCount++] = strdup(sParam.GetData());
+  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
   sParam.Printf("%d", GetTickFontFamily());
-  pSave->GetData()[nCount++] = strdup(sParam.GetData());
+  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
   sParam.Printf("%d", GetTickFontStyle());
-  pSave->GetData()[nCount++] = strdup(sParam.GetData());
+  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
   sParam.Printf("%d", GetTickFontWeight());
-  pSave->GetData()[nCount++] = strdup(sParam.GetData());
+  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
 
   // 3, lines settings
   sParam.Printf("%d", GetCurveThickness());
-  pSave->GetData()[nCount++] = strdup(sParam.GetData());
+  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
   sParam.Printf("%d", GetAxisThickness());
-  pSave->GetData()[nCount++] = strdup(sParam.GetData());
+  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
   sParam.Printf("%d", GetGridThickness());
-  pSave->GetData()[nCount++] = strdup(sParam.GetData());
+  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
 
   // 2, grids
   sParam.Printf("%d", m_RoughGrid);
-  pSave->GetData()[nCount++] = strdup(sParam.GetData());
+  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
   sParam.Printf("%d", m_PreciseGrid);
-  pSave->GetData()[nCount++] = strdup(sParam.GetData());
+  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
 
   wxASSERT(nSize == nCount);
   return (pSave);
@@ -309,12 +307,10 @@ void mafViewIntGraphWindow::DrawXAxis(wxDC *pDC, wxRect *prc, double rXMin, doub
   int nSplitsNumber    = SPLITS_NUMBER;
   int nSubSplitsNumber = SUBSPLITS_NUMBER;
   bool  bXUp;
-  char *sValue;
+  char sValue[MAXTEXTLEN + 1];
   wxRect  rTextRect;
   wxPoint szTextSize;
   wxPen   *pPen, *pBigPen, *pSmallPen;
-  
-  sValue  = (char*)malloc((MAXTEXTLEN + 1) * sizeof(char));
 
 //  rY = (cpgtrRanges->rYMax - cpgtrRanges->rYAxis)/(cpgtrRanges->rYMax - cpgtrRanges->rYMin);
   rY = 1;
@@ -335,7 +331,7 @@ void mafViewIntGraphWindow::DrawXAxis(wxDC *pDC, wxRect *prc, double rXMin, doub
   for(nI = 0; nI <= nSplitsNumber * nSubSplitsNumber; nI++)
   {
     rX = rXMin + rStepX * (nI);
-    sprintf(sValue," %.3f", round(rX / rXCoef * 1000) / 1000);
+    sprintf(sValue," %.1f", round(rX / rXCoef * 1000) / 1000);
     rX  = (rX - rXMin)/(rXMax - rXMin);
     nX = GetIntX(prc,rX);
     if(nI % nSubSplitsNumber == 0)
@@ -382,7 +378,6 @@ void mafViewIntGraphWindow::DrawXAxis(wxDC *pDC, wxRect *prc, double rXMin, doub
   cppDEL(pPen);
   cppDEL(pBigPen);
   cppDEL(pSmallPen);
-  free(sValue);
   return;
 }
 
@@ -395,12 +390,10 @@ void mafViewIntGraphWindow::DrawYAxis(wxDC *pDC, wxRect *prc, double rYMin, doub
   int     nSplitsNumber = SPLITS_NUMBER;
   int     nSubSplitsNumber = SUBSPLITS_NUMBER;
   bool    bYLeft;
-  char    *sValue;
+  char    sValue[MAXTEXTLEN + 1];
   wxRect  rTextRect;
   wxPoint szTextSize;
   wxPen   *pPen, *pBigPen, *pSmallPen;
-
-  sValue  = (char *)malloc((MAXTEXTLEN + 1) * sizeof(char));
 
 //  rX = (cpgtrRanges->rXAxis - cpgtrRanges->rXMin) / (cpgtrRanges->rXMax - cpgtrRanges->rXMin);
   rX = 0;
@@ -421,7 +414,7 @@ void mafViewIntGraphWindow::DrawYAxis(wxDC *pDC, wxRect *prc, double rYMin, doub
   for(nI = 0;nI <= nSplitsNumber * nSubSplitsNumber; nI++)
   {
     rY  = rYMin + rStepY * (nI);
-    sprintf(sValue," %.3f", round(rY / rYCoef * 1000) / 1000);
+    sprintf(sValue," %.1f", round(rY / rYCoef * 1000) / 1000);
     rY  = (rYMax - rY)/(rYMax - rYMin);
     nY  = GetIntY(prc,rY);
     if(nI % nSubSplitsNumber == 0)
@@ -468,21 +461,19 @@ void mafViewIntGraphWindow::DrawYAxis(wxDC *pDC, wxRect *prc, double rYMin, doub
   cppDEL(pPen);
   cppDEL(pBigPen);
   cppDEL(pSmallPen);
-  free(sValue);
   return;
 }
 
 //----------------------------------------------------------------------------
-void mafViewIntGraphWindow::DrawAxes(wxDC *pDC, wxRect *prc, const mafMemoryGraph::mafMemGrTotalRange *cpgtrRanges, double rXCoef, double rYCoef, bool bGrid, bool bPreciseGrid)
-//----------------------------------------------------------------------------
+void mafViewIntGraphWindow::DrawAxes(wxDC *pDC, wxRect *prc, double rXMin, double rXMax, double rYMin, double rYMax, double rXCoef, double rYCoef, bool bGrid, bool bPreciseGrid)
 {
   wxColor cTextColor;
 
   cTextColor = pDC->GetTextForeground();
   pDC->SetTextForeground(NUMBERS_COLOR);
 
-  DrawXAxis(pDC, prc, cpgtrRanges->rXMin, cpgtrRanges->rXMax, rXCoef, bGrid, bPreciseGrid);
-  DrawYAxis(pDC, prc, cpgtrRanges->rYMin, cpgtrRanges->rYMax, rYCoef, bGrid, bPreciseGrid);
+  DrawXAxis(pDC, prc, rXMin, rXMax, rXCoef, bGrid, bPreciseGrid);
+  DrawYAxis(pDC, prc, rYMin, rYMax, rYCoef, bGrid, bPreciseGrid);
 
   pDC->SetTextForeground(cTextColor);
   return;
@@ -513,6 +504,149 @@ void mafViewIntGraphWindow::AdoptMinMaxRange(double& vMin, double& vMax, double&
   vMin *= rPow10Ranges;
 }
 
+void mafViewIntGraphWindow::UpdateRanges()
+{
+  bool   xRangeInit = m_RangeInit;
+  double GrowStep    = 5.0;
+  double RangeSpace  = 0.000001;
+
+  if(m_XGraph)
+  {
+    for(unsigned j = 0; j < m_XGraph->GetSize(); j++)
+    {
+      for(unsigned k = 0; k < m_XGraph->GetXVarNum(); k++)
+      {
+        double curVal = m_XGraph->GetValue(j, m_XGraph->GetIndexX(k), m_XGraph->GetXDer(k));
+        if(!xRangeInit)
+        {
+          m_XMin = curVal;
+          m_XMax = m_XMin;
+          m_XMin -= RangeSpace;
+          m_XMax += RangeSpace;
+          xRangeInit = true;
+        }
+        else
+        {
+          double addGrow = (m_XMax - m_XMin) * GrowStep * 0.01;
+          if(curVal > m_XMax)
+          {
+            m_XMax   = curVal + addGrow;
+          }
+          if(curVal < m_XMin)
+          {
+            m_XMin = curVal - addGrow;
+          }
+        }
+      }
+    }
+  }
+  else
+  {
+    for(unsigned i = 0; i < m_Graphs.size(); i++)
+    {
+      for(unsigned j = 0; j < m_Graphs[i]->GetSize(); j++)
+      {
+        double curVal = m_Graphs[i]->GetValue(j, 0, 0);
+        if(!xRangeInit)
+        {
+          m_XMin = curVal;
+          m_XMax = m_XMin;
+          m_XMin -= RangeSpace;
+          m_XMax += RangeSpace;
+          xRangeInit = true;
+        }
+        else
+        {
+          double addGrow = (m_XMax - m_XMin) * GrowStep * 0.01;
+          if(curVal > m_XMax)
+          {
+            m_XMax   = curVal + addGrow;
+          }
+          if(curVal < m_XMin)
+          {
+            m_XMin = curVal - addGrow;
+          }
+        }
+      }
+    }
+  }
+  double oldymin    = m_YMin;
+  double oldymax    = m_YMax;
+  bool   yRangeInit = m_RangeInit;
+
+  for(unsigned i = 0; i < m_Graphs.size(); i++)
+  {
+    for(unsigned j = 0; j < m_Graphs[i]->GetYVarNum(); j++)
+    {
+      double VMin, VMax;
+      bool   localYInit = m_RangeInit;
+      if(localYInit)
+      {
+        VMin       = oldymin;
+        VMax       = oldymax;
+        localYInit = true;
+      }
+      for(unsigned k = 0; k < m_Graphs[i]->GetSize(); k++)
+      {
+        double curVal;
+        if(m_Graphs[i]->GetYDer(j) == 0)
+          curVal = m_Graphs[i]->GetValue(k, m_Graphs[i]->GetIndexY(j), m_Graphs[i]->GetYDer(j));
+        else
+        {
+          bool ok = m_Graphs[i]->GetValueByParam(curVal, m_Graphs[i]->GetValue(k, 0, 0), m_Graphs[i]->GetIndexY(j), m_Graphs[i]->GetYDer(j));
+          if(!ok)
+            continue;
+        }
+        if(m_Graphs[i]->GetYDer(j) > 0)
+        {
+          double derX = 1.0;
+          if(m_XGraph != NULL)
+          {
+            double tpar = m_Graphs[i]->GetValue(k, 0, 0);
+            if(!m_XGraph->GetValueByParam(derX, tpar, m_XGraph->GetIndexX(0), 1))
+              continue;
+            derX *= m_XGraph->GetDerivCoef(m_XGraph->GetIndexX(0));
+          }
+          /*if(fabs(derX) < DERIV_ABS_MIN)
+          continue;*/
+          curVal /= derX;
+        }
+
+        if(!localYInit)
+        {
+          VMin   = curVal;
+          VMax  = VMin;
+          VMin -= RangeSpace;
+          VMax += RangeSpace;
+          localYInit = true;
+        }
+        else
+        {
+          double addGrow = (VMax - VMin) * GrowStep * 0.01;
+          if(curVal > VMax)
+          {
+            VMax   = curVal + addGrow;
+          }
+          if(curVal < VMin)
+          {
+            VMin = curVal - addGrow;
+          }
+        }
+      }
+      if(localYInit)
+      {
+        if(!yRangeInit || VMin < m_YMin)
+          m_YMin = VMin;
+        if(!yRangeInit || VMax > m_YMax)
+          m_YMax = VMax;
+        yRangeInit = true;
+      }
+    }
+  }
+  m_RangeInit = xRangeInit && yRangeInit;
+}
+
+
 
 /*
  * Function draws graph attached to window in specified DC
@@ -524,31 +658,31 @@ void mafViewIntGraphWindow::AdoptMinMaxRange(double& vMin, double& vMax, double&
  * @author  Earnol
  * @see     Nothing
  */
+#ifdef ORIGGGGRRRRRRRRR
 //----------------------------------------------------------------------------
 void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
 //----------------------------------------------------------------------------
 {
-  int                                      nClHeight, nClWidth;
-  wxRect                                   rTextRect;
-  wxPoint                                  szTextSize;
-  unsigned int                             nI;
-  int                                      nX,nY;
-  unsigned int                             nSize,nBreakBegin,nBreakEnd;
-  double                                   rX,rY;
-  mafMemoryGraph                           *pmgGraph;
-  char                                     sExp[MAXTEXTLEN + 1];
-  char                                     sXIDDesc[MAXTEXTLEN + 1];
-  char                                     sYIDDesc[MAXTEXTLEN + 1];
-  const mafMemoryGraph::mafMemGrTotalRange *cpgtrRanges;
-  mafMemoryGraph::mafMemGrTotalRange       gtrRanges;
-  unsigned int                             nDimX,nDimY,nJ,nYNumber,nXNumber;
-  wxPoint                                  pt;
-  wxRect                                   rcGraphRect;
-  double                                   rXPow10Marks,rYPow10Marks;
-  wxColor                                  cOldColor;
-  int                                      nStartX, nStartY;
-  wxPen                                    *pPen;
-  wxFont                                   *pFont;
+  int          nClHeight, nClWidth;
+  wxRect       rTextRect;
+  wxPoint      szTextSize;
+  unsigned int nI;
+  int          nX,nY;
+  unsigned int nSize,nBreakBegin,nBreakEnd;
+  double       rX,rY;
+  double       valX, valY, derX;
+  char         sExp[MAXTEXTLEN + 1];
+  char         sXIDDesc[MAXTEXTLEN + 1];
+  char         sYIDDesc[MAXTEXTLEN + 1];
+  unsigned int nDimX,nDimY,nJ,nYNumber,nXNumber, nXDer, nYDer;
+  wxPoint      pt;
+  wxRect       rcGraphRect;
+  double       rXPow10Marks,rYPow10Marks;
+  double       XMin, XMax, YMin, YMax;
+  wxColor      cOldColor;
+  int          nStartX, nStartY;
+  wxPen        *pPen;
+  wxFont       *pFont;
 
   pCompatDC->GetSize(&nClWidth, &nClHeight);
   pPen = new wxPen(wxColor(255,255,255), 1, wxSOLID);
@@ -558,7 +692,7 @@ void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
   cppDEL(pPen);
 
   // do nothing in case we do not need anything
-  if(m_Graph == NULL)
+  if(m_Graphs.size() == 0 || m_Graphs[0] == NULL)
   {
     pPen = new wxPen(wxColor(0,0,0), 1, wxSOLID);
     pCompatDC->SetPen(*pPen);
@@ -570,10 +704,11 @@ void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
   }
 
   //access
-  pmgGraph    = m_Graph;
-  nDimX       = pmgGraph->GetXDim();
-  nDimY       = pmgGraph->GetYDim();
-  nSize       = pmgGraph->GetUsedMemSpace();
+  nDimX       = m_Graphs[0]->GetXVarNum();
+  nDimY       = m_Graphs[0]->GetYVarNum();
+  nSize       = m_Graphs[0]->GetSize();
+  nBreakBegin = m_Graphs[0]->GetBreakBegin();
+  nBreakEnd   = m_Graphs[0]->GetBreakEnd();
   
   //do not draw if have not enough points
   if((nSize < 2)||(nDimX == 0)||(nDimY == 0))
@@ -587,17 +722,15 @@ void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
     return;
   }
 
-  nDimX       = pmgGraph->GetXDim();
-  nDimY       = pmgGraph->GetYDim();
-  nSize       = pmgGraph->GetUsedMemSpace();
-  nBreakBegin = pmgGraph->BreakBegin();
-  nBreakEnd   = pmgGraph->BreakEnd();
-  cpgtrRanges = pmgGraph->GetRange();
+  UpdateRanges();
 
-  memcpy(&gtrRanges, cpgtrRanges, sizeof(mafMemoryGraph::mafMemGrTotalRange));
+  XMin = m_XMin;
+  XMax = m_XMax;
+  YMin = m_YMin;
+  YMax = m_YMax;
 
-  AdoptMinMaxRange(gtrRanges.rXMin, gtrRanges.rXMax, rXPow10Marks);
-  AdoptMinMaxRange(gtrRanges.rYMin, gtrRanges.rYMax, rYPow10Marks);
+  AdoptMinMaxRange(XMin, XMax, rXPow10Marks);
+  AdoptMinMaxRange(YMin, YMax, rYPow10Marks);
 
   pFont = new wxFont(m_TitleFontSize, GetFontFamily(m_TitleFontFamily), wxNORMAL, wxLIGHT, false, wxEmptyString, wxFONTENCODING_SYSTEM) ;
   pCompatDC->SetFont(*pFont);
@@ -617,7 +750,7 @@ void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
   rcGraphRect.SetBottom(nClHeight - (int)round(1.2 * pCompatDC->GetCharHeight()));
 
   //drawing axes
-  DrawAxes(pCompatDC, &rcGraphRect, &gtrRanges, rXPow10Marks, rYPow10Marks, m_RoughGrid != 0, m_PreciseGrid != 0);
+  DrawAxes(pCompatDC, &rcGraphRect, XMin, XMax, YMin, YMax, rXPow10Marks, rYPow10Marks, m_RoughGrid != 0, m_PreciseGrid != 0);
 
   
   pCompatDC->SetFont(wxNullFont);
@@ -634,13 +767,14 @@ void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
     pCompatDC->SetPen(*pPen);
     cOldColor = pCompatDC->GetTextForeground();
     pCompatDC->SetTextForeground(m_ColorTable[nJ % m_ColorTableNumber]);
-    nXNumber = pmgGraph->GetXIndex(0);
-    nYNumber = pmgGraph->GetYIndex(nJ);
+    nXNumber = m_Graphs[0]->GetIndexX(0);
+    nXDer    = m_Graphs[0]->GetXDer(0);
+    nYNumber = m_Graphs[0]->GetIndexY(nJ);
+    nYDer    = m_Graphs[0]->GetYDer(nJ);
     //writing captions
-    if(m_Desc != NULL)
     {
-      m_Desc->GetIDDesc(pmgGraph->GetID(nXNumber), sXIDDesc, MAXTEXTLEN);
-      m_Desc->GetIDDesc(pmgGraph->GetID(nYNumber), sYIDDesc, MAXTEXTLEN);
+      m_Graphs[0]->GetIDDesc(nXNumber, nXDer, sXIDDesc, MAXTEXTLEN);
+      m_Graphs[0]->GetIDDesc(nYNumber, nYDer, sYIDDesc, MAXTEXTLEN);
       if((int)rYPow10Marks != 1 && (int)rXPow10Marks != 1)
       {
         sprintf(sExp,"%s, %1.0e (%s, %1.0e) ", sYIDDesc, rYPow10Marks, sXIDDesc, rXPow10Marks);
@@ -666,21 +800,40 @@ void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
       //pt.x += szTextSize.x;
       pt.y += round(m_TitleFntHeight * SPACING_Y_COEFF);
     }
-    for(nI = 0; nI < nSize; nI++)
+    unsigned int nStart  = 0;
+    unsigned int nFinish = nBreakBegin;
+    for(int count = 0; count < 2; count++)
     {
-      rX  = ((*pmgGraph)(nI,nXNumber) - gtrRanges.rXMin)/(gtrRanges.rXMax - gtrRanges.rXMin);
-      rY  = (gtrRanges.rYMax - (*pmgGraph)(nI,nYNumber))/(gtrRanges.rYMax - gtrRanges.rYMin);
-      nX  = GetIntX(&rcGraphRect,rX);
-      nY  = GetIntY(&rcGraphRect,rY);
-      if(nI <= nBreakBegin || nI >= nBreakEnd)
-      { 
-        if(nI != 0 && (nI != nBreakEnd || nBreakEnd == nBreakBegin))
+      if(nFinish - nStart > 1)
+      {
+        bool previnit = false;
+        for(nI = nStart; nI < nFinish; nI++)
         {
-         pCompatDC->DrawLine(nStartX, nStartY, nX, nY);
+          valX = m_Graphs[0]->GetValue(nI,nXNumber, nXDer);
+          valY = m_Graphs[0]->GetValue(nI,nYNumber, nYDer);
+          if(nYDer == 1)
+          {
+            derX  = m_Graphs[0]->GetValue(nI,nXNumber, nYDer) * m_Graphs[0]->GetDerivCoef(nXNumber);
+            /*if(fabs(derX) < DERIV_ABS_MIN)
+              continue;*/
+            valY /= derX;
+            //valY  = fabs(valY);
+          }
+          rX   = (valX - XMin)/(XMax - XMin);
+          rY   = (YMax - valY)/(YMax - YMin);
+          nX   = GetIntX(&rcGraphRect,rX);
+          nY   = GetIntY(&rcGraphRect,rY);
+          if(previnit)
+          {
+            pCompatDC->DrawLine(nStartX, nStartY, nX, nY);
+          }
+          nStartX = nX;
+          nStartY = nY;
+          previnit = true;
         }
-        nStartX = nX;
-        nStartY = nY;        
       }
+      nStart  = nBreakEnd;
+      nFinish = nSize;
     }
     pCompatDC->SetTextForeground(cOldColor);
     pCompatDC->SetPen(wxNullPen);
@@ -696,6 +849,292 @@ void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
   cppDEL(pFont);
   return;
 } // end of _saRedraw
+#endif
+
+
+
+//----------------------------------------------------------------------------
+void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
+//----------------------------------------------------------------------------
+{
+  int          nClHeight, nClWidth;
+  wxRect       rTextRect;
+  wxPoint      szTextSize;
+  char         sExp[MAXTEXTLEN + 1];
+  char         sXIDDesc[MAXTEXTLEN + 1];
+  char         sYIDDesc[MAXTEXTLEN + 1];
+  unsigned int nDimX,nDimY,nMaxSize;
+  wxPoint      pt;
+  wxRect       rcGraphRect;
+  double       rXPow10Marks,rYPow10Marks;
+  double       XMin, XMax, YMin, YMax;
+  wxColor      cOldColor;
+  int          nStartX, nStartY;
+  wxPen        *pPen;
+  wxFont       *pFont;
+
+  pCompatDC->GetSize(&nClWidth, &nClHeight);
+  pPen = new wxPen(wxColor(255,255,255), 1, wxSOLID);
+  pCompatDC->SetPen(*pPen);
+  pCompatDC->DrawRectangle(0, 0, nClWidth, nClHeight);
+  pCompatDC->SetPen(wxNullPen);
+  cppDEL(pPen);
+
+  // do nothing in case we do not need anything
+  if(m_Graphs.size() == 0)
+    return;
+
+  //access
+  nDimX       = 1;//m_Graphs[0]->GetXVarNum();
+  nDimY       = 0;//m_Graphs[0]->GetYVarNum();
+  nMaxSize    = 0;
+  for(unsigned i = 0; i < m_Graphs.size(); i++)
+  {
+    //nDimX   += m_Graphs[i]->GetXVarNum();
+    nDimY   += m_Graphs[i]->GetYVarNum();
+    nMaxSize = max(nMaxSize, m_Graphs[i]->GetSize());
+  }
+  //nSize       = m_Graphs[0]->GetSize();
+
+  //do not draw if have not enough points
+  if((nMaxSize < 2)||(nDimX == 0||nDimY == 0))
+  {
+    return;
+  }
+
+  UpdateRanges();
+
+  XMin = m_XMin;
+  XMax = m_XMax;
+  YMin = m_YMin;
+  YMax = m_YMax;
+
+  AdoptMinMaxRange(XMin, XMax, rXPow10Marks);
+  AdoptMinMaxRange(YMin, YMax, rYPow10Marks);
+
+  pFont = new wxFont(m_TitleFontSize, GetFontFamily(m_TitleFontFamily), wxNORMAL, wxLIGHT, false, wxEmptyString, wxFONTENCODING_SYSTEM) ;
+  pCompatDC->SetFont(*pFont);
+  m_TitleFntHeight = pCompatDC->GetCharHeight();
+  rcGraphRect.SetLeft(0);
+  rcGraphRect.SetRight(nClWidth);
+  //set it to N*1.5 graphs 
+  rcGraphRect.SetTop((wxInt32)(SPACING_Y_COEFF * m_TitleFntHeight * nDimY));
+
+  sXIDDesc[0]='\0';
+  sYIDDesc[0]='\0';
+
+  pCompatDC->SetFont(wxNullFont);
+  cppDEL(pFont);
+  pFont = new wxFont(m_TickFontSize, GetFontFamily(m_TickFontFamily), wxNORMAL, wxLIGHT, false, wxEmptyString, wxFONTENCODING_SYSTEM) ;
+  pCompatDC->SetFont(*pFont);
+  rcGraphRect.SetBottom(nClHeight - (int)round(1.2 * pCompatDC->GetCharHeight()));
+
+  //drawing axes
+  DrawAxes(pCompatDC, &rcGraphRect, XMin, XMax, YMin, YMax, rXPow10Marks, rYPow10Marks, m_RoughGrid != 0, m_PreciseGrid != 0);
+
+
+  pCompatDC->SetFont(wxNullFont);
+  cppDEL(pFont);
+  pFont = new wxFont(m_TitleFontSize, GetFontFamily(m_TitleFontFamily), wxNORMAL, wxLIGHT, false, wxEmptyString, wxFONTENCODING_SYSTEM) ;
+  pCompatDC->SetFont(*pFont);
+
+  //drawing graph
+  pt.x = 0;
+  pt.y = 0;
+  unsigned varIndex = 0;
+  for(unsigned i = 0; i < m_Graphs.size(); i++)
+  {
+    for(unsigned j = 0; j < m_Graphs[i]->GetYVarNum(); j++,varIndex++)
+    {
+      pPen = new wxPen(m_ColorTable[varIndex % m_ColorTableNumber], m_CurveThickness, wxSOLID);
+      pCompatDC->SetPen(*pPen);
+      cOldColor = pCompatDC->GetTextForeground();
+      pCompatDC->SetTextForeground(m_ColorTable[varIndex % m_ColorTableNumber]);
+      unsigned nYNumber = m_Graphs[i]->GetIndexY(j);
+      unsigned nYDer    = m_Graphs[i]->GetYDer(j);
+      //writing captions
+      {
+        if(m_XGraph)
+          m_XGraph->GetIDDesc(m_XGraph->GetIndexX(0), 0, sXIDDesc, MAXTEXTLEN);
+        else
+          m_Graphs[i]->GetIDDesc(0, 0, sXIDDesc, MAXTEXTLEN);
+        m_Graphs[i]->GetIDDesc(nYNumber, nYDer, sYIDDesc, MAXTEXTLEN);
+        if((int)rYPow10Marks != 1 && (int)rXPow10Marks != 1)
+        {
+          sprintf(sExp,"%s, %1.0e (%s, %1.0e) ", sYIDDesc, rYPow10Marks, sXIDDesc, rXPow10Marks);
+        }
+        else  if((int)rYPow10Marks == 1 && (int)rXPow10Marks != 1)
+        {
+          sprintf(sExp,"%s (%s, %1.0e) ", sYIDDesc, sXIDDesc, rXPow10Marks);
+        }
+        else  if((int)rYPow10Marks != 1 && (int)rXPow10Marks == 1)
+        {
+          sprintf(sExp,"%s, %1.0e (%s) ", sYIDDesc, rYPow10Marks, sXIDDesc);
+        }
+        else
+        {
+          sprintf(sExp,"%s (%s) ", sYIDDesc, sXIDDesc);
+        }
+        pCompatDC->GetTextExtent(sExp, &szTextSize.x, &szTextSize.y);
+        rTextRect.SetLeft(pt.x + 35);
+        rTextRect.SetTop(pt.y);
+        rTextRect.SetRight(pt.x + szTextSize.x + 35);
+        rTextRect.SetBottom(m_TitleFntHeight);
+        pCompatDC->DrawText(sExp, rTextRect.GetLeft(), rTextRect.GetTop());
+        //pt.x += szTextSize.x;
+        pt.y += round(m_TitleFntHeight * SPACING_Y_COEFF);
+      }
+      pCompatDC->SetTextForeground(cOldColor);
+      pCompatDC->SetPen(wxNullPen);
+      cppDEL(pPen);
+    }
+  }
+
+  bool previnit = false;
+  if(m_XGraph != NULL)
+  {
+    varIndex = 0;
+    for(unsigned i = 0; i < m_Graphs.size(); i++)
+    {
+      for(int nJ = 0; nJ < m_Graphs[i]->GetYVarNum(); nJ++, varIndex++)
+      {
+        int nX, nY;
+        pPen = new wxPen(m_ColorTable[varIndex % m_ColorTableNumber], m_CurveThickness, wxSOLID);
+        pCompatDC->SetPen(*pPen);
+        cOldColor = pCompatDC->GetTextForeground();
+        pCompatDC->SetTextForeground(m_ColorTable[varIndex % m_ColorTableNumber]);
+
+        unsigned nStart  = m_XGraph->GetBreakBegin();
+        unsigned nFinish = m_XGraph->GetBreakEnd();
+        for(int count = 0; count < 2; count++)
+        {
+          if(nFinish - nStart > 0)
+            previnit = false;
+          for(int nI = nStart; nI < nFinish; nI++)
+          {
+            double valX   = m_XGraph->GetValue(nI, m_XGraph->GetIndexX(0), m_XGraph->GetXDer(0));
+            double paramt = m_XGraph->GetValue(nI, 0, 0);
+            double valY;
+            unsigned int der = m_Graphs[i]->GetYDer(nJ);
+            if(m_Graphs[i]->GetValueByParam(valY, paramt, m_Graphs[i]->GetIndexY(nJ), der))
+            {
+              if(der == 1)
+              {
+                double derX = m_XGraph->GetValue(nI, m_XGraph->GetIndexX(0), 1);
+                derX *= m_XGraph->GetDerivCoef(m_XGraph->GetIndexX(0));
+                /*if(fabs(derX) < DERIV_ABS_MIN)
+                continue;*/
+                valY /= derX;
+              }
+
+              double rX   = (valX - XMin) /( XMax - XMin);
+              double rY   = (YMax - valY) / (YMax - YMin);
+              nX      = GetIntX(&rcGraphRect, rX);
+              nY      = GetIntY(&rcGraphRect, rY);
+              if(previnit)
+              {
+                pCompatDC->DrawLine(nStartX, nStartY, nX, nY);
+              }
+              nStartX = nX;
+              nStartY = nY;
+              previnit = true;
+            }
+          }
+          nStart = 0;
+          nFinish = m_XGraph->GetBreakBegin();
+        }
+        pCompatDC->SetTextForeground(cOldColor);
+        pCompatDC->SetPen(wxNullPen);
+        cppDEL(pPen);
+
+        if(previnit)
+        {
+          pPen = new wxPen(MARKER_COLOR, 0, wxSOLID);
+          pCompatDC->SetPen(*pPen);
+          pCompatDC->DrawEllipse(nX - MARKER_RADIUS, nY - MARKER_RADIUS, 2 * MARKER_RADIUS, 2 * MARKER_RADIUS);
+          pCompatDC->SetPen(wxNullPen);
+          cppDEL(pPen);
+        }
+      }
+    }
+  }
+  else
+  {
+    varIndex = 0;
+    for(unsigned i = 0; i < m_Graphs.size(); i++)
+    {
+      for(unsigned j = 0; j < m_Graphs[i]->GetYVarNum(); j++, varIndex++)
+      {
+        pPen = new wxPen(m_ColorTable[varIndex % m_ColorTableNumber], m_CurveThickness, wxSOLID);
+        pCompatDC->SetPen(*pPen);
+        cOldColor = pCompatDC->GetTextForeground();
+        pCompatDC->SetTextForeground(m_ColorTable[varIndex % m_ColorTableNumber]);
+        unsigned nYNumber = m_Graphs[i]->GetIndexY(j);
+        unsigned nYDer    = m_Graphs[i]->GetYDer(j);
+        //writing captions
+        unsigned int nStart  = 0;
+        unsigned int nFinish = m_Graphs[i]->GetBreakBegin();
+        int nX, nY;
+        for(int count = 0; count < 2; count++)
+        {
+          if(nFinish - nStart > 0)
+            previnit = false;
+          if(nFinish - nStart <= 1)
+          {
+            nStart  = m_Graphs[i]->GetBreakEnd();
+            nFinish = m_Graphs[i]->GetSize();
+            continue;
+          }
+          for(unsigned t = nStart; t < nFinish; t++)
+          {
+            double valX;
+            double valY;
+            valX = m_Graphs[i]->GetValue(t, 0, 0);
+            if(m_Graphs[i]->GetValueByParam(valY, valX, nYNumber, nYDer))
+            {
+              /*if(nYDer == 1)
+              {
+              double derX = 1.0;
+              valY /= derX;
+              }*/
+
+              double rX   = (valX - XMin) /( XMax - XMin);
+              double rY   = (YMax - valY) / (YMax - YMin);
+              nX      = GetIntX(&rcGraphRect, rX);
+              nY      = GetIntY(&rcGraphRect, rY);
+              if(previnit)
+              {
+                pCompatDC->DrawLine(nStartX, nStartY, nX, nY);
+              }
+              nStartX = nX;
+              nStartY = nY;
+              previnit = true;
+            }
+          }
+          nStart  = m_Graphs[i]->GetBreakEnd();
+          nFinish = m_Graphs[i]->GetSize();
+        }
+        pCompatDC->SetTextForeground(cOldColor);
+        pCompatDC->SetPen(wxNullPen);
+        cppDEL(pPen);
+        if(previnit)
+        {
+          pPen = new wxPen(MARKER_COLOR, 0, wxSOLID);
+          pCompatDC->SetPen(*pPen);
+          pCompatDC->DrawEllipse(nX - MARKER_RADIUS, nY - MARKER_RADIUS, 2 * MARKER_RADIUS, 2 * MARKER_RADIUS);
+          pCompatDC->SetPen(wxNullPen);
+          cppDEL(pPen);
+        }
+      }
+    }
+  }
+
+  pCompatDC->SetFont(wxNullFont);
+  cppDEL(pFont);
+  return;
+} // end of _saRedraw
+
+
 
 //----------------------------------------------------------------------------
 void mafViewIntGraphWindow::AdjustCurveAppearance(unsigned int nCurve)
@@ -735,13 +1174,14 @@ wxBitmap mafViewIntGraphWindow::GetBitmap()
 void mafViewIntGraphWindow::OnCommand(wxCommandEvent& event)
 //----------------------------------------------------------------------------
 {
-  if(m_Graph == NULL)
+  if(m_Graphs.size() == 0 || m_Graphs[0] == NULL)
   {
     return;
   }
   if(event.GetId() == ID__RECALCRANGES)
   {
-    m_Graph->RecalculateRanges();
+    m_RangeInit = false;
+    UpdateRanges();
   }
   else if(event.GetId() == ID__GRIDONOFF)
   {
@@ -777,15 +1217,15 @@ void mafViewIntGraphWindow::OnCommand(wxCommandEvent& event)
   {
     AdjustCurveAppearance(m_pointed);
   }
-  else 
+  /*else 
   {
     if(event.GetId() < ID__FIRSTAUTOMENU)
     {
       //not our event go away
       return;
     }
-    m_Desc->ProcessMenu(m_Graph, event.GetId() - ID__FIRSTAUTOMENU);
-  }
+    m_Desc->ProcessMenu(m_Graphs[0], event.GetId() - ID__FIRSTAUTOMENU);
+  }*/
   Refresh(false, NULL);
   return;
 } // end of SaIntGraphWndDoCommandProc
@@ -795,17 +1235,23 @@ void mafViewIntGraphWindow::OnLeftMouseButtonDown(wxMouseEvent &event)
 //----------------------------------------------------------------------------
 {
   unsigned int nYNumber;
-  IDType       nID;
+  unsigned int nGraphIndex, nID;
+  unsigned int numVars = 0;
+  for(unsigned i = 0; i < m_Graphs.size(); i++)
+    numVars += m_Graphs[i]->GetYVarNum();
 
-  if(0 <= event.GetY() && event.GetY() <= SPACING_Y_COEFF * m_TitleFntHeight * (m_Graph->GetYDim() - 0.5))
+  if(numVars == 0)
+    return;
+  if(0 <= event.GetY() && event.GetY() <= SPACING_Y_COEFF * m_TitleFntHeight * (numVars - 0.5))
   {
     nYNumber = max(event.GetY() - (SPACING_Y_COEFF - 1.0)* m_TitleFntHeight * 0.5, 0) / (SPACING_Y_COEFF * m_TitleFntHeight);
-    nID      = m_Graph->GetYID(nYNumber);
-    SetSelectedID(nID); 
-    if(m_NotifiedView != NULL) 
+    for(nGraphIndex = 0; nGraphIndex < m_Graphs.size(); nGraphIndex++)
     {
-      m_NotifiedView->VmeSelect(nID, true);
+      if(nYNumber < m_Graphs[nGraphIndex]->GetYVarNum())
+        break;
+      nYNumber -= m_Graphs[nGraphIndex]->GetYVarNum();
     }
+    nID      = m_Graphs[nGraphIndex]->GetIndexY(nYNumber);
   }
   return;
 } // end of mafViewIntGraphWindow::OnLeftMouseButtonDown
@@ -825,17 +1271,16 @@ void mafViewIntGraphWindow::OnLeftMouseButtonDown(wxMouseEvent &event)
 void mafViewIntGraphWindow::OnRightMouseButtonDown(wxMouseEvent &event)
 //----------------------------------------------------------------------------
 {
-  wxMenu       *pPopupMenu, *pManageMenu;
+  wxMenu       *pPopupMenu;//, *pManageMenu;
   wxPoint      pt;
   char         *sCaption;
-  IDType       nID;
 
   pt = event.GetPosition();
   pPopupMenu = new wxMenu();
   sCaption = (char*)malloc((MAXTEXTLEN + 1) * sizeof(char));
-  pManageMenu = m_Desc->GenerateMenu(m_Graph, ID__FIRSTAUTOMENU);
+  /*pManageMenu = m_Desc->GenerateMenu(m_Graphs[0], ID__FIRSTAUTOMENU);
   if(pManageMenu)
-    pPopupMenu->Append(0, "Manage variables", pManageMenu);
+    pPopupMenu->Append(0, "Manage variables", pManageMenu);*/
   pPopupMenu->Append(ID__RECALCRANGES,"Update axes\' ranges");
   if(m_RoughGrid)
   {
@@ -855,7 +1300,11 @@ void mafViewIntGraphWindow::OnRightMouseButtonDown(wxMouseEvent &event)
   }
   pPopupMenu->Append(ID__SAVEIMAGE, "Save image");
   pPopupMenu->Append(ID__SAVECSV,   "Save Excel csv");
-  if(0 <= event.GetY() && event.GetY() <= SPACING_Y_COEFF * m_TitleFntHeight * (m_Graph->GetYDim() - 0.5))
+
+  unsigned NumGr = 0;
+  for(unsigned i = 0; i < m_Graphs.size(); i++)
+    NumGr += m_Graphs[i]->GetYVarNum();
+  if(0 <= event.GetY() && event.GetY() <= SPACING_Y_COEFF * m_TitleFntHeight * (NumGr - 0.5))
   {
     m_pointed = max(event.GetY() - (SPACING_Y_COEFF - 1.0)* m_TitleFntHeight * 0.5, 0) / (SPACING_Y_COEFF * m_TitleFntHeight);
     pPopupMenu->Append(ID__ADJUSTCURVE, "Adjust curve");
@@ -949,54 +1398,89 @@ void mafViewIntGraphWindow::OnSize(wxSizeEvent &event)
  * @see     Nothing
  */
 //----------------------------------------------------------------------------
-void  mafViewIntGraphWindow::SetGraphData(mafViewIntSetGraph *pSetGrpah)
+void  mafViewIntGraphWindow::AddGraphData(const mafGraphData *pGraphData)
 //----------------------------------------------------------------------------
 {
-  m_Graph       = pSetGrpah->pmgGraph;
-  m_Desc        = pSetGrpah->pidDesc;
+  m_Graphs.push_back(pGraphData);
   Refresh(false, NULL);
   return;
 } // end of SaIntGraphWndDoSetGraphProc
 
 /*
- * handler for IGWM_GETGRAPH message
- *
- * @memo    
- * @return          return value for this message
- * @author  Earnol
- * @see     Nothing
- */
+* handler for IGWM_SETGRAPH message
+*
+* @memo    
+* @param   hWnd    handle to window that received this message
+* @param   nMsg    message code
+* @param   wParam  params
+* @param   lParam  and
+* @return          return value for this message
+* @author  Earnol
+* @see     Nothing
+*/
 //----------------------------------------------------------------------------
-mafMemoryGraph *mafViewIntGraphWindow::GetGraph(void) const
+void  mafViewIntGraphWindow::SetGraphData(int idx, const mafGraphData *pGraphData)
 //----------------------------------------------------------------------------
 {
-  return ((const_cast<mafViewIntGraphWindow *>(this))->m_Graph);
-} // end of SaIntGraphWndDoGetGraphProc
-
+  int sz = m_Graphs.size();
+  if(sz < idx + 1)
+  {
+    m_Graphs.resize(idx + 1);
+    for(int i = sz; i < idx + 1; i++)
+      m_Graphs[i] = NULL;
+  }
+  m_Graphs[idx] = pGraphData;
+  Refresh(false, NULL);
+  return;
+} // end of SaIntGraphWndDoSetGraphProc
+/*
+* handler for IGWM_SETGRAPH message
+*
+* @memo    
+* @param   hWnd    handle to window that received this message
+* @param   nMsg    message code
+* @param   wParam  params
+* @param   lParam  and
+* @return          return value for this message
+* @author  Earnol
+* @see     Nothing
+*/
+//----------------------------------------------------------------------------
+void  mafViewIntGraphWindow::RemGraphData(const mafGraphData *pGraphData)
+//----------------------------------------------------------------------------
+{
+  for(std::vector<const mafGraphData *>::iterator it = m_Graphs.begin(); it != m_Graphs.end(); ++it)
+  {
+    if((*it) == pGraphData)
+    {
+      m_Graphs.erase(it);
+      break;
+    }
+  }
+  Refresh(false, NULL);
+  return;
+} // end of SaIntGraphWndDoSetGraphProc
 
 //----------------------------------------------------------------------------
-mafGUI *mafViewIntGraphWindow::GetGUI(mafGUI *pGUI, mafObserver *listener, wxInt32 nBaseID)
+void mafViewIntGraphWindow::CreateGui()
 //----------------------------------------------------------------------------
 {
   static wxString choices[] = {wxString("Default"),wxString("Decorative"), wxString("Roman"), wxString("Script"), wxString("Swiss"), wxString("Modern")};
-  if(pGUI == NULL)
-    pGUI = new mafGUI(listener);
-  m_BaseID = nBaseID;
+  m_Gui = new mafGUI(this);
 
-  pGUI->Bool   (nBaseID + ID_SHOW_ROUGH_GRID  ,"Rough Grid"       , &(m_RoughGrid),0);
-  pGUI->Bool   (nBaseID + ID_SHOW_PRECISE_GRID,"Precise Grid"     , &(m_PreciseGrid),0);
+  m_Gui->Bool   (ID_SHOW_ROUGH_GRID  ,"Rough Grid"       , &(m_RoughGrid),0);
+  m_Gui->Bool   (ID_SHOW_PRECISE_GRID,"Precise Grid"     , &(m_PreciseGrid),0);
 
-  pGUI->Integer(nBaseID + ID_TITLE_FONTSIZE , "Legend font size"  , &m_TitleFontSize, 3, 50); 
-  pGUI->Combo  (nBaseID + ID_TICK_FONTFAMILY, "Legend font family", (int *)&m_TitleFontFamily, mafFF_LAST, choices);
+  m_Gui->Integer(ID_TITLE_FONTSIZE , "Legend font size"  , &m_TitleFontSize, 3, 50); 
+  m_Gui->Combo  (ID_TICK_FONTFAMILY, "Legend font family", (int *)&m_TitleFontFamily, mafFF_LAST, choices);
 
-  pGUI->Integer(nBaseID + ID_TITLE_FONTSIZE , "Tick font size"  , &m_TickFontSize, 3, 50); 
-  pGUI->Combo  (nBaseID + ID_TICK_FONTFAMILY, "Tick font family", (int *)&m_TickFontFamily, mafFF_LAST, choices);
+  m_Gui->Integer(ID_TITLE_FONTSIZE , "Tick font size"  , &m_TickFontSize, 3, 50); 
+  m_Gui->Combo  (ID_TICK_FONTFAMILY, "Tick font family", (int *)&m_TickFontFamily, mafFF_LAST, choices);
 
-  pGUI->Slider (nBaseID + ID_THICK_CURVE    , "Curves thickness", &m_CurveThickness, 1, 5);
-  pGUI->Slider (nBaseID + ID_THICK_AXIS     , "Axis   thickness", &m_AxisThickness , 1, 5);
-  pGUI->Slider (nBaseID + ID_THICK_GRID     , "Grid   thickness", &m_GridThickness , 1, 5);
-  pGUI->Update();
-  return pGUI;
+  m_Gui->Slider (ID_THICK_CURVE    , "Curves thickness", &m_CurveThickness, 1, 5);
+  m_Gui->Slider (ID_THICK_AXIS     , "Axis   thickness", &m_AxisThickness , 1, 5);
+  m_Gui->Slider (ID_THICK_GRID     , "Grid   thickness", &m_GridThickness , 1, 5);
+  m_Gui->Update();
 }
 
 //----------------------------------------------------------------------------
@@ -1045,31 +1529,31 @@ wxInt32 mafViewIntGraphWindow::GetFontFamily(mafViewIntGraphFontFamily fFamily)
 }
 
 //----------------------------------------------------------------------------
-bool mafViewIntGraphWindow::OnEvent(mafEvent& e)
+void mafViewIntGraphWindow::OnEvent(mafEventBase *maf_event)
 //----------------------------------------------------------------------------
 {
-  int nNormalizedID = e.GetId() - m_BaseID;
-  switch(nNormalizedID)
+  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
   {
-    case ID_TITLE_FONTSIZE:
-    case ID_TITLE_FONTFAMILY:
-    case ID_TITLE_FONTSTYLE:
-    case ID_TITLE_FONTWEIGHT:
-    case ID_TICK_FONTSIZE:
-    case ID_TICK_FONTFAMILY:
-    case ID_TICK_FONTSTYLE:
-    case ID_TICK_FONTWEIGHT:
-    case ID_THICK_CURVE:
-    case ID_THICK_AXIS:
-    case ID_THICK_GRID:
-    case ID_SHOW_ROUGH_GRID:
-    case ID_SHOW_PRECISE_GRID:
-      Update();
-      return true;
+    switch(e->GetId())
+    {
+      case ID_TITLE_FONTSIZE:
+      case ID_TITLE_FONTFAMILY:
+      case ID_TITLE_FONTSTYLE:
+      case ID_TITLE_FONTWEIGHT:
+      case ID_TICK_FONTSIZE:
+      case ID_TICK_FONTFAMILY:
+      case ID_TICK_FONTSTYLE:
+      case ID_TICK_FONTWEIGHT:
+      case ID_THICK_CURVE:
+      case ID_THICK_AXIS:
+      case ID_THICK_GRID:
+      case ID_SHOW_ROUGH_GRID:
+      case ID_SHOW_PRECISE_GRID:
+        Update();
+        break;
+    }
   }
-  return false;
 }
-
 //----------------------------------------------------------------------------
 
 /*
@@ -1100,29 +1584,15 @@ void  mafViewIntGraphWindow::Update(void)
 bool mafViewIntGraphWindow::SaveGraphAsCSV(wxString const &sFileName)
 //----------------------------------------------------------------------------
 {
-  mafMemoryGraph *pmgGraph;
-  int            nI, nJ;
   wxFile         *pFile = NULL;
-  double         rValue;
   wxString       sStr("");  
   wxString       sWriteStr("");  
   wxChar const   *pSeparatorStr = GetListSeparator();
   wxChar const   *pDecStr = GetDecimalSeparator();
 
   // do nothing in case we do not need anything
-  if(m_Graph == NULL)
-  {
-    return (false);
-  }
-
-  //access
-  pmgGraph    = m_Graph;
- 
-  //do not draw if have not enough points
-  if((pmgGraph->GetDim() < 2)||(pmgGraph->GetXDim() == 0)||(pmgGraph->GetYDim() == 0))
-  {
-    return (false);
-  }
+  if(m_Graphs.size() == 0 || m_Graphs[0] == NULL)
+    return false;
 
   pFile = new wxFile(sFileName, wxFile::write);
   if(pFile == NULL)
@@ -1135,49 +1605,184 @@ bool mafViewIntGraphWindow::SaveGraphAsCSV(wxString const &sFileName)
     return (false);
   }
 
+  char nameBuffer[MAXTEXTLEN + 1];
+  sWriteStr = "";
+  if(m_XGraph)
+  {
+    m_XGraph->GetIDDesc(m_XGraph->GetIndexX(0), 0, nameBuffer, MAXTEXTLEN);
+    sWriteStr += nameBuffer;
+    sWriteStr += ";";
+  }
+  else if(m_Graphs.size() > 0)
+  {
+    m_Graphs[0]->GetIDDesc(0, 0, nameBuffer, MAXTEXTLEN);
+    sWriteStr += nameBuffer;
+    sWriteStr += ";";
+  }
 
-  for(nI = 0; nI < pmgGraph->GetUsedMemSpace(); nI++)
+  for(unsigned i = 0; i < m_Graphs.size(); i++)
+  {
+    for(int j = 0; j < m_Graphs[i]->GetYVarNum(); j++)
+    {
+      m_Graphs[i]->GetIDDesc(m_Graphs[i]->GetIndexY(j), m_Graphs[i]->GetYDer(j), nameBuffer, 1000);
+      sWriteStr += nameBuffer;
+      sWriteStr += ";";
+    }
+  }
+
+  int strln = sWriteStr.length();
+  if(strln > 0)
+    sWriteStr[strln - 1] = '\n';
+  pFile->Write(sWriteStr);
+
+
+  if(m_XGraph != NULL)
+  {
+    unsigned nStart  = m_XGraph->GetBreakEnd();
+    unsigned nFinish = m_XGraph->GetSize();
+    for(int count = 0; count < 2; count++)
+    {
+      for(int nI = nStart; nI < nFinish; nI++)
+      {
+        //save all X values
+        double xValue = m_XGraph->GetValue(nI, m_XGraph->GetIndexX(0), m_XGraph->GetXDer(0));
+        double paramt = m_XGraph->GetValue(nI, 0, 0);
+        sWriteStr = "";
+        sStr.Printf("%14.10f", xValue);
+        sStr.Replace(".", pDecStr, true);
+        sWriteStr += sStr;
+        sWriteStr += pSeparatorStr;
+
+        for(unsigned i = 0; i < m_Graphs.size(); i++)
+        {
+          for(int nJ = 0; nJ < m_Graphs[i]->GetYVarNum(); nJ++)
+          {
+            double yValue;
+            unsigned int der = m_Graphs[i]->GetYDer(nJ);
+            if(m_Graphs[i]->GetValueByParam(yValue, paramt, m_Graphs[i]->GetIndexY(nJ), der))
+            {
+              if(der == 1)
+              {
+                double derX;
+                if(m_XGraph->GetValueByParam(derX, paramt, m_XGraph->GetIndexX(0), 1))
+                {
+                  derX *= m_XGraph->GetDerivCoef(m_XGraph->GetIndexX(0));
+                  /*if(fabs(derX) < DERIV_ABS_MIN)
+                  continue;*/
+                  yValue /= derX;
+                  sStr.Printf("%14.10f", yValue);
+                  sStr.Replace(".", pDecStr, true);
+                }
+                else
+                {
+                  sStr.Printf("              ");
+                }
+              }
+              else
+              {
+                sStr.Printf("%14.10f", yValue);
+                sStr.Replace(".", pDecStr, true);
+              }
+            }
+            else
+            {
+            }
+            sWriteStr += sStr;
+            sWriteStr += pSeparatorStr;
+          }
+        }
+        //write to file
+        strln = sWriteStr.length();
+        if(strln > 0)
+          sWriteStr[strln - 1] = '\n';
+        pFile->Write(sWriteStr);
+      }
+      nStart = 0;
+      nFinish = m_XGraph->GetBreakBegin();
+    }
+    pFile->Flush();
+    pFile->Close();
+    cppDEL(pFile);
+    return true;
+  }
+
+  std::set<double> tts;
+  for(unsigned i = 0; i < m_Graphs.size(); i++)
+  {
+    for(unsigned j = 0; j < m_Graphs[i]->GetSize(); j++)
+    {
+      tts.insert(m_Graphs[i]->GetValue(j , 0, 0));
+    }
+  }
+
+  for (std::set<double>::iterator it = tts.begin(); it!=tts.end(); ++it)
   {
     sWriteStr = "";
-    //save all X values
-    for(nJ = 0; nJ < pmgGraph->GetXDim(); nJ++)
+    sStr.Printf("%14.10f", (*it));
+    sStr.Replace(".", pDecStr, true);
+    sWriteStr += sStr;
+    sWriteStr += pSeparatorStr;
+    for(unsigned i = 0; i < m_Graphs.size(); i++)
     {
-      rValue = (*pmgGraph)(nI, pmgGraph->GetXIndex(nJ));
-      sStr.Printf("%14.10f", rValue);
-      sStr.Replace(".", pDecStr, true);
-      sWriteStr += sStr;
-      if(nJ < pmgGraph->GetXDim() - 1)
+      unsigned nStart  = m_Graphs[i]->GetBreakEnd();
+      unsigned nFinish = m_Graphs[i]->GetSize();
+      bool     exported = false;
+      for(int count = 0; count < 2; count++)
       {
-        sWriteStr += pSeparatorStr;
+        for(int nI = nStart; nI < nFinish; nI++)
+        {
+          double ts = m_Graphs[i]->GetValue(nI, 0, 0);
+          if(ts == (*it))
+          {
+            exported = true;
+            for(int nJ = 0; nJ < m_Graphs[i]->GetYVarNum(); nJ++)
+            {
+              unsigned int der = m_Graphs[i]->GetYDer(nJ);
+              double yValue;
+              if(m_Graphs[i]->GetValueByParam(yValue, ts, m_Graphs[i]->GetIndexY(nJ), der))
+              {
+                //derX    = 1.0;
+                //yValue /= 1.0;
+                sStr.Printf("%14.10f", yValue);
+                sStr.Replace(".", pDecStr, true);
+                sWriteStr += sStr;
+                sWriteStr += pSeparatorStr;
+              }
+              else
+              {
+                sStr.Printf("              ");
+                sWriteStr += sStr;
+                sWriteStr += pSeparatorStr;
+              }
+            }
+            count = 2;
+            break;
+          }
+        }
+        nStart = 0;
+        nFinish = m_Graphs[i]->GetBreakBegin();
       }
-    }
-    //then Y
-    if(pmgGraph->GetYDim() > 0)
-    {
-      sWriteStr += pSeparatorStr;
-    }
-    for(nJ = 0; nJ < pmgGraph->GetYDim(); nJ++)
-    {
-      rValue = (*pmgGraph)(nI, pmgGraph->GetYIndex(nJ));
-      sStr.Printf("%14.10f", rValue);
-      sStr.Replace(".", pDecStr, true);
-      sWriteStr += sStr;
-      if(nJ < pmgGraph->GetYDim() - 1)
+      if(!exported)
       {
-        sWriteStr += pSeparatorStr;
+        for(int nJ = 0; nJ < m_Graphs[i]->GetYVarNum(); nJ++)
+        {
+          sStr.Printf("              ");
+          sWriteStr += sStr;
+          sWriteStr += pSeparatorStr;
+        }
       }
     }
     //write to file
-    sWriteStr += "\n";
+    strln = sWriteStr.length();
+    if(strln > 0)
+      sWriteStr[strln - 1] = '\n';
     pFile->Write(sWriteStr);
   }
-
   pFile->Flush();
   pFile->Close();
- 
-  cppDEL(pFile);
 
-  return (true);
+  cppDEL(pFile);
+  return true;
 }
 
 BEGIN_EVENT_TABLE(mafViewIntGraphWindow, wxWindow)
@@ -1189,61 +1794,6 @@ BEGIN_EVENT_TABLE(mafViewIntGraphWindow, wxWindow)
   EVT_COMMAND_RANGE(0, 0xFFFF, wxEVT_COMMAND_MENU_SELECTED, mafViewIntGraphWindow::OnCommand)
 END_EVENT_TABLE()
 
-//----------------------------------------------------------------------------
-void mafViewIntGraphWindow::Init()
-//----------------------------------------------------------------------------
-{
-  wxInt32 nI;
-
-  //Just do nothing here
-  m_Graph        = NULL;
-  m_NotifiedView = NULL;
-  m_Desc         = NULL;
-  m_RoughGrid    = false;
-  m_PreciseGrid  = false;
-  m_pointed      = 0;
-
-  m_BaseID          = 0;
-
-  m_TitleFontSize   = 10;
-  m_TitleFontFamily = mafFF_DEFAULT; 
-  m_TitleFontStyle  = wxNORMAL;
-  m_TitleFontWeight = wxLIGHT;
-
-  m_TickFontSize    = 10;
-  m_TickFontFamily  = mafFF_DEFAULT;
-  m_TickFontStyle   = wxNORMAL;
-  m_TickFontWeight  = wxLIGHT;
-
-  m_CurveThickness  = 1;
-  m_AxisThickness   = 1;
-  m_GridThickness   = 1;
-
-  m_ColorTable       = new wxColor[DIM(_GraphColors)];
-  m_ColorTableNumber = DIM(_GraphColors);
-  for(nI = 0; nI < m_ColorTableNumber; nI++)
-  {
-    m_ColorTable[nI] = _GraphColors[nI];
-  }
-
-  m_TitleFntHeight = 20;
-
-  m_SelectedID[0] = -1;
-  m_SelectedID[1] = -1;
-}
-/**
- * Default do nothing constructor
- *
- * @author  Earnol
- * @see     Nothing
- */
-//----------------------------------------------------------------------------
-mafViewIntGraphWindow::mafViewIntGraphWindow(void):wxWindow()
-//----------------------------------------------------------------------------
-{
-  Init();
-}
-
 /**
  * Actual constructor
  *
@@ -1251,11 +1801,46 @@ mafViewIntGraphWindow::mafViewIntGraphWindow(void):wxWindow()
  * @see     Nothing
  */
 //----------------------------------------------------------------------------
-mafViewIntGraphWindow::mafViewIntGraphWindow(const wxString& label):
+mafViewIntGraphWindow::mafViewIntGraphWindow(const wxString& label, mafObserver *listener):
 wxWindow(mafGetFrame(), -1, wxDefaultPosition, wxDefaultSize, 0, label)
 //----------------------------------------------------------------------------
 {
-  Init();
+  m_Listener = listener;
+  
+  m_XGraph           = NULL;
+
+  m_RoughGrid        = false;
+  m_PreciseGrid      = false;
+  m_pointed          = 0;
+
+  m_BaseID           = 0;
+
+  m_TitleFontSize    = 10;
+  m_TitleFontFamily  = mafFF_DEFAULT; 
+  m_TitleFontStyle   = wxNORMAL;
+  m_TitleFontWeight  = wxLIGHT;
+
+  m_TickFontSize     = 10;
+  m_TickFontFamily   = mafFF_DEFAULT;
+  m_TickFontStyle    = wxNORMAL;
+  m_TickFontWeight   = wxLIGHT;
+
+  m_CurveThickness   = 1;
+  m_AxisThickness    = 1;
+  m_GridThickness    = 1;
+
+  m_ColorTable       = new wxColor[DIM(_GraphColors)];
+  m_ColorTableNumber = DIM(_GraphColors);
+  for(int i = 0; i < m_ColorTableNumber; i++)
+  {
+    m_ColorTable[i] = _GraphColors[i];
+  }
+
+  m_TitleFntHeight   = 20;
+
+  m_RangeInit        = false;
+  m_Gui              = NULL;
+  CreateGui();
 }
 
 
@@ -1303,7 +1888,7 @@ wxChar const *GetListSeparator()
      return _caListSparator;
 
   RegCloseKey(hKey);
-  strncpy(szListSeparator, _caListSparator, 2);
+  strncpy(_caListSparator, szListSeparator, 2);
   #endif
 
   return _caListSparator;
@@ -1331,7 +1916,7 @@ wxChar const *GetDecimalSeparator()
      return _caDecSparator;
 
   RegCloseKey(hKey);
-  strncpy(szDecSeparator, _caDecSparator, 2);
+  strncpy(_caDecSparator, szDecSeparator, 2);
   #endif
 
   return _caDecSparator;

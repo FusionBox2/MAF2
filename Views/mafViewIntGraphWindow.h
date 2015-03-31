@@ -24,7 +24,6 @@
 //----------------------------------------------------------------------------
 // forward references
 //----------------------------------------------------------------------------
-class mafViewIntGraph;
 
 //----------------------------------------------------------------------------
 // defines
@@ -48,49 +47,51 @@ enum  mafViewIntGraphFontFamily
   mafFF_FORCED_DWORD = 0x7fffffff     
 };
 
-class mafIDDesc
+class mafGraphData
 {
 public:
-  virtual void   GetIDDesc(const IDType& nID,char *sDescript,unsigned int nLength) = 0;
-  virtual wxMenu *GenerateMenu(mafMemoryGraph *pmgGraph, unsigned int nIDBase) = 0;
-  virtual bool   ProcessMenu(mafMemoryGraph *pmgGraph, unsigned int nIDCommand) = 0;
-};
-
-struct mafViewIntGraphCreate
-{
-  wxWindow   *hNotifiedWnd;
-  mafIDDesc  *pidDesc;
-};
-
-typedef mafViewIntGraphCreate *mafPViewIntGraphCreate;
-
-struct mafViewIntSetGraph
-{
-  mafMemoryGraph *pmgGraph;
-  mafIDDesc      *pidDesc;
+  //virtual const double& operator()(unsigned int point,unsigned int coord, unsigned int deriv = 0) const = 0;
+  virtual double   GetValue(unsigned int point,unsigned int coord, unsigned int deriv = 0) const = 0;
+  virtual bool     GetValueByParam(double& res, double param,unsigned int coord, unsigned int deriv = 0) const = 0;
+  virtual unsigned GetVarNum() const  = 0;
+  virtual unsigned GetXVarNum() const = 0;
+  virtual unsigned GetYVarNum() const = 0;
+  virtual unsigned GetXDer(unsigned index) const = 0;
+  virtual unsigned GetYDer(unsigned index) const = 0;
+  virtual unsigned GetIndexX(unsigned index) const = 0;
+  virtual unsigned GetIndexY(unsigned index) const = 0;
+  virtual unsigned GetSize() const = 0;
+  virtual unsigned GetBreakBegin() const = 0;
+  virtual unsigned GetBreakEnd()  const = 0;
+  virtual double   GetDerivCoef(unsigned index) const = 0;
+  virtual void     GetIDDesc(unsigned index, unsigned int deriv, char *sDescript,unsigned int nLength) const = 0;
 };
 
 //----------------------------------------------------------------------------
 // mafViewIntGraphWindow
 //----------------------------------------------------------------------------
-class mafViewIntGraphWindow: public wxWindow
+class mafViewIntGraphWindow: public wxWindow, public mafObserver
 {
   DECLARE_DYNAMIC_CLASS(mafViewIntGraphWindow)
 public:
-  mafViewIntGraphWindow(const wxString& label);
-  //default do nothing constructor
-  mafViewIntGraphWindow(void);
+  mafViewIntGraphWindow(const wxString& label = "", mafObserver *listener = NULL);
   ~mafViewIntGraphWindow(void);
 
   int            &GetRoughGrid(void)   {return m_RoughGrid;}
   int            &GetPreciseGrid(void) {return m_PreciseGrid;}
-  mafMemoryGraph *GetGraph(void) const;
   wxBitmap       GetBitmap();
-  void           SetGraphData(mafViewIntSetGraph *pSetGrpah);
+  void           AddGraphData(const mafGraphData *pGraphData);
+  void           SetGraphData(int idx, const mafGraphData *pGraphData);
+  void           RemGraphData(const mafGraphData *pGraphData);
+  const mafGraphData *GetXParam(){return m_XGraph;}
+  void           SetXParam(const mafGraphData *pXGraph){m_XGraph = pXGraph;m_RangeInit = false;}
   void           Update(void);
   bool           SaveGraphAsCSV(wxString const &sFileName);
-  mafGUI         *GetGUI(mafGUI *pGUI, mafObserver *listener, wxInt32 nBaseID);
-  bool           OnEvent(mafEvent& e);
+  /** Return User Interface */
+  mafGUI         *GetGui() {return m_Gui;};
+  void           CreateGui();
+  void           OnEvent(mafEventBase *maf_event);
+  void           SetListener(mafObserver *listener) {m_Listener = listener;};
   static wxInt32 GetFontFamily(mafViewIntGraphFontFamily fFamily);
   /** Tune curve parameters */
   void           AdjustCurveAppearance(unsigned int nCurve);
@@ -100,12 +101,16 @@ public:
   void           LoadSettings(mafStringSet const *pSettings);
 
 protected:
-  mafMemoryGraph  *m_Graph;
-  mafIDDesc       *m_Desc;
-  int             m_RoughGrid;
-  int             m_PreciseGrid;
-  wxInt32         m_TitleFntHeight;
-  unsigned        m_pointed;
+
+  mafObserver                       *m_Listener;
+  std::vector<const mafGraphData *> m_Graphs;
+  const mafGraphData                *m_XGraph;
+  unsigned                          m_XIndex;
+  int                               m_RoughGrid;
+  int                               m_PreciseGrid;
+  wxInt32                           m_TitleFntHeight;
+  unsigned                          m_pointed;
+  mafGUI                            *m_Gui;
 
   void           OnCommand(wxCommandEvent& event);
   void           OnPaint(wxPaintEvent &event);
@@ -132,9 +137,7 @@ protected:
   mafDEFINE_GET_SET_MEMBER(wxInt32, CurveThickness)
   mafDEFINE_GET_SET_MEMBER(wxInt32, AxisThickness )
   mafDEFINE_GET_SET_MEMBER(wxInt32, GridThickness )
-  mafDEFINE_GET_SET_MEMBER(IDType,  SelectedID);
-  mafDEFINE_GET_SET_MEMBER(mafViewIntGraph*, NotifiedView);
-  
+
 private:
   int       GetIntX(const wxRect *prc, double rX);
   int       GetIntY(const wxRect *prc, double rY);
@@ -142,12 +145,16 @@ private:
   int       GetOptimalSplits(double rMin, double rMax, double rCoef);
   void      AdoptMinMaxRange(double& vMin, double& vMax, double& vPow10Marks);
   void      DrawGraph(wxDC *pCompatDC);
-  void      DrawAxes(wxDC *pDC, wxRect *prc, const mafMemoryGraph::mafMemGrTotalRange *cpgtrRanges, double rXCoef, double rYCoef, bool bGrid, bool bPreciseGrid);
+  void      DrawAxes(wxDC *pDC, wxRect *prc, double rXMin, double rXMax, double rYMin, double rYMax, double rXCoef, double rYCoef, bool bGrid, bool bPreciseGrid);
   void      DrawXAxis(wxDC *pDC, wxRect *prc, double rXMin, double rXMax, double rXCoef, bool bGrid, bool bPreciseGrid);
-  void      DrawYAxis(wxDC *pDC, wxRect *prc, double rXMin, double rXMax, double rXCoef, bool bGrid, bool bPreciseGrid);
+  void      DrawYAxis(wxDC *pDC, wxRect *prc, double rYMin, double rYMax, double rYCoef, bool bGrid, bool bPreciseGrid);
   void      Init();
+  void      UpdateRanges();
+
   wxColor   *m_ColorTable;
   wxInt32   m_ColorTableNumber;
+  double    m_XMin, m_XMax, m_YMin, m_YMax;
+  bool      m_RangeInit;
 };
 
 wxChar const *GetListSeparator();

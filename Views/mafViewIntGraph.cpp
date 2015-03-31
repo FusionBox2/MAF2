@@ -18,68 +18,68 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
-#include "mafViewIntGraphWindow.h"
-#include <wx/dc.h>
-
-#ifdef IMPORTED
-
-#include "wx/image.h"
-#include "mafDecl.h"
-#include "mafGUIHolder.h"
-#include "mafGUI.h"
-#include "mafSceneNode.h"
-#include "mafSceneGraph.h"
-#include "mafVMEPointSet.h"
-#include "mafVMESurface.h"
-
-#include "mafTagArray.h"
-#include "mafTransform.h"
-#include "mafSmartPointer.h"
-#include "mafAgent.h"
-
-#ifdef _MSC_FULL_VER
-#pragma warning (disable: 4786)
-#endif
-
-#endif
-
+#include "lhpPipeIntGraphAbstract.h"
 #include "mafViewIntGraph.h"
-#include "mafPipeIntGraph.h"
+
+#include "mafViewIntGraphWindow.h"
 
 #include "mafIndent.h"
 
-#include "mafPlotMath.h"
 #include "mafPipe.h"
 #include "mafPipeFactory.h"
 
 #include "mafStringSet.h"
 #include "mafTagArray.h"
 #include "mafVME.h"
-#include "mafVMELandmarkCloud.h"
-#include "mafVMESurface.h"
-#include "mafVMELandmark.h"
-#include "mafVMERoot.h"
+//#include "mafVMERoot.h"
 
-#include "vtkMAFSmartPointer.h"
-#include "vtkTransform.h"
-#include "vtkMatrix4x4.h"
+#include "mafSceneNode.h"
+#include "mafSceneGraph.h"
+
+
+#include "mafVMERoot.h"
+class lhpPlotGraph  : public mafSceneGraph
+{
+public:
+  lhpPlotGraph(mafView *view):mafSceneGraph(view, NULL, NULL){}
+  virtual ~lhpPlotGraph(){}
+  virtual int  GetNodeStatus (mafNode *node);
+};
+
+//----------------------------------------------------------------------------
+int lhpPlotGraph::GetNodeStatus(mafNode *node)
+//----------------------------------------------------------------------------
+{
+  return mafSceneGraph::GetNodeStatus(node);
+  if (!m_InformationPipeModality && mafVMERoot::SafeDownCast(node))
+  {
+    return NODE_NON_VISIBLE;
+  }
+
+  mafSceneNode *n = Vme2Node(node);
+  if(!n)
+    return NODE_NON_VISIBLE;
+
+  if (!node->IsMAFType(mafVME))
+  {
+    return NODE_NON_VISIBLE;
+  }
+  mafVME *vme = (mafVME *)node;
+  bool creatable = n->m_PipeCreatable && vme;
+  //landmark are not creatable
+  //if(vme->IsA("mafNodeLandmark")) creatable = false;
+
+  if(!creatable)                      return NODE_NON_VISIBLE;
+  if( n->m_Mutex &&  n->IsVisible())  return NODE_MUTEX_ON;
+  if( n->m_Mutex && !n->IsVisible())  return NODE_MUTEX_OFF;
+  if( n->IsVisible())                 return NODE_VISIBLE_ON;
+  if(!n->IsVisible())                 return NODE_VISIBLE_OFF;
+  return NODE_NON_VISIBLE;
+}
 
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(mafViewIntGraph);
 //----------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------
-void mafViewIntGraph::setWindowGraph()
-//----------------------------------------------------------------------------
-{
-  mafViewIntSetGraph setGraph;
-  setGraph.pidDesc  = m_Descriptions;
-  setGraph.pmgGraph = m_Graph;
-  if(m_RenderWindow != NULL)
-  {
-    m_RenderWindow->SetGraphData(&setGraph);
-  }
-}
 
 //----------------------------------------------------------------------------
 mafViewIntGraph::mafViewIntGraph(const wxString &label)
@@ -88,32 +88,28 @@ mafViewIntGraph::mafViewIntGraph(const wxString &label)
 {
   m_RenderWindow       = NULL;
   m_IsFrozen           = 0;
-  m_ReferenceFrame     = 0;
-  m_PlotFrameStart     = 0;
-  m_PlotFrameStop      = 0;
-  m_Graph              = NULL;
-  m_Descriptions       = NULL;
-  m_LoadMode           = false;
-  m_ModifyMode         = false;
-  m_VMEs               = NULL;
-  m_Pipes              = NULL;
+  //m_ReferenceFrame     = 0;
+  m_Smoothing          = 0.0;
   m_Sg                 = NULL;
-  m_Rwi                = NULL;
 }
 
 //----------------------------------------------------------------------------
 mafViewIntGraph::~mafViewIntGraph() 
 //----------------------------------------------------------------------------
 {
-  //if(m_Gui != NULL){;} //HideGui();
-  cppDEL(m_Sg);  
-  cppDEL(m_Rwi);
-  cppDEL(m_VMEs);
-  cppDEL(m_Graph);
-  cppDEL(m_Pipes);
-  cppDEL(m_Descriptions);
-  setWindowGraph();
+  m_PipeMap.clear();
+  cppDEL(m_Sg);
 }
+//----------------------------------------------------------------------------
+void mafViewIntGraph::PlugVisualPipe(mafString vme_type, mafString pipe_type, long visibility)
+//----------------------------------------------------------------------------
+{
+  mafVisualPipeInfo plugged_pipe;
+  plugged_pipe.m_PipeName=pipe_type;
+  plugged_pipe.m_Visibility=visibility;
+  m_PipeMap[vme_type] = plugged_pipe;
+}
+
 //----------------------------------------------------------------------------
 mafView *mafViewIntGraph::Copy(mafObserver *Listener)
 //----------------------------------------------------------------------------
@@ -121,19 +117,9 @@ mafView *mafViewIntGraph::Copy(mafObserver *Listener)
   mafViewIntGraph *v = new mafViewIntGraph(m_Label);
   v->m_Listener = Listener;
   v->m_Id = m_Id;
-
-  v->m_RenderWindow   = m_RenderWindow;
+  v->m_PipeMap = m_PipeMap;
   v->m_IsFrozen       = m_IsFrozen;
-  v->m_ReferenceFrame = m_ReferenceFrame;
-  v->m_PlotFrameStart = m_PlotFrameStart;
-  v->m_PlotFrameStop  = m_PlotFrameStop;
-  v->m_Graph          = m_Graph;
-  v->m_Descriptions   = m_Descriptions;
-  v->m_LoadMode       = m_LoadMode;
-  v->m_ModifyMode     = m_ModifyMode;
-  v->m_VMEs           = m_VMEs;
-  v->m_Pipes          = m_Pipes;
-
+  //v->m_ReferenceFrame = m_ReferenceFrame;
   v->Create();
   return v;
 }
@@ -145,74 +131,18 @@ void mafViewIntGraph::Create()
   m_RenderWindow = new mafViewIntGraphWindow(m_Label);
   m_Win          = m_RenderWindow;
 
-  m_RenderWindow->SetNotifiedView(this);
-
-
-  m_Rwi = new mafRWI(m_Win,ONE_LAYER);
-  m_Rwi->SetListener(this);//SIL. 16-6-2004: 
-  m_Sg  = new mafSceneGraph(this,m_Rwi->m_RenFront,m_Rwi->m_RenBack);
+  m_Sg  = new lhpPlotGraph(this);
   m_Sg->SetListener(this);
-  m_Rwi->m_Sg = m_Sg;
-
-
-  //m_Sg  = new mafSceneGraph(this,NULL,NULL);
-  //m_Sg->SetListener(this);
-
-  m_VMEs  = new VMEArray();
-  m_Graph = new mafMemoryGraph(FLT_GARB, 1, 1000);
-
-  m_Pipes = new PipeArray();
-  int nIndex = 0;
-
-  IDType setID;
-  setID.zero();
-  m_Graph->SetID(0,setID);
-  //m_Graph->SetID(1,nIndex + 1);
-  //m_Graph->SetGraphID(nIndex+1);
-
-  m_Graph->SetXDim(1);
-  m_Graph->SetDim(1);
-  m_Graph->SetYDim(0/*m_VMEs->Count()*/);
-  m_Graph->SetXIndex(0,0);
-  //m_Graph->SetYIndex(0,1);
-
-  m_Descriptions = new mafGraphIDDesc(m_Pipes);
-
-  setWindowGraph();
 
   //set reference frame as first sequence frame
-  m_ReferenceFrame   = 0;
-
-  m_PlotFrameStart = 0;
-  m_PlotFrameStop  = MAXINT;
-  m_LoadMode       = false;
-  m_ModifyMode     = false;
+  //m_ReferenceFrame = 0;
 }
 
 //----------------------------------------------------------------------------
 void mafViewIntGraph::VmeAdd(mafNode *vme)
 //----------------------------------------------------------------------------
 {
-  std::vector<mafTimeStamp> mpStamps;
-
   m_Sg->VmeAdd(vme);
-  m_VMEs->Add(mafVME::SafeDownCast(vme));
-  if(mafVME::SafeDownCast(vme)->GetNumberOfTimeStamps() > 0)
-  {
-    mafVME::SafeDownCast(vme)->GetTimeStamps(mpStamps);
-    m_PlotFrameStop = max(m_PlotFrameStop, mpStamps[mpStamps.size() - 1]);
-  }
-  else
-  {
-    m_PlotFrameStop  = MAXINT;
-  }
-  loadPlotInfo(mafVME::SafeDownCast(vme));
-
-  //load from first VME
-  if(m_VMEs->GetCount() == 1)
-  {
-    loadPlotGen();
-  }
 }
 //----------------------------------------------------------------------------
 void mafViewIntGraph::VmeShow(mafNode *vme, bool show)
@@ -233,40 +163,32 @@ void mafViewIntGraph::VmeUpdateProperty(mafNode *vme, bool fromTag)
 int mafViewIntGraph::GetNodeStatus(mafNode *vme)
 //----------------------------------------------------------------------------
 {
-  return m_Sg ? m_Sg->GetNodeStatus(vme) : NODE_NON_VISIBLE;
+  int status = m_Sg ? m_Sg->GetNodeStatus(vme) : NODE_NON_VISIBLE;
+  if (!m_PipeMap.empty())
+  {
+    mafString vme_type = vme->GetTypeName();
+    if(m_PipeMap[vme_type].m_Visibility == NON_VISIBLE)
+    {
+      status = NODE_NON_VISIBLE;
+    }
+    else if (m_PipeMap[vme_type].m_Visibility == MUTEX)
+    {
+      mafSceneNode *n = m_Sg->Vme2Node(vme);
+      if (n != NULL)
+      {
+        n->m_Mutex = true;
+      }
+      status = m_Sg->GetNodeStatus(vme);
+    }
+  }
+  return status;
 }
 
 //----------------------------------------------------------------------------
 void mafViewIntGraph::VmeRemove(mafNode *vme)
 //----------------------------------------------------------------------------
 {
-  int                        nVMEIndex;
-  std::vector<mafTimeStamp>  mpStamps;
-
   m_Sg->VmeRemove(vme);
-  nVMEIndex = m_VMEs->Index(mafVME::SafeDownCast(vme));
-  if(nVMEIndex != wxNOT_FOUND)
-  {
-    m_VMEs->RemoveAt(nVMEIndex);
-  }
-
-  //support range
-  if(m_VMEs->Count() > 0)
-  {
-    if(m_VMEs->Item(0)->GetNumberOfTimeStamps() > 0)
-    {
-      m_VMEs->Item(0)->GetTimeStamps(mpStamps);
-      m_PlotFrameStop = mpStamps[m_VMEs->Item(0)->GetNumberOfTimeStamps() - 1];
-    }
-    else
-    {
-      m_PlotFrameStop = MAXINT;
-    }
-  }
-  else
-  {
-    m_PlotFrameStop = MAXINT;
-  }
 }
 //----------------------------------------------------------------------------
 void mafViewIntGraph::VmeSelect(mafNode *vme, bool select)
@@ -279,35 +201,6 @@ void mafViewIntGraph::VmeSelect(mafNode *vme, bool select)
 void mafViewIntGraph::CameraUpdate() 
 //----------------------------------------------------------------------------
 {
-  wxInt32 nI, nJ;
-  wxInt32 nMaxFrame;
-  std::vector<mafTimeStamp> mpStamps;
-
-  if(m_IsFrozen)
-  {
-    if(m_Pipes->Count() > 0)
-    {
-      m_Pipes->Item(0)->m_Vme->GetTimeStamps(mpStamps);
-      nMaxFrame = mpStamps[m_Pipes->Item(0)->m_Vme->GetNumberOfTimeStamps() - 1];
-      for(nJ = m_PlotFrameStart; nJ < min(m_PlotFrameStop, nMaxFrame); nJ++)
-      {
-        for(nI = 0; nI < m_Pipes->Count(); nI++)
-        {
-          m_Pipes->Item(nI)->GrabData(nI, nJ);
-        }
-      }
-    }
-  }
-  else
-  {
-    for(nI = 0; nI < m_Pipes->Count(); nI++)
-    {
-      m_Pipes->Item(nI)->GrabData(nI);
-    }
-  }
-
-  //grab data from all pipes
-  //just pass update here
   if(m_RenderWindow != NULL)
     m_RenderWindow->Update();
 }
@@ -320,43 +213,64 @@ mafPipe* mafViewIntGraph::GetNodePipe(mafNode *vme)
   if(!n) return NULL;
   return n->m_Pipe;
 }
+
 //----------------------------------------------------------------------------
 void mafViewIntGraph::GetVisualPipeName(mafNode *node, mafString &pipe_name)
 //----------------------------------------------------------------------------
 {
-  assert(node->IsA("mafVME"));
-  mafVME *v = ((mafVME*)node);
-  pipe_name = "mafPipeIntGraph";
+  mafVME *v = mafVME::SafeDownCast(node);
+  assert(v);
+
+  v->Modified();
+  vtkDataSet *data = v->GetOutput()->GetVTKData();
+  // custom visualization for the view should be considered only
+  // if we are not in editing mode.
+  mafString vme_type = v->GetTypeName();
+  if (!m_PipeMap.empty())
+  {
+    // pick up the visual pipe from the view's visual pipe map
+    pipe_name = m_PipeMap[vme_type].m_PipeName;
+  }
+
+  if(pipe_name.IsEmpty())
+  {
+    // pick up the default visual pipe from the vme
+    pipe_name = "lhpPipeIntGraph";
+  }
 }
+
 //----------------------------------------------------------------------------
 void mafViewIntGraph::VmeCreatePipe(mafNode *vme)
 //----------------------------------------------------------------------------
 {
-  //mafString pipe_name = "";
-  //GetVisualPipeName(vme, pipe_name);
-
-  mafPipeIntGraph *pNewPipe;
-
-  mafSceneNode *n = m_Sg->Vme2Node(vme);
-  assert(n && !n->m_Pipe);
-
-  pNewPipe = new mafPipeIntGraph();
-  pNewPipe->Create(n);
-  pNewPipe->SetView(this);
-  n->m_Pipe = pNewPipe;
-  m_Pipes->Add(pNewPipe);
-  //m_Graph->Clean();
-  //m_Graph->SetDim(m_Pipes->Count() + 1);
-  //m_Graph->SetYDim(m_Pipes->Count());
-  if(!m_LoadMode)
+  mafString pipe_name = "";
+  GetVisualPipeName(vme, pipe_name);
+  if (pipe_name != "")
   {
-    IDType setID;
-    setID[0] = m_Pipes->Index(pNewPipe);
-    setID[1] = 1;
-    m_Graph->AddYVar(setID);
+    m_NumberOfVisibleVme++;
+    mafPipeFactory *pipe_factory  = mafPipeFactory::GetInstance();
+    assert(pipe_factory!=NULL);
+    mafObject *obj = NULL;
+    obj = pipe_factory->CreateInstance(pipe_name);
+    lhpPipeIntGraphAbstract *pipe = lhpPipeIntGraphAbstract::SafeDownCast(obj);
+    if (pipe)
+    {
+      pipe->SetListener(this);
+      mafSceneNode *n = m_Sg->Vme2Node(vme);
+      assert(n && !n->m_Pipe);
+      pipe->Create(n);
+      pipe->SetSmoothParam(m_Smoothing);
+      pipe->SetForcedWholeRange(m_IsFrozen);
+      n->m_Pipe = pipe;
+    }
+    else
+    {
+      if(obj)
+        cppDEL(obj);
+      mafErrorMessage(_("Cannot create visual pipe object of type \"%s\"!"),pipe_name.GetCStr());
+    }
   }
   return;
-  //mafErrorMessage(_("Cannot create visual pipe object of type \"%s\"!"),pipe_name.GetCStr());
 }
 
 //----------------------------------------------------------------------------
@@ -365,44 +279,8 @@ void mafViewIntGraph::VmeDeletePipe(mafNode *vme)
 {
   m_NumberOfVisibleVme--;
   mafSceneNode *n = m_Sg->Vme2Node(vme);
-  int nPipeIndex;
-  int nI;
 
   assert(n && n->m_Pipe);
-  nPipeIndex = m_Pipes->Index((mafPipeIntGraph *)n->m_Pipe);
-  if(nPipeIndex != wxNOT_FOUND)
-  {
-    if(m_Graph->GetXID(0)[0] == nPipeIndex && !m_Graph->GetXID(0).isZero())
-    {
-      IDType zero;
-      zero.zero();
-      m_Graph->SetXID(0, zero);
-    }
-    for(nI = m_Graph->GetYDim() - 1; nI >= 0; nI--)
-    {
-      if(nPipeIndex == m_Graph->GetYID(nI)[0] && !m_Graph->GetYID(nI).isZero())
-      {
-        m_Graph->RemYVar(m_Graph->GetYID(nI));
-      }
-    }
-
-    for(nI = 0; nI < m_Graph->GetDim(); nI++)
-    {
-      if(nPipeIndex == m_Graph->GetID(nI)[0] && !m_Graph->GetID(nI).isZero())
-      {
-        wxASSERT(false);
-      }
-      else if(m_Graph->GetID(nI)[0] > nPipeIndex)
-      {
-        IDType setID;
-        setID = m_Graph->GetID(nI);
-        setID[0]--;
-        m_Graph->SetID(nI, setID);
-      }
-    }
-
-    m_Pipes->RemoveAt(nPipeIndex);
-  }
   cppDEL(n->m_Pipe);
 }
 //-------------------------------------------------------------------------
@@ -411,22 +289,6 @@ mafGUI *mafViewIntGraph::CreateGui()
 {
   assert(m_Gui == NULL);
   m_Gui = mafView::CreateGui();
-  int nMaxFrame = MAXINT;
-  std::vector<mafTimeStamp> mpStamps;
-
-  if(m_VMEs->Count() > 0)
-  {
-    if(m_VMEs->Item(0)->GetNumberOfTimeStamps() > 0)
-    {
-      m_VMEs->Item(0)->GetTimeStamps(mpStamps);
-      nMaxFrame = mpStamps[mpStamps.size() - 1];
-      nMaxFrame = max(nMaxFrame, 0);
-    }
-    else
-    {
-      nMaxFrame = MAXINT;
-    }
-  }
 
   //////////////////////////////////////////Plot gui
   //m_Gui = new mafGUI(this);
@@ -435,17 +297,19 @@ mafGUI *mafViewIntGraph::CreateGui()
   m_Gui->Label("General Features",true);
   //m_Gui->Integer(ID_REFERENCE_FRAME, "Reference frame", &(m_ReferenceFrame), 0, nMaxFrame, "This frame will be treated as upright(reference) for all representations that require it!");
   //m_Gui->Button(ID_FIND_REFERENCE, "Autofind reference", "", "Find best reference frames for all joints (hierarchially based or not) ");
-  //m_Gui->VectorN(ID_ZOOM_START_STOP, "Frame limit", m_FreezeFrames, DIM(m_FreezeFrames), 0, nMaxFrame, "This frame will be treated as upright(reference) for all representations that require it!");
 
-  m_Gui->Bool(ID_FREEZE_GRAPH,"Freeze graph", &(m_IsFrozen),0);
+  m_Gui->Double(ID_SMOOTHING, "Smooth param", &m_Smoothing, 0, 1000);
+
+  //m_Gui->Bool(ID_FREEZE_GRAPH,"Freeze graph", &m_IsFrozen,0);
 
   m_Gui->Divider(2);
 
-  m_Gui->Button(ID_SAVE_PLOT, "Save plot", "", "Save plot to VME tree");
+  /*m_Gui->Button(ID_SAVE_PLOT, "Save plot", "", "Save plot to VME tree");
   m_Gui->Button(ID_LOAD_PLOT, "Load plot", "", "Restore plot from VME tree");
 
-  m_Gui->Divider(2);
-  m_Gui->RollOut(ID_ROLLOUT_RENDER, "Plot appearance", m_RenderWindow->GetGUI(NULL, this, ID_SHOW_LAST), false);
+
+  m_Gui->Divider(2);*/
+  m_Gui->RollOut(ID_ROLLOUT_RENDER, "Plot appearance", m_RenderWindow->GetGui(), false);
 
   /////////////////////////////////////////DisplayList GUI
   m_Gui->Divider(2);
@@ -462,23 +326,19 @@ void mafViewIntGraph::OnEvent(mafEventBase *maf_event)
 {
   if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
   {
-    //give it non listener child
-    m_RenderWindow->OnEvent(*e);
-
     switch(e->GetId())
     {
-    case VIEW_DELETE:
+    /*case VIEW_DELETE:
       {
         if(m_RenderWindow) 
           m_RenderWindow->Destroy();
         m_RenderWindow = NULL;
         mafEventMacro(*e);
         break;
-      }
+      }*/
     case ID_ROLLOUT_RENDER:
       break;
-    case ID_ZOOM_START_STOP:
-    case ID_REFERENCE_FRAME:
+    /*case ID_REFERENCE_FRAME:
       {
         m_Graph->Clean();
         if(m_IsFrozen)
@@ -486,13 +346,7 @@ void mafViewIntGraph::OnEvent(mafEventBase *maf_event)
           CameraUpdate();
         }
         break;
-      }
-    case ID_FREEZE_GRAPH:
-      {
-        //force it for new condition
-        CameraUpdate();      
-        break;
-      }    
+      }*/
     case ID_LOAD_PLOT:
       {
         loadPlot();
@@ -501,6 +355,32 @@ void mafViewIntGraph::OnEvent(mafEventBase *maf_event)
     case ID_SAVE_PLOT:
       {
         savePlot();
+        break;
+      }
+    case ID_FREEZE_GRAPH:
+      {
+        if(m_Sg)
+        {
+          for(mafSceneNode *n = m_Sg->GetNodeList(); n != NULL; n = n->m_Next)
+          {
+            lhpPipeIntGraphAbstract *pg = lhpPipeIntGraphAbstract::SafeDownCast(n->m_Pipe);
+            if(pg)
+              pg->SetForcedWholeRange(m_IsFrozen);
+          }
+        }
+      }
+      break;
+    case ID_SMOOTHING:
+      {
+        if(m_Sg)
+        {
+          for(mafSceneNode *n = m_Sg->GetNodeList(); n != NULL; n = n->m_Next)
+          {
+            lhpPipeIntGraphAbstract *pg = lhpPipeIntGraphAbstract::SafeDownCast(n->m_Pipe);
+            if(pg)
+              pg->SetSmoothParam(m_Smoothing);
+          }
+        }
         break;
       }
     default:
@@ -558,21 +438,6 @@ void mafViewIntGraph::Print(std::ostream& os, const int tabs)// const
   m_Sg->Print(os, 1);
   os << std::endl;
 }
-
-//----------------------------------------------------------------------------
-void mafViewIntGraph::VmeSelect(const IDType& nGraphID, bool select)
-//----------------------------------------------------------------------------
-{
-  mafVME *vme;
-  wxInt32 nPipeIndex;
-  //just scan all active pipes and find where 
-  nPipeIndex = nGraphID[0];
-  if(m_Pipes->GetCount() > nPipeIndex)
-  {
-    vme = m_Pipes->Item(nPipeIndex)->m_Vme;
-    mafEventMacro(mafEvent(this, VME_SELECTED, vme));
-  }
-}
 //----------------------------------------------------------------------------
 void mafViewIntGraph::UpdateGui() 
 //----------------------------------------------------------------------------
@@ -585,13 +450,18 @@ void mafViewIntGraph::UpdateGui()
 void mafViewIntGraph::savePlot(void)
 //----------------------------------------------------------------------------
 {
-  wxInt32 nI;
-
   savePlotGen();
+  if(m_Sg == NULL)
+    return;
 
-  for(nI = 0; nI < m_VMEs->GetCount(); nI++)
+  for(mafSceneNode *n = m_Sg->GetNodeList(); n != NULL; n = n->m_Next)
   {
-    savePlotInfo(m_VMEs->Item(nI));
+    mafNode *vme = n->m_Vme;
+    lhpPipeIntGraphAbstract *pipe = lhpPipeIntGraphAbstract::SafeDownCast(n->m_Pipe);
+    if(vme && pipe)
+    {
+      pipe->savePlotInfo();
+    }
   }
 }
 
@@ -603,15 +473,16 @@ void mafViewIntGraph::savePlotGen(void)
 
   //save general settings
 
-  for(int nI = 0; nI < m_VMEs->GetCount(); nI++)
+  for(mafSceneNode *n = m_Sg->GetNodeList(); n != NULL; n = n->m_Next)
   {
-    m_ModifyMode = true;
-    m_VMEs->Item(nI)->GetTagArray()->SetTag(mafTagItem(mafINTGG_SAVEINFO_TAG, const_cast<const char **>(pSave->GetData()), pSave->GetStringNumber()));
-    mafEventMacro(mafEvent(this,VME_MODIFIED, m_VMEs->Item(0)));
-    m_ModifyMode = false;
+    mafVME *vme = mafVME::SafeDownCast(n->m_Vme);
+    if(vme)
+    {
+      vme->GetTagArray()->SetTag(mafTagItem(mafINTGG_SAVEINFO_TAG, const_cast<const char **>(pSave->GetData()), pSave->GetStringNumber()));
+      mafEventMacro(mafEvent(this,VME_MODIFIED, vme));
+    }
   }
   cppDEL(pSave);
-
 }
 //----------------------------------------------------------------------------
 void mafViewIntGraph::loadPlotGen(void)
@@ -619,11 +490,12 @@ void mafViewIntGraph::loadPlotGen(void)
 {
   mafTagItem        Tag;
   //load general settings
-  for(int nI = 0; nI < m_VMEs->GetCount(); nI++)
+  for(mafSceneNode *n = m_Sg->GetNodeList(); n != NULL; n = n->m_Next)
   {
-    if(m_VMEs->Item(nI)->GetTagArray()->IsTagPresent(mafINTGG_SAVEINFO_TAG))
+    mafVME *vme = mafVME::SafeDownCast(n->m_Vme);
+    if(vme && vme->GetTagArray()->IsTagPresent(mafINTGG_SAVEINFO_TAG))
     {
-      if(m_VMEs->Item(nI)->GetTagArray()->GetTag(mafINTGG_SAVEINFO_TAG, Tag))
+      if(vme->GetTagArray()->GetTag(mafINTGG_SAVEINFO_TAG, Tag))
       {
         m_RenderWindow->LoadSettings(&mafStringSet(Tag.GetNumberOfComponents(), Tag.GetComponents()));
         UpdateGui();
@@ -637,143 +509,24 @@ void mafViewIntGraph::loadPlotGen(void)
 void mafViewIntGraph::loadPlot(void)
 //----------------------------------------------------------------------------
 {
-  wxInt32 nI;
-
   loadPlotGen();
 
   //clean all old plots
-  for(nI = m_Pipes->GetCount() - 1; nI >= 0; nI--)
+  for(mafSceneNode *n = m_Sg->GetNodeList(); n != NULL; n = n->m_Next)
   {
-    mafEventMacro(mafEvent(this, VME_SHOW, m_Pipes->Item(nI)->m_Vme, false));
-  }
-
-  for(nI = 0; nI < m_VMEs->GetCount(); nI++)
-  {
-    loadPlotInfo(m_VMEs->Item(nI));
-  }
-}
-
-//----------------------------------------------------------------------------
-void mafViewIntGraph::loadPlotInfo(mafVME *vme)
-//----------------------------------------------------------------------------
-{
-  mafTagItem        Tag;
-  wxInt32           nI;
-  wxChar const      *cpTagValue = NULL ;
-  wxInt32           nValue;
-
-  if(!vme->GetTagArray()->IsTagPresent(mafINTG_SAVEINFO_TAG))
-  {
-    return;
-  }
-  // X Value have double value + GDT_LAST;
-  //read a values one by one and add them to plot
-  for(nI = 0; nI< Tag.GetNumberOfComponents(); nI++)
-  {
-    cpTagValue = Tag.GetValue(nI);
-    sscanf(cpTagValue, "%d", &nValue);
-    if(m_Descriptions == NULL)
+    mafNode *vme = n->m_Vme;
+    if(vme)
     {
-      return;
-    }
-    IDType setID;
-    setID[1] = mafGraphDescType(nValue % GDT_LAST);
-    {
-      m_LoadMode = true;
-      mafEventMacro(mafEvent(this, VME_SHOW, vme, true));
-      mafEventMacro(mafEvent(this, CAMERA_UPDATE));
-
-      if(nValue >  GDT_LAST)
-      {
-        setID[0] = m_Pipes->Count() - 1;
-        m_Graph->SetXVar(0, setID);
-      }
-      else// if(nValue <= GDT_LAST)
-      {
-        setID[0] = m_Pipes->Count() - 1;
-        m_Graph->AddYVar(setID);
-      }
-      m_LoadMode = false;
+      mafEventMacro(mafEvent(this, VME_SHOW, vme, false));
     }
   }
-}
-//----------------------------------------------------------------------------
-void mafViewIntGraph::savePlotInfo(mafVME *vme)
-//----------------------------------------------------------------------------
-{
-  mafTagItem        *pTag = NULL;
-  wxInt32           nI;
-  wxChar const      *cpTagValue = NULL ;
-  wxInt32           nPipeIndex = -1;
-  wxInt32           nNumComp= 0, nCount = 0;
-  wxString          sString("");
-  wxString          sNumString("");
-  wxChar     const  **pEntries = NULL; 
-
-  //for all pipes
-  for(nI = 0; nI< m_Pipes->GetCount(); nI++)
+  for(mafSceneNode *n = m_Sg->GetNodeList(); n != NULL; n = n->m_Next)
   {
-    if(m_Pipes->Item(nI)->m_Vme == vme)
+    mafNode *vme = n->m_Vme;
+    lhpPipeIntGraphAbstract *pipe = lhpPipeIntGraphAbstract::SafeDownCast(n->m_Pipe);
+    if(vme && pipe)
     {
-      nPipeIndex = nI;
-      break;
+      pipe->loadPlotInfo();
     }
   }
-
-  if(nPipeIndex != -1)
-  {
-    nNumComp = 0;
-    for(nI = m_Graph->GetYDim() - 1; nI >= 0; nI--)
-    {
-      if(nPipeIndex == m_Graph->GetYID(nI)[0] && m_Graph->GetYID(nI)[1] != 0)
-      {
-        //save Y var
-        nNumComp++;
-      }
-    }
-    for(nI = m_Graph->GetXDim() - 1; nI >= 0; nI--)
-    {
-      if(nPipeIndex == m_Graph->GetXID(nI)[0] && m_Graph->GetYID(nI)[1] != 0)
-      {
-        //save X var
-        nNumComp++;
-      }
-    }
-    //actually save
-    nCount = 0;
-    pEntries = (wxChar const **)malloc(sizeof(wxChar *) * nNumComp);
-    for(nI = m_Graph->GetYDim() - 1; nI >= 0; nI--)
-    {
-      if(nPipeIndex == m_Graph->GetYID(nI)[0] && m_Graph->GetYID(nI)[1] != 0)
-      {
-        //save Y var
-        sNumString.Printf("%d", m_Graph->GetYID(nI)[1]);
-        pEntries[nCount] = strdup(sNumString.GetData());
-        nCount ++;
-      }
-    }
-    for(nI = m_Graph->GetXDim() - 1; nI >= 0; nI--)
-    {
-      if(nPipeIndex == m_Graph->GetXID(nI)[0] && m_Graph->GetYID(nI)[1] != 0)
-      {
-        //save X var
-        sNumString.Printf("%d", m_Graph->GetYID(nI)[1] + GDT_LAST);
-        pEntries[nCount] = strdup(sNumString.GetData());
-        nCount ++;
-      }
-    }
-  }
-
-  wxASSERT(nNumComp == nCount);
-  pTag = new mafTagItem(mafINTG_SAVEINFO_TAG, pEntries, nNumComp);
-  m_ModifyMode = true;
-  vme->GetTagArray()->SetTag(*pTag);
-  mafEventMacro(mafEvent(this,VME_MODIFIED,vme));
-  m_ModifyMode = false;
-  cppDEL(pTag);
-  for(nI = nNumComp - 1; nI >= 0; nI--)
-  {
-    free(const_cast<char *>(pEntries[nI]));
-  }
-  free(pEntries);
 }

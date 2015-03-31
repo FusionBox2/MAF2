@@ -130,32 +130,69 @@ SET(PROJECT_SRCS
 	mafINPWriter.h
 	mafMtrLMCReader.cpp
 	mafMtrLMCReader.h
-	mmoAFSys.cpp
-	mmoAFSys.h
-	mmoAverageLM.cpp
-	mmoAverageLM.h
-	mmoBuildHierarchy.cpp
-	mmoBuildHierarchy.h
-	mmoHelAxis.cpp
-	mmoHelAxis.h
-	mmoINPExporter.cpp
-	mmoINPExporter.h
-	mmoINPImporter.cpp
-	mmoINPImporter.h
-	mmoMTRExporter.cpp
-	mmoMTRExporter.h
-	mmoMTRImporter.cpp
-	mmoMTRImporter.h
-	mmoStickPalpation.cpp
-	mmoStickPalpation.h
-	mmoTimeReduce.cpp
-	mmoTimeReduce.h
-	mmoLnSurf.cpp
-	mmoLnSurf.h
+	lhpOpAFSys.cpp
+	lhpOpAFSys.h
+	lhpOpAverageLM.cpp
+	lhpOpAverageLM.h
+	lhpOpBuildHierarchy.cpp
+	lhpOpBuildHierarchy.h
+	lhpOpHelAxis.cpp
+	lhpOpHelAxis.h
+	lhpOpINPExporter.cpp
+	lhpOpINPExporter.h
+	lhpOpINPImporter.cpp
+	lhpOpINPImporter.h
+	lhpOpMTRExporter.cpp
+	lhpOpMTRExporter.h
+	lhpOpMTRImporter.cpp
+	lhpOpMTRImporter.h
+	lhpOpStickPalpation.cpp
+	lhpOpStickPalpation.h
+	lhpOpTimeReduce.cpp
+	lhpOpTimeReduce.h
+	lhpOpLnSurf.cpp
+	lhpOpLnSurf.h
 	
 	lhpOpImporterC3D.cpp
 	lhpOpImporterC3D.h
 
+	lhpOpICPRegFollow.cpp
+	lhpOpICPRegFollow.h
+	lhpOpImporterRSScan.cpp
+	lhpOpImporterRSScan.h
+	lhpOpJoinSurf.cpp
+	lhpOpJoinSurf.h
+	lhpOpLMMirror.cpp
+	lhpOpLMMirror.h
+	lhpOpLMProj.cpp
+	lhpOpLMProj.h
+	lhpOpMergeClouds.cpp
+	lhpOpMergeClouds.h        
+	lhpOpSolidify.cpp
+	lhpOpSolidify.h
+	lhpVMEMeshRSScanImporter.cpp
+	lhpVMEMeshRSScanImporter.h
+	mafMtrReader.cpp
+	mafMtrReader.h
+	lhpOpCreateObject.h	
+	lhpOpCutSurface.cpp
+	lhpOpCutSurface.h
+	lhpOpFingerStick.cpp
+	lhpOpFingerStick.h
+	lhpOpMTRULBImporter.cpp
+	lhpOpMTRULBImporter.h
+	lhpOpRegistration.cpp
+	lhpOpRegistration.h
+	lhpOpRegression.cpp
+	lhpOpRegression.h	
+	lhpOpRegSurfWithCloud.cpp
+	lhpOpRegSurfWithCloud.h
+	lhpOpRepresentInAF.cpp
+	lhpOpRepresentInAF.h
+	lhpOpSoftReg.cpp
+	lhpOpSoftReg.h
+	lhpOpRegisterLMScripted.cpp
+	lhpOpRegisterLMScripted.h
 	lhpOpComputeTensor.cpp
 	lhpOpComputeTensor.h
 	lhpCOmputeTensor.cpp

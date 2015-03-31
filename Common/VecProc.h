@@ -335,10 +335,25 @@ public:
     DEFINE_FIELD(in, true, true);
   }
   bool postRead(){return true;}
+  bool process(){/*if(!checkInputFields())return false;validateOutputFields();*/return true;}
+private:
+  Param<Type>       *m_in;
+};
+
+template <class Type>
+class DefVecInAlw : public Oper<Type>
+{
+public:
+  DefVecInAlw()
+  {
+    DEFINE_FIELD(in, true, true);
+  }
+  bool postRead(){return true;}
   bool process(){if(!checkInputFields())return false;validateOutputFields();return true;}
 private:
   Param<Type>       *m_in;
 };
+
 
 template <class Type>
 class DefVecOut : public Oper<Type>
@@ -365,14 +380,64 @@ public:
     DEFINE_SFIELDICO(up);
   }
   bool postRead();
+  bool process(){return true;}
+private:
+  Param<Type>       *m_dn;
+  Param<Type>       *m_in;
+  Param<Type>       *m_up;
+};
+
+template <class Type>
+class DefSclInAlw : public Oper<Type>
+{
+public:
+  DefSclInAlw()
+  {
+    DEFINE_SFIELDICO(dn);
+    DEFINE_SFIELDI(in);
+    DEFINE_SFIELDICO(up);
+  }
+  bool postRead();
   bool process(){if(!checkInputFields())return false;validateOutputFields();return true;}
 private:
   Param<Type>       *m_dn;
   Param<Type>       *m_in;
   Param<Type>       *m_up;
 };
+
+
 template <class Type>
 bool DefSclIn<Type>::postRead()
+{
+  if(m_dn != NULL) 
+  {
+    m_in->DnLimited() = true;
+    m_in->GetDnLimit() = m_dn->GetScalar();
+  }
+  if(m_up != NULL) 
+  {
+    m_in->UpLimited() = true;
+    m_in->GetUpLimit() = m_up->GetScalar();
+  }
+  if(m_in->IsUpLimited() && m_in->IsDnLimited())
+  {
+    m_in->GetScalar() = (m_in->GetUpLimit() + m_in->GetDnLimit()) / 2;
+    if(m_in->GetUpLimit() < m_in->GetDnLimit())
+      std::swap(m_in->GetUpLimit(), m_in->GetDnLimit());
+  }
+  else
+  {
+    m_in->GetScalar() = 0;
+    if(m_in->IsUpLimited() && (m_in->GetScalar() > m_in->GetUpLimit()))
+      m_in->GetScalar() = m_in->GetUpLimit();
+    if(m_in->IsDnLimited() && (m_in->GetScalar() < m_in->GetDnLimit()))
+      m_in->GetScalar() = m_in->GetDnLimit();
+  }
+  return true;
+}
+
+template <class Type>
+bool DefSclInAlw<Type>::postRead()
 {
   if(m_dn != NULL) 
   {
@@ -667,11 +732,27 @@ bool VecManVM<Type>::ProcessString(const char *pLine)
   {
     oper = new DefVecIn<Type>;
   }
+  if(strcmp(activ, "DEFVIA") == 0)
+  {
+    oper = new DefVecInAlw<Type>;
+  }
+  if(strcmp(activ, "DEFVIOPT") == 0)
+  {
+    oper = new DefVecIn<Type>;
+  }
   else if(strcmp(activ, "DEFVO") == 0)
   {
     oper = new DefVecOut<Type>;
   }
   else if(strcmp(activ, "DEFSI") == 0)
+  {
+    oper = new DefSclInAlw<Type>;
+  }
+  else if(strcmp(activ, "DEFSIA") == 0)
+  {
+    oper = new DefSclInAlw<Type>;
+  }
+  else if(strcmp(activ, "DEFSIOPT") == 0)
   {
     oper = new DefSclIn<Type>;
   }

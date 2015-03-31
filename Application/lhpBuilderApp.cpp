@@ -23,7 +23,7 @@
 #include <wx/datetime.h>
 #include <wx/config.h>
 
-#include "mafDecl.h"
+#include "lhpBuilderDecl.h"
 #include "mafVMEFactory.h"
 #include "mafPics.h"
 #include "mafGUIMDIFrame.h"
@@ -81,18 +81,19 @@
 #include "medOpVolumeResample.h"
 #include "mafOpAddLandmark.h"
 #include "medOpRegisterClusters.h"
+#include "lhpOpRegisterLMScripted.h"
 #include "mafOpCreateSurfaceParametric.h"
-#include "mmoBuildHierarchy.h"
-#include "mmoTimeReduce.h"
-#include "mmoINPExporter.h"
-#include "mmoMTRExporter.h"
-#include "mmoINPImporter.h"
-#include "mmoMTRImporter.h"
-#include "mmoLnSurf.h"
-#include "mmoAFSys.h"
-#include "mmoAverageLM.h"
-#include "mmoHelAxis.h"
-#include "mmoStickPalpation.h"
+#include "lhpOpBuildHierarchy.h"
+#include "lhpOpTimeReduce.h"
+#include "lhpOpINPExporter.h"
+#include "lhpOpMTRExporter.h"
+#include "lhpOpINPImporter.h"
+#include "lhpOpMTRImporter.h"
+#include "lhpOpLnSurf.h"
+#include "lhpOpAFSys.h"
+#include "lhpOpAverageLM.h"
+#include "lhpOpHelAxis.h"
+#include "lhpOpStickPalpation.h"
 #include "medOpScaleDataset.h"
 #include "medOpMove.h"
 //#include "mafOpMAFTransform.h"
@@ -169,6 +170,41 @@
 
 #include <vtkTimerLog.h>
 
+#include "lhpPipeIntGraph.h"
+#include "lhpPipeIntGraphHAxis.h"
+#include "lhpPipeIntGraphPolyline.h"
+#include "lhpPipeIntGraphAnalog.h"
+#include "lhpPipeLeverArm.h"
+#include "lhpVMELMCLines.h" 
+#include "mafVMEArrow.h" 
+#include "mafVMEC3DData.h" 
+#include "mafVMEPGDData.h" 
+#include "mafVMEBSplineLine.h"
+#include "mafVMEBSplineSurface.h"
+#include "mafVMEBSplineVolume.h"
+#include "lhpVMELeverArm.h"
+#include "mafVMESurfaceRegParam.h"
+#include "lhpOpFingerStick.h"
+#include "lhpOpMTRULBImporter.h"
+#include "lhpOpSoftReg.h"
+#include "lhpOpRegression.h"
+#include "lhpOpCreateObject.h"
+#include "lhpOpRegistration.h"
+#include "lhpOpRegSurfWithCloud.h"
+#include "lhpOpRepresentInAF.h"
+#include "lhpOpLMMirror.h"
+#include "lhpOpLMProj.h"
+#include "lhpOpSolidify.h"
+#include "lhpOpJoinSurf.h"
+#include "lhpOpMergeClouds.h"
+#include "lhpOpICPRegFollow.h"
+#include "lhpOpImporterRSScan.h"
+#include "lhpOpCutSurface.h"
+#include "vtkUnstructuredGrid.h"
+#include "vtkMAFSmartPointer.h"
+#include "vtkTransformFilter.h"
+#include "vtkStructuredPoints.h"
+
 
 // TODO: REFACTOR THIS 
 // this component is used only to override the Accept,  
@@ -178,6 +214,14 @@
 class lhpOpMove : public medOpMove
 {
 public:
+
+  lhpOpMove(const wxString &label = "Move\tCtrl+T"):medOpMove(label){}
+  //----------------------------------------------------------------------------
+  mafOp* Copy()   
+    //----------------------------------------------------------------------------
+  {
+    return new lhpOpMove(m_Label);
+  }
 
   /** Return true for the acceptable vme type. */
   bool Accept(mafNode* vme)
@@ -200,6 +244,66 @@ public:
     }
   }
 };
+
+class lhpOpMoveSeq : public lhpOpMove
+{
+public:
+  lhpOpMoveSeq(const wxString &label = "Move Sequence"):lhpOpMove(label){m_EnableScaling = 0;}
+  mafOp* Copy()   
+    //----------------------------------------------------------------------------
+  {
+    return new lhpOpMoveSeq(m_Label);
+  }
+  void OpDo();
+  void OpUndo();
+private:
+  void TransfMatr(mafMatrix& convMatrix, mafTimeStamp tsSkip = -1);
+  mafMatrix m_ConvMatrix;
+};
+
+
+//----------------------------------------------------------------------------
+void lhpOpMoveSeq::TransfMatr(mafMatrix& convMatrix, mafTimeStamp tsSkip)
+//----------------------------------------------------------------------------
+{
+  mafMatrix newMatr;
+  mafMatrix oldMatr;
+  std::vector<mafTimeStamp> stamps;
+  ((mafVME *)m_Input)->GetTimeStamps(stamps);
+  for(int i = 0; i < stamps.size(); i++)
+  {
+    if(stamps[i] == tsSkip)
+      continue;
+    // apply roto-translation to abs pose
+    ((mafVME *)m_Input)->GetOutput()->GetAbsMatrix(oldMatr, stamps[i]);
+    mafMatrix::Multiply4x4(convMatrix, oldMatr, newMatr);
+    ((mafVME *)m_Input)->SetAbsMatrix(newMatr, stamps[i]);
+  }
+  ((mafVME *)m_Input)->GetOutput()->Update();
+  mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+}
+void lhpOpMoveSeq::OpDo()
+//----------------------------------------------------------------------------
+{
+  mafMatrix newMatr;
+  mafMatrix oldMatr;
+  mafMatrix convMatrix;
+  newMatr = m_NewAbsMatrix;
+  oldMatr = m_OldAbsMatrix;
+  oldMatr.Invert();
+  mafMatrix::Multiply4x4(newMatr, oldMatr, convMatrix);
+  m_ConvMatrix = convMatrix;
+  //((mafVME *)m_Input)->SetAbsMatrix(oldMatr);
+  TransfMatr(convMatrix, ((mafVME *)m_Input)->GetTimeStamp());
+}
+void lhpOpMoveSeq::OpUndo()
+//----------------------------------------------------------------------------
+{
+  mafMatrix convMatrix;
+  convMatrix = m_ConvMatrix;
+  convMatrix.Invert();
+  TransfMatr(convMatrix);
+}
 
 class lhpOpScaleDataset : public medOpScaleDataset
 {
@@ -272,6 +376,65 @@ bool lhpBuilderApp::OnInit()
   #include "pic/lhpBuilder/MDICHILD_ICON.xpm"
   mafADDPIC(MDICHILD_ICON);
 
+  LibHandle C3DLib      = NULL;
+  LibHandle matlabLib   = NULL;
+  LibHandle fullControl = NULL;
+  bool fullVersion      = false;
+
+  fullControl = mafDynamicLoader::OpenLibrary("full_ver");
+  if(fullControl)
+  {
+    unsigned (*fnfull_ver)() = (unsigned(*)())mafDynamicLoader::GetSymbolAddress(fullControl, "fnfull_ver");
+    if(fnfull_ver != NULL && fnfull_ver() > 0)
+    {
+      fullVersion = true;
+    }
+    m_Plugins.push_back(std::make_pair(fullControl, (void(*)())NULL));
+  }
+
+  matlabLib = mafDynamicLoader::OpenLibrary("MATLAB");
+  if(matlabLib)
+  {
+    bool (*minit)() = (bool(*)())mafDynamicLoader::GetSymbolAddress(matlabLib, "Init");
+    if(minit == NULL || !minit())
+    {
+      mafDynamicLoader::CloseLibrary(matlabLib);
+      matlabLib = NULL;
+    }
+    else
+    {
+      void (*mterm)() = (void(*)())mafDynamicLoader::GetSymbolAddress(matlabLib, "Terminate");
+      if(lhpOpRegression::Config(matlabLib))
+      {
+        m_Plugins.push_back(std::make_pair(matlabLib, mterm));
+      }
+      else
+      {
+        if(mterm)
+          mterm();
+        mafDynamicLoader::CloseLibrary(matlabLib);
+        matlabLib = NULL;
+      }
+    }
+  }
+
+  if(fullVersion)
+  {
+    C3DLib = mafDynamicLoader::OpenLibrary("C3D_Reader");
+    if(C3DLib)
+    {
+      if(lhpOpImporterC3D::Config(C3DLib))
+      {
+        m_Plugins.push_back(std::make_pair(C3DLib, (void(*)())NULL));
+      }
+      else
+      {
+        mafDynamicLoader::CloseLibrary(C3DLib);
+        C3DLib = NULL;
+      }
+    }
+  }
+
   int result;
  
   result = medVMEFactory::Initialize();
@@ -287,6 +450,15 @@ bool lhpBuilderApp::OnInit()
   mafPlugNode<mafVMERawMotionData>("VME representing raw motion data");
   mafPlugNode<mafVMEAFRefSys>("VME representing anatomical frame");
   mafPlugNode<mafVMEHelAxis>("VME representing helical axis");
+  mafPlugNode<mafVMEC3DData>("VME representing C3D data");
+  mafPlugNode<mafVMEPGDData>("VME representing PGD data");
+  mafPlugNode<mafVMEArrow>("VME representing helical axis");
+  mafPlugNode<lhpVMELeverArm>("VME representing lever arm");
+  mafPlugNode<lhpVMELMCLines>("VME representing lines between landmarks of cloud");
+  mafPlugNode<mafVMEBSplineLine>("VME representing B-spline line");
+  mafPlugNode<mafVMEBSplineSurface>("VME representing B-spline surface");
+  mafPlugNode<mafVMEBSplineVolume>("VME representing B-spline volume");
+  mafPlugNode<mafVMESurfaceRegParam>("VME representing regression parametric surface");
   mafPlugNode<mafVMEVolumeLarge>("VME storing large volume datasets with one scalar component");
 
 mafPlugNode<medVMEComputeWrapping>("Generalized another VME Meter with wrapping geometry");
@@ -300,13 +472,30 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   mafPlugNode<medVMEMuscleWrapper>("Procedural VME representing muscle deformed according to its action lines");
 
   mafPlugPipe<lhpVisualPipeSurfaceScalar>("Visual pipe to render a surface with its scalar values");
+  mafPlugPipe<lhpPipeIntGraph>("Visual pipe for biomechanical graph");
+  mafPlugPipe<lhpPipeIntGraphHAxis>("Visual pipe for helical axis in a biomechanical graph");
+  mafPlugPipe<lhpPipeIntGraphPolyline>("Visual pipe for polyline in a biomechanical graph");
+  mafPlugPipe<lhpPipeIntGraphAnalog>("Visual pipe for analog data in a biomechanical graph");
+  mafPlugPipe<lhpPipeLeverArm>("Visual pipe for lever arm");
 
   m_Logic = new lhpBuilderLogic();
-  m_Logic->GetTopWin()->SetTitle("LHPBuilder");
+  if(fullVersion)
+  {
+    m_Logic->GetTopWin()->SetTitle("LHPBuilder");
+  }
+  else
+  {
+    m_Logic->GetTopWin()->SetTitle("ULBViewer");
+  }
   m_Logic->Configure();
   SetTopWindow(mafGetFrame());  
 
-	wxRegKey RegKey(wxString("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\lhpBuilder"));
+  wxString regKeyName;
+  if(fullVersion)
+    regKeyName = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\lhpBuilder";
+  else
+    regKeyName = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\ULBViewer";
+  wxRegKey RegKey(regKeyName);
 	if(RegKey.Exists())
 	{
 		RegKey.Create();
@@ -321,161 +510,195 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
 	}
 
   //------------------------- Importers -------------------------
-  m_Logic->Plug(new medOpImporterDicomOffis("DICOM"),"Images");
   m_Logic->Plug(new mafOpImporterSTL("STL"),"Geometries");
-  m_Logic->Plug(new mafOpImporterVTK("VTK"),"Other");
   m_Logic->Plug(new mafOpImporterMSF("MSF"),"Other");
-  m_Logic->Plug(new mafOpImporterMSF1x("MAF 1.x"),"Other");
-  m_Logic->Plug(new mafOpImporterBBF("BFF (VolumeLarge)"),"Other");
-  m_Logic->Plug(new mafOpImporterRAWVolume_BES("Raw Volume"),"Images");
-  m_Logic->Plug(new mafOpImporterRAWVolume("Raw Volume Legacy"),"Images");
-  m_Logic->Plug(new medOpImporterRAWImages("Raw Images"),"Images");
-  //m_Logic->Plug(new medOpImporterRAWImages("Raw Images Legacy"),"Images");
-  m_Logic->Plug(new mafOpImporterImage("Images"),"Images");
   m_Logic->Plug(new medOpImporterLandmark("Landmark"),"Motion Analysis");
-	m_Logic->Plug(new medOpImporterLandmarkWS("ASCII trajectories (VWs)"),"Motion Analysis");
-  m_Logic->Plug(new lhpOpImporterC3D("C3D"),"Motion Analysis");  
   m_Logic->Plug(new medOpImporterMotionData<mafVMERawMotionData>("Raw Motion Data", "RAW Motion Data (*.MAN)|*.MAN", "Dictionary (*.txt)|*.txt"), "Motion Analysis");
-  // m_Logic->Plug(new mmoLandmarkImporter("Landmark")); //Old Importer
-  m_Logic->Plug(new medOpImporterGRFWS("ASCII Force Plates (VWs)"), "Motion Analysis");
-  m_Logic->Plug(new mafOpImporterMesh("Generic Mesh"), "Finite Element");
-  m_Logic->Plug(new lhpOpImporterAnsysInputFile("Ansys Input File"), "Finite Element");	
-  m_Logic->Plug(new lhpOpImporterAnsysCDBFile("Ansys CDB File"), "Finite Element");	
+  m_Logic->Plug(new medOpImporterMotionData<mafVMEPGDData>("PGD Data", "PGD Data (*.PGD)|*.PGD", "Dictionary (*.txt)|*.txt"), "Motion Analysis");
   m_Logic->Plug(new mafOpImporterVRML("VRML"), "Geometries");
-  m_Logic->Plug(new mmoINPImporter("INP/INP_AF"), "Geometries");
-  m_Logic->Plug(new mmoMTRImporter("MTR"), "Geometries");
-  m_Logic->Plug(new mafOpImporterExternalFile("External data"), "Other");
-  m_Logic->Plug(new medOpImporterAnalogWS("ASCII Analog (VWs)"), "Motion Analysis");
+  m_Logic->Plug(new lhpOpINPImporter("INP/INP_AF"), "Geometries");
+  m_Logic->Plug(new lhpOpMTRImporter("MTR"), "Geometries");
+  m_Logic->Plug(new lhpOpMTRULBImporter("MTR (ULB)"), "Geometries");
+  if(fullVersion)
+  {
+    m_Logic->Plug(new medOpImporterDicomOffis("DICOM"),"Images");
+    m_Logic->Plug(new mafOpImporterVTK("VTK"),"Other");
+    m_Logic->Plug(new mafOpImporterMSF1x("MAF 1.x"),"Other");
+    m_Logic->Plug(new mafOpImporterBBF("BFF (VolumeLarge)"),"Other");
+    m_Logic->Plug(new mafOpImporterRAWVolume_BES("Raw Volume"),"Images");
+    m_Logic->Plug(new mafOpImporterRAWVolume("Raw Volume Legacy"),"Images");
+    m_Logic->Plug(new medOpImporterRAWImages("Raw Images"),"Images");
+    //m_Logic->Plug(new medOpImporterRAWImages("Raw Images Legacy"),"Images");
+    m_Logic->Plug(new mafOpImporterImage("Images"),"Images");
+    m_Logic->Plug(new medOpImporterLandmarkWS("ASCII trajectories (VWs)"),"Motion Analysis");
+    if(C3DLib)
+      m_Logic->Plug(new lhpOpImporterC3D("C3D"),"Motion Analysis");  
+    // m_Logic->Plug(new lhpOpLandmarkImporter("Landmark")); //Old Importer
+    m_Logic->Plug(new medOpImporterGRFWS("ASCII Force Plates (VWs)"), "Motion Analysis");
+    m_Logic->Plug(new mafOpImporterMesh("Generic Mesh"), "Finite Element");
+    m_Logic->Plug(new lhpOpImporterAnsysInputFile("Ansys Input File"), "Finite Element");	
+    m_Logic->Plug(new lhpOpImporterAnsysCDBFile("Ansys CDB File"), "Finite Element");	
+    m_Logic->Plug(new mafOpImporterExternalFile("External data"), "Other");
+    m_Logic->Plug(new medOpImporterAnalogWS("ASCII Analog (VWs)"), "Motion Analysis");
+    m_Logic->Plug(new lhpOpImporterRSScan("RSScan"), "Finite Element");	
+  }
 
   //-------------------------------------------------------------
 
   //------------------------- Exporters -------------------------
   m_Logic->Plug(new mafOpExporterSTL("STL"),"Geometries");
-  m_Logic->Plug(new mmoINPExporter("INP"),"Geometries");
-  m_Logic->Plug(new mmoMTRExporter("MTR"), "Geometries");
+  m_Logic->Plug(new lhpOpINPExporter("INP"),"Geometries");
   m_Logic->Plug(new mafOpExporterVTK("VTK"), "Other");
-	m_Logic->Plug(new mafOpExporterRAW("Raw"), "Images");
   m_Logic->Plug(new mafOpExporterBmp("Bmp"), "Images");
+  m_Logic->Plug(new lhpOpMTRExporter("MTR"), "Motion Analysis");
   m_Logic->Plug(new medOpExporterLandmark("Landmark"), "Motion Analysis");
-  m_Logic->Plug(new medOpExporterWrappedMeter("Wrapped Meter"), "Other");
-  m_Logic->Plug(new medOpExporterMeters("Meters"), "Other");
-  m_Logic->Plug(new lhpOpExporterAnsysInputFile("Ansys Input File"),"Finite Element");
+  if(fullVersion)
+  {
+    m_Logic->Plug(new mafOpExporterRAW("Raw"), "Images");
+    m_Logic->Plug(new medOpExporterWrappedMeter("Wrapped Meter"), "Other");
+    m_Logic->Plug(new medOpExporterMeters("Meters"), "Other");
+    m_Logic->Plug(new lhpOpExporterAnsysInputFile("Ansys Input File"),"Finite Element");
+  }
   //-------------------------------------------------------------
 
   //------------------------- Operations -------------------------
   m_Logic->Plug(new mafOpValidateTree());
   m_Logic->Plug(new mafOpCreateGroup("Group"),"Create/New");
-  m_Logic->Plug(new mafOpCreateVolume("Constant Volume"),"Create/New");
-
-#ifdef MAF_USE_ITK
-  m_Logic->Plug(new lhpOpCreateSurfaceScalar("Surface Scalar"),"Create/Derive");
-#endif
-  m_Logic->Plug(new mmoLnSurf("Lineset and surface"),"Create/Derive");
-	m_Logic->Plug(new mafOpCreateRefSys("Refsys"),"Create/New");
-  m_Logic->Plug(new mafOpCreateSlicer("Slicer"),"Create/Derive");
 	m_Logic->Plug(new mafOpCreateSurfaceParametric("Parametric Surface"),"Create/New");
 	m_Logic->Plug(new mafOpAddLandmark("Add Landmark \tCtrl+A"),"Create/New");
-  m_Logic->Plug(new medOpFreezeVME("Freeze VME"),"Create/Derive");
-  m_Logic->Plug(new medOpRegisterClusters("Register Landmark Cloud"),"Modify/Fuse");
   m_Logic->Plug(new mafOpCreateMeter("Distance Meter"),"Create/Derive");
-  //m_Logic->Plug(new medOpCreateWrappedMeter("Wrapped Meter"),"Create/Derive");
-  m_Logic->Plug(new medOpComputeWrapping("Wrapped Action Line"),"Create/Derive");//15-1-2009
 
-  m_Logic->Plug(new medOpCreateMuscleWrapper("Muscle Wrapper"),"Create/Derive"); //BES: 14.11.2008
- // m_Logic->Plug(new mmoEditMetadata("Metadata Editor"),"Modify");
-	m_Logic->Plug(new mafOpFilterSurface("Filter Surface"),"Modify");
-  m_Logic->Plug(new mafOpVOIDensityEditor("Volume Density"),"Modify");
-  m_Logic->Plug(new medOpMeshDeformation("Deform Surface"), "Modify");
-  m_Logic->Plug(new mafOpApplyTrajectory("Apply Trajectory"), "Modify");
-	m_Logic->Plug(new mafOpExtractIsosurface("Extract Isosurface"),"Create/Derive");
-  m_Logic->Plug(new medOpSurfaceMirror("Surface Mirror"),"Modify");
-	m_Logic->Plug(new mafOpCrop("Crop Volume"),"Modify");
-	m_Logic->Plug(new medOpVolumeResample("Volume Resample"),"Modify");
-	m_Logic->Plug(new mafOp2DMeasure("2D Measure"),"Measure");
-	m_Logic->Plug(new mafOpVOIDensity("VOI Density"),"Measure");
   m_Logic->Plug(new mafOpReparentTo("Reparent to...  \tCtrl+R"),"Modify/Fuse");
-  m_Logic->Plug(new lhpOpScaleDataset(),"Modify");
   m_Logic->Plug(new lhpOpMove(),"Modify");
-  m_Logic->Plug(new medOpCropDeformableROI(_("Masking")),_("Modify"));
-  m_Logic->Plug(new mafOpImporterVMEDataSetAttributes("VME DataSet Attributes Adder"),"Modify");
-  m_Logic->Plug(new medOpClassicICPRegistration("Register Surface"),"Modify/Fuse");
-  m_Logic->Plug(new mmoAFSys("AFRefsys"),"Create/Derive");
-  m_Logic->Plug(new mmoAverageLM("Average landmark"),"Create/Derive");
-  m_Logic->Plug(new mmoStickPalpation("Wand palpated landmark"),"Create/Derive");
+  m_Logic->Plug(new lhpOpAverageLM("Average landmark"),"Create/Derive");
+  m_Logic->Plug(new lhpOpCreateObject<lhpVMELMCLines>("Cloud lines", "Cloud lines"),"Create/Derive");
+  m_Logic->Plug(new lhpOpJoinSurf("JoinSurface"),"Create/Derive");
+  m_Logic->Plug(new lhpOpMergeClouds("Merge clouds"),"Create/Derive");
+  if(fullVersion)
+  {
+    m_Logic->Plug(new mafOpCreateVolume("Constant Volume"),"Create/New");
 
-  m_Logic->Plug(new mmoHelAxis("Helical axis"),"Create/Derive");
-  m_Logic->Plug(new mmoTimeReduce("Time reduce"),"Modify");
-  m_Logic->Plug(new mmoBuildHierarchy("Make hierarchical"),"Modify/Fuse");
-  m_Logic->Plug(new lhpOpBonemat("Bonemat"),"Modify");
-  m_Logic->Plug(new medOpIterativeRegistration("Iterative Registration"),"Modify/Fuse");
-  m_Logic->Plug(new mafOpOpenExternalFile("Open with external program"),"Manage"); 
-  m_Logic->Plug(new medOpCreateLabeledVolume("Labeled Volume"),"Create/Derive");
-  //m_Logic->Plug(new lhpOpUploadVME("Upload VME"),"Manage");
-  m_Logic->Plug(new lhpOpUploadMultiVME("Upload VME"),"Manage");
-  m_Logic->Plug(new lhpOpEditTag("Edit Tag VME"),"Manage");
-  m_Logic->Plug(new lhpOpDownloadVME("Download VME", lhpOpDownloadVME::FROM_BASKET),"Manage");
-  m_Logic->Plug(new lhpOpDownloadVME("Download VME from sandbox",lhpOpDownloadVME::FROM_SANDBOX),"Manage");
-  
-  m_Logic->Plug(new mafOpDecomposeTimeVarVME("Decompose Time"),"Create/Derive");
-  m_Logic->Plug(new mafOpLabelExtractor("Extract Label"),"Create/Derive");
-  m_Logic->Plug(new lhpOpMultiscaleExplore("Multiscale Viewer"),"Manage");
-  m_Logic->Plug(new medOpMML("Register from template"),"Modify");
-  m_Logic->Plug(new lhpOpKeyczarIntegrationTest("Security Libraries Integration"),"Test");
-  m_Logic->Plug(new lhpOpComputeTensor("Compute Tensors"), "Modify");
+#ifdef MAF_USE_ITK
+    m_Logic->Plug(new lhpOpCreateSurfaceScalar("Surface Scalar"),"Create/Derive");
+#endif
+    m_Logic->Plug(new lhpOpLnSurf("Lineset and surface"),"Create/Derive");
+    m_Logic->Plug(new mafOpCreateRefSys("Refsys"),"Create/New");
+    m_Logic->Plug(new mafOpCreateSlicer("Slicer"),"Create/Derive");
+    m_Logic->Plug(new medOpFreezeVME("Freeze VME"),"Create/Derive");
+    m_Logic->Plug(new medOpRegisterClusters("Register Landmark Cloud"),"Modify/Fuse");
+    m_Logic->Plug(new lhpOpRegisterLMScripted("Register Landmark Cloud Tree"),"Modify/Fuse");
+    //m_Logic->Plug(new medOpCreateWrappedMeter("Wrapped Meter"),"Create/Derive");
+    m_Logic->Plug(new medOpComputeWrapping("Wrapped Action Line"),"Create/Derive");//15-1-2009
+    m_Logic->Plug(new medOpCreateMuscleWrapper("Muscle Wrapper"),"Create/Derive"); //BES: 14.11.2008
+    // m_Logic->Plug(new lhpOpEditMetadata("Metadata Editor"),"Modify");
+    m_Logic->Plug(new mafOpFilterSurface("Filter Surface"),"Modify");
+    m_Logic->Plug(new mafOpVOIDensityEditor("Volume Density"),"Modify");
+    m_Logic->Plug(new medOpMeshDeformation("Deform Surface"), "Modify");
+    m_Logic->Plug(new mafOpApplyTrajectory("Apply Trajectory"), "Modify");
+    m_Logic->Plug(new mafOpExtractIsosurface("Extract Isosurface"),"Create/Derive");
+    m_Logic->Plug(new medOpSurfaceMirror("Surface Mirror"),"Modify");
+    m_Logic->Plug(new mafOpCrop("Crop Volume"),"Modify");
+    m_Logic->Plug(new medOpVolumeResample("Volume Resample"),"Modify");
+    m_Logic->Plug(new mafOp2DMeasure("2D Measure"),"Measure");
+    m_Logic->Plug(new mafOpVOIDensity("VOI Density"),"Measure");
+    m_Logic->Plug(new lhpOpScaleDataset(),"Modify");
+    m_Logic->Plug(new medOpCropDeformableROI(_("Masking")),_("Modify"));
+    m_Logic->Plug(new mafOpImporterVMEDataSetAttributes("VME DataSet Attributes Adder"),"Modify");
+    m_Logic->Plug(new medOpClassicICPRegistration("Register Surface"),"Modify/Fuse");
+    m_Logic->Plug(new lhpOpAFSys("AFRefsys"),"Create/Derive");
+    m_Logic->Plug(new lhpOpStickPalpation("Wand palpated landmark"),"Create/Derive");
 
-  m_Logic->Plug(new lhpOpTextureOrientation("Texture Orientation"),"Create/Derive");
+    m_Logic->Plug(new lhpOpHelAxis("Helical axis"),"Create/Derive");
+    m_Logic->Plug(new lhpOpTimeReduce("Time reduce"),"Modify");
+    m_Logic->Plug(new lhpOpLMProj(true, "Landmark Cloud Projection"),"Create/Derive");
+    m_Logic->Plug(new lhpOpSolidify("Solidify Landmark Cloud"),"Create/Derive");
+    m_Logic->Plug(new lhpOpSoftReg("Soft tissue registration"),"Create/Derive");
+    m_Logic->Plug(new lhpOpCreateObject<mafVMEBSplineLine>("BSplineLine", "BSplineLine"),"Create/New");
+    m_Logic->Plug(new lhpOpCreateObject<mafVMEBSplineSurface>("BSplineSurface", "BSplineSurface"),"Create/New");
+    m_Logic->Plug(new lhpOpCreateObject<mafVMEBSplineVolume>("BSplineVolume", "BSplineVolume"),"Create/New");
+    m_Logic->Plug(new lhpOpCreateObject<lhpVMELeverArm>("Lever Arm", "Lever Arm"),"Create/Derive");
+    m_Logic->Plug(new lhpOpRegSurfWithCloud("Register Surface with Landmark Cloud"),"Modify/Fuse");
+    m_Logic->Plug(new lhpOpRepresentInAF("Represent in RefSys"),"Modify/Fuse");
+    m_Logic->Plug(new lhpOpLMMirror("Landmark Cloud Mirror"),"Modify");
+    m_Logic->Plug(new lhpOpMoveSeq(),"Modify");
+    m_Logic->Plug(new lhpOpICPRegFollow("Move Surface As Registered"),"Modify/Fuse");
+    m_Logic->Plug(new lhpOpRegression("Regression"),"Create/Derive");
+    m_Logic->Plug(new lhpOpFingerStick("Finger stick"),"Create/Derive");
+    m_Logic->Plug(new lhpOpCutSurface("CutSurface"),"Create/Derive");
+    m_Logic->Plug(new medOpComputeWrapping("Compute Wrapping"),"Create/Derive");
+    //m_Logic->Plug(new lhpOpMeanHelAxis("Mean helical axis"),"Create/Derive");
+    m_Logic->Plug(new lhpOpRegistration("DSRegistration"),"Modify");
+    m_Logic->Plug(new lhpOpBuildHierarchy("Make hierarchical"),"Modify/Fuse");
+    m_Logic->Plug(new lhpOpBonemat("Bonemat"),"Modify");
+    m_Logic->Plug(new medOpIterativeRegistration("Iterative Registration"),"Modify/Fuse");
+    m_Logic->Plug(new mafOpOpenExternalFile("Open with external program"),"Manage"); 
+    m_Logic->Plug(new medOpCreateLabeledVolume("Labeled Volume"),"Create/Derive");
+    //m_Logic->Plug(new lhpOpUploadVME("Upload VME"),"Manage");
+    m_Logic->Plug(new lhpOpUploadMultiVME("Upload VME"),"Manage");
+    m_Logic->Plug(new lhpOpEditTag("Edit Tag VME"),"Manage");
+    m_Logic->Plug(new lhpOpDownloadVME("Download VME", lhpOpDownloadVME::FROM_BASKET),"Manage");
+    m_Logic->Plug(new lhpOpDownloadVME("Download VME from sandbox",lhpOpDownloadVME::FROM_SANDBOX),"Manage");
 
-  // Upload Download VME Refactor Target
-  m_Logic->Plug(new lhpOpUploadMultiVMERefactor("Upload Multi VME Refactor"),"Devel");
-  m_Logic->Plug(new lhpOpEditTagRefactor("Edit Tag VME Refactor"),"Devel");
-  m_Logic->Plug(new lhpOpDownloadVMERefactor("Download Multi VME Refactor"),"Devel");
-  // m_Logic->Plug(new lhpOpUploadVMERefactor("Upload VME Refactor"),"Devel");
-  
+    m_Logic->Plug(new mafOpDecomposeTimeVarVME("Decompose Time"),"Create/Derive");
+    m_Logic->Plug(new mafOpLabelExtractor("Extract Label"),"Create/Derive");
+    m_Logic->Plug(new lhpOpMultiscaleExplore("Multiscale Viewer"),"Manage");
+    m_Logic->Plug(new medOpMML("Register from template"),"Modify");
+    m_Logic->Plug(new lhpOpKeyczarIntegrationTest("Security Libraries Integration"),"Test");
+    m_Logic->Plug(new lhpOpComputeTensor("Compute Tensors"), "Modify");
+
+    m_Logic->Plug(new lhpOpTextureOrientation("Texture Orientation"),"Create/Derive");
+
+    // Upload Download VME Refactor Target
+    m_Logic->Plug(new lhpOpUploadMultiVMERefactor("Upload Multi VME Refactor"),"Devel");
+    m_Logic->Plug(new lhpOpEditTagRefactor("Edit Tag VME Refactor"),"Devel");
+    m_Logic->Plug(new lhpOpDownloadVMERefactor("Download Multi VME Refactor"),"Devel");
+    // m_Logic->Plug(new lhpOpUploadVMERefactor("Upload VME Refactor"),"Devel");
+  }
   
   //-------------------------------------------------------------
-
+  bool view_visibility = fullVersion;
   //------------------------- Views -------------------------
   //View Arbitrary Slice
   mafViewArbitrarySlice *ArbitraryView = new mafViewArbitrarySlice("Arbitrary");
   ArbitraryView->PackageView();
-  m_Logic->Plug(ArbitraryView);
+  m_Logic->Plug(ArbitraryView, view_visibility);
 
 
   // View DRR
   mafViewVTK *vdrr = new mafViewVTK("DRR");
   vdrr->PlugVisualPipe("mafVMEVolumeGray","medPipeVolumeDRR",MUTEX);
   vdrr->PlugVisualPipe("mafVMEVolumeLarge","medPipeVolumeDRR",MUTEX);
-  m_Logic->Plug(vdrr);
+  m_Logic->Plug(vdrr, view_visibility);
 
   // View Analog graph
   mafViewVTK *graph = new mafViewVTK("Analog Graph", CAMERA_PERSPECTIVE, false);
   graph->PlugVisualPipe("medVMEAnalog", "medPipeGraph",MUTEX);
-  m_Logic->Plug(graph);
+  m_Logic->Plug(graph, view_visibility);
 
   //View Global Slice
   mafViewGlobalSliceCompound *GlobalSlice = new mafViewGlobalSliceCompound("Global Slice");
   GlobalSlice->PackageView();
-  m_Logic->Plug(GlobalSlice);
+  m_Logic->Plug(GlobalSlice, view_visibility);
 
   mafViewVTK *viso = new mafViewVTK("Isosurface");
   viso->PlugVisualPipe("mafVMEVolumeGray", "mafPipeIsosurface",MUTEX);
   viso->PlugVisualPipe("medVMELabeledVolume", "mafPipeIsosurface",MUTEX);
   viso->PlugVisualPipe("mafVMEVolumeLarge","mafPipeIsosurface",MUTEX);
-  m_Logic->Plug(viso);
+  m_Logic->Plug(viso, view_visibility);
 
   mafViewVTK *visoGPU = new mafViewVTK("Isosurface (GPU)");
   visoGPU->PlugVisualPipe("mafVMEVolumeGray", "mafPipeIsosurfaceGPU",MUTEX);   //BES: 13.11.2008 - GPU support, mafPipeIsosurfaceGPU to be merged with mafPipeIsosurface in future 
   visoGPU->PlugVisualPipe("medVMELabeledVolume", "mafPipeIsosurfaceGPU",MUTEX);
   visoGPU->PlugVisualPipe("mafVMEVolumeLarge", "mafPipeIsosurfaceGPU",MUTEX);
-  m_Logic->Plug(visoGPU);
+  m_Logic->Plug(visoGPU, view_visibility);
 
   mafViewOrthoSlice *viewOrthoSlice = new mafViewOrthoSlice("OrthoSlice");
   viewOrthoSlice->PackageView();
-  m_Logic->Plug(viewOrthoSlice);
+  m_Logic->Plug(viewOrthoSlice, view_visibility);
 
   mafViewRXCT *vrxctl = new mafViewRXCT("RXCT");
   vrxctl->PackageView();
-  m_Logic->Plug(vrxctl);
+  m_Logic->Plug(vrxctl, view_visibility);
 
 	mafViewVTK *vsurface = new mafViewVTK("Surface");
 	vsurface->PlugVisualPipe("mafVMESurface","mafPipeSurface");
@@ -483,11 +706,17 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
 	m_Logic->Plug(vsurface);
 
   mafViewIntGraph *vgraph = new mafViewIntGraph("Biomechanical graph");
+  vgraph->PlugVisualPipe("mafVMEHelAxis","lhpPipeIntGraphHAxis");
+  vgraph->PlugVisualPipe("medVMEComputeWrapping","lhpPipeIntGraphPolyline");
+  vgraph->PlugVisualPipe("medVMEWrappedMeter","lhpPipeIntGraphPolyline");
+  vgraph->PlugVisualPipe("mafVMEMeter","lhpPipeIntGraphPolyline");
+  vgraph->PlugVisualPipe("lhpVMELeverArm","lhpPipeIntGraphPolyline");
+  vgraph->PlugVisualPipe("medVMEAnalog","lhpPipeIntGraphAnalog");
   m_Logic->Plug(vgraph);
 
   medViewSlicer *slicerView = new medViewSlicer("Slicer");
   slicerView->PackageView();
-  m_Logic->Plug(slicerView);
+  m_Logic->Plug(slicerView, view_visibility);
 
   //temporary for testing
   //mafViewSingleSliceCompound *sliceView = new mafViewSingleSliceCompound("Test Slice");
@@ -498,7 +727,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
 
   wxBitmap splashBitmap;
   splashBitmap.LoadFile("../Splash/SPLASH_SCREEN.bmp", wxBITMAP_TYPE_BMP);
-  m_Logic->ShowSplashScreen(splashBitmap); 
+    m_Logic->ShowSplashScreen(splashBitmap); 
 
   // show the application
 	m_Logic->ShowSplashScreen(splashBitmap);
@@ -517,6 +746,12 @@ int lhpBuilderApp::OnExit()
 
   //this hack is fixing VTK internal memory leak
   vtkTimerLog::CleanupLog();
+  for(unsigned i = 0; i < m_Plugins.size(); i++)
+  {
+    if(m_Plugins[i].second)
+      m_Plugins[i].second();
+    mafDynamicLoader::CloseLibrary(m_Plugins[i].first);
+  }
   return 0;
 }
 

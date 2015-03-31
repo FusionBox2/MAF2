@@ -32,13 +32,15 @@ ELSE (WIN32)
 ENDIF (WIN32)
 
 SET(PROJECT_LIBS
-  lhpCommon lhpCore lhpGui lhpOperations lhpViews lhpVME vtkLHP C3D_Reader GPUAPI
+  lhpCommon lhpCore lhpGui lhpOperations lhpViews lhpVME vtkLHP GPUAPI
 )
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
 IF (WIN32)
   SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/MANIFEST")
 ENDIF (WIN32)
 
+
+IF (BUILD_SUBAPPS)
 PROJECT (psLoader)
 
 SET(PROJECT_SRCS 
@@ -73,14 +75,12 @@ ELSE (WIN32)
 ENDIF (WIN32)
 
 SET(PROJECT_LIBS
-  lhpCommon lhpCore lhpGui lhpOperations lhpViews lhpVME vtkLHP C3D_Reader GPUAPI
+  lhpCommon lhpCore lhpGui lhpOperations lhpViews lhpVME vtkLHP GPUAPI
 )
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
 IF (WIN32)
   SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/MANIFEST")
 ENDIF (WIN32)
-
-IF (BUILD_SUBAPPS)
 
 PROJECT (psLoaderPlus)
 
@@ -116,7 +116,7 @@ ELSE (WIN32)
 ENDIF (WIN32)
 
 SET(PROJECT_LIBS
-  lhpCommon lhpCore lhpGui lhpOperations lhpViews lhpVME vtkLHP C3D_Reader GPUAPI
+  lhpCommon lhpCore lhpGui lhpOperations lhpViews lhpVME vtkLHP GPUAPI
 )
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
 IF (WIN32)
@@ -157,7 +157,7 @@ ELSE (WIN32)
 ENDIF (WIN32)
 
 SET(PROJECT_LIBS
-  lhpCommon lhpCore lhpGui lhpOperations lhpViews lhpVME vtkLHP C3D_Reader GPUAPI
+  lhpCommon lhpCore lhpGui lhpOperations lhpViews lhpVME vtkLHP GPUAPI
 )
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
 IF (WIN32)
@@ -199,7 +199,7 @@ ELSE (WIN32)
 ENDIF (WIN32)
 
 SET(PROJECT_LIBS
-  lhpCommon lhpCore lhpGui lhpOperations lhpViews lhpVME vtkLHP C3D_Reader GPUAPI
+  lhpCommon lhpCore lhpGui lhpOperations lhpViews lhpVME vtkLHP GPUAPI
 )
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
 IF (WIN32)

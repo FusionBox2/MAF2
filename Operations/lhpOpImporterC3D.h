@@ -18,6 +18,7 @@
 //----------------------------------------------------------------------------
 #include "mafOp.h"
 #include <map>
+#include "mafDynamicLoader.h"
 
 //----------------------------------------------------------------------------
 // forward references :
@@ -41,20 +42,22 @@ class mafVMEGroup;
 class lhpOpImporterC3D : public mafOp
 {
 public:
-	lhpOpImporterC3D(const wxString &label = "C3D Importer");
-	~lhpOpImporterC3D(); 
-	
+  static bool Config(LibHandle handle);
+
+  lhpOpImporterC3D(const wxString &label = "C3D Importer");
+  ~lhpOpImporterC3D(); 
+  
   mafTypeMacro(lhpOpImporterC3D, mafOp);
 
   virtual void OnEvent(mafEventBase *maf_event);
 
   mafOp* Copy();
 
-	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode *node);
+  /** Return true for the acceptable vme type. */
+  bool Accept(mafNode *node);
 
   /** Builds operation's interface. */
-	void OpRun();
+  void OpRun();
 
   /** Execute the operation. */
   void OpDo();
@@ -116,35 +119,35 @@ protected:
   /** Create the dialog interface for the importer. */
   virtual void CreateGui();
 
-	/** Initialize all structures needed for import data*/
+  /** Initialize all structures needed for import data*/
   void Initialize(const mafString &fullFileName, _InternalC3DData &intData);
 
-	/** Open C3D File*/
-	int OpenC3D(const mafString &fullFileName);
+  /** Open C3D File*/
+  int OpenC3D(const mafString &fullFileName);
 
-	/** Read C3D File Header*/
-	int ReadHeaderC3D(_InternalC3DData &intData);
+  /** Read C3D File Header*/
+  int ReadHeaderC3D(const mafString &fullFileName, _InternalC3DData &intData);
 
-	/** Read C3D Data*/
-	int ReadDataC3D();
+  /** Read C3D Data*/
+  int ReadDataC3D();
 
-	/** Close C3D File, it should destroy objects*/
-	int CloseC3D();
+  /** Close C3D File, it should destroy objects*/
+  int CloseC3D();
 
-	/** Import the c3d Landmark coordinates*/
-	void ImportTrajectories(_InternalC3DData &intData);
-	
-	/** Import the c3d analog data like EMG*/
-	void ImportAnalog(_InternalC3DData &intData);
+  /** Import the c3d Landmark coordinates*/
+  void ImportTrajectories(_InternalC3DData &intData);
+  
+  /** Import the c3d analog data like EMG*/
+  void ImportAnalog(_InternalC3DData &intData);
 
   /** Import the c3d platform data*/
   void ImportPlatform(_InternalC3DData &intData);
 
-	/** Import the c3d events*/
-	void ImportEvent(_InternalC3DData &intData);
+  /** Import the c3d events*/
+  void ImportEvent(_InternalC3DData &intData);
 
-	/** Cleans allocated memory*/
-	void Clear();
+  /** Cleans allocated memory*/
+  void Clear();
 
   /** Import the c3d events*/
   mafVMEGroup* ImportSingleFile(const mafString &fullFileName, _InternalC3DData &intData);
@@ -162,7 +165,7 @@ protected:
   mafString                      m_FileDir;
   mafString                      m_DictionaryFileName;
   std::map<mafString, mafString> m_dictionaryStruct;
-	int m_ImportTrajectoriesFlag;
+  int m_ImportTrajectoriesFlag;
   int m_ImportAnalogFlag;
   int m_ImportPlatformFlag;
   int m_ImportEventFlag;
@@ -184,63 +187,99 @@ protected:
     std::vector<mafVMEVector *> m_ForceList;
     std::vector<mafVMEVector *> m_MomentList;
 
-	  //data filled by Aurion importer
-	  //int m_Errcode;
-	  float m_AnalogRate, m_VideoRate;
-	  long m_LengthMs;
+    //data filled by Aurion importer
+    //int m_Errcode;
+    float m_AnalogRate, m_VideoRate;
+    long m_LengthMs;
 
     //derived member
     double m_TrajectorySamplePeriod;
     double m_AnalogSamplePeriod;
     double m_VectogramSamplePeriod;
 
-	  int m_NumTotTrajectories; 
-	  int m_NumTrajectories; 
-	  int m_NumAngles; 
-	  int m_NumMoments; 
-	  int m_NumPowers; 
-	  int m_NumFrames; 
-	  int m_NumChannels;
-	  int m_NumSamples;
-	  int m_NumEvents;
-	  int m_NumPlatforms;
+    int m_NumTotTrajectories; 
+    int m_NumTrajectories; 
+    int m_NumAngles; 
+    int m_NumMoments; 
+    int m_NumPowers; 
+    int m_NumFrames; 
+    int m_StartFrame;
+    int m_EndFrame;
+    int m_NumChannels;
+    int m_NumSamples;
+    int m_NumEvents;
+    int m_NumPlatforms;
 
-	  char *m_TrajectoryName;
-	  char *m_ChannelName;
-	  char *m_AngleName; 
-	  char *m_MomentName;
-	  char *m_PowerName;
-	  char *m_EventContext;
+    char *m_TrajectoryName;
+    char *m_ChannelName;
+    char *m_AngleName; 
+    char *m_MomentName;
+    char *m_PowerName;
+    char *m_EventContext;
 
-	  char *m_TrajectoryUnit;
-	  char *m_ChannelUnit;
-	  char *m_AngleUnit;
-	  char *m_MomentUnit;
-	  char *m_PowerUnit;
-  	
-	  double m_X;
-	  double m_Y;
-	  double m_Z;
+    char *m_TrajectoryUnit;
+    char *m_ChannelUnit;
+    char *m_AngleUnit;
+    char *m_MomentUnit;
+    char *m_PowerUnit;
+    
+    double m_X;
+    double m_Y;
+    double m_Z;
 
-	  double m_AnalogValue;
+    double m_AnalogValue;
     double m_EventValue;
-  	
-	  double m_CopX;
-	  double m_CopY;
-  	
-	  double m_ForceX;
-	  double m_ForceY; 
-	  double m_ForceZ;
-  	
-	  double m_MomentX;
-	  double m_MomentY;
-	  double m_MomentZ;
-  	
-	  double m_CenterX;
-	  double m_CenterY;
+    
+    double m_CopX;
+    double m_CopY;
+    
+    double m_ForceX;
+    double m_ForceY; 
+    double m_ForceZ;
+    
+    double m_MomentX;
+    double m_MomentY;
+    double m_MomentZ;
+    
+    double m_CenterX;
+    double m_CenterY;
   };
 
   std::vector<_InternalC3DData> m_intData;
-	
+  
+
+  static int (*getNumTraj)(void);
+  static int (*getTotalFrameTraj)(void);
+  static char* (*getNameTraj)(int indexTraj);
+  static char* (*getUnitTraj)(int indexTraj);
+  static int (*getTypeTraj)(int indexTraj);
+  static double (*getXTraj)(int indexTraj, int indexFrame);
+  static double (*getYTraj)(int indexTraj, int indexFrame);
+  static double (*getZTraj)(int indexTraj, int indexFrame);
+  static bool (*isDefinedTraj)(int indexTraj, int indexFrame);
+  static int (*getChannelsAnalog)(void);
+  static int (*getTotalSamplesAnalog)(void);
+  static char* (*getNameAnalog)(int indexChan);
+  static char* (*getUnitAnalog)(int indexChan);
+  static double (*getValueAnalog)(int indexChan, int indexSample);
+  static int (*getPlatforms)(void);
+  static void (*getCornerPlatform)(int indexPlatform, int indexCorner, double *coordX, double *coordY);
+  static void (*getCenterPlatform)(int indexPlatform, double *centerX, double *centerY);
+  static double (*getCOPX)(int indexPlatform, int indexSample);
+  static double (*getCOPY)(int indexPlatform, int indexSample);
+  static double (*getFx)(int indexPlatform, int indexSample);
+  static double (*getFy)(int indexPlatform, int indexSample);
+  static double (*getFz)(int indexPlatform, int indexSample);
+  static double (*getMx)(int indexPlatform, int indexSample);
+  static double (*getMy)(int indexPlatform, int indexSample);
+  static double (*getMz)(int indexPlatform, int indexSample);
+  static int (*getEvents)(void);
+  static char* (*getContextEvent)(int indexEvent);
+  static double (*getValueEvent)(int indexEvent);
+  static int (*C3D_Open)(char* fileName);
+  static int (*C3D_Read_Header)(long *lengthMs, float *videoRate, float *analogRate);
+  static int (*C3D_Read_Data)(void);
+  static int (*C3D_Calculate_Data)(void);
+  static int (*C3D_Close)(void);
 };
 #endif

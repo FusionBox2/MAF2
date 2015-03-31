@@ -136,7 +136,7 @@ void lhpBuilderLogic::GetCredentials()
 //----------------------------------------------------------------------------
 {
   bool retry = false;
-  retry = m_User->CheckUserCredentials();
+  //retry = m_User->CheckUserCredentials();
 
   while (retry)
   {

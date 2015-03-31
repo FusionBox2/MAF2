@@ -13,15 +13,12 @@
 #ifndef __mafPlotMath_H__
 #define __mafPlotMath_H__
 
-#ifdef __GNUG__
-    #pragma interface "mafIntGraphHyer.cpp"
-#endif
-
 #ifndef WX_PRECOMP
   #include "wx/wx.h"
 #endif
 
 #include "vtkMatrix4x4.h"
+#include "vectors.h"
 
 #define FLT_EPSILON     1.192092896e-07F        /* smallest such that 1.0+FLT_EPSILON != 1.0 */
 
@@ -29,7 +26,7 @@
 #define _Y_IDX                       1
 #define _Z_IDX                       2
 #define _W_IDX                       3
-#define _MATR_EL(xyzw,rua)           (*((&mpMat->vRight.x) + (sizeof(mpMat->vRight)/sizeof(DiFloat)) * (rua) + (xyzw)))
+#define _MATR_EL(xyzw,rua)           (*((&mpMat->vRight.x) + (sizeof(mpMat->vRight)/sizeof(double)) * (rua) + (xyzw)))
 
 #define EulFrmS      0
 #define EulFrmR      1
@@ -39,19 +36,19 @@
 #define EulNext      "\001\002\000\001"
 #define EulRepNo     0
 #define EulRepYes    1
-#define EulGetOrd(ord,i,j,k,h,n,s,f) {DiUInt32 o=DiF2L(ord);f=o&1;o>>=1;s=o&1;o>>=1;\
+#define EulGetOrd(ord,i,j,k,h,n,s,f) {unsigned int o=ord;f=o&1;o>>=1;s=o&1;o>>=1;\
     n=o&1;o>>=1;i=EulSafe[o&3];j=EulNext[i+n];k=EulNext[i+1-n];h=s?k:i;}
 
 // EulOrd creates an order value between 0 and 23 from 4-tuple choices.
 #define EulOrd(i,p,r,f)    (((((((i)<<1)+(p))<<1)+(r))<<1)+(f))
-#define _QUAT_COMP_ASSIGN(idx,val)   *((DiFloat *)qpQuat+(idx)) = (val)
+#define _QUAT_COMP_ASSIGN(idx,val)   *((double *)qpQuat+(idx)) = (val)
 #define EPSILON                     0.0004f
 
 #define FPEqualTo(a,b)          (fabs((a)-(b)) < 1e-4)  
 #define FPNotEqualTo(a,b)       (fabs((a)-(b)) > 1e-4)  
 
 
-#define Sb(a)  (*((DiSplitBits *)(&(a))))
+//#define Sb(a)  (*((DiSplitBits *)(&(a))))
 
 // Static axes 
 #define EulOrdXYZs    EulOrd(_X_IDX,EulParEven,EulRepNo,EulFrmS)
@@ -84,17 +81,15 @@
 #define FLT_GARB         888.0f  
 #define DiMax(a, b)      (((a) > (b))?(a):(b))
 #define DiMin(a, b)      (((a) < (b))?(a):(b))
-#define DiFAbs(a)        fabs(a)
 #define DiSign(Value)    (((Value) < 0.f)? -1.0f:(((Value) > 0.f)?1.0f:0.0f))
 #define DiRound(val)     (((val) - floor(val) > ceil(val) - (val)) ? ceil(val) : floor(val))
-#define DiSqr(val)       ((val) * (val))
 #define diPI             3.14159265358979323846f
 
 #ifndef DIM
   #define DIM(a)  (sizeof((a)) / sizeof(*(a)))
 #endif
-#define DiF2L(val)       ((DiInt32)(val))
-#define DiL2F(val)       ((float)(val))
+#define DiD2L(val)       ((int)(val))
+#define DiL2D(val)       ((double)(val))
 
 #ifdef __cplusplus
 template <bool test> struct Compiled_Time_Assertion_Failed;
@@ -141,30 +136,10 @@ Fits variable into diapason type regardless
 // type definitions
 //----------------------------------------------------------------------------
 
-typedef void          DiVoid;
-typedef bool          DiBool;
-typedef unsigned int  DiUInt32;
-typedef float         DiFloat;
-typedef double        DiDouble;
-typedef int           DiInt32;
-typedef char          DiTChar;
-
 //----------------------------------------------------------------------------
 // types definitions
 //----------------------------------------------------------------------------
-struct DiV4d
-{
-  DiFloat x;
-  DiFloat y;
-  DiFloat z;
-  DiFloat w;
-};
-
-struct DiV2d
-{
-  DiFloat x;
-  DiFloat z;
-};
+typedef V4d<double> DiV4d;
 
 struct DiMatrix
 {
@@ -172,18 +147,11 @@ struct DiMatrix
   DiV4d     vUp;
   DiV4d     vAt;
   DiV4d     vPos;
+  //DiV4d& operator[](int i){assert(i >= 0 && i <4);if(i == 0) return vRight; else if(i == 1) return vUp; else if(i == 2) return vUp; else return vPos;}
+  //const DiV4d& operator[](int i)const{assert(i >= 0 && i <4);if(i == 0) return vRight; else if(i == 1) return vUp; else if(i == 2) return vUp; else return vPos;}
 } ;
 
 typedef DiV4d DiQuaternion;
-
-
-typedef union TagDiSplitBits
-{
-  DiFloat           rFloat;
-  volatile DiInt32  nInt;
-  volatile DiUInt32 nUInt;
-} DiSplitBits;
-
 
 
 /**
@@ -210,51 +178,48 @@ extern DiV4d const *vp4GZero;
 // Functions references
 //----------------------------------------------------------------------------
 
-DiBool     mafTransfMirrorMatrixYOX(DiMatrix *mpIn, DiMatrix *mpOut);
-DiBool     mafTransfMatrixToEuler(DiMatrix const *mpR, DiV4d *vpR);
-DiBool     mafTransfEulerToMatrix(DiV4d *vpRot, DiMatrix *mpMat);
-DiBool     mafTransfEulerToQuaternion(DiV4d *vpRot, DiQuaternion *qpQuat);
-DiVoid     mafTransfOrtoNormalizeMatrix(DiMatrix *mpMat, DiV4d const*vpRot, DiBool bLeftRight);
-DiVoid     mafTransfRightLeftConv(DiMatrix *mpSource, DiMatrix *mpDest);
-DiVoid     mafTransfMatrixToGES(DiMatrix *mpParent, DiMatrix *mpChild, DiMatrix *mpBasic, DiV4d *vpR);
-void       mafAttVecToVTKMat(double ThetaIn[3], vtkMatrix4x4 *pMat);
-DiBool     mafTransfTransformUpright(DiV4d const*vpPos, DiV4d const*vpRot, DiMatrix *mpOut);
-DiBool     mafTransfInverseTransformUpright(DiMatrix const *mpIn, DiV4d *vpPos, DiV4d *vpRot);
-DiBool     mafTransfAFCoords(DiV4d const *vpP1, DiV4d const *vpP2, DiV4d const *vpP3, DiV4d const *vpP4, DiV4d const *vpP5, DiV4d *vpX,  DiV4d *vpY,  DiV4d *vpZ);
-DiVoid     mflMatrixToDi(vtkMatrix4x4 const *pMatrix, DiMatrix *mp);
-DiVoid     DiMatrixToVTK(DiMatrix const *mp, vtkMatrix4x4 *pMatrix);
-DiVoid     DiMatrixTransposeRotationalSubmatrix(const DiMatrix *mpMatSrc, DiMatrix *mpMatDst);
-DiVoid     DiMatrixOrtoNormalizeVectSys(DiV4d  *vpMain, DiV4d  *vpSub1, DiV4d  *vpSub2, DiBool bLeftRight);
-DiVoid     DiV4dTransformVectorTo(DiV4d const *vpIn, DiMatrix const *mpMat, DiV4d *vpOut);
-DiVoid     DiV4dInverseTransformVectorTo(DiV4d const *vpIn, DiMatrix const *mpMat, DiV4d *vpOut);
-DiVoid     DiV4dTransformPointTo(DiV4d const *vpIn, DiMatrix const *mpMat, DiV4d *vpOut);
-DiVoid     DiV4dInverseTransformPointTo(DiV4d const *vpIn, DiMatrix const *mpMat, DiV4d *vpOut);
-DiBool     DiMatrixInvert(const DiMatrix *mpIn, DiMatrix *mpOut);
-DiBool     DiMatrixTransform(DiMatrix *mpDst, DiMatrix *mpSrc, DiInt32 op);
-DiVoid     DiV4dCrossProduct(const DiV4d *vpVect1, const DiV4d *vpVect2, DiV4d *vpOut);
-DiVoid     DiMatrixMultiply(const DiMatrix *mpA, const DiMatrix *mpB, DiMatrix *mpOut);
-DiVoid     DiMatrixTestIntegrity(const DiMatrix *mpMatrix);
-bool       DiMatrixTestIdentity(const DiMatrix *mpMatrix);
-bool       DiMatrixTestRotIdentity(const DiMatrix *mpMatrix);
-DiVoid     DiMatrixIdentity(DiMatrix *mpM);
-DiVoid     DiQuatBuildFromMatrix(DiMatrix const *mpMatIn, DiQuaternion *qpQuat);
-DiVoid     DiQuatBuildMatrix(DiQuaternion *qpQuat, DiMatrix *mpMatrix);
-DiBool     mafTransfDecomposeMatrix(DiMatrix *mpIn, DiV4d *vpRot, DiV4d *vpPos);
-DiBool     mafTransfDecomposeMatrixStright(DiMatrix *mpIn, DiV4d *vpRot, DiV4d *vpPos);
-DiBool     mafTransfComposeMatrix(DiMatrix *mpIn, DiV4d *vpRot, DiV4d *vpPos);
-DiBool     mafTransfComposeMatrixStright(DiMatrix *mpIn, DiV4d const *vpRot, DiV4d const *vpPos);
-DiBool     mafTransfIsMatrixOrtoNormalized(DiMatrix *mpMat);
-DiVoid     DiMatrixScale(DiMatrix *mpMat, DiV4d *vpScale, DiOpCombainType nOperation);
-DiVoid     DiMatrixTranslate(DiMatrix *mpMat, DiV4d *vpTran, DiOpCombainType nOperation);
-DiVoid     DiMatrixRotateAtSinCosLeft(DiMatrix *mpMat, DiFloat rSin, DiFloat rCos, DiOpCombainType nOperation);
-DiVoid     DiMatrixRotateAt(DiMatrix *mpMat, DiFloat rAngle, DiOpCombainType nOperation);
-DiVoid     DiMatrixRotateRightSinCos(DiMatrix *mpMat, DiFloat rSin, DiFloat  rCos, DiOpCombainType nOperation);
-DiVoid     DiMatrixRotateRight(DiMatrix *mpMat, DiFloat rAngle, DiOpCombainType nOperation);
-DiVoid     DiMatrixRotateUpSinCosLeft(DiMatrix *mpMat, DiFloat rSin, DiFloat  rCos, DiOpCombainType nOperation);
-DiVoid     DiMatrixRotateUp(DiMatrix *mpMat, DiFloat rAngle, DiOpCombainType nOperation);
-DiVoid     BuildConfluencePoint(DiV4d const *axes, DiV4d const *points, DiInt32 numAxes, DiV4d &vConf);
-DiBool     mafOptimFindBestRotPoint(DiMatrix const *mpMatrs, DiInt32 nMatrNum, DiMatrix const *mpReference, DiV4d const *vpStartPoint, DiFloat rEpsilon, DiV4d *vpPos);
-DiVoid     BuildInstantaneousRotationCenter(DiMatrix const *mpFirst, DiMatrix const *mpSecond, DiV4d &vConf, DiV4d const &vPrev);
+void     mflMatrixToDi(vtkMatrix4x4 const *pMatrix, DiMatrix *mp);
+void     DiMatrixToVTK(DiMatrix const *mp, vtkMatrix4x4 *pMatrix);
+
+bool     mafTransfMirrorMatrixYOX(DiMatrix *mpIn, DiMatrix *mpOut);
+bool     mafTransfMatrixToEuler(DiMatrix const *mpR, DiV4d *vpR, int conv);
+bool     mafTransfEulerToMatrix(DiV4d *vpRot, DiMatrix *mpMat, int conv);
+bool     mafTransfEulerToQuaternion(DiV4d *vpRot, DiQuaternion *qpQuat, int conv);
+void     mafTransfOrtoNormalizeMatrix(DiMatrix *mpMat, DiV4d const*vpRot, bool bLeftRight);
+void     mafTransfRightLeftConv(DiMatrix *mpSource, DiMatrix *mpDest);
+void     mafTransfMatrixToGES(DiMatrix *mpParent, DiMatrix *mpChild, DiMatrix *mpBasic, DiV4d *vpR);
+void     mafAttVecToVTKMat(double ThetaIn[3], vtkMatrix4x4 *pMat);
+bool     mafTransfTransformUpright(DiV4d const*vpPos, DiV4d const*vpRot, DiMatrix *mpOut);
+bool     mafTransfInverseTransformUpright(DiMatrix const *mpIn, DiV4d *vpPos, DiV4d *vpRot);
+void     DiMatrixTransposeRotationalSubmatrix(const DiMatrix *mpMatSrc, DiMatrix *mpMatDst);
+void     DiMatrixOrtoNormalizeVectSys(DiV4d  *vpMain, DiV4d  *vpSub1, DiV4d  *vpSub2, bool bLeftRight);
+void     DiV4dTransformVectorTo(DiV4d const *vpIn, DiMatrix const *mpMat, DiV4d *vpOut);
+void     DiV4dInverseTransformVectorTo(DiV4d const *vpIn, DiMatrix const *mpMat, DiV4d *vpOut);
+void     DiV4dTransformPointTo(DiV4d const *vpIn, DiMatrix const *mpMat, DiV4d *vpOut);
+void     DiV4dInverseTransformPointTo(DiV4d const *vpIn, DiMatrix const *mpMat, DiV4d *vpOut);
+bool     DiMatrixInvert(const DiMatrix *mpIn, DiMatrix *mpOut);
+bool     DiMatrixTransform(DiMatrix *mpDst, DiMatrix *mpSrc, int op);
+void     DiV4dCrossProduct(const DiV4d *vpVect1, const DiV4d *vpVect2, DiV4d *vpOut);
+void     DiMatrixMultiply(const DiMatrix *mpA, const DiMatrix *mpB, DiMatrix *mpOut);
+void     DiMatrixTestIntegrity(const DiMatrix *mpMatrix);
+bool     DiMatrixTestIdentity(const DiMatrix *mpMatrix);
+bool     DiMatrixTestRotIdentity(const DiMatrix *mpMatrix);
+void     DiMatrixIdentity(DiMatrix *mpM);
+void     DiQuatBuildFromMatrix(DiMatrix const *mpMatIn, DiQuaternion *qpQuat);
+void     DiQuatBuildMatrix(DiQuaternion *qpQuat, DiMatrix *mpMatrix);
+bool     mafTransfDecomposeMatrix(DiMatrix *mpIn, DiV4d *vpRot, DiV4d *vpPos);
+bool     mafTransfDecomposeMatrixStright(DiMatrix *mpIn, DiV4d *vpRot, DiV4d *vpPos);
+bool     mafTransfComposeMatrix(DiMatrix *mpIn, DiV4d *vpRot, DiV4d *vpPos);
+bool     mafTransfComposeMatrixStright(DiMatrix *mpIn, DiV4d const *vpRot, DiV4d const *vpPos);
+bool     mafTransfIsMatrixOrtoNormalized(DiMatrix *mpMat);
+void     DiMatrixScale(DiMatrix *mpMat, DiV4d *vpScale, DiOpCombainType nOperation);
+void     DiMatrixTranslate(DiMatrix *mpMat, DiV4d *vpTran, DiOpCombainType nOperation);
+void     DiMatrixRotateAtSinCosLeft(DiMatrix *mpMat, double rSin, double rCos, DiOpCombainType nOperation);
+void     DiMatrixRotateAt(DiMatrix *mpMat, double rAngle, DiOpCombainType nOperation);
+void     DiMatrixRotateRightSinCos(DiMatrix *mpMat, double rSin, double  rCos, DiOpCombainType nOperation);
+void     DiMatrixRotateRight(DiMatrix *mpMat, double rAngle, DiOpCombainType nOperation);
+void     DiMatrixRotateUpSinCosLeft(DiMatrix *mpMat, double rSin, double  rCos, DiOpCombainType nOperation);
+void     DiMatrixRotateUp(DiMatrix *mpMat, double rAngle, DiOpCombainType nOperation);
 
 struct  DiMatrixInterpolationData
 {
@@ -265,45 +230,43 @@ struct  DiMatrixInterpolationData
   DiV4d         vPosDelta;
   DiV4d         vPrevPos;
 };
-DiVoid DiMatrixBuildInterpolated(DiMatrixInterpolationData *midpData, DiFloat rT, DiMatrix *mpNewMatrix);
-DiVoid DiMatrixBuildInterpolationData(DiMatrix const *mpCurMatrix, DiMatrix const *mpPrevMatrix, DiMatrixInterpolationData *midpData);
+void DiMatrixBuildInterpolated(DiMatrixInterpolationData *midpData, double rT, DiMatrix *mpNewMatrix);
+void DiMatrixBuildInterpolationData(DiMatrix const *mpCurMatrix, DiMatrix const *mpPrevMatrix, DiMatrixInterpolationData *midpData);
 
 #define            DiMatrixRotateUpSinCosRight(a, b, c, d)  DiMatrixRotateUpSinCosLeft((a), -(b), (c), (d))
 #define            DiMatrixRotateUpSinCos(a, b, c, d)  DiMatrixRotateUpSinCosLeft((a), (b), (c), (d))
 #define            DiMatrixRotateAtSinCosRight(a, b, c, d)  DiMatrixRotateAtSinCosLeft((a), -(b), (c), (d))
 #define            DiMatrixRotateAtSinCos(a, b, c, d)  DiMatrixRotateAtSinCosLeft((a), (b), (c), (d))
 
-DiFloat Determinant(DiMatrix const * inmat, DiInt32 n);
-DiFloat BuildFourPointSphere(DiV4d &c, DiV4d *p);
-DiFloat BuildFourPointSphere(DiV4d *c, DiV4d const *p1, DiV4d const *p2, DiV4d const *p3, DiV4d const *p4);
+double Determinant(DiMatrix const * inmat, int n);
 
 
-inline     DiVoid DiMatrixCopy(const DiMatrix *mpSrc, DiMatrix *mpDst)
+inline     void DiMatrixCopy(const DiMatrix *mpSrc, DiMatrix *mpDst)
 {
   wxASSERT(mpSrc); wxASSERT(mpDst);  *mpDst = *mpSrc;
 }
-inline     DiVoid DiV4dNegate(const DiV4d *vpIn, DiV4d *vpOut)
+inline     void DiV4dNegate(const DiV4d *vpIn, DiV4d *vpOut)
 {
   vpOut->x = -vpIn->x;  vpOut->y = -vpIn->y;  vpOut->z = -vpIn->z;  vpOut->w = 1.0f;
 }
-inline     DiVoid DiV4dCopy(const DiV4d *vpIn, DiV4d *vpOut)
+inline     void DiV4dCopy(const DiV4d *vpIn, DiV4d *vpOut)
 {
   vpOut->x = vpIn->x;  vpOut->y = vpIn->y;  vpOut->z = vpIn->z;  vpOut->w = vpIn->w;
 }
-inline     DiFloat DiV4dPointDistance2(const DiV4d *vpP0, const DiV4d *vpP1)
+inline     double DiV4dPointDistance2(const DiV4d *vpP0, const DiV4d *vpP1)
 {
-  DiV4d vV; DiFloat rDist;
+  DiV4d vV; double rDist;
   vV.x = vpP0->x - vpP1->x;  vV.y = vpP0->y - vpP1->y;  vV.z = vpP0->z - vpP1->z;
   rDist = vV.x * vV.x + vV.y * vV.y + vV.z * vV.z;
   return (rDist);
 } 
-inline     DiFloat DiV4dDotProduct(const DiV4d *vpVect1, const DiV4d *vpVect2)
+inline     double DiV4dDotProduct(const DiV4d *vpVect1, const DiV4d *vpVect2)
 {
   return(vpVect1->x * vpVect2->x + vpVect1->y * vpVect2->y + vpVect1->z * vpVect2->z);
 } 
-inline     DiVoid DiV4dMakeUnit(DiV4d *vpVect)
+inline     void DiV4dMakeUnit(DiV4d *vpVect)
 {
-  DiFloat   rLen, rRecLen;
+  double   rLen, rRecLen;
   rLen = DiV4dDotProduct(vpVect, vpVect);
   wxASSERT(rLen > 0.f);
 
@@ -313,9 +276,9 @@ inline     DiVoid DiV4dMakeUnit(DiV4d *vpVect)
   vpVect->z = vpVect->z * rRecLen;
   vpVect->w = 0.0f;
 }
-inline     DiFloat DiV4dNormalize(const DiV4d *vpIn, DiV4d *vpOut)
+inline     double DiV4dNormalize(const DiV4d *vpIn, DiV4d *vpOut)
 {
-  DiFloat   rLen, rRecLen;
+  double   rLen, rRecLen;
   rLen = DiV4dDotProduct(vpIn, vpIn);
   rLen = sqrt(rLen);
   wxASSERT(rLen > 0.f);
@@ -326,44 +289,32 @@ inline     DiFloat DiV4dNormalize(const DiV4d *vpIn, DiV4d *vpOut)
   vpOut->w = 0.0f;
   return rLen;
 } 
+
+
 #define diSHIFT_COMB(rA, rB, rC)      ((rA)*(rB)+(rC))
-inline     DiVoid DiV4dShiftComb(const DiV4d *vpVect1, const DiV4d *vpVect2, DiFloat rCoef, DiV4d *vpOut)
+inline     void DiV4dShiftComb(const DiV4d *vpVect1, const DiV4d *vpVect2, double rCoef, DiV4d *vpOut)
 {
   vpOut->x = diSHIFT_COMB(vpVect2->x, rCoef, vpVect1->x);
   vpOut->y = diSHIFT_COMB(vpVect2->y, rCoef, vpVect1->y);
   vpOut->z = diSHIFT_COMB(vpVect2->z, rCoef, vpVect1->z);
   vpOut->w = 1.0f;
-} 
-inline     DiVoid DiV4dScale(const DiV4d *vpIn, DiFloat rScale, DiV4d *vpOut)
+}
+inline     void DiV4dScale(const DiV4d *vpIn, double rScale, DiV4d *vpOut)
 {
   vpOut->x = vpIn->x * rScale;  vpOut->y = vpIn->y * rScale;  vpOut->z = vpIn->z * rScale;  vpOut->w = 1.0f;
 }
 
-inline     DiVoid DiV2dSub(const DiV2d *vpA, const DiV2d *vpB, DiV2d *vpC)
-{
-  vpC->x = vpA->x - vpB->x;  vpC->z = vpA->z - vpB->z;  
-} 
-
-inline     DiFloat DiV2dCrossProductY(const DiV2d *vpVect1, const DiV2d *vpVect2)
-{
-  DiFloat rCross;
-
-  rCross = -vpVect1->z * vpVect2->x + vpVect1->x * vpVect2->z;
-
-  return rCross;
-} // end of DiV2dCrossProductY
-
-inline     DiVoid DiV4dSub(const DiV4d *vpA, const DiV4d *vpB, DiV4d *vpC)
+inline     void DiV4dSub(const DiV4d *vpA, const DiV4d *vpB, DiV4d *vpC)
 {
   vpC->x = vpA->x - vpB->x;  vpC->y = vpA->y - vpB->y;  vpC->z = vpA->z - vpB->z;  vpC->w = 1.0f;
 } 
 
-inline     DiVoid DiV4dAdd(const DiV4d *vpA, const DiV4d *vpB, DiV4d *vpC)
+inline     void DiV4dAdd(const DiV4d *vpA, const DiV4d *vpB, DiV4d *vpC)
 {
   vpC->x = vpA->x + vpB->x;  vpC->y = vpA->y + vpB->y;  vpC->z = vpA->z + vpB->z;  vpC->w = 1.0f;
 } 
 
-inline     DiVoid DiV4dLineComb(const DiV4d *vpVect1, DiFloat rCoef1, const DiV4d *vpVect2, DiFloat rCoef2, DiV4d *vpOut)
+inline     void DiV4dLineComb(const DiV4d *vpVect1, double rCoef1, const DiV4d *vpVect2, double rCoef2, DiV4d *vpOut)
 {
   vpOut->x = diSHIFT_COMB(vpVect1->x, rCoef1, vpVect2->x * rCoef2);
   vpOut->y = diSHIFT_COMB(vpVect1->y, rCoef1, vpVect2->y * rCoef2);
@@ -371,7 +322,7 @@ inline     DiVoid DiV4dLineComb(const DiV4d *vpVect1, DiFloat rCoef1, const DiV4
   vpOut->w = 1.0f;
 } // end of DiV4dLineComb
 
-inline     DiVoid DiQuatLineComb(const DiQuaternion *vpVect1, DiFloat rCoef1, const DiQuaternion *vpVect2, DiFloat rCoef2, DiQuaternion *vpOut)
+inline     void DiQuatLineComb(const DiQuaternion *vpVect1, double rCoef1, const DiQuaternion *vpVect2, double rCoef2, DiQuaternion *vpOut)
 {
   vpOut->x = diSHIFT_COMB(vpVect1->x, rCoef1, vpVect2->x * rCoef2);
   vpOut->y = diSHIFT_COMB(vpVect1->y, rCoef1, vpVect2->y * rCoef2);
