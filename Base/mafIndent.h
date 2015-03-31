@@ -21,8 +21,6 @@
 #include "mafBase.h" 
 #include <ostream>
 
-class mafIndent;
-MAF_EXPORT std::ostream& operator<<(std::ostream& os, const mafIndent& o);
 
 /** mafIndent - a simple class to control print indentation.
   mafIndent is used to control indentation during the chaining print 
@@ -31,22 +29,17 @@ class MAF_EXPORT mafIndent : public mafBase
 {
 public:
   mafIndent(int ind=0);
-
-  /** return next level of indentetion */
-  virtual const char *GetTypeName() {return "mafIndent";};
-
   /**
     Determine the next indentation level. Keep indenting by two until the 
     max of forty. */
   mafIndent GetNextIndent();
-
-  operator const int() const {return m_Indent;}
-  /** Print out the indentation. Basically output a bunch of spaces. */
-  friend MAF_EXPORT std::ostream& operator<<(std::ostream& os, const mafIndent& o);
-
+  int       GetIndent() const {return m_Indent;}
+  operator int() const {return m_Indent;}
 protected:
   int m_Indent;  
 };
+
+MAF_EXPORT std::ostream& operator<<(std::ostream& os, const mafIndent& o);
 
 #endif
 

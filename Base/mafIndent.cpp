@@ -47,7 +47,7 @@ mafIndent mafIndent::GetNextIndent()
 std::ostream& operator<<(std::ostream& os, const mafIndent& ind)
 //------------------------------------------------------------------------------
 {
-  os << blanks + (MAF_NUMBER_OF_TABS-ind.m_Indent)*MAF_STD_INDENT ;
+  os << blanks + (MAF_NUMBER_OF_TABS-ind.GetIndent())*MAF_STD_INDENT ;
   return os;
 }
 
