@@ -22,6 +22,7 @@
 #include "mafSmartPointer.h"
 #include "mafString.h"
 #include "mafOBB.h"
+#include "mafObjectWithGUI.h"
 #include "mafDecl.h" // for MINID
 //----------------------------------------------------------------------------
 // forward declarations :
@@ -40,10 +41,6 @@ class mafGUI;
 class vtkDataSet;
 #endif //MAF_USE_VTK
 
-#ifdef MAF_EXPORTS
-template class MAF_EXPORT mafAutoPointer<mafTransformBase>;
-#endif
-
 /** mafVMEOutput - the output data structure of a VME node.
   mafVMEOutput is the output produced by a VME node.
 
@@ -52,7 +49,7 @@ template class MAF_EXPORT mafAutoPointer<mafTransformBase>;
   - add a GetITKImage
   - try to remove the restore of old data_pipe timestamp inside GetDataBounds()
   */
-class MAF_EXPORT mafVMEOutput : public mafObject
+class MAF_EXPORT mafVMEOutput : public mafObject, public mafObjectWithGUI
 {
 public:
   mafVMEOutput();
@@ -175,12 +172,6 @@ public:
     ID_LAST
   };
 
-  /** create and return the GUI for changing the node parameters */
-  mafGUI *GetGui();
-
-  /** destroy the Gui */
-  void DeleteGui();
-
 protected:
   /**
   Internally used to create a new instance of the GUI. This function should be
@@ -197,7 +188,6 @@ protected:
   mafVME *                  m_VME;      ///< pointer to source VME
   mafString                 m_DataType; ///< the type of data stored in object expressed as a string
   mafOBB                    m_Bounds;   ///< bounds of the output data (i.e. for current time)
-  mafGUI                   *m_Gui;      ///< user interface
 
   mafAutoPointer<mafTransformBase> m_Transform; ///< the transform generating the output pose matrix
 

@@ -57,7 +57,7 @@ public:
   /**
     Return true if the VME is visible. This function can be overridden to implement
     different visibility rules.*/
-  virtual bool IsVisible(mafNode *node) { return node->IsVisible();}
+  //virtual bool IsVisible(mafNode *node) { return node->IsVisible();}
 
   /** Allow to ignore m_VisibleToTraverse flag for the iterator. */
   virtual void IgnoreVisibleToTraverse(bool ignore) {m_IgnoreVisibleToTraverse = ignore;};

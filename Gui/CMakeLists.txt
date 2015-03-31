@@ -130,6 +130,8 @@ SET(PROJECT_SRCS
   mafGUIComboBox.h
   mafGUISettingsHelp.h
   mafGUISettingsHelp.cpp
+  mafObjectWithGUI.cpp
+  mafObjectWithGUI.h
 )
 
 IF (MAF_USE_CURL)

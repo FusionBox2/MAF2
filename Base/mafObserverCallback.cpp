@@ -38,7 +38,6 @@ mafObserverCallback::mafObserverCallback()
 //------------------------------------------------------------------------------
 {
   m_Callback    = NULL;
-  m_ClientData  = NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -52,28 +51,12 @@ void mafObserverCallback::OnEvent(mafEventBase *e)
 //------------------------------------------------------------------------------
 {
   if (m_Callback)
-  {
-    m_Callback(e->GetSender(), e->GetId(), this->GetClientData(), e->GetSource()->GetData());
-  }
+    m_Callback(e->GetSender(), e->GetId(), e->GetData());
 }
 
 //------------------------------------------------------------------------------
-void mafObserverCallback::SetCallback(void (*f)(void *sender, mafID eid, void *clientdata, void *calldata))
+void mafObserverCallback::SetCallback(void (*f)(void *sender, mafID eid, void *calldata))
 //------------------------------------------------------------------------------
 {
   m_Callback = f;
-}
-
-//------------------------------------------------------------------------------
-void mafObserverCallback::SetClientData(void *cd)
-//------------------------------------------------------------------------------
-{
-  this->m_ClientData = cd;
-}
-
-//------------------------------------------------------------------------------
-void* mafObserverCallback::GetClientData()
-//------------------------------------------------------------------------------
-{
-  return this->m_ClientData;
 }

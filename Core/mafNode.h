@@ -27,9 +27,18 @@
 #include "mafTimeStamped.h"
 #include "mafAttribute.h"
 #include "mafDecl.h"
+#include "mafTagArray.h"
+#include "mafObjectWithGUI.h"
+#include "mafEventSource.h"
 #include <vector>
 #include <map>
 #include <string>
+
+//----------------------------------------------------------------------------
+// forward declarations
+//----------------------------------------------------------------------------
+class mafNodeIterator;
+class mafNode;
 
 #ifdef MAF_EXPORTS
 #include "mafDllMacros.h"
@@ -37,22 +46,17 @@ EXPORT_STL_VECTOR(MAF_EXPORT,mafAutoPointer<mafNode>);
 EXPORT_STL_MAP(MAF_EXPORT,mafString,mafAutoPointer<mafAttribute>);
 #endif
 
-//----------------------------------------------------------------------------
-// forward declarations
-//----------------------------------------------------------------------------
-class mafEventSource;
-class mafNodeIterator;
-class mafTagArray;
-class mafGUI;
-
 /** data structure used to store a link VME and its Id */
 class MAF_EXPORT mmuNodeLink :public mafUtility
 {
 public:
-  mmuNodeLink(mafID id=-1,mafNode *node=NULL, mafID sub_id=-1):m_NodeId(id),m_Node(node),m_NodeSubId(sub_id) {}
+  mmuNodeLink(/*mafID id=-1,*/mafNode *node=NULL, mafID sub_id=-1):m_NodeId(-1),m_Node(node),m_NodeSubId(sub_id) {}
+  mafID GetId(){return m_NodeId;}
+  mmuNodeLink &SetId(mafID id){m_NodeId = id;return (*this);}
   mafNode *m_Node;
-  mafID   m_NodeId;
   mafID   m_NodeSubId;
+  private:
+    mafID   m_NodeId;
 };
 #ifdef MAF_EXPORTS
 EXPORT_STL_MAP(MAF_EXPORT,mafString,mmuNodeLink);
@@ -95,17 +99,10 @@ EXPORT_STL_MAP(MAF_EXPORT,mafString,mmuNodeLink);
 
   @sa mafNodeRoot
 */
-class MAF_EXPORT mafNode : public mafReferenceCounted, public mafStorable, public mafObserver, public mafTimeStamped
+class MAF_EXPORT mafNode : public mafReferenceCounted, public mafStorable, public mafObserver, public mafTimeStamped, public mafObjectWithGUI
 {
 public:
-  mafAbstractTypeMacro(mafNode,mafReferenceCounted);
-
-  /** defined to allow MakeCopy implementation. For the base class return a NULL pointer. */
-  virtual mafObject *NewObjectInstance() const {return NULL;}
-
-  /** Interface to allow creation of a copy of the node (works only for concrete subclasses) */
-  mafNode *NewInstance() {return SafeDownCast(NewObjectInstance());}
-  
+  mafTypeMacro(mafNode, mafReferenceCounted);
   /** print a dump of this object */
   virtual void Print(std::ostream& os, const int tabs=0);// const;
 
@@ -122,14 +119,9 @@ public:
   void Shutdown();
   
   /** Return true if this agent has been initialized */
-  int IsInitialized() {return m_Initialized;}
+  bool IsInitialized() {return m_Initialized;}
 
-  /** serialize the object on a store. @todo syntax to be changed */
-  int Store();
 
-  /** unserialized the object from a storage. @todo syntax to be changed */
-  int Restore();
-  
   /** return the name of this node*/
   const char *GetName() {return m_Name;}
 
@@ -163,7 +155,7 @@ public:
   static mafNode *CopyTree(mafNode *vme, mafNode *parent=NULL);
   
   /** Make a copy of the whole subtree and return its pointer */
-  mafNode *CopyTree() {return CopyTree(this);}
+  mafNode *CopyTree();
   
   /** Return a the pointer to a child given its index. 
       If only visible is true return the idx-th visible to traverse node */
@@ -238,6 +230,18 @@ public:
 
   /** Return true if the given one is a child of this node.*/
   bool IsAChild(mafNode *a);
+
+  /** Moves child with given index up.*/
+  void MoveChildUp(int idx);
+
+  /** Moves child with given index down.*/
+  void MoveChildDown(mafNode *child);
+
+  /** Moves child with given index up.*/
+  void MoveChildUp(mafNode *child);
+
+  /** Moves child with given index down.*/
+  void MoveChildDown(int idx);
 
   /**
     Find a node in all the subtrees, searching recursively into sub nodes.
@@ -325,11 +329,19 @@ public:
     directly by means of the map container APIs. */
   mafAttributesMap *GetAttributes() {return &m_Attributes;}
 
+  /** 
+  return the list of attributes. Attributes vector can be manipulated
+  directly by means of the map container APIs. */
+  const mafAttributesMap *GetAttributes() const {return &m_Attributes;}
+
   /** Set a new attribute. The given attribute is */
   void SetAttribute(const char *name,mafAttribute *a);
 
   /** return an attribute given the name */
   mafAttribute *GetAttribute(const char *name);
+
+  /** return an attribute given the name */
+  const mafAttribute *GetAttribute(const char *name) const;
 
   /** remove an attibute */
   void RemoveAttribute(const char *name);
@@ -364,13 +376,17 @@ public:
   void RemoveLink(const char *name);
 
   /** return the number of links stored in this Node */
-  mafID GetNumberOfLinks() {return m_Links.size();}
+  unsigned GetNumberOfLinks() {return m_Links.size();}
 
   /** remove all links */
   void RemoveAllLinks();
   
   /** return links array: links from this node to other arrays */
   mafLinksMap *GetLinks() {return &m_Links;}
+
+  /** used to send an event up in the tree */
+  void ForwardEvent(mafEventBase *maf_event);
+  void ForwardEvent(mafEventBase &maf_event);
 
   /** used to send an event up in the tree */
   void ForwardUpEvent(mafEventBase *maf_event);
@@ -381,19 +397,15 @@ public:
   void ForwardDownEvent(mafEventBase &maf_event);
 
   /** IDs for the GUI */
-  enum NODE_WIDGET_ID
+  enum BASENODE_WIDGET_ID
   {
     ID_NAME = MINID,
     ID_PRINT_INFO,
+    ID_MOVEUP,
+    ID_MOVEDN,
 	ID_HELP,
     ID_LAST
   };
-
-  /** create and return the GUI for changing the node parameters */
-  mafGUI *GetGui();
-
-  /** destroy the Gui */
-  void DeleteGui();
 
   /** return the Id of this node in the tree */
   mafID GetId() const;
@@ -407,6 +419,12 @@ public:
   /**
   Return the modification time.*/
   virtual unsigned long GetMTime();
+
+  /** Find new unique id */
+  virtual mafID GetNewNodeId();
+
+  /** Find new unique id */
+  virtual void ReleaseNodeId(mafID id);
 
   /** 
   Turn on the flag to calculate the timestamp considering also the linked nodes*/
@@ -431,13 +449,16 @@ protected:
   virtual int InternalInitialize();
 
   /** to be redefined by subclasses to define the shutdown actions */
-  virtual void InternalShutdown() {};
+  virtual void InternalShutdown();
 
   /**
     This function set the parent for this Node. It returns a value
     to allow subclasses to implement selective reparenting.*/
   virtual int SetParent(mafNode *parent);
   
+  /** Swaps children in given positions.*/
+  void SwapChildren(int idx1, int idx2);
+
   /**
     Internally used to create a new instance of the GUI. This function should be
     overridden by subclasses to create specialized GUIs. Each subclass should append
@@ -447,11 +468,11 @@ protected:
     same pannel GUI, each CreateGUI() function should first call the superclass' one.*/
   virtual mafGUI  *CreateGui();
 
-  void OnNodeDetachedFromTree(mafEventBase *e);
-  void OnNodeAttachedToTree(mafEventBase *e);
-  void OnNodeDestroyed(mafEventBase *e);
+  void OnNodeDetachedFromTree(mafNode *node);
+  void OnNodeAttachedToTree(mafNode *node);
+  void OnNodeDestroyed(mafNode *node);
+  void OnPrint();
 
-  mafGUI            *m_Gui;         ///< pointer to the node GUI
 
   mafChildrenVector m_Children;     ///< list of children
   mafNode           *m_Parent;      ///< parent node

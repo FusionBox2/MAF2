@@ -44,9 +44,6 @@ public:
   /** Set the listener object, i.e. the object receiving events sent by this object */
   void SetListener(mafObserver *Listener) {m_Listener = Listener;};
   
-	/** Set the quitting flag. */
-	static void OnQuit () {m_Quitting=true;}; 
-
   /** 
   Allow to set the flag to avoid closing the view. 
   For instance when an operation is running or something else the vertical application don't want that the view must stay open. */
@@ -74,7 +71,6 @@ protected:
   wxWindow		*m_Win;
   mafView     *m_View;
   mafObserver *m_Listener;
-  static bool  m_Quitting;
   bool         m_AllowCloseFlag;
   bool         m_EnableResize;
 

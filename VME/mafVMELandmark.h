@@ -133,6 +133,7 @@ protected:
 
   vtkPolyData *m_Polydata; ///< Polydata storing the landmark point
   mafString m_Position[3];
+  mafString m_LocalPosition[3];
 
 private:
   mafVMELandmark(const mafVMELandmark&); // Not implemented

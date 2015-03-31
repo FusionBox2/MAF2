@@ -63,7 +63,8 @@ mafOp(label)
 	m_CloudCreatedFlag    = false;
 	m_PickingActiveFlag   = false;
 	m_LandmarkPosition[0] = m_LandmarkPosition[1] = m_LandmarkPosition[2] = 0;
-	m_AddToCurrentTime    = 1;
+	m_AddToCurrentTime    = 0;
+  m_LocalCoords         = 0;
 }
 //----------------------------------------------------------------------------
 mafOpAddLandmark::~mafOpAddLandmark()
@@ -131,7 +132,18 @@ enum ADD_LANDMARK_ID
   ID_LOAD,
 	ID_CHANGE_POSITION,
 	ID_ADD_LANDMARK,
+  ID_LOCAL,
 };
+
+void mafOpAddLandmark::SetLandmarkPos(mafVMELandmark* lm, double x, double y, double z, double xo, double yo, double zo, mafTimeStamp t)
+{
+  if(m_LocalCoords)
+    lm->SetPose(x, y, z, xo, yo, zo, t);
+  else
+    lm->SetAbsPose(x, y, z, xo, yo, zo, t);
+}
+
+
 //----------------------------------------------------------------------------
 void mafOpAddLandmark::OpRun()
 //----------------------------------------------------------------------------
@@ -204,6 +216,7 @@ void mafOpAddLandmark::OpRun()
   if (!GetTestMode())
   {
 	  mafString tooltip(_("If checked, add the landmark to the current time. \nOtherwise add the landmark at time = 0"));
+    mafString tooltip1(_("If checked, add the landmark in local coordinates. \nOtherwise add the landmark in global coordinates"));
 	
 	  // setup gui_panel
 	  m_GuiPanel = new mafGUINamedPanel(mafGetFrame(),-1);
@@ -234,6 +247,7 @@ void mafOpAddLandmark::OpRun()
 	  m_Gui->Button(ID_ADD_LANDMARK,_("add landmark"));
 	  m_Gui->Divider();
 	  m_Gui->Bool(ID_ADD_TO_CURRENT_TIME, _("current time"),&m_AddToCurrentTime,1,tooltip);
+    m_Gui->Bool(ID_LOCAL, _("local coordinates"),&m_LocalCoords,1,tooltip1);
 	  m_Gui->Divider();
 	  m_Gui->Label(_("choose a name from the dictionary"));
 	  m_Gui->Label(_("and place landmark by"));
@@ -310,7 +324,7 @@ void mafOpAddLandmark::OnEvent(mafEventBase *maf_event)
         mafVMELandmark *landmark = mafVMELandmark::SafeDownCast(this->m_Cloud->FindInTreeByName(m_LandmarkName.GetCStr()));
 		    if(this->m_Cloud && landmark)
 		    {
-			    landmark->SetAbsPose(m_LandmarkPosition[0],m_LandmarkPosition[1],m_LandmarkPosition[2],0,0,0);
+			    SetLandmarkPos(landmark, m_LandmarkPosition[0], m_LandmarkPosition[1], m_LandmarkPosition[2], 0, 0, 0);
 			    m_Gui->Update();
 			    mafEventMacro(mafEvent(this,CAMERA_UPDATE));
 		    }
@@ -404,9 +418,9 @@ void mafOpAddLandmark::AddLandmark(double pos[3])
      landmark->SetTimeStamp(m_PickedVme->GetTimeStamp());
   landmark->Update();
   if(m_AddToCurrentTime)
-    landmark->SetAbsPose(m_LandmarkPosition[0],m_LandmarkPosition[1],m_LandmarkPosition[2],0,0,0);
+    SetLandmarkPos(landmark, m_LandmarkPosition[0], m_LandmarkPosition[1], m_LandmarkPosition[2], 0, 0, 0);
   else
-    landmark->SetAbsPose(m_LandmarkPosition[0],m_LandmarkPosition[1],m_LandmarkPosition[2],0,0,0,0);
+    SetLandmarkPos(landmark, m_LandmarkPosition[0], m_LandmarkPosition[1], m_LandmarkPosition[2], 0, 0, 0, 0);
 
   mafEventMacro(mafEvent(this,VME_SHOW,landmark.GetPointer(),true));
   mafEventMacro(mafEvent(this,CAMERA_UPDATE));

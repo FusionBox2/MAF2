@@ -242,6 +242,7 @@ void mafGUICheckTree::VmeModified(mafNode *vme)
 {
   this->SetNodeLabel((long)vme, vme->GetName());
 	VmeUpdateIcon(vme);
+  SortChildren((long)vme);
 }
 //----------------------------------------------------------------------------
 void mafGUICheckTree::VmeShow(mafNode *vme, bool show)   

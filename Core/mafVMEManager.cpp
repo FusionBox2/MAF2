@@ -412,7 +412,7 @@ int mafVMEManager::MSFOpen(mafString filename)
       stamp_open_all_found = true;
     }
   }
-	if(app_stamp.Equals("INVALID") || ((!stamp_found) && (!stamp_data_manager_found) && (!stamp_open_all_found))) 
+	/*if(app_stamp.Equals("INVALID") || ((!stamp_found) && (!stamp_data_manager_found) && (!stamp_open_all_found))) 
 	{
 		//Application stamp not valid
 		mafMessage(_("File not valid for this application!"), _("Warning"));
@@ -427,7 +427,7 @@ int mafVMEManager::MSFOpen(mafString filename)
       cppDEL(wait_cursor);
     }
 		return MAF_ERROR;
-	}
+	}*/
 	///////////////////////////////////////////////////////////////////////////////// 
   NotifyAdd(root_node); // add the storage root (the tree) with events notification
 

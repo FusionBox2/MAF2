@@ -44,9 +44,6 @@ class mafGUIViewFrame: public wxFrame , public mafObserver
 	
 	void SetListener(mafObserver *Listener) {m_Listener = Listener;};
 	
-  /** Set the quitting flag. */
-  static void OnQuit () {m_Quitting=true;}; 
-
 	/** Set which is the external view. */
 	void SetView(mafView *view);
 
@@ -69,7 +66,6 @@ protected:
 	mafObserver *m_Listener;
 	wxWindow    *m_ClientWin;
 	mafView     *m_View;
-  static bool  m_Quitting;
 
 	DECLARE_EVENT_TABLE()
 };

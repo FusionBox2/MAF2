@@ -153,8 +153,10 @@ void mafOpTransformInterface::OpDo()
       !m_Input->IsA("mafVMELandmark") && 
       //  parametric surfaces do not scale
       !m_Input->IsA("mafVMESurfaceParametric") &&
+      //  parametric surfaces do not scale
+      !m_Input->IsA("mafVMESurfaceRegParam") &&
       //  refSys do not scale
-      !m_Input->IsA("mafVMERefSys") &&
+      !m_Input->IsA("mafVMERefSysAbstract") &&
       //  slicer  do not scale
       !m_Input->IsA("mafVMESlicer") &&
       //  slicer  do not scale

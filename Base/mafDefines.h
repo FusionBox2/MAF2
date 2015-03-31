@@ -105,27 +105,22 @@ MAF_EXPORT void mafSleep(int msec);
 //------------------------------------------------------------------------------
 
 /** Delete a VTK object */
-#define vtkDEL(a) do{if (a) { a->Delete(); a = NULL; }}while(0)
+#define vtkDEL(a) do{if (a) { (a)->Delete(); a = NULL; }}while(0)
 
 /** Allocate a new VTK object: don't worry, New is a static member function! */
-#define vtkNEW(a) a=a->New()
+#define vtkNEW(a) a=(a)->New()
 
 /** Allocate a new MAF object: don't worry, New is a static member function! */
-#define mafNEW(a) do{a=a->New();a->Register(this);}while(0)
+#define mafNEW(a) do{a=(a)->New();(a)->Register(this);}while(0)
 
 /** Delete a MAF object */
-#define mafDEL(a) do{if (a) { a->Delete(); a = NULL;}}while(0)
+#define mafDEL(a) do{if (a) { (a)->Delete(); a = NULL;}}while(0)
 
 /** delete a new() allocated object */
 #define cppDEL(a) do{if (a) { delete a; a = NULL;}}while(0)
 
-/**
-  Macro used by mafObjects for RTTI information. This macro must be placed
-  in the class definition public section. */
-#define mafAbstractTypeMacro(thisClass,superclass) \
-  public: \
-  /** commodity type representing the parent class type */ \
-  typedef superclass Superclass; \
+
+#define mafAbstractBaseTypeMacro(thisClass) \
   /** return the class type id for this class type (static function) */ \
   static const mafTypeID &GetStaticTypeId(); \
   /** return the class type id for this mafObject instance */ \
@@ -146,55 +141,161 @@ MAF_EXPORT void mafSleep(int msec);
   static thisClass* SafeDownCast(mafObject *o);
 
 /**
-  Macro used by mafObjects for RTTI information. This macro must be placed
-  in the class definition public section. */
-#define mafTypeMacro(thisClass,superclass) \
-  mafAbstractTypeMacro(thisClass,superclass); \
+Macro used by mafObjects for RTTI information. This macro must be placed
+in the class definition public section. */
+#define mafConcreteBaseTypeMacro(thisClass) \
   /** return a new instance of the given type (static function) */  \
   static mafObject *NewObject(); \
   /** return a new instance of the mafObject instance */ \
-  virtual mafObject *NewObjectInstance() const; \
+  mafObject *NewObjectInstance() const; \
   /** return a typed new instance of a given object (this calls NewObject and casts) */ \
-  thisClass *NewInstance() const; \
+  virtual thisClass *NewInstance() const; \
   /** return a new instance of the this class type (static function). It can be called with "object_type::New()"  \
-      Also this function must be used for creating objects to be used with reference counting in place of the new() \
-      operator. */ \
+  Also this function must be used for creating objects to be used with reference counting in place of the new() \
+  operator. */ \
   static thisClass *New();
-  
+
+
+
+  /**
+  Macro used by mafObjects for RTTI information. This macro must be placed
+  in the class definition public section. */
+#define mafAbstractTypeMacro(thisClass,superclass) \
+  public: \
+  /** commodity type representing the parent class type */ \
+  typedef superclass Superclass; \
+  mafAbstractBaseTypeMacro(thisClass)
+
 /**
-  Macro used by mafObjects for RTTI information. This macor must be placed
-  in the .cpp file. */
-#define mafCxxAbstractTypeMacro(thisClass) \
+  Macro used by mafObjects for RTTI information. This macro must be placed
+  in the class definition public section. */
+#define mafTypeMacro(thisClass,superclass) \
+  mafAbstractTypeMacro(thisClass,superclass) \
+  mafConcreteBaseTypeMacro(thisClass)
+  
+
+
+/**
+Macro used by mafObjects for RTTI information. This macro must be placed
+in the class definition public section. */
+#define mafAbstractTypeI2Macro(thisClass,superclass1,superclass2) \
+  public: \
+  /** commodity type representing the parent class type */ \
+  typedef superclass1 Superclass1; \
+  typedef superclass2 Superclass2; \
+  mafAbstractBaseTypeMacro(thisClass)
+
+/**
+Macro used by mafObjects for RTTI information. This macro must be placed
+in the class definition public section. */
+#define mafTypeI2Macro(thisClass,superclass1,superclass2) \
+  mafAbstractTypeI2Macro(thisClass,superclass1,superclass2) \
+  mafConcreteBaseTypeMacro(thisClass)
+
+
+
+/**
+Macro used by mafObjects for RTTI information. This macro must be placed
+in the class definition public section. */
+#define mafAbstractTypeI3Macro(thisClass,superclass1,superclass2,superclass3) \
+  public: \
+  /** commodity type representing the parent class type */ \
+  typedef superclass1 Superclass1; \
+  typedef superclass2 Superclass2; \
+  typedef superclass3 Superclass3; \
+  mafAbstractBaseTypeMacro(thisClass)
+
+/**
+Macro used by mafObjects for RTTI information. This macro must be placed
+in the class definition public section. */
+#define mafTypeI3Macro(thisClass,superclass1,superclass2,superclass3) \
+  mafAbstractTypeI3Macro(thisClass,superclass1,superclass2,superclass3) \
+  mafConcreteBaseTypeMacro(thisClass)
+
+
+
+/**
+Macro used by mafObjects for RTTI information. This macor must be placed
+in the .cpp file. */
+#define mafCxxAbstractBaseTypeMacro(thisClass) \
   const mafTypeID &thisClass::GetStaticTypeId() {return typeid(thisClass);} \
   const mafTypeID &thisClass::GetTypeId() const {return typeid(thisClass);} \
   const char *thisClass::GetStaticTypeName() {return #thisClass;} \
   const char *thisClass::GetTypeName() const {return #thisClass;} \
-  bool thisClass::IsStaticType(const char *type) \
-  { return ( strcmp(#thisClass,type)==0 ) ? true : Superclass::IsStaticType(type); } \
-  bool thisClass::IsStaticType(const mafTypeID &type) \
-  { return ( type==typeid(thisClass) ? true : Superclass::IsStaticType(type) ); } \
   bool thisClass::IsA(const char *type) const {return IsStaticType(type);} \
   bool thisClass::IsA(const mafTypeID &type) const {return IsStaticType(type);} \
   thisClass* thisClass::SafeDownCast(mafObject *o) \
   { try { return dynamic_cast<thisClass *>(o); } catch (std::bad_cast) { return NULL;} }
 
+
+/**
+Macro used by mafObjects for RTTI information. This macro must be placed
+in the .cpp file. */
+#define mafCxxConcreteBaseTypeMacro(thisClass) \
+  mafObject *thisClass::NewObject() \
+  { return New(); } \
+  mafObject *thisClass::NewObjectInstance() const \
+  { return NewObject(); } \
+  thisClass *thisClass::New() \
+  { \
+  thisClass *obj = new thisClass; \
+  if (obj) obj->m_HeapFlag=true; \
+  return obj; \
+  } \
+  thisClass *thisClass::NewInstance() const \
+  { return New(); }
+
+
+/**
+  Macro used by mafObjects for RTTI information. This macor must be placed
+  in the .cpp file. */
+#define mafCxxAbstractTypeMacro(thisClass) \
+  mafCxxAbstractBaseTypeMacro(thisClass) \
+  bool thisClass::IsStaticType(const char *type) \
+  { return ( strcmp(#thisClass,type)==0 ) ? true : Superclass::IsStaticType(type); } \
+  bool thisClass::IsStaticType(const mafTypeID &type) \
+  { return ( type==typeid(thisClass) ? true : Superclass::IsStaticType(type) ); } \
+
 /**
   Macro used by mafObjects for RTTI information. This macro must be placed
   in the .cpp file. */
 #define mafCxxTypeMacro(thisClass) \
-  mafCxxAbstractTypeMacro(thisClass); \
-  mafObject *thisClass::NewObject() \
-  { \
-    thisClass *obj = new thisClass; \
-    if (obj) obj->m_HeapFlag=true; \
-    return obj; \
-  } \
-  mafObject *thisClass::NewObjectInstance() const \
-  { return NewObject(); } \
-  thisClass *thisClass::New() \
-  { return (thisClass *)NewObject(); } \
-  thisClass *thisClass::NewInstance() const \
-  { return (thisClass *)NewObjectInstance(); }
+  mafCxxAbstractTypeMacro(thisClass) \
+  mafCxxConcreteBaseTypeMacro(thisClass)
+
+/**
+Macro used by mafObjects for RTTI information. This macor must be placed
+in the .cpp file. */
+#define mafCxxAbstractTypeI2Macro(thisClass) \
+  mafCxxAbstractBaseTypeMacro(thisClass) \
+  bool thisClass::IsStaticType(const char *type) \
+  { return ( strcmp(#thisClass,type)==0 ) ? true : (Superclass1::IsStaticType(type) || Superclass2::IsStaticType(type)); } \
+  bool thisClass::IsStaticType(const mafTypeID &type) \
+  { return ( type==typeid(thisClass) ? true : (Superclass1::IsStaticType(type) || Superclass2::IsStaticType(type)) ); } \
+
+/**
+Macro used by mafObjects for RTTI information. This macro must be placed
+in the .cpp file. */
+#define mafCxxTypeI2Macro(thisClass) \
+  mafCxxAbstractTypeI2Macro(thisClass) \
+  mafCxxConcreteBaseTypeMacro(thisClass)
+
+/**
+Macro used by mafObjects for RTTI information. This macor must be placed
+in the .cpp file. */
+#define mafCxxAbstractTypeI3Macro(thisClass) \
+  mafCxxAbstractBaseTypeMacro(thisClass) \
+  bool thisClass::IsStaticType(const char *type) \
+  { return ( strcmp(#thisClass,type)==0 ) ? true : (Superclass1::IsStaticType(type) || Superclass2::IsStaticType(type) || Superclass3::IsStaticType(type)); } \
+  bool thisClass::IsStaticType(const mafTypeID &type) \
+  { return ( type==typeid(thisClass) ? true : (Superclass1::IsStaticType(type) || Superclass2::IsStaticType(type) || Superclass3::IsStaticType(type)) ); } \
+
+/**
+Macro used by mafObjects for RTTI information. This macro must be placed
+in the .cpp file. */
+#define mafCxxTypeI3Macro(thisClass) \
+  mafCxxAbstractTypeI3Macro(thisClass) \
+  mafCxxConcreteBaseTypeMacro(thisClass)
 
 /** Shortcut for type checking */
 #define IsMAFType(type_name) IsA(type_name::GetStaticTypeId())

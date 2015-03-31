@@ -1291,15 +1291,14 @@ void mafVMELandmarkCloud::OnEvent(mafEventBase *maf_event)
         else
         {
           bool existLandmarkChild = false;
-          mafNodeIterator *iter = this->NewIterator();
-          for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+          for(int i = 0; i < GetNumberOfChildren(); i++)
           {
-            if(node->GetParent() != this && node != this)
+            mafVMELandmark *lm = mafVMELandmark::SafeDownCast(GetChild(i));
+            if(lm != NULL && lm->GetNumberOfChildren() > 0)
             {
-              existLandmarkChild= true;
+              existLandmarkChild = true;
             }
           }
-          iter->Delete();
 
           if(existLandmarkChild)
           {

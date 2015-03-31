@@ -165,7 +165,7 @@ void mafPipeSurface::Create(mafSceneNode *n)
   // TODO: REFACTOR THIS 
   // workaround code to show RefSys colors by default... RefSys could have a different pipe
   // inheriting from this one...
-  if (m_Vme->IsA("mafVMERefSys"))
+  if (m_Vme->IsA("mafVMERefSysAbstract"))
   {
     m_ScalarVisibility = 1;
   }
@@ -223,7 +223,7 @@ void mafPipeSurface::Create(mafSceneNode *n)
   if(m_RenFront)
 	  m_Axes = new mafAxes(m_RenFront, m_Vme);
 
-	if(m_Vme->IsA("mafVMERefSys"))
+	if(m_Vme->IsA("mafVMERefSysAbstract"))
 		m_Axes->SetVisibility(false);
   	
 /*	
@@ -354,7 +354,7 @@ void mafPipeSurface::Select(bool sel)
 	if(m_Actor->GetVisibility()) 
 	{
 		m_OutlineActor->SetVisibility(sel);
-		if(!m_Vme->IsA("mafVMERefSys"))
+		if(!m_Vme->IsA("mafVMERefSysAbstract"))
 			m_Axes->SetVisibility(sel);
 	}
 }
@@ -476,7 +476,7 @@ void mafPipeSurface::OnEvent(mafEventBase *maf_event)
         {
           m_MaterialButton->Enable(m_UseVTKProperty != 0);
         }
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE))
+        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
       };
       break;
       case ID_RENDERING_DISPLAY_LIST:

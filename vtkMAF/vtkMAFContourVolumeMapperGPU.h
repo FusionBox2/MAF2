@@ -48,8 +48,8 @@ First call EstimateRelevantVolume()
 Then Render()
 */
 
-#ifndef __vtkMAFContourVolumeMapper_h
-#define __vtkMAFContourVolumeMapper_h
+#ifndef __vtkMAFContourVolumeMapperGPU_h
+#define __vtkMAFContourVolumeMapperGPU_h
 
 #include <vector>
 

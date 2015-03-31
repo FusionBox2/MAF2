@@ -478,9 +478,19 @@ void mafOpDecomposeTimeVarVME::CreateStaticVME(mafTimeStamp timeSt)
   typeVme = m_Input->GetTypeName();
 
   mafSmartPointer<mafVMEFactory> factory;
-  mafVME *newVme = factory->CreateVMEInstance(typeVme);
+  mafObject *objVme = factory->CreateInstance(typeVme);
+  mafVME *newVme = mafVME::SafeDownCast(objVme);
   if (!newVme)
+  {
+    if(objVme)
+    {
+      mafReferenceCounted *refCntObj = mafReferenceCounted::SafeDownCast(objVme);
+      if(refCntObj)
+        refCntObj->Register(this);
+      mafDEL(objVme);
+    }
     return;
+  }
 
   //If VME is a landmark, a landmark cloud must be created
   if (typeVme.Equals("mafVMELandmark"))
@@ -522,7 +532,19 @@ void mafOpDecomposeTimeVarVME::CreateStaticVME(mafTimeStamp timeSt)
     vmeItem = dv->GetNearestItem(timeSt);
     if (vmeItem)
     {
-      vmeItemCopy = (mafVMEItem*)factory->CreateInstance(vmeItem->GetTypeName());
+      mafObject *objVmeItem = factory->CreateInstance(vmeItem->GetTypeName());
+      vmeItemCopy = mafVMEItem::SafeDownCast(objVmeItem);
+      if (!vmeItemCopy)
+      {
+        if(objVmeItem)
+        {
+          mafReferenceCounted *refCntObj = mafReferenceCounted::SafeDownCast(objVmeItem);
+          if(refCntObj)
+            refCntObj->Register(this);
+          mafDEL(objVmeItem);
+        }
+        return;
+      }
       vmeItemCopy->DeepCopy(vmeItem);
       vmeGeneric->GetDataVector()->AppendItem(vmeItemCopy);
       oldTime = vmeItem->GetTimeStamp();

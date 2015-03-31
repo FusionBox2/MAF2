@@ -72,7 +72,8 @@ m_Timer(NULL, ID_TIMER)
   m_Sizer->SetSizeHints(this);
   
   m_Time     = 0;
-  m_TimeMin  = 0; 
+  m_TimeStep = 0;
+  m_TimeMin  = 0;
   m_TimeMax  = 1;
 
   m_TimeMinString = "";
@@ -263,7 +264,7 @@ void mafGUITimeBar::OnTimer(wxTimerEvent &event)
     m_Time = m_TimeStart + delta.ToDouble() / m_TimeBarSettings->GetTimeScale();
   }
   
-  if (m_Time >= time_max)
+  if (m_Time > time_max)
   {
     if (m_TimeBarSettings->GetLoop() == 1)
     {

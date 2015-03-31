@@ -27,7 +27,6 @@
 class mafObserver;
 class mafObserversList;
 class mafEventBase;
-class mafObserverCallback;
 
 //------------------------------------------------------------------------------
 // mafEventSource
@@ -55,12 +54,6 @@ public:
   /** Register an observer of this subject */
   void AddObserver(mafObserver &obj, int priority=0);
 
-  /** 
-    Add as observer a callback function. This function returns  
-    pointer to an observer object that must be deleted by 
-    consumer after having detached it from the event source */
-  mafObserverCallback *AddObserverCallback(void (*f)(void *sender,
-    mafID eid, void *clientdata, void *calldata));
 
   /** Unregister an observer. Return false if object is not an observer */
   bool RemoveObserver(mafObserver *obj);
@@ -86,21 +79,6 @@ public:
   /** invoke an event of this subject */
   void InvokeEvent(void *sender,mafID id=ID_NO_EVENT, void *data=NULL);
 
-  /** return pointer to client data stored in this object */
-  void *GetData();
-
-  /** set pointer to client data to be stored in this object */
-  void SetData(void *data);
-
-  /** 
-    set the owner of this object, used to create
-    a delegation pattern between the event source 
-    and the class who created it */
-  void SetOwner(void *owner);
-
-  /** return the owner class of this event source */
-  void *GetOwner();
-
   /** 
     set the channel Id assigned to this event source. If set to <0 
     no channel is assigned */
@@ -112,9 +90,7 @@ public:
   mafID GetChannel();
 
 protected:
-  void              *m_Data;       ///< void pointer to be used to store client data 
   mafObserversList  *m_Observers;  ///< list of observers
-  void              *m_Owner;      ///< pointer to class owning this event source
   mafID             m_Channel;     ///< a channel assigned to this event source, if <0 no channel is assigned
 private:
   

@@ -48,6 +48,8 @@
 #include "vtkDataSetReader.h"
 #include "vtkDataSetWriter.h"
 #include "vtkCharArray.h"
+#include "vtkCallbackCommand.h"
+
 
 #include <assert.h>
 
@@ -65,14 +67,22 @@ mafVMEItemVTK::mafVMEItemVTK()
   m_Data        = NULL;
   m_DataReader  = NULL;
   m_DataWriter  = NULL;
+  m_UpdateEventRouter = NULL;
+  vtkNEW(m_UpdateEventRouter);
+  m_UpdateEventRouter->SetCallback(InternalProcessUpdateEvents);
+  m_UpdateEventRouter->SetClientData(this);
+
 }
 
 //-------------------------------------------------------------------------
 mafVMEItemVTK::~mafVMEItemVTK()
 //-------------------------------------------------------------------------
 {
+  if(m_Data.GetPointer() != NULL)
+    m_Data->RemoveObserver(m_UpdateEventRouter);
   vtkDEL(m_DataWriter);
   vtkDEL(m_DataReader);
+  vtkDEL(m_UpdateEventRouter);
 }
 
 //-------------------------------------------------------------------------
@@ -81,18 +91,20 @@ void mafVMEItemVTK::DeepCopy(mafVMEItem *a)
 {
   mafVMEItemVTK *vtk_item=mafVMEItemVTK::SafeDownCast(a);
   assert(vtk_item);
+  if(this == vtk_item)
+    return;
   Superclass::DeepCopy(vtk_item);
+  if(m_Data.GetPointer() != NULL)
+    m_Data->RemoveObserver(m_UpdateEventRouter);
+  m_Data = NULL;
   if (vtk_item->GetData())
   {
     m_Data = vtk_item->GetData()->NewInstance();
+    if(m_Data.GetPointer() != NULL)
+      m_Data->AddObserver(vtkCommand::ModifiedEvent,m_UpdateEventRouter);
     m_Data->Delete(); // decrease reference count since VTK set it to 1 by default
     m_Data->DeepCopy(vtk_item->GetData());
   }
-  else
-  {
-    m_Data = NULL;
-  }
-  
 }
 
 //-------------------------------------------------------------------------
@@ -137,10 +149,17 @@ void mafVMEItemVTK::DeepCopyVmeLarge(mafVMEItem *a)
 void mafVMEItemVTK::ShallowCopy(mafVMEItem *a)
 //-------------------------------------------------------------------------
 {
-  Superclass::ShallowCopy(a); // Added by Losi 09.24.09 ShallowCopy must copy timestamp too
   mafVMEItemVTK *vtk_item=mafVMEItemVTK::SafeDownCast(a);
   assert(vtk_item);
+  if(this == vtk_item)
+    return;
+  Superclass::ShallowCopy(a); // Added by Losi 09.24.09 ShallowCopy must copy timestamp too
+  if(m_Data.GetPointer() != NULL)
+    m_Data->RemoveObserver(m_UpdateEventRouter);
+  m_Data = NULL;
   m_Data=vtk_item->GetData();
+  if(m_Data.GetPointer() != NULL)
+    m_Data->AddObserver(vtkCommand::ModifiedEvent,m_UpdateEventRouter);
 }
 
 //-------------------------------------------------------------------------
@@ -237,6 +256,7 @@ void mafVMEItemVTK::SetData(vtkDataSet *data)
       data->ComputeBounds();
       data->GetBounds(bounds);
       m_Bounds.DeepCopy(bounds);
+      data->AddObserver(vtkCommand::ModifiedEvent,m_UpdateEventRouter);
     }
     else
     {
@@ -244,6 +264,8 @@ void mafVMEItemVTK::SetData(vtkDataSet *data)
       this->SetDataType("");
       m_Bounds.Reset();
     }
+    if(m_Data.GetPointer() != NULL)
+      m_Data->RemoveObserver(m_UpdateEventRouter);
 
     m_Data=data;
 
@@ -743,6 +765,8 @@ void mafVMEItemVTK::ReleaseData()
 //-------------------------------------------------------------------------
 {
   vtkDEL(m_DataReader); // destroy reader
+  if(m_Data.GetPointer() != NULL)
+    m_Data->RemoveObserver(m_UpdateEventRouter);
   m_Data = NULL;        // unregister dataset
 }
 
@@ -798,4 +822,16 @@ void mafVMEItemVTK::Print(std::ostream& os, const int tabs) const
 
   // to do: implement DUMP of internally stored data
   strstream ostr;
+}
+
+
+//------------------------------------------------------------------------------
+void mafVMEItemVTK::InternalProcessUpdateEvents(vtkObject* sender, unsigned long id, void* clientdata, void* calldata)
+//------------------------------------------------------------------------------
+{
+  mafVMEItemVTK* self = reinterpret_cast<mafVMEItemVTK *>( clientdata );
+  if (sender==self->m_Data && id == vtkCommand::ModifiedEvent)
+  {
+    self->SetDataModified(true);
+  }
 }

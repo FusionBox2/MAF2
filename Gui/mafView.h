@@ -19,6 +19,7 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafObserver.h"
+#include "mafObjectWithGUI.h"
 
 //----------------------------------------------------------------------------
 // forward references :
@@ -74,7 +75,7 @@ mafView doesn't have a Scenegraph, nor knowledge about VTK /sa mafViewVTK.
 mafView can be the base class for composed Views.
 
 */
-class MAF_EXPORT mafView: public mafObserver, public mafObject
+class MAF_EXPORT mafView: public mafObserver, public mafObject, public mafObjectWithGUI
 {
 public:
   mafView(const wxString &label = "View");
@@ -126,7 +127,6 @@ public:
 
   virtual wxWindow*	GetWindow(){return m_Win;};
   virtual wxFrame*	GetFrame() {return m_Frame;};
-  virtual mafGUI*		GetGui()   {if(m_Gui == NULL) CreateGui(); assert(m_Gui); return m_Gui;};
   virtual void		  SetFrame(wxFrame* f) {m_Frame = f;};
 
   virtual void			OnSize(wxSizeEvent &size_event)	{};
@@ -182,8 +182,6 @@ protected:
   wxString       m_Name;
   wxWindow			*m_Win;
   wxFrame				*m_Frame;
-  mafGUI      	*m_Gui;
-  mafGUIHolder	*m_Guih;
 
   vtkCellPicker *m_Picker2D;  ///< the picker used to pick the in the render window
   vtkMAFRayCast3DPicker* m_Picker3D; ///< Used to pick in a VTK Render window
@@ -204,9 +202,6 @@ public:
   int            m_Id;      ///< Used to store the view type created (e.g. view surface).
   bool           m_Plugged; // forget it - it is used from outside 
   mafView       *m_Next;    // forget it - it is used from outside 
-
-  /** destroy the Gui */
-  void DeleteGui();
 
   virtual double *GetSlice();
   virtual void    SetSlice(double slice[3]);

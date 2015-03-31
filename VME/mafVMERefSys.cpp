@@ -27,29 +27,13 @@
 #include "mafVMERefSys.h"
 #include "mafGUI.h"
 
-#include "mmaMaterial.h"
 #include "mafTagArray.h"
 #include "mafTransform.h"
-#include "mafVMEOutputSurface.h"
-#include "mafDataPipeCustom.h"
 #include "mafStorageElement.h"
 #include "mafIndent.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafMatrix.h"
 
-#include "vtkMAFSmartPointer.h"
-#include "vtkMAFDataPipe.h"
-#include "vtkPoints.h"
-#include "vtkGlyph3D.h"
-#include "vtkPolyData.h"
-#include "vtkArrowSource.h"
-#include "vtkTransformPolyDataFilter.h"
-#include "vtkTransform.h"
-#include "vtkAppendPolyData.h"
-#include "vtkPointData.h"
-#include "vtkLineSource.h"
-#include "vtkUnsignedCharArray.h"
-#include "vtkAxes.h"
 #include "vtkMath.h"
 #include "vtkMatrix4x4.h"
 
@@ -63,139 +47,14 @@ mafCxxTypeMacro(mafVMERefSys)
 mafVMERefSys::mafVMERefSys()
 //-------------------------------------------------------------------------
 {
-  mafNEW(m_Transform);
-  mafVMEOutputSurface *output=mafVMEOutputSurface::New(); // an output with no data
-  output->SetTransform(m_Transform); // force my transform in the output
-  SetOutput(output);
-
-  // attach a datapipe which creates a bridge between VTK and MAF
-  mafDataPipeCustom *dpipe = mafDataPipeCustom::New();
-  SetDataPipe(dpipe);
-
-	DependsOnLinkedNodeOn();
-
-	m_Radio = 0;
-  m_ScaleFactor = 1.0;
-
-  vtkUnsignedCharArray *data;
-  float scalar_red[3]   = {255,0,0};
-  float scalar_green[3] = {0,255,0};
-  float scalar_blu[3]   = {0,0,255};
-
-  m_XArrow = vtkArrowSource::New();
-  m_XArrow->SetShaftRadius(m_XArrow->GetTipRadius()/5);
-  m_XArrow->SetTipResolution(40);
-  m_XArrow->SetTipRadius(m_XArrow->GetTipRadius()/2);
-  m_XArrow->Update();
-
-  m_XAxisTransform = vtkTransform::New();
-  m_XAxisTransform->PostMultiply();
-  m_XAxisTransform->Update();
-
-  m_XAxis = vtkTransformPolyDataFilter::New();
-  m_XAxis->SetInput(m_XArrow->GetOutput());
-  m_XAxis->SetTransform(m_XAxisTransform);
-  m_XAxis->Update();	
-
-  int points = m_XArrow->GetOutput()->GetNumberOfPoints();  
-
-  m_YArrow = vtkArrowSource::New();
-  m_YArrow->SetShaftRadius(m_YArrow->GetTipRadius() / 5);
-  m_YArrow->SetTipResolution(40);
-  m_YArrow->SetTipRadius(m_YArrow->GetTipRadius() / 2);
-
-  m_YAxisTransform = vtkTransform::New();
-  m_YAxisTransform->PostMultiply();
-  m_YAxisTransform->RotateZ(90);
-  m_YAxisTransform->Update();
-
-  m_YAxis = vtkTransformPolyDataFilter::New();
-  m_YAxis->SetInput(m_YArrow->GetOutput());
-  m_YAxis->SetTransform(m_YAxisTransform);
-  m_YAxis->Update();
-
-  m_ZArrow = vtkArrowSource::New();
-  m_ZArrow->SetShaftRadius(m_ZArrow->GetTipRadius() / 5);
-  m_ZArrow->SetTipResolution(40);
-  m_ZArrow->SetTipRadius(m_ZArrow->GetTipRadius() / 2);
-  m_ZArrow->Update();
-
-  m_ZAxisTransform = vtkTransform::New();
-  m_ZAxisTransform->PostMultiply();
-  m_ZAxisTransform->RotateY(-90);
-  m_ZAxisTransform->Update();
-
-  m_ZAxis  = vtkTransformPolyDataFilter::New();
-  m_ZAxis->SetInput(m_ZArrow->GetOutput());
-  m_ZAxis->SetTransform(m_ZAxisTransform);
-  m_ZAxis->Update();
-
-  data = vtkUnsignedCharArray::New();
-  data->SetName("AXES");
-  data->SetNumberOfComponents(3);
-  data->SetNumberOfTuples(points * 3);
-  int i;
-  for (i = 0; i < points; i++)
-    data->SetTuple(i, scalar_red);
-  for (i = points; i < 2*points; i++)
-    data->SetTuple(i, scalar_green);
-  for (i = 2*points; i < 3*points; i++)
-    data->SetTuple(i, scalar_blu);
-
-  // this filter do not copy the scalars also if all input 
-  m_Axes = vtkAppendPolyData::New();    
-  m_Axes->AddInput(m_XAxis->GetOutput()); // data has the scalars.
-  m_Axes->AddInput(m_YAxis->GetOutput());
-  m_Axes->AddInput(m_ZAxis->GetOutput());
-
-  m_Axes->Update();
-
-  m_ScaleAxisTransform = vtkTransform::New();
-  m_ScaleAxisTransform->Scale(m_ScaleFactor,m_ScaleFactor,m_ScaleFactor);
-  m_ScaleAxisTransform->Update();
-
-  vtkMAFSmartPointer<vtkPolyData> axes_surface;
-  axes_surface = m_Axes->GetOutput();
-  axes_surface->SetSource(NULL);
-  axes_surface->GetPointData()->SetScalars(data);
-  vtkDEL(data);
-
-  m_ScaleAxis  = vtkTransformPolyDataFilter::New();
-  m_ScaleAxis->SetInput(axes_surface.GetPointer());
-  m_ScaleAxis->SetTransform(m_ScaleAxisTransform);
-  m_ScaleAxis->Update();
-
-  dpipe->SetInput(m_ScaleAxis->GetOutput());
-
-	//m_Fixed = 0;
+  m_Radio = 0;
+  //m_Fixed = 0;
 }
 
 //-------------------------------------------------------------------------
 mafVMERefSys::~mafVMERefSys()
 //-------------------------------------------------------------------------
 {
-  mafDEL(m_Transform);
-  SetOutput(NULL);
-
-  vtkDEL(m_XArrow);
-  vtkDEL(m_XAxisTransform);
-  m_XAxis->SetTransform(NULL);
-  vtkDEL(m_XAxis);
-
-  vtkDEL(m_YArrow);
-  vtkDEL(m_YAxisTransform);
-  m_YAxis->SetTransform(NULL);
-  vtkDEL(m_YAxis);
-
-  vtkDEL(m_ZArrow);
-  vtkDEL(m_ZAxisTransform);
-  m_ZAxis->SetTransform(NULL);
-  vtkDEL(m_ZAxis);
-
-  vtkDEL(m_Axes);	
-  vtkDEL(m_ScaleAxisTransform);	
-  m_ScaleAxis->SetTransform(NULL);
-  vtkDEL(m_ScaleAxis);
 }
 //-------------------------------------------------------------------------
 int mafVMERefSys::DeepCopy(mafNode *a)
@@ -203,14 +62,6 @@ int mafVMERefSys::DeepCopy(mafNode *a)
 { 
   if (Superclass::DeepCopy(a)==MAF_OK)
   {
-    mafVMERefSys *vme_ref_sys=mafVMERefSys::SafeDownCast(a);
-    m_Transform->SetMatrix(vme_ref_sys->m_Transform->GetMatrix());
-    SetScaleFactor(vme_ref_sys->GetScaleFactor());
-    mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
-    if (dpipe)
-    {
-      dpipe->SetInput(m_ScaleAxis->GetOutput());
-    }
     return MAF_OK;
   }  
   return MAF_ERROR;
@@ -221,86 +72,18 @@ bool mafVMERefSys::Equals(mafVME *vme)
 {
   if (Superclass::Equals(vme))
   {
-    return (m_Transform->GetMatrix() == ((mafVMERefSys *)vme)->m_Transform->GetMatrix() &&
-            m_ScaleFactor == ((mafVMERefSys *)vme)->GetScaleFactor());
+    return true;
   }
   return false;
 }
-//-------------------------------------------------------------------------
-int mafVMERefSys::InternalInitialize()
-//-------------------------------------------------------------------------
-{
-  if (Superclass::InternalInitialize()==MAF_OK)
-  {
-    // force material allocation
-    GetMaterial();
-    return MAF_OK;
-  }
-  return MAF_ERROR;
-}
 
-//-------------------------------------------------------------------------
-mafVMEOutputSurface *mafVMERefSys::GetSurfaceOutput()
-//-------------------------------------------------------------------------
-{
-  return (mafVMEOutputSurface *)GetOutput();
-}
-
-//-------------------------------------------------------------------------
-void mafVMERefSys::SetMatrix(const mafMatrix &mat)
-//-------------------------------------------------------------------------
-{
-  m_Transform->SetMatrix(mat);
-  Modified();
-}
-
-//-------------------------------------------------------------------------
-bool mafVMERefSys::IsAnimated()
-//-------------------------------------------------------------------------
-{
-  return false;
-}
-
-//-------------------------------------------------------------------------
-void mafVMERefSys::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
-//-------------------------------------------------------------------------
-{
-  kframes.clear();
-}
-
-//-------------------------------------------------------------------------
-void mafVMERefSys::SetScaleFactor(double scale)
-//-------------------------------------------------------------------------
-{
-  m_ScaleFactor = scale;
-  if (m_Gui)
-  {
-    m_Gui->Update();
-  }
-  m_ScaleAxisTransform->Identity();
-  m_ScaleAxisTransform->Scale(m_ScaleFactor,m_ScaleFactor,m_ScaleFactor);
-  m_ScaleAxisTransform->Update();
-  m_ScaleAxis->Update();
-  mafEvent cam_event(this,CAMERA_UPDATE);
-  this->ForwardUpEvent(cam_event);
-  Modified();
-}
-
-//-------------------------------------------------------------------------
-double mafVMERefSys::GetScaleFactor()
-//-------------------------------------------------------------------------
-{
-  return m_ScaleFactor;
-}
 //-----------------------------------------------------------------------
 int mafVMERefSys::InternalStore(mafStorageElement *parent)
 //-----------------------------------------------------------------------
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent->StoreMatrix("Transform",&m_Transform->GetMatrix());
-    parent->StoreDouble("m_ScaleFactor", m_ScaleFactor);
-//		parent->StoreInteger("Fixed", m_Fixed);
+//    parent->StoreInteger("Fixed", m_Fixed);
     return MAF_OK;
   }
   return MAF_ERROR;
@@ -312,60 +95,33 @@ int mafVMERefSys::InternalRestore(mafStorageElement *node)
 {
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
-    mafMatrix matrix;
-    if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
-    {
-      m_Transform->SetMatrix(matrix);
-      node->RestoreDouble("m_ScaleFactor", m_ScaleFactor);
-//			node->RestoreInteger("Fixed", m_Fixed);
+//      node->RestoreInteger("Fixed", m_Fixed);
       return MAF_OK;
-    }
   }
   return MAF_ERROR;
-}
-//-------------------------------------------------------------------------
-mmaMaterial *mafVMERefSys::GetMaterial()
-//-------------------------------------------------------------------------
-{
-  mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
-  if (material == NULL)
-  {
-    material = mmaMaterial::New();
-    SetAttribute("MaterialAttributes", material);
-    if (m_Output)
-    {
-      ((mafVMEOutputSurface *)m_Output)->SetMaterial(material);
-    }
-  }
-  return material;
 }
 //-------------------------------------------------------------------------
 mafGUI* mafVMERefSys::CreateGui()
 //-------------------------------------------------------------------------
 {
+  mafID sub_id = -1;
 
-	mafID sub_id = -1;
-
-  m_Gui = mafNode::CreateGui(); // Called to show info about vmes' type and name
+  m_Gui = Superclass::CreateGui(); // Called to show info about vmes' type and name
   m_Gui->SetListener(this);
-  m_Gui->Divider();
 
-  m_Gui->Double(ID_SCALE_FACTOR,_("scale"),&m_ScaleFactor);
-  m_Gui->Divider();
+  wxString choises[3]={"Normal","Select Origin","Select Plane"};
+  m_Gui->Radio(ID_RADIO,"",&m_Radio,3,choises);
 
-	wxString choises[3]={"Normal","Select Origin","Select Plane"};
-	m_Gui->Radio(ID_RADIO,"",&m_Radio,3,choises);
-
-	mafVME *origin_vme = GetOriginVME();
+  mafVME *origin_vme = GetOriginVME();
   if (origin_vme && origin_vme->IsMAFType(mafVMELandmarkCloud))
   {
     sub_id = GetLinkSubId("OriginVME");
-		m_OriginVmeName = (sub_id != -1) ? ((mafVMELandmarkCloud *)origin_vme)->GetLandmarkName(sub_id) : _("none");
+    m_OriginVmeName = (sub_id != -1) ? ((mafVMELandmarkCloud *)origin_vme)->GetLandmarkName(sub_id) : _("none");
   }
   else
     m_OriginVmeName = origin_vme ? origin_vme->GetName() : _("none");
   m_Gui->Button(ID_REF_SYS_ORIGIN,&m_OriginVmeName,_("Origin"), _("Select the vme originABSPosition for the ref sys"));
-	m_Gui->Enable(ID_REF_SYS_ORIGIN,origin_vme!=NULL);
+  m_Gui->Enable(ID_REF_SYS_ORIGIN,origin_vme!=NULL);
 
   mafVME *point1_vme = GetPoint1VME();
   if (point1_vme && point1_vme->IsMAFType(mafVMELandmarkCloud))
@@ -376,7 +132,7 @@ mafGUI* mafVMERefSys::CreateGui()
   else
     m_Point1VmeName = point1_vme ? point1_vme->GetName() : _("none");
   m_Gui->Button(ID_POINT1,&m_Point1VmeName,_("Point 1"), _("Select the Point 1"));
-	m_Gui->Enable(ID_POINT1,point1_vme!=NULL);
+  m_Gui->Enable(ID_POINT1,point1_vme!=NULL);
 
   mafVME *point2_vme = GetPoint2VME();
   if (point2_vme && point2_vme->IsMAFType(mafVMELandmarkCloud))
@@ -387,27 +143,27 @@ mafGUI* mafVMERefSys::CreateGui()
   else
     m_Point2VmeName = point2_vme ? point2_vme->GetName() : _("none");
   m_Gui->Button(ID_POINT2,&m_Point2VmeName,_("Point 2"), _("Select the Point 2"));
-	m_Gui->Enable(ID_POINT2,point2_vme!=NULL);
+  m_Gui->Enable(ID_POINT2,point2_vme!=NULL);
 
-	if(point2_vme && origin_vme && point2_vme)
-		m_Radio=2;
-	else if(origin_vme)
-		m_Radio=1;
-	else
-		m_Radio=0;
+  if(point2_vme && origin_vme && point2_vme)
+    m_Radio=2;
+  else if(origin_vme)
+    m_Radio=1;
+  else
+    m_Radio=0;
 
   // vme ref sys fixed
-//	m_Gui->Bool(ID_FIXED, _("Click for fix the refsys"), &m_Fixed, 1);
+//  m_Gui->Bool(ID_FIXED, _("Click for fix the refsys"), &m_Fixed, 1);
 
-	/*m_Gui->Enable(ID_SCALE_FACTOR, m_Fixed == 0);
-	m_Gui->Enable(ID_REF_SYS_ORIGIN, m_Fixed == 0);
-	m_Gui->Enable(ID_POINT1, m_Fixed == 0);
-	m_Gui->Enable(ID_POINT2, m_Fixed == 0);
-	m_Gui->Enable(ID_RADIO, m_Fixed == 0);
-	m_Gui->Enable(ID_FIXED, m_Fixed == 0);*/
+  /*m_Gui->Enable(ID_SCALE_FACTOR, m_Fixed == 0);
+  m_Gui->Enable(ID_REF_SYS_ORIGIN, m_Fixed == 0);
+  m_Gui->Enable(ID_POINT1, m_Fixed == 0);
+  m_Gui->Enable(ID_POINT2, m_Fixed == 0);
+  m_Gui->Enable(ID_RADIO, m_Fixed == 0);
+  m_Gui->Enable(ID_FIXED, m_Fixed == 0);*/
 
-	m_Gui->Update();
-	//this->InternalUpdate();
+  m_Gui->Update();
+  //this->InternalUpdate();
 
   return m_Gui;
 }
@@ -420,12 +176,7 @@ void mafVMERefSys::OnEvent(mafEventBase *maf_event)
   {
     switch(e->GetId())
     {
-      case ID_SCALE_FACTOR:
-      {
-        SetScaleFactor(m_ScaleFactor);
-      }
-      break;
-			case ID_REF_SYS_ORIGIN:
+      case ID_REF_SYS_ORIGIN:
       case ID_POINT1:
       case ID_POINT2:
       {
@@ -440,73 +191,77 @@ void mafVMERefSys::OnEvent(mafEventBase *maf_event)
         {
           if (button_id == ID_REF_SYS_ORIGIN)
           {
-						SetRefSysLink("OriginVME", n);
-						m_OriginVmeName = n->GetName();
+            SetRefSysLink("OriginVME", n);
+            m_OriginVmeName = n->GetName();
           }
           else if (button_id == ID_POINT1)
           {
             SetRefSysLink("Point1VME", n);
-						m_Point1VmeName = n->GetName();
+            m_Point1VmeName = n->GetName();
           }
           else
           {
             SetRefSysLink("Point2VME", n);
-						m_Point2VmeName = n->GetName();
+            m_Point2VmeName = n->GetName();
           }
-					InternalUpdate();
-					m_Gui->Update();
+          InternalUpdate();
+          m_Gui->Update();
         }
+        mafEvent cam_event(this,CAMERA_UPDATE);
+        ForwardUpEvent(cam_event);
       }
       break;
-			case ID_RADIO:
-			{
-				if(m_Radio==0)
-				{
+      case ID_RADIO:
+      {
+        if(m_Radio==0)
+        {
           // Normal RefSys
-					this->RemoveAllLinks();
+          this->RemoveAllLinks();
           m_OriginVmeName = _("none");
           m_Point1VmeName = _("none");
           m_Point2VmeName = _("none");
-					m_Gui->Enable(ID_REF_SYS_ORIGIN,false);
-					m_Gui->Enable(ID_POINT1,false);
-					m_Gui->Enable(ID_POINT2,false);
-				}
-				else if(m_Radio==1)
-				{
+          m_Gui->Enable(ID_REF_SYS_ORIGIN,false);
+          m_Gui->Enable(ID_POINT1,false);
+          m_Gui->Enable(ID_POINT2,false);
+        }
+        else if(m_Radio==1)
+        {
           // RefSys with Origin link
-					this->RemoveLink("Point1VME");
-					this->RemoveLink("Point2VME");
+          this->RemoveLink("Point1VME");
+          this->RemoveLink("Point2VME");
           m_Point1VmeName = _("none");
           m_Point2VmeName = _("none");
-					m_Gui->Enable(ID_REF_SYS_ORIGIN,true);
-					m_Gui->Enable(ID_POINT1,false);
-					m_Gui->Enable(ID_POINT2,false);
-				}
-				else if(m_Radio==2)
-				{
+          m_Gui->Enable(ID_REF_SYS_ORIGIN,true);
+          m_Gui->Enable(ID_POINT1,false);
+          m_Gui->Enable(ID_POINT2,false);
+        }
+        else if(m_Radio==2)
+        {
           // RefSys with all the link enabled: originABSPosition, point1ABSPosition and point2ABSPosition
-					m_Gui->Enable(ID_REF_SYS_ORIGIN,true);
-					m_Gui->Enable(ID_POINT1,true);
-					m_Gui->Enable(ID_POINT2,true);
-				}
-				InternalUpdate();
-				m_Gui->Update();
-			}
-			break;
-			case ID_FIXED:
-			{
+          m_Gui->Enable(ID_REF_SYS_ORIGIN,true);
+          m_Gui->Enable(ID_POINT1,true);
+          m_Gui->Enable(ID_POINT2,true);
+        }
+        InternalUpdate();
+        m_Gui->Update();
+        mafEvent cam_event(this,CAMERA_UPDATE);
+        ForwardUpEvent(cam_event);
+      }
+      break;
+      case ID_FIXED:
+      {
         /*m_Gui->Enable(ID_SCALE_FACTOR, m_Fixed == 0);
-				m_Gui->Enable(ID_REF_SYS_ORIGIN, m_Fixed == 0);
+        m_Gui->Enable(ID_REF_SYS_ORIGIN, m_Fixed == 0);
 
-				m_Gui->Enable(ID_POINT1, m_Fixed == 0);
-				m_Gui->Enable(ID_POINT2, m_Fixed == 0);
-				m_Gui->Enable(ID_RADIO, m_Fixed == 0);
+        m_Gui->Enable(ID_POINT1, m_Fixed == 0);
+        m_Gui->Enable(ID_POINT2, m_Fixed == 0);
+        m_Gui->Enable(ID_RADIO, m_Fixed == 0);
 
         m_Gui->Enable(ID_FIXED, m_Fixed == 0);*/
-			}
-			break;
+      }
+      break;
       default:
-        mafNode::OnEvent(maf_event);
+        Superclass::OnEvent(maf_event);
     }
   }
   else
@@ -519,25 +274,9 @@ void mafVMERefSys::Print(std::ostream& os, const int tabs)
 //-----------------------------------------------------------------------
 {
   Superclass::Print(os,tabs);
-  mafIndent indent(tabs);
-
-  mafMatrix m = m_Transform->GetMatrix();
-  m.Print(os,indent.GetNextIndent());
-}
-//-------------------------------------------------------------------------
-char **mafVMERefSys::GetIcon()
-//-------------------------------------------------------------------------
-{
-  #include "mafVMEProcedural.xpm"
-  return mafVMEProcedural_xpm;
 }
 //-----------------------------------------------------------------------
-void mafVMERefSys::InternalPreUpdate()
-//-----------------------------------------------------------------------
-{
-}
-//-----------------------------------------------------------------------
-void mafVMERefSys::InternalUpdate()
+void mafVMERefSys::CalculateMatrix(mafMatrix &m, mafTimeStamp ts)
 //-----------------------------------------------------------------------
 {
   if (DEBUG_MODE)
@@ -546,19 +285,21 @@ void mafVMERefSys::InternalUpdate()
     stringStream << "Entering InternalUpdate for: " << this->GetName() << " VME"  << std::endl;
     mafLogMessage(stringStream.str().c_str());
   }
-	mafVME *point1VME = GetPoint1VME();
-	mafVME *point2VME = GetPoint2VME();
-	mafVME *originVME = GetOriginVME();
+  if(ts < 0)
+    ts = GetTimeStamp();
+  mafVME *point1VME = GetPoint1VME();
+  mafVME *point2VME = GetPoint2VME();
+  mafVME *originVME = GetOriginVME();
 
-	if(point1VME && point2VME && originVME)
-	{
-		double point1ABSPosition[3],point2ABSPosition[3],originABSPosition[3],useless[3];
-		mafSmartPointer<mafTransform> TmpTransform;
+  if(point1VME && point2VME && originVME)
+  {
+    double point1ABSPosition[3],point2ABSPosition[3],originABSPosition[3],useless[3];
+    mafSmartPointer<mafTransform> TmpTransform;
 
-		//Get the position of the originABSPosition
-		if(originVME->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("OriginVME") != -1)
+    //Get the position of the originABSPosition
+    if(originVME->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("OriginVME") != -1)
     {
-      ((mafVMELandmarkCloud *)originVME)->GetLandmarkPosition(GetLinkSubId("OriginVME"), originABSPosition, -1);
+      ((mafVMELandmarkCloud *)originVME)->GetLandmarkPosition(GetLinkSubId("OriginVME"), originABSPosition, ts);
       mafTransform t;
       t.SetMatrix(*originVME->GetOutput()->GetAbsMatrix());
       t.TransformPoint(originABSPosition, originABSPosition);
@@ -566,8 +307,8 @@ void mafVMERefSys::InternalUpdate()
     }
     else if(originVME->IsMAFType(mafVMELandmark))
     {
-			originVME->GetOutput()->Update();  
-      originVME->GetOutput()->GetAbsPose(originABSPosition, useless);
+      originVME->GetOutput()->Update();  
+      originVME->GetOutput()->GetAbsPose(originABSPosition, useless, ts);
     }
 
     if (DEBUG_MODE)
@@ -576,146 +317,118 @@ void mafVMERefSys::InternalUpdate()
     }
 
 
-		//Get the position of the point 1
-		if(point1VME->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("Point1VME") != -1)
+    //Get the position of the point 1
+    if(point1VME->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("Point1VME") != -1)
     {
-      ((mafVMELandmarkCloud *)point1VME)->GetLandmarkPosition(GetLinkSubId("Point1VME"),point1ABSPosition,-1);
+      ((mafVMELandmarkCloud *)point1VME)->GetLandmarkPosition(GetLinkSubId("Point1VME"),point1ABSPosition,ts);
       mafTransform t;
       t.SetMatrix(*point1VME->GetOutput()->GetAbsMatrix());
       t.TransformPoint(point1ABSPosition, point1ABSPosition);
     }
     else if(point1VME->IsMAFType(mafVMELandmark))
     {
-			point1VME->GetOutput()->Update();  
-      point1VME->GetOutput()->GetAbsPose(point1ABSPosition, useless);
+      point1VME->GetOutput()->Update();  
+      point1VME->GetOutput()->GetAbsPose(point1ABSPosition, useless, ts);
     }
     if (DEBUG_MODE)
     {
       LogVector3(point1ABSPosition, "point1ABSPosition abs position");
     }
 
-		//Get the position of the point 2
-		if(point2VME->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("Point2VME") != -1)
+    //Get the position of the point 2
+    if(point2VME->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("Point2VME") != -1)
     {
-      ((mafVMELandmarkCloud *)point2VME)->GetLandmarkPosition(GetLinkSubId("Point2VME"),point2ABSPosition,-1);
+      ((mafVMELandmarkCloud *)point2VME)->GetLandmarkPosition(GetLinkSubId("Point2VME"),point2ABSPosition,ts);
       mafTransform t;
       t.SetMatrix(*point2VME->GetOutput()->GetAbsMatrix());
       t.TransformPoint(point2ABSPosition, point2ABSPosition);
     }
     else if(point2VME->IsMAFType(mafVMELandmark))
     {
-			point2VME->GetOutput()->Update();  
-      point2VME->GetOutput()->GetAbsPose(point2ABSPosition, useless);
+      point2VME->GetOutput()->Update();  
+      point2VME->GetOutput()->GetAbsPose(point2ABSPosition, useless,ts);
     }
     if (DEBUG_MODE)
     {
       LogVector3(point1ABSPosition, "point2ABSPosition abs position");
     }
 
-		double point1OriginVector[3],point2OriginVector[3],point1Point2CrossProductVector[3];
+    double point1OriginVector[3],point2OriginVector[3],point1Point2CrossProductVector[3];
 
-		point1OriginVector[0] = point1ABSPosition[0] - originABSPosition[0];
-		point1OriginVector[1] = point1ABSPosition[1] - originABSPosition[1];
-		point1OriginVector[2] = point1ABSPosition[2] - originABSPosition[2];
+    point1OriginVector[0] = point1ABSPosition[0] - originABSPosition[0];
+    point1OriginVector[1] = point1ABSPosition[1] - originABSPosition[1];
+    point1OriginVector[2] = point1ABSPosition[2] - originABSPosition[2];
 
-		point2OriginVector[0] = point2ABSPosition[0] - originABSPosition[0];
-		point2OriginVector[1] = point2ABSPosition[1] - originABSPosition[1];
-		point2OriginVector[2] = point2ABSPosition[2] - originABSPosition[2];
+    point2OriginVector[0] = point2ABSPosition[0] - originABSPosition[0];
+    point2OriginVector[1] = point2ABSPosition[1] - originABSPosition[1];
+    point2OriginVector[2] = point2ABSPosition[2] - originABSPosition[2];
 
-		vtkMath::Normalize(point1OriginVector);
-		vtkMath::Normalize(point2OriginVector);
+    vtkMath::Normalize(point1OriginVector);
+    vtkMath::Normalize(point2OriginVector);
 
-		vtkMath::Cross(point1OriginVector,point2OriginVector,point1Point2CrossProductVector);
-		vtkMath::Normalize(point1Point2CrossProductVector);
-		vtkMath::Cross(point1Point2CrossProductVector,point1OriginVector,point2OriginVector);
+    vtkMath::Cross(point1OriginVector,point2OriginVector,point1Point2CrossProductVector);
+    vtkMath::Normalize(point1Point2CrossProductVector);
+    vtkMath::Cross(point1Point2CrossProductVector,point1OriginVector,point2OriginVector);
 
-		vtkMatrix4x4 *matrix_translation=vtkMatrix4x4::New();
-		matrix_translation->Identity();
-		for(int i=0;i<3;i++)
-			matrix_translation->SetElement(i,3,originABSPosition[i]);
+    vtkMatrix4x4 *matrix_translation=vtkMatrix4x4::New();
+    matrix_translation->Identity();
+    for(int i=0;i<3;i++)
+      matrix_translation->SetElement(i,3,originABSPosition[i]);
 
-		vtkMatrix4x4 *matrix_rotation=vtkMatrix4x4::New();
-		matrix_rotation->Identity();
-		for(int i=0;i<3;i++)
-			matrix_rotation->SetElement(i,0,point1OriginVector[i]);
-		for(int i=0;i<3;i++)
-			matrix_rotation->SetElement(i,1,point2OriginVector[i]);
-		for(int i=0;i<3;i++)
-			matrix_rotation->SetElement(i,2,point1Point2CrossProductVector[i]);
+    vtkMatrix4x4 *matrix_rotation=vtkMatrix4x4::New();
+    matrix_rotation->Identity();
+    for(int i=0;i<3;i++)
+      matrix_rotation->SetElement(i,0,point1OriginVector[i]);
+    for(int i=0;i<3;i++)
+      matrix_rotation->SetElement(i,1,point2OriginVector[i]);
+    for(int i=0;i<3;i++)
+      matrix_rotation->SetElement(i,2,point1Point2CrossProductVector[i]);
 
-		mafMatrix a;
-		a.SetVTKMatrix(matrix_rotation);
-		mafMatrix b;
-		b.SetVTKMatrix(matrix_translation);
-		mafMatrix c;
-		mafMatrix::Multiply4x4(b,a,c);
+    mafMatrix a;
+    a.SetVTKMatrix(matrix_rotation);
+    mafMatrix b;
+    b.SetVTKMatrix(matrix_translation);
+    mafMatrix::Multiply4x4(b,a,m);
 
     vtkDEL(matrix_rotation);
     vtkDEL(matrix_translation);
+    return;
+  }
+  if(originVME)
+  {
+    double origin[3],orientation[3];
 
-    this->SetAbsMatrix(c);
-	}
-	else if(originVME)
-	{
-		double origin[3],orientation[3];
-
-		//Get the position of the origin
-		if(originVME->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("OriginVME") != -1)
+    //Get the position of the origin
+    if(originVME->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("OriginVME") != -1)
     {
-      ((mafVMELandmarkCloud *)originVME)->GetLandmarkPosition(GetLinkSubId("OriginVME"),origin,-1);
+      ((mafVMELandmarkCloud *)originVME)->GetLandmarkPosition(GetLinkSubId("OriginVME"),origin,ts);
       mafTransform t;
       t.SetMatrix(*originVME->GetOutput()->GetAbsMatrix());
       t.TransformPoint(origin,origin);
     }
     else if(originVME->IsMAFType(mafVMELandmark))
     {
-			originVME->GetOutput()->Update();  
-      originVME->GetOutput()->GetAbsPose(origin, orientation);
+      originVME->GetOutput()->Update();  
+      originVME->GetOutput()->GetAbsPose(origin, orientation, ts);
     }
 
-		vtkMatrix4x4 *matrix_translation=vtkMatrix4x4::New();
-		matrix_translation->Identity();
-		for(int i=0;i<3;i++)
-			matrix_translation->SetElement(i,3,origin[i]);
+    vtkMatrix4x4 *matrix_translation=vtkMatrix4x4::New();
+    matrix_translation->Identity();
+    for(int i=0;i<3;i++)
+      matrix_translation->SetElement(i,3,origin[i]);
 
-		mafMatrix b;
-		b.SetVTKMatrix(matrix_translation);
+    m.SetVTKMatrix(matrix_translation);
 
     vtkDEL(matrix_translation);
-		
-    this->SetAbsMatrix(b);
-	}
-	else
-	{
-		vtkMatrix4x4 *matrix_translation=vtkMatrix4x4::New();
-		matrix_translation->Identity();
-
-		mafMatrix b;
-		b.SetVTKMatrix(matrix_translation);
-    vtkDEL(matrix_translation);
-		
-		//this->SetMatrix(b);
-    this->SetAbsMatrix(b);
-	}
-
-  SetScaleFactor(m_ScaleFactor);
-
-	mafEvent *e	= new mafEvent(this,CAMERA_UPDATE);
-  ForwardUpEvent(e);
-  delete e;
-	this->Modified();
-}
-//-------------------------------------------------------------------------
-void mafVMERefSys::SetRefSysLink(const char *link_name, mafNode *n)
-//-------------------------------------------------------------------------
-{
-	if (n->IsMAFType(mafVMELandmark))
-  {
-    SetLink(link_name,n->GetParent(),((mafVMELandmarkCloud *)n->GetParent())->FindLandmarkIndex(n->GetName()));
+    return;
   }
-  else
   {
-    SetLink(link_name, n);
+    vtkMatrix4x4 *matrix_translation=vtkMatrix4x4::New();
+    matrix_translation->Identity();
+
+    m.SetVTKMatrix(matrix_translation);
+    vtkDEL(matrix_translation);
+    return;
   }
 }
 //-------------------------------------------------------------------------

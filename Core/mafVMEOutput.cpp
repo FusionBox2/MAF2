@@ -201,7 +201,7 @@ void mafVMEOutput::GetVMEBounds(mafOBB &bounds,mafTimeStamp t, mafNodeIterator *
 //-------------------------------------------------------------------------
 {
   assert(m_VME);
-  if ((iter&&iter->IsVisible(m_VME))||(!iter&&m_VME->IsVisible()))
+  if (m_VME->IsVisible())
   {
     mafMatrix itemPose;
     
@@ -231,7 +231,7 @@ void mafVMEOutput::GetVMELocalBounds(mafOBB &bounds,mafTimeStamp t, mafNodeItera
 
   bounds.Reset();
 
-  if ((iter&&iter->IsVisible(m_VME))||(!iter&&m_VME->IsVisible()))
+  if (m_VME->IsVisible())
   {
     GetDataBounds(bounds,t);
   }
@@ -535,20 +535,6 @@ void mafVMEOutput::Print(std::ostream& os, const int tabs)// const
   os << indent << "DataType: "<<m_DataType<<std::endl;
 }
 
-//-------------------------------------------------------------------------
-mafGUI *mafVMEOutput::GetGui()
-//-------------------------------------------------------------------------
-{
-  if (m_Gui==NULL) CreateGui();
-  assert(m_Gui);
-  return m_Gui;
-}
-//-------------------------------------------------------------------------
-void mafVMEOutput::DeleteGui()
-//-------------------------------------------------------------------------
-{
-  cppDEL(m_Gui);
-}
 //-------------------------------------------------------------------------
 mafGUI* mafVMEOutput::CreateGui()
 //-------------------------------------------------------------------------

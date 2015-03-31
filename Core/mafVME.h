@@ -265,6 +265,9 @@ protected:
 	This method is called by SetTimeStamp method (that also notifies listeners). */
 	virtual void InternalSetTimeStamp(mafTimeStamp t);
 
+  /** update the matrix */
+  virtual void InternalUpdateMatrix() {}
+
   /** 
     Set the output and connect it to the VME. This is automatically called
     by GetOutput() of specific VME's */

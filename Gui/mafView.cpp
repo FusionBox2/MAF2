@@ -53,7 +53,6 @@ mafView::mafView(const wxString &label)
   m_Frame					= NULL;
 	m_Listener			= NULL;
 	m_Next					= NULL;
-  m_Guih					= NULL;
 	m_Gui					 	= NULL;
 	m_Plugged				= false;
   m_Id            = 0;
@@ -118,12 +117,6 @@ void mafView::OnEvent(mafEventBase *maf_event)
   {
     mafEventMacro(*maf_event);
   }
-}
-//-------------------------------------------------------------------------
-void mafView::DeleteGui()
-//-------------------------------------------------------------------------
-{
-  cppDEL(m_Gui);
 }
 //-------------------------------------------------------------------------
 mafGUI* mafView::CreateGui()

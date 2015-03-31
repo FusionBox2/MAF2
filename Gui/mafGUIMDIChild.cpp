@@ -54,7 +54,6 @@ BEGIN_EVENT_TABLE(mafGUIMDIChild,wxMDIChildFrame)
         EVT_MAXIMIZE  (mafGUIMDIChild::OnMaximize)
 END_EVENT_TABLE()
 
-bool mafGUIMDIChild::m_Quitting = false;
 //----------------------------------------------------------------------------
 mafGUIMDIChild::mafGUIMDIChild(wxMDIParentFrame* parent,mafView *view)
 :wxMDIChildFrame(parent,-1, "child",wxDefaultPosition, wxDefaultSize/*, 0*/)
@@ -137,7 +136,7 @@ void mafGUIMDIChild::OnCloseWindow(wxCloseEvent& event)
 void mafGUIMDIChild::OnActivate(wxActivateEvent& event)
 //----------------------------------------------------------------------------
 { 
-  if( event.GetActive() && m_View && !m_Quitting )
+  if( event.GetActive() && m_View)
   {
     mafEventMacro(mafEvent(this,VIEW_SELECT,m_View,(wxWindow*)NULL));
     Layout();

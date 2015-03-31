@@ -116,7 +116,7 @@ int mafOpExporterMSF::ExportMSF()
   for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
     idValues value;
-    value.oldID = node->GetId();
+    value.oldID = node;//->GetId();
     values.push_back(value);
   }
   iter->Delete();
@@ -128,8 +128,8 @@ int mafOpExporterMSF::ExportMSF()
   int index = 0;
   for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
-    idValues value;
-    values[index].newID = node->GetId();
+    //idValues value;
+    values[index].newID = node;//->GetId();
 
     index++;
 
@@ -148,10 +148,10 @@ int mafOpExporterMSF::ExportMSF()
       bool foundID = false;
       for (int i=0;i<values.size();i++)
       {
-        int id = it->second.m_NodeId;
-        if (it->second.m_NodeId == values[i].oldID)
+        //int id = it->second.m_NodeId;
+        if (it->second.m_Node/*Id*/ == values[i].oldID)
         {
-          it->second.m_NodeId = values[i].newID;
+          it->second.m_Node/*Id*/ = values[i].newID;
           foundID = true;
         }
       }

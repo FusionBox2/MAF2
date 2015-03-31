@@ -155,6 +155,14 @@ void mafLogicWithManagers::Configure()
 {
   mafLogicWithGUI::Configure(); // create the GUI - and calls CreateMenu
 
+  EnableItem(CAMERA_RESET, false);
+  EnableItem(CAMERA_FIT,   false);
+  EnableItem(CAMERA_FLYTO, false);
+  EnableItem(MENU_FILE_PRINT, false);
+  EnableItem(MENU_FILE_PRINT_PREVIEW, false);
+  EnableItem(MENU_FILE_PRINT_SETUP, false);
+  EnableItem(MENU_FILE_PRINT_PAGE_SETUP, false);
+
   if(this->m_PlugSidebar)
   {
     m_SideBar = new mafSideBar(m_Win,MENU_VIEW_SIDEBAR,this,m_SidebarStyle);
@@ -448,13 +456,6 @@ void mafLogicWithManagers::CreateMenu()
 	help_menu->Append(HELP_HOME, _("Help"));
 
 	m_MenuBar->Append(help_menu, _("&Help"));
-
-  m_Win->SetMenuBar(m_MenuBar);
-
-  EnableItem(MENU_FILE_PRINT, false);
-  EnableItem(MENU_FILE_PRINT_PREVIEW, false);
-  EnableItem(MENU_FILE_PRINT_SETUP, false);
-  EnableItem(MENU_FILE_PRINT_PAGE_SETUP, false);
 }
 //----------------------------------------------------------------------------
 void mafLogicWithManagers::CreateToolbar()
@@ -486,29 +487,7 @@ void mafLogicWithManagers::CreateToolbar()
   m_ToolBar->AddTool(CAMERA_RESET,mafPictureFactory::GetPictureFactory()->GetBmp("ZOOM_ALL"),_("reset camera to fit all (ctrl+f)"));
   m_ToolBar->AddTool(CAMERA_FIT,  mafPictureFactory::GetPictureFactory()->GetBmp("ZOOM_SEL"),_("reset camera to fit selected object (ctrl+shift+f)"));
   m_ToolBar->AddTool(CAMERA_FLYTO,mafPictureFactory::GetPictureFactory()->GetBmp("FLYTO"),_("fly to object under mouse"));
-
-
-  EnableItem(CAMERA_RESET, false);
-  EnableItem(CAMERA_FIT,   false);
-  EnableItem(CAMERA_FLYTO, false);
-  EnableItem(MENU_FILE_PRINT, false);
-  EnableItem(MENU_FILE_PRINT_PREVIEW, false);
-
   m_ToolBar->Realize();
-
-  //SIL. 23-may-2006 : 
-  m_Win->AddDockPane(m_ToolBar,  wxPaneInfo()
-    .Name("toolbar")
-    .Caption(wxT("ToolBar"))
-    .Top()
-    .Layer(2)
-    .ToolbarPane()
-    .LeftDockable(false)
-    .RightDockable(false)
-    .Floatable(false)
-    .Movable(false)
-    .Gripper(false)
-    );
 }
 //----------------------------------------------------------------------------
 void mafLogicWithManagers::UpdateFrameTitle()
@@ -1237,7 +1216,7 @@ void mafLogicWithManagers::OnQuit()
 
   if(m_VMEManager)
   {
-    m_Quitting = false;
+    bool quitting = false;
     if (m_VMEManager->MSFIsModified())
     {
       int answer = wxMessageBox
@@ -1248,20 +1227,17 @@ void mafLogicWithManagers::OnQuit()
           );
       if(answer == wxYES) 
         m_VMEManager->MSFSave();
-      m_Quitting = answer != wxCANCEL;
+      quitting = answer != wxCANCEL;
     }
     else 
     {
       int answer = wxMessageBox(_("quit program ?"), _("Confirm"), wxYES_NO | wxICON_QUESTION , m_Win);
-      m_Quitting = answer == wxYES;
+      quitting = answer == wxYES;
     }
-    if(!m_Quitting) 
+    if(!quitting) 
       return;
   }
 
-  mafGUIViewFrame::OnQuit();
-  mafGUIMDIChild::OnQuit(); 
-  m_Win->OnQuit(); 
 
   cppDEL(m_RemoteLogic);
   cppDEL(m_VMEManager);

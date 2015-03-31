@@ -43,20 +43,13 @@ public:
   mafTypeMacro(mafObserverCallback,mafObject);
 
   /** Set function callback to be called by this observer */
-  void SetCallback(void (*f)(void *sender, mafID eid, void *clientdata, void *calldata));
+  void SetCallback(void (*f)(void *sender, mafID eid, void *calldata));
    
-  /** set client data to be passed to callback function */
-  void SetClientData(void *cd);
-    
-  /** return client data passed to callback function */  
-  void* GetClientData();
-       
   /** process the events sent by subjects */
   virtual void OnEvent(mafEventBase *e);
 
 protected:
-  void (*m_Callback)(void *, mafID, void *, void *);  
-  void *m_ClientData;
+  void (*m_Callback)(void *, mafID, void *);  
 };
 
 #endif /* __mafObserverCallback_h */

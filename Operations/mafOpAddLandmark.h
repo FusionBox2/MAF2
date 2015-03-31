@@ -97,7 +97,10 @@ protected:
   /** Show a message box to inform the user that the added landmark already exists in the tree.*/
   void ExistingLandmarkMessage();
 
+  void SetLandmarkPos(mafVMELandmark* lm, double x, double y, double z, double xo, double yo, double zo, mafTimeStamp t = -1);
+
 	int m_AddToCurrentTime;
+  int m_LocalCoords;
 
   mafVMELandmarkCloud	*m_Cloud;
 	mafVME      				*m_PickedVme;

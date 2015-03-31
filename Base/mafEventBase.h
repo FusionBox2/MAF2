@@ -70,14 +70,6 @@ public:
   /** return sender (invoker) of this event */
   void *GetSender();
 
-  /** 
-    set event source who generated this event. Used by
-    mafEventSource to store its pointer in the event */
-  void SetSource(mafEventSource *src);
-
-  /** return the source to the event source who generated this event */
-  mafEventSource *GetSource();
-
   /** set Id for this event */
   void SetId(mafID id);
 
@@ -96,22 +88,12 @@ public:
   /** return call data, data sent by sender (event's invoker) to all observers */
   void *GetData();
 
-  /** return SkipFlag value. SkipFlag is used to make an event to be skipped by next observers */
-  bool GetSkipFlag();
-
-  /** set the skip flag. When true the event will be skipped by next observers */
-  void SetSkipFlag(bool flag);
-
-  /** force an event to be skipped by next observers */
-  void SkipNext();
-
 protected:
   void            *m_Sender;
-  mafEventSource  *m_Source;
   void            *m_Data;
   mafID           m_Id;
   mafID           m_Channel;
-  bool            m_SkipFlag;
+  static bool     m_LogVerbose;
   // static bool     m_LogVerbose;
 };
 #endif /* __mafEventBase_h */

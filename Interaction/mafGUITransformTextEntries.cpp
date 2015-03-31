@@ -210,7 +210,8 @@ void mafGUITransformTextEntries::SetAbsPose(mafMatrix* absPose, mafTimeStamp tim
 //----------------------------------------------------------------------------
 {
   // express absPose in RefSysVME refsys
-  mafTransformFrame *mflTr = mafTransformFrame::New();
+  mafTransformFrame *mflTr;
+  mafNEW(mflTr);
   mflTr->SetInput(absPose);
   mflTr->SetTargetFrame(m_RefSysVME->GetOutput()->GetAbsMatrix());
   mflTr->Update();

@@ -84,6 +84,8 @@ public:
 
   void OnEvent(mafEventBase *maf_event);
 
+  virtual mafID GetNewNodeId(){return GetNextNodeId();}
+
   /** Redefined to update the gui. */
   virtual void Update();
 

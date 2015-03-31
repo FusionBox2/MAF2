@@ -79,8 +79,6 @@ mafLogicWithGUI::mafLogicWithGUI(mafGUIMDIFrame *mdiFrame /*=NULL*/)
 
 	m_AppTitle      = "";
 
-  m_Quitting = false;
-
 	m_PlugMenu		  = true;
 	m_PlugToolbar	  = true;
 	m_PlugSidebar	  = true;
@@ -108,10 +106,13 @@ void mafLogicWithGUI::SetParentFrameStyle(long style)
 void mafLogicWithGUI::Configure()
 //----------------------------------------------------------------------------
 {
-  if(m_PlugMenu)		this->CreateMenu();
-  if(m_PlugToolbar) this->CreateToolbar();
-  if(m_PlugTimebar) this->CreateTimebar(); //SIL. 23-may-2006 : 
-  if(m_PlugLogbar)	this->CreateLogbar();	else this->CreateNullLog();
+  if(m_PlugMenu)    this->AddMenu();
+  if(m_PlugToolbar) this->AddToolbar();
+  if(m_PlugTimebar) this->AddTimebar();
+  if(m_PlugLogbar)  this->AddLogbar(); else this->CreateNullLog();
+  EnableItem(CAMERA_RESET, false);
+  EnableItem(CAMERA_FIT,   false);
+  EnableItem(CAMERA_FLYTO, false);
 }
 //----------------------------------------------------------------------------
 void mafLogicWithGUI::Show()
@@ -139,6 +140,13 @@ void mafLogicWithGUI::ShowSplashScreen(wxBitmap &splashImage)
   mafYield();
 }
 //----------------------------------------------------------------------------
+void mafLogicWithGUI::AddMenu()
+//----------------------------------------------------------------------------
+{
+  CreateMenu();
+  m_Win->SetMenuBar(m_MenuBar);
+}
+//----------------------------------------------------------------------------
 void mafLogicWithGUI::CreateMenu()
 //----------------------------------------------------------------------------
 {
@@ -149,28 +157,7 @@ void mafLogicWithGUI::CreateMenu()
   wxMenu *edit_menu = new wxMenu;
   m_MenuBar->Append(edit_menu, _("&Edit"));
   wxMenu *view_menu = new wxMenu;
-  if(this->m_PlugToolbar) 
-  {
-    view_menu->Append(MENU_VIEW_TOOLBAR, _("Toolbar"),"",wxITEM_CHECK);
-    view_menu->Check(MENU_VIEW_TOOLBAR,true);
-  }
   m_MenuBar->Append(view_menu, _("&View"));
-
-  m_Win->SetMenuBar(m_MenuBar);
-}
-//----------------------------------------------------------------------------
-void mafLogicWithGUI::CreateNullLog()
-//----------------------------------------------------------------------------
-{
-#ifdef MAF_USE_VTK
-  m_VtkLog = mafVTKLog::New();
-  m_VtkLog->SetInstance(m_VtkLog);
-#endif  
-  wxTextCtrl *log  = new wxTextCtrl( m_Win, -1, "", wxPoint(0,0), wxSize(100,300), wxNO_BORDER | wxTE_MULTILINE );
-	m_Logger = new mafWXLog(log);
-	log->Show(false);
-	wxLog *old_log = wxLog::SetActiveTarget( m_Logger );
-  cppDEL(old_log);
 }
 //----------------------------------------------------------------------------
 void mafLogicWithGUI::OnEvent(mafEventBase *maf_event)
@@ -246,12 +233,20 @@ void mafLogicWithGUI::OnQuit()
   {
     delete wxLog::SetActiveTarget(NULL);
   }
+  m_Win->OnQuit();
+  m_Win->Destroy();
 #ifdef MAF_USE_VTK 
   vtkTimerLog::CleanupLog();
   vtkDEL(m_VtkLog);
 #endif
-  m_Win->Destroy();
 }
+//----------------------------------------------------------------------------
+void mafLogicWithGUI::AddLogbar()
+//----------------------------------------------------------------------------
+{
+  CreateLogbar();
+}
+
 //----------------------------------------------------------------------------
 void mafLogicWithGUI::CreateLogbar()
 //----------------------------------------------------------------------------
@@ -273,7 +268,7 @@ void mafLogicWithGUI::CreateLogbar()
     s += ".log";
     if (m_Logger->SetFileName(s) == MAF_ERROR)
     {
-      wxMessageBox(wxString::Format("Unable to create log file %s!!",s),"Warning", wxOK|wxICON_WARNING);
+      mafLogMessage(wxString::Format("Unable to create log file %s!!",s),"Warning", wxOK|wxICON_WARNING);
     }
   }
   m_Logger->SetVerbose(m_LogAllEvents);
@@ -292,12 +287,46 @@ void mafLogicWithGUI::CreateLogbar()
   
   mafLogMessage(_("welcome"));
 }
+//----------------------------------------------------------------------------
+void mafLogicWithGUI::CreateNullLog()
+//----------------------------------------------------------------------------
+{
+#ifdef MAF_USE_VTK
+  m_VtkLog = mafVTKLog::New();
+  m_VtkLog->SetInstance(m_VtkLog);
+#endif  
+  wxTextCtrl *log  = new wxTextCtrl( m_Win, -1, "", wxPoint(0,0), wxSize(100,300), wxNO_BORDER | wxTE_MULTILINE );
+  m_Logger = new mafWXLog(log);
+  log->Show(false);
+  wxLog *old_log = wxLog::SetActiveTarget( m_Logger );
+  cppDEL(old_log);
+}
+//----------------------------------------------------------------------------
+void mafLogicWithGUI::AddToolbar()
+//----------------------------------------------------------------------------
+{
+  CreateToolbar();
+  //m_Win->SetToolBar(m_ToolBar);
+  m_Win->AddDockPane(m_ToolBar,  wxPaneInfo()
+    .Name("toolbar")
+    .Caption(wxT("ToolBar"))
+    .Top()
+    .Layer(2)
+    .ToolbarPane()
+    .LeftDockable(false)
+    .RightDockable(false)
+    .Floatable(false)
+    .Movable(false)
+    .Gripper(false)
+    );
+}
 
 //----------------------------------------------------------------------------
 void mafLogicWithGUI::CreateToolbar()
 //----------------------------------------------------------------------------
 {
-  m_ToolBar = new wxToolBar(m_Win,-1,wxPoint(0,0),wxSize(-1,-1),wxHORIZONTAL|wxNO_BORDER|wxTB_FLAT  );
+  //m_ToolBar = new wxToolBar(m_Win,-1,wxPoint(0,0),wxSize(-1,-1),wxHORIZONTAL|wxNO_BORDER|wxTB_FLAT  );
+  m_ToolBar = new wxToolBar(m_Win,MENU_VIEW_TOOLBAR,wxPoint(0,0),wxSize(-1,-1),wxTB_FLAT | wxTB_NODIVIDER );
   m_ToolBar->SetMargins(0,0);
   m_ToolBar->SetToolSeparation(2);
   m_ToolBar->SetToolBitmapSize(wxSize(20,20));
@@ -318,23 +347,12 @@ void mafLogicWithGUI::CreateToolbar()
   m_ToolBar->AddTool(CAMERA_FIT,  mafPictureFactory::GetPictureFactory()->GetBmp("ZOOM_SEL"),_("reset camera to fit selected object (ctrl+shift+f)"));
   m_ToolBar->AddTool(CAMERA_FLYTO,mafPictureFactory::GetPictureFactory()->GetBmp("FLYTO"),_("fly to object under mouse (press f inside a 3Dview)"));
   m_ToolBar->Realize();
-  m_Win->SetToolBar(m_ToolBar);
-
-  EnableItem(CAMERA_RESET, false);
-  EnableItem(CAMERA_FIT,   false);
-  EnableItem(CAMERA_FLYTO, false);
 }
 //----------------------------------------------------------------------------
-void mafLogicWithGUI::CreateTimebar()
+void mafLogicWithGUI::AddTimebar()
 //----------------------------------------------------------------------------
 {
-  m_TimePanel = new mafGUITimeBar(m_Win,MENU_VIEW_TIMEBAR,true);
-  m_TimePanel->SetListener(this);
-
-  // Events coming from settings are forwarded to the time bar.
-  m_TimePanel->SetTimeSettings(m_TimeBarSettings);
-  m_TimeBarSettings->SetListener(m_TimePanel);
-
+  CreateTimebar();
   m_Win->AddDockPane(m_TimePanel, wxPaneInfo()
     .Name("timebar")
     .Caption(wxT("TimeBar"))
@@ -350,6 +368,17 @@ void mafLogicWithGUI::CreateTimebar()
     .Resizable(false)
     .Movable(false)
     );
+}
+//----------------------------------------------------------------------------
+void mafLogicWithGUI::CreateTimebar()
+//----------------------------------------------------------------------------
+{
+  m_TimePanel = new mafGUITimeBar(m_Win,MENU_VIEW_TIMEBAR,true);
+  m_TimePanel->SetListener(this);
+
+  // Events coming from settings are forwarded to the time bar.
+  m_TimePanel->SetTimeSettings(m_TimeBarSettings);
+  m_TimeBarSettings->SetListener(m_TimePanel);
 }
 //----------------------------------------------------------------------------
 void mafLogicWithGUI::EnableItem(int item, bool enable)

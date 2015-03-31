@@ -44,7 +44,6 @@ BEGIN_EVENT_TABLE(mafGUIViewFrame, wxFrame)
 	  EVT_ACTIVATE  (mafGUIViewFrame::OnActivate)
 END_EVENT_TABLE()
 
-bool mafGUIViewFrame::m_Quitting = false;
 //----------------------------------------------------------------------------
 mafGUIViewFrame::mafGUIViewFrame( wxFrame* parent, 
                             wxWindowID id, 
@@ -105,7 +104,7 @@ void mafGUIViewFrame::OnSelect(wxCommandEvent &event)
 void mafGUIViewFrame::OnActivate(wxActivateEvent& event)
 //----------------------------------------------------------------------------
 { 
-	if( event.GetActive() && !m_Quitting )
+	if( event.GetActive())
   {
 		mafEventMacro(mafEvent(this,VIEW_SELECT,m_View,(wxWindow*)NULL));
 	  Layout();

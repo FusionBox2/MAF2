@@ -214,6 +214,8 @@ int mafVME::SetParent(mafNode *parent)
 
   if (m_MatrixPipe)
     m_MatrixPipe->SetTimeStamp(t);
+  else
+    InternalUpdateMatrix();
   
   if (m_AbsMatrixPipe)
     m_AbsMatrixPipe->SetTimeStamp(t);
@@ -825,6 +827,7 @@ void mafVME::OnEvent(mafEventBase *maf_event)
       break;
       case VME_MATRIX_UPDATE:
 			{
+        InternalUpdateMatrix();//Self process the event
 				mafEventBase absEvent(this, VME_ABSMATRIX_UPDATE);
 				if (maf_event->GetSender() == m_AbsMatrixPipe)
 				{

@@ -23,6 +23,7 @@
 #include "mafObject.h"
 #include "mafObserver.h"
 #include "mafEvent.h"
+#include "mafObjectWithGUI.h"
 
 //----------------------------------------------------------------------------
 // forward references :
@@ -44,7 +45,7 @@ class mafGUI;
   creates actors that will be rendered in a render view.
   It can handle a GUI, which events can be catched by OnEvent.
 */
-class MAF_EXPORT mafPipe : public mafObject, public mafObserver
+class MAF_EXPORT mafPipe : public mafObject, public mafObserver, public mafObjectWithGUI
 {
 public:
   mafTypeMacro(mafPipe,mafObject);
@@ -77,21 +78,9 @@ public:
     ID_LAST
   };
 
-  /** create and return the GUI for changing the node parameters */
-  mafGUI *GetGui() \
-  { \
-    if (m_Gui==NULL) CreateGui(); \
-    assert(m_Gui); \
-    return m_Gui; \
-  }
-
-  /** destroy the Gui */
-  void DeleteGui();
-
   /* Return Listener */
   mafObserver *GetListener(){return m_Listener;};
 
-  mafGUI         *m_Gui;      ///< User Interface
   mafVME         *m_Vme;      ///< VME used as input for the visual pipe
 	vtkMAFAssembly *m_AssemblyFront; ///< Assembly used to contain the actor in the front layer
 	vtkMAFAssembly *m_AssemblyBack;  ///< Assembly used to contain the actor in the background layer

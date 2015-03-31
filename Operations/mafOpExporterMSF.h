@@ -60,8 +60,8 @@ public:
 
   typedef struct 
   {
-    int oldID;
-    int newID;
+    mafNode *oldID;
+    mafNode *newID;
   } idValues;
 
 protected:

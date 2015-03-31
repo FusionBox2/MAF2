@@ -33,6 +33,8 @@ class mafTagArray;
 class vtkDataSet;
 class vtkDataReader;
 class vtkDataSetWriter;
+class vtkCallbackCommand;
+
 
 /** mafVMEItemVTK - store the single VTK dataset stored into a mafDataVector
   mafVMEItemVTK is an object that stores the single time stamped dataset of a
@@ -142,11 +144,14 @@ protected:
     into the URL. This method is called by Store().*/
   virtual int InternalStoreData(const char *url);
 
+  static void InternalProcessUpdateEvents(vtkObject* sender, unsigned long channel, void* clientdata, void* calldata);
+
   vtkSmartPointer<vtkDataSet> m_Data;       ///< pointer to VTK dataset
   vtkDataReader *             m_DataReader; ///< the reader used to read VTK data
   vtkDataSetWriter *          m_DataWriter; ///< the writer used to write VTK data
   int                         m_IOStatus;   ///< internally used to store the IO status
-  
+  vtkCallbackCommand*         m_UpdateEventRouter;
+
 private:
   mafVMEItemVTK(const mafVMEItemVTK&);
   void operator=(const mafVMEItemVTK&);

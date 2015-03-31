@@ -77,21 +77,10 @@ mafViewManager::mafViewManager()
 mafViewManager::~mafViewManager()
 //----------------------------------------------------------------------------
 {	
-	if(m_SelectedRWI)
-    m_SelectedRWI->SetMouse(NULL);
-	
-	mafView *v = NULL;
-
-  while(m_ViewList) // destroy all created views
-  {
-    v = m_ViewList;
-    m_ViewList = v->m_Next;
-    v->SetMouse(NULL); // dereference the mouse before destroy the view
-    cppDEL(v);
-  }
+  ViewDeleteAll();
 
   for(int i=0; i<m_TemplateNum; i++) // destroy all template views
-    cppDEL(m_ViewTemplate[i]);
+    mafDEL(m_ViewTemplate[i]);
 }
 
 //----------------------------------------------------------------------------
@@ -384,7 +373,7 @@ mafView *mafViewManager::ViewCreate(wxString label)
   for(;view_mult < MAXVIEW; view_mult++)
     if(m_ViewMatrixID[index][view_mult] == NULL)
       break;
-  view->m_Mult = view_mult; // update the view multiplicity
+  new_view->m_Mult = view_mult; // update the view multiplicity
 
   //update the matrix containing all created view
   m_ViewMatrixID[index][view_mult] = new_view;
@@ -437,7 +426,7 @@ void mafViewManager::ViewDelete(mafView *view)
     m_RemoteListener->OnEvent(&e);
   }
 
-  if(m_SelectedView)
+  if(m_SelectedView == view)
   {
     if(m_SelectedRWI)
       m_SelectedRWI->SetMouse(NULL); // update the selected view rwi
@@ -472,7 +461,7 @@ void mafViewManager::ViewDelete(mafView *view)
     }
   }
 
-	cppDEL(view);
+	mafDEL(view);
 }
 //----------------------------------------------------------------------------
 void mafViewManager::ViewDeleteAll()

@@ -139,6 +139,8 @@ IF (MAF_USE_VTK)
   mafVMEPolylineSpline.h
   mafVMEProber.cpp
   mafVMEProber.h
+  mafVMERefSysAbstract.cpp
+  mafVMERefSysAbstract.h
   mafVMERefSys.cpp
   mafVMERefSys.h
   mafVMESlicer.cpp

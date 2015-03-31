@@ -90,7 +90,7 @@ bool mafOpApplyTrajectory::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
 {  
   return !((mafVME *)vme)->IsAnimated() && !vme->IsA("mafVMERoot") 
-    && !vme->IsA("mafVMEExternalData") && !vme->IsA("mafVMERefSys");
+    && !vme->IsA("mafVMEExternalData") && !vme->IsA("mafVMERefSysAbstract");
 }
 //----------------------------------------------------------------------------
 bool mafOpApplyTrajectory::AcceptInputVME(mafNode* node)

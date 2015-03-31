@@ -75,6 +75,7 @@ mafVMELandmark::mafVMELandmark()
 
   dpipe->GetVTKDataPipe()->SetNthInput(0, m_Polydata);
   m_Position[0] = m_Position[1] = m_Position[2] = "0.0";
+  m_LocalPosition[0] = m_LocalPosition[1] = m_LocalPosition[2] = "0.0";
 }
 
 //-------------------------------------------------------------------------
@@ -347,6 +348,14 @@ mafGUI* mafVMELandmark::CreateGui()
   m_Gui->Label("", &m_Position[0]);
   m_Gui->Label("", &m_Position[1]);
   m_Gui->Label("", &m_Position[2]);
+  this->GetPoint(xyz);
+  m_Gui->Label("local pose:");
+  m_LocalPosition[0] = wxString::Format("x: %f",xyz[0]);
+  m_LocalPosition[1] = wxString::Format("y: %f",xyz[1]);
+  m_LocalPosition[2] = wxString::Format("z: %f",xyz[2]);
+  m_Gui->Label("", &m_LocalPosition[0]);
+  m_Gui->Label("", &m_LocalPosition[1]);
+  m_Gui->Label("", &m_LocalPosition[2]);
   m_Gui->Divider();
 	return m_Gui;
 }
@@ -393,6 +402,10 @@ void mafVMELandmark::SetTimeStamp(mafTimeStamp t)
   m_Position[0] = wxString::Format("x: %f",xyz[0]);
   m_Position[1] = wxString::Format("y: %f",xyz[1]);
   m_Position[2] = wxString::Format("z: %f",xyz[2]);
+  this->GetPoint(xyz);
+  m_LocalPosition[0] = wxString::Format("x: %f",xyz[0]);
+  m_LocalPosition[1] = wxString::Format("y: %f",xyz[1]);
+  m_LocalPosition[2] = wxString::Format("z: %f",xyz[2]);
   if(m_Gui)
     m_Gui->Update();
 }
@@ -406,6 +419,11 @@ void mafVMELandmark::InternalUpdate()
   m_Position[0] = wxString::Format("x: %f",xyz[0]);
   m_Position[1] = wxString::Format("y: %f",xyz[1]);
   m_Position[2] = wxString::Format("z: %f",xyz[2]);
+
+  this->GetPoint(xyz);
+  m_LocalPosition[0] = wxString::Format("x: %f",xyz[0]);
+  m_LocalPosition[1] = wxString::Format("y: %f",xyz[1]);
+  m_LocalPosition[2] = wxString::Format("z: %f",xyz[2]);
 
   if(m_Gui)
     m_Gui->Update();

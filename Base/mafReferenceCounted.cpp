@@ -91,6 +91,11 @@ void mafReferenceCounted::UnRegister(void *obj)
     mafErrorMacro("Trying to UnRegister a non-dynamically allocated object.");
     return;
   }
+  if(m_ReferenceCount <= 0)
+  {
+    mafErrorMacro("Trying to UnRegister an object with reference counter equal to zero.");
+  }
+
 
   if (--m_ReferenceCount <= 0)
   {

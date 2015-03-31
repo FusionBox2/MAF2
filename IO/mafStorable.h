@@ -41,6 +41,7 @@ class MAF_EXPORT mafStorable
 {
 public:
   mafStorable():m_Storable(true) {}
+  virtual ~mafStorable(){}
   /**
     Storing this object as part of an XML document. The element node must be passed as argument,
     which can eventually be the XML document root. The store function will append all the necessary 

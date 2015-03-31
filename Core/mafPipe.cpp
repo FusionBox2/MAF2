@@ -47,7 +47,6 @@ mafPipe::mafPipe()
 	m_RenFront      = NULL;
 	m_RenBack       = NULL;
 	m_AlwaysVisibleRenderer = NULL;
-  m_Gui           = NULL;
   m_Listener      = NULL;
 	m_Selected = false;
 }
@@ -75,12 +74,6 @@ mafPipe::~mafPipe()
 //----------------------------------------------------------------------------
 {
   m_Listener = NULL;
-  cppDEL(m_Gui);
-}
-//-------------------------------------------------------------------------
-void mafPipe::DeleteGui()
-//-------------------------------------------------------------------------
-{
   cppDEL(m_Gui);
 }
 //-------------------------------------------------------------------------

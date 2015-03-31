@@ -259,6 +259,7 @@ void mafVMEMeter::InternalUpdate()
   double threshold = GetMeterAttributes()->m_InitMeasure * (1 + GetMeterAttributes()->m_DeltaPercent / 100.0);
 
   UpdateLinks();
+  mafTimeStamp currTs = GetTimeStamp();
 
   if (GetMeterMode() == mafVMEMeter::POINT_DISTANCE)
   {
@@ -277,14 +278,16 @@ void mafVMEMeter::InternalUpdate()
 
       if(start_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("StartVME") != -1)
       {
-        ((mafVMELandmarkCloud *)start_vme)->GetLandmark(GetLinkSubId("StartVME"),m_StartPoint,-1);
-        m_TmpTransform->SetMatrix(*start_vme->GetOutput()->GetAbsMatrix());
+        ((mafVMELandmarkCloud *)start_vme)->GetLandmark(GetLinkSubId("StartVME"),m_StartPoint,currTs);
+        mafMatrix tm;
+        start_vme->GetOutput()->GetAbsMatrix(tm, currTs);
+        m_TmpTransform->SetMatrix(tm);
         m_TmpTransform->TransformPoint(m_StartPoint,m_StartPoint);
       }
       else
       {
         start_vme->GetOutput()->Update();  
-        start_vme->GetOutput()->GetAbsPose(m_StartPoint, orientation);
+        start_vme->GetOutput()->GetAbsPose(m_StartPoint, orientation, currTs);
       }
 
       // end is a landmark, consider also visibility
@@ -293,14 +296,16 @@ void mafVMEMeter::InternalUpdate()
 
       if(end_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("EndVME1") != -1)
       {
-        ((mafVMELandmarkCloud *)end_vme)->GetLandmark(GetLinkSubId("EndVME1"),m_EndPoint,-1);
-        m_TmpTransform->SetMatrix(*end_vme->GetOutput()->GetAbsMatrix());
+        ((mafVMELandmarkCloud *)end_vme)->GetLandmark(GetLinkSubId("EndVME1"),m_EndPoint,currTs);
+        mafMatrix tm;
+        end_vme->GetOutput()->GetAbsMatrix(tm, currTs);
+        m_TmpTransform->SetMatrix(tm);
         m_TmpTransform->TransformPoint(m_EndPoint,m_EndPoint);
       }
       else
       {
         end_vme->GetOutput()->Update();  
-        end_vme->GetOutput()->GetAbsPose(m_EndPoint, orientation);
+        end_vme->GetOutput()->GetAbsPose(m_EndPoint, orientation, currTs);
       }
     }
     else
@@ -328,8 +333,8 @@ void mafVMEMeter::InternalUpdate()
       double local_end[3];
       m_TmpTransform->TransformPoint(m_EndPoint,local_end);
 
-      m_LineSource2->SetPoint1(local_start[0],local_start[1],local_start[2]);
-      m_LineSource2->SetPoint2(local_start[0],local_start[1],local_start[2]);
+      m_LineSource2->SetPoint1(local_end[0],local_end[1],local_end[2]);
+      m_LineSource2->SetPoint2(local_end[0],local_end[1],local_end[2]);
       m_LineSource2->Update();
       m_LineSource->SetPoint1(local_start[0],local_start[1],local_start[2]);
       m_LineSource->SetPoint2(local_end[0],local_end[1],local_end[2]);
@@ -364,14 +369,16 @@ void mafVMEMeter::InternalUpdate()
 
       if(start_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("StartVME") != -1)
       {
-        ((mafVMELandmarkCloud *)start_vme)->GetLandmark(GetLinkSubId("StartVME"),m_StartPoint,-1);
-        m_TmpTransform->SetMatrix(*start_vme->GetOutput()->GetAbsMatrix());
+        ((mafVMELandmarkCloud *)start_vme)->GetLandmark(GetLinkSubId("StartVME"),m_StartPoint,currTs);
+        mafMatrix tm;
+        start_vme->GetOutput()->GetAbsMatrix(tm, currTs);
+        m_TmpTransform->SetMatrix(tm);
         m_TmpTransform->TransformPoint(m_StartPoint,m_StartPoint);
       }
       else
       {
         start_vme->GetOutput()->Update();  
-        start_vme->GetOutput()->GetAbsPose(m_StartPoint, orientation);
+        start_vme->GetOutput()->GetAbsPose(m_StartPoint, orientation, currTs);
       }
 
       // end is a landmark, consider also visibility
@@ -380,14 +387,16 @@ void mafVMEMeter::InternalUpdate()
 
       if(end1_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("EndVME1") != -1)
       {
-        ((mafVMELandmarkCloud *)end1_vme)->GetLandmark(GetLinkSubId("EndVME1"),m_EndPoint,-1);
-        m_TmpTransform->SetMatrix(*end1_vme->GetOutput()->GetAbsMatrix());
+        ((mafVMELandmarkCloud *)end1_vme)->GetLandmark(GetLinkSubId("EndVME1"),m_EndPoint,currTs);
+        mafMatrix tm;
+        end1_vme->GetOutput()->GetAbsMatrix(tm, currTs);
+        m_TmpTransform->SetMatrix(tm);
         m_TmpTransform->TransformPoint(m_EndPoint,m_EndPoint);
       }
       else
       {
         end1_vme->GetOutput()->Update();  
-        end1_vme->GetOutput()->GetAbsPose(m_EndPoint, orientation);
+        end1_vme->GetOutput()->GetAbsPose(m_EndPoint, orientation, currTs);
       }
 
       // end is a landmark, consider also visibility
@@ -396,14 +405,16 @@ void mafVMEMeter::InternalUpdate()
 
       if(end2_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("EndVME2") != -1)
       {
-        ((mafVMELandmarkCloud *)end2_vme)->GetLandmark(GetLinkSubId("EndVME2"),m_EndPoint2,-1);
-        m_TmpTransform->SetMatrix(*end2_vme->GetOutput()->GetAbsMatrix());
+        ((mafVMELandmarkCloud *)end2_vme)->GetLandmark(GetLinkSubId("EndVME2"),m_EndPoint2,currTs);
+        mafMatrix tm;
+        end2_vme->GetOutput()->GetAbsMatrix(tm, currTs);
+        m_TmpTransform->SetMatrix(tm);
         m_TmpTransform->TransformPoint(m_EndPoint2,m_EndPoint2);
       }
       else
       {
         end2_vme->GetOutput()->Update();  
-        end2_vme->GetOutput()->GetAbsPose(m_EndPoint2, orientation);
+        end2_vme->GetOutput()->GetAbsPose(m_EndPoint2, orientation, currTs);
       }
     }
     else
@@ -489,14 +500,16 @@ void mafVMEMeter::InternalUpdate()
 
       if(start_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("StartVME") != -1)
       {
-        ((mafVMELandmarkCloud *)start_vme)->GetLandmark(GetLinkSubId("StartVME"),m_StartPoint,-1);
-        m_TmpTransform->SetMatrix(*start_vme->GetOutput()->GetAbsMatrix());
+        ((mafVMELandmarkCloud *)start_vme)->GetLandmark(GetLinkSubId("StartVME"),m_StartPoint,currTs);
+        mafMatrix tm;
+        start_vme->GetOutput()->GetAbsMatrix(tm, currTs);
+        m_TmpTransform->SetMatrix(tm);
         m_TmpTransform->TransformPoint(m_StartPoint,m_StartPoint);
       }
       else
       {
         start_vme->GetOutput()->Update();  
-        start_vme->GetOutput()->GetAbsPose(m_StartPoint, orientation);
+        start_vme->GetOutput()->GetAbsPose(m_StartPoint, orientation, currTs);
       }
 
       /*if(mflVMELandmark *end1_landmark = mflVMELandmark::SafeDownCast(end1_vme))
@@ -504,14 +517,16 @@ void mafVMEMeter::InternalUpdate()
 
       if(end1_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("EndVME1") != -1)
       {
-        ((mafVMELandmarkCloud *)end1_vme)->GetLandmark(GetLinkSubId("EndVME1"),m_EndPoint,-1);
-        m_TmpTransform->SetMatrix(*end1_vme->GetOutput()->GetAbsMatrix());
+        ((mafVMELandmarkCloud *)end1_vme)->GetLandmark(GetLinkSubId("EndVME1"),m_EndPoint,currTs);
+        mafMatrix tm;
+        end1_vme->GetOutput()->GetAbsMatrix(tm, currTs);
+        m_TmpTransform->SetMatrix(tm);
         m_TmpTransform->TransformPoint(m_EndPoint,m_EndPoint);
       }
       else
       {
         end1_vme->GetOutput()->Update();  
-        end1_vme->GetOutput()->GetAbsPose(m_EndPoint, orientation);
+        end1_vme->GetOutput()->GetAbsPose(m_EndPoint, orientation, currTs);
       }
 
       /*if (mflVMELandmark *end2_landmark = mflVMELandmark::SafeDownCast(end2_vme))
@@ -519,14 +534,16 @@ void mafVMEMeter::InternalUpdate()
 
       if(end2_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("EndVME2") != -1)
       {
-        ((mafVMELandmarkCloud *)end2_vme)->GetLandmark(GetLinkSubId("EndVME2"),m_EndPoint2,-1);
-        m_TmpTransform->SetMatrix(*end2_vme->GetOutput()->GetAbsMatrix());
+        ((mafVMELandmarkCloud *)end2_vme)->GetLandmark(GetLinkSubId("EndVME2"),m_EndPoint2,currTs);
+        mafMatrix tm;
+        end2_vme->GetOutput()->GetAbsMatrix(tm, currTs);
+        m_TmpTransform->SetMatrix(tm);
         m_TmpTransform->TransformPoint(m_EndPoint2,m_EndPoint2);
       }
       else
       {
         end2_vme->GetOutput()->Update();  
-        end2_vme->GetOutput()->GetAbsPose(m_EndPoint2, orientation);
+        end2_vme->GetOutput()->GetAbsPose(m_EndPoint2, orientation, currTs);
       }
     }
     else
@@ -1050,20 +1067,25 @@ void mafVMEMeter::GenerateHistogram(int generate)
 void mafVMEMeter::CreateHistogram()
 //----------------------------------------------------------------------------
 {
+  mafTimeStamp currTs = GetTimeStamp();
   if (m_ProbedVME != NULL)
   {
+    mafTimeStamp tsPrb = m_ProbedVME->GetTimeStamp();
+    m_ProbedVME->SetTimeStamp(currTs);
+    m_ProbedVME->Update();
     vtkDataSet *probed_data = m_ProbedVME->GetOutput()->GetVTKData();
     probed_data->Update();
 
     vtkMAFSmartPointer<vtkTransform> transformStart;
     mafVME *start_vme = GetStartVME();
-    mafMatrix *matrixStart = start_vme->GetOutput()->GetMatrix();
+    mafMatrix matrixStart;
+    start_vme->GetOutput()->GetMatrix(matrixStart, currTs);
     double point1[3], rotStart[3];
 
     if (start_vme && start_vme->IsMAFType(mafVMELandmarkCloud))
     {
       int sub_id = GetLinkSubId("StartVME");
-      ((mafVMELandmark *)((mafVMELandmarkCloud *)start_vme)->GetChild(sub_id))->GetOutput()->GetAbsPose(point1, rotStart);
+      ((mafVMELandmark *)((mafVMELandmarkCloud *)start_vme)->GetChild(sub_id))->GetOutput()->GetAbsPose(point1, rotStart, currTs);
       
     }
     else
@@ -1076,13 +1098,14 @@ void mafVMEMeter::CreateHistogram()
     vtkMAFSmartPointer<vtkTransform> transformEnd;
    
     mafVME *end_vme1 = GetEnd1VME();
-    mafMatrix *matrixEnd1 = end_vme1->GetOutput()->GetMatrix();
+    mafMatrix matrixEnd1;
+    end_vme1->GetOutput()->GetMatrix(matrixEnd1, currTs);
 
     double point2[3], rotEnd[3];
     if (end_vme1 && end_vme1->IsMAFType(mafVMELandmarkCloud))
     {
       int sub_id = GetLinkSubId("EndVME1");
-      ((mafVMELandmark *)((mafVMELandmarkCloud *)end_vme1)->GetChild(sub_id))->GetOutput()->GetAbsPose(point2, rotEnd);
+      ((mafVMELandmark *)((mafVMELandmarkCloud *)end_vme1)->GetChild(sub_id))->GetOutput()->GetAbsPose(point2, rotEnd, currTs);
 
     }
     else
@@ -1135,5 +1158,9 @@ void mafVMEMeter::CreateHistogram()
     vtkPolyData *probimg_result = prober->GetPolyDataOutput();
     m_PlotActor->AddInput(probimg_result);
     if(m_HistogramRWI) m_HistogramRWI->m_RwiBase->Render();
+
+    m_ProbedVME->SetTimeStamp(tsPrb);
+    m_ProbedVME->Update();
+
   }
 }

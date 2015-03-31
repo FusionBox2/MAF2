@@ -44,6 +44,8 @@ public:
 
   void OnEvent(mafEventBase *e);
 
+  virtual mafID GetNewNodeId(){return GetNextNodeId();}
+
   /** return an xpm-icon that can be used to represent this node */
   static char ** GetIcon();   //SIL. 11-4-2005:  
 protected:

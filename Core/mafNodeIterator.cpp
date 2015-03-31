@@ -229,7 +229,7 @@ int mafNodeIterator::GoToNextNode()
   if (!m_TraversalDone)
   {
     //return (IsVisible(GetCurrentNode()))?MAF_OK:GoToNextNode();
-    return IsVisible(m_CurrentNode)||m_IgnoreVisibleToTraverse ? MAF_OK : GoToNextNode();
+    return m_CurrentNode->IsVisible()||m_IgnoreVisibleToTraverse ? MAF_OK : GoToNextNode();
   }
 
   return MAF_ERROR;
@@ -389,7 +389,7 @@ int mafNodeIterator::GoToPreviousNode()
   if (!m_TraversalDone)
   {
     //return (IsVisible(GetCurrentNode()))?MAF_OK:GoToPreviousNode();
-    return IsVisible(m_CurrentNode)||m_IgnoreVisibleToTraverse ? MAF_OK : GoToPreviousNode();
+    return m_CurrentNode->IsVisible()||m_IgnoreVisibleToTraverse ? MAF_OK : GoToPreviousNode();
   }
 
   return MAF_ERROR;
@@ -454,7 +454,7 @@ int mafNodeIterator::GoToFirstNode()
   {
     m_TraversalDone=0; // reset the traversal flag
     PreExecute(); // Call the pre-callback
-    return IsVisible(m_CurrentNode)||m_IgnoreVisibleToTraverse?MAF_OK:GoToNextNode();
+    return m_CurrentNode->IsVisible()||m_IgnoreVisibleToTraverse?MAF_OK:GoToNextNode();
   }
   else
   {
@@ -494,7 +494,7 @@ int mafNodeIterator::GoToLastNode()
     m_TraversalDone=0; // reset the traversal flag
     PreExecute(); // Call the Pre-callbacks
     //return IsVisible(m_CurrentNode)?MAF_OK:GoToPreviousNode();
-    return IsVisible(m_CurrentNode)||m_IgnoreVisibleToTraverse ? MAF_OK : GoToPreviousNode();
+    return m_CurrentNode->IsVisible()||m_IgnoreVisibleToTraverse ? MAF_OK : GoToPreviousNode();
   }
   else
   {

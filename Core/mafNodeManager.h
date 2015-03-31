@@ -22,8 +22,7 @@
 #include "mafEvent.h"
 #include "mafObserver.h"
 #include "mafNode.h"
-#include "mafVMERoot.h"
-#include "mafVMERoot.h"
+#include "mafNodeRoot.h"
 #include "mafGUIFileHistory.h"
 
 #ifdef MAF_EXPORTS
@@ -104,7 +103,7 @@ public:
   void SetFileHistoryMenu(wxMenu *menu);
  
 	/** Return the tree's root. */
-  mafVMERoot *GetRoot() { return m_Root;};		
+  mafNodeRoot *GetRoot() { return m_Root;};		
 
   /** Set the application stamp; this is the mark of the specific vertical application (is often equal to the application name). */
   void SetApplicationStamp(wxString appstamp);
@@ -119,7 +118,7 @@ public:
 protected:
   bool m_Modified;
 
-  mafVMERoot      *m_Root;
+  mafNodeRoot     *m_Root;
   mafObserver     *m_Listener;
   wxConfigBase		*m_Config;
   mafGUIFileHistory	 m_FileHistory;
