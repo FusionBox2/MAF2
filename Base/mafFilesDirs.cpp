@@ -65,6 +65,10 @@ mafString mafPathOnly(const mafString& fullname)
 {
   return wxPathOnly(fullname.GetCStr()).c_str();
 }
+mafString mafFileNameFromPath(const mafString& fullname)
+{
+  return wxFileNameFromPath(fullname.GetCStr()).c_str();
+}
 
 
 mafString mafCreateTempFileName(const mafString& base)

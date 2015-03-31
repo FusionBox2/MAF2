@@ -28,6 +28,7 @@ MAF_EXPORT mafString mafCreateTempFileName(const mafString& base);
 MAF_EXPORT void mafSplitPath(const mafString& fullname, mafString* path, mafString* name, mafString* ext);
 MAF_EXPORT void mafSplitPath(const mafString& fullname, mafString* path, mafString* nameext);
 MAF_EXPORT mafString mafPathOnly(const mafString& fullname);
+MAF_EXPORT mafString mafFileNameFromPath(const mafString& fullname);
 
 MAF_EXPORT void mafRemoveDirectory(const mafString& directory);
 MAF_EXPORT mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafString& tmpDir);
