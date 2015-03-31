@@ -65,6 +65,7 @@ public:
   {
     ID_SCALAR_VISIBILITY = Superclass::ID_LAST,
     ID_RENDERING_DISPLAY_LIST,
+    ID_LABELS,
     ID_LAST
   };
 
@@ -84,6 +85,7 @@ protected:
 
   int m_ScalarVisibility;
   int m_RenderingDisplayListFlag;
+  int m_Labels;
   mafGUIMaterialButton *m_MaterialButton;
 
   /** Create visual-pipe for closed cloud or single landmark */

@@ -73,6 +73,7 @@ mafPipeLandmarkCloud::mafPipeLandmarkCloud()
   m_Radius = 1.0;
   m_ScalarVisibility = FALSE;
   m_RenderingDisplayListFlag = 0;
+  m_Labels        = 1;
 }
 //----------------------------------------------------------------------------
 void mafPipeLandmarkCloud::Create(mafNode *node, mafView *view)
@@ -160,15 +161,22 @@ mafGUI *mafPipeLandmarkCloud::CreateGui()
 {
 	assert(m_Gui == NULL);
 	m_Gui = new mafGUI(this);
-	if(m_Vme && m_Vme->IsMAFType(mafVMELandmarkCloud))
+	if(m_Vme)
 	{
-		
-		m_Gui->Bool(ID_SCALAR_VISIBILITY,_("scalar vis."), &m_ScalarVisibility,0,_("turn on/off the scalar visibility"));
-		m_Gui->Divider();
-		m_MaterialButton = new mafGUIMaterialButton(m_Vme,this);
-		m_Gui->AddGui(m_MaterialButton->GetGui());
-		m_Gui->Bool(ID_RENDERING_DISPLAY_LIST,_("display list"),&m_RenderingDisplayListFlag,0,_("turn on/off \nrendering displaylist calculation"));
-		m_Gui->Divider();
+
+    if(m_Vme->IsMAFType(mafVMELandmarkCloud))
+    {
+      m_Gui->Bool(ID_SCALAR_VISIBILITY,_("scalar vis."), &m_ScalarVisibility,0,_("turn on/off the scalar visibility"));
+      m_Gui->Divider();
+      m_MaterialButton = new mafGUIMaterialButton(m_Vme,this);
+      m_Gui->AddGui(m_MaterialButton->GetGui());
+      m_Gui->Bool(ID_RENDERING_DISPLAY_LIST,_("display list"),&m_RenderingDisplayListFlag,0,_("turn on/off \nrendering displaylist calculation"));
+      m_Gui->Divider();
+    }
+    else
+    {
+      m_Gui->Bool(ID_LABELS, _("label"), &m_Labels);
+    }
 	}
 
 	return m_Gui;
@@ -181,7 +189,7 @@ void mafPipeLandmarkCloud::UpdateProperty(bool fromTag)
   {
     double pos[3], rot[3];
     m_Landmark->GetOutput()->GetAbsPose(pos, rot);
-    if(m_Landmark->GetLandmarkVisibility())
+    if(m_Labels && m_Landmark->GetLandmarkVisibility())
       m_Caption->SetVisibility(1);
     else
       m_Caption->SetVisibility(0);
@@ -229,6 +237,17 @@ void mafPipeLandmarkCloud::OnEvent(mafEventBase *maf_event)
         mafEventMacro(mafEvent(this,CAMERA_UPDATE));
       }
       break;
+      case ID_LABELS:
+        {
+          if(m_Landmark)
+          {
+            if(m_Landmark->GetLandmarkVisibility() && m_Labels)
+              m_Caption->SetVisibility(1);
+            else
+              m_Caption->SetVisibility(0);
+          }
+          mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        }
       case ID_RENDERING_DISPLAY_LIST:
         m_CloudMapper->SetImmediateModeRendering(m_RenderingDisplayListFlag);
         mafEventMacro(mafEvent(this,CAMERA_UPDATE));
@@ -376,7 +395,7 @@ void mafPipeLandmarkCloud::CreateClosedCloudPipe(vtkDataSet *data, double radius
     dis = wxString::Format("%s",m_Landmark->GetName().GetCStr());
     m_Caption->SetCaption(dis.c_str());
 
-    if(m_Landmark->GetLandmarkVisibility())
+    if(m_Labels && m_Landmark->GetLandmarkVisibility())
       m_Caption->SetVisibility(1);
     else
       m_Caption->SetVisibility(0);
