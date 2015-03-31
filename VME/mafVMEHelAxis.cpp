@@ -616,7 +616,7 @@ void mafVMEHelAxis::OnEvent(mafEventBase *maf_event)
   {
     mafString s(_("Choose cloud"));
     mafEvent e(this,VME_CHOOSE, &s, NULL/*, (long)&lhpOpRegisterLMScripted::ClosedCloudAccept*/);
-    mafEventMacro(e);
+    this->ForwardUpEvent(e);
     mafVME *vme = mafVME::SafeDownCast(e.GetVme());
     SetProximal(vme);
     break;
