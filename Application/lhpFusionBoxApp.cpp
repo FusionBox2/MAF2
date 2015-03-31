@@ -438,65 +438,6 @@ bool lhpFusionBoxApp::OnInit()
   #include "pic/lhpBuilder/MDICHILD_ICON.xpm"
   mafADDPIC(MDICHILD_ICON);
 
-  LibHandle C3DLib      = NULL;
-  LibHandle matlabLib   = NULL;
-  LibHandle fullControl = NULL;
-  bool fullVersion      = false;
-
-  fullControl = mafDynamicLoader::OpenLibrary("full_ver");
-  if(fullControl)
-  {
-    unsigned (*fnfull_ver)() = (unsigned(*)())mafDynamicLoader::GetSymbolAddress(fullControl, "fnfull_ver");
-    if(fnfull_ver != NULL && fnfull_ver() > 0)
-    {
-      fullVersion = true;
-    }
-    m_Plugins.push_back(std::make_pair(fullControl, (void(*)())NULL));
-  }
-
-  matlabLib = mafDynamicLoader::OpenLibrary("MATLAB");
-  if(matlabLib)
-  {
-    bool (*minit)() = (bool(*)())mafDynamicLoader::GetSymbolAddress(matlabLib, "Init");
-    if(minit == NULL || !minit())
-    {
-      mafDynamicLoader::CloseLibrary(matlabLib);
-      matlabLib = NULL;
-    }
-    else
-    {
-      void (*mterm)() = (void(*)())mafDynamicLoader::GetSymbolAddress(matlabLib, "Terminate");
-      if(lhpOpRegression::Config(matlabLib))
-      {
-        m_Plugins.push_back(std::make_pair(matlabLib, mterm));
-      }
-      else
-      {
-        if(mterm)
-          mterm();
-        mafDynamicLoader::CloseLibrary(matlabLib);
-        matlabLib = NULL;
-      }
-    }
-  }
-
-  if(fullVersion)
-  {
-    C3DLib = mafDynamicLoader::OpenLibrary("C3D_Reader");
-    if(C3DLib)
-    {
-      if(lhpOpImporterC3D::Config(C3DLib))
-      {
-        m_Plugins.push_back(std::make_pair(C3DLib, (void(*)())NULL));
-      }
-      else
-      {
-        mafDynamicLoader::CloseLibrary(C3DLib);
-        C3DLib = NULL;
-      }
-    }
-  }
-
   int result;
  
   result = medVMEFactory::Initialize();
@@ -541,22 +482,12 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   mafPlugPipe<lhpPipeLeverArm>("Visual pipe for lever arm");
 
   m_Logic = new lhpBuilderLogic();
-  if(fullVersion)
-  {
-    m_Logic->GetTopWin()->SetTitle("LHPFusionBox");
-  }
-  else
-  {
-    m_Logic->GetTopWin()->SetTitle("ULBViewer");
-  }
+  m_Logic->GetTopWin()->SetTitle("ICT4RehabDemo");
   m_Logic->Configure();
   SetTopWindow(mafGetFrame());  
 
   wxString regKeyName;
-  if(fullVersion)
-    regKeyName = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\lhpFusionBox";
-  else
-    regKeyName = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\ULBViewer";
+  regKeyName = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\ICT4RehabDemo";
   wxRegKey RegKey(regKeyName);
 	if(RegKey.Exists())
 	{
@@ -580,158 +511,34 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   m_Logic->Plug(new mafOpImporterMSF("MSF"),"Other");
   m_Logic->Plug(new medOpImporterLandmark("Landmark"),"Motion Analysis");
   m_Logic->Plug(new medOpImporterMotionData<mafVMERawMotionData>("Raw Motion Data", "RAW Motion Data (*.MAN)|*.MAN", "Dictionary (*.txt)|*.txt"), "Motion Analysis");
-  m_Logic->Plug(new medOpImporterMotionData<mafVMEPGDData>("PGD Data", "PGD Data (*.PGD)|*.PGD", "Dictionary (*.txt)|*.txt"), "Motion Analysis");
-  m_Logic->Plug(new mafOpImporterVRML("VRML"), "Geometries");
   m_Logic->Plug(new lhpOpINPImporter("INP/INP_AF"), "Geometries");
-  m_Logic->Plug(new lhpOpMTRImporter("MTR"), "Geometries");
-  m_Logic->Plug(new lhpOpMTRULBImporter("MTR (ULB)"), "Geometries");
   m_Logic->Plug(new lhpOpImporterC3DBTK("C3D BTK"),"Motion Analysis");  
-  if(fullVersion)
-  {
-    medGUIDicomSettings *dicomSettings=new medGUIDicomSettings(NULL,"DICOM");
-    medOpImporterDicomOffis *dimp = new medOpImporterDicomOffis("DICOM");
-    dimp->SetSetting(dicomSettings);
-    m_Logic->Plug(dimp,"DICOM Suite");
-    //m_Logic->Plug(new medOpImporterDicomOffis("DICOM"),"Images");
-    m_Logic->Plug(new mafOpImporterVTK("VTK"),"Other");
-    m_Logic->Plug(new mafOpImporterMSF1x("MAF 1.x"),"Other");
-    m_Logic->Plug(new mafOpImporterBBF("BFF (VolumeLarge)"),"Other");
-    m_Logic->Plug(new mafOpImporterRAWVolume_BES("Raw Volume"),"Images");
-    m_Logic->Plug(new mafOpImporterRAWVolume("Raw Volume Legacy"),"Images");
-    m_Logic->Plug(new medOpImporterRAWImages("Raw Images"),"Images");
-    //m_Logic->Plug(new medOpImporterRAWImages("Raw Images Legacy"),"Images");
-    m_Logic->Plug(new mafOpImporterImage("Images"),"Images");
-    m_Logic->Plug(new medOpImporterLandmarkWS("ASCII trajectories (VWs)"),"Motion Analysis");
-    if(C3DLib)
-      m_Logic->Plug(new lhpOpImporterC3D("C3D"),"Motion Analysis");  
-    // m_Logic->Plug(new lhpOpLandmarkImporter("Landmark")); //Old Importer
-    m_Logic->Plug(new medOpImporterGRFWS("ASCII Force Plates (VWs)"), "Motion Analysis");
-    m_Logic->Plug(new mafOpImporterMesh("Generic Mesh"), "Finite Element");
-    m_Logic->Plug(new lhpOpImporterAnsysInputFile("Ansys Input File"), "Finite Element");	
-    m_Logic->Plug(new lhpOpImporterAnsysCDBFile("Ansys CDB File"), "Finite Element");	
-    m_Logic->Plug(new mafOpImporterExternalFile("External data"), "Other");
-    m_Logic->Plug(new medOpImporterAnalogWS("ASCII Analog (VWs)"), "Motion Analysis");
-    m_Logic->Plug(new lhpOpKinectUtil(false, "Kinect"),"Motion Analysis");  
-    m_Logic->Plug(new lhpOpKinectUtil(true, "Kinect App"),"Motion Analysis");  
-    m_Logic->Plug(new lhpOpImporterRSScan("RSScan"), "Finite Element");	
-  }
+  m_Logic->Plug(new lhpOpKinectUtil(false, "Kinect"),"Motion Analysis");  
+  m_Logic->Plug(new lhpOpKinectUtil(true, "Kinect App"),"Motion Analysis");  
 
   //-------------------------------------------------------------
 
   //------------------------- Exporters -------------------------
   m_Logic->Plug(new mafOpExporterSTL("STL"),"Geometries");
   m_Logic->Plug(new lhpOpINPExporter("INP"),"Geometries");
-  m_Logic->Plug(new mafOpExporterVTK("VTK"), "Other");
-  m_Logic->Plug(new mafOpExporterBmp("Bmp"), "Images");
-  m_Logic->Plug(new lhpOpMTRExporter("MTR"), "Motion Analysis");
   m_Logic->Plug(new medOpExporterLandmark("Landmark"), "Motion Analysis");
-  if(fullVersion)
-  {
-    m_Logic->Plug(new mafOpExporterRAW("Raw"), "Images");
-    m_Logic->Plug(new medOpExporterWrappedMeter("Wrapped Meter"), "Other");
-    m_Logic->Plug(new medOpExporterMeters("Meters"), "Other");
-    m_Logic->Plug(new lhpOpExporterAnsysInputFile("Ansys Input File"),"Finite Element");
-  }
   //-------------------------------------------------------------
 
   //------------------------- Operations -------------------------
-  m_Logic->Plug(new mafOpValidateTree());
   m_Logic->Plug(new mafOpCreateGroup("Group"),"Create/New");
-	m_Logic->Plug(new mafOpCreateSurfaceParametric("Parametric Surface"),"Create/New");
-	m_Logic->Plug(new mafOpAddLandmark("Add Landmark \tCtrl+A"),"Create/New");
   m_Logic->Plug(new mafOpCreateMeter("Meter"),"Create/Derive");
-  m_Logic->Plug(new lhpOpFindCentroid("Geometry centroid"),"Create/Derive");
 
   m_Logic->Plug(new mafOpReparentTo("Reparent to...  \tCtrl+R"),"Modify/Fuse");
-  m_Logic->Plug(new lhpOpMove(),"Modify");
-  m_Logic->Plug(new lhpOpAverageLM("Average landmark"),"Create/Derive");
-  m_Logic->Plug(new lhpOpCreateLMCLines("Cloud lines"),"Create/Derive");
-  m_Logic->Plug(new lhpOpJoinSurf("JoinSurface"),"Create/Derive");
-  m_Logic->Plug(new lhpOpMergeClouds("Merge clouds"),"Create/Derive");
-  if(fullVersion)
-  {
-    m_Logic->Plug(new mafOpCreateVolume("Constant Volume"),"Create/New");
 
-#ifdef MAF_USE_ITK
-    m_Logic->Plug(new lhpOpCreateSurfaceScalar("Surface Scalar"),"Create/Derive");
-#endif
-    m_Logic->Plug(new lhpOpLnSurf("Lineset and surface"),"Create/Derive");
-    m_Logic->Plug(new mafOpCreateRefSys("Refsys"),"Create/New");
-    m_Logic->Plug(new mafOpCreateSlicer("Slicer"),"Create/Derive");
-    m_Logic->Plug(new medOpFreezeVME("Freeze VME"),"Create/Derive");
-    m_Logic->Plug(new medOpRegisterClusters("Register Landmark Cloud"),"Modify/Fuse");
-    m_Logic->Plug(new lhpOpFuseLMScripted("Fuse LM based model"),"Modify/Fuse");
-    m_Logic->Plug(new lhpOpRegisterLMScripted("Register Landmark Cloud Tree"),"Modify/Fuse");
-    //m_Logic->Plug(new medOpCreateWrappedMeter("Wrapped Meter"),"Create/Derive");
-    m_Logic->Plug(new medOpComputeWrapping("Wrapped Action Line"),"Create/Derive");//15-1-2009
-    m_Logic->Plug(new medOpCreateMuscleWrapper("Muscle Wrapper"),"Create/Derive"); //BES: 14.11.2008
-    // m_Logic->Plug(new lhpOpEditMetadata("Metadata Editor"),"Modify");
-    m_Logic->Plug(new mafOpFilterSurface("Filter Surface"),"Modify");
-    m_Logic->Plug(new mafOpVOIDensityEditor("Volume Density"),"Modify");
-    m_Logic->Plug(new medOpMeshDeformation("Deform Surface"), "Modify");
-    m_Logic->Plug(new mafOpApplyTrajectory("Apply Trajectory"), "Modify");
-    m_Logic->Plug(new mafOpExtractIsosurface("Extract Isosurface"),"Create/Derive");
-    m_Logic->Plug(new medOpSurfaceMirror("Surface Mirror"),"Modify");
-    m_Logic->Plug(new mafOpCrop("Crop Volume"),"Modify");
-    m_Logic->Plug(new medOpVolumeResample("Volume Resample"),"Modify");
-    m_Logic->Plug(new mafOp2DMeasure("2D Measure"),"Measure");
-    m_Logic->Plug(new mafOpVOIDensity("VOI Density"),"Measure");
-    m_Logic->Plug(new lhpOpScaleDataset(),"Modify");
-    m_Logic->Plug(new medOpCropDeformableROI(_("Masking")),_("Modify"));
-    m_Logic->Plug(new mafOpImporterVMEDataSetAttributes("VME DataSet Attributes Adder"),"Modify");
-    m_Logic->Plug(new medOpClassicICPRegistration("Register Surface"),"Modify/Fuse");
-    m_Logic->Plug(new lhpOpAFSys("AFRefsys"),"Create/Derive");
-    m_Logic->Plug(new lhpOpKinectAFs("Kinect Refsys"),"Create/Derive");
-    m_Logic->Plug(new lhpOpStickPalpation("Wand palpated landmark"),"Create/Derive");
+  m_Logic->Plug(new lhpOpFuseLMScripted("Fuse LM based model"),"Modify/Fuse");
+  m_Logic->Plug(new lhpOpRegisterLMScripted("Register Landmark Cloud Tree"),"Modify/Fuse");
+  m_Logic->Plug(new lhpOpAFSys("AFRefsys"),"Create/Derive");
+  m_Logic->Plug(new lhpOpKinectAFs("Kinect Refsys"),"Create/Derive");
 
-    m_Logic->Plug(new lhpOpHelAxis("Helical axis"),"Create/Derive");
-    m_Logic->Plug(new lhpOpTimeReduce("Time reduce"),"Modify");
-    m_Logic->Plug(new lhpOpTimeShift("Time shift"),"Modify");
-    m_Logic->Plug(new lhpOpLMProj(true, "Landmark Cloud Projection"),"Create/Derive");
-    m_Logic->Plug(new lhpOpSolidify("Solidify Landmark Cloud"),"Create/Derive");
-    m_Logic->Plug(new lhpOpSoftReg("Soft tissue registration"),"Create/Derive");
-    m_Logic->Plug(new lhpOpCreateObject<mafVMEBSplineLine>("BSplineLine", "BSplineLine"),"Create/New");
-    m_Logic->Plug(new lhpOpCreateObject<mafVMEBSplineSurface>("BSplineSurface", "BSplineSurface"),"Create/New");
-    m_Logic->Plug(new lhpOpCreateObject<mafVMEBSplineVolume>("BSplineVolume", "BSplineVolume"),"Create/New");
-    m_Logic->Plug(new lhpOpCreateObject<lhpVMELeverArm>("Lever Arm", "Lever Arm"),"Create/Derive");
-    m_Logic->Plug(new lhpOpRegSurfWithCloud("Register Surface with Landmark Cloud"),"Modify/Fuse");
-    m_Logic->Plug(new lhpOpRepresentInAF("Represent in RefSys"),"Modify/Fuse");
-    m_Logic->Plug(new lhpOpLMMirror("Landmark Cloud Mirror"),"Modify");
-    m_Logic->Plug(new lhpOpMoveSeq(),"Modify");
-    m_Logic->Plug(new lhpOpICPRegFollow("Move Surface As Registered"),"Modify/Fuse");
-    m_Logic->Plug(new lhpOpRegression("Regression"),"Create/Derive");
-    m_Logic->Plug(new lhpOpFingerStick("Finger stick"),"Create/Derive");
-    m_Logic->Plug(new lhpOpCutSurface("CutSurface"),"Create/Derive");
-    m_Logic->Plug(new medOpComputeWrapping("Compute Wrapping"),"Create/Derive");
-    //m_Logic->Plug(new lhpOpMeanHelAxis("Mean helical axis"),"Create/Derive");
-    m_Logic->Plug(new lhpOpRegistration("DSRegistration"),"Modify");
-    m_Logic->Plug(new lhpOpBuildHierarchy("Make hierarchical"),"Modify/Fuse");
-    m_Logic->Plug(new lhpOpBonemat("Bonemat"),"Modify");
-    m_Logic->Plug(new medOpIterativeRegistration("Iterative Registration"),"Modify/Fuse");
-    m_Logic->Plug(new mafOpOpenExternalFile("Open with external program"),"Manage"); 
-    m_Logic->Plug(new medOpCreateLabeledVolume("Labeled Volume"),"Create/Derive");
-    //m_Logic->Plug(new lhpOpUploadVME("Upload VME"),"Manage");
-    m_Logic->Plug(new lhpOpUploadMultiVME("Upload VME"),"Manage");
-    m_Logic->Plug(new lhpOpEditTag("Edit Tag VME"),"Manage");
-    m_Logic->Plug(new lhpOpDownloadVME("Download VME", lhpOpDownloadVME::FROM_BASKET),"Manage");
-    m_Logic->Plug(new lhpOpDownloadVME("Download VME from sandbox",lhpOpDownloadVME::FROM_SANDBOX),"Manage");
+  m_Logic->Plug(new lhpOpHelAxis("Helical axis"),"Create/Derive");
+  m_Logic->Plug(new lhpOpCreateObject<lhpVMELeverArm>("Lever Arm", "Lever Arm"),"Create/Derive");
+  m_Logic->Plug(new lhpOpBuildHierarchy("Make hierarchical"),"Modify/Fuse");
 
-    m_Logic->Plug(new mafOpDecomposeTimeVarVME("Decompose Time"),"Create/Derive");
-    m_Logic->Plug(new mafOpLabelExtractor("Extract Label"),"Create/Derive");
-    m_Logic->Plug(new lhpOpMultiscaleExplore("Multiscale Viewer"),"Manage");
-    m_Logic->Plug(new medOpMML("Register from template"),"Modify");
-    m_Logic->Plug(new lhpOpKeyczarIntegrationTest("Security Libraries Integration"),"Test");
-    m_Logic->Plug(new lhpOpComputeTensor("Compute Tensors"), "Modify");
-
-    m_Logic->Plug(new lhpOpTextureOrientation("Texture Orientation"),"Create/Derive");
-
-    // Upload Download VME Refactor Target
-    m_Logic->Plug(new lhpOpUploadMultiVMERefactor("Upload Multi VME Refactor"),"Devel");
-    m_Logic->Plug(new lhpOpEditTagRefactor("Edit Tag VME Refactor"),"Devel");
-    m_Logic->Plug(new lhpOpDownloadVMERefactor("Download Multi VME Refactor"),"Devel");
-    // m_Logic->Plug(new lhpOpUploadVMERefactor("Upload VME Refactor"),"Devel");
-  }
-  
   //-------------------------------------------------------------
   bool view_visibility = 0;//fullVersion;
   //------------------------- Views -------------------------
@@ -771,7 +578,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
 
   mafViewOrthoSlice *viewOrthoSlice = new mafViewOrthoSlice("OrthoSlice");
   viewOrthoSlice->PackageView();
-  m_Logic->Plug(viewOrthoSlice/*, view_visibility*/);
+  m_Logic->Plug(viewOrthoSlice, view_visibility);
 
   mafViewRXCT *vrxctl = new mafViewRXCT("RXCT");
   vrxctl->PackageView();
