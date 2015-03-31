@@ -27,6 +27,67 @@
 class mafStorageElement;
 class mafStorable;
 
+
+class MAF_EXPORT mafParser: public mafObject
+{
+public:
+  mafAbstractTypeMacro(mafParser,mafObject);
+
+  enum PARSER_IO_ERRORS {IO_OK=0,IO_GENERIC_ERROR,IO_WRONG_OBJECT_TYPE,IO_RESTORE_ERROR,IO_WRONG_FILE_TYPE,IO_WRONG_FILE_VERSION,IO_WRONG_URL,IO_LAST_ERROR};
+
+  mafParser();
+  virtual ~mafParser() {}
+
+  /** The TAG identifying the type (i.e. format) of file. (e.g. "MSF") */
+  void SetFileType(const mafString& filetype){m_FileType = filetype;}
+  /** The TAG identifying the type (i.e. format) of file. (e.g. "MSF") */
+  const mafString& GetFileType(){return m_FileType;}
+
+  /** The version of the file format used type of file. (default "1.1") */
+  void SetVersion(const mafString& version){m_Version = version;}
+
+  /** The version of the file format used type of file. (default "1.1") */
+  const mafString& GetVersion(){return m_Version;}
+
+  /** Set the URL of the document to be read or written */
+  virtual void SetURL(const mafString& url){m_URL = url;}
+
+
+  /** Return the URL of the document to be read or written */
+  const mafString& GetURL(){return m_URL;}
+
+  /** perform storing. the argument is the tag of the document node */
+  int Store();
+
+  /** perform restoring. the argument is the tag of the document node  */
+  int Restore();
+
+  /** set the document element to be stored */
+  void SetDocument (mafStorable *doc){m_Document = doc;}
+
+  /** return the document object restored */
+  mafStorable *GetDocument(){return m_Document;}
+
+  void SetErrorCode(int err) {m_ErrorCode=err;}
+  int  GetErrorCode() {return m_ErrorCode;}
+  bool NeedsUpgrade() {return m_NeedsUpgrade;}
+
+protected:
+  /** This is called by Store() and must be reimplemented by subclasses */
+  virtual int InternalStore()=0;
+
+  /** This is called by Restore() and must be reimplemented by subclasses */
+  virtual int InternalRestore()=0;
+
+  mafString           m_FileType;  ///< The type of file to be opened
+  mafString           m_Version;   ///< Current MSF version
+  mafStorable         *m_Document;        ///< document object to be stored, or being restored
+  mafString           m_URL;          ///< name of the file being accessed
+  int                 m_ErrorCode;    ///< the error code 0==OK
+  bool                 m_NeedsUpgrade; ///< Flag used to enable or not the upgrade mechanism.
+};
+
+
 /** Abstract class for an abject mastering the storing/restoring of objects
   This is an abstract class providing defining APIs for objects mastering storing/restoring
   of storing and restoring of mafStorable objects. Concrete implementation will define a concrete encoding.
@@ -47,12 +108,12 @@ class mafStorable;
 class MAF_EXPORT mafStorage: public mafObject
 {
 public:
-  mafAbstractTypeMacro(mafStorage,mafObject);
+  mafTypeMacro(mafStorage,mafObject);
 
-  enum STORAGE_IO_ERRORS {IO_OK=0,IO_GENERIC_ERROR,IO_WRONG_OBJECT_TYPE,IO_LAST_ERROR};
+  enum STORAGE_IO_ERRORS {IO_OK=0,IO_GENERIC_ERROR,IO_WRONG_OBJECT_TYPE,IO_RESTORE_ERROR,IO_WRONG_FILE_TYPE,IO_WRONG_FILE_VERSION,IO_WRONG_URL,IO_LAST_ERROR};
 
   mafStorage();
-  virtual ~mafStorage() {}
+  virtual ~mafStorage();
 
   /** Set the URL of the document to be read or written */
   virtual void SetURL(const char *name);
@@ -81,7 +142,7 @@ public:
   mafStorable *GetDocument();
 
   /** resolve an URL and provide local filename to be used as input */
-  virtual int ResolveInputURL(const char * url, mafString &filename, mafBaseEventHandler *observer = NULL)=0;
+  virtual int ResolveInputURL(const char * url, mafString &filename, mafBaseEventHandler *observer = NULL);
 
   /** resolve an URL and provide a local filename to be used as output */
   //virtual bool ResolveOutputURL(const mafCString url, mafString &filename)=0;
@@ -89,13 +150,13 @@ public:
   /** 
     store a file to an URL. This API transfer a tmp local file to URL.
     If no URL is specified use the storage URL as a base URL. */
-  virtual int StoreToURL(const char *filename, const char *url=NULL) = 0;
+  virtual int StoreToURL(const char *filename, const char *url=NULL);
 
   /** 
     Remove a file from the specified URL. Used when a file in the storage
     is no more necessary. If the specified URL is a local file name try 
     to prepend the storage URL as a base URL name.*/
-  virtual int ReleaseURL(const char *url) = 0;
+  virtual int ReleaseURL(const char *url);
 
   /** 
     Return a name of file to be used as tmp file during store/restore.
@@ -117,31 +178,36 @@ public:
   virtual void SetTmpFolder(const char *folder) {m_TmpFolder=folder;}
 
   /** return the folder where tmp files are stored */
-  virtual const char* GetTmpFolder() {return m_TmpFolder;}
+  virtual const char* GetTmpFolder();
 
   void SetErrorCode(int err) {m_ErrorCode=err;}
   int GetErrorCode() {return m_ErrorCode;}
 
-  bool NeedsUpgrade() {return m_NeedsUpgrade;};
+  /** remove the file from URL */
+  virtual int DeleteURL(const char *url);
+
+  /** empty the garbage collector list deleting old files */
+  virtual void EmptyGarbageCollector();
+
 
 protected:
   /** This is called by Store() and must be reimplemented by subclasses */
-  virtual int InternalStore()=0;
+  virtual int InternalStore();
 
   /** This is called by Restore() and must be reimplemented by subclasses */
-  virtual int InternalRestore()=0;
+  virtual int InternalRestore();
 
   /** populate the list of files in the storage folder */
-  virtual int OpenDirectory(const char *dir_name)=0;
+  virtual int OpenDirectory(const char *dir_name);
 
-  bool                 m_NeedsUpgrade; ///< Flag used to enable or not the upgrade mechanism.
-  mafStorable         *m_Document;        ///< document object to be stored, or being restored
-  mafStorageElement   *m_DocumentElement; ///< document stored element
+  std::set<mafString> m_GarbageCollector; ///< collect URL to be released
+  mafString  m_DefaultTmpFolder; ///< used to store the current default tmp folder
 
   mafString           m_URL;          ///< name of the file being accessed
   mafString           m_ParserURL;    ///< name of the last parsed file (used for SaveAs)
   mafID               m_TmpFileId;    ///< counter for unique tmp file naming
   mafString           m_TmpFolder;    ///< folder where to store tmp files
+  mafParser           *m_Parser;
   
   std::set<mafString> m_TmpFileNames; ///< name of tmp files in the MSF dir
   std::set<mafString> m_FilesDictionary; ///< list of files in the storage folder: to be populated by OpenDirectory()

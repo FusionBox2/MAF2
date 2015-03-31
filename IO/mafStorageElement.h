@@ -21,7 +21,7 @@
 //----------------------------------------------------------------------------
 // forward declarations :
 //----------------------------------------------------------------------------
-class mafStorage;
+class mafParser;
 class mafStorable;
 class mafMatrix;
 class mafString;
@@ -159,7 +159,7 @@ public:
   virtual int RestoreObjectVector(mafStorageElement *element,std::vector<mafObject *> &vector,const char *items_name="Item");
 
   /** return a pointer to the storage who created this element */
-  mafStorage *GetStorage() {return m_Storage;}
+  mafParser *GetStorage() {return m_Storage;}
 
   /** return a pointer to the parent element, i.e. the element upper in the hierarchy */
   mafStorageElement *GetParent() {return m_Parent;}
@@ -185,15 +185,15 @@ public:
 
 protected:
   /** elements can be created only by means of AppendChild() or FindNestedElement() */
-  mafStorageElement(mafStorageElement *parent,mafStorage *storage);
+  mafStorageElement(mafStorageElement *parent,mafParser *storage);
 
   /** commodity function to store a storable object creating on the fly the element to store it inside. */
   mafStorageElement *StoreObject(const char *name,mafStorable *storable, const char *type_name);
 
-  void SetStorage(mafStorage *storage) {m_Storage = storage;}
+  void SetStorage(mafParser *storage) {m_Storage = storage;}
   void SetParent(mafStorageElement *element) {m_Parent = element;}
 
-  mafStorage *m_Storage;                        ///< storage who created this element
+  mafParser *m_Storage;                        ///< storage who created this element
   mafStorageElement *m_Parent;                  ///< the parent element in the hierarchy
   std::vector<mafStorageElement *> *m_Children;  ///< children elements
 };

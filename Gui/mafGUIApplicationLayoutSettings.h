@@ -26,7 +26,7 @@ class mafViewManager;
 class mmaApplicationLayout;
 class mafGUIMDIFrame;
 class mafVMEStorage;
-class mafXMLStorage;
+class mafXMLParser;
 class mafVMERoot;
 
 //----------------------------------------------------------------------------
@@ -121,7 +121,7 @@ protected:
   mafViewManager        *m_ViewManager;
   mmaApplicationLayout  *m_Layout;
   //mafVMEStorage         *m_Storage;
-	mafXMLStorage         *m_XMLStorage;
+	mafXMLParser          *m_XMLStorage;
 	mafVMERoot            *m_XMLRoot;
   int                    m_VisibilityVme;
   wxListBox				      *m_List;

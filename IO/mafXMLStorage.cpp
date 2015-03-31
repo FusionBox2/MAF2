@@ -20,7 +20,6 @@
 #include "mafXMLElement.h"
 #include "mafXMLString.h"
 #include "mafStorable.h"
-#include "mafDirectory.h"
 #include "mmuDOMTreeErrorReporter.h"
 #include <iostream>
 #include <stdio.h>
@@ -45,246 +44,25 @@
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-mafCxxTypeMacro(mafXMLStorage)
+mafCxxTypeMacro(mafXMLParser)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-mafXMLStorage::mafXMLStorage()
+mafXMLParser::mafXMLParser()
 //------------------------------------------------------------------------------
 {
   m_DOM = new mmuXMLDOM;
-  m_Version = "1.1";
-  m_DocumentVersion = "1.1";
 }
 
 //------------------------------------------------------------------------------
-mafXMLStorage::~mafXMLStorage()
+mafXMLParser::~mafXMLParser()
 //------------------------------------------------------------------------------
 {
   cppDEL(m_DOM);
 }
 
 //------------------------------------------------------------------------------
-const char* mafXMLStorage::GetTmpFolder()
-//------------------------------------------------------------------------------
-{
-  if (m_TmpFolder.IsEmpty())
-  {
-    wxString path=wxPathOnly(m_URL.GetCStr());
-    if (!path.IsEmpty())
-    {
-      m_DefaultTmpFolder=path;
-      m_DefaultTmpFolder<<"/";
-    }
-    else
-    {
-      m_DefaultTmpFolder="";
-    }
-    
-    return m_DefaultTmpFolder;
-  }
-  else
-  {
-    return Superclass::GetTmpFolder();
-  }
-}
-
-//----------------------------------------------------------------------------
-int mafXMLStorage::OpenDirectory(const char *pathname)
-//----------------------------------------------------------------------------
-{
-  mafDirectory dir;
-  if (mafString::IsEmpty(pathname))
-  {
-    if (!dir.Load("."))
-      return MAF_ERROR;
-  }
-  else
-  {
-    if (!dir.Load(pathname))
-      return MAF_ERROR;
-  }
-  
-  m_FilesDictionary.clear();
-
-  for (int i=0;i<dir.GetNumberOfFiles();i++)
-  {
-    const char *fullname=dir.GetFile(i);  
-    const char *filename=mafString::BaseName(fullname);
-    m_FilesDictionary.insert(filename);
-  }
-
-  return MAF_OK;
-}
-
-//------------------------------------------------------------------------------
-void mafXMLStorage::SetURL(const char *name)
-//------------------------------------------------------------------------------
-{
-  if (m_URL!=name)
-  {
-    // when saving to a new file or loading a different file
-    // simply clear the list of URLs to be released.
-    m_GarbageCollector.clear();
-    Superclass::SetURL(name);
-  }
-}
-
-//------------------------------------------------------------------------------
-int mafXMLStorage::ResolveInputURL(const char * url, mafString &filename, mafBaseEventHandler *observer)
-//------------------------------------------------------------------------------
-{
-  // currently no real URL support
-  wxString path;
-  path=wxPathOnly(url);
-  if (path.IsEmpty())
-  {
-    wxString base_path;
-    base_path=wxPathOnly(m_ParserURL.GetCStr());
-
-    filename=base_path;
-    
-    if (!base_path.IsEmpty())
-      filename<<"/";
-
-    filename<<url;
-  }
-  else
-  {
-    filename=url;
-  }
-  
-  bool file_exist = wxFileExists(filename.GetCStr());
-  return file_exist ? MAF_OK : MAF_WAIT;
-}
-//------------------------------------------------------------------------------
-int mafXMLStorage::StoreToURL(const char * filename, const char * url)
-//------------------------------------------------------------------------------
-{
-  assert(url); // NULL url not yet supported
-
-  // currently no real URL support
-  wxString path;
-  path=wxPathOnly(url);
-
-  if (path.IsEmpty())
-  {
-    // if local file prepend base_path
-    wxString base_path,fullpathname;
-    base_path=wxPathOnly(m_URL.GetCStr());
-    if (!base_path.IsEmpty())
-    {
-      fullpathname=base_path+"/"+url;
-    }
-    else
-    {
-      fullpathname=url;
-    }
-    
-    if (IsFileInDirectory(url)) // IsFileInDirectory accepts URL specifications
-    {
-      // remove old file if present
-      DeleteURL(url);
-    }
-
-    // currently only local files are supported
-    return wxRenameFile(filename,fullpathname)?MAF_OK:MAF_ERROR;
-  }
-  else
-  {
-    // remove old file if present
-    wxRemoveFile(url);
-    // currently only local files are supported
-    return wxRenameFile(filename,url)?MAF_OK:MAF_ERROR;
-  } 
-}
-
-//------------------------------------------------------------------------------
-int mafXMLStorage::ReleaseURL(const char *url)
-//------------------------------------------------------------------------------
-{
-  // add to list of files to be deleted
-  m_GarbageCollector.insert(url);
-  return MAF_OK;
-}
-
-
-//------------------------------------------------------------------------------
-int mafXMLStorage::DeleteURL(const char *url)
-//------------------------------------------------------------------------------
-{
-  // currently no real URL support
-  wxString path;
-  path=wxPathOnly(url);
-
-  if (path.IsEmpty())
-  {
-    // if local file prepend base_path
-    wxString base_path,fullpathname;
-    base_path=wxPathOnly(m_URL.GetCStr());
-    fullpathname=base_path+"/"+url;
-
-    if (IsFileInDirectory(url))
-    {
-      // remove old file if present
-      wxRemoveFile(fullpathname);
-      return MAF_OK;
-    }
-
-    return MAF_ERROR;
-  }
-  else
-  {
-    return (wxRemoveFile(url)?MAF_OK:MAF_ERROR);
-  }
-
-}
-
-
-//------------------------------------------------------------------------------
-void mafXMLStorage::SetFileType(const char *filetype)
-//------------------------------------------------------------------------------
-{
-  m_FileType=filetype; // force string copying
-}
-
-//------------------------------------------------------------------------------
-const char *mafXMLStorage::GetFileType()
-//------------------------------------------------------------------------------
-{
-  return m_FileType;
-}
-
-//------------------------------------------------------------------------------
-void mafXMLStorage::SetVersion(const char *version)
-//------------------------------------------------------------------------------
-{
-  m_Version=version; // force string copying
-}
-//------------------------------------------------------------------------------
-const char *mafXMLStorage::GetVersion()
-//------------------------------------------------------------------------------
-{
-  return m_Version;
-}
-//------------------------------------------------------------------------------
-const char *mafXMLStorage::GetDocumentVersion()
-//------------------------------------------------------------------------------
-{
-  return m_DocumentVersion;
-}
-//------------------------------------------------------------------------------
-void mafXMLStorage::EmptyGarbageCollector()
-//------------------------------------------------------------------------------
-{
-  for (std::set<mafString>::iterator it=m_GarbageCollector.begin();it!=m_GarbageCollector.end();it++)
-  {
-    DeleteURL(*it);
-  }
-  m_GarbageCollector.clear();
-}
-//------------------------------------------------------------------------------
-int mafXMLStorage::InternalStore()
+int mafXMLParser::InternalStore()
 //------------------------------------------------------------------------------
 {
   int errorCode=0;
@@ -307,12 +85,7 @@ int mafXMLStorage::InternalStore()
   {
     m_DOM->m_XMLSerializer = ( (XERCES_CPP_NAMESPACE_QUALIFIER DOMImplementationLS*)m_DOM->m_XMLImplement )->createDOMWriter();
 
-    mafString filename;
-
-    // initially store to a tmp file
-    GetTmpFile(filename);
-
-    m_DOM->m_XMLTarget = new XERCES_CPP_NAMESPACE_QUALIFIER LocalFileFormatTarget(filename);
+    m_DOM->m_XMLTarget = new XERCES_CPP_NAMESPACE_QUALIFIER LocalFileFormatTarget(m_URL);
 
     // set user specified end of line sequence and output encoding
     m_DOM->m_XMLSerializer->setNewLine( mafXMLString("\r") );
@@ -338,23 +111,23 @@ int mafXMLStorage::InternalStore()
         // extract root element and wrap it with an mafXMLElement object
         XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *root = m_DOM->m_XMLDoc->getDocumentElement();
         assert(root);
-        m_DocumentElement = new mafXMLElement(new mmuXMLDOMElement(root),NULL,this);
+        mafStorageElement *documentElement = new mafXMLElement(new mmuXMLDOMElement(root),NULL,this);
 
         // attach version attribute to the root node
-        m_DocumentElement->SetAttribute("Version",m_Version);
+        documentElement->SetAttribute("Version",m_Version);
       
         // call Store function of the m_Document object. The root is passed
         // as parent the DOM root element. A tree root is usually a special
         // kind of object and can decide to store itself in the root
         // object itself, or below it as it happens for other nodes.
         assert(m_Document);
-        m_Document->Store(m_DocumentElement);
+        m_Document->Store(documentElement);
 
         // write the tree to disk
         m_DOM->m_XMLSerializer->writeNode(m_DOM->m_XMLTarget, *(m_DOM->m_XMLDoc));
 
         // destroy all intermediate objects
-        cppDEL (m_DocumentElement);  
+        cppDEL (documentElement);  
         cppDEL (m_DOM->m_XMLTarget);
         cppDEL (m_DOM->m_XMLDoc);
         errorCode=0;
@@ -374,26 +147,6 @@ int mafXMLStorage::InternalStore()
     cppDEL (m_DOM->m_XMLTarget);
     cppDEL (m_DOM->m_XMLSerializer);
     cppDEL (m_DOM->m_XMLDoctype);
-
-    // move to destination URL
-    if (errorCode==0)
-    {
-      if (StoreToURL(filename,m_URL)!=MAF_OK)
-      {
-        mafErrorMessage("Unable to resolve URL for output XML file, a copy of the file can be found in: %s",filename.GetCStr());
-        errorCode = 4;
-      }
-      else
-      {
-        //
-        // clean the storage file directory
-        //
-
-        ReleaseTmpFile(filename); // remove the storage tmp file
-
-        EmptyGarbageCollector();
-      }
-    }    
   }
   else
   {
@@ -409,7 +162,7 @@ int mafXMLStorage::InternalStore()
 }
 
 //------------------------------------------------------------------------------
-int mafXMLStorage::InternalRestore()
+int mafXMLParser::InternalRestore()
 //------------------------------------------------------------------------------
 {
   assert (m_Document);
@@ -448,15 +201,10 @@ int mafXMLStorage::InternalRestore()
     mmuDOMTreeErrorReporter *errReporter = new mmuDOMTreeErrorReporter();
     m_DOM->m_XMLParser->setErrorHandler(errReporter);
 
-    // here I should resolve the XML file name
-    mafString filename;
-    if (ResolveInputURL(m_ParserURL,filename) != MAF_ERROR)
     {
-      int errorCode  = 0;
-
       try
       {
-        m_DOM->m_XMLParser->parse(filename);
+        m_DOM->m_XMLParser->parse(m_URL);
         int errorCount = m_DOM->m_XMLParser->getErrorCount(); 
 
         if (errorCount != 0)
@@ -471,19 +219,20 @@ int mafXMLStorage::InternalRestore()
           m_DOM->m_XMLDoc = m_DOM->m_XMLParser->getDocument();
           XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *root = m_DOM->m_XMLDoc->getDocumentElement();
           assert(root);
-          m_DocumentElement = new mafXMLElement(new mmuXMLDOMElement(root),NULL,this);
+          mafStorageElement *documentElement = new mafXMLElement(new mmuXMLDOMElement(root),NULL,this);
 
-          if (m_FileType == m_DocumentElement->GetName())
+          if (m_FileType == documentElement->GetName())
           {
-            if (m_DocumentElement->GetAttribute("Version",m_DocumentVersion))
+            mafString docVersion;
+            if (documentElement->GetAttribute("Version",docVersion))
             {
-              double doc_version_f = atof(m_DocumentVersion);
+              double doc_version_f = atof(docVersion);
               double my_version_f = atof(m_Version);
             
               if (my_version_f <= doc_version_f)
               {
                 // Start tree restoring from root node
-                if (m_Document->Restore(m_DocumentElement) != MAF_OK)
+                if (m_Document->Restore(documentElement) != MAF_OK)
                   errorCode = IO_RESTORE_ERROR;
               }
               else
@@ -491,15 +240,15 @@ int mafXMLStorage::InternalRestore()
                 // Paolo 30-11-2007: due to changes on name for mafVMEScalar (to mafVMEScalarMatrix)
                 if (doc_version_f < 2.0)
                 {
-                  mafErrorMacro("XML parsing error: wrong file version v"<<m_DocumentVersion.GetCStr()<<", should be > v"<<m_Version.GetCStr());
+                  mafErrorMacro("XML parsing error: wrong file version v"<<docVersion.GetCStr()<<", should be > v"<<m_Version.GetCStr());
                   errorCode = IO_WRONG_FILE_VERSION;
                 }
                 else
                 {
                   // Upgrade document to the actual version
-                  m_DocumentElement->SetAttribute("Version", my_version_f);
+                  documentElement->SetAttribute("Version", my_version_f);
                   m_NeedsUpgrade = true;
-                  if (m_Document->Restore(m_DocumentElement) != MAF_OK)
+                  if (m_Document->Restore(documentElement) != MAF_OK)
                     errorCode = IO_RESTORE_ERROR;
                 }
               }
@@ -507,12 +256,12 @@ int mafXMLStorage::InternalRestore()
           }
           else
           {
-            mafErrorMacro("XML parsing error: wrong file type, expected \""<<m_FileType<<"\", found "<<m_DocumentElement->GetName());
+            mafErrorMacro("XML parsing error: wrong file type, expected \""<<m_FileType<<"\", found "<<documentElement->GetName());
             errorCode = IO_WRONG_FILE_TYPE;
           }
           
           // destroy the root XML element
-          cppDEL(m_DocumentElement);
+          cppDEL(documentElement);
         }
       }
 
@@ -527,7 +276,7 @@ int mafXMLStorage::InternalRestore()
       catch (const XERCES_CPP_NAMESPACE_QUALIFIER DOMException& e)
       { 
         mafString err;
-        err << "DOM-XML Error while parsing file '" << m_ParserURL << "'\n";
+        err << "DOM-XML Error while parsing file '" << m_URL << "'\n";
         err << "DOMException code is: " << mafString(e.code);
 
         if (e.getMessage())
@@ -550,11 +299,6 @@ int mafXMLStorage::InternalRestore()
         mafErrorMessage("An error occurred during XML parsing");
         errorCode = IO_XML_PARSE_ERROR;
       }
-    }
-    else
-    {
-      mafErrorMessage("Unable to resolve URL for input XML file");
-      errorCode = IO_WRONG_URL;
     }
 
     cppDEL (errReporter);

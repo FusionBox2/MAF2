@@ -219,7 +219,7 @@ void mafGUIApplicationLayoutSettings::SaveTreeLayout()
 void mafGUIApplicationLayoutSettings::InitializeSettings()
 //----------------------------------------------------------------------------
 {
-  m_XMLStorage = mafXMLStorage::New();
+  m_XMLStorage = mafXMLParser::New();
   m_XMLStorage->SetFileType("MLY");
   m_XMLStorage->SetVersion("2.0");
   mafNEW(m_XMLRoot);

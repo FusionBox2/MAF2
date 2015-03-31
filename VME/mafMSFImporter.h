@@ -89,11 +89,11 @@ protected:
   @todo
     - 
 */  
-class MAF_EXPORT mafMSFImporter: public mafXMLStorage
+class MAF_EXPORT mafMSFImporter: public mafStorage
 {
 public:
   
-  mafTypeMacro(mafMSFImporter,mafXMLStorage)
+  mafTypeMacro(mafMSFImporter,mafStorage)
 
   mafMSFImporter();
   virtual ~mafMSFImporter();
@@ -103,13 +103,6 @@ public:
   
   /** return the root node attached to this tree */
   mafVMERoot *GetRoot();
-
-protected:  
-  /** Do not allow changing the file type from external objects. */
-  void SetFileType(const char *filetype) {Superclass::SetFileType(filetype);}
-  
-  /** Do not allow changing the file version from external objects. */
-  void SetVersion(const char *version) {Superclass::SetVersion(version);}
 
 private:
   

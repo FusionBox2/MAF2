@@ -30,7 +30,7 @@
 #include "stdio.h"
 
 //------------------------------------------------------------------------------
-mafXMLElement::mafXMLElement(mmuXMLDOMElement *element,mafXMLElement *parent,mafXMLStorage *storage) :
+mafXMLElement::mafXMLElement(mmuXMLDOMElement *element,mafXMLElement *parent,mafXMLParser *storage) :
   mafStorageElement(parent,storage)
 //------------------------------------------------------------------------------
 {
@@ -163,10 +163,10 @@ const char *mafXMLElement::GetName()
 }
 
 //------------------------------------------------------------------------------
-mafXMLStorage *mafXMLElement::GetXMLStorage()
+mafXMLParser *mafXMLElement::GetXMLStorage()
 //------------------------------------------------------------------------------
 {
-  return (mafXMLStorage *)m_Storage;
+  return (mafXMLParser *)m_Storage;
 }
 
 //------------------------------------------------------------------------------

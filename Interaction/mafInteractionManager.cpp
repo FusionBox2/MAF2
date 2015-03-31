@@ -836,7 +836,7 @@ int mafInteractionManager::Store(const char *filename)
 //------------------------------------------------------------------------------
 {
   assert(filename);
-  mafXMLStorage writer;
+  mafXMLParser writer;
   
   // Multimod Interaction Settings file format
   writer.SetFileType("MIS");
@@ -853,7 +853,7 @@ int mafInteractionManager::Restore(const char *filename)
 //------------------------------------------------------------------------------
 {
   assert(filename);
-  mafXMLStorage reader;
+  mafXMLParser reader;
 
   // Multimod Interaction Settings file format
   reader.SetFileType("MIS");

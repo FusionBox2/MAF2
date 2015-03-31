@@ -21,7 +21,7 @@
 //----------------------------------------------------------------------------
 // forward declarations :
 //----------------------------------------------------------------------------
-class mafXMLStorage;
+class mafXMLParser;
 class mafXMLString;
 class mmuXMLDOMElement;
 
@@ -41,7 +41,7 @@ class mmuXMLDOMElement;
 class MAF_EXPORT mafXMLElement : public mafStorageElement
 {
 public:
-  mafXMLElement(mmuXMLDOMElement *element,mafXMLElement *parent,mafXMLStorage *storage);
+  mafXMLElement(mmuXMLDOMElement *element,mafXMLElement *parent,mafXMLParser *storage);
   virtual ~mafXMLElement();
 
   /** get the name of this XML element */
@@ -100,7 +100,7 @@ public:
   virtual int RestoreText(mafString &buffer);
 
   /** return a pointer to the storage who created this element */
-  mafXMLStorage *GetXMLStorage();
+  mafXMLParser *GetXMLStorage();
 
   /** return a pointer to the parent element, i.e. the element upper in the hierarchy */
   mafXMLElement *GetXMLParent();

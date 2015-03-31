@@ -24,7 +24,7 @@
 #include <assert.h>
 
 //------------------------------------------------------------------------------
-mafStorageElement::mafStorageElement(mafStorageElement *parent,mafStorage *storage)
+mafStorageElement::mafStorageElement(mafStorageElement *parent,mafParser *storage)
 //------------------------------------------------------------------------------
 {
   assert(storage); // no NULL storage is allowed

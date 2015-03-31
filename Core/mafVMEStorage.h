@@ -47,11 +47,11 @@ protected:
   @todo
     - 
 */  
-class MAF_EXPORT mafVMEStorage: public mafXMLStorage, public mafBaseEventHandler, public mafEventSender
+class MAF_EXPORT mafVMEStorage: public mafStorage, public mafBaseEventHandler, public mafEventSender
 {
 public:
   MAF_ID_DEC(MSF_FILENAME_CHANGED);
-  mafTypeMacro(mafVMEStorage,mafXMLStorage)
+  mafTypeMacro(mafVMEStorage,mafStorage)
 
   mafVMEStorage();
   virtual ~mafVMEStorage();
@@ -68,12 +68,6 @@ public:
   virtual void OnEvent(mafEventBase *e);
 
 protected:  
-  /** Do not allow changing the file type from external objects. */
-  void SetFileType(const char *filetype) {Superclass::SetFileType(filetype);}
-  
-  /** Do not allow changing the file version from external objects. */
-  void SetVersion(const char *version) {Superclass::SetVersion(version);}
-
   mmuMSFDocument m_MSFDoc; ///< the VME root node
 };
 #endif // _mafVMEStorage_h_

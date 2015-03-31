@@ -35,57 +35,20 @@ class mmuXMLDOM;
     - remove "IncludeWX.h" inclusion from .cpp
     - add support for NULL destination URL
 */  
-class MAF_EXPORT mafXMLStorage: public mafStorage
+class MAF_EXPORT mafXMLParser: public mafParser
 {
 public:
-  mafTypeMacro(mafXMLStorage,mafStorage);
+  mafTypeMacro(mafXMLParser,mafParser);
   
-  enum XML_IO_ERRORS {IO_XML_PARSE_ERROR=IO_LAST_ERROR,IO_DOM_XML_ERROR,IO_RESTORE_ERROR,IO_WRONG_FILE_TYPE,IO_WRONG_FILE_VERSION,IO_WRONG_URL,IO_XML_PARSER_INTERNAL_ERROR};
+  enum XML_IO_ERRORS {IO_XML_PARSE_ERROR=Superclass::IO_LAST_ERROR,IO_DOM_XML_ERROR,IO_XML_PARSER_INTERNAL_ERROR, IO_LAST_ERROR};
 
-  mafXMLStorage();
-  virtual ~mafXMLStorage();
+  mafXMLParser();
+  virtual ~mafXMLParser();
 
   /** 
     Return the instance of the DOM document used while reading and writing.
     This object is created when Store/Restore starts and destroyed when stops.*/
   mmuXMLDOM *GetXMLDOM() {return m_DOM;}
-
-  /** The TAG identifying the type (i.e. format) of file. (e.g. "MSF") */
-  void SetFileType(const char *filetype);
-  /** The TAG identifying the type (i.e. format) of file. (e.g. "MSF") */
-  const char *GetFileType();
-
-  /** The version of the file format used type of file. (default "1.1") */
-  void SetVersion(const char *version);
-
-  /** The version of the file format used type of file. (default "1.1") */
-  const char *GetVersion();
-
-  /** Return the version of the opened document.*/
-  const char *GetDocumentVersion();
-
-  /** resolve an URL and provide local filename to be used as input */
-  virtual int ResolveInputURL(const char * url, mafString &filename, mafBaseEventHandler *observer = NULL);
-
-  /** resolve an URL and provide a local filename to be used as output */
-  virtual int StoreToURL(const char * filename, const char * url);
-
-  /** release file from storage. Actually do not delete, just collect. */
-  virtual int ReleaseURL(const char *url);
-
-  /** remove the file from URL */
-  virtual int DeleteURL(const char *url);
-
-  /** populate the list of file in the directory */
-  virtual int OpenDirectory(const char *pathname);
-
-  /** Set the URL of the document to be read or written */
-  virtual void SetURL(const char *name);
-
-  virtual const char* GetTmpFolder();
-
-  /** empty the garbage collector list deleting old files */
-  virtual void EmptyGarbageCollector();
 
 protected:
   /** This is called by Store() and must be reimplemented by subclasses */
@@ -94,11 +57,6 @@ protected:
   /** This is called by Restore() and must be reimplemented by subclasses */
   virtual int InternalRestore();
 
-  mafString m_FileType;  ///< The type of file to be opened
-  mafString m_Version;   ///< Current MSF version
-  mafString m_DocumentVersion; ///< Open Document version.
   mmuXMLDOM *m_DOM;      ///< PIMPL object storing XML objects' pointers
-  std::set<mafString> m_GarbageCollector; ///< collect URL to be released
-  mafString  m_DefaultTmpFolder; ///< used to store the current default tmp folder
 };
 #endif // _mafXMLStorage_h_

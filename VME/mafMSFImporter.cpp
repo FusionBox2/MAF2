@@ -706,8 +706,8 @@ mafCxxTypeMacro(mafMSFImporter)
 mafMSFImporter::mafMSFImporter()
 //------------------------------------------------------------------------------
 {
-  SetVersion("1.0");
-  SetFileType("MSF");
+  m_Parser->SetVersion("1.0");
+  m_Parser->SetFileType("MSF");
   SetDocument(new mmuMSF1xDocument); // create a MSF doc
 }
 
@@ -715,19 +715,21 @@ mafMSFImporter::mafMSFImporter()
 mafMSFImporter::~mafMSFImporter()
 //------------------------------------------------------------------------------
 {
-  cppDEL(m_Document); // delete the document object
+  mafStorable *doc = GetDocument();
+  SetDocument(NULL);
+  cppDEL(doc); // delete the document object
 }
 
 //------------------------------------------------------------------------------
 void mafMSFImporter::SetRoot(mafVMERoot *root)
 //------------------------------------------------------------------------------
 {
-  ((mmuMSF1xDocument *)m_Document)->SetRoot(root);
+  ((mmuMSF1xDocument *)GetDocument())->SetRoot(root);
 }
 
 //------------------------------------------------------------------------------
 mafVMERoot *mafMSFImporter::GetRoot()
 //------------------------------------------------------------------------------
 {
-  return ((mmuMSF1xDocument *)m_Document)->GetRoot();
+  return ((mmuMSF1xDocument *)GetDocument())->GetRoot();
 }

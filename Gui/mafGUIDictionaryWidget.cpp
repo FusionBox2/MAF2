@@ -105,7 +105,7 @@ void mafGUIDictionaryWidget::LoadDictionary(const mafString& file)
   m_File = file;
   
   // XML storage to restore
-  mafXMLStorage restore;
+  mafXMLParser restore;
   restore.SetURL(m_File);
   restore.SetFileType("DIC");
   restore.SetVersion("2.0");

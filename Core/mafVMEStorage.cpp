@@ -87,8 +87,8 @@ mafCxxTypeMacro(mafVMEStorage)
 mafVMEStorage::mafVMEStorage()
 //------------------------------------------------------------------------------
 {
-  SetVersion("2.2");
-  SetFileType("MSF");
+  m_Parser->SetVersion("2.2");
+  m_Parser->SetFileType("MSF");
   SetDocument(&m_MSFDoc); // create a MSF doc and set the root node
 }
 
