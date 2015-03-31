@@ -250,7 +250,7 @@ void mafGizmoTranslateAxis::CreateISA()
   // create isa compositor and assign behaviors to IsaGen ivar
   for (int i = 0; i < 2; i++)
   {
-    m_IsaComp[i] = mafInteractorCompositorMouse::New();
+    mafNEW(m_IsaComp[i]);
 
     // default behavior is activated by mouse left and is constrained to X axis,
     // default ref sys is input vme abs matrix

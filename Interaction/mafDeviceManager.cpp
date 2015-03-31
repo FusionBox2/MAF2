@@ -54,7 +54,7 @@ mafDeviceManager::mafDeviceManager()
   m_RestoringFlag   = false;
   m_DeviceIdCounter = mafDevice::MIN_DEVICE_ID;
   m_PersistentDeviceIdCounter = 0;
-  vtkNEW(m_DeviceSet);
+  mafNEW(m_DeviceSet);
   m_DeviceSet->SetPersistentFlag(false);
   m_DeviceSet->SetThreaded(false);
   m_DeviceSet->SetName("DeviceSet");

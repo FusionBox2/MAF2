@@ -238,7 +238,7 @@ void mafGizmoTranslatePlane::CreateISA()
   // Default isa is constrained to plane XZ.
   for (int i = 0; i < SQ; i++)
   {
-    m_IsaComp[i] = mafInteractorCompositorMouse::New();
+    mafNEW(m_IsaComp[i]);
 
     // default behavior is activated by mouse left and is constrained to X axis,
     // default ref sys is input vme abs matrix

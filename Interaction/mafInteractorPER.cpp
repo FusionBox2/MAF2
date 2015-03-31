@@ -60,11 +60,13 @@ mafInteractorPER::mafInteractorPER()
   m_StartButton     = -1;
 
   m_CameraBehavior  = mafInteractor6DOFCameraMove::New(); // allocate camera behavior
+  m_CameraBehavior->Register(this);
   m_CameraBehavior->SetStartButton(MAF_LEFT_BUTTON); // any button
   SetModeToSingleButton();
   m_FirstTime = 0;
 
   m_CameraMouseBehavior = mafInteractorCameraMove::New(); // allocate mouse camera behavior
+  m_CameraMouseBehavior->Register(this);
   m_CameraMouseBehavior->SetStartButton(-1);
 }
 
@@ -72,8 +74,8 @@ mafInteractorPER::mafInteractorPER()
 mafInteractorPER::~mafInteractorPER()
 //------------------------------------------------------------------------------
 {
-  vtkDEL(m_CameraBehavior);
-  vtkDEL(m_CameraMouseBehavior);
+  mafDEL(m_CameraBehavior);
+  mafDEL(m_CameraMouseBehavior);
 }
 
 //----------------------------------------------------------------------------

@@ -173,7 +173,7 @@ void mafGizmoRotateCircle::CreateISA()
 {
   // Create isa compositor and assign behaviors to IsaGen ivar.
   // Default isa constrain rotation around X axis.
-  m_IsaComp = mafInteractorCompositorMouse::New();
+  mafNEW(m_IsaComp);
 
   // default behavior is activated by mouse left and is constrained to X axis,
   // default ref sys is input vme abs matrix

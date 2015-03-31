@@ -183,7 +183,7 @@ void mafOpAddLandmark::OpRun()
 			assert(false); 
 		}
 		// customize m_PickedVme behavior
-		m_LandmarkPicker = mafInteractorPicker::New();
+		mafNEW(m_LandmarkPicker);
 		m_LandmarkPicker->SetListener(this);
 
 		m_OldBehavior = m_PickedVme->GetBehavior();

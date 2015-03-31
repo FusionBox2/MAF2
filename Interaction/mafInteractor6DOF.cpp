@@ -37,11 +37,11 @@ mafCxxAbstractTypeMacro(mafInteractor6DOF)
 mafInteractor6DOF::mafInteractor6DOF()
 //------------------------------------------------------------------------------
 {
-  vtkNEW(m_TrackerPoseMatrix);
-  vtkNEW(m_InverseTrackerPoseMatrix);
-  vtkNEW(m_StartTrackerPoseMatrix);
-  vtkNEW(m_TmpTransform);
-  vtkNEW(m_DeltaTransform);
+  mafNEW(m_TrackerPoseMatrix);
+  mafNEW(m_InverseTrackerPoseMatrix);
+  mafNEW(m_StartTrackerPoseMatrix);
+  mafNEW(m_TmpTransform);
+  mafNEW(m_DeltaTransform);
     
   m_Avatar = NULL;
 }
@@ -50,11 +50,11 @@ mafInteractor6DOF::mafInteractor6DOF()
 mafInteractor6DOF::~mafInteractor6DOF()
 //------------------------------------------------------------------------------
 {
-  vtkDEL(m_TrackerPoseMatrix);
-  vtkDEL(m_InverseTrackerPoseMatrix);
-  vtkDEL(m_StartTrackerPoseMatrix);
-  vtkDEL(m_TmpTransform);
-  vtkDEL(m_DeltaTransform);
+  mafDEL(m_TrackerPoseMatrix);
+  mafDEL(m_InverseTrackerPoseMatrix);
+  mafDEL(m_StartTrackerPoseMatrix);
+  mafDEL(m_TmpTransform);
+  mafDEL(m_DeltaTransform);
 }
 
 //------------------------------------------------------------------------------

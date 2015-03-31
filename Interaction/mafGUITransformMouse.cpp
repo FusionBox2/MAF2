@@ -282,7 +282,7 @@ void mafGUITransformMouse::CreateISA()
   m_OldInteractor = m_InputVME->GetBehavior();
 
   // Create the isa compositor:
-  m_IsaCompositor = mafInteractorCompositorMouse::New();
+  mafNEW(m_IsaCompositor);
 
   // default aux ref sys is the vme ref sys
   m_RefSysVME = m_InputVME;
