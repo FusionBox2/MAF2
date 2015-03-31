@@ -19,6 +19,7 @@
 #include "mafString.h"
 #include "mafEventSender.h"
 #include "mafGUI.h"
+#include "wx/wxHtml.h"
 
 //----------------------------------------------------------------------------
 // forward references
@@ -28,14 +29,14 @@
 //----------------------------------------------------------------------------
 // lhpViewInfoWnd
 //----------------------------------------------------------------------------
-class lhpViewInfoWnd: public wxWindow, public mafBaseEventHandler, public mafEventSender
+class lhpViewInfoWnd: public wxHtmlWindow, public mafBaseEventHandler, public mafEventSender
 {
   DECLARE_DYNAMIC_CLASS(lhpViewInfoWnd)
 public:
   lhpViewInfoWnd(const wxString& label = "", mafBaseEventHandler *listener = NULL);
   ~lhpViewInfoWnd(void);
 
-  wxBitmap       GetBitmap();
+ // wxBitmap       GetBitmap();
   mafGUI         *GetGui() {return m_Gui;};
   void           CreateGui();
   void           OnEvent(mafEventBase *maf_event);
@@ -48,12 +49,12 @@ protected:
 
   mafGUI                            *m_Gui;
 
-  void           OnCommand(wxCommandEvent& event);
+  /*void           OnCommand(wxCommandEvent& event);
   void           OnPaint(wxPaintEvent &event);
   void           OnSize(wxSizeEvent &event);
   void           OnCloseWindow  (wxCloseEvent& event);
   void           OnRightMouseButtonDown(wxMouseEvent &event);
-  void           OnLeftMouseButtonDown(wxMouseEvent &event);
+  void           OnLeftMouseButtonDown(wxMouseEvent &event);*/
 
   //must have for table hook
   DECLARE_EVENT_TABLE();
@@ -62,11 +63,8 @@ protected:
 private:
   std::vector<mafNode *> m_VNodes;
 
-  void      DrawGraph(wxDC *pCompatDC);
-  void      DrawAxes(wxDC *pDC, wxRect *prc, double rXMin, double rXMax, double rYMin, double rYMax, double rXCoef, double rYCoef, bool bGrid, bool bPreciseGrid);
-  void      DrawXAxis(wxDC *pDC, wxRect *prc, double rXMin, double rXMax, double rXCoef, bool bGrid, bool bPreciseGrid);
-  void      DrawYAxis(wxDC *pDC, wxRect *prc, double rYMin, double rYMax, double rYCoef, bool bGrid, bool bPreciseGrid);
-  void      Init();
+  //void      DrawGraph(wxDC *pCompatDC);
+  //void      Init();
 
 };
 

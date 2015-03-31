@@ -26,6 +26,10 @@
 #include "wx/busyinfo.h"
 #include <math.h>
 
+
+#include "splines.h"
+
+
 #include <list>
 
 #include "mafDecl.h"
@@ -887,9 +891,7 @@ namespace
       "LeftShoulder",//(Data(:,135:137));
       "LeftElbow",//(Data(:,138:140));
       "LeftForearm",//(Data(:,141:143));
-      "LeftWrist",//(Data(:,144:146));
-      "Dummy",//                 147:14;
-      "Dummy",//                 150:62;
+      "LeftWrist"//(Data(:,144:146));
     };
 
 
@@ -906,12 +908,17 @@ namespace
       if(!readMatrix(fpath, rmatrix))
         continue;
 
+      lhpVMEKMInfo *kmi = lhpVMEKMInfo::New();
+      kmi->Register(NULL);
+      kmi->SetName(target->GetName() + "_GeneralInfo");
+      kmi->ReparentTo(target);
+
       medVMEAnalog *analog = medVMEAnalog::New();
       analog->Register(NULL);
 
-      mafString analogVmeName;
-      analogVmeName.Append(plot_files[i]);
-      analog->SetName(analogVmeName);
+      //mafString analogVmeName;
+      //analogVmeName.Append(plot_files[i]);
+      analog->SetName(target->GetName() + "_Graph");
 
       vnl_matrix<double> analogMatrix;
       analogMatrix.set_size(rmatrix[0].size() - 1 - 25 * 3, rmatrix.size()); //set dimensions
@@ -953,9 +960,86 @@ namespace
             channelsNameList.push_back(chName);
           }
 
-          analogMatrix.put(currentChannel + 1 - skipped, currentSample, rmatrix[currentSample][currentChannel + 2]); //fill following rows with values, every channel is a row
+          analogMatrix.put(currentChannel + 1 - skipped, currentSample, rmatrix[currentSample][currentChannel + 2] * (180. / 3.14159265358979323846)); //fill following rows with values, every channel is a row
         }
 
+      }
+      if(kmi->GetName().FindFirst("Hand-To-Head") != -1 || kmi->GetName().FindFirst("Hand-To-Mouth") != -1 || kmi->GetName().FindFirst("Hand-To-Back") != -1)
+      {
+        for(int currentSample = 0; currentSample < analogMatrix.columns(); currentSample++)
+        {
+          mafTimeStamp currentTime = analogMatrix.get(0, currentSample);
+
+          double tmp;
+          tmp = analogMatrix.get(40, currentSample);
+          if(currentSample == 0 || tmp > kmi->GetValue(0))
+            kmi->SetValue(0, tmp);
+          if(currentSample == 0 || tmp < kmi->GetValue(1))
+            kmi->SetValue(1, tmp);
+
+          tmp = analogMatrix.get(41, currentSample);
+          if(currentSample == 0 || tmp > kmi->GetValue(6))
+            kmi->SetValue(6, tmp);
+          if(currentSample == 0 || tmp < kmi->GetValue(7))
+            kmi->SetValue(7, tmp);
+
+          tmp = analogMatrix.get(42, currentSample);
+          if(currentSample == 0 || tmp > kmi->GetValue(3))
+            kmi->SetValue(3, tmp);
+          if(currentSample == 0 || tmp < kmi->GetValue(4))
+            kmi->SetValue(4, tmp);
+
+          tmp = analogMatrix.get(58, currentSample);
+          if(currentSample == 0 || tmp > kmi->GetValue(9))
+            kmi->SetValue(9, tmp);
+          if(currentSample == 0 || tmp < kmi->GetValue(10))
+            kmi->SetValue(10, tmp);
+          tmp = analogMatrix.get(59, currentSample);
+          if(currentSample == 0 || tmp > kmi->GetValue(15))
+            kmi->SetValue(15, tmp);
+          if(currentSample == 0 || tmp < kmi->GetValue(16))
+            kmi->SetValue(16, tmp);
+          tmp = analogMatrix.get(60, currentSample);
+          if(currentSample == 0 || tmp > kmi->GetValue(12))
+            kmi->SetValue(12, tmp);
+          if(currentSample == 0 || tmp < kmi->GetValue(13))
+            kmi->SetValue(13, tmp);
+
+
+
+          tmp = analogMatrix.get(43, currentSample);
+          if(currentSample == 0 || tmp > kmi->GetValue(27))
+            kmi->SetValue(27, tmp);
+          if(currentSample == 0 || tmp < kmi->GetValue(28))
+            kmi->SetValue(28, tmp);
+          tmp = analogMatrix.get(44, currentSample);
+          if(currentSample == 0 || tmp > kmi->GetValue(33))
+            kmi->SetValue(33, tmp);
+          if(currentSample == 0 || tmp < kmi->GetValue(34))
+            kmi->SetValue(34, tmp);
+          tmp = analogMatrix.get(45, currentSample);
+          if(currentSample == 0 || tmp > kmi->GetValue(30))
+            kmi->SetValue(30, tmp);
+          if(currentSample == 0 || tmp < kmi->GetValue(31))
+            kmi->SetValue(31, tmp);
+
+
+          tmp = analogMatrix.get(61, currentSample);
+          if(currentSample == 0 || tmp > kmi->GetValue(36))
+            kmi->SetValue(36, tmp);
+          if(currentSample == 0 || tmp < kmi->GetValue(37))
+            kmi->SetValue(37, tmp);
+          tmp = analogMatrix.get(62, currentSample);
+          if(currentSample == 0 || tmp > kmi->GetValue(42))
+            kmi->SetValue(42, tmp);
+          if(currentSample == 0 || tmp < kmi->GetValue(43))
+            kmi->SetValue(43, tmp);
+          tmp = analogMatrix.get(63, currentSample);
+          if(currentSample == 0 || tmp > kmi->GetValue(39))
+            kmi->SetValue(39, tmp);
+          if(currentSample == 0 || tmp < kmi->GetValue(40))
+            kmi->SetValue(40, tmp);
+        }
       }
 
 
@@ -971,9 +1055,9 @@ namespace
       {
         tag_Signals->SetValue(channelsNameList[n], n);
       }
-      analog->ReparentTo(grp);
+      analog->ReparentTo(target);
       mafDEL(analog);
-
+      mafDEL(kmi);
     }
     grp->ReparentTo(target);
     grp->Delete();
@@ -983,9 +1067,9 @@ namespace
 }
 
 mafCxxTypeMacro(lhpOpKinectUtil)
-//----------------------------------------------------------------------------
-lhpOpKinectUtil::lhpOpKinectUtil(bool extapp, const mafString& label, bool simple, bool llimb, bool ulimb) : Superclass(label)
-//----------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
+  lhpOpKinectUtil::lhpOpKinectUtil(bool extapp, const mafString& label, bool simple, bool llimb, bool ulimb) : Superclass(label)
+  //----------------------------------------------------------------------------
 {
   m_OpType    = OPTYPE_IMPORTER;
   m_Simple    = simple;
@@ -1010,14 +1094,14 @@ lhpOpKinectUtil::lhpOpKinectUtil(bool extapp, const mafString& label, bool simpl
 
 //----------------------------------------------------------------------------
 lhpOpKinectUtil::~lhpOpKinectUtil()
-//----------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
 {
   Clear();
 }
 
 //----------------------------------------------------------------------------
 mafOp* lhpOpKinectUtil::Copy()
-//----------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
 {
   lhpOpKinectUtil *op = new lhpOpKinectUtil(m_ExtApp, GetLabel(), m_Simple, m_LLimb, m_ULimb);
   op->m_Canundo = m_Canundo;
@@ -1028,7 +1112,7 @@ mafOp* lhpOpKinectUtil::Copy()
 
 //----------------------------------------------------------------------------
 bool lhpOpKinectUtil::Accept(mafNode* vme)
-//----------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
 {
   if(!vme) return false;
   return true;
@@ -1037,7 +1121,7 @@ bool lhpOpKinectUtil::Accept(mafNode* vme)
 
 //----------------------------------------------------------------------------
 void lhpOpKinectUtil::OpRun()   
-//----------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
 {
   if(!m_ExtApp)
   {
@@ -1070,11 +1154,11 @@ void lhpOpKinectUtil::OpRun()
 
 //----------------------------------------------------------------------------
 void lhpOpKinectUtil::OnEvent(mafEventBase *maf_event) 
-//----------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
 { 
   switch(maf_event->GetId())
   {
-    case wxOK:
+  case wxOK:
     {
       if(Import())
       {
@@ -1087,36 +1171,36 @@ void lhpOpKinectUtil::OnEvent(mafEventBase *maf_event)
 
     }
     break;
-    case wxCANCEL:
+  case wxCANCEL:
     {
       this->OpStop(OP_RUN_CANCEL);
     }
     break;
-    case ID_FSUFFIX:
-      if(m_TakeScaled)
-        m_FileSuffix = "_Scaled";
-      else
-        m_FileSuffix = "";
+  case ID_FSUFFIX:
+    if(m_TakeScaled)
+      m_FileSuffix = "_Scaled";
+    else
+      m_FileSuffix = "";
+    break;
+  case ID_FREQ:
+    break;
+  case ID_AFS:
+    m_Gui->Enable(ID_TYPEOFREFS, (m_AFs != 0));
+    break;
+  case ID_TYPEOFREFS:
+    break;
+  case ID_SCALE:
+    break;
+  case ID_CLEAR_DICT:
+    {
+      m_DictionaryFileName = "";
+    }//WARNING! NO break operator here, execution will continue in ID_LOAD_DICT
+  case ID_LOAD_DICT:
+    {
+      DictionaryUpdate();
       break;
-    case ID_FREQ:
-      break;
-    case ID_AFS:
-      m_Gui->Enable(ID_TYPEOFREFS, (m_AFs != 0));
-      break;
-    case ID_TYPEOFREFS:
-      break;
-    case ID_SCALE:
-      break;
-    case ID_CLEAR_DICT:
-      {
-        m_DictionaryFileName = "";
-      }//WARNING! NO break operator here, execution will continue in ID_LOAD_DICT
-    case ID_LOAD_DICT:
-      {
-        DictionaryUpdate();
-        break;
-      }
-    default:
+    }
+  default:
     {
       mafEventMacro(*maf_event); 
     }
@@ -1126,7 +1210,7 @@ void lhpOpKinectUtil::OnEvent(mafEventBase *maf_event)
 
 //----------------------------------------------------------------------------
 void lhpOpKinectUtil::OpDo()
-//----------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
 {
   wxBusyInfo wait("Please wait, create all VMEs in tree");
 
@@ -1140,7 +1224,7 @@ void lhpOpKinectUtil::OpDo()
 
 //----------------------------------------------------------------------------
 void lhpOpKinectUtil::OpUndo()
-//----------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
 {
   for(unsigned i = 0; i < m_Imported.size(); i++)
   {
@@ -1149,7 +1233,7 @@ void lhpOpKinectUtil::OpUndo()
 }
 //----------------------------------------------------------------------------
 void lhpOpKinectUtil::CreateGui()
-//----------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
 {
   mafString refs_names[] = {"Flexion", "Abduction"};
   m_Gui = new mafGUI(this);
@@ -1206,30 +1290,30 @@ namespace
       tmp.pop_front();
       /*if(mafVMEGenericAbstract *gvme = mafVMEGenericAbstract::SafeDownCast(x))
       {
-        mafTimeStamp ts = gvme->GetTimeStamp();
-        if(mafMatrixVector *mv = gvme->GetMatrixVector())
-        {
-          mafMatrix *matrix = gvme->GetOutput().GetMatrix()->GetNearestMatrix(ts);
-          if(matrix)
-          {
-            mafMatrix mat = *matrix;
-            mat.SetTimeStamp(ts);
-            mv->SetMatrix(mat);
-          }
-        }
+      mafTimeStamp ts = gvme->GetTimeStamp();
+      if(mafMatrixVector *mv = gvme->GetMatrixVector())
+      {
+      mafMatrix *matrix = gvme->GetOutput().GetMatrix()->GetNearestMatrix(ts);
+      if(matrix)
+      {
+      mafMatrix mat = *matrix;
+      mat.SetTimeStamp(ts);
+      mv->SetMatrix(mat);
+      }
+      }
       }
       if(mafDataVector *dv = oldVme->GetDataVector())
       {
-        vmeItem = dv->GetNearestItem(timeSt);
-        if (vmeItem)
-        {
-          if(mafVMEItem *vmeItemCopy = vmeItem->NewInstance())
-          {
-          vmeItemCopy->DeepCopy(vmeItem);
-          vmeGeneric->GetDataVector()->AppendItem(vmeItemCopy);
-          oldTime = vmeItem->GetTimeStamp();
-          }
-        }
+      vmeItem = dv->GetNearestItem(timeSt);
+      if (vmeItem)
+      {
+      if(mafVMEItem *vmeItemCopy = vmeItem->NewInstance())
+      {
+      vmeItemCopy->DeepCopy(vmeItem);
+      vmeGeneric->GetDataVector()->AppendItem(vmeItemCopy);
+      oldTime = vmeItem->GetTimeStamp();
+      }
+      }
       }*/
 
       for(int i = 0; i < x->GetNumberOfChildren(); i++)
@@ -1240,7 +1324,7 @@ namespace
 
   //----------------------------------------------------------------------------
   int ExtractMatchingPoints(mafVMELandmarkCloud *src, mafVMELandmarkCloud *trg, double time, vtkPoints *m_PointsSource, vtkPoints *m_PointsTarget)
-  //----------------------------------------------------------------------------
+    //----------------------------------------------------------------------------
   {
     m_PointsSource->Reset();
     m_PointsTarget->Reset();
@@ -1586,7 +1670,7 @@ namespace
 
 //----------------------------------------------------------------------------
 bool lhpOpKinectUtil::Import()
-//----------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
 {
   bool result = false;
   Clear();
@@ -1616,7 +1700,7 @@ bool lhpOpKinectUtil::Import()
   if(m_ExtApp)
   {
     /*if(m_ExtAppPath.IsEmpty())
-      return false;*/
+    return false;*/
     if(mafDirExists("C:\\KinectStorage"))
     {
       storageExists = true;
@@ -1728,6 +1812,7 @@ bool lhpOpKinectUtil::Import()
     mafVME *imported = ImportSingleFile(importName);
     if(imported != NULL)
     {
+      imported->SetName(name);
       if(m_ExtApp)
       {
         //mafString pref, resname;
@@ -1755,7 +1840,7 @@ bool lhpOpKinectUtil::Import()
         }
         //resname  = pref;
         //resname += name;
-        imported->SetName(name);
+        //imported->SetName(name);
       }
       else
       {
@@ -1797,11 +1882,6 @@ bool lhpOpKinectUtil::Import()
           {
             if(mafVMEGroup *grp = ModelImport(modelPath, imported))
             {
-              lhpVMEKMInfo *kmi;
-              mafNEW(kmi);
-              kmi->SetName(mafFileNameFromPath(importName) + "_GeneralInfo");
-              kmi->ReparentTo(imported);
-              mafDEL(kmi);
               if(m_Simple)
               {
                 mafNode *finReg = RegScripted(skeletalGroup, grp);

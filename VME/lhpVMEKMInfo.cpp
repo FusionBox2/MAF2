@@ -38,6 +38,8 @@ mafCxxTypeMacro(lhpVMEKMInfo)
 lhpVMEKMInfo::lhpVMEKMInfo()
 //-------------------------------------------------------------------------
 {
+  for(int i = 0; i < 200; i++)
+    m_values[i] = 0.;
   // The output is created on demand in GetOutput() to avoid
   // subclasses to have to destroy base class output
   mafNEW(m_Transform);

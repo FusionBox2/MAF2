@@ -57,6 +57,9 @@ public:
   /** return icon */
   int DeepCopy(mafNode *a);
 
+  double GetValue(int index){return m_values[index];}
+  void SetValue(int index, double val){m_values[index] = val;}
+
 protected:
   lhpVMEKMInfo();
   virtual ~lhpVMEKMInfo();
@@ -70,7 +73,7 @@ protected:
 
   int InternalRestore(mafStorageElement *node);
 
-
+  double m_values[200];
 private:
   lhpVMEKMInfo(const lhpVMEKMInfo&); // Not implemented
   void operator=(const lhpVMEKMInfo&); // Not implemented

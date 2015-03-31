@@ -87,7 +87,7 @@ public:
   It is used in mafSideBar to plug the visual pipe's GUI in the tabbed vme panel. \sa mafSideBar*/
   virtual mafPipe* GetNodePipe(mafNode *vme);
   /** Access function. See name. */
-  lhpViewInfoWnd       *GetRenderWindow()    {return m_RenderWindow;}
+  wxHtmlWindow       *GetRenderWindow()    {return m_RenderWindow;}
 
   /** Show view settings into the tabbed sidebar. */
   //void	ShowSettings();
@@ -121,13 +121,12 @@ public:
     ID_LAST
   };
 
+  void UpdatePage();
 protected:
   //graph rendering window
-  lhpViewInfoWnd          *m_RenderWindow;
-  int                     m_IsFrozen;
-  //mafTimeStamp            m_ReferenceFrame;
-  double                  m_Smoothing;
+  wxHtmlWindow            *m_RenderWindow;
   mafSceneGraph           *m_Sg;
+  std::vector<mafPipe *>   m_VNodes;
 
   virtual mafGUI *CreateGui();
   /** Return the visual pipe's name.*/

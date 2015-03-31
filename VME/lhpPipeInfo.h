@@ -47,6 +47,10 @@ public:
 
   void OnEvent(mafEventBase *maf_event);
 
+  const mafString& GetPageText(){return m_PageText;}
+
 protected:
+  void FillPage();
+  mafString m_PageText;
 };
 #endif // _lhpPipeInfo_H_

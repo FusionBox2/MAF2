@@ -51,23 +51,6 @@ IMPLEMENT_DYNAMIC_CLASS(lhpViewInfoWnd, wxWindow)
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-void lhpViewInfoWnd::DrawXAxis(wxDC *pDC, wxRect *prc, double rXMin, double rXMax, double rXCoef, bool bGrid, bool bPreciseGrid)
-//----------------------------------------------------------------------------
-{
-}
-
-//----------------------------------------------------------------------------
-void lhpViewInfoWnd::DrawYAxis(wxDC *pDC, wxRect *prc, double rYMin, double rYMax, double rYCoef, bool bGrid, bool bPreciseGrid)
-//----------------------------------------------------------------------------
-{
-}
-
-//----------------------------------------------------------------------------
-void lhpViewInfoWnd::DrawAxes(wxDC *pDC, wxRect *prc, double rXMin, double rXMax, double rYMin, double rYMax, double rXCoef, double rYCoef, bool bGrid, bool bPreciseGrid)
-{
-}
-
-//----------------------------------------------------------------------------
 void  lhpViewInfoWnd::AddInfo(mafNode *pInfo)
 //----------------------------------------------------------------------------
 {
@@ -91,7 +74,7 @@ void  lhpViewInfoWnd::RemInfo(mafNode *pGraphData)
   Refresh(false, NULL);
   return;
 }
-
+#ifdef TYRYTRYT
 
 //----------------------------------------------------------------------------
 void lhpViewInfoWnd::DrawGraph(wxDC *pCompatDC)
@@ -142,48 +125,6 @@ void lhpViewInfoWnd::DrawGraph(wxDC *pCompatDC)
   return;
 } // end of _saRedraw
 
-
-
-
-#ifdef iuyiuyiuyi
-
-
-
-wxColor      cOldColor;
-
-
-pCompatDC->SetFont(wxNullFont);
-cppDEL(pFont);
-pFont = new wxFont(m_TitleFontSize, GetFontFamily(m_TitleFontFamily), wxNORMAL, wxLIGHT, false, wxEmptyString, wxFONTENCODING_SYSTEM) ;
-pCompatDC->SetFont(*pFont);
-
-//drawing graph
-pt.x = 0;
-pt.y = 0;
-unsigned varIndex = 0;
-
-pPen = new wxPen(m_ColorTable[varIndex % m_ColorTableNumber], m_CurveThickness, wxSOLID);
-pCompatDC->SetPen(*pPen);
-cOldColor = pCompatDC->GetTextForeground();
-pCompatDC->SetTextForeground(wxColor(0,0,0));
-{
-  m_Graphs[i]->GetIDDesc(0, 0, sXIDDesc, MAXTEXTLEN);
-  sprintf(sExp,"%s, %1.0e (%s) ", sYIDDesc, rYPow10Marks, sXIDDesc);
-  pCompatDC->GetTextExtent(sExp, &szTextSize.x, &szTextSize.y);
-  rTextRect.SetLeft(pt.x + 35);
-  rTextRect.SetTop(pt.y);
-  rTextRect.SetRight(pt.x + szTextSize.x + 35);
-  rTextRect.SetBottom(m_TitleFntHeight);
-  pCompatDC->DrawText(sExp, rTextRect.GetLeft(), rTextRect.GetTop());
-  //pt.x += szTextSize.x;
-}
-pCompatDC->SetTextForeground(cOldColor);
-pCompatDC->SetPen(wxNullPen);
-cppDEL(pPen);
-
-#endif
-
-
 //----------------------------------------------------------------------------
 wxBitmap lhpViewInfoWnd::GetBitmap()
 //----------------------------------------------------------------------------
@@ -197,7 +138,6 @@ wxBitmap lhpViewInfoWnd::GetBitmap()
   compatDC.SelectObject(wxNullBitmap);
   return pBitMap;
 }
-
 /*
  * handler for WM_COMMAND message
  * @memo    
@@ -306,6 +246,7 @@ void lhpViewInfoWnd::OnSize(wxSizeEvent &event)
   return;
 } // end of lhpViewInfoWnd::OnSize
 
+#endif
 
 
 //----------------------------------------------------------------------------
@@ -350,13 +291,13 @@ void  lhpViewInfoWnd::Update(void)
 
 
 
-BEGIN_EVENT_TABLE(lhpViewInfoWnd, wxWindow)
-  EVT_PAINT      (lhpViewInfoWnd::OnPaint)
+BEGIN_EVENT_TABLE(lhpViewInfoWnd, wxHtmlWindow)
+  /*EVT_PAINT      (lhpViewInfoWnd::OnPaint)
   EVT_CLOSE      (lhpViewInfoWnd::OnCloseWindow)
   EVT_RIGHT_DOWN (lhpViewInfoWnd::OnRightMouseButtonDown)
   EVT_LEFT_DOWN  (lhpViewInfoWnd::OnLeftMouseButtonDown)
   EVT_SIZE       (lhpViewInfoWnd::OnSize)
-  EVT_COMMAND_RANGE(0, 0xFFFF, wxEVT_COMMAND_MENU_SELECTED, lhpViewInfoWnd::OnCommand)
+  EVT_COMMAND_RANGE(0, 0xFFFF, wxEVT_COMMAND_MENU_SELECTED, lhpViewInfoWnd::OnCommand)*/
 END_EVENT_TABLE()
 
 /**
@@ -367,7 +308,7 @@ END_EVENT_TABLE()
  */
 //----------------------------------------------------------------------------
 lhpViewInfoWnd::lhpViewInfoWnd(const wxString& label, mafBaseEventHandler *listener):
-wxWindow(mafGetFrame(), -1, wxDefaultPosition, wxDefaultSize, 0, label)
+wxHtmlWindow(mafGetFrame(), -1, wxDefaultPosition, wxDefaultSize, 0, label)
 //----------------------------------------------------------------------------
 {
   SetListener(listener);

@@ -32,7 +32,6 @@
 #include "mafStringSet.h"
 #include "mafTagArray.h"
 #include "mafVME.h"
-//#include "mafVMERoot.h"
 
 #include "mafSceneNode.h"
 #include "mafSceneGraph.h"
@@ -87,9 +86,6 @@ lhpViewInfo::lhpViewInfo(const mafString& label)
 //----------------------------------------------------------------------------
 {
   m_RenderWindow       = NULL;
-  m_IsFrozen           = 0;
-  //m_ReferenceFrame     = 0;
-  m_Smoothing          = 0.0;
   m_Sg                 = NULL;
 }
 
@@ -118,8 +114,6 @@ mafView *lhpViewInfo::Copy(mafBaseEventHandler *Listener)
   v->SetListener(Listener);
   v->m_Id = m_Id;
   v->m_PipeMap = m_PipeMap;
-  v->m_IsFrozen       = m_IsFrozen;
-  //v->m_ReferenceFrame = m_ReferenceFrame;
   v->Create();
   return v;
 }
@@ -128,14 +122,12 @@ mafView *lhpViewInfo::Copy(mafBaseEventHandler *Listener)
 void lhpViewInfo::Create()
 //----------------------------------------------------------------------------
 {
-  m_RenderWindow = new lhpViewInfoWnd(GetLabel().GetCStr());
+  m_RenderWindow = new wxHtmlWindow(mafGetFrame(), -1, wxDefaultPosition, wxDefaultSize, 0, GetLabel().GetCStr());
+
   m_Win          = m_RenderWindow;
 
   m_Sg  = new lhpViewInfoGraph(this);
   m_Sg->SetListener(this);
-
-  //set reference frame as first sequence frame
-  //m_ReferenceFrame = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -267,6 +259,8 @@ void lhpViewInfo::VmeCreatePipe(mafNode *vme)
       assert(n && !n->m_Pipe);
       pipe->Create(vme, this);
       n->m_Pipe = pipe;
+      m_VNodes.push_back(pipe);
+      UpdatePage();
     }
     else
     {
@@ -285,9 +279,35 @@ void lhpViewInfo::VmeDeletePipe(mafNode *vme)
   m_NumberOfVisibleVme--;
   mafSceneNode *n = m_Sg->Vme2Node(vme);
 
+
+
   assert(n && n->m_Pipe);
+  for(std::vector<mafPipe *>::iterator it = m_VNodes.begin(); it != m_VNodes.end(); ++it)
+  {
+    if((*it) == n->m_Pipe)
+    {
+      m_VNodes.erase(it);
+      break;
+    }
+  }
+  UpdatePage();
   cppDEL(n->m_Pipe);
 }
+void lhpViewInfo::UpdatePage()
+{
+  mafString pageText;
+  for(std::vector<mafPipe *>::iterator it = m_VNodes.begin(); it != m_VNodes.end(); ++it)
+  {
+    if(lhpPipeInfo *pi = lhpPipeInfo::SafeDownCast(*it))
+    {
+      pageText += pi->GetPageText();
+      pageText += "\n";
+    }
+  }
+  m_RenderWindow->SetPage(pageText.GetCStr());
+
+}
+
 //-------------------------------------------------------------------------
 mafGUI *lhpViewInfo::CreateGui()
 //-------------------------------------------------------------------------
@@ -300,7 +320,7 @@ mafGUI *lhpViewInfo::CreateGui()
   m_Gui->Label("General Features",true);
   m_Gui->Divider(2);
 
-  m_Gui->RollOut(ID_ROLLOUT_RENDER, "Plot appearance", m_RenderWindow->GetGui(), false);
+  //m_Gui->RollOut(ID_ROLLOUT_RENDER, "Plot appearance", m_RenderWindow->GetGui(), false);
 
   m_Gui->Divider(2);
 
@@ -347,7 +367,7 @@ void lhpViewInfo::Print(wxDC *dc, wxRect margins)
 void lhpViewInfo::GetImage(wxBitmap &bmp, int magnification)
 //----------------------------------------------------------------------------
 {
-  bmp = m_RenderWindow->GetBitmap();
+  //bmp = m_RenderWindow->GetBitmap();
 }
 //----------------------------------------------------------------------------
 void lhpViewInfo::OptionsUpdate()
