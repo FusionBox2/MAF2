@@ -2,6 +2,8 @@ PROJECT(lhpVME)
 
 # Set your list of sources here.
 SET(PROJECT_SRCS
+	lhpPipeInfo.cpp
+	lhpPipeInfo.h
 	lhpPipeIntGraph.cpp
 	lhpPipeIntGraph.h
 	lhpPipeIntGraphAbstract.cpp
@@ -26,6 +28,8 @@ SET(PROJECT_SRCS
 	lhpPipeIntGraphTime.h
 	lhpPipeLeverArm.cpp
 	lhpPipeLeverArm.h
+	lhpVMEKMInfo.cpp
+	lhpVMEKMInfo.h
 	lhpVMELeverArm.cpp
 	lhpVMELeverArm.h
 	lhpVMELMCLines.cpp

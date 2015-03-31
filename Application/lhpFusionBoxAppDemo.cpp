@@ -215,6 +215,9 @@
 #include "vtkTransformFilter.h"
 #include "vtkStructuredPoints.h"
 
+#include "lhpVMEKMInfo.h"
+#include "lhpPipeInfo.h"
+#include "lhpViewInfo.h"
 
 // TODO: REFACTOR THIS 
 // this component is used only to override the Accept,  
@@ -470,6 +473,8 @@ bool lhpFusionBoxApp::OnInit()
   mafPlugNode<mafVMESurfaceRegParam>("VME representing regression parametric surface");
   mafPlugNode<mafVMEVolumeLarge>("VME storing large volume datasets with one scalar component");
 
+  mafPlugNode<lhpVMEKMInfo>("VME storing large volume datasets with one scalar component");
+
   mafPlugNode<medVMEComputeWrapping>("Generalized another VME Meter with wrapping geometry");
   mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
 
@@ -486,6 +491,8 @@ bool lhpFusionBoxApp::OnInit()
   mafPlugPipe<lhpPipeIntGraphPolyline>("Visual pipe for polyline in a biomechanical graph");
   mafPlugPipe<lhpPipeIntGraphAnalog>("Visual pipe for analog data in a biomechanical graph");
   mafPlugPipe<lhpPipeLeverArm>("Visual pipe for lever arm");
+
+  mafPlugPipe<lhpPipeInfo>("Visual pipe for lever arm");
 
   m_Logic = new lhpBuilderLogic();
   m_Logic->GetTopWin()->SetTitle("LHPFusionBox");
@@ -526,6 +533,9 @@ bool lhpFusionBoxApp::OnInit()
   m_Logic->Plug(new lhpOpKinectUtil(true, "Kinect App Full",  true, true, true ),"Motion Analysis");  
   m_Logic->Plug(new lhpOpKinectUtil(true, "Kinect App Lower", true, true, false),"Motion Analysis");  
   m_Logic->Plug(new lhpOpKinectUtil(true, "Kinect App Upper", true, false, true),"Motion Analysis");  
+
+
+  m_Logic->Plug(new lhpOpCreateObject<lhpVMEKMInfo>("lhpVMEKMInfo", "lhpVMEKMInfo"),"Create/New");
 
   //-------------------------------------------------------------
 
@@ -618,6 +628,9 @@ bool lhpFusionBoxApp::OnInit()
   slicerView->PackageView();
   m_Logic->Plug(slicerView, view_visibility);
 
+  lhpViewInfo *igraph = new lhpViewInfo("Info view");
+  igraph->PlugVisualPipe("lhpVMEKMInfo","lhpPipeInfo");
+  m_Logic->Plug(igraph);
   //temporary for testing
   //mafViewSingleSliceCompound *sliceView = new mafViewSingleSliceCompound("Test Slice");
   //sliceView->PackageView();

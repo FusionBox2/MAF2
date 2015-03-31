@@ -6,6 +6,10 @@ PROJECT(lhpViews)
 
 # Set your list of sources here.
 SET(PROJECT_SRCS
+lhpViewInfo.cpp
+lhpViewInfo.h
+lhpViewInfoWnd.cpp
+lhpViewInfoWnd.h
 mafGraphIDDesc.cpp
 mafGraphIDDesc.h
 mafMemGraph.cpp
