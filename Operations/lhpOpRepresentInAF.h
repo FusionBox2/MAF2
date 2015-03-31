@@ -18,6 +18,7 @@
 //----------------------------------------------------------------------------
 #include "mafOp.h"
 #include "mafVMELandmarkCloud.h"
+#include "mafVMERefSysAbstract.h"
 
 //----------------------------------------------------------------------------
 // forward references :
@@ -50,10 +51,12 @@ public:
   /** Makes the undo for the operation. */
   void OpUndo();
 
-  static bool ClosedCloudAccept(mafNode* node) {return (node != NULL && node->IsA("mafVMELandmarkCloud") && !((mafVMELandmarkCloud*)node)->IsOpen());};
+  static bool RefSysAccept(mafNode* node) {mafVMERefSysAbstract *afsys = mafVMERefSysAbstract::SafeDownCast(node); return (afsys != NULL);}
 
 protected:
   int                     m_MultiTime;
   int                     m_ApplyChildren;
+  mafVMERefSysAbstract    *m_RefSys;
+  mafString               m_RefsysName;
  };
 #endif

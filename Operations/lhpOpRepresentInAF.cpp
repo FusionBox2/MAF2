@@ -58,6 +58,8 @@ lhpOpRepresentInAF::lhpOpRepresentInAF(const mafString& label) : Superclass(labe
   m_Canundo       = false;
   m_MultiTime     = true;
   m_ApplyChildren = true;
+  m_RefsysName    = "none";
+  m_RefSys        = NULL;
 }
 //----------------------------------------------------------------------------
 lhpOpRepresentInAF::~lhpOpRepresentInAF( ) 
@@ -76,8 +78,9 @@ bool lhpOpRepresentInAF::Accept(mafNode* node)
 {
   if(node == NULL && !node->IsMAFType(mafVMELandmarkCloud) || ((mafVMELandmarkCloud*)node)->IsOpen())
     return false;
-  mafVMERefSysAbstract *afsys = GetRefSys(mafVME::SafeDownCast(node));
-  return (afsys != NULL);
+  /*mafVMERefSysAbstract *afsys = GetRefSys(mafVME::SafeDownCast(node));
+  return (afsys != NULL);*/
+  return true;
 }
 //----------------------------------------------------------------------------
 // widget id's
@@ -95,16 +98,19 @@ void lhpOpRepresentInAF::OpRun()
   m_Gui = new mafGUI(this);
   m_Gui->SetListener(this);
 
+  m_Gui->Label(_("refsys :"),true);
+  m_Gui->Label(&m_RefsysName);
+  m_Gui->Button(ID_CHOOSE,_("refsys "));
 
   //m_Gui->Bool(ID_MULTIPLE_TIME_REGISTRATION,_("multi-time"),&m_MultiTime,1);
   //m_Gui->Enable(ID_MULTIPLE_TIME_REGISTRATION,((mafVMELandmarkCloud*)m_Input)->IsAnimated());
   ////m_Gui->Bool(ID_APPLY_CHILDREN,_("Apply children"),&m_ApplyChildren,1);
 
-  //m_Gui->OkCancel();
-
+  m_Gui->OkCancel();
+  
+  m_Gui->Enable(wxOK,m_RefSys!=NULL);
   //m_Gui->Divider();
-  //ShowGui();
-  OpStop(OP_RUN_OK);
+  ShowGui();
 }
 //----------------------------------------------------------------------------
 void lhpOpRepresentInAF::OnEvent(mafEventBase *maf_event)
@@ -114,6 +120,21 @@ void lhpOpRepresentInAF::OnEvent(mafEventBase *maf_event)
   {
     switch(e->GetId())
     {
+      case ID_CHOOSE:
+      {
+        mafString s(_("Choose refsys"));
+        mafEvent e(this, VME_CHOOSE, &s, NULL/*, (long)&lhpOpRepresentInAF::RefSysAccept*/);
+        mafEventMacro(e);
+        mafVMERefSysAbstract *rsa = mafVMERefSysAbstract::SafeDownCast(e.GetVme());
+        if(rsa)
+        {
+          m_RefSys = rsa;
+          m_RefsysName = rsa->GetName();
+          m_Gui->Enable(wxOK,true);
+          m_Gui->Update();
+        }
+        break;
+      }
       case wxOK:
         OpStop(OP_RUN_OK);
         break;
@@ -132,7 +153,7 @@ void lhpOpRepresentInAF::OpDo()
 {
   wxBusyInfo wait(_("Please wait, working..."));
   mafVMELandmarkCloud *inputCloud = mafVMELandmarkCloud::SafeDownCast(m_Input);
-  mafVMERefSysAbstract *refAF     = GetRefSys(inputCloud);
+  mafVMERefSysAbstract *refAF     = m_RefSys;
 
   std::vector<mafTimeStamp> timeStamps;
   inputCloud->GetLocalTimeStamps(timeStamps);
