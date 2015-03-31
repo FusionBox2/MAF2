@@ -43,13 +43,14 @@ mafCxxTypeMacro(mafOpReparentTo);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafOpReparentTo::mafOpReparentTo(const mafString& label) : Superclass(label)
+mafOpReparentTo::mafOpReparentTo(const mafString& label, bool keepGlobal) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType    = OPTYPE_OP;
   m_Canundo   = true;
   m_OldParent = NULL;
   m_TargetVme = NULL;
+  m_KeepGlobal = keepGlobal;
 }
 //----------------------------------------------------------------------------
 mafOpReparentTo::~mafOpReparentTo( ) 
@@ -68,6 +69,7 @@ mafOp* mafOpReparentTo::Copy()
 {
   mafOpReparentTo *cp = new mafOpReparentTo(GetLabel());
 	cp->m_OldParent = m_OldParent;
+  cp->m_KeepGlobal = m_KeepGlobal;
   return cp;
 }
 //----------------------------------------------------------------------------
@@ -106,30 +108,32 @@ void mafOpReparentTo::OpDo()
 //----------------------------------------------------------------------------
 {
   int num, t;
-  mmuTimeVector input_time;
-	mmuTimeVector target_time;
-	mmuTimeVector time;
 	mafTimeStamp cTime, startTime;
 	
   m_OldParent = mafVME::SafeDownCast(m_Input->GetParent());
 
-  ((mafVME *)m_Input)->GetAbsTimeStamps(input_time);
-	m_TargetVme->GetAbsTimeStamps(target_time);
-  mmuTimeSet::Merge(input_time,target_time,time);
-	num = time.size();
-
 	startTime = m_TargetVme->GetTimeStamp();
 
-  std::vector< mafAutoPointer<mafMatrix> > new_input_pose;
-  new_input_pose.resize(num);
-
-  for (t = 0; t < num; t++)
+  if(m_KeepGlobal)
   {
-    new_input_pose[t] = mafMatrix::New();
-  }
-  
+    mmuTimeVector input_time;
+    mmuTimeVector target_time;
+    mmuTimeVector time;
+    ((mafVME *)m_Input)->GetAbsTimeStamps(input_time);
+    m_TargetVme->GetAbsTimeStamps(target_time);
+    mmuTimeSet::Merge(input_time,target_time,time);
+    num = time.size();
+
+    std::vector< mafAutoPointer<mafMatrix> > new_input_pose;
+    new_input_pose.resize(num);
+
+    for (t = 0; t < num; t++)
+    {
+      new_input_pose[t] = mafMatrix::New();
+    }
+
   //change reference system
-  mafSmartPointer<mafTransformFrame> transform;
+  /*mafSmartPointer<mafTransformFrame> transform;
   for (t = 0; t < num; t++)
 	{
 		cTime = time[t];
@@ -157,12 +161,37 @@ void mafOpReparentTo::OpDo()
 	
   ((mafVME *)m_Input)->SetTimeStamp(startTime);
   m_TargetVme->SetTimeStamp(startTime);
-  m_OldParent->SetTimeStamp(startTime);
+  m_OldParent->SetTimeStamp(startTime);*/
 
-  for (t = 0; t < num; t++)
-  {
-    ((mafVME *)m_Input)->SetMatrix(*new_input_pose[t]);
+
+    for (t = 0; t < num; t++)
+    {
+      cTime = time[t];
+      mafMatrix vmeMatr, parMatr, parMatrInv;
+
+      ((mafVME *)m_Input)->GetOutput()->GetAbsMatrix(vmeMatr, cTime);
+      m_TargetVme->GetOutput()->GetAbsMatrix(parMatr, cTime);
+      mafMatrix::Invert(parMatr,  parMatrInv);
+      mafMatrix::Multiply4x4(parMatrInv, vmeMatr, *(new_input_pose[t]));
+      new_input_pose[t]->SetTimeStamp(cTime);
+    }
+    for (t = 0; t < num; t++)
+    {
+      ((mafVME *)m_Input)->SetMatrix(*new_input_pose[t]);
+    }
   }
+  else
+  {
+    mafMatrix vmeMatr, parMatr, parMatrInv, new_input_pose;
+    ((mafVME *)m_Input)->GetOutput()->GetAbsMatrix(vmeMatr, startTime);
+    m_TargetVme->GetOutput()->GetAbsMatrix(parMatr, startTime);
+    mafMatrix::Invert(parMatr,  parMatrInv);
+    mafMatrix::Multiply4x4(parMatrInv, vmeMatr, new_input_pose);
+    new_input_pose.SetTimeStamp(startTime);
+    ((mafVME *)m_Input)->SetMatrix(new_input_pose);
+  }
+  
+
   if (m_Input->ReparentTo(m_TargetVme) == MAF_OK)
   {
     mafEventMacro(mafEvent(this,CAMERA_UPDATE));

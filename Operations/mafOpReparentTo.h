@@ -37,7 +37,7 @@ class mafGUI;
 class MAF_EXPORT mafOpReparentTo: public mafOp
 {
 public:
-  mafOpReparentTo(const mafString& label = "ReparentTo");
+  mafOpReparentTo(const mafString& label = "ReparentTo", bool keepGlobal = true);
  ~mafOpReparentTo(); 
   
   mafTypeMacro(mafOpReparentTo, mafOp);
@@ -60,6 +60,7 @@ public:
   void SetTargetVme(mafVME *target);
 
 protected:
+  bool   m_KeepGlobal;
 	mafVME *m_TargetVme;
   mafVME *m_OldParent;
 };
