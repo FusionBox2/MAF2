@@ -153,6 +153,8 @@ public:
   /** Copy the given VME tree into a new tree. In case a parent is provided, link the new
     root node to it. Return the root of the new tree.*/
   static mafNode *CopyTree(mafNode *vme, mafNode *parent=NULL);
+
+  virtual void UpdateLinks(std::vector<std::pair<mafNode*, mafNode*> >& nodes);
   
   /** Make a copy of the whole subtree and return its pointer */
   mafNode *CopyTree();

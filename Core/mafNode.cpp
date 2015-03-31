@@ -773,7 +773,27 @@ bool mafNode::CompareTree(mafNode *vme)
   }
   return true;
 }
+//----------------------------------------------------------------------------
+void mafNode::UpdateLinks(std::vector<std::pair<mafNode*, mafNode*> >& nodes)
+//----------------------------------------------------------------------------
+{
+  // Copy links
+  mafLinksMap::iterator lnk_it;
+  for (lnk_it = GetLinks()->begin(); lnk_it != GetLinks()->end(); ++lnk_it)
+  {
+    for(unsigned i = 0; i < nodes.size(); i++)
+    {
+      if(lnk_it->second.m_Node == nodes[i].first)
+      {
+        //n->SetLink(lnk_it->first, mp_it->second, lnk_it->second.m_NodeSubId);
+        lnk_it->second.m_Node->RemoveObserver(this);
+        lnk_it->second.m_Node = nodes[i].second;
+        lnk_it->second.m_Node->AddObserver(this);
+      }
+    }
+  }
 
+}
 //----------------------------------------------------------------------------
 mafNode *mafNode::CopyTree()
 //-------------------------------------------------------------------------
@@ -804,21 +824,7 @@ mafNode *mafNode::CopyTree()
     mafNodeIterator *iter = res->NewIterator();
     for(mafNode *n = iter->GetFirstNode(); n; n = iter->GetNextNode())
     {
-      // Copy links
-      mafLinksMap::iterator lnk_it;
-      for (lnk_it = n->GetLinks()->begin(); lnk_it != n->GetLinks()->end(); ++lnk_it)
-      {
-        for(unsigned i = 0; i < nodes.size(); i++)
-        {
-          if(lnk_it->second.m_Node == nodes[i].first)
-          {
-            //n->SetLink(lnk_it->first, mp_it->second, lnk_it->second.m_NodeSubId);
-            lnk_it->second.m_Node->RemoveObserver(n);
-            lnk_it->second.m_Node = nodes[i].second;
-            lnk_it->second.m_Node->AddObserver(n);
-          }
-        }
-      }
+      n->UpdateLinks(nodes);
     }
     mafDEL(iter);
   }
