@@ -1371,6 +1371,7 @@ void mafLogicWithManagers::OnFileNew()
   mafVMERoot *root;
   mafNEW(root);
   root->SetName("root");
+  root->Initialize();
   //Add the application stamps
   SetAppTag(root);
   AddCreationDate(root);
