@@ -30,6 +30,7 @@
 #include "mafEvent.h"
 #include "mafGUI.h"
 #include "mafFilesDirs.h"
+#include "mafPlotMath.h"
 
 #include "mafOpExplodeCollapse.h"
 #include "lhpOpKinectAFs.h"
@@ -38,9 +39,11 @@
 #include "mafMatrixVector.h"
 #include "mafDataVector.h"
 #include "mafVME.h"
+#include "mafVMEGroup.h"
 #include "mafVMESurface.h"
 #include "mafVMELandmark.h"
 #include "mafVMELandmarkCloud.h"
+#include "medOpImporterLandmark.h"
 #include <fstream>
 #include <sstream>
 #include <stack>
@@ -61,12 +64,17 @@ enum
 {
   ID_DEFAULT = MINID,
   ID_EXTAPPPATH,
+  ID_EXTAPPPATHMODEL,
   ID_LOAD_DICT,
   ID_CLEAR_DICT,
   ID_FREQ,
   ID_AFS,
   ID_TYPEOFREFS,
+  ID_MODEL,
   ID_SCALE,
+  ID_SCALE1,
+  ID_SCALE2,
+  ID_SCALE3,
   ID_LAST,
   ID_FORCED_DWORD = 0x7fffffff
 };
@@ -101,6 +109,18 @@ namespace
   }
 }
 
+
+class medOpImporterLandmarkAccU : public medOpImporterLandmark
+{
+public:
+  mafTypeMacro(medOpImporterLandmarkAccU, medOpImporterLandmark);
+  medOpImporterLandmarkAccU(const mafString& label = "") : medOpImporterLandmark(label){}
+  std::vector<mafVME*>& GetResults(){return m_Results;}
+};
+
+mafCxxTypeMacro(medOpImporterLandmarkAccU)
+
+
 mafCxxTypeMacro(lhpOpKinectUtil)
 //----------------------------------------------------------------------------
 lhpOpKinectUtil::lhpOpKinectUtil(bool extapp, const mafString& label) : Superclass(label)
@@ -111,9 +131,14 @@ lhpOpKinectUtil::lhpOpKinectUtil(bool extapp, const mafString& label) : Supercla
   m_FileDir = mafGetApplicationDirectory() + "/Data/External/";
   m_DictionaryFileName = "";
   m_ExtAppPath         = "SkeletalViewerBart.exe";
+  m_ExtAppPathModel    = "LLOptim.exe";
   m_Scale  = 1000.0;
   m_Freq   = 30.0;
-  m_AFs    = true;
+  m_AFs    = false;
+  m_Model  = true;
+  m_Scale1 = 1.0;
+  m_Scale2 = 1.0;
+  m_Scale3 = 1.0;
   m_ExtApp = extapp;
   m_TypeOfRefs = 0;
   DictionaryUpdate();
@@ -204,15 +229,25 @@ void lhpOpKinectUtil::OnEvent(mafEventBase *maf_event)
     }
     break;
     case ID_EXTAPPPATH:
+    case ID_EXTAPPPATHMODEL:
       break;
     case ID_FREQ:
       break;
     case ID_AFS:
       m_Gui->Enable(ID_TYPEOFREFS, (m_AFs != 0));
       break;
+    case ID_MODEL:
+      m_Gui->Enable(ID_EXTAPPPATHMODEL, (m_Model != 0));
+      m_Gui->Enable(ID_SCALE1, (m_Model != 0));
+      m_Gui->Enable(ID_SCALE2, (m_Model != 0));
+      m_Gui->Enable(ID_SCALE3, (m_Model != 0));
+      break;
     case ID_TYPEOFREFS:
       break;
     case ID_SCALE:
+    case ID_SCALE1:
+    case ID_SCALE2:
+    case ID_SCALE3:
       break;
     case ID_CLEAR_DICT:
       {
@@ -265,10 +300,19 @@ void lhpOpKinectUtil::CreateGui()
   m_Gui->Bool(ID_AFS, _("AFs"), &m_AFs);
   m_Gui->Combo(ID_TYPEOFREFS, "Type",&m_TypeOfRefs, 2, refs_names);
   m_Gui->Label("");
+  m_Gui->Bool(ID_MODEL, _("Model"), &m_Model);
+  m_Gui->FileOpen(ID_EXTAPPPATHMODEL, "Mod app", &m_ExtAppPathModel, "*.exe");
+  m_Gui->Double(ID_SCALE1, _("Scale1"), &m_Scale1, 0.0);
+  m_Gui->Double(ID_SCALE2, _("Scale2"), &m_Scale2, 0.0);
+  m_Gui->Double(ID_SCALE3, _("Scale3"), &m_Scale3, 0.0);
   m_Gui->FileOpen(ID_LOAD_DICT, "LM list",  &m_DictionaryFileName, "*.txt");
   m_Gui->Button(ID_CLEAR_DICT, "Clean", "", "Press to cancel using list" );  
   m_Gui->Enable(ID_CLEAR_DICT, (m_DictionaryFileName != ""));
   m_Gui->Enable(ID_TYPEOFREFS, (m_AFs != 0));
+  m_Gui->Enable(ID_EXTAPPPATHMODEL, (m_Model != 0));
+  m_Gui->Enable(ID_SCALE1, (m_Model != 0));
+  m_Gui->Enable(ID_SCALE2, (m_Model != 0));
+  m_Gui->Enable(ID_SCALE3, (m_Model != 0));
 
   m_Gui->OkCancel();
 }
@@ -346,12 +390,6 @@ mafVME *lhpOpKinectUtil::ImportSingleFile(const mafString &fullFileName)
         buffer[i] = '.';
     }
 
-
-
-
-
-
-
     //std::istringstream mstream(fullFileName.GetCStr(), std::ios::in);
     std::istringstream mstream(buffer);
     /*if(!mstream.is_open())
@@ -405,14 +443,20 @@ mafVME *lhpOpKinectUtil::ImportSingleFile(const mafString &fullFileName)
   }
 
 
-  mafVMELandmarkCloud *dlc;
-  mafNEW(dlc);
+  mafVMELandmarkCloud *cloud;
+  mafNEW(cloud);
+  std::vector<mafTimeStamp> timeStamps;
 
-  dlc->SetName(mafFileNameFromPath(fullFileName));
-  dlc->SetRadius(15);
+  cloud->SetName(mafFileNameFromPath(fullFileName));
+  cloud->SetRadius(15);
 
   int current_lm = 0;
   int initValue = (rmatrix[0].size() % 3 == 1) ? 1 : 0;
+  timeStamps.resize(rmatrix.size());
+  for (int i = 0; i < rmatrix.size(); i++)
+  {
+    timeStamps[i] = (initValue == 1) ? rmatrix[i][0] : i / m_Freq;
+  }
 
   for (int j = initValue; j < rmatrix[0].size(); j += 3)
   {
@@ -425,22 +469,204 @@ mafVME *lhpOpKinectUtil::ImportSingleFile(const mafString &fullFileName)
       lm_name << current_lm;
     }
 
-    dlc->AppendLandmark(lm_name);
+    cloud->AppendLandmark(lm_name);
     current_lm++;
 
     for (int i = 0; i < rmatrix.size(); i++)
     { 
-      double ts = (initValue == 1) ? rmatrix[i][0] : i / m_Freq;
-      dlc->SetLandmark(lm_name,
+      cloud->SetLandmark(lm_name,
         m_Scale * rmatrix[i][j],
         m_Scale * rmatrix[i][j + 1],
         m_Scale * rmatrix[i][j + 2], 
-        ts);
+        timeStamps[i]);
     }	
 
   }						
-  return dlc;
+  if(!cloud || !m_Model || m_ExtAppPathModel.IsEmpty())
+    return cloud;
+
+  int    numframes = timeStamps.size();
+
+  mafString pelv_names[] = {"LASI", "RASI", "RPSI", "LPSI"};
+  mafString rleg_names[] = {"RTHI", "RKNE", "RTIB", "RANK", "RHEE", "RTOE"};
+  mafString lleg_names[] = {"LTHI", "LKNE", "LTIB", "LANK", "LHEE", "LTOE"};
+  int pelv_ind[4] = {-1, -1, -1, -1};
+  int rleg_ind[3] = {-1, -1, -1};
+  int lleg_ind[3] = {-1, -1, -1};
+
+  for(int i = 0; i < cloud->GetNumberOfLandmarks(); i++)
+  {
+    if(cloud->GetLandmarkName(i) == "LASI" || cloud->GetLandmarkName(i) == "LeftHip")
+      pelv_ind[0] = i;
+    if(cloud->GetLandmarkName(i) == "RASI" || cloud->GetLandmarkName(i) == "RightHip")
+      pelv_ind[1] = i;
+    if(cloud->GetLandmarkName(i) == "RPSI" || cloud->GetLandmarkName(i) == "Pelvis")
+      pelv_ind[2] = i;
+    if(cloud->GetLandmarkName(i) == "LPSI" || cloud->GetLandmarkName(i) == "Pelvis")
+      pelv_ind[3] = i;
+
+    if(cloud->GetLandmarkName(i) == "RKNE" || cloud->GetLandmarkName(i) == "RightKnee")
+      rleg_ind[0] = i;
+    if(cloud->GetLandmarkName(i) == "RANK" || cloud->GetLandmarkName(i) == "RightAnkle")
+      rleg_ind[1] = i;
+    if(cloud->GetLandmarkName(i) == "RTOE" || cloud->GetLandmarkName(i) == "RightFoot")
+      rleg_ind[2] = i;
+
+    if(cloud->GetLandmarkName(i) == "LKNE" || cloud->GetLandmarkName(i) == "LeftKnee")
+      lleg_ind[0] = i;
+    if(cloud->GetLandmarkName(i) == "LANK" || cloud->GetLandmarkName(i) == "LeftAnkle")
+      lleg_ind[1] = i;
+    if(cloud->GetLandmarkName(i) == "LTOE" || cloud->GetLandmarkName(i) == "LeftFoot")
+      lleg_ind[2] = i;
+  }
+
+  for(int i = 0; i < 4; i++)
+  {
+    if(pelv_ind[i] == -1)
+      return cloud;
+    if(i == 3)
+      break;
+    if(lleg_ind[i] == -1 || rleg_ind[i] == - 1)
+      return cloud;
+  }
+
+  mafString path, nameext;
+  mafSplitPath(m_ExtAppPathModel, &path, &nameext);
+  size_t length = path.Length();
+  if(length != 0 && path[length - 1] != '/' && path[length - 1] != '\\')
+    path += "/";
+
+  mafString params;
+  params = path;
+  params += "Inp_FuBx.dat";
+  double lasttimestamp = 0.0;
+  if(numframes > 0)
+    lasttimestamp = timeStamps[numframes - 1];
+  if(FILE *fp = fopen(params.GetCStr(), "wt"))
+  {
+    fputs("Scale_Kin/Anthr, Scale_Kin/S035 \n", fp);
+    fprintf(fp, "%f, %f, %f\n", m_Scale1, m_Scale2, m_Scale3);
+    fputs("tk,NSolu \n", fp);
+    fprintf(fp, "%f , %d\n", lasttimestamp, numframes);
+    fclose(fp);
+  }
+
+  mafString fn1;
+  mafString fn2;
+  mafString fn3;
+
+  fn1 = path;
+  fn1 += "Pelvis_mot.txt";
+  fn2 = path;
+  fn2 += "R_Foot_mot.txt";
+  fn3 = path;
+  fn3 += "L_Foot_mot.txt";
+
+  std::ofstream outF1, outF2, outF3;
+  outF1.open(fn1.GetCStr());
+  outF2.open(fn2.GetCStr());
+  outF3.open(fn3.GetCStr());
+
+
+  for (int index = 0; index < numframes; index++)
+  {
+    char numbs[1000];
+    double t = timeStamps[index];
+    outF1 << "Time";
+    outF2 << "Time";
+    outF3 << "Time";
+    sprintf(numbs, " %16lf\n", t);
+    outF1 << numbs;
+    outF2 << numbs;
+    outF3 << numbs;
+
+    for(int j = 0; j < 4; j++)
+    {
+      double invec[4];
+      cloud->GetLandmark(pelv_ind[j], invec, t);
+      invec[3] = 1.0;
+      outF1 << pelv_names[j];
+      sprintf(numbs, " %16lf %16lf %16lf \n", invec[0], invec[1], invec[2]);
+      outF1 << numbs;
+
+      if(j == 3)
+        break;
+
+      cloud->GetLandmark(rleg_ind[j], invec, t);
+      invec[3] = 1.0;
+      outF2 << rleg_names[2 * j + 0];
+      sprintf(numbs, " %16lf %16lf %16lf \n", 0.0, 0.0, 0.0);
+      outF2 << numbs;
+      outF2 << rleg_names[2 * j + 1];
+      sprintf(numbs, " %16lf %16lf %16lf \n", invec[0], invec[1], invec[2]);
+      outF2 << numbs;
+
+      cloud->GetLandmark(lleg_ind[j], invec, t);
+      invec[3] = 1.0;
+      outF3 << lleg_names[2 * j + 0];
+      sprintf(numbs, " %16lf %16lf %16lf \n", 0.0, 0.0, 0.0);
+      outF3 << numbs;
+      outF3 << lleg_names[2 * j + 1];
+      sprintf(numbs, " %16lf %16lf %16lf \n", invec[0], invec[1], invec[2]);
+      outF3 << numbs;
+    }
+  }
+
+  outF1.close();
+  outF2.close();
+  outF3.close();
+
+  mafString commandline = m_ExtAppPathModel;
+  wxSetWorkingDirectory(path.GetCStr());
+  commandline += " TR72_3FN.DAT rtk__out.dat";
+  if(wxExecute(commandline.GetCStr(), wxEXEC_SYNC) != 0)
+    return false;
+
+  mafString files[] = {"L_Foot.txt",
+    "L_Pate.txt",
+    "L_Shan.txt",
+    "L_Thg1.txt",
+    "L_Thg2.txt",
+    "L_Thg3.txt",
+    "R_Pate.txt",
+    "R_Foot.txt",
+    "R_Shan.txt",
+    "R_Thg1.txt",
+    "R_Thg2.txt",
+    "R_Thg3.txt",
+    "Pelvis.txt"};
+
+  mafVMEGroup *grp = NULL;
+  for(int i = 0; i < DIM(files); i++)
+  {
+    mafString fpath;
+    fpath = path;
+    fpath += files[i];
+    if(!mafFileExists(fpath))
+      continue;
+    medOpImporterLandmarkAccU *imp = new medOpImporterLandmarkAccU();
+    imp->SetFileName(fpath);
+    imp->Read();
+    std::vector<mafVME*>& res = imp->GetResults();
+    if(grp == NULL && !res.empty())
+    {
+      mafNEW(grp);
+      grp->SetName("KinectModel");
+    }
+    for(std::vector<mafVME*>::iterator it = res.begin(); it != res.end(); ++it)
+    {
+      (*it)->ReparentTo(grp);
+    }
+    delete imp;
+  }
+  if(grp)
+  {
+    grp->ReparentTo(cloud);
+    mafDEL(grp);
+  }
+  return cloud;
 }
+
 //----------------------------------------------------------------------------
 void lhpOpKinectUtil::Clear()
 //----------------------------------------------------------------------------

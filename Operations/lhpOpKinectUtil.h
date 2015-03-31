@@ -61,6 +61,7 @@ protected:
 
   std::vector<mafString>         m_C3DInputFileNameFullPaths;
   mafString                      m_ExtAppPath;
+  mafString                      m_ExtAppPathModel;
   mafString                      m_FileDir;
   mafString                      m_DictionaryFileName;
   std::vector<mafString>         m_dictionaryStruct;
@@ -68,6 +69,10 @@ protected:
   double                         m_Freq;
   bool                           m_ExtApp;
   int                            m_AFs;
+  int                            m_Model;
+  double                         m_Scale1;
+  double                         m_Scale2;
+  double                         m_Scale3;
   int                            m_TypeOfRefs;
   std::vector<mafVME*>           m_Imported;
 private:
