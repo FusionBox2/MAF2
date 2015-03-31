@@ -64,7 +64,7 @@ mafCxxTypeMacro(mafVMEPGDData)
 mafVMEPGDData::mafVMEPGDData()
 //----------------------------------------------------------------------------
 {
-  m_PGD_DLCloud = mafVMELandmarkCloud::New();
+  mafNEW(m_PGD_DLCloud);
   m_PGD_DLCloud->SetRadius(15.0);
   m_PGD_DLCloud->SetDefaultVisibility(0);  //modified by Marco. 3-10-2003
 
@@ -74,7 +74,7 @@ mafVMEPGDData::mafVMEPGDData()
 mafVMEPGDData::~mafVMEPGDData()
 //----------------------------------------------------------------------------
 {
-  m_PGD_DLCloud->Delete();
+  mafDEL(m_PGD_DLCloud);
 }
 
 //----------------------------------------------------------------------------
