@@ -203,7 +203,7 @@ protected:
   /** FILE SAVEAS evt. handler */
   virtual bool OnFileSaveAs();
   /** FILE CLOSE evt. handler */
-  virtual bool OnFileClose();
+  virtual bool OnFileClose(bool force = false);
   /** Called on Quit event. */
   virtual void OnQuit();
 

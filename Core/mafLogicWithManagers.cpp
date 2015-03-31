@@ -1337,12 +1337,12 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   mafLogicWithGUI::OnEvent(maf_event);
 }
 //----------------------------------------------------------------------------
-bool mafLogicWithManagers::OnFileClose()
+bool mafLogicWithManagers::OnFileClose(bool force)
 //----------------------------------------------------------------------------
 {
   if(!m_NodeManager)
     return true;
-  if(!AskConfirmAndSave())
+  if(!force && !AskConfirmAndSave())
     return false;
   OnEvent(&mafEvent(this,CLEAR_UNDO_STACK)); // ask logic to clear the undo stack
   if(m_Storage && !m_TmpDir.IsEmpty())
@@ -1427,7 +1427,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
       return false;
   }
 
-  if(!OnFileClose())
+  if(!OnFileClose(true))
     return false;
 
   mafString protocol;
