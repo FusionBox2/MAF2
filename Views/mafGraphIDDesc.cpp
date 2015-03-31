@@ -38,10 +38,10 @@ void mafGraphDataImpl::GetIDDesc(unsigned index, unsigned int deriv, char *sDesc
   const char *der = "Derivative ";
   if(GetID(index) == 0)
   {
-    _snprintf(sDescript, nLength, "%s%s, %s", (deriv == 0) ? val : der, m_Pipe->GetVarTitle(0), m_Pipe->GetVarUnit(0));
+    _snprintf(sDescript, nLength, "%s%s", (deriv == 0) ? val : der, m_Pipe->GetVarTitle(0)/*, m_Pipe->GetVarUnit(0)*/);
     return;
   }
-  _snprintf(sDescript,nLength,"%s%s %s, %s", (deriv == 0) ? val : der, m_Pipe->m_Node->GetName().GetCStr(), m_Pipe->GetVarTitle(GetID(index)), m_Pipe->GetVarUnit(GetID(index)));
+  _snprintf(sDescript,nLength,"%s%s %s", (deriv == 0) ? val : der, m_Pipe->m_Node->GetName().GetCStr(), m_Pipe->GetVarTitle(GetID(index))/*, m_Pipe->GetVarUnit(GetID(index))*/);
   return;
 }
 
