@@ -181,6 +181,10 @@ void mafPipeLandmarkCloud::UpdateProperty(bool fromTag)
   {
     double pos[3], rot[3];
     m_Landmark->GetOutput()->GetAbsPose(pos, rot);
+    if(m_Landmark->GetLandmarkVisibility())
+      m_Caption->SetVisibility(1);
+    else
+      m_Caption->SetVisibility(0);
     m_Caption->SetAttachmentPoint(pos[0],pos[1],pos[2]);
   }
 /*	double r = 10;
@@ -372,7 +376,10 @@ void mafPipeLandmarkCloud::CreateClosedCloudPipe(vtkDataSet *data, double radius
     dis = wxString::Format("%s",m_Landmark->GetName().GetCStr());
     m_Caption->SetCaption(dis.c_str());
 
-    m_Caption->SetVisibility(1);
+    if(m_Landmark->GetLandmarkVisibility())
+      m_Caption->SetVisibility(1);
+    else
+      m_Caption->SetVisibility(0);
     double pos[3], rot[3];
     m_Landmark->GetOutput()->GetAbsPose(pos, rot);
     m_Caption->SetAttachmentPoint(pos[0],pos[1],pos[2]);
