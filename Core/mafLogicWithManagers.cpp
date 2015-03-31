@@ -89,6 +89,37 @@
 #include "mafDataVector.h"
 #include "mafVMEStorage.h"
 #include "mafRemoteStorage.h"
+#include "mafOpSelect.h"
+
+
+mafID mafLogicWithManagers::GetNewMenuId()
+{
+  return MENU_USER_START + m_UserCommandIndex++;
+}
+
+void mafLogicWithManagers::EnableOperations(bool enable)
+{
+  for(unsigned i = 0; i < m_MenuElems.size(); i++)
+  {
+    if(i == 0)
+    {
+      EnableItem(i + MENU_USER_START,enable && m_OpManager->UndoAvailable());
+      continue;
+    }
+    if(i == 1)
+    {
+      EnableItem(i + MENU_USER_START,enable && m_OpManager->RedoAvailable()); 
+      continue;
+    }
+    if(m_MenuElems[i].m_op)
+    {
+      bool enableOp = enable;
+      mafNode *node = m_OpManager->GetSelectedVme();
+      enableOp = enableOp && node && m_OpManager->GetOperationById(m_MenuElems[i].m_id)->Accept(node);
+      EnableItem(i + MENU_USER_START, enableOp); 
+    }
+  }
+}
 
 //----------------------------------------------------------------------------
 mafLogicWithManagers::mafLogicWithManagers(mafGUIMDIFrame *mdiFrame/*=NULL*/)
@@ -115,6 +146,9 @@ mafLogicWithManagers::mafLogicWithManagers(mafGUIMDIFrame *mdiFrame/*=NULL*/)
   m_ExportMenu  = NULL; 
   m_OpMenu      = NULL;
   m_ViewMenu    = NULL; 
+  m_ViewListMenu= NULL; 
+  m_EditMenu    = NULL;
+  m_UserCommandIndex = 0;
   m_RecentFileMenu = NULL;
 
   m_MaterialChooser = NULL;
@@ -267,7 +301,22 @@ void mafLogicWithManagers::Plug(mafView* view, bool visibleInMenu)
 //----------------------------------------------------------------------------
 {
   if(m_ViewManager) 
-    m_ViewManager->ViewAdd(view, visibleInMenu);
+  {
+    long id = m_ViewManager->ViewAdd(view);
+    if(visibleInMenu)
+    {
+      if(!m_ViewListMenu)
+      {
+        m_ViewListMenu = new wxMenu;
+        m_ViewMenu->AppendSeparator();
+        m_ViewMenu->Append(0,_("Add View"),m_ViewListMenu);
+      }
+      wxString s = wxString::Format("%s",view->GetLabel().c_str());
+      mafID command = GetNewMenuId();
+      m_ViewListMenu->Append(command, s, (wxMenu *)NULL, s );
+      m_MenuElems.push_back(mafMenuElems(false, id, command));
+    }
+  }
 }
 //----------------------------------------------------------------------------
 void mafLogicWithManagers::Plug(mafOp *op, wxString menuPath, bool canUndo, mafGUISettings *setting)
@@ -275,7 +324,22 @@ void mafLogicWithManagers::Plug(mafOp *op, wxString menuPath, bool canUndo, mafG
 {
   if(m_OpManager) 
   {
-    m_OpManager->OpAdd(op, menuPath, canUndo, setting);
+    wxString fullLabel = op->m_Label;
+    wxString st = op->m_Label.c_str();
+    wxString menu_codes=wxStripMenuCodes(st);
+    op->m_Label = menu_codes.c_str();
+    long id = m_OpManager->OpAdd(op/*, canUndo/*, setting*/);
+    wxMenu *path_menu = m_OpMenu;
+    if(op->GetType() == OPTYPE_IMPORTER)
+      path_menu = m_ImportMenu;
+    else if(op->GetType() == OPTYPE_EXPORTER)
+      path_menu = m_ExportMenu;
+    else if(op->GetType() == OPTYPE_EDIT)
+      path_menu = m_EditMenu;
+    mafID command = GetNewMenuId();
+    AddToMenu(fullLabel, command, path_menu, menuPath);
+    m_MenuElems.push_back(mafMenuElems(true, id, command));
+
     
 // currently mafInteraction is strictly dependent on VTK
 #ifdef MAF_USE_VTK    
@@ -302,26 +366,8 @@ void mafLogicWithManagers::Show()
     m_VMEManager->SetFileHistoryMenu(m_RecentFileMenu);
   }
 
-  if(m_UseViewManager && m_ViewMenu)
-  {
-    wxMenu *view_list = new wxMenu;
-    m_ViewMenu->AppendSeparator();
-    m_ViewMenu->Append(0,_("Add View"),view_list);
-    m_ViewManager->FillMenu(view_list);
-  }
-
-  if(m_OpManager)
-  {
-    if(m_MenuBar && (m_ImportMenu || m_OpMenu || m_ExportMenu))
-    {
-      m_OpManager->FillMenu(m_ImportMenu, m_ExportMenu, m_OpMenu);
-      m_OpManager->SetMenubar(m_MenuBar);
-    }
-    if(m_ToolBar)
-      m_OpManager->SetToolbar(m_ToolBar);
-  }
-
   mafLogicWithGUI::Show();
+  EnableOperations(true);
 
   // must be after the mafLogicWithGUI::Show(); because in that method is set the m_AppTitle var
   SetApplicationStamp(m_AppTitle);
@@ -430,16 +476,16 @@ void mafLogicWithManagers::CreateMenu()
 
   m_MenuBar->Append(file_menu, _("&File"));
 
-  wxMenu    *edit_menu = new wxMenu;
-  edit_menu->Append(OP_UNDO,   _("Undo  \tCtrl+Z"));
-  edit_menu->Append(OP_REDO,   _("Redo  \tCtrl+Shift+Z"));
-  edit_menu->AppendSeparator();
-  edit_menu->Append(OP_DELETE, _("Delete"));
-  edit_menu->Append(OP_CUT,   _("Cut   \tCtrl+Shift+X"));
-  edit_menu->Append(OP_COPY,  _("Copy  \tCtrl+Shift+C"));
-  edit_menu->Append(OP_PASTE, _("Paste \tCtrl+Shift+V"));
-  edit_menu->Append(MENU_EDIT_FIND_VME, _("Find VME \tCtrl+F"));
-  m_MenuBar->Append(edit_menu, _("&Edit"));
+  m_EditMenu = new wxMenu;
+  mafID undoCommand = GetNewMenuId();
+  mafID redoCommand = GetNewMenuId();
+  AddToMenu(_("Undo  \tCtrl+Z"),      MENU_USER_START + 0,m_EditMenu);
+  AddToMenu(_("Redo  \tCtrl+Shift+Z"),MENU_USER_START + 1,m_EditMenu);
+  m_EditMenu->AppendSeparator();
+  m_MenuElems.push_back(mafMenuElems(true, 0, undoCommand));
+  m_MenuElems.push_back(mafMenuElems(true, 0, redoCommand));
+  m_EditMenu->Append(MENU_EDIT_FIND_VME, _("Find VME \tCtrl+F"));
+  m_MenuBar->Append(m_EditMenu, _("&Edit"));
 
   m_ViewMenu = new wxMenu;
   m_MenuBar->Append(m_ViewMenu, _("&View"));
@@ -476,13 +522,13 @@ void mafLogicWithManagers::CreateToolbar()
   m_ToolBar->AddTool(MENU_FILE_PRINT_PREVIEW,mafPictureFactory::GetPictureFactory()->GetBmp("PRINT_PREVIEW"),  _("show the print preview for the selected view"));
   m_ToolBar->AddSeparator();
 
-  m_ToolBar->AddTool(OP_UNDO,mafPictureFactory::GetPictureFactory()->GetBmp("OP_UNDO"),  _("undo (ctrl+z)"));
-  m_ToolBar->AddTool(OP_REDO,mafPictureFactory::GetPictureFactory()->GetBmp("OP_REDO"),  _("redo (ctrl+shift+z)"));
+  m_ToolBar->AddTool(MENU_USER_START + 0, mafPictureFactory::GetPictureFactory()->GetBmp("OP_UNDO"),  _("undo (ctrl+z)"));
+  m_ToolBar->AddTool(MENU_USER_START + 1, mafPictureFactory::GetPictureFactory()->GetBmp("OP_REDO"),  _("redo (ctrl+shift+z)"));
   m_ToolBar->AddSeparator();
 
-  m_ToolBar->AddTool(OP_CUT,  mafPictureFactory::GetPictureFactory()->GetBmp("OP_CUT"),  _("cut selected vme (ctrl+x)"));
-  m_ToolBar->AddTool(OP_COPY, mafPictureFactory::GetPictureFactory()->GetBmp("OP_COPY"), _("copy selected vme (ctrl+c)"));
-  m_ToolBar->AddTool(OP_PASTE,mafPictureFactory::GetPictureFactory()->GetBmp("OP_PASTE"),_("paste vme (ctrl+v)"));
+  m_ToolBar->AddTool(MENU_USER_START + 3, mafPictureFactory::GetPictureFactory()->GetBmp("OP_CUT"),  _("cut selected vme (ctrl+x)"));
+  m_ToolBar->AddTool(MENU_USER_START + 4, mafPictureFactory::GetPictureFactory()->GetBmp("OP_COPY"), _("copy selected vme (ctrl+c)"));
+  m_ToolBar->AddTool(MENU_USER_START + 5, mafPictureFactory::GetPictureFactory()->GetBmp("OP_PASTE"),_("paste vme (ctrl+v)"));
   m_ToolBar->AddSeparator();
   m_ToolBar->AddTool(CAMERA_RESET,mafPictureFactory::GetPictureFactory()->GetBmp("ZOOM_ALL"),_("reset camera to fit all (ctrl+f)"));
   m_ToolBar->AddTool(CAMERA_FIT,  mafPictureFactory::GetPictureFactory()->GetBmp("ZOOM_SEL"),_("reset camera to fit selected object (ctrl+shift+f)"));
@@ -503,13 +549,45 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
 {
   mafEvent *e = mafEvent::SafeDownCast(maf_event);
   if(!e)
+  {
+    mafLogicWithGUI::OnEvent(maf_event);
     return;
+  }
   mafID eventId = e->GetId();
   /*if (mafDataVector::GetSingleFileDataId() == eventId)
   {
     e->SetBool(m_StorageSettings->GetSingleFileStatus()!= 0);
     return;
   }*/
+  for(int i = 0; i < m_MenuElems.size(); i++)
+  {
+    if(eventId != m_MenuElems[i].m_command)
+      continue;
+    if(!m_MenuElems[i].m_op)
+    {
+      if(m_ViewManager)
+        m_ViewManager->ViewCreate(m_MenuElems[i].m_id + VIEW_START);
+      return;
+    }
+    if(!m_OpManager) 
+      break;
+    EnableOperations(false);
+    if(i == 0)
+    {
+      m_OpManager->OpUndo();
+      EnableOperations(true);
+      return;
+    }
+    if(i == 1)
+    {
+      m_OpManager->OpRedo();
+      EnableOperations(true);
+      return;
+    }
+    m_OpManager->OpRun(m_MenuElems[i].m_id, m_OpManager->GetSelectedVme());
+    EnableOperations(true);
+    return;
+  }
   // ###############################################################
   // commands related to FILE MENU  
   if(MENU_FILE_NEW == eventId)
@@ -781,6 +859,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
     if (!m_OpManager->Running())
     {
       m_OpManager->ClearUndoStack();
+      EnableOperations(true);
     }
     return;
   }
@@ -863,7 +942,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
     }
     if (m_OpManager)
     {
-      m_OpManager->RefreshMenu();
+      EnableOperations(!m_OpManager->Running());
     }
     return;
   }
@@ -1161,9 +1240,6 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
     m_HelpSettings->OpenHelpPage(entity);
   }
   mafLogicWithGUI::OnEvent(maf_event);
-      break; 
-    } // end switch case
-  } // end if SafeDowncast
 }
 //----------------------------------------------------------------------------
 void mafLogicWithManagers::OnFileNew()
@@ -1377,9 +1453,18 @@ void mafLogicWithManagers::VmeSelect(mafEvent& e)	//modified by Paolo 10-9-2003
       }
     }
   }
-  if(node != NULL && m_OpManager)
-    m_OpManager->OpSelect(node);
-    
+
+  if(node && m_OpManager && node != m_OpManager->GetSelectedVme()) 
+  {
+    mafOpSelect opsel;
+    opsel.SetNewSel(node);
+    m_OpManager->OpExec(&opsel);
+
+    //OnEvent(&mafEvent(this,VME_SELECTED,node));
+    mafLogMessage("node selected: %s", node->GetName());
+  }
+
+
 // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
   if (m_InteractionManager)
@@ -1396,7 +1481,7 @@ void mafLogicWithManagers::VmeSelected(mafNode *vme)
 //----------------------------------------------------------------------------
 {
   if(m_ViewManager) m_ViewManager->VmeSelect(vme);
-  if(m_OpManager)   m_OpManager->VmeSelected(vme);
+  if(m_OpManager)   {m_OpManager->VmeSelected(vme);    EnableOperations(true);}
 	if(m_SideBar)     m_SideBar->VmeSelected(vme);
 }
 //----------------------------------------------------------------------------
@@ -1487,17 +1572,20 @@ void mafLogicWithManagers::OpRunStarting()
 //----------------------------------------------------------------------------
 {
   EnableMenuAndToolbar(false);
+  EnableOperations(false);
 // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
   if(m_InteractionManager) m_InteractionManager->EnableSelect(false);
 #endif
   if(m_SideBar)    m_SideBar->EnableSelect(false);
+  EnableItem(MENU_EDIT_FIND_VME, false);
 }
 //----------------------------------------------------------------------------
 void mafLogicWithManagers::OpRunTerminated()
 //----------------------------------------------------------------------------
 {
   EnableMenuAndToolbar(true);
+  EnableOperations(true);
 // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
   if(m_InteractionManager) 
@@ -1505,6 +1593,7 @@ void mafLogicWithManagers::OpRunTerminated()
 #endif
   if(m_SideBar)
     m_SideBar->EnableSelect(true);
+  EnableItem(MENU_EDIT_FIND_VME, true);
 }
 //----------------------------------------------------------------------------
 void mafLogicWithManagers::EnableMenuAndToolbar(bool enable)

@@ -52,12 +52,6 @@ public:
   void SetRemoteListener(mafBaseEventHandler *Listener) {m_RemoteListener = Listener;};
   virtual void OnEvent(mafEventBase *maf_event);
 
-  /** Fill the main menù with plugged views. */
-	void FillMenu (wxMenu* menu);
-
-  /** Check if the view 'v' should be hidden from the 'View' menu.*/
-  bool IsVisibleInMenu(mafView* v);
-
   /** Add the vme to all views. */
   void VmeAdd(mafNode *n);
 
@@ -74,7 +68,7 @@ public:
   void VmeModified(mafNode *vme); //SIL. 9-3-2005: 
 
   /** Add the View to the view-list. */
-	virtual void ViewAdd(mafView *view, bool visibleInMenu = true);
+	virtual long ViewAdd(mafView *view);
   
 	/** Pass the selected render window to the mouse device. */
   void ViewSelected(mafView *view /*, mafRWIBase *rwi*/);
@@ -125,7 +119,7 @@ public:
   mafView *GetFromList(const char *label);
 
   /** Return the plugged view-list. */
-  mafView **GetListTemplate() {return m_ViewTemplate;};
+  const std::vector<mafView *> &GetListTemplate() {return m_ViewTemplate;}
 
   /** Empty. */
   void OnQuit();
@@ -145,8 +139,7 @@ protected:
   mafDeviceButtonsPadMouse      *m_Mouse;
   mafView       *m_ViewList;  // created view list
 
-  mafView       *m_ViewTemplate[MAXVIEW];   // view template vector
-  int            m_TemplateNum;       // number of template
+  std::vector<mafView*>       m_ViewTemplate;   // view template vector
 
   mafBaseEventHandler   *m_RemoteListener;
   mafVMERoot    *m_RootVme;
@@ -154,10 +147,7 @@ protected:
   mafView       *m_SelectedView;
   mafRWIBase    *m_SelectedRWI;
 	mafView       *m_ViewBeingCreated;
-  mafView       *m_ViewMatrixID[MAXVIEW][MAXVIEW];  ///< Matrix to access views directly by (id, multiplicity)
-
-  std::vector<long> m_IdInvisibleMenuList; ///< List of views that are no visible into the 'View' menu item.
-
+  std::vector<std::vector<mafView*> > m_ViewMatrixID;  ///< Matrix to access views directly by (id, multiplicity)
   bool m_CollaborateStatus;
 
   /** test friend */

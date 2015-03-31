@@ -50,9 +50,6 @@ protected:
   /** Send an event with the men item's id. */
   void OnMenu(wxCommandEvent& e);
   
-  /** Send an event with the men operation's id. */
-	void OnMenuOp(wxCommandEvent& e);
-  
   /** Send an event with the UI item's id. */
 	void OnUpdateUI(wxUpdateUIEvent& e);
   

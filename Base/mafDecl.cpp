@@ -421,16 +421,6 @@ std::string  mafIdString(int id)
 
 		 case SHOW_CONTEXTUAL_MENU: s="SHOW_CONTEXTUAL_MENU"; break;
 
-     case OP_START:							s="OP_START"; break; 
-     case OP_UNDO:							s="OP_UNDO"; break; 
-     case OP_REDO:							s="OP_REDO"; break; 
-     case OP_DELETE:						s="OP_DELETE"; break; 
-     case OP_CUT:								s="OP_CUT"; break; 
-     case OP_COPY:							s="OP_COPY"; break; 
-     case OP_PASTE:							s="OP_PASTE"; break; 
-     case OP_SELECT:						s="OP_SELECT"; break; 
-     case OP_TRANSFORM:					s="OP_TRANSFORM"; break; 
-     case OP_END:								s="OP_END"; break; 
 
      case WIDGETS_START:	      s="WIDGETS_START"; break; 
      case ID_LAYOUT:	          s="ID_LAYOUT"; break; 

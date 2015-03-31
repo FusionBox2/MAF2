@@ -38,8 +38,8 @@ class wxWindow;
 // MAX number of widgets that mafGUI can hold - used also by mafGUIValidator
 //const int MAXWIDGET = 200; 
 const int MAXWIDGET = 4096;
-const int MAXOP = 200; 
-const int MAXVIEW = 200; 
+
+const int VIEW_START = 12391;
 
 // extern MAF_EXPORT int MAFExpertMode; ///< Flag to turn On/Off detailed debug information or GUI widgets
 
@@ -298,25 +298,6 @@ MENU_USER_START,// to be used from vertical applications
 MENU_USER_END = MENU_USER_START+1000,
 
 MENU_END,
-
-// ids of operations - used by mafOpManager and mafGUIFrame
-// must be after MENU_END
-OP_START,
-  OP_UNDO,
-  OP_REDO,
-  OP_DELETE,
-  OP_CUT,
-  OP_COPY,
-  OP_PASTE,
-  OP_SELECT,
-  OP_TRANSFORM,
-	OP_USER,
-OP_END = OP_START + MAXOP,
-
-// ids of views - used by mafViewManager and mafGUIFrame
-// must be after MENU_END
-VIEW_START,
-VIEW_END = VIEW_START + MAXVIEW,
 
 // events sent by widget
 

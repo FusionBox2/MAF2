@@ -20,8 +20,6 @@
 //----------------------------------------------------------------------------
 // includes :
 //----------------------------------------------------------------------------
-#include <wx/accel.h>
-#include <wx/menu.h>
 #include "mafEvent.h"
 #include "mafEventSender.h"
 #include "mafBaseEventHandler.h"
@@ -32,12 +30,6 @@
 //----------------------------------------------------------------------------
 class mafNode;
 class mafOp;
-class mafOpSelect;
-class mafOpCut;
-class mafOpCopy;
-class mafOpPaste;
-class mafOpTransform;
-class vtkMatrix4x4;
 class mafDeviceButtonsPadMouse;
 class mafGUISettings;
 class mafGUISettingsDialog;
@@ -65,10 +57,7 @@ public:
   MAF_ID_DEC(RUN_OPERATION_EVENT)
 
 	/** Add the operation 'op' to the list of available operations. */
-	virtual void OpAdd(mafOp *op, wxString menuPath = "", bool can_undo = true, mafGUISettings *setting = NULL);
-
-	/** Fill the application men with the operations name.	*/
-	virtual void FillMenu(wxMenu* import, wxMenu* mexport, wxMenu* operations);
+	virtual long OpAdd(mafOp *op, wxString menuPath = "", bool can_undo = true, mafGUISettings *setting = NULL);
 
   /** Fill the setting dialog with the settings associated to the plugged operations.*/
   void FillSettingDialog(mafGUISettingsDialog *settingDialog);
@@ -79,8 +68,11 @@ public:
 	/** Return the selected vme. */
 	virtual mafNode* GetSelectedVme();
 
+	bool UndoAvailable(){return !m_Context.Undo_IsEmpty();}
+  bool RedoAvailable(){return !m_Context.Redo_IsEmpty();}
+
 	/** Run the operation by id. */
-  virtual void OpRun(int op_id);
+  virtual void OpRun(int op_id, void *op_param = NULL);
 	
 	/** Call this to exec an operation with user interaction and undo/redo services. */
   virtual void OpRun(mafOp *op, void *op_param = NULL);
@@ -89,22 +81,10 @@ public:
   virtual void OpRun(mafString &op_type, void *op_param = NULL);
 
 	/** Execute the operation 'op' and warn the user if the operation is undoable. */
-  virtual void OpExec		(mafOp *op);
-
-	/** Execute the select operation. */
-  virtual void OpSelect(mafNode* v);
-
-	/** Execute the transform operation. */
-	//virtual void OpTransform(vtkMatrix4x4* new_matrix,vtkMatrix4x4* old_matrix);
+  virtual void OpExec(mafOp *op, void *op_param = NULL);
 
 	/** Set the flag for warning the user if the operation is undoable. */
   virtual void WarningIfCantUndo (bool warn) {m_Warn = warn;};
-
-	/** Set a reference to the main toolbar. */
-  virtual void SetToolbar(wxToolBar *tb) {m_ToolBar = tb;};
-
-	/** Set a reference to the main men. */
-  virtual void SetMenubar(wxMenuBar *mb) {m_MenuBar = mb;};
 
 	/** return true if there is a running operation. */
   virtual bool Running()								 {return m_Context.Caller() != NULL;};
@@ -137,8 +117,11 @@ public:
 
   bool m_FromRemote; ///< Flag used to check if a command comes from local or remote application.
 
-  /** Called by logic to refresh the operation's menù items.*/
-  void RefreshMenu();
+	/** Execute the 'UnDo' method of the operation. */
+  virtual void OpUndo();
+
+	/** Execute the 'Do' method of the operation. */
+	virtual void OpRedo();
 
   /** Set MafUser */
   void SetMafUser(mafUser *user);
@@ -156,54 +139,29 @@ protected:
 	/** The operation is not executed and is deleted. */
   virtual void OpRunCancel(mafOp *op);
 
-	/** Execute the 'UnDo' method of the operation. */
-  virtual void OpUndo();
-
-	/** Execute the 'Do' method of the operation. */
-	virtual void OpRedo();
-
 	/** Warn the user if the operation is undoable. */
   virtual bool WarnUser(mafOp *op);
 
 	/** Sent a string message to the listener. */
   virtual void Notify(int msg, long arg=0L);
 
-	/** Enable/Disable the men items operation. */
-  virtual void EnableOp(bool CanEnable = true);
-
-	/** Enable/Disable the toolbar's buttons. */
-	virtual void EnableToolbar(bool CanEnable = true);
-
   /** Fill the attribute for traceability events*/
   void FillTraceabilityAttribute(mafOp *op, mafNode *in_node, mafNode *out_node);
 
-  void SetAccelerator(mafOp *op);
 
   mafDeviceButtonsPadMouse          *m_Mouse; ///< Pointer to the mouse devices.
   bool               m_Warn; ///< Flag to warn the user when an operation that can not undo is starting.
 	mafOpContextStack  m_Context;
   mafOp             *m_RunningOp; ///< Pointer to the current running operation.
-	wxMenu            *m_Menu[3]; ///< Array of pointers to the menu 'Operations', 'Importer' and 'Exporter'
   mafNode						*m_Selected; ///< Pointer to the current selected node.
   mafNode           *m_NaturalNode; ///< Pointer to the NATURAL node on which is running a non-input preserving operation.
 
   mafUser           *m_User; ///<User credentials
 
   std::vector<mafOp *> m_OpList; ///< List of pointer of plugged operations.
-  int                m_NumOp; ///< Number of plugged operations.
-  wxAcceleratorEntry m_OpAccelEntries[MAXOP]; ///< List of Accelerators for menu items.
-  int                m_NumOfAccelerators;
 
   void *m_OpParameters; ///< Pointer to the operation's parameter list.
 
-  mafOpSelect       *m_OpSelect; ///< Pointer to the (always available) operation for selecting VMEs
-  mafOpCut          *m_OpCut; ///< Pointer to the (always available) operation for cutting VMEs
-  mafOpCopy         *m_OpCopy; ///< Pointer to the (always available) operation for copying VMEs
-  mafOpPaste        *m_OpPaste; ///< Pointer to the (always available) operation for pasting VMEs
-  //mafOpTransform    *m_optransform;
-
-  wxMenuBar         *m_MenuBar; ///< Pointer to the Application's main menù
-	wxToolBar         *m_ToolBar; ///< Pointer to the application's Toolbal
 
   bool m_CollaborateStatus;  ///< Flag set to know if the application is in collaborative mode or no.
 

@@ -129,12 +129,6 @@ protected:
 	/** Send the men event. */
   void OnMenu(wxCommandEvent& e);
 
-	/** Send the 'Operations' men event. */
-  void OnMenuOp(wxCommandEvent& e);
-
-	/** Send the 'Views' men event. */
-  void OnMenuView(wxCommandEvent& e);
-
 	/** Send the UI event. */
   void OnUpdateUI(wxUpdateUIEvent& e);
 

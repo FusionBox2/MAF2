@@ -49,9 +49,7 @@ BEGIN_EVENT_TABLE(mafGUIFrame, wxFrame)
     EVT_CLOSE(mafGUIFrame::OnCloseWindow)
     EVT_MENU_RANGE(MENU_START,MENU_END,mafGUIFrame::OnMenu)
     EVT_MENU_RANGE(wxID_FILE1,wxID_FILE9,mafGUIFrame::OnMenu)
-    EVT_MENU_RANGE(OP_START,OP_END,mafGUIFrame::OnMenuOp)
     EVT_UPDATE_UI_RANGE(MENU_START,MENU_END,mafGUIFrame::OnUpdateUI)
-    EVT_UPDATE_UI_RANGE(OP_START,OP_END,mafGUIFrame::OnUpdateUI)
     EVT_SASH_DRAGGED_RANGE(SASH_START, SASH_END, mafGUIFrame::OnSashDrag)
     EVT_BUTTON (ID_LAYOUT, mafGUIFrame::OnLayout)
     EVT_SIZE(mafGUIFrame::OnSize)
@@ -78,12 +76,6 @@ void mafGUIFrame::OnMenu(wxCommandEvent& e)
 //----------------------------------------------------------------------------
 { 
   mafEventMacro(mafEvent(this,e.GetId()));
-}
-//----------------------------------------------------------------------------
-void mafGUIFrame::OnMenuOp(wxCommandEvent& e)
-//----------------------------------------------------------------------------
-{ 
-  mafEventMacro(mafEvent(this,MENU_OP,(long)e.GetId()));
 }
 //----------------------------------------------------------------------------
 void mafGUIFrame::OnUpdateUI(wxUpdateUIEvent& e)

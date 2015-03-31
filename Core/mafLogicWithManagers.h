@@ -159,6 +159,7 @@ public:
   void SetFileExtension(mafString &extension) {m_Extension = extension;};
 
 protected:
+  void EnableOperations(bool enable = true);
   //---------------------------------------------------------
   // Description:
   // Method to update the time bounds when 
@@ -283,6 +284,8 @@ protected:
   wxMenu *m_RecentFileMenu;
   wxMenu *m_OpMenu;
   wxMenu *m_ViewMenu; 
+  wxMenu *m_EditMenu; 
+  wxMenu *m_ViewListMenu; 
 
   bool m_CameraLinkingObserverFlag;
   bool m_ExternalViewFlag;
@@ -299,5 +302,16 @@ protected:
   mafString m_Extension;
 
   mafUser *m_User; ///< Applications' user
+  struct mafMenuElems
+  {
+    mafMenuElems(bool op, int id, mafID command):m_op(op), m_id(id), m_command(command){}
+    bool m_op;
+    int  m_id;
+    mafID m_command;
+  };
+  std::vector<mafMenuElems> m_MenuElems;
+
+  long m_UserCommandIndex;
+  mafID GetNewMenuId();
 };
 #endif

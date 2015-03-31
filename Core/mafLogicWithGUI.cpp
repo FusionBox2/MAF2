@@ -29,6 +29,7 @@
 #include <wx/datetime.h>
 #include <wx/busyinfo.h>
 #include <wx/splash.h>
+#include <wx/tokenzr.h>
 #include "mafDecl.h"
 #include "mafView.h"
 #include "mafGUIMDIFrame.h"
@@ -118,6 +119,13 @@ void mafLogicWithGUI::Configure()
 void mafLogicWithGUI::Show()
 //----------------------------------------------------------------------------
 {
+  wxAcceleratorEntry *entries = new wxAcceleratorEntry[m_AccelTable.size()];
+  for(int i = 0; i < m_AccelTable.size(); i++)
+    entries[i] = m_AccelTable[i];
+  wxAcceleratorTable atable(m_AccelTable.size(), entries);
+  if (atable.Ok())
+    mafGetFrame()->SetAcceleratorTable(atable);
+  delete[] entries;
   m_AppTitle = m_Win->GetTitle().c_str();
 	m_Win->Show(TRUE);
 }
@@ -154,8 +162,6 @@ void mafLogicWithGUI::CreateMenu()
   wxMenu *file_menu = new wxMenu;
   file_menu->Append(MENU_FILE_QUIT,  _("&Quit"));
   m_MenuBar->Append(file_menu, _("&File"));
-  wxMenu *edit_menu = new wxMenu;
-  m_MenuBar->Append(edit_menu, _("&Edit"));
   wxMenu *view_menu = new wxMenu;
   m_MenuBar->Append(view_menu, _("&View"));
 }
@@ -333,19 +339,6 @@ void mafLogicWithGUI::CreateToolbar()
   m_ToolBar->AddTool(MENU_FILE_NEW,mafPictureFactory::GetPictureFactory()->GetBmp("FILE_NEW"),    _("new msf storage file"));
   m_ToolBar->AddTool(MENU_FILE_OPEN,mafPictureFactory::GetPictureFactory()->GetBmp("FILE_OPEN"),  _("open msf storage file"));
   m_ToolBar->AddTool(MENU_FILE_SAVE,mafPictureFactory::GetPictureFactory()->GetBmp("FILE_SAVE"),  _("save current msf storage file"));
-  m_ToolBar->AddSeparator();
-
-  m_ToolBar->AddTool(OP_UNDO,mafPictureFactory::GetPictureFactory()->GetBmp("OP_UNDO"),  _("undo (ctrl+z)")); //correggere tooltip - shortcut sbagliati
-  m_ToolBar->AddTool(OP_REDO,mafPictureFactory::GetPictureFactory()->GetBmp("OP_REDO"),  _("redo (ctrl+shift+z)"));
-  m_ToolBar->AddSeparator();
-
-  m_ToolBar->AddTool(OP_CUT,  mafPictureFactory::GetPictureFactory()->GetBmp("OP_CUT"),  _("cut selected vme (ctrl+x)"));
-  m_ToolBar->AddTool(OP_COPY, mafPictureFactory::GetPictureFactory()->GetBmp("OP_COPY"), _("copy selected vme (ctrl+c)"));
-  m_ToolBar->AddTool(OP_PASTE,mafPictureFactory::GetPictureFactory()->GetBmp("OP_PASTE"),_("paste vme (ctrl+v)"));
-  m_ToolBar->AddSeparator();
-  m_ToolBar->AddTool(CAMERA_RESET,mafPictureFactory::GetPictureFactory()->GetBmp("ZOOM_ALL"),_("reset camera to fit all (ctrl+f)"));
-  m_ToolBar->AddTool(CAMERA_FIT,  mafPictureFactory::GetPictureFactory()->GetBmp("ZOOM_SEL"),_("reset camera to fit selected object (ctrl+shift+f)"));
-  m_ToolBar->AddTool(CAMERA_FLYTO,mafPictureFactory::GetPictureFactory()->GetBmp("FLYTO"),_("fly to object under mouse (press f inside a 3Dview)"));
   m_ToolBar->Realize();
 }
 //----------------------------------------------------------------------------
@@ -391,4 +384,78 @@ void mafLogicWithGUI::EnableItem(int item, bool enable)
         m_MenuBar->Enable(item,enable );
   if(m_ToolBar)
      m_ToolBar->EnableTool(item,enable );
+}
+
+//----------------------------------------------------------------------------
+void mafLogicWithGUI::AddToMenu(const wxString& name, long id, wxMenu* path_menu, const wxString& menuPath)
+//----------------------------------------------------------------------------
+{
+  if (menuPath != "")
+  {
+    wxString op_path = "";
+    wxStringTokenizer path_tkz(menuPath, "/");
+    while ( path_tkz.HasMoreTokens() )
+    {
+      op_path = path_tkz.GetNextToken();
+      int item = path_menu->FindItem(_(op_path));
+      if (item != wxNOT_FOUND)
+      {
+        wxMenuItem *menu_item = path_menu->FindItem(item);
+        if (menu_item)
+          path_menu = menu_item->GetSubMenu();
+      }
+      else
+      {
+        wxMenu *sub_menu = new wxMenu;
+        path_menu->Append(-1,_(op_path),sub_menu);
+        path_menu = sub_menu;
+      }
+    }
+  }
+  path_menu->Append(id, _(name), _(name));
+  SetAccelerator(name, id);
+}
+//----------------------------------------------------------------------------
+void mafLogicWithGUI::SetAccelerator(const wxString& name, long id)
+//----------------------------------------------------------------------------
+{
+  wxString accelerator, flag = "", extra_flag = "", key_code = "";
+  int flag_num;
+  accelerator = name;
+  wxStringTokenizer tkz(accelerator, "\t");
+  int token = tkz.CountTokens();
+
+  if (token > 1)
+  {
+    accelerator  = tkz.GetNextToken();
+    accelerator  = tkz.GetNextToken();
+    wxStringTokenizer tkz2(accelerator, "+");
+    token = tkz2.CountTokens();
+    if (token == 2)
+    {
+      flag = tkz2.GetNextToken();
+      key_code = tkz2.GetNextToken();
+    }
+    else
+    {
+      flag = tkz2.GetNextToken();
+      extra_flag = tkz2.GetNextToken();
+      key_code = tkz2.GetNextToken();
+    }
+    if (flag == "Ctrl")
+      flag_num = wxACCEL_CTRL;
+    else if(flag == "Alt")
+      flag_num = wxACCEL_ALT;
+    else if(flag == "Shift")
+      flag_num = wxACCEL_SHIFT;
+
+    if (extra_flag == "Ctrl")
+      flag_num |= wxACCEL_CTRL;
+    else if(extra_flag == "Alt")
+      flag_num |= wxACCEL_ALT;
+    else if(extra_flag == "Shift")
+      flag_num |= wxACCEL_SHIFT;
+
+    m_AccelTable.push_back(wxAcceleratorEntry(flag_num,  (int) *key_code.c_str(), id));
+  }
 }

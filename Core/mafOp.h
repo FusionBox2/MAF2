@@ -96,15 +96,6 @@ public:
 	/** Return true if the operation is undoable. */
 	virtual bool CanUndo();
 
-	/** Return true if the operation is an importer. */
-	//bool IsImporter();
-
-	/** Return true if the operation is an exporter. */
-	//bool IsExporter();
-
-	/** Return true if the operation is a normal operation. */
-	//bool IsOp();
-
 	/** Return true if the operation preserve the input vme. */
 	bool IsInputPreserving() {return m_InputPreserving;};
 
@@ -130,8 +121,6 @@ public:
   //SIL 22/04/04
 	long            m_Compatibility;
 	bool 						IsCompatible(long state);
-  wxMenuItem     *m_MenuItem;  
-  wxString        m_OpMenuPath;
 
   //MARCO 7/05/04
   virtual const char **GetActions() {return NULL;}; 

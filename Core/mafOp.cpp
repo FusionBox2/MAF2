@@ -41,13 +41,11 @@ mafOp::mafOp(const wxString &label)
 	m_Gui       = NULL;
 	m_Next      = NULL;
 	m_OpType    = OPTYPE_OP;
-  m_OpMenuPath= "";
 	m_Canundo   = false;
 	m_Label     = label;
   m_Guih      = NULL;
 	m_Input     = NULL;
   m_Output    = NULL;
-  m_MenuItem  = NULL;
   m_Mouse     = NULL;
   m_SettingPanel = NULL;
   m_Compatibility     = 0xFFFF;
@@ -64,7 +62,6 @@ mafOp::mafOp()
 	m_OpType    = OPTYPE_OP;
 	m_Canundo   = false;
 	m_Label     = "default op name";
-  m_OpMenuPath= "";
   m_Guih      = NULL;
 	m_Input     = NULL;
   m_Output    = NULL;
@@ -167,7 +164,8 @@ int mafOp::GetType()
 void mafOp::ShowGui()
 //----------------------------------------------------------------------------
 {
-  assert(m_Gui); 
+  if(!m_Gui)
+    return;
   m_Gui->Collaborate(m_CollaborateStatus);
   m_Guih = new mafGUIHolder(mafGetFrame(),-1);
   m_Guih->Put(m_Gui);
@@ -181,7 +179,8 @@ void mafOp::ShowGui()
 void mafOp::HideGui()
 //----------------------------------------------------------------------------
 {
-  assert(m_Gui); 
+  if(!m_Gui)
+    return;
   mafEventMacro(mafEvent(this,OP_HIDE_GUI,(wxWindow *)m_Guih));
   delete m_Guih;
   m_Guih = NULL;

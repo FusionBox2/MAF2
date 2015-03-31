@@ -121,6 +121,9 @@ public:
   virtual void ShowSplashScreen(wxBitmap &splashImage);
 
 protected:
+  /** Fill the application menu.	*/
+  void AddToMenu(const wxString& name, long id, wxMenu* path_menu, const wxString& menuPath ="");
+  void SetAccelerator(const wxString& name, long id);
   /** Add the main menu.*/
   void AddMenu();
   /** Add the toolbar.*/
@@ -173,6 +176,7 @@ protected:
   mafGUIApplicationSettings *m_ApplicationSettings;
   mafGUISettingsStorage     *m_StorageSettings;
   mafGUISettingsTimeBar     *m_TimeBarSettings;
+  std::vector<wxAcceleratorEntry> m_AccelTable; ///< List of Accelerators for menu items.
 
   bool m_PlugMenu;    ///< Flag to plug or not the Menu into the application. Default is true.
   bool m_PlugToolbar; ///< Flag to plug or not the Toolbar into the application. Default is true.

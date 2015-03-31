@@ -73,6 +73,8 @@ public:
     mafOpEdit(wxString label="");
     /** Destructor. */
     ~mafOpEdit(); 
+    /** Builds operation's interface. */
+    void OpRun();
     /** set input node to the operation. */
     void     SetInput(mafNode* vme) {m_Selection = vme;};
     /** check if the clipboard is empty.*/
@@ -89,6 +91,7 @@ public:
     void SetClipboard(mafNode *node);
 protected:
   // static   mafAutoPointer<mafNode> m_Clipboard;
+  static   int m_NumOperations;
   mafAutoPointer<mafNode> m_Backup;
   mafAutoPointer<mafNode> m_Selection;
 };
@@ -118,6 +121,28 @@ protected:
     mafAutoPointer<mafNode> m_SelectionParent;
     /** Load all children in the tree (Added by Di Cosmo on 24.05.2012) */
     void LoadChild(mafNode *vme);
+};
+/**
+class name: mafOpDelete
+Operation which perform delete on a node input.
+*/
+class MAF_EXPORT mafOpDelete: public mafOpEdit
+{
+public:
+  /** Constructor. */
+  mafOpDelete(wxString label=_("Delete"));
+  /** Destructor. */
+  ~mafOpDelete();
+  /** check if node can be input of the operation. */
+  bool Accept(mafNode* vme);
+  /** execute the operation.  */
+  void OpDo();
+  /** undo the operation. */
+  void OpUndo();
+  /** return a instance of current object. */
+  mafOp* Copy(); 
+protected:
+    mafAutoPointer<mafNode> m_SelectionParent;
 };
 /**
     class name: mafOpCopy
@@ -159,27 +184,4 @@ public:
 protected:
     mafAutoPointer<mafNode> m_PastedVme;
 };
-/*
-//----------------------------------------------------------------------------
-// mafOpTransform :
-//----------------------------------------------------------------------------
-
-class mafOpTransform: public mafOp
-{
-public:
-    mafOpTransform(wxString label="Transform"); 
-   ~mafOpTransform(); 
-    bool Accept(mafNode* vme);
-    void SetInput(mafNode* vme);       
-    void SetOldMatrix(vtkMatrix4x4* matrix);
-    void SetNewMatrix(vtkMatrix4x4* matrix);
-    void OpDo();
-    void OpUndo();
-    mafOp* Copy();
-protected:
-  	mafNode*       m_vme; 
-  	vtkMatrix4x4* m_new_matrix; 
-  	vtkMatrix4x4* m_old_matrix; 
-};
-*/
 #endif

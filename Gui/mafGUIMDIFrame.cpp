@@ -101,11 +101,8 @@ BEGIN_EVENT_TABLE(mafGUIMDIFrame, wxMDIParentFrame)
     EVT_CLOSE(mafGUIMDIFrame::OnCloseWindow)
     EVT_DROP_FILES(mafGUIMDIFrame::OnDropFile)
     EVT_MENU_RANGE(MENU_START,MENU_END,mafGUIMDIFrame::OnMenu)
-		EVT_MENU_RANGE(OP_START,OP_END,mafGUIMDIFrame::OnMenuOp)
-    EVT_MENU_RANGE(VIEW_START,VIEW_END,mafGUIMDIFrame::OnMenuView)
 		EVT_MENU_RANGE(wxID_FILE1, wxID_FILE9, mafGUIMDIFrame::OnMenu)
     EVT_UPDATE_UI_RANGE(MENU_START,MENU_END,mafGUIMDIFrame::OnUpdateUI)
-    EVT_UPDATE_UI_RANGE(OP_START,OP_END,mafGUIMDIFrame::OnUpdateUI)
     EVT_SIZE(mafGUIMDIFrame::OnSize) //SIL. 23-may-2006 : 
 
     EVT_IDLE(mafGUIMDIFrame::OnIdle)  
@@ -181,18 +178,6 @@ void mafGUIMDIFrame::OnMenu(wxCommandEvent& e)
 	//  ShowDockPane(e.GetId(), !DockPaneIsShown( (wxWindow*)(e.GetEventObject())) );
 	// else
   mafEventMacro(mafEvent(this,e.GetId()));
-}
-//----------------------------------------------------------------------------
-void mafGUIMDIFrame::OnMenuOp(wxCommandEvent& e)
-//----------------------------------------------------------------------------
-{ 
-  mafEventMacro(mafEvent(this,MENU_OP,(long)e.GetId()));
-}
-//----------------------------------------------------------------------------
-void mafGUIMDIFrame::OnMenuView(wxCommandEvent& e)
-//----------------------------------------------------------------------------
-{ 
-  mafEventMacro(mafEvent(this,VIEW_CREATE,(long)e.GetId()));
 }
 //----------------------------------------------------------------------------
 void mafGUIMDIFrame::OnUpdateUI(wxUpdateUIEvent& e)

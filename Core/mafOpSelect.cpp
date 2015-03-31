@@ -28,6 +28,10 @@
 #include "mafNode.h"
 #include "mafVMERoot.h"
 #include "mafString.h"
+#include "mafStorage.h"
+#include "mafEventIO.h"
+#include "mafDataVector.h"
+#include "mafVMEGenericAbstract.h"
 #ifdef MAF_USE_VTK
   #include "mafVMELandmarkCloud.h"
 #endif
@@ -39,6 +43,7 @@
 // mafAutoPointer<mafNode>  mafOpEdit::m_Clipboard(NULL);
 
 static mafAutoPointer<mafNode> m_Clipboard = NULL;
+int  mafOpEdit::m_NumOperations(0); 
 
 //////////////////
 // mafOpSelect ://
@@ -110,11 +115,15 @@ mafOpEdit::mafOpEdit(wxString label)
   m_Canundo = true; 
   m_OpType = OPTYPE_EDIT; 
   m_Selection = NULL; 
+  m_NumOperations++;
 }
 //----------------------------------------------------------------------------
 mafOpEdit::~mafOpEdit()
 //----------------------------------------------------------------------------
 {
+  m_NumOperations--;
+  if(m_NumOperations == 0)
+    ClipboardClear();
 } 
 //----------------------------------------------------------------------------
 bool mafOpEdit::ClipboardIsEmpty()
@@ -156,6 +165,13 @@ void mafOpEdit::SetClipboard(mafNode *node)
 {
   m_Clipboard = node;
 }
+//----------------------------------------------------------------------------
+void mafOpEdit::OpRun()
+//----------------------------------------------------------------------------
+{
+  OpStop(OP_RUN_OK);
+}
+
 ///////////////
 // mafOpCut ://
 ///////////////
@@ -288,6 +304,93 @@ Restore the Selection
   }
   mafEventMacro(mafEvent(this,VME_SELECTED,m_Selection));
   ClipboardRestore();
+}
+
+
+
+//////////////////
+// mafOpDelete ://
+//////////////////
+//----------------------------------------------------------------------------
+mafOpDelete::mafOpDelete(wxString label) 
+//----------------------------------------------------------------------------
+{
+  m_Label           = label;
+  m_SelectionParent = NULL; 
+  m_Canundo         = false;
+}
+//----------------------------------------------------------------------------
+mafOpDelete::~mafOpDelete() 
+//----------------------------------------------------------------------------
+{
+}
+//----------------------------------------------------------------------------
+mafOp* mafOpDelete::Copy() 
+//----------------------------------------------------------------------------
+{
+  return new mafOpDelete(m_Label);
+}
+//----------------------------------------------------------------------------
+bool mafOpDelete::Accept(mafNode* vme)
+//----------------------------------------------------------------------------
+{
+  return ((vme!=NULL) && (!vme->IsMAFType(mafVMERoot)));
+}
+//----------------------------------------------------------------------------
+void mafOpDelete::OpDo()
+//----------------------------------------------------------------------------
+/**
+backup the clipboard
+Send a VME_REMOVE for the selected vme
+Move (doesn't make a copy) the selected vme (and it's subtree) in the Clipboard
+Select the vme parent
+*/
+{
+  // do not remove binary files but fill a list with files to be deleted on save by the storage.
+  mafEventIO e(this,NODE_GET_STORAGE);
+  m_Selection->ForwardUpEvent(e);
+  mafStorage *storage = e.GetStorage();
+  mafNodeIterator *iter = m_Selection->NewIterator();
+  mafString data_filename;
+  for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+  {
+    if(mafVMEGenericAbstract::SafeDownCast(node))
+    {
+      mafVMEGenericAbstract *vme = mafVMEGenericAbstract::SafeDownCast(node);
+      mafDataVector *dv = vme->GetDataVector();
+      if (dv != NULL)
+      {
+        if (dv->GetSingleFileMode())
+        {
+          mafString archive_filename = dv->GetArchiveName();
+          if (archive_filename != "")
+          {
+            storage->ReleaseURL(archive_filename);
+          }
+        }
+        else
+        {
+          mafVMEItem *item;
+          int i;
+          for (i = 0; i < dv->GetNumberOfItems(); i++)
+          {
+            item = dv->GetItemByIndex(i);
+            data_filename = item->GetURL();
+            storage->ReleaseURL(data_filename);
+          }
+        }
+      }
+    }
+  }
+  iter->Delete();
+  m_SelectionParent = m_Selection->GetParent(); 
+  mafEventMacro(mafEvent(this,VME_REMOVE,m_Selection));
+  mafEventMacro(mafEvent(this,VME_SELECTED,m_SelectionParent));
+}
+//----------------------------------------------------------------------------
+void mafOpDelete::OpUndo()
+//----------------------------------------------------------------------------
+{
 }
 
 

@@ -288,16 +288,14 @@ void mafRemoteLogic::RemoteMessage(mafString &cmd, bool to_server)
     }
     else if (command == "GetViewList")
     {
-      mafView **v = m_ViewManager->GetListTemplate();
+      const std::vector<mafView*>& v = m_ViewManager->GetListTemplate();
       bool send_msg = false;
       mafString sync_cmd = "GetViewList";
-      int i = 0;
-      while (v[i] != NULL) 
+      for(std::vector<mafView*>::const_iterator it = v.begin(); it != v.end(); ++it)
       {
         send_msg = true;
         sync_cmd << m_CommandSeparator;
-        sync_cmd << v[i]->GetLabel().c_str();
-        i++;
+        sync_cmd << (*it)->GetLabel().c_str();
       }
 
       if(send_msg)

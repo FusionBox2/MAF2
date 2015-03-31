@@ -61,16 +61,8 @@ mafViewManager::mafViewManager()
   m_SelectedView      = NULL;
 	m_RootVme           = NULL;
   m_ViewBeingCreated  = NULL; 
-  m_TemplateNum       = 0;
   m_CollaborateStatus = false;
   m_FromRemote        = false;
-  m_IdInvisibleMenuList.clear();
-  for(int i=0; i<MAXVIEW; i++) 
-    m_ViewTemplate[i] = NULL;
-
-  for(int t=0; t<MAXVIEW; t++)
-    for(int v=0; v<MAXVIEW; v++)
-      m_ViewMatrixID[t][v] = NULL;
 }
 //----------------------------------------------------------------------------
 mafViewManager::~mafViewManager()
@@ -78,7 +70,7 @@ mafViewManager::~mafViewManager()
 {	
   ViewDeleteAll();
 
-  for(int i=0; i<m_TemplateNum; i++) // destroy all template views
+  for(int i=0; i<m_ViewTemplate.size(); i++) // destroy all template views
     mafDEL(m_ViewTemplate[i]);
 }
 
@@ -108,9 +100,6 @@ void mafViewManager::OnEvent(mafEventBase *maf_event)
       case VIEW_SELECT:
       {
         mafView *view = e->GetView();
-        //		mafRWIBase* rwi = (mafRWIBase*) e->GetWin();   
-        //		if(!rwi) rwi = view->GetDefaultRWI();
-
         bool notifylogic = (view != m_SelectedView);
 
         ViewSelected(view/*, rwi*/);
@@ -134,21 +123,16 @@ void mafViewManager::OnEvent(mafEventBase *maf_event)
 	}
 }
 //----------------------------------------------------------------------------
-void mafViewManager::ViewAdd(mafView *view, bool visibleInMenu)
+long mafViewManager::ViewAdd(mafView *view)
 //----------------------------------------------------------------------------
 {
-  m_ViewTemplate[m_TemplateNum] = view;
   // Update the view ID (starting from VIEW_START)
-	view->m_Id = m_TemplateNum + VIEW_START;
+	view->m_Id = m_ViewTemplate.size() + VIEW_START;
+  m_ViewTemplate.push_back(view);
   view->m_Mult = 0; // template views multiplicity is always 0
   view->SetListener(this);
-
-  if (!visibleInMenu)
-  {
-    m_IdInvisibleMenuList.push_back(view->m_Id); // update the invisible to menu views vector
-  }
-
-  m_TemplateNum++;
+  m_ViewMatrixID.resize(m_ViewMatrixID.size() + 1);
+  return m_ViewTemplate.size() - 1;
 }
 //----------------------------------------------------------------------------
 void mafViewManager::ViewSelected(mafView *view/*, mafRWIBase *rwi*/)
@@ -280,30 +264,6 @@ void mafViewManager::OnQuit()
 {
 }
 //----------------------------------------------------------------------------
-void mafViewManager::FillMenu(wxMenu* menu)
-//----------------------------------------------------------------------------
-{
-  wxString s;
-	for(int i=0; i<m_TemplateNum; i++)
-	{
-    mafView* v = m_ViewTemplate[i];
-    s = wxString::Format("%s",v->GetLabel().c_str());
-    if(IsVisibleInMenu(v))
-	    menu->Append(v->m_Id, s, (wxMenu *)NULL, s ); // Fill the menu with the labels of the template views
-  }
-}
-//----------------------------------------------------------------------------
-bool mafViewManager::IsVisibleInMenu(mafView* v)
-//----------------------------------------------------------------------------
-{
-  for(int i=0; i<m_IdInvisibleMenuList.size(); i++) // Search the specified view
-  {
-    if(m_IdInvisibleMenuList[i] == v->m_Id) return false;
-  }
-  
-  return true;
-}
-//----------------------------------------------------------------------------
 mafView *mafViewManager::ViewCreate(int id)
 //----------------------------------------------------------------------------
 {
@@ -311,7 +271,7 @@ mafView *mafViewManager::ViewCreate(int id)
 	mafView* view = NULL;
   int index = id - VIEW_START;
 
-	if( index <0 || index > m_TemplateNum) // the specified template id is out of bound
+	if( index <0 || index > m_ViewTemplate.size()) // the specified template id is out of bound
 	{
     assert(false);
 		return NULL;
@@ -323,9 +283,11 @@ mafView *mafViewManager::ViewCreate(int id)
   int view_mult = 0;
   new_view = view->Copy(this); // the crated view is a copy of the specified template view
 
-  for(;view_mult < MAXVIEW; view_mult++) // iterate over view matrix to calculate the multiplicity
+  for(;view_mult < m_ViewMatrixID[index].size(); view_mult++) // iterate over view matrix to calculate the multiplicity
     if(m_ViewMatrixID[index][view_mult] == NULL)
       break;
+  if(view_mult == m_ViewMatrixID[index].size())
+    m_ViewMatrixID[index].push_back(NULL);
   new_view->m_Mult = view_mult;
 
   //update the matrix containing all created views
@@ -351,7 +313,7 @@ mafView *mafViewManager::ViewCreate(wxString label)
 	mafView* view     = NULL;
 
 	int index = 0;
-  for(; index<m_TemplateNum; index++)
+  for(; index<m_ViewTemplate.size(); index++)
 	{
     // find the template view of the specified type
     wxString t = m_ViewTemplate[index]->GetLabel();
@@ -369,9 +331,11 @@ mafView *mafViewManager::ViewCreate(wxString label)
   int view_mult = 0;
 	new_view = view->Copy(this); // the crated view is a copy of the specified template view
 
-  for(;view_mult < MAXVIEW; view_mult++)
+  for(;view_mult < m_ViewMatrixID[index].size(); view_mult++)
     if(m_ViewMatrixID[index][view_mult] == NULL)
       break;
+  if(view_mult == m_ViewMatrixID[index].size())
+    m_ViewMatrixID[index].push_back(NULL);
   new_view->m_Mult = view_mult; // update the view multiplicity
 
   //update the matrix containing all created view
