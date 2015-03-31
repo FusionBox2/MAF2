@@ -20,6 +20,7 @@
 //----------------------------------------------------------------------------
 
 #include "lhpOpINPExporter.h"
+#include "mafFilesDirs.h"
 
 #include "mafDecl.h"
 #include "mafGUI.h"
@@ -194,7 +195,11 @@ void lhpOpINPExporter::ExportingTraverse(const char *dirName, mafNode* node)
   for (int i= 0; i< numberChildren; i++)
   {
     mafNode *child = node->GetChild(i);
-    ExportingTraverse(dirName, child);
+    wxString fn = dirName;
+    fn += "\\";
+    fn += node->GetName().GetCStr();
+    mafDirMake(fn.c_str());
+    ExportingTraverse(fn.c_str(), child);
   }
 }
 //----------------------------------------------------------------------------
