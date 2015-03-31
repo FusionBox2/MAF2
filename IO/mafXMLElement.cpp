@@ -51,10 +51,10 @@ mafXMLElement::~mafXMLElement()
 
 //------------------------------------------------------------------------------
 template <class T>
-int InternalParseData(const char *text,T *vector,int size)
+int InternalParseData(const mafXMLString& text,T *vector,int size)
 //------------------------------------------------------------------------------
 {
-  std::istringstream instr(text);
+  std::istringstream instr(text.GetCStr());
 
   for (int i=0;i<size;i++)
   {
@@ -70,10 +70,10 @@ int InternalParseData(const char *text,T *vector,int size)
 
 //------------------------------------------------------------------------------
 template <class T>
-int InternalParseData(const char *text,std::vector<T> &vector,int size)
+int InternalParseData(const mafXMLString& text,std::vector<T> &vector,int size)
 //------------------------------------------------------------------------------
 {
-  std::istringstream instr(text);
+  std::istringstream instr(text.GetCStr());
 
   for (int i=0;i<size;i++)
   {
