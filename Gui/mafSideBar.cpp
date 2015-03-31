@@ -106,7 +106,6 @@ mafSideBar::mafSideBar(wxWindow* parent, int id, mafBaseEventHandler *Listener, 
 mafSideBar::~mafSideBar() 
 //----------------------------------------------------------------------------
 {
-	cppDEL(m_Notebook);
 }
 //----------------------------------------------------------------------------
 void mafSideBar::OpShowGui(bool push_gui, mafGUIPanel *panel)
