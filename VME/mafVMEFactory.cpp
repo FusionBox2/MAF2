@@ -41,6 +41,15 @@
 #include "mafVMEPolylineSpline.h"
 #include "mafVMEProber.h"
 #include "mafVMERefSys.h"
+#include "mafVMEEllipsoid.h"
+#include "mafVMEHyperboloid.h"
+#include "mafVMECylinder.h"
+#include "mafVMELineSeg.h"
+#include "mafVMEMuscleWrapping.h"
+#include "mafVMEHyperboloid2S.h"
+#include "mafVMEPlane.h"
+#include "mafVMEGravityLine.h"
+#include "mafVMEOsteometricBoard.h"
 #include "mafVMERoot.h"
 
 #ifdef MAF_USE_ITK
@@ -52,6 +61,7 @@
 #include "mafVMESlicer.h"
 #include "mafVMESurface.h"
 #include "mafVMESurfaceParametric.h"
+#include "mafQuadraticSurface.hpp"
 #include "mafVMEVector.h"
 #include "mafVMEVolume.h"
 #include "mafVMEVolumeGray.h"
@@ -127,6 +137,7 @@ mafVMEFactory::mafVMEFactory()
   mafPlugNodeMacro(mafVMEMesh,"Generic VME storing vtkUnstructuredGrid datasets");
   mafPlugNodeMacro(mafVMESurface,"Generic VME storing vtkPolyData surfaces datasets");
   mafPlugNodeMacro(mafVMESurfaceParametric,"Generic VME storing vtkPolyData parametric surfaces");
+  
   mafPlugNodeMacro(mafVMEVolumeGray,"Generic VME storing vtk volume datasets with one scalar component");
   mafPlugNodeMacro(mafVMEVolumeRGB,"Generic VME storing vtk volume datasets with 3 RGB scalar components");
   mafPlugNodeMacro(mafVMEPolyline,"Generic VME storing polyline datasets");
@@ -140,6 +151,15 @@ mafVMEFactory::mafVMEFactory()
   mafPlugNodeMacro(mafVMEPointSet,"VME representing a set of points");
   mafPlugNodeMacro(mafVMERefSys,"VME representing a reference system");
   mafPlugNodeMacro(mafVMEScalar,"VME representing time varying scalar values");
+  mafPlugNodeMacro(mafVMEEllipsoid, "VME representing Ellipsoid");
+  mafPlugNodeMacro(mafVMECylinder, "VME representing Cylinder");
+  mafPlugNodeMacro(mafVMEHyperboloid, "VME representing Hyperboloid");
+  mafPlugNodeMacro(mafVMEPlane, "VME representing Plane");
+  mafPlugNodeMacro(mafVMEOsteometricBoard, "VME representing mafVMEOsteometricBoard");
+  mafPlugNodeMacro(mafVMEGravityLine, "VME representing GravityLine");
+  mafPlugNodeMacro(mafVMEHyperboloid2S, "VME representing Hyperboloid2S");
+  mafPlugNodeMacro(mafVMELineSeg, "VME representing LineSeg");
+  mafPlugNodeMacro(mafVMEMuscleWrapping, "VME representing Muscle Wrapping");
 #ifdef MAF_USE_ITK
   mafPlugNodeMacro(mafVMEScalarMatrix,"VME representing time varying scalar values");
 #endif

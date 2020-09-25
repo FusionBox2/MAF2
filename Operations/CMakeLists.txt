@@ -35,8 +35,26 @@ IF (MAF_USE_VTK)
     mafOpCreateGroup.h
     mafOpCreateMeter.cpp
     mafOpCreateMeter.h
+    mafOpCreateGravityLine.cpp
+    mafOpCreateGravityLine.h
+    mafOpCreateMeter2.cpp
+    mafOpCreateMeter2.h
     mafOpCreateSurfaceParametric.cpp
     mafOpCreateSurfaceParametric.h
+    mafOpCreateCylinder.cpp
+    mafOpCreateCylinder.h
+    mafOpCreateHyperboloid2S.cpp
+    mafOpCreateHyperboloid2S.h
+    mafOpCreateHyperboloid.cpp
+    mafOpCreateHyperboloid.h
+    mafOpCreateEllipsoid.cpp
+    mafOpCreateEllipsoid.h
+    mafOpCreateQuadricSurfaceFitting.cpp
+    mafOpCreateQuadricSurfaceFitting.h
+    mafOpCreateMuscleWrapping2.cpp
+    mafOpCreateMuscleWrapping2.h
+    mafOpCreateMuscleWrapper.cpp
+    mafOpCreateMuscleWrapper.h
     mafOpCreateProber.cpp
     mafOpCreateProber.h
     mafOpCreateRefSys.cpp
@@ -47,7 +65,13 @@ IF (MAF_USE_VTK)
     mafOpCreateSpline.h
     mafOpCreateVolume.cpp
     mafOpCreateVolume.h
-	mafOpVolumeUnion.cpp
+    mafOpCreateCenterline.cpp
+    mafOpCreateCenterline.h
+    mafOpCreatePlane.cpp
+    mafOpCreatePlane.h
+    mafOpCreateOsteometricBoard.cpp
+    mafOpCreateOsteometricBoard.h
+    mafOpVolumeUnion.cpp
     mafOpVolumeUnion.h
     mafOpRemoveCells.cpp
     mafOpRemoveCells.h
@@ -95,12 +119,18 @@ IF (MAF_USE_VTK)
     mafOpVOIDensityEditor.h
     mafOpImporterVRML.cpp
     mafOpImporterVRML.h
+	mafOpExporterVRML.cpp
+	mafOpExporterVRML.h
+	mafOpExporterGeomTex.cpp
+	mafOpExporterGeomTex.h
     mafOpExporterVTK.cpp
     mafOpExporterVTK.h
     mafOpImporterVTK.cpp
     mafOpImporterVTK.h
     mafOpCrop.cpp
     mafOpCrop.h
+    mafOpCrop3DSurface.cpp
+    mafOpCrop3DSurface.h
     mafOpBooleanSurface.cpp
     mafOpBooleanSurface.h
     mafOpEditNormals.cpp
@@ -135,6 +165,7 @@ IF (MAF_USE_ITK)
     mafOpScalarToSurface.h
     mafOpImporterVMEDataSetAttributes.cpp
     mafOpImporterVMEDataSetAttributes.h
+    
   )
 ENDIF (MAF_USE_ITK)
 

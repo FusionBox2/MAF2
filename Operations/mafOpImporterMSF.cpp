@@ -23,7 +23,7 @@
 //----------------------------------------------------------------------------
 
 #include "mafOpImporterMSF.h"
-
+#include "wx/busyinfo.h"
 #include <wx/zipstrm.h>
 #include <wx/zstream.h>
 #include <wx/fs_zip.h>
@@ -94,89 +94,120 @@ void mafOpImporterMSF::OpRun()
 int mafOpImporterMSF::ImportMSF()
 //----------------------------------------------------------------------------
 {
-  mafString unixname = m_File;
-  mafString path, name, ext;
-  mafSplitPath(m_File,&path,&name,&ext);
 
-  if(ext == _R("zmsf"))
-  {
-    unixname = mafOpenZIP(m_File, mafWxToString(::wxGetCwd()), m_TmpDir);
-    if(unixname.IsEmpty())
-    {
-      if (!m_TestMode)
-        mafMessage(_M(mafString(_L("Bad or corrupted zmsf file!"))));
-      return MAF_ERROR;
-    }
-    wxSetWorkingDirectory(m_TmpDir.toWx());
-  }
+	try{
 
-  unixname.ParsePathName(); // convert to unix format
+		wxBusyInfo wait40("importMSF");
+		Sleep(1500);
+		mafString unixname = m_File;
+		mafString path, name, ext;
+		mafSplitPath(m_File, &path, &name, &ext);
 
-  m_MSFFile = unixname; 
-  mafVMEStorage *storage;
-  mafNodeManager manager;
-  storage = mafVMEStorage::New();
-  storage->SetManager(&manager);
-  storage->SetURL(m_File);
+		if (ext == _R("zmsf"))
+		{
+			unixname = mafOpenZIP(m_File, ::wxGetCwd(), m_TmpDir);
+			if (unixname.IsEmpty())
+			{
+				if (!m_TestMode)
+					mafMessage(_("Bad or corrupted zmsf file!"));
+				return MAF_ERROR;
+			}
+			wxSetWorkingDirectory(m_TmpDir.toWx());
+		}
 
-  int res = storage->Restore();
-  if (res != MAF_OK)
-  {
-    // if some problems occurred during import give feedback to the user
-    if (!m_TestMode)
-      mafErrorMessage(_M(mafString(_L("Errors during file parsing! Look the log area for error messages."))));
-    //return MAF_ERROR;
-  }
-  mafVMERoot *root = mafVMERoot::SafeDownCast(manager.GetRoot());
-      
-  mafString group_name = _R("imported from ") + name + _R(".") + ext;
+		unixname.ParsePathName(); // convert to unix format
 
-  mafNodeIterator *iter = root->NewIterator();
-  for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
-  {
-    if(node == root)
-      continue;
-    mafVMEGenericAbstract *vmeWithDataVector = mafVMEGenericAbstract::SafeDownCast(node);
-    if (vmeWithDataVector)
-    {
-      mafDataVector *dataVector = vmeWithDataVector->GetDataVector();
-      if(dataVector)
-      {
-        for(mafDataVector::Iterator it = dataVector->Begin(); it != dataVector->End(); ++it)
-        {
-          if(mafVMEItemVTK *vitem = mafVMEItemVTK::SafeDownCast(it->second))
-            vitem->GetData();
-        }
-      }
-    }
-  }
-  iter->Delete();
- 
+		m_MSFFile = unixname;
+		mafVMEStorage *storage;
+		mafNodeManager manager;
+		storage = mafVMEStorage::New();
+		storage->SetManager(&manager);
+		storage->SetURL(m_File);
+
+		int res = storage->Restore();
+		if (res != MAF_OK)
+		{
+			// if some problems occurred during import give feedback to the user
+			if (!m_TestMode)
+				mafErrorMessage(_M(mafString(_L("Errors during file parsing! Look the log area for error messages."))));
+
+			wxBusyInfo wait4010("Errors during file parsing! Look the log area for error messages.");
+			Sleep(1500);
+			//return MAF_ERROR;
+		}
+		mafVMERoot *root = mafVMERoot::SafeDownCast(manager.GetRoot());
+
+		mafString group_name = _R("imported from ") + name + _R(".") + ext;
+
+		mafNodeIterator *iter = root->NewIterator();
+		for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+		{
+
+			wxBusyInfo wait4011(node->GetName().GetCStr());
+			Sleep(1500);
+			if (node == root)
+				continue;
+			mafVMEGenericAbstract *vmeWithDataVector = mafVMEGenericAbstract::SafeDownCast(node);
+			mafString t = node->GetName() + _R(" cast ok");
+			wxBusyInfo wait411(t.toWx());
+			Sleep(1500);
+			if (vmeWithDataVector)
+			{
+				mafDataVector *dataVector = vmeWithDataVector->GetDataVector();
+				if (dataVector)
+				{
+					for (mafDataVector::Iterator it = dataVector->Begin(); it != dataVector->End(); ++it)
+					{
+						if (mafVMEItemVTK *vitem = mafVMEItemVTK::SafeDownCast(it->second))
+							vitem->GetData();
+					}
+				}
+			}
+		}
 
 
-  mafNEW(m_Group);
-  m_Group->SetName(group_name);
-  m_Group->ReparentTo(m_Input);
-  
-  while (mafNode *node = root->GetFirstChild())
-  {
-    node->ReparentTo(m_Group);
+		wxBusyInfo wait4061("for loop ok");
+		Sleep(1500);
+		iter->Delete();
 
-    // Losi 03/16/2010 Bug #2049 fix
-    mafVMEGeneric *vme = mafVMEGeneric::SafeDownCast(node);
-    if(vme)
-    {
-      // Update data vector id to avoid duplicates
-      mafDataVector *dataVector = vme->GetDataVector();
-      if(dataVector)
-      {
-        dataVector->UpdateVectorId();
-      }
-    }
-  }
-  m_Group->Update();
-  m_Output = m_Group;
 
-  mafDEL(storage);
-  return MAF_OK;
+		mafNEW(m_Group);
+		m_Group->SetName(group_name);
+		m_Group->ReparentTo(m_Input);
+
+		while (mafNode *node = root->GetFirstChild())
+		{
+
+			wxBusyInfo wait4011(node->GetName().toWx());
+			Sleep(1500);
+			node->ReparentTo(m_Group);
+
+			// Losi 03/16/2010 Bug #2049 fix
+			mafVMEGeneric *vme = mafVMEGeneric::SafeDownCast(node);
+			if (vme)
+			{
+				// Update data vector id to avoid duplicates
+				mafDataVector *dataVector = vme->GetDataVector();
+				if (dataVector)
+				{
+					dataVector->UpdateVectorId();
+				}
+			}
+		}
+		m_Group->Update();
+		m_Output = m_Group;
+		wxBusyInfo wait4021("while loop ok");
+		Sleep(1500);
+		mafDEL(storage);
+
+		wxBusyInfo wait410("importMSF done");
+		Sleep(1500);
+		return MAF_OK;
+	}
+	catch (const std::exception& e)
+	{
+
+		wxBusyInfo wait40(e.what());
+		Sleep(1500);
+	}
 }

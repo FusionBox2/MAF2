@@ -25,6 +25,8 @@
 
 #include "mmaMeter.h"
 #include "mafVMEMeter.h"
+#include "mafVMEMuscleWrapper.h"
+
 #include "mafStorageElement.h"
 #include "mafIndent.h"
 

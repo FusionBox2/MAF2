@@ -53,7 +53,7 @@
 #include "vtkProperty.h"
 #include "vtkProperty2D.h"
 #include "vtkCaptionActor2D.h"
-
+#include "wx/busyinfo.h"
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(mafPipeMeter);
 //----------------------------------------------------------------------------
@@ -93,7 +93,7 @@ void mafPipeMeter::Create(mafNode *node, mafView *view/*, bool use_axes*/)
   m_Lut               = NULL;
   m_Caption           = NULL;
 
-  assert(m_Vme->IsA("mafVMEMeter"));
+ // assert(m_Vme->IsA("mafVMEMeter"));
   m_MeterVME = mafVMEMeter::SafeDownCast(m_Vme);
   m_MeterVME->AddObserver(this);
   assert(m_MeterVME->GetPolylineOutput());
@@ -236,6 +236,9 @@ mafPipeMeter::~mafPipeMeter()
 mafGUI *mafPipeMeter::CreateGui()
 //----------------------------------------------------------------------------
 {
+//	wxBusyInfo wait40("Pipemeter  update..");
+//	Sleep(1500);
+
   const mafString type_measure_string[] = {_R("absolute"), _R("relative")};
   const mafString representation_string[] = {_R("line"), _R("tube")};
   const mafString color_string[] = {_R("one"), _R("range")};
@@ -394,7 +397,10 @@ void mafPipeMeter::UpdateProperty(bool fromTag)
   }
 
   double distance_value = m_MeterVME->GetDistance();
-  if(m_MeterVME->GetMeterMode() == mafVMEMeter::LINE_ANGLE) distance_value = m_MeterVME->GetAngle();
+  if (m_MeterVME->GetMeterMode() == mafVMEMeter::LINE_ANGLE)
+  {
+	  distance_value = m_MeterVME->GetAngle();
+  }
   distance_value = RoundValue(distance_value);
   wxString dis;
   dis = wxString::Format("%.2f",distance_value);

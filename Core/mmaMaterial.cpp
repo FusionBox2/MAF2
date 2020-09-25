@@ -27,7 +27,7 @@
 #include <wx/bitmap.h>
 #include <wx/event.h>
 #include <wx/settings.h>
-
+#include "wx/busyinfo.h"
 #include "mmaMaterial.h"
 #include "mafDecl.h"
 #include "mafEvent.h"
@@ -61,6 +61,8 @@ mafCxxTypeMacro(mmaMaterial)
 mmaMaterial::mmaMaterial()
 //----------------------------------------------------------------------------
 {  
+
+
 	m_MaterialType= USE_VTK_PROPERTY;
 
   m_Name        = _R("MaterialAttributes");
@@ -70,7 +72,7 @@ mmaMaterial::mmaMaterial()
   lutPreset(4,m_ColorLut);
   m_Icon        = NULL;
   m_TextureImage= NULL;
-
+  m_VmeImageName = "";
   m_TextureMappingMode = PLANE_MAPPING;
 
   m_Value            = 1.0;
@@ -133,7 +135,7 @@ wxBitmap *mmaMaterial::MakeIcon()
   float b = col.Blue() / 255.0;
   
 	vtkMAFSmartPointer<vtkRenderer> ren;
-  ren->SetBackground(r,g,b);
+	ren->SetBackground(r,g,b);
 	ren->AddLight(light);
 	ren->LightFollowCameraOff();
 	ren->SetActiveCamera(camera);
@@ -216,6 +218,8 @@ wxBitmap *mmaMaterial::MakeIcon()
 void mmaMaterial::DeepCopy(const mafAttribute *a)
 //-------------------------------------------------------------------------
 { 
+
+
   Superclass::DeepCopy(a);
   // property
   m_MaterialName        = ((mmaMaterial *)a)->m_MaterialName;
@@ -255,6 +259,8 @@ void mmaMaterial::DeepCopy(const mafAttribute *a)
 bool mmaMaterial::Equals(const mafAttribute *a)
 //----------------------------------------------------------------------------
 {
+
+
   if (Superclass::Equals(a))
   {
     return (m_MaterialName  == ((mmaMaterial *)a)->m_MaterialName       &&
@@ -292,6 +298,8 @@ bool mmaMaterial::Equals(const mafAttribute *a)
 int mmaMaterial::InternalStore(mafStorageElement *parent)
 //-----------------------------------------------------------------------
 {  
+
+
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
     // property
@@ -331,11 +339,33 @@ int mmaMaterial::InternalStore(mafStorageElement *parent)
         parent->StoreVectorN(lutvalues,rgba,4);
       }
     }
-    else if (m_MaterialType == USE_TEXTURE)
-    {
-      // texture
-      parent->StoreInteger(_R("TextureID"), m_TextureID);
-      parent->StoreInteger(_R("TextureMappingMode"), m_TextureMappingMode);
+	if (m_MaterialType == USE_TEXTURE)
+	{
+		// texture
+		parent->StoreInteger(_R("TextureMappingMode"), m_TextureMappingMode);
+		parent->StoreText(_R("TextureImageName"), m_VmeImageName);
+
+		
+
+
+		m_TextureID = this->GetMaterialTextureID();
+		
+		if (m_TextureID != -1)
+		{	parent->StoreInteger(_R("TextureID"), m_TextureID);
+		
+		}
+		else
+		{
+			/*m_TextureID = ((mafVME*)this->m_TextureImage)->GetId();
+			mafVME *texture_vme=mafVME::SafeDownCast(((mafVME*)this)->GetRoot()->FindInTreeById(m_TextureID));
+			mafString name=texture_vme->GetName();
+			parent->StoreInteger("TextureID", m_TextureID);
+			wxBusyInfo wait1(std::to_string(m_TextureID).c_str());
+			Sleep(2000);
+			wxBusyInfo wait2(name.GetCStr());
+			Sleep(2000);*/
+		}
+		
     }
     parent->StoreInteger(_R("MaterialType"), m_MaterialType);
     return MAF_OK;
@@ -346,6 +376,7 @@ int mmaMaterial::InternalStore(mafStorageElement *parent)
 int mmaMaterial::InternalRestore(mafStorageElement *node)
 //----------------------------------------------------------------------------
 {
+
   if (Superclass::InternalRestore(node) == MAF_OK)
   {
     // property
@@ -393,6 +424,11 @@ int mmaMaterial::InternalRestore(mafStorageElement *node)
       // texture
       node->RestoreInteger(_R("TextureID"), m_TextureID);
       node->RestoreInteger(_R("TextureMappingMode"), m_TextureMappingMode);
+	  node->RestoreText(_R("TextureImageName"), m_VmeImageName);
+
+	  mafString na = m_VmeImageName;
+
+	  
     }
     UpdateProp();
     return MAF_OK;
@@ -403,6 +439,8 @@ int mmaMaterial::InternalRestore(mafStorageElement *node)
 void mmaMaterial::UpdateProp()
 //-----------------------------------------------------------------------
 {
+
+
   m_Prop->SetAmbientColor(m_Ambient);
   m_Prop->SetAmbient(m_AmbientIntensity);
   m_Prop->SetDiffuseColor(m_Diffuse);
@@ -430,16 +468,28 @@ void mmaMaterial::UpdateFromLut()
   m_ColorLut->GetTableRange(m_TableRange);
 }
 //-----------------------------------------------------------------------
+void mmaMaterial::SetMaterialTexture(vtkImageData *tex, mafString na)
+//-----------------------------------------------------------------------
+{
+
+  m_TextureImage  = tex;
+  m_TextureID     = -1;
+  m_VmeImageName = na;// ((mafVME*)m_TextureImage)->GetName();
+
+}
 void mmaMaterial::SetMaterialTexture(vtkImageData *tex)
 //-----------------------------------------------------------------------
 {
-  m_TextureImage  = tex;
-  m_TextureID     = -1;
+
+	m_TextureImage = tex;
+	m_TextureID = -1;
+	
 }
 //-----------------------------------------------------------------------
 void mmaMaterial::SetMaterialTexture(int tex_id)
 //-----------------------------------------------------------------------
 {
+
   m_TextureID     = tex_id;
   m_TextureImage  = NULL;
 }
@@ -447,13 +497,20 @@ void mmaMaterial::SetMaterialTexture(int tex_id)
 vtkImageData *mmaMaterial::GetMaterialTexture()
 //-----------------------------------------------------------------------
 {
+
   return m_TextureImage;
 }
 //-----------------------------------------------------------------------
 int mmaMaterial::GetMaterialTextureID()
 //-----------------------------------------------------------------------
 {
+	
   return m_TextureID;
+}
+
+mafString mmaMaterial::GetMaterialTextureName()
+{
+	return m_VmeImageName;
 }
 //-----------------------------------------------------------------------
 void mmaMaterial::Print(std::ostream& os, const int tabs) const

@@ -22,7 +22,7 @@
 // Failing in doing this will result in a run-time error saying:
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
-
+#include "wx/busyinfo.h"
 #include "mafVMEMeter.h"
 #include "mafVMEOutputMeter.h"
 #include "mafVMELandmarkCloud.h"
@@ -37,7 +37,7 @@
 #include "mmuIdFactory.h"
 #include "mafGUI.h"
 #include "mafAbsMatrixPipe.h"
-#include "vtkMAFSmartPointer.h"
+
 #include "mafRWI.h"
 #include "mafGUIDialogPreview.h"
 #include "mafVectors.h"
@@ -56,6 +56,14 @@
 #include "vtkRenderer.h"
 #include "vtkTransform.h"
 #include "vtkCellArray.h"
+
+//dictionary
+#include "mafGUIHolder.h"
+#include "mafGUISplittedPanel.h"
+#include "mafGUINamedPanel.h"
+#include "mafGUIDictionaryWidget.h"
+//#include "mafOpExplodeCollapse.h"
+//#include "mafSmartPointer.h"
 
 #include <assert.h>
 
@@ -142,7 +150,7 @@ mafVMEMeter::mafVMEMeter()
 
   m_HistogramDialog = NULL;
   m_HistogramRWI    = NULL;
-  
+
   m_GenerateHistogram = 0;
 }
 //-------------------------------------------------------------------------
@@ -258,6 +266,9 @@ void mafVMEMeter::InternalPreUpdate()
 void mafVMEMeter::InternalUpdate()
 //-----------------------------------------------------------------------
 {
+
+
+
   GetMeterAttributes()->m_ThresholdEvent = GetGenerateEvent();
   GetMeterAttributes()->m_DeltaPercent   = GetDeltaPercent();
   GetMeterAttributes()->m_InitMeasure    = GetInitMeasure();
@@ -600,6 +611,9 @@ void mafVMEMeter::InternalUpdate()
   }
   else if (GetMeterMode() == mafVMEMeter::LINE_ANGLE)
   {
+
+	
+
     mafVME *start_vme = GetStartVME();
     mafVME *start2_vme = GetStart2VME();
     mafVME *end1_vme  = GetEnd1VME();
@@ -982,10 +996,54 @@ double mafVMEMeter::GetAngle()
 mafGUI* mafVMEMeter::CreateGui()
 //-------------------------------------------------------------------------
 {
+
+	//wxBusyInfo wait40("GUI  update..");
+	//Sleep(1500);
   int num_mode = 3;
   const mafString mode_choices_string[] = {_L("point distance"), _L("line distance"), _L("line angle")};
+  /*
+  // setup gui_panel
+  mafGUINamedPanel *m_GuiPanel = new mafGUINamedPanel(mafGetFrame(), -1);
+  m_GuiPanel->SetTitle(_("Add Meter:"));
+
+  // setup splitter
+  mafGUISplittedPanel *sp = new mafGUISplittedPanel(m_GuiPanel, -1);
+  m_GuiPanel->Add(sp, 1, wxEXPAND);
+
+  //setup dictionary
+  m_Dict = new mafGUIDictionaryWidget(sp, -1);
+  m_Dict->SetListener(this);
+  //m_Dict->SetCloud(m_Cloud);
+  sp->PutOnTop(m_Dict->GetWidget());
+
+  // setup GuiHolder
+  mafGUIHolder *m_Guih = new mafGUIHolder(sp, -1, false, true);
+
+  */
 
   m_Gui = mafNode::CreateGui(); // Called to show info about vmes' type and name
+  /*
+  // setup dictionary
+  m_Dict = new mafGUIDictionaryWidget(sp,-1);
+  m_Dict->SetListener(this);
+  m_Dict->SetCloud(m_Cloud);
+  sp->PutOnTop(m_Dict->GetWidget());
+
+  // setup GuiHolder
+  m_Guih = new mafGUIHolder(sp,-1,false,true);
+
+
+  // setup Gui
+  m_Gui = new mafGUI(this);
+  m_Gui->SetListener(this);
+  m_Gui->Button(ID_LOAD,_("load dictionary"));
+  m_Gui->Divider();
+
+  */
+  /*m_Gui->SetListener(this);
+  int ID_LOAD = 12845;
+  m_Gui->Button(ID_LOAD, _("load dictionary"));
+  m_Gui->Divider();*/
   m_Gui->SetListener(this);
   m_Gui->Divider();
   m_Gui->Combo(ID_METER_MODE,_L("mode"),&(GetMeterAttributes()->m_MeterMode),num_mode,mode_choices_string,_L("Choose the meter mode"));
@@ -1067,6 +1125,7 @@ void mafVMEMeter::UpdateLinks()
 void mafVMEMeter::OnEvent(mafEventBase *maf_event)
 //-------------------------------------------------------------------------
 {
+
   // events to be sent up or down in the tree are simply forwarded
   if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
   {
@@ -1361,4 +1420,23 @@ void mafVMEMeter::CreateHistogram()
     m_ProbedVME->Update();
 
   }
+}
+void mafVMEMeter::SetLineAngle2(int la2)
+{
+	m_LineAngle2=la2;
+}
+int mafVMEMeter::GetLineAngle2()
+{
+	return m_LineAngle2;
+}
+
+double mafVMEMeter::GetValue()
+{
+
+	if (m_Distance > -1)
+
+		return m_Distance;
+	if (m_Angle > -1)
+		return m_Angle;
+
 }

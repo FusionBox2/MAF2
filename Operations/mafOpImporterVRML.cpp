@@ -194,10 +194,16 @@ void  mafOpImporterVRML::ImportVRML()
   vtkMAFSmartPointer<vtkRenderWindow> rw;
 
   vtkMAFSmartPointer<vtkVRMLImporter> importer;
-  importer->SetRenderWindow(rw.GetPointer());
+
   importer->SetFileName(m_File.GetCStr());
+  importer->Read();
   importer->Update();
 
+  importer->SetRenderWindow(rw.GetPointer());
+
+  
+
+ 
   mafMatrix matrix;
 
   vtkRendererCollection *rc = rw->GetRenderers();
@@ -213,8 +219,11 @@ void  mafOpImporterVRML::ImportVRML()
     wxMessageBox("MAF VRML does  not support all entities these standard allows to encode, because some were\nconsidered not relevant and did not may to MAF data model.");
   }
   
+
+ 
   for (int i = 0; i < num_actors; i++)
   {
+	 
     vtkActor *actor = ac->GetNextActor();
     matrix.DeepCopy(actor->GetMatrix());
 
@@ -240,7 +249,11 @@ void  mafOpImporterVRML::ImportVRML()
         m->m_Diffuse[1] = rgb[1];
         m->m_Diffuse[2] = rgb[2];
         m->UpdateProp();
+		// look for texture?//
 
+
+		
+		//
         surface->GetMatrixVector()->AppendKeyMatrix(matrix);
         surface->ReparentTo(m_Group);
         mafTagItem tag_Nature;

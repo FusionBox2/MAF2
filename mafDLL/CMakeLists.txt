@@ -704,6 +704,14 @@ IF (MAF_USE_VTK)
     ../VME/mafVMESurface.h
     ../VME/mafVMESurfaceParametric.cpp
     ../VME/mafVMESurfaceParametric.h
+    ../VME/mafVMEEllipsoid.cpp
+    ../VME/mafVMEEllipsoid.h
+    ../VME/mafVMELineSeg.cpp
+    ../VME/mafVMELineSeg.h
+    ../VME/mafQuadraticSurface.cpp
+    ../VME/mafQuadraticSurface.hpp
+    ../VME/mafVMEMuscleWrapping.cpp
+    ../VME/mafVMEMuscleWrapping.h
     ../VME/mafVMEVector.cpp
     ../VME/mafVMEVector.h
     ../VME/mafVMEVolume.cpp
@@ -783,6 +791,10 @@ IF (MAF_USE_VTK)
     ../Operations/mafOpCreateRefSys.cpp
     ../Operations/mafOpCreateRefSys.h
     ../Operations/mafOpCreateSlicer.cpp
+    ../Operations/mafOpCreateEllipsoid.h
+    ../Operations/mafOpCreateEllipsoid.cpp
+    ../Operations/mafOpCreateMuscleWrapping2.h
+    ../Operations/mafOpCreateMuscleWrapping2.cpp
     ../Operations/mafOpCreateSlicer.h
     ../Operations/mafOpCreateSpline.cpp
     ../Operations/mafOpCreateSpline.h

@@ -24,7 +24,7 @@
 #include "mafMatrix.h"
 #include <vector>
 #include <assert.h>
-
+#include "wx/busyinfo.h"
 //------------------------------------------------------------------------------
 template <class T>
 void InternalStoreVectorN(mafStorageElement *element,T *comps,int num,const char *name)
@@ -440,6 +440,11 @@ mafStorageElement *mafStorageElement::StoreObject(const mafString& name,mafStora
 mafStorageElement *mafStorageElement::StoreObject(const mafString& name,mafObject *object)
 //------------------------------------------------------------------------------
 {
+//	wxBusyInfo wait400(name.GetCStr());
+//	Sleep(0500);
+  
+//  wxBusyInfo wait40(object->GetStaticTypeName());
+//	Sleep(0500);
   assert(object);
   
   try 
@@ -515,6 +520,8 @@ mafObject *mafStorageElement::RestoreObject()
       type_name = UpgradeAttribute(_R("Type"));
     }
     
+
+
     mafObject *object=mafObjectFactory::CreateInstance(type_name.GetCStr());
     if (object)
     {
@@ -549,6 +556,7 @@ mafObject *mafStorageElement::RestoreObject()
     }    
     else
     {
+
       mafErrorMacro("Cannot restore object of type \""<<type_name.GetCStr()<<"\" from element <"<<GetName().GetCStr() <<"> since this object type is unknown.");
     }
   }

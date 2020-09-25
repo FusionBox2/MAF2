@@ -236,9 +236,9 @@ void mafGUIMDIFrame::CreateStatusbar()
 	CreateStatusBar(6); 
   m_frameStatusBar->SetStatusWidths(6,widths);
 	SetStatusText( _("welcome"),0);
-	SetStatusText( " ",1);
-	SetStatusText( " ",2);
-	SetStatusText( " ",3);
+	SetStatusText( "",1);
+	SetStatusText( "",2);
+	SetStatusText( "",3);
 
   // Paolo 10 Jul 2006: due to position correctly the progress bar.
 	wxRect pr;

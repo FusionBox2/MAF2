@@ -298,7 +298,7 @@ void mafOpManager::OpRun(mafOp *op, void *op_param)
       mafEventMacro(mafEvent(this,VME_SELECT,synthetic_vme,true));
       mafEventMacro(mafEvent(this,VME_SHOW,synthetic_vme,true));
     }
-    else
+		else
     {
       m_RunningOp = NULL;
       return;

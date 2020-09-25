@@ -34,7 +34,7 @@ class mafLODActor;
 class mafGUIMaterialButton;
 class mmaMaterial;
 class vtkActor;
-
+class mafNode;
 //----------------------------------------------------------------------------
 // mafPipeSurfaceTextured :
 //----------------------------------------------------------------------------
@@ -72,7 +72,11 @@ public:
     ID_USE_LOOKUP_TABLE,
     ID_LUT,
     ID_ENABLE_LOD,
-    ID_LAST
+    ID_LAST,
+	ID_CHOOSE_FILENAME1,
+	ID_CHOOSE_FILENAME2,
+	ID_PROGRESS_GAUGE
+	
   };
 
   /** Callback used to choose a node type mafVMEImage to be used as a texture to apply on the polydata.*/
@@ -110,6 +114,12 @@ protected:
   mafLODActor             *m_OutlineActor;
   mafAxes                 *m_Axes;
   vtkActor               *m_GhostActor;
+  mafString m_File;
+  mafString pathName;
+  mafString m_VmeImageName;
+  mafVME* image;
+  int iterator;
+  wxGauge *m_progressGauge;
 
   int m_UseVTKProperty;
   int m_UseTexture;
@@ -117,15 +127,17 @@ protected:
   int m_EnableActorLOD;
 
 	int m_ShowAxis;
-
+	int m_SubTreeExportOBJ;
   int m_ScalarVisibility;
   int m_SelectionVisibility;
   int m_RenderingDisplayListFlag;
+
+  std::vector<mafNode *> m_OBJs;
   mmaMaterial *m_SurfaceMaterial;
   mafGUIMaterialButton *m_MaterialButton;
 
   void UpdateProperty(bool fromTag = false);
-
+  void exportOBJs();
   /** Generate texture coordinate for polydata according to the mapping mode*/
   void GenerateTextureMapCoordinate();
 

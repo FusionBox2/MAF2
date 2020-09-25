@@ -36,7 +36,7 @@
 #include "mafVMESurface.h"
 #include "mafVMEVolumeGray.h"
 #include "mafVMESurfaceParametric.h"
-
+#include "mafVMEPlane.h"
 #include "vtkDataSet.h"
 #include "vtkPoints.h"
 
@@ -94,7 +94,7 @@ bool mafOpAddLandmark::Accept(mafNode *node)
 {
 	if (!node) return false;
 	
-  if( node->IsMAFType(mafVMESurface) || node->IsMAFType(mafVMEVolumeGray) || node->IsMAFType(mafVMESurfaceParametric)) 
+	if (node->IsMAFType(mafVMESurface) || node->IsMAFType(mafVMEVolumeGray) || node->IsMAFType(mafVMESurfaceParametric) || node->IsMAFType(mafVMEPlane))
 	{
 		m_PickingActiveFlag = true;
     return true;
@@ -102,7 +102,7 @@ bool mafOpAddLandmark::Accept(mafNode *node)
 
   if( node->IsMAFType(mafVMELandmarkCloud) && 
 		  node->GetParent() && 
-		  (node->GetParent()->IsMAFType(mafVMESurface) || node->GetParent()->IsMAFType(mafVMEVolumeGray) || node->GetParent()->IsMAFType(mafVMESurfaceParametric))) 
+		  (node->GetParent()->IsMAFType(mafVMESurface) || node->GetParent()->IsMAFType(mafVMEVolumeGray) || node->GetParent()->IsMAFType(mafVMESurfaceParametric) || node->GetParent()->IsMAFType(mafVMEPlane)))
 	{
 		  m_PickingActiveFlag = true;
 			return true;
@@ -112,7 +112,7 @@ bool mafOpAddLandmark::Accept(mafNode *node)
 		  node->GetParent() && 
 			node->GetParent()->IsMAFType(mafVMELandmarkCloud) &&
 			node->GetParent()->GetParent() && 
-			(node->GetParent()->GetParent()->IsMAFType(mafVMESurface) || node->GetParent()->GetParent()->IsMAFType(mafVMEVolumeGray) || node->GetParent()->GetParent()->IsMAFType(mafVMESurfaceParametric))) 
+			(node->GetParent()->GetParent()->IsMAFType(mafVMESurface) || node->GetParent()->GetParent()->IsMAFType(mafVMEVolumeGray) || node->GetParent()->GetParent()->IsMAFType(mafVMESurfaceParametric) || node->GetParent()->GetParent()->IsMAFType(mafVMEPlane)))
 	{
 		m_PickingActiveFlag = true;
 		return true;
@@ -161,7 +161,7 @@ void mafOpAddLandmark::OpRun()
   }
 	if(m_PickingActiveFlag == true)
 	{
-		if(m_Input->IsMAFType(mafVMESurface) || m_Input->IsMAFType(mafVMEVolumeGray) || m_Input->IsMAFType(mafVMESurfaceParametric))
+		if (m_Input->IsMAFType(mafVMESurface) || m_Input->IsMAFType(mafVMEVolumeGray) || m_Input->IsMAFType(mafVMESurfaceParametric) || m_Input->IsMAFType(mafVMEPlane))
 		{
 			m_PickedVme = mafVME::SafeDownCast(m_Input);
 			mafNEW(m_Cloud);

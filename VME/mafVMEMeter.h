@@ -22,6 +22,14 @@
 #include "mafVMEOutputPolyline.h"
 #include "mafVMEVolumeGray.h"
 #include "mafEvent.h"
+#include "mafVMELandmark.h"
+//dictionary
+#include "mafGUIHolder.h"
+#include "mafGUISplittedPanel.h"
+#include "mafGUINamedPanel.h"
+#include "mafGUIDictionaryWidget.h"
+//#include "mafOpExplodeCollapse.h"
+//#include "mafSmartPointer.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :
@@ -29,7 +37,7 @@
 class mmaMeter;
 class mmaMaterial;
 class vtkLineSource;
-class vtkLineSource;
+
 class vtkAppendPolyData;
 
 class vtkXYPlotActor;
@@ -76,7 +84,7 @@ public:
     ID_INFINITE_LINE,
     ID_LINE_ANGLE2,
     ID_PLOTTED_VME_LINK,
-	  ID_METER_MODE,
+	ID_METER_MODE,
     ID_PLOT_PROFILE,
     ID_LAST
   };
@@ -122,6 +130,7 @@ public:
 
   /**Get/Set the kind of measure  performed: distance between points (POINT) or
   distance between a point and a line. */
+
   int GetMeterMode();
   void SetMeterMode(int mode);
   void SetMeterModeToPointDistance() {this->SetMeterMode(mafVMEMeter::POINT_DISTANCE);}
@@ -191,12 +200,16 @@ public:
   /** Set the percentage elongation. */
   void SetDeltaPercent(int delta_percent);
 
+  void SetLineAngle2(int la2);
+  int GetLineAngle2();
+
+
   /** Get the percentage elongation. */
   int GetDeltaPercent();
 
   /** return distance extracting it from the connected pipe. */
   double GetDistance();
-
+  double GetValue();
   /** return angle extracting it from the connected pipe. */
   double GetAngle();
 
@@ -293,6 +306,8 @@ protected:
 
   int m_GenerateHistogram;
   mafVMEVolumeGray *m_ProbedVME; ///< VME probed by the m_ProbingLine
+
+  mafGUIDictionaryWidget *m_Dict;
 
 private:
   mafVMEMeter(const mafVMEMeter&); // Not implemented
