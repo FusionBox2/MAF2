@@ -72,6 +72,8 @@ IF (MAF_USE_VTK)
   mafPipeIsosurface.h
   mafPipeLandmarkCloud.cpp
   mafPipeLandmarkCloud.h
+  mafPipeMuscleWrapper.cpp
+  mafPipeMuscleWrapper.h
   mafPipeMeter.cpp
   mafPipeMeter.h
   mafPipePointSet.cpp
@@ -106,14 +108,26 @@ IF (MAF_USE_VTK)
   mafVMEMesh.h
   mafVMEMeter.cpp
   mafVMEMeter.h
+  mafVMELineSeg.cpp
+  mafVMELineSeg.h
+  mafVMECenterLine.cpp
+  mafVMECenterLine.h
+  mafVMEGravityLine.cpp
+  mafVMEGravityLine.h
   mafVMEOutputImage.cpp
   mafVMEOutputImage.h
   mafVMEOutputLandmarkCloud.cpp
   mafVMEOutputLandmarkCloud.h
   mafVMEOutputMesh.cpp
   mafVMEOutputMesh.h
+  mafVMEOutputLineSeg.cpp
+  mafVMEOutputLineSeg.h
   mafVMEOutputMeter.cpp
   mafVMEOutputMeter.h
+  mafVMEOutputMuscleWrapping.cpp
+  mafVMEOutputMuscleWrapping.h
+  mafVMEOutputMuscleWrapper.cpp
+  mafVMEOutputMuscleWrapper.h
   mafVMEOutputPointSet.cpp
   mafVMEOutputPointSet.h
   mafVMEOutputPolyline.cpp
@@ -141,7 +155,9 @@ IF (MAF_USE_VTK)
   mafVMESurface.cpp
   mafVMESurface.h
   mafVMESurfaceParametric.cpp
-  mafVMESurfaceParametric.h
+  mafVMESurfaceParametric.h 
+  mafVMEQuadricSurfaceFitting.cpp
+  mafVMEQuadricSurfaceFitting.h
   mafVMEVector.cpp
   mafVMEVector.h
   mafVMEVolume.cpp
@@ -152,6 +168,35 @@ IF (MAF_USE_VTK)
   mafVMEVolumeRGB.h
   mmaMeter.cpp
   mmaMeter.h
+  mafVMEHyperboloid2S.cpp
+  mafVMEHyperboloid2S.h
+  mafVMEHyperboloid.cpp
+  mafVMEHyperboloid.h
+  mafVMEPlane.cpp
+  mafVMEPlane.h
+  mafVMEOsteometricBoard.cpp
+  mafVMEOsteometricBoard.h
+  mafVMECylinder.cpp
+  mafVMECylinder.h    
+  mafVMEEllipsoid.cpp
+  mafVMEEllipsoid.h
+  mafLandmark.cpp
+  mafLandmark.hpp
+  mafDataElement.cpp
+  mafDataElement.hpp
+  mafQuadraticSurface.cpp
+  mafQuadraticSurface.hpp
+  mafMathtools.cpp
+  mafMathtools.hpp
+  mafVMEMuscleWrapper.cpp
+  mafVMEMuscleWrapper.h
+  mafVMEMuscleWrapping.cpp
+  mafVMEMuscleWrapping.h
+  mafPointCloud.cpp
+  mafPointCloud.hpp
+  mafdmLineSegment.cpp
+  mafdmLineSegment.hpp
+ 
   )
 ENDIF (MAF_USE_VTK)
 

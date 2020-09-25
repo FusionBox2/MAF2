@@ -47,7 +47,7 @@ public:
   mafTypeMacro(mafVMELandmark, mafVMEGenericAbstract);
 
   void Print(std::ostream &os, const int tabs=0);
-
+ 
   /** Copy the contents of another landmark into this one. */
   virtual int DeepCopy(mafNode *a);
 

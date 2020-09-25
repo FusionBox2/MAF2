@@ -35,7 +35,7 @@
 #include "mafGUI.h"
 #include <wx/tokenzr.h>
 #include <assert.h>
-
+#include "wx/busyinfo.h"
 #ifdef VTK_USE_ANSI_STDLIB
   #include <sstream>
 #endif
@@ -488,9 +488,11 @@ int mafNode::ReparentTo(mafNode *newparent)
 //-------------------------------------------------------------------------
 {
   // We cannot reparent to a subnode!!!
-  if (IsInTree(newparent))
-    return MAF_ERROR;
-  // Add this node to the new parent children list and
+	if (IsInTree(newparent))
+	{
+		
+		return MAF_ERROR;
+	}// Add this node to the new parent children list and
   // remove it from old parent children list.
   // We first add it to the new parent, thus it is registered
   // from the new parent, the we remove it from the list of the old parent.
@@ -498,8 +500,27 @@ int mafNode::ReparentTo(mafNode *newparent)
   // by AddChild.
   // self register to preserve from distruction
   mafAutoPointer<mafNode> pntr(this);
-  if((SetParent(NULL) == MAF_OK) && (SetParent(newparent) == MAF_OK))
-    return MAF_OK;
+ 
+  if ((SetParent(NULL) == MAF_OK))
+  {
+	  
+	  if (SetParent(newparent) == MAF_OK)
+	  {
+		
+		  return MAF_OK;
+	  }
+	  else
+	  {
+		  ;
+	  }
+  }
+  else
+  {
+	  ;
+  }
+
+
+
   return MAF_ERROR;
 }
 
@@ -577,12 +598,16 @@ void mafNode::RemoveAllChildren()
 int mafNode::SetParent(mafNode *parent)
 //-------------------------------------------------------------------------
 {
+
   // reparenting to NULL is admitted in any case
   if((parent != NULL && !this->CanReparentTo(parent)) || IsInTree(parent))
   {
+	  
     // modified by Stefano 27-10-2004: Changed the error macro to give feedback about node names 
     mafErrorMacro("Cannot reparent the VME: " << GetName() << " under the " << parent->GetTypeName() << " named " << parent->GetName());
-    return MAF_ERROR;
+    
+	
+	return MAF_ERROR;
   }
   if(m_Parent == parent)
   {
@@ -628,8 +653,12 @@ int mafNode::SetParent(mafNode *parent)
 
   if(new_root != NULL)
   {
-    if(m_Parent->IsInitialized() && (Initialize() == MAF_ERROR))
-      return MAF_ERROR;
+	  if (m_Parent->IsInitialized() && (Initialize() == MAF_ERROR))
+
+	  {
+		  
+		  return MAF_ERROR;
+	  }
     mafNode *prev = (m_Parent->m_Children.size() > 0) ? m_Parent->m_Children[m_Parent->m_Children.size() - 1].GetPointer() : NULL;
     m_Parent->m_Children.push_back(this);
     UpdateUpDownAvailability(prev);

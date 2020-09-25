@@ -52,7 +52,7 @@
 #include "vtkTriangleFilter.h"
 #include "vtkTransform.h"
 #include "vtkTransformPolyDataFilter.h"
-
+#include "wx/busyinfo.h"
 #include <vector>
 
 const bool DEBUG_MODE = true;
@@ -100,7 +100,7 @@ mafVMESurfaceParametric::mafVMESurfaceParametric()
   m_EllipsoidPhiRes = 10.0;
   m_EllipsoidTheRes = 10.0;
   m_EllipsoidOrientationAxis = ID_X_AXIS;
-
+  
 	mafNEW(m_Transform);
 	mafVMEOutputSurface *output=mafVMEOutputSurface::New(); // an output with no data
 	output->SetTransform(m_Transform); // force my transform in the output
@@ -120,9 +120,9 @@ mafVMESurfaceParametric::mafVMESurfaceParametric()
 mafVMESurfaceParametric::~mafVMESurfaceParametric()
 //-------------------------------------------------------------------------
 {
-	vtkDEL(m_PolyData);
+  vtkDEL(m_PolyData);
   mafDEL(m_Transform);
-	SetOutput(NULL);
+  SetOutput(NULL);
 }
 
 //-------------------------------------------------------------------------
@@ -279,6 +279,8 @@ void mafVMESurfaceParametric::GetLocalTimeStamps(std::vector<mafTimeStamp> &kfra
 mafGUI* mafVMESurfaceParametric::CreateGui()
 //-------------------------------------------------------------------------
 {
+
+	
   mafVME::CreateGui();
   if(m_Gui)
   {
@@ -363,6 +365,8 @@ void mafVMESurfaceParametric::InternalUpdate()
 	case PARAMETRIC_SPHERE:
 		{
       vtkMAFSmartPointer<vtkSphereSource> surf;
+	 // wxBusyInfo wait(std::to_string(m_SphereRadius).c_str());
+	 // Sleep(1500);
 			surf->SetRadius(m_SphereRadius);
       surf->SetPhiResolution(m_SpherePhiRes);
       surf->SetThetaResolution(m_SphereTheRes);
@@ -411,6 +415,7 @@ void mafVMESurfaceParametric::InternalUpdate()
 	case PARAMETRIC_CYLINDER:
 	{
     vtkMAFSmartPointer<vtkCylinderSource> surf;
+	
     surf->SetHeight(m_CylinderHeight);
     surf->SetRadius(m_CylinderRadius);
     surf->SetResolution(m_CylinderRes);

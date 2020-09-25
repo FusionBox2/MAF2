@@ -144,7 +144,7 @@ void mafOpTransformInterface::OpDo()
   vtkMAFSmartPointer<vtkUnstructuredGrid> ug;
   vtkMAFSmartPointer<vtkRectilinearGrid> rg;
   vtkMAFSmartPointer<vtkStructuredPoints> sp;
-
+  
   if (m_EnableScaling == 1 && 
       // group has no dataset
       !m_Input->IsA("mafVMEGroup") &&
@@ -287,12 +287,16 @@ void mafOpTransformInterface::OpDo()
       ((mafVMEGeneric *)m_Input)->SetData(rg,((mafVME *)m_Input)->GetTimeStamp());
     }
   }
+
+  
   // apply roto-translation to abs pose
   ((mafVME *)m_Input)->SetAbsMatrix(rotoTraslMatrix, m_CurrentTime);
   
   ((mafVME *)m_Input)->GetOutput()->Update();
 
   mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+  
+  
 }
 
 //----------------------------------------------------------------------------

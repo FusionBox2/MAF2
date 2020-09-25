@@ -89,6 +89,7 @@ int mafVMESurface::InternalInitialize()
 int mafVMESurface::SetData(vtkPolyData *data, mafTimeStamp t, int mode)
 //-------------------------------------------------------------------------
 {
+	
   vtkPolyData *polydata = vtkPolyData::SafeDownCast(data);
 
   if(polydata)
