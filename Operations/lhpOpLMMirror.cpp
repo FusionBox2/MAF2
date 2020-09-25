@@ -109,6 +109,15 @@ void lhpOpLMMirror::OpDo()
   mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(m_Input);
   if(cloud != NULL)
   {
+
+
+	  wxString synthetic_name = "Copied ";
+	  mafAutoPointer<mafNode> node = m_Input->MakeCopy();
+	  synthetic_name.Append(m_Input->GetName());
+	  node->SetName(synthetic_name);
+	  node->ReparentTo(m_Input->GetParent());
+
+
     std::vector<mafTimeStamp> stamps;
     cloud->GetLocalTimeStamps(stamps);
     for(unsigned i = 0; i < stamps.size(); i++)
@@ -136,6 +145,10 @@ void lhpOpLMMirror::OpUndo()
   mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(m_Input);
   if(cloud != NULL)
   {
+	 
+	 
+
+
     std::vector<mafTimeStamp> stamps;
     cloud->GetLocalTimeStamps(stamps);
     for(unsigned i = 0; i < stamps.size(); i++)

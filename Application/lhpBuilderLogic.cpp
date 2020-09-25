@@ -40,6 +40,8 @@ lhpBuilderLogic::lhpBuilderLogic()
 {
   m_PythonSettings = new lhpGUIPythonSettings(this);
   m_User = new lhpUser(this);
+
+
 }
 //----------------------------------------------------------------------------
 lhpBuilderLogic::~lhpBuilderLogic()
@@ -53,6 +55,9 @@ void lhpBuilderLogic::OnEvent(mafEventBase *maf_event)
 {
 	if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
 	{
+		
+		
+
 		switch(e->GetId())
 		{
 		case ABOUT_APPLICATION:

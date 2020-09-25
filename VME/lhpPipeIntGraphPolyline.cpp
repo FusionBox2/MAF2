@@ -28,7 +28,7 @@
 #include "medVMEComputeWrapping.h"
 #include "lhpVMELeverArm.h"
 #include "mafMatrix3x3.h"
-
+#include "mafVMEMuscleWrapping.h"
 //----------------------------------------------------------------------------
 // constants
 //----------------------------------------------------------------------------
@@ -127,6 +127,8 @@ bool lhpPipeIntGraphPolyline::StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTi
       medVMEWrappedMeter    *wrapped = medVMEWrappedMeter::SafeDownCast(m_Node);
       mafVMEMeter           *meter   = mafVMEMeter::SafeDownCast(m_Node);
       lhpVMELeverArm        *lever   = lhpVMELeverArm::SafeDownCast(m_Node);
+	  mafVMEMuscleWrapping *mwrapping = mafVMEMuscleWrapping::SafeDownCast(m_Node);
+
       if(wrapped != NULL)
         SetValue(GDT_LENGTH, wrapped->GetDistance());
       else if (meter != NULL)
@@ -140,6 +142,8 @@ bool lhpPipeIntGraphPolyline::StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTi
         SetValue(GDT_LENGTH, cwrap->GetDistance());
       else if (lever != NULL)
         SetValue(GDT_LENGTH, lever->GetDistance());
+	  else if (mwrapping!=NULL)
+		  SetValue(GDT_LENGTH, mwrapping->GetDistance());
       else
         SetValue(GDT_LENGTH, output->CalculateLength());
     }

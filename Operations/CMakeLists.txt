@@ -144,6 +144,7 @@ SET(PROJECT_SRCS
 	lhpOpINPImporter.h
 	lhpOpMTRExporter.cpp
 	lhpOpMTRExporter.h
+	
 	lhpOpMTRImporter.cpp
 	lhpOpMTRImporter.h
 	lhpOpStickPalpation.cpp
@@ -161,10 +162,20 @@ SET(PROJECT_SRCS
 	lhpOpExporterC3DBTK.cpp
 	lhpOpExporterC3DBTK.h
 
+	lhpOpImporterPressionCenter.cpp
+	lhpOpImporterPressionCenter.h
+	lhpOpImporterOBJ.cpp
+	lhpOpImporterOBJ.h
+
+	lhpOpImporterPLY.cpp
+	lhpOpImporterPLY.h
+
 	lhpOpICPRegFollow.cpp
 	lhpOpICPRegFollow.h
 	lhpOpImporterRSScan.cpp
 	lhpOpImporterRSScan.h
+	lhpOpCreateMetersScripted.cpp
+	lhpOpCreateMetersScripted.h
 	lhpOpJoinSurf.cpp
 	lhpOpJoinSurf.h
 	lhpOpLMMirror.cpp
