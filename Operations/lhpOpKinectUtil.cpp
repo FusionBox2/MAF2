@@ -603,34 +603,34 @@ namespace
 
     std::ofstream strm;
     strm.open(fullName, std::ios::out);
-    strm << "%%% function KV_Local_Param_Inp_Shv" << endl; 
-    strm << "" << endl; 
-    strm << "%%%%% ===========================================" << endl; 
-    strm << "%%%  Disp_Debug_Yes = 0; %%% 0 1" << endl; 
-    strm << "%%%  " << endl; 
-    strm << "Disp_Debug_Yes = 1; %%% 0 1" << endl; 
-    strm << "" << endl; 
-    strm << "%%%%% ===========================================" << endl; 
-    strm << "%%% " << endl; 
-    strm << "KV_Input_Kinect = 1; %%% 1-Kinect; 0-Vicon" << endl; 
-    strm << "%%% KV_Input_Kinect = 0; %%% 1-Kinect; 0-Vicon" << endl; 
-    strm << "" << endl; 
-    strm << "%%% " << endl; 
-    strm << "Anthropom_S035_Yes = 1; %%% 1-MAIN, 0- for Vicon !!! file load 'm50_Static2_SVSJ_may2012.bnr'" << endl; 
-    strm << "%%% Anthropom_S035_Yes = 0; %%% 1-MAIN, 0- for Vicon !!! file load 'm50_Static2_SVSJ_may2012.bnr'" << endl; 
-    strm << "" << endl; 
-    strm << "%%% OLD  Vicon_P1_In_YES = 1; %%% 1-P1_protcl; 0-P0_protcl(OPTIMIZ)" << endl; 
-    strm << "%%% OLD  Vicon_P1_In_YES = 0; %%% 1-P1_protcl; 0-P0_protcl(OPTIMIZ)" << endl; 
-    strm << "" << endl; 
-    strm << "%%% " << endl; 
-    strm << "Vicon_P1_In_YES =  [1 1 1 1 1]; %%% 1-P1_protcl; 0-P0_protcl(OPTIMIZ)  %%% P1_all: R_L_Legs(1 2) Trx(3) R_L_Hands(4 5) [1 1 1 1 1]-MAIN" << endl; 
-    strm << "%%% Vicon_P1_In_YES =  [0 0 0 0 0]; %%% 1-P1_protcl; 0-P0_protcl(OPTIMIZ)  %%% P0_all: R_L_Legs(1 2) Trx(3) R_L_Hands(4 5) [0 0 0 0 0]-All OPT" << endl; 
-    strm << "%%% Vicon_P1_In_YES =  [1 1 1 0 0]; %%% 1-P1_protcl; 0-P0_protcl(OPTIMIZ)  %%% P1_R_L_Legs(1 2) P1_Trx(3) P0_R_L_Hands(4 5) [1 1 1 0 0]-test" << endl; 
-    strm << "%%%%% ===========================================" << endl; 
-    strm << "%%% " << endl; 
-    strm << "Reduced_Output_Kinect_Yes = 0; %%% 0-MAIN 1-analysis 'Opt_5_Bds'(see below)" << endl; 
-    strm << "%%% Reduced_Output_Kinect_Yes = 1; %%% 0-MAIN 1-analysis 'Opt_5_Bds'(see below)" << endl; 
-    strm << "%%%%% ===========================================" << endl; 
+    strm << "%%% function KV_Local_Param_Inp_Shv" << endl; 
+    strm << "" << endl; 
+    strm << "%%%%% ===========================================" << endl; 
+    strm << "%%%  Disp_Debug_Yes = 0; %%% 0 1" << endl; 
+    strm << "%%%  " << endl; 
+    strm << "Disp_Debug_Yes = 1; %%% 0 1" << endl; 
+    strm << "" << endl; 
+    strm << "%%%%% ===========================================" << endl; 
+    strm << "%%% " << endl; 
+    strm << "KV_Input_Kinect = 1; %%% 1-Kinect; 0-Vicon" << endl; 
+    strm << "%%% KV_Input_Kinect = 0; %%% 1-Kinect; 0-Vicon" << endl; 
+    strm << "" << endl; 
+    strm << "%%% " << endl; 
+    strm << "Anthropom_S035_Yes = 1; %%% 1-MAIN, 0- for Vicon !!! file load 'm50_Static2_SVSJ_may2012.bnr'" << endl; 
+    strm << "%%% Anthropom_S035_Yes = 0; %%% 1-MAIN, 0- for Vicon !!! file load 'm50_Static2_SVSJ_may2012.bnr'" << endl; 
+    strm << "" << endl; 
+    strm << "%%% OLD  Vicon_P1_In_YES = 1; %%% 1-P1_protcl; 0-P0_protcl(OPTIMIZ)" << endl; 
+    strm << "%%% OLD  Vicon_P1_In_YES = 0; %%% 1-P1_protcl; 0-P0_protcl(OPTIMIZ)" << endl; 
+    strm << "" << endl; 
+    strm << "%%% " << endl; 
+    strm << "Vicon_P1_In_YES =  [1 1 1 1 1]; %%% 1-P1_protcl; 0-P0_protcl(OPTIMIZ)  %%% P1_all: R_L_Legs(1 2) Trx(3) R_L_Hands(4 5) [1 1 1 1 1]-MAIN" << endl; 
+    strm << "%%% Vicon_P1_In_YES =  [0 0 0 0 0]; %%% 1-P1_protcl; 0-P0_protcl(OPTIMIZ)  %%% P0_all: R_L_Legs(1 2) Trx(3) R_L_Hands(4 5) [0 0 0 0 0]-All OPT" << endl; 
+    strm << "%%% Vicon_P1_In_YES =  [1 1 1 0 0]; %%% 1-P1_protcl; 0-P0_protcl(OPTIMIZ)  %%% P1_R_L_Legs(1 2) P1_Trx(3) P0_R_L_Hands(4 5) [1 1 1 0 0]-test" << endl; 
+    strm << "%%%%% ===========================================" << endl; 
+    strm << "%%% " << endl; 
+    strm << "Reduced_Output_Kinect_Yes = 0; %%% 0-MAIN 1-analysis 'Opt_5_Bds'(see below)" << endl; 
+    strm << "%%% Reduced_Output_Kinect_Yes = 1; %%% 0-MAIN 1-analysis 'Opt_5_Bds'(see below)" << endl; 
+    strm << "%%%%% ===========================================" << endl; 
 
 
     strm << "Dir_Name_Data = '"; 
@@ -656,189 +656,189 @@ namespace
         strm << outKinectDirName[i]; 
     }
 
-    strm << "';%%% Dir_Name_Results = 'Output_Kinect_Processed'; %%% 'test'  'test_06'  'test_07'" << endl; 
-      strm << "" << endl; 
+    strm << "';%%% Dir_Name_Results = 'Output_Kinect_Processed'; %%% 'test'  'test_06'  'test_07'" << endl; 
+      strm << "" << endl; 
 
 
-      strm << "%%%%% ===========================================" << endl; 
-      strm << "%%% Static_Pose_Yes = 1; %%% 0 1-Scale from static pose" << endl; 
-      strm << "%%% " << endl; 
-      strm << "Static_Pose_Yes = 0; %%% 0 1-Scale from static pose" << endl; 
+      strm << "%%%%% ===========================================" << endl; 
+      strm << "%%% Static_Pose_Yes = 1; %%% 0 1-Scale from static pose" << endl; 
+      strm << "%%% " << endl; 
+      strm << "Static_Pose_Yes = 0; %%% 0 1-Scale from static pose" << endl; 
       strm << "%%% FN_Kin_Data_Inp_Static = '" << staticFile.GetCStr() << "'; %%% Serge Squat 21may2012 SVSJ" << endl;
     strm << "%%%%% ===========================================" << endl;
     strm << "FN_Kin_Data_Inp = '" << inputFile.GetCStr() << "'; %%% Serge Squat 21may2012 SVSJ" << endl;
-    strm << "%%%%% ===========================================" << endl; 
-      strm << "%%% " << endl; 
-      strm << "Save_Model_Yes = 0; %%% 0-MAIN 1" << endl; 
-      strm << "%%% Save_Model_Yes = 1; %%% 0-MAIN 1" << endl; 
-      strm << "%%% " << endl; 
-      strm << "Load_Model_Yes = 1; %%% 0-Requred ASCII:[TR72_3FN_MATL_LL.DAT, TR72_3FN_MATL_UL.DAT];  1-MAIN" << endl; 
-      strm << "%%% Load_Model_Yes = 0; %%% 0-Requred ASCII:[TR72_3FN_MATL_LL.DAT, TR72_3FN_MATL_UL.DAT];  1-MAIN" << endl; 
-      strm << "if Save_Model_Yes, Load_Model_Yes = 0; end" << endl; 
-      strm << "%%%%% ===========================================" << endl; 
+    strm << "%%%%% ===========================================" << endl; 
+      strm << "%%% " << endl; 
+      strm << "Save_Model_Yes = 0; %%% 0-MAIN 1" << endl; 
+      strm << "%%% Save_Model_Yes = 1; %%% 0-MAIN 1" << endl; 
+      strm << "%%% " << endl; 
+      strm << "Load_Model_Yes = 1; %%% 0-Requred ASCII:[TR72_3FN_MATL_LL.DAT, TR72_3FN_MATL_UL.DAT];  1-MAIN" << endl; 
+      strm << "%%% Load_Model_Yes = 0; %%% 0-Requred ASCII:[TR72_3FN_MATL_LL.DAT, TR72_3FN_MATL_UL.DAT];  1-MAIN" << endl; 
+      strm << "if Save_Model_Yes, Load_Model_Yes = 0; end" << endl; 
+      strm << "%%%%% ===========================================" << endl; 
       strm << "%%% " << endl;
-    if(llimb && ulimb) 
-      strm << "Opt_5_Bds = [1 1 1 1 1]; %%% R_L_Legs(1 2) Trx(3) R_L_Hands(4 5) [1 1 1 1 1]-MAIN" << endl; 
+    if(llimb && ulimb) 
+      strm << "Opt_5_Bds = [1 1 1 1 1]; %%% R_L_Legs(1 2) Trx(3) R_L_Hands(4 5) [1 1 1 1 1]-MAIN" << endl; 
     else if(llimb)
     strm << "Opt_5_Bds = [1 1 1 0 0]; %%% R_L_Legs(1 2) Trx(3) R_L_Hands(4 5) [1 1 1 1 1]-MAIN" << endl;
     else if(ulimb)
       strm << "Opt_5_Bds = [0 0 1 1 1]; %%% R_L_Legs(1 2) Trx(3) R_L_Hands(4 5) [1 1 1 1 1]-MAIN" << endl;
-    strm << "%%% Opt_5_Bds = [0 0 0 0 1]; %%% L_Hand(5) [0 0 0 0 1]-Test " << endl; 
-      strm << "%%% Opt_5_Bds = [1 0 0 0 1]; %%% R_Leg L_Hand(1 5) [1 0 0 0 1]-Test " << endl; 
-      strm << "%%% Opt_5_Bds = [1 0 0 0 0]; %%% R_Leg (1 ) [1 0 0 0 0]-Test " << endl; 
-      strm << "%%% Opt_5_Bds = [0 1 0 0 0]; %%% L_Leg (2 ) [0 1 0 0 0]-Test " << endl; 
-      strm << "%%% Opt_5_Bds = [1 1 0 0 0]; %%% RL_Leg (1 2) [1 1 0 0 0]-Test " << endl; 
-      strm << "%%% Opt_5_Bds = [0 0 0 1 1]; %%% R_L_Hands(4 5) [0 0 0 1 1]-Test " << endl; 
-      strm << "%%% Opt_5_Bds = [0 0 1 1 1]; %%% Trx(3) R_L_Hands(4 5) [0 0 1 1 1]-Test " << endl; 
-      strm << "%%% Opt_5_Bds = [1 1 0 0 0]; %%% R_L_Legs(1 2) [1 1 0 0 0]-Test " << endl; 
-      strm << "%%%%% ===========================================" << endl; 
-      strm << "%%% H_time_Refram = 0.1; %%% Normal Speed, e.g. SVSJ Squat_S02 21may2012" << endl; 
-      strm << "%%% H_time_Refram = 0.02; %%% Fast Speed, e.g. SVSJ Jump_S10 21may2012" << endl; 
-      strm << "%%% " << endl; 
-      strm << "H_time_Refram = 0.1; %%% Fast Speed, e.g. SVSJ Jump_S10 21may2012" << endl; 
-      strm << "%%% H_time_Refram = 0.01; %%% VERY Fast Speed, THEN(!!!) capturing frec(e.g.33fps) will be USED" << endl; 
-      strm << "%%%%% ===========================================" << endl; 
-      strm << "Equal_Frec_25_Yes = 1; %%% 0 1-MAIN; for Output reframing" << endl; 
-      strm << "%%% if Equal_Frec_25_Yes == 1, Frec_New = 100; h_Time = 1/Frec_New; end %%% 100 FPS" << endl; 
-      strm << "%%% " << endl; 
-      strm << "if Equal_Frec_25_Yes == 1, Frec_New = 10; h_Time = 1/Frec_New; end %%% 25 FPS" << endl; 
-      strm << "%%% if Equal_Frec_25_Yes == 1, Frec_New = 10; h_Time = 1/Frec_New; end %%% 100 FPS" << endl; 
-      strm << "%%%%% ===========================================" << endl; 
+    strm << "%%% Opt_5_Bds = [0 0 0 0 1]; %%% L_Hand(5) [0 0 0 0 1]-Test " << endl; 
+      strm << "%%% Opt_5_Bds = [1 0 0 0 1]; %%% R_Leg L_Hand(1 5) [1 0 0 0 1]-Test " << endl; 
+      strm << "%%% Opt_5_Bds = [1 0 0 0 0]; %%% R_Leg (1 ) [1 0 0 0 0]-Test " << endl; 
+      strm << "%%% Opt_5_Bds = [0 1 0 0 0]; %%% L_Leg (2 ) [0 1 0 0 0]-Test " << endl; 
+      strm << "%%% Opt_5_Bds = [1 1 0 0 0]; %%% RL_Leg (1 2) [1 1 0 0 0]-Test " << endl; 
+      strm << "%%% Opt_5_Bds = [0 0 0 1 1]; %%% R_L_Hands(4 5) [0 0 0 1 1]-Test " << endl; 
+      strm << "%%% Opt_5_Bds = [0 0 1 1 1]; %%% Trx(3) R_L_Hands(4 5) [0 0 1 1 1]-Test " << endl; 
+      strm << "%%% Opt_5_Bds = [1 1 0 0 0]; %%% R_L_Legs(1 2) [1 1 0 0 0]-Test " << endl; 
+      strm << "%%%%% ===========================================" << endl; 
+      strm << "%%% H_time_Refram = 0.1; %%% Normal Speed, e.g. SVSJ Squat_S02 21may2012" << endl; 
+      strm << "%%% H_time_Refram = 0.02; %%% Fast Speed, e.g. SVSJ Jump_S10 21may2012" << endl; 
+      strm << "%%% " << endl; 
+      strm << "H_time_Refram = 0.1; %%% Fast Speed, e.g. SVSJ Jump_S10 21may2012" << endl; 
+      strm << "%%% H_time_Refram = 0.01; %%% VERY Fast Speed, THEN(!!!) capturing frec(e.g.33fps) will be USED" << endl; 
+      strm << "%%%%% ===========================================" << endl; 
+      strm << "Equal_Frec_25_Yes = 1; %%% 0 1-MAIN; for Output reframing" << endl; 
+      strm << "%%% if Equal_Frec_25_Yes == 1, Frec_New = 100; h_Time = 1/Frec_New; end %%% 100 FPS" << endl; 
+      strm << "%%% " << endl; 
+      strm << "if Equal_Frec_25_Yes == 1, Frec_New = 10; h_Time = 1/Frec_New; end %%% 25 FPS" << endl; 
+      strm << "%%% if Equal_Frec_25_Yes == 1, Frec_New = 10; h_Time = 1/Frec_New; end %%% 100 FPS" << endl; 
+      strm << "%%%%% ===========================================" << endl; 
       strm << "%%% " << endl;
-    strm << "Thorax_Root_Yes = 0; %%% 1 0-MAIN" << endl; 
-      strm << "%%% Thorax_Root_Yes = 1; %%% 1 0-MAIN" << endl; 
-      strm << "if sum(Opt_5_Bds(1:3),2) == 0, Thorax_Root_Yes = 1; end " << endl; 
-      strm << "" << endl; 
-      strm << "%%%%% ===========================================" << endl; 
-      strm << "%%% " << endl; 
-      strm << "Kinect_In_YES = 1; %%% 0 1-Kinect Data" << endl; 
-      strm << "%%% Kinect_In_YES = 0; %%% 0-Vicon Data 1" << endl; 
-      strm << "%%% Kinect_In_YES = KV_Input_Kinect;" << endl; 
-      strm << "IFLag_AL_Fout = 1; %%% 0 1-MAIN" << endl; 
-      strm << "LL_OPT_YES = 1; %%% 0 1-MAIN" << endl; 
-      strm << "UpL_OPT_YES = 1; %%% 0 1-MAIN" << endl; 
-      strm << "DoFs_Smooth_Yes = 1; %%% 0 1-MAIN" << endl; 
-      strm << "DoFs_Corr_Yes = 1; %%% 0 1-MAIN" << endl; 
-      strm << "%%% " << endl; 
-      strm << "Should_LR_Corr_Yes = 1; %%% 0 1-MAIN" << endl; 
-      strm << "%%% Should_LR_Corr_Yes = 0; %%% 0-Test '09Free.txt'   1-MAIN" << endl; 
-      strm << "Surfl_Yes = 0; %%% 1-Trx_Ellipsoid_Fig1, 0-MAIN" << endl; 
-      strm << "Par_Smth_30 = 1; %%% 10-MAIN smoothing param for OVP spline" << endl; 
-      strm << "%%% Par_Smth_30 = 30; %%% 10-MAIN smoothing param for OVP spline" << endl; 
-      strm << "%%% " << endl; 
-      strm << "%%% Par_Smth_30 = 20; %%% 10-MAIN smoothing param for OVP spline" << endl; 
-      strm << "%%% Par_Smth_30 = 100; %%% 10-MAIN smoothing param for OVP spline" << endl; 
-      strm << "" << endl; 
-      strm << "%%% SMTH_50000_Yes = 0; %%% Pelvis smoothed" << endl; 
-      strm << "%%% " << endl; 
-      strm << "SMTH_50000_Yes = 1; %%% Pelvis NOT smoothed" << endl; 
-      strm << "%%% Mult_tol_Kinect = 100; %%% 1-Default" << endl; 
-      strm << "%%% Mult_tol_Kinect = 20; %%% 1-Default" << endl; 
-      strm << "%%% " << endl; 
-      strm << "Mult_tol_Kinect = 1; %%% 1-Default for Vic_2_Kin data" << endl; 
-      strm << "%%% Mult_tol_Kinect = 0; %%% 1-Default for Vic_2_Kin data" << endl; 
-      strm << "" << endl; 
-      strm << "%%% " << endl; 
-      strm << "Delt_RL_0p1 = 0.1; %%% Shoulder rhythm range EXTENSION" << endl; 
-      strm << "%%% TEST 27 Sept 2012 TOO MUCH Delt_RL_0p1 = 0.5; %%% Shoulder rhythm range EXTENSION" << endl; 
-      strm << "%%% TEST 27 Sept 2012 Delt_RL_0p1 = 1.0; %%% Shoulder rhythm range EXTENSION" << endl; 
-      strm << "" << endl; 
-      strm << "%%% TEST 28 Sept 2012 Delt_RL_0p1 = 0.3; %%% Shoulder rhythm range EXTENSION put Check_Border_Yes = 0;" << endl; 
-      strm << "" << endl; 
-      strm << "%%% " << endl; 
-      strm << "Check_Border_Yes = 1;" << endl; 
-      strm << "%%% Check_Border_Yes = 0;" << endl; 
-      strm << "%%% " << endl; 
-      strm << "HKA_Flx_Ext_50000_Yes = 1; %%% RL: HipKnAnk Trnsl & Flx/Ext NOT smoothed" << endl; 
-      strm << "%%% " << endl; 
-      strm << "PiG_C3D_Out_Yes = 1; %%% 1 - Out C3D LL PiG; 0-no C3D out" << endl; 
-      strm << "" << endl; 
-      strm << "%%% Lat_Dist_Inp = 30; %%% " << endl; 
-      strm << "%%% " << endl; 
-      strm << "Lat_Dist_Inp = 20; %%% " << endl; 
-      strm << "%%% Mult_Line_Inp = 1/3; %%% " << endl; 
-      strm << "%%% " << endl; 
-      strm << "Mult_Line_Inp = 2/3; %%% " << endl; 
-      strm << "" << endl; 
-      strm << "%%% " << endl; 
-      strm << "Pig_Lat_Wnds_Yes = 0; %%% 0-Kinect; 1-Vicon PiG" << endl; 
-      strm << "%%% " << endl; 
-      strm << "Wnd_Dat_From_Exp = 0; %%% MAIN" << endl; 
-      strm << "%%% Wnd_Dat_From_Exp = 1;" << endl; 
-      strm << "" << endl; 
-      strm << "%%% " << endl; 
-      strm << "Delt_ang = 48*pi/180; Alpha_D = 1./3; Ampl_Sin1 = 0.1;  Ampl_Sin2 = 0.17; " << endl; 
-      strm << "%%% Delt_ang = 48*pi/180; Alpha_D = .4; Ampl_Sin1 = 0.1;  Ampl_Sin2 = 0.17; " << endl; 
-      strm << "" << endl; 
-      strm << "%%%%% ===========================================" << endl; 
-      strm << "x0_Poly_Apprx_Yes = [1 1 1 1 1]; %%% 1 0" << endl; 
-      strm << "%%% N_Polyn = [3 3 3 3 3]; %%% [2-5] polyn" << endl; 
-      strm << "%%% " << endl; 
-      strm << "N_Polyn = [3 3 3 4 4]; %%% [2-5] polyn" << endl; 
-      strm << "%%% Mult_T5 = [0.5 0.5 0.5 0.0 0.0]; %%% [0.0-1.0]" << endl; 
-      strm << "%%% " << endl; 
-      strm << "Mult_T5 = [0.5 0.5 0.5 0.3 0.3]; %%% [0.0-1.0]" << endl; 
-      strm << "%%% Mult_T5 = [0.5 0.5 0.5 0.5 0.5]; %%% [0.0-1.0]" << endl; 
-      strm << "%%%%% ===========================================" << endl; 
-      strm << "%%% " << endl; 
-      strm << "Bord_Delt = 0.0001;" << endl; 
-      strm << "%%%%% ===========================================" << endl; 
-      strm << "%%% " << endl; 
-      strm << "Start_Fr_N = 1; " << endl; 
-      strm << "%%% Start_Fr_N = 263;" << endl; 
-      strm << "%%% Start_Fr_N = 201;" << endl; 
-      strm << "%%% Start_Fr_N = 301; %%% UP" << endl; 
-      strm << "" << endl; 
-      strm << "%%% for Vicon Start_Fr_N = 230; %%% UL_21jul.c3d" << endl; 
-      strm << "%%% for Vicon Start_Fr_N = 229; %%% UL_21jul.c3d" << endl; 
-      strm << "%%% for Vicon Start_Fr_N = 1; %%% 02Squat.c3d" << endl; 
-      strm << "" << endl; 
-      strm << "%%% " << endl; 
-      strm << "End_Fr_N = -1; %%% all data from Vicon C3D" << endl; 
-      strm << "%%% End_Fr_N = 501; %%% data from Vicon C3D" << endl; 
-      strm << "%%% End_Fr_N = 121; %%% data from Kinect New_Vic_Sqt_tst_C.dat" << endl; 
-      strm << "%%% End_Fr_N = 351;  %%% Kinect_MBA_dec_2012; Abd_UpL_Sqt 17dec2012" << endl; 
-      strm << "" << endl; 
-      strm << "%%% " << endl; 
-      strm << "Decim_Frm = 4;" << endl; 
-      strm << "%%% Vic_Pelv_4ALs = [0 1 1 1]; %%%  !!! LIAS LIPS  RIAS RIPS " << endl; 
-      strm << "%%% " << endl; 
-      strm << "Vic_Pelv_4ALs = [1 1 1 1]; %%% MAIN  !!! LIAS LIPS  RIAS RIPS " << endl; 
-      strm << "%%%%% ===========================================" << endl; 
-      strm << "%%%%%%%%%%  11 June SVSJ Squat" << endl; 
-      strm << "%%% RT_Kin_2_Vic = [  -0.99962947  -0.0034224409    0.027003927      342.23228;   0.026780458    0.053893448     0.99818751     -1777.7479; -0.0048715725     0.99854083   -0.053781824      955.71808];" << endl; 
-      strm << "%%%%%%%%%%  11 June SVSJ 14Trunk" << endl; 
-      strm << "%%% RT_Kin_2_Vic = [ -0.99957423 -7.5018323e-005 0.029178048  334.05104;  0.029113473  0.063978283  0.99752653 -1781.5372; -0.0019415942  0.99795129 -0.063948859 985.43056 ];" << endl; 
-      strm << "%%%%%%%%%%  11 June SVSJ 09Free.txt" << endl; 
-      strm << "%%% RT_Kin_2_Vic = [ -0.9990442  -0.003181937    0.04359438      295.4147; 0.043351262    0.055448726     0.99751998     -1789.0452; -0.005591298     0.9984565   -0.05525779      957.5889];" << endl; 
-      strm << "%%%%%%%%%%  11 June SVSJ 12Walk.txt" << endl; 
-      strm << "%%% RT_Kin_2_Vic = [ -0.9998067    0.01282821    0.01490113      380.5636; 0.015643311    0.059843495     0.99808519     -1767.8663; 0.011911915     0.99812534   -0.060032602      1020.6004];" << endl; 
-      strm << "%%%%%%%%%%  11 June SVSJ 11Run.txt" << endl; 
-      strm << "%%% RT_Kin_2_Vic = [ -0.9999932  -0.002111409   0.003019968       403.936; 0.0028994238    0.054935149     0.99848571     -1778.9454; -0.002274114     0.9984877   -0.05492865      955.1424];" << endl; 
-      strm << "%%% " << endl; 
-      strm << "RT_Kin_2_Vic = [ -0.9999932  -0.002111409   0.003019968       403.936; 0.0028994238    0.054935149     0.99848571     -1778.9454; -0.002274114     0.9984877   -0.05492865      955.1424];" << endl; 
-      strm << "" << endl; 
-      strm << "%%% UL_21jul.c3d and Session08  for Kinect" << endl; 
-      strm << "RT_Kin_2_Vic = [ -0.9973536   0.001262106    0.07269276      323.7613; 0.072604385    0.069536243     0.99493382     -2358.8713; -0.003799069     0.9975786   -0.06944386      812.5347];" << endl; 
-      strm << "%%% 02Squat.c3d and Sqt_tst_C.dat for Kinect " << endl; 
-      strm << "RT_Kin_2_Vic = [ -0.9996295  -0.003422441    0.02700393      342.2323; 0.026780458    0.053893448     0.99818751     -1777.7479; -0.004871572     0.9985408   -0.05378182      955.7181];" << endl; 
-      strm << "" << endl; 
-      //    strm << "%%% "Smth_Scl_Sqt_tst_C.dat" %%% 02Squat.c3d and Sqt_tst_C.dat for Kinect " << endl; 
-      strm << "RT_Kin_2_Vic = [ -0.9997103  -0.002643808   -0.02392442      472.9902; -0.024027614    0.050614826     0.99842917     -1768.9051; -0.001428724     0.9987147   -0.05066369       946.895];" << endl; 
-      strm << "" << endl; 
-      //    strm << "%%% "Smth_EqLnk_Sqt_tst_C.dat" %%% 02Squat.c3d and Sqt_tst_C.dat for Kinect " << endl; 
-      strm << "RT_Kin_2_Vic = [ -0.9999756  -0.002091416   -0.00667023      429.0553; -0.0067581791    0.045323936     0.99894948     -1769.3241; -0.001786898     0.9989702   -0.04533696      934.7044];" << endl; 
-      strm << "%%% UL_21jul.c3d and Smth_EqLnk_Session08  for Kinect" << endl; 
-      strm << "RT_Kin_2_Vic = [ -0.9942669   0.006880558     0.1067052      227.3685; 0.10692255    0.055059747     0.99274165     -2358.0297; 0.0009554544     0.9984594   -0.05547977      767.3736];" << endl; 
-      strm << "" << endl; 
-      strm << "%%% NO Transform to Vicon GCS " << endl; 
-      strm << "RT_Kin_2_Vic = [ eye(3) [0 0 0]'];" << endl; 
-      strm << "%%% New_Vic_Sqt_tst_C.dat RT_Kin_2_Vic = [ eye(3) [0 0 0]'];" << endl; 
-      strm << "" << endl; 
-      strm << "%%%%% ===========================================" << endl; 
-      strm << "" << endl; 
-      strm << "%%% end %%% %%% function KV_Local_Param_Inp_Shv" << endl; 
-      strm << "" << endl; 
+    strm << "Thorax_Root_Yes = 0; %%% 1 0-MAIN" << endl; 
+      strm << "%%% Thorax_Root_Yes = 1; %%% 1 0-MAIN" << endl; 
+      strm << "if sum(Opt_5_Bds(1:3),2) == 0, Thorax_Root_Yes = 1; end " << endl; 
+      strm << "" << endl; 
+      strm << "%%%%% ===========================================" << endl; 
+      strm << "%%% " << endl; 
+      strm << "Kinect_In_YES = 1; %%% 0 1-Kinect Data" << endl; 
+      strm << "%%% Kinect_In_YES = 0; %%% 0-Vicon Data 1" << endl; 
+      strm << "%%% Kinect_In_YES = KV_Input_Kinect;" << endl; 
+      strm << "IFLag_AL_Fout = 1; %%% 0 1-MAIN" << endl; 
+      strm << "LL_OPT_YES = 1; %%% 0 1-MAIN" << endl; 
+      strm << "UpL_OPT_YES = 1; %%% 0 1-MAIN" << endl; 
+      strm << "DoFs_Smooth_Yes = 1; %%% 0 1-MAIN" << endl; 
+      strm << "DoFs_Corr_Yes = 1; %%% 0 1-MAIN" << endl; 
+      strm << "%%% " << endl; 
+      strm << "Should_LR_Corr_Yes = 1; %%% 0 1-MAIN" << endl; 
+      strm << "%%% Should_LR_Corr_Yes = 0; %%% 0-Test '09Free.txt'   1-MAIN" << endl; 
+      strm << "Surfl_Yes = 0; %%% 1-Trx_Ellipsoid_Fig1, 0-MAIN" << endl; 
+      strm << "Par_Smth_30 = 1; %%% 10-MAIN smoothing param for OVP spline" << endl; 
+      strm << "%%% Par_Smth_30 = 30; %%% 10-MAIN smoothing param for OVP spline" << endl; 
+      strm << "%%% " << endl; 
+      strm << "%%% Par_Smth_30 = 20; %%% 10-MAIN smoothing param for OVP spline" << endl; 
+      strm << "%%% Par_Smth_30 = 100; %%% 10-MAIN smoothing param for OVP spline" << endl; 
+      strm << "" << endl; 
+      strm << "%%% SMTH_50000_Yes = 0; %%% Pelvis smoothed" << endl; 
+      strm << "%%% " << endl; 
+      strm << "SMTH_50000_Yes = 1; %%% Pelvis NOT smoothed" << endl; 
+      strm << "%%% Mult_tol_Kinect = 100; %%% 1-Default" << endl; 
+      strm << "%%% Mult_tol_Kinect = 20; %%% 1-Default" << endl; 
+      strm << "%%% " << endl; 
+      strm << "Mult_tol_Kinect = 1; %%% 1-Default for Vic_2_Kin data" << endl; 
+      strm << "%%% Mult_tol_Kinect = 0; %%% 1-Default for Vic_2_Kin data" << endl; 
+      strm << "" << endl; 
+      strm << "%%% " << endl; 
+      strm << "Delt_RL_0p1 = 0.1; %%% Shoulder rhythm range EXTENSION" << endl; 
+      strm << "%%% TEST 27 Sept 2012 TOO MUCH Delt_RL_0p1 = 0.5; %%% Shoulder rhythm range EXTENSION" << endl; 
+      strm << "%%% TEST 27 Sept 2012 Delt_RL_0p1 = 1.0; %%% Shoulder rhythm range EXTENSION" << endl; 
+      strm << "" << endl; 
+      strm << "%%% TEST 28 Sept 2012 Delt_RL_0p1 = 0.3; %%% Shoulder rhythm range EXTENSION put Check_Border_Yes = 0;" << endl; 
+      strm << "" << endl; 
+      strm << "%%% " << endl; 
+      strm << "Check_Border_Yes = 1;" << endl; 
+      strm << "%%% Check_Border_Yes = 0;" << endl; 
+      strm << "%%% " << endl; 
+      strm << "HKA_Flx_Ext_50000_Yes = 1; %%% RL: HipKnAnk Trnsl & Flx/Ext NOT smoothed" << endl; 
+      strm << "%%% " << endl; 
+      strm << "PiG_C3D_Out_Yes = 1; %%% 1 - Out C3D LL PiG; 0-no C3D out" << endl; 
+      strm << "" << endl; 
+      strm << "%%% Lat_Dist_Inp = 30; %%% " << endl; 
+      strm << "%%% " << endl; 
+      strm << "Lat_Dist_Inp = 20; %%% " << endl; 
+      strm << "%%% Mult_Line_Inp = 1/3; %%% " << endl; 
+      strm << "%%% " << endl; 
+      strm << "Mult_Line_Inp = 2/3; %%% " << endl; 
+      strm << "" << endl; 
+      strm << "%%% " << endl; 
+      strm << "Pig_Lat_Wnds_Yes = 0; %%% 0-Kinect; 1-Vicon PiG" << endl; 
+      strm << "%%% " << endl; 
+      strm << "Wnd_Dat_From_Exp = 0; %%% MAIN" << endl; 
+      strm << "%%% Wnd_Dat_From_Exp = 1;" << endl; 
+      strm << "" << endl; 
+      strm << "%%% " << endl; 
+      strm << "Delt_ang = 48*pi/180; Alpha_D = 1./3; Ampl_Sin1 = 0.1;  Ampl_Sin2 = 0.17; " << endl; 
+      strm << "%%% Delt_ang = 48*pi/180; Alpha_D = .4; Ampl_Sin1 = 0.1;  Ampl_Sin2 = 0.17; " << endl; 
+      strm << "" << endl; 
+      strm << "%%%%% ===========================================" << endl; 
+      strm << "x0_Poly_Apprx_Yes = [1 1 1 1 1]; %%% 1 0" << endl; 
+      strm << "%%% N_Polyn = [3 3 3 3 3]; %%% [2-5] polyn" << endl; 
+      strm << "%%% " << endl; 
+      strm << "N_Polyn = [3 3 3 4 4]; %%% [2-5] polyn" << endl; 
+      strm << "%%% Mult_T5 = [0.5 0.5 0.5 0.0 0.0]; %%% [0.0-1.0]" << endl; 
+      strm << "%%% " << endl; 
+      strm << "Mult_T5 = [0.5 0.5 0.5 0.3 0.3]; %%% [0.0-1.0]" << endl; 
+      strm << "%%% Mult_T5 = [0.5 0.5 0.5 0.5 0.5]; %%% [0.0-1.0]" << endl; 
+      strm << "%%%%% ===========================================" << endl; 
+      strm << "%%% " << endl; 
+      strm << "Bord_Delt = 0.0001;" << endl; 
+      strm << "%%%%% ===========================================" << endl; 
+      strm << "%%% " << endl; 
+      strm << "Start_Fr_N = 1; " << endl; 
+      strm << "%%% Start_Fr_N = 263;" << endl; 
+      strm << "%%% Start_Fr_N = 201;" << endl; 
+      strm << "%%% Start_Fr_N = 301; %%% UP" << endl; 
+      strm << "" << endl; 
+      strm << "%%% for Vicon Start_Fr_N = 230; %%% UL_21jul.c3d" << endl; 
+      strm << "%%% for Vicon Start_Fr_N = 229; %%% UL_21jul.c3d" << endl; 
+      strm << "%%% for Vicon Start_Fr_N = 1; %%% 02Squat.c3d" << endl; 
+      strm << "" << endl; 
+      strm << "%%% " << endl; 
+      strm << "End_Fr_N = -1; %%% all data from Vicon C3D" << endl; 
+      strm << "%%% End_Fr_N = 501; %%% data from Vicon C3D" << endl; 
+      strm << "%%% End_Fr_N = 121; %%% data from Kinect New_Vic_Sqt_tst_C.dat" << endl; 
+      strm << "%%% End_Fr_N = 351;  %%% Kinect_MBA_dec_2012; Abd_UpL_Sqt 17dec2012" << endl; 
+      strm << "" << endl; 
+      strm << "%%% " << endl; 
+      strm << "Decim_Frm = 4;" << endl; 
+      strm << "%%% Vic_Pelv_4ALs = [0 1 1 1]; %%%  !!! LIAS LIPS  RIAS RIPS " << endl; 
+      strm << "%%% " << endl; 
+      strm << "Vic_Pelv_4ALs = [1 1 1 1]; %%% MAIN  !!! LIAS LIPS  RIAS RIPS " << endl; 
+      strm << "%%%%% ===========================================" << endl; 
+      strm << "%%%%%%%%%%  11 June SVSJ Squat" << endl; 
+      strm << "%%% RT_Kin_2_Vic = [  -0.99962947  -0.0034224409    0.027003927      342.23228;   0.026780458    0.053893448     0.99818751     -1777.7479; -0.0048715725     0.99854083   -0.053781824      955.71808];" << endl; 
+      strm << "%%%%%%%%%%  11 June SVSJ 14Trunk" << endl; 
+      strm << "%%% RT_Kin_2_Vic = [ -0.99957423 -7.5018323e-005 0.029178048  334.05104;  0.029113473  0.063978283  0.99752653 -1781.5372; -0.0019415942  0.99795129 -0.063948859 985.43056 ];" << endl; 
+      strm << "%%%%%%%%%%  11 June SVSJ 09Free.txt" << endl; 
+      strm << "%%% RT_Kin_2_Vic = [ -0.9990442  -0.003181937    0.04359438      295.4147; 0.043351262    0.055448726     0.99751998     -1789.0452; -0.005591298     0.9984565   -0.05525779      957.5889];" << endl; 
+      strm << "%%%%%%%%%%  11 June SVSJ 12Walk.txt" << endl; 
+      strm << "%%% RT_Kin_2_Vic = [ -0.9998067    0.01282821    0.01490113      380.5636; 0.015643311    0.059843495     0.99808519     -1767.8663; 0.011911915     0.99812534   -0.060032602      1020.6004];" << endl; 
+      strm << "%%%%%%%%%%  11 June SVSJ 11Run.txt" << endl; 
+      strm << "%%% RT_Kin_2_Vic = [ -0.9999932  -0.002111409   0.003019968       403.936; 0.0028994238    0.054935149     0.99848571     -1778.9454; -0.002274114     0.9984877   -0.05492865      955.1424];" << endl; 
+      strm << "%%% " << endl; 
+      strm << "RT_Kin_2_Vic = [ -0.9999932  -0.002111409   0.003019968       403.936; 0.0028994238    0.054935149     0.99848571     -1778.9454; -0.002274114     0.9984877   -0.05492865      955.1424];" << endl; 
+      strm << "" << endl; 
+      strm << "%%% UL_21jul.c3d and Session08  for Kinect" << endl; 
+      strm << "RT_Kin_2_Vic = [ -0.9973536   0.001262106    0.07269276      323.7613; 0.072604385    0.069536243     0.99493382     -2358.8713; -0.003799069     0.9975786   -0.06944386      812.5347];" << endl; 
+      strm << "%%% 02Squat.c3d and Sqt_tst_C.dat for Kinect " << endl; 
+      strm << "RT_Kin_2_Vic = [ -0.9996295  -0.003422441    0.02700393      342.2323; 0.026780458    0.053893448     0.99818751     -1777.7479; -0.004871572     0.9985408   -0.05378182      955.7181];" << endl; 
+      strm << "" << endl; 
+      //    strm << "%%% "Smth_Scl_Sqt_tst_C.dat" %%% 02Squat.c3d and Sqt_tst_C.dat for Kinect " << endl; 
+      strm << "RT_Kin_2_Vic = [ -0.9997103  -0.002643808   -0.02392442      472.9902; -0.024027614    0.050614826     0.99842917     -1768.9051; -0.001428724     0.9987147   -0.05066369       946.895];" << endl; 
+      strm << "" << endl; 
+      //    strm << "%%% "Smth_EqLnk_Sqt_tst_C.dat" %%% 02Squat.c3d and Sqt_tst_C.dat for Kinect " << endl; 
+      strm << "RT_Kin_2_Vic = [ -0.9999756  -0.002091416   -0.00667023      429.0553; -0.0067581791    0.045323936     0.99894948     -1769.3241; -0.001786898     0.9989702   -0.04533696      934.7044];" << endl; 
+      strm << "%%% UL_21jul.c3d and Smth_EqLnk_Session08  for Kinect" << endl; 
+      strm << "RT_Kin_2_Vic = [ -0.9942669   0.006880558     0.1067052      227.3685; 0.10692255    0.055059747     0.99274165     -2358.0297; 0.0009554544     0.9984594   -0.05547977      767.3736];" << endl; 
+      strm << "" << endl; 
+      strm << "%%% NO Transform to Vicon GCS " << endl; 
+      strm << "RT_Kin_2_Vic = [ eye(3) [0 0 0]'];" << endl; 
+      strm << "%%% New_Vic_Sqt_tst_C.dat RT_Kin_2_Vic = [ eye(3) [0 0 0]'];" << endl; 
+      strm << "" << endl; 
+      strm << "%%%%% ===========================================" << endl; 
+      strm << "" << endl; 
+      strm << "%%% end %%% %%% function KV_Local_Param_Inp_Shv" << endl; 
+      strm << "" << endl; 
       strm.close();
   }
   mafVMEGroup *ModelImport(const mafString& path, mafVME *target)
