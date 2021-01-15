@@ -531,7 +531,7 @@ void mafLogicWithManagers::Init(int argc, char **argv)
         op_param += _R(" ");
         op_param += _R(argv[p]);
       }
-      m_OpManager->OpRun(op_type, (void *)op_param.GetCStr());
+      m_OpManager->OpRun(op_type, (void *)op_param.toStd().c_str());
     }
   }
 
