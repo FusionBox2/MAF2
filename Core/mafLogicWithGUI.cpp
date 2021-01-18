@@ -282,7 +282,7 @@ void mafLogicWithGUI::CreateLogbar()
   wxLog *old_log = wxLog::SetActiveTarget( m_Logger );
   cppDEL(old_log);
 
-  m_Win->AddDockPane(log, wxPaneInfo()
+  m_Win->AddDockPane(log, wxAuiPaneInfo()
     .Name("logbar")
     .Caption(wxT("LogBar"))
     .Bottom()
@@ -313,7 +313,7 @@ void mafLogicWithGUI::AddToolbar()
 {
   CreateToolbar();
   //m_Win->SetToolBar(m_ToolBar);
-  m_Win->AddDockPane(m_ToolBar,  wxPaneInfo()
+  m_Win->AddDockPane(m_ToolBar,  wxAuiPaneInfo()
     .Name("toolbar")
     .Caption(wxT("ToolBar"))
     .Top()
@@ -346,7 +346,7 @@ void mafLogicWithGUI::AddTimebar()
 //----------------------------------------------------------------------------
 {
   CreateTimebar();
-  m_Win->AddDockPane(m_TimePanel, wxPaneInfo()
+  m_Win->AddDockPane(m_TimePanel, wxAuiPaneInfo()
     .Name("timebar")
     .Caption(wxT("TimeBar"))
     .Bottom()

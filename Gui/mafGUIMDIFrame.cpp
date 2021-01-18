@@ -116,11 +116,11 @@ mafGUIMDIFrame::mafGUIMDIFrame(const wxString& title, const wxPoint& pos, const 
   mafSetFrame( this );
 
   this->SetMinSize(wxSize(600,500)); // m_DockManager cant handle correctly the frame MinSize (yet)
-  m_DockManager.SetFrame(this);
-  m_DockManager.GetArtProvider()->SetMetric(wxAUI_ART_PANE_BORDER_SIZE,0 );
-  m_DockManager.GetArtProvider()->SetColor(wxAUI_ART_INACTIVE_CAPTION_COLOUR, m_DockManager.GetArtProvider()->GetColor(wxAUI_ART_ACTIVE_CAPTION_COLOUR));
-  m_DockManager.GetArtProvider()->SetColor(wxAUI_ART_INACTIVE_CAPTION_GRADIENT_COLOUR, m_DockManager.GetArtProvider()->GetColor(wxAUI_ART_ACTIVE_CAPTION_GRADIENT_COLOUR));
-  m_DockManager.GetArtProvider()->SetColor(wxAUI_ART_INACTIVE_CAPTION_TEXT_COLOUR, m_DockManager.GetArtProvider()->GetColor(wxAUI_ART_ACTIVE_CAPTION_TEXT_COLOUR));
+  m_DockManager.SetManagedWindow(this);
+  m_DockManager.GetArtProvider()->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE,0 );
+  m_DockManager.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR, m_DockManager.GetArtProvider()->GetColor(wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR));
+  m_DockManager.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR, m_DockManager.GetArtProvider()->GetColor(wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR));
+  m_DockManager.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR, m_DockManager.GetArtProvider()->GetColor(wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR));
   m_DockManager.Update();
   m_DockSettings = new mafGUIDockSettings(m_DockManager);
 
@@ -514,7 +514,7 @@ void mafGUIMDIFrame::ShowDockSettings()
 }
 */
 //-----------------------------------------------------------
-void mafGUIMDIFrame::AddDockPane(wxWindow *window, wxPaneInfo& pane_info, const wxString &menu, const wxString &subMenu)
+void mafGUIMDIFrame::AddDockPane(wxWindow *window, wxAuiPaneInfo& pane_info, const wxString &menu, const wxString &subMenu)
 //-----------------------------------------------------------
 {
   m_DockManager.AddPane(window,pane_info, menu, subMenu);
@@ -524,10 +524,10 @@ void mafGUIMDIFrame::AddDockPane(wxWindow *window, wxPaneInfo& pane_info, const 
 void mafGUIMDIFrame::RemoveDockPane(wxString pane_name)
 //-----------------------------------------------------------
 {
-  wxPaneInfo& pi = m_DockManager.GetPane(pane_name);
+  wxAuiPaneInfo& pi = m_DockManager.GetPane(pane_name);
   if(pi.IsOk())
   {
-    m_DockManager.DetachPane(pi.m_Window);
+    m_DockManager.DetachPane(pi.window);
     m_DockManager.Update();
   }
 }
@@ -535,7 +535,7 @@ void mafGUIMDIFrame::RemoveDockPane(wxString pane_name)
 void mafGUIMDIFrame::ShowDockPane(wxString pane_name, bool show)
 //-----------------------------------------------------------
 {
-  wxPaneInfo& pi = m_DockManager.GetPane(pane_name);
+  wxAuiPaneInfo& pi = m_DockManager.GetPane(pane_name);
   if(pi.IsOk())
   {
     pi.Show( show );
@@ -546,7 +546,7 @@ void mafGUIMDIFrame::ShowDockPane(wxString pane_name, bool show)
 void mafGUIMDIFrame::ShowDockPane(wxWindow *window, bool show)
 //-----------------------------------------------------------
 {
-  wxPaneInfo& pi = m_DockManager.GetPane(window);
+  wxAuiPaneInfo& pi = m_DockManager.GetPane(window);
   if(pi.IsOk())
   {
     pi.Show( show );
@@ -557,7 +557,7 @@ void mafGUIMDIFrame::ShowDockPane(wxWindow *window, bool show)
 bool mafGUIMDIFrame::DockPaneIsShown(wxString pane_name)
 //-----------------------------------------------------------
 {
-  wxPaneInfo& pi = m_DockManager.GetPane(pane_name);
+  wxAuiPaneInfo& pi = m_DockManager.GetPane(pane_name);
   if(pi.IsOk())
     return pi.IsShown();
   return false;
@@ -566,7 +566,7 @@ bool mafGUIMDIFrame::DockPaneIsShown(wxString pane_name)
 bool mafGUIMDIFrame::DockPaneIsShown(wxWindow *window)
 //-----------------------------------------------------------
 {
-  wxPaneInfo& pi = m_DockManager.GetPane(window);
+  wxAuiPaneInfo& pi = m_DockManager.GetPane(window);
   if(pi.IsOk())
     return pi.IsShown();
   return false;
