@@ -33,7 +33,7 @@ class vtkMEDPolyDataMirror;
 class lhpOpLMMirror: public mafOp
 {
 public:
-	lhpOpLMMirror(const mafString& label = "Surface Mirror");
+	lhpOpLMMirror(const mafString& label = _R("Surface Mirror"));
 	~lhpOpLMMirror(); 
 	virtual void OnEvent(mafEventBase *maf_event);
 	mafOp* Copy();

@@ -129,7 +129,7 @@ mafView *mafViewIntGraph::Copy(mafBaseEventHandler *Listener, bool lightCopyEnab
 void mafViewIntGraph::Create()
 //----------------------------------------------------------------------------
 {
-  m_RenderWindow = new mafViewIntGraphWindow(GetLabel().GetCStr());
+  m_RenderWindow = new mafViewIntGraphWindow(GetLabel().toWx());
   m_Win          = m_RenderWindow;
 
   m_Sg  = new lhpPlotGraph(this);
@@ -167,7 +167,7 @@ int mafViewIntGraph::GetNodeStatus(mafNode *vme)
   int status = m_Sg ? m_Sg->GetNodeStatus(vme) : NODE_NON_VISIBLE;
   if (!m_PipeMap.empty())
   {
-    mafString vme_type = vme->GetTypeName();
+    mafString vme_type = _R(vme->GetTypeName());
     auto it = m_PipeMap.find(vme_type);
     if(it == m_PipeMap.end())
       return status;
@@ -229,7 +229,7 @@ void mafViewIntGraph::GetVisualPipeName(mafNode *node, mafString &pipe_name)
   vtkDataSet *data = v->GetOutput()->GetVTKData();
   // custom visualization for the view should be considered only
   // if we are not in editing mode.
-  mafString vme_type = v->GetTypeName();
+  mafString vme_type = _R(v->GetTypeName());
   auto it = m_PipeMap.find(vme_type);
   if (it != m_PipeMap.end())
   {
@@ -240,7 +240,7 @@ void mafViewIntGraph::GetVisualPipeName(mafNode *node, mafString &pipe_name)
   if(pipe_name.IsEmpty())
   {
     // pick up the default visual pipe from the vme
-    pipe_name = "lhpPipeIntGraph";
+    pipe_name = _R("lhpPipeIntGraph");
   }
 }
 
@@ -248,15 +248,15 @@ void mafViewIntGraph::GetVisualPipeName(mafNode *node, mafString &pipe_name)
 void mafViewIntGraph::VmeCreatePipe(mafNode *vme)
 //----------------------------------------------------------------------------
 {
-  mafString pipe_name = "";
+  mafString pipe_name = _R("");
   GetVisualPipeName(vme, pipe_name);
-  if (pipe_name != "")
+  if (!pipe_name.IsEmpty())
   {
     m_NumberOfVisibleVme++;
     mafPipeFactory *pipe_factory  = mafPipeFactory::GetInstance();
     assert(pipe_factory!=NULL);
     mafObject *obj = NULL;
-    obj = pipe_factory->CreateInstance(pipe_name);
+    obj = pipe_factory->CreateInstance(pipe_name.GetCStr());
     lhpPipeIntGraphAbstract *pipe = lhpPipeIntGraphAbstract::SafeDownCast(obj);
     if (pipe)
     {
@@ -272,7 +272,7 @@ void mafViewIntGraph::VmeCreatePipe(mafNode *vme)
     {
       if(obj)
         cppDEL(obj);
-      mafErrorMessage(_("Cannot create visual pipe object of type \"%s\"!"),pipe_name.GetCStr());
+      mafErrorMessage(_M(_L("Cannot create visual pipe object of type \"")+ pipe_name + _L("\"!")));
     }
   }
   return;
@@ -299,11 +299,11 @@ mafGUI *mafViewIntGraph::CreateGui()
   //m_Gui = new mafGUI(this);
   m_Gui->SetListener(this);
 
-  m_Gui->Label("General Features",true);
+  m_Gui->Label(_R("General Features"),true);
   //m_Gui->Integer(ID_REFERENCE_FRAME, "Reference frame", &(m_ReferenceFrame), 0, nMaxFrame, "This frame will be treated as upright(reference) for all representations that require it!");
   //m_Gui->Button(ID_FIND_REFERENCE, "Autofind reference", "", "Find best reference frames for all joints (hierarchially based or not) ");
 
-  m_Gui->Double(ID_SMOOTHING, "Smooth param", &m_Smoothing, 0, 1000);
+  m_Gui->Double(ID_SMOOTHING, _R("Smooth param"), &m_Smoothing, 0, 1000);
 
   //m_Gui->Bool(ID_FREEZE_GRAPH,"Freeze graph", &m_IsFrozen,0);
 
@@ -314,7 +314,7 @@ mafGUI *mafViewIntGraph::CreateGui()
 
 
   m_Gui->Divider(2);*/
-  m_Gui->RollOut(ID_ROLLOUT_RENDER, "Plot appearance", m_RenderWindow->GetGui(), false);
+  m_Gui->RollOut(ID_ROLLOUT_RENDER, _R("Plot appearance"), m_RenderWindow->GetGui(), false);
 
   /////////////////////////////////////////DisplayList GUI
   m_Gui->Divider(2);
@@ -435,7 +435,7 @@ void mafViewIntGraph::Print(std::ostream& os, const int tabs)// const
   mafIndent indent(tabs);
 
   os << indent << "mafViewIntGraph " << '\t' << this << "\n";
-  os << indent << "Name: " << '\t' << GetLabel() << "\n";
+  os << indent << "Name: " << '\t' << GetLabel().GetCStr() << "\n";
   os << indent << "View ID: " << '\t' << m_Id << "\n";
   os << indent << "View Mult: " << '\t' << m_Mult << "\n";
   os << indent << "Visible VME counter: " << '\t' << m_NumberOfVisibleVme << "\n";
@@ -487,8 +487,8 @@ void mafViewIntGraph::savePlotGen(void)
       char **sttr = pSave->GetData();
       int nm = pSave->GetStringNumber();
       for(int i = 0; i < nm; i++)
-        strv.push_back(mafString(sttr[i]));
-      vme->GetTagArray()->SetTag(mafTagItem(mafINTGG_SAVEINFO_TAG, strv));
+        strv.push_back(_R(sttr[i]));
+      vme->GetTagArray()->SetTag(mafTagItem(_R(mafINTGG_SAVEINFO_TAG), strv));
       mafEventMacro(mafEvent(this,VME_MODIFIED, vme));
     }
   }
@@ -504,7 +504,7 @@ void mafViewIntGraph::loadPlotGen(void)
     mafVME *vme = mafVME::SafeDownCast(n->m_Vme);
     if(vme)
     {
-      if(mafTagItem *ti = vme->GetTagArray()->GetTag(mafINTGG_SAVEINFO_TAG))
+      if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R(mafINTGG_SAVEINFO_TAG)))
       {
         m_RenderWindow->LoadSettings(&mafStringSet(ti->GetNumberOfComponents(), &ti->GetComponents()));
         UpdateGui();

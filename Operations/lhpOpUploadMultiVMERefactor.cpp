@@ -81,7 +81,7 @@ MafMedical is partially based on OpenMAF.
 mafCxxTypeMacro(lhpOpUploadMultiVMERefactor);
 //----------------------------------------------------------------------------
 //static variables
-mafString lhpOpUploadMultiVMERefactor::m_CacheSubdir = "0";
+mafString lhpOpUploadMultiVMERefactor::m_CacheSubdir = _R("0");
 
 enum lhpOpUploadMultiVME_ID
 {
@@ -103,21 +103,21 @@ lhpOpUploadMultiVMERefactor::lhpOpUploadMultiVMERefactor(const mafString& label)
   m_DerivedVMEsIdVector.clear();
   m_VMEsToUploadIdsVector.clear();
   m_OpUploadVME = NULL;
-  //m_ServiceURL = "http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/";
-  m_ServiceURL = "https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/";
+  //m_ServiceURL = _R("http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/");
+  m_ServiceURL = _R("https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/");
  
-  m_PythonExe = "python.exe_UNDEFINED";
+  m_PythonExe = _R("python.exe_UNDEFINED");
 
-  m_VMEUploaderDownloaderABSFolder  = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\").c_str();
+  m_VMEUploaderDownloaderABSFolder  = lhpUtils::lhpGetApplicationDirectory() + _R("\\VMEUploaderDownloaderRefactor\\");
 
-  m_MasterXMLDictionaryFileName = "UNDEFINED";
-  m_SubXMLDictionaryFilePrefix = "UNDEFINED" ;
-  m_SubXMLDictionaryFileName = "UNDEFINED";
-  m_AssembledXMLDictionaryFileName = "assembledXMLDictionary.xml";
-  m_SubDictionaryBuildingCommand = "UNDEFINED";
+  m_MasterXMLDictionaryFileName = _R("UNDEFINED");
+  m_SubXMLDictionaryFilePrefix = _R("UNDEFINED") ;
+  m_SubXMLDictionaryFileName = _R("UNDEFINED");
+  m_AssembledXMLDictionaryFileName = _R("assembledXMLDictionary.xml");
+  m_SubDictionaryBuildingCommand = _R("UNDEFINED");
 
   m_SubdictionaryId = 0; // NO_SUBDICTIONARY; 
-  m_ConnectionConfigurationFileName = "vmeUploaderConnectionConfiguration.conf" ;
+  m_ConnectionConfigurationFileName = _R("vmeUploaderConnectionConfiguration.conf") ;
   SetListener(this);
 }
 
@@ -166,7 +166,7 @@ void lhpOpUploadMultiVMERefactor::OpRun()
 {
   if (GetTestMode() == true)
   {
-    m_OpUploadVME = new lhpOpUploadVMERefactor("vmeUploader");
+    m_OpUploadVME = new lhpOpUploadVMERefactor(_R("vmeUploader"));
   } 
   else
   {
@@ -180,8 +180,8 @@ void lhpOpUploadMultiVMERefactor::OpRun()
   if(eventGetPythonExe.GetString())
   {
     m_PythonExe.Erase(0);
-    m_PythonExe = eventGetPythonExe.GetString()->GetCStr();
-    m_PythonExe.Append(" ");
+    m_PythonExe = *eventGetPythonExe.GetString();
+    m_PythonExe.Append(_R(" "));
   }
 
   //Get User values
@@ -198,7 +198,7 @@ void lhpOpUploadMultiVMERefactor::OpRun()
   if(m_User->GetProxyFlag())
   {
     m_ProxyURL = m_User->GetProxyHost();
-    m_ProxyPort = m_User->GetProxyPort();
+    m_ProxyPort = mafToString(m_User->GetProxyPort());
     // load the connection configuration file:
     this->SaveConnectionConfigurationFile();
   }
@@ -206,15 +206,15 @@ void lhpOpUploadMultiVMERefactor::OpRun()
   {
     wxString oldDir = wxGetCwd();
     if (m_DebugMode)
-      mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-    wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.GetCStr());
+      mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
+    wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.toWx());
     if (m_DebugMode)
-      mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+      mafLogMessage(_M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
     //if file exists , delete it
-    if(wxFileExists(m_ConnectionConfigurationFileName.GetCStr()))
+    if(mafFileExists(m_ConnectionConfigurationFileName))
     {
-      wxRemoveFile(m_ConnectionConfigurationFileName.GetCStr());
+      mafFileRemove(m_ConnectionConfigurationFileName);
     }
     wxSetWorkingDirectory(oldDir);
   }
@@ -222,13 +222,13 @@ void lhpOpUploadMultiVMERefactor::OpRun()
   int result = OP_RUN_CANCEL;
 
   mafString DebugPath = m_VMEUploaderDownloaderABSFolder;
-  DebugPath.Append("\\Debug.py");
-  if (wxFileExists(DebugPath.GetCStr()))
+  DebugPath.Append(_R("\\Debug.py"));
+  if (mafFileExists(DebugPath))
   {
     ifstream debugFile;
     debugFile.open(DebugPath.GetCStr());
     if (!debugFile) {
-      mafLogMessage("Unable to open Debug.py file");
+      mafLogMessage(_M("Unable to open Debug.py file"));
     }
 
     std::string isDebug;
@@ -242,7 +242,7 @@ void lhpOpUploadMultiVMERefactor::OpRun()
     debugFile.close();
   }
 
-  mafString s(_("Upload VMEs"));
+  mafString s(_L("Upload VMEs"));
   mafEvent e(this,VME_CHOOSE, &s);
   e.SetBool(true); //true to create dialog with VME multiselect
   mafEventMacro(e);
@@ -254,7 +254,7 @@ void lhpOpUploadMultiVMERefactor::OpRun()
     return;
   }
   
-  m_OpUploadVME = new lhpOpUploadVMERefactor("vmeUploader");
+  m_OpUploadVME = new lhpOpUploadVMERefactor(_R("vmeUploader"));
   m_OpUploadVME->SetDebugMode(m_DebugMode);
   m_OpUploadVME->SetListener(this->GetListener());
 
@@ -271,12 +271,12 @@ void lhpOpUploadMultiVMERefactor::OpRun()
     mafEventMacro(event);
 
     wxString temp;
-    temp.Append((*event.GetString()).GetCStr());
-    m_OpenMSFFileNameFullPath = temp;
+    temp.Append((*event.GetString()).toWx());
+    m_OpenMSFFileNameFullPath = mafWxToString(temp);
     temp = temp.BeforeLast('/');
-    mafString openMsfABSFolder = temp;  
+    mafString openMsfABSFolder = mafWxToString(temp);
 
-    if (openMsfABSFolder == "")
+    if (openMsfABSFolder.IsEmpty())
       wxMessageBox("Msf must be saved locally. Upload stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     else
       result = OP_RUN_OK;
@@ -305,15 +305,15 @@ void lhpOpUploadMultiVMERefactor::SaveConnectionConfigurationFile()
 {
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.GetCStr());
+    mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.toWx());
   if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+    mafLogMessage(_M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
   //if file exists , delete it
-  if(wxFileExists(m_ConnectionConfigurationFileName.GetCStr()))
+  if(mafFileExists(m_ConnectionConfigurationFileName))
   {
-    wxRemoveFile(m_ConnectionConfigurationFileName.GetCStr());
+    mafFileRemove(m_ConnectionConfigurationFileName);
   }
 
   // open auto tags file and try to handle tags using tags factory 
@@ -321,32 +321,32 @@ void lhpOpUploadMultiVMERefactor::SaveConnectionConfigurationFile()
 
   configurationFile.open(m_ConnectionConfigurationFileName.GetCStr());
   if (!configurationFile) {
-    wxString message = m_ConnectionConfigurationFileName.GetCStr();
-    message.Append(" not found! Unable to write configuration connection file");
-    mafLogMessage(message.c_str());
+    mafString message = m_ConnectionConfigurationFileName;
+    message.Append(_R(" not found! Unable to write configuration connection file"));
+    mafLogMessage(_M(message));
   }
   else
   {
-    configurationFile << m_ProxyURL;   
+    configurationFile << m_ProxyURL.GetCStr();
     configurationFile << "\n";
-    configurationFile << m_ProxyPort;
+    configurationFile << m_ProxyPort.GetCStr();
 
-    wxString message = m_ConnectionConfigurationFileName.GetCStr();
-    message.Append("Found connection configuration file: using connection parameters");
-    message.Append("m_ProxyURL: ");
-    message.Append(m_ProxyURL.GetCStr());
-    message.Append("m_ProxyPort: ");
-    message.Append(m_ProxyPort.GetCStr());
+    mafString message = m_ConnectionConfigurationFileName;
+    message.Append(_R("Found connection configuration file: using connection parameters"));
+    message.Append(_R("m_ProxyURL: "));
+    message.Append(m_ProxyURL);
+    message.Append(_R("m_ProxyPort: "));
+    message.Append(m_ProxyPort);
 
     if (m_DebugMode)
-      mafLogMessage(message.c_str());
+      mafLogMessage(_M(message));
 
     configurationFile.close();
   }
 
   wxSetWorkingDirectory(oldDir);
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+    mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 }
 
 
@@ -356,21 +356,21 @@ int lhpOpUploadMultiVMERefactor::UploadVMEWithItsChildren( mafNode *vme )
   //python to remove xml uploaded in case of msf upload error
   
   int number = 0;
-  mafString rollBackLocalFileName = "msfList";
+  mafString rollBackLocalFileName = _R("msfList");
   mafString xmlDataResourcesRollBackLocalFileName = rollBackLocalFileName;
 
-  while(wxFileExists(\
-  m_VMEUploaderDownloaderABSFolder + xmlDataResourcesRollBackLocalFileName.GetCStr() + ".lhp"))
+  while(mafFileExists(\
+  m_VMEUploaderDownloaderABSFolder + xmlDataResourcesRollBackLocalFileName + _R(".lhp")))
   {
     xmlDataResourcesRollBackLocalFileName = rollBackLocalFileName;
-    xmlDataResourcesRollBackLocalFileName << number;
+    xmlDataResourcesRollBackLocalFileName += mafToString(number);
     number++;
   }
 
-  mafString msfFilePath = m_VMEUploaderDownloaderABSFolder + xmlDataResourcesRollBackLocalFileName.GetCStr() + ".lhp";
-  FILE *file = fopen(msfFilePath,"w");
+  mafString msfFilePath = m_VMEUploaderDownloaderABSFolder + xmlDataResourcesRollBackLocalFileName + _R(".lhp");
+  FILE *file = fopen(msfFilePath.GetCStr(),"w");
   fclose(file);
-  xmlDataResourcesRollBackLocalFileName << ".lhp";
+  xmlDataResourcesRollBackLocalFileName += _R(".lhp");
 
   std::vector<const mafNode::mafChildrenVector*> childrenVector;
   childrenVector.clear();
@@ -390,8 +390,8 @@ int lhpOpUploadMultiVMERefactor::UploadVMEWithItsChildren( mafNode *vme )
     childToUpload = children->at(0);
 
     std::ostringstream stringStream;
-    stringStream << "childToUpload:" << childToUpload->GetName() << std::endl;
-    mafLogMessage(stringStream.str().c_str());
+    stringStream << "childToUpload:" << childToUpload->GetName().GetCStr() << std::endl;
+    mafLogMessage(_M(stringStream.str().c_str()));
           
   // upload children...
   while (numVmeChild != 0)
@@ -531,10 +531,10 @@ int lhpOpUploadMultiVMERefactor::UploadVMEWithItsLinks( mafNode *vme, bool isLas
   }
 
   m_OpUploadVME->SetInput(vme);
-  xmlURI = "";
+  xmlURI = _R("");
 
   m_OpUploadVME->SetWithChild(false);
-  m_OpUploadVME->SetXMLUploadedResourcesRollBackLocalFileName("noMSF");
+  m_OpUploadVME->SetXMLUploadedResourcesRollBackLocalFileName(_R("noMSF"));
   m_OpUploadVME->SetIsLast(true);
 
   if (m_OpUploadVME->Upload() == MAF_ERROR)
@@ -551,26 +551,26 @@ int lhpOpUploadMultiVMERefactor::UploadVMEWithItsLinks( mafNode *vme, bool isLas
 bool lhpOpUploadMultiVMERefactor::GetUploadError()   
 {
   bool errorFound = false;
-  if (wxFileExists(m_VMEUploaderDownloaderABSFolder + "ErrorFound.lhp"))
+  if (mafFileExists(m_VMEUploaderDownloaderABSFolder + _R("ErrorFound.lhp")))
   {
     mafString errorMessage;
-    std::ifstream errorFile(m_VMEUploaderDownloaderABSFolder + "ErrorFound.lhp", std::ios::in);
+    std::ifstream errorFile((m_VMEUploaderDownloaderABSFolder + _R("ErrorFound.lhp")).GetCStr(), std::ios::in);
     if (errorFile)
     {
       std::string buf;
       getline(errorFile, buf);
-      errorMessage.Append(buf.c_str());
-      errorMessage.Append("\n");
+      errorMessage.Append(_R(buf.c_str()));
+      errorMessage.Append(_R("\n"));
       while (!errorFile.eof())
       {
         getline(errorFile, buf);
-        errorMessage.Append(buf.c_str());
+        errorMessage.Append(_R(buf.c_str()));
       }
 
       wxMessageBox(wxString::Format("Error in MSF upload.\n%s\nUpload MSF stopped.\nVME already uploaded \
 will be removed from repository.",errorMessage.GetCStr()), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
       errorFile.close();
-      wxRemoveFile(m_VMEUploaderDownloaderABSFolder + "ErrorFound.lhp");
+      mafFileRemove(m_VMEUploaderDownloaderABSFolder + _R("ErrorFound.lhp"));
       errorFound = true;
     }
   }
@@ -583,10 +583,10 @@ bool lhpOpUploadMultiVMERefactor::RemoveAlreadyUploadedXMLResources(std::vector<
 {
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.GetCStr());
+    mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.toWx());
 
-  wxString command2execute;
+  mafString command2execute;
 
   //WAIT MESSAGE:
   wxBusyInfo *wait;
@@ -598,26 +598,25 @@ bool lhpOpUploadMultiVMERefactor::RemoveAlreadyUploadedXMLResources(std::vector<
   for (int i = 0; i < xmlURIVector.size(); i++)
   {
     command2execute.Clear();
-    command2execute = "pythonw.exe ";
+    command2execute = _R("pythonw.exe ");
 
     // remove XML resource from repository
-    command2execute.Append(" lhpRemoveXMLResource.py ");
+    command2execute.Append(_R(" lhpRemoveXMLResource.py "));
     command2execute.Append(m_User->GetName());
-    command2execute.Append(" ");
+    command2execute.Append(_R(" "));
     command2execute.Append(m_User->GetPwd());
-    command2execute.Append(" ");
-    command2execute.Append(xmlURIVector[i].GetCStr());
+    command2execute.Append(_R(" "));
+    command2execute.Append(xmlURIVector[i]);
 
     if (m_DebugMode)
-      mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+      mafLogMessage(_M(_R("Executing command: '") + command2execute + _R("'")));
 
     long pid = -1;
-    if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+    if (pid = wxExecute(command2execute.toWx(), wxEXEC_SYNC) != 0)
     {
       wxMessageBox("Error in lhpRemoveXMLResource. Can not remove uploaded resource", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
       if (m_DebugMode)
-        mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
-        command2execute.c_str(), pid);
+        mafLogMessage(_M(_R("ASYNC Command process '") + command2execute + _R("' terminated with exit code ") + mafToString(pid) + _R(".")));
       if(!m_TestMode)
       {
         delete wait;
@@ -650,7 +649,7 @@ int lhpOpUploadMultiVMERefactor::AddLinksURIToDerivedVMEMetadata( mafNode *deriv
       if (m_AlreadyUploadedVMEVector[c]->Equals(currentDerivedVME) && \
           m_AlreadyUploadedVMEVector[c]->GetId() == currentDerivedVME->GetId())
       {
-        vmeURI = m_AlreadyUploadedXMLURIVector[c];
+        vmeURI = m_AlreadyUploadedXMLURIVector[c].toWx();
         int count = vmeURI.find_first_of("'");
         vmeURI.erase(0, count+1);
         count = vmeURI.find_first_of("'");
@@ -672,7 +671,7 @@ int lhpOpUploadMultiVMERefactor::AddLinksURIToDerivedVMEMetadata( mafNode *deriv
           {
             m_AlreadyUploadedXMLURIVector[c];
             listURI.Append(m_AlreadyUploadedXMLURIVector[c]);
-            listURI.Append(" ");
+            listURI.Append(_R(" "));
             break;
           }
         }
@@ -680,42 +679,41 @@ int lhpOpUploadMultiVMERefactor::AddLinksURIToDerivedVMEMetadata( mafNode *deriv
     }
 
     wxString oldDir = wxGetCwd();
-    wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.GetCStr());
+    wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.toWx());
     if (m_DebugMode)
-      mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+      mafLogMessage(_M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
     //Add URI tag to link VME uploaded
-    wxString command2execute;
+    mafString command2execute;
     command2execute.Clear();
-    command2execute = m_PythonExe.GetCStr();
+    command2execute = m_PythonExe;
 
-    command2execute.Append("lhpEditRemoteTag.py ");
+    command2execute.Append(_R("lhpEditRemoteTag.py "));
     command2execute.Append(m_User->GetName());
-    command2execute.Append(" ");
+    command2execute.Append(_R(" "));
     command2execute.Append(m_User->GetPwd());
-    command2execute.Append(" ");
-    command2execute.Append(m_ServiceURL.GetCStr());
-    command2execute.Append(" ");
-    command2execute.Append(vmeURI.c_str());
-    command2execute.Append(",");
-    command2execute.Append("L0000_resource_MAF_Procedural_VMElinkURI1");
-    command2execute.Append(",");
-    command2execute.Append(listURI.GetCStr());
+    command2execute.Append(_R(" "));
+    command2execute.Append(m_ServiceURL);
+    command2execute.Append(_R(" "));
+    command2execute.Append(mafWxToString(vmeURI));
+    command2execute.Append(_R(","));
+    command2execute.Append(_R("L0000_resource_MAF_Procedural_VMElinkURI1"));
+    command2execute.Append(_R(","));
+    command2execute.Append(listURI);
     if (m_DebugMode)
-      mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+      mafLogMessage(_M(_R("Executing command: '") + command2execute + _R("'")));
 
     long pid = -1;
-    if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+    if (pid = wxExecute(command2execute.toWx(), wxEXEC_SYNC) != 0)
     {
       wxMessageBox("Error in lhpEditRemoteTag.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
-      mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-        command2execute.c_str(), pid);
+      mafLogMessage(_M(_R("SYNC Command process '") + command2execute + _R("' terminated with exit code ") + mafToString(pid) + _R(".")));
       return MAF_ERROR;
     }
 
     wxSetWorkingDirectory(oldDir);
     if (m_DebugMode)
-      mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+      mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
   }
   return MAF_OK;
 
@@ -756,10 +754,10 @@ int lhpOpUploadMultiVMERefactor::UploadVMELinks( mafNode *derived )
       }
       m_OpUploadVME->SetInput(link);
 
-      xmlURI = "";
+      xmlURI = _R("");
 
       m_OpUploadVME->SetWithChild(false);
-      m_OpUploadVME->SetXMLUploadedResourcesRollBackLocalFileName("noMsf");
+      m_OpUploadVME->SetXMLUploadedResourcesRollBackLocalFileName(_R("noMsf"));
       m_OpUploadVME->SetIsLast(false);
 
       if (m_OpUploadVME->Upload() == MAF_ERROR)
@@ -789,13 +787,13 @@ int lhpOpUploadMultiVMERefactor::SaveLinksURIFile(mafNode *node, std::vector<maf
   wxString listURIFileName;
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.GetCStr());
+    mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.toWx());
   if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+    mafLogMessage(_M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
-  listURIFileName = node->GetName();
-  listURIFileName.Append(wxString::Format("%d",node->GetId()));
+  listURIFileName = node->GetName().toWx();
+  listURIFileName.Append(mafToString(node->GetId()).toWx());
   listURIFileName.Replace("/","_");
   listURIFileName.Replace("\\","_");
   listURIFileName.Replace(":","_");
@@ -806,16 +804,16 @@ int lhpOpUploadMultiVMERefactor::SaveLinksURIFile(mafNode *node, std::vector<maf
   listURIFileName.Replace(">","_");
   listURIFileName.Replace("!","_");
   listURIFileName.Append(".linkURI");
-  wxString lockPath = m_VMEUploaderDownloaderABSFolder;
-  lockPath += listURIFileName.c_str();
+  mafString lockPath = m_VMEUploaderDownloaderABSFolder;
+  lockPath += mafWxToString(listURIFileName);
   //if file exists , delete it
-  if (wxFileExists(lockPath))
-    wxRemoveFile(lockPath);
+  if (mafFileExists(lockPath))
+    mafFileRemove(lockPath);
 
   // open auto tags file and try to handle tags using tags factory 
   ofstream listURIFile;
 
-  listURIFile.open(lockPath);
+  listURIFile.open(lockPath.GetCStr());
   if (!listURIFile)
   {
     return MAF_ERROR;
@@ -824,7 +822,7 @@ int lhpOpUploadMultiVMERefactor::SaveLinksURIFile(mafNode *node, std::vector<maf
   {
     for (int n = 0; n < linkURI.size(); n++)
     {
-      listURIFile << linkURI[n];
+      listURIFile << linkURI[n].GetCStr();
       listURIFile << "\n";
     }
     listURIFile.close();
@@ -832,7 +830,7 @@ int lhpOpUploadMultiVMERefactor::SaveLinksURIFile(mafNode *node, std::vector<maf
 
   wxSetWorkingDirectory(oldDir);
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+    mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
   return MAF_OK;
 }
 
@@ -843,13 +841,13 @@ int lhpOpUploadMultiVMERefactor::SaveChildrenURIFile(mafNode* node, mafString UR
   wxString listURIFileName;
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.GetCStr());
+    mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.toWx());
   if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+    mafLogMessage(_M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
-  listURIFileName = node->GetParent()->GetName();
-  listURIFileName.Append(wxString::Format("%d",node->GetParent()->GetId()));
+  listURIFileName = node->GetParent()->GetName().toWx();
+  listURIFileName.Append(mafToString(node->GetParent()->GetId()).toWx());
   listURIFileName.Replace("/","_");
   listURIFileName.Replace("\\","_");
   listURIFileName.Replace(":","_");
@@ -862,8 +860,8 @@ int lhpOpUploadMultiVMERefactor::SaveChildrenURIFile(mafNode* node, mafString UR
   listURIFileName.Replace("|","_");
   listURIFileName.Append(".childURI");
 
-  wxString lockPath = m_VMEUploaderDownloaderABSFolder;
-  lockPath += listURIFileName.c_str();
+  mafString lockPath = m_VMEUploaderDownloaderABSFolder;
+  lockPath += mafWxToString(listURIFileName);
   //Check if file named "lockPath" has been created by this operation
   bool myFile = false;
   for (int n = 0; n < m_FileCreatedVector.size(); n++)
@@ -878,8 +876,8 @@ int lhpOpUploadMultiVMERefactor::SaveChildrenURIFile(mafNode* node, mafString UR
    //if file exists and is not created by this operation, delete it
   if (!myFile)
   {
-    if (wxFileExists(lockPath.c_str()))
-      wxRemoveFile(lockPath.c_str());
+    if (mafFileExists(lockPath))
+      mafFileRemove(lockPath);
   }
 
   m_FileCreatedVector.push_back(lockPath);
@@ -887,21 +885,21 @@ int lhpOpUploadMultiVMERefactor::SaveChildrenURIFile(mafNode* node, mafString UR
   // open auto tags file and try to handle tags using tags factory 
   ofstream listURIFile;
 
-  listURIFile.open(lockPath, fstream::in | fstream::out | fstream::app);
+  listURIFile.open(lockPath.GetCStr(), fstream::in | fstream::out | fstream::app);
   if (!listURIFile)
   {
     return MAF_ERROR;
   }
   else
   {
-    listURIFile << URI;
+    listURIFile << URI.GetCStr();
     listURIFile << "\n";
   }
     listURIFile.close();
 
   wxSetWorkingDirectory(oldDir);
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+    mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
   return MAF_OK;
 }
 
@@ -916,43 +914,43 @@ void lhpOpUploadMultiVMERefactor::OpStop(int result)
 mafString lhpOpUploadMultiVMERefactor::GetXMLDictionaryFileName( mafString dictionaryFileNamePrefix )
 //--------------------------------------------------------------------------------------------
 {
-  mafString dictionaryFileName = "NOT FOUND";
+  mafString dictionaryFileName = _R("NOT FOUND");
   wxString oldDir = wxGetCwd();
 
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.GetCStr());
+    mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderABSFolder.toWx());
   if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+    mafLogMessage(_M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
   wxArrayString files;
-  wxString filePattern = dictionaryFileNamePrefix ;
+  wxString filePattern = dictionaryFileNamePrefix.toWx();
   filePattern.Append("*.xml");
 
   wxDir::GetAllFiles(wxGetCwd(), &files, filePattern, wxDIR_FILES);
   
   if (files.size() != 1)
   {
-    mafLogMessage("lhpXMLDictionary_*.xml not found! exiting");
+    mafLogMessage(_M("lhpXMLDictionary_*.xml not found! exiting"));
     return dictionaryFileName;
   }
   else
   {
     assert(files.size() == 1);
-    dictionaryFileName = files[0];
-    int pos = dictionaryFileName.FindLast("\\");
+    dictionaryFileName = mafWxToString(files[0]);
+    int pos = dictionaryFileName.FindLast(_R("\\"));
     dictionaryFileName.Erase(0, pos);
     if (m_DebugMode)
     {
-      mafLogMessage("Found dictionary!");
-      mafLogMessage(dictionaryFileName.GetCStr());
+      mafLogMessage(_M("Found dictionary!"));
+      mafLogMessage(_M(dictionaryFileName));
     }
   }
   
   wxSetWorkingDirectory(oldDir);
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  
+    mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
+
   return dictionaryFileName;
 }
 
@@ -963,7 +961,7 @@ void lhpOpUploadMultiVMERefactor::Upload()
 
   if (GetTestMode() == true)
   {
-    mafLogMessage("All Vmes will be uploaded with their metadata.\nPlease check before uploading. Completion of curation can be done in the sandbox.");
+    mafLogMessage(_M("All Vmes will be uploaded with their metadata.\nPlease check before uploading. Completion of curation can be done in the sandbox."));
   }
   else
   {
@@ -990,15 +988,15 @@ void lhpOpUploadMultiVMERefactor::Upload()
     {
       rootSelected = true;
       //if exists, remove error file form python
-      if (wxFileExists(m_VMEUploaderDownloaderABSFolder + "ErrorFound.lhp"))
+      if (mafFileExists(m_VMEUploaderDownloaderABSFolder + _R("ErrorFound.lhp")))
       {
-        wxRemoveFile(m_VMEUploaderDownloaderABSFolder + "ErrorFound.lhp");
+        mafFileRemove(m_VMEUploaderDownloaderABSFolder + _R("ErrorFound.lhp"));
       }
 
       //Check if VME without name are present
       mafNode *vmeWithNoName = NULL;
 
-      vmeWithNoName = m_VMEToBeUploadedVector[i]->FindInTreeByName("");
+      vmeWithNoName = m_VMEToBeUploadedVector[i]->FindInTreeByName(_R(""));
 
       if  (vmeWithNoName != NULL)
       {
@@ -1006,14 +1004,14 @@ void lhpOpUploadMultiVMERefactor::Upload()
         return;
       }
 
-      wxString rootName = m_VMEToBeUploadedVector[i]->GetName();
-      if  (rootName.CompareTo("root") == 0)
+      mafString rootName = m_VMEToBeUploadedVector[i]->GetName();
+      if  (rootName.toWx().CompareTo("root") == 0)
       {
-        wxString path, newRootName, ext;
-        wxString msfFullPathName = m_OpenMSFFileNameFullPath;
-        wxSplitPath(msfFullPathName, &path, &newRootName, &ext);
-        wxMessageBox(wxString::Format("Root name will be modified with the name as the MSF: %s ",newRootName), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
-        m_VMEToBeUploadedVector[i]->SetName(newRootName.c_str());
+        mafString path, newRootName, ext;
+        mafString msfFullPathName = m_OpenMSFFileNameFullPath;
+        mafSplitPath(msfFullPathName, &path, &newRootName, &ext);
+        wxMessageBox((_R("Root name will be modified with the name as the MSF:  ") + newRootName).toWx(), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+        m_VMEToBeUploadedVector[i]->SetName(newRootName);
         m_VMEToBeUploadedVector[i]->Modified();
         ((mafVMERoot *)m_VMEToBeUploadedVector[i])->Update();
 
@@ -1041,7 +1039,7 @@ void lhpOpUploadMultiVMERefactor::Upload()
     // for each selected vme:
     for (int i = 0; i < m_VMEToBeUploadedVector.size(); i++)
     {
-      if (strcmp(m_VMEToBeUploadedVector[i]->GetName(), "") == 0)
+      if (strcmp(m_VMEToBeUploadedVector[i]->GetName().GetCStr(), "") == 0)
       {
         wxMessageBox("Can not upload VME without name.", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
         return;
@@ -1108,7 +1106,7 @@ int lhpOpUploadMultiVMERefactor::LoadVMEsToUploadIdsVectorFromFile(const char *v
       std::ostringstream stringStream;
       stringStream << "Node with id: " << m_VMEToBeUploadedVector[i] << \
         " does not exist in VME tree. Exiting with MAF_ERROR" << std::endl;
-      mafLogMessage(stringStream.str().c_str());
+      mafLogMessage(_M(stringStream.str().c_str()));
       m_VMEToBeUploadedVector.clear();
       return MAF_ERROR;
     }
@@ -1142,7 +1140,7 @@ int lhpOpUploadMultiVMERefactor::SetVMEsToUploadIdsVector( std::vector<int> vmeI
         std::ostringstream stringStream;
         stringStream << "Node with id: " << m_VMEToBeUploadedVector[i] << \
         " does not exist in VME tree. Exiting with MAF_ERROR" << std::endl;
-        mafLogMessage(stringStream.str().c_str());
+        mafLogMessage(_M(stringStream.str().c_str()));
         m_VMEToBeUploadedVector.clear();
         return MAF_ERROR;
     }

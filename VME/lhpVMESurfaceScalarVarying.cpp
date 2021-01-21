@@ -115,11 +115,11 @@ lhpVMESurfaceScalarVarying::~lhpVMESurfaceScalarVarying()
 mmaMaterial *lhpVMESurfaceScalarVarying::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+  mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
   if (material == NULL)
   {
     material = mmaMaterial::New();
-    SetAttribute("MaterialAttributes", material);
+    SetAttribute(_R("MaterialAttributes"), material);
   }
   return material;
 }
@@ -258,7 +258,7 @@ bool lhpVMESurfaceScalarVarying::IsDataAvailable()
 mafNode *lhpVMESurfaceScalarVarying::GetScalarLink()
 //-----------------------------------------------------------------------
 {
-  return GetLink("Scalar");
+  return GetLink(_R("Scalar"));
 }
 //-----------------------------------------------------------------------
 void lhpVMESurfaceScalarVarying::SetScalarLink(mafNode *scalar)
@@ -271,9 +271,9 @@ void lhpVMESurfaceScalarVarying::SetScalarLink(mafNode *scalar)
     m_ScalarRegionMap.clear();
     vnl_matrix<double> mat = scalar_link->GetScalarOutput()->GetScalarData();
     m_ScalarMin = mat.min_value();
-    m_ScalarName = scalar_link ? scalar_link->GetName() : _("none");
+    m_ScalarName = scalar_link ? scalar_link->GetName() : _L("none");
     scalar_link->GetLocalTimeStamps(m_ScalarTimeStamps);
-    SetLink("Scalar", scalar);
+    SetLink(_R("Scalar"), scalar);
     Modified();
   }
 
@@ -283,7 +283,7 @@ void lhpVMESurfaceScalarVarying::SetScalarLink(mafNode *scalar)
 mafNode *lhpVMESurfaceScalarVarying::GetSurfaceLink()
 //-----------------------------------------------------------------------
 {
-  return GetLink("Surface");
+  return GetLink(_R("Surface"));
 }
 //-----------------------------------------------------------------------
 void lhpVMESurfaceScalarVarying::SetSurfaceLink(mafNode *surface)
@@ -293,7 +293,7 @@ void lhpVMESurfaceScalarVarying::SetSurfaceLink(mafNode *surface)
   
   if (surf_link != NULL && surf_link != GetSurfaceLink())
   {
-    SetLink("Surface", surface);
+    SetLink(_R("Surface"), surface);
     m_ScalarRegionMap.clear();
     FillScalarsName();
 
@@ -302,7 +302,7 @@ void lhpVMESurfaceScalarVarying::SetSurfaceLink(mafNode *surface)
     {
       polydata->Update();
       m_PolyData->DeepCopy(polydata);
-      m_SurfaceName = surf_link ? surf_link->GetName() : _("none");
+      m_SurfaceName = surf_link ? surf_link->GetName() : _L("none");
       if (m_Gui)
       {
         m_Gui->Update();
@@ -421,19 +421,19 @@ int lhpVMESurfaceScalarVarying::InternalStore(mafStorageElement *parent)
 {  
   if (Superclass::InternalStore(parent) == MAF_OK)
   {
-    if (parent->StoreMatrix("Transform",&m_Transform->GetMatrix()) == MAF_OK &&
-        parent->StoreInteger("Radius", m_Radius) == MAF_OK &&
-        parent->StoreInteger("NumOfScalarVMEIndexes", m_ScalarRegionMap.size()) == MAF_OK)
+    if (parent->StoreMatrix(_R("Transform"),&m_Transform->GetMatrix()) == MAF_OK &&
+        parent->StoreInteger(_R("Radius"), m_Radius) == MAF_OK &&
+        parent->StoreInteger(_R("NumOfScalarVMEIndexes"), m_ScalarRegionMap.size()) == MAF_OK)
     {
-      SurfaceScalarRegionMap::iterator it = m_ScalarRegionMap.begin();
+      auto it = m_ScalarRegionMap.begin();
       int *indexIds, num_indexes;
       mafString indexesName, numIndexesName;
       for (int n = 0; it != m_ScalarRegionMap.end(); it++, n++)
       {
-        numIndexesName = "NumOfScalarVMEIndexes";
-        indexesName = "ScalarVMEIndexes";
-        indexesName << n;
-        numIndexesName << n;
+        numIndexesName = _R("NumOfScalarVMEIndexes");
+        indexesName = _R("ScalarVMEIndexes");
+        indexesName += mafToString(n);
+        numIndexesName += mafToString(n);
         num_indexes = it->second->GetNumberOfIds() + 1;
         indexIds = new int[num_indexes];
         indexIds[0] = it->first;
@@ -441,8 +441,8 @@ int lhpVMESurfaceScalarVarying::InternalStore(mafStorageElement *parent)
         {
           indexIds[i] = it->second->GetId(i-1);
         }
-        if (parent->StoreInteger(numIndexesName.GetCStr(), num_indexes)      == MAF_ERROR ||
-            parent->StoreVectorN(indexesName.GetCStr(),indexIds,num_indexes) == MAF_ERROR)
+        if (parent->StoreInteger(numIndexesName, num_indexes)      == MAF_ERROR ||
+            parent->StoreVectorN(indexesName,indexIds,num_indexes) == MAF_ERROR)
         {
           delete indexIds;
           return MAF_ERROR;
@@ -461,26 +461,26 @@ int lhpVMESurfaceScalarVarying::InternalRestore(mafStorageElement *node)
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
-    if (node->RestoreMatrix("Transform",&matrix) == MAF_OK)
+    if (node->RestoreMatrix(_R("Transform"),&matrix) == MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
-      if (node->RestoreInteger("Radius", m_Radius) == MAF_OK)
+      if (node->RestoreInteger(_R("Radius"), m_Radius) == MAF_OK)
       {
         int num = 0;
-        if (node->RestoreInteger("NumOfScalarVMEIndexes", num) == MAF_OK)
+        if (node->RestoreInteger(_R("NumOfScalarVMEIndexes"), num) == MAF_OK)
         {
           int *indexIds, num_indexes;
           mafString indexesName, numIndexesName;
           for (int n = 0; n < num; n++)
           {
-            numIndexesName = "NumOfScalarVMEIndexes";
-            indexesName = "ScalarVMEIndexes";
-            indexesName << n;
-            numIndexesName << n;
-            if(node->RestoreInteger(numIndexesName.GetCStr(), num_indexes) == MAF_OK)
+            numIndexesName = _R("NumOfScalarVMEIndexes");
+            indexesName = _R("ScalarVMEIndexes");
+            indexesName += mafToString(n);
+            numIndexesName += mafToString(n);
+            if(node->RestoreInteger(numIndexesName, num_indexes) == MAF_OK)
             {
               indexIds = new int[num_indexes];
-              if (node->RestoreVectorN(indexesName.GetCStr(),indexIds,num_indexes) == MAF_OK)
+              if (node->RestoreVectorN(indexesName,indexIds,num_indexes) == MAF_OK)
               {
                 m_ScalarRegionMap[indexIds[0]] = vtkIdList::New();
                 for (int i = 1; i < num_indexes; i++)
@@ -522,16 +522,16 @@ mafGUI* lhpVMESurfaceScalarVarying::CreateGui()
   m_Gui->SetListener(this);
   m_Gui->Divider();
   mafVME *surf = mafVME::SafeDownCast(GetSurfaceLink());
-  m_SurfaceName = surf ? surf->GetName() : _("none");
+  m_SurfaceName = surf ? surf->GetName() : _L("none");
   mafVME *scalar = mafVME::SafeDownCast(GetScalarLink());
-  m_ScalarName = scalar ? scalar->GetName() : _("none");
-  m_Gui->Button(ID_SURFACE_LINK,&m_SurfaceName,_("surface"), _("Select the surface to be colored by scalar values."));
-  m_Gui->Button(ID_SCALAR_LINK,&m_ScalarName,_("scalar"), _("Select the Analog VME to be used to color the surface."));
+  m_ScalarName = scalar ? scalar->GetName() : _L("none");
+  m_Gui->Button(ID_SURFACE_LINK,&m_SurfaceName,_L("surface"), _L("Select the surface to be colored by scalar values."));
+  m_Gui->Button(ID_SCALAR_LINK,&m_ScalarName,_L("scalar"), _L("Select the Analog VME to be used to color the surface."));
   // update the linked scalars if there are some.
-  m_Gui->Bool(ID_EDIT_SCALAR_POSITION,_("Edit scalar"),&m_EditMode, 1);
-  m_Gui->Label("available scalars:", true);
-  m_ScalarsAvailableList = m_Gui->CheckList(ID_LIST_SCALARS_AVAILABLES, "", 100);
-  m_Gui->Integer(ID_RADIUS, _("radius"), &m_Radius, 1);
+  m_Gui->Bool(ID_EDIT_SCALAR_POSITION,_L("Edit scalar"),&m_EditMode, 1);
+  m_Gui->Label(_R("available scalars:"), true);
+  m_ScalarsAvailableList = m_Gui->CheckList(ID_LIST_SCALARS_AVAILABLES, _R(""), 100);
+  m_Gui->Integer(ID_RADIUS, _L("radius"), &m_Radius, 1);
   m_Gui->Divider();
   FillScalarsName(false);
   SurfaceScalarRegionMap::iterator it = m_ScalarRegionMap.begin();
@@ -555,7 +555,7 @@ void lhpVMESurfaceScalarVarying::OnEvent(mafEventBase *maf_event)
     {
       case ID_SURFACE_LINK:
       {
-        mafString title = _("Choose surface");
+        mafString title = _L("Choose surface");
         e->SetId(VME_CHOOSE);
         e->SetArg((long)&lhpVMESurfaceScalarVarying::OutputSurfaceAccept);
         e->SetString(&title);
@@ -573,7 +573,7 @@ void lhpVMESurfaceScalarVarying::OnEvent(mafEventBase *maf_event)
       break;
       case ID_SCALAR_LINK:
         {
-          mafString title = _("Choose analog");
+          mafString title = _L("Choose analog");
           e->SetId(VME_CHOOSE);
           e->SetArg((long)&lhpVMESurfaceScalarVarying::VmeScalarAccept);
           e->SetString(&title);
@@ -615,7 +615,7 @@ void lhpVMESurfaceScalarVarying::OnEvent(mafEventBase *maf_event)
           SetBehavior(m_PickScalar);
           if (m_SuggestUser)
           {
-            mafMessage(_("Check the signal from the listbox then pick on the linked surface to position the scalar."));
+            mafMessage(_M(mafString(_L("Check the signal from the listbox then pick on the linked surface to position the scalar."))));
             m_SuggestUser = false;
           }
         }
@@ -679,12 +679,12 @@ void lhpVMESurfaceScalarVarying::FillScalarsName(bool new_scalars)
   medVMEAnalog *scalar = medVMEAnalog::SafeDownCast(GetScalarLink());
   if (scalar != NULL)
   {
-     if(mafTagItem *tag_Signals = scalar->GetTagArray()->GetTag("SIGNALS_NAME"))
+     if(mafTagItem *tag_Signals = scalar->GetTagArray()->GetTag(_R("SIGNALS_NAME")))
     {
       m_ScalarsAvailableList->Clear();
       for (int s = 0; s < tag_Signals->GetNumberOfComponents(); s++)
       {
-        m_ScalarsAvailableList->AddItem(s,tag_Signals->GetValue(s).GetCStr(),false);
+        m_ScalarsAvailableList->AddItem(s,tag_Signals->GetValue(s).toWx(),false);
       }
       if (new_scalars)
       {
@@ -730,7 +730,7 @@ void lhpVMESurfaceScalarVarying::Print(std::ostream& os, const int tabs)
   {
     if (m_ScalarsAvailableList->IsItemChecked(s))
     {
-      os << indent << m_ScalarsAvailableList->GetItemLabel(s) << "\n";
+      os << indent << m_ScalarsAvailableList->GetItemLabel(s).GetCStr() << "\n";
     }
   }
   os << std::endl;

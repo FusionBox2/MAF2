@@ -57,7 +57,7 @@ mafCxxTypeMacro(lhpVMELMCLines)
 mafString lhpVMELMCLines::GetVisualPipe()
 //-------------------------------------------------------------------------
 {
-  return mafString("mafPipePolyline");
+  return mafString(_R("mafPipePolyline"));
 }
 
 
@@ -85,7 +85,7 @@ lhpVMELMCLines::lhpVMELMCLines()
   dpipe->SetInput(m_Polyline);
 
   m_Looped          = 0;
-  m_PointsCloudName = _("");
+  m_PointsCloudName = _L("");
 }
 //-------------------------------------------------------------------------
 lhpVMELMCLines::~lhpVMELMCLines()
@@ -255,8 +255,8 @@ int lhpVMELMCLines::InternalStore(mafStorageElement *parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent->StoreInteger("Looped", m_Looped);
-    if(parent->StoreMatrix("Transform",&m_Transform->GetMatrix())==MAF_OK)
+    parent->StoreInteger(_R("Looped"), m_Looped);
+    if(parent->StoreMatrix(_R("Transform"),&m_Transform->GetMatrix())==MAF_OK)
       return MAF_OK;
   }
   return MAF_ERROR;
@@ -269,8 +269,8 @@ int lhpVMELMCLines::InternalRestore(mafStorageElement *node)
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
-    node->RestoreInteger("Looped", m_Looped);
-    if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
+    node->RestoreInteger(_R("Looped"), m_Looped);
+    if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
       return MAF_OK;
@@ -301,13 +301,13 @@ char** lhpVMELMCLines::GetIcon()
 void lhpVMELMCLines::SetPointsCloudLink(mafNode *n)
 //-------------------------------------------------------------------------
 {
-  SetLink("PointsCloud", n);
+  SetLink(_R("PointsCloud"), n);
 }
 //-------------------------------------------------------------------------
 mafVMELandmarkCloud *lhpVMELMCLines::GetPointsCloudLink()
 //-------------------------------------------------------------------------
 {
-  return mafVMELandmarkCloud::SafeDownCast(GetLink("PointsCloud"));
+  return mafVMELandmarkCloud::SafeDownCast(GetLink(_R("PointsCloud")));
 }
 //-------------------------------------------------------------------------
 mafGUI* lhpVMELMCLines::CreateGui()
@@ -319,10 +319,10 @@ mafGUI* lhpVMELMCLines::CreateGui()
 
 
   mafVME *polyline_vme = GetPointsCloudLink();
-  m_PointsCloudName = polyline_vme ? polyline_vme->GetName() : _("none");
-  m_Gui->Button(ID_PNTS_CLOUD_LINK,_("Points"), _("Select the Points cloud to create the Spline"));
-  m_Gui->Label("Points: ", &m_PointsCloudName);
-  m_Gui->Bool(ID_LOOPED, _("Looped"), &m_Looped);
+  m_PointsCloudName = polyline_vme ? polyline_vme->GetName() : _L("none");
+  m_Gui->Button(ID_PNTS_CLOUD_LINK,_L("Points"), _L("Select the Points cloud to create the Spline"));
+  m_Gui->Label(_R("Points: "), &m_PointsCloudName);
+  m_Gui->Bool(ID_LOOPED, _L("Looped"), &m_Looped);
 
   m_Gui->Update();
   //this->InternalUpdate();
@@ -345,8 +345,8 @@ void lhpVMELMCLines::SetCloud(mafVMELandmarkCloud *cloud)
   }
   else
   {
-    RemoveLink("PointsCloud");
-    m_PointsCloudName = _("none");
+    RemoveLink(_R("PointsCloud"));
+    m_PointsCloudName = _L("none");
   }
 
   InternalUpdate();
@@ -372,7 +372,7 @@ void lhpVMELMCLines::OnEvent(mafEventBase *maf_event)
           mafVMELandmarkCloud *vme = NULL;
           {
             mafID button_id = e->GetId();
-            mafString title = _("Choose vme");
+            mafString title = _L("Choose vme");
             e->SetId(VME_CHOOSE);
             e->SetArg((long)&lhpVMELMCLines::PolylineAccept);
             e->SetString(&title);
@@ -422,11 +422,11 @@ int lhpVMELMCLines::InternalInitialize()
 mmaMaterial *lhpVMELMCLines::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+  mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
   if (material == NULL)
   {
     material = mmaMaterial::New();
-    SetAttribute("MaterialAttributes", material);
+    SetAttribute(_R("MaterialAttributes"), material);
   }
   return material;
 }

@@ -105,7 +105,7 @@ void lhpOpAverageLM::CreateGui()
   {
     m_Gui = new mafGUI(this);
     m_Gui->SetListener(this);
-    m_Gui->Label("");
+    m_Gui->Label(_R(""));
     m_Gui->OkCancel();
   }
   ShowGui();
@@ -163,7 +163,7 @@ void lhpOpAverageLM::OpDo()
   bool bCloudClosed = !m_LimbCloud->IsOpen();
   if(!bCloudClosed)
   {
-    mafOp *OpenOp = new mafOpExplodeCollapse("close cloud");
+    mafOp *OpenOp = new mafOpExplodeCollapse(_R("close cloud"));
     OpenOp->SetInput(m_LimbCloud);
     OpenOp->SetListener(GetListener());
     OpenOp->OpDo();
@@ -172,13 +172,13 @@ void lhpOpAverageLM::OpDo()
 
 
   m_LimbCloud->GetTimeStamps(kframes);
-  char newLMName[100];
+  mafString newLMName;
   int  avInd = 0;
-  sprintf(newLMName, "Average");
+  newLMName = _R("Average");
 
   while(m_LimbCloud->FindLandmarkIndex(newLMName) >= 0)
   {
-    sprintf(newLMName, "Average%d", avInd);
+    newLMName = _R("Average") + mafToString(avInd);
     avInd++;
   }
   m_NewIndex = m_LimbCloud->AppendLandmark(newLMName);
@@ -209,7 +209,7 @@ void lhpOpAverageLM::OpDo()
   }
   if(!bCloudClosed)
   {
-    mafOp *OpenOp = new mafOpExplodeCollapse("open cloud");
+    mafOp *OpenOp = new mafOpExplodeCollapse(_R("open cloud"));
     OpenOp->SetInput(m_LimbCloud);
     OpenOp->SetListener(GetListener());
     OpenOp->OpDo();
@@ -229,7 +229,7 @@ void lhpOpAverageLM::OpUndo()
   bool bCloudWasOpen = m_LimbCloud->IsOpen();
   if(bCloudWasOpen)
   {
-    mafOp *pCloseOp = new mafOpExplodeCollapse("close cloud");
+    mafOp *pCloseOp = new mafOpExplodeCollapse(_R("close cloud"));
     pCloseOp->SetInput(m_LimbCloud);
     pCloseOp->SetListener(GetListener());
     pCloseOp->OpDo();
@@ -241,7 +241,7 @@ void lhpOpAverageLM::OpUndo()
   
   if(bCloudWasOpen)
   {
-    mafOp *OpenOp = new mafOpExplodeCollapse("open cloud");
+    mafOp *OpenOp = new mafOpExplodeCollapse(_R("open cloud"));
     OpenOp->SetInput(m_LimbCloud);
     OpenOp->SetListener(GetListener());
     OpenOp->OpDo();

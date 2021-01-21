@@ -69,7 +69,7 @@ public:
   /** Builds operation's interface. */
   void OpRun();
 
-  lhpOpBonemat(const mafString& label= "");
+  lhpOpBonemat(const mafString& label= _R(""));
   ~lhpOpBonemat(); 
   mafOp* Copy();
   void OnEvent(mafEventBase *maf_event);

@@ -71,12 +71,12 @@ mafOp * lhpOpMTRULBImporter::Copy()
 void  lhpOpMTRULBImporter::OpRun()   
 //----------------------------------------------------------------------------
 {
-  mafString vrml_wildc  = "MTR FARO data (*.mtr)|*.mtr|MTR File list (*.dat)|*.dat";
+  mafString vrml_wildc  = _R("MTR FARO data (*.mtr)|*.mtr|MTR File list (*.dat)|*.dat");
 
   m_Files.clear();
   //if (m_File.IsEmpty())
   {
-    mafGetOpenMultiFiles(m_FileDir.GetCStr(),vrml_wildc.GetCStr(), m_Files);
+    mafGetOpenMultiFiles(m_FileDir,vrml_wildc, m_Files);
   }
 
   int result = OP_RUN_CANCEL;
@@ -122,22 +122,22 @@ void lhpOpMTRULBImporter::ReadMatrix(wxChar const *fstring, vtkMatrix4x4 *mat)
 
 
 //----------------------------------------------------------------------------
-void  lhpOpMTRULBImporter::ProcessSingleFile(const wxString &fileName)
+void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
 //----------------------------------------------------------------------------
 {
 
-  wxString vmeName;
+  mafString vmeName;
   //wxBusyInfo wait("Loading file: ...");  
   //assert(!m_vme);
-  wxString path;
+  mafString path;
   wxInt32  nI = 0;
-  wxString grpName, extension;
+  mafString grpName, extension;
   mafVMEGroup *grp;
 
-  wxSplitPath(fileName.c_str(),&path,&grpName,&extension);
+  mafSplitPath(fileName,&path,&grpName,&extension);
 
   mafNEW(grp);
-  grp->SetName(grpName.c_str());
+  grp->SetName(grpName);
   m_Groups.push_back(grp);
 
   while(TRUE)
@@ -146,13 +146,13 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const wxString &fileName)
     mafMTRReader    *readermc  = mafMTRReader::New();
     mafMTRReader    *readertn  = mafMTRReader::New();
     mafMTRReader    *readerSf  = mafMTRReader::New();
-    LMCReader->SetFileName(fileName);
-    readermc->SetFileName(fileName);
-    readertn->SetFileName(fileName);
-    readerSf->SetFileName(fileName);
-    wxString name, ext;
+    LMCReader->SetFileName(fileName.GetCStr());
+    readermc->SetFileName(fileName.GetCStr());
+    readertn->SetFileName(fileName.GetCStr());
+    readerSf->SetFileName(fileName.GetCStr());
+    mafString name, ext;
 
-    wxSplitPath(fileName.c_str(),&path,&name,&ext);
+    mafSplitPath(fileName,&path,&name,&ext);
 
     LMCReader->SetSet(mafMTRLMCReader::SetNotDefined);
     readermc->SetSet(mafMTRReader::SetNotDefined);
@@ -188,30 +188,29 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const wxString &fileName)
       cloud = clouds[i].first;
       if(clouds[i].second == 0)
       {
-        vmeName   = "Fbr_";
+        vmeName   = _R("Fbr_");
         curnumber = ++fib;
       }
       else if(clouds[i].second == 1)
       {
-        vmeName   = "Ori_";
+        vmeName   = _R("Ori_");
         curnumber = ++ori;
       }
       else if(clouds[i].second == 2)
       {
-        vmeName   = "Ins_";
+        vmeName   = _R("Ins_");
         curnumber = ++ins;
       }
 
-      wxString  curNumberStr("");
-      curNumberStr.Printf("%d", curnumber);
+      mafString  curNumberStr = mafToString(curnumber);
       vmeName = vmeName + curNumberStr;
-      vmeName += "_"; 
+      vmeName += _R("_"); 
       vmeName += name;
 
 
       mafTagItem tag_Nature;
-      tag_Nature.SetName("VME_NATURE");
-      tag_Nature.SetValue("NATURAL");
+      tag_Nature.SetName(_R("VME_NATURE"));
+      tag_Nature.SetValue(_R("NATURAL"));
 
       cloud->SetName(vmeName);
       cloud->GetTagArray()->SetTag(tag_Nature);
@@ -228,13 +227,13 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const wxString &fileName)
       {
         t = ((mafVME *)m_Input)->GetTimeStamp();
         mafNEW(lines);
-        lines->SetName(("TndFbr_" + name).c_str());
+        lines->SetName(_R("TndFbr_") + name);
         lines->SetData(data,t);
 
 
         mafTagItem tag_Nature;
-        tag_Nature.SetName("VME_NATURE");
-        tag_Nature.SetValue("NATURAL");
+        tag_Nature.SetName(_R("VME_NATURE"));
+        tag_Nature.SetValue(_R("NATURAL"));
 
         lines->GetTagArray()->SetTag(tag_Nature);
 
@@ -253,13 +252,13 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const wxString &fileName)
       {
         t = ((mafVME *)m_Input)->GetTimeStamp();
         mafNEW(lines);
-        lines->SetName(("MscFbr_" + name).c_str());
+        lines->SetName(_R("MscFbr_") + name);
         lines->SetData(data,t);
 
 
         mafTagItem tag_Nature;
-        tag_Nature.SetName("VME_NATURE");
-        tag_Nature.SetValue("NATURAL");
+        tag_Nature.SetName(_R("VME_NATURE"));
+        tag_Nature.SetValue(_R("NATURAL"));
 
         lines->GetTagArray()->SetTag(tag_Nature);
 
@@ -278,13 +277,13 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const wxString &fileName)
       {
         t = ((mafVME *)m_Input)->GetTimeStamp();
         mafNEW(surf);
-        surf->SetName(("Surf_" + name).c_str());
+        surf->SetName(_R("Surf_") + name);
         surf->SetData(data,t);
 
 
         mafTagItem tag_Nature;
-        tag_Nature.SetName("VME_NATURE");
-        tag_Nature.SetValue("NATURAL");
+        tag_Nature.SetName(_R("VME_NATURE"));
+        tag_Nature.SetValue(_R("NATURAL"));
 
         surf->GetTagArray()->SetTag(tag_Nature);
 
@@ -299,7 +298,7 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const wxString &fileName)
 
   //read inputs
   FILE         *fp;
-  fp = fopen(fileName.c_str(), "rt");
+  fp = fopen(fileName.GetCStr(), "rt");
   if(fp == NULL)
   {
     mafEventMacro(mafEvent(this, VME_ADD, grp));
@@ -346,10 +345,10 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const wxString &fileName)
     wxString inpName(sLine);
 
     inpName.Truncate(inpName.length() - 1);
-    inpName = path + "\\" + inpName;
+    inpName = path.toWx() + "\\" + inpName;
     reader->SetFileName(inpName);
-    wxString name, ext, inpPath;
-    wxSplitPath(inpName.c_str(), &inpPath,&name,&ext);
+    mafString name, ext, inpPath;
+    mafSplitPath(mafWxToString(inpName), &inpPath,&name,&ext);
 
     reader->Update();
 
@@ -357,14 +356,14 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const wxString &fileName)
     mafTimeStamp t;
     t = ((mafVME *)m_Input)->GetTimeStamp();
     mafNEW(surface);
-    surface->SetName(name.c_str());
+    surface->SetName(name);
     vtkPolyData *data = reader->GetOutput();
     surface->SetData(data,t);
 
 
     mafTagItem tag_Nature;
-    tag_Nature.SetName("VME_NATURE");
-    tag_Nature.SetValue("NATURAL");
+    tag_Nature.SetName(_R("VME_NATURE"));
+    tag_Nature.SetValue(_R("NATURAL"));
 
     surface->GetTagArray()->SetTag(tag_Nature);
 
@@ -405,13 +404,13 @@ void  lhpOpMTRULBImporter::ImportData()
       continue;
 
 
-    wxString name, ext;
-    wxString path;
-    wxSplitPath(m_Files[i].GetCStr(),&path,&name,&ext);
+    mafString name, ext;
+    mafString path;
+    mafSplitPath(m_Files[i],&path,&name,&ext);
 
-    if(ext == "mtr")
+    if(ext == _R("mtr"))
     {
-      ProcessSingleFile(m_Files[i].GetCStr());
+      ProcessSingleFile(m_Files[i]);
       mafEventMacro(mafEvent(this,CAMERA_UPDATE));
       continue;
     }
@@ -429,11 +428,11 @@ void  lhpOpMTRULBImporter::ImportData()
     while((pRet = fgets(sLine, maxStrLen, fp)) != NULL)
     {
       sscanf(sLine, "%s\n", sfname);
-      wxString fname(path);
+      mafString fname(path);
 
       //m_vme = NULL;
 
-      fname = path + '\\' + sfname;
+      fname = path + _R("\\") + _R(sfname);
       ProcessSingleFile(fname);
     }
     fclose(fp);

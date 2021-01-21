@@ -303,7 +303,7 @@ void lhpOpMultiscaleExplore::CreateOpDialog()
   //----------------------------------------------------------------------------
   // setup interface
   //----------------------------------------------------------------------------
-  m_Dialog = new mafGUIDialog("Multiscale Explorer", mafCLOSEWINDOW | mafRESIZABLE);
+  m_Dialog = new mafGUIDialog(_R("Multiscale Explorer"), mafCLOSEWINDOW | mafRESIZABLE);
 
   m_Rwi = new mafRWI(m_Dialog,ONE_LAYER,false);
   m_Rwi->SetListener(this);
@@ -326,7 +326,7 @@ void lhpOpMultiscaleExplore::CreateOpDialog()
   wxStaticText *setupCtrlsStaticTxt  = new wxStaticText(m_Dialog, -1, "Set up view");
 
   // add vme
-  mafGUIButton  *AddVMEButton = new mafGUIButton(m_Dialog, ID_ADDVME, "add vme", p, wxSize(80,20));
+  mafGUIButton  *AddVMEButton = new mafGUIButton(m_Dialog, ID_ADDVME, _R("add vme"), p, wxSize(80,20));
 
   // set base units
   wxString SIUnits[5] = {"m", "cm", "mm", "microns", "nm"} ;
@@ -336,10 +336,10 @@ void lhpOpMultiscaleExplore::CreateOpDialog()
 
   // multiscale controls
   wxStaticText *mscaleCtrlsStaticTxt = new wxStaticText(m_Dialog, -1, "Multiscale controls");
-  mafGUIButton  *ZoomOutButton = new mafGUIButton(m_Dialog, ID_ZOOMOUT, "zoom out x2", p, wxSize(80,20));
-  mafGUIButton  *CameraResetButton = new mafGUIButton(m_Dialog, ID_CAMERARESET, "reset camera", p, wxSize(80,20));
-  mafGUIButton  *GoBackButton = new mafGUIButton(m_Dialog, ID_GOBACK, "go back", p, wxSize(80,20));
-  mafGUIButton  *debug = new mafGUIButton(m_Dialog, ID_DEBUG, "debug", p, wxSize(80,20));
+  mafGUIButton  *ZoomOutButton = new mafGUIButton(m_Dialog, ID_ZOOMOUT, _R("zoom out x2"), p, wxSize(80,20));
+  mafGUIButton  *CameraResetButton = new mafGUIButton(m_Dialog, ID_CAMERARESET, _R("reset camera"), p, wxSize(80,20));
+  mafGUIButton  *GoBackButton = new mafGUIButton(m_Dialog, ID_GOBACK, _R("go back"), p, wxSize(80,20));
+  mafGUIButton  *debug = new mafGUIButton(m_Dialog, ID_DEBUG, _R("debug"), p, wxSize(80,20));
 
   // display scale
   wxStaticText *scaleStaticTxt = new wxStaticText(m_Dialog, -1, "Current scale: ") ;
@@ -365,8 +365,8 @@ void lhpOpMultiscaleExplore::CreateOpDialog()
   //mafGUIFloatSlider *opacitySlider = new mafGUIFloatSlider(m_Dialog, ID_OPACITY_SLIDER, 0.5, 0.0, 1.0, p) ;
 
   // ok and cancel
-  mafGUIButton  *ok = new mafGUIButton(m_Dialog, ID_OK, "ok", p, wxSize(80,20));
-  mafGUIButton  *cancel = new mafGUIButton(m_Dialog, ID_CANCEL, "cancel", p, wxSize(80,20));
+  mafGUIButton  *ok = new mafGUIButton(m_Dialog, ID_OK, _R("ok"), p, wxSize(80,20));
+  mafGUIButton  *cancel = new mafGUIButton(m_Dialog, ID_CANCEL, _R("cancel"), p, wxSize(80,20));
 
 
   // set validators
@@ -934,7 +934,7 @@ void lhpOpMultiscaleExplore::OnEvent(mafEventBase *maf_event)
   }
   else{
     if (e->GetId() == mafDeviceButtonsPadMouse::GetMouseDClickId())
-      mafLogMessage("double click !") ;
+      mafLogMessage(_M("double click !")) ;
   }
 }
 

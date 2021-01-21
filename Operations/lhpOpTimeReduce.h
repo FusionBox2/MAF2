@@ -36,7 +36,7 @@ class lhpOpTimeReduce: public mafOp
 {
 public:
   mafTypeMacro(lhpOpTimeReduce, mafOp)
-  lhpOpTimeReduce(const mafString& label = "TimeReduce");
+  lhpOpTimeReduce(const mafString& label = _R("TimeReduce"));
  ~lhpOpTimeReduce(); 
 
   virtual void OnEvent(mafEventBase *maf_event);

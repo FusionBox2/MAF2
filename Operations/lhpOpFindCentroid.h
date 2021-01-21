@@ -22,7 +22,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 class lhpOpFindCentroid: public mafOp
 {
 public:
-  lhpOpFindCentroid(const mafString& label = "Find centroid");
+  lhpOpFindCentroid(const mafString& label = _R("Find centroid"));
   ~lhpOpFindCentroid(); 
 
   mafTypeMacro(lhpOpFindCentroid, mafOp);

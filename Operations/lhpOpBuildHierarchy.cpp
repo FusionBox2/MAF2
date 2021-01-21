@@ -122,10 +122,10 @@ void lhpOpBuildHierarchy::CreateGui()
   {
     m_Gui = new mafGUI(this);
     m_Gui->SetListener(this);
-    m_Gui->FileOpen(ID_LOAD_DICTIONARY, _("Dictionary"),  &m_DictionaryFName);
-    m_Gui->Label("");
-    m_Gui->FileOpen(ID_LOAD_HIERARCHY, _("Hierarchy"),  &m_HierarchyFName);
-    m_Gui->Label("");
+    m_Gui->FileOpen(ID_LOAD_DICTIONARY, _L("Dictionary"),  &m_DictionaryFName);
+    m_Gui->Label(_R(""));
+    m_Gui->FileOpen(ID_LOAD_HIERARCHY, _L("Hierarchy"),  &m_HierarchyFName);
+    m_Gui->Label(_R(""));
     m_Gui->OkCancel();
   }
   ShowGui();
@@ -164,7 +164,7 @@ void lhpOpBuildHierarchy::OnEvent(mafEventBase *maf_event)
     }
     case ID_LOAD_DICTIONARY:
     {
-      if(m_DictionaryFName != "")
+      if(!m_DictionaryFName.IsEmpty())
       {
         ReadDictionary(&m_DictionaryFName, m_dictionary);
       }
@@ -172,9 +172,9 @@ void lhpOpBuildHierarchy::OnEvent(mafEventBase *maf_event)
     }
     case ID_LOAD_HIERARCHY:
     {
-      if(m_HierarchyFName != "")
+      if(!m_HierarchyFName.IsEmpty())
       {
-        ReadFromFile(m_HierarchyFName.GetCStr());
+        ReadFromFile(m_HierarchyFName);
       }
       break;
     }
@@ -255,7 +255,7 @@ static void makeReparent(mafVME *child, mafVME *newParent)
   }
   else
   {
-    mafLogMessage("Something went wrong while reparenting (bad pointer or memory errors)"); 
+    mafLogMessage(_M("Something went wrong while reparenting (bad pointer or memory errors)")); 
   }
 #ifndef OLDVERSION
   for (t = 0; t < num; t++)
@@ -398,7 +398,7 @@ void lhpOpBuildHierarchy::OpUndo()
 }
 
 //----------------------------------------------------------------------------
-bool lhpOpBuildHierarchy::ReadFromFile(const wxString& fileName)
+bool lhpOpBuildHierarchy::ReadFromFile(const mafString& fileName)
 //----------------------------------------------------------------------------
 {
   wxInt32                                      nI; 
@@ -542,19 +542,19 @@ void lhpOpBuildHierarchy::BindToVME(mafVME *pvme, lhpOpBuildHierarchy::mafFrame 
   wxString const * pVMENameStr = LookupUserName(pStart->GetName(), m_dictionary);
   if(pVMENameStr != NULL)
   {
-    pFoundVME = (mafVME*)pVMERoot->FindInTreeByName(pVMENameStr->GetData());
+    pFoundVME = (mafVME*)pVMERoot->FindInTreeByName(mafWxToString(*pVMENameStr));
   }
   //and again ^_^
   if(pFoundVME == NULL)
   {
     pVMENameStr = LookupStdName(pStart->GetName(), m_dictionary);
     if(pVMENameStr != NULL)
-      pFoundVME = (mafVME*)pVMERoot->FindInTreeByName(pVMENameStr->GetData());
+      pFoundVME = (mafVME*)pVMERoot->FindInTreeByName(mafWxToString(*pVMENameStr));
   }
   //try again in case of failure
   if(pFoundVME == NULL)
   {
-    pFoundVME = (mafVME*)pVMERoot->FindInTreeByName(pStart->GetName()->GetData());
+    pFoundVME = (mafVME*)pVMERoot->FindInTreeByName(mafWxToString(*pStart->GetName()));
   }
 
   pStart->SetVME(pFoundVME);

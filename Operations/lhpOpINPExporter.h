@@ -34,7 +34,7 @@ class mafVMEOutputSurface;
 class lhpOpINPExporter: public mafOp
 {
 public:
-  lhpOpINPExporter(const mafString& label = "INPExporter");
+  lhpOpINPExporter(const mafString& label = _R("INPExporter"));
   ~lhpOpINPExporter(); 
 
   mafTypeMacro(lhpOpINPExporter, mafOp);
@@ -49,7 +49,7 @@ public:
   void OpRun();
 
   /** Set the filename for the .stl to export */
-  void SetFileName(const char *file_name) {m_File = file_name;};
+  void SetFileName(const char *file_name) {m_File = _R(file_name);}
 
   void ApplyABSMatrixOn() {m_ABSMatrixFlag = 1;};
   void ApplyABSMatrixOff() {m_ABSMatrixFlag = 0;};

@@ -90,7 +90,7 @@ mafCxxTypeMacro(lhpOpDownloadVMERefactor);
 
 //static variables
 long lhpOpDownloadVMERefactor::m_Pid = -1;
-mafString lhpOpDownloadVMERefactor::m_CacheSubdir = "0";
+mafString lhpOpDownloadVMERefactor::m_CacheSubdir = _R("0");
 
 /*enum lhpOpDownloadVME_ID
 {
@@ -119,27 +119,27 @@ lhpOpDownloadVMERefactor::lhpOpDownloadVMERefactor(const mafString& label, int f
   m_FromSendbox = fromSandbox;
      
 
-  m_PythonExe = "python.exe_UNDEFINED";
-  m_PythonwExe = "pythonw.exe_UNDEFINED";  
+  m_PythonExe = _R("python.exe_UNDEFINED");
+  m_PythonwExe = _R("pythonw.exe_UNDEFINED");  
 
-  m_CurrentCache = m_CacheDir = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\UploadCache\\").c_str();
-  m_IncomingDir = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\Incoming\\").c_str();
+  m_CurrentCache = m_CacheDir = lhpUtils::lhpGetApplicationDirectory() + _R("\\VMEUploaderDownloaderRefactor\\UploadCache\\");
+  m_IncomingDir = lhpUtils::lhpGetApplicationDirectory() + _R("\\VMEUploaderDownloaderRefactor\\Incoming\\");
 
-  m_VMEUploaderDownloaderDir  = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\").c_str();
-  m_FileName = "";
-  m_ServiceURL = "https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/";
-  //m_ServiceURL = "http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/";
+  m_VMEUploaderDownloaderDir  = lhpUtils::lhpGetApplicationDirectory() + _R("\\VMEUploaderDownloaderRefactor\\");
+  m_FileName = _R("");
+  m_ServiceURL = _R("https://www.biomedtown.org/biomed_town/LHDL/users/repository/lhprepository2/");
+  //m_ServiceURL = _R("http://devel.fec.cineca.it:12680/town/biomed_town/LHDL/users/repository/lhprepository2/");
 
-  m_MsfDir = "";
-  m_IncomingCompletePath = "";
+  m_MsfDir = _R("");
+  m_IncomingCompletePath = _R("");
   
-  m_BasketListFileName = "ToDownload.txt" ;
-  m_ConnectionConfigurationFileName = "vmeUploaderConnectionConfiguration.conf" ;
-  m_BinaryRealName = "";
-  m_URISRBFile = "";
-  m_URISRBFileSize = "0";
-  m_ProxyURL = "";
-  m_ProxyPort = "0";
+  m_BasketListFileName = _R("ToDownload.txt") ;
+  m_ConnectionConfigurationFileName = _R("vmeUploaderConnectionConfiguration.conf") ;
+  m_BinaryRealName = _R("");
+  m_URISRBFile = _R("");
+  m_URISRBFileSize = _R("0");
+  m_ProxyURL = _R("");
+  m_ProxyPort = _R("0");
 }
 
 //----------------------------------------------------------------------------
@@ -195,8 +195,8 @@ void lhpOpDownloadVMERefactor::OpRun()
   if(eventGetPythonExe.GetString())
   {
     m_PythonExe.Erase(0);
-    m_PythonExe = eventGetPythonExe.GetString()->GetCStr();
-    m_PythonExe.Append(" ");
+    m_PythonExe = *eventGetPythonExe.GetString();
+    m_PythonExe.Append(_R(" "));
   }
 
   mafEvent eventGetPythonwExe;
@@ -207,8 +207,8 @@ void lhpOpDownloadVMERefactor::OpRun()
   if(eventGetPythonwExe.GetString())
   {
     m_PythonwExe.Erase(0);
-    m_PythonwExe = eventGetPythonwExe.GetString()->GetCStr();
-    m_PythonwExe.Append(" ");
+    m_PythonwExe = *eventGetPythonwExe.GetString();
+    m_PythonwExe.Append(_R(" "));
   }
   
   //Get User values
@@ -225,7 +225,7 @@ void lhpOpDownloadVMERefactor::OpRun()
   if(m_User->GetProxyFlag())
   {
     m_ProxyURL = m_User->GetProxyHost();
-    m_ProxyPort = m_User->GetProxyPort();
+    m_ProxyPort = mafToString(m_User->GetProxyPort());
     // load the connection configuration file:
     this->SaveConnectionConfigurationFile(); 
   }
@@ -233,15 +233,15 @@ void lhpOpDownloadVMERefactor::OpRun()
   {
     wxString oldDir = wxGetCwd();
     if (m_DebugMode)
-      mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-    wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+        mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
+    wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
     if (m_DebugMode)
-      mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+        mafLogMessage(_M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
     //if file exists , delete it
-    if(wxFileExists(m_ConnectionConfigurationFileName.GetCStr()))
+    if(mafFileExists(m_ConnectionConfigurationFileName))
     {
-      wxRemoveFile(m_ConnectionConfigurationFileName.GetCStr());
+      mafFileRemove(m_ConnectionConfigurationFileName);
     }
     wxSetWorkingDirectory(oldDir);
   }
@@ -249,14 +249,14 @@ void lhpOpDownloadVMERefactor::OpRun()
   int result = OP_RUN_CANCEL;
 
   mafString DebugPath = m_VMEUploaderDownloaderDir;
-  DebugPath.Append("\\Debug.py");
-  if (wxFileExists(DebugPath.GetCStr()))
+  DebugPath.Append(_R("\\Debug.py"));
+  if (mafFileExists(DebugPath))
   {
     ifstream debugFile;
     debugFile.open(DebugPath.GetCStr());
     if (!debugFile) 
     {
-      mafLogMessage("Unable to open Debug.py file");
+      mafLogMessage(_M("Unable to open Debug.py file"));
     }
 
     std::string isDebug;
@@ -300,47 +300,47 @@ void lhpOpDownloadVMERefactor::SaveConnectionConfigurationFile()
 {
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+      mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
   if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+      mafLogMessage(_M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
   //if file exists , delete it
-  if(wxFileExists(m_ConnectionConfigurationFileName.GetCStr()))
+  if(mafFileExists(m_ConnectionConfigurationFileName))
   {
-    wxRemoveFile(m_ConnectionConfigurationFileName.GetCStr());
+    mafFileRemove(m_ConnectionConfigurationFileName);
   }
 
   // open auto tags file and try to handle tags using tags factory 
   ofstream configurationFile;
   configurationFile.open(m_ConnectionConfigurationFileName.GetCStr());
   if (!configurationFile) {
-    wxString message = m_ConnectionConfigurationFileName.GetCStr();
-    message.Append(" not found! Unable to write configuration connection file");
-    mafLogMessage(message.c_str());
+    mafString message = m_ConnectionConfigurationFileName;
+    message.Append(_R(" not found! Unable to write configuration connection file"));
+    mafLogMessage(_M(message));
   }
   else
   {
-    configurationFile << m_ProxyURL;   
+    configurationFile << m_ProxyURL.GetCStr();
     configurationFile << "\n";
-    configurationFile << m_ProxyPort;
+    configurationFile << m_ProxyPort.GetCStr();
      
-    wxString message = m_ConnectionConfigurationFileName.GetCStr();
-    message.Append("Found connection configuration file: using connection parameters");
-    message.Append("m_ProxyURL: ");
-    message.Append(m_ProxyURL.GetCStr());
-    message.Append("m_ProxyPort: ");
-    message.Append(m_ProxyPort.GetCStr());
+    mafString message = m_ConnectionConfigurationFileName;
+    message.Append(_R("Found connection configuration file: using connection parameters"));
+    message.Append(_R("m_ProxyURL: "));
+    message.Append(m_ProxyURL);
+    message.Append(_R("m_ProxyPort: "));
+    message.Append(m_ProxyPort);
 
     if (m_DebugMode)
-      mafLogMessage(message.c_str());
+      mafLogMessage(_M(message));
 
     configurationFile.close();
   }
 
   wxSetWorkingDirectory(oldDir);
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+      mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
 }
 //----------------------------------------------------------------------------
@@ -404,7 +404,7 @@ void lhpOpDownloadVMERefactor::OpDo()
       //Check if VME has been already downloaded
       for (int c = 0; c < m_DownloadedURIVector.size(); c++)
       {
-        mafString VMEname = m_ListLinkURIInTree[i].c_str();
+        mafString VMEname = mafWxToString(m_ListLinkURIInTree[i]);
         if (m_DownloadedURIVector[c].Equals(VMEname))
         {
           //Fill vector of link, with node already downloaded
@@ -449,7 +449,7 @@ void lhpOpDownloadVMERefactor::OpDo()
           }
           else
           {
-            m_DerivedNodeVector[n]->SetLink(linkName.GetCStr(), m_LinkNodeVector[counter]->GetParent(), subId); 
+            m_DerivedNodeVector[n]->SetLink(linkName, m_LinkNodeVector[counter]->GetParent(), subId); 
           }
           counter++;
         }
@@ -462,7 +462,7 @@ void lhpOpDownloadVMERefactor::OpDo()
           }
           else
           {
-            m_DerivedNodeVector[n]->SetLink(linkName.GetCStr(), m_LinkNodeVector[counter]/*->GetParent()*/); 
+            m_DerivedNodeVector[n]->SetLink(linkName, m_LinkNodeVector[counter]/*->GetParent()*/); 
           }
           counter++;
         }
@@ -504,7 +504,7 @@ int lhpOpDownloadVMERefactor::DownloadTree(mafNode *node)
 int lhpOpDownloadVMERefactor::DownloadVME(wxArrayString listVME, mafNode *parentNode)   
 //----------------------------------------------------------------------------
 {
-  mafString isLast = "false";
+  mafString isLast = _R("false");
 
   for (int i = 0; i < listVME.size(); i++)
   {
@@ -514,7 +514,7 @@ int lhpOpDownloadVMERefactor::DownloadVME(wxArrayString listVME, mafNode *parent
         m_DownloadCounter +=1;
     }
 
-      m_CheckURIVector.push_back(listVME[i].c_str()); 
+      m_CheckURIVector.push_back(mafWxToString(listVME[i])); 
       if(!CreateIncomingDirectory())
       {
         wxMessageBox("Unable to create Incoming Directory", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
@@ -528,14 +528,14 @@ int lhpOpDownloadVMERefactor::DownloadVME(wxArrayString listVME, mafNode *parent
         DownloadCheck(true);
         return MAF_ERROR;
       }
-      if(DownloadSelectedXMLFromBasket(listVME[i]) != MAF_OK)
+      if(DownloadSelectedXMLFromBasket(mafWxToString(listVME[i])) != MAF_OK)
       {
         DownloadCheck(true);
         return MAF_ERROR;
       }
 
       //reconstruct msf
-      if(ReconstructMSF(listVME[i]) != MAF_OK)
+      if(ReconstructMSF(mafWxToString(listVME[i])) != MAF_OK)
       {
         wxMessageBox("Unable to reconstruct msf", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
         DownloadCheck(true);
@@ -544,75 +544,81 @@ int lhpOpDownloadVMERefactor::DownloadVME(wxArrayString listVME, mafNode *parent
 
       wxString oldDir = wxGetCwd();
       if (m_DebugMode)
-        mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-      wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+          mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
+      wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
       if (m_DebugMode)
-        mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+          mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
       wxBusyCursor wait;
 
 
-      if (m_URISRBFile.Equals("NOT PRESENT"))
-        m_URISRBFile = ".";
+      if (m_URISRBFile.Equals(_R("NOT PRESENT")))
+        m_URISRBFile = _R(".");
 
       mafSleep(3000);
 
       if ( ExistsRunningProcess() )
       {
         //PROCESS EXIST, ONLY CALL CLIENT
-        wxString command2execute;
-        command2execute = m_PythonwExe.GetCStr();
+        mafString command2execute;
+        command2execute = m_PythonwExe;
         // script for client
-        m_FileName = "Client.py ";
-        command2execute.Append(m_FileName.GetCStr());
-        command2execute.Append("127.0.0.1 "); //server address (localhost)
-        command2execute.Append("50000 "); //port address (50000)
-        command2execute.Append(wxString::Format("DOWNLOAD ")); //Download command
-        command2execute.Append(wxString::Format("%s ",m_URISRBFileSize)); //file size
+        m_FileName = _R("Client.py ");
+        command2execute.Append(m_FileName);
+        command2execute.Append(_R("127.0.0.1 ")); //server address (localhost)
+        command2execute.Append(_R("50000 ")); //port address (50000)
+        command2execute.Append(_R("DOWNLOAD ")); //Download command
+        command2execute.Append(m_URISRBFileSize); //file size
+        command2execute.Append(_R(" "));
 
         //workaround to understanding directory argument
-        wxString directoryWorkAround = m_IncomingCompletePath;
+        wxString directoryWorkAround = m_IncomingCompletePath.toWx();
         directoryWorkAround.Replace(" ", "?");
-        command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
-        command2execute.Append(wxString::Format("%s ",m_User->GetName())); //user
-        command2execute.Append(wxString::Format("%s ",m_User->GetPwd())); //pwd
-        command2execute.Append(wxString::Format("%s ",m_ServiceURL.GetCStr())); //dev repository
-        command2execute.Append(wxString::Format("%s ",listVME[i].c_str())); //XML URI NAME
-        command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //SRB DATA NAME
+        command2execute.Append(mafWxToString(directoryWorkAround)); //cache directory
+        command2execute.Append(m_User->GetName()); //user
+        command2execute.Append(m_FileName);
+        command2execute.Append(m_User->GetPwd()); //pwd
+        command2execute.Append(m_FileName);
+        command2execute.Append(m_ServiceURL); //dev repository
+        command2execute.Append(m_FileName);
+        command2execute.Append(mafWxToString(listVME[i])); //XML URI NAME
+        command2execute.Append(m_FileName);
+        command2execute.Append(m_URISRBFile); //SRB DATA NAME
+        command2execute.Append(m_FileName);
 
         //Code to understand if is last VME
         if (!m_WholeMsfDownload )
         {
           bool check = false;
-          if (m_BasketListURI.size() == 1 && !CheckIsRoot(listVME[i].c_str()) && !m_FillLinkVector)
+          if (m_BasketListURI.size() == 1 && !CheckIsRoot(mafWxToString(listVME[i])) && !m_FillLinkVector)
             check = true;
 
           else if (parentNode != NULL && parentNode->Equals(m_Group) && (i+1 == listVME.size()))
             check = true;
 
-          else if ((i+1 == listVME.size()) && m_ListLinkURI.IsEmpty() && !CheckIsRoot(listVME[i].c_str()))
+          else if ((i+1 == listVME.size()) && m_ListLinkURI.IsEmpty() && !CheckIsRoot(mafWxToString(listVME[i])))
             check = true;
 
-          wxArrayString URI = CheckRemoteLink(listVME[i].c_str());
+          wxArrayString URI = CheckRemoteLink(mafWxToString(listVME[i]));
           if (check && URI.IsEmpty())
-            isLast = "true";
+            isLast = _R("true");
 
         }
         else if (parentNode != NULL && parentNode->Equals(m_RootGroup) && (i+1 == listVME.size()) && m_DownloadCounter  == m_BasketListURI.size())
         {
-          wxArrayString URI = CheckRemoteLink(listVME[i].c_str());
-          if (URI.IsEmpty() && !CheckRemoteChild(listVME[i].c_str()))
-            isLast = "true";
+          wxArrayString URI = CheckRemoteLink(mafWxToString(listVME[i]));
+          if (URI.IsEmpty() && !CheckRemoteChild(mafWxToString(listVME[i])))
+            isLast = _R("true");
           else
           {
             bool alreadyDownloaded = false;
-            isLast = "true";
+            isLast = _R("true");
             //Check if VME has been already downloaded
             for (int i = 0 ; i < URI.size(); i++)
             {
               alreadyDownloaded = false;
               for (int c = 0; c < m_DownloadedURIVector.size(); c++)
               {
-                mafString VMEname = URI[i].c_str();
+                mafString VMEname = mafWxToString(URI[i]);
                 if (m_DownloadedURIVector[c].Equals(VMEname))
                 {
                   alreadyDownloaded = true;
@@ -621,7 +627,7 @@ int lhpOpDownloadVMERefactor::DownloadVME(wxArrayString listVME, mafNode *parent
               }
               if (alreadyDownloaded = false)
               {
-                isLast = "false";
+                isLast = _R("false");
                 break;
               }
             }
@@ -630,20 +636,20 @@ int lhpOpDownloadVMERefactor::DownloadVME(wxArrayString listVME, mafNode *parent
         }
         else if (m_FillLinkVector && (i+1 == listVME.size()))
         {
-          wxArrayString URI = CheckRemoteLink(listVME[i].c_str());
+          wxArrayString URI = CheckRemoteLink(mafWxToString(listVME[i]));
           if (URI.IsEmpty())
-            isLast = "true";
+            isLast = _R("true");
           else
           {
             bool alreadyDownloaded = false;
-            isLast = "true";
+            isLast = _R("true");
             //Check if VME has been already downloaded
             for (int i = 0 ; i < URI.size(); i++)
             {
               alreadyDownloaded = false;
               for (int c = 0; c < m_DownloadedURIVector.size(); c++)
               {
-                mafString VMEname = URI[i].c_str();
+                mafString VMEname = mafWxToString(URI[i]);
                 if (m_DownloadedURIVector[c].Equals(VMEname))
                 {
                   alreadyDownloaded = true;
@@ -652,94 +658,100 @@ int lhpOpDownloadVMERefactor::DownloadVME(wxArrayString listVME, mafNode *parent
               }
               if (alreadyDownloaded = false)
               {
-                isLast = "false";
+                isLast = _R("false");
                 break;
               }
             }
           }
         }
-        command2execute.Append(wxString::Format("%s",isLast.GetCStr())); //is last VME
+        command2execute.Append(isLast); //is last VME
 
         if (m_DebugMode)
-          mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
-        m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
+            mafLogMessage(_M(_R("Executing command: '") + command2execute + _R("'")));
+        m_Pid = wxExecute(command2execute.toWx(), wxEXEC_ASYNC);
 
       }
       else
       {
         //PROCESS NOT EXIST, CREATE SERVER AND CALL CLIENT
-        wxString command2execute;
+        mafString command2execute;
         if (m_DebugMode)
-          command2execute = m_PythonExe.GetCStr();
+          command2execute = m_PythonExe;
         else
-          command2execute = m_PythonwExe.GetCStr();
-        m_FileName = "ThreadedClient.py ";
-        command2execute.Append(m_FileName.GetCStr());
-        command2execute.Append("50000");
+          command2execute = m_PythonwExe;
+        m_FileName = _R("ThreadedClient.py ");
+        command2execute.Append(m_FileName);
+        command2execute.Append(_R("50000"));
         if (m_DebugMode)
-          mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+            mafLogMessage(_M(_R("Executing command: '") + command2execute + _R("'")));
 
-        m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
+        m_Pid = wxExecute(command2execute.toWx(), wxEXEC_ASYNC);
 
         if (m_DebugMode)
-          mafLogMessage(_T("ASYNC Command process '%s' terminated with exit code %d."),
-          command2execute.c_str(), m_Pid);
+            mafLogMessage(_M(_R("ASYNC Command process '") + command2execute + _R("' terminated with exit code ") + mafToString(m_Pid) + _R(".")));
 
         mafSleep(5000);
 
-        command2execute.clear();
-        command2execute = m_PythonwExe.GetCStr();
-        m_FileName = "Client.py ";
-        command2execute.Append(m_FileName.GetCStr());
-        command2execute.Append("127.0.0.1 "); //server address (localhost)
-        command2execute.Append("50000 "); //port address (50000)
-        command2execute.Append(wxString::Format("DOWNLOAD ")); //Download command
-        command2execute.Append(wxString::Format("%s ",m_URISRBFileSize)); //file size
+        command2execute.Clear();
+        command2execute = m_PythonwExe;
+        m_FileName = _R("Client.py ");
+        command2execute.Append(m_FileName);
+        command2execute.Append(_R("127.0.0.1 ")); //server address (localhost)
+        command2execute.Append(_R("50000 ")); //port address (50000)
+        command2execute.Append(_R("DOWNLOAD ")); //Download command
+        command2execute.Append(m_URISRBFileSize); //file size
+        command2execute.Append(_R(" "));
 
         //workaround to understanding directory argument
-        wxString directoryWorkAround = m_IncomingCompletePath;
+        wxString directoryWorkAround = m_IncomingCompletePath.toWx();
         directoryWorkAround.Replace(" ", "?");
-        command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
-        command2execute.Append(wxString::Format("%s ",m_User->GetName())); //user
-        command2execute.Append(wxString::Format("%s ",m_User->GetPwd())); //pwd
-        command2execute.Append(wxString::Format("%s ",m_ServiceURL.GetCStr())); //dev repository
-        command2execute.Append(wxString::Format("%s ",listVME[i].c_str())); //XML URI NAME
-        command2execute.Append(wxString::Format("%s ",m_URISRBFile.GetCStr())); //SRB DATA NAME
+        command2execute.Append(mafWxToString(directoryWorkAround)); //cache directory
+        command2execute.Append(_R(" "));
+        command2execute.Append(m_User->GetName()); //user
+        command2execute.Append(_R(" "));
+        command2execute.Append(m_User->GetPwd()); //pwd
+        command2execute.Append(_R(" "));
+        command2execute.Append(m_ServiceURL); //dev repository
+        command2execute.Append(_R(" "));
+        command2execute.Append(mafWxToString(listVME[i])); //XML URI NAME
+        command2execute.Append(_R(" "));
+        command2execute.Append(m_URISRBFile); //SRB DATA NAME
+        command2execute.Append(_R(" "));
 
         //Code to understand if is last VME
         if (!m_WholeMsfDownload )
         {
           bool check = false;
-          if (m_BasketListURI.size() == 1 && !CheckIsRoot(listVME[i].c_str()) && !m_FillLinkVector)
+          if (m_BasketListURI.size() == 1 && !CheckIsRoot(mafWxToString(listVME[i])) && !m_FillLinkVector)
             check = true;
 
           else if (parentNode != NULL && parentNode->Equals(m_Group) && (i+1 == listVME.size()))
             check = true;
 
-          else if ((i+1 == listVME.size()) && m_ListLinkURI.IsEmpty() && !CheckIsRoot(listVME[i].c_str()))
+          else if ((i+1 == listVME.size()) && m_ListLinkURI.IsEmpty() && !CheckIsRoot(mafWxToString(listVME[i])))
             check = true;
 
-          wxArrayString URI = CheckRemoteLink(listVME[i].c_str());
+          wxArrayString URI = CheckRemoteLink(mafWxToString(listVME[i]));
           if (check && URI.IsEmpty())
-            isLast = "true";
+            isLast = _R("true");
 
         }
         else if (parentNode != NULL && parentNode->Equals(m_RootGroup) && (i+1 == listVME.size()) && m_DownloadCounter  == m_BasketListURI.size())
         {
-          wxArrayString URI = CheckRemoteLink(listVME[i].c_str());
-          if (URI.IsEmpty() && !CheckRemoteChild(listVME[i].c_str()))
-            isLast = "true";
+          wxArrayString URI = CheckRemoteLink(mafWxToString(listVME[i]));
+          if (URI.IsEmpty() && !CheckRemoteChild(mafWxToString(listVME[i])))
+            isLast = _R("true");
           else
           {
             bool alreadyDownloaded = false;
-            isLast = "true";
+            isLast = _R("true");
             //Check if VME has been already downloaded
             for (int i = 0 ; i < URI.size(); i++)
             {
               alreadyDownloaded = false;
               for (int c = 0; c < m_DownloadedURIVector.size(); c++)
               {
-                mafString VMEname = URI[i].c_str();
+                mafString VMEname = mafWxToString(URI[i]);
                 if (m_DownloadedURIVector[c].Equals(VMEname))
                 {
                   alreadyDownloaded = true;
@@ -748,7 +760,7 @@ int lhpOpDownloadVMERefactor::DownloadVME(wxArrayString listVME, mafNode *parent
               }
               if (alreadyDownloaded = false)
               {
-                isLast = "false";
+                isLast = _R("false");
                 break;
               }
             }
@@ -757,20 +769,20 @@ int lhpOpDownloadVMERefactor::DownloadVME(wxArrayString listVME, mafNode *parent
         }
         else if (m_FillLinkVector && (i+1 == listVME.size()))
         {
-          wxArrayString URI = CheckRemoteLink(listVME[i].c_str());
+          wxArrayString URI = CheckRemoteLink(mafWxToString(listVME[i]));
           if (URI.IsEmpty())
-            isLast = "true";
+            isLast = _R("true");
           else
           {
             bool alreadyDownloaded = false;
-            isLast = "true";
+            isLast = _R("true");
             //Check if VME has been already downloaded
             for (int i = 0 ; i < URI.size(); i++)
             {
               alreadyDownloaded = false;
               for (int c = 0; c < m_DownloadedURIVector.size(); c++)
               {
-                mafString VMEname = URI[i].c_str();
+                mafString VMEname = mafWxToString(URI[i]);
                 if (m_DownloadedURIVector[c].Equals(VMEname))
                 {
                   alreadyDownloaded = true;
@@ -779,20 +791,20 @@ int lhpOpDownloadVMERefactor::DownloadVME(wxArrayString listVME, mafNode *parent
               }
               if (alreadyDownloaded = false)
               {
-                isLast = "false";
+                isLast = _R("false");
                 break;
               }
             }
           }
         }
-        command2execute.Append(wxString::Format("%s",isLast.GetCStr())); //is last VME
+        command2execute.Append(isLast); //is last VME
 
         if (m_DebugMode)
-          mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
-        m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
+            mafLogMessage(_M(_R("Executing command: '") + command2execute + _R("'")));
+        m_Pid = wxExecute(command2execute.toWx(), wxEXEC_ASYNC);
       }
       wxSetWorkingDirectory(oldDir);
-      m_DownloadedURIVector.push_back(listVME[i].c_str());
+      m_DownloadedURIVector.push_back(mafWxToString(listVME[i]));
 
       //import msf in the current tree
       if(ImportMSF(parentNode) != MAF_OK)
@@ -824,13 +836,13 @@ bool lhpOpDownloadVMERefactor::CreateIncomingCache()
   mafEventMacro(event);
 
   wxString temp;
-  temp.Append((*event.GetString()).GetCStr());
+  temp.Append((*event.GetString()).toWx());
   temp = temp.BeforeLast('/');
-  m_MsfDir = temp;
+  m_MsfDir = mafWxToString(temp);
 
-  wxDir dir(m_MsfDir.GetCStr());
-  wxString exist = m_MsfDir.GetCStr();
-  if ( !wxDirExists(exist) || !dir.IsOpened())
+  wxDir dir(m_MsfDir.toWx());
+  mafString exist = m_MsfDir;
+  if ( !mafDirExists(exist) || !dir.IsOpened())
   {
     // deal with the error here - wxDir would already log an error message
     // explaining the exact reason of the failure
@@ -839,17 +851,17 @@ bool lhpOpDownloadVMERefactor::CreateIncomingCache()
 
   //control cache subdir
   mafString currentSubdir;
-  currentSubdir = m_IncomingDir + m_CacheSubdir.GetCStr();
-  while(wxDirExists(currentSubdir))
+  currentSubdir = m_IncomingDir + m_CacheSubdir;
+  while(mafDirExists(currentSubdir))
   {
     int number = atoi(m_CacheSubdir.GetCStr());
     number += 1;
-    m_CacheSubdir = "";
-    m_CacheSubdir << number;
-    currentSubdir = m_IncomingDir + m_CacheSubdir.GetCStr();
+    m_CacheSubdir = _R("");
+    m_CacheSubdir += mafToString(number);
+    currentSubdir = m_IncomingDir + m_CacheSubdir;
   }
-  currentSubdir = currentSubdir + "\\";
-  wxMkDir(currentSubdir);
+  currentSubdir = currentSubdir + _R("\\");
+  mafDirMake(currentSubdir);
   m_IncomingCompletePath = currentSubdir;
 
   return result;
@@ -862,11 +874,11 @@ bool lhpOpDownloadVMERefactor::ExistsRunningProcess()
   bool result = false;
   
   wxFile lockFile;
-  wxString lockpath = m_VMEUploaderDownloaderDir;
-  lockpath += "activeLock.lhp";
-  if (wxFileExists(lockpath))
+  mafString lockpath = m_VMEUploaderDownloaderDir;
+  lockpath += _R("activeLock.lhp");
+  if (mafFileExists(lockpath))
   {
-    result = lockFile.Open(lockpath);
+    result = lockFile.Open(lockpath.toWx());
   }
   
   if(result)
@@ -885,7 +897,7 @@ bool lhpOpDownloadVMERefactor::ExistsRunningProcess()
 
     if(!result)
     {
-      wxRemoveFile(lockpath);
+      mafFileRemove(lockpath);
     }
   }
   return result;
@@ -915,22 +927,22 @@ int lhpOpDownloadVMERefactor::CreateFileListFromBasket()
 {
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+      mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
   if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+      mafLogMessage(_M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
   // gui for selecting vme
-  wxString command2execute;
+  mafString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonwExe.GetCStr();
+  command2execute = m_PythonwExe;
 
-  command2execute.Append(" downloadSelectorApp.py ");
+  command2execute.Append(_R(" downloadSelectorApp.py "));
   command2execute.Append(m_User->GetName());
-  command2execute.Append(" ");
+  command2execute.Append(_R(" "));
   command2execute.Append(m_User->GetPwd());
-  command2execute.Append(" ");
-  command2execute.Append(wxString::Format("%d",m_FromSendbox));
+  command2execute.Append(_R(" "));
+  command2execute.Append(mafToString(m_FromSendbox));
 
 
   wxBusyInfo *wait;
@@ -939,7 +951,7 @@ int lhpOpDownloadVMERefactor::CreateFileListFromBasket()
     wait = new wxBusyInfo("Please wait for your data resource listing...");
   }
 
-  long pid = wxExecute(command2execute, wxEXEC_SYNC);
+  long pid = wxExecute(command2execute.toWx(), wxEXEC_SYNC);
 
   if(!m_TestMode)
   {
@@ -948,7 +960,7 @@ int lhpOpDownloadVMERefactor::CreateFileListFromBasket()
 
   wxSetWorkingDirectory(oldDir);
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+      mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
   return MAF_OK;
 }
@@ -958,17 +970,17 @@ int lhpOpDownloadVMERefactor::RetrieveInformationFromBasketListFile()
 {
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+      mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
   if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+      mafLogMessage(_M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
   // open auto tags file and try to handle tags using tags factory 
   ifstream inBasketListFile;
 
   inBasketListFile.open(m_BasketListFileName.GetCStr());
   if (!inBasketListFile) {
-    mafLogMessage("Unable to open file");
+    mafLogMessage(_M("Unable to open file"));
     return MAF_ERROR; // terminate with error
   }
 
@@ -983,7 +995,7 @@ int lhpOpDownloadVMERefactor::RetrieveInformationFromBasketListFile()
 
   wxSetWorkingDirectory(oldDir);
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+      mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
   return MAF_OK;
 }
@@ -993,31 +1005,31 @@ int lhpOpDownloadVMERefactor::DownloadSelectedXMLFromBasket(mafString  xmlFile)
 {
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+      mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
   if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+      mafLogMessage(_M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
   // get manual tags
-  wxString command2execute;
+  mafString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonExe.GetCStr();
-  command2execute.Append(" downloadSingleXML.py ");
+  command2execute = m_PythonExe;
+  command2execute.Append(_R(" downloadSingleXML.py "));
   command2execute.Append(m_User->GetName());
-  command2execute.Append(" ");
+  command2execute.Append(_R(" "));
   command2execute.Append(m_User->GetPwd());
-  command2execute.Append(" ");
-  command2execute.Append(xmlFile.GetCStr());
-  command2execute.Append(" ");
+  command2execute.Append(_R(" "));
+  command2execute.Append(xmlFile);
+  command2execute.Append(_R(" "));
 
-  wxString directoryWorkAround = m_IncomingCompletePath;
+  wxString directoryWorkAround = m_IncomingCompletePath.toWx();
   directoryWorkAround.Replace(" ", "?");
-  command2execute.Append(directoryWorkAround);
+  command2execute.Append(mafWxToString(directoryWorkAround));
 
   wxArrayString output;
   wxArrayString errors;
   long pid = -1;
-  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
+  if (pid = wxExecute(command2execute.toWx(), output, errors, wxEXEC_SYNC) != 0)
   {
     wxMessageBox(wxString::Format("Error in downloadSingleXML.py trying to download '%s'.\nMSF download stopped.",xmlFile.GetCStr()), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     return MAF_ERROR;
@@ -1025,16 +1037,16 @@ int lhpOpDownloadVMERefactor::DownloadSelectedXMLFromBasket(mafString  xmlFile)
 
   if (m_DebugMode)
   {
-    mafLogMessage("Command Output Messages:");
+    mafLogMessage(_M("Command Output Messages:"));
     for (int i = 0; i < output.size(); i++)
     {
-      mafLogMessage(output[i]);
+        mafLogMessage(_M(mafWxToString(output[i])));
     }
 
-    mafLogMessage("Command Errors Messages:");
+    mafLogMessage(_M("Command Errors Messages:"));
     for (int i = 0; i < errors.size(); i++)
     {
-      mafLogMessage(errors[i]);
+        mafLogMessage(_M(mafWxToString(errors[i])));
     }
   }
 
@@ -1043,12 +1055,12 @@ int lhpOpDownloadVMERefactor::DownloadSelectedXMLFromBasket(mafString  xmlFile)
     return MAF_ERROR;
   }
 
-  m_URISRBFileSize = output[output.size() - 1];
-  m_URISRBFile = output[output.size() - 2];
+  m_URISRBFileSize = mafWxToString(output[output.size() - 1]);
+  m_URISRBFile = mafWxToString(output[output.size() - 2]);
 
   wxSetWorkingDirectory(oldDir);
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+      mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
   return MAF_OK;
 }
@@ -1058,38 +1070,38 @@ int lhpOpDownloadVMERefactor::ReconstructMSF(mafString xmlFile)
 {
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+      mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
   if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+      mafLogMessage(_M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
-  wxString command2execute;
+  mafString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonwExe.GetCStr();
-  command2execute.Append(" msfReconstructor.py ");
+  command2execute = m_PythonwExe;
+  command2execute.Append(_R(" msfReconstructor.py "));
 
-  wxString directoryWorkAround = m_IncomingCompletePath;
+  wxString directoryWorkAround = m_IncomingCompletePath.toWx();
   directoryWorkAround.Replace(" ", "?");
 
-  command2execute.Append(directoryWorkAround);
-  command2execute.Append(" ");
+  command2execute.Append(mafWxToString(directoryWorkAround));
+  command2execute.Append(_R(" "));
   command2execute.Append(xmlFile);
-  command2execute.Append(" ");
+  command2execute.Append(_R(" "));
 
-  wxString directoryWorkAroundMSF = m_MsfDir;
+  wxString directoryWorkAroundMSF = m_MsfDir.toWx();
   directoryWorkAroundMSF.Append("/");
   directoryWorkAroundMSF.Replace(" ", "?");
 
-  command2execute.Append(directoryWorkAroundMSF);
-  command2execute.Append(" ");
+  command2execute.Append(mafWxToString(directoryWorkAroundMSF));
+  command2execute.Append(_R(" "));
   if (m_DebugMode)
-    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+      mafLogMessage(_M(_R("Executing command: '") + command2execute + _R("'")));
 
-  long pid = wxExecute(command2execute, wxEXEC_SYNC);
+  long pid = wxExecute(command2execute.toWx(), wxEXEC_SYNC);
   
   wxSetWorkingDirectory(oldDir);
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+      mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
   return MAF_OK;
 }
@@ -1103,12 +1115,12 @@ wxArrayString lhpOpDownloadVMERefactor::GetChildURI(mafNode *node)
   int count;
   wxArrayString listChildURI;
   listChildURI.clear();
-  mafTagItem *tagChild = node->GetTagArray()->GetTag("L0000_resource_MAF_TreeInfo_VmeChildURI1");
+  mafTagItem *tagChild = node->GetTagArray()->GetTag(_R("L0000_resource_MAF_TreeInfo_VmeChildURI1"));
 
   if (tagChild == NULL)
     return listChildURI;
 
-  std::string listChild = tagChild->GetValue();
+  std::string listChild = tagChild->GetValue().GetCStr();
 
   if (listChild.rfind("dataresource") != std::string::npos)
   {
@@ -1135,11 +1147,11 @@ void lhpOpDownloadVMERefactor::GetLinkURI(mafNode *node)
 {
   wxString name;
   int count;
-  mafTagItem *linkChild = node->GetTagArray()->GetTag("L0000_resource_MAF_Procedural_VMElinkURI1");
+  mafTagItem *linkChild = node->GetTagArray()->GetTag(_R("L0000_resource_MAF_Procedural_VMElinkURI1"));
    if (linkChild == NULL)
      return;
 
-  std::string linkURI = linkChild->GetValue();
+  std::string linkURI = linkChild->GetValue().GetCStr();
 
   if (linkURI.rfind("dataresource") != std::string::npos)
   {
@@ -1175,52 +1187,51 @@ wxArrayString lhpOpDownloadVMERefactor::CheckRemoteLink(mafString URI)
 //-------------------------------------------------------------------
 {
   wxString oldDir = wxGetCwd();
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
   if (m_DebugMode)
-  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+      mafLogMessage(_M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
-  wxString command2execute;
+  mafString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonExe.GetCStr();
+  command2execute = m_PythonExe;
 
-  command2execute.Append("lhpReadRemoteTag.py ");
+  command2execute.Append(_R("lhpReadRemoteTag.py "));
   command2execute.Append(m_User->GetName());
-  command2execute.Append(" ");
+  command2execute.Append(_R(" "));
   command2execute.Append(m_User->GetPwd());
-  command2execute.Append(" ");
-  command2execute.Append(m_ServiceURL.GetCStr());
-  command2execute.Append(" ");
-  command2execute.Append(URI.GetCStr());
-  command2execute.Append(",");
-  command2execute.Append("L0000_resource_MAF_Procedural_VMElinkURI1");
+  command2execute.Append(_R(" "));
+  command2execute.Append(m_ServiceURL);
+  command2execute.Append(_R(" "));
+  command2execute.Append(URI);
+  command2execute.Append(_R(","));
+  command2execute.Append(_R("L0000_resource_MAF_Procedural_VMElinkURI1"));
 
   if (m_DebugMode)
-  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+      mafLogMessage(_M(_R("Executing command: '") + command2execute + _R("'")));
 
   wxArrayString output;
   wxArrayString errors;
   long pid = -1;
-  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
+  if (pid = wxExecute(command2execute.toWx(), output, errors, wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Error in lhpReadRemoteTag.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     if (m_DebugMode)
-      mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-      command2execute.c_str(), pid);
+        mafLogMessage(_M(_R("SYNC Command process '") + command2execute + _R("' terminated with exit code ") + mafToString(pid) + _R(".")));
     return MAF_ERROR;
   }
 
   if (m_DebugMode)
   {
-    mafLogMessage("Command Output Messages:");
+    mafLogMessage(_M("Command Output Messages:"));
     for (int i = 0; i < output.size(); i++)
     {
-      mafLogMessage(output[i]);
+        mafLogMessage(_M(mafWxToString(output[i])));
     }
 
-    mafLogMessage("Command Errors Messages:");
+    mafLogMessage(_M("Command Errors Messages:"));
     for (int i = 0; i < errors.size(); i++)
     {
-      mafLogMessage(errors[i]);
+        mafLogMessage(_M(mafWxToString(errors[i])));
     }
   }
 
@@ -1253,7 +1264,7 @@ wxArrayString lhpOpDownloadVMERefactor::CheckRemoteLink(mafString URI)
 
   wxSetWorkingDirectory(oldDir);
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+      mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
   return URIArray;
 }
 
@@ -1263,52 +1274,51 @@ bool lhpOpDownloadVMERefactor::CheckRemoteChild(mafString URI)
 {
   bool containChild = false;
   wxString oldDir = wxGetCwd();
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
   if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+      mafLogMessage(_M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
-  wxString command2execute;
+  mafString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonExe.GetCStr();
+  command2execute = m_PythonExe;
 
-  command2execute.Append("lhpReadRemoteTag.py ");
+  command2execute.Append(_R("lhpReadRemoteTag.py "));
   command2execute.Append(m_User->GetName());
-  command2execute.Append(" ");
+  command2execute.Append(_R(" "));
   command2execute.Append(m_User->GetPwd());
-  command2execute.Append(" ");
-  command2execute.Append(m_ServiceURL.GetCStr());
-  command2execute.Append(" ");
-  command2execute.Append(URI.GetCStr());
-  command2execute.Append(",");
-  command2execute.Append("L0000_resource_MAF_TreeInfo_VmeChildURI1");
+  command2execute.Append(_R(" "));
+  command2execute.Append(m_ServiceURL);
+  command2execute.Append(_R(" "));
+  command2execute.Append(URI);
+  command2execute.Append(_R(","));
+  command2execute.Append(_R("L0000_resource_MAF_TreeInfo_VmeChildURI1"));
 
   if (m_DebugMode)
-    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+      mafLogMessage(_M(_R("Executing command: '") + command2execute + _R("'")));
 
   wxArrayString output;
   wxArrayString errors;
   long pid = -1;
-  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
+  if (pid = wxExecute(command2execute.toWx(), output, errors, wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Error in lhpReadRemoteTag.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     if (m_DebugMode)
-      mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-      command2execute.c_str(), pid);
+        mafLogMessage(_M(_R("SYNC Command process '") + command2execute + _R("' terminated with exit code ") + mafToString(pid) + _R(".")));
     return MAF_ERROR;
   }
 
   if (m_DebugMode)
   {
-    mafLogMessage("Command Output Messages:");
+    mafLogMessage(_M("Command Output Messages:"));
     for (int i = 0; i < output.size(); i++)
     {
-      mafLogMessage(output[i]);
+        mafLogMessage(_M(mafWxToString(output[i])));
     }
 
-    mafLogMessage("Command Errors Messages:");
+    mafLogMessage(_M("Command Errors Messages:"));
     for (int i = 0; i < errors.size(); i++)
     {
-      mafLogMessage(errors[i]);
+        mafLogMessage(_M(mafWxToString(errors[i])));
     }
   }
 
@@ -1318,7 +1328,7 @@ bool lhpOpDownloadVMERefactor::CheckRemoteChild(mafString URI)
 
   wxSetWorkingDirectory(oldDir);
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+      mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
   return containChild;
 }
 //-------------------------------------------------------------------
@@ -1327,63 +1337,62 @@ bool lhpOpDownloadVMERefactor::CheckIsRoot(mafString URI)
 {
   bool isRoot = false;
   wxString oldDir = wxGetCwd();
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
   if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+      mafLogMessage(_M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
-  wxString command2execute;
+  mafString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonExe.GetCStr();
+  command2execute = m_PythonExe;
 
-  command2execute.Append("lhpReadRemoteTag.py ");
+  command2execute.Append(_R("lhpReadRemoteTag.py "));
   command2execute.Append(m_User->GetName());
-  command2execute.Append(" ");
+  command2execute.Append(_R(" "));
   command2execute.Append(m_User->GetPwd());
-  command2execute.Append(" ");
-  command2execute.Append(m_ServiceURL.GetCStr());
-  command2execute.Append(" ");
-  command2execute.Append(URI.GetCStr());
-  command2execute.Append(",");
-  command2execute.Append("L0000_resource_MAF_VmeType");
+  command2execute.Append(_R(" "));
+  command2execute.Append(m_ServiceURL);
+  command2execute.Append(_R(" "));
+  command2execute.Append(URI);
+  command2execute.Append(_R(","));
+  command2execute.Append(_R("L0000_resource_MAF_VmeType"));
 
   if (m_DebugMode)
-    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+      mafLogMessage(_M(_R("Executing command: '") + command2execute + _R("'")));
 
   wxArrayString output;
   wxArrayString errors;
   long pid = -1;
-  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
+  if (pid = wxExecute(command2execute.toWx(), output, errors, wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Error in lhpReadRemoteTag.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     if (m_DebugMode)
-      mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-      command2execute.c_str(), pid);
+        mafLogMessage(_M(_R("SYNC Command process '") + command2execute + _R("' terminated with exit code ") + mafToString(pid) + _R(".")));
     return MAF_ERROR;
   }
 
   if (m_DebugMode)
   {
-    mafLogMessage("Command Output Messages:");
+    mafLogMessage(_M("Command Output Messages:"));
     for (int i = 0; i < output.size(); i++)
     {
-      mafLogMessage(output[i]);
+        mafLogMessage(_M(mafWxToString(output[i])));
     }
 
-    mafLogMessage("Command Errors Messages:");
+    mafLogMessage(_M("Command Errors Messages:"));
     for (int i = 0; i < errors.size(); i++)
     {
-      mafLogMessage(errors[i]);
+        mafLogMessage(_M(mafWxToString(errors[i])));
     }
   }
 
-  wxString child= output[output.size() - 1];
-  if (child.CompareTo("mafVMERoot") == 0)
+  mafString child= mafWxToString(output[output.size() - 1]);
+  if (child == _R("mafVMERoot"))
     isRoot = true;
 
 
   wxSetWorkingDirectory(oldDir);
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+      mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
   return isRoot;
 }
 //-------------------------------------------------------------------
@@ -1393,10 +1402,10 @@ int lhpOpDownloadVMERefactor::ImportMSF(mafNode *parentNode)
   //msf name is standard: outputMSF.msf
   mafString msfFileName;
   msfFileName.Append(m_IncomingCompletePath);
-  msfFileName.Append("outputMAF.msf");
+  msfFileName.Append(_R("outputMAF.msf"));
   msfFileName.ParsePathName();
 
-  if (!wxFileExists(msfFileName.GetCStr()))
+  if (!mafFileExists(msfFileName))
   {
     return MAF_ERROR;
   }
@@ -1405,14 +1414,14 @@ int lhpOpDownloadVMERefactor::ImportMSF(mafNode *parentNode)
   mafNodeManager manager;
   storage = mafVMEStorage::New();
   storage->SetManager(&manager);
-  storage->SetURL(msfFileName.GetCStr());
+  storage->SetURL(msfFileName);
 
   int res = storage->Restore();
   if (res != MAF_OK)
   {
     // if some problems occurred during import give feedback to the user
     if (!m_TestMode)
-      mafErrorMessage(_("Errors during file parsing! Look the log area for error messages."));
+      mafErrorMessage(_M(mafString(_L("Errors during file parsing! Look the log area for error messages."))));
     return MAF_ERROR;
   }
   mafVMERoot *root = mafVMERoot::SafeDownCast(manager.GetRoot());
@@ -1425,9 +1434,9 @@ int lhpOpDownloadVMERefactor::ImportMSF(mafNode *parentNode)
     mafNEW(m_RootGroup);
     //copy tags from Root downloaded to new group.
     m_RootGroup->GetTagArray()->DeepCopy(root->GetTagArray());
-    mafString label = "MSF from repository: ";
+    mafString label = _R("MSF from repository: ");
     label.Append(root->GetName());
-    m_RootGroup->SetName(label.GetCStr());
+    m_RootGroup->SetName(label);
     m_RootGroup->ReparentTo(m_Input);
     m_DownloadedNodeVector.push_back(m_RootGroup);
     if (DownloadTree(root) != MAF_OK)
@@ -1458,7 +1467,7 @@ int lhpOpDownloadVMERefactor::ImportMSF(mafNode *parentNode)
   if (m_Group == NULL && !m_WholeMsfDownload)
   {
     mafNEW(m_Group);
-    m_Group->SetName("Downloaded from repository");
+    m_Group->SetName(_R("Downloaded from repository"));
     m_Group->ReparentTo(m_Input);
   }
    
@@ -1502,59 +1511,66 @@ void lhpOpDownloadVMERefactor::UpdateBinaryFile()
     m_Input->GetRoot()->OnEvent(&es);
     mafVMEStorage *storage = mafVMEStorage::SafeDownCast(es.GetStorage());
     mafString newMSFFileName = storage->GetURL();
-    wxString oldItemURL, newItemURL, tmpURL;
-    wxString path, name, ext;
-    wxString oldItemPath, oldItemName, oldItemExt;
+    mafString oldItemURL, newItemURL, tmpURL;
+    mafString path, name, ext;
+    mafString oldItemPath, oldItemName, oldItemExt;
 
    
-    wxSplitPath(newMSFFileName.GetCStr(), &path, &name, &ext);
+    mafSplitPath(newMSFFileName, &path, &name, &ext);
     it = dv->Begin();
     mafVMEItem *item=it->second;
-    oldItemURL = item->GetURL();
-    wxSplitPath(oldItemURL, &oldItemPath, &oldItemName, &oldItemExt);
+    oldItemURL = _R(item->GetURL());
+    mafSplitPath(oldItemURL, &oldItemPath, &oldItemName, &oldItemExt);
 
     dv->UpdateVectorId();
     item->UpdateItemId();
     int newId = item->GetId();
 
-    newItemURL = name << '.' << newId << '.' << oldItemExt;
+    newItemURL = name + _R(".") + mafToString(newId) + _R(".") + oldItemExt;
     //item->SetURL(newItemURL);        
    
-    wxString absOldItemURL = m_IncomingCompletePath.GetCStr();
-    absOldItemURL += oldItemURL.c_str();
-    wxString absNewItemURL = path;
-    absNewItemURL += "/";
-    absNewItemURL += newItemURL.c_str();
+    mafString absOldItemURL = m_IncomingCompletePath;
+    absOldItemURL += oldItemURL;
+    mafString absNewItemURL = path;
+    absNewItemURL += _R("/");
+    absNewItemURL += newItemURL;
 
     //Call python module to copy binary data when downloaded
     wxString oldDir = wxGetCwd();
-    wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+    wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
     if (m_DebugMode)
-      mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+        mafLogMessage(_M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
-    wxString command2execute;
-    command2execute.Clear();
-    command2execute = m_PythonwExe.GetCStr();
+    mafString command2execute;
+    command2execute = m_PythonwExe;
 
-    command2execute.Append("binaryImporter.py ");
-    command2execute.Append("false"); //false if it is not animated
-    command2execute.Append(" ");
+    command2execute.Append(_R("binaryImporter.py "));
+    command2execute.Append(_R("false")); //false if it is not animated
+    command2execute.Append(_R(" "));
 
-    absOldItemURL.Replace(" ", "???");
+    {
+        wxString tmp = absOldItemURL.toWx();
+        tmp.Replace(" ", "???");
+        absOldItemURL = mafWxToString(tmp);
+    }
     command2execute.Append(absOldItemURL);
 
-    command2execute.Append(" ");
+    command2execute.Append(_R(" "));
 
-    absNewItemURL.Replace(" ", "???");
+    {
+        wxString tmp = absNewItemURL.toWx();
+        tmp.Replace(" ", "???");
+        absNewItemURL = mafWxToString(tmp);
+    }
     command2execute.Append(absNewItemURL);
 
     if (m_DebugMode)
-      mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
-    m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
+        mafLogMessage(_M(_R("Executing command: '") + command2execute + _R("'")));
+    m_Pid = wxExecute(command2execute.toWx(), wxEXEC_ASYNC);
     wxSetWorkingDirectory(oldDir);
  
     if (m_DebugMode)
-      mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+      mafLogMessage( _M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")) );
   }
   
 }
@@ -1571,46 +1587,46 @@ void lhpOpDownloadVMERefactor::UpdateBinaryFile()
     m_Input->GetRoot()->OnEvent(&es);
     mafVMEStorage *storage = mafVMEStorage::SafeDownCast(es.GetStorage());
     mafString newMSFFileName = storage->GetURL();
-    wxString path, name, ext;
-    wxString oldArchiveURL, newArchiveURL, tmpURL;
-    wxString oldItemURL, oldItemExt, oldItemPath, newItemURL;
-    wxString oldArchivePath, oldArchiveName, oldArchiveExt;
+    mafString path, name, ext;
+    mafString oldArchiveURL, newArchiveURL, tmpURL;
+    mafString oldItemURL, oldItemExt, oldItemPath, newItemURL;
+    mafString oldArchivePath, oldArchiveName, oldArchiveExt;
     
-    wxSplitPath(newMSFFileName.GetCStr(), &path, &name, &ext);
+    mafSplitPath(newMSFFileName, &path, &name, &ext);
     it = dv->Begin();
     mafVMEItem *item=it->second;
     //oldArchiveURL = item->GetArchiveFileName();
-    wxSplitPath(oldArchiveURL, &oldArchivePath, &oldArchiveName, &oldArchiveExt);
+    mafSplitPath(oldArchiveURL, &oldArchivePath, &oldArchiveName, &oldArchiveExt);
     dv->UpdateVectorId();
     int newId = dv->GetVectorID();
 
     newArchiveURL = name;
-    newArchiveURL += '.';
-    newArchiveURL += mafString(newId);
-    newArchiveURL += '.';
+    newArchiveURL += _R(".");
+    newArchiveURL += mafToString(newId);
+    newArchiveURL += _R(".");
     newArchiveURL += oldArchiveExt;
 
     //item->SetArchiveFileName(mafString(newArchiveURL.c_str()));
     
 
-    wxString absOldArchiveURL = m_IncomingCompletePath.GetCStr();
-    absOldArchiveURL += oldArchiveURL;
+    wxString absOldArchiveURL = m_IncomingCompletePath.toWx();
+    absOldArchiveURL += oldArchiveURL.toWx();
 
-    wxString absNewArchiveURL = path;
-    absNewArchiveURL += '/';
-    absNewArchiveURL += newArchiveURL;
+    wxString absNewArchiveURL = path.toWx();
+    absNewArchiveURL += wxT('/');
+    absNewArchiveURL += newArchiveURL.toWx();
 
     for (it = dv->Begin(); it!= dv->End(); it++)
     {
       mafVMEItem *item=it->second;
-      oldItemURL = item->GetURL();
-      wxSplitPath(oldItemURL, &oldItemPath, &oldItemURL, &oldItemExt);
+      oldItemURL = _R(item->GetURL());
+      mafSplitPath(oldItemURL, &oldItemPath, &oldItemURL, &oldItemExt);
       item->UpdateItemId();
       newId = item->GetId();
       newItemURL = name;
-      newItemURL += '.';
-      newItemURL += mafString(newId);
-      newItemURL += '.';
+      newItemURL += _R(".");
+      newItemURL += mafToString(newId);
+      newItemURL += _R(".");
       newItemURL += oldItemExt;
       //item->SetURL(newItemURL);
       //item->SetArchiveFileName(mafString(newArchiveURL.c_str()));
@@ -1618,35 +1634,35 @@ void lhpOpDownloadVMERefactor::UpdateBinaryFile()
 
     //Call python module to copy binary data when downloaded
     wxString oldDir = wxGetCwd();
-    wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+    wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
     if (m_DebugMode)
-      mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+        mafLogMessage(_M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
-    wxString command2execute;
+    mafString command2execute;
     command2execute.Clear();
-    command2execute = m_PythonwExe.GetCStr();
+    command2execute = m_PythonwExe;
 
-    command2execute.Append("binaryImporter.py ");
-    command2execute.Append("true"); //true if it is animated
-    command2execute.Append(" ");
+    command2execute.Append(_R("binaryImporter.py "));
+    command2execute.Append(_R("true")); //true if it is animated
+    command2execute.Append(_R(" "));
 
 
     absOldArchiveURL.Replace(" ", "???");
-    command2execute.Append(absOldArchiveURL);
-    command2execute.Append(" ");
+    command2execute.Append(mafWxToString(absOldArchiveURL));
+    command2execute.Append(_R(" "));
 
     absNewArchiveURL.Replace(" ", "???");
-    command2execute.Append(absNewArchiveURL);
+    command2execute.Append(mafWxToString(absNewArchiveURL));
     if (m_DebugMode)
-      mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+        mafLogMessage(_M(_R("Executing command: '") + command2execute + _R("'")));
 
     if (m_DebugMode)
-      mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
-    m_Pid = wxExecute(command2execute, wxEXEC_ASYNC);
+        mafLogMessage(_M(_R("Executing command: '") + command2execute + _R("'")));
+    m_Pid = wxExecute(command2execute.toWx(), wxEXEC_ASYNC);
     wxSetWorkingDirectory(oldDir);
 
     if (m_DebugMode)
-      mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+        mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
   }
 }
 
@@ -1658,54 +1674,53 @@ int lhpOpDownloadVMERefactor::DownloadCheck(bool failed)
   for (int m = 0; m < m_CheckURIVector.size(); m++)
   {
     if (m != 0)
-      checkParameter.Append(":");
+      checkParameter.Append(_R(":"));
     if (m == m_DownloadedURIVector.size()-1 && failed)
     {
       //if failed, last VME genereted an error
       checkParameter.Append(m_CheckURIVector[m]);
-      checkParameter.Append(",");
-      checkParameter.Append("error");
+      checkParameter.Append(_R(","));
+      checkParameter.Append(_R("error"));
     }
     else
     {
       checkParameter.Append(m_CheckURIVector[m]);
-      checkParameter.Append(",");
-      checkParameter.Append("success");
+      checkParameter.Append(_R(","));
+      checkParameter.Append(_R("success"));
     }
   }
 
   wxString oldDir = wxGetCwd();
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
   if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+      mafLogMessage(_M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
-  wxString command2execute;
+  mafString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonwExe.GetCStr();
+  command2execute = m_PythonwExe;
 
-  command2execute.Append("lhpDownloadVmeCheck.py ");
+  command2execute.Append(_R("lhpDownloadVmeCheck.py "));
   command2execute.Append(m_User->GetName());
-  command2execute.Append(" ");
+  command2execute.Append(_R(" "));
   command2execute.Append(m_User->GetPwd());
-  command2execute.Append(" ");
-  command2execute.Append(m_ServiceURL.GetCStr());
-  command2execute.Append(" ");
-  command2execute.Append(checkParameter.GetCStr());
+  command2execute.Append(_R(" "));
+  command2execute.Append(m_ServiceURL);
+  command2execute.Append(_R(" "));
+  command2execute.Append(checkParameter);
   if (m_DebugMode)
-    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+      mafLogMessage(_M(_R("Executing command: '") + command2execute + _R("'")));
 
   long pid = -1;
-  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  if (pid = wxExecute(command2execute.toWx(), wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Error in lhpDownloadVmeCheck.py", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
-    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-      command2execute.c_str(), pid);
+    mafLogMessage(_M(_R("SYNC Command process '") + command2execute + _R("' terminated with exit code ") + mafToString(pid) + _R(".")));
     return MAF_ERROR;
   }
 
   wxSetWorkingDirectory(oldDir);
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+      mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
   return MAF_OK;
 }
@@ -1717,39 +1732,39 @@ bool lhpOpDownloadVMERefactor::IsLHPBuilderVersionUpToDate()
   wxBusyInfo("Checking if  your software is up-to-date in order to upload, please wait...");
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+      mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
   if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
-  
+      mafLogMessage(_M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
+
   // get application name
   mafEvent eventGetApplicationName;
   eventGetApplicationName.SetSender(this);
   eventGetApplicationName.SetId(ID_REQUEST_APPLICATION_NAME);
   mafEventMacro(eventGetApplicationName);
-  mafString appName = eventGetApplicationName.GetString()->GetCStr();  
+  mafString appName = *eventGetApplicationName.GetString();
 
   // get manual tags
-  wxString command2execute;
+  mafString command2execute;
   command2execute.Clear();
-  command2execute = m_PythonwExe.GetCStr();
-  command2execute.Append(" lhpDictionaryVersionChecker.py ");
-  command2execute.Append(appName.GetCStr());
-  command2execute.Append(" ");
-  if( !m_ProxyURL.Equals("") )
+  command2execute = m_PythonwExe;
+  command2execute.Append(_R(" lhpDictionaryVersionChecker.py "));
+  command2execute.Append(appName);
+  command2execute.Append(_R(" "));
+  if( !m_ProxyURL.IsEmpty() )
   {
-    command2execute.Append(m_ProxyURL.GetCStr());
-    command2execute.Append(" ");
-    command2execute.Append(m_ProxyPort.GetCStr());
+    command2execute.Append(m_ProxyURL);
+    command2execute.Append(_R(" "));
+    command2execute.Append(m_ProxyPort);
   }
 
   if (m_DebugMode)
-    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+      mafLogMessage(_M(_R("Executing command: '") + command2execute + _R("'")));
 
   wxArrayString output;
   wxArrayString errors;
   long pid = -1;
-  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
+  if (pid = wxExecute(command2execute.toWx(), output, errors, wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Error in lhpDictionaryVersionChecker.py. Download stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     return MAF_ERROR;
@@ -1757,16 +1772,16 @@ bool lhpOpDownloadVMERefactor::IsLHPBuilderVersionUpToDate()
 
   if (m_DebugMode)
   {
-    mafLogMessage("Command Output Messages:");
+    mafLogMessage(_M("Command Output Messages:"));
     for (int i = 0; i < output.size(); i++)
     {
-      mafLogMessage(output[i]);
+        mafLogMessage(_M(mafWxToString(output[i])));
     }
 
-    mafLogMessage("Command Errors Messages:");
+    mafLogMessage(_M("Command Errors Messages:"));
     for (int i = 0; i < errors.size(); i++)
     {
-      mafLogMessage(errors[i]);
+        mafLogMessage(_M(mafWxToString(errors[i])));
     }
   }
   
@@ -1775,7 +1790,7 @@ bool lhpOpDownloadVMERefactor::IsLHPBuilderVersionUpToDate()
 
   wxSetWorkingDirectory(oldDir);
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+      mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
   if (result == "UpToDate")
   {

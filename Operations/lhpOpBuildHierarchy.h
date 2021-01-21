@@ -69,7 +69,7 @@ public:
     void      SetName(wxString const *str) {delete m_name; m_name = new wxString(*str);}
   };
 
-  lhpOpBuildHierarchy(const mafString& label = "BuildHierarchy");
+  lhpOpBuildHierarchy(const mafString& label = _R("BuildHierarchy"));
  ~lhpOpBuildHierarchy(); 
 
   virtual void OnEvent(mafEventBase *maf_event);
@@ -82,7 +82,7 @@ public:
   void CreateGui();
 
   /** Load links from file. */
-  bool  ReadFromFile(const wxString &sFName);  
+  bool  ReadFromFile(const mafString &sFName);  
 
 protected: 
 

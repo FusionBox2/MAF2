@@ -39,7 +39,7 @@ class lhpOpFingerStick: public mafOp
 {
 public:
   mafTypeMacro(lhpOpFingerStick, mafOp)
-  lhpOpFingerStick(const mafString& label = "");
+  lhpOpFingerStick(const mafString& label = _R(""));
  ~lhpOpFingerStick(); 
 
  virtual void OnEvent(mafEventBase *maf_event);
@@ -106,7 +106,7 @@ protected:
   void SetNodeName(mafVME *pVME, mafString *pName);
   ///work variables
   double           m_LocalTip[4];
-  wxString         m_NewLandmarkName;
+  mafString        m_NewLandmarkName;
   vtkWeightedLandmarkTransform *m_RegisterTransform;
 
 private:

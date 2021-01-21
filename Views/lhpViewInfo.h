@@ -45,7 +45,7 @@ class mafSceneGraph;
 class lhpViewInfo: public mafView
 {
 public:
-  lhpViewInfo(const mafString& label = "Info view");
+  lhpViewInfo(const mafString& label = _R("Info view"));
   virtual ~lhpViewInfo(); 
 
   mafTypeMacro(lhpViewInfo, mafView);

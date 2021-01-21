@@ -1394,27 +1394,27 @@ void  mafViewIntGraphWindow::RemGraphData(const mafGraphData *pGraphData)
 void mafViewIntGraphWindow::CreateGui()
 //----------------------------------------------------------------------------
 {
-  static mafString choices[] = {wxString("Default"),wxString("Decorative"), wxString("Roman"), wxString("Script"), wxString("Swiss"), wxString("Modern")};
+  static mafString choices[] = {_R("Default"),_R("Decorative"), _R("Roman"), _R("Script"), _R("Swiss"), _R("Modern")};
   m_Gui = new mafGUI(this);
 
-  m_Gui->Label("Grid");
-  m_Gui->Bool   (ID_SHOW_ROUGH_GRID  ,"Rough"       , &(m_RoughGrid),0);
-  m_Gui->Bool   (ID_SHOW_PRECISE_GRID,"Precise"     , &(m_PreciseGrid),0);
+  m_Gui->Label(_R("Grid"));
+  m_Gui->Bool   (ID_SHOW_ROUGH_GRID  ,_R("Rough")       , &(m_RoughGrid),0);
+  m_Gui->Bool   (ID_SHOW_PRECISE_GRID,_R("Precise")     , &(m_PreciseGrid),0);
 
-  m_Gui->Label("Font");
-  m_Gui->Integer(ID_TITLE_FONTSIZE , "Legend"  , &m_TitleFontSize, 3, 50); 
-  m_Gui->Combo  (ID_TICK_FONTFAMILY, "Legend", (int *)&m_TitleFontFamily, mafFF_LAST, choices);
+  m_Gui->Label(_R("Font"));
+  m_Gui->Integer(ID_TITLE_FONTSIZE , _R("Legend")  , &m_TitleFontSize, 3, 50); 
+  m_Gui->Combo  (ID_TICK_FONTFAMILY, _R("Legend"), (int *)&m_TitleFontFamily, mafFF_LAST, choices);
 
-  m_Gui->Integer(ID_TITLE_FONTSIZE , "Ticks"  , &m_TickFontSize, 3, 50); 
-  m_Gui->Combo  (ID_TICK_FONTFAMILY, "Ticks", (int *)&m_TickFontFamily, mafFF_LAST, choices);
+  m_Gui->Integer(ID_TITLE_FONTSIZE , _R("Ticks")  , &m_TickFontSize, 3, 50); 
+  m_Gui->Combo  (ID_TICK_FONTFAMILY, _R("Ticks"), (int *)&m_TickFontFamily, mafFF_LAST, choices);
 
-  m_Gui->Label("Thickness");
-  m_Gui->Slider (ID_THICK_CURVE    , "Curves", &m_CurveThickness, 1, 5);
-  m_Gui->Slider (ID_THICK_AXIS     , "Axes", &m_AxisThickness , 1, 5);
-  m_Gui->Slider (ID_THICK_GRID     , "Grid", &m_GridThickness , 1, 5);
-  m_Gui->Bool   (ID_FORCE_YRANGES, "Force ranges", &m_ForceRanges);
-  m_Gui->Double(ID_YMINRANGE, "Y Min", &m_YForceMin);
-  m_Gui->Double(ID_YMAXRANGE, "Y Min", &m_YForceMax);
+  m_Gui->Label(_R("Thickness"));
+  m_Gui->Slider (ID_THICK_CURVE    , _R("Curves"), &m_CurveThickness, 1, 5);
+  m_Gui->Slider (ID_THICK_AXIS     , _R("Axes"), &m_AxisThickness , 1, 5);
+  m_Gui->Slider (ID_THICK_GRID     , _R("Grid"), &m_GridThickness , 1, 5);
+  m_Gui->Bool   (ID_FORCE_YRANGES, _R("Force ranges"), &m_ForceRanges);
+  m_Gui->Double(ID_YMINRANGE, _R("Y Min"), &m_YForceMin);
+  m_Gui->Double(ID_YMAXRANGE, _R("Y Min"), &m_YForceMax);
   m_Gui->Update();
 }
 

@@ -67,7 +67,7 @@ public:
   void SetTimeStamp(mafTimeStamp t);
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString("lhpVisualPipeSurfaceScalar");};
+  virtual mafString GetVisualPipe() {return mafString(_R("lhpVisualPipeSurfaceScalar"));};
 
   /** Return pointer to material attribute. */
   mmaMaterial *GetMaterial();

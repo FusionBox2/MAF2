@@ -229,7 +229,7 @@ class lhpOpMove : public medOpMove
 public:
   mafTypeMacro(lhpOpMove, medOpMove)
 
-  lhpOpMove(const mafString& label = "Move\tCtrl+T"):Superclass(label){}
+  lhpOpMove(const mafString& label = _R("Move\tCtrl+T")):Superclass(label){}
   //----------------------------------------------------------------------------
   mafOp* Copy()   
     //----------------------------------------------------------------------------
@@ -263,7 +263,7 @@ class lhpOpMoveSeq : public lhpOpMove
 {
 public:
   mafTypeMacro(lhpOpMoveSeq, lhpOpMove)
-  lhpOpMoveSeq(const mafString& label = "Move Sequence"):Superclass(label){m_EnableScaling = 0;}
+  lhpOpMoveSeq(const mafString& label = _R("Move Sequence")):Superclass(label){m_EnableScaling = 0;}
   mafOp* Copy()   
     //----------------------------------------------------------------------------
   {
@@ -282,7 +282,7 @@ class lhpOpCreateLMCLines: public mafOp
 {
 public:
   mafTypeMacro(lhpOpCreateLMCLines, mafOp);
-  lhpOpCreateLMCLines(const mafString& label = "CreateObject"):Superclass(label)
+  lhpOpCreateLMCLines(const mafString& label = _R("CreateObject")):Superclass(label)
   {
     m_OpType  = OPTYPE_OP;
     m_Canundo = true;
@@ -299,7 +299,7 @@ public:
   void OpRun()
   {
     mafNEW(m_Created);
-    m_Created->SetName("Cloud lines");
+    m_Created->SetName(_R("Cloud lines"));
     m_Output = m_Created;
     mafEventMacro(mafEvent(this,OP_RUN_OK));
   }
@@ -507,60 +507,60 @@ bool lhpFusionBoxApp::OnInit()
     RegKey.Create();
     wxString revision;
     RegKey.QueryValue(wxString("DisplayVersion"), revision);
-    m_Logic->SetRevision(revision);
+    m_Logic->SetRevision(mafWxToString(revision));
   }
   else
   {
-    wxString revision="0.1";
+    mafString revision=_R("0.1");
     m_Logic->SetRevision(revision);
   }
   //------------------------- Editors -------------------------
-  m_Logic->Plug(new mafOpDelete(_("Delete   \tCtrl+Shift+D")), "");
-  m_Logic->Plug(new mafOpCut(_("Cut   \tCtrl+Shift+X")), "");
-  m_Logic->Plug(new mafOpCopy(_("Copy  \tCtrl+Shift+C")), "");
-  m_Logic->Plug(new mafOpPaste(_("Paste \tCtrl+Shift+V")), "");
+  m_Logic->Plug(new mafOpDelete(_L("Delete   \tCtrl+Shift+D")), _R(""));
+  m_Logic->Plug(new mafOpCut(_L("Cut   \tCtrl+Shift+X")), _R(""));
+  m_Logic->Plug(new mafOpCopy(_L("Copy  \tCtrl+Shift+C")), _R(""));
+  m_Logic->Plug(new mafOpPaste(_L("Paste \tCtrl+Shift+V")), _R(""));
   //------------------------- Importers -------------------------
-  m_Logic->Plug(new mafOpImporterSTL("STL"),"Geometries");
-  m_Logic->Plug(new mafOpImporterMSF("MSF"),"Other");
-  m_Logic->Plug(new medOpImporterLandmark("Landmark"),"Motion Analysis");
-  m_Logic->Plug(new lhpOpINPImporter("INP/INP_AF"), "Geometries");
-  m_Logic->Plug(new lhpOpImporterC3DBTK("C3D BTK"),"Motion Analysis");  
+  m_Logic->Plug(new mafOpImporterSTL(_R("STL")),_R("Geometries"));
+  m_Logic->Plug(new mafOpImporterMSF(_R("MSF")),_R("Other"));
+  m_Logic->Plug(new medOpImporterLandmark(_R("Landmark")),_R("Motion Analysis"));
+  m_Logic->Plug(new lhpOpINPImporter(_R("INP/INP_AF")), _R("Geometries"));
+  m_Logic->Plug(new lhpOpImporterC3DBTK(_R("C3D BTK")),_R("Motion Analysis"));  
   if(C3DLib)
-    m_Logic->Plug(new lhpOpImporterC3D("C3D"),"Motion Analysis");  
-  m_Logic->Plug(new lhpOpKinectUtil(false, "Kinect Full",  true, true, true ),"Motion Analysis");  
-  m_Logic->Plug(new lhpOpKinectUtil(false, "Kinect Lower", true, true, false),"Motion Analysis");  
-  m_Logic->Plug(new lhpOpKinectUtil(false, "Kinect Upper", true, false, true),"Motion Analysis");  
-  m_Logic->Plug(new lhpOpKinectUtil(true, "Kinect App Full",  true, true, true ),"Motion Analysis");  
-  m_Logic->Plug(new lhpOpKinectUtil(true, "Kinect App Lower", true, true, false),"Motion Analysis");  
-  m_Logic->Plug(new lhpOpKinectUtil(true, "Kinect App Upper", true, false, true),"Motion Analysis");  
+    m_Logic->Plug(new lhpOpImporterC3D(_R("C3D")),_R("Motion Analysis"));  
+  m_Logic->Plug(new lhpOpKinectUtil(false, _R("Kinect Full"),  true, true, true ),_R("Motion Analysis"));  
+  m_Logic->Plug(new lhpOpKinectUtil(false, _R("Kinect Lower"), true, true, false),_R("Motion Analysis"));  
+  m_Logic->Plug(new lhpOpKinectUtil(false, _R("Kinect Upper"), true, false, true),_R("Motion Analysis"));  
+  m_Logic->Plug(new lhpOpKinectUtil(true, _R("Kinect App Full"),  true, true, true ),_R("Motion Analysis"));  
+  m_Logic->Plug(new lhpOpKinectUtil(true, _R("Kinect App Lower"), true, true, false),_R("Motion Analysis"));  
+  m_Logic->Plug(new lhpOpKinectUtil(true, _R("Kinect App Upper"), true, false, true),_R("Motion Analysis"));  
 
 
-  m_Logic->Plug(new lhpOpCreateObject<lhpVMEKMInfo>("lhpVMEKMInfo", "lhpVMEKMInfo"),"Create/New");
+  m_Logic->Plug(new lhpOpCreateObject<lhpVMEKMInfo>(_R("lhpVMEKMInfo"), _R("lhpVMEKMInfo")),_R("Create/New"));
 
   //-------------------------------------------------------------
 
   //------------------------- Exporters -------------------------
-  m_Logic->Plug(new mafOpExporterSTL("STL"),"Geometries");
-  m_Logic->Plug(new lhpOpINPExporter("INP"),"Geometries");
-  m_Logic->Plug(new medOpExporterLandmark("Landmark"), "Motion Analysis");
-  m_Logic->Plug(new lhpOpExporterC3DBTK("C3D BTK"),"Motion Analysis");  
+  m_Logic->Plug(new mafOpExporterSTL(_R("STL")),_R("Geometries"));
+  m_Logic->Plug(new lhpOpINPExporter(_R("INP")),_R("Geometries"));
+  m_Logic->Plug(new medOpExporterLandmark(_R("Landmark")), _R("Motion Analysis"));
+  m_Logic->Plug(new lhpOpExporterC3DBTK(_R("C3D BTK")),_R("Motion Analysis"));  
 
   //------------------------- Operations -------------------------
-  m_Logic->Plug(new mafOpCreateGroup("Group"),"Create/New");
+  m_Logic->Plug(new mafOpCreateGroup(_R("Group")),_R("Create/New"));
 
-  m_Logic->Plug(new mafOpReparentTo("Reparent to...  \tCtrl+R"),"Modify/Fuse");
-  m_Logic->Plug(new mafOpReparentTo("Local reparent to...", false),"Modify/Fuse");
+  m_Logic->Plug(new mafOpReparentTo(_R("Reparent to...  \tCtrl+R")),_R("Modify/Fuse"));
+  m_Logic->Plug(new mafOpReparentTo(_R("Local reparent to..."), false),_R("Modify/Fuse"));
 
   if(fullVersion)
   {
-    m_Logic->Plug(new mafOpCreateRefSys("Refsys"),"Create/New");
-    m_Logic->Plug(new medOpRegisterClusters("Register Landmark Cloud"),"Modify/Fuse");
-    m_Logic->Plug(new lhpOpFuseLMScripted("Fuse LM based model"),"Modify/Fuse");
-    m_Logic->Plug(new lhpOpRegisterLMScripted("Register Landmark Cloud Tree"),"Modify/Fuse");
-    m_Logic->Plug(new lhpOpAFSys("AFRefsys"),"Create/Derive");
-    m_Logic->Plug(new lhpOpKinectAFs("Kinect Refsys"),"Create/Derive");
+    m_Logic->Plug(new mafOpCreateRefSys(_R("Refsys")),_R("Create/New"));
+    m_Logic->Plug(new medOpRegisterClusters(_R("Register Landmark Cloud")),_R("Modify/Fuse"));
+    m_Logic->Plug(new lhpOpFuseLMScripted(_R("Fuse LM based model")),_R("Modify/Fuse"));
+    m_Logic->Plug(new lhpOpRegisterLMScripted(_R("Register Landmark Cloud Tree")),_R("Modify/Fuse"));
+    m_Logic->Plug(new lhpOpAFSys(_R("AFRefsys")),_R("Create/Derive"));
+    m_Logic->Plug(new lhpOpKinectAFs(_R("Kinect Refsys")),_R("Create/Derive"));
 
-    m_Logic->Plug(new lhpOpKinectModel("KinectModel"),"Modify");  
+    m_Logic->Plug(new lhpOpKinectModel(_R("KinectModel")),_R("Modify"));  
 
   }
 
@@ -568,71 +568,71 @@ bool lhpFusionBoxApp::OnInit()
   bool view_visibility = 0;//fullVersion;
   //------------------------- Views -------------------------
   //View Arbitrary Slice
-  mafViewArbitrarySlice *ArbitraryView = new mafViewArbitrarySlice("Arbitrary");
+  mafViewArbitrarySlice *ArbitraryView = new mafViewArbitrarySlice(_R("Arbitrary"));
   ArbitraryView->PackageView();
   m_Logic->Plug(ArbitraryView, view_visibility);
 
 
   // View DRR
-  mafViewVTK *vdrr = new mafViewVTK("DRR");
-  vdrr->PlugVisualPipe("mafVMEVolumeGray","medPipeVolumeDRR",MUTEX);
-  vdrr->PlugVisualPipe("mafVMEVolumeLarge","medPipeVolumeDRR",MUTEX);
+  mafViewVTK *vdrr = new mafViewVTK(_R("DRR"));
+  vdrr->PlugVisualPipe(_R("mafVMEVolumeGray"),_R("medPipeVolumeDRR"),MUTEX);
+  vdrr->PlugVisualPipe(_R("mafVMEVolumeLarge"),_R("medPipeVolumeDRR"),MUTEX);
   m_Logic->Plug(vdrr, view_visibility);
 
   // View Analog graph
-  mafViewVTK *graph = new mafViewVTK("Analog Graph", CAMERA_PERSPECTIVE, false);
-  graph->PlugVisualPipe("medVMEAnalog", "medPipeGraph",MUTEX);
+  mafViewVTK *graph = new mafViewVTK(_R("Analog Graph"), CAMERA_PERSPECTIVE, false);
+  graph->PlugVisualPipe(_R("medVMEAnalog"), _R("medPipeGraph"),MUTEX);
   m_Logic->Plug(graph, view_visibility);
 
   //View Global Slice
-  mafViewGlobalSliceCompound *GlobalSlice = new mafViewGlobalSliceCompound("Global Slice");
+  mafViewGlobalSliceCompound *GlobalSlice = new mafViewGlobalSliceCompound(_R("Global Slice"));
   GlobalSlice->PackageView();
   m_Logic->Plug(GlobalSlice, view_visibility);
 
-  mafViewVTK *viso = new mafViewVTK("Isosurface");
-  viso->PlugVisualPipe("mafVMEVolumeGray", "mafPipeIsosurface",MUTEX);
-  viso->PlugVisualPipe("medVMELabeledVolume", "mafPipeIsosurface",MUTEX);
-  viso->PlugVisualPipe("mafVMEVolumeLarge","mafPipeIsosurface",MUTEX);
+  mafViewVTK *viso = new mafViewVTK(_R("Isosurface"));
+  viso->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeIsosurface"),MUTEX);
+  viso->PlugVisualPipe(_R("medVMELabeledVolume"), _R("mafPipeIsosurface"),MUTEX);
+  viso->PlugVisualPipe(_R("mafVMEVolumeLarge"),_R("mafPipeIsosurface"),MUTEX);
   m_Logic->Plug(viso, view_visibility);
 
-  mafViewVTK *visoGPU = new mafViewVTK("Isosurface (GPU)");
-  visoGPU->PlugVisualPipe("mafVMEVolumeGray", "mafPipeIsosurfaceGPU",MUTEX);   //BES: 13.11.2008 - GPU support, mafPipeIsosurfaceGPU to be merged with mafPipeIsosurface in future 
-  visoGPU->PlugVisualPipe("medVMELabeledVolume", "mafPipeIsosurfaceGPU",MUTEX);
-  visoGPU->PlugVisualPipe("mafVMEVolumeLarge", "mafPipeIsosurfaceGPU",MUTEX);
+  mafViewVTK *visoGPU = new mafViewVTK(_R("Isosurface (GPU)"));
+  visoGPU->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeIsosurfaceGPU"),MUTEX);   //BES: 13.11.2008 - GPU support, mafPipeIsosurfaceGPU to be merged with mafPipeIsosurface in future 
+  visoGPU->PlugVisualPipe(_R("medVMELabeledVolume"), _R("mafPipeIsosurfaceGPU"),MUTEX);
+  visoGPU->PlugVisualPipe(_R("mafVMEVolumeLarge"), _R("mafPipeIsosurfaceGPU"),MUTEX);
   m_Logic->Plug(visoGPU, view_visibility);
 
-  mafViewOrthoSlice *viewOrthoSlice = new mafViewOrthoSlice("OrthoSlice");
+  mafViewOrthoSlice *viewOrthoSlice = new mafViewOrthoSlice(_R("OrthoSlice"));
   viewOrthoSlice->PackageView();
   m_Logic->Plug(viewOrthoSlice, view_visibility);
 
-  mafViewRXCT *vrxctl = new mafViewRXCT("RXCT");
+  mafViewRXCT *vrxctl = new mafViewRXCT(_R("RXCT"));
   vrxctl->PackageView();
   m_Logic->Plug(vrxctl, view_visibility);
 
-  mafViewVTK *vsurface = new mafViewVTK("Surface");
-  vsurface->PlugVisualPipe("mafVMESurface","mafPipeSurface");
-  vsurface->PlugVisualPipe("mafVMELandmark", "medPipeTrajectories");
+  mafViewVTK *vsurface = new mafViewVTK(_R("Surface"));
+  vsurface->PlugVisualPipe(_R("mafVMESurface"),_R("mafPipeSurface"));
+  vsurface->PlugVisualPipe(_R("mafVMELandmark"), _R("medPipeTrajectories"));
   m_Logic->Plug(vsurface);
 
-  mafViewIntGraph *vgraph = new mafViewIntGraph("Biomechanical graph");
-  vgraph->PlugVisualPipe("mafVMEHelAxis","lhpPipeIntGraphHAxis");
-  vgraph->PlugVisualPipe("medVMEComputeWrapping","lhpPipeIntGraphPolyline");
-  vgraph->PlugVisualPipe("medVMEWrappedMeter","lhpPipeIntGraphPolyline");
-  vgraph->PlugVisualPipe("mafVMEMeter","lhpPipeIntGraphPolyline");
-  vgraph->PlugVisualPipe("lhpVMELeverArm","lhpPipeIntGraphPolyline");
-  vgraph->PlugVisualPipe("mafVMEVector","lhpPipeIntGraphPolyline");
-  vgraph->PlugVisualPipe("medVMEAnalog","lhpPipeIntGraphAnalog");
+  mafViewIntGraph *vgraph = new mafViewIntGraph(_R("Biomechanical graph"));
+  vgraph->PlugVisualPipe(_R("mafVMEHelAxis"),_R("lhpPipeIntGraphHAxis"));
+  vgraph->PlugVisualPipe(_R("medVMEComputeWrapping"),_R("lhpPipeIntGraphPolyline"));
+  vgraph->PlugVisualPipe(_R("medVMEWrappedMeter"),_R("lhpPipeIntGraphPolyline"));
+  vgraph->PlugVisualPipe(_R("mafVMEMeter"),_R("lhpPipeIntGraphPolyline"));
+  vgraph->PlugVisualPipe(_R("lhpVMELeverArm"),_R("lhpPipeIntGraphPolyline"));
+  vgraph->PlugVisualPipe(_R("mafVMEVector"),_R("lhpPipeIntGraphPolyline"));
+  vgraph->PlugVisualPipe(_R("medVMEAnalog"),_R("lhpPipeIntGraphAnalog"));
   m_Logic->Plug(vgraph);
 
-  medViewSlicer *slicerView = new medViewSlicer("Slicer");
+  medViewSlicer *slicerView = new medViewSlicer(_R("Slicer"));
   slicerView->PackageView();
   m_Logic->Plug(slicerView, view_visibility);
 
-  lhpViewInfo *igraph = new lhpViewInfo("Info view");
-  igraph->PlugVisualPipe("lhpVMEKMInfo","lhpPipeInfo");
+  lhpViewInfo *igraph = new lhpViewInfo(_R("Info view"));
+  igraph->PlugVisualPipe(_R("lhpVMEKMInfo"),_R("lhpPipeInfo"));
   m_Logic->Plug(igraph);
   //temporary for testing
-  //mafViewSingleSliceCompound *sliceView = new mafViewSingleSliceCompound("Test Slice");
+  //mafViewSingleSliceCompound *sliceView = new mafViewSingleSliceCompound(_R("Test Slice"));
   //sliceView->PackageView();
   //m_Logic->Plug(sliceView);
 

@@ -20,7 +20,6 @@
 //----------------------------------------------------------------------------
 
 #include "lhpOpINPExporter.h"
-#include "mafFilesDirs.h"
 
 #include "mafDecl.h"
 #include "mafGUI.h"
@@ -45,10 +44,10 @@ lhpOpINPExporter::lhpOpINPExporter(const mafString& label) : Superclass(label)
 {
   m_OpType        = OPTYPE_EXPORTER;
   m_Canundo       = true;
-  m_File          = "";
+  m_File          = _R("");
   m_Binary        = 0;
   m_ABSMatrixFlag = 1;
-  m_FileDir       = "";
+  m_FileDir       = _R("");
 }
 //----------------------------------------------------------------------------
 lhpOpINPExporter::~lhpOpINPExporter()
@@ -74,14 +73,14 @@ enum STL_EXPORTER_ID
 void lhpOpINPExporter::OpRun()   
 //----------------------------------------------------------------------------
 {
-  mafString wildc = "INP file (*.inp)|*.inp";
+  mafString wildc = _R("INP file (*.inp)|*.inp");
 
   m_Gui = new mafGUI(this);
   //m_Gui->FileSave(ID_CHOOSE_FILENAME,"stl file", &m_File, wildc,"Save As...");
   //m_Gui->Label("file type",true);
   //m_Gui->Bool(ID_STL_BINARY_FILE,"binary",&m_Binary,0);
-  m_Gui->Label("absolute matrix",true);
-  m_Gui->Bool(ID_ABS_MATRIX_TO_STL,"apply",&m_ABSMatrixFlag,0);
+  m_Gui->Label(_R("absolute matrix"),true);
+  m_Gui->Bool(ID_ABS_MATRIX_TO_STL,_R("apply"),&m_ABSMatrixFlag,0);
   m_Gui->OkCancel();
   //m_Gui->Enable(wxOK,m_File != "");
 
@@ -102,12 +101,12 @@ void lhpOpINPExporter::OnEvent(mafEventBase *maf_event)
         if(mafVME::SafeDownCast(m_Input)->GetOutput()->IsMAFType(mafVMEOutputSurface))
         {
           mafString FileDir = mafGetApplicationDirectory();
-          FileDir << "\\";
-          FileDir << m_Input->GetName();
-          FileDir << ".inp";
-          mafString wildc = "INP (*.inp)|*.inp";
-          m_File = mafGetSaveFile(FileDir.GetCStr(), wildc.GetCStr());
-          if(m_File!="")
+          FileDir += _R("\\");
+          FileDir += m_Input->GetName();
+          FileDir += _R(".inp");
+          mafString wildc = _R("INP (*.inp)|*.inp");
+          m_File = mafGetSaveFile(FileDir, wildc);
+          if(!m_File.IsEmpty())
           {
             ExportSurface();
             OpStop(OP_RUN_OK);
@@ -117,9 +116,9 @@ void lhpOpINPExporter::OnEvent(mafEventBase *maf_event)
         }
         else
         {
-          wxString f = mafGetDirName(mafGetApplicationDirectory()).GetCStr();
+          mafString f = mafGetDirName(mafGetApplicationDirectory());
 
-          if(f != "") 
+          if(!f.IsEmpty()) 
           {
             m_FileDir = f;
             ExportSurface();
@@ -131,7 +130,7 @@ void lhpOpINPExporter::OnEvent(mafEventBase *maf_event)
       }
       break;
     case ID_CHOOSE_FILENAME:
-      m_Gui->Enable(wxOK,m_File != "");
+      m_Gui->Enable(wxOK,!m_File.IsEmpty());
       break;
     case wxCANCEL:
       OpStop(OP_RUN_CANCEL);
@@ -184,22 +183,22 @@ void lhpOpINPExporter::ExportingTraverse(const char *dirName, mafNode* node)
 {
   if(mafVME::SafeDownCast(node)->GetOutput()->IsMAFType(mafVMEOutputSurface))
   {
-    wxString fn = dirName;
-    fn += "\\";
+    mafString fn = _R(dirName);
+    fn += _R("\\");
     fn += node->GetName();
-    fn += ".inp";
-    ExportOneSurface(fn.c_str(), mafVMEOutputSurface::SafeDownCast(mafVME::SafeDownCast(node)->GetOutput()));
+    fn += _R(".inp");
+    ExportOneSurface(fn.GetCStr(), mafVMEOutputSurface::SafeDownCast(mafVME::SafeDownCast(node)->GetOutput()));
   }
   int numberChildren = node->GetNumberOfChildren();
-  wxString fn = dirName;
-  fn += "\\";
-  fn += node->GetName().GetCStr();
+  mafString fn = _R(dirName);
+  fn += _R("\\");
+  fn += node->GetName();
   if(numberChildren > 0)
-    mafDirMake(fn.c_str());
+    mafDirMake(fn);
   for (int i= 0; i< numberChildren; i++)
   {
     mafNode *child = node->GetChild(i);
-    ExportingTraverse(fn.c_str(), child);
+    ExportingTraverse(fn.GetCStr(), child);
   }
 }
 //----------------------------------------------------------------------------

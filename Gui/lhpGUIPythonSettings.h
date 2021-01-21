@@ -29,7 +29,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 class lhpGUIPythonSettings : public mafGUISettings
 {
 public:
-	lhpGUIPythonSettings(mafBaseEventHandler *Listener, const mafString &label = _("Python Settings"));
+	lhpGUIPythonSettings(mafBaseEventHandler *Listener, const mafString &label = _L("Python Settings"));
 	~lhpGUIPythonSettings(); 
 
   enum APP_SETTINGS_WIDGET_ID
@@ -42,13 +42,13 @@ public:
   void OnEvent(mafEventBase *maf_event);
 
   /** Set python.exe interpreter used at runtime*/
-  void SetPythonExe(const char *pythonExe){m_PythonExe = pythonExe;};
+  void SetPythonExe(const char *pythonExe){m_PythonExe = _R(pythonExe);}
   
   /** Get python.exe interpreter used at runtime*/
-  mafString &GetPythonExe(){return m_PythonExe;};
+  mafString &GetPythonExe(){return m_PythonExe;}
 
   /** Set pythonw.exe interpreter used at runtime*/
-  void SetPythonwExe(const char *pythonwExe){m_PythonwExe = pythonwExe;};
+  void SetPythonwExe(const char *pythonwExe){m_PythonwExe = _R(pythonwExe);}
 
 	/** Get pythonw.exe interpreter used at runtime*/
   mafString &GetPythonwExe() {return m_PythonwExe;};

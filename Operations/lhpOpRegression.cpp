@@ -701,14 +701,14 @@ void lhpOpRegression::CreateGui()
 void lhpOpRegression::CreateGuiBase()
 //----------------------------------------------------------------------------
 {
-  const mafString mode_choices_string[] = {_("Pelvis"),_("Right Humerus"),_("Left Humerus"),_("Right Scapula"),_("Left Scapula"),_("Right Clavicle"),_("Left Clavicle"),_("Right Femur"),_("Left Femur")};
+  const mafString mode_choices_string[] = {_L("Pelvis"),_L("Right Humerus"),_L("Left Humerus"),_L("Right Scapula"),_L("Left Scapula"),_L("Right Clavicle"),_L("Left Clavicle"),_L("Right Femur"),_L("Left Femur")};
   int bonenum = 9;
   if(m_Gui == NULL)
   {
     m_Gui = new mafGUI(this);
     m_Gui->SetListener(this);
-    m_Gui->Radio(ID_BONETYPE, _("Type"), &m_BoneType, bonenum, mode_choices_string);
-    m_Gui->Label("");
+    m_Gui->Radio(ID_BONETYPE, _L("Type"), &m_BoneType, bonenum, mode_choices_string);
+    m_Gui->Label(_R(""));
     m_Gui->OkCancel();
   }
   ShowGui();
@@ -721,17 +721,17 @@ void lhpOpRegression::CreateGuiPelvis()
   {
     m_Gui = new mafGUI(this);
     m_Gui->SetListener(this);
-    m_Gui->Bool(ID_APPROX, _("Davis method"), &m_Approximate[0]);
-    m_Gui->Bool(ID_APPROX, _("Bell method"), &m_Approximate[1]);
-    m_Gui->Bool(ID_APPROX, _("OrthoTrak method"), &m_Approximate[2]);
-    m_Gui->Bool(ID_APPROX, _("Harrington method"), &m_Approximate[3]);
+    m_Gui->Bool(ID_APPROX, _L("Davis method"), &m_Approximate[0]);
+    m_Gui->Bool(ID_APPROX, _L("Bell method"), &m_Approximate[1]);
+    m_Gui->Bool(ID_APPROX, _L("OrthoTrak method"), &m_Approximate[2]);
+    m_Gui->Bool(ID_APPROX, _L("Harrington method"), &m_Approximate[3]);
     if(m_Inited)
     {
-      m_Gui->Bool(ID_APPROX, _("ULB pelvic"), &m_Approximate[4]);
-      m_Gui->Bool(ID_APPROX, _("ULB illiacs"), &m_Approximate[5]);
+      m_Gui->Bool(ID_APPROX, _L("ULB pelvic"), &m_Approximate[4]);
+      m_Gui->Bool(ID_APPROX, _L("ULB illiacs"), &m_Approximate[5]);
     }
-    m_Gui->Double(ID_APPROX, _("Leg length"), &m_Length, 0);
-    m_Gui->Label("");
+    m_Gui->Double(ID_APPROX, _L("Leg length"), &m_Length, 0);
+    m_Gui->Label(_R(""));
     m_Gui->OkCancel();
   }
   ShowGui();
@@ -746,18 +746,18 @@ void lhpOpRegression::CreateGuiFemur()
     m_Gui->SetListener(this);
     if(m_Inited)
     {
-      m_Gui->Bool(ID_APPROX, _("Head_ML"), &m_Approximate[0]);
-      m_Gui->Bool(ID_APPROX, _("Cond_Sulc_ML"), &m_Approximate[1]);
-      m_Gui->Bool(ID_APPROX, _("Lat_Cond_ML"), &m_Approximate[2]);
-      m_Gui->Bool(ID_APPROX, _("Med_Cond_ML"), &m_Approximate[3]);
+      m_Gui->Bool(ID_APPROX, _L("Head_ML"), &m_Approximate[0]);
+      m_Gui->Bool(ID_APPROX, _L("Cond_Sulc_ML"), &m_Approximate[1]);
+      m_Gui->Bool(ID_APPROX, _L("Lat_Cond_ML"), &m_Approximate[2]);
+      m_Gui->Bool(ID_APPROX, _L("Med_Cond_ML"), &m_Approximate[3]);
     }
-    m_Gui->Bool(ID_APPROX, _("Head"), &m_Approximate[4]);
-    m_Gui->Bool(ID_APPROX, _("Lat_Cond"), &m_Approximate[5]);
-    m_Gui->Bool(ID_APPROX, _("Med_Cond"), &m_Approximate[6]);
-    m_Gui->Bool(ID_APPROX, _("Lat_Patella"), &m_Approximate[7]);
-    m_Gui->Bool(ID_APPROX, _("Med_Patella"), &m_Approximate[8]);
-    m_Gui->Bool(ID_APPROX, _("Sulcus"), &m_Approximate[9]);
-    m_Gui->Label("");
+    m_Gui->Bool(ID_APPROX, _L("Head"), &m_Approximate[4]);
+    m_Gui->Bool(ID_APPROX, _L("Lat_Cond"), &m_Approximate[5]);
+    m_Gui->Bool(ID_APPROX, _L("Med_Cond"), &m_Approximate[6]);
+    m_Gui->Bool(ID_APPROX, _L("Lat_Patella"), &m_Approximate[7]);
+    m_Gui->Bool(ID_APPROX, _L("Med_Patella"), &m_Approximate[8]);
+    m_Gui->Bool(ID_APPROX, _L("Sulcus"), &m_Approximate[9]);
+    m_Gui->Label(_R(""));
     m_Gui->OkCancel();
   }
   ShowGui();
@@ -770,10 +770,10 @@ void lhpOpRegression::CreateGuiHumerus()
   {
     m_Gui = new mafGUI(this);
     m_Gui->SetListener(this);
-    m_Gui->Bool(ID_APPROX, _("Head"), &m_Approximate[0]);
-    m_Gui->Bool(ID_APPROX, _("Condyle"), &m_Approximate[1]);
-    m_Gui->Bool(ID_APPROX, _("Groove"), &m_Approximate[2]);
-    m_Gui->Label("");
+    m_Gui->Bool(ID_APPROX, _L("Head"), &m_Approximate[0]);
+    m_Gui->Bool(ID_APPROX, _L("Condyle"), &m_Approximate[1]);
+    m_Gui->Bool(ID_APPROX, _L("Groove"), &m_Approximate[2]);
+    m_Gui->Label(_R(""));
     m_Gui->OkCancel();
   }
   ShowGui();
@@ -786,9 +786,9 @@ void lhpOpRegression::CreateGuiScapula()
   {
     m_Gui = new mafGUI(this);
     m_Gui->SetListener(this);
-    m_Gui->Bool(ID_APPROX, _("Cavity"), &m_Approximate[0]);
-    m_Gui->Bool(ID_APPROX, _("Acro_clav"), &m_Approximate[1]);
-    m_Gui->Label("");
+    m_Gui->Bool(ID_APPROX, _L("Cavity"), &m_Approximate[0]);
+    m_Gui->Bool(ID_APPROX, _L("Acro_clav"), &m_Approximate[1]);
+    m_Gui->Label(_R(""));
     m_Gui->OkCancel();
   }
   ShowGui();
@@ -801,9 +801,9 @@ void lhpOpRegression::CreateGuiClavicle()
   {
     m_Gui = new mafGUI(this);
     m_Gui->SetListener(this);
-    m_Gui->Bool(ID_APPROX, _("Ster_clav"), &m_Approximate[0]);
-    m_Gui->Bool(ID_APPROX, _("Acro_clav"), &m_Approximate[1]);
-    m_Gui->Label("");
+    m_Gui->Bool(ID_APPROX, _L("Ster_clav"), &m_Approximate[0]);
+    m_Gui->Bool(ID_APPROX, _L("Acro_clav"), &m_Approximate[1]);
+    m_Gui->Label(_R(""));
     m_Gui->OkCancel();
   }
   ShowGui();
@@ -872,9 +872,9 @@ void lhpOpRegression::OnEvent(mafEventBase *maf_event)
 
 bool lhpOpRegression::RegressionFemur(bool right)
 {
-  char *namesr[] = {"RFTC", "RFME", "RFLE"};
-  char *namesl[] = {"LFTC", "LFME", "LFLE"};
-  char **names;
+  mafString namesr[] = {_R("RFTC"), _R("RFME"), _R("RFLE")};
+  mafString namesl[] = {_R("LFTC"), _R("LFME"), _R("LFLE")};
+  mafString *names;
   int  inds[3];
 
   names = (right) ? namesr : namesl;
@@ -884,9 +884,8 @@ bool lhpOpRegression::RegressionFemur(bool right)
     inds[i] = m_Cloud->FindLandmarkIndex(names[i]);
     if(inds[i] == -1)
     {
-      char msgbuf[100];
-      sprintf(msgbuf, "Landmark %s is not found", names[i]);
-      wxMessageBox(msgbuf, "Error");
+      mafString msgbuf = _R("Landmark ") + names[i] + _R(" is not found");
+      mafErrorMessage(_M(msgbuf));
       return false;
     }
   }
@@ -908,19 +907,19 @@ bool lhpOpRegression::RegressionFemur(bool right)
   if(kframes.size() == 0)
     return false;
 
-  char newLMName[100];
+  mafString newLMName, sidePrefix;
   int  avInd = 0;
 
-  newLMName[0] =(right) ? 'R' : 'L';
+  sidePrefix =(right) ? _R("R") : _R("L");
   if(m_Inited)
   {
     if(m_Approximate[0])
     {
-      sprintf(newLMName + 1, "_Head_ML");
+      newLMName = sidePrefix + _R("_Head_ML");
       avInd = 0;
       while(m_Cloud->FindLandmarkIndex(newLMName) >= 0)
       {
-        sprintf(newLMName + 1, "_Head_ML%d", avInd);
+        newLMName = sidePrefix + mafString::Format(_R("_Head_ML%d"), avInd);
         avInd++;
       }
       newIndex = m_Cloud->AppendLandmark(newLMName);
@@ -935,11 +934,11 @@ bool lhpOpRegression::RegressionFemur(bool right)
 
     if(m_Approximate[1])
     {
-      sprintf(newLMName + 1, "_Cond_Sulc_ML");
+      newLMName = sidePrefix + _R("_Cond_Sulc_ML");
       avInd = 0;
       while(m_Cloud->FindLandmarkIndex(newLMName) >= 0)
       {
-        sprintf(newLMName + 1, "_Cond_Sulc_ML%d", avInd);
+        newLMName = sidePrefix + mafString::Format(_R("_Cond_Sulc_ML%d"), avInd);
         avInd++;
       }
       newIndex = m_Cloud->AppendLandmark(newLMName);
@@ -954,11 +953,11 @@ bool lhpOpRegression::RegressionFemur(bool right)
 
     if(m_Approximate[2])
     {
-      sprintf(newLMName + 1, "_Lat_Cond_ML");
+      newLMName = sidePrefix + _R("_Lat_Cond_ML");
       avInd = 0;
       while(m_Cloud->FindLandmarkIndex(newLMName) >= 0)
       {
-        sprintf(newLMName + 1, "_Lat_Cond_ML%d", avInd);
+        newLMName = sidePrefix + mafString::Format(_R("_Lat_Cond_ML%d"), avInd);
         avInd++;
       }
       newIndex = m_Cloud->AppendLandmark(newLMName);
@@ -973,11 +972,11 @@ bool lhpOpRegression::RegressionFemur(bool right)
 
     if(m_Approximate[3])
     {
-      sprintf(newLMName + 1, "_Med_Cond_ML");
+      newLMName = sidePrefix + _R("_Med_Cond_ML");
       avInd = 0;
       while(m_Cloud->FindLandmarkIndex(newLMName) >= 0)
       {
-        sprintf(newLMName + 1, "_Med_Cond_ML%d", avInd);
+        newLMName = sidePrefix + mafString::Format(_R("_Med_Cond_ML%d"), avInd);
         avInd++;
       }
       newIndex = m_Cloud->AppendLandmark(newLMName);
@@ -1137,13 +1136,13 @@ bool lhpOpRegression::RegressionFemur(bool right)
       if(!right)
         center.x = - center.x;
       if(kframes.size() <= 1)
-        AddSphere("Head", center.components, radius);
+        AddSphere(_R("Head"), center.components, radius);
       TransformPoint(mGlobalInv, center);
       if(nI == 0)
       {
         LMAdding LMdata;
         LMdata.m_Pelvic = true;
-        LMdata.m_Name  = (right) ? "RFCH" : "LFCH";
+        LMdata.m_Name  = (right) ? _R("RFCH") : _R("LFCH");
         LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
         LMdata.m_Pos = center;
         m_LMAdd.push_back(LMdata);
@@ -1237,13 +1236,13 @@ bool lhpOpRegression::RegressionFemur(bool right)
       mFin.SetElement(1, 3, center[1]);
       mFin.SetElement(2, 3, center[2]);
       if(kframes.size() <= 1)
-        AddEllipsoid("Lat_Cond", mFin, radius);
+        AddEllipsoid(_R("Lat_Cond"), mFin, radius);
       TransformPoint(mGlobalInv, center);
       if(nI == 0)
       {
         LMAdding LMdata;
         LMdata.m_Pelvic = true;
-        LMdata.m_Name  = (right) ? "RFLC" : "LFLC";
+        LMdata.m_Name  = (right) ? _R("RFLC") : _R("LFLC");
         LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
         LMdata.m_Pos = center;
         m_LMAdd.push_back(LMdata);
@@ -1338,13 +1337,13 @@ bool lhpOpRegression::RegressionFemur(bool right)
       mFin.SetElement(1, 3, center[1]);
       mFin.SetElement(2, 3, center[2]);
       if(kframes.size() <= 1)
-        AddEllipsoid("Med_Cond", mFin, radius);
+        AddEllipsoid(_R("Med_Cond"), mFin, radius);
       TransformPoint(mGlobalInv, center);
       if(nI == 0)
       {
         LMAdding LMdata;
         LMdata.m_Pelvic = true;
-        LMdata.m_Name  = (right) ? "RFMC" : "LFMC";
+        LMdata.m_Name  = (right) ? _R("RFMC") : _R("LFMC");
         LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
         LMdata.m_Pos = center;
         m_LMAdd.push_back(LMdata);
@@ -1359,7 +1358,7 @@ bool lhpOpRegression::RegressionFemur(bool right)
       {
         LMAdding LMdata;
         LMdata.m_Pelvic = true;
-        LMdata.m_Name  = (right) ? "RFBC" : "LFBC";
+        LMdata.m_Name  = (right) ? _R("RFBC") : _R("LFBC");
         LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
         LMdata.m_Pos = (LC + MC) / 2;
         m_LMAdd.push_back(LMdata);
@@ -1398,8 +1397,8 @@ bool lhpOpRegression::RegressionFemur(bool right)
       }
       if(kframes.size() <= 1)
       {
-        AddPlane("Lat_Patella", center.components, normal.components);
-        AddArrow("Lat_Patella", center.components, normal.components);
+        AddPlane(_R("Lat_Patella"), center.components, normal.components);
+        AddArrow(_R("Lat_Patella"), center.components, normal.components);
       }
       TransformPoint(mGlobalInv, center);
       if(nI == 0)
@@ -1407,7 +1406,7 @@ bool lhpOpRegression::RegressionFemur(bool right)
         LMAdding LMdata;
         LMdata.m_Pelvic = true;
         //LMdata.m_Name  = "Groove";
-        LMdata.m_Name  = (right) ? "RFLP" : "LFLP";
+        LMdata.m_Name  = (right) ? _R("RFLP") : _R("LFLP");
         LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
         LMdata.m_Pos = center;
         m_LMAdd.push_back(LMdata);
@@ -1444,8 +1443,8 @@ bool lhpOpRegression::RegressionFemur(bool right)
       }
       if(kframes.size() <= 1)
       {
-        AddPlane("Med_Patella", center.components, normal.components);
-        AddArrow("Med_Patella", center.components, normal.components);
+        AddPlane(_R("Med_Patella"), center.components, normal.components);
+        AddArrow(_R("Med_Patella"), center.components, normal.components);
       }
       TransformPoint(mGlobalInv, center);
       if(nI == 0)
@@ -1453,7 +1452,7 @@ bool lhpOpRegression::RegressionFemur(bool right)
         LMAdding LMdata;
         LMdata.m_Pelvic = true;
         //LMdata.m_Name  = "Groove";
-        LMdata.m_Name  = (right) ? "RFMP" : "LFMP";
+        LMdata.m_Name  = (right) ? _R("RFMP") : _R("LFMP");
         LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
         LMdata.m_Pos = center;
         m_LMAdd.push_back(LMdata);
@@ -1490,15 +1489,15 @@ bool lhpOpRegression::RegressionFemur(bool right)
       }
       if(kframes.size() <= 1)
       {
-        AddPlane("Sulcus", center.components, normal.components);
-        AddArrow("Sulcus", center.components, normal.components);
+        AddPlane(_R("Sulcus"), center.components, normal.components);
+        AddArrow(_R("Sulcus"), center.components, normal.components);
       }
       TransformPoint(mGlobalInv, center);
       {
         LMAdding LMdata;
         LMdata.m_Pelvic = true;
         //LMdata.m_Name  = "Groove";
-        LMdata.m_Name  = (right) ? "RFSC" : "LFSC";
+        LMdata.m_Name  = (right) ? _R("RFSC") : _R("LFSC");
         LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
         LMdata.m_Pos = center;
         m_LMAdd.push_back(LMdata);
@@ -1512,7 +1511,7 @@ bool lhpOpRegression::RegressionFemur(bool right)
 
 bool lhpOpRegression::RegressionPelvis(bool right)
 {
-  char *names[] = {"RIAS", "LIAS", "RIPS", "LIPS", "RIIT", "LIIT", "RICT", "LICT"};
+  mafString names[] = {_R("RIAS"), _R("LIAS"), _R("RIPS"), _R("LIPS"), _R("RIIT"), _R("LIIT"), _R("RICT"), _R("LICT")};
   int  inds[8];
 
   for(int i = 0; i < 4; i++)
@@ -1520,9 +1519,8 @@ bool lhpOpRegression::RegressionPelvis(bool right)
     inds[i] = m_Cloud->FindLandmarkIndex(names[i]);
     if(inds[i] == -1)
     {
-      char msgbuf[100];
-      sprintf(msgbuf, "Landmark %s is not found", names[i]);
-      wxMessageBox(msgbuf, "Error");
+      mafString msgbuf = _R("Landmark ") + names[i] + _R(" is not found");
+      mafErrorMessage(_M(msgbuf));
       return false;
     }
   }
@@ -1535,9 +1533,8 @@ bool lhpOpRegression::RegressionPelvis(bool right)
         inds[i] = m_Cloud->FindLandmarkIndex(names[i]);
         if(inds[i] == -1)
         {
-          char msgbuf[100];
-          sprintf(msgbuf, "Landmark %s is not found", names[i]);
-          wxMessageBox(msgbuf, "Error");
+          mafString msgbuf = _R("Landmark ") + names[i] + _R(" is not found");
+          mafErrorMessage(_M(msgbuf));
           return false;
         }
       }
@@ -1565,16 +1562,16 @@ bool lhpOpRegression::RegressionPelvis(bool right)
   if(kframes.size() == 0)
     return false;
 
-  char newLMName[100];
+  mafString newLMName;
   int  avInd = 0;
 
   if(m_Approximate[0])
   {
-    sprintf(newLMName, "RIAC_Davis");
+    newLMName = _R("RIAC_Davis");
     avInd = 0;
     while(m_Cloud->FindLandmarkIndex(newLMName) >= 0)
     {
-      sprintf(newLMName, "RIAC_Davis%d", avInd);
+      newLMName = mafString::Format(_R("RIAC_Davis%d"), avInd);
       avInd++;
     }
     newIndex = m_Cloud->AppendLandmark(newLMName);
@@ -1586,11 +1583,11 @@ bool lhpOpRegression::RegressionPelvis(bool right)
 
     m_NewIndexes.push_back(newIndex);
 
-    sprintf(newLMName, "LIAC_Davis");
+    newLMName = _R("LIAC_Davis");
     avInd = 0;
     while(m_Cloud->FindLandmarkIndex(newLMName) >= 0)
     {
-      sprintf(newLMName, "LIAC_Davis%d", avInd);
+      newLMName = mafString::Format(_R("LIAC_Davis%d"), avInd);
       avInd++;
     }
     newIndex = m_Cloud->AppendLandmark(newLMName);
@@ -1604,11 +1601,11 @@ bool lhpOpRegression::RegressionPelvis(bool right)
 
   if(m_Approximate[1])
   {
-    sprintf(newLMName, "RIAC_Bell");
+    newLMName = _R("RIAC_Bell");
     avInd = 0;
     while(m_Cloud->FindLandmarkIndex(newLMName) >= 0)
     {
-      sprintf(newLMName, "RIAC_Bell%d", avInd);
+      newLMName = mafString::Format(_R("RIAC_Bell%d"), avInd);
       avInd++;
     }
     newIndex = m_Cloud->AppendLandmark(newLMName);
@@ -1620,11 +1617,11 @@ bool lhpOpRegression::RegressionPelvis(bool right)
 
     m_NewIndexes.push_back(newIndex);
 
-    sprintf(newLMName, "LIAC_Bell");
+    newLMName = _R("LIAC_Bell");
     avInd = 0;
     while(m_Cloud->FindLandmarkIndex(newLMName) >= 0)
     {
-      sprintf(newLMName, "LIAC_Bell%d", avInd);
+      newLMName = mafString::Format(_R("LIAC_Bell%d"), avInd);
       avInd++;
     }
     newIndex = m_Cloud->AppendLandmark(newLMName);
@@ -1638,11 +1635,11 @@ bool lhpOpRegression::RegressionPelvis(bool right)
 
   if(m_Approximate[2])
   {
-    sprintf(newLMName, "RIAC_OrthoTrak");
+    newLMName = _R("RIAC_OrthoTrak");
     avInd = 0;
     while(m_Cloud->FindLandmarkIndex(newLMName) >= 0)
     {
-      sprintf(newLMName, "RIAC_OrthoTrak%d", avInd);
+      newLMName = mafString::Format(_R("RIAC_OrthoTrak%d"), avInd);
       avInd++;
     }
     newIndex = m_Cloud->AppendLandmark(newLMName);
@@ -1654,11 +1651,11 @@ bool lhpOpRegression::RegressionPelvis(bool right)
 
     m_NewIndexes.push_back(newIndex);
 
-    sprintf(newLMName, "LIAC_OrthoTrak");
+    newLMName = _R("LIAC_OrthoTrak");
     avInd = 0;
     while(m_Cloud->FindLandmarkIndex(newLMName) >= 0)
     {
-      sprintf(newLMName, "LIAC_OrthoTrak%d", avInd);
+      newLMName = mafString::Format(_R("LIAC_OrthoTrak%d"), avInd);
       avInd++;
     }
     newIndex = m_Cloud->AppendLandmark(newLMName);
@@ -1672,11 +1669,11 @@ bool lhpOpRegression::RegressionPelvis(bool right)
 
   if(m_Approximate[3])
   {
-    sprintf(newLMName, "RIAC_Harrington");
+    newLMName = _R("RIAC_Harrington");
     avInd = 0;
     while(m_Cloud->FindLandmarkIndex(newLMName) >= 0)
     {
-      sprintf(newLMName, "RIAC_Harrington%d", avInd);
+      newLMName = mafString::Format(_R("RIAC_Harrington%d"), avInd);
       avInd++;
     }
     newIndex = m_Cloud->AppendLandmark(newLMName);
@@ -1688,11 +1685,11 @@ bool lhpOpRegression::RegressionPelvis(bool right)
 
     m_NewIndexes.push_back(newIndex);
 
-    sprintf(newLMName, "LIAC_Harrington");
+    newLMName = _R("LIAC_Harrington");
     avInd = 0;
     while(m_Cloud->FindLandmarkIndex(newLMName) >= 0)
     {
-      sprintf(newLMName, "LIAC_Harrington%d", avInd);
+      newLMName = mafString::Format(_R("LIAC_Harrington%d"), avInd);
       avInd++;
     }
     newIndex = m_Cloud->AppendLandmark(newLMName);
@@ -1708,11 +1705,11 @@ bool lhpOpRegression::RegressionPelvis(bool right)
   {
     if(m_Approximate[4])
     {
-      sprintf(newLMName, "RIAC_ULB_P");
+      newLMName = _R("RIAC_ULB_P");
       avInd = 0;
       while(m_Cloud->FindLandmarkIndex(newLMName) >= 0)
       {
-        sprintf(newLMName, "RIAC_ULB_P%d", avInd);
+        newLMName = mafString::Format(_R("RIAC_ULB_P%d"), avInd);
         avInd++;
       }
       newIndex = m_Cloud->AppendLandmark(newLMName);
@@ -1724,11 +1721,11 @@ bool lhpOpRegression::RegressionPelvis(bool right)
 
       m_NewIndexes.push_back(newIndex);
 
-      sprintf(newLMName, "LIAC_ULB_P");
+      newLMName = _R("LIAC_ULB_P");
       avInd = 0;
       while(m_Cloud->FindLandmarkIndex(newLMName) >= 0)
       {
-        sprintf(newLMName, "LIAC_ULB_P%d", avInd);
+        newLMName = mafString::Format(_R("LIAC_ULB_P%d"), avInd);
         avInd++;
       }
       newIndex = m_Cloud->AppendLandmark(newLMName);
@@ -1741,11 +1738,11 @@ bool lhpOpRegression::RegressionPelvis(bool right)
     }
     if(m_Approximate[5])
     {
-      sprintf(newLMName, "RIAC_ULB_I");
+      newLMName = _R("RIAC_ULB_I");
       avInd = 0;
       while(m_Cloud->FindLandmarkIndex(newLMName) >= 0)
       {
-        sprintf(newLMName, "RIAC_ULB_I%d", avInd);
+        newLMName = mafString::Format(_R("RIAC_ULB_I%d"), avInd);
         avInd++;
       }
       newIndex = m_Cloud->AppendLandmark(newLMName);
@@ -1757,11 +1754,11 @@ bool lhpOpRegression::RegressionPelvis(bool right)
 
       m_NewIndexes.push_back(newIndex);
 
-      sprintf(newLMName, "LIAC_ULB_I");
+      newLMName = _R("LIAC_ULB_I");
       avInd = 0;
       while(m_Cloud->FindLandmarkIndex(newLMName) >= 0)
       {
-        sprintf(newLMName, "LIAC_ULB_I%d", avInd);
+        newLMName = mafString::Format(_R("LIAC_ULB_I%d"), avInd);
         avInd++;
       }
       newIndex = m_Cloud->AppendLandmark(newLMName);
@@ -1883,37 +1880,28 @@ bool lhpOpRegression::RegressionHumerus(bool right)
 {
   mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(m_Input);
 
-  char name2[] = "RHLT";
-  char name5[] = "RHME";
-  char name7[] = "RHLE";
-  if(!right)
-  {
-    name2[0] = 'L';
-    name5[0] = 'L';
-    name7[0] = 'L';
-  }
+  mafString name2 = right ? _R("RHLT") : _R("LHLT");
+  mafString name5 = right ? _R("RHME") : _R("LHME");
+  mafString name7 = right ? _R("RHLE") : _R("LHLE");
   int ind2 = cloud->FindLandmarkIndex(name2);
   int ind5 = cloud->FindLandmarkIndex(name5);
   int ind7 = cloud->FindLandmarkIndex(name7);
   if(ind2 == -1)
   {
-    char msgbuf[100];
-    sprintf(msgbuf, "Landmark %s is not found", name2);
-    wxMessageBox(msgbuf, "Error");
+    mafString msgbuf = _R("Landmark ") + name2 + _R(" is not found");
+    mafErrorMessage(_M(msgbuf));
     return false;
   }
   if(ind5 == -1)
   {
-    char msgbuf[100];
-    sprintf(msgbuf, "Landmark %s is not found", name5);
-    wxMessageBox(msgbuf, "Error");
+    mafString msgbuf = _R("Landmark ") + name5 + _R(" is not found");
+    mafErrorMessage(_M(msgbuf));
     return false;
   }
   if(ind7 == -1)
   {
-    char msgbuf[100];
-    sprintf(msgbuf, "Landmark %s is not found", name7);
-    wxMessageBox(msgbuf, "Error");
+    mafString msgbuf = _R("Landmark ") + name7 + _R(" is not found");
+    mafErrorMessage(_M(msgbuf));
     return false;
   }
 
@@ -2076,14 +2064,14 @@ bool lhpOpRegression::RegressionHumerus(bool right)
       if(!right)
         center.x = - center.x;
       if(kframes.size() <= 1)
-        AddSphere("Head", center.components, radius);
+        AddSphere(_R("Head"), center.components, radius);
       TransformPoint(mGlobalInv, center);
       if(nI == 0)
       {
         LMAdding LMdata;
         LMdata.m_Pelvic = true;
         //LMdata.m_Name  = "Head";
-        LMdata.m_Name  = (right) ? "RHCH" : "LHCH";
+        LMdata.m_Name  = (right) ? _R("RHCH") : _R("LHCH");
         LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
         LMdata.m_Pos = center;
         m_LMAdd.push_back(LMdata);
@@ -2113,14 +2101,14 @@ bool lhpOpRegression::RegressionHumerus(bool right)
       if(!right)
         center.x = - center.x;
       if(kframes.size() <= 1)
-      AddSphere("Condyle", center.components, radius);
+      AddSphere(_R("Condyle"), center.components, radius);
       TransformPoint(mGlobalInv, center);
       if(nI == 0)
       {
         LMAdding LMdata;
         LMdata.m_Pelvic = true;
         //LMdata.m_Name  = "Condyle";
-        LMdata.m_Name  = (right) ? "RHCO" : "LHCO";
+        LMdata.m_Name  = (right) ? _R("RHCO") : _R("LHCO");
         LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
         LMdata.m_Pos = center;
         m_LMAdd.push_back(LMdata);
@@ -2157,8 +2145,8 @@ bool lhpOpRegression::RegressionHumerus(bool right)
       }
       if(kframes.size() <= 1)
       {
-        AddPlane("Groove", center.components, normal.components);
-        AddArrow("Groove", center.components, normal.components);
+        AddPlane(_R("Groove"), center.components, normal.components);
+        AddArrow(_R("Groove"), center.components, normal.components);
       }
       TransformPoint(mGlobalInv, center);
       if(nI == 0)
@@ -2166,7 +2154,7 @@ bool lhpOpRegression::RegressionHumerus(bool right)
         LMAdding LMdata;
         LMdata.m_Pelvic = true;
         //LMdata.m_Name  = "Groove";
-        LMdata.m_Name  = (right) ? "RHGR" : "LHGR";
+        LMdata.m_Name  = (right) ? _R("RHGR") : _R("LHGR");
         LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
         LMdata.m_Pos = center;
         m_LMAdd.push_back(LMdata);
@@ -2180,37 +2168,28 @@ bool lhpOpRegression::RegressionHumerus(bool right)
 bool lhpOpRegression::RegressionScapula(bool right)
 {
   mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(m_Input);
-  char name1[] = "RSIA";
-  char name2[] = "RSRS";
-  char name4[] = "RSAA";
-  if(!right)
-  {
-    name1[0] = 'L';
-    name2[0] = 'L';
-    name4[0] = 'L';
-  }
+  mafString name1 = right ? _R("RSIA") : _R("LSIA");
+  mafString name2 = right ? _R("RSRS") : _R("LSRS");
+  mafString name4 = right ? _R("RSAA") : _R("LSAA");
   int ind1 = cloud->FindLandmarkIndex(name1);
   int ind2 = cloud->FindLandmarkIndex(name2);
   int ind4 = cloud->FindLandmarkIndex(name4);
   if(ind1 == -1)
   {
-    char msgbuf[100];
-    sprintf(msgbuf, "Landmark %s is not found", name1);
-    wxMessageBox(msgbuf, "Error");
+    mafString msgbuf = _R("Landmark ") + name1 + _R(" is not found");
+    mafErrorMessage(_M(msgbuf));
     return false;
   }
   if(ind2 == -1)
   {
-    char msgbuf[100];
-    sprintf(msgbuf, "Landmark %s is not found", name2);
-    wxMessageBox(msgbuf, "Error");
+    mafString msgbuf = _R("Landmark ") + name2 + _R(" is not found");
+    mafErrorMessage(_M(msgbuf));
     return false;
   }
   if(ind4 == -1)
   {
-    char msgbuf[100];
-    sprintf(msgbuf, "Landmark %s is not found", name4);
-    wxMessageBox(msgbuf, "Error");
+    mafString msgbuf = _R("Landmark ") + name4 + _R(" is not found");
+    mafErrorMessage(_M(msgbuf));
     return false;
   }
 
@@ -2372,14 +2351,14 @@ bool lhpOpRegression::RegressionScapula(bool right)
         center.x = - center.x;
       }
       if(kframes.size() <= 1)
-        AddSphere("GlenoidCavity", center.components, radius);
+        AddSphere(_R("GlenoidCavity"), center.components, radius);
       TransformPoint(mGlobalInv, center);
       if(nI == 0)
       {
         LMAdding LMdata;
         LMdata.m_Pelvic = true;
         //LMdata.m_Name  = "GlenoidCavity";
-        LMdata.m_Name  = (right) ? "RSGC" : "LSGC";
+        LMdata.m_Name  = (right) ? _R("RSGC") : _R("LSGC");
         LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
         LMdata.m_Pos = center;
         m_LMAdd.push_back(LMdata);
@@ -2416,8 +2395,8 @@ bool lhpOpRegression::RegressionScapula(bool right)
       }
       if(kframes.size() <= 1)
       {
-        AddPlane("Acro_clav", center.components, normal.components);
-        AddArrow("Acro_clav", center.components, normal.components);
+        AddPlane(_R("Acro_clav"), center.components, normal.components);
+        AddArrow(_R("Acro_clav"), center.components, normal.components);
       }
       TransformPoint(mGlobalInv, center);
       if(nI == 0)
@@ -2425,7 +2404,7 @@ bool lhpOpRegression::RegressionScapula(bool right)
         LMAdding LMdata;
         LMdata.m_Pelvic = true;
         //LMdata.m_Name  = "Acro_clav";
-        LMdata.m_Name  = (right) ? "RSAC" : "LSAC";
+        LMdata.m_Name  = (right) ? _R("RSAC") : _R("LSAC");
         LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
         LMdata.m_Pos = center;
         m_LMAdd.push_back(LMdata);
@@ -2439,37 +2418,28 @@ bool lhpOpRegression::RegressionScapula(bool right)
 bool lhpOpRegression::RegressionClavicle(bool right)
 {
   mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(m_Input);
-  char name1[] = "RCSJ";
-  char name2[] = "RCAS";
-  char name5[] = "RCAJ";
-  if(!right)
-  {
-    name1[0] = 'L';
-    name2[0] = 'L';
-    name5[0] = 'L';
-  }
+  mafString name1 = right ? _R("RCSJ") : _R("LCSJ");
+  mafString name2 = right ? _R("RCAS") : _R("LCAS");
+  mafString name5 = right ? _R("RCAJ") : _R("LCAJ");
   int ind1 = cloud->FindLandmarkIndex(name1);
   int ind2 = cloud->FindLandmarkIndex(name2);
   int ind5 = cloud->FindLandmarkIndex(name5);
   if(ind1 == -1)
   {
-    char msgbuf[100];
-    sprintf(msgbuf, "Landmark %s is not found", name1);
-    wxMessageBox(msgbuf, "Error");
+    mafString msgbuf = _R("Landmark ") + name1 + _R(" is not found");
+    mafErrorMessage(_M(msgbuf));
     return false;
   }
   if(ind2 == -1)
   {
-    char msgbuf[100];
-    sprintf(msgbuf, "Landmark %s is not found", name2);
-    wxMessageBox(msgbuf, "Error");
+    mafString msgbuf = _R("Landmark ") + name2 + _R(" is not found");
+    mafErrorMessage(_M(msgbuf));
     return false;
   }
   if(ind5 == -1)
   {
-    char msgbuf[100];
-    sprintf(msgbuf, "Landmark %s is not found", name5);
-    wxMessageBox(msgbuf, "Error");
+    mafString msgbuf = _R("Landmark ") + name5 + _R(" is not found");
+    mafErrorMessage(_M(msgbuf));
     return false;
   }
 
@@ -2636,8 +2606,8 @@ bool lhpOpRegression::RegressionClavicle(bool right)
       }
       if(kframes.size() <= 1)
       {
-        AddPlane("Ster_clav", center.components, normal.components);
-        AddArrow("Ster_clav", center.components, normal.components);
+        AddPlane(_R("Ster_clav"), center.components, normal.components);
+        AddArrow(_R("Ster_clav"), center.components, normal.components);
       }
       TransformPoint(mGlobalInv, center);
       if(nI == 0)
@@ -2645,7 +2615,7 @@ bool lhpOpRegression::RegressionClavicle(bool right)
         LMAdding LMdata;
         LMdata.m_Pelvic = true;
         //LMdata.m_Name  = "Ster_clav";
-        LMdata.m_Name  = (right) ? "RCSC" : "LCSC";
+        LMdata.m_Name  = (right) ? _R("RCSC") : _R("LCSC");
         LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
         LMdata.m_Pos = center;
         m_LMAdd.push_back(LMdata);
@@ -2682,8 +2652,8 @@ bool lhpOpRegression::RegressionClavicle(bool right)
       }
       if(kframes.size() <= 1)
       {
-        AddPlane("Acro_clav", center.components, normal.components);
-        AddArrow("Acro_clav", center.components, normal.components);
+        AddPlane(_R("Acro_clav"), center.components, normal.components);
+        AddArrow(_R("Acro_clav"), center.components, normal.components);
       }
       TransformPoint(mGlobalInv, center);
       if(nI == 0)
@@ -2691,7 +2661,7 @@ bool lhpOpRegression::RegressionClavicle(bool right)
         LMAdding LMdata;
         LMdata.m_Pelvic = true;
         //LMdata.m_Name  = "Acro_clav";
-        LMdata.m_Name  = (right) ? "RCAC" : "LCAC";
+        LMdata.m_Name  = (right) ? _R("RCAC") : _R("LCAC");
         LMdata.m_Index = m_Cloud->AppendLandmark(LMdata.m_Name);
         LMdata.m_Pos = center;
         m_LMAdd.push_back(LMdata);
@@ -2738,7 +2708,7 @@ void lhpOpRegression::AddSphere(const mafString& name, double *center, double ra
   mtr.SetElement(2, 3, center[2]);
   mafNEW(grp);
   parName  = name;
-  parName += "_group";
+  parName += _R("_group");
   grp->SetName(name);
   grp->ReparentTo(m_Input);
   grp->SetAbsMatrix(mtr);
@@ -2774,7 +2744,7 @@ void lhpOpRegression::AddEllipsoid(const mafString& name, const mafMatrix &mtr, 
 
   mafNEW(grp);
   parName  = name;
-  parName += "_group";
+  parName += _R("_group");
   grp->SetName(name);
   grp->ReparentTo(m_Input);
   grp->SetAbsMatrix(mtr);

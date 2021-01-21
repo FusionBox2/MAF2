@@ -31,22 +31,22 @@ mafGUISettings(Listener, label)
   // Default interpreter will be set at application startup
   
   // default to system python
-  m_PythonExe = "python.exe";
-  m_PythonwExe = "pythonw.exe";
+  m_PythonExe = _R("python.exe");
+  m_PythonwExe = _R("pythonw.exe");
 
-  mafString pythonDir  = (mafGetApplicationDirectory() + "\\Python\\Python25").c_str();
-  mafString pythonExe = pythonDir + "\\python.exe";
-  mafString pythonwExe = pythonDir + "\\pythonw.exe";
+  mafString pythonDir  = mafGetApplicationDirectory() + _R("\\Python\\Python25");
+  mafString pythonExe = pythonDir + _R("\\python.exe");
+  mafString pythonwExe = pythonDir + _R("\\pythonw.exe");
 
   // use the embedded python if available
-  if (wxFileExists(pythonExe.GetCStr()))
+  if (mafFileExists(pythonExe))
   {
-    m_PythonExe = pythonExe.GetCStr();
+    m_PythonExe = pythonExe;
   }
   
-  if (wxFileExists(pythonExe.GetCStr()))
+  if (mafFileExists(pythonExe))
   {
-    m_PythonwExe = pythonwExe.GetCStr();
+    m_PythonwExe = pythonwExe;
   }
 
   InitializeSettings();
@@ -59,14 +59,14 @@ lhpGUIPythonSettings::~lhpGUIPythonSettings()
 void lhpGUIPythonSettings::CreateGui()
 {
   m_Gui = new mafGUI(this);
-  m_Gui->Label(_("Python Settings"));
-  m_Gui->Label(_(""));
-  m_Gui->Label(_("python.exe interpreter full path"));
-  m_Gui->String(ID_PYTHON_EXE,_(""),&m_PythonExe,1);
-  m_Gui->Label(_(""));
-  m_Gui->Label(_("pythonw.exe interpreter full path"));
-  m_Gui->String(ID_PYTHONW_EXE,_(""),&m_PythonwExe,1);
-  m_Gui->Label(_(""));
+  m_Gui->Label(_L("Python Settings"));
+  m_Gui->Label(_L(""));
+  m_Gui->Label(_L("python.exe interpreter full path"));
+  m_Gui->String(ID_PYTHON_EXE,_L(""),&m_PythonExe);
+  m_Gui->Label(_L(""));
+  m_Gui->Label(_L("pythonw.exe interpreter full path"));
+  m_Gui->String(ID_PYTHONW_EXE,_L(""),&m_PythonwExe);
+  m_Gui->Label(_L(""));
   m_Gui->Divider(2);
   EnableItems(true);
 }
@@ -107,7 +107,7 @@ void lhpGUIPythonSettings::InitializeSettings()
   //}
   //else
   //{
-  m_Config->Write("m_PythonExe",m_PythonExe);
+  m_Config->Write("m_PythonExe",m_PythonExe.toWx());
     // }
   // 
   /*if(m_Config->Read("m_PythonwWxe", &stringItem))
@@ -116,7 +116,7 @@ void lhpGUIPythonSettings::InitializeSettings()
   }
   else
   {*/
-  m_Config->Write("m_PythonwWxe",m_PythonwExe.GetCStr());
+  m_Config->Write("m_PythonwWxe",m_PythonwExe.toWx());
   //   }
 
   m_Config->Flush();

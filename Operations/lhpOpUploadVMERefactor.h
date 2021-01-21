@@ -87,7 +87,7 @@ public:
   Return the remote URI where the XML resource has been stored after calling Upload()*/
   mafString GetRemoteXMLResourceURI() {return m_RemoteXMLResourceURI;};
 
-  lhpOpUploadVMERefactor(const mafString& label = "Upload Vme");
+  lhpOpUploadVMERefactor(const mafString& label = _R("Upload Vme"));
   ~lhpOpUploadVMERefactor(); 
 
   mafTypeMacro(lhpOpUploadVMERefactor, mafOp);
@@ -175,7 +175,7 @@ protected:
 
   mafString m_CacheMasterFolderABSName; //>cache subfolders parent directory
   static mafString m_CacheChildFolderLocalName; //>cache subdirectory
-  wxString m_CurrentCacheChildABSFolder; //>current cache subdirectory
+  mafString m_CurrentCacheChildABSFolder; //>current cache subdirectory
   
   mafString m_OutgoingFolderABSName; //directory for xml and binary to send
 
@@ -219,8 +219,8 @@ private:
   wxArrayString m_ManualTagsList;
   wxArrayString m_UnhandledAutoTagsListFromFactory; ///< the factory was not able to handle these tags
   wxArrayString m_HandledAutoTagsListFromFactory; ///< tags handled by the factory  
-  wxString m_UnhandledPlusManualTagsLocalFileName;
-  wxString m_NodeName;
+  mafString m_UnhandledPlusManualTagsLocalFileName;
+  mafString m_NodeName;
   FILE *m_ProxyFile;
   bool m_HasLink;
   bool m_HasChild;

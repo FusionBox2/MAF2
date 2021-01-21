@@ -37,9 +37,9 @@ lhpUser::lhpUser(mafBaseEventHandler *listener)
 //----------------------------------------------------------------------------
 {
   SetListener(listener);
-  m_PythonExe = "python.exe_UNDEFINED";
-  m_PythonwExe = "pythonw.exe_UNDEFINED";
-  m_VMEUploaderDownloaderDir  = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloader\\").c_str();
+  m_PythonExe = _R("python.exe_UNDEFINED");
+  m_PythonwExe = _R("pythonw.exe_UNDEFINED");
+  m_VMEUploaderDownloaderDir  = lhpUtils::lhpGetApplicationDirectory() + _R("\\VMEUploaderDownloader\\");
   
   m_IsAuthenticated = false;
  
@@ -104,42 +104,42 @@ bool lhpUser::ExecuteAuthenticationScript()
   if(event.GetString())
   {
     m_PythonwExe.Erase(0);
-    m_PythonwExe = event.GetString()->GetCStr();
-    m_PythonwExe.Append(" ");
+    m_PythonwExe = *event.GetString();
+    m_PythonwExe.Append(_R(" "));
   }
   
   wxString oldDir = wxGetCwd();
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
-  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+  mafLogMessage( _M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
+  mafLogMessage( _M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
   // get manual tags
-  wxString command2execute;
-  command2execute.Clear();
-  command2execute = m_PythonwExe.GetCStr();
+  mafString command2execute;
+  command2execute = m_PythonwExe;
 
-  command2execute.Append(" lhpAuthenticationControl.py ");
-  command2execute.Append(m_Username.GetCStr());
-  command2execute.Append(" ");
-  command2execute.Append(m_Password.GetCStr());
+  command2execute.Append(_R(" lhpAuthenticationControl.py "));
+  command2execute.Append(m_Username);
+  command2execute.Append(_R(" "));
+  command2execute.Append(m_Password);
   
-  if(m_ProxyFlag != 0 && !m_ProxyHost.Equals(""))
+  if(m_ProxyFlag != 0 && !m_ProxyHost.IsEmpty())
   {
-    command2execute.Append(" ");
-    command2execute.Append(m_ProxyHost.GetCStr());
-    command2execute.Append(" ");
-    command2execute.Append(wxString::Format("%d ",m_ProxyPort));
+    command2execute.Append(_R(" "));
+    command2execute.Append(m_ProxyHost);
+    command2execute.Append(_R(" "));
+    command2execute.Append(mafToString(m_ProxyPort));
+    command2execute.Append(_R(" "));
   }
   
   //mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
-  mafLogMessage("Authenticating user (Timeout to 30 seconds). Please wait...");
-  long pid = wxExecute(command2execute, wxEXEC_SYNC);
+  mafLogMessage(_M("Authenticating user (Timeout to 30 seconds). Please wait..."));
+  long pid = wxExecute(command2execute.toWx(), wxEXEC_SYNC);
 
   wxArrayString output;
   wxArrayString errors;
 
-  pid = wxExecute(command2execute, output, errors);
+  pid = wxExecute(command2execute.toWx(), output, errors);
 
   if (output.size() == 0)
   {
@@ -147,16 +147,16 @@ bool lhpUser::ExecuteAuthenticationScript()
   }
 
 
-  mafLogMessage("Command Output Messages:");
+  mafLogMessage(_M("Command Output Messages:"));
   for (int i = 0; i < output.size(); i++)
   {
-    mafLogMessage(output[i]);
+    mafLogMessage(_M(mafWxToString(output[i])));
   }
 
-  mafLogMessage("Command Errors Messages (if any...):");
+  mafLogMessage(_M("Command Errors Messages (if any...):"));
   for (int i = 0; i < errors.size(); i++)
   {
-    mafLogMessage(errors[i]);
+    mafLogMessage(_M(mafWxToString(errors[i])));
   }
 
   // gathering values from Python Output:
@@ -169,7 +169,7 @@ bool lhpUser::ExecuteAuthenticationScript()
   wxString result = output[output.size() - 1];
 
   wxSetWorkingDirectory(oldDir);
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  mafLogMessage( _M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
   if (result == "Authenticated")
   {

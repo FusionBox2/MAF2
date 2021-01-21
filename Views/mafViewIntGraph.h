@@ -48,7 +48,7 @@ class mafSceneGraph;
 class mafViewIntGraph: public mafView
 {
 public:
-  mafViewIntGraph(const mafString& label = "Biomechanical graph");
+  mafViewIntGraph(const mafString& label = _R("Biomechanical graph"));
   virtual ~mafViewIntGraph(); 
 
   mafTypeMacro(mafViewIntGraph, mafView);

@@ -71,7 +71,7 @@ lhpOpImporterC3DBTK::_InternalC3DData::_InternalC3DData()
   m_VmeAnalog = NULL;
 
   //c3d filename
-  m_FileName = "";
+  m_FileName = _R("");
 
   //Aurion
   //m_Errcode = 0;
@@ -128,9 +128,9 @@ lhpOpImporterC3DBTK::lhpOpImporterC3DBTK(const mafString& label) : Superclass(la
   m_OpType  = OPTYPE_IMPORTER;
   m_Canundo = true;
 
-  m_FileDir = mafGetApplicationDirectory() + "/Data/External/";
-  m_DictionaryFileName = "";
-  m_LMRenameFileName = "";
+  m_FileDir = mafGetApplicationDirectory() + _R("/Data/External/");
+  m_DictionaryFileName = _R("");
+  m_LMRenameFileName = _R("");
 
   //gui
   m_ImportTrajectoriesFlag = TRUE;
@@ -195,7 +195,7 @@ mafOp* lhpOpImporterC3DBTK::Copy()
 void lhpOpImporterC3DBTK::OpRun()   
 //----------------------------------------------------------------------------
 {
-  mafString wildcard = "c3d files (*.c3d)|*.c3d";
+  mafString wildcard = _R("c3d files (*.c3d)|*.c3d");
 
   m_C3DInputFileNameFullPaths.clear();
   {
@@ -227,10 +227,10 @@ void lhpOpImporterC3DBTK::OpRun()
 int lhpOpImporterC3DBTK::OpenC3D(const mafString &fullFileName)
 //----------------------------------------------------------------------------
 {
-  mafLogMessage("C3D_Open");
+  mafLogMessage(_M("C3D_Open"));
 
 	btk::AcquisitionFileReader::Pointer reader = btk::AcquisitionFileReader::New();
-  reader->SetFilename(fullFileName.GetCStr());
+  reader->SetFilename(fullFileName.toStd());
   reader->Update();
   m_Acq = reader->GetOutput();
 
@@ -250,20 +250,20 @@ bool lhpOpImporterC3DBTK::LoadDictionary()
 //----------------------------------------------------------------------------
 {
   std::string landmarkName, segmentName;
-  std::ifstream dictionaryInputStream(m_DictionaryFileName, std::ios::in);
+  std::ifstream dictionaryInputStream(m_DictionaryFileName.GetCStr(), std::ios::in);
 
   if(dictionaryInputStream.is_open() == 0)
     return false;
   while(dictionaryInputStream >> landmarkName)	
   {
     dictionaryInputStream >> segmentName;			
-    std::map<mafString, mafString>::iterator it = m_dictionaryStruct.find(landmarkName.c_str());
+    std::map<mafString, mafString>::iterator it = m_dictionaryStruct.find(_R(landmarkName.c_str()));
     if(it != m_dictionaryStruct.end())
     {
       m_dictionaryStruct.clear();
       return false;
     }
-    m_dictionaryStruct[landmarkName.c_str()] = segmentName.c_str();
+    m_dictionaryStruct[_R(landmarkName.c_str())] = _R(segmentName.c_str());
   }
   return true;
 }
@@ -278,20 +278,20 @@ bool lhpOpImporterC3DBTK::LoadLMRename()
 //----------------------------------------------------------------------------
 {
   std::string landmarkName, segmentName;
-  std::ifstream LMRenameInputStream(m_LMRenameFileName, std::ios::in);
+  std::ifstream LMRenameInputStream(m_LMRenameFileName.GetCStr(), std::ios::in);
 
   if(LMRenameInputStream.is_open() == 0)
     return false;
   while(LMRenameInputStream >> landmarkName)	
   {
     LMRenameInputStream >> segmentName;			
-    std::map<mafString, mafString>::iterator it = m_LMRenameStruct.find(landmarkName.c_str());
+    std::map<mafString, mafString>::iterator it = m_LMRenameStruct.find(_R(landmarkName.c_str()));
     if(it != m_LMRenameStruct.end())
     {
       m_LMRenameStruct.clear();
       return false;
     }
-    m_LMRenameStruct[landmarkName.c_str()] = segmentName.c_str();
+    m_LMRenameStruct[_R(landmarkName.c_str())] = _R(segmentName.c_str());
   }
   return true;
 }
@@ -332,8 +332,8 @@ void lhpOpImporterC3DBTK::Initialize(const mafString &fullFileName, lhpOpImporte
   intData.m_AnalogSamplePeriod = ((double)intData.m_LengthMs/(double)intData.m_NumSamples) / 1000.0;
   intData.m_VectogramSamplePeriod = intData.m_AnalogSamplePeriod;
 
-  wxString fileName = fullFileName.GetCStr();
-  fileName = fileName.AfterLast('\\').BeforeLast('.');
+  mafString fileName = fullFileName;
+  fileName = mafWxToString(fileName.toWx().AfterLast('\\').BeforeLast('.'));
 
   intData.m_FileName = fileName;
 }
@@ -352,7 +352,7 @@ mafVMEGroup *lhpOpImporterC3DBTK::ImportSingleFile(const mafString &fullFileName
       mafNEW(intData.m_VmeGroup);
       mafString resultName;
       resultName.Append(intData.m_FileName);
-      resultName.Append("_C3D");
+      resultName.Append(_R("_C3D"));
       intData.m_VmeGroup->SetName(resultName);
     }
 
@@ -422,7 +422,7 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
 
   intData.m_Clouds.clear();
 
-  bool usingDictionary = (m_DictionaryFileName != "");
+  bool usingDictionary = (!m_DictionaryFileName.IsEmpty());
   mafVMELandmarkCloud *specCloud = NULL;//the only cloud if read without dictionary and NOT_IN_DICTIONARY with
   mafString specCloudName;//name of specCloud
 
@@ -433,11 +433,11 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
     if(specCloud == NULL)
       return;
 	specCloud->SetRadius(m_DefaultRadius);
-    specCloudName.Append("TRAJECTORIES");
+    specCloudName.Append(_R("TRAJECTORIES"));
     specCloud->SetName(specCloudName);
   }
   else//with dictionary just prepare name, creation only if needed
-    specCloudName.Append("NOT_IN_DICTIONARY");
+    specCloudName.Append(_R("NOT_IN_DICTIONARY"));
 
   mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
   
@@ -461,7 +461,7 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
       case btk::Point::Force:
       case btk::Point::Marker:
         {
-          intData.m_TrajectoryName = m_Acq->GetPoint(currentTrajectory)->GetLabel().c_str();
+          intData.m_TrajectoryName = _R(m_Acq->GetPoint(currentTrajectory)->GetLabel().c_str());
 		  std::map<mafString, mafString>::iterator renIt = m_LMRenameStruct.find(intData.m_TrajectoryName);
 		  //trajectory name found
 		  if(renIt != m_LMRenameStruct.end())
@@ -540,7 +540,7 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
               }
             }
 
-            intData.m_TrajectoryUnit = m_Acq->GetPointUnit().c_str();
+            intData.m_TrajectoryUnit = _R(m_Acq->GetPointUnit().c_str());
 
             bool visibility = m_Acq->GetPoint(currentTrajectory)->GetResiduals().coeffRef(currentFrame) != -1;
             if(visibility)
@@ -567,9 +567,9 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
         break;
       case btk::Point::Angle:
 
-        intData.m_AngleName = m_Acq->GetPoint(currentTrajectory)->GetLabel().c_str();
+        intData.m_AngleName = _R(m_Acq->GetPoint(currentTrajectory)->GetLabel().c_str());
         
-        intData.m_AngleUnit = m_Acq->GetPointUnit().c_str();
+        intData.m_AngleUnit = _R(m_Acq->GetPointUnit().c_str());
         
         if(m_Acq->GetPoint(currentTrajectory)->GetResiduals().coeffRef(currentFrame) != -1)
         {
@@ -581,9 +581,9 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
         break;
       case btk::Point::Moment:
 
-        intData.m_MomentName = m_Acq->GetPoint(currentTrajectory)->GetLabel().c_str();
+        intData.m_MomentName = _R(m_Acq->GetPoint(currentTrajectory)->GetLabel().c_str());
 
-        intData.m_MomentUnit = m_Acq->GetPointUnit().c_str();
+        intData.m_MomentUnit = _R(m_Acq->GetPointUnit().c_str());
         
         if(m_Acq->GetPoint(currentTrajectory)->GetResiduals().coeffRef(currentFrame) != -1)
         {
@@ -595,9 +595,9 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
         break;
       case btk::Point::Power:
 
-        intData.m_PowerName = m_Acq->GetPoint(currentTrajectory)->GetLabel().c_str();
+        intData.m_PowerName = _R(m_Acq->GetPoint(currentTrajectory)->GetLabel().c_str());
         
-        intData.m_PowerUnit = m_Acq->GetPointUnit().c_str();
+        intData.m_PowerUnit = _R(m_Acq->GetPointUnit().c_str());
         
         if(m_Acq->GetPoint(currentTrajectory)->GetResiduals().coeffRef(currentFrame) != -1)
         {
@@ -649,7 +649,7 @@ void lhpOpImporterC3DBTK::ImportAnalog(lhpOpImporterC3DBTK::_InternalC3DData &in
   mafNEW(intData.m_VmeAnalog);
   mafString analogVmeName;
   //analogVmeName.Append(intData.m_FileName);
-  analogVmeName.Append("ANALOG");
+  analogVmeName.Append(_R("ANALOG"));
   intData.m_VmeAnalog->SetName(analogVmeName);
 
   vnl_matrix<double> analogMatrix;
@@ -668,9 +668,9 @@ void lhpOpImporterC3DBTK::ImportAnalog(lhpOpImporterC3DBTK::_InternalC3DData &in
     for(int currentChannel=0; currentChannel < intData.m_NumChannels; currentChannel++)
     {
 
-      intData.m_ChannelName = m_Acq->GetAnalog(currentChannel)->GetLabel().c_str();
+      intData.m_ChannelName = _R(m_Acq->GetAnalog(currentChannel)->GetLabel().c_str());
       intData.m_AnalogValue = m_Acq->GetAnalog(currentChannel)->GetValues()(currentSample, 0);
-      intData.m_ChannelUnit = m_Acq->GetAnalog(currentChannel)->GetUnit().c_str();
+      intData.m_ChannelUnit = _R(m_Acq->GetAnalog(currentChannel)->GetUnit().c_str());
 
       if(currentSample == 0) channelsNameList.push_back(intData.m_ChannelName);
 
@@ -686,11 +686,11 @@ void lhpOpImporterC3DBTK::ImportAnalog(lhpOpImporterC3DBTK::_InternalC3DData &in
   intData.m_VmeAnalog->SetData(analogMatrix, 0);
 
   mafTagItem tag_Sig;
-  tag_Sig.SetName("SIGNALS_NAME");
+  tag_Sig.SetName(_R("SIGNALS_NAME"));
   tag_Sig.SetNumberOfComponents(intData.m_NumSamples);
   intData.m_VmeAnalog->GetTagArray()->SetTag(tag_Sig);
 
-  mafTagItem *tag_Signals = intData.m_VmeAnalog->GetTagArray()->GetTag("SIGNALS_NAME");
+  mafTagItem *tag_Signals = intData.m_VmeAnalog->GetTagArray()->GetTag(_R("SIGNALS_NAME"));
   for (int n = 0; n < channelsNameList.size(); n++)
   {
     tag_Signals->SetValue(channelsNameList[n], n);
@@ -770,10 +770,10 @@ void lhpOpImporterC3DBTK::ImportPlatform(lhpOpImporterC3DBTK::_InternalC3DData &
     mafNEW(platform);
     intData.m_PlatformList.push_back(platform);
     mafString platformNumber;
-    platformNumber << (currentPlatform + 1) ;
+    platformNumber += mafToString(currentPlatform + 1) ;
     mafString platformName;
     //platformName.Append(intData.m_FileName);
-    platformName.Append("FORCE_PLATFORM_");
+    platformName.Append(_R("FORCE_PLATFORM_"));
     platformName.Append(platformNumber);
     intData.m_PlatformList[currentPlatform]->SetName(platformName);
 
@@ -791,7 +791,7 @@ void lhpOpImporterC3DBTK::ImportPlatform(lhpOpImporterC3DBTK::_InternalC3DData &
     intData.m_ForceList.push_back(force);
     mafString forceName;
     //forceName.Append(intData.m_FileName);
-    forceName.Append("GRF_");
+    forceName.Append(_R("GRF_"));
     forceName.Append(platformNumber);
     intData.m_ForceList[currentPlatform]->SetName(forceName);
 
@@ -801,7 +801,7 @@ void lhpOpImporterC3DBTK::ImportPlatform(lhpOpImporterC3DBTK::_InternalC3DData &
     intData.m_MomentList.push_back(moment);
     mafString momentName;
     //momentName.Append(intData.m_FileName);
-    momentName.Append("MOMENT_");
+    momentName.Append(_R("MOMENT_"));
     momentName.Append(platformNumber);
     intData.m_MomentList[currentPlatform]->SetName(momentName);
 
@@ -925,7 +925,7 @@ void lhpOpImporterC3DBTK::ImportEvent(lhpOpImporterC3DBTK::_InternalC3DData &int
   //For every event
   for(int currentEvent=0; currentEvent<intData.m_NumEvents; currentEvent++)
   {
-    intData.m_EventContext = m_Acq->GetEvent(currentEvent)->GetContext().c_str();//event context
+    intData.m_EventContext = _R(m_Acq->GetEvent(currentEvent)->GetContext().c_str());//event context
     intData.m_EventValue = m_Acq->GetEvent(currentEvent)->GetTime();              //event value in seconds
   }
 }
@@ -952,23 +952,23 @@ void lhpOpImporterC3DBTK::CreateGui()
 //----------------------------------------------------------------------------
 {
 	m_Gui = new mafGUI(this);
-	m_Gui->Label("Select:", true);
+	m_Gui->Label(_R("Select:"), true);
 
-  m_Gui->Bool(ID_IMPORT_TRAJECTORIES,_("Trajectories"),&m_ImportTrajectoriesFlag,1);
-  m_Gui->Bool(ID_IMPORT_ANALOG,_("Analog Data"),&m_ImportAnalogFlag,1);
-  m_Gui->Bool(ID_IMPORT_PLATFORM,_("Force Plate Data"),&m_ImportPlatformFlag,1);
+  m_Gui->Bool(ID_IMPORT_TRAJECTORIES,_L("Trajectories"),&m_ImportTrajectoriesFlag,1);
+  m_Gui->Bool(ID_IMPORT_ANALOG,_L("Analog Data"),&m_ImportAnalogFlag,1);
+  m_Gui->Bool(ID_IMPORT_PLATFORM,_L("Force Plate Data"),&m_ImportPlatformFlag,1);
   //m_Gui->Bool(ID_IMPORT_EVENT,_("Auto Crop"),&m_ImportEventFlag,1);
-  m_Gui->Label("");
-  m_Gui->Double(ID_RADIUS, "Radius", &m_DefaultRadius, 0);
+  m_Gui->Label(_R(""));
+  m_Gui->Double(ID_RADIUS, _R("Radius"), &m_DefaultRadius, 0);
   m_Gui->Divider();
-  m_Gui->FileOpen(ID_LOAD_LMREN, "Renamer",  &m_LMRenameFileName, "*.txt");
-  m_Gui->Button(ID_CLEAR_LMREN, "Clean", "", "Press to cancel using LM renamer" );  
-  m_Gui->Label("");
-  m_Gui->FileOpen(ID_LOAD_DICT, "Segment",  &m_DictionaryFileName, "*.txt");
-  m_Gui->Button(ID_CLEAR_DICT, "Clean", "", "Press to cancel using dictionary" );  
+  m_Gui->FileOpen(ID_LOAD_LMREN, _R("Renamer"),  &m_LMRenameFileName, _R("*.txt"));
+  m_Gui->Button(ID_CLEAR_LMREN, _R("Clean"), _R(""), _R("Press to cancel using LM renamer") );
+  m_Gui->Label(_R(""));
+  m_Gui->FileOpen(ID_LOAD_DICT, _R("Segment"),  &m_DictionaryFileName, _R("*.txt"));
+  m_Gui->Button(ID_CLEAR_DICT, _R("Clean"), _R(""), _R("Press to cancel using dictionary") );
 
-  m_Gui->Enable(ID_CLEAR_DICT, (m_DictionaryFileName != ""));
-  m_Gui->Enable(ID_CLEAR_LMREN, (m_LMRenameFileName != ""));
+  m_Gui->Enable(ID_CLEAR_DICT, (!m_DictionaryFileName.IsEmpty()));
+  m_Gui->Enable(ID_CLEAR_LMREN, (!m_LMRenameFileName.IsEmpty()));
 
 	m_Gui->OkCancel();
 }
@@ -976,14 +976,14 @@ void lhpOpImporterC3DBTK::CreateGui()
 void lhpOpImporterC3DBTK::DictionaryUpdate() 
 //----------------------------------------------------------------------------
 {
-  bool emptyName = (m_DictionaryFileName == "");
+  bool emptyName = (m_DictionaryFileName.IsEmpty());
   DestroyDictionary();
   if(!emptyName)
   {
     if(!LoadDictionary())
     {
       wxLogMessage("Error reading dictionary.");
-      m_DictionaryFileName = "";
+      m_DictionaryFileName = _R("");
     }
   }
   if(m_Gui)
@@ -996,14 +996,14 @@ void lhpOpImporterC3DBTK::DictionaryUpdate()
 void lhpOpImporterC3DBTK::LMRenameUpdate() 
 //----------------------------------------------------------------------------
 {
-  bool emptyName = (m_LMRenameFileName == "");
+  bool emptyName = (m_LMRenameFileName.IsEmpty());
   DestroyLMRename();
   if(!emptyName)
   {
     if(!LoadLMRename())
     {
       wxLogMessage("Error reading LM renamer.");
-      m_LMRenameFileName = "";
+      m_LMRenameFileName = _R("");
     }
   }
   if(m_Gui)
@@ -1042,7 +1042,7 @@ void lhpOpImporterC3DBTK::OnEvent(mafEventBase *maf_event)
         break;
       case ID_CLEAR_DICT:
         {
-          m_DictionaryFileName = "";
+          m_DictionaryFileName = _R("");
         }//WARNING! NO break operator here, execution will continue in ID_LOAD_DICT
       case ID_LOAD_DICT:
         {
@@ -1051,7 +1051,7 @@ void lhpOpImporterC3DBTK::OnEvent(mafEventBase *maf_event)
         }
       case ID_CLEAR_LMREN:
         {
-          m_LMRenameFileName = "";
+          m_LMRenameFileName = _R("");
         }//WARNING! NO break operator here, execution will continue in ID_LOAD_DICT
       case ID_LOAD_LMREN:
         {
@@ -1063,7 +1063,7 @@ void lhpOpImporterC3DBTK::OnEvent(mafEventBase *maf_event)
           if(m_Gui)
           {
             m_Gui->Enable(ID_LOAD_DICT, m_ImportTrajectoriesFlag != 0);
-            m_Gui->Enable(ID_CLEAR_DICT, m_ImportTrajectoriesFlag != 0 && m_DictionaryFileName != "");
+            m_Gui->Enable(ID_CLEAR_DICT, m_ImportTrajectoriesFlag != 0 && !m_DictionaryFileName.IsEmpty());
           }
           break;
         }

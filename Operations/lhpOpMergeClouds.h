@@ -32,7 +32,7 @@ class mafVMESurface;
 class lhpOpMergeClouds: public mafOp
 {
 public:
-           lhpOpMergeClouds(const mafString& label = "Merge clouds");
+           lhpOpMergeClouds(const mafString& label = _R("Merge clouds"));
   virtual ~lhpOpMergeClouds();
   
   mafTypeMacro(lhpOpMergeClouds, mafOp);

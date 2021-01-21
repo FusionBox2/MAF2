@@ -61,12 +61,12 @@ mafOp * lhpOpMTRImporter::Copy()
 void  lhpOpMTRImporter::OpRun()   
 //----------------------------------------------------------------------------
 {
-  mafString vrml_wildc  = "MTR FARO data (*.mtr)|*.mtr";
+  mafString vrml_wildc  = _R("MTR FARO data (*.mtr)|*.mtr");
 
   m_Files.clear();
   //if (m_File.IsEmpty())
   {
-    mafGetOpenMultiFiles(m_FileDir.GetCStr(),vrml_wildc.GetCStr(), m_Files);
+    mafGetOpenMultiFiles(m_FileDir,vrml_wildc, m_Files);
   }
 
   int result = OP_RUN_CANCEL;
@@ -95,25 +95,25 @@ void  lhpOpMTRImporter::ImportData()
       continue;
  
     
-    wxString vmeName;
+    mafString vmeName;
     //wxBusyInfo wait("Loading file: ...");  
-    wxString path;
-    wxString grpName, extension;
+    mafString path;
+    mafString grpName, extension;
     mafVMEGroup *grp;
 
-    wxSplitPath(m_Files[fi].GetCStr(),&path,&grpName,&extension);
+    mafSplitPath(m_Files[fi],&path,&grpName,&extension);
 
     mafNEW(grp);
-    grp->SetName(grpName.c_str());
+    grp->SetName(grpName);
     m_Groups.push_back(grp);
 
     while(TRUE)
     {
       mafMTRLMCReader *LMCReader = mafMTRLMCReader::New();
-      LMCReader->SetFileName(m_Files[fi]);
-      wxString name, ext;
+      LMCReader->SetFileName(m_Files[fi].GetCStr());
+      mafString name, ext;
 
-      wxSplitPath(m_Files[fi].GetCStr(),&path,&name,&ext);
+      mafSplitPath(m_Files[fi],&path,&name,&ext);
 
       LMCReader->SetSet(mafMTRLMCReader::SetNotDefined);
       LMCReader->Execute();
@@ -127,13 +127,12 @@ void  lhpOpMTRImporter::ImportData()
       const std::vector<std::pair<mafVMELandmarkCloud*, int> >& clouds = LMCReader->GetClouds();
       for(int i = 0; i < clouds.size(); i++)
       {
-        vmeName = name + "_";
-        wxString  curNumber("");
-        curNumber.Printf("%d", i);
+        vmeName = name + _R("_");
+        mafString  curNumber = mafToString(i);
         vmeName = vmeName + curNumber;
         mafTagItem tag_Nature;
-        tag_Nature.SetName("VME_NATURE");
-        tag_Nature.SetValue("NATURAL");
+        tag_Nature.SetName(_R("VME_NATURE"));
+        tag_Nature.SetValue(_R("NATURAL"));
 
         mafVMELandmarkCloud *cloud;
         cloud = clouds[i].first;

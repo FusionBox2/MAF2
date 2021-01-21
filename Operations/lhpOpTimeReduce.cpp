@@ -122,15 +122,15 @@ void lhpOpTimeReduce::CreateGui()
 {
   if(m_Gui == NULL)
   {
-    char strng[100];
+    mafString strng;
     int nFrames = mafVMEGenericAbstract::SafeDownCast(m_Input)->GetNumberOfLocalTimeStamps();
-    sprintf(strng, "Node has %d timestamps", nFrames);
+    strng = mafString::Format(_R("Node has %d timestamps"), nFrames);
     m_Gui = new mafGUI(this);
     m_Gui->SetListener(this);
     m_Gui->Label(strng);
-    m_Gui->Label("Each frame number");
-    m_Gui->Integer(ID_NUMBER, "", &(m_Number), 1, nFrames, "This is frame index");
-    m_Gui->Bool(ID_DELETE, "will be deleted", &m_Delete, 1, "This is indication to delete or to save frames indicated");
+    m_Gui->Label(_R("Each frame number"));
+    m_Gui->Integer(ID_NUMBER, _R(""), &(m_Number), 1, nFrames, _R("This is frame index"));
+    m_Gui->Bool(ID_DELETE, _R("will be deleted"), &m_Delete, 1, _R("This is indication to delete or to save frames indicated"));
     m_Gui->OkCancel();
   }
   ShowGui();

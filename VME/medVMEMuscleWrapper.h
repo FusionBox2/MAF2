@@ -178,7 +178,7 @@ public:
 
   /** Return the suggested pipe-typename for the visualization of this vme */
   virtual mafString GetVisualPipe() {
-    return mafString("mafPipeSurface");
+    return mafString(_R("mafPipeSurface"));
   };
   
   /**

@@ -38,7 +38,7 @@ public:
   mafUser *GetInputUser(){return m_InputUser;};
 
 	/** Set the input storage */
-	void SetInputMSF(const char *msfFile) {m_InputMSF = msfFile;};
+	void SetInputMSF(const char *msfFile) {m_InputMSF = _R(msfFile);};
 	const char *GetInputMSF(){return m_InputMSF.GetCStr();};
   
   /** Called by the tag handler code: fill the auto string to be written in XML*/
@@ -59,17 +59,17 @@ class MAF_EXPORT lhpTagHandler : public mafObject
 public:
   mafTypeMacro(lhpTagHandler,mafObject);
 
-  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo){mafLogMessage("Please write handling code for this tag!");};  
-  const char *GetTagName(){return m_TagName;};
+  virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo){mafLogMessage(_M("Please write handling code for this tag!"));}
+  const char *GetTagName(){return m_TagName.GetCStr();};
   
     /** Set python.exe interpreter used at runtime*/
-  void SetPythonExe(const char *pythonExe){m_PythonExe = pythonExe;};
+  void SetPythonExe(const char *pythonExe){m_PythonExe = _R(pythonExe);};
   
   /** Get python.exe interpreter used at runtime*/
   mafString &GetPythonExe(){return m_PythonExe;};
 
   /** Set pythonw.exe interpreter used at runtime*/
-  void SetPythonwExe(const char *pythonwExe){m_PythonwExe = pythonwExe;};
+  void SetPythonwExe(const char *pythonwExe){m_PythonwExe = _R(pythonwExe);};
 
 	/** Get pythonw.exe interpreter used at runtime*/
   mafString &GetPythonwExe() {return m_PythonwExe;};

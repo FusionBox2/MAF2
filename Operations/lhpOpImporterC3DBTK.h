@@ -45,7 +45,7 @@ class mafVMEGroup;
 class lhpOpImporterC3DBTK : public mafOp
 {
 public:
-	lhpOpImporterC3DBTK(const mafString& label = "C3D Importer");
+	lhpOpImporterC3DBTK(const mafString& label = _R("C3D Importer"));
 	~lhpOpImporterC3DBTK(); 
 	
   mafTypeMacro(lhpOpImporterC3DBTK, mafOp);
@@ -72,15 +72,15 @@ public:
   //methods useful for test
 
   /* Set/Get Full pathname of c3d File*/
-  void SetC3DFileName(const char *filec3d){Clear(); m_C3DInputFileNameFullPaths.resize(1);m_C3DInputFileNameFullPaths[0] = filec3d;}
-  const char * GetC3DFileName() {if(m_C3DInputFileNameFullPaths.empty()) return NULL; return m_C3DInputFileNameFullPaths[0];}
+  void SetC3DFileName(const char *filec3d){Clear(); m_C3DInputFileNameFullPaths.resize(1);m_C3DInputFileNameFullPaths[0] = _R(filec3d);}
+  const char * GetC3DFileName() {if(m_C3DInputFileNameFullPaths.empty()) return NULL; return m_C3DInputFileNameFullPaths[0].GetCStr();}
 
   /* Set/Get Full pathname of dictionary File*/
-  void SetDictionaryFileName(const char *fileDict){m_DictionaryFileName = fileDict;DictionaryUpdate();}
-  const char * GetDictionaryFileName() {return m_DictionaryFileName;}
+  void SetDictionaryFileName(const char *fileDict){m_DictionaryFileName = _R(fileDict);DictionaryUpdate();}
+  const char * GetDictionaryFileName() {return m_DictionaryFileName.GetCStr();}
 
-  void SetLMRenameFileName(const char *fileDict){m_LMRenameFileName = fileDict;LMRenameUpdate();}
-  const char * GetLMRenameFileName() {return m_LMRenameFileName;}
+  void SetLMRenameFileName(const char *fileDict){m_LMRenameFileName = _R(fileDict);LMRenameUpdate();}
+  const char * GetLMRenameFileName() {return m_LMRenameFileName.GetCStr();}
 
   /* Get Group representing result of import */
   mafVMEGroup *GetGroup(){if(m_intData.empty()) return NULL; return m_intData[0].m_VmeGroup;}

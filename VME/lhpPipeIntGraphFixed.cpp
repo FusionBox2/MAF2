@@ -96,9 +96,9 @@ mafGUI *lhpPipeIntGraphFixed::CreateGui()
   wxString name;
   bool checked = false;
 
-  m_CheckBoxXval = m_Gui->CheckList(ID_CHECK_BOXXVAL,_("X value"),100,_("Choose value for X axis"));
-  m_CheckBoxYval = m_Gui->CheckList(ID_CHECK_BOXYVAL,_("Y values"),100,_("Choose values for Y axis"));
-  m_CheckBoxYder = m_Gui->CheckList(ID_CHECK_BOXYDER,_("Y derivs"),100,_("Choose values for Y axis"));
+  m_CheckBoxXval = m_Gui->CheckList(ID_CHECK_BOXXVAL,_L("X value"),100,_L("Choose value for X axis"));
+  m_CheckBoxYval = m_Gui->CheckList(ID_CHECK_BOXYVAL,_L("Y values"),100,_L("Choose values for Y axis"));
+  m_CheckBoxYder = m_Gui->CheckList(ID_CHECK_BOXYDER,_L("Y derivs"),100,_L("Choose values for Y axis"));
 
   m_CheckBoxXval->SetCheckMode(MODE_RADIO);
   for (int n = 0; n < m_vars.size(); n++)

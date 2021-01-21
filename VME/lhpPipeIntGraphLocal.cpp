@@ -70,7 +70,7 @@ lhpPipeIntGraphLocal::lhpPipeIntGraphLocal()
   m_vars.resize(GDT_LAST);
   InvalidateAllVars();
   m_Proximal = NULL;
-  m_ProximalName = "";
+  m_ProximalName = _R("");
 }
 void lhpPipeIntGraphLocal::Create(mafNode *node, mafView *view)
 {
@@ -89,7 +89,7 @@ void lhpPipeIntGraphLocal::SetProximal(mafVME *proximal)
   if(m_Proximal)
     m_Proximal->RemoveObserver(this);
   m_Proximal = proximal;
-  m_ProximalName = (m_Proximal) ? m_Proximal->GetName() : "";
+  m_ProximalName = (m_Proximal) ? m_Proximal->GetName() : _R("");
   if(m_Proximal)
     m_Proximal->AddObserver(this);
   if(m_Gui)
@@ -103,7 +103,7 @@ void lhpPipeIntGraphLocal::OnEvent(mafEventBase *maf_event)
   {
     if(ID_PARENT == e->GetId())
     {
-      mafString s(_("Choose cloud"));
+      mafString s(_L("Choose cloud"));
       mafEvent e(this,VME_CHOOSE, &s, NULL/*, (long)&lhpOpRegisterLMScripted::ClosedCloudAccept*/);
       mafEventMacro(e);
       mafVME *vme = mafVME::SafeDownCast(e.GetVme());
@@ -129,10 +129,10 @@ mafGUI *lhpPipeIntGraphLocal::CreateGui()
 //----------------------------------------------------------------------------
 {
   Superclass::CreateGui();
-  m_Gui->Label(_("Parent :"),true);
+  m_Gui->Label(_L("Parent :"),true);
   m_Gui->Label(&m_ProximalName);
-  m_Gui->Button(ID_PARENT,_("parent "));
-  m_Gui->Button(ID_RESETPARENT,_("reset parent"));
+  m_Gui->Button(ID_PARENT,_L("parent "));
+  m_Gui->Button(ID_RESETPARENT,_L("reset parent"));
   return m_Gui;
 }
 

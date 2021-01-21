@@ -36,7 +36,7 @@ class lhpOpAverageLM: public mafOp
 {
 public:
   mafTypeMacro(lhpOpAverageLM, mafOp)
-  lhpOpAverageLM(const mafString& label = "");
+  lhpOpAverageLM(const mafString& label = _R(""));
  ~lhpOpAverageLM(); 
 
   virtual void OnEvent(mafEventBase *maf_event);

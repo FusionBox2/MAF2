@@ -920,7 +920,7 @@ void solidify(const std::vector<V3d<double> >& gold, std::vector<std::vector<V3d
   double R[3][3],RR[3][3],T[3];
 
   unsigned int ct_nb;
-  unsigned int i,j,l,m,n,k,z,t,taille;
+  unsigned int i,j,l,m,n,k,z,t;
   double res,min;
   int inc=0;
 
@@ -1169,7 +1169,7 @@ lhpOpSolidify::lhpOpSolidify(const mafString& label) : Superclass(label)
   m_OpType             = OPTYPE_OP;
   m_Canundo            = true;
   m_Source             = NULL;
-  m_SourceName         = "none";
+  m_SourceName         = _R("none");
 }
 //----------------------------------------------------------------------------
 lhpOpSolidify::~lhpOpSolidify()
@@ -1209,10 +1209,10 @@ void lhpOpSolidify::OpRun()
     // interface:
     m_Gui = new mafGUI(this);
     m_Gui->SetListener(this);
-    m_Gui->Label(_("source :"),true);
+    m_Gui->Label(_L("source :"),true);
     m_Gui->Label(&m_SourceName);
-    m_Gui->Button(ID_CHOOSE,_("source "));
-    m_Gui->Label("");
+    m_Gui->Button(ID_CHOOSE,_L("source "));
+    m_Gui->Label(_R(""));
     m_Gui->OkCancel();
     m_Gui->Enable(wxOK, false);
 
@@ -1259,7 +1259,7 @@ void lhpOpSolidify::OpStop(int result)
   mafVMELandmarkCloud *newcloud;// = mafVMELandmarkCloud::New();
   mafString           ncname;
   ncname.Append(cloud->GetName());
-  ncname.Append("_solidified_with_");
+  ncname.Append(_R("_solidified_with_"));
   ncname.Append(m_SourceName);
   mafNEW(newcloud);
   newcloud->SetName(ncname);
@@ -1325,7 +1325,7 @@ void lhpOpSolidify::OnEvent(mafEventBase *maf_event)
     {
       case ID_CHOOSE:
         {
-          mafString s(_("Choose solid landmark"));
+          mafString s(_L("Choose solid landmark"));
           mafEvent e(this,VME_CHOOSE, &s, (long)&lhpOpSolidify::RigidBodyAccept);
           mafEventMacro(e);
           if(e.GetVme() == NULL)
@@ -1367,7 +1367,7 @@ void lhpOpSolidify::SetNodeName(mafVME *pVME, mafString *pName)
   *pName = pVME->GetName();
   if(pVME->GetParent() != NULL)
   {
-    *pName = *pName + " parent:";
-    *pName = *pName + pVME->GetParent()->GetName().GetCStr();
+    *pName += _R(" parent:");
+    *pName += pVME->GetParent()->GetName();
   }
 }

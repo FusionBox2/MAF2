@@ -33,7 +33,7 @@ class mafEvent;
 class lhpOpRegSurfWithCloud: public mafOp
 {
 public:
-  lhpOpRegSurfWithCloud(const mafString& label = _("Register Surface with Cloud"));
+  lhpOpRegSurfWithCloud(const mafString& label = _L("Register Surface with Cloud"));
  ~lhpOpRegSurfWithCloud(); 
   virtual void OnEvent(mafEventBase *maf_event);
   

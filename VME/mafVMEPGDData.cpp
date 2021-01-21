@@ -81,7 +81,7 @@ mafVMEPGDData::~mafVMEPGDData()
 void mafVMEPGDData::SetDictionaryFileName(const char *name)
 //----------------------------------------------------------------------------
 {
-  m_DictionaryFileName = name;
+  m_DictionaryFileName = _R(name);
   DictionaryOn();
   Modified();
 }
@@ -90,7 +90,7 @@ void mafVMEPGDData::SetDictionaryFileName(const char *name)
 void mafVMEPGDData::SetFileName(const char *name)
 //----------------------------------------------------------------------------
 {
-  m_FileName = name;
+  m_FileName = _R(name);
   Modified();
 }
 
@@ -99,7 +99,7 @@ int mafVMEPGDData::Read()
 //-----------------------------------------------------------------------
 {
   m_PGDLMNamesTagArray = new std::vector<mafString>;
-  m_pPGDFile = fopen(m_FileName, "rb");
+  m_pPGDFile = fopen(m_FileName.GetCStr(), "rb");
 
   mafTagItem  TmpTagItem;
   mafTagArray *PGDDictionaryTagArray = mafTagArray::New();
@@ -117,8 +117,8 @@ int mafVMEPGDData::Read()
     dict_iff.getline(buf,128,'\n');
 
     sscanf(buf,"%s %s", tmpString1, tmpString2);
-    TmpTagItem.SetName(tmpString1);
-    TmpTagItem.SetValue(tmpString2, 0);
+    TmpTagItem.SetName(_R(tmpString1));
+    TmpTagItem.SetValue(_R(tmpString2), 0);
     PGDDictionaryTagArray->SetTag(TmpTagItem);
   }
   while (!dict_iff.eof());
@@ -205,15 +205,15 @@ int mafVMEPGDData::Read()
       }
 
       //Find segment name from landmark name  
-      mafTagItem *tag = PGDDictionaryTagArray->GetTag(LandmarkName);
+      mafTagItem *tag = PGDDictionaryTagArray->GetTag(_R(LandmarkName));
       if(tag != NULL)
       {
-        const char *SegmentName = tag->GetValue();
+        const char *SegmentName = tag->GetValue().GetCStr();
 
         sprintf(tmpstring, "%s", SegmentName);
 
         //Search for segment [Side|SegmentName] in VME
-        if	(NULL == (TmpVMEFound =  mafVME::SafeDownCast(FindInTreeByName(tmpstring))))
+        if	(NULL == (TmpVMEFound =  mafVME::SafeDownCast(FindInTreeByName(_R(tmpstring)))))
         {	
           //if the segment does not exist then create its VME	
 
@@ -221,13 +221,13 @@ int mafVMEPGDData::Read()
 
           //modified by Vladik: 8-03-2005
           //TmpVME->Open();
-          TmpVME->SetName(tmpstring);
+          TmpVME->SetName(_R(tmpstring));
           TmpVME->SetRadius(m_DefaultRadius);
           //mafEventMacro(mafEvent(this,VME_CREATE_CLIENT_DATA,m_cloud));
           AddChild(TmpVME);		
 
           // reimplemented by MARCO
-          TmpVME->AppendLandmark(X,Y,Z,LandmarkName);
+          TmpVME->AppendLandmark(X,Y,Z,_R(LandmarkName));
 
           //modified by Vladik: 8-03-2005
           /*mafVMELandmark *Landmark = mafVMELandmark::New();
@@ -245,7 +245,7 @@ int mafVMEPGDData::Read()
           if (mafVMELandmarkCloud * TmpVME = mafVMELandmarkCloud::SafeDownCast(TmpVMEFound))
           {
             //modified by Vladik: 8-03-2005
-            TmpVME->AppendLandmark(X,Y,Z,LandmarkName);
+            TmpVME->AppendLandmark(X,Y,Z,_R(LandmarkName));
             /*mafVMELandmark *Landmark = mafVMELandmark::New();//we have a reference on the vme (we can call vtkDEL in the UNDO)
             Landmark->SetName(LandmarkName);
             Landmark->ReparentTo(TmpVME);
@@ -286,16 +286,16 @@ int mafVMEPGDData::Read()
     ///// End workaround /////
 
     //find the segment in VMETree
-    TmpVMEFound =  mafVME::SafeDownCast(FindInTreeByName(CurrentSegmentName));
+    TmpVMEFound =  mafVME::SafeDownCast(FindInTreeByName(_R(CurrentSegmentName)));
 
     // check if TmpVMEFound is NULL, and in that case create a new one
     if (TmpVMEFound == NULL) 
     {
 
       mafVMELandmarkCloud *TmpVME = mafVMELandmarkCloud::New();
-      TmpVME->SetName(CurrentSegmentName);
+      TmpVME->SetName(_R(CurrentSegmentName));
 
-      mafTagItem *v_ti = new mafTagItem("visible", 0.0);
+      mafTagItem *v_ti = new mafTagItem(_R("visible"), 0.0);
       TmpVME->GetTagArray()->SetTag(*v_ti);
       TmpVMEFound=TmpVME;       
       AddChild(TmpVME);

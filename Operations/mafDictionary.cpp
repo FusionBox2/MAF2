@@ -122,7 +122,7 @@ bool ReadDictionary(mafString *fileName, std::vector<std::pair<wxString, wxStrin
   wxString     sFirstName("");
   wxString     sSecondName("");
 
-  pFile = new wxTextFile(fileName->GetCStr());
+  pFile = new wxTextFile(fileName->toWx());
 
   if(pFile == NULL)
   {

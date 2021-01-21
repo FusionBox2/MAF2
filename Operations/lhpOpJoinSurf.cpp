@@ -90,17 +90,17 @@ void lhpOpJoinSurf::CreateGui()
 {
   m_Gui = new mafGUI(this);
   m_Gui->SetListener(this);
-  m_Gui->Label(_("Surfaces"), true);
+  m_Gui->Label(_L("Surfaces"), true);
   m_ListBox = m_Gui->ListBox(ID_JOINSURF/*LISTBOX*/);
 
   for(int j = 0; j < m_JoinSurf.size();j++)
   {
-    m_ListBox->Append(m_JoinSurf[j]->GetName().GetCStr());
+    m_ListBox->Append(m_JoinSurf[j]->GetName().toWx());
   }
 
 
-  m_Gui->Button(ID_ADD_SURF, _("Add"), "" ,"");
-  m_Gui->Button(ID_REMOVE_SURF, _("Remove"), "" ,"");
+  m_Gui->Button(ID_ADD_SURF, _L("Add"), _R(""), _R(""));
+  m_Gui->Button(ID_REMOVE_SURF, _L("Remove"), _R(""), _R(""));
 
   m_Gui->OkCancel();
   ShowGui();
@@ -129,7 +129,7 @@ void lhpOpJoinSurf::OnEvent(mafEventBase *maf_event)
       wxMessageBox("Current max point number is one!");
       return;
       }*/
-      mafString s("Choose surface to join");
+      mafString s(_R("Choose surface to join"));
       mafEvent e(this,VME_CHOOSE, &s);
       mafEventMacro(e);
       if(e.GetVme() == NULL)
@@ -139,19 +139,19 @@ void lhpOpJoinSurf::OnEvent(mafEventBase *maf_event)
       mafNode *sel = e.GetVme();
       if(mafVME::SafeDownCast(sel)== NULL || !mafVME::SafeDownCast(sel)->GetOutput()->IsMAFType(mafVMEOutputSurface))
       {
-        wxMessageBox("Selected VME should have mafVMEOutputSurface as Output.","Warning", wxOK|wxICON_WARNING , NULL);
+        mafWarningMessage(_M("Selected VME should have mafVMEOutputSurface as Output."));
         return;
       }
       if(sel == m_Input)
       {
-        wxMessageBox("Selected VME should not be the same as Input.","Warning", wxOK|wxICON_WARNING , NULL);
+        mafWarningMessage(_M("Selected VME should not be the same as Input."));
         return;
       }
 
       mafString t;
       t = mafVME::SafeDownCast(sel)->GetName();
-      m_ListBox->Append(_(t));
-      m_ListBox->SetStringSelection(_(t));
+      m_ListBox->Append(_(t.toWx()));
+      m_ListBox->SetStringSelection(_(t.toWx()));
       m_JoinSurf.push_back(mafVME::SafeDownCast(sel));
 
 
@@ -346,14 +346,14 @@ void lhpOpJoinSurf::OpStop(int result)
   mafNEW(m_OutSurface);
   mafString nm;
   nm = m_Input->GetName();
-  nm += "_merged";
+  nm += _R("_merged");
   //nm += m_JoinSurf[0]->GetName();
   m_OutSurface->SetName(nm);
   m_OutSurface->SetData(output,t);
 
   mafTagItem tag_Nature;
-  tag_Nature.SetName("VME_NATURE");
-  tag_Nature.SetValue("NATURAL");
+  tag_Nature.SetName(_R("VME_NATURE"));
+  tag_Nature.SetValue(_R("NATURAL"));
 
   m_OutSurface->GetTagArray()->SetTag(tag_Nature);
 
@@ -369,8 +369,8 @@ void lhpOpJoinSurf::SetNodeName(mafVME *pVME, mafString *pName)
   *pName = pVME->GetName();
   if(pVME->GetParent() != NULL)
   {
-    *pName = *pName + " parent:";
-    *pName = *pName + pVME->GetParent()->GetName().GetCStr();
+    *pName += _R(" parent:");
+    *pName += pVME->GetParent()->GetName();
   }
 }
 

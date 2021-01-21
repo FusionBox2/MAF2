@@ -59,7 +59,7 @@ class lhpOpEditTagRefactor: public mafOp
 {
 public:
 
-	lhpOpEditTagRefactor(const mafString& label = "Edit VME Tag");
+	lhpOpEditTagRefactor(const mafString& label = _R("Edit VME Tag"));
 	~lhpOpEditTagRefactor(); 
 
 	mafTypeMacro(lhpOpEditTagRefactor, mafOp);
@@ -155,8 +155,8 @@ private:
   wxArrayString m_ManualTagsList;
   wxArrayString m_UnhandledAutoTagsListFromFactory; ///< the factory was not able to handle these tags
   wxArrayString m_HandledAutoTagsListFromFactory; ///< tags handled by the factory  
-  wxString m_UnhandledPlusManualTagsLocalFileName;
-  wxString m_NodeName;
+  mafString m_UnhandledPlusManualTagsLocalFileName;
+  mafString m_NodeName;
   mafNode *m_Parent;
   bool m_HasLink;
   bool m_DebugMode;

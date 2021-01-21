@@ -32,7 +32,7 @@ class mafEvent;
 class lhpOpKeyczarIntegrationTest : public mafOp
 {
 public:
-	lhpOpKeyczarIntegrationTest(const mafString& label = "lhpOpKeyczarIntegrationTest");
+	lhpOpKeyczarIntegrationTest(const mafString& label = _R("lhpOpKeyczarIntegrationTest"));
 	~lhpOpKeyczarIntegrationTest(); 
 	
   mafTypeMacro(lhpOpKeyczarIntegrationTest, mafOp);

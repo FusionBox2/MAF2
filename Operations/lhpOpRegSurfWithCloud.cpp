@@ -61,9 +61,9 @@ lhpOpRegSurfWithCloud::lhpOpRegSurfWithCloud(const mafString& label) : Superclas
   m_Canundo     = true;
   m_Source      = NULL;
   m_Resultat    = NULL;
-  m_SourceName  = "none";
+  m_SourceName  = _R("none");
   m_MultiTime   = true;
-  m_ScriptFName = "";
+  m_ScriptFName = _R("");
 }
 //----------------------------------------------------------------------------
 lhpOpRegSurfWithCloud::~lhpOpRegSurfWithCloud( ) 
@@ -99,12 +99,12 @@ void lhpOpRegSurfWithCloud::OpRun()
   m_Gui = new mafGUI(this);
   m_Gui->SetListener(this);
 
-  m_Gui->Label(_("source :"),true);
+  m_Gui->Label(_L("source :"),true);
   m_Gui->Label(&m_SourceName);
 
-  m_Gui->Button(ID_CHOOSE,_("source "));
+  m_Gui->Button(ID_CHOOSE,_L("source "));
 
-  m_Gui->FileOpen(ID_LOAD_SCRIPT, "Load reg list",  &m_ScriptFName, "*.txt");
+  m_Gui->FileOpen(ID_LOAD_SCRIPT, _R("Load reg list"),  &m_ScriptFName, _R("*.txt"));
   //m_Gui->Bool(ID_MULTIPLE_TIME_REGISTRATION,_("multi-time"),&m_MultiTime,1);
   //m_Gui->Enable(ID_MULTIPLE_TIME_REGISTRATION,false);
 
@@ -124,13 +124,13 @@ void lhpOpRegSurfWithCloud::OnEvent(mafEventBase *maf_event)
     {
     case ID_LOAD_SCRIPT:
       {
-        if(m_ScriptFName != "")
+        if(!m_ScriptFName.IsEmpty())
           ReadDictionary(&m_ScriptFName, m_LMDict);
         break;
       }
       case ID_CHOOSE:
       {
-        mafString s(_("Choose cloud"));
+        mafString s(_L("Choose cloud"));
         mafEvent e(this,VME_CHOOSE, &s, (long)&lhpOpRegSurfWithCloud::ClosedCloudAccept);
         mafEventMacro(e);
         mafNode *vme = e.GetVme();
@@ -188,7 +188,7 @@ void lhpOpRegSurfWithCloud::OpStop(int result)
     for(unsigned i = 0; i < m_Input->GetNumberOfChildren(); i++)
     {
       mafVMESurface *surfChild = mafVMESurface::SafeDownCast(m_Input->GetChild(i));
-      if(surfChild == NULL || strcmp(surfChild->GetName(), m_LMDict[s].first.c_str()) != 0)
+      if(surfChild == NULL || strcmp(surfChild->GetName().GetCStr(), m_LMDict[s].first.c_str()) != 0)
         continue;
       mafNEW(surf);
       if(surf->CanCopy(surfChild))
@@ -205,7 +205,7 @@ void lhpOpRegSurfWithCloud::OpStop(int result)
     for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
     {
       mafVMELandmarkCloud *cloudChild = mafVMELandmarkCloud::SafeDownCast(node);
-      if(cloudChild != NULL && strcmp(cloudChild->GetName(), m_LMDict[s].second.c_str()) == 0)
+      if(cloudChild != NULL && strcmp(cloudChild->GetName().GetCStr(), m_LMDict[s].second.c_str()) == 0)
       {
         cloud = cloudChild;
         break;
@@ -258,7 +258,7 @@ void lhpOpRegSurfWithCloud::OpStop(int result)
     mafDEL(surf);
   }
 
-  wxString name = wxString::Format("%s registered on %s", m_Resultat->GetName(), m_Source->GetName());
+  mafString name = m_Resultat->GetName() + _R(" registered on ") + m_Source->GetName();
   m_Resultat->SetName(name);
   m_Resultat->ReparentTo(m_Input->GetParent());
 

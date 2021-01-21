@@ -100,7 +100,7 @@ mafVMEC3DData::~mafVMEC3DData()
 void mafVMEC3DData::SetDictionaryFileName(const char *name)
 //----------------------------------------------------------------------------
 {
-  this->m_DictionaryFileName = name;
+  this->m_DictionaryFileName = _R(name);
   this->DictionaryOn();
   this->Modified();
 }
@@ -109,7 +109,7 @@ void mafVMEC3DData::SetDictionaryFileName(const char *name)
 void mafVMEC3DData::SetFileName(const char *name)
 //----------------------------------------------------------------------------
 {
-  this->m_FileName = name;
+  this->m_FileName = _R(name);
   this->Modified();
 }
 
@@ -124,7 +124,7 @@ int mafVMEC3DData::Read()
   //root->CleanTree();
 
 
-  pC3DFile = fopen(this->m_FileName, "rb");
+  pC3DFile = fopen(this->m_FileName.GetCStr(), "rb");
 
   //Parse C3D file header
   this->Read_C3D_Header(num_markers, 
@@ -165,7 +165,7 @@ int mafVMEC3DData::Read()
 int mafVMEC3DData::PreRead()
 //-----------------------------------------------------------------------
 {
-  pC3DFile = fopen(this->m_FileName, "rb");
+  pC3DFile = fopen(this->m_FileName.GetCStr(), "rb");
 
   //Parse C3D file header
   this->Read_C3D_Header(num_markers, 
@@ -366,17 +366,17 @@ int mafVMEC3DData::Read_C3D_Data(unsigned short	num_markers,				// number of mar
   //If a dictionary exist read data from dictionary
   if (this->GetDictionary())
   {	//if dict exist
-    std::ifstream dictionaryInputStream(this->m_DictionaryFileName, std::ios::in);
+    std::ifstream dictionaryInputStream(this->m_DictionaryFileName.GetCStr(), std::ios::in);
 
     if(dictionaryInputStream.is_open() != 0)
     {
 
       while(dictionaryInputStream >> landmarkName)	
       {
-        dictTI.SetName(landmarkName.c_str());
+        dictTI.SetName(_R(landmarkName.c_str()));
 
         dictionaryInputStream >> segmentName;			
-        dictTI.SetComponent(segmentName.c_str(), 0);
+        dictTI.SetComponent(_R(segmentName.c_str()), 0);
 
         dictionaryTagArray->SetTag(dictTI);
       }
@@ -397,13 +397,13 @@ int mafVMEC3DData::Read_C3D_Data(unsigned short	num_markers,				// number of mar
 
       // c3DLMNamesTagArray(i) is in the dictionary?
       mafVMELandmarkCloud *currentCloud;
-      const char *newSegName;
+      mafString newSegName;
 
       // searching in dictionary for c3DLMNamesTagArray(i)...
       if (mafTagItem *ti = dictionaryTagArray->GetTag(c3DLMNamesTagArray->at(i)))
         newSegName = ti->GetComponent(0);
       else
-        newSegName = "NOT_IN_DICTIONARY";
+        newSegName = _R("NOT_IN_DICTIONARY");
       {// (tag found)
 
         // ok, the landmark exist in the dictionary; does the parent segment already exist?		
@@ -455,7 +455,7 @@ int mafVMEC3DData::Read_C3D_Data(unsigned short	num_markers,				// number of mar
     {
       // Create num_markers landmarks named from c3DLMNamesTagArray;				  {
       this->C3D_DLCloud->AppendLandmark(c3DLMNamesTagArray->at(i));
-      this->C3D_DLCloud->SetName("dummy");
+      this->C3D_DLCloud->SetName(_R("dummy"));
       // set coordinates for each landmark for each time stamp
       for (int k = 0; k < C3DMatrix.rows(); k++)
       {
@@ -565,7 +565,7 @@ void mafVMEC3DData::Read_C3D_Parameters(std::vector<mafString> *mlabels, FILE *i
     mafString lmname;
     char tmpstr[100];
     fgets(tmpstr, ncol+1, infile);
-    mafString lm_name = this->strrtrim(tmpstr);
+    mafString lm_name = _R(this->strrtrim(tmpstr));
     mlabels->push_back(lm_name);
   }
 } 

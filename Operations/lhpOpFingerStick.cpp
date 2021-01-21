@@ -136,7 +136,7 @@ bool lhpOpFingerStick::ReadLMDictionary(mafString *fileName)
   wxString     sSecondName("");
   //mafGraphDictionary *pEntry;
 
-  pFile = new wxTextFile(fileName->GetCStr());
+  pFile = new wxTextFile(fileName->toWx());
 
   if(pFile == NULL)
   {
@@ -185,7 +185,7 @@ bool lhpOpFingerStick::ReadLMDictionary(mafString *fileName)
 
 
 //----------------------------------------------------------------------------
-lhpOpFingerStick::lhpOpFingerStick(const mafString& label) : Superclass(label), m_DictionaryFName("")
+lhpOpFingerStick::lhpOpFingerStick(const mafString& label) : Superclass(label), m_DictionaryFName(_R(""))
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_OP;
@@ -194,19 +194,19 @@ lhpOpFingerStick::lhpOpFingerStick(const mafString& label) : Superclass(label), 
 
   
   m_PlateCalibration = NULL;
-  m_PlateCalibrationName = "";
+  m_PlateCalibrationName = _R("");
   
   m_BallsCalibration = NULL;
-  m_BallsCalibrationName = "";
+  m_BallsCalibrationName = _R("");
   
   m_PalpatorCalibration = NULL;
-  m_PalpatorCalibrationName = "";
+  m_PalpatorCalibrationName = _R("");
   
   m_PlateCloud = NULL;
-  m_PlateCloudName = "";
+  m_PlateCloudName = _R("");
   
   m_PalpatorCloud = NULL;
-  m_PalpatorCloudName = "";
+  m_PalpatorCloudName = _R("");
 
   m_Method               = 0;
 
@@ -298,18 +298,18 @@ void lhpOpFingerStick::CreateGui()
   {
     m_Gui = new mafGUI(this);
     m_Gui->SetListener(this);
-    m_Gui->Label("");
-    m_Gui->Button(ID_PALPATOR_CALIBRATION, "Palpator calibration cloud", "", "Press to select target cloud with wand calibration." );  
-    m_Gui->Label("Trg c. VME:",&m_PalpatorCalibrationName);
-    m_Gui->Button(ID_PLATE_CALIBRATION, "Plate calibration cloud", "", "Press to select wand cloud with wand definition." );  
-    m_Gui->Label("Wnd d.VME",&m_PlateCalibrationName);
-    m_Gui->Label("");
-    m_Gui->FileOpen(ID_LOAD_LIST, "List",  &m_ListFName, "*.lst");
-    m_Gui->Label("");
-    m_Gui->Button(ID_CLEAN_LIST, "Clean", "", "Press to cancel list using" );  
-    m_Gui->Label("");
-    m_Gui->FileOpen(ID_LOAD_DICTIONARY, "Dictionary",  &m_DictionaryFName, "*.txt");
-    m_Gui->Label("");
+    m_Gui->Label(_R(""));
+    m_Gui->Button(ID_PALPATOR_CALIBRATION, _R("Palpator calibration cloud"), _R(""), _R("Press to select target cloud with wand calibration.") );
+    m_Gui->Label(_R("Trg c. VME:"),&m_PalpatorCalibrationName);
+    m_Gui->Button(ID_PLATE_CALIBRATION, _R("Plate calibration cloud"), _R(""), _R("Press to select wand cloud with wand definition.") );
+    m_Gui->Label(_R("Wnd d.VME"),&m_PlateCalibrationName);
+    m_Gui->Label(_R(""));
+    m_Gui->FileOpen(ID_LOAD_LIST, _R("List"),  &m_ListFName, _R("*.lst"));
+    m_Gui->Label(_R(""));
+    m_Gui->Button(ID_CLEAN_LIST, _R("Clean"), _R(""), _R("Press to cancel list using") );
+    m_Gui->Label(_R(""));
+    m_Gui->FileOpen(ID_LOAD_DICTIONARY, _R("Dictionary"),  &m_DictionaryFName, _R("*.txt"));
+    m_Gui->Label(_R(""));
     //m_Gui->Bool(ID_USE_HOLES, "Use holes", &m_Method, 0, "Turn on to use holes for palpator calibration..");
     //m_Gui->Label("");
     m_Gui->OkCancel();
@@ -328,7 +328,7 @@ void lhpOpFingerStick::OpStop(int result)
   }
   else if (result == OP_RUN_OK)
   {
-    if(m_DictionaryFName == "" || m_PlateCalibration == NULL || m_PalpatorCalibration == NULL)
+    if(m_DictionaryFName.IsEmpty() || m_PlateCalibration == NULL || m_PalpatorCalibration == NULL)
     {
       //wxMessageBox("Wand is not defined. Possibly wand data are not imported.","Alert", wxOK , NULL);
       wxMessageBox("Not all data defined for operation.","Alert", wxOK , NULL);
@@ -346,8 +346,8 @@ void lhpOpFingerStick::SetNodeName(mafVME *pVME, mafString *pName)
    *pName = pVME->GetName();
   if(pVME->GetParent() != NULL)
   {
-    *pName = *pName + " parent:";
-    *pName = *pName + pVME->GetParent()->GetName().GetCStr();
+    *pName += _R(" parent:");
+    *pName += pVME->GetParent()->GetName();
   }
 }
 //----------------------------------------------------------------------------
@@ -373,7 +373,7 @@ void lhpOpFingerStick::OnEvent(mafEventBase *e)
     }
     case ID_LOAD_LIST:
     {
-      if(m_ListFName != "")
+      if(!m_ListFName.IsEmpty())
       {
         m_LMDict.clear();
         ReadLMDictionary(&m_ListFName);
@@ -382,7 +382,7 @@ void lhpOpFingerStick::OnEvent(mafEventBase *e)
     }
     case ID_CLEAN_LIST:
     {
-      m_ListFName = "";
+      m_ListFName = _R("");
       m_LMDict.clear();
       m_Gui->Update();
       break;
@@ -390,7 +390,7 @@ void lhpOpFingerStick::OnEvent(mafEventBase *e)
 
     case ID_PLATE_CALIBRATION:
     {
-      mafString s("Choose wand calibration cloud");
+      mafString s(_R("Choose wand calibration cloud"));
       mafEvent e(this,VME_CHOOSE, &s);
       mafEventMacro(e);
       if(e.GetVme() == NULL)
@@ -409,7 +409,7 @@ void lhpOpFingerStick::OnEvent(mafEventBase *e)
     }
     case ID_BALLS_CALIBRATION:
     {
-      mafString s("Choose wand definition cloud");
+      mafString s(_R("Choose wand definition cloud"));
       mafEvent e(this,VME_CHOOSE, &s);
       mafEventMacro(e);
       if(e.GetVme() == NULL)
@@ -428,7 +428,7 @@ void lhpOpFingerStick::OnEvent(mafEventBase *e)
     }
     case ID_PALPATOR_CALIBRATION:
     {
-      mafString s("Choose  target calibration cloud");
+      mafString s(_R("Choose  target calibration cloud"));
       mafEvent e(this,VME_CHOOSE, &s);
       mafEventMacro(e);
       if(e.GetVme() == NULL)
@@ -449,7 +449,7 @@ void lhpOpFingerStick::OnEvent(mafEventBase *e)
         for(nI = 0; nI < parent->GetNumberOfChildren(); nI++)
         {
           mafVME *child = (mafVME *)parent->GetChild(nI);
-          if(child->IsA("mafVMELandmarkCloud") && strcmp(child->GetName(), "Plate") == 0)
+          if(child->IsA("mafVMELandmarkCloud") && strcmp(child->GetName().GetCStr(), "Plate") == 0)
           {
             m_PlateCalibration = (mafVMELandmarkCloud *)child;
             SetNodeName(m_PlateCalibration, &m_PlateCalibrationName);
@@ -462,7 +462,7 @@ void lhpOpFingerStick::OnEvent(mafEventBase *e)
     }
     case ID_PLATE_CLOUD:
     {
-      mafString s("Choose target cloud");
+      mafString s(_R("Choose target cloud"));
       mafEvent e(this,VME_CHOOSE, &s);
       mafEventMacro(e);
       if(e.GetVme() == NULL)
@@ -481,7 +481,7 @@ void lhpOpFingerStick::OnEvent(mafEventBase *e)
     }
     case ID_PALPATOR_CLOUD:
     {
-      mafString s("Choose target cloud");
+      mafString s(_R("Choose target cloud"));
       mafEvent e(this,VME_CHOOSE, &s);
       mafEventMacro(e);
       if(e.GetVme() == NULL)
@@ -536,8 +536,8 @@ void lhpOpFingerStick::OpDo()
         mafVME *child = (mafVME *)parent->GetChild(nI);
         if(child->IsA("mafVMELandmarkCloud"))
         {
-          strncpy(strinst, child->GetName(), StrLim);
-          unsigned ln = strlen(child->GetName()) + 1;
+          strncpy(strinst, child->GetName().GetCStr(), StrLim);
+          unsigned ln = strlen(child->GetName().GetCStr()) + 1;
           if(ln > StrLim)
             ln = StrLim;
           for(unsigned it = 0; it < ln; it++)
@@ -559,8 +559,8 @@ void lhpOpFingerStick::OpDo()
     }
   }
 
-  wxString spath, sname, sext;
-  wxSplitPath(m_DictionaryFName.GetCStr(), &spath, &sname, &sext);
+  mafString spath, sname, sext;
+  mafSplitPath(m_DictionaryFName, &spath, &sname, &sext);
 
 
   tipPoint[0] = 0;
@@ -569,26 +569,26 @@ void lhpOpFingerStick::OpDo()
 
   mafVMEGroup *group;
   mafNEW(group); //We got a Reference on it
-  group->SetName("Finger palpator");
+  group->SetName(_R("Finger palpator"));
   group->ReparentTo(m_Input);
   mafEventMacro(mafEvent(this,VME_ADD,group));
 
-  for(nI = 0; nI < ((m_ListFName != "") ? m_LMDict.size() : m_BallsCalibration->GetNumberOfLandmarks()); nI++)
+  for(nI = 0; nI < ((!m_ListFName.IsEmpty()) ? m_LMDict.size() : m_BallsCalibration->GetNumberOfLandmarks()); nI++)
   {
-    int LMIndex = (m_ListFName != "") ? m_BallsCalibration->FindLandmarkIndex(m_LMDict[nI].first) : nI;
+    int LMIndex = (!m_ListFName.IsEmpty()) ? m_BallsCalibration->FindLandmarkIndex(mafWxToString(m_LMDict[nI].first)) : nI;
     if(LMIndex == -1)
       continue;
-    wxString file(spath);
-    wxString name;
-    file += "\\";
-    name  = (m_ListFName != "") ? m_LMDict[nI].second : m_BallsCalibration->GetLandmarkName(nI);
+    mafString file(spath);
+    mafString name;
+    file += _R("\\");
+    name  = (!m_ListFName.IsEmpty()) ? mafWxToString(m_LMDict[nI].second) : m_BallsCalibration->GetLandmarkName(nI);
     file += name; 
-    file += ".c3d";
+    file += _R(".c3d");
 
-    lhpOpImporterC3D *importer=new lhpOpImporterC3D("importer");
+    lhpOpImporterC3D *importer=new lhpOpImporterC3D(_R("importer"));
     //importer->TestModeOn();
-    importer->SetC3DFileName(file);
-    importer->SetDictionaryFileName(m_DictionaryFName);
+    importer->SetC3DFileName(file.GetCStr());
+    importer->SetDictionaryFileName(m_DictionaryFName.GetCStr());
     importer->SetImportTrajectories(true);
     importer->SetImportAnalog(false);
     importer->SetImportPlatform(false);
@@ -609,8 +609,8 @@ void lhpOpFingerStick::OpDo()
         mafVME *child = (mafVME *)vme->GetChild(nJ);
         if(child->IsA("mafVMELandmarkCloud"))
         {
-          strncpy(strinst, child->GetName(), StrLim);
-          unsigned ln = strlen(child->GetName()) + 1;
+          strncpy(strinst, child->GetName().GetCStr(), StrLim);
+          unsigned ln = strlen(child->GetName().GetCStr()) + 1;
           if(ln > StrLim)
             ln = StrLim;
           for(unsigned it = 0; it < ln; it++)
@@ -636,8 +636,7 @@ void lhpOpFingerStick::OpDo()
 
         mafVMELandmarkCloud *locCalibr;
         mafNEW(locCalibr);
-        char nmLC[100];
-        sprintf(nmLC, "Finger palpator based on %s", name.GetData());
+        mafString nmLC = _R("Finger palpator based on ") + name;
         locCalibr->SetName(nmLC);
         locCalibr->SetRadius(15);
         locCalibr->Close();
@@ -649,7 +648,7 @@ void lhpOpFingerStick::OpDo()
           locCalibr->AppendLandmark(x, y, z, m_PalpatorCalibration->GetLandmarkName(nK));
         }
 
-        locCalibr->AppendLandmark(res[0], res[1], res[2], "TIP");
+        locCalibr->AppendLandmark(res[0], res[1], res[2], _R("TIP"));
         locCalibr->ReparentTo(group);
         mafEventMacro(mafEvent(this,VME_ADD,locCalibr));
         mafDEL(locCalibr);
@@ -671,7 +670,7 @@ void lhpOpFingerStick::OpDo()
 
   mafVMELandmarkCloud *averagedCalibr;
   mafNEW(averagedCalibr);
-  averagedCalibr->SetName("Finger palpator wand definition");
+  averagedCalibr->SetName(_R("Finger palpator wand definition"));
   averagedCalibr->SetRadius(15);
   averagedCalibr->Close();
 
@@ -682,7 +681,7 @@ void lhpOpFingerStick::OpDo()
     averagedCalibr->AppendLandmark(x, y, z, m_PalpatorCalibration->GetLandmarkName(nI));
   }
 
-  averagedCalibr->AppendLandmark(tipPoint[0], tipPoint[1], tipPoint[2], "TIP");
+  averagedCalibr->AppendLandmark(tipPoint[0], tipPoint[1], tipPoint[2], _R("TIP"));
   averagedCalibr->ReparentTo(group);
   mafEventMacro(mafEvent(this,VME_ADD,averagedCalibr));
   mafDEL(averagedCalibr);
@@ -709,7 +708,7 @@ bool lhpOpFingerStick::ProcessSingleLM(int lmIndex, double result[3])
 
   if(!bPlateCloudClosed)
   {
-    mafOp *pCloseOp = new mafOpExplodeCollapse("close cloud");
+    mafOp *pCloseOp = new mafOpExplodeCollapse(_R("close cloud"));
     pCloseOp->SetInput(m_PlateCloud);
     pCloseOp->SetListener(GetListener());
     pCloseOp->OpDo();
@@ -720,7 +719,7 @@ bool lhpOpFingerStick::ProcessSingleLM(int lmIndex, double result[3])
 
   if(!bPlateCalibrationClosed)
   {
-    mafOp *pCloseOp = new mafOpExplodeCollapse("close cloud");
+    mafOp *pCloseOp = new mafOpExplodeCollapse(_R("close cloud"));
     pCloseOp->SetInput(m_PlateCalibration);
     pCloseOp->SetListener(GetListener());
     pCloseOp->OpDo();
@@ -822,7 +821,7 @@ bool lhpOpFingerStick::ProcessSingleLM(int lmIndex, double result[3])
 
   if(!bPalpatorCalibrationClosed)
   {
-    mafOp *pCloseOp = new mafOpExplodeCollapse("close cloud");
+    mafOp *pCloseOp = new mafOpExplodeCollapse(_R("close cloud"));
     pCloseOp->SetInput(m_PalpatorCalibration);
     pCloseOp->SetListener(GetListener());
     pCloseOp->OpDo();
@@ -831,7 +830,7 @@ bool lhpOpFingerStick::ProcessSingleLM(int lmIndex, double result[3])
 
   if(!bPalpatorCalibrationClosed)
   {
-    mafOp *pOpenOp = new mafOpExplodeCollapse("open cloud");
+    mafOp *pOpenOp = new mafOpExplodeCollapse(_R("open cloud"));
     pOpenOp->SetInput(m_PalpatorCalibration);
     pOpenOp->SetListener(GetListener());
     pOpenOp->OpDo();
@@ -840,7 +839,7 @@ bool lhpOpFingerStick::ProcessSingleLM(int lmIndex, double result[3])
 
   if(!bPlateCloudClosed)
   {
-    mafOp *pOpenOp = new mafOpExplodeCollapse("open cloud");
+    mafOp *pOpenOp = new mafOpExplodeCollapse(_R("open cloud"));
     pOpenOp->SetInput(m_PlateCloud);
     pOpenOp->SetListener(GetListener());
     pOpenOp->OpDo();
@@ -849,7 +848,7 @@ bool lhpOpFingerStick::ProcessSingleLM(int lmIndex, double result[3])
 
   if(!bPlateCalibrationClosed)
   {
-    mafOp *pOpenOp = new mafOpExplodeCollapse("open cloud");
+    mafOp *pOpenOp = new mafOpExplodeCollapse(_R("open cloud"));
     pOpenOp->SetInput(m_PlateCalibration);
     pOpenOp->SetListener(GetListener());
     pOpenOp->OpDo();
@@ -879,13 +878,13 @@ int lhpOpFingerStick::ExtractMatchingPoints(mafVMELandmarkCloud *src, mafVMELand
 
   for(i = 0;i < npSource;i++)
   {
-    wxString SourceLandmarkName = src->GetLandmarkName(i);
+    mafString SourceLandmarkName = src->GetLandmarkName(i);
 
     //search for landmark with the same name
     bool found = false;
     for(j = 0;j < npTarget;j++)
     {
-      wxString TargetLandmarkName = trg->GetLandmarkName(j);
+      mafString TargetLandmarkName = trg->GetLandmarkName(j);
       if(SourceLandmarkName == TargetLandmarkName)
       {
         found = true;

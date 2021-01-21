@@ -104,7 +104,7 @@ int lhpVMEMeshRSScanImporter::Read()
   }
 
 
-  mafString RSValuesArrayName("RSValues");
+  mafString RSValuesArrayName(_R("RSValues"));
   mafVMEMesh    *mesh = NULL;
   mafVMESurface *surf = NULL;
 
@@ -148,16 +148,16 @@ int lhpVMEMeshRSScanImporter::Read()
     {
       mafNEW(m_Output);
       mafTagItem tag_Nature;
-      tag_Nature.SetName("VME_NATURE");
-      tag_Nature.SetValue("NATURAL");
+      tag_Nature.SetName(_R("VME_NATURE"));
+      tag_Nature.SetValue(_R("NATURAL"));
       m_Output->GetTagArray()->SetTag(tag_Nature);
-      m_Output->SetName("RSScan");
+      m_Output->SetName(_R("RSScan"));
       mafNEW(mesh);
       mafTagItem tagNature;
-      tagNature.SetName("VME_NATURE");
-      tagNature.SetValue("NATURAL");
+      tagNature.SetName(_R("VME_NATURE"));
+      tagNature.SetValue(_R("NATURAL"));
       mesh->GetTagArray()->SetTag(tag_Nature);
-      mesh->SetName("RSScan");
+      mesh->SetName(_R("RSScan"));
       mesh->ReparentTo(m_Output);
       vtkPoints *src, *trg;
       src = vtkPoints::New();
@@ -173,11 +173,11 @@ int lhpVMEMeshRSScanImporter::Read()
       s[0] = (m_NumCols - 0.5) * m_SizeX;
       s[1] = (m_NumRows - 0.5) * m_SizeY;
       src->InsertNextPoint(s);
-      m_Sensors->GetLandmark("SNS3", s);
+      m_Sensors->GetLandmark(_R("SNS3"), s);
       trg->InsertNextPoint(s);
-      m_Sensors->GetLandmark("SNS1", s);
+      m_Sensors->GetLandmark(_R("SNS1"), s);
       trg->InsertNextPoint(s);
-      m_Sensors->GetLandmark("SNS2", s);
+      m_Sensors->GetLandmark(_R("SNS2"), s);
       trg->InsertNextPoint(s);
 
 
@@ -224,10 +224,10 @@ int lhpVMEMeshRSScanImporter::Read()
       mafNEW(surf);
 
       mafTagItem tagN;
-      tagN.SetName("VME_NATURE");
-      tagN.SetValue("NATURAL");
+      tagN.SetName(_R("VME_NATURE"));
+      tagN.SetValue(_R("NATURAL"));
       surf->GetTagArray()->SetTag(tagN);
-      surf->SetName("RSScan");
+      surf->SetName(_R("RSScan"));
       surf->SetData(output, ts * 0.001);
       surf->ReparentTo(m_Output);
       vtkDEL(output);

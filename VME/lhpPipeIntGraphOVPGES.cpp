@@ -80,7 +80,7 @@ mafGUI *lhpPipeIntGraphOVPGES::CreateGui()
 {
   assert(m_Gui == NULL);
   m_Gui = Superclass::CreateGui();
-  m_Gui->Double(ID_REF_STAMP, _("RefStamp"), &m_RefStamp);
+  m_Gui->Double(ID_REF_STAMP, _L("RefStamp"), &m_RefStamp);
   return m_Gui;
 }
 

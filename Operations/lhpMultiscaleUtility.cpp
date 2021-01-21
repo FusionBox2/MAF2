@@ -359,7 +359,7 @@ void lhpMultiscaleUtility::ConvertScaleToTidyUnits(double scale, int baseUnits, 
       scale /= 1E9 ;
       break ;
     default:
-      mafLogMessage("unknown base unit in lhpMultiscaleUtility::ConvertScaleToTidyUnits()") ;
+      mafLogMessage(_M("unknown base unit in lhpMultiscaleUtility::ConvertScaleToTidyUnits()")) ;
       assert(false) ;
       break ;
   }

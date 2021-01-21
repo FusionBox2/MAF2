@@ -81,7 +81,7 @@ const bool DEBUG_TAGS_PROPAGATION = false;
 mafCxxTypeMacro(lhpOpEditTagRefactor);
 //----------------------------------------------------------------------------
 //static variables
-mafString lhpOpEditTagRefactor::m_CacheSubdir = "0";
+mafString lhpOpEditTagRefactor::m_CacheSubdir = _R("0");
 
 enum  m_SubdictionaryId_VALUES
 {
@@ -115,28 +115,28 @@ lhpOpEditTagRefactor::lhpOpEditTagRefactor(const mafString& label) : Superclass(
   m_LinkName.clear();
   m_User = NULL;
 
-  m_PythonExe = "python.exe_UNDEFINED";
-  m_PythonwExe = "pythonw.exe_UNDEFINED";  
+  m_PythonExe = _R("python.exe_UNDEFINED");
+  m_PythonwExe = _R("pythonw.exe_UNDEFINED");  
 
-  m_CacheDir = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\UploadCache\\").c_str();
-  m_OutgoingDir = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\Outgoing\\").c_str();
+  m_CacheDir = lhpUtils::lhpGetApplicationDirectory() + _R("\\VMEUploaderDownloaderRefactor\\UploadCache\\");
+  m_OutgoingDir = lhpUtils::lhpGetApplicationDirectory() + _R("\\VMEUploaderDownloaderRefactor\\Outgoing\\");
 
-  m_VMEUploaderDownloaderDir  = (lhpUtils::lhpGetApplicationDirectory() + "\\VMEUploaderDownloaderRefactor\\").c_str();
-  m_FileName = "";
-  m_UnhandledPlusManualTagsLocalFileName = "manualTagFile.csv";
-  m_MsfDir = "";
+  m_VMEUploaderDownloaderDir  = lhpUtils::lhpGetApplicationDirectory() + _R("\\VMEUploaderDownloaderRefactor\\");
+  m_FileName = _R("");
+  m_UnhandledPlusManualTagsLocalFileName = _R("manualTagFile.csv");
+  m_MsfDir = _R("");
 
 
-  m_MasterXMLDictionaryFilePrefix = "lhpXMLDictionary_";
-  m_MasterXMLDictionaryFileName = "UNDEFINED";
-  m_SubXMLDictionaryFilePrefix = "UNDEFINED" ;
-  m_SubXMLDictionaryFileName = "UNDEFINED";
-  m_AssembledXMLDictionaryFileName = "assembledXMLDictionary.xml";
-  m_SubDictionaryBuildingCommand = "UNDEFINED";
+  m_MasterXMLDictionaryFilePrefix = _R("lhpXMLDictionary_");
+  m_MasterXMLDictionaryFileName = _R("UNDEFINED");
+  m_SubXMLDictionaryFilePrefix = _R("UNDEFINED") ;
+  m_SubXMLDictionaryFileName = _R("UNDEFINED");
+  m_AssembledXMLDictionaryFileName = _R("assembledXMLDictionary.xml");
+  m_SubDictionaryBuildingCommand = _R("UNDEFINED");
 
-  m_AutoTagsListFromXMLDictionaryFileName = "autoTagsList.txt";
-  m_ManualTagsListFromXMLDictionaryFileName = "manualTagsList.txt";
-  m_HandledAutoTagsLocalFileName = "handledAutoTagsList.csv";
+  m_AutoTagsListFromXMLDictionaryFileName = _R("autoTagsList.txt");
+  m_ManualTagsListFromXMLDictionaryFileName = _R("manualTagsList.txt");
+  m_HandledAutoTagsLocalFileName = _R("handledAutoTagsList.csv");
 
   m_HandledAutoTagsListFromFactory.Clear();
   m_UnhandledAutoTagsListFromFactory.Clear();
@@ -147,7 +147,7 @@ lhpOpEditTagRefactor::lhpOpEditTagRefactor(const mafString& label) : Superclass(
 
   m_MetadataEditorId = 0;
   m_UseFADictionary = 0;
-  m_DictionaryToProcessFileName = "UNDEFINED";
+  m_DictionaryToProcessFileName = _R("UNDEFINED");
 
   m_UseDicomSubdictionary = 0;
   m_UseFASubdictionary = 0;
@@ -202,8 +202,8 @@ void lhpOpEditTagRefactor::OpRun()
   if(eventGetPythonExe.GetString())
   {
     m_PythonExe.Erase(0);
-    m_PythonExe = eventGetPythonExe.GetString()->GetCStr();
-    m_PythonExe.Append(" ");
+    m_PythonExe = *eventGetPythonExe.GetString();
+    m_PythonExe.Append(_R(" "));
   }
 
   mafEvent eventGetPythonwExe;
@@ -214,8 +214,8 @@ void lhpOpEditTagRefactor::OpRun()
   if(eventGetPythonwExe.GetString())
   {
     m_PythonwExe.Erase(0);
-    m_PythonwExe = eventGetPythonwExe.GetString()->GetCStr();
-    m_PythonwExe.Append(" ");
+    m_PythonwExe = *eventGetPythonwExe.GetString();
+    m_PythonwExe.Append(_R(" "));
   }
 
 
@@ -230,13 +230,13 @@ void lhpOpEditTagRefactor::OpRun()
   }
 
   mafString DebugPath = m_VMEUploaderDownloaderDir;
-  DebugPath.Append("\\Debug.py");
-  if (wxFileExists(DebugPath.GetCStr()))
+  DebugPath.Append(_R("\\Debug.py"));
+  if (mafFileExists(DebugPath))
   {
     ifstream debugFile;
     debugFile.open(DebugPath.GetCStr());
     if (!debugFile) {
-      mafLogMessage("Unable to open Debug.py file");
+      mafLogMessage(_M("Unable to open Debug.py file"));
     }
 
     std::string isDebug;
@@ -245,7 +245,7 @@ void lhpOpEditTagRefactor::OpRun()
     isDebug = isDebug.substr(pos+1);
     if (!isDebug.compare("1") || !isDebug.compare("True"))
     {
-      m_PythonwExe = m_PythonExe.GetCStr();
+      m_PythonwExe = m_PythonExe;
       m_DebugMode = true;
     }
     debugFile.close();
@@ -268,7 +268,7 @@ void lhpOpEditTagRefactor::OnEvent(mafEventBase *maf_event)
     case ID_SUBDICTIONARY:
     {
       if (m_DebugMode)
-        mafLogMessage("You choosed dictionary number %i", m_SubdictionaryId);
+        mafLogMessage(_M(_R("You choosed dictionary number ") + mafToString(m_SubdictionaryId)));
     }
     break;
     
@@ -338,12 +338,12 @@ int lhpOpEditTagRefactor::EditTags()
   mafEventMacro(event);
 
   wxString temp;
-  temp.Append((*event.GetString()).GetCStr());
-  m_MsfFile = temp;
+  temp.Append((*event.GetString()).toWx());
+  m_MsfFile = mafWxToString(temp);
   temp = temp.BeforeLast('/');
-  m_MsfDir = temp;  
+  m_MsfDir = mafWxToString(temp);
 
-  if (m_MsfDir == "")
+  if (m_MsfDir.IsEmpty())
   {
     wxMessageBox("Can't edit VME tags: msf must be saved locally");
     return MAF_ERROR;
@@ -372,52 +372,52 @@ int lhpOpEditTagRefactor::EditTags()
   if (m_Input->IsA("mafVMERoot") && m_Input->GetTagArray() == NULL)
   {
     mafTagItem rootTag;
-    rootTag.SetName("ROOT_TAG");
+    rootTag.SetName(_R("ROOT_TAG"));
     m_Input->GetTagArray()->SetTag(rootTag);
   }
 
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+    mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
   wxBusyCursor wait;
 
   //PROCESS EXIST, ONLY CALL CLIENT
-  wxString command2execute;
-  command2execute = m_PythonwExe.GetCStr();
+  mafString command2execute;
+  command2execute = m_PythonwExe;
   // script for client
-  m_FileName = "lhpEditVMETag.py ";
-  command2execute.Append(m_FileName.GetCStr());
+  m_FileName = _R("lhpEditVMETag.py ");
+  command2execute.Append(m_FileName);
 
   //workaround to understand directory argument
-  wxString directoryWorkAround = m_CurrentCache;
+  wxString directoryWorkAround = m_CurrentCache.toWx();
   directoryWorkAround.Replace(" ", "??");
-  command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
+  command2execute.Append(mafWxToString(directoryWorkAround)); //cache directory
+  command2execute.Append(_R(" "));
 
   //workaround to understand directory argument
-  directoryWorkAround = m_MsfDir;
+  directoryWorkAround = m_MsfDir.toWx();
   directoryWorkAround.Replace(" ", "??");
 
-  command2execute.Append(wxString::Format("%s ",directoryWorkAround)); //cache directory
-  command2execute.Append(wxString::Format("%d ",m_Input->GetId())); //vme id
-  command2execute.Append(wxString::Format("%s ", m_UnhandledPlusManualTagsLocalFileName.c_str())); //manualTagFile
-  command2execute.Append(wxString::Format("%s", m_HandledAutoTagsLocalFileName.GetCStr())); //autoTagFile
+  command2execute.Append(mafWxToString(directoryWorkAround)); //cache directory
+  command2execute.Append(mafToString(m_Input->GetId())); //vme id
+  command2execute.Append(_R(" "));
+  command2execute.Append(m_UnhandledPlusManualTagsLocalFileName); //manualTagFile
+  command2execute.Append(m_HandledAutoTagsLocalFileName); //autoTagFile
 
 
   if (m_DebugMode)
-    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+    mafLogMessage(_M(_R("Executing command: '") + command2execute + _R("'")));
   long pid = -1;
-  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  if (pid = wxExecute(command2execute.toWx(), wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Error in lhpEditVMETag.py");
-    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-      command2execute.c_str(), pid);
+    mafLogMessage(_M(_R("SYNC Command process '") + command2execute + _R("' terminated with exit code ") + mafToString(pid) + _R(".")));
     return MAF_ERROR;
   }
 
   if (m_DebugMode)
-    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-    command2execute.c_str(), pid);
+    mafLogMessage(_M(_R("SYNC Command process '") + command2execute + _R("' terminated with exit code ") + mafToString(pid) + _R(".")));
 
   int save = wxMessageBox(wxString::Format("Do you want to save your changes?"),\
     "Save changes", wxYES | wxNO | wxCENTRE | wxICON_QUESTION);
@@ -441,7 +441,7 @@ int lhpOpEditTagRefactor::EditTags()
       std::ostringstream stringStream;
       stringStream << "Skipping propagation..."  << std::endl;
       if (m_DebugMode)
-        mafLogMessage(stringStream.str().c_str());
+        mafLogMessage(_M(stringStream.str().c_str()));
     }
   } 
   else if (save == wxNO)
@@ -449,7 +449,7 @@ int lhpOpEditTagRefactor::EditTags()
     std::ostringstream stringStream;
     stringStream << "Skipping saving..."  << std::endl;
     if (m_DebugMode)
-      mafLogMessage(stringStream.str().c_str());
+      mafLogMessage(_M(stringStream.str().c_str()));
   }
 
   return MAF_OK;
@@ -464,19 +464,19 @@ int lhpOpEditTagRefactor::CopyEditorTagsIntoOriginalMSF()
   mafString msfPythonFileName;
   mafString msfCompletePath;
   msfPythonFileName.Append(m_MsfDir);
-  msfPythonFileName.Append("/");
-  msfPythonFileName.Append("OutputMSF");
+  msfPythonFileName.Append(_R("/"));
+  msfPythonFileName.Append(_R("OutputMSF"));
   int fileNumber = 0;
   msfCompletePath = msfPythonFileName;
 
-  while(wxFileExists(msfCompletePath.Append(".msf").GetCStr()))
+  while(mafFileExists(msfCompletePath.Append(_R(".msf"))))
   {
     msfCompletePath = msfPythonFileName;
-    msfCompletePath << fileNumber;
+    msfCompletePath += mafToString(fileNumber);
     fileNumber++;   
   }
-  msfPythonFileName.Append(".lhp");
-  int result = rename(msfPythonFileName, msfCompletePath);
+  msfPythonFileName.Append(_R(".lhp"));
+  int result = rename(msfPythonFileName.GetCStr(), msfCompletePath.GetCStr());
   if ( result != 0 )
     return MAF_ERROR;
 
@@ -485,14 +485,14 @@ int lhpOpEditTagRefactor::CopyEditorTagsIntoOriginalMSF()
   mafNodeManager manager;
   storage = mafVMEStorage::New();
   storage->SetManager(&manager);
-  storage->SetURL(msfCompletePath.GetCStr());
+  storage->SetURL(msfCompletePath);
 
   int res = storage->Restore();
   if (res != MAF_OK)
   {
     // if some problems occurred during import give feedback to the user
     if (!m_TestMode)
-      mafErrorMessage(_("Errors during file parsing! Look the log area for error messages."));
+      mafErrorMessage(_M(mafString(_L("Errors during file parsing! Look the log area for error messages."))));
     return MAF_ERROR;
   }
   mafVMERoot *root = mafVMERoot::SafeDownCast(manager.GetRoot());
@@ -517,18 +517,18 @@ int lhpOpEditTagRefactor::CopyEditorTagsIntoOriginalMSF()
   {
     for (int i = 0; i < m_LinkNode.size(); i++)
     {
-      m_Input->SetLink(m_LinkName[i].GetCStr(), m_LinkNode[i]);
+      m_Input->SetLink(m_LinkName[i], m_LinkNode[i]);
     }
   }
 
   //remove csv file
-  wxString lockPath = m_VMEUploaderDownloaderDir;
-  lockPath += m_UnhandledPlusManualTagsLocalFileName.c_str();
-  if (wxFileExists(lockPath))
-    wxRemoveFile(lockPath); //fileName
+  mafString lockPath = m_VMEUploaderDownloaderDir;
+  lockPath += m_UnhandledPlusManualTagsLocalFileName;
+  if (mafFileExists(lockPath))
+    mafFileRemove(lockPath); //fileName
 
   //remove msf created by phyton tag editor
-  remove(msfCompletePath); 
+  remove(msfCompletePath.GetCStr());
 
   mafDEL(storage);
   return MAF_OK;
@@ -560,18 +560,18 @@ bool lhpOpEditTagRefactor::CreateCache()
 {
   bool result = false;
   //control cache subdir
-  wxString currentSubdir;
-  currentSubdir = m_CacheDir + m_CacheSubdir.GetCStr();
-  while(wxDirExists(currentSubdir))
+  mafString currentSubdir;
+  currentSubdir = m_CacheDir + m_CacheSubdir;
+  while(mafDirExists(currentSubdir))
   {
     int number = atoi(m_CacheSubdir.GetCStr());
     number += 1;
-    m_CacheSubdir = "";
-    m_CacheSubdir << number;
-    currentSubdir = m_CacheDir + m_CacheSubdir.GetCStr();
+    m_CacheSubdir = _R("");
+    m_CacheSubdir += mafToString(number);
+    currentSubdir = m_CacheDir + m_CacheSubdir;
   }
-  currentSubdir = currentSubdir + "\\";
-  if(wxMkDir(currentSubdir) == 0)
+  currentSubdir = currentSubdir + _R("\\");
+  if(mafDirMake(currentSubdir) == 0)
     result = true;
 
   m_CurrentCache = currentSubdir;
@@ -616,67 +616,63 @@ int lhpOpEditTagRefactor::GeneratesTagsListsFromXMLDictionary()
   
   wxString oldDir = wxGetCwd();
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+    mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
   if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+    mafLogMessage(_M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
-  mafString outputDict = "UNDEFINED";
+  mafString outputDict = _R("UNDEFINED");
   BuildXMLEditorInputDictionary(outputDict);
   
   // get auto tags
-  wxString command2execute;
-  command2execute.Append(m_PythonExe.GetCStr());
-  command2execute.Append(" lhpXMLDictionaryParser.py ");
-  command2execute.Append(outputDict.GetCStr());
-  command2execute.Append(" auto_tags ");
-  command2execute.Append(m_AutoTagsListFromXMLDictionaryFileName.GetCStr());
+  mafString command2execute;
+  command2execute.Append(m_PythonExe);
+  command2execute.Append(_R(" lhpXMLDictionaryParser.py "));
+  command2execute.Append(outputDict);
+  command2execute.Append(_R(" auto_tags "));
+  command2execute.Append(m_AutoTagsListFromXMLDictionaryFileName);
   
   if (m_DebugMode)
-    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+    mafLogMessage(_M(_R("Executing command: '") + command2execute + _R("'")));
 
   long pid = -1;
-  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  if (pid = wxExecute(command2execute.toWx(), wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Error in lhpXMLDictionaryParser.py");
-    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-      command2execute.c_str(), pid);
+    mafLogMessage(_M(_R("SYNC Command process '") + command2execute + _R("' terminated with exit code ") + mafToString(pid) + _R(".")));
     return MAF_ERROR;
   }
 
-  if ( !command2execute )
+  if ( !command2execute.GetCStr() )
     return MAF_ERROR;
 
   if (m_DebugMode)
-    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-    command2execute.c_str(), pid);
+    mafLogMessage(_M(_R("SYNC Command process '") + command2execute + _R("' terminated with exit code ") + mafToString(pid) + _R(".")));
 
   // get manual tags
   command2execute.Clear();
-  command2execute = m_PythonExe.GetCStr();  
-  command2execute.Append(" lhpXMLDictionaryParser.py ");
-  command2execute.Append(m_DictionaryToProcessFileName.GetCStr());
-  command2execute.Append(" manual_tags ");
-  command2execute.Append(m_ManualTagsListFromXMLDictionaryFileName.GetCStr());
+  command2execute = m_PythonExe;  
+  command2execute.Append(_R(" lhpXMLDictionaryParser.py "));
+  command2execute.Append(m_DictionaryToProcessFileName);
+  command2execute.Append(_R(" manual_tags "));
+  command2execute.Append(m_ManualTagsListFromXMLDictionaryFileName);
 
   if (m_DebugMode)
-    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+    mafLogMessage(_M(_R("Executing command: '") + command2execute + _R("'")));
 
   pid = -1;
-  if (pid = wxExecute(command2execute, wxEXEC_SYNC) != 0)
+  if (pid = wxExecute(command2execute.toWx(), wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Error in lhpXMLDictionaryParser.py");
-    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-      command2execute.c_str(), pid);
+    mafLogMessage(_M(_R("SYNC Command process '") + command2execute + _R("' terminated with exit code ") + mafToString(pid) + _R(".")));
     return MAF_ERROR;
   }
 
-  if ( !command2execute )
+  if ( !command2execute.GetCStr() )
     return MAF_ERROR;
 
   if (m_DebugMode)
-    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-    command2execute.c_str(), pid);
+    mafLogMessage(_M(_R("SYNC Command process '") + command2execute + _R("' terminated with exit code ") + mafToString(pid) + _R(".")));
 
   // cleanup
   m_AutoTagsList.Clear();
@@ -688,9 +684,9 @@ int lhpOpEditTagRefactor::GeneratesTagsListsFromXMLDictionary()
 
   inManualTagsFile.open(m_ManualTagsListFromXMLDictionaryFileName.GetCStr());
   if (!inManualTagsFile) {
-    wxString message = m_ManualTagsListFromXMLDictionaryFileName.GetCStr();
-    message.Append(" not found! Unable to open XML dictionary file");
-    mafLogMessage(message.c_str());
+    mafString message = m_ManualTagsListFromXMLDictionaryFileName;
+    message.Append(_R(" not found! Unable to open XML dictionary file"));
+    mafLogMessage(_M(message));
     return MAF_ERROR; // terminate with error
   }
 
@@ -707,7 +703,7 @@ int lhpOpEditTagRefactor::GeneratesTagsListsFromXMLDictionary()
 
   inAutoTagsFile.open(m_AutoTagsListFromXMLDictionaryFileName.GetCStr());
   if (!inAutoTagsFile) {
-    mafLogMessage("Unable to open file");
+    mafLogMessage(_M("Unable to open file"));
     return MAF_ERROR; // terminate with error
   }
 
@@ -719,24 +715,24 @@ int lhpOpEditTagRefactor::GeneratesTagsListsFromXMLDictionary()
   }
   inAutoTagsFile.close();
 
-  mafString tagName = "";
+  mafString tagName = _R("");
   
   lhpTagHandlerInputOutputParametersCargo *parametersCargo = lhpTagHandlerInputOutputParametersCargo::New();
   parametersCargo->SetInputVme(mafVME::SafeDownCast(m_Input));
   parametersCargo->SetInputUser(m_User);
-	parametersCargo->SetInputMSF(m_MsfFile);
+	parametersCargo->SetInputMSF(m_MsfFile.GetCStr());
 
   for (int i = 0; i < m_AutoTagsList.size(); i++)
   {
-    tagName = m_AutoTagsList[i].c_str();
+    tagName = mafWxToString(m_AutoTagsList[i]);
 
-    if (tagName != "")
+    if (!tagName.IsEmpty())
     {
       
       lhpFactoryTagHandler *tagsFactory  = lhpFactoryTagHandler::GetInstance();
       assert(tagsFactory!=NULL);
       lhpTagHandler *tagHandler = NULL;
-      tagHandler = tagsFactory->CreateTagHandlerInstance("lhpTagHandler_" + tagName);
+      tagHandler = tagsFactory->CreateTagHandlerInstance((_R("lhpTagHandler_") + tagName).GetCStr());
    
       if (tagHandler)
       {
@@ -744,17 +740,17 @@ int lhpOpEditTagRefactor::GeneratesTagsListsFromXMLDictionary()
         tagHandler->SetPythonwExe(m_PythonwExe.GetCStr());
         tagHandler->HandleAutoTag(parametersCargo);
         wxString tagValue = "\"";
-        tagValue.Append(tagName.GetCStr());
+        tagValue.Append(tagName.toWx());
         tagValue.Append("\",\"");
-        tagValue.Append(parametersCargo->GetTagHandlerGeneratedString());
+        tagValue.Append(parametersCargo->GetTagHandlerGeneratedString().toWx());
         tagValue.Append('\"');
         m_HandledAutoTagsListFromFactory.Add(tagValue.c_str());
       }
       else
       {
-        m_UnhandledAutoTagsListFromFactory.Add(tagName.GetCStr());
+        m_UnhandledAutoTagsListFromFactory.Add(tagName.toWx());
         if (m_DebugMode)
-          mafLogMessage(_("Cannot handle \"%s\" tag!, this tag will become manual"),tagName.GetCStr());
+          mafLogMessage(_M(_L("Cannot handle \"") + tagName + _L("\" tag!, this tag will become manual")));
       }      
     }
   }
@@ -773,7 +769,7 @@ int lhpOpEditTagRefactor::GeneratesTagsListsFromXMLDictionary()
 
   for (int i = 0; i < m_HandledAutoTagsListFromFactory.size(); i++)
   {
-    tagName = m_HandledAutoTagsListFromFactory[i].c_str();
+    tagName = mafWxToString(m_HandledAutoTagsListFromFactory[i]);
     handledAutoTagsFile << tagName.GetCStr() << std::endl ;
   }
   
@@ -784,10 +780,10 @@ int lhpOpEditTagRefactor::GeneratesTagsListsFromXMLDictionary()
   // open auto tags file and try to handle tags using tags factory 
   ofstream unhandledPlusManualTagsFile;
 
-  unhandledPlusManualTagsFile.open(m_CurrentCache + m_UnhandledPlusManualTagsLocalFileName.c_str());
+  unhandledPlusManualTagsFile.open((m_CurrentCache + m_UnhandledPlusManualTagsLocalFileName).GetCStr());
 
   if (!unhandledPlusManualTagsFile) {
-    mafLogMessage("Unable to create file");
+    mafLogMessage(_M("Unable to create file"));
     return MAF_ERROR; // terminate with error
   }
 
@@ -795,12 +791,12 @@ int lhpOpEditTagRefactor::GeneratesTagsListsFromXMLDictionary()
   m_Input->GetTagArray()->GetTagList(tagList);
 
   bool tagFound;
-  mafString tagValue = "";
+  mafString tagValue = _R("");
   // write unhandled auto
   for (int i = 0; i < m_UnhandledAutoTagsListFromFactory.size(); i++)
   {
     tagFound = false;
-    tagName = m_UnhandledAutoTagsListFromFactory[i].c_str();
+    tagName = mafWxToString(m_UnhandledAutoTagsListFromFactory[i]);
 
     for (int n = 0; n < tagList.size(); n++)
     {
@@ -821,7 +817,7 @@ int lhpOpEditTagRefactor::GeneratesTagsListsFromXMLDictionary()
   for (int i = 0; i < m_ManualTagsList.size(); i++)
   {
     tagFound = false;
-    tagName = m_ManualTagsList[i].c_str();
+    tagName = mafWxToString(m_ManualTagsList[i]);
 
     for (int n = 0; n < tagList.size(); n++)
     {
@@ -845,38 +841,38 @@ int lhpOpEditTagRefactor::GeneratesTagsListsFromXMLDictionary()
   {
     // launch new editor
     command2execute.Clear();
-    command2execute.Append(m_PythonwExe.GetCStr());
-    command2execute.Append(" lhpMetadataEditor.py ");
-    command2execute.Append(m_UnhandledPlusManualTagsLocalFileName.c_str()); 
-    command2execute.Append(" ");
-    command2execute.Append(m_DictionaryToProcessFileName.GetCStr());
-    command2execute.Append(wxString::Format(" %s", m_CurrentCache.GetCStr())); //manualTagFile
+    command2execute.Append(m_PythonwExe);
+    command2execute.Append(_R(" lhpMetadataEditor.py "));
+    command2execute.Append(m_UnhandledPlusManualTagsLocalFileName); 
+    command2execute.Append(_R(" "));
+    command2execute.Append(m_DictionaryToProcessFileName);
+    command2execute.Append(_R(" "));
+    command2execute.Append(m_CurrentCache); //manualTagFile
   } 
   else
   {
     // launch old editor
     command2execute.Clear();
-    command2execute.Append(m_PythonExe.GetCStr());
-    command2execute.Append(" CSVOMATIC.py ");
-    command2execute.Append(m_UnhandledPlusManualTagsLocalFileName.c_str());
+    command2execute.Append(m_PythonExe);
+    command2execute.Append(_R(" CSVOMATIC.py "));
+    command2execute.Append(m_UnhandledPlusManualTagsLocalFileName);
   }
   
   
     // if (m_DebugMode)
-    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  mafLogMessage(_M(_R("Executing command: '") + command2execute + _R("'")));
 
-  pid = wxExecute(command2execute, wxEXEC_SYNC);
+  pid = wxExecute(command2execute.toWx(), wxEXEC_SYNC);
 
-  if ( !command2execute )
+  if ( !command2execute.GetCStr())
     return MAF_ERROR;
 
   if (m_DebugMode)
-    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-    command2execute.c_str(), pid);
+    mafLogMessage(_M(_R("SYNC Command process '") + command2execute + _R("' terminated with exit code ") + mafToString(pid) + _R(".")));
 
   wxSetWorkingDirectory(oldDir);
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+    mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
   return MAF_OK;
 }
@@ -886,25 +882,25 @@ int lhpOpEditTagRefactor::GeneratesTagsListsFromXMLDictionary()
 mafString lhpOpEditTagRefactor::GetXMLDictionaryFileName( mafString dictionaryFileNamePrefix )
 //----------------------------------------------------------------------------
 {
-  mafString dictionaryFileName = "NOT FOUND";
+  mafString dictionaryFileName = _R("NOT FOUND");
   wxString oldDir = wxGetCwd();
 
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+    mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
   if (m_DebugMode)
-    mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+    mafLogMessage(_M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
   wxArrayString files;
-  wxString filePattern = dictionaryFileNamePrefix ;
+  wxString filePattern = dictionaryFileNamePrefix.toWx() ;
   filePattern.Append("*.xml");
 
   wxDir::GetAllFiles(wxGetCwd(), &files, filePattern, wxDIR_FILES);
   
   if (files.size() == 0)
   {
-    mafLogMessage(dictionaryFileNamePrefix.GetCStr());
-    mafLogMessage("dictionary not found! exiting...");
+    mafLogMessage(_M(dictionaryFileNamePrefix));
+    mafLogMessage(_M("dictionary not found! exiting..."));
   }
   else if (files.size() > 1)
   {
@@ -914,28 +910,28 @@ mafString lhpOpEditTagRefactor::GetXMLDictionaryFileName( mafString dictionaryFi
     { 
       stringStream << "found dictionary: " << files[i].c_str()  << std::endl;      
     }
-    mafLogMessage(stringStream.str().c_str());
-    mafLogMessage("Too much dictionaries found! exiting...");
+    mafLogMessage(_M(stringStream.str().c_str()));
+    mafLogMessage(_M("Too much dictionaries found! exiting..."));
 
     return dictionaryFileName;
   }
   else
   {
     assert(files.size() == 1);
-    dictionaryFileName = files[0];
-    int pos = dictionaryFileName.FindLast("\\");
+    dictionaryFileName = mafWxToString(files[0]);
+    int pos = dictionaryFileName.FindLast(_R("\\"));
     dictionaryFileName.Erase(0, pos);
     if (m_DebugMode)
     {
-      mafLogMessage("Found dictionary!");
-      mafLogMessage(dictionaryFileName.GetCStr());
+      mafLogMessage(_M("Found dictionary!"));
+      mafLogMessage(_M(dictionaryFileName));
     }
   }
   
   wxSetWorkingDirectory(oldDir);
   if (m_DebugMode)
-    mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-  
+    mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
+
   return dictionaryFileName;
 }
 
@@ -950,7 +946,7 @@ void lhpOpEditTagRefactor::CreateGui()
   if (DEBUG_TAGS_PROPAGATION)
   {
     m_Gui->Divider(2);
-    m_Gui->Button(ID_PROPAGATE,"test propagate");
+    m_Gui->Button(ID_PROPAGATE,_R("test propagate"));
   }
   
   // Default editor is Metadata Editor
@@ -960,17 +956,17 @@ void lhpOpEditTagRefactor::CreateGui()
   m_Gui->Combo(ID_METADATA_EDITOR, "", &m_MetadataEditorId, 2, metadataEditor);*/
 
   m_Gui->Divider(2);
-  m_Gui->Label("Use Dicom subdictionary");
-  m_Gui->Bool(ID_USE_DICOM_SUBDICTIONARY, "", &m_UseDicomSubdictionary);
+  m_Gui->Label(_R("Use Dicom subdictionary"));
+  m_Gui->Bool(ID_USE_DICOM_SUBDICTIONARY, _R(""), &m_UseDicomSubdictionary);
   m_Gui->Divider(2);
-  m_Gui->Label("Use Motion Analysis subdictionary");
-  m_Gui->Bool(ID_USE_MA_SUBDICTIONARY, "", &m_UseMASubdictionary);
+  m_Gui->Label(_R("Use Motion Analysis subdictionary"));
+  m_Gui->Bool(ID_USE_MA_SUBDICTIONARY, _R(""), &m_UseMASubdictionary);
   m_Gui->Divider(2);
-  m_Gui->Label("Use MicroCT subdictionary");
-  m_Gui->Bool(ID_USE_MICROCT_SUBDICTIONARY, "", &m_UseMicroCTSubdictionary);
+  m_Gui->Label(_R("Use MicroCT subdictionary"));
+  m_Gui->Bool(ID_USE_MICROCT_SUBDICTIONARY, _R(""), &m_UseMicroCTSubdictionary);
   m_Gui->Divider(2);
-  m_Gui->Label("Use Functional Anatomy subdictionary");
-  m_Gui->Bool(ID_USE_FA_SUBDICTIONARY, "", &m_UseFASubdictionary);
+  m_Gui->Label(_R("Use Functional Anatomy subdictionary"));
+  m_Gui->Bool(ID_USE_FA_SUBDICTIONARY, _R(""), &m_UseFASubdictionary);
   m_Gui->Divider(2);
   m_Gui->Divider();
   m_Gui->Divider();
@@ -985,30 +981,29 @@ int lhpOpEditTagRefactor::AppendChildDictionary( const char *sourceXMLDictionary
     const char *outputXMLFN )
 {
 
-  wxString command2execute;
-  command2execute = m_PythonwExe.GetCStr();
+  mafString command2execute;
+  command2execute = m_PythonwExe;
   
-  command2execute.Append(" lhpXMLDictionariesBuilder.py ");
-  command2execute.Append(sourceXMLDictionaryFileName);
-  command2execute.Append(" ");
-  command2execute.Append(childXMLDictionaryToAppendFileName);
-  command2execute.Append(" ");
-  command2execute.Append(pythonString);
-  command2execute.Append(" ");
-  command2execute.Append(outputXMLFN);
+  command2execute.Append(_R(" lhpXMLDictionariesBuilder.py "));
+  command2execute.Append(_R(sourceXMLDictionaryFileName));
+  command2execute.Append(_R(" "));
+  command2execute.Append(_R(childXMLDictionaryToAppendFileName));
+  command2execute.Append(_R(" "));
+  command2execute.Append(_R(pythonString));
+  command2execute.Append(_R(" "));
+  command2execute.Append(_R(outputXMLFN));
 
-  m_DictionaryToProcessFileName = outputXMLFN;
+  m_DictionaryToProcessFileName = _R(outputXMLFN);
   // if (m_DebugMode)
-    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+    mafLogMessage(_M(_R("Executing command: '") + command2execute + _R("'")));
 
   wxArrayString output;
   wxArrayString errors;
   long pid = -1;
-  if (pid = wxExecute(command2execute, output, errors, wxEXEC_SYNC) != 0)
+  if (pid = wxExecute(command2execute.toWx(), output, errors, wxEXEC_SYNC) != 0)
   {
     wxMessageBox("Error in lhpXMLDictionariesBuilder.py");
-    mafLogMessage(_T("SYNC Command process '%s' terminated with exit code %d."),
-      command2execute.c_str(), pid);
+    mafLogMessage(_M(_R("SYNC Command process '") + command2execute + _R("' terminated with exit code ") + mafToString(pid) + _R(".")));
     return MAF_ERROR;
   }
 
@@ -1017,7 +1012,7 @@ int lhpOpEditTagRefactor::AppendChildDictionary( const char *sourceXMLDictionary
 
 void lhpOpEditTagRefactor::PropagateTagsToChoosedVMES()
 {
-  mafString s(_("Choose target VMEs"));
+  mafString s(_L("Choose target VMEs"));
   mafEvent e(this,VME_CHOOSE, &s);
   e.SetBool(true); //true to create dialog with VME multiselect
   mafEventMacro(e);
@@ -1028,7 +1023,7 @@ void lhpOpEditTagRefactor::PropagateTagsToChoosedVMES()
   std::ostringstream stringStream;
   stringStream << "Vector size: "<< size  << std::endl;
   if (m_DebugMode)
-    mafLogMessage(stringStream.str().c_str());
+      mafLogMessage(_M(stringStream.str().c_str()));
 
   // for each vme different from the input one
   // copy input edited tags into it
@@ -1047,7 +1042,7 @@ void lhpOpEditTagRefactor::PropagateTagsToChoosedVMES()
 
   for (int i = 0; i < size; i++) 
   { 
-    std::string tagName = tagNamesVector[i];
+    std::string tagName = tagNamesVector[i].GetCStr();
     std::string stringToSearch = "L0000";
 
     bool found = false;
@@ -1063,7 +1058,7 @@ void lhpOpEditTagRefactor::PropagateTagsToChoosedVMES()
       foundTxt = "Found";
       std::string tagValue;
 
-      tagValue = inputTagArray->GetTag(tagName.c_str())->GetValue();
+      tagValue = inputTagArray->GetTag(_R(tagName.c_str()))->GetValue().toStd();
       tagsToBeCopiedDictionary[tagName] = tagValue;
     } 
     else
@@ -1073,14 +1068,14 @@ void lhpOpEditTagRefactor::PropagateTagsToChoosedVMES()
 
     stringStream << foundTxt << " " << stringToSearch << " in "<< tagName <<  std::endl;
     if (m_DebugMode)
-      mafLogMessage(stringStream.str().c_str());
+        mafLogMessage(_M(stringStream.str().c_str()));
   }
 
   std::vector<mafNode *>::iterator nodeVectorIterator = nodeVector.begin();
   stringStream.clear();
   stringStream << "The following vme were checked: " << std::endl;
   if (m_DebugMode)
-    mafLogMessage(stringStream.str().c_str());
+      mafLogMessage(_M(stringStream.str().c_str()));
 
 
   // for each target vme excluding the input
@@ -1089,23 +1084,23 @@ void lhpOpEditTagRefactor::PropagateTagsToChoosedVMES()
     mafVME *targetVme = mafVME::SafeDownCast(*nodeVectorIterator);
     assert(targetVme);
     std::ostringstream stringStream;
-    stringStream << "vme name: " << targetVme->GetName()  << std::endl;
+    stringStream << "vme name: " << targetVme->GetName().GetCStr() << std::endl;
     if (m_DebugMode)
-      mafLogMessage(stringStream.str().c_str());
+        mafLogMessage(_M(stringStream.str().c_str()));
 
     if (targetVme == m_Input)
     {
       std::ostringstream stringStream;
       stringStream << "Skipping input vme!"  << std::endl;
       if (m_DebugMode)
-        mafLogMessage(stringStream.str().c_str());
+          mafLogMessage(_M(stringStream.str().c_str()));
     } 
     else
     {
       std::ostringstream stringStream;
-      stringStream << "Copying to "  << targetVme->GetName() << std::endl;
+      stringStream << "Copying to "  << targetVme->GetName().GetCStr() << std::endl;
       if (m_DebugMode)
-        mafLogMessage(stringStream.str().c_str());
+          mafLogMessage(_M(stringStream.str().c_str()));
 
       // get the target vme tag array
       mafTagArray *targetTagArray = targetVme->GetTagArray();
@@ -1118,10 +1113,10 @@ void lhpOpEditTagRefactor::PropagateTagsToChoosedVMES()
         std::string key = tagsToBeCopiedDictionaryIterator->first;
         std::string val = tagsToBeCopiedDictionaryIterator->second;
         std::ostringstream stringStream;
-        stringStream << "Copying " << key << " " << val << " to " << targetVme->GetName() << std::endl;
+        stringStream << "Copying " << key << " " << val << " to " << targetVme->GetName().GetCStr() << std::endl;
         if (m_DebugMode)
-          mafLogMessage(stringStream.str().c_str());
-        targetTagArray->SetTag(mafTagItem(key.c_str(), val.c_str()));
+            mafLogMessage(_M(stringStream.str().c_str()));
+        targetTagArray->SetTag(mafTagItem(_R(key.c_str()), _R(val.c_str())));
         tagsToBeCopiedDictionaryIterator++;
       }
 
@@ -1135,7 +1130,7 @@ void lhpOpEditTagRefactor::PropagateTagsToChoosedVMES()
 int lhpOpEditTagRefactor::BuildXMLEditorInputDictionary( mafString &generatedXMLDictionaryFileName )
 {
   m_MasterXMLDictionaryFileName = this->GetXMLDictionaryFileName(m_MasterXMLDictionaryFilePrefix);
-  if (m_MasterXMLDictionaryFileName == "NOT FOUND")
+  if (m_MasterXMLDictionaryFileName == _R("NOT FOUND"))
   {
     return MAF_ERROR;
   }
@@ -1148,15 +1143,15 @@ int lhpOpEditTagRefactor::BuildXMLEditorInputDictionary( mafString &generatedXML
   if (m_UseDicomSubdictionary == 1)
   { 
 
-    mafString dicomSubDictionaryAppendingCommand = "dicom";   
-    mafString dicomSubDictionaryFilePrefix = "lhpXMLDicomSourceSubdictionary_";
-    mafString dicomSubDictionaryFileName = this->GetXMLDictionaryFileName(dicomSubDictionaryFilePrefix).GetCStr();
+    mafString dicomSubDictionaryAppendingCommand = _R("dicom");   
+    mafString dicomSubDictionaryFilePrefix = _R("lhpXMLDicomSourceSubdictionary_");
+    mafString dicomSubDictionaryFileName = this->GetXMLDictionaryFileName(dicomSubDictionaryFilePrefix);
 
-    outputDict = "assembledWithDicom.xml";
+    outputDict = _R("assembledWithDicom.xml");
 
     if (this->\
-      AppendChildDictionary(inputDict,dicomSubDictionaryFileName\
-      , dicomSubDictionaryAppendingCommand, outputDict)
+      AppendChildDictionary(inputDict.GetCStr(),dicomSubDictionaryFileName.GetCStr(),
+          dicomSubDictionaryAppendingCommand.GetCStr(), outputDict.GetCStr())
       == MAF_ERROR)
     {
       return MAF_ERROR;
@@ -1167,15 +1162,15 @@ int lhpOpEditTagRefactor::BuildXMLEditorInputDictionary( mafString &generatedXML
 
   if (m_UseMASubdictionary == 1)
   { 
-    mafString maSubDictionaryAppendingCommand = "motion_analysis";   
-    mafString maSubDictionaryFilePrefix = "lhpXMLMotionAnalysisSourceSubdictionary_";
-    mafString maSubDictionaryFileName = this->GetXMLDictionaryFileName(maSubDictionaryFilePrefix).GetCStr();
+    mafString maSubDictionaryAppendingCommand = _R("motion_analysis");   
+    mafString maSubDictionaryFilePrefix = _R("lhpXMLMotionAnalysisSourceSubdictionary_");
+    mafString maSubDictionaryFileName = this->GetXMLDictionaryFileName(maSubDictionaryFilePrefix);
 
-    outputDict = "assembledWithMA.xml";
+    outputDict = _R("assembledWithMA.xml");
 
     if (this->\
-      AppendChildDictionary(inputDict,maSubDictionaryFileName\
-      , maSubDictionaryAppendingCommand, outputDict)
+      AppendChildDictionary(inputDict.GetCStr(),maSubDictionaryFileName.GetCStr(),
+          maSubDictionaryAppendingCommand.GetCStr(), outputDict.GetCStr())
       == MAF_ERROR)
     {
       return MAF_ERROR;
@@ -1188,16 +1183,16 @@ int lhpOpEditTagRefactor::BuildXMLEditorInputDictionary( mafString &generatedXML
   {
     // build micro ct
 
-    mafString microCTSubDictionaryBuildingCommand = "micro_ct";
+    mafString microCTSubDictionaryBuildingCommand = _R("micro_ct");
 
-    mafString microCTSubDictionaryFilePrefix = "lhpXMLMicroCTSourceSubdictionary_";
-    mafString microCTSubDictionaryFileName = this->GetXMLDictionaryFileName(microCTSubDictionaryFilePrefix).GetCStr();
+    mafString microCTSubDictionaryFilePrefix = _R("lhpXMLMicroCTSourceSubdictionary_");
+    mafString microCTSubDictionaryFileName = this->GetXMLDictionaryFileName(microCTSubDictionaryFilePrefix);
 
-    outputDict = "assembledWithMicroCT.xml";
+    outputDict = _R("assembledWithMicroCT.xml");
 
     if (this->\
-      AppendChildDictionary(inputDict,microCTSubDictionaryFileName\
-      , microCTSubDictionaryBuildingCommand, outputDict)
+      AppendChildDictionary(inputDict.GetCStr(),microCTSubDictionaryFileName.GetCStr(),
+          microCTSubDictionaryBuildingCommand.GetCStr(), outputDict.GetCStr())
       == MAF_ERROR)
     {
       return MAF_ERROR;
@@ -1208,14 +1203,14 @@ int lhpOpEditTagRefactor::BuildXMLEditorInputDictionary( mafString &generatedXML
 
   if (m_UseFASubdictionary == 1)
   {
-    mafString faSubDictionaryFilePrefix = "lhpXMLFASourceSubdictionary_";
-    mafString faSubDictionaryFileName = this->GetXMLDictionaryFileName(faSubDictionaryFilePrefix).GetCStr();
+    mafString faSubDictionaryFilePrefix = _R("lhpXMLFASourceSubdictionary_");
+    mafString faSubDictionaryFileName = this->GetXMLDictionaryFileName(faSubDictionaryFilePrefix);
 
-    mafString outputDict = "assembledWithFA.xml";
-    mafString s = "functional_anatomy";
+    mafString outputDict = _R("assembledWithFA.xml");
+    mafString s = _R("functional_anatomy");
 
-    int result = AppendChildDictionary(m_DictionaryToProcessFileName, \
-      faSubDictionaryFileName.GetCStr(), s, outputDict);
+    int result = AppendChildDictionary(m_DictionaryToProcessFileName.GetCStr(),
+      faSubDictionaryFileName.GetCStr(), s.GetCStr(), outputDict.GetCStr());
 
     if (result == MAF_ERROR)
     {
@@ -1233,36 +1228,36 @@ void lhpOpEditTagRefactor::LoadUsedDictionariesFromTags()
 {
   mafTagItem tag;
 
-  m_Input->GetTagArray()->GetTag("USE_DICOM_SUBDICTIONARY", tag);
+  m_Input->GetTagArray()->GetTag(_R("USE_DICOM_SUBDICTIONARY"), tag);
   mafString value;
   value = tag.GetValue();
-  m_UseDicomSubdictionary = value == "1" ? 1 : 0 ;
+  m_UseDicomSubdictionary = value == _R("1") ? 1 : 0 ;
 
-  m_Input->GetTagArray()->GetTag("USE_FA_SUBDICTIONARY", tag);
+  m_Input->GetTagArray()->GetTag(_R("USE_FA_SUBDICTIONARY"), tag);
   value = tag.GetValue();
-  m_UseFASubdictionary = value == "1" ? 1 : 0 ;
+  m_UseFASubdictionary = value == _R("1") ? 1 : 0 ;
 
-  m_Input->GetTagArray()->GetTag("USE_MA_SUBDICTIONARY", tag);
+  m_Input->GetTagArray()->GetTag(_R("USE_MA_SUBDICTIONARY"), tag);
   value = tag.GetValue();
-  m_UseMASubdictionary = value == "1" ? 1 : 0 ;
+  m_UseMASubdictionary = value == _R("1") ? 1 : 0 ;
   
-  m_Input->GetTagArray()->GetTag("USE_MICROCT_SUBDICTIONARY", tag);
+  m_Input->GetTagArray()->GetTag(_R("USE_MICROCT_SUBDICTIONARY"), tag);
   value = tag.GetValue();
-  m_UseMicroCTSubdictionary = value == "1" ? 1 : 0 ;
+  m_UseMicroCTSubdictionary = value == _R("1") ? 1 : 0 ;
 }
 
 void lhpOpEditTagRefactor::StoreUsedDictionariesToTags()
 {
   mafString value;
-  value = m_UseDicomSubdictionary  == 1 ? "1" : "0" ;
-  m_Input->GetTagArray()->SetTag(mafTagItem("USE_DICOM_SUBDICTIONARY", value));
+  value = m_UseDicomSubdictionary  == 1 ? _R("1") : _R("0") ;
+  m_Input->GetTagArray()->SetTag(mafTagItem(_R("USE_DICOM_SUBDICTIONARY"), value));
   
-  value = m_UseFASubdictionary  == 1 ? "1" : "0" ;
-  m_Input->GetTagArray()->SetTag(mafTagItem("USE_FA_SUBDICTIONARY",value));
+  value = m_UseFASubdictionary  == 1 ? _R("1") : _R("0") ;
+  m_Input->GetTagArray()->SetTag(mafTagItem(_R("USE_FA_SUBDICTIONARY"),value));
 
-  value = m_UseMASubdictionary  == 1 ? "1" : "0" ;
-  m_Input->GetTagArray()->SetTag(mafTagItem("USE_MA_SUBDICTIONARY",value));
+  value = m_UseMASubdictionary  == 1 ? _R("1") : _R("0") ;
+  m_Input->GetTagArray()->SetTag(mafTagItem(_R("USE_MA_SUBDICTIONARY"),value));
 
-  value = m_UseMicroCTSubdictionary  == 1 ? "1" : "0" ;
-  m_Input->GetTagArray()->SetTag(mafTagItem("USE_MICROCT_SUBDICTIONARY",value));
+  value = m_UseMicroCTSubdictionary  == 1 ? _R("1") : _R("0") ;
+  m_Input->GetTagArray()->SetTag(mafTagItem(_R("USE_MICROCT_SUBDICTIONARY"),value));
 }

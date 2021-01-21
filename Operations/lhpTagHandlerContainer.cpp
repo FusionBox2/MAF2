@@ -62,7 +62,7 @@ void lhpTagHandler_L0000_resource_DictionaryURI::HandleAutoTag(lhpTagHandlerInpu
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/LHDL_dictionary");
+  cargo->SetTagHandlerGeneratedString(_R("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/LHDL_dictionary"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_DictionaryVersion);
@@ -76,14 +76,14 @@ lhpTagHandler_L0000_resource_DictionaryVersion::lhpTagHandler_L0000_resource_Dic
 void lhpTagHandler_L0000_resource_DictionaryVersion::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-  mafString dictionaryFileNamePrefix = "lhpXMLDictionary_";
-  mafString dictionaryFileName = "NOT FOUND";
+  mafString dictionaryFileNamePrefix = _R("lhpXMLDictionary_");
+  mafString dictionaryFileName = _R("NOT FOUND");
   wxString oldDir = wxGetCwd();
 
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
 
   wxArrayString files;
-  wxString filePattern = dictionaryFileNamePrefix ;
+  wxString filePattern = dictionaryFileNamePrefix.toWx();
   filePattern.Append("*.xml");
 
   wxDir::GetAllFiles(wxGetCwd(), &files, filePattern, wxDIR_FILES);
@@ -91,28 +91,28 @@ void lhpTagHandler_L0000_resource_DictionaryVersion::HandleAutoTag(lhpTagHandler
   if (files.size() == 0)
   {
     // tag handling code
-    cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+    cargo->SetTagHandlerGeneratedString(dictionaryFileName);
   }
   if (files.size() != 1)
   {
     // tag handling code
-    cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+    cargo->SetTagHandlerGeneratedString(dictionaryFileName);
   }
   else
   {
     assert(files.size() == 1);
-    dictionaryFileName = files[0];
-    int pos = dictionaryFileName.FindLast("\\");
+    dictionaryFileName = mafWxToString(files[0]);
+    int pos = dictionaryFileName.FindLast(_R("\\"));
     dictionaryFileName.Erase(0, pos);
   }
 
   wxSetWorkingDirectory(oldDir);
 
-  int pos = dictionaryFileName.FindLast("_");
+  int pos = dictionaryFileName.FindLast(_R("_"));
   dictionaryFileName.Erase(0, pos);
-  pos = dictionaryFileName.FindLast(".");
+  pos = dictionaryFileName.FindLast(_R("."));
   dictionaryFileName.Erase(pos);
-  cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+  cargo->SetTagHandlerGeneratedString(dictionaryFileName);
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_DataType_Field);
@@ -127,7 +127,7 @@ void lhpTagHandler_L0000_resource_data_DataType_Field::HandleAutoTag(lhpTagHandl
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+  cargo->SetTagHandlerGeneratedString(_R("Automated Tag Not Handled (instance exists)"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_DataType_Dimension);
@@ -145,23 +145,23 @@ void lhpTagHandler_L0000_resource_data_DataType_Dimension::HandleAutoTag(lhpTagH
 	mafString value;
   if(mafVMEOutputSurface::SafeDownCast(vme->GetOutput()))
 	{
-		value = "SURFACE";
+		value = _R("SURFACE");
 	}
   else if(mafVMEOutputPolyline::SafeDownCast(vme->GetOutput())) 
   {
-    value = "CURVE";
+    value = _R("CURVE");
   }
   else if(mafVMEOutputVolume::SafeDownCast(vme->GetOutput()))
   {
-    value = "VOLUME";
+    value = _R("VOLUME");
   }
   else if(mafVMEOutputPointSet::SafeDownCast(vme->GetOutput()))
   {
-    value = "POINT";
+    value = _R("POINT");
   }
 	else
 	{
-		value = "NOT PRESENT";
+		value = _R("NOT PRESENT");
 	}
 
 	// tag handling code
@@ -183,15 +183,15 @@ void lhpTagHandler_L0000_resource_data_DataType_VolumeType::HandleAutoTag(lhpTag
 	mafString value;
   if(vtkImageData::SafeDownCast(vme->GetOutput()->GetVTKData()))
 	{
-		value = "STRUCTURED";
+		value = _R("STRUCTURED");
 	}
   else if (vtkRectilinearGrid::SafeDownCast(vme->GetOutput()->GetVTKData()))
   {
-    value = "CARTESIAN";
+    value = _R("CARTESIAN");
   }
   else if (vtkUnstructuredGrid::SafeDownCast(vme->GetOutput()->GetVTKData()))
   {
-    value = "UNSTRUCTURED";
+    value = _R("UNSTRUCTURED");
   }
 /*  else if (? ::SafeDownCast(vme->GetOutput()->GetVTKData())) BREP
   {
@@ -199,7 +199,7 @@ void lhpTagHandler_L0000_resource_data_DataType_VolumeType::HandleAutoTag(lhpTag
   }*/
 	else
 	{
-		value = "NOT PRESENT";
+		value = _R("NOT PRESENT");
 	}
 
 	// tag handling code
@@ -219,7 +219,7 @@ void lhpTagHandler_L0000_resource_data_DataType_Timevarying::HandleAutoTag(lhpTa
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  value = vme->IsAnimated()?"1":"0";
+  value = vme->IsAnimated()?_R("1"):_R("0");
 
   // tag handling code
   cargo->SetTagHandlerGeneratedString(value);
@@ -238,38 +238,38 @@ void lhpTagHandler_L0000_resource_data_Size_FileSize::HandleAutoTag(lhpTagHandle
 {
   //here there is also the controller for zip archive
 	long length = 0;
-	mafString inputMSF = cargo->GetInputMSF();
+	mafString inputMSF = _R(cargo->GetInputMSF());
 	mafString id ;
-	id << cargo->GetInputVme()->GetId();
+	id += mafToString(cargo->GetInputVme()->GetId());
 
   if(cargo->GetInputVme()->GetId() == -1) return; 
 
 	//here put code for filename
 	wxString oldDir = wxGetCwd();
-	mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
-	wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
-	mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+  mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
+  mafLogMessage(_M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
 	// get manual tags
-	wxString command2execute;
+	mafString command2execute;
 	command2execute.Clear();
-	command2execute = m_PythonwExe.GetCStr();
+	command2execute = m_PythonwExe;
 
-	command2execute.Append(" lhpVMEBinaryDataChecker.py ");
-  command2execute.Append("\"");
-	command2execute.Append(inputMSF.GetCStr());
-  command2execute.Append("\"");
-	command2execute.Append(" ");
-	command2execute.Append(id.GetCStr());
+	command2execute.Append(_R(" lhpVMEBinaryDataChecker.py "));
+  command2execute.Append(_R("\""));
+	command2execute.Append(inputMSF);
+  command2execute.Append(_R("\""));
+	command2execute.Append(_R(" "));
+	command2execute.Append(id);
 
 	//mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
-	long pid = wxExecute(command2execute, wxEXEC_SYNC);
+	long pid = wxExecute(command2execute.toWx(), wxEXEC_SYNC);
 
 	wxArrayString output;
 	wxArrayString errors;
 
-	pid = wxExecute(command2execute, output, errors);
+	pid = wxExecute(command2execute.toWx(), output, errors);
 
 	wxString result = output[output.size() - 1];
   
@@ -278,14 +278,14 @@ void lhpTagHandler_L0000_resource_data_Size_FileSize::HandleAutoTag(lhpTagHandle
   //if result == "", no binary data has been found
   if (result == "")
   {
-    cargo->SetTagHandlerGeneratedString(wxString::Format("%d",0));
+    cargo->SetTagHandlerGeneratedString(mafToString(0));
     return;
   }
 
 	////////////////////////////
 
 	wxString temp;
-	temp.Append(inputMSF.GetCStr());
+	temp.Append(inputMSF.toWx());
 	temp = temp.BeforeLast('/');
 	temp.Append("/");
 	temp.Append(result);
@@ -295,10 +295,10 @@ void lhpTagHandler_L0000_resource_data_Size_FileSize::HandleAutoTag(lhpTagHandle
   extension = extension.AfterLast('.');
 
   bool fileOpened = false;
-  mafString fileToComputeLength = temp;
+  mafString fileToComputeLength = mafWxToString(temp);
  
   fstream fp;
-  fp.open(fileToComputeLength);
+  fp.open(fileToComputeLength.GetCStr());
 
   if(fp.fail() == false)
   {
@@ -310,7 +310,7 @@ void lhpTagHandler_L0000_resource_data_Size_FileSize::HandleAutoTag(lhpTagHandle
 
 
   //Process with length
-	if(fileOpened) cargo->SetTagHandlerGeneratedString(wxString::Format("%d",length));
+	if(fileOpened) cargo->SetTagHandlerGeneratedString(mafToString(length));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Size_EntityCount);
@@ -325,7 +325,7 @@ void lhpTagHandler_L0000_resource_data_Size_EntityCount::HandleAutoTag(lhpTagHan
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag , Not Handled (instance exists)");
+  cargo->SetTagHandlerGeneratedString(_R("Automated Tag , Not Handled (instance exists)"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Size_TimeFramesCount);
@@ -344,7 +344,7 @@ void lhpTagHandler_L0000_resource_data_Size_TimeFramesCount::HandleAutoTag(lhpTa
   mafString value;
   std::vector<mafTimeStamp> timeStamps;
   vme->GetTimeStamps(timeStamps);
-  value << (long) timeStamps.size();
+  value += mafToString((long) timeStamps.size());
 
   // tag handling code
   cargo->SetTagHandlerGeneratedString(value);
@@ -362,7 +362,7 @@ void lhpTagHandler_L0000_resource_data_Dataset_DatasetURI::HandleAutoTag(lhpTagH
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
+  cargo->SetTagHandlerGeneratedString(_R("This tag will be filled during the upload process"));
 }
 
 
@@ -378,7 +378,7 @@ void lhpTagHandler_L0000_resource_data_Dataset_UploadDate::HandleAutoTag(lhpTagH
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
+  cargo->SetTagHandlerGeneratedString(_R("This tag will be filled during the upload process"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_LocalFileCheckSum);
@@ -393,7 +393,7 @@ void lhpTagHandler_L0000_resource_data_Dataset_LocalFileCheckSum::HandleAutoTag(
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
+  cargo->SetTagHandlerGeneratedString(_R("This tag will be filled during the upload process"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat);
@@ -407,10 +407,10 @@ lhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat::lhpTagHandler_L00
 void lhpTagHandler_L0000_resource_data_Dataset_FileType_FileFormat::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-  mafString value = "MAF2"; //for now the only file format supported
+  mafString value = _R("MAF2"); //for now the only file format supported
  
   // tag handling code
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Dataset_FileType_Endianity);
@@ -426,7 +426,7 @@ void lhpTagHandler_L0000_resource_data_Dataset_FileType_Endianity::HandleAutoTag
 {
 	
 	mafString value;
-	value = mafIsLittleEndian()? "Little Endian" : "Big Endian";
+	value = mafIsLittleEndian()? _R("Little Endian") : _R("Big Endian");
 
 	// tag handling code
 	cargo->SetTagHandlerGeneratedString(value);
@@ -445,7 +445,7 @@ void lhpTagHandler_L0000_resource_data_Dataset_FileType_Encryption::HandleAutoTa
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  value = vme->GetCrypting()?"1":"0";
+  value = vme->GetCrypting()?_R("1"):_R("0");
 
   // tag handling code
   cargo->SetTagHandlerGeneratedString(value);
@@ -465,8 +465,8 @@ void lhpTagHandler_L0000_resource_MAF_VmeType::HandleAutoTag(lhpTagHandlerInputO
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  value = vme->GetTypeName();
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  value = _R(vme->GetTypeName());
+  cargo->SetTagHandlerGeneratedString(value);
 }
 
 
@@ -509,7 +509,7 @@ void lhpTagHandler_L0000_resource_MAF_TimeSpace_VMEabsoluteMatrixPose::HandleAut
 	for(timeCount = 0; timeCount < finalTimeStamps; timeCount++)
 	{
 		absMatrixPipe->SetTimeStamp(timeStamps[timeCount]);
-		value << absMatrixPipe->GetMatrix();
+		value += mafToString(absMatrixPipe->GetMatrix());
 	}
 
 	// tag handling code
@@ -534,10 +534,10 @@ void lhpTagHandler_L0000_resource_MAF_TimeSpace_TimeStampVector::HandleAutoTag(l
   long timeCount;
   for(timeCount = 0; timeCount < timeStamps.size(); timeCount++)
   {
-    value << timeStamps[timeCount];
+    value += mafToString(timeStamps[timeCount]);
     if(timeCount < timeStamps.size() - 1 )
     {
-      value << " ";
+      value += _R(" ");
     }
   }
 
@@ -557,7 +557,7 @@ void lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeRootURI::HandleAutoTag(lhpTagH
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+  cargo->SetTagHandlerGeneratedString(_R("Automated Tag Not Handled (instance exists)"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeRootName);
@@ -576,7 +576,7 @@ void lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeRootName::HandleAutoTag(lhpTag
   value = vme->GetRoot()->GetName();
   
   // tag handling code
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 }
 
 
@@ -592,7 +592,7 @@ void lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeChildURI1::HandleAutoTag(lhpTa
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
+  cargo->SetTagHandlerGeneratedString(_R("This tag will be filled during the upload process"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_MAF_Procedural);
@@ -606,13 +606,13 @@ lhpTagHandler_L0000_resource_MAF_Procedural::lhpTagHandler_L0000_resource_MAF_Pr
 void lhpTagHandler_L0000_resource_MAF_Procedural::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-  mafString value = "false";
+  mafString value = _R("false");
   mafVME *vme = cargo->GetInputVme();
   if (vme->GetNumberOfLinks() != 0)
-    value = "true";
+    value = _R("true");
 
   // tag handling code
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_MAF_Procedural_VMElinkURI1);
@@ -627,7 +627,7 @@ void lhpTagHandler_L0000_resource_MAF_Procedural_VMElinkURI1::HandleAutoTag(lhpT
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
+  cargo->SetTagHandlerGeneratedString(_R("This tag will be filled during the upload process"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeTreeCreationDate);
@@ -644,12 +644,12 @@ void lhpTagHandler_L0000_resource_MAF_TreeInfo_VmeTreeCreationDate::HandleAutoTa
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetRoot()->GetTagArray()->GetTag("Creation_Date"))
+  if(mafTagItem *ti = vme->GetRoot()->GetTagArray()->GetTag(_R("Creation_Date")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_Operation);
@@ -666,13 +666,13 @@ void lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_Operation::Handl
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute("TrialAttribute");
+  mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute(_R("TrialAttribute"));
   if (trial != NULL)
   {
     value = trial->m_TraceabilityVector[0].m_OperationName;
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 }
 
 
@@ -690,13 +690,13 @@ void lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_CreationDate::Ha
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute("TrialAttribute");
+  mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute(_R("TrialAttribute"));
   if (trial != NULL)
   {
     value = trial->m_TraceabilityVector[0].m_Date;
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_Application);
@@ -713,13 +713,13 @@ void lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_Application::Han
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute("TrialAttribute");
+  mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute(_R("TrialAttribute"));
   if (trial != NULL)
   {
     value = trial->m_TraceabilityVector[0].m_AppStamp;
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_IsNatural);
@@ -734,15 +734,15 @@ void lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_IsNatural::Handl
 //------------------------------------------------------------------------------------
 {
   mafVME *vme = cargo->GetInputVme();
-  mafString value = "false";
+  mafString value = _R("false");
 
-  mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute("TrialAttribute");
+  mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute(_R("TrialAttribute"));
   if (trial != NULL)
   {
     value = trial->m_TraceabilityVector[0].m_IsNatural;
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_OperatorID);
@@ -759,13 +759,13 @@ void lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_OperatorID::Hand
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute("TrialAttribute");
+  mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute(_R("TrialAttribute"));
   if (trial != NULL)
   {
     value = trial->m_TraceabilityVector[0].m_OperatorID;
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_Parameters);
@@ -782,13 +782,13 @@ void lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_Parameters::Hand
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute("TrialAttribute");
+  mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute(_R("TrialAttribute"));
   if (trial != NULL)
   {
      value = trial->m_TraceabilityVector[0].m_Parameters;
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_Operation);
@@ -803,7 +803,7 @@ void lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_Operation::Hand
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+  cargo->SetTagHandlerGeneratedString(_R("Automated Tag Not Handled (instance exists)"));
 }
 
 
@@ -819,7 +819,7 @@ void lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_ModifyDate::Han
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+  cargo->SetTagHandlerGeneratedString(_R("Automated Tag Not Handled (instance exists)"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_Application);
@@ -834,7 +834,7 @@ void lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_Application::Ha
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+  cargo->SetTagHandlerGeneratedString(_R("Automated Tag Not Handled (instance exists)"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_OperatorID);
@@ -849,7 +849,7 @@ void lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_OperatorID::Han
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+  cargo->SetTagHandlerGeneratedString(_R("Automated Tag Not Handled (instance exists)"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_Parameters);
@@ -864,7 +864,7 @@ void lhpTagHandler_L0000_resource_data_Traceability_ModifyEvent1_Parameters::Han
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+  cargo->SetTagHandlerGeneratedString(_R("Automated Tag Not Handled (instance exists)"));
 }
 
 
@@ -880,7 +880,7 @@ void lhpTagHandler_L0000_resource_data_Traceability_Ownership::HandleAutoTag(lhp
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+  cargo->SetTagHandlerGeneratedString(_R("Automated Tag Not Handled (instance exists)"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Traceability_Ownership_OwnerID);
@@ -911,7 +911,7 @@ lhpTagHandler_L0000_resource_data_Ownership_OwnerID::lhpTagHandler_L0000_resourc
 void lhpTagHandler_L0000_resource_data_Ownership_OwnerID::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-  cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
+  cargo->SetTagHandlerGeneratedString(_R("This tag will be filled during the upload process"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Quality_QualityScore1_URL)
@@ -926,7 +926,7 @@ void lhpTagHandler_L0000_resource_data_Quality_QualityScore1_URL::HandleAutoTag(
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
+  cargo->SetTagHandlerGeneratedString(_R("This tag will be filled during the upload process"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Quality_QualityScore1_Score)
@@ -941,7 +941,7 @@ void lhpTagHandler_L0000_resource_data_Quality_QualityScore1_Score::HandleAutoTa
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
+  cargo->SetTagHandlerGeneratedString(_R("This tag will be filled during the upload process"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Quality_QualityScore1_ScoreDate)
@@ -956,7 +956,7 @@ void lhpTagHandler_L0000_resource_data_Quality_QualityScore1_ScoreDate::HandleAu
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
+  cargo->SetTagHandlerGeneratedString(_R("This tag will be filled during the upload process"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_Access_Policy1_GroupID)
@@ -971,7 +971,7 @@ void lhpTagHandler_L0000_resource_Access_Policy1_GroupID::HandleAutoTag(lhpTagHa
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
+  cargo->SetTagHandlerGeneratedString(_R("This tag will be filled during the upload process"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_Access_Policy1_Price)
@@ -986,7 +986,7 @@ void lhpTagHandler_L0000_resource_Access_Policy1_Price::HandleAutoTag(lhpTagHand
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
+  cargo->SetTagHandlerGeneratedString(_R("This tag will be filled during the upload process"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_Access_Policy1_Usage)
@@ -1001,7 +1001,7 @@ void lhpTagHandler_L0000_resource_Access_Policy1_Usage::HandleAutoTag(lhpTagHand
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("This tag will be filled during the upload process");
+  cargo->SetTagHandlerGeneratedString(_R("This tag will be filled during the upload process"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_Access_Publishing_PublishingStatus)
@@ -1016,7 +1016,7 @@ void lhpTagHandler_L0000_resource_Access_Publishing_PublishingStatus::HandleAuto
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("private");
+  cargo->SetTagHandlerGeneratedString(_R("private"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy);
@@ -1031,7 +1031,7 @@ void lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Descrip
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/FA_onto");
+  cargo->SetTagHandlerGeneratedString(_R("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/FA_onto"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy_FunctionalAnatomy_DictionaryURI);
@@ -1046,7 +1046,7 @@ void lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Descrip
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/FA_onto");
+  cargo->SetTagHandlerGeneratedString(_R("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/FA_onto"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy_FunctionalAnatomy_DictionaryVersion);
@@ -1060,14 +1060,14 @@ lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_
 void lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Description_FunctionalAnatomy_FunctionalAnatomy_DictionaryVersion::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-  mafString dictionaryFileNamePrefix = "lhpXMLFASourceSubdictionary_";
-  mafString dictionaryFileName = "NOT FOUND";
+  mafString dictionaryFileNamePrefix = _R("lhpXMLFASourceSubdictionary_");
+  mafString dictionaryFileName = _R("NOT FOUND");
   wxString oldDir = wxGetCwd();
 
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
 
   wxArrayString files;
-  wxString filePattern = dictionaryFileNamePrefix ;
+  wxString filePattern = dictionaryFileNamePrefix.toWx();
   filePattern.Append("*.xml");
 
   wxDir::GetAllFiles(wxGetCwd(), &files, filePattern, wxDIR_FILES);
@@ -1075,28 +1075,28 @@ void lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Descrip
   if (files.size() == 0)
   {
     // tag handling code
-    cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+    cargo->SetTagHandlerGeneratedString(dictionaryFileName);
   }
   if (files.size() != 1)
   {
     // tag handling code
-    cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+    cargo->SetTagHandlerGeneratedString(dictionaryFileName);
   }
   else
   {
     assert(files.size() == 1);
-    dictionaryFileName = files[0];
-    int pos = dictionaryFileName.FindLast("\\");
+    dictionaryFileName = mafWxToString(files[0]);
+    int pos = dictionaryFileName.FindLast(_R("\\"));
     dictionaryFileName.Erase(0, pos);
   }
 
   wxSetWorkingDirectory(oldDir);
 
-  int pos = dictionaryFileName.FindLast("_");
+  int pos = dictionaryFileName.FindLast(_R("_"));
   dictionaryFileName.Erase(0, pos);
-  pos = dictionaryFileName.FindLast(".");
+  pos = dictionaryFileName.FindLast(_R("."));
   dictionaryFileName.Erase(pos);
-  cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+  cargo->SetTagHandlerGeneratedString(dictionaryFileName);
 }
 
 
@@ -1112,7 +1112,7 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource::HandleAutoTag(lhpTagH
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/DicomSource");
+  cargo->SetTagHandlerGeneratedString(_R("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/DicomSource"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DictionaryURI);
@@ -1127,7 +1127,7 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Dictionary
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/DicomSource");
+  cargo->SetTagHandlerGeneratedString(_R("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/DicomSource"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DictionaryVersion);
@@ -1141,14 +1141,14 @@ lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DictionaryVersi
 void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DictionaryVersion::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-  mafString dictionaryFileNamePrefix = "lhpXMLDicomSourceSubdictionary_";
-  mafString dictionaryFileName = "NOT FOUND";
+  mafString dictionaryFileNamePrefix = _R("lhpXMLDicomSourceSubdictionary_");
+  mafString dictionaryFileName = _R("NOT FOUND");
   wxString oldDir = wxGetCwd();
 
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
 
   wxArrayString files;
-  wxString filePattern = dictionaryFileNamePrefix ;
+  wxString filePattern = dictionaryFileNamePrefix.toWx();
   filePattern.Append("*.xml");
 
   wxDir::GetAllFiles(wxGetCwd(), &files, filePattern, wxDIR_FILES);
@@ -1156,28 +1156,28 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Dictionary
   if (files.size() == 0)
   {
     // tag handling code
-    cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+    cargo->SetTagHandlerGeneratedString(dictionaryFileName);
   }
   if (files.size() != 1)
   {
     // tag handling code
-    cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+    cargo->SetTagHandlerGeneratedString(dictionaryFileName);
   }
   else
   {
     assert(files.size() == 1);
-    dictionaryFileName = files[0];
-    int pos = dictionaryFileName.FindLast("\\");
+    dictionaryFileName = mafWxToString(files[0]);
+    int pos = dictionaryFileName.FindLast(_R("\\"));
     dictionaryFileName.Erase(0, pos);
   }
 
   wxSetWorkingDirectory(oldDir);
 
-  int pos = dictionaryFileName.FindLast("_");
+  int pos = dictionaryFileName.FindLast(_R("_"));
   dictionaryFileName.Erase(0, pos);
-  pos = dictionaryFileName.FindLast(".");
+  pos = dictionaryFileName.FindLast(_R("."));
   dictionaryFileName.Erase(pos);
-  cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+  cargo->SetTagHandlerGeneratedString(dictionaryFileName);
 }
 
 
@@ -1193,7 +1193,7 @@ void lhpTagHandler_L0000_resource_data_Source_MASource::HandleAutoTag(lhpTagHand
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/MASource");
+  cargo->SetTagHandlerGeneratedString(_R("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/MASource"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryURI);
@@ -1208,7 +1208,7 @@ void lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryURI::H
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/MASource");
+  cargo->SetTagHandlerGeneratedString(_R("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/MASource"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryVersion);
@@ -1222,14 +1222,14 @@ lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryVersion::lh
 void lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryVersion::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-  mafString dictionaryFileNamePrefix = "lhpXMLMotionAnalysisSourceSubdictionary_";
-  mafString dictionaryFileName = "NOT FOUND";
+  mafString dictionaryFileNamePrefix = _R("lhpXMLMotionAnalysisSourceSubdictionary_");
+  mafString dictionaryFileName = _R("NOT FOUND");
   wxString oldDir = wxGetCwd();
 
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
 
   wxArrayString files;
-  wxString filePattern = dictionaryFileNamePrefix ;
+  wxString filePattern = dictionaryFileNamePrefix.toWx();
   filePattern.Append("*.xml");
 
   wxDir::GetAllFiles(wxGetCwd(), &files, filePattern, wxDIR_FILES);
@@ -1237,28 +1237,28 @@ void lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryVersio
   if (files.size() == 0)
   {
     // tag handling code
-    cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+    cargo->SetTagHandlerGeneratedString(dictionaryFileName);
   }
   if (files.size() != 1)
   {
     // tag handling code
-    cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+    cargo->SetTagHandlerGeneratedString(dictionaryFileName);
   }
   else
   {
     assert(files.size() == 1);
-    dictionaryFileName = files[0];
-    int pos = dictionaryFileName.FindLast("\\");
+    dictionaryFileName = mafWxToString(files[0]);
+    int pos = dictionaryFileName.FindLast(_R("\\"));
     dictionaryFileName.Erase(0, pos);
   }
 
   wxSetWorkingDirectory(oldDir);
 
-  int pos = dictionaryFileName.FindLast("_");
+  int pos = dictionaryFileName.FindLast(_R("_"));
   dictionaryFileName.Erase(0, pos);
-  pos = dictionaryFileName.FindLast(".");
+  pos = dictionaryFileName.FindLast(_R("."));
   dictionaryFileName.Erase(pos);
-  cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+  cargo->SetTagHandlerGeneratedString(dictionaryFileName);
 }
 
 
@@ -1287,7 +1287,7 @@ void lhpTagHandler_L0000_resource_data_Source_MASource_MASource_General_Sampling
       freq = 1/dif;
       freq = mafRoundToPrecision(freq, 0);
     }
-    cargo->SetTagHandlerGeneratedString(wxString::Format("%f",freq));
+    cargo->SetTagHandlerGeneratedString(mafString::Format(_R("%f"),freq));
   }
   else
   {
@@ -1311,7 +1311,7 @@ void lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DataType_IsLandm
   mafVME *vme = cargo->GetInputVme();
   if (vme->IsA("mafVMELandmarkCloud"))
   {
-    value << ((mafVMELandmarkCloud*)vme)->GetNumberOfLandmarks();
+    value += mafToString(((mafVMELandmarkCloud*)vme)->GetNumberOfLandmarks());
   }
   cargo->SetTagHandlerGeneratedString(value);
 }
@@ -1329,7 +1329,7 @@ void lhpTagHandler_L0000_resource_data_Source_MicroCTSource::HandleAutoTag(lhpTa
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/MicroCTSource");
+  cargo->SetTagHandlerGeneratedString(_R("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/MicroCTSource"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_DictionaryURI);
@@ -1344,7 +1344,7 @@ void lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_Dictio
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/MicroCTSource");
+  cargo->SetTagHandlerGeneratedString(_R("https://www.biomedtown.org/biomed_town/LHDL/users/swclient/dictionaries/MicroCTSource"));
 }
 
 mafCxxTypeMacro(lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_DictionaryVersion);
@@ -1358,14 +1358,14 @@ lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_DictionaryV
 void lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_DictionaryVersion::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-  mafString dictionaryFileNamePrefix = "lhpXMLMicroCTSourceSubdictionary_";
-  mafString dictionaryFileName = "NOT FOUND";
+  mafString dictionaryFileNamePrefix = _R("lhpXMLMicroCTSourceSubdictionary_");
+  mafString dictionaryFileName = _R("NOT FOUND");
   wxString oldDir = wxGetCwd();
 
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.GetCStr());
+  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
 
   wxArrayString files;
-  wxString filePattern = dictionaryFileNamePrefix ;
+  wxString filePattern = dictionaryFileNamePrefix.toWx();
   filePattern.Append("*.xml");
 
   wxDir::GetAllFiles(wxGetCwd(), &files, filePattern, wxDIR_FILES);
@@ -1373,28 +1373,28 @@ void lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_Dictio
   if (files.size() == 0)
   {
     // tag handling code
-    cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+    cargo->SetTagHandlerGeneratedString(dictionaryFileName);
   }
   if (files.size() != 1)
   {
     // tag handling code
-    cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+    cargo->SetTagHandlerGeneratedString(dictionaryFileName);
   }
   else
   {
     assert(files.size() == 1);
-    dictionaryFileName = files[0];
-    int pos = dictionaryFileName.FindLast("\\");
+    dictionaryFileName = mafWxToString(files[0]);
+    int pos = dictionaryFileName.FindLast(_R("\\"));
     dictionaryFileName.Erase(0, pos);
   }
 
   wxSetWorkingDirectory(oldDir);
 
-  int pos = dictionaryFileName.FindLast("_");
+  int pos = dictionaryFileName.FindLast(_R("_"));
   dictionaryFileName.Erase(0, pos);
-  pos = dictionaryFileName.FindLast(".");
+  pos = dictionaryFileName.FindLast(_R("."));
   dictionaryFileName.Erase(pos);
-  cargo->SetTagHandlerGeneratedString(dictionaryFileName.GetCStr());
+  cargo->SetTagHandlerGeneratedString(dictionaryFileName);
 }
 
 
@@ -1411,7 +1411,7 @@ void L0000_resource_Documentation::HandleAutoTag(lhpTagHandlerInputOutputParamet
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+  cargo->SetTagHandlerGeneratedString(_R("Automated Tag Not Handled (instance exists)"));
 }
 
 
@@ -1428,7 +1428,7 @@ void L0000_resource_Access_Policy1_GroupID::HandleAutoTag(lhpTagHandlerInputOutp
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+  cargo->SetTagHandlerGeneratedString(_R("Automated Tag Not Handled (instance exists)"));
 }
 
 
@@ -1445,7 +1445,7 @@ void L0000_resource_Access_Policy1_Price::HandleAutoTag(lhpTagHandlerInputOutput
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+  cargo->SetTagHandlerGeneratedString(_R("Automated Tag Not Handled (instance exists)"));
 }
 
 
@@ -1461,7 +1461,7 @@ void L0000_resource_Access_Policy1_Usage::HandleAutoTag(lhpTagHandlerInputOutput
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+  cargo->SetTagHandlerGeneratedString(_R("Automated Tag Not Handled (instance exists)"));
 }
 
 
@@ -1477,7 +1477,7 @@ void L0000_resource_Access_Publishing_PublishingStatus::HandleAutoTag(lhpTagHand
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+  cargo->SetTagHandlerGeneratedString(_R("Automated Tag Not Handled (instance exists)"));
 }
 
 //////////
@@ -1497,12 +1497,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_StudyDate:
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("StudyDate"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("StudyDate")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -1520,12 +1520,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Modality::
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("Modality"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("Modality")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -1543,13 +1543,13 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Manufactur
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("Manufacturer"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("Manufacturer")))
   {
     value = ti->GetValue();
   }
 
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -1567,12 +1567,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Institutio
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("InstitutionName"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("InstitutionName")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -1591,12 +1591,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_StationNam
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("StationName"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("StationName")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -1615,12 +1615,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Manufactur
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("ManufacturerModelName"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("ManufacturerModelName")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -1639,12 +1639,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PatientID:
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("PatientID"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("PatientID")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -1663,12 +1663,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PatientSex
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("PatientSex"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("PatientSex")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -1687,12 +1687,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ScanOption
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("ScanOptions"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("ScanOptions")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -1711,12 +1711,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_KVP::Handl
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("KVP"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("KVP")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -1735,12 +1735,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DataCollec
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("DataCollectionDiameter"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("DataCollectionDiameter")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -1759,13 +1759,13 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Reconstruc
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("ReconstructionDiameter"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("ReconstructionDiameter")))
   {
     value = ti->GetValue();
   }
   else
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -1784,12 +1784,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DistanceSo
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("DistanceSourceToDetector"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("DistanceSourceToDetector")))
   {
     value = ti->GetValue();
   }
  
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -1808,12 +1808,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_DistanceSo
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("DistanceSourceToPatient"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("DistanceSourceToPatient")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -1832,12 +1832,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_GantryDete
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("GantryDetectorTilt"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("GantryDetectorTilt")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -1856,12 +1856,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_TableHeigh
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("TableHeight"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("TableHeight")))
   {
     value = ti->GetValue();
   }
  
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -1880,12 +1880,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_RotationDi
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("RotationDirection"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("RotationDirection")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -1904,12 +1904,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ExposureTi
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("ExposureTime"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("ExposureTime")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -1928,12 +1928,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_XRayTubeCu
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("XrayTubeCurrent"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("XrayTubeCurrent")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -1952,12 +1952,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Exposure::
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("Exposure"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("Exposure")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -1976,12 +1976,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_FilterType
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("FilterType"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("FilterType")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -1999,12 +1999,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_FocalSpot:
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("FocalSpot"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("FocalSpot")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -2022,12 +2022,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Convolutio
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("ConvolutionKernel"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("ConvolutionKernel")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -2045,12 +2045,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PatientPos
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("PatientPosition"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("PatientPosition")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -2068,12 +2068,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_StudyID::H
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("StudyID"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("StudyID")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -2091,12 +2091,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_ImagePosit
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("ImagePositionPatient"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("ImagePositionPatient")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -2114,12 +2114,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PixelSpaci
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("PixelSpacing"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("PixelSpacing")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -2137,12 +2137,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_PixelPaddi
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("PixelPaddingValue"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("PixelPaddingValue")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -2160,12 +2160,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_WindowCent
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("WindowCenter"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("WindowCenter")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -2183,16 +2183,16 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_WindowWidt
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("WindowWidth"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("WindowWidth")))
   {
     value = ti->GetValue();
   }
   else
   {
-    value = "Not found";
+    value = _R("Not found");
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -2210,12 +2210,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_RescaleInt
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("RescaleIntercept"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("RescaleIntercept")))
   {
     value = ti->GetValue();
   }
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }
 
@@ -2233,12 +2233,12 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_RescaleSlo
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("RescaleSlope"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("RescaleSlope")))
   {
     value = ti->GetValue();
   }
 
 
-  cargo->SetTagHandlerGeneratedString(value.GetCStr());
+  cargo->SetTagHandlerGeneratedString(value);
 
 }

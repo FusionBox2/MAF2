@@ -45,7 +45,7 @@ class mafVMEGroup;
 class lhpOpExporterC3DBTK : public mafOp
 {
 public:
-  lhpOpExporterC3DBTK(const mafString& label = "C3D Exporter");
+  lhpOpExporterC3DBTK(const mafString& label = _R("C3D Exporter"));
   ~lhpOpExporterC3DBTK(); 
 
   mafTypeMacro(lhpOpExporterC3DBTK, mafOp);
@@ -64,7 +64,7 @@ public:
   void ExportLandmark();
 
   /** Set the filename for the .stl to export */
-  void SetFileName(const char *file_name) {m_File = file_name;};
+  void SetFileName(const char *file_name) {m_File = _R(file_name);};
 
 protected:
   void ExportingTraverse(mafNode *vme, std::vector<mafVMELandmarkCloud*>& clouds, std::vector<medVMEAnalog*>& analogs);

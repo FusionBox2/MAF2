@@ -35,7 +35,7 @@ class lhpOpRegistration: public mafOp
 {
 public:
   mafTypeMacro(lhpOpRegistration, mafOp)
-  lhpOpRegistration(const mafString& label = "DSRegistration");
+  lhpOpRegistration(const mafString& label = _R("DSRegistration"));
  ~lhpOpRegistration(); 
 
   virtual void OnEvent(mafEventBase *maf_event);

@@ -29,7 +29,6 @@
 #include "mafDecl.h"
 #include "mafEvent.h"
 #include "mafGUI.h"
-#include "mafFilesDirs.h"
 #include "mafPlotMath.h"
 
 #include "mafOpExplodeCollapse.h"
@@ -72,7 +71,7 @@ class medOpImporterLandmarkAcc : public medOpImporterLandmark
 {
 public:
   mafTypeMacro(medOpImporterLandmarkAcc, medOpImporterLandmark);
-  medOpImporterLandmarkAcc(const mafString& label = "") : medOpImporterLandmark(label){}
+  medOpImporterLandmarkAcc(const mafString& label = _R("")) : medOpImporterLandmark(label){}
   std::vector<mafVME*>& GetResults(){return m_Results;}
 };
 
@@ -84,8 +83,8 @@ lhpOpKinectModel::lhpOpKinectModel(const mafString& label) : Superclass(label)
 {
   m_OpType     = OPTYPE_OP;
   m_Canundo    = false;
-  m_FileDir    = mafGetApplicationDirectory() + "/Data/External/";
-  m_ExtAppPath = mafGetApplicationDirectory() + "/SkeletalViewerBart.exe";
+  m_FileDir    = mafGetApplicationDirectory() + _R("/Data/External/");
+  m_ExtAppPath = mafGetApplicationDirectory() + _R("/SkeletalViewerBart.exe");
   m_Scale1     = 1.0;
   m_Scale2     = 1.0;
   m_Scale3     = 1.0;
@@ -123,27 +122,27 @@ bool lhpOpKinectModel::Accept(mafNode* vme)
 
   for(int i = 0; i < cloud->GetNumberOfLandmarks(); i++)
   {
-    if(cloud->GetLandmarkName(i) == "LASI" || cloud->GetLandmarkName(i) == "LeftHip")
+    if(cloud->GetLandmarkName(i) == _R("LASI") || cloud->GetLandmarkName(i) == _R("LeftHip"))
       pelv_ind[0] = i;
-    if(cloud->GetLandmarkName(i) == "RASI" || cloud->GetLandmarkName(i) == "RightHip")
+    if(cloud->GetLandmarkName(i) == _R("RASI") || cloud->GetLandmarkName(i) == _R("RightHip"))
       pelv_ind[1] = i;
-    if(cloud->GetLandmarkName(i) == "RPSI" || cloud->GetLandmarkName(i) == "Pelvis")
+    if(cloud->GetLandmarkName(i) == _R("RPSI") || cloud->GetLandmarkName(i) == _R("Pelvis"))
       pelv_ind[2] = i;
-    if(cloud->GetLandmarkName(i) == "LPSI" || cloud->GetLandmarkName(i) == "Pelvis")
+    if(cloud->GetLandmarkName(i) == _R("LPSI") || cloud->GetLandmarkName(i) == _R("Pelvis"))
       pelv_ind[3] = i;
 
-    if(cloud->GetLandmarkName(i) == "RKNE" || cloud->GetLandmarkName(i) == "RightKnee")
+    if(cloud->GetLandmarkName(i) == _R("RKNE") || cloud->GetLandmarkName(i) == _R("RightKnee"))
       rleg_ind[0] = i;
-    if(cloud->GetLandmarkName(i) == "RANK" || cloud->GetLandmarkName(i) == "RightAnkle")
+    if(cloud->GetLandmarkName(i) == _R("RANK") || cloud->GetLandmarkName(i) == _R("RightAnkle"))
       rleg_ind[1] = i;
-    if(cloud->GetLandmarkName(i) == "RTOE" || cloud->GetLandmarkName(i) == "RightFoot")
+    if(cloud->GetLandmarkName(i) == _R("RTOE") || cloud->GetLandmarkName(i) == _R("RightFoot"))
       rleg_ind[2] = i;
 
-    if(cloud->GetLandmarkName(i) == "LKNE" || cloud->GetLandmarkName(i) == "LeftKnee")
+    if(cloud->GetLandmarkName(i) == _R("LKNE") || cloud->GetLandmarkName(i) == _R("LeftKnee"))
       lleg_ind[0] = i;
-    if(cloud->GetLandmarkName(i) == "LANK" || cloud->GetLandmarkName(i) == "LeftAnkle")
+    if(cloud->GetLandmarkName(i) == _R("LANK") || cloud->GetLandmarkName(i) == _R("LeftAnkle"))
       lleg_ind[1] = i;
-    if(cloud->GetLandmarkName(i) == "LTOE" || cloud->GetLandmarkName(i) == "LeftFoot")
+    if(cloud->GetLandmarkName(i) == _R("LTOE") || cloud->GetLandmarkName(i) == _R("LeftFoot"))
       lleg_ind[2] = i;
   }
   for(int i = 0; i < 4; i++)
@@ -243,10 +242,10 @@ void lhpOpKinectModel::CreateGui()
 //----------------------------------------------------------------------------
 {
   m_Gui = new mafGUI(this);
-  m_Gui->FileOpen(ID_EXTAPPPATH, "Ext app", &m_ExtAppPath, "*.exe");
-  m_Gui->Double(ID_SCALE, _("Scale1"), &m_Scale1, 0.0);
-  m_Gui->Double(ID_SCALE, _("Scale2"), &m_Scale2, 0.0);
-  m_Gui->Double(ID_SCALE, _("Scale3"), &m_Scale3, 0.0);
+  m_Gui->FileOpen(ID_EXTAPPPATH, _R("Ext app"), &m_ExtAppPath, _R("*.exe"));
+  m_Gui->Double(ID_SCALE, _L("Scale1"), &m_Scale1, 0.0);
+  m_Gui->Double(ID_SCALE, _L("Scale2"), &m_Scale2, 0.0);
+  m_Gui->Double(ID_SCALE, _L("Scale3"), &m_Scale3, 0.0);
 
   m_Gui->OkCancel();
 }
@@ -270,11 +269,11 @@ bool lhpOpKinectModel::Import()
   mafSplitPath(m_ExtAppPath, &path, &nameext);
   size_t length = path.Length();
   if(length != 0 && path[length - 1] != '/' && path[length - 1] != '\\')
-    path += "/";
+    path += _R("/");
 
   mafString params;
   params = path;
-  params += "Inp_FuBx.dat";
+  params += _R("Inp_FuBx.dat");
   double lasttimestamp = 0.0;
   if(numframes > 0)
     lasttimestamp = timeStamps[numframes - 1];
@@ -287,36 +286,36 @@ bool lhpOpKinectModel::Import()
     fclose(fp);
   }
 
-  mafString pelv_names[] = {"LASI", "RASI", "RPSI", "LPSI"};
-  mafString rleg_names[] = {"RTHI", "RKNE", "RTIB", "RANK", "RHEE", "RTOE"};
-  mafString lleg_names[] = {"LTHI", "LKNE", "LTIB", "LANK", "LHEE", "LTOE"};
+  mafString pelv_names[] = {_R("LASI"), _R("RASI"), _R("RPSI"), _R("LPSI")};
+  mafString rleg_names[] = {_R("RTHI"), _R("RKNE"), _R("RTIB"), _R("RANK"), _R("RHEE"), _R("RTOE")};
+  mafString lleg_names[] = {_R("LTHI"), _R("LKNE"), _R("LTIB"), _R("LANK"), _R("LHEE"), _R("LTOE")};
   int pelv_ind[4] = {-1, -1, -1, -1};
   int rleg_ind[3] = {-1, -1, -1};
   int lleg_ind[3] = {-1, -1, -1};
 
   for(int i = 0; i < cloud->GetNumberOfLandmarks(); i++)
   {
-    if(cloud->GetLandmarkName(i) == "LASI" || cloud->GetLandmarkName(i) == "LeftHip")
+    if(cloud->GetLandmarkName(i) == _R("LASI") || cloud->GetLandmarkName(i) == _R("LeftHip"))
       pelv_ind[0] = i;
-    if(cloud->GetLandmarkName(i) == "RASI" || cloud->GetLandmarkName(i) == "RightHip")
+    if(cloud->GetLandmarkName(i) == _R("RASI") || cloud->GetLandmarkName(i) == _R("RightHip"))
       pelv_ind[1] = i;
-    if(cloud->GetLandmarkName(i) == "RPSI" || cloud->GetLandmarkName(i) == "Pelvis")
+    if(cloud->GetLandmarkName(i) == _R("RPSI") || cloud->GetLandmarkName(i) == _R("Pelvis"))
       pelv_ind[2] = i;
-    if(cloud->GetLandmarkName(i) == "LPSI" || cloud->GetLandmarkName(i) == "Pelvis")
+    if(cloud->GetLandmarkName(i) == _R("LPSI") || cloud->GetLandmarkName(i) == _R("Pelvis"))
       pelv_ind[3] = i;
 
-    if(cloud->GetLandmarkName(i) == "RKNE" || cloud->GetLandmarkName(i) == "RightKnee")
+    if(cloud->GetLandmarkName(i) == _R("RKNE") || cloud->GetLandmarkName(i) == _R("RightKnee"))
       rleg_ind[0] = i;
-    if(cloud->GetLandmarkName(i) == "RANK" || cloud->GetLandmarkName(i) == "RightAnkle")
+    if(cloud->GetLandmarkName(i) == _R("RANK") || cloud->GetLandmarkName(i) == _R("RightAnkle"))
       rleg_ind[1] = i;
-    if(cloud->GetLandmarkName(i) == "RTOE" || cloud->GetLandmarkName(i) == "RightFoot")
+    if(cloud->GetLandmarkName(i) == _R("RTOE") || cloud->GetLandmarkName(i) == _R("RightFoot"))
       rleg_ind[2] = i;
 
-    if(cloud->GetLandmarkName(i) == "LKNE" || cloud->GetLandmarkName(i) == "LeftKnee")
+    if(cloud->GetLandmarkName(i) == _R("LKNE") || cloud->GetLandmarkName(i) == _R("LeftKnee"))
       lleg_ind[0] = i;
-    if(cloud->GetLandmarkName(i) == "LANK" || cloud->GetLandmarkName(i) == "LeftAnkle")
+    if(cloud->GetLandmarkName(i) == _R("LANK") || cloud->GetLandmarkName(i) == _R("LeftAnkle"))
       lleg_ind[1] = i;
-    if(cloud->GetLandmarkName(i) == "LTOE" || cloud->GetLandmarkName(i) == "LeftFoot")
+    if(cloud->GetLandmarkName(i) == _R("LTOE") || cloud->GetLandmarkName(i) == _R("LeftFoot"))
       lleg_ind[2] = i;
   }
 
@@ -325,11 +324,11 @@ bool lhpOpKinectModel::Import()
   mafString fn3;
 
   fn1 = path;
-  fn1 += "Pelvis_mot.txt";
+  fn1 += _R("Pelvis_mot.txt");
   fn2 = path;
-  fn2 += "R_Foot_mot.txt";
+  fn2 += _R("R_Foot_mot.txt");
   fn3 = path;
-  fn3 += "L_Foot_mot.txt";
+  fn3 += _R("L_Foot_mot.txt");
 
   std::ofstream outF1, outF2, outF3;
   outF1.open(fn1.GetCStr());
@@ -354,7 +353,7 @@ bool lhpOpKinectModel::Import()
       double invec[4];
       cloud->GetLandmark(pelv_ind[j], invec, t);
       invec[3] = 1.0;
-      outF1 << pelv_names[j];
+      outF1 << pelv_names[j].GetCStr();
       sprintf(numbs, " %16lf %16lf %16lf \n", invec[0], invec[1], invec[2]);
       outF1 << numbs;
 
@@ -363,19 +362,19 @@ bool lhpOpKinectModel::Import()
 
       cloud->GetLandmark(rleg_ind[j], invec, t);
       invec[3] = 1.0;
-      outF2 << rleg_names[2 * j + 0];
+      outF2 << rleg_names[2 * j + 0].GetCStr();
       sprintf(numbs, " %16lf %16lf %16lf \n", 0.0, 0.0, 0.0);
       outF2 << numbs;
-      outF2 << rleg_names[2 * j + 1];
+      outF2 << rleg_names[2 * j + 1].GetCStr();
       sprintf(numbs, " %16lf %16lf %16lf \n", invec[0], invec[1], invec[2]);
       outF2 << numbs;
 
       cloud->GetLandmark(lleg_ind[j], invec, t);
       invec[3] = 1.0;
-      outF3 << lleg_names[2 * j + 0];
+      outF3 << lleg_names[2 * j + 0].GetCStr();
       sprintf(numbs, " %16lf %16lf %16lf \n", 0.0, 0.0, 0.0);
       outF3 << numbs;
-      outF3 << lleg_names[2 * j + 1];
+      outF3 << lleg_names[2 * j + 1].GetCStr();
       sprintf(numbs, " %16lf %16lf %16lf \n", invec[0], invec[1], invec[2]);
       outF3 << numbs;
     }
@@ -387,24 +386,24 @@ bool lhpOpKinectModel::Import()
 
 
   mafString commandline = m_ExtAppPath;
-  wxSetWorkingDirectory(path.GetCStr());
-  commandline += " TR72_3FN.DAT rtk__out.dat";
-  if(wxExecute(commandline.GetCStr(), wxEXEC_SYNC) != 0)
+  wxSetWorkingDirectory(path.toWx());
+  commandline += _R(" TR72_3FN.DAT rtk__out.dat");
+  if(wxExecute(commandline.toWx(), wxEXEC_SYNC) != 0)
     return false;
 
-  mafString files[] = {"L_Foot.txt",
-                       "L_Pate.txt",
-                       "L_Shan.txt",
-                       "L_Thg1.txt",
-                       "L_Thg2.txt",
-                       "L_Thg3.txt",
-                       "R_Pate.txt",
-                       "R_Foot.txt",
-                       "R_Shan.txt",
-                       "R_Thg1.txt",
-                       "R_Thg2.txt",
-                       "R_Thg3.txt",
-                       "Pelvis.txt"};
+  mafString files[] = {_R("L_Foot.txt"),
+                       _R("L_Pate.txt"),
+                       _R("L_Shan.txt"),
+                       _R("L_Thg1.txt"),
+                       _R("L_Thg2.txt"),
+                       _R("L_Thg3.txt"),
+                       _R("R_Pate.txt"),
+                       _R("R_Foot.txt"),
+                       _R("R_Shan.txt"),
+                       _R("R_Thg1.txt"),
+                       _R("R_Thg2.txt"),
+                       _R("R_Thg3.txt"),
+                       _R("Pelvis.txt")};
   mafVMEGroup *grp = NULL;
   for(int i = 0; i < DIM(files); i++)
   {
@@ -414,15 +413,15 @@ bool lhpOpKinectModel::Import()
     if(!mafFileExists(fpath))
       continue;
     medOpImporterLandmarkAcc *imp = new medOpImporterLandmarkAcc();
-    imp->SetFileName(fpath);
+    imp->SetFileName(fpath.GetCStr());
     imp->Read();
     std::vector<mafVME*>& res = imp->GetResults();
     if(grp == NULL && !res.empty())
     {
       mafNEW(grp);
-      grp->SetName("KinectModel");
+      grp->SetName(_R("KinectModel"));
     }
-    for(std::vector<mafVME*>::iterator it = res.begin(); it != res.end(); ++it)
+    for(auto it = res.begin(); it != res.end(); ++it)
     {
       (*it)->ReparentTo(grp);
     }

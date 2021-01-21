@@ -34,7 +34,7 @@ class lhpOpTimeShift: public mafOp
 {
 public:
   mafTypeMacro(lhpOpTimeShift, mafOp)
-  lhpOpTimeShift(const mafString& label = "TimeReduce");
+  lhpOpTimeShift(const mafString& label = _R("TimeReduce"));
  ~lhpOpTimeShift(); 
 
   virtual void OnEvent(mafEventBase *maf_event);

@@ -23,7 +23,7 @@ mafString lhpUtils::lhpGetApplicationDirectory()
 
 #else
              // DEBUG
-             mafString sourceDir = LHP_SOURCE_DIR;
+             mafString sourceDir = _R(LHP_SOURCE_DIR);
 
              for (unsigned int i=0;i<sourceDir.Length();i++)
              {

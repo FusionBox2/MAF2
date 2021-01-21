@@ -60,7 +60,7 @@ class lhpOpDownloadVMERefactor: public mafOp
 {
 public:
 
-	lhpOpDownloadVMERefactor(const mafString& label = "Download Vme", int fromSandbox = FROM_BASKET);
+	lhpOpDownloadVMERefactor(const mafString& label = _R("Download Vme"), int fromSandbox = FROM_BASKET);
 	~lhpOpDownloadVMERefactor(); 
 
 	mafTypeMacro(lhpOpDownloadVMERefactor, mafOp);

@@ -85,7 +85,7 @@ public:
   virtual bool Equals(mafVME *vme);
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString("lhpPipeLeverArm");};
+  virtual mafString GetVisualPipe() {return mafString(_R("lhpPipeLeverArm"));};
 
   /** return the right type of output */  
   mafVMEOutputPolyline *GetPolylineOutput();

@@ -33,7 +33,7 @@ class mafVMESurface;
 class lhpOpCutSurface: public mafOp
 {
 public:
-           lhpOpCutSurface(const mafString& label = "CutSurface");
+           lhpOpCutSurface(const mafString& label = _R("CutSurface"));
   virtual ~lhpOpCutSurface();
   
   mafTypeMacro(lhpOpCutSurface, mafOp);

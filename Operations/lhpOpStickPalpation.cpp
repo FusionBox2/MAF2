@@ -101,7 +101,7 @@ namespace {
       {
         continue;
       }
-      pVMEName = paDetArray[nI]->GetName();
+      pVMEName = paDetArray[nI]->GetName().GetCStr();
       if(strstr(pVMEName, "stick") != NULL || strstr(pVMEName, "Stick") != NULL || strstr(pVMEName, "STICK") != NULL)
       {
         bStickDetected = true;
@@ -138,7 +138,7 @@ namespace {
     {
       return NULL;
     }
-    pVMEName = pVME->GetName();
+    pVMEName = pVME->GetName().GetCStr();
     if(strstr(pVMEName, "stick") != NULL || strstr(pVMEName, "Stick") != NULL || strstr(pVMEName, "STICK") != NULL)
     {
       bStickDetected = true;
@@ -169,7 +169,7 @@ namespace {
     {
       return NULL;
     }
-    if(strstr(pVME->GetName(), name) != NULL)
+    if(strstr(pVME->GetName().GetCStr(), name) != NULL)
       return pVME;
     return NULL;
   }
@@ -233,11 +233,11 @@ namespace {
 
     for(int i = 0; i < npSource; i++)
     {
-      wxString SourceLandmarkName = src->GetLandmarkName(i);
+      mafString SourceLandmarkName = src->GetLandmarkName(i);
       //search for landmark with the same name
       for(int j = 0; j < npTarget; j++)
       {
-        wxString TargetLandmarkName = trg->GetLandmarkName(j);
+        mafString TargetLandmarkName = trg->GetLandmarkName(j);
         if(SourceLandmarkName == TargetLandmarkName)
         {
           lmpairs.push_back(std::make_pair(i, j));
@@ -249,23 +249,23 @@ namespace {
 
 }
 //----------------------------------------------------------------------------
-lhpOpStickPalpation::lhpOpStickPalpation(const mafString& label) : Superclass(label), m_DictionaryFName("")
+lhpOpStickPalpation::lhpOpStickPalpation(const mafString& label) : Superclass(label), m_DictionaryFName(_R(""))
 //----------------------------------------------------------------------------
 {
   m_OpType               = OPTYPE_OP;
   m_Canundo              = true;
   
   m_StickCalibration     = NULL;
-  m_StickCalibrationName = "";
+  m_StickCalibrationName = _R("");
   
   m_StickDefinition      = NULL;
-  m_StickDefinitionName  = "";
+  m_StickDefinitionName  = _R("");
   m_LimbCalibration      = NULL;
-  m_LimbCalibrationName  = "";
+  m_LimbCalibrationName  = _R("");
   m_LimbCloud            = NULL;
-  m_LimbCloudName        = "";
+  m_LimbCloudName        = _R("");
   m_TrgMotion            = NULL;
-  m_TrgMotionName        = "";
+  m_TrgMotionName        = _R("");
   //m_NewLandmarkName      = "";
 
   m_WarnNamesNotMatched  = false;
@@ -342,33 +342,33 @@ void lhpOpStickPalpation::OpRun()
 void lhpOpStickPalpation::CreateGui()
 //----------------------------------------------------------------------------
 {
-  const mafString choices_string[] = {_("rigid"), _("similarity"), _("affine")}; 
+  const mafString choices_string[] = {_L("rigid"), _L("similarity"), _L("affine")}; 
   if(m_Gui == NULL)
   {
     m_Gui = new mafGUI(this);
     m_Gui->SetListener(this);
-    m_Gui->Label("");
-    m_Gui->Button(ID_STICK_DEFINITION, "Wand definition cloud", "", "Press to select wand cloud with wand definition." );  
-    m_Gui->Label("Wnd d.VME",&m_StickDefinitionName);
-    m_Gui->Button(ID_STICK_CALIBRATION, "Wand calibration cloud", "", "Press to select cloud for wand calibration." );  
-    m_Gui->Label("Wnd c.VME",&m_StickCalibrationName);
-    m_Gui->Button(ID_LIMB_CALIBRATION, "Target calibration cloud", "", "Press to select target cloud with wand calibration." );  
-    m_Gui->Label("Trg c. VME:",&m_LimbCalibrationName);
-    m_Gui->Button(ID_LIMB_CLOUD, "Target cloud", "", "Press to select target cloud." );  
-    m_Gui->Label("Target VME: ",&m_LimbCloudName);
+    m_Gui->Label(_R(""));
+    m_Gui->Button(ID_STICK_DEFINITION, _R("Wand definition cloud"), _R(""), _R("Press to select wand cloud with wand definition.") );
+    m_Gui->Label(_R("Wnd d.VME"),&m_StickDefinitionName);
+    m_Gui->Button(ID_STICK_CALIBRATION, _R("Wand calibration cloud"), _R(""), _R("Press to select cloud for wand calibration.") );
+    m_Gui->Label(_R("Wnd c.VME"),&m_StickCalibrationName);
+    m_Gui->Button(ID_LIMB_CALIBRATION, _R("Target calibration cloud"), _R(""), _R("Press to select target cloud with wand calibration.") );
+    m_Gui->Label(_R("Trg c. VME:"),&m_LimbCalibrationName);
+    m_Gui->Button(ID_LIMB_CLOUD, _R("Target cloud"), _R(""), _R("Press to select target cloud.") );
+    m_Gui->Label(_R("Target VME: "),&m_LimbCloudName);
 
-    m_Gui->Button(ID_TRG_MOT, "Target motion", "", "Press to select target motion" );  
-    m_Gui->Label("Target VME: ",&m_TrgMotionName);
+    m_Gui->Button(ID_TRG_MOT, _R("Target motion"), _R(""), _R("Press to select target motion") );
+    m_Gui->Label(_R("Target VME: "),&m_TrgMotionName);
 
 
-    m_Gui->Label("");
-    m_Gui->FileOpen(ID_LOAD_SCRIPT, "Script",  &m_ScriptFName, "Script file|*.srp");
-    m_Gui->Label("");
-    m_Gui->Button(ID_CLEAN_SCRIPT, "Clean", "", "Press to cancel script using" );  
-    m_Gui->Label("");
-    m_Gui->FileOpen(ID_LOAD_DICTIONARY, "Dictionary",  &m_DictionaryFName, "Text files|*.txt|All files|*.*");
-    m_Gui->Label("");
-    m_Gui->Combo(ID_REG_TYPE, _("reg. type"), &m_RegistrationMode, 3, choices_string); 
+    m_Gui->Label(_R(""));
+    m_Gui->FileOpen(ID_LOAD_SCRIPT, _R("Script"),  &m_ScriptFName, _R("Script file|*.srp"));
+    m_Gui->Label(_R(""));
+    m_Gui->Button(ID_CLEAN_SCRIPT, _R("Clean"), _R(""), _R("Press to cancel script using") );
+    m_Gui->Label(_R(""));
+    m_Gui->FileOpen(ID_LOAD_DICTIONARY, _R("Dictionary"),  &m_DictionaryFName, _R("Text files|*.txt|All files|*.*"));
+    m_Gui->Label(_R(""));
+    m_Gui->Combo(ID_REG_TYPE, _L("reg. type"), &m_RegistrationMode, 3, choices_string); 
     m_Gui->OkCancel();
   }
   ShowGui();
@@ -385,7 +385,7 @@ void lhpOpStickPalpation::OpStop(int result)
   }
   else if (result == OP_RUN_OK)
   {
-    if(m_ScriptFName == "")
+    if(m_ScriptFName.IsEmpty())
     {
       if(m_StickCalibration == NULL || m_StickDefinition == NULL || m_LimbCalibration == NULL || m_LimbCloud == NULL)
       {
@@ -412,8 +412,8 @@ void lhpOpStickPalpation::SetNodeName(mafVME *pVME, mafString *pName)
    *pName = pVME->GetName();
   if(pVME->GetParent() != NULL)
   {
-    *pName = *pName + " parent:";
-    *pName = *pName + pVME->GetParent()->GetName().GetCStr();
+    *pName += _R(" parent:");
+    *pName += pVME->GetParent()->GetName();
   }
 }
 //----------------------------------------------------------------------------
@@ -444,7 +444,7 @@ void lhpOpStickPalpation::OnEvent(mafEventBase *e)
     }
     case ID_LOAD_SCRIPT:
     {
-      if(m_ScriptFName != "")
+      if(!m_ScriptFName.IsEmpty())
       {
         ReadDictionary(&m_ScriptFName, m_LMDict);
       }
@@ -452,13 +452,13 @@ void lhpOpStickPalpation::OnEvent(mafEventBase *e)
     }
     case ID_CLEAN_SCRIPT:
     {
-      m_ScriptFName = "";
+      m_ScriptFName = _R("");
       m_Gui->Update();
       break;
     }
     case ID_STICK_CALIBRATION:
     {
-      mafString s("Choose wand calibration cloud");
+      mafString s(_R("Choose wand calibration cloud"));
       mafEvent e(this,VME_CHOOSE, &s);
       mafEventMacro(e);
       if(e.GetVme() == NULL)
@@ -477,7 +477,7 @@ void lhpOpStickPalpation::OnEvent(mafEventBase *e)
     }
     case ID_STICK_DEFINITION:
     {
-      mafString s("Choose wand definition cloud");
+      mafString s(_R("Choose wand definition cloud"));
       mafEvent e(this,VME_CHOOSE, &s);
       mafEventMacro(e);
       if(e.GetVme() == NULL)
@@ -496,7 +496,7 @@ void lhpOpStickPalpation::OnEvent(mafEventBase *e)
     }
     case ID_LIMB_CALIBRATION:
     {
-      mafString s("Choose  target calibration cloud");
+      mafString s(_R("Choose  target calibration cloud"));
       mafEvent e(this,VME_CHOOSE, &s);
       mafEventMacro(e);
       if(e.GetVme() == NULL)
@@ -515,7 +515,7 @@ void lhpOpStickPalpation::OnEvent(mafEventBase *e)
     }
     case ID_LIMB_CLOUD:
     {
-      mafString s("Choose target cloud");
+      mafString s(_R("Choose target cloud"));
       mafEvent e(this,VME_CHOOSE, &s);
       mafEventMacro(e);
       if(e.GetVme() == NULL)
@@ -534,7 +534,7 @@ void lhpOpStickPalpation::OnEvent(mafEventBase *e)
     }
     case ID_TRG_MOT:
     {
-      mafString s("Choose node with landmark clouds as children");
+      mafString s(_R("Choose node with landmark clouds as children"));
       mafEvent e(this,VME_CHOOSE, &s);
       mafEventMacro(e);
       if(e.GetVme() == NULL)
@@ -552,7 +552,7 @@ void lhpOpStickPalpation::OnEvent(mafEventBase *e)
       }
       if(!b)
       {
-        wxMessageBox("Selected VME should contain mafVMELandmarkCloud as a child.","Warning", wxOK|wxICON_WARNING , NULL);
+        mafWarningMessage(_M("Selected VME should contain mafVMELandmarkCloud as a child."));
         return;
       }
       m_TrgMotion = mafVME::SafeDownCast(e.GetVme());
@@ -586,44 +586,44 @@ void lhpOpStickPalpation::OpDo()
   //modified by Stefano. 18-9-2003
   wxBusyInfo wait("Please wait, working...");
 
-  if(m_ScriptFName == "")
+  if(m_ScriptFName.IsEmpty())
   {
     ProcessSingleLM();
     return;
   }
 
-  if(m_DictionaryFName == "")
+  if(m_DictionaryFName.IsEmpty())
     wxMessageBox("Dictionary for c3d import is not specified. Trying to use C3D_dictionary.txt","Alert", wxOK , NULL);
 
 
-  wxString spath, sname, sext;
-  wxSplitPath(m_ScriptFName.GetCStr(), &spath, &sname, &sext);
+  mafString spath, sname, sext;
+  mafSplitPath(m_ScriptFName, &spath, &sname, &sext);
 
   for(nL = 0; nL < m_LMDict.size(); nL++)
   {
-    wxString file(spath);
-    wxString dict(m_DictionaryFName);
+    mafString file(spath);
+    mafString dict(m_DictionaryFName);
 
-    file += "\\";
-    file += m_LMDict[nL].first; 
-    file += ".c3d";
+    file += _R("\\");
+    file += mafWxToString(m_LMDict[nL].first); 
+    file += _R(".c3d");
 
-    if(dict == "")
+    if(dict.IsEmpty())
     {
       dict  = spath;
-      dict += "\\C3D_dictionnary.txt";
+      dict += _R("\\C3D_dictionnary.txt");
     }
 
     m_LimbCloud        = NULL;
     m_LimbCalibration  = NULL;
     m_StickCalibration = NULL;
 
-    wxLogMessage("Importing landmark %s to segment %s", m_LMDict[nL].first.c_str(), m_LMDict[nL].second.c_str());
+    mafLogMessage(_M(_R("Importing landmark ") + mafWxToString(m_LMDict[nL].first) + _R(" to segment ") + mafWxToString(m_LMDict[nL].second)));
 #ifndef OLD_IMPORTER
-    lhpOpImporterC3D *importer=new lhpOpImporterC3D("importer");
+    lhpOpImporterC3D *importer=new lhpOpImporterC3D(_R("importer"));
     //importer->TestModeOn();
-    importer->SetC3DFileName(file);
-    importer->SetDictionaryFileName(dict);
+    importer->SetC3DFileName(file.GetCStr());
+    importer->SetDictionaryFileName(dict.GetCStr());
     importer->SetImportTrajectories(true);
     importer->SetImportAnalog(false);
     importer->SetImportPlatform(false);
@@ -637,8 +637,8 @@ void lhpOpStickPalpation::OpDo()
 
     mafVMEC3DData *reader;
     mafNEW(reader);
-    reader->SetFileName(file);
-    reader->SetDictionaryFileName(dict);
+    reader->SetFileName(file.GetCStr());
+    reader->SetDictionaryFileName(dict.GetCStr());
 
     reader->DictionaryOn();
 
@@ -646,8 +646,8 @@ void lhpOpStickPalpation::OpDo()
 
     vme = reader;
 #endif
-    wxString path, name, ext;
-    wxSplitPath(file.c_str(),&path,&name,&ext);
+    mafString path, name, ext;
+    mafSplitPath(file,&path,&name,&ext);
     vme->SetName(name);
     mafEventMacro(mafEvent(this,VME_ADD,vme));
 
@@ -731,7 +731,7 @@ void lhpOpStickPalpation::ProcessSingleLM()
   }
 
   //2. find Tip coods in this system
-  int tipIndex = m_StickDefinition->FindLandmarkIndex("TIP");
+  int tipIndex = m_StickDefinition->FindLandmarkIndex(_R("TIP"));
   if(tipIndex == -1)
   {
     wxLogMessage("TIP mark not found on wand. Either revise your dictionary or rename tip to TIP.");
@@ -883,7 +883,7 @@ void lhpOpStickPalpation::ProcessSingleLM()
   mafVMELandmarkCloud *averagedCalibr;
   mafNEW(averagedCalibr);
   averagedCalibr->Open();
-  averagedCalibr->SetName("averaged landmark cloud");
+  averagedCalibr->SetName(_R("averaged landmark cloud"));
   averagedCalibr->SetRadius(15);
   averagedCalibr->SetNumberOfLandmarks(m_LimbCalibration->GetNumberOfLandmarks() + 1);
 
@@ -893,7 +893,7 @@ void lhpOpStickPalpation::ProcessSingleLM()
     averagedCalibr->SetLandmark(i, lmPositions[i][0], lmPositions[i][1], lmPositions[i][2]);
     averagedCalibr->SetLandmarkVisibility(i, lmPositionNums[i] != 0);
   }
-  averagedCalibr->SetLandmarkName(m_LimbCalibration->GetNumberOfLandmarks(), "TIPPED");
+  averagedCalibr->SetLandmarkName(m_LimbCalibration->GetNumberOfLandmarks(), _R("TIPPED"));
   averagedCalibr->SetLandmark(m_LimbCalibration->GetNumberOfLandmarks(), localTip[0], localTip[1], localTip[2]);
   averagedCalibr->SetLandmarkVisibility(m_LimbCalibration->GetNumberOfLandmarks(), true);
 
@@ -931,14 +931,14 @@ void lhpOpStickPalpation::ProcessSingleLM()
     //add landmark if not existed
     if(!added)
     {
-      char lmNameNew[1000];
+      mafString lmNameNew;
       int index = 0;
-      sprintf(lmNameNew, "%s", m_LimbCalibration->GetParent()->GetName());
+      lmNameNew = m_LimbCalibration->GetParent()->GetName();
       do 
       {
         newIndex = m_LimbCloud->FindLandmarkIndex(lmNameNew);
         index++;
-        sprintf(lmNameNew, "%s%d", m_LimbCalibration->GetParent()->GetName(), index);
+        lmNameNew = m_LimbCalibration->GetParent()->GetName() + mafToString(index);
       }
       while(newIndex != -1);
 

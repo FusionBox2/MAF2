@@ -258,11 +258,11 @@ int medVMEMuscleWrapper::InternalInitialize()
 mmaMaterial *medVMEMuscleWrapper::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+  mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
   if (material == NULL)
   {
     material = mmaMaterial::New();
-    SetAttribute("MaterialAttributes", material);
+    SetAttribute(_R("MaterialAttributes"), material);
   }
   return material;
 }
@@ -291,9 +291,9 @@ void medVMEMuscleWrapper::StoreMeterLink(mafVME* vme, int nLinkNameId, int nPosI
   {
     mafString szName;
     if (nPosId >= 0)
-      szName = wxString::Format(wxT("%s%d"), MUSCLEWRAPPER_LINK_NAMES[nLinkNameId], nPosId);
+      szName = _R(MUSCLEWRAPPER_LINK_NAMES[nLinkNameId]) + mafString::Format(_R("%d"), nPosId);
     else
-      szName = MUSCLEWRAPPER_LINK_NAMES[nLinkNameId];
+      szName = _R(MUSCLEWRAPPER_LINK_NAMES[nLinkNameId]);
 
     SetLink(szName, vme);
   }
@@ -318,13 +318,13 @@ void medVMEMuscleWrapper::StoreMeterLinks()
     for (mafLinksMap::iterator i = pLinks->begin(); i != pLinks->end(); i++)
     {
       if (
-        i->first.Equals(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_MUSCLE]) ||
-        i->first.Equals(MUSCLEWRAPPER_LINK_NAMES[LNK_FIBERS_ORIGIN]) ||
-        i->first.Equals(MUSCLEWRAPPER_LINK_NAMES[LNK_FIBERS_INSERTION]) ||        
-        i->first.StartsWith(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_WRAPPERx]) ||
-        i->first.StartsWith(MUSCLEWRAPPER_LINK_NAMES[LNK_DYNPOSE_WRAPPERx]) ||
-        i->first.StartsWith(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_REFSYSx]) ||
-        i->first.StartsWith(MUSCLEWRAPPER_LINK_NAMES[LNK_DYNPOSE_REFSYSx])
+        i->first.Equals(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_MUSCLE])) ||
+        i->first.Equals(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_FIBERS_ORIGIN])) ||
+        i->first.Equals(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_FIBERS_INSERTION])) ||        
+        i->first.StartsWith(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_WRAPPERx])) ||
+        i->first.StartsWith(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_DYNPOSE_WRAPPERx])) ||
+        i->first.StartsWith(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_REFSYSx])) ||
+        i->first.StartsWith(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_DYNPOSE_REFSYSx]))
         )
       {
         RemoveLink(i->first);
@@ -361,9 +361,9 @@ mafVME* medVMEMuscleWrapper::RestoreMeterLink(int nLinkNameId, int nPosId)
 {
   mafString szName;
   if (nPosId >= 0)
-    szName = wxString::Format(wxT("%s%d"), MUSCLEWRAPPER_LINK_NAMES[nLinkNameId], nPosId);
+    szName = _R(MUSCLEWRAPPER_LINK_NAMES[nLinkNameId]) + mafString::Format(_R("%d"), nPosId);
   else
-    szName = MUSCLEWRAPPER_LINK_NAMES[nLinkNameId];
+    szName = _R(MUSCLEWRAPPER_LINK_NAMES[nLinkNameId]);
   
   return mafVME::SafeDownCast(GetLink(szName));  
 }
@@ -413,19 +413,19 @@ void medVMEMuscleWrapper::RestoreMeterLinks()
     
   if (Superclass::InternalStore(parent) == MAF_OK)  //stores material + links to muscle and OI areas VMEs
   {
-    parent->StoreInteger("Wrappers_Num", m_nWrappers);
-    parent->StoreInteger("InputMode", m_InputMode);
-    parent->StoreInteger("VisualMode", m_VisMode);   
-    parent->StoreInteger("UseRefSys", m_UseRefSys);
-    parent->StoreInteger("Fibers_Type", m_FbTemplate);
-    parent->StoreInteger("Fibers_Num", m_FbNumFib);
-    parent->StoreInteger("Fibers_Res", m_FbResolution);
-    parent->StoreDouble("Fibers_Thickness", m_FbThickness);
-    parent->StoreInteger("Fibers_Smooth", m_FbSmooth);
-    parent->StoreInteger("Smooth_Steps", m_FbSmoothSteps);    
-    parent->StoreDouble("Smooth_Weight", m_FbSmoothWeight); 
+    parent->StoreInteger(_R("Wrappers_Num"), m_nWrappers);
+    parent->StoreInteger(_R("InputMode"), m_InputMode);
+    parent->StoreInteger(_R("VisualMode"), m_VisMode);   
+    parent->StoreInteger(_R("UseRefSys"), m_UseRefSys);
+    parent->StoreInteger(_R("Fibers_Type"), m_FbTemplate);
+    parent->StoreInteger(_R("Fibers_Num"), m_FbNumFib);
+    parent->StoreInteger(_R("Fibers_Res"), m_FbResolution);
+    parent->StoreDouble(_R("Fibers_Thickness"), m_FbThickness);
+    parent->StoreInteger(_R("Fibers_Smooth"), m_FbSmooth);
+    parent->StoreInteger(_R("Smooth_Steps"), m_FbSmoothSteps);    
+    parent->StoreDouble(_R("Smooth_Weight"), m_FbSmoothWeight); 
 
-    parent->StoreMatrix("Transform",&m_Transform->GetMatrix());
+    parent->StoreMatrix(_R("Transform"),&m_Transform->GetMatrix());
     return MAF_OK;
   }
   return MAF_ERROR;
@@ -437,41 +437,41 @@ void medVMEMuscleWrapper::RestoreMeterLinks()
 {
   if (Superclass::InternalRestore(node)==MAF_OK)
   {     
-    if (node->RestoreInteger("Wrappers_Num", m_nWrappers) != MAF_OK)
+    if (node->RestoreInteger(_R("Wrappers_Num"), m_nWrappers) != MAF_OK)
       m_nWrappers = 0;  //no wrapper available
 
-    if (node->RestoreInteger("InputMode", m_InputMode) != MAF_OK)
+    if (node->RestoreInteger(_R("InputMode"), m_InputMode) != MAF_OK)
       m_InputMode = DEFAULT_INPUT_MODE;
 
-    if (node->RestoreInteger("VisualMode", m_VisMode) != MAF_OK)
+    if (node->RestoreInteger(_R("VisualMode"), m_VisMode) != MAF_OK)
       m_VisMode = DEFAULT_VISUAL_MODE; 
 
-    if (node->RestoreInteger("UseRefSys", m_UseRefSys) != MAF_OK)
+    if (node->RestoreInteger(_R("UseRefSys"), m_UseRefSys) != MAF_OK)
       m_UseRefSys = DEFAULT_USEREFSYSVAL;
 
-    if (node->RestoreInteger("Fibers_Type", m_FbTemplate) != MAF_OK)
+    if (node->RestoreInteger(_R("Fibers_Type"), m_FbTemplate) != MAF_OK)
       m_FbTemplate = DEFAULT_FIBERS_TYPE;
 
-    if (node->RestoreInteger("Fibers_Num", m_FbNumFib) != MAF_OK)
+    if (node->RestoreInteger(_R("Fibers_Num"), m_FbNumFib) != MAF_OK)
       m_FbNumFib = DEFAULT_FIBERS_NUM;
 
-    if (node->RestoreInteger("Fibers_Res", m_FbResolution) != MAF_OK)
+    if (node->RestoreInteger(_R("Fibers_Res"), m_FbResolution) != MAF_OK)
       m_FbResolution = DEFAULT_FIBERS_RES;
 
-    if (node->RestoreDouble("Fibers_Thickness", m_FbThickness) != MAF_OK)
+    if (node->RestoreDouble(_R("Fibers_Thickness"), m_FbThickness) != MAF_OK)
       m_FbThickness = DEFAULT_FIBERS_THICKNESS;
 
-    if (node->RestoreInteger("Fibers_Smooth", m_FbSmooth) != MAF_OK)
+    if (node->RestoreInteger(_R("Fibers_Smooth"), m_FbSmooth) != MAF_OK)
       m_FbSmooth = DEFAULT_FIBERS_SMOOTH;
 
-    if (node->RestoreInteger("Smooth_Steps", m_FbSmoothSteps) != MAF_OK)
+    if (node->RestoreInteger(_R("Smooth_Steps"), m_FbSmoothSteps) != MAF_OK)
       m_FbSmoothSteps = DEFAULT_FIBERS_SMOOTHSTEPS;
 
-    if (node->RestoreDouble("Smooth_Weight", m_FbSmoothWeight) != MAF_OK)
+    if (node->RestoreDouble(_R("Smooth_Weight"), m_FbSmoothWeight) != MAF_OK)
       m_FbSmoothWeight = DEFAULT_FIBERS_SMOOTHWEIGHT;
     
     mafMatrix matrix;
-    if (node->RestoreMatrix("Transform",&matrix)==MAF_OK) {    
+    if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK) {    
       m_Transform->SetMatrix(matrix);
     }
 
@@ -1124,9 +1124,9 @@ mafGUI* medVMEMuscleWrapper::CreateGui()
   m_Gui->SetListener(this);
   
   RestoreMeterLinks();
-  m_MuscleVmeName = m_MuscleVme == NULL ? wxT("") : m_MuscleVme->GetName();
+  m_MuscleVmeName = m_MuscleVme == NULL ? _R("") : m_MuscleVme->GetName();
   for (int i = 0; i < 2; i++){
-    m_OIVMEName[i] = m_OIVME[i] == NULL ? wxT("") : m_OIVME[i]->GetName();    
+    m_OIVMEName[i] = m_OIVME[i] == NULL ? _R("") : m_OIVME[i]->GetName();    
   }
 
 #pragma region Generated Code from wxFormBuilder  
@@ -1528,7 +1528,7 @@ void medVMEMuscleWrapper::OnEvent(mafEventBase *maf_event)
 
     case ID_RESTPOSE_MUSCLE_LINK:
       {
-        if (bNeedUpdate = SelectVme(_("Choose muscle vme link (in the rest pose)"),
+        if (bNeedUpdate = SelectVme(_L("Choose muscle vme link (in the rest pose)"),
           (long)&medVMEMuscleWrapper::VMEAcceptMuscle, m_MuscleVme, m_MuscleVmeName))
         {
           //new muscle is here => we need to pass its matrix to our output
@@ -1538,24 +1538,24 @@ void medVMEMuscleWrapper::OnEvent(mafEventBase *maf_event)
       break;
 
     case ID_SELECT_RP_REFSYS_LINK:
-      SelectVme(_("Choose the reference system for the rest pose wrapper"),
+      SelectVme(_L("Choose the reference system for the rest pose wrapper"),
         (long)&medVMEMuscleWrapper::VMEAcceptRefSys, m_RefSysVme[0], m_RefSysVmeName[0]);
       break;
 
     case ID_SELECT_CP_REFSYS_LINK:
-      SelectVme(_("Choose the reference system for the rest pose wrapper"),
+      SelectVme(_L("Choose the reference system for the rest pose wrapper"),
         (long)&medVMEMuscleWrapper::VMEAcceptRefSys, m_RefSysVme[1], m_RefSysVmeName[1]);
       break;
 
     case ID_SELECT_RP:
-      if (SelectVme(_("Choose wrapper vme link (in the rest pose)"),
+      if (SelectVme(_L("Choose wrapper vme link (in the rest pose)"),
         (long)&medVMEMuscleWrapper::VMEAcceptWrapper, m_WrappersVme[0], m_WrappersVmeName[0])
         )        
         m_BttnAddWrapper->Enable(m_WrappersVme[1] != NULL);
       break;
 
     case ID_SELECT_CP:
-      if (SelectVme(_("Choose wrapper vme link (in the current pose)"),
+      if (SelectVme(_L("Choose wrapper vme link (in the current pose)"),
         (long)&medVMEMuscleWrapper::VMEAcceptWrapper, m_WrappersVme[1], m_WrappersVmeName[1])
         )
           m_BttnAddWrapper->Enable(m_InputMode == 0 || m_WrappersVme[0] != NULL);      
@@ -1566,7 +1566,7 @@ void medVMEMuscleWrapper::OnEvent(mafEventBase *maf_event)
       for (int i = 0; i < 2; i++)
       {
         m_RefSysVme[i] = m_WrappersVme[i] = NULL;
-        m_RefSysVmeName[i] = m_WrappersVmeName[i] = wxT("");
+        m_RefSysVmeName[i] = m_WrappersVmeName[i] = _R("");
       }
             
       m_BttnAddWrapper->Enable(FALSE);
@@ -1593,14 +1593,14 @@ void medVMEMuscleWrapper::OnEvent(mafEventBase *maf_event)
       }
 
     case ID_FIBERS_ORIGIN_LINK:
-      bNeedUpdate = SelectVme(_("Choose a landmark cloud (or a landmark) that represent the origin area of muscle."),
+      bNeedUpdate = SelectVme(_L("Choose a landmark cloud (or a landmark) that represent the origin area of muscle."),
         (long)&medVMEMuscleWrapper::VMEAcceptOIAreas, m_OIVME[0], m_OIVMEName[0]);
 
       bNeedUpdate &= m_VisMode != 0;
       break;
 
     case ID_FIBERS_INSERTION_LINK:
-      bNeedUpdate = SelectVme(_("Choose a landmark cloud (or a landmark) that represent the insertion area of muscle."),
+      bNeedUpdate = SelectVme(_L("Choose a landmark cloud (or a landmark) that represent the insertion area of muscle."),
         (long)&medVMEMuscleWrapper::VMEAcceptOIAreas, m_OIVME[1], m_OIVMEName[1]);
 
       bNeedUpdate &= m_VisMode != 0;
@@ -1682,10 +1682,10 @@ void medVMEMuscleWrapper::AddWrapper(WRAPPER_ITEM* pItem)
   for (int i = 0; i < 2; i++)
   {
     if (pItem->pVmeRP_CP[i] != NULL)
-      szName[i] = pItem->pVmeRP_CP[i]->GetName();
+      szName[i] = pItem->pVmeRP_CP[i]->GetName().toWx();
 
     if (pItem->pVmeRefSys_RP_CP[i] != NULL)
-      szName[2+i] = pItem->pVmeRefSys_RP_CP[i]->GetName();
+      szName[2+i] = pItem->pVmeRefSys_RP_CP[i]->GetName().toWx();
   }  
 
   m_WrappersCtrl->InsertItem(nCount, szName[0]);

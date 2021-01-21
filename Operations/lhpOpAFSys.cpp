@@ -47,41 +47,41 @@
 // Forward Refs
 //----------------------------------------------------------------------------
 
-#define ADD_PREDEF(title, arr_name, boneID) m_predefinedScripts.push_back(PredefinedScripts(title, std::vector<mafString>(&arr_name[0], &arr_name[0] + sizeof(arr_name)/sizeof(arr_name[0])), mafVMEAFRefSys::ID_AFS_##boneID))
+#define ADD_PREDEF(title, arr_name, boneID) m_predefinedScripts.push_back(PredefinedScripts(_R(title), std::vector<mafString>(&arr_name[0], &arr_name[0] + sizeof(arr_name)/sizeof(arr_name[0])), mafVMEAFRefSys::ID_AFS_##boneID))
 void lhpOpAFSys::InitPredefined()
 {
-  mafString _IPE[] = {"ASSV PN0 RIAS", "ASSV PN1 LIAS", "ASSV PN2 RIPS", "ASSV PN3 LIPS", "DEFVI RIAC", "DEFVI LIAC", "LNCMB MIDDLEA 0.5 PN0 0.5 PN1", "LNCMB MIDDLEP 0.5 PN2 0.5 PN3", "ASSV P1 PN0", "ASSV P2 PN1", "ASSV P3 MIDDLEP", "ASSV P4 PN1", "ASSV P5 PN0", "LNCMB A 1 P2 -1 P1", "NRML A", "LNCMB B 1 P3 -1 P2", "NRML B", "CROSS X1 A B", "NRML X1", "LNCMB R 1 P5 -1 P4", "NRML R", "CROSS Y1 X1 R", "NRML Y1", "CROSS Z1 X1 Y1", "NRML Z1", "ASSV X Y1", "ASSV Y X1", "LNCMB Z -1 Z1 0 Y1", "ASSV P MIDDLEA"};
-  mafString _LFT[] = {"ASSV PN0 LFCC", "ASSV PN1 LFM5", "ASSV PN2 LFM2", "ASSV PN3 LFM1", "ASSV P1 PN3", "ASSV P2 PN1", "ASSV P3 PN0", "ASSV P4 PN2", "ASSV P5 PN0", "LNCMB A 1 P2 -1 P1", "NRML A", "LNCMB B 1 P3 -1 P2", "NRML B", "CROSS X1 A B", "NRML X1", "LNCMB R 1 P5 -1 P4", "NRML R", "CROSS Y1 X1 R", "NRML Y1", "CROSS Z1 X1 Y1", "NRML Z1", "ASSV X Z1", "ASSV Y X1", "ASSV Z Y1", "ASSV P PN0"};
-  mafString _LSH_FAX[] = {"ASSV PN0 LFAX", "ASSV PN1 LTTC", "ASSV PN2 LTAM", "ASSV PN3 LFAL", "LNCMB MIDDLE 0.5 PN2 0.5 PN3", "ASSV P1 PN2", "ASSV P2 PN3", "ASSV P3 PN0", "ASSV P4 MIDDLE", "ASSV P5 PN1", "LNCMB A 1 P2 -1 P1", "NRML A", "LNCMB B 1 P3 -1 P2", "NRML B", "CROSS X1 A B", "NRML X1", "LNCMB R 1 P5 -1 P4", "NRML R", "CROSS Y1 X1 R", "NRML Y1", "CROSS Z1 X1 Y1", "NRML Z1", "ASSV X X1", "LNCMB Y -1 Z1 0 Y1", "ASSV Z Y1", "ASSV P MIDDLE"};
-  mafString _LSH_FNE[] = {"ASSV PN0 LFNE", "ASSV PN1 LTTC", "ASSV PN2 LTAM", "ASSV PN3 LFAL", "LNCMB MIDDLE 0.5 PN2 0.5 PN3", "ASSV P1 PN2", "ASSV P2 PN3", "ASSV P3 PN0", "ASSV P4 MIDDLE", "ASSV P5 PN1", "LNCMB A 1 P2 -1 P1", "NRML A", "LNCMB B 1 P3 -1 P2", "NRML B", "CROSS X1 A B", "NRML X1", "LNCMB R 1 P5 -1 P4", "NRML R", "CROSS Y1 X1 R", "NRML Y1", "CROSS Z1 X1 Y1", "NRML Z1", "ASSV X X1", "LNCMB Y -1 Z1 0 Y1", "ASSV Z Y1", "ASSV P MIDDLE"};
-  mafString _LSH_ISB[] = {"ASSV PN0 LTLR", "ASSV PN1 LTMR", "ASSV PN2 LFAL", "ASSV PN3 LTAM", "LNCMB MIDDLEUP 0.5 PN0 0.5 PN1", "LNCMB MIDDLEDN 0.5 PN2 0.5 PN3", "SUBV Z PN3 PN2", "NRML Z", "SUBV A MIDDLEUP MIDDLEDN", "NRML A", "CROSS X A Z", "NRML X", "CROSS Y Z X", "NRML Y", "ASSV P MIDDLEDN"};
-  mafString _LTH[] = {"ASSV PN0 LFME", "ASSV PN1 LFLE", "ASSV PN2 LFCH", "LNCMB MIDDLE 0.5 PN0 0.5 PN1", "ASSV P1 PN0", "ASSV P2 PN1", "ASSV P3 PN2", "ASSV P4 MIDDLE", "ASSV P5 PN2", "LNCMB A 1 P2 -1 P1", "NRML A", "LNCMB B 1 P3 -1 P2", "NRML B", "CROSS X1 A B", "NRML X1", "LNCMB R 1 P5 -1 P4", "NRML R", "CROSS Y1 X1 R", "NRML Y1", "CROSS Z1 X1 Y1", "NRML Z1", "ASSV X X1", "LNCMB Y -1 Z1 0 Y1", "ASSV Z Y1", "ASSV P MIDDLE"};
-  mafString _RFT[] = {"ASSV PN0 RFCC", "ASSV PN1 RFM1", "ASSV PN2 RFM2", "ASSV PN3 RFM5", "ASSV P1 PN3", "ASSV P2 PN1", "ASSV P3 PN0", "ASSV P4 PN2", "ASSV P5 PN0", "LNCMB A 1 P2 -1 P1", "NRML A", "LNCMB B 1 P3 -1 P2", "NRML B", "CROSS X1 A B", "NRML X1", "LNCMB R 1 P5 -1 P4", "NRML R", "CROSS Y1 X1 R", "NRML Y1", "CROSS Z1 X1 Y1", "NRML Z1", "ASSV X Z1", "ASSV Y X1", "ASSV Z Y1", "ASSV P PN0"};
-  mafString _RSH_FAX[] = {"ASSV PN0 RFAX", "ASSV PN1 RTTC", "ASSV PN2 RFAL", "ASSV PN3 RTAM", "LNCMB MIDDLE 0.5 PN2 0.5 PN3", "ASSV P1 PN2", "ASSV P2 PN3", "ASSV P3 PN0", "ASSV P4 MIDDLE", "ASSV P5 PN1", "LNCMB A 1 P2 -1 P1", "NRML A", "LNCMB B 1 P3 -1 P2", "NRML B", "CROSS X1 A B", "NRML X1", "LNCMB R 1 P5 -1 P4", "NRML R", "CROSS Y1 X1 R", "NRML Y1", "CROSS Z1 X1 Y1", "NRML Z1", "ASSV X X1", "LNCMB Y -1 Z1 0 Y1", "ASSV Z Y1", "ASSV P MIDDLE"};
-  mafString _RSH_FNE[] = {"ASSV PN0 RFNE", "ASSV PN1 RTTC", "ASSV PN2 RFAL", "ASSV PN3 RTAM", "LNCMB MIDDLE 0.5 PN2 0.5 PN3", "ASSV P1 PN2", "ASSV P2 PN3", "ASSV P3 PN0", "ASSV P4 MIDDLE", "ASSV P5 PN1", "LNCMB A 1 P2 -1 P1", "NRML A", "LNCMB B 1 P3 -1 P2", "NRML B", "CROSS X1 A B", "NRML X1", "LNCMB R 1 P5 -1 P4", "NRML R", "CROSS Y1 X1 R", "NRML Y1", "CROSS Z1 X1 Y1", "NRML Z1", "ASSV X X1", "LNCMB Y -1 Z1 0 Y1", "ASSV Z Y1", "ASSV P MIDDLE"};
-  mafString _RSH_ISB[] = {"ASSV PN0 RTLR", "ASSV PN1 RTMR", "ASSV PN2 RFAL", "ASSV PN3 RTAM", "LNCMB MIDDLEUP 0.5 PN0 0.5 PN1", "LNCMB MIDDLEDN 0.5 PN2 0.5 PN3", "SUBV Z PN2 PN3", "NRML Z", "SUBV A MIDDLEUP MIDDLEDN", "NRML A", "CROSS X A Z", "NRML X", "CROSS Y Z X", "NRML Y", "ASSV P MIDDLEDN"};
-  mafString _RTH[] = {"ASSV PN0 RFLE", "ASSV PN1 RFME", "ASSV PN2 RFCH", "LNCMB MIDDLE 0.5 PN0 0.5 PN1", "ASSV P1 PN0", "ASSV P2 PN1", "ASSV P3 PN2", "ASSV P4 MIDDLE", "ASSV P5 PN2", "LNCMB A 1 P2 -1 P1", "NRML A", "LNCMB B 1 P3 -1 P2", "NRML B", "CROSS X1 A B", "NRML X1", "LNCMB R 1 P5 -1 P4", "NRML R", "CROSS Y1 X1 R", "NRML Y1", "CROSS Z1 X1 Y1", "NRML Z1", "ASSV X X1", "LNCMB Y -1 Z1 0 Y1", "ASSV Z Y1", "ASSV P MIDDLE"};
-  mafString _RHFT[] = {"ASSV PN0 RFCC", "ASSV PN1 RFPT", "ASSV PN2 RFST", "LNCMB MIDDLE 0.5 PN1 0.5 PN2", "SUBV X MIDDLE PN0", "NRML X", "SUBV A PN1 PN2", "NRML A", "CROSS Y A X", "NRML Y", "CROSS Z X Y", "NRML Z", "ASSV P MIDDLE"};
-  mafString _LHFT[] = {"ASSV PN0 LFCC", "ASSV PN1 LFPT", "ASSV PN2 LFST", "LNCMB MIDDLE 0.5 PN1 0.5 PN2", "SUBV X MIDDLE PN0", "NRML X", "SUBV A PN2 PN1", "NRML A", "CROSS Y A X", "NRML Y", "CROSS Z X Y", "NRML Z", "ASSV P MIDDLE"};
-  mafString _RFFT[] = {"ASSV PN0 RFM2", "ASSV PN1 RFMT", "ASSV PN2 RFNT", "LNCMB MIDDLE 0.5 PN1 0.5 PN2", "SUBV X PN0 MIDDLE ", "NRML X", "SUBV A PN1 PN2", "NRML A", "CROSS Y A X", "NRML Y", "CROSS Z X Y", "NRML Z", "ASSV P MIDDLE"};
-  mafString _LFFT[] = {"ASSV PN0 LFM2", "ASSV PN1 LFMT", "ASSV PN2 LFNT", "LNCMB MIDDLE 0.5 PN1 0.5 PN2", "SUBV X PN0 MIDDLE ", "NRML X", "SUBV A PN2 PN1", "NRML A", "CROSS Y A X", "NRML Y", "CROSS Z X Y", "NRML Z", "ASSV P MIDDLE"};
+  mafString _IPE[] = {_R("ASSV PN0 RIAS"), _R("ASSV PN1 LIAS"), _R("ASSV PN2 RIPS"), _R("ASSV PN3 LIPS"), _R("DEFVI RIAC"), _R("DEFVI LIAC"), _R("LNCMB MIDDLEA 0.5 PN0 0.5 PN1"), _R("LNCMB MIDDLEP 0.5 PN2 0.5 PN3"), _R("ASSV P1 PN0"), _R("ASSV P2 PN1"), _R("ASSV P3 MIDDLEP"), _R("ASSV P4 PN1"), _R("ASSV P5 PN0"), _R("LNCMB A 1 P2 -1 P1"), _R("NRML A"), _R("LNCMB B 1 P3 -1 P2"), _R("NRML B"), _R("CROSS X1 A B"), _R("NRML X1"), _R("LNCMB R 1 P5 -1 P4"), _R("NRML R"), _R("CROSS Y1 X1 R"), _R("NRML Y1"), _R("CROSS Z1 X1 Y1"), _R("NRML Z1"), _R("ASSV X Y1"), _R("ASSV Y X1"), _R("LNCMB Z -1 Z1 0 Y1"), _R("ASSV P MIDDLEA")};
+  mafString _LFT[] = {_R("ASSV PN0 LFCC"), _R("ASSV PN1 LFM5"), _R("ASSV PN2 LFM2"), _R("ASSV PN3 LFM1"), _R("ASSV P1 PN3"), _R("ASSV P2 PN1"), _R("ASSV P3 PN0"), _R("ASSV P4 PN2"), _R("ASSV P5 PN0"), _R("LNCMB A 1 P2 -1 P1"), _R("NRML A"), _R("LNCMB B 1 P3 -1 P2"), _R("NRML B"), _R("CROSS X1 A B"), _R("NRML X1"), _R("LNCMB R 1 P5 -1 P4"), _R("NRML R"), _R("CROSS Y1 X1 R"), _R("NRML Y1"), _R("CROSS Z1 X1 Y1"), _R("NRML Z1"), _R("ASSV X Z1"), _R("ASSV Y X1"), _R("ASSV Z Y1"), _R("ASSV P PN0")};
+  mafString _LSH_FAX[] = {_R("ASSV PN0 LFAX"), _R("ASSV PN1 LTTC"), _R("ASSV PN2 LTAM"), _R("ASSV PN3 LFAL"), _R("LNCMB MIDDLE 0.5 PN2 0.5 PN3"), _R("ASSV P1 PN2"), _R("ASSV P2 PN3"), _R("ASSV P3 PN0"), _R("ASSV P4 MIDDLE"), _R("ASSV P5 PN1"), _R("LNCMB A 1 P2 -1 P1"), _R("NRML A"), _R("LNCMB B 1 P3 -1 P2"), _R("NRML B"), _R("CROSS X1 A B"), _R("NRML X1"), _R("LNCMB R 1 P5 -1 P4"), _R("NRML R"), _R("CROSS Y1 X1 R"), _R("NRML Y1"), _R("CROSS Z1 X1 Y1"), _R("NRML Z1"), _R("ASSV X X1"), _R("LNCMB Y -1 Z1 0 Y1"), _R("ASSV Z Y1"), _R("ASSV P MIDDLE")};
+  mafString _LSH_FNE[] = {_R("ASSV PN0 LFNE"), _R("ASSV PN1 LTTC"), _R("ASSV PN2 LTAM"), _R("ASSV PN3 LFAL"), _R("LNCMB MIDDLE 0.5 PN2 0.5 PN3"), _R("ASSV P1 PN2"), _R("ASSV P2 PN3"), _R("ASSV P3 PN0"), _R("ASSV P4 MIDDLE"), _R("ASSV P5 PN1"), _R("LNCMB A 1 P2 -1 P1"), _R("NRML A"), _R("LNCMB B 1 P3 -1 P2"), _R("NRML B"), _R("CROSS X1 A B"), _R("NRML X1"), _R("LNCMB R 1 P5 -1 P4"), _R("NRML R"), _R("CROSS Y1 X1 R"), _R("NRML Y1"), _R("CROSS Z1 X1 Y1"), _R("NRML Z1"), _R("ASSV X X1"), _R("LNCMB Y -1 Z1 0 Y1"), _R("ASSV Z Y1"), _R("ASSV P MIDDLE")};
+  mafString _LSH_ISB[] = {_R("ASSV PN0 LTLR"), _R("ASSV PN1 LTMR"), _R("ASSV PN2 LFAL"), _R("ASSV PN3 LTAM"), _R("LNCMB MIDDLEUP 0.5 PN0 0.5 PN1"), _R("LNCMB MIDDLEDN 0.5 PN2 0.5 PN3"), _R("SUBV Z PN3 PN2"), _R("NRML Z"), _R("SUBV A MIDDLEUP MIDDLEDN"), _R("NRML A"), _R("CROSS X A Z"), _R("NRML X"), _R("CROSS Y Z X"), _R("NRML Y"), _R("ASSV P MIDDLEDN")};
+  mafString _LTH[] = {_R("ASSV PN0 LFME"), _R("ASSV PN1 LFLE"), _R("ASSV PN2 LFCH"), _R("LNCMB MIDDLE 0.5 PN0 0.5 PN1"), _R("ASSV P1 PN0"), _R("ASSV P2 PN1"), _R("ASSV P3 PN2"), _R("ASSV P4 MIDDLE"), _R("ASSV P5 PN2"), _R("LNCMB A 1 P2 -1 P1"), _R("NRML A"), _R("LNCMB B 1 P3 -1 P2"), _R("NRML B"), _R("CROSS X1 A B"), _R("NRML X1"), _R("LNCMB R 1 P5 -1 P4"), _R("NRML R"), _R("CROSS Y1 X1 R"), _R("NRML Y1"), _R("CROSS Z1 X1 Y1"), _R("NRML Z1"), _R("ASSV X X1"), _R("LNCMB Y -1 Z1 0 Y1"), _R("ASSV Z Y1"), _R("ASSV P MIDDLE")};
+  mafString _RFT[] = {_R("ASSV PN0 RFCC"), _R("ASSV PN1 RFM1"), _R("ASSV PN2 RFM2"), _R("ASSV PN3 RFM5"), _R("ASSV P1 PN3"), _R("ASSV P2 PN1"), _R("ASSV P3 PN0"), _R("ASSV P4 PN2"), _R("ASSV P5 PN0"), _R("LNCMB A 1 P2 -1 P1"), _R("NRML A"), _R("LNCMB B 1 P3 -1 P2"), _R("NRML B"), _R("CROSS X1 A B"), _R("NRML X1"), _R("LNCMB R 1 P5 -1 P4"), _R("NRML R"), _R("CROSS Y1 X1 R"), _R("NRML Y1"), _R("CROSS Z1 X1 Y1"), _R("NRML Z1"), _R("ASSV X Z1"), _R("ASSV Y X1"), _R("ASSV Z Y1"), _R("ASSV P PN0")};
+  mafString _RSH_FAX[] = {_R("ASSV PN0 RFAX"), _R("ASSV PN1 RTTC"), _R("ASSV PN2 RFAL"), _R("ASSV PN3 RTAM"), _R("LNCMB MIDDLE 0.5 PN2 0.5 PN3"), _R("ASSV P1 PN2"), _R("ASSV P2 PN3"), _R("ASSV P3 PN0"), _R("ASSV P4 MIDDLE"), _R("ASSV P5 PN1"), _R("LNCMB A 1 P2 -1 P1"), _R("NRML A"), _R("LNCMB B 1 P3 -1 P2"), _R("NRML B"), _R("CROSS X1 A B"), _R("NRML X1"), _R("LNCMB R 1 P5 -1 P4"), _R("NRML R"), _R("CROSS Y1 X1 R"), _R("NRML Y1"), _R("CROSS Z1 X1 Y1"), _R("NRML Z1"), _R("ASSV X X1"), _R("LNCMB Y -1 Z1 0 Y1"), _R("ASSV Z Y1"), _R("ASSV P MIDDLE")};
+  mafString _RSH_FNE[] = {_R("ASSV PN0 RFNE"), _R("ASSV PN1 RTTC"), _R("ASSV PN2 RFAL"), _R("ASSV PN3 RTAM"), _R("LNCMB MIDDLE 0.5 PN2 0.5 PN3"), _R("ASSV P1 PN2"), _R("ASSV P2 PN3"), _R("ASSV P3 PN0"), _R("ASSV P4 MIDDLE"), _R("ASSV P5 PN1"), _R("LNCMB A 1 P2 -1 P1"), _R("NRML A"), _R("LNCMB B 1 P3 -1 P2"), _R("NRML B"), _R("CROSS X1 A B"), _R("NRML X1"), _R("LNCMB R 1 P5 -1 P4"), _R("NRML R"), _R("CROSS Y1 X1 R"), _R("NRML Y1"), _R("CROSS Z1 X1 Y1"), _R("NRML Z1"), _R("ASSV X X1"), _R("LNCMB Y -1 Z1 0 Y1"), _R("ASSV Z Y1"), _R("ASSV P MIDDLE")};
+  mafString _RSH_ISB[] = {_R("ASSV PN0 RTLR"), _R("ASSV PN1 RTMR"), _R("ASSV PN2 RFAL"), _R("ASSV PN3 RTAM"), _R("LNCMB MIDDLEUP 0.5 PN0 0.5 PN1"), _R("LNCMB MIDDLEDN 0.5 PN2 0.5 PN3"), _R("SUBV Z PN2 PN3"), _R("NRML Z"), _R("SUBV A MIDDLEUP MIDDLEDN"), _R("NRML A"), _R("CROSS X A Z"), _R("NRML X"), _R("CROSS Y Z X"), _R("NRML Y"), _R("ASSV P MIDDLEDN")};
+  mafString _RTH[] = {_R("ASSV PN0 RFLE"), _R("ASSV PN1 RFME"), _R("ASSV PN2 RFCH"), _R("LNCMB MIDDLE 0.5 PN0 0.5 PN1"), _R("ASSV P1 PN0"), _R("ASSV P2 PN1"), _R("ASSV P3 PN2"), _R("ASSV P4 MIDDLE"), _R("ASSV P5 PN2"), _R("LNCMB A 1 P2 -1 P1"), _R("NRML A"), _R("LNCMB B 1 P3 -1 P2"), _R("NRML B"), _R("CROSS X1 A B"), _R("NRML X1"), _R("LNCMB R 1 P5 -1 P4"), _R("NRML R"), _R("CROSS Y1 X1 R"), _R("NRML Y1"), _R("CROSS Z1 X1 Y1"), _R("NRML Z1"), _R("ASSV X X1"), _R("LNCMB Y -1 Z1 0 Y1"), _R("ASSV Z Y1"), _R("ASSV P MIDDLE")};
+  mafString _RHFT[] = {_R("ASSV PN0 RFCC"), _R("ASSV PN1 RFPT"), _R("ASSV PN2 RFST"), _R("LNCMB MIDDLE 0.5 PN1 0.5 PN2"), _R("SUBV X MIDDLE PN0"), _R("NRML X"), _R("SUBV A PN1 PN2"), _R("NRML A"), _R("CROSS Y A X"), _R("NRML Y"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P MIDDLE")};
+  mafString _LHFT[] = {_R("ASSV PN0 LFCC"), _R("ASSV PN1 LFPT"), _R("ASSV PN2 LFST"), _R("LNCMB MIDDLE 0.5 PN1 0.5 PN2"), _R("SUBV X MIDDLE PN0"), _R("NRML X"), _R("SUBV A PN2 PN1"), _R("NRML A"), _R("CROSS Y A X"), _R("NRML Y"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P MIDDLE")};
+  mafString _RFFT[] = {_R("ASSV PN0 RFM2"), _R("ASSV PN1 RFMT"), _R("ASSV PN2 RFNT"), _R("LNCMB MIDDLE 0.5 PN1 0.5 PN2"), _R("SUBV X PN0 MIDDLE "), _R("NRML X"), _R("SUBV A PN1 PN2"), _R("NRML A"), _R("CROSS Y A X"), _R("NRML Y"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P MIDDLE")};
+  mafString _LFFT[] = {_R("ASSV PN0 LFM2"), _R("ASSV PN1 LFMT"), _R("ASSV PN2 LFNT"), _R("LNCMB MIDDLE 0.5 PN1 0.5 PN2"), _R("SUBV X PN0 MIDDLE "), _R("NRML X"), _R("SUBV A PN2 PN1"), _R("NRML A"), _R("CROSS Y A X"), _R("NRML Y"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P MIDDLE")};
 
-  mafString _TRX[]   = {"ASSV PN0 MSXS", "ASSV PN1 MTV8", "ASSV PN2 MSJN", "ASSV PN3 MTV2", "LNCMB MIDDLEDN 0.5 PN0 0.5 PN1", "LNCMB MIDDLEUP 0.5 PN2 0.5 PN3", "SUBV Y MIDDLEUP MIDDLEDN", "NRML Y", "SUBV A PN2 PN3", "NRML A", "CROSS Z A Y", "NRML Z", "CROSS X Y Z", "NRML X", "ASSV P PN2"};
-  mafString _RCLV[]  = {"ASSV PN0 MSXS", "ASSV PN1 MTV8", "ASSV PN2 MSJN", "ASSV PN3 MTV2", "ASSV PN4 RCAS", "ASSV PN5 RCAJ", "LNCMB MIDDLEDN 0.5 PN0 0.5 PN1", "LNCMB MIDDLEUP 0.5 PN2 0.5 PN3", "SUBV YT MIDDLEUP MIDDLEDN", "NRML YT", "LNCMB MIDDLE 0.5 PN1 0.5 PN2", "SUBV Z PN5 PN4", "NRML Z", "CROSS X YT Z", "NRML X", "CROSS Y Z X", "NRML Y", "ASSV P PN4"};
-  mafString _LCLV[]  = {"ASSV PN0 MSXS", "ASSV PN1 MTV8", "ASSV PN2 MSJN", "ASSV PN3 MTV2", "ASSV PN4 LCAS", "ASSV PN5 LCAJ", "LNCMB MIDDLEDN 0.5 PN0 0.5 PN1", "LNCMB MIDDLEUP 0.5 PN2 0.5 PN3", "SUBV YT MIDDLEUP MIDDLEDN", "NRML YT", "LNCMB MIDDLE 0.5 PN1 0.5 PN2", "SUBV Z PN4 PN5", "NRML Z", "CROSS X YT Z", "NRML X", "CROSS Y Z X", "NRML Y", "ASSV P PN4"};
-  mafString _RSCP[]  = {"ASSV PN0 RSAA", "ASSV PN1 RSRS", "ASSV PN2 RSIA", "SUBV Z PN0 PN1", "NRML Z", "SUBV A PN1 PN2", "NRML A", "CROSS X A Z", "NRML X", "CROSS Y Z X", "NRML Y", "ASSV P PN0"};
-  mafString _LSCP[]  = {"ASSV PN0 LSAA", "ASSV PN1 LSRS", "ASSV PN2 LSIA", "SUBV Z PN1 PN0", "NRML Z", "SUBV A PN1 PN2", "NRML A", "CROSS X A Z", "NRML X", "CROSS Y Z X", "NRML Y", "ASSV P PN0"};
-  mafString _RHUM1[] = {"ASSV PN0 RHCH", "ASSV PN1 RHLE", "ASSV PN2 RHME", "LNCMB MIDDLE 0.5 PN1 0.5 PN2", "SUBV Y PN0 MIDDLE", "NRML Y", "SUBV A PN1 PN2", "NRML A", "CROSS X Y A", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P PN0"};
-  mafString _LHUM1[] = {"ASSV PN0 LHCH", "ASSV PN1 LHLE", "ASSV PN2 LHME", "LNCMB MIDDLE 0.5 PN1 0.5 PN2", "SUBV Y PN0 MIDDLE", "NRML Y", "SUBV A PN2 PN1", "NRML A", "CROSS X Y A", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P PN0"};
-  mafString _RHUM2[] = {"ASSV PN0 RHCH", "ASSV PN1 RHLE", "ASSV PN2 RHME", "ASSV PN4 RUSP", "LNCMB MIDDLE 0.5 PN1 0.5 PN2", "SUBV Y PN0 MIDDLE", "NRML Y", "SUBV YF PN4 MIDDLE", "NRML YF", "CROSS Z Y YF", "NRML Z", "CROSS X Y Z", "NRML X", "ASSV P PN0"};
-  mafString _LHUM2[] = {"ASSV PN0 LHCH", "ASSV PN1 LHLE", "ASSV PN2 LHME", "ASSV PN4 LUSP", "LNCMB MIDDLE 0.5 PN1 0.5 PN2", "SUBV Y PN0 MIDDLE", "NRML Y", "SUBV YF PN4 MIDDLE", "NRML YF", "CROSS Z Y YF", "NRML Z", "CROSS X Y Z", "NRML X", "ASSV P PN0"};
-  mafString _RFRA[]  = {"ASSV PN0 RUSP", "ASSV PN1 RHLE", "ASSV PN2 RHME", "ASSV PN3 RRSP", "LNCMB MIDDLE 0.5 PN1 0.5 PN2", "SUBV Y PN0 MIDDLE", "NRML Y", "SUBV A PN3 PN0", "NRML A", "CROSS X Y A", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P PN0"};
-  mafString _LFRA[]  = {"ASSV PN0 LUSP", "ASSV PN1 LHLE", "ASSV PN2 LHME", "ASSV PN3 LRSP", "LNCMB MIDDLE 0.5 PN1 0.5 PN2", "SUBV Y PN0 MIDDLE", "NRML Y", "SUBV A PN0 PN3", "NRML A", "CROSS X Y A", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P PN0"};
+  mafString _TRX[]   = {_R("ASSV PN0 MSXS"), _R("ASSV PN1 MTV8"), _R("ASSV PN2 MSJN"), _R("ASSV PN3 MTV2"), _R("LNCMB MIDDLEDN 0.5 PN0 0.5 PN1"), _R("LNCMB MIDDLEUP 0.5 PN2 0.5 PN3"), _R("SUBV Y MIDDLEUP MIDDLEDN"), _R("NRML Y"), _R("SUBV A PN2 PN3"), _R("NRML A"), _R("CROSS Z A Y"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("ASSV P PN2")};
+  mafString _RCLV[]  = {_R("ASSV PN0 MSXS"), _R("ASSV PN1 MTV8"), _R("ASSV PN2 MSJN"), _R("ASSV PN3 MTV2"), _R("ASSV PN4 RCAS"), _R("ASSV PN5 RCAJ"), _R("LNCMB MIDDLEDN 0.5 PN0 0.5 PN1"), _R("LNCMB MIDDLEUP 0.5 PN2 0.5 PN3"), _R("SUBV YT MIDDLEUP MIDDLEDN"), _R("NRML YT"), _R("LNCMB MIDDLE 0.5 PN1 0.5 PN2"), _R("SUBV Z PN5 PN4"), _R("NRML Z"), _R("CROSS X YT Z"), _R("NRML X"), _R("CROSS Y Z X"), _R("NRML Y"), _R("ASSV P PN4")};
+  mafString _LCLV[]  = {_R("ASSV PN0 MSXS"), _R("ASSV PN1 MTV8"), _R("ASSV PN2 MSJN"), _R("ASSV PN3 MTV2"), _R("ASSV PN4 LCAS"), _R("ASSV PN5 LCAJ"), _R("LNCMB MIDDLEDN 0.5 PN0 0.5 PN1"), _R("LNCMB MIDDLEUP 0.5 PN2 0.5 PN3"), _R("SUBV YT MIDDLEUP MIDDLEDN"), _R("NRML YT"), _R("LNCMB MIDDLE 0.5 PN1 0.5 PN2"), _R("SUBV Z PN4 PN5"), _R("NRML Z"), _R("CROSS X YT Z"), _R("NRML X"), _R("CROSS Y Z X"), _R("NRML Y"), _R("ASSV P PN4")};
+  mafString _RSCP[]  = {_R("ASSV PN0 RSAA"), _R("ASSV PN1 RSRS"), _R("ASSV PN2 RSIA"), _R("SUBV Z PN0 PN1"), _R("NRML Z"), _R("SUBV A PN1 PN2"), _R("NRML A"), _R("CROSS X A Z"), _R("NRML X"), _R("CROSS Y Z X"), _R("NRML Y"), _R("ASSV P PN0")};
+  mafString _LSCP[]  = {_R("ASSV PN0 LSAA"), _R("ASSV PN1 LSRS"), _R("ASSV PN2 LSIA"), _R("SUBV Z PN1 PN0"), _R("NRML Z"), _R("SUBV A PN1 PN2"), _R("NRML A"), _R("CROSS X A Z"), _R("NRML X"), _R("CROSS Y Z X"), _R("NRML Y"), _R("ASSV P PN0")};
+  mafString _RHUM1[] = {_R("ASSV PN0 RHCH"), _R("ASSV PN1 RHLE"), _R("ASSV PN2 RHME"), _R("LNCMB MIDDLE 0.5 PN1 0.5 PN2"), _R("SUBV Y PN0 MIDDLE"), _R("NRML Y"), _R("SUBV A PN1 PN2"), _R("NRML A"), _R("CROSS X Y A"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P PN0")};
+  mafString _LHUM1[] = {_R("ASSV PN0 LHCH"), _R("ASSV PN1 LHLE"), _R("ASSV PN2 LHME"), _R("LNCMB MIDDLE 0.5 PN1 0.5 PN2"), _R("SUBV Y PN0 MIDDLE"), _R("NRML Y"), _R("SUBV A PN2 PN1"), _R("NRML A"), _R("CROSS X Y A"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P PN0")};
+  mafString _RHUM2[] = {_R("ASSV PN0 RHCH"), _R("ASSV PN1 RHLE"), _R("ASSV PN2 RHME"), _R("ASSV PN4 RUSP"), _R("LNCMB MIDDLE 0.5 PN1 0.5 PN2"), _R("SUBV Y PN0 MIDDLE"), _R("NRML Y"), _R("SUBV YF PN4 MIDDLE"), _R("NRML YF"), _R("CROSS Z Y YF"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("ASSV P PN0")};
+  mafString _LHUM2[] = {_R("ASSV PN0 LHCH"), _R("ASSV PN1 LHLE"), _R("ASSV PN2 LHME"), _R("ASSV PN4 LUSP"), _R("LNCMB MIDDLE 0.5 PN1 0.5 PN2"), _R("SUBV Y PN0 MIDDLE"), _R("NRML Y"), _R("SUBV YF PN4 MIDDLE"), _R("NRML YF"), _R("CROSS Z Y YF"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("ASSV P PN0")};
+  mafString _RFRA[]  = {_R("ASSV PN0 RUSP"), _R("ASSV PN1 RHLE"), _R("ASSV PN2 RHME"), _R("ASSV PN3 RRSP"), _R("LNCMB MIDDLE 0.5 PN1 0.5 PN2"), _R("SUBV Y PN0 MIDDLE"), _R("NRML Y"), _R("SUBV A PN3 PN0"), _R("NRML A"), _R("CROSS X Y A"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P PN0")};
+  mafString _LFRA[]  = {_R("ASSV PN0 LUSP"), _R("ASSV PN1 LHLE"), _R("ASSV PN2 LHME"), _R("ASSV PN3 LRSP"), _R("LNCMB MIDDLE 0.5 PN1 0.5 PN2"), _R("SUBV Y PN0 MIDDLE"), _R("NRML Y"), _R("SUBV A PN0 PN3"), _R("NRML A"), _R("CROSS X Y A"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P PN0")};
 
-  mafString _3PNT_Y[] = {"ASSV PN0 PNT1", "ASSV PN1 PNT2", "ASSV PN2 PNT3", "DEFSI 0 t 1", "SUBS s 1 t", "LNCMB MIDDLE t PN0 s PN1", "ASSV P1 PN1", "ASSV P2 PN0", "ASSV P3 PN2", "ASSV P4 MIDDLE", "ASSV P5 PN2", "LNCMB A 1 P2 -1 P1", "NRML A", "LNCMB B 1 P3 -1 P2", "NRML B", "CROSS X1 A B", "NRML X1", "LNCMB R 1 P5 -1 P4", "NRML R", "CROSS Y1 X1 R", "NRML Y1", "CROSS Z1 X1 Y1", "NRML Z1", "ASSV X X1", "LNCMB Y -1 Z1 0 Y1", "ASSV Z Y1", "ASSV P MIDDLE"};
-  mafString _3PNT_Z[] = {"ASSV PN0 PNT1", "ASSV PN1 PNT2", "ASSV PN2 PNT3", "DEFSI 0 t 1", "SUBS s 1 t", "LNCMB MIDDLE t PN0 s PN1", "SUBV Z PN1 PN0", "NRML Z", "SUBV Y1 MIDDLE PN2", "NRML Y1", "CROSS X Z Y1", "NRML X", "CROSS Y1 X Z", "LNCMB Y -1 Y1 0 Y1", "ASSV P MIDDLE"};
-  mafString _4PNT_Y[] = {"ASSV PN0 PNT1", "ASSV PN1 PNT2", "ASSV PN2 PNT3", "ASSV PN3 PNT4", "DEFSI 0 t 1", "SUBS s 1 t", "LNCMB MIDDLE t PN0 s PN1", "ASSV P1 PN1", "ASSV P2 PN0", "ASSV P3 PN2", "ASSV P4 PN3", "ASSV P5 PN2", "LNCMB A 1 P2 -1 P1", "NRML A", "LNCMB B 1 P3 -1 P2", "NRML B", "CROSS X1 A B", "NRML X1", "LNCMB R 1 P5 -1 P4", "NRML R", "CROSS Y1 X1 R", "NRML Y1", "CROSS Z1 X1 Y1", "NRML Z1", "ASSV X X1", "LNCMB Y -1 Z1 0 Y1", "ASSV Z Y1", "ASSV P MIDDLE"};
-  mafString _4PNT_Z[] = {"ASSV PN0 PNT1", "ASSV PN1 PNT2", "ASSV PN2 PNT3", "ASSV PN3 PNT4", "DEFSI 0 t 1", "SUBS s 1 t", "LNCMB MIDDLE t PN0 s PN1", "SUBV Z PN1 PN0", "NRML Z", "SUBV Y1 PN3 PN2", "NRML Y1", "CROSS X Z Y1", "NRML X", "CROSS Y1 X Z", "LNCMB Y -1 Y1 0 Y1", "ASSV P MIDDLE"};
+  mafString _3PNT_Y[] = {_R("ASSV PN0 PNT1"), _R("ASSV PN1 PNT2"), _R("ASSV PN2 PNT3"), _R("DEFSI 0 t 1"), _R("SUBS s 1 t"), _R("LNCMB MIDDLE t PN0 s PN1"), _R("ASSV P1 PN1"), _R("ASSV P2 PN0"), _R("ASSV P3 PN2"), _R("ASSV P4 MIDDLE"), _R("ASSV P5 PN2"), _R("LNCMB A 1 P2 -1 P1"), _R("NRML A"), _R("LNCMB B 1 P3 -1 P2"), _R("NRML B"), _R("CROSS X1 A B"), _R("NRML X1"), _R("LNCMB R 1 P5 -1 P4"), _R("NRML R"), _R("CROSS Y1 X1 R"), _R("NRML Y1"), _R("CROSS Z1 X1 Y1"), _R("NRML Z1"), _R("ASSV X X1"), _R("LNCMB Y -1 Z1 0 Y1"), _R("ASSV Z Y1"), _R("ASSV P MIDDLE")};
+  mafString _3PNT_Z[] = {_R("ASSV PN0 PNT1"), _R("ASSV PN1 PNT2"), _R("ASSV PN2 PNT3"), _R("DEFSI 0 t 1"), _R("SUBS s 1 t"), _R("LNCMB MIDDLE t PN0 s PN1"), _R("SUBV Z PN1 PN0"), _R("NRML Z"), _R("SUBV Y1 MIDDLE PN2"), _R("NRML Y1"), _R("CROSS X Z Y1"), _R("NRML X"), _R("CROSS Y1 X Z"), _R("LNCMB Y -1 Y1 0 Y1"), _R("ASSV P MIDDLE")};
+  mafString _4PNT_Y[] = {_R("ASSV PN0 PNT1"), _R("ASSV PN1 PNT2"), _R("ASSV PN2 PNT3"), _R("ASSV PN3 PNT4"), _R("DEFSI 0 t 1"), _R("SUBS s 1 t"), _R("LNCMB MIDDLE t PN0 s PN1"), _R("ASSV P1 PN1"), _R("ASSV P2 PN0"), _R("ASSV P3 PN2"), _R("ASSV P4 PN3"), _R("ASSV P5 PN2"), _R("LNCMB A 1 P2 -1 P1"), _R("NRML A"), _R("LNCMB B 1 P3 -1 P2"), _R("NRML B"), _R("CROSS X1 A B"), _R("NRML X1"), _R("LNCMB R 1 P5 -1 P4"), _R("NRML R"), _R("CROSS Y1 X1 R"), _R("NRML Y1"), _R("CROSS Z1 X1 Y1"), _R("NRML Z1"), _R("ASSV X X1"), _R("LNCMB Y -1 Z1 0 Y1"), _R("ASSV Z Y1"), _R("ASSV P MIDDLE")};
+  mafString _4PNT_Z[] = {_R("ASSV PN0 PNT1"), _R("ASSV PN1 PNT2"), _R("ASSV PN2 PNT3"), _R("ASSV PN3 PNT4"), _R("DEFSI 0 t 1"), _R("SUBS s 1 t"), _R("LNCMB MIDDLE t PN0 s PN1"), _R("SUBV Z PN1 PN0"), _R("NRML Z"), _R("SUBV Y1 PN3 PN2"), _R("NRML Y1"), _R("CROSS X Z Y1"), _R("NRML X"), _R("CROSS Y1 X Z"), _R("LNCMB Y -1 Y1 0 Y1"), _R("ASSV P MIDDLE")};
 
   ADD_PREDEF("Pelvis",     _IPE,     PELVIS);
   ADD_PREDEF("RThigh",     _RTH,     RTHIGH);
@@ -180,7 +180,7 @@ void lhpOpAFSys::OpRun()
 {
   mafString strBase(m_Input->GetName());
   mafNEW(m_RefSys);
-  strBase += "_AF_Frame";
+  strBase += _R("_AF_Frame");
   mafString str = strBase;
   unsigned ind = 0;
   unsigned i;
@@ -189,19 +189,19 @@ void lhpOpAFSys::OpRun()
     for(i = 0; i < m_Input->GetNumberOfChildren(); i++)
     {
       mafNode *node = m_Input->GetChild(i);
-      if(strcmp(node->GetName(), str.GetCStr()) == 0)
+      if(node->GetName() == str)
       {
-        str.Printf("%s_%u", strBase.GetCStr(), ind);
+        str = strBase + mafString::Format(_R("_%u"), ind);
         ind++;
         break;
       }
     }
   }
   while(i < m_Input->GetNumberOfChildren() && ind != UINT_MAX);
-  m_RefSys->SetName(str.GetCStr());
+  m_RefSys->SetName(str);
   for(unsigned nm = 0; nm < m_predefinedScripts.size(); nm++)
   {
-    if(stricmp(m_predefinedScripts[nm].m_Name.GetCStr(), m_Input->GetName()) == 0)
+    if(stricmp(m_predefinedScripts[nm].m_Name.GetCStr(), m_Input->GetName().GetCStr()) == 0)
     {
       m_Radio = nm;
       m_RefSys->SetScriptText(m_predefinedScripts[m_Radio].m_Script);
@@ -222,12 +222,12 @@ void lhpOpAFSys::CreateGui()
   std::vector<mafString> list;
   for(unsigned i = 0; i < m_predefinedScripts.size(); i++)
   {
-    list.push_back(m_predefinedScripts[i].m_Name.GetCStr());
+    list.push_back(m_predefinedScripts[i].m_Name);
   }
-  list.push_back("Custom");
-  m_Gui->Radio(ID_RADIO_SCRIPT, "",&m_Radio, list.size(), &list[0]);
-  m_Gui->FileOpen(ID_LOAD_SCRIPT, "Script", &m_ScriptFName);
-  m_Gui->Label("");
+  list.push_back(_R("Custom"));
+  m_Gui->Radio(ID_RADIO_SCRIPT, _R(""),&m_Radio, list.size(), &list[0]);
+  m_Gui->FileOpen(ID_LOAD_SCRIPT, _R("Script"), &m_ScriptFName);
+  m_Gui->Label(_R(""));
 
   m_Gui->Enable(ID_LOAD_SCRIPT, m_Radio == m_predefinedScripts.size());
   m_Gui->OkCancel();
@@ -249,7 +249,7 @@ void lhpOpAFSys::OpStop(int result)
   }
   else if (result == OP_RUN_OK)
   {
-    if(m_Radio == m_predefinedScripts.size() && m_ScriptFName == "")
+    if(m_Radio == m_predefinedScripts.size() && m_ScriptFName.IsEmpty())
     {
       wxMessageBox("Method is not specified","Alert", wxOK , NULL);
       return;
@@ -261,7 +261,7 @@ void lhpOpAFSys::OpStop(int result)
 
 bool lhpOpAFSys::ReadScript(const mafString& filename, std::vector<mafString>& output)
 {
-  FILE *fp = fopen(filename, "rt");
+  FILE *fp = fopen(filename.GetCStr(), "rt");
   if(fp == NULL)
   {
     return false;
@@ -276,7 +276,7 @@ bool lhpOpAFSys::ReadScript(const mafString& filename, std::vector<mafString>& o
     pRet = fgets(sLine, maxStrLen, fp);
     if(pRet == NULL)
       break;
-    output.push_back(mafString(pRet));
+    output.push_back(_R(pRet));
   }
   fclose(fp);
   return true;
@@ -298,7 +298,7 @@ void lhpOpAFSys::OnEvent(mafEventBase *maf_event)
     case ID_LOAD_SCRIPT:
       {
         std::vector<mafString> tmp;
-        if(m_ScriptFName != "" && ReadScript(m_ScriptFName, tmp))
+        if(!m_ScriptFName.IsEmpty() && ReadScript(m_ScriptFName, tmp))
         {
           m_RefSys->SetScriptText(tmp);
           m_RefSys->SetBoneID(mafVMEAFRefSys::ID_AFS_NOTDEFINED);
@@ -316,7 +316,7 @@ void lhpOpAFSys::OnEvent(mafEventBase *maf_event)
         else
         {
           std::vector<mafString> tmp;
-          if(m_ScriptFName != "" && ReadScript(m_ScriptFName, tmp))
+          if(!m_ScriptFName.IsEmpty() && ReadScript(m_ScriptFName, tmp))
           {
             m_RefSys->SetScriptText(tmp);
             m_RefSys->SetBoneID(mafVMEAFRefSys::ID_AFS_NOTDEFINED);

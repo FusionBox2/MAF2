@@ -32,7 +32,7 @@ class lhpOpICPRegFollow: public mafOp
 {
 public:
   mafTypeMacro(lhpOpICPRegFollow, mafOp)
-	lhpOpICPRegFollow(const mafString& label = "");
+	lhpOpICPRegFollow(const mafString& label = _R(""));
 	~lhpOpICPRegFollow(); 
 	void   OnEvent(mafEventBase *maf_event);
 	mafOp* Copy();

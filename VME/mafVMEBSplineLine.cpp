@@ -123,7 +123,7 @@ mafCxxTypeMacro(mafVMEBSplineLine)
 mafString mafVMEBSplineLine::GetVisualPipe()
 //-------------------------------------------------------------------------
 {
-  return mafString("mafPipePolyline");
+  return mafString(_R("mafPipePolyline"));
 }
 
 
@@ -150,7 +150,7 @@ mafVMEBSplineLine::mafVMEBSplineLine()
   vtkNEW(m_Polyline);
   dpipe->SetInput(m_Polyline);
 
-  m_PointsCloudName = _("");
+  m_PointsCloudName = _L("");
 
   m_BCurve       = NULL;
   m_TesselSize   = 10;
@@ -377,14 +377,14 @@ int mafVMEBSplineLine::InternalStore(mafStorageElement *parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent->StoreMatrix("Transform",&m_Transform->GetMatrix());
-    parent->StoreInteger("Order", m_Order);
-    parent->StoreInteger("Mode", m_Mode);
-    parent->StoreInteger("Submode", m_SubMode);
-    parent->StoreDouble("Smooth", m_Smooth);
-    parent->StoreInteger("Num_parts", m_TesselSize);
-    parent->StoreInteger("Filter_ident", m_FilterIdent);
-    parent->StoreInteger("Extract_fibre", m_ExtractFibre);
+    parent->StoreMatrix(_R("Transform"),&m_Transform->GetMatrix());
+    parent->StoreInteger(_R("Order"), m_Order);
+    parent->StoreInteger(_R("Mode"), m_Mode);
+    parent->StoreInteger(_R("Submode"), m_SubMode);
+    parent->StoreDouble(_R("Smooth"), m_Smooth);
+    parent->StoreInteger(_R("Num_parts"), m_TesselSize);
+    parent->StoreInteger(_R("Filter_ident"), m_FilterIdent);
+    parent->StoreInteger(_R("Extract_fibre"), m_ExtractFibre);
     return MAF_OK;
   }
   return MAF_ERROR;
@@ -397,16 +397,16 @@ int mafVMEBSplineLine::InternalRestore(mafStorageElement *node)
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
-    if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
+    if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
-      node->RestoreInteger("Order", m_Order);
-      node->RestoreInteger("Mode", m_Mode);
-      node->RestoreInteger("Submode", m_SubMode);
-      node->RestoreDouble("Smooth", m_Smooth);
-      node->RestoreInteger("Num_parts", m_TesselSize);
-      node->RestoreInteger("Filter_ident", m_FilterIdent);
-      node->RestoreInteger("Extract_fibre", m_ExtractFibre);
+      node->RestoreInteger(_R("Order"), m_Order);
+      node->RestoreInteger(_R("Mode"), m_Mode);
+      node->RestoreInteger(_R("Submode"), m_SubMode);
+      node->RestoreDouble(_R("Smooth"), m_Smooth);
+      node->RestoreInteger(_R("Num_parts"), m_TesselSize);
+      node->RestoreInteger(_R("Filter_ident"), m_FilterIdent);
+      node->RestoreInteger(_R("Extract_fibre"), m_ExtractFibre);
       m_Loaded = true;
       return MAF_OK;
     }
@@ -436,20 +436,20 @@ char** mafVMEBSplineLine::GetIcon()
 void mafVMEBSplineLine::SetPointsCloudLink(mafNode *n)
 //-------------------------------------------------------------------------
 {
-  SetLink("PointsCloud", n);
+  SetLink(_R("PointsCloud"), n);
 }
 //-------------------------------------------------------------------------
 mafVMELandmarkCloud *mafVMEBSplineLine::GetPointsCloudLink()
 //-------------------------------------------------------------------------
 {
-  return mafVMELandmarkCloud::SafeDownCast(GetLink("PointsCloud"));
+  return mafVMELandmarkCloud::SafeDownCast(GetLink(_R("PointsCloud")));
 }
 //-------------------------------------------------------------------------
 mafGUI* mafVMEBSplineLine::CreateGui()
 //-------------------------------------------------------------------------
 {
-  const mafString mode_choices_string[] = {_("Direct"),_("Maximal influence"), _("Interpolate")};
-  const mafString submode_choices_string[] = {_("1st derivative"),_("2nd derivative"), _("Periodic")};
+  const mafString mode_choices_string[] = {_L("Direct"),_L("Maximal influence"), _L("Interpolate")};
+  const mafString submode_choices_string[] = {_L("1st derivative"),_L("2nd derivative"), _L("Periodic")};
 
   mafID sub_id = -1;
 
@@ -459,18 +459,18 @@ mafGUI* mafVMEBSplineLine::CreateGui()
 
 
   mafVME *polyline_vme = GetPointsCloudLink();
-  m_PointsCloudName = polyline_vme ? polyline_vme->GetName() : _("none");
-  m_Gui->Button(ID_PNTS_CLOUD_LINK,&m_PointsCloudName,_("Points"), _("Select the Points cloud to create the Spline"));
-  m_Gui->Label("Points: ", &m_PointsCloudName);
-  m_Gui->Integer(ID_ORDER, _("Order"), &m_Order, 1, 10);
-  m_Gui->Combo(ID_MODE, _("Mode"), &m_Mode, DIM(mode_choices_string), mode_choices_string);
-  m_Gui->Combo(ID_SUBMODE, _("Submode"), &m_SubMode, DIM(submode_choices_string), submode_choices_string);
-  m_Gui->FloatSlider(ID_SMOOTH, _("Smooth"),&m_Smooth, 0.0, 1000.0);
-  m_Gui->Integer(ID_NUMTESSEL, _("Num parts"), &m_TesselSize, 2, 500);
+  m_PointsCloudName = polyline_vme ? polyline_vme->GetName() : _L("none");
+  m_Gui->Button(ID_PNTS_CLOUD_LINK,&m_PointsCloudName,_L("Points"), _L("Select the Points cloud to create the Spline"));
+  m_Gui->Label(_R("Points: "), &m_PointsCloudName);
+  m_Gui->Integer(ID_ORDER, _L("Order"), &m_Order, 1, 10);
+  m_Gui->Combo(ID_MODE, _L("Mode"), &m_Mode, DIM(mode_choices_string), mode_choices_string);
+  m_Gui->Combo(ID_SUBMODE, _L("Submode"), &m_SubMode, DIM(submode_choices_string), submode_choices_string);
+  m_Gui->FloatSlider(ID_SMOOTH, _L("Smooth"),&m_Smooth, 0.0, 1000.0);
+  m_Gui->Integer(ID_NUMTESSEL, _L("Num parts"), &m_TesselSize, 2, 500);
 
   m_Gui->Enable(ID_SMOOTH, m_Mode == 2);
-  m_Gui->Bool(ID_FILTER, _("Filter ident"), &m_FilterIdent);
-  m_Gui->Bool(ID_EXTRACT, _("Extract fibre"), &m_ExtractFibre);
+  m_Gui->Bool(ID_FILTER, _L("Filter ident"), &m_FilterIdent);
+  m_Gui->Bool(ID_EXTRACT, _L("Extract fibre"), &m_ExtractFibre);
   m_Gui->Enable(ID_EXTRACT, m_FilterIdent != 0);
   m_Gui->Enable(ID_SUBMODE, m_Mode == BCurve<double>::SPT_MODE_INTERP);
 
@@ -563,7 +563,7 @@ void mafVMEBSplineLine::OnEvent(mafEventBase *maf_event)
           else if(e->GetId() == ID_PNTS_CLOUD_LINK)
           {
             mafID button_id = e->GetId();
-            mafString title = _("Choose vme");
+            mafString title = _L("Choose vme");
             e->SetId(VME_CHOOSE);
             e->SetArg((long)&mafVMEBSplineLine::PolylineAccept);
             e->SetString(&title);
@@ -699,11 +699,11 @@ int mafVMEBSplineLine::InternalInitialize()
 mmaMaterial *mafVMEBSplineLine::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+  mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
   if (material == NULL)
   {
     material = mmaMaterial::New();
-    SetAttribute("MaterialAttributes", material);
+    SetAttribute(_R("MaterialAttributes"), material);
   }
   return material;
 }

@@ -98,7 +98,7 @@ class lhpOpMultiscaleExplore : public mafOp
   friend class lhpOpMultiscaleExploreTest ;   ///< test class is a friend
 
 public:
-  lhpOpMultiscaleExplore(const mafString& label = "Explore Multiscale");
+  lhpOpMultiscaleExplore(const mafString& label = _R("Explore Multiscale"));
   ~lhpOpMultiscaleExplore(); 
 
   mafTypeMacro(lhpOpMultiscaleExplore, mafOp);

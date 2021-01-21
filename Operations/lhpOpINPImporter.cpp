@@ -70,12 +70,12 @@ mafOp * lhpOpINPImporter::Copy()
 void  lhpOpINPImporter::OpRun()   
 //----------------------------------------------------------------------------
 {
-  mafString vrml_wildc = "AMIRA geometry (*.inp)|*.inp|AMIRA geometry in AF system (*.inp_AFs)|*.inp_AFs";
+  mafString vrml_wildc = _R("AMIRA geometry (*.inp)|*.inp|AMIRA geometry in AF system (*.inp_AFs)|*.inp_AFs");
 
   m_Files.clear();
   //if (m_File.IsEmpty())
   {
-    mafGetOpenMultiFiles(m_FileDir.GetCStr(),vrml_wildc.GetCStr(), m_Files);
+    mafGetOpenMultiFiles(m_FileDir,vrml_wildc, m_Files);
   }
 
   int result = OP_RUN_CANCEL;
@@ -102,25 +102,25 @@ void  lhpOpINPImporter::ImportData()
     mafINPReader  *reader = mafINPReader::New();
     mafVMESurface *surface;
 
-    reader->SetFileName(m_Files[i]);
-    wxString path, name, ext;
+    reader->SetFileName(m_Files[i].GetCStr());
+    mafString path, name, ext;
 
-    wxSplitPath(m_Files[i].GetCStr(),&path,&name,&ext);
+    mafSplitPath(m_Files[i],&path,&name,&ext);
 
     reader->Update();
 
     mafTimeStamp t;
     t = ((mafVME *)m_Input)->GetTimeStamp();
     mafNEW(surface);
-    surface->SetName(name.c_str());
+    surface->SetName(name);
     vtkPolyData *data = reader->GetOutput();
     surface->SetData(data,t);
 
     m_Surfaces.push_back(surface);
 
     mafTagItem tag_Nature;
-    tag_Nature.SetName("VME_NATURE");
-    tag_Nature.SetValue("NATURAL");
+    tag_Nature.SetName(_R("VME_NATURE"));
+    tag_Nature.SetValue(_R("NATURAL"));
 
     surface->GetTagArray()->SetTag(tag_Nature);
 

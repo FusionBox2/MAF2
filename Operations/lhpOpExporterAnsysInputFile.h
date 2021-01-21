@@ -33,7 +33,7 @@ grammar based Ansys .inp format writer written in Python */
 class lhpOpExporterAnsysInputFile : public mafOp
 {
 public:
-	lhpOpExporterAnsysInputFile(const mafString& label = "lhpOpExporterAnsysInputFile");
+	lhpOpExporterAnsysInputFile(const mafString& label = _R("lhpOpExporterAnsysInputFile"));
 	~lhpOpExporterAnsysInputFile(); 
 	
   mafTypeMacro(lhpOpExporterAnsysInputFile, mafOp);
@@ -44,8 +44,8 @@ public:
   void SetApplyABSMatrix(int apply_matrix) {m_ABSMatrixFlag = apply_matrix;};
 
   /** Set/Get output file name*/
-  void SetOutputFileName(const char *outputFileName) {m_AnsysOutputFileNameFullPath = outputFileName;};
-  const char *GetOutputFileName() {return m_AnsysOutputFileNameFullPath.c_str();};
+  void SetOutputFileName(const char *outputFileName) {m_AnsysOutputFileNameFullPath = _R(outputFileName);};
+  const char *GetOutputFileName() {return m_AnsysOutputFileNameFullPath.GetCStr();};
 
   /** Export the input mesh by writing it in Ansys .inp format */
   int Write();
@@ -67,16 +67,16 @@ public:
 protected:
 
   /** Set/Get nodes file name*/
-  void SetInputNodesFileName(const char *name)   {this->m_NodesFileName = name;};
-  const char *GetInputNodesFileName() {return this->m_NodesFileName;};
+  void SetInputNodesFileName(const char *name)   {this->m_NodesFileName = _R(name);}
+  const char *GetInputNodesFileName() {return this->m_NodesFileName.GetCStr();}
 
   /** Set/Get elements file name*/
-  void SetInputElementsFileName(const char *name)   {this->m_ElementsFileName = name;};
-  const char *GetInputElementsFileName() {return this->m_ElementsFileName;};
+  void SetInputElementsFileName(const char *name)   {this->m_ElementsFileName = _R(name);}
+  const char *GetInputElementsFileName() {return this->m_ElementsFileName.GetCStr();}
 
   /** Set/Get materials file name*/
-  void SetInputMaterialsFileName(const char *name) {this->m_MaterialsFileName = name;};
-  const char *GetInputMaterialsFileName() {return this->m_MaterialsFileName;};
+  void SetInputMaterialsFileName(const char *name) {this->m_MaterialsFileName = _R(name);}
+  const char *GetInputMaterialsFileName() {return this->m_MaterialsFileName.GetCStr();}
 
   /** Create the dialog interface for the importer. */
   virtual void CreateGui();  
@@ -85,10 +85,10 @@ protected:
 
   void OnOK();
 
-  wxString m_FileDir;
-  wxString m_AnsysOutputFileNameFullPath;
+  mafString m_FileDir;
+  mafString m_AnsysOutputFileNameFullPath;
 
-  wxString m_AnsysPythonExporterFullPathFileName;
+  mafString m_AnsysPythonExporterFullPathFileName;
 
   int m_ImporterType;
 	mafVMEMesh *m_ImportedVmeMesh;
@@ -99,13 +99,13 @@ protected:
   mafString m_CacheDir;
 
   /** Nodes file name*/
-  wxString m_NodesFileName;
+  mafString m_NodesFileName;
 
   /** Elements file name*/
-  wxString m_ElementsFileName;
+  mafString m_ElementsFileName;
 
   /** Materials file name*/
-  wxString m_MaterialsFileName;
+  mafString m_MaterialsFileName;
 
   long m_Pid;
   

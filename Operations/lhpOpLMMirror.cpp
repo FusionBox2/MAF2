@@ -88,13 +88,13 @@ void lhpOpLMMirror::OpRun()
 		// interface:
 		m_Gui = new mafGUI(this);
 		m_Gui->SetListener(this);
-		m_Gui->Label("this doesn't work on animated vme");
-		m_Gui->Label("");
+		m_Gui->Label(_R("this doesn't work on animated vme"));
+		m_Gui->Label(_R(""));
 		
-		m_Gui->Bool(ID_MIRRORX,"mirror x coords", &m_MirrorX, 1);
-		m_Gui->Bool(ID_MIRRORY,"mirror y coords", &m_MirrorY, 1);
-		m_Gui->Bool(ID_MIRRORZ,"mirror z coords", &m_MirrorZ, 1);
-		m_Gui->Label("");
+		m_Gui->Bool(ID_MIRRORX,_R("mirror x coords"), &m_MirrorX, 1);
+		m_Gui->Bool(ID_MIRRORY,_R("mirror y coords"), &m_MirrorY, 1);
+		m_Gui->Bool(ID_MIRRORZ,_R("mirror z coords"), &m_MirrorZ, 1);
+		m_Gui->Label(_R(""));
 		m_Gui->OkCancel();
 
 		ShowGui();

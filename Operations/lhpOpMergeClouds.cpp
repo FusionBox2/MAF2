@@ -91,17 +91,17 @@ void lhpOpMergeClouds::CreateGui()
 {
   m_Gui = new mafGUI(this);
   m_Gui->SetListener(this);
-  m_Gui->Label(_("Surfaces"), true);
+  m_Gui->Label(_L("Surfaces"), true);
   m_ListBox = m_Gui->ListBox(ID_MERGE_CLOUD/*LISTBOX*/);
 
   for(int j = 0; j < m_MergeClouds.size();j++)
   {
-    m_ListBox->Append(m_MergeClouds[j]->GetName().GetCStr());
+    m_ListBox->Append(m_MergeClouds[j]->GetName().toWx());
   }
 
 
-  m_Gui->Button(ID_ADD_CLOUD, _("Add"), "" ,"");
-  m_Gui->Button(ID_REMOVE_CLOUD, _("Remove"), "" ,"");
+  m_Gui->Button(ID_ADD_CLOUD, _L("Add"), _R(""), _R(""));
+  m_Gui->Button(ID_REMOVE_CLOUD, _L("Remove"), _R(""), _R(""));
 
   m_Gui->OkCancel();
   ShowGui();
@@ -130,7 +130,7 @@ void lhpOpMergeClouds::OnEvent(mafEventBase *maf_event)
       wxMessageBox("Current max point number is one!");
       return;
       }*/
-      mafString s("Choose surface to join");
+      mafString s(_R("Choose surface to join"));
       mafEvent e(this,VME_CHOOSE, &s);
       mafEventMacro(e);
       if(e.GetVme() == NULL)
@@ -140,19 +140,19 @@ void lhpOpMergeClouds::OnEvent(mafEventBase *maf_event)
       mafNode *sel = e.GetVme();
       if(mafVME::SafeDownCast(sel)== NULL)
       {
-        wxMessageBox("Selected VME is not acceptable.","Warning", wxOK|wxICON_WARNING , NULL);
+        mafWarningMessage(_M("Selected VME is not acceptable."));
         return;
       }
       if(sel == m_Input)
       {
-        wxMessageBox("Selected VME should not be the same as Input.","Warning", wxOK|wxICON_WARNING , NULL);
+        mafWarningMessage(_M("Selected VME should not be the same as Input."));
         return;
       }
 
       mafString t;
       t = mafVME::SafeDownCast(sel)->GetName();
-      m_ListBox->Append(_(t));
-      m_ListBox->SetStringSelection(_(t));
+      m_ListBox->Append(_(t.toWx()));
+      m_ListBox->SetStringSelection(_(t.toWx()));
       m_MergeClouds.push_back(mafVME::SafeDownCast(sel));
 
 
@@ -237,8 +237,8 @@ void lhpOpMergeClouds::SetNodeName(mafVME *pVME, mafString *pName)
   *pName = pVME->GetName();
   if(pVME->GetParent() != NULL)
   {
-    *pName = *pName + " parent:";
-    *pName = *pName + pVME->GetParent()->GetName().GetCStr();
+    *pName += _R(" parent:");
+    *pName += pVME->GetParent()->GetName();
   }
 }
 

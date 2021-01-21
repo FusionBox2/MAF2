@@ -195,8 +195,8 @@ void psLoaderGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
           mafPipe *p = sn->m_Pipe;
           if (p)
           {
-            wxString t = vme->GetName();
-            t += " pipe gui";
+            mafString t = vme->GetName();
+            t += _R(" pipe gui");
             mafGUIDialog dlg(t,mafCLOSEWINDOW);
             mafGUI *gui = p->GetGui();
             wxWindow *old_parent = gui->GetParent();
@@ -210,7 +210,7 @@ void psLoaderGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
           }
           else
           {
-            wxMessageBox("Visual pipe has no gui!!", _("Warning"));
+            mafWarningMessage(_M("Visual pipe has no gui!!"));
           }
         }
       }
@@ -218,7 +218,7 @@ void psLoaderGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
     break;
 		case CONTEXTUAL_MENU_TRANSFORM:
 		{
-			mafString s = "Move\tCtrl+T";
+			mafString s = _R("Move\tCtrl+T");
 			mafEventMacro(mafEvent(this, PARSE_STRING, &s));
 		}
 		break;
@@ -268,13 +268,13 @@ void psLoaderGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
     case CONTEXTUAL_MENU_EXPORT_AS_VRML:
     {
       mafString file_dir  = mafGetApplicationDirectory();
-      mafString wildc     = "VRML (*.wrl)|*.wrl";
+      mafString wildc     = _R("VRML (*.wrl)|*.wrl");
       mafString file      = mafGetSaveFile(file_dir,wildc);
       if (!file.IsEmpty())
       {
         vtkRenderWindow *renwin = m_ViewActive->GetRWI()->GetRenderWindow();
         vtkMAFSmartPointer<vtkVRMLExporter> vrml_exporter;
-        vrml_exporter->SetFileName(file);
+        vrml_exporter->SetFileName(file.GetCStr());
         vrml_exporter->SetInput(renwin);
         vrml_exporter->Update();
         vrml_exporter->Write();
@@ -283,14 +283,14 @@ void psLoaderGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
     break;
 		case CONTEXTUAL_MENU_RENAME_VIEW:
 		{
-			wxTextEntryDialog *dlg = new wxTextEntryDialog(m_ChildViewActive,"please enter a name", "VIEW NAME", m_ViewActive->GetName().GetCStr());
+			wxTextEntryDialog *dlg = new wxTextEntryDialog(m_ChildViewActive,"please enter a name", "VIEW NAME", m_ViewActive->GetName().toWx());
 			int result = dlg->ShowModal(); 
 			wxString name = dlg->GetValue();
 			cppDEL(dlg);
 			if(result != wxID_OK) return;
-			m_ViewActive->SetName(name);
+			m_ViewActive->SetName(mafWxToString(name));
 			if(name == "")
-        m_ChildViewActive->SetTitle(wxStripMenuCodes(m_ViewActive->GetLabel().GetCStr()));
+        m_ChildViewActive->SetTitle(wxStripMenuCodes(m_ViewActive->GetLabel().toWx()));
 			else
 				m_ChildViewActive->SetTitle(name);
 		}

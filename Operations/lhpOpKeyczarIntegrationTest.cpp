@@ -40,8 +40,8 @@ lhpOpKeyczarIntegrationTest::lhpOpKeyczarIntegrationTest(const mafString& label)
   m_OpType  = OPTYPE_OP;
   m_Canundo = false;
   
-  m_PythonExe = "python.exe_UNDEFINED";
-  m_PythonwExe = "pythonw.exe_UNDEFINED";  
+  m_PythonExe = _R("python.exe_UNDEFINED");
+  m_PythonwExe = _R("pythonw.exe_UNDEFINED");  
 }
 
 //----------------------------------------------------------------------------
@@ -75,8 +75,8 @@ void lhpOpKeyczarIntegrationTest::OpRun()
   if(eventGetPythonExe.GetString())
   {
     m_PythonExe.Erase(0);
-    m_PythonExe = eventGetPythonExe.GetString()->GetCStr();
-    m_PythonExe.Append(" ");
+    m_PythonExe = *eventGetPythonExe.GetString();
+    m_PythonExe.Append(_R(" "));
   }
 
   mafEvent eventGetPythonwExe;
@@ -87,8 +87,8 @@ void lhpOpKeyczarIntegrationTest::OpRun()
   if(eventGetPythonwExe.GetString())
   {
     m_PythonwExe.Erase(0);
-    m_PythonwExe = eventGetPythonwExe.GetString()->GetCStr();
-    m_PythonwExe.Append(" ");
+    m_PythonwExe = *eventGetPythonwExe.GetString();
+    m_PythonwExe.Append(_R(" "));
   }
 
 
@@ -102,40 +102,39 @@ int lhpOpKeyczarIntegrationTest::Execute()
   
   // This is for deploy: need to work on PYTHONPATH to solve issues with Python modules execution path...
   wxString keyCZarToolFullPath = "NONE";
-  keyCZarToolFullPath = mafGetApplicationDirectory().GetCStr();
+  keyCZarToolFullPath = mafGetApplicationDirectory().toWx();
   keyCZarToolFullPath.Append("\\Security\\keyczar\\Keyczar-Python\\src\\keyczar");
 
   wxArrayString output;
   wxArrayString errors;
 
-  wxString command2execute;
+  mafString command2execute;
 
   wxString oldDir = wxGetCwd();
 
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  mafLogMessage( _M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
   wxSetWorkingDirectory(keyCZarToolFullPath);
 
-  mafLogMessage( _T("Now current working directory is: '%s' "), wxGetCwd().c_str() );
+  mafLogMessage( _M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
-  command2execute = "cmd.exe /K \"";
-  command2execute.Append(m_PythonExe.GetCStr());
-  command2execute.Append(" keyczart.py\"");
-  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  command2execute = _R("cmd.exe /K \"");
+  command2execute.Append(m_PythonExe);
+  command2execute.Append(_R(" keyczart.py\""));
+  mafLogMessage( _M(_R("Executing command: '") + command2execute + _R("'")));
 
-  long pid = wxExecute(command2execute, wxEXEC_SYNC);
+  long pid = wxExecute(command2execute.toWx(), wxEXEC_SYNC);
 
   for (int i = 0; i < output.GetCount(); i++)
   {
-    mafLogMessage(output[i].c_str());
+    mafLogMessage(_M(mafWxToString(output[i])));
   }
   
-  if ( !command2execute )
+  if ( !command2execute.GetCStr() )
     return MAF_ERROR;
 
   
-  mafLogMessage(_T("Command process '%s' terminated with exit code %d."),
-    command2execute.c_str(), pid);
+  mafLogMessage(_M(_R("Command process '") + command2execute + _R("' terminated with exit code ") + mafToString(pid) + _R(".")));
 
   wxSetWorkingDirectory(oldDir);
   int result = OP_RUN_OK;
@@ -154,7 +153,7 @@ enum Mesh_Importer_ID
 void lhpOpKeyczarIntegrationTest::CreateGui()
 //----------------------------------------------------------------------------
 {
-  mafString wildcard = "inp files (*.inp)|*.inp|All Files (*.*)|*.*";
+  mafString wildcard = _R("inp files (*.inp)|*.inp|All Files (*.*)|*.*");
 
 }
 //----------------------------------------------------------------------------

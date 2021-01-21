@@ -47,8 +47,8 @@ lhpOpImporterRSScan::lhpOpImporterRSScan(const mafString& label) : Superclass(la
   m_OpType  = OPTYPE_IMPORTER;
   m_Canundo = true;
   m_ImportedVmeMesh = NULL;
-  m_PlateParamsFileName = "";
-  m_DataFileName = "";
+  m_PlateParamsFileName = _R("");
+  m_DataFileName = _R("");
   m_Scale        = 1.0;
   m_TimeShift    = 0.0;
 }
@@ -66,7 +66,7 @@ bool lhpOpImporterRSScan::Accept(mafNode *node)
   mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(node);
   if(cloud == NULL)
     return false;
-  if(cloud->FindLandmarkIndex("SNS1") == -1 || cloud->FindLandmarkIndex("SNS2") == -1 || cloud->FindLandmarkIndex("SNS3") == -1)
+  if(cloud->FindLandmarkIndex(_R("SNS1")) == -1 || cloud->FindLandmarkIndex(_R("SNS2")) == -1 || cloud->FindLandmarkIndex(_R("SNS3")) == -1)
     return false;
   return true;
 }
@@ -105,7 +105,7 @@ int lhpOpImporterRSScan::Read()
   {
     if (!m_TestMode)
     {
-      mafMessage(_("Error parsing input files! See log window for details..."),_("Error"));
+      mafErrorMessage(_M(mafString(_L("Error parsing input files! See log window for details..."))));
     }
   } 
   else if (returnValue == MAF_OK)
@@ -136,21 +136,21 @@ enum Mesh_Importer_ID
 void lhpOpImporterRSScan::CreateGui()
 //----------------------------------------------------------------------------
 {
-  mafString wildcardlis = "lis files (*.lis)|*.lis|All Files (*.*)|*.*";
-  mafString wildcardxls = "xls files (*.xls)|*.xls|All Files (*.*)|*.*";
+  mafString wildcardlis = _R("lis files (*.lis)|*.lis|All Files (*.*)|*.*");
+  mafString wildcardxls = _R("xls files (*.xls)|*.xls|All Files (*.*)|*.*");
 
   m_Gui = new mafGUI(this);
   m_Gui->SetListener(this);
 
-  m_Gui->Label(_("Plate params file:"), true);
-  m_Gui->FileOpen (ID_PLATE_PARAMS_FILE_NAME, "", &m_PlateParamsFileName, wildcardlis);
+  m_Gui->Label(_L("Plate params file:"), true);
+  m_Gui->FileOpen (ID_PLATE_PARAMS_FILE_NAME, _R(""), &m_PlateParamsFileName, wildcardlis);
   m_Gui->Divider();
  
-  m_Gui->Label(_("Data file:"), true);
-  m_Gui->FileOpen (ID_DATA_FILE_NAME, "", &m_DataFileName, wildcardxls);
+  m_Gui->Label(_L("Data file:"), true);
+  m_Gui->FileOpen (ID_DATA_FILE_NAME, _R(""), &m_DataFileName, wildcardxls);
   m_Gui->Divider();
-  m_Gui->Double(ID_SCALE,_("scale"),&m_Scale, 0.0, 1000.0);
-  m_Gui->Double(ID_TIMESHIFT,_("time shift"),&m_TimeShift);
+  m_Gui->Double(ID_SCALE,_L("scale"),&m_Scale, 0.0, 1000.0);
+  m_Gui->Double(ID_TIMESHIFT,_L("time shift"),&m_TimeShift);
 
   m_Gui->Divider(2);
   m_Gui->Divider();

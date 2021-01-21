@@ -38,7 +38,7 @@ mafCxxTypeMacro(lhpPipeIntGraphAnalog);
 
 const char *lhpPipeIntGraphAnalog::GetVarTitle(int i) const
 {
-  return m_Names[i];//"";//saVarDesc[i];
+  return m_Names[i].GetCStr();//"";//saVarDesc[i];
 }
 
 const char *lhpPipeIntGraphAnalog::GetVarUnit(int i)const
@@ -94,18 +94,18 @@ void lhpPipeIntGraphAnalog::Create(mafNode *node, mafView *view)
   m_Graph->AddXVar(0);
 
 
-  mafTagItem *tag_Signals = m_Node->GetTagArray()->GetTag("SIGNALS_NAME");
+  mafTagItem *tag_Signals = m_Node->GetTagArray()->GetTag(_R("SIGNALS_NAME"));
   bool tagPresent = (tag_Signals != NULL);
   if (!tagPresent)
   {
     mafTagItem tag_Sig;
-    tag_Sig.SetName("SIGNALS_NAME");
+    tag_Sig.SetName(_R("SIGNALS_NAME"));
     tag_Sig.SetNumberOfComponents(m_NumberOfSignals);
     m_Node->GetTagArray()->SetTag(tag_Sig);
-    mafTagItem *tag_Signals = m_Node->GetTagArray()->GetTag("SIGNALS_NAME");
+    mafTagItem *tag_Signals = m_Node->GetTagArray()->GetTag(_R("SIGNALS_NAME"));
   }
   mafString name;
-  m_Names.push_back("Time");
+  m_Names.push_back(_R("Time"));
 
   for (int n = 0; n < m_NumberOfSignals; n++)
   {
@@ -115,8 +115,7 @@ void lhpPipeIntGraphAnalog::Create(mafNode *node, mafView *view)
     }
     else
     {
-      name  = "analog_";
-      name += wxString::Format("%d", n);
+      name  = _R("analog_") + mafToString(n);
       tag_Signals->SetValue(name, n);
     }
     m_Names.push_back(name);
@@ -145,9 +144,9 @@ mafGUI *lhpPipeIntGraphAnalog::CreateGui()
   wxString name;
   bool checked = false;
 
-  m_CheckBoxXval = m_Gui->CheckList(ID_CHECK_BOXXVAL,_("X value"),100,_("Choose value for X axis"));
-  m_CheckBoxYval = m_Gui->CheckList(ID_CHECK_BOXYVAL,_("Y values"),100,_("Choose values for Y axis"));
-  m_CheckBoxYder = m_Gui->CheckList(ID_CHECK_BOXYDER,_("Y derivs"),100,_("Choose values for Y axis"));
+  m_CheckBoxXval = m_Gui->CheckList(ID_CHECK_BOXXVAL,_L("X value"),100,_L("Choose value for X axis"));
+  m_CheckBoxYval = m_Gui->CheckList(ID_CHECK_BOXYVAL,_L("Y values"),100,_L("Choose values for Y axis"));
+  m_CheckBoxYder = m_Gui->CheckList(ID_CHECK_BOXYDER,_L("Y derivs"),100,_L("Choose values for Y axis"));
 
   m_CheckBoxXval->SetCheckMode(MODE_RADIO);
   for (int n = 0; n < m_Names.size(); n++)

@@ -69,10 +69,10 @@ lhpOpFuseLMScripted::lhpOpFuseLMScripted(const mafString& label) : Superclass(la
   m_Source           = NULL;
   m_Target           = NULL;
   m_Registered       = NULL;
-  m_SourceName       ="none";
-  m_TargetName       ="none";
+  m_SourceName       =_R("none");
+  m_TargetName       =_R("none");
   m_MultiTime        = 0;
-  m_ListFName        = "";
+  m_ListFName        = _R("");
 }
 //----------------------------------------------------------------------------
 lhpOpFuseLMScripted::~lhpOpFuseLMScripted( ) 
@@ -109,24 +109,24 @@ void lhpOpFuseLMScripted::OpRun()
   m_Source = (mafVMELandmarkCloud*)m_Input;
   m_SourceName = m_Input->GetName();
   
-  mafString wildcard = "Dictionary (*.txt)|*.txt|All Files (*.*)|*.*";
+  mafString wildcard = _R("Dictionary (*.txt)|*.txt|All Files (*.*)|*.*");
 
   m_Gui = new mafGUI(this);
   m_Gui->SetListener(this);
   
-  m_Gui->Label(_("source :"),true);
+  m_Gui->Label(_L("source :"),true);
   m_Gui->Label(&m_SourceName);
   
-  m_Gui->Label(_("target :"),true);
+  m_Gui->Label(_L("target :"),true);
   m_Gui->Label(&m_TargetName);
-  m_Gui->Button(ID_CHOOSE,_("target "));
+  m_Gui->Button(ID_CHOOSE,_L("target "));
   
   
-  m_Gui->Bool(ID_MULTIPLE_TIME_REGISTRATION,_("multi-time"),&m_MultiTime,1);
+  m_Gui->Bool(ID_MULTIPLE_TIME_REGISTRATION,_L("multi-time"),&m_MultiTime,1);
   m_Gui->Enable(ID_MULTIPLE_TIME_REGISTRATION,false);
   
-  m_Gui->FileOpen(ID_LOAD_SCRIPT, "Script",  &m_ListFName, "*.txt");
-  m_Gui->Label("");
+  m_Gui->FileOpen(ID_LOAD_SCRIPT, _R("Script"),  &m_ListFName, _R("*.txt"));
+  m_Gui->Label(_R(""));
 
   m_Gui->OkCancel();
 
@@ -190,7 +190,7 @@ bool lhpOpFuseLMScripted::ReadLMDictionary(mafString *fileName)
   wxString     sSecondName("");
   //mafGraphDictionary *pEntry;
 
-  pFile = new wxTextFile(fileName->GetCStr());
+  pFile = new wxTextFile(fileName->toWx());
 
   if(pFile == NULL)
   {
@@ -247,7 +247,7 @@ void lhpOpFuseLMScripted::OnEvent(mafEventBase *maf_event)
     {
       case ID_CHOOSE:
       {
-        mafString s(_("Choose cloud"));
+        mafString s(_L("Choose cloud"));
         mafEvent e(this,VME_CHOOSE, &s, NULL/*, (long)&lhpOpFuseLMScripted::ClosedCloudAccept*/);
         mafEventMacro(e);
         mafNode *vme = e.GetVme();
@@ -255,7 +255,7 @@ void lhpOpFuseLMScripted::OnEvent(mafEventBase *maf_event)
       }
       break;
       case ID_LOAD_SCRIPT:
-        if(m_ListFName != "")
+        if(!m_ListFName.IsEmpty())
         {
           m_LMDict.clear();
           ReadLMDictionary(&m_ListFName);
@@ -306,7 +306,7 @@ bool lhpOpFuseLMScripted::RegistrationProcedure()
 
   if(m_Registered == NULL)
   {
-    wxString name = wxString::Format("%s registered on %s",m_Source->GetName().GetCStr(), m_Target->GetName().GetCStr());
+    mafString name = m_Source->GetName() + _R(" registered on ") + m_Target->GetName();
     m_Registered= mafVME::SafeDownCast(m_Source->CopyTree());
     m_Registered->Register(this);
     m_Registered->SetName(name);
@@ -335,13 +335,13 @@ bool lhpOpFuseLMScripted::RegistrationProcedure()
     mafVMELandmarkCloud *lmct = NULL;
     if(lmcs == NULL)//lmcr is of the same type as lmcs
       continue;
-    const char *search_name = nsrc->GetName();
+    const char *search_name = nsrc->GetName().GetCStr();
     for(int i = 0; i < m_LMDict.size(); i++)
     {
       search_name = NULL;
       if(usedEntries[i])
         continue;
-      if(mafString(nsrc->GetName()) == mafString(m_LMDict[i].first))
+      if(nsrc->GetName() == mafWxToString(m_LMDict[i].first))
       {
         usedEntries[i] = true;
         search_name = m_LMDict[i].second.c_str();
@@ -356,7 +356,7 @@ bool lhpOpFuseLMScripted::RegistrationProcedure()
         mafVMELandmarkCloud *lmtmp = mafVMELandmarkCloud::SafeDownCast(lmt);
         if(lmtmp == NULL)
           continue;
-        if(strstr(lmtmp->GetName(), search_name) != NULL)
+        if(strstr(lmtmp->GetName().GetCStr(), search_name) != NULL)
         {
           lmct = lmtmp;
           break;

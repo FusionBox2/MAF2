@@ -236,7 +236,7 @@ void lhpOpTextureOrientation::CreateOpDialog()
   //----------------------------------------------------------------------------
   // setup interface
   //----------------------------------------------------------------------------
-  m_Dialog = new mafGUIDialog("Texture Orientation", mafCLOSEWINDOW | mafRESIZABLE);
+  m_Dialog = new mafGUIDialog(_R("Texture Orientation"), mafCLOSEWINDOW | mafRESIZABLE);
 
   m_Rwi = new mafRWI(m_Dialog,ONE_LAYER,false);
   m_Rwi->SetListener(this);
@@ -279,13 +279,13 @@ void lhpOpTextureOrientation::CreateOpDialog()
   m_progressGauge = new wxGauge(m_Dialog, ID_PROGRESS_GAUGE, 100, p, wxSize(80,20), wxGA_HORIZONTAL) ;
   wxStaticText *filenameStaticTxt = new wxStaticText(m_Dialog, -1, "filename ") ;
   wxTextCtrl *filenameValueTxt = new wxTextCtrl(m_Dialog, ID_FILENAME_TXT, wxEmptyString, p, wxSize(80,20), wxTE_RIGHT) ;
-  m_printButton = new mafGUIButton(m_Dialog, ID_PRINT_BUTTON, "Print", p, wxSize(80,20));
+  m_printButton = new mafGUIButton(m_Dialog, ID_PRINT_BUTTON, _R("Print"), p, wxSize(80,20));
   m_printButton->Enable(false) ;
-  mafGUIButton *updateButton = new mafGUIButton(m_Dialog, ID_UPDATE, "Update", p, wxSize(80,20));
+  mafGUIButton *updateButton = new mafGUIButton(m_Dialog, ID_UPDATE, _R("Update"), p, wxSize(80,20));
 
   // ok and cancel
-  mafGUIButton  *ok = new mafGUIButton(m_Dialog, ID_OK, "ok", p, wxSize(80,20));
-  mafGUIButton  *cancel = new mafGUIButton(m_Dialog, ID_CANCEL, "cancel", p, wxSize(80,20));
+  mafGUIButton  *ok = new mafGUIButton(m_Dialog, ID_OK, _R("ok"), p, wxSize(80,20));
+  mafGUIButton  *cancel = new mafGUIButton(m_Dialog, ID_CANCEL, _R("cancel"), p, wxSize(80,20));
 
 
   // Set validators
@@ -528,7 +528,7 @@ void lhpOpTextureOrientation::CreateOutputVME()
 //----------------------------------------------------------------------------
 {
   mafNEW(m_polydataVME) ;
-  m_polydataVME->SetName("orientation") ;
+  m_polydataVME->SetName(_R("orientation")) ;
   m_polydataVME->SetData(m_polydata, 0) ;
   m_Output = m_polydataVME ;
   m_Output->ReparentTo(m_Input) ;

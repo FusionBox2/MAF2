@@ -73,13 +73,13 @@ void lhpOpHelAxis::OpRun()
 //----------------------------------------------------------------------------
 {
   mafNEW(m_HelicalSys);
-  m_HelicalSys->SetName("Helical_axis");
+  m_HelicalSys->SetName(_R("Helical_axis"));
   mafVMELandmarkCloud *lmc;
   mafNEW(lmc);
-  lmc->SetName("HA_Points");
-  lmc->AppendLandmark(0, 0,    0, "Pivot");
-  lmc->AppendLandmark(0, 0,  100, "PntFrt");
-  lmc->AppendLandmark(0, 0, -100, "PntBck");
+  lmc->SetName(_R("HA_Points"));
+  lmc->AppendLandmark(0, 0,    0, _R("Pivot"));
+  lmc->AppendLandmark(0, 0,  100, _R("PntFrt"));
+  lmc->AppendLandmark(0, 0, -100, _R("PntBck"));
   lmc->ReparentTo(m_HelicalSys);
   mafDEL(lmc);
   mafEventMacro(mafEvent(this,OP_RUN_OK)); 

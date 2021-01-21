@@ -36,7 +36,7 @@ class lhpOpStickPalpation: public mafOp
 {
 public:
   mafTypeMacro(lhpOpStickPalpation, mafOp)
-  lhpOpStickPalpation(const mafString& label = "StickPalpation");
+  lhpOpStickPalpation(const mafString& label = _R("StickPalpation"));
  ~lhpOpStickPalpation(); 
 
   virtual void OnEvent(mafEventBase *maf_event);

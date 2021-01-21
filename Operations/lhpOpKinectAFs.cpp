@@ -47,71 +47,71 @@
 // Forward Refs
 //----------------------------------------------------------------------------
 
-#define ADD_PREDEF(title, arr_name, boneID) predefinedScripts.push_back(PredefinedScripts(title, std::vector<mafString>(&arr_name[0], &arr_name[0] + sizeof(arr_name)/sizeof(arr_name[0])), mafVMEAFRefSys::ID_AFS_##boneID))
+#define ADD_PREDEF(title, arr_name, boneID) predefinedScripts.push_back(PredefinedScripts(_R(title), std::vector<mafString>(&arr_name[0], &arr_name[0] + sizeof(arr_name)/sizeof(arr_name[0])), mafVMEAFRefSys::ID_AFS_##boneID))
 void lhpOpKinectAFs::InitPredefined()
 {
-  /*mafString _S01[] = {"SUBV Y SPINE PELVIS", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P Pelvis"};
-  mafString _S02[] = {"SUBV Y SPINE PELVIS", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P Spine"};
-  mafString _S03[] = {"SUBV Y SPINE PELVIS", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P Thorax"};
-  mafString _S04[] = {"SUBV Y SPINE PELVIS", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P Head"};
-  mafString _S05[] = {"SUBV Y SPINE PELVIS", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P LeftShoulder"};
-  mafString _S06[] = {"SUBV Y SPINE PELVIS", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P LeftElbow"};
-  mafString _S07[] = {"SUBV Y SPINE PELVIS", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P LeftWrist"};
-  mafString _S08[] = {"SUBV Y SPINE PELVIS", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P LeftHand"};
-  mafString _S09[] = {"SUBV Y SPINE PELVIS", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P RightShoulder"};
-  mafString _S10[] = {"SUBV Y SPINE PELVIS", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P RightElbow"};
-  mafString _S11[] = {"SUBV Y SPINE PELVIS", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P RightWrist"};
-  mafString _S12[] = {"SUBV Y SPINE PELVIS", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P RightHand"};
-  mafString _S13[] = {"SUBV Y SPINE PELVIS", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P LeftHip"};
-  mafString _S14[] = {"SUBV Y SPINE PELVIS", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P LeftKnee"};
-  mafString _S15[] = {"SUBV Y SPINE PELVIS", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P LeftAnkle"};
-  mafString _S16[] = {"SUBV Y SPINE PELVIS", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P LeftFoot"};
-  mafString _S17[] = {"SUBV Y SPINE PELVIS", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P RightHip"};
-  mafString _S18[] = {"SUBV Y SPINE PELVIS", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P RightKnee"};
-  mafString _S19[] = {"SUBV Y SPINE PELVIS", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P RightAnkle"};
-  mafString _S20[] = {"SUBV Y SPINE PELVIS", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P RightFoot"};*/
+  /*mafString _S01[] = {_R("SUBV Y SPINE PELVIS"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P Pelvis")};
+  mafString _S02[] = {_R("SUBV Y SPINE PELVIS"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P Spine")};
+  mafString _S03[] = {_R("SUBV Y SPINE PELVIS"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P Thorax")};
+  mafString _S04[] = {_R("SUBV Y SPINE PELVIS"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P Head")};
+  mafString _S05[] = {_R("SUBV Y SPINE PELVIS"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P LeftShoulder")};
+  mafString _S06[] = {_R("SUBV Y SPINE PELVIS"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P LeftElbow")};
+  mafString _S07[] = {_R("SUBV Y SPINE PELVIS"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P LeftWrist")};
+  mafString _S08[] = {_R("SUBV Y SPINE PELVIS"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P LeftHand")};
+  mafString _S09[] = {_R("SUBV Y SPINE PELVIS"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P RightShoulder")};
+  mafString _S10[] = {_R("SUBV Y SPINE PELVIS"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P RightElbow")};
+  mafString _S11[] = {_R("SUBV Y SPINE PELVIS"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P RightWrist")};
+  mafString _S12[] = {_R("SUBV Y SPINE PELVIS"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P RightHand")};
+  mafString _S13[] = {_R("SUBV Y SPINE PELVIS"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P LeftHip")};
+  mafString _S14[] = {_R("SUBV Y SPINE PELVIS"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P LeftKnee")};
+  mafString _S15[] = {_R("SUBV Y SPINE PELVIS"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P LeftAnkle")};
+  mafString _S16[] = {_R("SUBV Y SPINE PELVIS"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P LeftFoot")};
+  mafString _S17[] = {_R("SUBV Y SPINE PELVIS"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P RightHip")};
+  mafString _S18[] = {_R("SUBV Y SPINE PELVIS"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P RightKnee")};
+  mafString _S19[] = {_R("SUBV Y SPINE PELVIS"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P RightAnkle")};
+  mafString _S20[] = {_R("SUBV Y SPINE PELVIS"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P RightFoot")};*/
 
-  mafString _F01[] = {"SUBV Y SPINE PELVIS", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P Pelvis"};
-  mafString _F02[] = {"SUBV Y SPINE PELVIS", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P Spine"};
-  mafString _F03[] = {"SUBV Y THORAX SPINE", "NRML Y", "SUBV Z RIGHTSHOULDER LEFTSHOULDER", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P Thorax"};
-  mafString _F04[] = {"SUBV Y THORAX SPINE", "NRML Y", "SUBV Z RIGHTSHOULDER LEFTSHOULDER", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P Head"};
-  mafString _F05[] = {"SUBV Y LEFTELBOW LEFTSHOULDER", "NRML Y", "SUBV Z RIGHTSHOULDER LEFTSHOULDER", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P LeftShoulder"};
-  mafString _F06[] = {"SUBV Y LEFTWRIST LEFTELBOW", "NRML Y", "SUBV Z RIGHTSHOULDER LEFTSHOULDER", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P LeftElbow"};
-  mafString _F07[] = {"SUBV Y LEFTHAND LEFTWRIST", "NRML Y", "SUBV Z RIGHTSHOULDER LEFTSHOULDER", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P LeftWrist"};
-  mafString _F08[] = {"SUBV Y LEFTHAND LEFTWRIST", "NRML Y", "SUBV Z RIGHTSHOULDER LEFTSHOULDER", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P LeftHand"};
-  mafString _F09[] = {"SUBV Y RIGHTSHOULDER RIGHTELBOW", "NRML Y", "SUBV Z RIGHTSHOULDER LEFTSHOULDER", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P RightShoulder"};
-  mafString _F10[] = {"SUBV Y RIGHTELBOW RIGHTWRIST", "NRML Y", "SUBV Z RIGHTSHOULDER LEFTSHOULDER", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P RightElbow"};
-  mafString _F11[] = {"SUBV Y RIGHTWRIST RIGHTHAND", "NRML Y", "SUBV Z RIGHTSHOULDER LEFTSHOULDER", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P RightWrist"};
-  mafString _F12[] = {"SUBV Y RIGHTWRIST RIGHTHAND", "NRML Y", "SUBV Z RIGHTSHOULDER LEFTSHOULDER", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P RightHand"};
-  mafString _F13[] = {"SUBV Y LEFTKNEE LEFTHIP", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P LeftHip"};
-  mafString _F14[] = {"SUBV Y LEFTANKLE LEFTKNEE", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P LeftKnee"};
-  mafString _F15[] = {"SUBV X LEFTANKLE LEFTFOOT", "NRML X", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS Y Z X", "NRML Y", "CROSS Z X Y", "NRML Z", "ASSV P LeftAnkle"};
-  mafString _F16[] = {"SUBV X LEFTANKLE LEFTFOOT", "NRML X", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS Y Z X", "NRML Y", "CROSS Z X Y", "NRML Z", "ASSV P LeftFoot"};
-  mafString _F17[] = {"SUBV Y RIGHTHIP RIGHTKNEE", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P RightHip"};
-  mafString _F18[] = {"SUBV Y RIGHTKNEE RIGHTANKLE", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P RightKnee"};
-  mafString _F19[] = {"SUBV X RIGHTFOOT RIGHTANKLE", "NRML X", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS Y Z X", "NRML Y", "CROSS Z X Y", "NRML Z", "ASSV P RightAnkle"};
-  mafString _F20[] = {"SUBV X RIGHTFOOT RIGHTANKLE", "NRML X", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS Y Z X", "NRML Y", "CROSS Z X Y", "NRML Z", "ASSV P RightFoot"};
+  mafString _F01[] = {_R("SUBV Y SPINE PELVIS"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P Pelvis")};
+  mafString _F02[] = {_R("SUBV Y SPINE PELVIS"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P Spine")};
+  mafString _F03[] = {_R("SUBV Y THORAX SPINE"), _R("NRML Y"), _R("SUBV Z RIGHTSHOULDER LEFTSHOULDER"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P Thorax")};
+  mafString _F04[] = {_R("SUBV Y THORAX SPINE"), _R("NRML Y"), _R("SUBV Z RIGHTSHOULDER LEFTSHOULDER"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P Head")};
+  mafString _F05[] = {_R("SUBV Y LEFTELBOW LEFTSHOULDER"), _R("NRML Y"), _R("SUBV Z RIGHTSHOULDER LEFTSHOULDER"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P LeftShoulder")};
+  mafString _F06[] = {_R("SUBV Y LEFTWRIST LEFTELBOW"), _R("NRML Y"), _R("SUBV Z RIGHTSHOULDER LEFTSHOULDER"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P LeftElbow")};
+  mafString _F07[] = {_R("SUBV Y LEFTHAND LEFTWRIST"), _R("NRML Y"), _R("SUBV Z RIGHTSHOULDER LEFTSHOULDER"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P LeftWrist")};
+  mafString _F08[] = {_R("SUBV Y LEFTHAND LEFTWRIST"), _R("NRML Y"), _R("SUBV Z RIGHTSHOULDER LEFTSHOULDER"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P LeftHand")};
+  mafString _F09[] = {_R("SUBV Y RIGHTSHOULDER RIGHTELBOW"), _R("NRML Y"), _R("SUBV Z RIGHTSHOULDER LEFTSHOULDER"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P RightShoulder")};
+  mafString _F10[] = {_R("SUBV Y RIGHTELBOW RIGHTWRIST"), _R("NRML Y"), _R("SUBV Z RIGHTSHOULDER LEFTSHOULDER"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P RightElbow")};
+  mafString _F11[] = {_R("SUBV Y RIGHTWRIST RIGHTHAND"), _R("NRML Y"), _R("SUBV Z RIGHTSHOULDER LEFTSHOULDER"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P RightWrist")};
+  mafString _F12[] = {_R("SUBV Y RIGHTWRIST RIGHTHAND"), _R("NRML Y"), _R("SUBV Z RIGHTSHOULDER LEFTSHOULDER"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P RightHand")};
+  mafString _F13[] = {_R("SUBV Y LEFTKNEE LEFTHIP"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P LeftHip")};
+  mafString _F14[] = {_R("SUBV Y LEFTANKLE LEFTKNEE"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P LeftKnee")};
+  mafString _F15[] = {_R("SUBV X LEFTANKLE LEFTFOOT"), _R("NRML X"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS Y Z X"), _R("NRML Y"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P LeftAnkle")};
+  mafString _F16[] = {_R("SUBV X LEFTANKLE LEFTFOOT"), _R("NRML X"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS Y Z X"), _R("NRML Y"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P LeftFoot")};
+  mafString _F17[] = {_R("SUBV Y RIGHTHIP RIGHTKNEE"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P RightHip")};
+  mafString _F18[] = {_R("SUBV Y RIGHTKNEE RIGHTANKLE"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P RightKnee")};
+  mafString _F19[] = {_R("SUBV X RIGHTFOOT RIGHTANKLE"), _R("NRML X"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS Y Z X"), _R("NRML Y"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P RightAnkle")};
+  mafString _F20[] = {_R("SUBV X RIGHTFOOT RIGHTANKLE"), _R("NRML X"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS Y Z X"), _R("NRML Y"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P RightFoot")};
 
-  mafString _A01[] = {"SUBV Y SPINE PELVIS", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P Pelvis"};
-  mafString _A02[] = {"SUBV Y SPINE PELVIS", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P Spine"};
-  mafString _A03[] = {"SUBV Y THORAX SPINE", "NRML Y", "SUBV Z RIGHTSHOULDER LEFTSHOULDER", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P Thorax"};
-  mafString _A04[] = {"SUBV Y THORAX SPINE", "NRML Y", "SUBV Z RIGHTSHOULDER LEFTSHOULDER", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P Head"};
-  mafString _A05[] = {"SUBV Y LEFTELBOW LEFTSHOULDER", "NRML Y", "SUBV Y1 THORAX SPINE", "NRML Y1", "SUBV Z1 RIGHTSHOULDER LEFTSHOULDER", "NRML Z1", "CROSS X Y1 Z1", "NRML X", "CROSS Z X Y", "NRML Z", "CROSS X Y Z", "NRML X", "ASSV P LeftShoulder"};
-  mafString _A06[] = {"SUBV Y LEFTWRIST LEFTELBOW", "NRML Y", "SUBV Z RIGHTSHOULDER LEFTSHOULDER", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P LeftElbow"};
-  mafString _A07[] = {"SUBV Y LEFTHAND LEFTWRIST", "NRML Y", "SUBV Z RIGHTSHOULDER LEFTSHOULDER", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P LeftWrist"};
-  mafString _A08[] = {"SUBV Y LEFTHAND LEFTWRIST", "NRML Y", "SUBV Z RIGHTSHOULDER LEFTSHOULDER", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P LeftHand"};
-  mafString _A09[] = {"SUBV Y RIGHTSHOULDER RIGHTELBOW", "NRML Y", "SUBV Y1 THORAX SPINE", "NRML Y1", "SUBV Z1 RIGHTSHOULDER LEFTSHOULDER", "NRML Z1", "CROSS X Z1 Y1", "NRML X", "CROSS Z X Y", "NRML Z", "CROSS X Y Z", "NRML X", "ASSV P RightShoulder"};
-  mafString _A10[] = {"SUBV Y RIGHTELBOW RIGHTWRIST", "NRML Y", "SUBV Z RIGHTSHOULDER LEFTSHOULDER", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P RightElbow"};
-  mafString _A11[] = {"SUBV Y RIGHTWRIST RIGHTHAND", "NRML Y", "SUBV Z RIGHTSHOULDER LEFTSHOULDER", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P RightWrist"};
-  mafString _A12[] = {"SUBV Y RIGHTWRIST RIGHTHAND", "NRML Y", "SUBV Z RIGHTSHOULDER LEFTSHOULDER", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P RightHand"};
-  mafString _A13[] = {"SUBV Y LEFTKNEE LEFTHIP", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P LeftHip"};
-  mafString _A14[] = {"SUBV Y LEFTANKLE LEFTKNEE", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P LeftKnee"};
-  mafString _A15[] = {"SUBV X LEFTANKLE LEFTFOOT", "NRML X", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS Y Z X", "NRML Y", "CROSS Z X Y", "NRML Z", "ASSV P LeftAnkle"};
-  mafString _A16[] = {"SUBV X LEFTANKLE LEFTFOOT", "NRML X", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS Y Z X", "NRML Y", "CROSS Z X Y", "NRML Z", "ASSV P LeftFoot"};
-  mafString _A17[] = {"SUBV Y RIGHTHIP RIGHTKNEE", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P RightHip"};
-  mafString _A18[] = {"SUBV Y RIGHTKNEE RIGHTANKLE", "NRML Y", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS X Y Z", "NRML X", "CROSS Z X Y", "NRML Z", "ASSV P RightKnee"};
-  mafString _A19[] = {"SUBV X RIGHTFOOT RIGHTANKLE", "NRML X", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS Y Z X", "NRML Y", "CROSS Z X Y", "NRML Z", "ASSV P RightAnkle"};
-  mafString _A20[] = {"SUBV X RIGHTFOOT RIGHTANKLE", "NRML X", "SUBV Z RIGHTHIP LEFTHIP", "NRML Z", "CROSS Y Z X", "NRML Y", "CROSS Z X Y", "NRML Z", "ASSV P RightFoot"};
+  mafString _A01[] = {_R("SUBV Y SPINE PELVIS"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P Pelvis")};
+  mafString _A02[] = {_R("SUBV Y SPINE PELVIS"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P Spine")};
+  mafString _A03[] = {_R("SUBV Y THORAX SPINE"), _R("NRML Y"), _R("SUBV Z RIGHTSHOULDER LEFTSHOULDER"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P Thorax")};
+  mafString _A04[] = {_R("SUBV Y THORAX SPINE"), _R("NRML Y"), _R("SUBV Z RIGHTSHOULDER LEFTSHOULDER"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P Head")};
+  mafString _A05[] = {_R("SUBV Y LEFTELBOW LEFTSHOULDER"), _R("NRML Y"), _R("SUBV Y1 THORAX SPINE"), _R("NRML Y1"), _R("SUBV Z1 RIGHTSHOULDER LEFTSHOULDER"), _R("NRML Z1"), _R("CROSS X Y1 Z1"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("ASSV P LeftShoulder")};
+  mafString _A06[] = {_R("SUBV Y LEFTWRIST LEFTELBOW"), _R("NRML Y"), _R("SUBV Z RIGHTSHOULDER LEFTSHOULDER"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P LeftElbow")};
+  mafString _A07[] = {_R("SUBV Y LEFTHAND LEFTWRIST"), _R("NRML Y"), _R("SUBV Z RIGHTSHOULDER LEFTSHOULDER"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P LeftWrist")};
+  mafString _A08[] = {_R("SUBV Y LEFTHAND LEFTWRIST"), _R("NRML Y"), _R("SUBV Z RIGHTSHOULDER LEFTSHOULDER"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P LeftHand")};
+  mafString _A09[] = {_R("SUBV Y RIGHTSHOULDER RIGHTELBOW"), _R("NRML Y"), _R("SUBV Y1 THORAX SPINE"), _R("NRML Y1"), _R("SUBV Z1 RIGHTSHOULDER LEFTSHOULDER"), _R("NRML Z1"), _R("CROSS X Z1 Y1"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("ASSV P RightShoulder")};
+  mafString _A10[] = {_R("SUBV Y RIGHTELBOW RIGHTWRIST"), _R("NRML Y"), _R("SUBV Z RIGHTSHOULDER LEFTSHOULDER"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P RightElbow")};
+  mafString _A11[] = {_R("SUBV Y RIGHTWRIST RIGHTHAND"), _R("NRML Y"), _R("SUBV Z RIGHTSHOULDER LEFTSHOULDER"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P RightWrist")};
+  mafString _A12[] = {_R("SUBV Y RIGHTWRIST RIGHTHAND"), _R("NRML Y"), _R("SUBV Z RIGHTSHOULDER LEFTSHOULDER"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P RightHand")};
+  mafString _A13[] = {_R("SUBV Y LEFTKNEE LEFTHIP"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P LeftHip")};
+  mafString _A14[] = {_R("SUBV Y LEFTANKLE LEFTKNEE"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P LeftKnee")};
+  mafString _A15[] = {_R("SUBV X LEFTANKLE LEFTFOOT"), _R("NRML X"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS Y Z X"), _R("NRML Y"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P LeftAnkle")};
+  mafString _A16[] = {_R("SUBV X LEFTANKLE LEFTFOOT"), _R("NRML X"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS Y Z X"), _R("NRML Y"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P LeftFoot")};
+  mafString _A17[] = {_R("SUBV Y RIGHTHIP RIGHTKNEE"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P RightHip")};
+  mafString _A18[] = {_R("SUBV Y RIGHTKNEE RIGHTANKLE"), _R("NRML Y"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS X Y Z"), _R("NRML X"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P RightKnee")};
+  mafString _A19[] = {_R("SUBV X RIGHTFOOT RIGHTANKLE"), _R("NRML X"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS Y Z X"), _R("NRML Y"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P RightAnkle")};
+  mafString _A20[] = {_R("SUBV X RIGHTFOOT RIGHTANKLE"), _R("NRML X"), _R("SUBV Z RIGHTHIP LEFTHIP"), _R("NRML Z"), _R("CROSS Y Z X"), _R("NRML Y"), _R("CROSS Z X Y"), _R("NRML Z"), _R("ASSV P RightFoot")};
 
   {
     std::vector<PredefinedScripts> predefinedScripts;
@@ -246,16 +246,16 @@ enum
 void lhpOpKinectAFs::OpRun()   
 //----------------------------------------------------------------------------
 {
-  mafString refs_names[] = {"Flex", "Abd"};
+  mafString refs_names[] = {_R("Flex"), _R("Abd")};
   std::vector<PredefinedScripts>& predefinedScripts = m_predefinedScripts[m_TypeOfRefs];
   for(unsigned nm = 0; nm < predefinedScripts.size(); nm++)
   {
     mafVMEAFRefSys *refsys;
     mafNEW(refsys);
     mafString str(m_Input->GetName());
-    str += "_";
+    str += _R("_");
     str += predefinedScripts[nm].m_Name;
-    str += "_";
+    str += _R("_");
     str += refs_names[m_TypeOfRefs];
     refsys->SetName(str);
     refsys->SetScriptText(predefinedScripts[nm].m_Script);
@@ -270,17 +270,17 @@ void lhpOpKinectAFs::OpRun()
 void lhpOpKinectAFs::CreateGui()
 //----------------------------------------------------------------------------
 {
-  mafString refs_names[] = {"Flexion", "Abduction"};
+  mafString refs_names[] = {_R("Flexion"), _R("Abduction")};
   m_Gui = new mafGUI(this);
   m_Gui->SetListener(this);
 
-  m_Gui->Combo(ID_TYPEOFREFS, "Type",&m_TypeOfRefs, 2, refs_names);
+  m_Gui->Combo(ID_TYPEOFREFS, _R("Type"),&m_TypeOfRefs, 2, refs_names);
   m_Gui->OkCancel();
   ShowGui();
 }
 void lhpOpKinectAFs::SetTypeOfRefs(int i)
 {
-  mafString refs_names[] = {"Flex", "Abd"};
+  mafString refs_names[] = {_R("Flex"), _R("Abd")};
   m_TypeOfRefs = i;
   if(m_RefSys.empty())
     return;
@@ -289,9 +289,9 @@ void lhpOpKinectAFs::SetTypeOfRefs(int i)
   {
     mafVMEAFRefSys *refsys = m_RefSys[nm];
     mafString str(m_Input->GetName());
-    str += "_";
+    str += _R("_");
     str += predefinedScripts[nm].m_Name;
-    str += "_";
+    str += _R("_");
     str += refs_names[m_TypeOfRefs];
     refsys->SetName(str);
     refsys->SetScriptText(predefinedScripts[nm].m_Script);

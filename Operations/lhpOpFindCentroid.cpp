@@ -110,12 +110,12 @@ void lhpOpFindCentroid::OpRun()
       mafNEW(cloud);
       if(!cloud)
         mafEventMacro(mafEvent(this,OP_RUN_CANCEL));
-      cloud->SetName("Centroid");
+      cloud->SetName(_R("Centroid"));
       mafTagItem tag_Nature;
-      tag_Nature.SetName("VME_NATURE");
-      tag_Nature.SetValue("NATURAL");
+      tag_Nature.SetName(_R("VME_NATURE"));
+      tag_Nature.SetValue(_R("NATURAL"));
       cloud->GetTagArray()->SetTag(tag_Nature);
-      cloud->AppendLandmark("Centroid");
+      cloud->AppendLandmark(_R("Centroid"));
     }
     cloud->SetLandmark(0, centroid.x, centroid.y, centroid.z, it->first);
   }

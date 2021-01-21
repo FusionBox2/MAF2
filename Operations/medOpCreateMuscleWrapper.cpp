@@ -64,7 +64,7 @@ void medOpCreateMuscleWrapper::OpRun()
 //----------------------------------------------------------------------------
 {
   mafNEW(m_Meter);
-  m_Meter->SetName("Muscle Wrapped Meter");
+  m_Meter->SetName(_R("Muscle Wrapped Meter"));
   m_Output = m_Meter;
   mafEventMacro(mafEvent(this,OP_RUN_OK));
 }

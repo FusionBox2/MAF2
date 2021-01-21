@@ -483,7 +483,7 @@ lhpOpRegistration::lhpOpRegistration(const mafString& label) : Superclass(label)
   m_OpType      = OPTYPE_OP;
   m_Canundo     = true;
   m_RegTarget   = NULL;
-  m_RegTrgName  = "";
+  m_RegTrgName  = _R("");
   m_RefStampTrg = 0.0;
   m_RefStampSrc = 0.0;
 
@@ -574,12 +574,12 @@ void lhpOpRegistration::CreateGui()
 {
   m_Gui = new mafGUI(this);
   m_Gui->SetListener(this);
-  m_Gui->Button(ID_REGTRG, "Reg target", "", "Press to select." );  
-  m_Gui->Label("Wnd d.VME",&m_RegTrgName);
-  m_Gui->Bool(ID_SCALE, "Scale", &m_Scale);
-  m_Gui->Bool(ID_PRIMARY, "Primary", &m_Primary);
-  m_Gui->Bool(ID_ADVANCED, "Advanced", &m_Advanced);
-  m_Gui->Bool(ID_REGRESSION, "Regression", &m_Regression);
+  m_Gui->Button(ID_REGTRG, _R("Reg target"), _R(""), _R("Press to select.") );
+  m_Gui->Label(_R("Wnd d.VME"),&m_RegTrgName);
+  m_Gui->Bool(ID_SCALE, _R("Scale"), &m_Scale);
+  m_Gui->Bool(ID_PRIMARY, _R("Primary"), &m_Primary);
+  m_Gui->Bool(ID_ADVANCED, _R("Advanced"), &m_Advanced);
+  m_Gui->Bool(ID_REGRESSION, _R("Regression"), &m_Regression);
   m_Gui->OkCancel();
   ShowGui();
 }
@@ -1556,7 +1556,7 @@ bool lhpOpRegistration::RegistrationProcedure()
   mafVMEGroup *grp;
   mafNEW(grp);
   mafNode *trgCopy = NULL;
-  grp->SetName("DSRegistration_result");
+  grp->SetName(_R("DSRegistration_result"));
   m_Result = grp;
   if(m_Primary)
   {
@@ -1680,8 +1680,8 @@ void lhpOpRegistration::SetNodeName(mafVME *pVME, mafString *pName)
   *pName = pVME->GetName();
   if(pVME->GetParent() != NULL)
   {
-    *pName = *pName + " parent:";
-    *pName = *pName + pVME->GetParent()->GetName().GetCStr();
+    *pName += _R(" parent:");
+    *pName += pVME->GetParent()->GetName();
   }
 }
 
@@ -1708,7 +1708,7 @@ void lhpOpRegistration::OnEvent(mafEventBase *maf_event)
     break;
     case ID_REGTRG:
     {
-      mafString s("Choose reg data");
+      mafString s(_R("Choose reg data"));
       mafEvent e(this,VME_CHOOSE, &s);
       mafEventMacro(e);
       if(e.GetVme() == NULL)

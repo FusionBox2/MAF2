@@ -47,22 +47,22 @@ mafCxxTypeMacro(lhpOpImporterAnsysInputFile);
 lhpOpImporterAnsysInputFile::lhpOpImporterAnsysInputFile(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
-  m_PythonExe = "python.exe_UNDEFINED";
-  m_PythonwExe = "pythonw.exe_UNDEFINED";
+  m_PythonExe = _R("python.exe_UNDEFINED");
+  m_PythonwExe = _R("pythonw.exe_UNDEFINED");
   m_OpType  = OPTYPE_IMPORTER;
   m_Canundo = true;
   m_ImporterType = 0;
   m_ImportedVmeMesh = NULL;
-  m_NodesFileName = "";
-  m_ElementsFileName = "";
-  m_MaterialsFileName = "";
-  m_AnsysInputFileName = "";
-  m_CacheDir = (lhpUtils::lhpGetApplicationDirectory() + "\\Data\\AnsysReaderCache");
-  m_AnsysInputFileNameFullPath		= "";
-  m_FileDir = (lhpUtils::lhpGetApplicationDirectory() + "/Data/External/");
+  m_NodesFileName = _R("");
+  m_ElementsFileName = _R("");
+  m_MaterialsFileName = _R("");
+  m_AnsysInputFileName = _R("");
+  m_CacheDir = lhpUtils::lhpGetApplicationDirectory() + _R("\\Data\\AnsysReaderCache");
+  m_AnsysInputFileNameFullPath		= _R("");
+  m_FileDir = lhpUtils::lhpGetApplicationDirectory() + _R("/Data/External/");
   
   // This is for deploy: need to work on PYTHONPATH to solve issues with Python modules execution path...
-  m_AnsysPythonImporterFullPathFileName = (lhpUtils::lhpGetApplicationDirectory() + "\\ASCIIParser\\ansysReader.py");
+  m_AnsysPythonImporterFullPathFileName = lhpUtils::lhpGetApplicationDirectory() + _R("\\ASCIIParser\\ansysReader.py");
   
   // This is for local testing: 
   // m_AnsysPythonImporterFullPathFileName = "D:\\vapps\\LHPBuilder_Parabuild\\ASCIIParser\\ansysReader.py";
@@ -101,8 +101,8 @@ void lhpOpImporterAnsysInputFile::OpRun()
   if(eventGetPythonExe.GetString())
   {
     m_PythonExe.Erase(0);
-    m_PythonExe = eventGetPythonExe.GetString()->GetCStr();
-    m_PythonExe.Append(" ");
+    m_PythonExe = *eventGetPythonExe.GetString();
+    m_PythonExe.Append(_R(" "));
   }
 
   mafEvent eventGetPythonwExe;
@@ -113,8 +113,8 @@ void lhpOpImporterAnsysInputFile::OpRun()
   if(eventGetPythonwExe.GetString())
   {
     m_PythonwExe.Erase(0);
-    m_PythonwExe = eventGetPythonwExe.GetString()->GetCStr();
-    m_PythonwExe.Append(" ");
+    m_PythonwExe = *eventGetPythonwExe.GetString();
+    m_PythonwExe.Append(_R(" "));
   }
 
 
@@ -136,63 +136,62 @@ int lhpOpImporterAnsysInputFile::Read()
 //   wxExecute (command, output, errors);
   
   // execute the Python reader
-  wxString command2execute;
+  mafString command2execute;
   // mafLogMessage(wxGetCwd());
 
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
-  command2execute = m_PythonExe.GetCStr();
-  command2execute.Append(" \"\"");
-  command2execute.Append(m_AnsysPythonImporterFullPathFileName.c_str());
-  command2execute.Append(" \"");
-  command2execute.Append(m_AnsysInputFileNameFullPath.c_str());
-  command2execute.Append("\" \"");
+  command2execute = m_PythonExe;
+  command2execute.Append(_R(" \"\""));
+  command2execute.Append(m_AnsysPythonImporterFullPathFileName);
+  command2execute.Append(_R(" \"\""));
+  command2execute.Append(m_AnsysInputFileNameFullPath);
+  command2execute.Append(_R(" \"\""));
   command2execute.Append(m_CacheDir);
-  command2execute.Append("\" ");
-  command2execute.Append("\"nodes.lis\" \"elements.lis\" \"materials.lis\"");
+  command2execute.Append(_R(" \"\""));
+  command2execute.Append(_R("\"nodes.lis\" \"elements.lis\" \"materials.lis\""));
   
-  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  mafLogMessage(_M(_R("Executing command: '") + command2execute + _R("'")));
 
   // m_Pid = wxExecute(command2execute, output, errors, wxEXEC_NODISABLE);
-  m_Pid = wxExecute(command2execute, wxEXEC_SYNC);
+  m_Pid = wxExecute(command2execute.toWx(), wxEXEC_SYNC);
 
   for (int i = 0; i < output.GetCount(); i++)
   {
-    mafLogMessage(output[i].c_str());
+    mafLogMessage(_M(mafWxToString(output[i])));
   }
   
-  if ( !command2execute )
+  if ( !command2execute.GetCStr())
     return MAF_ERROR;
 
-  mafLogMessage(_T("Command process '%s' terminated with exit code %d."),
-    command2execute.c_str(), m_Pid);
+  mafLogMessage(_M(_R("Command process '") + command2execute + _R("' terminated with exit code ") + mafToString(m_Pid) + _R(".")));
 
-  m_NodesFileName = m_CacheDir + "\\nodes.lis" ;
-  m_ElementsFileName = m_CacheDir + "\\elements.lis" ;
-  m_MaterialsFileName = m_CacheDir + "\\materials.lis" ;
+  m_NodesFileName = m_CacheDir + _R("\\nodes.lis") ;
+  m_ElementsFileName = m_CacheDir + _R("\\elements.lis") ;
+  m_MaterialsFileName = m_CacheDir + _R("\\materials.lis") ;
 
   mafVMEMeshAnsysTextImporter *reader = new mafVMEMeshAnsysTextImporter;
-	reader->SetNodesFileName(m_NodesFileName.c_str());
-  reader->SetElementsFileName(m_ElementsFileName.c_str());
-  reader->SetMaterialsFileName(m_MaterialsFileName.c_str());
+	reader->SetNodesFileName(m_NodesFileName.GetCStr());
+  reader->SetElementsFileName(m_ElementsFileName.GetCStr());
+  reader->SetMaterialsFileName(m_MaterialsFileName.GetCStr());
 	int returnValue = reader->Read();
 
   if (returnValue == MAF_ERROR)
   {
     if (!m_TestMode)
     {
-      mafMessage(_("Error parsing input files! See log window for details..."),_("Error"));
+      mafErrorMessage(_M(mafString(_L("Error parsing input files! See log window for details..."))));
     }
   } 
   else if (returnValue == MAF_OK)
   {
     mafNEW(m_ImportedVmeMesh);
-    m_ImportedVmeMesh->SetName("Imported Mesh");
+    m_ImportedVmeMesh->SetName(_R("Imported Mesh"));
 	  m_ImportedVmeMesh->SetDataByDetaching(reader->GetOutput()->GetUnstructuredGridOutput()->GetVTKData(),0);
 
     mafTagItem tag_Nature;
-    tag_Nature.SetName("VME_NATURE");
-    tag_Nature.SetValue("NATURAL");
+    tag_Nature.SetName(_R("VME_NATURE"));
+    tag_Nature.SetValue(_R("NATURAL"));
     m_ImportedVmeMesh->GetTagArray()->SetTag(tag_Nature);
 
     m_Output = m_ImportedVmeMesh;
@@ -218,14 +217,14 @@ enum Mesh_Importer_ID
 void lhpOpImporterAnsysInputFile::CreateGui()
 //----------------------------------------------------------------------------
 {
-  mafString wildcard = "inp files (*.inp)|*.inp|All Files (*.*)|*.*";
+  mafString wildcard = _R("inp files (*.inp)|*.inp|All Files (*.*)|*.*");
 
   int result = OP_RUN_CANCEL;
-  m_AnsysInputFileNameFullPath = "";
+  m_AnsysInputFileNameFullPath = _R("");
   
-  wxString f;
-  f = mafGetOpenFile(m_FileDir,wildcard).GetCStr(); 
-  if(!f.IsEmpty() && wxFileExists(f))
+  mafString f;
+  f = mafGetOpenFile(m_FileDir,wildcard); 
+  if(!f.IsEmpty() && mafFileExists(f))
   {
     m_AnsysInputFileNameFullPath = f;
     Read();

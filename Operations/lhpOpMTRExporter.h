@@ -36,7 +36,7 @@ class lhpOpMTRExporter: public mafOp
 {
 public:
   mafTypeMacro(lhpOpMTRExporter, mafOp)
-  lhpOpMTRExporter(const mafString& label = "MTRExporter");
+  lhpOpMTRExporter(const mafString& label = _R("MTRExporter"));
   ~lhpOpMTRExporter(); 
   mafOp* Copy();
   void OnEvent(mafEventBase *maf_event);
@@ -50,13 +50,13 @@ public:
   void ExportLandmark();
 
   /** Set the filename for export */
-  void SetFileName(const char *file_name) {m_File = file_name;};
+  void SetFileName(const char *file_name) {m_File = _R(file_name);};
 
 protected:
   void ExportingTraverse(std::ostream &out, const char *dirName, mafNode* node);
   void ExportOneCloud(std::ostream &out, mafVMELandmarkCloud* cloud);
-  wxString m_File;
-  wxString m_FileDir;
+  mafString m_File;
+  mafString m_FileDir;
   mafVME   *m_Vme; 
   int      m_ABSPos;
 };

@@ -58,7 +58,7 @@ lhpOpRepresentInAF::lhpOpRepresentInAF(const mafString& label) : Superclass(labe
   m_Canundo       = false;
   m_MultiTime     = true;
   m_ApplyChildren = true;
-  m_RefsysName    = "none";
+  m_RefsysName    = _R("none");
   m_RefSys        = NULL;
 }
 //----------------------------------------------------------------------------
@@ -98,9 +98,9 @@ void lhpOpRepresentInAF::OpRun()
   m_Gui = new mafGUI(this);
   m_Gui->SetListener(this);
 
-  m_Gui->Label(_("refsys :"),true);
+  m_Gui->Label(_L("refsys :"),true);
   m_Gui->Label(&m_RefsysName);
-  m_Gui->Button(ID_CHOOSE,_("refsys "));
+  m_Gui->Button(ID_CHOOSE,_L("refsys "));
 
   //m_Gui->Bool(ID_MULTIPLE_TIME_REGISTRATION,_("multi-time"),&m_MultiTime,1);
   //m_Gui->Enable(ID_MULTIPLE_TIME_REGISTRATION,((mafVMELandmarkCloud*)m_Input)->IsAnimated());
@@ -122,7 +122,7 @@ void lhpOpRepresentInAF::OnEvent(mafEventBase *maf_event)
     {
       case ID_CHOOSE:
       {
-        mafString s(_("Choose refsys"));
+        mafString s(_L("Choose refsys"));
         mafEvent e(this, VME_CHOOSE, &s, NULL/*, (long)&lhpOpRepresentInAF::RefSysAccept*/);
         mafEventMacro(e);
         mafVMERefSysAbstract *rsa = mafVMERefSysAbstract::SafeDownCast(e.GetVme());

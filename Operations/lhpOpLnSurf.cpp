@@ -120,20 +120,20 @@ bool lhpOpLnSurf::Accept(mafNode* vme)
 void lhpOpLnSurf::OpRun()   
 //----------------------------------------------------------------------------
 {
-  const mafString choices_string[] = {_("Lines and surface"), _("Surface"), _("Lines")}; 
+  const mafString choices_string[] = {_L("Lines and surface"), _L("Surface"), _L("Lines")}; 
   if(m_Gui == NULL)
   {
     m_Gui = new mafGUI(this);
-    m_Gui->FloatSlider(ID_RHO_SPL, "rho spline param",&m_rhoLine, 0.0, 1000.0);
-    m_Gui->FloatSlider(ID_RHO_SRF, "rho surface param",&m_rhoSurf, 0.0, 1000.0);
-    m_Gui->FloatSlider(ID_SGM_SRF, "sigma surface param",&m_sgmSurf, 0.0, 1000.0);
-    m_Gui->Slider(ID_DIM_SPL, "curve split number",&m_splDim, 4, 100);
-    m_Gui->Slider(ID_DIMX_SRF, "surface x-split number",&m_xDim, 4, 100);
-    m_Gui->Slider(ID_DIMY_SRF, "surface y-split number",&m_yDim, 4, 100);
-    m_Gui->Combo(ID_GEN_LIST, _("reg. type"), &m_generateLinesSurfaces, 3, choices_string); 
-    m_Gui->Bool(ID_PARSE_NAME, _("parse names"), &m_parseNames);
+    m_Gui->FloatSlider(ID_RHO_SPL, _R("rho spline param"),&m_rhoLine, 0.0, 1000.0);
+    m_Gui->FloatSlider(ID_RHO_SRF, _R("rho surface param"),&m_rhoSurf, 0.0, 1000.0);
+    m_Gui->FloatSlider(ID_SGM_SRF, _R("sigma surface param"),&m_sgmSurf, 0.0, 1000.0);
+    m_Gui->Slider(ID_DIM_SPL, _R("curve split number"),&m_splDim, 4, 100);
+    m_Gui->Slider(ID_DIMX_SRF, _R("surface x-split number"),&m_xDim, 4, 100);
+    m_Gui->Slider(ID_DIMY_SRF, _R("surface y-split number"),&m_yDim, 4, 100);
+    m_Gui->Combo(ID_GEN_LIST, _L("reg. type"), &m_generateLinesSurfaces, 3, choices_string); 
+    m_Gui->Bool(ID_PARSE_NAME, _L("parse names"), &m_parseNames);
     m_Gui->SetListener(this);
-    m_Gui->Label("");
+    m_Gui->Label(_R(""));
     m_Gui->OkCancel();
   }
   ShowGui();
@@ -229,10 +229,10 @@ void lhpOpLnSurf::OpDo()
       if(m_parseNames)
       {
         OriIns = false;
-        int namelen = strlen(cloud->GetName());
+        int namelen = strlen(cloud->GetName().GetCStr());
         if(namelen >= 4)
         {
-          if(strncmp(cloud->GetName(), "Ori_", 4) == 0 || strncmp(cloud->GetName(), "Ins_", 4) == 0)
+          if(strncmp(cloud->GetName().GetCStr(), "Ori_", 4) == 0 || strncmp(cloud->GetName().GetCStr(), "Ins_", 4) == 0)
             OriIns = true;
         }
       }
@@ -298,21 +298,21 @@ void lhpOpLnSurf::OpDo()
   if((3 - m_generateLinesSurfaces) & 1)
   {
     mafTimeStamp t;
-    wxString     muscnm("MscFbr_");
-    wxString     tendnm("TndFbr_");
+    mafString     muscnm(_R("MscFbr_"));
+    mafString     tendnm(_R("TndFbr_"));
     t = ((mafVME *)m_Input)->GetTimeStamp();
     mafNEW(m_Muscles);
     mafNEW(m_Tendons);
     muscnm += m_Input->GetName();
     tendnm += m_Input->GetName();
-    m_Muscles->SetName(muscnm.c_str());
+    m_Muscles->SetName(muscnm);
     m_Muscles->SetData(musc,t);
-    m_Tendons->SetName(tendnm.c_str());
+    m_Tendons->SetName(tendnm);
     m_Tendons->SetData(tend,t);
 
     mafTagItem tag_Nature;
-    tag_Nature.SetName("VME_NATURE");
-    tag_Nature.SetValue("NATURAL");
+    tag_Nature.SetName(_R("VME_NATURE"));
+    tag_Nature.SetValue(_R("NATURAL"));
 
     m_Muscles->GetTagArray()->SetTag(tag_Nature);
     m_Tendons->GetTagArray()->SetTag(tag_Nature);
@@ -325,16 +325,16 @@ void lhpOpLnSurf::OpDo()
   if((3 - m_generateLinesSurfaces) & 2)
   {
     mafTimeStamp t;
-    wxString     sfnm("Surf_");
+    mafString     sfnm(_R("Surf_"));
     t = ((mafVME *)m_Input)->GetTimeStamp();
     mafNEW(m_Surface);
     sfnm += m_Input->GetName();
-    m_Surface->SetName(sfnm.c_str());
+    m_Surface->SetName(sfnm);
     m_Surface->SetData(surf, t);
 
     mafTagItem tag_Nature;
-    tag_Nature.SetName("VME_NATURE");
-    tag_Nature.SetValue("NATURAL");
+    tag_Nature.SetName(_R("VME_NATURE"));
+    tag_Nature.SetValue(_R("NATURAL"));
 
     m_Surface->GetTagArray()->SetTag(tag_Nature);
 

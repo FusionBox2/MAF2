@@ -96,8 +96,8 @@ void lhpOpCutSurface::CreateGui()
 {
   m_Gui = new mafGUI(this);
   m_Gui->SetListener(this);
-  m_Gui->Button(ID_PARAMSURF, "Cutting surf", "", "Press to select." );  
-  m_Gui->Label("Wnd d.VME",&m_CutSurfName);
+  m_Gui->Button(ID_PARAMSURF, _R("Cutting surf"), _R(""), _R("Press to select.") );  
+  m_Gui->Label(_R("Wnd d.VME"),&m_CutSurfName);
   m_Gui->OkCancel();
   ShowGui();
 }
@@ -120,7 +120,7 @@ void lhpOpCutSurface::OnEvent(mafEventBase *maf_event)
     break;
   case ID_PARAMSURF:
     {
-      mafString s("Choose cutting surface");
+      mafString s(_R("Choose cutting surface"));
       mafEvent e(this,VME_CHOOSE, &s);
       mafEventMacro(e);
       if(e.GetVme() == NULL)
@@ -129,7 +129,7 @@ void lhpOpCutSurface::OnEvent(mafEventBase *maf_event)
       }
       if(!e.GetVme()->IsA("mafVMESurfaceParametric"))
       {
-        wxMessageBox("Selected VME should be of mafVMESurfaceParametric type.","Warning", wxOK|wxICON_WARNING , NULL);
+        mafWarningMessage(_M("Selected VME should be of mafVMESurfaceParametric type."));
         return;
       }
 
@@ -328,12 +328,12 @@ void lhpOpCutSurface::OpStop(int result)
   mafTimeStamp t;
   t = ((mafVME *)m_Input)->GetTimeStamp();
   mafNEW(m_OutSurface);
-  m_OutSurface->SetName("cutted");
+  m_OutSurface->SetName(_R("cutted"));
   m_OutSurface->SetData(output,t);
 
   mafTagItem tag_Nature;
-  tag_Nature.SetName("VME_NATURE");
-  tag_Nature.SetValue("NATURAL");
+  tag_Nature.SetName(_R("VME_NATURE"));
+  tag_Nature.SetValue(_R("NATURAL"));
 
   m_OutSurface->GetTagArray()->SetTag(tag_Nature);
 
@@ -349,8 +349,8 @@ void lhpOpCutSurface::SetNodeName(mafVME *pVME, mafString *pName)
   *pName = pVME->GetName();
   if(pVME->GetParent() != NULL)
   {
-    *pName = *pName + " parent:";
-    *pName = *pName + pVME->GetParent()->GetName().GetCStr();
+    *pName += _R(" parent:");
+    *pName += pVME->GetParent()->GetName();
   }
 }
 

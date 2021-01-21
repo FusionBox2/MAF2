@@ -191,11 +191,11 @@ int mafVMEArrow::InternalInitialize()
 mmaMaterial *mafVMEArrow::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+  mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
   if (material == NULL)
   {
     material = mmaMaterial::New();
-    SetAttribute("MaterialAttributes", material);
+    SetAttribute(_R("MaterialAttributes"), material);
     if (m_Output)
     {
       ((mafVMEOutputSurface *)m_Output)->SetMaterial(material);
@@ -235,8 +235,8 @@ int mafVMEArrow::InternalStore(mafStorageElement *parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent->StoreMatrix("Transform",&m_Transform->GetMatrix());
-    parent->StoreDouble("ScaleFactor", m_ScaleFactor);
+    parent->StoreMatrix(_R("Transform"),&m_Transform->GetMatrix());
+    parent->StoreDouble(_R("ScaleFactor"), m_ScaleFactor);
     return MAF_OK;
   }
   return MAF_ERROR;
@@ -249,10 +249,10 @@ int mafVMEArrow::InternalRestore(mafStorageElement *node)
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
-    if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
+    if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
-      node->RestoreDouble("ScaleFactor", m_ScaleFactor);
+      node->RestoreDouble(_R("ScaleFactor"), m_ScaleFactor);
       SetScaleFactor(m_ScaleFactor);
       return MAF_OK;
     }
@@ -288,9 +288,9 @@ mafGUI *mafVMEArrow::CreateGui()
 {
   m_Gui = Superclass::CreateGui();
   m_Gui->Show(false);
-  m_Gui->Double(ID_SCALE_FACTOR,_("scale"),&m_ScaleFactor);
+  m_Gui->Double(ID_SCALE_FACTOR,_L("scale"),&m_ScaleFactor);
   m_Gui->Divider();
-  m_Gui->Button(ID_PRINT, "print", "debug info" );
+  m_Gui->Button(ID_PRINT, _R("print"), _R("debug info") );
   m_Gui->Update();
   return m_Gui;
 }

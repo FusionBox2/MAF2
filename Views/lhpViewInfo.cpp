@@ -123,7 +123,7 @@ mafView *lhpViewInfo::Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled)
 void lhpViewInfo::Create()
 //----------------------------------------------------------------------------
 {
-  m_RenderWindow = new wxHtmlWindow(mafGetFrame(), -1, wxDefaultPosition, wxDefaultSize, 0, GetLabel().GetCStr());
+  m_RenderWindow = new wxHtmlWindow(mafGetFrame(), -1, wxDefaultPosition, wxDefaultSize, 0, GetLabel().toWx());
 
   m_Win          = m_RenderWindow;
 
@@ -159,7 +159,7 @@ int lhpViewInfo::GetNodeStatus(mafNode *vme)
   int status = m_Sg ? m_Sg->GetNodeStatus(vme) : NODE_NON_VISIBLE;
   if (!m_PipeMap.empty())
   {
-    mafString vme_type = vme->GetTypeName();
+    mafString vme_type = _R(vme->GetTypeName());
     if(m_PipeMap.find(vme_type) == m_PipeMap.end())
       return status;
     if(m_PipeMap[vme_type].m_Visibility == NON_VISIBLE)
@@ -225,7 +225,7 @@ void lhpViewInfo::GetVisualPipeName(mafNode *node, mafString &pipe_name)
   vtkDataSet *data = v->GetOutput()->GetVTKData();
   // custom visualization for the view should be considered only
   // if we are not in editing mode.
-  mafString vme_type = v->GetTypeName();
+  mafString vme_type = _R(v->GetTypeName());
   if (!m_PipeMap.empty())
   {
     // pick up the visual pipe from the view's visual pipe map
@@ -235,7 +235,7 @@ void lhpViewInfo::GetVisualPipeName(mafNode *node, mafString &pipe_name)
   if(pipe_name.IsEmpty())
   {
     // pick up the default visual pipe from the vme
-    pipe_name = "lhpPipeIntGraph";
+    pipe_name = _R("lhpPipeIntGraph");
   }
 }
 
@@ -243,15 +243,15 @@ void lhpViewInfo::GetVisualPipeName(mafNode *node, mafString &pipe_name)
 void lhpViewInfo::VmeCreatePipe(mafNode *vme)
 //----------------------------------------------------------------------------
 {
-  mafString pipe_name = "";
+  mafString pipe_name = _R("");
   GetVisualPipeName(vme, pipe_name);
-  if (pipe_name != "")
+  if (!pipe_name.IsEmpty())
   {
     m_NumberOfVisibleVme++;
     mafPipeFactory *pipe_factory  = mafPipeFactory::GetInstance();
     assert(pipe_factory!=NULL);
     mafObject *obj = NULL;
-    obj = pipe_factory->CreateInstance(pipe_name);
+    obj = pipe_factory->CreateInstance(pipe_name.GetCStr());
     lhpPipeInfo *pipe = lhpPipeInfo::SafeDownCast(obj);
     if (pipe)
     {
@@ -267,7 +267,7 @@ void lhpViewInfo::VmeCreatePipe(mafNode *vme)
     {
       if(obj)
         cppDEL(obj);
-      mafErrorMessage(_("Cannot create visual pipe object of type \"%s\"!"),pipe_name.GetCStr());
+      mafErrorMessage(_M(_L("Cannot create visual pipe object of type \"") + pipe_name + _L("\"!")));
     }
   }
   return;
@@ -302,10 +302,10 @@ void lhpViewInfo::UpdatePage()
     if(lhpPipeInfo *pi = lhpPipeInfo::SafeDownCast(*it))
     {
       pageText += pi->GetPageText();
-      pageText += "\n";
+      pageText += _R("\n");
     }
   }
-  m_RenderWindow->SetPage(pageText.GetCStr());
+  m_RenderWindow->SetPage(pageText.toWx());
 
 }
 
@@ -318,7 +318,7 @@ mafGUI *lhpViewInfo::CreateGui()
 
   m_Gui->SetListener(this);
 
-  m_Gui->Label("General Features",true);
+  m_Gui->Label(_R("General Features"),true);
   m_Gui->Divider(2);
 
   //m_Gui->RollOut(ID_ROLLOUT_RENDER, "Plot appearance", m_RenderWindow->GetGui(), false);
@@ -384,7 +384,7 @@ void lhpViewInfo::Print(std::ostream& os, const int tabs)// const
   mafIndent indent(tabs);
 
   os << indent << "lhpViewInfo " << '\t' << this << "\n";
-  os << indent << "Name: " << '\t' << GetLabel() << "\n";
+  os << indent << "Name: " << '\t' << GetLabel().GetCStr() << "\n";
   os << indent << "View ID: " << '\t' << m_Id << "\n";
   os << indent << "View Mult: " << '\t' << m_Mult << "\n";
   os << indent << "Visible VME counter: " << '\t' << m_NumberOfVisibleVme << "\n";

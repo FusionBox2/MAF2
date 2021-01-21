@@ -33,7 +33,7 @@ class mafEvent;
 class lhpOpImporterRSScan: public mafOp
 {
 public:
-	lhpOpImporterRSScan(const mafString& label = "RSScanImporter");
+	lhpOpImporterRSScan(const mafString& label = _R("RSScanImporter"));
 	~lhpOpImporterRSScan(); 
 	
   mafTypeMacro(lhpOpImporterRSScan, mafOp);
@@ -49,12 +49,12 @@ public:
   void SetFileName(const char *file_name);
 
   /** Set/Get nodes file name*/
-  void SetNodesFileName(const char *name)   {m_PlateParamsFileName = name;}
-  const char *GetNodesFileName() {return m_PlateParamsFileName;}
+  void SetNodesFileName(const char *name)   {m_PlateParamsFileName = _R(name);}
+  const char *GetNodesFileName() {return m_PlateParamsFileName.GetCStr();}
 
   /** Set/Get elements file name*/
-  void SetElementsFileName(const char *name)   {m_DataFileName = name;}
-  const char *GetElementsFileName() {return m_DataFileName;}
+  void SetElementsFileName(const char *name)   {m_DataFileName = _R(name);}
+  const char *GetElementsFileName() {return m_DataFileName.GetCStr();}
 
   /** Builds operation's interface. */
   void OpRun();

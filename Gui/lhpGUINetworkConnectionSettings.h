@@ -30,7 +30,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 class lhpGUINetworkConnectionSettings : public mafGUISettings
 {
 public:
-	lhpGUINetworkConnectionSettings(mafBaseEventHandler *Listener, const mafString &label = _("Network Connection"));
+	lhpGUINetworkConnectionSettings(mafBaseEventHandler *Listener, const mafString &label = _L("Network Connection"));
 	~lhpGUINetworkConnectionSettings(); 
 
   enum APP_SETTINGS_WIDGET_ID
@@ -53,7 +53,7 @@ public:
   mafString &GetProxyHost();
 
   /** Set Port in proxy connection*/
-  void SetProxyHost(const char *proxyHost){m_ProxyHost = proxyHost;};
+  void SetProxyHost(const char *proxyHost){m_ProxyHost = _R(proxyHost);}
 
 	/** Get Port in proxy connection*/
 	int GetProxyPort();

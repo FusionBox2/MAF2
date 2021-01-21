@@ -102,8 +102,8 @@ lhpOpBonemat::lhpOpBonemat(const mafString& label) : Superclass(label)
   m_OpType  = OPTYPE_OP;
   m_Canundo = false;
   m_InputPreserving = false;
-  m_ConfigurationFileName = "";
-  m_FrequencyFileName = "";
+  m_ConfigurationFileName = _R("");
+  m_FrequencyFileName = _R("");
 
   m_HU0_d0_el0 = 0;
   m_HU0_d0_el1 = 0;
@@ -273,28 +273,28 @@ void lhpOpBonemat::CreateGui()
 //----------------------------------------------------------------------------
 {
   m_Gui = new mafGUI(this);
-  m_Gui->Label(""); 
+  m_Gui->Label(_R(""));
 
-  m_Gui->Label("Configuration File:", true);
-  m_Gui->Button(ID_OPEN_CONFIGURATION_FILE, "open configuration file");
-  m_Gui->Button(ID_SAVE_CONFIGURATION_FILE, "save configuration file");
+  m_Gui->Label(_R("Configuration File:"), true);
+  m_Gui->Button(ID_OPEN_CONFIGURATION_FILE, _R("open configuration file"));
+  m_Gui->Button(ID_SAVE_CONFIGURATION_FILE, _R("save configuration file"));
   m_Gui->Enable(ID_SAVE_CONFIGURATION_FILE, false); 
-  m_Gui->Button(ID_SAVE_CONFIGURATION_FILE_AS, "save configuration file as");
+  m_Gui->Button(ID_SAVE_CONFIGURATION_FILE_AS, _R("save configuration file as"));
   m_Gui->Divider(2);
 
-  m_Gui->Label("Volume:", &m_InputVolumeName, true);
+  m_Gui->Label(_R("Volume:"), &m_InputVolumeName, true);
   
-  m_Gui->Button(ID_VOLUME_CHOOSE, "choose volume");
+  m_Gui->Button(ID_VOLUME_CHOOSE, _R("choose volume"));
   m_Gui->Divider(2);
   
-  m_Gui->Label("Output Frequency file: ",true);
+  m_Gui->Label(_R("Output Frequency file: "),true);
 
-  mafString wildc = "Frequency File (*.*)|*.*";
-  m_FrequencyFileName = wxGetCwd();
-  m_FrequencyFileName +=  "\\" ;
+  mafString wildc = _R("Frequency File (*.*)|*.*");
+  m_FrequencyFileName = mafWxToString(wxGetCwd());
+  m_FrequencyFileName +=  _R("\\") ;
   m_FrequencyFileName +=  m_Input->GetName();
-  m_FrequencyFileName +=  "-Freq.txt";
-  m_Gui->FileSave(ID_OUTPUT_FREQUENCY_FILE_NAME, _("Freq file"), &m_FrequencyFileName, wildc.GetCStr());
+  m_FrequencyFileName +=  _R("-Freq.txt");
+  m_Gui->FileSave(ID_OUTPUT_FREQUENCY_FILE_NAME, _L("Freq file"), &m_FrequencyFileName, wildc);
   
   m_Gui->Divider(2);
 
@@ -320,51 +320,51 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Divider(2);
 #endif
 
-  m_Gui->Label("CT densitometric calibration", true);
-  m_Gui->Label("RhoQCT = a + b * HU", false);
+  m_Gui->Label(_R("CT densitometric calibration"), true);
+  m_Gui->Label(_R("RhoQCT = a + b * HU"), false);
   
-  m_Gui->Double(ID_RO_INTERCEPT, "a", &m_RhoIntercept);
-  m_Gui->Double(ID_RO_SLOPE, "b", &m_RhoSlope)   ;
+  m_Gui->Double(ID_RO_INTERCEPT, _R("a"), &m_RhoIntercept);
+  m_Gui->Double(ID_RO_SLOPE, _R("b"), &m_RhoSlope)   ;
   m_Gui->Divider(2);
   
   m_Gui->Enable(ID_RO_INTERCEPT, true);
   m_Gui->Enable(ID_RO_SLOPE, true);
 
   // flag ro correction
-  m_Gui->Bool(ID_FLAG_RO_CORRECTION, "apply calibration correction", &m_RhoCalibrationCorrectionIsActive,1);
+  m_Gui->Bool(ID_FLAG_RO_CORRECTION, _R("apply calibration correction"), &m_RhoCalibrationCorrectionIsActive,1);
   m_Gui->Divider(2);
   // ro correction (if yes) enable 3x2 gui->double
   //////////////////////////////////////////////////////////////////////////
   
   m_Gui->Divider(2);
-  m_Gui->Label("Correction of the calibration",true);
-  m_Gui->Label("RhoAsh = a + b * RhoQCT",false);
-  const mafString densityChoicesRoCalibration[] = {"one interval", "three intervals"};
-  m_Gui->Combo(ID_TYPE_RHOQCT_CORRECTION,"", &m_RhoCalibrationCorrectionType,2,densityChoicesRoCalibration);  
+  m_Gui->Label(_R("Correction of the calibration"),true);
+  m_Gui->Label(_R("RhoAsh = a + b * RhoQCT"),false);
+  const mafString densityChoicesRoCalibration[] = {_R("one interval"), _R("three intervals")};
+  m_Gui->Combo(ID_TYPE_RHOQCT_CORRECTION, _R(""), &m_RhoCalibrationCorrectionType,2,densityChoicesRoCalibration);
   m_Gui->Divider();
 
-  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_SINGLE_0, "a", &m_a_CalibrationCorrection);
-  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_SINGLE_1, "b", &m_b_CalibrationCorrection);
-
-  m_Gui->Divider();
-
-  m_Gui->Double(ID_RO_CORRECTION_DENSITY_INTERVAL_0, "RhoQCT1",&m_RhoQCT1);
-  m_Gui->Double(ID_RO_CORRECTION_DENSITY_INTERVAL_1, "RhoQCT2",&m_RhoQCT2);
-
+  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_SINGLE_0, _R("a"), &m_a_CalibrationCorrection);
+  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_SINGLE_1, _R("b"), &m_b_CalibrationCorrection);
 
   m_Gui->Divider();
 
-  m_Gui->Label("RhoQCT < RhoQCT1");
-  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_0, "a", &m_a_RhoQCTLessThanRhoQCT1);
-  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_1, "b", &m_b_RhoQCTLessThanRhoQCT1);
+  m_Gui->Double(ID_RO_CORRECTION_DENSITY_INTERVAL_0, _R("RhoQCT1"),&m_RhoQCT1);
+  m_Gui->Double(ID_RO_CORRECTION_DENSITY_INTERVAL_1, _R("RhoQCT2"),&m_RhoQCT2);
+
+
+  m_Gui->Divider();
+
+  m_Gui->Label(_R("RhoQCT < RhoQCT1"));
+  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_0, _R("a"), &m_a_RhoQCTLessThanRhoQCT1);
+  m_Gui->Double(ID_RO_CORRECTION_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_1, _R("b"), &m_b_RhoQCTLessThanRhoQCT1);
   
-  m_Gui->Label("RhoQCT1 <= RhoQCT <= RhoQCT2");
-  m_Gui->Double(ID_RO_CORRECTION_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_0, "a", &m_a_RhoQCTBetweenRhoQCT1AndRhoQCT2);
-  m_Gui->Double(ID_RO_CORRECTION_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_1, "b", &m_b_RhoQCTBetweenRhoQCT1AndRhoQCT2);
+  m_Gui->Label(_R("RhoQCT1 <= RhoQCT <= RhoQCT2"));
+  m_Gui->Double(ID_RO_CORRECTION_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_0, _R("a"), &m_a_RhoQCTBetweenRhoQCT1AndRhoQCT2);
+  m_Gui->Double(ID_RO_CORRECTION_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_1, _R("b"), &m_b_RhoQCTBetweenRhoQCT1AndRhoQCT2);
   
-  m_Gui->Label("RhoQCT > RhoQCT2");
-  m_Gui->Double(ID_RO_CORRECTION_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_0, "a", &m_a_RhoQCTBiggerThanRhoQCT2);
-  m_Gui->Double(ID_RO_CORRECTION_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_1, "b", &m_b_RhoQCTBiggerThanRhoQCT2);
+  m_Gui->Label(_R("RhoQCT > RhoQCT2"));
+  m_Gui->Double(ID_RO_CORRECTION_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_0, _R("a"), &m_a_RhoQCTBiggerThanRhoQCT2);
+  m_Gui->Double(ID_RO_CORRECTION_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_1, _R("b"), &m_b_RhoQCTBiggerThanRhoQCT2);
   
   m_Gui->Enable(ID_TYPE_RHOQCT_CORRECTION,false);
   EnableRhoQCTDensityInterval(false);
@@ -373,37 +373,37 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Divider(2);
   //////////////////////////////////////////////////////////////////////////
 
-  m_Gui->Label("density-elasticity relationship", true);
-  m_Gui->Label("E = a + b * RhoAsh^c", false);
+  m_Gui->Label(_R("density-elasticity relationship"), true);
+  m_Gui->Label(_R("E = a + b * RhoAsh^c"), false);
   
-  const mafString densityChoices[] = {"one interval", "three intervals"};
-  m_Gui->Combo(ID_RHOASH_DENSITY_INTERVALS_NUMBER,"", &m_DensityIntervalsNumber,2,densityChoices);  
+  const mafString densityChoices[] = {_R("one interval"), _R("three intervals")};
+  m_Gui->Combo(ID_RHOASH_DENSITY_INTERVALS_NUMBER, _R(""), &m_DensityIntervalsNumber,2,densityChoices);
   m_Gui->Divider(2);
   
-  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_0, "a", &m_a_OneInterval);
-  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_1, "b", &m_b_OneInterval);
-  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_2, "c", &m_c_OneInterval);
+  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_0, _R("a"), &m_a_OneInterval);
+  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_1, _R("b"), &m_b_OneInterval);
+  m_Gui->Double(ID_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_SINGLE_DENSITY_INTERVAL_2, _R("c"), &m_c_OneInterval);
 
   m_Gui->Divider();
 
-  m_Gui->Double(ID_DENSITY_INTERVAL_0, "RhoAsh1",&m_RhoAsh1);
-  m_Gui->Double(ID_DENSITY_INTERVAL_1, "RhoAsh2",&m_RhoAsh2);
+  m_Gui->Double(ID_DENSITY_INTERVAL_0, _R("RhoAsh1"),&m_RhoAsh1);
+  m_Gui->Double(ID_DENSITY_INTERVAL_1, _R("RhoAsh2"),&m_RhoAsh2);
 
-  m_Gui->Label("RhoAsh < RhoAsh1");
-  m_Gui->Double(ID_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_0, "a", &m_a_RhoAshLessThanRhoAsh1);
-  m_Gui->Double(ID_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_1, "b", &m_b_RhoAshLessThanRhoAsh1);
-  m_Gui->Double(ID_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_2, "c", &m_c_RhoAshLessThanRhoAsh1);
+  m_Gui->Label(_R("RhoAsh < RhoAsh1"));
+  m_Gui->Double(ID_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_0, _R("a"), &m_a_RhoAshLessThanRhoAsh1);
+  m_Gui->Double(ID_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_1, _R("b"), &m_b_RhoAshLessThanRhoAsh1);
+  m_Gui->Double(ID_FIRST_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_2, _R("c"), &m_c_RhoAshLessThanRhoAsh1);
   
   
-  m_Gui->Label("RhoAsh1 <= RhoAsh <= RhoAsh2");
-  m_Gui->Double(ID_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_0, "a", &m_a_RhoAshBetweenRhoAsh1andRhoAsh2);
-  m_Gui->Double(ID_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_1, "b", &m_b_RhoAshBetweenRhoAsh1andRhoAsh2);
-  m_Gui->Double(ID_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_2, "c", &m_c_RhoAshBetweenRhoAsh1andRhoAsh2);
+  m_Gui->Label(_R("RhoAsh1 <= RhoAsh <= RhoAsh2"));
+  m_Gui->Double(ID_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_0, _R("a"), &m_a_RhoAshBetweenRhoAsh1andRhoAsh2);
+  m_Gui->Double(ID_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_1, _R("b"), &m_b_RhoAshBetweenRhoAsh1andRhoAsh2);
+  m_Gui->Double(ID_SECOND_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_2, _R("c"), &m_c_RhoAshBetweenRhoAsh1andRhoAsh2);
 
-  m_Gui->Label("RhoAsh > RhoAsh2");
-  m_Gui->Double(ID_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_0, "a", &m_a_RhoAshBiggerThanRhoAsh2);
-  m_Gui->Double(ID_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_1, "b", &m_b_RhoAshBiggerThanRhoAsh2);
-  m_Gui->Double(ID_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_2, "c", &m_c_RhoAshBiggerThanRhoAsh2);
+  m_Gui->Label(_R("RhoAsh > RhoAsh2"));
+  m_Gui->Double(ID_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_0, _R("a"), &m_a_RhoAshBiggerThanRhoAsh2);
+  m_Gui->Double(ID_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_1, _R("b"), &m_b_RhoAshBiggerThanRhoAsh2);
+  m_Gui->Double(ID_THIRD_EXPONENTIAL_COEFFICIENTS_VECTOR_V3_2, _R("c"), &m_c_RhoAshBiggerThanRhoAsh2);
 
   
   m_Gui->Divider(2);
@@ -426,27 +426,27 @@ void lhpOpBonemat::CreateGui()
 
 
   m_Gui->Divider(); 
-  const mafString choices[] = {"HU integration", "E integration"};
-  m_Gui->Label("Young's modulus ( E ) calculation modality","",TRUE);
-  m_Gui->Combo(ID_YOUNG_MODULE_CALCULATION_MODALITY, "", &m_YoungModuleCalculationModality, 2, choices);
-  m_Gui->Label("integration steps");
-  m_Gui->Integer(ID_STEPS_NUMBER, "", &m_StepsNumber);
-  m_Gui->Label("gap value");
-  m_Gui->Double(::ID_GAP_VALUE, "", &m_Egap);
+  const mafString choices[] = {_R("HU integration"), _R("E integration")};
+  m_Gui->Label(_R("Young's modulus ( E ) calculation modality"), mafString(_R("")),true);
+  m_Gui->Combo(ID_YOUNG_MODULE_CALCULATION_MODALITY, _R(""), &m_YoungModuleCalculationModality, 2, choices);
+  m_Gui->Label(_R("integration steps"));
+  m_Gui->Integer(ID_STEPS_NUMBER, _R(""), &m_StepsNumber);
+  m_Gui->Label(_R("gap value"));
+  m_Gui->Double(::ID_GAP_VALUE, _R(""), &m_Egap);
   m_Gui->Divider();
 
   //#ifndef _DEBUG_BONEMAT
 
-  m_Gui->Button(ID_EXECUTE, "execute");
+  m_Gui->Button(ID_EXECUTE, _R("execute"));
 //#endif
   
   m_Gui->Divider(2);
-  m_Gui->Button(ID_PRINT_DEBUG_INFO, "Print Debug Info");
+  m_Gui->Button(ID_PRINT_DEBUG_INFO, _R("Print Debug Info"));
   m_Gui->Divider(2);
 
   m_Gui->OkCancel();
-  m_Gui->Label("");
-  m_Gui->Label("");
+  m_Gui->Label(_R(""));
+  m_Gui->Label(_R(""));
 
   mafNEW(m_OriginalVMEMesh);
   m_OriginalVMEMesh->DeepCopy(mafVMEMesh::SafeDownCast(m_Input));
@@ -468,12 +468,12 @@ int lhpOpBonemat::SaveConfigurationFileAs()
 {
   mafString initialFileName;
   initialFileName = mafGetApplicationDirectory();
-  initialFileName.Append("\\newConfigurationFile.conf");
+  initialFileName.Append(_R("\\newConfigurationFile.conf"));
 
-  mafString wildc = "configuration file (*.conf)|*.conf";
-  mafString newFileName = mafGetSaveFile(initialFileName.GetCStr(), wildc);
+  mafString wildc = _R("configuration file (*.conf)|*.conf");
+  mafString newFileName = mafGetSaveFile(initialFileName, wildc);
  
-  if (newFileName == "") return MAF_ERROR;
+  if (newFileName.IsEmpty()) return MAF_ERROR;
 
   return SaveConfigurationFile(newFileName.GetCStr());
 }
@@ -599,7 +599,7 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
           }
           else
           {
-            m_InputVolumeName =  "";
+            m_InputVolumeName = _R("");
             m_Gui->Update();
           }
         }
@@ -616,7 +616,7 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
       {
         std::ostringstream stringStream;
         PrintSelf(stringStream);
-        mafLogMessage(stringStream.str().c_str());
+        mafLogMessage(_M(stringStream.str().c_str()));
       }
       break;
       default:
@@ -645,7 +645,7 @@ const char* lhpOpBonemat::GetConfigurationFileName()
 void lhpOpBonemat::SetConfigurationFileName(const char* name)
 //----------------------------------------------------------------------------
 {
-  m_ConfigurationFileName = name;  
+  m_ConfigurationFileName = _R(name);  
 }
 
 //----------------------------------------------------------------------------
@@ -659,7 +659,7 @@ const char* lhpOpBonemat::GetFrequencyFileName()
 void lhpOpBonemat::SetFrequencyFileName(const char* name)
 //----------------------------------------------------------------------------
 {
-  m_FrequencyFileName = name;  
+  m_FrequencyFileName = _R(name);  
 }
 
 
@@ -667,13 +667,13 @@ void lhpOpBonemat::SetFrequencyFileName(const char* name)
 int lhpOpBonemat::OpenConfigurationFile()
 //----------------------------------------------------------------------------
 {
-  mafString wildcconf = "conf Data (*.conf)|*.conf";
+  mafString wildcconf = _R("conf Data (*.conf)|*.conf");
 
   mafString initial = mafGetApplicationDirectory();
 
-  mafString returnString = mafGetOpenFile("", wildcconf);
+  mafString returnString = mafGetOpenFile(_R(""), wildcconf);
 
-  if (returnString == "")
+  if (returnString.IsEmpty())
   {
     return 1;
   }
@@ -748,7 +748,7 @@ int lhpOpBonemat::HUIntegration()
     {
       std::ostringstream stringStream;
       stringStream << "Not applying abs pose to geometry... DeepCopy not needed"  << std::endl;
-      mafLogMessage(stringStream.str().c_str());
+      mafLogMessage(_M(stringStream.str().c_str()));
     }
 
   } 
@@ -773,7 +773,7 @@ int lhpOpBonemat::HUIntegration()
     {
       std::ostringstream stringStream;
       stringStream << "Applying abs pose to geometry... Now working on DeepCopy"  << std::endl;
-      mafLogMessage(stringStream.str().c_str());
+      mafLogMessage(_M(stringStream.str().c_str()));
     }
 
     inputUnstructuredGrid = inputUGTransformed;
@@ -1180,7 +1180,7 @@ int lhpOpBonemat::HUIntegration()
   std::vector<mafString> stringVector;
 
   // correspondence material_id to insert in fielddata
-  stringVector.push_back(mafString("material_id"));
+  stringVector.push_back(_R("material_id"));
 
   vtkDoubleArray *iarr = vtkDoubleArray::New();
   iarr->SetName(stringVector[0].GetCStr());
@@ -1197,9 +1197,9 @@ int lhpOpBonemat::HUIntegration()
   iarr->Delete();
 
   
-  stringVector.push_back(mafString("EX"));
-  stringVector.push_back(mafString("NUXY"));
-  stringVector.push_back(mafString("DENS"));
+  stringVector.push_back(_R("EX"));
+  stringVector.push_back(_R("NUXY"));
+  stringVector.push_back(_R("DENS"));
 
   // create field data data array
   for (i = 1; i < stringVector.size(); i++)
@@ -1213,11 +1213,11 @@ int lhpOpBonemat::HUIntegration()
     {
       // fill ith data array with jth value 
       // cycle on materials
-      if(stringVector[i] == mafString("EX"))
+      if(stringVector[i] == _R("EX"))
         darr->InsertValue(j, materialProperties[j]->E);
-      else if(stringVector[i] == mafString("NUXY"))
+      else if(stringVector[i] == _R("NUXY"))
         darr->InsertValue(j, 0.3);
-      else if(stringVector[i] == mafString("DENS"))
+      else if(stringVector[i] == _R("DENS"))
         darr->InsertValue(j, materialProperties[j]->rho);
        
     }
@@ -1361,7 +1361,7 @@ int lhpOpBonemat::YoungModuleIntegration()
     {
       std::ostringstream stringStream;
       stringStream << "Not applying abs pose to geometry... DeepCopy not needed"  << std::endl;
-      mafLogMessage(stringStream.str().c_str());
+      mafLogMessage(_M(stringStream.str().c_str()));
     }
 
   } 
@@ -1386,7 +1386,7 @@ int lhpOpBonemat::YoungModuleIntegration()
     {
       std::ostringstream stringStream;
       stringStream << "Applying abs pose to geometry... Now working on DeepCopy"  << std::endl;
-      mafLogMessage(stringStream.str().c_str());
+      mafLogMessage(_M(stringStream.str().c_str()));
     }
 
     inputUnstructuredGrid = inputUGTransformed;
@@ -1536,7 +1536,7 @@ int lhpOpBonemat::YoungModuleIntegration()
 
 
   logStringStream << "-- Computing elements densities\n";
-  mafLogMessage("%s",logStringStream.str().c_str());
+  mafLogMessage(_M(logStringStream.str().c_str()));
   logStringStream.str("");
 
   // considered this for rho density value
@@ -1899,7 +1899,7 @@ int lhpOpBonemat::YoungModuleIntegration()
   }
 
   logStringStream << "-- Writing frequency file\n";
-  mafLogMessage("%s",logStringStream.str().c_str());
+  mafLogMessage(_M(logStringStream.str().c_str()));
   logStringStream.str("");
 
   fprintf(freq_fp, "rho \t\t E \t\t NUMBER OF ELEMENTS\n\n");
@@ -2016,7 +2016,7 @@ int lhpOpBonemat::YoungModuleIntegration()
 
 #ifdef _DEBUG_BONEMAT
       logStringStream << "material ID:" << numMats << '\t' << "material E:" << E << '\t' << "material ro" << ro << std::endl;
-      mafLogMessage("%s",logStringStream.str().c_str());
+      mafLogMessage(_M(logStringStream.str().c_str()));
       logStringStream.str("");
 #endif
 
@@ -2052,7 +2052,7 @@ int lhpOpBonemat::YoungModuleIntegration()
 
 #ifdef _DEBUG_BONEMAT
   logStringStream << "material ID:" << numMats << '\t' << "material E:" << E << '\t' << "material ro" << ro << std::endl;
-  mafLogMessage("%s",logStringStream.str().c_str());
+  mafLogMessage(_M(logStringStream.str().c_str()));
   logStringStream.str("");
 
 #endif
@@ -2067,7 +2067,7 @@ int lhpOpBonemat::YoungModuleIntegration()
   std::vector<mafString> stringVector;
 
   // correspondence material_id to insert in fielddata
-  stringVector.push_back(mafString("material_id"));
+  stringVector.push_back(_R("material_id"));
 
   vtkDoubleArray *iarr = vtkDoubleArray::New();
   iarr->SetName(stringVector[0].GetCStr());
@@ -2084,9 +2084,9 @@ int lhpOpBonemat::YoungModuleIntegration()
   iarr->Delete();
 
   
-  stringVector.push_back(mafString("EX"));
-  stringVector.push_back(mafString("NUXY"));
-  stringVector.push_back(mafString("DENS"));
+  stringVector.push_back(_R("EX"));
+  stringVector.push_back(_R("NUXY"));
+  stringVector.push_back(_R("DENS"));
 
   // create field data data array
   for (i = 1; i < stringVector.size(); i++)
@@ -2100,11 +2100,11 @@ int lhpOpBonemat::YoungModuleIntegration()
     {
       // fill ith data array with jth value 
       // ciclo sui materiali
-      if(stringVector[i] == mafString("DENS"))
+      if(stringVector[i] == _R("DENS"))
         darr->InsertValue(j, materialProperties[j]->rho);
-      else if(stringVector[i] == mafString("EX"))
+      else if(stringVector[i] == _R("EX"))
         darr->InsertValue(j, materialProperties[j]->E);
-      else if(stringVector[i] == mafString("NUXY"))
+      else if(stringVector[i] == _R("NUXY"))
         darr->InsertValue(j, 0.3);
     }
     // add the ith data array to the field data
@@ -2243,7 +2243,7 @@ void lhpOpBonemat::DisableRhoAshThreeIntervals()
 
 mafNode *lhpOpBonemat::VolumeSelection()
 {
-  mafString title = _("Choose Volume");
+  mafString title = _L("Choose Volume");
   mafEvent *e; 
   e = new mafEvent();
   e->SetId(VME_CHOOSE);
@@ -2291,8 +2291,8 @@ int lhpOpBonemat::LoadConfigurationFile( const char *configurationFileName )
     return MAF_ERROR;
   }
 
-  mafString LoadConfigurationFileCacheFileName = configurationFileName;
-  LoadConfigurationFileCacheFileName.Append(".Load.cache");
+  mafString LoadConfigurationFileCacheFileName = _R(configurationFileName);
+  LoadConfigurationFileCacheFileName.Append(_R(".Load.cache"));
 
   std::ofstream LoadConfigurationFileCache(LoadConfigurationFileCacheFileName.GetCStr(), std::ios::out);
 
@@ -2329,7 +2329,7 @@ int lhpOpBonemat::LoadConfigurationFile( const char *configurationFileName )
   std::ifstream inputFileFromCache(LoadConfigurationFileCacheFileName.GetCStr(), std::ios::in);
 
   if (!inputFileFromCache) {
-    std::cerr << "Error opening " << LoadConfigurationFileCacheFileName << "\n";
+    std::cerr << "Error opening " << LoadConfigurationFileCacheFileName.GetCStr() << "\n";
     assert(false);
     return MAF_ERROR;
   }
@@ -2450,7 +2450,7 @@ int lhpOpBonemat::LoadConfigurationFile( const char *configurationFileName )
   {
     std::ostringstream stringStream;
     PrintSelf(stringStream);
-    mafLogMessage(stringStream.str().c_str());
+    mafLogMessage(_M(stringStream.str().c_str()));
   }
 
   return MAF_OK;

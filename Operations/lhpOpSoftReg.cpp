@@ -90,7 +90,7 @@ lhpOpSoftReg::lhpOpSoftReg(const mafString& label) : Superclass(label)
   m_OpType    = OPTYPE_OP;
   m_Canundo   = true;
   m_Bones     = NULL;
-  m_BonesName = "none";
+  m_BonesName = _R("none");
   m_Sample    = 0.0;
 
 }
@@ -144,11 +144,11 @@ void lhpOpSoftReg::OpRun()
   if(m_Gui == NULL)
   {
     m_Gui = new mafGUI(this);
-    m_Gui->Label(_("bones :"),true);
+    m_Gui->Label(_L("bones :"),true);
     m_Gui->Label(&m_BonesName);
 
-    m_Gui->Button(ID_SELECTBONES, _("select bones"));
-    m_Gui->Label("");
+    m_Gui->Button(ID_SELECTBONES, _L("select bones"));
+    m_Gui->Label(_R(""));
     m_Gui->OkCancel();
     m_Gui->Enable(wxOK,false);
   }
@@ -169,7 +169,7 @@ void lhpOpSoftReg::OnEvent(mafEventBase *maf_event)
       break;
     case ID_SELECTBONES:
       {
-        mafString s(_("Choose cloud"));
+        mafString s(_L("Choose cloud"));
         mafEvent e(this,VME_CHOOSE, &s, (long)&lhpOpSoftReg::BonesSetAccept);
         mafEventMacro(e);
         mafNode *vme = e.GetVme();
@@ -441,12 +441,12 @@ void lhpOpSoftReg::OpDo()
     t = ((mafVME *)m_Input)->GetTimeStamp();
     mafVMESurface *outSurface;
     mafNEW(outSurface);
-    outSurface->SetName("cutted");
+    outSurface->SetName(_R("cutted"));
     outSurface->SetData(output,t);
 
     mafTagItem tag_Nature;
-    tag_Nature.SetName("VME_NATURE");
-    tag_Nature.SetValue("NATURAL");
+    tag_Nature.SetName(_R("VME_NATURE"));
+    tag_Nature.SetValue(_R("NATURAL"));
 
     outSurface->GetTagArray()->SetTag(tag_Nature);
 

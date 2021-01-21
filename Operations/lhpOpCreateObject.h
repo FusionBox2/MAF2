@@ -80,7 +80,7 @@ public:
 
 protected: 
   O         *m_Created;
-  wxString  m_CreatedName;
+  mafString  m_CreatedName;
 };
 
 #endif

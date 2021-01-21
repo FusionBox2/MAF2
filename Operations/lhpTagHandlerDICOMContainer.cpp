@@ -42,7 +42,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 //------------------------------------------------------------------------------------
 {
   // tag handling code
-  cargo->SetTagHandlerGeneratedString("Automated Tag Not Handled (instance exists)");
+  cargo->SetTagHandlerGeneratedString(_R("Automated Tag Not Handled (instance exists)"));
 }
 
 
@@ -60,13 +60,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("StudyDate"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("StudyDate")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -87,13 +87,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("Modality"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("Modality")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -113,13 +113,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("Manufacturer"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("Manufacturer")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -139,13 +139,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("InstitutionName"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("InstitutionName")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -165,13 +165,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("StationName"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("StationName")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -191,13 +191,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("ManufacturerModelName"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("ManufacturerModelName")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -217,13 +217,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("PatientID"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("PatientID")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -243,13 +243,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("PatientSex"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("PatientSex")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -269,13 +269,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("ScanOptions"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("ScanOptions")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -295,13 +295,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("KVP"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("KVP")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -321,13 +321,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("DataCollectionDiameter"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("DataCollectionDiameter")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -347,13 +347,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("ReconstructionDiameter"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("ReconstructionDiameter")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -373,13 +373,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("DistanceSourceToDetector"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("DistanceSourceToDetector")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -399,13 +399,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("DistanceSourceToPatient"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("DistanceSourceToPatient")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -425,13 +425,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("GantryDetectorTilt"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("GantryDetectorTilt")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -451,13 +451,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("TableHeight"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("TableHeight")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -477,13 +477,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("RotationDirection"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("RotationDirection")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -503,13 +503,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("ExposureTime"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("ExposureTime")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -529,13 +529,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("XRayTubeCurrent"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("XRayTubeCurrent")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -555,13 +555,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("Exposure"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("Exposure")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -581,13 +581,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("FilterType"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("FilterType")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -607,13 +607,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("FocalSpot"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("FocalSpot")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -633,13 +633,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("ConvolutionKernel"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("ConvolutionKernel")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -659,13 +659,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("PatientPosition"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("PatientPosition")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -685,13 +685,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("StudyID"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("StudyID")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -711,13 +711,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("ImagePositionPatient"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("ImagePositionPatient")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -737,13 +737,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("PixelSpacing"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("PixelSpacing")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -763,13 +763,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("PixelPaddingValue"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("PixelPaddingValue")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -789,13 +789,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("WindowCenter"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("WindowCenter")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -815,13 +815,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("WindowWidth"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("WindowWidth")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -841,13 +841,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("RescaleIntercept"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("RescaleIntercept")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code
@@ -867,13 +867,13 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
 {
   mafVME *vme = cargo->GetInputVme();
   mafString value;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("RescaleSlope"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("RescaleSlope")))
   {
     ti->GetValueAsSingleString(value);
   }
   else
   {
-    value = "NOT PRESENT";
+    value = _R("NOT PRESENT");
   }
 
   // tag handling code

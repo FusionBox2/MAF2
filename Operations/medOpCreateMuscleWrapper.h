@@ -28,7 +28,7 @@ class mafEvent;
 class medOpCreateMuscleWrapper: public mafOp
 {
 public:
-  medOpCreateMuscleWrapper(const mafString& label = "CreateMuscleWrappedMeter");
+  medOpCreateMuscleWrapper(const mafString& label = _R("CreateMuscleWrappedMeter"));
   ~medOpCreateMuscleWrapper(); 
 
   mafTypeMacro(medOpCreateMuscleWrapper, mafOp);

@@ -318,13 +318,8 @@ void lhpOpComputeTensor::CreateOutputDataset()
     m_Output = m_VmeTensors;
     m_Output->ReparentTo(m_Input);
     // Set the name of the dataset
-    const char* originalName = m_Input->GetName();
-    const char suffix[11] = " - tensors";
-    char* name = new char[strlen(originalName) + strlen(suffix) + 1];
-    strcpy(name, originalName);
-    strcat(name, suffix);
+    mafString name = m_Input->GetName() + _R(" - tensors");
     m_Output->SetName(name);
-    delete[] name;
     }
   }
 
@@ -645,7 +640,7 @@ void lhpOpComputeTensor::SetRenderVolumeVisibilityAndUpdateContent()
 void lhpOpComputeTensor::CreateOpDialog()
 //----------------------------------------------------------------------------
 {
-  m_Dialog = new mafGUIDialog("Tensor viewer", mafCLOSEWINDOW | mafRESIZABLE);
+  m_Dialog = new mafGUIDialog(_R("Tensor viewer"), mafCLOSEWINDOW | mafRESIZABLE);
 
   m_Rwi = new mafRWI(m_Dialog,ONE_LAYER,false);
   m_Rwi->SetListener(this);

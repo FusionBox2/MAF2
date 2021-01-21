@@ -46,8 +46,7 @@ lhpPipeInfo::~lhpPipeInfo()
 }
 void lhpPipeInfo::FillPage()
 {
-  char htmlbuf[10240];
-  htmlbuf[0] = '\0';
+  mafString htmlbuf;
   double values[54];
   for(int i = 0; i < 54; i++)
     values[i] = 0.f;
@@ -55,11 +54,12 @@ void lhpPipeInfo::FillPage()
   {
     for(int i = 0; i < 54; i++)
       values[i] = kmi->GetValue(i);
-    if(kmi->GetName().FindFirst("Hand-To-Head") != -1 || kmi->GetName().FindFirst("Hand-To-Mouth") != -1 || kmi->GetName().FindFirst("Hand-To-Back") != -1)
+    if(kmi->GetName().FindFirst(_R("Hand-To-Head")) != -1 || kmi->GetName().FindFirst(_R("Hand-To-Mouth")) != -1 || kmi->GetName().FindFirst(_R("Hand-To-Back")) != -1)
     {
-      sprintf(htmlbuf, 
-        "<table border=\"1\">\
-        <tr><th colspan=\"2\">%s</th></tr>\
+        htmlbuf = _R("<table border=\"1\">\
+        <tr><th colspan=\"2\">") + m_Node->GetName() +
+          mafString::Format(
+        _R("</th></tr>\
         <tr><td colspan=\"2\">Right shoulder</th></tr>\
         <tr><td style=\"width:60%%;\">Flexion(+)/Extension(-)/Speed</td><td>%.0f / %.0f / %.0f</td></tr>\
         <tr><td style=\"width:60%%;\">Adduction(+)/Abduction(-)/Speed</td><td>%.0f / %.0f / %.0f</td></tr>\
@@ -84,7 +84,7 @@ void lhpPipeInfo::FillPage()
         <tr><td style=\"width:60%%;\">Flexion(+)/Extension(-)/Speed</td><td>%.0f / %.0f / %.0f</td></tr>\
         <tr><td style=\"width:60%%;\">Adduction(+)/Abduction(-)/Speed</td><td>%.0f / %.0f / %.0f</td></tr>\
         <tr><td style=\"width:60%%;\">Internal rotation(+)/External rotation(-)/Speed</td><td>%.0f / %.0f / %.0f</td></tr>\
-        </table>", m_Node->GetName().GetCStr(), 
+        </table>"), 
         values[0], values[1], values[2],
         values[3], values[4], values[5],
         values[6], values[7], values[8],

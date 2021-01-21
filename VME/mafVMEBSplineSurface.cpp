@@ -59,7 +59,7 @@ mafCxxTypeMacro(mafVMEBSplineSurface)
 mafString mafVMEBSplineSurface::GetVisualPipe()
 //-------------------------------------------------------------------------
 {
-  return mafString("mafPipeSurface");
+  return mafString(_R("mafPipeSurface"));
 }
 
 //-------------------------------------------------------------------------
@@ -92,7 +92,7 @@ mafVMEBSplineSurface::mafVMEBSplineSurface()
   vtkNEW(m_Polygons);
   dpipe->SetInput(m_Polygons);
 
-  m_PointsGroupName = "";
+  m_PointsGroupName = _R("");
   m_BSurface   = NULL;
   m_OrderX     = 4;
   m_OrderY     = 4;
@@ -450,7 +450,7 @@ int mafVMEBSplineSurface::InternalStore(mafStorageElement *parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    if(parent->StoreMatrix("Transform",&m_Transform->GetMatrix())==MAF_OK)
+    if(parent->StoreMatrix(_R("Transform"),&m_Transform->GetMatrix())==MAF_OK)
       return MAF_OK;
   }
   return MAF_ERROR;
@@ -463,7 +463,7 @@ int mafVMEBSplineSurface::InternalRestore(mafStorageElement *node)
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
-    if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
+    if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
       return MAF_OK;
@@ -494,28 +494,27 @@ char** mafVMEBSplineSurface::GetIcon()
 void mafVMEBSplineSurface::SetPointsGroupLink(mafNode *n)
 //-------------------------------------------------------------------------
 {
-  SetLink("PointsGroup", n);
+  SetLink(_R("PointsGroup"), n);
 }
 //-------------------------------------------------------------------------
 void mafVMEBSplineSurface::SetElemLink(mafNode *n, int index)
 //-------------------------------------------------------------------------
 {
-  char nm[50];
-  sprintf(nm, "Elem%d", index);
+  mafString nm = mafString::Format(_R("Elem%d"), index);
   SetLink(nm, n);
 }
 //-------------------------------------------------------------------------
 mafVME *mafVMEBSplineSurface::GetPointsGroupLink()
 //-------------------------------------------------------------------------
 {
-  return mafVME::SafeDownCast(GetLink("PointsGroup"));
+  return mafVME::SafeDownCast(GetLink(_R("PointsGroup")));
 }
 //-------------------------------------------------------------------------
 mafGUI* mafVMEBSplineSurface::CreateGui()
 //-------------------------------------------------------------------------
 {
-  const mafString mode_choices_string[] = {_("Direct"),_("Maximal influence"), _("Interpolate")};
-  const mafString submode_choices_string[] = {_("1st derivative"),_("2nd derivative"), _("Periodic")};
+  const mafString mode_choices_string[] = {_L("Direct"),_L("Maximal influence"), _L("Interpolate")};
+  const mafString submode_choices_string[] = {_L("1st derivative"),_L("2nd derivative"), _L("Periodic")};
 
   mafID sub_id = -1;
 
@@ -525,21 +524,21 @@ mafGUI* mafVMEBSplineSurface::CreateGui()
 
 
   mafVME *polyline_vme1 = GetPointsGroupLink();
-  m_PointsGroupName = polyline_vme1 ? polyline_vme1->GetName() : _("none");
-  m_Gui->Button(ID_PNTS_GROUP_LINK,&m_PointsGroupName,_("Points"), _("Select the Points cloud to create the Spline"));
-  m_Gui->Integer(ID_ORDERX, _("Order X"), &m_OrderX, 1, 10);
-  m_Gui->Integer(ID_ORDERY, _("Order Y"), &m_OrderY, 1, 10);
-  m_Gui->Combo(ID_MODE, _("Mode"), &m_Mode, DIM(mode_choices_string), mode_choices_string);
-  m_Gui->Combo(ID_SUBMODEU, _("Submode X"), &m_SubModeU, DIM(submode_choices_string), submode_choices_string);
-  m_Gui->Combo(ID_SUBMODEV, _("Submode Y"), &m_SubModeV, DIM(submode_choices_string), submode_choices_string);
+  m_PointsGroupName = polyline_vme1 ? polyline_vme1->GetName() : _L("none");
+  m_Gui->Button(ID_PNTS_GROUP_LINK,&m_PointsGroupName,_L("Points"), _L("Select the Points cloud to create the Spline"));
+  m_Gui->Integer(ID_ORDERX, _L("Order X"), &m_OrderX, 1, 10);
+  m_Gui->Integer(ID_ORDERY, _L("Order Y"), &m_OrderY, 1, 10);
+  m_Gui->Combo(ID_MODE, _L("Mode"), &m_Mode, DIM(mode_choices_string), mode_choices_string);
+  m_Gui->Combo(ID_SUBMODEU, _L("Submode X"), &m_SubModeU, DIM(submode_choices_string), submode_choices_string);
+  m_Gui->Combo(ID_SUBMODEV, _L("Submode Y"), &m_SubModeV, DIM(submode_choices_string), submode_choices_string);
 
-  m_Gui->Bool(ID_USEBSLINES, _("Use BSLines"), &m_useBSLines);
+  m_Gui->Bool(ID_USEBSLINES, _L("Use BSLines"), &m_useBSLines);
 
-  m_Gui->FloatSlider(ID_SMOOTHX, _("Smooth X"),&m_SmoothX, 0.0, 1000.0);
-  m_Gui->FloatSlider(ID_SMOOTHY, _("Smooth Y"),&m_SmoothY, 0.0, 1000.0);
+  m_Gui->FloatSlider(ID_SMOOTHX, _L("Smooth X"),&m_SmoothX, 0.0, 1000.0);
+  m_Gui->FloatSlider(ID_SMOOTHY, _L("Smooth Y"),&m_SmoothY, 0.0, 1000.0);
 
-  m_Gui->Integer(ID_NUMTESSELX, _("Num parts X"), &m_TesselX, 2, 500);
-  m_Gui->Integer(ID_NUMTESSELY, _("Num parts Y"), &m_TesselY, 2, 500);
+  m_Gui->Integer(ID_NUMTESSELX, _L("Num parts X"), &m_TesselX, 2, 500);
+  m_Gui->Integer(ID_NUMTESSELY, _L("Num parts Y"), &m_TesselY, 2, 500);
 
   m_Gui->Enable(ID_SMOOTHX, m_Mode == 2);
   m_Gui->Enable(ID_SMOOTHY, m_Mode == 2);
@@ -635,7 +634,7 @@ void mafVMEBSplineSurface::OnEvent(mafEventBase *maf_event)
         else if(e->GetId() == ID_PNTS_GROUP_LINK)
         {
           mafID button_id = e->GetId();
-          mafString title = _("Choose vme");
+          mafString title = _L("Choose vme");
           e->SetId(VME_CHOOSE);
           e->SetArg((long)&mafVMEBSplineSurface::PolylineAccept);
           e->SetString(&title);
@@ -748,11 +747,11 @@ int mafVMEBSplineSurface::InternalInitialize()
 mmaMaterial *mafVMEBSplineSurface::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+  mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
   if (material == NULL)
   {
     material = mmaMaterial::New();
-    SetAttribute("MaterialAttributes", material);
+    SetAttribute(_R("MaterialAttributes"), material);
   }
   return material;
 }

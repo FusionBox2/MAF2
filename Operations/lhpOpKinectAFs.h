@@ -38,7 +38,7 @@ class lhpOpKinectAFs: public mafOp
 {
 public:
   mafTypeMacro(lhpOpKinectAFs, mafOp)
-  lhpOpKinectAFs(const mafString& label = "KinectAFSys");
+  lhpOpKinectAFs(const mafString& label = _R("KinectAFSys"));
  ~lhpOpKinectAFs(); 
 
   virtual void OnEvent(mafEventBase *maf_event);

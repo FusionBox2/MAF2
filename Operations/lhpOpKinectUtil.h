@@ -36,7 +36,7 @@ class lhpOpKinectUtil: public mafOp
 {
 public:
   mafTypeMacro(lhpOpKinectUtil, mafOp)
-  lhpOpKinectUtil(bool extapp = false, const mafString& label = "KinectUtil", bool simple = false, bool llimb = true, bool ulimb = true);
+  lhpOpKinectUtil(bool extapp = false, const mafString& label = _R("KinectUtil"), bool simple = false, bool llimb = true, bool ulimb = true);
  ~lhpOpKinectUtil(); 
 
   virtual void OnEvent(mafEventBase *maf_event);

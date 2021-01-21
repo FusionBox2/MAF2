@@ -38,7 +38,7 @@ class mafVMESurface;
 class lhpOpINPImporter: public mafOp
 {
 public:
-           lhpOpINPImporter(const mafString& label = "INP Importer");
+           lhpOpINPImporter(const mafString& label = _R("INP Importer"));
   virtual ~lhpOpINPImporter();
   
   mafTypeMacro(lhpOpINPImporter, mafOp);

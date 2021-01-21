@@ -32,7 +32,7 @@ class lhpOpSoftReg: public mafOp
 
 public:
   mafTypeMacro(lhpOpSoftReg, mafOp)
-  lhpOpSoftReg(const mafString& label="");
+  lhpOpSoftReg(const mafString& label= _R(""));
  ~lhpOpSoftReg(); 
 
   virtual void OnEvent(mafEventBase *maf_event);

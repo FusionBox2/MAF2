@@ -32,7 +32,7 @@ mafGUISettings(Listener, label)
 {
   // Default values for the application.
   m_ProxyFlag = 0;
-  m_ProxyHost = "";
+  m_ProxyHost = _R("");
   m_ProxyPort = 0;
 
   InitializeSettings();
@@ -47,11 +47,11 @@ void lhpGUINetworkConnectionSettings::CreateGui()
 //----------------------------------------------------------------------------
 {
   m_Gui = new mafGUI(this);
-  m_Gui->Label(_("Connection Settings"));
-  m_Gui->Bool(ID_PROXY_FLAG,_("using proxy"),&m_ProxyFlag,1);
-  m_Gui->String(ID_PROXY_HOST,_("Host"),&m_ProxyHost,"");
-  m_Gui->Integer(ID_PROXY_PORT,_("Port"),&m_ProxyPort,1);
-  m_Gui->Label(_(""));
+  m_Gui->Label(_L("Connection Settings"));
+  m_Gui->Bool(ID_PROXY_FLAG,_L("using proxy"),&m_ProxyFlag,1);
+  m_Gui->String(ID_PROXY_HOST,_L("Host"),&m_ProxyHost, _R(""));
+  m_Gui->Integer(ID_PROXY_PORT,_L("Port"),&m_ProxyPort,1);
+  m_Gui->Label(_L(""));
   m_Gui->Divider(2);
   EnableItems();
 }
@@ -101,11 +101,11 @@ void lhpGUINetworkConnectionSettings::InitializeSettings()
 
   if(m_Config->Read("ProxyHost", &string_item))
   {
-    m_ProxyHost = string_item.c_str();
+    m_ProxyHost = mafWxToString(string_item);
   }
   else
   {
-    m_Config->Write("ProxyHost",m_ProxyHost.GetCStr());
+    m_Config->Write("ProxyHost",m_ProxyHost.toWx());
   }
 
   if(m_Config->Read("ProxyPort", &long_item))

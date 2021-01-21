@@ -38,7 +38,7 @@ class lhpOpAFSys: public mafOp
 {
 public:
   mafTypeMacro(lhpOpAFSys, mafOp)
-  lhpOpAFSys(const mafString& label = "AFSys");
+  lhpOpAFSys(const mafString& label = _R("AFSys"));
  ~lhpOpAFSys(); 
 
   virtual void OnEvent(mafEventBase *maf_event);

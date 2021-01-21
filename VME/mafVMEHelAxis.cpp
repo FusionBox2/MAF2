@@ -162,14 +162,14 @@ void mafVMEHelAxis::InternalUpdate()
 
   if(m_Gui)
   {
-    m_StrDir[0] = wxString::Format("x: %f",m_Direction[0]);
-    m_StrDir[1] = wxString::Format("y: %f",m_Direction[1]);
-    m_StrDir[2] = wxString::Format("z: %f",m_Direction[2]);
-    m_StrPnt[0] = wxString::Format("x: %f",m_StartPoint[0]);
-    m_StrPnt[1] = wxString::Format("y: %f",m_StartPoint[1]);
-    m_StrPnt[2] = wxString::Format("z: %f",m_StartPoint[2]);
-    m_StrAng    = (m_Mode == 1) ? "" : wxString::Format("x: %f",m_Angle);
-    m_StrTrl    = (m_Mode == 1) ? "" : wxString::Format("x: %f",m_Translation);
+    m_StrDir[0] = mafString::Format(_R("x: %f"),m_Direction[0]);
+    m_StrDir[1] = mafString::Format(_R("y: %f"),m_Direction[1]);
+    m_StrDir[2] = mafString::Format(_R("z: %f"),m_Direction[2]);
+    m_StrPnt[0] = mafString::Format(_R("x: %f"),m_StartPoint[0]);
+    m_StrPnt[1] = mafString::Format(_R("y: %f"),m_StartPoint[1]);
+    m_StrPnt[2] = mafString::Format(_R("z: %f"),m_StartPoint[2]);
+    m_StrAng    = (m_Mode == 1) ? _R("") : mafString::Format(_R("a: %f"),m_Angle);
+    m_StrTrl    = (m_Mode == 1) ? _R("") : mafString::Format(_R("t: %f"),m_Translation);
     m_Gui->Update();
   }
 
@@ -327,11 +327,11 @@ mafVMEHelAxis::mafVMEHelAxis() : mafVME()
   m_StartPoint   = V3d<double>(0.0, 0.0, 0.0);
   m_Direction    = V3d<double>(1.0, 0.0, 0.0);
 
-  m_StrDir[0]    = "1.0";
-  m_StrDir[1]    = m_StrDir[2] = "0.0";
-  m_StrPnt[0]    = m_StrPnt[1] = m_StrPnt[2] = "0.0";
-  m_StrAng       = "0.0";
-  m_StrTrl       = "0.0";
+  m_StrDir[0]    = _R("1.0");
+  m_StrDir[1]    = m_StrDir[2] = _R("0.0");
+  m_StrPnt[0]    = m_StrPnt[1] = m_StrPnt[2] = _R("0.0");
+  m_StrAng       = _R("0.0");
+  m_StrTrl       = _R("0.0");
 
 
   m_MeanChanges  = 1;
@@ -413,8 +413,8 @@ mafVMEHelAxis::mafVMEHelAxis() : mafVME()
   //SetData(m_ScaleAxis->GetOutput(), -1);
 
   dpipe->SetInput(m_ScaleAxis->GetOutput());
-  m_ProximalName = "";
-  m_DistalName = "";
+  m_ProximalName = _R("");
+  m_DistalName = _R("");
 }
 
 //-------------------------------------------------------------------------
@@ -449,11 +449,11 @@ int mafVMEHelAxis::InternalInitialize()
 mmaMaterial *mafVMEHelAxis::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+  mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
   if (material == NULL)
   {
     material = mmaMaterial::New();
-    SetAttribute("MaterialAttributes", material);
+    SetAttribute(_R("MaterialAttributes"), material);
     if (m_Output)
     {
       ((mafVMEOutputSurface *)m_Output)->SetMaterial(material);
@@ -497,16 +497,16 @@ int mafVMEHelAxis::InternalStore(mafStorageElement *parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent->StoreMatrix("Transform",&m_Transform->GetMatrix());
+    parent->StoreMatrix(_R("Transform"),&m_Transform->GetMatrix());
     //code for backward compatibility
-    parent->StoreDouble("ScaleFactor", m_LengthFactor);
-    parent->StoreDouble("RadiusFactor", m_RadiusFactor);
-    parent->StoreDouble("LengthFactor", m_LengthFactor);
-    parent->StoreDouble("MinAngle", m_MinAngle);
-    parent->StoreDouble("MinTime", m_MinTime);
-    parent->StoreDouble("MaxTime", m_MaxTime);
-    parent->StoreInteger("Mode", m_Mode);
-    parent->StoreInteger("AligningMode", m_AligningMode);
+    parent->StoreDouble(_R("ScaleFactor"), m_LengthFactor);
+    parent->StoreDouble(_R("RadiusFactor"), m_RadiusFactor);
+    parent->StoreDouble(_R("LengthFactor"), m_LengthFactor);
+    parent->StoreDouble(_R("MinAngle"), m_MinAngle);
+    parent->StoreDouble(_R("MinTime"), m_MinTime);
+    parent->StoreDouble(_R("MaxTime"), m_MaxTime);
+    parent->StoreInteger(_R("Mode"), m_Mode);
+    parent->StoreInteger(_R("AligningMode"), m_AligningMode);
     return MAF_OK;
   }
   return MAF_ERROR;
@@ -519,19 +519,19 @@ int mafVMEHelAxis::InternalRestore(mafStorageElement *node)
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
-    if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
+    if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
       //code for backward compatibility
-      node->RestoreDouble("ScaleFactor", m_LengthFactor);
+      node->RestoreDouble(_R("ScaleFactor"), m_LengthFactor);
       m_RadiusFactor = m_LengthFactor;
-      node->RestoreDouble("RadiusFactor", m_RadiusFactor);
-      node->RestoreDouble("LengthFactor", m_LengthFactor);
-      node->RestoreDouble("MinAngle", m_MinAngle);
-      node->RestoreDouble("MinTime", m_MinTime);
-      node->RestoreDouble("MaxTime", m_MaxTime);
-      node->RestoreInteger("Mode", m_Mode);
-      node->RestoreInteger("AligningMode", m_AligningMode);
+      node->RestoreDouble(_R("RadiusFactor"), m_RadiusFactor);
+      node->RestoreDouble(_R("LengthFactor"), m_LengthFactor);
+      node->RestoreDouble(_R("MinAngle"), m_MinAngle);
+      node->RestoreDouble(_R("MinTime"), m_MinTime);
+      node->RestoreDouble(_R("MaxTime"), m_MaxTime);
+      node->RestoreInteger(_R("Mode"), m_Mode);
+      node->RestoreInteger(_R("AligningMode"), m_AligningMode);
       m_MeanChanges = 1;
       SetRadiusFactor(m_RadiusFactor);
       SetLengthFactor(m_LengthFactor);
@@ -547,13 +547,13 @@ void mafVMEHelAxis::SetProximal(mafVME *vme)
   assert(false);
   if(vme)
   {
-    SetLink("ProximalSegment", vme);
+    SetLink(_R("ProximalSegment"), vme);
     m_ProximalName = vme->GetName();
   }
   else 
   {
-    RemoveLink("ProximalSegment");
-    m_ProximalName = "";
+    RemoveLink(_R("ProximalSegment"));
+    m_ProximalName = _R("");
   }
   if(m_Gui)
     m_Gui->Update();
@@ -563,13 +563,13 @@ void mafVMEHelAxis::SetDistal(mafVME *vme)
 {
   if(vme)
   {
-    SetLink("DistalSegment", vme);
+    SetLink(_R("DistalSegment"), vme);
     m_DistalName = vme->GetName();
   }
   else 
   {
-    RemoveLink("DistalSegment");
-    m_DistalName = "";
+    RemoveLink(_R("DistalSegment"));
+    m_DistalName = _R("");
   }
   if(m_Gui)
     m_Gui->Update();
@@ -578,14 +578,14 @@ void mafVMEHelAxis::SetDistal(mafVME *vme)
 mafVME *mafVMEHelAxis::GetProximal()
 {
   return GetParent();
-  if(mafVME *vme = mafVME::SafeDownCast(GetLink("ProximalSegment")))
+  if(mafVME *vme = mafVME::SafeDownCast(GetLink(_R("ProximalSegment"))))
     return vme;
   return NULL;
 }
 mafVME *mafVMEHelAxis::GetDistal()
 {
   //return GetParent();
-  if(mafVME *vme = mafVME::SafeDownCast(GetLink("DistalSegment")))
+  if(mafVME *vme = mafVME::SafeDownCast(GetLink(_R("DistalSegment"))))
     return vme;
   return NULL;
 }
@@ -640,7 +640,7 @@ void mafVMEHelAxis::OnEvent(mafEventBase *maf_event)
     }
   case ID_PROXIMAL:
     {
-      mafString s(_("Choose cloud"));
+      mafString s(_L("Choose cloud"));
       mafEvent e(this,VME_CHOOSE, &s, NULL/*, (long)&lhpOpRegisterLMScripted::ClosedCloudAccept*/);
       this->ForwardUpEvent(e);
       mafVME *vme = mafVME::SafeDownCast(e.GetVme());
@@ -649,7 +649,7 @@ void mafVMEHelAxis::OnEvent(mafEventBase *maf_event)
     }
   case ID_DISTAL:
   {
-    mafString s(_("Choose cloud"));
+    mafString s(_L("Choose cloud"));
     mafEvent e(this,VME_CHOOSE, &s, NULL/*, (long)&lhpOpRegisterLMScripted::ClosedCloudAccept*/);
     this->ForwardUpEvent(e);
     mafVME *vme = mafVME::SafeDownCast(e.GetVme());
@@ -679,58 +679,58 @@ void mafVMEHelAxis::OnEvent(mafEventBase *maf_event)
 mafGUI *mafVMEHelAxis::CreateGui()
 //----------------------------------------------------------------------------
 {
-  const mafString mode_choices[] = {_("Instant"), _("Mean"), _("Relative")};
-  const mafString align_choices[] = {_("None"), _("XYZ"), _("XZY"), _("YZX"), _("YXZ"), _("ZXY"), _("ZYX")};
+  const mafString mode_choices[] = {_L("Instant"), _L("Mean"), _L("Relative")};
+  const mafString align_choices[] = {_L("None"), _L("XYZ"), _L("XZY"), _L("YZX"), _L("YXZ"), _L("ZXY"), _L("ZYX")};
   m_Gui = Superclass::CreateGui();
   m_Gui->Show(false);
-  m_Gui->Double(ID_RADIUS_FACTOR,_("radius scale"),&m_RadiusFactor);
-  m_Gui->Double(ID_LENGTH_FACTOR,_("length scale"),&m_LengthFactor);
-  m_Gui->Double(ID_MIN_ANGLE, _("Min angle"), &m_MinAngle, 0.0);
-  m_Gui->Combo(ID_MODE, _("Mode"), &m_Mode, 3, mode_choices, _("Select mode"));
-  m_Gui->Combo(ID_ALIGNING, _("Align"), &m_AligningMode, 7, align_choices, _("Select aligning"));
+  m_Gui->Double(ID_RADIUS_FACTOR,_L("radius scale"),&m_RadiusFactor);
+  m_Gui->Double(ID_LENGTH_FACTOR,_L("length scale"),&m_LengthFactor);
+  m_Gui->Double(ID_MIN_ANGLE, _L("Min angle"), &m_MinAngle, 0.0);
+  m_Gui->Combo(ID_MODE, _L("Mode"), &m_Mode, 3, mode_choices, _L("Select mode"));
+  m_Gui->Combo(ID_ALIGNING, _L("Align"), &m_AligningMode, 7, align_choices, _L("Select aligning"));
 
-  m_Gui->Label(_("Proximal :"),true);
+  m_Gui->Label(_L("Proximal :"),true);
   if(mafVME *vme = GetProximal())
     m_ProximalName = vme->GetName();
   m_Gui->Label(&m_ProximalName);
   //m_Gui->Button(ID_PROXIMAL,_("Proximal"));
   //m_Gui->Button(ID_RESETPROXIMAL,_("Reset proximal"));
 
-  m_Gui->Label(_("Distal :"),true);
+  m_Gui->Label(_L("Distal :"),true);
   if(mafVME *vme = GetDistal())
     m_DistalName = vme->GetName();
   m_Gui->Label(&m_DistalName);
-  m_Gui->Button(ID_DISTAL,_("Distal"));
-  m_Gui->Button(ID_RESETDISTAL,_("Reset distal"));
+  m_Gui->Button(ID_DISTAL,_L("Distal"));
+  m_Gui->Button(ID_RESETDISTAL,_L("Reset distal"));
 
-  m_Gui->Double(ID_MIN_TIME, _("Min time"), &m_MinTime, 0.0);
-  m_Gui->Double(ID_MAX_TIME, _("Max time"), &m_MaxTime);
-  m_Gui->Double(ID_REF_TIME, _("Ref time"), &m_RefTime);
+  m_Gui->Double(ID_MIN_TIME, _L("Min time"), &m_MinTime, 0.0);
+  m_Gui->Double(ID_MAX_TIME, _L("Max time"), &m_MaxTime);
+  m_Gui->Double(ID_REF_TIME, _L("Ref time"), &m_RefTime);
   m_Gui->Divider();
   m_Gui->Enable(ID_MIN_TIME, m_Mode == 1);
   m_Gui->Enable(ID_MAX_TIME, m_Mode == 1);
   m_Gui->Enable(ID_REF_TIME, m_Mode == 2);
   m_Gui->Divider();
-  m_Gui->Label("Direction:");
-  m_StrDir[0] = wxString::Format("x: %f",m_Direction[0]);
-  m_StrDir[1] = wxString::Format("y: %f",m_Direction[1]);
-  m_StrDir[2] = wxString::Format("z: %f",m_Direction[2]);
-  m_Gui->Label("", &m_StrDir[0]);
-  m_Gui->Label("", &m_StrDir[1]);
-  m_Gui->Label("", &m_StrDir[2]);
-  m_Gui->Label("Rotation Center:");
-  m_StrPnt[0] = wxString::Format("x: %f",m_StartPoint[0]);
-  m_StrPnt[1] = wxString::Format("y: %f",m_StartPoint[1]);
-  m_StrPnt[2] = wxString::Format("z: %f",m_StartPoint[2]);
-  m_Gui->Label("", &m_StrPnt[0]);
-  m_Gui->Label("", &m_StrPnt[1]);
-  m_Gui->Label("", &m_StrPnt[2]);
-  m_Gui->Label("Angle:");
-  m_StrAng    = (m_Mode == 1) ? "" : wxString::Format("%f",m_Angle);
-  m_Gui->Label("", &m_StrAng);
-  m_Gui->Label("Translation:");
-  m_StrTrl    = (m_Mode == 1) ? "" : wxString::Format("%f",m_Translation);
-  m_Gui->Label("", &m_StrTrl);
+  m_Gui->Label(_R("Direction:"));
+  m_StrDir[0] = mafString::Format(_R("x: %f"),m_Direction[0]);
+  m_StrDir[1] = mafString::Format(_R("y: %f"),m_Direction[1]);
+  m_StrDir[2] = mafString::Format(_R("z: %f"),m_Direction[2]);
+  m_Gui->Label(_R(""), &m_StrDir[0]);
+  m_Gui->Label(_R(""), &m_StrDir[1]);
+  m_Gui->Label(_R(""), &m_StrDir[2]);
+  m_Gui->Label(_R("Rotation Center:"));
+  m_StrPnt[0] = mafString::Format(_R("x: %f"),m_StartPoint[0]);
+  m_StrPnt[1] = mafString::Format(_R("y: %f"),m_StartPoint[1]);
+  m_StrPnt[2] = mafString::Format(_R("z: %f"),m_StartPoint[2]);
+  m_Gui->Label(_R(""), &m_StrPnt[0]);
+  m_Gui->Label(_R(""), &m_StrPnt[1]);
+  m_Gui->Label(_R(""), &m_StrPnt[2]);
+  m_Gui->Label(_R("Angle:"));
+  m_StrAng    = (m_Mode == 1) ? _R("") : mafString::Format(_R("%f"),m_Angle);
+  m_Gui->Label(_R(""), &m_StrAng);
+  m_Gui->Label(_R("Translation:"));
+  m_StrTrl    = (m_Mode == 1) ? _R("") : mafString::Format(_R("%f"),m_Translation);
+  m_Gui->Label(_R(""), &m_StrTrl);
   m_Gui->Update();
   return m_Gui;
 }

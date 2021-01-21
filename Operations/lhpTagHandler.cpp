@@ -30,9 +30,9 @@ lhpTagHandlerInputOutputParametersCargo::lhpTagHandlerInputOutputParametersCargo
 {
   m_InputVme = NULL;
 	m_InputUser = NULL;
-	m_InputMSF = "";
+	m_InputMSF = _R("");
 
-  m_TagHandlerGeneratedString = "NOT YET HANDLED!";
+  m_TagHandlerGeneratedString = _R("NOT YET HANDLED!");
 }
 
 
@@ -41,9 +41,9 @@ mafCxxTypeMacro(lhpTagHandler);
 lhpTagHandler::lhpTagHandler()
 //------------------------------------------------------------------------------
 {
-	m_PythonExe ="python.exe ";
-	m_PythonwExe ="pythonw.exe ";
-	m_VMEUploaderDownloaderDir  = (lhpUtils::lhpGetApplicationDirectory() + "\\..\\VMEUploaderDownloader\\").c_str();
+	m_PythonExe =_R("python.exe ");
+	m_PythonwExe =_R("pythonw.exe ");
+	m_VMEUploaderDownloaderDir  = lhpUtils::lhpGetApplicationDirectory() + _R("\\..\\VMEUploaderDownloader\\");
 }
 
 //------------------------------------------------------------------------
@@ -51,7 +51,7 @@ void lhpTagHandler::ExtractTagName()
 //------------------------------------------------------------------------
 {
   // tag name from type
-  m_TagName = this->GetTypeName();
-  int endPos = m_TagName.FindFirst("_");
+  m_TagName = _R(this->GetTypeName());
+  int endPos = m_TagName.FindFirst(_R("_"));
   m_TagName.Erase(0, endPos);
 }

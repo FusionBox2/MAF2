@@ -73,11 +73,11 @@ lhpOpRegisterLMScripted::lhpOpRegisterLMScripted(const mafString& label) : Super
   m_Registered       = NULL;
   m_PointsSource     = NULL;
   m_PointsTarget     = NULL;
-  m_SourceName       ="none";
-  m_TargetName       ="none";
+  m_SourceName       =_R("none");
+  m_TargetName       =_R("none");
   m_MultiTime        = 0;
   m_RegistrationMode = RIGID;
-  m_ListFName        = "";
+  m_ListFName        = _R("");
 }
 //----------------------------------------------------------------------------
 lhpOpRegisterLMScripted::~lhpOpRegisterLMScripted( ) 
@@ -118,26 +118,26 @@ void lhpOpRegisterLMScripted::OpRun()
   m_SourceName = m_Input->GetName();
   
   int num_choices = 3;
-  const mafString choices_string[] = {_("rigid"), _("similarity"), _("affine")}; 
-  mafString wildcard = "Dictionary (*.txt)|*.txt|All Files (*.*)|*.*";
+  const mafString choices_string[] = {_L("rigid"), _L("similarity"), _L("affine")}; 
+  mafString wildcard = _R("Dictionary (*.txt)|*.txt|All Files (*.*)|*.*");
 
   m_Gui = new mafGUI(this);
   m_Gui->SetListener(this);
   
-  m_Gui->Label(_("source :"),true);
+  m_Gui->Label(_L("source :"),true);
   m_Gui->Label(&m_SourceName);
   
-  m_Gui->Label(_("target :"),true);
+  m_Gui->Label(_L("target :"),true);
   m_Gui->Label(&m_TargetName);
-  m_Gui->Button(ID_CHOOSE,_("target "));
+  m_Gui->Button(ID_CHOOSE,_L("target "));
   
-  m_Gui->Combo(ID_REGTYPE, _("reg. type"), &m_RegistrationMode, num_choices, choices_string); 
+  m_Gui->Combo(ID_REGTYPE, _L("reg. type"), &m_RegistrationMode, num_choices, choices_string); 
   
-  m_Gui->Bool(ID_MULTIPLE_TIME_REGISTRATION,_("multi-time"),&m_MultiTime,1);
+  m_Gui->Bool(ID_MULTIPLE_TIME_REGISTRATION,_L("multi-time"),&m_MultiTime,1);
   m_Gui->Enable(ID_MULTIPLE_TIME_REGISTRATION,false);
   
-  m_Gui->FileOpen(ID_LOAD_SCRIPT, "Script",  &m_ListFName, "*.txt");
-  m_Gui->Label("");
+  m_Gui->FileOpen(ID_LOAD_SCRIPT, _R("Script"),  &m_ListFName, _R("*.txt"));
+  m_Gui->Label(_R(""));
 
   m_Gui->OkCancel();
 
@@ -205,7 +205,7 @@ bool lhpOpRegisterLMScripted::ReadLMDictionary(mafString *fileName)
   wxString     sSecondName("");
   //mafGraphDictionary *pEntry;
 
-  pFile = new wxTextFile(fileName->GetCStr());
+  pFile = new wxTextFile(fileName->toWx());
 
   if(pFile == NULL)
   {
@@ -262,7 +262,7 @@ void lhpOpRegisterLMScripted::OnEvent(mafEventBase *maf_event)
     {
       case ID_CHOOSE:
       {
-        mafString s(_("Choose cloud"));
+        mafString s(_L("Choose cloud"));
         mafEvent e(this,VME_CHOOSE, &s, NULL/*, (long)&lhpOpRegisterLMScripted::ClosedCloudAccept*/);
         mafEventMacro(e);
         mafNode *vme = e.GetVme();
@@ -272,7 +272,7 @@ void lhpOpRegisterLMScripted::OnEvent(mafEventBase *maf_event)
       case ID_REGTYPE:
       break;
       case ID_LOAD_SCRIPT:
-        if(m_ListFName != "")
+        if(!m_ListFName.IsEmpty())
         {
           m_LMDict.clear();
           ReadLMDictionary(&m_ListFName);
@@ -370,7 +370,7 @@ bool lhpOpRegisterLMScripted::RegistrationProcedure()
 
   if(m_Registered == NULL)
   {
-    wxString name = wxString::Format("%s registered on %s",m_Source->GetName().GetCStr(), m_Target->GetName().GetCStr());
+    mafString name = m_Source->GetName() + _R(" registered on ") + m_Target->GetName();
     m_Registered= mafVME::SafeDownCast(CopyTreeTimeStamp(m_Source));
     m_Registered->Register(this);
     m_Registered->SetName(name);
@@ -399,13 +399,13 @@ bool lhpOpRegisterLMScripted::RegistrationProcedure()
     mafVMELandmarkCloud *lmct = NULL;
     if(lmcs == NULL)//lmcr is of the same type as lmcs
       continue;
-    const char *search_name = nsrc->GetName();
+    const char *search_name = nsrc->GetName().GetCStr();
     for(int i = 0; i < m_LMDict.size(); i++)
     {
       search_name = NULL;
       if(usedEntries[i])
         continue;
-      if(mafString(nsrc->GetName()) == mafString(m_LMDict[i].first))
+      if(nsrc->GetName() == mafWxToString(m_LMDict[i].first))
       {
         usedEntries[i] = true;
         search_name = m_LMDict[i].second.c_str();
@@ -420,7 +420,7 @@ bool lhpOpRegisterLMScripted::RegistrationProcedure()
         mafVMELandmarkCloud *lmtmp = mafVMELandmarkCloud::SafeDownCast(lmt);
         if(lmtmp == NULL)
           continue;
-        if(strstr(lmtmp->GetName(), search_name) != NULL)
+        if(strstr(lmtmp->GetName().GetCStr(), search_name) != NULL)
         {
           lmct = lmtmp;
           break;
@@ -445,9 +445,9 @@ bool lhpOpRegisterLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandma
 {
   mafVMEInfoText *info;
   mafNEW(info);
-  wxString name = wxString::Format("Info for registration %s into %s",m_Source->GetName().GetCStr(), m_Target->GetName().GetCStr());
+  mafString name = _R("Info for registration ") + m_Source->GetName() + _R(" into ") + m_Target->GetName();
   info->SetName(name);
-  info->SetPosLabel("Registration residual: ", 0);
+  info->SetPosLabel(_R("Registration residual: "), 0);
   info->SetPosShow(true, 0);
   bool infoAdded = false;
 
@@ -555,13 +555,13 @@ int lhpOpRegisterLMScripted::ExtractMatchingPoints(mafVMELandmarkCloud *src, maf
   {
     if(!src->GetLandmarkVisibility(i))
       continue;
-    wxString SourceLandmarkName = src->GetLandmarkName(i);
+    mafString SourceLandmarkName = src->GetLandmarkName(i);
 
     bool found = false;
     for(j=0;j<npTarget;j++)
     {
-      wxString TargetLandmarkName = trg->GetLandmarkName(j);
-      if(mafString(SourceLandmarkName) == mafString(TargetLandmarkName))
+      mafString TargetLandmarkName = trg->GetLandmarkName(j);
+      if(SourceLandmarkName == TargetLandmarkName)
       {
         found = true;
         found_one = true;

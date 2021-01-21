@@ -65,8 +65,8 @@ lhpOpExporterC3DBTK::lhpOpExporterC3DBTK(const mafString& label) : Superclass(la
 {
   m_OpType = OPTYPE_EXPORTER;
   m_Canundo = true;
-  m_File = "";
-  m_FileDir = "";
+  m_File = _R("");
+  m_FileDir = _R("");
   m_Input   = NULL;
   m_GlobalPos = true;
   m_Subtree   = false;
@@ -97,12 +97,12 @@ void lhpOpExporterC3DBTK::OpRun()
 //----------------------------------------------------------------------------
 {
   m_Gui = new mafGUI(this);
-  m_Gui->Label("absolute matrix",true);
-  m_Gui->Bool(ID_ABS_POSITION,"apply",&m_GlobalPos,0);
+  m_Gui->Label(_R("absolute matrix"),true);
+  m_Gui->Bool(ID_ABS_POSITION,_R("apply"),&m_GlobalPos,0);
   if(mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(m_Input))
-    m_Gui->Bool(ID_SUBTREE,"Subtree",&m_Subtree,0);
+    m_Gui->Bool(ID_SUBTREE,_R("Subtree"),&m_Subtree,0);
   else if(medVMEAnalog *analog = medVMEAnalog::SafeDownCast(m_Input))
-    m_Gui->Bool(ID_SUBTREE,"Subtree",&m_Subtree,0);
+    m_Gui->Bool(ID_SUBTREE,_R("Subtree"),&m_Subtree,0);
   m_Gui->OkCancel();
   m_Gui->Divider();
   ShowGui();
@@ -142,17 +142,17 @@ void lhpOpExporterC3DBTK::OnEvent(mafEventBase *maf_event)
         m_Gui->Enable(wxCANCEL, false);
 
         assert(m_Input);
-        wxString proposed = (mafGetApplicationDirectory() + "/Data/External/").c_str();
+        mafString proposed = mafGetApplicationDirectory() + _R("/Data/External/");
 
         if(true)//(m_Input->IsMAFType(mafVMELandmarkCloud))
         {
           proposed += m_Input->GetName();
-          proposed += ".c3d";
-          wxString wildc = "c3d file (*.c3d)|*.c3d";
+          proposed += _R(".c3d");
+          mafString wildc = _R("c3d file (*.c3d)|*.c3d");
 
-          wxString f = mafGetSaveFile(proposed,wildc).GetCStr(); 
+          mafString f = mafGetSaveFile(proposed,wildc); 
 
-          if(f != "") 
+          if(!f.IsEmpty()) 
           {
             m_File = f;
             ExportLandmark();
@@ -180,9 +180,9 @@ void lhpOpExporterC3DBTK::OnEvent(mafEventBase *maf_event)
           }
           else*/
           {
-            wxString f = mafGetDirName(proposed).GetCStr();
+            mafString f = mafGetDirName(proposed);
 
-            if(f != "") 
+            if(!f.IsEmpty()) 
             {
               m_FileDir = f;
               ExportLandmark();
@@ -447,7 +447,7 @@ bool lhpOpExporterC3DBTK::ExportClouds(btk::Acquisition::Pointer target, std::ve
     {
       btk::Point::Pointer targetP = target->GetPoint(pointIndex);
       pointIndex++;
-      targetP->SetLabel(cloud->GetLandmarkName(j).GetCStr());
+      targetP->SetLabel(cloud->GetLandmarkName(j).toStd());
 
       for (int index = 0; index < timeStamps.size(); index++)
       {
@@ -491,7 +491,7 @@ bool lhpOpExporterC3DBTK::ExportClouds(btk::Acquisition::Pointer target, std::ve
   for(int i = 0; i < analogs.size(); i++)
   {
     medVMEAnalog *analog = analogs[i];
-    mafTagItem   *namesTag = analog->GetTagArray()->GetTag("SIGNALS_NAME");
+    mafTagItem   *namesTag = analog->GetTagArray()->GetTag(_R("SIGNALS_NAME"));
 
     const vnl_matrix<double>& matr = analog->GetScalarOutput()->GetScalarData();
     std::vector<mafTimeStamp> aTimeStamps;
@@ -506,7 +506,7 @@ bool lhpOpExporterC3DBTK::ExportClouds(btk::Acquisition::Pointer target, std::ve
     {
       btk::Analog::Pointer targetA = target->GetAnalog(analogIndex);
       analogIndex++;
-      targetA->SetLabel(namesTag->GetValue(j).GetCStr());
+      targetA->SetLabel(namesTag->GetValue(j).toStd());
     }
     analogIndex = analogIndexDep;
 
@@ -561,8 +561,6 @@ void lhpOpExporterC3DBTK::ExportLandmark()
   {
     wait = new wxBusyInfo("Please wait, exporting...");
   }
-  //file creation
-  const char    *fileName = (m_File);
 
   std::vector<mafVMELandmarkCloud*> clouds;
   std::vector<medVMEAnalog*>        analogs;
@@ -584,7 +582,7 @@ void lhpOpExporterC3DBTK::ExportLandmark()
     if(ExportClouds(target, clouds, analogs))
     {
       btk::AcquisitionFileWriter::Pointer writer = btk::AcquisitionFileWriter::New();
-      writer->SetFilename(fileName);
+      writer->SetFilename(m_File.toStd());
       writer->SetInput(target);
       writer->Update();
     }

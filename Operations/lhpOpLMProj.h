@@ -31,7 +31,7 @@ class mafVME;
 class lhpOpLMProj: public mafOp
 {
 public:
-  lhpOpLMProj(bool internalproj = true, const mafString& label = "Landmarks projection");
+  lhpOpLMProj(bool internalproj = true, const mafString& label = _R("Landmarks projection"));
   ~lhpOpLMProj(); 
   virtual void OnEvent(mafEventBase *maf_event);
   mafOp* Copy();

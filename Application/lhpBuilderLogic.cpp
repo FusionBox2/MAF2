@@ -57,11 +57,9 @@ void lhpBuilderLogic::OnEvent(mafEventBase *maf_event)
 		{
 		case ABOUT_APPLICATION:
 			{
-				wxString message = m_AppTitle.GetCStr();
-				message += _(" Application ");
-				message += m_Revision;
-				wxMessageBox(message, "About Application");
-				mafLogMessage(wxString::Format("%s",m_Revision.GetCStr()));
+				mafString message = m_AppTitle + _L(" Application ") + m_Revision;
+				wxMessageBox(message.toWx(), "About Application");
+				mafLogMessage(_M(m_Revision));
 			}
 			break;
       case ID_REQUEST_APPLICATION_NAME:
@@ -83,7 +81,7 @@ void lhpBuilderLogic::OnEvent(mafEventBase *maf_event)
       break;
     case ID_REQUEST_PYTHON_EXE_INTERPRETER:
       {
-        if(m_PythonSettings->GetPythonExe())
+        if(m_PythonSettings->GetPythonExe().GetCStr())
         {
           e->SetString(&m_PythonSettings->GetPythonExe());
         }
@@ -92,7 +90,7 @@ void lhpBuilderLogic::OnEvent(mafEventBase *maf_event)
     
     case ID_REQUEST_PYTHONW_EXE_INTERPRETER:
       {
-        if(m_PythonSettings->GetPythonwExe())
+        if(m_PythonSettings->GetPythonwExe().GetCStr())
         {
 
           e->SetString(&m_PythonSettings->GetPythonwExe());
@@ -115,12 +113,12 @@ void lhpBuilderLogic::VmeAdded(mafNode *vme)
   mafLogicWithManagers::VmeAdded(vme);
   // check for the presence of the LHDL attribute
 
-  mafTagArray *lhdlArray = mafTagArray::SafeDownCast(vme->GetAttribute("LHDL"));
+  mafTagArray *lhdlArray = mafTagArray::SafeDownCast(vme->GetAttribute(_R("LHDL")));
   if (lhdlArray == NULL)
   {
     lhdlArray = mafTagArray::New();
-    lhdlArray->SetName("LHDL");
-    vme->SetAttribute("LHDL",lhdlArray);
+    lhdlArray->SetName(_R("LHDL"));
+    vme->SetAttribute(_R("LHDL"),lhdlArray);
   }
 }
 //----------------------------------------------------------------------------
@@ -151,7 +149,7 @@ void lhpBuilderLogic::GetCredentials()
 void lhpBuilderLogic::ViewContextualMenu(bool vme_menu)
 //----------------------------------------------------------------------------
 {
-  if (m_AppTitle == "PSLoader")
+  if (m_AppTitle == _R("PSLoader"))
   {
     psLoaderGUIContextualMenu *contextMenu = new psLoaderGUIContextualMenu();
     contextMenu->SetListener(this);

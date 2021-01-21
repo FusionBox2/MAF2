@@ -115,14 +115,14 @@ void lhpOpTimeShift::CreateGui()
 {
   if(m_Gui == NULL)
   {
-    char strng[100];
+    mafString strng;
     int nFrames = mafVMEGenericAbstract::SafeDownCast(m_Input)->GetNumberOfLocalTimeStamps();
-    sprintf(strng, "Node has %d timestamps", nFrames);
+    strng = mafString::Format(_R("Node has %d timestamps"), nFrames);
     m_Gui = new mafGUI(this);
     m_Gui->SetListener(this);
     m_Gui->Label(strng);
-    m_Gui->Label("Shift for, s");
-    m_Gui->Double(ID_SHIFTVAL, "", &m_Shift);
+    m_Gui->Label(_R("Shift for, s"));
+    m_Gui->Double(ID_SHIFTVAL, _R(""), &m_Shift);
     m_Gui->OkCancel();
   }
   ShowGui();

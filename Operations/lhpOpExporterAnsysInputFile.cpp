@@ -48,23 +48,23 @@ mafCxxTypeMacro(lhpOpExporterAnsysInputFile);
 lhpOpExporterAnsysInputFile::lhpOpExporterAnsysInputFile(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
-  m_PythonExe = "python.exe_UNDEFINED";
-  m_PythonwExe = "pythonw.exe_UNDEFINED";
+  m_PythonExe = _R("python.exe_UNDEFINED");
+  m_PythonwExe = _R("pythonw.exe_UNDEFINED");
 
   m_OpType  = OPTYPE_EXPORTER;
   m_Canundo = true;
   m_ImporterType = 0;
   m_ImportedVmeMesh = NULL;
-  m_NodesFileName = "";
-  m_ElementsFileName = "";
-  m_MaterialsFileName = "";
-  m_AnsysInputFileName = "";
-  m_CacheDir = (lhpUtils::lhpGetApplicationDirectory() + "\\Data\\AnsysWriterCache").c_str();
-  m_AnsysOutputFileNameFullPath		= "";
-  m_FileDir = (lhpUtils::lhpGetApplicationDirectory() + "/Data/External/").c_str();
+  m_NodesFileName = _R("");
+  m_ElementsFileName = _R("");
+  m_MaterialsFileName = _R("");
+  m_AnsysInputFileName = _R("");
+  m_CacheDir = lhpUtils::lhpGetApplicationDirectory() + _R("\\Data\\AnsysWriterCache");
+  m_AnsysOutputFileNameFullPath		= _R("");
+  m_FileDir = lhpUtils::lhpGetApplicationDirectory() + _R("/Data/External/");
   
   // This is for deploy: need to work on PYTHONPATH to solve issues with Python modules execution path...
-  m_AnsysPythonExporterFullPathFileName = (lhpUtils::lhpGetApplicationDirectory() + "\\ASCIIParser\\ansysWriter.py").c_str();
+  m_AnsysPythonExporterFullPathFileName = lhpUtils::lhpGetApplicationDirectory() + _R("\\ASCIIParser\\ansysWriter.py");
   
   m_Pid = -1;
   m_ABSMatrixFlag = 1;
@@ -108,8 +108,8 @@ void lhpOpExporterAnsysInputFile::OpRun()
   if(eventGetPythonExe.GetString())
   {
     m_PythonExe.Erase(0);
-    m_PythonExe = eventGetPythonExe.GetString()->GetCStr();
-    m_PythonExe.Append(" ");
+    m_PythonExe = *eventGetPythonExe.GetString();
+    m_PythonExe.Append(_R(" "));
   }
 
   mafEvent eventGetPythonwExe;
@@ -120,8 +120,8 @@ void lhpOpExporterAnsysInputFile::OpRun()
   if(eventGetPythonwExe.GetString())
   {
     m_PythonwExe.Erase(0);
-    m_PythonwExe = eventGetPythonwExe.GetString()->GetCStr();
-    m_PythonwExe.Append(" ");
+    m_PythonwExe = *eventGetPythonwExe.GetString();
+    m_PythonwExe.Append(_R(" "));
   }
 
   CreateGui();
@@ -135,18 +135,18 @@ int lhpOpExporterAnsysInputFile::Write()
     wxBusyInfo wait(_("Writing file: ..."));
   }
 
-  m_NodesFileName = m_CacheDir + "\\AnsysExporterNodes.lis" ;
-  m_ElementsFileName = m_CacheDir + "\\AnsysExporterElements.lis" ;
-  m_MaterialsFileName = m_CacheDir + "\\AnsysExporterMaterials.lis" ;
+  m_NodesFileName = m_CacheDir + _R("\\AnsysExporterNodes.lis");
+  m_ElementsFileName = m_CacheDir + _R("\\AnsysExporterElements.lis");
+  m_MaterialsFileName = m_CacheDir + _R("\\AnsysExporterMaterials.lis");
 
   mafVMEMeshAnsysTextExporter *exporter = new mafVMEMeshAnsysTextExporter;
   mafVMEMesh *input = mafVMEMesh::SafeDownCast(m_Input);
   assert(input);
 
   exporter->SetInput(input->GetUnstructuredGridOutput()->GetUnstructuredGridData());
-  exporter->SetOutputNodesFileName(m_NodesFileName.c_str());
-  exporter->SetOutputElementsFileName(m_ElementsFileName.c_str());
-  exporter->SetOutputMaterialsFileName(m_MaterialsFileName.c_str());
+  exporter->SetOutputNodesFileName(m_NodesFileName.GetCStr());
+  exporter->SetOutputElementsFileName(m_ElementsFileName.GetCStr());
+  exporter->SetOutputMaterialsFileName(m_MaterialsFileName.GetCStr());
 
   mafVMEMesh *inMesh = mafVMEMesh::SafeDownCast(m_Input);
   assert(inMesh);
@@ -171,38 +171,37 @@ See the log area for more details. ");
   wxArrayString errors;
   
   // execute the Python reader
-  wxString command2execute;
+  mafString command2execute;
   
-  mafLogMessage( _T("Current working directory is: '%s' "), wxGetCwd().c_str() );
+  mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
   // read cache files and create ansys file
-  command2execute = m_PythonExe.GetCStr();
-  command2execute.Append(" \"\"");
-  command2execute.Append(m_AnsysPythonExporterFullPathFileName.c_str());
-  command2execute.Append(" \"");
-  command2execute.Append(m_NodesFileName.c_str());
-  command2execute.Append("\" \"");
-  command2execute.Append(m_ElementsFileName.c_str());
-  command2execute.Append("\" \"");
-  command2execute.Append(m_MaterialsFileName.c_str());
-  command2execute.Append("\" \"");
-  command2execute.Append(m_AnsysOutputFileNameFullPath.c_str());
-  command2execute.Append("\"");
-  mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+  command2execute = m_PythonExe;
+  command2execute.Append(_R(" \"\""));
+  command2execute.Append(m_AnsysPythonExporterFullPathFileName);
+  command2execute.Append(_R(" \""));
+  command2execute.Append(m_NodesFileName);
+  command2execute.Append(_R("\" \""));
+  command2execute.Append(m_ElementsFileName);
+  command2execute.Append(_R("\" \""));
+  command2execute.Append(m_MaterialsFileName);
+  command2execute.Append(_R("\" \""));
+  command2execute.Append(m_AnsysOutputFileNameFullPath);
+  command2execute.Append(_R("\""));
+  mafLogMessage(_M(_R("Executing command: '") + command2execute + _R("'")));
 
   // m_Pid = wxExecute(command2execute, output, errors, wxEXEC_NODISABLE);
-  m_Pid = wxExecute(command2execute, wxEXEC_SYNC);
+  m_Pid = wxExecute(command2execute.toWx(), wxEXEC_SYNC);
 
   for (int i = 0; i < output.GetCount(); i++)
   {
-    mafLogMessage(output[i].c_str());
+    mafLogMessage(_M(mafWxToString(output[i])));
   }
   
-  if ( !command2execute )
+  if ( !command2execute.GetCStr())
     return MAF_ERROR;
 
-  mafLogMessage(_T("Command process '%s' terminated with exit code %d."),
-    command2execute.c_str(), m_Pid);
+  mafLogMessage(_M(_R("Command process '") + command2execute + _R("' terminated with exit code ") + mafToString(m_Pid) + _R(".")));
 
   return MAF_OK;
 
@@ -224,11 +223,11 @@ enum Mesh_Importer_ID
 void lhpOpExporterAnsysInputFile::CreateGui()
 //----------------------------------------------------------------------------
 {
-  mafString wildc = "Stereo Litography (*.stl)|*.stl";
+  mafString wildc = _R("Stereo Litography (*.stl)|*.stl");
 
   m_Gui = new mafGUI(this);
-  m_Gui->Label("absolute matrix",true);
-  m_Gui->Bool(ID_ABS_MATRIX_TO_STL,"apply",&m_ABSMatrixFlag,0);
+  m_Gui->Label(_R("absolute matrix"),true);
+  m_Gui->Bool(ID_ABS_MATRIX_TO_STL,_R("apply"),&m_ABSMatrixFlag,0);
   m_Gui->OkCancel();  
   m_Gui->Divider();
 
@@ -269,29 +268,28 @@ long lhpOpExporterAnsysInputFile::GetPid()
 
 void lhpOpExporterAnsysInputFile::OnOK()
 {
-  mafString wildcard = "inp files (*.inp)|*.inp|All Files (*.*)|*.*";
+  mafString wildcard = _R("inp files (*.inp)|*.inp|All Files (*.*)|*.*");
 
-  m_AnsysOutputFileNameFullPath = "";
+  m_AnsysOutputFileNameFullPath = _R("");
 
-  bool cacheDirExist = wxDirExists(m_CacheDir.GetCStr());
+  bool cacheDirExist = mafDirExists(m_CacheDir);
 
   if (cacheDirExist == false)
   {
     std::ostringstream stringStream;
     stringStream << "creating cache dir: " << m_CacheDir.GetCStr() << std::endl;
-    mafLogMessage(stringStream.str().c_str());          
-    wxMkdir(m_CacheDir.GetCStr());
+    mafLogMessage(_M(stringStream.str().c_str()));
+    mafDirMake(m_CacheDir);
   }
   else
   {
     std::ostringstream stringStream;
     stringStream << "found cache dir: " << m_CacheDir.GetCStr() << std::endl;
-    mafLogMessage(stringStream.str().c_str());
-
+    mafLogMessage(_M(stringStream.str().c_str()));
   }
 
-  wxString f;
-  f = mafGetSaveFile(m_FileDir,wildcard).GetCStr(); 
+  mafString f;
+  f = mafGetSaveFile(m_FileDir,wildcard); 
   if(!f.IsEmpty())
   {
     m_AnsysOutputFileNameFullPath = f;

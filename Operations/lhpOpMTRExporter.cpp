@@ -52,8 +52,8 @@ lhpOpMTRExporter::lhpOpMTRExporter(const mafString& label) : Superclass(label)
 {
   m_OpType  = OPTYPE_EXPORTER;
   m_Canundo = true;
-  m_File    = "";
-  m_FileDir = "";
+  m_File    = _R("");
+  m_FileDir = _R("");
   m_Input   = NULL;
   m_ABSPos  = 1;
 }
@@ -82,8 +82,8 @@ void lhpOpMTRExporter::OpRun()
 //----------------------------------------------------------------------------
 {
   m_Gui = new mafGUI(this);
-  m_Gui->Label("absolute positions",true);
-  m_Gui->Bool(ID_ABS_POS,"apply",&m_ABSPos,0);
+  m_Gui->Label(_R("absolute positions"),true);
+  m_Gui->Bool(ID_ABS_POS,_R("apply"),&m_ABSPos,0);
   m_Gui->OkCancel();
   //m_Gui->Enable(wxOK,m_File != "");
 
@@ -107,17 +107,17 @@ void lhpOpMTRExporter::OnEvent(mafEventBase *maf_event)
         m_Gui->Enable(wxCANCEL, false);
 
         assert(m_Input);
-        wxString proposed = (mafGetApplicationDirectory() + "/Data/External/").c_str();
+        mafString proposed = mafGetApplicationDirectory() + _R("/Data/External/");
 
         if(m_Input->IsMAFType(mafVMELandmarkCloud))
         {
           proposed += m_Input->GetName();
-          proposed += ".mtr";
-          wxString wildc = "FARO MTR file (*.mtr)|*.mtr";
+          proposed += _R(".mtr");
+          mafString wildc = _R("FARO MTR file (*.mtr)|*.mtr");
 
-          wxString f = mafGetSaveFile(proposed,wildc).GetCStr(); 
+          mafString f = mafGetSaveFile(proposed,wildc); 
 
-          if(f != "") 
+          if(!f.IsEmpty()) 
           {
             m_File = f;
             ExportLandmark();
@@ -132,11 +132,11 @@ void lhpOpMTRExporter::OnEvent(mafEventBase *maf_event)
           {
 
             proposed += m_Input->GetName();
-            proposed += ".mtr";
-            mafString wildc = "FARO MTR file (*.mtr)|*.mtr";
-            wxString f = mafGetSaveFile(proposed,wildc).GetCStr(); 
+            proposed += _R(".mtr");
+            mafString wildc = _R("FARO MTR file (*.mtr)|*.mtr");
+            mafString f = mafGetSaveFile(proposed,wildc); 
 
-            if(f != "") 
+            if(!f.IsEmpty()) 
             {
               m_File = f;
               ExportLandmark();
@@ -145,9 +145,9 @@ void lhpOpMTRExporter::OnEvent(mafEventBase *maf_event)
           }
           else
           {
-            wxString f = mafGetDirName(proposed).GetCStr();
+            mafString f = mafGetDirName(proposed);
 
-            if(f != "") 
+            if(!f.IsEmpty()) 
             {
               m_FileDir = f;
               ExportLandmark();
@@ -268,17 +268,17 @@ void lhpOpMTRExporter::ExportingTraverse(std::ostream &out, const char *dirName,
       ExportOneCloud(out, mafVMELandmarkCloud::SafeDownCast(node));
     else
     {
-      wxString fn = dirName;
-      fn += "\\";
+      mafString fn = _R(dirName);
+      fn += _R("\\");
       fn += node->GetName();
       /*if(node->GetParent() != NULL)
       {
         fn += "_";
         fn += node->GetParent()->GetName();
       }*/
-      fn += ".mtr";
+      fn += _R(".mtr");
       std::ofstream outF;
-      outF.open(fn.c_str());
+      outF.open(fn.GetCStr());
       outF<<"Index     Xmm        Ymm        Zmm     A(deg)     B(deg)     C(deg)\n";
       ExportOneCloud(outF, mafVMELandmarkCloud::SafeDownCast(node));
       outF.close();
@@ -301,28 +301,27 @@ void lhpOpMTRExporter::ExportLandmark()
     wxBusyInfo wait("Saving landmark position: Please wait");
   }
   //file creation
-  const char    *fileName = (m_File);
   std::ofstream f_Out;
 
   if(m_Input->IsMAFType(mafVMELandmarkCloud))
   {
-    f_Out.open(fileName);
+    f_Out.open(m_File.GetCStr());
     f_Out<<"Index     Xmm        Ymm        Zmm     A(deg)     B(deg)     C(deg)\n";
     ExportOneCloud(f_Out, mafVMELandmarkCloud::SafeDownCast(m_Input));
     f_Out.close();
   }
   else
   {
-    if(m_FileDir == "")
+    if(m_FileDir.IsEmpty())
     {
-      f_Out.open(fileName);
+      f_Out.open(m_File.GetCStr());
       f_Out<<"Index     Xmm        Ymm        Zmm     A(deg)     B(deg)     C(deg)\n";
       ExportingTraverse(f_Out, NULL, m_Input);
       f_Out.close();
     }
     else
     {
-      ExportingTraverse(f_Out, m_FileDir.c_str(), m_Input);
+      ExportingTraverse(f_Out, m_FileDir.GetCStr(), m_Input);
     }
   }
 }

@@ -145,7 +145,7 @@ int mafMTRLMCReader::ReadASCIIMTR(FILE *fp)
   m_PointSet.resize(1);
   mafNEW(m_PointSet[0].first);
   m_PointSet[0].first->Open();
-  m_PointSet[0].first->SetName("Tempora memorie");
+  m_PointSet[0].first->SetName(_R("Tempora memorie"));
   m_PointSet[0].first->SetRadius(m_Radius);
   m_PointSet[0].second = 0;
 
@@ -180,8 +180,7 @@ int mafMTRLMCReader::ReadASCIIMTR(FILE *fp)
     else
       m_PointSet[cloudIndex].second = 0;
 
-    wxString number;
-    number.Printf("%1.0lf", rTemp);
+    mafString number = mafString::Format(_R("%1.0lf"), rTemp);
     int ret = m_PointSet[cloudIndex].first->SetNumberOfLandmarks(m_PointSet[cloudIndex].first->GetNumberOfLandmarks() + 1);
     if(ret==MAF_OK)
     {
@@ -214,7 +213,7 @@ int mafMTRLMCReader::ReadASCIIMTR(FILE *fp)
       m_PointSet.resize(m_PointSet.size() + 1);
       mafNEW(m_PointSet[m_PointSet.size() - 1].first);
       m_PointSet[m_PointSet.size() - 1].first->Open();
-      m_PointSet[m_PointSet.size() - 1].first->SetName("Tempora memorie");
+      m_PointSet[m_PointSet.size() - 1].first->SetName(_R("Tempora memorie"));
       m_PointSet[m_PointSet.size() - 1].first->SetRadius(3);
       m_PointSet[m_PointSet.size() - 1].second = 0;
 

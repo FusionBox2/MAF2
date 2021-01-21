@@ -35,7 +35,6 @@
 #include "mafDecl.h"
 #include "mafEvent.h"
 #include "mafGUI.h"
-#include "mafFilesDirs.h"
 #include "mafPlotMath.h"
 
 #include "mafOpExplodeCollapse.h"
@@ -105,7 +104,7 @@ class medOpImporterLandmarkAccU : public medOpImporterLandmark
 {
 public:
   mafTypeMacro(medOpImporterLandmarkAccU, medOpImporterLandmark);
-  medOpImporterLandmarkAccU(const mafString& label = "") : medOpImporterLandmark(label){}
+  medOpImporterLandmarkAccU(const mafString& label = _R("")) : medOpImporterLandmark(label){}
   std::vector<mafVME*>& GetResults(){return m_Results;}
 };
 
@@ -192,14 +191,14 @@ namespace
     mafString m_MSFFile;
     mafSplitPath(m_File,&path,&name,&ext);
 
-    if(ext == "zmsf")
+    if(ext == _R("zmsf"))
     {
-      unixname = mafOpenZIP(m_File, ::wxGetCwd(), m_TmpDir);
+      unixname = mafOpenZIP(m_File, mafWxToString(::wxGetCwd()), m_TmpDir);
       if(unixname.IsEmpty())
       {
         return NULL;
       }
-      wxSetWorkingDirectory(m_TmpDir.GetCStr());
+      wxSetWorkingDirectory(m_TmpDir.toWx());
     }
 
     unixname.ParsePathName(); // convert to unix format
@@ -221,7 +220,7 @@ namespace
     }
     mafVMERoot *root = mafVMERoot::SafeDownCast(manager.GetRoot());
 
-    mafString group_name = "Skeletal model";
+    mafString group_name = _R("Skeletal model");
 
     mafNodeIterator *iter = root->NewIterator();
     for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
@@ -383,34 +382,34 @@ namespace
 
   void extractTool(const mafString& tmpPath)
   {
-    const char *resNames[]=    {"IDR_EXE2", "LL_Model_S035_K",                    
-      "LL_Model_S035_V",                     
-      "TR72_3FN_MATL_LL_K",                  
-      "TR72_3FN_MATL_LL_V",                  
-      "TR72_3FN_MATL_UL_K",                  
-      "TR72_3FN_MATL_UL_V",                  
-      "UpL_Model_S035_K",                    
-      "UpL_Model_S035_V",                    
+    const wchar_t *resNames[]=    {L"IDR_EXE2", L"LL_Model_S035_K",                    
+      L"LL_Model_S035_V",                     
+      L"TR72_3FN_MATL_LL_K",                  
+      L"TR72_3FN_MATL_LL_V",                  
+      L"TR72_3FN_MATL_UL_K",                  
+      L"TR72_3FN_MATL_UL_V",                  
+      L"UpL_Model_S035_K",                    
+      L"UpL_Model_S035_V",                    
 
-      "KV_Local_Param_Inp_Shv_K",            
-      "KV_Local_Param_Inp_Shv_V",            
-      "All_Regr_p_coeffs_2_ALL_Kin_R_Abd_N", 
-      "All_Regr_p_coeffs_2_ALL_Kin_R_Flx_N"};
+      L"KV_Local_Param_Inp_Shv_K",            
+      L"KV_Local_Param_Inp_Shv_V",            
+      L"All_Regr_p_coeffs_2_ALL_Kin_R_Abd_N", 
+      L"All_Regr_p_coeffs_2_ALL_Kin_R_Flx_N"};
 
-    const char *names[]=
-    {"KinVic_Opt_ShV_2012.exe","LL_Model_S035_K.dat",
-    "LL_Model_S035_V.dat",
-    "TR72_3FN_MATL_LL_K.DAT",
-    "TR72_3FN_MATL_LL_V.DAT",
-    "TR72_3FN_MATL_UL_K.DAT",
-    "TR72_3FN_MATL_UL_V.DAT",
-    "UpL_Model_S035_K.dat",
-    "UpL_Model_S035_V.dat",
+    mafString names[]=
+    {_R("KinVic_Opt_ShV_2012.exe"),_R("LL_Model_S035_K.dat"),
+    _R("LL_Model_S035_V.dat"),
+    _R("TR72_3FN_MATL_LL_K.DAT"),
+    _R("TR72_3FN_MATL_LL_V.DAT"),
+    _R("TR72_3FN_MATL_UL_K.DAT"),
+    _R("TR72_3FN_MATL_UL_V.DAT"),
+    _R("UpL_Model_S035_K.dat"),
+    _R("UpL_Model_S035_V.dat"),
 
-    "KV_Local_Param_Inp_Shv_K.m",
-    "KV_Local_Param_Inp_Shv_V.m",
-    "All_Regr_p_coeffs_2_ALL_Kin_R_Abd_N.txt",
-    "All_Regr_p_coeffs_2_ALL_Kin_R_Flx_N.txt"};
+    _R("KV_Local_Param_Inp_Shv_K.m"),
+    _R("KV_Local_Param_Inp_Shv_V.m"),
+    _R("All_Regr_p_coeffs_2_ALL_Kin_R_Abd_N.txt"),
+    _R("All_Regr_p_coeffs_2_ALL_Kin_R_Flx_N.txt")};
 
 
 
@@ -420,9 +419,9 @@ namespace
     {
       mafString apppath;
       apppath = tmpPath;
-      apppath += "\\";
+      apppath += _R("\\");
       apppath += names[i];
-      HRSRC hrSrc = FindResource(hInstance, resNames[i], i==0?"EXE":"DAT");
+      HRSRC hrSrc = FindResourceW(hInstance, resNames[i], i==0?L"EXE":L"DAT");
       HGLOBAL exef = LoadResource(hInstance, hrSrc);
       size_t sz = SizeofResource(hInstance, hrSrc);
       void *buf = LockResource(exef);
@@ -592,7 +591,7 @@ namespace
 
     mafString fullName;
     fullName = mtlbopt;
-    fullName += "\\KV_Local_Param_Inp_Shv_K.m";
+    fullName += _R("\\KV_Local_Param_Inp_Shv_K.m");
 
     mafString kinectDirName;
     kinectDirName = inputPath;
@@ -601,7 +600,7 @@ namespace
     outKinectDirName = outputPath;
 
     std::ofstream strm;
-    strm.open(fullName, std::ios::out);
+    strm.open(fullName.GetCStr(), std::ios::out);
     strm << "%%% function KV_Local_Param_Inp_Shv" << endl; 
     strm << "" << endl; 
     strm << "%%%%% ===========================================" << endl; 
@@ -843,36 +842,36 @@ namespace
   mafVMEGroup *ModelImport(const mafString& path, mafVME *target)
   {
     mafString files[] = {
-      "L_Foot.txt",
-      "L_Pate.txt",
-      "L_Shan.txt",
-      "L_Thg1.txt",
-      "L_Thg2.txt",
-      "L_Thg3.txt",
-      "R_Pate.txt",
-      "R_Foot.txt",
-      "R_Shan.txt",
-      "R_Thg1.txt",
-      "R_Thg2.txt",
-      "R_Thg3.txt",
-      "Pelvis.txt",
-      "UpCerv.txt",
-      "UpLCla.txt",
-      "UpLHan.txt",
-      "UpLHum.txt",
-      "UpLRad.txt",
-      "UpLSca.txt",
-      "UpLUln.txt",
-      "UpLumb.txt",
-      "UpPelv.txt",
-      "UpRCla.txt",
-      "UpRHan.txt",
-      "UpRHum.txt",
-      "UpRRad.txt",
-      "UpRSca.txt",
-      "UpRUln.txt",
-      "UpSkul.txt",
-      "UpThor.txt",
+      _R("L_Foot.txt"),
+      _R("L_Pate.txt"),
+      _R("L_Shan.txt"),
+      _R("L_Thg1.txt"),
+      _R("L_Thg2.txt"),
+      _R("L_Thg3.txt"),
+      _R("R_Pate.txt"),
+      _R("R_Foot.txt"),
+      _R("R_Shan.txt"),
+      _R("R_Thg1.txt"),
+      _R("R_Thg2.txt"),
+      _R("R_Thg3.txt"),
+      _R("Pelvis.txt"),
+      _R("UpCerv.txt"),
+      _R("UpLCla.txt"),
+      _R("UpLHan.txt"),
+      _R("UpLHum.txt"),
+      _R("UpLRad.txt"),
+      _R("UpLSca.txt"),
+      _R("UpLUln.txt"),
+      _R("UpLumb.txt"),
+      _R("UpPelv.txt"),
+      _R("UpRCla.txt"),
+      _R("UpRHan.txt"),
+      _R("UpRHum.txt"),
+      _R("UpRRad.txt"),
+      _R("UpRSca.txt"),
+      _R("UpRUln.txt"),
+      _R("UpSkul.txt"),
+      _R("UpThor.txt"),
     };
 
     mafVMEGroup *grp = NULL;
@@ -880,21 +879,21 @@ namespace
     {
       mafString fpath;
       fpath = path;
-      fpath += "\\";
+      fpath += _R("\\");
       fpath += files[i];
       if(!mafFileExists(fpath))
         continue;
       medOpImporterLandmarkAccU *imp = new medOpImporterLandmarkAccU();
-      imp->SetFileName(fpath);
+      imp->SetFileName(fpath.GetCStr());
       imp->Read();
       std::vector<mafVME*>& res = imp->GetResults();
       if(grp == NULL && !res.empty())
       {
         grp = mafVMEGroup::New();
         grp->Register(NULL);
-        grp->SetName("KinectModel");
+        grp->SetName(_R("KinectModel"));
       }
-      for(std::vector<mafVME*>::iterator it = res.begin(); it != res.end(); ++it)
+      for(auto it = res.begin(); it != res.end(); ++it)
       {
         (*it)->ReparentTo(grp);
       }
@@ -905,61 +904,61 @@ namespace
 
 
     mafString plot_files[] = {
-      /*"DoFs_2_LL72_UpL72_001.dat",
-      "DoFs_2rf25_LL72_UpL72_001.dat",
-      "DoFs_OVP_2_LL72_UpL72_001.dat",*/
-      "DoFs_OVP_Smth_2_LL72_UpL72_001.dat",
+      /*_R("DoFs_2_LL72_UpL72_001.dat"),
+      _R("DoFs_2rf25_LL72_UpL72_001.dat"),
+      _R("DoFs_OVP_2_LL72_UpL72_001.dat"),*/
+      _R("DoFs_OVP_Smth_2_LL72_UpL72_001.dat"),
     };
 
     mafString chNameShV[] ={
-      "Dummy",//                 3:5;
-      "Pelvis",//(Data(:,6:8));
-      "RightHip",//(Data(:,9:11));
-      "Dummy",//                 12:14;
-      "Dummy",//                 15:17;
-      "Dummy",//                 18:20;
-      "Dummy",//                 21:23;
-      "Dummy",//                 24:26;
-      "RightKnee",//(Data(:,27:29));
-      "Dummy",//                 30:32;
-      "RightAnkle",//(Data(:,33:35));
-      "Dummy",//                 36:38;
-      "Dummy",//                 39:41;
-      "LeftHip",//(Data(:,42:44));
-      "Dummy",//                 45:47;
-      "Dummy",//                 48:50;
-      "Dummy",//                 51:53;
-      "Dummy",//                 54:56;
-      "Dummy",//                 57:59;
-      "LeftKnee",//(Data(:,60:62));
-      "Dummy",//                 63:65;
-      "LeftAnkle",//(Data(:,66:68));
-      "Dummy",//                 69:14;
-      "Dummy",//                 72:14;
-      "Dummy",//                 75:14;
-      "Dummy",//                 78:14;
-      "Dummy",//                 81:14;
-      "Spine",//(Data(:,84:86));
-      "Dummy",//                 87:14;
-      "Thorax",//(Data(:,90:92));
-      "Dummy",//                 93:14;
-      "Neck",//(Data(:,96:98));
-      "Dummy",//                 99:14;
-      "Head",//(Data(:,102:104));
-      "RightClavicle",//(Data(:,105:107));
-      "RightScapula",//(Data(:,108:110));
-      "Dummy",//                 111:14;
-      "RightShoulder",//(Data(:,114:116));
-      "RightElbow",//(Data(:,117:119));
-      "RightForearm",//(Data(:,120:122));
-      "RightWrist",//(Data(:,123:125));
-      "LeftClavicle",//(Data(:,126:128));
-      "LeftScapula",//(Data(:,129:131));
-      "Dummy",//                 132:14;
-      "LeftShoulder",//(Data(:,135:137));
-      "LeftElbow",//(Data(:,138:140));
-      "LeftForearm",//(Data(:,141:143));
-      "LeftWrist"//(Data(:,144:146));
+      _R("Dummy"),//                 3:5;
+      _R("Pelvis"),//(Data(:,6:8));
+      _R("RightHip"),//(Data(:,9:11));
+      _R("Dummy"),//                 12:14;
+      _R("Dummy"),//                 15:17;
+      _R("Dummy"),//                 18:20;
+      _R("Dummy"),//                 21:23;
+      _R("Dummy"),//                 24:26;
+      _R("RightKnee"),//(Data(:,27:29));
+      _R("Dummy"),//                 30:32;
+      _R("RightAnkle"),//(Data(:,33:35));
+      _R("Dummy"),//                 36:38;
+      _R("Dummy"),//                 39:41;
+      _R("LeftHip"),//(Data(:,42:44));
+      _R("Dummy"),//                 45:47;
+      _R("Dummy"),//                 48:50;
+      _R("Dummy"),//                 51:53;
+      _R("Dummy"),//                 54:56;
+      _R("Dummy"),//                 57:59;
+      _R("LeftKnee"),//(Data(:,60:62));
+      _R("Dummy"),//                 63:65;
+      _R("LeftAnkle"),//(Data(:,66:68));
+      _R("Dummy"),//                 69:14;
+      _R("Dummy"),//                 72:14;
+      _R("Dummy"),//                 75:14;
+      _R("Dummy"),//                 78:14;
+      _R("Dummy"),//                 81:14;
+      _R("Spine"),//(Data(:,84:86));
+      _R("Dummy"),//                 87:14;
+      _R("Thorax"),//(Data(:,90:92));
+      _R("Dummy"),//                 93:14;
+      _R("Neck"),//(Data(:,96:98));
+      _R("Dummy"),//                 99:14;
+      _R("Head"),//(Data(:,102:104));
+      _R("RightClavicle"),//(Data(:,105:107));
+      _R("RightScapula"),//(Data(:,108:110));
+      _R("Dummy"),//                 111:14;
+      _R("RightShoulder"),//(Data(:,114:116));
+      _R("RightElbow"),//(Data(:,117:119));
+      _R("RightForearm"),//(Data(:,120:122));
+      _R("RightWrist"),//(Data(:,123:125));
+      _R("LeftClavicle"),//(Data(:,126:128));
+      _R("LeftScapula"),//(Data(:,129:131));
+      _R("Dummy"),//                 132:14;
+      _R("LeftShoulder"),//(Data(:,135:137));
+      _R("LeftElbow"),//(Data(:,138:140));
+      _R("LeftForearm"),//(Data(:,141:143));
+      _R("LeftWrist")//(Data(:,144:146));
     };
 
 
@@ -967,7 +966,7 @@ namespace
     {
       mafString fpath;
       fpath = path;
-      fpath += "\\";
+      fpath += _R("\\");
       fpath += plot_files[i];
       if(!mafFileExists(fpath))
         continue;
@@ -986,7 +985,7 @@ namespace
 
       //mafString analogVmeName;
       //analogVmeName.Append(plot_files[i]);
-      analog->SetName(target->GetName() + "_Graph");
+      analog->SetName(target->GetName() + _R("_Graph"));
 
       vnl_matrix<double> analogMatrix;
       analogMatrix.set_size((rmatrix[0].size() - 2 - 25 * 3) * 2 + 1, rmatrix.size()); //set dimensions
@@ -1011,7 +1010,7 @@ namespace
           //intData.m_AnalogValue = m_Acq->GetAnalog(currentChannel)->GetValues()(currentSample, 0);
           //intData.m_ChannelUnit = m_Acq->GetAnalog(currentChannel)->GetUnit().c_str();
 
-          if(chNameShV[currentChannel / 3] == "Dummy")
+          if(chNameShV[currentChannel / 3] == _R("Dummy"))
           {
             skipped++;
             continue;
@@ -1020,13 +1019,13 @@ namespace
             mafString chName;
             chName = chNameShV[currentChannel / 3];
             if(currentChannel % 3 == 0)
-              chName += " FlexExt";
+              chName += _R(" FlexExt");
             else if(currentChannel % 3 == 1)
-              chName += " RotExtInt";
+              chName += _R(" RotExtInt");
             else if(currentChannel % 3 == 2)
-              chName += " AbdAdd";
+              chName += _R(" AbdAdd");
             channelsNameList.push_back(chName);
-            chName += "Speed";
+            chName += _R("Speed");
             channelsNameList.push_back(chName);
           }
 
@@ -1056,7 +1055,7 @@ namespace
         }
 
       }
-      if(kmi->GetName().FindFirst("Hand-To-Head") != -1 || kmi->GetName().FindFirst("Hand-To-Mouth") != -1 || kmi->GetName().FindFirst("Hand-To-Back") != -1)
+      if(kmi->GetName().FindFirst(_R("Hand-To-Head")) != -1 || kmi->GetName().FindFirst(_R("Hand-To-Mouth")) != -1 || kmi->GetName().FindFirst(_R("Hand-To-Back")) != -1)
       {
         for(int currentSample = 0; currentSample < analogMatrix.columns(); currentSample++)
         {
@@ -1180,11 +1179,11 @@ namespace
       analog->SetData(analogMatrix, 0);
 
       mafTagItem tag_Sig;
-      tag_Sig.SetName("SIGNALS_NAME");
+      tag_Sig.SetName(_R("SIGNALS_NAME"));
       tag_Sig.SetNumberOfComponents(rmatrix.size());
       analog->GetTagArray()->SetTag(tag_Sig);
 
-      mafTagItem *tag_Signals = analog->GetTagArray()->GetTag("SIGNALS_NAME");
+      mafTagItem *tag_Signals = analog->GetTagArray()->GetTag(_R("SIGNALS_NAME"));
       for (int n = 0; n < channelsNameList.size(); n++)
       {
         tag_Signals->SetValue(channelsNameList[n], n);
@@ -1210,8 +1209,8 @@ mafCxxTypeMacro(lhpOpKinectUtil)
   m_LLimb     = llimb;
   m_ULimb     = ulimb;
   m_Canundo   = false;
-  m_FileDir = mafGetApplicationDirectory() + "/Data/External/";
-  m_DictionaryFileName = "";
+  m_FileDir = mafGetApplicationDirectory() + _R("/Data/External/");
+  m_DictionaryFileName = _R("");
   m_Scale  = 1.0;
   m_Freq   = 30.0;
   m_AFs    = false;
@@ -1220,9 +1219,9 @@ mafCxxTypeMacro(lhpOpKinectUtil)
   m_TypeOfRefs = 0;
   m_TakeScaled = 1;
   if(m_TakeScaled)
-    m_FileSuffix = "_Scaled";
+    m_FileSuffix = _R("_Scaled");
   else
-    m_FileSuffix = "";
+    m_FileSuffix = _R("");
   DictionaryUpdate();
 }
 
@@ -1259,7 +1258,7 @@ void lhpOpKinectUtil::OpRun()
 {
   if(!m_ExtApp)
   {
-    mafString wildcard = "Kinect data files (*.txt)|*.txt";
+    mafString wildcard = _R("Kinect data files (*.txt)|*.txt");
     m_C3DInputFileNameFullPaths.clear();
     mafGetOpenMultiFiles(m_FileDir,wildcard, m_C3DInputFileNameFullPaths);
     if(m_C3DInputFileNameFullPaths.size() == 0) 
@@ -1312,9 +1311,9 @@ void lhpOpKinectUtil::OnEvent(mafEventBase *maf_event)
     break;
   case ID_FSUFFIX:
     if(m_TakeScaled)
-      m_FileSuffix = "_Scaled";
+      m_FileSuffix = _R("_Scaled");
     else
-      m_FileSuffix = "";
+      m_FileSuffix = _R("");
     break;
   case ID_FREQ:
     break;
@@ -1327,7 +1326,7 @@ void lhpOpKinectUtil::OnEvent(mafEventBase *maf_event)
     break;
   case ID_CLEAR_DICT:
     {
-      m_DictionaryFileName = "";
+      m_DictionaryFileName = _R("");
     }//WARNING! NO break operator here, execution will continue in ID_LOAD_DICT
   case ID_LOAD_DICT:
     {
@@ -1369,21 +1368,21 @@ void lhpOpKinectUtil::OpUndo()
 void lhpOpKinectUtil::CreateGui()
   //----------------------------------------------------------------------------
 {
-  mafString refs_names[] = {"Flexion", "Abduction"};
+  mafString refs_names[] = {_R("Flexion"), _R("Abduction")};
   m_Gui = new mafGUI(this);
   if(m_ExtApp)
   {
-    m_Gui->Bool(ID_FSUFFIX, "Scaled", &m_TakeScaled);
+    m_Gui->Bool(ID_FSUFFIX, _R("Scaled"), &m_TakeScaled);
   }
-  m_Gui->Double(ID_SCALE, _("Scale"), &m_Scale, 0.0);
-  m_Gui->Double(ID_FREQ, _("Freq"), &m_Freq, 0.000001);
-  m_Gui->Bool(ID_AFS, _("AFs"), &m_AFs);
-  m_Gui->Combo(ID_TYPEOFREFS, "Type",&m_TypeOfRefs, 2, refs_names);
-  m_Gui->Label("");
-  m_Gui->Bool(ID_MODEL, _("Model"), &m_Model);
-  m_Gui->FileOpen(ID_LOAD_DICT, "LM list",  &m_DictionaryFileName, "*.txt");
-  m_Gui->Button(ID_CLEAR_DICT, "Clean", "", "Press to cancel using list" );  
-  m_Gui->Enable(ID_CLEAR_DICT, (m_DictionaryFileName != ""));
+  m_Gui->Double(ID_SCALE, _L("Scale"), &m_Scale, 0.0);
+  m_Gui->Double(ID_FREQ, _L("Freq"), &m_Freq, 0.000001);
+  m_Gui->Bool(ID_AFS, _L("AFs"), &m_AFs);
+  m_Gui->Combo(ID_TYPEOFREFS, _R("Type"),&m_TypeOfRefs, 2, refs_names);
+  m_Gui->Label(_R(""));
+  m_Gui->Bool(ID_MODEL, _L("Model"), &m_Model);
+  m_Gui->FileOpen(ID_LOAD_DICT, _R("LM list"),  &m_DictionaryFileName, _R("*.txt"));
+  m_Gui->Button(ID_CLEAR_DICT, _R("Clean"), _R(""), _R("Press to cancel using list") );
+  m_Gui->Enable(ID_CLEAR_DICT, (!m_DictionaryFileName.IsEmpty()));
   m_Gui->Enable(ID_TYPEOFREFS, (m_AFs != 0));
 
   m_Gui->OkCancel();
@@ -1485,13 +1484,13 @@ namespace
     {
       if(!src->GetLandmarkVisibility(i))
         continue;
-      wxString SourceLandmarkName = src->GetLandmarkName(i);
+      mafString SourceLandmarkName = src->GetLandmarkName(i);
 
       bool found = false;
       for(j=0;j<npTarget;j++)
       {
-        wxString TargetLandmarkName = trg->GetLandmarkName(j);
-        if(mafString(SourceLandmarkName) == mafString(TargetLandmarkName))
+        mafString TargetLandmarkName = trg->GetLandmarkName(j);
+        if(SourceLandmarkName == TargetLandmarkName)
         {
           found = true;
           found_one = true;
@@ -1628,9 +1627,9 @@ namespace
   {
     mafVMEInfoText *info = mafVMEInfoText::New();
     info->Register(NULL);
-    wxString name = wxString::Format("Info for registration");// %s into %s",m_Source->GetName().GetCStr(), m_Target->GetName().GetCStr());
+    mafString name = _R("Info for registration");// %s into %s",m_Source->GetName().GetCStr(), m_Target->GetName().GetCStr());
     info->SetName(name);
-    info->SetPosLabel("Registration residual: ", 0);
+    info->SetPosLabel(_R("Registration residual: "), 0);
     info->SetPosShow(true, 0);
     bool infoAdded = false;
 
@@ -1724,7 +1723,7 @@ namespace
 
     if(m_Registered == NULL)
     {
-      wxString name = wxString::Format("Registered model");
+      mafString name = _R("Registered model");
       m_Registered= mafVME::SafeDownCast(CopyTreeTimeStamp(m_Source));
       m_Registered->Register(NULL);
       m_Registered->SetName(name);
@@ -1754,13 +1753,13 @@ namespace
       mafVMELandmarkCloud *lmct = NULL;
       if(lmcs == NULL)//lmcr is of the same type as lmcs
         continue;
-      const char *search_name = nsrc->GetName();
+      const char *search_name = nsrc->GetName().GetCStr();
       for(int i = 0; i < m_LMDict.size(); i++)
       {
         search_name = NULL;
         if(usedEntries[i])
           continue;
-        if(mafString(nsrc->GetName()) == mafString(m_LMDict[i].first))
+        if(nsrc->GetName() == mafWxToString(m_LMDict[i].first))
         {
           usedEntries[i] = true;
           search_name = m_LMDict[i].second.c_str();
@@ -1775,7 +1774,7 @@ namespace
           mafVMELandmarkCloud *lmtmp = mafVMELandmarkCloud::SafeDownCast(lmt);
           if(lmtmp == NULL)
             continue;
-          if(strstr(lmtmp->GetName(), search_name) != NULL)
+          if(strstr(lmtmp->GetName().GetCStr(), search_name) != NULL)
           {
             lmct = lmtmp;
             break;
@@ -1816,11 +1815,11 @@ bool lhpOpKinectUtil::Import()
   {
     mafString zmsfPlacement;
     mafString zmsfName;
-    zmsfPlacement = mafCreateTempFileName("");
-    zmsfName = zmsfPlacement + "\\SkelModel.zmsf";
+    zmsfPlacement = mafCreateTempFileName(_R(""));
+    zmsfName = zmsfPlacement + _R("\\SkelModel.zmsf");
     mafDirMake(zmsfPlacement);
     HINSTANCE hInstance = wxGetInstance();
-    HRSRC hrSrc = FindResource(hInstance, "SkelModel", _T("ZMSF"));
+    HRSRC hrSrc = FindResourceW(hInstance, L"SkelModel", L"ZMSF");
     HGLOBAL exef = LoadResource(hInstance, hrSrc);
     size_t sz = SizeofResource(hInstance, hrSrc);
     void *buf = LockResource(exef);
@@ -1835,23 +1834,23 @@ bool lhpOpKinectUtil::Import()
   {
     /*if(m_ExtAppPath.IsEmpty())
     return false;*/
-    if(mafDirExists("C:\\KinectStorage"))
+    if(mafDirExists(_R("C:\\KinectStorage")))
     {
       storageExists = true;
-      filetoprd = "C:\\KinectStorage";
+      filetoprd = _R("C:\\KinectStorage");
     }
     else
     {
-      filetoprd = mafCreateTempFileName("");
+      filetoprd = mafCreateTempFileName(_R(""));
     }
 
     apppath = filetoprd;
     if(!storageExists)
       mafDirMake(filetoprd);
-    apppath += "\\mrkless.exe";
+    apppath += _R("\\mrkless.exe");
 
     HINSTANCE hInstance = wxGetInstance();
-    HRSRC hrSrc = FindResource(hInstance, "IDR_EXE1", _T("EXE"));
+    HRSRC hrSrc = FindResourceW(hInstance, L"IDR_EXE1", L"EXE");
     HGLOBAL exef = LoadResource(hInstance, hrSrc);
     size_t sz = SizeofResource(hInstance, hrSrc);
     void *buf = LockResource(exef);
@@ -1860,22 +1859,22 @@ bool lhpOpKinectUtil::Import()
     fclose(exeF);
 
     mafString commandline = apppath;
-    commandline += " -logging" + filetoprd;
-    if(wxExecute(commandline.GetCStr(), wxEXEC_SYNC) != 0)
+    commandline += _R(" -logging") + filetoprd;
+    if(wxExecute(commandline.toWx(), wxEXEC_SYNC) != 0)
       return false;
     /*system(commandline.GetCStr());
     if(!RunProgram(const_cast<char*>(commandline.GetCStr())))
     return false;*/
 
     filestxt = filetoprd;
-    filestxt += "\\Files.txt";
+    filestxt += _R("\\Files.txt");
     sessionstxt = filetoprd;
-    sessionstxt += "\\Sessions.txt";
+    sessionstxt += _R("\\Sessions.txt");
     if(!mafFileExists(filestxt))
       return false;
     m_C3DInputFileNameFullPaths.clear();
 
-    if(FILE* fp = fopen(filestxt, "rt"))
+    if(FILE* fp = fopen(filestxt.GetCStr(), "rt"))
     {
       char string[4096];
       while(!feof(fp))
@@ -1891,12 +1890,12 @@ bool lhpOpKinectUtil::Import()
             string[i] = '/';
         }
         mafString fName;
-        fName = mafString(string);
+        fName = mafString(_R(string));
         m_C3DInputFileNameFullPaths.push_back(fName);
       }
       fclose(fp);
     }
-    if(FILE* fp = fopen(sessionstxt, "rt"))
+    if(FILE* fp = fopen(sessionstxt.GetCStr(), "rt"))
     {
       char string[4096];
       while(!feof(fp))
@@ -1912,7 +1911,7 @@ bool lhpOpKinectUtil::Import()
             string[i] = '/';
         }
         mafString fName;
-        fName = mafString(string);
+        fName = mafString(_R(string));
         sessionsList.push_back(std::make_pair(fName, (mafVME*)nullptr));
       }
       fclose(fp);
@@ -1922,11 +1921,11 @@ bool lhpOpKinectUtil::Import()
   mafString mtlbTmp, modelPath;
   if(m_Model)
   {
-    mtlbTmp = mafCreateTempFileName("");
+    mtlbTmp = mafCreateTempFileName(_R(""));
     mafDirMake(mtlbTmp);
     extractTool(mtlbTmp);
     modelPath = mtlbTmp;
-    modelPath += "\\Model";
+    modelPath += _R("\\Model");
   }
 
 
@@ -1939,10 +1938,10 @@ bool lhpOpKinectUtil::Import()
     if(m_ExtApp)
     {
       importName = path;
-      importName += "/";
+      importName += _R("/");
       importName += name;
       importName += m_FileSuffix;
-      importName += ".";
+      importName += _R(".");
       importName += ext;
     }
     if(!mafFileExists(importName))
@@ -1955,7 +1954,7 @@ bool lhpOpKinectUtil::Import()
       {
         //mafString pref, resname;
         //pref = mafString("");
-        for(std::vector<std::pair<mafString, mafVME*> >::iterator it = sessionsList.begin(); it != sessionsList.end(); ++it)
+        for(auto it = sessionsList.begin(); it != sessionsList.end(); ++it)
         {
           if(it->first == path)
           {
@@ -1988,25 +1987,25 @@ bool lhpOpKinectUtil::Import()
       {
         mafString nmext, staticName, fullSName, anthroFile;
         nmext = name;
-        nmext += ".";
+        nmext += _R(".");
         nmext += ext;
-        if(importName.FindFirst("_Scaled") != -1)
-          staticName = "Static_Scaled.txt";
+        if(importName.FindFirst(_R("_Scaled")) != -1)
+          staticName = _R("Static_Scaled.txt");
         else
-          staticName = "Static.txt";
+          staticName = _R("Static.txt");
         fullSName = path;
-        fullSName += "/";
+        fullSName += _R("/");
         fullSName += staticName;
 
         anthroFile = path;
-        anthroFile += "/";
-        anthroFile += "AnthropometryKinect.m";
+        anthroFile += _R("/");
+        anthroFile += _R("AnthropometryKinect.m");
         if(/*mafFileExists(fullSName) && */mafFileExists(anthroFile))
         {
           mafString newAnthro;
           newAnthro = mtlbTmp;
-          newAnthro += "/";
-          newAnthro += "AnthropometryKinect.m";
+          newAnthro += _R("/");
+          newAnthro += _R("AnthropometryKinect.m");
           mafFileCopy(anthroFile, newAnthro);
           mafDirMake(modelPath);
           writeParams(mtlbTmp, path, nmext, staticName, modelPath, m_LLimb, m_ULimb);
@@ -2014,11 +2013,11 @@ bool lhpOpKinectUtil::Import()
 
           mafString commandline;
           commandline = mtlbTmp;
-          commandline += "/KinVic_Opt_ShV_2012.exe KV_Local_Param_Inp_Shv_K.m LL_Model_S035_K.dat UpL_Model_S035_K.dat >a.log";
-          wxSetWorkingDirectory(mtlbTmp.GetCStr());
+          commandline += _R("/KinVic_Opt_ShV_2012.exe KV_Local_Param_Inp_Shv_K.m LL_Model_S035_K.dat UpL_Model_S035_K.dat >a.log");
+          wxSetWorkingDirectory(mtlbTmp.toWx());
           mafString tmpOut;
           tmpOut = mtlbTmp;
-          tmpOut += "/tmp.tmp";
+          tmpOut += _R("/tmp.tmp");
           wxBusyInfo *busy = new wxBusyInfo("Optimization. Please wait...");
           //if(wxExecute(commandline.GetCStr(), wxEXEC_SYNC) == 0)
           if(RunProgram(mtlbTmp.GetCStr(), commandline.GetCStr(), tmpOut.GetCStr()))
@@ -2111,8 +2110,8 @@ mafVME *lhpOpKinectUtil::ImportSingleFile(const mafString &fullFileName)
       lm_name = m_dictionaryStruct[current_lm];
     else
     {
-      lm_name ="lm_";
-      lm_name << current_lm;
+      lm_name =_R("lm_");
+      lm_name += mafToString(current_lm);
     }
 
     cloud->AppendLandmark(lm_name);
@@ -2280,38 +2279,38 @@ void lhpOpKinectUtil::Clear()
 }
 void lhpOpKinectUtil::DictionaryUpdate()
 {
-  bool emptyName = (m_DictionaryFileName == "");
+  bool emptyName = m_DictionaryFileName.IsEmpty();
   DestroyDictionary();
   if(!emptyName)
   {
     if(!LoadDictionary())
     {
       wxLogMessage("Error reading dictionary.");
-      m_DictionaryFileName = "";
+      m_DictionaryFileName = _R("");
     }
   }
   else
   {
-    m_dictionaryStruct.push_back("Pelvis");
-    m_dictionaryStruct.push_back("Spine");
-    m_dictionaryStruct.push_back("Thorax");
-    m_dictionaryStruct.push_back("Head");
-    m_dictionaryStruct.push_back("LeftShoulder");
-    m_dictionaryStruct.push_back("LeftElbow");
-    m_dictionaryStruct.push_back("LeftWrist");
-    m_dictionaryStruct.push_back("LeftHand");
-    m_dictionaryStruct.push_back("RightShoulder");
-    m_dictionaryStruct.push_back("RightElbow");
-    m_dictionaryStruct.push_back("RightWrist");
-    m_dictionaryStruct.push_back("RightHand");
-    m_dictionaryStruct.push_back("LeftHip");
-    m_dictionaryStruct.push_back("LeftKnee");
-    m_dictionaryStruct.push_back("LeftAnkle");
-    m_dictionaryStruct.push_back("LeftFoot");
-    m_dictionaryStruct.push_back("RightHip");
-    m_dictionaryStruct.push_back("RightKnee");
-    m_dictionaryStruct.push_back("RightAnkle");
-    m_dictionaryStruct.push_back("RightFoot");
+    m_dictionaryStruct.push_back(_R("Pelvis"));
+    m_dictionaryStruct.push_back(_R("Spine"));
+    m_dictionaryStruct.push_back(_R("Thorax"));
+    m_dictionaryStruct.push_back(_R("Head"));
+    m_dictionaryStruct.push_back(_R("LeftShoulder"));
+    m_dictionaryStruct.push_back(_R("LeftElbow"));
+    m_dictionaryStruct.push_back(_R("LeftWrist"));
+    m_dictionaryStruct.push_back(_R("LeftHand"));
+    m_dictionaryStruct.push_back(_R("RightShoulder"));
+    m_dictionaryStruct.push_back(_R("RightElbow"));
+    m_dictionaryStruct.push_back(_R("RightWrist"));
+    m_dictionaryStruct.push_back(_R("RightHand"));
+    m_dictionaryStruct.push_back(_R("LeftHip"));
+    m_dictionaryStruct.push_back(_R("LeftKnee"));
+    m_dictionaryStruct.push_back(_R("LeftAnkle"));
+    m_dictionaryStruct.push_back(_R("LeftFoot"));
+    m_dictionaryStruct.push_back(_R("RightHip"));
+    m_dictionaryStruct.push_back(_R("RightKnee"));
+    m_dictionaryStruct.push_back(_R("RightAnkle"));
+    m_dictionaryStruct.push_back(_R("RightFoot"));
   }
   if(m_Gui)
   {
@@ -2322,13 +2321,13 @@ void lhpOpKinectUtil::DictionaryUpdate()
 bool lhpOpKinectUtil::LoadDictionary()
 {
   std::string landmarkName;
-  std::ifstream dictionaryInputStream(m_DictionaryFileName, std::ios::in);
+  std::ifstream dictionaryInputStream(m_DictionaryFileName.GetCStr(), std::ios::in);
 
   if(dictionaryInputStream.is_open() == 0)
     return false;
   while(dictionaryInputStream >> landmarkName)	
   {
-    m_dictionaryStruct.push_back(landmarkName.c_str());
+    m_dictionaryStruct.push_back(_R(landmarkName.c_str()));
   }
   return true;
 }

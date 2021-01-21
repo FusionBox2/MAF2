@@ -59,7 +59,7 @@ mafCxxTypeMacro(mafVMEBSplineVolume)
 mafString mafVMEBSplineVolume::GetVisualPipe()
 //-------------------------------------------------------------------------
 {
-  return mafString("mafPipeSurface");
+  return mafString(_R("mafPipeSurface"));
 }
 
 //-------------------------------------------------------------------------
@@ -92,7 +92,7 @@ mafVMEBSplineVolume::mafVMEBSplineVolume()
   vtkNEW(m_Polygons);
   dpipe->SetInput(m_Polygons);
 
-  m_PointsGroupName = "";
+  m_PointsGroupName = _R("");
   m_BVolume    = NULL;
   m_OrderX     = 4;
   m_OrderY     = 4;
@@ -350,7 +350,7 @@ int mafVMEBSplineVolume::InternalStore(mafStorageElement *parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    if(parent->StoreMatrix("Transform",&m_Transform->GetMatrix())==MAF_OK)
+    if(parent->StoreMatrix(_R("Transform"),&m_Transform->GetMatrix())==MAF_OK)
       return MAF_OK;
   }
   return MAF_ERROR;
@@ -363,7 +363,7 @@ int mafVMEBSplineVolume::InternalRestore(mafStorageElement *node)
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
-    if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
+    if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
       return MAF_OK;
@@ -394,7 +394,7 @@ char** mafVMEBSplineVolume::GetIcon()
 mafGUI* mafVMEBSplineVolume::CreateGui()
 //-------------------------------------------------------------------------
 {
-  const mafString mode_choices_string[] = {_("Direct"),_("Maximal influence")};//, _("Interpolate")};
+  const mafString mode_choices_string[] = {_L("Direct"),_L("Maximal influence")};//, _("Interpolate")};
 
   mafID sub_id = -1;
 
@@ -403,20 +403,20 @@ mafGUI* mafVMEBSplineVolume::CreateGui()
   m_Gui->Divider();
 
 
-  m_PointsGroupName = _("none");
-  m_Gui->Button(ID_PNTS_GROUP_LINK,&m_PointsGroupName,_("Points"), _("Select the Points cloud to create the Spline"));
-  m_Gui->Integer(ID_ORDERX, _("Order X"), &m_OrderX, 1, 10);
-  m_Gui->Integer(ID_ORDERY, _("Order Y"), &m_OrderY, 1, 10);
-  m_Gui->Integer(ID_ORDERZ, _("Order Z"), &m_OrderZ, 1, 10);
-  m_Gui->Combo(ID_MODE, _("Mode"), &m_Mode, DIM(mode_choices_string), mode_choices_string);
+  m_PointsGroupName = _L("none");
+  m_Gui->Button(ID_PNTS_GROUP_LINK,&m_PointsGroupName,_L("Points"), _L("Select the Points cloud to create the Spline"));
+  m_Gui->Integer(ID_ORDERX, _L("Order X"), &m_OrderX, 1, 10);
+  m_Gui->Integer(ID_ORDERY, _L("Order Y"), &m_OrderY, 1, 10);
+  m_Gui->Integer(ID_ORDERZ, _L("Order Z"), &m_OrderZ, 1, 10);
+  m_Gui->Combo(ID_MODE, _L("Mode"), &m_Mode, DIM(mode_choices_string), mode_choices_string);
 
-  m_Gui->Integer(ID_NUMSOURCEX, _("Num source X"), &m_SourceX, 5, 500);
-  m_Gui->Integer(ID_NUMSOURCEY, _("Num source Y"), &m_SourceY, 5, 500);
-  m_Gui->Integer(ID_NUMSOURCEZ, _("Num source Y"), &m_SourceZ, 5, 500);
+  m_Gui->Integer(ID_NUMSOURCEX, _L("Num source X"), &m_SourceX, 5, 500);
+  m_Gui->Integer(ID_NUMSOURCEY, _L("Num source Y"), &m_SourceY, 5, 500);
+  m_Gui->Integer(ID_NUMSOURCEZ, _L("Num source Y"), &m_SourceZ, 5, 500);
 
-  m_Gui->Integer(ID_NUMTESSELX, _("Num parts X"), &m_TesselX, 2, 500);
-  m_Gui->Integer(ID_NUMTESSELY, _("Num parts Y"), &m_TesselY, 2, 500);
-  m_Gui->Integer(ID_NUMTESSELZ, _("Num parts Y"), &m_TesselZ, 2, 500);
+  m_Gui->Integer(ID_NUMTESSELX, _L("Num parts X"), &m_TesselX, 2, 500);
+  m_Gui->Integer(ID_NUMTESSELY, _L("Num parts Y"), &m_TesselY, 2, 500);
+  m_Gui->Integer(ID_NUMTESSELZ, _L("Num parts Y"), &m_TesselZ, 2, 500);
 
   m_Gui->Update();
   //this->InternalUpdate();
@@ -657,11 +657,11 @@ int mafVMEBSplineVolume::InternalInitialize()
 mmaMaterial *mafVMEBSplineVolume::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+  mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
   if (material == NULL)
   {
     material = mmaMaterial::New();
-    SetAttribute("MaterialAttributes", material);
+    SetAttribute(_R("MaterialAttributes"), material);
   }
   return material;
 }

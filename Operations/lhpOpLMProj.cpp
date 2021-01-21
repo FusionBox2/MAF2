@@ -155,7 +155,7 @@ lhpOpLMProj::lhpOpLMProj(bool internalproj, const mafString& label) : Superclass
   m_Canundo            = true;
   m_InputPreserving    = false; //Natural_preserving
   m_Source             = NULL;
-  m_SourceName         = "none";
+  m_SourceName         = _R("none");
   m_MultiTime          = true;
   m_InternalProjection = internalproj;
 }
@@ -198,11 +198,11 @@ void lhpOpLMProj::OpRun()
     // interface:
     m_Gui = new mafGUI(this);
     m_Gui->SetListener(this);
-    m_Gui->Label(_("Project to :"),true);
+    m_Gui->Label(_L("Project to :"),true);
     m_Gui->Label(&m_SourceName);
-    m_Gui->Button(ID_CHOOSE,_("source "));
+    m_Gui->Button(ID_CHOOSE,_L("source "));
     //m_Gui->Bool(ID_MULTITIME,_("multi-time"),&m_MultiTime);
-    m_Gui->Label("");
+    m_Gui->Label(_R(""));
     m_Gui->OkCancel();
     m_Gui->Enable(wxOK, false);
 
@@ -241,7 +241,7 @@ void lhpOpLMProj::OpDo()
   }
 
   ncname.Append(cloud->GetName());
-  ncname.Append("_projected_on_");
+  ncname.Append(_R("_projected_on_"));
   ncname.Append(m_SourceName);
   mafNEW(newcloud);
   m_Output = newcloud;
@@ -380,7 +380,7 @@ void lhpOpLMProj::OnEvent(mafEventBase *maf_event)
         break;
       case ID_CHOOSE:
         {
-          mafString s("Choose surface to join");
+          mafString s(_R("Choose surface to join"));
           mafEvent e(this,VME_CHOOSE, &s);
           mafEventMacro(e);
           if(e.GetVme() == NULL)
@@ -390,7 +390,7 @@ void lhpOpLMProj::OnEvent(mafEventBase *maf_event)
           mafNode *sel = e.GetVme();
           if(mafVME::SafeDownCast(sel)== NULL || !mafVME::SafeDownCast(sel)->GetOutput()->IsMAFType(mafVMEOutputSurface))
           {
-            wxMessageBox("Selected VME should have mafVMEOutputSurface as Output.","Warning", wxOK|wxICON_WARNING , NULL);
+            mafWarningMessage(_M("Selected VME should have mafVMEOutputSurface as Output."));
             return;
           }
 
@@ -422,7 +422,7 @@ void lhpOpLMProj::SetNodeName(mafVME *pVME, mafString *pName)
   *pName = pVME->GetName();
   if(pVME->GetParent() != NULL)
   {
-    *pName = *pName + " parent:";
-    *pName = *pName + pVME->GetParent()->GetName().GetCStr();
+    *pName += _R(" parent:");
+    *pName += pVME->GetParent()->GetName();
   }
 }

@@ -69,8 +69,8 @@ lhpVMELeverArm::lhpVMELeverArm()
 {
   m_Distance      = -1.0;
   
-  m_HAxisVmeName  = "";
-  m_LineVmeName   = "";
+  m_HAxisVmeName  = _R("");
+  m_LineVmeName   = _R("");
   
   mafNEW(m_Transform);
   mafVMEOutputPolyline *output = mafVMEOutputPolyline::New(); // an output with no data
@@ -117,15 +117,15 @@ int lhpVMELeverArm::DeepCopy(mafNode *a)
   if (Superclass::DeepCopy(a)==MAF_OK)
   {
     lhpVMELeverArm *meter = lhpVMELeverArm::SafeDownCast(a);
-    mafNode *linked_node = mafNode::SafeDownCast(meter->GetLink("HAxisVME"));
+    mafNode *linked_node = mafNode::SafeDownCast(meter->GetLink(_R("HAxisVME")));
     if (linked_node)
     {
-      this->SetLink("HAxisVME", linked_node);
+      this->SetLink(_R("HAxisVME"), linked_node);
     }
-    linked_node = mafNode::SafeDownCast(meter->GetLink("LineVME"));
+    linked_node = mafNode::SafeDownCast(meter->GetLink(_R("LineVME")));
     if (linked_node)
     {
-      this->SetLink("LineVME", linked_node);
+      this->SetLink(_R("LineVME"), linked_node);
     }
     m_Transform->SetMatrix(meter->m_Transform->GetMatrix());
 
@@ -147,8 +147,8 @@ bool lhpVMELeverArm::Equals(mafVME *vme)
   if (Superclass::Equals(vme))
   {
     ret = m_Transform->GetMatrix() == ((lhpVMELeverArm *)vme)->m_Transform->GetMatrix() && \
-          GetLink("HAxisVME") == ((lhpVMELeverArm *)vme)->GetLink("HAxisVME") && \
-          GetLink("LineVME") == ((lhpVMELeverArm *)vme)->GetLink("LineVME");
+          GetLink(_R("HAxisVME")) == ((lhpVMELeverArm *)vme)->GetLink(_R("HAxisVME")) && \
+          GetLink(_R("LineVME")) == ((lhpVMELeverArm *)vme)->GetLink(_R("LineVME"));
   }
   return ret;
 }
@@ -170,11 +170,11 @@ int lhpVMELeverArm::InternalInitialize()
 mmaMaterial *lhpVMELeverArm::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+  mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
   if (material == NULL)
   {
     material = mmaMaterial::New();
-    SetAttribute("MaterialAttributes", material);
+    SetAttribute(_R("MaterialAttributes"), material);
   }
   return material;
 }
@@ -385,7 +385,7 @@ int lhpVMELeverArm::InternalStore(mafStorageElement *parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent->StoreMatrix("Transform",&m_Transform->GetMatrix());
+    parent->StoreMatrix(_R("Transform"),&m_Transform->GetMatrix());
     return MAF_OK;
   }
   return MAF_ERROR;
@@ -397,7 +397,7 @@ int lhpVMELeverArm::InternalRestore(mafStorageElement *node)
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
-    if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
+    if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
       return MAF_OK;
@@ -427,11 +427,11 @@ void lhpVMELeverArm::Print(std::ostream& os, const int tabs)
 mmaMeter *lhpVMELeverArm::GetMeterAttributes()
 //-------------------------------------------------------------------------
 {
-  mmaMeter *meter_attributes = (mmaMeter *)GetAttribute("MeterAttributes");
+  mmaMeter *meter_attributes = (mmaMeter *)GetAttribute(_R("MeterAttributes"));
   if (meter_attributes == NULL)
   {
     meter_attributes = mmaMeter::New();
-    SetAttribute("MeterAttributes", meter_attributes);
+    SetAttribute(_R("MeterAttributes"), meter_attributes);
   }
   return meter_attributes;
 }
@@ -554,17 +554,14 @@ double lhpVMELeverArm::GetDistance()
 mafGUI* lhpVMELeverArm::CreateGui()
 //-------------------------------------------------------------------------
 {
-  int num_mode = 3;
-  const wxString mode_choices_string[] = {_("point distance"), _("line distance"), _("line angle")};
-
   m_Gui = mafNode::CreateGui(); // Called to show info about vmes' type and name
   m_Gui->SetListener(this);
   m_Gui->Divider();
 
   UpdateLinks();
   
-  m_Gui->Button(ID_AXIS_LINK,&m_HAxisVmeName,_("Axis"), _("Select the helical axis for the lever arm"));
-  m_Gui->Button(ID_LINE_LINK,&m_LineVmeName,_("Line"), _("Select the muscle curve for the lever arm"));
+  m_Gui->Button(ID_AXIS_LINK,&m_HAxisVmeName,_L("Axis"), _L("Select the helical axis for the lever arm"));
+  m_Gui->Button(ID_LINE_LINK,&m_LineVmeName,_L("Line"), _L("Select the muscle curve for the lever arm"));
 
   m_Gui->Divider();
   InternalUpdate();
@@ -582,19 +579,19 @@ void lhpVMELeverArm::UpdateLinks()
 
   if (haxis_vme && haxis_vme->IsMAFType(mafVMELandmarkCloud))
   {
-    sub_id = GetLinkSubId("HAxisVME");
-    m_HAxisVmeName = (sub_id != -1) ? ((mafVMELandmarkCloud *)haxis_vme)->GetLandmarkName(sub_id) : _("none");
+    sub_id = GetLinkSubId(_R("HAxisVME"));
+    m_HAxisVmeName = (sub_id != -1) ? ((mafVMELandmarkCloud *)haxis_vme)->GetLandmarkName(sub_id) : _L("none");
   }
   else
-    m_HAxisVmeName = haxis_vme ? haxis_vme->GetName() : _("none");
+    m_HAxisVmeName = haxis_vme ? haxis_vme->GetName() : _L("none");
 
   if (line_vme && line_vme->IsMAFType(mafVMELandmarkCloud))
   {
-    sub_id = GetLinkSubId("LineVME");
-    m_LineVmeName = (sub_id != -1) ? ((mafVMELandmarkCloud *)line_vme)->GetLandmarkName(sub_id) : _("none");
+    sub_id = GetLinkSubId(_R("LineVME"));
+    m_LineVmeName = (sub_id != -1) ? ((mafVMELandmarkCloud *)line_vme)->GetLandmarkName(sub_id) : _L("none");
   }
   else
-    m_LineVmeName = line_vme ? line_vme->GetName() : _("none");
+    m_LineVmeName = line_vme ? line_vme->GetName() : _L("none");
 }
 //-------------------------------------------------------------------------
 void lhpVMELeverArm::OnEvent(mafEventBase *maf_event)
@@ -609,7 +606,7 @@ void lhpVMELeverArm::OnEvent(mafEventBase *maf_event)
       case ID_LINE_LINK:
       {
         mafID button_id = e->GetId();
-        mafString title = _("Choose lever arm vme link");
+        mafString title = _L("Choose lever arm vme link");
         e->SetId(VME_CHOOSE);
         if (button_id == ID_AXIS_LINK)
           e->SetArg((long)&lhpVMELeverArm::AxisAccept);
@@ -650,20 +647,20 @@ void lhpVMELeverArm::SetMeterLink(const char *link_name, mafNode *n)
 {
   if (n->IsMAFType(mafVMELandmark))
   {
-    SetLink(link_name,n->GetParent(),((mafVMELandmarkCloud *)n->GetParent())->FindLandmarkIndex(n->GetName()));
+    SetLink(_R(link_name),n->GetParent(),((mafVMELandmarkCloud *)n->GetParent())->FindLandmarkIndex(n->GetName()));
   }
   else
-    SetLink(link_name, n);
+    SetLink(_R(link_name), n);
 }
 //-------------------------------------------------------------------------
 mafVME *lhpVMELeverArm::GetHAxisVME()
 //-------------------------------------------------------------------------
 {
-  return mafVME::SafeDownCast(GetLink("HAxisVME"));
+  return mafVME::SafeDownCast(GetLink(_R("HAxisVME")));
 }
 //-------------------------------------------------------------------------
 mafVME *lhpVMELeverArm::GetLineVME()
 //-------------------------------------------------------------------------
 {
-  return mafVME::SafeDownCast(GetLink("LineVME"));
+  return mafVME::SafeDownCast(GetLink(_R("LineVME")));
 }

@@ -64,7 +64,7 @@ void lhpMultiscaleDoubleClickCallback::OnEvent(mafEventBase *event)
   if (ch==MCH_INPUT){
     if (id == mafDeviceButtonsPadMouse::GetMouseDClickId()){}
 
-    mafLogMessage("double click !") ;
+    mafLogMessage(_M("double click !")) ;
     mafEvent e(this, m_id) ;
     mafEventMacro(e) ;
   }

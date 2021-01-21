@@ -147,7 +147,7 @@ mafGUI* lhpVisualPipeSurfaceScalar::CreateGui()
 {
   assert(m_Gui == NULL);
   m_Gui = mafPipe::CreateGui();
-  m_Gui->Lut(ID_LUT, "lut", m_Material->m_ColorLut);
+  m_Gui->Lut(ID_LUT, _R("lut"), m_Material->m_ColorLut);
   return m_Gui;
 }
 //-------------------------------------------------------------------------

@@ -143,40 +143,39 @@ int mafVMEAFRefSys::InternalStore(mafStorageElement *parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent->StoreInteger("Active", m_Active);
-    parent->StoreInteger("BoneID", m_BoneID);
-    parent->StoreDouble("XOffset", m_XOffset);
-    parent->StoreDouble("YOffset", m_YOffset);
-    parent->StoreDouble("ZOffset", m_ZOffset);
-    parent->StoreDouble("XRotate", m_XRotate);
-    parent->StoreDouble("YRotate", m_YRotate);
-    parent->StoreDouble("ZRotate", m_ZRotate);
+    parent->StoreInteger(_R("Active"), m_Active);
+    parent->StoreInteger(_R("BoneID"), m_BoneID);
+    parent->StoreDouble(_R("XOffset"), m_XOffset);
+    parent->StoreDouble(_R("YOffset"), m_YOffset);
+    parent->StoreDouble(_R("ZOffset"), m_ZOffset);
+    parent->StoreDouble(_R("XRotate"), m_XRotate);
+    parent->StoreDouble(_R("YRotate"), m_YRotate);
+    parent->StoreDouble(_R("ZRotate"), m_ZRotate);
     m_textSize = m_scriptText.size();
-    parent->StoreInteger("ScriptStrings", m_textSize);
+    parent->StoreInteger(_R("ScriptStrings"), m_textSize);
     for(int i = 0; i < m_textSize; i++)
     {
-      char nm[30];
-      sprintf(nm, "ln%d", i);
-      parent->StoreText(nm, m_scriptText[i].GetCStr());
+      mafString nm = mafString::Format(_R("ln%d"), i);
+      parent->StoreText(nm, m_scriptText[i]);
     }
 
     for(unsigned i = 0; i < m_vm->getInputs().size(); i++)
     {
       if(m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
       {
-        std::map<mafString, mafString>::iterator it = m_lmMapping.find(m_vm->getInputs()[i].first.c_str());
+        auto it = m_lmMapping.find(_R(m_vm->getInputs()[i].first.c_str()));
         if(it == m_lmMapping.end())
         {
-          parent->StoreText(m_vm->getInputs()[i].first.c_str(), m_vm->getInputs()[i].first.c_str());
+          parent->StoreText(_R(m_vm->getInputs()[i].first.c_str()), _R(m_vm->getInputs()[i].first.c_str()));
         }
         else
         {
-          parent->StoreText(it->first.GetCStr(), it->second.GetCStr());
+          parent->StoreText(it->first, it->second);
         }
       }
       else
       {
-        parent->StoreDouble(m_vm->getInputs()[i].first.c_str(), m_vm->getInputs()[i].second->GetScalar());
+        parent->StoreDouble(_R(m_vm->getInputs()[i].first.c_str()), m_vm->getInputs()[i].second->GetScalar());
       }
     }
     return MAF_OK;
@@ -216,20 +215,19 @@ int mafVMEAFRefSys::InternalRestore(mafStorageElement *node)
     mafMatrix matrix;
     //if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
     {
-      node->RestoreInteger("Active", m_Active);
-      node->RestoreInteger("BoneID", m_BoneID);
-      node->RestoreDouble("XOffset", m_XOffset);
-      node->RestoreDouble("YOffset", m_YOffset);
-      node->RestoreDouble("ZOffset", m_ZOffset);
-      node->RestoreDouble("XRotate", m_XRotate);
-      node->RestoreDouble("YRotate", m_YRotate);
-      node->RestoreDouble("ZRotate", m_ZRotate);
-      node->RestoreInteger("ScriptStrings", m_textSize);
+      node->RestoreInteger(_R("Active"), m_Active);
+      node->RestoreInteger(_R("BoneID"), m_BoneID);
+      node->RestoreDouble(_R("XOffset"), m_XOffset);
+      node->RestoreDouble(_R("YOffset"), m_YOffset);
+      node->RestoreDouble(_R("ZOffset"), m_ZOffset);
+      node->RestoreDouble(_R("XRotate"), m_XRotate);
+      node->RestoreDouble(_R("YRotate"), m_YRotate);
+      node->RestoreDouble(_R("ZRotate"), m_ZRotate);
+      node->RestoreInteger(_R("ScriptStrings"), m_textSize);
       m_scriptText.resize(m_textSize);
       for(int i = 0; i < m_textSize; i++)
       {
-        char nm[30];
-        sprintf(nm, "ln%d", i);
+        mafString nm = mafString::Format(_R("ln%d"), i);
         node->RestoreText(nm, m_scriptText[i]);
       }
       ConvertTextToVM(false);
@@ -238,12 +236,12 @@ int mafVMEAFRefSys::InternalRestore(mafStorageElement *node)
         if(m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
         {
           mafString tmp;
-          node->RestoreText(m_vm->getInputs()[i].first.c_str(), tmp);
-          m_lmMapping[m_vm->getInputs()[i].first.c_str()] = tmp;
+          node->RestoreText(_R(m_vm->getInputs()[i].first.c_str()), tmp);
+          m_lmMapping[_R(m_vm->getInputs()[i].first.c_str())] = tmp;
         }
         else
         {
-          node->RestoreDouble(m_vm->getInputs()[i].first.c_str(), m_vm->getInputs()[i].second->GetScalar());
+          node->RestoreDouble(_R(m_vm->getInputs()[i].first.c_str()), m_vm->getInputs()[i].second->GetScalar());
         }
       }
       SetScaleFactor(m_ScaleFactor);
@@ -257,45 +255,45 @@ int mafVMEAFRefSys::InternalRestore(mafStorageElement *node)
 mafGUI* mafVMEAFRefSys::CreateGui()
 //-------------------------------------------------------------------------
 {
-	const mafString bone_choices_string[] = {_("Undefined"),_("Pelvis"), _("Right thigh"), _("Left thigh"), _("Right shank"), _("Left shank"), _("Right foot"), _("Left foot")};
+	const mafString bone_choices_string[] = {_L("Undefined"),_L("Pelvis"), _L("Right thigh"), _L("Left thigh"), _L("Right shank"), _L("Left shank"), _L("Right foot"), _L("Left foot")};
   m_Gui = Superclass::CreateGui();
   m_Gui->Show(false);
 
-  m_Gui->Bool(ID_ACTIVE, _("Active"), &m_Active);
+  m_Gui->Bool(ID_ACTIVE, _L("Active"), &m_Active);
   m_Gui->Divider();
 
-  m_Gui->FloatSlider(ID_X_OFFSET, "X offset",&m_XOffset, -1000.0, 1000.0);
-  m_Gui->FloatSlider(ID_Y_OFFSET, "Y offset",&m_YOffset, -1000.0, 1000.0);
-  m_Gui->FloatSlider(ID_Z_OFFSET, "Z offset",&m_ZOffset, -1000.0, 1000.0);
-  m_Gui->FloatSlider(ID_X_ROTATE, "X rotate",&m_XRotate, -180.0, 180.0);
-  m_Gui->FloatSlider(ID_Y_ROTATE, "Y rotate",&m_YRotate, -180.0, 180.0);
-  m_Gui->FloatSlider(ID_Z_ROTATE, "Z rotate",&m_ZRotate, -180.0, 180.0);
+  m_Gui->FloatSlider(ID_X_OFFSET, _R("X offset"),&m_XOffset, -1000.0, 1000.0);
+  m_Gui->FloatSlider(ID_Y_OFFSET, _R("Y offset"),&m_YOffset, -1000.0, 1000.0);
+  m_Gui->FloatSlider(ID_Z_OFFSET, _R("Z offset"),&m_ZOffset, -1000.0, 1000.0);
+  m_Gui->FloatSlider(ID_X_ROTATE, _R("X rotate"),&m_XRotate, -180.0, 180.0);
+  m_Gui->FloatSlider(ID_Y_ROTATE, _R("Y rotate"),&m_YRotate, -180.0, 180.0);
+  m_Gui->FloatSlider(ID_Z_ROTATE, _R("Z rotate"),&m_ZRotate, -180.0, 180.0);
   m_Gui->Divider();
 
   for(unsigned i = 0; i < m_vm->getInputs().size(); i++)
   {
     if(m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
     {
-      std::map<mafString, mafString>::iterator it = m_lmMapping.find(m_vm->getInputs()[i].first.c_str());
+      auto it = m_lmMapping.find(_R(m_vm->getInputs()[i].first.c_str()));
       if(it == m_lmMapping.end())
         continue;
-      m_Gui->Button(ID_FIRSTDYN + i, it->first.GetCStr(), "", "Press to modify");
-      m_Gui->Label(it->first.GetCStr(), &(it->second));
-      m_buttonMapping[ID_FIRSTDYN + i] = m_vm->getInputs()[i].first.c_str();
+      m_Gui->Button(ID_FIRSTDYN + i, it->first, _R(""), _R("Press to modify"));
+      m_Gui->Label(it->first, &(it->second));
+      m_buttonMapping[ID_FIRSTDYN + i] = _R(m_vm->getInputs()[i].first.c_str());
     }
     else
     {
       double minlimit = (m_vm->getInputs()[i].second->IsDnLimited()) ? m_vm->getInputs()[i].second->GetDnLimit() : MINDOUBLE;
       double maxlimit = (m_vm->getInputs()[i].second->IsUpLimited()) ? m_vm->getInputs()[i].second->GetUpLimit() : MAXDOUBLE;
       if(m_vm->getInputs()[i].second->IsDnLimited() && m_vm->getInputs()[i].second->IsUpLimited())
-        m_Gui->FloatSlider(ID_FIRSTDYN + i, m_vm->getInputs()[i].first.c_str(), &(m_vm->getInputs()[i].second->GetScalar()), minlimit, maxlimit);
+        m_Gui->FloatSlider(ID_FIRSTDYN + i, _R(m_vm->getInputs()[i].first.c_str()), &(m_vm->getInputs()[i].second->GetScalar()), minlimit, maxlimit);
       else
-        m_Gui->Double(ID_FIRSTDYN + i, m_vm->getInputs()[i].first.c_str(), &(m_vm->getInputs()[i].second->GetScalar()), minlimit, maxlimit);
-      m_buttonMapping[ID_FIRSTDYN + i] = m_vm->getInputs()[i].first.c_str();
+        m_Gui->Double(ID_FIRSTDYN + i, _R(m_vm->getInputs()[i].first.c_str()), &(m_vm->getInputs()[i].second->GetScalar()), minlimit, maxlimit);
+      m_buttonMapping[ID_FIRSTDYN + i] = _R(m_vm->getInputs()[i].first.c_str());
     }
   }
 
-  m_Gui->Combo(ID_SELECT_BONEID, "Bone ID", &m_BoneID, DIM(bone_choices_string), bone_choices_string);
+  m_Gui->Combo(ID_SELECT_BONEID, _R("Bone ID"), &m_BoneID, DIM(bone_choices_string), bone_choices_string);
 
   m_Gui->Update();
 
@@ -318,7 +316,7 @@ bool mafVMEAFRefSys::ConvertTextToVM(bool buildMapping)
     {
       if(buildMapping)
       {
-        m_lmMapping[m_vm->getInputs()[i].first.c_str()] = m_vm->getInputs()[i].first.c_str();
+        m_lmMapping[_R(m_vm->getInputs()[i].first.c_str())] = _R(m_vm->getInputs()[i].first.c_str());
         SetRefSysLink(m_vm->getInputs()[i].first.c_str(), GetParent());
       }
     }
@@ -338,7 +336,7 @@ void mafVMEAFRefSys::SetScriptText(const std::vector<mafString>& script)
 
 void mafVMEAFRefSys::LoadScriptFromFile(const mafString& filename)
 {
-  FILE *fp = fopen(filename, "rt");
+  FILE *fp = fopen(filename.GetCStr(), "rt");
   if(fp == NULL)
   {
     return;
@@ -354,7 +352,7 @@ void mafVMEAFRefSys::LoadScriptFromFile(const mafString& filename)
     pRet = fgets(sLine, maxStrLen, fp);
     if(pRet == NULL)
       break;
-    m_scriptText.push_back(mafString(pRet));
+    m_scriptText.push_back(mafString(_R(pRet)));
   }
 
   fclose(fp);
@@ -401,7 +399,7 @@ void mafVMEAFRefSys::OnEvent(mafEventBase *maf_event)
           std::map<mafString, mafString>::iterator itlm = m_lmMapping.find(itbtn->second);
           if(itlm != m_lmMapping.end())
           {
-            mafString title = "Choose landmark";
+            mafString title = _R("Choose landmark");
             mafEvent e(this,VME_CHOOSE, &title);
             e.SetArg((long)&mafVMERefSysAbstract::LandmarkAccept);
             e.SetString(&title);
@@ -411,7 +409,7 @@ void mafVMEAFRefSys::OnEvent(mafEventBase *maf_event)
             if(n != NULL)
             {
               itlm->second = n->GetName();
-              SetRefSysLink(itlm->first, n->GetParent());
+              SetRefSysLink(itlm->first.GetCStr(), n->GetParent());
             }
           }
         }
@@ -471,10 +469,10 @@ bool mafVMEAFRefSys::UpdateVM(mafTimeStamp ts)
       mafVMELandmarkCloud *lmcLink = NULL;
       int                 ind      = -1;
       {
-        std::map<mafString, mafString>::iterator it = m_lmMapping.find(m_vm->getInputs()[i].first.c_str());
+        auto it = m_lmMapping.find(_R(m_vm->getInputs()[i].first.c_str()));
         if(it == m_lmMapping.end())
           continue;
-        mafVMELandmarkCloud *tmpLink = mafVMELandmarkCloud::SafeDownCast(GetLink(m_vm->getInputs()[i].first.c_str()));
+        mafVMELandmarkCloud *tmpLink = mafVMELandmarkCloud::SafeDownCast(GetLink(_R(m_vm->getInputs()[i].first.c_str())));
         lmcLink = (tmpLink != NULL) ? tmpLink : parentLMC;
         if(lmcLink != NULL)
         {
