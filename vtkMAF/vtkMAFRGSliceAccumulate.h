@@ -61,7 +61,7 @@ class VTK_vtkMAF_EXPORT vtkMAFRGSliceAccumulate : public vtkRectilinearGridSourc
 {
 public:
   vtkTypeRevisionMacro(vtkMAFRGSliceAccumulate,vtkRectilinearGridSource);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
 	static vtkMAFRGSliceAccumulate *New();
 

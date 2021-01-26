@@ -73,13 +73,13 @@ class VTK_vtkMAF_EXPORT vtkMAFTransferFunction2D : public vtkDataObject {
     static vtkMAFTransferFunction2D *New();
     vtkTypeRevisionMacro(vtkMAFTransferFunction2D,vtkDataObject);
     
-    void Initialize();
-    void DeepCopy( vtkDataObject *f ) { this->ShallowCopy(f); }
-    void ShallowCopy( vtkDataObject *f );
+    void Initialize() override;
+    void DeepCopy( vtkDataObject *f ) override { this->ShallowCopy(f); }
+    void ShallowCopy( vtkDataObject *f ) override;
     
     /**
     Return what type of dataset this is.*/
-    int GetDataObjectType() {return VTK_TRANSFER_FUNCTION_2D;};
+    int GetDataObjectType() override {return VTK_TRANSFER_FUNCTION_2D;};
     
     /**
     Get number of widgets. Some of them can be not-active*/
@@ -179,7 +179,7 @@ class VTK_vtkMAF_EXPORT vtkVolumeProperty2 : public vtkVolumeProperty {
     void SetTransferFunction2D(vtkMAFTransferFunction2D *function);
     vtkMAFTransferFunction2D *GetTransferFunction2D() const { return this->TransferFunction2D; }
 
-    unsigned long int GetMTime();
+    unsigned long int GetMTime() override;
 
     void DeepCopy(vtkVolumeProperty *f );
     void ShallowCopy(vtkVolumeProperty *f );

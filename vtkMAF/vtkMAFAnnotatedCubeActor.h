@@ -63,15 +63,15 @@ class VTK_vtkMAF_EXPORT vtkMAFAnnotatedCubeActor : public vtkProp3D
 public:
   static vtkMAFAnnotatedCubeActor *New();
   vtkTypeRevisionMacro(vtkMAFAnnotatedCubeActor,vtkProp3D);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /** For some exporters and other other operations we must be
   able to collect all the actors or volumes. These methods
   are used in that process. */
-  virtual void GetActors(vtkPropCollection *); 
+  void GetActors(vtkPropCollection *) override; 
 
   /** Support the standard render methods. */
-  virtual int RenderOpaqueGeometry(vtkViewport *viewport);
+  int RenderOpaqueGeometry(vtkViewport *viewport) override;
 
   /** Support the standard render methods. */
   virtual int RenderTranslucentPolygonalGeometry(vtkViewport *viewport);
@@ -80,11 +80,11 @@ public:
   virtual int HasTranslucentPolygonalGeometry();
 
   /** Shallow copy of an axes actor. Overloads the virtual vtkProp method. */
-  void ShallowCopy(vtkProp *prop);
+  void ShallowCopy(vtkProp *prop) override;
 
   /** Release any graphics resources that are being consumed by this actor.
   The parameter window could be used to determine which graphic resources to release. */
-  void ReleaseGraphicsResources(vtkWindow *);
+  void ReleaseGraphicsResources(vtkWindow *) override;
 
   /** Get the bounds for this Actor as (Xmin,Xmax,Ymin,Ymax,Zmin,Zmax). (The
   method GetBounds(double bounds[6]) is available from the superclass.) */
@@ -92,10 +92,10 @@ public:
   
   /** Get the bounds for this Actor as (Xmin,Xmax,Ymin,Ymax,Zmin,Zmax). (The
   method GetBounds(double bounds[6]) is available from the superclass.) */
-  double *GetBounds();
+  double *GetBounds() override;
 
   /**  Get the actors mtime plus consider its properties and texture if set. */
-  unsigned long int GetMTime();
+  unsigned long int GetMTime() override;
 
   /** Set the scale factor for the face text */
   void SetFaceTextScale(double);

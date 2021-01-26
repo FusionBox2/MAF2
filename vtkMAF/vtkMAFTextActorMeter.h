@@ -62,16 +62,16 @@ class VTK_vtkMAF_EXPORT vtkMAFTextActorMeter : public vtkActor2D
   /** RTTI macro. */
   vtkTypeRevisionMacro(vtkMAFTextActorMeter,vtkActor2D);
   /** Print useful information. */
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   /** Create an instance of the object. */
   static	vtkMAFTextActorMeter *New();
   
   /** Method is intended for rendering. */
-  int	 RenderOverlay(vtkViewport *viewport);
+  int	 RenderOverlay(vtkViewport *viewport) override;
   /** Method is intended for rendering Opaque Geometry */
-  int	 RenderOpaqueGeometry(vtkViewport *viewport);
+  int	 RenderOpaqueGeometry(vtkViewport *viewport) override;
   /** Method is intended for rendering Translucent Geometry */
-  int	 RenderTranslucentGeometry(vtkViewport *viewport)  {return 0;}
+  int	 RenderTranslucentGeometry(vtkViewport *viewport) override  {return 0;}
  
   /** Retrieve text actor input. */
   char*   GetText(){return TextActor->GetInput();}

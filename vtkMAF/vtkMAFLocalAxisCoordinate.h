@@ -48,7 +48,7 @@ public:
   vtkGetObjectMacro(Matrix,vtkMatrix4x4);
 
   /** used only when the coordinate system is VTK_USERDEFINED  */
-  virtual double *GetComputedUserDefinedValue(vtkViewport *viewport);
+  double *GetComputedUserDefinedValue(vtkViewport *viewport) override;
 
 protected:
   /** constructor */

@@ -37,7 +37,7 @@ public:
 
 protected:
   /** reimplement execute fixing the algorithm when the number of points of the cutter output is zero.*/
-  void Execute();
+  void Execute() override;
 
 private:
     /** Copy Constructor , not implemented */

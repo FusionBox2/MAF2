@@ -31,7 +31,7 @@ public:
   static vtkMAFPolyDataToSinglePolyLine* New();
 
 protected:
-  void Execute();
+  void Execute() override;
 
 private:
 	vtkMAFPolyDataToSinglePolyLine(const vtkMAFPolyDataToSinglePolyLine&);  // Not implemented.

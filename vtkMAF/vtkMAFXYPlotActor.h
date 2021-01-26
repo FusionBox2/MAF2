@@ -56,7 +56,7 @@ class VTK_vtkMAF_EXPORT vtkMAFXYPlotActor : public vtkActor2D
 {
 public:
   vtkTypeRevisionMacro(vtkMAFXYPlotActor,vtkActor2D);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Instantiate object with autorange computation; bold, italic, and shadows
@@ -387,22 +387,22 @@ public:
   
   // Description:
   // Take into account the modified time of internal helper classes.
-  unsigned long GetMTime();
+  unsigned long GetMTime() override;
   
 //BTX  
   // Description:
   // WARNING: INTERNAL METHOD - NOT INTENDED FOR GENERAL USE
   // DO NOT USE THIS METHOD OUTSIDE OF THE RENDERING PROCESS.
   // Draw the x-y plot.
-  int RenderOpaqueGeometry(vtkViewport*);
-  int RenderOverlay(vtkViewport*);
-  int RenderTranslucentGeometry(vtkViewport *) {return 0;}
+  int RenderOpaqueGeometry(vtkViewport*) override;
+  int RenderOverlay(vtkViewport*) override;
+  int RenderTranslucentGeometry(vtkViewport *) override {return 0;}
 
   // Description:
   // Release any graphics resources that are being consumed by this actor.
   // The parameter window could be used to determine which graphic
   // resources to release.
-  void ReleaseGraphicsResources(vtkWindow *);
+  void ReleaseGraphicsResources(vtkWindow *) override;
 //ETX  
 
 protected:

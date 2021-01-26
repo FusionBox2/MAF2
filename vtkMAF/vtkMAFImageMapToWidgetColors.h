@@ -67,17 +67,17 @@ public:
   vtkSetMacro( Level, double );
   vtkGetMacro( Level, double );
   
-  unsigned long GetMTime();
+  unsigned long GetMTime() override;
 
 protected:
   vtkMAFImageMapToWidgetColors();
   ~vtkMAFImageMapToWidgetColors();
 
-  void ExecuteInformation(vtkImageData *inData, vtkImageData *outData);
-  void ExecuteInformation(){this->vtkImageMapToColors::ExecuteInformation();};
+  void ExecuteInformation(vtkImageData *inData, vtkImageData *outData) override;
+  void ExecuteInformation() override{this->vtkImageMapToColors::ExecuteInformation();};
   void ThreadedExecute(vtkImageData *inData, vtkImageData *outData,
-                       int extent[6], int id);
-  void ExecuteData(vtkDataObject *output);
+                       int extent[6], int id) override;
+  void ExecuteData(vtkDataObject *output) override;
   template<class T> void UpdateGradientCache(T *dataPointer);
 
   vtkMAFTransferFunction2D *TransferFunction;

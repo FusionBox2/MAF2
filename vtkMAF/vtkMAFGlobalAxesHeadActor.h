@@ -62,13 +62,13 @@ class VTK_vtkMAF_EXPORT vtkMAFGlobalAxesHeadActor : public vtkProp3D
 public:
   static vtkMAFGlobalAxesHeadActor *New();
   vtkTypeRevisionMacro(vtkMAFGlobalAxesHeadActor,vtkProp3D);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // For some exporters and other other operations we must be
   // able to collect all the actors or volumes. These methods
   // are used in that process.
-  virtual void GetActors(vtkPropCollection *);
+  void GetActors(vtkPropCollection *) override;
 
   // Description:
   // This is the vtk file containing the 3D head. It must exists.
@@ -76,7 +76,7 @@ public:
 
   // Description:
   // Support the standard render methods.
-  virtual int RenderOpaqueGeometry(vtkViewport *viewport);
+  int RenderOpaqueGeometry(vtkViewport *viewport) override;
   virtual int RenderTranslucentPolygonalGeometry(vtkViewport *viewport);
 
   // Description:
@@ -85,23 +85,23 @@ public:
 
   // Description:
   // Shallow copy of an axes actor. Overloads the virtual vtkProp method.
-  void ShallowCopy(vtkProp *prop);
+  void ShallowCopy(vtkProp *prop) override;
 
   // Description:
   // Release any graphics resources that are being consumed by this actor.
   // The parameter window could be used to determine which graphic
   // resources to release.
-  void ReleaseGraphicsResources(vtkWindow *);
+  void ReleaseGraphicsResources(vtkWindow *) override;
 
   // Description:
   // Get the bounds for this Actor as (Xmin,Xmax,Ymin,Ymax,Zmin,Zmax). (The
   // method GetBounds(double bounds[6]) is available from the superclass.)
   void GetBounds(double bounds[6]);
-  double *GetBounds();
+  double *GetBounds() override;
 
   // Description:
   // Get the actors mtime plus consider its properties and texture if set.
-  unsigned long int GetMTime();
+  unsigned long int GetMTime() override;
 
   // Description:
   // Get the cube properties.

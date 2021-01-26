@@ -91,7 +91,7 @@ public:
   /** RTTI Macro */
   vtkTypeRevisionMacro(vtkMAFProjectSP,vtkStructuredPointsToStructuredPointsFilter);
   /** Print object information */
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /** Static Function for object instantiation */
   static vtkMAFProjectSP *New();
@@ -134,9 +134,9 @@ protected:
   void operator=(const vtkMAFProjectSP&) {}
 
   /** Update dimensions and whole extents */
-  void ExecuteInformation();
+  void ExecuteInformation() override;
   /** Execute the projection and fill output scalars */
-  void Execute();
+  void Execute() override;
 
   int ProjectionMode;  
 };

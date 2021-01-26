@@ -51,7 +51,7 @@ class VTK_vtkMAF_EXPORT vtkMAFRayCast3DPicker : public vtkAbstractPropPicker
 public:
   static vtkMAFRayCast3DPicker *New();
   vtkTypeRevisionMacro(vtkMAFRayCast3DPicker,vtkAbstractPropPicker);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /**
     Specify tolerance for performing pick operation. Tolerance is specified
@@ -97,8 +97,8 @@ public:
   /**
     Perform pick operation with selection point provided. Currenltly does
     nothin. Return non-zero if something was successfully picked. */
-  virtual int Pick(double selectionX, double selectionY, double selectionZ, 
-                   vtkRenderer *renderer);
+  int Pick(double selectionX, double selectionY, double selectionZ, 
+                   vtkRenderer *renderer) override;
   /** 
     Perform pick operation with selection point provided. Currenltly does
     nothin. Return non-zero if something was successfully picked. */
@@ -131,7 +131,7 @@ protected:
   virtual double IntersectWithLine(double p1[3], double p2[3], double tol, 
                                   vtkAssemblyPath *path, vtkProp3D *p, 
                                   vtkAbstractMapper3D *m);
-  virtual void Initialize();
+  void Initialize() override;
 
   double Tolerance; ///< tolerance for computation (% of window)
   double MapperPosition[3]; ///< selection point in untransformed coordinates

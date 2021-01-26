@@ -51,7 +51,7 @@ class VTK_vtkMAF_EXPORT vtkMAFExtendedGlyph3D : public vtkDataSetToPolyDataFilte
 {
 public:
   vtkTypeRevisionMacro(vtkMAFExtendedGlyph3D,vtkDataSetToPolyDataFilter);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /**
   Construct object with scaling on, scaling mode is by scalar value, 
@@ -179,9 +179,9 @@ protected:
   vtkMAFExtendedGlyph3D();
   ~vtkMAFExtendedGlyph3D();
 
-  void Execute();
-  void ExecuteInformation();
-  void ComputeInputUpdateExtents(vtkDataObject *output);
+  void Execute() override;
+  void ExecuteInformation() override;
+  void ComputeInputUpdateExtents(vtkDataObject *output) override;
 
   int NumberOfSources; // Number of source objects
   vtkPolyData **Source; // Geometry to copy to each point

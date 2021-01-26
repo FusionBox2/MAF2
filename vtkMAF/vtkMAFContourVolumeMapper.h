@@ -141,10 +141,10 @@ public:
   /** RTTI Macro */
   vtkTypeRevisionMacro(vtkMAFContourVolumeMapper, vtkVolumeMapper);
   /** Print Object Information */
-  void PrintSelf( ostream& os, vtkIndent index );
+  void PrintSelf( ostream& os, vtkIndent index ) override;
 
   /** The input should be either vtkImageData or vtkRectilinearGrid */
-  void  SetInput(vtkDataSet *input);
+  void  SetInput(vtkDataSet *input) override;
   /** Retrieve the input */
   vtkDataSet*  GetInput() { return (vtkDataSet*)vtkVolumeMapper::GetInput(); }
 
@@ -152,7 +152,7 @@ public:
   Render the isosurface.
   If data has been cached for this contour value, calls DrawCache()
   Else calls PrepareAccelerationDataTemplate() and RenderMCubes() */
-  void Render(vtkRenderer *ren, vtkVolume *vol);
+  void Render(vtkRenderer *ren, vtkVolume *vol) override;
 
   /** Get multi-resolution feature. By default it is enabled  */
   vtkGetMacro(AutoLODRender, int);
@@ -183,7 +183,7 @@ public:
   /** Set the threshold for Marching cubes algorithm */  
   void SetContourValue(float val) { if (this->ContourValue != val) { this->ContourValue = val; this->CacheCreated = false; } }
   /** Update Mapper */
-  void Update();
+  void Update() override;
 
   /** Checks if the input data is supported */
   bool IsDataValid(bool warnings);

@@ -43,7 +43,7 @@ public:
 	
 	static vtkMAFPolyDataSingleSourceShortestPath *New();
 	
-	void PrintSelf(ostream& os, vtkIndent indent);
+	void PrintSelf(ostream& os, vtkIndent indent) override;
 	
 	// Description:
 	// The vertex ids (of the input polydata) on the shortest path
@@ -77,7 +77,7 @@ public:
 	vtkBooleanMacro(UseScalarWeights, int);
 	
 	// Description:
-	unsigned long GetMTime();
+	unsigned long GetMTime() override;
 
   // Description:
   // Get Path Lenght
@@ -90,7 +90,7 @@ protected:
 	void operator=(const vtkMAFPolyDataSingleSourceShortestPath&);
 	
 	// Usual data generation method
-	void Execute();
+	void Execute() override;
 	
 	// Build a graph description of the mesh
 	void BuildAdjacency(vtkPolyData *pd);

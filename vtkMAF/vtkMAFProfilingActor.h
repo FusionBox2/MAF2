@@ -55,16 +55,16 @@ class VTK_vtkMAF_EXPORT vtkMAFProfilingActor : public vtkActor2D
   /** RTTI Macro */
   vtkTypeRevisionMacro(vtkMAFProfilingActor,vtkActor2D);
   /** Print Object Information */
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   /** create an instance of the object */
   static	vtkMAFProfilingActor *New();
   
   /** Draw the object to the screen */
-  int	 RenderOverlay(vtkViewport *viewport);
+  int	 RenderOverlay(vtkViewport *viewport) override;
   /** Draw the object to the screen */
-  int	 RenderOpaqueGeometry(vtkViewport *viewport);
+  int	 RenderOpaqueGeometry(vtkViewport *viewport) override;
   /** Draw the object to the screen */
-  int	 RenderTranslucentGeometry(vtkViewport *viewport)  {return 0;}
+  int	 RenderTranslucentGeometry(vtkViewport *viewport) override  {return 0;}
  
 protected:
     /** constructor */

@@ -60,7 +60,7 @@ class VTK_vtkMAF_EXPORT vtkMAFGridActor : public vtkActor
   /** RTTI macro. */
   vtkTypeRevisionMacro(vtkMAFGridActor,vtkActor);
   /** Print information regarding the status of the object. */
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   /** Create an instance of the object. */
   static	vtkMAFGridActor *New();
   
@@ -76,9 +76,9 @@ class VTK_vtkMAF_EXPORT vtkMAFGridActor : public vtkActor
   /** Adjust the clipping range (this method is empty).*/
   virtual  void 		AdjustClippingRange(vtkViewport *viewport);
   /** Method is intended for rendering Opaque Geometry.*/
-  virtual  int			RenderOpaqueGeometry(vtkViewport *viewport);
+   int			RenderOpaqueGeometry(vtkViewport *viewport) override;
   /** Method is intended for rendering Translucent Geometry. */
-  virtual  int			RenderTranslucentGeometry(vtkViewport *viewport);
+   int			RenderTranslucentGeometry(vtkViewport *viewport) override;
 
 protected:
   /** constructor. */
@@ -104,7 +104,7 @@ protected:
 
 private:
   /** Hide the two parameter Render() method from the user and the compiler.*/
-  virtual void Render(vtkRenderer *, vtkMapper *) {};
+  void Render(vtkRenderer *, vtkMapper *) override {};
   /** Copy Constructor Not implemented. */
   vtkMAFGridActor(const vtkMAFGridActor&);  	// Not implemented.
   /** Assign Operator Not implemented. */

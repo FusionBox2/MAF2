@@ -89,7 +89,7 @@ class VTK_vtkMAF_EXPORT vtkMAFOrientationMarkerWidget : public vtkInteractorObse
 public:
   static vtkMAFOrientationMarkerWidget* New();
   vtkTypeRevisionMacro(vtkMAFOrientationMarkerWidget, vtkInteractorObserver);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   
   /** Set the orientation marker to be displayed in this widget. */
@@ -100,7 +100,7 @@ public:
 
   
   /** Enable/disable the widget. Default is 0 (disabled). */
-  virtual void SetEnabled(int);
+  void SetEnabled(int) override;
 
   /** Callback to keep the camera for the orientation marker up to date with the
   camera in the parent renderer. */

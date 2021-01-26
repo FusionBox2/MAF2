@@ -44,7 +44,7 @@ public:
   static vtkMAFVolumeResample*New();
   vtkTypeRevisionMacro(vtkMAFVolumeResample, vtkDataSetToDataSetFilter);
   
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /**
   Specify a point defining the origin of the plane.*/
@@ -92,12 +92,12 @@ protected:
   vtkMAFVolumeResample();
   ~vtkMAFVolumeResample();
 
-  void ExecuteInformation();
-  void ExecuteData(vtkDataObject *output);
+  void ExecuteInformation() override;
+  void ExecuteData(vtkDataObject *output) override;
   
   void ExecuteData(vtkImageData *output);
 
-  void ComputeInputUpdateExtents(vtkDataObject *output);
+  void ComputeInputUpdateExtents(vtkDataObject *output) override;
 
   void PrepareVolume();
   void CalculateTextureCoordinates(const double point[3], const int size[2], const double spacing[2], double ts[2]);

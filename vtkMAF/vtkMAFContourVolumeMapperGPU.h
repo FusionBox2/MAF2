@@ -249,7 +249,7 @@ class name: vtkMAFContourVolumeMapperGPU.
     
 
     /** The input should be either vtkImageData or vtkRectilinearGrid */
-    void  SetInput(vtkDataSet *input);
+    void  SetInput(vtkDataSet *input) override;
     /** Get current input*/
     vtkDataSet*  GetInput() { return (vtkDataSet*)vtkVolumeMapper::GetInput(); }
 
@@ -257,7 +257,7 @@ class name: vtkMAFContourVolumeMapperGPU.
     Render the isosurface.
     If data has been cached for this contour value, calls DrawCache()
     Else calls PrepareAccelerationDataTemplate() and RenderMCubes() */
-    void Render(vtkRenderer *ren, vtkVolume *vol);
+    void Render(vtkRenderer *ren, vtkVolume *vol) override;
 
     /** get multi-resolution feature. By default it is enabled  */
     vtkGetMacro(AutoLODRender, int);
@@ -288,7 +288,7 @@ class name: vtkMAFContourVolumeMapperGPU.
     /** set the threshold for Marching cubes algorithm */ 
     void SetContourValue(float val) { if (this->ContourValue != val) { this->ContourValue = val; this->CacheCreated = false; } }
     /** Update Mapper*/
-    void Update();
+    void Update() override;
 
     /** Checks if the input data is supported */
     bool IsDataValid(bool warnings);

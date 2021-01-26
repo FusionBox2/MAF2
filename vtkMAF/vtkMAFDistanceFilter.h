@@ -114,14 +114,14 @@ class VTK_vtkMAF_EXPORT vtkMAFDistanceFilter : public vtkDataSetToDataSetFilter 
     ~vtkMAFDistanceFilter();
 
     /** get modified time*/
-    unsigned long int GetMTime();
+    unsigned long int GetMTime() override;
 
     /** execute information*/
-    void ExecuteInformation();
+    void ExecuteInformation() override;
     /** execute data*/
-    void ExecuteData(vtkDataObject *output);
+    void ExecuteData(vtkDataObject *output) override;
     /** compute and update extents */
-    void ComputeInputUpdateExtents(vtkDataObject *output);
+    void ComputeInputUpdateExtents(vtkDataObject *output) override;
 
     /**  Prepare special data fast traversing in the volume*/
     void PrepareVolume();

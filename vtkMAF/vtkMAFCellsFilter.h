@@ -46,7 +46,7 @@ public:
   /** RTTI Macro */
   vtkTypeRevisionMacro(vtkMAFCellsFilter, vtkPolyDataToPolyDataFilter);
   /** Print Object Information */
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
    
  /** Mark a cell */ 
  void MarkCell(vtkIdType cellid);

@@ -99,12 +99,12 @@ public:
   static vtkMAFAdaptiveVolumeMapper *New();
   
   /** Input should be either structured points or rectilinear grid*/
-  void  SetInput(vtkDataSet *input);
+  void  SetInput(vtkDataSet *input) override;
   //vtkDataSet*  GetInput() { return vtkVolumeMapper::GetInput(); }
 
   /** The main method. It will perform all initializations and then 
   call RenderServer that distributes render portions between rendering threads.*/
-  void Render(vtkRenderer *ren, vtkVolume *vol);
+  void Render(vtkRenderer *ren, vtkVolume *vol) override;
   
   /** Get optimizations that can affect picture quality*/
   vtkGetMacro(EnableAutoLOD, int);
@@ -119,7 +119,7 @@ public:
   static void SetInterpolation(bool val) { vtkMAFAdaptiveVolumeMapper::Interpolation = val; }
 
   /** Update the mapper */
-  void Update();
+  void Update() override;
 
   /** Check weather the input data can be rendered. The renderer supports regular and rectilinear 
   grids with unsigned/signed char or short values.*/

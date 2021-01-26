@@ -31,15 +31,15 @@ public:
   static vtkMAFImplicitPolyData *New();
   vtkTypeRevisionMacro(vtkMAFImplicitPolyData, vtkImplicitFunction);
 
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   
   /**
   Evaluate plane equation of nearest triangle to point x[3].*/
-  double EvaluateFunction(double x[3]);
+  double EvaluateFunction(double x[3]) override;
 
   /**
   Evaluate function gradient of nearest triangle to point x[3].*/
-  void EvaluateGradient(double x[3], double g[3]);
+  void EvaluateGradient(double x[3], double g[3]) override;
 
   /**
   Set the input polydata used for the implicit function evaluation.
