@@ -45,7 +45,7 @@
 #include "mafTransform.h"
 
 #ifdef __WIN32__
-  #include "typeinfo.h"
+  #include <typeinfo>
 #endif
 
 //----------------------------------------------------------------------------
