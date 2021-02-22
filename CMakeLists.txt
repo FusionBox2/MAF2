@@ -168,17 +168,17 @@ ENDIF (MAF_FOUND)
 EXEC_PROGRAM("python.exe" "${LHP_SOURCE_DIR}/Installer" ARGS "-V" OUTPUT_VARIABLE O RETURN_VALUE R)
 
 # check for python 2.5.1 existence
-IF(${O} MATCHES "Python 2.5.1")
+IF("${O}" MATCHES "Python 2.5.1")
     MESSAGE(STATUS "Found Python 2.5.1")
     
     EXEC_PROGRAM("python.exe" "${LHP_SOURCE_DIR}/Installer" ARGS "wxPythonExistenceCheck.py" OUTPUT_VARIABLE O RETURN_VALUE R)        
     
     # check for wxPython 2.8.9.1 existence
-    IF(${O} MATCHES "2.8.9.1")
+    IF("${O}" MATCHES "2.8.9.1")
        
        MESSAGE(STATUS "Found wxPython 2.8.9.1 (msw-unicode)")
         
-    ELSE(${O} MATCHES "2.8.9.1")
+    ELSE("${O}" MATCHES "2.8.9.1")
        
         MESSAGE("Problems finding wxPython 2.8.9.1 (msw-unicode)
 Please go to: 
@@ -191,9 +191,9 @@ You can skip this step but application network facilities will not work.
 ")
 
         
-   ENDIF(${O} MATCHES "2.8.9.1")
+   ENDIF("${O}" MATCHES "2.8.9.1")
     
-ELSE(${O} MATCHES "Python 2.5.1")
+ELSE("${O}" MATCHES "Python 2.5.1")
     
     MESSAGE("Problems finding Python 2.5.1
 Please go to: 
@@ -205,7 +205,7 @@ in order to have a working developer environment.
 You can skip this step but application network facilities will not work.
 ")
     
-ENDIF(${O} MATCHES "Python 2.5.1")
+ENDIF("${O}" MATCHES "Python 2.5.1")
 
 #-----------------------------------------------------------------------------
 # LHPBUILDER dictionary download stuff
