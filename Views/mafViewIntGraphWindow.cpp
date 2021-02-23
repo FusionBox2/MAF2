@@ -1123,7 +1123,7 @@ void mafViewIntGraphWindow::OnCommand(wxCommandEvent& event)
   else if(event.GetId() == ID__SAVEIMAGE)
   {
     wxString fileName = ::wxFileSelector("Select image file name", "", "image", ".bmp", "BMP files (*.bmp)|*.bmp|All files (*.*)|*.*", 
-                                 wxSAVE | wxOVERWRITE_PROMPT | wxHIDE_READONLY, this);
+                                 wxSAVE | wxOVERWRITE_PROMPT, this);
     if(fileName != "")
     {
       wxBitmap pBitMap = GetBitmap();
@@ -1133,7 +1133,7 @@ void mafViewIntGraphWindow::OnCommand(wxCommandEvent& event)
   else if(event.GetId() == ID__SAVECSV)
   {
     wxString CSVFileName = ::wxFileSelector("Select Excel CSV file name", "", "data", ".csv", "CSV files (*.csv)|*.csv|All files (*.*)|*.*", 
-                                   wxSAVE | wxOVERWRITE_PROMPT | wxHIDE_READONLY, this);
+                                   wxSAVE | wxOVERWRITE_PROMPT, this);
     if(CSVFileName != "")
     {
       if(!SaveGraphAsCSV(CSVFileName))
