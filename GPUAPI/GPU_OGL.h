@@ -27,9 +27,6 @@
 #ifndef GPU_OGL_h__
 #define GPU_OGL_h__
 
-#include <wx/string.h>
-
-
 #ifdef _WIN32
 	#define GLEW_STATIC
 	#include "glew.h"    //must be included before gl.h and glu.h
@@ -115,7 +112,7 @@ public:
   /** Initializes simple vertex and fragment shader 
   if a shader is not specified, the parameter vs or ps must be NULL
   returns false, if an error occurs and the description of the error in err parameter */  
-  bool CreateShaders(const char* vs, const char* ps, wxString* err = NULL);
+  bool CreateShaders(const char* vs, const char* ps, char* err = NULL);
   
   /** Releases OpenGL resources allocated for shaders by CreateShaders */
   void DestroyShaders();
@@ -124,14 +121,14 @@ public:
   It calls BeginExecution, InitializeComputation, RunComputation, 
   FinalizeComputation and EndExecution  
   Returns false, if the program could not be executed. */
-  bool ExecuteProgram(wxString* err = NULL);
+  bool ExecuteProgram(char* err = NULL);
 
   /** Loads shading program into hardware pipeline 
   Every successive rendering will go through custom program 
   User calls BeginExecute and EndExecute, if additional or nonstandard
   computation is required, otherwise ExecuteProgram is better suitable
   Returns false, if the program could not be loaded. */
-  virtual bool BeginExecute(wxString* err = NULL);
+  virtual bool BeginExecute(char* err = NULL);
 
   /** Unloads the current shading program */
   virtual void EndExecute();
@@ -266,20 +263,20 @@ protected:
 
   /** Creates OpenGL rendering context. 
   Called from CreateShaders, returns false, if the context could not be created */
-  bool CreateRenderingContext(wxString* err = NULL);
+  bool CreateRenderingContext(char* err = NULL);
 
   /** Destroys the rendering context */
   void DestroyRenderingContext();
 
   /** Creates OpenGL rendering window
   Returns false, if the OpenGL rendering window could not be created. */
-  bool CreateRenderingWindow(wxString* err = NULL);
+  bool CreateRenderingWindow(char* err = NULL);
 
   /** Destroys the rendering window */
   void DestroyRenderingWindow();
 
   /** Formats Windows LastError into err */
-  void GetLastErrorText(wxString* err);
+  void GetLastErrorText(char* err);
 #endif // _WIN32
 };
 

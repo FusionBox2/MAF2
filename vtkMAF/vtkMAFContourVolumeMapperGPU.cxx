@@ -601,7 +601,7 @@ static const vtkMarchingCubesTriangleCases* marchingCubesCases = vtkMarchingCube
     if (CurrentPath.size() > 0)
       CurrentPath += '/';
 #else  
-    wxString CurrentPath = wxGetCwd();
+    std::string CurrentPath = getcwd();
     CurrentPath += '/';
 #endif //_WIN32
 

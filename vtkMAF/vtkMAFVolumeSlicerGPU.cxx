@@ -1203,8 +1203,8 @@ bool vtkMAFVolumeSlicer::CreateGPUProvider()
     "  gl_FragColor = texture3D(voxels, tcoord);  \n"
     "}\n";
 
-  wxString err;
-  if (!m_pGPUProvider->CreateShaders(NULL, ps, &err))
+  char err[MAX_PATH + 1];
+  if (!m_pGPUProvider->CreateShaders(NULL, ps, err))
   {
     vtkErrorMacro(<< "GPUProvider->CreateShaders failed:" << err);
     delete[] m_pGPUProvider;
@@ -1251,8 +1251,8 @@ void vtkMAFVolumeSlicer::CreateImageGPU(const void* input, void* output, vtkImag
   //set the size of texture
   m_pGPUProvider->SetTarget(xs, ys, xs*dx, ys*dy);
 
-  wxString szErr;
-  if (!m_pGPUProvider->BeginExecute(&szErr))
+  char szErr[MAX_PATH + 1];
+  if (!m_pGPUProvider->BeginExecute(szErr))
   {    
     vtkErrorMacro(<< "GPUProvider->BeginExecute failed:" << szErr);
     return; //terminate process

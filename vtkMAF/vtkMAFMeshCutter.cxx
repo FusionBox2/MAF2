@@ -31,8 +31,6 @@
 #include "vtkMatrix4x4.h"
 
 #include <ostream>
-#include "mafDefines.h"
-#include "vtkMAFToLinearTransform.h"
 #include "vtkTransform.h"
 
 
@@ -994,8 +992,7 @@ void vtkMAFMeshCutter::CalculateLocalCutCoord()
 	if(trans)
 	{
 		double origin[4],normal[4];
-		vtkMatrix4x4 *inverse;
-		vtkNEW(inverse);
+		vtkMatrix4x4 *inverse = vtkMatrix4x4::New();
 		//Getting slicing transform matrix
 		trans->GetMatrix(inverse);
 		//Inverting matrix to obtain slice to mesh transform matrix
@@ -1013,6 +1010,7 @@ void vtkMAFMeshCutter::CalculateLocalCutCoord()
 		ToRotationMatrix(inverse);
 		//Using rotation matrix to calculate mesh local normal
 		inverse->MultiplyPoint(normal,CutTranformedNormal);
+        inverse->Delete();
 	}
 	else
 	{
