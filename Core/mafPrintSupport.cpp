@@ -224,7 +224,6 @@ void mafPrintSupport::OnPrintSetup()
   wxPrintDialogData printDialogData(*m_PrintData);
   wxPrintDialog printerDialog(mafGetFrame(), & printDialogData);
 
-  printerDialog.GetPrintDialogData().SetSetupDialog(TRUE);
   printerDialog.ShowModal();
 
   (*m_PrintData) = printerDialog.GetPrintDialogData().GetPrintData();

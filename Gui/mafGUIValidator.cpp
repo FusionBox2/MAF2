@@ -1048,7 +1048,7 @@ void mafGUIValidator::OnButton(wxCommandEvent& event)
 					name += ".";
 					name += ext;
 				}
-        wxFileDialog dialog(m_Button,"Open File", path, name, m_Wildcard.GetCStr(), wxOPEN|wxFILE_MUST_EXIST|wxHIDE_READONLY , m_Button->GetPosition());
+        wxFileDialog dialog(m_Button,"Open File", path, name, m_Wildcard.GetCStr(), wxOPEN|wxFILE_MUST_EXIST , m_Button->GetPosition());
         dialog.SetReturnCode(wxID_OK);
 				ret_code = dialog.ShowModal();
 				if (ret_code == wxID_OK)
@@ -1072,7 +1072,7 @@ void mafGUIValidator::OnButton(wxCommandEvent& event)
 					name += ".";
 					name += ext;
 				}
-        wxFileDialog dialog(m_Button,"Save File", path, name, m_Wildcard.GetCStr(), wxSAVE|wxOVERWRITE_PROMPT|wxHIDE_READONLY , m_Button->GetPosition());
+        wxFileDialog dialog(m_Button,"Save File", path, name, m_Wildcard.GetCStr(), wxSAVE|wxOVERWRITE_PROMPT , m_Button->GetPosition());
         dialog.SetReturnCode(wxID_OK);
 				ret_code = dialog.ShowModal();
 				if (ret_code == wxID_OK)
