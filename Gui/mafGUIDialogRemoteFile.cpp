@@ -32,7 +32,6 @@
 #include "mafGUISettingsStorage.h"
 
 #include "mafCurlUtility.h"
-#include <curl/types.h>
 #include <curl/easy.h>
 
 //----------------------------------------------------------------------------

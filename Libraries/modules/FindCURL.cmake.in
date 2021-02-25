@@ -1,0 +1,8 @@
+# Description:
+# This module finds the location of the CURL source and binary paths.
+#
+
+# add search path for CURL
+SET(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH};@MAF_CRL_DIR@")
+
+find_package(CURL)

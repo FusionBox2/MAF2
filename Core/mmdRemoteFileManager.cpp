@@ -33,7 +33,6 @@
 #define UPLOAD_FILE_AS  "while-uploading.txt"
 #define RENAME_FILE_TO  "renamed-and-fine.txt"
 
-#include <curl/types.h>
 #include <curl/easy.h>
 
 struct LocalFileDownloaded {

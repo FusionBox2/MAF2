@@ -36,6 +36,10 @@ ELSE (${CMAKE_GENERATOR} STREQUAL "Visual Studio 6")
 ENDIF (${CMAKE_GENERATOR} STREQUAL "Visual Studio 6")
 
 
+IF (MAF_USE_CURL)
+  SET(MAF_CRL_DIR "${CRL_DIR}" CACHE PATH "CURL path")
+ENDIF(MAF_USE_CURL)
+
 
 #
 # configure CMake modules for MFL
@@ -76,13 +80,6 @@ ENDIF (MAF_USE_WX)
 IF (MAF_USE_XercesC)
   MFL_SUBPROJECT(XercesC XercesC)
 ENDIF(MAF_USE_XercesC)
-
-#
-# cURL Library
-#
-IF (MAF_USE_CURL)
-  MFL_SUBPROJECT(CURL CURL)
-ENDIF(MAF_USE_CURL)
 
 #
 # Crypto Library

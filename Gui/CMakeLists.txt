@@ -201,6 +201,10 @@ SET(PROJECT_LIBS
   mafBase
 )
 
+IF (MAF_USE_CURL)
+  SET(PROJECT_LIBS ${PROJECT_LIBS} CURL::libcurl)
+ENDIF (MAF_USE_CURL)
+
 #........................................................
 #solo la vtkCommon e' linkata per default
 #per linkare altre lib inserirle qui di seguito
