@@ -32,7 +32,10 @@
 #include "mafVME.h"
 
 #include "vtkDataSet.h"
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkErrorCode.h"
 //------------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMAFDataPipe)
@@ -59,13 +62,6 @@ void vtkMAFDataPipe::SetDataPipe(mafDataPipe *dpipe)
 }
 
 //----------------------------------------------------------------------------
-void vtkMAFDataPipe::SetNthInput(int num, vtkDataSet *input)
-//----------------------------------------------------------------------------
-{
-  Superclass::SetNthInput(num,input);
-}
-
-//----------------------------------------------------------------------------
 // Get the MTime. Take in consideration also modifications to the MAF data pipe
 unsigned long vtkMAFDataPipe::GetMTime()
 //------------------------------------------------------------------------------
@@ -85,14 +81,7 @@ unsigned long vtkMAFDataPipe::GetMTime()
 }
 
 //------------------------------------------------------------------------------
-unsigned long vtkMAFDataPipe::GetInformationTime()
-//------------------------------------------------------------------------------
-{
-  return InformationTime.GetMTime();
-}
-
-//------------------------------------------------------------------------------
-vtkDataSet *vtkMAFDataPipe::GetOutput(int idx)
+/*vtkDataSet *vtkMAFDataPipe::GetOutput(int idx)
 //------------------------------------------------------------------------------
 {
   if (this->NumberOfOutputs < idx+1)
@@ -100,10 +89,10 @@ vtkDataSet *vtkMAFDataPipe::GetOutput(int idx)
     UpdateInformation(); // force creating the outputs
   }
   return Superclass::GetOutput(idx);
-}
+}*/
 
 //------------------------------------------------------------------------------
-vtkDataSet *vtkMAFDataPipe::GetOutput()
+/*vtkDataSet *vtkMAFDataPipe::GetOutput()
 //------------------------------------------------------------------------------
 {
   if (this->NumberOfOutputs == 0)
@@ -111,7 +100,7 @@ vtkDataSet *vtkMAFDataPipe::GetOutput()
     UpdateInformation(); // force creating the outputs
   }
   return Superclass::GetOutput();
-}
+}*/
 
 //------------------------------------------------------------------------------
 void vtkMAFDataPipe::UpdateInformation()
@@ -125,18 +114,24 @@ void vtkMAFDataPipe::UpdateInformation()
 }
 
 //------------------------------------------------------------------------------
-void vtkMAFDataPipe::ExecuteInformation()
-//------------------------------------------------------------------------------
+int vtkMAFDataPipe::RequestInformation(
+  vtkInformation *request,
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
-  this->SetErrorCode( vtkErrorCode::NoError );
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
+  /*this->SetErrorCode( vtkErrorCode::NoError );
   
   // check if output array is still empty
   if (this->Outputs==NULL||this->Outputs[0]==NULL)
   {
     // create a new object of the same type of those in the array
-    if (GetNumberOfInputs()>0)
+    if (GetNumberOfInputPorts()>0)
     {
-      for (int i=0;i<GetNumberOfInputs();i++)
+      for (int i=0;i<GetNumberOfInputPorts();i++)
       {
         
         vtkDataSet *data=(vtkDataSet *)GetInputs()[i];
@@ -152,21 +147,32 @@ void vtkMAFDataPipe::ExecuteInformation()
     }
   } 
   
-  if (GetNumberOfInputs()>0&&GetInput()) // work around to skip vtkDataSet bug with zero inputs
-    Superclass::ExecuteInformation(); 
+  if (GetNumberOfInputPorts()>0&&GetInput())*/ // work around to skip vtkDataSet bug with zero inputs
+  return Superclass::RequestInformation(request, inputVector, outputVector);
 }
 
-//------------------------------------------------------------------------------
-void vtkMAFDataPipe::Execute()
-//------------------------------------------------------------------------------
+int vtkMAFDataPipe::RequestData(
+  vtkInformation *request,//vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
-  if (GetInput())
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
+  // get the input and output
+  vtkDataSet *input = vtkDataSet::SafeDownCast(
+    inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkDataSet *output = vtkDataSet::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
+  /*if (GetInput())
   {
     if(m_DataPipe->IsA("mafDataPipeCustom"))
       m_DataPipe->OnEvent(&mafEventBase(this,VME_OUTPUT_DATA_UPDATE));
-    for (int i=0;i<GetNumberOfInputs();i++)
+    for (int i=0;i<GetNumberOfInputPorts();i++)
     {
-      if (GetNumberOfOutputs()>i)
+      if (GetNumberOfOutputPorts()>i)
       {
         vtkDataSet *input=(vtkDataSet *)GetInputs()[i];
         input->Update();
@@ -180,5 +186,6 @@ void vtkMAFDataPipe::Execute()
     // forward event to MAF data pipe
     if(!m_DataPipe->IsA("mafDataPipeCustom"))
       m_DataPipe->OnEvent(&mafEventBase(this,VME_OUTPUT_DATA_UPDATE));
-  }
+  }*/
+  return Superclass::RequestData(request, inputVector, outputVector);
 }

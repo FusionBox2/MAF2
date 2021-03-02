@@ -8,7 +8,10 @@
 
 =========================================================================*/
 
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkImageData.h"
 #include "vtkRectilinearGrid.h"
 #include "vtkPolyData.h"
@@ -46,12 +49,13 @@ vtkMAFDistanceFilter::vtkMAFDistanceFilter() {
   // caches
   this->UniformToRectGridIndex[0] = this->UniformToRectGridIndex[1] = this->UniformToRectGridIndex[2] = NULL;
   this->VoxelSizes[0] = this->VoxelSizes[1] = this->VoxelSizes[2] = NULL;
+  this->SetNumberOfInputPorts(2);
   }
 
 
 //----------------------------------------------------------------------------
 vtkMAFDistanceFilter::~vtkMAFDistanceFilter() {
-  this->SetSource((vtkDataSet *)NULL);
+  this->SetInputConnection(1, NULL);
 
   if (this->InputTransform)
     this->InputTransform->Delete();
@@ -62,29 +66,10 @@ vtkMAFDistanceFilter::~vtkMAFDistanceFilter() {
   }
 
 //----------------------------------------------------------------------------
-void vtkMAFDistanceFilter::SetSource(vtkDataSet *data)
-//----------------------------------------------------------------------------
-{
-  this->SetNthInput(1, (vtkDataObject*)data);
-}
-
-//----------------------------------------------------------------------------
-vtkDataSet *vtkMAFDistanceFilter::GetSource()
-//----------------------------------------------------------------------------
-{
-  if(this->GetNumberOfInputs() < 2)
-    return NULL;
-  return (vtkDataSet *)(this->Inputs[1]);
-}
-//----------------------------------------------------------------------------
 unsigned long int vtkMAFDistanceFilter::GetMTime() 
 //----------------------------------------------------------------------------
 {
   unsigned long int time = Superclass::GetMTime();
-  if (this->GetSource() && this->GetSource()->GetMTime() > time)
-    time = this->GetSource()->GetMTime();
-  if (this->GetInput() && this->GetInput()->GetMTime() > time)
-    time = this->GetInput()->GetMTime();
   if (this->InputMatrix && this->InputMatrix->GetMTime() > time)
     time = this->InputMatrix->GetMTime();
   if (this->InputTransform && this->InputTransform->GetMTime() > time)
@@ -92,36 +77,80 @@ unsigned long int vtkMAFDistanceFilter::GetMTime()
   return time;
 }
 
-//----------------------------------------------------------------------------
-void vtkMAFDistanceFilter::ComputeInputUpdateExtents(vtkDataObject *output) {
-  vtkDataObject *source = this->GetSource();
-  if (source)
-    source->SetUpdateExtentToWholeExtent();
-  }
+int vtkMAFDistanceFilter::FillInputPortInformation(int port, vtkInformation* info)
+{
+    if (port == 1)
+    {
+        info->Set(vtkAlgorithm::INPUT_IS_OPTIONAL(), 1);
+        return 1;
+    }
+    return this->Superclass::FillInputPortInformation(port, info);
+}
 
 //----------------------------------------------------------------------------
-void vtkMAFDistanceFilter::ExecuteInformation() {
-  }
+int vtkMAFDistanceFilter::RequestUpdateExtent(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
+{
+    int numInputConnections = inputVector[1]->GetNumberOfInformationObjects();
+    for (int j = 0; j < numInputConnections; j++)
+    {
+        vtkInformation* inputInfo = inputVector[1]->GetInformationObject(j);
+        vtkStreamingDemandDrivenPipeline::SetUpdateExtentToWholeExtent(inputInfo);
+    }
+    return 1;
+}
+
+//----------------------------------------------------------------------------
+int vtkMAFDistanceFilter::RequestInformation(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
+{
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
+  return 1;
+}
 
 
 //----------------------------------------------------------------------------
-void vtkMAFDistanceFilter::ExecuteData(vtkDataObject *outputObject) {
-  vtkImageData       *imageData = vtkImageData::SafeDownCast(this->GetSource());
-  vtkRectilinearGrid *gridData  = vtkRectilinearGrid::SafeDownCast(this->GetSource());
-  vtkPointSet   *input  = vtkPointSet::SafeDownCast(this->GetInput());
+int vtkMAFDistanceFilter::RequestData(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
+{
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *srcInfo = inputVector[1]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
+  // get the input and output
+  vtkDataSet *inputObject = vtkDataSet::SafeDownCast(
+    inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkDataSet *sourceObject = vtkDataSet::SafeDownCast(
+    srcInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkDataSet *outputObject = vtkDataSet::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
+  vtkImageData       *imageData = vtkImageData::SafeDownCast(sourceObject);
+  vtkRectilinearGrid *gridData  = vtkRectilinearGrid::SafeDownCast(sourceObject);
+  vtkPointSet   *input  = vtkPointSet::SafeDownCast(inputObject);
   vtkPointSet   *output = vtkPointSet::SafeDownCast(outputObject);
 
   if (input == NULL || output == NULL || imageData == NULL && gridData == NULL) {
     vtkErrorMacro(<< "Input or output is incorrect");
-    return;
+    return 0;
     }
   if (input->GetPointData()->GetNormals() == NULL && this->FilterMode == VTK_DISTANCE_MODE) {
     vtkErrorMacro(<<"No normals for input");
-    return;
+    return 0 ;
     }
 
   // prepare data for calculations
-  this->PrepareVolume();
+  this->PrepareVolume(sourceObject);
   output->CopyStructure(input);
 
   const int numPts = input->GetNumberOfPoints();
@@ -143,8 +172,8 @@ void vtkMAFDistanceFilter::ExecuteData(vtkDataObject *outputObject) {
     }
   output->GetPointData()->SetNormals(normals);
   
-  const int dataType             = this->GetSource()->GetPointData()->GetScalars()->GetDataType();
-  const void * const DataPointer = this->GetSource()->GetPointData()->GetScalars()->GetVoidPointer(0);
+  const int dataType             = sourceObject->GetPointData()->GetScalars()->GetDataType();
+  const void * const DataPointer = sourceObject->GetPointData()->GetScalars()->GetVoidPointer(0);
 
   // process the data
   if (this->FilterMode == VTK_DISTANCE_MODE) {
@@ -211,18 +240,19 @@ void vtkMAFDistanceFilter::ExecuteData(vtkDataObject *outputObject) {
       
       float density = 0;
       switch (dataType) {
-        case VTK_UNSIGNED_SHORT: density = this->FindDensity(point, (const unsigned short*)DataPointer); break;
-        case VTK_SHORT:          density = this->FindDensity(point, (const short*)DataPointer); break;
-        case VTK_UNSIGNED_CHAR:  density = this->FindDensity(point, (const unsigned char*)DataPointer); break;
-        case VTK_CHAR:           density = this->FindDensity(point, (const char*)DataPointer); break;
-        case VTK_FLOAT:          density = this->FindDensity(point, (const float*)DataPointer); break;
-        case VTK_DOUBLE:         density = this->FindDensity(point, (const double*)DataPointer); break;
+        case VTK_UNSIGNED_SHORT: density = this->FindDensity(sourceObject, point, (const unsigned short*)DataPointer); break;
+        case VTK_SHORT:          density = this->FindDensity(sourceObject, point, (const short*)DataPointer); break;
+        case VTK_UNSIGNED_CHAR:  density = this->FindDensity(sourceObject, point, (const unsigned char*)DataPointer); break;
+        case VTK_CHAR:           density = this->FindDensity(sourceObject, point, (const char*)DataPointer); break;
+        case VTK_FLOAT:          density = this->FindDensity(sourceObject, point, (const float*)DataPointer); break;
+        case VTK_DOUBLE:         density = this->FindDensity(sourceObject, point, (const double*)DataPointer); break;
         }
       if (scalars)
         scalars->SetTuple1(pi, density);
       }
     
     }
+  return 1;
   }
 
 
@@ -302,8 +332,8 @@ template<typename DataType> double vtkMAFDistanceFilter::TraceRay(const double o
 
 
 //------------------------------------------------------------------------
-template<typename DataType> double vtkMAFDistanceFilter::FindDensity(const double point[3], const DataType *dataPointer) {
-  vtkRectilinearGrid *gridData  = vtkRectilinearGrid::SafeDownCast(this->GetSource());
+template<typename DataType> double vtkMAFDistanceFilter::FindDensity(vtkDataSet* sourceObject, const double point[3], const DataType *dataPointer) {
+  vtkRectilinearGrid *gridData  = vtkRectilinearGrid::SafeDownCast(sourceObject);
 
   double density = 0.f, xyz[3], dxyz[3];
   int ixyz[3];
@@ -335,11 +365,11 @@ template<typename DataType> double vtkMAFDistanceFilter::FindDensity(const doubl
   }
 
 //--------------------------------------------------------------
-void vtkMAFDistanceFilter::PrepareVolume() {
-  if (this->GetSource()->GetMTime() < this->BuildTime && this->VoxelSizes[0] != NULL)
+void vtkMAFDistanceFilter::PrepareVolume(vtkDataSet* sourceObject) {
+  if (sourceObject->GetMTime() < this->BuildTime && this->VoxelSizes[0] != NULL)
     return; // caches are up-to-date
-  vtkImageData       *imageData = vtkImageData::SafeDownCast(this->GetSource());
-  vtkRectilinearGrid *gridData  = vtkRectilinearGrid::SafeDownCast(this->GetSource());
+  vtkImageData       *imageData = vtkImageData::SafeDownCast(sourceObject);
+  vtkRectilinearGrid *gridData  = vtkRectilinearGrid::SafeDownCast(sourceObject);
 
   if (imageData)
     imageData->GetDimensions(this->DataDimensions);

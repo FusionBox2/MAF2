@@ -61,12 +61,13 @@ bool mafDataPipeInterpolatorVTK::Accept(mafVME *vme)
 }
 
 //------------------------------------------------------------------------------
-vtkDataSet *mafDataPipeInterpolatorVTK::GetVTKData()
+vtkAlgorithmOutput *mafDataPipeInterpolatorVTK::GetVTKData()
 //------------------------------------------------------------------------------
 {
-  m_VTKDataPipe->UpdateInformation();
-  vtkDataSet *data = m_VTKDataPipe->GetInput();
-  return (data != NULL) ? m_VTKDataPipe->GetOutput() : NULL;
+  //m_VTKDataPipe->UpdateInformation();
+  //vtkDataSet *data = m_VTKDataPipe->GetInput();
+  //return (data != NULL) ? m_VTKDataPipe->GetOutput() : NULL;
+  return m_VTKDataPipe->GetOutputPort();
 }
 
 //----------------------------------------------------------------------------
@@ -87,7 +88,7 @@ void mafDataPipeInterpolatorVTK::PreExecute()
   // if the current item is changed set the data inside new item as input for the interpolator
   // more specialized interpolators could redefine this to have more inputs (e.g. when 
   // interpolating different items)
-  if ( m_CurrentItem && (m_CurrentItem!=m_OldItem || \
+  /*if ( m_CurrentItem && (m_CurrentItem!=m_OldItem || \
     mtime>m_UpdateTime.GetMTime() || \
     mtime>m_VTKDataPipe->GetInformationTime() ||
     !m_CurrentItem->IsDataPresent()))
@@ -98,7 +99,7 @@ void mafDataPipeInterpolatorVTK::PreExecute()
       m_VTKDataPipe->SetNthInput(0,data);
       m_UpdateTime.Modified();
     }
-  } 
+  } */
 }
 
 //------------------------------------------------------------------------------

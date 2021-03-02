@@ -68,7 +68,7 @@ public:
   virtual bool Equals(const mafAttribute *a);
 
   /** Set the texture image to map on the surface */
-  void SetMaterialTexture(vtkImageData *tex);
+  void SetMaterialTexture_(vtkImageData *tex);
 
   /** Return the texture set as vtkImageData */
   vtkImageData *GetMaterialTexture();

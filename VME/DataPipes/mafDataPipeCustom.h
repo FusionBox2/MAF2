@@ -38,7 +38,7 @@ public:
   void OnEvent(mafEventBase *e);
 
   /** return the VTK dataset generated as output to this data pipe */
-  virtual vtkDataSet *GetVTKData();
+  virtual vtkAlgorithmOutput *GetVTKData();
 
   /** return the bridge object between VTK datapipe and MAF update mechanism */
   vtkMAFDataPipe *GetVTKDataPipe();
@@ -50,10 +50,10 @@ public:
   virtual void UpdateBounds();
 
   /** sets the first input of the datapipe */
-  void SetInput(vtkDataSet *input_dataset);
+  //void SetInputData(vtkDataSet *input_dataset);
 
   /** sets the N-th input of the datapipe */
-  void SetNthInput(int n, vtkDataSet *input_dataset);
+  //void SetInputData(int n, vtkDataSet *input_dataset);
 
 protected:
   mafDataPipeCustom();

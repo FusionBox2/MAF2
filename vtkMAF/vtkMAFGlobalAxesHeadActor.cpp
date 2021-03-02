@@ -70,9 +70,15 @@ vtkMAFGlobalAxesHeadActor::vtkMAFGlobalAxesHeadActor()
   int numCells = HeadReader->GetOutput()->GetNumberOfCells();
   assert(numCells > 0); // if this assert fail check for HeadABSFileName problems
 
+  InitTransform = vtkTransform::New();
+  InitTransform->PostMultiply();
+  vtkTransformPolyDataFilter* tpdf = vtkTransformPolyDataFilter::New();
+  tpdf->SetTransform(InitTransform);
+
   vtkPolyDataMapper *headMapper = vtkPolyDataMapper::New();
   this->HeadActor = vtkActor::New();
-  headMapper->SetInput( this->HeadReader->GetOutput() );
+  tpdf->SetInputConnection(this->HeadReader->GetOutputPort());
+  headMapper->SetInputConnection( tpdf->GetOutputPort() );
   this->HeadActor->SetMapper( headMapper );
   this->HeadActor->SetVisibility(1);
   headMapper->Delete();
@@ -84,6 +90,7 @@ vtkMAFGlobalAxesHeadActor::vtkMAFGlobalAxesHeadActor()
   prop->SetColor(1, 1, 1);
  
   this->UpdateProps();
+  tpdf->Delete();
 }
 
 //-------------------------------------------------------------------------
@@ -93,6 +100,7 @@ vtkMAFGlobalAxesHeadActor::~vtkMAFGlobalAxesHeadActor()
   this->HeadActor->Delete();
 
   this->Assembly->Delete();
+  InitTransform->Delete();
 }
 
 
@@ -253,27 +261,6 @@ bool vtkMAFGlobalAxesHeadActor::FileExists(const char* filename)
 
 void vtkMAFGlobalAxesHeadActor::SetInitialPose(vtkMatrix4x4* initMatrix)
 {
-  // Directly transform polydata
-  vtkPolyData* data = ((vtkPolyData*)((vtkPolyDataMapper*)this->HeadActor->GetMapper())->GetInput());
-
-  vtkTransform* initTransform;
-  vtkTransformPolyDataFilter* transformer;
-
-  initTransform = vtkTransform::New();
-  transformer = vtkTransformPolyDataFilter::New();
-
-  initTransform->SetMatrix(initMatrix);
-  transformer->SetInput(data);
-  transformer->SetTransform(initTransform);
-  transformer->Update();
-
-  data->DeepCopy(transformer->GetOutput());
-  data->Update();
-  data->Modified();
-  ((vtkPolyDataMapper*)this->HeadActor->GetMapper())->Update();
-  ((vtkPolyDataMapper*)this->HeadActor->GetMapper())->Modified();
-  this->HeadActor->Modified();
-
-  transformer->Delete();
-  initTransform->Delete();
+  InitTransform->Concatenate(initMatrix);
+  this->HeadActor->GetMapper()->Update();
 }

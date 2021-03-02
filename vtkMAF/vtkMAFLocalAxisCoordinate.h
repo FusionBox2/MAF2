@@ -37,10 +37,8 @@ public:
   /** create an instance of the object */
   static vtkMAFLocalAxisCoordinate* New();
 
-  /** macro Set for DataSet member */
-  vtkSetObjectMacro(DataSet,vtkDataSet);
-  /** macro Get for DataSet member */
-  vtkGetObjectMacro(DataSet,vtkDataSet);
+  vtkSetMacro(ScaleFactor,double);
+  vtkGetMacro(ScaleFactor,double);
 
   /** macro Set for Mactrix member */
   vtkSetObjectMacro(Matrix,vtkMatrix4x4);
@@ -55,7 +53,7 @@ protected:
   vtkMAFLocalAxisCoordinate();
 
 private:
-  vtkDataSet *DataSet;
+  double ScaleFactor;
   vtkMatrix4x4 *Matrix;
   
   /** Copy Constructor , not implemented */

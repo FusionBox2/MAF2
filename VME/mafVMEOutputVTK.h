@@ -22,7 +22,6 @@
 //----------------------------------------------------------------------------
 // forward declarations :
 //----------------------------------------------------------------------------
-class mafVMEGerericVTK;
 
 /** NULL output for VME node with a VTK output data.
   mafVMEOutputVTK is the output produced by a node generating an output
@@ -42,7 +41,7 @@ public:
     of stored Items is 0. Also special VME could not support VTK dataset output.
     An event is rised when the output data changes to allow attached classes to 
     update their input.*/
-  virtual vtkDataSet *GetVTKData();
+  virtual vtkAlgorithmOutput *GetVTKData();
 
   /**
     Update all the output data structures (data, bounds, matrix and abs matrix).*/

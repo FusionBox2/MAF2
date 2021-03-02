@@ -37,6 +37,7 @@
 #include "mafVMESurface.h"
 #include "mafEventSender.h"
 
+#include "vtkMAFContourVolumeMapperGPU.h"
 #include "vtkMAFAssembly.h"
 #include "vtkMAFSmartPointer.h"
 #include "vtkProperty.h"

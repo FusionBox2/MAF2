@@ -64,7 +64,8 @@ class VTK_vtkMAF_EXPORT vtkMAFProfilingActor : public vtkActor2D
   /** Draw the object to the screen */
   int	 RenderOpaqueGeometry(vtkViewport *viewport) override;
   /** Draw the object to the screen */
-  int	 RenderTranslucentGeometry(vtkViewport *viewport) override  {return 0;}
+  int	 RenderTranslucentPolygonalGeometry(vtkViewport *viewport) override;
+  int  HasTranslucentPolygonalGeometry() override  {return 0;}
  
 protected:
     /** constructor */

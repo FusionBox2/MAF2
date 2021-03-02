@@ -26,7 +26,7 @@
 #ifndef __vtkMAFDistanceFilter_h
 #define __vtkMAFDistanceFilter_h
 
-#include "vtkDataSetToDataSetFilter.h"
+#include "vtkDataSetAlgorithm.h"
 #include "vtkMatrix4x4.h"
 #include "vtkTransform.h"
 
@@ -42,17 +42,12 @@ from isosurfaces of defined value obtained by interpolating into the source data
 For example, we can compute distances on a geometry
 (specified as Input) from an isosurface in a volume (Source).
 */
-class VTK_vtkMAF_EXPORT vtkMAFDistanceFilter : public vtkDataSetToDataSetFilter {
+class VTK_vtkMAF_EXPORT vtkMAFDistanceFilter : public vtkDataSetAlgorithm {
   public:
     /** create an instance of the object */
     static vtkMAFDistanceFilter *New();
     /** RTTI Macro */
-    vtkTypeRevisionMacro(vtkMAFDistanceFilter, vtkDataSetToDataSetFilter);
-    
-    /**   Specify the point locations used to Distance input. Any geometry  can be used.*/
-    void SetSource(vtkDataSet *data);
-    /** Retireve the Source pointer */
-    vtkDataSet *GetSource();
+    vtkTypeRevisionMacro(vtkMAFDistanceFilter, vtkDataSetAlgorithm);
     
     /**   Set Macro, Specify the transformation matrix that should be applied to input points prior to rendering*/
     vtkSetObjectMacro(InputMatrix, vtkMatrix4x4);
@@ -116,21 +111,23 @@ class VTK_vtkMAF_EXPORT vtkMAFDistanceFilter : public vtkDataSetToDataSetFilter 
     /** get modified time*/
     unsigned long int GetMTime() override;
 
+    virtual int FillInputPortInformation(int port, vtkInformation* info) override;
+
     /** execute information*/
-    void ExecuteInformation() override;
+    int RequestInformation (vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
     /** execute data*/
-    void ExecuteData(vtkDataObject *output) override;
+    int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
     /** compute and update extents */
-    void ComputeInputUpdateExtents(vtkDataObject *output) override;
+    int RequestUpdateExtent(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
     /**  Prepare special data fast traversing in the volume*/
-    void PrepareVolume();
+    void PrepareVolume(vtkDataSet* sourceObject);
 
     /**  This is the main function. It traces a ray from a given point until the ray hits the voxel that exceeds Threshold 
     or the traversed distance exceeds MaxDistance values.*/
     template<typename DataType> double TraceRay(const double origin[3], const double ray[3], const DataType *dataPointer);
     /** find density in specific point */
-    template<typename DataType> double FindDensity(const double point[3], const DataType *dataPointer);
+    template<typename DataType> double FindDensity(vtkDataSet* sourceObject, const double point[3], const DataType *dataPointer);
 
     // parameters
     double Threshold; 

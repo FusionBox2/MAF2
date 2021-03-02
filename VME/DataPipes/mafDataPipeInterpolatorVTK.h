@@ -54,7 +54,7 @@ public:
   mafVMEItemVTK *GetCurrentItem() {return (mafVMEItemVTK *)m_CurrentItem;}
 
   /** return the VTK dataset generated as output to this data pipe */
-  virtual vtkDataSet *GetVTKData();
+  virtual vtkAlgorithmOutput *GetVTKData();
 
   /** update the data pipe output */
   virtual void Update();

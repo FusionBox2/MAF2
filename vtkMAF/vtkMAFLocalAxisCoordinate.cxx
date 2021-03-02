@@ -30,26 +30,22 @@ vtkMAFLocalAxisCoordinate::vtkMAFLocalAxisCoordinate()
 //----------------------------------------------------------------------------
 {
   this->CoordinateSystem = VTK_USERDEFINED;
-  this->DataSet = NULL;
+  this->ScaleFactor = 1;
   this->Matrix = NULL;
 }
 //----------------------------------------------------------------------------
 vtkMAFLocalAxisCoordinate::~vtkMAFLocalAxisCoordinate()
 //----------------------------------------------------------------------------
 {
-  this->SetDataSet(NULL);
 	this->SetMatrix(NULL);
 }
 //----------------------------------------------------------------------------
 double *vtkMAFLocalAxisCoordinate::GetComputedUserDefinedValue(vtkViewport *viewport)
 //----------------------------------------------------------------------------
 {
-  double size = 100;
-	if(DataSet) size = DataSet->GetLength()/8.0;
-
   int   i;
 	double v[4]; 
-	for(i=0; i<3; i++) v[i] = this->Value[i] * size;
+	for(i=0; i<3; i++) v[i] = this->Value[i] * this->ScaleFactor;
 	v[3]=1;
 
 	double w[4]; 

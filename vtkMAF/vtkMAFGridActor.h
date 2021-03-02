@@ -78,7 +78,8 @@ class VTK_vtkMAF_EXPORT vtkMAFGridActor : public vtkActor
   /** Method is intended for rendering Opaque Geometry.*/
    int			RenderOpaqueGeometry(vtkViewport *viewport) override;
   /** Method is intended for rendering Translucent Geometry. */
-   int			RenderTranslucentGeometry(vtkViewport *viewport) override;
+   int			RenderTranslucentPolygonalGeometry(vtkViewport *viewport) override;
+   int			HasTranslucentPolygonalGeometry() override;
 
 protected:
   /** constructor. */

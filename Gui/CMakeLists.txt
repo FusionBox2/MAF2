@@ -15,9 +15,9 @@ SET(PROJECT_SRCS
   mafGUIDialogLogin.cpp
   mafGUIDialogLogin.h
   
-  mafGUIDialogTransferFunction2D.cpp
-  mafGUIDialogTransferFunction2D.h
-  mafTransferFunction2DInteractors.cpp
+#  mafGUIDialogTransferFunction2D.cpp
+#  mafGUIDialogTransferFunction2D.h
+#  mafTransferFunction2DInteractors.cpp
   
   mafGUISettings.cpp
   mafGUISettings.h
@@ -184,8 +184,8 @@ IF (MAF_USE_VTK)
   mafGUILutWidget.cpp
   mafGUILutWidget.h
 
-  mafGUIHistogramWidget.cpp
-  mafGUIHistogramWidget.h
+#  mafGUIHistogramWidget.cpp
+#  mafGUIHistogramWidget.h
   )
 ENDIF (MAF_USE_VTK)
 

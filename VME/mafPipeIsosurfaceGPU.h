@@ -18,14 +18,13 @@
 #define __mafPipeIsosurfaceGPU_H__
 
 #include "mafPipeVTK.h"
-#include "vtkMAFContourVolumeMapperGPU.h"
 
 //----------------------------------------------------------------------------
 // forward refs :
 //----------------------------------------------------------------------------
 class vtkActor;
 class vtkVolume;
-//class vtkMAFContourVolumeMapperGPU;
+class vtkMAFContourVolumeMapperGPU;
 class vtkPolyDataMapper;
 class vtkOutlineCornerFilter;
 class mafVME;

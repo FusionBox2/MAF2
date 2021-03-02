@@ -130,6 +130,7 @@ protected:
   ~vtkMAFGlobalAxesHeadActor();
 
   vtkPolyDataReader  *HeadReader;
+  vtkTransform       *InitTransform;
   vtkActor           *HeadActor;
 
   void                UpdateProps();
