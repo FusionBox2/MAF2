@@ -35,6 +35,23 @@ ELSE (${CMAKE_GENERATOR} STREQUAL "Visual Studio 6")
   OPTION(MAF_USE_CRYPTO "Find and Link the CRYPTO library." ON)
 ENDIF (${CMAKE_GENERATOR} STREQUAL "Visual Studio 6")
 
+IF (MAF_USE_VTK)
+  IF("${VTK_DIR}" STREQUAL "")
+    MFL_SUBPROJECT(VTK VTK)
+    SET(MAF_VTK_DIR "${MFL_BINARY_DIR}/VTK/Build")
+  ELSE("${VTK_DIR}" STREQUAL "")
+    SET(MAF_VTK_DIR "${VTK_DIR}")
+  ENDIF("${VTK_DIR}" STREQUAL "")
+ENDIF (MAF_USE_VTK)
+
+IF (MAF_USE_ITK)
+  IF("${ITK_DIR}" STREQUAL "")
+    MFL_SUBPROJECT(ITK ITK)
+    SET(MAF_ITK_DIR "${MFL_BINARY_DIR}/ITK/Build")
+  ELSE("${ITK_DIR}" STREQUAL "")
+    SET(MAF_ITK_DIR "${ITK_DIR}")
+  ENDIF("${ITK_DIR}" STREQUAL "")
+ENDIF (MAF_USE_ITK)
 
 IF (MAF_USE_CURL)
   SET(MAF_CRL_DIR "${CRL_DIR}" CACHE PATH "CURL path")
@@ -45,20 +62,6 @@ ENDIF(MAF_USE_CURL)
 # configure CMake modules for MFL
 #
 MFL_SUBPROJECT (MFL_MODULES modules)
-
-#
-# this is to build VTK inside the MAF tree
-#
-IF (MAF_USE_VTK)
-  MFL_SUBPROJECT(VTK VTK)
-ENDIF (MAF_USE_VTK)
-
-#
-# this is to build ITK inside the MAF tree
-#
-IF (MAF_USE_ITK)
-  MFL_SUBPROJECT(ITK ITK)
-ENDIF (MAF_USE_ITK)
 
 #
 # this is to build VCOLLIDE inside the MAF tree

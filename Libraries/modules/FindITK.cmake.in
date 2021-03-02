@@ -16,7 +16,7 @@
 
 #MESSAGE ("FindITK: SOF")
 # try to setup legacy search path for ITK
-FIND_PATH(ITK_DIR UseITK.cmake "${MFL_BINARY_DIR}/ITK/Build")
+FIND_PATH(ITK_DIR UseITK.cmake "${MAF_ITK_DIR}")
 
 #INCLUDE ("${CMAKE_ROOT}/Modules/FindITK.cmake")
 find_package(ITK)
