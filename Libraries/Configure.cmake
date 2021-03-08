@@ -57,6 +57,11 @@ IF (MAF_USE_CURL)
   SET(MAF_CRL_DIR "${CRL_DIR}" CACHE PATH "CURL path")
 ENDIF(MAF_USE_CURL)
 
+IF (MAF_USE_WX)
+  SET(MAF_WXW_DIR "${WXW_DIR}" CACHE PATH "wxWidgets path")
+  SET(MAF_WX_CONF "${wxWidgets_CONFIGURATION}")
+ENDIF (MAF_USE_WX)
+
 
 #
 # configure CMake modules for MFL
@@ -69,13 +74,6 @@ MFL_SUBPROJECT (MFL_MODULES modules)
 #IF (MAF_USE_VCOLLIDE)
 #MFL_SUBPROJECT(VCollide20 VCollide20)
 #ENDIF (MAF_USE_VCOLLIDE)
-
-#
-# wxWindows Library
-#
-IF (MAF_USE_WX)
-  MFL_SUBPROJECT(WXWIN wxWin)
-ENDIF (MAF_USE_WX)
 
 #
 # XercesC Library
