@@ -589,14 +589,10 @@ bool lhpOpUploadMultiVMERefactor::RemoveAlreadyUploadedXMLResources(std::vector<
   wxString command2execute;
 
   //WAIT MESSAGE:
-  wxInfoFrame *wait;
+  wxBusyInfo *wait;
   if(!m_TestMode)
   {
-    wait = new wxInfoFrame(NULL, "Please wait, removing uploaded VME");
-    wait->SetWindowStyleFlag(wxSTAY_ON_TOP); //to keep wait message on top
-    wait->Show(true);
-    wait->Refresh();
-    wait->Update();
+    wait = new wxBusyInfo("Please wait, removing uploaded VME");
   }
 
   for (int i = 0; i < xmlURIVector.size(); i++)
@@ -979,14 +975,10 @@ void lhpOpUploadMultiVMERefactor::Upload()
     }
   }
 
-  wxInfoFrame *wait;
+  wxBusyInfo *wait;
   if(!m_TestMode)
   {
-    wait = new wxInfoFrame(NULL, "Please wait, uploading VME");
-    wait->SetWindowStyleFlag(wxSTAY_ON_TOP); //to keep wait message on top
-    wait->Show(true);
-    wait->Refresh();
-    wait->Update();
+    wait = new wxBusyInfo("Please wait, uploading VME");
   }
 
   //Check if VMERoot has been chosen, than upload only the root with its children

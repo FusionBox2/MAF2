@@ -381,14 +381,10 @@ void lhpOpDownloadVME::OpDo()
     return;
   }
 
-  wxInfoFrame *wait;
+  wxBusyInfo *wait;
   if(!m_TestMode)
   {
-    wait = new wxInfoFrame(NULL, "Please wait, downloading VME");
-    wait->SetWindowStyleFlag(wxSTAY_ON_TOP); //to keep wait message on top
-    wait->Show(true);
-    wait->Refresh();
-    wait->Update();
+    wait = new wxBusyInfo("Please wait, downloading VME");
   }
 
   //Download VME form the basket

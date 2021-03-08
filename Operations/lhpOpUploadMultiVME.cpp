@@ -290,14 +290,10 @@ void lhpOpUploadMultiVME::OpDo()
     return;
   }
 
-  wxInfoFrame *wait;
+  wxBusyInfo *wait;
   if(!m_TestMode)
   {
-    wait = new wxInfoFrame(NULL, "Please wait, uploading VME");
-    wait->SetWindowStyleFlag(wxSTAY_ON_TOP); //to keep wait message on top
-    wait->Show(true);
-    wait->Refresh();
-    wait->Update();
+    wait = new wxBusyInfo("Please wait, uploading VME");
   }
 
   //If VMERoot has been chosen, than upload only itself with its children
@@ -771,14 +767,10 @@ bool lhpOpUploadMultiVME::RemoveResources(std::vector<mafString> vectorURI)
   wxString command2execute;
 
   //WAIT MESSAGE:
-  wxInfoFrame *wait;
+  wxBusyInfo *wait;
   if(!m_TestMode)
   {
-    wait = new wxInfoFrame(NULL, "Please wait, removing uploaded VME");
-    wait->SetWindowStyleFlag(wxSTAY_ON_TOP); //to keep wait message on top
-    wait->Show(true);
-    wait->Refresh();
-    wait->Update();
+    wait = new wxBusyInfo("Please wait, removing uploaded VME");
   }
 
   for (int i = 0; i < m_UploadedURIVector.size(); i++)
