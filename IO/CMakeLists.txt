@@ -50,7 +50,7 @@ IF (MAF_USE_XercesC)
     mmuXMLDOM.h
     mmuXMLDOMElement.h
   )
-  SET(PROJECT_LIBS ${PROJECT_LIBS} XercesC)
+  SET(PROJECT_LIBS ${PROJECT_LIBS} XercesC::XercesC)
 ENDIF (MAF_USE_XercesC)
 
 IF (MAF_USE_VTK)

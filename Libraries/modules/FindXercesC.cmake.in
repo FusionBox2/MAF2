@@ -1,0 +1,9 @@
+# Description:
+# This module finds the location of the XercesC source and binary paths. It
+# adds specified path to CMAKE_PREFIX_PATH and uses stsndard CMake find_package.
+#
+
+# add search path for XercesC
+SET(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH};@MAF_XRC_DIR@")
+
+find_package(XercesC)

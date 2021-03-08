@@ -23,7 +23,6 @@
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/framework/LocalFileFormatTarget.hpp>
-#include <xercesc/dom/impl/DOMWriterImpl.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
 #ifdef XERCES_CPP_NAMESPACE_USE

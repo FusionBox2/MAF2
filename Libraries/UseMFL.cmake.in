@@ -40,12 +40,12 @@ ENDIF (MAF_USE_VTK)
 # XercesC library
 #
 IF (MAF_USE_XercesC)
-  SET (XercesC_POSSIBLE_ROOT_PATHS @MFL_BINARY_DIR@/XercesC/Build @MFL_SOURCE_DIR@/XercesC/Sources)
-  FIND_FILE(XercesC_USE_FILE UseXercesC.cmake ${XercesC_POSSIBLE_ROOT_PATHS})
-  FIND_PATH(XercesC_BINARY_PATH UseXercesC.cmake ${XercesC_POSSIBLE_ROOT_PATHS})
-  IF (XercesC_USE_FILE)
-    INCLUDE (${XercesC_USE_FILE}) # currently only local library is supported
-  ENDIF (XercesC_USE_FILE)
+  INCLUDE (@MFL_BINARY_DIR@/modules/FindXercesC.cmake)
+  IF (XercesC_FOUND)
+    MESSAGE(STATUS "USE_MFL: Using XercesC library")
+  ELSE (XercesC_FOUND)
+    MESSAGE(FATAL_ERROR "USE_MFL: Cannot find required XercesC library, cannot build!")
+  ENDIF (XercesC_FOUND)
 ENDIF (MAF_USE_XercesC)
 
 #

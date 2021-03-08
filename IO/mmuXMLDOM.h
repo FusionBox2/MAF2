@@ -22,7 +22,6 @@
 #include <xercesc/util/PlatformUtils.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/framework/LocalFileFormatTarget.hpp>
-#include <xercesc/dom/impl/DOMWriterImpl.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
 #ifdef XERCES_CPP_NAMESPACE_USE
@@ -52,7 +51,7 @@ public:
   XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument       *m_XMLDoc;  
   XERCES_CPP_NAMESPACE_QUALIFIER DOMNode           *m_XMLNode;
   XERCES_CPP_NAMESPACE_QUALIFIER DOMImplementation *m_XMLImplement;
-  XERCES_CPP_NAMESPACE_QUALIFIER DOMWriter         *m_XMLSerializer;
+  XERCES_CPP_NAMESPACE_QUALIFIER DOMLSSerializer   *m_XMLSerializer;
   XERCES_CPP_NAMESPACE_QUALIFIER XMLFormatTarget   *m_XMLTarget;
   XERCES_CPP_NAMESPACE_QUALIFIER XercesDOMParser   *m_XMLParser;
 };
