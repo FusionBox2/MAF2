@@ -32,13 +32,13 @@
 // Event Table:
 //----------------------------------------------------------------------------
 BEGIN_EVENT_TABLE(mafGUIDialog, wxDialog)
-  EVT_CLOSE(mafGUIDialog::nvOnCloseWindow)
-  EVT_BUTTON(wxID_OK, mafGUIDialog::nvOnOK)
-  EVT_BUTTON(wxID_CANCEL, mafGUIDialog::nvOnCancel)
-  EVT_BUTTON(wxID_CLOSE, mafGUIDialog::nvOnClose)
-  EVT_BUTTON(wxOK, mafGUIDialog::nvOnOK)
-  EVT_BUTTON(wxCANCEL, mafGUIDialog::nvOnCancel)
-  EVT_SIZE(mafGUIDialog::OnSize)
+  //EVT_CLOSE(mafGUIDialog::nvOnCloseWindow)
+  //EVT_BUTTON(wxID_OK, mafGUIDialog::nvOnOK)
+  //EVT_BUTTON(wxID_CANCEL, mafGUIDialog::nvOnCancel)
+  //EVT_BUTTON(wxID_CLOSE, mafGUIDialog::nvOnClose)
+  //EVT_BUTTON(wxOK, mafGUIDialog::nvOnOK)
+  //EVT_BUTTON(wxCANCEL, mafGUIDialog::nvOnCancel)
+  //EVT_SIZE(mafGUIDialog::OnSize)
 
 /* todo: discover if the following syntax is valid -- if yes I can have the redefined handler called (if handler are virtual)
   EVT_CLOSE(OnCloseWindow)
@@ -99,6 +99,7 @@ mafGUIDialog::mafGUIDialog(const wxString& title,long style)
   }
   if( (style & mafCLOSE) )
   {
+    SetEscapeId(wxID_CLOSE);
     m_CloseButton = new wxButton(this,wxID_CLOSE,"close");
     m_ButtonsSizer->Add(m_CloseButton);
   }
@@ -188,7 +189,7 @@ void mafGUIDialog::OnCloseWindow(wxCloseEvent &event)
   //Cancel should not destroy the window - just hide it
   //To know when the window is destroyed - override Destroy.
 
-  wxDialog::OnCloseWindow(event);
+  //wxDialog::OnCloseWindow(event);
 }
 //----------------------------------------------------------------------------
 void mafGUIDialog::OnOK(wxCommandEvent &event)
@@ -221,7 +222,7 @@ void mafGUIDialog::OnOK(wxCommandEvent &event)
 void mafGUIDialog::OnCancel(wxCommandEvent &event)
 //----------------------------------------------------------------------------
 {
-  wxDialog::OnCancel(event);
+  //wxDialog::OnCancel(event);
   /* --- this is what wxDialog::OnCancel does
   SetReturnCode(wxID_CANCEL);
   Show(false);

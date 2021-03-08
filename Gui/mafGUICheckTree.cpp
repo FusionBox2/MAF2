@@ -391,7 +391,6 @@ void mafGUICheckTree::InitializeImageList()
   //get icon size 
   //I assume all vme-icon to have the same size
   wxBitmap bmp = mafPictureFactory::GetPictureFactory()->GetVmePic(v[0]);
-  assert(bmp != wxNullBitmap);
   int w = bmp.GetWidth();
   int h = bmp.GetHeight();
   assert(w>0 && h>0);

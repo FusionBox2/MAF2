@@ -437,16 +437,14 @@ void mafGUILutEditor::OnEvent(mafEventBase *maf_event)
         if(m_parent->IsKindOf(CLASSINFO(wxDialog)))
         {
           wxDialog *dlg = (wxDialog *)m_parent;
-					wxCommandEvent cmd(0, wxID_OK);
-          dlg->OnOK( cmd );
+          dlg->EndModal( wxID_OK );
         }
       break; 
       case ID_CANCEL:
         if(m_parent->IsKindOf(CLASSINFO(wxDialog)))
         {
           wxDialog *dlg = (wxDialog *)m_parent;
-					wxCommandEvent cmd(0, wxID_CANCEL);
-          dlg->OnCancel( cmd );
+          dlg->EndModal( wxID_CANCEL );
         }
       break; 
       case ID_APPLY:

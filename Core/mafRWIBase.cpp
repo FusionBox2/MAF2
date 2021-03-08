@@ -675,7 +675,7 @@ void mafRWIBase::GetImage(wxBitmap& bitmap, int magnification)
 
   //translate to a wxBitmap
   wxImage  *img = new wxImage(dim[0],dim[1],buffer,TRUE);
-  bitmap = wxBitmap(img,24);
+  bitmap = wxBitmap(*img,24);
   delete img;
   delete buffer;
 }
