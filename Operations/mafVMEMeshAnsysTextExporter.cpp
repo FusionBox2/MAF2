@@ -40,10 +40,10 @@
 
 
 // vcl includes
-#include <vcl_string.h>
-#include <vcl_fstream.h>
-#include <vcl_sstream.h>
-#include <vcl_map.h>
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <map>
 #include <vcl_vector.h>
 
 //----------------------------------------------------------------------------
@@ -102,7 +102,7 @@ int mafVMEMeshAnsysTextExporter::Write()
 int mafVMEMeshAnsysTextExporter::WriteNodesFile( vtkUnstructuredGrid *inputUGrid, const char *outputFileName )
 {
   // check this is a valid nodes id field data: 
-  vcl_string nodesIDArrayName = "id";
+  std::string nodesIDArrayName = "id";
 
   vtkIntArray *nodesIDArray = vtkIntArray::SafeDownCast(inputUGrid->GetPointData()->GetArray(nodesIDArrayName.c_str()));
   
@@ -270,7 +270,7 @@ int mafVMEMeshAnsysTextExporter::WriteElementsFile( vtkUnstructuredGrid *inputUG
   }
 
   // create vtkPointIdAnsysPointId map
-  vcl_map<int, int> vtkPointIdAnsysPointsIdMap;
+  std::map<int, int> vtkPointIdAnsysPointsIdMap;
   int nodesIdNumber = nodesIDArray->GetNumberOfTuples();
   
   assert(nodesIdNumber == inputUGrid->GetNumberOfPoints());
@@ -403,7 +403,7 @@ void mafVMEMeshAnsysTextExporter::WriteMaterialsFile( vtkUnstructuredGrid *input
 {
   // check this is a valid materials field data: I am assuming that vtk field data
   // contains only material attributes otherwise this code will not work
-  vcl_string materialIDArrayName = "material_id";
+  std::string materialIDArrayName = "material_id";
 
   vtkDataArray *materialsIDArray = NULL;
   
@@ -430,7 +430,7 @@ void mafVMEMeshAnsysTextExporter::WriteMaterialsFile( vtkUnstructuredGrid *input
     A fake temporary material with ID = 1 will be created in order to export the data.");
 
     // write fake material to disk...
-    vcl_ostringstream output;
+    std::ostringstream output;
 
     int fakeMaterialID = 1;
     double fakeMaterialTemperature = 0.0000; 
@@ -439,7 +439,7 @@ void mafVMEMeshAnsysTextExporter::WriteMaterialsFile( vtkUnstructuredGrid *input
     fakeMaterialTemperature << std::endl;
 
     
-    vcl_string fakeMaterialPropertyName = "FAKEMATERIALUSEDFOREXPORTTOWARDANSYS";
+    std::string fakeMaterialPropertyName = "FAKEMATERIALUSEDFOREXPORTTOWARDANSYS";
     int fakeMaterialPropertyValue = 1;
 
     output << fakeMaterialPropertyName << " = " << fakeMaterialPropertyValue << std::endl;
@@ -447,8 +447,8 @@ void mafVMEMeshAnsysTextExporter::WriteMaterialsFile( vtkUnstructuredGrid *input
 
     cout << output.str();
     
-	vcl_ofstream outputf;
-	vcl_string fileName = outputFileName;
+    std::ofstream outputf;
+    std::string fileName = outputFileName;
 
 	outputf.open(fileName.c_str());
 	outputf << output.str();
@@ -467,10 +467,10 @@ void mafVMEMeshAnsysTextExporter::WriteMaterialsFile( vtkUnstructuredGrid *input
     vtkFieldData *fieldData = inputUGrid->GetFieldData();
 
     // gather material properties array names
-    vcl_vector<vcl_string> materialProperties;
+    std::vector<std::string> materialProperties;
     for (int arrayID = 0; arrayID < fieldData->GetNumberOfArrays(); arrayID++)
     {
-      vcl_string arrayName = fieldData->GetArray(arrayID)->GetName();
+      std::string arrayName = fieldData->GetArray(arrayID)->GetName();
       if (arrayName != materialIDArrayName.c_str())
       {
         materialProperties.push_back(arrayName);
@@ -485,7 +485,7 @@ void mafVMEMeshAnsysTextExporter::WriteMaterialsFile( vtkUnstructuredGrid *input
     // write each material
     //
     // write elements matrix to disk...
-    vcl_ostringstream output;
+    std::ostringstream output;
     
     // for each material
     for (int i = 0; i < numberOfMaterials; i++)
@@ -499,7 +499,7 @@ void mafVMEMeshAnsysTextExporter::WriteMaterialsFile( vtkUnstructuredGrid *input
       // for each property
       for (int j = 0; j < numberOfMaterialProperties; j++)
       {
-        vcl_string arrayName = materialProperties[j];
+        std::string arrayName = materialProperties[j];
         vtkDataArray *array = fieldData->GetArray(arrayName.c_str());
         output << arrayName << " = " << array->GetTuple(i)[0] << std::endl;
       }
@@ -509,8 +509,8 @@ void mafVMEMeshAnsysTextExporter::WriteMaterialsFile( vtkUnstructuredGrid *input
 
     cout << output.str();
 
-	vcl_ofstream outputf;
-	vcl_string fileName = outputFileName;
+    std::ofstream outputf;
+    std::string fileName = outputFileName;
 	outputf.open(fileName.c_str());
 	outputf << output.str();
     outputf.close();

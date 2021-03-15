@@ -24,7 +24,7 @@
 
 #include "mafASCIIImporterUtility.h"
 
-#include <vcl_fstream.h>
+#include <fstream>
 #include <vnl/vnl_vector.h>
 
 //----------------------------------------------------------------------------
@@ -44,7 +44,7 @@ int mafASCIIImporterUtility::ReadFile(const char *fname)
 //----------------------------------------------------------------------------
 {
   //Read raw motion data
-  vcl_ifstream v_raw_matrix(fname, std::ios::in);
+    std::ifstream v_raw_matrix(fname, std::ios::in);
 
 	if(v_raw_matrix.is_open() != 0)
 	{	

@@ -53,11 +53,11 @@ const int DEBUG_MODE = false;
 #include <iomanip>
 
 #include <vcl_vector.h>
-#include <vcl_fstream.h>
-#include <vcl_sstream.h>
-#include <vcl_algorithm.h>
-#include <vcl_string.h>
-#include <vcl_map.h>
+#include <fstream>
+#include <sstream>
+#include <algorithm>
+#include <string>
+#include <map>
 #include "vnl/vnl_matrix.h"
 
 mafVMEDataSetAttributesImporter::mafVMEDataSetAttributesImporter()
@@ -110,14 +110,14 @@ int mafVMEDataSetAttributesImporter::Read()
  
   // vector holdin results matrix for each time stamp
   typedef vnl_matrix<double> doubleMatrix; 
-  vcl_vector<doubleMatrix> attributesMatrixVector;
+  std::vector<doubleMatrix> attributesMatrixVector;
 
   // vector holding file names in current directory
-  vcl_vector<vcl_string> fileNamesVector;
-  vcl_vector<vcl_string>::iterator fileNamesVectorIterator;
+  std::vector<std::string> fileNamesVector;
+  std::vector<std::string>::iterator fileNamesVectorIterator;
 
   // holder for result labels
-  vcl_vector<vcl_string> labelsVector;
+  std::vector<std::string> labelsVector;
 
   // number of labels in result file
   int numLabels = -1;
@@ -145,18 +145,18 @@ int mafVMEDataSetAttributesImporter::Read()
 
   for (int i = 0; i < dirAccessor->GetNumberOfFiles(); i++)
   {
-    vcl_string tmpStr(dirAccessor->GetFile(i));
+    std::string tmpStr(dirAccessor->GetFile(i));
     fileNamesVector.push_back(tmpStr);
   }
 
   // search for a file name containing the prefix
-  vcl_string vclFilePrefix = "";
+  std::string vclFilePrefix = "";
   (m_TimeVarying == true) ? vclFilePrefix = m_FilePrefix.GetCStr() : vclFilePrefix = m_FileBaseName  ;
   
   for (fileNamesVectorIterator = fileNamesVector.begin(); fileNamesVectorIterator != fileNamesVector.end(); fileNamesVectorIterator++)
   {
     int pos = (*fileNamesVectorIterator).find(vclFilePrefix,0);
-    if (pos != vcl_string::npos) break;
+    if (pos != std::string::npos) break;
   }
   
   if (fileNamesVectorIterator == fileNamesVector.end())
@@ -167,7 +167,7 @@ int mafVMEDataSetAttributesImporter::Read()
   }
 
   // we found a file name containing the prefix PRNLS_0001.lis
-  vcl_string genericFileName = *fileNamesVectorIterator;
+  std::string genericFileName = *fileNamesVectorIterator;
 
   // remove the prefix from the string
   genericFileName.erase(0, m_FilePrefix.Length());
@@ -186,7 +186,7 @@ int mafVMEDataSetAttributesImporter::Read()
 
   if (GetUseTSFile()== true)
   {
-    vcl_ifstream inputStream(m_TSFileName.GetCStr(), std::ios::in);    
+    std::ifstream inputStream(m_TSFileName.GetCStr(), std::ios::in);    
     if (inputStream.is_open())
     { 
       tsMatrixWith1Column.read_ascii(inputStream);
@@ -217,14 +217,14 @@ int mafVMEDataSetAttributesImporter::Read()
   int fileId = 1;
   
   // create the cell id hash table: 
-  vcl_map<int, int> attributeFileAnsysIdToRowIdIMap;
+  std::map<int, int> attributeFileAnsysIdToRowIdIMap;
 
   while (1)
   {
     // build the ith file name
     
     //build the index part
-    vcl_ostringstream number;     
+    std::ostringstream number;     
     number << std::setfill('0') << std::setw(4) << fileId;
       
     // build the full name
@@ -239,7 +239,7 @@ int mafVMEDataSetAttributesImporter::Read()
     mafLogMessage(stringStream.str().c_str());
           
     // open the ith file
-    vcl_ifstream ithAttributesFileStream(ithAttributesFileName.GetCStr(), std::ios::in);
+    std::ifstream ithAttributesFileStream(ithAttributesFileName.GetCStr(), std::ios::in);
     if (ithAttributesFileStream.is_open() == false)
     {
       if (fileId == 1)
@@ -262,10 +262,10 @@ int mafVMEDataSetAttributesImporter::Read()
       ithAttributesFileStream.getline(buf, 1000, '\n');
 
       // associate an istringstream with full line
-      vcl_istringstream inputStrStream(buf);
+      std::istringstream inputStrStream(buf);
 
       // fill the string vector with columns names
-      vcl_string tmpStrSingleWord;
+      std::string tmpStrSingleWord;
       while (inputStrStream >> tmpStrSingleWord) 
       {
         labelsVector.push_back(tmpStrSingleWord);
@@ -313,7 +313,7 @@ int mafVMEDataSetAttributesImporter::Read()
       mafLogMessage(stringStream.str().c_str());
     }
 
-    typedef vcl_map<int, int>::const_iterator  Iter;
+    typedef std::map<int, int>::const_iterator  Iter;
     
 
     
@@ -323,7 +323,7 @@ int mafVMEDataSetAttributesImporter::Read()
     for (int vtkId = 0; vtkId < tmpAttributesMatrix.rows(); vtkId++)
     {
       int ansysCellId = tmpAttributesMatrix(vtkId, ansysIdCol);
-      attributeFileAnsysIdToRowIdIMap.insert(vcl_map<int,int>::value_type(ansysCellId, vtkId));       
+      attributeFileAnsysIdToRowIdIMap.insert(std::map<int,int>::value_type(ansysCellId, vtkId));
       if (DEBUG_MODE)
         {
           std::ostringstream stringStream;
@@ -561,7 +561,7 @@ int mafVMEDataSetAttributesImporter::SplitFileName()
   }
 
   // find the last point
-  vcl_string fileName = m_FileName.GetCStr();
+  std::string fileName = m_FileName.GetCStr();
   int pointPos = fileName.find_last_of('.');
   
   // find the last / on linux
@@ -573,13 +573,13 @@ int mafVMEDataSetAttributesImporter::SplitFileName()
   }
 
   // extension
-  vcl_string ext(fileName, pointPos,fileName.length()-pointPos);
+  std::string ext(fileName, pointPos,fileName.length()-pointPos);
 
   // fileBaseName
-  vcl_string baseFileName(fileName, slashPos+1, pointPos-slashPos-1);
+  std::string baseFileName(fileName, slashPos+1, pointPos-slashPos-1);
 
   // path
-  vcl_string path(fileName, 0, slashPos+1);
+  std::string path(fileName, 0, slashPos+1);
 
   m_ResultsDir = path.c_str();
   m_FileBaseName = baseFileName.c_str();

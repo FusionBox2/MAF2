@@ -31,7 +31,7 @@
 #include "vtkTransform.h"
 #include "vtkTransformFilter.h"
 #include "vtkVectorText.h"
-#include "vcl_cassert.h"
+#include <cassert>
 
 vtkCxxRevisionMacro(vtkMAFAnnotatedCubeActor, "$Revision: 1.1.2.3 $");
 vtkStandardNewMacro(vtkMAFAnnotatedCubeActor);
