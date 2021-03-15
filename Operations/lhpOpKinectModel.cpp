@@ -47,8 +47,7 @@
 #include <fstream>
 #include <sstream>
 #include <stack>
-#include <vcl_fstream.h>
-#include <vcl_string.h>
+#include <string>
 
 //----------------------------------------------------------------------------
 // Required for MSVC

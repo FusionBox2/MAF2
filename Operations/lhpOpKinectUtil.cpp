@@ -56,8 +56,7 @@
 #include <fstream>
 #include <sstream>
 #include <stack>
-#include <vcl_fstream.h>
-#include <vcl_string.h>
+#include <string>
 #include <vnl\vnl_matrix.h>
 
 #include "mafNodeIterator.h"
@@ -2322,8 +2321,8 @@ void lhpOpKinectUtil::DictionaryUpdate()
 }
 bool lhpOpKinectUtil::LoadDictionary()
 {
-  vcl_string landmarkName;
-  vcl_ifstream dictionaryInputStream(m_DictionaryFileName, std::ios::in);
+  std::string landmarkName;
+  std::ifstream dictionaryInputStream(m_DictionaryFileName, std::ios::in);
 
   if(dictionaryInputStream.is_open() == 0)
     return false;

@@ -31,8 +31,7 @@
 
 #include "itkRawMotionImporterUtility.h"
 
-#include <vcl_fstream.h>
-#include <vcl_string.h>
+#include <fstream>
 #include <vnl\vnl_matrix.h>
 
 #include <iostream>
@@ -348,7 +347,7 @@ int mafVMEC3DData::Read_C3D_Data(unsigned short	num_markers,				// number of mar
   //vcl_ofstream mtrx("C:\\m2", std::ios::out);
   //mtrx << C3DMatrix;
 
-  vcl_string landmarkName, segmentName;
+  std::string landmarkName, segmentName;
 
   // dictionaryTagArray holds lm_name <-> segment name association:
   // for example:
@@ -367,7 +366,7 @@ int mafVMEC3DData::Read_C3D_Data(unsigned short	num_markers,				// number of mar
   //If a dictionary exist read data from dictionary
   if (this->GetDictionary())
   {	//if dict exist
-    vcl_ifstream dictionaryInputStream(this->m_DictionaryFileName, std::ios::in);
+    std::ifstream dictionaryInputStream(this->m_DictionaryFileName, std::ios::in);
 
     if(dictionaryInputStream.is_open() != 0)
     {
@@ -384,7 +383,7 @@ int mafVMEC3DData::Read_C3D_Data(unsigned short	num_markers,				// number of mar
     }
     else
     {
-      vcl_cout << "Dictionary file does not exist!\n";
+      std::cout << "Dictionary file does not exist!\n";
       dictionaryTagArray->Delete();
       return 1;
     }

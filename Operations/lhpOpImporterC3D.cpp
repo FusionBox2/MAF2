@@ -77,8 +77,8 @@
 #define POWER				    4
 
 
-#include <vcl_fstream.h>
-#include <vcl_string.h>
+#include <fstream>
+#include <string>
 #include <vnl\vnl_matrix.h>
 
 #include <iostream>
@@ -318,8 +318,8 @@ int lhpOpImporterC3D::ReadHeaderC3D(const mafString &fullFileName, lhpOpImporter
 bool lhpOpImporterC3D::LoadDictionary()
 //----------------------------------------------------------------------------
 {
-  vcl_string landmarkName, segmentName;
-  vcl_ifstream dictionaryInputStream(m_DictionaryFileName, std::ios::in);
+  std::string landmarkName, segmentName;
+  std::ifstream dictionaryInputStream(m_DictionaryFileName, std::ios::in);
 
   if(dictionaryInputStream.is_open() == 0)
     return false;

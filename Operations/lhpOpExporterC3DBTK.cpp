@@ -49,8 +49,7 @@
 
 //#include "C3D_Reader.h"
 
-#include <vcl_fstream.h>
-#include <vcl_string.h>
+#include <string>
 #include <vnl\vnl_matrix.h>
 
 #include <iostream>

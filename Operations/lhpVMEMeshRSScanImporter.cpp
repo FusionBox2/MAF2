@@ -41,12 +41,12 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 
 
 // vcl includes
-#include <vcl_string.h>
-#include <vcl_fstream.h>
-#include <vcl_sstream.h>
-#include <vcl_map.h>
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <map>
 #include <vcl_vector.h>
-#include <vcl_algorithm.h>
+#include <algorithm>
 
 #include "mafVectors.h"
 
@@ -78,9 +78,9 @@ lhpVMEMeshRSScanImporter::~lhpVMEMeshRSScanImporter()
 int lhpVMEMeshRSScanImporter::Read()
 {
   vnl_matrix<double> DataFileMatrix;
-  vcl_ifstream paramsfstr(m_PlateParamsFileName, std::ios::in);
-  vcl_ifstream fstr(m_DataFileName, std::ios::in);
-  vcl_string v_string;
+  std::ifstream paramsfstr(m_PlateParamsFileName, std::ios::in);
+  std::ifstream fstr(m_DataFileName, std::ios::in);
+  std::string v_string;
   int    frame;
   double ts;
 
@@ -90,7 +90,7 @@ int lhpVMEMeshRSScanImporter::Read()
   while(!paramsfstr.eof())
   {
     const char *frs = NULL;
-    vcl_getline(paramsfstr, v_string);
+    std::getline(paramsfstr, v_string);
     if(v_string[0] == '#')
       continue;
     if((frs = strstr(v_string.c_str(), "NumRows")) != NULL)
@@ -115,7 +115,7 @@ int lhpVMEMeshRSScanImporter::Read()
     const char *frs = NULL;
     do
     {
-      vcl_getline(fstr, v_string);
+      std::getline(fstr, v_string);
       frs = strstr(v_string.c_str(), "Frame ");
     }
     while(!fstr.eof() && frs == NULL);
@@ -345,7 +345,7 @@ void lhpVMEMeshRSScanImporter::AddIntArrayToUnstructuredGridCellData( vtkUnstruc
 
 int lhpVMEMeshRSScanImporter::ReadMatrix(vnl_matrix<double> &M, const char *fname)
 {
-  vcl_ifstream v_raw_matrix(fname, std::ios::in);
+  std::ifstream v_raw_matrix(fname, std::ios::in);
   if(v_raw_matrix.is_open() != 0)
   {
     M.read_ascii(v_raw_matrix);

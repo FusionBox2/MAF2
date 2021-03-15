@@ -47,8 +47,7 @@
 
 //#include "C3D_Reader.h"
 
-#include <vcl_fstream.h>
-#include <vcl_string.h>
+#include <string>
 #include <vnl\vnl_matrix.h>
 
 #include <iostream>
@@ -250,8 +249,8 @@ int lhpOpImporterC3DBTK::OpenC3D(const mafString &fullFileName)
 bool lhpOpImporterC3DBTK::LoadDictionary()
 //----------------------------------------------------------------------------
 {
-  vcl_string landmarkName, segmentName;
-  vcl_ifstream dictionaryInputStream(m_DictionaryFileName, std::ios::in);
+  std::string landmarkName, segmentName;
+  std::ifstream dictionaryInputStream(m_DictionaryFileName, std::ios::in);
 
   if(dictionaryInputStream.is_open() == 0)
     return false;
@@ -278,8 +277,8 @@ void lhpOpImporterC3DBTK::DestroyDictionary()
 bool lhpOpImporterC3DBTK::LoadLMRename()
 //----------------------------------------------------------------------------
 {
-  vcl_string landmarkName, segmentName;
-  vcl_ifstream LMRenameInputStream(m_LMRenameFileName, std::ios::in);
+  std::string landmarkName, segmentName;
+  std::ifstream LMRenameInputStream(m_LMRenameFileName, std::ios::in);
 
   if(LMRenameInputStream.is_open() == 0)
     return false;
