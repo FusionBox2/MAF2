@@ -34,9 +34,9 @@
 #include "vtkUnstructuredGrid.h"
 
 #include <vcl_vector.h>
-#include <vcl_algorithm.h>
-#include <vcl_map.h>
-#include <vcl_list.h>
+#include <algorithm>
+#include <map>
+#include <list>
 #include <vnl/vnl_matrix.h>
 
 #include "mafString.h"
@@ -109,8 +109,8 @@ void mafParabolicMeshToLinearMeshFilter::Execute()
   //-----------------------
     
   vtkPoints *points = vtkPoints::New();
-  vcl_map<int, int> oldIdToNewIdMap;
-  typedef vcl_map<int, int>::const_iterator  Iter;
+  std::map<int, int> oldIdToNewIdMap;
+  typedef std::map<int, int>::const_iterator  Iter;
   numPointsNew = 0;
     
   // load the connectivity and store the new geometry
@@ -121,7 +121,7 @@ void mafParabolicMeshToLinearMeshFilter::Execute()
       int ptId = input->GetCell(i)->GetPointId(j);
       if (oldIdToNewIdMap.find(ptId) == oldIdToNewIdMap.end())
       {
-        oldIdToNewIdMap.insert(vcl_map<int,int>::value_type(ptId, numPointsNew));        
+        oldIdToNewIdMap.insert(std::map<int,int>::value_type(ptId, numPointsNew));
         numPointsNew++;
 
         //add another point to output

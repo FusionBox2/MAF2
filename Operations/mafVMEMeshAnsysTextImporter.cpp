@@ -43,12 +43,12 @@
 
 
 // vcl includes
-#include <vcl_string.h>
-#include <vcl_fstream.h>
-#include <vcl_sstream.h>
-#include <vcl_map.h>
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <map>
 #include <vcl_vector.h>
-#include <vcl_algorithm.h>
+#include <algorithm>
 
 
 #define MIN( x, y ) ( (x) < (y) ? (x) : (y) )
@@ -381,7 +381,7 @@ int mafVMEMeshAnsysTextImporter::ParseMaterialsFile(vtkUnstructuredGrid *grid, c
   }
 
 	// read materials from file
-	vcl_ifstream input;
+	std::ifstream input;
 
 	/*
 
@@ -396,22 +396,22 @@ int mafVMEMeshAnsysTextImporter::ParseMaterialsFile(vtkUnstructuredGrid *grid, c
 
 	*/
 
-	vcl_string startStr;
-	vcl_string tmpStr;
+	std::string startStr;
+	std::string tmpStr;
 
 	// material prop numerical value
 	double value;
 
 	// materials properties vector [loc_num_prop x num_mat];
-	typedef vcl_vector<double> row_vector;
-	vcl_vector<row_vector> mat_prop_values_vec;
-	vcl_vector<row_vector> mat_prop_ids_vec;
+	typedef std::vector<double> row_vector;
+	std::vector<row_vector> mat_prop_values_vec;
+	std::vector<row_vector> mat_prop_ids_vec;
 	row_vector mat_prop_values_min_vec;
 	row_vector mat_prop_values_max_vec;
 
 
 	// holds material properties name; first element is "material_id"
-	vcl_vector<vcl_string> mat_prop_name_vec;
+	std::vector<std::string> mat_prop_name_vec;
 	mat_prop_name_vec.push_back("material_id");
 	//id props does not need min max, pushing back for other props align
 	mat_prop_values_min_vec.push_back(0);
@@ -597,10 +597,10 @@ int mafVMEMeshAnsysTextImporter::GetElementType()
 //----------------------------------------------------------------------------
 {
   // read the first line of the connectivity file    
-  vcl_ifstream connectivityStream;
+  std::ifstream connectivityStream;
   connectivityStream.open(m_ElementsFileName, ios::out);
 
-  vcl_vector<int> connectivityVector;
+  std::vector<int> connectivityVector;
 
   if (connectivityStream.is_open())
   {
@@ -612,7 +612,7 @@ int mafVMEMeshAnsysTextImporter::GetElementType()
     connectivityStream.getline(buf, CHAR_BUF_SIZE, '\n');
     
     // associate an istringstream with full line
-    vcl_istringstream connectivityStrStream(buf);
+	std::istringstream connectivityStrStream(buf);
 
     // fill the connectivityVector
     while (connectivityStrStream >> tmpInt) 
@@ -683,7 +683,7 @@ int mafVMEMeshAnsysTextImporter::GetElementType()
 int mafVMEMeshAnsysTextImporter::ReadMatrix(vnl_matrix<double> &M, const char *fname)
 //----------------------------------------------------------------------------
 {
-  vcl_ifstream v_raw_matrix(fname, std::ios::in);
+  std::ifstream v_raw_matrix(fname, std::ios::in);
 
 
   if(v_raw_matrix.is_open() != 0)
@@ -748,7 +748,7 @@ void mafVMEMeshAnsysTextImporter::FEMDataToCellData( vtkUnstructuredGrid *input,
   int materialsNumber = materialIDArrayFD->GetNumberOfTuples();
 
   // create a vector for searching material ID:
-  vcl_map<int, int> materialIdMaterialColumnMap;
+  std::map<int, int> materialIdMaterialColumnMap;
   for (int i = 0; i < materialsNumber; i++)
   {
     int materialID = (int)(materialIDArrayFD->GetValue(i));

@@ -24,7 +24,6 @@
 #include "mafMTime.h"
 
 #include <vnl/vnl_matrix.h>
-#include <vnl/vnl_matrix.txx>
 
 //----------------------------------------------------------------------------
 // forward declarations :

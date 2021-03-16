@@ -36,7 +36,7 @@
 
 #include <assert.h>
 
-#include <vcl_fstream.h>
+#include <fstream>
 #include <vnl/vnl_vector.h>
 
 //-------------------------------------------------------------------------
@@ -315,7 +315,7 @@ int mafVMEItemScalarMatrix::UpdateReader(mafString &filename)
     if (GetCrypting())
     {
 #ifdef MAF_USE_CRYPTO
-      vcl_stringstream decrypted_raw_matrix;
+      std::stringstream decrypted_raw_matrix;
       decrypted_raw_matrix << m_DecryptedFileString.c_str();
       data.read_ascii(decrypted_raw_matrix);
 #else
@@ -325,7 +325,7 @@ int mafVMEItemScalarMatrix::UpdateReader(mafString &filename)
     }
     else
     {
-      vcl_ifstream v_raw_matrix(filename, std::ios::in);
+      std::ifstream v_raw_matrix(filename, std::ios::in);
       if(v_raw_matrix.is_open() != 0)
       {
         data.read_ascii(v_raw_matrix);
@@ -346,7 +346,7 @@ int mafVMEItemScalarMatrix::UpdateReader(mafString &filename)
       mafErrorMacro("Error extracting item from the archive!");
       return MAF_ERROR;
     }
-    vcl_stringstream raw_matrix_string;
+    std::stringstream raw_matrix_string;
     raw_matrix_string << m_InputMemory << std::endl;
     data.read_ascii(raw_matrix_string);
     delete m_InputMemory;
@@ -447,7 +447,7 @@ int mafVMEItemScalarMatrix::InternalStoreData(const char *url)
       //unsigned data_size = data.size();
       //double *s = new double[data_size];
       //data.copy_out(s);
-      vcl_stringstream data_stream;
+      std::stringstream data_stream;
       data.print(data_stream);
       m_DataString = data_stream.str().c_str();
       /*m_DataString << s[0];
@@ -481,7 +481,7 @@ int mafVMEItemScalarMatrix::InternalStoreData(const char *url)
       }
       else
       {
-        vcl_ofstream writer(filename);
+        std::ofstream writer(filename);
         if (!writer.bad())
         {
           writer << m_DataString.GetCStr() << std::endl;
