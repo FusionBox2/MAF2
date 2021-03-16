@@ -1,4 +1,4 @@
-project(vtkLocalExample)
+project(vtkMAF)
 cmake_minimum_required(VERSION 2.8)
 
 # Find and load VTK settings.
