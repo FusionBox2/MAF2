@@ -1,0 +1,8 @@
+# Description:
+# This module finds the location of the CURL source and binary paths.
+#
+
+# add search path for CURL
+SET(cryptopp_DIR @MAF_CRP_DIR@/lib/cmake/cryptopp)
+
+find_package(cryptopp REQUIRED)
