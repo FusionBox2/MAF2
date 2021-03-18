@@ -2,22 +2,21 @@
 #include "mafCrypt.h"
 #ifdef MAF_USE_CRYPTO
 
-#include "pch.h"
+#include "cryptopp/pch.h"
 
-#include "default.h"
-#include "md5.h"
-#include "sha.h"
-#include "ripemd.h"
-#include "files.h"
-#include "rng.h"
-#include "hex.h"
-#include "gzip.h"
-#include "default.h"
-#include "rsa.h"
-#include "randpool.h"
-#include "ida.h"
-#include "socketft.h"
-#include <base64.h>
+#include "cryptopp/default.h"
+#include "cryptopp/md5.h"
+#include "cryptopp/sha.h"
+#include "cryptopp/ripemd.h"
+#include "cryptopp/files.h"
+#include "cryptopp/rng.h"
+#include "cryptopp/hex.h"
+#include "cryptopp/gzip.h"
+#include "cryptopp/default.h"
+#include "cryptopp/rsa.h"
+#include "cryptopp/randpool.h"
+#include "cryptopp/ida.h"
+#include "cryptopp/base64.h"
 
 #include <iostream>
 #include <wx/msgdlg.h>
