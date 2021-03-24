@@ -57,7 +57,7 @@ class VTK_vtkMAF_EXPORT vtkMAFSimpleRulerActor2D : public vtkActor2D
 {
  public:
   vtkTypeRevisionMacro(vtkMAFSimpleRulerActor2D,vtkActor2D);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   static	vtkMAFSimpleRulerActor2D *New();
 
 	void SetColor(double r,double g,double b);
@@ -72,9 +72,10 @@ class VTK_vtkMAF_EXPORT vtkMAFSimpleRulerActor2D : public vtkActor2D
   /** Draw the ruler at the center of the screen. */
   void CenterAxesOnScreen(bool center = true);
 
-  int	 RenderOverlay(vtkViewport *viewport);
-  int	 RenderOpaqueGeometry(vtkViewport *viewport);      
-  int	 RenderTranslucentGeometry(vtkViewport *viewport)  {return 0;};
+  int	 RenderOverlay(vtkViewport *viewport) override;
+  int	 RenderOpaqueGeometry(vtkViewport *viewport) override;      
+  int	 RenderTranslucentPolygonalGeometry(vtkViewport *viewport) override  {return 0;};
+  int	 HasTranslucentPolygonalGeometry() override { return 0; };
   void AdjustClippingRange(vtkViewport *viewport)        {};
 
   void UseGlobalAxes(bool globalAxes) {GlobalAxes = globalAxes; Modified();};
