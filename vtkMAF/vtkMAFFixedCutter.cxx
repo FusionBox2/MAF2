@@ -16,6 +16,8 @@
 
 #include "vtkMAFFixedCutter.h"
 #include "vtkViewport.h"
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkPoints.h"
 #include "vtkPolyData.h"
@@ -36,17 +38,33 @@ vtkMAFFixedCutter::~vtkMAFFixedCutter()
 {
 }
 //----------------------------------------------------------------------------
-void vtkMAFFixedCutter::Execute()
-//----------------------------------------------------------------------------
+int vtkMAFFixedCutter::RequestData(
+  vtkInformation *request,
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
-  vtkCutter::Execute();
+    if (this->Superclass::RequestData(request, inputVector, outputVector) == 0)
+    {
+        return 0;
+    }
+
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
+  // get the input and output
+  vtkDataSet *input = vtkDataSet::SafeDownCast(
+    inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkPolyData* output = vtkPolyData::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
   
-  if(this->GetOutput()->GetNumberOfPoints() == 0)
+  if(output->GetNumberOfPoints() == 0)
   {
 	  vtkPoints *pts = vtkPoints::New();
-	  pts->InsertNextPoint(this->GetInput()->GetCenter());
-    this->GetOutput()->SetPoints(pts);
+	  pts->InsertNextPoint(input->GetCenter());
+    output->SetPoints(pts);
     pts->Delete();
   }
-  this->GetOutput()->GetPointData()->SetNormals(NULL);
+  output->GetPointData()->SetNormals(NULL);
+  return 1;
 }
