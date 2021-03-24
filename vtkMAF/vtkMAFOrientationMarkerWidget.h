@@ -16,14 +16,8 @@
 #ifndef __vtkMAFOrientationMarkerWidget_h
 #define __vtkMAFOrientationMarkerWidget_h
 
-#include "vtkInteractorObserver.h"
+#include "vtkOrientationMarkerWidget.h"
 #include "vtkMAFConfigure.h"
-
-class vtkActor2D;
-class vtkPolyData;
-class vtkProp;
-class vtkMAFOrientationMarkerWidgetObserver;
-class vtkRenderer;
 
 /**
 Classname: vtkOrientationMarkerWidget - 2D widget for manipulating a marker prop
@@ -84,126 +78,15 @@ vtkInteractorObserver vtkXYPlotWidget vtkScalarBarWidget vtkAxesActor
 vtkAnnotatedCubeActor
 
 */
-class VTK_vtkMAF_EXPORT vtkMAFOrientationMarkerWidget : public vtkInteractorObserver
+class VTK_vtkMAF_EXPORT vtkMAFOrientationMarkerWidget : public vtkOrientationMarkerWidget
 {
 public:
   static vtkMAFOrientationMarkerWidget* New();
-  vtkTypeRevisionMacro(vtkMAFOrientationMarkerWidget, vtkInteractorObserver);
-  void PrintSelf(ostream& os, vtkIndent indent);
-
-  
-  /** Set the orientation marker to be displayed in this widget. */
-  virtual void SetOrientationMarker(vtkProp *prop);
-
-  /** Get the orientation marker to be displayed in this widget. */
-  vtkGetObjectMacro(OrientationMarker, vtkProp);
-
-  
-  /** Enable/disable the widget. Default is 0 (disabled). */
-  virtual void SetEnabled(int);
-
-  /** Callback to keep the camera for the orientation marker up to date with the
-  camera in the parent renderer. */
-  void ExecuteCameraUpdateEvent(vtkObject *o, unsigned long event, void *calldata);
-
-  /** Set whether to allow this widget to be interactively moved/scaled.
-  Default is On.*/
-  void SetInteractive(int state);
-  
-  /** Get whether to allow this widget to be interactively moved/scaled.
-  Default is On.*/
-  vtkGetMacro(Interactive, int);
-
-  /** Set/get whether to allow this widget to be interactively moved/scaled.
-  Default is On.*/
-  vtkBooleanMacro(Interactive, int);
-
-  /** Set the color of the outline of this widget.  The outline is visible
-  when (in interactive mode) the cursor is over this widget.
-  Default is white (1,1,1). */
-  void SetOutlineColor(double r, double g, double b);
-  
-  /** Get the color of the outline of this widget.  The outline is visible
-  when (in interactive mode) the cursor is over this widget.
-  Default is white (1,1,1). */  
-  double *GetOutlineColor();
-
-  /** Set the viewport to position/size this widget.
-  Default is bottom left corner (0,0,0.2,0.2). */
-  void SetViewport(double minX, double minY, double maxX, double maxY);
-
-  /** Get the viewport to position/size this widget.
-  Default is bottom left corner (0,0,0.2,0.2). */
-  double* GetViewport();
-
-  /** The tolerance representing the distance to the widget (in pixels)
-  in which the cursor is considered to be on the widget, or on a
-  widget feature (e.g., a corner point or edge). */
-  vtkSetClampMacro(Tolerance,int,1,10);
-
-  /** The tolerance representing the distance to the widget (in pixels)
-  in which the cursor is considered to be on the widget, or on a
-  widget feature (e.g., a corner point or edge). */
-  vtkGetMacro(Tolerance,int);
+  vtkTypeRevisionMacro(vtkMAFOrientationMarkerWidget, vtkOrientationMarkerWidget);
 
 protected:
   vtkMAFOrientationMarkerWidget();
   ~vtkMAFOrientationMarkerWidget();
-
-  vtkRenderer *Renderer;
-  vtkProp     *OrientationMarker;
-  vtkPolyData *Outline;
-  vtkActor2D  *OutlineActor;
-
-  unsigned long StartEventObserverId;
-
-  static void ProcessEvents(vtkObject *object, unsigned long event,
-                            void *clientdata, void *calldata);
-
-  /** ProcessEvents() dispatches to these methods */
-  void OnLeftButtonDown();
-  void OnLeftButtonUp();
-  void OnMouseMove();
-
-  /** observer to update the renderer's camera */
-  vtkMAFOrientationMarkerWidgetObserver *Observer;
-
-  int Interactive;
-  int Tolerance;
-  int Moving;
-
-  /** used to compute relative movements */
-  int StartPosition[2];
-
-  /** Manage the state of the widget */
-  int State;
-  enum WidgetState
-  {
-    Outside = 0,
-    Inside,
-    Translating,
-    AdjustingP1,
-    AdjustingP2,
-    AdjustingP3,
-    AdjustingP4
-  };
-
-  /** use to determine what state the mouse is over, edge1 p1, etc.
-  returns a state from the WidgetState enum above */
-  int ComputeStateBasedOnPosition(int X, int Y, int *pos1, int *pos2);
-
-  /** set the cursor to the correct shape based on State argument */
-  void SetCursor(int state);
-
-  /** adjust the viewport depending on state */
-  void MoveWidget(int X, int Y);
-  void ResizeTopLeft(int X, int Y);
-  void ResizeTopRight(int X, int Y);
-  void ResizeBottomLeft(int X, int Y);
-  void ResizeBottomRight(int X, int Y);
-
-  void SquareRenderer();
-  void UpdateOutline();
 
 private:
   vtkMAFOrientationMarkerWidget(const vtkMAFOrientationMarkerWidget&);  // Not implemented
