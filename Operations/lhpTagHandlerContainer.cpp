@@ -86,7 +86,7 @@ void lhpTagHandler_L0000_resource_DictionaryVersion::HandleAutoTag(lhpTagHandler
   wxString filePattern = dictionaryFileNamePrefix ;
   filePattern.Append("*.xml");
 
-  wxDir::GetAllFiles(wxGetWorkingDirectory(), &files, filePattern, wxDIR_FILES);
+  wxDir::GetAllFiles(wxGetCwd(), &files, filePattern, wxDIR_FILES);
 
   if (files.size() == 0)
   {
@@ -1070,7 +1070,7 @@ void lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Descrip
   wxString filePattern = dictionaryFileNamePrefix ;
   filePattern.Append("*.xml");
 
-  wxDir::GetAllFiles(wxGetWorkingDirectory(), &files, filePattern, wxDIR_FILES);
+  wxDir::GetAllFiles(wxGetCwd(), &files, filePattern, wxDIR_FILES);
 
   if (files.size() == 0)
   {
@@ -1151,7 +1151,7 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Dictionary
   wxString filePattern = dictionaryFileNamePrefix ;
   filePattern.Append("*.xml");
 
-  wxDir::GetAllFiles(wxGetWorkingDirectory(), &files, filePattern, wxDIR_FILES);
+  wxDir::GetAllFiles(wxGetCwd(), &files, filePattern, wxDIR_FILES);
 
   if (files.size() == 0)
   {
@@ -1232,7 +1232,7 @@ void lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryVersio
   wxString filePattern = dictionaryFileNamePrefix ;
   filePattern.Append("*.xml");
 
-  wxDir::GetAllFiles(wxGetWorkingDirectory(), &files, filePattern, wxDIR_FILES);
+  wxDir::GetAllFiles(wxGetCwd(), &files, filePattern, wxDIR_FILES);
 
   if (files.size() == 0)
   {
@@ -1368,7 +1368,7 @@ void lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_Dictio
   wxString filePattern = dictionaryFileNamePrefix ;
   filePattern.Append("*.xml");
 
-  wxDir::GetAllFiles(wxGetWorkingDirectory(), &files, filePattern, wxDIR_FILES);
+  wxDir::GetAllFiles(wxGetCwd(), &files, filePattern, wxDIR_FILES);
 
   if (files.size() == 0)
   {

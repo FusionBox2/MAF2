@@ -1173,7 +1173,7 @@ mafString lhpOpUploadMultiVME::GetXMLDictionaryFileName( mafString dictionaryFil
   wxString filePattern = dictionaryFileNamePrefix ;
   filePattern.Append("*.xml");
 
-  wxDir::GetAllFiles(wxGetWorkingDirectory(), &files, filePattern, wxDIR_FILES);
+  wxDir::GetAllFiles(wxGetCwd(), &files, filePattern, wxDIR_FILES);
   
   if (files.size() != 1)
   {

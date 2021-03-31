@@ -290,7 +290,7 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Label("Output Frequency file: ",true);
 
   mafString wildc = "Frequency File (*.*)|*.*";
-  m_FrequencyFileName = wxGetWorkingDirectory();
+  m_FrequencyFileName = wxGetCwd();
   m_FrequencyFileName +=  "\\" ;
   m_FrequencyFileName +=  m_Input->GetName();
   m_FrequencyFileName +=  "-Freq.txt";
