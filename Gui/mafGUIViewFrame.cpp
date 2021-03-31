@@ -118,7 +118,7 @@ void mafGUIViewFrame::SetView(mafView *view)
    m_ClientWin->Reparent(this);
    m_ClientWin->Show(true);
 
-   SetTitle(wxStripMenuCodes(m_View->GetLabel()));
+   SetTitle(wxStripMenuCodes(m_View->GetLabel().GetCStr()));
 }
 //----------------------------------------------------------------------------
 void mafGUIViewFrame::OnEvent(mafEventBase *maf_event)

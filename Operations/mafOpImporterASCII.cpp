@@ -118,7 +118,7 @@ void mafOpImporterASCII::FillFileList(const char *file_pattern)
 {
   wxArrayString files;
   m_Files.clear();
-  wxDir::GetAllFiles(wxGetWorkingDirectory(), &files, file_pattern);
+  wxDir::GetAllFiles(wxGetCwd(), &files, file_pattern);
   for (int f = 0; f < files.GetCount(); f++)
   {
     m_Files.insert(m_Files.end(), files[f].c_str());
