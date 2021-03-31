@@ -1153,7 +1153,7 @@ wxDockUIPart* wxFrameManager::HitTest(int x, int y)
             continue;
            
         // if the point is inside the rectangle, we have a hit
-        if (item->m_Rect.Inside(x,y))
+        if (item->m_Rect.Contains(x,y))
             result = item;
     }
     
@@ -3110,7 +3110,7 @@ void wxFrameManager::ShowHint(const wxRect& rect)
     // go ahead and use a transparent hint
     
     if ((m_Flags & wxAUI_MGR_TRANSPARENT_HINT) != 0 &&
-        os_type == wxWINDOWS_NT && ver_major >= 5)
+        os_type == wxOS_WINDOWS_NT && ver_major >= 5)
     {
         if (m_LastHint == rect)
             return;

@@ -52,7 +52,7 @@ mafSideBar::mafSideBar(wxWindow* parent, int id, mafBaseEventHandler *Listener, 
   //splitted panel  
   m_Notebook = new wxNotebook(parent,id);
   m_Notebook->SetFont(wxFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT)));
-  m_SideSplittedPanel = new wxSplitterWindow(m_Notebook, -1, wxDefaultPosition, wxSize(-1,-1),/*wxSP_3DSASH |*/ wxSP_FULLSASH);
+  m_SideSplittedPanel = new wxSplitterWindow(m_Notebook, -1, wxDefaultPosition, wxSize(-1,-1),/*wxSP_3DSASH |*/ wxSP_NOBORDER);
 
   //tree ----------------------------
   m_Tree = new mafGUICheckTree(m_SideSplittedPanel,-1,false,true);
@@ -143,7 +143,7 @@ void mafSideBar::ViewSelect(mafView *view)
 	if(view)
 	{
 		wxString s = " ";
-		s += wxStripMenuCodes(view->GetLabel());
+		s += wxStripMenuCodes(view->GetLabel().GetCStr());
 		s += " props:";
 		m_ViewPropertyPanel->SetTitle(s);
 		mafGUI *gui = view->GetGui();

@@ -94,7 +94,7 @@ mafString mafGetOpenFile(const mafString& initial, const mafString& wild, const 
   mafString wildcard=wild;
   wildcard+="|All Files (*.*)|*.*";
  
-	wxFileDialog dialog(parent, title.GetCStr(), path, name, wildcard.GetCStr(), wxOPEN|wxFILE_MUST_EXIST);
+  wxFileDialog dialog(parent, title.GetCStr(), path, name, wildcard.GetCStr(), wxFD_OPEN|wxFD_FILE_MUST_EXIST);
 
   dialog.SetReturnCode(wxID_OK);
 	int result = dialog.ShowModal();
@@ -116,7 +116,7 @@ void mafGetOpenMultiFiles(const mafString& initial, const mafString& wild, std::
   mafString wildcard = wild;
   wildcard += "|All Files (*.*)|*.*";
  
-	wxFileDialog dialog(parent, title.GetCStr(), path, name, wildcard.GetCStr(), wxOPEN|wxFILE_MUST_EXIST|wxMULTIPLE);
+  wxFileDialog dialog(parent, title.GetCStr(), path, name, wildcard.GetCStr(), wxFD_OPEN|wxFD_FILE_MUST_EXIST|wxFD_MULTIPLE);
 
   dialog.SetReturnCode(wxID_OK);
 	int result = dialog.ShowModal();
@@ -141,7 +141,7 @@ mafString mafGetSaveFile(const mafString& initial, const mafString& wild, const 
   mafString defaultname = "newMAFfile";
   wildcard += "|All Files (*.*)|*.*";
   //wxFileDialog dialog(parent,title.GetCStr(), path, name, wildcard.GetCStr(), wxSAVE|wxOVERWRITE_PROMPT|wxHIDE_READONLY);
-  wxFileDialog dialog(parent,title.GetCStr(), initial.GetCStr(), defaultname.GetCStr(), wildcard.GetCStr(), wxSAVE|wxOVERWRITE_PROMPT);
+  wxFileDialog dialog(parent,title.GetCStr(), initial.GetCStr(), defaultname.GetCStr(), wildcard.GetCStr(), wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
   dialog.SetReturnCode(wxID_OK);
 	int result = dialog.ShowModal();
   mafYield(); // wait for the dialog to disappear

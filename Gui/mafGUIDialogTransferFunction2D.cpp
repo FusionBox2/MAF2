@@ -112,7 +112,7 @@ enum TRANSFER_FUNCTION_DIALOG_ID
 
 //----------------------------------------------------------------------------
 mafGUIDialogTransferFunction2D::mafGUIDialogTransferFunction2D() :
-  mafGUIDialog("Choose Transfer Function", wxDIALOG_MODAL | wxCAPTION | wxTHICK_FRAME )
+  mafGUIDialog("Choose Transfer Function", wxCAPTION | wxRESIZE_BORDER )
 //----------------------------------------------------------------------------
 {
 }

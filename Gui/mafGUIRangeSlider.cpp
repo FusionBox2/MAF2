@@ -133,7 +133,6 @@ void mafGUIRangeSlider::OnPaint(wxPaintEvent &event)
 {
   wxPaintDC dc(this);
   PrepareDC(dc);
-  dc.BeginDrawing();
   dc.Clear();
   const wxSize size = this->GetClientSize();
 
@@ -162,7 +161,6 @@ void mafGUIRangeSlider::OnPaint(wxPaintEvent &event)
   dc.DrawCircle(lineX + lineWidth + m_BorderWidgetRadius, lineY, m_BorderWidgetRadius);
 
   this->RedrawWidgets(dc);
-  dc.EndDrawing();
 }
 //----------------------------------------------------------------------------
 void mafGUIRangeSlider::RedrawWidgets(wxDC &dc, bool eraseWidgets) 
@@ -231,13 +229,11 @@ void mafGUIRangeSlider::OnMouse(wxMouseEvent &event)
 
       wxClientDC dc(this);
       PrepareDC(dc);
-      dc.BeginDrawing();
 
       this->RedrawWidgets(dc, true);
       this->m_Value[this->m_SelectedTriangleWidget] = newVal;
 
       this->RedrawWidgets(dc);
-      dc.EndDrawing();
       
       DrawLabel(x,y,this->m_Value[this->m_SelectedTriangleWidget]);
 

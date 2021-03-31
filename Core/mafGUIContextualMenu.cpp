@@ -294,7 +294,7 @@ void mafGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
 			if(result != wxID_OK) return;
 			m_ViewActive->SetName(name);
 			if(name == "")
-        m_ChildViewActive->SetTitle(wxStripMenuCodes(m_ViewActive->GetLabel()));
+        m_ChildViewActive->SetTitle(wxStripMenuCodes(m_ViewActive->GetLabel().GetCStr()));
 			else
 				m_ChildViewActive->SetTitle(name.GetCStr());
 		}
