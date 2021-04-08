@@ -7,6 +7,8 @@
   Version:   $Revision: 1.1.2.1 $
 
 =========================================================================*/
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkImageData.h"
 #include "vtkRectilinearGrid.h"
@@ -128,7 +130,15 @@ void vtkMAFVolumeResample::SetVolumeAxisY(double axis[3]) {
 }
 
 //----------------------------------------------------------------------------
-void vtkMAFVolumeResample::ExecuteInformation() {
+void vtkMAFVolumeResample::RequestInformation(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
+{
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
   for (int i = 0; i < this->GetNumberOfOutputs(); i++) {
     if (vtkImageData::SafeDownCast(this->GetOutput(i))) {
       vtkImageData *output = (vtkImageData*)this->GetOutput(i);
@@ -141,7 +151,7 @@ void vtkMAFVolumeResample::ExecuteInformation() {
       //  dims[2] = 1;
       //  output->SetDimensions(dims);
       //  }
-      output->SetWholeExtent(output->GetExtent());
+      outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),output->GetExtent(,6));
       output->SetUpdateExtentToWholeExtent();
 
       if (this->AutoSpacing) { // select spacing
@@ -184,7 +194,7 @@ void vtkMAFVolumeResample::ExecuteInformation() {
         // find spacing now
         double maxSpacing = max(maxS - minS, maxT - minT);
         spacing[0] = spacing[1] = spacing[3] = max(maxSpacing, 1.e-8f);
-        output->SetSpacing(spacing);
+        outInfo->Set(vtkDataObject::SPACING(),spacing,3);
         if (fabs(minT) > 1.e-3 || fabs(minS) > 1.e-3) {
           this->VolumeOrigin[0] += minT * this->VolumeAxisX[0] * dims[0] + minS * this->VolumeAxisY[0] * dims[1];
           this->VolumeOrigin[1] += minT * this->VolumeAxisX[1] * dims[0] + minS * this->VolumeAxisY[1] * dims[1];
@@ -192,7 +202,7 @@ void vtkMAFVolumeResample::ExecuteInformation() {
           this->Modified();
           }
         }
-      output->SetOrigin(this->VolumeOrigin);
+      outInfo->Set(vtkDataObject::ORIGIN(),this->VolumeOrigin,3);
       }
     else {
       }
@@ -280,7 +290,15 @@ void vtkMAFVolumeResample::PrepareVolume() {
 
 
 //----------------------------------------------------------------------------
-void vtkMAFVolumeResample::ComputeInputUpdateExtents(vtkDataObject *output) {
+void vtkMAFVolumeResample::RequestUpdateExtent(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
+{
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
   vtkDataObject *input = this->GetInput();
   input->SetUpdateExtentToWholeExtent();
   }

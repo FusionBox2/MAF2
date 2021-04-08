@@ -32,7 +32,7 @@
 #define __vtkMAFVolumeSlicer_h
 
 #include "vtkMAFConfigure.h"
-#include "vtkDataSetToDataSetFilter.h"
+#include "vtkDataSetAlgorithm.h"
 #include "vtkImageData.h"
 #include "vtkPolyData.h"
 
@@ -42,10 +42,10 @@
 class vtkRectilinearGrid;
 class vtkLinearTransform;
 
-class VTK_vtkMAF_EXPORT vtkMAFVolumeSlicer : public vtkDataSetToDataSetFilter {
+class VTK_vtkMAF_EXPORT vtkMAFVolumeSlicer : public vtkDataSetAlgorithm {
 public:
   static vtkMAFVolumeSlicer *New();
-  vtkTypeRevisionMacro(vtkMAFVolumeSlicer, vtkDataSetToDataSetFilter);
+  vtkTypeRevisionMacro(vtkMAFVolumeSlicer, vtkDataSetAlgorithm);
 
   /**
   Specify a point defining the origin of the plane.*/
@@ -107,14 +107,14 @@ protected:
 
   unsigned long int GetMTime();
 
-  void ExecuteInformation();
+  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
   void ExecuteData(vtkDataObject *output);
   
   // different implementations for polydata and imagedata
   void ExecuteData(vtkPolyData *output);
   void ExecuteData(vtkImageData *output);
 
-  void ComputeInputUpdateExtents(vtkDataObject *output);
+  int RequestUpdateExtent(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
   void PrepareVolume();
   void CalculateTextureCoordinates(const float point[3], const int size[2], const double spacing[2], float ts[2]);

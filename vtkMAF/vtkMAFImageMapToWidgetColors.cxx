@@ -7,6 +7,8 @@
   Version:   $Revision: 1.2 $
 
 =========================================================================*/
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkImageData.h"
 #include "vtkPointData.h"
@@ -155,10 +157,17 @@ unsigned long vtkMAFImageMapToWidgetColors::GetMTime()
 }
 
 //----------------------------------------------------------------------------
-void vtkMAFImageMapToWidgetColors::ExecuteInformation(vtkImageData *inData, vtkImageData *outData) 
+void vtkMAFImageMapToWidgetColors::RequestInformation(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
-  outData->SetScalarType(VTK_UNSIGNED_CHAR);
-  outData->SetNumberOfScalarComponents(3);
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
+  outInfo->Set(vtkDataObject::SCALAR_TYPE(),VTK_UNSIGNED_CHAR);
+  outInfo->Set(vtkDataObject::SCALAR_NUMBER_OF_COMPONENTS(),3);
 }
 
 //----------------------------------------------------------------------------
@@ -192,8 +201,21 @@ void vtkMAFImageMapToWidgetColors::ThreadedExecute(vtkImageData *inData, vtkImag
 
 //----------------------------------------------------------------------------
 // This non-templated function executes the filter for any type of data.
-template<class T> void vtkMAFImageMapToWidgetColors::Execute(vtkImageData *inData,  T *inPtr, vtkImageData *outData, unsigned char *outPtr, int outExt[6]) 
+template<class T> void vtkMAFImageMapToWidgetColors::RequestData(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
+  // get the input and output
+  vtkStructuredGrid *input = vtkStructuredGrid::SafeDownCast(
+    inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkStructuredGrid *output = vtkStructuredGrid::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
   // color mapping
   const double shift = this->Window / 2.0 - this->Level;
   const double scale = 255.0 / this->Window;

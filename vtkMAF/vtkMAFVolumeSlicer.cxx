@@ -10,6 +10,8 @@
 
 #include "vtkMAFVolumeSlicer.h"
 
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkRectilinearGrid.h"
 #include "vtkCellArray.h"
@@ -143,9 +145,15 @@ unsigned long int vtkMAFVolumeSlicer::GetMTime()
   return time;
 }
 //----------------------------------------------------------------------------
-void vtkMAFVolumeSlicer::ExecuteInformation() 
-//----------------------------------------------------------------------------
+void vtkMAFVolumeSlicer::RequestInformation(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
   if (GetInput()==NULL)
     return;
   for (int i = 0; i < this->GetNumberOfOutputs(); i++) 
@@ -161,7 +169,7 @@ void vtkMAFVolumeSlicer::ExecuteInformation()
         dims[2] = 1;
         output->SetDimensions(dims);
       }
-      output->SetWholeExtent(output->GetExtent());
+      outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),output->GetExtent(,6));
       output->SetUpdateExtentToWholeExtent();
 
       if (this->AutoSpacing) 
@@ -221,7 +229,7 @@ void vtkMAFVolumeSlicer::ExecuteInformation()
         // find spacing now
         float maxSpacing = max(maxS - minS, maxT - minT);
         spacing[0] = spacing[1] = max(maxSpacing, 1.e-8f);
-        output->SetSpacing(spacing);
+        outInfo->Set(vtkDataObject::SPACING(),spacing,3);
 
         // http://bugzilla.hpc.cineca.it/show_bug.cgi?id=1180
         // Totally heuristic bug fix: magicNumber was 1.e-3 before.
@@ -234,7 +242,7 @@ void vtkMAFVolumeSlicer::ExecuteInformation()
           this->Modified();
         }
       }
-      output->SetOrigin(this->GlobalPlaneOrigin);
+      outInfo->Set(vtkDataObject::ORIGIN(),this->GlobalPlaneOrigin,3);
     }
     else 
     {
@@ -334,9 +342,15 @@ void vtkMAFVolumeSlicer::PrepareVolume()
   this->PreprocessingTime.Modified();
 }
 //----------------------------------------------------------------------------
-void vtkMAFVolumeSlicer::ComputeInputUpdateExtents(vtkDataObject *output) 
-//----------------------------------------------------------------------------
+void vtkMAFVolumeSlicer::RequestUpdateExtent(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
   vtkDataObject *input = this->GetInput();
   input->SetUpdateExtentToWholeExtent();
 }

@@ -8,7 +8,10 @@
 
 =========================================================================*/
 
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkImageData.h"
 #include "vtkRectilinearGrid.h"
 #include "vtkPolyData.h"
@@ -93,14 +96,34 @@ unsigned long int vtkMAFDistanceFilter::GetMTime()
 }
 
 //----------------------------------------------------------------------------
-void vtkMAFDistanceFilter::ComputeInputUpdateExtents(vtkDataObject *output) {
+void vtkMAFDistanceFilter::RequestUpdateExtent(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
+{
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
   vtkDataObject *source = this->GetSource();
   if (source)
     source->SetUpdateExtentToWholeExtent();
   }
 
 //----------------------------------------------------------------------------
-void vtkMAFDistanceFilter::ExecuteInformation() {
+void vtkMAFDistanceFilter::RequestInformation(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
+{
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
+  // get the info objects
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+
   }
 
 

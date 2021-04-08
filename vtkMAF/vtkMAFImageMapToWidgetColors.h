@@ -73,8 +73,8 @@ protected:
   vtkMAFImageMapToWidgetColors();
   ~vtkMAFImageMapToWidgetColors();
 
-  void ExecuteInformation(vtkImageData *inData, vtkImageData *outData);
-  void ExecuteInformation(){this->vtkImageMapToColors::ExecuteInformation();};
+  void ExecuteInformation (vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *){this->vtkImageMapToColors::ExecuteInformation (vtkInformation *, vtkInformationVector **, vtkInformationVector *);};
   void ThreadedExecute(vtkImageData *inData, vtkImageData *outData,
                        int extent[6], int id);
   void ExecuteData(vtkDataObject *output);

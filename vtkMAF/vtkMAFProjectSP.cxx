@@ -40,6 +40,8 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 =========================================================================*/
 #include "vtkMAFProjectSP.h"
 //#include "vtkMath2.h"
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkStructuredPoints.h"
 #include "vtkPointData.h"
@@ -57,9 +59,15 @@ vtkMAFProjectSP::vtkMAFProjectSP()
 }
 
 //=========================================================================
-void vtkMAFProjectSP::ExecuteInformation()
-//=========================================================================
+void vtkMAFProjectSP::RequestInformation(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
   vtkImageData *input=this->GetInput();
   vtkStructuredPoints *output=this->GetOutput();
   int dims[3], outDims[3], wholeExtent[6];
@@ -69,14 +77,15 @@ void vtkMAFProjectSP::ExecuteInformation()
     vtkErrorMacro("Missing input");
     return;
     }
-  this->vtkStructuredPointsToStructuredPointsFilter::ExecuteInformation();
+  this->vtkStructuredPointsToStructuredPointsFilter::RequestInformation(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
+{
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
-  input->GetWholeExtent( wholeExtent );
-  dims[0] = wholeExtent[1] - wholeExtent[0] + 1;
-  dims[1] = wholeExtent[3] - wholeExtent[2] + 1;
-  dims[2] = wholeExtent[5] - wholeExtent[4] + 1;
-  
-  switch (this->ProjectionMode) {
   case VTK_PROJECT_FROM_X:
     outDims[0] = dims[1];
     outDims[1] = dims[2];
@@ -101,7 +110,7 @@ void vtkMAFProjectSP::ExecuteInformation()
   wholeExtent[5] = outDims[2] - 1;
   
   
-  output->SetWholeExtent( wholeExtent );
+  outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), wholeExtent ,6);
   output->SetUpdateExtent( wholeExtent );   // cosi funziona - Silvano & Robez
 
 
@@ -109,9 +118,21 @@ void vtkMAFProjectSP::ExecuteInformation()
 }
 
 //=========================================================================
-void vtkMAFProjectSP::Execute()
-//=========================================================================
+void vtkMAFProjectSP::RequestData(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
+  // get the input and output
+  vtkStructuredGrid *input = vtkStructuredGrid::SafeDownCast(
+    inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkStructuredGrid *output = vtkStructuredGrid::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
   int dims[3], outDims[3];
   double origin[3], ar[3], outOrigin[3]={0.0,0.0,0.0}, outAR[3];
 
@@ -159,11 +180,11 @@ void vtkMAFProjectSP::Execute()
     outAR[2] = 1;
   }
   
-  output->SetScalarType(input->GetScalarType());
-  output->SetNumberOfScalarComponents(input->GetNumberOfScalarComponents());
+  outInfo->Set(vtkDataObject::SCALAR_TYPE(),input->GetScalarType());
+  outInfo->Set(vtkDataObject::SCALAR_NUMBER_OF_COMPONENTS(),input->GetNumberOfScalarComponents());
   output->SetDimensions(outDims);
-  output->SetSpacing(outAR);
-  output->SetOrigin(outOrigin);
+  outInfo->Set(vtkDataObject::SPACING(),outAR,3);
+  outInfo->Set(vtkDataObject::ORIGIN(),outOrigin,3);
   
   vtkDebugMacro( <<"Output Dimension are " << outDims[0] << " " << outDims[1] << " " << outDims[2] );
 

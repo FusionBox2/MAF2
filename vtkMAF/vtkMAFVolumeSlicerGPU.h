@@ -32,7 +32,7 @@
 #define __vtkMAFVolumeSlicer_h
 
 #include "vtkMAFConfigure.h"
-#include "vtkDataSetToDataSetFilter.h"
+#include "vtkDataSetAlgorithm.h"
 #include "vtkImageData.h"
 #include "vtkPolyData.h"
 
@@ -51,10 +51,10 @@ class mafGPUOGL;
 #endif
 
 
-class VTK_vtkMAF_EXPORT vtkMAFVolumeSlicer : public vtkDataSetToDataSetFilter {
+class VTK_vtkMAF_EXPORT vtkMAFVolumeSlicer : public vtkDataSetAlgorithm {
 public:
   static vtkMAFVolumeSlicer *New();
-  vtkTypeRevisionMacro(vtkMAFVolumeSlicer, vtkDataSetToDataSetFilter);
+  vtkTypeRevisionMacro(vtkMAFVolumeSlicer, vtkDataSetAlgorithm);
 
 #pragma region Attributes
   /**
@@ -135,12 +135,12 @@ protected:
   /*virtual*/ unsigned long int GetMTime();
 
   /** By default copy the output update extent to the input. */
-  /*virtual*/ void ComputeInputUpdateExtents(vtkDataObject *output);
+  /*virtual*/ int RequestUpdateExtent(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
   /** 
   By default, UpdateInformation calls this method to copy information
   unmodified from the input to the output.*/
-  /*virtual*/void ExecuteInformation();
+  /*virtual*/int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
   /**
   This method is the one that should be used by subclasses, right now the 

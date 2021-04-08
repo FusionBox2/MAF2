@@ -16,6 +16,8 @@
   under MAF (www.openmaf.org)
 
 =========================================================================*/
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
 #include "vtkMAFCellsFilter.h"
@@ -97,14 +99,27 @@ void vtkMAFCellsFilter::SetMarkedOpacity(double opacity)
 
 // Description:
 // Perform cell removal
-void vtkMAFCellsFilter::Execute()
+void vtkMAFCellsFilter::RequestData(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
+  // get the input and output
+  vtkStructuredGrid *input = vtkStructuredGrid::SafeDownCast(
+    inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkStructuredGrid *output = vtkStructuredGrid::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
   if (!this->IsInitialized)
     {
     this->Initialize();
     }
     
-  vtkPolyData *input = this->GetInput();
+  vtkPolyData *input =(vtkPolyData *) (this->GetInput());
   vtkPolyData *output = this->GetOutput();
   
   // num of cells that will be in the output
@@ -133,9 +148,12 @@ void vtkMAFCellsFilter::Initialize()
   
   // This also gets around the problem when the user is in the event
   // loop but some filter has been modified upstream, changing the data.
-  this->GetInput()->Update();
+
+
+    this->Update();
+    //this->GetInput()->Update();
   
-  vtkIdType numCells = this->GetInput()->GetNumberOfCells();
+  vtkIdType numCells = ((vtkPolyData*)(this->GetInput()))->GetNumberOfCells();
   this->CellIdList->SetNumberOfIds(numCells);
   
   for (vtkIdType i=0; i < numCells; i++)

@@ -11,6 +11,8 @@
 
 #include "vtkMAFPolyDataSingleSourceShortestPath.h"
 #include "vtkFloatArray.h"
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkMath.h"
 #include "vtkIdList.h"
@@ -72,8 +74,21 @@ unsigned long vtkMAFPolyDataSingleSourceShortestPath::GetMTime()
 	return mTime;
 }
 
-void vtkMAFPolyDataSingleSourceShortestPath::Execute()
+void vtkMAFPolyDataSingleSourceShortestPath::RequestData(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
+  // get the input and output
+  vtkPointSet *input = vtkPointSet::SafeDownCast(
+    inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkPointSet *output = vtkPointSet::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
 	vtkPolyData *input = this->GetInput();
 	vtkPolyData *output = this->GetOutput();
 	

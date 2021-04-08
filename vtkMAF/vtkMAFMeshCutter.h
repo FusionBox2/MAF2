@@ -98,7 +98,7 @@ protected:
   vtkMAFMeshCutter() ;                                                              ///< constructor
   ~vtkMAFMeshCutter() ;                                                             ///< destructor
 
-  void Execute();                                                               ///< execute method
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);                                                               ///< execute method
 
 
   // edge described by id's of endpoints

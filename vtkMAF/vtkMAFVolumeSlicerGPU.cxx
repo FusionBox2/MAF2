@@ -20,6 +20,8 @@
 #endif
 
 #include "vtkMAFVolumeSlicer.h"
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkRectilinearGrid.h"
 #include "vtkCellArray.h"
@@ -187,9 +189,15 @@ void vtkMAFVolumeSlicer::SetPlaneOrigin(double x, double y, double z)
 
 //----------------------------------------------------------------------------
 //By default copy the output update extent to the input.
-void vtkMAFVolumeSlicer::ComputeInputUpdateExtents(vtkDataObject *output) 
-//----------------------------------------------------------------------------
+void vtkMAFVolumeSlicer::RequestUpdateExtent(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
   vtkDataObject *input = this->GetInput();
   input->SetUpdateExtentToWholeExtent();
 }
@@ -197,9 +205,15 @@ void vtkMAFVolumeSlicer::ComputeInputUpdateExtents(vtkDataObject *output)
 //----------------------------------------------------------------------------
 //By default, UpdateInformation calls this method to copy information
 //unmodified from the input to the output.
-/*virtual*/ void vtkMAFVolumeSlicer::ExecuteInformation() 
-//----------------------------------------------------------------------------
+/*virtual*/ void vtkMAFVolumeSlicer::RequestInformation(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
   vtkDataSet* input;
   if ((input = GetInput()) == NULL || this->GetNumberOfOutputs() == 0)
     return; //nothing to cut, or we have no output -> exit
@@ -290,7 +304,7 @@ void vtkMAFVolumeSlicer::ComputeInputUpdateExtents(vtkDataObject *output)
         dims[2] = 1;  //force it to be 2D
         output->SetDimensions(dims);
       }
-      output->SetWholeExtent(output->GetExtent());
+      outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),output->GetExtent(,6));
       output->SetUpdateExtentToWholeExtent();
 
 
@@ -357,13 +371,13 @@ void vtkMAFVolumeSlicer::ComputeInputUpdateExtents(vtkDataObject *output)
         //RELEASE NOTE: we have 3 numberOfPoints if the plane cuts or touches one corner. The latter one
         //is not considered to be an intersection, however, it is a singular case that we will not distinguish
         if (m_bNoIntersection = (numberOfPoints <= 2))
-          output->SetSpacing(spacing);  //spacing will be 1:1:1
+          outInfo->Set(vtkDataObject::SPACING(),spacing,3);  //spacing will be 1:1:1
         else
         {
           // find spacing now
           float maxSpacing = max(maxS - minS, maxT - minT);
           spacing[0] = spacing[1] = max(maxSpacing, 1.e-8f);
-          output->SetSpacing(spacing);
+          outInfo->Set(vtkDataObject::SPACING(),spacing,3);
           if (fabs(minT) > 1.e-3 || fabs(minS) > 1.e-3) 
           {
             this->GlobalPlaneOrigin[0] += minT * this->GlobalPlaneAxisX[0] * dims[0] + minS * this->GlobalPlaneAxisY[0] * dims[1];
@@ -375,7 +389,7 @@ void vtkMAFVolumeSlicer::ComputeInputUpdateExtents(vtkDataObject *output)
       }
 
       //if !AutoSpacing, we will use the original spacing used there
-      output->SetOrigin(this->GlobalPlaneOrigin);
+      outInfo->Set(vtkDataObject::ORIGIN(),this->GlobalPlaneOrigin,3);
     }
   }
 }

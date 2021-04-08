@@ -49,7 +49,7 @@ void vtkMAFImplicitPolyData::SetInput(vtkPolyData *input)
 		  this->Tri->PassVertsOff();
 		  this->Tri->PassLinesOff();
     }
-	  this->Tri->SetInput( input );
+	  this->Tri->SetInputData( input );
     this->Tri->Update();
 
     this->Input = this->Tri->GetOutput();
@@ -80,7 +80,8 @@ unsigned long vtkMAFImplicitPolyData::GetMTime()
 
   if ( this->Input != NULL )
   {
-    this->Input->Update ();
+      
+   // this->Input->Update ();
     inputMTime = this->Input->GetMTime();
     mTime = ( inputMTime > mTime ? inputMTime : mTime );
   }
