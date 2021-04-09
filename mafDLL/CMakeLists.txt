@@ -706,6 +706,8 @@ IF (MAF_USE_VTK)
     ../VME/mafVMESurfaceParametric.h
     ../VME/mafVMEEllipsoid.cpp
     ../VME/mafVMEEllipsoid.h
+    ../VME/mafVMECenterLine.cpp
+    ../VME/mafVMECenterLine.h
     ../VME/mafVMELineSeg.cpp
     ../VME/mafVMELineSeg.h
     ../VME/mafQuadraticSurface.cpp

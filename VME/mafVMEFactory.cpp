@@ -49,6 +49,7 @@
 #include "mafVMEHyperboloid2S.h"
 #include "mafVMEPlane.h"
 #include "mafVMEGravityLine.h"
+#include "mafVMECenterLine.h"
 #include "mafVMEOsteometricBoard.h"
 #include "mafVMERoot.h"
 
@@ -160,6 +161,7 @@ mafVMEFactory::mafVMEFactory()
   mafPlugNodeMacro(mafVMEHyperboloid2S, "VME representing Hyperboloid2S");
   mafPlugNodeMacro(mafVMELineSeg, "VME representing LineSeg");
   mafPlugNodeMacro(mafVMEMuscleWrapping, "VME representing Muscle Wrapping");
+  mafPlugNodeMacro(mafVMECenterLine, "VME representing CenterLine");
 #ifdef MAF_USE_ITK
   mafPlugNodeMacro(mafVMEScalarMatrix,"VME representing time varying scalar values");
 #endif

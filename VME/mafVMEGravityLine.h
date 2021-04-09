@@ -71,25 +71,7 @@ public:
 	void SetSurfaceName(mafVMESurface* ,mafString);
 	//void SetPlane(mafVMEPlane*, mafString a);
   virtual void Update();
-  /** Set the geometry type to be generated: use PARAMETRIC_SURFACE_TYPE_ID as arg*/
-//  void SetGeometryType(int parametricSurfaceTypeID);
-
-  /** Return the type of the parametric object.*/
-//  int GetGeometryType(){return m_GeometryType;};
-
-  /** Set the radius for the parametric sphere.*/
-
-
-  /** Return the radius of the parametric sphere.*/
-//  double GetSphereRadius() {return m_SphereRadius;};
-
-  /** Return the radius of the parametric cylinder.*/
-//  double GetCylinderRadius() {return m_CylinderRadius;};
-
-  /** Return the cylinder orientation axis.*/
-//  int GetCylinderAxis() {return m_CylinderOrientationAxis;};
-
-  /** Copy the contents of another mafVMESurfaceParametric into this one. */
+ 
   virtual int DeepCopy(mafNode *a);
 
   /** Compare with another mafVMESurfaceParametric. */
@@ -101,8 +83,6 @@ public:
   mafVMEOutputPolyline *GetPolylineOutput();
  
 
-  /** return always false since (currently) the slicer is not an animated VME (position 
-  is the same for all timestamps). */
   virtual bool IsAnimated();
 
   /** Return the suggested pipe-typename for the visualization of this vme */

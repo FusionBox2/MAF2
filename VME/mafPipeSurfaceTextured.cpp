@@ -52,6 +52,7 @@
 #include "vtkTexture.h"
 #include "mafLODActor.h"
 #include "vtkRenderer.h"
+#include "vtkCleanPolyData.h"
 #include "vtkLookupTable.h"
 #include "vtkActor.h"
 #include "vtkVRMLExporter.h"
@@ -673,7 +674,12 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 								  
 								  mafVMEOutputSurface *data = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
 								  data->Update();
-								  
+
+								  vtkPolyData* datachild = vtkPolyData::SafeDownCast(data->GetVTKData());
+								  //assert(data);
+								  datachild->Update();
+								 
+							
 								//  vtkMAFSmartPointer<vtkTriangleFilter>triangles;
 								//  vtkMAFSmartPointer<vtkTransformPolyDataFilter> v_tpdf;
 								//  triangles->SetInput(data->GetSurfaceData());
@@ -693,8 +699,24 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 								 // actor->SetMapper(mapper);
 								  m_Actor->SetUserTransform(data->GetAbsTransform()->GetVTKTransform());
 								 // actor->SetTexture(m_Texture);
+
+								  vtkCleanPolyData* vtkCleaner = vtkCleanPolyData::New();
+								  vtkCleaner->SetInput(datachild);
+								  vtkCleaner->SetTolerance(0.0);
+								  vtkCleaner->ConvertStripsToPolysOn();
+								  vtkCleaner->ConvertPolysToLinesOn();
+								  vtkCleaner->PointMergingOn();
+								  vtkCleaner->Update();
+								  ;
+								  vtkPolyDataMapper* mapperchild = vtkPolyDataMapper::New();
+								  vtkActor* actorchild = vtkActor::New();
+								  mapperchild->SetInput(vtkCleaner->GetOutput());
+								  actorchild->SetMapper(mapperchild);
+
+								 
+
 								  vtkRenderer* renderer = vtkRenderer::New();
-								  renderer->AddActor(m_Actor);
+								  renderer->AddActor(actorchild);
 								  
 								  vtkRenderWindow* renderWindow = vtkRenderWindow::New();
 								  renderWindow->AddRenderer(renderer);
@@ -706,7 +728,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 								  wxBusyInfo wait523(m_File.GetCStr());
 								  
 								  Sleep(1500);
-
+								  
 
 								  vtkMAFSmartPointer<vtkOBJExporter> writer;
 								  writer->SetRenderWindow(renderWindow);

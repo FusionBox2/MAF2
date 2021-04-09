@@ -35,11 +35,9 @@
 #include <fstream>
 #include "mafVMEPlane.h"
 #include "mafVMESurface.h"
-#include "../../Eigen/Eigen/Dense"
-#include <vector>
-//#include "../../Eigen/unsupported/Eigen/CXX11/Tensor"
 
-//#include "../QuadricSurfaces/vtkContentActor.hpp"
+#include <vector>
+
 using namespace Eigen;
 //----------------------------------------------------------------------------
 // forward declarations :
@@ -77,17 +75,16 @@ struct ellipse_struct
 
 };
 
-/** mafVMESurfaceParametric - this class represents a parametric surface that is a specific geometry.
-currently generated geometries are: cylinder, sphere, cube, cone and plane.
-*/
+
 class MAF_EXPORT mafVMECenterLine : public mafVME
 {
 public:
 
 	mafTypeMacro(mafVMECenterLine, mafVME);
     
-  ellipse_struct* fitellipse(Eigen::MatrixX3d);
-  Eigen::Matrix3d principalAxes(int, std::vector<std::vector<double>>& vertex, double, double, std::vector<std::vector<double>>& Cross_Sec_PGD_LCS);
+  ellipse_struct* fitellipse(Eigen::MatrixX3d,int ,int);
+  Eigen::Matrix3d principalAxesLCSRib(int, std::vector<std::vector<double>>& vertex, double, double, std::vector<std::vector<double>>& Cross_Sec_PGD_LCS,Eigen::Vector3d);
+  Eigen::Matrix3d principalAxesLCS(int, std::vector<std::vector<double>>& vertex, double, double, std::vector<std::vector<double>>& Cross_Sec_PGD_LCS);
   virtual void Update();
   Eigen::Matrix3d theta2r(Eigen::Vector3d);
 
@@ -96,23 +93,7 @@ public:
 
   double Max_Eigen_v(int N,int NDIM, Eigen::Matrix3d A, double EPS);
   int sign(double);
-  /** Set the geometry type to be generated: use PARAMETRIC_SURFACE_TYPE_ID as arg*/
-//  void SetGeometryType(int parametricSurfaceTypeID);
-
-  /** Return the type of the parametric object.*/
-//  int GetGeometryType(){return m_GeometryType;};
-
-  /** Set the radius for the parametric sphere.*/
-
-
-  /** Return the radius of the parametric sphere.*/
-//  double GetSphereRadius() {return m_SphereRadius;};
-
-  /** Return the radius of the parametric cylinder.*/
-//  double GetCylinderRadius() {return m_CylinderRadius;};
-
-  /** Return the cylinder orientation axis.*/
-//  int GetCylinderAxis() {return m_CylinderOrientationAxis;};
+ 
 
   /** Copy the contents of another mafVMESurfaceParametric into this one. */
   virtual int DeepCopy(mafNode *a);
@@ -137,7 +118,7 @@ public:
   mmaMaterial *GetMaterial();
 
   /** return an xpm-icon that can be used to represent this node */
-  //static char ** GetIcon();
+ // static char ** GetIcon();
 	
   /** Precess events coming from other objects */ 
   virtual void OnEvent(mafEventBase *maf_event);
@@ -155,9 +136,7 @@ public:
 
   virtual void SetMatrix(const mafMatrix &mat);
   virtual void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes);
-  /*
-  Fit an ellipsoid to a set of points
-  */
+
   mafVMECenterLine();
   virtual ~mafVMECenterLine();
 protected:
@@ -169,14 +148,17 @@ protected:
 
 //	CHANGE_VALUE_POINTS1,
 	ID_LAST,
-
+	CHANGE_VALUE_CenterLine,
 	ID_Surface_LINK
   };
 
   void SetInputPointsCloud(vtkPoints *);
-
-  /** this function uses PARAMETRIC_SURFACE_TYPE_ID as argument*/
-  //void EnableQuadricSurfaceGui(int surfaceTypeID);
+  mafVMELandmarkCloud	*m_CloudPath1;
+  double Delt_1 = 5;///5
+  double Mult_01 = 0.05;
+  double	D_1mm = 1.5;
+  double	D_50mm = 25;
+  double	Fi_stp_5 =  3;
 
 	virtual int InternalStore(mafStorageElement *parent);
 	virtual int InternalRestore(mafStorageElement *node);

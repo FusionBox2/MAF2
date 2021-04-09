@@ -28,7 +28,7 @@ class MAF_EXPORT mafVMEEllipsoid : public mafQuadraticSurface
 {
 public:
 
-	mafTypeMacro(mafVMEEllipsoid, mafQuadraticSurface, mafVME);
+	mafTypeMacro(mafVMEEllipsoid, mafQuadraticSurface , mafVME);
 
 protected:
 
@@ -43,7 +43,7 @@ private:
 	//mafVMELandmarkCloud	*m_Cloud2;
 	virtual void InternalUpdate();
 	void UpdateLinks();
-	int initvme = 0;
+	//int initvme = 0;
 	mafVME *center_vme;
 	void SetTimeStamp(mafTimeStamp t);
 	//double centerTemp[3];

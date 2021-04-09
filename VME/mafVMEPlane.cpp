@@ -411,8 +411,9 @@ void mafVMEPlane::push(double t)
 mafGUI* mafVMEPlane::CreateGui()
 //-------------------------------------------------------------------------
 {
-
-	m_Gui = new mafGUI(this);
+	m_Gui = mafVME::CreateGui();
+	m_Gui->Label("Plane Gui");
+	
 
 	m_Gui->Double(CHANGE_VALUE_PLANE, _("Ux"), &m_PlaneXRes);
 	m_Gui->Double(CHANGE_VALUE_PLANE, _("Uy"), &m_PlaneYRes);
