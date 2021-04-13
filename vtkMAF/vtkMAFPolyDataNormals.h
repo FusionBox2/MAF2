@@ -43,8 +43,8 @@ protected:
 protected:
   vtkMAFPolyDataNormals();
 	
-	//this is update method to avoid recalculation of things
-	/*virtual*/ void UpdateData(vtkDataObject *outputo);
+  // Usual data generation method
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*);
 
 private:
   vtkMAFPolyDataNormals(const vtkMAFPolyDataNormals&);  // Not implemented.
