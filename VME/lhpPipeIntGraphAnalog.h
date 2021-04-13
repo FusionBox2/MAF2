@@ -61,6 +61,8 @@ public:
   virtual const char   *GetVarTitle(int i) const;
   virtual const char   *GetVarUnit(int i) const;
   virtual double       GetVarDerivativeCoef(int i) const;
+  virtual std::istream& operator>>(std::istream& is);
+  virtual std::ostream& operator<<(std::ostream& os) const;
 
 protected:
   virtual void GrabData();

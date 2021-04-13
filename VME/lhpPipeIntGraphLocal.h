@@ -71,15 +71,19 @@ public:
   virtual const char   *GetVarTitle(int i) const;
   virtual const char   *GetVarUnit(int i) const;
   virtual double       GetVarDerivativeCoef(int i) const;
+  virtual std::istream& operator>>(std::istream& is);
+  virtual std::ostream& operator<<(std::ostream& os) const;
 
   /** Answer events coming from the Gui and from cloud */
   void OnEvent(mafEventBase *maf_event);
+
+  mafVME *GetProximal()const{ return m_Proximal; }
+  void SetProximal(mafVME *proximal);
 
 protected:
   /** Create the Gui for the visual pipe that allow the user to change the pipe's parameters.*/
   virtual mafGUI *CreateGui();
   virtual bool StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTimeStamp prevts);
-  void SetProximal(mafVME *proximal);
   mafVME *m_Proximal;
   mafString m_ProximalName;
 };

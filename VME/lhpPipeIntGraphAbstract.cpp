@@ -76,7 +76,7 @@ mafGUI *lhpPipeIntGraphAbstract::CreateGui()
   assert(m_Gui == NULL);
   m_Gui = new mafGUI(this);
 
-  //m_Gui->Bool(ID_WHOLE_RANGE, _("Whole range"), &m_WholeRange);
+  m_Gui->Bool(ID_WHOLE_RANGE, _L("Whole range"), &m_WholeRange);
   return m_Gui;
 }
 
@@ -128,9 +128,8 @@ void lhpPipeIntGraphAbstract::SetSmoothParam(double param)
   mafEventMacro(mafEvent(this,CAMERA_UPDATE));
 }
 
-
 //----------------------------------------------------------------------------
-void lhpPipeIntGraphAbstract::loadPlotInfo()
+std::istream& lhpPipeIntGraphAbstract::operator>>(std::istream& is)
 //----------------------------------------------------------------------------
 {
   //mafTagItem        Tag;
@@ -139,7 +138,7 @@ void lhpPipeIntGraphAbstract::loadPlotInfo()
   //wxInt32           nValue;
   //unsigned int      der;
 
-  return;
+  return is;
 /*
   //if(!vme->GetTagArray()->IsTagPresent(mafINTG_SAVEINFO_TAG))
   {
@@ -177,7 +176,7 @@ void lhpPipeIntGraphAbstract::loadPlotInfo()
   }*/
 }
 //----------------------------------------------------------------------------
-void lhpPipeIntGraphAbstract::savePlotInfo()
+std::ostream& lhpPipeIntGraphAbstract::operator<<(std::ostream& os) const
 //----------------------------------------------------------------------------
 {/*
   mafTagItem        *pTag = NULL;
@@ -255,4 +254,5 @@ void lhpPipeIntGraphAbstract::savePlotInfo()
     free(const_cast<char *>(pEntries[nI]));
   }
   free(pEntries);*/
+  return os;
 }

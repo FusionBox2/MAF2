@@ -161,6 +161,11 @@ SET(PROJECT_SRCS
 	lhpOpExporterC3DBTK.cpp
 	lhpOpExporterC3DBTK.h
 
+	lhpOpExporterCSVGraph.cpp
+	lhpOpExporterCSVGraph.h
+	lhpOpImporterC3DFused.cpp
+	lhpOpImporterC3DFused.h
+
 	lhpOpICPRegFollow.cpp
 	lhpOpICPRegFollow.h
 	lhpOpImporterRSScan.cpp

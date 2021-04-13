@@ -109,8 +109,6 @@ void lhpOpFuseLMScripted::OpRun()
   m_Source = (mafVMELandmarkCloud*)m_Input;
   m_SourceName = m_Input->GetName();
   
-  mafString wildcard = _R("Dictionary (*.txt)|*.txt|All Files (*.*)|*.*");
-
   m_Gui = new mafGUI(this);
   m_Gui->SetListener(this);
   

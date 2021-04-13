@@ -34,19 +34,16 @@ mafCxxTypeMacro(lhpPipeIntGraphFixed);
 
 const char *lhpPipeIntGraphFixed::GetVarTitle(int i) const
 {
-  wxASSERT(false);
   return "";
 }
 
 const char *lhpPipeIntGraphFixed::GetVarUnit(int i)const
 {
-  wxASSERT(false);
   return "";
 }
 
 double lhpPipeIntGraphFixed::GetVarDerivativeCoef(int i)const
 {
-  wxASSERT(false);
   return 1.0;
 }
 
@@ -141,6 +138,32 @@ void lhpPipeIntGraphFixed::UpdateGUIChecks()
     mafGUICheckListBox *lst = (m_Graph->GetYDeriv(i) == 0) ? m_CheckBoxYval : m_CheckBoxYder;
     lst->CheckItem(id, true);
   }
+}
+std::istream& lhpPipeIntGraphFixed::operator>>(std::istream& is)
+{
+  unsigned dim;
+  is >> dim;
+  for (unsigned i = 0; i < dim; ++i)
+  {
+    int id;
+    unsigned yd;
+    is >> id >> yd;
+    m_Graph->AddYVar(id, yd);
+  }
+  if (m_Gui)
+    UpdateGUIChecks();
+  return is;
+}
+std::ostream& lhpPipeIntGraphFixed::operator<<(std::ostream& os) const
+{
+  os << m_Graph->GetYDim() << " ";
+  for (unsigned int i = 0; i < m_Graph->GetYDim(); i++)
+  {
+    auto id = m_Graph->GetYID(i);
+    auto yd = m_Graph->GetYDer(i);
+    os << id << " " << yd << " ";
+  }
+  return os;
 }
 
 //----------------------------------------------------------------------------
@@ -243,7 +266,6 @@ void lhpPipeIntGraphFixed::InvalidateAllVars()
 bool lhpPipeIntGraphFixed::StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTimeStamp prevts)
 //----------------------------------------------------------------------------
 {
-  wxASSERT(false);
   return false;
 }
 

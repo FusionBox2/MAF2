@@ -20,8 +20,13 @@
 
 #include "lhpPipeIntGraphAbstract.h"
 #include "mafViewIntGraph.h"
+#include <fstream>
+#include <algorithm>
+#include <iterator>
 
 #include "mafViewIntGraphWindow.h"
+#include "lhpPipeIntGraphLocal.h"
+#include <unordered_map>
 
 #include "mafIndent.h"
 
@@ -36,7 +41,7 @@
 #include "mafSceneNode.h"
 #include "mafSceneGraph.h"
 
-
+#include <queue>
 #include "mafVMERoot.h"
 class lhpPlotGraph  : public mafSceneGraph
 {
@@ -309,11 +314,11 @@ mafGUI *mafViewIntGraph::CreateGui()
 
   m_Gui->Divider(2);
 
-  /*m_Gui->Button(ID_SAVE_PLOT, "Save plot", "", "Save plot to VME tree");
-  m_Gui->Button(ID_LOAD_PLOT, "Load plot", "", "Restore plot from VME tree");
+  m_Gui->Button(ID_SAVE_PLOT, _R("Save plot"), _R(""), _R("Save plot"));
+  m_Gui->Button(ID_LOAD_PLOT, _R("Load plot"), _R(""), _R("Restore plot"));
 
 
-  m_Gui->Divider(2);*/
+  m_Gui->Divider(2);
   m_Gui->RollOut(ID_ROLLOUT_RENDER, _R("Plot appearance"), m_RenderWindow->GetGui(), false);
 
   /////////////////////////////////////////DisplayList GUI
@@ -455,19 +460,72 @@ void mafViewIntGraph::UpdateGui()
 void mafViewIntGraph::savePlot(void)
 //----------------------------------------------------------------------------
 {
-  savePlotGen();
+  //savePlotGen();
   if(m_Sg == NULL)
     return;
 
-  for(mafSceneNode *n = m_Sg->GetNodeList(); n != NULL; n = n->m_Next)
+  wxString ScriptFileName = ::wxFileSelector("Select script file name", "", "data", ".psc", "PSC files (*.psc)|*.psc|All files (*.*)|*.*",
+    wxFD_SAVE | wxFD_OVERWRITE_PROMPT, GetFrame());
+  if (ScriptFileName.IsEmpty())
+    return;
+
+  std::queue<mafNode*> trav;
+  m_shown_flags.clear();
+  m_pipe_config.clear();
+
+  std::unordered_map<mafNode*, size_t> indexator;
+  indexator[NULL] = 0;
+  size_t idx = 1;
+  trav.push(m_Sg->GetSelectedVme());
+  while (!trav.empty())
   {
-    mafNode *vme = n->m_Vme;
-    lhpPipeIntGraphAbstract *pipe = lhpPipeIntGraphAbstract::SafeDownCast(n->m_Pipe);
-    if(vme && pipe)
-    {
-      pipe->savePlotInfo();
-    }
+    mafNode *curr = trav.front();
+    trav.pop();
+    for (unsigned long i = 0, ie = curr->GetNumberOfChildren(); i != ie; ++i)
+      trav.push(curr->GetChild(i));
+    indexator[curr] = idx++;
   }
+
+
+  trav.push(m_Sg->GetSelectedVme());
+  //trav.push(nullptr);
+  while (!trav.empty())
+  {
+    mafNode *curr = trav.front();
+    trav.pop();
+    for (unsigned long i = 0, ie = curr->GetNumberOfChildren(); i != ie; ++i)
+      trav.push(curr->GetChild(i));
+    lhpPipeIntGraphAbstract *pipe = static_cast<lhpPipeIntGraphAbstract*>(GetNodePipe(curr));
+    m_shown_flags.push_back(pipe != nullptr);
+    if (pipe)
+    {
+      std::ostringstream oss;
+      if (lhpPipeIntGraphLocal *lcl = lhpPipeIntGraphLocal::SafeDownCast(pipe))
+      {
+        mafNode *nd = lcl->GetProximal();
+        auto it = indexator.find(nd);
+        if (it != indexator.end())
+          oss << it->second << " ";
+      }
+      pipe->operator<<(oss);
+      m_pipe_config.push_back(oss.str());
+    }
+    //trav.push(nullptr);
+  }
+
+//   for(mafSceneNode *n = m_Sg->GetNodeList(); n != NULL; n = n->m_Next)
+//   {
+//     mafNode *vme = n->m_Vme;
+//     lhpPipeIntGraphAbstract *pipe = lhpPipeIntGraphAbstract::SafeDownCast(n->m_Pipe);
+//     if(vme && pipe)
+//     {
+//       //pipe->savePlotInfo();
+//     }
+//   }
+  std::ofstream ofs(ScriptFileName.c_str());
+  std::copy(m_shown_flags.begin(), m_shown_flags.end(), std::ostream_iterator<bool>(ofs, " "));
+  ofs << '\n';
+  std::copy(m_pipe_config.begin(), m_pipe_config.end(), std::ostream_iterator<std::string>(ofs, "\n"));
 }
 
 //----------------------------------------------------------------------------
@@ -513,15 +571,97 @@ void mafViewIntGraph::loadPlotGen(void)
     }
   }
 }
+namespace
+{
+  struct Line
+  {
+    std::string data;
+    operator std::string const&() const { return data; }
+  };
+  std::istream& operator>>(std::istream& s, Line& dst)
+  {
+    return std::getline(s, dst.data);
+  }
+}
 
 //----------------------------------------------------------------------------
-void mafViewIntGraph::loadPlot(void)
+void mafViewIntGraph::loadPlot(bool readfile)
 //----------------------------------------------------------------------------
 {
-  loadPlotGen();
+  if (readfile)
+  {
+    wxString ScriptFileName = ::wxFileSelector("Select script file name", "", "data", ".psc", "PSC files (*.psc)|*.psc|All files (*.*)|*.*",
+      wxFD_OPEN | wxFD_FILE_MUST_EXIST, GetFrame());
+    if (ScriptFileName.IsEmpty())
+      return;
+    m_shown_flags.clear();
+    m_pipe_config.clear();
+    std::ifstream ifs(ScriptFileName.c_str());
+    Line s;
+    ifs >> s;
+    std::istringstream iss(s);
+    std::copy(std::istream_iterator<bool>(iss), std::istream_iterator<bool>(), std::back_inserter(m_shown_flags));
+    std::copy(std::istream_iterator<Line>(ifs), std::istream_iterator<Line>(), std::back_inserter(m_pipe_config));
+  }
+
+  //loadPlotGen();
+  std::queue<mafNode*> trav;
+  auto it = m_shown_flags.cbegin();
+  auto its = m_pipe_config.cbegin();
+
+  std::vector<mafNode*> indexator;
+  indexator.push_back(NULL);
+  trav.push(m_Sg->GetSelectedVme());
+  while (!trav.empty())
+  {
+    mafNode *curr = trav.front();
+    trav.pop();
+    for (unsigned long i = 0, ie = curr->GetNumberOfChildren(); i != ie; ++i)
+      trav.push(curr->GetChild(i));
+    indexator.push_back(curr);
+  }
+
+
+  trav.push(m_Sg->GetSelectedVme());
+  //trav.push(nullptr);
+  while (!trav.empty())
+  {
+    mafNode *curr = trav.front();
+    trav.pop();
+    for (unsigned long i = 0, ie = curr->GetNumberOfChildren(); i != ie; ++i)
+      trav.push(curr->GetChild(i));
+    bool show = false;
+    if (it != m_shown_flags.cend())
+      show = *it++;
+    if (readfile)
+      mafEventMacro(mafEvent(this, VME_SHOW, curr, show));
+    else
+    {
+      if (show)
+        VmeCreatePipe(curr);
+    }
+    if(lhpPipeIntGraphAbstract *pipe = static_cast<lhpPipeIntGraphAbstract*>(GetNodePipe(curr)))
+    {
+      if (its != m_pipe_config.cend())
+      {
+        std::istringstream iss(*its++);
+        if (lhpPipeIntGraphLocal *lcl = lhpPipeIntGraphLocal::SafeDownCast(pipe))
+        {
+          size_t ix;
+          iss >> ix;
+          lcl->SetProximal(mafVME::SafeDownCast(indexator[ix]));
+        }
+        pipe->operator>>(iss);
+        if (!readfile)
+          pipe->SetForcedWholeRange(true);
+      }
+    }
+
+    //trav.push(nullptr);
+  }
 
   //clean all old plots
-  for(mafSceneNode *n = m_Sg->GetNodeList(); n != NULL; n = n->m_Next)
+  /*for(mafSceneNode *n = m_Sg->GetNodeList(); n != NULL; n = n->m_Next)
   {
     mafNode *vme = n->m_Vme;
     if(vme)
@@ -537,5 +677,5 @@ void mafViewIntGraph::loadPlot(void)
     {
       pipe->loadPlotInfo();
     }
-  }
+  }*/
 }

@@ -208,9 +208,9 @@ void lhpOpImporterC3DBTK::OpRun()
   }
   else if (!m_TestMode)
   {
-  CreateGui();
-  ShowGui();
-}
+    CreateGui();
+    ShowGui();
+  }
   else
   {
     if(Import())

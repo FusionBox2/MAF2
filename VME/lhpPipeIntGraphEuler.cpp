@@ -122,6 +122,7 @@ bool lhpPipeIntGraphEuler::StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTimeS
   //Euler
   if(GDT_EUL_ROTXXYZs <= nVarID && nVarID <= GDT_EUL_ROTZZYZr)
   {
+#ifdef NEWEST_CODE
     mafMatrix mLTM;
     V4d<double>    vRot;
     float  oldValueX= 0.f;
@@ -147,6 +148,30 @@ bool lhpPipeIntGraphEuler::StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTimeS
     vRot.x= Fix180Difference( oldValueX, vRot.x);
     vRot.y= Fix180Difference(-oldValueY, vRot.y);
     vRot.z= Fix180Difference( oldValueZ, vRot.z);
+#else
+    mafMatrix mLTM;
+    //V4d<double>    vRot;
+    V3d<double> vRot;
+    V3d<double> oldValue;
+
+    int xindex = nVarID - (nVarID - GDT_EUL_ROTXXYZs) % 3;
+    if (m_Graph->GetUsedMemSpace() != 0 && prevts < ts)
+    {
+      oldValue[0] = GetValue(xindex + 0) / mafMatrix3x3::RadiansToDegrees();
+      oldValue[1] = GetValue(xindex + 1) / mafMatrix3x3::RadiansToDegrees();
+      oldValue[2] = GetValue(xindex + 2) / mafMatrix3x3::RadiansToDegrees();
+    }
+
+    //vRot.w= _Conventions[(nVarID - GDT_EUL_ROTXXYZs) / 3];
+
+    GetLocalMatrix(mafVME::SafeDownCast(m_Node), ts, mLTM, m_Proximal);
+    vRot = EulerAngles<double>(*mLTM.GetVTKMatrix(), _Conventions[(nVarID - GDT_EUL_ROTXXYZs) / 3], oldValue);
+    //mafTransfMatrixToEuler(&mLTM, &vRot, _Conventions[(nVarID - GDT_EUL_ROTXXYZs) / 3]);
+
+    vRot.x *= mafMatrix3x3::RadiansToDegrees();
+    vRot.y *= mafMatrix3x3::RadiansToDegrees();
+    vRot.z *= mafMatrix3x3::RadiansToDegrees();
+#endif
     SetValue(xindex + 0, vRot.x);
     SetValue(xindex + 1, vRot.y);
     SetValue(xindex + 2, vRot.z);

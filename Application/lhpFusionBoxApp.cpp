@@ -201,7 +201,9 @@
 #include "lhpOpRegSurfWithCloud.h"
 #include "lhpOpRepresentInAF.h"
 #include "lhpOpImporterC3DBTK.h" 
+#include "lhpOpImporterC3DFused.h" 
 #include "lhpOpExporterC3DBTK.h" 
+#include "lhpOpExporterCSVGraph.h" 
 #include "lhpOpLMMirror.h"
 #include "lhpOpLMProj.h"
 #include "lhpOpSolidify.h"
@@ -595,6 +597,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   m_Logic->Plug(new lhpOpMTRImporter(_R("MTR")), _R("Geometries"));
   m_Logic->Plug(new lhpOpMTRULBImporter(_R("MTR (ULB)")), _R("Geometries"));
   m_Logic->Plug(new lhpOpImporterC3DBTK(_R("C3D BTK")),_R("Motion Analysis"));  
+  m_Logic->Plug(new lhpOpImporterC3DFused(_R("C3D Automated")),_R("Motion Analysis"));  
   if(fullVersion)
   {
     medGUIDicomSettings *dicomSettings=new medGUIDicomSettings(NULL,_R("DICOM"));
@@ -639,7 +642,8 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   m_Logic->Plug(new lhpOpMTRExporter(_R("MTR")), _R("Motion Analysis"));
   m_Logic->Plug(new medOpExporterLandmark(_R("Landmark")), _R("Motion Analysis"));
   m_Logic->Plug(new lhpOpExporterC3DBTK(_R("C3D BTK")),_R("Motion Analysis"));  
-  if(fullVersion)
+  m_Logic->Plug(new lhpOpExporterCSVGraph(_R("CSV Graph")), _R("Motion Analysis"));
+  if (fullVersion)
   {
     m_Logic->Plug(new mafOpExporterRAW(_R("Raw")), _R("Images"));
     m_Logic->Plug(new medOpExporterWrappedMeter(_R("Wrapped Meter")), _R("Other"));
@@ -806,6 +810,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   vgraph->PlugVisualPipe(_R("lhpVMELeverArm"),_R("lhpPipeIntGraphPolyline"));
   vgraph->PlugVisualPipe(_R("mafVMEVector"),_R("lhpPipeIntGraphPolyline"));
   vgraph->PlugVisualPipe(_R("medVMEAnalog"),_R("lhpPipeIntGraphAnalog"));
+  lhpOpExporterCSVGraph::m_ViewIntGraph = vgraph;
   m_Logic->Plug(vgraph);
 
   medViewSlicer *slicerView = new medViewSlicer(_R("Slicer"));

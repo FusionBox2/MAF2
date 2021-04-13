@@ -93,7 +93,7 @@ public:
   /** save information about current plot into VME*/
   void                  savePlot(void);
   /** restore information about current plot from VME tree*/
-  void                  loadPlot(void);
+  void                  loadPlot(bool readfile = true);
   /** save information about current plot into VME: general settings*/
   void                  savePlotGen(void);
   /** restore information about current plot from VME tree: general settings*/
@@ -137,6 +137,9 @@ public:
   };
 
 
+
+  std::vector<bool>        m_shown_flags;
+  std::vector<std::string> m_pipe_config;
 
 protected:
   //graph rendering window

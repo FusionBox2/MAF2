@@ -26,6 +26,7 @@
 #define _Y_IDX                       1
 #define _Z_IDX                       2
 #define _W_IDX                       3
+enum QuatPart { X, Y, Z, W };
 #define _MATR_EL(xyzw,rua)           (*((&mpMat->vRight.x) + (sizeof(mpMat->vRight)/sizeof(double)) * (rua) + (xyzw)))
 
 #define EulFrmS      0
@@ -47,6 +48,13 @@
 #define FPEqualTo(a,b)          (fabs((a)-(b)) < 1e-4)  
 #define FPNotEqualTo(a,b)       (fabs((a)-(b)) > 1e-4)  
 
+#define EulFrm(ord)  ((unsigned)(ord)&1)
+#define EulRep(ord)  (((unsigned)(ord)>>1)&1)
+#define EulPar(ord)  (((unsigned)(ord)>>2)&1)
+#define EulAxI(ord)  ((int)(EulSafe[(((unsigned)(ord)>>3)&3)]))
+#define EulAxJ(ord)  ((int)(EulNext[EulAxI(ord)+(EulPar(ord)==EulParOdd)]))
+#define EulAxK(ord)  ((int)(EulNext[EulAxI(ord)+(EulPar(ord)!=EulParOdd)]))
+#define EulAxH(ord)  ((EulRep(ord)==EulRepNo)?EulAxK(ord):EulAxI(ord))
 
 //#define Sb(a)  (*((DiSplitBits *)(&(a))))
 
@@ -329,5 +337,314 @@ inline     void DiQuatLineComb(const DiQuaternion *vpVect1, double rCoef1, const
   vpOut->z = diSHIFT_COMB(vpVect1->z, rCoef1, vpVect2->z * rCoef2);
   vpOut->w = diSHIFT_COMB(vpVect1->w, rCoef1, vpVect2->w * rCoef2);
 } // end of DiV4dLineComb
+
+template<class Type>
+Type& Fix2PI(Type& src, const Type& trg)
+{
+  const static auto pivl = 4 * atan(Type(1));
+  while (src > trg + pivl) src -= 2 * pivl;
+  while (src < trg - pivl) src += 2 * pivl;
+  return src;
+}
+template <class Type>
+auto norm2(const Type& v) -> decltype(v * v)
+{
+  return v * v;
+}
+
+template<class Type, class VecType = V3d<Type> >
+VecType EulerAngles(const vtkMatrix4x4& M, int order, const VecType& prev = VecType())
+{
+  VecType u = VecType();
+  VecType v = VecType();
+  VecType p = prev;
+  const static auto pivl = 4 * atan(Type(1));
+
+  int i, j, k, h, n, s, f;
+  EulGetOrd(order, i, j, k, h, n, s, f);
+  if (n == EulParOdd) { p = -p; }
+  if (f == EulFrmR)   { std::swap(p[0], p[2]); }
+  if (s == EulRepYes)
+  {
+    auto sy = sqrt(M[i][j] * M[i][j] + M[i][k] * M[i][k]);
+    if (sy > 16 * FLT_EPSILON)
+    {
+      u[0] = atan2(M[i][j], M[i][k]);
+      u[1] = atan2(sy, M[i][i]);
+      u[2] = atan2(M[j][i], -M[k][i]);
+    }
+    else
+    {
+      auto sd = atan2(-M[j][k], M[j][j]);
+      u[1] = atan2(sy, M[i][i]);
+      if (M[i][i] > 0)
+      {
+        u[0] = (p[0] - p[2] + sd) / 2;
+        u[2] = (p[2] - p[0] + sd) / 2;
+      }
+      else
+      {
+        u[0] = (p[0] + p[2] + sd) / 2;
+        u[2] = (p[0] + p[2] - sd) / 2;
+      }
+    }
+    v[1] = /*2 * pivl*/ -u[1];
+    v[0] = pivl + u[0];
+    v[2] = pivl + u[2];
+  }
+  else
+  {
+    auto cy = sqrt(M[i][i] * M[i][i] + M[j][i] * M[j][i]);
+    if (cy > 16 * FLT_EPSILON)
+    {
+      u[0] = atan2(M[k][j], M[k][k]);
+      u[1] = atan2(-M[k][i], cy);
+      u[2] = atan2(M[j][i], M[i][i]);
+    }
+    else
+    {
+      auto sd = atan2(-M[j][k], M[j][j]);
+      u[1] = atan2(-M[k][i], cy);
+      if (M[k][i] > 0)
+      {
+        u[0] = (p[0] - p[2] + sd) / 2;
+        u[2] = (p[2] - p[0] + sd) / 2;
+      }
+      else
+      {
+        u[0] = (p[0] + p[2] + sd) / 2;
+        u[2] = (p[0] + p[2] - sd) / 2;
+      }
+    }
+    v[1] = pivl - u[1];
+    v[0] = pivl + u[0];
+    v[2] = pivl + u[2];
+  }
+
+  for (size_t i = 0; i < 3; ++i)
+  {
+    Fix2PI(u[i], p[i]);
+    Fix2PI(v[i], p[i]);
+  }
+
+  if (norm2(v - p) < norm2(u - p))
+    u = v;
+
+  if (n == EulParOdd) { u = -u; }
+  if (f == EulFrmR)   { std::swap(u[0], u[2]); }
+  return u;
+}
+template<int order, class Type, class VecType = V3d<Type> >
+VecType EulerAngles(const vtkMatrix4x4& M, const VecType& prev = VecType())
+{
+  return EulerAngles(order, M, prev);
+}
+template<class VecType>
+VecType EulerAnglesFix(int order, VecType& curr, const VecType& prv)
+{
+  typedef decltype(VecType()[0] * VecType()[0]) Type;
+  auto prev = prv;
+  auto curs = curr;
+  auto pivl = 4 * atan(Type(1));
+  int i, j, k, h, n, s, f;
+  EulGetOrd(order, i, j, k, h, n, s, f);
+  if (n == EulParOdd) { curr = -curr; }
+  if (f == EulFrmR) { std::swap(curr[0], curr[2]); }
+  if (n == EulParOdd) { prev = -prev; }
+  if (f == EulFrmR) { std::swap(prev[0], prev[2]); }
+  if (s == EulRepYes) {
+    auto sy = sin(curr[1]);
+    if (sy <= 16 * FLT_EPSILON)
+    {
+      auto cy = cos(curr[1]);
+      auto sd = curr[0];
+      if (cy > 0)
+      {
+        curr[0] = (prev[0] - prev[2] + sd) / 2;
+        curr[2] = (prev[2] - prev[0] + sd) / 2;
+      }
+      else
+      {
+        curr[0] = (prev[0] + prev[2] + sd) / 2;
+        curr[2] = (prev[0] + prev[2] - sd) / 2;
+      }
+    }
+    curs[1] = /*2 * pivl*/ -curr[1];
+    curs[0] = pivl + curr[0];
+    curs[2] = pivl + curr[2];
+  }
+  else {
+    auto cy = cos(curr[1]);
+    if (cy <= 16 * FLT_EPSILON)
+    {
+      auto sy = sin(curr[1]);
+      auto sd = curr[0];
+      if (sy < 0)
+      {
+        curr[0] = (prev[0] - prev[2] + sd) / 2;
+        curr[2] = (prev[2] - prev[0] + sd) / 2;
+      }
+      else
+      {
+        curr[0] = (prev[0] + prev[2] + sd) / 2;
+        curr[2] = (prev[0] + prev[2] - sd) / 2;
+      }
+    }
+    curs[1] = pivl - curr[1];
+    curs[0] = pivl + curr[0];
+    curs[2] = pivl + curr[2];
+  }
+  for (size_t i = 0; i < 3; ++i)
+  {
+    Fix2PI(curr[i], prev[i]);
+    Fix2PI(curs[i], prev[i]);
+  }
+
+  auto sx = curs[0] - prev[0];
+  auto sy = curs[0] - prev[0];
+  auto sz = curs[0] - prev[0];
+  auto rx = curr[0] - prev[0];
+  auto ry = curr[0] - prev[0];
+  auto rz = curr[0] - prev[0];
+  if (sx * sx + sy * sy + sz * sz < rx * rx + ry * ry + rz * rz)
+    curr = curs;
+
+  if (n == EulParOdd) { curr = -curr; }
+  if (f == EulFrmR) { std::swap(curr[0], curr[2]); }
+  return curr;
+}
+
+template<class VecType>
+void eulerTransform(vtkMatrix4x4& M, int conv, const VecType& eul, const VecType& trn = VecType())
+{
+  using Type = decltype(VecType() * VecType());
+  VecType ea(eul);
+  Type ti, tj, th, ci, cj, ch, si, sj, sh, cc, cs, sc, ss;
+  int i, j, k, h, n, s, f;
+  EulGetOrd(conv, i, j, k, h, n, s, f);
+  if (f == EulFrmR) { std::swap(ea[0], ea[2]); }
+  if (n == EulParOdd) { ea = -ea; }
+  ti = ea[0];    tj = ea[1];    th = ea[2];
+  ci = cos(ti); cj = cos(tj); ch = cos(th);
+  si = sin(ti); sj = sin(tj); sh = sin(th);
+  cc = ci*ch; cs = ci*sh; sc = si*ch; ss = si*sh;
+  if (s == EulRepYes)
+  {
+    M[i][i] = cj;       M[i][j] = sj * si;       M[i][k] = sj * ci;
+    M[j][i] = sj * sh;  M[j][j] = -cj * ss + cc; M[j][k] = -cj * cs - sc;
+    M[k][i] = -sj * ch; M[k][j] = cj * sc + cs;  M[k][k] = cj * cc - ss;
+  }
+  else
+  {
+    M[i][i] = cj * ch; M[i][j] = sj * sc - cs; M[i][k] = sj * cc + ss;
+    M[j][i] = cj * sh; M[j][j] = sj * ss + cc; M[j][k] = sj * cs - sc;
+    M[k][i] = -sj;     M[k][j] = cj * si;      M[k][k] = cj * ci;
+  }
+  M[0][3] = trn[0];  M[1][3] = trn[1]; M[2][3] = trn[2];
+  return M;
+}
+template<int conv, class VecType>
+void eulerTransform(vtkMatrix4x4& M, const VecType& eul, const VecType& trn = VecType())
+{
+  eulerTransform(M, conv, eul, trn);
+}
+
+
+
+template<class Type>
+Type sign(Type v)
+{
+  if (v > 0)
+    return Type(1);
+  if (v < 0)
+    return Type(-1);
+  return Type(0);
+}
+template<class Type, class VecType = V3d<Type> >
+VecType OVPAngles(const vtkMatrix4x4& M, const VecType& prev = VecType())
+{
+  VecType u = VecType();
+  Type    a = Type(0.5) * (M[2][1] - M[1][2]);
+  Type    b = Type(0.5) * (M[0][2] - M[2][0]);
+  Type    c = Type(0.5) * (M[1][0] - M[0][1]);
+  Type    s = sqrt(a * a + b * b + c * c);
+  Type    co = Type(0.5) * (M[0][0] + M[1][1] + M[2][2] - 1);
+  Type    fi = atan2(s, co);
+  Type    t;
+
+  co = std::min(Type(1), std::max(Type(-1), co));
+  Type v = Type(1) - co;
+
+  if (s > Type(0.1e-12))
+  {
+    u[0] = a / s;
+    u[1] = b / s;
+    u[2] = c / s;
+  }
+  else if (fabs(fi) > Type(0.1e-12) && co > 0)
+  {
+    t = Type(1) / v;
+    u[0] = sign(M[2][1] - M[1][2]) * sqrt(abs((M[0][0] - co) * t));
+    u[1] = sign(M[0][2] - M[2][0]) * sqrt(abs((M[1][1] - co) * t));
+    u[2] = sign(M[1][0] - M[0][1]) * sqrt(abs((M[2][2] - co) * t));
+  }
+  else if (fabs(fi) > Type(0.1e-12) && co < 0)
+  {
+    t = Type(1) / v;
+    u[0] = sqrt(abs((M[0][0] - co) * t));
+    u[1] = sqrt(abs((M[1][1] - co) * t));
+    u[2] = sqrt(abs((M[2][2] - co) * t));
+
+    if (M[2][1] - M[1][2] >= 0)
+      s = Type(1);
+    else
+      s = Type(-1);
+    u[0] = u[0] * s;
+    u[1] = u[1] * sign(M[1][0] + M[0][1]) * s;
+    u[2] = u[2] * sign(M[2][1] + M[0][2]) * s;
+  }
+  return Fix2PI(fi, u * prev) * u;
+  return Fix2PI(fi, (u * (u * fi - prev))) * u;
+  //const static auto pivl = 4 * atan(Type(1));
+  //auto res = u * fi;
+  //auto k = (u * (u * fi - prev)) / (2 * pivl);
+  //return (fi - round(k) * 2 * pivl) * u;
+}
+
+//ovp angles based
+template<class VecType>
+void ovpTransform(vtkMatrix4x4& M, const VecType& ovp, const VecType& trn = VecType())
+{
+  using Type = decltype(VecType() * VecType());
+  M[0][0] = M[0][1] = M[0][2] = Type();
+  M[1][0] = M[1][1] = M[1][2] = Type();
+  M[2][0] = M[2][1] = M[2][2] = Type();
+  M[0][0] = M[1][1] = M[2][2] = Type(1);
+  M[0][3] = trn[0];  M[1][3] = trn[1]; M[2][3] = trn[2];
+  Type fi = norm(ovp);
+  if (fi < Type(1e-8))
+    return M;
+  Type cfi = cos(fi);
+  Type sinc = sin(fi) / fi;
+  Type cosc = (Type(1) - cfi) / (fi * fi);
+
+  V3d<Type> A[] = { V3d<Type>(Type(0), -ovp[2], ovp[1]),
+    V3d<Type>(ovp[2], Type(0), -ovp[0]),
+    V3d<Type>(-ovp[1], ovp[0], Type(0)) };
+  V3d<Type> E[] = { V3d<Type>(Type(1), Type(0), Type(0)),
+    V3d<Type>(Type(0), Type(1), Type(0)),
+    V3d<Type>(Type(0), Type(0), Type(1)) };
+  V3d<Type> T[] = { V3d<Type>(ovp[0] * ovp[0], ovp[0] * ovp[1], ovp[0] * ovp[2]),
+    V3d<Type>(ovp[1] * ovp[0], ovp[1] * ovp[1], ovp[1] * ovp[2]),
+    V3d<Type>(ovp[2] * ovp[0], ovp[2] * ovp[1], ovp[2] * ovp[2]) };
+  for (size_t i = 0; i < 3; ++i)
+  {
+    M[0][i] = cfi * E[0][i] + sinc * A[0][i] + cosc * T[0][i];
+    M[1][i] = cfi * E[1][i] + sinc * A[1][i] + cosc * T[1][i];
+    M[2][i] = cfi * E[2][i] + sinc * A[2][i] + cosc * T[2][i];
+    M[i][3] = trn[i];
+  }
+  return M;
+}
 
 #endif

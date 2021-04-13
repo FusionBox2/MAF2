@@ -192,6 +192,32 @@ void lhpPipeIntGraphAnalog::UpdateGUIChecks()
     lst->CheckItem(id, true);
   }
 }
+std::istream& lhpPipeIntGraphAnalog::operator>>(std::istream& is)
+{
+  unsigned dim;
+  is >> dim;
+  for (unsigned i = 0; i < dim; ++i)
+  {
+    int id;
+    unsigned yd;
+    is >> id >> yd;
+    m_Graph->AddYVar(id, yd);
+  }
+  if (m_Gui)
+    UpdateGUIChecks();
+  return is;
+}
+std::ostream& lhpPipeIntGraphAnalog::operator<<(std::ostream& os) const
+{
+  os << m_Graph->GetYDim() << " ";
+  for (unsigned int i = 0; i < m_Graph->GetYDim(); i++)
+  {
+    auto id = m_Graph->GetYID(i);
+    auto yd = m_Graph->GetYDer(i);
+    os << id << " " << yd << " ";
+  }
+  return os;
+}
 
 //----------------------------------------------------------------------------
 void lhpPipeIntGraphAnalog::OnEvent(mafEventBase *maf_event)

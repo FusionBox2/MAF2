@@ -55,8 +55,8 @@ public:
   virtual const char *GetVarTitle(int i) const = 0;
   virtual const char *GetVarUnit(int i) const = 0;
   virtual double     GetVarDerivativeCoef(int i) const = 0;
-  virtual void       loadPlotInfo();
-  virtual void       savePlotInfo();
+  virtual std::istream& operator>>(std::istream& is);
+  virtual std::ostream& operator<<(std::ostream& os) const ;
   int                GetForcedWholeRange(){return m_ForcedWholeRange;}
   void               SetForcedWholeRange(int forced);
   void               SetSmoothParam(double param);

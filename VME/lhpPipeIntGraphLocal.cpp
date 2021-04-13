@@ -95,6 +95,15 @@ void lhpPipeIntGraphLocal::SetProximal(mafVME *proximal)
   if(m_Gui)
     m_Gui->Update();
 }
+std::istream& lhpPipeIntGraphLocal::operator>>(std::istream& is)
+{
+  return Superclass::operator>>(is);
+}
+std::ostream& lhpPipeIntGraphLocal::operator<<(std::ostream& os) const
+{
+  return Superclass::operator<<(os);
+}
+
 //----------------------------------------------------------------------------
 void lhpPipeIntGraphLocal::OnEvent(mafEventBase *maf_event)
 //----------------------------------------------------------------------------
