@@ -73,7 +73,8 @@ class VTK_vtkMAF_EXPORT vtkMAFRulerActor2D : public vtkActor2D
 
   int	 RenderOverlay(vtkViewport *viewport);
   int	 RenderOpaqueGeometry(vtkViewport *viewport);      
-  int	 RenderTranslucentGeometry(vtkViewport *viewport)  {return 0;};
+  int	 RenderTranslucentPolygonalGeometry(vtkViewport*) { return 0; }
+  int	 HasTranslucentPolygonalGeometry() { return 0; }
   void AdjustClippingRange(vtkViewport *viewport)        {};
 
   void UseGlobalAxes(bool globalAxes) {GlobalAxes = globalAxes; Modified();};
