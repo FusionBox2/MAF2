@@ -36,7 +36,7 @@
 vtkStandardNewMacro(vtkMAFPolyDataToSinglePolyLine);
 
 //----------------------------------------------------------------------------
-vtkMAFPolyDataToSinglePolyLine::vtkMAFPolyDataToSinglePolyLine() : vtkPolyDataToPolyDataFilter()
+vtkMAFPolyDataToSinglePolyLine::vtkMAFPolyDataToSinglePolyLine()
 //----------------------------------------------------------------------------
 {
 }
@@ -46,7 +46,7 @@ vtkMAFPolyDataToSinglePolyLine::~vtkMAFPolyDataToSinglePolyLine()
 {
 }
 //----------------------------------------------------------------------------
-void vtkMAFPolyDataToSinglePolyLine::RequestData(
+int vtkMAFPolyDataToSinglePolyLine::RequestData(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
   vtkInformationVector *outputVector)
@@ -61,12 +61,11 @@ void vtkMAFPolyDataToSinglePolyLine::RequestData(
   vtkPolyData *output = vtkPolyData::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-	vtkPoints* InPts = this->GetInput()->GetPoints();
-	vtkPolyData* InPD = this->GetInput();
-	vtkPolyData *output = this->GetOutput();
+	vtkPoints* InPts = input->GetPoints();
+	vtkPolyData* InPD = input;
 
-	int numLines = this->GetInput()->GetNumberOfLines();
-  if(numLines == 0) return;
+	int numLines = input->GetNumberOfLines();
+  if(numLines == 0) return 1;
 	int numPts = numLines+1;
 	double /*x[3],*/ tc[3]/*, v[3]*/;
 	int i/*, j*/;
@@ -124,4 +123,5 @@ void vtkMAFPolyDataToSinglePolyLine::RequestData(
 
   if(output->GetPointData()->GetScalars())
     output->GetPointData()->SetScalars(vtkFloatArray::New());
+  return 1;
 }
