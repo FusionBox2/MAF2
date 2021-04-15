@@ -78,7 +78,9 @@ class VTK_vtkMAF_EXPORT vtkMAFGridActor : public vtkActor
   /** Method is intended for rendering Opaque Geometry.*/
   virtual  int			RenderOpaqueGeometry(vtkViewport *viewport);
   /** Method is intended for rendering Translucent Geometry. */
-  virtual  int			RenderTranslucentGeometry(vtkViewport *viewport);
+  virtual  int			RenderTranslucentPolygonalGeometry(vtkViewport *viewport);
+  /** Does this prop have some translucent polygonal geometry? */
+  virtual  int			HasTranslucentPolygonalGeometry();
 
 protected:
   /** constructor. */
