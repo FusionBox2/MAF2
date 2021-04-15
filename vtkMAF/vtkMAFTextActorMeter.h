@@ -71,8 +71,12 @@ class VTK_vtkMAF_EXPORT vtkMAFTextActorMeter : public vtkActor2D
   /** Method is intended for rendering Opaque Geometry */
   int	 RenderOpaqueGeometry(vtkViewport *viewport);
   /** Method is intended for rendering Translucent Geometry */
-  int	 RenderTranslucentGeometry(vtkViewport *viewport)  {return 0;}
- 
+  virtual int RenderTranslucentPolygonalGeometry(vtkViewport*) { return 0; }
+
+  // Description:
+  // Does this prop have some translucent polygonal geometry?
+  virtual int HasTranslucentPolygonalGeometry() { return 0; }
+
   /** Retrieve text actor input. */
   char*   GetText(){return TextActor->GetInput();}
   /** Modify text actor input. */
