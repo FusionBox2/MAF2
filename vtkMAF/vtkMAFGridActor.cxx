@@ -81,10 +81,16 @@ int vtkMAFGridActor::RenderOpaqueGeometry(vtkViewport *vp)
 	return 1;
 }
 //------------------------------------------------------------------------------
-int vtkMAFGridActor::RenderTranslucentGeometry(vtkViewport *vp)
+int vtkMAFGridActor::RenderTranslucentPolygonalGeometry(vtkViewport *vp)
 //------------------------------------------------------------------------------
 {
   return 0;
+}
+//------------------------------------------------------------------------------
+int vtkMAFGridActor::HasTranslucentPolygonalGeometry()
+//------------------------------------------------------------------------------
+{
+    return 0;
 }
 //------------------------------------------------------------------------------
 void vtkMAFGridActor::AdjustClippingRange(vtkViewport *vp)
