@@ -99,7 +99,7 @@ void vtkMAFCellsFilter::SetMarkedOpacity(double opacity)
 
 // Description:
 // Perform cell removal
-void vtkMAFCellsFilter::RequestData(
+int vtkMAFCellsFilter::RequestData(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
   vtkInformationVector *outputVector)
@@ -109,9 +109,9 @@ void vtkMAFCellsFilter::RequestData(
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
   // get the input and output
-  vtkStructuredGrid *input = vtkStructuredGrid::SafeDownCast(
+  vtkPolyData*input = vtkPolyData::SafeDownCast(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
-  vtkStructuredGrid *output = vtkStructuredGrid::SafeDownCast(
+  vtkPolyData*output = vtkPolyData::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
   if (!this->IsInitialized)
@@ -119,9 +119,6 @@ void vtkMAFCellsFilter::RequestData(
     this->Initialize();
     }
     
-  vtkPolyData *input =(vtkPolyData *) (this->GetInput());
-  vtkPolyData *output = this->GetOutput();
-  
   // num of cells that will be in the output
   vtkIdType numCells = this->CellIdList->GetNumberOfIds();
   // dont know how many points... cant be more than the input
@@ -135,7 +132,7 @@ void vtkMAFCellsFilter::RequestData(
     
     // Copy unremoved cells to the output... 
     output->CopyCells(input, this->CellIdList);
-  
+    return 1;
 }
 
 void vtkMAFCellsFilter::Initialize()
@@ -150,9 +147,6 @@ void vtkMAFCellsFilter::Initialize()
   // loop but some filter has been modified upstream, changing the data.
 
 
-    this->Update();
-    //this->GetInput()->Update();
-  
   vtkIdType numCells = ((vtkPolyData*)(this->GetInput()))->GetNumberOfCells();
   this->CellIdList->SetNumberOfIds(numCells);
   
