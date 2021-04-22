@@ -40,29 +40,44 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 =========================================================================*/
 #include "vtkMAFRectilinearGridToRectilinearGridFilter.h"
 #include "vtkObjectFactory.h"
+#include "vtkInformation.h"
 
 vtkCxxRevisionMacro(vtkMAFRectilinearGridToRectilinearGridFilter, "$Revision: 1.1 $");
 vtkStandardNewMacro(vtkMAFRectilinearGridToRectilinearGridFilter);
 
+int vtkMAFRectilinearGridToRectilinearGridFilter::FillInputPortInformation(int port, vtkInformation* info)
+{
+    if (port == 1)
+    {
+        info->Set(vtkAlgorithm::INPUT_IS_OPTIONAL(), 1);
+        return 1;
+    }
+    return Superclass::FillInputPortInformation(port, info);
+}
 
 //----------------------------------------------------------------------------
 // Specify the input data or filter.
 void vtkMAFRectilinearGridToRectilinearGridFilter::SetInput(vtkRectilinearGrid *input)
 {
-  this->vtkProcessObject::SetNthInput(0, input);
+    //this->vtkProcessObject::SetNthInput(0, input);
+ 
+    this->vtkAlgorithm::SetInputDataObject(0,input);
 }
 
 //----------------------------------------------------------------------------
 // Specify the input data or filter.
 vtkRectilinearGrid *vtkMAFRectilinearGridToRectilinearGridFilter::GetInput()
 {
-  if (this->NumberOfInputs < 1)
+    //if(this->NumberOfInputs()<1)
+  if (this->GetNumberOfInputConnections(0) < 1)
     {
     return NULL;
     }
   
-  return (vtkRectilinearGrid *)(this->Inputs[0]);
+ // return (vtkRectilinearGrid *)(this->Inputs[0]);
+  return (vtkRectilinearGrid*)(this->GetInputDataObject(0,0));
 }
+
 
 
 

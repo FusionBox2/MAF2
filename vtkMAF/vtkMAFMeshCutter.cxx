@@ -28,7 +28,7 @@
 #include "vtkUnstructuredGrid.h"
 #include "vtkPlane.h"
 #include "vtkPolyData.h"
-#include "vtkIdType.h"
+#include "vtkType.h"
 #include "vtkIdList.h"
 #include "vtkMatrix4x4.h"
 
@@ -66,7 +66,7 @@ vtkMAFMeshCutter::~vtkMAFMeshCutter()
 unsigned long vtkMAFMeshCutter::GetMTime()
 //------------------------------------------------------------------------------
 {
-  unsigned long mTime = this->vtkUnstructuredGridToPolyDataFilter::GetMTime();
+  unsigned long mTime = this->vtkPolyDataAlgorithm::GetMTime();
   unsigned long time;
 
   if (CutFunction != NULL )
@@ -80,7 +80,7 @@ unsigned long vtkMAFMeshCutter::GetMTime()
 
 //------------------------------------------------------------------------------
 // Execute method
-void vtkMAFMeshCutter::RequestData(
+int vtkMAFMeshCutter::RequestData(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
   vtkInformationVector *outputVector)
@@ -112,6 +112,7 @@ void vtkMAFMeshCutter::RequestData(
 
   // Run the cutter
   CreateSlice() ;
+  return 1;
 }
 
 
