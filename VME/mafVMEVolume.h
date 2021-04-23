@@ -53,7 +53,7 @@ public:
   mmaVolumeMaterial *GetMaterial();
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString("mafPipeBox");};
+  virtual mafString GetVisualPipe() {return mafString(_R("mafPipeBox"));}
 
 protected:
   mafVMEVolume();

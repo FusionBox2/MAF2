@@ -24,6 +24,6 @@ class mafString;
 
 /** extract the file archived in the zipFile in the directory where is placed the zip file.
 Return the list of the files extracted. */
-MAF_EXPORT std::vector<mafString> ZIPOpen(mafString zipFile);
+MAF_EXPORT std::vector<mafString> ZIPOpen(const mafString& zipFile);
 
 #endif

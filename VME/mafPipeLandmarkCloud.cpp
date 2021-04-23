@@ -166,16 +166,16 @@ mafGUI *mafPipeLandmarkCloud::CreateGui()
 
     if(m_Vme->IsMAFType(mafVMELandmarkCloud))
     {
-      m_Gui->Bool(ID_SCALAR_VISIBILITY,_("scalar vis."), &m_ScalarVisibility,0,_("turn on/off the scalar visibility"));
+      m_Gui->Bool(ID_SCALAR_VISIBILITY,_L("scalar vis."), &m_ScalarVisibility,0,_L("turn on/off the scalar visibility"));
       m_Gui->Divider();
       m_MaterialButton = new mafGUIMaterialButton(m_Vme,this);
       m_Gui->AddGui(m_MaterialButton->GetGui());
-      m_Gui->Bool(ID_RENDERING_DISPLAY_LIST,_("display list"),&m_RenderingDisplayListFlag,0,_("turn on/off \nrendering displaylist calculation"));
+      m_Gui->Bool(ID_RENDERING_DISPLAY_LIST,_L("display list"),&m_RenderingDisplayListFlag,0,_L("turn on/off \nrendering displaylist calculation"));
       m_Gui->Divider();
     }
     else
     {
-      m_Gui->Bool(ID_LABELS, _("label"), &m_Labels);
+      m_Gui->Bool(ID_LABELS, _L("label"), &m_Labels);
     }
 	}
 
@@ -391,9 +391,7 @@ void mafPipeLandmarkCloud::CreateClosedCloudPipe(vtkDataSet *data, double radius
     m_Caption->SetHeight(0.05);
     m_Caption->SetWidth(0.35);
     m_Caption->BorderOff();
-    wxString dis;
-    dis = wxString::Format("%s",m_Landmark->GetName().GetCStr());
-    m_Caption->SetCaption(dis.c_str());
+    m_Caption->SetCaption(m_Landmark->GetName().GetCStr());
 
     if(m_Labels && m_Landmark->GetLandmarkVisibility())
       m_Caption->SetVisibility(1);

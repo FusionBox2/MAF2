@@ -200,12 +200,12 @@ void mafPipeBox::UpdateProperty(bool fromTag)
 mafGUI *mafPipeBox::CreateGui()
 //-------------------------------------------------------------------------
 {
-  mafString box_type[] = {_("3D"), _("4D"),_("3D Subtree"),_("4D Subtree")};
+  mafString box_type[] = {_L("3D"), _L("4D"),_L("3D Subtree"),_L("4D Subtree")};
   int num_choices = 4;
 
   assert(m_Gui == NULL);
   m_Gui = new mafGUI(this);
-  m_Gui->Combo(ID_BOUNDS_MODE, _("bounds"), &m_BoundsMode, num_choices, box_type);
+  m_Gui->Combo(ID_BOUNDS_MODE, _L("bounds"), &m_BoundsMode, num_choices, box_type);
   m_Gui->Divider();
 	return m_Gui;
 }

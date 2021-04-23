@@ -76,7 +76,7 @@ mafGizmoRotateFan::mafGizmoRotateFan(mafVME *input, mafBaseEventHandler *listene
   //-----------------
   // the circle gizmo
   m_GizmoFan = mafVMEGizmo::New();
-  m_GizmoFan->SetName("fan");
+  m_GizmoFan->SetName(_R("fan"));
   m_GizmoFan->SetData(m_ChangeFanAxisTPDF->GetOutput());
   
   // set the default axis to X axis
@@ -234,17 +234,17 @@ void mafGizmoRotateFan::OnEvent(mafEventBase *maf_event)
         if (m_ActiveAxis == X)
         {
 		  // gizmo X is sending events
-          activeAxisStringToSend = "X";
+          activeAxisStringToSend = _R("X");
         }
         else if (m_ActiveAxis == Y)
         {
 		  // gizmo Y is sending events
-          activeAxisStringToSend = "Y";
+          activeAxisStringToSend = _R("Y");
         } 
         else if (m_ActiveAxis == Z)
         {
 		  // gizmo Z is sending events
-          activeAxisStringToSend = "Z";
+          activeAxisStringToSend = _R("Z");
         }
 
         assert(e->GetString() == NULL);

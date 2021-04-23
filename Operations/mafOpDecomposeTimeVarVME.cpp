@@ -124,12 +124,11 @@ void mafOpDecomposeTimeVarVME::OpRun()
 
   if (buildHelpGui.GetArg() == true)
   {
-	  m_Gui->Button(ID_HELP, "Help","");	
+	  m_Gui->Button(ID_HELP, _R("Help"), _R(""));
   }
 
-  char string[100];
   m_NumberFrames = mafVMEGenericAbstract::SafeDownCast(m_Input)->GetNumberOfLocalTimeStamps();
-  sprintf(string, "Node has %d timestamps", m_NumberFrames);
+  mafString string = mafString::Format(_R("Node has %d timestamps"), m_NumberFrames);
   m_Gui->Label(string);
 
   ModeGui();
@@ -147,22 +146,22 @@ void mafOpDecomposeTimeVarVME::ModeGui()
     m_GuiInterval = new mafGUI(this);
     m_GuiPeriodicity = new mafGUI(this);
     
-    m_GuiFrames->Button(ID_INSERT_FRAME, _("Add timestamp"), "", _("Add a timestamp"));
-    m_GuiFrames->Button(ID_REMOVE_FRAME, _("Remove timestamp"), "", _("Remove a timestamp"));
+    m_GuiFrames->Button(ID_INSERT_FRAME, _L("Add timestamp"), _R(""), _L("Add a timestamp"));
+    m_GuiFrames->Button(ID_REMOVE_FRAME, _L("Remove timestamp"), _R(""), _L("Remove a timestamp"));
 
     double min = 0;
-    m_GuiFrames->Double(ID_FRAME, _("Timestamp"), &m_Frame, min);
+    m_GuiFrames->Double(ID_FRAME, _L("Timestamp"), &m_Frame, min);
 
-    m_FramesListBox =  m_GuiFrames->ListBox(ID_LIST_FRAMES,_("List"),60,_("Chose label to visualize"));
+    m_FramesListBox =  m_GuiFrames->ListBox(ID_LIST_FRAMES,_L("List"),60,_L("Chose label to visualize"));
   
-    m_GuiInterval->Double(CHANGE_VALUE_INTERVAL, _("From"), &m_IntervalFrom, min );
-    m_GuiInterval->Double(CHANGE_VALUE_INTERVAL, _("To"), &m_IntervalTo, min, m_NumberFrames);
+    m_GuiInterval->Double(CHANGE_VALUE_INTERVAL, _L("From"), &m_IntervalFrom, min );
+    m_GuiInterval->Double(CHANGE_VALUE_INTERVAL, _L("To"), &m_IntervalTo, min, m_NumberFrames);
 
-    m_GuiPeriodicity->Integer(CHANGE_VALUE_PERIODICITY, _("Period"), &m_Periodicity, min, m_NumberFrames);
+    m_GuiPeriodicity->Integer(CHANGE_VALUE_PERIODICITY, _L("Period"), &m_Periodicity, min, m_NumberFrames);
 
-    m_RollOutFrames = m_Gui->RollOut(ID_ROLLOUT_FRAMES,_("Timestamps mode"), m_GuiFrames, false);
-    m_RollOutInterval = m_Gui->RollOut(ID_ROLLOUT_INTERVAL,_("Interval mode"), m_GuiInterval, false);
-    m_RollOutPeriodicity = m_Gui->RollOut(ID_ROLLOUT_PERIODICITY,_("Periodicity mode"), m_GuiPeriodicity, false);
+    m_RollOutFrames = m_Gui->RollOut(ID_ROLLOUT_FRAMES,_L("Timestamps mode"), m_GuiFrames, false);
+    m_RollOutInterval = m_Gui->RollOut(ID_ROLLOUT_INTERVAL,_L("Interval mode"), m_GuiInterval, false);
+    m_RollOutPeriodicity = m_Gui->RollOut(ID_ROLLOUT_PERIODICITY,_L("Periodicity mode"), m_GuiPeriodicity, false);
 
     m_Gui->OkCancel();
     m_Gui->Divider();
@@ -303,7 +302,7 @@ void mafOpDecomposeTimeVarVME::AppendFrame(char *string)
     m_FramesListBox->Append(string);
   }
 
-  m_FrameLabel.push_back(string);
+  m_FrameLabel.push_back(_R(string));
 }
 
 //----------------------------------------------------------------------------
@@ -353,8 +352,8 @@ int mafOpDecomposeTimeVarVME::UpdateFrames()
 
   vme->GetLocalTimeStamps(kframes);
   mafString name = vme->GetName();
-  mafString groupName = "Decomposed from ";
-  groupName << name;
+  mafString groupName = _R("Decomposed from ");
+  groupName += name;
   
   mafNEW(m_Group);
   m_Group->SetName(groupName);
@@ -376,9 +375,8 @@ int mafOpDecomposeTimeVarVME::UpdateFrames()
           //check if the inserted frame is inside the timestamps bounds
           if (timeSt < kframes[0] || timeSt > kframes[kframes.size()-1])
           {
-            char errorMessage[50];
-            sprintf(errorMessage, "Frame %s is outside timestamps bounds!", frame);
-            wxMessageBox( errorMessage, _("Warning"), wxOK | wxICON_ERROR  ); 
+            mafString errorMessage = _R("Frame ") + frame + _R(" is outside timestamps bounds!");
+            mafWarningMessage(_M(errorMessage)); 
           }
           CreateStaticVME(timeSt);
         }
@@ -476,10 +474,10 @@ void mafOpDecomposeTimeVarVME::CreateStaticVME(mafTimeStamp timeSt)
 
   // restore due attributes
   mafString typeVme;
-  typeVme = m_Input->GetTypeName();
+  typeVme = _R(m_Input->GetTypeName());
 
   mafSmartPointer<mafVMEFactory> factory;
-  mafObject *objVme = factory->CreateInstance(typeVme);
+  mafObject *objVme = factory->CreateInstance(typeVme.GetCStr());
   mafVME *newVme = mafVME::SafeDownCast(objVme);
   if (!newVme)
   {
@@ -494,7 +492,8 @@ void mafOpDecomposeTimeVarVME::CreateStaticVME(mafTimeStamp timeSt)
   }
 
   //If VME is a landmark, a landmark cloud must be created
-  if (typeVme.Equals("mafVMELandmark"))
+#pragma message ("IsATypeOf to be used")
+  if (typeVme.Equals(_R("mafVMELandmark")))
   {
     mafNEW(m_Cloud);
 	if (m_TestMode == true)
@@ -558,17 +557,17 @@ void mafOpDecomposeTimeVarVME::CreateStaticVME(mafTimeStamp timeSt)
  
   //Add the timestamp information to the name
   vme_name = oldVme->GetName();   
-  timeStr = wxString::Format("_%.3f", oldTime);
+  timeStr = mafString::Format(_R("_%.3f"), oldTime);
   newName = vme_name;
-  newName << timeStr;
-  newVme->SetName(newName.GetCStr());  
+  newName += timeStr;
+  newVme->SetName(newName);  
 
   //If VME is a landmark, the new landmark must be added to the landmark cloud created
   if (m_Cloud != NULL)
   {
-    mafString cloudName = "cloud_";
-    cloudName << newName;
-    m_Cloud->SetName(cloudName.GetCStr());
+    mafString cloudName = _R("cloud_");
+    cloudName += newName;
+    m_Cloud->SetName(cloudName);
     m_Cloud->AddChild(newVme);
     m_Cloud->ReparentTo(m_Group);
     m_Group->Update();

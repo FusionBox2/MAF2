@@ -137,8 +137,8 @@ mafGUIMDIFrame::mafGUIMDIFrame(const wxString& title, const wxPoint& pos, const 
 #endif
 
   wxIconBundle ib;
-  ib.AddIcon( mafPictureFactory::GetPictureFactory()->GetIcon("FRAME_ICON16x16") );
-  ib.AddIcon( mafPictureFactory::GetPictureFactory()->GetIcon("FRAME_ICON32x32") );
+  ib.AddIcon( mafPictureFactory::GetPictureFactory()->GetIcon(_R("FRAME_ICON16x16")) );
+  ib.AddIcon( mafPictureFactory::GetPictureFactory()->GetIcon(_R("FRAME_ICON32x32")) );
   SetIcons(ib);
 
 #ifdef MAF_USE_VTK
@@ -207,17 +207,17 @@ void mafGUIMDIFrame::OnSize(wxSizeEvent& event)
 void mafGUIMDIFrame::OnDropFile(wxDropFilesEvent &event)
 //-----------------------------------------------------------
 {
-  wxString path, name, ext, *file_list;
+  mafString path, name, ext;
   mafString file_to_open;
 
   int num_files = event.GetNumberOfFiles();
-  file_list = event.GetFiles();
+  wxString *file_list = event.GetFiles();
   for (int i=0; i< num_files; i++)
   {
-    file_to_open = file_list[i].c_str();
+    file_to_open = mafWxToString(file_list[i]);
 
-    wxSplitPath(file_list[i],&path, &name, &ext);
-    if (ext == "msf" || ext == "zmsf")
+    mafSplitPath(file_to_open,&path, &name, &ext);
+    if (ext == _R("msf") || ext == _R("zmsf"))
     {
       mafEventMacro(mafEvent(this,MENU_FILE_OPEN,&file_to_open));
       return;
@@ -477,7 +477,7 @@ void mafGUIMDIFrame::BindToProgressBar(vtkObject* vtkobj)
   else if(vtkobj->IsA("vtkProcessObject")) 
 		BindToProgressBar((vtkProcessObject*)vtkobj);
 	else 
-    mafLogMessage("wrong vtkObject passed to BindToProgressBar");
+    mafLogMessage(_M("wrong vtkObject passed to BindToProgressBar"));
 }
 //-----------------------------------------------------------
 void mafGUIMDIFrame::BindToProgressBar(vtkProcessObject* filter)

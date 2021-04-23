@@ -89,15 +89,15 @@ mafGUITree::mafGUITree( wxWindow* parent,wxWindowID id, bool CloseButton, bool H
   m_Sizer->Add(m_NodeTree,1,wxEXPAND);
 
   //default image list
-  wxBitmap bmp = mafPictureFactory::GetPictureFactory()->GetBmp("NODE_GRAY");
+  wxBitmap bmp = mafPictureFactory::GetPictureFactory()->GetBmp(_R("NODE_GRAY"));
   int w = bmp.GetWidth();
   int h = bmp.GetHeight();
 
   m_NodeImages = new wxImageList(w,h,FALSE,4);
   m_NodeImages->Add(bmp);
-  m_NodeImages->Add(mafPictureFactory::GetPictureFactory()->GetBmp("NODE_RED"));
-  m_NodeImages->Add(mafPictureFactory::GetPictureFactory()->GetBmp("NODE_BLUE"));
-  m_NodeImages->Add(mafPictureFactory::GetPictureFactory()->GetBmp("NODE_YELLOW"));
+  m_NodeImages->Add(mafPictureFactory::GetPictureFactory()->GetBmp(_R("NODE_RED")));
+  m_NodeImages->Add(mafPictureFactory::GetPictureFactory()->GetBmp(_R("NODE_BLUE")));
+  m_NodeImages->Add(mafPictureFactory::GetPictureFactory()->GetBmp(_R("NODE_YELLOW")));
   m_NodeTree->SetImageList(m_NodeImages);
 
   Reset();
@@ -441,12 +441,12 @@ int mafGUITree::CheckIconId(int icon)
   if(!m_NodeImages) return 0;
   if( icon <0 )
   {
-    mafLogMessage("mafGUITree: icon id = %d out of range ", icon);
+    mafLogMessage(_M(_R("mafGUITree: icon id = ") + mafToString(icon) + _R(" out of range ")));
     return 0;
   }
   if( icon >= m_NodeImages->GetImageCount() ) 
   {
-    mafLogMessage("mafGUITree: icon id = %d out of range ", icon);
+      mafLogMessage(_M(_R("mafGUITree: icon id = ") + mafToString(icon) + _R(" out of range ")));
     return m_NodeImages->GetImageCount()-1;
   }
   return icon;
@@ -457,7 +457,7 @@ void mafGUITree::SetImageList(wxImageList *img)
 {
   if(m_NodeRoot != 0)
   {
-    mafLogMessage("warning: mafGUITree::SetImageList must be called before adding any node");
+    mafLogMessage(_M("warning: mafGUITree::SetImageList must be called before adding any node"));
     // if you replace the image-list with a shorter one 
     // the icon-index actually in use by the existing nodes 
     // can become inconsistent 

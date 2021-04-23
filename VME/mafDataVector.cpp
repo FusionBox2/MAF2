@@ -64,7 +64,7 @@ mafDataVector::mafDataVector()
   m_SingleFileMode  = true;
   m_JustRestored    = false;
   m_VectorID        = -1;
-  m_ArchiveName     = "";
+  m_ArchiveName     = _R("");
 }
 
 //-----------------------------------------------------------------------
@@ -198,8 +198,8 @@ void mafDataVector::InsertItem(mafVMEItem *m)
 int mafDataVector::InternalStore(mafStorageElement *parent)
 //-----------------------------------------------------------------------
 {
-  parent->SetAttribute("NumberOfItems",mafString(GetNumberOfItems()));
-  parent->SetAttribute("ItemTypeName",GetItemTypeName());
+  parent->SetAttribute(_R("NumberOfItems"),mafToString(GetNumberOfItems()));
+  parent->SetAttribute(_R("ItemTypeName"),_R(GetItemTypeName()));
 
   // retrieve the tree root
   mafEventIO e(this,NODE_GET_ROOT);
@@ -211,7 +211,7 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
   m_VectorID = GetVectorID();
 
   // the DataVector ID
-  parent->SetAttribute("VectorID",mafString(m_VectorID));
+  parent->SetAttribute(_R("VectorID"),mafToString(m_VectorID));
 
   mafEventIO es(this,NODE_GET_STORAGE);
   InvokeEvent(es);
@@ -279,7 +279,7 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
         mafString filename;
         resolvedURL = storage->ResolveInputURL(m_ArchiveName, filename);
 
-        if (resolvedURL == MAF_OK && wxFileExists(filename.GetCStr()))//Only if exist an archive where it is possible read the vtk data
+        if (resolvedURL == MAF_OK && mafFileExists(filename))//Only if exist an archive where it is possible read the vtk data
         {
           mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
           long progress = 0;
@@ -312,24 +312,24 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
 
           for (int i=0;i<filesExtracted.size();i++)
           {
-            remove(filesExtracted[i]);
+            mafFileRemove(filesExtracted[i]);
           }
         }
 
         //////////////////////////////////////////////////////////////////////////
 
         m_ArchiveName = base_name;
-        m_ArchiveName << ".";
-        m_ArchiveName << m_VectorID;
-        m_ArchiveName << ".z";
+        m_ArchiveName += _R(".");
+        m_ArchiveName += mafToString(m_VectorID);
+        m_ArchiveName += _R(".z");
 
         it = Begin();
         item = it->second;
         item->UpdateData();
-        m_ArchiveName << item->GetDataFileExtension();
+        m_ArchiveName += _R(item->GetDataFileExtension());
         mafString tmp_archive;
         storage->GetTmpFile(tmp_archive);
-        wxFileOutputStream out(tmp_archive.GetCStr());
+        wxFileOutputStream out(tmp_archive.toWx());
         wxZipOutputStream zip(out);
         if (!out || !zip)
           return MAF_ERROR;
@@ -344,7 +344,7 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
 
           // data file URL is specified as a local filename
           mafString data_file_url;
-          data_file_url << base_name << "." << mafString(item->GetId()) << "." << item->GetDataFileExtension(); // extension is defined by the kind of item itself
+          data_file_url += base_name + _R(".") + mafToString(item->GetId()) + _R(".") + _R(item->GetDataFileExtension()); // extension is defined by the kind of item itself
 
           item->SetCrypting(m_Crypting);
           item->SetIOModeToMemory();
@@ -364,13 +364,13 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
           {
             return ret;
           }
-          item->SetURL(data_file_url);
+          item->SetURL(data_file_url.GetCStr());
           item->ReleaseOldFileOn(); // restore to default
 
           item->SetArchiveFileName(m_ArchiveName);
           if (!item->StoreToArchive(zip))
           {
-            mafMessage(_("Unable to write %s into archive file %s"), data_file_url, m_ArchiveName.GetCStr());
+            mafMessage(_M(_L("Unable to write ") + data_file_url + _L(" into archive file ") + m_ArchiveName));
             ret = MAF_ERROR;
           }
 
@@ -408,7 +408,7 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
 
         // data file URL is specified as a local filename
         mafString data_file_url;
-        data_file_url << base_name << "." << mafString(item->GetId()) << "." << item->GetDataFileExtension(); // extension is defined by the kind of item itself
+        data_file_url += base_name + _R(".") + mafToString(item->GetId()) + _R(".") + _R(item->GetDataFileExtension()); // extension is defined by the kind of item itself
 
         item->SetCrypting(m_Crypting);
 
@@ -423,7 +423,7 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
         }
 
         item->SetIOModeToDefault();
-        ret = item->StoreData(data_file_url);
+        ret = item->StoreData(data_file_url.GetCStr());
         
         item->ReleaseOldFileOn(); // restore to default
         switch (ret)
@@ -441,16 +441,16 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
     m_JustRestored = false;
   }
 
-  parent->SetAttribute("SingleFileMode",m_SingleFileMode ? "true" : "false");
+  parent->SetAttribute(_R("SingleFileMode"),m_SingleFileMode ? _R("true") : _R("false"));
   if (m_SingleFileMode)
   {
-    parent->SetAttribute("ArchiveFileName", m_ArchiveName);
+    parent->SetAttribute(_R("ArchiveFileName"), m_ArchiveName);
   }
 
   // Store meta-data (meta-data is stored later to be able set some info about stored data files)
   for (it = Begin(); it != End(); it++)
   {
-    parent->StoreObject("VItem",it->second.GetPointer());
+    parent->StoreObject(_R("VItem"),it->second.GetPointer());
   }
 
   m_DataModified = false;
@@ -465,17 +465,17 @@ int mafDataVector::InternalRestore(mafStorageElement *node)
 
   m_JustRestored = true;
 
-  if (node->GetAttributeAsInteger("NumberOfItems", num_items) && \
-      node->GetAttribute("ItemTypeName", item_type) && \
-      node->GetAttribute("SingleFileMode", single_file) && \
-      node->GetAttributeAsInteger("VectorID", m_VectorID) \
+  if (node->GetAttributeAsInteger(_R("NumberOfItems"), num_items) && \
+      node->GetAttribute(_R("ItemTypeName"), item_type) && \
+      node->GetAttribute(_R("SingleFileMode"), single_file) && \
+      node->GetAttributeAsInteger(_R("VectorID"), m_VectorID) \
     )
   {
-    SetItemTypeName(item_type);
-    SetSingleFileMode(single_file == "true" || single_file == "True" || single_file == "TRUE");
+    SetItemTypeName(item_type.GetCStr());
+    SetSingleFileMode(single_file == _R("true") || single_file == _R("True") || single_file == _R("TRUE"));
     if (m_SingleFileMode)
     {
-      node->GetAttribute("ArchiveFileName", m_ArchiveName);
+      node->GetAttribute(_R("ArchiveFileName"), m_ArchiveName);
     }
   }
   else
@@ -485,7 +485,7 @@ int mafDataVector::InternalRestore(mafStorageElement *node)
 
   // restore items meta-data
   mafStorageElement::ChildrenVector elements;
-  node->GetNestedElementsByName("VItem",elements);
+  node->GetNestedElementsByName(_R("VItem"),elements);
 
   assert(num_items == elements.size()); // check the number of elements
 

@@ -78,8 +78,8 @@ void mafVMEExternalData::SetExtension(const char *ext)
 {
   mafTagItem item;
 
-  item.SetName("EXTDATA_EXTENSION");
-  item.SetValue(ext);
+  item.SetName(_R("EXTDATA_EXTENSION"));
+  item.SetValue(_R(ext));
   this->GetTagArray()->SetTag(item);
 }
 
@@ -89,8 +89,8 @@ void mafVMEExternalData::SetFileName(const char *filename)
 {
   mafTagItem item;
   
-  item.SetName("EXTDATA_FILENAME");
-  item.SetValue(filename);
+  item.SetName(_R("EXTDATA_FILENAME"));
+  item.SetValue(_R(filename));
   this->GetTagArray()->SetTag(item);
 }
 
@@ -98,8 +98,8 @@ void mafVMEExternalData::SetFileName(const char *filename)
 const char* mafVMEExternalData::GetExtension()
 //-------------------------------------------------------------------------
 {
-  if(mafTagItem *item=this->GetTagArray()->GetTag("EXTDATA_EXTENSION"))
-    return item->GetValue();
+  if(mafTagItem *item=this->GetTagArray()->GetTag(_R("EXTDATA_EXTENSION")))
+    return item->GetValue().GetCStr();
   return NULL;
 }
 
@@ -107,8 +107,8 @@ const char* mafVMEExternalData::GetExtension()
 const char *mafVMEExternalData::GetFileName()
 //-------------------------------------------------------------------------
 {
-  if(mafTagItem* item=this->GetTagArray()->GetTag("EXTDATA_FILENAME"))
-    return item->GetValue();
+  if(mafTagItem* item=this->GetTagArray()->GetTag(_R("EXTDATA_FILENAME")))
+    return item->GetValue().GetCStr();
   return NULL;
 }
 
@@ -124,12 +124,12 @@ mafString mafVMEExternalData::GetAbsoluteFileName()
     filename = m_MSFPath;
   }
   
-  filename.Append("\\");
-  filename.Append(this->GetFileName());
-  filename.Append(".");
-  filename.Append(this->GetExtension());
+  filename.Append(_R("\\"));
+  filename.Append(_R(this->GetFileName()));
+  filename.Append(_R("."));
+  filename.Append(_R(this->GetExtension()));
 
-  if (wxFileExists(filename.GetCStr()))
+  if (mafFileExists(filename))
   {
     return filename;
   }
@@ -138,11 +138,11 @@ mafString mafVMEExternalData::GetAbsoluteFileName()
     // if file not exists, than the file is not stored yet and I must use TmpPath
     GetTmpPath();
     filename = m_TmpPath;
-    filename.Append("\\");
-    filename.Append(this->GetFileName());
-    filename.Append(".");
-    filename.Append(this->GetExtension());
-    return filename; 
+    filename.Append(_R("\\"));
+    filename.Append(_R(this->GetFileName()));
+    filename.Append(_R("."));
+    filename.Append(_R(this->GetExtension()));
+    return filename;
   }
 }
 
@@ -168,8 +168,8 @@ void mafVMEExternalData::SetMimeType(const char *mimetype)
 //-------------------------------------------------------------------------
 {
   mafTagItem item;
-  item.SetName("EXTDATA_MIMETYPE");
-  item.SetValue(mimetype);
+  item.SetName(_R("EXTDATA_MIMETYPE"));
+  item.SetValue(_R(mimetype));
   this->GetTagArray()->SetTag(item);
 }
  
@@ -177,8 +177,8 @@ void mafVMEExternalData::SetMimeType(const char *mimetype)
 const char* mafVMEExternalData::GetMimeType()
 //-------------------------------------------------------------------------
 {
-  if(mafTagItem *item=this->GetTagArray()->GetTag("EXTDATA_MIMETYPE"))
-    return item->GetValue();
+  if(mafTagItem *item=this->GetTagArray()->GetTag(_R("EXTDATA_MIMETYPE")))
+    return item->GetValue().GetCStr();
   return NULL;
 }
 
@@ -189,14 +189,14 @@ int mafVMEExternalData::InternalStore(mafStorageElement *parent)
   InitializeCurrentPath();
   
   mafString fileNameOrigin =  GetAbsoluteFileName(); 
-  mafString fileNameTarget = m_MSFPath + "\\" + GetFileName() + "." + GetExtension();
+  mafString fileNameTarget = m_MSFPath + _R("\\") + _R(GetFileName()) + _R(".") + _R(GetExtension());
 
   if (!fileNameOrigin.Equals(fileNameTarget))
   {
-    bool copySuccess = wxCopyFile(fileNameOrigin.GetCStr(), fileNameTarget.GetCStr());
+    bool copySuccess = mafFileCopy(fileNameOrigin, fileNameTarget);
     if (!copySuccess)
     {
-      mafErrorMessage( "Error copying external file!" );
+      mafErrorMessage( _M("Error copying external file!") );
       return MAF_ERROR;
     }
   }
@@ -212,7 +212,7 @@ int mafVMEExternalData::InternalRestore(mafStorageElement *parent)
   m_TmpPath = parent->GetStorage()->GetURL();
   m_TmpPath.ExtractPathName();
   
-  m_MSFPath = "";
+  m_MSFPath.Clear();
 
   return MAF_OK;
 }

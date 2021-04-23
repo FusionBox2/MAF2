@@ -131,11 +131,11 @@ char** mafVMEMesh::GetIcon()
 mmaMaterial *mafVMEMesh::GetMaterial()
 //-------------------------------------------------------------------------
 {
-	mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+	mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
 	if (material == NULL)
 	{
 		material = mmaMaterial::New();
-		SetAttribute("MaterialAttributes", material);
+		SetAttribute(_R("MaterialAttributes"), material);
 		if (m_Output)
 		{
 			((mafVMEOutputMesh *)m_Output)->SetMaterial(material);

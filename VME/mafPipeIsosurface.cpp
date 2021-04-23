@@ -181,8 +181,8 @@ mafGUI *mafPipeIsosurface::CreateGui()
 
 	assert(m_Gui == NULL);
 	m_Gui = new mafGUI(this);
-	m_ContourSlider = m_Gui->FloatSlider(ID_CONTOUR_VALUE,_("contour"), &m_ContourValue,range[0],range[1]);
-	m_AlphaSlider = m_Gui->FloatSlider(ID_ALPHA_VALUE,_("alpha"), &m_AlphaValue,0.0,1.0);
+	m_ContourSlider = m_Gui->FloatSlider(ID_CONTOUR_VALUE,_L("contour"), &m_ContourValue,range[0],range[1]);
+	m_AlphaSlider = m_Gui->FloatSlider(ID_ALPHA_VALUE,_L("alpha"), &m_AlphaValue,0.0,1.0);
 	//m_Gui->Button(ID_GENERATE_ISOSURFACE,"generate iso");
 	return m_Gui;
 }
@@ -246,23 +246,22 @@ void mafPipeIsosurface::ExctractIsosurface(mafVMESurface *isoSurface /* = NULL *
 	m_ContourMapper->GetOutput(0, surface);
 	m_ContourMapper->Update();
 
-  if(m_ExtractIsosurfaceName.Equals(""))
+  if(m_ExtractIsosurfaceName.IsEmpty())
   {
-    wxString name = wxString::Format(_("Isosurface %g"),m_ContourValue);
-    m_ExtractIsosurfaceName = name;
+    m_ExtractIsosurfaceName = mafString::Format(_L("Isosurface %g"), m_ContourValue);
   }
 	
 
 	if (isoSurface)
 	{
-		isoSurface->SetName(m_ExtractIsosurfaceName.GetCStr());
+		isoSurface->SetName(m_ExtractIsosurfaceName);
 		isoSurface->SetData(surface,0);
 	
 		isoSurface->ReparentTo(m_Vme);
 	}
 
 	surface->Delete();
-  m_ExtractIsosurfaceName = "";
+  m_ExtractIsosurfaceName = _R("");
 }
 //----------------------------------------------------------------------------
 void mafPipeIsosurface::EnableBoundingBoxVisibility(bool enable)

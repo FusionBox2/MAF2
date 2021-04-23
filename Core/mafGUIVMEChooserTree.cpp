@@ -85,12 +85,12 @@ int mafGUIVMEChooserTree::GetVmeStatus(mafNode *node)
     {
       if (!node->IsMAFType(mafVMELandmarkCloud))
       {
-        image_id = ClassNameToIcon(node->GetTypeName()) + NODE_VISIBLE_ON;
+        image_id = ClassNameToIcon(_R(node->GetTypeName())) + NODE_VISIBLE_ON;
         return image_id;
       }
       else if (!((mafVMELandmarkCloud*)node)->IsOpen())
       {
-        image_id = ClassNameToIcon(node->GetTypeName()) + NODE_VISIBLE_ON;
+        image_id = ClassNameToIcon(_R(node->GetTypeName())) + NODE_VISIBLE_ON;
         return image_id;
       }
     }
@@ -98,7 +98,7 @@ int mafGUIVMEChooserTree::GetVmeStatus(mafNode *node)
     {
       if (!node->IsMAFType(mafVMERoot))
       {
-        image_id = ClassNameToIcon(node->GetTypeName()) + NODE_VISIBLE_ON;
+        image_id = ClassNameToIcon(_R(node->GetTypeName())) + NODE_VISIBLE_ON;
         return image_id;
       }
     }
@@ -107,12 +107,12 @@ int mafGUIVMEChooserTree::GetVmeStatus(mafNode *node)
   {
     if(m_ValidateFunction(node))
     {
-      image_id = ClassNameToIcon(node->GetTypeName()) + NODE_VISIBLE_ON;
+      image_id = ClassNameToIcon(_R(node->GetTypeName())) + NODE_VISIBLE_ON;
       return image_id;
     }
   }
 
-  image_id = ClassNameToIcon(node->GetTypeName()) + NODE_NON_VISIBLE;
+  image_id = ClassNameToIcon(_R(node->GetTypeName())) + NODE_NON_VISIBLE;
   return image_id;
 }
 
@@ -139,26 +139,25 @@ void mafGUIVMEChooserTree::InitializeImageList()
   // the corresponding icon index can be retrieved as 
   // ClassNameToIcon(vme-class-name) + vme-state
 
-  std::vector<wxString>  v;
-  mafPictureFactory::GetPictureFactory()->GetVmeNames(v);
+  std::vector<mafString> v = mafPictureFactory::GetPictureFactory()->GetVmeNames();
 
-  const int num_of_status = 5; 
-  int num_types = v.size();
-  int num_icons = num_types * num_of_status;
+  const size_t num_of_status = 5; 
+  size_t num_types = v.size();
+  size_t num_icons = num_types * num_of_status;
 
   if(num_types <= 0)
   {
-    mafLogMessage("mafGUIVMEChooserTree:  Warning - no vme-icons defined");
+    mafLogMessage(_M("mafGUIVMEChooserTree:  Warning - no vme-icons defined"));
     return;
   }
 
   //retrieve state icons
   wxBitmap state_ico[num_of_status];
-  state_ico[NODE_NON_VISIBLE] = mafPictureFactory::GetPictureFactory()->GetBmp("DISABLED");
-  state_ico[NODE_VISIBLE_OFF] = mafPictureFactory::GetPictureFactory()->GetBmp("DISABLED");
-  state_ico[NODE_VISIBLE_ON]  = mafPictureFactory::GetPictureFactory()->GetBmp("DISABLED");
-  state_ico[NODE_MUTEX_OFF]   = mafPictureFactory::GetPictureFactory()->GetBmp("DISABLED");
-  state_ico[NODE_MUTEX_ON]    = mafPictureFactory::GetPictureFactory()->GetBmp("DISABLED");
+  state_ico[NODE_NON_VISIBLE] = mafPictureFactory::GetPictureFactory()->GetBmp(_R("DISABLED"));
+  state_ico[NODE_VISIBLE_OFF] = mafPictureFactory::GetPictureFactory()->GetBmp(_R("DISABLED"));
+  state_ico[NODE_VISIBLE_ON]  = mafPictureFactory::GetPictureFactory()->GetBmp(_R("DISABLED"));
+  state_ico[NODE_MUTEX_OFF]   = mafPictureFactory::GetPictureFactory()->GetBmp(_R("DISABLED"));
+  state_ico[NODE_MUTEX_ON]    = mafPictureFactory::GetPictureFactory()->GetBmp(_R("DISABLED"));
   int sw = state_ico[0].GetWidth();
   int sh = state_ico[0].GetHeight();
 
@@ -174,14 +173,13 @@ void mafGUIVMEChooserTree::InitializeImageList()
   //int mh = (sh>h) ? sh : h;
   wxImageList *imgs = new wxImageList(w,h,FALSE,num_icons);
 
-  for(int i=0; i<num_types; i++)
+  for(size_t i=0; i<num_types; i++)
   {
-    wxString name = v[i];
-    m_MapClassNameToIcon[name]=i*num_of_status;
+    m_MapClassNameToIcon[v[i]]=i*num_of_status;
 
-    for( int s=0; s<num_of_status; s++)
+    for( size_t s=0; s<num_of_status; s++)
     {
-      wxBitmap vmeico = mafPictureFactory::GetPictureFactory()->GetVmePic(name);
+      wxBitmap vmeico = mafPictureFactory::GetPictureFactory()->GetVmePic(v[i]);
       if(s==0) vmeico = mafGrayScale(vmeico);
       imgs->Add(vmeico);
     }
@@ -199,12 +197,11 @@ void mafGUIVMEChooserTree::InitializeImageListMulti()
   // the corresponding icon index can be retrieved as 
   // ClassNameToIcon(vme-class-name) + vme-state
 
-  std::vector<wxString>  v;
-  mafPictureFactory::GetPictureFactory()->GetVmeNames(v);
+  std::vector<mafString> v = mafPictureFactory::GetPictureFactory()->GetVmeNames();
 
-  const int num_of_status = 5; 
-  int num_types = v.size();
-  int num_icons = num_types * (num_of_status * 2); // Added the status "Data not available"
+  const size_t num_of_status = 5; 
+  size_t num_types = v.size();
+  size_t num_icons = num_types * (num_of_status * 2); // Added the status "Data not available"
 
   if(num_types <= 0)
   {
@@ -214,11 +211,11 @@ void mafGUIVMEChooserTree::InitializeImageListMulti()
   //retrieve state icons
   //I assume all state-icon to have the same size
   wxBitmap state_ico[num_of_status];
-  state_ico[NODE_NON_VISIBLE] = mafPictureFactory::GetPictureFactory()->GetBmp("DISABLED");
-  state_ico[NODE_VISIBLE_OFF] = mafPictureFactory::GetPictureFactory()->GetBmp("CHECK_OFF");
-  state_ico[NODE_VISIBLE_ON]  = mafPictureFactory::GetPictureFactory()->GetBmp("CHECK_ON");
-  state_ico[NODE_MUTEX_OFF]   = mafPictureFactory::GetPictureFactory()->GetBmp("RADIO_OFF");
-  state_ico[NODE_MUTEX_ON]    = mafPictureFactory::GetPictureFactory()->GetBmp("RADIO_ON");
+  state_ico[NODE_NON_VISIBLE] = mafPictureFactory::GetPictureFactory()->GetBmp(_R("DISABLED"));
+  state_ico[NODE_VISIBLE_OFF] = mafPictureFactory::GetPictureFactory()->GetBmp(_R("CHECK_OFF"));
+  state_ico[NODE_VISIBLE_ON]  = mafPictureFactory::GetPictureFactory()->GetBmp(_R("CHECK_ON"));
+  state_ico[NODE_MUTEX_OFF]   = mafPictureFactory::GetPictureFactory()->GetBmp(_R("RADIO_OFF"));
+  state_ico[NODE_MUTEX_ON]    = mafPictureFactory::GetPictureFactory()->GetBmp(_R("RADIO_ON"));
   int sw = state_ico[0].GetWidth();
   int sh = state_ico[0].GetHeight();
 
@@ -234,15 +231,14 @@ void mafGUIVMEChooserTree::InitializeImageListMulti()
   int mh = (sh>h) ? sh : h;
   wxImageList *imgs = new wxImageList(mw,mh,FALSE,num_icons);
 
-  for(int i=0; i<num_types; i++)
+  for(size_t i=0; i<num_types; i++)
   {
-    wxString name = v[i];
-    m_MapClassNameToIcon[name]=i*(num_of_status * 2); // Paolo 18/12/2006
+    m_MapClassNameToIcon[v[i]]=i*(num_of_status * 2); // Paolo 18/12/2006
 
-    int s;
+    size_t s;
     for( s=0; s<num_of_status; s++)
     {
-      wxBitmap vmeico = mafPictureFactory::GetPictureFactory()->GetVmePic(name);
+      wxBitmap vmeico = mafPictureFactory::GetPictureFactory()->GetVmePic(v[i]);
       if(s==0) vmeico = mafGrayScale(vmeico);
       wxBitmap merged = MergeIcons(state_ico[s],vmeico);
       imgs->Add(merged);
@@ -380,13 +376,13 @@ void mafGUIVMEChooserTree::VmeUpdateIcon(mafNode *vme)
       if (!checked)
       {
         nodeSatus = NODE_VISIBLE_ON*2;
-        icon_index = ClassNameToIcon(node->GetTypeName()) + nodeSatus;
+        icon_index = ClassNameToIcon(_R(node->GetTypeName())) + nodeSatus;
         m_CheckedNode.push_back(node);
       }
       else
       {
         nodeSatus = NODE_VISIBLE_ON;
-        icon_index = ClassNameToIcon(node->GetTypeName()) + nodeSatus;
+        icon_index = ClassNameToIcon(_R(node->GetTypeName())) + nodeSatus;
         std::vector<mafNode *>::iterator found = std::find(m_CheckedNode.begin(), m_CheckedNode.end(), node);
         if (found != m_CheckedNode.end())
         {
@@ -402,14 +398,14 @@ void mafGUIVMEChooserTree::VmeUpdateIcon(mafNode *vme)
     if (!checked)
     {
       nodeSatus = NODE_VISIBLE_ON*2;
-      icon_index = ClassNameToIcon(vme->GetTypeName()) + nodeSatus;
+      icon_index = ClassNameToIcon(_R(vme->GetTypeName())) + nodeSatus;
       m_CheckedNode.push_back(vme);
     }
     else
     {
       nodeSatus = NODE_VISIBLE_ON;
-      icon_index = ClassNameToIcon(vme->GetTypeName()) + nodeSatus;
-      std::vector<mafNode *>::iterator found = std::find(m_CheckedNode.begin(), m_CheckedNode.end(), vme);
+      icon_index = ClassNameToIcon(_R(vme->GetTypeName())) + nodeSatus;
+      auto found = std::find(m_CheckedNode.begin(), m_CheckedNode.end(), vme);
       if (found != m_CheckedNode.end())
       {
         m_CheckedNode.erase(found);

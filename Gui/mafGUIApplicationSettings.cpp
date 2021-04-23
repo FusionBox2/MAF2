@@ -37,14 +37,14 @@ mafGUISettings(Listener, label)
   // Default values for the application.
   m_LogToFile   = 1; //logging enabled for correcting bug #820
   m_VerboseLog  = 0;
-  m_LogFolder = wxGetCwd().c_str();
+  m_LogFolder = mafWxToString(wxGetCwd());
 
 	m_ImageTypeId = PNG;
 
   m_WarnUserFlag = true;
   
   m_UseDefaultPasPhrase = 1;
-  m_PassPhrase = mafDefaultPassPhrase();
+  m_PassPhrase = _R(mafDefaultPassPhrase());
 
   InitializeSettings();
 
@@ -60,23 +60,23 @@ void mafGUIApplicationSettings::CreateGui()
 //----------------------------------------------------------------------------
 {
   m_Gui = new mafGUI(this);
-  m_Gui->Label(_("Application general settings"));
-  m_Gui->Bool(ID_USE_DEFAULT_PASSPHRASE,_("use default passphrase"),&m_UseDefaultPasPhrase,1);
-  m_Gui->String(ID_PASSPHRASE,_("passphrase"),&m_PassPhrase,"",false,true);
+  m_Gui->Label(_L("Application general settings"));
+  m_Gui->Bool(ID_USE_DEFAULT_PASSPHRASE,_L("use default passphrase"),&m_UseDefaultPasPhrase,1);
+  m_Gui->String(ID_PASSPHRASE,_L("passphrase"),&m_PassPhrase,_R(""),false,true);
   m_Gui->Divider(2);
-  m_Gui->Bool(ID_LOG_TO_FILE,_("log to file"),&m_LogToFile,1);
-  m_Gui->Bool(ID_LOG_VERBOSE,_("log verbose"),&m_VerboseLog,1);
+  m_Gui->Bool(ID_LOG_TO_FILE,_L("log to file"),&m_LogToFile,1);
+  m_Gui->Bool(ID_LOG_VERBOSE,_L("log verbose"),&m_VerboseLog,1);
   if (m_EnableLogDirChoices)
   {
-  	m_Gui->DirOpen(ID_LOG_DIR,_("log dir"),&m_LogFolder);
+  	m_Gui->DirOpen(ID_LOG_DIR,_L("log dir"),&m_LogFolder);
   }
   m_Gui->Divider(2);
-  m_Gui->Bool(ID_WARN_UNDO, _("warn on undoable"), &m_WarnUserFlag, 1, _("If checked the use is warned when an operation \nthat not support the undo is executed."));
+  m_Gui->Bool(ID_WARN_UNDO, _L("warn on undoable"), &m_WarnUserFlag, 1, _L("If checked the use is warned when an operation \nthat not support the undo is executed."));
   EnableItems();
-  m_Gui->Label(_("changes will take effect when the \napplication restart"),false,true);
-  m_Gui->Label("");
-  mafString id_array[3] = {_("JPG") , _("BMP"), _("PNG")};
-  m_Gui->Combo(IMAGE_TYPE_ID,_("image type"), &m_ImageTypeId,3,id_array);
+  m_Gui->Label(_L("changes will take effect when the \napplication restart"),false,true);
+  m_Gui->Label(_R(""));
+  mafString id_array[3] = {_L("JPG") , _L("BMP"), _L("PNG")};
+  m_Gui->Combo(IMAGE_TYPE_ID,_L("image type"), &m_ImageTypeId,3,id_array);
   m_Gui->Divider(2);
 }
 //----------------------------------------------------------------------------
@@ -101,7 +101,7 @@ void mafGUIApplicationSettings::OnEvent(mafEventBase *maf_event)
       mafEventBase::SetLogVerbose(m_VerboseLog != 0);
     break;
     case ID_LOG_DIR:
-      m_Config->Write("LogFolder",m_LogFolder.GetCStr());
+      m_Config->Write("LogFolder",m_LogFolder.toWx());
     break;
     case ID_WARN_UNDO:
       m_Config->Write("WarnUser",m_WarnUserFlag);
@@ -113,12 +113,12 @@ void mafGUIApplicationSettings::OnEvent(mafEventBase *maf_event)
       m_Config->Write("UseDefaultPassphrase",m_UseDefaultPasPhrase);
       if (m_UseDefaultPasPhrase != 0)
       {
-        m_PassPhrase = mafDefaultPassPhrase();
-        wxMessageBox(_("Passphrase resetted to default one!"),_("Warning"));
+        m_PassPhrase = _R(mafDefaultPassPhrase());
+        mafWarningMessage(_M(mafString(_L("Passphrase resetted to default one!"))));
       }
       else
       {
-        m_PassPhrase = wxGetPasswordFromUser(_("Insert passphrase"),_("Passphrase"),wxEmptyString).c_str();
+        m_PassPhrase = mafWxToString(wxGetPasswordFromUser(_("Insert passphrase"),_("Passphrase"),wxEmptyString));
       }
       EnableItems();
       m_Gui->Update();
@@ -160,11 +160,11 @@ void mafGUIApplicationSettings::InitializeSettings()
   }
   if(m_Config->Read("LogFolder", &string_item))
   {
-    m_LogFolder = string_item.c_str();
+    m_LogFolder = mafWxToString(string_item);
   }
   else
   {
-    m_Config->Write("LogFolder",m_LogFolder.GetCStr());
+    m_Config->Write("LogFolder",m_LogFolder.toWx());
   }
   if (m_Config->Read("WarnUser", &long_item))
   {
@@ -184,7 +184,7 @@ void mafGUIApplicationSettings::InitializeSettings()
   }
   if (m_UseDefaultPasPhrase == 0)
   {
-    m_PassPhrase = wxGetPasswordFromUser(_("Insert passphrase"),_("Passphrase"),wxEmptyString).c_str();
+    m_PassPhrase = mafWxToString(wxGetPasswordFromUser(_("Insert passphrase"),_("Passphrase"),wxEmptyString));
   }
   if(m_Config->Read("ImageType", &long_item))
   {
@@ -203,7 +203,7 @@ void mafGUIApplicationSettings::SetLogFolder(mafString log_folder)
   if (m_LogFolder != log_folder)
   {
     m_LogFolder = log_folder;
-    m_Config->Write("LogFolder",m_LogFolder.GetCStr());
+    m_Config->Write("LogFolder",m_LogFolder.toWx());
     m_Config->Flush();
   }
 }
@@ -230,7 +230,7 @@ void mafGUIApplicationSettings::SetLogVerboseStatus(int log_verbose)
   }
 }
 //----------------------------------------------------------------------------
-void mafGUIApplicationSettings::SetUseDefaultPassPhrase(int use_default, mafString passphrase)
+void mafGUIApplicationSettings::SetUseDefaultPassPhrase(int use_default, const mafString& passphrase)
 //----------------------------------------------------------------------------
 {
   if (m_UseDefaultPasPhrase != use_default)
@@ -240,13 +240,13 @@ void mafGUIApplicationSettings::SetUseDefaultPassPhrase(int use_default, mafStri
     m_Config->Flush();
     if (m_UseDefaultPasPhrase != 0)
     {
-      m_PassPhrase = mafDefaultPassPhrase();
+      m_PassPhrase = _R(mafDefaultPassPhrase());
     }
     else
     {
       if (passphrase.IsEmpty())
       {
-        m_PassPhrase = wxGetPasswordFromUser(_("Insert passphrase"),_("Passphrase"),wxEmptyString).c_str();
+        m_PassPhrase = mafWxToString(wxGetPasswordFromUser(_("Insert passphrase"),_("Passphrase"),wxEmptyString));
       }
       else
       {
@@ -256,7 +256,7 @@ void mafGUIApplicationSettings::SetUseDefaultPassPhrase(int use_default, mafStri
   }
 }
 //----------------------------------------------------------------------------
-void mafGUIApplicationSettings::SetPassPhrase(mafString pass_phrase)
+void mafGUIApplicationSettings::SetPassPhrase(const mafString& pass_phrase)
 //----------------------------------------------------------------------------
 {
   m_PassPhrase = pass_phrase;

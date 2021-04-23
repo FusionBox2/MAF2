@@ -36,7 +36,7 @@ mafGUISettings(Listener, label)
 {
   m_BuildHelpGui = false;
   m_HelpFileName = mafGetApplicationDirectory();
-  m_HelpFileName.Append("\\Help\\Help.txt");   
+  m_HelpFileName.Append(_R("\\Help\\Help.txt"));   
   InitializeSettings();
 }
 
@@ -47,13 +47,13 @@ mafGUISettingsHelp::~mafGUISettingsHelp()
 void mafGUISettingsHelp::CreateGui()
 {
   m_Gui = new mafGUI(this);
-  m_Gui->Label(_("Help Settings"));
-  m_Gui->Label(_(""));
-  m_Gui->Label(_("Help file name"));
-  m_Gui->String(ID_HELP_FILE_NAME ,_(""),&m_HelpFileName);
-  m_Gui->Label(_(""));
-  m_Gui->Label(_("build the help gui"));
-  m_Gui->Bool(ID_BUILD_HELP_GUI ,_(""),&m_BuildHelpGui,1);
+  m_Gui->Label(_L("Help Settings"));
+  m_Gui->Label(_L(""));
+  m_Gui->Label(_L("Help file name"));
+  m_Gui->String(ID_HELP_FILE_NAME ,_L(""),&m_HelpFileName);
+  m_Gui->Label(_L(""));
+  m_Gui->Label(_L("build the help gui"));
+  m_Gui->Bool(ID_BUILD_HELP_GUI ,_L(""),&m_BuildHelpGui,1);
   m_Gui->Divider(2);
   EnableItems(true);
 }
@@ -76,7 +76,7 @@ void mafGUISettingsHelp::OnEvent(mafEventBase *maf_event)
 
 	case ID_HELP_FILE_NAME:
 	{
-		m_Config->Write("m_HelpFileName",m_HelpFileName);
+		m_Config->Write("m_HelpFileName",m_HelpFileName.toWx());
 	}
 	break;
 
@@ -105,11 +105,11 @@ void mafGUISettingsHelp::InitializeSettings()
 
   if(m_Config->Read("m_HelpFileName", &stringItem))
   {
-	  m_HelpFileName = stringItem;
+	  m_HelpFileName = mafWxToString(stringItem);
   }
   else
   {
-	  m_Config->Write("m_HelpFileName",m_HelpFileName);
+	  m_Config->Write("m_HelpFileName",m_HelpFileName.toWx());
   }
   
   m_Config->Flush();
@@ -117,10 +117,10 @@ void mafGUISettingsHelp::InitializeSettings()
 
 void mafGUISettingsHelp::OpenHelpPage(const mafString& entity )
 {
-	std::string helpFileName = m_HelpFileName;
-	assert(wxFileExists(helpFileName.c_str()));
+	mafString helpFileName = m_HelpFileName;
+	assert(mafFileExists(helpFileName));
 	
-	std::ifstream csvFile(helpFileName.c_str());
+	std::ifstream csvFile(helpFileName.GetCStr());
 	std::string line;
 	while(std::getline(csvFile,line))
 	{
@@ -135,7 +135,7 @@ void mafGUISettingsHelp::OpenHelpPage(const mafString& entity )
 		wxString trimmedCurrentLineHelpLink = wxString(currentLineHelpLink.c_str()).Trim().Trim(false);
 
     wxString entitywx;
-    entitywx = entity.GetCStr();
+    entitywx = entity.toWx();
 		entitywx.Replace("\t","");
 
 		if (strcmp(entitywx.c_str() , trimmedCurrentLineEntityName.c_str()) == 0)

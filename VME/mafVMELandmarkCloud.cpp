@@ -54,7 +54,7 @@ const bool DEBUG_MODE = false;
 //------------------------------------------------------------------------------
 // local defines
 //------------------------------------------------------------------------------
-#define MAF_LMC_ITEMS_NUMBER_TAG "MFL_VME_NUMBER_OF_LANDMARKS"
+#define MAF_LMC_ITEMS_NUMBER_TAG _R("MFL_VME_NUMBER_OF_LANDMARKS")
 
 //------------------------------------------------------------------------------
 // Events
@@ -195,7 +195,7 @@ int mafVMELandmarkCloud::GetNumberOfLandmarks()
         tarray->GetTagList(tag_list);
         for (int i = 0; i < tag_list.size(); i++)
         {
-          if (tag_list[i].StartsWith("LM_NAME_"))
+          if (tag_list[i].StartsWith(_R("LM_NAME_")))
           {
             m_NumberOfLandmarks++;
           }
@@ -239,8 +239,8 @@ int mafVMELandmarkCloud::SetNumberOfLandmarks(int num)
         Superclass::AddChild(lm);
 
         mafString name;
-        name = "LM_NAME_";
-        name << n;
+        name = _R("LM_NAME_");
+        name += mafToString(n);
         SetLandmarkName(n, name);
       }
     }
@@ -271,13 +271,14 @@ int mafVMELandmarkCloud::SetNumberOfLandmarks(int num)
       // add default names to new landmarks
       for (int n = oldnum; n < num; n++)
       {
-        const char *oldname = GetLandmarkName(n);
+        const char *oldname = GetLandmarkName(n).GetCStr();
         // it could be the name already exist...
+#pragma message ("it should be check for empty string")
         if (oldname == NULL)
         {
           mafString name;
-          name = "LM_NAME_";
-          name << n;
+          name = _R("LM_NAME_");
+          name += mafToString(n);
           SetLandmarkName(n,name);
         }
       }
@@ -337,8 +338,8 @@ int mafVMELandmarkCloud::SetNumberOfLandmarks(int num)
 void mafVMELandmarkCloud::RemoveLandmarkName(int idx)
 //-------------------------------------------------------------------------
 { 
-  mafString tagname="LM_NAME_";
-  tagname << idx;
+  mafString tagname=_R("LM_NAME_");
+  tagname += mafToString(idx);
   GetTagArray()->DeleteTag(tagname);
 }
 
@@ -350,7 +351,7 @@ int mafVMELandmarkCloud::AppendLandmark(const mafString& name, bool checkForDupl
   {
     if (FindLandmarkIndex(name) >= 0)
     {
-      mafErrorMacro("Cannot add new landmark \""<<name<<"\": a landmark with the same name already exists!!!");
+      mafErrorMacro("Cannot add new landmark \""<<name.GetCStr() <<"\": a landmark with the same name already exists!!!");
       return -1;
     }
   }
@@ -411,7 +412,7 @@ int mafVMELandmarkCloud::SetLandmarkForTimeFrame(int idx,double x,double y,doubl
 int mafVMELandmarkCloud::SetLandmark(mafVMELandmark *lm)
 //-------------------------------------------------------------------------
 {
-  const char *lm_name = lm->GetName();
+  mafString lm_name = lm->GetName();
   double pos[3], rot[3];
   lm->GetOutput()->GetPose(pos,rot);
   return AppendLandmark(pos[0],pos[1],pos[2],lm_name);
@@ -530,11 +531,11 @@ int mafVMELandmarkCloud::RemoveLandmark(int idx)
 const mafString& mafVMELandmarkCloud::GetLandmarkName(int idx)
 //-------------------------------------------------------------------------
 {
-  static mafString empty("");
+  static mafString empty;
   if (GetState() == CLOSED_CLOUD)
   {
-    mafString tag = "LM_NAME_";
-    tag << idx;
+    mafString tag = _R("LM_NAME_");
+    tag += mafToString(idx);
     mafTagItem *item = GetTagArray()->GetTag(tag);
     return item ? item->GetValue() : empty;
   }
@@ -551,9 +552,9 @@ void mafVMELandmarkCloud::SetLandmarkName(int idx,const mafString& name)
 {
   if (GetState() == CLOSED_CLOUD)
   {
-    mafString tag = "LM_NAME_";
-    tag << idx;
-    GetTagArray()->SetTag(mafTagItem(tag.GetCStr(),name));
+    mafString tag = _R("LM_NAME_");
+    tag += mafToString(idx);
+    GetTagArray()->SetTag(mafTagItem(tag,name));
   }
   else
   {
@@ -734,7 +735,7 @@ void mafVMELandmarkCloud::Close()
 {
   if (m_State == CLOSED_CLOUD)
   {
-    mafWarningMacro("Cloud " << GetName() << " already closed!!");
+    mafWarningMacro("Cloud " << GetName().GetCStr() << " already closed!!");
     return;
   }
 
@@ -748,7 +749,7 @@ void mafVMELandmarkCloud::Close()
   {
     std::ostringstream stringStream;
     stringStream << "cannot render busy cursor..."  << std::endl;
-    mafLogMessage(stringStream.str().c_str());
+    mafLogMessage(_M(stringStream.str().c_str()));
   }
 
   int num = GetNumberOfLandmarks();
@@ -770,7 +771,7 @@ void mafVMELandmarkCloud::Close()
   long progress = 0;
 
   ForwardUpEvent(&mafEvent(this,PROGRESSBAR_SHOW));
-  ForwardUpEvent(&mafEvent(this,PROGRESSBAR_SET_TEXT, &mafString("Collapsing cloud")));
+  ForwardUpEvent(&mafEvent(this,PROGRESSBAR_SET_TEXT, &mafString(_R("Collapsing cloud"))));
 
   for (int c = 0; c < numberOfChildren;c++)
   {
@@ -790,7 +791,7 @@ void mafVMELandmarkCloud::Close()
         xyz[2] = mat->GetElements()[2][3];
 
         if (mat->GetElements()[0][0]!=mat->GetElements()[1][1]||mat->GetElements()[0][0]!=mat->GetElements()[2][2]) // DEBUG Test
-          mafErrorMacro("Close: corrupted visibility information for landmark " << lm->GetName() << " a time " << mat->GetTimeStamp());
+          mafErrorMacro("Close: corrupted visibility information for landmark " << lm->GetName().GetCStr() << " a time " << mat->GetTimeStamp());
 
         vis = mat->GetElements()[0][0] != 0;
         
@@ -902,7 +903,7 @@ void mafVMELandmarkCloud::Open()
 {
   if (m_State == OPEN_CLOUD)
   {
-    mafWarningMacro("Cloud " << GetName() << " already open!!");
+    mafWarningMacro("Cloud " << GetName().GetCStr() << " already open!!");
     return;
   }
 
@@ -916,11 +917,11 @@ void mafVMELandmarkCloud::Open()
   {
     std::ostringstream stringStream;
     stringStream << "cannot render busy cursor..."  << std::endl;
-    mafLogMessage(stringStream.str().c_str());
+    mafLogMessage(_M(stringStream.str().c_str()));
   }
 
   ForwardUpEvent(&mafEvent(this,PROGRESSBAR_SHOW));
-  ForwardUpEvent(&mafEvent(this,PROGRESSBAR_SET_TEXT, &mafString("Exploding cloud")));
+  ForwardUpEvent(&mafEvent(this,PROGRESSBAR_SET_TEXT, &mafString(_R("Exploding cloud"))));
   long progress  = 0;
 
   int i,numlm = GetNumberOfLandmarks();
@@ -1188,7 +1189,7 @@ int mafVMELandmarkCloud::GetState()
 {
   if (m_State == UNSET_CLOUD)
   {
-    if (mafTagItem *tag = GetTagArray()->GetTag("MFL_VME_LANDMARK_CLOUD_STATE"))
+    if (mafTagItem *tag = GetTagArray()->GetTag(_R("MFL_VME_LANDMARK_CLOUD_STATE")))
     {
       m_State = tag->GetValueAsDouble();
     }
@@ -1205,7 +1206,7 @@ void mafVMELandmarkCloud::SetState(int state)
 //-------------------------------------------------------------------------
 {
   m_State = state;
-  GetTagArray()->SetTag(mafTagItem("MFL_VME_LANDMARK_CLOUD_STATE", m_State));
+  GetTagArray()->SetTag(mafTagItem(_R("MFL_VME_LANDMARK_CLOUD_STATE"), m_State));
   Modified();
 }
 
@@ -1236,7 +1237,7 @@ void mafVMELandmarkCloud::Print(std::ostream &os, const int tabs)
   {
     double x,y,z;
     GetLandmark(idx,x,y,z,m_CurrentTime);
-    os << indent << "LM: \""<<GetLandmarkName(idx)<<"\" (" \
+    os << indent << "LM: \""<<GetLandmarkName(idx).GetCStr() <<"\" (" \
       <<x<<","<<y<<","<<z<<") Visibility=" \
       << GetLandmarkVisibility(idx,m_CurrentTime)<<std::endl;
   }
@@ -1252,12 +1253,12 @@ mafGUI* mafVMELandmarkCloud::CreateGui()
   m_Gui->Divider();
   GetRadius(); // Called to update m_Radius var from tag
   m_CloudStateCheckbox = this->IsOpen() ? 1 : 0;
-  m_Gui->Bool(ID_OPEN_CLOSE_CLOUD,"Explode",&m_CloudStateCheckbox);
+  m_Gui->Bool(ID_OPEN_CLOSE_CLOUD,_R("Explode"),&m_CloudStateCheckbox);
 
-  m_Gui->Double(ID_LM_RADIUS, "radius", &m_Radius, 0.0,MAXDOUBLE,-1);
+  m_Gui->Double(ID_LM_RADIUS, _R("radius"), &m_Radius, 0.0,MAXDOUBLE,-1);
   m_Gui->Enable(ID_LM_RADIUS, m_CloudStateCheckbox == 0);
 
-  m_Gui->Integer(ID_LM_SPHERE_RESOLUTION, "Resolution", &m_SphereResolution, 0.0,MAXINT);
+  m_Gui->Integer(ID_LM_SPHERE_RESOLUTION, _R("Resolution"), &m_SphereResolution, 0.0,MAXINT);
   m_Gui->Enable(ID_LM_SPHERE_RESOLUTION, m_CloudStateCheckbox == 0);
   
   m_Gui->Divider();
@@ -1340,8 +1341,8 @@ int mafVMELandmarkCloud::InternalStore(mafStorageElement *parent)
 {
   if (Superclass::InternalStore(parent) == MAF_OK)
   {
-    if (parent->StoreInteger("LM_SPHERE_RESOLUTION", m_SphereResolution) == MAF_OK &&
-        parent->StoreDouble("LM_RADIUS", m_Radius) == MAF_OK)
+    if (parent->StoreInteger(_R("LM_SPHERE_RESOLUTION"), m_SphereResolution) == MAF_OK &&
+        parent->StoreDouble(_R("LM_RADIUS"), m_Radius) == MAF_OK)
     {
       return MAF_OK;
     }
@@ -1401,8 +1402,8 @@ int mafVMELandmarkCloud::InternalRestore(mafStorageElement *node)
 {
   if (Superclass::InternalRestore(node) == MAF_OK)
   {
-    if (node->RestoreInteger("LM_SPHERE_RESOLUTION", m_SphereResolution) == MAF_OK &&
-        node->RestoreDouble("LM_RADIUS", m_Radius) == MAF_OK)
+    if (node->RestoreInteger(_R("LM_SPHERE_RESOLUTION"), m_SphereResolution) == MAF_OK &&
+        node->RestoreDouble(_R("LM_RADIUS"), m_Radius) == MAF_OK)
     {
       return MAF_OK;
     }
@@ -1413,11 +1414,11 @@ int mafVMELandmarkCloud::InternalRestore(mafStorageElement *node)
 mmaMaterial *mafVMELandmarkCloud::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+  mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
   if (material == NULL)
   {
     material = mmaMaterial::New();
-    SetAttribute("MaterialAttributes", material);
+    SetAttribute(_R("MaterialAttributes"), material);
     if (m_Output)
     {
       ((mafVMEOutputPointSet *)m_Output)->SetMaterial(material);
@@ -1473,9 +1474,9 @@ bool mafVMELandmarkCloud::IsDataAvailable()
     {
       std::ostringstream stringStream;
       stringStream << "bool mafVMELandmarkCloud::IsDataAvailable()" << std::endl
-        << "Data for VME: " << this->GetName() << " is "  << \
+        << "Data for VME: " << this->GetName().GetCStr() << " is "  << \
         (available ? " available" : " not available") << std::endl;
-      mafLogMessage(stringStream.str().c_str());
+      mafLogMessage(_M(stringStream.str().c_str()));
     }
     return available;
   }

@@ -29,7 +29,7 @@ class mafGUIPanelStack: public mafGUIPanel
 public:
   /** constructor */
   mafGUIPanelStack(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition, 
-           const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL, const wxString& name = "panel");
+           const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL, const mafString& name = _R("panel"));
   /** destructor */
   virtual ~mafGUIPanelStack(); 
 

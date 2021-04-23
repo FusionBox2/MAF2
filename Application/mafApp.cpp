@@ -146,95 +146,96 @@ bool mafApp::OnInit()
 		RegKey.Create();
 		wxString revision;
 		RegKey.QueryValue(wxString("DisplayVersion"), revision);
-		logic->SetRevision(revision);
+		logic->SetRevision(mafWxToString(revision));
 	}
 	else
 	{
-		wxString revision="0.1";
+		mafString revision=_R("0.1");
 		logic->SetRevision(revision);
 	}
   //------------------------- Editors -------------------------
-  logic->Plug(new mafOpDelete(_("Delete   \tCtrl+Shift+D")), "");
-  logic->Plug(new mafOpCut(_("Cut   \tCtrl+Shift+X")), "");
-  logic->Plug(new mafOpCopy(_("Copy  \tCtrl+Shift+C")), "");
-  logic->Plug(new mafOpPaste(_("Paste \tCtrl+Shift+V")), "");
+  logic->Plug(new mafOpDelete(_L("Delete   \tCtrl+Shift+D")), _R(""));
+  logic->Plug(new mafOpCut(_L("Cut   \tCtrl+Shift+X")), _R(""));
+  logic->Plug(new mafOpCopy(_L("Copy  \tCtrl+Shift+C")), _R(""));
+  logic->Plug(new mafOpPaste(_L("Paste \tCtrl+Shift+V")), _R(""));
   //------------------------- Importers -------------------------
-  logic->Plug(new mafOpImporterSTL("STL"),"Geometries");
-  logic->Plug(new mafOpImporterMSF("MSF"),"Other");
-  logic->Plug(new mafOpImporterVRML("VRML"), "Geometries");
-  logic->Plug(new mafOpImporterVTK("VTK"),"Other");
-  logic->Plug(new mafOpImporterMSF1x("MAF 1.x"),"Other");
-  logic->Plug(new mafOpImporterRAWVolume("Raw Volume Legacy"),"Images");
-  logic->Plug(new mafOpImporterImage("Images"),"Images");
-  logic->Plug(new mafOpImporterMesh("Generic Mesh"), "Finite Element");
-  logic->Plug(new mafOpImporterExternalFile("External data"), "Other");
+  logic->Plug(new mafOpImporterSTL(_R("STL")),_R("Geometries"));
+  logic->Plug(new mafOpImporterMSF(_R("MSF")),_R("Other"));
+  logic->Plug(new mafOpImporterVRML(_R("VRML")), _R("Geometries"));
+  logic->Plug(new mafOpImporterVTK(_R("VTK")),_R("Other"));
+  logic->Plug(new mafOpImporterMSF1x(_R("MAF 1.x")),_R("Other"));
+  logic->Plug(new mafOpImporterRAWVolume(_R("Raw Volume Legacy")),_R("Images"));
+  logic->Plug(new mafOpImporterImage(_R("Images")),_R("Images"));
+  logic->Plug(new mafOpImporterMesh(_R("Generic Mesh")), _R("Finite Element"));
+  logic->Plug(new mafOpImporterExternalFile(_R("External data")), _R("Other"));
 
   //-------------------------------------------------------------
 
   //------------------------- Exporters -------------------------
-  logic->Plug(new mafOpExporterSTL("STL"),"Geometries");
-  logic->Plug(new mafOpExporterVTK("VTK"), "Other");
-  logic->Plug(new mafOpExporterBmp("Bmp"), "Images");
-  logic->Plug(new mafOpExporterRAW("Raw"), "Images");
+  logic->Plug(new mafOpExporterSTL(_R("STL")),_R("Geometries"));
+  logic->Plug(new mafOpExporterVTK(_R("VTK")), _R("Other"));
+  logic->Plug(new mafOpExporterBmp(_R("Bmp")), _R("Images"));
+  logic->Plug(new mafOpExporterRAW(_R("Raw")), _R("Images"));
   //-------------------------------------------------------------
 
   //------------------------- Operations -------------------------
   logic->Plug(new mafOpValidateTree());
-  logic->Plug(new mafOpCreateGroup("Group"),"Create/New");
-	logic->Plug(new mafOpCreateSurfaceParametric("Parametric Surface"),"Create/New");
-	logic->Plug(new mafOpAddLandmark("Add Landmark \tCtrl+A"),"Create/New");
-  logic->Plug(new mafOpCreateMeter("Meter"),"Create/Derive");
+  logic->Plug(new mafOpCreateGroup(_R("Group")),_R("Create/New"));
+	logic->Plug(new mafOpCreateSurfaceParametric(_R("Parametric Surface")),_R("Create/New"));
+	logic->Plug(new mafOpAddLandmark(_R("Add Landmark \tCtrl+A")),_R("Create/New"));
+  logic->Plug(new mafOpCreateMeter(_R("Meter")),_R("Create/Derive"));
 
-  logic->Plug(new mafOpReparentTo("Reparent to...  \tCtrl+R"),"Modify/Fuse");
-  logic->Plug(new mafOpReparentTo("Local reparent to...", false),"Modify/Fuse");
-  logic->Plug(new mafOpCreateVolume("Constant Volume"),"Create/New");
+  logic->Plug(new mafOpReparentTo(_R("Reparent to...  \tCtrl+R")),_R("Modify/Fuse"));
+  logic->Plug(new mafOpReparentTo(_R("Local reparent to..."), false),_R("Modify/Fuse"));
+  logic->Plug(new mafOpCreateVolume(_R("Constant Volume")),_R("Create/New"));
 
-  logic->Plug(new mafOpCreateRefSys("Refsys"),"Create/New");
-  logic->Plug(new mafOpCreateSlicer("Slicer"),"Create/Derive");
-  logic->Plug(new mafOpFilterSurface("Filter Surface"),"Modify");
-  logic->Plug(new mafOpVOIDensityEditor("Volume Density"),"Modify");
-  logic->Plug(new mafOpApplyTrajectory("Apply Trajectory"), "Modify");
-  logic->Plug(new mafOpExtractIsosurface("Extract Isosurface"),"Create/Derive");
-  logic->Plug(new mafOpCrop("Crop Volume"),"Modify");
-  logic->Plug(new mafOp2DMeasure("2D Measure"),"Measure");
-  logic->Plug(new mafOpVOIDensity("VOI Density"),"Measure");
-  logic->Plug(new mafOpImporterVMEDataSetAttributes("VME DataSet Attributes Adder"),"Modify");
-  logic->Plug(new mafOpOpenExternalFile("Open with external program"),"Manage"); 
+  logic->Plug(new mafOpCreateRefSys(_R("Refsys")),_R("Create/New"));
+  logic->Plug(new mafOpCreateSlicer(_R("Slicer")),_R("Create/Derive"));
+  logic->Plug(new mafOpFilterSurface(_R("Filter Surface")),_R("Modify"));
+  logic->Plug(new mafOpVOIDensityEditor(_R("Volume Density")),_R("Modify"));
+  logic->Plug(new mafOpApplyTrajectory(_R("Apply Trajectory")), _R("Modify"));
+  logic->Plug(new mafOpExtractIsosurface(_R("Extract Isosurface")),_R("Create/Derive"));
+  logic->Plug(new mafOpCrop(_R("Crop Volume")),_R("Modify"));
+  logic->Plug(new mafOp2DMeasure(_R("2D Measure")),_R("Measure"));
+  logic->Plug(new mafOpVOIDensity(_R("VOI Density")),_R("Measure"));
+  logic->Plug(new mafOpImporterVMEDataSetAttributes(_R("VME DataSet Attributes Adder")),_R("Modify"));
 
-  logic->Plug(new mafOpDecomposeTimeVarVME("Decompose Time"),"Create/Derive");
-  logic->Plug(new mafOpLabelExtractor("Extract Label"),"Create/Derive");
+  logic->Plug(new mafOpOpenExternalFile(_R("Open with external program")),_R("Manage")); 
+
+  logic->Plug(new mafOpDecomposeTimeVarVME(_R("Decompose Time")),_R("Create/Derive"));
+  logic->Plug(new mafOpLabelExtractor(_R("Extract Label")),_R("Create/Derive"));
   
   //-------------------------------------------------------------
   bool view_visibility = 0;//fullVersion;
   //------------------------- Views -------------------------
 
   // View DRR
-  mafViewVTK *vdrr = new mafViewVTK("DRR");
-  vdrr->PlugVisualPipe("mafVMEVolumeGray","medPipeVolumeDRR",MUTEX);
-  vdrr->PlugVisualPipe("mafVMEVolumeLarge","medPipeVolumeDRR",MUTEX);
+  mafViewVTK *vdrr = new mafViewVTK(_R("DRR"));
+  vdrr->PlugVisualPipe(_R("mafVMEVolumeGray"),_R("medPipeVolumeDRR"),MUTEX);
+  vdrr->PlugVisualPipe(_R("mafVMEVolumeLarge"),_R("medPipeVolumeDRR"),MUTEX);
   logic->Plug(vdrr, view_visibility);
 
   // View Analog graph
-  mafViewVTK *graph = new mafViewVTK("Analog Graph", CAMERA_PERSPECTIVE, false);
-  graph->PlugVisualPipe("medVMEAnalog", "medPipeGraph",MUTEX);
+  mafViewVTK *graph = new mafViewVTK(_R("Analog Graph"), CAMERA_PERSPECTIVE, false);
+  graph->PlugVisualPipe(_R("medVMEAnalog"), _R("medPipeGraph"),MUTEX);
   logic->Plug(graph/*, view_visibility*/);
 
-  mafViewVTK *viso = new mafViewVTK("Isosurface");
-  viso->PlugVisualPipe("mafVMEVolumeGray", "mafPipeIsosurface",MUTEX);
-  viso->PlugVisualPipe("medVMELabeledVolume", "mafPipeIsosurface",MUTEX);
-  viso->PlugVisualPipe("mafVMEVolumeLarge","mafPipeIsosurface",MUTEX);
+  mafViewVTK *viso = new mafViewVTK(_R("Isosurface"));
+  viso->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeIsosurface"),MUTEX);
+  viso->PlugVisualPipe(_R("medVMELabeledVolume"), _R("mafPipeIsosurface"),MUTEX);
+  viso->PlugVisualPipe(_R("mafVMEVolumeLarge"),_R("mafPipeIsosurface"),MUTEX);
   logic->Plug(viso, view_visibility);
 
-  mafViewVTK *visoGPU = new mafViewVTK("Isosurface (GPU)");
-  visoGPU->PlugVisualPipe("mafVMEVolumeGray", "mafPipeIsosurfaceGPU",MUTEX);   //BES: 13.11.2008 - GPU support, mafPipeIsosurfaceGPU to be merged with mafPipeIsosurface in future 
-  visoGPU->PlugVisualPipe("medVMELabeledVolume", "mafPipeIsosurfaceGPU",MUTEX);
-  visoGPU->PlugVisualPipe("mafVMEVolumeLarge", "mafPipeIsosurfaceGPU",MUTEX);
+  mafViewVTK *visoGPU = new mafViewVTK(_R("Isosurface (GPU)"));
+  visoGPU->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeIsosurfaceGPU"),MUTEX);   //BES: 13.11.2008 - GPU support, mafPipeIsosurfaceGPU to be merged with mafPipeIsosurface in future 
+  visoGPU->PlugVisualPipe(_R("medVMELabeledVolume"), _R("mafPipeIsosurfaceGPU"),MUTEX);
+  visoGPU->PlugVisualPipe(_R("mafVMEVolumeLarge"), _R("mafPipeIsosurfaceGPU"),MUTEX);
   logic->Plug(visoGPU, view_visibility);
 
-	mafViewVTK *vsurface = new mafViewVTK("Surface");
-	vsurface->PlugVisualPipe("mafVMESurface","mafPipeSurface");
-  vsurface->PlugVisualPipe("mafVMELandmark", "medPipeTrajectories");
-	logic->Plug(vsurface);
+  mafViewVTK *vsurface = new mafViewVTK(_R("Surface"));
+  vsurface->PlugVisualPipe(_R("mafVMESurface"),_R("mafPipeSurface"));
+  vsurface->PlugVisualPipe(_R("mafVMELandmark"), _R("medPipeTrajectories"));
+  logic->Plug(vsurface);
 
   //-------------------------------------------------------------
   wxBitmap splashBitmap;

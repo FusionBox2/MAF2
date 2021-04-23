@@ -66,11 +66,11 @@ mafOpVOIDensity::mafOpVOIDensity(const mafString& label) : Superclass(label)
   m_MinScalar       = 99999.0;
   m_StandardDeviation = 0.0;
 
-	m_NumberOfScalarsString = mafString(wxString::Format("%d",m_NumberOfScalars));
-  m_MeanScalarString      = mafString(wxString::Format("%f",m_MeanScalar));
-  m_MaxScalarString       = mafString(wxString::Format("%f",m_MaxScalar));
-  m_MinScalarString       = mafString(wxString::Format("%f",m_MinScalar));
-  m_StandardDeviationString = mafString(wxString::Format("%f",m_StandardDeviation));
+	m_NumberOfScalarsString = mafString::Format(_R("%d"),m_NumberOfScalars);
+  m_MeanScalarString      = mafString::Format(_R("%f"),m_MeanScalar);
+  m_MaxScalarString       = mafString::Format(_R("%f"),m_MaxScalar);
+  m_MinScalarString       = mafString::Format(_R("%f"),m_MinScalar);
+  m_StandardDeviationString = mafString::Format(_R("%f"),m_StandardDeviation);
 }
 //----------------------------------------------------------------------------
 mafOpVOIDensity::~mafOpVOIDensity()
@@ -125,20 +125,20 @@ void mafOpVOIDensity::OpRun()
 
 		if (buildHelpGui.GetArg() == true)
 		{
-			m_Gui->Button(ID_HELP, "Help","");	
+			m_Gui->Button(ID_HELP, _R("Help"), _R(""));
 		}
 
 		m_Gui->Divider();
-		m_Gui->Button(ID_CHOOSE_SURFACE,_("VOI surface"));
-		m_Gui->Button(ID_EVALUATE_DENSITY, _("Evaluate"), "", _("Evaluate density inside the choosed surface"));
+		m_Gui->Button(ID_CHOOSE_SURFACE,_L("VOI surface"));
+		m_Gui->Button(ID_EVALUATE_DENSITY, _L("Evaluate"), _R(""), _L("Evaluate density inside the choosed surface"));
 		m_Gui->Divider(2);
-		m_Gui->Label(_("Number of voxel inside the VOI"));
-		m_Gui->String(ID_NUM_SCALARS,"n=",&m_NumberOfScalarsString,"");
-		m_Gui->Label(_("Voxels's scalar mean inside the VOI"));
-		m_Gui->String(ID_MEAN_SCALAR,"m=",&m_MeanScalarString,"");
-		m_Gui->String(ID_MAX_SCALAR,"max=",&m_MaxScalarString,"");
-		m_Gui->String(ID_MIN_SCALAR,"min=",&m_MinScalarString,"");
-		m_Gui->String(ID_STANDARD_DEVIATION,"stdev=",&m_StandardDeviationString,"");
+		m_Gui->Label(_L("Number of voxel inside the VOI"));
+		m_Gui->String(ID_NUM_SCALARS,_R("n="),&m_NumberOfScalarsString, _R(""));
+		m_Gui->Label(_L("Voxels's scalar mean inside the VOI"));
+		m_Gui->String(ID_MEAN_SCALAR,_R("m="),&m_MeanScalarString, _R(""));
+		m_Gui->String(ID_MAX_SCALAR,_R("max="),&m_MaxScalarString, _R(""));
+		m_Gui->String(ID_MIN_SCALAR,_R("min="),&m_MinScalarString, _R(""));
+		m_Gui->String(ID_STANDARD_DEVIATION,_R("stdev="),&m_StandardDeviationString, _R(""));
 		//m_VoxelList=m_Gui->ListBox(ID_VOXEL_LIST);
 		m_Gui->Divider(2);
 		m_Gui->Divider();
@@ -184,7 +184,7 @@ void mafOpVOIDensity::OnEvent(mafEventBase *maf_event)
 
 			case ID_CHOOSE_SURFACE:
 			{
-				mafString title = _("VOI surface");
+				mafString title = _L("VOI surface");
         mafEvent event(this,VME_CHOOSE,&title,(long)&mafOpVOIDensity::OutputSurfaceAccept);
 				mafEventMacro(event);
 				m_Surface = event.GetVme();
@@ -193,8 +193,8 @@ void mafOpVOIDensity::OnEvent(mafEventBase *maf_event)
 				mafVME *VME=mafVME::SafeDownCast(m_Surface);
         if (VME == NULL)
         {
-          mafMessage(_("Not valid surface choosed!!"), _("Warning"));
-          m_Surface = NULL;
+            mafWarningMessage(_M(mafString(_L("Open surface choosed!!"))));
+            m_Surface = NULL;
           return;
         }
 				VME->Update();
@@ -211,7 +211,7 @@ void mafOpVOIDensity::OnEvent(mafEventBase *maf_event)
 				if(FE->GetOutput()->GetNumberOfCells() != 0)
 				{
 					//open polydata
-					mafMessage(_("Open surface choosed!!"), _("Warning"));
+					mafWarningMessage(_M(mafString(_L("Open surface choosed!!"))));
 					m_Surface = NULL;
 					return;
 				}
@@ -306,14 +306,14 @@ void mafOpVOIDensity::ExtractVolumeScalars()
   }
   m_StandardDeviation = sqrt(Sum/m_NumberOfScalars);
 
-  m_NumberOfScalarsString = mafString(wxString::Format("%d",m_NumberOfScalars));
-  m_MeanScalarString      = mafString(wxString::Format("%f",m_MeanScalar));
-  m_MaxScalarString       = mafString(wxString::Format("%f",m_MaxScalar));
-  m_MinScalarString       = mafString(wxString::Format("%f",m_MinScalar));
-  m_StandardDeviationString = mafString(wxString::Format("%f",m_StandardDeviation));
+  m_NumberOfScalarsString = mafString::Format(_R("%d"),m_NumberOfScalars);
+  m_MeanScalarString      = mafString::Format(_R("%f"),m_MeanScalar);
+  m_MaxScalarString       = mafString::Format(_R("%f"),m_MaxScalar);
+  m_MinScalarString       = mafString::Format(_R("%f"),m_MinScalar);
+  m_StandardDeviationString = mafString::Format(_R("%f"),m_StandardDeviation);
 	if(!this->m_TestMode)
 	{
 		m_Gui->Update();
-		mafLogMessage(wxString::Format("\nn,m,max,min,stdev\n%d,%.3lf,%.3lf,%.3lf,%.3lf",m_NumberOfScalars,m_MeanScalar,m_MaxScalar,m_MinScalar,m_StandardDeviation));
+		mafLogMessage(_M(mafString::Format(_R("\nn,m,max,min,stdev\n%d,%.3lf,%.3lf,%.3lf,%.3lf"),m_NumberOfScalars,m_MeanScalar,m_MaxScalar,m_MinScalar,m_StandardDeviation)));
 	}
 }

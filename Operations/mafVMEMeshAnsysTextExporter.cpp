@@ -110,8 +110,8 @@ int mafVMEMeshAnsysTextExporter::WriteNodesFile( vtkUnstructuredGrid *inputUGrid
 
   if (nodesIDArray == NULL)
   {
-    mafLogMessage("nodesID informations not found in vtk unstructured grid!\
-    Temporary nodes id array will be created in order to export the data.");
+    mafLogMessage(_M("nodesID informations not found in vtk unstructured grid!\
+    Temporary nodes id array will be created in order to export the data."));
     
     int numPoints = inputUGrid->GetNumberOfPoints();
     syntheticNodesIDArray = vtkIntArray::New();
@@ -215,11 +215,11 @@ int mafVMEMeshAnsysTextExporter::WriteElementsFile( vtkUnstructuredGrid *inputUG
 
   // read all the elements with their attribute data in memory (vnl_matrix)
 
-  mafString ansysNODESIDArrayName("id");
-  mafString ansysELEMENTIDArrayName("ANSYS_ELEMENT_ID");
-  mafString ansysTYPEIntArrayName("ANSYS_ELEMENT_TYPE");
-  mafString ansysMATERIALIntArrayName("material"); 
-  mafString ansysREALIntArrayName("ANSYS_ELEMENT_REAL");
+  mafString ansysNODESIDArrayName(_R("id"));
+  mafString ansysELEMENTIDArrayName(_R("ANSYS_ELEMENT_ID"));
+  mafString ansysTYPEIntArrayName(_R("ANSYS_ELEMENT_TYPE"));
+  mafString ansysMATERIALIntArrayName(_R("material")); 
+  mafString ansysREALIntArrayName(_R("ANSYS_ELEMENT_REAL"));
 
   vtkCellData *cellData = inputUGrid->GetCellData();
   vtkPointData *pointData = inputUGrid->GetPointData();
@@ -231,8 +231,8 @@ int mafVMEMeshAnsysTextExporter::WriteElementsFile( vtkUnstructuredGrid *inputUG
 
   if (elementIdArray == NULL)
   {
-    mafLogMessage("ANSYS_ELEMENT_ID information not found in vtk unstructured grid!\
-    Temporary elements id array will be created in order to export the data.");
+    mafLogMessage(_M("ANSYS_ELEMENT_ID information not found in vtk unstructured grid!\
+    Temporary elements id array will be created in order to export the data."));
 
     int numCells = inputUGrid->GetNumberOfCells();
     syntheticElementsIDArray = vtkIntArray::New();
@@ -254,8 +254,8 @@ int mafVMEMeshAnsysTextExporter::WriteElementsFile( vtkUnstructuredGrid *inputUG
 
   if (nodesIDArray == NULL)
   {
-    mafLogMessage("nodesID informations not found in vtk unstructured grid!\
-                  Temporary nodes id array will be created in order to export the data.");
+    mafLogMessage(_M("nodesID informations not found in vtk unstructured grid!\
+                  Temporary nodes id array will be created in order to export the data."));
 
     int numPoints = inputUGrid->GetNumberOfPoints();
     syntheticNodesIDArray = vtkIntArray::New();
@@ -288,8 +288,8 @@ int mafVMEMeshAnsysTextExporter::WriteElementsFile( vtkUnstructuredGrid *inputUG
 
   if (materialArray == NULL)
   {
-    mafLogMessage("material informations not found in vtk unstructured grid!\
-    Temporary materials id array will be created in order to export the data.");
+    mafLogMessage(_M("material informations not found in vtk unstructured grid!\
+    Temporary materials id array will be created in order to export the data."));
 
     int numCells = inputUGrid->GetNumberOfCells();
     syntheticMaterialArray = vtkIntArray::New();
@@ -311,8 +311,8 @@ int mafVMEMeshAnsysTextExporter::WriteElementsFile( vtkUnstructuredGrid *inputUG
 
   if (typeArray == NULL)
   {
-    mafLogMessage("Ansys TYPE informations not found in vtk unstructured grid!\
-                  Temporary TYPE array will be created in order to export the data.");
+    mafLogMessage(_M("Ansys TYPE informations not found in vtk unstructured grid!\
+                  Temporary TYPE array will be created in order to export the data."));
 
     int numCells = inputUGrid->GetNumberOfCells();
     syntheticTypeArray = vtkIntArray::New();
@@ -334,8 +334,8 @@ int mafVMEMeshAnsysTextExporter::WriteElementsFile( vtkUnstructuredGrid *inputUG
 
   if (realArray == NULL)
   {
-    mafLogMessage("Ansys REAL informations not found in vtk unstructured grid!\
-                  Temporary REAL array will be created in order to export the data.");
+    mafLogMessage(_M("Ansys REAL informations not found in vtk unstructured grid!\
+                  Temporary REAL array will be created in order to export the data."));
 
     int numCells = inputUGrid->GetNumberOfCells();
     syntheticRealArray = vtkIntArray::New();
@@ -412,7 +412,7 @@ void mafVMEMeshAnsysTextExporter::WriteMaterialsFile( vtkUnstructuredGrid *input
 
   if (materialsIDArray != NULL)
   {
-    mafLogMessage("Found material array in field data");
+    mafLogMessage(_M("Found material array in field data"));
   }
   else
   {
@@ -420,14 +420,14 @@ void mafVMEMeshAnsysTextExporter::WriteMaterialsFile( vtkUnstructuredGrid *input
     materialsIDArray = inputUGrid->GetCellData()->GetScalars(materialIDArrayName.c_str());  
     if (materialsIDArray != NULL)
     {
-      mafLogMessage("Found material array as active scalar");
+      mafLogMessage(_M("Found material array as active scalar"));
     }
   }
 
   if (materialsIDArray == NULL)
   {
-    mafLogMessage("material informations not found in vtk unstructured grid!\
-    A fake temporary material with ID = 1 will be created in order to export the data.");
+    mafLogMessage(_M("material informations not found in vtk unstructured grid!\
+    A fake temporary material with ID = 1 will be created in order to export the data."));
 
     // write fake material to disk...
     std::ostringstream output;

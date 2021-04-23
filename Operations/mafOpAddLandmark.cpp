@@ -58,7 +58,7 @@ mafOpAddLandmark::mafOpAddLandmark(const mafString& label) : Superclass(label)
   m_OldBehavior     = NULL;
   m_LandmarkAdded.clear();
 
-  m_LandmarkName        = "new_landmark";
+  m_LandmarkName        = _R("new_landmark");
 	m_CloudCreatedFlag    = false;
 	m_PickingActiveFlag   = false;
 	m_LandmarkPosition[0] = m_LandmarkPosition[1] = m_LandmarkPosition[2] = 0;
@@ -172,7 +172,7 @@ void mafOpAddLandmark::OpRun()
 			}
 
 			m_Cloud->Open();
-			m_Cloud->SetName(_("new landmark cloud"));
+			m_Cloud->SetName(_L("new landmark cloud"));
 			m_Cloud->SetRadius(m_PickedVme->GetOutput()->GetVTKData()->GetLength()/60.0);
 			m_Cloud->ReparentTo(m_PickedVme);
 			mafEventMacro(mafEvent(this,VME_SHOW,m_Cloud,true));
@@ -217,7 +217,7 @@ void mafOpAddLandmark::OpRun()
 		{
 			mafNEW(m_Cloud);
 			m_Cloud->Open();
-			m_Cloud->SetName(_("new landmark cloud"));
+			m_Cloud->SetName(_L("new landmark cloud"));
 			m_Cloud->ReparentTo(m_Input);
 			mafEventMacro(mafEvent(this,VME_SHOW,m_Cloud,true));
 			m_CloudCreatedFlag = true;
@@ -226,12 +226,12 @@ void mafOpAddLandmark::OpRun()
   
   if (!GetTestMode())
   {
-	  mafString tooltip(_("If checked, add the landmark to the current time. \nOtherwise add the landmark at time = 0"));
-    mafString tooltip1(_("If checked, add the landmark in local coordinates. \nOtherwise add the landmark in global coordinates"));
+	  mafString tooltip(_L("If checked, add the landmark to the current time. \nOtherwise add the landmark at time = 0"));
+    mafString tooltip1(_L("If checked, add the landmark in local coordinates. \nOtherwise add the landmark in global coordinates"));
 	
 	  // setup gui_panel
 	  m_GuiPanel = new mafGUINamedPanel(mafGetFrame(),-1);
-	  m_GuiPanel->SetTitle(_("Add Landmark:"));
+	  m_GuiPanel->SetTitle(_L("Add Landmark:"));
 	
 	  // setup splitter
 	  mafGUISplittedPanel *sp = new mafGUISplittedPanel(m_GuiPanel,-1);
@@ -250,21 +250,21 @@ void mafOpAddLandmark::OpRun()
 	  // setup Gui
 	  m_Gui = new mafGUI(this);
 	  m_Gui->SetListener(this);
-	  m_Gui->Button(ID_LOAD,_("load dictionary"));
+	  m_Gui->Button(ID_LOAD,_L("load dictionary"));
 	  m_Gui->Divider();
-	  m_Gui->Label(_("landmark name"));
-	  m_Gui->String(ID_LM_NAME,"",&m_LandmarkName);
+	  m_Gui->Label(_L("landmark name"));
+	  m_Gui->String(ID_LM_NAME, _R(""),&m_LandmarkName);
 	  m_Gui->Divider();
-	  m_Gui->Button(ID_ADD_LANDMARK,_("add landmark"));
+	  m_Gui->Button(ID_ADD_LANDMARK,_L("add landmark"));
 	  m_Gui->Divider();
-	  m_Gui->Bool(ID_ADD_TO_CURRENT_TIME, _("current time"),&m_AddToCurrentTime,1,tooltip);
-    m_Gui->Bool(ID_LOCAL, _("local coordinates"),&m_LocalCoords,1,tooltip1);
+	  m_Gui->Bool(ID_ADD_TO_CURRENT_TIME, _L("current time"),&m_AddToCurrentTime,1,tooltip);
+    m_Gui->Bool(ID_LOCAL, _L("local coordinates"),&m_LocalCoords,1,tooltip1);
 	  m_Gui->Divider();
-	  m_Gui->Label(_("choose a name from the dictionary"));
-	  m_Gui->Label(_("and place landmark by"));
-	  m_Gui->Label(_("clicking on the parent surface"));
+	  m_Gui->Label(_L("choose a name from the dictionary"));
+	  m_Gui->Label(_L("and place landmark by"));
+	  m_Gui->Label(_L("clicking on the parent surface"));
 	  m_Gui->Divider();
-	  m_Gui->Vector(ID_CHANGE_POSITION, _("Position"), m_LandmarkPosition,MINFLOAT,MAXFLOAT,2,_("landmark position"));
+	  m_Gui->Vector(ID_CHANGE_POSITION, _L("Position"), m_LandmarkPosition,MINFLOAT,MAXFLOAT,2,_L("landmark position"));
 	  m_Gui->OkCancel();
 	  m_Gui->Enable(wxOK, false);
 	
@@ -303,19 +303,19 @@ void mafOpAddLandmark::OnEvent(mafEventBase *maf_event)
       
       case ITEM_SELECTED:
 		  m_LandmarkName = *(e->GetString());
-			if(this->m_Cloud && this->m_Cloud->FindInTreeByName(m_LandmarkName.GetCStr()))
+			if(this->m_Cloud && this->m_Cloud->FindInTreeByName(m_LandmarkName))
 			{
         ExistingLandmarkMessage();
-				m_LandmarkName = "";
+				m_LandmarkName = _R("");
 			}
 			m_Gui->Update();
 		  break;
 
       case VME_PICKED:
-        if(this->m_Cloud && this->m_Cloud->FindInTreeByName(m_LandmarkName.GetCStr()))
+        if(this->m_Cloud && this->m_Cloud->FindInTreeByName(m_LandmarkName))
         {
           ExistingLandmarkMessage();
-          m_LandmarkName = "";
+          m_LandmarkName = _R("");
           m_Gui->Update();
         }
         else
@@ -332,7 +332,7 @@ void mafOpAddLandmark::OnEvent(mafEventBase *maf_event)
       break;
       case ID_CHANGE_POSITION:
       {
-        mafVMELandmark *landmark = mafVMELandmark::SafeDownCast(this->m_Cloud->FindInTreeByName(m_LandmarkName.GetCStr()));
+        mafVMELandmark *landmark = mafVMELandmark::SafeDownCast(this->m_Cloud->FindInTreeByName(m_LandmarkName));
 		    if(this->m_Cloud && landmark)
 		    {
 			    SetLandmarkPos(landmark, m_LandmarkPosition[0], m_LandmarkPosition[1], m_LandmarkPosition[2], 0, 0, 0);
@@ -342,7 +342,7 @@ void mafOpAddLandmark::OnEvent(mafEventBase *maf_event)
       }
       break;
 			case ID_ADD_LANDMARK:
-		  if(this->m_Cloud && !this->m_Cloud->FindInTreeByName(m_LandmarkName.GetCStr()))
+		  if(this->m_Cloud && !this->m_Cloud->FindInTreeByName(m_LandmarkName))
 			{
 				AddLandmark(m_LandmarkPosition);
 				m_Gui->Update();
@@ -350,7 +350,7 @@ void mafOpAddLandmark::OnEvent(mafEventBase *maf_event)
 			else
 			{
         ExistingLandmarkMessage();
-				m_LandmarkName = "";
+				m_LandmarkName = _R("");
 				m_Gui->Update();
 			}
 			break;
@@ -362,17 +362,17 @@ void mafOpAddLandmark::OnEvent(mafEventBase *maf_event)
         OpStop(OP_RUN_CANCEL);
       break;
       case ID_LM_NAME:
-      if(this->m_Cloud && this->m_Cloud->FindInTreeByName(m_LandmarkName.GetCStr()))
+      if(this->m_Cloud && this->m_Cloud->FindInTreeByName(m_LandmarkName))
       {
         ExistingLandmarkMessage();
-        m_LandmarkName = "";
+        m_LandmarkName = _R("");
         m_Gui->Update();
       }
-      else if(wxString(m_LandmarkName).Find(" ") != -1)
+      else if(m_LandmarkName.FindFirst(_R(" ")) != -1)
       {
-        wxString msg(_("Landmark has character space in his name, substitute those space!"));
-        wxMessageBox(msg, _("Warning"), wxOK|wxICON_WARNING , NULL);
-        m_LandmarkName = "";
+        mafString msg = _L("Landmark has character space in his name, substitute those space!");
+		mafWarningMessage(_M(msg));
+        m_LandmarkName = _R("");
         m_Gui->Update();
       }
       break;
@@ -423,7 +423,7 @@ void mafOpAddLandmark::AddLandmark(double pos[3])
   }
   
   mafSmartPointer<mafVMELandmark> landmark;
-  landmark->SetName(m_LandmarkName.GetCStr());
+  landmark->SetName(m_LandmarkName);
   landmark->ReparentTo(m_Cloud);
   if(NULL != m_PickedVme)
      landmark->SetTimeStamp(m_PickedVme->GetTimeStamp());

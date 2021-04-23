@@ -78,7 +78,7 @@ mafLogicWithGUI::mafLogicWithGUI(mafGUIMDIFrame *mdiFrame /*=NULL*/)
 	m_Logger				= NULL;
   m_VtkLog        = NULL;
 
-	m_AppTitle      = "";
+	m_AppTitle      = _R("");
 
 	m_PlugMenu		  = true;
 	m_PlugToolbar	  = true;
@@ -126,14 +126,14 @@ void mafLogicWithGUI::Show()
   if (atable.Ok())
     mafGetFrame()->SetAcceleratorTable(atable);
   delete[] entries;
-  m_AppTitle = m_Win->GetTitle().c_str();
+  m_AppTitle = mafWxToString(m_Win->GetTitle());
 	m_Win->Show(TRUE);
 }
 //----------------------------------------------------------------------------
 void mafLogicWithGUI::ShowSplashScreen()
 //----------------------------------------------------------------------------
 {
-  wxBitmap splashImage = mafPictureFactory::GetPictureFactory()->GetBmp("SPLASH_SCREEN");
+  wxBitmap splashImage = mafPictureFactory::GetPictureFactory()->GetBmp(_R("SPLASH_SCREEN"));
   ShowSplashScreen(splashImage);
 }
 //----------------------------------------------------------------------------
@@ -266,15 +266,15 @@ void mafLogicWithGUI::CreateLogbar()
   m_Logger->LogToFile(m_LogToFile);
   if(m_LogToFile)
   {
-    wxString s = m_ApplicationSettings->GetLogFolder().GetCStr();
+    mafString s = m_ApplicationSettings->GetLogFolder();
     wxDateTime log_time = wxDateTime::Now();
-    s += "\\";
-    s += m_Win->GetTitle();
-    s += wxString::Format("_%02d_%02d_%d_%02d_%2d",log_time.GetYear(),log_time.GetMonth() + 1,log_time.GetDay(),log_time.GetHour(),log_time.GetMinute());
-    s += ".log";
-    if (m_Logger->SetFileName(s) == MAF_ERROR)
+    s += _R("\\");
+    s += mafWxToString(m_Win->GetTitle());
+    s += mafString::Format(_R("_%02d_%02d_%d_%02d_%2d"),log_time.GetYear(),log_time.GetMonth() + 1,log_time.GetDay(),log_time.GetHour(),log_time.GetMinute());
+    s += _R(".log");
+    if (m_Logger->SetFileName(s.toWx()) == MAF_ERROR)
     {
-      mafLogMessage(wxString::Format("Unable to create log file %s!!",s),"Warning", wxOK|wxICON_WARNING);
+      mafLogMessage(_M(_R("Unable to create log file ") + s));
     }
   }
   m_Logger->SetVerbose(m_LogAllEvents);
@@ -291,7 +291,7 @@ void mafLogicWithGUI::CreateLogbar()
     .TopDockable(false) // prevent docking on top side - otherwise may dock also beside the toolbar -- and it's hugely
   );
   
-  mafLogMessage(_("welcome"));
+  mafLogMessage(_M(mafString(_L("welcome"))));
 }
 //----------------------------------------------------------------------------
 void mafLogicWithGUI::CreateNullLog()
@@ -336,9 +336,9 @@ void mafLogicWithGUI::CreateToolbar()
   m_ToolBar->SetMargins(0,0);
   m_ToolBar->SetToolSeparation(2);
   m_ToolBar->SetToolBitmapSize(wxSize(20,20));
-  m_ToolBar->AddTool(MENU_FILE_NEW,mafPictureFactory::GetPictureFactory()->GetBmp("FILE_NEW"),    _("new msf storage file"));
-  m_ToolBar->AddTool(MENU_FILE_OPEN,mafPictureFactory::GetPictureFactory()->GetBmp("FILE_OPEN"),  _("open msf storage file"));
-  m_ToolBar->AddTool(MENU_FILE_SAVE,mafPictureFactory::GetPictureFactory()->GetBmp("FILE_SAVE"),  _("save current msf storage file"));
+  m_ToolBar->AddTool(MENU_FILE_NEW,mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_NEW")),    _("new msf storage file"));
+  m_ToolBar->AddTool(MENU_FILE_OPEN,mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_OPEN")),  _("open msf storage file"));
+  m_ToolBar->AddTool(MENU_FILE_SAVE,mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_SAVE")),  _("save current msf storage file"));
   m_ToolBar->Realize();
 }
 //----------------------------------------------------------------------------
@@ -390,10 +390,10 @@ void mafLogicWithGUI::EnableItem(int item, bool enable)
 void mafLogicWithGUI::AddToMenu(const mafString& name, long id, wxMenu* path_menu, const mafString& menuPath)
 //----------------------------------------------------------------------------
 {
-  if (menuPath != "")
+  if (!menuPath.IsEmpty())
   {
     wxString op_path = "";
-    wxStringTokenizer path_tkz(menuPath.GetCStr(), "/");
+    wxStringTokenizer path_tkz(menuPath.toWx(), "/");
     while ( path_tkz.HasMoreTokens() )
     {
       op_path = path_tkz.GetNextToken();
@@ -412,7 +412,7 @@ void mafLogicWithGUI::AddToMenu(const mafString& name, long id, wxMenu* path_men
       }
     }
   }
-  path_menu->Append(id, _(name), _(name));
+  path_menu->Append(id, _(name.toWx()), _(name.toWx()));
   SetAccelerator(name, id);
 }
 //----------------------------------------------------------------------------

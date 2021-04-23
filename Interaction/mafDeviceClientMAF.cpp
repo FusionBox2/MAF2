@@ -37,7 +37,7 @@ mafDeviceClientMAF::mafDeviceClientMAF()
   SetThreaded(0);
   m_Client = new ClientUnit();
   m_Client->SetListener(this);
-  m_ServerHost = wxGetHostName().c_str();
+  m_ServerHost = mafWxToString(wxGetHostName());
   m_PortNumber = 50000;
   m_Connected  = false;
 }
@@ -56,8 +56,8 @@ void mafDeviceClientMAF::CreateGui()
   Superclass::CreateGui();
   //m_Gui->Divider(1);
 
-  m_Gui->String(ID_SERVER_HOSTNAME,"server",&m_ServerHost);
-  m_Gui->Integer(ID_PORT_NUMBER,"port",&m_PortNumber, 1, 100000);
+  m_Gui->String(ID_SERVER_HOSTNAME,_R("server"),&m_ServerHost);
+  m_Gui->Integer(ID_PORT_NUMBER,_R("port"),&m_PortNumber, 1, 100000);
 
 	m_Gui->Divider();
 }
@@ -97,7 +97,7 @@ int mafDeviceClientMAF::InternalInitialize()
 
   m_AutoStart = 0;
 
-  wxString hn = m_ServerHost.GetCStr();
+  wxString hn = m_ServerHost.toWx();
   wxIPV4address server_address;
   server_address.Service(m_PortNumber);
   server_address.Hostname(hn);

@@ -194,6 +194,6 @@ void mafDataPipe::Print(std::ostream& os, const int tabs) const
 {
   mafIndent indent(tabs);
   mafString dp_name;
-  dp_name = m_VME ? m_VME->GetName() : "(NULL)";
+  dp_name = m_VME ? m_VME->GetName() : _R("(NULL)");
   os << indent << "VME:" << dp_name.GetCStr() << std::endl;
 }

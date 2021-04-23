@@ -42,7 +42,7 @@ written by rows or columns into a mafVMEScalarMatrix. Multiple files produce a t
 class MAF_EXPORT mafOpImporterASCII: public mafOp
 {
 public:
-  mafOpImporterASCII(const mafString& label = "ASCIIImporter");
+  mafOpImporterASCII(const mafString& label = _R("ASCIIImporter"));
   ~mafOpImporterASCII(); 
  
   virtual void OnEvent(mafEventBase *maf_event);

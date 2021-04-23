@@ -52,7 +52,7 @@ mafAnimate::mafAnimate(vtkRenderer *renderer, mafNode *vme, mafBaseEventHandler 
   m_Tags			= NULL;
   m_StoredPositions = NULL;
 
-  m_SelectedPosition	= "";
+  m_SelectedPosition	= _R("");
 	m_InterpolateFlag		= 1;
 	m_PositionList			    = NULL;
 	m_StorePositionButton		= NULL;
@@ -120,8 +120,8 @@ void mafAnimate::CreateGui()
 	wxStaticText *lab = new wxStaticText(m_Gui,-1,"fly pose",dp,wxSize(lw,bh));
   lab->SetFont(m_Gui->GetBoldFont());
 
-	m_StorePositionButton  = new mafGUIButton (m_Gui,ID_STORE, "add", dp,bs);
-  m_DeletePositionButton = new mafGUIButton (m_Gui,ID_DELETE,"remove",dp,bs);
+	m_StorePositionButton  = new mafGUIButton (m_Gui,ID_STORE, _R("add"), dp,bs);
+  m_DeletePositionButton = new mafGUIButton (m_Gui,ID_DELETE,_R("remove"),dp,bs);
   
   m_StorePositionButton->SetListener(this);
 	m_DeletePositionButton->SetListener(this);
@@ -132,11 +132,11 @@ void mafAnimate::CreateGui()
 	sizer->Add(m_DeletePositionButton,  0, wxRIGHT, wm);
   m_Gui->Add(sizer,0,wxALL,rm); 
 
-	m_PositionList = m_Gui->ListBox(ID_LIST," ");
+	m_PositionList = m_Gui->ListBox(ID_LIST,_R(" "));
 
   wxStaticText *labRefresh = new wxStaticText(m_Gui,-1,"        ",dp,wxSize(lw,bh));
-  m_RefreshPositionButton = new mafGUIButton (m_Gui,ID_REFRESH,"refresh",dp,bs);
-  m_RenamePositionButton = new mafGUIButton (m_Gui,ID_RENAME,"rename",dp,bs);
+  m_RefreshPositionButton = new mafGUIButton (m_Gui,ID_REFRESH,_R("refresh"),dp,bs);
+  m_RenamePositionButton = new mafGUIButton (m_Gui,ID_RENAME,_R("rename"),dp,bs);
 
 
   m_RefreshPositionButton->SetListener(this);
@@ -150,8 +150,8 @@ void mafAnimate::CreateGui()
 
 
   wxStaticText *labImport = new wxStaticText(m_Gui,-1,"        ",dp,wxSize(lw,bh));
-  m_ImportPositionButton = new mafGUIButton (m_Gui,ID_IMPORT,"import",dp,bs);
-  m_ExportPositionButton = new mafGUIButton (m_Gui,ID_EXPORT,"export",dp,bs);
+  m_ImportPositionButton = new mafGUIButton (m_Gui,ID_IMPORT,_R("import"),dp,bs);
+  m_ExportPositionButton = new mafGUIButton (m_Gui,ID_EXPORT,_R("export"),dp,bs);
 
   m_ImportPositionButton->SetListener(this);
   m_ExportPositionButton->SetListener(this);
@@ -162,7 +162,7 @@ void mafAnimate::CreateGui()
   sizerImport->Add(m_ExportPositionButton,  0, wxRIGHT, wm);
   m_Gui->Add(sizerImport,0,wxALL,rm); 
 
-	m_Gui->Bool(ID_INTERPOLATE,_("interpolate"),&m_InterpolateFlag, 1);
+	m_Gui->Bool(ID_INTERPOLATE,_L("interpolate"),&m_InterpolateFlag, 1);
   
   m_AnimatePlayer = new mafGUIMovieCtrl(m_Gui);
   m_AnimatePlayer->SetListener(this);
@@ -180,8 +180,8 @@ void mafAnimate::OnEvent(mafEventBase *maf_event)
   
   if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
   {
-    mafString wildcard = "xml file (*.xml)|*.xml|all files (*.*)|*.*";
-    mafString fileName = "";
+    mafString wildcard = _R("xml file (*.xml)|*.xml|all files (*.*)|*.*");
+    mafString fileName;
     switch(e->GetId())
     {
       case ID_STORE:
@@ -209,16 +209,16 @@ void mafAnimate::OnEvent(mafEventBase *maf_event)
         EnableWidgets();
         break;
       case ID_IMPORT:
-        fileName = mafGetOpenFile("", wildcard);
-        if (fileName != "")
+        fileName = mafGetOpenFile(_R(""), wildcard);
+        if (!fileName.IsEmpty())
         {
           LoadPoseFromFile(fileName);
           EnableWidgets();
         }
       break;
       case ID_EXPORT:
-        fileName = mafGetSaveFile("", wildcard);
-        if (fileName != "")
+        fileName = mafGetSaveFile(_R(""), wildcard);
+        if (!fileName.IsEmpty())
           StorePoseToFile(fileName);
       break;
       case TIME_SET:
@@ -235,8 +235,8 @@ void mafAnimate::EnableWidgets()
   m_StorePositionButton->Enable( m_Tags != NULL ); 
   m_PositionList->Enable( m_Tags != NULL && m_PositionList->GetCount()>0 );
   m_PositionList->Enable( m_Tags != NULL && m_PositionList->GetCount()>0 );
-  m_DeletePositionButton->Enable( m_Tags != NULL && m_PositionList->GetCount()>0 && m_SelectedPosition != "" );
-  m_RenamePositionButton->Enable( m_Tags != NULL && m_PositionList->GetCount()>0 && m_SelectedPosition != "" );
+  m_DeletePositionButton->Enable( m_Tags != NULL && m_PositionList->GetCount()>0 && !m_SelectedPosition.IsEmpty() );
+  m_RenamePositionButton->Enable( m_Tags != NULL && m_PositionList->GetCount()>0 && !m_SelectedPosition.IsEmpty());
   m_Gui->Enable( ID_INTERPOLATE, m_Tags != NULL && m_PositionList->GetCount()>0 );
   m_AnimatePlayer->Enable(m_PositionList->GetCount()>1);
   m_AnimatePlayer->SetFrameBounds(0,m_PositionList->GetCount()-1);
@@ -249,9 +249,9 @@ void mafAnimate::LoadPoseFromFile(const mafString &fileName)
 
   // XML storage to restore
   mafXMLParser restore;
-  restore.SetURL(fileName.GetCStr());
-  restore.SetFileType("CAM");
-  restore.SetVersion("1.0");
+  restore.SetURL(fileName);
+  restore.SetFileType(_R("CAM"));
+  restore.SetVersion(_R("1.0"));
   restore.SetDocument(newCam);
   restore.Restore();
 
@@ -268,9 +268,9 @@ void mafAnimate::StorePoseToFile(const mafString &fileName)
 
   // XML storage to restore
   mafXMLParser restore;
-  restore.SetURL(fileName.GetCStr());
-  restore.SetFileType("CAM");
-  restore.SetVersion("1.0");
+  restore.SetURL(fileName);
+  restore.SetFileType(_R("CAM"));
+  restore.SetVersion(_R("1.0"));
   restore.SetDocument(m_StoredPositions);
   restore.Store();
 }
@@ -291,8 +291,8 @@ void mafAnimate::FlyTo()
 //----------------------------------------------------------------------------
 {
   assert(m_Tags && m_Renderer && m_PositionList);
-  m_SelectedPosition = m_PositionList->GetStringSelection();
-  mafString flyto_tagName = "FLY_TO_" + m_SelectedPosition;
+  m_SelectedPosition = mafWxToString(m_PositionList->GetStringSelection());
+  mafString flyto_tagName = _R("FLY_TO_") + m_SelectedPosition;
   mafTagItem *item = m_Tags->GetTag(flyto_tagName);
   if(item == NULL)
     item = m_Tags->GetTag(m_SelectedPosition); // support old style
@@ -519,20 +519,20 @@ void mafAnimate::StoreViewPoint()
 	if(result != wxID_OK) return;
 	
 	// test if is it unique -----------------------
-  wxString flyto_tagName = "FLY_TO_" + name;
-	if(m_Tags->GetTag(flyto_tagName.c_str()))
+  mafString flyto_tagName = _R("FLY_TO_") + mafWxToString(name);
+	if(m_Tags->GetTag(flyto_tagName))
 	{
 		wxString msg = "this name is already used, do you want to overwrite it ?";
 		int res = wxMessageBox(msg,"Store Camera Position", wxOK|wxCANCEL|wxICON_QUESTION, NULL);
 		if(res == wxCANCEL) return;
 
     //remove item to be overwritten
-		m_Tags->DeleteTag(flyto_tagName.c_str());
+		m_Tags->DeleteTag(flyto_tagName);
 		m_PositionList->Delete(m_PositionList->FindString(name));
 	}
   
 	// we have the new name -----------------------
-	m_SelectedPosition = name;
+	m_SelectedPosition = mafWxToString(name);
 
 	vtkCamera *camera = m_Renderer->GetActiveCamera();
 	double fp[3],cam_pos[3],view_up[3], par_scale;
@@ -542,7 +542,7 @@ void mafAnimate::StoreViewPoint()
   par_scale = camera->GetParallelScale();
 	
 	mafTagItem item;
-	item.SetName(flyto_tagName.c_str());
+	item.SetName(flyto_tagName);
 	item.SetNumberOfComponents(10);
 	item.SetComponent(fp[0],0);
 	item.SetComponent(fp[1],1);
@@ -556,26 +556,26 @@ void mafAnimate::StoreViewPoint()
   item.SetComponent(par_scale,9);
 	m_Tags->SetTag(item);
 
-	m_PositionList->Append(m_SelectedPosition.GetCStr());
+	m_PositionList->Append(m_SelectedPosition.toWx());
   SetCurrentSelection(m_PositionList->GetCount() - 1);
 }
 //----------------------------------------------------------------------------
 void mafAnimate::RenameViewPoint()
 //----------------------------------------------------------------------------
 {
-	assert(m_SelectedPosition != "");
+	assert(!m_SelectedPosition.IsEmpty());
 
 	// prompt user for the new name -----------------------
-	wxTextEntryDialog *dlg = new wxTextEntryDialog(NULL,"please enter a name", "Rename Camera Position",m_SelectedPosition.GetCStr());
+	wxTextEntryDialog *dlg = new wxTextEntryDialog(NULL,"please enter a name", "Rename Camera Position",m_SelectedPosition.toWx());
   int result = dlg->ShowModal(); 
-  mafString name = dlg->GetValue().c_str();
+  mafString name = mafWxToString(dlg->GetValue());
   cppDEL(dlg);
 	if(result != wxID_OK) return;
 
   if(name == m_SelectedPosition) return; // user doesn't give a different name, skip
 
   // test if is it unique -----------------------
-	mafString flyto_tagName = "FLY_TO_" + name;
+	mafString flyto_tagName = _R("FLY_TO_") + name;
   if(m_Tags->GetTag(flyto_tagName))
 	{
 		wxString msg = "this name is already used, do you want to overwrite it ?";
@@ -584,10 +584,10 @@ void mafAnimate::RenameViewPoint()
 
     //remove item to be overwritten
 		m_Tags->DeleteTag(flyto_tagName);
-		m_PositionList->Delete(m_PositionList->FindString(name.GetCStr()));
+		m_PositionList->Delete(m_PositionList->FindString(name.toWx()));
 	}
 
-	mafString flyto_oldTagName = "FLY_TO_" + m_SelectedPosition;
+	mafString flyto_oldTagName = _R("FLY_TO_") + m_SelectedPosition;
   mafTagItem *item = m_Tags->GetTag(flyto_oldTagName);
   assert(item  && item->GetNumberOfComponents() == 10);
 
@@ -599,7 +599,7 @@ void mafAnimate::RenameViewPoint()
 
 	int n = m_PositionList->GetSelection();
 	if(n >= 0) 
-    m_PositionList->SetString(n, name.GetCStr());
+    m_PositionList->SetString(n, name.toWx());
 
   m_SelectedPosition = name;
 	m_Gui->Update();
@@ -608,24 +608,24 @@ void mafAnimate::RenameViewPoint()
 void mafAnimate::DeleteViewPoint(int pos /*= 0*/)
 //----------------------------------------------------------------------------
 {
-  m_SelectedPosition = m_PositionList->GetStringSelection();
-	if (m_SelectedPosition == "" && m_PositionList->GetCount()>0)
+  m_SelectedPosition = mafWxToString(m_PositionList->GetStringSelection());
+	if (m_SelectedPosition.IsEmpty() && m_PositionList->GetCount()>0)
   {
-    m_SelectedPosition = m_PositionList->GetString(0);
+    m_SelectedPosition = mafWxToString(m_PositionList->GetString(0));
     pos = 0;
   };
 
 	m_PositionList->Delete(pos);
 
-	mafString flyto_tagName = "FLY_TO_" + m_SelectedPosition;
+	mafString flyto_tagName = _R("FLY_TO_") + m_SelectedPosition;
   if(m_Tags->GetTag(flyto_tagName))
 	  m_Tags->DeleteTag(flyto_tagName);
 
-	m_SelectedPosition = "";
+	m_SelectedPosition.Clear();
   if(m_PositionList->GetCount()) 
 	{
 		SetCurrentSelection(0);
-	  m_SelectedPosition = m_PositionList->GetStringSelection();
+	  m_SelectedPosition = mafWxToString(m_PositionList->GetStringSelection());
 	}
 }
 //----------------------------------------------------------------------------
@@ -659,7 +659,7 @@ void mafAnimate::RetrieveStoredPositions(bool update_listbox /*= true*/)
     mafTagItem *item = m_Tags->GetTag(tag_list[t]);
     if(item && ((item->GetNumberOfComponents() == 9) || (item->GetNumberOfComponents() == 10)))
     {
-      wxString name = item->GetName();
+      wxString name = item->GetName().toWx();
       if(name.Find("FLY_TO_") != -1)
       {
         m_StoredPositions->SetTag(*item);
@@ -690,7 +690,7 @@ void mafAnimate::SetStoredPositions(mafTagArray *positions)
   {
     RetrieveStoredPositions();
     SetCurrentSelection(0);
-    m_SelectedPosition = m_PositionList->GetStringSelection();
+    m_SelectedPosition = mafWxToString(m_PositionList->GetStringSelection());
     FlyTo();
   }
 }

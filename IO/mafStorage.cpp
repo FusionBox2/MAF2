@@ -18,7 +18,6 @@
 #include "mafStorable.h"
 #include "mafDirectory.h"
 #include "mafXMLStorage.h"
-#include "mafFilesDirs.h"
 
 //------------------------------------------------------------------------------
 mafCxxTypeMacro(mafStorage);
@@ -29,7 +28,7 @@ mafStorage::mafStorage()
 {
   m_TmpFileId       = 0;
   m_ErrorCode       = 0;
-  m_TmpFolder       = wxGetCwd().c_str();
+  m_TmpFolder       = mafWxToString(wxGetCwd());
   m_Parser          = mafXMLParser::New();
 }
 
@@ -54,13 +53,13 @@ int mafStorage::Store()
   }
   else
   {
-    dir_path="";
+    dir_path.Clear();
   }
 
   //open the directory index
   if (OpenDirectory(dir_path)==MAF_ERROR)
   {
-    mafErrorMessage("I/O Error: stored failed because path not found!");
+    mafErrorMessage(_M("I/O Error: stored failed because path not found!"));
     return MAF_ERROR;
   }
 
@@ -132,15 +131,15 @@ const mafString& mafStorage::GetTmpFolder()
 {
   if (m_TmpFolder.IsEmpty())
   {
-    wxString path=wxPathOnly(m_URL.GetCStr());
+    mafString path=mafPathOnly(m_URL);
     if (!path.IsEmpty())
     {
       m_DefaultTmpFolder=path;
-      m_DefaultTmpFolder<<"/";
+      m_DefaultTmpFolder+=_R("/");
     }
     else
     {
-      m_DefaultTmpFolder="";
+      m_DefaultTmpFolder.Clear();
     }
 
     return m_DefaultTmpFolder;
@@ -158,7 +157,7 @@ int mafStorage::OpenDirectory(const mafString& pathname)
   mafDirectory dir;
   if (pathname.IsEmpty())
   {
-    if (!dir.Load("."))
+    if (!dir.Load(_R(".")))
       return MAF_ERROR;
   }
   else
@@ -171,8 +170,7 @@ int mafStorage::OpenDirectory(const mafString& pathname)
 
   for (int i=0;i<dir.GetNumberOfFiles();i++)
   {
-    const mafString& fullname=dir.GetFile(i);  
-    const mafString& filename=mafString::BaseName(fullname);
+    mafString filename = dir.GetFile(i).BaseName();
     m_FilesDictionary.insert(filename);
   }
 
@@ -198,10 +196,10 @@ void mafStorage::GetTmpFile(mafString &filename)
 //------------------------------------------------------------------------------
 {
   mafString tmpfname=GetTmpFolder();
-  tmpfname<<"#tmp.";
+  tmpfname+=_R("#tmp.");
   do 
   {
-    tmpfname<<mafString(m_TmpFileId++);	
+    tmpfname+=mafToString(m_TmpFileId++);	
   } while(m_TmpFileNames.find(tmpfname)!=m_TmpFileNames.end());
   
   filename=tmpfname;
@@ -235,9 +233,9 @@ int mafStorage::ResolveInputURL(const mafString& url, mafString &filename, mafBa
     filename=base_path;
 
     if (!base_path.IsEmpty())
-      filename<<"/";
+      filename+=_R("/");
 
-    filename<<url;
+    filename+=url;
   }
   else
   {
@@ -267,7 +265,7 @@ int mafStorage::StoreToURL(const mafString& filename, const mafString& url)
     base_path=mafPathOnly(m_URL);
     if (!base_path.IsEmpty())
     {
-      fullpathname=base_path+"/"+url;
+      fullpathname=base_path+_R("/")+url;
     }
     else
     {
@@ -315,7 +313,7 @@ int mafStorage::DeleteURL(const mafString& url)
     // if local file prepend base_path
     mafString base_path,fullpathname;
     base_path=mafPathOnly(m_URL);
-    fullpathname=base_path+"/"+url;
+    fullpathname=base_path+_R("/")+url;
 
     if (IsFileInDirectory(url))
     {
@@ -360,7 +358,7 @@ int mafStorage::InternalStore()
   {
     if (StoreToURL(filename,m_URL)!=MAF_OK)
     {
-      mafErrorMessage("Unable to resolve URL for output XML file, a copy of the file can be found in: %s",filename.GetCStr());
+      mafErrorMessage(_M(_R("Unable to resolve URL for output XML file, a copy of the file can be found in: ") + filename));
       errorCode = 4;
     }
     else
@@ -384,7 +382,7 @@ int mafStorage::InternalRestore()
   // here I should resolve the XML file name
   if (ResolveInputURL(m_ParserURL,filename) == MAF_ERROR)
   {
-    mafErrorMessage("Unable to resolve URL for input XML file");
+    mafErrorMessage(_M("Unable to resolve URL for input XML file"));
     return IO_WRONG_URL;
   }
 

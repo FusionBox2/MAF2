@@ -45,7 +45,7 @@ mmaApplicationLayout *mafNodeLayout::GetLayout()
 {
   if (m_AppLayout == NULL)
   {
-    m_AppLayout = (mmaApplicationLayout *)GetAttribute("ApplicationLayout");
+    m_AppLayout = (mmaApplicationLayout *)GetAttribute(_R("ApplicationLayout"));
   }
   return m_AppLayout;
 }

@@ -34,17 +34,22 @@ using namespace std;
 static mafMutexLock mafLogMutex; 
 static char mafLogBuffer[BUFFER_DIMENSION];
 
+mafMessageBuf _M(const char *s)
+{
+    return mafMessageBuf(s);
+}
+
 //------------------------------------------------------------------------------
-void mafLogMessage(const char *format, ...)
+void mafLogMessage(mafMessageBuf msg)
 //------------------------------------------------------------------------------
 {
   
   mafLogMutex.Lock();
-  MAF_PRINT_MACRO(format,mafLogBuffer,sizeof(mafLogBuffer));
+  wxSnprintf(mafLogBuffer, BUFFER_DIMENSION, wxT("%s"), msg.GetBuf());
 
 #ifdef MAF_USE_WX
   wxString logStr;
-  logStr.Append(wxString::Format("%s", format));
+  logStr.Append(wxString::Format(wxT("%s"), msg.GetBuf()));
   if(logStr.size()<sizeof(mafLogBuffer))
     wxLogMessage(mafLogBuffer);
   else
@@ -66,14 +71,14 @@ void mafLogMessage(const char *format, ...)
 }
 //------------------------------------------------------------------------------
 // open a warning dialog and write a message
-void mafWarningMessage(const char *format, ...)
+void mafWarningMessage(mafMessageBuf msg)
 //------------------------------------------------------------------------------
 {
   mafLogMutex.Lock();
-  MAF_PRINT_MACRO(format,mafLogBuffer,sizeof(mafLogBuffer));
+  wxSnprintf(mafLogBuffer, BUFFER_DIMENSION, wxT("%s"), msg.GetBuf());
 
 #ifdef MAF_USE_WX
-  wxMessageBox(mafLogBuffer,"Warning Message",wxOK|wxICON_WARNING);
+  wxMessageBox(mafLogBuffer,wxT("Warning Message"),wxOK|wxICON_WARNING);
 #else
   cerr << "Warning: " << mafLogBuffer;    
 #endif
@@ -83,14 +88,14 @@ void mafWarningMessage(const char *format, ...)
 
 //------------------------------------------------------------------------------
 // open an error dialog and write a message
-void mafErrorMessage(const char *format, ...)
+void mafErrorMessage(mafMessageBuf msg)
 //------------------------------------------------------------------------------
 {
   mafLogMutex.Lock();
-  MAF_PRINT_MACRO(format,mafLogBuffer,sizeof(mafLogBuffer));
+  wxSnprintf(mafLogBuffer, BUFFER_DIMENSION, wxT("%s"), msg.GetBuf());
 
 #ifdef MAF_USE_WX
-  wxMessageBox(mafLogBuffer,"Error Message",wxOK|wxICON_ERROR);
+  wxMessageBox(mafLogBuffer,wxT("Error Message"),wxOK|wxICON_ERROR);
 #else
   cerr << "Error:" << mafLogBuffer;
 #endif
@@ -100,14 +105,14 @@ void mafErrorMessage(const char *format, ...)
 
 //------------------------------------------------------------------------------
 // open a message dialog and write a message
-void mafMessage(const char *format, ...)
+void mafMessage(mafMessageBuf msg)
 //------------------------------------------------------------------------------
 {
   mafLogMutex.Lock();
-  MAF_PRINT_MACRO(format,mafLogBuffer,sizeof(mafLogBuffer));
+  wxSnprintf(mafLogBuffer, BUFFER_DIMENSION, wxT("%s"), msg.GetBuf());
 
 #ifdef MAF_USE_WX
-  wxMessageBox(mafLogBuffer,"Information",wxOK|wxICON_INFORMATION);
+  wxMessageBox(mafLogBuffer,wxT("Information"),wxOK|wxICON_INFORMATION);
 #else
   cerr << mafLogBuffer;
 #endif

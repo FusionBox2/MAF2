@@ -90,17 +90,37 @@ typedef float                  mafFloat;
 typedef double                 mafDouble;
 typedef double                 mafReal;
 
+class MAF_EXPORT mafMessageBuf
+{
+public:
+    explicit mafMessageBuf(const char *buf)
+        : m_buf(buf)
+    {}
+    const char* GetBuf() const { return m_buf; }
+    mafMessageBuf& operator=(const mafMessageBuf& other)
+    {
+        m_buf = other.m_buf;
+        return *this;
+    }
+private:
+    mafMessageBuf(const wxString& str);
+    mafMessageBuf& operator=(const wxString& str);
+    mafMessageBuf& operator=(const char* buf);
+    const char* m_buf;
+};
+MAF_EXPORT mafMessageBuf _M(const char* s);
+
 //------------------------------------------------------------------------------
 // Global Functions
 //------------------------------------------------------------------------------
 /** write a message in the log area */
-MAF_EXPORT void mafLogMessage(const char *format, ...);
+MAF_EXPORT void mafLogMessage(mafMessageBuf msg);
 /** open a warning dialog and write a message */
-MAF_EXPORT void mafWarningMessage(const char *format, ...);
+MAF_EXPORT void mafWarningMessage(mafMessageBuf msg);
 /** open an error dialog and write a message */
-MAF_EXPORT void mafErrorMessage(const char *format, ...);
+MAF_EXPORT void mafErrorMessage(mafMessageBuf msg);
 /** open a message dialog and write a message */
-MAF_EXPORT void mafMessage(const char *format, ...);
+MAF_EXPORT void mafMessage(mafMessageBuf msg);
 /** 
   reliable comparison test for floating point numbers. Extracted from article:
   "Work Around Floating-Point Accuracy/Comparison Problems" Article ID: Q69333
@@ -182,7 +202,7 @@ MAF_EXPORT void mafSleep(int msec);
   std::stringstream msg; \
   msg << "Warning in: " __FILE__ ", line " << __LINE__ << "\n" x \
     << "\n"; \
-  mafLogMessage(msg.str().c_str());\
+  mafLogMessage(_M(msg.str().c_str()));\
 }
 
 /** 
@@ -193,7 +213,7 @@ MAF_EXPORT void mafSleep(int msec);
   std::stringstream msg; \
   msg << "Error in: " __FILE__ ", line " << __LINE__ << "\n" x \
     << "\n"; \
-  mafLogMessage(msg.str().c_str());\
+  mafLogMessage(_M(msg.str().c_str()));\
 }
 
 /** 
@@ -202,7 +222,7 @@ MAF_EXPORT void mafSleep(int msec);
 { \
   std::stringstream msg; \
   msg << x << "\n"; \
-  mafWarningMessage(msg.str().c_str());\
+  mafWarningMessage(_M(msg.str().c_str()));\
 }
 
 /** 
@@ -211,7 +231,7 @@ MAF_EXPORT void mafSleep(int msec);
 { \
   std::stringstream msg; \
   msg << x << "\n"; \
-  mafErrorMessage(msg.str().c_str());\
+  mafErrorMessage(_M(msg.str().c_str()));\
 }
 
 /** 
@@ -220,30 +240,7 @@ MAF_EXPORT void mafSleep(int msec);
 { \
   std::stringstream msg; \
   msg << x << "\n"; \
-  mafMessage(msg.str().c_str());\
+  mafMessage(_M(msg.str().c_str()));\
 }
-
-#ifdef MAF_USE_WX
-/** 
-  Macro for formatted printing to string (adapted from wxWidgets IMPLEMENT_LOG_FUNCTION)
-  To use it you will need to include wx/wx.h */
-#define MAF_PRINT_MACRO(format,buffer,size) \
-  va_list argptr; \
-  va_start(argptr, format); \
-  wxVsnprintf(buffer, size, format, argptr); \
-  va_end(argptr);
-
-#else
-/** 
-  Macro for formatted printing to string (adapted from wxWidgets IMPLEMENT_LOG_FUNCTION)
-  To use it you will need to include <stdio.h>, <stdarg.h> and <varargs.h>
-  This is less safe since it can't limit output string size. */
-#define MAF_PRINT_MACRO(format,buffer,size) \
-  va_list argptr; \
-  va_start(argptr, format); \
-  vsprintf(buffer, format, argptr); \
-  va_end(argptr);
-
-#endif
 
 #endif

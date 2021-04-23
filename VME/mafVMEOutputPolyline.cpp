@@ -45,7 +45,7 @@ mafVMEOutputPolyline::mafVMEOutputPolyline()
 //-------------------------------------------------------------------------
 {
   m_Material = NULL;
-  m_NumberOfPoints = "0";
+  m_NumberOfPoints = _R("0");
 }
 
 //-------------------------------------------------------------------------
@@ -80,14 +80,14 @@ mafGUI* mafVMEOutputPolyline::CreateGui()
     this->Update();
   }
   mafString vtk_data_type;
-  vtk_data_type << mafString(GetVTKData()->GetClassName());
-  m_Gui->Label(_("vtk type: "), vtk_data_type, true);
+  vtk_data_type += _R(GetVTKData()->GetClassName());
+  m_Gui->Label(_L("vtk type: "), vtk_data_type, true);
   
   //m_Length = mafString(wxString::Format(_("%.2f"),CalculateLength()));
-  m_Gui->Label(_(" Length: "), &m_Length ,true);
+  m_Gui->Label(_L(" Length: "), &m_Length ,true);
 
-  m_NumberOfPoints = mafString(((vtkPolyData *)m_VME->GetOutput()->GetVTKData())->GetNumberOfPoints());
-  m_Gui->Label(_("Points: "), &m_NumberOfPoints ,true);
+  m_NumberOfPoints = mafToString(((vtkPolyData *)m_VME->GetOutput()->GetVTKData())->GetNumberOfPoints());
+  m_Gui->Label(_L("Points: "), &m_NumberOfPoints ,true);
 
   return m_Gui;
 }
@@ -100,7 +100,7 @@ mmaMaterial *mafVMEOutputPolyline::GetMaterial()
     return  m_Material;
 
   // search for a material attribute in the VME connected to this output
-  return GetVME() ? mmaMaterial::SafeDownCast(GetVME()->GetAttribute("MaterialAttributes")) : NULL;
+  return GetVME() ? mmaMaterial::SafeDownCast(GetVME()->GetAttribute(_R("MaterialAttributes"))) : NULL;
 }
 //-------------------------------------------------------------------------
 void mafVMEOutputPolyline::Update()
@@ -110,8 +110,8 @@ void mafVMEOutputPolyline::Update()
   m_VME->Update();
   if (m_VME && m_VME->GetDataPipe() && m_VME->GetDataPipe()->GetVTKData())
   {
-  	m_Length = mafString(wxString::Format(_("%.2f"),CalculateLength()));  
-    m_NumberOfPoints = mafString(((vtkPolyData *)m_VME->GetOutput()->GetVTKData())->GetNumberOfPoints());
+  	m_Length = mafString::Format(_L("%.2f"),CalculateLength());  
+    m_NumberOfPoints = mafToString(((vtkPolyData *)m_VME->GetOutput()->GetVTKData())->GetNumberOfPoints());
   }
   
   if (m_Gui)

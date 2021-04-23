@@ -81,7 +81,7 @@ public:
   virtual mafView *ViewCreate(int id);
   
 	/** Create a view given the type. */
-  virtual mafView *ViewCreate(wxString label);
+  virtual mafView *ViewCreate(const mafString& label);
   
 	/** Insert the view into the view-list, fill the view with the vme tree and select the selected vme. */
   void ViewInsert(mafView *view);

@@ -40,7 +40,7 @@ END_EVENT_TABLE()
 
 IMPLEMENT_DYNAMIC_CLASS(mafGUIPicButton,wxBitmapButton)
 //----------------------------------------------------------------------------
-mafGUIPicButton::mafGUIPicButton(wxWindow *parent, wxString BitmapId, wxWindowID id, mafBaseEventHandler *listener, int offset)
+mafGUIPicButton::mafGUIPicButton(wxWindow *parent, const mafString& BitmapId, wxWindowID id, mafBaseEventHandler *listener, int offset)
 //----------------------------------------------------------------------------
 {
   SetListener(listener);
@@ -81,7 +81,7 @@ void mafGUIPicButton::Command(wxCommandEvent& event)
   mafEventMacro(mafEvent(this, m_Id));
 }
 //----------------------------------------------------------------------------
-void mafGUIPicButton::SetBitmap(wxString BitmapId, wxWindowID id )
+void mafGUIPicButton::SetBitmap(const mafString& BitmapId, wxWindowID id )
 //----------------------------------------------------------------------------
 {
   wxBitmap b = mafPictureFactory::GetPictureFactory()->GetBmp(BitmapId);

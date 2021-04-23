@@ -32,7 +32,7 @@ class mafNode;
 class MAF_EXPORT mafOpCreateRefSys: public mafOp
 {
 public:
-  mafOpCreateRefSys(const mafString& label = "CreateRefSys");
+  mafOpCreateRefSys(const mafString& label = _R("CreateRefSys"));
  ~mafOpCreateRefSys(); 
 
   mafTypeMacro(mafOpCreateRefSys, mafOp);

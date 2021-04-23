@@ -280,21 +280,21 @@ mafGUI *mafPipeVector::CreateGui()
   assert(m_Gui == NULL);
   m_Gui = new mafGUI(this);
   m_Gui->Divider();
-  m_Gui->Bool(ID_USE_VTK_PROPERTY,_("property"),&m_UseVTKProperty);
+  m_Gui->Bool(ID_USE_VTK_PROPERTY,_L("property"),&m_UseVTKProperty);
   m_MaterialButton = new mafGUIMaterialButton(m_Vme,this);
   m_Gui->AddGui(m_MaterialButton->GetGui());
   m_MaterialButton->Enable(m_UseVTKProperty != 0);
   m_Gui->Divider();
-  m_Gui->Bool(ID_USE_ARROW,_("Arrow"),&m_UseArrow,1,_("To visualize the arrow tip"));
-  m_Gui->Bool(ID_USE_SPHERE,_("COP"),&m_UseSphere,1,_("To visualize sphere on COP"));
+  m_Gui->Bool(ID_USE_ARROW,_L("Arrow"),&m_UseArrow,1,_L("To visualize the arrow tip"));
+  m_Gui->Bool(ID_USE_SPHERE,_L("COP"),&m_UseSphere,1,_L("To visualize sphere on COP"));
   m_Gui->Divider();
-  m_Gui->Bool(ID_USE_BUNCH,_("Vectogram"),&m_UseBunch,0,_("To visualize the Vectogram"));
+  m_Gui->Bool(ID_USE_BUNCH,_L("Vectogram"),&m_UseBunch,0,_L("To visualize the Vectogram"));
   m_Gui->Divider();
-  m_Gui->Integer(ID_STEP,_("Step:"),&m_Step,0,(m_TimeVector.size()),_("1 To visualize every vector"));
+  m_Gui->Integer(ID_STEP,_L("Step:"),&m_Step,0,(m_TimeVector.size()),_L("1 To visualize every vector"));
   m_Gui->Divider();
-  m_Gui->Integer(ID_INTERVAL,_("Interval:"),&m_Interval,0,(m_TimeVector.size()),_("Interval of frames to visualize"));
+  m_Gui->Integer(ID_INTERVAL,_L("Interval:"),&m_Interval,0,(m_TimeVector.size()),_L("Interval of frames to visualize"));
   m_Gui->Divider();
-  m_Gui->Bool(ID_ALL_BUNCH,_("Complete"),&m_AllBunch,0,_("To visualize the whole bunch"));
+  m_Gui->Bool(ID_ALL_BUNCH,_L("Complete"),&m_AllBunch,0,_L("To visualize the whole bunch"));
 
   m_Gui->Enable(ID_ALL_BUNCH, m_UseBunch == 1);
   m_Gui->Enable(ID_INTERVAL, m_UseBunch == 1 && m_AllBunch == 0);

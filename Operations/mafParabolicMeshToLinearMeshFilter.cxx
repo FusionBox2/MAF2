@@ -99,7 +99,7 @@ void mafParabolicMeshToLinearMeshFilter::Execute()
     {
       output->DeepCopy(input);
 
-      mafLogMessage("Mesh is already linear or made of unsupported type elements! Bypassing the filter");
+      mafLogMessage(_M("Mesh is already linear or made of unsupported type elements! Bypassing the filter"));
       return;
     }
   }  

@@ -42,7 +42,7 @@ mafCxxTypeMacro(mafVMEOutputPointSet)
 mafVMEOutputPointSet::mafVMEOutputPointSet()
 //-------------------------------------------------------------------------
 {
-  m_NumPoints = "0";
+  m_NumPoints = _R("0");
   m_Material = NULL;
 }
 
@@ -68,7 +68,7 @@ mmaMaterial *mafVMEOutputPointSet::GetMaterial()
     return  m_Material;
 
   // search for a material attribute in the VME connected to this output
-  return GetVME() ? mmaMaterial::SafeDownCast(GetVME()->GetAttribute("MaterialAttributes")) : NULL;
+  return GetVME() ? mmaMaterial::SafeDownCast(GetVME()->GetAttribute(_R("MaterialAttributes"))) : NULL;
 }
 
 //-------------------------------------------------------------------------
@@ -88,9 +88,9 @@ mafGUI* mafVMEOutputPointSet::CreateGui()
   {
     this->Update();
     int num = GetPointSetData()->GetNumberOfVerts();
-    m_NumPoints = num;
+    m_NumPoints = mafToString(num);
   }
-  m_Gui->Label(_("points: "), &m_NumPoints, true);
+  m_Gui->Label(_L("points: "), &m_NumPoints, true);
 	m_Gui->Divider();
   return m_Gui;
 }
@@ -103,11 +103,11 @@ void mafVMEOutputPointSet::Update()
   if (GetPointSetData())
   {
     int num = GetPointSetData()->GetNumberOfVerts();
-    m_NumPoints = num;
+    m_NumPoints = mafToString(num);
   }
   else
   {
-    m_NumPoints = "0";
+    m_NumPoints = _R("0");
   }
   if (m_Gui)
   {

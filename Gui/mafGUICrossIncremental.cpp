@@ -68,7 +68,7 @@ END_EVENT_TABLE()
 #define FONTSIZE 9
 
 //----------------------------------------------------------------------------
-mafGUICrossIncremental::mafGUICrossIncremental(wxWindow* parent, wxWindowID id, const char * label, double *stepVariable, double *topBottomVariable, double *leftRightVariable, bool boldLabel /* = true */, int modality /* = ID_COMPLETE_LAYOUT */, const wxPoint& pos /* = wxDefaultPosition */, const wxSize& size /* = wxDefaultSize */, double min /* = MINFLOAT */, double max /* = MAXFLOAT */, int decimal_digit /* = -1 */, long style /* = wxTAB_TRAVERSAL | wxCLIP_CHILDREN */, bool comboStep /* = false */, mafString *buttonUpDown_text /* = NULL */, mafString *buttonLeftRight_text /* = NULL */)
+mafGUICrossIncremental::mafGUICrossIncremental(wxWindow* parent, wxWindowID id, const mafString& label, double *stepVariable, double *topBottomVariable, double *leftRightVariable, bool boldLabel /* = true */, int modality /* = ID_COMPLETE_LAYOUT */, const wxPoint& pos /* = wxDefaultPosition */, const wxSize& size /* = wxDefaultSize */, double min /* = MINFLOAT */, double max /* = MAXFLOAT */, int decimal_digit /* = -1 */, long style /* = wxTAB_TRAVERSAL | wxCLIP_CHILDREN */, bool comboStep /* = false */, mafString *buttonUpDown_text /* = NULL */, mafString *buttonLeftRight_text /* = NULL */)
 :mafGUIPanel(parent,id,pos,size,style) 
 //----------------------------------------------------------------------------
 {
@@ -101,7 +101,7 @@ mafGUICrossIncremental::mafGUICrossIncremental(wxWindow* parent, wxWindowID id, 
   else
     CreateWidgetComboBox();
 
-  LayoutStyle(label);
+  LayoutStyle(label.GetCStr());
   
 	this->SetAutoLayout( TRUE );
 	this->SetSizer( m_Sizer );
@@ -123,17 +123,17 @@ void mafGUICrossIncremental::CreateWidgetTopBottom(mafString *button_text)
     }
     else
     {
-      buttonTextToApply[0] = "+";
-      buttonTextToApply[1] = "-";
+      buttonTextToApply[0] = _R("+");
+      buttonTextToApply[1] = _R("-");
     }
 
-		m_ButtonTop = new mafGUIButton   (this, ID_BUTTON_TOP/*w_id*/, buttonTextToApply[0].GetCStr(),dp, wxSize(EW, BH + 2) );
+		m_ButtonTop = new mafGUIButton   (this, ID_BUTTON_TOP/*w_id*/, buttonTextToApply[0],dp, wxSize(EW, BH + 2) );
 		m_ButtonTop->SetValidator( mafGUIValidator(this,ID_BUTTON_TOP/*w_id*/,m_ButtonTop) );
 		//  m_ButtonTop->SetFont(m_Font);
 		//if(!tooltip.IsEmpty()) 
 		//  m_ButtonTop->SetToolTip(tooltip.GetCStr());
 
-		m_ButtonBottom = new mafGUIButton   (this, ID_BUTTON_BOTTOM/*w_id*/, buttonTextToApply[1].GetCStr(),dp, wxSize(EW, BH+2) );
+		m_ButtonBottom = new mafGUIButton   (this, ID_BUTTON_BOTTOM/*w_id*/, buttonTextToApply[1],dp, wxSize(EW, BH+2) );
 
 		m_ButtonBottom->SetValidator( mafGUIValidator(this,ID_BUTTON_BOTTOM/*w_id*/,m_ButtonBottom) );
 		//m_ButtonBottom->SetFont(m_Font);
@@ -157,16 +157,16 @@ void mafGUICrossIncremental::CreateWidgetLeftRight(mafString *button_text)
     }
     else
     {
-      buttonTextToApply[0] = "-";
-      buttonTextToApply[1] = "+";
+      buttonTextToApply[0] = _R("-");
+      buttonTextToApply[1] = _R("+");
     }
-		m_ButtonLeft = new mafGUIButton   (this, ID_BUTTON_LEFT/*w_id*/, buttonTextToApply[0].GetCStr(),dp, wxSize(EW, BH+2) );
+		m_ButtonLeft = new mafGUIButton   (this, ID_BUTTON_LEFT/*w_id*/, buttonTextToApply[0],dp, wxSize(EW, BH+2) );
 		m_ButtonLeft->SetValidator( mafGUIValidator(this,ID_BUTTON_LEFT/*w_id*/,m_ButtonLeft) );
 		//m_ButtonLeft->SetFont(m_Font);
 		//if(!tooltip.IsEmpty()) 
 		//  m_ButtonTop->SetToolTip(tooltip.GetCStr());
 
-		m_ButtonRight = new mafGUIButton   (this, ID_BUTTON_RIGHT/*w_id*/, buttonTextToApply[1].GetCStr(),dp, wxSize(EW, BH+2) );
+		m_ButtonRight = new mafGUIButton   (this, ID_BUTTON_RIGHT/*w_id*/, buttonTextToApply[1],dp, wxSize(EW, BH+2) );
 		m_ButtonRight->SetValidator( mafGUIValidator(this,ID_BUTTON_RIGHT/*w_id*/,m_ButtonRight) );
 		//m_ButtonRight->SetFont(m_Font);
 		//if(!tooltip.IsEmpty()) 

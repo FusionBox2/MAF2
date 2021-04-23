@@ -46,7 +46,7 @@ class MAF_EXPORT mafOpCrop: public mafOp
 {
 public:
              
-            	 mafOpCrop(const mafString& label=_("Crop") , bool showShadingPlane = false);
+            	 mafOpCrop(const mafString& label=_L("Crop") , bool showShadingPlane = false);
 	virtual     ~mafOpCrop();
 	/*virtual*/ void OnEvent(mafEventBase *maf_event);
 

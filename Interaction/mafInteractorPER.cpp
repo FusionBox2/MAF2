@@ -416,7 +416,7 @@ int mafInteractorPER::StopInteraction(mafDevice *device, int button)
     return true;
   }
 
-  mafWarningMacro("StopInteraction without a Start for device "<< device->GetName());
+  mafWarningMacro("StopInteraction without a Start for device "<< device->GetName().GetCStr());
   return false;
 }
 

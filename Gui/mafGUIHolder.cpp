@@ -39,7 +39,7 @@ mafGUIHolder::mafGUIHolder(wxWindow* parent,wxWindowID id,bool CloseButton,bool 
 :mafGUINamedPanel(parent,id,CloseButton,HideTitle) 
 //----------------------------------------------------------------------------
 {
-  SetTitle(" module controls area:");
+  SetTitle(_R(" module controls area:"));
   m_Panel = new mafGUIScrolledPanel(this,-1);
 
   Add(m_Panel,1,wxEXPAND);

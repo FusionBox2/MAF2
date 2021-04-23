@@ -210,7 +210,7 @@ public:
   virtual void OnEvent(mafEventBase *maf_event);
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString("");};
+  virtual mafString GetVisualPipe() {return mafString();};
 
   /** Set the mode with which render the VME: DEFAULT_VISUAL_MODE or NO_DATA_VISUAL_MODE.
   Setting the visual mode to default will produce also the reset of the m_EditingVisualPipe

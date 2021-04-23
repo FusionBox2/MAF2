@@ -581,7 +581,7 @@ int mafNode::SetParent(mafNode *parent)
   if((parent != NULL && !this->CanReparentTo(parent)) || IsInTree(parent))
   {
     // modified by Stefano 27-10-2004: Changed the error macro to give feedback about node names 
-    mafErrorMacro("Cannot reparent the VME: " << GetName() << " under the " << parent->GetTypeName() << " named " << parent->GetName());
+    mafErrorMacro("Cannot reparent the VME: " << GetName().GetCStr() << " under the " << parent->GetTypeName() << " named " << parent->GetName().GetCStr());
     return MAF_ERROR;
   }
   if(m_Parent == parent)
@@ -892,12 +892,12 @@ void mafNode::RemoveAllAttributes()
 mafTagArray  *mafNode::GetTagArray()
 //-------------------------------------------------------------------------
 {
-  mafTagArray *tarray = mafTagArray::SafeDownCast(GetAttribute("TagArray"));
+  mafTagArray *tarray = mafTagArray::SafeDownCast(GetAttribute(_R("TagArray")));
   if (!tarray)
   {
     tarray = mafTagArray::New();
-    tarray->SetName("TagArray");
-    SetAttribute("TagArray",tarray);
+    tarray->SetName(_R("TagArray"));
+    SetAttribute(_R("TagArray"),tarray);
   }
   return tarray;
 }
@@ -906,7 +906,6 @@ mafTagArray  *mafNode::GetTagArray()
 mafNode *mafNode::GetLink(const mafString& name)
 //-------------------------------------------------------------------------
 {
-  assert(name);
   mafLinksMap::iterator it = m_Links.find(name);
   if (it != m_Links.end())
   {
@@ -927,7 +926,6 @@ mafNode *mafNode::GetLink(const mafString& name)
 mafID mafNode::GetLinkSubId(const mafString& name)
 //-------------------------------------------------------------------------
 {
-  assert(name);
   mafLinksMap::iterator it = m_Links.find(name);
   if (it != m_Links.end())
   {
@@ -939,12 +937,11 @@ mafID mafNode::GetLinkSubId(const mafString& name)
 void mafNode::SetLink(const mafString& name, mafNode *node, mafID sub_id)
 //-------------------------------------------------------------------------
 {
-  assert(name);
   assert(node);
 
   if (node == NULL)
   {
-    mafLogMessage(_("Warning!! NULL node can not be set as link."));
+    mafLogMessage(_M(mafString(_L("Warning!! NULL node can not be set as link."))));
     return;
   }
 
@@ -975,7 +972,6 @@ void mafNode::SetLink(const mafString& name, mafNode *node, mafID sub_id)
 void mafNode::RemoveLink(const mafString& name)
 //-------------------------------------------------------------------------
 {
-  assert(name);
   mafLinksMap::iterator it=m_Links.find(name);
   if (it!=m_Links.end())
   {
@@ -1111,7 +1107,7 @@ void mafNode::OnEvent(mafEventBase *e)
       switch(gui_event->GetId()) 
       {
       case ID_NAME:
-        SetName(m_Name.GetCStr());
+        SetName(m_Name);
         break;
       case ID_PRINT_INFO:
         OnPrint();
@@ -1121,7 +1117,7 @@ void mafNode::OnEvent(mafEventBase *e)
 
 				mafEvent helpEvent;
 				helpEvent.SetSender(this);
-				mafString vmeTypeName = this->GetTypeName();
+				mafString vmeTypeName = _R(this->GetTypeName());
 				helpEvent.SetString(&vmeTypeName);
 				helpEvent.SetId(OPEN_HELP_PAGE);
 				ForwardUpEvent(helpEvent);
@@ -1191,37 +1187,37 @@ void mafNode::OnEvent(mafEventBase *e)
 int mafNode::InternalStore(mafStorageElement *parent)
 //-------------------------------------------------------------------------
 {
-  parent->SetAttribute("Name",m_Name);
-  parent->SetAttribute("Id",mafString(m_Id));
+  parent->SetAttribute(_R("Name"),m_Name);
+  parent->SetAttribute(_R("Id"),mafToString(m_Id));
 
   // store Attributes into a tmp array
   std::vector<mafObject *> attrs;
-  for (mafAttributesMap::iterator it=m_Attributes.begin();it!=m_Attributes.end();it++)
+  for (auto it=m_Attributes.begin();it!=m_Attributes.end();++it)
   {
     attrs.push_back(it->second);
   }
-  parent->StoreObjectVector("Attributes",attrs);
+  parent->StoreObjectVector(_R("Attributes"),attrs);
 
   // store Links
   unsigned numberOfLinks = 0;
-  for (mafLinksMap::iterator links_it=m_Links.begin();links_it!=m_Links.end();links_it++)
+  for (auto links_it=m_Links.begin();links_it!=m_Links.end();++links_it)
   {
     mmuNodeLink &link=links_it->second;
     if (links_it->second.m_Node != NULL && links_it->second.m_Node->IsValid() && links_it->second.m_Node->GetRoot() == GetRoot())
       numberOfLinks++;
   }
 
-  mafStorageElement *links_element=parent->AppendChild("Links");
-  links_element->SetAttribute("NumberOfLinks",mafString(numberOfLinks));
-  for (mafLinksMap::iterator links_it=m_Links.begin();links_it!=m_Links.end();links_it++)
+  mafStorageElement *links_element=parent->AppendChild(_R("Links"));
+  links_element->SetAttribute(_R("NumberOfLinks"),mafToString((long)numberOfLinks));
+  for (auto links_it=m_Links.begin();links_it!=m_Links.end();++links_it)
   {
     mmuNodeLink &link=links_it->second;
     if (links_it->second.m_Node != NULL && links_it->second.m_Node->IsValid() && links_it->second.m_Node->GetRoot() == GetRoot())
     {
-      mafStorageElement *link_item_element=links_element->AppendChild("Link");
-      link_item_element->SetAttribute("Name",links_it->first);
-      link_item_element->SetAttribute("NodeId",link.m_Node->GetId());
-      link_item_element->SetAttribute("NodeSubId",link.m_NodeSubId);
+      mafStorageElement *link_item_element=links_element->AppendChild(_R("Link"));
+      link_item_element->SetAttribute(_R("Name"),links_it->first);
+      link_item_element->SetAttribute(_R("NodeId"),link.m_Node->GetId());
+      link_item_element->SetAttribute(_R("NodeSubId"),link.m_NodeSubId);
     }
   }
 
@@ -1235,7 +1231,7 @@ int mafNode::InternalStore(mafStorageElement *parent)
       nodes_to_store.push_back(node);
     }
   }
-  parent->StoreObjectVector("Children",nodes_to_store,"Node");
+  parent->StoreObjectVector(_R("Children"),nodes_to_store,_R("Node"));
 
   return MAF_OK;
 }
@@ -1244,24 +1240,24 @@ int mafNode::InternalStore(mafStorageElement *parent)
 int mafNode::InternalRestore(mafStorageElement *node)
 //-------------------------------------------------------------------------
 {
-  if (!node->GetAttribute("Name", m_Name))
+  if (!node->GetAttribute(_R("Name"), m_Name))
   {
     mafErrorMacro("I/O error restoring node of type "<<GetTypeName()<<" : cannot found Name attribute.");
     return MAF_ERROR;
   }
   // restore Id
   mafString id;
-  if (!node->GetAttribute("Id", id))
+  if (!node->GetAttribute(_R("Id"), id))
   {
-    mafErrorMacro("I/O error restoring node "<<GetName()<<" of type "<<GetTypeName()<<" : cannot found Id attribute.");
+    mafErrorMacro("I/O error restoring node "<<GetName().GetCStr() <<" of type "<<GetTypeName()<<" : cannot found Id attribute.");
     return MAF_ERROR;
   }
-  SetId((mafID)atof(id));
+  SetId((mafID)atof(id.GetCStr()));
 
   // restore attributes
   RemoveAllAttributes();
   std::vector<mafObject *> attrs;
-  if (node->RestoreObjectVector("Attributes",attrs) != MAF_OK)
+  if (node->RestoreObjectVector(_R("Attributes"),attrs) != MAF_OK)
   {
     mafErrorMacro("Problems restoring attributes for node ");// << GetName());
     // do not return MAF_ERROR when cannot restore an attribute due to missing object type
@@ -1281,24 +1277,24 @@ int mafNode::InternalRestore(mafStorageElement *node)
 
   // restore Links
   RemoveAllLinks();
-  mafStorageElement *links_element = node->FindNestedElement("Links");
+  mafStorageElement *links_element = node->FindNestedElement(_R("Links"));
   if (!links_element)
   {
-    mafErrorMacro("I/O error restoring node "<<GetName()<<" of type "<<GetTypeName()<<" : problems restoring links.");
+    mafErrorMacro("I/O error restoring node "<<GetName().GetCStr() <<" of type "<<GetTypeName()<<" : problems restoring links.");
     return MAF_ERROR;
   }
   mafString num_links;
-  links_element->GetAttribute("NumberOfLinks", num_links);
-  int n=(int)atof(num_links);
+  links_element->GetAttribute(_R("NumberOfLinks"), num_links);
+  int n=(int)atof(num_links.GetCStr());
   mafStorageElement::ChildrenVector links_vector = links_element->GetChildren();
   assert(links_vector.size() == n);
   for (unsigned int i = 0; i < n; i++)
   {
     mafString link_name;
-    links_vector[i]->GetAttribute("Name",link_name);
+    links_vector[i]->GetAttribute(_R("Name"),link_name);
     mafID link_node_id, link_node_subid;
-    links_vector[i]->GetAttributeAsInteger("NodeId",link_node_id);
-    links_vector[i]->GetAttributeAsInteger("NodeSubId",link_node_subid);
+    links_vector[i]->GetAttributeAsInteger(_R("NodeId"),link_node_id);
+    links_vector[i]->GetAttributeAsInteger(_R("NodeSubId"),link_node_subid);
     if(!(link_node_id == -1 && link_node_subid == -1))
     {
       m_Links[link_name] = mmuNodeLink(NULL,link_node_subid).SetId(link_node_id);
@@ -1308,7 +1304,7 @@ int mafNode::InternalRestore(mafStorageElement *node)
   // restore children
   RemoveAllChildren();
   std::vector<mafObject *> children;
-  if (node->RestoreObjectVector("Children",children,"Node") != MAF_OK)
+  if (node->RestoreObjectVector(_R("Children"),children,_R("Node")) != MAF_OK)
   {
     if (node->GetStorage()->GetErrorCode()!=mafStorage::IO_WRONG_OBJECT_TYPE)
       return MAF_ERROR;
@@ -1340,7 +1336,7 @@ void mafNode::Print(std::ostream& os, const int tabs)
   os << indent << "Name: \"" << m_Name.GetCStr() << "\"" << std::endl;
   os << indent << "Initialized: " << m_Initialized << std::endl;
   os << indent << "VisibleToTraverse: " << m_VisibleToTraverse << std::endl;
-  os << indent << "Parent: \"" << (m_Parent?m_Parent->m_Name.GetCStr():"NULL") << "\"" << std::endl; 
+  os << indent << "Parent: \"" << (m_Parent?m_Parent->m_Name.GetCStr():_R("NULL")) << "\"" << std::endl; 
   os << indent << "Number of Children: " << GetNumberOfChildren() << std::endl;
   os << indent << "Id: " << GetId() << std::endl;
   os << indent << "Attributes:\n";
@@ -1386,11 +1382,11 @@ mafGUI* mafNode::CreateGui()
   assert(m_Gui == NULL);
   m_Gui = new mafGUI(this);
   
-  mafString type_name = GetTypeName();
+  mafString type_name = _R(GetTypeName());
   if((*GetMAFExpertMode()) == TRUE) 
-    m_Gui->Button(ID_PRINT_INFO, type_name, "", "Print node debug information");
+    m_Gui->Button(ID_PRINT_INFO, type_name, _R(""), _R("Print node debug information"));
   
-  m_Gui->String(ID_NAME,"name :", &m_Name);
+  m_Gui->String(ID_NAME,_R("name :"), &m_Name);
 
   mafEvent buildHelpGui;
   buildHelpGui.SetSender(this);
@@ -1399,14 +1395,14 @@ mafGUI* mafNode::CreateGui()
 
   if (buildHelpGui.GetArg() == true)
   {
-	  m_Gui->Button(ID_HELP, "Help","");	
+	  m_Gui->Button(ID_HELP, _R("Help"),_R(""));	
   }
 
 	m_Gui->Divider();
 
-  m_Gui->Button(ID_MOVEUP, _("UP"), _("Up"), _("Move up in parent list"));
-  m_Gui->TwoButtons(ID_MOVELEFT, ID_MOVERIGHT, _("Move left in tree"), _("Move right in tree"));
-  m_Gui->Button(ID_MOVEDN, _("DN"), _("Down"), _("Move down in parent list"));
+  m_Gui->Button(ID_MOVEUP, _L("UP"), _L("Up"), _L("Move up in parent list"));
+  m_Gui->TwoButtons(ID_MOVELEFT, ID_MOVERIGHT, _L("Move left in tree"), _L("Move right in tree"));
+  m_Gui->Button(ID_MOVEDN, _L("DN"), _L("Down"), _L("Move down in parent list"));
   m_Gui->Divider();
 
   UpdateUpDownAvailability(this);
@@ -1438,12 +1434,12 @@ void mafNode::OnPrint()
     message = message.Mid(pos+1);
   }
 #else
-  std::strstream ss1,ss2;
-  Print(ss1);
-  ss1 << std::ends;   // Paolo 13/06/2005: needed to close correctly the strstream
+  std::stringstream stringStream;
+  stringStream << "[VME PRINTOUT:]\n";
+  Print(stringStream);
+  stringStream << std::endl;   // Paolo 13/06/2005: needed to close correctly the strstream
   //mafLogMessage("[VME PRINTOUT:]\n%s\n", ss1.str()); 
-  mafLogMessage("[VME PRINTOUT:]\n");
-  mafLogMessage(ss1.str()); 
+  mafLogMessage(_M(stringStream.str().c_str()));
 #endif
 }
 
@@ -1550,7 +1546,7 @@ mafNode * mafNode::GetByPath(const char *path,  bool onlyVisible /*=true*/)
       //Root case: root does not ave next
       if (tmpParent==NULL) 
       {
-        mafLogMessage("Node path error: root does not have next");
+        mafLogMessage(_M("Node path error: root does not have next"));
         currentNode=NULL;
         break;
       }
@@ -1559,7 +1555,7 @@ mafNode * mafNode::GetByPath(const char *path,  bool onlyVisible /*=true*/)
       //Size check
       if (tmpIndex==tmpParent->GetNumberOfChildren(onlyVisible)-1)
       {
-        mafLogMessage("Node path error: asked 'next' on last node");
+        mafLogMessage(_M("Node path error: asked 'next' on last node"));
         currentNode=NULL;
         break;
       }
@@ -1573,7 +1569,7 @@ mafNode * mafNode::GetByPath(const char *path,  bool onlyVisible /*=true*/)
       //Root case: root does not ave next
       if (tmpParent==NULL) 
       {
-        mafLogMessage("Node path error: root does not have next");
+        mafLogMessage(_M("Node path error: root does not have next"));
         currentNode=NULL;
         break;
       }
@@ -1582,7 +1578,7 @@ mafNode * mafNode::GetByPath(const char *path,  bool onlyVisible /*=true*/)
       //Size check
       if (tmpIndex==0)
       {
-        mafLogMessage("Node path error: asked 'prec' on first node");
+        mafLogMessage(_M("Node path error: asked 'prec' on first node"));
         currentNode=NULL;
         break;
       }
@@ -1596,7 +1592,7 @@ mafNode * mafNode::GetByPath(const char *path,  bool onlyVisible /*=true*/)
       //Root case: root does not ave next
       if (tmpParent==NULL) 
       {
-        mafLogMessage("Node path error: root does not have next");
+        mafLogMessage(_M("Node path error: root does not have next"));
         currentNode=NULL;
         break;
       }
@@ -1611,7 +1607,7 @@ mafNode * mafNode::GetByPath(const char *path,  bool onlyVisible /*=true*/)
       //Root case: root does not ave next
       if (tmpParent==NULL) 
       {
-        mafLogMessage("Node path error: root does not have next");
+        mafLogMessage(_M("Node path error: root does not have next"));
         currentNode=NULL;
         break;
       }
@@ -1624,7 +1620,7 @@ mafNode * mafNode::GetByPath(const char *path,  bool onlyVisible /*=true*/)
       //Root case: root does not ave next
       if (currentNode->GetNumberOfChildren(onlyVisible)==0) 
       {
-        mafLogMessage("Node path error: asked 'firstChild' on no child node");
+        mafLogMessage(_M("Node path error: asked 'firstChild' on no child node"));
         currentNode=NULL;
         break;
       }
@@ -1637,7 +1633,7 @@ mafNode * mafNode::GetByPath(const char *path,  bool onlyVisible /*=true*/)
       //Root case: root does not ave next
       if (currentNode->GetNumberOfChildren(onlyVisible)==0) 
       {
-        mafLogMessage("Node path error: asked 'lastChild' on no child node");
+        mafLogMessage(_M("Node path error: asked 'lastChild' on no child node"));
         currentNode=NULL;
         break;
       }
@@ -1650,7 +1646,7 @@ mafNode * mafNode::GetByPath(const char *path,  bool onlyVisible /*=true*/)
       //checking match bracket 
       if (token[token.size()-1] != ']')
       {
-        mafLogMessage("Node path error: pair[] wrong format");
+        mafLogMessage(_M("Node path error: pair[] wrong format"));
         currentNode=NULL;
         break;
       }
@@ -1662,7 +1658,7 @@ mafNode * mafNode::GetByPath(const char *path,  bool onlyVisible /*=true*/)
       //Root case: root does not ave next
       if (tmpParent==NULL) 
       {
-        mafLogMessage("Node path error: root does not have pairs");
+        mafLogMessage(_M("Node path error: root does not have pairs"));
         currentNode=NULL;
         break;
       }
@@ -1670,7 +1666,7 @@ mafNode * mafNode::GetByPath(const char *path,  bool onlyVisible /*=true*/)
       //Number checking
       if (!tmpString.IsNumber())
       {
-        mafLogMessage("Node path error: wrong pair[] argument");
+        mafLogMessage(_M("Node path error: wrong pair[] argument"));
         currentNode=NULL;
         break;
       }
@@ -1680,7 +1676,7 @@ mafNode * mafNode::GetByPath(const char *path,  bool onlyVisible /*=true*/)
       //Checking bounds
       if(tmpIndex < 0 || tmpIndex > tmpParent->GetNumberOfChildren(onlyVisible)-1)
       {
-        mafLogMessage("Node path error: pair[] value outside bounds");
+        mafLogMessage(_M("Node path error: pair[] value outside bounds"));
         currentNode=NULL;
         break;
       }
@@ -1693,7 +1689,7 @@ mafNode * mafNode::GetByPath(const char *path,  bool onlyVisible /*=true*/)
       //checking match bracket 
       if (token[token.size()-1] != '}')
       {
-        mafLogMessage("Node path error: pair{} wrong format");
+        mafLogMessage(_M("Node path error: pair{} wrong format"));
         currentNode=NULL;
         break;
       }
@@ -1705,16 +1701,16 @@ mafNode * mafNode::GetByPath(const char *path,  bool onlyVisible /*=true*/)
       //Root case: root does not ave next
       if (tmpParent==NULL) 
       {
-        mafLogMessage("Node path error: root does not have pairs");
+        mafLogMessage(_M("Node path error: root does not have pairs"));
         currentNode=NULL;
         break;
       }
 
       //getting node index
-      tmpIndex=tmpParent->FindNodeIdx(tmpString,onlyVisible);
+      tmpIndex=tmpParent->FindNodeIdx(mafWxToString(tmpString),onlyVisible);
       if (tmpIndex==-1)
       {
-        mafLogMessage("Node path error: pair{%s}, not found",tmpString);
+        mafLogMessage(_M(_R("Node path error: pair{") + mafWxToString(tmpString) + _R("}, not found")));
         currentNode=NULL;
         break;
       }
@@ -1727,7 +1723,7 @@ mafNode * mafNode::GetByPath(const char *path,  bool onlyVisible /*=true*/)
       //checking match bracket 
       if (token[token.size()-1] != ']')
       {
-        mafLogMessage("Node path error: child[] wrong format");
+        mafLogMessage(_M("Node path error: child[] wrong format"));
         currentNode=NULL;
         break;
       }
@@ -1738,7 +1734,7 @@ mafNode * mafNode::GetByPath(const char *path,  bool onlyVisible /*=true*/)
       //Number checking
       if (!tmpString.IsNumber())
       {
-        mafLogMessage("Node path error: wrong child[] argument");
+        mafLogMessage(_M("Node path error: wrong child[] argument"));
         currentNode=NULL;
         break;
       }
@@ -1748,7 +1744,7 @@ mafNode * mafNode::GetByPath(const char *path,  bool onlyVisible /*=true*/)
       //Checking bounds
       if(tmpIndex < 0 || tmpIndex > currentNode->GetNumberOfChildren(onlyVisible)-1)
       {
-        mafLogMessage("Node path error: child[] value outside bounds");
+        mafLogMessage(_M("Node path error: child[] value outside bounds"));
         currentNode=NULL;
         break;
       }
@@ -1762,7 +1758,7 @@ mafNode * mafNode::GetByPath(const char *path,  bool onlyVisible /*=true*/)
       //checking match bracket 
       if (token[token.size()-1] != '}')
       {
-        mafLogMessage("Node path error: child{} wrong format");
+        mafLogMessage(_M("Node path error: child{} wrong format"));
         currentNode=NULL;
         break;
       }
@@ -1771,10 +1767,10 @@ mafNode * mafNode::GetByPath(const char *path,  bool onlyVisible /*=true*/)
       tmpString=token.SubString(6,token.size()-2);
 
       //getting node index
-      tmpIndex=currentNode->FindNodeIdx(tmpString,onlyVisible);
+      tmpIndex=currentNode->FindNodeIdx(mafWxToString(tmpString),onlyVisible);
       if (tmpIndex==-1)
       {
-        mafLogMessage("Node path error: pair{%s}, not found",tmpString);
+        mafLogMessage(_M(_R("Node path error: pair{") + mafWxToString(tmpString) + _R("}, not found")));
         currentNode=NULL;
         break;
       }
@@ -1792,7 +1788,7 @@ mafNode * mafNode::GetByPath(const char *path,  bool onlyVisible /*=true*/)
       currentNode=currentNode->GetParent();
       if (currentNode==NULL)
       {
-        mafLogMessage("Node path error: root does not have parent");
+        mafLogMessage(_M("Node path error: root does not have parent"));
         break;
       }
     }
@@ -1805,10 +1801,10 @@ mafNode * mafNode::GetByPath(const char *path,  bool onlyVisible /*=true*/)
     else 
     {
       currentNode=NULL;
-      mafLogMessage("Node path error: unknown token:%s",token);
+      mafLogMessage(_M(_R("Node path error: unknown token:") + mafWxToString(token)));
       break;
     }
-    tmpString=currentNode->GetName();
+    tmpString=currentNode->GetName().toWx();
 
   } 
   //While end

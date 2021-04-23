@@ -195,13 +195,13 @@ void mafOpClipSurface::CreateGui()
 {
 	m_Gui = new mafGUI(this);
 	m_Gui->Divider();
-	mafString clip_by_choices[2] = {"surface","implicit function"};
-	m_Gui->Combo(ID_CLIP_BY,_("clip by"),&m_ClipModality,2,clip_by_choices);
-	m_Gui->Bool(ID_USE_GIZMO,_("use gizmo"),&m_UseGizmo,1);
-	mafString gizmo_name[3] = {"translate","rotate","scale"};
-	m_Gui->Combo(ID_CHOOSE_GIZMO,_("gizmo"),&m_GizmoType,3,gizmo_name);
-	m_Gui->Button(ID_CHOOSE_SURFACE,_("clipper surface"));
-	m_Gui->Bool(ID_CLIP_INSIDE,_("reverse clipping"),&m_ClipInside,1);
+	mafString clip_by_choices[2] = {_L("surface"),_L("implicit function")};
+	m_Gui->Combo(ID_CLIP_BY,_L("clip by"),&m_ClipModality,2,clip_by_choices);
+	m_Gui->Bool(ID_USE_GIZMO,_L("use gizmo"),&m_UseGizmo,1);
+	mafString gizmo_name[3] = {_L("translate"),_L("rotate"),_L("scale")};
+	m_Gui->Combo(ID_CHOOSE_GIZMO,_L("gizmo"),&m_GizmoType,3,gizmo_name);
+	m_Gui->Button(ID_CHOOSE_SURFACE,_L("clipper surface"));
+	m_Gui->Bool(ID_CLIP_INSIDE,_L("reverse clipping"),&m_ClipInside,1);
 	double b[6];
 	((mafVME *)m_Input)->GetOutput()->GetVMEBounds(b);
 	// bounding box dim
@@ -210,7 +210,7 @@ void mafOpClipSurface::CreateGui()
 	//m_Gui->Double(ID_PLANE_WIDTH,_("plane w."),&m_PlaneWidth,0.0);
 	//m_Gui->Double(ID_PLANE_HEIGHT,_("plane h."),&m_PlaneHeight,0.0);
 	//m_Gui->Divider();
-	m_Gui->Bool(ID_GENERATE_CLIPPED_OUTPUT,_("generate clipped output"),&m_GenerateClippedOutput,1);
+	m_Gui->Bool(ID_GENERATE_CLIPPED_OUTPUT,_L("generate clipped output"),&m_GenerateClippedOutput,1);
 	m_Gui->OkCancel();
 
 	m_Gui->Enable(ID_GENERATE_CLIPPED_OUTPUT, m_ClipModality == mafOpClipSurface::MODE_IMPLICIT_FUNCTION);
@@ -230,7 +230,7 @@ void mafOpClipSurface::OnEventThis(mafEventBase *maf_event)
 		{
 		case ID_CHOOSE_SURFACE:
 			{
-				mafString title = "Choose m_Clipper Surface";
+				mafString title = _L("Choose Clipper Surface");
         e->SetArg((long)&mafOpClipSurface::SurfaceAccept);
 				e->SetString(&title);
 				e->SetId(VME_CHOOSE);
@@ -544,7 +544,7 @@ void mafOpClipSurface::OpDo()
 		mafNEW(m_ClippedVME);
 		m_ClippedVME->DeepCopy(m_Input);
 		m_ClippedVME->SetData(transform_clipped_output->GetOutput(),((mafVME *)m_Input)->GetTimeStamp());
-		m_ClippedVME->SetName("clipped");
+		m_ClippedVME->SetName(_R("clipped"));
 		m_ClippedVME->Update();
 
 		m_ClippedVME->ReparentTo(m_Input->GetParent());
@@ -737,7 +737,7 @@ void mafOpClipSurface::ShowClipPlane(bool show)
 
       mafNEW(m_ImplicitPlaneGizmo);
       m_ImplicitPlaneGizmo->SetData(m_Gizmo->GetOutput());
-      m_ImplicitPlaneGizmo->SetName("implicit plane gizmo");
+      m_ImplicitPlaneGizmo->SetName(_R("implicit plane gizmo"));
       m_ImplicitPlaneGizmo->ReparentTo(mafVME::SafeDownCast(m_Input->GetRoot()));
 
       // position the plane

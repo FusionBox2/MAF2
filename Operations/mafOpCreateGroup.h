@@ -31,7 +31,7 @@ class mafNode;
 class MAF_EXPORT mafOpCreateGroup: public mafOp
 {
 public:
-  mafOpCreateGroup(const mafString& label = "CreateGroup");
+  mafOpCreateGroup(const mafString& label = _R("CreateGroup"));
   ~mafOpCreateGroup(); 
 
   mafTypeMacro(mafOpCreateGroup, mafOp);

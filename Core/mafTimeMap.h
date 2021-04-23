@@ -53,8 +53,8 @@ public:
   //mafAbstractTypeMacro(mafTimeMap<T>,mafObject);
 
   /** set the TypeName of the kind of item accepted by this container */
-  void SetItemTypeName(const char *tname) {m_ItemTypeName=tname;}
-  const char *GetItemTypeName() {return m_ItemTypeName;}
+  void SetItemTypeName(const char *tname) {m_ItemTypeName=_R(tname);}
+  const char *GetItemTypeName() {return m_ItemTypeName.GetCStr();}
   
   /**
     Insert an item to the vector trying to append it, anyway the array

@@ -87,7 +87,7 @@ void mafAttachCamera::CreateGui()
 {
 	m_Gui = new mafGUI(this);
 	m_Gui->Show(true);
-  m_Gui->Bool(ID_CAMERA_ATTACH,"attach",&m_EnableAttachCamera,0,"Attach the camera to selected vme");
+  m_Gui->Bool(ID_CAMERA_ATTACH,_R("attach"),&m_EnableAttachCamera,0,_R("Attach the camera to selected vme"));
 	m_Gui->Divider();
 	m_Gui->Update();
 }
@@ -218,7 +218,7 @@ void mafAttachCamera::PrintSelf( ostream& os)
   os << "mafAttachCamera " << this << " PrintSelf:" << std::endl;
   
   os << "Camera attach enabled flag m_EnableAttachCamera: " << m_EnableAttachCamera << std::endl;
-  os << "Vme to follow with camera m_AttachedVme: " << (m_AttachedVme ? m_AttachedVme->GetName() : "NULL") << std::endl; 
+  os << "Vme to follow with camera m_AttachedVme: " << (m_AttachedVme ? m_AttachedVme->GetName().GetCStr() : _R("NULL")) << std::endl;
   os << "m_AttachedVmeMatrix: " << m_AttachedVmeMatrix << std::endl;
   if (m_AttachedVmeMatrix)
   {

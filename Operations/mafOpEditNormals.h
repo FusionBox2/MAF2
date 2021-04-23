@@ -32,7 +32,7 @@ class mafEvent;
 class MAF_EXPORT mafOpEditNormals: public mafOp
 {
 public:
-	mafOpEditNormals(const mafString& label = "Edit Normals");
+	mafOpEditNormals(const mafString& label = _R("Edit Normals"));
 	~mafOpEditNormals(); 
 	virtual void OnEvent(mafEventBase *maf_event);
 

@@ -33,7 +33,7 @@ class mafVMERoot;
 class mafGUIDialogFindVme : public mafGUIDialog
 {
 public:
-	mafGUIDialogFindVme(const wxString& title, long style = mafCLOSEWINDOW);
+	mafGUIDialogFindVme(const mafString& title, long style = mafCLOSEWINDOW);
 	virtual ~mafGUIDialogFindVme();
 
   void OnEvent(mafEventBase *maf_event);

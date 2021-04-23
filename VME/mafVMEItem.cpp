@@ -71,8 +71,8 @@ mafVMEItem::mafVMEItem()
   m_ReleaseOldFile  = true;
   m_IsLoadingData   = false;
 
-  m_ArchiveFileName = "";
-  m_ChecksumMD5     = "";
+  m_ArchiveFileName = _R("");
+  m_ChecksumMD5     = _R("");
 }
 
 //-------------------------------------------------------------------------
@@ -215,7 +215,7 @@ void mafVMEItem::Print(std::ostream& os, const int tabs) const
 
   os << indent << "Contents:"<<std::endl;
 
-  os << indent << "DataType: " << "\""<<m_DataType<<"\""<<std::endl;
+  os << indent << "DataType: " << "\""<<m_DataType.GetCStr() <<"\""<<std::endl;
 
   os << indent << "TimeStamp: "<< GetTimeStamp()<<std::endl;
 
@@ -227,13 +227,13 @@ void mafVMEItem::Print(std::ostream& os, const int tabs) const
 int mafVMEItem::InternalStore(mafStorageElement *parent)
 //-------------------------------------------------------------------------
 {
-  if (parent->StoreText("URL",m_URL)==MAF_OK \
-    &&parent->StoreInteger("Id",m_Id)==MAF_OK \
-    &&parent->StoreText("DataType",m_DataType)==MAF_OK \
-    &&parent->StoreDouble("TimeStamp",m_TimeStamp)==MAF_OK \
-    &&parent->StoreText("Crypting",m_Crypting?"true":"false")==MAF_OK \
-    &&parent->StoreVectorN("Bounds",m_Bounds.m_Bounds,6)==MAF_OK \
-    &&parent->StoreObject("TagArray",m_TagArray)!=NULL)
+  if (parent->StoreText(_R("URL"),m_URL)==MAF_OK \
+    &&parent->StoreInteger(_R("Id"),m_Id)==MAF_OK \
+    &&parent->StoreText(_R("DataType"),m_DataType)==MAF_OK \
+    &&parent->StoreDouble(_R("TimeStamp"),m_TimeStamp)==MAF_OK \
+    &&parent->StoreText(_R("Crypting"),m_Crypting?_R("true"):_R("false"))==MAF_OK \
+    &&parent->StoreVectorN(_R("Bounds"),m_Bounds.m_Bounds,6)==MAF_OK \
+    &&parent->StoreObject(_R("TagArray"),m_TagArray)!=NULL)
   {
     return MAF_OK;
   }
@@ -245,7 +245,7 @@ int mafVMEItem::InternalStore(mafStorageElement *parent)
 void mafVMEItem::SetURL(const char *name)
 //-------------------------------------------------------------------------
 {
-  if (!m_URL.IsEmpty()&&m_URL!=name)
+  if (!m_URL.IsEmpty()&&m_URL!=_R(name))
   {
     mafEventIO e(this,NODE_GET_STORAGE);
     mafEventMacro(e);
@@ -257,7 +257,7 @@ void mafVMEItem::SetURL(const char *name)
       SetDataModified(true); // force rewriting data 
     }
   }
-  m_URL=name;
+  m_URL=_R(name);
 }
 
 //-------------------------------------------------------------------------
@@ -265,15 +265,15 @@ int mafVMEItem::InternalRestore(mafStorageElement *node)
 //-------------------------------------------------------------------------
 {
   mafString crypting;
-  if (node->RestoreText("URL",m_URL)==MAF_OK \
-    &&node->RestoreInteger("Id",m_Id)==MAF_OK \
-    &&node->RestoreText("DataType",m_DataType)==MAF_OK \
-    &&node->RestoreDouble("TimeStamp",m_TimeStamp)==MAF_OK \
-    &&node->RestoreText("Crypting",crypting)==MAF_OK \
-    &&node->RestoreVectorN("Bounds",m_Bounds.m_Bounds,6)==MAF_OK \
-    &&node->RestoreObject("TagArray",m_TagArray)==MAF_OK)
+  if (node->RestoreText(_R("URL"),m_URL)==MAF_OK \
+    &&node->RestoreInteger(_R("Id"),m_Id)==MAF_OK \
+    &&node->RestoreText(_R("DataType"),m_DataType)==MAF_OK \
+    &&node->RestoreDouble(_R("TimeStamp"),m_TimeStamp)==MAF_OK \
+    &&node->RestoreText(_R("Crypting"),crypting)==MAF_OK \
+    &&node->RestoreVectorN(_R("Bounds"),m_Bounds.m_Bounds,6)==MAF_OK \
+    &&node->RestoreObject(_R("TagArray"),m_TagArray)==MAF_OK)
   {
-    m_Crypting = (crypting=="true"||crypting=="True"||crypting=="TRUE")?true:false;
+    m_Crypting = (crypting==_R("true")||crypting==_R("True")||crypting==_R("TRUE"))?true:false;
 
     // DATA is restored only on demand when is on Default mode
     return MAF_OK;
@@ -314,13 +314,13 @@ int mafVMEItem::RestoreData()
 int mafVMEItem::ExtractFileFromArchive(mafString &archive_fullname, mafString &item_file)
 //-------------------------------------------------------------------------
 {
-  wxFileInputStream in(archive_fullname.GetCStr());
+  wxFileInputStream in(archive_fullname.toWx());
   wxZipInputStream zip(in);
   if (!in || !zip)
     return MAF_ERROR;
   wxZipEntry *entry = NULL;
   // convert the local name we are looking for into the internal format
-  wxString name = wxZipEntry::GetInternalName(item_file.GetCStr());
+  wxString name = wxZipEntry::GetInternalName(item_file.toWx());
 
   // call GetNextEntry() until the required internal name is found
   // to be re-factored for efficiency reasons.

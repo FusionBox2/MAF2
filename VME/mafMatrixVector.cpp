@@ -75,11 +75,11 @@ void mafMatrixVector::AppendKeyMatrix(const mafMatrix &m)
 int mafMatrixVector::InternalStore(mafStorageElement *parent)
 //-----------------------------------------------------------------------
 {
-  parent->SetAttribute("NumberOfItems",mafString(GetNumberOfItems()));
+  parent->SetAttribute(_R("NumberOfItems"),mafToString(GetNumberOfItems()));
   for (Iterator it=Begin();it!=End();it++)
   {
     mafMatrix *mat=it->second;
-    if (parent->StoreMatrix("Matrix",mat)!=MAF_OK)
+    if (parent->StoreMatrix(_R("Matrix"),mat)!=MAF_OK)
       return MAF_ERROR;
   }
   return MAF_OK;
@@ -89,10 +89,10 @@ int mafMatrixVector::InternalRestore(mafStorageElement *node)
 //-----------------------------------------------------------------------
 {
   mafID num_items;
-  if (node->GetAttributeAsInteger("NumberOfItems",num_items))
+  if (node->GetAttributeAsInteger(_R("NumberOfItems"),num_items))
   {
     mafStorageElement::ChildrenVector vector_elements;
-    node->GetNestedElementsByName("Matrix",vector_elements);
+    node->GetNestedElementsByName(_R("Matrix"),vector_elements);
 
     assert(vector_elements.size()==num_items);
 

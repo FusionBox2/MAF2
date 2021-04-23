@@ -73,7 +73,7 @@ Example:
 class MAF_EXPORT mafGUIDialog : public wxDialog, public mafBaseEventHandler, public mafEventSender  
 {
 public:
-	mafGUIDialog (const wxString& title,	long style = mafCLOSEWINDOW | mafRESIZABLE | mafCLOSE);
+	mafGUIDialog (const mafString& title,	long style = mafCLOSEWINDOW | mafRESIZABLE | mafCLOSE);
 	virtual ~mafGUIDialog (); 
   void OnEvent(mafEventBase *maf_event);
 

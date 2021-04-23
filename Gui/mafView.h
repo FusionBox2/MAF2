@@ -79,7 +79,7 @@ mafView can be the base class for composed Views.
 class MAF_EXPORT mafView: public mafObject, public mafBaseEventHandler, public mafEventSender, public mafObjectWithGUI
 {
 public:
-  mafView(const mafString& label = "View");
+  mafView(const mafString& label = _R("View"));
   virtual ~mafView(); 
 
   mafTypeMacro(mafView, mafObject);

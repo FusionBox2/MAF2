@@ -65,7 +65,7 @@ void mafOpCreateGroup::OpRun()
 //----------------------------------------------------------------------------
 {
   mafNEW(m_Group);
-  m_Group->SetName("group");
+  m_Group->SetName(_R("group"));
   m_Output = m_Group;
   mafEventMacro(mafEvent(this,OP_RUN_OK));
 }

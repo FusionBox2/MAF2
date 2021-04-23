@@ -124,10 +124,10 @@ void mafDevice::CreateGui()
 
   assert(m_Gui == NULL);
   m_Gui = new mafGUI(this);
-  m_Gui->String(ID_NAME,"name",&m_Name);
+  m_Gui->String(ID_NAME,_R("name"),&m_Name);
   m_Gui->Divider();
-  m_Gui->Bool(ID_ACTIVATE,"start",&m_Start,0,"activate/deactivate this device");
-  m_Gui->Bool(ID_AUTO_START,"auto start",&m_AutoStart,0,"automatically activate device on application startup");
+  m_Gui->Bool(ID_ACTIVATE,_R("start"),&m_Start,0,_R("activate/deactivate this device"));
+  m_Gui->Bool(ID_AUTO_START,_R("auto start"),&m_AutoStart,0,_R("automatically activate device on application startup"));
   //m_Gui->Enable(ID_ACTIVATE,!IsInitialized());
   //m_Gui->Enable(ID_SHUTDOWN,IsInitialized()!=0);
 
@@ -162,7 +162,7 @@ void mafDevice::OnEvent(mafEventBase *e)
       if(m_Start) // user request to Start
       {
           if (Initialize())
-            mafErrorMessage("Cannot Initialize Device","I/O Error");
+            mafErrorMessage(_M("Cannot Initialize Device"));
       }
       else // user request to Stop
       {
@@ -191,9 +191,9 @@ void mafDevice::OnEvent(mafEventBase *e)
 int mafDevice::InternalStore(mafStorageElement *node)
 //------------------------------------------------------------------------------
 {
-  if (node->StoreText("Name",m_Name)==MAF_OK && \
-      node->StoreInteger("ID",(m_ID-MIN_DEVICE_ID))==MAF_OK && \
-      node->StoreInteger("AutoStart",m_AutoStart)==MAF_OK)  
+  if (node->StoreText(_R("Name"),m_Name)==MAF_OK && \
+      node->StoreInteger(_R("ID"),(m_ID-MIN_DEVICE_ID))==MAF_OK && \
+      node->StoreInteger(_R("AutoStart"),m_AutoStart)==MAF_OK)  
   return MAF_OK;
 
   return MAF_ERROR;
@@ -204,14 +204,14 @@ int mafDevice::InternalRestore(mafStorageElement *node)
 //------------------------------------------------------------------------------
 {  
   // Device Name
-  if (node->RestoreText("Name",m_Name)==MAF_OK)
+  if (node->RestoreText(_R("Name"),m_Name)==MAF_OK)
   {
     int dev_id;
-    node->RestoreInteger("ID",dev_id);
+    node->RestoreInteger(_R("ID"),dev_id);
     SetID(dev_id+MIN_DEVICE_ID);
     int flag;
     // AutoStart flag (optional)
-    if (node->RestoreInteger("AutoStart",flag)==MAF_OK)
+    if (node->RestoreInteger(_R("AutoStart"),flag)==MAF_OK)
     {
       SetAutoStart(flag!=0);      
     }

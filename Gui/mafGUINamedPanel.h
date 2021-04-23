@@ -53,7 +53,7 @@ public:
   bool Remove(wxSizer*  sizer ) {return m_Sizer->Detach(sizer);};
 
   /** Set the text shown on the title-bar. */
-  void SetTitle(wxString label) {if(m_Label) m_Label->SetLabel(label);};
+  void SetTitle(const mafString& label) {if(m_Label) m_Label->SetLabel(label.toWx());}
 
   /** Change the background color of the title. */
   void SetTitleColor(wxColour *color = NULL);

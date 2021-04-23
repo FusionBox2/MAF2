@@ -33,7 +33,7 @@ class mafOp;
 class MAF_EXPORT mafOpImporterExternalFile: public mafOp
 {
 public:
-  mafOpImporterExternalFile(const mafString &label = "ExternalFileImporter");
+  mafOpImporterExternalFile(const mafString &label = _R("ExternalFileImporter"));
  ~mafOpImporterExternalFile(); 
 
   mafTypeMacro(mafOpImporterExternalFile, mafOp);
@@ -45,7 +45,7 @@ public:
 
   /** Set the External filename to be imported. 
   This is used when the operation is executed not using user interface. */
-  void SetFileName(const char *name) {m_File = name;};
+  void SetFileName(const char *name) {m_File = _R(name);};
 
 	/** Builds operation's interface. */
   void OpRun();

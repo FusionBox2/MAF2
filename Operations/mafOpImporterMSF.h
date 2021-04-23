@@ -34,7 +34,7 @@ class mafVMEGroup;
 class MAF_EXPORT mafOpImporterMSF: public mafOp 
 {
 public:
-  mafOpImporterMSF(const mafString& label = "MSFImporter");
+  mafOpImporterMSF(const mafString& label = _R("MSFImporter"));
   ~mafOpImporterMSF(); 
 
   mafTypeMacro(mafOpImporterMSF, mafOp);
@@ -52,7 +52,7 @@ public:
 
   /** Set the MSF filename to be imported. 
   This is used when the operation is executed not using user interface. */
-  void SetFileName(const char *name) {m_File = name;};
+  void SetFileName(const char *name) {m_File = _R(name);};
 
 protected:
   mafString         m_File;

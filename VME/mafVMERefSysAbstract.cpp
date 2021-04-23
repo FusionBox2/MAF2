@@ -283,7 +283,7 @@ int mafVMERefSysAbstract::InternalStore(mafStorageElement *parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent->StoreDouble("ScaleFactor", m_ScaleFactor);
+    parent->StoreDouble(_R("ScaleFactor"), m_ScaleFactor);
     return MAF_OK;
   }
   return MAF_ERROR;
@@ -295,7 +295,7 @@ int mafVMERefSysAbstract::InternalRestore(mafStorageElement *node)
 {
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
-    node->RestoreDouble("ScaleFactor", m_ScaleFactor);
+    node->RestoreDouble(_R("ScaleFactor"), m_ScaleFactor);
     SetScaleFactor(m_ScaleFactor);
     return MAF_OK;
   }
@@ -305,11 +305,11 @@ int mafVMERefSysAbstract::InternalRestore(mafStorageElement *node)
 mmaMaterial *mafVMERefSysAbstract::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+  mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
   if (material == NULL)
   {
     material = mmaMaterial::New();
-    SetAttribute("MaterialAttributes", material);
+    SetAttribute(_R("MaterialAttributes"), material);
     if (m_Output)
     {
       ((mafVMEOutputSurface *)m_Output)->SetMaterial(material);
@@ -325,7 +325,7 @@ mafGUI* mafVMERefSysAbstract::CreateGui()
   m_Gui->SetListener(this);
   m_Gui->Divider();
 
-  m_Gui->Double(ID_SCALE_FACTOR,_("scale"),&m_ScaleFactor);
+  m_Gui->Double(ID_SCALE_FACTOR,_L("scale"),&m_ScaleFactor);
   m_Gui->Divider();
 
   m_Gui->Update();
@@ -403,13 +403,13 @@ void mafVMERefSysAbstract::SetRefSysLink(const char *link_name, mafNode *n)
 {
   if(n == NULL)
   {
-    RemoveLink(link_name);
+    RemoveLink(_R(link_name));
     return;
   }
   if (n->IsMAFType(mafVMELandmark))
   {
     mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(n->GetParent());
-    mafString refname(link_name);
+    mafString refname(_R(link_name));
     refname = refname.Lower();
     int numberOfLandmarks = cloud->GetNumberOfLandmarks();
     for(int i = 0; i < numberOfLandmarks; i++)
@@ -417,13 +417,13 @@ void mafVMERefSysAbstract::SetRefSysLink(const char *link_name, mafNode *n)
       mafString lm_name = cloud->GetLandmarkName(i).Lower();
       if(lm_name == refname)
       {
-        SetLink(link_name,n->GetParent(), i);
+        SetLink(_R(link_name),n->GetParent(), i);
         break;
       }
     }
   }
   else
   {
-    SetLink(link_name, n);
+    SetLink(_R(link_name), n);
   }
 }

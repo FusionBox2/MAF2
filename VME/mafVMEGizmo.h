@@ -94,7 +94,7 @@ public:
   //static char ** GetIcon();
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString("mafPipeGizmo");};
+  virtual mafString GetVisualPipe() {return mafString(_R("mafPipeGizmo"));};
 
   /**Set/Get Text Value , that is an information that can be renderized in a custom position*/
   void SetTextValue(const char* text);

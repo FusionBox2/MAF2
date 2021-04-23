@@ -45,7 +45,7 @@ to the user and no data will be imported.*/
 class MAF_EXPORT mafOpImporterVTK: public mafOp 
 {
 public:
-  mafOpImporterVTK(const mafString& label = "VTKImporter");
+  mafOpImporterVTK(const mafString& label = _R("VTKImporter"));
  ~mafOpImporterVTK(); 
   
   mafTypeMacro(mafOpImporterVTK, mafOp);
@@ -63,7 +63,7 @@ public:
 
   /** Set the vtk filename to be imported. 
       This is used when the operation is executed not using user interface. */
-  void SetFileName(const char *name) {m_File = name;};
+  void SetFileName(const mafString& name) {m_File = name;};
 
 protected:
   mafString m_File;

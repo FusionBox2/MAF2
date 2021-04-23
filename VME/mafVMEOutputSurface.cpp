@@ -47,7 +47,7 @@ mafVMEOutputSurface::mafVMEOutputSurface()
 {
   m_Texture       = NULL;
   m_Material      = NULL;
-  m_NumTriangles  = "0";
+  m_NumTriangles  = _R("0");
 }
 
 //-------------------------------------------------------------------------
@@ -93,7 +93,7 @@ mmaMaterial *mafVMEOutputSurface::GetMaterial()
     return  m_Material;
 
   // search for a material attribute in the VME connected to this output
-  return GetVME() ? mmaMaterial::SafeDownCast(GetVME()->GetAttribute("MaterialAttributes")) : NULL;
+  return GetVME() ? mmaMaterial::SafeDownCast(GetVME()->GetAttribute(_R("MaterialAttributes"))) : NULL;
 }
 
 //-------------------------------------------------------------------------
@@ -115,7 +115,7 @@ mafGUI* mafVMEOutputSurface::CreateGui()
     int num = GetSurfaceData()->GetNumberOfPolys();
     m_NumTriangles = num;
   }*/
-  m_Gui->Label(_("triangles: "), &m_NumTriangles, true);
+  m_Gui->Label(_L("triangles: "), &m_NumTriangles, true);
   m_Gui->Divider();
 	return m_Gui;
 }
@@ -130,11 +130,11 @@ void mafVMEOutputSurface::Update()
     //GetSurfaceData()->Modified();	//BES: 12.9.2012 - I do not see any reason for this except to make troubles during rendering since this forces rerender of everything
     GetSurfaceData()->Update();
     int num = GetSurfaceData()->GetNumberOfPolys();
-    m_NumTriangles = num;
+    m_NumTriangles = mafToString(num);
   }
   else
   {
-    m_NumTriangles = _("0");
+    m_NumTriangles = _L("0");
   }
   if (m_Gui)
   {

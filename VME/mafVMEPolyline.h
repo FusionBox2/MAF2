@@ -59,7 +59,7 @@ public:
     mmaMaterial *GetMaterial();
 
     /** Return the suggested pipe-typename for the visualization of this vme */
-    virtual mafString GetVisualPipe() {return mafString("mafPipePolyline");};
+    virtual mafString GetVisualPipe() {return mafString(_R("mafPipePolyline"));};
 
 		/** return an xpm-icon that can be used to represent this node */
 		static char ** GetIcon();

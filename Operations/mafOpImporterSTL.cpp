@@ -32,7 +32,6 @@
 #include "mafVMESurface.h"
 #include "mafSmartPointer.h"
 #include "vtkMAFSmartPointer.h"
-#include "mafFilesDirs.h"
 
 #include "vtkSTLReader.h"
 #include "vtkPolyData.h"
@@ -51,7 +50,7 @@ mafOpImporterSTL::mafOpImporterSTL(const mafString& label) : Superclass(label)
   m_Canundo = true;
   m_Files.clear();
   m_Swaps.clear();
-  m_FileDir = "";//mafGetApplicationDirectory().c_str();
+  m_FileDir = _R("");//mafGetApplicationDirectory().c_str();
 }
 //----------------------------------------------------------------------------
 mafOpImporterSTL::~mafOpImporterSTL()
@@ -80,9 +79,9 @@ void mafOpImporterSTL::OpRun()
 {
   if (!m_TestMode && m_Files.size() == 0)
   {
-    mafString wildc = "Stereo Litography (*.stl)|*.stl";
+    mafString wildc = _R("Stereo Litography (*.stl)|*.stl");
     m_Files.clear();
-    mafGetOpenMultiFiles(m_FileDir.GetCStr(),wildc.GetCStr(), m_Files);
+    mafGetOpenMultiFiles(m_FileDir,wildc, m_Files);
   }
 	
 	int result = OP_RUN_CANCEL;
@@ -202,9 +201,9 @@ void mafOpImporterSTL::ImportSTL()
       mafString swapped;				
 		  f_in.open (m_Files[kk].GetCStr(), ifstream::in| ifstream::binary);
 		  int dot_pos = m_Files[kk].FindLastChr('.');
-      swapped.NCopy(m_Files[kk].GetCStr(),dot_pos);
-		  swapped = swapped + "_swapped";
-		  swapped = swapped + ".stl";
+      swapped.NCopy(m_Files[kk],dot_pos);
+		  swapped += _R("_swapped");
+		  swapped += _R(".stl");
 		  std::ofstream f_out;
 		  f_out.open(swapped.GetCStr(), ofstream::out | ofstream::binary);
   		
@@ -251,11 +250,11 @@ void mafOpImporterSTL::ImportSTL()
 
     vtkMAFSmartPointer<vtkSTLReader> reader;
 	  mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR,reader));
-    reader->SetFileName(fn);
+    reader->SetFileName(fn.GetCStr());
 	  reader->Update();
 
     mafString path, name, ext;
-    mafSplitPath(fn.GetCStr(),&path,&name,&ext);
+    mafSplitPath(fn,&path,&name,&ext);
 
     mafVMESurface *importedSTL;
     mafNEW(importedSTL);
@@ -263,15 +262,14 @@ void mafOpImporterSTL::ImportSTL()
 	  importedSTL->SetDataByDetaching(reader->GetOutput(),0);
 
     mafTagItem tag_Nature;
-    tag_Nature.SetName("VME_NATURE");
-    tag_Nature.SetValue("NATURAL");
+    tag_Nature.SetName(_R("VME_NATURE"));
+    tag_Nature.SetValue(_R("NATURAL"));
     importedSTL->GetTagArray()->SetTag(tag_Nature);
 
 	  //delete the swapped file
 	  if (m_Swaps[kk] != 0)
 	  {
-		  const char* file_name = (fn);
-		  remove(file_name);
+		  mafFileRemove(fn);
 	  }
     m_ImportedSTLs.push_back(importedSTL);
   }
@@ -325,7 +323,7 @@ void mafOpImporterSTL::SetFileName(const char *file_name)
 //----------------------------------------------------------------------------
 {
   m_Files.resize(1);
-  m_Files[0] = file_name;
+  m_Files[0] = _R(file_name);
   m_Swaps.resize(m_Files.size());
   for(unsigned i = 0; i < m_Swaps.size(); i++)
   {

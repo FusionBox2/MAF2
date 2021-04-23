@@ -31,7 +31,7 @@
 //----------------------------------------------------------------------------
 // mafPictureFactory_Pimpl
 //----------------------------------------------------------------------------
-typedef std::map<std::string,wxImage> mafPicMap;
+typedef std::map<mafString,wxImage> mafPicMap;
 
 struct mafPictureFactory_Pimpl
 {
@@ -157,42 +157,42 @@ mafPictureFactory::~mafPictureFactory()
   cppDEL(m_PictureMaps);
 }
 //----------------------------------------------------------------------------
-void mafPictureFactory::Add(wxString id,char** xpm)
+void mafPictureFactory::Add(const mafString& id,char** xpm)
 //----------------------------------------------------------------------------
 {
-  m_PictureMaps->map[id.c_str()] = wxImage(xpm);
+  m_PictureMaps->map[id] = wxImage(xpm);
 }
 //----------------------------------------------------------------------------
-wxBitmap mafPictureFactory::GetBmp(wxString id)
+wxBitmap mafPictureFactory::GetBmp(const mafString& id)
 //----------------------------------------------------------------------------
 {
-  mafPicMap::iterator it = m_PictureMaps->map.find(id.c_str());
+  mafPicMap::iterator it = m_PictureMaps->map.find(id);
   if (it != m_PictureMaps->map.end())
     return wxBitmap((*it).second);
   else
   {
-    mafLogMessage("mafPictureFactory: bmp with id = %s not found",id.c_str());
+    mafLogMessage(_M(_R("mafPictureFactory: bmp with id = ") + id + _R(" not found")));
     return wxNullBitmap;
   }
 }
 //----------------------------------------------------------------------------
-wxImage mafPictureFactory::GetImg(wxString id)
+wxImage mafPictureFactory::GetImg(const mafString& id)
 //----------------------------------------------------------------------------
 {
-  mafPicMap::iterator it = m_PictureMaps->map.find(id.c_str());
+  mafPicMap::iterator it = m_PictureMaps->map.find(id);
   if (it != m_PictureMaps->map.end())
     return (*it).second;
   else
   {
-    mafLogMessage("mafPictureFactory: img with id = %s not found",id.c_str());
+    mafLogMessage(_M(_R("mafPictureFactory: img with id = ") + id + _R(" not found")));
     return wxNullImage;
   }
 }
 //----------------------------------------------------------------------------
-wxIcon mafPictureFactory::GetIcon(wxString id)
+wxIcon mafPictureFactory::GetIcon(const mafString& id)
 //----------------------------------------------------------------------------
 {
-  mafPicMap::iterator it = m_PictureMaps->map.find(id.c_str());
+  mafPicMap::iterator it = m_PictureMaps->map.find(id);
   if (it != m_PictureMaps->map.end())
   {
     wxBitmap bmp = wxBitmap((*it).second);
@@ -202,39 +202,39 @@ wxIcon mafPictureFactory::GetIcon(wxString id)
   }
   else
   {
-    mafLogMessage("mafPictureFactory: icon with id = %s not found",id.c_str());
+    mafLogMessage(_M(_R("mafPictureFactory: icon with id = ") + id + _R(" not found")));
     return wxNullIcon;
   }
 }
 //----------------------------------------------------------------------------
-void mafPictureFactory::AddVmePic(wxString id,char** xpm)
+void mafPictureFactory::AddVmePic(const mafString& id,char** xpm)
 //----------------------------------------------------------------------------
 {
-  m_PictureMaps->vme_map[id.c_str()] = wxImage(xpm);
+  m_PictureMaps->vme_map[id] = wxImage(xpm);
 }
 //----------------------------------------------------------------------------
-wxBitmap mafPictureFactory::GetVmePic(wxString id)
+wxBitmap mafPictureFactory::GetVmePic(const mafString& id)
 //----------------------------------------------------------------------------
 {
-  mafPicMap::iterator it = m_PictureMaps->vme_map.find(id.c_str());
+  mafPicMap::iterator it = m_PictureMaps->vme_map.find(id);
   if (it != m_PictureMaps->vme_map.end())
     return wxBitmap((*it).second);
   else
   {
-    mafLogMessage("mafPictureFactory: vme-pic with id = %s not found",id.c_str());
+      mafLogMessage(_M(_R("mafPictureFactory: vme-pic with id = ") + id + _R(" not found")));
     return wxNullBitmap;
   }
 }
 //----------------------------------------------------------------------------
-void mafPictureFactory::GetVmeNames( std::vector<wxString>& v )
+std::vector<mafString> mafPictureFactory::GetVmeNames()
 //----------------------------------------------------------------------------
 {
-  v.clear();
+  std::vector<mafString> v;
   for (mafPicMap::iterator it = m_PictureMaps->vme_map.begin(); it != m_PictureMaps->vme_map.end(); it++)
   {
-    wxString s = ((*it).first).c_str();
-    v.push_back(s);
+    v.push_back(it->first);
   }
+  return v;
 }
 //----------------------------------------------------------------------------
 mafPictureFactory* mafPictureFactory::GetPictureFactory()
@@ -263,13 +263,13 @@ int foo = mafAddPic(vme_xpm);  //correct, but will be called before ThePicMap ha
     #include "vtkPointData.h"
 
     //----------------------------------------------------------------------------
-    vtkImageData* mafPictureFactory::GetVTKImg(wxString id)
+    vtkImageData* mafPictureFactory::GetVTKImg(const mafString& id)
     //----------------------------------------------------------------------------
     {
-      mafPicMap::iterator it = m_PictureMaps->map.find(id.c_str());
+      mafPicMap::iterator it = m_PictureMaps->map.find(id);
       if (it == m_PictureMaps->map.end())
       {
-        mafLogMessage("mafPictureFactory: icon with id = %s not found",id.c_str());
+          mafLogMessage(_M(_R("mafPictureFactory: icon with id = ") + id + _R(" not found")));
         return NULL;
       }
 

@@ -110,7 +110,7 @@ public:
     Return the DataType to be produced as output. This can be used to avoid calling
     update for checking about data type directly in the output dataset and thus
     without actually loading the data from file. */
-  virtual const char *GetDataType() const {return m_DataType;}
+  virtual const char *GetDataType() const {return m_DataType.GetCStr();}
 
   /**
     Update all the output data structures (data, bounds, matrix and abs matrix).*/

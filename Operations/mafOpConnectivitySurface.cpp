@@ -56,8 +56,8 @@ mafOpConnectivitySurface::mafOpConnectivitySurface(const mafString& label) : Sup
 	m_OriginalPolydata  = NULL;
 
 	m_Thresold = 0.0;
-	m_NumberOfExtractedSurfaces = "0";
-  m_Alert="";
+	m_NumberOfExtractedSurfaces = _R("0");
+  m_Alert= _R("");
 
 	m_ExtractBiggestSurface = 0;
 }
@@ -104,30 +104,30 @@ void mafOpConnectivitySurface::CreateGui()
   double bounds[6];
   m_OriginalPolydata->GetBounds(bounds);
 
-  m_Gui->Label("");
-  m_Gui->Label(_("Extract the largest surface"),true);
+  m_Gui->Label(_R(""));
+  m_Gui->Label(_L("Extract the largest surface"),true);
 
-  m_Gui->Bool(ID_EXTRACT_BIGGEST_SURFACE,_("Enable"),&m_ExtractBiggestSurface);
+  m_Gui->Bool(ID_EXTRACT_BIGGEST_SURFACE,_L("Enable"),&m_ExtractBiggestSurface);
   m_Gui->Divider(2);
   //-------------------------------------
 
-  m_Gui->Label(_("Filter Output by Size"),true);
-  m_Gui->Label(_("Size Thresh."));
+  m_Gui->Label(_L("Filter Output by Size"),true);
+  m_Gui->Label(_L("Size Thresh."));
   //m_Gui->Double(ID_THRESOLD,"", &m_Thresold,0,MAXDOUBLE,-1,_("The operation will get rid of surfaces which are under this size"));
-  m_Gui->Slider(ID_THRESOLD,"",&m_Thresold,0,100);
+  m_Gui->Slider(ID_THRESOLD, _R(""),&m_Thresold,0,100);
 
-  m_Gui->Label("Input bounds dimensions:",true);
+  m_Gui->Label(_R("Input bounds dimensions:"),true);
 
   mafString labelX;
-  labelX.Append(wxString::Format(_("DimX:  %.2f"),(bounds[1]-bounds[0])));
+  labelX.Append(mafString::Format(_L("DimX:  %.2f"),(bounds[1]-bounds[0])));
   m_Gui->Label(labelX);
 
   mafString labelY;
-  labelY.Append(wxString::Format(_("DimY:  %.2f"),(bounds[3]-bounds[2])));
+  labelY.Append(mafString::Format(_L("DimY:  %.2f"),(bounds[3]-bounds[2])));
   m_Gui->Label(labelY);
 
   mafString labelZ;
-  labelZ.Append(wxString::Format(_("DimZ:  %.2f"),(bounds[5]-bounds[4])));
+  labelZ.Append(mafString::Format(_L("DimZ:  %.2f"),(bounds[5]-bounds[4])));
   m_Gui->Label(labelZ);
 
 
@@ -136,10 +136,10 @@ void mafOpConnectivitySurface::CreateGui()
   //-------------------------------------
 
 
-  m_Gui->Button(ID_VTK_CONNECT,_("run connectivity"));
+  m_Gui->Button(ID_VTK_CONNECT,_L("run connectivity"));
 
-  m_Gui->Label("");
-  m_Gui->Label(_("Extracted:"), &m_NumberOfExtractedSurfaces);
+  m_Gui->Label(_R(""));
+  m_Gui->Label(_L("Extracted:"), &m_NumberOfExtractedSurfaces);
 
 
   vtkMAFSmartPointer<vtkPolyDataConnectivityFilter> connectivityFilter;
@@ -148,17 +148,17 @@ void mafOpConnectivitySurface::CreateGui()
   connectivityFilter->Update();
 
   int regionNumbers = connectivityFilter->GetNumberOfExtractedRegions();
-  m_NumberOfExtractedSurfaces = wxString::Format("%d", regionNumbers);
+  m_NumberOfExtractedSurfaces = mafString::Format(_R("%d"), regionNumbers);
 
   if(regionNumbers > 100)
   {
-    m_Alert= _("Warning: process time will be heavy");
+    m_Alert= _L("Warning: process time will be heavy");
   }
   else
-    m_Alert = "";
+    m_Alert = _R("");
 
   m_Gui->Label(&m_Alert, true, true);
-  m_Gui->Label("");
+  m_Gui->Label(_R(""));
 
   m_Gui->OkCancel();
   m_Gui->Enable(wxOK,false);
@@ -217,7 +217,7 @@ void mafOpConnectivitySurface::OnEvent(mafEventBase *maf_event)
 					connectivityFilter->Update();
 					regionNumbers = connectivityFilter->GetNumberOfExtractedRegions();
 				}
-				m_NumberOfExtractedSurfaces = wxString::Format("%d", regionNumbers);
+				m_NumberOfExtractedSurfaces = mafString::Format(_R("%d"), regionNumbers);
 				m_Gui->Update();
 			}
 			break;
@@ -325,19 +325,19 @@ void mafOpConnectivitySurface::OnVtkConnect()
 			mafVMESurface *surf;
 			mafNEW(surf);
 			surf->SetData(clean->GetOutput(),surf->GetTimeStamp());
-			surf->SetName(wxString::Format("%d_extr",region).c_str());
+			surf->SetName(mafString::Format(_R("%d_extr"),region));
 			m_ExtractedVmes.push_back(surf);
 		}
 	}
 
-  m_NumberOfExtractedSurfaces = wxString::Format("%d", m_ExtractedVmes.size());
+  m_NumberOfExtractedSurfaces = mafString::Format(_R("%d"), m_ExtractedVmes.size());
 
   if(regionNumbers > 100)
   {
-    m_Alert= _("Warning: process time will be heavy");
+    m_Alert= _L("Warning: process time will be heavy");
   }
   else
-    m_Alert = "";
+    m_Alert = _R("");
 
   if(!m_TestMode)
   {

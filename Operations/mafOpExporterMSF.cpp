@@ -48,8 +48,8 @@ mafOpExporterMSF::mafOpExporterMSF(const mafString& label) : Superclass(label)
   m_OpType  = OPTYPE_EXPORTER;
   m_Canundo = true;
 
-  m_MSFFile    = "";
-	m_MSFFileDir = "";//mafGetApplicationDirectory().c_str();
+  m_MSFFile    = _R("");
+	m_MSFFileDir = _R("");//mafGetApplicationDirectory().c_str();
 }
 //----------------------------------------------------------------------------
 mafOpExporterMSF::~mafOpExporterMSF()
@@ -60,11 +60,11 @@ mafOpExporterMSF::~mafOpExporterMSF()
 void mafOpExporterMSF::OpRun()   
 //----------------------------------------------------------------------------
 {
-	mafString wildc = "MAF Storage Format (*.msf)|*.msf";
+	mafString wildc = _R("MAF Storage Format (*.msf)|*.msf");
 	mafString f;
   if (m_MSFFile.IsEmpty())
   {
-    f = mafGetSaveFile(m_MSFFileDir.GetCStr(),wildc.GetCStr()); 
+    f = mafGetSaveFile(m_MSFFileDir,wildc); 
     m_MSFFile = f;
   }
 
@@ -92,16 +92,16 @@ int mafOpExporterMSF::ExportMSF()
   {
   	wxBusyInfo wait("Saving MSF: Please wait");
   }
-  assert(m_MSFFile != "");
+  assert(!m_MSFFile.IsEmpty());
 
-	if(!wxFileExists(wxString(m_MSFFile)))
+	if(!mafFileExists(m_MSFFile))
 	{
-		wxString path, name, ext, dir2;
-		wxSplitPath(m_MSFFile.GetCStr(),&path,&name,&ext);
-		dir2 = path + "\\" + name;
-		if(!wxDirExists(dir2))
-			wxMkdir(dir2);
-		m_MSFFile = dir2 + "\\" + name + "." + ext;
+		mafString path, name, ext, dir2;
+		mafSplitPath(m_MSFFile,&path,&name,&ext);
+		dir2 = path + _R("\\") + name;
+		if(!mafDirExists(dir2))
+			mafDirMake(dir2);
+		m_MSFFile = dir2 + _R("\\") + name + _R(".") + ext;
 	}
 
   mafNodeManager manager;
@@ -110,7 +110,7 @@ int mafOpExporterMSF::ExportMSF()
   storage.SetURL(m_MSFFile);
   mafVMERoot *root;
   mafNEW(root);
-  root->SetName("root");
+  root->SetName(_R("root"));
   root->Initialize();
   manager.SetRoot(root);
 
@@ -162,13 +162,13 @@ int mafOpExporterMSF::ExportMSF()
 
       if (!foundID)
       {
-        linkToEliminate.push_back(it->first.GetCStr());
+        linkToEliminate.push_back(it->first);
       }
     }
 
     for (int i=0;i<linkToEliminate.size();i++)
     {
-      node->RemoveLink(linkToEliminate[i].GetCStr());
+      node->RemoveLink(linkToEliminate[i]);
     }
   }
   iter->Delete();

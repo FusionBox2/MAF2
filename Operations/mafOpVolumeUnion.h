@@ -48,7 +48,7 @@ class MAF_EXPORT mafOpVolumeUnion: public mafOp
 {
 public:
              
-            	 mafOpVolumeUnion(const mafString &label=_("Volume Union"));
+            	 mafOpVolumeUnion(const mafString &label=_L("Volume Union"));
 	virtual     ~mafOpVolumeUnion();
 	/*virtual*/ void OnEvent(mafEventBase *maf_event);
 

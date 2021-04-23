@@ -96,7 +96,7 @@ int  mafViewPlot::GetNodeStatus(mafNode *vme)
   int status = m_Sg ? m_Sg->GetNodeStatus(vme) : NODE_NON_VISIBLE;
   if (!m_PipeMap.empty())
   {
-    mafString vme_type = vme->GetTypeName();
+    mafString vme_type = _R(vme->GetTypeName());
     if(m_PipeMap[vme_type].m_Visibility == NON_VISIBLE)
     {
       status = NODE_NON_VISIBLE;
@@ -140,7 +140,7 @@ void mafViewPlot::GetVisualPipeName(mafNode *node, mafString &pipe_name)
   assert(node->IsA("mafVME"));
   mafVME *v = ((mafVME*)node);
 
-  mafString vme_type = v->GetTypeName();
+  mafString vme_type = _R(v->GetTypeName());
   if (!m_PipeMap.empty())
   {
     // pick up the visual pipe from the view's visual pipe map
@@ -156,15 +156,15 @@ void mafViewPlot::GetVisualPipeName(mafNode *node, mafString &pipe_name)
 void mafViewPlot::VmeCreatePipe(mafNode *vme)
 //----------------------------------------------------------------------------
 {
-  mafString pipe_name = "";
+  mafString pipe_name;
   GetVisualPipeName(vme, pipe_name);
 
-  if (pipe_name != "")
+  if (!pipe_name.IsEmpty())
   {
     mafPipeFactory *pipe_factory  = mafPipeFactory::GetInstance();
     assert(pipe_factory!=NULL);
     mafObject *obj = NULL;
-    obj = pipe_factory->CreateInstance(pipe_name);
+    obj = pipe_factory->CreateInstance(pipe_name.GetCStr());
     mafPipe *pipe = (mafPipe*)obj;
     if (pipe)
     {
@@ -176,7 +176,7 @@ void mafViewPlot::VmeCreatePipe(mafNode *vme)
     }
     else
     {
-      mafErrorMessage("Cannot create visual pipe object of type \"%s\"!",pipe_name.GetCStr());
+      mafErrorMessage(_M(_R("Cannot create visual pipe object of type \"") + pipe_name + _R("\"!")));
     }
   }
 }

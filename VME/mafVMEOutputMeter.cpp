@@ -51,11 +51,11 @@ mafGUI *mafVMEOutputMeter::CreateGui()
   assert(m_Gui == NULL);
   m_Gui = mafVMEOutput::CreateGui();
   
-  m_Distance = ((mafVMEMeter *)m_VME)->GetDistance();
-  m_Gui->Label(_("distance: "), &m_Distance, true);
+  m_Distance = mafToString(((mafVMEMeter *)m_VME)->GetDistance());
+  m_Gui->Label(_L("distance: "), &m_Distance, true);
 
-  m_Angle = ((mafVMEMeter *)m_VME)->GetAngle();
-  m_Gui->Label(_("angle: "), &m_Angle, true);
+  m_Angle = mafToString(((mafVMEMeter *)m_VME)->GetAngle());
+  m_Gui->Label(_L("angle: "), &m_Angle, true);
 	m_Gui->Divider();
 
   return m_Gui;
@@ -69,13 +69,13 @@ void mafVMEOutputMeter::Update()
 
   if(((mafVMEMeter *)m_VME)->GetMeterMode() == mafVMEMeter::POINT_DISTANCE || ((mafVMEMeter *)m_VME)->GetMeterMode() == mafVMEMeter::LINE_DISTANCE)
   {
-  m_Distance = ((mafVMEMeter *)m_VME)->GetDistance();
-  m_Angle ="";
+  m_Distance = mafToString(((mafVMEMeter *)m_VME)->GetDistance());
+  m_Angle = _R("");
   }
   else if(((mafVMEMeter *)m_VME)->GetMeterMode() == mafVMEMeter::LINE_ANGLE)
   {
-    m_Distance ="";
-    m_Angle= ((mafVMEMeter *)m_VME)->GetAngle();
+    m_Distance = _R("");
+    m_Angle= mafToString(((mafVMEMeter *)m_VME)->GetAngle());
   }
   if (m_Gui)
   {

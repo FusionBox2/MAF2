@@ -52,9 +52,9 @@ mafOpImporterMesh::mafOpImporterMesh(const mafString& label) : Superclass(label)
   m_Canundo = true;
   m_ImporterType = 0;
   m_ImportedVmeMesh = NULL;
-  m_NodesFileName = "";
-  m_ElementsFileName = "";
-  m_MaterialsFileName = "";
+  m_NodesFileName = _R("");
+  m_ElementsFileName = _R("");
+  m_MaterialsFileName = _R("");
 }
 
 //----------------------------------------------------------------------------
@@ -102,18 +102,18 @@ int mafOpImporterMesh::Read()
   {
     if (!m_TestMode)
     {
-      mafMessage(_("Error parsing input files! See log window for details..."),_("Error"));
+      mafErrorMessage(_M(mafString(_L("Error parsing input files! See log window for details..."))));
     }
   } 
   else if (returnValue == MAF_OK)
   {
     mafNEW(m_ImportedVmeMesh);
-    m_ImportedVmeMesh->SetName("Imported Mesh");
+    m_ImportedVmeMesh->SetName(_R("Imported Mesh"));
 	  m_ImportedVmeMesh->SetDataByDetaching(reader->GetOutput()->GetUnstructuredGridOutput()->GetVTKData(),0);
 
     mafTagItem tag_Nature;
-    tag_Nature.SetName("VME_NATURE");
-    tag_Nature.SetValue("NATURAL");
+    tag_Nature.SetName(_R("VME_NATURE"));
+    tag_Nature.SetValue(_R("NATURAL"));
     m_ImportedVmeMesh->GetTagArray()->SetTag(tag_Nature);
 
     m_Output = m_ImportedVmeMesh;
@@ -139,25 +139,25 @@ enum Mesh_Importer_ID
 void mafOpImporterMesh::CreateGui()
 //----------------------------------------------------------------------------
 {
-  mafString wildcard = "lis files (*.lis)|*.lis|All Files (*.*)|*.*";
+  mafString wildcard = _R("lis files (*.lis)|*.lis|All Files (*.*)|*.*");
 
   m_Gui = new mafGUI(this);
   m_Gui->SetListener(this);
 
-  mafString TypeOfImporter[2]={"Ansys Text","ToDo"};
-  m_Gui->Label(_("Importer type"), true);
-  m_Gui->Combo(ID_Importer_Type,"",&m_ImporterType,1,TypeOfImporter);
+  mafString TypeOfImporter[2]={_R("Ansys Text"),_R("ToDo")};
+  m_Gui->Label(_L("Importer type"), true);
+  m_Gui->Combo(ID_Importer_Type, _R(""),&m_ImporterType,1,TypeOfImporter);
   m_Gui->Divider(2);
-  m_Gui->Label(_("nodes file:"), true);
-  m_Gui->FileOpen (ID_NodesFileName,	"",	&m_NodesFileName, wildcard);
+  m_Gui->Label(_L("nodes file:"), true);
+  m_Gui->FileOpen (ID_NodesFileName, _R(""),	&m_NodesFileName, wildcard);
   m_Gui->Divider();
  
-  m_Gui->Label(_("elements file:"), true);
-  m_Gui->FileOpen (ID_ElementsFileName,	"",	&m_ElementsFileName, wildcard);
+  m_Gui->Label(_L("elements file:"), true);
+  m_Gui->FileOpen (ID_ElementsFileName, _R(""),	&m_ElementsFileName, wildcard);
   m_Gui->Divider();
 
-  m_Gui->Label(_("materials file (optional):"), true);
-  m_Gui->FileOpen (ID_MaterialsFileName,	"",	&m_MaterialsFileName, wildcard);
+  m_Gui->Label(_L("materials file (optional):"), true);
+  m_Gui->FileOpen (ID_MaterialsFileName, _R(""),	&m_MaterialsFileName, wildcard);
   m_Gui->Divider(2);
   m_Gui->Divider();
   m_Gui->OkCancel();

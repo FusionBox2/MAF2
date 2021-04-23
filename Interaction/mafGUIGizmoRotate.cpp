@@ -64,10 +64,10 @@ void mafGUIGizmoRotate::CreateGui()
   m_Gui = new mafGUI(this);
   
   m_Gui->Divider(2);
-  m_Gui->Label("rotation gizmo abs orientation", true);
-  m_Gui->Double(ID_ROTATE_X, "Rotate X", &m_Orientation[0]);
-  m_Gui->Double(ID_ROTATE_Y, "Rotate Y", &m_Orientation[1]);
-  m_Gui->Double(ID_ROTATE_Z, "Rotate Z", &m_Orientation[2]);
+  m_Gui->Label(_R("rotation gizmo abs orientation"), true);
+  m_Gui->Double(ID_ROTATE_X, _R("Rotate X"), &m_Orientation[0]);
+  m_Gui->Double(ID_ROTATE_Y, _R("Rotate Y"), &m_Orientation[1]);
+  m_Gui->Double(ID_ROTATE_Z, _R("Rotate Z"), &m_Orientation[2]);
 	m_Gui->Divider();
   m_Gui->Update();
 }

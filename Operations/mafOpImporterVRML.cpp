@@ -135,11 +135,11 @@ mafCxxTypeMacro(mafOpImporterVRML);
 //----------------------------------------------------------------------------
 {
 	m_OpType	= OPTYPE_IMPORTER;
-	m_File		= "";
+	m_File		= _R("");
 	m_Canundo	= true;
 	m_Group		= NULL;
 
- 	m_FileDir = "";//mafGetApplicationDirectory().c_str();
+ 	m_FileDir = _R("");//mafGetApplicationDirectory().c_str();
 }
 //----------------------------------------------------------------------------
  mafOpImporterVRML::~ mafOpImporterVRML()
@@ -160,10 +160,10 @@ mafOp * mafOpImporterVRML::Copy()
 void  mafOpImporterVRML::OpRun()   
 //----------------------------------------------------------------------------
 {
-	mafString vrml_wildc	= "VRML Data (*.wrl)|*.wrl";
+	mafString vrml_wildc	= _R("VRML Data (*.wrl)|*.wrl");
 
   if (m_File.IsEmpty())
-    m_File = mafGetOpenFile(m_FileDir.GetCStr(),vrml_wildc.GetCStr()); 	
+    m_File = mafGetOpenFile(m_FileDir,vrml_wildc); 	
 
   int result = OP_RUN_CANCEL;
 
@@ -185,11 +185,11 @@ void  mafOpImporterVRML::SetFileName(const mafString& file_name)
 void  mafOpImporterVRML::ImportVRML()
 //----------------------------------------------------------------------------
 {
-  wxString path, name, ext;
-  wxSplitPath(m_File.GetCStr(),&path,&name,&ext);
+  mafString path, name, ext;
+  mafSplitPath(m_File,&path,&name,&ext);
 
   mafNEW(m_Group);
-  m_Group->SetName(name.c_str());
+  m_Group->SetName(name);
 
   vtkMAFSmartPointer<vtkRenderWindow> rw;
 
@@ -220,13 +220,13 @@ void  mafOpImporterVRML::ImportVRML()
 
     if (actor->GetMapper() != NULL && actor->GetMapper()->GetInput() != NULL)
     {
-      wxString name;
-      name.Printf("surface_%d", i);
+      mafString name;
+      name = mafString::Format(_R("surface_%d"), i);
 
       mafTimeStamp t;
       t = ((mafVME *)m_Input)->GetTimeStamp();
       mafSmartPointer<mafVMESurface> surface;
-      surface->SetName(name.c_str());
+      surface->SetName(name);
       vtkPolyData *data = (vtkPolyData *)actor->GetMapper()->GetInput();
       data->Update();
       if(data->GetNumberOfPolys() != 0)
@@ -244,8 +244,8 @@ void  mafOpImporterVRML::ImportVRML()
         surface->GetMatrixVector()->AppendKeyMatrix(matrix);
         surface->ReparentTo(m_Group);
         mafTagItem tag_Nature;
-        tag_Nature.SetName("VME_NATURE");
-        tag_Nature.SetValue("NATURAL");
+        tag_Nature.SetName(_R("VME_NATURE"));
+        tag_Nature.SetValue(_R("NATURAL"));
         surface->GetTagArray()->SetTag(tag_Nature);
       }
       

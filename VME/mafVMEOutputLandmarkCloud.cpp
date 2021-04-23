@@ -42,7 +42,7 @@ mafCxxTypeMacro(mafVMEOutputLandmarkCloud)
 mafVMEOutputLandmarkCloud::mafVMEOutputLandmarkCloud()
 //-------------------------------------------------------------------------
 {
-  m_NumLandmarks = "0";
+  m_NumLandmarks = _R("0");
   m_Gui = NULL;
 }
 
@@ -74,8 +74,8 @@ mafGUI* mafVMEOutputLandmarkCloud::CreateGui()
 {
   assert(m_Gui == NULL);
   m_Gui = mafVMEOutput::CreateGui();
-  m_NumLandmarks = mafVMELandmarkCloud::SafeDownCast(m_VME)->GetNumberOfLandmarks();
-  m_Gui->Label(_("points: "), &m_NumLandmarks, true);
+  m_NumLandmarks = mafToString(mafVMELandmarkCloud::SafeDownCast(m_VME)->GetNumberOfLandmarks());
+  m_Gui->Label(_L("points: "), &m_NumLandmarks, true);
   m_Gui->Divider();
 	return m_Gui;
 }
@@ -85,7 +85,7 @@ void mafVMEOutputLandmarkCloud::Update()
 {
   assert(m_VME);
   m_VME->Update();
-  m_NumLandmarks = mafVMELandmarkCloud::SafeDownCast(m_VME)->GetNumberOfLandmarks();
+  m_NumLandmarks = mafToString(mafVMELandmarkCloud::SafeDownCast(m_VME)->GetNumberOfLandmarks());
   if (m_Gui)
   {
     m_Gui->Update();

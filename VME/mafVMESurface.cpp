@@ -128,11 +128,11 @@ int mafVMESurface::SetData(vtkDataSet *data, mafTimeStamp t, int mode)
 mmaMaterial *mafVMESurface::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+  mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
   if (material == NULL)
   {
     material = mmaMaterial::New();
-    SetAttribute("MaterialAttributes", material);
+    SetAttribute(_R("MaterialAttributes"), material);
     if (m_Output)
     {
       ((mafVMEOutputSurface *)m_Output)->SetMaterial(material);

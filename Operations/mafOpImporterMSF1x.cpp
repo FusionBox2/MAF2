@@ -34,7 +34,6 @@
 #include "mafVMEStorage.h"
 #include "mafMSFImporter.h"
 #include "mafVMEGroup.h"
-#include "mafFilesDirs.h"
 
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(mafOpImporterMSF1x);
@@ -46,10 +45,10 @@ mafOpImporterMSF1x::mafOpImporterMSF1x(const mafString& label) : Superclass(labe
 {
   m_OpType  = OPTYPE_IMPORTER;
 	m_Canundo = true;
-	m_File    = "";
+	m_File    = _R("");
   m_Group   = NULL;
 
-  m_FileDir = "";//mafGetApplicationDirectory().c_str();
+  m_FileDir = _R("");//mafGetApplicationDirectory().c_str();
 }
 //----------------------------------------------------------------------------
 mafOpImporterMSF1x::~mafOpImporterMSF1x( ) 
@@ -70,18 +69,18 @@ mafOp* mafOpImporterMSF1x::Copy()
 void mafOpImporterMSF1x::OpRun()   
 //----------------------------------------------------------------------------
 {
-	mafString wildc = "MSF file (*.msf)|*.msf";
+	mafString wildc = _R("MSF file (*.msf)|*.msf");
 	mafString f;
   if(m_File.IsEmpty())
 	{
-		f = mafGetOpenFile(m_FileDir, wildc.GetCStr(), "Choose MSF file");
+		f = mafGetOpenFile(m_FileDir, wildc, _R("Choose MSF file"));
 		m_File = f;
 	}
 
   int result = OP_RUN_CANCEL;
   if(!m_File.IsEmpty())
 	{
-    wxSetWorkingDirectory(wxString(m_File.GetCStr()));
+    wxSetWorkingDirectory(m_File.toWx());
     ImportMSF();
 	  result = OP_RUN_OK;
 	}
@@ -104,13 +103,13 @@ void mafOpImporterMSF1x::ImportMSF()
   success = (storage->Restore() == MAF_OK);
 
   if(!success)
-    mafErrorMessage("I/O Error importing MSF file.");
+    mafErrorMessage(_M("I/O Error importing MSF file."));
 
   mafVMERoot *root = mafVMERoot::SafeDownCast(manager.GetRoot());
 
   mafString path, name, ext;
-  mafSplitPath(m_File.GetCStr(),&path,&name,&ext);
-  mafString group_name = wxString::Format("imported from %s.%s",name.GetCStr(),ext.GetCStr()).c_str();
+  mafSplitPath(m_File,&path,&name,&ext);
+  mafString group_name = _R("imported from ") + name + _R(".") + ext;
 
   mafNEW(m_Group);
   m_Group->SetName(group_name);

@@ -241,7 +241,7 @@ void mafOpExtractIsosurface::CreateOpDialog()
 
 
   //===== setup interface ====
-  m_Dialog = new mafGUIDialog("Extract Isosurface", mafCLOSEWINDOW | mafRESIZABLE);
+  m_Dialog = new mafGUIDialog(_R("Extract Isosurface"), mafCLOSEWINDOW | mafRESIZABLE);
 
   m_PIPRen = vtkRenderer::New();
 
@@ -275,7 +275,7 @@ void mafOpExtractIsosurface::CreateOpDialog()
 
   if (buildHelpGui.GetArg() == true)
   {
-	  b_help = new mafGUIButton(m_Dialog, ID_HELP_BUTTON, "Help", p, wxSize(80, 20));
+	  b_help = new mafGUIButton(m_Dialog, ID_HELP_BUTTON, _R("Help"), p, wxSize(80, 20));
 	  // help validator
 	  b_help->SetValidator( mafGUIValidator(this, ID_HELP_BUTTON,b_help));
   }
@@ -302,10 +302,10 @@ void mafOpExtractIsosurface::CreateOpDialog()
   m_SliceMax  = m_SliceSlider->GetMax();
   m_Slice     = m_SliceSlider->GetValue();
 
-  mafGUIButton *b_incr_slice = new mafGUIButton(m_Dialog, ID_INCREASE_SLICE, ">",	p,wxSize(25, 20));
-  mafGUIButton *b_decr_slice = new mafGUIButton(m_Dialog, ID_DECREASE_SLICE, "<",	p,wxSize(25, 20));
-  mafGUIButton *b_incr =       new mafGUIButton(m_Dialog, ID_INCREASE_ISO,   ">",	p,wxSize(25, 20));
-  mafGUIButton *b_decr =       new mafGUIButton(m_Dialog, ID_DECREASE_ISO,   "<",	p,wxSize(25, 20));
+  mafGUIButton *b_incr_slice = new mafGUIButton(m_Dialog, ID_INCREASE_SLICE, _R(">"),	p,wxSize(25, 20));
+  mafGUIButton *b_decr_slice = new mafGUIButton(m_Dialog, ID_DECREASE_SLICE, _R("<"),	p,wxSize(25, 20));
+  mafGUIButton *b_incr =       new mafGUIButton(m_Dialog, ID_INCREASE_ISO,   _R(">"),	p,wxSize(25, 20));
+  mafGUIButton *b_decr =       new mafGUIButton(m_Dialog, ID_DECREASE_ISO,   _R("<"),	p,wxSize(25, 20));
 
   wxCheckBox *chk_interpolation = new wxCheckBox(m_Dialog, ID_TRILINEAR_INTERPOLATION_ON,"interpolation", p, wxSize(80,20),1);
 
@@ -316,9 +316,9 @@ void mafOpExtractIsosurface::CreateOpDialog()
 	wxCheckBox *chk_triangulate =   new wxCheckBox(m_Dialog, ID_TRIANGULATE, _("triangulate"), p, wxSize(80,20));
   //  wxCheckBox *b_grid  = new wxCheckBox(m_Dialog, ID_GRID,         "show/hide grid", p, wxSize(80,20));
 
-  mafGUIButton  *b_fit =    new mafGUIButton(m_Dialog, ID_FIT,    "reset camera", p,wxSize(80,20));
-  mafGUIButton  *b_ok =     new mafGUIButton(m_Dialog, ID_OK,     "ok", p, wxSize(80,20));
-  mafGUIButton  *b_cancel = new mafGUIButton(m_Dialog, ID_CANCEL, "cancel", p, wxSize(80,20));
+  mafGUIButton  *b_fit =    new mafGUIButton(m_Dialog, ID_FIT,    _R("reset camera"), p,wxSize(80,20));
+  mafGUIButton  *b_ok =     new mafGUIButton(m_Dialog, ID_OK,     _R("ok"), p, wxSize(80,20));
+  mafGUIButton  *b_cancel = new mafGUIButton(m_Dialog, ID_CANCEL, _R("cancel"), p, wxSize(80,20));
 
   wxCheckBox *chk_multi = new wxCheckBox(m_Dialog, ID_MULTIPLE_CONTOURS, "multi contours", p, wxSize(100,20));
   wxTextCtrl *text_num_of_contours = new wxTextCtrl(m_Dialog, ID_NUM_OF_CONTOURS, "num", p,wxSize(25, 16), wxNO_BORDER);
@@ -837,10 +837,10 @@ void mafOpExtractIsosurface::UpdateSurface(bool use_lod)
 
     if (DEBUG_MODE)
     {
-      mafLogMessage(m_Input->GetName());
+      mafLogMessage(_M(m_Input->GetName()));
       std::ostringstream stringStream;
       m_ContourVolumeMapper->Print(stringStream);
-      mafLogMessage(stringStream.str().c_str());
+      mafLogMessage(_M(stringStream.str().c_str()));
     }
     
     if (!m_TestMode)
@@ -913,7 +913,7 @@ void mafOpExtractIsosurface::ExtractSurface(bool clean)
   if (m_NumberOfContours > 1)
   {
     mafNEW(m_OutputGroup);
-    m_OutputGroup->SetName("Extract isosurface output");
+    m_OutputGroup->SetName(_R("Extract isosurface output"));
   }
 
   // IMPORTANT, extract the isosurface from m_ContourVolumeMapper in this way
@@ -961,11 +961,11 @@ void mafOpExtractIsosurface::ExtractSurface(bool clean)
     }
     m_ContourVolumeMapper->Update();
 
-    wxString name = wxString::Format( "%s Isosurface %g", m_Input->GetName(),m_IsoValue );
+    mafString name = m_Input->GetName() + mafString::Format( _R(" Isosurface %g"),m_IsoValue );
 
     mafVMESurface *vme_surf;
     mafNEW(vme_surf);
-    vme_surf->SetName(name.c_str());
+    vme_surf->SetName(name);
     //vme_surf->SetDataByDetaching(surface,0);
     vme_surf->SetData(surface,0);
     vme_surf->GetOutput()->Update();
@@ -993,14 +993,14 @@ void mafOpExtractIsosurface::ExtractSurface(bool clean)
 mafString mafOpExtractIsosurface::GetParameters()
 //----------------------------------------------------------------------------
 {
-  wxString parameter;
+  mafString parameter;
   for (int contour = 0; contour < m_NumberOfContours; contour++)
   {
-    parameter.Append("Contour value = ");
-    parameter.Append(wxString::Format("%f", m_IsoValueVector[contour]));
-    parameter.Append(", ");
+    parameter.Append(_R("Contour value = "));
+    parameter.Append(mafString::Format(_R("%f"), m_IsoValueVector[contour]));
+    parameter.Append(_R(", "));
   }
-  parameter.RemoveLast(2);
+  parameter = mafWxToString(parameter.toWx().RemoveLast(2));
 
   return parameter;
 }

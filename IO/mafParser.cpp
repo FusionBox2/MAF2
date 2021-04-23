@@ -22,7 +22,7 @@ mafParser::mafParser()
   m_Document        = NULL;
   m_NeedsUpgrade    = false;
   m_ErrorCode       = 0;
-  m_Version         = "1.1";
+  m_Version         = _R("1.1");
 }
 //------------------------------------------------------------------------------
 int mafParser::Store()

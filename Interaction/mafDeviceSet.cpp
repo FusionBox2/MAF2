@@ -67,7 +67,7 @@ int mafDeviceSet::InternalInitialize()
     assert(device);
     if (device->StartUp())
     {
-      mafErrorMacro("Cannot Initilized Device: "<<device->GetName());
+      mafErrorMacro("Cannot Initilized Device: "<<device->GetName().GetCStr());
 		  return MAF_ERROR;
     }
   }
@@ -105,9 +105,9 @@ int mafDeviceSet::InternalStore(mafStorageElement *node)
     if (device->IsPersistent()) // do not store persistent devices
       continue;
 
-    if (node->StoreObject("Device",device)==NULL)
+    if (node->StoreObject(_R("Device"),device)==NULL)
     {
-      mafErrorMacro("Error Writing "<<device->GetName()<<" device");
+      mafErrorMacro("Error Writing "<<device->GetName().GetCStr() <<" device");
       m_DevicesMutex->Unlock();
 		  return MAF_ERROR;;
     }
@@ -136,7 +136,7 @@ int mafDeviceSet::InternalRestore(mafStorageElement *node)
     // the device must be already connected to the
     // device manager
     mafStorageElement *device_node=devices[i];  
-    if (device_node->GetName()=="Device")
+    if (device_node->GetName()==_R("Device"))
     {
       if (mafObject *obj=device_node->RestoreObject())
       {
@@ -198,7 +198,7 @@ mafDevice *mafDeviceSet::GetDevice(const char *name)
   for (std::list<mafDevice*>::iterator it=m_Devices.begin();it!=m_Devices.end();it++)
   {
     mafDevice *device=*it;
-    if (device->GetName()==name)
+    if (device->GetName()==_R(name))
     {
       m_DevicesMutex->Unlock();
       return device;

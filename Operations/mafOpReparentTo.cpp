@@ -87,7 +87,7 @@ void mafOpReparentTo::OpRun()
 	if((m_TargetVme != NULL) && (m_Input->CanReparentTo(m_TargetVme)))
 		result = OP_RUN_OK;
   else
-    mafMessage(_("Cannot re-parent to specified node"), _("Error"), wxICON_ERROR);
+    mafErrorMessage(_M(mafString(_L("Cannot re-parent to specified node"))));
 
 	mafEventMacro(mafEvent(this,result));
 }
@@ -99,7 +99,7 @@ void mafOpReparentTo::SetTargetVme(mafVME *target)
 
   if((m_TargetVme == NULL) || !m_Input->CanReparentTo(m_TargetVme))
   {
-    mafMessage(_("Cannot re-parent to specified node"),_("Error"),wxICON_ERROR);
+    mafErrorMessage(_M(mafString(_L("Cannot re-parent to specified node"))));
     mafEventMacro(mafEvent(this,OP_RUN_CANCEL));
   }
 }
@@ -198,7 +198,7 @@ void mafOpReparentTo::OpDo()
   }
   else
   {
-    mafLogMessage(_("Something went wrong while re-parenting (bad pointer or memory errors)"));
+    mafLogMessage(_M(mafString(_L("Something went wrong while re-parenting (bad pointer or memory errors)"))));
   }
 }
 //----------------------------------------------------------------------------

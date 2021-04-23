@@ -31,7 +31,7 @@ class mafGUISettingsTimeBar : public mafGUISettings
 {
 public:
   /** constructor */
-	mafGUISettingsTimeBar(mafBaseEventHandler *Listener, const mafString &label = _("Time Bar"));
+	mafGUISettingsTimeBar(mafBaseEventHandler *Listener, const mafString &label = _L("Time Bar"));
   /** destructor */
 	~mafGUISettingsTimeBar(); 
 

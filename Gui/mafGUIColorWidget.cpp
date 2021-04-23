@@ -157,10 +157,10 @@ mafGUIColorWidget::mafGUIColorWidget(wxWindow* parent, wxWindowID id, const wxPo
 
   py= m_HsvPosition.y+ m_HsvSize - 20;
   px = px+w1+2;
-  mafGUIButton *b1 = new mafGUIButton(this,ID_COPY,"copy",wxPoint(px,py),wxSize(48,20));  
+  mafGUIButton *b1 = new mafGUIButton(this,ID_COPY,_R("copy"),wxPoint(px,py),wxSize(48,20));  
 	b1->SetValidator( mafGUIValidator(this,ID_COPY,b1) );
   px += 47;
-  mafGUIButton *b2 = new mafGUIButton(this,ID_PASTE,"paste",wxPoint(px,py), wxSize(48,20));  
+  mafGUIButton *b2 = new mafGUIButton(this,ID_PASTE,_R("paste"),wxPoint(px,py), wxSize(48,20));  
 	b2->SetValidator( mafGUIValidator(this,ID_PASTE,b2) );
 
 

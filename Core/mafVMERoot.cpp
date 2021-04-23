@@ -46,7 +46,7 @@ mafCxxTypeMacro(mafVMERoot)
 mafVMERoot::mafVMERoot()
 //-------------------------------------------------------------------------
 {
-  m_ApplicationStamp = "";
+  m_ApplicationStamp = _R("");
   m_MaxItemId=-1;
   mafNEW(m_Transform);
   mafVMEOutputNULL *output=mafVMEOutputNULL::New(); // an output with no data
@@ -120,14 +120,14 @@ void mafVMERoot::OnEvent(mafEventBase *maf_event)
     {
       if (e->GetId() == ID_APPLICATION_STAMP)
       {
-        if(mafTagItem *ti = GetTagArray()->GetTag("APP_STAMP"))
+        if(mafTagItem *ti = GetTagArray()->GetTag(_R("APP_STAMP")))
         {
           ti->SetValue(m_ApplicationStamp);
         }
         else
         {
           mafTagItem app_stamp_item;
-          app_stamp_item.SetName("APP_STAMP");
+          app_stamp_item.SetName(_R("APP_STAMP"));
           app_stamp_item.SetValue(m_ApplicationStamp);
           GetTagArray()->SetTag(app_stamp_item);
         }
@@ -188,8 +188,8 @@ int mafVMERoot::InternalStore(mafStorageElement *parent)
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
     StoreRoot(parent);
-    parent->StoreInteger("MaxItemId",m_MaxItemId);
-    parent->StoreMatrix("Transform",&m_Transform->GetMatrix());
+    parent->StoreInteger(_R("MaxItemId"),m_MaxItemId);
+    parent->StoreMatrix(_R("Transform"),&m_Transform->GetMatrix());
     return MAF_OK;
   }
   return MAF_ERROR;
@@ -201,13 +201,13 @@ int mafVMERoot::InternalRestore(mafStorageElement *node)
 {
   RestoreRoot(node);
   int max_item_id;
-  node->RestoreInteger("MaxItemId",max_item_id);
+  node->RestoreInteger(_R("MaxItemId"),max_item_id);
   m_MaxItemId = max_item_id;
 
   if (Superclass::InternalRestore(node)==MAF_OK)
   {  
     mafMatrix matrix;
-    if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
+    if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
       return MAF_OK;
@@ -220,7 +220,7 @@ void mafVMERoot::Update()
 //-------------------------------------------------------------------------
 {
   mafVME::Update();
-  if(mafTagItem *ti = GetTagArray()->GetTag("APP_STAMP"))
+  if(mafTagItem *ti = GetTagArray()->GetTag(_R("APP_STAMP")))
   {
     m_ApplicationStamp = ti->GetValue();
     if (m_Gui)
@@ -237,11 +237,11 @@ mafGUI *mafVMERoot::CreateGui()
   assert(m_Gui == NULL);
   mafNode::CreateGui();
 
-  if(mafTagItem *ti = GetTagArray()->GetTag("APP_STAMP"))
+  if(mafTagItem *ti = GetTagArray()->GetTag(_R("APP_STAMP")))
   {
     m_ApplicationStamp = ti->GetValue();
   }
-  m_Gui->String(ID_APPLICATION_STAMP, "app stamp", &m_ApplicationStamp, "Tag to associate a msf file \nto a particular application.");
+  m_Gui->String(ID_APPLICATION_STAMP, _R("app stamp"), &m_ApplicationStamp, _R("Tag to associate a msf file \nto a particular application."));
   m_Gui->Divider();
 	return m_Gui;
 }

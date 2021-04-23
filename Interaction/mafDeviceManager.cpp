@@ -57,7 +57,7 @@ mafDeviceManager::mafDeviceManager()
   mafNEW(m_DeviceSet);
   m_DeviceSet->SetPersistentFlag(false);
   m_DeviceSet->SetThreaded(false);
-  m_DeviceSet->SetName("DeviceSet");
+  m_DeviceSet->SetName(_R("DeviceSet"));
   m_DeviceSet->AutoStartOn();
   m_DeviceSet->SetListener(this);
   m_DeviceSet->SetID(++m_DeviceIdCounter); // ID of the root device
@@ -113,18 +113,18 @@ mafDevice *mafDeviceManager::AddDevice(const char *type, bool persistent)
     const char *dev_name=iFactory->GetDeviceDescription(type);
     assert(dev_name);
 
-    mafString base_name=dev_name;
+    mafString base_name=_R(dev_name);
     mafString instance_name = base_name;
 
     for (int id=1;true;id++)
     {
       
       // if no device with the same name exists break!
-      if (m_DeviceSet->GetDevice(instance_name)==NULL)
+      if (m_DeviceSet->GetDevice(instance_name.GetCStr())==NULL)
         break;
 
       // else append an numeric postfix
-      instance_name=base_name+" ("+mafString(id)+")";
+      instance_name=base_name+_R(" (")+mafToString(id)+_R(")");
     }
     
     device->SetName(instance_name);
@@ -194,9 +194,9 @@ int mafDeviceManager::InternalStore(mafStorageElement *node)
 //----------------------------------------------------------------------------
 {
   assert(node);
-  node->SetAttribute("DeviceIdCounter",m_DeviceIdCounter);
+  node->SetAttribute(_R("DeviceIdCounter"),m_DeviceIdCounter);
   
-  if (node->StoreObject("DeviceSet",m_DeviceSet)==NULL)
+  if (node->StoreObject(_R("DeviceSet"),m_DeviceSet)==NULL)
     return MAF_ERROR;
 
   return MAF_OK;
@@ -209,14 +209,14 @@ int mafDeviceManager::InternalRestore(mafStorageElement *node)
   assert(node);
   m_RestoringFlag=true; // used to avoid DeviceManager set device ID when restoring
   
-  if (!node->GetAttributeAsInteger("DeviceIdCounter",m_DeviceIdCounter))
+  if (!node->GetAttributeAsInteger(_R("DeviceIdCounter"),m_DeviceIdCounter))
   {
     assert(true);
     mafErrorMacro("Cannot find \"DeviceIdCounter\" attribute, possible subsequent restoring problems!");
     m_DeviceIdCounter = mafDevice::MIN_DEVICE_ID;
   }
   
-  int fail = node->RestoreObject("DeviceSet",m_DeviceSet);
+  int fail = node->RestoreObject(_R("DeviceSet"),m_DeviceSet);
   
   m_RestoringFlag=false;
 

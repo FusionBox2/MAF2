@@ -182,7 +182,7 @@ int  mafViewVTK::GetNodeStatus(mafNode *vme)
   int status = m_Sg ? m_Sg->GetNodeStatus(vme) : NODE_NON_VISIBLE;
   if (!m_PipeMap.empty())
   {
-    mafString vme_type = vme->GetTypeName();
+    mafString vme_type = _R(vme->GetTypeName());
     auto it = m_PipeMap.find(vme_type);
     if(it == m_PipeMap.end())
       return status;
@@ -264,13 +264,13 @@ void mafViewVTK::GetVisualPipeName(mafNode *node, mafString &pipe_name)
   mafVMELandmark *lm = mafVMELandmark::SafeDownCast(v);
   if (lmc == NULL && data == NULL && lm == NULL)
   {
-    pipe_name = "mafPipeBox";
+    pipe_name = _R("mafPipeBox");
   }
   else
   {
     // custom visualization for the view should be considered only
     // if we are not in editing mode.
-    mafString vme_type = v->GetTypeName();
+    mafString vme_type = _R(v->GetTypeName());
     auto it = m_PipeMap.find(vme_type);
     if (it != m_PipeMap.end())
     {
@@ -289,16 +289,16 @@ void mafViewVTK::GetVisualPipeName(mafNode *node, mafString &pipe_name)
 void mafViewVTK::VmeCreatePipe(mafNode *vme)
 //----------------------------------------------------------------------------
 {
-  mafString pipe_name = "";
+  mafString pipe_name;
   GetVisualPipeName(vme, pipe_name);
 
-  if (pipe_name != "")
+  if (!pipe_name.IsEmpty())
   {
     m_NumberOfVisibleVme++;
     mafPipeFactory *pipe_factory  = mafPipeFactory::GetInstance();
     assert(pipe_factory!=NULL);
     mafObject *obj = NULL;
-    obj = pipe_factory->CreateInstance(pipe_name);
+    obj = pipe_factory->CreateInstance(pipe_name.GetCStr());
     mafPipe *pipe = (mafPipe*)obj;
     if (pipe)
     {
@@ -310,7 +310,7 @@ void mafViewVTK::VmeCreatePipe(mafNode *vme)
     }
     else
     {
-      mafErrorMessage(_("Cannot create visual pipe object of type \"%s\"!"),pipe_name.GetCStr());
+      mafErrorMessage(_M(_L("Cannot create visual pipe object of type \"") + pipe_name + _L("\"!")));
     }
   }
 }
@@ -333,19 +333,19 @@ mafGUI *mafViewVTK::CreateGui()
   
   /////////////////////////////////////////Attach Camera GUI
   m_AttachCamera = new mafAttachCamera(m_Gui, m_Rwi, this);
-  m_Gui->RollOut(ID_ROLLOUT_ATTACH_CAMERA, " Attach camera", m_AttachCamera->GetGui(), false);
+  m_Gui->RollOut(ID_ROLLOUT_ATTACH_CAMERA, _R(" Attach camera"), m_AttachCamera->GetGui(), false);
 
   /////////////////////////////////////////Text GUI
   m_TextKit = new mafTextKit(m_Gui, m_Rwi->m_RenFront, this);
-  m_Gui->RollOut(ID_ROLLOUT_TEXT_KIT, " Text kit", m_TextKit->GetGui(), false);
+  m_Gui->RollOut(ID_ROLLOUT_TEXT_KIT, _R(" Text kit"), m_TextKit->GetGui(), false);
 
   /////////////////////////////////////////Light GUI
   m_LightKit = new mafLightKit(m_Gui, m_Rwi->m_RenFront, this);
-  m_Gui->RollOut(ID_ROLLOUT_LIGHT_KIT, " Light kit", m_LightKit->GetGui(), false);
+  m_Gui->RollOut(ID_ROLLOUT_LIGHT_KIT, _R(" Light kit"), m_LightKit->GetGui(), false);
   
   // Animate kit
   m_AnimateKit = new mafAnimate(m_Rwi->m_RenFront,m_Sg->GetSelectedVme()->GetRoot(),this);
-  m_Gui->RollOut(ID_ROLLOUT_ANIMATE_KIT, " Animate kit", m_AnimateKit->GetGui(), false);
+  m_Gui->RollOut(ID_ROLLOUT_ANIMATE_KIT, _R(" Animate kit"), m_AnimateKit->GetGui(), false);
 
   m_Gui->Divider();
 
@@ -514,7 +514,7 @@ void mafViewVTK::Print(std::ostream& os, const int tabs)// const
   mafIndent indent(tabs);
 
   os << indent << "mafViewVTK " << '\t' << this << "\n";
-  os << indent << "Name: " << '\t' << GetLabel() << "\n";
+  os << indent << "Name: " << '\t' << GetLabel().GetCStr() << "\n";
   os << indent << "View ID: " << '\t' << m_Id << "\n";
   os << indent << "View Mult: " << '\t' << m_Mult << "\n";
   os << indent << "Visible VME counter: " << '\t' << m_NumberOfVisibleVme << "\n";

@@ -21,7 +21,6 @@
 #include <set>
 #include <xstring>
 
-using namespace std;
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
@@ -50,7 +49,7 @@ class MAF_EXPORT mafOpGarbageCollectMSFDir: public mafOp
 {
 public:
   /** constructor */
-  mafOpGarbageCollectMSFDir(const mafString& label = "Garbage Collect MSF Tree");
+  mafOpGarbageCollectMSFDir(const mafString& label = _R("Garbage Collect MSF Tree"));
   
   /** destructor */
   ~mafOpGarbageCollectMSFDir(); 
@@ -73,15 +72,15 @@ public:
 
 protected: 
   
-  int GetFilesToRemove(set<string> &filesToRemoveSet);
+  int GetFilesToRemove(std::set<std::string> &filesToRemoveSet);
 
   /** 
   Return s1 - s2 */
-  set<string> SetDifference( set<string> &s1, set<string> &s2 );
+  std::set<std::string> SetDifference(std::set<std::string> &s1, std::set<std::string> &s2 );
  
-  set<string> GetMSFDirABSFileNamesSet();
+  std::set<std::string> GetMSFDirABSFileNamesSet();
 
-  void PrintSet(set<string> inputSet);
+  void PrintSet(std::set<std::string> inputSet);
 
   /** Log errors into the log area according to the error number reported.*/
   void ErrorLog(int error_num, const char *node_name, const char *description = NULL);
@@ -91,7 +90,7 @@ protected:
   mafString GetMSFXMLFileAbsFileName(mafNode *anyTreeNode);
  
   /** files linked to vme in trees */
-  set<string> m_MSFTreeBinaryFilesSet;
-  set<string> m_MSFDirABSFileNamesSet;
+  std::set<std::string> m_MSFTreeBinaryFilesSet;
+  std::set<std::string> m_MSFDirABSFileNamesSet;
 };
 #endif

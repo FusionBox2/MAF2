@@ -38,7 +38,7 @@ class MAF_EXPORT mafOpExporterRAW: public mafOp
 {
 public:
   mafTypeMacro(mafOpExporterRAW, mafOp)
-  mafOpExporterRAW(const mafString& label = "");
+  mafOpExporterRAW(const mafString& label = _R(""));
  ~mafOpExporterRAW(); 
   mafOp* Copy();
 
@@ -60,10 +60,10 @@ public:
   void SaveVolume();
 
 	//Set the filename for the .raw to export
-	void SetFileName(const char *file_name){m_FileName = file_name;};
+	void SetFileName(const char *file_name){m_FileName = _R(file_name);}
 
 	//Set the filename for the .txt Z coordinates to export
-	void SetFileZ(const char *file_name){m_FileNameZ = file_name;};
+	void SetFileZ(const char *file_name){m_FileNameZ = _R(file_name);}
 
 	//Enable or disable the gui for multi/single file mode
 	void SetSingleFile(int enable);

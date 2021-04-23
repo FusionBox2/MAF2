@@ -18,7 +18,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-
+#include "mafDecl.h"
 /** 
   class name: mafGUIPanel
    Inherits directly from wxPanel and adds the pointer to the next panel
@@ -28,7 +28,7 @@ class MAF_EXPORT mafGUIPanel: public wxPanel
 public:
   /** constructor */
   mafGUIPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition, 
-           const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL, const wxString& name = "panel");
+           const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL, const mafString& name = _R("panel"));
 
   mafGUIPanel *m_NextPanel;
 

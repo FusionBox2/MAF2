@@ -51,7 +51,7 @@ BEGIN_EVENT_TABLE(mafGUIDialog, wxDialog)
 END_EVENT_TABLE()
 
 //----------------------------------------------------------------------------
-mafGUIDialog::mafGUIDialog(const wxString& title,long style)
+mafGUIDialog::mafGUIDialog(const mafString& title,long style)
 : wxDialog()
 //----------------------------------------------------------------------------
 {
@@ -66,7 +66,7 @@ mafGUIDialog::mafGUIDialog(const wxString& title,long style)
     s |= wxCLOSE_BOX;
   }
 
-  Create(mafGetFrame(),-1,title,wxDefaultPosition,wxDefaultSize,s); 
+  Create(mafGetFrame(),-1,title.toWx(),wxDefaultPosition,wxDefaultSize,s); 
 
   m_DialogSizer  =  new wxBoxSizer( wxVERTICAL );
   m_GuiSizer     =  new wxBoxSizer( wxVERTICAL );

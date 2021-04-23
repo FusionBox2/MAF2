@@ -46,7 +46,7 @@ mafTextKit::mafTextKit(wxWindow* parent, vtkRenderer *renderer, mafBaseEventHand
   m_ShowText = 1;
   m_TextAlign = 0;
   m_TextOffset = 0;
-  m_TextInView = "";
+  m_TextInView = _R("");
   m_TextSize = 12;
   
   vtkNEW(m_TextMapper);
@@ -98,20 +98,20 @@ enum TEXT_KIT_WIDGET_ID
 void mafTextKit::CreateGui()
 //----------------------------------------------------------------------------
 {
-  mafString align[9] = {"upper left","upper center","upper right",
-                       "center left","center","center right",
-                       "lower left","lower center","lower right"};
+  mafString align[9] = {_R("upper left"),_R("upper center"),_R("upper right"),
+                       _R("center left"),_R("center"),_R("center right"),
+                       _R("lower left"),_R("lower center"),_R("lower right")};
 
   m_Gui = new mafGUI(this);
 	m_Gui->Show(true);
-  m_Gui->Label("Text kit",true);
-  m_Gui->Bool(ID_SHOW_TEXT,"show",&m_ShowText,0,"Show/hide text");
-  m_Gui->String(ID_TEXT_IN_VIEW,"view text",&m_TextInView,"Text visualized into the view");
-  m_Gui->Button(ID_NLINE_TEXT_IN_VIEW,"edit","n-line text");
+  m_Gui->Label(_R("Text kit"),true);
+  m_Gui->Bool(ID_SHOW_TEXT,_R("show"),&m_ShowText,0,_R("Show/hide text"));
+  m_Gui->String(ID_TEXT_IN_VIEW,_R("view text"),&m_TextInView,_R("Text visualized into the view"));
+  m_Gui->Button(ID_NLINE_TEXT_IN_VIEW,_R("edit"),_R("n-line text"));
 
-  m_Gui->Color(ID_TEXT_COLOR,"color",&m_TextColor);
-  m_Gui->Combo(ID_TEXT_ALIGN,"align",&m_TextAlign,9,align,"Align text inside the view");
-  m_Gui->Integer(ID_TEXT_SIZE,"font size",&m_TextSize,1,300);
+  m_Gui->Color(ID_TEXT_COLOR,_R("color"),&m_TextColor);
+  m_Gui->Combo(ID_TEXT_ALIGN,_R("align"),&m_TextAlign,9,align,_R("Align text inside the view"));
+  m_Gui->Integer(ID_TEXT_SIZE,_R("font size"),&m_TextSize,1,300);
 	m_Gui->Divider();
 	m_Gui->Update();
 }
@@ -125,12 +125,12 @@ void mafTextKit::OnEvent(mafEventBase *maf_event)
     {
       case ID_NLINE_TEXT_IN_VIEW:
       {
-        mafGUIDialog dlg("Edit text",mafCLOSEWINDOW|mafRESIZABLE|mafOK|mafCANCEL);
+        mafGUIDialog dlg(_R("Edit text"),mafCLOSEWINDOW|mafRESIZABLE|mafOK|mafCANCEL);
         wxTextCtrl *text = new wxTextCtrl(&dlg,-1,wxString(m_TextInView.GetCStr()),wxDefaultPosition,wxSize(200,200),wxTE_MULTILINE);
         dlg.Add(text,1);
         int answer = dlg.ShowModal();
         wxString s = text->GetValue();
-        m_TextInView = s.c_str();
+        m_TextInView = mafWxToString(s);
         m_TextMapper->SetInput(m_TextInView.GetCStr());
       }
       break;
@@ -159,7 +159,7 @@ void mafTextKit::OnEvent(mafEventBase *maf_event)
 void mafTextKit::SetText(const char *text)
 //----------------------------------------------------------------------------
 {
-  m_TextInView = text;
+  m_TextInView = _R(text);
   m_TextMapper->SetInput(m_TextInView.GetCStr());
 }
 //----------------------------------------------------------------------------

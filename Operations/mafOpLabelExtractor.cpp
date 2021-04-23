@@ -70,7 +70,7 @@ mafOpLabelExtractor::mafOpLabelExtractor(const mafString& label) : Superclass(la
   m_Ds = NULL;
   m_OutputData = NULL;
 	m_ValLabel     = 0;
-	m_SurfaceName  = "label 0";
+	m_SurfaceName  = _R("label 0");
   m_SmoothVolume = 0;
   m_RadiusFactor = 0.5;
   m_RadiusFactorAfter = 0.5;
@@ -135,38 +135,38 @@ void mafOpLabelExtractor::OpRun()
 
 	if (buildHelpGui.GetArg() == true)
 	{
-		m_Gui->Button(ID_HELP, "Help","");	
+		m_Gui->Button(ID_HELP, _R("Help"), _R(""));
 	}
 
-  m_Gui->Bool(ID_SMOOTH,_("smooth"),&m_SmoothVolume,0,_("gaussian smooth for extracting big surface"));
+  m_Gui->Bool(ID_SMOOTH,_L("smooth"),&m_SmoothVolume,0,_L("gaussian smooth for extracting big surface"));
   m_Gui->Divider(2);
-  m_Gui->Float(ID_RADIUS_FACTOR,_("rad. factor"),&m_RadiusFactor,0.1,MAXFLOAT,0,2,_("max distance to consider for the smooth."));
-  m_Gui->Vector(ID_STD_DEVIATION,_("std dev."),m_StdDev, 0.1, MAXFLOAT,2,_("standard deviation for the smooth."));
+  m_Gui->Float(ID_RADIUS_FACTOR,_L("rad. factor"),&m_RadiusFactor,0.1,MAXFLOAT,0,2,_L("max distance to consider for the smooth."));
+  m_Gui->Vector(ID_STD_DEVIATION,_L("std dev."),m_StdDev, 0.1, MAXFLOAT,2,_L("standard deviation for the smooth."));
   m_Gui->Divider();
-  m_Gui->Vector(ID_SAMPLING_RATE,_("sample rate"),m_SamplingRate, 1, MAXINT,_("sampling rate for volume sub-sampling."));
+  m_Gui->Vector(ID_SAMPLING_RATE,_L("sample rate"),m_SamplingRate, 1, MAXINT,_L("sampling rate for volume sub-sampling."));
   m_Gui->Divider();
-  m_Gui->Float(ID_RADIUS_FACTOR_AFTER,_("rad. factor"),&m_RadiusFactorAfter,0.1,MAXFLOAT,0,2,_("max distance to consider for the smooth."));
-  m_Gui->Vector(ID_STD_DEVIATION_AFTER,_("std dev."),m_StdDevAfter, 0.1, MAXFLOAT,2,_("standard deviation for the smooth."));
+  m_Gui->Float(ID_RADIUS_FACTOR_AFTER,_L("rad. factor"),&m_RadiusFactorAfter,0.1,MAXFLOAT,0,2,_L("max distance to consider for the smooth."));
+  m_Gui->Vector(ID_STD_DEVIATION_AFTER,_L("std dev."),m_StdDevAfter, 0.1, MAXFLOAT,2,_L("standard deviation for the smooth."));
   m_Gui->Divider(2);
   m_Gui->Divider();
 
   if (m_Input->IsA("medVMELabeledVolume"))
   {
-    m_LabelCheckBox = m_Gui->CheckList(ID_LABELS,_("Labels"),360,_("Chose label to extract"));
+    m_LabelCheckBox = m_Gui->CheckList(ID_LABELS,_L("Labels"),360,_L("Chose label to extract"));
 
-    typedef std::list< wxString > LIST;
+    typedef std::list< mafString > LIST;
     LIST myList;     
     LIST::iterator myListIter;   
 
-    if  (const mafTagItem *tagLabel = m_Input->GetTagArray()->GetTag( "LABELS" ))
+    if  (const mafTagItem *tagLabel = m_Input->GetTagArray()->GetTag( _R("LABELS") ))
     {
       int noc = tagLabel->GetNumberOfComponents();
       if(noc != 0)
       {
         for ( unsigned int i = 0; i < noc; i++ )
         {
-          wxString label = tagLabel->GetValue( i );
-          if ( label != "" )
+          mafString label = tagLabel->GetValue( i );
+          if ( !label.IsEmpty() )
           {
             myList.push_back( label );
           }
@@ -177,14 +177,14 @@ void mafOpLabelExtractor::OpRun()
         {
           for ( unsigned int j = 0; j < noc; j++ )
           {
-            wxString component = tagLabel->GetValue( j );
-            if ( component != "" )
+            mafString component = tagLabel->GetValue( j );
+            if ( !component.IsEmpty() )
             {
-              wxString labelName = *myListIter;
+              mafString labelName = *myListIter;
               if ( component == labelName )
               {
-                m_LabelCheckBox->AddItem(checkListId, component, false);
-                FillLabelVector(component, false);
+                m_LabelCheckBox->AddItem(checkListId, component.toWx(), false);
+                FillLabelVector(component.toWx(), false);
                 checkListId++;
               }
             }
@@ -195,8 +195,8 @@ void mafOpLabelExtractor::OpRun()
   }
   else
   {
-    m_Gui->Double(ID_LABEL,_("label"), &m_ValLabel);
-    m_Gui->String(ID_NAME,_("name"),&m_SurfaceName);
+    m_Gui->Double(ID_LABEL,_L("label"), &m_ValLabel);
+    m_Gui->String(ID_NAME,_L("name"),&m_SurfaceName);
   }
 
   m_Gui->Divider();
@@ -281,7 +281,7 @@ void mafOpLabelExtractor::OnEvent(mafEventBase *maf_event)
 void mafOpLabelExtractor::UpdateDataLabel()
 //----------------------------------------------------------------------------
 {
-  mafNode *linkedNode = m_Input->GetLink("VolumeLink");
+  mafNode *linkedNode = m_Input->GetLink(_R("VolumeLink"));
   mafSmartPointer<mafVME> linkedVolume = mafVME::SafeDownCast(linkedNode);
 
   //Get dataset from volume linked to
@@ -313,17 +313,17 @@ void mafOpLabelExtractor::GenerateLabeledVolume()
     {
       wxString label = m_LabelNameVector.at(c);
       wxStringTokenizer tkz(label,wxT(' '),wxTOKEN_RET_EMPTY_ALL);
-      mafString labelName = tkz.GetNextToken().c_str();
-      mafString labelIntStr = tkz.GetNextToken().c_str();
-      int labelIntValue = atoi(labelIntStr);
+      mafString labelName = mafWxToString(tkz.GetNextToken());
+      mafString labelIntStr = mafWxToString(tkz.GetNextToken());
+      int labelIntValue = atoi(labelIntStr.GetCStr());
       labelIntVector.push_back(labelIntValue);
       //Set the label value for vtkImageThreshold
       m_ValLabel = labelIntValue;
-      mafString minStr = tkz.GetNextToken().c_str();
-      int minValue = atof(minStr);
+      mafString minStr = mafWxToString(tkz.GetNextToken());
+      int minValue = atof(minStr.GetCStr());
       minVector.push_back(minValue);
-      mafString maxStr = tkz.GetNextToken().c_str();
-      int mxValue = atof(maxStr);
+      mafString maxStr = mafWxToString(tkz.GetNextToken());
+      int mxValue = atof(maxStr.GetCStr());
       maxVector.push_back(mxValue);
       counter++;
     }

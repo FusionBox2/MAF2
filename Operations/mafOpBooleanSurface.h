@@ -47,7 +47,7 @@ EXPORT_STL_VECTOR(MAF_EXPORT,vtkPolyData*);
 class MAF_EXPORT mafOpBooleanSurface: public mafOp
 {
 public:
-	mafOpBooleanSurface(const mafString& label = "FilterSurface");
+	mafOpBooleanSurface(const mafString& label = _R("FilterSurface"));
 	~mafOpBooleanSurface(); 
 	virtual void OnEvent(mafEventBase *maf_event);
 

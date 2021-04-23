@@ -145,12 +145,12 @@ int mafVMEGroup::InternalStore(mafStorageElement *parent)
     std::ostringstream stringStream;
     stringStream << "Storing matrix:"  << std::endl;
     m_Transform->Print(stringStream);
-    mafLogMessage(stringStream.str().c_str());
+    mafLogMessage(_M(stringStream.str().c_str()));
   }
 
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent->StoreMatrix("Transform",&m_Transform->GetMatrix());
+    parent->StoreMatrix(_R("Transform"),&m_Transform->GetMatrix());
     return MAF_OK;
   }
   return MAF_ERROR;
@@ -165,7 +165,7 @@ int mafVMEGroup::InternalRestore(mafStorageElement *node)
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
-    if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
+    if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK)
     {
 
       if (DEBUG_MODE)
@@ -173,7 +173,7 @@ int mafVMEGroup::InternalRestore(mafStorageElement *node)
         std::ostringstream stringStream;
         stringStream << "Restoring group matrix:"  << std::endl;
         matrix.Print(stringStream);
-        mafLogMessage(stringStream.str().c_str());
+        mafLogMessage(_M(stringStream.str().c_str()));
       }
 
       this->SetMatrix(matrix);
@@ -190,7 +190,7 @@ int mafVMEGroup::InternalRestore(mafStorageElement *node)
 restoring group matrix as:"  << std::endl;
           matrix.Print(stringStream);
           stringStream << "Please report any problem with old MSF containing groups!!!"  << std::endl;
-          mafLogMessage(stringStream.str().c_str());
+          mafLogMessage(_M(stringStream.str().c_str()));
         }
       return MAF_OK;
     }

@@ -39,13 +39,13 @@ mafCxxTypeMacro(mafUser);
 mafUser::mafUser()
 //----------------------------------------------------------------------------
 {
-  m_Username = "";
-  m_Password = "";
-  m_UserHome = "";
-  m_ProxyHost = "";
+  m_Username = _R("");
+  m_Password = _R("");
+  m_UserHome = _R("");
+  m_ProxyHost = _R("");
   m_ProxyPort = 0;
   m_ProxyFlag = 0;
-  m_UserInfoFile = "/.usrInfo";
+  m_UserInfoFile = _R("/.usrInfo");
   m_Initialized = false;
   m_RememberCredentials = false;
 }
@@ -62,7 +62,7 @@ int mafUser::ShowLoginDialog()
   {
     InitializeUserInformations();
   }
-  mafGUIDialogLogin login_dialog(_("User authentication"));
+  mafGUIDialogLogin login_dialog(_L("User authentication"));
   login_dialog.SetUserCredentials(m_Username, m_Password, m_ProxyFlag, m_ProxyHost, m_ProxyPort, m_RememberCredentials);
   int result = login_dialog.ShowModal();
   if(result != wxID_OK) return wxID_CANCEL;
@@ -108,7 +108,7 @@ void mafUser::InitializeUserInformations()
   InitUserInfoHome();
 
   wxString credentials = "";
-  if (wxFileExists(m_UserInfoFile.GetCStr()))
+  if (mafFileExists(m_UserInfoFile))
   {
 #ifdef MAF_USE_CRYPTO
     bool decrypt_success = false;
@@ -118,7 +118,7 @@ void mafUser::InitializeUserInformations()
     if (!decrypt_success)
 
     {
-      mafLogMessage(_("Error on Decryption!!"));
+      mafLogMessage(_M(mafString(_L("Error on Decryption!!"))));
       return;
     }
     credentials = decrypt_credentials.c_str();
@@ -138,22 +138,22 @@ void mafUser::InitializeUserInformations()
     mafString useProxy;
     
     wxStringTokenizer tkz(credentials, "\n");
-    usr = tkz.GetNextToken().c_str();
+    usr = mafWxToString(tkz.GetNextToken());
     if (tkz.HasMoreTokens())
     {
-      pwd = tkz.GetNextToken().c_str();
+      pwd = mafWxToString(tkz.GetNextToken());
     }
     if (tkz.HasMoreTokens())
     {
-      proxyHost = tkz.GetNextToken().c_str();
+      proxyHost = mafWxToString(tkz.GetNextToken());
     }
     if (tkz.HasMoreTokens())
     {
-      proxyPort = tkz.GetNextToken().c_str();
+      proxyPort = mafWxToString(tkz.GetNextToken());
     }
     if (tkz.HasMoreTokens())
     {
-      useProxy = tkz.GetNextToken().c_str();
+      useProxy = mafWxToString(tkz.GetNextToken());
     }
 
     m_Username = usr;
@@ -165,15 +165,15 @@ void mafUser::InitializeUserInformations()
   }
   else
   {
-    m_Username = wxGetUserName().c_str();
-    m_Password = "";
+    m_Username = mafWxToString(wxGetUserName());
+    m_Password.Clear();
     m_RememberCredentials = 0;
   }
 
   m_Initialized = true;
 }
 //----------------------------------------------------------------------------
-bool mafUser::SetCredentials(mafString &name, mafString &pwd, int &proxyFlag,  mafString &proxyHost, mafString &proxyPort, int &remember_me)
+bool mafUser::SetCredentials(const mafString& name, const mafString& pwd, int proxyFlag, const mafString& proxyHost, const mafString& proxyPort, int remember_me)
 //----------------------------------------------------------------------------
 {
   m_Username = name;
@@ -181,7 +181,7 @@ bool mafUser::SetCredentials(mafString &name, mafString &pwd, int &proxyFlag,  m
   m_RememberCredentials = remember_me;
   m_ProxyFlag = proxyFlag;
   m_ProxyHost = proxyHost;
-  m_ProxyPort = atoi(proxyPort);
+  m_ProxyPort = atoi(proxyPort.GetCStr());
   
   // empty username is not accepted!!
   m_Initialized = !m_Username.IsEmpty();
@@ -265,32 +265,32 @@ void mafUser::UpdateUserCredentialsFile()
 {
   if (m_RememberCredentials != 0)
   {
-    wxString credentials;
+    mafString credentials;
     credentials = m_Username;
-    credentials << "\n";
-    credentials << m_Password;
-    credentials << "\n";
-    credentials << m_ProxyHost;
-    credentials << "\n";
-    credentials << m_ProxyPort;
-    credentials << "\n";
-    credentials << m_ProxyFlag;
+    credentials += _R("\n");
+    credentials += m_Password;
+    credentials += _R("\n");
+    credentials += m_ProxyHost;
+    credentials += _R("\n");
+    credentials += mafToString(m_ProxyPort);
+    credentials += _R("\n");
+    credentials += mafToString(m_ProxyFlag);
 #ifdef MAF_USE_CRYPTO
     bool encrypt_success = false;
-    encrypt_success = mafDefaultEncryptFileFromMemory(credentials.c_str(), credentials.Length(), m_UserInfoFile.GetCStr());
+    encrypt_success = mafDefaultEncryptFileFromMemory(credentials.GetCStr(), credentials.Length(), m_UserInfoFile.GetCStr());
     if (!encrypt_success)
     {
-      mafLogMessage(_("Error on Encryption!!"));
+      mafLogMessage(_M(mafString(_L("Error on Encryption!!"))));
     }
 #else
-    wxFFile f_out(m_UserInfoFile.GetCStr(), "w");
+    wxFFile f_out(m_UserInfoFile.toWx(), "w");
     f_out.Write(credentials);
     f_out.Close();
 #endif
   }
   else
   {
-    wxRemoveFile(m_UserInfoFile.GetCStr());
+    mafFileRemove(m_UserInfoFile);
   }
 }
 //----------------------------------------------------------------------------
@@ -298,11 +298,11 @@ void mafUser::InitUserInfoHome()
 //----------------------------------------------------------------------------
 {
   wxStandardPaths std_paths;
-  m_UserHome = std_paths.GetUserLocalDataDir().c_str();
-  if (!wxDirExists(m_UserHome.GetCStr()))
+  m_UserHome = mafWxToString(std_paths.GetUserLocalDataDir());
+  if (!mafDirExists(m_UserHome))
   {
-    wxMkdir(m_UserHome.GetCStr());
+    mafDirMake(m_UserHome);
   }
   m_UserInfoFile = m_UserHome;
-  m_UserInfoFile << "/.usrInfo";
+  m_UserInfoFile += _R("/.usrInfo");
 }

@@ -40,7 +40,7 @@ class MAF_EXPORT mafOpSelect: public mafOp
 public:
   mafTypeMacro(mafOpSelect, mafOp)
     /** Constructor. */
-    mafOpSelect(const mafString& label=_("Select"));
+    mafOpSelect(const mafString& label=_L("Select"));
     /** Destructor. */
    ~mafOpSelect(); 
     /** check if node can be input of the operation. */
@@ -72,7 +72,7 @@ class MAF_EXPORT mafOpEdit: public mafOp
 public:
   mafTypeMacro(mafOpEdit, mafOp)
     /** Constructor. */
-    mafOpEdit(const mafString& label="");
+    mafOpEdit(const mafString& label=_R(""));
     /** Destructor. */
     ~mafOpEdit(); 
     /** Builds operation's interface. */
@@ -106,7 +106,7 @@ class MAF_EXPORT mafOpCut: public mafOpEdit
 public:
   mafTypeMacro(mafOpCut, mafOpEdit)
     /** Constructor. */
-    mafOpCut(const mafString& label=_("Cut"));
+    mafOpCut(const mafString& label=_L("Cut"));
     /** Destructor. */
     ~mafOpCut();
     /** check if node can be input of the operation. */
@@ -134,7 +134,7 @@ class MAF_EXPORT mafOpDelete: public mafOpEdit
 public:
   mafTypeMacro(mafOpDelete, mafOpEdit)
   /** Constructor. */
-  mafOpDelete(const mafString& label=_("Delete"));
+  mafOpDelete(const mafString& label=_L("Delete"));
   /** Destructor. */
   ~mafOpDelete();
   /** check if node can be input of the operation. */
@@ -157,7 +157,7 @@ class MAF_EXPORT mafOpCopy: public mafOpEdit
 public:
   mafTypeMacro(mafOpCopy, mafOpEdit)
     /** Constructor. */
-    mafOpCopy(const mafString& label=_("Copy"));
+    mafOpCopy(const mafString& label=_L("Copy"));
     /** Destructor. */
     ~mafOpCopy();
     /** check if node can be input of the operation. */
@@ -178,7 +178,7 @@ class MAF_EXPORT mafOpPaste: public mafOpEdit
 public:
   mafTypeMacro(mafOpPaste, mafOpEdit)
     /** Constructor. */
-    mafOpPaste(const mafString& label=_("Paste"));
+    mafOpPaste(const mafString& label=_L("Paste"));
     /** check if node can be input of the operation. */
     bool Accept(mafNode* vme);
     /** execute the operation.  */    

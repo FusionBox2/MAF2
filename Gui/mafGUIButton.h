@@ -36,7 +36,7 @@ class MAF_EXPORT mafGUIButton : public wxButton, public mafEventSender
 {
 
 public:
-  mafGUIButton(wxWindow* parent, wxWindowID id, const wxString& label, 
+  mafGUIButton(wxWindow* parent, wxWindowID id, const mafString& label, 
             const wxPoint& pos, const wxSize& size = wxDefaultSize, long style = 0);
 
   mafGUIButton(wxWindow *parent, wxWindowID id = 0 );

@@ -70,7 +70,7 @@ mafGizmoScaleIsotropic::mafGizmoScaleIsotropic(mafVME *input, mafBaseEventHandle
 
   // cube gizmo
   m_CubeGizmo = mafVMEGizmo::New();  
-  m_CubeGizmo->SetName("CubeGizmo");
+  m_CubeGizmo->SetName(_R("CubeGizmo"));
   m_CubeGizmo->SetData(m_Cube->GetOutput());
   m_CubeGizmo->SetMediator(GetListener());
 

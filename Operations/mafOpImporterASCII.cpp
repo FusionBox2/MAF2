@@ -52,7 +52,7 @@ mafOpImporterASCII::mafOpImporterASCII(const mafString& label) : Superclass(labe
 
   m_ScalarOrder = 1;
 
-  m_FileDir = "";//mafGetApplicationDirectory().c_str();
+  m_FileDir = _R("");//mafGetApplicationDirectory().c_str();
   m_ScalarData = NULL;
   m_ReadyToExecute = false;
 }
@@ -75,7 +75,7 @@ mafOp* mafOpImporterASCII::Copy()
 void mafOpImporterASCII::SetParameters(void *param)
 //----------------------------------------------------------------------------
 {
-  mafString t = "";
+  mafString t = _R("");
   wxString op_par = (char *)param;
   wxStringTokenizer tkz(op_par, " ");
   wxString order = tkz.GetNextToken();
@@ -86,28 +86,28 @@ void mafOpImporterASCII::SetParameters(void *param)
   }
   else
   {
-    t = order.c_str();
-    if (t.FindFirst("*.") != -1)
+    t = mafWxToString(order);
+    if (t.FindFirst(_R("*.")) != -1)
     {
       FillFileList(t.GetCStr());
     }
     else
     {
-      m_Files.insert(m_Files.end(), t.GetCStr());
+      m_Files.insert(m_Files.end(), t);
     }
   }
 
   while (tkz.HasMoreTokens())
   {
-    t = tkz.GetNextToken().c_str();
-    if (t.FindFirst("*.") != -1)
+    t = mafWxToString(tkz.GetNextToken());
+    if (t.FindFirst(_R("*.")) != -1)
     {
       FillFileList(t.GetCStr());
       break;
     }
     else
     {
-      m_Files.insert(m_Files.end(), t.GetCStr());
+      m_Files.insert(m_Files.end(), t);
     }
   }
   m_ReadyToExecute = true;
@@ -121,7 +121,7 @@ void mafOpImporterASCII::FillFileList(const char *file_pattern)
   wxDir::GetAllFiles(wxGetCwd(), &files, file_pattern);
   for (int f = 0; f < files.GetCount(); f++)
   {
-    m_Files.insert(m_Files.end(), files[f].c_str());
+    m_Files.insert(m_Files.end(), mafWxToString(files[f]));
   }
 }
 //----------------------------------------------------------------------------
@@ -136,11 +136,11 @@ enum ASCII_IMPORTER_ID
 void mafOpImporterASCII::OpRun()
 //----------------------------------------------------------------------------
 {
-  mafString scalar_order[2] = {_("row"), _("columns")};
+  mafString scalar_order[2] = {_L("row"), _L("columns")};
   
   m_Gui = new mafGUI(this);
-  m_Gui->Combo(ID_ASCII_DATA_ORDER,_("order"),&m_ScalarOrder,2,scalar_order,_("Select the order of how are stored the scalars."));
-  m_Gui->Button(ID_ASCII_FILE,_("ASCII data"),"",_("Choose single or multiple file ASCII."));
+  m_Gui->Combo(ID_ASCII_DATA_ORDER,_L("order"),&m_ScalarOrder,2,scalar_order,_L("Select the order of how are stored the scalars."));
+  m_Gui->Button(ID_ASCII_FILE,_L("ASCII data"),_R(""),_L("Choose single or multiple file ASCII."));
   m_Gui->OkCancel();
   
   if (m_ReadyToExecute)
@@ -168,7 +168,7 @@ void mafOpImporterASCII::OnEvent(mafEventBase *maf_event)
     {
       case ID_ASCII_FILE:
       {
-        mafString wildc = "(*.*)|*.*";
+        mafString wildc = _R("(*.*)|*.*");
         mafGetOpenMultiFiles(m_FileDir,wildc,m_Files);
       }
       break;
@@ -180,7 +180,7 @@ void mafOpImporterASCII::OnEvent(mafEventBase *maf_event)
         }
         else
         {
-          mafMessage(_("Some errors occurs during the import phase! Data can not be imported."), _("Warning"));
+          mafWarningMessage(_M(mafString(_L("Some errors occurs during the import phase! Data can not be imported."))));
           OpStop(OP_RUN_CANCEL);
         }
       break;
@@ -197,7 +197,7 @@ int mafOpImporterASCII::ImportASCII()
   if(!this->m_TestMode)
 	  wxBusyInfo wait(_("Loading file/s: ..."));
   mafNEW(m_ScalarData);
-  m_ScalarData->SetName("scalar");
+  m_ScalarData->SetName(_R("scalar"));
 
   int import_result = MAF_ERROR;
 

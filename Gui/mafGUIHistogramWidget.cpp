@@ -100,7 +100,7 @@ mafGUIHistogramWidget::mafGUIHistogramWidget(wxWindow* parent, wxWindowID id /* 
   if (showThresholds)
   {
 	  wxBoxSizer *sizerH1 = new wxBoxSizer(wxHORIZONTAL);
-	  m_SliderThresholds = new mafGUILutSlider(this,ID_SLIDER_THRESHOLD ,wxPoint(0,0),wxSize(10,24), 0, "Thresholds");
+	  m_SliderThresholds = new mafGUILutSlider(this,ID_SLIDER_THRESHOLD ,wxPoint(0,0),wxSize(10,24), 0, _R("Thresholds"));
 	  m_SliderThresholds->SetListener(this);
 	  m_SliderThresholds->SetSize(5,24);
 	  m_SliderThresholds->SetMinSize(wxSize(5,24));
@@ -172,7 +172,7 @@ void mafGUIHistogramWidget::GetThresholds(double *lower, double *upper)
 void mafGUIHistogramWidget::CreateGui()
 //----------------------------------------------------------------------------
 {
-  mafString represent[3] = {"points", "lines", "bar"};
+  mafString represent[3] = {_R("points"), _R("lines"), _R("bar")};
   m_Gui = new mafGUI(this);
   m_Gui->Show(true);
 
@@ -194,12 +194,12 @@ void mafGUIHistogramWidget::CreateGui()
     m_Slider->Update();
     m_Gui->Add(m_Slider);
   }
-  m_Gui->Combo(ID_REPRESENTATION,"represent",&m_Representation,3,represent);
-  m_Gui->Bool(ID_AUTOSCALE,"autoscale", &m_AutoscaleHistogram);
-  m_Gui->Double(ID_SCALE_FACTOR,"scale",&m_ScaleFactor,1.0e-299,MAXDOUBLE,-1);
-  m_Gui->Bool(ID_LOGSCALE,"log",&m_LogHistogramFlag,0,"Enable/Disable log scale for histogram");
-  m_Gui->Double(ID_LOGFACTOR,"log constant",&m_LogScaleConstant,1.0e-299,MAXDOUBLE,-1,"multiplicative factor for log scale histogram");
-  m_Gui->Button(ID_RESET, "reset");
+  m_Gui->Combo(ID_REPRESENTATION,_R("represent"),&m_Representation,3,represent);
+  m_Gui->Bool(ID_AUTOSCALE,_R("autoscale"), &m_AutoscaleHistogram);
+  m_Gui->Double(ID_SCALE_FACTOR,_R("scale"),&m_ScaleFactor,1.0e-299,MAXDOUBLE,-1);
+  m_Gui->Bool(ID_LOGSCALE,_R("log"),&m_LogHistogramFlag,0,_R("Enable/Disable log scale for histogram"));
+  m_Gui->Double(ID_LOGFACTOR,_R("log constant"),&m_LogScaleConstant,1.0e-299,MAXDOUBLE,-1,_R("multiplicative factor for log scale histogram"));
+  m_Gui->Button(ID_RESET, _R("reset"));
   m_Gui->Divider();
 
   EnableWidgets(m_Data != NULL);
@@ -272,7 +272,7 @@ void mafGUIHistogramWidget::OnEvent( mafEventBase *event )
         if (m_ShowText)
         {
         m_HisctogramValue = m_Histogram->GetHistogramValue(pos[0],pos[1]);
-        m_Histogram->SetLabel(mafString(m_HisctogramValue).GetCStr());
+        m_Histogram->SetLabel(mafToString(m_HisctogramValue).GetCStr());
         }
       }
       m_HistogramRWI->CameraUpdate();

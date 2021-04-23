@@ -46,14 +46,14 @@ mafGUILocaleSettings::~mafGUILocaleSettings()
 void mafGUILocaleSettings::CreateGui()
 //----------------------------------------------------------------------------
 {
-  mafString lang_array[8] = {"English","French","German","Italian","Spanish","Russian","Polish","Czech"};
+  mafString lang_array[8] = {_R("English"),_R("French"),_R("German"),_R("Italian"),_R("Spanish"),_R("Russian"),_R("Polish"),_R("Czech")};
 
   m_Gui = new mafGUI(this);   
-  m_Gui->Label(_("User Interface Language"));
-  m_Gui->Radio(LANGUAGE_ID,"", &m_LanguageId, 8,lang_array);
+  m_Gui->Label(_L("User Interface Language"));
+  m_Gui->Radio(LANGUAGE_ID,_R(""), &m_LanguageId, 8,lang_array);
 	m_Gui->Enable(LANGUAGE_ID,m_EnableLanguage); 
-  m_Gui->Label(_("changes will take effect when \nthe application restart"),false,true);
-  m_Gui->Label("");
+  m_Gui->Label(_L("changes will take effect when \nthe application restart"),false,true);
+  m_Gui->Label(_R(""));
 }
 //----------------------------------------------------------------------------
 void mafGUILocaleSettings::OnEvent(mafEventBase *maf_event)
@@ -67,42 +67,42 @@ void mafGUILocaleSettings::OnEvent(mafEventBase *maf_event)
       {
       case 1:
         m_Language = wxLANGUAGE_FRENCH;
-        m_LanguageDictionary = "fr";
+        m_LanguageDictionary = _R("fr");
         break;
       case 2:
         m_Language = wxLANGUAGE_GERMAN;
-        m_LanguageDictionary = "de";
+        m_LanguageDictionary = _R("de");
         break;
       case 3:
         m_Language = wxLANGUAGE_ITALIAN;
-        m_LanguageDictionary = "it";
+        m_LanguageDictionary = _R("it");
         break;
       case 4:
         m_Language = wxLANGUAGE_SPANISH;
-        m_LanguageDictionary = "es";
+        m_LanguageDictionary = _R("es");
         break;
 	  case 5:
 		m_Language = wxLANGUAGE_RUSSIAN;
-        m_LanguageDictionary = "ru";
+        m_LanguageDictionary = _R("ru");
         break;
 	  case 6:
 		m_Language = wxLANGUAGE_POLISH;
-        m_LanguageDictionary = "pl";
+        m_LanguageDictionary = _R("pl");
         break;
 	  case 7:
 		m_Language = wxLANGUAGE_CZECH;
-		m_LanguageDictionary = "cs";
+		m_LanguageDictionary = _R("cs");
 		break;
 	  case 8:
 		  m_Language = wxLANGUAGE_CHINESE_SIMPLIFIED;
-		  m_LanguageDictionary = "zh";
+		  m_LanguageDictionary = _R("zh");
 		  break;
       default:
         m_Language = wxLANGUAGE_ENGLISH;
-        m_LanguageDictionary = "en";
+        m_LanguageDictionary = _R("en");
       }
       m_Config->Write("Language",m_Language);
-      m_Config->Write("Dictionary",m_LanguageDictionary);
+      m_Config->Write("Dictionary",m_LanguageDictionary.toWx());
       m_Config->Flush();
     }
     break;
@@ -121,7 +121,7 @@ void mafGUILocaleSettings::InitializeSettings()
   {
     m_Language = (wxLanguage)lang;
     m_Config->Read("Dictionary", &dict);
-    m_LanguageDictionary = dict;
+    m_LanguageDictionary = mafWxToString(dict);
   }
   else
   {
@@ -129,7 +129,7 @@ void mafGUILocaleSettings::InitializeSettings()
     m_Config->Write("Language",wxLANGUAGE_ENGLISH);
     m_Config->Write("Dictionary","en");
     m_Language = wxLANGUAGE_ENGLISH;
-    m_LanguageDictionary = "en";
+    m_LanguageDictionary = _R("en");
   }
 
   m_Config->Flush();
@@ -138,7 +138,7 @@ void mafGUILocaleSettings::InitializeSettings()
   prefix += "\\Language\\";
   m_Locale.Init(m_Language);
   m_Locale.AddCatalogLookupPathPrefix(prefix);
-  m_Locale.AddCatalog(wxT(m_LanguageDictionary.GetCStr()));
+  m_Locale.AddCatalog(m_LanguageDictionary.toWx());
 #ifndef WIN32
   m_Locale.AddCatalog("fileutils");
 #endif
@@ -177,51 +177,51 @@ void mafGUILocaleSettings::InitializeSettings()
 void mafGUILocaleSettings::SetLanguageDirectory(const char* prefix, const char* languageDirectory)
 //----------------------------------------------------------------------------
 {
-  m_LanguageDictionary = wxT(languageDirectory);
+  m_LanguageDictionary = _R(languageDirectory);
   m_Locale.AddCatalogLookupPathPrefix(prefix);
 
-  m_Locale.AddCatalog(wxT(m_LanguageDictionary.GetCStr()));
-  if (strcmp(wxT(m_LanguageDictionary.GetCStr()), "fr") == 0)
+  m_Locale.AddCatalog(m_LanguageDictionary.toWx());
+  if (m_LanguageDictionary == _R("fr"))
   {
   	m_Language		= wxLANGUAGE_FRENCH;
 	m_LanguageId	= 1;
   }
-  else if (strcmp(wxT(m_LanguageDictionary.GetCStr()), "de") == 0)
+  else if (m_LanguageDictionary == _R("de"))
   {
     m_Language		= wxLANGUAGE_GERMAN;
 	m_LanguageId	= 2;
   }
-  else if (strcmp(wxT(m_LanguageDictionary.GetCStr()), "it") == 0)
+  else if (m_LanguageDictionary == _R("it"))
   {
 	  m_Language	= wxLANGUAGE_ITALIAN;
 	m_LanguageId	= 3; 
   }
-  else if (strcmp(wxT(m_LanguageDictionary.GetCStr()), "es") == 0)
+  else if (m_LanguageDictionary == _R("es"))
   {
     m_Language		= wxLANGUAGE_SPANISH;
 	m_LanguageId	= 4;
   }
-  else if (strcmp(wxT(m_LanguageDictionary.GetCStr()), "ru") == 0)
+  else if (m_LanguageDictionary == _R("ru"))
   {
     m_Language		= wxLANGUAGE_RUSSIAN;
 	m_LanguageId	= 5;
   }
-  else if (strcmp(wxT(m_LanguageDictionary.GetCStr()), "pl") == 0)
+  else if (m_LanguageDictionary == _R("pl"))
   {
     m_Language		= wxLANGUAGE_POLISH;
 	m_LanguageId	= 6;
   }
-  else if (strcmp(wxT(m_LanguageDictionary.GetCStr()), "cs") == 0)
+  else if (m_LanguageDictionary == _R("cs"))
   {
 	m_Language		= wxLANGUAGE_CZECH;
 	m_LanguageId	= 7;
   }
-  else if (strcmp(wxT(m_LanguageDictionary.GetCStr()), "zh") == 0)
+  else if (m_LanguageDictionary == _R("zh"))
   {
 	  m_Language		= wxLANGUAGE_CHINESE_SIMPLIFIED;
 	  m_LanguageId	= 8;
   }
-  else if (strcmp(wxT(m_LanguageDictionary.GetCStr()), "en") == 0)
+  else if (m_LanguageDictionary == _R("en"))
   {
     m_Language		= wxLANGUAGE_ENGLISH;
 	m_LanguageId	= 0;
@@ -235,5 +235,5 @@ void mafGUILocaleSettings::ChangeLanguage(wxLanguage languageEnum, const char *l
   m_Config->Write("Language",languageEnum);
   m_Config->Write("Dictionary",languageAcronym);
   m_Language = languageEnum;
-  m_LanguageDictionary = languageAcronym;
+  m_LanguageDictionary = _R(languageAcronym);
 }

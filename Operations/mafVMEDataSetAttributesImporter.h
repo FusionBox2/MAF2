@@ -49,7 +49,7 @@ public:
   /** Set the dataset attribute filename. If attributes are time varying 
   the filename will be used to find the directory containing attribute files*/
   void SetFileName(const char *filename);
-  const char *GetFileName() {return m_FileName;};
+  const char *GetFileName() {return m_FileName.GetCStr();};
 
   /** Time Varying flag */
   void TimeVaryingOn() {m_TimeVarying = true;};
@@ -83,7 +83,7 @@ public:
   void SetUseIdArrayFlag(bool useIdArray) {m_UseIdArray = useIdArray;};
   bool GetUseIdArrayFlag() {return m_UseIdArray;};
 
-  void SetIdArrayName(const char *idArrayName) {m_IdArrayName = idArrayName; };
+  void SetIdArrayName(const char *idArrayName) {m_IdArrayName = _R(idArrayName); };
   const char *GetIdArrayName() { return m_IdArrayName.GetCStr(); };
 
   /**
@@ -92,7 +92,7 @@ public:
   for a sequence like "file_0001.lis", "file_0002.lis" and so on, 
   the prefix is "file_".This is needed for time varying
   result files*/
-  void SetFilePrefix(const char *filePrefix) {m_FilePrefix = filePrefix; };
+  void SetFilePrefix(const char *filePrefix) {m_FilePrefix = _R(filePrefix); };
   const char *GetFilePrefix() { return m_FilePrefix.GetCStr(); };
 
   enum ATTRIBUTE_TYPE {POINT_DATA = 0, CELL_DATA};
@@ -106,7 +106,7 @@ public:
 
   /** 
   Set the timestamps file name*/
-  void SetTSFileName(const char *tsFileName) {this->m_TSFileName = tsFileName; };
+  void SetTSFileName(const char *tsFileName) {this->m_TSFileName = _R(tsFileName); };
   const char* GetTSFileName() {return this->m_TSFileName.GetCStr(); };  
 
   /** 
@@ -128,7 +128,7 @@ protected:
   /** 
   Set the name of the directory containing attribute data files; this is needed for time varying
   attribute data files*/
-  void SetResultsDir(const char *resDir) {m_ResultsDir = resDir; };
+  void SetResultsDir(const char *resDir) {m_ResultsDir = _R(resDir); };
   const char *GetResultsDir() { return m_ResultsDir.GetCStr(); };
 
  
@@ -136,7 +136,7 @@ protected:
   Set the extension of the result files ie the part following
   the increasing int number. This is needed for time varying
   result files*/
-  void SetFileExtension(const char *ext) {m_FileExtension = ext; };
+  void SetFileExtension(const char *ext) {m_FileExtension = _R(ext); };
   const char *GetFileExtension() {return m_FileExtension.GetCStr(); };
 
   int SplitFileName();

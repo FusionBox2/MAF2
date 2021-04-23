@@ -53,7 +53,7 @@ class MAF_EXPORT mafGUIMaterialChooser : public mafBaseEventHandler
 {
 
 public:
-	mafGUIMaterialChooser(wxString dialog_title = "Material Chooser");  // reads materials from file
+	mafGUIMaterialChooser(const mafString& dialog_title = _R("Material Chooser"));  // reads materials from file
  ~mafGUIMaterialChooser();  // store materials to file
 
   /** Show in modal configuration the material editor. */

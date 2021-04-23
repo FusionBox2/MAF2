@@ -59,7 +59,7 @@ mafOp::mafOp()
 	m_Next      = NULL;
 	m_OpType    = OPTYPE_OP;
 	m_Canundo   = false;
-	m_Label     = "default op name";
+	m_Label     = _R("default op name");
   m_Guih      = NULL;
 	m_Input     = NULL;
   m_Output    = NULL;
@@ -167,8 +167,8 @@ void mafOp::ShowGui()
   m_Guih = new mafGUIHolder(mafGetFrame(),-1);
   m_Guih->Put(m_Gui);
 	
-  wxString menu_codes=wxStripMenuCodes(m_Label.GetCStr());
-  wxString title = wxString::Format(" %s parameters:",menu_codes.c_str());
+  mafString menu_codes=mafStripMenuCodes(m_Label);
+  mafString title = _R(" ") + menu_codes + _R(" parameters:");
   m_Guih->SetTitle(title);
   mafEventMacro(mafEvent(this,OP_SHOW_GUI,(wxWindow *)m_Guih));
 }

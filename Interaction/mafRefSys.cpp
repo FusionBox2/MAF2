@@ -307,6 +307,6 @@ void mafRefSys::Print(std::ostream& os, const int tabs)
 
   os << indent << "m_Renderer used as Reference System:"<<m_Renderer;
 
-  os << indent << "m_VME: \""<<(m_VME?m_VME->GetName():"NULL")<<"\"\n";
+  os << indent << "m_VME: \""<<(m_VME?m_VME->GetName().GetCStr() :_R("NULL"))<<"\"\n";
 
 }

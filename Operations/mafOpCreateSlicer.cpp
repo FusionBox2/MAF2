@@ -69,7 +69,7 @@ bool mafOpCreateSlicer::Accept(mafNode *node)
 void mafOpCreateSlicer::OpRun()
 //----------------------------------------------------------------------------
 {
-  mafString title = _("Choose VME to slice");
+  mafString title = _L("Choose VME to slice");
   mafEvent e;
   e.SetId(VME_CHOOSE);
   e.SetArg((long)&mafOpCreateSlicer::VolumeAccept);
@@ -82,7 +82,7 @@ void mafOpCreateSlicer::OpRun()
   if (n != NULL)
   {
 		mafNEW(m_Slicer);
-		m_Slicer->SetName("slicer");
+		m_Slicer->SetName(_R("slicer"));
 		m_Output = m_Slicer;
 
     m_SlicedVME = n;

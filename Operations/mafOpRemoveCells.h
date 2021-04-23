@@ -60,7 +60,7 @@ class MAF_EXPORT mafOpRemoveCells: public mafOp
 {
 public:
 	
-  mafOpRemoveCells(const mafString& label = "RemoveCells");
+  mafOpRemoveCells(const mafString& label = _R("RemoveCells"));
  ~mafOpRemoveCells(); 
 	
   mafTypeMacro(mafOpRemoveCells, mafOp);

@@ -97,8 +97,8 @@ void mafLightKit::CreateGui()
 	
   wxStaticText *lab = new wxStaticText(m_Gui,-1,"lights list",dp,ls, wxALIGN_RIGHT);
 	
-	m_ButtonAdd = new mafGUIButton (m_Gui,ID_ADD_LIGHT,"add",dp,bs);
-  m_ButtonRemove = new mafGUIButton (m_Gui,ID_REMOVE_LIGHT,"remove",dp,bs);
+	m_ButtonAdd = new mafGUIButton (m_Gui,ID_ADD_LIGHT,_R("add"),dp,bs);
+  m_ButtonRemove = new mafGUIButton (m_Gui,ID_REMOVE_LIGHT,_R("remove"),dp,bs);
 	m_ButtonAdd->SetListener(this);
 	m_ButtonRemove->SetListener(this);
 
@@ -108,13 +108,13 @@ void mafLightKit::CreateGui()
 	sizer->Add( m_ButtonRemove, 0, wxRIGHT, wm);
   m_Gui->Add(sizer,0,wxALL,rm); 
 	
-	m_LightList = m_Gui->ListBox(ID_LIGHT_LIST, " ");
+	m_LightList = m_Gui->ListBox(ID_LIGHT_LIST, _R(" "));
 
-	m_Gui->Bool(ID_LIGHT_ON_OFF,"on-off",&m_LightOnOff,0);
-	m_Gui->FloatSlider(ID_LIGHT_AZIMUTH,"azimuth",&m_LightAzimuth,-90.0,90.0);
-	m_Gui->FloatSlider(ID_LIGHT_ELEVATION,"elevation",&m_LightElevation,-90.0,90.0);
-	m_Gui->FloatSlider(ID_LIGHT_INTENSITY,"intensity",&m_LightIntensity,0.0,1.0);
-	m_Gui->Color(ID_LIGHT_COLOR,"color",&m_LightColor);
+	m_Gui->Bool(ID_LIGHT_ON_OFF,_R("on-off"),&m_LightOnOff,0);
+	m_Gui->FloatSlider(ID_LIGHT_AZIMUTH,_R("azimuth"),&m_LightAzimuth,-90.0,90.0);
+	m_Gui->FloatSlider(ID_LIGHT_ELEVATION,_R("elevation"),&m_LightElevation,-90.0,90.0);
+	m_Gui->FloatSlider(ID_LIGHT_INTENSITY,_R("intensity"),&m_LightIntensity,0.0,1.0);
+	m_Gui->Color(ID_LIGHT_COLOR,_R("color"),&m_LightColor);
 
 	//init the listbox with the existent light
 	for(int i=0; i<MAX_NUM_LIGHT; i++)

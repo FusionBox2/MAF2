@@ -116,12 +116,12 @@ mafRWIBase::mafRWIBase(wxWindow *parent, wxWindowID id, const wxPoint &pos,
   m_Hidden = true;
   this->Show(false);
 	//m_SaveDir = ::wxGetHomeDir().c_str(); 
-  m_SaveDir = "";
+  m_SaveDir = _R("");
   m_Width = m_Height = 10;
   
   m_Camera    = NULL;
   
-  m_StereoMovieDir     = "";
+  m_StereoMovieDir     = _R("");
   m_StereoMovieFrameCounter = 0;
   m_StereoMovieLeftEye      = NULL;
   m_StereoMovieRightEye     = NULL;
@@ -227,7 +227,7 @@ void mafRWIBase::Start()
 //----------------------------------------------------------------------------
 {
   // the interactor cannot control the event loop
-  mafLogMessage("mafRWIBase::Start() interactor cannot control event loop.");
+  mafLogMessage(_M("mafRWIBase::Start() interactor cannot control event loop."));
 }
 //----------------------------------------------------------------------------
 void mafRWIBase::UpdateSize(int x, int y)
@@ -680,66 +680,67 @@ void mafRWIBase::GetImage(wxBitmap& bitmap, int magnification)
   delete buffer;
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::SaveImage(mafString filename, int magnification , int forceExtension)
+void mafRWIBase::SaveImage(const mafString& filename_, int magnification , int forceExtension)
 //---------------------------------------------------------------------------
 {
-  wxString path, name, ext;
-  wxSplitPath(filename.GetCStr(),&path,&name,&ext);
+#pragma message ("argument is modified below, so we need to copy it, refactor")
+  mafString filename = filename_;//argument is modified below, so we need to copy it, refactor
+  mafString path, name, ext;
+  mafSplitPath(filename,&path,&name,&ext);
   if (filename.IsEmpty() || ext.IsEmpty())
   {
-    wxString wildc = "Image (*.bmp)|*.bmp|Image (*.jpg)|*.jpg|Image (*.png)|*.png|Image (*.ps)|*.ps|Image (*.tiff)|*.tiff";
+    mafString wildc = _R("Image (*.bmp)|*.bmp|Image (*.jpg)|*.jpg|Image (*.png)|*.png|Image (*.ps)|*.ps|Image (*.tiff)|*.tiff");
 //    wxString file = wxString::Format("%s\\%sSnapshot", m_SaveDir.GetCStr(),filename.GetCStr());
-    wxString file = "";
+    mafString file;
     switch(forceExtension)
     {
       case mafGUIApplicationSettings::JPG :
-        wildc = "Image (*.jpg)|*.jpg";
+        wildc = _R("Image (*.jpg)|*.jpg");
       break;
       case mafGUIApplicationSettings::BMP:
-        wildc = "Image (*.bmp)|*.bmp";
+        wildc = _R("Image (*.bmp)|*.bmp");
         break;
       case mafGUIApplicationSettings::PNG:
-        wildc = "Image (*.png)|*.png";
+        wildc = _R("Image (*.png)|*.png");
       break;
     }
 /*
-    if(!wxDirExists(path))
+    if(!mafDirExists(path))
     {
       file = m_SaveDir;
-      file +=  "\\";
-      filename = name.c_str();
+      file +=  _R("\\");
+      filename = name;
     }
 */    
     file.Append(filename);
-    file = mafGetSaveFile(file,wildc).GetCStr(); 
+    file = mafGetSaveFile(file,wildc); 
     if(file.IsEmpty()) 
       return;
-    filename = file.c_str();
+    filename = file;
   }
 
-  wxString temporary = filename.GetCStr();
-  temporary = temporary.AfterLast('\\').AfterFirst('.');
+  mafString temporary = mafWxToString(filename.toWx().AfterLast('\\').AfterFirst('.'));
 
   switch(forceExtension)
   {
     case mafGUIApplicationSettings::JPG :
-    if(temporary != _("jpg"))
-      filename += _(".jpg");
+    if(temporary != _L("jpg"))
+      filename += _L(".jpg");
     break;
     case mafGUIApplicationSettings::BMP:
-    if(temporary != _("bmp"))
-      filename += _(".bmp");
+    if(temporary != _L("bmp"))
+      filename += _L(".bmp");
     break;
     case mafGUIApplicationSettings::PNG:
-      if(temporary != _("png"))
-        filename += _(".png");
+      if(temporary != _L("png"))
+        filename += _L(".png");
     break;
   }
 
   mafString basename = filename.BaseName();
   if (basename.IsEmpty())
   {
-    filename = m_SaveDir << "\\" << filename;
+    filename = m_SaveDir + _R("\\") + filename;
   }
   
   ::wxBeginBusyCursor();
@@ -794,9 +795,9 @@ void mafRWIBase::SaveImage(mafString filename, int magnification , int forceExte
   w2i->Update();
   GetRenderWindow()->OffScreenRenderingOff();
   
-  wxSplitPath(filename.GetCStr(),&path,&name,&ext);
+  mafSplitPath(filename,&path,&name,&ext);
   ext.MakeLower();
-  if (ext == "bmp")
+  if (ext == _R("bmp"))
   {
     vtkMAFSmartPointer<vtkBMPWriter> w;
     w->SetInput(w2i->GetOutput());
@@ -805,28 +806,28 @@ void mafRWIBase::SaveImage(mafString filename, int magnification , int forceExte
     w->SetFileName(filename.GetCStr());
     w->Write();
   }
-  else if (ext == "jpg")
+  else if (ext == _R("jpg"))
   {
     vtkMAFSmartPointer<vtkJPEGWriter> w;
     w->SetInput(w2i->GetOutput());
     w->SetFileName(filename.GetCStr());
     w->Write();
   }
-  else if (ext == "tiff")
+  else if (ext == _R("tiff"))
   {
     vtkMAFSmartPointer<vtkTIFFWriter> w;
     w->SetInput(w2i->GetOutput());
     w->SetFileName(filename.GetCStr());
     w->Write();
   }
-  else if (ext == "ps")
+  else if (ext == _R("ps"))
   {
     vtkMAFSmartPointer<vtkPostScriptWriter> w;
     w->SetInput(w2i->GetOutput());
     w->SetFileName(filename.GetCStr());
     w->Write();
   }
-  else if (ext == "png")
+  else if (ext == _R("png"))
   {
     vtkMAFSmartPointer<vtkPNGWriter> w;
     w->SetInput(w2i->GetOutput());
@@ -837,80 +838,81 @@ void mafRWIBase::SaveImage(mafString filename, int magnification , int forceExte
   }
   else
   {
-    wxMessageBox(_("Image can not be saved. Not valid file!"), _("Warning"));
+    mafWarningMessage(_M(mafString(_L("Image can not be saved. Not valid file!"))));
   }
   ::wxEndBusyCursor();
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::SaveImageRecursive(mafString filename, mafViewCompound *v,int magnification,int forceExtension)
+void mafRWIBase::SaveImageRecursive(const mafString& filename_, mafViewCompound *v,int magnification,int forceExtension)
 //----------------------------------------------------------------------------
 {
   if(v == NULL) return;
+#pragma message ("argument is modified below, so we need to copy it, refactor")
+  mafString filename = filename_;//argument is modified below, so we need to copy it, refactor
 
-  wxString path, name, ext;
-  wxSplitPath(filename.GetCStr(),&path,&name,&ext);
+  mafString path, name, ext;
+  mafSplitPath(filename,&path,&name,&ext);
   if (filename.IsEmpty() || ext.IsEmpty())
   {
     //wxString wildc = "Image (*.bmp)|*.bmp|Image (*.jpg)|*.jpg";
-    wxString wildc = "Image (*.bmp)|*.bmp|Image (*.jpg)|*.jpg|Image (*.png)|*.png|Image (*.ps)|*.ps|Image (*.tiff)|*.tiff";
-    wxString file = wxString::Format("%s\\%sSnapshot", m_SaveDir.GetCStr(),filename.GetCStr());
+    mafString wildc = _R("Image (*.bmp)|*.bmp|Image (*.jpg)|*.jpg|Image (*.png)|*.png|Image (*.ps)|*.ps|Image (*.tiff)|*.tiff");
+    mafString file = m_SaveDir + _R("\\") + filename + _R("Snapshot");
     switch(forceExtension)
     {
     case mafGUIApplicationSettings::JPG :
-      wildc = "Image (*.jpg)|*.jpg";
+      wildc = _R("Image (*.jpg)|*.jpg");
       break;
     case mafGUIApplicationSettings::BMP:
-      wildc = "Image (*.bmp)|*.bmp";
+      wildc = _R("Image (*.bmp)|*.bmp");
       break;
     case mafGUIApplicationSettings::PNG:
-      wildc = "Image (*.png)|*.png";
+      wildc = _R("Image (*.png)|*.png");
       break;
     }
     //mafString file ;
-    if(!wxDirExists(path))
+    if(!mafDirExists(path))
     {
       file = m_SaveDir;
-      file +=  "\\";
-      filename = name.c_str();
+      file +=  _R("\\");
+      filename = name;
     }
 
     file.Append(filename);
-    file = mafGetSaveFile(file,wildc).GetCStr(); 
+    file = mafGetSaveFile(file,wildc); 
     if(file.IsEmpty()) 
       return;
-    filename = file.c_str();
+    filename = file;
   }
   
-  wxString temporary = filename.GetCStr();
-  temporary = temporary.AfterLast('\\').AfterFirst('.');
+  mafString temporary = mafWxToString(filename.toWx().AfterLast('\\').AfterFirst('.'));
 
   switch(forceExtension)
   {
   case mafGUIApplicationSettings::JPG :
-    if(temporary != _("jpg"))
-      filename += _(".jpg");
+    if(temporary != _L("jpg"))
+      filename += _L(".jpg");
     break;
   case mafGUIApplicationSettings::BMP:
-    if(temporary != _("bmp"))
-      filename += _(".bmp");
+    if(temporary != _L("bmp"))
+      filename += _L(".bmp");
     break;
   case mafGUIApplicationSettings::PNG:
-    if(temporary != _("png"))
-      filename += _(".png");
+    if(temporary != _L("png"))
+      filename += _L(".png");
     break;
   }
 
   mafString basename = filename.BaseName();
   if (basename.IsEmpty())
   {
-    filename = m_SaveDir << "\\" << filename;
+    filename = m_SaveDir + _R("\\") + filename;
   }
 
 
   RecursiveSaving(filename, v, magnification);
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::RecursiveSaving(mafString filename, mafViewCompound *v,int magnification)
+void mafRWIBase::RecursiveSaving(const mafString& filename, mafViewCompound *v,int magnification)
 //----------------------------------------------------------------------------
 {
   for(int i=0; i< v->GetNumberOfSubView(); i++)
@@ -919,18 +921,18 @@ void mafRWIBase::RecursiveSaving(mafString filename, mafViewCompound *v,int magn
     currentView = v->GetSubView(i);
     if(mafViewCompound::SafeDownCast(currentView) != NULL)
     {
-      wxString subViewString;
+      mafString subViewString;
       subViewString.Append(filename);
-      wxString pathName, fileName, extension;
-      wxSplitPath(subViewString,&pathName,&fileName,&extension);
+      mafString pathName, fileName, extension;
+      mafSplitPath(subViewString,&pathName,&fileName,&extension);
 
       subViewString.Clear();
       subViewString.Append(pathName);
-      subViewString.Append("\\");
+      subViewString.Append(_R("\\"));
       subViewString.Append(fileName);
-      subViewString.Append("_");
+      subViewString.Append(_R("_"));
       subViewString.Append(currentView->GetLabel());
-      subViewString.Append(".");
+      subViewString.Append(_R("."));
       subViewString.Append(extension);
 
       RecursiveSaving(subViewString, mafViewCompound::SafeDownCast(currentView), magnification);
@@ -938,15 +940,15 @@ void mafRWIBase::RecursiveSaving(mafString filename, mafViewCompound *v,int magn
     else
     {
       ///////////////////////////////////
-      wxString temp, pathName, fileName, extension;
+      mafString temp, pathName, fileName, extension;
       temp.Append(filename);
-      wxSplitPath(temp,&pathName,&fileName,&extension);
-      fileName.Append(wxString::Format("_%d", i));
+      mafSplitPath(temp,&pathName,&fileName,&extension);
+      fileName.Append(mafString::Format(_R("_%d"), i));
       temp.Clear();
       temp.Append(pathName);
-      temp.Append("\\");
+      temp.Append(_R("\\"));
       temp.Append(fileName);
-      temp.Append(".");
+      temp.Append(_R("."));
       temp.Append(extension);
 
       ::wxBeginBusyCursor();
@@ -1001,48 +1003,48 @@ void mafRWIBase::RecursiveSaving(mafString filename, mafViewCompound *v,int magn
       currentView->GetRWI()->GetRenderWindow()->OffScreenRenderingOff();
       
       extension.MakeLower();
-      if (extension == "bmp")
+      if (extension == _R("bmp"))
       {
         vtkMAFSmartPointer<vtkBMPWriter> w;
         w->SetInput(w2i->GetOutput());
         w->SetPixelPerMeterX(pixelXMeterX);
         w->SetPixelPerMeterY(pixelXMeterY);
-        w->SetFileName(temp.c_str());
+        w->SetFileName(temp.GetCStr());
         w->Write();
       }
-      else if (extension == "jpg")
+      else if (extension == _R("jpg"))
       {
         vtkMAFSmartPointer<vtkJPEGWriter> w;
         w->SetInput(w2i->GetOutput());
-        w->SetFileName(temp.c_str());
+        w->SetFileName(temp.GetCStr());
         w->Write();
       }
-      else if (extension == "tiff")
+      else if (extension == _R("tiff"))
       {
         vtkMAFSmartPointer<vtkTIFFWriter> w;
         w->SetInput(w2i->GetOutput());
-        w->SetFileName(temp.c_str());
+        w->SetFileName(temp.GetCStr());
         w->Write();
       }
-      else if (extension == "ps")
+      else if (extension == _R("ps"))
       {
         vtkMAFSmartPointer<vtkPostScriptWriter> w;
         w->SetInput(w2i->GetOutput());
-        w->SetFileName(temp.c_str());
+        w->SetFileName(temp.GetCStr());
         w->Write();
       }
-      else if (extension == "png")
+      else if (extension == _R("png"))
       {
         vtkMAFSmartPointer<vtkPNGWriter> w;
         w->SetInput(w2i->GetOutput());
         w->SetPixelPerMeterX(pixelXMeterX);
         w->SetPixelPerMeterY(pixelXMeterY);
-        w->SetFileName(temp.c_str());
+        w->SetFileName(temp.GetCStr());
         w->Write();
       }
       else
       {
-        wxMessageBox(_("Image can not be saved. Not valid file!"), _("Warning"));
+        mafWarningMessage(_M(mafString(_L("Image can not be saved. Not valid file!"))));
       }
       ::wxEndBusyCursor();
       ///////////////////////////////////
@@ -1053,33 +1055,35 @@ void mafRWIBase::RecursiveSaving(mafString filename, mafViewCompound *v,int magn
   }
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::SaveAllImages(mafString filename, mafViewCompound *v, int forceExtension)
+void mafRWIBase::SaveAllImages(const mafString& filename_, mafViewCompound *v, int forceExtension)
 //---------------------------------------------------------------------------
 {
   if(v == NULL) return;
-  wxString path, name, ext;
-  wxSplitPath(filename,&path,&name,&ext);
+#pragma message ("argument is modified below, so we need to copy it, refactor")
+  mafString filename = filename_;//argument is modified below, so we need to copy it, refactor
+  mafString path, name, ext;
+  mafSplitPath(filename,&path,&name,&ext);
   if (filename.IsEmpty() || ext.IsEmpty())
   {
-    mafString wildc = "Image (*.jpg)|*.jpg|Image (*.bmp)|*.bmp|Image (*.png)|*.png";
+    mafString wildc = _R("Image (*.jpg)|*.jpg|Image (*.bmp)|*.bmp|Image (*.png)|*.png");
     switch(forceExtension)
     {
     case mafGUIApplicationSettings::JPG :
-      wildc = "Image (*.jpg)|*.jpg";
+      wildc = _R("Image (*.jpg)|*.jpg");
       break;
     case mafGUIApplicationSettings::BMP:
-      wildc = "Image (*.bmp)|*.bmp";
+      wildc = _R("Image (*.bmp)|*.bmp");
       break;
     case mafGUIApplicationSettings::PNG:
-      wildc = "Image (*.png)|*.png";
+      wildc = _R("Image (*.png)|*.png");
       break;
     }
     mafString file;
-    if(!wxDirExists(path))
+    if(!mafDirExists(path))
     {
       file = m_SaveDir;
-      file +=  "\\";
-      filename = mafString(name);
+      file +=  _R("\\");
+      filename = name;
     }
     file.Append(filename);
     file = mafGetSaveFile(file,wildc); 
@@ -1088,29 +1092,28 @@ void mafRWIBase::SaveAllImages(mafString filename, mafViewCompound *v, int force
     filename = file;
   }
 
-  wxString temporary = filename.GetCStr();
-  temporary = temporary.AfterLast('\\').AfterFirst('.');
+  mafString temporary = mafWxToString(filename.toWx().AfterLast('\\').AfterFirst('.'));
 
   switch(forceExtension)
   {
   case mafGUIApplicationSettings::JPG :
-    if(mafString(temporary) != _("jpg"))
-      filename += _(".jpg");
+    if(temporary != _L("jpg"))
+      filename += _L(".jpg");
     break;
   case mafGUIApplicationSettings::BMP:
-    if(mafString(temporary) != _("bmp"))
-      filename += _(".bmp");
+    if(temporary != _L("bmp"))
+      filename += _L(".bmp");
     break;
   case mafGUIApplicationSettings::PNG:
-    if(mafString(temporary) != _("png"))
-      filename += _(".png");
+    if(temporary != _L("png"))
+      filename += _L(".png");
     break;
   }
 
   mafString basename = filename.BaseName();
   if (basename.IsEmpty())
   {
-    filename = m_SaveDir << "\\" << filename;
+    filename = m_SaveDir + _R("\\") + filename;
   }
 
   ::wxBeginBusyCursor();
@@ -1118,23 +1121,23 @@ void mafRWIBase::SaveAllImages(mafString filename, mafViewCompound *v, int force
   wxBitmap imageBitmap;
   v->GetImage(imageBitmap);
 
-  wxSplitPath(filename,&path,&name,&ext);
+  mafSplitPath(filename,&path,&name,&ext);
   ext.MakeLower();
-  if (ext == "bmp")
+  if (ext == _R("bmp"))
   {
-    imageBitmap.SaveFile(filename.GetCStr(), wxBITMAP_TYPE_BMP);
+    imageBitmap.SaveFile(filename.toWx(), wxBITMAP_TYPE_BMP);
   }
-  else if (ext == "jpg")
+  else if (ext == _R("jpg"))
   {
     wxJPEGHandler *jpegHandler = new wxJPEGHandler();
-    jpegHandler->SetName("JPEGHANDLER");
+    jpegHandler->SetName(wxT("JPEGHANDLER"));
     wxImage::AddHandler(jpegHandler);
     wxImage image = imageBitmap.ConvertToImage();
     image.SetOption(_("quality"), 100);
-    image.SaveFile(filename.GetCStr(), wxBITMAP_TYPE_JPEG);
+    image.SaveFile(filename.toWx(), wxBITMAP_TYPE_JPEG);
     wxImage::RemoveHandler("JPEGHANDLER");
   }
-  else if (ext == "png")
+  else if (ext == _R("png"))
   {
     /*wxPNGHandler *pngHandler = new wxPNGHandler();
     pngHandler->SetName("PNGHANDLER");
@@ -1144,7 +1147,7 @@ void mafRWIBase::SaveAllImages(mafString filename, mafViewCompound *v, int force
     image.SaveFile(filename.GetCStr(), wxBITMAP_TYPE_PNG);
     wxImage::RemoveHandler("PNGHANDLER");*/
     
-    std::string fn = filename.GetCStr();
+    std::string fn = filename.toStd();
     fn = fn.substr(0,fn.size()-3);
     fn.append("bmp");
     //imageBitmap.SetDepth(24);
@@ -1162,11 +1165,11 @@ void mafRWIBase::SaveAllImages(mafString filename, mafViewCompound *v, int force
     r->Delete();
     w->Delete();
 
-    wxRemoveFile(fn.c_str());
+    mafFileRemove(_R(fn.c_str()));
   }
   else
   {
-    wxMessageBox("Must save with JPG, BMP of PNG extension");
+    mafWarningMessage(_M("Must save with JPG, BMP or PNG extension"));
   }
   ::wxEndBusyCursor();
 }
@@ -1204,7 +1207,7 @@ void mafRWIBase::SetInteractorStyle(vtkInteractorObserver *o)
 void mafRWIBase::SetStereoMovieDirectory(const char *dir)
 //----------------------------------------------------------------------------
 {
-  m_StereoMovieDir = dir;
+  m_StereoMovieDir = _R(dir);
 }
 //----------------------------------------------------------------------------
 void mafRWIBase::GenerateStereoFrames()
@@ -1222,9 +1225,9 @@ void mafRWIBase::GenerateStereoFrames()
   m_StereoImage->Update();
   mafString filename;
   filename = m_StereoMovieDir;
-  filename += "\\movie_";
-  filename += wxString::Format("%05d",m_StereoMovieFrameCounter);
-  filename += ".png";
+  filename += _R("\\movie_");
+  filename += mafString::Format(_R("%05d"),m_StereoMovieFrameCounter);
+  filename += _R(".png");
   m_StereoMoviewFrameWriter->SetFileName(filename.GetCStr());
   m_StereoMoviewFrameWriter->Write();
   m_StereoMovieFrameCounter++;

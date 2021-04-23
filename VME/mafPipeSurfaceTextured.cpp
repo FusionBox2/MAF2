@@ -163,7 +163,7 @@ void mafPipeSurfaceTextured::Create(mafNode *node, mafView *view/*, bool use_axe
     }
     else
     {
-      mafLogMessage(_("texture info not correctly stored inside material!!"));
+      mafLogMessage(_M(mafString((_L("texture info not correctly stored inside material!!")))));
     }
   }
 
@@ -333,32 +333,32 @@ void mafPipeSurfaceTextured::UpdateProperty(bool fromTag)
 mafGUI *mafPipeSurfaceTextured::CreateGui()
 //----------------------------------------------------------------------------
 {
-  wxString mapping_mode[3] = {"Plane", "Cylinder","Sphere"};
+  mafString mapping_mode[3] = {_R("Plane"), _R("Cylinder"),_R("Sphere")};
 
   assert(m_Gui == NULL);
   m_Gui = new mafGUI(this);
-  m_Gui->Bool(ID_RENDERING_DISPLAY_LIST,"displaylist",&m_RenderingDisplayListFlag,0,"turn on/off \nrendering displaylist calculation");
-  m_Gui->Bool(ID_SCALAR_VISIBILITY,"scalar vis.", &m_ScalarVisibility,0,"turn on/off the scalar visibility");
+  m_Gui->Bool(ID_RENDERING_DISPLAY_LIST,_R("displaylist"),&m_RenderingDisplayListFlag,0,_R("turn on/off \nrendering displaylist calculation"));
+  m_Gui->Bool(ID_SCALAR_VISIBILITY,_R("scalar vis."), &m_ScalarVisibility,0,_R("turn on/off the scalar visibility"));
   m_Gui->Divider();
-  m_Gui->Bool(ID_USE_VTK_PROPERTY,"property",&m_UseVTKProperty);
+  m_Gui->Bool(ID_USE_VTK_PROPERTY,_R("property"),&m_UseVTKProperty);
   m_MaterialButton = new mafGUIMaterialButton(m_Vme,this);
   m_Gui->AddGui(m_MaterialButton->GetGui());
   m_MaterialButton->Enable(m_UseVTKProperty != 0);
   m_Gui->Divider();
-  m_Gui->Bool(ID_USE_TEXTURE,"texture",&m_UseTexture);
-  m_Gui->Button(ID_CHOOSE_TEXTURE,"texture");
+  m_Gui->Bool(ID_USE_TEXTURE,_R("texture"),&m_UseTexture);
+  m_Gui->Button(ID_CHOOSE_TEXTURE,_R("texture"));
   mafVMEOutputSurface *surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
   //m_Gui->Combo(ID_TEXTURE_MAPPING_MODE,"mapping",&surface_output->GetMaterial()->m_TextureMappingMode,3,mapping_mode);
   m_Gui->Enable(ID_CHOOSE_TEXTURE,m_UseTexture != 0);
   m_Gui->Enable(ID_TEXTURE_MAPPING_MODE,m_UseTexture != 0);
   m_Gui->Enable(ID_TEXTURE_MAPPING_MODE,m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_TEXTURE && m_UseTexture != 0);
   m_Gui->Divider();
-  m_Gui->Bool(ID_USE_LOOKUP_TABLE,"lut",&m_UseLookupTable);
-  m_Gui->Lut(ID_LUT,"lut",m_SurfaceMaterial->m_ColorLut);
+  m_Gui->Bool(ID_USE_LOOKUP_TABLE,_R("lut"),&m_UseLookupTable);
+  m_Gui->Lut(ID_LUT,_R("lut"),m_SurfaceMaterial->m_ColorLut);
   m_Gui->Enable(ID_LUT,m_UseLookupTable != 0);
   m_Gui->Divider(2);
-  m_Gui->Bool(ID_ENABLE_LOD,"LOD",&m_EnableActorLOD);
-  m_Gui->Label("");
+  m_Gui->Bool(ID_ENABLE_LOD,_R("LOD"),&m_EnableActorLOD);
+  m_Gui->Label(_R(""));
 
   if (m_SurfaceMaterial == NULL)
   {
@@ -436,7 +436,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
       break;
       case ID_CHOOSE_TEXTURE:
       {
-        mafString title = "Choose texture";
+        mafString title = _R("Choose texture");
         e->SetId(VME_CHOOSE);
         e->SetArg((long)&mafPipeSurfaceTextured::ImageAccept);
         e->SetString(&title);

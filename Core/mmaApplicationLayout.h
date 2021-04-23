@@ -79,9 +79,9 @@ public:
   int GetNumberOfViewsInLayout() {return m_LayoutViewList.size();};
 
   /** Set a label to associate to the saved layout.*/
-  void SetLayoutName(const char *name);
+  void SetLayoutName(const mafString& name);
 
-  const char *GetLayoutName() {return m_LayoutName.GetCStr();};
+  const mafString& GetLayoutName() {return m_LayoutName;};
 
   /** Clear current layout.*/
   void ClearLayout();
@@ -93,7 +93,7 @@ public:
   void GetApplicationInfo(int &maximized, int pos[2], int size[2]);
 
   /** Set the visibility for the corresponding interface element.*/
-  void SetInterfaceElementVisibility(mafString panel_name, int visibility);
+  void SetInterfaceElementVisibility(const mafString& panel_name, int visibility);
 
   std::vector<ViewLayoutInfo>::iterator GetLayoutList() {return m_LayoutViewList.begin();};
 

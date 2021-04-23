@@ -51,11 +51,11 @@ mafOpEditMetadata::mafOpEditMetadata(const mafString& label) : Superclass(label)
   m_OldTagArray   = NULL;
   m_SelectedTag   = NULL;
 
-  m_TagName = _("Name");
+  m_TagName = _L("Name");
   m_TagType = mafOpEditMetadata::NUMERIC_TAG;
   m_TagMulteplicity   = 1;
   m_TagComponent      = 0;
-  m_TagValueAsString  = "0";
+  m_TagValueAsString  = _R("0");
   m_TagValueAsDouble  = 0.0;
 }
 
@@ -111,12 +111,12 @@ void mafOpEditMetadata::OpRun()
 
 	if (buildHelpGui.GetArg() == true)
 	{
-		m_Gui->Button(ID_HELP, "Help","");	
+		m_Gui->Button(ID_HELP, _R("Help"), _R(""));
 	}
 
-    m_MetadataList = m_Gui->ListBox(ID_METADATA_LIST,"",120);
+    m_MetadataList = m_Gui->ListBox(ID_METADATA_LIST, _R(""),120);
     for (int t=0; t<tag_list.size();t++)
-      m_MetadataList->Insert(tag_list[t].GetCStr(),0);
+      m_MetadataList->Insert(tag_list[t].toWx(),0);
 
     if (!m_MetadataList->IsEmpty())
     {
@@ -124,17 +124,17 @@ void mafOpEditMetadata::OpRun()
       SelectTag(m_MetadataList->GetString(0).c_str());
     }
 
-    mafString tag_type[2] = {_("numeric"),_("string")};
+    mafString tag_type[2] = {_L("numeric"),_L("string")};
 
-    m_Gui->Button(ID_ADD_METADATA,_("Add"));
-    m_Gui->Button(ID_REMOVE_METADATA,_("Remove"));
+    m_Gui->Button(ID_ADD_METADATA,_L("Add"));
+    m_Gui->Button(ID_REMOVE_METADATA,_L("Remove"));
     m_Gui->Divider(2);
-    m_Gui->String(ID_TAG_NAME,_("name"),&m_TagName);
-    m_Gui->Combo(ID_TAG_TYPE,_("type"),&m_TagType,2,tag_type);
-    m_Gui->Integer(ID_TAG_MULTEPLICITY,_("multep."),&m_TagMulteplicity,1);
-    m_Gui->Integer(ID_TAG_COMPONENT,_("comp"),&m_TagComponent,0);
-    m_Gui->Double(ID_TAG_DOUBLE_VALUE,_("num. value"),&m_TagValueAsDouble);
-    m_Gui->String(ID_TAG_STRING_VALUE,_("string value"),&m_TagValueAsString);
+    m_Gui->String(ID_TAG_NAME,_L("name"),&m_TagName);
+    m_Gui->Combo(ID_TAG_TYPE,_L("type"),&m_TagType,2,tag_type);
+    m_Gui->Integer(ID_TAG_MULTEPLICITY,_L("multep."),&m_TagMulteplicity,1);
+    m_Gui->Integer(ID_TAG_COMPONENT,_L("comp"),&m_TagComponent,0);
+    m_Gui->Double(ID_TAG_DOUBLE_VALUE,_L("num. value"),&m_TagValueAsDouble);
+    m_Gui->String(ID_TAG_STRING_VALUE,_L("string value"),&m_TagValueAsString);
 
     EnableWidgets();
     m_Gui->OkCancel();
@@ -148,7 +148,7 @@ void mafOpEditMetadata::OpRun()
 void mafOpEditMetadata::SelectTag(const char *tag_name)
 //----------------------------------------------------------------------------
 {
-  m_SelectedTag = m_TagArray->GetTag(tag_name);
+  m_SelectedTag = m_TagArray->GetTag(_R(tag_name));
   if (m_SelectedTag == NULL)
   {
     wxMessageBox(_("Try to select a not existing Tag!"), _("Warning"));
@@ -209,7 +209,7 @@ void mafOpEditMetadata::OnEvent(mafEventBase *maf_event)
       break;
       case ID_ADD_METADATA:
       {
-        m_TagName = "New Tag";
+        m_TagName = _R("New Tag");
         AddNewTag(m_TagName);
         m_Gui->Update();
       }
@@ -285,12 +285,12 @@ void mafOpEditMetadata::SetTagName(const char *name)
 {
   mafTagItem new_named_tag;
   new_named_tag = *m_SelectedTag;
-  new_named_tag.SetName(name);
+  new_named_tag.SetName(_R(name));
   m_TagArray->DeleteTag(m_SelectedTag->GetName());
   m_TagArray->SetTag(new_named_tag);
   if(!m_TestMode)
   {
-    m_SelectedTag = m_TagArray->GetTag(name);
+    m_SelectedTag = m_TagArray->GetTag(_R(name));
     int sel = m_MetadataList->GetSelection();
     m_MetadataList->SetString(sel,name);
 
@@ -331,39 +331,39 @@ void mafOpEditMetadata::AddNewTag(mafString &name)
 {
   int n = -1;
   m_TagName = name;
-  wxString new_name;
+  mafString new_name;
   new_name = m_TagName;
   m_TagType = mafOpEditMetadata::NUMERIC_TAG;
   m_TagMulteplicity   = 1;
   m_TagComponent      = 0;
-  m_TagValueAsString  = "0";
+  m_TagValueAsString  = _R("0");
   m_TagValueAsDouble  = 0.0;
 
   m_SelectedTag = new mafTagItem();
-  m_SelectedTag->SetName(new_name.c_str());
+  m_SelectedTag->SetName(new_name);
   m_SelectedTag->SetType(m_TagType+1);
   m_SelectedTag->SetNumberOfComponents(m_TagMulteplicity);
   m_SelectedTag->SetComponent(m_TagValueAsDouble,m_TagComponent);
   bool tag_present = false;
-  while (m_TagArray->GetTag(new_name.c_str()))
+  while (m_TagArray->GetTag(new_name))
   {
     tag_present = true;
     new_name = m_TagName;
-    new_name << n++;
+    new_name += mafToString(n++);
   }
   if (tag_present)
   {
     wxString msg = _("Tag named ");
-    msg << m_TagName.GetCStr();
+    msg << m_TagName.toWx();
     msg << " renamed in ";
-    msg << new_name;
+    msg << new_name.GetCStr();
     msg <<" because already exists!";
     wxMessageBox(msg, _("Warning"));
   }
   if(!m_TestMode)
-    m_MetadataList->Insert(new_name, m_MetadataList->GetCount());
+    m_MetadataList->Insert(new_name.toWx(), m_MetadataList->GetCount());
   m_TagName = new_name;
-  m_SelectedTag->SetName(m_TagName.GetCStr());
+  m_SelectedTag->SetName(m_TagName);
   m_TagArray->SetTag(*m_SelectedTag);
   cppDEL(m_SelectedTag);
   SelectTag(m_TagName.GetCStr());

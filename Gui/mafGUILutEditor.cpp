@@ -94,22 +94,22 @@ mafGUILutEditor::mafGUILutEditor(wxWindow* parent, wxWindowID id, const wxPoint&
   m_NewUserLutName = "New User Preset";
   m_Info = "" ;
   
-  m_UserLutLibraryDir = (mafGetApplicationDirectory() + "\\UserDefinedLookupTables\\").c_str();
+  m_UserLutLibraryDir = mafGetApplicationDirectory() + _R("\\UserDefinedLookupTables\\");
 
-  if (wxDirExists(m_UserLutLibraryDir.c_str()))
+  if (mafDirExists(m_UserLutLibraryDir))
   {
-    mafLogMessage("User lut library found! Loading...");
+    mafLogMessage(_M("User lut library found! Loading..."));
   } 
   else
   {
-    mafLogMessage("User lut library not found! Creating new one...");
-    wxMkdir(m_UserLutLibraryDir.c_str());
+    mafLogMessage(_M("User lut library not found! Creating new one..."));
+    mafDirMake(m_UserLutLibraryDir);
   }
 
-  assert(wxDirExists(m_UserLutLibraryDir.c_str()));
+  assert(mafDirExists(m_UserLutLibraryDir));
 
   m_UserLutLibrary = new mafLUTLibrary;
-  m_UserLutLibrary->SetDir(m_UserLutLibraryDir.c_str());
+  m_UserLutLibrary->SetDir(m_UserLutLibraryDir);
   m_UserLutLibrary->Load();
 
 	wxArrayString presetsLutNames;
@@ -123,8 +123,7 @@ mafGUILutEditor::mafGUILutEditor(wxWindow* parent, wxWindowID id, const wxPoint&
 
   int userLutPresetNum = m_UserLutLibrary->GetNumberOfLuts();
   
-  std::vector<std::string> lutNames;
-  m_UserLutLibrary->GetLutNames(lutNames);
+  std::vector<mafString> lutNames = m_UserLutLibrary->GetLutNames();
 
   wxArrayString userLutNames;
 
@@ -133,7 +132,7 @@ mafGUILutEditor::mafGUILutEditor(wxWindow* parent, wxWindowID id, const wxPoint&
 
   for (int id = 0; id < userLutPresetNum-1; id++) 
   { 
-    userLutNames.Add(lutNames[id].c_str());
+    userLutNames.Add(lutNames[id].toWx());
   }
   
   wxFont bold_font = wxFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
@@ -182,7 +181,7 @@ mafGUILutEditor::mafGUILutEditor(wxWindow* parent, wxWindowID id, const wxPoint&
   // sizer->Add( labelUserPresets, 0, wxALL, M);
 
   mafGUIButton  *buttonSetUserLUT;
-  buttonSetUserLUT = new mafGUIButton(this, ID_ADD_TO_ULIB, _("Set"),dp, wxSize(LW,BH) );
+  buttonSetUserLUT = new mafGUIButton(this, ID_ADD_TO_ULIB, _L("Set"),dp, wxSize(LW,BH) );
   buttonSetUserLUT->SetValidator( mafGUIValidator(this,ID_ADD_TO_ULIB,buttonSetUserLUT) );
 
   wxTextCtrl *textNewUserLUTName;
@@ -198,7 +197,7 @@ mafGUILutEditor::mafGUILutEditor(wxWindow* parent, wxWindowID id, const wxPoint&
 
   
   mafGUIButton  *buttonRemoveFromUserLUTS;
-  buttonRemoveFromUserLUTS = new mafGUIButton(this, ID_REMOVE_FROM_ULIB, _("Remove"),dp, wxSize(DW,BH) );
+  buttonRemoveFromUserLUTS = new mafGUIButton(this, ID_REMOVE_FROM_ULIB, _L("Remove"),dp, wxSize(DW,BH) );
   buttonRemoveFromUserLUTS->SetValidator( mafGUIValidator(this,ID_REMOVE_FROM_ULIB,buttonRemoveFromUserLUTS) );  
 
   wxStaticText *staticTextSelectUserLut = new wxStaticText (this, -1, _("select user LUT"), dp, wxSize(LW,LH), wxALIGN_RIGHT );
@@ -247,11 +246,11 @@ mafGUILutEditor::mafGUILutEditor(wxWindow* parent, wxWindowID id, const wxPoint&
 // 	sizer->Add( lab, 0, wxALL, M);
 	sz = new wxBoxSizer(wxHORIZONTAL);
 
-  butt = new mafGUIButton(this, ID_SHADE_RGB, _("shade in rgba space"),dp, wxSize(143,BH) );
+  butt = new mafGUIButton(this, ID_SHADE_RGB, _L("shade in rgba space"),dp, wxSize(143,BH) );
 	butt->SetValidator( mafGUIValidator(this,ID_SHADE_RGB,butt) );
 	sz->Add( butt, 0, wxRIGHT, 2);
 
-  butt = new mafGUIButton(this, ID_SHADE_HSV, _("shade in hsva space"),dp, wxSize(143,BH) );
+  butt = new mafGUIButton(this, ID_SHADE_HSV, _L("shade in hsva space"),dp, wxSize(143,BH) );
 	butt->SetValidator( mafGUIValidator(this,ID_SHADE_HSV,butt) );
 	sz->Add( butt, 0);
   sizer->Add(sz,0,wxALL, M);
@@ -267,15 +266,15 @@ mafGUILutEditor::mafGUILutEditor(wxWindow* parent, wxWindowID id, const wxPoint&
   if(m_parent->IsKindOf(CLASSINFO(wxDialog)))
   {
 	  sz = new wxBoxSizer(wxHORIZONTAL);
-    butt = new mafGUIButton(this, ID_OK, _("ok"),dp, wxSize(96,BH) );
+    butt = new mafGUIButton(this, ID_OK, _L("ok"),dp, wxSize(96,BH) );
 	  butt->SetValidator( mafGUIValidator(this,ID_OK,butt) );
 	  sz->Add( butt, 0, wxRIGHT, 2);
 
-    butt = new mafGUIButton(this, ID_CANCEL, _("cancel"),dp, wxSize(96,BH) );
+    butt = new mafGUIButton(this, ID_CANCEL, _L("cancel"),dp, wxSize(96,BH) );
 	  butt->SetValidator( mafGUIValidator(this,ID_CANCEL,butt) );
 	  sz->Add( butt, 0, wxRIGHT, 2);
 
-    butt = new mafGUIButton(this, ID_APPLY, _("apply"),dp, wxSize(96,BH) );
+    butt = new mafGUIButton(this, ID_APPLY, _L("apply"),dp, wxSize(96,BH) );
 	  butt->SetValidator( mafGUIValidator(this,ID_APPLY,butt) );
 	  sz->Add( butt, 0);
     sizer->Add(sz,0,wxALL, M);
@@ -337,15 +336,15 @@ void mafGUILutEditor::OnEvent(mafEventBase *maf_event)
 
       case ID_NEW_USER_LUT_NAME:
       {
-        mafLogMessage("ID_NEW_USER_LUT_NAME");
+        mafLogMessage(_M("ID_NEW_USER_LUT_NAME"));
       }
       break;
 
       case ID_ADD_TO_ULIB:
       {
-        mafLogMessage("ID_ADD_TO_ULIB");
-        m_UserLutLibrary->Add(m_Lut, m_NewUserLutName.c_str());
-        int id = m_UserPresetCombo->FindString(m_NewUserLutName.c_str());
+        mafLogMessage(_M("ID_ADD_TO_ULIB"));
+        m_UserLutLibrary->Add(m_Lut, mafWxToString(m_NewUserLutName));
+        int id = m_UserPresetCombo->FindString(m_NewUserLutName);
         if (id != -1)
         {
           // the item  already exists and it will not be added to the combo
@@ -363,12 +362,12 @@ void mafGUILutEditor::OnEvent(mafEventBase *maf_event)
           return;
         }
 
-        mafLogMessage("ID_REMOVE_FROM_ULIB");
-        m_UserLutLibrary->Add(m_Lut, m_NewUserLutName.c_str());
+        mafLogMessage(_M("ID_REMOVE_FROM_ULIB"));
+        m_UserLutLibrary->Add(m_Lut, mafWxToString(m_NewUserLutName));
         int id = m_UserPresetCombo->GetSelection();
         wxString sel = m_UserPresetCombo->GetString(id) ;
         m_UserPresetCombo->Delete(id);
-        m_UserLutLibrary->Remove(sel.c_str());
+        m_UserLutLibrary->Remove(mafWxToString(sel));
 
       }
       break;
@@ -380,17 +379,17 @@ void mafGUILutEditor::OnEvent(mafEventBase *maf_event)
           return;
         }
 
-        mafLogMessage("ID_USER_PRESET");
+        mafLogMessage(_M("ID_USER_PRESET"));
         int id = m_UserPresetCombo->GetSelection();
-        wxString sel = m_UserPresetCombo->GetString(id) ;
-        mafLogMessage(sel.c_str());
+        mafString sel = mafWxToString(m_UserPresetCombo->GetString(id));
+        mafLogMessage(_M(sel));
 				double range[2];
 				range[0]=m_Lut->GetRange()[0];
 				range[1]=m_Lut->GetRange()[1];
-				m_Lut->DeepCopy(m_UserLutLibrary->GetLutByName(sel.c_str()));
+				m_Lut->DeepCopy(m_UserLutLibrary->GetLutByName(sel));
 				m_Lut->SetRange(range);
 				
-        m_NewUserLutName = sel.c_str();
+        m_NewUserLutName = sel.toWx();
         UpdateWidgetsOnLutChange();
       }
       break;
@@ -526,7 +525,7 @@ void mafGUILutEditor::ShowLutDialog(vtkLookupTable *lut, mafBaseEventHandler *li
 //----------------------------------------------------------------------------
 {
   long style = wxDEFAULT_DIALOG_STYLE | wxNO_FULL_REPAINT_ON_RESIZE | wxCLIP_CHILDREN;
-  mafGUIDialog dlg(_("LutEditor"), mafCLOSEWINDOW);
+  mafGUIDialog dlg(_L("LutEditor"), mafCLOSEWINDOW);
   
   int x_init,y_init;
   x_init = mafGetFrame()->GetPosition().x;

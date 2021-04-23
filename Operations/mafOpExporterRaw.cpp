@@ -57,13 +57,13 @@ mafOpExporterRAW::mafOpExporterRAW(const mafString& label) : Superclass(label)
 {
   m_OpType = OPTYPE_EXPORTER;
   m_Canundo = true;
-  m_FileName = "";
-	m_FileNameZ = "";
+  m_FileName = _R("");
+	m_FileNameZ = _R("");
   m_Input = NULL;
 	m_SingleFile = 1;
 	m_Offset = 0;
 
-	m_ProposedDirectory = "";//mafGetApplicationDirectory().c_str();
+	m_ProposedDirectory = _R("");//mafGetApplicationDirectory().c_str();
 }
 //----------------------------------------------------------------------------
 mafOpExporterRAW::~mafOpExporterRAW()
@@ -90,22 +90,22 @@ void mafOpExporterRAW::OpRun()
 //----------------------------------------------------------------------------
 {
 	m_ProposedDirectory += m_Input->GetName();
-	m_ProposedDirectory += ".raw";
+	m_ProposedDirectory += _R(".raw");
 	if(!m_TestMode)
 	{
-		mafString wildc = "raw file (*.raw)|*.raw";
+		mafString wildc = _R("raw file (*.raw)|*.raw");
 		m_FileName = mafGetSaveFile(m_ProposedDirectory,wildc);
 
 		//Crete GUI
 		m_Gui = new mafGUI(this);
 		m_Gui->SetListener(this);
 
-		m_Gui->Bool(ID_SINGLE_FILE,"single file",&m_SingleFile);
+		m_Gui->Bool(ID_SINGLE_FILE,_R("single file"),&m_SingleFile);
 		m_Gui->Divider();
 
-		m_Gui->Integer(ID_INT,"slice offset: ", &m_Offset,MININT,MAXINT,"only if not single file");
+		m_Gui->Integer(ID_INT,_R("slice offset: "), &m_Offset,MININT,MAXINT,_R("only if not single file"));
 
-		m_Gui->Label("");
+		m_Gui->Label(_R(""));
 		m_Gui->OkCancel(); 
 
 		m_Gui->Enable(ID_INT,false);
@@ -121,7 +121,7 @@ void mafOpExporterRAW::OpDo()
 //----------------------------------------------------------------------------
 {					
 	assert(m_Input);
-	assert(m_FileName != "");
+	assert(!m_FileName.IsEmpty());
 	this->SaveVolume();
 }
 
@@ -129,9 +129,9 @@ void mafOpExporterRAW::OpDo()
 void mafOpExporterRAW::SaveVolume()
 //----------------------------------------------------------------------------
 {
-	wxString path,name,ext;
-	::wxSplitPath(m_FileName,&path,&name,&ext);
-	path+= _("\\");
+	mafString path,name,ext;
+	mafSplitPath(m_FileName,&path,&name,&ext);
+	path+= _L("\\");
 	if(!m_TestMode)
 		wxBusyInfo wait("Please wait, working...");
 	
@@ -151,12 +151,12 @@ void mafOpExporterRAW::SaveVolume()
 		vtkImageWriter *exporter = vtkImageWriter::New();
 		exporter->SetInput(ImageData);
 
-		wxString prefix;
+		mafString prefix;
 
 		//if the data RAW are saved in a single file
 		if (m_SingleFile)
 		{
-			prefix = wxString::Format("%s%s_%dx%dx%d",path,name,xdim,ydim,zdim);
+			prefix = path + name + mafString::Format(_R("_%dx%dx%d"),xdim,ydim,zdim);
 			
 			exporter->SetFileDimensionality(3); 
 			exporter->SetFilePattern("%s.raw");					
@@ -166,14 +166,14 @@ void mafOpExporterRAW::SaveVolume()
 		//if the data RAW are saved in a different file for each slice
 		else 
 		{
-			prefix = wxString::Format("%s%s_%dx%d",path,name,xdim,ydim);
+			prefix = path + name + mafString::Format(_R("_%dx%d"),xdim,ydim);
 
 			exporter->SetFileDimensionality(2); // the writer will create a number of 2D images
 			exporter->SetFilePattern("%s_%04d.raw");
 		}
 		
-		char *c_prefix = (char*)( prefix.c_str() ); 
-		exporter->SetFilePrefix(c_prefix);
+#pragma message ("Strange requeirement for const_cast")
+		exporter->SetFilePrefix(const_cast<char*>((const char*)prefix.GetCStr()));
 		exporter->Write();
 
 		//if the user choose a numeration of the slices files not starting with zero: 
@@ -185,15 +185,15 @@ void mafOpExporterRAW::SaveVolume()
 
 			wxString name_file, old_name, new_name;
 
-			directory->Open(path);
+			directory->Open(path.GetCStr());
 			int number_files = directory->GetNumberOfFiles();
 
 			for (int i=0;i<number_files; i++)
 			{
 				name_file = directory->GetFile(i);
-				old_name = path + name_file;
+				old_name = path.toWx() + name_file;
 
-				if ((name_file.Find(name)) >= 0)
+				if ((name_file.Find(name.GetCStr())) >= 0)
 				{
 					wxString numeration = name_file.AfterLast('_');
 		
@@ -207,7 +207,7 @@ void mafOpExporterRAW::SaveVolume()
 						wxString new_numeration;
 						new_numeration = wxString::Format("%04d",value);
 						name_file.Replace(numeration, new_numeration);	
-						new_name = path + name_file;
+						new_name = path.toWx() + name_file;
 
 						rename(old_name,new_name);										
 					}
@@ -270,25 +270,22 @@ void mafOpExporterRAW::SaveVolume()
 
 			int num_of_slices = z_coords->GetNumberOfTuples(); 
 		
-			const char* nome;
 			std::ofstream f_out;
 			if(!m_TestMode)
 			{
 				//saving the z coordinates in a file
 				mafString proposed = mafGetApplicationDirectory();
-				proposed += _("/Data/External/");
-				proposed += _("Z_coordinates_");
+				proposed += _L("/Data/External/");
+				proposed += _L("Z_coordinates_");
 				proposed += m_Input->GetName();
-				proposed += _(".txt");
-				mafString wildc = _("txt file (*.txt)|*.txt");
+				proposed += _L(".txt");
+				mafString wildc = _L("txt file (*.txt)|*.txt");
 				mafString file = mafGetSaveFile(proposed,wildc);   
-				nome = (file);
-				f_out.open(nome);
+				f_out.open(file.GetCStr());
 			}
 			else
 			{
-				nome = m_FileNameZ;
-				f_out.open(nome);
+				f_out.open(m_FileNameZ.GetCStr());
 			} 
 					
 			f_out<< "Z coordinates:"<<"\n";
@@ -322,8 +319,8 @@ void mafOpExporterRAW::SaveVolume()
 			int a[3];
 			StructuredPoints->GetDimensions(a);
 
-			wxString filename = wxString::Format("%s%s_%dx%dx%d.raw",path,name,xdim,ydim,zdim);							
-			exporter->SetFileName(filename);
+			mafString filename = path + name + mafString::Format(_R("_%dx%dx%d.raw"),xdim,ydim,zdim);							
+			exporter->SetFileName(filename.GetCStr());
 			exporter->SetFileDimensionality(3);
 
 			exporter->Write();
@@ -360,20 +357,18 @@ void mafOpExporterRAW::SaveVolume()
 
 			int num_of_slices = z_coords->GetNumberOfTuples(); 
 				
-			const char* nome;
 			if(!m_TestMode)
 			{
 				//saving the z coordinates in a file
 				mafString proposed = mafGetApplicationDirectory();
-				proposed += _("/Data/External/");
-				proposed += _("Z_coordinates_");
+				proposed += _L("/Data/External/");
+				proposed += _L("Z_coordinates_");
 				proposed += m_Input->GetName();
-				proposed += _(".txt");
-				mafString wildc = _("txt file (*.txt)|*.txt");
+				proposed += _L(".txt");
+				mafString wildc = _L("txt file (*.txt)|*.txt");
 				mafString file = mafGetSaveFile(proposed,wildc);   
-				nome = (file);
 				std::ofstream f_out;
-				f_out.open(nome);
+				f_out.open(file.GetCStr());
 					
 				f_out<< "Z coordinates:"<<"\n";
 
@@ -385,9 +380,8 @@ void mafOpExporterRAW::SaveVolume()
 			}
 			else
 			{
-				nome = m_FileNameZ;
 				std::ofstream f_out;
-				f_out.open(nome);
+				f_out.open(m_FileNameZ.GetCStr());
 					
 				f_out<< "Z coordinates:"<<"\n";
 
@@ -422,8 +416,8 @@ void mafOpExporterRAW::SaveVolume()
 				StructuredPoints->Update();
 				exporter->Modified();								
 								
-				wxString filename = wxString::Format("%s%s_%dx%d_%04d.raw",path,name,xdim,ydim,i);							
-				exporter->SetFileName(filename);
+				mafString filename = path + name + mafString::Format(_R("_%dx%d_%04d.raw"),xdim,ydim,i);							
+				exporter->SetFileName(filename.GetCStr());
 
 				exporter->Write();
 
@@ -438,15 +432,15 @@ void mafOpExporterRAW::SaveVolume()
 				vtkSmartPointer<vtkDirectory> directory;
 				wxString name_file, old_name, new_name;
 
-				directory->Open(path);
+				directory->Open(path.GetCStr());
 				int number_files = directory->GetNumberOfFiles();
 
 				for (int i=0;i<number_files; i++)
 				{
 					name_file = directory->GetFile(i);
-					old_name = path + name_file;
+					old_name = path.toWx() + name_file;
 
-					if ((name_file.Find(name)) >= 0)
+					if ((name_file.Find(name.GetCStr())) >= 0)
 					{
 						wxString numeration = name_file.AfterLast('_');
 
@@ -460,7 +454,7 @@ void mafOpExporterRAW::SaveVolume()
 							wxString new_numeration;
 							new_numeration = wxString::Format("%04d",value);
 							name_file.Replace(numeration, new_numeration);	
-							new_name = path + name_file;
+							new_name = path.toWx() + name_file;
 
 							rename(old_name,new_name);										
 						}

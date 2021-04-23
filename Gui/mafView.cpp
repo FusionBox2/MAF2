@@ -44,7 +44,7 @@ mafCxxTypeMacro(mafView);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafView::mafView(const mafString& label):m_Label(label), m_Name("")
+mafView::mafView(const mafString& label):m_Label(label), m_Name(_R(""))
 //----------------------------------------------------------------------------
 {
 	m_Win						= NULL;
@@ -67,7 +67,7 @@ mafView::mafView(const mafString& label):m_Label(label), m_Name("")
   m_Slice[0] = m_Slice[1] = m_Slice[2] =  0.;
   m_Normal[0] = m_Normal[1] = m_Normal[2] =  0.;
 
-  m_HTMLText = "";
+  m_HTMLText = _R("");
   m_LightCopyEnabled = false;
 }
 //----------------------------------------------------------------------------
@@ -86,10 +86,11 @@ void mafView::OnEvent(mafEventBase *maf_event)
     {
       case ID_PRINT_INFO:
       {
-        std::strstream ss1;
-        Print(ss1);
-        ss1 << std::ends;  
-        mafLogMessage("[VIEW PRINTOUT:]\n%s\n", ss1.str()); 
+        std::stringstream stringStream;
+        stringStream << "[VIEW PRINTOUT:]\n";
+        Print(stringStream);
+        stringStream << std::endl;  
+        mafLogMessage(_M(stringStream.str().c_str()));
       }
       break;
 		
@@ -120,10 +121,10 @@ mafGUI* mafView::CreateGui()
   assert(m_Gui == NULL);
   m_Gui = new mafGUI(this);
 
-  mafString type_name = GetTypeName();
+  mafString type_name = _R(GetTypeName());
   
   if((*GetMAFExpertMode()) == TRUE) 
-    m_Gui->Button(ID_PRINT_INFO, type_name, "", "Print view debug information");
+    m_Gui->Button(ID_PRINT_INFO, type_name, _R(""), _R("Print view debug information"));
 
   mafEvent buildHelpGui;
   buildHelpGui.SetSender(this);
@@ -132,7 +133,7 @@ mafGUI* mafView::CreateGui()
 
   if (buildHelpGui.GetArg() == true)
   {
-	  m_Gui->Button(ID_HELP, "Help","");	
+	  m_Gui->Button(ID_HELP, _R("Help"),_R(""));	
   }
 
   return m_Gui;

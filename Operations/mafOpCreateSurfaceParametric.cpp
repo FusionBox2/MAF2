@@ -68,7 +68,7 @@ void mafOpCreateSurfaceParametric::OpRun()
 //----------------------------------------------------------------------------
 {
   mafNEW(m_SurfaceParametric);
-  m_SurfaceParametric->SetName("Surface Parametric");
+  m_SurfaceParametric->SetName(_R("Surface Parametric"));
   m_Output = m_SurfaceParametric;
   mafEventMacro(mafEvent(this,OP_RUN_OK));
 }

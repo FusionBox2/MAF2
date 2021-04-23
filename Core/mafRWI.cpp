@@ -88,7 +88,7 @@ mafRWI::mafRWI()
 	m_BGColour  = wxColour(DEFAULT_BG_COLOR * 255,DEFAULT_BG_COLOR * 255,DEFAULT_BG_COLOR * 255);
 	m_GridColour= wxColour(DEFAULT_GRID_COLOR * 255,DEFAULT_GRID_COLOR * 255,DEFAULT_GRID_COLOR * 255);
 
-	m_StereoMovieDir    = "";
+	m_StereoMovieDir    = _R("");
 	m_StereoMovieEnable = 0;
 
 	m_ShowProfilingInformation = 0;
@@ -129,7 +129,7 @@ mafRWI::mafRWI(wxWindow *parent, RWI_LAYERS layers, bool use_grid, bool show_axe
 	m_BGColour  = wxColour(DEFAULT_BG_COLOR * 255,DEFAULT_BG_COLOR * 255,DEFAULT_BG_COLOR * 255);
 	m_GridColour= wxColour(DEFAULT_GRID_COLOR * 255,DEFAULT_GRID_COLOR * 255,DEFAULT_GRID_COLOR * 255);
 
-	m_StereoMovieDir    = "";
+	m_StereoMovieDir    = _R("");
 	m_StereoMovieEnable = 0;
 	m_ShowProfilingInformation = 0;
 
@@ -632,7 +632,7 @@ void mafRWI::SetStereo(int stereo_type)
 {
 	if(m_RenBack) 
 	{
-		mafLogMessage("WARNING: SetStereo is disabled for RWI with two layers");
+		mafLogMessage(_M("WARNING: SetStereo is disabled for RWI with two layers"));
 		return;
 	}
 
@@ -978,7 +978,7 @@ enum RWI_WIDGET_ID
 mafGUI *mafRWI::CreateGui()
 //-------------------------------------------------------------------------
 {
-	mafString grid_normal[3] = {"X axes","Y axes","Z axes"};
+	mafString grid_normal[3] = {_R("X axes"),_R("Y axes"),_R("Z axes")};
 
 	assert(m_Gui == NULL);
 	m_Gui = new mafGUI(this);
@@ -986,56 +986,56 @@ mafGUI *mafRWI::CreateGui()
 	if (m_Camera->GetParallelProjection() == 0)
 	{
 		m_Sizer =  new wxBoxSizer( wxHORIZONTAL );
-		m_CameraButtons[0] = new mafGUIPicButton(m_Gui, "PIC_BOTTOM",ID_CAMERA_BOTTOM, this);
-		m_CameraButtons[1] = new mafGUIPicButton(m_Gui, "PIC_TOP",   ID_CAMERA_TOP,    this);
-		m_CameraButtons[2] = new mafGUIPicButton(m_Gui, "PIC_BACK",  ID_CAMERA_BACK,   this);
-		m_CameraButtons[3] = new mafGUIPicButton(m_Gui, "PIC_FRONT", ID_CAMERA_FRONT,  this);
-		m_CameraButtons[4] = new mafGUIPicButton(m_Gui, "PIC_LEFT",  ID_CAMERA_LEFT,   this);
-		m_CameraButtons[5] = new mafGUIPicButton(m_Gui, "PIC_RIGHT", ID_CAMERA_RIGHT,  this);
+		m_CameraButtons[0] = new mafGUIPicButton(m_Gui, _R("PIC_BOTTOM"),ID_CAMERA_BOTTOM, this);
+		m_CameraButtons[1] = new mafGUIPicButton(m_Gui, _R("PIC_TOP"),   ID_CAMERA_TOP,    this);
+		m_CameraButtons[2] = new mafGUIPicButton(m_Gui, _R("PIC_BACK"),  ID_CAMERA_BACK,   this);
+		m_CameraButtons[3] = new mafGUIPicButton(m_Gui, _R("PIC_FRONT"), ID_CAMERA_FRONT,  this);
+		m_CameraButtons[4] = new mafGUIPicButton(m_Gui, _R("PIC_LEFT"),  ID_CAMERA_LEFT,   this);
+		m_CameraButtons[5] = new mafGUIPicButton(m_Gui, _R("PIC_RIGHT"), ID_CAMERA_RIGHT,  this);
 		for(int i = 0; i < 6; i++)
 			m_Sizer->Add(m_CameraButtons[i],0,0);
 		m_Gui->Add(m_Sizer);
-		m_Gui->Label("Camera parameters");
-		m_Gui->Vector(ID_FOCAL_POINT, "focal pnt.", m_FocalPoint);
-		m_Gui->Vector(ID_CAMERA_POSITION, "position", m_CameraPosition);
+		m_Gui->Label(_R("Camera parameters"));
+		m_Gui->Vector(ID_FOCAL_POINT, _R("focal pnt."), m_FocalPoint);
+		m_Gui->Vector(ID_CAMERA_POSITION, _R("position"), m_CameraPosition);
 		//m_Gui->Vector(ID_CAMERA_VIEW_UP, "view up", m_CameraViewUp);
 		//m_Gui->Vector(ID_CAMERA_ORIENTATION, "orientation", m_CameraOrientation);
-		mafGUICrossIncremental *ci = m_Gui->CrossIncremental(ID_CAMERA_ORIENTATION,"orientation", &m_StepCameraOrientation, &m_TopBottomAccumulation, &m_LeftRigthAccumulation,mafGUICrossIncremental::ID_COMPLETE_LAYOUT,"Change the rotation step value from the entry.",false);
+		mafGUICrossIncremental *ci = m_Gui->CrossIncremental(ID_CAMERA_ORIENTATION,_R("orientation"), &m_StepCameraOrientation, &m_TopBottomAccumulation, &m_LeftRigthAccumulation,mafGUICrossIncremental::ID_COMPLETE_LAYOUT,_R("Change the rotation step value from the entry."),false);
 		ci->EnableStep(true);
 		m_Gui->Divider(2);
 	}
 
-	m_Gui->Bool(ID_SHOW_GRID,"grid",&m_ShowGrid,0,"Turn On/Off the grid");
-	m_Gui->Combo(ID_GRID_NORMAL,"grid norm",&m_GridNormal,3,grid_normal,"orientation axes for the grid");
-	m_Gui->Double(ID_GRID_POS,"grid pos",	&m_GridPosition);
-	m_Gui->Color(ID_GRID_COLOR,"grid color",&m_GridColour);
+	m_Gui->Bool(ID_SHOW_GRID,_R("grid"),&m_ShowGrid,0,_R("Turn On/Off the grid"));
+	m_Gui->Combo(ID_GRID_NORMAL,_R("grid norm"),&m_GridNormal,3,grid_normal,_R("orientation axes for the grid"));
+	m_Gui->Double(ID_GRID_POS,_R("grid pos"),	&m_GridPosition);
+	m_Gui->Color(ID_GRID_COLOR,_R("grid color"),&m_GridColour);
 	m_Gui->Divider(2);
-	m_Gui->Bool(ID_SHOW_AXES,"show axes",&m_ShowAxes,0);
-	m_Gui->Color(ID_BG_COLOR,"back color",&m_BGColour);
+	m_Gui->Bool(ID_SHOW_AXES,_R("show axes"),&m_ShowAxes,0);
+	m_Gui->Color(ID_BG_COLOR,_R("back color"),&m_BGColour);
 
 	//////// ruler gui
 	if (m_Camera->GetParallelProjection())
 	{
 		m_Gui->Divider(2);
-		m_Gui->Bool(ID_SHOW_RULER,"show ruler",&m_ShowRuler);
-		m_Gui->Double(ID_RULER_SCALE_FACTOR,"scale factor",&m_RulerScaleFactor,1.0e-299,MAXDOUBLE,-1);
-		m_Gui->String(ID_RULER_LEGEND,"legend",&m_RulerLegend);
+		m_Gui->Bool(ID_SHOW_RULER,_R("show ruler"),&m_ShowRuler);
+		m_Gui->Double(ID_RULER_SCALE_FACTOR,_R("scale factor"),&m_RulerScaleFactor,1.0e-299,MAXDOUBLE,-1);
+		m_Gui->String(ID_RULER_LEGEND,_R("legend"),&m_RulerLegend);
 	}
 
 	if (m_StereoType)
 	{
 		m_Gui->Divider(2);
-		m_Gui->Label("stero movie");
-		m_Gui->DirOpen(ID_STERO_MOVIE_DIR,"dir",&m_StereoMovieDir);
-		m_Gui->Bool(ID_STERO_MOVIE,"Start rec",&m_StereoMovieEnable);
+		m_Gui->Label(_R("stero movie"));
+		m_Gui->DirOpen(ID_STERO_MOVIE_DIR,_R("dir"),&m_StereoMovieDir);
+		m_Gui->Bool(ID_STERO_MOVIE,_R("Start rec"),&m_StereoMovieEnable);
 		m_Gui->Enable(ID_STERO_MOVIE_DIR,m_StereoType != 0);
 		m_Gui->Enable(ID_STERO_MOVIE,false);
 	}
 
 	m_Gui->Divider(2);
-	m_Gui->Bool(ID_LINK_CAMERA,"link camera",&m_LinkCamera,0,"Turn On/Off camera interaction synchronization");
-	m_Gui->Bool(ID_SHOW_ORIENTATOR,"orientation",&m_ShowOrientator);
-	m_Gui->Bool(ID_SHOW_PROFILING_INFORMATION,"fps",&m_ShowProfilingInformation);
+	m_Gui->Bool(ID_LINK_CAMERA,_R("link camera"),&m_LinkCamera,0,_R("Turn On/Off camera interaction synchronization"));
+	m_Gui->Bool(ID_SHOW_ORIENTATOR,_R("orientation"),&m_ShowOrientator);
+	m_Gui->Bool(ID_SHOW_PROFILING_INFORMATION,_R("fps"),&m_ShowProfilingInformation);
 	m_Gui->Divider();
 	return m_Gui;
 }
@@ -1192,7 +1192,7 @@ void mafRWI::UpdateRulerUnit()
 	m_RulerLegend = unit_settings->GetUnitName();
 	cppDEL(unit_settings);
 	m_Ruler->SetScaleFactor(m_RulerScaleFactor);
-	m_Ruler->SetLegend(m_RulerLegend);
+	m_Ruler->SetLegend(m_RulerLegend.GetCStr());
 	if (m_Gui != NULL) 
 	{
 		m_Gui->Update();

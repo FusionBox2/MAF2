@@ -84,7 +84,7 @@ void mafAttributeTraceability::DeepCopy(const mafAttribute *a)
     traceability.m_Date = ((mafAttributeTraceability *)a)->m_TraceabilityVector[i].m_Date;
     traceability.m_AppStamp = ((mafAttributeTraceability *)a)->m_TraceabilityVector[i].m_AppStamp;
     traceability.m_OperatorID = ((mafAttributeTraceability *)a)->m_TraceabilityVector[i].m_OperatorID;
-    if (((mafAttributeTraceability *)a)->m_TraceabilityVector[i].m_TrialEvent == "Create")
+    if (((mafAttributeTraceability *)a)->m_TraceabilityVector[i].m_TrialEvent == _R("Create"))
     {
       traceability.m_IsNatural = ((mafAttributeTraceability *)a)->m_TraceabilityVector[i].m_IsNatural;
     }
@@ -109,7 +109,7 @@ bool mafAttributeTraceability::Equals(const mafAttribute *a) const
         m_TraceabilityVector[i].m_OperatorID != ((mafAttributeTraceability *)a)->m_TraceabilityVector[i].m_OperatorID)
         return false;
 
-      if (((mafAttributeTraceability *)a)->m_TraceabilityVector[i].m_TrialEvent == "Create")
+      if (((mafAttributeTraceability *)a)->m_TraceabilityVector[i].m_TrialEvent == _R("Create"))
       {
         if (m_TraceabilityVector[i].m_IsNatural != ((mafAttributeTraceability *)a)->m_TraceabilityVector[i].m_IsNatural)
           return false;
@@ -127,15 +127,15 @@ int mafAttributeTraceability::InternalStore(mafStorageElement *parent)
   {
     for (int i = 0; i < m_TraceabilityVector.size(); i++)
     {
-      parent->StoreText("TrialEvent", m_TraceabilityVector[i].m_TrialEvent.GetCStr());
-      parent->StoreText("Operation", m_TraceabilityVector[i].m_OperationName.GetCStr());
-      parent->StoreText("Parameters", m_TraceabilityVector[i].m_Parameters.GetCStr());
-      parent->StoreText("Date", m_TraceabilityVector[i].m_Date.GetCStr());
-      parent->StoreText("Application", m_TraceabilityVector[i].m_AppStamp.GetCStr());
-      parent->StoreText("OperatorID",  m_TraceabilityVector[i].m_OperatorID.GetCStr());
-      if (m_TraceabilityVector[i].m_TrialEvent == "Create")
+      parent->StoreText(_R("TrialEvent"), m_TraceabilityVector[i].m_TrialEvent);
+      parent->StoreText(_R("Operation"), m_TraceabilityVector[i].m_OperationName);
+      parent->StoreText(_R("Parameters"), m_TraceabilityVector[i].m_Parameters);
+      parent->StoreText(_R("Date"), m_TraceabilityVector[i].m_Date);
+      parent->StoreText(_R("Application"), m_TraceabilityVector[i].m_AppStamp);
+      parent->StoreText(_R("OperatorID"),  m_TraceabilityVector[i].m_OperatorID);
+      if (m_TraceabilityVector[i].m_TrialEvent == _R("Create"))
       {
-        parent->StoreText("IsNatural", m_TraceabilityVector[i].m_IsNatural.GetCStr());
+        parent->StoreText(_R("IsNatural"), m_TraceabilityVector[i].m_IsNatural);
       }
     }  
   }
@@ -151,25 +151,25 @@ int mafAttributeTraceability::InternalRestore(mafStorageElement *node)
     m_Traceability traceability;
 
     std::vector<mafStorageElement*> listTrialEvent;
-    node->GetNestedElementsByName("TrialEvent", listTrialEvent);
+    node->GetNestedElementsByName(_R("TrialEvent"), listTrialEvent);
 
     std::vector<mafStorageElement*> listOperation;
-    node->GetNestedElementsByName("Operation", listOperation);
+    node->GetNestedElementsByName(_R("Operation"), listOperation);
 
     std::vector<mafStorageElement*> listParameters;
-    node->GetNestedElementsByName("Parameters", listParameters);
+    node->GetNestedElementsByName(_R("Parameters"), listParameters);
 
     std::vector<mafStorageElement*> listDate;
-    node->GetNestedElementsByName("Date", listDate);
+    node->GetNestedElementsByName(_R("Date"), listDate);
 
     std::vector<mafStorageElement*> listApplication;
-    node->GetNestedElementsByName("Application", listApplication);
+    node->GetNestedElementsByName(_R("Application"), listApplication);
 
     std::vector<mafStorageElement*> listOperatorID;
-    node->GetNestedElementsByName("OperatorID", listOperatorID);
+    node->GetNestedElementsByName(_R("OperatorID"), listOperatorID);
 
     std::vector<mafStorageElement*> listIsNatural;
-    node->GetNestedElementsByName("IsNatural", listIsNatural);
+    node->GetNestedElementsByName(_R("IsNatural"), listIsNatural);
 
     try
     {
@@ -185,7 +185,7 @@ int mafAttributeTraceability::InternalRestore(mafStorageElement *node)
         listDate[i]->RestoreText(traceability.m_Date);
         listApplication[i]->RestoreText(traceability.m_AppStamp);
         listOperatorID[i]->RestoreText(traceability.m_OperatorID);
-        if (traceability.m_TrialEvent == "Create")
+        if (traceability.m_TrialEvent == _R("Create"))
         {
           //BES: 27.11.2008 - BUG FIX - listIsNatural can contain less items than listTrialEvent
           listIsNatural[iCreateIdx++]->RestoreText(traceability.m_IsNatural);  
@@ -195,7 +195,7 @@ int mafAttributeTraceability::InternalRestore(mafStorageElement *node)
     }
     catch (...)
     {
-      mafLogMessage("Problems restoring audit trials attribute");
+      mafLogMessage(_M("Problems restoring audit trials attribute"));
     }
     
    

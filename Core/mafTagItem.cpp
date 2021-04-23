@@ -159,7 +159,7 @@ const mafString& mafTagItem::GetName() const
 void mafTagItem::SetValue(double value,int component)
 //-------------------------------------------------------------------------
 {
-  mafString tmp(value);
+  mafString tmp = mafToString(value);
   SetValue(tmp,component);
   SetType(MAF_NUMERIC_TAG);
 }
@@ -278,7 +278,7 @@ void mafTagItem::SetComponents(const std::vector<double>& components)
 const mafString& mafTagItem::GetValue(int component) const
 //-------------------------------------------------------------------------
 {
-  static mafString empty("");
+  static mafString empty;
   if (GetNumberOfComponents()>component)
     return m_Components[component];
   return empty;
@@ -319,7 +319,7 @@ double mafTagItem::GetComponentAsDouble(int comp) const
 void mafTagItem::Initialize()
 //-------------------------------------------------------------------------
 {
-  m_Name="";
+  m_Name=_R("");
   m_Type=MAF_MISSING_TAG;
   m_Components.clear();
 }
@@ -351,23 +351,23 @@ void mafTagItem::GetValueAsSingleString(mafString &str) const
     // one for the trailing "\0".
 
     // leading parenthesis
-    str="(";
+    str=_R("(");
 
     for (i=0;i<GetNumberOfComponents();i++)
     {
       // colon separator
-      if (i>0) str<<",";
+      if (i>0) str+=_R(",");
 
-      str<<"\""<<m_Components[i]<<"\"";    
+      str+=_R("\"") + m_Components[i]+_R("\"");    
     }
 
     // tailing parenthesis
-    str<<")";
+    str+=_R(")");
   }
   else
   {
     // no components
-    str="";
+    str.Clear();
   }
 
 }
@@ -379,16 +379,16 @@ void mafTagItem::GetTypeAsString(mafString &str) const
   switch (m_Type)
   {
   case (MAF_MISSING_TAG):
-    str = "MIS";
+    str = _R("MIS");
     break;
   case (MAF_NUMERIC_TAG):
-    str = "NUM";
+    str = _R("NUM");
     break;
   case (MAF_STRING_TAG):
-    str = "STR";
+    str = _R("STR");
     break;
   default:
-    str = "UNK";
+    str = _R("UNK");
   }
 }
 
@@ -425,7 +425,7 @@ void mafTagItem::Print(std::ostream& os, const int tabs) const
 {
   mafIndent indent(tabs);
 
-  os << indent <<"Name: \"" << (m_Name?m_Name.GetCStr():"(NULL)") <<"\"";
+  os << indent <<"Name: \"" << (m_Name.GetCStr()?m_Name.GetCStr():_R("(NULL)")) <<"\"";
 
   int t=this->GetType();
   char *tstr;
@@ -465,13 +465,13 @@ void mafTagItem::Print(std::ostream& os, const int tabs) const
 int mafTagItem::InternalStore(mafStorageElement *parent)
 //-------------------------------------------------------------------------
 {
-  parent->SetAttribute("Name", GetName());
-  parent->SetAttribute("Mult",mafString(GetNumberOfComponents()));
+  parent->SetAttribute(_R("Name"), GetName());
+  parent->SetAttribute(_R("Mult"),mafToString(GetNumberOfComponents()));
   mafString type;
   GetTypeAsString(type);
-  parent->SetAttribute("Type",type);
+  parent->SetAttribute(_R("Type"),type);
 
-  if (parent->StoreVectorN("TItem",m_Components,GetNumberOfComponents(),"TC")==MAF_ERROR)
+  if (parent->StoreVectorN(_R("TItem"),m_Components,GetNumberOfComponents(),_R("TC"))==MAF_ERROR)
     return MAF_ERROR;
 
   return MAF_OK;
@@ -481,36 +481,36 @@ int mafTagItem::InternalStore(mafStorageElement *parent)
 int mafTagItem::InternalRestore(mafStorageElement *node)
 //-------------------------------------------------------------------------
 {
-  if (!node->GetAttribute("Name",m_Name))
+  if (!node->GetAttribute(_R("Name"),m_Name))
     return MAF_ERROR;
 
   mafString type;
-  if (!node->GetAttribute("Type",type))
+  if (!node->GetAttribute(_R("Type"),type))
     return MAF_ERROR;
   
-  if (type=="NUM")
+  if (type==_R("NUM"))
   {
     SetType(MAF_NUMERIC_TAG);
   }
-  else if (type=="STR")
+  else if (type==_R("STR"))
   {
     SetType(MAF_STRING_TAG);
   }
-  else if (type=="MIS")
+  else if (type==_R("MIS"))
   {
     SetType(MAF_MISSING_TAG);
   }
   else
   {
-    SetType(atof(type));
+    SetType(atof(type.GetCStr()));
   }
 
   mafID num;
-  if (!node->GetAttributeAsInteger("Mult",num))
+  if (!node->GetAttributeAsInteger(_R("Mult"),num))
     return MAF_ERROR;
   
   SetNumberOfComponents(num);
   
-  return node->RestoreVectorN("TItem",m_Components,GetNumberOfComponents(),"TC");
+  return node->RestoreVectorN(_R("TItem"),m_Components,GetNumberOfComponents(),_R("TC"));
 }
 

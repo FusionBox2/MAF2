@@ -72,36 +72,33 @@ public:
   void Initialize();
 
   /** add a picture to the factory -- if id already exist it is overwritten */
-  void Add(wxString id,char** xpm);
+  void Add(const mafString& id,char** xpm);
 
   /** retrieve a picture from the Factory as a wxBitmap */
-  wxBitmap GetBmp(wxString id);
+  wxBitmap GetBmp(const mafString& id);
 
   /** retrieve a picture from the Factory as a wxImage */
-  wxImage GetImg(wxString id);
+  wxImage GetImg(const mafString& id);
 
   /** retrieve a picture from the Factory as a wxIcon */
-  wxIcon GetIcon(wxString id);
+  wxIcon GetIcon(const mafString& id);
 
 #ifdef MAF_USE_VTK
   /** retrieve a picture from the Factory as a vtkImageData -- this picture must be deleted by the user */
-  vtkImageData* GetVTKImg(wxString id);
+  vtkImageData* GetVTKImg(const mafString& id);
 #endif
-
-  /** Fills the given vectors with the available Pic Id's */
-  void GetPicIds(std::vector<wxString>& v);
 
   /** add a vme-picture to the factory. 
       id should be the ClassName.
       if id already exist it is overwritten.
   */
-  void AddVmePic(wxString id,char** xpm);
+  void AddVmePic(const mafString& id,char** xpm);
 
   /** retrieve a vme-picture from the Factory as a wxBitmap. */
-  wxBitmap GetVmePic(wxString id);
+  wxBitmap GetVmePic(const mafString& id);
 
   /** retrieve the names of the registered vme-pics */
-  void GetVmeNames( std::vector<wxString>& v );
+  std::vector<mafString> GetVmeNames();
 
   static mafPictureFactory* GetPictureFactory();
 
@@ -115,10 +112,10 @@ protected:
 // macro
 //----------------------------------------------------------------------------
 /* shotcut to add a picture to the factory */
-#define mafADDPIC(X) mafPictureFactory::GetPictureFactory()->Add( #X , X##_xpm )
+#define mafADDPIC(X) mafPictureFactory::GetPictureFactory()->Add( _R(#X) , X##_xpm )
 
 /* shotcut to add a vmepicture to the factory */
-#define mafADDVMEPIC(X) mafPictureFactory::GetPictureFactory()->AddVmePic( #X , X##_xpm )
+#define mafADDVMEPIC(X) mafPictureFactory::GetPictureFactory()->AddVmePic( _R(#X) , X##_xpm )
 
 //----------------------------------------------------------------------------
 // the mafPics and mafVmePics singleton

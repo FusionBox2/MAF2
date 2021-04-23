@@ -38,27 +38,27 @@ enum LOGIN_ID
   PROXY_PORT_ID,
 };
 //----------------------------------------------------------------------------
-mafGUIDialogLogin::mafGUIDialogLogin(const wxString& title, long style)
+mafGUIDialogLogin::mafGUIDialogLogin(const mafString& title, long style)
 : mafGUIDialog(title, style)
 //----------------------------------------------------------------------------
 {
   m_RememberMe = 0;
-  m_Username = "";
-  m_Pwd = "";
+  m_Username = _R("");
+  m_Pwd = _R("");
   m_UsernameOld = m_Username;
   m_PwdOld = m_Pwd;
   m_ProxyFlag = 0;
-  m_ProxyHost = "";
+  m_ProxyHost = _R("");
   m_ProxyPort = 0;
   m_InformationsInserted = false;
 
   m_Gui = new mafGUI(this);
-  m_Gui->String(USERNAME_ID,_("user: "), &m_Username);
-  m_Gui->String(PWD_ID,_("pwd: "), &m_Pwd, "", false, true);
-  m_Gui->Bool(PROXY_FLAG_ID,_("using proxy"),&m_ProxyFlag,1);
-  m_Gui->String(PROXY_HOST_ID,_("Host"),&m_ProxyHost,"");
-  m_Gui->Integer(PROXY_PORT_ID,_("Port"),&m_ProxyPort,1);
-  m_Gui->Bool(REMEMBER_ME_ID, _("remember me"), &m_RememberMe, 1);
+  m_Gui->String(USERNAME_ID,_L("user: "), &m_Username);
+  m_Gui->String(PWD_ID,_L("pwd: "), &m_Pwd, _R(""), false, true);
+  m_Gui->Bool(PROXY_FLAG_ID,_L("using proxy"),&m_ProxyFlag,1);
+  m_Gui->String(PROXY_HOST_ID,_L("Host"),&m_ProxyHost,_R(""));
+  m_Gui->Integer(PROXY_PORT_ID,_L("Port"),&m_ProxyPort,1);
+  m_Gui->Bool(REMEMBER_ME_ID, _L("remember me"), &m_RememberMe, 1);
   m_Gui->Divider();
 
   EnableItems();

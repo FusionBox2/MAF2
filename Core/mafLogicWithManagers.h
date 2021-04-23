@@ -103,7 +103,7 @@ public:
 
   /**  Plug a new operation and its undo flag: if the operation does not support
   undo the undo flag has no effect */
-	virtual void Plug(mafOp *op, const mafString& menuPath = "", bool canUndo = true, mafGUISettings *setting = NULL);
+	virtual void Plug(mafOp *op, const mafString& menuPath = _R(""), bool canUndo = true, mafGUISettings *setting = NULL);
 	
   /** Configure the application.
   At this point are plugged all the managers, the side-bar docking panel. 
@@ -187,7 +187,7 @@ protected:
   /** FILE OPEN evt. handler. 
   By default (file_to_open = NULL) it ask the user to choose a file to open,
   otherwise it open the given one.*/
-	virtual bool OnFileOpen(const mafString& file_to_open = "");
+	virtual bool OnFileOpen(const mafString& file_to_open = _R(""));
   /** FILE UPLOAD evt. handler 
   By default (remote_file = NULL) AND the entire msf is uploaded and only the remote directory is asked to the user, 
   otherwise given parameters are managed to upload the file correctly. 'upload_flag' can be:
@@ -241,7 +241,7 @@ protected:
   /** Respond to a VME_REMOVING evt. propagate evt. to SideBar,ViewManager,ecc.. */
 	virtual void VmeRemoving(mafNode *vme);
 	/** Respond to a VME_CHOOSE evt. Build a dialog containing the vme tree and return the vme choosed from the user. */
-	virtual std::vector<mafNode*> VmeChoose(long vme_accept_function = 0, long style = REPRESENTATION_AS_TREE, mafString title = "Choose Node", bool multiSelect = false);
+	virtual std::vector<mafNode*> VmeChoose(long vme_accept_function = 0, long style = REPRESENTATION_AS_TREE, mafString title = _R("Choose Node"), bool multiSelect = false);
 
   /** Build a dialog to show all available materials. */	
   virtual void VmeChooseMaterial(mafVME *vme, bool updateProperty);

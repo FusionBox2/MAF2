@@ -37,7 +37,7 @@ This component allow to make remote file browsing.
 class MAF_EXPORT mafGUIDialogRemoteFile : public mafGUIDialog
 {
 public:
-	mafGUIDialogRemoteFile(mafBaseEventHandler *listener = NULL,const wxString &title = _("Remote file browsing"), long style = mafRESIZABLE);
+	mafGUIDialogRemoteFile(mafBaseEventHandler *listener = NULL,const mafString &title = _L("Remote file browsing"), long style = mafRESIZABLE);
 	~mafGUIDialogRemoteFile(); 
 	void OnEvent(mafEventBase *maf_event);
 

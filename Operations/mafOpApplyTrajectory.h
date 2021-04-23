@@ -49,7 +49,7 @@ public:
   };
 
   /** Contructor. */
-	mafOpApplyTrajectory(const mafString& label = "Apply trajectory");
+	mafOpApplyTrajectory(const mafString& label = _R("Apply trajectory"));
 
   /** Desctructor. */
 	~mafOpApplyTrajectory(); 
@@ -96,7 +96,7 @@ public:
   int ApplyTrajectoriesFromVME();
 
   /** Set the filename for the file to import */
-  void SetFileName(const char *file_name){m_File = file_name;};
+  void SetFileName(const char *file_name){m_File = _R(file_name);}
 
   /** Set the VME from which apply the transformation */
   void SetVME(mafVME* vme){m_VME = vme;};

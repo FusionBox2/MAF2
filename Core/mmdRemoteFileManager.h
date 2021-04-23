@@ -48,10 +48,10 @@ public:
   };
 
   /** Download a remote file into the local cache and write in the 'local_filename' the path to reach it.*/
-  int DownloadRemoteFile(mafString remote_filename, mafString &downloaded_filename, mafBaseEventHandler *observer = NULL);
+  int DownloadRemoteFile(const mafString& remote_filename, mafString &downloaded_filename, mafBaseEventHandler *observer = NULL);
 
   /** Upload local file to the remote repository.*/
-  int UploadLocalFile(mafString local_filename, mafString remote_filename, mafBaseEventHandler *observer = NULL);
+  int UploadLocalFile(const mafString& local_filename, const mafString& remote_filename, mafBaseEventHandler *observer = NULL);
 
   /** Retrieve the file list that match the input path prefix and store the result in memory into the struct.*/
   int ListRemoteDirectory(mafString & queryString, msfTreeSearchReult &chunk);

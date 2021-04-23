@@ -45,7 +45,7 @@ EXPORT_STL_VECTOR(MAF_EXPORT,int);
 class MAF_EXPORT mafOpImporterSTL: public mafOp
 {
 public:
-	mafOpImporterSTL(const mafString& label = "STLImporter");
+	mafOpImporterSTL(const mafString& label = _R("STLImporter"));
 	~mafOpImporterSTL(); 
 	
   mafTypeMacro(mafOpImporterSTL, mafOp);

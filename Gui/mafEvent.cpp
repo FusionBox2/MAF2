@@ -88,34 +88,34 @@ enum HIGHEST_EVENT_ID
 void mafEvent::Log() 
 //----------------------------------------------------------------------------
 {
-  mafString s = "[EV]";
-               s << " sender= "<< (long)m_Sender;
-               s << " ID= "    << mafIdString(m_Id);
-  if(m_Arg)    s << " arg= "   << m_Arg;
-  if(m_Bool)   s << " bool= "  << (int)m_Bool;
-  if(m_Double)  s << " double= " << m_Double;
-  if(m_MAFString) s << " string= "<< *m_MAFString;
-  if(m_View)   s << " view= "  << (long)m_View<<" : " << m_View->GetLabel();
-  if(m_x)      s << " x= " << m_x;
-  if(m_y)      s << " y= " << m_y;
-  if(m_width)  s << " width= " << m_width;
-  if(m_height) s << " height= " << m_height;
-  if(m_Vme)    s << " vme= "   << (long)m_Vme <<" : " << m_Vme->GetName();
-  if(m_Op)     s << " op= "    << (long)m_Op  <<" : " << m_Op->GetLabel();
+  mafString s = _R("[EV]");
+               s += _R(" sender= ") + mafToString((long)m_Sender);
+               s += _R(" ID= ") + mafIdString(m_Id);
+  if(m_Arg)    s += _R(" arg= ") + mafToString(m_Arg);
+  if(m_Bool)   s += _R(" bool= ") + mafToString((int)m_Bool);
+  if(m_Double)  s += _R(" double= ") + mafToString(m_Double);
+  if(m_MAFString) s += _R(" string= ") + *m_MAFString;
+  if(m_View)   s += _R(" view= ") + mafToString((long)m_View) + _R(" : ") + m_View->GetLabel();
+  if(m_x)      s += _R(" x= ") + mafToString(m_x);
+  if(m_y)      s += _R(" y= ") + mafToString(m_y);
+  if(m_width)  s += _R(" width= ") + mafToString(m_width);
+  if(m_height) s += _R(" height= ") + mafToString(m_height);
+  if(m_Vme)    s += _R(" vme= ") + mafToString((long)m_Vme) + _R(" : ") + m_Vme->GetName();
+  if(m_Op)     s += _R(" op= ") + mafToString((long)m_Op) + _R(" : ") + m_Op->GetLabel();
 #ifdef MAF_USE_WX
-  if(m_Win)    s << " win= "   << (long)m_Win;
-  if(m_UpdateUIEvent)   s << " ui_evt= "<< (long)m_UpdateUIEvent;
-  if(m_WxObj)  s << " wxobj= " << (long)m_WxObj;
+  if(m_Win)    s += _R(" win= ") + mafToString((long)m_Win);
+  if(m_UpdateUIEvent)   s += _R(" ui_evt= ") + mafToString((long)m_UpdateUIEvent);
+  if(m_WxObj)  s += _R(" wxobj= ") + mafToString((long)m_WxObj);
 #endif
 #ifdef MAF_USE_VTK
-  if(m_VtkProp)   s << " prop= "  << (long)m_VtkProp;
-  if(m_Matrix) s << " matrix= "<< (long)m_Matrix;
-  if(m_OldMatrix)s << " matrix= "<< (long)m_OldMatrix;
-  if(m_VtkObj) s << " vtkobj= "<< (long)m_VtkObj << " : " << m_VtkObj->GetClassName();
+  if(m_VtkProp)   s += _R(" prop= ") + mafToString((long)m_VtkProp);
+  if(m_Matrix) s += _R(" matrix= ") + mafToString((long)m_Matrix);
+  if(m_OldMatrix)s += _R(" matrix= ") + mafToString((long)m_OldMatrix);
+  if(m_VtkObj) s += _R(" vtkobj= ") + mafToString((long)m_VtkObj) + _R(" : ") + _R(m_VtkObj->GetClassName());
 #endif
-  if(m_MafObject) s << " mafobj= " << (long)m_MafObject << " : " << m_MafObject->GetTypeName();
+  if(m_MafObject) s += _R(" mafobj= ") + mafToString((long)m_MafObject) + _R(" : ") + _R(m_MafObject->GetTypeName());
 
-  mafLogMessage(s);
+  mafLogMessage(_M(s));
 }
 //----------------------------------------------------------------------------
 mafEvent* mafEvent::Copy() 
@@ -187,21 +187,21 @@ void mafEvent::Init(void *sender, int id, long arg)
   bool *verbose = GetLogVerbose();
   if (id != UPDATE_UI && (*verbose))
   {
-    mafString sender_type = "Sent Event. Sender: ";
+    mafString sender_type = _R("Sent Event. Sender: ");
     try
     {
       mafObject *obj = (mafObject *)sender;
-      sender_type << typeid(*obj).name();
+      sender_type += _R(typeid(*obj).name());
     }
     catch (...)
     {
-      sender_type = "not mafObject (";
-      sender_type << (long)sender;
-      sender_type << ")";
+      sender_type = _R("not mafObject (");
+      sender_type += mafToString((long)sender);
+      sender_type += _R(")");
     }
     mafString id_name = mafIdString(id);
-    mafString msg = sender_type + "  ID: " + id_name;
-    mafLogMessage(msg);
+    mafString msg = sender_type + _R("  ID: ") + id_name;
+    mafLogMessage(_M(msg));
   }
 
   m_Sender = sender;

@@ -52,7 +52,7 @@ mafOpValidateTree::mafOpValidateTree(const mafString& label) : Superclass(label)
 {
   m_OpType	= OPTYPE_OP;
   m_Canundo = true;
-  m_MSFPath = "";
+  m_MSFPath = _R("");
 }
 //----------------------------------------------------------------------------
 mafOpValidateTree::~mafOpValidateTree()
@@ -111,7 +111,7 @@ int mafOpValidateTree::ValidateTree()
       bool valid = node->IsValid();
       if (!valid && !node->IsMAFType(mafVMERoot))
       {
-        ErrorLog(mafOpValidateTree::INVALID_NODE, node->GetName());
+        ErrorLog(mafOpValidateTree::INVALID_NODE, node->GetName().GetCStr());
         node->UpdateId();
         if (result != mafOpValidateTree::VALIDATE_ERROR)
         {
@@ -127,28 +127,28 @@ int mafOpValidateTree::ValidateTree()
         {
           if (lnk_it->second.m_Node == NULL)
           {
-            ErrorLog(mafOpValidateTree::LINK_NULL, node->GetName(), lnk_it->first);
+            ErrorLog(mafOpValidateTree::LINK_NULL, node->GetName().GetCStr(), lnk_it->first.GetCStr());
             result = mafOpValidateTree::VALIDATE_ERROR;
             continue;
           }
           valid = root->IsInTree(lnk_it->second.m_Node);
           if (!valid)
           {
-            ErrorLog(mafOpValidateTree::LINK_NOT_PRESENT, lnk_it->second.m_Node->GetName());
+            ErrorLog(mafOpValidateTree::LINK_NOT_PRESENT, lnk_it->second.m_Node->GetName().GetCStr());
             result = mafOpValidateTree::VALIDATE_ERROR;
           }
           valid = lnk_it->second.m_Node->IsValid();
           if (!valid && !lnk_it->second.m_Node->IsMAFType(mafVMERoot))
           {
-            ErrorLog(mafOpValidateTree::INVALID_NODE, lnk_it->second.m_Node->GetName());
+            ErrorLog(mafOpValidateTree::INVALID_NODE, lnk_it->second.m_Node->GetName().GetCStr());
             result = mafOpValidateTree::VALIDATE_ERROR;
           }
         }
       }
       // check data (binary data files are associated to that file that 
       // have the DataVector => inherit from mafVMEGenericAbstract
-      mafString urlString = "";
-      mafString archiveFilename = "";
+      mafString urlString = _R("");
+      mafString archiveFilename = _R("");
       wxString absFilename = "";
       mafVMEItem *item = NULL;
       bool singleFileMode = false;
@@ -157,8 +157,8 @@ int mafOpValidateTree::ValidateTree()
       if (vme != NULL && vme->IsA("mafVMEExternalData"))
       {
         mafVMEExternalData *ed = mafVMEExternalData::SafeDownCast(vme);
-        mafString fileName = ed->GetFileName();
-        mafString extension = ed->GetExtension();
+        mafString fileName = _R(ed->GetFileName());
+        mafString extension = _R(ed->GetExtension());
 
         if (m_MSFPath.IsEmpty())
         {
@@ -172,21 +172,18 @@ int mafOpValidateTree::ValidateTree()
           }
         }
 
-        wxString absFilename = m_MSFPath;
-        absFilename << "\\";
-        absFilename << fileName;
-        absFilename << ".";
-        absFilename << extension;
+        wxString absFilename = (m_MSFPath + _R("\\") + fileName + _R(".") + extension).toWx();
         absFilename.Replace("/","\\");
 
-        if (!wxFileExists(absFilename.c_str()))
+        if (!mafFileExists(mafWxToString(absFilename)))
         {
           ErrorLog(mafOpValidateTree::BINARY_FILE_NOT_PRESENT, absFilename.c_str());
           result = mafOpValidateTree::VALIDATE_ERROR;
         }
         else
         {
-          m_MSFTreeAbsFileNamesSet.insert(absFilename.c_str());
+          m_MSFTreeAbsFileNamesSet.insert(mafWxToString(absFilename).toStd());
+#pragma message ("a bit hacky")
         }
       }
       else if (vme != NULL) // any other vme type
@@ -211,7 +208,7 @@ int mafOpValidateTree::ValidateTree()
             item = dv->GetItemByIndex(t);
             if (item == NULL)
             {
-              ErrorLog(mafOpValidateTree::ITEM_NOT_PRESENT, vme->GetName());
+              ErrorLog(mafOpValidateTree::ITEM_NOT_PRESENT, vme->GetName().GetCStr());
               result = mafOpValidateTree::VALIDATE_ERROR;
             }
             else
@@ -219,7 +216,7 @@ int mafOpValidateTree::ValidateTree()
               int item_id = item->GetId();
               if (max_item_id < item_id)
               {
-                ErrorLog(mafOpValidateTree::MAX_ITEM_ID_PATCHED, vme->GetName());
+                ErrorLog(mafOpValidateTree::MAX_ITEM_ID_PATCHED, vme->GetName().GetCStr());
                 root->SetMaxItemId(item_id);
                 if (result != mafOpValidateTree::VALIDATE_ERROR)
                 {
@@ -227,40 +224,40 @@ int mafOpValidateTree::ValidateTree()
                 }
               }
 
-              urlString = item->GetURL();
+              urlString = _R(item->GetURL());
               if (urlString.IsEmpty())
               {
-                ErrorLog(mafOpValidateTree::URL_EMPTY, vme->GetName());
+                ErrorLog(mafOpValidateTree::URL_EMPTY, vme->GetName().GetCStr());
                 result = mafOpValidateTree::VALIDATE_ERROR;
               }
               //archiveFilename = item->GetArchiveFileName();
               singleFileMode = dv->GetSingleFileMode();
               if (singleFileMode && archiveFilename.IsEmpty())
               {
-                ErrorLog(mafOpValidateTree::ARCHIVE_FILE_NOT_PRESENT, vme->GetName());
+                ErrorLog(mafOpValidateTree::ARCHIVE_FILE_NOT_PRESENT, vme->GetName().GetCStr());
                 result = mafOpValidateTree::VALIDATE_ERROR;
               }
-              absFilename = m_MSFPath;
-              absFilename << "\\";
+              absFilename = (m_MSFPath + _R("\\")).toWx();
               absFilename.Replace("/","\\");
 
               if (singleFileMode)
               {
-                absFilename << archiveFilename;                
+                absFilename << archiveFilename.toWx();
               }
               else
               {
-                absFilename << urlString;
+                absFilename << urlString.toWx();
               }
 
-              if (!wxFileExists(absFilename.c_str()))
+              if (!mafFileExists(mafWxToString(absFilename)))
               {
                 ErrorLog(mafOpValidateTree::BINARY_FILE_NOT_PRESENT, absFilename.c_str());
                 result = mafOpValidateTree::VALIDATE_ERROR;
               }
               else
               {
-                m_MSFTreeAbsFileNamesSet.insert(absFilename.c_str());
+                m_MSFTreeAbsFileNamesSet.insert(mafWxToString(absFilename).toStd());
+#pragma message("a bit hacky")
               }
             } // item != NULL
           } // for() on items
@@ -270,7 +267,7 @@ int mafOpValidateTree::ValidateTree()
   } // try
   catch (...)
   {
-    ErrorLog(mafOpValidateTree::EXCEPTION_ON_ITERATOR, iter->GetCurrentNode()->GetName());
+    ErrorLog(mafOpValidateTree::EXCEPTION_ON_ITERATOR, iter->GetCurrentNode()->GetName().GetCStr());
   }
   iter->Delete();
  
@@ -283,43 +280,43 @@ void mafOpValidateTree::ErrorLog(int error_num, const char *node_name, const cha
   switch(error_num)
   {
     case mafOpValidateTree::INVALID_NODE:
-      (m_TestMode==false)?mafLogMessage(_("Patched Node '%s' with an invalid ID!!"), node_name):printf(_("Patched Node '%s' with an invalid ID!!"), node_name);
+      mafLogMessage(_M(_L("Patched Node '") + mafString(_R(node_name)) + _L("' with an invalid ID!!")));
     break;
     case mafOpValidateTree::LINK_NOT_PRESENT:
-      mafLogMessage(_("Link node '%s' is not present into the tree"), node_name);
+      mafLogMessage(_M(_L("Link node '") + mafString(_R(node_name)) + _L("' is not present into the tree")));
     break;
     case mafOpValidateTree::LINK_NULL:
-      mafLogMessage(_("Link '%s' of node '%s' is null"), description, node_name);
+      mafLogMessage(_M(_L("Link '") + mafString(_R(description)) + _L("' of node '") + mafString(_R(node_name)) + _L("' is null")));
     break;
     case mafOpValidateTree::EXCEPTION_ON_ITERATOR:
-      mafLogMessage(_("Exception occurred during iteration on node '%s'"), node_name);
+      mafLogMessage(_M(_L("Exception occurred during iteration on node '") + mafString(_R(node_name)) + _L("'")));
     break;
     case mafOpValidateTree::ITEM_NOT_PRESENT:
-      mafLogMessage(_("Item not present in node '%s'"), node_name);
+      mafLogMessage(_M(_L("Item not present in node '") + mafString(_R(node_name)) + _L("'")));
     break;
     case mafOpValidateTree::MAX_ITEM_ID_PATCHED:
-      mafLogMessage(_("Item of Node '%s' has caused Max item Id to be patched!!"), node_name);
+      mafLogMessage(_M(_L("Item of Node '") + mafString(_R(node_name)) + _L("' has caused Max item Id to be patched!!")));
     break;
     case mafOpValidateTree::URL_EMPTY:
-      mafLogMessage(_("URL referring to binary data not present in node '%s'"), node_name);
+      mafLogMessage(_M(_L("URL referring to binary data not present in node '") + mafString(_R(node_name)) + _L("'")));
     break;
     case mafOpValidateTree::BINARY_FILE_NOT_PRESENT:
-      mafLogMessage(_("Binary data file '%s' not present"), node_name);
+      mafLogMessage(_M(_L("Binary data file '") + mafString(_R(node_name)) + _L("' not present")));
     break;
     case mafOpValidateTree::ARCHIVE_FILE_NOT_PRESENT:
-      mafLogMessage(_("Archive data file not present for node '%s'"), node_name);
+      mafLogMessage(_M(_L("Archive data file not present for node '") + mafString(_R(node_name)) + _L("'")));
     break;
   }
 }
 
-int mafOpValidateTree::GetMSFTreeABSFileNamesSet( set<string> &fileNamesSet )
+int mafOpValidateTree::GetMSFTreeABSFileNamesSet( std::set<std::string> &fileNamesSet )
 {
   int result = this->ValidateTree(); // needed to fill m_MSFTreeBinaryFilesSet ivar
   
   if (result != mafOpValidateTree::VALIDATE_SUCCESS)
   {
     fileNamesSet.clear();
-    mafLogMessage("MSF Tree is invalid: GetMSFTreeABSFileNamesSet returning an empty set");
+    mafLogMessage(_M("MSF Tree is invalid: GetMSFTreeABSFileNamesSet returning an empty set"));
     return MAF_ERROR;
   }
  

@@ -98,7 +98,7 @@ Proceed?";
   mafEventMacro(mafEvent(this,OP_RUN_OK));
 }
 
-int mafOpGarbageCollectMSFDir::GetFilesToRemove( set<string> &filesToRemoveSet )
+int mafOpGarbageCollectMSFDir::GetFilesToRemove(std::set<std::string> &filesToRemoveSet )
 {
   assert(m_Input);
   mafOpValidateTree* validateTree = new mafOpValidateTree();
@@ -113,36 +113,38 @@ int mafOpGarbageCollectMSFDir::GetFilesToRemove( set<string> &filesToRemoveSet )
   } 
   else
   {
-    wxString msg = "MSF Tree is invalid, exiting";
+    mafString msg = _R("MSF Tree is invalid, exiting");
 
     if (!m_TestMode)
     {
-      wxMessageBox(msg);
+      mafErrorMessage(_M(msg));
     }
-    mafLogMessage("MSF Tree is invalid, exiting");
+    mafLogMessage(_M("MSF Tree is invalid, exiting"));
     return MAF_ERROR;
   }
   
-  set<string> msfTreeFiles;
+  std::set<std::string> msfTreeFiles;
   result = validateTree->GetMSFTreeABSFileNamesSet(msfTreeFiles);
 
   if (result == MAF_OK)
   {
-    set<string> msfDirFiles = this->GetMSFDirABSFileNamesSet();
+    std::set<std::string> msfDirFiles = this->GetMSFDirABSFileNamesSet();
 
     // add the msf file name:
-    wxString msfXMLFileABSFileName = GetMSFXMLFileAbsFileName(m_Input);
+    mafString msfXMLFileABSFileName = GetMSFXMLFileAbsFileName(m_Input);
 
-    assert(wxFileExists(msfXMLFileABSFileName));
-    msfTreeFiles.insert(msfXMLFileABSFileName.c_str());
+    assert(mafFileExists(msfXMLFileABSFileName));
+    msfTreeFiles.insert(msfXMLFileABSFileName.toStd());
 
     // add the backup file if present:
-    wxString msfXMLBackupFile = msfXMLFileABSFileName.Append(".bak");
+#pragma message("actually no replacement needed, go straight with mafString")
+    wxString msfXMLBackupFile = msfXMLFileABSFileName.Append(_R(".bak")).toWx();
     msfXMLBackupFile.Replace("/","\\");
 
-    if (wxFileExists(msfXMLBackupFile.c_str()))
+    if (mafFileExists(mafWxToString(msfXMLBackupFile)))
     {
-      msfTreeFiles.insert(msfXMLBackupFile.c_str());
+      msfTreeFiles.insert(mafWxToString(msfXMLBackupFile).toStd());
+#pragma message("a bit hacky")
     }
 
     filesToRemoveSet = SetDifference(msfDirFiles, msfTreeFiles);
@@ -158,54 +160,50 @@ int mafOpGarbageCollectMSFDir::GetFilesToRemove( set<string> &filesToRemoveSet )
   return MAF_OK;
 }
 
-void mafOpGarbageCollectMSFDir::PrintSet( set<string> inputSet )
+void mafOpGarbageCollectMSFDir::PrintSet( std::set<std::string> inputSet )
 {
-  set<string>::iterator iter;
-  iter = inputSet.begin();
+  auto iter = inputSet.begin();
 
-  ostringstream stringStream;
-  stringStream << endl;
+  std::ostringstream stringStream;
+  stringStream << std::endl;
 
   while( iter != inputSet.end() ) 
   {
-    stringStream << *iter << endl << endl;
+    stringStream << *iter << std::endl << std::endl;
     ++iter;
   }
 
-  mafLogMessage(stringStream.str().c_str());
+  mafLogMessage(_M(stringStream.str().c_str()));
 }
 
-set<string> mafOpGarbageCollectMSFDir::GetMSFDirABSFileNamesSet()
+std::set<std::string> mafOpGarbageCollectMSFDir::GetMSFDirABSFileNamesSet()
 {
   assert(m_Input);
   mafString msfABSPath = GetMSFDirAbsPath(m_Input);
   
   assert(msfABSPath.IsEmpty() == false);
-  assert(wxDirExists(msfABSPath));
+  assert(mafDirExists(msfABSPath));
 
   m_MSFDirABSFileNamesSet.clear();
 
   vtkDirectory *directoryReader = vtkDirectory::New();
-  directoryReader->Open(msfABSPath);
+  directoryReader->Open(msfABSPath.GetCStr());
   for (int i=0; i < directoryReader->GetNumberOfFiles(); i++) // skipping "." and ".." dir
   {
-    mafString localFileName = directoryReader->GetFile(i);
+    mafString localFileName = _R(directoryReader->GetFile(i));
 
-    wxString absFileName;
-    absFileName << msfABSPath;
-    absFileName << "/";
-    absFileName << localFileName;
+    wxString absFileName = (msfABSPath +  _R("/") + localFileName).toWx();
 
     absFileName.Replace("/","\\");
 
-    if ((strcmp(localFileName,".") == 0) || \
-      (strcmp(localFileName,"..") == 0)) 
+    if (localFileName == _R(".") || localFileName == _R("..")) 
     {
       continue;
     }
-    else if (wxFileExists(absFileName.c_str()))
+    else if (mafFileExists(mafWxToString(absFileName)))
     {     
-      m_MSFDirABSFileNamesSet.insert(absFileName.c_str());
+      m_MSFDirABSFileNamesSet.insert(mafWxToString(absFileName).toStd());
+#pragma message("a bit hacky")
     }
   }
   
@@ -213,9 +211,9 @@ set<string> mafOpGarbageCollectMSFDir::GetMSFDirABSFileNamesSet()
   return m_MSFDirABSFileNamesSet;
 }
 
-set<string> mafOpGarbageCollectMSFDir::SetDifference( set<string> &s1, set<string> &s2 )
+std::set<std::string> mafOpGarbageCollectMSFDir::SetDifference( std::set<std::string> &s1, std::set<std::string> &s2 )
 {
-  set<string> result;
+  std::set<std::string> result;
   set_difference(s1.begin(), s1.end(), \
     s2.begin(), s2.end(),
     inserter(result, result.end()));
@@ -233,7 +231,7 @@ mafString mafOpGarbageCollectMSFDir::GetMSFDirAbsPath(mafNode *anyTreeNode)
   mafVMEStorage *storage = mafVMEStorage::SafeDownCast(es.GetStorage());
   assert(storage);
 
-  mafString msfABSPath = ""; // empty by default
+  mafString msfABSPath = _R(""); // empty by default
  
   if (storage != NULL)
   {  
@@ -241,10 +239,10 @@ mafString mafOpGarbageCollectMSFDir::GetMSFDirAbsPath(mafNode *anyTreeNode)
     msfABSPath.ExtractPathName();
   }
 
-  wxString tmp = msfABSPath.GetCStr();
+  wxString tmp = msfABSPath.toWx();
   tmp.Replace("/","\\");
 
-  return tmp.c_str();
+  return mafWxToString(tmp);
 }
 
 mafString mafOpGarbageCollectMSFDir::GetMSFXMLFileAbsFileName(mafNode *anyTreeNode)
@@ -261,31 +259,30 @@ mafString mafOpGarbageCollectMSFDir::GetMSFXMLFileAbsFileName(mafNode *anyTreeNo
 
   if (storage != NULL)
   {  
-    msfXMLFileAbsFileName = storage->GetURL();
+    msfXMLFileAbsFileName = storage->GetURL().toWx();
   }
 
   msfXMLFileAbsFileName.Replace("/","\\");
 
-  return msfXMLFileAbsFileName.c_str();
+  return mafWxToString(msfXMLFileAbsFileName);
 }
 
 int mafOpGarbageCollectMSFDir::GarbageCollect()
 {
-  set<string> filesToRemove;
+  std::set<std::string> filesToRemove;
   int errorCode = GetFilesToRemove(filesToRemove);
   
-  set<string>::iterator iter;
-  iter = filesToRemove.begin();
+  auto iter = filesToRemove.begin();
 
-  ostringstream stringStream;
+  std::ostringstream stringStream;
   stringStream << endl;
 
   while( iter != filesToRemove.end() ) 
   {
-    string fileToRemove = *iter;
+    std::string fileToRemove = *iter;
     stringStream << "Deleting: " << fileToRemove << endl;
     
-    bool result = wxRemoveFile(wxString(fileToRemove.c_str()));
+    bool result = mafFileRemove(_R(fileToRemove.c_str()));
     
     if (result == false)
     {
@@ -293,8 +290,8 @@ int mafOpGarbageCollectMSFDir::GarbageCollect()
     }
       
     stringStream << "OK" << endl;
-    mafLogMessage(stringStream.str().c_str());
-    
+    mafLogMessage(_M(stringStream.str().c_str()));
+
     ++iter;
   }
  

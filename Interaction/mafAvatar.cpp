@@ -98,9 +98,9 @@ void mafAvatar::CreateGui()
     assert(m_Gui);
 
     m_Gui->Divider(2);
-    m_Gui->Label("Avatar Settings", true);
+    m_Gui->Label(_R("Avatar Settings"), true);
     m_Gui->Divider();
-    m_Gui->String(ID_NAME,"name",&m_Name);
+    m_Gui->String(ID_NAME,_R("name"),&m_Name);
     m_Gui->Divider();
   }
   
@@ -304,7 +304,7 @@ int mafAvatar::InternalStore(mafStorageElement *node)
 //------------------------------------------------------------------------------
 {
   assert(node);
-  return node->StoreText("Name",m_Name);
+  return node->StoreText(_R("Name"),m_Name);
 }
 
 //------------------------------------------------------------------------------
@@ -312,7 +312,7 @@ int mafAvatar::InternalRestore(mafStorageElement *node)
 //------------------------------------------------------------------------------
 {
   assert(node);
-  return node->RestoreText("Name",m_Name);
+  return node->RestoreText(_R("Name"),m_Name);
 }
 
 //------------------------------------------------------------------------------

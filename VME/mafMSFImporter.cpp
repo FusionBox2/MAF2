@@ -85,7 +85,7 @@ namespace {
 int mafMSFImporter::InternalStore(mafStorageElement *node)
 //------------------------------------------------------------------------------
 {
-  mafErrorMessage("Writing MSF 1.x files is not supported!");
+  mafErrorMessage(_M("Writing MSF 1.x files is not supported!"));
   return MAF_ERROR;
 }
 
@@ -101,11 +101,11 @@ int mafMSFImporter::InternalRestore(mafStorageElement *node)
     return MAF_ERROR;
   mafAutoPointer<mafVMERoot> root_ap = root;
   mafString root_name;
-  if (node->GetAttribute("Name",root_name))
+  if (node->GetAttribute(_R("Name"),root_name))
     root->SetName(root_name);
 
   mafID max_item_id;
-  if (node->GetAttributeAsInteger("MaxItemId",max_item_id))
+  if (node->GetAttributeAsInteger(_R("MaxItemId"),max_item_id))
     root->SetMaxItemId(max_item_id);
   
 
@@ -113,14 +113,14 @@ int mafMSFImporter::InternalRestore(mafStorageElement *node)
 
   for (int i=0;i<children.size();i++)
   {
-    if (children[i]->GetName() == "TArray")
+    if (children[i]->GetName() == _R("TArray"))
     {
       if (RestoreTagArray(children[i],root->GetTagArray()) != MAF_OK)
       {
-        mafErrorMacro("MSFImporter: error restoring Tag Array of node: \""<<root->GetName()<<"\"");
+        mafErrorMacro("MSFImporter: error restoring Tag Array of node: \""<<root->GetName().GetCStr() <<"\"");
       }
     }
-    else if (children[i]->GetName() == "VME")
+    else if (children[i]->GetName() == _R("VME"))
     {
       mafVME *child_vme=RestoreVME(children[i],root);
       if (child_vme==NULL)
@@ -146,15 +146,15 @@ int mafMSFImporter::InternalRestore(mafStorageElement *node)
   // iteration for setting up linked vme
   for (n = iter->GetFirstNode(); n;n=iter->GetNextNode())
   {
-    if (n->IsMAFType(mafVMEGeneric) && n->GetTagArray()->GetTag("mflVMELink"))
+    if (n->IsMAFType(mafVMEGeneric) && n->GetTagArray()->GetTag(_R("mflVMELink")))
     {
       link_list.push_back(n);
-      mafTagItem *tag = n->GetTagArray()->GetTag("VME_ALIAS_PATH");
-      mafNode *linkedVME = this->ParsePath(root, tag->GetValue());
+      mafTagItem *tag = n->GetTagArray()->GetTag(_R("VME_ALIAS_PATH"));
+      mafNode *linkedVME = this->ParsePath(root, tag->GetValue().GetCStr());
       if (linkedVME != NULL)
       {
         mafID sub_id = -1;
-        if (mafTagItem *ti = n->GetTagArray()->GetTag("SUBLINK_ID"))
+        if (mafTagItem *ti = n->GetTagArray()->GetTag(_R("SUBLINK_ID")))
         {
           sub_id = (mafID)ti->GetValueAsDouble();
         }
@@ -232,7 +232,7 @@ mafVME *mafMSFImporter::RestoreVME(mafStorageElement *node, mafVME *parent)
   mafVME *vme = NULL;
   // restore due attributes
   mafString vme_type;
-  if (node->GetAttribute("Type",vme_type))
+  if (node->GetAttribute(_R("Type"),vme_type))
   {
     vme = CreateVMEInstance(vme_type);
     if (!vme)
@@ -240,7 +240,7 @@ mafVME *mafMSFImporter::RestoreVME(mafStorageElement *node, mafVME *parent)
 
     mafString vme_name;
 
-    if (node->GetAttribute("Name",vme_name))
+    if (node->GetAttribute(_R("Name"),vme_name))
     {
       vme->SetName(vme_name);
       // traverse children and restore TagArray, MatrixVector and VMEItems 
@@ -250,11 +250,11 @@ mafVME *mafMSFImporter::RestoreVME(mafStorageElement *node, mafVME *parent)
       {
         // Restore a TagArray element
         //if (mafCString("TArray") == children[i]->GetName())
-        if (mafString("TArray").Equals(children[i]->GetName()))
+        if (children[i]->GetName() == _R("TArray"))
         {
           if (RestoreTagArray(children[i],vme->GetTagArray()) != MAF_OK)
           {
-            mafErrorMacro("MSFImporter: error restoring Tag Array of node: \""<<vme->GetName()<<"\"");
+            mafErrorMacro("MSFImporter: error restoring Tag Array of node: \""<<vme->GetName().GetCStr() <<"\"");
             return NULL;
           }
 
@@ -262,41 +262,41 @@ mafVME *mafMSFImporter::RestoreVME(mafStorageElement *node, mafVME *parent)
           // here should process VME-specific tags //
           ///////////////////////////////////////////
           mafTagArray *ta = vme->GetTagArray();
-          if (ta->GetTag("material"))
+          if (ta->GetTag(_R("material")))
           {
             RestoreMaterial(vme);
           }
-          if (ta->GetTag("MAF_TOOL_VME"))
+          if (ta->GetTag(_R("MAF_TOOL_VME")))
           {
-            ta->DeleteTag("MAF_TOOL_VME");
+            ta->DeleteTag(_R("MAF_TOOL_VME"));
           }
-          if (vme_type == "mflVMEMeter")
+          if (vme_type == _R("mflVMEMeter"))
           {
             RestoreMeterAttribute(vme);
           }
-          else if (vme_type == "mflVMELandmarkCloud" || vme_type == "mflVMERigidLandmarkCloud" || vme_type == "mflVMEDynamicLandmarkCloud")
+          else if (vme_type == _R("mflVMELandmarkCloud") || vme_type == _R("mflVMERigidLandmarkCloud") || vme_type == _R("mflVMEDynamicLandmarkCloud"))
           {
             int num_lm = ((mafVMELandmarkCloud *)vme)->GetNumberOfLandmarks();
             double rad = ((mafVMELandmarkCloud *)vme)->GetRadius();
           }
         }
         // restore VME-Item element
-        else if (children[i]->GetName() == "VItem")
+        else if (children[i]->GetName() == _R("VItem"))
         {
           if (RestoreVItem(children[i],vme) != MAF_OK)
           {
-            mafErrorMacro("MSFImporter: error restoring VME-Item of node: \""<<vme->GetName()<<"\"");
+            mafErrorMacro("MSFImporter: error restoring VME-Item of node: \""<<vme->GetName().GetCStr() <<"\"");
             return NULL;
           }
         }
 
         // restore MatrixVector element
-        else if (children[i]->GetName()== "VMatrix")
+        else if (children[i]->GetName()== _R("VMatrix"))
         {
           mafVMEGenericAbstract *vme_generic = mafVMEGenericAbstract::SafeDownCast(vme);
           if (vme_generic && RestoreVMatrix(children[i],vme_generic->GetMatrixVector()) != MAF_OK)
           {
-            mafErrorMacro("MSFImporter: error restoring VME-Item of node: \""<<vme->GetName()<<"\"");
+            mafErrorMacro("MSFImporter: error restoring VME-Item of node: \""<<vme->GetName().GetCStr() <<"\"");
             return NULL;
           }
           if (mafVMEGroup::SafeDownCast(vme))
@@ -309,17 +309,17 @@ mafVME *mafMSFImporter::RestoreVME(mafStorageElement *node, mafVME *parent)
         }
         
         // restore children VMEs
-        else if (children[i]->GetName() == "VME")
+        else if (children[i]->GetName() == _R("VME"))
         {
           mafVME *child_vme=RestoreVME(children[i],vme);
           if (child_vme==NULL)
           {
-            mafErrorMacro("MSFImporter: error restoring child VME (parent=\""<<vme->GetName()<<"\")");
+            mafErrorMacro("MSFImporter: error restoring child VME (parent=\""<<vme->GetName().GetCStr() <<"\")");
             continue;
           }
 
           // add the new VME as a child of the given parent node
-          if (vme_type == "mflVMELandmarkCloud" || vme_type == "mflVMERigidLandmarkCloud" || vme_type == "mflVMEDynamicLandmarkCloud" && child_vme->IsMAFType(mafVMELandmark))
+          if (vme_type == _R("mflVMELandmarkCloud") || vme_type == _R("mflVMERigidLandmarkCloud") || vme_type == _R("mflVMEDynamicLandmarkCloud") && child_vme->IsMAFType(mafVMELandmark))
           {
             if(mafVMELandmark::SafeDownCast(child_vme))
             {
@@ -335,43 +335,43 @@ mafVME *mafMSFImporter::RestoreVME(mafStorageElement *node, mafVME *parent)
             }
             
           }
-          else if ((vme->IsMAFType(mafVMEMeter) || vme->IsMAFType(mafVMEProber)) && child_vme->GetTagArray()->GetTag("mflVMELink"))
+          else if ((vme->IsMAFType(mafVMEMeter) || vme->IsMAFType(mafVMEProber)) && child_vme->GetTagArray()->GetTag(_R("mflVMELink")))
           {
             // this is a particular case for mafVMEMeter, in which the links are changed name
-            if (child_vme->GetName() == "StartLink")
+            if (child_vme->GetName() == _R("StartLink"))
             {
-              child_vme->SetName("StartVME");
-              if (vme->GetTagArray()->GetTag("MFL_METER_START_VME_ID"))
+              child_vme->SetName(_R("StartVME"));
+              if (vme->GetTagArray()->GetTag(_R("MFL_METER_START_VME_ID")))
               {
-                child_vme->GetTagArray()->SetTag(mafTagItem("SUBLINK_ID",vme->GetTagArray()->GetTag("MFL_METER_START_VME_ID")->GetValue()));
-                vme->GetTagArray()->DeleteTag("MFL_METER_START_VME_ID");
+                child_vme->GetTagArray()->SetTag(mafTagItem(_R("SUBLINK_ID"),vme->GetTagArray()->GetTag(_R("MFL_METER_START_VME_ID"))->GetValue()));
+                vme->GetTagArray()->DeleteTag(_R("MFL_METER_START_VME_ID"));
               }
             }
-            else if (child_vme->GetName() == "EndLink1")
+            else if (child_vme->GetName() == _R("EndLink1"))
             {
-              child_vme->SetName("EndVME1");
-              if (vme->GetTagArray()->GetTag("MFL_METER_END_VME_1_ID"))
+              child_vme->SetName(_R("EndVME1"));
+              if (vme->GetTagArray()->GetTag(_R("MFL_METER_END_VME_1_ID")))
               {
-                child_vme->GetTagArray()->SetTag(mafTagItem("SUBLINK_ID",vme->GetTagArray()->GetTag("MFL_METER_END_VME_1_ID")->GetValue()));
-                vme->GetTagArray()->DeleteTag("MFL_METER_END_VME_1_ID");
+                child_vme->GetTagArray()->SetTag(mafTagItem(_R("SUBLINK_ID"),vme->GetTagArray()->GetTag(_R("MFL_METER_END_VME_1_ID"))->GetValue()));
+                vme->GetTagArray()->DeleteTag(_R("MFL_METER_END_VME_1_ID"));
               }
             }
-            else if (child_vme->GetName() == "EndLink2")
+            else if (child_vme->GetName() == _R("EndLink2"))
             {
-              child_vme->SetName("EndVME2");
-              if (vme->GetTagArray()->GetTag("MFL_METER_END_VME_2_ID"))
+              child_vme->SetName(_R("EndVME2"));
+              if (vme->GetTagArray()->GetTag(_R("MFL_METER_END_VME_2_ID")))
               {
-                child_vme->GetTagArray()->SetTag(mafTagItem("SUBLINK_ID",vme->GetTagArray()->GetTag("MFL_METER_END_VME_2_ID")->GetValue()));
-                vme->GetTagArray()->DeleteTag("MFL_METER_END_VME_2_ID");
+                child_vme->GetTagArray()->SetTag(mafTagItem(_R("SUBLINK_ID"),vme->GetTagArray()->GetTag(_R("MFL_METER_END_VME_2_ID"))->GetValue()));
+                vme->GetTagArray()->DeleteTag(_R("MFL_METER_END_VME_2_ID"));
               }
             }
-            else if (child_vme->GetName() == "SurfaceLink")
+            else if (child_vme->GetName() == _R("SurfaceLink"))
             {
-              child_vme->SetName("Surface");
+              child_vme->SetName(_R("Surface"));
             }
-            else if (child_vme->GetName() == "VolumeLink")
+            else if (child_vme->GetName() == _R("VolumeLink"))
             {
-              child_vme->SetName("Volume");
+              child_vme->SetName(_R("Volume"));
             }
             vme->AddChild(child_vme);
           }
@@ -391,67 +391,67 @@ mafVME *mafMSFImporter::CreateVMEInstance(const mafString &name)
 //------------------------------------------------------------------------------
 {
   if (
-    name == "mafVMEGeneric"         ||
-    name == "mflVMEAlias"
+    name == _R("mafVMEGeneric")         ||
+    name == _R("mflVMEAlias")
     )
   {
     return mafVMEGeneric::New();
   }
-  else if (name == "mflVMELink")
+  else if (name == _R("mflVMELink"))
   {
     mafVME *link = mafVMEGeneric::New();
-    link->GetTagArray()->SetTag(mafTagItem("mflVMELink","1"));
+    link->GetTagArray()->SetTag(mafTagItem(_R("mflVMELink"),_R("1")));
     return link;
   }
-  else if (name == "mflVMEExternalData")
+  else if (name == _R("mflVMEExternalData"))
   {
     return mafVMEExternalData::New();
   }
-  else if (name == "mflVMEGroup")
+  else if (name == _R("mflVMEGroup"))
   {
     return mafVMEGroup::New();
   }
-  else if (name == "mflVMESurface")
+  else if (name == _R("mflVMESurface"))
   {
     return mafVMESurface::New();
   }
-  else if (name == "mflVMEGenericVolume")
+  else if (name == _R("mflVMEGenericVolume"))
   {
     return mafVMEVolumeRGB::New();
   }
-  else if (name == "mflVMEGrayVolume")
+  else if (name == _R("mflVMEGrayVolume"))
   {
     return mafVMEVolumeGray::New();
   }
-  else if (name == "mflVMELandmarkCloud" || name == "mflVMEDynamicLandmarkCloud"  || name == "mflVMERigidLandmarkCloud")
+  else if (name == _R("mflVMELandmarkCloud") || name == _R("mflVMEDynamicLandmarkCloud")  || name == _R("mflVMERigidLandmarkCloud"))
   {
     return mafVMELandmarkCloud::New();
   }
-  else if (name == "mflVMELandmark")
+  else if (name == _R("mflVMELandmark"))
   {
     return mafVMELandmark::New();
   }
-  else if (name == "mflVMEImage")
+  else if (name == _R("mflVMEImage"))
   {
     return mafVMEImage::New();
   }
-  else if (name == "mflVMEMeter")
+  else if (name == _R("mflVMEMeter"))
   {
     return mafVMEMeter::New();
   }
-  else if (name == "mflVMEPointSet")
+  else if (name == _R("mflVMEPointSet"))
   {
     return mafVMEPointSet::New();
   }
-  else if (name == "mflVMERefSys")
+  else if (name == _R("mflVMERefSys"))
   {
     return mafVMERefSys::New();
   }
-  else if (name == "mflVMEMaps")
+  else if (name == _R("mflVMEMaps"))
   {
     return mafVMEProber::New();
   }
-  else if (name == "mflVMESlicer")
+  else if (name == _R("mflVMESlicer"))
   {
     return mafVMESlicer::New();
   }
@@ -479,55 +479,55 @@ void mafMSFImporter::RestoreMeterAttribute(mafVME *vme)
     for (int t=0; t<num_tags; t++)
     {
       const mafString& tag_name = tag_list[t];
-      if (tag_list[t].Equals("MFL_METER_END_VME_1_ID") || 
-          tag_list[t].Equals("MFL_METER_START_VME_ID") ||
-          tag_list[t].Equals("MFL_METER_END_VME_2_ID"))
+      if (tag_list[t].Equals(_R("MFL_METER_END_VME_1_ID")) || 
+          tag_list[t].Equals(_R("MFL_METER_START_VME_ID")) ||
+          tag_list[t].Equals(_R("MFL_METER_END_VME_2_ID")))
       {
         continue;
       }
-      ti = meter_ta->GetTag(tag_name.GetCStr());
+      ti = meter_ta->GetTag(tag_name);
       component = ti->GetComponentAsDouble(0);
-      if (tag_name.Equals("MFL_METER_TYPE"))
+      if (tag_name.Equals(_R("MFL_METER_TYPE")))
       {
         meter_attrib->m_MeterMode = (int)component;
       }
-      else if (tag_name.Equals("MFL_METER_COLOR_MODE"))
+      else if (tag_name.Equals(_R("MFL_METER_COLOR_MODE")))
       {
         meter_attrib->m_ColorMode = (int)component;
       }
-      else if (tag_name.Equals("MFL_METER_MEASURE_TYPE"))
+      else if (tag_name.Equals(_R("MFL_METER_MEASURE_TYPE")))
       {
         meter_attrib->m_MeasureType = (int)component;
       }
-      else if (tag_name.Equals("MFL_METER_REPRESENTATION"))
+      else if (tag_name.Equals(_R("MFL_METER_REPRESENTATION")))
       {
         meter_attrib->m_Representation = (int)component;
       }
-      else if (tag_name.Equals("MFL_METER_TUBE_CAPPING"))
+      else if (tag_name.Equals(_R("MFL_METER_TUBE_CAPPING")))
       {
         meter_attrib->m_Capping = (int)component;
       }
-      else if (tag_name.Equals("MFL_METER_EVENT_THRESHOLD"))
+      else if (tag_name.Equals(_R("MFL_METER_EVENT_THRESHOLD")))
       {
         meter_attrib->m_GenerateEvent = (int)component;
       }
-      else if (tag_name.Equals("MFL_METER_INIT_MEASURE"))
+      else if (tag_name.Equals(_R("MFL_METER_INIT_MEASURE")))
       {
         meter_attrib->m_InitMeasure = component;
       }
-      else if (tag_name.Equals("MFL_METER_DELTA_PERCENT"))
+      else if (tag_name.Equals(_R("MFL_METER_DELTA_PERCENT")))
       {
         meter_attrib->m_DeltaPercent = (int)component;
       }
-      else if (tag_name.Equals("MFL_METER_LABEL_VISIBILITY"))
+      else if (tag_name.Equals(_R("MFL_METER_LABEL_VISIBILITY")))
       {
         meter_attrib->m_LabelVisibility = (int)component;
       }
-      else if (tag_name.Equals("MFL_METER_RADIUS"))
+      else if (tag_name.Equals(_R("MFL_METER_RADIUS")))
       {
         meter_attrib->m_TubeRadius = component;
       }
-      else if (tag_name.Equals("MFL_METER_DISTANCE_RANGE"))
+      else if (tag_name.Equals(_R("MFL_METER_DISTANCE_RANGE")))
       {
         meter_attrib->m_DistanceRange[0] = component;
         meter_attrib->m_DistanceRange[1] = ti->GetComponentAsDouble(1);
@@ -543,14 +543,14 @@ void mafMSFImporter::RestoreMeterAttribute(mafVME *vme)
 void mafMSFImporter::RestoreMaterial(mafVME *vme)
 //------------------------------------------------------------------------------
 {
-  mmaMaterial *material = (mmaMaterial *)vme->GetAttribute("MaterialAttributes");
+  mmaMaterial *material = (mmaMaterial *)vme->GetAttribute(_R("MaterialAttributes"));
   if (material == NULL)
   {
     material = mmaMaterial::New();
-    vme->SetAttribute("MaterialAttributes", material);
+    vme->SetAttribute(_R("MaterialAttributes"), material);
   }
 
-  mafTagItem *mat_item = vme->GetTagArray()->GetTag("material");
+  mafTagItem *mat_item = vme->GetTagArray()->GetTag(_R("material"));
   material->m_MaterialName =  mat_item->GetComponent(MAT_NAME);
   material->m_Ambient[0] = mat_item->GetComponentAsDouble(MAT_AMBIENT_R);
   material->m_Ambient[1] = mat_item->GetComponentAsDouble(MAT_AMBIENT_G);
@@ -568,7 +568,7 @@ void mafMSFImporter::RestoreMaterial(mafVME *vme)
   material->m_Opacity = mat_item->GetComponentAsDouble(MAT_OPACITY);
   material->m_Representation = (int)mat_item->GetComponentAsDouble(MAT_REPRESENTATION);
   material->UpdateProp();
-  vme->GetTagArray()->DeleteTag("material");
+  vme->GetTagArray()->DeleteTag(_R("material"));
 }
 
 //------------------------------------------------------------------------------
@@ -576,19 +576,19 @@ int mafMSFImporter::RestoreVItem(mafStorageElement *node, mafVME *vme)
 //------------------------------------------------------------------------------
 {
   mafTimeStamp item_time;
-  if (node->GetAttributeAsDouble("TimeStamp",item_time))
+  if (node->GetAttributeAsDouble(_R("TimeStamp"),item_time))
   {
     mafString data_type;
-    if (node->GetAttribute("DataType",data_type))
+    if (node->GetAttribute(_R("DataType"),data_type))
     {
       mafID item_id;
-      if (node->GetAttributeAsInteger("Id",item_id))
+      if (node->GetAttributeAsInteger(_R("Id"),item_id))
       {
         mafString data_file;
-        if (node->GetAttribute("DataFile",data_file))
+        if (node->GetAttribute(_R("DataFile"),data_file))
         {
           mafSmartPointer<mafVMEItemVTK> vitem;
-          mafStorageElement *tarray=node->FindNestedElement("TArray");
+          mafStorageElement *tarray=node->FindNestedElement(_R("TArray"));
           mafVMEGeneric *vme_generic=mafVMEGeneric::SafeDownCast(vme);
           assert(vme_generic);
           if (tarray)
@@ -599,28 +599,28 @@ int mafMSFImporter::RestoreVItem(mafStorageElement *node, mafVME *vme)
               // here should process VMEItem-specific tags //
               ///////////////////////////////////////////////
               mafTagArray *ta = vitem->GetTagArray();
-              if (ta->GetTag("MFL_CRYPTING"))
+              if (ta->GetTag(_R("MFL_CRYPTING")))
               {
-                mafTagItem *ti = ta->GetTag("MFL_CRYPTING");
+                mafTagItem *ti = ta->GetTag(_R("MFL_CRYPTING"));
                 vme->SetCrypting((int)ti->GetValueAsDouble());
                 vitem->SetCrypting((int)ti->GetValueAsDouble() != 0);
-                ta->DeleteTag("MFL_CRYPTING");
+                ta->DeleteTag(_R("MFL_CRYPTING"));
               }
-              if (ta->GetTag("VTK_DATASET_BOUNDS"))
+              if (ta->GetTag(_R("VTK_DATASET_BOUNDS")))
               {
                 double *b = vitem->GetBounds();
-                mafTagItem *ti = ta->GetTag("VTK_DATASET_BOUNDS");
+                mafTagItem *ti = ta->GetTag(_R("VTK_DATASET_BOUNDS"));
                 for (int c=0;c<6;c++)
                 {
                   b[c] = ti->GetComponentAsDouble(c);
                 }
-                ta->DeleteTag("VTK_DATASET_BOUNDS");
+                ta->DeleteTag(_R("VTK_DATASET_BOUNDS"));
               }
             }
           } // tarray
           vitem->SetTimeStamp(item_time);
           vitem->SetId(item_id);
-          vitem->SetURL(data_file);
+          vitem->SetURL(data_file.GetCStr());
           vitem->SetDataType(data_type);
           vme_generic->GetDataVector()->AppendItem(vitem);
           vme_generic->GetDataVector()->SetCrypting(vitem->GetCrypting());
@@ -644,7 +644,7 @@ int mafMSFImporter::RestoreVMatrix(mafStorageElement *node, mafMatrixVector *vma
 
   for (int i = 0;i<children.size();i++)
   {
-    assert(children[i]->GetName() == "Matrix");
+    assert(children[i]->GetName() == _R("Matrix"));
 
     mafSmartPointer<mafMatrix> matrix;
     int restored_matrix = children[i]->RestoreMatrix(matrix);
@@ -669,36 +669,36 @@ int mafMSFImporter::RestoreTagArray(mafStorageElement *node, mafTagArray *tarray
 
   for (int i = 0;i<children.size();i++)
   {
-    if (children[i]->GetName()== "TItem")
+    if (children[i]->GetName()== _R("TItem"))
     {
       mafID num_of_comps;
-      if (children[i]->GetAttributeAsInteger("Mult",num_of_comps))
+      if (children[i]->GetAttributeAsInteger(_R("Mult"),num_of_comps))
       {
         mafString tag_name;
-        if (children[i]->GetAttribute("Tag",tag_name))
+        if (children[i]->GetAttribute(_R("Tag"),tag_name))
         {
           mafString tag_type;
-          if (children[i]->GetAttribute("Type",tag_type))
+          if (children[i]->GetAttribute(_R("Type"),tag_type))
           {
             mafTagItem titem;
             titem.SetNumberOfComponents(num_of_comps);
             titem.SetName(tag_name);
     
-            if (tag_type=="NUM")
+            if (tag_type==_R("NUM"))
             {
               titem.SetType(mafTagItem::MAF_NUMERIC_TAG);
             }
-            else if (tag_type=="STR")
+            else if (tag_type==_R("STR"))
             {
               titem.SetType(mafTagItem::MAF_STRING_TAG);
             }
-            else if (tag_type=="MIS")
+            else if (tag_type==_R("MIS"))
             {
               titem.SetType(mafTagItem::MAF_MISSING_TAG);
             }
             else
             {
-              titem.SetType(atof(tag_type));
+              titem.SetType(atof(tag_type.GetCStr()));
             }
 
             mafStorageElement::ChildrenVector tag_comps;
@@ -706,7 +706,7 @@ int mafMSFImporter::RestoreTagArray(mafStorageElement *node, mafTagArray *tarray
             int idx=0;
             for (int n = 0;n<tag_comps.size();n++)
             {
-              if (tag_comps[n]->GetName() == "TC")
+              if (tag_comps[n]->GetName() == _R("TC"))
               {
                 mafString tc;
                 tag_comps[n]->RestoreText(tc);
@@ -715,7 +715,7 @@ int mafMSFImporter::RestoreTagArray(mafStorageElement *node, mafTagArray *tarray
               }
               else
               {
-                mafErrorMacro("Error parning a TItem element inside a TagArray: expected <TC> sub element, found <"<<tag_comps[n]->GetName()<<">");
+                mafErrorMacro("Error parning a TItem element inside a TagArray: expected <TC> sub element, found <"<<tag_comps[n]->GetName().GetCStr() <<">");
               } 
             } 
             tarray->SetTag(titem);

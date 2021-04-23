@@ -256,7 +256,7 @@ void mafObjectFactory::LoadLibrariesInPath(const char* path)
 //------------------------------------------------------------------------------
 {
   mafDirectory dir;
-  if ( !dir.Load(path) )
+  if ( !dir.Load(_R(path)) )
   {
     return;
   }
@@ -266,14 +266,14 @@ void mafObjectFactory::LoadLibrariesInPath(const char* path)
    */
   for ( unsigned int i = 0; i < dir.GetNumberOfFiles(); i++ )
   {
-    const char* file = dir.GetFile(i);
+    const mafString& file = dir.GetFile(i);
     /**
      * try to make sure the file has at least the extension
      * for a shared library in it.
      */
-    if ( NameIsSharedLibrary(file) )
+    if ( NameIsSharedLibrary(file.GetCStr()) )
     {
-      std::string fullpath = CreateFullPath(path, file);
+      std::string fullpath = CreateFullPath(path, file.GetCStr());
       LibHandle lib = mafDynamicLoader::OpenLibrary(fullpath.c_str());
       if ( lib )
       {

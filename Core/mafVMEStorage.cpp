@@ -23,7 +23,6 @@
 #include "mafStorageElement.h"
 #include "mmuIdFactory.h"
 #include "mafEventIO.h"
-#include "mafFilesDirs.h"
 
 //------------------------------------------------------------------------------
 mafCxxTypeMacro(mafVMEStorage)
@@ -34,8 +33,8 @@ mafVMEStorage::mafVMEStorage()
 //------------------------------------------------------------------------------
 {
   m_NodeManager = NULL;
-  m_Parser->SetVersion("2.2");
-  m_Parser->SetFileType("MSF");
+  m_Parser->SetVersion(_R("2.2"));
+  m_Parser->SetFileType(_R("MSF"));
   m_Parser->SetDocument(m_NodeManager); // create a MSF doc and set the root node
 }
 

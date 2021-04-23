@@ -215,8 +215,8 @@ int mafVMEPolylineSpline::InternalStore(mafStorageElement *parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    if(parent->StoreMatrix("Transform",&m_Transform->GetMatrix())==MAF_OK && 
-       parent->StoreInteger("AxisReorder", m_OrderByAxisMode) == MAF_OK
+    if(parent->StoreMatrix(_R("Transform"),&m_Transform->GetMatrix())==MAF_OK && 
+       parent->StoreInteger(_R("AxisReorder"), m_OrderByAxisMode) == MAF_OK
       )    
       return MAF_OK;
   }
@@ -230,9 +230,9 @@ int mafVMEPolylineSpline::InternalRestore(mafStorageElement *node)
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
-    if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
+    if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK)
     {
-      node->RestoreInteger("AxisReorder",m_OrderByAxisMode);
+      node->RestoreInteger(_R("AxisReorder"),m_OrderByAxisMode);
       m_Transform->SetMatrix(matrix);
       return MAF_OK;
     }
@@ -262,13 +262,13 @@ char** mafVMEPolylineSpline::GetIcon()
 void mafVMEPolylineSpline::SetPolylineLink(mafNode *n)
 //-------------------------------------------------------------------------
 {
-	SetLink("PolylineSource", n);
+	SetLink(_R("PolylineSource"), n);
 }
 //-------------------------------------------------------------------------
 mafVME *mafVMEPolylineSpline::GetPolylineLink()
 //-------------------------------------------------------------------------
 {
-  return mafVME::SafeDownCast(GetLink("PolylineSource"));
+  return mafVME::SafeDownCast(GetLink(_R("PolylineSource")));
 }
 //-------------------------------------------------------------------------
 mafGUI* mafVMEPolylineSpline::CreateGui()
@@ -281,11 +281,11 @@ mafGUI* mafVMEPolylineSpline::CreateGui()
   m_Gui->SetListener(this);
   m_Gui->Divider();
 
-	m_Gui->Integer(ID_NUMBER_NODES,_("Degree"),&m_SplineCoefficient);
+	m_Gui->Integer(ID_NUMBER_NODES,_L("Degree"),&m_SplineCoefficient);
 
 	mafVME *polyline_vme = GetPolylineLink();
-  m_PolylineLinkName = polyline_vme ? polyline_vme->GetName() : _("none");
-  m_Gui->Button(ID_LINK_POLYLINE,&m_PolylineLinkName,_("Polyline"), _("Select the Polyline to create the Spline"));
+  m_PolylineLinkName = polyline_vme ? polyline_vme->GetName() : _L("none");
+  m_Gui->Button(ID_LINK_POLYLINE,&m_PolylineLinkName,_L("Polyline"), _L("Select the Polyline to create the Spline"));
 
 	m_Gui->Update();
 	//this->InternalUpdate();
@@ -304,7 +304,7 @@ void mafVMEPolylineSpline::OnEvent(mafEventBase *maf_event)
       case ID_LINK_POLYLINE:
       {
         mafID button_id = e->GetId();
-        mafString title = _("Choose vme");
+        mafString title = _L("Choose vme");
         e->SetId(VME_CHOOSE);
         e->SetArg((long)&mafVMEPolylineSpline::PolylineAccept);
         e->SetString(&title);
@@ -439,11 +439,11 @@ void mafVMEPolylineSpline::OptimizeMinimumSpacingSpline()
 mmaMaterial *mafVMEPolylineSpline::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+  mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
   if (material == NULL)
   {
     material = mmaMaterial::New();
-    SetAttribute("MaterialAttributes", material);
+    SetAttribute(_R("MaterialAttributes"), material);
     if (m_Output)
     {
       ((mafVMEOutputPolyline *)m_Output)->SetMaterial(material);

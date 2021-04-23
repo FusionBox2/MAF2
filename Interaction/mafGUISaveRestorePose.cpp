@@ -38,7 +38,7 @@
 
 #include "vtkMatrix4x4.h"
 
-mafString dummyPoseNameUsedForTesting = "dummyPoseNameUsedForTesting";
+mafString dummyPoseNameUsedForTesting = _R("dummyPoseNameUsedForTesting");
 
 //----------------------------------------------------------------------------
 mafGUISaveRestorePose::mafGUISaveRestorePose(mafVME *input, mafBaseEventHandler *listener, int typeGui, bool testMode)
@@ -73,19 +73,19 @@ void mafGUISaveRestorePose::CreateGui()
   m_Gui->Divider(2);
   if(m_TypeGui == ID_POSE_GUI)
   {
-    m_Gui->Label("save/restore pose", true);
-    m_Gui->Button(ID_SAVE,"save pose");
-    m_Gui->Button(ID_REMOVE,"remove pose");
-    m_Gui->Label("");
-    m_PositionsList = m_Gui->ListBox(ID_APPLY,"apply pose");
+    m_Gui->Label(_R("save/restore pose"), true);
+    m_Gui->Button(ID_SAVE,_R("save pose"));
+    m_Gui->Button(ID_REMOVE,_R("remove pose"));
+    m_Gui->Label(_R(""));
+    m_PositionsList = m_Gui->ListBox(ID_APPLY,_R("apply pose"));
   }
   else if(m_TypeGui == ID_SCALE_GUI)
   {
-    m_Gui->Label("save/restore scaling", true);
-    m_Gui->Button(ID_SAVE,"save scaling");
-    m_Gui->Button(ID_REMOVE,"remove scaling");
-    m_Gui->Label("");
-    m_PositionsList = m_Gui->ListBox(ID_APPLY,"apply scaling");
+    m_Gui->Label(_R("save/restore scaling"), true);
+    m_Gui->Button(ID_SAVE,_R("save scaling"));
+    m_Gui->Button(ID_REMOVE,_R("remove scaling"));
+    m_Gui->Label(_R(""));
+    m_PositionsList = m_Gui->ListBox(ID_APPLY,_R("apply scaling"));
   }
   
   m_PositionsList->Clear();
@@ -158,7 +158,7 @@ void mafGUISaveRestorePose::FillListBoxWithABSPosesStoredInInputVME()
 	  mafTagItem *item = tag_array->GetTag(tag_list[t]);
 		if(item->GetNumberOfComponents() == 16)
 		{
-			wxString name = item->GetName();
+			wxString name = item->GetName().toWx();
       if(name.Find("STORED_ABS_POS_") != -1)
       {
 			  name = name.Remove(0,15);
@@ -186,13 +186,13 @@ void mafGUISaveRestorePose::StorePose()
   }
   else if (m_TestMode == true)
   {
-    pose_name = dummyPoseNameUsedForTesting;
+    pose_name = dummyPoseNameUsedForTesting.toWx();
   }
   
   pose_name.Trim();
   pose_name.Trim(FALSE);
 
-  mafString AbsPos_tagName = "STORED_ABS_POS_" + pose_name;
+  mafString AbsPos_tagName = _R("STORED_ABS_POS_") + mafWxToString(pose_name);
 
   mafTagArray *tagArray = m_InputVME->GetTagArray();
   if(tagArray->GetTag(AbsPos_tagName)) 
@@ -219,14 +219,14 @@ void mafGUISaveRestorePose::RemovePose( int absPoseListBoxID )
 
   if (m_TestMode == false)
   {
-    pose_name = m_PositionsList->GetString(absPoseListBoxID).c_str();
+    pose_name = mafWxToString(m_PositionsList->GetString(absPoseListBoxID));
   }
   else if (m_TestMode == true)
   {
     pose_name = dummyPoseNameUsedForTesting;
   }
   
-  mafString AbsPos_tagName = "STORED_ABS_POS_" + pose_name;
+  mafString AbsPos_tagName = _R("STORED_ABS_POS_") + pose_name;
 
   RemovePoseHelper(AbsPos_tagName);
   
@@ -242,11 +242,11 @@ void mafGUISaveRestorePose::RestorePose( int absPoseListBoxID )
 
   if (m_TestMode == false)
   {
-    pose_name = m_PositionsList->GetString(absPoseListBoxID).c_str();
+    pose_name = mafWxToString(m_PositionsList->GetString(absPoseListBoxID));
   }
   else if (m_TestMode == true)
   {
-    pose_name = dummyPoseNameUsedForTesting.GetCStr();
+    pose_name = dummyPoseNameUsedForTesting;
   }
 
   RestorePoseHelper(pose_name);
@@ -257,10 +257,10 @@ void mafGUISaveRestorePose::RestorePoseHelper( mafString pose_name )
 {
   assert(m_InputVME);
 
-  wxString AbsPos_tagName = "STORED_ABS_POS_" + pose_name;
+  mafString AbsPos_tagName = _R("STORED_ABS_POS_") + pose_name;
   int comp = 0;
   mafMatrix abs_pose;
-  if(mafTagItem *item = m_InputVME->GetTagArray()->GetTag(AbsPos_tagName.c_str()))
+  if(mafTagItem *item = m_InputVME->GetTagArray()->GetTag(AbsPos_tagName))
   {
     for (int r=0; r<4; r++)
       for (int c=0; c<4; c++)
@@ -308,6 +308,6 @@ void mafGUISaveRestorePose::StorePoseHelper( mafString absPoseTagName )
 void mafGUISaveRestorePose::RemovePoseHelper( mafString absPoseTagName )
 {
   assert(m_InputVME);
-  if (m_InputVME->GetTagArray()->GetTag(absPoseTagName.GetCStr()))
-    m_InputVME->GetTagArray()->DeleteTag(absPoseTagName.GetCStr());
+  if (m_InputVME->GetTagArray()->GetTag(absPoseTagName))
+    m_InputVME->GetTagArray()->DeleteTag(absPoseTagName);
 }

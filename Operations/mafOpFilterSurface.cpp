@@ -142,39 +142,39 @@ void mafOpFilterSurface::CreateGui()
 
   if (buildHelpGui.GetArg() == true)
   {
-	  m_Gui->Button(ID_HELP, "Help","");	
+	  m_Gui->Button(ID_HELP, _R("Help"), _R(""));
   }
 
-  m_Gui->Label("");
-  m_Gui->Label("smooth",true);
-  m_Gui->Slider(ID_ITERACTION,"n.iteraction: ",&m_Iterations,0,500);
-  m_Gui->Button(ID_SMOOTH,"apply smooth");
+  m_Gui->Label(_R(""));
+  m_Gui->Label(_R("smooth"),true);
+  m_Gui->Slider(ID_ITERACTION,_R("n.iteraction: "),&m_Iterations,0,500);
+  m_Gui->Button(ID_SMOOTH,_R("apply smooth"));
 
   m_Gui->Divider(2);
-  m_Gui->Label("decimate",true);
-  m_Gui->Bool(ID_PRESERVE_TOPOLOGY,"preserve topology",&m_TopologyFlag, 1);
-  m_Gui->Slider(ID_REDUCTION,"reduc. to %: ",&m_Reduction,1, 100);
-  m_Gui->Button(ID_DECIMATE,"apply decimate");
+  m_Gui->Label(_R("decimate"),true);
+  m_Gui->Bool(ID_PRESERVE_TOPOLOGY,_R("preserve topology"),&m_TopologyFlag, 1);
+  m_Gui->Slider(ID_REDUCTION,_R("reduc. to %: "),&m_Reduction,1, 100);
+  m_Gui->Button(ID_DECIMATE,_R("apply decimate"));
 
   m_Gui->Divider(2);
-  m_Gui->Label("normals",true);
-  m_Gui->Slider(ID_NORMALS_ANGLE,"angle",&m_Angle, 0, 90);
-  m_Gui->Bool(ID_EDGE_SPLITTING,"edge splitting",&m_EdgeSplit, 1);
-  m_Gui->Bool(ID_FLIP_NORMALS,"flip normals",&m_FlipNormals, 1);
-  m_Gui->Button(ID_NORMALS,"apply normals");
-  m_Gui->Button(ID_RESET_NORMALS,"reset normals");
+  m_Gui->Label(_R("normals"),true);
+  m_Gui->Slider(ID_NORMALS_ANGLE,_R("angle"),&m_Angle, 0, 90);
+  m_Gui->Bool(ID_EDGE_SPLITTING,_R("edge splitting"),&m_EdgeSplit, 1);
+  m_Gui->Bool(ID_FLIP_NORMALS,_R("flip normals"),&m_FlipNormals, 1);
+  m_Gui->Button(ID_NORMALS,_R("apply normals"));
+  m_Gui->Button(ID_RESET_NORMALS,_R("reset normals"));
 
   m_Gui->Divider(2);
-  m_Gui->Label("other filters",true);
-  m_Gui->Button(ID_STRIPPER,"strip");
-  m_Gui->Button(ID_TRIANGLE,"triangulate");
-  m_Gui->Button(ID_CLEAN,"clean");
-  m_Gui->Button(ID_VTK_CONNECT,"connectivity");
+  m_Gui->Label(_R("other filters"),true);
+  m_Gui->Button(ID_STRIPPER,_R("strip"));
+  m_Gui->Button(ID_TRIANGLE,_R("triangulate"));
+  m_Gui->Button(ID_CLEAN,_R("clean"));
+  m_Gui->Button(ID_VTK_CONNECT,_R("connectivity"));
 
   m_Gui->Divider(2);
-  m_Gui->Label("");
-  m_Gui->Button(ID_PREVIEW,"preview");
-  m_Gui->Button(ID_CLEAR,"clear");
+  m_Gui->Label(_R(""));
+  m_Gui->Button(ID_PREVIEW,_R("preview"));
+  m_Gui->Button(ID_CLEAR,_R("clear"));
   m_Gui->OkCancel();
   m_Gui->Enable(wxOK,false);
 
@@ -586,38 +586,38 @@ void mafOpFilterSurface::OnClear()
 mafString mafOpFilterSurface::GetParameters()
 //----------------------------------------------------------------------------
 {
-  wxString parameter;
+  mafString parameter;
 
-  parameter.Append("n.iteraction = ");
-  parameter.Append(wxString::Format("%i", m_Iterations));
-  parameter.Append(", ");
-  parameter.Append("preserve topology = ");
-  parameter.Append(wxString::Format("%i", m_TopologyFlag));
+  parameter.Append(_R("n.iteraction = "));
+  parameter.Append(mafString::Format(_R("%i"), m_Iterations));
+  parameter.Append(_R(", "));
+  parameter.Append(_R("preserve topology = "));
+  parameter.Append(mafString::Format(_R("%i"), m_TopologyFlag));
 
-  parameter.Append(", ");
-  parameter.Append("reduc. to % = ");
-  parameter.Append(wxString::Format("%i", m_Reduction));
-  parameter.Append(", ");
-  parameter.Append("angle = ");
-  parameter.Append(wxString::Format("%i", m_Angle));
-  parameter.Append(", ");
-  parameter.Append("edge splitting = ");
-  parameter.Append(wxString::Format("%i", m_EdgeSplit));
-  parameter.Append(", ");
-  parameter.Append("flip normals = ");
-  parameter.Append(wxString::Format("%i", m_FlipNormals));
-  parameter.Append(", ");
-  parameter.Append("strip = ");
-  parameter.Append(wxString::Format("%i", m_StripFlag));
-  parameter.Append(", ");
-  parameter.Append("triangulate = ");
-  parameter.Append(wxString::Format("%i", m_TriangulateFlag));
-  parameter.Append(", ");
-  parameter.Append("clean = ");
-  parameter.Append(wxString::Format("%i", m_CleanFlag));
-  parameter.Append(", ");
-  parameter.Append("connectivity = ");
-  parameter.Append(wxString::Format("%i", m_ConnectivityFlag));
+  parameter.Append(_R(", "));
+  parameter.Append(_R("reduc. to % = "));
+  parameter.Append(mafString::Format(_R("%i"), m_Reduction));
+  parameter.Append(_R(", "));
+  parameter.Append(_R("angle = "));
+  parameter.Append(mafString::Format(_R("%i"), m_Angle));
+  parameter.Append(_R(", "));
+  parameter.Append(_R("edge splitting = "));
+  parameter.Append(mafString::Format(_R("%i"), m_EdgeSplit));
+  parameter.Append(_R(", "));
+  parameter.Append(_R("flip normals = "));
+  parameter.Append(mafString::Format(_R("%i"), m_FlipNormals));
+  parameter.Append(_R(", "));
+  parameter.Append(_R("strip = "));
+  parameter.Append(mafString::Format(_R("%i"), m_StripFlag));
+  parameter.Append(_R(", "));
+  parameter.Append(_R("triangulate = "));
+  parameter.Append(mafString::Format(_R("%i"), m_TriangulateFlag));
+  parameter.Append(_R(", "));
+  parameter.Append(_R("clean = "));
+  parameter.Append(mafString::Format(_R("%i"), m_CleanFlag));
+  parameter.Append(_R(", "));
+  parameter.Append(_R("connectivity = "));
+  parameter.Append(mafString::Format(_R("%i"), m_ConnectivityFlag));
 
   return parameter;
 }

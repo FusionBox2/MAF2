@@ -65,10 +65,10 @@ void mafGUIGizmoScale::CreateGui()
   m_Gui = new mafGUI(this);
 
   m_Gui->Divider(2);
-  m_Gui->Label("scaling gizmo abs scaling", true);
-  m_Gui->Double(ID_SCALE_X, "Scaling X", &m_Scaling[0], 0);
-  m_Gui->Double(ID_SCALE_Y, "Scaling Y", &m_Scaling[1], 0);
-  m_Gui->Double(ID_SCALE_Z, "Scaling Z", &m_Scaling[2], 0);
+  m_Gui->Label(_R("scaling gizmo abs scaling"), true);
+  m_Gui->Double(ID_SCALE_X, _R("Scaling X"), &m_Scaling[0], 0);
+  m_Gui->Double(ID_SCALE_Y, _R("Scaling Y"), &m_Scaling[1], 0);
+  m_Gui->Double(ID_SCALE_Z, _R("Scaling Z"), &m_Scaling[2], 0);
 	m_Gui->Divider();
   m_Gui->Update();
 }

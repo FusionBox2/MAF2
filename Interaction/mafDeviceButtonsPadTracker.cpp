@@ -99,13 +99,13 @@ int mafDeviceButtonsPadTracker::InternalStore(mafStorageElement *node)
     return MAF_ERROR;
 
   //StoreMatrix(writer,m_TrackerToCanonicalTransform->GetMatrix(),"TrackerToCanonicalMatrix");
-  node->StoreVectorN("TrackedBoxBounds",m_TrackedBounds.m_Bounds,6);
-  node->StoreVectorN("TrackedBoxOrientation",m_TrackedBoxOrientation,3);
+  node->StoreVectorN(_R("TrackedBoxBounds"),m_TrackedBounds.m_Bounds,6);
+  node->StoreVectorN(_R("TrackedBoxOrientation"),m_TrackedBoxOrientation,3);
 
   // store default avatar if present
   if (m_DefaultAvatar)
   {
-    return (node->StoreObject("Avatar",m_DefaultAvatar)?MAF_OK:MAF_ERROR);
+    return (node->StoreObject(_R("Avatar"),m_DefaultAvatar)?MAF_OK:MAF_ERROR);
   }
 
   return MAF_OK;
@@ -120,12 +120,12 @@ int mafDeviceButtonsPadTracker::InternalRestore(mafStorageElement *node)
     return MAF_ERROR;
 
 
-  if (node->RestoreVectorN("TrackedBoxBounds",m_TrackedBounds.m_Bounds,6)==MAF_OK)
+  if (node->RestoreVectorN(_R("TrackedBoxBounds"),m_TrackedBounds.m_Bounds,6)==MAF_OK)
   {
     m_TrackedBounds.Modified();
-    if (node->RestoreVectorN("TrackedBoxOrientation",m_TrackedBoxOrientation,3)==MAF_OK)
+    if (node->RestoreVectorN(_R("TrackedBoxOrientation"),m_TrackedBoxOrientation,3)==MAF_OK)
     {
-      if (mafStorageElement *sub_node=node->FindNestedElement("Avatar"))
+      if (mafStorageElement *sub_node=node->FindNestedElement(_R("Avatar")))
       {
         mafObject *obj=sub_node->RestoreObject();
         if (mafAvatar3D *avatar=mafAvatar3D::SafeDownCast(obj))
@@ -134,7 +134,7 @@ int mafDeviceButtonsPadTracker::InternalRestore(mafStorageElement *node)
         }
         else
         {
-          mafErrorMessage("find wrong type of Avatar (%s) while restoring mafDeviceButtonsPadTracker.",obj->GetTypeName());
+          mafErrorMessage(_M(mafString(_R("find wrong type of Avatar (")) + _R(obj->GetTypeName()) + _R(") while restoring mafDeviceButtonsPadTracker.")));
           obj->Delete();
         }
       }
@@ -436,7 +436,7 @@ int mafDeviceButtonsPadTracker::AvatarChooser(mafString& avatar_name,mafString& 
 
   if (avatars->size()==0)
   {
-    mafErrorMessage("No avatars available!","Avatar Chooser Error");
+    mafErrorMessage(_M("No avatars available!"));
     return MAF_ERROR;
   }
 
@@ -446,7 +446,7 @@ int mafDeviceButtonsPadTracker::AvatarChooser(mafString& avatar_name,mafString& 
   std::set<std::string>::const_iterator it=avatars->begin();
   for (int id=0;it!=avatars->end();id++,it++)
   {
-    avatar_types[id] = it->c_str();
+    avatar_types[id] = _R(it->c_str());
     avatar_names[id]=iFactory->GetAvatarDescription(it->c_str());
   }
 
@@ -460,7 +460,7 @@ int mafDeviceButtonsPadTracker::AvatarChooser(mafString& avatar_name,mafString& 
     if (index>=0)
     {
       avatar_type = avatar_types[index];
-      avatar_name = avatar_names[index];
+      avatar_name = mafWxToString(avatar_names[index]);
     }
   }
 
@@ -475,17 +475,17 @@ void mafDeviceButtonsPadTracker::CreateGui()
   Superclass::CreateGui();
   m_Gui->Divider(1);
 
-  m_Gui->Bool(ID_AVATAR_CHECK,"avatar",&m_AvatarFlag,true,"enable the default avatar for the tracker");
-  m_Gui->Button(ID_AVATAR_SELECT,"set avatar");
+  m_Gui->Bool(ID_AVATAR_CHECK,_R("avatar"),&m_AvatarFlag,true,_R("enable the default avatar for the tracker"));
+  m_Gui->Button(ID_AVATAR_SELECT,_R("set avatar"));
   m_Gui->Enable(ID_AVATAR_SELECT,false);
 
   m_Gui->Divider(2);
-  m_Gui->VectorN(ID_TB_X_EXTENT,"X extent",	m_TrackedBounds.m_Bounds,2, MINFLOAT, MAXFLOAT, -1);
-  m_Gui->VectorN(ID_TB_Y_EXTENT,"Y extent",	&(GetTrackedBounds().m_Bounds[2]),2, MINFLOAT, MAXFLOAT, -1);
-  m_Gui->VectorN(ID_TB_Z_EXTENT,"Z extent",	&(GetTrackedBounds().m_Bounds[4]),2, MINFLOAT, MAXFLOAT, -1);
+  m_Gui->VectorN(ID_TB_X_EXTENT,_R("X extent"),	m_TrackedBounds.m_Bounds,2, MINFLOAT, MAXFLOAT, -1);
+  m_Gui->VectorN(ID_TB_Y_EXTENT,_R("Y extent"),	&(GetTrackedBounds().m_Bounds[2]),2, MINFLOAT, MAXFLOAT, -1);
+  m_Gui->VectorN(ID_TB_Z_EXTENT,_R("Z extent"),	&(GetTrackedBounds().m_Bounds[4]),2, MINFLOAT, MAXFLOAT, -1);
   m_Gui->Divider();
-  m_Gui->Vector(ID_TB_POSITION,"position",	m_TBPosition, MINFLOAT, MAXFLOAT, -1);
-  m_Gui->Vector(ID_TB_ORIENTATION,"orientation",	m_TrackedBoxOrientation, MINFLOAT, MAXFLOAT, -1);
+  m_Gui->Vector(ID_TB_POSITION,_R("position"),	m_TBPosition, MINFLOAT, MAXFLOAT, -1);
+  m_Gui->Vector(ID_TB_ORIENTATION,_R("orientation"),	m_TrackedBoxOrientation, MINFLOAT, MAXFLOAT, -1);
   m_Gui->Divider();
 }
 
@@ -545,7 +545,7 @@ void mafDeviceButtonsPadTracker::OnEvent(mafEventBase *event)
           {
             // Set the default avatar for the tracker
             //no SafeDownCast in mafAvatar3D: how can I create an mafAvatar3D from mafAvatar
-            mafAvatar *avatar = mafInteractionFactory::CreateAvatarInstance(avatar_type);
+            mafAvatar *avatar = mafInteractionFactory::CreateAvatarInstance(avatar_type.GetCStr());
             assert(avatar);
             avatar->SetName(avatar_name);
             SetDefaultAvatar(avatar);

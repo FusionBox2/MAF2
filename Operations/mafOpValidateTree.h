@@ -21,7 +21,6 @@
 #include <set>
 #include <xstring>
 
-using namespace std;
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
@@ -49,7 +48,7 @@ class MAF_EXPORT mafOpValidateTree: public mafOp
 {
 public:
   /** constructor */
-  mafOpValidateTree(const mafString& label = "Validate Tree");
+  mafOpValidateTree(const mafString& label = _R("Validate Tree"));
   /** destructor */
   ~mafOpValidateTree(); 
   
@@ -61,7 +60,7 @@ public:
   If the tree is valid return MAF_OK and fills fileNamesSet with the absolute file names of 
   data belonging to vme's in vme tree. These are all the files that need to be copied in order
   to replicate the entire msf. Otherwise it returns MAF_ERROR and an empty set*/
-  int GetMSFTreeABSFileNamesSet(set<string> &fileNamesSet);;
+  int GetMSFTreeABSFileNamesSet(std::set<std::string> &fileNamesSet);
  
   /** values returned by ValidateTree() */
   enum VALIDATE_RETURN_VALUES
@@ -106,7 +105,7 @@ protected:
 
   // extract
   /** files linked to vme in trees */
-  set<string> m_MSFTreeAbsFileNamesSet;
+  std::set<std::string> m_MSFTreeAbsFileNamesSet;
 
 };
 #endif

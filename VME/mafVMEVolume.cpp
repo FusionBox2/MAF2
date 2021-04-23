@@ -81,7 +81,7 @@ mafVMEOutput *mafVMEVolume::GetOutput()
 mmaVolumeMaterial *mafVMEVolume::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaVolumeMaterial *material = (mmaVolumeMaterial *)GetAttribute("VolumeMaterialAttributes");
+  mmaVolumeMaterial *material = (mmaVolumeMaterial *)GetAttribute(_R("VolumeMaterialAttributes"));
   if (material == NULL)
   {
     material = mmaVolumeMaterial::New();
@@ -97,7 +97,7 @@ mmaVolumeMaterial *mafVMEVolume::GetMaterial()
       material->UpdateFromTables();
     }*/
     
-    SetAttribute("VolumeMaterialAttributes", material);
+    SetAttribute(_R("VolumeMaterialAttributes"), material);
     if (m_Output)
     {
       ((mafVMEOutputVolume *)m_Output)->SetMaterial(material);
@@ -117,9 +117,9 @@ int mafVMEVolume::SetData(vtkDataSet *data, mafTimeStamp t, int mode)
     if (item != NULL)
     {
       mafString dt = item->GetDataType();
-      if (!dt.Equals(data->GetClassName()))
+      if (dt != _R(data->GetClassName()))
       {
-        mafLogMessage("Warning!! Trying to set different volume data type.");
+        mafLogMessage(_M("Warning!! Trying to set different volume data type."));
         return MAF_ERROR;
       }
     }

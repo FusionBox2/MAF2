@@ -44,7 +44,7 @@ class MAF_EXPORT mafGUISettingsDialog : public mafBaseEventHandler
 
 public:
   /** constructor */
-	mafGUISettingsDialog(wxString dialog_title = _("Application Settings"));
+	mafGUISettingsDialog(const mafString& dialog_title = _L("Application Settings"));
   /** destructor */
  ~mafGUISettingsDialog();  
 

@@ -53,7 +53,7 @@ mafViewHTML::mafViewHTML(const mafString& label, int camera_position, bool show_
 //----------------------------------------------------------------------------
 {
   m_Html  = NULL;
-  m_Url   = "http://www.cineca.it/index.html";
+  m_Url   = _R("http://www.cineca.it/index.html");
 }
 //----------------------------------------------------------------------------
 mafViewHTML::~mafViewHTML()
@@ -143,26 +143,26 @@ void mafViewHTML::VmeShow  (mafNode *vme, bool show)
 void mafViewHTML::VmeCreatePipe(mafNode *vme) 
 //----------------------------------------------------------------------------
 {
-  wxString body;
+  mafString body;
   mafNode *ExternalNote = NULL;
   bool found = false;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("HTML_INFO"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("HTML_INFO")))
     body = ti->GetValue();
   else
     return;
   for(int i = 0; i < vme->GetNumberOfChildren(); i++)
   {
     ExternalNote = vme->GetChild(i);
-    if(ExternalNote->GetTagArray()->GetTag("HTML_INFO"))
+    if(ExternalNote->GetTagArray()->GetTag(_R("HTML_INFO")))
     {
       found = true;
       break;
     }
   }
   if(found)
-    m_Html->LoadPage(((mafVMEExternalData *)ExternalNote)->GetAbsoluteFileName().GetCStr());
+    m_Html->LoadPage(((mafVMEExternalData *)ExternalNote)->GetAbsoluteFileName().toWx());
   else
-    m_Html->SetPage(body);
+    m_Html->SetPage(body.toWx());
 
   m_ActiveNote = vme;
 }
@@ -173,12 +173,12 @@ mafGUI *mafViewHTML::CreateGui()
 	assert(m_Gui == NULL);
 	m_Gui = new mafGUI(this);
   m_Gui->SetListener(this);
-	m_Gui->Label("");
-	m_Gui->Button(ID_LOAD,"load html file");
-	m_Gui->Label("");
-  m_Gui->String(ID_URL,"url: ",&m_Url);
-	m_Gui->Button(ID_BACK,"go back");
-	m_Gui->Button(ID_FORWARD,"go forward");
+	m_Gui->Label(_R(""));
+	m_Gui->Button(ID_LOAD,_R("load html file"));
+	m_Gui->Label(_R(""));
+  m_Gui->String(ID_URL,_R("url: "),&m_Url);
+	m_Gui->Button(ID_BACK,_R("go back"));
+	m_Gui->Button(ID_FORWARD,_R("go forward"));
   m_Gui->Divider();
 
   return m_Gui;
@@ -200,7 +200,7 @@ void mafViewHTML::OnEvent(mafEventBase *maf_event)
 		break;
     case ID_URL:
       if(!m_Url.IsEmpty())
-	      m_Html->LoadPage(m_Url.GetCStr());
+	      m_Html->LoadPage(m_Url.toWx());
     break;
     default:
       mafEventMacro(*maf_event);

@@ -74,10 +74,10 @@ mafGizmoTranslate::mafGizmoTranslate(mafVME* input, mafBaseEventHandler *listene
   for (int i = 0; i < 3; i++)
   {
     // Create mafGizmoTranslateAxis and send events to this
-	mafString name("Arrow");
-	if(i == 0) name.Append("X");
-	else if(i == 1) name.Append("Y");
-	else if(i == 2) name.Append("Z");
+	mafString name(_R("Arrow"));
+	if(i == 0) name.Append(_R("X"));
+	else if(i == 1) name.Append(_R("Y"));
+	else if(i == 2) name.Append(_R("Z"));
     m_GTAxis[i] = new mafGizmoTranslateAxis(input, this, name);
 	  m_GTAxis[i]->SetAxis(i);
 

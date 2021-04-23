@@ -69,8 +69,8 @@ mafGUIMDIChild::mafGUIMDIChild(wxMDIParentFrame* parent,mafView *view)
   m_Win->Reparent(this);
   m_Win->Show(true);
 
-  SetIcon(mafPictureFactory::GetPictureFactory()->GetIcon("MDICHILD_ICON"));
-	SetTitle(wxStripMenuCodes(m_View->GetLabel().GetCStr()));
+  SetIcon(mafPictureFactory::GetPictureFactory()->GetIcon(_R("MDICHILD_ICON")));
+	SetTitle(wxStripMenuCodes(m_View->GetLabel().toWx()));
 }
 //----------------------------------------------------------------------------
 mafGUIMDIChild::~mafGUIMDIChild()
@@ -147,7 +147,7 @@ void mafGUIMDIChild::OnMaximize(wxMaximizeEvent &event)
 {
   if (m_View)
   {
-    mafString msg = "MaximizeSelectedView";
+    mafString msg = _R("MaximizeSelectedView");
     mafEventMacro(mafEvent(this,VIEW_MAXIMIZE,&msg));
   }
 }
