@@ -62,7 +62,6 @@
 #include "mafOpImporterVRML.h"
 #include "mafOpCreateVolume.h"
 #include "mafOpVOIDensityEditor.h"
-//BES: 23.6.2008 - Large Volume - to be merged 
 #include "mafOpImporterRAWVolume.h"
 #include "mafOpExporterRaw.h"
 #include "mafOpExtractIsosurface.h"
@@ -84,9 +83,6 @@
 #include "vtkTransformFilter.h"
 #include "vtkStructuredPoints.h"
 
-//BES: 23.6.2008 - TO BE UNCOMMENTED WHEN VTK IS PATCHED AS I SUGGESTED
-////BES: 14.5.2008 - special memory manager for supporting of large data
-//#include <vtkDataArrayMemMng.h>
 
 
 //--------------------------------------------------------------------------------
@@ -96,8 +92,8 @@
 IMPLEMENT_APP(mafApp)
 
 ////BES: 14.5.2008 - OnIdle to unlock blocks
-//BEGIN_EVENT_TABLE(lhpFusionBoxApp, wxApp)
-//  EVT_IDLE(lhpFusionBoxApp::OnIdle)
+//BEGIN_EVENT_TABLE(mafApp, wxApp)
+//  EVT_IDLE(mafApp::OnIdle)
 //END_EVENT_TABLE()
 
 //--------------------------------------------------------------------------------
@@ -143,7 +139,7 @@ bool mafApp::OnInit()
   SetTopWindow(mafGetFrame());  
 
   wxString regKeyName;
-  regKeyName = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\lhpFusionBox";
+  regKeyName = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\mafApp";
   wxRegKey RegKey(regKeyName);
 	if(RegKey.Exists())
 	{
@@ -169,7 +165,6 @@ bool mafApp::OnInit()
   logic->Plug(new mafOpImporterVTK("VTK"),"Other");
   logic->Plug(new mafOpImporterMSF1x("MAF 1.x"),"Other");
   logic->Plug(new mafOpImporterRAWVolume("Raw Volume Legacy"),"Images");
-  //logic->Plug(new medOpImporterRAWImages("Raw Images Legacy"),"Images");
   logic->Plug(new mafOpImporterImage("Images"),"Images");
   logic->Plug(new mafOpImporterMesh("Generic Mesh"), "Finite Element");
   logic->Plug(new mafOpImporterExternalFile("External data"), "Other");
@@ -212,6 +207,7 @@ bool mafApp::OnInit()
   //-------------------------------------------------------------
   bool view_visibility = 0;//fullVersion;
   //------------------------- Views -------------------------
+
   // View DRR
   mafViewVTK *vdrr = new mafViewVTK("DRR");
   vdrr->PlugVisualPipe("mafVMEVolumeGray","medPipeVolumeDRR",MUTEX);
