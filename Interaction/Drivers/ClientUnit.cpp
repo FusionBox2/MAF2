@@ -85,7 +85,7 @@ bool ClientUnit::DisconnectClient()
 void ClientUnit::SendMessageToServer(mafString &cmd)
 //----------------------------------------------------------------------------
 {
-  char *msg1;
+  const char *msg1;
   size_t len;
 
   m_busy = TRUE;
@@ -98,7 +98,7 @@ void ClientUnit::SendMessageToServer(mafString &cmd)
   // not affected by flags)
 
   //m_sock->SetFlags(wxSOCKET_WAITALL);
-  msg1 = (char *)cmd.GetCStr();
+  msg1 = (const char *)cmd.GetCStr();
   len  = cmd.Length() + 1;
 
   m_sock->Write(msg1, len);
@@ -145,7 +145,7 @@ void ClientUnit::ReadMessageFromServer(wxSocketBase *sock)
   
   if (len > 0) 
   {
-    mafString s = msg;
+    mafString s = _R(msg);
     mafEvent e(this,RemoteMessage_ID,&s);
     InvokeEvent(e);
   }
