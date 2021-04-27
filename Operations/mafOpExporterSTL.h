@@ -35,7 +35,7 @@ class mafNode;
 class MAF_EXPORT mafOpExporterSTL: public mafOp
 {
 public:
-  mafOpExporterSTL(const mafString& label = "STLExporter");
+  mafOpExporterSTL(const mafString& label = _R("STLExporter"));
  ~mafOpExporterSTL(); 
   
   mafTypeMacro(mafOpExporterSTL, mafOp);
@@ -50,7 +50,7 @@ public:
   void OpRun();
 
   /** Set the filename for the .stl to export */
-  void SetFileName(const char *file_name) {m_File = file_name;};
+  void SetFileName(const char *file_name) {m_File = _R(file_name);};
 
   void ApplyABSMatrixOn() {m_ABSMatrixFlag = 1;};
   void ApplyABSMatrixOff() {m_ABSMatrixFlag = 0;};

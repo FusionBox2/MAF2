@@ -40,7 +40,7 @@ class mafEvent;
 class MAF_EXPORT mafOp2DMeasure: public mafOp
 {
 public:
-	mafOp2DMeasure(const mafString& label = "2DMeasure");
+	mafOp2DMeasure(const mafString& label = _R("2DMeasure"));
 	~mafOp2DMeasure(); 
 	virtual void OnEvent(mafEventBase *maf_event);
   

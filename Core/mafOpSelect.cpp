@@ -367,7 +367,7 @@ Select the vme parent
         if (dv->GetSingleFileMode())
         {
           mafString archive_filename = dv->GetArchiveName();
-          if (archive_filename != "")
+          if (!archive_filename.IsEmpty())
           {
             storage->ReleaseURL(archive_filename);
           }
@@ -379,7 +379,7 @@ Select the vme parent
           for (i = 0; i < dv->GetNumberOfItems(); i++)
           {
             item = dv->GetItemByIndex(i);
-            data_filename = item->GetURL();
+            data_filename = _R(item->GetURL());
             storage->ReleaseURL(data_filename);
           }
         }
@@ -438,9 +438,9 @@ copy the selected VME and its subtree into the clipboard
   ClipboardBackup();
   SetClipboard(m_Selection->CopyTree());
   mafString copy_name;
-  copy_name = "copy of ";
+  copy_name = _R("copy of ");
   copy_name += GetClipboard()->GetName();
-  GetClipboard()->SetName(copy_name.GetCStr());
+  GetClipboard()->SetName(copy_name);
 }
 //----------------------------------------------------------------------------
 void mafOpCopy::OpUndo()

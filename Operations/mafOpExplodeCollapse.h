@@ -34,7 +34,7 @@ class mafNode;
 class MAF_EXPORT mafOpExplodeCollapse: public mafOp
 {
 public:
-  mafOpExplodeCollapse(const mafString& label = "ExplodeCollapse");
+  mafOpExplodeCollapse(const mafString& label = _R("ExplodeCollapse"));
  ~mafOpExplodeCollapse(); 
   
   mafTypeMacro(mafOpExplodeCollapse, mafOp);

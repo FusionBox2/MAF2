@@ -76,10 +76,10 @@ bool mafDirectory::Load(const mafString& namestr)
   // Loop through names
   do 
   {
-    m_Files.push_back(data.name);
+    m_Files.push_back(_R(data.name));
   } 
   while ( _findnext(srchHandle, &data) != -1 );
-  m_Path = name;
+  m_Path = _R(name);
   return _findclose(srchHandle) != -1;
 }
 
@@ -117,7 +117,7 @@ bool mafDirectory::Load(const mafString& namestr)
 const mafString& mafDirectory::GetFile(int index)const
 //------------------------------------------------------------------------------
 {
-  static mafString empty("");
+  static mafString empty;
   if ( index >= m_Files.size() )
   {
     //mafGenericOutputMacro( << "Bad index for GetFile on maf::mafDirectory\n");

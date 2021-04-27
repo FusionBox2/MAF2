@@ -31,7 +31,7 @@
 class mafGUIDialogLogin : public mafGUIDialog
 {
 public:
-	mafGUIDialogLogin(const wxString& title, long style = mafCLOSEWINDOW | mafOK | mafCANCEL);
+	mafGUIDialogLogin(const mafString& title, long style = mafCLOSEWINDOW | mafOK | mafCANCEL);
 	virtual ~mafGUIDialogLogin();
 
   void OnEvent(mafEventBase *maf_event);

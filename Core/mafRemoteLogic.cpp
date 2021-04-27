@@ -56,8 +56,8 @@ mafRemoteLogic::mafRemoteLogic(mafBaseEventHandler *Listener, mafViewManager *vi
   m_ViewManager       = view_manager;
   m_OperationManager  = operation_manager;
   
-  m_RemoteMsg         = "";
-  m_CommandSeparator  = ":";
+  m_RemoteMsg         = _R("");
+  m_CommandSeparator  = _R(":");
 
   m_RemoteMouse = NULL;
 
@@ -82,7 +82,7 @@ void mafRemoteLogic::OnEvent(mafEventBase *event)
 //  if(m_ClientUnit && !m_ClientUnit->IsConnected() && m_ClientUnit->IsBusy())
 //    return;
 
-  m_RemoteMsg = "";
+  m_RemoteMsg.Clear();
 
   mafID id = event->GetId();
   if (mafEvent *e = mafEvent::SafeDownCast(event)) 
@@ -99,13 +99,13 @@ void mafRemoteLogic::OnEvent(mafEventBase *event)
       {
         mafView *view = e->GetView();
         mafString view_id;
-        view_id << (view->m_Id - VIEW_START);
+        view_id += mafToString(view->m_Id - VIEW_START);
         mafString view_mult;
-        view_mult << view->m_Mult;
+        view_mult += mafToString(view->m_Mult);
         if(id == VIEW_DELETE)
-          m_RemoteMsg = "VIEW_DELETE";
+          m_RemoteMsg = _R("VIEW_DELETE");
         else if(id == VIEW_SELECTED)
-          m_RemoteMsg = "VIEW_SELECTED";
+          m_RemoteMsg = _R("VIEW_SELECTED");
         m_RemoteMsg += m_CommandSeparator;
         m_RemoteMsg += view_id;
         m_RemoteMsg += m_CommandSeparator;
@@ -115,56 +115,56 @@ void mafRemoteLogic::OnEvent(mafEventBase *event)
       {
         mafView *view = e->GetView();
         mafString view_id;
-        view_id << (view->m_Id - VIEW_START);
-        m_RemoteMsg = "VIEW_CREATE";
+        view_id += mafToString(view->m_Id - VIEW_START);
+        m_RemoteMsg = _R("VIEW_CREATE");
         m_RemoteMsg += m_CommandSeparator;
         m_RemoteMsg += view_id;
       }
       else if(id == mafOpManager::OPERATION_INTERFACE_EVENT)
       {
-        wxString widget_id = wxString::Format("%d",e->GetArg());
+        mafString widget_id = mafToString(e->GetArg());
         WidgetDataType widget_data;
         e->GetWidgetData(widget_data);
         switch(widget_data.dType) 
         {
           case INT_DATA:
           {
-            m_RemoteMsg = "WidgetInt";
-            m_RemoteMsg << m_CommandSeparator;
-            m_RemoteMsg << widget_id;
-            m_RemoteMsg << m_CommandSeparator;
-            m_RemoteMsg << widget_data.iValue;
+            m_RemoteMsg = _R("WidgetInt");
+            m_RemoteMsg += m_CommandSeparator;
+            m_RemoteMsg += widget_id;
+            m_RemoteMsg += m_CommandSeparator;
+            m_RemoteMsg += mafToString(widget_data.iValue);
           }
           break;
           case FLOAT_DATA:
           {
-            m_RemoteMsg = "WidgetFloat";
-            m_RemoteMsg << m_CommandSeparator;
-            m_RemoteMsg << widget_id;
-            m_RemoteMsg << m_CommandSeparator;
-            m_RemoteMsg << widget_data.fValue;
+            m_RemoteMsg = _R("WidgetFloat");
+            m_RemoteMsg += m_CommandSeparator;
+            m_RemoteMsg += widget_id;
+            m_RemoteMsg += m_CommandSeparator;
+            m_RemoteMsg += mafToString(widget_data.fValue);
           }
           break;
           case DOUBLE_DATA:
           {
-            m_RemoteMsg = "WidgetDouble";
-            m_RemoteMsg << m_CommandSeparator;
-            m_RemoteMsg << widget_id;
-            m_RemoteMsg << m_CommandSeparator;
-            m_RemoteMsg << widget_data.dValue;
+            m_RemoteMsg = _R("WidgetDouble");
+            m_RemoteMsg += m_CommandSeparator;
+            m_RemoteMsg += widget_id;
+            m_RemoteMsg += m_CommandSeparator;
+            m_RemoteMsg += mafToString(widget_data.dValue);
           }
           break;
           case STRING_DATA:
           {
-            m_RemoteMsg = "WidgetString";
-            m_RemoteMsg << m_CommandSeparator;
-            m_RemoteMsg << widget_id;
-            m_RemoteMsg << m_CommandSeparator;
-            m_RemoteMsg << widget_data.sValue;
+            m_RemoteMsg = _R("WidgetString");
+            m_RemoteMsg += m_CommandSeparator;
+            m_RemoteMsg += widget_id;
+            m_RemoteMsg += m_CommandSeparator;
+            m_RemoteMsg += _R(widget_data.sValue);
           }
           break;
           default:
-            m_RemoteMsg = "WidgetID";
+            m_RemoteMsg = _R("WidgetID");
             m_RemoteMsg += m_CommandSeparator;
             m_RemoteMsg += widget_id;
           break;
@@ -172,9 +172,9 @@ void mafRemoteLogic::OnEvent(mafEventBase *event)
       }
       else if(id == mafOpManager::RUN_OPERATION_EVENT)
       {
-        m_RemoteMsg = "RunOperation";
-        m_RemoteMsg << m_CommandSeparator;
-        m_RemoteMsg << e->GetArg();
+        m_RemoteMsg = _R("RunOperation");
+        m_RemoteMsg += m_CommandSeparator;
+        m_RemoteMsg += mafToString(e->GetArg());
       }
     }
   }
@@ -187,17 +187,17 @@ void mafRemoteLogic::OnEvent(mafEventBase *event)
       unsigned long modifiers = ei->GetModifiers();
       double pos[2];
       ei->Get2DPosition(pos);
-      m_RemoteMsg = "MouseDevice";
-      m_RemoteMsg << m_CommandSeparator;
-      m_RemoteMsg << id;
-      m_RemoteMsg << m_CommandSeparator;
-      m_RemoteMsg << pos[0];
-      m_RemoteMsg << m_CommandSeparator;
-      m_RemoteMsg << pos[1];
-      m_RemoteMsg << m_CommandSeparator;
-      m_RemoteMsg << (int)modifiers;
-      m_RemoteMsg << m_CommandSeparator;
-      m_RemoteMsg << ei->GetButton();
+      m_RemoteMsg = _R("MouseDevice");
+      m_RemoteMsg += m_CommandSeparator;
+      m_RemoteMsg += mafToString(id);
+      m_RemoteMsg += m_CommandSeparator;
+      m_RemoteMsg += mafToString(pos[0]);
+      m_RemoteMsg += m_CommandSeparator;
+      m_RemoteMsg += mafToString(pos[1]);
+      m_RemoteMsg += m_CommandSeparator;
+      m_RemoteMsg += mafToString((int)modifiers);
+      m_RemoteMsg += m_CommandSeparator;
+      m_RemoteMsg += mafToString(ei->GetButton());
     }
     else if (id == mafDeviceButtonsPadMouse::GetMouseCharEventId())
     {
@@ -272,15 +272,15 @@ void mafRemoteLogic::RemoteMessage(mafString &cmd, bool to_server)
     {
       const std::list<mafView *>& v = m_ViewManager->GetList();
       bool send_msg = false;
-      mafString sync_cmd = "SynchronizeView";
+      mafString sync_cmd = _R("SynchronizeView");
 
       for(std::list<mafView*>::const_iterator it = v.begin(); it != v.end(); ++it) // find previous(view)
       {
         send_msg = true;
-        sync_cmd << m_CommandSeparator;
-        sync_cmd << (*it)->m_Id;
-        sync_cmd << m_CommandSeparator;
-        sync_cmd << (*it)->m_Mult;
+        sync_cmd += m_CommandSeparator;
+        sync_cmd += mafToString((*it)->m_Id);
+        sync_cmd += m_CommandSeparator;
+        sync_cmd += mafToString((*it)->m_Mult);
       }
 
       if(send_msg)
@@ -290,12 +290,12 @@ void mafRemoteLogic::RemoteMessage(mafString &cmd, bool to_server)
     {
       const std::vector<mafView*>& v = m_ViewManager->GetListTemplate();
       bool send_msg = false;
-      mafString sync_cmd = "GetViewList";
+      mafString sync_cmd = _R("GetViewList");
       for(std::vector<mafView*>::const_iterator it = v.begin(); it != v.end(); ++it)
       {
         send_msg = true;
-        sync_cmd << m_CommandSeparator;
-        sync_cmd << (*it)->GetLabel().GetCStr();
+        sync_cmd += m_CommandSeparator;
+        sync_cmd += (*it)->GetLabel();
       }
 
       if(send_msg)
@@ -307,10 +307,10 @@ void mafRemoteLogic::RemoteMessage(mafString &cmd, bool to_server)
       if (view) 
       {
         mafString view_id;
-        view_id << (view->m_Id - VIEW_START);
+        view_id += mafToString(view->m_Id - VIEW_START);
         mafString view_mult;
-        view_mult << view->m_Mult;
-        m_RemoteMsg = "VIEW_SELECTED";
+        view_mult += mafToString(view->m_Mult);
+        m_RemoteMsg = _R("VIEW_SELECTED");
         m_RemoteMsg += m_CommandSeparator;
         m_RemoteMsg += view_id;
         m_RemoteMsg += m_CommandSeparator;
@@ -372,15 +372,15 @@ void mafRemoteLogic::RemoteMessage(mafString &cmd, bool to_server)
     }
     else if (command == "GetTreeVME")
     {
-      m_RemoteMsg = "GetTreeVME";
+      m_RemoteMsg = _R("GetTreeVME");
       mafNode *root = m_ViewManager->GetCurrentRoot();
       mafNodeIterator *iter = root->NewIterator();
       for(mafNode *vme = iter->GetFirstNode(); vme; vme = iter->GetNextNode())
       {
-        m_RemoteMsg << m_CommandSeparator;
-        m_RemoteMsg << vme->GetName();
-        m_RemoteMsg << m_CommandSeparator;
-        m_RemoteMsg << vme->GetId();
+        m_RemoteMsg += m_CommandSeparator;
+        m_RemoteMsg += vme->GetName();
+        m_RemoteMsg += m_CommandSeparator;
+        m_RemoteMsg += mafToString(vme->GetId());
       }
       iter->Delete();
       m_ClientUnit->SendMessageToServer(m_RemoteMsg);
@@ -420,7 +420,7 @@ void mafRemoteLogic::RemoteMessage(mafString &cmd, bool to_server)
       }
       else
       {
-        op_type = data_cmd.c_str();
+        op_type = mafWxToString(data_cmd);
         m_OperationManager->OpRun(op_type);
       }
       m_OperationManager->m_FromRemote = false;
@@ -514,10 +514,10 @@ void mafRemoteLogic::RemoteMessage(mafString &cmd, bool to_server)
     else if (command == "OpenFile")
     {
       mafString fileToOpen;
-      fileToOpen = data_cmd.c_str();
+      fileToOpen = mafWxToString(data_cmd);
       fileToOpen += m_CommandSeparator;
       if(tkz.HasMoreTokens())
-        fileToOpen += tkz.GetNextToken().c_str();
+        fileToOpen += mafWxToString(tkz.GetNextToken());
       mafEventMacro(mafEvent(this, MENU_FILE_OPEN, &fileToOpen));
     }
   }
@@ -560,20 +560,20 @@ bool mafRemoteLogic::IsSocketConnected()
 void mafRemoteLogic::VmeSelected(mafNode *vme)
 //----------------------------------------------------------------------------
 {
-  mafString cmd = "VME_SELECT";
-  cmd << m_CommandSeparator;
-  cmd << vme->GetId();
+  mafString cmd = _R("VME_SELECT");
+  cmd += m_CommandSeparator;
+  cmd += mafToString(vme->GetId());
   RemoteMessage(cmd);
 }
 //----------------------------------------------------------------------------
 void mafRemoteLogic::VmeShow(mafNode *vme, bool show_vme)
 //----------------------------------------------------------------------------
 {
-  mafString cmd = "VME_SHOW";
-  cmd << m_CommandSeparator;
-  cmd << vme->GetId();
-  cmd << m_CommandSeparator;
-  cmd << show_vme;
+  mafString cmd = _R("VME_SHOW");
+  cmd += m_CommandSeparator;
+  cmd += mafToString(vme->GetId());
+  cmd += m_CommandSeparator;
+  cmd += mafToString(show_vme);
   RemoteMessage(cmd);
 }
 //----------------------------------------------------------------------------
@@ -583,15 +583,15 @@ void mafRemoteLogic::SynchronizeApplication()
   // Send local layout
   const std::list<mafView *>& v = m_ViewManager->GetList();
   bool send_msg = false;
-  mafString cmd = "SynchronizeView";
+  mafString cmd = _R("SynchronizeView");
 
-  for(std::list<mafView*>::const_iterator it = v.begin(); it != v.end(); ++it) // find previous(view)
+  for(auto it = v.begin(); it != v.end(); ++it) // find previous(view)
   {
     send_msg = true;
-    cmd << m_CommandSeparator;
-    cmd << (*it)->m_Id - VIEW_START;
-    cmd << m_CommandSeparator;
-    cmd << (*it)->m_Mult;
+    cmd += m_CommandSeparator;
+    cmd += mafToString((*it)->m_Id - VIEW_START);
+    cmd += m_CommandSeparator;
+    cmd += mafToString((*it)->m_Mult);
   }
 
   if(send_msg)
@@ -600,6 +600,6 @@ void mafRemoteLogic::SynchronizeApplication()
   }
 
   // Retrieve Remote layout.
-  cmd = "GetViewLayout";
+  cmd = _R("GetViewLayout");
   RemoteMessage(cmd);
 }

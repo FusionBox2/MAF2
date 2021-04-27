@@ -65,7 +65,7 @@
 #include "vtkImageExport.h"
 
 //----------------------------------------------------------------------------
-mafGUIMaterialChooser::mafGUIMaterialChooser(wxString dialog_title)
+mafGUIMaterialChooser::mafGUIMaterialChooser(const mafString& dialog_title)
 //----------------------------------------------------------------------------
 {  
 	m_ChoosedMaterial	= NULL;
@@ -77,10 +77,10 @@ mafGUIMaterialChooser::mafGUIMaterialChooser(wxString dialog_title)
 	m_RWI					    = NULL;
 
   m_Filename = mafGetApplicationDirectory();
-  m_Filename += "/mat_library.xml";
+  m_Filename += _R("/mat_library.xml");
   
   //initialize first material 
-  m_MaterialName      = "new material";
+  m_MaterialName      = _R("new material");
 	m_AmbientColor      = wxColour(0,0,0);
 	m_DiffuseColor      = mafRandomColor();
 	m_SpecularColor     = wxColour(255,255,255); 
@@ -121,7 +121,7 @@ bool mafGUIMaterialChooser::ShowChooserDialog(mafVME *vme, bool remember_last_ma
 	}
 
   m_Vme = vme;
-  m_VmeMaterial = (mmaMaterial *)m_Vme->GetAttribute("MaterialAttributes");
+  m_VmeMaterial = (mmaMaterial *)m_Vme->GetAttribute(_R("MaterialAttributes"));
   assert(m_VmeMaterial);
 
   if (!remember_last_material)
@@ -162,7 +162,7 @@ enum MATERIAL_PROPERTY_ID
 void mafGUIMaterialChooser::CreateGUI() 
 //----------------------------------------------------------------------------
 {
-	mafString wildcard = "xml file (*.xml)|*.xml|all files (*.*)|*.*";
+	mafString wildcard = _R("xml file (*.xml)|*.xml|all files (*.*)|*.*");
 
   int x_pos,y_pos,w,h;
   mafGetFrame()->GetPosition(&x_pos,&y_pos);
@@ -173,7 +173,7 @@ void mafGUIMaterialChooser::CreateGUI()
   //m_Dialog->SetMinSize(wxSize(w,h));
 
 	m_ListCtrlMaterial = new mafGUIListCtrlBitmap(m_Dialog,-1,0,1); 
-	m_ListCtrlMaterial->SetTitle("material library"); 
+	m_ListCtrlMaterial->SetTitle(_R("material library")); 
 	m_ListCtrlMaterial->SetListener(this); 
 	m_ListCtrlMaterial->Reset();
 	//m_ListCtrlMaterial->SetSize(wxSize(200,500));
@@ -187,40 +187,40 @@ void mafGUIMaterialChooser::CreateGUI()
 	m_Gui = new mafGUI(this);
   
   //m_Gui->Label		(""); 
-	m_Gui->Label("current material",1);
-	m_Gui->String(ID_NAME,"name",&m_MaterialName);
+	m_Gui->Label(_R("current material"),1);
+	m_Gui->String(ID_NAME,_R("name"),&m_MaterialName);
 
-	m_Gui->Label		("ambient",1);
-	m_Gui->FloatSlider(ID_AMBIENT_INTENSITY,"intensity",&m_AmbientIntensity,0.0,1.0);
-	m_Gui->Color(ID_AMBIENT_COLOR,"color",&m_AmbientColor);
+	m_Gui->Label		(_R("ambient"),1);
+	m_Gui->FloatSlider(ID_AMBIENT_INTENSITY,_R("intensity"),&m_AmbientIntensity,0.0,1.0);
+	m_Gui->Color(ID_AMBIENT_COLOR,_R("color"),&m_AmbientColor);
 
-	m_Gui->Label		("diffuse",1);
-	m_Gui->FloatSlider(ID_DIFFUSE_INTENSITY,"intensity",&m_DiffuseIntensity,0.0,1.0);
-	m_Gui->Color(ID_DIFFUSE_COLOR,"color",&m_DiffuseColor);
+	m_Gui->Label		(_R("diffuse"),1);
+	m_Gui->FloatSlider(ID_DIFFUSE_INTENSITY,_R("intensity"),&m_DiffuseIntensity,0.0,1.0);
+	m_Gui->Color(ID_DIFFUSE_COLOR,_R("color"),&m_DiffuseColor);
 
-	m_Gui->Label		("specular",1);
-	m_Gui->FloatSlider(ID_SPECULAR_INTENSITY,"intensity",&m_SpecularIntensity,0.0,1.0);
-	m_Gui->Color(ID_SPECULAR_COLOR,"color",&m_SpecularColor);
-	m_Gui->Slider(ID_SPECULAR_POWER,"power",&m_SpecularPower,1,100);
+	m_Gui->Label		(_R("specular"),1);
+	m_Gui->FloatSlider(ID_SPECULAR_INTENSITY,_R("intensity"),&m_SpecularIntensity,0.0,1.0);
+	m_Gui->Color(ID_SPECULAR_COLOR,_R("color"),&m_SpecularColor);
+	m_Gui->Slider(ID_SPECULAR_POWER,_R("power"),&m_SpecularPower,1,100);
 
-	m_Gui->Label		("");
-	m_Gui->FloatSlider(ID_OPACITY,"opacity",&m_Opacity,0.0,1.0);
-	m_Gui->Bool(ID_WIRE,"wireframe",&m_Wire,0);
+	m_Gui->Label		(_R(""));
+	m_Gui->FloatSlider(ID_OPACITY,_R("opacity"),&m_Opacity,0.0,1.0);
+	m_Gui->Bool(ID_WIRE,_R("wireframe"),&m_Wire,0);
 
-  m_Gui->Label		("");
-	m_Gui->Button(ID_ADD,"store current material in library");
-	m_Gui->Button(ID_REMOVE,"remove selected material from library");
+  m_Gui->Label		(_R(""));
+	m_Gui->Button(ID_ADD,_R("store current material in library"));
+	m_Gui->Button(ID_REMOVE,_R("remove selected material from library"));
   m_Gui->Enable(ID_REMOVE, false);
-	m_Gui->Label		("");
-	m_Gui->FileOpen(ID_LOAD,"load library",&m_Filename,wildcard);
-	m_Gui->FileSave(ID_SAVE,"save library",&m_Filename,wildcard);
-	m_Gui->Label		("");
+	m_Gui->Label		(_R(""));
+	m_Gui->FileOpen(ID_LOAD,_R("load library"),&m_Filename,wildcard);
+	m_Gui->FileSave(ID_SAVE,_R("save library"),&m_Filename,wildcard);
+	m_Gui->Label		(_R(""));
   //m_Gui->OkCancel();
   int bh = m_Gui->GetMetrics(GUI_BUTTON_HEIGHT);
   int fw = m_Gui->GetMetrics(GUI_FULL_WIDTH);
-  m_OkButton  = new mafGUIButton (m_Gui,ID_OK, "Ok", wxDefaultPosition,wxSize(fw/3, bh));
-  m_CancelButton = new mafGUIButton (m_Gui,ID_CANCEL,"Cancel",wxDefaultPosition,wxSize(fw/3, bh));
-  m_ApplyButton = new mafGUIButton (m_Gui,ID_APPLY,"Apply",wxDefaultPosition,wxSize(fw/3, bh));
+  m_OkButton  = new mafGUIButton (m_Gui,ID_OK, _R("Ok"), wxDefaultPosition,wxSize(fw/3, bh));
+  m_CancelButton = new mafGUIButton (m_Gui,ID_CANCEL,_R("Cancel"),wxDefaultPosition,wxSize(fw/3, bh));
+  m_ApplyButton = new mafGUIButton (m_Gui,ID_APPLY,_R("Apply"),wxDefaultPosition,wxSize(fw/3, bh));
   m_OkButton->SetListener(this);
   m_CancelButton->SetListener(this);
   m_ApplyButton->SetListener(this);
@@ -483,7 +483,7 @@ void mafGUIMaterialChooser::LoadMaterials_old()
 		//name
 		f_in.getline(line,128);
 		char *material = line;
-		mat->m_MaterialName = material;
+		mat->m_MaterialName = _R(material);
 
 		//Ambient Color:	
 		f_in.getline(line,128);
@@ -530,7 +530,7 @@ void mafGUIMaterialChooser::LoadMaterials_old()
     m_List.push_back(mat);
 
 		// insert mat in the tree
-		this->m_ListCtrlMaterial->AddItem((long)mat,mat->m_MaterialName.GetCStr(),&wxBitmap(50,50));
+		this->m_ListCtrlMaterial->AddItem((long)mat,mat->m_MaterialName.toWx(),&wxBitmap(50,50));
 
 		//blank line
 		f_in.getline(line,128);
@@ -595,9 +595,9 @@ void mafGUIMaterialChooser::LoadLibraryFromFile()
 
   // XML storage to restore
   mafXMLParser restore;
-  restore.SetURL(m_Filename.GetCStr());
-  restore.SetFileType("MAP");
-  restore.SetVersion("1.0");
+  restore.SetURL(m_Filename);
+  restore.SetFileType(_R("MAP"));
+  restore.SetVersion(_R("1.0"));
 
   mafStorableMaterialLibrary *mat_lib = new mafStorableMaterialLibrary(&m_List);
   restore.SetDocument(mat_lib);
@@ -607,7 +607,7 @@ void mafGUIMaterialChooser::LoadLibraryFromFile()
   for (int m = 0; m < m_List.size(); m++)
   {
     mat = m_List[m];
-    this->m_ListCtrlMaterial->AddItem((long)mat,mat->m_MaterialName.GetCStr(),mat->MakeIcon());
+    this->m_ListCtrlMaterial->AddItem((long)mat,mat->m_MaterialName.toWx(),mat->MakeIcon());
   }
 
   mat_lib->Delete();
@@ -621,9 +621,9 @@ void mafGUIMaterialChooser::StoreLibraryToFile()
 
   // XML storage to restore
   mafXMLParser restore;
-  restore.SetURL(m_Filename.GetCStr());
-  restore.SetFileType("MAP");
-  restore.SetVersion("1.0");
+  restore.SetURL(m_Filename);
+  restore.SetFileType(_R("MAP"));
+  restore.SetVersion(_R("1.0"));
 
   mafStorableMaterialLibrary *mat_lib = new mafStorableMaterialLibrary(&m_List);
   restore.SetDocument(mat_lib);
@@ -741,7 +741,7 @@ void mafGUIMaterialChooser::AddMaterial()
   m_List.push_back(mat);
 
 	// insert mat in the tree
-	m_ListCtrlMaterial->AddItem((long)mat, mat->m_MaterialName.GetCStr(), mat->MakeIcon());	
+	m_ListCtrlMaterial->AddItem((long)mat, mat->m_MaterialName.toWx(), mat->MakeIcon());	
   m_ListCtrlMaterial->SelectItem((long)mat);
 	SelectMaterial(mat);
 }
@@ -863,7 +863,7 @@ void mafGUIMaterialChooser::CreateDefaultLibrary()
     if(res != 16) break;
 
     mmaMaterial *mat = mmaMaterial::New();
-		mat->m_MaterialName = name; 
+		mat->m_MaterialName = _R(name); 
     mat->m_AmbientIntensity = a;
     mat->m_Ambient[0] = ac[0];
     mat->m_Ambient[1] = ac[1];
@@ -887,7 +887,7 @@ void mafGUIMaterialChooser::CreateDefaultLibrary()
     m_List.push_back(mat);
 
 		// insert mat in the tree
-		m_ListCtrlMaterial->AddItem((long)mat,mat->m_MaterialName.GetCStr(),mat->MakeIcon());
+		m_ListCtrlMaterial->AddItem((long)mat,mat->m_MaterialName.toWx(),mat->MakeIcon());
   }
 }
 //------------------------------------------------------------------------------
@@ -905,7 +905,7 @@ int mafStorableMaterialLibrary::InternalRestore(mafStorageElement *element)
 //------------------------------------------------------------------------------
 {
   std::vector<mafObject *> attrs;
-  element->RestoreObjectVector("MaterialLib", attrs);
+  element->RestoreObjectVector(_R("MaterialLib"), attrs);
   for (unsigned int i = 0; i < attrs.size(); i++)
   {
     mmaMaterial *item = mmaMaterial::SafeDownCast(attrs[i]);
@@ -923,5 +923,5 @@ int mafStorableMaterialLibrary::InternalStore( mafStorageElement *parent )
     attrs.push_back((*m_MaterialList)[m]);
   }
 
-  return parent->StoreObjectVector("MaterialLib", attrs);
+  return parent->StoreObjectVector(_R("MaterialLib"), attrs);
 }

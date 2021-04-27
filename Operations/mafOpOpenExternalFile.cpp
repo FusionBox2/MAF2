@@ -85,7 +85,7 @@ void mafOpOpenExternalFile::OpRun()
 	if (filetype->GetOpenCommand(&command2execute, wxFileType::MessageParameters(file, mime)))
 	{
     command2execute.Replace("/", "\\");
-    mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
+    mafLogMessage( _M(_R("Executing command: '") + mafWxToString(command2execute) + _R("'")) );
 		m_Pid = wxExecute(command2execute); //,FALSE
 		cppDEL(filetype);
 		mafEventMacro(mafEvent(this,OP_RUN_OK));

@@ -55,7 +55,7 @@ public:
     virtual mafVMEOutput *GetOutput();
 
     /** Return the suggested pipe-typename for the visualization of this vme */
-    virtual mafString GetVisualPipe() {return mafString("mafPipeImage3D");};
+    virtual mafString GetVisualPipe() {return mafString(_R("mafPipeImage3D"));}
 
     /** return icon */
     static char** GetIcon();

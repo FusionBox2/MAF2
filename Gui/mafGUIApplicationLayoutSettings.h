@@ -44,7 +44,7 @@ class MAF_EXPORT mafGUIApplicationLayoutSettings : public mafGUISettings
 {
 public:
   /** constructor .*/
-	mafGUIApplicationLayoutSettings(mafBaseEventHandler *listener, const mafString &label = _("Application Layout"));
+	mafGUIApplicationLayoutSettings(mafBaseEventHandler *listener, const mafString &label = _L("Application Layout"));
   /** destructor .*/
 	~mafGUIApplicationLayoutSettings(); 
 

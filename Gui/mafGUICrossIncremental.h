@@ -56,7 +56,7 @@ class MAF_EXPORT mafGUICrossIncremental: public mafGUIPanel, public mafBaseEvent
 public:
   mafGUICrossIncremental(wxWindow* parent, 
                   wxWindowID id,
-                  const char * label,
+                  const mafString& label,
                   double *stepVariable,
 									double *topBottomVariable,
 									double *leftRightVariable,

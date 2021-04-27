@@ -58,18 +58,18 @@ mafSideBar::mafSideBar(wxWindow* parent, int id, mafBaseEventHandler *Listener, 
   m_Tree = new mafGUICheckTree(m_SideSplittedPanel,-1,false,true);
   m_Tree->SetListener(Listener);
   m_Tree->SetSize(-1,300);
-  m_Tree->SetTitle(" vme hierarchy: ");
+  m_Tree->SetTitle(_R(" vme hierarchy: "));
   m_Notebook->AddPage(m_SideSplittedPanel,_("data tree"),true);
 
   //view property panel
   m_ViewPropertyPanel = new mafGUIHolder(m_Notebook,-1,false,true);
-  m_ViewPropertyPanel->SetTitle(_("no view selected:"));
+  m_ViewPropertyPanel->SetTitle(_L("no view selected:"));
   m_Notebook->AddPage(m_ViewPropertyPanel,_("view settings"));
 
   //op_panel ----------------------------
   m_OpPanel  = new mafGUIPanelStack(m_Notebook ,-1);
   mafGUINamedPanel *empty_op = new mafGUINamedPanel(m_OpPanel ,-1,false,true);
-  empty_op->SetTitle(_(" no operation running:"));
+  empty_op->SetTitle(_L(" no operation running:"));
   m_OpPanel->Push(empty_op);
   m_Notebook->AddPage(m_OpPanel ,_("operation"));
 
@@ -127,7 +127,7 @@ void mafSideBar::OpHideGui(bool view_closed)
 	{
 		this->m_Notebook->SetSelection(0);
 		this->m_ViewPropertyPanel->RemoveCurrentGui();
-		this->m_ViewPropertyPanel->SetTitle("");
+		this->m_ViewPropertyPanel->SetTitle(_R(""));
 	}
 	else
 	{
@@ -142,9 +142,9 @@ void mafSideBar::ViewSelect(mafView *view)
 	m_Tree->ViewSelected(view);
 	if(view)
 	{
-		wxString s = " ";
-		s += wxStripMenuCodes(view->GetLabel().GetCStr());
-		s += " props:";
+		mafString s = _R(" ");
+		s += mafStripMenuCodes(view->GetLabel());
+		s += _R(" props:");
 		m_ViewPropertyPanel->SetTitle(s);
 		mafGUI *gui = view->GetGui();
 		if(gui) 
@@ -154,7 +154,7 @@ void mafSideBar::ViewSelect(mafView *view)
 	}
 	else
 	{
-    m_ViewPropertyPanel->SetTitle(_("no view selected:"));
+    m_ViewPropertyPanel->SetTitle(_L("no view selected:"));
 		m_ViewPropertyPanel->RemoveCurrentGui();
 	}
   m_SelectedView = view;
@@ -317,7 +317,7 @@ void mafSideBar::UpdateVmePanel()
 	    }
 	    if (vme_pipe_gui)
 	    {
-	      m_NewAppendingGUI->Label(_("GUI visual Pipes"),true);
+	      m_NewAppendingGUI->Label(_L("GUI visual Pipes"),true);
 	      m_NewAppendingGUI->AddGui(vme_pipe_gui);
 	      m_NewAppendingGUI->FitGui();
 	      m_NewAppendingGUI->Update();

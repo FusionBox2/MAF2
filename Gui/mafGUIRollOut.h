@@ -40,7 +40,7 @@ that can be shown/hidden by pressing on the picture button on the left of the ti
 class MAF_EXPORT mafGUIRollOut: public wxPanel, public mafEventSender
 {
 public:
-           mafGUIRollOut(mafGUI *parent, mafString title, mafGUI *roll_gui, int id = -1, bool rollOutOpen = true);
+           mafGUIRollOut(mafGUI *parent, const mafString& title, mafGUI *roll_gui, int id = -1, bool rollOutOpen = true);
   virtual ~mafGUIRollOut();
 
   /** Open/Close the Roll-out.*/

@@ -36,18 +36,18 @@ BEGIN_EVENT_TABLE(mafGUIRollOut,wxPanel)
 END_EVENT_TABLE()
 
 //----------------------------------------------------------------------------
-mafGUIRollOut::mafGUIRollOut(mafGUI *parent, mafString title, mafGUI *roll_gui, int id, bool rollOutOpen)
+mafGUIRollOut::mafGUIRollOut(mafGUI *parent, const mafString& title, mafGUI *roll_gui, int id, bool rollOutOpen)
 :wxPanel(parent,id)
 //----------------------------------------------------------------------------
 {
   wxBoxSizer *topsizer =  new wxBoxSizer( wxHORIZONTAL );
   
-  wxString b = rollOutOpen ? "ROLLOUT_OPEN" : "ROLLOUT_CLOSE";
+  mafString b = rollOutOpen ? _R("ROLLOUT_OPEN") : _R("ROLLOUT_CLOSE");
   m_RollOutButton = new mafGUIPicButton(this, b, ID_CLOSE_SASH);
   m_RollOutButton->SetEventId(ID_CLOSE_SASH);
   topsizer->Add(m_RollOutButton,0,wxLEFT,2);
 
-  wxStaticText* lab = new wxStaticText(this, -1, title.GetCStr());
+  wxStaticText* lab = new wxStaticText(this, -1, title.toWx());
   wxFont font = wxFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
 #if WIN32
   font.SetPointSize(9);
@@ -86,9 +86,9 @@ void mafGUIRollOut::OnRollOut(wxCommandEvent &event)
 void mafGUIRollOut::RollOut(bool open)
 //----------------------------------------------------------------------------
 {
-  wxString b;
+  mafString b;
   m_RollGui->Show(open);
-  b = m_RollGui->IsShown() ? "ROLLOUT_OPEN": "ROLLOUT_CLOSE";
+  b = m_RollGui->IsShown() ? _R("ROLLOUT_OPEN"): _R("ROLLOUT_CLOSE");
   m_RollOutButton->SetBitmap(b, ID_CLOSE_SASH);
   m_MainGui->Update();
   m_MainGui->FitGui();

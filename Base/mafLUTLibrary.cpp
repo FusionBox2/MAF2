@@ -16,6 +16,7 @@
 
 
 #include "mafDefines.h" 
+#include "mafDecl.h"
 //----------------------------------------------------------------------------
 // NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
 // This force to include Window,wxWidgets and VTK exactly in this order.
@@ -42,17 +43,15 @@ const bool DEBUG_MODE = false;
 void mafLUTLibrary::Clear(bool removeLibraryFromDisk)
 {
   // destroy lib
-  std::map<std::string, vtkLookupTable *>::iterator it;
-
-  for(it = m_LutMap.begin(); it != m_LutMap.end(); it++)
+  for(auto it = m_LutMap.begin(); it != m_LutMap.end(); ++it)
   {
     vtkLookupTable *lut = (*it).second;
     if (DEBUG_MODE)
       {
-	std::string lutName = (*it).first;
+	    mafString lutName = (*it).first;
         std::ostringstream stringStream;
-        stringStream << "destroying lut:" << lutName << " at " << lut << std::endl;
-        mafLogMessage(stringStream.str().c_str());
+        stringStream << "destroying lut:" << lutName.GetCStr() << " at " << lut << std::endl;
+        mafLogMessage(_M(stringStream.str().c_str()));
       }
     lut->Delete();
   }
@@ -61,14 +60,13 @@ void mafLUTLibrary::Clear(bool removeLibraryFromDisk)
 
   if (removeLibraryFromDisk)
   {
-    assert(wxDirExists(m_LibraryDir.GetCStr()));
-    wxRmdir(m_LibraryDir.GetCStr());
+    assert(mafDirExists(m_LibraryDir));
+    mafDirRemove(m_LibraryDir);
   }
 }
 
 mafLUTLibrary::mafLUTLibrary()
 {
-  m_LibraryDir = "";
 }
 
 mafLUTLibrary::~mafLUTLibrary()
@@ -95,16 +93,16 @@ void mafLUTLibrary::PrintLut( std::ostringstream &stringStream, vtkLookupTable *
 
 }
 
-void mafLUTLibrary::SaveLUT( vtkLookupTable *inLut, const char *outFileName)
+void mafLUTLibrary::SaveLUT( vtkLookupTable *inLut, const mafString& outFileName)
 {
   assert(inLut);
   vtkLookupTable *lut = inLut;
 
-  std::string fileName = outFileName;
+  mafString fileName = outFileName;
 
   std::ofstream output;
 
-  output.open(fileName.c_str());
+  output.open(fileName.GetCStr());
 
   double range[2];
   lut->GetTableRange(range);
@@ -130,20 +128,20 @@ void mafLUTLibrary::SaveLUT( vtkLookupTable *inLut, const char *outFileName)
 
   output.close();
 
-  assert(wxFileExists(fileName.c_str()));
+  assert(mafFileExists(fileName));
 
 }
 
-void mafLUTLibrary::LoadLUT( const char *lutFileName, vtkLookupTable *targetLut )
+void mafLUTLibrary::LoadLUT(const mafString& lutFileName, vtkLookupTable *targetLut )
 {
   assert(targetLut);
   vtkLookupTable *lut = targetLut;
 
-  std::string fileName = lutFileName;
+  mafString fileName = lutFileName;
 
   std::ifstream input;
 
-  input.open(fileName.c_str());
+  input.open(fileName.GetCStr());
 
   std::string tmp;
   double range[2];
@@ -152,7 +150,7 @@ void mafLUTLibrary::LoadLUT( const char *lutFileName, vtkLookupTable *targetLut 
   {
     std::ostringstream stringStream;
     stringStream << "Skipping: " << tmp  << std::endl;
-    mafLogMessage(stringStream.str().c_str());
+    mafLogMessage(_M(stringStream.str().c_str()));
   }
 
   input  >> range[0] >> range[1];
@@ -164,7 +162,7 @@ void mafLUTLibrary::LoadLUT( const char *lutFileName, vtkLookupTable *targetLut 
   {
     std::ostringstream stringStream;
     stringStream << "Skipping: " << tmp  << std::endl;
-    mafLogMessage(stringStream.str().c_str());
+    mafLogMessage(_M(stringStream.str().c_str()));
   }
   input >> numberOfTableValues;
 
@@ -176,35 +174,35 @@ void mafLUTLibrary::LoadLUT( const char *lutFileName, vtkLookupTable *targetLut 
   {
     std::ostringstream stringStream;
     stringStream << "Skipping: " << tmp  << std::endl;
-    mafLogMessage(stringStream.str().c_str());
+    mafLogMessage(_M(stringStream.str().c_str()));
   }
   input >> tmp;
   if (DEBUG_MODE)
   {
     std::ostringstream stringStream;
     stringStream << "Skipping: " << tmp  << std::endl;
-    mafLogMessage(stringStream.str().c_str());
+    mafLogMessage(_M(stringStream.str().c_str()));
   }
   input >> tmp;
   if (DEBUG_MODE)
   {
     std::ostringstream stringStream;
     stringStream << "Skipping: " << tmp  << std::endl;
-    mafLogMessage(stringStream.str().c_str());
+    mafLogMessage(_M(stringStream.str().c_str()));
   }
   input >> tmp;
   if (DEBUG_MODE)
   {
     std::ostringstream stringStream;
     stringStream << "Skipping: " << tmp  << std::endl;
-    mafLogMessage(stringStream.str().c_str());
+    mafLogMessage(_M(stringStream.str().c_str()));
   }
   input >> tmp;
   if (DEBUG_MODE)
   {
     std::ostringstream stringStream;
     stringStream << "Skipping: " << tmp  << std::endl;
-    mafLogMessage(stringStream.str().c_str());
+    mafLogMessage(_M(stringStream.str().c_str()));
   }
 
   for(int i=0; i<numberOfTableValues; i++)
@@ -216,7 +214,7 @@ void mafLUTLibrary::LoadLUT( const char *lutFileName, vtkLookupTable *targetLut 
     {
       std::ostringstream stringStream;
       stringStream << "Skipping: " << toSkip  << std::endl;
-      mafLogMessage(stringStream.str().c_str());
+      mafLogMessage(_M(stringStream.str().c_str()));
     }
     input  >> rgba[0] >> rgba[1] >> rgba[2] >> rgba[3];
     lut->SetTableValue(i, rgba);
@@ -224,11 +222,11 @@ void mafLUTLibrary::LoadLUT( const char *lutFileName, vtkLookupTable *targetLut 
 
   input.close();
 
-  assert(wxFileExists(fileName.c_str()));
+  assert(mafFileExists(fileName));
 
 }
 
-void mafLUTLibrary::Add( vtkLookupTable *inputLUT, const char *lutName )
+void mafLUTLibrary::Add( vtkLookupTable *inputLUT, const mafString& lutName )
 {
 
   vtkLookupTable *lut = m_LutMap[lutName];
@@ -238,8 +236,8 @@ void mafLUTLibrary::Add( vtkLookupTable *inputLUT, const char *lutName )
     if (DEBUG_MODE)
     {
       std::ostringstream stringStream;
-      stringStream << "Overwriting: " << lutName << std::endl;
-      mafLogMessage(stringStream.str().c_str());
+      stringStream << "Overwriting: " << lutName.GetCStr() << std::endl;
+      mafLogMessage(_M(stringStream.str().c_str()));
 
       lut->Delete();
     }
@@ -249,35 +247,33 @@ void mafLUTLibrary::Add( vtkLookupTable *inputLUT, const char *lutName )
   newLut->DeepCopy(inputLUT);
   m_LutMap[lutName] = newLut;
 
-  mafString lutFileName = m_LibraryDir + "/" + lutName + ".lut";
-  SaveLUT(newLut, lutFileName.GetCStr());
+  mafString lutFileName = m_LibraryDir + _R("/") + lutName + _R(".lut");
+  SaveLUT(newLut, lutFileName);
 
-  assert(wxFileExists(lutFileName.GetCStr()));
+  assert(mafFileExists(lutFileName));
 }
 
 void mafLUTLibrary::Save()
 {
-  wxMkdir(m_LibraryDir.GetCStr());
-  assert(wxDirExists(m_LibraryDir.GetCStr()));
+  mafDirMake(m_LibraryDir);
+  assert(mafDirExists(m_LibraryDir));
 
-  std::map<std::string, vtkLookupTable *>::iterator it;
-
-  for(it = m_LutMap.begin(); it != m_LutMap.end(); it++)
+  for(auto it = m_LutMap.begin(); it != m_LutMap.end(); ++it)
   {
-    std::string s = (*it).first;
+    mafString s = (*it).first;
     vtkLookupTable *lut = (*it).second;
-    std::string absFileName = std::string(m_LibraryDir)  + "/" + s.append(".lut");
-    SaveLUT(lut, absFileName.c_str());
+    mafString absFileName = m_LibraryDir  + _R("/") + s + _R(".lut");
+    SaveLUT(lut, absFileName);
   }  
 }
 
 
-void mafLUTLibrary::SetDir( const char *dir )
+void mafLUTLibrary::SetDir(const mafString& dir )
 {
   m_LibraryDir = dir;
 }
 
-const char *mafLUTLibrary::GetDir()
+const mafString& mafLUTLibrary::GetDir()
 {
   return m_LibraryDir;
 }
@@ -288,7 +284,7 @@ void mafLUTLibrary::Load()
   m_LutMap.clear();
 
   vtkMAFSmartPointer<vtkDirectory> vtkDir;
-  int result = vtkDir->Open(m_LibraryDir);
+  int result = vtkDir->Open(m_LibraryDir.GetCStr());
   assert(result == 1);
 
   int numFiles = vtkDir->GetNumberOfFiles();
@@ -309,43 +305,38 @@ void mafLUTLibrary::Load()
     if (isLutFile)
     {
       cout << "found .lut at: " << int(foundPosition) << " in " << lutLocalFileName << std::endl;
-      std::string lutAbsFileName = std::string(m_LibraryDir.GetCStr()) + lutLocalFileName;
-      assert(wxFileExists(lutAbsFileName.c_str()));
+      mafString lutAbsFileName = m_LibraryDir + _R(lutLocalFileName.c_str());
+      assert(mafFileExists(lutAbsFileName));
 
       std::string lutName = lutLocalFileName.erase(foundPosition);
       vtkLookupTable *vtkLut = vtkLookupTable::New();
-      LoadLUT(lutAbsFileName.c_str(), vtkLut);
-      m_LutMap[lutName] = vtkLut;
+      LoadLUT(lutAbsFileName, vtkLut);
+      m_LutMap[_R(lutName.c_str())] = vtkLut;
     }
   }  
 
-  std::map<std::string, vtkLookupTable *>::iterator it;
-
-  for(it = m_LutMap.begin(); it != m_LutMap.end(); it++)
+  for(auto it = m_LutMap.begin(); it != m_LutMap.end(); it++)
   {
-    std::string s = (*it).first;
-    mafLogMessage(s.c_str());
+    mafLogMessage(_M(it->first));
   }
 
   assert(true);
 }
 
 
-int mafLUTLibrary::Remove( const char *lutName )
+int mafLUTLibrary::Remove(const mafString& lutName )
 {
-
-  std::map<std::string, vtkLookupTable *>::const_iterator it;
-  it = m_LutMap.find(lutName);
+  auto it = m_LutMap.find(lutName);
 
   if (it == m_LutMap.end())
   {
     cout << "The LUT lib doesn't have an element "
-      << "with key: " << lutName << std::endl;
+      << "with key: " << lutName.GetCStr() << std::endl;
     return MAF_ERROR;
   }
   else
   {
-    cout << "removing element: " << lutName << std::endl;
+    cout << "removing element: " << lutName.GetCStr() << std::endl;
     vtkLookupTable *lut = m_LutMap[lutName];
     lut->Delete();
     m_LutMap.erase(lutName);
@@ -354,11 +345,11 @@ int mafLUTLibrary::Remove( const char *lutName )
   } 
 }
 
-void mafLUTLibrary::RemoveLUTFromDisk(const char *lutName)
+void mafLUTLibrary::RemoveLUTFromDisk(const mafString& lutName)
 {
-  mafString lutFileName = m_LibraryDir + "/" + lutName + ".lut";
-  assert(wxFileExists(lutFileName.GetCStr()));
-  wxRemoveFile(lutFileName.GetCStr());
+  mafString lutFileName = m_LibraryDir + _R("/") + lutName + _R(".lut");
+  assert(mafFileExists(lutFileName));
+  mafFileRemove(lutFileName);
 }
 
 int mafLUTLibrary::GetNumberOfLuts()
@@ -366,18 +357,17 @@ int mafLUTLibrary::GetNumberOfLuts()
   return m_LutMap.size();
 }
 
-void mafLUTLibrary::GetLutNames( std::vector<std::string> &names )
+std::vector<mafString> mafLUTLibrary::GetLutNames()
 {
-  std::map<std::string, vtkLookupTable *>::iterator it;
-
-  for(it = m_LutMap.begin(); it != m_LutMap.end(); it++)
+  std::vector<mafString> names;
+  for(auto it = m_LutMap.begin(); it != m_LutMap.end(); it++)
   {
-    std::string lutName = (*it).first;
-    names.push_back(lutName);      
+    names.push_back(it->first);
   }
+  return names;
 }
 
-vtkLookupTable *mafLUTLibrary::GetLutByName(const char *name)
+vtkLookupTable *mafLUTLibrary::GetLutByName(const mafString& name)
 {
   if (HasLut(name))
   {
@@ -389,15 +379,14 @@ vtkLookupTable *mafLUTLibrary::GetLutByName(const char *name)
   }
 }
 
-bool mafLUTLibrary::HasLut(const char *name)
+bool mafLUTLibrary::HasLut(const mafString& name)
 {
-  std::map<std::string, vtkLookupTable *>::const_iterator it;
-  it = m_LutMap.find(name);
+  auto it = m_LutMap.find(name);
 
   if (it == m_LutMap.end())
   {
     cout << "The LUT lib doesn't have an element "
-      << "with key: " << name << std::endl;
+      << "with key: " << name.GetCStr() << std::endl;
     return false;
   }
   else

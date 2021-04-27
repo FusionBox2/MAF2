@@ -111,11 +111,11 @@ int mafVMEPolyline::SetData(vtkDataSet *data, mafTimeStamp t, int mode)
 mmaMaterial *mafVMEPolyline::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+  mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
   if (material == NULL)
   {
     material = mmaMaterial::New();
-    SetAttribute("MaterialAttributes", material);
+    SetAttribute(_R("MaterialAttributes"), material);
     if (m_Output)
     {
       ((mafVMEOutputPolyline *)m_Output)->SetMaterial(material);

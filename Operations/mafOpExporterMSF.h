@@ -36,7 +36,7 @@ class mafEvent;
 class MAF_EXPORT mafOpExporterMSF: public mafOp
 {
 public:
-  mafOpExporterMSF(const mafString& label = "MSFExporter");
+  mafOpExporterMSF(const mafString& label = _R("MSFExporter"));
  ~mafOpExporterMSF(); 
   
   mafTypeMacro(mafOpExporterMSF, mafOp);
@@ -50,10 +50,10 @@ public:
   void OpRun();
 
   /** Set the filename for the .msf to export */
-  void SetFileName(const char *file_name) {m_MSFFile = file_name;};
+  void SetFileName(const char *file_name) {m_MSFFile = _R(file_name);}
 
   /** Get the filename for the .msf to export */
-  mafString GetFileName() {return m_MSFFile;};
+  mafString GetFileName() {return m_MSFFile;}
 
   /** Export selected subtree-tree to a .msf file*/
   int ExportMSF();

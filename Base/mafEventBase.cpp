@@ -100,21 +100,21 @@ mafID mafEventBase::GetId()
   bool *verbose = GetLogVerbose();
   if (m_Id != UPDATE_UI && (*verbose) )
   {
-    mafString sender_type = "Received Event. Sender: ";
+    mafString sender_type = _R("Received Event. Sender: ");
     try
     {
       mafObject *obj = (mafObject *)m_Sender;
-      sender_type << typeid(*obj).name();
+      sender_type += _R(typeid(*obj).name());
     }
     catch (...)
     {
-      sender_type = "not mafObject (";
-      sender_type << (long)m_Sender;
-      sender_type << ")";
+      sender_type = _R("not mafObject (");
+      sender_type += mafToString((long)m_Sender);
+      sender_type += _R(")");
     }
     mafString id_name = mafIdString(m_Id);
-    mafString msg = sender_type + "  ID: " + id_name;
-    mafLogMessage(msg);
+    mafString msg = sender_type + _R("  ID: ") + id_name;
+    mafLogMessage(_M(msg));
   }
   return m_Id;
 }

@@ -50,7 +50,7 @@ public:
 
   /** Set the user's credentials. 
   Return 'true' if the users' credentials are correctly initialized, otherwise 'flase' value is returned. */
-  bool SetCredentials(mafString &name, mafString &pwd, int &proxyFlag, mafString &proxyHost, mafString &proxyPort, int &remember_me);
+  bool SetCredentials(const mafString& name, const mafString& pwd, int proxyFlag, const mafString& proxyHost, const mafString& proxyPort, int remember_me);
 
   /** Return the information on user name.*/
   mafString &GetName();

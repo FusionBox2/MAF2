@@ -38,7 +38,7 @@ mafCxxTypeMacro(mmaMeter)
 mmaMeter::mmaMeter()
 //-------------------------------------------------------------------------
 {
-  m_Name           = "MeterAttributes";
+  m_Name           = _R("MeterAttributes");
   m_LabelVisibility= 1;
   m_ColorMode      = mafVMEMeter::ONE_COLOR;
   m_Representation = mafVMEMeter::LINE_REPRESENTATION;
@@ -106,18 +106,18 @@ int mmaMeter::InternalStore(mafStorageElement *parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent->StoreInteger("MeterMode", m_MeterMode);
-    parent->StoreInteger("ColorMode", m_ColorMode);
-    parent->StoreInteger("Representation", m_Representation);
-    parent->StoreInteger("Capping", m_Capping);
-    parent->StoreInteger("MeasureType", m_MeasureType);
-    parent->StoreInteger("GenerateEvent", m_GenerateEvent);
-    parent->StoreDouble("DeltaPercent", m_DeltaPercent);
-    parent->StoreInteger("ThresholdEvent", m_ThresholdEvent);
-    parent->StoreInteger("LabelVisibility", m_LabelVisibility);
-    parent->StoreDouble("InitMeasure",m_InitMeasure);
-    parent->StoreDouble("TubeRadius",m_TubeRadius);
-    parent->StoreVectorN("DistanceRange",m_DistanceRange,2);
+    parent->StoreInteger(_R("MeterMode"), m_MeterMode);
+    parent->StoreInteger(_R("ColorMode"), m_ColorMode);
+    parent->StoreInteger(_R("Representation"), m_Representation);
+    parent->StoreInteger(_R("Capping"), m_Capping);
+    parent->StoreInteger(_R("MeasureType"), m_MeasureType);
+    parent->StoreInteger(_R("GenerateEvent"), m_GenerateEvent);
+    parent->StoreDouble(_R("DeltaPercent"), m_DeltaPercent);
+    parent->StoreInteger(_R("ThresholdEvent"), m_ThresholdEvent);
+    parent->StoreInteger(_R("LabelVisibility"), m_LabelVisibility);
+    parent->StoreDouble(_R("InitMeasure"),m_InitMeasure);
+    parent->StoreDouble(_R("TubeRadius"),m_TubeRadius);
+    parent->StoreVectorN(_R("DistanceRange"),m_DistanceRange,2);
     return MAF_OK;
   }
   return MAF_ERROR;
@@ -131,18 +131,18 @@ int mmaMeter::InternalRestore(mafStorageElement *node)
     //mafMatrix matrix;  //modified by Marco. 29-9-2005 It seems this field is not stored...
     ///if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
     //{
-      node->RestoreInteger("MeterMode", m_MeterMode);
-      node->RestoreInteger("ColorMode", m_ColorMode);
-      node->RestoreInteger("Representation", m_Representation);
-      node->RestoreInteger("Capping", m_Capping);
-      node->RestoreInteger("MeasureType", m_MeasureType);
-      node->RestoreInteger("GenerateEvent", m_GenerateEvent);
-      node->RestoreDouble("DeltaPercent", m_DeltaPercent);
-      node->RestoreInteger("ThresholdEvent", m_ThresholdEvent);
-      node->RestoreInteger("LabelVisibility", m_LabelVisibility);
-      node->RestoreDouble("InitMeasure",m_InitMeasure);
-      node->RestoreDouble("TubeRadius",m_TubeRadius);
-      node->RestoreVectorN("DistanceRange",m_DistanceRange,2);
+      node->RestoreInteger(_R("MeterMode"), m_MeterMode);
+      node->RestoreInteger(_R("ColorMode"), m_ColorMode);
+      node->RestoreInteger(_R("Representation"), m_Representation);
+      node->RestoreInteger(_R("Capping"), m_Capping);
+      node->RestoreInteger(_R("MeasureType"), m_MeasureType);
+      node->RestoreInteger(_R("GenerateEvent"), m_GenerateEvent);
+      node->RestoreDouble(_R("DeltaPercent"), m_DeltaPercent);
+      node->RestoreInteger(_R("ThresholdEvent"), m_ThresholdEvent);
+      node->RestoreInteger(_R("LabelVisibility"), m_LabelVisibility);
+      node->RestoreDouble(_R("InitMeasure"),m_InitMeasure);
+      node->RestoreDouble(_R("TubeRadius"),m_TubeRadius);
+      node->RestoreVectorN(_R("DistanceRange"),m_DistanceRange,2);
       return MAF_OK;
     //}
   }

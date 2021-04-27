@@ -46,9 +46,9 @@ mafOpExporterMesh::mafOpExporterMesh(const mafString& label) : Superclass(label)
 {
   m_OpType  = OPTYPE_EXPORTER;
   m_Canundo = true;
-  m_NodesFileName = "";
-  m_ElementsFileName = "";
-  m_MaterialsFileName = "";
+  m_NodesFileName = _R("");
+  m_ElementsFileName = _R("");
+  m_MaterialsFileName = _R("");
 }
 
 //----------------------------------------------------------------------------
@@ -76,31 +76,31 @@ void mafOpExporterMesh::OpRun()
 //----------------------------------------------------------------------------
 {
   // Save the file
-  mafString wildc = "lis files (*.lis)|*.lis|All Files (*.*)|*.*";
+  mafString wildc = _R("lis files (*.lis)|*.lis|All Files (*.*)|*.*");
 
   mafString name = m_Input->GetName();
   if (name.FindChr('\\') != -1 || name.FindChr('/') != -1 || name.FindChr(':') != -1 || 
       name.FindChr('?')  != -1 || name.FindChr('"') != -1 || name.FindChr('<') != -1 || 
       name.FindChr('>')  != -1 || name.FindChr('|') != -1 )
   {
-    mafMessage("Node name contains invalid chars.\nA node name can not contain chars like \\ / : * ? \" < > |");
-    m_File = "";
+    mafMessage(_M("Node name contains invalid chars.\nA node name can not contain chars like \\ / : * ? \" < > |"));
+    m_File = _R("");
   }
   else
   {
-    m_FileDir << this->m_Input->GetName();
-    m_FileDir << ".lis";
+    m_FileDir += this->m_Input->GetName();
+    m_FileDir += _R(".lis");
     m_File = mafGetSaveFile(m_FileDir, wildc);
   }
 
   // Generate the three output files
-  wxString wxstr(m_File.GetCStr());
+  wxString wxstr = m_File.toWx();
   wxString wxname = wxstr.Before('.');
   wxString wxextension = wxstr.After('.');
 
-  m_NodesFileName << wxname.c_str() << "_NODES." << wxextension.c_str();
-  m_ElementsFileName << wxname.c_str() << "_ELEMENTS." << wxextension.c_str();
-  m_MaterialsFileName << wxname.c_str() << "_MATERIALS." << wxextension.c_str();
+  m_NodesFileName += mafWxToString(wxname) + _R("_NODES.") + mafWxToString(wxextension);
+  m_ElementsFileName += mafWxToString(wxname) + _R("_ELEMENTS.") + mafWxToString(wxextension);
+  m_MaterialsFileName += mafWxToString(wxname) + _R("_MATERIALS.") + mafWxToString(wxextension);
 
   // Write to output
   int result = Write();
@@ -137,12 +137,12 @@ int mafOpExporterMesh::Write()
   {
     if (!m_TestMode)
     {
-      mafMessage(_("Error writing output files! See log window for details..."),_("Error"));
+        mafErrorMessage(_M(mafString(_L("Error writing output files! See log window for details..."))));
     }
   }
 
   // Create a dummy file that will be used to check for duplicate files
-  std::ofstream f_Out(m_File);
+  std::ofstream f_Out(m_File.GetCStr());
   if (!f_Out.bad())
   {
     f_Out << "FILE LIST:" << "\n";

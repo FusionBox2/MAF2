@@ -214,7 +214,7 @@ void mafOpRemoveCells::CreateOpDialog()
   wxBusyCursor wait;
 
   //===== setup interface ====
-  m_Dialog = new mafGUIDialog("Remove Cells", mafCLOSEWINDOW | mafRESIZABLE);
+  m_Dialog = new mafGUIDialog(_R("Remove Cells"), mafCLOSEWINDOW | mafRESIZABLE);
   
   m_Rwi = new mafRWI(m_Dialog,ONE_LAYER,false);
   m_Rwi->SetListener(this);
@@ -253,10 +253,10 @@ void mafOpRemoveCells::CreateOpDialog()
 
   wxStaticText *help  = new wxStaticText(m_Dialog,-1, "Use CTRL to select cells");
 
-  mafGUIButton  *unselectAllButton =    new mafGUIButton(m_Dialog, ID_UNSELECT,    "unselect all", p,wxSize(80,20));
-  mafGUIButton  *b_fit =    new mafGUIButton(m_Dialog, ID_FIT,    "reset camera", p,wxSize(80,20));
-  mafGUIButton  *ok =     new mafGUIButton(m_Dialog, ID_OK,     "ok", p, wxSize(80,20));
-  mafGUIButton  *cancel = new mafGUIButton(m_Dialog, ID_CANCEL, "cancel", p, wxSize(80,20));
+  mafGUIButton  *unselectAllButton =    new mafGUIButton(m_Dialog, ID_UNSELECT,    _R("unselect all"), p,wxSize(80,20));
+  mafGUIButton  *b_fit =    new mafGUIButton(m_Dialog, ID_FIT,    _R("reset camera"), p,wxSize(80,20));
+  mafGUIButton  *ok =     new mafGUIButton(m_Dialog, ID_OK,     _R("ok"), p, wxSize(80,20));
+  mafGUIButton  *cancel = new mafGUIButton(m_Dialog, ID_CANCEL, _R("cancel"), p, wxSize(80,20));
 
 	
   b_clip->SetValidator(mafGUIValidator(this,ID_AUTOCLIP,b_clip,(int*)&m_AutoClip));
@@ -569,14 +569,14 @@ void mafOpRemoveCells::CreateHelperStructures()
 
   if (polydata->GetPoints() == NULL)
   {
-    mafLogMessage("No points!");
+    mafLogMessage(_M("No points!"));
     assert(false);
   }
 
 
   if ( polydata->GetNumberOfPoints() < 1 || polydata->GetNumberOfCells() < 1 )
   {
-    mafLogMessage("No data to connect!");
+    mafLogMessage(_M("No data to connect!"));
     assert(false);
   }
 

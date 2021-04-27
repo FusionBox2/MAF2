@@ -86,9 +86,9 @@ void mafOpScalarToSurface::OpRun()
   }
 
   mafString surface_name = m_Input->GetName();
-  surface_name += " surface";
+  surface_name += _R(" surface");
   mafNEW(m_Surface);
-  m_Surface->SetName(surface_name.GetCStr());
+  m_Surface->SetName(surface_name);
   
   vtkMAFSmartPointer<vtkAppendPolyData> scalar_surface;
   vtkMAFSmartPointer<vtkDelaunay2D> delaunay;

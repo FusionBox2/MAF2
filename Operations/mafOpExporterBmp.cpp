@@ -55,7 +55,7 @@ mafOpExporterBmp::mafOpExporterBmp(const mafString& label) : Superclass(label)
   m_Input = NULL;
   m_Offset = 0;
   m_Bit8 = 1;
-	m_DirName = "";
+	m_DirName = _R("");
 }
 //----------------------------------------------------------------------------
 mafOpExporterBmp::~mafOpExporterBmp()
@@ -89,12 +89,12 @@ void mafOpExporterBmp::OpRun()
     //Crete GUI
     m_Gui = new mafGUI(this);
     
-    m_Gui->DirOpen(ID_DIROPEN, "export dir", &m_DirName, _("choose dir") );
+    m_Gui->DirOpen(ID_DIROPEN, _R("export dir"), &m_DirName, _L("choose dir") );
    
-    m_Gui->Bool(ID_8BIT, "grayscale", &m_Bit8, 0, _("export in 8 bit gray scale format"));
-    m_Gui->Integer(ID_INT,"offset: ", &m_Offset,MININT,MAXINT, _("only if 8 bit"));
+    m_Gui->Bool(ID_8BIT, _R("grayscale"), &m_Bit8, 0, _L("export in 8 bit gray scale format"));
+    m_Gui->Integer(ID_INT,_R("offset: "), &m_Offset,MININT,MAXINT, _L("only if 8 bit"));
 
-    m_Gui->Label("");
+    m_Gui->Label(_R(""));
     m_Gui->OkCancel(); 
      
     m_Gui->Divider();
@@ -127,13 +127,13 @@ mafOp* mafOpExporterBmp::Copy()
 void mafOpExporterBmp::SaveBmp()
 //----------------------------------------------------------------------------
 {
-  assert(m_DirName != "");
+  assert(!m_DirName.IsEmpty());
  
-  wxString path,name,ext;
-  ::wxSplitPath(m_DirName,&path,&name,&ext);
-  path+= _("\\");
+  mafString path,name,ext;
+  mafSplitPath(m_DirName,&path,&name,&ext);
+  path+= _L("\\");
   path+= name;
-  path+= _("\\");
+  path+= _L("\\");
   /*
 #ifndef TEST_MODE
     wxBusyInfo wait(_("Please wait, working..."));
@@ -208,8 +208,7 @@ void mafOpExporterBmp::SaveBmp()
   vtkMAFSmartPointer<vtkDoubleArray> scalarSliceIn;
   scalarSliceIn->SetNumberOfTuples(size);
 
-  wxString prefix;
-			prefix = wxString::Format("%s%s_%dx%d",path,name,xdim,ydim);
+  mafString prefix = path + name + mafString::Format(_R("_%dx%d"),xdim,ydim);
 
 
   if (m_Bit8 == 0)
@@ -246,7 +245,9 @@ void mafOpExporterBmp::SaveBmp()
     exporter->SetInput(imageFlip->GetOutput());
     exporter->SetFileDimensionality(2); // the writer will create a number of 2D images
     exporter->SetFilePattern("%s_%04d.bmp");
-    exporter->SetFilePrefix((char*)prefix.c_str());
+#pragma message ("strange const_cast need")
+    exporter->SetFilePrefix(const_cast<char*>((const char *)prefix.GetCStr()));
+#pragma message("const_cast needed")
      
     exporter->Write();
   }
@@ -254,7 +255,7 @@ void mafOpExporterBmp::SaveBmp()
   {
     int counter = 0;
     double tuple;
-    wxString fileName;
+    mafString fileName;
     long progress = 0;
 
     mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
@@ -276,10 +277,10 @@ void mafOpExporterBmp::SaveBmp()
 
       int fileNumber = z + m_Offset;
 
-      fileName = wxString::Format("%s_%04d.bmp",prefix, fileNumber);
+      fileName = prefix + mafString::Format(_R("_%04d.bmp"), fileNumber);
 
       
-      WriteImageDataAsMonocromeBitmap(imageSlice, fileName.c_str());
+      WriteImageDataAsMonocromeBitmap(imageSlice, fileName);
       scalarSliceIn->Reset();
     }
     mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
@@ -324,8 +325,8 @@ bool mafOpExporterBmp::WriteImageDataAsMonocromeBitmap(vtkImageData *img, mafStr
 {
 #ifdef WIN32
   // check filename
-  if( !filename ) return false;
-  FILE *f = fopen( filename, "wb");
+  if( filename.IsEmpty() ) return false;
+  FILE *f = fopen( filename.GetCStr(), "wb");
   if(!f) return false;
   fclose(f); // to be reopended later
 
@@ -447,7 +448,7 @@ bool mafOpExporterBmp::WriteImageDataAsMonocromeBitmap(vtkImageData *img, mafStr
   }
 
   //write the image
-  f = fopen( filename, "wb");
+  f = fopen( filename.GetCStr(), "wb");
   fwrite(&hdr,1,sizeof (BITMAPFILEHEADER),f);
 
   int chunksize  = 10000;

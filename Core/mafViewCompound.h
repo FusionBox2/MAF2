@@ -49,7 +49,7 @@ mafViewCompound doesn't have a Scenegraph, nor knowledge about VTK /sa mafViewVT
 class MAF_EXPORT mafViewCompound: public mafView
 {
 public:
-  mafViewCompound(const mafString& label = "View Compound", int num_row = 1, int num_col = 2);
+  mafViewCompound(const mafString& label = _R("View Compound"), int num_row = 1, int num_col = 2);
   virtual ~mafViewCompound(); 
 
   mafTypeMacro(mafViewCompound, mafView);

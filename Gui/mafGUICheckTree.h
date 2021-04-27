@@ -103,7 +103,7 @@ protected:
   virtual int GetVmeStatus(mafNode *vme);
 
   /** retrieve the icon-index for a vme given the classname */
-  int ClassNameToIcon(wxString classname);
+  int ClassNameToIcon(const mafString& classname);
 
   /** Fill the image list considering the visibility vme type, and vme availability.
            The result is a list of images, and one image can be associated to the label that represent the node of the tree in the wxwidget.*/
@@ -139,7 +139,7 @@ protected:
   bool     m_CanSelect;
   wxMenu  *m_RMenu;	
 
-  typedef std::map<wxString,int> MapClassNameToIcon;
+  typedef std::map<mafString,int> MapClassNameToIcon;
   MapClassNameToIcon m_MapClassNameToIcon;
 
   /** event table declaration */

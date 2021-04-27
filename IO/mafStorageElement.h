@@ -119,13 +119,13 @@ public:
 
   /** 
     Store a vector of objects. Objects must be both mafObject and mafStorable @sa StoreObject() */
-  int StoreObjectVector(const mafString& name,const std::vector<mafObject *> &vector,const mafString& items_name="Item");
+  int StoreObjectVector(const mafString& name,const std::vector<mafObject *> &vector,const mafString& items_name=_R("Item"));
 
   /** Restore a vector of objects. Objects must be both mafObject and mafStorable @sa RestoreObject() */
-  int RestoreObjectVector(const mafString& name,std::vector<mafObject *> &vector,const mafString& items_name="Item");
+  int RestoreObjectVector(const mafString& name,std::vector<mafObject *> &vector,const mafString& items_name= _R("Item"));
 
   /** Restore a vector of objects. Objects must be both mafObject and mafStorable @sa RestoreObject() */
-  int RestoreObjectVector(mafStorageElement *element,std::vector<mafObject *> &vector,const mafString& items_name="Item");
+  int RestoreObjectVector(mafStorageElement *element,std::vector<mafObject *> &vector,const mafString& items_name= _R("Item"));
 
   /** return a pointer to the storage who created this element */
   mafParser *GetStorage() {return m_Storage;}

@@ -48,7 +48,7 @@ EXPORT_STL_VECTOR(MAF_EXPORT,mafVME*);
 class MAF_EXPORT mafOpDecomposeTimeVarVME: public mafOp
 {
 public:
-  mafOpDecomposeTimeVarVME(const mafString& label = "Decompose time varying VME");
+  mafOpDecomposeTimeVarVME(const mafString& label = _R("Decompose time varying VME"));
  ~mafOpDecomposeTimeVarVME(); 
  mafTypeMacro(mafOpDecomposeTimeVarVME, public mafOp)
 

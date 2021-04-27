@@ -277,15 +277,15 @@ mafGUI* mafViewCompound::CreateGui()
 //-------------------------------------------------------------------------
 {
   mafString childview_tooltip;
-  childview_tooltip = "set the default child view";
+  childview_tooltip = _R("set the default child view");
 
-  mafString layout_choices[4] = {"default","layout 1","layout 2", "custom"};
+  mafString layout_choices[4] = {_R("default"),_R("layout 1"),_R("layout 2"), _R("custom")};
 
   assert(m_Gui == NULL);
   m_Gui = new mafGUI(this);
-  m_Gui->Integer(ID_DEFAULT_CHILD_VIEW,"default child", &m_DefauldChildView, 0, m_NumOfChildView, childview_tooltip);
-  m_Gui->Combo(ID_LAYOUT_CHOOSER,"layout",&m_LayoutConfiguration,4,layout_choices);
-  m_Gui->Bool(ID_LINK_SUBVIEW,"link camera",&m_LinkSubView);
+  m_Gui->Integer(ID_DEFAULT_CHILD_VIEW,_R("default child"), &m_DefauldChildView, 0, m_NumOfChildView, childview_tooltip);
+  m_Gui->Combo(ID_LAYOUT_CHOOSER,_R("layout"),&m_LayoutConfiguration,4,layout_choices);
+  m_Gui->Bool(ID_LINK_SUBVIEW,_R("link camera"),&m_LinkSubView);
   return m_Gui;
 }
 //----------------------------------------------------------------------------
@@ -493,7 +493,7 @@ void mafViewCompound::MaximizeSubView(int subview_id, bool maximize)
   }
   if (subview_id < 0 || subview_id >= m_NumOfChildView)
   {
-    mafMessage("Wrong sub-view id !!");
+    mafMessage(_M("Wrong sub-view id !!"));
     return;
   }
   m_SubViewMaximized = maximize ? subview_id : -1;

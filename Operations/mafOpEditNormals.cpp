@@ -113,17 +113,17 @@ void mafOpEditNormals::OpRun()
 		m_Gui = new mafGUI(this);
 
 		m_Gui->Divider(2);
-		m_Gui->Label("normals",true);
-		m_Gui->Slider(ID_NORMALS_ANGLE,"angle",&m_Angle, 0, 90);
-		m_Gui->Bool(ID_EDGE_SPLITTING,"edge splitting",&m_EdgeSplit, 1);
-		m_Gui->Bool(ID_FLIP_NORMALS,"flip normals",&m_FlipNormals, 1);
-		m_Gui->Button(ID_NORMALS,"apply normals");
-		m_Gui->Button(ID_RESET_NORMALS,"reset normals");
+		m_Gui->Label(_R("normals"),true);
+		m_Gui->Slider(ID_NORMALS_ANGLE,_R("angle"),&m_Angle, 0, 90);
+		m_Gui->Bool(ID_EDGE_SPLITTING,_R("edge splitting"),&m_EdgeSplit, 1);
+		m_Gui->Bool(ID_FLIP_NORMALS,_R("flip normals"),&m_FlipNormals, 1);
+		m_Gui->Button(ID_NORMALS,_R("apply normals"));
+		m_Gui->Button(ID_RESET_NORMALS,_R("reset normals"));
 
 		m_Gui->Divider(2);
-		m_Gui->Label("");
-		m_Gui->Button(ID_PREVIEW,"preview");
-		m_Gui->Button(ID_CLEAR,"clear");
+		m_Gui->Label(_R(""));
+		m_Gui->Button(ID_PREVIEW,_R("preview"));
+		m_Gui->Button(ID_CLEAR,_R("clear"));
 		m_Gui->OkCancel();
 		m_Gui->Enable(wxOK,false);
 

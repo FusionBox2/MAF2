@@ -57,8 +57,8 @@ mafOpApplyTrajectory::mafOpApplyTrajectory(const mafString& label) : Superclass(
 {
 	m_OpType	= OPTYPE_OP;
 	m_Canundo	= true;
-	m_File		= "";
-	m_FileDir = mafGetApplicationDirectory() + "/Data/";
+	m_File		= _R("");
+	m_FileDir = mafGetApplicationDirectory() + _R("/Data/");
   m_OriginalMatrix = NULL;
   m_VME = NULL;
 }
@@ -125,7 +125,7 @@ void mafOpApplyTrajectory::OpStop(int result)
 void mafOpApplyTrajectory::CreateGui()
 //----------------------------------------------------------------------------
 {
-  wxString pgd_wildc	= "txt (*.txt)|*.txt";
+  mafString pgd_wildc	= _R("txt (*.txt)|*.txt");
 
   m_Gui = new mafGUI(this);
   
@@ -136,16 +136,16 @@ void mafOpApplyTrajectory::CreateGui()
 
   if (buildHelpGui.GetArg() == true)
   {
-	  m_Gui->Button(ID_HELP, "Help","");	
+	  m_Gui->Button(ID_HELP, _R("Help"), _R(""));
   }
 
   m_Gui->Divider(0);
-  m_Gui->Label("Load trajectories");
-  m_Gui->FileOpen(ID_OPEN_FILE,"from file:", &m_File, pgd_wildc,"Choose text file");
+  m_Gui->Label(_R("Load trajectories"));
+  m_Gui->FileOpen(ID_OPEN_FILE,_R("from file:"), &m_File, pgd_wildc,_R("Choose text file"));
 
   m_Gui->Divider(0);
   m_Gui->Divider(0);
-  m_Gui->Button(ID_SELECT_VME,"Select","from VMEs:","Select VME"); 
+  m_Gui->Button(ID_SELECT_VME,_R("Select"),_R("from VMEs:"),_R("Select VME")); 
 
   m_Gui->Divider(0);
   m_Gui->Divider(0);
@@ -158,19 +158,19 @@ void mafOpApplyTrajectory::OpDo()
   // CASE 1: Read trajectories from a file
   if (m_VME==NULL)
   {
-    wxString f = m_File;
-    if(!f.IsEmpty() && wxFileExists(f))
+    mafString f = m_File;
+    if(!f.IsEmpty() && mafFileExists(f))
 	  {
       if (Read() != MAF_OK)
       {
         if(!this->m_TestMode)
-          mafMessage(_("Unsupported file format."), _("I/O Error"), wxICON_ERROR );
+          mafErrorMessage(_M(mafString(_L("Unsupported file format."))));
       }
 	  }
     else
     {
       if(!this->m_TestMode)
-        mafMessage(_("File empty or file not found."), _("I/O Error"), wxICON_ERROR );
+        mafErrorMessage(_M(mafString(_L("File empty or file not found."))));
     }
   }
   // CASE 2: Apply trajectories from a time-varying VME 
@@ -179,7 +179,7 @@ void mafOpApplyTrajectory::OpDo()
     if (ApplyTrajectoriesFromVME() != MAF_OK)
     {
       if(!this->m_TestMode)
-        mafMessage(_("An error occurred while applying trajectories"), _("I/O Error"), wxICON_ERROR );
+        mafErrorMessage(_M(mafString(_L("An error occurred while applying trajectories"))));
     }
   }
 }
@@ -225,9 +225,9 @@ void mafOpApplyTrajectory::OnEvent(mafEventBase *maf_event)
     
 	case wxOK:
       {
-        if (!m_VME && m_File.Compare("")==0)
+        if (!m_VME && m_File.IsEmpty())
         {
-          mafMessage(_("No input has been selected."), _("I/O Error"), wxICON_ERROR );
+          mafErrorMessage(_M(mafString(_L("No input has been selected."))));
           OpStop(OP_RUN_CANCEL);
         }
         else
@@ -243,7 +243,7 @@ void mafOpApplyTrajectory::OnEvent(mafEventBase *maf_event)
       {
         if (!m_TestMode)
         {
-          if (m_File.Compare("")!=0)
+          if (!m_File.IsEmpty())
           {
             m_Gui->Enable(ID_SELECT_VME,false);  
           }
@@ -252,7 +252,7 @@ void mafOpApplyTrajectory::OnEvent(mafEventBase *maf_event)
       break;
     case ID_SELECT_VME:
       {
-        mafString title = mafString("Select a VME:");
+        mafString title = _R("Select a VME:");
         mafEvent e(this,VME_CHOOSE);
         e.SetString(&title);
         e.SetArg((long)(&mafOpApplyTrajectory::AcceptInputVME)) ; // accept only time-varying VME
@@ -288,14 +288,14 @@ int mafOpApplyTrajectory::Read()
   mafNEW(m_OriginalMatrix);
   m_OriginalMatrix->DeepCopy(((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
 
-  wxString path, name, ext;
-  wxSplitPath(m_File.GetCStr(),&path,&name,&ext);
+  mafString path, name, ext;
+  mafSplitPath(m_File,&path,&name,&ext);
 
   double time;
   double newPosition[3];
   double newOrientation[3];
 
-  wxString s_file = m_File.GetCStr();
+  wxString s_file = m_File.toWx();
   wxFileInputStream inputFile( s_file );
   wxTextInputStream text( inputFile );
   
@@ -315,11 +315,11 @@ int mafOpApplyTrajectory::Read()
     newOrientation[1] = atof(tkz.GetNextToken().c_str());
     newOrientation[2] = atof(tkz.GetNextToken().c_str());
     
-    wxString token = tkz.GetNextToken().c_str();
+    wxString token = tkz.GetNextToken();
     if (!token.IsEmpty())
     {
       if(!this->m_TestMode)
-        mafMessage(_("Error reading trajectory file. Incorrect number of parameter."), _("I/O Error"), wxICON_ERROR );
+        mafErrorMessage(_M(mafString(_L("Error reading trajectory file. Incorrect number of parameter."))));
       return MAF_ERROR;
     }
 

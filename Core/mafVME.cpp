@@ -860,7 +860,7 @@ int mafVME::InternalStore(mafStorageElement *parent)
 {
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent->SetAttribute("Crypting",mafString(m_Crypting));
+    parent->SetAttribute(_R("Crypting"),mafToString(m_Crypting));
     return MAF_OK;
   }
   return MAF_ERROR;
@@ -873,7 +873,7 @@ int mafVME::InternalRestore(mafStorageElement *node)
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafID crypt;
-    node->GetAttributeAsInteger("Crypting",crypt);
+    node->GetAttributeAsInteger(_R("Crypting"),crypt);
     SetCrypting(crypt);
 
     return MAF_OK;
@@ -889,10 +889,10 @@ mafGUI *mafVME::CreateGui()
   m_Gui->SetListener(this);
 
   mafString anim_text;
-  anim_text = _("not animated");
+  anim_text = _L("not animated");
   if (IsAnimated())
   {
-    anim_text = _("animated");
+    anim_text = _L("animated");
   }
   
   m_Gui->Label(anim_text);

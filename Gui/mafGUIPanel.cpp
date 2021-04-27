@@ -32,8 +32,8 @@ BEGIN_EVENT_TABLE(mafGUIPanel,wxPanel)
 END_EVENT_TABLE()
 //----------------------------------------------------------------------------
 
-mafGUIPanel::mafGUIPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
-:wxPanel(parent,id,pos,size,style,name)         
+mafGUIPanel::mafGUIPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const mafString& name)
+:wxPanel(parent,id,pos,size,style,name.toWx())
 //----------------------------------------------------------------------------
 {
   m_NextPanel = NULL;

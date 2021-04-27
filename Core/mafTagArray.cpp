@@ -192,11 +192,11 @@ int mafTagArray::InternalStore(mafStorageElement *parent)
   int ret=Superclass::InternalStore(parent);
   if (ret==MAF_OK)
   {  
-    parent->SetAttribute("NumberOfTags",mafString(GetNumberOfTags()));
+    parent->SetAttribute(_R("NumberOfTags"),mafToString(GetNumberOfTags()));
   
     for (mmuTagsMap::iterator it=m_Tags.begin();it!=m_Tags.end()&&ret==MAF_OK;it++)
     {
-      mafStorageElement *item_element=parent->AppendChild("TItem");
+      mafStorageElement *item_element=parent->AppendChild(_R("TItem"));
       ret=it->second.Store(item_element)!=MAF_OK;
     }
   }
@@ -210,14 +210,14 @@ int mafTagArray::InternalRestore(mafStorageElement *node)
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafID numAttrs=-1;
-    node->GetAttributeAsInteger("NumberOfTags",numAttrs);
+    node->GetAttributeAsInteger(_R("NumberOfTags"),numAttrs);
   
     const mafStorageElement::ChildrenVector &children=node->GetChildren();
     int ret=MAF_OK;
     int idx=0;
     for (int i=0;(idx < numAttrs) && (i < children.size()) && (ret == MAF_OK);i++)
     {
-      if (children[i]->GetName() == "TItem")
+      if (children[i]->GetName() == _R("TItem"))
       {
         mafTagItem new_titem;
         ret=new_titem.Restore(children[i]);

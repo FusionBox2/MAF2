@@ -123,21 +123,21 @@ void mafOpFilterVolume::CreateGui()
   // interface:
   m_Gui = new mafGUI(this);
 
-  m_Gui->Bool(ID_APPLY_ON_INPUT,_("apply on input"),&m_ApplyDirectlyOnInput,0,_("Check this flag for big volumes to save memory"));
-  m_Gui->Label("");
-  m_Gui->Label(_("smooth"),true);
-  m_Gui->Vector(ID_STANDARD_DEVIATION,_("sd: "),m_StandardDeviation,0.1,100,2,_("standard deviation for smooth filter"));
-  m_Gui->Vector(ID_RADIUS_FACTOR,_("radius: "),m_SmoothRadius,1,10,2,_("radius for smooth filter"));
-  m_Gui->Button(ID_SMOOTH,_("apply smooth"));
+  m_Gui->Bool(ID_APPLY_ON_INPUT,_L("apply on input"),&m_ApplyDirectlyOnInput,0,_L("Check this flag for big volumes to save memory"));
+  m_Gui->Label(_R(""));
+  m_Gui->Label(_L("smooth"),true);
+  m_Gui->Vector(ID_STANDARD_DEVIATION,_L("sd: "),m_StandardDeviation,0.1,100,2,_L("standard deviation for smooth filter"));
+  m_Gui->Vector(ID_RADIUS_FACTOR,_L("radius: "),m_SmoothRadius,1,10,2,_L("radius for smooth filter"));
+  m_Gui->Button(ID_SMOOTH,_L("apply smooth"));
 
-  m_Gui->Label("");
-  m_Gui->Label(_("median"),true);
-  m_Gui->Vector(ID_KERNEL_SIZE,_("kernel: "),m_KernelSize,1,10,_("size of kernel"));
-  m_Gui->Button(ID_MEDIAN,_("apply median"));
+  m_Gui->Label(_R(""));
+  m_Gui->Label(_L("median"),true);
+  m_Gui->Vector(ID_KERNEL_SIZE,_L("kernel: "),m_KernelSize,1,10,_L("size of kernel"));
+  m_Gui->Button(ID_MEDIAN,_L("apply median"));
 
   m_Gui->Divider(2);
-  m_Gui->Button(ID_PREVIEW,_("preview"));
-  m_Gui->Button(ID_CLEAR,_("clear"));
+  m_Gui->Button(ID_PREVIEW,_L("preview"));
+  m_Gui->Button(ID_CLEAR,_L("clear"));
   m_Gui->OkCancel();
   m_Gui->Enable(wxOK,false);
 

@@ -37,7 +37,7 @@ mafGizmoInterface::mafGizmoInterface()
   m_Modality = G_LOCAL;
   m_RefSysVME = NULL;
   m_Visibility = false;
-  m_Name = "UNDEFINED_GIZMO_NAME";
+  m_Name = _R("UNDEFINED_GIZMO_NAME");
   m_Mediator = NULL;
   m_Autoscale = false;
   m_RenderWindowHeightPercentage = 0.20;

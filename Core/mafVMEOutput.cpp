@@ -532,7 +532,7 @@ void mafVMEOutput::Print(std::ostream& os, const int tabs)// const
   Get4DBounds(bounds);
   bounds.Print(os,indent.GetNextIndent());
 
-  os << indent << "DataType: "<<m_DataType<<std::endl;
+  os << indent << "DataType: "<<m_DataType.GetCStr()<<std::endl;
 }
 
 //-------------------------------------------------------------------------
@@ -542,8 +542,8 @@ mafGUI* mafVMEOutput::CreateGui()
   assert(m_Gui == NULL);
   m_Gui = new mafGUI(m_VME);
 
-  mafString type = GetTypeName(); 
-  m_Gui->Label("type: ", type, true);
+  mafString type = _R(GetTypeName()); 
+  m_Gui->Label(_R("type: "), type, true);
 	m_Gui->Divider();
   return m_Gui;
 }

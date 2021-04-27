@@ -85,10 +85,10 @@ mafGizmoHandle::mafGizmoHandle(mafVME *input, mafBaseEventHandler *listener /* =
   //-----------------
   // plane
   m_ShadingPlaneGizmo = mafVMEGizmo::New();
-  m_ShadingPlaneGizmo->SetName("ShadingPlaneGizmo");
+  m_ShadingPlaneGizmo->SetName(_R("ShadingPlaneGizmo"));
   // cone gizmo
   m_BoxGizmo = mafVMEGizmo::New();  
-  m_BoxGizmo->SetName("BoxGizmo");
+  m_BoxGizmo->SetName(_R("BoxGizmo"));
   
   // since i'm working in local mode i reparent to input vme the gizmo
   m_BoxGizmo->SetData(m_TranslateBoxPolyDataFilterEnd->GetOutput());

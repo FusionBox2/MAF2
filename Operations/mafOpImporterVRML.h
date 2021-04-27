@@ -41,7 +41,7 @@ class mafVMEGroup;
 class MAF_EXPORT mafOpImporterVRML: public mafOp
 {
 public:
-           mafOpImporterVRML(const mafString& label = "VRMLImporter");
+           mafOpImporterVRML(const mafString& label = _R("VRMLImporter"));
 	virtual ~mafOpImporterVRML();
 	
   mafTypeMacro(mafOpImporterVRML, mafOp);

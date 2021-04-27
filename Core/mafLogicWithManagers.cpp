@@ -93,7 +93,6 @@
 #include "mafRemoteStorage.h"
 #include "mafOpSelect.h"
 
-#include "mafFilesDirs.h"
 #include "mafEventIO.h"
 #include "mafNodeIterator.h"
 #include "mafVMEGenericAbstract.h"
@@ -188,9 +187,9 @@ mafLogicWithManagers::mafLogicWithManagers(mafGUIMDIFrame *mdiFrame/*=NULL*/)
 
   m_HelpSettings = NULL;
 
-  m_Revision = _("0.1");
+  m_Revision = _L("0.1");
 
-  m_Extension = "msf";
+  m_Extension = _R("msf");
 
   m_User = new mafUser();
 
@@ -201,9 +200,9 @@ mafLogicWithManagers::mafLogicWithManagers(mafGUIMDIFrame *mdiFrame/*=NULL*/)
   mafString msfDir = mafGetApplicationDirectory();
   msfDir.ParsePathName();
   m_MSFDir   = msfDir;
-  m_MSFFile  = "";
-  m_ZipFile  = "";
-  m_TmpDir   = "";
+  m_MSFFile  = _R("");
+  m_ZipFile  = _R("");
+  m_TmpDir   = _R("");
 
   m_SingleBinaryFile = false;
 
@@ -214,14 +213,14 @@ mafLogicWithManagers::mafLogicWithManagers(mafGUIMDIFrame *mdiFrame/*=NULL*/)
 bool mafLogicWithManagers::SetAppTag(mafNode *vme)
 //----------------------------------------------------------------------------
 {
-  if(!vme->GetTagArray()->GetTag("APP_STAMP"))
+  if(!vme->GetTagArray()->GetTag(_R("APP_STAMP")))
   {
     mafTagItem tag_appstamp;
-    tag_appstamp.SetName("APP_STAMP");
+    tag_appstamp.SetName(_R("APP_STAMP"));
     if(!m_AppStamp.empty())
       tag_appstamp.SetValue(m_AppStamp.at(0));
     else
-      tag_appstamp.SetValue("");
+      tag_appstamp.SetValue(_R(""));
     vme->GetTagArray()->SetTag(tag_appstamp);
     return true;
   }
@@ -235,10 +234,10 @@ void mafLogicWithManagers::AddCreationDate(mafNode *vme)
 {
   mafString dateAndTime;
   wxDateTime time = wxDateTime::UNow(); // get time with millisecond precision
-  dateAndTime  = wxString::Format("%02d/%02d/%02d %02d:%02d:%02d",time.GetDay(), time.GetMonth()+1, time.GetYear(), time.GetHour(), time.GetMinute(),time.GetSecond()).c_str();
+  dateAndTime  = mafString::Format(_R("%02d/%02d/%02d %02d:%02d:%02d"),time.GetDay(), time.GetMonth()+1, time.GetYear(), time.GetHour(), time.GetMinute(),time.GetSecond());
 
   mafTagItem tag_creationDate;
-  tag_creationDate.SetName("Creation_Date");
+  tag_creationDate.SetName(_R("Creation_Date"));
   tag_creationDate.SetValue(dateAndTime);
   vme->GetTagArray()->SetTag(tag_creationDate); // set creation date tag for the specified vme
 }
@@ -246,7 +245,7 @@ void mafLogicWithManagers::AddCreationDate(mafNode *vme)
 bool mafLogicWithManagers::CheckAppTag(mafNode *vme)
 {
   mafString app_stamp;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag("APP_STAMP"))
+  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("APP_STAMP")))
     app_stamp = ti->GetValue();
   // First check for compatibility with all stored App stamps
   bool stamp_found = false;
@@ -255,17 +254,17 @@ bool mafLogicWithManagers::CheckAppTag(mafNode *vme)
   for (int k=0; k<m_AppStamp.size(); k++)
   {
     // Check with the Application name
-    if (app_stamp.Equals(m_AppStamp.at(k)))
+    if (app_stamp == m_AppStamp.at(k))
     {
       stamp_found = true;
     }
     // Check with the "Data Manager" tag
-    if (m_AppStamp.at(k).Equals("DataManager"))
+    if (m_AppStamp.at(k).Equals(_R("DataManager")))
     {
       stamp_data_manager_found = true;
     }
     // Check with the "OPEN_ALL_DATA" tag
-    if (m_AppStamp.at(k).Equals("OPEN_ALL_DATA"))
+    if (m_AppStamp.at(k).Equals(_R("OPEN_ALL_DATA")))
     {
       stamp_open_all_found = true;
     }
@@ -414,7 +413,7 @@ void mafLogicWithManagers::Plug(mafView* view, bool visibleInMenu)
         m_ViewMenu->AppendSeparator();
         m_ViewMenu->Append(0,_("Add View"),m_ViewListMenu);
       }
-      wxString s = wxString::Format("%s",view->GetLabel().GetCStr());
+      wxString s = view->GetLabel().toWx();
       mafID command = GetNewMenuId();
       m_ViewListMenu->Append(command, s, (wxMenu *)NULL, s );
       m_MenuElems.push_back(mafMenuElems(false, id, command));
@@ -503,7 +502,7 @@ void mafLogicWithManagers::Init(int argc, char **argv)
   {
     if(argc > 1 )
 	  {
-		  mafString file = argv[1];
+		  mafString file = _R(argv[1]);
 		  if(mafFileExists(file))
 		  {
 			  OnFileOpen(file);
@@ -525,12 +524,12 @@ void mafLogicWithManagers::Init(int argc, char **argv)
 
     if(argc > 1 )
     {
-      mafString op_type = argv[1];
-      mafString op_param = argv[2];
+      mafString op_type = _R(argv[1]);
+      mafString op_param = _R(argv[2]);
       for (int p = 3; p < argc; p++)
       {
-        op_param += " ";
-        op_param += argv[p];
+        op_param += _R(" ");
+        op_param += _R(argv[p]);
       }
       m_OpManager->OpRun(op_type, (void *)op_param.GetCStr());
     }
@@ -578,8 +577,8 @@ void mafLogicWithManagers::CreateMenu()
   m_EditMenu = new wxMenu;
   mafID undoCommand = GetNewMenuId();
   mafID redoCommand = GetNewMenuId();
-  AddToMenu(_("Undo  \tCtrl+Z"),      MENU_USER_START + 0,m_EditMenu);
-  AddToMenu(_("Redo  \tCtrl+Shift+Z"),MENU_USER_START + 1,m_EditMenu);
+  AddToMenu(_L("Undo  \tCtrl+Z"),      MENU_USER_START + 0,m_EditMenu);
+  AddToMenu(_L("Redo  \tCtrl+Shift+Z"),MENU_USER_START + 1,m_EditMenu);
   m_EditMenu->AppendSeparator();
   m_MenuElems.push_back(mafMenuElems(true, 0, undoCommand));
   m_MenuElems.push_back(mafMenuElems(true, 0, redoCommand));
@@ -612,27 +611,27 @@ void mafLogicWithManagers::CreateToolbar()
   m_ToolBar->SetMargins(0,0);
   m_ToolBar->SetToolSeparation(2);
   m_ToolBar->SetToolBitmapSize(wxSize(20,20));
-  m_ToolBar->AddTool(MENU_FILE_NEW,mafPictureFactory::GetPictureFactory()->GetBmp("FILE_NEW"),    _("new " + m_Extension + " storage file"));
-  m_ToolBar->AddTool(MENU_FILE_OPEN,mafPictureFactory::GetPictureFactory()->GetBmp("FILE_OPEN"),  _("open " + m_Extension + " storage file"));
-  m_ToolBar->AddTool(MENU_FILE_SAVE,mafPictureFactory::GetPictureFactory()->GetBmp("FILE_SAVE"),  _("save current " + m_Extension + " storage file"));
+  m_ToolBar->AddTool(MENU_FILE_NEW,mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_NEW")),    (_L("new ") + m_Extension + _L(" storage file")).toWx());
+  m_ToolBar->AddTool(MENU_FILE_OPEN,mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_OPEN")),  (_L("open ") + m_Extension + _L(" storage file")).toWx());
+  m_ToolBar->AddTool(MENU_FILE_SAVE,mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_SAVE")),  (_L("save current ") + m_Extension + _L(" storage file")).toWx());
   m_ToolBar->AddSeparator();
 
-  m_ToolBar->AddTool(MENU_FILE_PRINT,mafPictureFactory::GetPictureFactory()->GetBmp("PRINT"),  _("print the selected view"));
-  m_ToolBar->AddTool(MENU_FILE_PRINT_PREVIEW,mafPictureFactory::GetPictureFactory()->GetBmp("PRINT_PREVIEW"),  _("show the print preview for the selected view"));
+  m_ToolBar->AddTool(MENU_FILE_PRINT,mafPictureFactory::GetPictureFactory()->GetBmp(_R("PRINT")),  _("print the selected view"));
+  m_ToolBar->AddTool(MENU_FILE_PRINT_PREVIEW,mafPictureFactory::GetPictureFactory()->GetBmp(_R("PRINT_PREVIEW")),  _("show the print preview for the selected view"));
   m_ToolBar->AddSeparator();
 
-  m_ToolBar->AddTool(MENU_USER_START + 0, mafPictureFactory::GetPictureFactory()->GetBmp("OP_UNDO"),  _("undo (ctrl+z)"));
-  m_ToolBar->AddTool(MENU_USER_START + 1, mafPictureFactory::GetPictureFactory()->GetBmp("OP_REDO"),  _("redo (ctrl+shift+z)"));
+  m_ToolBar->AddTool(MENU_USER_START + 0, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_UNDO")),  _("undo (ctrl+z)"));
+  m_ToolBar->AddTool(MENU_USER_START + 1, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_REDO")),  _("redo (ctrl+shift+z)"));
   m_ToolBar->AddSeparator();
 
-  m_ToolBar->AddTool(MENU_USER_START + 2, mafPictureFactory::GetPictureFactory()->GetBmp("OP_DELETE"),  _("delete selected vme (ctrl+shift+d)"));
-  m_ToolBar->AddTool(MENU_USER_START + 3, mafPictureFactory::GetPictureFactory()->GetBmp("OP_CUT"),  _("cut selected vme (ctrl+x)"));
-  m_ToolBar->AddTool(MENU_USER_START + 4, mafPictureFactory::GetPictureFactory()->GetBmp("OP_COPY"), _("copy selected vme (ctrl+c)"));
-  m_ToolBar->AddTool(MENU_USER_START + 5, mafPictureFactory::GetPictureFactory()->GetBmp("OP_PASTE"),_("paste vme (ctrl+v)"));
+  m_ToolBar->AddTool(MENU_USER_START + 2, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_DELETE")),  _("delete selected vme (ctrl+shift+d)"));
+  m_ToolBar->AddTool(MENU_USER_START + 3, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_CUT")),  _("cut selected vme (ctrl+x)"));
+  m_ToolBar->AddTool(MENU_USER_START + 4, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_COPY")), _("copy selected vme (ctrl+c)"));
+  m_ToolBar->AddTool(MENU_USER_START + 5, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_PASTE")),_("paste vme (ctrl+v)"));
   m_ToolBar->AddSeparator();
-  m_ToolBar->AddTool(CAMERA_RESET,mafPictureFactory::GetPictureFactory()->GetBmp("ZOOM_ALL"),_("reset camera to fit all (ctrl+f)"));
-  m_ToolBar->AddTool(CAMERA_FIT,  mafPictureFactory::GetPictureFactory()->GetBmp("ZOOM_SEL"),_("reset camera to fit selected object (ctrl+shift+f)"));
-  m_ToolBar->AddTool(CAMERA_FLYTO,mafPictureFactory::GetPictureFactory()->GetBmp("FLYTO"),_("fly to object under mouse"));
+  m_ToolBar->AddTool(CAMERA_RESET,mafPictureFactory::GetPictureFactory()->GetBmp(_R("ZOOM_ALL")),_("reset camera to fit all (ctrl+f)"));
+  m_ToolBar->AddTool(CAMERA_FIT,  mafPictureFactory::GetPictureFactory()->GetBmp(_R("ZOOM_SEL")),_("reset camera to fit selected object (ctrl+shift+f)"));
+  m_ToolBar->AddTool(CAMERA_FLYTO,mafPictureFactory::GetPictureFactory()->GetBmp(_R("FLYTO")),_("fly to object under mouse"));
   m_ToolBar->Realize();
 }
 //----------------------------------------------------------------------------
@@ -641,8 +640,8 @@ void mafLogicWithManagers::UpdateFrameTitle()
 {
   mafString title(m_AppTitle);
   if(!m_MSFFile.IsEmpty())
-    title += "   " + m_MSFFile;
-  m_Win->SetTitle(title.GetCStr());
+    title += _R("   ") + m_MSFFile;
+  m_Win->SetTitle(title.toWx());
 }
 //----------------------------------------------------------------------------
 void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
@@ -700,7 +699,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   {
     mafString *filename = e->GetString();
     if(filename)
-      OnFileOpen((*filename).GetCStr());
+      OnFileOpen(*filename);
     else
       OnFileOpen();
     UpdateFrameTitle();
@@ -898,7 +897,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
     }
     else
     {
-      std::vector<mafNode*> nodeVector = VmeChoose(e->GetArg(), REPRESENTATION_AS_TREE, "Choose Node", e->GetBool());
+      std::vector<mafNode*> nodeVector = VmeChoose(e->GetArg(), REPRESENTATION_AS_TREE, _R("Choose Node"), e->GetBool());
       if (!e->GetBool())
       {
         if (nodeVector.size() != 0)
@@ -968,7 +967,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
     int menuId, opId;
     mafString *s = e->GetString();
     menuId = m_MenuBar->FindMenu(_("Operations"));
-    opId = m_MenuBar->GetMenu(menuId)->FindItem(s->GetCStr());
+    opId = m_MenuBar->GetMenu(menuId)->FindItem(s->toWx());
     m_OpManager->OpRun(opId);
     return;
   }
@@ -1245,7 +1244,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
       mafInteractor *interactor = mafInteractor::SafeDownCast(e->GetMafObject());
       assert(interactor);
       mafString *action_name = e->GetString();
-      m_InteractionManager->BindAction(*action_name,interactor);
+      m_InteractionManager->BindAction(action_name->GetCStr(),interactor);
     }
 #endif
     return;
@@ -1259,7 +1258,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
       mafInteractor *interactor = mafInteractor::SafeDownCast(e->GetMafObject());
       assert(interactor);
       mafString *action_name = e->GetString();
-      m_InteractionManager->UnBindAction(*action_name,interactor);
+      m_InteractionManager->UnBindAction(action_name->GetCStr(),interactor);
     }
 #endif
     return;
@@ -1327,17 +1326,17 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   }
   if(ABOUT_APPLICATION == eventId)
   {
-    wxString message = m_AppTitle.GetCStr();
-    message += _(" Application ");
+    mafString message = m_AppTitle;
+    message += _L(" Application ");
     message += m_Revision;
-    wxMessageBox(message, "About Application");
+    wxMessageBox(message.toWx(), "About Application");
     return;
   }
   if(HELP_HOME == eventId)
   {
     if (m_HelpSettings)
     {
-      m_HelpSettings->OpenHelpPage("HELP_HOME");
+      m_HelpSettings->OpenHelpPage(_R("HELP_HOME"));
     }
   }
   if(GET_BUILD_HELP_GUI == eventId)
@@ -1357,8 +1356,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   if(OPEN_HELP_PAGE == eventId)
   {
   // open help for entity
-    wxString entity = e->GetString()->GetCStr();
-    m_HelpSettings->OpenHelpPage(entity);
+    m_HelpSettings->OpenHelpPage(*e->GetString());
   }
   mafLogicWithGUI::OnEvent(maf_event);
 }
@@ -1374,15 +1372,15 @@ bool mafLogicWithManagers::OnFileClose(bool force)
   if(m_Storage && !m_TmpDir.IsEmpty())
   {
     mafRemoveDirectory(m_TmpDir); // remove the temporary directory
-    m_TmpDir = "";
+    m_TmpDir.Clear();
   }
   m_NodeManager->SetRoot(NULL);
   m_NodeManager->MSFModified(false);
   mafDEL(m_Storage);
   m_NodeManager->SetListener(this);
   VmeSelected(NULL);
-  m_MSFFile = "";
-  m_ZipFile = ""; 
+  m_MSFFile.Clear();
+  m_ZipFile.Clear(); 
   UpdateFrameTitle();
   return true;
 }
@@ -1396,7 +1394,7 @@ void mafLogicWithManagers::OnFileNew()
     return;
   mafVMERoot *root;
   mafNEW(root);
-  root->SetName("root");
+  root->SetName(_R("root"));
   root->Initialize();
   //Add the application stamps
   SetAppTag(root);
@@ -1442,13 +1440,13 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
     }
     else
     {
-		  mafString wildc = "MAF Storage Format file (*.";
+		  mafString wildc = _R("MAF Storage Format file (*.");
 		  wildc += m_Extension;
-		  wildc += ")|*.";
+		  wildc += _R(")|*.");
 		  wildc += m_Extension;
-			wildc += "|Compressed file (*.z" + m_Extension + ")|*.z" + m_Extension + "";
+			wildc += _R("|Compressed file (*.z") + m_Extension + _R(")|*.z") + m_Extension;
 		  //mafString wildc    = _("MAF Storage Format file (*.msf)|*.msf|Compressed file (*.zmsf)|*.zmsf");
-      file = mafGetOpenFile("", wildc);
+      file = mafGetOpenFile(_R(""), wildc);
     }
     if(file.IsEmpty())
       return false;
@@ -1481,10 +1479,10 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
     if(!mafFileExists(file))
     {
       mafString msg;
-      msg = _("File ");
-      msg << file;
-      msg << _(" not found!");
-      mafWarningMessage(msg, _("Warning"));
+      msg = _L("File ");
+      msg += file;
+      msg += _L(" not found!");
+      mafWarningMessage(_M(msg));
 
       if(m_FileHistoryIdx != -1)
       {
@@ -1512,7 +1510,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
   mafString unixname = file;
   mafString path, name, ext;
   mafSplitPath(file,&path,&name,&ext);
-  if(ext == "zmsf")
+  if(ext == _R("zmsf"))
   {
     if (remote_file) // download remote zmsf
     {
@@ -1521,9 +1519,9 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
       mafString local_filename, remote_filename;
       remote_filename = file;
       local_filename = m_Storage->GetTmpFolder();
-      local_filename += "/";
+      local_filename += _R("/");
       local_filename += name;
-      local_filename += ".zmsf";
+      local_filename += _R(".zmsf");
       ((mafRemoteStorage *)m_Storage)->GetRemoteFileManager()->DownloadRemoteFile(remote_filename, local_filename); // download the remote file in the download cache
       file = local_filename;
     }
@@ -1531,7 +1529,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
     unixname = mafOpenZIP(file, m_Storage->GetTmpFolder(), m_TmpDir); // open the zmsf archive and extract it to the temporary directory
     if(unixname.IsEmpty())
     {
-      mafMessage(_("Bad or corrupted zmsf file!"));
+      mafMessage(_M(mafString(_L("Bad or corrupted zmsf file!"))));
       m_NodeManager->SetListener(this);
       mafDEL(m_Storage);
       if(!m_TestMode) // Losi 02/16/2010 for test class
@@ -1541,13 +1539,13 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
       }
       return false;
     }
-    wxSetWorkingDirectory(m_TmpDir.GetCStr());
+    wxSetWorkingDirectory(m_TmpDir.toWx());
   }
 
   unixname.ParsePathName();
 
   m_MSFFile = unixname; 
-  m_Storage->SetURL(m_MSFFile.GetCStr());
+  m_Storage->SetURL(m_MSFFile);
 
 
   int res = m_Storage->Restore();
@@ -1564,14 +1562,14 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
   }
   if(res == mafStorage::IO_WRONG_OBJECT_TYPE)
   {
-    mafErrorMessage(_("Errors during file parsing! Look the log area for error messages."));
+    mafErrorMessage(_M(mafString(_L("Errors during file parsing! Look the log area for error messages."))));
   }
   mafVMERoot *root = mafVMERoot::SafeDownCast(m_NodeManager->GetRoot());
   SetAppTag(root);
   if(!CheckAppTag(root))
   {
     //Application stamp not valid
-    mafMessage(_("File not valid for this application!"), _("Warning"));
+    mafMessage(_M(mafString(_L("File not valid for this application!"))));
     mafDEL(m_Storage);
     m_NodeManager->SetListener(this);
     m_NodeManager->SetRoot(NULL);
@@ -1611,13 +1609,13 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
     cppDEL(wait_cursor);
   }
 
-  if (m_TmpDir != "")
+  if (!m_TmpDir.IsEmpty())
   {
-    m_FileHistory.AddFileToHistory(m_ZipFile.GetCStr()); // add the zmsf file to the history
+    m_FileHistory.AddFileToHistory(m_ZipFile.toWx()); // add the zmsf file to the history
   }
   else if(/*!remote_file && */res == MAF_OK)
   {
-    m_FileHistory.AddFileToHistory(m_MSFFile.GetCStr()); // add the msf file to the history
+    m_FileHistory.AddFileToHistory(m_MSFFile.toWx()); // add the msf file to the history
   }
   else if(res != MAF_OK && m_FileHistoryIdx != -1)
   {
@@ -1631,7 +1629,7 @@ void mafLogicWithManagers::OnFileHistory(int fileId)
 //----------------------------------------------------------------------------
 {
   m_FileHistoryIdx = fileId;
-  OnFileOpen(m_FileHistory.GetHistoryFile(fileId).c_str());
+  OnFileOpen(mafWxToString(m_FileHistory.GetHistoryFile(fileId)));
   m_FileHistoryIdx = -1;
 }
 //----------------------------------------------------------------------------
@@ -1655,7 +1653,7 @@ void mafLogicWithManagers::Save()
     return;
   if(mafFileExists(m_MSFFile) && m_MakeBakFile) // an msf with the same name exists
   {
-    mafString bak_filename = m_MSFFile + ".bak";                // create the backup for the saved msf
+    mafString bak_filename = m_MSFFile + _R(".bak");                // create the backup for the saved msf
     mafFileRename(m_MSFFile, bak_filename);  // renaming the founded one
   }
   wxBusyInfo *bi = NULL;
@@ -1665,7 +1663,7 @@ void mafLogicWithManagers::Save()
   }
   if (m_Storage->Store() != MAF_OK) // store the tree
   {
-    mafLogMessage(_("Error during MSF saving"));
+    mafLogMessage(_M(mafString(_L("Error during MSF saving"))));
     if(!m_TestMode) // Losi 02/16/2010 for test class 
     {
       cppDEL(bi);
@@ -1715,8 +1713,8 @@ bool mafLogicWithManagers::OnFileSaveAs()
   if(!root)
     return true;
 
-  m_MSFFile = ""; // set filenames to empty so the MSFSave method will ask for them
-  m_ZipFile = "";
+  m_MSFFile.Clear(); // set filenames to empty so the MSFSave method will ask for them
+  m_ZipFile.Clear();
   m_MakeBakFile = false;
 
   // new file to save: ask to the application which is the default
@@ -1726,7 +1724,7 @@ bool mafLogicWithManagers::OnFileSaveAs()
   SetSingleBinaryFile(e.GetBool()); // set the save modality for time-varying vme*/
 
   // ask for the new file name.
-  mafString wildc = _("MAF Storage Format file (*.msf)|*.msf|Compressed file (*.zmsf)|*.zmsf");
+  mafString wildc = _L("MAF Storage Format file (*.msf)|*.msf|Compressed file (*.zmsf)|*.zmsf");
   mafString file = mafGetSaveFile(m_MSFDir, wildc);
   if(file.IsEmpty())
     return false;
@@ -1737,17 +1735,17 @@ bool mafLogicWithManagers::OnFileSaveAs()
     mafSplitPath(file,&path,&name,&ext);
     size_t length = path.Length();
     if(length > 0 && path[length - 1] != '\\' && path[length - 1] != '/')
-      file_dir = path + "/";
-    file_dir = path + "/" + name;
+      file_dir = path + _R("/");
+    file_dir = path + _R("/") + name;
     if(!mafDirExists(file_dir))
       mafDirMake(file_dir);
-    if (ext == "zmsf")
+    if (ext == _R("zmsf"))
     {
       m_ZipFile = file;
       m_TmpDir = file_dir;
-      ext = "msf";
+      ext = _R("msf");
     }
-    file = file_dir + "/" + name + "." + ext;
+    file = file_dir + _R("/") + name + _R(".") + ext;
   }
 
   file.ParsePathName();
@@ -1784,11 +1782,11 @@ bool mafLogicWithManagers::OnFileSaveAs()
   if (!m_ZipFile.IsEmpty())
   {
     mafZIPSave(m_ZipFile, m_TmpDir);
-    m_FileHistory.AddFileToHistory(m_ZipFile.GetCStr()); // add the zmsf to the file history
+    m_FileHistory.AddFileToHistory(m_ZipFile.toWx()); // add the zmsf to the file history
   }
   else
   {
-    m_FileHistory.AddFileToHistory(m_MSFFile.GetCStr()); // add the msf to the file history
+    m_FileHistory.AddFileToHistory(m_MSFFile.toWx()); // add the msf to the file history
   }
   return true;
 }
@@ -1839,7 +1837,7 @@ void mafLogicWithManagers::VmeDoubleClicked(mafEvent &e)
   mafNode *node = e.GetVme();
   if (node)
   {
-    mafLogMessage("Double click on %s", node->GetName());
+    mafLogMessage(_M(_R("Double click on ") + node->GetName()));
   }
 }
 //----------------------------------------------------------------------------
@@ -1875,7 +1873,7 @@ void mafLogicWithManagers::VmeSelect(mafEvent& e)	//modified by Paolo 10-9-2003
     m_OpManager->OpExec(&opsel);
 
     //OnEvent(&mafEvent(this,VME_SELECTED,node));
-    mafLogMessage("node selected: %s", node->GetName());
+    mafLogMessage(_M(_R("node selected: ") + node->GetName()));
   }
 
   if(m_RemoteLogic && (e.GetSender() != m_RemoteLogic) && m_RemoteLogic->IsSocketConnected())
@@ -1946,8 +1944,8 @@ void mafLogicWithManagers::VmeAdded(mafNode *vme)
   if(m_ViewManager)
     m_ViewManager->VmeAdd(vme);
   bool vme_in_tree = true;
-  vme_in_tree = !vme->GetTagArray()->GetTag("VISIBLE_IN_THE_TREE") || 
-    (vme->GetTagArray()->GetTag("VISIBLE_IN_THE_TREE") && vme->GetTagArray()->GetTag("VISIBLE_IN_THE_TREE")->GetValueAsDouble() != 0);
+  vme_in_tree = !vme->GetTagArray()->GetTag(_R("VISIBLE_IN_THE_TREE")) || 
+    (vme->GetTagArray()->GetTag(_R("VISIBLE_IN_THE_TREE")) && vme->GetTagArray()->GetTag(_R("VISIBLE_IN_THE_TREE"))->GetValueAsDouble() != 0);
   if(m_SideBar && vme_in_tree)
     m_SideBar->VmeAdd(vme);
   if(m_PlugTimebar)
@@ -1959,7 +1957,7 @@ void mafLogicWithManagers::RestoreLayout()
 {
   // Retrieve the saved layout.
   mafNode *vme = m_NodeManager->GetRoot();
-  mmaApplicationLayout *app_layout = mmaApplicationLayout::SafeDownCast(vme->GetAttribute("ApplicationLayout"));
+  mmaApplicationLayout *app_layout = mmaApplicationLayout::SafeDownCast(vme->GetAttribute(_R("ApplicationLayout")));
   if (app_layout)
   {
     int answer = wxMessageBox(_("Do you want to load the layout?"), _("Warning"), wxYES_NO);
@@ -2009,8 +2007,8 @@ void mafLogicWithManagers::VmeRemoving(mafNode *vme)
 //----------------------------------------------------------------------------
 {
   bool vme_in_tree = true;
-  vme_in_tree = !vme->GetTagArray()->GetTag("VISIBLE_IN_THE_TREE") || 
-    (vme->GetTagArray()->GetTag("VISIBLE_IN_THE_TREE") && vme->GetTagArray()->GetTag("VISIBLE_IN_THE_TREE")->GetValueAsDouble() != 0);
+  vme_in_tree = !vme->GetTagArray()->GetTag(_R("VISIBLE_IN_THE_TREE")) || 
+    (vme->GetTagArray()->GetTag(_R("VISIBLE_IN_THE_TREE")) && vme->GetTagArray()->GetTag(_R("VISIBLE_IN_THE_TREE"))->GetValueAsDouble() != 0);
   if(m_SideBar && vme_in_tree)
     m_SideBar->VmeRemove(vme);
 	if(m_ViewManager)
@@ -2194,7 +2192,7 @@ void mafLogicWithManagers::UpdateTimeBounds()
 std::vector<mafNode*> mafLogicWithManagers::VmeChoose(long vme_accept_function, long style, mafString title, bool multiSelect)
 //----------------------------------------------------------------------------
 {
-  mafGUIVMEChooser vc(m_SideBar->GetTree(),title.GetCStr(), vme_accept_function, style, multiSelect);
+  mafGUIVMEChooser vc(m_SideBar->GetTree(),title, vme_accept_function, style, multiSelect);
   return vc.ShowChooserDialog();
 }
 //----------------------------------------------------------------------------
@@ -2225,7 +2223,7 @@ void mafLogicWithManagers::FindVME()
 //----------------------------------------------------------------------------
 {
   mafGUICheckTree *tree = m_SideBar->GetTree();
-  mafGUIDialogFindVme fd(_("Find VME"));
+  mafGUIDialogFindVme fd(_L("Find VME"));
   fd.SetTree(tree);
   fd.ShowModal();
 }
@@ -2297,22 +2295,22 @@ void mafLogicWithManagers::UpdateMeasureUnit()
 void mafLogicWithManagers::ImportExternalFile(mafString &filename)
 //----------------------------------------------------------------------------
 {
-  wxString path, name, ext;
-  wxSplitPath(filename.GetCStr(),&path,&name,&ext);
+  mafString path, name, ext;
+  mafSplitPath(filename,&path,&name,&ext);
   ext.MakeLower();
-  if (ext == "vtk")
+  if (ext == _R("vtk"))
   {
-    mafOpImporterVTK *vtkImporter = new mafOpImporterVTK("importer");
+    mafOpImporterVTK *vtkImporter = new mafOpImporterVTK(_R("importer"));
     vtkImporter->SetInput(m_NodeManager->GetRoot());
     vtkImporter->SetListener(m_OpManager);
-    vtkImporter->SetFileName(filename.GetCStr());
+    vtkImporter->SetFileName(filename);
     vtkImporter->ImportVTK();
     vtkImporter->OpDo();
     cppDEL(vtkImporter);
   }
-  else if (ext == "stl")
+  else if (ext == _R("stl"))
   {
-    mafOpImporterSTL *stlImporter = new mafOpImporterSTL("importer");
+    mafOpImporterSTL *stlImporter = new mafOpImporterSTL(_R("importer"));
     stlImporter->SetInput(m_NodeManager->GetRoot());
     stlImporter->SetListener(m_OpManager);
     stlImporter->SetFileName(filename.GetCStr());
@@ -2321,7 +2319,7 @@ void mafLogicWithManagers::ImportExternalFile(mafString &filename)
     cppDEL(stlImporter);
   }
   else
-    wxMessageBox(_("Can not import this type of file!"), _("Warning"));
+    mafWarningMessage(_M("Can not import this type of file!"));
 }
 //----------------------------------------------------------------------------
 void mafLogicWithManagers::SetRevision(mafString revision)

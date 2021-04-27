@@ -74,8 +74,8 @@ mafVMELandmark::mafVMELandmark()
   SetDataPipe(dpipe);
 
   dpipe->GetVTKDataPipe()->SetNthInput(0, m_Polydata);
-  m_Position[0] = m_Position[1] = m_Position[2] = "0.0";
-  m_LocalPosition[0] = m_LocalPosition[1] = m_LocalPosition[2] = "0.0";
+  m_Position[0] = m_Position[1] = m_Position[2] = _R("0.0");
+  m_LocalPosition[0] = m_LocalPosition[1] = m_LocalPosition[2] = _R("0.0");
 }
 
 //-------------------------------------------------------------------------
@@ -341,21 +341,21 @@ mafGUI* mafVMELandmark::CreateGui()
   m_Gui = mafVME::CreateGui(); // Called to show info about vmes' type and name
   double xyz[3],rxyz[3];
   this->GetOutput()->GetAbsPose(xyz,rxyz);
-  m_Gui->Label("abs pose:");
-  m_Position[0] = wxString::Format("x: %f",xyz[0]);
-  m_Position[1] = wxString::Format("y: %f",xyz[1]);
-  m_Position[2] = wxString::Format("z: %f",xyz[2]);
-  m_Gui->Label("", &m_Position[0]);
-  m_Gui->Label("", &m_Position[1]);
-  m_Gui->Label("", &m_Position[2]);
+  m_Gui->Label(_R("abs pose:"));
+  m_Position[0] = mafString::Format(_R("x: %f"),xyz[0]);
+  m_Position[1] = mafString::Format(_R("y: %f"),xyz[1]);
+  m_Position[2] = mafString::Format(_R("z: %f"),xyz[2]);
+  m_Gui->Label(_R(""), &m_Position[0]);
+  m_Gui->Label(_R(""), &m_Position[1]);
+  m_Gui->Label(_R(""), &m_Position[2]);
   this->GetPoint(xyz);
-  m_Gui->Label("local pose:");
-  m_LocalPosition[0] = wxString::Format("x: %f",xyz[0]);
-  m_LocalPosition[1] = wxString::Format("y: %f",xyz[1]);
-  m_LocalPosition[2] = wxString::Format("z: %f",xyz[2]);
-  m_Gui->Label("", &m_LocalPosition[0]);
-  m_Gui->Label("", &m_LocalPosition[1]);
-  m_Gui->Label("", &m_LocalPosition[2]);
+  m_Gui->Label(_R("local pose:"));
+  m_LocalPosition[0] = mafString::Format(_R("x: %f"),xyz[0]);
+  m_LocalPosition[1] = mafString::Format(_R("y: %f"),xyz[1]);
+  m_LocalPosition[2] = mafString::Format(_R("z: %f"),xyz[2]);
+  m_Gui->Label(_R(""), &m_LocalPosition[0]);
+  m_Gui->Label(_R(""), &m_LocalPosition[1]);
+  m_Gui->Label(_R(""), &m_LocalPosition[2]);
   m_Gui->Divider();
 	return m_Gui;
 }
@@ -367,16 +367,16 @@ mmaMaterial *mafVMELandmark::GetMaterial()
   mmaMaterial *material;
   if (m_Parent)
   {
-    material = (mmaMaterial *)m_Parent->GetAttribute("MaterialAttributes");
+    material = (mmaMaterial *)m_Parent->GetAttribute(_R("MaterialAttributes"));
   }
   else
   {
-    material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+    material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
   }
   if (material == NULL)
   {
     material = mmaMaterial::New();
-    SetAttribute("MaterialAttributes", material);
+    SetAttribute(_R("MaterialAttributes"), material);
   }
   if (m_Output)
   {
@@ -399,13 +399,13 @@ void mafVMELandmark::SetTimeStamp(mafTimeStamp t)
   this->GetOutput()->Update();
   double xyz[3],rxyz[3];
   this->GetOutput()->GetAbsPose(xyz,rxyz);  
-  m_Position[0] = wxString::Format("x: %f",xyz[0]);
-  m_Position[1] = wxString::Format("y: %f",xyz[1]);
-  m_Position[2] = wxString::Format("z: %f",xyz[2]);
+  m_Position[0] = mafString::Format(_R("x: %f"),xyz[0]);
+  m_Position[1] = mafString::Format(_R("y: %f"),xyz[1]);
+  m_Position[2] = mafString::Format(_R("z: %f"),xyz[2]);
   this->GetPoint(xyz);
-  m_LocalPosition[0] = wxString::Format("x: %f",xyz[0]);
-  m_LocalPosition[1] = wxString::Format("y: %f",xyz[1]);
-  m_LocalPosition[2] = wxString::Format("z: %f",xyz[2]);
+  m_LocalPosition[0] = mafString::Format(_R("x: %f"),xyz[0]);
+  m_LocalPosition[1] = mafString::Format(_R("y: %f"),xyz[1]);
+  m_LocalPosition[2] = mafString::Format(_R("z: %f"),xyz[2]);
   if(m_Gui)
     m_Gui->Update();
 }
@@ -416,14 +416,14 @@ void mafVMELandmark::InternalUpdate()
   double xyz[3],rxyz[3];
   this->GetOutput()->GetAbsPose(xyz,rxyz);
 
-  m_Position[0] = wxString::Format("x: %f",xyz[0]);
-  m_Position[1] = wxString::Format("y: %f",xyz[1]);
-  m_Position[2] = wxString::Format("z: %f",xyz[2]);
+  m_Position[0] = mafString::Format(_R("x: %f"),xyz[0]);
+  m_Position[1] = mafString::Format(_R("y: %f"),xyz[1]);
+  m_Position[2] = mafString::Format(_R("z: %f"),xyz[2]);
 
   this->GetPoint(xyz);
-  m_LocalPosition[0] = wxString::Format("x: %f",xyz[0]);
-  m_LocalPosition[1] = wxString::Format("y: %f",xyz[1]);
-  m_LocalPosition[2] = wxString::Format("z: %f",xyz[2]);
+  m_LocalPosition[0] = mafString::Format(_R("x: %f"),xyz[0]);
+  m_LocalPosition[1] = mafString::Format(_R("y: %f"),xyz[1]);
+  m_LocalPosition[2] = mafString::Format(_R("z: %f"),xyz[2]);
 
   if(m_Gui)
     m_Gui->Update();

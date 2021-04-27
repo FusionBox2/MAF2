@@ -50,10 +50,10 @@ mafOpImporterVMEDataSetAttributes::mafOpImporterVMEDataSetAttributes(const mafSt
   m_OpType  = OPTYPE_OP;
   m_Canundo = true;
   
-  m_FileName = "";
-  m_FilePrefix = "";
+  m_FileName = _R("");
+  m_FilePrefix = _R("");
   m_TimeVarying = 0;
-  m_TSFileName = "";
+  m_TSFileName = _R("");
   m_UseTSFile = 0;
   m_AttributeType = mafVMEDataSetAttributesImporter::POINT_DATA;
   
@@ -61,7 +61,7 @@ mafOpImporterVMEDataSetAttributes::mafOpImporterVMEDataSetAttributes(const mafSt
   m_Input = NULL;
 
   m_UseIdArray = false;
-  m_IdArrayName = "ANSYS_ELEMENT_ID";
+  m_IdArrayName = _R("ANSYS_ELEMENT_ID");
 }
 
 //----------------------------------------------------------------------------
@@ -120,7 +120,7 @@ int mafOpImporterVMEDataSetAttributes::Read()
   {
     if (!m_TestMode)
     {
-      mafMessage(_("Error parsing input files! See log window for details..."),_("Error"));
+        mafErrorMessage(_M(mafString(_L("Error parsing input files! See log window for details..."))));
     }
   } 
   else
@@ -163,7 +163,7 @@ enum Mesh_Importer_ID
 
 void mafOpImporterVMEDataSetAttributes::CreateGui()
 {
-  mafString wildcard = "txt files (*.txt)|*.txt|All Files (*.*)|*.*";
+  mafString wildcard = _R("txt files (*.txt)|*.txt|All Files (*.*)|*.*");
 
   m_Gui = new mafGUI(this);
   m_Gui->SetListener(this);
@@ -175,38 +175,38 @@ void mafOpImporterVMEDataSetAttributes::CreateGui()
 
   if (buildHelpGui.GetArg() == true)
   {
-	  m_Gui->Button(ID_HELP, "Help","");	
+	  m_Gui->Button(ID_HELP, _R("Help"), _R(""));
   }
 
-  m_Gui->Label(" ");
-  m_Gui->Label("attributes file:",true);
-  m_Gui->FileOpen (ID_FileName,	"",	&m_FileName, wildcard);
+  m_Gui->Label(_R(" "));
+  m_Gui->Label(_R("attributes file:"),true);
+  m_Gui->FileOpen (ID_FileName, _R(""),	&m_FileName, wildcard);
   
-  m_Gui->Label("time varying");
-  m_Gui->Bool(ID_TimeVarying,"",&m_TimeVarying);
+  m_Gui->Label(_R("time varying"));
+  m_Gui->Bool(ID_TimeVarying, _R(""),&m_TimeVarying);
   m_Gui->Divider();
 
-  m_Gui->Label("file prefix:",true);
-  m_Gui->String(ID_FilePrefix,	"",	&m_FilePrefix, wildcard);
+  m_Gui->Label(_R("file prefix:"),true);
+  m_Gui->String(ID_FilePrefix, _R(""),	&m_FilePrefix, wildcard);
   m_Gui->Divider();
 
-  m_Gui->Bool(ID_UseTSFile,"use TS file:",&m_UseTSFile);
+  m_Gui->Bool(ID_UseTSFile,_R("use TS file:"),&m_UseTSFile);
   m_Gui->Divider();
 
-  m_Gui->Label("time stamps file:",true);
-  m_Gui->FileOpen (ID_TSFileName,	"",	&m_TSFileName, wildcard);
+  m_Gui->Label(_R("time stamps file:"),true);
+  m_Gui->FileOpen (ID_TSFileName, _R(""),	&m_TSFileName, wildcard);
   m_Gui->Divider();
 
-  mafString attributeType[2]={"point data","cell data"};
-  m_Gui->Label("Importer type",true);
-  m_Gui->Combo(ID_AttributeType,"",&m_AttributeType,2,attributeType);
+  mafString attributeType[2]={_R("point data"),_R("cell data")};
+  m_Gui->Label(_R("Importer type"),true);
+  m_Gui->Combo(ID_AttributeType, _R(""),&m_AttributeType,2,attributeType);
   m_Gui->Divider(2);
 
-  m_Gui->Label("use id map array");
-  m_Gui->Bool(ID_UseIdArray,"",&m_UseIdArray);
+  m_Gui->Label(_R("use id map array"));
+  m_Gui->Bool(ID_UseIdArray, _R(""),&m_UseIdArray);
   m_Gui->Divider();
-  m_Gui->Label("id map array name:",true);
-  m_Gui->String(ID_IdArrayName,	"",	&m_IdArrayName);
+  m_Gui->Label(_R("id map array name:"),true);
+  m_Gui->String(ID_IdArrayName, _R(""),	&m_IdArrayName);
   m_Gui->Enable(ID_IdArrayName, m_UseIdArray ? true : false);
   m_Gui->Divider();
 
@@ -297,17 +297,17 @@ void mafOpImporterVMEDataSetAttributes::OnEvent(mafEventBase *maf_event)
 
 void mafOpImporterVMEDataSetAttributes::SetFileName( const char *filename )
 {
-	m_FileName = filename;
+	m_FileName = _R(filename);
 }
 
 void mafOpImporterVMEDataSetAttributes::SetFilePrefix( const char *filePrefix )
 {
-	m_FilePrefix = filePrefix;
+	m_FilePrefix = _R(filePrefix);
 }
 
 void mafOpImporterVMEDataSetAttributes::SetTSFileName( const char *tsFileName )
 {
-	m_TSFileName = tsFileName;
+	m_TSFileName = _R(tsFileName);
 }
 
 void mafOpImporterVMEDataSetAttributes::SetUseTSFile( bool useTSFile )

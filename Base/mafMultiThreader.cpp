@@ -119,7 +119,7 @@ int mafMultiThreader::SpawnThread( mafThreadFunctionType f, void *UserData )
 
   if ( id >= MAF_MAX_THREADS )
   {
-    mafErrorMessage( "You have too many active threads!" );
+    mafErrorMessage( _M("You have too many active threads!") );
     return MAF_ERROR;
   }
 

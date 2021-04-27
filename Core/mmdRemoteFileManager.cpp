@@ -36,7 +36,7 @@
 #include <curl/easy.h>
 
 struct LocalFileDownloaded {
-  char *filename;
+  const mafString& filename;
   FILE *stream;
 };
 
@@ -61,8 +61,7 @@ mmdRemoteFileManager::mmdRemoteFileManager()
   m_Headerlist  = NULL;
   m_Curl = curl_easy_init();
 
-  m_UserName = ""; // blank user name means anonymous user.
-  m_Pwd = "";
+  m_UserName = _R(""); // blank user name means anonymous user.
   m_Port = 80;
   SetPersistentFlag(true);
   SetAutoStart(true);
@@ -122,19 +121,19 @@ void mmdRemoteFileManager::EnableAuthentication(bool enable)
   m_EnableCertificateAuthentication = enable;
 }
 //----------------------------------------------------------------------------
-int mmdRemoteFileManager::DownloadRemoteFile(mafString remote_filename, mafString &downloaded_filename, mafBaseEventHandler *observer)
+int mmdRemoteFileManager::DownloadRemoteFile(const mafString& remote_filename, mafString &downloaded_filename, mafBaseEventHandler *observer)
 //----------------------------------------------------------------------------
 {
   if (observer == NULL)
   {
     struct LocalFileDownloaded localfile = 
     {
-      (char *)downloaded_filename.GetCStr(), // name to store the file as if successful
+      downloaded_filename, // name to store the file as if successful
         NULL
     };
 
     mafString auth = m_UserName;
-    auth += ":";
+    auth += _R(":");
     auth += m_Pwd;
     curl_easy_reset(m_Curl);
     curl_easy_setopt(m_Curl, CURLOPT_URL, remote_filename.GetCStr());
@@ -157,7 +156,7 @@ int mmdRemoteFileManager::DownloadRemoteFile(mafString remote_filename, mafStrin
 
     if (curl_error && localfile.stream)
     {
-      wxRemoveFile(localfile.filename);
+      mafFileRemove(localfile.filename);
     }
 
     if (curl_error)
@@ -182,24 +181,24 @@ int mmdRemoteFileManager::DownloadRemoteFile(mafString remote_filename, mafStrin
   }
 }
 //------------------------------------------------------------------------------
-int mmdRemoteFileManager::UploadLocalFile(mafString local_filename, mafString remote_filename, mafBaseEventHandler *observer)
+int mmdRemoteFileManager::UploadLocalFile(const mafString& local_filename, const mafString& remote_filename, mafBaseEventHandler *observer)
 //------------------------------------------------------------------------------
 {
   if (observer == NULL)
   {
-    mafString protocol = "";
+    mafString protocol;
     bool is_remote = IsRemote(remote_filename, protocol);
 
-    wxString path,short_name,ext;
-    wxSplitPath(remote_filename,&path,&short_name,&ext);
-    if (ext == "msf")
+    mafString path,short_name,ext;
+    mafSplitPath(remote_filename,&path,&short_name,&ext);
+    if (ext == _R("msf"))
       m_LocalStream = fopen(local_filename.GetCStr(), "rt");
     else
       m_LocalStream = fopen(local_filename.GetCStr(), "rb");
 
     if(!m_LocalStream)
     {
-      wxMessageBox(_("Error uploading file!!"),_("Error"));
+      mafErrorMessage(_M(mafString(_L("Error uploading file!!"))));
       return MAF_ERROR;
     }
 
@@ -207,7 +206,7 @@ int mmdRemoteFileManager::UploadLocalFile(mafString local_filename, mafString re
     stat(local_filename.GetCStr(), &m_FileInfo); 
 
     mafString auth = m_UserName;
-    auth += ":";
+    auth += _R(":");
     auth += m_Pwd;
     curl_easy_reset(m_Curl);
     curl_easy_setopt(m_Curl, CURLOPT_URL, remote_filename.GetCStr());
@@ -221,9 +220,9 @@ int mmdRemoteFileManager::UploadLocalFile(mafString local_filename, mafString re
     {
       curl_easy_setopt(m_Curl, CURLOPT_PORT, m_Port);
       curl_easy_setopt(m_Curl, CURLOPT_USERPWD, auth.GetCStr());
-      if (protocol.Equals("http") || protocol.Equals("https"))
+      if (protocol.Equals(_R("http")) || protocol.Equals(_R("https")))
       {
-        m_EnableCertificateAuthentication = protocol.Equals("https");
+        m_EnableCertificateAuthentication = protocol.Equals(_R("https"));
         if (m_EnableCertificateAuthentication)
         {
           curl_easy_setopt(m_Curl, CURLOPT_SSL_VERIFYHOST, 0);
@@ -274,7 +273,7 @@ int mmdRemoteFileManager::ListRemoteDirectory(mafString & queryString, msfTreeSe
 //----------------------------------------------------------------------------
 {
   mafString auth = m_UserName;
-  auth += ":";
+  auth += _R(":");
   auth += m_Pwd;  
   curl_easy_reset(m_Curl);
   curl_easy_setopt(m_Curl, CURLOPT_URL, queryString.GetCStr());
@@ -311,8 +310,8 @@ void mmdRemoteFileManager::OnEvent(mafEventBase *e)
 void mmdRemoteFileManager::ErrorManager(int err_num)
 //------------------------------------------------------------------------------
 {
-  mafString err_string = curl_easy_strerror((CURLcode)err_num);
-  wxMessageBox(err_string.GetCStr(), _("Warning"));
+  mafString err_string = _R(curl_easy_strerror((CURLcode)err_num));
+  mafWarningMessage(_M(err_string));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -327,7 +326,7 @@ int FileDownload(void *buffer, size_t size, size_t nmemb, void *stream)
   if(out && !out->stream) 
   {
     // open file for writing
-    out->stream = fopen(out->filename, "wb");
+    out->stream = fopen(out->filename.GetCStr(), "wb");
     if(!out->stream)
       return -1; // failure, can't open file to write
   }

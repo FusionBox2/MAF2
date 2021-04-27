@@ -56,10 +56,7 @@ void PrintSelf(std::ostream& os,const int indent);
   which knows about the full path for the MSF file itself.*/
   mafString GetAbsoluteFileName();
 
-  /** TODO: REFACTOR THIS 
-  This API is not clear */
-  void SetCurrentPath(mafString &path) {this->m_TmpPath=path;};
-  void SetCurrentPath(const char *path) {this->m_TmpPath=path;};
+  void SetCurrentPath(const mafString &path) {this->m_TmpPath=path;};
 
   /** Copy the contents of another VMEExternalData into this one. */
   virtual int DeepCopy(mafNode *a);

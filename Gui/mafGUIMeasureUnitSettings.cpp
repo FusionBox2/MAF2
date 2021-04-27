@@ -32,11 +32,11 @@ mafGUIMeasureUnitSettings::mafGUIMeasureUnitSettings(mafBaseEventHandler *Listen
 mafGUISettings(Listener, label)
 //----------------------------------------------------------------------------
 {
-  m_DefaultUnits[0] = "mm";
-  m_DefaultUnits[1] = "m";
-  m_DefaultUnits[2] = "inch";
-  m_DefaultUnits[3] = "feet";
-  m_DefaultUnits[4] = "custom";
+  m_DefaultUnits[0] = _R("mm");
+  m_DefaultUnits[1] = _R("m");
+  m_DefaultUnits[2] = _R("inch");
+  m_DefaultUnits[3] = _R("feet");
+  m_DefaultUnits[4] = _R("custom");
 
   m_DefaultFactors[0] = 1.0;
   m_DefaultFactors[1] = 1000.0;
@@ -58,18 +58,18 @@ void mafGUIMeasureUnitSettings::CreateGui()
 //----------------------------------------------------------------------------
 {
   m_Gui = new mafGUI(this);
-  m_Gui->Label(_("Application measure units"));
-  m_Gui->Combo(MEASURE_DEFAULT_DATA_UNIT_ID,_("data"),&m_ChoosedDataUnit,5,m_DefaultUnits);
-  m_Gui->Combo(MEASURE_DEFAULT_VISUAL_UNIT_ID,_("visual"),&m_ChoosedVisualUnit,5,m_DefaultUnits);
+  m_Gui->Label(_L("Application measure units"));
+  m_Gui->Combo(MEASURE_DEFAULT_DATA_UNIT_ID,_L("data"),&m_ChoosedDataUnit,5,m_DefaultUnits);
+  m_Gui->Combo(MEASURE_DEFAULT_VISUAL_UNIT_ID,_L("visual"),&m_ChoosedVisualUnit,5,m_DefaultUnits);
   m_Gui->Divider(2);
-  m_Gui->Label(_("custom"));
-  m_Gui->String(MEASURE_DATA_STRING_ID,_("data unit"),&m_DataUnitName);
-  m_Gui->String(MEASURE_VISUAL_STRING_ID,_("visual unit"),&m_VisualUnitName);
-  m_Gui->Double(MEASURE_SCALE_FACTOR_ID,_("scale"),&m_ScaleFactor, MINDOUBLE, MAXDOUBLE,-1,_("scale factor of new unit referred to mm"));
+  m_Gui->Label(_L("custom"));
+  m_Gui->String(MEASURE_DATA_STRING_ID,_L("data unit"),&m_DataUnitName);
+  m_Gui->String(MEASURE_VISUAL_STRING_ID,_L("visual unit"),&m_VisualUnitName);
+  m_Gui->Double(MEASURE_SCALE_FACTOR_ID,_L("scale"),&m_ScaleFactor, MINDOUBLE, MAXDOUBLE,-1,_L("scale factor of new unit referred to mm"));
   m_Gui->Enable(MEASURE_SCALE_FACTOR_ID,m_ChoosedDataUnit == 4 || m_ChoosedVisualUnit == 4);
   m_Gui->Enable(MEASURE_DATA_STRING_ID,m_ChoosedDataUnit == 4);
   m_Gui->Enable(MEASURE_VISUAL_STRING_ID,m_ChoosedDataUnit == 4);
-  m_Gui->Label("");
+  m_Gui->Label(_R(""));
 }
 //----------------------------------------------------------------------------
 mafGUIMeasureUnitSettings::~mafGUIMeasureUnitSettings() 
@@ -106,8 +106,8 @@ void mafGUIMeasureUnitSettings::OnEvent(mafEventBase *maf_event)
       m_ScaleFactor = 1.0;
     }
   }
-  m_Config->Write("VisualUnitName",m_VisualUnitName.GetCStr());
-  m_Config->Write("DataUnitName",m_DataUnitName.GetCStr());
+  m_Config->Write("VisualUnitName",m_VisualUnitName.toWx());
+  m_Config->Write("DataUnitName",m_DataUnitName.toWx());
   m_Config->Write("ScaleFactor",m_ScaleFactor);
   m_Config->Flush();
   mafEventMacro(mafEvent(this,MEASURE_UNIT_UPDATED));
@@ -120,19 +120,19 @@ void mafGUIMeasureUnitSettings::InitializeSettings()
   wxString unit_name;
   if(m_Config->Read("VisualUnitName", &unit_name))
   {
-    m_VisualUnitName = unit_name;
+    m_VisualUnitName = mafWxToString(unit_name);
   }
   else
   {
-    m_Config->Write("VisualUnitName",m_VisualUnitName.GetCStr());
+    m_Config->Write("VisualUnitName",m_VisualUnitName.toWx());
   }
   if(m_Config->Read("DataUnitName", &unit_name))
   {
-    m_DataUnitName = unit_name;
+    m_DataUnitName = mafWxToString(unit_name);
   }
   else
   {
-    m_Config->Write("DataUnitName",m_DataUnitName.GetCStr());
+    m_Config->Write("DataUnitName",m_DataUnitName.toWx());
   }
   if(m_Config->Read("ScaleFactor", &factor))
   {
@@ -143,38 +143,38 @@ void mafGUIMeasureUnitSettings::InitializeSettings()
     m_Config->Write("ScaleFactor",m_ScaleFactor);
   }
 
-  if (m_DataUnitName == "mm")
+  if (m_DataUnitName == _R("mm"))
   {
     m_ChoosedDataUnit = 0;
   }
-  else if (m_DataUnitName == "m")
+  else if (m_DataUnitName == _R("m"))
   {
     m_ChoosedDataUnit = 1;
   }
-  else if (m_DataUnitName == "inch")
+  else if (m_DataUnitName == _R("inch"))
   {
     m_ChoosedDataUnit = 2;
   }
-  else if (m_DataUnitName == "feet")
+  else if (m_DataUnitName == _R("feet"))
   {
     m_ChoosedDataUnit = 3;
   }
   else
     m_ChoosedDataUnit = 4;
 
-  if (m_VisualUnitName == "mm")
+  if (m_VisualUnitName == _R("mm"))
   {
     m_ChoosedVisualUnit = 0;
   }
-  else if (m_VisualUnitName == "m")
+  else if (m_VisualUnitName == _R("m"))
   {
     m_ChoosedVisualUnit = 1;
   }
-  else if (m_VisualUnitName == "inch")
+  else if (m_VisualUnitName == _R("inch"))
   {
     m_ChoosedVisualUnit = 2;
   }
-  else if (m_VisualUnitName == "feet")
+  else if (m_VisualUnitName == _R("feet"))
   {
     m_ChoosedVisualUnit = 3;
   }

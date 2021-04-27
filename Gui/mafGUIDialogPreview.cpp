@@ -27,7 +27,7 @@
 #include "mafRWI.h"
 
 //----------------------------------------------------------------------------
-mafGUIDialogPreview::mafGUIDialogPreview(const wxString& title,long style)
+mafGUIDialogPreview::mafGUIDialogPreview(const mafString& title,long style)
 : mafGUIDialog(title, style)
 //----------------------------------------------------------------------------
 {

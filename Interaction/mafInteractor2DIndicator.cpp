@@ -351,9 +351,8 @@ void mafInteractor2DIndicator::DrawMeasureTool(double x, double y)
 		{
 			double tmp_pos[3];
 			m_Line->GetPoint2(tmp_pos);
-			mafString ds;
-      ds = wxString::Format(_("Label"));
-		  m_MeterVector[m_MeterVector.size()-1]->SetText(ds);
+			mafString ds = _L("Label");
+		  m_MeterVector[m_MeterVector.size()-1]->SetText(ds.GetCStr());
 			m_MeterVector[m_MeterVector.size()-1]->SetTextPosition(tmp_pos);
       m_DisableUndoAndOkCancel = true;
 		}
@@ -361,9 +360,8 @@ void mafInteractor2DIndicator::DrawMeasureTool(double x, double y)
 		{
 			double tmp_pos[3];
 			m_Line2->GetPoint2(tmp_pos);
-			mafString ds;
-      ds = wxString::Format(_("Label"));
-		  m_MeterVector[m_MeterVector.size()-1]->SetText(ds);
+			mafString ds = _L("Label");
+		  m_MeterVector[m_MeterVector.size()-1]->SetText(ds.GetCStr());
 			m_MeterVector[m_MeterVector.size()-1]->SetTextPosition(tmp_pos);
       m_DisableUndoAndOkCancel = false;
 		}
@@ -541,7 +539,7 @@ bool mafInteractor2DIndicator::IsDisableUndoAndOkCancel()
 void mafInteractor2DIndicator::SetLabel(mafString label)
 //----------------------------------------------------------------------------
 {
-	m_MeterVector[m_MeterVector.size()-1]->SetText(label);
+	m_MeterVector[m_MeterVector.size()-1]->SetText(label.GetCStr());
 	m_CurrentRenderer->GetRenderWindow()->Render();
 }
 //----------------------------------------------------------------------------

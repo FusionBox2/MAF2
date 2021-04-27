@@ -35,7 +35,7 @@ class mafVMEMesh;
 class MAF_EXPORT mafOpExporterMesh: public mafOp
 {
 public:
-	mafOpExporterMesh(const mafString& label = "MeshExporter");
+	mafOpExporterMesh(const mafString& label = _R("MeshExporter"));
 	~mafOpExporterMesh(); 
 	
   mafTypeMacro(mafOpExporterMesh, mafOp);
@@ -46,19 +46,19 @@ public:
 	bool Accept(mafNode *node);
 
 	/** Set the filename for the mesh to export */
-  void SetFileName(const char *file_name) {this->m_File = file_name;};
+  void SetFileName(const char *file_name) {this->m_File = _R(file_name);}
 
   /** Set/Get nodes file name*/
-  void SetNodesFileName(const char *name)   {this->m_NodesFileName = name;};
-  const char *GetNodesFileName() {return this->m_NodesFileName;};
+  void SetNodesFileName(const char *name)   {this->m_NodesFileName = _R(name);};
+  const char *GetNodesFileName() {return this->m_NodesFileName.GetCStr();};
 
   /** Set/Get elements file name*/
-  void SetElementsFileName(const char *name)   {this->m_ElementsFileName = name;};
-  const char *GetElementsFileName() {return this->m_ElementsFileName;};
+  void SetElementsFileName(const char *name)   {this->m_ElementsFileName = _R(name);};
+  const char *GetElementsFileName() {return this->m_ElementsFileName.GetCStr();};
 
   /** Set/Get materials file name*/
-  void SetMaterialsFileName(const char *name) {this->m_MaterialsFileName = name;};
-  const char *GetMaterialsFileName() {return this->m_MaterialsFileName;};
+  void SetMaterialsFileName(const char *name) {this->m_MaterialsFileName = _R(name);};
+  const char *GetMaterialsFileName() {return this->m_MaterialsFileName.GetCStr();};
 
   /** Builds operation's interface. */
 	void OpRun();

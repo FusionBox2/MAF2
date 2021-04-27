@@ -387,19 +387,19 @@ void mafOpCrop::CreateGui()
 
 	if (buildHelpGui.GetArg() == true)
 	{
-		m_Gui->Button(ID_HELP, "Help","");	
+		m_Gui->Button(ID_HELP, _R("Help"), _R(""));
 	}
 
-  m_Gui->Label("");
-  m_Gui->Bool(ID_SHOW_HANDLES, _("handles"), &m_ShowHandles, 0, _("toggle gizmo handles visibility"));
-  m_Gui->Bool(ID_SHOW_ROI, "ROI", &m_ShowROI, 0, _("toggle region of interest visibility"));
-	m_Gui->Label("");
-	m_Gui->VectorN(ID_CROP_DIR_X, _("range x"), m_XminXmax, 2, bounds[0], bounds[1]);
-	m_Gui->VectorN(ID_CROP_DIR_Y, _("range y"), m_YminYmax, 2, bounds[2], bounds[3]);
-	m_Gui->VectorN(ID_CROP_DIR_Z, _("range z"), m_ZminZmax, 2, bounds[4], bounds[5]);
+  m_Gui->Label(_R(""));
+  m_Gui->Bool(ID_SHOW_HANDLES, _L("handles"), &m_ShowHandles, 0, _L("toggle gizmo handles visibility"));
+  m_Gui->Bool(ID_SHOW_ROI, _R("ROI"), &m_ShowROI, 0, _L("toggle region of interest visibility"));
+	m_Gui->Label(_R(""));
+	m_Gui->VectorN(ID_CROP_DIR_X, _L("range x"), m_XminXmax, 2, bounds[0], bounds[1]);
+	m_Gui->VectorN(ID_CROP_DIR_Y, _L("range y"), m_YminYmax, 2, bounds[2], bounds[3]);
+	m_Gui->VectorN(ID_CROP_DIR_Z, _L("range z"), m_ZminZmax, 2, bounds[4], bounds[5]);
 
-  m_Gui->Button(ID_RESET_CROPPING_AREA, _("reset"), "", _("reset the cropping area"));
-	m_Gui->Label("");
+  m_Gui->Button(ID_RESET_CROPPING_AREA, _L("reset"), _R(""), _L("reset the cropping area"));
+	m_Gui->Label(_R(""));
 	m_Gui->OkCancel();
 
 	m_Gui->Divider();

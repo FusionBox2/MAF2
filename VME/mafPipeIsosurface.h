@@ -77,7 +77,7 @@ public:
 
   void SetActorVisibility(int visibility);
 
-  void SetExtractIsosurfaceName(const char *name){m_ExtractIsosurfaceName = mafString(name);}
+  void SetExtractIsosurfaceName(const char *name){m_ExtractIsosurfaceName = mafString(_R(name));}
 
   void SetEnableContourAnalysis(bool clean);
 

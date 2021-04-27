@@ -49,7 +49,7 @@ mafRoot* mafRoot::SafeDownCast(mafObject *o)
 int mafRoot::StoreRoot(mafStorageElement *parent)
 //-------------------------------------------------------------------------
 {
-  parent->SetAttribute("MaxNodeId",mafString(m_MaxNodeId));
+  parent->SetAttribute(_R("MaxNodeId"),mafToString(m_MaxNodeId));
   return MAF_OK;
 }
 //-------------------------------------------------------------------------
@@ -57,7 +57,7 @@ int mafRoot::RestoreRoot(mafStorageElement *element)
 //-------------------------------------------------------------------------
 {
   mafID max_id;
-  if (!element->GetAttributeAsInteger("MaxNodeId",max_id))
+  if (!element->GetAttributeAsInteger(_R("MaxNodeId"),max_id))
     return MAF_ERROR;
 
   SetMaxNodeId(max_id);

@@ -112,7 +112,7 @@ enum TRANSFER_FUNCTION_DIALOG_ID
 
 //----------------------------------------------------------------------------
 mafGUIDialogTransferFunction2D::mafGUIDialogTransferFunction2D() :
-  mafGUIDialog("Choose Transfer Function", wxCAPTION | wxRESIZE_BORDER )
+  mafGUIDialog(_R("Choose Transfer Function"), wxCAPTION | wxRESIZE_BORDER )
 //----------------------------------------------------------------------------
 {
 }
@@ -186,7 +186,7 @@ void mafGUIDialogTransferFunction2D::ShowModal(mafVME *vme)
   int threadID = threader->SpawnThread((vtkThreadFunctionType)CreatePipe, this);
 
 	// Check for stored transfer function in volume vme
-	if(m_Vme->GetTagArray()->GetTag("VOLUME_TRANSFER_FUNCTION"))
+	if(m_Vme->GetTagArray()->GetTag(_R("VOLUME_TRANSFER_FUNCTION")))
 		LoadTransferFunction();
 
   int x_pos,y_pos,w,h;
@@ -358,9 +358,9 @@ void mafGUIDialogTransferFunction2D::CreateGUI()
 
   // add / remove buttons
   mafGUIButton  *b1, *b2;
-  b1 = new mafGUIButton(this, ID_TF_ADD,    "add",wxDefaultPosition, wxSize(40, 20));
+  b1 = new mafGUIButton(this, ID_TF_ADD,    _R("add"),wxDefaultPosition, wxSize(40, 20));
   b1->SetValidator(mafGUIValidator(this, ID_TF_ADD, b1));
-  b2 = new mafGUIButton(this, ID_TF_REMOVE, "remove", wxDefaultPosition, wxSize(40, 20));
+  b2 = new mafGUIButton(this, ID_TF_REMOVE, _R("remove"), wxDefaultPosition, wxSize(40, 20));
   b2->SetValidator(mafGUIValidator(this, ID_TF_REMOVE, b2));
   addRemoveSizer->Add(b1, 0, wxALIGN_TOP | wxALL, 6);
   addRemoveSizer->Add(b2, 0, wxALIGN_BOTTOM | wxALL, 6);
@@ -377,8 +377,7 @@ void mafGUIDialogTransferFunction2D::CreateGUI()
 
   // colour
   this->m_WidgetColor.Set(this->m_Widget.Color[0] * 255, this->m_Widget.Color[1] * 255, this->m_Widget.Color[2] * 255);
-  wxString bmp_id = "";
-  bmp_id << MENU_FILE_OPEN;
+  mafString bmp_id = mafToString(MENU_FILE_OPEN);
   mafGUIPicButton *colorOpen = new mafGUIPicButton(this, bmp_id, ID_TF_COLOR);
 	wxTextCtrl   *colorBox = new wxTextCtrl  (this, ID_TF_COLOR, "", wxDefaultPosition, wxSize(-1,16), wxTE_READONLY|wxNO_BORDER);
   colorOpen->SetValidator( mafGUIValidator(this, ID_TF_COLOR, colorOpen, &this->m_WidgetColor, colorBox));
@@ -466,9 +465,9 @@ void mafGUIDialogTransferFunction2D::CreateGUI()
 //  rightPaneL->Add(new wxStaticText(this, -1, "", wxDefaultPosition, wxSize(-1, 20)), wxEXPAND, 0);
 
   // ok, cancel
-  b1 = new mafGUIButton(this, wxOK,    "ok", wxDefaultPosition, wxSize(-1, 20));
+  b1 = new mafGUIButton(this, wxOK,    _R("ok"), wxDefaultPosition, wxSize(-1, 20));
   b1->SetValidator(mafGUIValidator(this, wxOK, b1));
-  b2 = new mafGUIButton(this, wxCANCEL,    "cancel",wxDefaultPosition, wxSize(-1, 20));
+  b2 = new mafGUIButton(this, wxCANCEL,    _R("cancel"),wxDefaultPosition, wxSize(-1, 20));
   b2->SetValidator(mafGUIValidator(this, wxCANCEL, b2));
   
   wxBoxSizer *applyOkCancelSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -1033,12 +1032,12 @@ void mafGUIDialogTransferFunction2D::ResizePreviewWindow()
 void mafGUIDialogTransferFunction2D::LoadTransferFunction()
 //----------------------------------------------------------------------------
 {
-	wxString string;
-  if(mafTagItem *ti = m_Vme->GetTagArray()->GetTag("VOLUME_TRANSFER_FUNCTION"))
+	mafString string;
+  if(mafTagItem *ti = m_Vme->GetTagArray()->GetTag(_R("VOLUME_TRANSFER_FUNCTION")))
     string = ti->GetValue();
   vtkMAFTransferFunction2D *newf = vtkMAFTransferFunction2D::New();
 	newf->DeepCopy(this->m_TransferFunction);
-	if (newf->LoadFromString(string.c_str()))
+	if (newf->LoadFromString(string.GetCStr()))
 		this->m_TransferFunction->DeepCopy(newf);
 	newf->Delete();
 
@@ -1050,11 +1049,11 @@ void mafGUIDialogTransferFunction2D::SaveTransferFunction()
 {
 	if (this->m_TransferFunction->GetNumberOfWidgets() > 0) 
 	{
-		if(m_Vme->GetTagArray()->GetTag("VOLUME_TRANSFER_FUNCTION"))
-			m_Vme->GetTagArray()->DeleteTag("VOLUME_TRANSFER_FUNCTION");
+		if(m_Vme->GetTagArray()->GetTag(_R("VOLUME_TRANSFER_FUNCTION")))
+			m_Vme->GetTagArray()->DeleteTag(_R("VOLUME_TRANSFER_FUNCTION"));
     mafTagItem tfTAG;
-		tfTAG.SetName("VOLUME_TRANSFER_FUNCTION");
-		tfTAG.SetValue(this->m_TransferFunction->SaveToString());
+		tfTAG.SetName(_R("VOLUME_TRANSFER_FUNCTION"));
+		tfTAG.SetValue(_R(this->m_TransferFunction->SaveToString()));
 		m_Vme->GetTagArray()->SetTag(tfTAG);
   }
 }

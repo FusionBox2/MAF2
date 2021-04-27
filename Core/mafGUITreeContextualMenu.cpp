@@ -210,7 +210,7 @@ void mafGUITreeContextualMenu::ShowContextualMenu()
 	}
   else
   {
-    mafLogMessage(_("Warning!! No tree setted to the contextual menu."));
+    mafLogMessage(_M(mafString(_L("Warning!! No tree setted to the contextual menu."))));
   }
 }
 //----------------------------------------------------------------------------

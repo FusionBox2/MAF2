@@ -31,7 +31,7 @@
 class MAF_EXPORT mafGUISettingsStorage : public mafGUISettings
 {
 public:
-	mafGUISettingsStorage(mafBaseEventHandler *Listener, const mafString &label = _("Storage"));
+	mafGUISettingsStorage(mafBaseEventHandler *Listener, const mafString &label = _L("Storage"));
 	~mafGUISettingsStorage(); 
 
   enum STORAGE_SETTINGS_WIDGET_ID

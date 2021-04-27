@@ -121,11 +121,11 @@ mafVMESlicer::~mafVMESlicer()
 mmaMaterial *mafVMESlicer::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+  mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
   if (material == NULL)
   {
     material = mmaMaterial::New();
-    SetAttribute("MaterialAttributes", material);
+    SetAttribute(_R("MaterialAttributes"), material);
     lutPreset(4,GetMaterial()->m_ColorLut);
   }
   return material;
@@ -141,7 +141,7 @@ int mafVMESlicer::DeepCopy(mafNode *a)
     mafNode *linked_node = slicer->GetSlicedVMELink();
     if (linked_node)
     {
-      this->SetLink("SlicedVME", linked_node);
+      this->SetLink(_R("SlicedVME"), linked_node);
     }
 
     m_Transform->SetMatrix(slicer->m_Transform->GetMatrix());
@@ -168,7 +168,7 @@ bool mafVMESlicer::Equals(mafVME *vme)
   {
     return ret = (m_Transform->GetMatrix()==((mafVMESlicer *)vme)->m_Transform->GetMatrix() &&
                   m_SlicedName      == ((mafVMESlicer *)vme)->m_SlicedName &&
-                  GetLink("SlicedVME") == ((mafVMESlicer *)vme)->GetLink("SlicedVME"));
+                  GetLink(_R("SlicedVME")) == ((mafVMESlicer *)vme)->GetLink(_R("SlicedVME")));
   }
   return ret;
 }
@@ -181,8 +181,8 @@ mafGUI* mafVMESlicer::CreateGui()
   m_Gui->SetListener(this);
   m_Gui->Divider();
   mafVME *vol = mafVME::SafeDownCast(GetSlicedVMELink());
-  m_SlicedName = vol ? vol->GetName() : _("none");
-  m_Gui->Button(ID_VOLUME_LINK,&m_SlicedName,_("Volume"), _("Select the volume to be sliced"));
+  m_SlicedName = vol ? vol->GetName() : _L("none");
+  m_Gui->Button(ID_VOLUME_LINK,&m_SlicedName,_L("Volume"), _L("Select the volume to be sliced"));
 
   m_Gui->Divider();
   return m_Gui;
@@ -198,7 +198,7 @@ void mafVMESlicer::OnEvent(mafEventBase *maf_event)
     {
       case ID_VOLUME_LINK:
       {
-        mafString title = _("Choose volume vme");
+        mafString title = _L("Choose volume vme");
         e->SetId(VME_CHOOSE);
         e->SetArg((long)&mafVMESlicer::VolumeAccept);
         e->SetString(&title);
@@ -265,13 +265,13 @@ void mafVMESlicer::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
 mafNode *mafVMESlicer::GetSlicedVMELink()
 //-----------------------------------------------------------------------
 {
-  return GetLink("SlicedVME");
+  return GetLink(_R("SlicedVME"));
 }
 //-----------------------------------------------------------------------
 void mafVMESlicer::SetSlicedVMELink(mafNode *node)
 //-----------------------------------------------------------------------
 {
-  SetLink("SlicedVME", node);
+  SetLink(_R("SlicedVME"), node);
   Modified();
 }
 //-----------------------------------------------------------------------
@@ -356,7 +356,7 @@ void mafVMESlicer::InternalPreUpdate()
     }
   }
 
-  m_SlicedName = vol ? vol->GetName() : _("none");
+  m_SlicedName = vol ? vol->GetName() : _L("none");
 }
 
 //-----------------------------------------------------------------------
@@ -397,7 +397,7 @@ int mafVMESlicer::InternalStore(mafStorageElement *parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent->StoreMatrix("Transform",&m_Transform->GetMatrix());
+    parent->StoreMatrix(_R("Transform"),&m_Transform->GetMatrix());
     return MAF_OK;
   }
   return MAF_ERROR;
@@ -410,7 +410,7 @@ int mafVMESlicer::InternalRestore(mafStorageElement *node)
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
-    if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
+    if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
       

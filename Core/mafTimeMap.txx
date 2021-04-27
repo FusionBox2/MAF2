@@ -65,10 +65,10 @@ void mafTimeMap<T>::AppendItem(T *m)
 	assert(m);
   if (!m_ItemTypeName.IsEmpty())
   {
-    assert(m->IsA(m_ItemTypeName));
-    if (!m->IsA(m_ItemTypeName))
+    assert(m->IsA(m_ItemTypeName.GetCStr()));
+    if (!m->IsA(m_ItemTypeName.GetCStr()))
     {
-      mafErrorMacro("Unsupported Item type \""<<m->GetTypeName()<<"\", allowed type is \""<<m_ItemTypeName<<"\": cannot Append item!");
+      mafErrorMacro("Unsupported Item type \""<<m->GetTypeName()<<"\", allowed type is \""<<m_ItemTypeName.GetCStr()<<"\": cannot Append item!");
       return;
     }
   }
@@ -84,10 +84,10 @@ void mafTimeMap<T>::PrependItem(T *m)
   assert(m);
   if (!m_ItemTypeName.IsEmpty())
   {
-    assert(m->IsA(m_ItemTypeName));
-    if (!m->IsA(m_ItemTypeName))
+    assert(m->IsA(m_ItemTypeName.GetCStr()));
+    if (!m->IsA(m_ItemTypeName.GetCStr()))
     {
-      mafErrorMacro("Unsupported Item type \""<<m->GetTypeName()<<"\", allowed type is \""<<m_ItemTypeName<<"\": cannot Prepend item!");
+      mafErrorMacro("Unsupported Item type \""<<m->GetTypeName()<<"\", allowed type is \""<<m_ItemTypeName.GetCStr()<<"\": cannot Prepend item!");
       return;
     }
   }
@@ -102,10 +102,10 @@ void mafTimeMap<T>::InsertItem(T *m)
   assert(m);
   if (!m_ItemTypeName.IsEmpty())
   {
-    assert(m->IsA(m_ItemTypeName));
-    if (!m->IsA(m_ItemTypeName))
+    assert(m->IsA(m_ItemTypeName.GetCStr()));
+    if (!m->IsA(m_ItemTypeName.GetCStr()))
     {
-      mafErrorMacro("Unsupported Item type \""<<m->GetTypeName()<<"\", allowed type is \""<<m_ItemTypeName<<"\": cannot Insert item!");
+      mafErrorMacro("Unsupported Item type \""<<m->GetTypeName()<<"\", allowed type is \""<<m_ItemTypeName.GetCStr()<<"\": cannot Insert item!");
       return;
     }
   }

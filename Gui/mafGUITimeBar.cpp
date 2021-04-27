@@ -75,15 +75,13 @@ m_Timer(NULL, ID_TIMER)
   m_TimeMin  = 0;
   m_TimeMax  = 1;
 
-  m_TimeMinString = "";
-  m_TimeMinString << m_TimeMin;
-  m_TimeMaxString = "";
-  m_TimeMaxString << m_TimeMax;
+  m_TimeMinString = mafToString(m_TimeMin);
+  m_TimeMaxString = mafToString(m_TimeMax);
 
-  wxStaticText *labTimeMin = new wxStaticText(this, -1, m_TimeMinString.GetCStr());
+  wxStaticText *labTimeMin = new wxStaticText(this, -1, m_TimeMinString.toWx());
   labTimeMin->SetValidator( mafGUIValidator(this, -1, labTimeMin, &m_TimeMinString) );
   
-  wxStaticText *labTimeMax = new wxStaticText(this, -1, m_TimeMaxString.GetCStr());
+  wxStaticText *labTimeMax = new wxStaticText(this, -1, m_TimeMaxString.toWx());
   labTimeMax->SetValidator( mafGUIValidator(this, -1, labTimeMax, &m_TimeMaxString) );
 
   wxStaticText *lab1 = new wxStaticText(this,-1," time ");
@@ -101,11 +99,11 @@ m_Timer(NULL, ID_TIMER)
   m_Sizer->Add(lab1,0,wxALIGN_CENTER);
   m_Sizer->Add(m_TimeBarEntry,0,wxALIGN_CENTER);
 
-  m_TimeBarButtons[0] = new mafGUIPicButton(this, "TIME_BEGIN", TIME_BEGIN, this);
-  m_TimeBarButtons[1] = new mafGUIPicButton(this, "TIME_PREV",  TIME_PREV , this);
-  m_TimeBarButtons[2] = new mafGUIPicButton(this, "TIME_PLAY",  TIME_PLAY , this);
-  m_TimeBarButtons[3] = new mafGUIPicButton(this, "TIME_NEXT",  TIME_NEXT , this);
-  m_TimeBarButtons[4] = new mafGUIPicButton(this, "TIME_END",   TIME_END  , this);
+  m_TimeBarButtons[0] = new mafGUIPicButton(this, _R("TIME_BEGIN"), TIME_BEGIN, this);
+  m_TimeBarButtons[1] = new mafGUIPicButton(this, _R("TIME_PREV"),  TIME_PREV , this);
+  m_TimeBarButtons[2] = new mafGUIPicButton(this, _R("TIME_PLAY"),  TIME_PLAY , this);
+  m_TimeBarButtons[3] = new mafGUIPicButton(this, _R("TIME_NEXT"),  TIME_NEXT , this);
+  m_TimeBarButtons[4] = new mafGUIPicButton(this, _R("TIME_END"),   TIME_END  , this);
 
   for(int i = 0; i < 5; i++)
     m_Sizer->Add(m_TimeBarButtons[i],0,0);
@@ -221,7 +219,7 @@ void mafGUITimeBar::OnEvent(mafEventBase *maf_event)
       }
       if(play)
       {
-        m_TimeBarButtons[2]->SetBitmap("TIME_STOP");
+        m_TimeBarButtons[2]->SetBitmap(_R("TIME_STOP"));
         m_TimeBarButtons[2]->SetEventId(TIME_STOP);
 
         m_TimeStart = m_Time;
@@ -231,7 +229,7 @@ void mafGUITimeBar::OnEvent(mafEventBase *maf_event)
       }
       else
       {
-        m_TimeBarButtons[2]->SetBitmap("TIME_PLAY");
+        m_TimeBarButtons[2]->SetBitmap(_R("TIME_PLAY"));
         m_TimeBarButtons[2]->SetEventId(TIME_PLAY);
         m_Timer.Stop();
       }
@@ -322,10 +320,8 @@ void mafGUITimeBar::SetBounds(double min, double max)
 
   m_TimeBarEntry->SetValidator(mafGUIValidator(this,ID_ENTRY,m_TimeBarEntry,&m_Time,m_TimeMin,m_TimeMax));
 
-  m_TimeMinString = "";
-  m_TimeMinString << m_TimeMin;
-  m_TimeMaxString = "";
-  m_TimeMaxString << m_TimeMax;
+  m_TimeMinString = mafToString(m_TimeMin);
+  m_TimeMaxString = mafToString(m_TimeMax);
 
   //m_TimeBarSettings->SetSubrange(m_TimeMin,m_TimeMax);
   Update();

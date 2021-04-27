@@ -47,12 +47,12 @@ mafOpExporterSTL::mafOpExporterSTL(const mafString& label) : Superclass(label)
 {
   m_OpType  = OPTYPE_EXPORTER;
   m_Canundo = true;
-  m_File    = "";
+  m_File    = _R("");
 
 	m_Binary        = 1;
 	m_ABSMatrixFlag = 1;
 
-	m_FileDir = "";//mafGetApplicationDirectory().c_str();
+	m_FileDir = _R("");//mafGetApplicationDirectory().c_str();
 }
 //----------------------------------------------------------------------------
 mafOpExporterSTL::~mafOpExporterSTL()
@@ -78,16 +78,16 @@ enum STL_EXPORTER_ID
 void mafOpExporterSTL::OpRun()   
 //----------------------------------------------------------------------------
 {
-  mafString wildc = "Stereo Litography (*.stl)|*.stl";
+  mafString wildc = _R("Stereo Litography (*.stl)|*.stl");
 
   m_Gui = new mafGUI(this);
-	m_Gui->FileSave(ID_CHOOSE_FILENAME,"stl file", &m_File, wildc,"Save As...");
-  m_Gui->Label("file type",true);
-	m_Gui->Bool(ID_STL_BINARY_FILE,"binary",&m_Binary,0);
-	m_Gui->Label("absolute matrix",true);
-	m_Gui->Bool(ID_ABS_MATRIX_TO_STL,"apply",&m_ABSMatrixFlag,0);
+	m_Gui->FileSave(ID_CHOOSE_FILENAME,_R("stl file"), &m_File, wildc,_R("Save As..."));
+  m_Gui->Label(_R("file type"),true);
+	m_Gui->Bool(ID_STL_BINARY_FILE,_R("binary"),&m_Binary,0);
+	m_Gui->Label(_R("absolute matrix"),true);
+	m_Gui->Bool(ID_ABS_MATRIX_TO_STL,_R("apply"),&m_ABSMatrixFlag,0);
 	m_Gui->OkCancel();
-  m_Gui->Enable(wxOK,m_File != "");
+  m_Gui->Enable(wxOK,!m_File.IsEmpty());
 	
 	m_Gui->Divider();
 
@@ -135,7 +135,7 @@ void mafOpExporterSTL::OnEvent(mafEventBase *maf_event)
         OpStop(OP_RUN_OK);
       break;
       case ID_CHOOSE_FILENAME:
-        m_Gui->Enable(wxOK,m_File != "");
+        m_Gui->Enable(wxOK,!m_File.IsEmpty());
       break;
       case wxCANCEL:
         OpStop(OP_RUN_CANCEL);

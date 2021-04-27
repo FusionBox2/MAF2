@@ -32,7 +32,7 @@ dataset filled with a constant scalar value. This is useful for testing purposes
 class MAF_EXPORT mafOpCreateVolume: public mafOp
 {
 public:
-  mafOpCreateVolume(const mafString& label = "Create Volume");
+  mafOpCreateVolume(const mafString& label = _R("Create Volume"));
   ~mafOpCreateVolume(); 
 
   mafTypeMacro(mafOpCreateVolume, mafOp);

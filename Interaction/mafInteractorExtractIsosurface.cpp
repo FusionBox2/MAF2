@@ -69,7 +69,7 @@ void mafInteractorExtractIsosurface::OnMouseMove()
     std::ostringstream stringStream;
     stringStream << "No vtkRenderer defined for mafInteractorExtractIsosurface" << std::endl;
     stringStream << "Skipping mafInteractorExtractIsosurface::OnMouseMove()" << std::endl;
-    mafLogMessage(stringStream.str().c_str());
+    mafLogMessage(_M(stringStream.str().c_str()));
     return;
   }
 
@@ -92,7 +92,7 @@ void mafInteractorExtractIsosurface::OnButtonUp(mafEventInteraction *e)
     std::ostringstream stringStream;
     stringStream << "No vtkRenderer defined for mafInteractorExtractIsosurface" << std::endl;
     stringStream << "Skipping mafInteractorExtractIsosurface::OnButtonUp()" << std::endl;
-    mafLogMessage(stringStream.str().c_str());
+    mafLogMessage(_M(stringStream.str().c_str()));
     return;
   }
 
@@ -142,7 +142,7 @@ void mafInteractorExtractIsosurface::PickIsoValue(mafDevice *device)
     std::ostringstream stringStream;
     stringStream << "No vtkRenderer defined for mafInteractorExtractIsosurface" << std::endl;
     stringStream << "Skipping mafInteractorExtractIsosurface::PickIsoValue()" << std::endl;
-    mafLogMessage(stringStream.str().c_str());
+    mafLogMessage(_M(stringStream.str().c_str()));
     return;
   } 
   else if (m_Renderer != NULL && mouse == NULL)
@@ -150,7 +150,7 @@ void mafInteractorExtractIsosurface::PickIsoValue(mafDevice *device)
     std::ostringstream stringStream;
     stringStream << "No device available for picking" << std::endl;
     stringStream << "Skipping mafInteractorExtractIsosurface::PickIsoValue()" << std::endl;
-    mafLogMessage(stringStream.str().c_str());
+    mafLogMessage(_M(stringStream.str().c_str()));
     return;
   }
   else
@@ -159,7 +159,7 @@ void mafInteractorExtractIsosurface::PickIsoValue(mafDevice *device)
     stringStream << "No vtkRenderer defined for mafInteractorExtractIsosurface" << std::endl;
     stringStream << "and no picking device available." << std::endl;
     stringStream << "Skipping mafInteractorExtractIsosurface::PickIsoValue()" << std::endl;
-    mafLogMessage(stringStream.str().c_str());
+    mafLogMessage(_M(stringStream.str().c_str()));
     return;
   }
 }

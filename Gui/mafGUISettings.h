@@ -35,7 +35,7 @@ class MAF_EXPORT mafGUISettings : public mafBaseEventHandler, public mafEventSen
 {
 public:
   /** constructor */
-	mafGUISettings(mafBaseEventHandler *Listener, const mafString &label = _("Settings"));
+	mafGUISettings(mafBaseEventHandler *Listener, const mafString &label = _L("Settings"));
   /** destructor */
 	~mafGUISettings(); 
 

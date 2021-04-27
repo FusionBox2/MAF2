@@ -110,10 +110,10 @@ int mafVMEMeshAnsysTextImporter::Read()
     mafNEW(m_Output);
 
     mafTagItem tag_Nature;
-    tag_Nature.SetName("VME_NATURE");
-    tag_Nature.SetValue("NATURAL");
+    tag_Nature.SetName(_R("VME_NATURE"));
+    tag_Nature.SetValue(_R("NATURAL"));
     m_Output->GetTagArray()->SetTag(tag_Nature);
-    m_Output->SetName("imported mesh");
+    m_Output->SetName(_R("imported mesh"));
 
   }
 
@@ -126,14 +126,14 @@ int mafVMEMeshAnsysTextImporter::Read()
   
   if (ret == 0)
   {
-    mafLogMessage("Materials file found; building mesh attribute data from materials info...");
+    mafLogMessage(_M("Materials file found; building mesh attribute data from materials info..."));
 
     // convert field data from materials to cell data       
     FEMDataToCellData(grid.GetPointer(), gridToLinearize.GetPointer());
   }
   else
   {
-    mafLogMessage("Materials file not found! Not building attribute data from materials info...");
+    mafLogMessage(_M("Materials file not found! Not building attribute data from materials info..."));
     gridToLinearize = grid;
   }
   
@@ -165,7 +165,7 @@ int mafVMEMeshAnsysTextImporter::ParseNodesFile(vtkUnstructuredGrid *grid)
 {
   if (strcmp(m_NodesFileName, "") == 0)
   {
-    mafLogMessage("Nodes filename not specified!");
+    mafLogMessage(_M("Nodes filename not specified!"));
     return -1;
   }
 
@@ -270,7 +270,7 @@ int mafVMEMeshAnsysTextImporter::ParseElementsFile(vtkUnstructuredGrid *grid)
 {
   if (strcmp(m_ElementsFileName, "") == 0)
   {
-    mafLogMessage("Elements filename not specified!");
+    mafLogMessage(_M("Elements filename not specified!"));
     return -1;
   }
   
@@ -292,12 +292,12 @@ int mafVMEMeshAnsysTextImporter::ParseElementsFile(vtkUnstructuredGrid *grid)
 
   int FIRST_CONNECTIVITY_COLUMN = 6;
 
-  mafString ansysELEMENTIDArrayName("ANSYS_ELEMENT_ID");
-  mafString ansysTYPEIntArrayName("ANSYS_ELEMENT_TYPE"); // ET,50,187: Element Type = 50; this is used for grouping elements of the same element type
+  mafString ansysELEMENTIDArrayName(_R("ANSYS_ELEMENT_ID"));
+  mafString ansysTYPEIntArrayName(_R("ANSYS_ELEMENT_TYPE")); // ET,50,187: Element Type = 50; this is used for grouping elements of the same element type
   // this should be renamed ANSYS_ MATERIAL _TYPE:for the moment and possible backward compatibility issues 
   // I leave the array name as material
-  mafString ansysMATERIALIntArrayName("material"); 
-  mafString ansysREALIntArrayName("ANSYS_ELEMENT_REAL");// this is another grouping ID but for the moment it is not used
+  mafString ansysMATERIALIntArrayName(_R("material")); 
+  mafString ansysREALIntArrayName(_R("ANSYS_ELEMENT_REAL"));// this is another grouping ID but for the moment it is not used
 
   int ret = GetElementType();
   if (ret == -1 || ret == UNSUPPORTED_ELEMENT )
@@ -376,7 +376,7 @@ int mafVMEMeshAnsysTextImporter::ParseMaterialsFile(vtkUnstructuredGrid *grid, c
 {
   if (strcmp(matfilename, "") == 0)
   {
-    mafLogMessage("Materials filename not specified!");
+    mafLogMessage(_M("Materials filename not specified!"));
     return -1;
   }
 
@@ -537,25 +537,26 @@ int mafVMEMeshAnsysTextImporter::ParseMaterialsFile(vtkUnstructuredGrid *grid, c
 						mafString matLabel;
 						mafString rangeLabel;
 						mafString applyLabel;
-						matLabel.Printf(" Material N. %d has no property %s defined", (int)mat_prop_values_vec[j][0], mat_prop_name_vec[propIndex].c_str());
-						rangeLabel.Printf(" %s current Range is (%.4f,%.4f)",mat_prop_name_vec[propIndex].c_str(), mat_prop_values_min_vec[propIndex], mat_prop_values_max_vec[propIndex]);
-						applyLabel.Printf("Apply to all %s",mat_prop_name_vec[propIndex].c_str());
+						matLabel = mafString::Format(" Material N. %d has no property %s defined", (int)mat_prop_values_vec[j][0], mat_prop_name_vec[propIndex].c_str());
+						rangeLabel = mafString::Format(" %s current Range is (%.4f,%.4f)",mat_prop_name_vec[propIndex].c_str(), mat_prop_values_min_vec[propIndex], mat_prop_values_max_vec[propIndex]);
+						applyLabel = mafString::Format("Apply to all %s",mat_prop_name_vec[propIndex].c_str());
 															
 						//Create GUI
 						mafGUI *dialogGui;
 						dialogGui = new mafGUI(NULL);
-						dialogGui->Label(matLabel,"",true);
-						dialogGui->Label("");
-						dialogGui->Label(rangeLabel,"");
-						dialogGui->Label("");
-						dialogGui->Label("Please Insert property value");
-						dialogGui->Double(-1,_("Value: "), &assignValue);
+#pragma message ("here mafString is explicit to avoid ambiguity. Check for refactoring")
+						dialogGui->Label(matLabel, mafString(_R("")),true);
+						dialogGui->Label(_R(""));
+						dialogGui->Label(rangeLabel, mafString(_R("")));
+						dialogGui->Label(_R(""));
+						dialogGui->Label(_R("Please Insert property value"));
+						dialogGui->Double(-1,_L("Value: "), &assignValue);
 						dialogGui->Bool(-1,applyLabel, &assignToAll,true);
 						dialogGui->FitGui();
 
 						//Create and show dialog
 						mafGUIDialog *dialog;
-						dialog = new mafGUIDialog("Unkonwn Property Value", mafRESIZABLE | mafOK);
+						dialog = new mafGUIDialog(_R("Unkonwn Property Value"), mafRESIZABLE | mafOK);
 						dialog->Add(dialogGui);
 						dialog->SetMinSize(wxSize(320,100));
 						dialog->Fit();
@@ -708,8 +709,8 @@ void mafVMEMeshAnsysTextImporter::FEMDataToCellData( vtkUnstructuredGrid *input,
   // materials id per cell
   vtkDoubleArray *materialIDArrayFD = NULL;
   int numCells = -1, numMatProp = -1, numMat = -1;
-  mafString matStr("material");
-  mafString matIdStr("material_id");
+  mafString matStr(_R("material"));
+  mafString matIdStr(_R("material_id"));
   vtkIntArray *materialArrayCD = NULL;
   vtkFieldData *inFD = NULL;
   vtkCellData *outCD = NULL;

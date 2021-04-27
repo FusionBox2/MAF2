@@ -45,10 +45,10 @@ mafGUIListCtrl::mafGUIListCtrl( wxWindow* parent,wxWindowID id, bool CloseButton
   SetBackgroundColour(wxColour(255,255,255));
    
   m_Images = new wxImageList(15,15,FALSE,4);
-  m_Images->Add(mafPictureFactory::GetPictureFactory()->GetBmp("NODE_YELLOW"));
-  m_Images->Add(mafPictureFactory::GetPictureFactory()->GetBmp("NODE_GRAY"));
-  m_Images->Add(mafPictureFactory::GetPictureFactory()->GetBmp("NODE_RED"));
-  m_Images->Add(mafPictureFactory::GetPictureFactory()->GetBmp("NODE_BLUE"));
+  m_Images->Add(mafPictureFactory::GetPictureFactory()->GetBmp(_R("NODE_YELLOW")));
+  m_Images->Add(mafPictureFactory::GetPictureFactory()->GetBmp(_R("NODE_GRAY")));
+  m_Images->Add(mafPictureFactory::GetPictureFactory()->GetBmp(_R("NODE_RED")));
+  m_Images->Add(mafPictureFactory::GetPictureFactory()->GetBmp(_R("NODE_BLUE")));
 
   m_List = new wxListCtrl(this,ID_LIST,wxDefaultPosition,wxSize(100,100) ,wxLC_REPORT);
   
@@ -80,7 +80,7 @@ bool mafGUIListCtrl::AddItem (long item_id, const mafString& label, ITEM_ICONS i
   long id =  m_List->FindItem(-1, item_id);
   if(id != -1)
     return false;
-  long tmp = m_List->InsertItem(item_id,label.GetCStr(),icon); 
+  long tmp = m_List->InsertItem(item_id,label.toWx(),icon); 
   m_List->SetItemData(tmp, item_id);
   return true;
 }
@@ -105,7 +105,7 @@ bool mafGUIListCtrl::SetItemLabel (long item_id, const mafString& label)
 {
   long id =  m_List->FindItem(-1, item_id);
   if (id == -1) return false;
-  m_List->SetItemText(id,label.GetCStr());
+  m_List->SetItemText(id,label.toWx());
   return true;
 }
 //----------------------------------------------------------------------------
@@ -141,7 +141,7 @@ ITEM_ICONS mafGUIListCtrl::GetItemIcon (long item_id)
   int icon = -1;
   if( li.m_mask & wxLIST_MASK_IMAGE )
     icon = li.m_image;
-  mafLogMessage("icon = %d",icon);
+  mafLogMessage(_M(_R("icon = ") + mafToString(icon)));
   mafYield();
   return (ITEM_ICONS) icon;
 }
@@ -164,7 +164,7 @@ void mafGUIListCtrl::OnSelectionChanged(wxListEvent& event)
 {
   if(m_PreventNotify) return;
    
-  mafString s = m_List->GetItemText(event.GetIndex());
+  mafString s = mafWxToString(m_List->GetItemText(event.GetIndex()));
   long item_id = event.GetData();
   long icon = event.GetImage();
 

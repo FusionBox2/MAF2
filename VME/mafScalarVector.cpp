@@ -58,13 +58,13 @@ void mafScalarVector::GetScalarVector(std::vector<double> &svector)
 int mafScalarVector::InternalStore(mafStorageElement *parent)
 //-----------------------------------------------------------------------
 {
-  parent->SetAttribute("NumberOfItems",mafString(GetNumberOfItems()));
+  parent->SetAttribute(_R("NumberOfItems"),mafToString(GetNumberOfItems()));
   for (Iterator it = BeginScalarVector(); it != EndScalarVector(); it++)
   {
     double sca[2];
     sca[0] = it->first;
     sca[1] = it->second;
-    if (parent->StoreVectorN("Scalar", sca , 2) != MAF_OK)
+    if (parent->StoreVectorN(_R("Scalar"), sca , 2) != MAF_OK)
       return MAF_ERROR;
   }
   return MAF_OK;
@@ -74,10 +74,10 @@ int mafScalarVector::InternalRestore(mafStorageElement *node)
 //-----------------------------------------------------------------------
 {
   mafID num_items;
-  if (node->GetAttributeAsInteger("NumberOfItems",num_items))
+  if (node->GetAttributeAsInteger(_R("NumberOfItems"),num_items))
   {
     mafStorageElement::ChildrenVector vector_elements;
-    node->GetNestedElementsByName("Scalar", vector_elements);
+    node->GetNestedElementsByName(_R("Scalar"), vector_elements);
 
     assert(vector_elements.size() == num_items);
 

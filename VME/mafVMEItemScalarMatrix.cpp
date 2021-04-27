@@ -48,7 +48,7 @@ mafVMEItemScalarMatrix::mafVMEItemScalarMatrix()
 //-------------------------------------------------------------------------
 {
   m_IOStatus   = MAF_OK;
-  m_DataString = "";
+  m_DataString = _R("");
 }
 
 //-------------------------------------------------------------------------
@@ -152,7 +152,7 @@ void mafVMEItemScalarMatrix::SetData(vnl_matrix<double> &data)
   {
     if (!data.empty())
     {
-      this->SetDataType("vnl_matrix");
+      this->SetDataType(_R("vnl_matrix"));
 
       double bounds[6];
       bounds[0] = bounds[1] = bounds[2] = bounds[3] = bounds[4] = bounds[5] = 0.0;
@@ -160,7 +160,7 @@ void mafVMEItemScalarMatrix::SetData(vnl_matrix<double> &data)
     }
     else
     {
-      this->SetDataType("");
+      this->SetDataType(_R(""));
       m_Bounds.Reset();
     }
 
@@ -281,7 +281,7 @@ int mafVMEItemScalarMatrix::ReadData(mafString &filename, int resolvedURL)
     if (GetCrypting() && m_IOMode != MEMORY)
     {
 #ifdef MAF_USE_CRYPTO
-      mafDefaultDecryptFileInMemory(filename, m_DecryptedFileString);
+      mafDefaultDecryptFileInMemory(filename.GetCStr(), m_DecryptedFileString);
 #else
       mafErrorMacro(_("Encrypted data not supported: MAF not linked to Crypto library."));
       return MAF_ERROR;
@@ -302,7 +302,7 @@ int mafVMEItemScalarMatrix::UpdateReader(mafString &filename)
 {
   vnl_matrix<double> data;
 
-  if(mafTagItem *item = m_TagArray->GetTag("SCALAR_MATRIX_DIMENSIONS"))
+  if(mafTagItem *item = m_TagArray->GetTag(_R("SCALAR_MATRIX_DIMENSIONS")))
   {
     int r,c;
     r = (int)item->GetComponentAsDouble(0);
@@ -325,7 +325,7 @@ int mafVMEItemScalarMatrix::UpdateReader(mafString &filename)
     }
     else
     {
-      std::ifstream v_raw_matrix(filename, std::ios::in);
+      std::ifstream v_raw_matrix(filename.GetCStr(), std::ios::in);
       if(v_raw_matrix.is_open() != 0)
       {
         data.read_ascii(v_raw_matrix);
@@ -356,7 +356,7 @@ int mafVMEItemScalarMatrix::UpdateReader(mafString &filename)
 
   if (data.empty())
   {
-    mafErrorMacro("Cannot read data file " << filename);
+    mafErrorMacro("Cannot read data file " << filename.GetCStr());
     return MAF_ERROR;
   }
   else
@@ -387,13 +387,13 @@ int mafVMEItemScalarMatrix::InternalStoreData(const char *url)
         found = false;
       break;
       case DEFAULT:
-        if (mafString::IsEmpty(url))
+        if (mafString(_R("")) == _R(url))//url is empty
         {
           mafWarningMacro("No filename specified: cannot write data to disk");
           return MAF_ERROR;
         }
 
-        found = storage->IsFileInDirectory(url);
+        found = storage->IsFileInDirectory(_R(url));
         storage->GetTmpFile(filename);
       break;
       default:
@@ -421,7 +421,7 @@ int mafVMEItemScalarMatrix::InternalStoreData(const char *url)
 
     m_IOStatus = 0;
     int ret = MAF_OK; // value returned by StoreToURL() function at the end of saving to file
-    if ((IsDataPresent() && (!found || (m_URL != url))) || ((IsDataPresent() == found) && (found == IsDataModified())))
+    if ((IsDataPresent() && (!found || (m_URL != _R(url)))) || ((IsDataPresent() == found) && (found == IsDataModified())))
     {       
       vnl_matrix<double> data = GetData();
 
@@ -438,7 +438,7 @@ int mafVMEItemScalarMatrix::InternalStoreData(const char *url)
       r = data.rows();
       c = data.columns();
       mafTagItem item;
-      item.SetName("SCALAR_MATRIX_DIMENSIONS");
+      item.SetName(_R("SCALAR_MATRIX_DIMENSIONS"));
       item.SetNumberOfComponents(2);
       item.SetComponent(r,0);
       item.SetComponent(c,1);
@@ -449,7 +449,7 @@ int mafVMEItemScalarMatrix::InternalStoreData(const char *url)
       //data.copy_out(s);
       std::stringstream data_stream;
       data.print(data_stream);
-      m_DataString = data_stream.str().c_str();
+      m_DataString = _R(data_stream.str().c_str());
       /*m_DataString << s[0];
       for (int i = 1; i < data_size; i++)
       {
@@ -481,7 +481,7 @@ int mafVMEItemScalarMatrix::InternalStoreData(const char *url)
       }
       else
       {
-        std::ofstream writer(filename);
+        std::ofstream writer(filename.GetCStr());
         if (!writer.bad())
         {
           writer << m_DataString.GetCStr() << std::endl;
@@ -559,7 +559,7 @@ bool mafVMEItemScalarMatrix::StoreToArchive(wxZipOutputStream &zip)
 //-------------------------------------------------------------------------
 {
   wxStringInputStream data_stream(m_OutputMemory);
-  if (!zip.PutNextEntry(m_URL.GetCStr(), wxDateTime::Now(), m_OutputMemorySize) || !zip.Write(data_stream))
+  if (!zip.PutNextEntry(m_URL.toWx(), wxDateTime::Now(), m_OutputMemorySize) || !zip.Write(data_stream))
     return false;
   return true;
 }

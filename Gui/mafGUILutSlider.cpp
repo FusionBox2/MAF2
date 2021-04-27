@@ -43,12 +43,12 @@ public:
   mafGUILutButt() { };
 
   mafGUILutButt(wxWindow *parent, wxWindowID id,
-        const wxString& label,
+        const mafString& label,
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
         long style = 0)
   {
-    Create(parent, id, label, pos, size, style);
+    Create(parent, id, label.toWx(), pos, size, style);
     m_X0 = 0;
     m_EnableIgnoreLeftDown = false;
   };
@@ -138,7 +138,7 @@ BEGIN_EVENT_TABLE(mafGUILutSlider,wxPanel)
   EVT_SIZE(mafGUILutSlider::OnSize)
 END_EVENT_TABLE()
 //----------------------------------------------------------------------------
-mafGUILutSlider::mafGUILutSlider(wxWindow *parent, wxWindowID id, const wxPoint& pos /* = wxDefaultPosition */, const wxSize& size /* = wxDefaultSize */, long style /* = 0 */, const char* middleButtonTitle /* = "windowing" */)
+mafGUILutSlider::mafGUILutSlider(wxWindow *parent, wxWindowID id, const wxPoint& pos /* = wxDefaultPosition */, const wxSize& size /* = wxDefaultSize */, long style /* = 0 */, const mafString& middleButtonTitle /* = "windowing" */)
 :wxPanel(parent,id,pos,size,wxSUNKEN_BORDER | wxCLIP_CHILDREN )
 //----------------------------------------------------------------------------
 {
@@ -148,9 +148,9 @@ mafGUILutSlider::mafGUILutSlider(wxWindow *parent, wxWindowID id, const wxPoint&
   m_HighValue= 100;
   
   m_MinLabel      = new wxStaticText(this, -1, "", wxPoint(0,0), wxSize(35, BUTT_H));
-  m_MinButton     = new mafGUILutButt(this, 1, "0", wxPoint(0,0), wxSize(50, BUTT_H));
+  m_MinButton     = new mafGUILutButt(this, 1, _R("0"), wxPoint(0,0), wxSize(50, BUTT_H));
   m_MiddleButton  = new mafGUILutButt(this, 3, middleButtonTitle, wxPoint(25,0),	wxSize(100,BUTT_H));
-  m_MaxButton     = new mafGUILutButt(this, 2, "100", wxPoint(125,0), wxSize(50, BUTT_H));
+  m_MaxButton     = new mafGUILutButt(this, 2, _R("100"), wxPoint(125,0), wxSize(50, BUTT_H));
   m_MaxLabel      = new wxStaticText(this, -1, "", wxPoint(0,0), wxSize(35, BUTT_H));
 
   SetMinSize(size);

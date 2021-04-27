@@ -71,7 +71,7 @@
 #include <set>
 #include <assert.h>
 
-#define MIS_VERSION "2.0"
+#define MIS_VERSION _R("2.0")
 
 #define DEFAULT_INTRA_FRAME_TIME 0.02 
 
@@ -100,12 +100,12 @@ mafInteractionManager::mafInteractionManager()
   m_ActionsList       = NULL;
   m_Bindings          = NULL;
   m_SettingFileName = mafGetApplicationDirectory();
-  m_SettingFileName.Append("Config/Presets");
-  if(!::wxDirExists(m_SettingFileName)) m_SettingFileName = mafGetApplicationDirectory();
+  m_SettingFileName.Append(_R("Config/Presets"));
+  if(!mafDirExists(m_SettingFileName)) m_SettingFileName = mafGetApplicationDirectory();
   
   mafNEW(m_DeviceManager);
   m_DeviceManager->SetListener(this);
-  m_DeviceManager->SetName("DeviceManager");
+  m_DeviceManager->SetName(_R("DeviceManager"));
   
   CreateGUI();
 
@@ -114,7 +114,7 @@ mafInteractionManager::mafInteractionManager()
   
   // create the static event router and connect it
   mafNEW(m_StaticEventRouter);
-  m_StaticEventRouter->SetName("StaticEventRouter");
+  m_StaticEventRouter->SetName(_R("StaticEventRouter"));
   m_StaticEventRouter->SetListener(this);
   //m_StaticEventRouter->PlugEventSource(this,CameraUpdateChannel); // propagate camera events to actions
 
@@ -124,7 +124,7 @@ mafInteractionManager::mafInteractionManager()
 
   // create positional event router
   mafNEW(m_PositionalEventRouter);
-  m_PositionalEventRouter->SetName("PositionalEventRouter");
+  m_PositionalEventRouter->SetName(_R("PositionalEventRouter"));
   pointing_action->BindInteractor(m_PositionalEventRouter);
   m_PositionalEventRouter->SetListener(this);
 
@@ -185,7 +185,7 @@ void mafInteractionManager::SetPER(mafInteractorPER *per)
   m_PositionalEventRouter = per;
 
   // bind new PER
-  m_PositionalEventRouter->SetName("PositionalEventRouter");
+  m_PositionalEventRouter->SetName(_R("PositionalEventRouter"));
   pointing_action->BindInteractor(m_PositionalEventRouter);
   m_PositionalEventRouter->SetListener(this);
 }
@@ -350,7 +350,7 @@ int mafInteractionManager::RemoveAvatar(mafAvatar *avatar)
 mafAvatar *mafInteractionManager::GetAvatar(const char *name)
 //------------------------------------------------------------------------------
 {
-  mmuAvatarsMap::iterator it=m_Avatars.find(name);  
+  mmuAvatarsMap::iterator it=m_Avatars.find(_R(name));  
   return (it!=m_Avatars.end())?it->second:NULL;
 }
 
@@ -647,13 +647,13 @@ void mafInteractionManager::OnEvent(mafEventBase *event)
         case ID_STORE:
         { 
           //SIL. 4-7-2005: begin
-          std::string result = 
-          mafGetSaveFile(m_SettingFileName, "Interaction Settings (*.xml)| *.xml", "Save Interaction Settings");
-          if( result == "") return;
-          m_SettingFileName = result.c_str();
+          mafString result = 
+          mafGetSaveFile(m_SettingFileName, _R("Interaction Settings (*.xml)| *.xml"), _R("Save Interaction Settings"));
+          if( result.IsEmpty()) return;
+          m_SettingFileName = result;
           //SIL. 4-7-2005: end
 
-          Store(m_SettingFileName);
+          Store(m_SettingFileName.GetCStr());
         
           return;
         }
@@ -661,13 +661,13 @@ void mafInteractionManager::OnEvent(mafEventBase *event)
         case ID_LOAD:
         {
           //SIL. 4-7-2005: begin
-          std::string result = 
-          mafGetOpenFile(m_SettingFileName, "Interaction Settings (*.xml)| *.xml", "Load Interaction Settings");
-          if( result == "") return;
-          m_SettingFileName = result.c_str();
+          mafString result = 
+          mafGetOpenFile(m_SettingFileName, _R("Interaction Settings (*.xml)| *.xml"), _R("Load Interaction Settings"));
+          if( result.IsEmpty()) return;
+          m_SettingFileName = result;
           //SIL. 4-7-2005: end
 
-          Restore(m_SettingFileName);
+          Restore(m_SettingFileName.GetCStr());
           //camera reset here?
         
           return;
@@ -682,11 +682,11 @@ void mafInteractionManager::OnEvent(mafEventBase *event)
       
           if (m_ActionsList->IsItemChecked(m_ActionsList->GetSelection()))
           {
-            GetSER()->BindDeviceToAction(m_CurrentDevice,action_name);
+            GetSER()->BindDeviceToAction(m_CurrentDevice,action_name.GetCStr());
           }
           else
           {
-            GetSER()->UnBindDeviceFromAction(m_CurrentDevice,action_name);
+            GetSER()->UnBindDeviceFromAction(m_CurrentDevice,action_name.GetCStr());
           }
           return;
         }
@@ -839,10 +839,10 @@ int mafInteractionManager::Store(const char *filename)
   mafXMLParser writer;
   
   // Multimod Interaction Settings file format
-  writer.SetFileType("MIS");
+  writer.SetFileType(_R("MIS"));
   writer.SetVersion(MIS_VERSION);
 
-  writer.SetURL(filename);
+  writer.SetURL(_R(filename));
   writer.SetDocument(this);
 
   return writer.Store();
@@ -856,10 +856,10 @@ int mafInteractionManager::Restore(const char *filename)
   mafXMLParser reader;
 
   // Multimod Interaction Settings file format
-  reader.SetFileType("MIS");
+  reader.SetFileType(_R("MIS"));
   reader.SetVersion(MIS_VERSION);
 
-  reader.SetURL(filename);
+  reader.SetURL(_R(filename));
   reader.SetDocument(this);
 
   return reader.Restore();
@@ -870,11 +870,11 @@ int mafInteractionManager::InternalStore(mafStorageElement *node)
 //------------------------------------------------------------------------------
 {
   // store device settings
-  if (node->StoreObject("DeviceManager",m_DeviceManager)==NULL)
+  if (node->StoreObject(_R("DeviceManager"),m_DeviceManager)==NULL)
     return MAF_ERROR;
   
   // store bindings
-  if (node->StoreObject("DeviceBindings",m_StaticEventRouter)==NULL)
+  if (node->StoreObject(_R("DeviceBindings"),m_StaticEventRouter)==NULL)
     return MAF_ERROR;
   
   return MAF_OK;
@@ -884,10 +884,10 @@ int mafInteractionManager::InternalStore(mafStorageElement *node)
 int mafInteractionManager::InternalRestore(mafStorageElement *node)
 //------------------------------------------------------------------------------
 {
-  if (node->RestoreObject("DeviceManager",m_DeviceManager)!=MAF_OK)
+  if (node->RestoreObject(_R("DeviceManager"),m_DeviceManager)!=MAF_OK)
     return MAF_ERROR;
   
-  if (node->RestoreObject("DeviceBindings",m_StaticEventRouter)!=MAF_OK)
+  if (node->RestoreObject(_R("DeviceBindings"),m_StaticEventRouter)!=MAF_OK)
     return MAF_ERROR;
   
   return MAF_OK;
@@ -967,7 +967,7 @@ void mafInteractionManager::UpdateBindings()
         if (it_list->GetPointer() == m_CurrentDevice)
           found = true;
       }
-      m_ActionsList->AddItem(i++,action->GetName().GetCStr(),found);
+      m_ActionsList->AddItem(i++,action->GetName().toWx(),found);
     }
   }
 }
@@ -978,7 +978,7 @@ void mafInteractionManager::AddDeviceToTree(mafDevice *device,mafDeviceSet *pare
 {
   assert(device);
   mafID parent_id=(parent?parent->GetID():0);
-  m_DeviceTree->AddNode(device->GetID(),parent_id,device->GetName().GetCStr());
+  m_DeviceTree->AddNode(device->GetID(),parent_id,device->GetName().toWx());
   //m_DeviceTree->Update();
 }
 
@@ -1009,7 +1009,7 @@ void mafInteractionManager::UpdateDevice(mafDevice *device)
 //----------------------------------------------------------------------------
 {
   assert(device);
-  m_DeviceTree->SetNodeLabel(device->GetID(),device->GetName().GetCStr());
+  m_DeviceTree->SetNodeLabel(device->GetID(),device->GetName().toWx());
 }
 //SIL. 07-jun-2006 : -- heavily changed
 //----------------------------------------------------------------------------
@@ -1022,19 +1022,19 @@ void mafInteractionManager::CreateGUI()
   m_DeviceTree->SetMinSize(wxSize(250,100));
   m_DeviceTree->SetListener(this);
 
-  m_Gui->Button(ID_ADD_DEVICE,"Add Device");
-  m_Gui->Button(ID_REMOVE_DEVICE,"Remove Device");
-  m_Gui->Button(ID_LOAD,"Load");
-  m_Gui->Button(ID_STORE,"Save as");
-  m_Gui->Label("installed devices");
+  m_Gui->Button(ID_ADD_DEVICE,_R("Add Device"));
+  m_Gui->Button(ID_REMOVE_DEVICE,_R("Remove Device"));
+  m_Gui->Button(ID_LOAD,_R("Load"));
+  m_Gui->Button(ID_STORE,_R("Save as"));
+  m_Gui->Label(_R("installed devices"));
   m_Gui->Add(m_DeviceTree,0,0);
-  m_Gui->Label("selected device options");
+  m_Gui->Label(_R("selected device options"));
   m_Gui->Divider();
 
   m_Bindings = new mafGUI(this); // bindings will be added to m_Gui later (at the device selection)
   m_Bindings->Divider(1);
-  m_Bindings->Label("actions associated to this device",false);
-  m_ActionsList = m_Bindings->CheckList(ID_BINDING_LIST,"",60);
+  m_Bindings->Label(_R("actions associated to this device"),false);
+  m_ActionsList = m_Bindings->CheckList(ID_BINDING_LIST,_R(""),60);
   m_ActionsList->SetSize(250,100);
   m_ActionsList->SetMinSize(wxSize(250,100));
 } 

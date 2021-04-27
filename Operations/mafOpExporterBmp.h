@@ -38,7 +38,7 @@ class MAF_EXPORT mafOpExporterBmp: public mafOp
 {
 public:
   mafTypeMacro(mafOpExporterBmp, mafOp)
-  mafOpExporterBmp(const mafString& label = "");
+  mafOpExporterBmp(const mafString& label = _R(""));
  ~mafOpExporterBmp(); 
   mafOp* Copy();
 
@@ -57,7 +57,7 @@ public:
   void OnEvent(mafEventBase *maf_event);
 	
 	//Set the directory where export the .bmp files
-  void SetDirName(const char *dir_name){m_DirName = dir_name;};
+  void SetDirName(const char *dir_name){m_DirName = _R(dir_name);};
 
   /** Set the format of exported bmp file: "false" for 24 bit file, "true" for 8 bit gray scale file. */
   void SetGrayscale(bool grayScale){m_Bit8 = grayScale;};

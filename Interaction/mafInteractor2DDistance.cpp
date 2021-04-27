@@ -79,9 +79,9 @@ mafInteractor2DDistance::mafInteractor2DDistance()
   m_ProbedVME = NULL;
   m_Mouse     = NULL;
 
-  mafString plot_title = _("Density vs. Length (mm)");
-  mafString plot_titleX = "mm";
-  mafString plot_titleY = _("Dens.");
+  mafString plot_title = _L("Density vs. Length (mm)");
+  mafString plot_titleX = _L("mm");
+  mafString plot_titleY = _L("Dens.");
   vtkNEW(m_PlotActor);
   m_PlotActor->GetProperty()->SetColor(0.02,0.06,0.62);	
   m_PlotActor->GetProperty()->SetLineWidth(2);
@@ -92,9 +92,9 @@ mafInteractor2DDistance::mafInteractor2DDistance()
   m_PlotActor->SetPlotCoordinate(0,300);
   m_PlotActor->SetNumberOfXLabels(10);
   m_PlotActor->SetXValuesToIndex();
-  m_PlotActor->SetTitle(plot_title);
-  m_PlotActor->SetXTitle(plot_titleX);
-  m_PlotActor->SetYTitle(plot_titleY);
+  m_PlotActor->SetTitle(plot_title.GetCStr());
+  m_PlotActor->SetXTitle(plot_titleX.GetCStr());
+  m_PlotActor->SetYTitle(plot_titleY.GetCStr());
   vtkTextProperty* tprop = m_PlotActor->GetTitleTextProperty();
   tprop->SetColor(0.02,0.06,0.62);
   tprop->SetFontFamilyToArial();
@@ -109,7 +109,7 @@ mafInteractor2DDistance::mafInteractor2DDistance()
   int x_init,y_init;
   x_init = mafGetFrame()->GetPosition().x;
   y_init = mafGetFrame()->GetPosition().y;
-  m_HistogramDialog = new mafGUIDialogPreview(_("Histogram"), mafCLOSEWINDOW | mafUSERWI);
+  m_HistogramDialog = new mafGUIDialogPreview(_L("Histogram"), mafCLOSEWINDOW | mafUSERWI);
   m_HistogramRWI = m_HistogramDialog->GetRWI();
   m_HistogramRWI->SetListener(this);
   m_HistogramRWI->m_RenFront->AddActor2D(m_PlotActor);
@@ -461,9 +461,8 @@ void mafInteractor2DDistance::DrawMeasureTool(double x, double y)
       {
         double tmp_pos[3];
         m_Line->GetPoint2(tmp_pos);
-        mafString ds;
-        ds = wxString::Format(_("%.2f") , m_Distance);
-        m_MeterVector[m_MeterVector.size()-1]->SetText(ds);
+        mafString ds = mafString::Format(_R("%.2f") , m_Distance);
+        m_MeterVector[m_MeterVector.size()-1]->SetText(ds.GetCStr());
         m_MeterVector[m_MeterVector.size()-1]->SetTextPosition(tmp_pos);
         m_DisableUndoAndOkCancel = true;
       }
@@ -471,9 +470,8 @@ void mafInteractor2DDistance::DrawMeasureTool(double x, double y)
       {
         double tmp_pos[3];
         m_Line2->GetPoint2(tmp_pos);
-        mafString ds;
-        ds = wxString::Format(_("%.2f") , m_Distance);
-        m_MeterVector[m_MeterVector.size()-1]->SetText(ds);
+        mafString ds = mafString::Format(_R("%.2f") , m_Distance);
+        m_MeterVector[m_MeterVector.size()-1]->SetText(ds.GetCStr());
         m_MeterVector[m_MeterVector.size()-1]->SetTextPosition(tmp_pos);
         m_DisableUndoAndOkCancel = false;
       }
@@ -589,9 +587,8 @@ void mafInteractor2DDistance::DrawMeasureTool(double x, double y)
     tmp_pos[0] =  ((tmp_pos1_1[0] + tmp_pos2_1[0])/2 + (tmp_pos1_2[0] + tmp_pos2_2[0])/2)/2;
     tmp_pos[1] =  ((tmp_pos1_1[1] + tmp_pos2_1[1])/2 + (tmp_pos1_2[1] + tmp_pos2_2[1])/2)/2;
     tmp_pos[2] =  ((tmp_pos1_1[2] + tmp_pos2_1[2])/2 + (tmp_pos1_2[2] + tmp_pos2_2[2])/2)/2;
-    mafString ds;
-    ds = wxString::Format(_("%.2f"), m_Distance);
-    m_MeterVector[m_MeterVector.size()-1]->SetText(ds);
+    mafString ds = mafString::Format(_R("%.2f"), m_Distance);
+    m_MeterVector[m_MeterVector.size()-1]->SetText(ds.GetCStr());
     if(m_Distance > 0.15)
     {
       m_MeterVector[m_MeterVector.size()-1]->SetTextPosition(tmp_pos);  
@@ -609,7 +606,7 @@ void mafInteractor2DDistance::DrawMeasureTool(double x, double y)
     CalculateMeasure();
     m_RendererVector.push_back(m_CurrentRenderer);
 
-    if(mafString("*Error*") == m_MeterVector[m_MeterVector.size()-1]->GetText())
+    if(mafString(_R("*Error*")) == _R(m_MeterVector[m_MeterVector.size()-1]->GetText()))
     {
       wxMessageBox(_("Impossible to measure the angle.\n Both the lines must have length > 0!"));
     }  
@@ -980,9 +977,8 @@ void mafInteractor2DDistance::SetManualDistance(double manualDistance)
 		}
 		*/
 
-    mafString ds;
-    ds = wxString::Format(_("%.2f") , manualDistance);
-    m_MeterVector[m_MeterVector.size()-1]->SetText(ds);
+    mafString ds = mafString::Format(_R("%.2f") , manualDistance);
+    m_MeterVector[m_MeterVector.size()-1]->SetText(ds.GetCStr());
 
     m_Measure[m_Measure.size()-1] = manualDistance;
   }
@@ -1017,9 +1013,8 @@ void mafInteractor2DDistance::SetManualDistance(double manualDistance)
     m_LineSourceVector2[m_LineSourceVector2.size()-1]->SetPoint2(tmp6);
     m_LineSourceVector2[m_LineSourceVector2.size()-1]->Update();
 
-    mafString ds;
-    ds = wxString::Format(_("%.2f") , manualDistance);
-    m_MeterVector[m_MeterVector.size()-1]->SetText(ds);
+    mafString ds = mafString::Format(_R("%.2f") , manualDistance);
+    m_MeterVector[m_MeterVector.size()-1]->SetText(ds.GetCStr());
 
     m_Measure[m_Measure.size()-1] = manualDistance;
   }
@@ -1030,7 +1025,7 @@ void mafInteractor2DDistance::SetManualDistance(double manualDistance)
 void mafInteractor2DDistance::SetLabel(mafString label)
 //----------------------------------------------------------------------------
 {
-	m_MeterVector[m_MeterVector.size()-1]->SetText(label);
+	m_MeterVector[m_MeterVector.size()-1]->SetText(label.GetCStr());
 	m_CurrentRenderer->GetRenderWindow()->Render();
 }
 //----------------------------------------------------------------------------

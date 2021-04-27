@@ -85,7 +85,7 @@ int mafXMLParser::InternalStore()
   {
     m_DOM->m_XMLSerializer = ( (XERCES_CPP_NAMESPACE_QUALIFIER DOMImplementationLS*)m_DOM->m_XMLImplement )->createLSSerializer();
 
-    m_DOM->m_XMLTarget = new XERCES_CPP_NAMESPACE_QUALIFIER LocalFileFormatTarget(m_URL);
+    m_DOM->m_XMLTarget = new XERCES_CPP_NAMESPACE_QUALIFIER LocalFileFormatTarget(m_URL.GetCStr());
 
     // set user specified end of line sequence and output encoding
     m_DOM->m_XMLSerializer->setNewLine( mafXMLString("\r") );
@@ -100,7 +100,7 @@ int mafXMLParser::InternalStore()
     try
     {
       // create a document
-      m_DOM->m_XMLDoc = m_DOM->m_XMLImplement->createDocument( NULL, mafXMLString(m_FileType), NULL ); // NO URI and NO DTD
+      m_DOM->m_XMLDoc = m_DOM->m_XMLImplement->createDocument( NULL, mafXMLString(m_FileType.GetCStr()), NULL ); // NO URI and NO DTD
       if (m_DOM->m_XMLDoc)
       {
         XERCES_CPP_NAMESPACE_QUALIFIER DOMLSOutput *theOutputDesc = m_DOM->m_XMLImplement->createLSOutput();
@@ -117,7 +117,7 @@ int mafXMLParser::InternalStore()
         mafStorageElement *documentElement = new mafXMLElement(new mmuXMLDOMElement(root),NULL,this);
 
         // attach version attribute to the root node
-        documentElement->SetAttribute("Version",m_Version);
+        documentElement->SetAttribute(_R("Version"),m_Version);
       
         // call Store function of the m_Document object. The root is passed
         // as parent the DOM root element. A tree root is usually a special
@@ -144,7 +144,7 @@ int mafXMLParser::InternalStore()
     }
     catch (...)
     {
-       mafErrorMessage("XML error, an error occurred creating the XML document!");
+       mafErrorMessage(_M("XML error, an error occurred creating the XML document!"));
        errorCode = 3;
     }
 
@@ -155,7 +155,7 @@ int mafXMLParser::InternalStore()
   else
   {
     // implementation retrieve failed
-    mafErrorMessage("Requested XML implementation is not supported");
+    mafErrorMessage(_M("Requested XML implementation is not supported"));
     errorCode = 1;
   }
  
@@ -208,13 +208,13 @@ int mafXMLParser::InternalRestore()
     {
       try
       {
-        m_DOM->m_XMLParser->parse(m_URL);
+        m_DOM->m_XMLParser->parse(m_URL.GetCStr());
         int errorCount = m_DOM->m_XMLParser->getErrorCount(); 
 
         if (errorCount != 0)
         {
           // errors while parsing...
-          mafErrorMessage("Errors while parsing XML file");
+          mafErrorMessage(_M("Errors while parsing XML file"));
           errorCode = IO_XML_PARSE_ERROR;
         }
         else
@@ -228,10 +228,10 @@ int mafXMLParser::InternalRestore()
           if (m_FileType == documentElement->GetName())
           {
             mafString docVersion;
-            if (documentElement->GetAttribute("Version",docVersion))
+            if (documentElement->GetAttribute(_R("Version"),docVersion))
             {
-              double doc_version_f = atof(docVersion);
-              double my_version_f = atof(m_Version);
+              double doc_version_f = atof(docVersion.GetCStr());
+              double my_version_f = atof(m_Version.GetCStr());
             
               if (my_version_f <= doc_version_f)
               {
@@ -250,7 +250,7 @@ int mafXMLParser::InternalRestore()
                 else
                 {
                   // Upgrade document to the actual version
-                  documentElement->SetAttribute("Version", my_version_f);
+                  documentElement->SetAttribute(_R("Version"), my_version_f);
                   m_NeedsUpgrade = true;
                   if (m_Document->Restore(documentElement) != MAF_OK)
                     errorCode = IO_RESTORE_ERROR;
@@ -260,7 +260,7 @@ int mafXMLParser::InternalRestore()
           }
           else
           {
-            mafErrorMacro("XML parsing error: wrong file type, expected \""<<m_FileType<<"\", found "<<documentElement->GetName());
+            mafErrorMacro("XML parsing error: wrong file type, expected \""<<m_FileType.GetCStr() <<"\", found "<<documentElement->GetName().GetCStr());
             errorCode = IO_WRONG_FILE_TYPE;
           }
           
@@ -272,21 +272,25 @@ int mafXMLParser::InternalRestore()
       catch (const XERCES_CPP_NAMESPACE_QUALIFIER XMLException& e)
       {
         mafString err;
-        err << "An error occurred during XML parsing.\n Message: " << mafXMLString(e.getMessage());
-        mafErrorMessage(err);
+        err += _R("An error occurred during XML parsing.\n Message: ");
+        err += _R(mafXMLString(e.getMessage()));
+        mafErrorMessage(_M(err));
         errorCode = IO_XML_PARSE_ERROR;
       }
 
       catch (const XERCES_CPP_NAMESPACE_QUALIFIER DOMException& e)
       { 
         mafString err;
-        err << "DOM-XML Error while parsing file '" << m_URL << "'\n";
-        err << "DOMException code is: " << mafString(e.code);
+        err += _R("DOM-XML Error while parsing file '") + m_URL + _R("'\n");
+        err += _R("DOMException code is: ") + mafToString(e.code);
 
         if (e.getMessage())
-          err << "DOMException msg is: " << mafXMLString(e.getMessage());
+        {
+            err += _R("DOMException msg is: ");
+            err += _R(mafXMLString(e.getMessage()));
+        }
       
-        mafErrorMessage(err);
+        mafErrorMessage(_M(err));
         errorCode = IO_DOM_XML_ERROR;
       }
 
@@ -300,7 +304,7 @@ int mafXMLParser::InternalRestore()
 
       catch (...)
       {
-        mafErrorMessage("An error occurred during XML parsing");
+        mafErrorMessage(_M("An error occurred during XML parsing"));
         errorCode = IO_XML_PARSE_ERROR;
       }
     }
@@ -311,7 +315,7 @@ int mafXMLParser::InternalRestore()
   else
   {
     // parser allocation error
-    mafErrorMessage("Failed to allocate XML parser");
+    mafErrorMessage(_M("Failed to allocate XML parser"));
     errorCode = IO_XML_PARSER_INTERNAL_ERROR;
   }
 

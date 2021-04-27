@@ -58,19 +58,19 @@ ClientUnit::~ClientUnit()
 bool ClientUnit::ConnectClient(wxIPV4address &addr)
 //----------------------------------------------------------------------------
 {
-  mafLogMessage(_("\nTrying to connect (timeout = 10 sec) ...\n"));
+  mafLogMessage(_M(mafString(_L("\nTrying to connect (timeout = 10 sec) ...\n"))));
   m_sock->Connect(addr, FALSE);
   m_sock->WaitOnConnect(10);
 
   bool status = m_sock->IsConnected();
 
   if(status)
-    mafLogMessage(_("Succeeded ! Connection established\n"));
+    mafLogMessage(_M(mafString(_L("Succeeded ! Connection established\n"))));
   else
   {
     m_sock->Close();
-    mafLogMessage(_("Failed ! Unable to connect\n"));
-    mafLogMessage(_("Can't connect to the specified host"));
+    mafLogMessage(_M(mafString(_L("Failed ! Unable to connect\n"))));
+    mafLogMessage(_M(mafString(_L("Can't connect to the specified host"))));
   }
 
   return status;
@@ -110,19 +110,19 @@ void ClientUnit::SendMessageToServer(mafString &cmd)
 void ClientUnit::OnSocketEvent(wxSocketEvent& event)
 //----------------------------------------------------------------------------
 {
-  wxString s = _("OnSocketEvent: ");
+  mafString s = _L("OnSocketEvent: ");
 
   wxSocketBase *sock = event.GetSocket();
 
   switch(event.GetSocketEvent())
   {
     case wxSOCKET_INPUT: 
-      s.Append(_("wxSOCKET_INPUT\n")); 
+      s.Append(_L("wxSOCKET_INPUT\n")); 
       ReadMessageFromServer(sock);
     break;
-    case wxSOCKET_LOST       : s.Append(_("wxSOCKET_LOST\n")); break;
-    case wxSOCKET_CONNECTION : s.Append(_("wxSOCKET_CONNECTION\n")); break;
-    default                  : s.Append(_("Unexpected event !\n")); break;
+    case wxSOCKET_LOST       : s.Append(_L("wxSOCKET_LOST\n")); break;
+    case wxSOCKET_CONNECTION : s.Append(_L("wxSOCKET_CONNECTION\n")); break;
+    default                  : s.Append(_L("Unexpected event !\n")); break;
   }
 
   //mafLogMessage(s.c_str());

@@ -86,23 +86,23 @@ void mafGUITransformTextEntries::CreateGui()
   m_Gui->SetListener(this);
 
   m_Gui->Divider(2);
-  m_Gui->Label("vme pose", true);
-  m_Gui->Double(ID_TRANSLATE_X, "Translate X", &m_Position[0]);
-  m_Gui->Double(ID_TRANSLATE_Y, "Translate Y", &m_Position[1]);
-  m_Gui->Double(ID_TRANSLATE_Z, "Translate Z", &m_Position[2]);
-  m_Gui->Double(ID_ROTATE_X, "Rotate X", &m_Orientation[0]);
-  m_Gui->Double(ID_ROTATE_Y, "Rotate Y", &m_Orientation[1]);
-  m_Gui->Double(ID_ROTATE_Z, "Rotate Z", &m_Orientation[2]);
+  m_Gui->Label(_R("vme pose"), true);
+  m_Gui->Double(ID_TRANSLATE_X, _R("Translate X"), &m_Position[0]);
+  m_Gui->Double(ID_TRANSLATE_Y, _R("Translate Y"), &m_Position[1]);
+  m_Gui->Double(ID_TRANSLATE_Z, _R("Translate Z"), &m_Position[2]);
+  m_Gui->Double(ID_ROTATE_X, _R("Rotate X"), &m_Orientation[0]);
+  m_Gui->Double(ID_ROTATE_Y, _R("Rotate Y"), &m_Orientation[1]);
+  m_Gui->Double(ID_ROTATE_Z, _R("Rotate Z"), &m_Orientation[2]);
 
   if (m_EnableScaling == true)
   {
-    m_Gui->Double(ID_SCALE_X, "Scale X", &m_Scaling[0], 0);
-    m_Gui->Double(ID_SCALE_Y, "Scale Y", &m_Scaling[1], 0);
-    m_Gui->Double(ID_SCALE_Z, "Scale Z", &m_Scaling[2], 0);
+    m_Gui->Double(ID_SCALE_X, _R("Scale X"), &m_Scaling[0], 0);
+    m_Gui->Double(ID_SCALE_Y, _R("Scale Y"), &m_Scaling[1], 0);
+    m_Gui->Double(ID_SCALE_Z, _R("Scale Z"), &m_Scaling[2], 0);
   }
   else
   {
-    mafLogMessage("scaling not enabled, not building scaling gui");
+    mafLogMessage(_M("scaling not enabled, not building scaling gui"));
   }
 
   m_Gui->Divider();

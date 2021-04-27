@@ -130,13 +130,13 @@ void mafVMEItemVTK::DeepCopyVmeLarge(mafVMEItem *a)
 
       vtk_item->ReleaseData();
 
-      mafString filename = wxGetCwd();
-      filename<<"/TMP.vtk";
-      mafLogMessage("<<<<<Creating temp file : %s",filename);
+      mafString filename = mafWxToString(wxGetCwd());
+      filename += _R("/TMP.vtk");
+      mafLogMessage(_M(_R("<<<<<Creating temp file : ") + filename));
       this->ReadData(filename);
-      mafLogMessage("<<<<<Read temp file : %s",filename);
+      mafLogMessage(_M(_R("<<<<<Read temp file : ") + filename));
 
-      remove(filename);
+      mafFileRemove(filename);
   }
   else
   {
@@ -250,7 +250,7 @@ void mafVMEItemVTK::SetData(vtkDataSet *data)
     if (data)
     {
       //m_DataType=data->GetClassName();
-      this->SetDataType(data->GetClassName());
+      this->SetDataType(_R(data->GetClassName()));
 
       double bounds[6];
       data->Update();
@@ -262,7 +262,7 @@ void mafVMEItemVTK::SetData(vtkDataSet *data)
     else
     {
       //m_DataType="";
-      this->SetDataType("");
+      this->SetDataType(_R(""));
       m_Bounds.Reset();
     }
     if(m_Data.GetPointer() != NULL)
@@ -395,7 +395,7 @@ int mafVMEItemVTK::ReadData(mafString &filename, int resolvedURL)
     if (GetCrypting() && m_IOMode != MEMORY)
     {
 #ifdef MAF_USE_CRYPTO
-      mafDefaultDecryptFileInMemory(filename, m_DecryptedFileString);
+      mafDefaultDecryptFileInMemory(filename.GetCStr(), m_DecryptedFileString);
 #else
       mafErrorMacro("Encrypted data not supported: MAF not linked to Crypto library.");
       return MAF_ERROR;
@@ -404,31 +404,31 @@ int mafVMEItemVTK::ReadData(mafString &filename, int resolvedURL)
 
     // Workaround for double read bug of the vtkDataSetReader class
     // Read immediately the data and destroy the reader to close the input file
-    if (datatype == "vtkPolyData")
+    if (datatype == _R("vtkPolyData"))
     {
       reader = vtkPolyDataReader::New();
       UpdateReader(reader, filename);
       data = ((vtkPolyDataReader *)reader)->GetOutput();
     }
-    else if (datatype == "vtkStructuredPoints" || datatype == "vtkImageData")
+    else if (datatype == _R("vtkStructuredPoints") || datatype == _R("vtkImageData"))
     {
       reader = vtkStructuredPointsReader::New();
       UpdateReader(reader, filename);
       data = ((vtkStructuredPointsReader *)reader)->GetOutput();
     }
-    else if (datatype == "vtkStructuredGrid")
+    else if (datatype == _R("vtkStructuredGrid"))
     {
       reader = vtkStructuredGridReader::New();
       UpdateReader(reader, filename);
       data = ((vtkStructuredGridReader *)reader)->GetOutput();
     }
-    else if (datatype == "vtkRectilinearGrid")
+    else if (datatype == _R("vtkRectilinearGrid"))
     {
       reader = vtkRectilinearGridReader::New();
       UpdateReader(reader, filename);
       data = ((vtkRectilinearGridReader *)reader)->GetOutput();
     }
-    else if (datatype == "vtkUnstructuredGrid")
+    else if (datatype == _R("vtkUnstructuredGrid"))
     {
       reader = vtkUnstructuredGridReader::New();
       UpdateReader(reader, filename);
@@ -454,7 +454,7 @@ int mafVMEItemVTK::ReadData(mafString &filename, int resolvedURL)
 
     if (data == NULL || err == VTK_ERROR)
     {
-      mafErrorMacro("Cannot read data file " << filename);
+      mafErrorMacro("Cannot read data file " << filename.GetCStr());
       reader->Delete(); //BES: 23.5.2008 - added to avoid memory leaks
       return MAF_ERROR;
     }
@@ -497,7 +497,7 @@ int mafVMEItemVTK::UpdateReader(vtkDataReader *reader, mafString &filename)
     }
     else
     {
-      reader->SetFileName(filename);
+      reader->SetFileName(filename.GetCStr());
     }
     reader->Update();
   }
@@ -548,13 +548,13 @@ int mafVMEItemVTK::InternalStoreData(const char *url)
         found = false;
       break;
       case DEFAULT:
-        if (mafString::IsEmpty(url))
+        if (mafString(_R("")) == _R(url))//url is empty
         {
           mafWarningMacro("No filename specified: cannot write data to disk");
           return MAF_ERROR;
         }
 
-        found=storage->IsFileInDirectory(url);
+        found=storage->IsFileInDirectory(_R(url));
         storage->GetTmpFile(filename);
       break;
       default:
@@ -584,7 +584,7 @@ int mafVMEItemVTK::InternalStoreData(const char *url)
     int ret = MAF_OK; // value returned by StoreToURL() function at the end of saving to file
     int vtk_err = VTK_OK;
     int chk_res = MAF_OK;
-    if ((IsDataPresent()&&(!found||(m_URL!=url)))||((IsDataPresent()==found)&&(found==IsDataModified())))
+    if ((IsDataPresent()&&(!found||(m_URL!=_R(url))))||((IsDataPresent()==found)&&(found==IsDataModified())))
     {       
       //if (!item->IsDataModified()&&found)
       //  return;
@@ -594,7 +594,7 @@ int mafVMEItemVTK::InternalStoreData(const char *url)
       // problems retrieving data... (e.g. when a file has been erroneously deleted or corrupted...)
       if (data == NULL)
       {
-        mafLogMessage(_("problems retrieving data... (e.g. when a file has been erroneously deleted or corrupted...)"));
+        mafLogMessage(_M(mafString(_L("problems retrieving data... (e.g. when a file has been erroneously deleted or corrupted...)"))));
         return MAF_ERROR;
       }
 
@@ -654,7 +654,7 @@ int mafVMEItemVTK::InternalStoreData(const char *url)
         if (GetCrypting())
         {
 #ifdef MAF_USE_CRYPTO
-          mafDefaultEncryptFileFromMemory(writer->GetOutputString(), writer->GetOutputStringLength(),filename);
+          mafDefaultEncryptFileFromMemory(writer->GetOutputString(), writer->GetOutputStringLength(),filename.GetCStr());
 #else
           mafErrorMacro("Encrypted data is not supported: Crypto library not linked to MAF!");
           return MAF_ERROR;
@@ -662,14 +662,14 @@ int mafVMEItemVTK::InternalStoreData(const char *url)
         }
         else
         {
-          writer->SetFileName(filename);
+          writer->SetFileName(filename.GetCStr());
           writer->Write();
           vtk_err = writer->GetErrorCode();
           if (vtk_err == VTK_ERROR)
           {
             return MAF_ERROR;
           }
-          int chk_res = CheckFile(filename);
+          int chk_res = CheckFile(filename.GetCStr());
           if (chk_res != MAF_OK)
           {
             return MAF_ERROR;
@@ -716,19 +716,19 @@ int mafVMEItemVTK::CheckFile(const char *filename)
   int res = file_chk->IsFileValid(m_DataType.GetCStr());
   if (res == VTK_ERROR)
   {
-    mafMessage(_("File %s corrupted!!"), filename);
+    mafMessage(_M(mafString(_L("File ")) + _R(filename) + _L(" corrupted!!")));
     return MAF_ERROR;
   }
   std::string chk_result;
   mafCalculateteChecksum(filename, chk_result);
-  m_ChecksumMD5 = chk_result.c_str();
-  if(!GetTagArray()->GetTag("MD5Checksum"))
+  m_ChecksumMD5 = _R(chk_result.c_str());
+  if(!GetTagArray()->GetTag(_R("MD5Checksum")))
   {
     mafTagItem ti;
-    ti.SetName("MD5Checksum");
+    ti.SetName(_R("MD5Checksum"));
     GetTagArray()->SetTag(ti);
   }
-  mafTagItem *md5tag = GetTagArray()->GetTag("MD5Checksum");
+  mafTagItem *md5tag = GetTagArray()->GetTag(_R("MD5Checksum"));
   md5tag->SetValue(m_ChecksumMD5);
   return MAF_OK;
 }
@@ -742,19 +742,19 @@ int mafVMEItemVTK::CheckFile(const char *input_string, int input_len)
   int res = file_chk->IsFileValid(m_DataType.GetCStr());
   if (res != 0)
   {
-    mafMessage(_("String corrupted!!"));
+    mafMessage(_M("String corrupted!!"));
     return MAF_ERROR;
   }
   std::string chk_result;
   mafCalculateteChecksum(input_string, input_len, chk_result);
-  m_ChecksumMD5 = chk_result.c_str();
-  if(!GetTagArray()->GetTag("MD5Checksum"))
+  m_ChecksumMD5 = _R(chk_result.c_str());
+  if(!GetTagArray()->GetTag(_R("MD5Checksum")))
   {
     mafTagItem ti;
-    ti.SetName("MD5Checksum");
+    ti.SetName(_R("MD5Checksum"));
     GetTagArray()->SetTag(ti);
   }
-  mafTagItem *md5tag = GetTagArray()->GetTag("MD5Checksum");
+  mafTagItem *md5tag = GetTagArray()->GetTag(_R("MD5Checksum"));
   md5tag->SetValue(m_ChecksumMD5);
   return MAF_OK;
 }
@@ -797,7 +797,7 @@ void mafVMEItemVTK::GetOutputMemory(const char *&out_str, int &size)
 bool mafVMEItemVTK::StoreToArchive(wxZipOutputStream &zip)
 //-------------------------------------------------------------------------
 {
-  if (!zip.PutNextEntry(m_URL.GetCStr(), wxDateTime::Now(), m_OutputMemorySize) || !zip.Write(m_OutputMemory, m_OutputMemorySize))
+  if (!zip.PutNextEntry(m_URL.toWx(), wxDateTime::Now(), m_OutputMemorySize) || !zip.Write(m_OutputMemory, m_OutputMemorySize))
     return false;
   bool write_res = zip.LastWrite() == m_OutputMemorySize;
   return write_res;

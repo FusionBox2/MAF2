@@ -49,7 +49,7 @@ class MAF_EXPORT mafViewVTK: public mafView
 public:
 
   /** constructor */
-  mafViewVTK(const mafString& label = "vtkView", int camera_position = CAMERA_PERSPECTIVE, bool show_axes = true, bool show_grid = false, bool show_ruler = false, int stereo = 0, bool show_orientator = false, int axesType = mafAxes::TRIAD);
+  mafViewVTK(const mafString& label = _R("vtkView"), int camera_position = CAMERA_PERSPECTIVE, bool show_axes = true, bool show_grid = false, bool show_ruler = false, int stereo = 0, bool show_orientator = false, int axesType = mafAxes::TRIAD);
   /** constructor */
   virtual ~mafViewVTK(); 
   /** RTTI macro */

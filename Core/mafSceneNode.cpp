@@ -296,7 +296,7 @@ void mafSceneNode::Print(std::ostream& os, const int tabs)// const
 
   // print the scene node
   os << indent << "mafSceneNode" << '\t' << this << std::endl;
-  os << indent << "Linked VME" << '\t' << m_Vme << '\t' << m_Vme->GetName() << std::endl;
+  os << indent << "Linked VME" << '\t' << m_Vme << '\t' << m_Vme->GetName().GetCStr() << std::endl;
   os << indent << "Visual Pipe" << '\t' << m_Pipe << '\t' <<  (m_Pipe ? m_Pipe->GetTypeName() : "")  << std::endl;  
   os << indent << "Front Renderer" << '\t' << m_RenFront << std::endl;
   os <<  indent << "Back Renderer" << '\t' << m_RenBack << std::endl;

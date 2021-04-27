@@ -65,12 +65,12 @@ m_Timer(NULL, ID_TIMER)
   TransferDataToWindow();
 
   m_Sizer =  new wxBoxSizer( wxHORIZONTAL );
-  m_TimeBarButtons[MOVIE_BEGIN] = new mafGUIPicButton(this, "TIME_BEGIN", TIME_BEGIN, this);
-  m_TimeBarButtons[MOVIE_PREV] = new mafGUIPicButton(this, "TIME_PREV",  TIME_PREV , this);
-  m_TimeBarButtons[MOVIE_PLAY] = new mafGUIPicButton(this, "TIME_PLAY",  TIME_PLAY, this);
-  m_TimeBarButtons[MOVIE_NEXT] = new mafGUIPicButton(this, "TIME_NEXT",  TIME_NEXT , this);
-  m_TimeBarButtons[MOVIE_END] = new mafGUIPicButton(this, "TIME_END",   TIME_END  , this);
-  m_TimeBarButtons[MOVIE_REC] = new mafGUIPicButton(this, "MOVIE_RECORD",  MOVIE_RECORD , this);
+  m_TimeBarButtons[MOVIE_BEGIN] = new mafGUIPicButton(this, _R("TIME_BEGIN"), TIME_BEGIN, this);
+  m_TimeBarButtons[MOVIE_PREV] = new mafGUIPicButton(this, _R("TIME_PREV"),  TIME_PREV , this);
+  m_TimeBarButtons[MOVIE_PLAY] = new mafGUIPicButton(this, _R("TIME_PLAY"),  TIME_PLAY, this);
+  m_TimeBarButtons[MOVIE_NEXT] = new mafGUIPicButton(this, _R("TIME_NEXT"),  TIME_NEXT , this);
+  m_TimeBarButtons[MOVIE_END] = new mafGUIPicButton(this, _R("TIME_END"),   TIME_END  , this);
+  m_TimeBarButtons[MOVIE_REC] = new mafGUIPicButton(this, _R("MOVIE_RECORD"),  MOVIE_RECORD , this);
 
   for(int i = 0; i < MOVIE_BUTTONS_NUM; i++)
     m_Sizer->Add(m_TimeBarButtons[i],0,0);
@@ -130,7 +130,7 @@ void mafGUIMovieCtrl::OnEvent(mafEventBase *maf_event)
     }
     if(play)
     {
-      m_TimeBarButtons[MOVIE_PLAY]->SetBitmap("TIME_STOP");
+      m_TimeBarButtons[MOVIE_PLAY]->SetBitmap(_R("TIME_STOP"));
       m_TimeBarButtons[MOVIE_PLAY]->SetEventId(TIME_STOP);
       
       m_TimeBarButtons[MOVIE_BEGIN]->Enable(false);
@@ -143,7 +143,7 @@ void mafGUIMovieCtrl::OnEvent(mafEventBase *maf_event)
     }
     else
     {
-      m_TimeBarButtons[MOVIE_PLAY]->SetBitmap("TIME_PLAY");
+      m_TimeBarButtons[MOVIE_PLAY]->SetBitmap(_R("TIME_PLAY"));
       m_TimeBarButtons[MOVIE_PLAY]->SetEventId(TIME_PLAY);
 
       m_TimeBarButtons[MOVIE_BEGIN]->Enable();

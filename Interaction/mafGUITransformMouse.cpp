@@ -86,25 +86,25 @@ void mafGUITransformMouse::CreateGui()
 {
   m_Gui = new mafGUI(this);
   m_Gui->Divider(2);
-  m_Gui->Label("mouse interaction", true);
-  m_Gui->Label("left mouse: rotate");
-  m_Gui->Label("middle mouse: translate");
-  m_Gui->Label("left mouse + ctrl: rotate around view normal");
+  m_Gui->Label(_R("mouse interaction"), true);
+  m_Gui->Label(_R("left mouse: rotate"));
+  m_Gui->Label(_R("middle mouse: translate"));
+  m_Gui->Label(_R("left mouse + ctrl: rotate around view normal"));
   m_Gui->Divider();
 
   // rotation axes
-  mafString rot_axes[5] = {"x", "y", "z", "view","normal view"};
+  mafString rot_axes[5] = {_R("x"), _R("y"), _R("z"), _R("view"),_R("normal view")};
 
   // translation axes
-	mafString translation_type[10] = {"x", "y", "z", "view","normal view", "xy", "xz", "yz", "surface snap","surface snap with normal || x"}; 
+	mafString translation_type[10] = { _R("x"), _R("y"), _R("z"), _R("view"),_R("normal view"), _R("xy"), _R("xz"), _R("yz"), _R("surface snap"),_R("surface snap with normal || x")};
 
   // rotation constraints
-  m_Gui->Label("rotation constraints");
-	m_Gui->Combo(ID_ROTATION_AXES,"",&m_RotationConstraintId,5,rot_axes);
+  m_Gui->Label(_R("rotation constraints"));
+	m_Gui->Combo(ID_ROTATION_AXES,_R(""),&m_RotationConstraintId,5,rot_axes);
 
   // translation constraints
-  m_Gui->Label("translation constraints");
-	m_Gui->Combo(ID_TRASLATION_AXES,"",&m_TranslationConstraintId,10,translation_type);
+  m_Gui->Label(_R("translation constraints"));
+	m_Gui->Combo(ID_TRASLATION_AXES,_R(""),&m_TranslationConstraintId,10,translation_type);
 
 	m_Gui->Divider();
 

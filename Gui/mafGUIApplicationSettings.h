@@ -40,7 +40,7 @@ class MAF_EXPORT mafGUIApplicationSettings : public mafGUISettings
 {
 public:
   /** constructor .*/
-	mafGUIApplicationSettings(mafBaseEventHandler *Listener, const mafString &label = _("Application"));
+	mafGUIApplicationSettings(mafBaseEventHandler *Listener, const mafString &label = _L("Application"));
   /** destructor .*/
 	~mafGUIApplicationSettings(); 
 
@@ -93,13 +93,13 @@ public:
 
   /** Set the flag to use the default passphrase with which encrypt saved data.
   If the flag is '0' means that no default passphrase is used, so the second optional argument has to be set.*/
-  void SetUseDefaultPassPhrase(int use_default, mafString passphrase = "");
+  void SetUseDefaultPassPhrase(int use_default, const mafString& passphrase = _R(""));
 
   /** Return the Pass phrase used to encrypt/decrypt files.*/
   mafString &GetPassPhrase() {return m_PassPhrase;};
 
   /** Set the custom passphrase to encrypt data.*/
-  void SetPassPhrase(mafString pass_phrase);
+  void SetPassPhrase(const mafString& pass_phrase);
 
   /** Select image type during saving of the views*/
   void SetImageTypeId(int imageTypeId){m_ImageTypeId = imageTypeId;}

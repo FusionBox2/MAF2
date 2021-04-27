@@ -129,11 +129,11 @@ mafVMESurfaceParametric::~mafVMESurfaceParametric()
 mmaMaterial *mafVMESurfaceParametric::GetMaterial()
 //-------------------------------------------------------------------------
 {
-	mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+	mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
 	if (material == NULL)
 	{
 		material = mmaMaterial::New();
-		SetAttribute("MaterialAttributes", material);
+		SetAttribute(_R("MaterialAttributes"), material);
 	}
 	return material;
 }
@@ -282,8 +282,8 @@ mafGUI* mafVMESurfaceParametric::CreateGui()
   mafVME::CreateGui();
   if(m_Gui)
   {
-    mafString geometryType[6] = {"Sphere", "Cone", "Cylinder", "Cube", "Plane", "Ellipsoid"};
-    m_Gui->Combo(ID_GEOMETRY_TYPE, "", &m_GeometryType, 6, geometryType);
+    mafString geometryType[6] = {_R("Sphere"), _R("Cone"), _R("Cylinder"), _R("Cube"), _R("Plane"), _R("Ellipsoid")};
+    m_Gui->Combo(ID_GEOMETRY_TYPE, _R(""), &m_GeometryType, 6, geometryType);
     m_Gui->Divider(2);
 
     CreateGuiSphere();   
@@ -524,34 +524,34 @@ int mafVMESurfaceParametric::InternalStore(mafStorageElement *parent)
 	if (Superclass::InternalStore(parent)==MAF_OK)
 	{
     if (
-		parent->StoreMatrix("Transform",&m_Transform->GetMatrix()) == MAF_OK && 
-		parent->StoreInteger("Geometry", 	m_GeometryType) == MAF_OK &&
-    parent->StoreDouble("ShereRadius", m_SphereRadius) == MAF_OK &&
-    parent->StoreDouble("SpherePhiRes",m_SpherePhiRes) == MAF_OK &&
-    parent->StoreDouble("SphereThetaRes",m_SphereTheRes) == MAF_OK &&
-    parent->StoreDouble("ConeHieght",m_ConeHeight) == MAF_OK &&
-    parent->StoreDouble("ConeRadius",m_ConeRadius) == MAF_OK &&
-    parent->StoreInteger("ConeCapping",m_ConeCapping) == MAF_OK &&
-    parent->StoreDouble("ConeRes",m_ConeRes) == MAF_OK &&
-    parent->StoreInteger("ConeOrientationAxis",m_ConeOrientationAxis) == MAF_OK &&
-    parent->StoreDouble("CylinderHeight",m_CylinderHeight) == MAF_OK &&
-    parent->StoreDouble("CylinderRadius",m_CylinderRadius) == MAF_OK &&
-    parent->StoreDouble("CylinderRes",m_CylinderRes) == MAF_OK &&
-    parent->StoreInteger("CylinderOrientationAxis",m_CylinderOrientationAxis) == MAF_OK &&
-    parent->StoreDouble("CubeXLength",m_CubeXLength) == MAF_OK &&
-    parent->StoreDouble("CubeYLength",m_CubeYLength) == MAF_OK &&
-    parent->StoreDouble("CubeZLength",m_CubeZLength) == MAF_OK &&
-    parent->StoreDouble("PlaneXRes",m_PlaneXRes) == MAF_OK &&
-    parent->StoreDouble("PlaneYRes",m_PlaneYRes) == MAF_OK &&
-    parent->StoreVectorN("PlaneOrigin",m_PlaneOrigin,3) == MAF_OK &&
-    parent->StoreVectorN("PlanePoint1",m_PlanePoint1,3) == MAF_OK &&
-    parent->StoreVectorN("PlanePoint2",m_PlanePoint2,3) == MAF_OK &&
-    parent->StoreDouble("EllipsoidXLenght",m_EllipsoidXLenght) == MAF_OK &&
-    parent->StoreDouble("EllipsoidYLenght",m_EllipsoidYLenght) == MAF_OK &&
-    parent->StoreDouble("EllipsoidZLenght",m_EllipsoidZLenght) == MAF_OK &&
-    parent->StoreDouble("EllipsoidTheRes",m_EllipsoidTheRes) == MAF_OK &&
-    parent->StoreDouble("EllipsoidPhiRes",m_EllipsoidPhiRes) == MAF_OK &&
-    parent->StoreInteger("EllipsoidOrientationAxis",m_CylinderOrientationAxis) == MAF_OK
+		parent->StoreMatrix(_R("Transform"),&m_Transform->GetMatrix()) == MAF_OK && 
+		parent->StoreInteger(_R("Geometry"), 	m_GeometryType) == MAF_OK &&
+    parent->StoreDouble(_R("ShereRadius"), m_SphereRadius) == MAF_OK &&
+    parent->StoreDouble(_R("SpherePhiRes"),m_SpherePhiRes) == MAF_OK &&
+    parent->StoreDouble(_R("SphereThetaRes"),m_SphereTheRes) == MAF_OK &&
+    parent->StoreDouble(_R("ConeHieght"),m_ConeHeight) == MAF_OK &&
+    parent->StoreDouble(_R("ConeRadius"),m_ConeRadius) == MAF_OK &&
+    parent->StoreInteger(_R("ConeCapping"),m_ConeCapping) == MAF_OK &&
+    parent->StoreDouble(_R("ConeRes"),m_ConeRes) == MAF_OK &&
+    parent->StoreInteger(_R("ConeOrientationAxis"),m_ConeOrientationAxis) == MAF_OK &&
+    parent->StoreDouble(_R("CylinderHeight"),m_CylinderHeight) == MAF_OK &&
+    parent->StoreDouble(_R("CylinderRadius"),m_CylinderRadius) == MAF_OK &&
+    parent->StoreDouble(_R("CylinderRes"),m_CylinderRes) == MAF_OK &&
+    parent->StoreInteger(_R("CylinderOrientationAxis"),m_CylinderOrientationAxis) == MAF_OK &&
+    parent->StoreDouble(_R("CubeXLength"),m_CubeXLength) == MAF_OK &&
+    parent->StoreDouble(_R("CubeYLength"),m_CubeYLength) == MAF_OK &&
+    parent->StoreDouble(_R("CubeZLength"),m_CubeZLength) == MAF_OK &&
+    parent->StoreDouble(_R("PlaneXRes"),m_PlaneXRes) == MAF_OK &&
+    parent->StoreDouble(_R("PlaneYRes"),m_PlaneYRes) == MAF_OK &&
+    parent->StoreVectorN(_R("PlaneOrigin"),m_PlaneOrigin,3) == MAF_OK &&
+    parent->StoreVectorN(_R("PlanePoint1"),m_PlanePoint1,3) == MAF_OK &&
+    parent->StoreVectorN(_R("PlanePoint2"),m_PlanePoint2,3) == MAF_OK &&
+    parent->StoreDouble(_R("EllipsoidXLenght"),m_EllipsoidXLenght) == MAF_OK &&
+    parent->StoreDouble(_R("EllipsoidYLenght"),m_EllipsoidYLenght) == MAF_OK &&
+    parent->StoreDouble(_R("EllipsoidZLenght"),m_EllipsoidZLenght) == MAF_OK &&
+    parent->StoreDouble(_R("EllipsoidTheRes"),m_EllipsoidTheRes) == MAF_OK &&
+    parent->StoreDouble(_R("EllipsoidPhiRes"),m_EllipsoidPhiRes) == MAF_OK &&
+    parent->StoreInteger(_R("EllipsoidOrientationAxis"),m_CylinderOrientationAxis) == MAF_OK
     )
 		return MAF_OK;
 	}
@@ -565,36 +565,36 @@ int mafVMESurfaceParametric::InternalRestore(mafStorageElement *node)
 	if (Superclass::InternalRestore(node)==MAF_OK)
 	{
     mafMatrix matrix;
-    if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
+    if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK)
     {
       m_Transform->SetMatrix(matrix); 
-      node->RestoreInteger("Geometry",m_GeometryType);
-      node->RestoreDouble("ShereRadius",m_SphereRadius);
-      node->RestoreDouble("SpherePhiRes",m_SpherePhiRes);
-      node->RestoreDouble("SphereThetaRes",m_SphereTheRes);
-      node->RestoreDouble("ConeHieght",m_ConeHeight);
-      node->RestoreDouble("ConeRadius",m_ConeRadius);
-      node->RestoreInteger("ConeCapping",m_ConeCapping);
-      node->RestoreDouble("ConeRes",m_ConeRes);
-      node->RestoreInteger("ConeOrientationAxis",m_ConeOrientationAxis);
-      node->RestoreDouble("CylinderHeight",m_CylinderHeight);
-      node->RestoreDouble("CylinderRadius",m_CylinderRadius);
-      node->RestoreDouble("CylinderRes",m_CylinderRes);
-      node->RestoreInteger("CylinderOrientationAxis",m_CylinderOrientationAxis);
-      node->RestoreDouble("CubeXLength",m_CubeXLength);
-      node->RestoreDouble("CubeYLength",m_CubeYLength);
-      node->RestoreDouble("CubeZLength",m_CubeZLength);
-      node->RestoreDouble("PlaneXRes",m_PlaneXRes);
-      node->RestoreDouble("PlaneYRes",m_PlaneYRes);
-      node->RestoreVectorN("PlaneOrigin",m_PlaneOrigin,3);
-      node->RestoreVectorN("PlanePoint1",m_PlanePoint1,3);
-      node->RestoreVectorN("PlanePoint2",m_PlanePoint2,3);
-      node->RestoreDouble("EllipsoidXLenght",m_EllipsoidXLenght);
-      node->RestoreDouble("EllipsoidYLenght",m_EllipsoidYLenght);
-      node->RestoreDouble("EllipsoidZLenght",m_EllipsoidZLenght);
-      node->RestoreDouble("EllipsoidTheRes",m_EllipsoidTheRes);
-      node->RestoreDouble("EllipsoidPhiRes",m_EllipsoidPhiRes);
-      node->RestoreInteger("EllipsoidOrientationAxis",m_CylinderOrientationAxis);
+      node->RestoreInteger(_R("Geometry"),m_GeometryType);
+      node->RestoreDouble(_R("ShereRadius"),m_SphereRadius);
+      node->RestoreDouble(_R("SpherePhiRes"),m_SpherePhiRes);
+      node->RestoreDouble(_R("SphereThetaRes"),m_SphereTheRes);
+      node->RestoreDouble(_R("ConeHieght"),m_ConeHeight);
+      node->RestoreDouble(_R("ConeRadius"),m_ConeRadius);
+      node->RestoreInteger(_R("ConeCapping"),m_ConeCapping);
+      node->RestoreDouble(_R("ConeRes"),m_ConeRes);
+      node->RestoreInteger(_R("ConeOrientationAxis"),m_ConeOrientationAxis);
+      node->RestoreDouble(_R("CylinderHeight"),m_CylinderHeight);
+      node->RestoreDouble(_R("CylinderRadius"),m_CylinderRadius);
+      node->RestoreDouble(_R("CylinderRes"),m_CylinderRes);
+      node->RestoreInteger(_R("CylinderOrientationAxis"),m_CylinderOrientationAxis);
+      node->RestoreDouble(_R("CubeXLength"),m_CubeXLength);
+      node->RestoreDouble(_R("CubeYLength"),m_CubeYLength);
+      node->RestoreDouble(_R("CubeZLength"),m_CubeZLength);
+      node->RestoreDouble(_R("PlaneXRes"),m_PlaneXRes);
+      node->RestoreDouble(_R("PlaneYRes"),m_PlaneYRes);
+      node->RestoreVectorN(_R("PlaneOrigin"),m_PlaneOrigin,3);
+      node->RestoreVectorN(_R("PlanePoint1"),m_PlanePoint1,3);
+      node->RestoreVectorN(_R("PlanePoint2"),m_PlanePoint2,3);
+      node->RestoreDouble(_R("EllipsoidXLenght"),m_EllipsoidXLenght);
+      node->RestoreDouble(_R("EllipsoidYLenght"),m_EllipsoidYLenght);
+      node->RestoreDouble(_R("EllipsoidZLenght"),m_EllipsoidZLenght);
+      node->RestoreDouble(_R("EllipsoidTheRes"),m_EllipsoidTheRes);
+      node->RestoreDouble(_R("EllipsoidPhiRes"),m_EllipsoidPhiRes);
+      node->RestoreInteger(_R("EllipsoidOrientationAxis"),m_CylinderOrientationAxis);
       return MAF_OK;
     }
 	}
@@ -625,12 +625,12 @@ char** mafVMESurfaceParametric::GetIcon()
 void mafVMESurfaceParametric::CreateGuiPlane()
 {
   m_GuiPlane= new mafGUI(this);
-  m_GuiPlane->Label("Plane");
-  m_GuiPlane->Double(CHANGE_VALUE_PLANE,_("X Res"), &m_PlaneXRes);
-  m_GuiPlane->Double(CHANGE_VALUE_PLANE,_("Y Res"), &m_PlaneYRes);
-  m_GuiPlane->Vector(CHANGE_VALUE_PLANE,_("Origin"), m_PlaneOrigin);
-  m_GuiPlane->Vector(CHANGE_VALUE_PLANE,_("Point 1"), m_PlanePoint1);
-  m_GuiPlane->Vector(CHANGE_VALUE_PLANE,_("Point 2"), m_PlanePoint2);
+  m_GuiPlane->Label(_R("Plane"));
+  m_GuiPlane->Double(CHANGE_VALUE_PLANE,_L("X Res"), &m_PlaneXRes);
+  m_GuiPlane->Double(CHANGE_VALUE_PLANE,_L("Y Res"), &m_PlaneYRes);
+  m_GuiPlane->Vector(CHANGE_VALUE_PLANE,_L("Origin"), m_PlaneOrigin);
+  m_GuiPlane->Vector(CHANGE_VALUE_PLANE,_L("Point 1"), m_PlanePoint1);
+  m_GuiPlane->Vector(CHANGE_VALUE_PLANE,_L("Point 2"), m_PlanePoint2);
   assert(m_Gui);
   m_Gui->AddGui(m_GuiPlane);
 }
@@ -638,10 +638,10 @@ void mafVMESurfaceParametric::CreateGuiPlane()
 void mafVMESurfaceParametric::CreateGuiCube()
 {
   m_GuiCube = new mafGUI(this);
-  m_GuiCube->Label("Cube");
-  m_GuiCube->Double(CHANGE_VALUE_CUBE,_("X Length"), &m_CubeXLength);
-  m_GuiCube->Double(CHANGE_VALUE_CUBE,_("Y Length"), &m_CubeYLength);
-  m_GuiCube->Double(CHANGE_VALUE_CUBE,_("Z Length"), &m_CubeZLength);
+  m_GuiCube->Label(_R("Cube"));
+  m_GuiCube->Double(CHANGE_VALUE_CUBE,_L("X Length"), &m_CubeXLength);
+  m_GuiCube->Double(CHANGE_VALUE_CUBE,_L("Y Length"), &m_CubeYLength);
+  m_GuiCube->Double(CHANGE_VALUE_CUBE,_L("Z Length"), &m_CubeZLength);
   assert(m_Gui);
   m_Gui->AddGui(m_GuiCube);
 }
@@ -649,12 +649,12 @@ void mafVMESurfaceParametric::CreateGuiCube()
 void mafVMESurfaceParametric::CreateGuiCylinder()
 {
   m_GuiCylinder = new mafGUI(this);
-  m_GuiCylinder->Label("Cylinder");
-  m_GuiCylinder->Double(CHANGE_VALUE_CYLINDER,_("Height"), &m_CylinderHeight);
-  m_GuiCylinder->Double(CHANGE_VALUE_CYLINDER,_("Radius"), &m_CylinderRadius);
-  m_GuiCylinder->Double(CHANGE_VALUE_CYLINDER,_("Resolution"), &m_CylinderRes);
-  mafString orientationArray[3] = {_("X axis"),_("Y axis"),_("Z axis")};
-  m_GuiCylinder->Radio(CHANGE_VALUE_CYLINDER,"Orientation", &m_CylinderOrientationAxis, 3,orientationArray);
+  m_GuiCylinder->Label(_R("Cylinder"));
+  m_GuiCylinder->Double(CHANGE_VALUE_CYLINDER,_L("Height"), &m_CylinderHeight);
+  m_GuiCylinder->Double(CHANGE_VALUE_CYLINDER,_L("Radius"), &m_CylinderRadius);
+  m_GuiCylinder->Double(CHANGE_VALUE_CYLINDER,_L("Resolution"), &m_CylinderRes);
+  mafString orientationArray[3] = {_L("X axis"),_L("Y axis"),_L("Z axis")};
+  m_GuiCylinder->Radio(CHANGE_VALUE_CYLINDER,_R("Orientation"), &m_CylinderOrientationAxis, 3,orientationArray);
   assert(m_Gui);
   m_Gui->AddGui(m_GuiCylinder);
 
@@ -663,13 +663,13 @@ void mafVMESurfaceParametric::CreateGuiCylinder()
 void mafVMESurfaceParametric::CreateGuiCone()
 {
   m_GuiCone = new mafGUI(this);
-  m_GuiCone->Label("Cone");
-  m_GuiCone->Double(CHANGE_VALUE_CONE,_("Height"), &m_ConeHeight);
-  m_GuiCone->Double(CHANGE_VALUE_CONE,_("Radius"), &m_ConeRadius);
-  m_GuiCone->Double(CHANGE_VALUE_CONE,_("Resolution"), &m_ConeRes);
-  m_GuiCone->Bool(CHANGE_VALUE_CONE,"Cap", &m_ConeCapping); // Open or closed cone
-  mafString orientationArray[3] = {_("X axis"),_("Y axis"),_("Z axis")};
-  m_GuiCone->Radio(CHANGE_VALUE_CONE,"Orientation", &m_ConeOrientationAxis, 3,orientationArray);
+  m_GuiCone->Label(_R("Cone"));
+  m_GuiCone->Double(CHANGE_VALUE_CONE,_L("Height"), &m_ConeHeight);
+  m_GuiCone->Double(CHANGE_VALUE_CONE,_L("Radius"), &m_ConeRadius);
+  m_GuiCone->Double(CHANGE_VALUE_CONE,_L("Resolution"), &m_ConeRes);
+  m_GuiCone->Bool(CHANGE_VALUE_CONE,_R("Cap"), &m_ConeCapping); // Open or closed cone
+  mafString orientationArray[3] = {_L("X axis"),_L("Y axis"),_L("Z axis")};
+  m_GuiCone->Radio(CHANGE_VALUE_CONE,_R("Orientation"), &m_ConeOrientationAxis, 3,orientationArray);
   assert(m_Gui);
   m_Gui->AddGui(m_GuiCone);
 }
@@ -677,10 +677,10 @@ void mafVMESurfaceParametric::CreateGuiCone()
 void mafVMESurfaceParametric::CreateGuiSphere()
 {
   m_GuiSphere = new mafGUI(this);
-  m_GuiSphere->Label("Sphere");
-  m_GuiSphere->Double(CHANGE_VALUE_SPHERE,_("Radius"), &m_SphereRadius);
-  m_GuiSphere->Double(CHANGE_VALUE_SPHERE,_("Phi res"), &m_SpherePhiRes);
-  m_GuiSphere->Double(CHANGE_VALUE_SPHERE,_("Theta res"), &m_SphereTheRes);
+  m_GuiSphere->Label(_R("Sphere"));
+  m_GuiSphere->Double(CHANGE_VALUE_SPHERE,_L("Radius"), &m_SphereRadius);
+  m_GuiSphere->Double(CHANGE_VALUE_SPHERE,_L("Phi res"), &m_SpherePhiRes);
+  m_GuiSphere->Double(CHANGE_VALUE_SPHERE,_L("Theta res"), &m_SphereTheRes);
   assert(m_Gui);
   m_Gui->AddGui(m_GuiSphere);
 }
@@ -688,14 +688,14 @@ void mafVMESurfaceParametric::CreateGuiSphere()
 void mafVMESurfaceParametric::CreateGuiEllipsoid()
 {
   m_GuiEllipsoid = new mafGUI(this);
-  m_GuiEllipsoid->Label("Ellipsoid");
-  m_GuiEllipsoid->Double(CHANGE_VALUE_ELLIPSOID,_("X Length"), &m_EllipsoidXLenght);
-  m_GuiEllipsoid->Double(CHANGE_VALUE_ELLIPSOID,_("Y Length"), &m_EllipsoidYLenght);
-  m_GuiEllipsoid->Double(CHANGE_VALUE_ELLIPSOID,_("Z Length"), &m_EllipsoidZLenght);
-  m_GuiEllipsoid->Double(CHANGE_VALUE_ELLIPSOID,_("Phi res"), &m_EllipsoidPhiRes);
-  m_GuiEllipsoid->Double(CHANGE_VALUE_ELLIPSOID,_("Theta res"), &m_EllipsoidTheRes);
-  mafString orientationArray[3] = {_("X axis"),_("Y axis"),_("Z axis")};
-  m_GuiEllipsoid->Radio(CHANGE_VALUE_ELLIPSOID,"Orientation", &m_EllipsoidOrientationAxis, 3,orientationArray);
+  m_GuiEllipsoid->Label(_R("Ellipsoid"));
+  m_GuiEllipsoid->Double(CHANGE_VALUE_ELLIPSOID,_L("X Length"), &m_EllipsoidXLenght);
+  m_GuiEllipsoid->Double(CHANGE_VALUE_ELLIPSOID,_L("Y Length"), &m_EllipsoidYLenght);
+  m_GuiEllipsoid->Double(CHANGE_VALUE_ELLIPSOID,_L("Z Length"), &m_EllipsoidZLenght);
+  m_GuiEllipsoid->Double(CHANGE_VALUE_ELLIPSOID,_L("Phi res"), &m_EllipsoidPhiRes);
+  m_GuiEllipsoid->Double(CHANGE_VALUE_ELLIPSOID,_L("Theta res"), &m_EllipsoidTheRes);
+  mafString orientationArray[3] = {_L("X axis"),_L("Y axis"),_L("Z axis")};
+  m_GuiEllipsoid->Radio(CHANGE_VALUE_ELLIPSOID,_R("Orientation"), &m_EllipsoidOrientationAxis, 3,orientationArray);
   assert(m_Gui);
   m_Gui->AddGui(m_GuiEllipsoid);
 }
@@ -771,8 +771,8 @@ void mafVMESurfaceParametric::EnableParametricSurfaceGui( int surfaceTypeID )
          {
            std::ostringstream stringStream;
            stringStream << "enabling Sphere gui" << std::endl;
-           mafLogMessage(stringStream.str().c_str());
-         }
+           mafLogMessage(_M(stringStream.str().c_str()));
+       }
     break;
   
     case PARAMETRIC_CONE:
@@ -781,7 +781,7 @@ void mafVMESurfaceParametric::EnableParametricSurfaceGui( int surfaceTypeID )
       {
         std::ostringstream stringStream;
         stringStream << "enabling Cone gui" << std::endl;
-        mafLogMessage(stringStream.str().c_str());
+        mafLogMessage(_M(stringStream.str().c_str()));
       }
 
     break;
@@ -792,7 +792,7 @@ void mafVMESurfaceParametric::EnableParametricSurfaceGui( int surfaceTypeID )
       {
         std::ostringstream stringStream;
         stringStream << "enabling Cylinder gui" << std::endl;
-        mafLogMessage(stringStream.str().c_str());
+        mafLogMessage(_M(stringStream.str().c_str()));
       }
 
     break;
@@ -803,7 +803,7 @@ void mafVMESurfaceParametric::EnableParametricSurfaceGui( int surfaceTypeID )
       {
         std::ostringstream stringStream;
         stringStream << "enabling Cube gui" << std::endl;
-        mafLogMessage(stringStream.str().c_str());
+        mafLogMessage(_M(stringStream.str().c_str()));
       }
 
     break;
@@ -814,7 +814,7 @@ void mafVMESurfaceParametric::EnableParametricSurfaceGui( int surfaceTypeID )
       {
         std::ostringstream stringStream;
         stringStream << "enabling Plane gui" << std::endl;
-        mafLogMessage(stringStream.str().c_str());
+        mafLogMessage(_M(stringStream.str().c_str()));
       }
 
     break;
@@ -825,7 +825,7 @@ void mafVMESurfaceParametric::EnableParametricSurfaceGui( int surfaceTypeID )
       {
         std::ostringstream stringStream;
         stringStream << "enabling Ellipsoid gui" << std::endl;
-        mafLogMessage(stringStream.str().c_str());
+        mafLogMessage(_M(stringStream.str().c_str()));
       }
 
       break;

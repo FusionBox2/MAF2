@@ -65,15 +65,15 @@ mafVMEDataSetAttributesImporter::mafVMEDataSetAttributesImporter()
 
   m_TimeVarying = false;
   m_Input = NULL;
-  m_FileName = "";
-  m_FileBaseName = "";
-  m_ResultsDir = "";
-  m_FilePrefix = "";
-  m_FileExtension = "";
+  m_FileName = _R("");
+  m_FileBaseName = _R("");
+  m_ResultsDir = _R("");
+  m_FilePrefix = _R("");
+  m_FileExtension = _R("");
   SetAttributeTypeToPointData();
   UseTSFileOff();
   UseIdArrayOff();
-  m_IdArrayName = "UNDEFINED";
+  m_IdArrayName = _R("UNDEFINED");
 }
 
 mafVMEDataSetAttributesImporter::~mafVMEDataSetAttributesImporter()
@@ -151,7 +151,7 @@ int mafVMEDataSetAttributesImporter::Read()
 
   // search for a file name containing the prefix
   std::string vclFilePrefix = "";
-  (m_TimeVarying == true) ? vclFilePrefix = m_FilePrefix.GetCStr() : vclFilePrefix = m_FileBaseName  ;
+  (m_TimeVarying == true) ? vclFilePrefix = m_FilePrefix.GetCStr() : vclFilePrefix = m_FileBaseName.GetCStr();
   
   for (fileNamesVectorIterator = fileNamesVector.begin(); fileNamesVectorIterator != fileNamesVector.end(); fileNamesVectorIterator++)
   {
@@ -229,15 +229,15 @@ int mafVMEDataSetAttributesImporter::Read()
       
     // build the full name
     mafString ithAttributesFileName = m_ResultsDir;
-    ithAttributesFileName.Append(vclFilePrefix.c_str());
-    if (m_TimeVarying) ithAttributesFileName.Append(number.str().c_str()) ;
+    ithAttributesFileName.Append(_R(vclFilePrefix.c_str()));
+    if (m_TimeVarying) ithAttributesFileName.Append(_R(number.str().c_str())) ;
     ithAttributesFileName.Append(m_FileExtension);
      
     // DEBUG
     std::ostringstream stringStream;
     stringStream << "reading "<< ithAttributesFileName.GetCStr() << std::endl;
-    mafLogMessage(stringStream.str().c_str());
-          
+    mafLogMessage(_M(stringStream.str().c_str()));
+
     // open the ith file
     std::ifstream ithAttributesFileStream(ithAttributesFileName.GetCStr(), std::ios::in);
     if (ithAttributesFileStream.is_open() == false)
@@ -310,7 +310,7 @@ int mafVMEDataSetAttributesImporter::Read()
       stringStream << std::endl;
       stringStream << "tmpAttributesMatrix" << std::endl;
       stringStream << tmpAttributesMatrix  << std::endl;
-      mafLogMessage(stringStream.str().c_str());
+      mafLogMessage(_M(stringStream.str().c_str()));
     }
 
     typedef std::map<int, int>::const_iterator  Iter;
@@ -328,8 +328,8 @@ int mafVMEDataSetAttributesImporter::Read()
         {
           std::ostringstream stringStream;
           stringStream << "ansysCellId: " << ansysCellId << " vtkId: " << attributeFileAnsysIdToRowIdIMap[ansysCellId] << std::endl;
-          mafLogMessage(stringStream.str().c_str());
-        }
+          mafLogMessage(_M(stringStream.str().c_str()));
+      }
     }  
   
     // push the matrix in the matrix vector
@@ -446,9 +446,9 @@ int mafVMEDataSetAttributesImporter::Read()
         if (idArray == NULL)
         {
           // try active scalar
-          mafString activeScalarName = targetAttributeData->GetScalars()->GetName();
+          mafString activeScalarName = _R(targetAttributeData->GetScalars()->GetName());
           
-          if (activeScalarName.Equals(m_IdArrayName.GetCStr()))
+          if (activeScalarName == m_IdArrayName)
           {
             idArray = vtkIntArray::
               SafeDownCast(
@@ -461,7 +461,7 @@ int mafVMEDataSetAttributesImporter::Read()
             std::ostringstream stringStream;
             stringStream << "Point Data Array " << m_IdArrayName.GetCStr() << " does not exist!" << std::endl;
             stringStream << "Cannot map vtk points ID to user defined one. Exiting with MAF_ERROR" << std::endl;
-            mafLogMessage(stringStream.str().c_str());
+            mafLogMessage(_M(stringStream.str().c_str()));
             return MAF_ERROR;
           }
         
@@ -477,8 +477,8 @@ int mafVMEDataSetAttributesImporter::Read()
         if (idArray == NULL)
         {
           // try active scalar
-          mafString activeScalarName = targetAttributeData->GetScalars()->GetName();
-          if (activeScalarName.Equals(m_IdArrayName.GetCStr()))
+          mafString activeScalarName = _R(targetAttributeData->GetScalars()->GetName());
+          if (activeScalarName == m_IdArrayName)
           {
             idArray = vtkIntArray::
               SafeDownCast(
@@ -492,7 +492,7 @@ int mafVMEDataSetAttributesImporter::Read()
           std::ostringstream stringStream;
           stringStream << "Cell Data Array " << m_IdArrayName.GetCStr() << " does not exist!" << std::endl;
           stringStream << "Cannot map vtk cells ID to user defined one. Exiting with MAF_ERROR" << std::endl;
-          mafLogMessage(stringStream.str().c_str());
+          mafLogMessage(_M(stringStream.str().c_str()));
           return MAF_ERROR;
         }
         assert(idArray);
@@ -548,15 +548,15 @@ int mafVMEDataSetAttributesImporter::Read()
 
 void mafVMEDataSetAttributesImporter::SetFileName( const char *filename )
 {
-  m_FileName = filename	;
+  m_FileName = _R(filename)	;
   
 }
 
 int mafVMEDataSetAttributesImporter::SplitFileName()
 {
-  if (m_FileName == "")
+  if (m_FileName.IsEmpty())
   {
-    mafWarningMessageMacro("filename not specified!!!")
+      mafWarningMessage(_M("filename not specified!!!"));
     return MAF_ERROR;
   }
 
@@ -581,9 +581,9 @@ int mafVMEDataSetAttributesImporter::SplitFileName()
   // path
   std::string path(fileName, 0, slashPos+1);
 
-  m_ResultsDir = path.c_str();
-  m_FileBaseName = baseFileName.c_str();
-  m_FileExtension = ext.c_str();
+  m_ResultsDir = _R(path.c_str());
+  m_FileBaseName = _R(baseFileName.c_str());
+  m_FileExtension = _R(ext.c_str());
   
   return MAF_OK;
 }

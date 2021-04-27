@@ -36,7 +36,7 @@ END_EVENT_TABLE()
 
 //----------------------------------------------------------------------------
 mafGUIPanelStack::mafGUIPanelStack(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
-               const wxSize& size, long style, const wxString& name)
+               const wxSize& size, long style, const mafString& name)
 :mafGUIPanel(parent,id,pos,size,style,name)         
 //----------------------------------------------------------------------------
 {

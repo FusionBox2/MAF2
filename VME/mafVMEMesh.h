@@ -58,7 +58,7 @@ public:
   static char** GetIcon();
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString("mafPipeMesh");};
+  virtual mafString GetVisualPipe() {return mafString(_R("mafPipeMesh"));}
 
 	/** used to initialize and create the material attribute if not yet present */
 	virtual int InternalInitialize();

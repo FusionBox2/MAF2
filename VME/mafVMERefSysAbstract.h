@@ -91,7 +91,7 @@ public:
   static char ** GetIcon();
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString("mafPipeSurface");};
+  virtual mafString GetVisualPipe() {return mafString(_R("mafPipeSurface"));}
 
   /** 
   Set links for the ref-sys*/

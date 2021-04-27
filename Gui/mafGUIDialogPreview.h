@@ -41,7 +41,7 @@ mafGUIDialogPreview can be used inside operations to make a preview window.
 class MAF_EXPORT mafGUIDialogPreview : public mafGUIDialog
 {
 public:
-	mafGUIDialogPreview (const wxString& title,	long style = mafCLOSEWINDOW | mafRESIZABLE | mafCLOSE | mafUSEGUI | mafUSERWI );
+	mafGUIDialogPreview (const mafString& title,	long style = mafCLOSEWINDOW | mafRESIZABLE | mafCLOSE | mafUSEGUI | mafUSERWI );
 	virtual ~mafGUIDialogPreview (); 
    
   /** Return the dialog's render window.*/

@@ -34,7 +34,7 @@ class mafGUIDockSettings: public mafGUISettings
 {
 public:
  /** constructor */
- mafGUIDockSettings(wxFrameManager& mgr, const mafString &label = _("User Interface Preferences"));
+ mafGUIDockSettings(wxFrameManager& mgr, const mafString &label = _L("User Interface Preferences"));
  /** destructor */
  virtual ~mafGUIDockSettings();
 

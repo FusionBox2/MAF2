@@ -137,7 +137,7 @@ public:
   static char** GetIcon();
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString("mafPipeScalarMatrix");};
+  virtual mafString GetVisualPipe() {return mafString(_R("mafPipeScalarMatrix"));};
 
 protected:
   mafVMEScalarMatrix();

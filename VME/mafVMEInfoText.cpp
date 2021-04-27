@@ -45,9 +45,9 @@ mafVMEInfoText::mafVMEInfoText()
   m_PosShow[0]   = false;
   m_PosShow[1]   = false;
   m_PosShow[2]   = false;
-  m_PosLabels[0] = "";
-  m_PosLabels[1] = "";
-  m_PosLabels[2] = "";
+  m_PosLabels[0] = _R("");
+  m_PosLabels[1] = _R("");
+  m_PosLabels[2] = _R("");
 }
 
 //-------------------------------------------------------------------------
@@ -91,24 +91,21 @@ int mafVMEInfoText::InternalStore(mafStorageElement *parent)
   {
     for(int i = 0; i < 3; i++)
     {
-      char txtname[256];
-      sprintf(txtname, "Label%ld", i);
+      mafString txtname = _R("Label") + mafToString(i);
       if(parent->StoreText(txtname, m_PosLabels[i]) != MAF_OK)
         return MAF_ERROR;
     }
     for(int i = 0; i < 3; i++)
     {
-      char txtname[256];
-      sprintf(txtname, "ShowLabel%ld", i);
-      if(parent->StoreInteger(txtname, m_PosShow[i] ? 1 : 0) != MAF_OK)
+        mafString txtname = _R("ShowLabel") + mafToString(i);
+        if (parent->StoreInteger(txtname, m_PosShow[i] ? 1 : 0) != MAF_OK)
         return MAF_ERROR;
     }
     int strSz = m_Strings.size();
-    parent->StoreInteger("NumberOfStrings", strSz);
+    parent->StoreInteger(_R("NumberOfStrings"), strSz);
     for(int i = 0; i < m_Strings.size(); i++)
     {
-      char txtname[256];
-      sprintf(txtname, "String%ld", i);
+      mafString txtname = _R("String") + mafToString(i);
       if(parent->StoreText(txtname, m_Strings[i]) != MAF_OK)
         return MAF_ERROR;
     }
@@ -123,16 +120,16 @@ int mafVMEInfoText::InternalRestore(mafStorageElement *node)
 {
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
-    char txtname[256];
+    mafString txtname;
     for(int j = 0; j < 3; j++)
     {
-      sprintf(txtname, "Label%ld", j);
+      txtname = _R("Label") + mafToString(j);
       if(node->RestoreText(txtname, m_PosLabels[j]) != MAF_OK)
         return MAF_ERROR;
     }
     for(int j = 0; j < 3; j++)
     {
-      sprintf(txtname, "ShowLabel%ld", j);
+      txtname = _R("ShowLabel") + mafToString(j);
       int val;
       if(node->RestoreInteger(txtname, val) != MAF_OK)
         return MAF_ERROR;
@@ -141,18 +138,18 @@ int mafVMEInfoText::InternalRestore(mafStorageElement *node)
 
     mafString ReadStr;
     int       i = 0;
-    sprintf(txtname, "String%ld", i);
+    txtname = _R("String") + mafToString(i);
     m_Strings.clear();
 
     int strSz = m_Strings.size();
-    if(node->RestoreInteger("NumberOfStrings", strSz) == MAF_OK)
+    if(node->RestoreInteger(_R("NumberOfStrings"), strSz) == MAF_OK)
     {
       for(int k = 0; k < strSz; k++) 
       {
         if(node->RestoreText(txtname,ReadStr) == MAF_OK)
           m_Strings.push_back(ReadStr);
         i++;
-        sprintf(txtname, "String%ld", i);
+        txtname = _R("String") + mafToString(i);
       }
     }
     else
@@ -161,7 +158,7 @@ int mafVMEInfoText::InternalRestore(mafStorageElement *node)
       {
         m_Strings.push_back(ReadStr);
         i++;
-        sprintf(txtname, "String%ld", i);
+        txtname = _R("String") + mafToString(i);
       }
     }
     return MAF_OK;
@@ -190,10 +187,10 @@ mafGUI* mafVMEInfoText::CreateGui()
   for(int i = 0; i < 3; i++)
   {
     if(m_PosShow[i])
-      m_PositionText[i] = wxString::Format("%s%f",m_PosLabels[i].GetCStr(), xyz[i]);
+      m_PositionText[i] = m_PosLabels[i] + mafString::Format(_R("%f"), xyz[i]);
     else
-      m_PositionText[i] = "";
-    m_Gui->Label("", &m_PositionText[i]);
+      m_PositionText[i].Clear();
+    m_Gui->Label(_R(""), &m_PositionText[i]);
   }
 
   m_Gui->Update();
@@ -208,7 +205,7 @@ void mafVMEInfoText::Print(std::ostream& os, const int tabs)
   mafIndent indent(tabs);
 
   for(int i = 0; i < m_Strings.size(); i++)
-    os << m_Strings[i] << endl;
+    os << m_Strings[i].GetCStr() << endl;
 }
 
 //-------------------------------------------------------------------------
@@ -222,9 +219,9 @@ void mafVMEInfoText::SetTimeStamp(mafTimeStamp t)
   for(int i = 0; i < 3; i++)
   {
     if(m_PosShow[i])
-      m_PositionText[i] = wxString::Format("%s%f",m_PosLabels[i].GetCStr(), xyz[i]);
+      m_PositionText[i] = m_PosLabels[i] + mafString::Format(_R("%f"), xyz[i]);
     else
-      m_PositionText[i] = "";
+      m_PositionText[i].Clear();
   }
   if(m_Gui)
     m_Gui->Update();
@@ -255,9 +252,9 @@ void mafVMEInfoText::SetPosShow(bool show, int index)
   double xyz[3],rxyz[3];
   this->GetOutput()->GetAbsPose(xyz,rxyz);  
   if(m_PosShow[index])
-    m_PositionText[index] = wxString::Format("%s%f",m_PosLabels[index].GetCStr(), xyz[index]);
+    m_PositionText[index] = m_PosLabels[index] + mafString::Format(_R("%f"), xyz[index]);
   else
-    m_PositionText[index] = "";
+    m_PositionText[index].Clear();
 
   if(m_Gui) 
     m_Gui->Update();
@@ -285,9 +282,9 @@ void mafVMEInfoText::SetPosLabel(const mafString& label, int index)
   double xyz[3],rxyz[3];
   this->GetOutput()->GetAbsPose(xyz,rxyz);  
   if(m_PosShow[index])
-    m_PositionText[index] = wxString::Format("%s%f",m_PosLabels[index].GetCStr(), xyz[index]);
+    m_PositionText[index] = m_PosLabels[index] + mafString::Format(_R("%f"), xyz[index]);
   else
-    m_PositionText[index] = "";
+    m_PositionText[index].Clear();
 
   if(m_Gui) 
     m_Gui->Update();

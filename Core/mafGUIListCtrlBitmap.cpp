@@ -153,7 +153,7 @@ ITEM_ICONS mafGUIListCtrlBitmap::GetItemIcon(long item_id)
   int icon = -1;
   if( li.m_mask & wxLIST_MASK_IMAGE )
      icon = li.m_image;
-  mafLogMessage("icon = %d",icon);
+  mafLogMessage(_M(_R("icon = ") + mafToString(icon)));
   mafYield();
   return (ITEM_ICONS) icon;
 }
@@ -179,7 +179,7 @@ void mafGUIListCtrlBitmap::OnSelectionChanged(wxListEvent& event)
   if(m_PreventNotify) 
     return;
    
-  mafString s = m_List->GetItemText(event.GetIndex()).c_str();
+  mafString s = mafWxToString(m_List->GetItemText(event.GetIndex()));
   long item_id = event.GetData();
   long icon = event.GetImage();
 

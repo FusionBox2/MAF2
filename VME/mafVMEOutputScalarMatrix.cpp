@@ -57,8 +57,8 @@ mafVMEOutputScalarMatrix::mafVMEOutputScalarMatrix()
 #ifdef MAF_USE_VTK
   vtkNEW(m_Polydata);
 #endif
-  m_NumberOfRows = "0";
-  m_NumberOfColumns = "0";
+  m_NumberOfRows = _R("0");
+  m_NumberOfColumns = _R("0");
 }
 
 //-------------------------------------------------------------------------
@@ -252,12 +252,12 @@ mafGUI* mafVMEOutputScalarMatrix::CreateGui()
     this->Update();
   }
   vnl_matrix<double> data = GetScalarData();
-  m_NumberOfRows = "";
-  m_NumberOfRows << (int)data.rows();
-  m_NumberOfColumns = "";
-  m_NumberOfColumns << (int)data.columns();
-  m_Gui->Label(_("rows: "),&m_NumberOfRows);
-  m_Gui->Label(_("columns: "),&m_NumberOfColumns);
+  m_NumberOfRows = _R("");
+  m_NumberOfRows += mafToString((int)data.rows());
+  m_NumberOfColumns = _R("");
+  m_NumberOfColumns += mafToString((int)data.columns());
+  m_Gui->Label(_L("rows: "),&m_NumberOfRows);
+  m_Gui->Label(_L("columns: "),&m_NumberOfColumns);
 	m_Gui->Divider(); 
 	return m_Gui;
 }
@@ -267,10 +267,10 @@ void mafVMEOutputScalarMatrix::Update()
 //-------------------------------------------------------------------------
 {
   vnl_matrix<double> data = GetScalarData();
-  m_NumberOfRows = "";
-  m_NumberOfRows << (int)data.rows();
-  m_NumberOfColumns = "";
-  m_NumberOfColumns << (int)data.columns();
+  m_NumberOfRows = _R("");
+  m_NumberOfRows += mafToString((int)data.rows());
+  m_NumberOfColumns = _R("");
+  m_NumberOfColumns += mafToString((int)data.columns());
   if (m_Gui)
   {
     m_Gui->Update();

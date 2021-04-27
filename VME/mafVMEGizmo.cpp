@@ -55,11 +55,11 @@ mafVMEGizmo::mafVMEGizmo()
   SetDataPipe(dpipe);
   
   // modified by Stefano 14-3-2005: gizmos set to not visible in the tree and node chooser
-  GetTagArray()->SetTag(mafTagItem("VISIBLE_IN_THE_TREE", 0.0));
+  GetTagArray()->SetTag(mafTagItem(_R("VISIBLE_IN_THE_TREE"), 0.0));
 
   SetVisibleToTraverse(false);
 
-  m_TextValue = "";
+  m_TextValue = _R("");
   m_TextVisibility = FALSE;
 
   m_TextColour[0] = m_TextColour[1] = m_TextColour[2] = 1.0;
@@ -100,11 +100,11 @@ bool mafVMEGizmo::Equals(mafVME *vme)
 mmaMaterial *mafVMEGizmo::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+  mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
   if (material == NULL)
   {
     material = mmaMaterial::New();
-    SetAttribute("MaterialAttributes", material);
+    SetAttribute(_R("MaterialAttributes"), material);
   }
   return material;
 }
@@ -159,14 +159,14 @@ void mafVMEGizmo::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
 void mafVMEGizmo::SetTextValue(const char* text)
 //-------------------------------------------------------------------------
 {
-  m_TextValue = mafString(text);
+  m_TextValue = mafString(_R(text));
   InvokeEvent(this, VME_OUTPUT_DATA_UPDATE);
 }
 //-------------------------------------------------------------------------
 const char * mafVMEGizmo::GetTextValue()
 //-------------------------------------------------------------------------
 {
-  return m_TextValue;
+  return m_TextValue.GetCStr();
 }
 //-------------------------------------------------------------------------
 void mafVMEGizmo::SetTextPosition(double *position3D)

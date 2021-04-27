@@ -305,7 +305,7 @@ mafView *mafViewManager::ViewCreate(int id)
 	return new_view;
 }
 //----------------------------------------------------------------------------
-mafView *mafViewManager::ViewCreate(wxString label)
+mafView *mafViewManager::ViewCreate(const mafString& label)
 //----------------------------------------------------------------------------
 {
 	mafView* new_view = NULL;
@@ -315,7 +315,7 @@ mafView *mafViewManager::ViewCreate(wxString label)
   for(; index<m_ViewTemplate.size(); index++)
 	{
     // find the template view of the specified type
-    wxString t = m_ViewTemplate[index]->GetLabel();
+    mafString t = m_ViewTemplate[index]->GetLabel();
 		if(t == label )
 		{
 	    view = m_ViewTemplate[index];
@@ -454,7 +454,7 @@ mafView * mafViewManager::GetFromList( const char *label )
 {
   for(std::list<mafView*>::iterator v = m_ViewList.begin(); v != m_ViewList.end(); ++v) 
   {
-    if ((*v)->GetLabel()==label)
+    if ((*v)->GetLabel()==_R(label))
       return (*v);
   }
   return NULL;

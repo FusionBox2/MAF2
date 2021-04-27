@@ -57,14 +57,14 @@ mafGUIDictionaryWidget::mafGUIDictionaryWidget(wxWindow *parent, int id)
   m_NumItem = 0;
   m_Items = NULL;
   m_Vme   = NULL;
-  m_File = "";
+  m_File = _R("");
 
   m_List = new mafGUIListCtrl(parent,id,false,true);
   m_List->Show(false);
   m_List->SetListener(this);
   m_List->SetSize(wxSize(450,400));
 
-  if(m_File != "") LoadDictionary(m_File);
+  if(!m_File.IsEmpty()) LoadDictionary(m_File);
 }
 //----------------------------------------------------------------------------
 mafGUIDictionaryWidget::~mafGUIDictionaryWidget()
@@ -92,11 +92,11 @@ void mafGUIDictionaryWidget::OnEvent(mafEventBase *maf_event)
 void mafGUIDictionaryWidget::LoadDictionary()
 //----------------------------------------------------------------------------
 {
-  mafString wild_dict	= "Dictionary file (*.dic)|*.dic|All files (*.*)|*.*";
+  mafString wild_dict	= _R("Dictionary file (*.dic)|*.dic|All files (*.*)|*.*");
   mafString m_dict		  = mafGetApplicationDirectory();
-  m_dict = m_dict + "\\Config\\Dictionary\\";
-	mafString file       = mafGetOpenFile(m_dict,wild_dict,"Choose Dictionary File",m_List); 
-	if(file != "") LoadDictionary(file);
+  m_dict = m_dict + _R("\\Config\\Dictionary\\");
+	mafString file       = mafGetOpenFile(m_dict,wild_dict,_R("Choose Dictionary File"),m_List); 
+	if(!file.IsEmpty()) LoadDictionary(file);
 }
 //----------------------------------------------------------------------------
 void mafGUIDictionaryWidget::LoadDictionary(const mafString& file)
@@ -107,8 +107,8 @@ void mafGUIDictionaryWidget::LoadDictionary(const mafString& file)
   // XML storage to restore
   mafXMLParser restore;
   restore.SetURL(m_File);
-  restore.SetFileType("DIC");
-  restore.SetVersion("2.0");
+  restore.SetFileType(_R("DIC"));
+  restore.SetVersion(_R("2.0"));
 
   // create a new object to restore into
   mafStorableDictionary *storeDict = new mafStorableDictionary;
@@ -121,7 +121,7 @@ void mafGUIDictionaryWidget::LoadDictionary(const mafString& file)
   m_Items = new mafString*[m_NumItem];
 
   m_List->Reset();
-  m_List->SetColumnLabel(0, "names already in use are displayed with the red icon");
+  m_List->SetColumnLabel(0, _R("names already in use are displayed with the red icon"));
   for(int i=0; i<m_NumItem; i++)
   {
      m_Items[i] = new mafString(storeDict->m_StrVector[i]);
@@ -198,7 +198,7 @@ int mafStorableDictionary::InternalRestore(mafStorageElement *element)
 {
   m_StrVector.resize(element->GetChildren()[0]->GetChildren().size());
   
-  if(element->RestoreVectorN("Dictionary",m_StrVector,element->GetChildren()[0]->GetChildren().size(),"DItem"))
+  if(element->RestoreVectorN(_R("Dictionary"),m_StrVector,element->GetChildren()[0]->GetChildren().size(),_R("DItem")))
     return MAF_ERROR;
   return MAF_OK;
 }

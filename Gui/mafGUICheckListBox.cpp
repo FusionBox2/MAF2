@@ -79,7 +79,7 @@ void mafGUICheckListBox::AddItem(int id, wxString label)
   //if( m_CheckListBox->Number() == mafGUICheckListBox_ArraySize ) 
   if( m_CheckListBox->GetCount() == mafGUICheckListBox_ArraySize ) 
   {
-    mafLogMessage("mafGUICheckListBox:overflow");
+    mafLogMessage(_M("mafGUICheckListBox:overflow"));
     return;
   }
   
@@ -99,7 +99,7 @@ void mafGUICheckListBox::AddItem(int id, wxString label, bool check)
   //if( m_CheckListBox->Number() == mafGUICheckListBox_ArraySize ) 
   if( m_CheckListBox->GetCount() == mafGUICheckListBox_ArraySize ) 
   {
-    mafLogMessage("mafGUICheckListBox:overflow");
+    mafLogMessage(_M("mafGUICheckListBox:overflow"));
     return;
   }
 
@@ -147,7 +147,7 @@ void mafGUICheckListBox::SetItemLabel(int id, const mafString label)
   if( index == -1 ) return;
 
   m_PreventNotify = true;
-  m_CheckListBox->SetString(index,label.GetCStr());
+  m_CheckListBox->SetString(index,label.toWx());
   m_PreventNotify = false;
 }
 //----------------------------------------------------------------------------
@@ -158,7 +158,7 @@ mafString mafGUICheckListBox::GetItemLabel(int id)
 
   m_PreventNotify = true;
   int index = FindItemIndex(id);
-  label = m_CheckListBox->GetString(index).c_str();
+  label = mafWxToString(m_CheckListBox->GetString(index));
   m_PreventNotify = false;
 
 	return label;
@@ -198,7 +198,7 @@ int mafGUICheckListBox::FindItemIndex(int id)
     i++;
   }
 
-  mafLogMessage("mafGUICheckListBox: ItemNotFound: %d",id);
+  mafLogMessage(_M(_R("mafGUICheckListBox: ItemNotFound: ") + mafToString(id)));
   return -1;
 }
 //----------------------------------------------------------------------------

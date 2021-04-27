@@ -36,7 +36,7 @@ class mafTagItem;
 class MAF_EXPORT mafOpEditMetadata: public mafOp
 {
 public:
-  mafOpEditMetadata(const mafString& label = "EditMetadata");
+  mafOpEditMetadata(const mafString& label = _R("EditMetadata"));
  ~mafOpEditMetadata(); 
 	virtual void OnEvent(mafEventBase *maf_event);
 

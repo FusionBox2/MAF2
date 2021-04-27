@@ -367,23 +367,23 @@ mafGUI *mafPipeSurface::CreateGui()
 {
   assert(m_Gui == NULL);
   m_Gui = new mafGUI(this);
-  m_Gui->Bool(ID_RENDERING_DISPLAY_LIST,"displaylist",&m_RenderingDisplayListFlag,0,"turn on/off \nrendering displaylist calculation");
+  m_Gui->Bool(ID_RENDERING_DISPLAY_LIST,_R("displaylist"),&m_RenderingDisplayListFlag,0,_R("turn on/off \nrendering displaylist calculation"));
 	//m_Gui->Bool(ID_SCALAR_VISIBILITY,"scalar vis.", &m_ScalarVisibility,0,"turn on/off the scalar visibility");
-	m_Gui->Bool(ID_NORMAL_VISIBILITY,"norm. vis.",&m_NormalVisibility);
-	m_Gui->Bool(ID_EDGE_VISIBILITY,"edge vis.",&m_EdgeVisibility);
+	m_Gui->Bool(ID_NORMAL_VISIBILITY,_R("norm. vis."),&m_NormalVisibility);
+	m_Gui->Bool(ID_EDGE_VISIBILITY,_R("edge vis."),&m_EdgeVisibility);
   m_Gui->Divider();
-  m_Gui->Bool(ID_USE_VTK_PROPERTY,"property",&m_UseVTKProperty);
+  m_Gui->Bool(ID_USE_VTK_PROPERTY,_R("property"),&m_UseVTKProperty);
   m_MaterialButton = new mafGUIMaterialButton(m_Vme,this);
   m_Gui->AddGui(m_MaterialButton->GetGui());
   m_MaterialButton->Enable(m_UseVTKProperty != 0);
   m_Gui->Divider();
-  m_Gui->Bool(ID_USE_LOOKUP_TABLE,"lut",&m_UseLookupTable);
+  m_Gui->Bool(ID_USE_LOOKUP_TABLE,_R("lut"),&m_UseLookupTable);
   double sr[2];
   m_Mapper->GetScalarRange(sr);
   m_SurfaceMaterial->m_ColorLut->SetTableRange(sr);
-	m_Gui->Lut(ID_LUT,"lut",m_SurfaceMaterial->m_ColorLut);
+	m_Gui->Lut(ID_LUT,_R("lut"),m_SurfaceMaterial->m_ColorLut);
   //m_Gui->Bool(ID_LUT, "new lut", &m_UseLookupTable);
-  m_Gui->Bool(ID_SCALAR_VISIBILITY,"scalar vis.", &m_ScalarVisibility,0,"turn on/off the scalar visibility");
+  m_Gui->Bool(ID_SCALAR_VISIBILITY,_R("scalar vis."), &m_ScalarVisibility,0,_R("turn on/off the scalar visibility"));
 	m_Gui->Enable(ID_LUT,m_UseLookupTable != 0);
   //m_Gui->Divider(2);
   //m_Gui->Bool(ID_ENABLE_LOD,"LOD",&m_EnableActorLOD);
@@ -392,9 +392,9 @@ mafGUI *mafPipeSurface::CreateGui()
   // Get the surface's scalars array
   // Scalars data type selection (point data or cell data)
   mafString scalarsDataTypes[2];
-  scalarsDataTypes[0] = "points";
-  scalarsDataTypes[1] = "cells";
-  m_Gui->Combo(ID_SCALARS_DATA_TYPE_SELECTION,"scalars ty.",&m_SelectedDataAttribute,2,scalarsDataTypes,"Determine the visible scalars data type (points data or cell data)");
+  scalarsDataTypes[0] = _R("points");
+  scalarsDataTypes[1] = _R("cells");
+  m_Gui->Combo(ID_SCALARS_DATA_TYPE_SELECTION,_R("scalars ty."),&m_SelectedDataAttribute,2,scalarsDataTypes,_R("Determine the visible scalars data type (points data or cell data)"));
   m_Gui->Enable(ID_SCALARS_DATA_TYPE_SELECTION, m_ScalarVisibility != 0);
 
   vtkDataSetAttributes *dataAttribute = GetSelectedDataAttribute();
@@ -406,15 +406,15 @@ mafGUI *mafPipeSurface::CreateGui()
   for(int i = 0; i < dataAttribute->GetNumberOfArrays(); i++)
   {
     mafString tmp;
-    tmp = dataAttribute->GetArrayName(i);
+    tmp = _R(dataAttribute->GetArrayName(i));
     scalarsArrayNames.push_back(tmp);
   }
-  m_ScalarsArraySelection = m_Gui->Combo(ID_SCALARS_ARRAY_SELECTION,"scalars ar.",&m_SelectedScalarsArray,scalarsArrayNames.size(), scalarsArrayNames.data(),"Determine the visible scalars array");
+  m_ScalarsArraySelection = m_Gui->Combo(ID_SCALARS_ARRAY_SELECTION,_R("scalars ar."),&m_SelectedScalarsArray,scalarsArrayNames.size(), scalarsArrayNames.data(),_R("Determine the visible scalars array"));
   m_Gui->Enable(ID_SCALARS_ARRAY_SELECTION, m_ScalarVisibility != 0 && dataAttribute->GetNumberOfArrays() > 0);
   // }
   ////
 
-  m_Gui->Label("");
+  m_Gui->Label(_R(""));
 
   if (m_SurfaceMaterial == NULL)
   {

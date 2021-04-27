@@ -32,7 +32,7 @@ class mafEvent;
 class MAF_EXPORT mafOpCreateSpline: public mafOp
 {
 public:
-  mafOpCreateSpline(const mafString& label = "Create Parametric Surface");
+  mafOpCreateSpline(const mafString& label = _R("Create Parametric Surface"));
   ~mafOpCreateSpline(); 
 
   mafTypeMacro(mafOpCreateSpline, mafOp);

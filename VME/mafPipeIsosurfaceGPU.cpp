@@ -182,11 +182,11 @@ mafGUI *mafPipeIsosurfaceGPU::CreateGui()
 
 	assert(m_Gui == NULL);
 	m_Gui = new mafGUI(this);
-	m_ContourSlider = m_Gui->FloatSlider(ID_CONTOUR_VALUE,_("contour"), &m_ContourValue,range[0],range[1]);
-	m_AlphaSlider = m_Gui->FloatSlider(ID_ALPHA_VALUE,_("alpha"), &m_AlphaValue,0.0,1.0);
+	m_ContourSlider = m_Gui->FloatSlider(ID_CONTOUR_VALUE,_L("contour"), &m_ContourValue,range[0],range[1]);
+	m_AlphaSlider = m_Gui->FloatSlider(ID_ALPHA_VALUE,_L("alpha"), &m_AlphaValue,0.0,1.0);
   m_Gui->Divider();
-  m_Gui->Bool(ID_ENABLE_GPU, "Enable GPU", &m_EnableGPU, 1, 
-    _("Enables / disables GPU support for iso-surfacing. GPU iso-surfacing is faster but may produce unexpected results on some hardware."));
+  m_Gui->Bool(ID_ENABLE_GPU, _R("Enable GPU"), &m_EnableGPU, 1, 
+    _L("Enables / disables GPU support for iso-surfacing. GPU iso-surfacing is faster but may produce unexpected results on some hardware."));
 	return m_Gui;
 }
 //----------------------------------------------------------------------------
@@ -255,10 +255,10 @@ void mafPipeIsosurfaceGPU::ExctractIsosurface()
 	m_ContourMapper->GetOutput(0, surface);
 	m_ContourMapper->Update();
 
-	wxString name = wxString::Format(_("Isosurface %g"),m_ContourValue);
+	mafString name = mafString::Format(_L("Isosurface %g"),m_ContourValue);
 
 	mafNEW(m_IsosurfaceVme);
-	m_IsosurfaceVme->SetName(name.c_str());
+	m_IsosurfaceVme->SetName(name);
 	m_IsosurfaceVme->SetDataByDetaching(surface,0);
 
 	m_IsosurfaceVme->ReparentTo(m_Vme);

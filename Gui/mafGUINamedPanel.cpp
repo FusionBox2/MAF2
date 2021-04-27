@@ -72,7 +72,7 @@ mafGUINamedPanel::mafGUINamedPanel( wxWindow* parent,wxWindowID id,bool CloseBut
 
 	  if (CloseButton)
 	  {
-		  mafGUIPicButton *b = new mafGUIPicButton(m_Top, "CLOSE_SASH",ID_CLOSE_SASH);
+		  mafGUIPicButton *b = new mafGUIPicButton(m_Top, _R("CLOSE_SASH"),ID_CLOSE_SASH);
       b->SetEventId(ID_CLOSE_SASH);  //SIL. 7-4-2005: 
 		  m_TopSizer->Add(b,0,wxRIGHT,2);
 	  }

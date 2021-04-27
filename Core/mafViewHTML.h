@@ -35,7 +35,7 @@ class wxHtmlWindow;
 class MAF_EXPORT mafViewHTML: public mafView
 {
 public:
-	          mafViewHTML(const mafString& label = "vtkViewHTML", int camera_position = CAMERA_PERSPECTIVE, bool show_axes = true, bool show_grid = false, int stereo = 0);
+	          mafViewHTML(const mafString& label = _R("vtkViewHTML"), int camera_position = CAMERA_PERSPECTIVE, bool show_axes = true, bool show_grid = false, int stereo = 0);
 	virtual	 ~mafViewHTML();
 
   mafTypeMacro(mafViewHTML, mafView);

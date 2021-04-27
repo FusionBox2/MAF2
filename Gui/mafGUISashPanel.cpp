@@ -70,7 +70,7 @@ mafGUISashPanel::mafGUISashPanel (wxWindow* parent,wxWindowID id, wxDirection si
   		SetDefaultSize(wxSize(1000, defaultsize));
 		break;
 		default:
-			mafLogMessage("mafGUISashPanel: unrecognized side");
+			mafLogMessage(_M("mafGUISashPanel: unrecognized side"));
   }
   SetExtraBorderSize(0);
 

@@ -145,7 +145,7 @@ void mafInteractorSelectCell::OnEvent(mafEventBase *event)
       }
       else
       {
-        mafLogMessage("only handling events from the mouse!more code is required in order to handle this device!");
+        mafLogMessage(_M("only handling events from the mouse!more code is required in order to handle this device!"));
         assert(false);
       } 
     }

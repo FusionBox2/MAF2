@@ -48,13 +48,13 @@ enum mafGUISettingsDialog_IDS
   ID_ROOT,
 };
 //----------------------------------------------------------------------------
-mafGUISettingsDialog::mafGUISettingsDialog(wxString dialog_title)
+mafGUISettingsDialog::mafGUISettingsDialog(const mafString& dialog_title)
 //----------------------------------------------------------------------------
 {  
   #include <pic/FOLDER.xpm>
-  mafPictureFactory::GetPictureFactory()->Add("FOLDER", FOLDER_xpm);
+  mafPictureFactory::GetPictureFactory()->Add(_R("FOLDER"), FOLDER_xpm);
   wxImageList *tree_images = new wxImageList(20,20,FALSE,1);
-  tree_images->Add(mafPictureFactory::GetPictureFactory()->GetBmp("FOLDER"));
+  tree_images->Add(mafPictureFactory::GetPictureFactory()->GetBmp(_R("FOLDER")));
 
   m_Dialog = new mafGUIDialog(dialog_title);
 	m_Tree   = new mafGUITree(m_Dialog,ID_SELECT_PAGE,false,true);

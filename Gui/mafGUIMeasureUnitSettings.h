@@ -35,7 +35,7 @@ class mafGUIMeasureUnitSettings : public mafGUISettings
 {
 public:
   /** constructor. */
-	mafGUIMeasureUnitSettings(mafBaseEventHandler *Listener, const mafString &label = _("Measure Unit"));
+	mafGUIMeasureUnitSettings(mafBaseEventHandler *Listener, const mafString &label = _L("Measure Unit"));
   /** destructor. */
 	~mafGUIMeasureUnitSettings(); 
 

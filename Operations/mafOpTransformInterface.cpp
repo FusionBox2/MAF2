@@ -68,7 +68,7 @@ mafOpTransformInterface::mafOpTransformInterface(const mafString& label) : Super
   m_ActiveGizmo = TR_GIZMO;
 
   m_RefSysVME = NULL;
-  m_RefSysVMEName = "unassigned";
+  m_RefSysVMEName = _R("unassigned");
 
   // operation involve scaling by default; override this behavior in derived class constructor
   m_EnableScaling = 1;
@@ -174,7 +174,7 @@ void mafOpTransformInterface::OpDo()
     
     std::ostringstream stringStream;
     stringStream << "mafOpTransformInterface : Applying scaling to vtk dataset..."  << std::endl;
-    mafLogMessage(stringStream.str().c_str());
+    mafLogMessage(_M(stringStream.str().c_str()));
 
     if (dataSet->IsA("vtkPolyData"))
     {

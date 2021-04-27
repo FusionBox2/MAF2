@@ -63,8 +63,8 @@ mafGUI* mafPipe::CreateGui()
   assert(m_Gui == NULL);
   m_Gui = new mafGUI(this);
 
-  mafString type = GetTypeName();
-  m_Gui->Label("type :", type);
+  mafString type = _R(GetTypeName());
+  m_Gui->Label(_R("type :"), type);
 	m_Gui->Divider();
   return m_Gui;
 }

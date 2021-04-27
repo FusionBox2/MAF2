@@ -23,6 +23,7 @@
 #include <wx/bitmap.h>
 
 #include "mafString.h"
+#include "mafFilesDirs.h"
 
 #include <vector>
 
@@ -409,16 +410,16 @@ MAF_EXPORT void mafSetFrame(wxWindow* frame);
 MAF_EXPORT void mafYield();
 
 /** show the Dir Selection Dialog Box */
-MAF_EXPORT mafString  mafGetDirName(const mafString& initial, const mafString& title = "Select Directory", wxWindow *parent = NULL);
+MAF_EXPORT mafString  mafGetDirName(const mafString& initial, const mafString& title = _R("Select Directory"), wxWindow *parent = NULL);
 
 /** show the File Open Dialog Box */
-MAF_EXPORT mafString mafGetOpenFile(const mafString& initial, const mafString& wildcard, const mafString& title = "Open File", wxWindow *parent = NULL);
+MAF_EXPORT mafString mafGetOpenFile(const mafString& initial, const mafString& wildcard, const mafString& title = _R("Open File"), wxWindow *parent = NULL);
 
 /** show the File Open Dialog Box for multiple file selection */
-MAF_EXPORT void mafGetOpenMultiFiles(const mafString& initial, const mafString& wildcard, std::vector<mafString>& files, const mafString& title = "Open Files", wxWindow *parent = NULL);
+MAF_EXPORT void mafGetOpenMultiFiles(const mafString& initial, const mafString& wildcard, std::vector<mafString>& files, const mafString& title = _R("Open Files"), wxWindow *parent = NULL);
 
 /** show the File Save Dialog Box */
-MAF_EXPORT mafString mafGetSaveFile(const mafString& initial, const mafString& wildcard, const mafString& title = "Save File", wxWindow *parent = NULL);
+MAF_EXPORT mafString mafGetSaveFile(const mafString& initial, const mafString& wildcard, const mafString& title = _R("Save File"), wxWindow *parent = NULL);
 
 /** return true if the filename use a protocol like ftp, http or https.
   Write into 'protocol_used' parameter the protocol used by the file.*/

@@ -25,7 +25,7 @@
 #define mafPlugNodeMacro(node_type,descr) \
   RegisterNewNode(node_type::GetStaticTypeName(), descr, node_type::NewObject); \
   if (mafPictureFactory::GetPicsInitialized()) \
-  mafPictureFactory::GetPictureFactory()->AddVmePic(node_type::GetStaticTypeName(),node_type::GetIcon());
+  mafPictureFactory::GetPictureFactory()->AddVmePic(_R(node_type::GetStaticTypeName()),node_type::GetIcon());
 
 //----------------------------------------------------------------------------
 // forward declarations :
@@ -93,7 +93,7 @@ mafPlugNode<T>::mafPlugNode(const char *description)
     factory->RegisterNewNode(T::GetStaticTypeName(), description, T::NewObject);
     // here plug node's icon inside picture factory
     if (mafPictureFactory::GetPicsInitialized())
-      mafPictureFactory::GetPictureFactory()->AddVmePic(T::GetStaticTypeName(),T::GetIcon());
+      mafPictureFactory::GetPictureFactory()->AddVmePic(_R(T::GetStaticTypeName()),T::GetIcon());
   }
 }
 

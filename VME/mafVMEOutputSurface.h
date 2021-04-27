@@ -71,7 +71,7 @@ public:
   */
 
   /** Retrive number of trinagles (polys) of the polydata*/
-  const char *GetNumberOfTriangles(){return m_NumTriangles;}
+  const char *GetNumberOfTriangles(){return m_NumTriangles.GetCStr();}
 
   /** Update all the output data structures (data, bounds, matrix and abs matrix).*/
   virtual void Update();

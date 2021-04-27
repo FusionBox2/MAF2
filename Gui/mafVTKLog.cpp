@@ -15,6 +15,7 @@
 =========================================================================*/
 
 #include "mafDefines.h" 
+#include "mafDecl.h"
 //----------------------------------------------------------------------------
 // NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
 // This force to include Window,wxWidgets and VTK exactly in this order.
@@ -56,15 +57,15 @@ void mafVTKLog::DisplayText(const char* text)
 
   if (this->m_Enabled)
   {
-    wxString message="[VTK]";
-		message += text;
+    mafString message=_R("[VTK]");
+    message += _R(text);
 
     // Strip CR
-    for (;message.Last()=='\n';)
+    for (;message.EndsWith(_R("\n"));)
     {
-      message.RemoveLast();
+      message.Erase(message.Length() - 1);
     }
 
-    mafLogMessage(message.c_str());
+    mafLogMessage(_M(message));
   }
 }

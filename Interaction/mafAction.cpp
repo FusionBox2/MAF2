@@ -121,14 +121,14 @@ int mafAction::InternalStore(mafStorageElement *node)
   // Store bindings to devices, not bindings to interactors, 
   // since the last ones are created at runtime.
   
-  node->SetAttribute("Name",GetName());
-  mafStorageElement *subnode = node->AppendChild("Device");
+  node->SetAttribute(_R("Name"),GetName());
+  mafStorageElement *subnode = node->AppendChild(_R("Device"));
 
-  for (mmuDeviceList::iterator it = m_Devices.begin(); it!=m_Devices.end(); it++)
+  for (auto it = m_Devices.begin(); it!=m_Devices.end(); it++)
   {
     mafDevice *device=it->GetPointer();
-    subnode->SetAttribute("Name",device->GetName());
-    subnode->SetAttribute("ID",(mafID)(device->GetID()));
+    subnode->SetAttribute(_R("Name"),device->GetName());
+    subnode->SetAttribute(_R("ID"),(mafID)(device->GetID()));
   }
 
   return MAF_OK;
@@ -139,7 +139,7 @@ int mafAction::InternalRestore(mafStorageElement *node)
 //------------------------------------------------------------------------------
 {
   mafString name;
-  node->GetAttribute("Name",name);
+  node->GetAttribute(_R("Name"),name);
  
   SetName(name);
 
@@ -148,12 +148,12 @@ int mafAction::InternalRestore(mafStorageElement *node)
   {
     mafStorageElement *subnode = children[i];
     assert(subnode);
-    if (subnode->GetName() == "Device")
+    if (subnode->GetName() == _R("Device"))
     {
       mafID id;
       mafString name;
 
-      if (subnode->GetAttributeAsInteger("ID",id) && subnode->GetAttribute("Name",name))
+      if (subnode->GetAttributeAsInteger(_R("ID"),id) && subnode->GetAttribute(_R("Name"),name))
       {
         // forward an event to device manager to perform binding...
         mafEventMacro(mafEvent(this,DEVICE_BIND,(long)id));
@@ -186,7 +186,7 @@ void mafAction::OnEvent(mafEventBase *event)
     assert(sender);
     
     
-    for (mmuDeviceList::iterator it=m_Devices.begin();it!=m_Devices.end();it++)
+    for (auto it=m_Devices.begin();it!=m_Devices.end();++it)
     {
       mafDevice *dev=it->GetPointer();
       if (dev->IsInitialized())

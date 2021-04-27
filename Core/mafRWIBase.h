@@ -111,15 +111,15 @@ public:
   void GetImage(wxBitmap& bitmap, int magnification = 1);
 	/** 
   Save an image of the render window. */
-  void SaveImage(mafString filename = "", int magnification = 1, int forceExtension = -1);
+  void SaveImage(const mafString& filename = _R(""), int magnification = 1, int forceExtension = -1);
   
   /** 
   Save all images of a view compound creating a view for every subview */
-  void SaveImageRecursive(mafString filename = "", mafViewCompound *v = NULL, int magnification = 1,int forceExtension=-1);
-  void RecursiveSaving(mafString filename="", mafViewCompound *v=NULL,int magnification=1);
+  void SaveImageRecursive(const mafString& filename = _R(""), mafViewCompound *v = NULL, int magnification = 1,int forceExtension=-1);
+  void RecursiveSaving(const mafString& filename= _R(""), mafViewCompound *v=NULL,int magnification=1);
   /** 
   Save all images of the compound view. */
-  void SaveAllImages(mafString filename = "", mafViewCompound *v = NULL, int forceExtension=-1);
+  void SaveAllImages(const mafString& filename = _R(""), mafViewCompound *v = NULL, int forceExtension=-1);
 	/** 
   Return the current used camera */
 	vtkCamera* GetCamera();

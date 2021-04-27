@@ -172,7 +172,7 @@ int mafVMEScalar::InternalStore(mafStorageElement *parent)
   {
     if (m_ScalarVector)
     {
-      mafStorageElement *data_vector = parent->AppendChild("ScalarVector");
+      mafStorageElement *data_vector = parent->AppendChild(_R("ScalarVector"));
       if(m_ScalarVector->Store(data_vector) == MAF_ERROR)
         return MAF_ERROR;
     }
@@ -189,7 +189,7 @@ int mafVMEScalar::InternalRestore(mafStorageElement *node)
     // restore Data Vector
     if (m_ScalarVector)
     {
-      mafStorageElement *data_vector = node->FindNestedElement("ScalarVector");
+      mafStorageElement *data_vector = node->FindNestedElement(_R("ScalarVector"));
       if (data_vector)
       {
         return m_ScalarVector->Restore(data_vector);

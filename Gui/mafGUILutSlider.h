@@ -45,7 +45,7 @@ public:
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
         long style = 0,
-        const char* middleButtonTitle = "windowing"
+        const mafString& middleButtonTitle = _R("windowing")
         );
  ~mafGUILutSlider();
  

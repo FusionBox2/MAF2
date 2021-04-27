@@ -38,7 +38,7 @@ mafXMLElement::mafXMLElement(mmuXMLDOMElement *element,mafXMLElement *parent,maf
   assert(element);
   assert(element->m_XMLElement);
   m_DOMElement = element;
-  m_Name = mafXMLString(element->m_XMLElement->getTagName());
+  m_Name = _R(mafXMLString(element->m_XMLElement->getTagName()));
 }
 
 //------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ mafStorageElement::ChildrenVector &mafXMLElement::GetChildrenList()
 mafStorageElement *mafXMLElement::AppendChild(const mafString& name)
 //------------------------------------------------------------------------------
 {
-  XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *child_element=GetXMLElement()->m_XMLElement->getOwnerDocument()->createElement(mafXMLString(name));
+  XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *child_element=GetXMLElement()->m_XMLElement->getOwnerDocument()->createElement(mafXMLString(name.GetCStr()));
   m_DOMElement->m_XMLElement->appendChild(child_element);
   mafXMLElement *child=new mafXMLElement(new mmuXMLDOMElement(child_element),this,GetStorage());
   GetChildrenList().push_back(child);
@@ -92,20 +92,16 @@ mafStorageElement *mafXMLElement::AppendChild(const mafString& name)
 void mafXMLElement::SetAttribute(const mafString& name,const mafString& value)
 //------------------------------------------------------------------------------
 {
-  assert(name);
-  assert(value);
-  
-  m_DOMElement->m_XMLElement->setAttribute(mafXMLString(name),mafXMLString(value));
+  m_DOMElement->m_XMLElement->setAttribute(mafXMLString(name.GetCStr()),mafXMLString(value.GetCStr()));
 }
 //------------------------------------------------------------------------------
 bool mafXMLElement::GetAttribute(const mafString& name, mafString &value)
 //------------------------------------------------------------------------------
 {
-  assert(name);
-  const XMLCh *xml_value=m_DOMElement->m_XMLElement->getAttribute(mafXMLString(name));
+  const XMLCh *xml_value=m_DOMElement->m_XMLElement->getAttribute(mafXMLString(name.GetCStr()));
   if (xml_value)
   {
-    value=mafXMLString(xml_value);
+    value=_R(mafXMLString(xml_value));
     return true;
   }
   return false; 
@@ -114,8 +110,7 @@ bool mafXMLElement::GetAttribute(const mafString& name, mafString &value)
 int mafXMLElement::StoreText(const mafString& text)
 //------------------------------------------------------------------------------
 {
-  assert(text);
-  XERCES_CPP_NAMESPACE_QUALIFIER DOMText *text_node=GetXMLElement()->m_XMLElement->getOwnerDocument()->createTextNode(mafXMLString(text));
+  XERCES_CPP_NAMESPACE_QUALIFIER DOMText *text_node=GetXMLElement()->m_XMLElement->getOwnerDocument()->createTextNode(mafXMLString(text.GetCStr()));
   m_DOMElement->m_XMLElement->appendChild(text_node);
   return MAF_OK;
 }
@@ -123,7 +118,7 @@ int mafXMLElement::StoreText(const mafString& text)
 int mafXMLElement::RestoreText(mafString &buffer)
 //------------------------------------------------------------------------------
 {
-  buffer=mafXMLString(this->GetXMLElement()->m_XMLElement->getTextContent());
+  buffer=_R(mafXMLString(this->GetXMLElement()->m_XMLElement->getTextContent()));
 
   return MAF_OK;
 }

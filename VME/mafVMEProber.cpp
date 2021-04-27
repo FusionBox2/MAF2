@@ -91,11 +91,11 @@ mafVMEProber::~mafVMEProber()
 mmaMaterial *mafVMEProber::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+  mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
   if (material == NULL)
   {
     material = mmaMaterial::New();
-    SetAttribute("MaterialAttributes", material);
+    SetAttribute(_R("MaterialAttributes"), material);
   }
   return material;
 }
@@ -122,8 +122,8 @@ void mafVMEProber::InternalPreUpdate()
   m_ProbingDataPipe->SetSurface(surf);
   m_ProbingDataPipe->SetVolume(vol);
 
-  m_SurfaceName = surf ? surf->GetName() : _("none");
-  m_VolumeName = vol ? vol->GetName() : _("none");
+  m_SurfaceName = surf ? surf->GetName() : _L("none");
+  m_VolumeName = vol ? vol->GetName() : _L("none");
 
   if (m_Gui)
   {
@@ -138,12 +138,12 @@ int mafVMEProber::DeepCopy(mafNode *a)
   if (Superclass::DeepCopy(a)==MAF_OK)
   {
     mafVMEProber *prober = mafVMEProber::SafeDownCast(a);
-    mafNode *volume_linked_node = prober->GetLink("Volume");
+    mafNode *volume_linked_node = prober->GetLink(_R("Volume"));
     if (volume_linked_node)
     {
       SetVolumeLink(volume_linked_node);
     }
-    mafNode *surface_linked_node = prober->GetLink("Surface");
+    mafNode *surface_linked_node = prober->GetLink(_R("Surface"));
     if (surface_linked_node)
     {
       SetSurfaceLink(surface_linked_node);
@@ -169,8 +169,8 @@ bool mafVMEProber::Equals(mafVME *vme)
   if (Superclass::Equals(vme))
   {
     ret = m_Transform->GetMatrix() == ((mafVMEProber *)vme)->m_Transform->GetMatrix() && \
-      GetLink("Volume") == ((mafVMEProber *)vme)->GetLink("Volume") && \
-      GetLink("Surface")== ((mafVMEProber *)vme)->GetLink("Surface") && \
+      GetLink(_R("Volume")) == ((mafVMEProber *)vme)->GetLink(_R("Volume")) && \
+      GetLink(_R("Surface"))== ((mafVMEProber *)vme)->GetLink(_R("Surface")) && \
       m_ProberMode      == ((mafVMEProber *)vme)->m_ProberMode && \
       m_DistThreshold   == ((mafVMEProber *)vme)->m_DistThreshold && \
       m_MaxDistance     == ((mafVMEProber *)vme)->m_MaxDistance && \
@@ -218,19 +218,19 @@ bool mafVMEProber::IsDataAvailable()
 mafNode *mafVMEProber::GetVolumeLink()
 //-----------------------------------------------------------------------
 {
-  return GetLink("Volume");
+  return GetLink(_R("Volume"));
 }
 //-----------------------------------------------------------------------
 mafNode *mafVMEProber::GetSurfaceLink()
 //-----------------------------------------------------------------------
 {
-  return GetLink("Surface");
+  return GetLink(_R("Surface"));
 }
 //-----------------------------------------------------------------------
 void mafVMEProber::SetVolumeLink(mafNode *volume)
 //-----------------------------------------------------------------------
 {
-  SetLink("Volume", volume);
+  SetLink(_R("Volume"), volume);
   m_ProbingDataPipe->SetVolume(volume);
   Modified();
 }
@@ -238,7 +238,7 @@ void mafVMEProber::SetVolumeLink(mafNode *volume)
 void mafVMEProber::SetSurfaceLink(mafNode *surface)
 //-----------------------------------------------------------------------
 {
-  SetLink("Surface", surface);
+  SetLink(_R("Surface"), surface);
   m_ProbingDataPipe->SetSurface(surface);
   Modified();
 }
@@ -264,7 +264,7 @@ int mafVMEProber::InternalStore(mafStorageElement *parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent->StoreMatrix("Transform",&m_Transform->GetMatrix());
+    parent->StoreMatrix(_R("Transform"),&m_Transform->GetMatrix());
     return MAF_OK;
   }
   return MAF_ERROR;
@@ -276,7 +276,7 @@ int mafVMEProber::InternalRestore(mafStorageElement *node)
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
-    if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
+    if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
       return MAF_OK;
@@ -297,7 +297,7 @@ void mafVMEProber::SetMode(int mode)
   }
 
   m_ProberMode = mode;
-  GetTagArray()->SetTag(mafTagItem("MFL_MAP_MODE",m_ProberMode));
+  GetTagArray()->SetTag(mafTagItem(_R("MFL_MAP_MODE"),m_ProberMode));
   m_ProbingDataPipe->SetMode(m_ProberMode);
   this->Modified();
 }
@@ -305,7 +305,7 @@ void mafVMEProber::SetMode(int mode)
 int mafVMEProber::GetMode()
 //-------------------------------------------------------------------------
 {
-  return (int)mafRestoreNumericFromTag(GetTagArray(), "MFL_MAP_MODE",m_ProberMode,-1,0);
+  return (int)mafRestoreNumericFromTag(GetTagArray(), _R("MFL_MAP_MODE"),m_ProberMode,-1,0);
 }
 //-------------------------------------------------------------------------
 void mafVMEProber::SetDistanceThreshold(float thr)
@@ -313,7 +313,7 @@ void mafVMEProber::SetDistanceThreshold(float thr)
 {
   m_DistThreshold = thr;
 
-  GetTagArray()->SetTag(mafTagItem("MFL_MAP_DISTANCE_THRESHOLD", m_DistThreshold));
+  GetTagArray()->SetTag(mafTagItem(_R("MFL_MAP_DISTANCE_THRESHOLD"), m_DistThreshold));
   m_ProbingDataPipe->SetDistanceThreshold(m_DistThreshold);
   this->Modified();
 }
@@ -321,7 +321,7 @@ void mafVMEProber::SetDistanceThreshold(float thr)
 float mafVMEProber::GetDistanceThreshold()
 //-------------------------------------------------------------------------
 {
-  return mafRestoreNumericFromTag(GetTagArray(),"MFL_MAP_DISTANCE_THRESHOLD", m_DistThreshold, -1.0f, 0.0f);
+  return mafRestoreNumericFromTag(GetTagArray(),_R("MFL_MAP_DISTANCE_THRESHOLD"), m_DistThreshold, -1.0f, 0.0f);
 }
 //-------------------------------------------------------------------------
 void mafVMEProber::SetMaxDistance(float max_dist)
@@ -335,7 +335,7 @@ void mafVMEProber::SetMaxDistance(float max_dist)
 
   m_MaxDistance = max_dist;
 
-  GetTagArray()->SetTag(mafTagItem("MFL_MAP_MAX_DISTANCE", m_MaxDistance));
+  GetTagArray()->SetTag(mafTagItem(_R("MFL_MAP_MAX_DISTANCE"), m_MaxDistance));
   m_ProbingDataPipe->SetMaxDistance(m_MaxDistance);
   this->Modified();
 }
@@ -343,7 +343,7 @@ void mafVMEProber::SetMaxDistance(float max_dist)
 float mafVMEProber::GetMaxDistance()
 //-------------------------------------------------------------------------
 {
-  return mafRestoreNumericFromTag(GetTagArray(),"MFL_MAP_MAX_DISTANCE",m_MaxDistance,-1.0f, 1.0f);
+  return mafRestoreNumericFromTag(GetTagArray(),_R("MFL_MAP_MAX_DISTANCE"),m_MaxDistance,-1.0f, 1.0f);
 }
 //-------------------------------------------------------------------------
 void mafVMEProber::SetDistanceMode(int mode)
@@ -356,7 +356,7 @@ void mafVMEProber::SetDistanceMode(int mode)
   }
 
   m_DistanceModeType = mode;
-  GetTagArray()->SetTag(mafTagItem("MFL_MAP_DISTANCE_MODE", m_DistanceModeType));
+  GetTagArray()->SetTag(mafTagItem(_R("MFL_MAP_DISTANCE_MODE"), m_DistanceModeType));
   m_ProbingDataPipe->SetDistanceMode(m_DistanceModeType);
   this->Modified();
 }
@@ -376,7 +376,7 @@ void mafVMEProber::SetDistanceModeToVector()
 int mafVMEProber::GetDistanceMode()
 //-------------------------------------------------------------------------
 {
-  return mafRestoreNumericFromTag(GetTagArray(),"MFL_MAP_DISTANCE_MODE",m_DistanceModeType,-1,0);
+  return mafRestoreNumericFromTag(GetTagArray(),_R("MFL_MAP_DISTANCE_MODE"),m_DistanceModeType,-1,0);
 }
 //-------------------------------------------------------------------------
 void mafVMEProber::SetHighDensity(float high_dens)
@@ -384,7 +384,7 @@ void mafVMEProber::SetHighDensity(float high_dens)
 {
   m_HighDensity = high_dens;
 
-  GetTagArray()->SetTag(mafTagItem("MFL_MAP_HIGH_DENSITY", m_HighDensity));
+  GetTagArray()->SetTag(mafTagItem(_R("MFL_MAP_HIGH_DENSITY"), m_HighDensity));
   m_ProbingDataPipe->SetHighDensity(m_HighDensity);
   this->Modified();
 }
@@ -392,7 +392,7 @@ void mafVMEProber::SetHighDensity(float high_dens)
 float mafVMEProber::GetHighDensity()
 //-------------------------------------------------------------------------
 {
-  return mafRestoreNumericFromTag(GetTagArray(),"MFL_MAP_HIGH_DENSITY",m_HighDensity,-1.0f,600.0f);
+  return mafRestoreNumericFromTag(GetTagArray(),_R("MFL_MAP_HIGH_DENSITY"),m_HighDensity,-1.0f,600.0f);
 }
 //-------------------------------------------------------------------------
 void mafVMEProber::SetLowDensity(float low_dens)
@@ -400,7 +400,7 @@ void mafVMEProber::SetLowDensity(float low_dens)
 {
   m_LowDensity = low_dens;
 
-  GetTagArray()->SetTag(mafTagItem("MFL_MAP_LOW_DENSITY", m_LowDensity));
+  GetTagArray()->SetTag(mafTagItem(_R("MFL_MAP_LOW_DENSITY"), m_LowDensity));
   m_ProbingDataPipe->SetLowDensity(m_LowDensity);
   this->Modified();
 }
@@ -408,7 +408,7 @@ void mafVMEProber::SetLowDensity(float low_dens)
 float mafVMEProber::GetLowDensity()
 //-------------------------------------------------------------------------
 {
-  return mafRestoreNumericFromTag(GetTagArray(),"MFL_MAP_LOW_DENSITY",m_LowDensity,-1.0f,300.0f);
+  return mafRestoreNumericFromTag(GetTagArray(),_R("MFL_MAP_LOW_DENSITY"),m_LowDensity,-1.0f,300.0f);
 }
 //-------------------------------------------------------------------------
 mafGUI* mafVMEProber::CreateGui()
@@ -418,16 +418,16 @@ mafGUI* mafVMEProber::CreateGui()
   m_Gui->SetListener(this);
   m_Gui->Divider();
   mafVME *vol = mafVME::SafeDownCast(GetVolumeLink());
-  m_VolumeName = vol ? vol->GetName() : _("none");
-  m_Gui->Button(ID_VOLUME_LINK,&m_VolumeName,_("Volume"), _("Select the volume to be probed"));
+  m_VolumeName = vol ? vol->GetName() : _L("none");
+  m_Gui->Button(ID_VOLUME_LINK,&m_VolumeName,_L("Volume"), _L("Select the volume to be probed"));
 
   mafVME *surf = mafVME::SafeDownCast(GetSurfaceLink());
-  m_SurfaceName = surf ? surf->GetName() : _("none");
-  m_Gui->Button(ID_SURFACE_LINK,&m_SurfaceName,_("Surface"), _("Select the polydata to probe the volume"));
+  m_SurfaceName = surf ? surf->GetName() : _L("none");
+  m_Gui->Button(ID_SURFACE_LINK,&m_SurfaceName,_L("Surface"), _L("Select the polydata to probe the volume"));
 
   m_ProberMode = GetMode();
-  mafString prober_mode[2] = {_("density"), _("distance")};
-  m_Gui->Combo(ID_MODALITY,_("modality"), &m_ProberMode, 2, prober_mode);
+  mafString prober_mode[2] = {_L("density"), _L("distance")};
+  m_Gui->Combo(ID_MODALITY,_L("modality"), &m_ProberMode, 2, prober_mode);
 	m_Gui->Divider();
   return m_Gui;
 }
@@ -442,7 +442,7 @@ void mafVMEProber::OnEvent(mafEventBase *maf_event)
     {
       case ID_VOLUME_LINK:
       {
-        mafString title = _("Choose volume vme");
+        mafString title = _L("Choose volume vme");
         e->SetId(VME_CHOOSE);
         e->SetArg((long)&mafVMEProber::VolumeAccept);
         e->SetString(&title);
@@ -458,7 +458,7 @@ void mafVMEProber::OnEvent(mafEventBase *maf_event)
       break;
       case ID_SURFACE_LINK:
       {
-        mafString title = _("Choose surface vme");
+        mafString title = _L("Choose surface vme");
         e->SetId(VME_CHOOSE);
         e->SetArg((long)&mafVMEProber::OutputSurfaceAccept);
         e->SetString(&title);

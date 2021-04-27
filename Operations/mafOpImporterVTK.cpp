@@ -36,7 +36,6 @@
 #include "mafVMEVolumeGray.h"
 #include "mafVMEVolumeRGB.h"
 #include "mafVMEMesh.h"
-#include "mafFilesDirs.h"
 
 #include "mafTagArray.h"
 #include "vtkMAFSmartPointer.h"
@@ -59,7 +58,7 @@ mafOpImporterVTK::mafOpImporterVTK(const mafString& label) : Superclass(label)
 {
   m_OpType  = OPTYPE_IMPORTER;
 	m_Canundo = true;
-	m_File    = "";
+	m_File    = _R("");
 
   //m_VmePointSet = NULL;
   m_VmeLandmarkCloud = NULL;
@@ -71,7 +70,7 @@ mafOpImporterVTK::mafOpImporterVTK(const mafString& label) : Superclass(label)
   m_VmeMesh     = NULL;
   m_VmeGeneric  = NULL;
 
-  m_FileDir = "";//mafGetApplicationDirectory().c_str();
+  m_FileDir = _R("");//mafGetApplicationDirectory().c_str();
 }
 //----------------------------------------------------------------------------
 mafOpImporterVTK::~mafOpImporterVTK()
@@ -99,11 +98,11 @@ mafOp* mafOpImporterVTK::Copy()
 void mafOpImporterVTK::OpRun()   
 //----------------------------------------------------------------------------
 {
-	mafString wildc = "vtk Data (*.vtk)|*.vtk";
+	mafString wildc = _R("vtk Data (*.vtk)|*.vtk");
   mafString f;
   if (m_File.IsEmpty())
   {
-    f = mafGetOpenFile(m_FileDir, wildc, _("Choose VTK file"));
+    f = mafGetOpenFile(m_FileDir, wildc, _L("Choose VTK file"));
     m_File = f;
   }
 
@@ -117,7 +116,7 @@ void mafOpImporterVTK::OpRun()
     else
     {
       if(!this->m_TestMode)
-        mafMessage(_("Unsupported file format"), _("I/O Error"), wxICON_ERROR );
+          mafErrorMessage(_M(mafString(_L("Unsupported file format"))));
     }
 	}
 	mafEventMacro(mafEvent(this,result));
@@ -131,7 +130,7 @@ int mafOpImporterVTK::ImportVTK()
 		wxBusyInfo wait(_("Loading file: ..."));
   
   vtkMAFSmartPointer<vtkDataSetReader> reader;
-  reader->SetFileName(m_File);
+  reader->SetFileName(m_File.GetCStr());
 
   vtkDataReader *preader = NULL;
   // workaround to avoid double reading
@@ -156,7 +155,7 @@ int mafOpImporterVTK::ImportVTK()
       return MAF_ERROR;
   }
   mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR,preader));
-  preader->SetFileName(m_File);
+  preader->SetFileName(m_File.GetCStr());
   preader->Update();
   
   if (preader->GetNumberOfOutputs()>0)
@@ -215,8 +214,8 @@ int mafOpImporterVTK::ImportVTK()
       }
 
       mafTagItem tag_Nature;
-      tag_Nature.SetName("VME_NATURE");
-      tag_Nature.SetValue("NATURAL");
+      tag_Nature.SetName(_R("VME_NATURE"));
+      tag_Nature.SetValue(_R("NATURAL"));
       m_Output->GetTagArray()->SetTag(tag_Nature);
       m_Output->ReparentTo(m_Input);
       m_Output->SetName(name);
@@ -227,7 +226,7 @@ int mafOpImporterVTK::ImportVTK()
   vtkDEL(preader);
   if(!success && !this->m_TestMode)
   {
-    mafMessage(_("Error reading VTK file."), _("I/O Error"), wxICON_ERROR );
+    mafErrorMessage(_M(mafString(_L("Error reading VTK file."))));
     return MAF_ERROR;
   }
   return MAF_OK;

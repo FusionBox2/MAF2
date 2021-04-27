@@ -48,8 +48,8 @@ mafCxxTypeMacro(mmaVolumeMaterial)
 mmaVolumeMaterial::mmaVolumeMaterial()
 //----------------------------------------------------------------------------
 {  
-  m_Name        = "VolumeMaterialAttributes";
-  m_MaterialName= "new material";
+  m_Name        = _R("VolumeMaterialAttributes");
+  m_MaterialName= _R("new material");
   vtkNEW(m_ColorLut);
 
   vtkNEW(m_OpacityTransferFunction);
@@ -142,49 +142,47 @@ int mmaVolumeMaterial::InternalStore(mafStorageElement *parent)
   {
     UpdateFromTables();
     // property
-    parent->StoreText("MaterialName",m_MaterialName);
+    parent->StoreText(_R("MaterialName"),m_MaterialName);
     // lut
-    parent->StoreDouble("Level_LUT", m_Level_LUT);
-    parent->StoreDouble("Window_LUT", m_Window_LUT);
-    parent->StoreDouble("HueRange0", m_HueRange[0]);
-    parent->StoreDouble("HueRange1", m_HueRange[1]);
-    parent->StoreDouble("SaturationRange0", m_SaturationRange[0]);
-    parent->StoreDouble("SaturationRange1", m_SaturationRange[1]);
-    parent->StoreDouble("TableRange0", m_TableRange[0]);
-    parent->StoreDouble("TableRange1", m_TableRange[1]);
-    parent->StoreDouble("GammaCorrection", m_GammaCorrection);
-    parent->StoreInteger("NumValues", m_NumValues);
+    parent->StoreDouble(_R("Level_LUT"), m_Level_LUT);
+    parent->StoreDouble(_R("Window_LUT"), m_Window_LUT);
+    parent->StoreDouble(_R("HueRange0"), m_HueRange[0]);
+    parent->StoreDouble(_R("HueRange1"), m_HueRange[1]);
+    parent->StoreDouble(_R("SaturationRange0"), m_SaturationRange[0]);
+    parent->StoreDouble(_R("SaturationRange1"), m_SaturationRange[1]);
+    parent->StoreDouble(_R("TableRange0"), m_TableRange[0]);
+    parent->StoreDouble(_R("TableRange1"), m_TableRange[1]);
+    parent->StoreDouble(_R("GammaCorrection"), m_GammaCorrection);
+    parent->StoreInteger(_R("NumValues"), m_NumValues);
     mafString lutvalues;
     double *rgba;
     for (int v = 0; v < m_NumValues; v++)
     {
-      lutvalues = "LUT_VALUE_";
-      lutvalues << v;
+      lutvalues = _R("LUT_VALUE_");
+      lutvalues += mafToString(v);
       rgba = m_ColorLut->GetTableValue(v);
       parent->StoreVectorN(lutvalues,rgba,4);
     }
-    parent->StoreInteger("InterpolationType", m_InterpolationType);
-    parent->StoreInteger("Shade", m_Shade);
+    parent->StoreInteger(_R("InterpolationType"), m_InterpolationType);
+    parent->StoreInteger(_R("Shade"), m_Shade);
     m_NumOpacityValues = m_OpacityTransferFunction->GetSize();
-    parent->StoreInteger("NumOpacityValues", m_NumOpacityValues);
+    parent->StoreInteger(_R("NumOpacityValues"), m_NumOpacityValues);
     double *data_values = m_OpacityTransferFunction->GetDataPointer();
     double point[2];
     int p;
     for (p = 0; p < m_NumOpacityValues; p++)
     {
-      lutvalues = "OPACITY_VALUE_";
-      lutvalues << p;
+      lutvalues = _R("OPACITY_VALUE_") + mafToString(p);
       point[0] = data_values[2*p];
       point[1] = data_values[2*p + 1];
       parent->StoreVectorN(lutvalues,point,2);
     }
     m_NumGradientValues = m_GradientTransferFunction->GetSize();
-    parent->StoreInteger("NumGradientValues", m_NumGradientValues);
+    parent->StoreInteger(_R("NumGradientValues"), m_NumGradientValues);
     data_values = m_GradientTransferFunction->GetDataPointer();
     for (p = 0; p < m_NumGradientValues; p++)
     {
-      lutvalues = "GRADIENT_VALUE_";
-      lutvalues << p;
+      lutvalues = _R("GRADIENT_VALUE_") + mafToString(p);
       point[0] = data_values[2*p];
       point[1] = data_values[2*p + 1];
       parent->StoreVectorN(lutvalues,point,2);
@@ -200,49 +198,49 @@ int mmaVolumeMaterial::InternalRestore(mafStorageElement *node)
   if (Superclass::InternalRestore(node) == MAF_OK)
   {
     // property
-    node->RestoreText("MaterialName",m_MaterialName);
+    node->RestoreText(_R("MaterialName"),m_MaterialName);
     // lut
-    node->RestoreDouble("Level_LUT", m_Level_LUT);
-    node->RestoreDouble("Window_LUT", m_Window_LUT);
-    node->RestoreDouble("HueRange0", m_HueRange[0]);
-    node->RestoreDouble("HueRange1", m_HueRange[1]);
-    node->RestoreDouble("SaturationRange0", m_SaturationRange[0]);
-    node->RestoreDouble("SaturationRange1", m_SaturationRange[1]);
-    node->RestoreDouble("TableRange0", m_TableRange[0]);
-    node->RestoreDouble("TableRange1", m_TableRange[1]);
-    node->RestoreDouble("GammaCorrection", m_GammaCorrection);
-    node->RestoreInteger("NumValues", m_NumValues);
+    node->RestoreDouble(_R("Level_LUT"), m_Level_LUT);
+    node->RestoreDouble(_R("Window_LUT"), m_Window_LUT);
+    node->RestoreDouble(_R("HueRange0"), m_HueRange[0]);
+    node->RestoreDouble(_R("HueRange1"), m_HueRange[1]);
+    node->RestoreDouble(_R("SaturationRange0"), m_SaturationRange[0]);
+    node->RestoreDouble(_R("SaturationRange1"), m_SaturationRange[1]);
+    node->RestoreDouble(_R("TableRange0"), m_TableRange[0]);
+    node->RestoreDouble(_R("TableRange1"), m_TableRange[1]);
+    node->RestoreDouble(_R("GammaCorrection"), m_GammaCorrection);
+    node->RestoreInteger(_R("NumValues"), m_NumValues);
     m_ColorLut->SetNumberOfTableValues(m_NumValues);
     mafString lutvalues;
     double rgba[4];
     for (int v = 0; v < m_NumValues; v++)
     {
-      lutvalues = "LUT_VALUE_";
-      lutvalues << v;
+      lutvalues = _R("LUT_VALUE_");
+      lutvalues += mafToString(v);
       node->RestoreVectorN(lutvalues,rgba,4);
       m_ColorLut->SetTableValue(v,rgba);
     }
     m_ColorLut->SetTableRange(m_TableRange);
     m_ColorLut->SetRange(m_TableRange);
     m_ColorLut->Build();
-    node->RestoreInteger("InterpolationType", m_InterpolationType);
-    node->RestoreInteger("Shade", m_Shade);
-    node->RestoreInteger("NumOpacityValues", m_NumOpacityValues);
+    node->RestoreInteger(_R("InterpolationType"), m_InterpolationType);
+    node->RestoreInteger(_R("Shade"), m_Shade);
+    node->RestoreInteger(_R("NumOpacityValues"), m_NumOpacityValues);
 
     double point[2];
     int p;
     for (p = 0; p < m_NumOpacityValues; p++)
     {
-      lutvalues = "OPACITY_VALUE_";
-      lutvalues << p;
+      lutvalues = _R("OPACITY_VALUE_");
+      lutvalues += mafToString(p);
       node->RestoreVectorN(lutvalues,point,2);
       m_OpacityTransferFunction->AddPoint(point[0],point[1]);
     }
-    node->RestoreInteger("NumGradientValues", m_NumGradientValues);
+    node->RestoreInteger(_R("NumGradientValues"), m_NumGradientValues);
     for (p = 0; p < m_NumGradientValues; p++)
     {
-      lutvalues = "GRADIENT_VALUE_";
-      lutvalues << p;
+      lutvalues = _R("GRADIENT_VALUE_");
+      lutvalues += mafToString(p);
       node->RestoreVectorN(lutvalues,point,2);
       m_GradientTransferFunction->AddPoint(point[0],point[1]);
     }

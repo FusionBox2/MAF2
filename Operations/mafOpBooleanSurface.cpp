@@ -140,8 +140,8 @@ void mafOpBooleanSurface::OpRun()
 	vtkMAFSmartPointer<vtkPolyData> poly;
 	poly->DeepCopy((vtkPolyData*)((mafVME*)m_Input)->GetOutput()->GetVTKData());
   m_ResultVME->SetData(poly,((mafVME*)m_Input)->GetTimeStamp());
-  mafString name = _("bool_");
-  name << m_Input->GetName();
+  mafString name = _L("bool_");
+  name += m_Input->GetName();
   m_ResultVME->SetAbsMatrix(*((mafVME*)m_Input)->GetOutput()->GetAbsMatrix());
   m_ResultVME->SetName(name);
   m_ResultVME->Modified();
@@ -160,11 +160,11 @@ void mafOpBooleanSurface::OpRun()
 	//wxString clip_by_choices[2] = {"surface","implicit function"};
 	//m_Gui->Combo(ID_MODALITY,"Modality",&m_Modality,2,clip_by_choices);
 
-	m_Gui->Label("Surface:",true);
-	m_Gui->Button(ID_CHOOSE_UNION,_("Union VME"));
-	m_Gui->Button(ID_CHOOSE_INTERSECTION,_("Intersect VME"));
-	m_Gui->Button(ID_CHOOSE_DIFFERENCE,_("Difference VME"));
-	m_Gui->Integer(ID_SUBDIVISION,_("Subdivide"), &m_Subdivision,1,10);
+	m_Gui->Label(_R("Surface:"),true);
+	m_Gui->Button(ID_CHOOSE_UNION,_L("Union VME"));
+	m_Gui->Button(ID_CHOOSE_INTERSECTION,_L("Intersect VME"));
+	m_Gui->Button(ID_CHOOSE_DIFFERENCE,_L("Difference VME"));
+	m_Gui->Integer(ID_SUBDIVISION,_L("Subdivide"), &m_Subdivision,1,10);
 
 	/*m_Gui->Label("Implicit:",true);
 	m_Gui->Button(ID_CLIP,_("Clip"));
@@ -172,7 +172,7 @@ void mafOpBooleanSurface::OpRun()
 	m_Gui->Enable(ID_CLIP,m_Modality == MODE_IMPLICIT_FUNCTION);
 	m_Gui->Enable(ID_CLIP_INSIDE,m_Modality == MODE_IMPLICIT_FUNCTION);*/
 
-	m_Gui->Button(ID_UNDO,_("Undo"));
+	m_Gui->Button(ID_UNDO,_L("Undo"));
 	m_Gui->Enable(ID_UNDO,false);
 
 	m_Gui->OkCancel();
@@ -211,11 +211,11 @@ void mafOpBooleanSurface::OnEvent(mafEventBase *maf_event)
 			break;
 		case ID_CHOOSE_UNION:
 			{
-				mafString title = "Choose Union Surface";
+				mafString title = _R("Choose Union Surface");
 				VmeChoose(title,e);
         if(m_FirstOperatorVME == m_SecondOperatorVME || m_Input == m_SecondOperatorVME)
         {
-          mafMessage(_("Can't operate over the same VME"));
+          mafMessage(_M(mafString(_L("Can't operate over the same VME"))));
           return;
         }
 				Union();
@@ -224,11 +224,11 @@ void mafOpBooleanSurface::OnEvent(mafEventBase *maf_event)
 			break;
 		case ID_CHOOSE_INTERSECTION:
 			{
-				mafString title = _("Choose Intersect Surface");
+				mafString title = _L("Choose Intersect Surface");
 				VmeChoose(title,e);
         if(m_FirstOperatorVME == m_SecondOperatorVME || m_Input == m_SecondOperatorVME)
         {
-          mafMessage(_("Can't operate over the same VME"));
+          mafMessage(_M(mafString(_L("Can't operate over the same VME"))));
           return;
         }
 				Intersection();
@@ -238,11 +238,11 @@ void mafOpBooleanSurface::OnEvent(mafEventBase *maf_event)
 			break;
 		case ID_CHOOSE_DIFFERENCE:
 			{
-				mafString title = _("Choose Difference Surface");
+				mafString title = _L("Choose Difference Surface");
 				VmeChoose(title,e);
         if(m_FirstOperatorVME == m_SecondOperatorVME || m_Input == m_SecondOperatorVME)
         {
-          mafMessage(_("Can't operate over the same VME"));
+          mafMessage(_M(mafString(_L("Can't operate over the same VME"))));
           return;
         }
 				Difference();
@@ -346,7 +346,7 @@ void mafOpBooleanSurface::Clip()
 
 	if(result == MAF_ERROR)
 	{
-		mafMessage(_("The result surface hasn't any points"),_("Warning"),wxICON_EXCLAMATION);
+		mafWarningMessage(_M(mafString(_L("The result surface hasn't any points"))));
 		vtkDEL(resultPolydata);
 	}
 	else
@@ -500,7 +500,7 @@ void mafOpBooleanSurface::Intersection()
 
 			if(result == MAF_ERROR)
 			{
-				mafMessage(_("The result surface hasn't any points"),_("Warning"),wxICON_EXCLAMATION);
+				mafWarningMessage(_M(mafString(_L("The result surface hasn't any points"))));
 				mafDEL(resultPolydata);
 			}
 			else
@@ -579,7 +579,7 @@ void mafOpBooleanSurface::ShowClipPlane(bool show)
 
 			//mafNEW(m_ImplicitPlaneGizmo);
 			m_ImplicitPlaneGizmo->SetData(gizmo->GetOutput());
-			m_ImplicitPlaneGizmo->SetName("implicit plane gizmo");
+			m_ImplicitPlaneGizmo->SetName(_R("implicit plane gizmo"));
 			m_ImplicitPlaneGizmo->ReparentTo(mafVME::SafeDownCast(m_Input->GetRoot()));
 
 			// position the plane
@@ -718,7 +718,7 @@ void mafOpBooleanSurface::Difference()
 			int result=m_FirstOperatorVME->SetData(resultPolydata,((mafVME*)m_Input)->GetTimeStamp());
 			if(result == MAF_ERROR)
 			{
-				mafMessage(_("The result surface hasn't any points"),_("Warning"),wxICON_EXCLAMATION);
+				mafWarningMessage(_M(mafString(_L("The result surface hasn't any points"))));
 				mafDEL(resultPolydata);
 			}
 			else

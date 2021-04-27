@@ -122,7 +122,7 @@ public:
 
 protected:
   /** Fill the application menu.	*/
-  void AddToMenu(const mafString& name, long id, wxMenu* path_menu, const mafString& menuPath ="");
+  void AddToMenu(const mafString& name, long id, wxMenu* path_menu, const mafString& menuPath =_R(""));
   void SetAccelerator(const mafString& name, long id);
   /** Add the main menu.*/
   void AddMenu();

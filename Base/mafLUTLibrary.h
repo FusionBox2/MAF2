@@ -32,8 +32,8 @@ public:
   ~mafLUTLibrary();
 
   /** set get the library directory */
-  void SetDir(const char *dir);
-  const char *GetDir();
+  void SetDir(const mafString& dir);
+  const mafString& GetDir();
 
   /** load lut library */
   void Load();
@@ -42,23 +42,23 @@ public:
   void Save();
 
   /** beware! if a lut with the same name exists it will be replaced */
-  void Add(vtkLookupTable *inLUT, const char *lutName);
+  void Add(vtkLookupTable *inLUT, const mafString& lutName);
 
   /** remove a lut from the library: return MAF_ERROR  if lutName does not exist, 
   MAF_OK otherwise */
-  int Remove(const char *lutName); 
+  int Remove(const mafString& lutName);
 
   /** return the number of luts */
   int GetNumberOfLuts();
 
   /** return the lut names vector */
-  void GetLutNames(std::vector<std::string> &names);
+  std::vector<mafString> GetLutNames();
 
   /** get a lut by name */
-  vtkLookupTable *GetLutByName(const char *name);
+  vtkLookupTable *GetLutByName(const mafString& name);
   
   /** return if the named lut is present or not  */
-  bool HasLut(const char *name);
+  bool HasLut(const mafString& name);
 
   /** Clear the library; do not remove it from disk unless removeLibraryFromDisk is true */
   void Clear(bool removeLibraryFromDisk = false);
@@ -66,11 +66,11 @@ public:
   void PrintLut( std::ostringstream &stringStream, vtkLookupTable *lut );
 
 private:
-  std::map<std::string, vtkLookupTable *> m_LutMap;
+  std::map<mafString, vtkLookupTable *> m_LutMap;
   mafString m_LibraryDir;
 
-  void RemoveLUTFromDisk(const char *lutName);
-  void LoadLUT( const char *inLutFileName, vtkLookupTable *targetLut);
-  void SaveLUT( vtkLookupTable *inLut, const char *outFileName); 
+  void RemoveLUTFromDisk(const mafString& lutName);
+  void LoadLUT(const mafString& inLutFileName, vtkLookupTable *targetLut);
+  void SaveLUT( vtkLookupTable *inLut, const mafString& outFileName);
 };
 #endif

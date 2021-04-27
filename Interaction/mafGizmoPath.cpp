@@ -68,7 +68,7 @@ void mafGizmoPath::Constructor(mafNode *imputVme, mafBaseEventHandler *listener,
 //----------------------------------------------------------------------------
 {
 
-  m_Name = name;
+  m_Name = _R(name);
   SetListener(listener);
   m_ConstraintPolyline = NULL;
   m_VmeGizmoPath = NULL;
@@ -162,7 +162,7 @@ void mafGizmoPath::SetInput( mafVME *vme )
   if (m_VmeGizmoPath != NULL)
   {
     Destructor();
-    Constructor(vme, GetListener(), m_Name);
+    Constructor(vme, GetListener(), m_Name.GetCStr());
   }
 }
 
@@ -279,12 +279,12 @@ void mafGizmoPath::FindBoundaryVerticesID( double s, int &idMin, int &idMax, dou
   if (s <  0)
   {
     s = 0;
-    mafLogMessage("out of constrain polyline: setting s to 0") ;
+    mafLogMessage(_M("out of constrain polyline: setting s to 0")) ;
   }
   else if (s  > lineLenght)
   {
     s = lineLenght;
-    mafLogMessage("out of constrain polyline: setting s to constraint length") ;
+    mafLogMessage(_M("out of constrain polyline: setting s to constraint length")) ;
   }
 
   vtkPoints *pts = vtkPolyData::SafeDownCast(m_ConstraintPolyline->GetOutput()->GetVTKData())->GetPoints();

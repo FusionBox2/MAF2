@@ -49,7 +49,7 @@ template class MAF_EXPORT mafAutoPointer<mafMatrix>;
 class MAF_EXPORT mafGizmoRotateCircle: public mafGizmoInterface
 {
 public:
-           mafGizmoRotateCircle(mafVME *input, mafBaseEventHandler *listener = NULL, mafString name = "Circle");
+           mafGizmoRotateCircle(mafVME *input, mafBaseEventHandler *listener = NULL, mafString name = _R("Circle"));
   virtual ~mafGizmoRotateCircle(); 
   
    /** 

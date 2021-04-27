@@ -112,12 +112,12 @@ void mafOpVOIDensityEditor::OpRun()
 
 		if (buildHelpGui.GetArg() == true)
 		{
-			m_Gui->Button(ID_HELP, "Help","");	
+			m_Gui->Button(ID_HELP, _R("Help"), _R(""));
 		}
 
 		m_Gui->Divider();
-    m_Gui->Double(ID_SCALAR_VALUE, "fill scalar", &m_ScalarValue);
-		m_Gui->Button(ID_CHOOSE_SURFACE,_("VOI surface"));
+    m_Gui->Double(ID_SCALAR_VALUE, _R("fill scalar"), &m_ScalarValue);
+		m_Gui->Button(ID_CHOOSE_SURFACE,_L("VOI surface"));
 		m_Gui->OkCancel();
 		m_Gui->Divider();
 
@@ -148,7 +148,7 @@ void mafOpVOIDensityEditor::OnEvent(mafEventBase *maf_event)
 
 			case ID_CHOOSE_SURFACE:
 			{
-				mafString title = _("VOI surface");
+				mafString title = _L("VOI surface");
         mafEvent event(this,VME_CHOOSE,&title,(long)&mafOpVOIDensityEditor::OutputSurfaceAccept);
 				mafEventMacro(event);
 				m_Surface = event.GetVme();
@@ -157,7 +157,7 @@ void mafOpVOIDensityEditor::OnEvent(mafEventBase *maf_event)
 				mafVME *VME = mafVME::SafeDownCast(m_Surface);
         if (VME == NULL)
         {
-          mafMessage(_("Not valid surface choosed!!"), _("Warning"));
+          mafWarningMessage(_M(mafString(_L("Not valid surface choosed!!"))));
           m_Surface = NULL;
           return;
         }
@@ -175,7 +175,7 @@ void mafOpVOIDensityEditor::OnEvent(mafEventBase *maf_event)
 				if(FE->GetOutput()->GetNumberOfCells() != 0)
 				{
 					//open polydata
-					mafMessage(_("Open surface choosed!!"), _("Warning"));
+					mafWarningMessage(_M(mafString(_L("Open surface choosed!!"))));
 					m_Surface = NULL;
 					return;
 				}
@@ -301,7 +301,7 @@ void mafOpVOIDensityEditor::OpUndo()
     }
     if (result != MAF_OK)
     {
-      mafLogMessage("Error assigning the old dataset to %s", m_Input->GetName());
+      mafLogMessage(_M(_R("Error assigning the old dataset to ") + m_Input->GetName()));
       return;
     }
     ((mafVMEVolumeGray *)m_Input)->Update();

@@ -45,7 +45,7 @@ class MAF_EXPORT mafOpImporterVMEDataSetAttributes: public mafOp
 {
 public:
 
-	mafOpImporterVMEDataSetAttributes(const mafString& label = "mafOpImporterVMEDataSetAttributes");
+	mafOpImporterVMEDataSetAttributes(const mafString& label = _R("mafOpImporterVMEDataSetAttributes"));
 	~mafOpImporterVMEDataSetAttributes(); 
 	
   mafTypeMacro(mafOpImporterVMEDataSetAttributes, mafOp);
@@ -77,7 +77,7 @@ public:
   void SetUseIdArrayFlag(bool useIdArray) {m_UseIdArray = useIdArray;};
   bool GetUseIdArrayFlag() {return m_UseIdArray;};
 
-  void SetIdArrayName(const char *idArrayName) {m_IdArrayName = idArrayName; };
+  void SetIdArrayName(const char *idArrayName) {m_IdArrayName = _R(idArrayName); };
   const char *GetIdArrayName() { return m_IdArrayName.GetCStr(); };
 
   /** 

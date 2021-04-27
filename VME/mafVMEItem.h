@@ -99,7 +99,7 @@ public:
   bool IsDataModified() {return m_DataModified;};
 
   /** return the URL where this data is stored */
-  const char *GetURL() {return m_URL;};
+  const char *GetURL() {return m_URL.GetCStr();};
 
   /** used to set an external URL where this data is stored */
   virtual void SetURL(const char *name);

@@ -42,7 +42,7 @@ mafOpImporterExternalFile::mafOpImporterExternalFile(const mafString &label) : S
   m_Input = NULL; 
 
   m_Vme = NULL;
-	m_FileDir = "";//mafGetApplicationDirectory().c_str();
+	m_FileDir = _R("");//mafGetApplicationDirectory().c_str();
 }
 //----------------------------------------------------------------------------
 mafOpImporterExternalFile::~mafOpImporterExternalFile( ) 
@@ -62,11 +62,11 @@ mafOp* mafOpImporterExternalFile::Copy()
 void mafOpImporterExternalFile::OpRun()   
 //----------------------------------------------------------------------------
 {
-  mafString wildc = _("All Files (*.*) |*.*");
+  mafString wildc = _L("All Files (*.*) |*.*");
   mafString f;
   if (m_File.IsEmpty())
   {
-    f = mafGetOpenFile(m_FileDir.GetCStr(),wildc.GetCStr());
+    f = mafGetOpenFile(m_FileDir,wildc);
     m_File = f;
   }
   
@@ -84,17 +84,16 @@ void mafOpImporterExternalFile::OpRun()
 void mafOpImporterExternalFile::ImportExternalFile()
 //----------------------------------------------------------------------------
 {
-	wxString path, name, ext;
-	wxSplitPath(m_File, &path, &name, &ext);
+	mafString path, name, ext;
+	mafSplitPath(m_File, &path, &name, &ext);
   
-	wxString vmeName;
-	vmeName << name << "." << ext;
+	mafString vmeName = name + _R(".") + ext;
 
   mafNEW(m_Vme);
-	m_Vme->SetExtension(ext);
-	m_Vme->SetFileName(name.c_str());
-  m_Vme->SetCurrentPath(path.c_str());
-	m_Vme->SetName(vmeName.c_str());
+	m_Vme->SetExtension(ext.GetCStr());
+	m_Vme->SetFileName(name.GetCStr());
+  m_Vme->SetCurrentPath(path);
+	m_Vme->SetName(vmeName);
   m_Vme->ReparentTo(m_Input);
   m_Vme->Update();
 

@@ -519,14 +519,14 @@ void mafOpVolumeUnion::CreateGui()
 
 	if (buildHelpGui.GetArg() == true)
 	{
-		m_Gui->Button(ID_HELP, "Help","");	
+		m_Gui->Button(ID_HELP, _R("Help"), _R(""));
 	}
 
-	m_Gui->Label("");
-	m_Gui->Label("Choose the volume for the union operation");
-	m_Gui->Button(ID_VOL_SELECT, _("Choose"), "", _("Choose the volume for the union operation"));
+	m_Gui->Label(_R(""));
+	m_Gui->Label(_R("Choose the volume for the union operation"));
+	m_Gui->Button(ID_VOL_SELECT, _L("Choose"), _R(""), _L("Choose the volume for the union operation"));
 
-	m_Gui->Label("");
+	m_Gui->Label(_R(""));
 
 	int dimXYZ[3];
 	if(m_FirstVMEVolume->GetVolumeOutput()->GetVTKData()->GetDataObjectType() == VTK_RECTILINEAR_GRID) 
@@ -541,20 +541,20 @@ void mafOpVolumeUnion::CreateGui()
 	m_resolutionXYZ[0] = dimXYZ[0];
 	m_resolutionXYZ[1] = dimXYZ[1];
 	m_resolutionXYZ[2] = dimXYZ[2];
-	m_Gui->VectorN(ID_RESOLUTION, _("Resolution"), m_resolutionXYZ, 3, 30, 1000);
+	m_Gui->VectorN(ID_RESOLUTION, _L("Resolution"), m_resolutionXYZ, 3, 30, 1000);
 
-	m_Gui->Label("");
+	m_Gui->Label(_R(""));
 
     //m_FirstVMEVolume->GetVolumeOutput()->GetRectilinearData()->GetBounds(m_bounds);
 	m_FirstVMEVolume->GetVolumeOutput()->GetVTKData()->GetBounds(m_bounds);
 	m_spacingXYZ[0] = (fabs(m_bounds[1] - m_bounds[0]))/(m_resolutionXYZ[0]-1.);
 	m_spacingXYZ[1] = (fabs(m_bounds[3] - m_bounds[2]))/(m_resolutionXYZ[1]-1.);
 	m_spacingXYZ[2] = (fabs(m_bounds[5] - m_bounds[4]))/(m_resolutionXYZ[2]-1.);
-    m_Gui->VectorN(ID_SPACING, _("Spacing"), m_spacingXYZ, 3, 1.e-08, 10000,4,"The spacing is computed as the ratio between the length side and the resolution");
+    m_Gui->VectorN(ID_SPACING, _L("Spacing"), m_spacingXYZ, 3, 1.e-08, 10000,4,_R("The spacing is computed as the ratio between the length side and the resolution"));
 	m_Gui->Enable(ID_SPACING,false);
 
-	m_Gui->Label("");
-	m_Gui->TwoButtons(ID_OK,ID_CANCEL,"Ok", "Cancel");
+	m_Gui->Label(_R(""));
+	m_Gui->TwoButtons(ID_OK,ID_CANCEL,_R("Ok"), _R("Cancel"));
 
 	m_Gui->Divider();
 
@@ -586,7 +586,7 @@ void mafOpVolumeUnion::OnEvent(mafEventBase *maf_event)
 			break;
 			case ID_VOL_SELECT:
 				{
-					mafString title = "Choose Union Volume";
+					mafString title = _R("Choose Union Volume");
 					bool selOK = VmeChoose(title,e);
 					if(selOK) {
 						if ( !(m_SecondVMEVolume->GetOutput()->GetVTKData()->IsA("vtkRectilinearGrid")) && !(m_SecondVMEVolume->GetOutput()->GetVTKData()->IsA("vtkStructuredPoints")) )
@@ -596,7 +596,7 @@ void mafOpVolumeUnion::OnEvent(mafEventBase *maf_event)
 						}
 					    if(m_Input == m_SecondVMEVolume)
 					    {
-					 	     mafMessage(_("Can't operate over the same VME"));
+					 	     mafMessage(_M(mafString(_L("Can't operate over the same VME"))));
 						     return;
 					    }
 					    m_vme_is_selected = true;

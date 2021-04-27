@@ -37,9 +37,9 @@ BEGIN_EVENT_TABLE(mafGUIButton,wxButton)
 END_EVENT_TABLE()
 
 //----------------------------------------------------------------------------
-mafGUIButton::mafGUIButton(wxWindow* parent, wxWindowID id, const wxString& label, 
+mafGUIButton::mafGUIButton(wxWindow* parent, wxWindowID id, const mafString& label, 
                      const wxPoint& pos, const wxSize& size, long style)
-: wxButton(parent,id,label,pos,size,style)
+: wxButton(parent,id,label.toWx(),pos,size,style)
 //----------------------------------------------------------------------------
 {
   m_Id = id;

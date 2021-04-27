@@ -39,7 +39,6 @@
 #include "mafNodeManager.h"
 
 #include "vtkMAFSmartPointer.h"
-#include "mafFilesDirs.h"
 
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(mafOpImporterMSF);
@@ -51,7 +50,7 @@ mafOpImporterMSF::mafOpImporterMSF(const mafString& label) : Superclass(label)
 {
   m_OpType  = OPTYPE_IMPORTER;
   m_Canundo = true;
-  m_File    = "";
+  m_File    = _R("");
   m_Group   = NULL;
 }
 //----------------------------------------------------------------------------
@@ -60,7 +59,7 @@ mafOpImporterMSF::~mafOpImporterMSF()
 {
   mafDEL(m_Group);
   mafRemoveDirectory(m_TmpDir);
-  m_TmpDir = "";
+  m_TmpDir = _R("");
 }
 //----------------------------------------------------------------------------
 mafOp* mafOpImporterMSF::Copy()   
@@ -76,9 +75,9 @@ void mafOpImporterMSF::OpRun()
 {
   if (!m_TestMode)
   {
-    mafString fileDir = "";//mafGetApplicationDirectory().c_str();
-    mafString wildc  = _("MAF Storage Format file (*.msf)|*.msf|Compressed file (*.zmsf)|*.zmsf");
-    m_File = mafGetOpenFile(fileDir, wildc, _("Choose MSF file"));
+    mafString fileDir = _R("");//mafGetApplicationDirectory().c_str();
+    mafString wildc  = _L("MAF Storage Format file (*.msf)|*.msf|Compressed file (*.zmsf)|*.zmsf");
+    m_File = mafGetOpenFile(fileDir, wildc, _L("Choose MSF file"));
   }
 
   int result = OP_RUN_CANCEL;
@@ -99,16 +98,16 @@ int mafOpImporterMSF::ImportMSF()
   mafString path, name, ext;
   mafSplitPath(m_File,&path,&name,&ext);
 
-  if(ext == "zmsf")
+  if(ext == _R("zmsf"))
   {
-    unixname = mafOpenZIP(m_File, ::wxGetCwd(), m_TmpDir);
+    unixname = mafOpenZIP(m_File, mafWxToString(::wxGetCwd()), m_TmpDir);
     if(unixname.IsEmpty())
     {
       if (!m_TestMode)
-        mafMessage(_("Bad or corrupted zmsf file!"));
+        mafMessage(_M(mafString(_L("Bad or corrupted zmsf file!"))));
       return MAF_ERROR;
     }
-    wxSetWorkingDirectory(m_TmpDir.GetCStr());
+    wxSetWorkingDirectory(m_TmpDir.toWx());
   }
 
   unixname.ParsePathName(); // convert to unix format
@@ -125,12 +124,12 @@ int mafOpImporterMSF::ImportMSF()
   {
     // if some problems occurred during import give feedback to the user
     if (!m_TestMode)
-      mafErrorMessage(_("Errors during file parsing! Look the log area for error messages."));
+      mafErrorMessage(_M(mafString(_L("Errors during file parsing! Look the log area for error messages."))));
     //return MAF_ERROR;
   }
   mafVMERoot *root = mafVMERoot::SafeDownCast(manager.GetRoot());
       
-  mafString group_name = wxString::Format("imported from %s.%s",name.GetCStr(),ext.GetCStr()).c_str();
+  mafString group_name = _R("imported from ") + name + _R(".") + ext;
 
   mafNodeIterator *iter = root->NewIterator();
   for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())

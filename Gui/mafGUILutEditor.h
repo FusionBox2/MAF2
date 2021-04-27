@@ -81,7 +81,7 @@ protected:
   double       m_ValueRange[2]; ///< Value range of the current lookup table.
   wxString     m_Info; // selected indexes
   wxString     m_NewUserLutName;
-  wxString m_UserLutLibraryDir;
+  mafString m_UserLutLibraryDir;
 
   mafGUILutSwatch   *m_LutSwatch;
   mafGUILutWidget   *m_LutWidget;

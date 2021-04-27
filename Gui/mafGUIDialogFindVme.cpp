@@ -37,11 +37,11 @@ enum FIND_VME_ID
   FIND_NEXT
 };
 //----------------------------------------------------------------------------
-mafGUIDialogFindVme::mafGUIDialogFindVme(const wxString& title, long style)
+mafGUIDialogFindVme::mafGUIDialogFindVme(const mafString& title, long style)
 : mafGUIDialog(title, style)
 //----------------------------------------------------------------------------
 {
-  m_SearchString = "";
+  m_SearchString = _R("");
   m_MatchCase = 0;
   m_WholeWord = 0;
   m_Root = NULL;
@@ -49,9 +49,9 @@ mafGUIDialogFindVme::mafGUIDialogFindVme(const wxString& title, long style)
   m_NodeFoundList.clear();
 
   m_Gui = new mafGUI(this);
-  m_Gui->String(FIND_STRING,_("find vme: "), &m_SearchString);
-  m_Gui->Bool(MATCH_CASE_ID, _("match case"), &m_MatchCase, 1);
-  m_Gui->Bool(WHOLE_WORD_ID, _("match whole word"), &m_WholeWord, 1);
+  m_Gui->String(FIND_STRING,_L("find vme: "), &m_SearchString);
+  m_Gui->Bool(MATCH_CASE_ID, _L("match case"), &m_MatchCase, 1);
+  m_Gui->Bool(WHOLE_WORD_ID, _L("match whole word"), &m_WholeWord, 1);
 
   wxBoxSizer *buttons_sizer = new wxBoxSizer(wxHORIZONTAL);
   wxButton *findNextButton = new wxButton(this,FIND_NEXT,_("find next"));
@@ -78,15 +78,15 @@ void mafGUIDialogFindVme::OnEvent(mafEventBase *maf_event)
     break;
     case FIND_NEXT:
     {
-      if (!FindNextNode(m_SearchString))
+      if (!FindNextNode(m_SearchString.GetCStr()))
       {
         if (m_NodeFoundList.size() == 0)
         {
-          mafMessage(_("No VME found named %s"), m_SearchString);
+          mafMessage(_M(_L("No VME found named ") + m_SearchString));
         }
         else
         {
-          mafMessage(_("End of the tree!!"));
+          mafMessage(_M(mafString(_L("End of the tree!!"))));
           m_NodeFoundList.clear();
         }
       }
@@ -108,8 +108,8 @@ bool mafGUIDialogFindVme::FindNextNode(const char *text)
   {
     return false;
   }
-  m_SearchString = text;
-  mafNode *nodeFound = FindInTreeByName(m_Root, m_SearchString, m_MatchCase != 0, m_WholeWord != 0);
+  m_SearchString = _R(text);
+  mafNode *nodeFound = FindInTreeByName(m_Root, m_SearchString.GetCStr(), m_MatchCase != 0, m_WholeWord != 0);
   if (nodeFound == NULL)
   {
     return false;
@@ -136,7 +136,7 @@ mafNode *mafGUIDialogFindVme::FindInTreeByName(mafNode *node, const char *name, 
 {
   wxString word_to_search;
   word_to_search = name;
-  wxString myName = node->GetName();
+  wxString myName = node->GetName().toWx();
 
   if (!match_case)
   {

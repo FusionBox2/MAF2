@@ -55,7 +55,7 @@ mafVMEOutputScalar::mafVMEOutputScalar()
   vtkNEW(m_Polydata);
 #endif
 
-  m_ScalarDataString = "";
+  m_ScalarDataString = _R("");
 }
 
 //-------------------------------------------------------------------------
@@ -126,7 +126,7 @@ mafGUI* mafVMEOutputScalar::CreateGui()
   /*double data = GetScalarData();
   m_ScalarDataString = "";
   m_ScalarDataString << data;*/
-  m_Gui->Label(_("data: "),&m_ScalarDataString);
+  m_Gui->Label(_L("data: "),&m_ScalarDataString);
 	m_Gui->Divider(); 
 	return m_Gui;
 }
@@ -136,8 +136,8 @@ void mafVMEOutputScalar::Update()
 //-------------------------------------------------------------------------
 {
   double data = GetScalarData();
-  m_ScalarDataString = "";
-  m_ScalarDataString << data;
+  m_ScalarDataString = _R("");
+  m_ScalarDataString += mafToString(data);
   if (m_Gui)
   {
     m_Gui->Update();

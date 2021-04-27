@@ -91,14 +91,14 @@ const mafString& mafAttribute::GetName() const
 int mafAttribute::InternalStore(mafStorageElement *parent)
 //-------------------------------------------------------------------------
 {
-  return parent->StoreText("Name",m_Name);
+  return parent->StoreText(_R("Name"),m_Name);
 }
 
 //-------------------------------------------------------------------------
 int mafAttribute::InternalRestore(mafStorageElement *node)
 //-------------------------------------------------------------------------
 {
-  return node->RestoreText("Name",m_Name);
+  return node->RestoreText(_R("Name"),m_Name);
 }
 //-------------------------------------------------------------------------
 void mafAttribute::Print(std::ostream& os, const int tabs) const

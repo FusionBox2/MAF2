@@ -77,9 +77,9 @@ m_Mgr(mgr), mafGUISettings(NULL, label)
   if( m_Mgr.GetArtProvider()->GetMetric(wxAUI_ART_GRADIENT_TYPE) == wxAUI_GRADIENT_VERTICAL)    m_CaptionMode = 1;
   if( m_Mgr.GetArtProvider()->GetMetric(wxAUI_ART_GRADIENT_TYPE) == wxAUI_GRADIENT_HORIZONTAL)  m_CaptionMode = 2;
 
-  m_CaptionModeLabels[0] = "paint caption with flat color";
-  m_CaptionModeLabels[1] = "paint caption with horizontal gradient";
-  m_CaptionModeLabels[2] = "paint caption with vertical gradient";
+  m_CaptionModeLabels[0] = _R("paint caption with flat color");
+  m_CaptionModeLabels[1] = _R("paint caption with horizontal gradient");
+  m_CaptionModeLabels[2] = _R("paint caption with vertical gradient");
 }
 //----------------------------------------------------------------------------
 void mafGUIDockSettings::CreateGui()
@@ -87,32 +87,32 @@ void mafGUIDockSettings::CreateGui()
 {
   m_Gui = new mafGUI(this);
 
-  m_Gui->Bool( ID_AllowFloating,   "Allow pane floating",&m_AllowFloating, 1);
+  m_Gui->Bool( ID_AllowFloating,   _R("Allow pane floating"),&m_AllowFloating, 1);
   //m_Gui->Bool( ID_AllowActivePane, "highlight active pane",&m_AllowActivePane, 1);
 
   //m_Gui->Divider(1);
   //m_Gui->Label("Pane caption mode");
-  m_Gui->Radio(ID_CaptionMode,"",&m_CaptionMode,3,m_CaptionModeLabels);
+  m_Gui->Radio(ID_CaptionMode,_R(""),&m_CaptionMode,3,m_CaptionModeLabels);
   m_Gui->Divider(0);
 
-  m_Gui->Label("Pane metrics",false);
-  m_Gui->Slider(ID_PaneBorderSize,"BorderSize",&m_PaneBorderSize,0,10);
-  m_Gui->Slider(ID_SashSize,"SashSize",&m_SashSize,0,10);
-  m_Gui->Slider(ID_CaptionSize,"CaptionSize",&m_CaptionSize,2,24);
+  m_Gui->Label(_R("Pane metrics"),false);
+  m_Gui->Slider(ID_PaneBorderSize,_R("BorderSize"),&m_PaneBorderSize,0,10);
+  m_Gui->Slider(ID_SashSize,_R("SashSize"),&m_SashSize,0,10);
+  m_Gui->Slider(ID_CaptionSize,_R("CaptionSize"),&m_CaptionSize,2,24);
   m_Gui->Divider(1);
 
-  m_Gui->Label("Pane colors",false);
-  m_Gui->Color(ID_BackgroundColor,"Background",&m_BackgroundColor);
-  m_Gui->Color(ID_SashColor,"Sash",&m_SashColor);
-  m_Gui->Color(ID_BorderColor,"Border",&m_BorderColor);
-  m_Gui->Color(ID_GripperColor,"Gripper",&m_GripperColor);
+  m_Gui->Label(_R("Pane colors"),false);
+  m_Gui->Color(ID_BackgroundColor,_R("Background"),&m_BackgroundColor);
+  m_Gui->Color(ID_SashColor,_R("Sash"),&m_SashColor);
+  m_Gui->Color(ID_BorderColor,_R("Border"),&m_BorderColor);
+  m_Gui->Color(ID_GripperColor,_R("Gripper"),&m_GripperColor);
   m_Gui->Divider(1);
 
-  m_Gui->Label("Caption colors",false);
+  m_Gui->Label(_R("Caption colors"),false);
   //m_Gui->Label("Inactive caption colors",false);
-  m_Gui->Color(ID_InactiveCaptionColor,"Color",&m_InactiveCaptionColor);
-  m_Gui->Color(ID_InactiveCaptionGradientColor,"Gradient",&m_InactiveCaptionGradientColor);
-  m_Gui->Color(ID_InactiveCaptionTextColor,"Text",&m_InactiveCaptionTextColor);
+  m_Gui->Color(ID_InactiveCaptionColor,_R("Color"),&m_InactiveCaptionColor);
+  m_Gui->Color(ID_InactiveCaptionGradientColor,_R("Gradient"),&m_InactiveCaptionGradientColor);
+  m_Gui->Color(ID_InactiveCaptionTextColor,_R("Text"),&m_InactiveCaptionTextColor);
   m_Gui->Divider(1);
 
   //m_Gui->Label("Active caption colors",false);

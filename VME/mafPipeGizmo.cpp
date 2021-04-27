@@ -59,7 +59,7 @@ mafPipeGizmo::mafPipeGizmo()
 	m_CaptionActor    = NULL;
 	m_GizmoAutoscaleHelper = NULL;
 	m_Mediator = NULL;
-	m_Caption = "";
+	m_Caption = _R("");
 
 }
 //----------------------------------------------------------------------------
@@ -158,7 +158,7 @@ void mafPipeGizmo::Create(mafNode *node, mafView *view)
 	m_CaptionActor->SetPadding(0);
 
 	m_CaptionActor->ThreeDimensionalLeaderOff();
-	m_CaptionActor->SetCaption(m_Caption);
+	m_CaptionActor->SetCaption(m_Caption.GetCStr());
 
 	m_CaptionActor->SetHeight(0.03);
 	//m_CaptionActor->SetWidth(0.05);

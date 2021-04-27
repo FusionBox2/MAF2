@@ -114,20 +114,20 @@ void mafOpDecimateSurface::OpRun()
 		m_Gui = new mafGUI(this);
 
 	  
-		m_Gui->Bool(ID_WIREFRAME,"wireframe",&m_WireFrame, 0);
+		m_Gui->Bool(ID_WIREFRAME,_R("wireframe"),&m_WireFrame, 0);
 
 		m_Gui->Divider(2);
-		m_Gui->Label("decimate",true);
-		m_Gui->Bool(ID_PRESERVE_TOPOLOGY,"preserve topology",&m_TopologyFlag, 1);
-		m_Gui->Slider(ID_REDUCTION,"reduc.to %",&m_Reduction,1, 100);
-		m_Gui->Button(ID_DECIMATE,"apply decimate");
+		m_Gui->Label(_R("decimate"),true);
+		m_Gui->Bool(ID_PRESERVE_TOPOLOGY,_R("preserve topology"),&m_TopologyFlag, 1);
+		m_Gui->Slider(ID_REDUCTION,_R("reduc.to %"),&m_Reduction,1, 100);
+		m_Gui->Button(ID_DECIMATE,_R("apply decimate"));
 
 		//mafGUIMaterialButton *m_MaterialButton = new mafGUIMaterialButton(m_Input,this);
 		
 		m_Gui->Divider(2);
-		m_Gui->Label("");
-		m_Gui->Button(ID_PREVIEW,"preview");
-		m_Gui->Button(ID_CLEAR,"undo");
+		m_Gui->Label(_R(""));
+		m_Gui->Button(ID_PREVIEW,_R("preview"));
+		m_Gui->Button(ID_CLEAR,_R("undo"));
 		m_Gui->OkCancel();
 		m_Gui->Enable(wxOK,false);
 

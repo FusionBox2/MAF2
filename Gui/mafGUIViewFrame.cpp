@@ -53,7 +53,7 @@ mafGUIViewFrame::mafGUIViewFrame( wxFrame* parent,
                             long style 
                             )
 //----------------------------------------------------------------------------
-: wxFrame(parent, id, title.GetCStr(), pos, size, style)
+: wxFrame(parent, id, title.toWx(), pos, size, style)
 {
   m_ClientWin = NULL;
 }
@@ -118,7 +118,7 @@ void mafGUIViewFrame::SetView(mafView *view)
    m_ClientWin->Reparent(this);
    m_ClientWin->Show(true);
 
-   SetTitle(wxStripMenuCodes(m_View->GetLabel().GetCStr()));
+   SetTitle(wxStripMenuCodes(m_View->GetLabel().toWx()));
 }
 //----------------------------------------------------------------------------
 void mafGUIViewFrame::OnEvent(mafEventBase *maf_event)

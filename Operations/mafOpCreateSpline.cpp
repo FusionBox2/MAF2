@@ -68,7 +68,7 @@ void mafOpCreateSpline::OpRun()
 //----------------------------------------------------------------------------
 {
   mafNEW(m_PolylineSpline);
-  m_PolylineSpline->SetName("Polyline Spline");
+  m_PolylineSpline->SetName(_R("Polyline Spline"));
   m_Output = m_PolylineSpline;
   mafEventMacro(mafEvent(this,OP_RUN_OK));
 }

@@ -498,13 +498,13 @@ int mafAvatar3D::InternalStore(mafStorageElement *node)
   if(Superclass::InternalStore(node))
     return MAF_ERROR;
 
-  node->StoreInteger("DisplayWorkingBox",GetDisplayWorkingBox());
-  node->StoreInteger("DisplayDebugText",GetDisplayDebugText());
+  node->StoreInteger(_R("DisplayWorkingBox"),GetDisplayWorkingBox());
+  node->StoreInteger(_R("DisplayDebugText"),GetDisplayDebugText());
   double coords[2];
   coords[0]=GetDebugTextPosition()[0];
   coords[1]=GetDebugTextPosition()[1];
-  node->StoreVectorN("DebugTextPosition",coords,2);
-  node->StoreInteger("CoordsFrame",GetCoordsFrame());
+  node->StoreVectorN(_R("DebugTextPosition"),coords,2);
+  node->StoreInteger(_R("CoordsFrame"),GetCoordsFrame());
 
   // write prop3D properties?
   return MAF_OK;
@@ -518,17 +518,17 @@ int mafAvatar3D::InternalRestore(mafStorageElement *node)
     return MAF_ERROR;
   
   int display_working_box = 0;
-  node->RestoreInteger("DisplayWorkingBox",display_working_box);
+  node->RestoreInteger(_R("DisplayWorkingBox"),display_working_box);
   SetDisplayWorkingBox(display_working_box);
   
   int display_debug_text = 0;
-  node->RestoreInteger("DisplayDebugText",display_debug_text);
+  node->RestoreInteger(_R("DisplayDebugText"),display_debug_text);
   SetDisplayDebugText(display_debug_text);
   
   double coords[2]={0,0};
-  node->RestoreVectorN("DebugTextPosition",coords,2);
+  node->RestoreVectorN(_R("DebugTextPosition"),coords,2);
   SetDebugTextPosition(coords[0],coords[1]);
-  node->RestoreInteger("CoordsFrame",m_CoordsFrame);
+  node->RestoreInteger(_R("CoordsFrame"),m_CoordsFrame);
   return MAF_OK;
   
 }
@@ -568,12 +568,12 @@ void mafAvatar3D::OnMove3DEvent(mafEventInteraction *e)
   {
     if (m_DisplayDebugText)
     {
-      wxString label = GetTracker()->GetName();
+      mafString label = GetTracker()->GetName();
 
       if (m_CoordsFrame==WORLD_COORDS)
       {   
-        label << " (World): ";
-        UpdateDebugText(label,world_pose);
+        label += _R(" (World): ");
+        UpdateDebugText(label.GetCStr(),world_pose);
       }
       else
       {            
@@ -581,13 +581,13 @@ void mafAvatar3D::OnMove3DEvent(mafEventInteraction *e)
         {
           mafMatrix normal_pose;
           GetTracker()->TrackerToCanonical(*tracker_pose,normal_pose);
-          label << " (Canonical): ";
-          UpdateDebugText(label,normal_pose);
+          label += _R(" (Canonical): ");
+          UpdateDebugText(label.GetCStr(),normal_pose);
         }
         else
         {
-          label << " (Tracker): ";
-          UpdateDebugText(label,*tracker_pose);
+          label += _R(" (Tracker): ");
+          UpdateDebugText(label.GetCStr(),*tracker_pose);
         }
       }
     }
@@ -659,23 +659,23 @@ void mafAvatar3D::CreateGui()
   Superclass::CreateGui();
   // this should be moved to avatar settings!!!
   mafString mappings[mafCameraTransform::NUM_OF_MAPPINGS];
-  mappings[mafCameraTransform::MAX_SCALE]="max scale";
-  mappings[mafCameraTransform::MIN_SCALE]="min scale";
-  mappings[mafCameraTransform::FIT_X]="fit X";
-  mappings[mafCameraTransform::FIT_Y]="fit Y";
-  mappings[mafCameraTransform::ANISOTROPIC]="anisotropic";
+  mappings[mafCameraTransform::MAX_SCALE]=_R("max scale");
+  mappings[mafCameraTransform::MIN_SCALE]=_R("min scale");
+  mappings[mafCameraTransform::FIT_X]=_R("fit X");
+  mappings[mafCameraTransform::FIT_Y]=_R("fit Y");
+  mappings[mafCameraTransform::ANISOTROPIC]=_R("anisotropic");
 
   mafString coords_system[3];
-  coords_system[mafAvatar3D::WORLD_COORDS]="world coords";
-  coords_system[mafAvatar3D::TRACKER_COORDS]="tracker coords";
-  coords_system[mafAvatar3D::CANONICAL_COORDS]="canonical coords";
+  coords_system[mafAvatar3D::WORLD_COORDS]=_R("world coords");
+  coords_system[mafAvatar3D::TRACKER_COORDS]=_R("tracker coords");
+  coords_system[mafAvatar3D::CANONICAL_COORDS]=_R("canonical coords");
 
-  m_Gui->Combo(ID_FITTING_COMBO,"fitting mode",&m_FittingMode,mafCameraTransform::NUM_OF_MAPPINGS,mappings,
-    "select the rule for mapping the tracker coordinates into world coordinates");
-  m_Gui->Bool(ID_WBOX_BOOL,"working box",&m_DisplayWorkingBox,0,"display working box in the scene");
-  m_Gui->Bool(ID_DEBUG_TEXT,"debug text",&m_DisplayDebugText,0,"display working box in the scene");
-  m_Gui->VectorN(ID_DEBUG_TEXT_POSITION,"text pos",m_DebugTextPosition,2,MINFLOAT,MAXFLOAT,2,"where to position the text on the screen");
-  m_Gui->Combo(ID_COORDS_COMBO,"coords frame",&m_CoordsFrame,3,coords_system,"select pose matrix frame");
+  m_Gui->Combo(ID_FITTING_COMBO,_R("fitting mode"),&m_FittingMode,mafCameraTransform::NUM_OF_MAPPINGS,mappings,
+    _R("select the rule for mapping the tracker coordinates into world coordinates"));
+  m_Gui->Bool(ID_WBOX_BOOL,_R("working box"),&m_DisplayWorkingBox,0,_R("display working box in the scene"));
+  m_Gui->Bool(ID_DEBUG_TEXT,_R("debug text"),&m_DisplayDebugText,0,_R("display working box in the scene"));
+  m_Gui->VectorN(ID_DEBUG_TEXT_POSITION,_R("text pos"),m_DebugTextPosition,2,MINFLOAT,MAXFLOAT,2,_R("where to position the text on the screen"));
+  m_Gui->Combo(ID_COORDS_COMBO,_R("coords frame"),&m_CoordsFrame,3,coords_system,_R("select pose matrix frame"));
   m_Gui->Divider();
 }
 

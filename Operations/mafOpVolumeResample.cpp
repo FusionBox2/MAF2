@@ -214,7 +214,7 @@ void mafOpVolumeResample::CreateGizmoCube()
   SetBoundsToVMELocalBounds();
 
   mafNEW(m_ResampleBoxVme);
-  m_ResampleBoxVme->SetName("GizmoCube");
+  m_ResampleBoxVme->SetName(_R("GizmoCube"));
   m_ResampleBoxVme->SetData(m_ResampleBox->GetOutput());
   m_ResampleBoxVme->GetMaterial()->m_Diffuse[0] = 1;
   m_ResampleBoxVme->GetMaterial()->m_Diffuse[1] = 0;
@@ -308,7 +308,7 @@ void mafOpVolumeResample::Resample()
   mafSmartPointer<mafTransformFrame> output_to_input;
   
   // In a future version if not a "Natural" data the filter should operate in place.
-	mafString new_vme_name = "resampled_";
+	mafString new_vme_name = _R("resampled_");
 	new_vme_name += m_Input->GetName();
 
 	/*mafNEW(m_ResampledVme);
@@ -471,28 +471,28 @@ void mafOpVolumeResample::CreateGui()
   //m_Gui->Button(ID_VOLUME_VMEBOUNDS,"VME Global Bounds","","set the crop bounding box to the VME global bounds");
   //m_Gui->Button(ID_VOLUME_4DBOUNDS,"VME 4D Bounds","","set the crop bounding box to the current VME 4D bounds");
   //m_Gui->Label("");
-	m_Gui->Label("ROI Selection",true);
-	m_Gui->Label("Resample Bounding Box Extent");
-	m_Gui->VectorN(ID_VOLUME_DIR_X, "X", &m_VolumeBounds[0], 2);
-	m_Gui->VectorN(ID_VOLUME_DIR_Y, "Y", &m_VolumeBounds[2], 2);
-	m_Gui->VectorN(ID_VOLUME_DIR_Z, "Z", &m_VolumeBounds[4], 2);
+	m_Gui->Label(_R("ROI Selection"),true);
+	m_Gui->Label(_R("Resample Bounding Box Extent"));
+	m_Gui->VectorN(ID_VOLUME_DIR_X, _R("X"), &m_VolumeBounds[0], 2);
+	m_Gui->VectorN(ID_VOLUME_DIR_Y, _R("Y"), &m_VolumeBounds[2], 2);
+	m_Gui->VectorN(ID_VOLUME_DIR_Z, _R("Z"), &m_VolumeBounds[4], 2);
 
-	m_Gui->Label("");
+	m_Gui->Label(_R(""));
 
-  m_Gui->Label("ROI Orientation",true);
-  m_Gui->Label("Bouding Box Origin");
-  m_Gui->Vector(ID_VOLUME_ORIGIN, "", m_VolumePosition,MINFLOAT,MAXFLOAT,2,"output volume origin");
+  m_Gui->Label(_R("ROI Orientation"),true);
+  m_Gui->Label(_R("Bouding Box Origin"));
+  m_Gui->Vector(ID_VOLUME_ORIGIN, _R(""), m_VolumePosition,MINFLOAT,MAXFLOAT,2,_R("output volume origin"));
 
-  m_Gui->Label("Bouding Box Orientation");
-  m_Gui->Vector(ID_VOLUME_ORIENTATION, "", m_VolumeOrientation,MINFLOAT,MAXFLOAT,2,"output volume orientation");
+  m_Gui->Label(_R("Bouding Box Orientation"));
+  m_Gui->Vector(ID_VOLUME_ORIENTATION, _R(""), m_VolumeOrientation,MINFLOAT,MAXFLOAT,2,_R("output volume orientation"));
 
-  m_Gui->Label("Volume Spacing",false);
-  m_Gui->Vector(ID_VOLUME_SPACING, "", this->m_VolumeSpacing,MINFLOAT,MAXFLOAT,4,"output volume spacing");
-  m_Gui->Button(ID_VOLUME_AUTOSPACING,"AutoSpacing","","compute auto spacing by rotating original spacing");
+  m_Gui->Label(_R("Volume Spacing"),false);
+  m_Gui->Vector(ID_VOLUME_SPACING, _R(""), this->m_VolumeSpacing,MINFLOAT,MAXFLOAT,4,_R("output volume spacing"));
+  m_Gui->Button(ID_VOLUME_AUTOSPACING,_R("AutoSpacing"), _R(""),_R("compute auto spacing by rotating original spacing"));
 
   UpdateGizmoData();
 
-  m_Gui->Label("");
+  m_Gui->Label(_R(""));
   
   /*double range[2];
   wxString str_range;

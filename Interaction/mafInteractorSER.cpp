@@ -42,7 +42,7 @@ int mafInteractorSER::InternalStore(mafStorageElement *node)
   for (mmuActionsMap::iterator it=m_Actions.begin();it!=m_Actions.end();it++)
   {
     mafAction *action=it->second;
-    node->StoreObject("Action",action);   
+    node->StoreObject(_R("Action"),action);   
   }
 
   return 0;
@@ -56,16 +56,16 @@ int mafInteractorSER::InternalRestore(mafStorageElement *node)
   for (int i=0;i<children.size();i++)
   {
     mafStorageElement *subnode=children[i];
-    if (subnode->GetName()!="Action")
+    if (subnode->GetName()!=_R("Action"))
     {
-      mafErrorMacro("Unexpected element <"<<subnode->GetName()<<">");
+      mafErrorMacro("Unexpected element <"<<subnode->GetName().GetCStr() <<">");
       return MAF_ERROR;
     }
    
     // create the object to be restored mannualy since mafAction is not in the factory
     mafString action_name;
-    subnode->GetAttribute("Name",action_name);
-    mafAction *action = GetAction(action_name);
+    subnode->GetAttribute(_R("Name"),action_name);
+    mafAction *action = GetAction(action_name.GetCStr());
 
     if (action && action->Restore(subnode))
     {
@@ -79,7 +79,7 @@ int mafInteractorSER::InternalRestore(mafStorageElement *node)
 mafAction *mafInteractorSER::GetAction(const char *name)
 //------------------------------------------------------------------------------
 {
-  mmuActionsMap::iterator it=m_Actions.find(name);
+  auto it=m_Actions.find(_R(name));
   return (it!=m_Actions.end()?it->second:NULL);
 }
 
@@ -131,7 +131,7 @@ mafAction *mafInteractorSER::AddAction(const char *name, float priority, int typ
     return old_action;
 
   mafSmartPointer<mafAction> action;
-  action->SetName(name);
+  action->SetName(_R(name));
   action->SetType(type);
   AddAction(action,priority);
   

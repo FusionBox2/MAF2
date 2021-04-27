@@ -42,7 +42,7 @@ DECLARE_DYNAMIC_CLASS(mafGUIPicButton)
 
 public:
   mafGUIPicButton() {};
-  mafGUIPicButton(wxWindow *parent, wxString BitmapId, wxWindowID id = 0, mafBaseEventHandler *listener = NULL, int offset = 0);
+  mafGUIPicButton(wxWindow *parent, const mafString& BitmapId, wxWindowID id = 0, mafBaseEventHandler *listener = NULL, int offset = 0);
   mafGUIPicButton(wxWindow *parent, wxBitmap *b, wxWindowID id = 0, mafBaseEventHandler *listener = NULL, int offset = 0);
 
   /** allow to change the Event-Id at run time */
@@ -51,7 +51,7 @@ public:
   /**  Used to change Bitmap and Event-ID at run time.
   Example: the Time Bar Play button once pressed become a Stop Button 
   which send a Stop-Event-Id, when pressed again is reverted to Play. */
-  void SetBitmap(wxString BitmapId, wxWindowID id = 0); 
+  void SetBitmap(const mafString& BitmapId, wxWindowID id = 0);
 
 protected:  
   virtual void SetDefault() {};

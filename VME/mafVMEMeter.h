@@ -97,7 +97,7 @@ public:
   virtual bool Equals(mafVME *vme);
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString("mafPipeMeter");};
+  virtual mafString GetVisualPipe() {return mafString(_R("mafPipeMeter"));};
 
   /** return the right type of output */  
   mafVMEOutputPolyline *GetPolylineOutput();

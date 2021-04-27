@@ -38,7 +38,6 @@
 #include "vtkJPEGReader.h"
 #include "vtkPNGReader.h"
 #include "vtkTIFFReader.h"
-#include "mafFilesDirs.h"
 
 #include <algorithm>
 
@@ -47,15 +46,15 @@
 //----------------------------------------------------------------------------
 bool CompareNumber(const mafString& first, const mafString& second)
 {
-	wxString first_path, first_name, first_ext;
-	wxString second_path, second_name, second_ext;
+	mafString first_path, first_name, first_ext;
+	mafString second_path, second_name, second_ext;
 	long first_num, second_num;
 
-	wxSplitPath(first.GetCStr(),&first_path,&first_name,&first_ext);
-	wxSplitPath(second.GetCStr(),&second_path,&second_name,&second_ext);
+	mafSplitPath(first,&first_path,&first_name,&first_ext);
+	mafSplitPath(second,&second_path,&second_name,&second_ext);
 
-	first_name.ToLong(&first_num);
-	second_name.ToLong(&second_num);
+	first_name.toWx().ToLong(&first_num);
+	second_name.toWx().ToLong(&second_num);
 
   return (first_num - second_num) < 0;   // compare number
 }
@@ -74,9 +73,9 @@ mafOpImporterImage::mafOpImporterImage(const mafString& label) : Superclass(labe
   m_NumFiles = 0;
   m_BuildVolumeFlag = 0;
 
-  m_FilePrefix    = "";
-  m_FilePattern   = "%s%04d";
-  m_FileExtension = "";
+  m_FilePrefix    = _R("");
+  m_FilePattern   = _R("%s%04d");
+  m_FileExtension = _R("");
   m_FileOffset    = 0;
   m_FileSpacing = 1;
   m_ImageZSpacing = 1.0;
@@ -84,7 +83,7 @@ mafOpImporterImage::mafOpImporterImage(const mafString& label) : Superclass(labe
   m_ImportedImage = NULL;
   m_ImportedImageAsVolume = NULL;
 
-  m_FileDirectory = "";//mafGetApplicationDirectory().c_str();
+  m_FileDirectory = _R("");//mafGetApplicationDirectory().c_str();
 }
 //----------------------------------------------------------------------------
 mafOpImporterImage::~mafOpImporterImage()
@@ -110,7 +109,7 @@ enum IMAGE_IMPORTER_ID
 void mafOpImporterImage::OpRun()   
 //----------------------------------------------------------------------------
 {
-	mafString wildc = "Images (*.bmp;*.jpg;*.png;*.tif)| *.bmp;*.jpg;*.png;*.tif";
+	mafString wildc = _R("Images (*.bmp;*.jpg;*.png;*.tif)| *.bmp;*.jpg;*.png;*.tif");
 	
   if (!m_TestMode)
   {
@@ -128,17 +127,17 @@ void mafOpImporterImage::OpRun()
   }
   else
   {
-    mafSplitPath(m_Files[0].GetCStr(),&m_FileDirectory,&m_FilePrefix,&m_FileExtension);
+    mafSplitPath(m_Files[0],&m_FileDirectory,&m_FilePrefix,&m_FileExtension);
     
     if (!m_TestMode)
     {
-      m_Gui->Bool(ID_BUILD_VOLUME,"Volume",&m_BuildVolumeFlag,0,"Check to build volume, otherwise a sequence of image is generated!");
-	    m_Gui->String(ID_STRING_PREFIX,"file pref.", &m_FilePrefix);
-	    m_Gui->String(ID_STRING_PATTERN,"file patt.", &m_FilePattern);
-	    m_Gui->String(ID_STRING_EXT,"file ext.", &m_FileExtension);
-	    m_Gui->Integer(ID_OFFSET,"file offset:",&m_FileOffset,0, MAXINT,"set the first slice number in the files name");
-	    m_Gui->Integer(ID_SPACING,"file spc.:",&m_FileSpacing,1, MAXINT, "set the spacing between the slices in the files name");
-	    m_Gui->Double(ID_DATA_SPACING,"data spc.:",&m_ImageZSpacing,1);
+      m_Gui->Bool(ID_BUILD_VOLUME,_R("Volume"),&m_BuildVolumeFlag,0,_R("Check to build volume, otherwise a sequence of image is generated!"));
+	    m_Gui->String(ID_STRING_PREFIX,_R("file pref."), &m_FilePrefix);
+	    m_Gui->String(ID_STRING_PATTERN,_R("file patt."), &m_FilePattern);
+	    m_Gui->String(ID_STRING_EXT,_R("file ext."), &m_FileExtension);
+	    m_Gui->Integer(ID_OFFSET,_R("file offset:"),&m_FileOffset,0, MAXINT,_R("set the first slice number in the files name"));
+	    m_Gui->Integer(ID_SPACING,_R("file spc.:"),&m_FileSpacing,1, MAXINT, _R("set the spacing between the slices in the files name"));
+	    m_Gui->Double(ID_DATA_SPACING,_R("data spc.:"),&m_ImageZSpacing,1);
       m_Gui->OkCancel();
 
       m_Gui->Enable(ID_STRING_PREFIX,false);
@@ -221,8 +220,8 @@ void mafOpImporterImage::ImportImage()
     BuildImageSequence(); // Build image sequence
 
   mafTagItem tag_Nature;
-  tag_Nature.SetName("VME_NATURE");
-  tag_Nature.SetValue("NATURAL");
+  tag_Nature.SetName(_R("VME_NATURE"));
+  tag_Nature.SetValue(_R("NATURAL"));
 
   m_Output->GetTagArray()->SetTag(tag_Nature);
 }
@@ -253,34 +252,34 @@ void mafOpImporterImage::BuildImageSequence()
     }
 
     mafSplitPath(m_Files[i],&path,&name,&ext);
-		ext = wxString(ext.GetCStr()).MakeUpper().c_str();
-		if(wxString(name.GetCStr()).IsNumber())
-			wxString(name.GetCStr()).ToLong(&time);
+		ext.MakeUpper();
+		if(name.toWx().IsNumber())
+			name.toWx().ToLong(&time);
 		else
 			time = i;
 
-		if(ext == "BMP")
+		if(ext == _R("BMP"))
 		{
 			vtkMAFSmartPointer<vtkBMPReader> r;
 			r->SetFileName(m_Files[i].GetCStr());
 			r->Update();
       m_ImportedImage->SetData(r->GetOutput(),time);
 		} 
-		else if (ext == "JPG" || ext == "JPEG" )
+		else if (ext == _R("JPG") || ext == _R("JPEG") )
 		{
 			vtkMAFSmartPointer<vtkJPEGReader> r;
 			r->SetFileName(m_Files[i].GetCStr());
 			r->Update();
       m_ImportedImage->SetData(r->GetOutput(),time);
 		}
-		else if (ext == "PNG")
+		else if (ext == _R("PNG"))
 		{
 			vtkMAFSmartPointer<vtkPNGReader> r;
 			r->SetFileName(m_Files[i].GetCStr());
 			r->Update();
       m_ImportedImage->SetData(r->GetOutput(),time);
 		}
-		else if (ext == "TIF" || ext == "TIFF" )
+		else if (ext == _R("TIF") || ext == _R("TIFF") )
 		{
 			vtkMAFSmartPointer<vtkTIFFReader> r;
 			r->SetFileName(m_Files[i].GetCStr());
@@ -288,11 +287,11 @@ void mafOpImporterImage::BuildImageSequence()
       m_ImportedImage->SetData(r->GetOutput(),time);
 		}
 		else
-			wxMessageBox("unable to import %s, unrecognized type",m_Files[i].GetCStr());
+			wxMessageBox((_R("unable to import ") + m_Files[i] + _R(", unrecognized type")).toWx());
 	}
 
   if(m_NumFiles > 1)
-    m_ImportedImage->SetName("Imported Images");
+    m_ImportedImage->SetName(_R("Imported Images"));
   else
     m_ImportedImage->SetName(name);
 
@@ -306,15 +305,15 @@ void mafOpImporterImage::BuildImageSequence()
 void mafOpImporterImage::BuildVolume()
 //----------------------------------------------------------------------------
 {
-  wxString prefix  = m_FileDirectory + "\\" + m_FilePrefix;
+  wxString prefix  = (m_FileDirectory + _R("\\") + m_FilePrefix).toWx();
   prefix.Replace("/", "\\");
-  wxString pattern = m_FilePattern  + "."  + m_FileExtension;
+  wxString pattern = (m_FilePattern  + _R(".")  + m_FileExtension).toWx();
   int extent[6];
 
   mafNEW(m_ImportedImageAsVolume);
-  m_ImportedImageAsVolume->SetName("Imported Volume");
+  m_ImportedImageAsVolume->SetName(_R("Imported Volume"));
 
-  if(m_FileExtension.Upper() == "BMP")
+  if(m_FileExtension.Upper() == _R("BMP"))
 	{
     vtkBMPReader *r = vtkBMPReader::New();
     r->SetFileName(m_Files[0].GetCStr());
@@ -338,7 +337,7 @@ void mafOpImporterImage::BuildVolume()
     
     r->Delete();
 	} 
-	else if (m_FileExtension.Upper() == "JPG" || m_FileExtension.Upper() == "JPEG")
+	else if (m_FileExtension.Upper() == _R("JPG") || m_FileExtension.Upper() == _R("JPEG"))
 	{
 		vtkJPEGReader *r = vtkJPEGReader::New();
     r->SetFileName(m_Files[0].GetCStr());
@@ -361,7 +360,7 @@ void mafOpImporterImage::BuildVolume()
     
     r->Delete();
 	}
-	else if (m_FileExtension.Upper() == "PNG")
+	else if (m_FileExtension.Upper() == _R("PNG"))
 	{
 		vtkPNGReader *r = vtkPNGReader::New();
     r->SetFileName(m_Files[0].GetCStr());
@@ -384,7 +383,7 @@ void mafOpImporterImage::BuildVolume()
     
     r->Delete();
 	}
-	else if (m_FileExtension.Upper() == "TIF" || m_FileExtension.Upper() == "TIFF" )
+	else if (m_FileExtension.Upper() == _R("TIF") || m_FileExtension.Upper() == _R("TIFF") )
 	{
 		vtkTIFFReader *r = vtkTIFFReader::New();
     r->SetFileName(m_Files[0].GetCStr());
@@ -409,7 +408,7 @@ void mafOpImporterImage::BuildVolume()
 	}
 	else
   {
-		mafLogMessage("unable to import %s, unrecognized type", m_Files[0].GetCStr());
+		mafLogMessage(_M(_R("unable to import ") + m_Files[0] + _R(", unrecognized type")));
     mafDEL(m_ImportedImageAsVolume);
   }
   
@@ -419,6 +418,6 @@ void mafOpImporterImage::BuildVolume()
 void mafOpImporterImage::SetFileName(const char *file_name)
 //----------------------------------------------------------------------------
 {
- m_Files.push_back(file_name);
+ m_Files.push_back(_R(file_name));
  m_NumFiles = m_Files.size();
 }

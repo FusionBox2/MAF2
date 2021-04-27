@@ -22,7 +22,7 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
-#define DEFAULT_REMOTE_PATH "/mafstorage/"
+#define DEFAULT_REMOTE_PATH _R("/mafstorage/")
 
 #include "mafGUIDialogRemoteFile.h"
 #include <wx/tokenzr.h>
@@ -35,7 +35,7 @@
 #include <curl/easy.h>
 
 //----------------------------------------------------------------------------
-mafGUIDialogRemoteFile::mafGUIDialogRemoteFile(mafBaseEventHandler *listener,const wxString &title, long style)
+mafGUIDialogRemoteFile::mafGUIDialogRemoteFile(mafBaseEventHandler *listener,const mafString &title, long style)
 : mafGUIDialog(title, style)
 //----------------------------------------------------------------------------
 {
@@ -85,21 +85,21 @@ void mafGUIDialogRemoteFile::CreateGui()
   m_RemotePath = DEFAULT_REMOTE_PATH;
   m_RemoteFilename = m_Host;
   m_RemoteFilename += m_RemotePath;
-  m_Gui->String(ID_HOST,"host",&m_Host,_("hostname including the protocol: http://..."));
-  m_Gui->Integer(ID_PORT,_("port"),&m_Port,1);
-  m_Gui->String(ID_USER,_("user"),&m_User);
-  m_Gui->String(ID_PWD,_("pwd"),&m_Pwd,"",false,true);
+  m_Gui->String(ID_HOST,_L("host"),&m_Host,_L("hostname including the protocol: http://..."));
+  m_Gui->Integer(ID_PORT,_L("port"),&m_Port,1);
+  m_Gui->String(ID_USER,_L("user"),&m_User);
+  m_Gui->String(ID_PWD,_L("pwd"),&m_Pwd,_R(""),false,true);
   m_Gui->Divider(2);
-  m_Gui->String(ID_PATH,_("path"),&m_RemotePath);
-  m_Gui->Button(ID_BROWSE_REMOTE_FILE,_("browse"),_("remote files"));
-  m_Gui->Button(ID_BROWSE_LOCAL_FILE, _("browse"),_("local files"));
+  m_Gui->String(ID_PATH,_L("path"),&m_RemotePath);
+  m_Gui->Button(ID_BROWSE_REMOTE_FILE,_L("browse"),_L("remote files"));
+  m_Gui->Button(ID_BROWSE_LOCAL_FILE, _L("browse"),_L("local files"));
   m_Gui->OkCancel();
 
 	m_Gui->Divider();
   
   m_GuiList = new mafGUI(this);
   m_GuiList->Show(true);
-  m_RemoteFilesList = m_GuiList->ListBox(ID_LIST_FILES,"",155);
+  m_RemoteFilesList = m_GuiList->ListBox(ID_LIST_FILES,_R(""),155);
 
 	m_GuiList->Divider();
 
@@ -138,9 +138,9 @@ void mafGUIDialogRemoteFile::OnEvent(mafEventBase *maf_event)
       break;
       case ID_BROWSE_LOCAL_FILE:
       {
-        mafString local_file = "";
-        mafString wildc = _("MAF Storage Format file (*.msf)|*.msf|Compressed file (*.zmsf)|*.zmsf");
-        local_file = mafGetOpenFile("",wildc.GetCStr(),_("Open local file"),this);
+        mafString local_file;
+        mafString wildc = _L("MAF Storage Format file (*.msf)|*.msf|Compressed file (*.zmsf)|*.zmsf");
+        local_file = mafGetOpenFile(_R(""),wildc,_L("Open local file"),this);
         if (!local_file.IsEmpty())
         {
           m_RemoteFilename = local_file;
@@ -152,7 +152,7 @@ void mafGUIDialogRemoteFile::OnEvent(mafEventBase *maf_event)
       case ID_LIST_FILES:
       {
         int sel = m_RemoteFilesList->GetSelection();
-        m_RemotePath = m_RemoteFilesList->GetString(sel);
+        m_RemotePath = mafWxToString(m_RemoteFilesList->GetString(sel));
         m_Gui->Update();
       }
       break;
@@ -166,7 +166,7 @@ void mafGUIDialogRemoteFile::OnEvent(mafEventBase *maf_event)
         mafGUIDialog::OnEvent(e);
       break;
       case wxCANCEL:
-        m_RemoteFilename = "";
+        m_RemoteFilename.Clear();
         mafGUIDialog::OnEvent(e);
       break;
       default:
@@ -184,11 +184,11 @@ void mafGUIDialogRemoteFile::RemoteFileBrowsing()
   chunk.size = 0;    // no data at this point 
 
   mafString auth = m_User;
-  auth += ":";
+  auth += _R(":");
   auth += m_Pwd;
   curl_easy_reset(m_Curl);
   mafString mafTree = m_Host; 
-  mafTree += m_RemotePath + "msfTree";
+  mafTree += m_RemotePath + _R("msfTree");
   curl_easy_setopt(m_Curl, CURLOPT_URL, mafTree.GetCStr());
   curl_easy_setopt(m_Curl, CURLOPT_PORT, m_Port);
   curl_easy_setopt(m_Curl, CURLOPT_USERPWD, auth.GetCStr());

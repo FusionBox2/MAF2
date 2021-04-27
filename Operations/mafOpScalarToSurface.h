@@ -33,7 +33,7 @@ class MAF_EXPORT mafOpScalarToSurface: public mafOp
 {
 public:
   /** Constructor. */
-  mafOpScalarToSurface(const mafString& label = "ScalarToSurface");
+  mafOpScalarToSurface(const mafString& label = _R("ScalarToSurface"));
 
   /** Destructor. */
  ~mafOpScalarToSurface(); 

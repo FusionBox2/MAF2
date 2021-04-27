@@ -83,9 +83,9 @@ void mafOpCreateVolume::OpRun()
 //----------------------------------------------------------------------------
 {
   m_Gui = new mafGUI(this);
-  m_Gui->Vector(ID_SPACING, "xyz spc", m_Spacing, 0.0000000001);
-  m_Gui->Vector(ID_DIMENSIONS, "xyz dim", m_Dimensions, 0.0000000001);
-  m_Gui->Double(ID_SCALA_VALUE, "density", &m_Density, 0.0);
+  m_Gui->Vector(ID_SPACING, _R("xyz spc"), m_Spacing, 0.0000000001);
+  m_Gui->Vector(ID_DIMENSIONS, _R("xyz dim"), m_Dimensions, 0.0000000001);
+  m_Gui->Double(ID_SCALA_VALUE, _R("density"), &m_Density, 0.0);
   m_Gui->OkCancel();
 
   ShowGui();
@@ -151,7 +151,7 @@ void mafOpCreateVolume::CreateVolume()
   sca->Delete();
 
   mafNEW(m_Volume);
-  m_Volume->SetName("volume");
+  m_Volume->SetName(_R("volume"));
   m_Volume->SetData(vol, -1);
   m_Output = m_Volume;
 }
