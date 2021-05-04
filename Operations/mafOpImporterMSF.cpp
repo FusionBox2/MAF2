@@ -97,8 +97,8 @@ int mafOpImporterMSF::ImportMSF()
 
 	try{
 
-		wxBusyInfo wait40("importMSF");
-		Sleep(1500);
+		//wxBusyInfo wait40("importMSF");
+		//Sleep(1500);
 		mafString unixname = m_File;
 		mafString path, name, ext;
 		mafSplitPath(m_File, &path, &name, &ext);
@@ -131,8 +131,8 @@ int mafOpImporterMSF::ImportMSF()
 			if (!m_TestMode)
 				mafErrorMessage(_M(mafString(_L("Errors during file parsing! Look the log area for error messages."))));
 
-			wxBusyInfo wait4010("Errors during file parsing! Look the log area for error messages.");
-			Sleep(1500);
+			//wxBusyInfo wait4010("Errors during file parsing! Look the log area for error messages.");
+			//Sleep(1500);
 			//return MAF_ERROR;
 		}
 		mafVMERoot *root = mafVMERoot::SafeDownCast(manager.GetRoot());
@@ -143,14 +143,14 @@ int mafOpImporterMSF::ImportMSF()
 		for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 		{
 
-			wxBusyInfo wait4011(node->GetName().GetCStr());
-			Sleep(1500);
+			//wxBusyInfo wait4011(node->GetName().GetCStr());
+			//Sleep(1500);
 			if (node == root)
 				continue;
 			mafVMEGenericAbstract *vmeWithDataVector = mafVMEGenericAbstract::SafeDownCast(node);
 			mafString t = node->GetName() + _R(" cast ok");
-			wxBusyInfo wait411(t.toWx());
-			Sleep(1500);
+			//wxBusyInfo wait411(t.toWx());
+			//Sleep(1500);
 			if (vmeWithDataVector)
 			{
 				mafDataVector *dataVector = vmeWithDataVector->GetDataVector();
@@ -166,8 +166,8 @@ int mafOpImporterMSF::ImportMSF()
 		}
 
 
-		wxBusyInfo wait4061("for loop ok");
-		Sleep(1500);
+		//wxBusyInfo wait4061("for loop ok");
+		//Sleep(1500);
 		iter->Delete();
 
 
@@ -178,8 +178,8 @@ int mafOpImporterMSF::ImportMSF()
 		while (mafNode *node = root->GetFirstChild())
 		{
 
-			wxBusyInfo wait4011(node->GetName().toWx());
-			Sleep(1500);
+			//wxBusyInfo wait4011(node->GetName().toWx());
+			//Sleep(1500);
 			node->ReparentTo(m_Group);
 
 			// Losi 03/16/2010 Bug #2049 fix
@@ -196,12 +196,12 @@ int mafOpImporterMSF::ImportMSF()
 		}
 		m_Group->Update();
 		m_Output = m_Group;
-		wxBusyInfo wait4021("while loop ok");
-		Sleep(1500);
+		///wxBusyInfo wait4021("while loop ok");
+		//Sleep(1500);
 		mafDEL(storage);
 
-		wxBusyInfo wait410("importMSF done");
-		Sleep(1500);
+		//wxBusyInfo wait410("importMSF done");
+		//Sleep(1500);
 		return MAF_OK;
 	}
 	catch (const std::exception& e)

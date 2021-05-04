@@ -20,8 +20,7 @@ class mmaMaterial;
 class mafVMEOutputSurface;
 class vtkPolyData;
 
-/** mafVMESurfaceParametric - this class represents a parametric surface that is a specific geometry.
-currently generated geometries are: cylinder, sphere, cube, cone and plane.
+/** mafVMESurfaceParametric - this class represents a specific geometry: the plane.
 */
 class MAF_EXPORT mafVMEPlane : public mafVME
 {

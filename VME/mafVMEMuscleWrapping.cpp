@@ -91,13 +91,23 @@ mafVMEMuscleWrapping::mafVMEMuscleWrapping()
 	centerTemp[0] = 0; centerTemp[01] = 0; centerTemp[02] = 0;
 	m_Q0LandmarkName="";
 	m_P0LandmarkName = "";
+	m_insert1LandmarkName = "";
+	m_insert2LandmarkName = "";
 	mafString gLength = "";
 	globalError = 0;
 	globalLength = 0;
 	m_ComputeStateCheckbox = 01;
 	rate = 100;
 	intersectionInit = false;
-  
+	
+	
+	insert2 = mafVMELandmark::New();
+	insert2->SetName("insert2");
+	insert2 = NULL;
+
+	insert1 = mafVMELandmark::New();
+	insert1->SetName("insert1");
+	insert1 = NULL;
 
 
   P0 = mafVMELandmark::New();
@@ -119,8 +129,8 @@ mafVMEMuscleWrapping::mafVMEMuscleWrapping()
 
   n1 = 0;
   n2 = 0;
-
- /* mafNEW(m_Cloud2);
+  
+ mafNEW(m_Cloud2);
 
   m_Cloud2->Open();
   m_Cloud2->SetName(_("Quadric_Muscle_Intersection"));
@@ -133,16 +143,17 @@ mafVMEMuscleWrapping::mafVMEMuscleWrapping()
   m_Cloud2->AppendLandmark(1, 1, 0, "q", false);
   m_Cloud2->AppendLandmark(1, 0, 0, "p2", false);
   m_Cloud2->AppendLandmark(1, 1, 0, "q2", false);
-  m_Cloud2->AppendLandmark(0, 0, 0, "pIntersec", false);
-  m_Cloud2->AppendLandmark(0, 0, 0, "qIntersec", false);*/
-  //mafNEW(m_CloudPath1);
-
-  //m_CloudPath1->Open();
-  //m_CloudPath1->SetName(_("path1"));
-  //m_CloudPath1->SetRadius(1.5);
-  //m_CloudPath1->ReparentTo(this);
-  //m_CloudPath1->AppendLandmark(0, 0, 0, "first", false);
-  //m_CloudPath1->AppendLandmark(0, 0, 0, "last", false);
+  m_Cloud2->AppendLandmark(0, 0, 0, "insert2", false);
+  m_Cloud2->AppendLandmark(0, 0, 0, "insert1", false);
+  
+  
+ // mafNEW(m_CloudPath1);
+ // m_CloudPath1->Open();
+ // m_CloudPath1->SetName(_("path1"));
+ // m_CloudPath1->SetRadius(1.5);
+ // m_CloudPath1->ReparentTo(this);
+ // m_CloudPath1->AppendLandmark(0, 0, 0, "first", false);
+ // m_CloudPath1->AppendLandmark(0, 0, 0, "last", false);
  // m_CloudPath1->AppendLandmark(0, 0, 0, "mm", false);
   
   //mafNEW(m_CloudPath2);
@@ -316,8 +327,10 @@ mafGUI* mafVMEMuscleWrapping::CreateGui()
 	m_Gui->Button(ID_ELLIPSOID2_LINK, &m_EllipsoidVmeName2, _("Quadric2"), _("Select Quadric2"));
 	m_Gui->Button(ID_P0_LINK, &m_P0LandmarkName, _("Starting Point"), _("Select Starting Point"));
 	m_Gui->Button(ID_Q0_LINK, &m_Q0LandmarkName, _("Ending Point"), _("Select Ending Point"));
+	m_Gui->Button(ID_insert1_LINK, &m_insert1LandmarkName, _("insert1"), _("Select insert1 Point"));
+	m_Gui->Button(ID_insert2_LINK, &m_insert2LandmarkName, _("insert2"), _("Select insert2 Point"));
 	m_Gui->Integer(ID_DRate, _("Discretization rate"), &rate);
-
+//	m_Gui->Double(CHANGE_VALUE_tempdist, _("tempdist"), &tempdist);
 	
 	gLength = ss.Append( std::to_string(globalLength).c_str());
 	gError = std::to_string(globalError).c_str();
@@ -522,6 +535,65 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 
 	  }
 		  break;
+
+	  case ID_insert1_LINK:
+	  {
+
+
+
+						 mafID button_id = e->GetId();
+						 mafString title = _("Choose insert1 Landmark link");
+						 e->SetId(VME_CHOOSE);
+
+						 e->SetString(&title);
+						 ForwardUpEvent(e);
+						 mafNode *n = e->GetVme();
+						 if (n != NULL)
+						 {
+							 //p0 = (mafVMELandmark*)n;
+							 SetLandmarkLink("insert1", n);
+							 m_insert1LandmarkName = n->GetName();
+							 m_Gui->Update();
+						 }
+
+
+
+	  }
+		  break;
+
+	  case ID_insert2_LINK:
+	  {
+
+
+
+						 mafID button_id = e->GetId();
+						 mafString title = _("Choose insert2 Landmark link");
+						 e->SetId(VME_CHOOSE);
+
+						 e->SetString(&title);
+						 ForwardUpEvent(e);
+						 mafNode *n = e->GetVme();
+						 if (n != NULL)
+						 {
+							 
+							 SetLandmarkLink("insert2", n);
+							 m_insert2LandmarkName = n->GetName();
+							 m_Gui->Update();
+						 }
+
+
+
+	  }
+		  break;
+	//  case CHANGE_VALUE_tempdist:
+	 // {
+		  //InternalUpdate();
+			//e->SetId(CAMERA_UPDATE);
+			//ForwardUpEvent(e);
+
+
+	  //}
+		//  break;
 	  
 
 
@@ -578,10 +650,12 @@ void mafVMEMuscleWrapping::InternalUpdate()
 		mafTransform *m_TmpTransform2;
 		mafNEW(m_TmpTransform2);
 		((mafVMELandmark *)P0)->GetPoint(m_StartPoint, currTs);
-		((mafVMELandmarkCloud *)((mafVMELandmark *)P0)->GetParent())->GetOutput()->GetAbsMatrix(tm, currTs);
 
+		((mafVMELandmarkCloud *)((mafVMELandmark *)P0)->GetParent())->GetOutput()->GetAbsMatrix(tm, currTs);
 		m_TmpTransform1->SetMatrix(tm);
 		m_TmpTransform1->TransformPoint(m_StartPoint, m_StartPoint);
+
+
 
 		m_TmpTransform2->SetMatrix(GetOutput()->GetAbsTransform()->GetMatrix());
 		m_TmpTransform2->Invert();
@@ -592,6 +666,9 @@ void mafVMEMuscleWrapping::InternalUpdate()
 		//local_start[0]=m_StartPoint[0];
 		//local_start[1] = m_StartPoint[1];
 		//local_start[2] = m_StartPoint[2];
+
+		m_Cloud2->SetLandmark("p0", local_start[0], local_start[1], local_start[2], currTs);
+		m_Cloud2->Update();
 		//			
 		((mafVMELandmark *)Q0)->GetPoint(m_EndPoint, currTs);
 		((mafVMELandmarkCloud *)((mafVMELandmark *)Q0)->GetParent())->GetOutput()->GetAbsMatrix(tm, currTs);
@@ -604,8 +681,43 @@ void mafVMEMuscleWrapping::InternalUpdate()
 		//local_end[0] = m_EndPoint[0];
 		//local_end[1] = m_EndPoint[1];
 		//local_end[2] = m_EndPoint[2];
-		//m_Cloud2->SetLandmark("q0", local_end[0], local_end[1], local_end[2], currTs);
-		//m_Cloud2->Update();
+		m_Cloud2->SetLandmark("q0", local_end[0], local_end[1], local_end[2], currTs);
+		m_Cloud2->Update();
+
+		///insertion tests ///
+		if (insert1 != NULL)
+		{
+			((mafVMELandmark *)insert1)->GetPoint(m_insert1Point, currTs);
+			((mafVMELandmarkCloud *)((mafVMELandmark *)insert1)->GetParent())->GetOutput()->GetAbsMatrix(tm, currTs);
+
+			m_TmpTransform1->SetMatrix(tm);
+			m_TmpTransform1->TransformPoint(m_insert1Point, m_insert1Point);
+
+			m_TmpTransform2->TransformPoint(m_insert1Point, local_insert1);
+
+			local_insert1[0] = m_insert1Point[0];
+			local_insert1[1] = m_insert1Point[1];
+			local_insert1[2] = m_insert1Point[2];
+			m_Cloud2->SetLandmark("insert1", local_insert1[0], local_insert1[1], local_insert1[2], currTs);
+			m_Cloud2->Update();
+		}
+		if (insert2 != NULL)
+		{
+			((mafVMELandmark *)insert2)->GetPoint(m_insert2Point, currTs);
+			((mafVMELandmarkCloud *)((mafVMELandmark *)insert2)->GetParent())->GetOutput()->GetAbsMatrix(tm, currTs);
+
+			m_TmpTransform1->SetMatrix(tm);
+			m_TmpTransform1->TransformPoint(m_insert2Point, m_insert2Point);
+
+			m_TmpTransform2->TransformPoint(m_insert2Point, local_insert2);
+
+			local_insert2[0] = m_insert2Point[0];
+			local_insert2[1] = m_insert2Point[1];
+			local_insert2[2] = m_insert2Point[2];
+			m_Cloud2->SetLandmark("insert2", local_insert2[0], local_insert2[1], local_insert2[2], currTs);
+			m_Cloud2->Update();
+		}
+		////
 		LMFunctor functor;
 		functor.p0 << m_StartPoint[0], m_StartPoint[1], m_StartPoint[2];
 		functor.q0 << m_EndPoint[0], m_EndPoint[1], m_EndPoint[2];
@@ -1451,11 +1563,22 @@ void mafVMEMuscleWrapping::InternalUpdate()
 
 					functor.m = 6;
 					functor.n = 6;
-
+					
 					VectorXd X(6);
 			
-					X << intersectionpts[0][0], intersectionpts[0][1], intersectionpts[0][2], intersectionpts[1][0], intersectionpts[1][1], intersectionpts[1][2];
-
+					if (m_insert1LandmarkName == "" || m_insert1LandmarkName == "none")
+					{
+						m_Cloud2->SetLandmark("insert1", intersectionpts[0][0], intersectionpts[0][1], intersectionpts[0][2], currTs);
+						m_Cloud2->Update();
+						m_Cloud2->SetLandmark("insert2", intersectionpts[1][0], intersectionpts[1][1], intersectionpts[1][2], currTs);
+						m_Cloud2->Update();	
+						X << intersectionpts[0][0], intersectionpts[0][1], intersectionpts[0][2], intersectionpts[1][0], intersectionpts[1][1], intersectionpts[1][2];
+					}
+					else
+					{
+						X << local_insert1[0], local_insert1[1], local_insert1[2], local_insert2[0], local_insert2[1], local_insert2[2];
+						
+					}
 					Eigen::LevenbergMarquardt<LMFunctor> lm(functor);
 					lm.resetParameters();
 					int r = lm.minimize(X);
@@ -1497,7 +1620,11 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					}
 				
 
-					
+
+					m_Cloud2->SetLandmark("p", positionP[0], positionP[1], positionP[2], currTs);
+					m_Cloud2->Update();
+					m_Cloud2->SetLandmark("q", positionQ[0], positionQ[1], positionQ[2], currTs);
+					m_Cloud2->Update();
 					vector<Vector3d> path = ellip1->computeGeodesicPath((mafVMELandmark*)P0, (mafVMELandmark*)Q0, p, q, 2 * length,rate, &globalError);
 
 					
@@ -1517,7 +1644,9 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					m_TmpTransform2->TransformPoint(posPt, local_posPt);
 					pts5->InsertNextPoint(local_posPt);
 					
-					if ((path.size() > 1) && (tempdist > 10))
+
+//					m_CloudPath1->SetLandmark("first",posPt[0], posPt[01], posPt[02], currTs);
+					if ((path.size() > 1) )//&& (tempdist > 0.1))
 					if (m_ComputeStateCheckbox)
 					{
 						for (int i = 0; i < path.size(); i++)
@@ -1532,6 +1661,8 @@ void mafVMEMuscleWrapping::InternalUpdate()
 								posPt[2] = path[i][2];
 
 								m_TmpTransform2->TransformPoint(posPt, local_posPt);
+
+						//		m_CloudPath1->AppendLandmark(posPt[0], posPt[1], posPt[2], "mm", false);
 								pts5->InsertNextPoint(local_posPt);
 							
 							}
@@ -1543,6 +1674,9 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					posPt[0] = positionQ[0];
 					posPt[1] = positionQ[1];
 					posPt[2] = positionQ[2];
+			//	    m_CloudPath1->SetLandmark("last", X(3), X(4), X(5), currTs);
+
+
 
 					m_TmpTransform2->TransformPoint(posPt, local_posPt);
 					pts5->InsertNextPoint(local_posPt);
@@ -1607,7 +1741,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 
 					
 					functor.surfaces = NULL;
-					
+				//	m_CloudPath1->Update();
 					line15->Delete();
 					line14->Delete();
 					line13->Delete();
@@ -1845,6 +1979,18 @@ mafVME *mafVMEMuscleWrapping::GetP0VME()
 {
 	return mafVME::SafeDownCast(GetLink("P0Landmark"));
 }
+
+mafVME *mafVMEMuscleWrapping::Getinsert1VME()
+//-------------------------------------------------------------------------
+{
+	return mafVME::SafeDownCast(GetLink("insert1"));
+}
+
+mafVME *mafVMEMuscleWrapping::Getinsert2VME()
+//-------------------------------------------------------------------------
+{
+	return mafVME::SafeDownCast(GetLink("insert2"));
+}
 mafVME *mafVMEMuscleWrapping::GetEllipsoidVME()
 //-------------------------------------------------------------------------
 {
@@ -1910,5 +2056,22 @@ void mafVMEMuscleWrapping::UpdateLinks()
 	else
 		m_P0LandmarkName = P0 ? P0->GetName() : _("none");
 		
+	insert1 = Getinsert1VME();
+	if (insert1 && insert1->IsMAFType(mafVMELandmark))
+	{
+		sub_id = GetLinkSubId("insert1");
+		m_insert1LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)insert1->GetParent())->GetLandmarkName(sub_id) : _("none");
+	}
+	else
+		m_insert1LandmarkName = insert1 ? insert1->GetName() : _("none");
 
+
+	insert2 = Getinsert2VME();
+	if (insert2 && insert2->IsMAFType(mafVMELandmark))
+	{
+		sub_id = GetLinkSubId("insert2");
+		m_insert2LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)insert2->GetParent())->GetLandmarkName(sub_id) : _("none");
+	}
+	else
+		m_insert2LandmarkName = insert2 ? insert2->GetName() : _("none");
 }

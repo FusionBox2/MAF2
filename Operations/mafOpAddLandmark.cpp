@@ -17,7 +17,7 @@
 #include "mafOpAddLandmark.h"
 
 #include "mafDecl.h"
-
+#include "wx/busyinfo.h"
 #include "mafInteractorPicker.h"
 #include "mafInteractor.h"
 #include "mafGUI.h"
@@ -39,8 +39,11 @@
 #include "mafVMEPlane.h"
 #include "vtkDataSet.h"
 #include "vtkPoints.h"
-
-
+#include "mafQuadraticSurface.hpp"
+#include "mafVMEEllipsoid.h"
+#include "mafVMEHyperboloid.h"
+#include "mafVMEHyperboloid2S.h"
+#include "mafVMECylinder.h"
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(mafOpAddLandmark);
 //----------------------------------------------------------------------------
@@ -93,8 +96,11 @@ bool mafOpAddLandmark::Accept(mafNode *node)
 //----------------------------------------------------------------------------
 {
 	if (!node) return false;
-	
-	if (node->IsMAFType(mafVMESurface) || node->IsMAFType(mafVMEVolumeGray) || node->IsMAFType(mafVMESurfaceParametric) || node->IsMAFType(mafVMEPlane))
+
+	int s = node->IsMAFType(mafVMEEllipsoid);
+	wxBusyInfo wait12(std::string(s));
+	Sleep(1500);
+	if (node->IsMAFType(mafVMESurface) || node->IsMAFType(mafVMEVolumeGray) || node->IsMAFType(mafVMESurfaceParametric) || node->IsMAFType(mafVMEPlane) || node->IsMAFType(mafVMEEllipsoid) || node->IsMAFType(mafVMEHyperboloid) || node->IsMAFType(mafVMEHyperboloid2S) || node->IsMAFType(mafVMECylinder))
 	{
 		m_PickingActiveFlag = true;
     return true;
@@ -102,7 +108,7 @@ bool mafOpAddLandmark::Accept(mafNode *node)
 
   if( node->IsMAFType(mafVMELandmarkCloud) && 
 		  node->GetParent() && 
-		  (node->GetParent()->IsMAFType(mafVMESurface) || node->GetParent()->IsMAFType(mafVMEVolumeGray) || node->GetParent()->IsMAFType(mafVMESurfaceParametric) || node->GetParent()->IsMAFType(mafVMEPlane)))
+		  (node->GetParent()->IsMAFType(mafVMESurface) || node->GetParent()->IsMAFType(mafVMEVolumeGray) || node->GetParent()->IsMAFType(mafVMESurfaceParametric) || node->GetParent()->IsMAFType(mafVMEPlane) || node->GetParent()->IsMAFType(mafVMEEllipsoid)))
 	{
 		  m_PickingActiveFlag = true;
 			return true;
@@ -112,7 +118,7 @@ bool mafOpAddLandmark::Accept(mafNode *node)
 		  node->GetParent() && 
 			node->GetParent()->IsMAFType(mafVMELandmarkCloud) &&
 			node->GetParent()->GetParent() && 
-			(node->GetParent()->GetParent()->IsMAFType(mafVMESurface) || node->GetParent()->GetParent()->IsMAFType(mafVMEVolumeGray) || node->GetParent()->GetParent()->IsMAFType(mafVMESurfaceParametric) || node->GetParent()->GetParent()->IsMAFType(mafVMEPlane)))
+			(node->GetParent()->GetParent()->IsMAFType(mafVMESurface) || node->GetParent()->GetParent()->IsMAFType(mafVMEVolumeGray) || node->GetParent()->GetParent()->IsMAFType(mafVMESurfaceParametric) || node->GetParent()->GetParent()->IsMAFType(mafVMEPlane) || node->GetParent()->GetParent()->IsMAFType(mafVMEEllipsoid)))
 	{
 		m_PickingActiveFlag = true;
 		return true;
@@ -161,7 +167,7 @@ void mafOpAddLandmark::OpRun()
   }
 	if(m_PickingActiveFlag == true)
 	{
-		if (m_Input->IsMAFType(mafVMESurface) || m_Input->IsMAFType(mafVMEVolumeGray) || m_Input->IsMAFType(mafVMESurfaceParametric) || m_Input->IsMAFType(mafVMEPlane))
+		if (m_Input->IsMAFType(mafVMESurface) || m_Input->IsMAFType(mafVMEVolumeGray) || m_Input->IsMAFType(mafVMESurfaceParametric) || m_Input->IsMAFType(mafVMEPlane) || m_Input->IsMAFType(mafVMEEllipsoid) || m_Input->IsMAFType(mafVMEHyperboloid) || m_Input->IsMAFType(mafVMEHyperboloid2S) || m_Input->IsMAFType(mafVMECylinder))
 		{
 			m_PickedVme = mafVME::SafeDownCast(m_Input);
 			mafNEW(m_Cloud);

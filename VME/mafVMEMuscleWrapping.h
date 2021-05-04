@@ -268,6 +268,8 @@ protected:
 	ID_ELLIPSOID2_LINK,
 	ID_Q0_LINK,
 	ID_P0_LINK,
+	ID_insert1_LINK,
+	ID_insert2_LINK,
 	ID_DRate
   };
 
@@ -305,6 +307,8 @@ protected:
   vtkAppendPolyData *m_Goniometer;
   mafString m_P0LandmarkName;
   mafString m_Q0LandmarkName;
+  mafString m_insert1LandmarkName;
+  mafString m_insert2LandmarkName;
   mafTransform *m_Transform; 
   vtkPolyData  *m_PolyData;
   mafString gLength;
@@ -326,8 +330,8 @@ protected:
 
 
   Eigen::Matrix3d rotationMat;
- 
-//  mafVMELandmarkCloud	*m_Cloud2;
+  //mafVMELandmarkCloud	*m_Cloud1;
+  mafVMELandmarkCloud	*m_Cloud2;
   //mafVMELandmarkCloud	*m_CloudPath1;
   //mafVMELandmarkCloud	*m_CloudPath2;
   
@@ -344,21 +348,30 @@ protected:
   protected:
 	  mafVME* GetP0VME();
 	  mafVME* GetQ0VME();
+
+	  mafVME* Getinsert1VME();
+	  mafVME* Getinsert2VME();
 	  mafVME* GetEllipsoidVME();
 	  mafVME* GetEllipsoidVME2();
 	  
 	  mafVME *P0;
 	  mafVME *Q0;
+	  mafVME* insert1;
+	  mafVME* insert2;
 	  mafVMELandmark* pp;
 	  mafVMELandmark* qq;
 	  mafVMELandmark* p;
 	  mafVMELandmark* p2;
 	  mafVMELandmark* q;
 	  mafVMELandmark* q2;
+	  double m_insert1Point[3];
+	  double m_insert2Point[3];
 	  double m_StartPoint[3];
 	  double m_EndPoint[3];
 	  double local_start[3];
 	  double local_end[3];
+	  double local_insert1[3];
+	  double local_insert2[3];
 	  double local_startP[3];
 	  double local_endQ[3];
 	  double localEllipCenter[3];

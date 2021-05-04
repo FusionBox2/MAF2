@@ -22,7 +22,7 @@
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
-class mafVMESurfaceParametric;
+//class mafVMESurfaceParametric;
 class mafGUI;
 class mafEvent;
 class mafVMEHyperboloid;

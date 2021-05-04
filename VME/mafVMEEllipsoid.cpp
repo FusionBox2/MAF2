@@ -264,6 +264,9 @@ mafGUI* mafVMEEllipsoid::CreateGui()
 	m_Gui->Double(CHANGE_VALUE_Ellipsoid, _("RX"), &a);
 	m_Gui->Double(CHANGE_VALUE_Ellipsoid, _("RY"), &b);
 	m_Gui->Double(CHANGE_VALUE_Ellipsoid, _("RZ"), &c);
+
+	m_Gui->Double(CHANGE_VALUE_Ellipsoid, _("Theta"), &resTheta);
+	m_Gui->Double(CHANGE_VALUE_Ellipsoid, _("Phi"), &resPhi);
 	m_Gui->Divider();
 	m_Gui->Button(ID_ELLIPSOIDCenter_LINK, &m_LandmarkName, _("centerLandmark"), _("select the center"));
 	m_Gui->FitGui();
