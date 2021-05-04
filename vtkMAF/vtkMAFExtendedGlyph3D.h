@@ -27,7 +27,7 @@
 #ifndef __vtkMAFExtendedGlyph3D_h
 #define __vtkMAFExtendedGlyph3D_h
 
-#include "vtkDataSetToPolyDataFilter.h"
+#include "vtkPolyDataAlgorithm.h"
 #include "vtkMAFConfigure.h"
 
 #define VTK_SCALE_BY_SCALAR 0
@@ -47,10 +47,10 @@
 #define VTK_INDEXING_BY_SCALAR 1
 #define VTK_INDEXING_BY_VECTOR 2
 
-class VTK_vtkMAF_EXPORT vtkMAFExtendedGlyph3D : public vtkDataSetToPolyDataFilter
+class VTK_vtkMAF_EXPORT vtkMAFExtendedGlyph3D : public vtkPolyDataAlgorithm
 {
 public:
-  vtkTypeRevisionMacro(vtkMAFExtendedGlyph3D,vtkDataSetToPolyDataFilter);
+  vtkTypeRevisionMacro(vtkMAFExtendedGlyph3D,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   /**
@@ -179,9 +179,9 @@ protected:
   vtkMAFExtendedGlyph3D();
   ~vtkMAFExtendedGlyph3D();
 
-  void Execute();
-  void ExecuteInformation();
-  void ComputeInputUpdateExtents(vtkDataObject *output);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestUpdateExtent(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
   int NumberOfSources; // Number of source objects
   vtkPolyData **Source; // Geometry to copy to each point

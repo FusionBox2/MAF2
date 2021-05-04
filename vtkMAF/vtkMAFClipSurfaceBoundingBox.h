@@ -22,7 +22,7 @@
 //----------------------------------------------------------------------------
 #include "vtkMAFConfigure.h"
 #include "vtkPolyData.h"
-#include "vtkPolyDataToPolyDataFilter.h"
+#include "vtkPolyDataAlgorithm.h"
 
 //----------------------------------------------------------------------------
 // forward references :
@@ -33,7 +33,7 @@
   Class used for clip an input surface with a box generated with the extrusion for example of a plane.
   The ClipInside flag is used to retrieve one of the two parts in which the input surface is clipped.
 */
-class VTK_vtkMAF_EXPORT vtkMAFClipSurfaceBoundingBox : public vtkPolyDataToPolyDataFilter 
+class VTK_vtkMAF_EXPORT vtkMAFClipSurfaceBoundingBox : public vtkPolyDataAlgorithm 
 {
 
 public:
@@ -44,9 +44,16 @@ public:
 	vtkTypeRevisionMacro(vtkMAFClipSurfaceBoundingBox,vtkObject);
 
   /** Set the polydata with which clip is performed.*/
-	void SetMask(vtkPolyData *mask) {this->SetNthInput(1, mask);};
+	void SetMask(vtkPolyData* mask) {
+		
+		this->SetInputData(1, mask);
+	};
   /** Retrieve the mask polydata.*/
-	vtkPolyData *GetMask() { return (vtkPolyData *)(this->Inputs[1]);};
+	vtkPolyData *GetMask() {
+		
+		//return (vtkPolyData *)(this->getInputs[1]);
+		return (vtkPolyData*)(this->GetInput(1));
+	};
 
   /** Set macro for ClipInside.*/
 	vtkSetMacro(ClipInside,int);
@@ -60,7 +67,7 @@ protected:
 	~vtkMAFClipSurfaceBoundingBox();
 
   /** Execute the filter. */
-	void Execute();
+	int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
 	int ClipInside;
 };

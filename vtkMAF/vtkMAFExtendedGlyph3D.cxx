@@ -23,6 +23,8 @@
 #include "vtkIdList.h"
 #include "vtkIdTypeArray.h"
 #include "vtkMath.h"
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
@@ -69,8 +71,21 @@ vtkMAFExtendedGlyph3D::~vtkMAFExtendedGlyph3D()
   this->SetInputNormalsSelection(NULL);
 }
 
-void vtkMAFExtendedGlyph3D::Execute()
+void vtkMAFExtendedGlyph3D::RequestData(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
+  // get the input and output
+  vtkPolyData *input = vtkPolyData::SafeDownCast(
+    inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkPolyData *output = vtkPolyData::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
   vtkPointData *pd;
   vtkDataArray *inScalars;
   vtkDataArray *inVectors;
@@ -589,8 +604,15 @@ void vtkMAFExtendedGlyph3D::Execute()
 // Since indexing determines size of outputs, EstimatedWholeMemorySize is
 // truly an estimate.  Ignore Indexing (although for a best estimate we
 // should average the size of the sources instead of using 0).
-void vtkMAFExtendedGlyph3D::ExecuteInformation()
+void vtkMAFExtendedGlyph3D::RequestInformation(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
   if (this->GetInput() == NULL)
     {
     vtkErrorMacro("Missing input");
@@ -708,8 +730,15 @@ void vtkMAFExtendedGlyph3D::PrintSelf(ostream& os, vtkIndent indent)
      << (this->InputNormalsSelection ? this->InputNormalsSelection : "(none)") << "\n";
 }
 
-void vtkMAFExtendedGlyph3D::ComputeInputUpdateExtents( vtkDataObject *output )
+void vtkMAFExtendedGlyph3D::RequestUpdateExtent(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
   vtkPolyData *outPd;
 
   if (this->GetInput() == NULL)

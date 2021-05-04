@@ -32,17 +32,17 @@
 #define __vtkMAFVolumeResample_h
 
 #include "vtkMAFConfigure.h"
-#include "vtkDataSetToDataSetFilter.h"
+#include "vtkDataSetAlgorithm.h"
 #include "vtkImageData.h"
 
 //class vtkImageData;
 class vtkRectilinearGrid;
 
 
-class VTK_vtkMAF_EXPORT vtkMAFVolumeResample: public vtkDataSetToDataSetFilter {
+class VTK_vtkMAF_EXPORT vtkMAFVolumeResample: public vtkDataSetAlgorithm {
 public:
   static vtkMAFVolumeResample*New();
-  vtkTypeRevisionMacro(vtkMAFVolumeResample, vtkDataSetToDataSetFilter);
+  vtkTypeRevisionMacro(vtkMAFVolumeResample, vtkDataSetAlgorithm);
   
   void PrintSelf(ostream& os, vtkIndent indent);
 
@@ -92,12 +92,12 @@ protected:
   vtkMAFVolumeResample();
   ~vtkMAFVolumeResample();
 
-  void ExecuteInformation();
+  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
   void ExecuteData(vtkDataObject *output);
   
   void ExecuteData(vtkImageData *output);
 
-  void ComputeInputUpdateExtents(vtkDataObject *output);
+  int RequestUpdateExtent(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
   void PrepareVolume();
   void CalculateTextureCoordinates(const double point[3], const int size[2], const double spacing[2], double ts[2]);

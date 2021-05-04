@@ -14,6 +14,8 @@
 
 =========================================================================*/
 
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
 #include "vtkMAFClipSurfaceBoundingBox.h"
@@ -40,11 +42,23 @@ vtkMAFClipSurfaceBoundingBox::~vtkMAFClipSurfaceBoundingBox()
 	SetMask(NULL);
 }
 //-------------------------------------------------------------------------
-void vtkMAFClipSurfaceBoundingBox::Execute() 
-//-------------------------------------------------------------------------
+int vtkMAFClipSurfaceBoundingBox::RequestData(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
-	vtkPolyData *output = this->GetOutput();
-	vtkPolyData *input	= this->GetInput();
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
+  // get the input and output
+  vtkPolyData *input = vtkPolyData::SafeDownCast(
+    inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkPolyData *output = vtkPolyData::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
+//	vtkPolyData *output = this->GetOutput();
+	//vtkPolyData *input	= this->GetInput();
 	vtkPolyData *mask		=	this->GetMask();
 	
 	double bounds[6];
@@ -58,7 +72,7 @@ void vtkMAFClipSurfaceBoundingBox::Execute()
 	double scale_factor=2*sqrt(vtkMath::Distance2BetweenPoints(p1,p2));
 
 	vtkLinearExtrusionFilter *extrusionFilter = vtkLinearExtrusionFilter::New();
-	extrusionFilter->SetInput(mask);
+	extrusionFilter->SetInputData(mask);
 	extrusionFilter->SetScaleFactor(scale_factor);
 	extrusionFilter->Modified();
 	extrusionFilter->Update();
@@ -67,16 +81,18 @@ void vtkMAFClipSurfaceBoundingBox::Execute()
 	implicitPolyData->SetInput(extrusionFilter->GetOutput());
 
 	vtkClipPolyData *clipFilter = vtkClipPolyData::New();
-	clipFilter->SetInput(input);
+	clipFilter->SetInputData(input);
 	clipFilter->SetGenerateClipScalars(0);
 	clipFilter->SetClipFunction(implicitPolyData);
 	clipFilter->SetInsideOut(ClipInside);
 	clipFilter->SetValue(0);
 	clipFilter->Update();
 
-	output->DeepCopy(clipFilter->GetOutput());
+	output->DeepCopy(clipFilter->GetOutputDataObject(0));
 
 	clipFilter->Delete();
 	implicitPolyData->Delete();
 	extrusionFilter->Delete();
+
+	return 1;
 }
