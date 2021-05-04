@@ -89,11 +89,11 @@ mafVMEMuscleWrapping::mafVMEMuscleWrapping()
 	
 	centerTemp = new double[3];
 	centerTemp[0] = 0; centerTemp[01] = 0; centerTemp[02] = 0;
-	m_Q0LandmarkName="";
-	m_P0LandmarkName = "";
-	m_insert1LandmarkName = "";
-	m_insert2LandmarkName = "";
-	mafString gLength = "";
+	m_Q0LandmarkName=_R("");
+	m_P0LandmarkName = _R("");
+	m_insert1LandmarkName = _R("");
+	m_insert2LandmarkName = _R("");
+	mafString gLength = _R("");
 	globalError = 0;
 	globalLength = 0;
 	m_ComputeStateCheckbox = 01;
@@ -102,29 +102,29 @@ mafVMEMuscleWrapping::mafVMEMuscleWrapping()
 	
 	
 	insert2 = mafVMELandmark::New();
-	insert2->SetName("insert2");
+	insert2->SetName(_R("insert2"));
 	insert2 = NULL;
 
 	insert1 = mafVMELandmark::New();
-	insert1->SetName("insert1");
+	insert1->SetName(_R("insert1"));
 	insert1 = NULL;
 
 
   P0 = mafVMELandmark::New();
-  P0->SetName("P0");
+  P0->SetName(_R("P0"));
   P0 = NULL;
   Q0 = mafVMELandmark::New();
-  Q0->SetName("Q0");
+  Q0->SetName(_R("Q0"));
   Q0 = NULL;
   p2 = mafVMELandmark::New();
-  p2->SetName("p2");
+  p2->SetName(_R("p2"));
   
   q2 = mafVMELandmark::New();
-  q2->SetName("q2");
+  q2->SetName(_R("q2"));
   p = mafVMELandmark::New();
-  p->SetName("p");
+  p->SetName(_R("p"));
   q = mafVMELandmark::New();
-  q->SetName("q");
+  q->SetName(_R("q"));
 
 
   n1 = 0;
@@ -133,18 +133,18 @@ mafVMEMuscleWrapping::mafVMEMuscleWrapping()
  mafNEW(m_Cloud2);
 
   m_Cloud2->Open();
-  m_Cloud2->SetName(_("Quadric_Muscle_Intersection"));
+  m_Cloud2->SetName(_L("Quadric_Muscle_Intersection"));
   m_Cloud2->SetRadius(1.5);
   m_Cloud2->ReparentTo(this);
-  m_Cloud2->AppendLandmark(0, 0, 0, "p0", false);
-  m_Cloud2->AppendLandmark(1, 1, 1, "q0", false);
+  m_Cloud2->AppendLandmark(0, 0, 0, _R("p0"), false);
+  m_Cloud2->AppendLandmark(1, 1, 1, _R("q0"), false);
   //m_Cloud2->AppendLandmark(0.5, 0.5, 0.5, "c0", false);
-  m_Cloud2->AppendLandmark(1, 0, 0, "p", false);
-  m_Cloud2->AppendLandmark(1, 1, 0, "q", false);
-  m_Cloud2->AppendLandmark(1, 0, 0, "p2", false);
-  m_Cloud2->AppendLandmark(1, 1, 0, "q2", false);
-  m_Cloud2->AppendLandmark(0, 0, 0, "insert2", false);
-  m_Cloud2->AppendLandmark(0, 0, 0, "insert1", false);
+  m_Cloud2->AppendLandmark(1, 0, 0, _R("p"), false);
+  m_Cloud2->AppendLandmark(1, 1, 0, _R("q"), false);
+  m_Cloud2->AppendLandmark(1, 0, 0, _R("p2"), false);
+  m_Cloud2->AppendLandmark(1, 1, 0, _R("q2"), false);
+  m_Cloud2->AppendLandmark(0, 0, 0, _R("insert2"), false);
+  m_Cloud2->AppendLandmark(0, 0, 0, _R("insert1"), false);
   
   
  // mafNEW(m_CloudPath1);
@@ -222,11 +222,11 @@ mafVMEMuscleWrapping::~mafVMEMuscleWrapping()
 mmaMaterial *mafVMEMuscleWrapping::GetMaterial()
 //-------------------------------------------------------------------------
 {
-	mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+	mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
 	if (material == NULL)
 	{
 		material = mmaMaterial::New();
-		SetAttribute("MaterialAttributes", material);
+		SetAttribute(_R("MaterialAttributes"), material);
 	}
 	return material;
 }
@@ -323,19 +323,19 @@ mafGUI* mafVMEMuscleWrapping::CreateGui()
 
 	m_ComputeStateCheckbox = 1;
 	
-	m_Gui->Button(ID_ELLIPSOID_LINK, &m_EllipsoidVmeName, _("Quadric1"), _("Select Quadric1"));
-	m_Gui->Button(ID_ELLIPSOID2_LINK, &m_EllipsoidVmeName2, _("Quadric2"), _("Select Quadric2"));
-	m_Gui->Button(ID_P0_LINK, &m_P0LandmarkName, _("Starting Point"), _("Select Starting Point"));
-	m_Gui->Button(ID_Q0_LINK, &m_Q0LandmarkName, _("Ending Point"), _("Select Ending Point"));
-	m_Gui->Button(ID_insert1_LINK, &m_insert1LandmarkName, _("insert1"), _("Select insert1 Point"));
-	m_Gui->Button(ID_insert2_LINK, &m_insert2LandmarkName, _("insert2"), _("Select insert2 Point"));
-	m_Gui->Integer(ID_DRate, _("Discretization rate"), &rate);
+	m_Gui->Button(ID_ELLIPSOID_LINK, &m_EllipsoidVmeName, _L("Quadric1"), _L("Select Quadric1"));
+	m_Gui->Button(ID_ELLIPSOID2_LINK, &m_EllipsoidVmeName2, _L("Quadric2"), _L("Select Quadric2"));
+	m_Gui->Button(ID_P0_LINK, &m_P0LandmarkName, _L("Starting Point"), _L("Select Starting Point"));
+	m_Gui->Button(ID_Q0_LINK, &m_Q0LandmarkName, _L("Ending Point"), _L("Select Ending Point"));
+	m_Gui->Button(ID_insert1_LINK, &m_insert1LandmarkName, _L("insert1"), _L("Select insert1 Point"));
+	m_Gui->Button(ID_insert2_LINK, &m_insert2LandmarkName, _L("insert2"), _L("Select insert2 Point"));
+	m_Gui->Integer(ID_DRate, _L("Discretization rate"), &rate);
 //	m_Gui->Double(CHANGE_VALUE_tempdist, _("tempdist"), &tempdist);
 	
-	gLength = ss.Append( std::to_string(globalLength).c_str());
-	gError = std::to_string(globalError).c_str();
-	m_Gui->Label(_("distance: "), &gLength, true);
-	m_Gui->Label(_("error: "), &gError, true);
+	gLength = ss.Append( mafToString(globalLength));
+	gError = mafToString(globalError);
+	m_Gui->Label(_L("distance: "), &gLength, true);
+	m_Gui->Label(_L("error: "), &gError, true);
     m_Gui->FitGui();
     m_Gui->Update();
 
@@ -364,10 +364,10 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 	{
 
 
-		string ee;
+		mafString ee;
 		if (e->GetVme() == NULL)
 		{
-			ee = "VME NOT found";
+			ee = _R("VME NOT found");
 			
 		}
 	  else
@@ -443,7 +443,7 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 	  {
 								
 								 mafID button_id = e->GetId();
-								 mafString title = _("Choose quadric1 vme link");
+								 mafString title = _L("Choose quadric1 vme link");
 								 e->SetId(VME_CHOOSE);
 								 e->SetArg((long)&mafQuadraticSurface::VMEAccept);
 								 e->SetString(&title);
@@ -452,7 +452,7 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 								 if (n != NULL)
 								 {
 									
-										 SetEllipsoidLink("EllipVME", n);
+										 SetEllipsoidLink(_R("EllipVME"), n);
 										 m_EllipsoidVmeName = n->GetName();
 										 
 										 ellip = (mafQuadraticSurface*)n;
@@ -469,7 +469,7 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 	  {
 								
 								mafID button_id = e->GetId();
-								mafString title = _("Choose quadric2 vme link");
+								mafString title = _L("Choose quadric2 vme link");
 								e->SetId(VME_CHOOSE);
 								e->SetArg((long)&mafQuadraticSurface::VMEAccept);
 								e->SetString(&title);
@@ -478,7 +478,7 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 								if (n != NULL)
 								{
 
-									SetEllipsoidLink("EllipVME2", n);
+									SetEllipsoidLink(_R("EllipVME2"), n);
 									m_EllipsoidVmeName2 = n->GetName();
 									ellip2 = (mafQuadraticSurface*)n;
 									length = std::max(length,std::max(std::max(ellip2->getSzZ(), ellip2->getSzY()), ellip2->getSzX()));
@@ -494,7 +494,7 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 	  {
 		 
 			mafID button_id = e->GetId();
-			mafString title = _("Choose Q0 Landmark link");
+			mafString title = _L("Choose Q0 Landmark link");
 			e->SetId(VME_CHOOSE);
 
 			e->SetString(&title);
@@ -503,7 +503,7 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 			if (n != NULL)
 			{							 
 				//q0 = (mafVMELandmark*)n;
-				SetLandmarkLink("Q0Landmark", n);
+				SetLandmarkLink(_R("Q0Landmark"), n);
 				m_Q0LandmarkName = n->GetName();
 				m_Gui->Update();							 
 			}
@@ -517,7 +517,7 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 		
 	  
 			mafID button_id = e->GetId();
-			mafString title = _("Choose P0 Landmark link");
+			mafString title = _L("Choose P0 Landmark link");
 			e->SetId(VME_CHOOSE);
 
 			e->SetString(&title);
@@ -526,7 +526,7 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 			if (n != NULL)
 			{
 				//p0 = (mafVMELandmark*)n;
-				SetLandmarkLink("P0Landmark", n);
+				SetLandmarkLink(_R("P0Landmark"), n);
 				m_P0LandmarkName = n->GetName();
 				m_Gui->Update();		  
 			}
@@ -542,7 +542,7 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 
 
 						 mafID button_id = e->GetId();
-						 mafString title = _("Choose insert1 Landmark link");
+						 mafString title = _L("Choose insert1 Landmark link");
 						 e->SetId(VME_CHOOSE);
 
 						 e->SetString(&title);
@@ -551,7 +551,7 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 						 if (n != NULL)
 						 {
 							 //p0 = (mafVMELandmark*)n;
-							 SetLandmarkLink("insert1", n);
+							 SetLandmarkLink(_R("insert1"), n);
 							 m_insert1LandmarkName = n->GetName();
 							 m_Gui->Update();
 						 }
@@ -567,7 +567,7 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 
 
 						 mafID button_id = e->GetId();
-						 mafString title = _("Choose insert2 Landmark link");
+						 mafString title = _L("Choose insert2 Landmark link");
 						 e->SetId(VME_CHOOSE);
 
 						 e->SetString(&title);
@@ -576,7 +576,7 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 						 if (n != NULL)
 						 {
 							 
-							 SetLandmarkLink("insert2", n);
+							 SetLandmarkLink(_R("insert2"), n);
 							 m_insert2LandmarkName = n->GetName();
 							 m_Gui->Update();
 						 }
@@ -667,7 +667,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 		//local_start[1] = m_StartPoint[1];
 		//local_start[2] = m_StartPoint[2];
 
-		m_Cloud2->SetLandmark("p0", local_start[0], local_start[1], local_start[2], currTs);
+		m_Cloud2->SetLandmark(_R("p0"), local_start[0], local_start[1], local_start[2], currTs);
 		m_Cloud2->Update();
 		//			
 		((mafVMELandmark *)Q0)->GetPoint(m_EndPoint, currTs);
@@ -681,7 +681,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 		//local_end[0] = m_EndPoint[0];
 		//local_end[1] = m_EndPoint[1];
 		//local_end[2] = m_EndPoint[2];
-		m_Cloud2->SetLandmark("q0", local_end[0], local_end[1], local_end[2], currTs);
+		m_Cloud2->SetLandmark(_R("q0"), local_end[0], local_end[1], local_end[2], currTs);
 		m_Cloud2->Update();
 
 		///insertion tests ///
@@ -698,7 +698,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 			local_insert1[0] = m_insert1Point[0];
 			local_insert1[1] = m_insert1Point[1];
 			local_insert1[2] = m_insert1Point[2];
-			m_Cloud2->SetLandmark("insert1", local_insert1[0], local_insert1[1], local_insert1[2], currTs);
+			m_Cloud2->SetLandmark(_R("insert1"), local_insert1[0], local_insert1[1], local_insert1[2], currTs);
 			m_Cloud2->Update();
 		}
 		if (insert2 != NULL)
@@ -714,7 +714,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 			local_insert2[0] = m_insert2Point[0];
 			local_insert2[1] = m_insert2Point[1];
 			local_insert2[2] = m_insert2Point[2];
-			m_Cloud2->SetLandmark("insert2", local_insert2[0], local_insert2[1], local_insert2[2], currTs);
+			m_Cloud2->SetLandmark(_R("insert2"), local_insert2[0], local_insert2[1], local_insert2[2], currTs);
 			m_Cloud2->Update();
 		}
 		////
@@ -770,16 +770,16 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					pts1->InsertNextPoint(local_end);
 
 					mafVMELineSeg* line13 = mafVMELineSeg::New();
-					line13->SetName("line13");
+					line13->SetName(_R("line13"));
 
 					line13->setPoints(pts1);
 					line13->GetOutput()->Update();
 					line13->Update();
 					globalLength = sqrt((local_end[0] - local_start[0])*(local_end[0] - local_start[0]) + (local_end[1] - local_start[1])*(local_end[1] - local_start[1]) + (local_end[2] - local_start[2])*(local_end[2] - local_start[2]));
 					//gLength = globalLength;
-					mafString ss = " ";
-					gLength = ss.Append(std::to_string(globalLength).c_str());
-					gError = std::to_string(globalError).c_str();
+					mafString ss = _R(" ");
+					gLength = ss.Append(mafToString(globalLength));
+					gError = mafToString(globalError);
 					//m_Gui->Update();
 
 
@@ -953,9 +953,9 @@ void mafVMEMuscleWrapping::InternalUpdate()
 
 					globalLength = globalLength + wrappingDistance;
 					//gLength = globalLength;
-					mafString ss = " ";
-					gLength = ss.Append(std::to_string(globalLength).c_str());
-					gError = std::to_string(globalError).c_str();
+					mafString ss = _R(" ");
+					gLength = ss.Append(mafToString(globalLength));
+					gError = mafToString(globalError);
 
 					m_Goniometer->RemoveAllInputs();
 					m_Goniometer->AddInput(line13->getVTKPolydata());
@@ -1140,9 +1140,9 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					globalLength = globalLength + wrappingDistance;
 					//gLength = globalLength;
 
-					mafString ss = " ";
-					gLength = ss.Append(std::to_string(globalLength).c_str());
-					gError = std::to_string(globalError).c_str();
+					mafString ss = _R(" ");
+					gLength = ss.Append(mafToString(globalLength));
+					gError = mafToString(globalError);
 
 					m_Goniometer->RemoveAllInputs();
 					m_Goniometer->AddInput(line13->getVTKPolydata());
@@ -1442,9 +1442,9 @@ void mafVMEMuscleWrapping::InternalUpdate()
 
 					globalLength = globalLength + wrappingDistance;
 					//gLength = globalLength;
-					mafString ss = " ";
-					gLength = ss.Append(std::to_string(globalLength).c_str());
-					gError = std::to_string(globalError).c_str();
+					mafString ss = _R(" ");
+					gLength = ss.Append(mafToString(globalLength));
+					gError = mafToString(globalError);
 
 
 					m_Goniometer->RemoveAllInputs();
@@ -1520,7 +1520,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					pts1->InsertNextPoint(local_end);
 
 					mafVMELineSeg* line11 = mafVMELineSeg::New();
-					line11->SetName("line11");
+					line11->SetName(_R("line11"));
 					line11->resetPoints();
 					line11->setPoints(pts1);
 					line11->GetOutput()->Update();
@@ -1528,9 +1528,9 @@ void mafVMEMuscleWrapping::InternalUpdate()
 
 					globalLength = sqrt((m_EndPoint[0] - m_StartPoint[0])*(m_EndPoint[0] - m_StartPoint[0]) + (m_EndPoint[1] - m_StartPoint[1])*(m_EndPoint[1] - m_StartPoint[1]) + (m_EndPoint[2] - m_StartPoint[2])*(m_EndPoint[2] - m_StartPoint[2]));
 					//gLength = globalLength;
-					mafString ss = " ";
-					gLength = ss.Append(std::to_string(globalLength).c_str());
-					gError = std::to_string(globalError).c_str();
+					mafString ss = _R(" ");
+					gLength = ss.Append(mafToString(globalLength));
+					gError = mafToString(globalError);
 
 					m_Goniometer->RemoveAllInputs();
 					m_Goniometer->AddInput(line11->getVTKPolydata());
@@ -1566,11 +1566,11 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					
 					VectorXd X(6);
 			
-					if (m_insert1LandmarkName == "" || m_insert1LandmarkName == "none")
+					if (m_insert1LandmarkName.IsEmpty() || m_insert1LandmarkName == _R("none"))
 					{
-						m_Cloud2->SetLandmark("insert1", intersectionpts[0][0], intersectionpts[0][1], intersectionpts[0][2], currTs);
+						m_Cloud2->SetLandmark(_R("insert1"), intersectionpts[0][0], intersectionpts[0][1], intersectionpts[0][2], currTs);
 						m_Cloud2->Update();
-						m_Cloud2->SetLandmark("insert2", intersectionpts[1][0], intersectionpts[1][1], intersectionpts[1][2], currTs);
+						m_Cloud2->SetLandmark(_R("insert2"), intersectionpts[1][0], intersectionpts[1][1], intersectionpts[1][2], currTs);
 						m_Cloud2->Update();	
 						X << intersectionpts[0][0], intersectionpts[0][1], intersectionpts[0][2], intersectionpts[1][0], intersectionpts[1][1], intersectionpts[1][2];
 					}
@@ -1621,9 +1621,9 @@ void mafVMEMuscleWrapping::InternalUpdate()
 				
 
 
-					m_Cloud2->SetLandmark("p", positionP[0], positionP[1], positionP[2], currTs);
+					m_Cloud2->SetLandmark(_R("p"), positionP[0], positionP[1], positionP[2], currTs);
 					m_Cloud2->Update();
-					m_Cloud2->SetLandmark("q", positionQ[0], positionQ[1], positionQ[2], currTs);
+					m_Cloud2->SetLandmark(_R("q"), positionQ[0], positionQ[1], positionQ[2], currTs);
 					m_Cloud2->Update();
 					vector<Vector3d> path = ellip1->computeGeodesicPath((mafVMELandmark*)P0, (mafVMELandmark*)Q0, p, q, 2 * length,rate, &globalError);
 
@@ -1724,9 +1724,9 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					
 					globalLength = globalLength + wrappingDistance;
 					//gLength = globalLength;
-					mafString ss = " ";
-					gLength = ss.Append(std::to_string(globalLength).c_str());
-					gError = std::to_string(globalError).c_str();
+					mafString ss = _R(" ");
+					gLength = ss.Append(mafToString(globalLength));
+					gError = mafToString(globalError);
 
 
 					m_Goniometer->RemoveAllInputs();
@@ -1768,7 +1768,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 
 
 				mafVMELineSeg* line11 = mafVMELineSeg::New();
-				line11->SetName("line11");
+				line11->SetName(_R("line11"));
 
 				line11->resetPoints();
 				line11->setPoints(pts1);
@@ -1777,10 +1777,10 @@ void mafVMEMuscleWrapping::InternalUpdate()
 
 				globalLength = sqrt((m_EndPoint[0] - m_StartPoint[0])*(m_EndPoint[0] - m_StartPoint[0]) + (m_EndPoint[1] - m_StartPoint[1])*(m_EndPoint[1] - m_StartPoint[1]) + (m_EndPoint[2] - m_StartPoint[2])*(m_EndPoint[2] - m_StartPoint[2]));
 				//gLength = globalLength;
-				mafString ss = " ";
-				gLength = ss.Append(std::to_string(globalLength).c_str());
+				mafString ss = _R(" ");
+				gLength = ss.Append(mafToString(globalLength));
 				globalError = 0;
-				gError = std::to_string(globalError).c_str();
+				gError = mafToString(globalError);
 
 
 				m_Goniometer->RemoveAllInputs();
@@ -1812,8 +1812,8 @@ int mafVMEMuscleWrapping::InternalStore(mafStorageElement *parent)
 {
 	if (Superclass::InternalStore(parent) == MAF_OK)
 	{
-		parent->StoreInteger("computeState", m_ComputeStateCheckbox);
-		parent->StoreMatrix("Transform", &m_Transform->GetMatrix());
+		parent->StoreInteger(_R("computeState"), m_ComputeStateCheckbox);
+		parent->StoreMatrix(_R("Transform"), &m_Transform->GetMatrix());
 		return MAF_OK;
 	}
 	return MAF_ERROR;
@@ -1829,9 +1829,9 @@ int mafVMEMuscleWrapping::InternalRestore(mafStorageElement *node)
 	if (Superclass::InternalRestore(node) == MAF_OK)
 	{
 		mafMatrix matrix;
-		if (node->RestoreMatrix("Transform", &matrix) == MAF_OK
+		if (node->RestoreMatrix(_R("Transform"), &matrix) == MAF_OK
 			&&
-			node->RestoreInteger("computeState", m_ComputeStateCheckbox) == MAF_OK 
+			node->RestoreInteger(_R("computeState"), m_ComputeStateCheckbox) == MAF_OK 
 			)
 		{
 			m_Transform->SetMatrix(matrix);
@@ -1854,7 +1854,7 @@ int mafVMEMuscleWrapping::InternalRestore(mafStorageElement *node)
   //return mafVMEProcedural_xpm;
 //}
 
-void mafVMEMuscleWrapping::SetEllipsoidLink(const char *link_name, mafNode *n)
+void mafVMEMuscleWrapping::SetEllipsoidLink(const mafString& link_name, mafNode *n)
 //-------------------------------------------------------------------------
 {
 
@@ -1963,7 +1963,7 @@ double** mafVMEMuscleWrapping::computeLineIntersection(double localpt1[3], doubl
 	return result;
 }
 
-void mafVMEMuscleWrapping::SetLandmarkLink(const char *link_name, mafNode *n)
+void mafVMEMuscleWrapping::SetLandmarkLink(const mafString& link_name, mafNode *n)
 //-------------------------------------------------------------------------
 {
 
@@ -1977,34 +1977,34 @@ void mafVMEMuscleWrapping::SetLandmarkLink(const char *link_name, mafNode *n)
 mafVME *mafVMEMuscleWrapping::GetP0VME()
 //-------------------------------------------------------------------------
 {
-	return mafVME::SafeDownCast(GetLink("P0Landmark"));
+	return mafVME::SafeDownCast(GetLink(_R("P0Landmark")));
 }
 
 mafVME *mafVMEMuscleWrapping::Getinsert1VME()
 //-------------------------------------------------------------------------
 {
-	return mafVME::SafeDownCast(GetLink("insert1"));
+	return mafVME::SafeDownCast(GetLink(_R("insert1")));
 }
 
 mafVME *mafVMEMuscleWrapping::Getinsert2VME()
 //-------------------------------------------------------------------------
 {
-	return mafVME::SafeDownCast(GetLink("insert2"));
+	return mafVME::SafeDownCast(GetLink(_R("insert2")));
 }
 mafVME *mafVMEMuscleWrapping::GetEllipsoidVME()
 //-------------------------------------------------------------------------
 {
-	return mafVME::SafeDownCast(GetLink("EllipVME"));
+	return mafVME::SafeDownCast(GetLink(_R("EllipVME")));
 }
 mafVME *mafVMEMuscleWrapping::GetEllipsoidVME2()
 //-------------------------------------------------------------------------
 {
-	return mafVME::SafeDownCast(GetLink("EllipVME2"));
+	return mafVME::SafeDownCast(GetLink(_R("EllipVME2")));
 }
 mafVME *mafVMEMuscleWrapping::GetQ0VME()
 //-------------------------------------------------------------------------
 {	
-	return mafVME::SafeDownCast(GetLink("Q0Landmark"));
+	return mafVME::SafeDownCast(GetLink(_R("Q0Landmark")));
 }
 void mafVMEMuscleWrapping::UpdateLinks()
 //-------------------------------------------------------------------------
@@ -2016,13 +2016,13 @@ void mafVMEMuscleWrapping::UpdateLinks()
 	ellip = (mafQuadraticSurface*)GetEllipsoidVME();
 	if (ellip && ellip->IsMAFType(mafQuadraticSurface))
 	{
-		nd = GetLink("EllipVME");
-		m_EllipsoidVmeName = (nd != NULL) ? ((mafQuadraticSurface *)ellip)->GetName() : _("none");
+		nd = GetLink(_R("EllipVME"));
+		m_EllipsoidVmeName = (nd != NULL) ? ((mafQuadraticSurface *)ellip)->GetName() : _L("none");
 		
 	}
 	else
 	{
-		m_EllipsoidVmeName = ellip ? ellip->GetName() : _("none");
+		m_EllipsoidVmeName = ellip ? ellip->GetName() : _L("none");
 		
 	}
 	
@@ -2030,48 +2030,48 @@ void mafVMEMuscleWrapping::UpdateLinks()
 	ellip2 = (mafQuadraticSurface*)GetEllipsoidVME2();
 	if (ellip2 && ellip2->IsMAFType(mafQuadraticSurface))
 	{
-		nd = GetLink("EllipVME2");
-		m_EllipsoidVmeName2 = (nd != NULL) ? ((mafQuadraticSurface *)ellip2)->GetName() : _("none");
+		nd = GetLink(_R("EllipVME2"));
+		m_EllipsoidVmeName2 = (nd != NULL) ? ((mafQuadraticSurface *)ellip2)->GetName() : _L("none");
 	}
 	else
-		m_EllipsoidVmeName2 = ellip2 ? ellip2->GetName() : _("none");
+		m_EllipsoidVmeName2 = ellip2 ? ellip2->GetName() : _L("none");
 
 	
 	Q0 = GetQ0VME();
 	if (Q0 && Q0->IsMAFType(mafVMELandmark))
 	{
-		sub_id = GetLinkSubId("Q0Landmark");
-		m_Q0LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)Q0->GetParent())->GetLandmarkName(sub_id) : _("none");
+		sub_id = GetLinkSubId(_R("Q0Landmark"));
+		m_Q0LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)Q0->GetParent())->GetLandmarkName(sub_id) : _L("none");
 	}
 	else
-		m_Q0LandmarkName = Q0 ? Q0->GetName() : _("none");
+		m_Q0LandmarkName = Q0 ? Q0->GetName() : _L("none");
 
 
 	P0 = GetP0VME();
 	if (P0 && P0->IsMAFType(mafVMELandmark))
 	{
-		sub_id = GetLinkSubId("P0Landmark");
-		m_P0LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)P0->GetParent())->GetLandmarkName(sub_id) : _("none");
+		sub_id = GetLinkSubId(_R("P0Landmark"));
+		m_P0LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)P0->GetParent())->GetLandmarkName(sub_id) : _L("none");
 	}
 	else
-		m_P0LandmarkName = P0 ? P0->GetName() : _("none");
+		m_P0LandmarkName = P0 ? P0->GetName() : _L("none");
 		
 	insert1 = Getinsert1VME();
 	if (insert1 && insert1->IsMAFType(mafVMELandmark))
 	{
-		sub_id = GetLinkSubId("insert1");
-		m_insert1LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)insert1->GetParent())->GetLandmarkName(sub_id) : _("none");
+		sub_id = GetLinkSubId(_R("insert1"));
+		m_insert1LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)insert1->GetParent())->GetLandmarkName(sub_id) : _L("none");
 	}
 	else
-		m_insert1LandmarkName = insert1 ? insert1->GetName() : _("none");
+		m_insert1LandmarkName = insert1 ? insert1->GetName() : _L("none");
 
 
 	insert2 = Getinsert2VME();
 	if (insert2 && insert2->IsMAFType(mafVMELandmark))
 	{
-		sub_id = GetLinkSubId("insert2");
-		m_insert2LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)insert2->GetParent())->GetLandmarkName(sub_id) : _("none");
+		sub_id = GetLinkSubId(_R("insert2"));
+		m_insert2LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)insert2->GetParent())->GetLandmarkName(sub_id) : _L("none");
 	}
 	else
-		m_insert2LandmarkName = insert2 ? insert2->GetName() : _("none");
+		m_insert2LandmarkName = insert2 ? insert2->GetName() : _L("none");
 }

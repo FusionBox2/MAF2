@@ -88,11 +88,11 @@ mafVMEMuscleWrapperAQ::mafVMEMuscleWrapperAQ()
   m_InfiniteLine  = 0;
   m_LineAngle2    = 0;
   
-  m_StartVmeName  = "";
-  m_StartVme2Name  = "";
-  m_EndVme1Name   = "";
-  m_EndVme2Name   = "";
-  m_ProbeVmeName   = "";
+  m_StartVmeName  = _R("");
+  m_StartVme2Name  = _R("");
+  m_EndVme1Name   = _R("");
+  m_EndVme2Name   = _R("");
+  m_ProbeVmeName   = _R("");
   
   mafNEW(m_Transform);
   mafVMEOutputMuscleWrapperAQ *output = mafVMEOutputMuscleWrapperAQ::New(); // an output with no data
@@ -129,9 +129,9 @@ mafVMEMuscleWrapperAQ::mafVMEMuscleWrapperAQ()
 
   m_ProbedVME = NULL;
 
-  mafString plot_title = _("Density vs. Length (mm)");
-  mafString plot_titleX = "mm";
-  mafString plot_titleY = _("Dens.");
+  mafString plot_title = _L("Density vs. Length (mm)");
+  mafString plot_titleX = _R("mm");
+  mafString plot_titleY = _L("Dens.");
   vtkNEW(m_PlotActor);
   m_PlotActor->GetProperty()->SetColor(0.02,0.06,0.62);	
   m_PlotActor->GetProperty()->SetLineWidth(2);
@@ -142,9 +142,9 @@ mafVMEMuscleWrapperAQ::mafVMEMuscleWrapperAQ()
   m_PlotActor->SetPlotCoordinate(0,300);
   m_PlotActor->SetNumberOfXLabels(10);
   m_PlotActor->SetXValuesToIndex();
-  m_PlotActor->SetTitle(plot_title);
-  m_PlotActor->SetXTitle(plot_titleX);
-  m_PlotActor->SetYTitle(plot_titleY);
+  m_PlotActor->SetTitle(plot_title.GetCStr());
+  m_PlotActor->SetXTitle(plot_titleX.GetCStr());
+  m_PlotActor->SetYTitle(plot_titleY.GetCStr());
   vtkTextProperty* tprop = m_PlotActor->GetTitleTextProperty();
   tprop->SetColor(0.02,0.06,0.62);
   tprop->SetFontFamilyToArial();
@@ -233,11 +233,11 @@ mmaMaterial *mafVMEMuscleWrapperAQ::GetMaterial()
 {
 	wxBusyInfo wait("muscle wrapperAQ getting material...");
 	Sleep(3000);
-  mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+  mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
   if (material == NULL)
   {
     material = mmaMaterial::New();
-    SetAttribute("MaterialAttributes", material);
+    SetAttribute(_R("MaterialAttributes"), material);
   }
 
   wxBusyInfo wait2("muscle wrapperAQ getting material done");
@@ -317,9 +317,9 @@ void mafVMEMuscleWrapperAQ::InternalUpdate()
       /*if (mflVMELandmark *start_landmark = mflVMELandmark::SafeDownCast(start_vme))
         start_ok = start_landmark->GetLandmarkVisibility();*/
 
-      if(start_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("StartVME") != -1)
+      if(start_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId(_R("StartVME")) != -1)
       {
-        ((mafVMELandmarkCloud *)start_vme)->GetLandmark(GetLinkSubId("StartVME"),m_StartPoint,currTs);
+        ((mafVMELandmarkCloud *)start_vme)->GetLandmark(GetLinkSubId(_R("StartVME")),m_StartPoint,currTs);
         mafMatrix tm;
         start_vme->GetOutput()->GetAbsMatrix(tm, currTs);
         m_TmpTransform->SetMatrix(tm);
@@ -335,9 +335,9 @@ void mafVMEMuscleWrapperAQ::InternalUpdate()
       /*if (mflVMELandmark *end_landmark = mflVMELandmark::SafeDownCast(end_vme))
         end_ok = end_landmark->GetLandmarkVisibility();*/
 
-      if(end_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("EndVME1") != -1)
+      if(end_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId(_R("EndVME1")) != -1)
       {
-        ((mafVMELandmarkCloud *)end_vme)->GetLandmark(GetLinkSubId("EndVME1"),m_EndPoint,currTs);
+        ((mafVMELandmarkCloud *)end_vme)->GetLandmark(GetLinkSubId(_R("EndVME1")),m_EndPoint,currTs);
         mafMatrix tm;
         end_vme->GetOutput()->GetAbsMatrix(tm, currTs);
         m_TmpTransform->SetMatrix(tm);
@@ -412,9 +412,9 @@ void mafVMEMuscleWrapperAQ::InternalUpdate()
       /*if (mflVMELandmark *start_landmark = mflVMELandmark::SafeDownCast(start_vme))
         start_ok = start_landmark->GetLandmarkVisibility();*/
 
-      if(start_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("StartVME") != -1)
+      if(start_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId(_R("StartVME")) != -1)
       {
-        ((mafVMELandmarkCloud *)start_vme)->GetLandmark(GetLinkSubId("StartVME"),m_StartPoint,currTs);
+        ((mafVMELandmarkCloud *)start_vme)->GetLandmark(GetLinkSubId(_R("StartVME")),m_StartPoint,currTs);
         mafMatrix tm;
         start_vme->GetOutput()->GetAbsMatrix(tm, currTs);
         m_TmpTransform->SetMatrix(tm);
@@ -427,9 +427,9 @@ void mafVMEMuscleWrapperAQ::InternalUpdate()
       }
       if(m_LineAngle2)
       {
-        if(start2_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("StartVME2") != -1)
+        if(start2_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId(_R("StartVME2")) != -1)
         {
-          ((mafVMELandmarkCloud *)start2_vme)->GetLandmark(GetLinkSubId("StartVME2"), m_StartPoint2, currTs);
+          ((mafVMELandmarkCloud *)start2_vme)->GetLandmark(GetLinkSubId(_R("StartVME2")), m_StartPoint2, currTs);
           mafMatrix tm;
           start2_vme->GetOutput()->GetAbsMatrix(tm, currTs);
           m_TmpTransform->SetMatrix(tm);
@@ -446,9 +446,9 @@ void mafVMEMuscleWrapperAQ::InternalUpdate()
       /*if (mflVMELandmark *end1_landmark = mflVMELandmark::SafeDownCast(end1_vme))
         end1_ok = end1_landmark->GetLandmarkVisibility();*/
 
-      if(end1_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("EndVME1") != -1)
+      if(end1_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId(_R("EndVME1")) != -1)
       {
-        ((mafVMELandmarkCloud *)end1_vme)->GetLandmark(GetLinkSubId("EndVME1"),m_EndPoint,currTs);
+        ((mafVMELandmarkCloud *)end1_vme)->GetLandmark(GetLinkSubId(_R("EndVME1")),m_EndPoint,currTs);
         mafMatrix tm;
         end1_vme->GetOutput()->GetAbsMatrix(tm, currTs);
         m_TmpTransform->SetMatrix(tm);
@@ -464,9 +464,9 @@ void mafVMEMuscleWrapperAQ::InternalUpdate()
       /*if (mflVMELandmark *end2_landmark = mflVMELandmark::SafeDownCast(end2_vme))
         end2_ok = end2_landmark->GetLandmarkVisibility();*/
 
-      if(end2_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("EndVME2") != -1)
+      if(end2_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId(_R("EndVME2")) != -1)
       {
-        ((mafVMELandmarkCloud *)end2_vme)->GetLandmark(GetLinkSubId("EndVME2"),m_EndPoint2,currTs);
+        ((mafVMELandmarkCloud *)end2_vme)->GetLandmark(GetLinkSubId(_R("EndVME2")),m_EndPoint2,currTs);
         mafMatrix tm;
         end2_vme->GetOutput()->GetAbsMatrix(tm, currTs);
         m_TmpTransform->SetMatrix(tm);
@@ -652,9 +652,9 @@ void mafVMEMuscleWrapperAQ::InternalUpdate()
       /*if (mflVMELandmark *start_landmark = mflVMELandmark::SafeDownCast(start_vme))
         start_ok = start_landmark->GetLandmarkVisibility();*/
 
-      if(start_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("StartVME") != -1)
+      if(start_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId(_R("StartVME")) != -1)
       {
-        ((mafVMELandmarkCloud *)start_vme)->GetLandmark(GetLinkSubId("StartVME"),m_StartPoint,currTs);
+        ((mafVMELandmarkCloud *)start_vme)->GetLandmark(GetLinkSubId(_R("StartVME")),m_StartPoint,currTs);
         mafMatrix tm;
         start_vme->GetOutput()->GetAbsMatrix(tm, currTs);
         m_TmpTransform->SetMatrix(tm);
@@ -668,9 +668,9 @@ void mafVMEMuscleWrapperAQ::InternalUpdate()
 
       if(m_LineAngle2)
       {
-        if(start2_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("StartVME2") != -1)
+        if(start2_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId(_R("StartVME2")) != -1)
         {
-          ((mafVMELandmarkCloud *)start2_vme)->GetLandmark(GetLinkSubId("StartVME2"),m_StartPoint2,currTs);
+          ((mafVMELandmarkCloud *)start2_vme)->GetLandmark(GetLinkSubId(_R("StartVME2")),m_StartPoint2,currTs);
           mafMatrix tm;
           start2_vme->GetOutput()->GetAbsMatrix(tm, currTs);
           m_TmpTransform->SetMatrix(tm);
@@ -686,9 +686,9 @@ void mafVMEMuscleWrapperAQ::InternalUpdate()
       /*if(mflVMELandmark *end1_landmark = mflVMELandmark::SafeDownCast(end1_vme))
         end1_ok = end1_landmark->GetLandmarkVisibility();*/
 
-      if(end1_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("EndVME1") != -1)
+      if(end1_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId(_R("EndVME1")) != -1)
       {
-        ((mafVMELandmarkCloud *)end1_vme)->GetLandmark(GetLinkSubId("EndVME1"),m_EndPoint,currTs);
+        ((mafVMELandmarkCloud *)end1_vme)->GetLandmark(GetLinkSubId(_R("EndVME1")),m_EndPoint,currTs);
         mafMatrix tm;
         end1_vme->GetOutput()->GetAbsMatrix(tm, currTs);
         m_TmpTransform->SetMatrix(tm);
@@ -703,9 +703,9 @@ void mafVMEMuscleWrapperAQ::InternalUpdate()
       /*if (mflVMELandmark *end2_landmark = mflVMELandmark::SafeDownCast(end2_vme))
         end2_ok = end2_landmark->GetLandmarkVisibility();*/
 
-      if(end2_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("EndVME2") != -1)
+      if(end2_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId(_R("EndVME2")) != -1)
       {
-        ((mafVMELandmarkCloud *)end2_vme)->GetLandmark(GetLinkSubId("EndVME2"),m_EndPoint2,currTs);
+        ((mafVMELandmarkCloud *)end2_vme)->GetLandmark(GetLinkSubId(_R("EndVME2")),m_EndPoint2,currTs);
         mafMatrix tm;
         end2_vme->GetOutput()->GetAbsMatrix(tm, currTs);
         m_TmpTransform->SetMatrix(tm);
@@ -834,9 +834,9 @@ int mafVMEMuscleWrapperAQ::InternalStore(mafStorageElement *parent)
 	Sleep(3000);
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent->StoreInteger("Infinite", m_InfiniteLine);
-    parent->StoreInteger("LineAngle2", m_LineAngle2);
-    parent->StoreMatrix("Transform",&m_Transform->GetMatrix());
+    parent->StoreInteger(_R("Infinite"), m_InfiniteLine);
+    parent->StoreInteger(_R("LineAngle2"), m_LineAngle2);
+    parent->StoreMatrix(_R("Transform"),&m_Transform->GetMatrix());
     return MAF_OK;
   }
   return MAF_ERROR;
@@ -850,9 +850,9 @@ int mafVMEMuscleWrapperAQ::InternalRestore(mafStorageElement *node)
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
-    node->RestoreInteger("Infinite", m_InfiniteLine);
-    node->RestoreInteger("LineAngle2", m_LineAngle2);
-    if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
+    node->RestoreInteger(_R("Infinite"), m_InfiniteLine);
+    node->RestoreInteger(_R("LineAngle2"), m_LineAngle2);
+    if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
       return MAF_OK;
@@ -886,11 +886,11 @@ mmaMuscleWrapperAQ *mafVMEMuscleWrapperAQ::GetMeterAttributes()
 {
 	wxBusyInfo wait("muscle wrapperAQ getting attributes...");
 	Sleep(3000);
-	mmaMuscleWrapperAQ *meter_attributes = (mmaMuscleWrapperAQ *)GetAttribute("MeterAttributes");
+	mmaMuscleWrapperAQ *meter_attributes = (mmaMuscleWrapperAQ *)GetAttribute(_R("MeterAttributes"));
   if (meter_attributes == NULL)
   {
     meter_attributes = mmaMuscleWrapperAQ::New();
-    SetAttribute("MeterAttributes", meter_attributes);
+    SetAttribute(_R("MeterAttributes"), meter_attributes);
   }
 
   wxBusyInfo wait2("muscle wrapperAQ getting attributes done");
@@ -1043,7 +1043,7 @@ mafGUI* mafVMEMuscleWrapperAQ::CreateGui()
 	wxBusyInfo wait2("muscle wrapperAQ creating gui...");
 	Sleep(3000);
   int num_mode = 3;
-  const mafString mode_choices_string[] = {_("point distance"), _("line distance"), _("line angle")};
+  const mafString mode_choices_string[] = {_L("point distance"), _L("line distance"), _L("line angle")};
   /*
   // setup gui_panel
   mafGUINamedPanel *m_GuiPanel = new mafGUINamedPanel(mafGetFrame(), -1);
@@ -1089,18 +1089,18 @@ mafGUI* mafVMEMuscleWrapperAQ::CreateGui()
   m_Gui->Divider();*/
   m_Gui->SetListener(this);
   m_Gui->Divider();
-  m_Gui->Combo(ID_METER_MODE,_("mode"),&(GetMeterAttributes()->m_MeterMode),num_mode,mode_choices_string,_("Choose the meter mode"));
+  m_Gui->Combo(ID_METER_MODE,_L("mode"),&(GetMeterAttributes()->m_MeterMode),num_mode,mode_choices_string,_L("Choose the meter mode"));
   m_Gui->Divider();
 
   UpdateLinks();
   
-  m_Gui->Button(ID_START_METER_LINK,&m_StartVmeName,_("Start"), _("Select the start vme for the meter"));
-  m_Gui->Button(ID_END1_METER_LINK,&m_EndVme1Name,_("End 1"), _("Select the end vme for point distance"));
-  m_Gui->Button(ID_START2_METER_LINK,&m_StartVme2Name,_("Start2"), _("Select the start vme for the second line"));
-  m_Gui->Button(ID_END2_METER_LINK,&m_EndVme2Name,_("End 2"), _("Select the vme representing \nthe point for line distance"));
+  m_Gui->Button(ID_START_METER_LINK,&m_StartVmeName,_L("Start"), _L("Select the start vme for the meter"));
+  m_Gui->Button(ID_END1_METER_LINK,&m_EndVme1Name,_L("End 1"), _L("Select the end vme for point distance"));
+  m_Gui->Button(ID_START2_METER_LINK,&m_StartVme2Name,_L("Start2"), _L("Select the start vme for the second line"));
+  m_Gui->Button(ID_END2_METER_LINK,&m_EndVme2Name,_L("End 2"), _L("Select the vme representing \nthe point for line distance"));
 
-  m_Gui->Bool(ID_INFINITE_LINE, _("Infinite"), &m_InfiniteLine);
-  m_Gui->Bool(ID_LINE_ANGLE2, _("2 lines angle"), &m_LineAngle2);
+  m_Gui->Bool(ID_INFINITE_LINE, _L("Infinite"), &m_InfiniteLine);
+  m_Gui->Bool(ID_LINE_ANGLE2, _L("2 lines angle"), &m_LineAngle2);
 
   if(GetMeterAttributes()->m_MeterMode == POINT_DISTANCE)
     m_Gui->Enable(ID_END2_METER_LINK,false);
@@ -1108,10 +1108,10 @@ mafGUI* mafVMEMuscleWrapperAQ::CreateGui()
   m_Gui->Enable(ID_LINE_ANGLE2, GetMeterAttributes()->m_MeterMode == LINE_ANGLE || GetMeterAttributes()->m_MeterMode == LINE_DISTANCE);
   m_Gui->Enable(ID_START2_METER_LINK, GetMeterAttributes()->m_MeterMode == LINE_ANGLE && m_LineAngle2);
 
-  m_Gui->Bool(ID_PLOT_PROFILE,_("plot profile"),&m_GenerateHistogram);
+  m_Gui->Bool(ID_PLOT_PROFILE,_L("plot profile"),&m_GenerateHistogram);
   m_Gui->Enable(ID_PLOT_PROFILE,GetMeterAttributes()->m_MeterMode == POINT_DISTANCE);
 
-  m_Gui->Button(ID_PLOTTED_VME_LINK,&m_ProbeVmeName,_("Probed"), _("Select the vme that will be plotted"));
+  m_Gui->Button(ID_PLOTTED_VME_LINK,&m_ProbeVmeName,_L("Probed"), _L("Select the vme that will be plotted"));
   m_Gui->Enable(ID_PLOTTED_VME_LINK, GetMeterAttributes()->m_MeterMode == POINT_DISTANCE);
 
 	m_Gui->Divider();
@@ -1132,38 +1132,38 @@ void mafVMEMuscleWrapperAQ::UpdateLinks()
 
   if (start_vme && start_vme->IsMAFType(mafVMELandmarkCloud))
   {
-    sub_id = GetLinkSubId("StartVME");
-    m_StartVmeName = (sub_id != -1) ? ((mafVMELandmarkCloud *)start_vme)->GetLandmarkName(sub_id) : _("none");
+    sub_id = GetLinkSubId(_R("StartVME"));
+    m_StartVmeName = (sub_id != -1) ? ((mafVMELandmarkCloud *)start_vme)->GetLandmarkName(sub_id) : _L("none");
   }
   else
-    m_StartVmeName = start_vme ? start_vme->GetName() : _("none");
+    m_StartVmeName = start_vme ? start_vme->GetName() : _L("none");
 
   if (start_vme2 && start_vme2->IsMAFType(mafVMELandmarkCloud))
   {
-    sub_id = GetLinkSubId("Start2VME");
-    m_StartVme2Name = (sub_id != -1) ? ((mafVMELandmarkCloud *)start_vme2)->GetLandmarkName(sub_id) : _("none");
+    sub_id = GetLinkSubId(_R("Start2VME"));
+    m_StartVme2Name = (sub_id != -1) ? ((mafVMELandmarkCloud *)start_vme2)->GetLandmarkName(sub_id) : _L("none");
   }
   else
-    m_StartVme2Name = start_vme2 ? start_vme2->GetName() : _("none");
+    m_StartVme2Name = start_vme2 ? start_vme2->GetName() : _L("none");
 
   if (end_vme1 && end_vme1->IsMAFType(mafVMELandmarkCloud))
   {
-    sub_id = GetLinkSubId("EndVME1");
-    m_EndVme1Name = (sub_id != -1) ? ((mafVMELandmarkCloud *)end_vme1)->GetLandmarkName(sub_id) : _("none");
+    sub_id = GetLinkSubId(_R("EndVME1"));
+    m_EndVme1Name = (sub_id != -1) ? ((mafVMELandmarkCloud *)end_vme1)->GetLandmarkName(sub_id) : _L("none");
   }
   else
-    m_EndVme1Name = end_vme1 ? end_vme1->GetName() : _("none");
+    m_EndVme1Name = end_vme1 ? end_vme1->GetName() : _L("none");
 
   if (end_vme2 && end_vme2->IsMAFType(mafVMELandmarkCloud))
   {
-    sub_id = GetLinkSubId("EndVME2");
-    m_EndVme2Name = (sub_id != -1) ? ((mafVMELandmarkCloud *)end_vme2)->GetLandmarkName(sub_id) : _("none");
+    sub_id = GetLinkSubId(_R("EndVME2"));
+    m_EndVme2Name = (sub_id != -1) ? ((mafVMELandmarkCloud *)end_vme2)->GetLandmarkName(sub_id) : _L("none");
   }
   else
-    m_EndVme2Name = end_vme2 ? end_vme2->GetName() : _("none");
+    m_EndVme2Name = end_vme2 ? end_vme2->GetName() : _L("none");
 
   m_ProbedVME = mafVMEVolumeGray::SafeDownCast(probedVme);
-  m_ProbeVmeName = probedVme ? probedVme->GetName() : _("none");
+  m_ProbeVmeName = probedVme ? probedVme->GetName() : _L("none");
 }
 //-------------------------------------------------------------------------
 void mafVMEMuscleWrapperAQ::OnEvent(mafEventBase *maf_event)
@@ -1193,7 +1193,7 @@ void mafVMEMuscleWrapperAQ::OnEvent(mafEventBase *maf_event)
       case ID_END2_METER_LINK:
       {
         mafID button_id = ev->GetId();
-        mafString title = _("Choose meter vme link");
+        mafString title = _L("Choose meter vme link");
         ev->SetId(VME_CHOOSE);
 		ev->SetArg((long)&mafVMEMuscleWrapperAQ::VMEAccept);
         ev->SetString(&title);
@@ -1203,22 +1203,22 @@ void mafVMEMuscleWrapperAQ::OnEvent(mafEventBase *maf_event)
         {
           if (button_id == ID_START_METER_LINK)
           {
-            SetMeterLink("StartVME", n);
+            SetMeterLink(_R("StartVME"), n);
             m_StartVmeName = n->GetName();
           }
           else if (button_id == ID_START2_METER_LINK)
           {
-            SetMeterLink("StartVME2", n);
+            SetMeterLink(_R("StartVME2"), n);
             m_StartVme2Name = n->GetName();
           }
           else if (button_id == ID_END1_METER_LINK)
           {
-            SetMeterLink("EndVME1", n);
+            SetMeterLink(_R("EndVME1"), n);
             m_EndVme1Name = n->GetName();
           }
           else
           {
-            SetMeterLink("EndVME2", n);
+            SetMeterLink(_R("EndVME2"), n);
             m_EndVme2Name = n->GetName();
           }
           m_Gui->Update();
@@ -1229,7 +1229,7 @@ void mafVMEMuscleWrapperAQ::OnEvent(mafEventBase *maf_event)
       case ID_PLOTTED_VME_LINK:
         {
           mafID button_id = ev->GetId();
-          mafString title = _("Choose meter vme link");
+          mafString title = _L("Choose meter vme link");
           ev->SetId(VME_CHOOSE);
 		  ev->SetArg((long)&mafVMEMuscleWrapperAQ::VolumeAccept);
           ev->SetString(&title);
@@ -1237,7 +1237,7 @@ void mafVMEMuscleWrapperAQ::OnEvent(mafEventBase *maf_event)
           mafNode *n = ev->GetVme();
           if (n != NULL)
           {
-            SetMeterLink("PlottedVME",n);
+            SetMeterLink(_R("PlottedVME"),n);
             m_ProbedVME = mafVMEVolumeGray::SafeDownCast(n);
             m_ProbeVmeName = n->GetName();
             CreateHistogram();
@@ -1286,7 +1286,7 @@ void mafVMEMuscleWrapperAQ::OnEvent(mafEventBase *maf_event)
           int x_init,y_init;
           x_init = mafGetFrame()->GetPosition().x;
           y_init = mafGetFrame()->GetPosition().y;
-          m_HistogramDialog = new mafGUIDialogPreview(_("Histogram Dialog"), mafCLOSEWINDOW | mafUSERWI);
+          m_HistogramDialog = new mafGUIDialogPreview(_L("Histogram Dialog"), mafCLOSEWINDOW | mafUSERWI);
           m_HistogramRWI = m_HistogramDialog->GetRWI();
           m_HistogramRWI->SetListener(this);
           m_HistogramRWI->m_RenFront->AddActor2D(m_PlotActor);
@@ -1314,7 +1314,7 @@ void mafVMEMuscleWrapperAQ::OnEvent(mafEventBase *maf_event)
   Sleep(3000);
 }
 //-------------------------------------------------------------------------
-void mafVMEMuscleWrapperAQ::SetMeterLink(const char *link_name, mafNode *n)
+void mafVMEMuscleWrapperAQ::SetMeterLink(const mafString& link_name, mafNode *n)
 //-------------------------------------------------------------------------
 {
   if (n->IsMAFType(mafVMELandmark))
@@ -1328,31 +1328,31 @@ void mafVMEMuscleWrapperAQ::SetMeterLink(const char *link_name, mafNode *n)
 mafVME *mafVMEMuscleWrapperAQ::GetStartVME()
 //-------------------------------------------------------------------------
 {
-  return mafVME::SafeDownCast(GetLink("StartVME"));
+  return mafVME::SafeDownCast(GetLink(_R("StartVME")));
 }
 //-------------------------------------------------------------------------
 mafVME *mafVMEMuscleWrapperAQ::GetStart2VME()
 //-------------------------------------------------------------------------
 {
-  return mafVME::SafeDownCast(GetLink("StartVME2"));
+  return mafVME::SafeDownCast(GetLink(_R("StartVME2")));
 }
 //-------------------------------------------------------------------------
 mafVME *mafVMEMuscleWrapperAQ::GetEnd1VME()
 //-------------------------------------------------------------------------
 {
-  return mafVME::SafeDownCast(GetLink("EndVME1"));
+  return mafVME::SafeDownCast(GetLink(_R("EndVME1")));
 }
 //-------------------------------------------------------------------------
 mafVME *mafVMEMuscleWrapperAQ::GetEnd2VME()
 //-------------------------------------------------------------------------
 {
-  return mafVME::SafeDownCast(GetLink("EndVME2"));
+  return mafVME::SafeDownCast(GetLink(_R("EndVME2")));
 }
 //-------------------------------------------------------------------------
 mafVME *mafVMEMuscleWrapperAQ::GetPlottedVME()
 //-------------------------------------------------------------------------
 {
-  return mafVME::SafeDownCast(GetLink("PlottedVME"));
+  return mafVME::SafeDownCast(GetLink(_R("PlottedVME")));
 }
 //----------------------------------------------------------------------------
 void mafVMEMuscleWrapperAQ::GenerateHistogram(int generate)
@@ -1390,7 +1390,7 @@ void mafVMEMuscleWrapperAQ::CreateHistogram()
 
     if (start_vme && start_vme->IsMAFType(mafVMELandmarkCloud))
     {
-      int sub_id = GetLinkSubId("StartVME");
+      int sub_id = GetLinkSubId(_R("StartVME"));
       ((mafVMELandmark *)((mafVMELandmarkCloud *)start_vme)->GetChild(sub_id))->GetOutput()->GetAbsPose(point1, rotStart, currTs);
       
     }
@@ -1410,7 +1410,7 @@ void mafVMEMuscleWrapperAQ::CreateHistogram()
     double point2[3], rotEnd[3];
     if (end_vme1 && end_vme1->IsMAFType(mafVMELandmarkCloud))
     {
-      int sub_id = GetLinkSubId("EndVME1");
+      int sub_id = GetLinkSubId(_R("EndVME1"));
       ((mafVMELandmark *)((mafVMELandmarkCloud *)end_vme1)->GetChild(sub_id))->GetOutput()->GetAbsPose(point2, rotEnd, currTs);
 
     }

@@ -80,7 +80,7 @@ public:
   virtual bool IsAnimated();
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString("mafPipePolyline");};
+  virtual mafString GetVisualPipe() {return _R("mafPipePolyline");};
 
   /** Return pointer to material attribute. */
   mmaMaterial *GetMaterial();

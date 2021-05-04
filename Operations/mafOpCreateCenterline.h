@@ -32,7 +32,7 @@ class mafEvent;
 class MAF_EXPORT mafOpCreateCenterLine : public mafOp
 {
 public:
-	mafOpCreateCenterLine(const mafString& label = "CreateCenterLine");
+	mafOpCreateCenterLine(const mafString& label = _R("CreateCenterLine"));
 	~mafOpCreateCenterLine();
 
 	mafTypeMacro(mafOpCreateCenterLine, mafOp);

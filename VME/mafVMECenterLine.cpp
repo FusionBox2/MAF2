@@ -80,7 +80,7 @@ mafVMECenterLine::mafVMECenterLine()
 	centerTemp[0] = 0; centerTemp[01] = 0; centerTemp[02] = 0;
 
 
-	mafString gLength = "";
+	mafString gLength = _R("");
 
 
   
@@ -109,13 +109,13 @@ mafVMECenterLine::mafVMECenterLine()
 
 	mafNEW(m_CloudPath1);
 	m_CloudPath1->Open();
-	m_CloudPath1->SetName(_("path1"));
+	m_CloudPath1->SetName(_L("path1"));
 	m_CloudPath1->SetRadius(1.5);
 	m_CloudPath1->ReparentTo(this);
-	m_CloudPath1->AppendLandmark(0, 0, 0, "first", false);
-	m_CloudPath1->AppendLandmark(0, 0, 0, "last", false);
+	m_CloudPath1->AppendLandmark(0, 0, 0, _R("first"), false);
+	m_CloudPath1->AppendLandmark(0, 0, 0, _R("last"), false);
 	
-	m_CloudPath1->AppendLandmark(0, 0, 0, "mm", false);
+	m_CloudPath1->AppendLandmark(0, 0, 0, _R("mm"), false);
 
 
 }
@@ -134,11 +134,11 @@ mafVMECenterLine::~mafVMECenterLine()
 mmaMaterial *mafVMECenterLine::GetMaterial()
 //-------------------------------------------------------------------------
 {
-	mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+	mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
 	if (material == NULL)
 	{
 		material = mmaMaterial::New();
-		SetAttribute("MaterialAttributes", material);
+		SetAttribute(_R("MaterialAttributes"), material);
 	}
 	return material;
 }
@@ -1600,15 +1600,15 @@ mafGUI* mafVMECenterLine::CreateGui()
     //m_Gui->Divider(2);
    // CreateGuiSphere();
  
-   m_Gui->Button(ID_Surface_LINK, &m_SurfaceName, _("Surface"), _("Select Surace"));
+   m_Gui->Button(ID_Surface_LINK, &m_SurfaceName, _L("Surface"), _L("Select Surace"));
 
 
 
-   m_Gui->Double(CHANGE_VALUE_CenterLine, _("Delt_1"), &Delt_1);
-   m_Gui->Double(CHANGE_VALUE_CenterLine, _("Mult_01"), &Mult_01);
-   m_Gui->Double(CHANGE_VALUE_CenterLine, _("D_1mm"), &D_1mm);
-   m_Gui->Double(CHANGE_VALUE_CenterLine, _("D_50mm"), &D_50mm);
-   m_Gui->Double(CHANGE_VALUE_CenterLine, _("Fi_stp_5"), &Fi_stp_5);
+   m_Gui->Double(CHANGE_VALUE_CenterLine, _L("Delt_1"), &Delt_1);
+   m_Gui->Double(CHANGE_VALUE_CenterLine, _L("Mult_01"), &Mult_01);
+   m_Gui->Double(CHANGE_VALUE_CenterLine, _L("D_1mm"), &D_1mm);
+   m_Gui->Double(CHANGE_VALUE_CenterLine, _L("D_50mm"), &D_50mm);
+   m_Gui->Double(CHANGE_VALUE_CenterLine, _L("Fi_stp_5"), &Fi_stp_5);
     m_Gui->FitGui();
     
   //  EnableQuadricSurfaceGui(m_GeometryType);
@@ -1633,9 +1633,9 @@ void mafVMECenterLine::OnEvent(mafEventBase *maf_event)
   {
 
 
-	  string ee;
+	  mafString ee;
 	  if (e->GetVme() == NULL)
-		 ee = "VME NOT found";
+		 ee = _R("VME NOT found");
 	  else
 	  {
 		  ee = e->GetVme()->GetName();
@@ -1657,7 +1657,7 @@ void mafVMECenterLine::OnEvent(mafEventBase *maf_event)
 	{
 
 						  mafID button_id = e->GetId();
-						  mafString title = _("Choose surface vme link");
+						  mafString title = _L("Choose surface vme link");
 						  e->SetId(VME_CHOOSE);
 						  e->SetArg((long)&mafVMEPlane::VMEAccept);
 						  e->SetString(&title);
@@ -1666,7 +1666,7 @@ void mafVMECenterLine::OnEvent(mafEventBase *maf_event)
 						  if (n != NULL)
 						  {
 
-							  SetSurfaceLink("SurfaceVME", n);
+							  SetSurfaceLink(_R("SurfaceVME"), n);
 							  m_SurfaceName = n->GetName();
 							  surface = (mafVMESurface*)n;
 
@@ -2890,7 +2890,7 @@ void mafVMECenterLine::InternalUpdate()
 			{
 								
 				
-				m_CloudPath1->SetLandmark("first", f[0], f[1], f[2], currTs);
+				m_CloudPath1->SetLandmark(_R("first"), f[0], f[1], f[2], currTs);
 				m_CloudPath1->Update();
 			}
 			else{
@@ -2898,7 +2898,7 @@ void mafVMECenterLine::InternalUpdate()
 				if (ij == num - 1)
 				{
 					
-					m_CloudPath1->SetLandmark("last", f[0], f[1], f[2], currTs);
+					m_CloudPath1->SetLandmark(_R("last"), f[0], f[1], f[2], currTs);
 					m_CloudPath1->Update();
 				}
 				else
@@ -3218,7 +3218,7 @@ int mafVMECenterLine::InternalStore(mafStorageElement *parent)
 	if (Superclass::InternalStore(parent)==MAF_OK)
 	{
 		if (
-			parent->StoreMatrix("Transform", &m_Transform->GetMatrix()) == MAF_OK 
+			parent->StoreMatrix(_R("Transform"), &m_Transform->GetMatrix()) == MAF_OK 
 			//&& parent->StoreInteger("surface",&m_SurfaceName) == MAF_OK
 			)
 			
@@ -3239,7 +3239,7 @@ int mafVMECenterLine::InternalRestore(mafStorageElement *node)
 	if (Superclass::InternalRestore(node)==MAF_OK)
 	{
     mafMatrix matrix;
-	if (node->RestoreMatrix("Transform", &matrix) == MAF_OK 
+	if (node->RestoreMatrix(_R("Transform"), &matrix) == MAF_OK 
 		//&& node->RestoreInteger("surface", &m_SurfaceName) == MAF_OK
 			
 		)
@@ -3287,7 +3287,7 @@ void mafVMECenterLine::SetTimeStamp(mafTimeStamp t)
 mafVMESurface *mafVMECenterLine::GetSurfaceVME()
 //-------------------------------------------------------------------------
 {
-	return mafVMESurface::SafeDownCast(GetLink("SurfaceVME"));
+	return mafVMESurface::SafeDownCast(GetLink(_R("SurfaceVME")));
 }
 void mafVMECenterLine::UpdateLinks()
 //-------------------------------------------------------------------------
@@ -3300,16 +3300,16 @@ void mafVMECenterLine::UpdateLinks()
 	surface = GetSurfaceVME();
 	if (surface && surface->IsMAFType(mafVMESurface))
 	{
-		nd = GetLink("SurfaceVME");
-		m_SurfaceName = (nd != NULL) ? ((mafVMESurface *)surface)->GetName() : _("none");
+		nd = GetLink(_R("SurfaceVME"));
+		m_SurfaceName = (nd != NULL) ? ((mafVMESurface *)surface)->GetName() : _L("none");
 	}
 	else
-		m_SurfaceName = surface ? surface->GetName() : _("none");
+		m_SurfaceName = surface ? surface->GetName() : _L("none");
 		
 
 }
 
-void mafVMECenterLine::SetSurfaceLink(const char *link_name, mafNode *n)
+void mafVMECenterLine::SetSurfaceLink(const mafString& link_name, mafNode *n)
 //-------------------------------------------------------------------------
 {	
 	if (n->IsMAFType(mafVMESurface))

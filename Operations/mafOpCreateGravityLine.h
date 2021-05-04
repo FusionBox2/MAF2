@@ -32,7 +32,7 @@ class mafEvent;
 class MAF_EXPORT mafOpCreateGravityLine : public mafOp
 {
 public:
-	mafOpCreateGravityLine(const mafString& label = "CreateGravityLine");
+	mafOpCreateGravityLine(const mafString& label = _R("CreateGravityLine"));
 	~mafOpCreateGravityLine();
 
 	mafTypeMacro(mafOpCreateGravityLine, mafOp);

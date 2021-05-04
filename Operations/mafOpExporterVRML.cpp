@@ -72,11 +72,11 @@ mafOpExporterVRML::mafOpExporterVRML(const mafString& label) : Superclass(label)
 {
   m_OpType  = OPTYPE_EXPORTER;
   m_Canundo = true;
-  m_File    = "";
+  m_File    = _R("");
 
 
 
-	m_FileDir = "";//mafGetApplicationDirectory().c_str();
+	m_FileDir = _R("");//mafGetApplicationDirectory();
 }
 //----------------------------------------------------------------------------
 mafOpExporterVRML::~mafOpExporterVRML()
@@ -98,16 +98,16 @@ enum STL_EXPORTER_ID
 void mafOpExporterVRML::OpRun()   
 //----------------------------------------------------------------------------
 {
-  mafString wildc = "Stereo Litography (*.wrl)|*.wrl";
+  mafString wildc = _R("Stereo Litography (*.wrl)|*.wrl");
 
   m_Gui = new mafGUI(this);
-	m_Gui->FileSave(ID_CHOOSE_FILENAME,"wrl file", &m_File, wildc,"Save As...");
+	m_Gui->FileSave(ID_CHOOSE_FILENAME,_R("wrl file"), &m_File, wildc,_R("Save As..."));
   //m_Gui->Label("file type",true);
 	//m_Gui->Bool(ID_STL_BINARY_FILE,"binary",&m_Binary,0);
 	//m_Gui->Label("absolute matrix",true);
 	//m_Gui->Bool(ID_ABS_MATRIX_TO_STL,"apply",&m_ABSMatrixFlag,0);
 	m_Gui->OkCancel();
-  m_Gui->Enable(wxOK,m_File != "");
+  m_Gui->Enable(wxOK,!m_File.IsEmpty());
 	
 	m_Gui->Divider();
 
@@ -168,7 +168,7 @@ void mafOpExporterVRML::OnEvent(mafEventBase *maf_event)
         OpStop(OP_RUN_OK);
       break;
       case ID_CHOOSE_FILENAME:
-        m_Gui->Enable(wxOK,m_File != "");
+        m_Gui->Enable(wxOK,!m_File.IsEmpty());
       break;
       case wxCANCEL:
         OpStop(OP_RUN_CANCEL);
@@ -196,7 +196,7 @@ void mafOpExporterVRML::ExportVRML()
   ofstream file1;
   file1.open("texture.txt");
   
-  file1 << "size " << attributes->size() << " Name " << m_Input->GetName()<<" Link "<<m_Input->GetLinks();
+  file1 << "size " << attributes->size() << " Name " << m_Input->GetName().toStd()<<" Link "<<m_Input->GetLinks();
   file1.close();
   mafNode::mafLinksMap *linkedNodes = m_Input->GetLinks();
   
@@ -217,7 +217,7 @@ void mafOpExporterVRML::ExportVRML()
   }
   else
   {
-	  mafLogMessage(_("Scalars NULL!!"));
+	  mafLogMessage(_M(mafString(_L("Scalars NULL!!"))));
   }
   
   m_SurfaceMaterial = out_surface->GetMaterial();
@@ -292,7 +292,7 @@ void mafOpExporterVRML::ExportVRML()
 		}
 		else
 		{
-			mafLogMessage(_("texture info not correctly stored inside material!!"));
+			mafLogMessage(_M(mafString(_L("texture info not correctly stored inside material!!"))));
 		}
 	}
 /*	exporter->SetInput(image);

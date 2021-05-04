@@ -48,7 +48,7 @@ mafCxxTypeMacro(mafVMECylinder);
 mafVMECylinder::mafVMECylinder()
 {
 
-	m_LandmarkName = "";
+	m_LandmarkName = _R("");
 	center_vme = NULL;
 	res = 10;
 	m_CylinderOrientationAxis = 1;
@@ -60,7 +60,7 @@ mafVMECylinder::mafVMECylinder()
 
 	this->rotationMatrix = Matrix3d::Identity();
 	
-	this->name = "cylinder";
+	this->name = _R("cylinder");
 
 	mafNEW(m_Transform);
 	mafVMEOutputSurface *output = mafVMEOutputSurface::New(); // an output with no data
@@ -113,17 +113,17 @@ int mafVMECylinder::InternalStore(mafStorageElement *parent)
 	{
 		if (
 		//	parent->StoreObject("centervme", center_vme)&&
-			parent->StoreText("name", name) == MAF_OK &&
-			parent->StoreText("landmarkName", m_LandmarkName) == MAF_OK &&
-			parent->StoreDouble("Centerx", center(0)) == MAF_OK &&
-			parent->StoreDouble("Centery", center(1)) == MAF_OK &&
-			parent->StoreDouble("Centerz", center(2)) == MAF_OK &&
-			parent->StoreDouble("a", a) == MAF_OK &&
-			parent->StoreDouble("b", b) == MAF_OK &&
-			parent->StoreDouble("h", h) == MAF_OK &&
-			parent->StoreInteger("CylinderOrientationAxis", m_CylinderOrientationAxis) == MAF_OK &&
-			parent->StoreDouble("res", res) == MAF_OK &&
-			parent->StoreMatrix("Transform", &m_Transform->GetMatrix()) == MAF_OK
+			parent->StoreText(_R("name"), name) == MAF_OK &&
+			parent->StoreText(_R("landmarkName"), m_LandmarkName) == MAF_OK &&
+			parent->StoreDouble(_R("Centerx"), center(0)) == MAF_OK &&
+			parent->StoreDouble(_R("Centery"), center(1)) == MAF_OK &&
+			parent->StoreDouble(_R("Centerz"), center(2)) == MAF_OK &&
+			parent->StoreDouble(_R("a"), a) == MAF_OK &&
+			parent->StoreDouble(_R("b"), b) == MAF_OK &&
+			parent->StoreDouble(_R("h"), h) == MAF_OK &&
+			parent->StoreInteger(_R("CylinderOrientationAxis"), m_CylinderOrientationAxis) == MAF_OK &&
+			parent->StoreDouble(_R("res"), res) == MAF_OK &&
+			parent->StoreMatrix(_R("Transform"), &m_Transform->GetMatrix()) == MAF_OK
 
 			)
 		{
@@ -144,22 +144,22 @@ int mafVMECylinder::InternalRestore(mafStorageElement *node)
 		mafMatrix matrix;
 		if (	
 			//node->RestoreObject("centervme", center_vme) == MAF_OK &&
-			node->RestoreText("name", name) == MAF_OK &&
-			node->RestoreText("landmarkName", m_LandmarkName) == MAF_OK &&
-			node->RestoreDouble("Centerx", center(0)) == MAF_OK &&
-			node->RestoreDouble("Centery", center(1)) == MAF_OK &&
-			node->RestoreDouble("Centerz", center(2)) == MAF_OK &&
-			node->RestoreDouble("a", a) == MAF_OK &&
-			node->RestoreDouble("b", b) == MAF_OK &&
-			node->RestoreDouble("h", h) == MAF_OK &&
-			node->RestoreInteger("CylinderOrientationAxis", m_CylinderOrientationAxis) == MAF_OK
+			node->RestoreText(_R("name"), name) == MAF_OK &&
+			node->RestoreText(_R("landmarkName"), m_LandmarkName) == MAF_OK &&
+			node->RestoreDouble(_R("Centerx"), center(0)) == MAF_OK &&
+			node->RestoreDouble(_R("Centery"), center(1)) == MAF_OK &&
+			node->RestoreDouble(_R("Centerz"), center(2)) == MAF_OK &&
+			node->RestoreDouble(_R("a"), a) == MAF_OK &&
+			node->RestoreDouble(_R("b"), b) == MAF_OK &&
+			node->RestoreDouble(_R("h"), h) == MAF_OK &&
+			node->RestoreInteger(_R("CylinderOrientationAxis"), m_CylinderOrientationAxis) == MAF_OK
 			)
 
 		{ 
 		
 		if(
-			node->RestoreDouble("res", res) == MAF_OK &&
-			node->RestoreMatrix("Transform", &matrix) == MAF_OK 
+			node->RestoreDouble(_R("res"), res) == MAF_OK &&
+			node->RestoreMatrix(_R("Transform"), &matrix) == MAF_OK 
      	  )
 		{
 			m_Transform->SetMatrix(matrix);
@@ -192,7 +192,7 @@ void mafVMECylinder::OnEvent(mafEventBase *maf_event)
 		case ID_CYLINDERCenter_LINK:
 		{
 				  mafID button_id = e->GetId();
-				  mafString title = _("Choose cylinder center vme link");
+				  mafString title = _L("Choose cylinder center vme link");
 				  e->SetId(VME_CHOOSE);
 								  
 				  e->SetString(&title);
@@ -205,7 +205,7 @@ void mafVMECylinder::OnEvent(mafEventBase *maf_event)
 					  mafTransform *m_TmpTransform;
 					  mafNEW(m_TmpTransform);
 					  
-					  SetCenterLink("centerLandmark", n);
+					  SetCenterLink(_R("centerLandmark"), n);
 					  m_LandmarkName = n->GetName();
 								  
 					  center_vme = GetCenterVME();
@@ -237,7 +237,7 @@ mafVME *mafVMECylinder::GetCenterVME()
 //-------------------------------------------------------------------------
 {
 
-	center_vme = mafVME::SafeDownCast(GetLink("centerLandmark"));
+	center_vme = mafVME::SafeDownCast(GetLink(_R("centerLandmark")));
 	//string s = center_vme->GetName();
 	//wxBusyInfo wait12(s.c_str());
 	//Sleep(1500);
@@ -248,17 +248,17 @@ mafGUI* mafVMECylinder::CreateGui()
 {
 	
 	m_Gui = mafVME::CreateGui();
-	m_Gui->Label("Cylinder Gui");
+	m_Gui->Label(_R("Cylinder Gui"));
 //	m_Gui->Double(CHANGE_VALUE_Cylinder, _("CenterX"), &center(0));
 //	m_Gui->Double(CHANGE_VALUE_Cylinder, _("CenterY"), &center(1));
 //	m_Gui->Double(CHANGE_VALUE_Cylinder, _("CenterZ"), &center(2));
-	m_Gui->Double(CHANGE_VALUE_Cylinder, _("RX"), &a);
+	m_Gui->Double(CHANGE_VALUE_Cylinder, _L("RX"), &a);
 //	m_Gui->Double(CHANGE_VALUE_Cylinder, _("RY"), &b);
-	m_Gui->Double(CHANGE_VALUE_Cylinder, _("H"), &h);
+	m_Gui->Double(CHANGE_VALUE_Cylinder, _L("H"), &h);
 	//mafString orientationArray[3] = { _("X axis"), _("Y axis"), _("Z axis") };
 	//m_Gui->Radio(CHANGE_VALUE_Cylinder, "Orientation", &m_CylinderOrientationAxis, 3, orientationArray);
 	m_Gui->Divider();
-	m_Gui->Button(ID_CYLINDERCenter_LINK, &m_LandmarkName, _("centerLandmark"), _("select the center"));
+	m_Gui->Button(ID_CYLINDERCenter_LINK, &m_LandmarkName, _L("centerLandmark"), _L("select the center"));
 	m_Gui->FitGui();
 	m_Gui->Update();
 	return m_Gui;
@@ -438,12 +438,12 @@ void mafVMECylinder::UpdateLinks()
 
 	if (center_vme && center_vme->IsMAFType(mafVMELandmarkCloud))
 	{
-		sub_id = GetLinkSubId("centerLandmark");
-		m_LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)center_vme)->GetLandmarkName(sub_id) : _("none");
+		sub_id = GetLinkSubId(_R("centerLandmark"));
+		m_LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)center_vme)->GetLandmarkName(sub_id) : _L("none");
 	}
 	else
 	{
-		m_LandmarkName = center_vme ? center_vme->GetName() : _("none");
+		m_LandmarkName = center_vme ? center_vme->GetName() : _L("none");
 	
 	}
 
@@ -468,9 +468,9 @@ void mafVMECylinder::InternalUpdate()
 	mafNEW(m_TmpTransform);
 	if (center_vme)
 	{
-		if (center_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId("centerLandmark") != -1)
+		if (center_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId(_R("centerLandmark")) != -1)
 		{
-			((mafVMELandmarkCloud *)center_vme)->GetLandmark(GetLinkSubId("centerLandmark"), centerAbs, currTs);
+			((mafVMELandmarkCloud *)center_vme)->GetLandmark(GetLinkSubId(_R("centerLandmark")), centerAbs, currTs);
 
 			//
 			mafMatrix tm;
@@ -688,11 +688,11 @@ mmaMaterial *mafVMECylinder::GetMaterial()
 //-------------------------------------------------------------------------
 {
 
-	mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+	mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
 	if (material == NULL)
 	{
 		material = mmaMaterial::New();
-		SetAttribute("MaterialAttributes", material);
+		SetAttribute(_R("MaterialAttributes"), material);
 	}
 	return material;
 }
@@ -705,7 +705,7 @@ char** mafVMECylinder::GetIcon()
 	return mafVMEProcedural_xpm;
 }
 
-void mafVMECylinder::SetCenterLink(const char *link_name, mafNode *n)
+void mafVMECylinder::SetCenterLink(const mafString& link_name, mafNode *n)
 //-------------------------------------------------------------------------
 {
 

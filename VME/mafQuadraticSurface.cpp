@@ -42,9 +42,9 @@ int mafQuadraticSurface::InternalStore(mafStorageElement *parent)
 	if (Superclass::InternalStore(parent) == MAF_OK)
 	{
 		if (
-			parent->StoreDouble("Centerx", center[0]) == MAF_OK &&
-			parent->StoreDouble("Centery", center[1]) == MAF_OK &&
-			parent->StoreDouble("Centerz", center[2]) == MAF_OK 
+			parent->StoreDouble(_R("Centerx"), center[0]) == MAF_OK &&
+			parent->StoreDouble(_R("Centery"), center[1]) == MAF_OK &&
+			parent->StoreDouble(_R("Centerz"), center[2]) == MAF_OK 
 			
 			)
 			return MAF_OK;
@@ -59,9 +59,9 @@ int mafQuadraticSurface::InternalRestore(mafStorageElement *node)
 	{
 		
 		if (
-			node->RestoreDouble("Centerx", center[0]) == MAF_OK &&
-			node->RestoreDouble("Centery", center[1]) == MAF_OK &&
-			node->RestoreDouble("Centerz", center[2]) == MAF_OK 
+			node->RestoreDouble(_R("Centerx"), center[0]) == MAF_OK &&
+			node->RestoreDouble(_R("Centery"), center[1]) == MAF_OK &&
+			node->RestoreDouble(_R("Centerz"), center[2]) == MAF_OK 
 			)
 		{
 		

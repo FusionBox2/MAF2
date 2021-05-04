@@ -56,7 +56,7 @@ private:
 	void SetTimeStamp(mafTimeStamp t);
 	//double centerTemp[3];
 	mafString m_LandmarkName;
-	void SetCenterLink(const char *, mafNode *);
+	void SetCenterLink(const mafString&, mafNode *);
 	bool Equals(mafVME*);
 	double a,b, h;
 	
@@ -78,7 +78,7 @@ private:
 	virtual void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes);
 	virtual void SetMatrix(const mafMatrix &mat);
 	virtual bool IsAnimated();
-	virtual mafString GetVisualPipe() { return mafString("mafPipeSurface"); };
+	virtual mafString GetVisualPipe() { return mafString(_R("mafPipeSurface")); };
 	
 public:
 	Matrix3d rotationMatrix;

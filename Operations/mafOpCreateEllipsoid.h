@@ -33,7 +33,7 @@ class mafVMEEllipsoid;
 class MAF_EXPORT mafOpCreateEllipsoid: public mafOp
 {
 public:
-  mafOpCreateEllipsoid(const mafString& label = "Create Ellipsoid");
+  mafOpCreateEllipsoid(const mafString& label = _R("Create Ellipsoid"));
   ~mafOpCreateEllipsoid(); 
 
   mafTypeMacro(mafOpCreateEllipsoid, mafOp);

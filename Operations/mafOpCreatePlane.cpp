@@ -70,7 +70,7 @@ void mafOpCreatePlane::OpRun()
 {
 	mafNEW(m_Plane);
 
-	m_Plane->SetName("Plane");
+	m_Plane->SetName(_R("Plane"));
 	m_Output = m_Plane;
 	mafEventMacro(mafEvent(this, OP_RUN_OK));
 }

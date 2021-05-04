@@ -87,7 +87,7 @@ public:
 
   /** Return the suggested pipe-typename for the visualization of this vme */
   //virtual mafString GetVisualPipe() {return mafString("mafPipeSurface");};
-  virtual mafString GetVisualPipe() { return mafString("mafPipePolyline"); };
+  virtual mafString GetVisualPipe() { return mafString(_R("mafPipePolyline")); };
   //virtual mafString GetVisualPipe() { return mafString("mafPipeMeter"); };
   /** Return pointer to material attribute. */
   mmaMaterial *GetMaterial();
@@ -98,8 +98,8 @@ public:
   /** Precess events coming from other objects */ 
   virtual void OnEvent(mafEventBase *maf_event);
 
-  void SetPlaneLink(const char *link_name, mafNode *n);
-  void SetSurfaceLink(const char *link_name, mafNode *n);
+  void SetPlaneLink(const mafString& link_name, mafNode *n);
+  void SetSurfaceLink(const mafString& link_name, mafNode *n);
   
   void SetTimeStamp(mafTimeStamp t);
   /**
@@ -180,7 +180,7 @@ protected:
 
   vtkMAFSmartPointer<vtkPoints> points;
 
-  void SetLandmarkLink(const char *, mafNode *);
+  void SetLandmarkLink(const mafString&, mafNode *);
  
   void UpdateLinks();
 

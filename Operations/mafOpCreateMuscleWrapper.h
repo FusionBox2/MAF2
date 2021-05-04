@@ -34,7 +34,7 @@ class mafVMEMuscleWrapperAQ;
 class MAF_EXPORT mafOpCreateMuscleWrapperAQ : public mafOp
 {
 public:
-	mafOpCreateMuscleWrapperAQ(const mafString& label = "Muscle WrapperAQ");
+	mafOpCreateMuscleWrapperAQ(const mafString& label = _R("Muscle WrapperAQ"));
 	~mafOpCreateMuscleWrapperAQ();
 
 	mafTypeMacro(mafOpCreateMuscleWrapperAQ, mafOp);

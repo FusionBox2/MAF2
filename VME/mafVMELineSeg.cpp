@@ -131,11 +131,11 @@ mafVMELineSeg::~mafVMELineSeg()
 mmaMaterial *mafVMELineSeg::GetMaterial()
 //-------------------------------------------------------------------------
 {
-	mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+	mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
 	if (material == NULL)
 	{
 		material = mmaMaterial::New();
-		SetAttribute("MaterialAttributes", material);
+		SetAttribute(_R("MaterialAttributes"), material);
 	}
 	return material;
 }
@@ -347,7 +347,7 @@ int mafVMELineSeg::InternalStore(mafStorageElement *parent)
 	
 	if (Superclass::InternalStore(parent)==MAF_OK)
 	{
-		if (	parent->StoreMatrix("Transform", &m_Transform->GetMatrix()) == MAF_OK	)
+		if (	parent->StoreMatrix(_R("Transform"), &m_Transform->GetMatrix()) == MAF_OK	)
 		{
 			/*parent->StoreInteger("NbrPts", pts->GetNumberOfPoints());
 			if (pts->GetNumberOfPoints() > 1)
@@ -372,8 +372,8 @@ int mafVMELineSeg::InternalStore(mafStorageElement *parent)
 				return MAF_OK;
 			}*/
 
-			parent->StoreVectorN("PosPt1", PosPt1, 3);
-			parent->StoreVectorN("PosPt2", PosPt2, 3);
+			parent->StoreVectorN(_R("PosPt1"), PosPt1, 3);
+			parent->StoreVectorN(_R("PosPt2"), PosPt2, 3);
 
 		}
 		return MAF_OK;
@@ -394,11 +394,11 @@ int mafVMELineSeg::InternalRestore(mafStorageElement *node)
 	{
     mafMatrix matrix;
 	
-    if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
+    if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK)
     {
       m_Transform->SetMatrix(matrix); 
-	  node->RestoreVectorN("PosPt1", PosPt1, 3);
-	  node->RestoreVectorN("PosPt2", PosPt2, 3);
+	  node->RestoreVectorN(_R("PosPt1"), PosPt1, 3);
+	  node->RestoreVectorN(_R("PosPt2"), PosPt2, 3);
 	 /* node->RestoreInteger("NbrPts",nbrPts);
 	  if (nbrPts > 1)
 	  {
@@ -443,9 +443,9 @@ char** mafVMELineSeg::GetIcon()
 void mafVMELineSeg::CreateGuiLine()
 {
   m_GuiLine = new mafGUI(this);
-  m_GuiLine->Label("Line");
-  m_GuiLine->Vector(CHANGE_VALUE_LINE, _("Point 1"), PosPt1);
-  m_GuiLine->Vector(CHANGE_VALUE_LINE, _("Point 2"), PosPt2);
+  m_GuiLine->Label(_R("Line"));
+  m_GuiLine->Vector(CHANGE_VALUE_LINE, _L("Point 1"), PosPt1);
+  m_GuiLine->Vector(CHANGE_VALUE_LINE, _L("Point 2"), PosPt2);
   
  /* m_Position1[0] = wxString::Format("pt1 x: %f", PosPt1[0]);
   m_Position1[1] = wxString::Format("pt1 y: %f", PosPt1[1]);

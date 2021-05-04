@@ -33,7 +33,7 @@ dataset filled with a constant scalar value. This is useful for testing purposes
 class MAF_EXPORT mafOpCreatePlane : public mafOp
 {
 public:
-	mafOpCreatePlane(const mafString& label = "Create Plane");
+	mafOpCreatePlane(const mafString& label = _R("Create Plane"));
   ~mafOpCreatePlane();
 
   mafTypeMacro(mafOpCreatePlane, mafOp);

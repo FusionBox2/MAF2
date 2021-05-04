@@ -30,7 +30,7 @@ class mafNode;
 class MAF_EXPORT mafOpExporterGeomTex : public mafOp
 {
 public:
-	mafOpExporterGeomTex(const mafString& label = "GeomTexExporter");
+	mafOpExporterGeomTex(const mafString& label = _R("GeomTexExporter"));
 	~mafOpExporterGeomTex();
 
 	mafTypeMacro(mafOpExporterGeomTex, mafOp);
@@ -45,7 +45,7 @@ public:
 	void OpRun();
 
 	/** Set the filename for the .stl to export */
-	void SetFileName(const char *file_name) { m_File = file_name; };
+	void SetFileName(const mafString& file_name) { m_File = file_name; };
 
 	void ApplyABSMatrixOn() { m_ABSMatrixFlag = 1; };
 	void ApplyABSMatrixOff() { m_ABSMatrixFlag = 0; };

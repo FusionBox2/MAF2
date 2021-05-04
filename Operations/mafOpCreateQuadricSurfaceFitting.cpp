@@ -68,7 +68,7 @@ void mafOpCreateQuadricSurfaceFitting::OpRun()
 //----------------------------------------------------------------------------
 {
 	mafNEW(m_QuadricSurfaceFitting);
-	m_QuadricSurfaceFitting->SetName("Quadric_Surface_Fitting");
+	m_QuadricSurfaceFitting->SetName(_R("Quadric_Surface_Fitting"));
 	m_Output = m_QuadricSurfaceFitting;
 	mafEventMacro(mafEvent(this, OP_RUN_OK));
 }

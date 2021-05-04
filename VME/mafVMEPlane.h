@@ -61,7 +61,7 @@ public:
 	virtual bool IsAnimated();
 
 	/** Return the suggested pipe-typename for the visualization of this vme */
-	virtual mafString GetVisualPipe() { return mafString("mafPipeSurface"); };
+	virtual mafString GetVisualPipe() { return mafString(_R("mafPipeSurface")); };
 
 	/** Return pointer to material attribute. */
 	mmaMaterial *GetMaterial();
@@ -98,7 +98,7 @@ public:
 	void push(double s);
 	void SetUVector(double,int);
 	double GetUVector(int);
-	void SetLandmarkLink(const char *, mafNode *);
+	void SetLandmarkLink(const mafString&, mafNode *);
 //	void Setm_p1LName(mafString);
 //	void Setm_p2LName(mafString);
 //	void Setm_p3LName(mafString);
@@ -125,7 +125,7 @@ protected:
 
 	bool pts_change;
 	
-	void SetPlaneLink(const char *, mafNode *);
+	void SetPlaneLink(const mafString&, mafNode *);
 	mafString m_p1LandmarkName;
 //	mafString m_p2LandmarkName;
 //	mafString m_p3LandmarkName;

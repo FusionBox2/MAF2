@@ -33,7 +33,7 @@ class mafVMEHyperboloid2S;
 class MAF_EXPORT mafOpCreateHyperboloid2S : public mafOp
 {
 public:
-	mafOpCreateHyperboloid2S(const mafString& label = "Create Hyperboloid");
+	mafOpCreateHyperboloid2S(const mafString& label = _R("Create Hyperboloid"));
 	~mafOpCreateHyperboloid2S();
 
 	mafTypeMacro(mafOpCreateHyperboloid2S, mafOp);

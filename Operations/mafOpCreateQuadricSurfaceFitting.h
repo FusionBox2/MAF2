@@ -32,7 +32,7 @@ class mafEvent;
 class MAF_EXPORT mafOpCreateQuadricSurfaceFitting : public mafOp
 {
 public:
-	mafOpCreateQuadricSurfaceFitting(const mafString& label = "Create Quadric Surface Fitting");
+	mafOpCreateQuadricSurfaceFitting(const mafString& label = _R("Create Quadric Surface Fitting"));
 	~mafOpCreateQuadricSurfaceFitting();
 
 	mafTypeMacro(mafOpCreateQuadricSurfaceFitting, mafOp);

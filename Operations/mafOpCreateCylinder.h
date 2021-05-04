@@ -33,7 +33,7 @@ class mafVMECylinder;
 class MAF_EXPORT mafOpCreateCylinder : public mafOp
 {
 public:
-	mafOpCreateCylinder(const mafString& label = "Create Cylinder");
+	mafOpCreateCylinder(const mafString& label = _R("Create Cylinder"));
 	~mafOpCreateCylinder();
 
 	mafTypeMacro(mafOpCreateCylinder, mafOp);

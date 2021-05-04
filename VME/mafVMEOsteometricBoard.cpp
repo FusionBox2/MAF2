@@ -83,15 +83,15 @@ mafVMEOsteometricBoard::mafVMEOsteometricBoard()
 	pos3[0] = 0; pos3[1] = 0;  pos3[2] = 0;
 
 	plan1 = mafVMEPlane::New();
-	plan1->SetName("prinicipal_plane");
+	plan1->SetName(_R("prinicipal_plane"));
 	plan1->ReparentTo(this);
 	
 	plan2 = mafVMEPlane::New();
-	plan2->SetName("2nd_plane");
+	plan2->SetName(_R("2nd_plane"));
 	plan2->ReparentTo(this);
 
 	plan3 = mafVMEPlane::New();
-	plan3->SetName("3rd_plane");
+	plan3->SetName(_R("3rd_plane"));
 	plan3->ReparentTo(this);
 
 
@@ -120,38 +120,38 @@ mafVMEOsteometricBoard::mafVMEOsteometricBoard()
 	mafNEW(m_Cloud1);
 
 	m_Cloud1->Open();
-	m_Cloud1->SetName(_("computed OB points"));
+	m_Cloud1->SetName(_L("computed OB points"));
 	m_Cloud1->SetRadius(1.5);
 	m_Cloud1->ReparentTo(this);
-	m_Cloud1->AppendLandmark(m_PlaneOrigin[0], m_PlaneOrigin[1], m_PlaneOrigin[2], "Pl2Pt3", false);
-	m_Cloud1->AppendLandmark(m_PlanePoint1[0], m_PlanePoint1[1], m_PlanePoint1[2], "Pl3Pt2", false);
-	m_Cloud1->AppendLandmark(m_PlanePoint2[0], m_PlanePoint2[1], m_PlanePoint2[2], "Pl3Pt3", false);
-	m_p1LandmarkName = "";
-	m_p2LandmarkName = "";
-	m_p3LandmarkName = "";
-	m_p4LandmarkName = "";
-	m_p5LandmarkName = "";
-	m_p6LandmarkName = "";
-	m_SurfaceName = "";
+	m_Cloud1->AppendLandmark(m_PlaneOrigin[0], m_PlaneOrigin[1], m_PlaneOrigin[2], _R("Pl2Pt3"), false);
+	m_Cloud1->AppendLandmark(m_PlanePoint1[0], m_PlanePoint1[1], m_PlanePoint1[2], _R("Pl3Pt2"), false);
+	m_Cloud1->AppendLandmark(m_PlanePoint2[0], m_PlanePoint2[1], m_PlanePoint2[2], _R("Pl3Pt3"), false);
+	m_p1LandmarkName = _R("");
+	m_p2LandmarkName = _R("");
+	m_p3LandmarkName = _R("");
+	m_p4LandmarkName = _R("");
+	m_p5LandmarkName = _R("");
+	m_p6LandmarkName = _R("");
+	m_SurfaceName = _R("");
 
 	//gline1 = NULL;
 	//surface = NULL;
 	mafNEW(gline1);
 	//gline1->ReparentTo(plan1);
 	gline1->ReparentTo(this);
-	gline1->SetName("gline1");
+	gline1->SetName(_R("gline1"));
 	
 	mafNEW(gline2);
 	//gline2->ReparentTo(plan2);
 	gline2->ReparentTo(this);
-	gline2->SetName("gline2");
+	gline2->SetName(_R("gline2"));
 	;
 	mafNEW(gline3);
 	gline3->ReparentTo(this);
 	//gline3->ReparentTo(plan3);
-	gline3->SetName("gline3");
+	gline3->SetName(_R("gline3"));
 	
-	m_plan1Name = "";
+	m_plan1Name = _R("");
 	//m_p4LandmarkName = "";
 	surf = vtkPlaneSource::New();
 	//parallelPlane= vtkPlaneSource::New();
@@ -188,11 +188,11 @@ mmaMaterial *mafVMEOsteometricBoard::GetMaterial()
 //-------------------------------------------------------------------------
 {
 
-	mmaMaterial *material = (mmaMaterial *)GetAttribute("MaterialAttributes");
+	mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
 	if (material == NULL)
 	{
 		material = mmaMaterial::New();
-		SetAttribute("MaterialAttributes", material);
+		SetAttribute(_R("MaterialAttributes"), material);
 	}
 	return material;
 }
@@ -307,16 +307,16 @@ mafGUI* mafVMEOsteometricBoard::CreateGui()
 	//{
 	
 
-	m_Gui->Double(CHANGE_VALUE_PLANE, _("alphaPlan1"), &m_PlaneXRes);
-	m_Gui->Double(CHANGE_VALUE_PLANE, _("alphaPlan2"), &m_PlaneYRes);
-	m_Gui->Button(ID_Surface_LINK, &m_SurfaceName, _("Surface"), _("Select Surace"));
-	m_Gui->Button(ID_P1_LINK, &m_p1LandmarkName, _("1st plane 1st_Point"), _("Select Pl1 1st Point"));
-	m_Gui->Button(ID_P2_LINK, &m_p2LandmarkName, _("1st plane 2nd_Point"), _("Select Pl1 2nd Point"));
-	m_Gui->Button(ID_P3_LINK, &m_p3LandmarkName, _("1st plane 3rd_Point"), _("Select Pl1 3rd Point"));
+	m_Gui->Double(CHANGE_VALUE_PLANE, _L("alphaPlan1"), &m_PlaneXRes);
+	m_Gui->Double(CHANGE_VALUE_PLANE, _L("alphaPlan2"), &m_PlaneYRes);
+	m_Gui->Button(ID_Surface_LINK, &m_SurfaceName, _L("Surface"), _L("Select Surace"));
+	m_Gui->Button(ID_P1_LINK, &m_p1LandmarkName, _L("1st plane 1st_Point"), _L("Select Pl1 1st Point"));
+	m_Gui->Button(ID_P2_LINK, &m_p2LandmarkName, _L("1st plane 2nd_Point"), _L("Select Pl1 2nd Point"));
+	m_Gui->Button(ID_P3_LINK, &m_p3LandmarkName, _L("1st plane 3rd_Point"), _L("Select Pl1 3rd Point"));
 
-	m_Gui->Button(ID_P4_LINK, &m_p4LandmarkName, _("2nd plane 1st_Point"), _("Select Pl2 1st Point"));
-	m_Gui->Button(ID_P5_LINK, &m_p5LandmarkName, _("2nd plane 2nd_Point"), _("Select Pl2 2nd Point"));
-	m_Gui->Button(ID_P6_LINK, &m_p6LandmarkName, _("3rd plane 1st_Point"), _("Select Pl3 1st Point"));
+	m_Gui->Button(ID_P4_LINK, &m_p4LandmarkName, _L("2nd plane 1st_Point"), _L("Select Pl2 1st Point"));
+	m_Gui->Button(ID_P5_LINK, &m_p5LandmarkName, _L("2nd plane 2nd_Point"), _L("Select Pl2 2nd Point"));
+	m_Gui->Button(ID_P6_LINK, &m_p6LandmarkName, _L("3rd plane 1st_Point"), _L("Select Pl3 1st Point"));
 
 	m_Gui->Update();
 	//}
@@ -352,7 +352,7 @@ void mafVMEOsteometricBoard::OnEvent(mafEventBase *maf_event)
 		{
 
 								mafID button_id = e->GetId();
-								mafString title = _("Choose surface vme link");
+								mafString title = _L("Choose surface vme link");
 								e->SetId(VME_CHOOSE);
 								// e->SetArg((long)&mafVMESurface::VMEAccept);
 								e->SetString(&title);
@@ -361,7 +361,7 @@ void mafVMEOsteometricBoard::OnEvent(mafEventBase *maf_event)
 								if (n != NULL)
 								{
 
-									SetSurfaceLink("SurfaceVME", n);
+									SetSurfaceLink(_R("SurfaceVME"), n);
 									m_SurfaceName = n->GetName();
 									surface = (mafVMESurface*)n;
 
@@ -379,7 +379,7 @@ void mafVMEOsteometricBoard::OnEvent(mafEventBase *maf_event)
 
 						   mafID button_id = e->GetId();
 	
-						   mafString title = _("Choose P1 Landmark link");
+						   mafString title = _L("Choose P1 Landmark link");
 						   e->SetId(VME_CHOOSE);
 
 						   e->SetString(&title);
@@ -388,7 +388,7 @@ void mafVMEOsteometricBoard::OnEvent(mafEventBase *maf_event)
 						   if (n != NULL)
 						   {
 
-							   SetLandmarkLink("first_Point", n);
+							   SetLandmarkLink(_R("first_Point"), n);
 							   m_p1LandmarkName = n->GetName();
 							   m_Gui->Update();
 							   pts_change = true;
@@ -403,7 +403,7 @@ void mafVMEOsteometricBoard::OnEvent(mafEventBase *maf_event)
 						   
 
 						   mafID button_id = e->GetId();
-						   mafString title = _("Choose P2 Landmark link");
+						   mafString title = _L("Choose P2 Landmark link");
 						   e->SetId(VME_CHOOSE);
 
 						   e->SetString(&title);
@@ -413,7 +413,7 @@ void mafVMEOsteometricBoard::OnEvent(mafEventBase *maf_event)
 						   {
 
 							   
-							   SetLandmarkLink("second_Point", n);
+							   SetLandmarkLink(_R("second_Point"), n);
 							   m_p2LandmarkName = n->GetName();
 
 							   m_Gui->Update();
@@ -429,7 +429,7 @@ void mafVMEOsteometricBoard::OnEvent(mafEventBase *maf_event)
 						   
 
 						   mafID button_id = e->GetId();
-						   mafString title = _("Choose P3 Landmark link");
+						   mafString title = _L("Choose P3 Landmark link");
 						   e->SetId(VME_CHOOSE);
 
 						   e->SetString(&title);
@@ -439,7 +439,7 @@ void mafVMEOsteometricBoard::OnEvent(mafEventBase *maf_event)
 						   {
 
 							   
-							   SetLandmarkLink("third_Point", n);
+							   SetLandmarkLink(_R("third_Point"), n);
 							   m_p3LandmarkName = n->GetName();
 
 							   m_Gui->Update();
@@ -455,7 +455,7 @@ void mafVMEOsteometricBoard::OnEvent(mafEventBase *maf_event)
 
 
 						   mafID button_id = e->GetId();
-						   mafString title = _("Choose P4 Landmark link");
+						   mafString title = _L("Choose P4 Landmark link");
 						   e->SetId(VME_CHOOSE);
 
 						   e->SetString(&title);
@@ -463,7 +463,7 @@ void mafVMEOsteometricBoard::OnEvent(mafEventBase *maf_event)
 						   mafNode *n = e->GetVme();
 						   if (n != NULL)
 						   {
-							   SetLandmarkLink("4th_Point", n);
+							   SetLandmarkLink(_R("4th_Point"), n);
 							   m_p4LandmarkName = n->GetName();
 
 							   m_Gui->Update();
@@ -480,7 +480,7 @@ void mafVMEOsteometricBoard::OnEvent(mafEventBase *maf_event)
 
 
 						   mafID button_id = e->GetId();
-						   mafString title = _("Choose P5 Landmark link");
+						   mafString title = _L("Choose P5 Landmark link");
 						   e->SetId(VME_CHOOSE);
 
 						   e->SetString(&title);
@@ -490,7 +490,7 @@ void mafVMEOsteometricBoard::OnEvent(mafEventBase *maf_event)
 						   {
 
 
-							   SetLandmarkLink("5th_Point", n);
+							   SetLandmarkLink(_R("5th_Point"), n);
 							   m_p5LandmarkName = n->GetName();
 
 							   m_Gui->Update();
@@ -507,7 +507,7 @@ void mafVMEOsteometricBoard::OnEvent(mafEventBase *maf_event)
 
 
 						   mafID button_id = e->GetId();
-						   mafString title = _("Choose P6 Landmark link");
+						   mafString title = _L("Choose P6 Landmark link");
 						   e->SetId(VME_CHOOSE);
 
 						   e->SetString(&title);
@@ -517,7 +517,7 @@ void mafVMEOsteometricBoard::OnEvent(mafEventBase *maf_event)
 						   {
 
 
-							   SetLandmarkLink("6th_Point", n);
+							   SetLandmarkLink(_R("6th_Point"), n);
 							   m_p6LandmarkName = n->GetName();
 
 							   m_Gui->Update();
@@ -540,7 +540,7 @@ void mafVMEOsteometricBoard::OnEvent(mafEventBase *maf_event)
 	}
 }
 
-void mafVMEOsteometricBoard::SetLandmarkLink(const char *link_name, mafNode *n)
+void mafVMEOsteometricBoard::SetLandmarkLink(const mafString& link_name, mafNode *n)
 //-------------------------------------------------------------------------
 {
 	
@@ -733,7 +733,7 @@ void mafVMEOsteometricBoard::InternalUpdate()
 			
 			//plan2->setPoint1(m_PlaneOrigin);
 			//plan2->setPoint2(pos);
-			m_Cloud1->SetLandmark("Pl2Pt3", pos[0], pos[1], pos[2], -1);
+			m_Cloud1->SetLandmark(_R("Pl2Pt3"), pos[0], pos[1], pos[2], -1);
 			//plan2->setPoint3(m_PlanePoint1);
 
 //			plan2->SetLandmarkLink("third_Point", m_Cloud1->GetLandmark("Pl2Pt3"));
@@ -768,13 +768,13 @@ void mafVMEOsteometricBoard::InternalUpdate()
 			
 			//plan3->setPoint1(pos2);
 
-			m_Cloud1->SetLandmark("Pl3Pt2", pos2[0], pos2[1], pos2[2], -1);
+			m_Cloud1->SetLandmark(_R("Pl3Pt2"), pos2[0], pos2[1], pos2[2], -1);
 //			plan3->SetLandmarkLink("second_Point", m_Cloud1->GetLandmark("Pl3Pt2"));
 //			plan3->Setm_p2LName("Pl3Pt2");
 			plan3->Update();
 
 			//plan3->setPoint2(pos3);
-			m_Cloud1->SetLandmark("Pl3Pt3", pos3[0], pos3[1], pos3[2], -1);
+			m_Cloud1->SetLandmark(_R("Pl3Pt3"), pos3[0], pos3[1], pos3[2], -1);
 //			plan3->SetLandmarkLink("third_Point", m_Cloud1->GetLandmark("Pl3Pt3"));
 //			plan3->Setm_p3LName("Pl3Pt3");
 			plan3->Update();
@@ -833,11 +833,11 @@ int mafVMEOsteometricBoard::InternalStore(mafStorageElement *parent)
 	if (Superclass::InternalStore(parent) == MAF_OK)
 	{
 		if (
-			parent->StoreMatrix("Transform", &m_Transform->GetMatrix()) == MAF_OK &&
+			parent->StoreMatrix(_R("Transform"), &m_Transform->GetMatrix()) == MAF_OK &&
 		//	parent->StoreInteger("Geometry", m_GeometryType) == MAF_OK &&
 	
-			parent->StoreDouble("PlaneUx", m_PlaneXRes) == MAF_OK &&
-			parent->StoreDouble("PlaneUy", m_PlaneYRes) == MAF_OK //&&
+			parent->StoreDouble(_R("PlaneUx"), m_PlaneXRes) == MAF_OK &&
+			parent->StoreDouble(_R("PlaneUy"), m_PlaneYRes) == MAF_OK //&&
 			
 	
 			
@@ -862,13 +862,13 @@ int mafVMEOsteometricBoard::InternalRestore(mafStorageElement *node)
 	if (Superclass::InternalRestore(node) == MAF_OK)
 	{
 		mafMatrix matrix;
-		if (node->RestoreMatrix("Transform", &matrix) == MAF_OK)
+		if (node->RestoreMatrix(_R("Transform"), &matrix) == MAF_OK)
 		{
 			m_Transform->SetMatrix(matrix);
 		
 			
-			node->RestoreDouble("PlaneUx", m_PlaneXRes);
-			node->RestoreDouble("PlaneUy", m_PlaneYRes);
+			node->RestoreDouble(_R("PlaneUx"), m_PlaneXRes);
+			node->RestoreDouble(_R("PlaneUy"), m_PlaneYRes);
 			/*node->RestoreText("m_p1LandmarkName", m_p1LandmarkName);
 			node->RestoreText("m_p2LandmarkName", m_p2LandmarkName);
 			node->RestoreText("m_p3LandmarkName", m_p3LandmarkName);
@@ -931,8 +931,8 @@ void mafVMEOsteometricBoard::UpdateLinks()
 	surface = GetSurfaceVME();
 	if (surface && surface->IsMAFType(mafVMESurface))
 	{
-		nd = GetLink("SurfaceVME");
-		m_SurfaceName = (nd != NULL) ? ((mafVMESurface *)surface)->GetName() : _("none");
+		nd = GetLink(_R("SurfaceVME"));
+		m_SurfaceName = (nd != NULL) ? ((mafVMESurface *)surface)->GetName() : _L("none");
 
 		//gline1->SetSurfaceLink("SurfaceVME", nd);
 		
@@ -957,7 +957,7 @@ void mafVMEOsteometricBoard::UpdateLinks()
 		
 	}
 	else
-		m_SurfaceName = surface ? surface->GetName() : _("none");
+		m_SurfaceName = surface ? surface->GetName() : _L("none");
 
 	
 	
@@ -965,71 +965,71 @@ void mafVMEOsteometricBoard::UpdateLinks()
 	{
 
 		 
-		mafVMELandmark* p1 = GetLandmarkVME("first_Point");
+		mafVMELandmark* p1 = GetLandmarkVME(_R("first_Point"));
 		if (p1 && p1->IsMAFType(mafVMELandmark))
 		{
-			sub_id = GetLinkSubId("first_Point");
-			m_p1LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)p1->GetParent())->GetLandmarkName(sub_id) : _("none");
+			sub_id = GetLinkSubId(_R("first_Point"));
+			m_p1LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)p1->GetParent())->GetLandmarkName(sub_id) : _L("none");
 
 //			plan1->SetLandmarkLink("first_Point", GetLandmarkVME("first_Point"));
 //			plan1->Setm_p1LName(m_p1LandmarkName);
 		}
 		else
-			m_p1LandmarkName = p1 ? p1->GetName() : _("none");
+			m_p1LandmarkName = p1 ? p1->GetName() : _L("none");
 
-		mafVMELandmark* p2 = GetLandmarkVME("second_Point");
+		mafVMELandmark* p2 = GetLandmarkVME(_R("second_Point"));
 		if (p2 && p2->IsMAFType(mafVMELandmark))
 		{
-			sub_id = GetLinkSubId("second_Point");
-			m_p2LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)p2->GetParent())->GetLandmarkName(sub_id) : _("none");
+			sub_id = GetLinkSubId(_R("second_Point"));
+			m_p2LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)p2->GetParent())->GetLandmarkName(sub_id) : _L("none");
 
 //			plan1->SetLandmarkLink("second_Point", GetLandmarkVME("second_Point"));
 //			plan1->Setm_p2LName(m_p2LandmarkName);
 		}
 		else
-			m_p2LandmarkName = p2 ? p2->GetName() : _("none");
+			m_p2LandmarkName = p2 ? p2->GetName() : _L("none");
 
-		mafVMELandmark* p3 = GetLandmarkVME("third_Point");
+		mafVMELandmark* p3 = GetLandmarkVME(_R("third_Point"));
 		if (p3 && p3->IsMAFType(mafVMELandmark))
 		{
-			sub_id = GetLinkSubId("third_Point");
-			m_p3LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)p3->GetParent())->GetLandmarkName(sub_id) : _("none");
+			sub_id = GetLinkSubId(_R("third_Point"));
+			m_p3LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)p3->GetParent())->GetLandmarkName(sub_id) : _L("none");
 
 //			plan1->SetLandmarkLink("third_Point", ((mafVMELandmarkCloud *)p3->GetParent())->GetLandmark(m_p3LandmarkName));
 //			plan1->Setm_p3LName(m_p3LandmarkName);
 		}
 		else
-			m_p3LandmarkName = p3 ? p3->GetName() : _("none");
+			m_p3LandmarkName = p3 ? p3->GetName() : _L("none");
 
-		mafVMELandmark* p4 = GetLandmarkVME("4th_Point");
+		mafVMELandmark* p4 = GetLandmarkVME(_R("4th_Point"));
 		if (p4 && p4->IsMAFType(mafVMELandmark))
 		{
-			sub_id = GetLinkSubId("4th_Point");
-			m_p4LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)p4->GetParent())->GetLandmarkName(sub_id) : _("none");
+			sub_id = GetLinkSubId(_R("4th_Point"));
+			m_p4LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)p4->GetParent())->GetLandmarkName(sub_id) : _L("none");
 
 //			plan2->SetLandmarkLink("first_Point", ((mafVMELandmarkCloud *)p4->GetParent())->GetLandmark(m_p4LandmarkName));
 //			plan2->Setm_p1LName(m_p4LandmarkName);
 		}
 		else
-			m_p4LandmarkName = p4 ? p4->GetName() : _("none");
+			m_p4LandmarkName = p4 ? p4->GetName() : _L("none");
 
-		mafVMELandmark* p5 = GetLandmarkVME("5th_Point");
+		mafVMELandmark* p5 = GetLandmarkVME(_R("5th_Point"));
 		if (p5 && p5->IsMAFType(mafVMELandmark))
 		{
-			sub_id = GetLinkSubId("5th_Point");
-			m_p5LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)p5->GetParent())->GetLandmarkName(sub_id) : _("none");
+			sub_id = GetLinkSubId(_R("5th_Point"));
+			m_p5LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)p5->GetParent())->GetLandmarkName(sub_id) : _L("none");
 
 //			plan2->SetLandmarkLink("second_Point", ((mafVMELandmarkCloud *)p5->GetParent())->GetLandmark(m_p5LandmarkName));
 //			plan2->Setm_p2LName(m_p5LandmarkName);
 		}
 		else
-			m_p5LandmarkName = p5 ? p5->GetName() : _("none");
+			m_p5LandmarkName = p5 ? p5->GetName() : _L("none");
 
-		mafVMELandmark* p6 = GetLandmarkVME("6th_Point");
+		mafVMELandmark* p6 = GetLandmarkVME(_R("6th_Point"));
 		if (p6 && p6->IsMAFType(mafVMELandmark))
 		{
-			sub_id = GetLinkSubId("6th_Point");
-			m_p6LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)p6->GetParent())->GetLandmarkName(sub_id) : _("none");
+			sub_id = GetLinkSubId(_R("6th_Point"));
+			m_p6LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)p6->GetParent())->GetLandmarkName(sub_id) : _L("none");
 
 //			plan3->SetLandmarkLink("first_Point", ((mafVMELandmarkCloud *)p6->GetParent())->GetLandmark(m_p6LandmarkName));
 //			plan3->Setm_p1LName(m_p6LandmarkName);
@@ -1037,7 +1037,7 @@ void mafVMEOsteometricBoard::UpdateLinks()
 			 p6->GetPoint(m_PlanePoint2[0], m_PlanePoint2[1], m_PlanePoint2[2],-1);
 		}
 		else
-			m_p6LandmarkName = p6 ? p6->GetName() : _("none");
+			m_p6LandmarkName = p6 ? p6->GetName() : _L("none");
 			
 	}
 	
@@ -1062,7 +1062,7 @@ mafVMELandmark *mafVMEOsteometricBoard::GetLandmarkVME(mafString str)
 
 
 
-void mafVMEOsteometricBoard::SetSurfaceLink(const char *link_name, mafNode *n)
+void mafVMEOsteometricBoard::SetSurfaceLink(const mafString& link_name, mafNode *n)
 //-------------------------------------------------------------------------
 {
 
@@ -1080,5 +1080,5 @@ mafVMESurface *mafVMEOsteometricBoard::GetSurfaceVME()
 
 
 	
-	return mafVMESurface::SafeDownCast(GetLink("SurfaceVME"));
+	return mafVMESurface::SafeDownCast(GetLink(_R("SurfaceVME")));
 }

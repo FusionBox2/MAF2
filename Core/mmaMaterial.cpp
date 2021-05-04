@@ -72,7 +72,7 @@ mmaMaterial::mmaMaterial()
   lutPreset(4,m_ColorLut);
   m_Icon        = NULL;
   m_TextureImage= NULL;
-  m_VmeImageName = "";
+  m_VmeImageName = _R("");
   m_TextureMappingMode = PLANE_MAPPING;
 
   m_Value            = 1.0;

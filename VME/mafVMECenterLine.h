@@ -106,14 +106,14 @@ public:
  // mafVMEOutputSurface *GetSurfaceOutput();
   mafVMEOutputPolyline *GetPolylineOutput();
  
-  void SetSurfaceLink(const char *, mafNode *);
+  void SetSurfaceLink(const mafString&, mafNode *);
   /** return always false since (currently) the slicer is not an animated VME (position 
   is the same for all timestamps). */
   virtual bool IsAnimated();
 
   /** Return the suggested pipe-typename for the visualization of this vme */
   //virtual mafString GetVisualPipe() {return mafString("mafPipeSurface");};
-  virtual mafString GetVisualPipe() { return mafString("mafPipePolyline"); };
+  virtual mafString GetVisualPipe() { return mafString(_R("mafPipePolyline")); };
   /** Return pointer to material attribute. */
   mmaMaterial *GetMaterial();
 

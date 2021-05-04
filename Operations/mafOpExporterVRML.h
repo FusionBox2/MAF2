@@ -39,7 +39,7 @@ class mmaMaterial;
 class MAF_EXPORT mafOpExporterVRML : public mafOp
 {
 public:
-           mafOpExporterVRML(const mafString& label = "VRMLExporter");
+           mafOpExporterVRML(const mafString& label = _R("VRMLExporter"));
 	virtual ~mafOpExporterVRML();
 	
   mafTypeMacro(mafOpExporterVRML, mafOp);

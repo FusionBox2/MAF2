@@ -105,11 +105,11 @@ int mafOpImporterMSF::ImportMSF()
 
 		if (ext == _R("zmsf"))
 		{
-			unixname = mafOpenZIP(m_File, ::wxGetCwd(), m_TmpDir);
+			unixname = mafOpenZIP(m_File, mafWxToString(::wxGetCwd()), m_TmpDir);
 			if (unixname.IsEmpty())
 			{
 				if (!m_TestMode)
-					mafMessage(_("Bad or corrupted zmsf file!"));
+					mafMessage(_M(mafString(_L("Bad or corrupted zmsf file!"))));
 				return MAF_ERROR;
 			}
 			wxSetWorkingDirectory(m_TmpDir.toWx());

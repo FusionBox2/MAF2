@@ -52,7 +52,7 @@ mafGUI *mafVMEOutputMuscleWrapping::CreateGui()
   m_Gui = mafVMEOutput::CreateGui();
   
  // m_Distance = ((mafVMEMuscleWrapping *)m_VME)->GetDistance();
-  m_Gui->Label(_("distance: "), &m_Distance, true);
+  m_Gui->Label(_L("distance: "), &m_Distance, true);
 
   //m_Angle = ((mafVMEMeter *)m_VME)->GetAngle();
   //m_Gui->Label(_("angle: "), &m_Angle, true);

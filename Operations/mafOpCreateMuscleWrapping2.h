@@ -32,7 +32,7 @@ class mafEvent;
 class MAF_EXPORT mafOpCreateMuscleWrapping2 : public mafOp
 {
 public:
-	mafOpCreateMuscleWrapping2(const mafString& label = "Create Quadric Surface Fitting");
+	mafOpCreateMuscleWrapping2(const mafString& label = _R("Create Quadric Surface Fitting"));
 	~mafOpCreateMuscleWrapping2();
 
 	mafTypeMacro(mafOpCreateMuscleWrapping2, mafOp);

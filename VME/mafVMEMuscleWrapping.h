@@ -226,7 +226,7 @@ public:
 
   /** Return the suggested pipe-typename for the visualization of this vme */
 
-  virtual mafString GetVisualPipe() { return mafString("mafPipePolyline"); };
+  virtual mafString GetVisualPipe() { return mafString(_R("mafPipePolyline")); };
   /** Return pointer to material attribute. */
   mmaMaterial *GetMaterial();
 
@@ -236,7 +236,7 @@ public:
   /** Precess events coming from other objects */ 
   virtual void OnEvent(mafEventBase *maf_event);
 
-  void SetEllipsoidLink(const char *link_name, mafNode *n);
+  void SetEllipsoidLink(const mafString& link_name, mafNode *n);
   double GetDistance();
   
   //void SetTimeStamp(mafTimeStamp t);
@@ -318,7 +318,7 @@ protected:
   vtkMAFSmartPointer<vtkPoints> points;
  
 
-  void SetLandmarkLink(const char *, mafNode *);
+  void SetLandmarkLink(const mafString&, mafNode *);
  
 
 
@@ -342,7 +342,7 @@ protected:
   double ** computeLineIntersection(double l1[3], double l2[3], int*, mafQuadraticSurface* ellipsoid);
 
 
-  mafString ss = " ";
+  mafString ss = _R(" ");
   double globalLength;
   double globalError;
   protected:

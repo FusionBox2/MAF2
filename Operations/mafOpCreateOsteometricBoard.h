@@ -34,7 +34,7 @@ dataset filled with a constant scalar value. This is useful for testing purposes
 class MAF_EXPORT mafOpCreateOsteometricBoard : public mafOp
 {
 public:
-	mafOpCreateOsteometricBoard(const mafString& label = "Create OsteometricBoard");
+	mafOpCreateOsteometricBoard(const mafString& label = _R("Create OsteometricBoard"));
 	~mafOpCreateOsteometricBoard();
 
 	mafTypeMacro(mafOpCreateOsteometricBoard, mafOp);
