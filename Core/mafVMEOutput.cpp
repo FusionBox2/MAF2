@@ -58,7 +58,7 @@ mafVMEOutput::~mafVMEOutput()
 
 #ifdef MAF_USE_VTK
 //-------------------------------------------------------------------------
-vtkDataSet *mafVMEOutput::GetVTKData()
+vtkAlgorithmOutput *mafVMEOutput::GetVTKData()
 //-------------------------------------------------------------------------
 {
   assert(m_VME);

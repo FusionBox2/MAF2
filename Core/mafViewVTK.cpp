@@ -259,7 +259,7 @@ void mafViewVTK::GetVisualPipeName(mafNode *node, mafString &pipe_name)
   assert(v);
 
   v->Modified();
-  vtkDataSet *data = v->GetOutput()->GetVTKData();
+  vtkAlgorithmOutput *data = v->GetOutput()->GetVTKData();
   mafVMELandmarkCloud *lmc = mafVMELandmarkCloud::SafeDownCast(v);
   mafVMELandmark *lm = mafVMELandmark::SafeDownCast(v);
   if (lmc == NULL && data == NULL && lm == NULL)
