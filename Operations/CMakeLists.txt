@@ -37,6 +37,36 @@ IF (MAF_USE_VTK)
     mafOpCreateMeter.h
     mafOpCreateSurfaceParametric.cpp
     mafOpCreateSurfaceParametric.h
+    mafOpCreateGravityLine.cpp
+    mafOpCreateGravityLine.h
+    mafOpCreateMeter2.cpp
+    mafOpCreateMeter2.h
+    mafOpCreateCylinder.cpp
+    mafOpCreateCylinder.h
+    mafOpCreateHyperboloid2S.cpp
+    mafOpCreateHyperboloid2S.h
+    mafOpCreateHyperboloid.cpp
+    mafOpCreateHyperboloid.h
+    mafOpCreateEllipsoid.cpp
+    mafOpCreateEllipsoid.h
+    mafOpCreateQuadricSurfaceFitting.cpp
+    mafOpCreateQuadricSurfaceFitting.h
+    mafOpCreateMuscleWrapping2.cpp
+    mafOpCreateMuscleWrapping2.h
+    mafOpCreateMuscleWrapper.cpp
+    mafOpCreateMuscleWrapper.h
+    mafOpCreateCenterline.cpp
+    mafOpCreateCenterline.h
+    mafOpCreatePlane.cpp
+    mafOpCreatePlane.h
+    mafOpCreateOsteometricBoard.cpp
+    mafOpCreateOsteometricBoard.h
+    mafOpExporterVRML.cpp
+    mafOpExporterVRML.h
+    mafOpExporterGeomTex.cpp
+    mafOpExporterGeomTex.h
+    mafOpCrop3DSurface.cpp
+    mafOpCrop3DSurface.h
     mafOpCreateProber.cpp
     mafOpCreateProber.h
     mafOpCreateRefSys.cpp

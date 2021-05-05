@@ -21,7 +21,7 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafAttribute.h"
-
+#include "mafVME.h"
 //----------------------------------------------------------------------------
 // forward refs :
 //----------------------------------------------------------------------------
@@ -68,6 +68,7 @@ public:
   virtual bool Equals(const mafAttribute *a);
 
   /** Set the texture image to map on the surface */
+  void SetMaterialTexture(vtkImageData *tex, mafString tex_name);
   void SetMaterialTexture(vtkImageData *tex);
 
   /** Return the texture set as vtkImageData */
@@ -75,10 +76,10 @@ public:
 
   /** Return the vme's id representing the texture */
   int GetMaterialTextureID();
-
+  mafString GetMaterialTextureName();
   /** Set the mafVMEImage id to use as texture to map on the surface */
   void SetMaterialTexture(int tex_id);
-
+ // void SetMaterialTexture(mafString tex_name);
   /** Apply shading parameters to the vtkProperty */
   virtual void UpdateProp();
 
@@ -111,7 +112,7 @@ public:
 protected:
   vtkImageData *m_TextureImage;
   int           m_TextureID;
-
+  mafString m_VmeImageName;
   virtual int InternalStore(mafStorageElement *parent);
   virtual int InternalRestore(mafStorageElement *node);
 };

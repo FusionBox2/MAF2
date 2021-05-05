@@ -13,8 +13,8 @@
  PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-#ifndef __mafVMEMeter_h
-#define __mafVMEMeter_h
+#ifndef __mafVMEMuscleWrapperAQ_h
+#define __mafVMEMuscleWrapperAQ_h
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
@@ -22,60 +22,187 @@
 #include "mafVMEOutputPolyline.h"
 #include "mafVMEVolumeGray.h"
 #include "mafEvent.h"
-#include "mafVMELandmark.h"
+#include "mafLandmark.hpp"
+#include "mafVMEEllipsoid.h"
+#include "mafQuadraticSurface.hpp"
 //dictionary
 #include "mafGUIHolder.h"
 #include "mafGUISplittedPanel.h"
 #include "mafGUINamedPanel.h"
 #include "mafGUIDictionaryWidget.h"
+#include "mafVMEMeter.h"
+#include "../../Eigen/unsupported/Eigen/LevenbergMarquardt"
 //#include "mafOpExplodeCollapse.h"
 //#include "mafSmartPointer.h"
-
+#include <vector>
 //----------------------------------------------------------------------------
 // forward declarations :
 //----------------------------------------------------------------------------
-class mmaMeter;
+class mmaMuscleWrapperAQ;
 class mmaMaterial;
 class vtkLineSource;
-
+class vtkLineSource;
 class vtkAppendPolyData;
 
 class vtkXYPlotActor;
 class mafRWI;
 class mafGUIDialogPreview;
 
+struct LMFunctor : Eigen::DenseFunctor<double>
+{
+	LMFunctor(void) : DenseFunctor<double>(6, 1) {}
+	// X -> F
+	// Compute 'm' errors, one for each data point, for the given parameter values in 'x'
+	int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &F) const
+	{
+		//F = VectorXd::Zero(6);
+
+		// cout <<" x in () operator" << x << endl << endl;
+		int nrSurfaces = surfaces->size();
+
+		for (int i = 0; i<nrSurfaces; i++)
+		{
+			VectorXd tempF = VectorXd::Zero(6);
+
+			Vector3d surfacePoint1(x[6 * i], x[6 * i + 1], x[6 * i + 2]);
+			Vector3d surfacePoint2(x[6 * i + 3], x[6 * i + 4], x[6 * i + 5]);
+			Vector3d connectionPoint1;
+			Vector3d connectionPoint2;
+
+			if (i == 0)
+			{
+				connectionPoint1 = p0;
+			}
+			else
+			{
+				connectionPoint1 = Vector3d(x[6 * (i - 1) + 3], x[6 * (i - 1) + 4], x[6 * (i - 1) + 5]);
+			}
+			if (i == nrSurfaces - 1)
+			{
+				connectionPoint2 = q0;
+			}
+			else
+			{
+				connectionPoint2 = Vector3d(x[6 * (i + 1) + 0], x[6 * (i + 1) + 1], x[6 * (i + 1) + 2]);
+			}
+			//  cout << "x" << endl << x << endl;
+			//  cout << "connectionPoint1" << endl << connectionPoint1 << endl;
+			//   cout << "surfacePoint1" << endl<<surfacePoint1 << endl;
+			//   cout << "surfacePoint2" << endl<< surfacePoint2  << endl;
+			//  cout << "connectionPoint2" << endl<< connectionPoint2 << endl;
+
+			(*surfaces)[i]->wrapfunF(surfacePoint1, surfacePoint2, connectionPoint1, connectionPoint2, &tempF);
+			// cout << surfacePoint1 << surfacePoint2 << connectionPoint1 << connectionPoint2 << endl;
+			for (int k = 0; k<6; k++)
+				F(6 * i + k) = tempF(k);
+
+			// cout << F << endl;
+		}
+		// F(0) = Ftot.norm();
+		// F = Ftot;
+		// cout << "error value: " << F.norm() << endl << endl;
+		//cout << "X after error computation " << x << endl;
+		return 0;
+	}
+	// X -> J
+	// Compute the jacobian of the functions
+	int df(const Eigen::VectorXd &x, Eigen::MatrixXd &J) const
+	{
+		int nrSurfaces = surfaces->size();
+
+		J = MatrixXd::Zero(6 * nrSurfaces, 6 * nrSurfaces);
+
+		for (int i = 0; i<nrSurfaces; i++)
+		{
+			MatrixXd tempJ = MatrixXd::Zero(6, 6);
+
+			Vector3d surfacePoint1(x[6 * i], x[6 * i + 1], x[6 * i + 2]);
+			Vector3d surfacePoint2(x[6 * i + 3], x[6 * i + 4], x[6 * i + 5]);
+			Vector3d connectionPoint1;
+			Vector3d connectionPoint2;
+			if (i == 0)
+			{
+				connectionPoint1 = p0;
+			}
+			else
+			{
+				connectionPoint1 = Vector3d(x[6 * (i - 1) + 3], x[6 * (i - 1) + 4], x[6 * (i - 1) + 5]);
+			}
+			if (i == nrSurfaces - 1)
+			{
+				connectionPoint2 = q0;
+			}
+			else
+			{
+				connectionPoint2 = Vector3d(x[6 * (i + 1) + 0], x[6 * (i + 1) + 1], x[6 * (i + 1) + 2]);
+			}
+
+			(*surfaces)[i]->wrapfunJ(surfacePoint1, surfacePoint2, connectionPoint1, connectionPoint2, &tempJ);
+
+			/* for(int k=0;k<6;k++)
+			for(int l=0;l<6;l++)
+			J(6*i+k,6*i+l) = tempJ(k,l);
+			*/
+			J.block<6, 6>(6 * i, 6 * i) = tempJ;
+			// cout << tempJ << endl;
+
+
+		}
+		//cout << "final gradient" << J << endl;
+		//cout << "X after gradient computation " << x << endl;
+		return 0;
+	}
+
+	vector<mafQuadraticSurface*>* surfaces = new vector<mafQuadraticSurface*>();
+	Vector3d p0;
+	Vector3d q0;
+
+
+	// Number of data points, i.e. values.
+	int m;
+
+	// Returns 'm', the number of values.
+	int values() const { return m; }
+
+	// The number of parameters, i.e. inputs.
+	int n;
+
+	// Returns 'n', the number of inputs.
+	int inputs() const { return n; }
+
+};
 
 /** mafVMEMeter - 
 */
-class MAF_EXPORT mafVMEMeter : public mafVME
+class MAF_EXPORT mafVMEMuscleWrapperAQ : public mafVME
 {
 public:
   MAF_ID_DEC(LENGTH_THRESHOLD_EVENT);
 
-  enum METER_MEASURE_TYPE_ID
+  enum MuscleWrapperAQ_MEASURE_TYPE_ID
   {
     POINT_DISTANCE=0,
     LINE_DISTANCE,
     LINE_ANGLE,
   };
-  enum METER_COLOR_TYPE_ID
+  enum MuscleWrapperAQ_COLOR_TYPE_ID
   {
     ONE_COLOR=0,
     RANGE_COLOR
   };
-  enum METER_REPRESENTATION_ID
+  enum MuscleWrapperAQ_REPRESENTATION_ID
   {
     LINE_REPRESENTATION=0,
     TUBE_REPRESENTATION
   };
-  enum METER_MEASURE_ID
+  enum MuscleWrapperAQ_MEASURE_ID
   {
     ABSOLUTE_MEASURE=0,
     RELATIVE_MEASURE
   };
-  mafTypeMacro(mafVMEMeter,mafVME);
+  mafTypeMacro(mafVMEMuscleWrapperAQ, mafVME);
 
-  enum METER_WIDGET_ID
+  enum MuscleWrapperAQ_WIDGET_ID
   {
     ID_START_METER_LINK = Superclass::ID_LAST,
     ID_START2_METER_LINK,
@@ -132,9 +259,9 @@ public:
   distance between a point and a line. */
   int GetMeterMode();
   void SetMeterMode(int mode);
-  void SetMeterModeToPointDistance() {this->SetMeterMode(mafVMEMeter::POINT_DISTANCE);}
-  void SetMeterModeToLineDistance() {this->SetMeterMode(mafVMEMeter::LINE_DISTANCE);}
-  void SetMeterModeToLineAngle() {this->SetMeterMode(mafVMEMeter::LINE_ANGLE);}
+  void SetMeterModeToPointDistance() { this->SetMeterMode(mafVMEMuscleWrapperAQ::POINT_DISTANCE); }
+  void SetMeterModeToLineDistance() { this->SetMeterMode(mafVMEMuscleWrapperAQ::LINE_DISTANCE); }
+  void SetMeterModeToLineAngle() { this->SetMeterMode(mafVMEMuscleWrapperAQ::LINE_ANGLE); }
 
   /** Store the min and max distance to associate with colors.*/
   void SetDistanceRange(double min, double max);
@@ -146,24 +273,24 @@ public:
 
   /** Color the meter with a range colors extracted by a LookupTable or in flat mode selected by material library. */
   void SetMeterColorMode(int mode);
-  void SetMeterColorModeToOneColor() {this->SetMeterColorMode(mafVMEMeter::ONE_COLOR);}
-  void SetMeterColorModeToRangeColor() {this->SetMeterColorMode(mafVMEMeter::RANGE_COLOR);}
+  void SetMeterColorModeToOneColor() { this->SetMeterColorMode(mafVMEMuscleWrapperAQ::ONE_COLOR); }
+  void SetMeterColorModeToRangeColor() { this->SetMeterColorMode(mafVMEMuscleWrapperAQ::RANGE_COLOR); }
 
   /** Get the color mode of the meter. */
   int GetMeterColorMode();
 
   /** Set the measure type to absolute or relative to the initial measure. */
   void SetMeterMeasureType(int type);
-  void SetMeterMeasureTypeToAbsolute() {this->SetMeterMeasureType(mafVMEMeter::ABSOLUTE_MEASURE);}
-  void SetMeterMeasureTypeToRelative() {this->SetMeterMeasureType(mafVMEMeter::RELATIVE_MEASURE);}
+  void SetMeterMeasureTypeToAbsolute() { this->SetMeterMeasureType(mafVMEMuscleWrapperAQ::ABSOLUTE_MEASURE); }
+  void SetMeterMeasureTypeToRelative() { this->SetMeterMeasureType(mafVMEMuscleWrapperAQ::RELATIVE_MEASURE); }
 
   /** Get the measure type. */
   int GetMeterMeasureType();
 
   /** Represent the meter with a tube or as a line. */
   void SetMeterRepresentation(int representation);
-  void SetMeterRepresentationToLine() {this->SetMeterRepresentation(mafVMEMeter::LINE_REPRESENTATION);}
-  void SetMeterRepresentationToTube() {this->SetMeterRepresentation(mafVMEMeter::TUBE_REPRESENTATION);}
+  void SetMeterRepresentationToLine() { this->SetMeterRepresentation(mafVMEMuscleWrapperAQ::LINE_REPRESENTATION); }
+  void SetMeterRepresentationToTube() { this->SetMeterRepresentation(mafVMEMuscleWrapperAQ::TUBE_REPRESENTATION); }
 
   /** Get the representation mode of the meter. */
   int GetMeterRepresentation();
@@ -213,7 +340,7 @@ public:
   double GetAngle();
 
   /** return the meter's attributes */
-  mmaMeter *GetMeterAttributes();
+  mmaMuscleWrapperAQ *GetMeterAttributes();
 
   mafVME *GetStartVME();
   mafVME *GetStart2VME();
@@ -222,7 +349,7 @@ public:
   mafVME *GetPlottedVME();
 
   /** Set links for the meter*/
-  virtual void SetMeterLink(const char *link_name, mafNode *n);
+  virtual void SetMeterLink(const mafString& link_name, mafNode *n);
 
   /** Return pointer to material attribute. */
   mmaMaterial *GetMaterial();
@@ -246,10 +373,28 @@ public:
 
   /** Retrieve EndPoint coordinates*/
   double *GetEndPoint2Coordinate(){return m_EndPoint2;};
+  /*void ComputeWrap();
 
+  mafdmLandmark* p0 = new mafdmLandmark(30, 30, 80, "p0");
+  mafdmLandmark* q0 = new mafdmLandmark(30, 30, -80, "q0");
+
+  mafdmEllipsoid* e = new mafdmEllipsoid(0.0, 0.0, 0.0, 20.0, 20.0, 30.0);
+
+  LMFunctor functor;
+  std::vector<mafQuadraticSurface*> surfaces;
+
+  VectorXd X;
+
+
+  mafdmLandmark* p;
+  mafdmLandmark* q;
+
+  vector<Vector3d> path;
+  vtkSmartPointer<vtkPoints> points;*/
 protected:
-  mafVMEMeter();
-  virtual ~mafVMEMeter();
+
+	mafVMEMuscleWrapperAQ();
+	virtual ~mafVMEMuscleWrapperAQ();
 
   virtual int InternalStore(mafStorageElement *parent);
   virtual int InternalRestore(mafStorageElement *node);
@@ -309,7 +454,15 @@ protected:
   mafGUIDictionaryWidget *m_Dict;
 
 private:
-  mafVMEMeter(const mafVMEMeter&); // Not implemented
-  void operator=(const mafVMEMeter&); // Not implemented
+	mafVMEMuscleWrapperAQ(const mafVMEMuscleWrapperAQ&); // Not implemented
+	void operator=(const mafVMEMuscleWrapperAQ&); // Not implemented
+
+	
+
+	
+
+
+
+
 };
 #endif

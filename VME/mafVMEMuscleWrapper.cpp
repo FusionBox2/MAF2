@@ -1,7 +1,7 @@
 /*=========================================================================
 
  Program: MAF2
- Module: mafVMEMeter
+ Module: mafVMEMuscleWrapper
  Authors: Marco Petrone, Paolo Quadrani
  
  Copyright (c) B3C
@@ -23,11 +23,11 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
-#include "mafVMEMeter.h"
-#include "mafVMEOutputMeter.h"
+#include "mafVMEMuscleWrapper.h"
+#include "mafVMEOutputMuscleWrapper.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafVMELandmark.h"
-#include "mmaMeter.h"
+#include "mmaMuscleWrapperAQ.h"
 #include "mmaMaterial.h"
 #include "mafEventSender.h"
 #include "mafTransform.h"
@@ -64,19 +64,24 @@
 #include "mafGUIDictionaryWidget.h"
 //#include "mafOpExplodeCollapse.h"
 //#include "mafSmartPointer.h"
+#include "mafdmLineSegment.hpp"
 
+#include "mafPointCloud.hpp"
 #include <assert.h>
-
-MAF_ID_IMP(mafVMEMeter::LENGTH_THRESHOLD_EVENT);
-
-//-------------------------------------------------------------------------
-mafCxxTypeMacro(mafVMEMeter)
-//-------------------------------------------------------------------------
+#include <wx/busyinfo.h>
+MAF_ID_IMP(mafVMEMuscleWrapperAQ::LENGTH_THRESHOLD_EVENT);
 
 //-------------------------------------------------------------------------
-mafVMEMeter::mafVMEMeter()
+mafCxxTypeMacro(mafVMEMuscleWrapperAQ)
+//-------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------
+mafVMEMuscleWrapperAQ::mafVMEMuscleWrapperAQ()
 //-------------------------------------------------------------------------
 {
+
+  wxBusyInfo wait("muscle wrapperAQ construction...");
+  Sleep(3000);
   m_Distance      = -1.0;
   m_Angle         = 0.0;
 
@@ -90,7 +95,7 @@ mafVMEMeter::mafVMEMeter()
   m_ProbeVmeName   = _R("");
   
   mafNEW(m_Transform);
-  mafVMEOutputMeter *output = mafVMEOutputMeter::New(); // an output with no data
+  mafVMEOutputMuscleWrapperAQ *output = mafVMEOutputMuscleWrapperAQ::New(); // an output with no data
   output->SetTransform(m_Transform); // force my transform in the output
   SetOutput(output);
 
@@ -125,7 +130,7 @@ mafVMEMeter::mafVMEMeter()
   m_ProbedVME = NULL;
 
   mafString plot_title = _L("Density vs. Length (mm)");
-  mafString plot_titleX = _L("mm");
+  mafString plot_titleX = _R("mm");
   mafString plot_titleY = _L("Dens.");
   vtkNEW(m_PlotActor);
   m_PlotActor->GetProperty()->SetColor(0.02,0.06,0.62);	
@@ -152,9 +157,12 @@ mafVMEMeter::mafVMEMeter()
   m_HistogramRWI    = NULL;
   
   m_GenerateHistogram = 0;
+
+  wxBusyInfo wait2("muscle wrapperAQ construction done");
+  Sleep(3000);
 }
 //-------------------------------------------------------------------------
-mafVMEMeter::~mafVMEMeter()
+mafVMEMuscleWrapperAQ::~mafVMEMuscleWrapperAQ()
 //-------------------------------------------------------------------------
 {
   mafDEL(m_Transform);
@@ -173,12 +181,12 @@ mafVMEMeter::~mafVMEMeter()
   cppDEL(m_HistogramDialog);
 }
 //-------------------------------------------------------------------------
-int mafVMEMeter::DeepCopy(mafNode *a)
+int mafVMEMuscleWrapperAQ::DeepCopy(mafNode *a)
 //-------------------------------------------------------------------------
 {
 	if (Superclass::DeepCopy(a)==MAF_OK)
 	{
-		mafVMEMeter *meter = mafVMEMeter::SafeDownCast(a);
+		mafVMEMuscleWrapperAQ *meter = mafVMEMuscleWrapperAQ::SafeDownCast(a);
 		m_Transform->SetMatrix(meter->m_Transform->GetMatrix());
     m_InfiniteLine = meter->m_InfiniteLine;
     m_LineAngle2   = meter->m_LineAngle2;
@@ -195,18 +203,18 @@ int mafVMEMeter::DeepCopy(mafNode *a)
 }
 
 //-------------------------------------------------------------------------
-bool mafVMEMeter::Equals(mafVME *vme)
+bool mafVMEMuscleWrapperAQ::Equals(mafVME *vme)
 //-------------------------------------------------------------------------
 {
   bool ret = false;
   if (Superclass::Equals(vme))
   {
-    ret = m_Transform->GetMatrix() == ((mafVMEMeter *)vme)->m_Transform->GetMatrix();
+	  ret = m_Transform->GetMatrix() == ((mafVMEMuscleWrapperAQ *)vme)->m_Transform->GetMatrix();
   }
   return ret;
 }
 //-------------------------------------------------------------------------
-int mafVMEMeter::InternalInitialize()
+int mafVMEMuscleWrapperAQ::InternalInitialize()
 //-------------------------------------------------------------------------
 {
   if (Superclass::InternalInitialize()==MAF_OK)
@@ -220,52 +228,71 @@ int mafVMEMeter::InternalInitialize()
   return MAF_ERROR;
 }
 //-------------------------------------------------------------------------
-mmaMaterial *mafVMEMeter::GetMaterial()
+mmaMaterial *mafVMEMuscleWrapperAQ::GetMaterial()
 //-------------------------------------------------------------------------
 {
+	wxBusyInfo wait("muscle wrapperAQ getting material...");
+	Sleep(3000);
   mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
   if (material == NULL)
   {
     material = mmaMaterial::New();
     SetAttribute(_R("MaterialAttributes"), material);
   }
+
+  wxBusyInfo wait2("muscle wrapperAQ getting material done");
+  Sleep(3000);
   return material;
 }
 //-------------------------------------------------------------------------
-mafVMEOutputPolyline *mafVMEMeter::GetPolylineOutput()
+mafVMEOutputPolyline *mafVMEMuscleWrapperAQ::GetPolylineOutput()
 //-------------------------------------------------------------------------
 {
+	wxBusyInfo wait("muscle wrapperAQ getting output");
+	Sleep(3000);
   return (mafVMEOutputPolyline *)GetOutput();
 }
 //-------------------------------------------------------------------------
-void mafVMEMeter::SetMatrix(const mafMatrix &mat)
+void mafVMEMuscleWrapperAQ::SetMatrix(const mafMatrix &mat)
 //-------------------------------------------------------------------------
 {
+	wxBusyInfo wait("muscle wrapperAQ SetMatrix...");
+	Sleep(3000);
   m_Transform->SetMatrix(mat);
   Modified();
 }
 //-------------------------------------------------------------------------
-bool mafVMEMeter::IsAnimated()
+bool mafVMEMuscleWrapperAQ::IsAnimated()
 //-------------------------------------------------------------------------
 {
   return false;
 }
 //-------------------------------------------------------------------------
-void mafVMEMeter::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
+void mafVMEMuscleWrapperAQ::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
 //-------------------------------------------------------------------------
 {
+	wxBusyInfo wait("muscle wrapperAQ getting GetLocalTimeStamps...");
+	Sleep(3000);
   kframes.clear(); // no timestamps
 }
 //-----------------------------------------------------------------------
-void mafVMEMeter::InternalPreUpdate()
+void mafVMEMuscleWrapperAQ::InternalPreUpdate()
 //-----------------------------------------------------------------------
 {
+
+  wxBusyInfo wait("muscle wrapperAQ getting preupdate...");
+  Sleep(3000);
   GetMeterAttributes();
+  wxBusyInfo wait2("muscle wrapperAQ getting preupdate done");
+  Sleep(3000);
 }
 //-----------------------------------------------------------------------
-void mafVMEMeter::InternalUpdate()
+void mafVMEMuscleWrapperAQ::InternalUpdate()
 //-----------------------------------------------------------------------
 {
+
+	wxBusyInfo wait("muscle wrapperAQ getting update...");
+	Sleep(3000);
   GetMeterAttributes()->m_ThresholdEvent = GetGenerateEvent();
   GetMeterAttributes()->m_DeltaPercent   = GetDeltaPercent();
   GetMeterAttributes()->m_InitMeasure    = GetInitMeasure();
@@ -275,7 +302,7 @@ void mafVMEMeter::InternalUpdate()
   UpdateLinks();
   mafTimeStamp currTs = GetTimeStamp();
 
-  if (GetMeterMode() == mafVMEMeter::POINT_DISTANCE)
+  if (GetMeterMode() == mafVMEMuscleWrapperAQ::POINT_DISTANCE)
   {
     mafVME *start_vme = GetStartVME();
     mafVME *end_vme   = GetEnd1VME();
@@ -333,7 +360,7 @@ void mafVMEMeter::InternalUpdate()
       // compute distance between points
       m_Distance = sqrt(vtkMath::Distance2BetweenPoints(m_StartPoint, m_EndPoint));
 
-      if(GetMeterMeasureType() == mafVMEMeter::RELATIVE_MEASURE)
+	  if (GetMeterMeasureType() == mafVMEMuscleWrapperAQ::RELATIVE_MEASURE)
         m_Distance -= GetMeterAttributes()->m_InitMeasure;
 
       // compute start point in local coordinate system
@@ -366,10 +393,10 @@ void mafVMEMeter::InternalUpdate()
     GetOutput()->Update();
     InvokeEvent(this, VME_OUTPUT_DATA_UPDATE);
 
-    if(GetMeterMeasureType() == mafVMEMeter::ABSOLUTE_MEASURE && GetMeterAttributes()->m_ThresholdEvent > 0 && m_Distance >= 0 && m_Distance >= threshold)
+	if (GetMeterMeasureType() == mafVMEMuscleWrapperAQ::ABSOLUTE_MEASURE && GetMeterAttributes()->m_ThresholdEvent > 0 && m_Distance >= 0 && m_Distance >= threshold)
       InvokeEvent(this,LENGTH_THRESHOLD_EVENT);
   }
-  else if (GetMeterMode() == mafVMEMeter::LINE_DISTANCE)
+  else if (GetMeterMode() == mafVMEMuscleWrapperAQ::LINE_DISTANCE)
   {
     mafVME *start_vme = GetStartVME();
     mafVME *end1_vme  = GetEnd1VME();
@@ -559,7 +586,7 @@ void mafVMEMeter::InternalUpdate()
       // compute distance between start and closest point
       m_Distance = sqrt(vtkMath::Distance2BetweenPoints(p4, p3));
 
-      if(GetMeterMeasureType() == mafVMEMeter::RELATIVE_MEASURE)
+	  if (GetMeterMeasureType() == mafVMEMuscleWrapperAQ::RELATIVE_MEASURE)
         m_Distance -= GetMeterAttributes()->m_InitMeasure;
 
       // compute start point in local coordinate system
@@ -603,11 +630,14 @@ void mafVMEMeter::InternalUpdate()
     GetOutput()->Update();
     InvokeEvent(this, VME_OUTPUT_DATA_UPDATE);
 
-    if(GetMeterMeasureType() == mafVMEMeter::ABSOLUTE_MEASURE && GetMeterAttributes()->m_ThresholdEvent > 0 && m_Distance >= 0 && m_Distance >= threshold)
+	if (GetMeterMeasureType() == mafVMEMuscleWrapperAQ::ABSOLUTE_MEASURE && GetMeterAttributes()->m_ThresholdEvent > 0 && m_Distance >= 0 && m_Distance >= threshold)
       InvokeEvent(this, LENGTH_THRESHOLD_EVENT);
   }
-  else if (GetMeterMode() == mafVMEMeter::LINE_ANGLE)
+  else if (GetMeterMode() == mafVMEMuscleWrapperAQ::LINE_ANGLE)
   {
+
+	
+
     mafVME *start_vme = GetStartVME();
     mafVME *start2_vme = GetStart2VME();
     mafVME *end1_vme  = GetEnd1VME();
@@ -731,7 +761,7 @@ void mafVMEMeter::InternalUpdate()
       if(vn1 != 0 && vn2 != 0)
       {
         m_Angle = acos(s / (vn1 * vn2)) * vtkMath::RadiansToDegrees();
-        if(GetMeterMeasureType() == mafVMEMeter::RELATIVE_MEASURE)
+		if (GetMeterMeasureType() == mafVMEMuscleWrapperAQ::RELATIVE_MEASURE)
           m_Angle -= GetMeterAttributes()->m_InitMeasure;
       }
       else
@@ -769,7 +799,7 @@ void mafVMEMeter::InternalUpdate()
     GetOutput()->Update();
     InvokeEvent(this, VME_OUTPUT_DATA_UPDATE);
 
-    if(GetMeterMeasureType() == mafVMEMeter::ABSOLUTE_MEASURE && GetMeterAttributes()->m_ThresholdEvent > 0 && m_Angle > 0 && m_Angle >= threshold)
+	if (GetMeterMeasureType() == mafVMEMuscleWrapperAQ::ABSOLUTE_MEASURE && GetMeterAttributes()->m_ThresholdEvent > 0 && m_Angle > 0 && m_Angle >= threshold)
       InvokeEvent(this,LENGTH_THRESHOLD_EVENT);
   }
 
@@ -792,11 +822,16 @@ void mafVMEMeter::InternalUpdate()
   m_PolyData->SetLines(cellArray);
   m_PolyData->Update();
 
+  wxBusyInfo wait2("muscle wrapperAQ getting update done");
+  Sleep(3000);
+
 }
 //-----------------------------------------------------------------------
-int mafVMEMeter::InternalStore(mafStorageElement *parent)
+int mafVMEMuscleWrapperAQ::InternalStore(mafStorageElement *parent)
 //-----------------------------------------------------------------------
-{  
+{
+	wxBusyInfo wait2("muscle wrapperAQ internal store");
+	Sleep(3000);
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
     parent->StoreInteger(_R("Infinite"), m_InfiniteLine);
@@ -807,9 +842,11 @@ int mafVMEMeter::InternalStore(mafStorageElement *parent)
   return MAF_ERROR;
 }
 //-----------------------------------------------------------------------
-int mafVMEMeter::InternalRestore(mafStorageElement *node)
+int mafVMEMuscleWrapperAQ::InternalRestore(mafStorageElement *node)
 //-----------------------------------------------------------------------
 {
+	wxBusyInfo wait2("muscle wrapperAQ internal restore");
+	Sleep(3000);
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
@@ -825,9 +862,11 @@ int mafVMEMeter::InternalRestore(mafStorageElement *node)
   return MAF_ERROR;
 }
 //-----------------------------------------------------------------------
-void mafVMEMeter::Print(std::ostream& os, const int tabs)
+void mafVMEMuscleWrapperAQ::Print(std::ostream& os, const int tabs)
 //-----------------------------------------------------------------------
 {
+	wxBusyInfo wait2("muscle wrapperAQ internal print");
+	Sleep(3000);
   Superclass::Print(os,tabs);
   mafIndent indent(tabs);
 
@@ -842,158 +881,212 @@ void mafVMEMeter::Print(std::ostream& os, const int tabs)
 //  return mafVMEMeter_xpm;
 //}
 //-------------------------------------------------------------------------
-mmaMeter *mafVMEMeter::GetMeterAttributes()
+mmaMuscleWrapperAQ *mafVMEMuscleWrapperAQ::GetMeterAttributes()
 //-------------------------------------------------------------------------
 {
-  mmaMeter *meter_attributes = (mmaMeter *)GetAttribute(_R("MeterAttributes"));
+	wxBusyInfo wait("muscle wrapperAQ getting attributes...");
+	Sleep(3000);
+	mmaMuscleWrapperAQ *meter_attributes = (mmaMuscleWrapperAQ *)GetAttribute(_R("MeterAttributes"));
   if (meter_attributes == NULL)
   {
-    meter_attributes = mmaMeter::New();
+    meter_attributes = mmaMuscleWrapperAQ::New();
     SetAttribute(_R("MeterAttributes"), meter_attributes);
   }
+
+  wxBusyInfo wait2("muscle wrapperAQ getting attributes done");
+  Sleep(3000);
   return meter_attributes;
 }
 //-------------------------------------------------------------------------
-void mafVMEMeter::SetMeterMode(int mode)
+void mafVMEMuscleWrapperAQ::SetMeterMode(int mode)
 //-------------------------------------------------------------------------
 {
+	wxBusyInfo wait2("muscle wrapperAQ setting mode");
+	Sleep(3000);
   GetMeterAttributes()->m_MeterMode = mode;
 }
 //-------------------------------------------------------------------------
-int mafVMEMeter::GetMeterMode()
+int mafVMEMuscleWrapperAQ::GetMeterMode()
 //-------------------------------------------------------------------------
 {
+
+	wxBusyInfo wait2("muscle wrapperAQ getting metermode");
+	Sleep(3000);
   return GetMeterAttributes()->m_MeterMode;
 }
 //-------------------------------------------------------------------------
-void mafVMEMeter::SetDistanceRange(double min, double max)
+void mafVMEMuscleWrapperAQ::SetDistanceRange(double min, double max)
 //-------------------------------------------------------------------------
 {
   GetMeterAttributes()->m_DistanceRange[0] = min;
   GetMeterAttributes()->m_DistanceRange[1] = max;
 }
 //-------------------------------------------------------------------------
-double *mafVMEMeter::GetDistanceRange() 
+double *mafVMEMuscleWrapperAQ::GetDistanceRange()
 //-------------------------------------------------------------------------
 {
   return GetMeterAttributes()->m_DistanceRange;
 }
 //-------------------------------------------------------------------------
-void mafVMEMeter::SetMeterColorMode(int mode)
+void mafVMEMuscleWrapperAQ::SetMeterColorMode(int mode)
 //-------------------------------------------------------------------------
 {
   GetMeterAttributes()->m_ColorMode = mode;
 }
 //-------------------------------------------------------------------------
-int mafVMEMeter::GetMeterColorMode()
+int mafVMEMuscleWrapperAQ::GetMeterColorMode()
 //-------------------------------------------------------------------------
 {
   return GetMeterAttributes()->m_ColorMode;
 }
 //-------------------------------------------------------------------------
-void mafVMEMeter::SetMeterMeasureType(int type)
+void mafVMEMuscleWrapperAQ::SetMeterMeasureType(int type)
 //-------------------------------------------------------------------------
 {
   GetMeterAttributes()->m_MeasureType = type;
 }
 //-------------------------------------------------------------------------
-int mafVMEMeter::GetMeterMeasureType()
+int mafVMEMuscleWrapperAQ::GetMeterMeasureType()
 //-------------------------------------------------------------------------
 {
   return GetMeterAttributes()->m_MeasureType;
 }
 //-------------------------------------------------------------------------
-void mafVMEMeter::SetMeterRepresentation(int representation)
+void mafVMEMuscleWrapperAQ::SetMeterRepresentation(int representation)
 //-------------------------------------------------------------------------
 {
   GetMeterAttributes()->m_Representation = representation;
 }
 //-------------------------------------------------------------------------
-int mafVMEMeter::GetMeterRepresentation()
+int mafVMEMuscleWrapperAQ::GetMeterRepresentation()
 //-------------------------------------------------------------------------
 {
   return GetMeterAttributes()->m_Representation;
 }
 //-------------------------------------------------------------------------
-void mafVMEMeter::SetMeterCapping(int capping)
+void mafVMEMuscleWrapperAQ::SetMeterCapping(int capping)
 //-------------------------------------------------------------------------
 {
   GetMeterAttributes()->m_Capping = capping;
 }
 //-------------------------------------------------------------------------
-int mafVMEMeter::GetMeterCapping()
+int mafVMEMuscleWrapperAQ::GetMeterCapping()
 //-------------------------------------------------------------------------
 {
   return GetMeterAttributes()->m_Capping;
 }
 //-------------------------------------------------------------------------
-void mafVMEMeter::SetGenerateEvent(int generate)
+void mafVMEMuscleWrapperAQ::SetGenerateEvent(int generate)
 //-------------------------------------------------------------------------
 {
   GetMeterAttributes()->m_GenerateEvent = generate;
 }
 //-------------------------------------------------------------------------
-int mafVMEMeter::GetGenerateEvent()
+int mafVMEMuscleWrapperAQ::GetGenerateEvent()
 //-------------------------------------------------------------------------
 {
   return GetMeterAttributes()->m_GenerateEvent;
 }
 //-------------------------------------------------------------------------
-void mafVMEMeter::SetInitMeasure(double init_measure)
+void mafVMEMuscleWrapperAQ::SetInitMeasure(double init_measure)
 //-------------------------------------------------------------------------
 {
   GetMeterAttributes()->m_InitMeasure = init_measure;
 }
 //-------------------------------------------------------------------------
-double mafVMEMeter::GetInitMeasure()
+double mafVMEMuscleWrapperAQ::GetInitMeasure()
 //-------------------------------------------------------------------------
 {
   return GetMeterAttributes()->m_InitMeasure;
 }
 //-------------------------------------------------------------------------
-void mafVMEMeter::SetMeterRadius(double radius)
+void mafVMEMuscleWrapperAQ::SetMeterRadius(double radius)
 //-------------------------------------------------------------------------
 {
   GetMeterAttributes()->m_TubeRadius = radius;
 }
 //-------------------------------------------------------------------------
-double mafVMEMeter::GetMeterRadius()
+double mafVMEMuscleWrapperAQ::GetMeterRadius()
 //-------------------------------------------------------------------------
 {
   return GetMeterAttributes()->m_TubeRadius;
 }
 //-------------------------------------------------------------------------
-void mafVMEMeter::SetDeltaPercent(int delta_percent)
+void mafVMEMuscleWrapperAQ::SetDeltaPercent(int delta_percent)
 //-------------------------------------------------------------------------
 {
   GetMeterAttributes()->m_DeltaPercent = delta_percent;
 }
 //-------------------------------------------------------------------------
-int mafVMEMeter::GetDeltaPercent()
+int mafVMEMuscleWrapperAQ::GetDeltaPercent()
 //-------------------------------------------------------------------------
 {
   return GetMeterAttributes()->m_DeltaPercent;
 }
 //-------------------------------------------------------------------------
-double mafVMEMeter::GetDistance()
+double mafVMEMuscleWrapperAQ::GetDistance()
 //-------------------------------------------------------------------------
 {
   return m_Distance;
 }
 //-------------------------------------------------------------------------
-double mafVMEMeter::GetAngle()
+double mafVMEMuscleWrapperAQ::GetAngle()
 //-------------------------------------------------------------------------
 {
   return m_Angle;
 }
 //-------------------------------------------------------------------------
-mafGUI* mafVMEMeter::CreateGui()
+mafGUI* mafVMEMuscleWrapperAQ::CreateGui()
 //-------------------------------------------------------------------------
 {
+
+	wxBusyInfo wait2("muscle wrapperAQ creating gui...");
+	Sleep(3000);
   int num_mode = 3;
   const mafString mode_choices_string[] = {_L("point distance"), _L("line distance"), _L("line angle")};
+  /*
+  // setup gui_panel
+  mafGUINamedPanel *m_GuiPanel = new mafGUINamedPanel(mafGetFrame(), -1);
+  m_GuiPanel->SetTitle(_("Add Meter:"));
+
+  // setup splitter
+  mafGUISplittedPanel *sp = new mafGUISplittedPanel(m_GuiPanel, -1);
+  m_GuiPanel->Add(sp, 1, wxEXPAND);
+
+  //setup dictionary
+  m_Dict = new mafGUIDictionaryWidget(sp, -1);
+  m_Dict->SetListener(this);
+  //m_Dict->SetCloud(m_Cloud);
+  sp->PutOnTop(m_Dict->GetWidget());
+
+  // setup GuiHolder
+  mafGUIHolder *m_Guih = new mafGUIHolder(sp, -1, false, true);
+
+  */
 
   m_Gui = mafNode::CreateGui(); // Called to show info about vmes' type and name
+  /*
+  // setup dictionary
+  m_Dict = new mafGUIDictionaryWidget(sp,-1);
+  m_Dict->SetListener(this);
+  m_Dict->SetCloud(m_Cloud);
+  sp->PutOnTop(m_Dict->GetWidget());
+
+  // setup GuiHolder
+  m_Guih = new mafGUIHolder(sp,-1,false,true);
+
+
+  // setup Gui
+  m_Gui = new mafGUI(this);
+  m_Gui->SetListener(this);
+  m_Gui->Button(ID_LOAD,_("load dictionary"));
+  m_Gui->Divider();
+
+  */
+  /*m_Gui->SetListener(this);
+  int ID_LOAD = 12845;
+  m_Gui->Button(ID_LOAD, _("load dictionary"));
+  m_Gui->Divider();*/
   m_Gui->SetListener(this);
   m_Gui->Divider();
   m_Gui->Combo(ID_METER_MODE,_L("mode"),&(GetMeterAttributes()->m_MeterMode),num_mode,mode_choices_string,_L("Choose the meter mode"));
@@ -1022,11 +1115,12 @@ mafGUI* mafVMEMeter::CreateGui()
   m_Gui->Enable(ID_PLOTTED_VME_LINK, GetMeterAttributes()->m_MeterMode == POINT_DISTANCE);
 
 	m_Gui->Divider();
-
+	wxBusyInfo wait("muscle wrapperAQ creating gui done");
+	Sleep(3000);
   return m_Gui;
 }
 //-------------------------------------------------------------------------
-void mafVMEMeter::UpdateLinks()
+void mafVMEMuscleWrapperAQ::UpdateLinks()
 //-------------------------------------------------------------------------
 {
   mafID sub_id = -1;
@@ -1072,57 +1166,59 @@ void mafVMEMeter::UpdateLinks()
   m_ProbeVmeName = probedVme ? probedVme->GetName() : _L("none");
 }
 //-------------------------------------------------------------------------
-void mafVMEMeter::OnEvent(mafEventBase *maf_event)
+void mafVMEMuscleWrapperAQ::OnEvent(mafEventBase *maf_event)
 //-------------------------------------------------------------------------
 {
+	wxBusyInfo wait2("muscle wrapperAQ on event..");
+	Sleep(3000);
   // events to be sent up or down in the tree are simply forwarded
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
+  if (mafEvent *ev = mafEvent::SafeDownCast(maf_event))
   {
-    switch(e->GetId())
+    switch(ev->GetId())
     {
       case ID_LINE_ANGLE2:
         m_Gui->Enable(ID_START2_METER_LINK, m_LineAngle2 != 0);
         this->Modified();
-        e->SetId(CAMERA_UPDATE);
-        ForwardUpEvent(e);
+        ev->SetId(CAMERA_UPDATE);
+        ForwardUpEvent(ev);
         break;
       case ID_INFINITE_LINE:
         this->Modified();
-        e->SetId(CAMERA_UPDATE);
-        ForwardUpEvent(e);
+        ev->SetId(CAMERA_UPDATE);
+        ForwardUpEvent(ev);
         break;
       case ID_START_METER_LINK:
       case ID_START2_METER_LINK:
       case ID_END1_METER_LINK:
       case ID_END2_METER_LINK:
       {
-        mafID button_id = e->GetId();
+        mafID button_id = ev->GetId();
         mafString title = _L("Choose meter vme link");
-        e->SetId(VME_CHOOSE);
-        e->SetArg((long)&mafVMEMeter::VMEAccept);
-        e->SetString(&title);
-        ForwardUpEvent(e);
-        mafNode *n = e->GetVme();
+        ev->SetId(VME_CHOOSE);
+		ev->SetArg((long)&mafVMEMuscleWrapperAQ::VMEAccept);
+        ev->SetString(&title);
+        ForwardUpEvent(ev);
+        mafNode *n = ev->GetVme();
         if (n != NULL)
         {
           if (button_id == ID_START_METER_LINK)
           {
-            SetMeterLink("StartVME", n);
+            SetMeterLink(_R("StartVME"), n);
             m_StartVmeName = n->GetName();
           }
           else if (button_id == ID_START2_METER_LINK)
           {
-            SetMeterLink("StartVME2", n);
+            SetMeterLink(_R("StartVME2"), n);
             m_StartVme2Name = n->GetName();
           }
           else if (button_id == ID_END1_METER_LINK)
           {
-            SetMeterLink("EndVME1", n);
+            SetMeterLink(_R("EndVME1"), n);
             m_EndVme1Name = n->GetName();
           }
           else
           {
-            SetMeterLink("EndVME2", n);
+            SetMeterLink(_R("EndVME2"), n);
             m_EndVme2Name = n->GetName();
           }
           m_Gui->Update();
@@ -1132,16 +1228,16 @@ void mafVMEMeter::OnEvent(mafEventBase *maf_event)
       break;
       case ID_PLOTTED_VME_LINK:
         {
-          mafID button_id = e->GetId();
+          mafID button_id = ev->GetId();
           mafString title = _L("Choose meter vme link");
-          e->SetId(VME_CHOOSE);
-          e->SetArg((long)&mafVMEMeter::VolumeAccept);
-          e->SetString(&title);
-          ForwardUpEvent(e);
-          mafNode *n = e->GetVme();
+          ev->SetId(VME_CHOOSE);
+		  ev->SetArg((long)&mafVMEMuscleWrapperAQ::VolumeAccept);
+          ev->SetString(&title);
+          ForwardUpEvent(ev);
+          mafNode *n = ev->GetVme();
           if (n != NULL)
           {
-            SetMeterLink("PlottedVME",n);
+            SetMeterLink(_R("PlottedVME"),n);
             m_ProbedVME = mafVMEVolumeGray::SafeDownCast(n);
             m_ProbeVmeName = n->GetName();
             CreateHistogram();
@@ -1174,9 +1270,9 @@ void mafVMEMeter::OnEvent(mafEventBase *maf_event)
       m_Gui->Enable(ID_PLOT_PROFILE,GetMeterAttributes()->m_MeterMode == POINT_DISTANCE);
       m_Gui->Enable(ID_PLOTTED_VME_LINK, GetMeterAttributes()->m_MeterMode == POINT_DISTANCE);
       this->Modified();
-      mafID button_id = e->GetId();
-      e->SetId(CAMERA_UPDATE);
-      ForwardUpEvent(e);
+      mafID button_id = ev->GetId();
+      ev->SetId(CAMERA_UPDATE);
+      ForwardUpEvent(ev);
      
 	  }
 	  break;
@@ -1212,50 +1308,54 @@ void mafVMEMeter::OnEvent(mafEventBase *maf_event)
   {
     Superclass::OnEvent(maf_event);
   }
+
+
+  wxBusyInfo wait("muscle wrapperAQ on event done");
+  Sleep(3000);
 }
 //-------------------------------------------------------------------------
-void mafVMEMeter::SetMeterLink(const char *link_name, mafNode *n)
+void mafVMEMuscleWrapperAQ::SetMeterLink(const mafString& link_name, mafNode *n)
 //-------------------------------------------------------------------------
 {
   if (n->IsMAFType(mafVMELandmark))
   {
-    SetLink(_R(link_name),n->GetParent(),((mafVMELandmarkCloud *)n->GetParent())->FindLandmarkIndex(n->GetName()));
+    SetLink(link_name,n->GetParent(),((mafVMELandmarkCloud *)n->GetParent())->FindLandmarkIndex(n->GetName()));
   }
   else
-    SetLink(_R(link_name), n);
+    SetLink(link_name, n);
 }
 //-------------------------------------------------------------------------
-mafVME *mafVMEMeter::GetStartVME()
+mafVME *mafVMEMuscleWrapperAQ::GetStartVME()
 //-------------------------------------------------------------------------
 {
   return mafVME::SafeDownCast(GetLink(_R("StartVME")));
 }
 //-------------------------------------------------------------------------
-mafVME *mafVMEMeter::GetStart2VME()
+mafVME *mafVMEMuscleWrapperAQ::GetStart2VME()
 //-------------------------------------------------------------------------
 {
   return mafVME::SafeDownCast(GetLink(_R("StartVME2")));
 }
 //-------------------------------------------------------------------------
-mafVME *mafVMEMeter::GetEnd1VME()
+mafVME *mafVMEMuscleWrapperAQ::GetEnd1VME()
 //-------------------------------------------------------------------------
 {
   return mafVME::SafeDownCast(GetLink(_R("EndVME1")));
 }
 //-------------------------------------------------------------------------
-mafVME *mafVMEMeter::GetEnd2VME()
+mafVME *mafVMEMuscleWrapperAQ::GetEnd2VME()
 //-------------------------------------------------------------------------
 {
   return mafVME::SafeDownCast(GetLink(_R("EndVME2")));
 }
 //-------------------------------------------------------------------------
-mafVME *mafVMEMeter::GetPlottedVME()
+mafVME *mafVMEMuscleWrapperAQ::GetPlottedVME()
 //-------------------------------------------------------------------------
 {
   return mafVME::SafeDownCast(GetLink(_R("PlottedVME")));
 }
 //----------------------------------------------------------------------------
-void mafVMEMeter::GenerateHistogram(int generate)
+void mafVMEMuscleWrapperAQ::GenerateHistogram(int generate)
 //----------------------------------------------------------------------------
 {
   if(m_HistogramDialog)
@@ -1270,7 +1370,7 @@ void mafVMEMeter::GenerateHistogram(int generate)
   }
 }
 //----------------------------------------------------------------------------
-void mafVMEMeter::CreateHistogram()
+void mafVMEMuscleWrapperAQ::CreateHistogram()
 //----------------------------------------------------------------------------
 {
   mafTimeStamp currTs = GetTimeStamp();
@@ -1331,23 +1431,7 @@ void mafVMEMeter::CreateHistogram()
     double b[6];
     m_ProbedVME->GetOutput()->GetBounds(b);
 
-    /*if(tmp1[0] < b[0]) tmp1[0] = b[0];
-    else if (tmp1[0] > b[1]) tmp1[0] = b[1];
-
-    if(tmp1[1] < b[2]) tmp1[1] = b[2];
-    else if (tmp1[1] > b[3]) tmp1[1] = b[3];
-
-    if(tmp1[2] < b[4]) tmp1[2] = b[4];
-    else if (tmp1[2] > b[5]) tmp1[2] = b[5];
-
-    if(tmp2[0] < b[0]) tmp2[0] = b[0];
-    else if (tmp2[0] > b[1]) tmp2[0] = b[1];
-
-    if(tmp2[1] < b[2]) tmp2[1] = b[2];
-    else if (tmp2[1] > b[3]) tmp2[1] = b[3];
-
-    if(tmp2[2] < b[4]) tmp2[2] = b[4];
-    else if (tmp2[2] > b[5]) tmp2[2] = b[5];*/
+   
 
     m_ProbingLine->SetPoint1(point1);
     m_ProbingLine->SetPoint2(point2);
@@ -1370,19 +1454,51 @@ void mafVMEMeter::CreateHistogram()
 
   }
 }
-void mafVMEMeter::SetLineAngle2(int la2)
+void mafVMEMuscleWrapperAQ::SetLineAngle2(int la2)
 {
 	m_LineAngle2=la2;
 }
-int mafVMEMeter::GetLineAngle2()
+int mafVMEMuscleWrapperAQ::GetLineAngle2()
 {
 	return m_LineAngle2;
 }
 
-double mafVMEMeter::GetValue()
+double mafVMEMuscleWrapperAQ::GetValue()
 {
+
 	if (m_Distance > -1)
+
 		return m_Distance;
 	if (m_Angle > -1)
 		return m_Angle;
+
+		
+
 }
+/*void mafVMEMuscleWrapperAQ::ComputeWrap()
+{
+	surfaces.push_back(e);
+	functor.surfaces = &surfaces;
+	functor.p0 = p0->getCenter();
+	functor.q0 = q0->getCenter();
+	functor.m = 6;
+	functor.n = 6;
+
+	X << 0, 0, 30, 0, 0, -30;
+
+	Eigen::LevenbergMarquardt<LMFunctor> lm (functor);
+	int r = lm.minimize(X);
+
+
+	p= new mafdmLandmark(X(0), X(1), X(2), "p");
+	mafdmLandmark* q= new mafdmLandmark(X(3), X(4), X(5), "q");
+	vector<Vector3d> path = e->computeGeodesicPath(*p0, *q0, *p, *q);
+	vtkMAFSmartPointer<vtkPoints> points;
+	for (int i = 0; i<path.size(); i++)
+		points->InsertNextPoint(path[i][0], path[i][1], path[i][2]);
+
+	mafdmPointCloud* trajectory = new mafdmPointCloud(points);
+
+	mafdmLineSegment* s1 = new mafdmLineSegment(p0, p);
+	mafdmLineSegment* s2 = new mafdmLineSegment(q0, q);
+}*/
