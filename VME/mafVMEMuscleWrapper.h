@@ -31,7 +31,7 @@
 #include "mafGUINamedPanel.h"
 #include "mafGUIDictionaryWidget.h"
 #include "mafVMEMeter.h"
-#include "../../Eigen/unsupported/Eigen/LevenbergMarquardt"
+#include "unsupported/Eigen/LevenbergMarquardt"
 //#include "mafOpExplodeCollapse.h"
 //#include "mafSmartPointer.h"
 #include <vector>

@@ -13,7 +13,7 @@
 #include "mafDataElement.hpp"
 #include "mafLandmark.hpp"
 #include "mafVMELandmark.h"
-#include "../../Eigen/Eigen/Dense"
+#include "Eigen/Dense"
 
 #include <boost/array.hpp>
 #include <boost/numeric/odeint.hpp>

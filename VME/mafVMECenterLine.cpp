@@ -65,7 +65,7 @@
 #include <algorithm>
 #include "mafVMEMeter.h"
 #include "mafVMEPlane.h"
-#include "../../Eigen/unsupported/Eigen/Polynomials"
+#include "unsupported/Eigen/Polynomials"
 //const bool DEBUG_MODE = true;
 using namespace Eigen;
 

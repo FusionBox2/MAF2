@@ -31,7 +31,7 @@
 #include "mafVMEMeter.h"
 #include "mafVMELineSeg.h"
 #include "vtkAppendPolyData.h"
-#include "../../Eigen/unsupported/Eigen/LevenbergMarquardt"
+#include "unsupported/Eigen/LevenbergMarquardt"
 #include <vector>
 #include <iostream>
 #include <fstream>

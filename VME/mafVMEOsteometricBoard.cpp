@@ -51,7 +51,7 @@
 
 #include <vector>
 #include "mafVMEGravityLine.h"
-#include "../../Eigen/Eigen/Dense"
+#include "Eigen/Dense"
 using namespace std;
 //const bool DEBUG_MODE = true;
 //#include "../DataElementInfoPanel.hpp"

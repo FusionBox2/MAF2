@@ -11,7 +11,7 @@
 #include "vtkSmartPointer.h"
 #include <vtkMatrix4x4.h>
 
-#include "../../Eigen/Eigen/Dense"
+#include "Eigen/Dense"
 using Eigen::Vector3d;
 using Eigen::Matrix3d;
 
