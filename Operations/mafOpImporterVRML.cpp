@@ -194,10 +194,12 @@ void  mafOpImporterVRML::ImportVRML()
   vtkMAFSmartPointer<vtkRenderWindow> rw;
 
   vtkMAFSmartPointer<vtkVRMLImporter> importer;
-  importer->SetRenderWindow(rw.GetPointer());
+
   importer->SetFileName(m_File.GetCStr());
+  importer->Read();
   importer->Update();
 
+  importer->SetRenderWindow(rw.GetPointer());
   mafMatrix matrix;
 
   vtkRendererCollection *rc = rw->GetRenderers();

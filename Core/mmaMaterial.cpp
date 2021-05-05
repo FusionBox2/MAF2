@@ -70,7 +70,7 @@ mmaMaterial::mmaMaterial()
   lutPreset(4,m_ColorLut);
   m_Icon        = NULL;
   m_TextureImage= NULL;
-
+  m_VmeImageName = _R("");
   m_TextureMappingMode = PLANE_MAPPING;
 
   m_Value            = 1.0;
@@ -331,11 +331,18 @@ int mmaMaterial::InternalStore(mafStorageElement *parent)
         parent->StoreVectorN(lutvalues,rgba,4);
       }
     }
-    else if (m_MaterialType == USE_TEXTURE)
-    {
-      // texture
-      parent->StoreInteger(_R("TextureID"), m_TextureID);
-      parent->StoreInteger(_R("TextureMappingMode"), m_TextureMappingMode);
+	if (m_MaterialType == USE_TEXTURE)
+	{
+		// texture
+		parent->StoreInteger(_R("TextureMappingMode"), m_TextureMappingMode);
+		parent->StoreText(_R("TextureImageName"), m_VmeImageName);
+
+		m_TextureID = this->GetMaterialTextureID();
+		
+		if (m_TextureID != -1)
+		{
+			parent->StoreInteger(_R("TextureID"), m_TextureID);
+		}
     }
     parent->StoreInteger(_R("MaterialType"), m_MaterialType);
     return MAF_OK;
@@ -393,6 +400,7 @@ int mmaMaterial::InternalRestore(mafStorageElement *node)
       // texture
       node->RestoreInteger(_R("TextureID"), m_TextureID);
       node->RestoreInteger(_R("TextureMappingMode"), m_TextureMappingMode);
+	  node->RestoreText(_R("TextureImageName"), m_VmeImageName);
     }
     UpdateProp();
     return MAF_OK;
@@ -430,11 +438,20 @@ void mmaMaterial::UpdateFromLut()
   m_ColorLut->GetTableRange(m_TableRange);
 }
 //-----------------------------------------------------------------------
-void mmaMaterial::SetMaterialTexture(vtkImageData *tex)
+void mmaMaterial::SetMaterialTexture(vtkImageData *tex, mafString na)
 //-----------------------------------------------------------------------
 {
   m_TextureImage  = tex;
   m_TextureID     = -1;
+  m_VmeImageName = na;// ((mafVME*)m_TextureImage)->GetName();
+
+}
+void mmaMaterial::SetMaterialTexture(vtkImageData *tex)
+//-----------------------------------------------------------------------
+{
+
+	m_TextureImage = tex;
+	m_TextureID = -1;
 }
 //-----------------------------------------------------------------------
 void mmaMaterial::SetMaterialTexture(int tex_id)
@@ -454,6 +471,11 @@ int mmaMaterial::GetMaterialTextureID()
 //-----------------------------------------------------------------------
 {
   return m_TextureID;
+}
+
+mafString mmaMaterial::GetMaterialTextureName()
+{
+	return m_VmeImageName;
 }
 //-----------------------------------------------------------------------
 void mmaMaterial::Print(std::ostream& os, const int tabs) const

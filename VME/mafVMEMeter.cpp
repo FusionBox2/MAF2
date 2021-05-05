@@ -37,7 +37,7 @@
 #include "mmuIdFactory.h"
 #include "mafGUI.h"
 #include "mafAbsMatrixPipe.h"
-#include "vtkMAFSmartPointer.h"
+
 #include "mafRWI.h"
 #include "mafGUIDialogPreview.h"
 #include "mafVectors.h"
@@ -56,6 +56,14 @@
 #include "vtkRenderer.h"
 #include "vtkTransform.h"
 #include "vtkCellArray.h"
+
+//dictionary
+#include "mafGUIHolder.h"
+#include "mafGUISplittedPanel.h"
+#include "mafGUINamedPanel.h"
+#include "mafGUIDictionaryWidget.h"
+//#include "mafOpExplodeCollapse.h"
+//#include "mafSmartPointer.h"
 
 #include <assert.h>
 
@@ -1361,4 +1369,20 @@ void mafVMEMeter::CreateHistogram()
     m_ProbedVME->Update();
 
   }
+}
+void mafVMEMeter::SetLineAngle2(int la2)
+{
+	m_LineAngle2=la2;
+}
+int mafVMEMeter::GetLineAngle2()
+{
+	return m_LineAngle2;
+}
+
+double mafVMEMeter::GetValue()
+{
+	if (m_Distance > -1)
+		return m_Distance;
+	if (m_Angle > -1)
+		return m_Angle;
 }

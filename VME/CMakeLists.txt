@@ -90,6 +90,50 @@ IF (MAF_USE_VTK)
   mafPipeVolumeProjected.h
   mafPipeVolumeSlice.cpp
   mafPipeVolumeSlice.h
+  mafPipeMuscleWrapper.cpp
+  mafPipeMuscleWrapper.h
+  mafVMELineSeg.cpp
+  mafVMELineSeg.h
+  mafVMECenterLine.cpp
+  mafVMECenterLine.h
+  mafVMEGravityLine.cpp
+  mafVMEGravityLine.h
+  mafVMEOutputLineSeg.cpp
+  mafVMEOutputLineSeg.h
+  mafVMEOutputMuscleWrapping.cpp
+  mafVMEOutputMuscleWrapping.h
+  mafVMEOutputMuscleWrapper.cpp
+  mafVMEOutputMuscleWrapper.h
+  mafVMEQuadricSurfaceFitting.cpp
+  mafVMEQuadricSurfaceFitting.h
+  mafVMEHyperboloid2S.cpp
+  mafVMEHyperboloid2S.h
+  mafVMEHyperboloid.cpp
+  mafVMEHyperboloid.h
+  mafVMEPlane.cpp
+  mafVMEPlane.h
+  mafVMEOsteometricBoard.cpp
+  mafVMEOsteometricBoard.h
+  mafVMECylinder.cpp
+  mafVMECylinder.h    
+  mafVMEEllipsoid.cpp
+  mafVMEEllipsoid.h
+  mafLandmark.cpp
+  mafLandmark.hpp
+  mafDataElement.cpp
+  mafDataElement.hpp
+  mafQuadraticSurface.cpp
+  mafQuadraticSurface.hpp
+  mafMathtools.cpp
+  mafMathtools.hpp
+  mafVMEMuscleWrapper.cpp
+  mafVMEMuscleWrapper.h
+  mafVMEMuscleWrapping.cpp
+  mafVMEMuscleWrapping.h
+  mafPointCloud.cpp
+  mafPointCloud.hpp
+  mafdmLineSegment.cpp
+  mafdmLineSegment.hpp 
   mafVMEGeneric.cpp
   mafVMEGeneric.h
   mafVMEGizmo.cpp

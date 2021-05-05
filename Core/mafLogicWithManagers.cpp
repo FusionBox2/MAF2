@@ -1660,6 +1660,7 @@ void mafLogicWithManagers::Save()
   if(!m_TestMode) // Losi 02/16/2010 for test class 
   {
     bi = new wxBusyInfo(_("Saving MSF: Please wait"));
+	Sleep(1500);
   }
   if (m_Storage->Store() != MAF_OK) // store the tree
   {
