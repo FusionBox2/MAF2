@@ -29,7 +29,7 @@ class MAF_EXPORT mafVMEHyperboloid : public mafQuadraticSurface
 {
 public:
 
-	mafTypeMacro(mafVMEHyperboloid, mafQuadraticSurface, mafVME);
+	mafTypeMacro(mafVMEHyperboloid, mafQuadraticSurface);
 
 protected:
 

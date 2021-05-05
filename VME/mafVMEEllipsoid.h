@@ -28,7 +28,7 @@ class MAF_EXPORT mafVMEEllipsoid : public mafQuadraticSurface
 {
 public:
 
-	mafTypeMacro(mafVMEEllipsoid, mafQuadraticSurface , mafVME);
+	mafTypeMacro(mafVMEEllipsoid, mafQuadraticSurface);
 
 protected:
 

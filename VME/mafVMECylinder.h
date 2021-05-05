@@ -29,7 +29,7 @@ class MAF_EXPORT mafVMECylinder : public mafQuadraticSurface
 {
 public:
 
-	mafTypeMacro(mafVMECylinder, mafQuadraticSurface, mafVME);
+	mafTypeMacro(mafVMECylinder, mafQuadraticSurface);
 
 protected:
 
