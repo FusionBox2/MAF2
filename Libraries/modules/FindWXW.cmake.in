@@ -4,6 +4,6 @@
 
 # add search path for CURL
 SET(wxWidgets_ROOT_DIR @MAF_WXW_DIR@)
-SET(wxWidgets_LIB_DIR @MAF_WXW_DIR@/lib/vc_lib)
+SET(wxWidgets_LIB_DIR @MAF_WXW_DIR@/lib/@MAF_WXW_LIBDIR@)
 SET(wxWidgets_CONFIGURATION @MAF_WX_CONF@)
 find_package(wxWidgets COMPONENTS base net core adv html aui REQUIRED)
