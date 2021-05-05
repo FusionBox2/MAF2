@@ -68,6 +68,11 @@ ENDIF(MAF_USE_CRYPTO)
 IF (MAF_USE_WX)
   SET(MAF_WXW_DIR "${WXW_DIR}" CACHE PATH "wxWidgets path")
   SET(MAF_WX_CONF "${wxWidgets_CONFIGURATION}")
+  IF(HAVE_64_BIT)
+    SET(MAF_WXW_LIBDIR "vc_x64_lib" CACHE PATH "wxWidgets lib subfolder")
+  ELSE(HAVE_64_BIT)
+    SET(MAF_WXW_LIBDIR "vc_lib" CACHE PATH "wxWidgets lib subfolder")
+  ENDIF(HAVE_64_BIT)
 ENDIF (MAF_USE_WX)
 
 

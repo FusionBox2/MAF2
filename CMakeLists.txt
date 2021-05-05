@@ -107,6 +107,9 @@ SET (CONFIGURE_ERROR 0)
 #-----------------------------------------------------------------------------
 INCLUDE (${CMAKE_ROOT}/Modules/FindThreads.cmake)
 
+IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
+  SET(HAVE_64_BIT 1)
+ENDIF(CMAKE_SIZEOF_VOID_P EQUAL 8)
 
 #-----------------------------------------------------------------------------
 # Check if MFL is inside the MAF tree.
