@@ -52,6 +52,7 @@
 #include "vtkProperty.h"
 #include "vtkTexture.h"
 #include "mafLODActor.h"
+#include "vtkCleanPolyData.h"
 #include "vtkRenderer.h"
 #include "vtkLookupTable.h"
 #include "vtkActor.h"
