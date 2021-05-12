@@ -611,27 +611,27 @@ void mafLogicWithManagers::CreateToolbar()
   m_ToolBar->SetMargins(0,0);
   m_ToolBar->SetToolSeparation(2);
   m_ToolBar->SetToolBitmapSize(wxSize(20,20));
-  m_ToolBar->AddTool(MENU_FILE_NEW,mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_NEW")),    (_L("new ") + m_Extension + _L(" storage file")).toWx());
-  m_ToolBar->AddTool(MENU_FILE_OPEN,mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_OPEN")),  (_L("open ") + m_Extension + _L(" storage file")).toWx());
-  m_ToolBar->AddTool(MENU_FILE_SAVE,mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_SAVE")),  (_L("save current ") + m_Extension + _L(" storage file")).toWx());
+  m_ToolBar->AddTool(MENU_FILE_NEW, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_NEW")),    (_L("new ") + m_Extension + _L(" storage file")).toWx());
+  m_ToolBar->AddTool(MENU_FILE_OPEN, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_OPEN")),  (_L("open ") + m_Extension + _L(" storage file")).toWx());
+  m_ToolBar->AddTool(MENU_FILE_SAVE, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_SAVE")),  (_L("save current ") + m_Extension + _L(" storage file")).toWx());
   m_ToolBar->AddSeparator();
 
-  m_ToolBar->AddTool(MENU_FILE_PRINT,mafPictureFactory::GetPictureFactory()->GetBmp(_R("PRINT")),  _("print the selected view"));
-  m_ToolBar->AddTool(MENU_FILE_PRINT_PREVIEW,mafPictureFactory::GetPictureFactory()->GetBmp(_R("PRINT_PREVIEW")),  _("show the print preview for the selected view"));
+  m_ToolBar->AddTool(MENU_FILE_PRINT, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("PRINT")),  _("print the selected view"));
+  m_ToolBar->AddTool(MENU_FILE_PRINT_PREVIEW, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("PRINT_PREVIEW")),  _("show the print preview for the selected view"));
   m_ToolBar->AddSeparator();
 
-  m_ToolBar->AddTool(MENU_USER_START + 0, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_UNDO")),  _("undo (ctrl+z)"));
-  m_ToolBar->AddTool(MENU_USER_START + 1, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_REDO")),  _("redo (ctrl+shift+z)"));
+  m_ToolBar->AddTool(MENU_USER_START + 0, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_UNDO")),  _("undo (ctrl+z)"));
+  m_ToolBar->AddTool(MENU_USER_START + 1, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_REDO")),  _("redo (ctrl+shift+z)"));
   m_ToolBar->AddSeparator();
 
-  m_ToolBar->AddTool(MENU_USER_START + 2, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_DELETE")),  _("delete selected vme (ctrl+shift+d)"));
-  m_ToolBar->AddTool(MENU_USER_START + 3, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_CUT")),  _("cut selected vme (ctrl+x)"));
-  m_ToolBar->AddTool(MENU_USER_START + 4, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_COPY")), _("copy selected vme (ctrl+c)"));
-  m_ToolBar->AddTool(MENU_USER_START + 5, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_PASTE")),_("paste vme (ctrl+v)"));
+  m_ToolBar->AddTool(MENU_USER_START + 2, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_DELETE")),  _("delete selected vme (ctrl+shift+d)"));
+  m_ToolBar->AddTool(MENU_USER_START + 3, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_CUT")),  _("cut selected vme (ctrl+x)"));
+  m_ToolBar->AddTool(MENU_USER_START + 4, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_COPY")), _("copy selected vme (ctrl+c)"));
+  m_ToolBar->AddTool(MENU_USER_START + 5, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_PASTE")),_("paste vme (ctrl+v)"));
   m_ToolBar->AddSeparator();
-  m_ToolBar->AddTool(CAMERA_RESET,mafPictureFactory::GetPictureFactory()->GetBmp(_R("ZOOM_ALL")),_("reset camera to fit all (ctrl+f)"));
-  m_ToolBar->AddTool(CAMERA_FIT,  mafPictureFactory::GetPictureFactory()->GetBmp(_R("ZOOM_SEL")),_("reset camera to fit selected object (ctrl+shift+f)"));
-  m_ToolBar->AddTool(CAMERA_FLYTO,mafPictureFactory::GetPictureFactory()->GetBmp(_R("FLYTO")),_("fly to object under mouse"));
+  m_ToolBar->AddTool(CAMERA_RESET, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("ZOOM_ALL")),_("reset camera to fit all (ctrl+f)"));
+  m_ToolBar->AddTool(CAMERA_FIT, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("ZOOM_SEL")),_("reset camera to fit selected object (ctrl+shift+f)"));
+  m_ToolBar->AddTool(CAMERA_FLYTO, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FLYTO")),_("fly to object under mouse"));
   m_ToolBar->Realize();
 }
 //----------------------------------------------------------------------------

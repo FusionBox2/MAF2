@@ -1526,10 +1526,10 @@ void mafNode::SwapChildren(int idx1, int idx2)
   OnEvent(&e);
 }
 //-------------------------------------------------------------------------
-mafNode * mafNode::GetByPath(const char *path,  bool onlyVisible /*=true*/)
+mafNode * mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
 //-------------------------------------------------------------------------
 {
-  wxStringTokenizer tkz(wxT(path), wxT("/"));
+  wxStringTokenizer tkz(path.toWx(), wxT("/"));
 
   mafNode *currentNode=this;
   mafNode *tmpParent;
