@@ -1020,7 +1020,7 @@ int lhpOpDownloadVME::DownloadSelectedXMLFromBasket(mafString  xmlFile)
   long pid = -1;
   if (pid = wxExecute(command2execute.toWx(), output, errors, wxEXEC_SYNC) != 0)
   {
-    wxMessageBox(wxString::Format("Error in downloadSingleXML.py trying to download '%s'.\nMSF download stopped.",xmlFile.GetCStr()), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+    wxMessageBox(wxString::Format("Error in downloadSingleXML.py trying to download '%s'.\nMSF download stopped.",xmlFile.toWx()), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     return MAF_ERROR;
   }
 
@@ -1206,7 +1206,7 @@ wxArrayString lhpOpDownloadVME::CheckRemoteLink(mafString URI)
     wxMessageBox("Error in lhpReadRemoteTag.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     if (m_DebugMode)
         mafLogMessage(_M(_R("SYNC Command process '") + command2execute + _R("' terminated with exit code ") + mafToString(pid) + _R(".")));
-    return MAF_ERROR;
+    return wxArrayString();
   }
 
   if (m_DebugMode)
@@ -1500,29 +1500,29 @@ void lhpOpDownloadVME::UpdateBinaryFile()
     m_Input->GetRoot()->OnEvent(&es);
     mafVMEStorage *storage = mafVMEStorage::SafeDownCast(es.GetStorage());
     mafString newMSFFileName = storage->GetURL();
-    wxString oldItemURL, newItemURL, tmpURL;
-    wxString path, name, ext;
-    wxString oldItemPath, oldItemName, oldItemExt;
+    mafString oldItemURL, newItemURL, tmpURL;
+    mafString path, name, ext;
+    mafString oldItemPath, oldItemName, oldItemExt;
 
    
-    wxSplitPath(newMSFFileName.GetCStr(), &path, &name, &ext);
+    mafSplitPath(newMSFFileName, &path, &name, &ext);
     it = dv->Begin();
     mafVMEItem *item=it->second;
-    oldItemURL = item->GetURL();
-    wxSplitPath(oldItemURL, &oldItemPath, &oldItemName, &oldItemExt);
+    oldItemURL = _R(item->GetURL());
+    mafSplitPath(oldItemURL, &oldItemPath, &oldItemName, &oldItemExt);
 
     dv->UpdateVectorId();
     item->UpdateItemId();
     int newId = item->GetId();
 
-    newItemURL = name << '.' << newId << '.' << oldItemExt;
+    newItemURL = name + _R(".") + mafToString(newId) + _R(".") + oldItemExt;
     //item->SetURL(newItemURL);        
    
-    wxString absOldItemURL = m_IncomingCompletePath.GetCStr();
-    absOldItemURL += oldItemURL.c_str();
-    wxString absNewItemURL = path;
-    absNewItemURL += "/";
-    absNewItemURL += newItemURL.c_str();
+    mafString absOldItemURL = m_IncomingCompletePath;
+    absOldItemURL += oldItemURL;
+    mafString absNewItemURL = path;
+    absNewItemURL += _R("/");
+    absNewItemURL += newItemURL;
 
     //Call python module to copy binary data when downloaded
     wxString oldDir = wxGetCwd();
@@ -1538,13 +1538,13 @@ void lhpOpDownloadVME::UpdateBinaryFile()
     command2execute.Append(_R("false")); //false if it is not animated
     command2execute.Append(_R(" "));
 
-    absOldItemURL.Replace(" ", "???");
-    command2execute.Append(mafWxToString(absOldItemURL));
+    absOldItemURL.Replace(_R(" "), _R("???"));
+    command2execute.Append(absOldItemURL);
 
     command2execute.Append(_R(" "));
 
-    absNewItemURL.Replace(" ", "???");
-    command2execute.Append(mafWxToString(absNewItemURL));
+    absNewItemURL.Replace(_R(" "), _R("???"));
+    command2execute.Append(absNewItemURL);
 
     if (m_DebugMode)
         mafLogMessage(_M(_R("Executing command: '") + command2execute + _R("'")));
@@ -1569,46 +1569,46 @@ void lhpOpDownloadVME::UpdateBinaryFile()
     m_Input->GetRoot()->OnEvent(&es);
     mafVMEStorage *storage = mafVMEStorage::SafeDownCast(es.GetStorage());
     mafString newMSFFileName = storage->GetURL();
-    wxString path, name, ext;
-    wxString oldArchiveURL, newArchiveURL, tmpURL;
-    wxString oldItemURL, oldItemExt, oldItemPath, newItemURL;
-    wxString oldArchivePath, oldArchiveName, oldArchiveExt;
+    mafString path, name, ext;
+    mafString oldArchiveURL, newArchiveURL, tmpURL;
+    mafString oldItemURL, oldItemExt, oldItemPath, newItemURL;
+    mafString oldArchivePath, oldArchiveName, oldArchiveExt;
     
-    wxSplitPath(newMSFFileName.GetCStr(), &path, &name, &ext);
+    mafSplitPath(newMSFFileName, &path, &name, &ext);
     it = dv->Begin();
     mafVMEItem *item=it->second;
     //oldArchiveURL = item->GetArchiveFileName();
-    wxSplitPath(oldArchiveURL, &oldArchivePath, &oldArchiveName, &oldArchiveExt);
+    mafSplitPath(oldArchiveURL, &oldArchivePath, &oldArchiveName, &oldArchiveExt);
     dv->UpdateVectorId();
     int newId = dv->GetVectorID();
 
     newArchiveURL = name;
-    newArchiveURL += '.';
-    newArchiveURL += mafToString(newId).toWx();
-    newArchiveURL += '.';
+    newArchiveURL += _R(".");
+    newArchiveURL += mafToString(newId);
+    newArchiveURL += _R(".");
     newArchiveURL += oldArchiveExt;
 
     //item->SetArchiveFileName(mafString(newArchiveURL.c_str()));
     
 
-    wxString absOldArchiveURL = m_IncomingCompletePath.GetCStr();
+    mafString absOldArchiveURL = m_IncomingCompletePath;
     absOldArchiveURL += oldArchiveURL;
 
-    wxString absNewArchiveURL = path;
-    absNewArchiveURL += '/';
+    mafString absNewArchiveURL = path;
+    absNewArchiveURL += _R("/");
     absNewArchiveURL += newArchiveURL;
 
     for (it = dv->Begin(); it!= dv->End(); it++)
     {
       mafVMEItem *item=it->second;
-      oldItemURL = item->GetURL();
-      wxSplitPath(oldItemURL, &oldItemPath, &oldItemURL, &oldItemExt);
+      oldItemURL = _R(item->GetURL());
+      mafSplitPath(oldItemURL, &oldItemPath, &oldItemURL, &oldItemExt);
       item->UpdateItemId();
       newId = item->GetId();
       newItemURL = name;
-      newItemURL += '.';
-      newItemURL += mafToString(newId).toWx();
-      newItemURL += '.';
+      newItemURL += _R(".");
+      newItemURL += mafToString(newId);
+      newItemURL += _R(".");
       newItemURL += oldItemExt;
       //item->SetURL(newItemURL);
       //item->SetArchiveFileName(mafString(newArchiveURL.c_str()));
@@ -1629,12 +1629,12 @@ void lhpOpDownloadVME::UpdateBinaryFile()
     command2execute.Append(_R(" "));
 
 
-    absOldArchiveURL.Replace(" ", "???");
-    command2execute.Append(mafWxToString(absOldArchiveURL));
+    absOldArchiveURL.Replace(_R(" "), _R("???"));
+    command2execute.Append(absOldArchiveURL);
     command2execute.Append(_R(" "));
 
-    absNewArchiveURL.Replace(" ", "???");
-    command2execute.Append(mafWxToString(absNewArchiveURL));
+    absNewArchiveURL.Replace(_R(" "), _R("???"));
+    command2execute.Append(absNewArchiveURL);
     if (m_DebugMode)
         mafLogMessage(_M(_R("Executing command: '") + command2execute + _R("'")));
 

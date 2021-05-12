@@ -162,9 +162,9 @@ void lhpOpComputeTensor::OpRun()
   // check the validity of attributes and report error message
   // TODO: use wxWidgets instead of windows message boxes
   if (vmeData == NULL)  
-    MessageBox(NULL, "The original dataset is not of the correct type", "OpComputeTensor", MB_OK);
+    mafMessage(_M("The original dataset is not of the correct type"));
   if (vmeDisplacements == NULL)
-    MessageBox(NULL, "Could not find displacement vectors", "OpComputeTensor", MB_OK);
+    mafMessage(_M("Could not find displacement vectors"));
   
   if (!vmeData || !vmeDisplacements )
     {
@@ -178,7 +178,7 @@ void lhpOpComputeTensor::OpRun()
 
   if (!DatasetsMatch())
     {
-    MessageBox(NULL, "The datasets do not match!", "OpComputeTensor", MB_OK);
+    mafMessage(_M("The datasets do not match!"));
     mafEventMacro(mafEvent(this,OP_RUN_CANCEL)); // TODO: terminated? or just cancel?
     return;     // TODO: this breaks the selection in the lhpBuilder
     }

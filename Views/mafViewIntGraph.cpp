@@ -522,7 +522,7 @@ void mafViewIntGraph::savePlot(void)
 //       //pipe->savePlotInfo();
 //     }
 //   }
-  std::ofstream ofs(ScriptFileName.c_str());
+  std::ofstream ofs(mafWxToString(ScriptFileName).GetCStr());
   std::copy(m_shown_flags.begin(), m_shown_flags.end(), std::ostream_iterator<bool>(ofs, " "));
   ofs << '\n';
   std::copy(m_pipe_config.begin(), m_pipe_config.end(), std::ostream_iterator<std::string>(ofs, "\n"));
@@ -596,7 +596,7 @@ void mafViewIntGraph::loadPlot(bool readfile)
       return;
     m_shown_flags.clear();
     m_pipe_config.clear();
-    std::ifstream ifs(ScriptFileName.c_str());
+    std::ifstream ifs(mafWxToString(ScriptFileName).GetCStr());
     Line s;
     ifs >> s;
     std::istringstream iss(s);

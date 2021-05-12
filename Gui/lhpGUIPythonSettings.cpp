@@ -82,10 +82,10 @@ void lhpGUIPythonSettings::OnEvent(mafEventBase *maf_event)
   switch(maf_event->GetId())
   {
     case ID_PYTHON_EXE:
-      m_Config->Write("m_PythonExe",m_PythonExe.GetCStr());
+      m_Config->Write("m_PythonExe",m_PythonExe.toWx());
     break;
     case ID_PYTHONW_EXE:
-      m_Config->Write("m_PythonwExe",m_PythonwExe.GetCStr());
+      m_Config->Write("m_PythonwExe",m_PythonwExe.toWx());
     break;
     default:
       mafEventMacro(*maf_event);

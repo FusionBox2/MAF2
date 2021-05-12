@@ -153,7 +153,7 @@ bool ReadDictionary(mafString *fileName, std::vector<std::pair<wxString, wxStrin
     if(sFirstName == "" || sSecondName == "")
     {
       //consider string in invalid
-      wxMessageBox(wxString::Format("Syntax error in file %s, line %d. Ignoring.", fileName->GetCStr(), nI + 1), "Warning.", wxOK | wxCENTRE | wxICON_WARNING);
+      mafWarningMessage(_M(_R("Syntax error in file ") + *fileName + mafString::Format(_R(", line %d. Ignoring."), nI + 1)));
       nI++;
       continue;
     }

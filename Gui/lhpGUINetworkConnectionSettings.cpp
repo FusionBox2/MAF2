@@ -72,7 +72,7 @@ void lhpGUINetworkConnectionSettings::OnEvent(mafEventBase *maf_event)
       m_Config->Write("EnableProxy",m_ProxyFlag);
     break;
     case ID_PROXY_HOST:
-      m_Config->Write("ProxyHost",m_ProxyHost.GetCStr());
+      m_Config->Write("ProxyHost",m_ProxyHost.toWx());
     break;
     case ID_PROXY_PORT:
       m_Config->Write("ProxyPort",m_ProxyPort);

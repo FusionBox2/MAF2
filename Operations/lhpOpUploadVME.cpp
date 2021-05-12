@@ -1128,7 +1128,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
   // open auto tags file and try to handle tags using tags factory 
   ofstream unhandledPlusManualTagsFile;
 
-  unhandledPlusManualTagsFile.open(m_CurrentCache + m_CsvName.c_str());
+  unhandledPlusManualTagsFile.open(mafWxToString(m_CurrentCache + m_CsvName).toStd());
 
   if (!unhandledPlusManualTagsFile) {
     mafLogMessage(_M("Unable to create file"));

@@ -116,7 +116,7 @@ namespace
 {
   bool RunProgram(const char *wDir, const char *commandline, const char *outFilePath)
   {
-    STARTUPINFO si;
+    STARTUPINFOA si;
     PROCESS_INFORMATION pi;
 
     SECURITY_ATTRIBUTES sa;
@@ -157,7 +157,7 @@ namespace
         *fnmit = '\\';
     }
     // Start the child process. 
-    if( !CreateProcess(NULL,   // No module name (use command line)
+    if( !CreateProcessA(NULL,   // No module name (use command line)
       szCmdline,        // Command line
       NULL,           // Process handle not inheritable
       NULL,           // Thread handle not inheritable

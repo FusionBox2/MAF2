@@ -1031,7 +1031,7 @@ int lhpOpDownloadVMERefactor::DownloadSelectedXMLFromBasket(mafString  xmlFile)
   long pid = -1;
   if (pid = wxExecute(command2execute.toWx(), output, errors, wxEXEC_SYNC) != 0)
   {
-    wxMessageBox(wxString::Format("Error in downloadSingleXML.py trying to download '%s'.\nMSF download stopped.",xmlFile.GetCStr()), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+    wxMessageBox(wxString::Format("Error in downloadSingleXML.py trying to download '%s'.\nMSF download stopped.",xmlFile.toWx()), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     return MAF_ERROR;
   }
 
@@ -1217,7 +1217,7 @@ wxArrayString lhpOpDownloadVMERefactor::CheckRemoteLink(mafString URI)
     wxMessageBox("Error in lhpReadRemoteTag.py. Uploading stopped", wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
     if (m_DebugMode)
         mafLogMessage(_M(_R("SYNC Command process '") + command2execute + _R("' terminated with exit code ") + mafToString(pid) + _R(".")));
-    return MAF_ERROR;
+    return wxArrayString();
   }
 
   if (m_DebugMode)

@@ -477,7 +477,7 @@ void lhpOpTextureOrientation::OnEvent(mafEventBase *maf_event)
       { 
         // print the results to file
         fstream outputStream ;
-        outputStream.open((char*)m_outputFilename.GetData(), fstream::out | fstream::app) ;
+        outputStream.open(mafWxToString(m_outputFilename).toStd(), fstream::out | fstream::app) ;
         m_vectorGlyphPipe->PrintResults(outputStream) ;
         outputStream.close() ;
         break ;

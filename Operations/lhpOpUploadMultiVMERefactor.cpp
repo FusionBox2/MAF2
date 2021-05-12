@@ -568,7 +568,7 @@ bool lhpOpUploadMultiVMERefactor::GetUploadError()
       }
 
       wxMessageBox(wxString::Format("Error in MSF upload.\n%s\nUpload MSF stopped.\nVME already uploaded \
-will be removed from repository.",errorMessage.GetCStr()), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+will be removed from repository.",errorMessage.toWx()), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
       errorFile.close();
       mafFileRemove(m_VMEUploaderDownloaderABSFolder + _R("ErrorFound.lhp"));
       errorFound = true;
@@ -742,7 +742,7 @@ int lhpOpUploadMultiVMERefactor::UploadVMELinks( mafNode *derived )
         link = (mafNode*)((mafVMELandmarkCloud *)link)->GetLandmark(i->second.m_NodeSubId);
       }
 
-      wxMessageBox(wxString::Format("Link found! Upload VME: %s", link->GetName()), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+      wxMessageBox(wxString::Format("Link found! Upload VME: %s", link->GetName().toWx()), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
 
       //Verify if the link has some link!!
       if (link->GetNumberOfLinks() != 0)
@@ -1005,7 +1005,7 @@ void lhpOpUploadMultiVMERefactor::Upload()
       }
 
       mafString rootName = m_VMEToBeUploadedVector[i]->GetName();
-      if  (rootName.toWx().CompareTo("root") == 0)
+      if  (rootName == _R("root"))
       {
         mafString path, newRootName, ext;
         mafString msfFullPathName = m_OpenMSFFileNameFullPath;

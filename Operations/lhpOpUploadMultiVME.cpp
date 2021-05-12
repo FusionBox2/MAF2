@@ -745,7 +745,7 @@ bool lhpOpUploadMultiVME::GetUploadError()
         errorMessage.Append(_R(buf.c_str()));
       }
 
-      wxMessageBox(wxString::Format("Error in MSF upload.\n%s\nUpload MSF stopped.\nVME already uploaded will be removed from repository.",errorMessage.GetCStr()), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+      wxMessageBox(wxString::Format("Error in MSF upload.\n%s\nUpload MSF stopped.\nVME already uploaded will be removed from repository.",errorMessage.toWx()), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
       errorFile.close();
       mafFileRemove(m_VMEUploaderDownloaderDir + _R("ErrorFound.lhp"));
       errorFound = true;
@@ -914,7 +914,7 @@ int lhpOpUploadMultiVME::UploadVMELinks(mafNode *derived)
         link = (mafNode*)((mafVMELandmarkCloud *)link)->GetLandmark(i->second.m_NodeSubId);
       }
       hasBinary = isBinaryDataPresent(link);
-      wxMessageBox(wxString::Format("Link found! Upload VME: %s", link->GetName()), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
+      wxMessageBox(wxString::Format("Link found! Upload VME: %s", link->GetName().toWx()), wxMessageBoxCaptionStr, wxSTAY_ON_TOP | wxOK);
 
       //Verify if the link has some link!!
       if (link->GetNumberOfLinks() != 0)
