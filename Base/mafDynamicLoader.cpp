@@ -152,7 +152,7 @@ const char* mafDynamicLoader::LastError()
 LibHandle mafDynamicLoader::OpenLibrary(const char* libname )
 //----------------------------------------------------------------------------
 {
-  return LoadLibrary(libname);
+  return LoadLibraryA(libname);
 }
 
 //----------------------------------------------------------------------------

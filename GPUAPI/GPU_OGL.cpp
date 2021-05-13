@@ -607,7 +607,7 @@ bool mafGPUOGL::CreateRenderingWindow(char* err)
   if (m_hRWnd == NULL)
   {
     //register new window class
-    WNDCLASS	wc;
+    WNDCLASSA	wc;
     ZeroMemory (&wc, sizeof (WNDCLASS));
 
     wc.style			    = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
@@ -615,7 +615,7 @@ bool mafGPUOGL::CreateRenderingWindow(char* err)
     wc.hInstance		  = GetModuleHandle(NULL);    
     wc.lpszClassName	= RW_CLASSNAME;   
 
-    if (RegisterClass(&wc))
+    if (RegisterClassA(&wc))
       m_bUnregWndClass = true;
     else
     {
@@ -709,7 +709,7 @@ void mafGPUOGL::DestroyRenderingWindow()
 
   if (m_bUnregWndClass) 
   {
-    UnregisterClass(RW_CLASSNAME, ::GetModuleHandle(NULL));
+    UnregisterClassA(RW_CLASSNAME, ::GetModuleHandle(NULL));
     m_bUnregWndClass = false;
   }
 }

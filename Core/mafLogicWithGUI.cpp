@@ -336,9 +336,9 @@ void mafLogicWithGUI::CreateToolbar()
   m_ToolBar->SetMargins(0,0);
   m_ToolBar->SetToolSeparation(2);
   m_ToolBar->SetToolBitmapSize(wxSize(20,20));
-  m_ToolBar->AddTool(MENU_FILE_NEW,mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_NEW")),    _("new msf storage file"));
-  m_ToolBar->AddTool(MENU_FILE_OPEN,mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_OPEN")),  _("open msf storage file"));
-  m_ToolBar->AddTool(MENU_FILE_SAVE,mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_SAVE")),  _("save current msf storage file"));
+  m_ToolBar->AddTool(MENU_FILE_NEW, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_NEW")),    _("new msf storage file"));
+  m_ToolBar->AddTool(MENU_FILE_OPEN, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_OPEN")),  _("open msf storage file"));
+  m_ToolBar->AddTool(MENU_FILE_SAVE, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_SAVE")),  _("save current msf storage file"));
   m_ToolBar->Realize();
 }
 //----------------------------------------------------------------------------

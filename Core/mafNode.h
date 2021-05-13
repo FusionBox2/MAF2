@@ -190,7 +190,7 @@ public:
 
   By default this function search only on visible to traverse nodes
   */
-  mafNode *GetByPath(const char *path, bool onlyVisible=true);
+  mafNode *GetByPath(const mafString& path, bool onlyVisible=true);
   
   /** Add a child to this node. Return MAF_OK if success.*/
   virtual int AddChild(mafNode *node);

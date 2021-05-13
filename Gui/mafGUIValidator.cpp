@@ -623,9 +623,9 @@ bool mafGUIValidator::TransferToWindow(void)
 {
   assert(IsValid());
   wxString s;
-  wxString path;
-  wxString name;
-  wxString ext;
+  mafString path;
+  mafString name;
+  mafString ext;
   
   switch (m_Mode) 
 	{
@@ -714,27 +714,27 @@ bool mafGUIValidator::TransferToWindow(void)
       m_ComboBox->SetSelection(*m_IntVar);
     break;
     case VAL_DIROPEN:
-			path = m_MafStringVar->toWx();
-			if( ! ::wxDirExists(path) ) wxSplitPath(m_MafStringVar->toWx(), &path, &name, &ext); // it is a filename
-			m_TextCtrl->SetValue(path);
-			if(path != "")
+			path = *m_MafStringVar;
+			if( ! mafDirExists(path) ) mafSplitPath(*m_MafStringVar, &path, &name, &ext); // it is a filename
+			m_TextCtrl->SetValue(path.toWx());
+			if(!path.IsEmpty())
 			{ 
-				m_TextCtrl->SetToolTip(path);
+				m_TextCtrl->SetToolTip(path.toWx());
 			}
   	break;
     case VAL_FILEOPEN:
     case VAL_FILESAVE:
-			wxSplitPath(m_MafStringVar->toWx(), &path, &name, &ext);
-			if (ext.Len() >0 )
+			mafSplitPath(*m_MafStringVar, &path, &name, &ext);
+			if (!ext.IsEmpty())
 			{
-				name += ".";
+				name += _R(".");
 				name += ext;
 			}
-			m_TextCtrl->SetValue(name);
-			path = m_MafStringVar->toWx();
-			if(path != "")
+			m_TextCtrl->SetValue(name.toWx());
+			path = *m_MafStringVar;
+			if(!path.IsEmpty())
 			{ 
-				m_TextCtrl->SetToolTip(path);
+				m_TextCtrl->SetToolTip(path.toWx());
 			}
   	break;
     case VAL_COLOR:
