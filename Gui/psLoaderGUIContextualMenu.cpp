@@ -63,7 +63,8 @@ enum VIEW_CONTEXTUAL_MENU_ID
     CONTEXTUAL_MENU_NORMAL_SIZE_CHILD_SUB_VIEW,
 		CONTEXTUAL_MENU_SAVE_AS_IMAGE,
     CONTEXTUAL_MENU_SAVE_ALL_AS_IMAGE,
-    CONTEXTUAL_MENU_EXPORT_AS_VRML,
+   // CONTEXTUAL_MENU_EXPORT_AS_VRML,
+	//CONTEXTUAL_MENU_EXPORT_AS_FBX,
     //CONTEXTUAL_MENU_EXTERNAL_INTERNAL_VIEW,
 	CONTEXTUAL_VIEW_MENU_STOP
 };
@@ -140,7 +141,8 @@ void psLoaderGUIContextualMenu::ShowContextualMenu(wxFrame *child, mafView *view
   }  
   
   
-  this->Append(CONTEXTUAL_MENU_EXPORT_AS_VRML, _("Export Scene (VRML)"));
+  //this->Append(CONTEXTUAL_MENU_EXPORT_AS_VRML, _("Export Scene (VRML)"));
+  //this->Append(CONTEXTUAL_MENU_EXPORT_AS_FBX, _("Export Scene (FBX)"));
 
 	int x,y;
 	::wxGetMousePosition(&x, &y);
@@ -265,7 +267,7 @@ void psLoaderGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
     case CONTEXTUAL_MENU_SAVE_ALL_AS_IMAGE:
 			mafEventMacro(mafEvent(this, VIEW_SAVE_IMAGE,true));
 		break;
-    case CONTEXTUAL_MENU_EXPORT_AS_VRML:
+  /*  case CONTEXTUAL_MENU_EXPORT_AS_VRML:
     {
       mafString file_dir  = mafGetApplicationDirectory();
       mafString wildc     = _R("VRML (*.wrl)|*.wrl");
@@ -280,7 +282,7 @@ void psLoaderGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
         vrml_exporter->Write();
       }
     }
-    break;
+    break;*/
 		case CONTEXTUAL_MENU_RENAME_VIEW:
 		{
 			wxTextEntryDialog *dlg = new wxTextEntryDialog(m_ChildViewActive,"please enter a name", "VIEW NAME", m_ViewActive->GetName().toWx());

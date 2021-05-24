@@ -52,6 +52,10 @@
 #include "mafOpExporterBmp.h"
 #include "mafOpCreateGroup.h"
 #include "mafOpCreateMeter.h"
+#include "mafOpCreateMuscleWrapping2.h"
+#include "mafOpCreateMeter2.h"
+#include "mafOpCreateGravityLine.h"
+#include "mafOpCreateCenterLine.h"
 #include "medOpCreateWrappedMeter.h"
 #include "mafOpCreateSlicer.h"
 #include "mafOpCreateRefSys.h"
@@ -65,18 +69,25 @@
 #include "mafOpImporterSTL.h"
 #include "mafOpExporterSTL.h"
 #include "mafOpExporterVTK.h"
+#include "mafOpExporterVRML.h"
+#include "mafOpExporterGeomTex.h"
 #include "mafOpImporterVTK.h"
 #include "mafOpImporterMSF1x.h"
 #include "mafOpImporterVRML.h"
 #include "mafOpCreateVolume.h"
+#include "mafOpCreatePlane.h"
+#include "mafOpCreateOsteometricBoard.h"
 #include "mafOpVOIDensityEditor.h"
 #include "mafOpImporterBBF.h"
+#include "mafOpCreateQuadricSurfaceFitting.h"
+//#include "mafOpCreateMuscleWrapper.h"
 //BES: 23.6.2008 - Large Volume - to be merged 
 #include "mafOpImporterRAWVolume_BES.h"
 #include "mafOpImporterRAWVolume.h"
 #include "lhpOpKinectUtil.h"
 #include "lhpOpKinectModel.h"
 #include "lhpOpKinectAFs.h"
+#include "lhpOpCreateMetersScripted.h"
 #include "mafOpExporterRaw.h"
 #include "medOpImporterRAWImages.h"
 #include "mafOpExtractIsosurface.h"
@@ -88,6 +99,10 @@
 #include "lhpOpFuseLMScripted.h"
 #include "lhpOpRegisterLMScripted.h"
 #include "mafOpCreateSurfaceParametric.h"
+#include "mafOpCreateEllipsoid.h"
+#include "mafOpCreateHyperboloid.h"
+#include "mafOpCreateHyperboloid2S.h"
+#include "mafOpCreateCylinder.h"
 #include "lhpOpBuildHierarchy.h"
 #include "lhpOpTimeReduce.h"
 #include "lhpOpTimeShift.h"
@@ -95,6 +110,8 @@
 #include "lhpOpMTRExporter.h"
 #include "lhpOpINPImporter.h"
 #include "lhpOpMTRImporter.h"
+#include "lhpOpImporterOBJ.h"
+#include "lhpOpImporterPLY.h"
 #include "lhpOpLnSurf.h"
 #include "lhpOpAFSys.h"
 #include "lhpOpAverageLM.h"
@@ -148,7 +165,7 @@
 #include "medOpCropDeformableROI.h"
 #include "mafOpValidateTree.h"
 #include "mafOpApplyTrajectory.h"
-
+#include "mafOpCrop3DSurface.h"
 #include "medOpComputeWrapping.h"
 #include "medVMEComputeWrapping.h"
 #include "medPipeComputeWrapping.h"
@@ -202,6 +219,7 @@
 #include "lhpOpRepresentInAF.h"
 #include "lhpOpImporterC3DBTK.h" 
 #include "lhpOpImporterC3DFused.h" 
+#include "lhpOpImporterPressionCenter.h" 
 #include "lhpOpExporterC3DBTK.h" 
 #include "lhpOpExporterCSVGraph.h" 
 #include "lhpOpLMMirror.h"
@@ -588,6 +606,8 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   m_Logic->Plug(new mafOpPaste(_L("Paste \tCtrl+Shift+V")), _R(""));
   //------------------------- Importers -------------------------
   m_Logic->Plug(new mafOpImporterSTL(_R("STL")),_R("Geometries"));
+  m_Logic->Plug(new lhpOpImporterOBJ(_R("OBJ")), _R("Geometries"));
+  m_Logic->Plug(new lhpOpImporterPLY(_R("PLY")), _R("Geometries"));
   m_Logic->Plug(new mafOpImporterMSF(_R("MSF")),_R("Other"));
   m_Logic->Plug(new medOpImporterLandmark(_R("Landmark")),_R("Motion Analysis"));
   m_Logic->Plug(new medOpImporterMotionData<mafVMERawMotionData>(_R("Raw Motion Data"), _R("RAW Motion Data (*.MAN)|*.MAN"), _R("Dictionary (*.txt)|*.txt")), _R("Motion Analysis"));
@@ -598,6 +618,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   m_Logic->Plug(new lhpOpMTRULBImporter(_R("MTR (ULB)")), _R("Geometries"));
   m_Logic->Plug(new lhpOpImporterC3DBTK(_R("C3D BTK")),_R("Motion Analysis"));  
   m_Logic->Plug(new lhpOpImporterC3DFused(_R("C3D Automated")),_R("Motion Analysis"));  
+  m_Logic->Plug(new lhpOpImporterPressionCenter(_R("plantar pression center")), _R("Gait Analysis"));
   if(fullVersion)
   {
     medGUIDicomSettings *dicomSettings=new medGUIDicomSettings(NULL,_R("DICOM"));
@@ -637,6 +658,9 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   //------------------------- Exporters -------------------------
   m_Logic->Plug(new mafOpExporterSTL(_R("STL")),_R("Geometries"));
   m_Logic->Plug(new lhpOpINPExporter(_R("INP")),_R("Geometries"));
+  //m_Logic->Plug(new mafOpExporterVRML(_R("VRML")), _R("Geometries"));
+  //m_Logic->Plug(new mafOpExporterVRML(_R("FBX")), _R("Geometries"));
+  //m_Logic->Plug(new mafOpExporterGeomTex(_R("GEOMTEX")), _R("Geometries"));
   m_Logic->Plug(new mafOpExporterVTK(_R("VTK")), _R("Other"));
   m_Logic->Plug(new mafOpExporterBmp(_R("Bmp")), _R("Images"));
   m_Logic->Plug(new lhpOpMTRExporter(_R("MTR")), _R("Motion Analysis"));
@@ -655,11 +679,22 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   //------------------------- Operations -------------------------
   m_Logic->Plug(new mafOpValidateTree());
   m_Logic->Plug(new mafOpCreateGroup(_R("Group")),_R("Create/New"));
-	m_Logic->Plug(new mafOpCreateSurfaceParametric(_R("Parametric Surface")),_R("Create/New"));
-	m_Logic->Plug(new mafOpAddLandmark(_R("Add Landmark \tCtrl+A")),_R("Create/New"));
+  m_Logic->Plug(new lhpOpCreateMetersScripted(_R("Scripted meters")), _R("Create/New"));
+  m_Logic->Plug(new mafOpCreateSurfaceParametric(_R("Parametric Surface")),_R("Create/New"));
+  m_Logic->Plug(new mafOpCreateEllipsoid(_R("Ellipsoid")), _R("Create/New/QuadricSurface"));
+  m_Logic->Plug(new mafOpCreateHyperboloid(_R("Hyperboloid1S")), _R("Create/New/QuadricSurface"));
+  m_Logic->Plug(new mafOpCreateHyperboloid2S(_R("Hyperboloid2S")), _R("Create/New/QuadricSurface"));
+  m_Logic->Plug(new mafOpCreateCylinder(_R("Cylinder")), _R("Create/New/QuadricSurface"));
+  m_Logic->Plug(new mafOpCreateQuadricSurfaceFitting(_R("Quadric Surface Fitting")), _R("Create/Derive"));
+  m_Logic->Plug(new mafOpAddLandmark(_R("Add Landmark \tCtrl+A")),_R("Create/New"));
   m_Logic->Plug(new mafOpCreateMeter(_R("Meter")),_R("Create/Derive"));
+  m_Logic->Plug(new mafOpCreateMeter2(_R("Meter2")), _R("Create/Derive"));
+  m_Logic->Plug(new mafOpCreateCenterLine(_R("Centerline")), _R("Create/Derive"));
+  m_Logic->Plug(new mafOpCreateGravityLine(_R("GravityLine")), _R("Create/New/Osteometric Tools"));
   m_Logic->Plug(new lhpOpFindCentroid(_R("Geometry centroid")),_R("Create/Derive"));
 
+//  m_Logic->Plug(new mafOpCreateMuscleWrapperAQ(_R("Muscle Wrapper_AQ")), _R("Create/Derive"));
+  m_Logic->Plug(new mafOpCreateMuscleWrapping2(_R("Muscle Wrapper_2")), _R("Create/Derive"));
   m_Logic->Plug(new mafOpReparentTo(_R("Reparent to...  \tCtrl+R")),_R("Modify/Fuse"));
   m_Logic->Plug(new mafOpReparentTo(_R("Local reparent to..."), false),_R("Modify/Fuse"));
   m_Logic->Plug(new lhpOpMove(),_R("Modify"));
@@ -667,6 +702,8 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   m_Logic->Plug(new lhpOpCreateLMCLines(_R("Cloud lines")),_R("Create/Derive"));
   m_Logic->Plug(new lhpOpJoinSurf(_R("JoinSurface")),_R("Create/Derive"));
   m_Logic->Plug(new lhpOpMergeClouds(_R("Merge clouds")),_R("Create/Derive"));
+  m_Logic->Plug(new mafOpCreatePlane(_R("Plane")), _R("Create/New/Osteometric Tools"));
+  //m_Logic->Plug(new mafOpCreateOsteometricBoard(_R("OsteometricBoard")), _R("Create/New/Osteometric Tools"));
   if(fullVersion)
   {
     m_Logic->Plug(new mafOpCreateVolume(_R("Constant Volume")),_R("Create/New"));
@@ -675,7 +712,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
     m_Logic->Plug(new lhpOpCreateSurfaceScalar(_R("Surface Scalar")),_R("Create/Derive"));
 #endif
     m_Logic->Plug(new lhpOpLnSurf(_R("Lineset and surface")),_R("Create/Derive"));
-    m_Logic->Plug(new mafOpCreateRefSys(_R("Refsys")),_R("Create/New"));
+    //m_Logic->Plug(new mafOpCreateRefSys(_R("Refsys")),_R("Create/New"));
     m_Logic->Plug(new mafOpCreateSlicer(_R("Slicer")),_R("Create/Derive"));
     m_Logic->Plug(new medOpFreezeVME(_R("Freeze VME")),_R("Create/Derive"));
     m_Logic->Plug(new medOpRegisterClusters(_R("Register Landmark Cloud")),_R("Modify/Fuse"));
@@ -690,8 +727,9 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
     m_Logic->Plug(new medOpMeshDeformation(_R("Deform Surface")), _R("Modify"));
     m_Logic->Plug(new mafOpApplyTrajectory(_R("Apply Trajectory")), _R("Modify"));
     m_Logic->Plug(new mafOpExtractIsosurface(_R("Extract Isosurface")),_R("Create/Derive"));
-    m_Logic->Plug(new medOpSurfaceMirror(_R("Surface Mirror")),_R("Modify"));
+    m_Logic->Plug(new medOpSurfaceMirror(_R("Group/Surface Mirror")),_R("Modify"));
     m_Logic->Plug(new mafOpCrop(_R("Crop Volume")),_R("Modify"));
+	m_Logic->Plug(new mafOpCrop3DSurface(_R("Crop 3D Surface")), _R("Modify"));
     m_Logic->Plug(new medOpVolumeResample(_R("Volume Resample")),_R("Modify"));
     m_Logic->Plug(new mafOp2DMeasure(_R("2D Measure")),_R("Measure"));
     m_Logic->Plug(new mafOpVOIDensity(_R("VOI Density")),_R("Measure"));
@@ -802,10 +840,16 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   vsurface->PlugVisualPipe(_R("mafVMELandmark"), _R("medPipeTrajectories"));
 	m_Logic->Plug(vsurface);
 
+	mafViewVTK *vsurfacet = new mafViewVTK(_R("Textured Surface"));
+	vsurfacet->PlugVisualPipe(_R("mafVMELandmark"), _R("medPipeTrajectories"));
+	vsurfacet->PlugVisualPipe(_R("mafVMESurface"), _R("mafPipeSurfaceTextured"));
+	m_Logic->Plug(vsurfacet);
+
   mafViewIntGraph *vgraph = new mafViewIntGraph(_R("Biomechanical graph"));
   vgraph->PlugVisualPipe(_R("mafVMEHelAxis"),_R("lhpPipeIntGraphHAxis"));
   vgraph->PlugVisualPipe(_R("medVMEComputeWrapping"),_R("lhpPipeIntGraphPolyline"));
   vgraph->PlugVisualPipe(_R("medVMEWrappedMeter"),_R("lhpPipeIntGraphPolyline"));
+  vgraph->PlugVisualPipe(_R("mafVMEMuscleWrapping"), _R("lhpPipeIntGraphPolyline"));
   vgraph->PlugVisualPipe(_R("mafVMEMeter"),_R("lhpPipeIntGraphPolyline"));
   vgraph->PlugVisualPipe(_R("lhpVMELeverArm"),_R("lhpPipeIntGraphPolyline"));
   vgraph->PlugVisualPipe(_R("mafVMEVector"),_R("lhpPipeIntGraphPolyline"));
@@ -832,7 +876,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
     m_Logic->ShowSplashScreen(splashBitmap); 
 
   // show the application
-	m_Logic->ShowSplashScreen(splashBitmap);
+  m_Logic->ShowSplashScreen(splashBitmap);
   m_Logic->Show();
   m_Logic->GetCredentials();
 

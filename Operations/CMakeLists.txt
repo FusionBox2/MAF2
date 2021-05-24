@@ -165,11 +165,20 @@ SET(PROJECT_SRCS
 	lhpOpExporterCSVGraph.h
 	lhpOpImporterC3DFused.cpp
 	lhpOpImporterC3DFused.h
+	lhpOpImporterPressionCenter.cpp
+	lhpOpImporterPressionCenter.h
+	lhpOpImporterOBJ.cpp
+	lhpOpImporterOBJ.h
+
+	lhpOpImporterPLY.cpp
+	lhpOpImporterPLY.h
 
 	lhpOpICPRegFollow.cpp
 	lhpOpICPRegFollow.h
 	lhpOpImporterRSScan.cpp
 	lhpOpImporterRSScan.h
+	lhpOpCreateMetersScripted.cpp
+	lhpOpCreateMetersScripted.h
 	lhpOpJoinSurf.cpp
 	lhpOpJoinSurf.h
 	lhpOpLMMirror.cpp
