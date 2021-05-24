@@ -23,7 +23,8 @@
 #include "mafMathtools.hpp"
 #include "mafVMELandmarkCloud.h"
 //#include "../DataElementInfoPanel.hpp"
-
+#include <boost/numeric/odeint.hpp>
+using namespace boost::numeric::odeint;
 
 mafQuadraticSurface::mafQuadraticSurface()
 {

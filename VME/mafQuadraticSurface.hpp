@@ -15,14 +15,13 @@
 #include "mafVMELandmark.h"
 #include "Eigen/Dense"
 
-#include <boost/array.hpp>
-#include <boost/numeric/odeint.hpp>
+#include <array>
 
 using namespace std;
-using namespace boost::numeric::odeint;
+//using namespace boost::numeric::odeint;
 
-typedef boost::array< double , 6 > state_type;
-//typedef std::array< double, 6 > state_type;
+//typedef boost::array< double , 6 > state_type;
+typedef std::array< double, 6 > state_type;
 
 
 using Eigen::Matrix;
