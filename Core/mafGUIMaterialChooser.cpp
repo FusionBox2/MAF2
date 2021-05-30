@@ -530,7 +530,7 @@ void mafGUIMaterialChooser::LoadMaterials_old()
     m_List.push_back(mat);
 
 		// insert mat in the tree
-		this->m_ListCtrlMaterial->AddItem((long)mat,mat->m_MaterialName.toWx(),&wxBitmap(50,50));
+		this->m_ListCtrlMaterial->AddItem((intptr_t)mat,mat->m_MaterialName.toWx(),&wxBitmap(50,50));
 
 		//blank line
 		f_in.getline(line,128);
@@ -607,7 +607,7 @@ void mafGUIMaterialChooser::LoadLibraryFromFile()
   for (int m = 0; m < m_List.size(); m++)
   {
     mat = m_List[m];
-    this->m_ListCtrlMaterial->AddItem((long)mat,mat->m_MaterialName.toWx(),mat->MakeIcon());
+    this->m_ListCtrlMaterial->AddItem((intptr_t)mat,mat->m_MaterialName.toWx(),mat->MakeIcon());
   }
 
   mat_lib->Delete();
@@ -635,7 +635,7 @@ void mafGUIMaterialChooser::StoreLibraryToFile()
 void mafGUIMaterialChooser::RemoveMaterial()
 //----------------------------------------------------------------------------
 {
-  m_ListCtrlMaterial->DeleteItem((long)m_ChoosedMaterial);
+  m_ListCtrlMaterial->DeleteItem((intptr_t)m_ChoosedMaterial);
 
 	//remove m_ChoosedMaterial from the list
 /*  bool found = false;
@@ -684,7 +684,7 @@ void mafGUIMaterialChooser::ClearList()
 void mafGUIMaterialChooser::SelectMaterial(mmaMaterial *m)
 //----------------------------------------------------------------------------
 {
-  if(m_ListCtrlMaterial->SelectItem((long)m) || m_ChoosedMaterial == NULL)
+  if(m_ListCtrlMaterial->SelectItem((intptr_t)m) || m_ChoosedMaterial == NULL)
   {
     if(m_ChoosedMaterial == NULL)
       mafNEW(m_ChoosedMaterial);
@@ -741,8 +741,8 @@ void mafGUIMaterialChooser::AddMaterial()
   m_List.push_back(mat);
 
 	// insert mat in the tree
-	m_ListCtrlMaterial->AddItem((long)mat, mat->m_MaterialName.toWx(), mat->MakeIcon());	
-  m_ListCtrlMaterial->SelectItem((long)mat);
+	m_ListCtrlMaterial->AddItem((intptr_t)mat, mat->m_MaterialName.toWx(), mat->MakeIcon());	
+  m_ListCtrlMaterial->SelectItem((intptr_t)mat);
 	SelectMaterial(mat);
 }
 //----------------------------------------------------------------------------
@@ -887,7 +887,7 @@ void mafGUIMaterialChooser::CreateDefaultLibrary()
     m_List.push_back(mat);
 
 		// insert mat in the tree
-		m_ListCtrlMaterial->AddItem((long)mat,mat->m_MaterialName.toWx(),mat->MakeIcon());
+		m_ListCtrlMaterial->AddItem((intptr_t)mat,mat->m_MaterialName.toWx(),mat->MakeIcon());
   }
 }
 //------------------------------------------------------------------------------
