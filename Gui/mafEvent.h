@@ -55,22 +55,22 @@ public:
   mafTypeMacro(mafEvent,mafEventBase);
 
   mafEvent();                                                         
-  mafEvent(void *sender, int id,                           long arg=0);
-  mafEvent(void *sender, int id, bool             b,       long arg=0);
-  mafEvent(void *sender, int id, double           f,       long arg=0);
-  mafEvent(void *sender, int id, mafString       *s,       long arg=0);
-  mafEvent(void *sender, int id, mafString       *s, int x, int y, int width, int height,  long arg=0);
-  mafEvent(void *sender, int id, mafNode         *vme,     bool b=false, long arg=0);
+  mafEvent(void *sender, int id,                           intptr_t arg=0);
+  mafEvent(void *sender, int id, bool             b,       intptr_t arg=0);
+  mafEvent(void *sender, int id, double           f,       intptr_t arg=0);
+  mafEvent(void *sender, int id, mafString       *s,       intptr_t arg=0);
+  mafEvent(void *sender, int id, mafString       *s, int x, int y, int width, int height, intptr_t arg=0);
+  mafEvent(void *sender, int id, mafNode         *vme,     bool b=false, intptr_t arg=0);
   mafEvent(void *sender, int id, mafView         *view,    wxWindow *win=NULL);
-  mafEvent(void *sender, int id, mafOp					 *op,      long arg=0);
-  mafEvent(void *sender, int id, mafObject       *mafobj,  long arg=0);
-  mafEvent(void *sender, int id, mafObject       *mafobj,  mafString       *s, long arg=0);
-  mafEvent(void *sender, int id, WidgetDataType  &widget_data,  long arg=0);
+  mafEvent(void *sender, int id, mafOp					 *op, intptr_t arg=0);
+  mafEvent(void *sender, int id, mafObject       *mafobj, intptr_t arg=0);
+  mafEvent(void *sender, int id, mafObject       *mafobj,  mafString       *s, intptr_t arg=0);
+  mafEvent(void *sender, int id, WidgetDataType  &widget_data, intptr_t arg=0);
   mafEvent(void *sender, int id, mafMatrix    *m1,mafMatrix  *m2=NULL);
 
   virtual void DeepCopy(const mafEventBase *maf_event);
 
-  long              GetArg()     {return m_Arg;};
+  intptr_t          GetArg()     {return m_Arg;};
   bool              GetBool()    {return m_Bool;};
   double            GetDouble()   {return m_Double;};
   mafString*        GetString();
@@ -95,7 +95,7 @@ public:
 
   void GetWidgetData(WidgetDataType &widget_data);
 
-  void SetArg(long arg)         { m_Arg = arg;};
+  void SetArg(intptr_t arg)         { m_Arg = arg;};
   void SetBool(bool b)          { m_Bool = b;};
   void SetDouble(double f)      { m_Double = f;};
   void SetString(mafString *s);
@@ -108,7 +108,7 @@ public:
   void SetWidgetData(WidgetDataType &widget_data);
 
 protected:
-  long             m_Arg;
+  intptr_t         m_Arg;
   bool             m_Bool;
   double           m_Double;
   mafString       *m_MAFString;
@@ -130,9 +130,9 @@ protected:
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #ifdef MAF_USE_WX
 public:
-  mafEvent(void *sender, int id, wxWindow        *win,    long arg=0);
-  mafEvent(void *sender, int id, wxUpdateUIEvent *e,      long arg=0);
-  mafEvent(void *sender, int id, wxObject        *wxobj,  long arg=0);
+  mafEvent(void *sender, int id, wxWindow        *win,    intptr_t arg=0);
+  mafEvent(void *sender, int id, wxUpdateUIEvent *e,      intptr_t arg=0);
+  mafEvent(void *sender, int id, wxObject        *wxobj,  intptr_t arg=0);
 
   wxWindow*        GetWin()       {return m_Win;};
   wxUpdateUIEvent* GetUIEvent()   {return m_UpdateUIEvent;};
@@ -152,7 +152,7 @@ protected:
 #ifdef MAF_USE_VTK
 public:
   mafEvent(void *sender, int id, vtkProp         *prop,   mafNode *vme=NULL);
-  mafEvent(void *sender, int id, vtkObject       *vtkobj, long arg=0);
+  mafEvent(void *sender, int id, vtkObject       *vtkobj, intptr_t arg=0);
   mafEvent(void *sender, int id, vtkObject       *vtkobj, mafString *s);
 
   vtkProp*         GetProp()      {return m_VtkProp;};
@@ -177,7 +177,7 @@ public:
   
 protected:
 
-  void Init(void *sender, int id, long arg=0);
+  void Init(void *sender, int id, intptr_t arg=0);
   void Initialized();
 };
 #endif /* __mafEvent_h */
