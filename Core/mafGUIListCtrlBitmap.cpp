@@ -180,7 +180,7 @@ void mafGUIListCtrlBitmap::OnSelectionChanged(wxListEvent& event)
     return;
    
   mafString s = mafWxToString(m_List->GetItemText(event.GetIndex()));
-  long item_id = event.GetData();
+  intptr_t item_id = event.GetData();
   long icon = event.GetImage();
 
 	mafEventMacro(mafEvent(this, ITEM_SELECTED, &s, item_id ));
