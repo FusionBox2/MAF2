@@ -232,7 +232,7 @@ void mafGUIMDIFrame::OnDropFile(wxDropFilesEvent &event)
 void mafGUIMDIFrame::CreateStatusbar()
 //----------------------------------------------------------------------------
 {
-  static const int widths[]={-1,60,60,60,210,100}; // enlarged the last tab for the "free mem watch" information
+  static const int widths[]={-1,60,60,60,210,150}; // enlarged the last tab for the "free mem watch" information
 	CreateStatusBar(6); 
   m_frameStatusBar->SetStatusWidths(6,widths);
 	SetStatusText( _("welcome"),0);
