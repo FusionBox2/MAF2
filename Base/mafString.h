@@ -234,6 +234,7 @@ MAF_EXPORT mafString mafWxToString(const wxString& str);
 
 MAF_EXPORT mafString mafToString(int        d);
 MAF_EXPORT mafString mafToString(long       d);
+MAF_EXPORT mafString mafToString(long long  d);
 MAF_EXPORT mafString mafToString(float      d);
 MAF_EXPORT mafString mafToString(double     d);
 /** Put inside string a mafMatrix in row order
