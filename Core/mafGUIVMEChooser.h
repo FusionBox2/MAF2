@@ -41,7 +41,7 @@ class mafGUIVMEChooser : public mafGUIDialog
 {
 
 public:
-           mafGUIVMEChooser(mafGUICheckTree *tree, const mafString& dialog_title=_R("Vme Chooser"), long vme_accept_function = 0, long style = REPRESENTATION_AS_TREE, bool multiSelect = false);
+           mafGUIVMEChooser(mafGUICheckTree *tree, const mafString& dialog_title=_R("Vme Chooser"), intptr_t vme_accept_function = 0, long style = REPRESENTATION_AS_TREE, bool multiSelect = false);
           ~mafGUIVMEChooser();
 	std::vector<mafNode*> ShowChooserDialog();
   void  OnEvent(mafEventBase *maf_event);

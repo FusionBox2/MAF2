@@ -35,7 +35,7 @@
 #include "mafNode.h"
 
 //----------------------------------------------------------------------------
-mafGUIVMEChooser::mafGUIVMEChooser(mafGUICheckTree *tree, const mafString& dialog_title, long vme_accept_function, long style, bool multiSelect)
+mafGUIVMEChooser::mafGUIVMEChooser(mafGUICheckTree *tree, const mafString& dialog_title, intptr_t vme_accept_function, long style, bool multiSelect)
 : mafGUIDialog(dialog_title,mafCLOSEWINDOW | mafRESIZABLE | mafCLOSE | mafOK )
 //----------------------------------------------------------------------------
 {
