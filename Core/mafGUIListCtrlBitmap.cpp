@@ -83,9 +83,9 @@ bool mafGUIListCtrlBitmap::AddItem(intptr_t item_id, wxString label, wxBitmap *b
     wxBitmap foo(50,50);
 		m_Images->Add(foo);
   }
-  long tmp = m_List->InsertItem(item_id,label,0);
+  long tmp = m_List->InsertItem(m_List->GetItemCount(),label,0);
 	m_List->SetItemImage(tmp,tmp,tmp); 
-  m_List->SetItemData(tmp, item_id);
+  m_List->SetItemPtrData(tmp, item_id);
   return true;
 }
 //----------------------------------------------------------------------------
