@@ -1693,7 +1693,7 @@ void medVMEMuscleWrapper::AddWrapper(WRAPPER_ITEM* pItem)
     m_WrappersCtrl->SetItem(nCount, i, szName[i]);
   }  
   
-  m_WrappersCtrl->SetItemData(nCount, (long)pItem);
+  m_WrappersCtrl->SetItemPtrData(nCount, (wxUIntPtr)pItem);
   m_WrappersCtrl->SetItemState(nCount, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED,
     wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
   m_WrappersCtrl->EnsureVisible(nCount);
