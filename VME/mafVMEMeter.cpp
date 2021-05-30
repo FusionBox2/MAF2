@@ -1099,7 +1099,7 @@ void mafVMEMeter::OnEvent(mafEventBase *maf_event)
         mafID button_id = e->GetId();
         mafString title = _L("Choose meter vme link");
         e->SetId(VME_CHOOSE);
-        e->SetArg((long)&mafVMEMeter::VMEAccept);
+        e->SetArg((intptr_t)&mafVMEMeter::VMEAccept);
         e->SetString(&title);
         ForwardUpEvent(e);
         mafNode *n = e->GetVme();
@@ -1135,7 +1135,7 @@ void mafVMEMeter::OnEvent(mafEventBase *maf_event)
           mafID button_id = e->GetId();
           mafString title = _L("Choose meter vme link");
           e->SetId(VME_CHOOSE);
-          e->SetArg((long)&mafVMEMeter::VolumeAccept);
+          e->SetArg((intptr_t)&mafVMEMeter::VolumeAccept);
           e->SetString(&title);
           ForwardUpEvent(e);
           mafNode *n = e->GetVme();

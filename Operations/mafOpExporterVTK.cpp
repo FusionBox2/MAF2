@@ -256,7 +256,7 @@ void mafOpExporterVTK::SaveVTKData()
   // mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR, writer));
   long dummyProgressValue = 50;
   
-  mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,dummyProgressValue));
+  mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)dummyProgressValue));
 
   writer->SetFileName(m_File.GetCStr());
   writer->Write();

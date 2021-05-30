@@ -474,7 +474,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
       {
         mafString title = _R("Choose texture");
         e->SetId(VME_CHOOSE);
-        e->SetArg((long)&mafPipeSurfaceTextured::ImageAccept);
+        e->SetArg((intptr_t)&mafPipeSurfaceTextured::ImageAccept);
         e->SetString(&title);
         mafEventMacro(*e);
         mafNode *n = e->GetVme();

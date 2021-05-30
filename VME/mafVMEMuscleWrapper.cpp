@@ -1195,7 +1195,7 @@ void mafVMEMuscleWrapperAQ::OnEvent(mafEventBase *maf_event)
         mafID button_id = ev->GetId();
         mafString title = _L("Choose meter vme link");
         ev->SetId(VME_CHOOSE);
-		ev->SetArg((long)&mafVMEMuscleWrapperAQ::VMEAccept);
+		ev->SetArg((intptr_t)&mafVMEMuscleWrapperAQ::VMEAccept);
         ev->SetString(&title);
         ForwardUpEvent(ev);
         mafNode *n = ev->GetVme();
@@ -1231,7 +1231,7 @@ void mafVMEMuscleWrapperAQ::OnEvent(mafEventBase *maf_event)
           mafID button_id = ev->GetId();
           mafString title = _L("Choose meter vme link");
           ev->SetId(VME_CHOOSE);
-		  ev->SetArg((long)&mafVMEMuscleWrapperAQ::VolumeAccept);
+		  ev->SetArg((intptr_t)&mafVMEMuscleWrapperAQ::VolumeAccept);
           ev->SetString(&title);
           ForwardUpEvent(ev);
           mafNode *n = ev->GetVme();

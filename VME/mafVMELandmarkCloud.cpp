@@ -871,7 +871,7 @@ void mafVMELandmarkCloud::Close()
       landmarks.push_back(lm); 
     }
     progress = c * 100 / numberOfChildren;
-    ForwardUpEvent(&mafEvent(this,PROGRESSBAR_SET_VALUE, progress));
+    ForwardUpEvent(&mafEvent(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress));
 
   }
   
@@ -968,7 +968,7 @@ void mafVMELandmarkCloud::Open()
       }
 		}
     progress = i * 100 / numlm;
-    ForwardUpEvent(&mafEvent(this,PROGRESSBAR_SET_VALUE, progress));
+    ForwardUpEvent(&mafEvent(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress));
 
 	}
   // remove all items and tags...

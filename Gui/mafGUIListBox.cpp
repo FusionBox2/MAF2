@@ -125,7 +125,7 @@ void mafGUIListBox::OnSelect(wxCommandEvent &event)
    int widget_id = this->GetId();
    int index = event.GetInt();
    m_ItemSelected = this->m_ListBox->GetStringSelection();
-   mafEventMacro(mafEvent(this, widget_id, (long)index) );
+   mafEventMacro(mafEvent(this, widget_id, (intptr_t)index) );
 }
 //----------------------------------------------------------------------------
 void mafGUIListBox::OnSize(wxSizeEvent& event)

@@ -208,21 +208,21 @@ bool mafGUICheckTree::IsIconChecked(wxTreeItemId item)
 //----------------------------------------------------------------------------
 {
   mafNode* vme = (mafNode*) (NodeFromItem(item));
-  bool checked = GetNodeIcon((long)vme) == (ClassNameToIcon(_R(vme->GetTypeName())) + NODE_VISIBLE_ON * 2);
+  bool checked = GetNodeIcon((intptr_t)vme) == (ClassNameToIcon(_R(vme->GetTypeName())) + NODE_VISIBLE_ON * 2);
   return checked;
 }
 //----------------------------------------------------------------------------
 void mafGUICheckTree::VmeAdd(mafNode *vme)   
 //----------------------------------------------------------------------------
 {
-  AddNode((long)vme,(long)vme->GetParent(), vme->GetName().toWx(), 0);
+  AddNode((intptr_t)vme,(intptr_t)vme->GetParent(), vme->GetName().toWx(), 0);
 	VmeUpdateIcon(vme);
 }
 //----------------------------------------------------------------------------
 void mafGUICheckTree::VmeRemove(mafNode *vme)   
 //----------------------------------------------------------------------------
 {
-  this->DeleteNode((long)vme);
+  this->DeleteNode((intptr_t)vme);
   if (m_SelectedNode == vme)
   {
     m_SelectedNode = NULL;
@@ -230,29 +230,29 @@ void mafGUICheckTree::VmeRemove(mafNode *vme)
 }
 void mafGUICheckTree::VmeExpand(mafNode *vme)
 {
-  this->ExpandNode((long)vme);
+  this->ExpandNode((intptr_t)vme);
 }
 void mafGUICheckTree::VmeCollapse(mafNode *vme)
 {
-  this->CollapseNode((long)vme);
+  this->CollapseNode((intptr_t)vme);
 }
 void mafGUICheckTree::VmeExpandSubTree(mafNode *vme)
 {
-  this->ExpandNodeSubTree((long)vme);
+  this->ExpandNodeSubTree((intptr_t)vme);
 }
 void mafGUICheckTree::VmeCollapseSubTree(mafNode *vme)
 {
-  this->CollapseNodeSubTree((long)vme);
+  this->CollapseNodeSubTree((intptr_t)vme);
 }
 void mafGUICheckTree::VmeExpandVisible(mafNode *vme)
 {
-  this->ExpandNodeVisible((long)vme);
+  this->ExpandNodeVisible((intptr_t)vme);
 }
 //----------------------------------------------------------------------------
 void mafGUICheckTree::VmeSelected(mafNode *vme)   
 //----------------------------------------------------------------------------
 {
-  this->SelectNode((long)vme);
+  this->SelectNode((intptr_t)vme);
   m_SelectedNode = vme;
   VmeUpdateIcon(vme);
 }
@@ -260,9 +260,9 @@ void mafGUICheckTree::VmeSelected(mafNode *vme)
 void mafGUICheckTree::VmeModified(mafNode *vme)
 //----------------------------------------------------------------------------
 {
-  this->SetNodeLabel((long)vme, vme->GetName().toWx());
+  this->SetNodeLabel((intptr_t)vme, vme->GetName().toWx());
 	VmeUpdateIcon(vme);
-  SortChildren((long)vme);
+  SortChildren((intptr_t)vme);
 }
 //----------------------------------------------------------------------------
 void mafGUICheckTree::VmeShow(mafNode *vme, bool show)   
@@ -290,7 +290,7 @@ void mafGUICheckTree::VmeUpdateIcon(mafNode *vme)
 
     dataStatus = ((mafVME *)node)->IsDataAvailable() ? 0 : 1;
     icon_index = ClassNameToIcon(_R(node->GetTypeName())) + (GetVmeStatus(node)*2) + dataStatus;
-    SetNodeIcon( (long)node, icon_index );
+    SetNodeIcon( (intptr_t)node, icon_index );
 
     if (node->GetNumberOfLinks() != 0)
     {
@@ -305,7 +305,7 @@ void mafGUICheckTree::VmeUpdateIcon(mafNode *vme)
           {
             dataStatus = linkedVME->IsDataAvailable() ? 0 : 1;
             icon_index = ClassNameToIcon(_R(linkedVME->GetTypeName())) + (GetVmeStatus(linkedVME)*2) + dataStatus;
-            SetNodeIcon( (long)linkedVME, icon_index );
+            SetNodeIcon( (intptr_t)linkedVME, icon_index );
           }
         }
       }

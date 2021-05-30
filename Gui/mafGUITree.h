@@ -104,34 +104,34 @@ public:
 	/** Create a new tree item with the specified parent,label and icon. 
       Set parent = 0 to create the root. 0 is not a valid node_id.
   */
-	bool AddNode(long node_id, long parent_id , wxString label, int icon = 0);
+	bool AddNode(intptr_t node_id, intptr_t parent_id , wxString label, int icon = 0);
   
 	/** Delete the specified node, and its subtree. */
-	bool DeleteNode(long node_id);
+	bool DeleteNode(intptr_t node_id);
   
 	/** Set the label for the node. */
-	bool SetNodeLabel(long node_id, wxString label);
+	bool SetNodeLabel(intptr_t node_id, wxString label);
 
   /** Get the label for the node. Add by Mucci 19/09/2007*/
-  wxString GetNodeLabel(long node_id);
+  wxString GetNodeLabel(intptr_t node_id);
 
   /** Check if the node has children. Add by Mucci 19/09/2007*/
-  bool NodeHasChildren(long node_id);
+  bool NodeHasChildren(intptr_t node_id);
 
   /** Return the parent id of the node. Add by Mucci 19/09/2007*/
-  long GetNodeParent(long node_id);
+  long GetNodeParent(intptr_t node_id);
   
 	/** Move a node, and its subtree. */
-	bool SetNodeParent(long node_id, long parent_id );
+	bool SetNodeParent(intptr_t node_id, intptr_t parent_id );
   
 	/** Set the icon for the node. */
-  bool SetNodeIcon(long node_id, int icon);
+  bool SetNodeIcon(intptr_t node_id, int icon);
   
   /** Return the icon index for the node 'node_id'. */
-  int  GetNodeIcon(long node_id);
+  int  GetNodeIcon(intptr_t node_id);
 
   /** Select the node. */
-  bool SelectNode(long node_id);
+  bool SelectNode(intptr_t node_id);
 
   /** Set the images to be used for the nodes. 
       Must be set before adding any node. 
@@ -145,11 +145,11 @@ public:
 
   /** Sort the children of node_id. (not the subtree) 
       give node_id = 0 to specify the root. */
-  void SortChildren(long node_id =0);
+  void SortChildren(intptr_t node_id =0);
 
   /** Sort the subtree of node_id.
   give node_id = 0 to specify the root. */
-  void SortSubTree(long node_id =0);
+  void SortSubTree(intptr_t node_id =0);
 
   /** if autosort is on - the tree is always kept sorted */
   void SetAutoSort(bool enable);
@@ -158,24 +158,24 @@ public:
   bool GetAutoSort() {return m_Autosort;};
 
   /** collapse the children of node_id */
-  void CollapseNode(long node_id);
+  void CollapseNode(intptr_t node_id);
 
   /** expand the children of node_id */
-  void ExpandNode(long node_id);
+  void ExpandNode(intptr_t node_id);
 
   /** collapse the children of node_id */
-  void CollapseNodeSubTree(long node_id);
+  void CollapseNodeSubTree(intptr_t node_id);
 
   /** expand the children of node_id */
-  void ExpandNodeSubTree(long node_id);
+  void ExpandNodeSubTree(intptr_t node_id);
 
-  void ExpandNodeVisible(long node_id);
+  void ExpandNodeVisible(intptr_t node_id);
 
   /** Return the node item from node id. */
-  wxTreeItemId ItemFromNode(long node_id);
+  wxTreeItemId ItemFromNode(intptr_t node_id);
 
   /** Return node id from node item. */
-  long NodeFromItem(wxTreeItemId& item);
+  intptr_t NodeFromItem(wxTreeItemId& item);
   
   
   void SetTreeStyle(long style) {m_NodeTree->SetWindowStyle(style);};
@@ -189,13 +189,13 @@ protected:
   void OnSize(wxSizeEvent& event);
 
 	/** Return true if node exist. */
-  bool NodeExist(long node_id);
+  bool NodeExist(intptr_t node_id);
   
 	/** Delete recursively a node and its subtree. */
-	void DeleteNode2(long node_id);
+	void DeleteNode2(intptr_t node_id);
   
 	/** Move a node, and its subtree. */
-  void SetNodeParent2(long node_id, long parent_id );
+  void SetNodeParent2(intptr_t node_id, intptr_t parent_id );
     
   /** Check that id is a valid index in the imagelist - return the (eventually clamped) value */
   int CheckIconId(int icon);
@@ -204,7 +204,7 @@ protected:
 
   bool               m_PreventNotify;
   bool               m_Autosort;
-  long               m_NodeRoot;
+  intptr_t           m_NodeRoot;
   wxImageList       *m_NodeImages;       
   wxHashTable       *m_NodeTable;        
 
@@ -214,10 +214,10 @@ protected:
 	//----------------------------------------------------------------------------
 	class mafGUITreeItemData: public wxTreeItemData{
 	public:
-			mafGUITreeItemData(long node_id) {m_NodeId = node_id; };
-			long GetNode()                {return m_NodeId;};
+			mafGUITreeItemData(intptr_t node_id) {m_NodeId = node_id; };
+			intptr_t GetNode()                {return m_NodeId;};
 	protected:
-			long m_NodeId;
+			intptr_t m_NodeId;
 	};
   class mafTreeCtrlSortable : public wxTreeCtrl
   {

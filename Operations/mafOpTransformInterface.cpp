@@ -277,7 +277,7 @@ void mafOpTransformInterface::OpDo()
         }
 
         progress = (arrayId + 1) * 100 / 3;
-        mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,progress));
+        mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
         //mafProgressBarSetValueMacro(progress);
       }
       

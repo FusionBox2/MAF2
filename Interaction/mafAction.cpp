@@ -156,7 +156,7 @@ int mafAction::InternalRestore(mafStorageElement *node)
       if (subnode->GetAttributeAsInteger(_R("ID"),id) && subnode->GetAttribute(_R("Name"),name))
       {
         // forward an event to device manager to perform binding...
-        mafEventMacro(mafEvent(this,DEVICE_BIND,(long)id));
+        mafEventMacro(mafEvent(this,DEVICE_BIND,(intptr_t)id));
       }
       else
       {

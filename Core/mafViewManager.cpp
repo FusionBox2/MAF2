@@ -104,7 +104,7 @@ void mafViewManager::OnEvent(mafEventBase *maf_event)
         ViewSelected(view/*, rwi*/);
 
         if(notifylogic)
-          mafEventMacro(mafEvent(this,VIEW_SELECT,(long)e->GetSender())); // forward the view selection event to logic
+          mafEventMacro(mafEvent(this,VIEW_SELECT,(intptr_t)e->GetSender())); // forward the view selection event to logic
 
         if(m_CollaborateStatus && m_RemoteListener && !m_FromRemote)
         {
