@@ -60,25 +60,25 @@ public:
   void Reset();
 
   /** Add one item to the list. */
-  bool AddItem(long item_id, wxString label, wxBitmap *bmp = NULL);
+  bool AddItem(intptr_t item_id, wxString label, wxBitmap *bmp = NULL);
 
   /** Remove the item from the list. */
-  bool DeleteItem(long item_id);
+  bool DeleteItem(intptr_t item_id);
 
   /** Set the item's label. */
-  bool SetItemLabel(long item_id, wxString label);
+  bool SetItemLabel(intptr_t item_id, wxString label);
 
   /** Get the item's label. */
-  wxString GetItemLabel  (long item_id);
+  wxString GetItemLabel  (intptr_t item_id);
 
   /** Set the item's icon, return true on success. */
-  bool SetItemIcon(long item_id, wxBitmap *bmp);
+  bool SetItemIcon(intptr_t item_id, wxBitmap *bmp);
 
   /** Get the item's icon. */
-  ITEM_ICONS GetItemIcon(long item_id);
+  ITEM_ICONS GetItemIcon(intptr_t item_id);
 
   /** Select the item 'id'. */
-  bool SelectItem(long item_id);
+  bool SelectItem(intptr_t item_id);
 
   /** Set the label for the list's column. */
   void SetColumnLabel(int col, wxString label);

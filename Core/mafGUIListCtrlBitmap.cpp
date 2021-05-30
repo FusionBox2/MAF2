@@ -69,7 +69,7 @@ void mafGUIListCtrlBitmap::Reset()
   m_List->SetColumnWidth(0, 1000);
 }
 //----------------------------------------------------------------------------
-bool mafGUIListCtrlBitmap::AddItem(long item_id, wxString label, wxBitmap *bmp)
+bool mafGUIListCtrlBitmap::AddItem(intptr_t item_id, wxString label, wxBitmap *bmp)
 //----------------------------------------------------------------------------
 {
   long id =  m_List->FindItem(-1, item_id);
@@ -89,7 +89,7 @@ bool mafGUIListCtrlBitmap::AddItem(long item_id, wxString label, wxBitmap *bmp)
   return true;
 }
 //----------------------------------------------------------------------------
-bool mafGUIListCtrlBitmap::DeleteItem(long item_id)
+bool mafGUIListCtrlBitmap::DeleteItem(intptr_t item_id)
 //----------------------------------------------------------------------------
 {
   long id =  m_List->FindItem(-1, item_id);
@@ -107,7 +107,7 @@ bool mafGUIListCtrlBitmap::DeleteItem(long item_id)
   return true;
 }
 //----------------------------------------------------------------------------
-bool mafGUIListCtrlBitmap::SetItemLabel(long item_id, wxString label)
+bool mafGUIListCtrlBitmap::SetItemLabel(intptr_t item_id, wxString label)
 //----------------------------------------------------------------------------
 {
   long id =  m_List->FindItem(-1, item_id);
@@ -117,7 +117,7 @@ bool mafGUIListCtrlBitmap::SetItemLabel(long item_id, wxString label)
   return true;
 }
 //----------------------------------------------------------------------------
-bool mafGUIListCtrlBitmap::SetItemIcon(long item_id, wxBitmap *bmp)
+bool mafGUIListCtrlBitmap::SetItemIcon(intptr_t item_id, wxBitmap *bmp)
 //----------------------------------------------------------------------------
 {
   long id = m_List->FindItem(-1, item_id);
@@ -130,7 +130,7 @@ bool mafGUIListCtrlBitmap::SetItemIcon(long item_id, wxBitmap *bmp)
   return true;
 }
 //----------------------------------------------------------------------------
-wxString mafGUIListCtrlBitmap::GetItemLabel(long item_id)
+wxString mafGUIListCtrlBitmap::GetItemLabel(intptr_t item_id)
 //----------------------------------------------------------------------------
 {
   long id =  m_List->FindItem(-1, item_id);
@@ -139,7 +139,7 @@ wxString mafGUIListCtrlBitmap::GetItemLabel(long item_id)
   return m_List->GetItemText(id);
 }
 //----------------------------------------------------------------------------
-ITEM_ICONS mafGUIListCtrlBitmap::GetItemIcon(long item_id)
+ITEM_ICONS mafGUIListCtrlBitmap::GetItemIcon(intptr_t item_id)
 //----------------------------------------------------------------------------
 {
   long id =  m_List->FindItem(-1, item_id);
@@ -158,7 +158,7 @@ ITEM_ICONS mafGUIListCtrlBitmap::GetItemIcon(long item_id)
   return (ITEM_ICONS) icon;
 }
 //----------------------------------------------------------------------------
-bool mafGUIListCtrlBitmap::SelectItem(long item_id)
+bool mafGUIListCtrlBitmap::SelectItem(intptr_t item_id)
 //----------------------------------------------------------------------------
 {
   long id =  m_List->FindItem(-1, item_id);
