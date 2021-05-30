@@ -240,7 +240,7 @@ protected:
   The VME that can be selected are defined by accept_callback.
   If no VME is selected, the routine returns false, otherwise it returns
   reference to the VME, its name and updates GUI */  
-  bool SelectVme(mafString title, long accept_callback,
+  bool SelectVme(mafString title, intptr_t accept_callback,
     mafVME*& pOutVME, mafString& szOutVmeName);
 
   /** Updates the visibility (etc) of GUI controls */

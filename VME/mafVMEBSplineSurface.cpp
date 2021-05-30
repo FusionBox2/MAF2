@@ -636,7 +636,7 @@ void mafVMEBSplineSurface::OnEvent(mafEventBase *maf_event)
           mafID button_id = e->GetId();
           mafString title = _L("Choose vme");
           e->SetId(VME_CHOOSE);
-          e->SetArg((long)&mafVMEBSplineSurface::PolylineAccept);
+          e->SetArg((intptr_t)&mafVMEBSplineSurface::PolylineAccept);
           e->SetString(&title);
           ForwardUpEvent(e);
           vme = mafVMEGroup::SafeDownCast(e->GetVme());

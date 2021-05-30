@@ -557,7 +557,7 @@ void lhpVMESurfaceScalarVarying::OnEvent(mafEventBase *maf_event)
       {
         mafString title = _L("Choose surface");
         e->SetId(VME_CHOOSE);
-        e->SetArg((long)&lhpVMESurfaceScalarVarying::OutputSurfaceAccept);
+        e->SetArg((intptr_t)&lhpVMESurfaceScalarVarying::OutputSurfaceAccept);
         e->SetString(&title);
         ForwardUpEvent(e);
         mafVME *n = mafVME::SafeDownCast(e->GetVme());
@@ -575,7 +575,7 @@ void lhpVMESurfaceScalarVarying::OnEvent(mafEventBase *maf_event)
         {
           mafString title = _L("Choose analog");
           e->SetId(VME_CHOOSE);
-          e->SetArg((long)&lhpVMESurfaceScalarVarying::VmeScalarAccept);
+          e->SetArg((intptr_t)&lhpVMESurfaceScalarVarying::VmeScalarAccept);
           e->SetString(&title);
           ForwardUpEvent(e);
           mafVME *n = mafVME::SafeDownCast(e->GetVme());

@@ -131,7 +131,7 @@ void lhpOpRegSurfWithCloud::OnEvent(mafEventBase *maf_event)
       case ID_CHOOSE:
       {
         mafString s(_L("Choose cloud"));
-        mafEvent e(this,VME_CHOOSE, &s, (long)&lhpOpRegSurfWithCloud::ClosedCloudAccept);
+        mafEvent e(this,VME_CHOOSE, &s, (intptr_t)&lhpOpRegSurfWithCloud::ClosedCloudAccept);
         mafEventMacro(e);
         mafNode *vme = e.GetVme();
         OnChooseVme(vme);

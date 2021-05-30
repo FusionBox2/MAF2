@@ -849,7 +849,7 @@ void lhpOpMultiscaleExplore::OnEvent(mafEventBase *maf_event)
         // raise event to call up select vme dialog
         // The VME_CHOOSE event is handled by mafLogicWithManagers
         mafEvent e(this,VME_CHOOSE);  // create choose event 
-        e.SetArg((long)acceptFunc) ;  // pass the accept function to the event.
+        e.SetArg((intptr_t)acceptFunc) ;  // pass the accept function to the event.
         mafEventMacro(e);
         mafVME* vme = mafVME::SafeDownCast(e.GetVme());
 

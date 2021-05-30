@@ -565,7 +565,7 @@ void mafVMEBSplineLine::OnEvent(mafEventBase *maf_event)
             mafID button_id = e->GetId();
             mafString title = _L("Choose vme");
             e->SetId(VME_CHOOSE);
-            e->SetArg((long)&mafVMEBSplineLine::PolylineAccept);
+            e->SetArg((intptr_t)&mafVMEBSplineLine::PolylineAccept);
             e->SetString(&title);
             ForwardUpEvent(e);
             vme = mafVMELandmarkCloud::SafeDownCast(e->GetVme());

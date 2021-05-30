@@ -374,7 +374,7 @@ void lhpVMELMCLines::OnEvent(mafEventBase *maf_event)
             mafID button_id = e->GetId();
             mafString title = _L("Choose vme");
             e->SetId(VME_CHOOSE);
-            e->SetArg((long)&lhpVMELMCLines::PolylineAccept);
+            e->SetArg((intptr_t)&lhpVMELMCLines::PolylineAccept);
             e->SetString(&title);
             ForwardUpEvent(e);
             vme = mafVMELandmarkCloud::SafeDownCast(e->GetVme());

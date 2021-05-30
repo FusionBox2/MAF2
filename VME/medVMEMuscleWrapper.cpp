@@ -1529,7 +1529,7 @@ void medVMEMuscleWrapper::OnEvent(mafEventBase *maf_event)
     case ID_RESTPOSE_MUSCLE_LINK:
       {
         if (bNeedUpdate = SelectVme(_L("Choose muscle vme link (in the rest pose)"),
-          (long)&medVMEMuscleWrapper::VMEAcceptMuscle, m_MuscleVme, m_MuscleVmeName))
+          (intptr_t)&medVMEMuscleWrapper::VMEAcceptMuscle, m_MuscleVme, m_MuscleVmeName))
         {
           //new muscle is here => we need to pass its matrix to our output
           this->SetMatrix(*m_MuscleVme->GetOutput()->GetMatrix());
@@ -1539,24 +1539,24 @@ void medVMEMuscleWrapper::OnEvent(mafEventBase *maf_event)
 
     case ID_SELECT_RP_REFSYS_LINK:
       SelectVme(_L("Choose the reference system for the rest pose wrapper"),
-        (long)&medVMEMuscleWrapper::VMEAcceptRefSys, m_RefSysVme[0], m_RefSysVmeName[0]);
+        (intptr_t)&medVMEMuscleWrapper::VMEAcceptRefSys, m_RefSysVme[0], m_RefSysVmeName[0]);
       break;
 
     case ID_SELECT_CP_REFSYS_LINK:
       SelectVme(_L("Choose the reference system for the rest pose wrapper"),
-        (long)&medVMEMuscleWrapper::VMEAcceptRefSys, m_RefSysVme[1], m_RefSysVmeName[1]);
+        (intptr_t)&medVMEMuscleWrapper::VMEAcceptRefSys, m_RefSysVme[1], m_RefSysVmeName[1]);
       break;
 
     case ID_SELECT_RP:
       if (SelectVme(_L("Choose wrapper vme link (in the rest pose)"),
-        (long)&medVMEMuscleWrapper::VMEAcceptWrapper, m_WrappersVme[0], m_WrappersVmeName[0])
+        (intptr_t)&medVMEMuscleWrapper::VMEAcceptWrapper, m_WrappersVme[0], m_WrappersVmeName[0])
         )        
         m_BttnAddWrapper->Enable(m_WrappersVme[1] != NULL);
       break;
 
     case ID_SELECT_CP:
       if (SelectVme(_L("Choose wrapper vme link (in the current pose)"),
-        (long)&medVMEMuscleWrapper::VMEAcceptWrapper, m_WrappersVme[1], m_WrappersVmeName[1])
+        (intptr_t)&medVMEMuscleWrapper::VMEAcceptWrapper, m_WrappersVme[1], m_WrappersVmeName[1])
         )
           m_BttnAddWrapper->Enable(m_InputMode == 0 || m_WrappersVme[0] != NULL);      
       break;    
@@ -1594,14 +1594,14 @@ void medVMEMuscleWrapper::OnEvent(mafEventBase *maf_event)
 
     case ID_FIBERS_ORIGIN_LINK:
       bNeedUpdate = SelectVme(_L("Choose a landmark cloud (or a landmark) that represent the origin area of muscle."),
-        (long)&medVMEMuscleWrapper::VMEAcceptOIAreas, m_OIVME[0], m_OIVMEName[0]);
+        (intptr_t)&medVMEMuscleWrapper::VMEAcceptOIAreas, m_OIVME[0], m_OIVMEName[0]);
 
       bNeedUpdate &= m_VisMode != 0;
       break;
 
     case ID_FIBERS_INSERTION_LINK:
       bNeedUpdate = SelectVme(_L("Choose a landmark cloud (or a landmark) that represent the insertion area of muscle."),
-        (long)&medVMEMuscleWrapper::VMEAcceptOIAreas, m_OIVME[1], m_OIVMEName[1]);
+        (intptr_t)&medVMEMuscleWrapper::VMEAcceptOIAreas, m_OIVME[1], m_OIVMEName[1]);
 
       bNeedUpdate &= m_VisMode != 0;
       break;
@@ -1762,7 +1762,7 @@ void medVMEMuscleWrapper::UpdateControls()
 //If no VME is selected, the routine returns false, otherwise it returns
 //reference to the VME, its name and updates GUI
 bool medVMEMuscleWrapper::SelectVme(mafString title, 
-    long accept_callback, mafVME*& pOutVME, mafString& szOutVmeName)
+    intptr_t accept_callback, mafVME*& pOutVME, mafString& szOutVmeName)
 //------------------------------------------------------------------------
 {
   mafEvent ev(this, VME_CHOOSE, accept_callback);

@@ -1326,7 +1326,7 @@ void lhpOpSolidify::OnEvent(mafEventBase *maf_event)
       case ID_CHOOSE:
         {
           mafString s(_L("Choose solid landmark"));
-          mafEvent e(this,VME_CHOOSE, &s, (long)&lhpOpSolidify::RigidBodyAccept);
+          mafEvent e(this,VME_CHOOSE, &s, (intptr_t)&lhpOpSolidify::RigidBodyAccept);
           mafEventMacro(e);
           if(e.GetVme() == NULL)
           {

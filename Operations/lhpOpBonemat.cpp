@@ -1106,7 +1106,7 @@ int lhpOpBonemat::HUIntegration()
     arrayMaterial->InsertNextTuple1(0);
 
     progress = (elementNumber + 1) * 100 / numElements;
-    mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,progress));
+    mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
 
   }
   
@@ -1678,7 +1678,7 @@ int lhpOpBonemat::YoungModuleIntegration()
     arrayMaterial->InsertNextTuple1(0);
 
     progress = (id + 1) * 100 / numElements;
-    mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,progress));
+    mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
   }
 
   mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
@@ -1824,7 +1824,7 @@ int lhpOpBonemat::YoungModuleIntegration()
     eModuleSource[id].rho = 0;
 
     progress = (id + 1) * 100 / numElements;
-    mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,progress));
+    mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
     float valueE = arrayE->GetValue(id);
     float valueRo = arrayRo->GetValue(id);
     arrayE->SetValue(id, eModuleSource[id].E);
@@ -2247,7 +2247,7 @@ mafNode *lhpOpBonemat::VolumeSelection()
   mafEvent *e; 
   e = new mafEvent();
   e->SetId(VME_CHOOSE);
-  e->SetArg((long)&lhpOpBonemat::VolumeAccept);
+  e->SetArg((intptr_t)&lhpOpBonemat::VolumeAccept);
   e->SetString(&title);
 
   mafEventMacro(*e);

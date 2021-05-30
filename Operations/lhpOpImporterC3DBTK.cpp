@@ -611,7 +611,7 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
     }
 
     progress = (currentFrame + 1) * 100 / intData.m_NumFrames;
-    mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,progress));
+    mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
   }
 
   //if specCloud exists add it to all clouds
@@ -678,7 +678,7 @@ void lhpOpImporterC3DBTK::ImportAnalog(lhpOpImporterC3DBTK::_InternalC3DData &in
     }
 
     progress = (currentSample +1 ) * 100 / (intData.m_NumSamples);
-    mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,progress));
+    mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
   }
 
   mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
@@ -908,7 +908,7 @@ void lhpOpImporterC3DBTK::ImportPlatform(lhpOpImporterC3DBTK::_InternalC3DData &
       intData.m_MomentList[currentPlatform]->GetOutput()->GetVTKData()->Update();
 
       progress = (currentSample + 1 + (currentPlatform * intData.m_NumSamples )) * 100 / (intData.m_NumSamples * intData.m_NumPlatforms);
-      mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,progress));
+      mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
     }
   }
   mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));

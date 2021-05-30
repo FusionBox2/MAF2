@@ -609,9 +609,9 @@ void lhpVMELeverArm::OnEvent(mafEventBase *maf_event)
         mafString title = _L("Choose lever arm vme link");
         e->SetId(VME_CHOOSE);
         if (button_id == ID_AXIS_LINK)
-          e->SetArg((long)&lhpVMELeverArm::AxisAccept);
+          e->SetArg((intptr_t)&lhpVMELeverArm::AxisAccept);
         else
-          e->SetArg((long)&lhpVMELeverArm::LineAccept);
+          e->SetArg((intptr_t)&lhpVMELeverArm::LineAccept);
         e->SetString(&title);
         ForwardUpEvent(e);
         mafNode *n = e->GetVme();
