@@ -136,7 +136,6 @@ protected:
   mafGUIMaterialButton *m_MaterialButton;
 
   void UpdateProperty(bool fromTag = false);
-  void exportOBJs();
   /** Generate texture coordinate for polydata according to the mapping mode*/
   void GenerateTextureMapCoordinate();
 

@@ -788,66 +788,6 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
   }
 }
 
-void mafPipeSurfaceTextured::exportOBJs()
-{
-	
-	vtkPolyData *datachild;
-	mafVMEOutputSurface *surface_outputchild;
-	vtkPolyDataMapper* mapperchild;
-	vtkActor* actorchild;
-	vtkRenderer* rendererchild;
-	vtkRenderWindow* renderWindowchild;
-	mafString mtlName;
-	vtkMAFSmartPointer<vtkOBJExporter> writerchild;
-	mafString objName;
-	int i = 0;
-	//for (int i = 0; i < m_OBJs.size(); i++)
-	{
-		surface_outputchild = mafVMEOutputSurface::SafeDownCast(m_OBJs[i]);
-		//assert(surface_outputchild);
-		surface_outputchild->Update();
-		datachild = vtkPolyData::SafeDownCast(surface_outputchild->GetVTKData());
-		//assert(data);
-		datachild->Update();
-		mapperchild->SetInput(datachild);
-		actorchild->SetMapper(mapperchild);
-
-		rendererchild = vtkRenderer::New();
-		rendererchild->AddActor(actorchild);
-		renderWindowchild = vtkRenderWindow::New();
-		renderWindowchild->AddRenderer(rendererchild);
-
-		/*mtlName = pathName;
-		mtlName.Append("\\");
-		mtlName.Append(m_OBJs[i]->GetName());
-		mtlName.Append(".obj.mtl");*/
-
-
-		//objName = pathName;
-		//objName.Append("\\");
-		objName.Append(m_OBJs[i]->GetName());
-		wxBusyInfo wait((_R("writing child file...") + objName).toWx());
-		writerchild->SetRenderWindow(renderWindowchild);
-		writerchild->SetFilePrefix(objName.GetCStr());
-		writerchild->Write();
-		//open MTLfile and add the texture
-		/*if (actorchild->GetTexture() != NULL)
-		{
-
-			vtkMAFSmartPointer<vtkJPEGWriter> exporter;
-			exporter->SetInput(m_Actor->GetTexture()->GetInput());
-			mafString imageName = m_OBJs[i]->GetName();
-			
-
-			exporter->SetFileName(imageName.Append(".jpg"));
-			exporter->Write();
-			std::ofstream mtlfile;
-
-			mtlfile.open(mtlName, std::ios_base::app);
-			mtlfile << "map_Kd " + imageName;
-		}*/
-	}
-}
 //----------------------------------------------------------------------------
 void mafPipeSurfaceTextured::GenerateTextureMapCoordinate()
 //----------------------------------------------------------------------------
