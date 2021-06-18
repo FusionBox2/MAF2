@@ -117,6 +117,7 @@ class VTK_vtkMAF_EXPORT vtkMAFDistanceFilter : public vtkDataSetAlgorithm {
     unsigned long int GetMTime();
 
     /** execute information*/
+    int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector* );
     void ExecuteInformation (vtkInformation *, vtkInformationVector **, vtkInformationVector *);
     /** execute data*/
     void ExecuteData(vtkDataObject *output);

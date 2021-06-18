@@ -86,17 +86,17 @@ public:
   vtkGetMacro( AutoSpacing, int );
   vtkBooleanMacro(AutoSpacing, int );
 
-  void SetOutput(vtkImageData *data) { vtkDataSetSource::SetOutput(data); }
+  void SetOutput(vtkImageData* data) { vtkDataSetAlgorithm::GetExecutive()->SetOutputData(0,data); }
 
 protected:
   vtkMAFVolumeResample();
   ~vtkMAFVolumeResample();
 
   int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-  void ExecuteData(vtkDataObject *output);
+  void ExecuteData(vtkDataObject *output, vtkInformation* outInfo);
   
-  void ExecuteData(vtkImageData *output);
-
+  void ExecuteData(vtkImageData *output, vtkInformation* outInfo);
+  //int RequestData(vtkInformation*,vtkInformationVector** , vtkInformationVector*);
   int RequestUpdateExtent(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
   void PrepareVolume();

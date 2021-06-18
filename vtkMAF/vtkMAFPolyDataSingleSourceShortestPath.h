@@ -91,7 +91,8 @@ protected:
 	
 	// Usual data generation method
 	int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-	
+	vtkPolyData* input;
+	vtkPolyData* output;
 	// Build a graph description of the mesh
 	void BuildAdjacency(vtkPolyData *pd);
 	

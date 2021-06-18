@@ -68,16 +68,16 @@ vtkMAFDistanceFilter::~vtkMAFDistanceFilter() {
 void vtkMAFDistanceFilter::SetSource(vtkDataSet *data)
 //----------------------------------------------------------------------------
 {
-  this->SetNthInput(1, (vtkDataObject*)data);
+  this->SetInputDataObject(1, (vtkDataObject*)data);
 }
 
 //----------------------------------------------------------------------------
 vtkDataSet *vtkMAFDistanceFilter::GetSource()
 //----------------------------------------------------------------------------
 {
-  if(this->GetNumberOfInputs() < 2)
+  if(this->GetNumberOfInputConnections(0) < 2)//GetNumberOfInputs()
     return NULL;
-  return (vtkDataSet *)(this->Inputs[1]);
+  return (vtkDataSet *)(this->GetInputConnection(0,1));//->Inputs[1]
 }
 //----------------------------------------------------------------------------
 unsigned long int vtkMAFDistanceFilter::GetMTime() 
@@ -96,7 +96,7 @@ unsigned long int vtkMAFDistanceFilter::GetMTime()
 }
 
 //----------------------------------------------------------------------------
-void vtkMAFDistanceFilter::RequestUpdateExtent(
+int vtkMAFDistanceFilter::RequestUpdateExtent(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
   vtkInformationVector *outputVector)
@@ -105,13 +105,16 @@ void vtkMAFDistanceFilter::RequestUpdateExtent(
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
-  vtkDataObject *source = this->GetSource();
+  /*vtkDataObject *source = this->GetSource();
   if (source)
     source->SetUpdateExtentToWholeExtent();
+  */
+  this->SetUpdateExtentToWholeExtent();
+  return 1;
   }
 
 //----------------------------------------------------------------------------
-void vtkMAFDistanceFilter::RequestInformation(
+int vtkMAFDistanceFilter::RequestInformation(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
   vtkInformationVector *outputVector)
@@ -121,8 +124,9 @@ void vtkMAFDistanceFilter::RequestInformation(
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
   // get the info objects
-  vtkInformation* outInfo = outputVector->GetInformationObject(0);
-  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  //vtkInformation* outInfo = outputVector->GetInformationObject(0);
+  //vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  return 1;
 
   }
 

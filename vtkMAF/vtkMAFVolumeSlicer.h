@@ -35,6 +35,7 @@
 #include "vtkDataSetAlgorithm.h"
 #include "vtkImageData.h"
 #include "vtkPolyData.h"
+#include "vtkExecutive.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :
@@ -80,13 +81,13 @@ public:
   vtkSetMacro( AutoSpacing, int );
   vtkGetMacro( AutoSpacing, int );
 
-  void SetOutput(vtkImageData *data) { vtkDataSetSource::SetOutput(data); }
-  void SetOutput(vtkPolyData  *data) { vtkDataSetSource::SetOutput(data); }
+  void SetOutput(vtkImageData* data) { vtkDataSetAlgorithm::GetExecutive()->SetOutputData(0, data); }
+  void SetOutput(vtkPolyData  *data) { vtkDataSetAlgorithm::GetExecutive()->SetOutputData(0, data); }
 
   /**
   specify the image to be used for texturing output polydata object*/
-  void SetTexture(vtkImageData *data) {this->SetNthInput(1, (vtkDataObject*)data);};
-  vtkImageData *GetTexture() { return vtkImageData::SafeDownCast(this->Inputs[1]);};
+  void SetTexture(vtkImageData *data) {this->SetInputDataObject(1, (vtkDataObject*)data);};
+  vtkImageData *GetTexture() { return vtkImageData::SafeDownCast(this->GetInput(1));};
 
   /** 
   Transform slicer plane according to the given transformation before slicing.*/
@@ -99,7 +100,11 @@ public:
   void SetTrilinearInterpolationOff(){TriLinearInterpolationOn = false;};
 
   /** Set tri-linear interpolation */
-  void SetTrilinearInterpolation(bool on){TriLinearInterpolationOn = on;this->ExecuteData(this->GetOutput(0));};
+  void SetTrilinearInterpolation(bool on)
+  {TriLinearInterpolationOn = on;
+  vtkInformation* outInfo= this->GetOutput(0)->GetInformation();
+  this->ExecuteData(this->GetOutput(0), outInfo);
+  };
 
 protected:
   vtkMAFVolumeSlicer();
@@ -108,11 +113,11 @@ protected:
   unsigned long int GetMTime();
 
   int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-  void ExecuteData(vtkDataObject *output);
+  void ExecuteData(vtkDataObject *output,  vtkInformation* outInfo);
   
   // different implementations for polydata and imagedata
-  void ExecuteData(vtkPolyData *output);
-  void ExecuteData(vtkImageData *output);
+  void ExecuteData(vtkPolyData *output , vtkInformation* outInfo);
+  void ExecuteData(vtkImageData *output, vtkInformation* outInfo);
 
   int RequestUpdateExtent(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 

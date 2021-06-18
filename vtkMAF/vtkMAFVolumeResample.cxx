@@ -16,7 +16,7 @@
 #include "vtkCellArray.h"
 #include "vtkFloatArray.h"
 #include "vtkPointData.h"
-
+#include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkMath.h"
 
 #include "vtkMAFVolumeResample.h"
@@ -130,7 +130,7 @@ void vtkMAFVolumeResample::SetVolumeAxisY(double axis[3]) {
 }
 
 //----------------------------------------------------------------------------
-void vtkMAFVolumeResample::RequestInformation(
+int vtkMAFVolumeResample::RequestInformation(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
   vtkInformationVector *outputVector)
@@ -139,7 +139,7 @@ void vtkMAFVolumeResample::RequestInformation(
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
-  for (int i = 0; i < this->GetNumberOfOutputs(); i++) {
+  for (int i = 0; i < this->GetTotalNumberOfInputConnections(); i++) {
     if (vtkImageData::SafeDownCast(this->GetOutput(i))) {
       vtkImageData *output = (vtkImageData*)this->GetOutput(i);
       
@@ -151,8 +151,10 @@ void vtkMAFVolumeResample::RequestInformation(
       //  dims[2] = 1;
       //  output->SetDimensions(dims);
       //  }
-      outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),output->GetExtent(,6));
-      output->SetUpdateExtentToWholeExtent();
+
+      
+      outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),output->GetExtent(),6);
+      this->SetUpdateExtentToWholeExtent();
 
       if (this->AutoSpacing) { // select spacing
         this->PrepareVolume();
@@ -207,17 +209,25 @@ void vtkMAFVolumeResample::RequestInformation(
     else {
       }
     }
+  return 1;
   }
 
 //----------------------------------------------------------------------------
-void vtkMAFVolumeResample::ExecuteData(vtkDataObject *outputData) {
+void vtkMAFVolumeResample::ExecuteData(vtkDataObject *outputData, vtkInformation* outInfo) {
   this->PrepareVolume();
 
   if (vtkImageData::SafeDownCast(outputData))
-    this->ExecuteData((vtkImageData*)outputData);
+    this->ExecuteData((vtkImageData*)outputData,outInfo);
   
   outputData->Modified();
+
   }
+
+/*int  vtkMAFVolumeResample::RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*)
+{
+
+    return 1;
+}*/
 
 //----------------------------------------------------------------------------
 void vtkMAFVolumeResample::PrepareVolume() {
@@ -290,7 +300,7 @@ void vtkMAFVolumeResample::PrepareVolume() {
 
 
 //----------------------------------------------------------------------------
-void vtkMAFVolumeResample::RequestUpdateExtent(
+int vtkMAFVolumeResample::RequestUpdateExtent(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
   vtkInformationVector *outputVector)
@@ -299,24 +309,159 @@ void vtkMAFVolumeResample::RequestUpdateExtent(
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
-  vtkDataObject *input = this->GetInput();
-  input->SetUpdateExtentToWholeExtent();
+  //vtkDataObject *input = this->GetInput();
+  this->SetUpdateExtentToWholeExtent();
+
+  return 1;
   }
 
 
 //----------------------------------------------------------------------------
-void vtkMAFVolumeResample::ExecuteData(vtkImageData *outputObject) 
+/*int vtkMAFVolumeResample::RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*)
+{
+    int extent[6];
+    outputObject->GetWholeExtent(extent);
+    outputObject->SetExtent(extent);
+    //outputObject->SetNumberOfScalarComponents(1);
+    outputObject->AllocateScalars();
+
+    const void* inputPointer = this->GetInput()->GetPointData()->GetScalars()->GetVoidPointer(0);
+    const void* outputPointer = outputObject->GetPointData()->GetScalars()->GetVoidPointer(0);
+
+    switch (this->GetInput()->GetPointData()->GetScalars()->GetDataType())
+    {
+    case VTK_CHAR: //---------------------------------------------
+        switch (outputObject->GetPointData()->GetScalars()->GetDataType())
+        {
+        case VTK_CHAR:
+            this->CreateImage((const char*)inputPointer, (char*)outputPointer, outputObject);
+            break;
+        case VTK_UNSIGNED_CHAR:
+            this->CreateImage((const char*)inputPointer, (u_char*)outputPointer, outputObject);
+            break;
+        case VTK_SHORT:
+            this->CreateImage((const char*)inputPointer, (short*)outputPointer, outputObject);
+            break;
+        case VTK_UNSIGNED_SHORT:
+            this->CreateImage((const char*)inputPointer, (u_short*)outputPointer, outputObject);
+            break;
+        case VTK_FLOAT:
+            this->CreateImage((const char*)inputPointer, (float*)outputPointer, outputObject);
+            break;
+        default:
+            vtkErrorMacro(<< "vtkMAFVolumeResample: Scalar type is not supported");
+            return 0;
+        }
+        break;
+    case VTK_UNSIGNED_CHAR: //------------------------------------
+        switch (outputObject->GetPointData()->GetScalars()->GetDataType()) {
+        case VTK_CHAR:
+            this->CreateImage((const u_char*)inputPointer, (char*)outputPointer, outputObject);
+            break;
+        case VTK_UNSIGNED_CHAR:
+            this->CreateImage((const u_char*)inputPointer, (u_char*)outputPointer, outputObject);
+            break;
+        case VTK_SHORT:
+            this->CreateImage((const u_char*)inputPointer, (short*)outputPointer, outputObject);
+            break;
+        case VTK_UNSIGNED_SHORT:
+            this->CreateImage((const u_char*)inputPointer, (u_short*)outputPointer, outputObject);
+            break;
+        case VTK_FLOAT:
+            this->CreateImage((const u_char*)inputPointer, (float*)outputPointer, outputObject);
+            break;
+        default:
+            vtkErrorMacro(<< "vtkMAFVolumeResample: Scalar type is not supported");
+            return 0;
+        }
+        break;
+    case VTK_SHORT: //--------------------------------------------
+        switch (outputObject->GetPointData()->GetScalars()->GetDataType()) {
+        case VTK_CHAR:
+            this->CreateImage((const short*)inputPointer, (char*)outputPointer, outputObject);
+            break;
+        case VTK_UNSIGNED_CHAR:
+            this->CreateImage((const short*)inputPointer, (u_char*)outputPointer, outputObject);
+            break;
+        case VTK_SHORT:
+            this->CreateImage((const short*)inputPointer, (short*)outputPointer, outputObject);
+            break;
+        case VTK_UNSIGNED_SHORT:
+            this->CreateImage((const short*)inputPointer, (u_short*)outputPointer, outputObject);
+            break;
+        case VTK_FLOAT:
+            this->CreateImage((const short*)inputPointer, (float*)outputPointer, outputObject);
+            break;
+        default:
+            vtkErrorMacro(<< "vtkMAFVolumeResample: Scalar type is not supported");
+            return 0;
+        }
+        break;
+    case VTK_UNSIGNED_SHORT: //-----------------------------------
+        switch (outputObject->GetPointData()->GetScalars()->GetDataType())
+        {
+        case VTK_CHAR:
+            this->CreateImage((const u_short*)inputPointer, (char*)outputPointer, outputObject);
+            break;
+        case VTK_UNSIGNED_CHAR:
+            this->CreateImage((const u_short*)inputPointer, (u_char*)outputPointer, outputObject);
+            break;
+        case VTK_SHORT:
+            this->CreateImage((const u_short*)inputPointer, (short*)outputPointer, outputObject);
+            break;
+        case VTK_UNSIGNED_SHORT:
+            this->CreateImage((const u_short*)inputPointer, (u_short*)outputPointer, outputObject);
+            break;
+        case VTK_FLOAT:
+            this->CreateImage((const u_short*)inputPointer, (float*)outputPointer, outputObject);
+            break;
+        default:
+            vtkErrorMacro(<< "vtkMAFVolumeResample: Scalar type is not supported");
+            return 0;
+        }
+        break;
+    case VTK_FLOAT: //--------------------------------------------
+        switch (outputObject->GetPointData()->GetScalars()->GetDataType())
+        {
+        case VTK_CHAR:
+            this->CreateImage((const float*)inputPointer, (char*)outputPointer, outputObject);
+            break;
+        case VTK_UNSIGNED_CHAR:
+            this->CreateImage((const float*)inputPointer, (u_char*)outputPointer, outputObject);
+            break;
+        case VTK_SHORT:
+            this->CreateImage((const float*)inputPointer, (short*)outputPointer, outputObject);
+            break;
+        case VTK_UNSIGNED_SHORT:
+            this->CreateImage((const float*)inputPointer, (u_short*)outputPointer, outputObject);
+            break;
+        case VTK_FLOAT:
+            this->CreateImage((const float*)inputPointer, (float*)outputPointer, outputObject);
+            break;
+        default:
+            vtkErrorMacro(<< "vtkMAFVolumeResample: Scalar type is not supported");
+            return 0;
+        }
+        break;
+    default:
+        vtkErrorMacro(<< "vtkMAFVolumeResample: Scalar type is not supported");
+        return 0;
+    }
+    return 1;
+}*/
+
+void vtkMAFVolumeResample::ExecuteData(vtkImageData *outputObject, vtkInformation* outInfo)
 {
   int extent[6];
-  outputObject->GetWholeExtent(extent);
+  this->GetUpdateExtent(extent);
   outputObject->SetExtent(extent);
   //outputObject->SetNumberOfScalarComponents(1);
-  outputObject->AllocateScalars();
-  
-  const void *inputPointer  = this->GetInput()->GetPointData()->GetScalars()->GetVoidPointer(0);
+  outputObject->AllocateScalars(outInfo);
+  vtkImageData* imageData = vtkImageData::SafeDownCast(this->GetInput());
+  const void *inputPointer  = imageData->GetPointData()->GetScalars()->GetVoidPointer(0);
   const void *outputPointer = outputObject->GetPointData()->GetScalars()->GetVoidPointer(0);
   
-  switch (this->GetInput()->GetPointData()->GetScalars()->GetDataType()) 
+  switch (imageData->GetPointData()->GetScalars()->GetDataType()) 
   {
     case VTK_CHAR: //---------------------------------------------
       switch (outputObject->GetPointData()->GetScalars()->GetDataType()) 

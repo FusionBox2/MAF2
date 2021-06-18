@@ -62,7 +62,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #ifndef __vtkMAFProjectSP_h
 #define __vtkMAFProjectSP_h
 
-#include "vtkStructuredPointsToStructuredPointsFilter.h"
+#include "vtkStructuredGridAlgorithm.h"
 #include "vtkMAFConfigure.h"
 
 #define VTK_PROJECT_FROM_X 1
@@ -84,12 +84,12 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
   Typical applications of this filter are to produce an image from a volume
   for image processing or visualization.
 */
-class VTK_vtkMAF_EXPORT vtkMAFProjectSP : public vtkStructuredPointsToStructuredPointsFilter
+class VTK_vtkMAF_EXPORT vtkMAFProjectSP : public vtkStructuredGridAlgorithm
 
 {
 public:
   /** RTTI Macro */
-  vtkTypeRevisionMacro(vtkMAFProjectSP,vtkStructuredPointsToStructuredPointsFilter);
+  vtkTypeRevisionMacro(vtkMAFProjectSP, vtkStructuredGridAlgorithm);
   /** Print object information */
   void PrintSelf(ostream& os, vtkIndent indent);
 
