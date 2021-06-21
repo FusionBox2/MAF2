@@ -60,7 +60,7 @@ vtkMAFProjectRG::vtkMAFProjectRG()
 
 //=========================================================================
 int vtkMAFProjectRG::RequestInformation(
-  vtkInformation *vtkNotUsed(request),
+  vtkInformation *request,
   vtkInformationVector **inputVector,
   vtkInformationVector *outputVector)
 {
@@ -78,19 +78,12 @@ int vtkMAFProjectRG::RequestInformation(
     return 1;
     }
 
-  vtkInformation* re;
- // vtkInformationVector** inputVector;
-  //vtkInformationVector* outputVector;
   this->vtkMAFRectilinearGridToRectilinearGridFilter::RequestInformation(
-      re, inputVector, outputVector);
+      request, inputVector, outputVector);
 
   switch (this->ProjectionMode)
  
 {
-  // get the info objects
-  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
-  vtkInformation *outInfo = outputVector->GetInformationObject(0);
-
   case VTK_PROJECT_FROM_X:
     outDims[0] = dims[1];
     outDims[1] = dims[2];
@@ -133,10 +126,10 @@ int vtkMAFProjectRG::RequestData(
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
   // get the input and output
-  vtkPolyData *input = vtkPolyData::SafeDownCast(
-    inInfo->Get(vtkDataObject::DATA_OBJECT()));
-  vtkPolyData *output = vtkPolyData::SafeDownCast(
-    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+  /*vtkPolyData* input = vtkPolyData::SafeDownCast(
+    inInfo->Get(vtkDataObject::DATA_OBJECT()));*/
+  /*vtkPolyData* output = vtkPolyData::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));*/
 
   int i, j, k, dims[3], outDims[3], dim, idx, newIdx;  
   int sliceSize, outSize, jOffset, kOffset;
