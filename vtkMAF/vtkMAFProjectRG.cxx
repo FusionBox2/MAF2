@@ -43,10 +43,11 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkPolyData.h"
 #include "vtkPointData.h"
 #include "vtkDataArray.h"
 #include "vtkStructuredPoints.h"
-
+#include "vtkStreamingDemandDrivenPipeline.h"
 vtkCxxRevisionMacro(vtkMAFProjectRG, "$Revision: 1.1 $");
 vtkStandardNewMacro(vtkMAFProjectRG);
 
@@ -58,7 +59,7 @@ vtkMAFProjectRG::vtkMAFProjectRG()
 }
 
 //=========================================================================
-void vtkMAFProjectRG::RequestInformation(
+int vtkMAFProjectRG::RequestInformation(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
   vtkInformationVector *outputVector)
@@ -74,12 +75,17 @@ void vtkMAFProjectRG::RequestInformation(
   if (this->GetInput() == NULL)
     {
     vtkErrorMacro("Missing input");
-    return;
+    return 1;
     }
+
+  vtkInformation* re;
+ // vtkInformationVector** inputVector;
+  //vtkInformationVector* outputVector;
   this->vtkMAFRectilinearGridToRectilinearGridFilter::RequestInformation(
-  vtkInformation *vtkNotUsed(request),
-  vtkInformationVector **inputVector,
-  vtkInformationVector *outputVector)
+      re, inputVector, outputVector);
+
+  switch (this->ProjectionMode)
+ 
 {
   // get the info objects
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
@@ -109,13 +115,15 @@ void vtkMAFProjectRG::RequestInformation(
   wholeExtent[5] = outDims[2] - 1;
   
   outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), wholeExtent ,6);
-  output->SetUpdateExtent( wholeExtent );   // cosi funziona - Silvano & Robez
-
+  this->SetUpdateExtent( wholeExtent );   // cosi funziona - Silvano & Robez
+  
   vtkDebugMacro(<<"Whole Extent is " << wholeExtent[1] << " " << wholeExtent[3] << " " << wholeExtent[5]);
+
+  return 0;
 }
 
 //=========================================================================
-void vtkMAFProjectRG::RequestData(
+int vtkMAFProjectRG::RequestData(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
   vtkInformationVector *outputVector)
@@ -267,7 +275,9 @@ void vtkMAFProjectRG::RequestData(
   ZCoordinates->Delete();
   
 	outPD->SetScalars(outSc);
-	outSc->Delete();
+	outSc->Delete();  
+
+    return 0;
 }
 
 

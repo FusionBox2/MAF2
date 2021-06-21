@@ -68,16 +68,23 @@ public:
   vtkGetMacro( Level, double );
   
   unsigned long GetMTime();
-
+  template<class T> int RequestData(
+      vtkInformation*,
+      vtkInformationVector**,
+      vtkInformationVector*);
 protected:
   vtkMAFImageMapToWidgetColors();
   ~vtkMAFImageMapToWidgetColors();
 
-  void ExecuteInformation (vtkInformation *, vtkInformationVector **, vtkInformationVector *);
-  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *){this->vtkImageMapToColors::ExecuteInformation (vtkInformation *, vtkInformationVector **, vtkInformationVector *);};
+ // void ExecuteInformation (vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*);
+  //{this->vtkImageMapToColors::ExecuteInformation (vtkInformation *, vtkInformationVector **, vtkInformationVector *);};
   void ThreadedExecute(vtkImageData *inData, vtkImageData *outData,
                        int extent[6], int id);
-  void ExecuteData(vtkDataObject *output);
+  //void ExecuteData(vtkDataObject *output);
+  int RequestData(vtkDataObject* ,
+      vtkInformation* outInfo);
+
   template<class T> void UpdateGradientCache(T *dataPointer);
 
   vtkMAFTransferFunction2D *TransferFunction;

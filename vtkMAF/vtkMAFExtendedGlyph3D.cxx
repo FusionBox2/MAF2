@@ -51,7 +51,7 @@ vtkMAFExtendedGlyph3D::vtkMAFExtendedGlyph3D()
   this->VectorMode = VTK_USE_VECTOR;
   this->Clamping = 0;
   this->IndexMode = VTK_INDEXING_OFF;
-  this->NumberOfRequiredInputs = 1;
+ // this->NumberOfRequiredInputs = 1;
   this->GeneratePointIds = 0;
   this->PointIdsName = NULL;
   this->SetPointIdsName("InputPointIds");
@@ -71,7 +71,7 @@ vtkMAFExtendedGlyph3D::~vtkMAFExtendedGlyph3D()
   this->SetInputNormalsSelection(NULL);
 }
 
-void vtkMAFExtendedGlyph3D::RequestData(
+int vtkMAFExtendedGlyph3D::RequestData(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
   vtkInformationVector *outputVector)
@@ -81,7 +81,7 @@ void vtkMAFExtendedGlyph3D::RequestData(
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
   // get the input and output
-  vtkPolyData *input = vtkPolyData::SafeDownCast(
+  vtkDataSet *input = vtkDataSet::SafeDownCast(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
   vtkPolyData *output = vtkPolyData::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
@@ -108,9 +108,9 @@ void vtkMAFExtendedGlyph3D::RequestData(
   vtkIdType ptIncr, cellId;
   int haveVectors, haveNormals;
   double scalex,scaley,scalez, den;
-  vtkPolyData *output = this->GetOutput();
+  ////////////vtkPolyData *output = this->GetOutput();
   vtkPointData *outputPD = output->GetPointData();
-  vtkDataSet *input = this->GetInput();
+ ///////////// vtkDataSet *input = this->GetInput();
   int numberOfSources = this->GetNumberOfSources();
   vtkPolyData *defaultSource = NULL;
   vtkIdTypeArray *pointIds=0;
@@ -123,7 +123,7 @@ void vtkMAFExtendedGlyph3D::RequestData(
   if (!input)
     {
     vtkErrorMacro(<<"No input");
-    return;
+    return 0;
     }
 
   pd = input->GetPointData();
@@ -146,7 +146,7 @@ void vtkMAFExtendedGlyph3D::RequestData(
     inGhostLevels = ((vtkUnsignedCharArray*)temp)->GetPointer(0);
     }
 
-  requestedGhostLevel = output->GetUpdateGhostLevel();
+  requestedGhostLevel = this->GetUpdateGhostLevel();
   
   
   numPts = input->GetNumberOfPoints();
@@ -155,7 +155,7 @@ void vtkMAFExtendedGlyph3D::RequestData(
     vtkDebugMacro(<<"No points to glyph!");
     pts->Delete();
     trans->Delete();
-    return;
+    return 1;
     }
 
   // Check input for consistency
@@ -185,7 +185,7 @@ void vtkMAFExtendedGlyph3D::RequestData(
       vtkErrorMacro(<<"Indexing on but don't have data to index with");
       pts->Delete();
       trans->Delete();
-      return;
+      return 0;
       }
     else
       {
@@ -213,8 +213,9 @@ void vtkMAFExtendedGlyph3D::RequestData(
     defaultPointIds[1] = 1;
     defaultSource->SetPoints(defaultPoints);
     defaultSource->InsertNextCell(VTK_LINE, 2, defaultPointIds);
-    defaultSource->SetUpdateExtent(0, 1, 0);
+    this->SetUpdateExtent(0, 1, 0);
     this->SetSource(defaultSource);
+    
     defaultSource->Delete();
     defaultSource = NULL;
     defaultPoints->Delete();
@@ -604,7 +605,7 @@ void vtkMAFExtendedGlyph3D::RequestData(
 // Since indexing determines size of outputs, EstimatedWholeMemorySize is
 // truly an estimate.  Ignore Indexing (although for a best estimate we
 // should average the size of the sources instead of using 0).
-void vtkMAFExtendedGlyph3D::RequestInformation(
+int vtkMAFExtendedGlyph3D::RequestInformation(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
   vtkInformationVector *outputVector)
@@ -616,7 +617,7 @@ void vtkMAFExtendedGlyph3D::RequestInformation(
   if (this->GetInput() == NULL)
     {
     vtkErrorMacro("Missing input");
-    return;
+    return 0;
     }
 }
 
@@ -626,13 +627,14 @@ void vtkMAFExtendedGlyph3D::RequestInformation(
 void vtkMAFExtendedGlyph3D::SetNumberOfSources(int num)
 {
   // one more because input has index 0.
-  this->SetNumberOfInputs(num+1);
+  this->SetNumberOfInputPorts(num+1);
 }
 
 int vtkMAFExtendedGlyph3D::GetNumberOfSources()
 {
   // one less because input has index 0.
-  return this->NumberOfInputs - 1;
+  //return this->NumberOfInputs - 1;
+   return  this->GetNumberOfInputPorts()-1;
 }
 
 // Specify a source object at a specified table location.
@@ -643,7 +645,7 @@ void vtkMAFExtendedGlyph3D::SetSource(int id, vtkPolyData *pd)
     vtkErrorMacro("Bad index " << id << " for source.");
     return;
     }
-  this->vtkProcessObject::SetNthInput(id + 1, pd);
+  this->vtkAlgorithm::SetInputDataObject(id + 1, pd);
 }
 
 // Get a pointer to a source object at a specified table location.
@@ -655,7 +657,7 @@ vtkPolyData *vtkMAFExtendedGlyph3D::GetSource(int id)
     }
   else
     {
-    return (vtkPolyData *)this->Inputs[id+1];
+    return (vtkPolyData *)this->GetInputConnection(id+1,0);
     }
 }
 
@@ -730,7 +732,7 @@ void vtkMAFExtendedGlyph3D::PrintSelf(ostream& os, vtkIndent indent)
      << (this->InputNormalsSelection ? this->InputNormalsSelection : "(none)") << "\n";
 }
 
-void vtkMAFExtendedGlyph3D::RequestUpdateExtent(
+int vtkMAFExtendedGlyph3D::RequestUpdateExtent(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
   vtkInformationVector *outputVector)
@@ -744,17 +746,18 @@ void vtkMAFExtendedGlyph3D::RequestUpdateExtent(
   if (this->GetInput() == NULL)
     {
     vtkErrorMacro("Missing input");
-    return;
+    return 0;
     }
 
-  output = output;
+  //output = output;
   outPd = this->GetOutput();
   if (this->GetSource())
     {
-    this->GetSource()->SetUpdateExtent(0, 1, 0);
+    this->SetUpdateExtent(0, 1, 0);
     }
-  this->GetInput()->SetUpdateExtent(outPd->GetUpdatePiece(),
-                                    outPd->GetUpdateNumberOfPieces(),
-                                    outPd->GetUpdateGhostLevel());
-  this->GetInput()->RequestExactExtentOn();
+  this->SetUpdateExtent(outPd->GetPiece(),
+                                    outPd->GetNumberOfPieces(),
+                                    outPd->GetGhostLevel());
+ // this->GetInput()->RequestExactExtentOn();
+  return 1;
 }

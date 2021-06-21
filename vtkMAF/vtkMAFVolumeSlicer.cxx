@@ -18,7 +18,7 @@
 #include "vtkDoubleArray.h"
 #include "vtkPointData.h"
 #include "vtkLinearTransform.h"
-
+#include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkMath.h"
 
 #include "assert.h"
@@ -145,7 +145,7 @@ unsigned long int vtkMAFVolumeSlicer::GetMTime()
   return time;
 }
 //----------------------------------------------------------------------------
-void vtkMAFVolumeSlicer::RequestInformation(
+int vtkMAFVolumeSlicer::RequestInformation(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
   vtkInformationVector *outputVector)
@@ -155,8 +155,8 @@ void vtkMAFVolumeSlicer::RequestInformation(
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
   if (GetInput()==NULL)
-    return;
-  for (int i = 0; i < this->GetNumberOfOutputs(); i++) 
+    return 0;
+  for (int i = 0; i < this->GetNumberOfOutputPorts(); i++) 
   {
     if (vtkImageData::SafeDownCast(this->GetOutput(i))) 
     {
@@ -169,8 +169,9 @@ void vtkMAFVolumeSlicer::RequestInformation(
         dims[2] = 1;
         output->SetDimensions(dims);
       }
-      outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),output->GetExtent(,6));
-      output->SetUpdateExtentToWholeExtent();
+      
+      outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(),output->GetExtent(),6);
+      this->SetUpdateExtentToWholeExtent();
 
       if (this->AutoSpacing) 
       { // select spacing
@@ -248,19 +249,21 @@ void vtkMAFVolumeSlicer::RequestInformation(
     {
     }
   }
+  return 1;
 }
 //----------------------------------------------------------------------------
-void vtkMAFVolumeSlicer::ExecuteData(vtkDataObject *outputData) 
+void vtkMAFVolumeSlicer::ExecuteData(vtkDataObject *outputData, vtkInformation* outInfo)
 //----------------------------------------------------------------------------
 {  
-  this->NumComponents = this->GetInput()->GetPointData()->GetScalars()->GetNumberOfComponents();
+  vtkImageData* imageData = vtkImageData::SafeDownCast(this->GetInput());
+  this->NumComponents = imageData->GetPointData()->GetScalars()->GetNumberOfComponents();
 
   this->PrepareVolume();
 
   if (vtkImageData::SafeDownCast(outputData))
-    this->ExecuteData((vtkImageData*)outputData);
+    this->ExecuteData((vtkImageData*)outputData, outInfo);
   else if (vtkPolyData::SafeDownCast(outputData))
-    this->ExecuteData((vtkPolyData*)outputData);
+    this->ExecuteData((vtkPolyData*)outputData,  outInfo);
   
   outputData->Modified();
 }
@@ -342,7 +345,7 @@ void vtkMAFVolumeSlicer::PrepareVolume()
   this->PreprocessingTime.Modified();
 }
 //----------------------------------------------------------------------------
-void vtkMAFVolumeSlicer::RequestUpdateExtent(
+int vtkMAFVolumeSlicer::RequestUpdateExtent(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
   vtkInformationVector *outputVector)
@@ -352,10 +355,11 @@ void vtkMAFVolumeSlicer::RequestUpdateExtent(
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
 
   vtkDataObject *input = this->GetInput();
-  input->SetUpdateExtentToWholeExtent();
+  this->SetUpdateExtentToWholeExtent();
+  return 1;
 }
 //----------------------------------------------------------------------------
-void vtkMAFVolumeSlicer::ExecuteData(vtkPolyData *output) 
+void vtkMAFVolumeSlicer::ExecuteData(vtkPolyData *output, vtkInformation* outInfo)
 //----------------------------------------------------------------------------
 {
   output->Reset();
@@ -363,7 +367,7 @@ void vtkMAFVolumeSlicer::ExecuteData(vtkPolyData *output)
   // define the plane
   if (this->GetTexture()) 
   {
-    this->GetTexture()->Update();
+   // this->GetTexture()->Update();
     memcpy(this->GlobalPlaneOrigin, this->GetTexture()->GetOrigin(), sizeof(this->GlobalPlaneOrigin));
   }
 
@@ -423,9 +427,13 @@ void vtkMAFVolumeSlicer::ExecuteData(vtkPolyData *output)
   {
     vtkImageData *texture = this->GetTexture();
     int extent[6];
-    assert(texture->GetSource() != this);
-    texture->UpdateInformation();
-    texture->GetWholeExtent(extent);
+   // assert(texture->GetSource() != this);
+    //assert(texture->GetData()!=this);
+    //texture->UpdateInformation();
+    //texture->GetWholeExtent(extent);
+    this->UpdateInformation();
+    this->GetUpdateExtent();
+    
     if (extent[0] >= extent[1])
       texture->GetExtent(extent);
     size[0] = extent[1] - extent[0] + 1;
@@ -516,19 +524,20 @@ void vtkMAFVolumeSlicer::ExecuteData(vtkPolyData *output)
   tsObj->Delete();
 }
 //----------------------------------------------------------------------------
-void vtkMAFVolumeSlicer::ExecuteData(vtkImageData *outputObject) 
+void vtkMAFVolumeSlicer::ExecuteData(vtkImageData *outputObject , vtkInformation* outInfo)
 //----------------------------------------------------------------------------
 {
   int extent[6];
-  outputObject->GetWholeExtent(extent);
+  this->GetUpdateExtent(extent);
   outputObject->SetExtent(extent);
-  outputObject->SetNumberOfScalarComponents(this->NumComponents);
-  outputObject->AllocateScalars();
+  //outputObject->SetNumberOfScalarComponents(this->NumComponents);
+  outputObject->AllocateScalars(outInfo);
   
-  const void *inputPointer  = this->GetInput()->GetPointData()->GetScalars()->GetVoidPointer(0);
+  vtkImageData* imageData = vtkImageData::SafeDownCast(this->GetInput());
+  const void *inputPointer  = imageData->GetPointData()->GetScalars()->GetVoidPointer(0);
   const void *outputPointer = outputObject->GetPointData()->GetScalars()->GetVoidPointer(0);
   
-  switch (this->GetInput()->GetPointData()->GetScalars()->GetDataType()) 
+  switch (imageData->GetPointData()->GetScalars()->GetDataType())
   {
     case VTK_CHAR: //---------------------------------------------
       switch (outputObject->GetPointData()->GetScalars()->GetDataType()) 
