@@ -306,7 +306,7 @@ void mafGUIVMEChooserTree::CloneSubTree(mafGUICheckTree *source_tree, wxTreeItem
 //----------------------------------------------------------------------------
 {
   wxString  text  = source_tree->GetTree()->GetItemText(*source_item);
-  long      node  = source_tree->NodeFromItem(*source_item);
+  intptr_t  node  = source_tree->NodeFromItem(*source_item);
   int       image = GetVmeStatus((mafNode *)node);
 
   wxTreeItemId current_item;
@@ -369,7 +369,7 @@ void mafGUIVMEChooserTree::VmeUpdateIcon(mafNode *vme)
   //When root VME is checked, all the sub-tree will be checked.
   if (vme->IsA("mafVMERoot"))
   {
-    bool checked = IsIconChecked(ItemFromNode((long)vme));
+    bool checked = IsIconChecked(ItemFromNode((intptr_t)vme));
     mafNodeIterator *iter = vme->NewIterator();
     for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
     {
@@ -389,12 +389,12 @@ void mafGUIVMEChooserTree::VmeUpdateIcon(mafNode *vme)
           m_CheckedNode.erase(found);
         }
       }
-      SetNodeIcon( (long)node, icon_index );
+      SetNodeIcon( (intptr_t)node, icon_index );
     }
   }
   else
   {
-    bool checked = IsIconChecked(ItemFromNode((long)vme));
+    bool checked = IsIconChecked(ItemFromNode((intptr_t)vme));
     if (!checked)
     {
       nodeSatus = NODE_VISIBLE_ON*2;
@@ -411,6 +411,6 @@ void mafGUIVMEChooserTree::VmeUpdateIcon(mafNode *vme)
         m_CheckedNode.erase(found);
       }
     }
-    SetNodeIcon( (long)vme, icon_index );
+    SetNodeIcon( (intptr_t)vme, icon_index );
   }
 }

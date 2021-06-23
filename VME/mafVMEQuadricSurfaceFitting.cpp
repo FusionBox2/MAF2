@@ -62,6 +62,7 @@
 #include "mafVMEOutputPointSet.h"
 #include <vector>
 #include "vtkPointSet.h"
+#include <boost/numeric/odeint.hpp>
 
 
 const bool DEBUG_MODE = true;

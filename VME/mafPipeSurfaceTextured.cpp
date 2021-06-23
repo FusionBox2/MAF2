@@ -474,7 +474,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
       {
         mafString title = _R("Choose texture");
         e->SetId(VME_CHOOSE);
-        e->SetArg((long)&mafPipeSurfaceTextured::ImageAccept);
+        e->SetArg((intptr_t)&mafPipeSurfaceTextured::ImageAccept);
         e->SetString(&title);
         mafEventMacro(*e);
         mafNode *n = e->GetVme();
@@ -517,7 +517,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 	  case ID_CHOOSE_FILENAME1:
 	  {
 								 mafString imageNameTemp = m_File;
-								 imageNameTemp.Erase(imageNameTemp.Length() - 6, imageNameTemp.Length() - 1);
+								 imageNameTemp.Erase(imageNameTemp.Length() - 4, imageNameTemp.Length() - 1);
 								 imageNameTemp.Append(_R("temp.wrl"));
 								 
 								 
@@ -550,7 +550,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 										 exporter->SetInput(m_Actor->GetTexture()->GetInput());
 
 										 mafString imageName = m_File;
-										 imageName.Erase(imageName.Length() - 5, imageName.Length() - 1);
+										 imageName.Erase(imageName.Length() - 3, imageName.Length() - 1);
 
 
 
@@ -679,7 +679,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 								  renderWindow->AddRenderer(renderer);
 
 								  mafString mtlName = m_File;
-								  mtlName.Erase(mtlName.Length() - 5, mtlName.Length() - 1);
+								  mtlName.Erase(mtlName.Length() - 3, mtlName.Length() - 1);
 								  mtlName.Append(_R("obj.mtl"));
 
 								  wxBusyInfo wait523(m_File.toWx());
@@ -709,7 +709,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 									  vtkMAFSmartPointer<vtkJPEGWriter> exporter;
 									  exporter->SetInput(m_Actor->GetTexture()->GetInput());
 									  mafString imageName = m_File;
-									  imageName.Erase(imageName.Length() - 5, imageName.Length() - 1);
+									  imageName.Erase(imageName.Length() - 3, imageName.Length() - 1);
 
 									  exporter->SetFileName(imageName.Append(_R("jpg")).GetCStr());
 									  exporter->Write();
@@ -788,66 +788,6 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
   }
 }
 
-void mafPipeSurfaceTextured::exportOBJs()
-{
-	
-	vtkPolyData *datachild;
-	mafVMEOutputSurface *surface_outputchild;
-	vtkPolyDataMapper* mapperchild;
-	vtkActor* actorchild;
-	vtkRenderer* rendererchild;
-	vtkRenderWindow* renderWindowchild;
-	mafString mtlName;
-	vtkMAFSmartPointer<vtkOBJExporter> writerchild;
-	mafString objName;
-	int i = 0;
-	//for (int i = 0; i < m_OBJs.size(); i++)
-	{
-		surface_outputchild = mafVMEOutputSurface::SafeDownCast(m_OBJs[i]);
-		//assert(surface_outputchild);
-		surface_outputchild->Update();
-		datachild = vtkPolyData::SafeDownCast(surface_outputchild->GetVTKData());
-		//assert(data);
-		datachild->Update();
-		mapperchild->SetInput(datachild);
-		actorchild->SetMapper(mapperchild);
-
-		rendererchild = vtkRenderer::New();
-		rendererchild->AddActor(actorchild);
-		renderWindowchild = vtkRenderWindow::New();
-		renderWindowchild->AddRenderer(rendererchild);
-
-		/*mtlName = pathName;
-		mtlName.Append("\\");
-		mtlName.Append(m_OBJs[i]->GetName());
-		mtlName.Append(".obj.mtl");*/
-
-
-		//objName = pathName;
-		//objName.Append("\\");
-		objName.Append(m_OBJs[i]->GetName());
-		wxBusyInfo wait((_R("writing child file...") + objName).toWx());
-		writerchild->SetRenderWindow(renderWindowchild);
-		writerchild->SetFilePrefix(objName.GetCStr());
-		writerchild->Write();
-		//open MTLfile and add the texture
-		/*if (actorchild->GetTexture() != NULL)
-		{
-
-			vtkMAFSmartPointer<vtkJPEGWriter> exporter;
-			exporter->SetInput(m_Actor->GetTexture()->GetInput());
-			mafString imageName = m_OBJs[i]->GetName();
-			
-
-			exporter->SetFileName(imageName.Append(".jpg"));
-			exporter->Write();
-			std::ofstream mtlfile;
-
-			mtlfile.open(mtlName, std::ios_base::app);
-			mtlfile << "map_Kd " + imageName;
-		}*/
-	}
-}
 //----------------------------------------------------------------------------
 void mafPipeSurfaceTextured::GenerateTextureMapCoordinate()
 //----------------------------------------------------------------------------

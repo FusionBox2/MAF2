@@ -444,7 +444,7 @@ void mafVMEProber::OnEvent(mafEventBase *maf_event)
       {
         mafString title = _L("Choose volume vme");
         e->SetId(VME_CHOOSE);
-        e->SetArg((long)&mafVMEProber::VolumeAccept);
+        e->SetArg((intptr_t)&mafVMEProber::VolumeAccept);
         e->SetString(&title);
         ForwardUpEvent(e);
         mafNode *n = e->GetVme();
@@ -460,7 +460,7 @@ void mafVMEProber::OnEvent(mafEventBase *maf_event)
       {
         mafString title = _L("Choose surface vme");
         e->SetId(VME_CHOOSE);
-        e->SetArg((long)&mafVMEProber::OutputSurfaceAccept);
+        e->SetArg((intptr_t)&mafVMEProber::OutputSurfaceAccept);
         e->SetString(&title);
         ForwardUpEvent(e);
         mafNode *n = e->GetVme();

@@ -296,7 +296,7 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
             if ((dataIndex % step == 0))
             {
               progress++;
-              mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,progress));
+              mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
             }
             itemTmp = itTmp->second;
             int IOmode = itemTmp->GetIOMode();
@@ -307,7 +307,7 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
             dataIndex++;
           }
           
-          mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(long)100));
+          mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)100));
           mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
 
           for (int i=0;i<filesExtracted.size();i++)

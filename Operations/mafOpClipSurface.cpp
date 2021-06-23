@@ -231,7 +231,7 @@ void mafOpClipSurface::OnEventThis(mafEventBase *maf_event)
 		case ID_CHOOSE_SURFACE:
 			{
 				mafString title = _L("Choose Clipper Surface");
-        e->SetArg((long)&mafOpClipSurface::SurfaceAccept);
+        e->SetArg((intptr_t)&mafOpClipSurface::SurfaceAccept);
 				e->SetString(&title);
 				e->SetId(VME_CHOOSE);
 				mafEventMacro(*e);

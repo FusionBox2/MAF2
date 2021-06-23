@@ -109,7 +109,7 @@ mafID mafEventBase::GetId()
     catch (...)
     {
       sender_type = _R("not mafObject (");
-      sender_type += mafToString((long)m_Sender);
+      sender_type += mafToString((intptr_t)m_Sender);
       sender_type += _R(")");
     }
     mafString id_name = mafIdString(m_Id);

@@ -65,7 +65,7 @@ bool mafDirectory::Load(const mafString& namestr)
   struct _finddata_t data;  // data of current file
   
   // Now put them into the file array
-  long srchHandle = _findfirst(buf, &data);
+  intptr_t srchHandle = _findfirst(buf, &data);
   delete [] buf;
   
   if ( srchHandle == -1 )

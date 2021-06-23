@@ -183,7 +183,7 @@ void mafVMERefSys::OnEvent(mafEventBase *maf_event)
         mafID button_id = e->GetId();
         mafString title = _L("Choose vme");
         e->SetId(VME_CHOOSE);
-        e->SetArg((long)&mafVMERefSys::LandmarkAccept);
+        e->SetArg((intptr_t)&mafVMERefSys::LandmarkAccept);
         e->SetString(&title);
         ForwardUpEvent(e);
         mafNode *n = e->GetVme();

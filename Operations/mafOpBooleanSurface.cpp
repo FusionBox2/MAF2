@@ -748,7 +748,7 @@ void mafOpBooleanSurface::Difference()
 void mafOpBooleanSurface::VmeChoose(mafString title,mafEvent *e)
 //----------------------------------------------------------------------------
 {
-	e->SetArg((long)&mafOpBooleanSurface::SurfaceAccept);
+	e->SetArg((intptr_t)&mafOpBooleanSurface::SurfaceAccept);
 	e->SetString(&title);
 	e->SetId(VME_CHOOSE);
 	mafEventMacro(*e);

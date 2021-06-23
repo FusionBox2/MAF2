@@ -2190,7 +2190,7 @@ void mafLogicWithManagers::UpdateTimeBounds()
   }
 }
 //----------------------------------------------------------------------------
-std::vector<mafNode*> mafLogicWithManagers::VmeChoose(long vme_accept_function, long style, mafString title, bool multiSelect)
+std::vector<mafNode*> mafLogicWithManagers::VmeChoose(intptr_t vme_accept_function, long style, mafString title, bool multiSelect)
 //----------------------------------------------------------------------------
 {
   mafGUIVMEChooser vc(m_SideBar->GetTree(),title, vme_accept_function, style, multiSelect);

@@ -445,7 +445,7 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 								 mafID button_id = e->GetId();
 								 mafString title = _L("Choose quadric1 vme link");
 								 e->SetId(VME_CHOOSE);
-								 e->SetArg((long)&mafQuadraticSurface::VMEAccept);
+								 e->SetArg((intptr_t)&mafQuadraticSurface::VMEAccept);
 								 e->SetString(&title);
 								 ForwardUpEvent(e);
 								 mafNode *n = e->GetVme();
@@ -471,7 +471,7 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 								mafID button_id = e->GetId();
 								mafString title = _L("Choose quadric2 vme link");
 								e->SetId(VME_CHOOSE);
-								e->SetArg((long)&mafQuadraticSurface::VMEAccept);
+								e->SetArg((intptr_t)&mafQuadraticSurface::VMEAccept);
 								e->SetString(&title);
 								ForwardUpEvent(e);
 								mafNode *n = e->GetVme();

@@ -44,7 +44,7 @@
 // Typedefs
 //------------------------------------------------------------------------------
 typedef double mafTimeStamp; ///< type for time varying data timestamps (not for pipelines timestamps!)
-typedef long mafID; ///< type for IDs inside MAF @todo to be changed to support 64bit IDs
+typedef intptr_t mafID; ///< type for IDs inside MAF @todo to be changed to support 64bit IDs
 typedef std::type_info mafTypeID; ///< type for mafObject's class type IDs
 
 //------------------------------------------------------------------------------

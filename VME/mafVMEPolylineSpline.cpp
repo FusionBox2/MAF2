@@ -306,7 +306,7 @@ void mafVMEPolylineSpline::OnEvent(mafEventBase *maf_event)
         mafID button_id = e->GetId();
         mafString title = _L("Choose vme");
         e->SetId(VME_CHOOSE);
-        e->SetArg((long)&mafVMEPolylineSpline::PolylineAccept);
+        e->SetArg((intptr_t)&mafVMEPolylineSpline::PolylineAccept);
         e->SetString(&title);
         ForwardUpEvent(e);
         mafNode *n = e->GetVme();

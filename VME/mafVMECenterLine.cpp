@@ -1659,7 +1659,7 @@ void mafVMECenterLine::OnEvent(mafEventBase *maf_event)
 						  mafID button_id = e->GetId();
 						  mafString title = _L("Choose surface vme link");
 						  e->SetId(VME_CHOOSE);
-						  e->SetArg((long)&mafVMEPlane::VMEAccept);
+						  e->SetArg((intptr_t)&mafVMEPlane::VMEAccept);
 						  e->SetString(&title);
 						  ForwardUpEvent(e);
 						  mafNode *n = e->GetVme();

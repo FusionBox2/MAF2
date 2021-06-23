@@ -248,7 +248,7 @@ void mafOpImporterImage::BuildImageSequence()
     if (mafFloatEquals(fmod(i,10.0f),0.0f))
     {
       progress_value = (i*100)/m_NumFiles;
-      mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,progress_value));
+      mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress_value));
     }
 
     mafSplitPath(m_Files[i],&path,&name,&ext);

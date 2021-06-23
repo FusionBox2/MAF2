@@ -133,7 +133,7 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 	{
 		wait = new wxBusyInfo("Build Volume Union: please wait...");
 		mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
-		mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE, progress));
+		mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress));
 	}
 
 	//Input data(first volume)
@@ -236,7 +236,7 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 		{
 			progress++;
 			Sleep(150); // Workaround: I need this sleep function to update slowly the progress bar 
-			mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,progress));
+			mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
 		}	
 	}
 	 
@@ -297,7 +297,7 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 		{
 			progress++;
 			Sleep(150);
-		    mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,progress));
+		    mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
 		}
 	}
 	
@@ -358,7 +358,7 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 		{
 			progress++;
 			Sleep(150);
-			mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,progress));
+			mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
 		}
 	}
 	
@@ -418,7 +418,7 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 		{
 			progress++;
 			Sleep(150);
-			mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,progress));
+			mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
 		}
 	}
 
@@ -483,7 +483,7 @@ enum VOLUME_UNION_WIDGET_ID
 bool mafOpVolumeUnion::VmeChoose(mafString title,mafEvent *e)
 //----------------------------------------------------------------------------
 {
-	e->SetArg((long)&mafOpVolumeUnion::VmeUnionAccept);
+	e->SetArg((intptr_t)&mafOpVolumeUnion::VmeUnionAccept);
 	e->SetString(&title);
 	e->SetId(VME_CHOOSE);
 	mafEventMacro(*e);

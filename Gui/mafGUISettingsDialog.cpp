@@ -129,7 +129,7 @@ void mafGUISettingsDialog::AddRoot()
   page->ui = new mafGUI(this);
   m_List.push_back(page);
 
-  m_Tree->AddNode((long)page,0,page->label,0);
+  m_Tree->AddNode((intptr_t)page,0,page->label,0);
 }
 //----------------------------------------------------------------------------
 void mafGUISettingsDialog::AddPage(mafGUI *ui, wxString label, wxString parent_label)
@@ -146,7 +146,7 @@ void mafGUISettingsDialog::AddPage(mafGUI *ui, wxString label, wxString parent_l
   page->ui = ui;
   m_List.push_back(page);
   
-  m_Tree->AddNode((long)page,(long)parent,label,0);
+  m_Tree->AddNode((intptr_t)page,(intptr_t)parent,label,0);
 }
 //----------------------------------------------------------------------------
 void mafGUISettingsDialog::RemovePage(wxString label)
@@ -156,7 +156,7 @@ void mafGUISettingsDialog::RemovePage(wxString label)
   
   Page *page = GetPageByName(label);
   if(!page) return;
-  m_Tree->DeleteNode((long)(page));
+  m_Tree->DeleteNode((intptr_t)(page));
 
   // remove page from the List --- and shift up all following elements
   int i;

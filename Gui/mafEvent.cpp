@@ -52,18 +52,18 @@ enum HIGHEST_EVENT_ID
 // mafEvent CTOR's
 //----------------------------------------------------------------------------
   mafEvent::mafEvent()																																		  { Init(NULL,NO_EVENT,0);                                        Initialized();}
-  mafEvent::mafEvent(void *sender, int id,                            long arg)							{ Init(sender, id, arg);                                        Initialized();}
-  mafEvent::mafEvent(void *sender, int id, bool             b,        long arg)							{ Init(sender, id, arg); m_Bool =b;                             Initialized();}
-  mafEvent::mafEvent(void *sender, int id, double           f,        long arg)             { Init(sender, id, arg); m_Double=f;                            Initialized();}
-  mafEvent::mafEvent(void *sender, int id, mafString        *s,       long arg)							{ Init(sender, id, arg); m_MAFString =s;                        Initialized();}
-  mafEvent::mafEvent(void *sender, int id, mafString       *s, int x, int y, int width, int height,  long arg)  { Init(sender, id, arg); m_MAFString =s; m_x = x; m_y = y; m_width = width; m_height = height;   Initialized();}
+  mafEvent::mafEvent(void *sender, int id,                            intptr_t arg)							{ Init(sender, id, arg);                                        Initialized();}
+  mafEvent::mafEvent(void *sender, int id, bool             b,        intptr_t arg)							{ Init(sender, id, arg); m_Bool =b;                             Initialized();}
+  mafEvent::mafEvent(void *sender, int id, double           f,        intptr_t arg)             { Init(sender, id, arg); m_Double=f;                            Initialized();}
+  mafEvent::mafEvent(void *sender, int id, mafString        *s,       intptr_t arg)							{ Init(sender, id, arg); m_MAFString =s;                        Initialized();}
+  mafEvent::mafEvent(void *sender, int id, mafString       *s, int x, int y, int width, int height,  intptr_t arg)  { Init(sender, id, arg); m_MAFString =s; m_x = x; m_y = y; m_width = width; m_height = height;   Initialized();}
   mafEvent::mafEvent(void *sender, int id, mafView          *view,    wxWindow *win)				{ Init(sender, id, 0);   m_View =view; m_Win  =win;             Initialized();}
-  mafEvent::mafEvent(void *sender, int id, mafNode          *vme,     bool b,long arg)			{ Init(sender, id, arg); m_Vme  =vme; m_Bool = b;               Initialized();}
-  mafEvent::mafEvent(void *sender, int id, mafOp            *op,      long arg)							{ Init(sender, id, arg);   m_Op   =op;                          Initialized();}
+  mafEvent::mafEvent(void *sender, int id, mafNode          *vme,     bool b,intptr_t arg)			{ Init(sender, id, arg); m_Vme  =vme; m_Bool = b;               Initialized();}
+  mafEvent::mafEvent(void *sender, int id, mafOp            *op,      intptr_t arg)							{ Init(sender, id, arg);   m_Op   =op;                          Initialized();}
   mafEvent::mafEvent(void *sender, int id, mafMatrix        *m1,mafMatrix  *m2)					    { Init(sender, id, 0);   m_Matrix =m1; m_OldMatrix =m2;         Initialized();}
-  mafEvent::mafEvent(void *sender, int id, mafObject        *mafobj,  long arg)						  { Init(sender, id, arg); m_MafObject = mafobj;                  Initialized();}
-  mafEvent::mafEvent(void *sender, int id, mafObject        *mafobj,  mafString *s,long arg){ Init(sender, id, arg); m_MafObject = mafobj; m_MAFString =s;  Initialized();}
-  mafEvent::mafEvent(void *sender, int id, WidgetDataType   &widget_data,  long arg)
+  mafEvent::mafEvent(void *sender, int id, mafObject        *mafobj,  intptr_t arg)						  { Init(sender, id, arg); m_MafObject = mafobj;                  Initialized();}
+  mafEvent::mafEvent(void *sender, int id, mafObject        *mafobj,  mafString *s,intptr_t arg){ Init(sender, id, arg); m_MafObject = mafobj; m_MAFString =s;  Initialized();}
+  mafEvent::mafEvent(void *sender, int id, WidgetDataType   &widget_data,  intptr_t arg)
   {
     Init(sender, id, arg);
     m_WidgetData.dType = widget_data.dType;
@@ -74,12 +74,12 @@ enum HIGHEST_EVENT_ID
     Initialized();
   }
 #ifdef MAF_USE_WX
-  mafEvent::mafEvent(void *sender, int id, wxWindow        *win,    long arg)							{ Init(sender, id, arg); m_Win  =win;										Initialized();}
-  mafEvent::mafEvent(void *sender, int id, wxUpdateUIEvent *e,      long arg)							{ Init(sender, id, arg); m_UpdateUIEvent = e;																	}
-  mafEvent::mafEvent(void *sender, int id, wxObject        *wxobj,  long arg)							{ Init(sender, id, arg); m_WxObj = wxobj;							  Initialized();}
+  mafEvent::mafEvent(void *sender, int id, wxWindow        *win,    intptr_t arg)							{ Init(sender, id, arg); m_Win  =win;										Initialized();}
+  mafEvent::mafEvent(void *sender, int id, wxUpdateUIEvent *e,      intptr_t arg)							{ Init(sender, id, arg); m_UpdateUIEvent = e;																	}
+  mafEvent::mafEvent(void *sender, int id, wxObject        *wxobj,  intptr_t arg)							{ Init(sender, id, arg); m_WxObj = wxobj;							  Initialized();}
 #endif
 #ifdef MAF_USE_VTK
-  mafEvent::mafEvent(void *sender, int id, vtkObject       *vtkobj, long arg)							{ Init(sender, id, arg); m_VtkObj = vtkobj;							Initialized();}
+  mafEvent::mafEvent(void *sender, int id, vtkObject       *vtkobj, intptr_t arg)							{ Init(sender, id, arg); m_VtkObj = vtkobj;							Initialized();}
   mafEvent::mafEvent(void *sender, int id, vtkObject       *vtkobj, mafString *s)         { Init(sender, id, 0);   m_VtkObj = vtkobj;m_MAFString =s; Initialized();}
   mafEvent::mafEvent(void *sender, int id, vtkProp         *prop,   mafNode *vme)   			{ Init(sender, id, 0);   m_VtkProp= prop; m_Vme = vme;  Initialized();}
 #endif
@@ -89,31 +89,31 @@ void mafEvent::Log()
 //----------------------------------------------------------------------------
 {
   mafString s = _R("[EV]");
-               s += _R(" sender= ") + mafToString((long)m_Sender);
+               s += _R(" sender= ") + mafToString((intptr_t)m_Sender);
                s += _R(" ID= ") + mafIdString(m_Id);
   if(m_Arg)    s += _R(" arg= ") + mafToString(m_Arg);
   if(m_Bool)   s += _R(" bool= ") + mafToString((int)m_Bool);
   if(m_Double)  s += _R(" double= ") + mafToString(m_Double);
   if(m_MAFString) s += _R(" string= ") + *m_MAFString;
-  if(m_View)   s += _R(" view= ") + mafToString((long)m_View) + _R(" : ") + m_View->GetLabel();
+  if(m_View)   s += _R(" view= ") + mafToString((intptr_t)m_View) + _R(" : ") + m_View->GetLabel();
   if(m_x)      s += _R(" x= ") + mafToString(m_x);
   if(m_y)      s += _R(" y= ") + mafToString(m_y);
   if(m_width)  s += _R(" width= ") + mafToString(m_width);
   if(m_height) s += _R(" height= ") + mafToString(m_height);
-  if(m_Vme)    s += _R(" vme= ") + mafToString((long)m_Vme) + _R(" : ") + m_Vme->GetName();
-  if(m_Op)     s += _R(" op= ") + mafToString((long)m_Op) + _R(" : ") + m_Op->GetLabel();
+  if(m_Vme)    s += _R(" vme= ") + mafToString((intptr_t)m_Vme) + _R(" : ") + m_Vme->GetName();
+  if(m_Op)     s += _R(" op= ") + mafToString((intptr_t)m_Op) + _R(" : ") + m_Op->GetLabel();
 #ifdef MAF_USE_WX
-  if(m_Win)    s += _R(" win= ") + mafToString((long)m_Win);
-  if(m_UpdateUIEvent)   s += _R(" ui_evt= ") + mafToString((long)m_UpdateUIEvent);
-  if(m_WxObj)  s += _R(" wxobj= ") + mafToString((long)m_WxObj);
+  if(m_Win)    s += _R(" win= ") + mafToString((intptr_t)m_Win);
+  if(m_UpdateUIEvent)   s += _R(" ui_evt= ") + mafToString((intptr_t)m_UpdateUIEvent);
+  if(m_WxObj)  s += _R(" wxobj= ") + mafToString((intptr_t)m_WxObj);
 #endif
 #ifdef MAF_USE_VTK
-  if(m_VtkProp)   s += _R(" prop= ") + mafToString((long)m_VtkProp);
-  if(m_Matrix) s += _R(" matrix= ") + mafToString((long)m_Matrix);
-  if(m_OldMatrix)s += _R(" matrix= ") + mafToString((long)m_OldMatrix);
-  if(m_VtkObj) s += _R(" vtkobj= ") + mafToString((long)m_VtkObj) + _R(" : ") + _R(m_VtkObj->GetClassName());
+  if(m_VtkProp)   s += _R(" prop= ") + mafToString((intptr_t)m_VtkProp);
+  if(m_Matrix) s += _R(" matrix= ") + mafToString((intptr_t)m_Matrix);
+  if(m_OldMatrix)s += _R(" matrix= ") + mafToString((intptr_t)m_OldMatrix);
+  if(m_VtkObj) s += _R(" vtkobj= ") + mafToString((intptr_t)m_VtkObj) + _R(" : ") + _R(m_VtkObj->GetClassName());
 #endif
-  if(m_MafObject) s += _R(" mafobj= ") + mafToString((long)m_MafObject) + _R(" : ") + _R(m_MafObject->GetTypeName());
+  if(m_MafObject) s += _R(" mafobj= ") + mafToString((intptr_t)m_MafObject) + _R(" : ") + _R(m_MafObject->GetTypeName());
 
   mafLogMessage(_M(s));
 }
@@ -181,7 +181,7 @@ void mafEvent::DeepCopy(const mafEventBase *maf_event)
 #endif
 }
 //----------------------------------------------------------------------------
-void mafEvent::Init(void *sender, int id, long arg) 
+void mafEvent::Init(void *sender, int id, intptr_t arg) 
 //----------------------------------------------------------------------------
 {
   bool *verbose = GetLogVerbose();
@@ -196,7 +196,7 @@ void mafEvent::Init(void *sender, int id, long arg)
     catch (...)
     {
       sender_type = _R("not mafObject (");
-      sender_type += mafToString((long)sender);
+      sender_type += mafToString((intptr_t)sender);
       sender_type += _R(")");
     }
     mafString id_name = mafIdString(id);

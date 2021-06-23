@@ -233,7 +233,7 @@ void mafRemoteLogic::RemoteMessage(mafString &cmd, bool to_server)
       long v_id;
       data_cmd.ToLong(&v_id);
       m_ViewManager->m_FromRemote = true;
-      mafEventMacro(mafEvent(this,VIEW_CREATE,(long)(v_id + VIEW_START)));
+      mafEventMacro(mafEvent(this,VIEW_CREATE,(intptr_t)(v_id + VIEW_START)));
       if (m_RemoteMouse)
       {
         mafEvent eb(this,VIEW_SELECT, m_ViewManager->GetSelectedView());
@@ -251,7 +251,7 @@ void mafRemoteLogic::RemoteMessage(mafString &cmd, bool to_server)
       if(m_ViewManager->GetView(v_id-VIEW_START,v_mult) == NULL)
       {
         m_ViewManager->m_FromRemote = true;
-        mafEventMacro(mafEvent(this,VIEW_CREATE,v_id));
+        mafEventMacro(mafEvent(this,VIEW_CREATE,(intptr_t)v_id));
         m_ViewManager->m_FromRemote = false;
       }
       while(tkz.HasMoreTokens())
@@ -263,7 +263,7 @@ void mafRemoteLogic::RemoteMessage(mafString &cmd, bool to_server)
         if(m_ViewManager->GetView(v_id-VIEW_START,v_mult) == NULL)
         {
           m_ViewManager->m_FromRemote = true;
-          mafEventMacro(mafEvent(this,VIEW_CREATE,v_id));
+          mafEventMacro(mafEvent(this,VIEW_CREATE,(intptr_t)v_id));
           m_ViewManager->m_FromRemote = false;
         }
       }
@@ -389,7 +389,7 @@ void mafRemoteLogic::RemoteMessage(mafString &cmd, bool to_server)
     {
       long vme_id;
       data_cmd.ToLong(&vme_id);
-      mafEventMacro(mafEvent(this,VME_SELECT,vme_id));
+      mafEventMacro(mafEvent(this,VME_SELECT,(intptr_t)vme_id));
     }
     else if(command == "VME_SHOW")
     {
