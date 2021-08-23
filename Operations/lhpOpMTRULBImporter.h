@@ -55,7 +55,7 @@ public:
   void ProcessSingleFile(const mafString &fileName);
 
 protected:
-  void ReadMatrix(wxChar const *fstring, vtkMatrix4x4 *mat);
+  void ReadMatrix(const char *fstring, vtkMatrix4x4 *mat);
 
   std::vector<mafString>     m_Files;
   mafString m_FileDir;

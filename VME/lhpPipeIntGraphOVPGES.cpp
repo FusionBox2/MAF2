@@ -30,8 +30,8 @@
 //----------------------------------------------------------------------------
 namespace
 {
-  const char *saVarDesc[]  = {"OVP Pos X", "OVP Pos Y", "OVP Pos Z", "OVP Ori X", "OVP Ori Y", "OVP Ori Z", "GES Pos X", "GES Pos Y", "GES Pos Z", "GES Ori X", "GES Ori Y", "GES Ori Z"};
-  const char *saVarUnits[] = {"mm", "mm", "mm", "deg", "deg", "deg", "mm", "mm", "mm", "deg", "deg", "deg"};
+  const mafString saVarDesc[]  = {_R("OVP Pos X"), _R("OVP Pos Y"), _R("OVP Pos Z"), _R("OVP Ori X"), _R("OVP Ori Y"), _R("OVP Ori Z"), _R("GES Pos X"), _R("GES Pos Y"), _R("GES Pos Z"), _R("GES Ori X"), _R("GES Ori Y"), _R("GES Ori Z")};
+  const mafString saVarUnits[] = {_R("mm"), _R("mm"), _R("mm"), _R("deg"), _R("deg"), _R("deg"), _R("mm"), _R("mm"), _R("mm"), _R("deg"), _R("deg"), _R("deg")};
   double saCoefs[] = {1.0, 1.0, 1.0, mafMatrix3x3::DegreesToRadians(), mafMatrix3x3::DegreesToRadians(), mafMatrix3x3::DegreesToRadians(), 1.0, 1.0, 1.0, mafMatrix3x3::DegreesToRadians(), mafMatrix3x3::DegreesToRadians(), mafMatrix3x3::DegreesToRadians()};
 }
 
@@ -39,14 +39,14 @@ namespace
 mafCxxTypeMacro(lhpPipeIntGraphOVPGES);
 
 
-const char *lhpPipeIntGraphOVPGES::GetVarTitle(int i) const
+const mafString& lhpPipeIntGraphOVPGES::GetVarTitle(int i) const
 {
   if(i < Superclass::GDT_LAST)
     return Superclass::GetVarTitle(i);
   return saVarDesc[i - Superclass::GDT_LAST];
 }
 
-const char *lhpPipeIntGraphOVPGES::GetVarUnit(int i)const
+const mafString& lhpPipeIntGraphOVPGES::GetVarUnit(int i)const
 {
   if(i < Superclass::GDT_LAST)
     return Superclass::GetVarUnit(i);

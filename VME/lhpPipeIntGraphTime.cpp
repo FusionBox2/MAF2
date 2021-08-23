@@ -30,27 +30,35 @@
 //----------------------------------------------------------------------------
 // constants
 //----------------------------------------------------------------------------
+namespace
+{
+    const mafString sVarDesc = _R("Time");
+
+    const mafString sVarUnit = _R("s");
+
+    const mafString emptyDesc = _R("");
+}
 
 mafCxxTypeMacro(lhpPipeIntGraphTime);
 
-const char *lhpPipeIntGraphTime::GetVarTitle(int i) const
+const mafString& lhpPipeIntGraphTime::GetVarTitle(int i) const
 {
   if(i != GDT_FRAME)
   {
-    wxASSERT(false);
-    return "";
+      wxASSERT(false);
+      return emptyDesc;
   }
-  return "Time";
+  return sVarDesc;
 }
 
-const char *lhpPipeIntGraphTime::GetVarUnit(int i)const
+const mafString& lhpPipeIntGraphTime::GetVarUnit(int i)const
 {
-  if(i != GDT_FRAME)
-  {
-    wxASSERT(false);
-    return "";
-  }
-  return "s";
+    if (i != GDT_FRAME)
+    {
+        wxASSERT(false);
+        return emptyDesc;
+    }
+    return sVarUnit;
 }
 
 double lhpPipeIntGraphTime::GetVarDerivativeCoef(int i)const

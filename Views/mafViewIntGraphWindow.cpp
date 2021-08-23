@@ -22,6 +22,7 @@
 #include "mafViewIntGraphWindow.h"
 #include "wx/file.h" 
 #include "wx/colordlg.h" 
+#include <wx/config.h>
 
 #include <stdio.h>
 #include <set>
@@ -712,9 +713,9 @@ void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
   int          nClHeight, nClWidth;
   wxRect       rTextRect;
   wxPoint      szTextSize;
-  char         sExp[MAXTEXTLEN + 1];
-  char         sXIDDesc[MAXTEXTLEN + 1];
-  char         sYIDDesc[MAXTEXTLEN + 1];
+  wxString     sExp;
+  mafString    sXIDDesc;
+  mafString    sYIDDesc;
   unsigned int nDimX,nDimY,nMaxSize;
   wxPoint      pt;
   wxRect       rcGraphRect;
@@ -817,25 +818,25 @@ void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
       //writing captions
       {
         if(m_XGraph)
-          m_XGraph->GetIDDesc(m_XGraph->GetIndexX(0), 0, sXIDDesc, MAXTEXTLEN);
+          sXIDDesc = m_XGraph->GetIDDesc(m_XGraph->GetIndexX(0), 0);
         else
-          m_Graphs[i]->GetIDDesc(0, 0, sXIDDesc, MAXTEXTLEN);
-        m_Graphs[i]->GetIDDesc(nYNumber, nYDer, sYIDDesc, MAXTEXTLEN);
+            sXIDDesc = m_Graphs[i]->GetIDDesc(0, 0);
+        sYIDDesc = m_Graphs[i]->GetIDDesc(nYNumber, nYDer);
         if((int)rYPow10Marks != 1 && (int)rXPow10Marks != 1)
         {
-          sprintf(sExp,"%s, %1.0e (%s, %1.0e) ", sYIDDesc, rYPow10Marks, sXIDDesc, rXPow10Marks);
+          sExp = wxString::Format("%s, %1.0e (%s, %1.0e) ", sYIDDesc.toWx(), rYPow10Marks, sXIDDesc.toWx(), rXPow10Marks);
         }
         else  if((int)rYPow10Marks == 1 && (int)rXPow10Marks != 1)
         {
-          sprintf(sExp,"%s (%s, %1.0e) ", sYIDDesc, sXIDDesc, rXPow10Marks);
+          sExp = wxString::Format("%s (%s, %1.0e) ", sYIDDesc.toWx(), sXIDDesc.toWx(), rXPow10Marks);
         }
         else  if((int)rYPow10Marks != 1 && (int)rXPow10Marks == 1)
         {
-          sprintf(sExp,"%s, %1.0e (%s) ", sYIDDesc, rYPow10Marks, sXIDDesc);
+          sExp = wxString::Format("%s, %1.0e (%s) ", sYIDDesc.toWx(), rYPow10Marks, sXIDDesc.toWx());
         }
         else
         {
-          sprintf(sExp,"%s (%s) ", sYIDDesc, sXIDDesc);
+          sExp = wxString::Format("%s (%s) ", sYIDDesc.toWx(), sXIDDesc.toWx());
         }
         pCompatDC->GetTextExtent(sExp, &szTextSize.x, &szTextSize.y);
         rTextRect.SetLeft(pt.x + 35);
@@ -937,7 +938,7 @@ void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
               pPen = new wxPen(MARKER_COLOR, 0, wxSOLID);
               pCompatDC->SetPen(*pPen);
               pCompatDC->DrawEllipse(nEX - MARKER_RADIUS, nEY - MARKER_RADIUS, 2 * MARKER_RADIUS, 2 * MARKER_RADIUS);
-              sprintf(sExp,"%.1f", valEY / rYPow10Marks);
+              sExp = wxString::Format("%.1f", valEY / rYPow10Marks);
               pCompatDC->GetTextExtent(sExp, &szTextSize.x, &szTextSize.y);
               rTextRect.SetLeft(nEX + MARKER_RADIUS + 5);
               rTextRect.SetTop(nEY + MARKER_RADIUS);
@@ -1043,7 +1044,7 @@ void mafViewIntGraphWindow::DrawGraph(wxDC *pCompatDC)
             pPen = new wxPen(MARKER_COLOR, 0, wxSOLID);
             pCompatDC->SetPen(*pPen);
             pCompatDC->DrawEllipse(nEX - MARKER_RADIUS, nEY - MARKER_RADIUS, 2 * MARKER_RADIUS, 2 * MARKER_RADIUS);
-            sprintf(sExp,"%.1f", valEY / rYPow10Marks);
+            sExp = wxString::Format("%.1f", valEY / rYPow10Marks);
             pCompatDC->GetTextExtent(sExp, &szTextSize.x, &szTextSize.y);
             rTextRect.SetLeft(nEX - MARKER_RADIUS - szTextSize.x - 5);
             rTextRect.SetTop(nEY + MARKER_RADIUS);
@@ -1525,8 +1526,8 @@ bool mafViewIntGraphWindow::SaveGraphAsCSV(wxString const &sFileName)
   wxFile         *pFile = NULL;
   wxString       sStr("");  
   wxString       sWriteStr("");  
-  wxChar const   *pSeparatorStr = GetListSeparator();
-  wxChar const   *pDecStr = GetDecimalSeparator();
+  const wxString& pSeparatorStr = GetListSeparator();
+  const wxString& pDecStr = GetDecimalSeparator();
 
   // do nothing in case we do not need anything
   if(m_Graphs.size() == 0 || m_Graphs[0] == NULL)
@@ -1543,18 +1544,15 @@ bool mafViewIntGraphWindow::SaveGraphAsCSV(wxString const &sFileName)
     return (false);
   }
 
-  char nameBuffer[MAXTEXTLEN + 1];
   sWriteStr = "";
   if(m_XGraph)
   {
-    m_XGraph->GetIDDesc(m_XGraph->GetIndexX(0), 0, nameBuffer, MAXTEXTLEN);
-    sWriteStr += nameBuffer;
+    sWriteStr += m_XGraph->GetIDDesc(m_XGraph->GetIndexX(0), 0).toWx();
     sWriteStr += ";";
   }
   else if(m_Graphs.size() > 0)
   {
-    m_Graphs[0]->GetIDDesc(0, 0, nameBuffer, MAXTEXTLEN);
-    sWriteStr += nameBuffer;
+    sWriteStr += m_Graphs[0]->GetIDDesc(0, 0).toWx();
     sWriteStr += ";";
   }
 
@@ -1562,8 +1560,7 @@ bool mafViewIntGraphWindow::SaveGraphAsCSV(wxString const &sFileName)
   {
     for(int j = 0; j < m_Graphs[i]->GetYVarNum(); j++)
     {
-      m_Graphs[i]->GetIDDesc(m_Graphs[i]->GetIndexY(j), m_Graphs[i]->GetYDer(j), nameBuffer, 1000);
-      sWriteStr += nameBuffer;
+      sWriteStr += m_Graphs[i]->GetIDDesc(m_Graphs[i]->GetIndexY(j), m_Graphs[i]->GetYDer(j)).toWx();
       sWriteStr += ";";
     }
   }
@@ -1811,57 +1808,45 @@ mafViewIntGraphWindow::~mafViewIntGraphWindow()
 //#endif
 
 //----------------------------------------------------------------------------
-wxChar const *GetListSeparator()
+const wxString& GetListSeparator()
 //----------------------------------------------------------------------------
 {
-  static wxChar _caListSparator[2] = {',','\0'};
+  static wxString _caListSparator = wxT(",");
 
-  #if !defined UNIX 
-
-  HKEY  hKey;
-  char  szListSeparator[2];
-  DWORD dwBufLen = 2;
-  LONG  lRet;
-
-  lRet = RegOpenKeyEx( HKEY_CURRENT_USER, "Control Panel\\International", 0, KEY_QUERY_VALUE, &hKey);
-  if(lRet != ERROR_SUCCESS)
-     return _caListSparator;
-
-  lRet = RegQueryValueEx(hKey, "Slist", NULL, NULL, (LPBYTE)szListSeparator, &dwBufLen);
-  if((lRet != ERROR_SUCCESS) || (dwBufLen > 2) )
-     return _caListSparator;
-
-  RegCloseKey(hKey);
-  strncpy(_caListSparator, szListSeparator, 2);
-  #endif
+#if !defined UNIX 
+  wxString regKeyName = wxT("HKEY_CURRENT_USER\\Control Panel\\International");
+  wxRegKey RegKey(regKeyName);
+  if (RegKey.Exists())
+  {
+      wxString val;
+      if (RegKey.QueryValue(wxT("Slist"), val))
+      {
+          _caListSparator = val;
+      }
+  }
+#endif
 
   return _caListSparator;
 }
 
 //----------------------------------------------------------------------------
-wxChar const *GetDecimalSeparator()
+const wxString& GetDecimalSeparator()
 //----------------------------------------------------------------------------
 {
-  static wxChar _caDecSparator[2] = {'.','\0'};
+  static wxString _caDecSparator = wxT(".");
 
-  #if !defined UNIX 
-
-  HKEY  hKey;
-  char  szDecSeparator[2];
-  DWORD dwBufLen = 2;
-  LONG  lRet;
-
-  lRet = RegOpenKeyEx( HKEY_CURRENT_USER, "Control Panel\\International", 0, KEY_QUERY_VALUE, &hKey);
-  if(lRet != ERROR_SUCCESS)
-     return _caDecSparator;
-
-  lRet = RegQueryValueEx(hKey, "sDecimal", NULL, NULL, (LPBYTE)szDecSeparator, &dwBufLen);
-  if((lRet != ERROR_SUCCESS) || (dwBufLen > 2) )
-     return _caDecSparator;
-
-  RegCloseKey(hKey);
-  strncpy(_caDecSparator, szDecSeparator, 2);
-  #endif
+#if !defined UNIX 
+  wxString regKeyName = wxT("HKEY_CURRENT_USER\\Control Panel\\International");
+  wxRegKey RegKey(regKeyName);
+  if (RegKey.Exists())
+  {
+      wxString val;
+      if (RegKey.QueryValue(wxT("sDecimal"), val))
+      {
+          _caDecSparator = val;
+      }
+  }
+#endif
 
   return _caDecSparator;
 }
@@ -4480,7 +4465,7 @@ void mpMovableObject::ShapeUpdated()
     // Just in case...
     if (m_shape_xs.size()!=m_shape_ys.size())
     {
-        ::wxLogError(wxT("[mpMovableObject::ShapeUpdated] Error, m_shape_xs and m_shape_ys have different lengths!"));
+        wxLogError(wxT("[mpMovableObject::ShapeUpdated] Error, m_shape_xs and m_shape_ys have different lengths!"));
     }
     else
     {
@@ -4619,9 +4604,9 @@ void mpCovarianceEllipse::RecalculateShape()
     m_shape_ys.clear();
 
     // Preliminar checks:
-    if (m_quantiles<0)  { ::wxLogError(wxT("[mpCovarianceEllipse] Error: quantiles must be non-negative")); return; }
-    if (m_cov_00<0)     { ::wxLogError(wxT("[mpCovarianceEllipse] Error: cov(0,0) must be non-negative")); return; }
-    if (m_cov_11<0)     { ::wxLogError(wxT("[mpCovarianceEllipse] Error: cov(1,1) must be non-negative")); return; }
+    if (m_quantiles<0)  { wxLogError(wxT("[mpCovarianceEllipse] Error: quantiles must be non-negative")); return; }
+    if (m_cov_00<0)     { wxLogError(wxT("[mpCovarianceEllipse] Error: cov(0,0) must be non-negative")); return; }
+    if (m_cov_11<0)     { wxLogError(wxT("[mpCovarianceEllipse] Error: cov(1,1) must be non-negative")); return; }
 
     m_shape_xs.resize( m_segments,0 );
     m_shape_ys.resize( m_segments,0 );
@@ -4633,7 +4618,7 @@ void mpCovarianceEllipse::RecalculateShape()
 
     double D = b*b - 4*c;
 
-    if (D<0)     { ::wxLogError(wxT("[mpCovarianceEllipse] Error: cov is not positive definite")); return; }
+    if (D<0)     { wxLogError(wxT("[mpCovarianceEllipse] Error: cov is not positive definite")); return; }
 
     double eigenVal0 =0.5*( -b + sqrt(D) );
     double eigenVal1 =0.5*( -b - sqrt(D) );
@@ -4717,7 +4702,7 @@ void mpPolygon::setPoints(
 {
     if ( points_xs.size()!=points_ys.size() )
     {
-        ::wxLogError(wxT("[mpPolygon] Error: points_xs and points_ys must have the same number of elements"));
+        wxLogError(wxT("[mpPolygon] Error: points_xs and points_ys must have the same number of elements"));
     }
     else
     {
@@ -4747,7 +4732,7 @@ void mpBitmapLayer::SetBitmap( const wxImage &inBmp, double x, double y, double 
 {
     if (!inBmp.Ok())
     {
-        ::wxLogError(wxT("[mpBitmapLayer] Assigned bitmap is not Ok()!"));
+        wxLogError(wxT("[mpBitmapLayer] Assigned bitmap is not Ok()!"));
     }
     else
     {

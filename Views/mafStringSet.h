@@ -37,13 +37,12 @@ public:
   mafStringSet(wxInt32 nStringNumber, const std::vector<mafString> *pData = NULL);
   virtual ~mafStringSet();
   wxInt32 GetStringNumber() const {return m_StringNumber;}
-  wxInt32 SetStringNumber(wxInt32 nSN) {wxInt32 nOld = m_StringNumber; m_StringNumber = nSN; return nOld;}
-  wxChar  **GetData() {return m_Data;}
-  wxChar  ** const GetData() const {return m_Data;}
+  wxString  *GetData() {return m_Data;}
+  wxString  *const GetData() const {return m_Data;}
 
 protected:
   //number of strings
   wxInt32 m_StringNumber;
-  wxChar  **m_Data;
+  wxString *m_Data;
 };
 #endif

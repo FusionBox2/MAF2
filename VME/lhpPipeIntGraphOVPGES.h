@@ -74,8 +74,8 @@ public:
   /** Answer events coming from the Gui and from cloud */
   void OnEvent(mafEventBase *maf_event);
 
-  virtual const char   *GetVarTitle(int i) const;
-  virtual const char   *GetVarUnit(int i) const;
+  virtual const mafString& GetVarTitle(int i) const;
+  virtual const mafString& GetVarUnit(int i) const;
   virtual double       GetVarDerivativeCoef(int i) const;
 
 protected:

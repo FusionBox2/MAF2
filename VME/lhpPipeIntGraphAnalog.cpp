@@ -33,17 +33,21 @@
 //----------------------------------------------------------------------------
 // constants
 //----------------------------------------------------------------------------
+namespace
+{
+    const mafString emptyDesc = _R("");
+}
 mafCxxTypeMacro(lhpPipeIntGraphAnalog);
 
 
-const char *lhpPipeIntGraphAnalog::GetVarTitle(int i) const
+const mafString& lhpPipeIntGraphAnalog::GetVarTitle(int i) const
 {
-  return m_Names[i].GetCStr();//"";//saVarDesc[i];
+  return m_Names[i];//"";//saVarDesc[i];
 }
 
-const char *lhpPipeIntGraphAnalog::GetVarUnit(int i)const
+const mafString& lhpPipeIntGraphAnalog::GetVarUnit(int i)const
 {
-  return "";//saVarUnits[i];
+  return emptyDesc;//saVarUnits[i];
 }
 
 double lhpPipeIntGraphAnalog::GetVarDerivativeCoef(int i)const
@@ -141,7 +145,6 @@ mafGUI *lhpPipeIntGraphAnalog::CreateGui()
 {
   assert(m_Gui == NULL);
   m_Gui = Superclass::CreateGui();
-  wxString name;
   bool checked = false;
 
   m_CheckBoxXval = m_Gui->CheckList(ID_CHECK_BOXXVAL,_L("X value"),100,_L("Choose value for X axis"));
@@ -151,7 +154,7 @@ mafGUI *lhpPipeIntGraphAnalog::CreateGui()
   m_CheckBoxXval->SetCheckMode(MODE_RADIO);
   for (int n = 0; n < m_Names.size(); n++)
   {
-    name = GetVarTitle(n);
+    wxString name = GetVarTitle(n).toWx();
     m_CheckBoxXval->AddItem(n, name, checked);
     m_CheckBoxYval->AddItem(n, name, checked);
     m_CheckBoxYder->AddItem(n, name, checked);

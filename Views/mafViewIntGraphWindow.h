@@ -65,7 +65,7 @@ public:
   virtual unsigned GetBreakBegin() const = 0;
   virtual unsigned GetBreakEnd()  const = 0;
   virtual double   GetDerivCoef(unsigned index) const = 0;
-  virtual void     GetIDDesc(unsigned index, unsigned int deriv, char *sDescript,unsigned int nLength) const = 0;
+  virtual mafString GetIDDesc(unsigned index, unsigned int deriv) const = 0;
   virtual double   GetTime() const = 0;
 };
 
@@ -160,8 +160,8 @@ private:
 
 };
 
-wxChar const *GetListSeparator();
-wxChar const *GetDecimalSeparator();
+const wxString& GetListSeparator();
+const wxString& GetDecimalSeparator();
 
 
 

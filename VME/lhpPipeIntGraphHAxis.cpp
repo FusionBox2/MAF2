@@ -31,9 +31,11 @@
 //----------------------------------------------------------------------------
 namespace
 {
-  const char *saVarDesc[]  = {"Axis direction X", "Axis direction Y", "Axis direction Z", "Rot center X", "Rot center Y", "Rot center Z", "Axis translation", "Axis rotation angle"};
+  const mafString saVarDesc[]  = {_R("Axis direction X"), _R("Axis direction Y"), _R("Axis direction Z"), _R("Rot center X"), _R("Rot center Y"), _R("Rot center Z"), _R("Axis translation"), _R("Axis rotation angle")};
 
-  const char *saVarUnits[] = {"", "", "", "mm", "mm", "mm", "mm","deg"};
+  const mafString saVarUnits[] = {_R(""), _R(""), _R(""), _R("mm"), _R("mm"), _R("mm"), _R("mm"),_R("deg")};
+
+  const mafString emptyDesc = _R("");
 
   double saCoefs[] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,mafMatrix3x3::DegreesToRadians()};
 }
@@ -42,24 +44,24 @@ namespace
 mafCxxTypeMacro(lhpPipeIntGraphHAxis);
 
 
-const char *lhpPipeIntGraphHAxis::GetVarTitle(int i) const
+const mafString& lhpPipeIntGraphHAxis::GetVarTitle(int i) const
 {
   if(i >= GDT_LAST)
   {
     wxASSERT(false);
-    return "";
+    return emptyDesc;
   }
   if(i < Superclass::GDT_LAST)
     return Superclass::GetVarTitle(i);
   return saVarDesc[i - Superclass::GDT_LAST];
 }
 
-const char *lhpPipeIntGraphHAxis::GetVarUnit(int i)const
+const mafString& lhpPipeIntGraphHAxis::GetVarUnit(int i)const
 {
   if(i >= GDT_LAST)
   {
     wxASSERT(false);
-    return "";
+    return emptyDesc;
   }
   if(i < Superclass::GDT_LAST)
     return Superclass::GetVarUnit(i);

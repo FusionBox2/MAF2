@@ -32,42 +32,50 @@
 //----------------------------------------------------------------------------
 // constants
 //----------------------------------------------------------------------------
+namespace
+{
+    const mafString saVarDesc[] = { _R("Angle"), _R("Length") };
+
+    const mafString saVarUnits[] = { _R("deg"), _R("mm") };
+
+    const mafString emptyDesc = _R("");
+}
 mafCxxTypeMacro(lhpPipeIntGraphPolyline);
 
 
-const char *lhpPipeIntGraphPolyline::GetVarTitle(int i) const
+const mafString& lhpPipeIntGraphPolyline::GetVarTitle(int i) const
 {
   if(i >= GDT_LAST)
   {
     wxASSERT(false);
-    return "";
+    return emptyDesc;
   }
   if(i < Superclass::GDT_LAST)
     return Superclass::GetVarTitle(i);
   if(mafVMEMeter *m = mafVMEMeter::SafeDownCast(m_Node))
   {
     if(m->GetMeterMode() == mafVMEMeter::LINE_ANGLE)
-      return "Angle";
+      return saVarDesc[0];
   }
-  return "Length";
+  return saVarDesc[1];
 }
 
-const char *lhpPipeIntGraphPolyline::GetVarUnit(int i)const
+const mafString& lhpPipeIntGraphPolyline::GetVarUnit(int i)const
 {
   if(i >= GDT_LAST)
   {
     wxASSERT(false);
-    return "";
+    return emptyDesc;
   }
   if(i < Superclass::GDT_LAST)
     return Superclass::GetVarUnit(i);
   if(mafVMEMeter *m = mafVMEMeter::SafeDownCast(m_Node))
   {
     if(m->GetMeterMode() == mafVMEMeter::LINE_ANGLE)
-      return "deg";
+      return saVarUnits[0];
   }
 
-  return "mm";
+  return saVarUnits[1];
 }
 
 double lhpPipeIntGraphPolyline::GetVarDerivativeCoef(int i)const

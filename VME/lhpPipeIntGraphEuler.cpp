@@ -26,13 +26,13 @@
 #include "mafMatrix3x3.h"
 #include "mafVME.h"
 
-#define EulerAnglesDescr(Convention) "Euler "#Convention" Angle1", "Euler "#Convention" Angle2", "Euler "#Convention" Angle3"
+#define EulerAnglesDescr(Convention) _R("Euler "#Convention" Angle1"), _R("Euler "#Convention" Angle2"), _R("Euler "#Convention" Angle3")
 //----------------------------------------------------------------------------
 // constants
 //----------------------------------------------------------------------------
 namespace
 {
-  const char *saVarDesc[] = 
+  const mafString saVarDesc[] = 
   {
     EulerAnglesDescr(XYZs),
     EulerAnglesDescr(XYXs),
@@ -63,24 +63,26 @@ namespace
     EulOrdYXZs, EulOrdYXYs, EulOrdZXYs, EulOrdZXZs, EulOrdZYXs, EulOrdZYZs,
     EulOrdZYXr, EulOrdXYXr, EulOrdYZXr, EulOrdXZXr, EulOrdXZYr, EulOrdYZYr,
     EulOrdZXYr, EulOrdYXYr, EulOrdYXZr, EulOrdZXZr, EulOrdXYZr, EulOrdZYZr};
+
+  const mafString sVarUnit = _R("deg");
 }
 
 
 mafCxxTypeMacro(lhpPipeIntGraphEuler);
 
 
-const char *lhpPipeIntGraphEuler::GetVarTitle(int i) const
+const mafString& lhpPipeIntGraphEuler::GetVarTitle(int i) const
 {
   if(i < Superclass::GDT_LAST)
     return Superclass::GetVarTitle(i);
   return saVarDesc[i - Superclass::GDT_LAST];
 }
 
-const char *lhpPipeIntGraphEuler::GetVarUnit(int i)const
+const mafString& lhpPipeIntGraphEuler::GetVarUnit(int i)const
 {
   if(i < Superclass::GDT_LAST)
     return Superclass::GetVarUnit(i);
-  return "deg";
+  return sVarUnit;
 }
 
 double lhpPipeIntGraphEuler::GetVarDerivativeCoef(int i)const

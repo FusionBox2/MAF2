@@ -90,7 +90,7 @@ void  lhpOpMTRULBImporter::OpRun()
   mafEventMacro(mafEvent(this,result));
 }
 
-void lhpOpMTRULBImporter::ReadMatrix(wxChar const *fstring, vtkMatrix4x4 *mat)
+void lhpOpMTRULBImporter::ReadMatrix(const char *fstring, vtkMatrix4x4 *mat)
 {
 
   if(mat == NULL)
@@ -371,9 +371,8 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
 
     vtkDEL(reader);
 
-    wxString sLinedMatrix;
-    wxInt32  nJ;
-    for(nJ = 0; nJ < 3; nJ++)
+    std::string sLinedMatrix;
+    for(int nJ = 0; nJ < 3; nJ++)
     {
       pRet = fgets(sLine, maxStrLen, fp);
       sLinedMatrix += sLine;

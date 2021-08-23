@@ -46,7 +46,7 @@ public:
   virtual unsigned GetBreakBegin() const {return BreakBegin();}
   virtual unsigned GetBreakEnd()  const {return BreakEnd();}
   virtual double   GetDerivCoef(unsigned index) const;
-  virtual void     GetIDDesc(unsigned index, unsigned int deriv, char *sDescript,unsigned int nLength) const;
+  virtual mafString GetIDDesc(unsigned index, unsigned int deriv) const;
   virtual double   GetTime() const;
 private:
   lhpPipeIntGraphAbstract *m_Pipe;

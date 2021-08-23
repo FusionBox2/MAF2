@@ -35,19 +35,12 @@ mafStringSet::mafStringSet(wxInt32 nStringNumber, const std::vector<mafString> *
 
   if(m_StringNumber > 0)
   {
-    m_Data = (wxChar **)malloc(sizeof(wxChar *) * m_StringNumber);
-    if(pData == NULL)
+    m_Data = new wxString[m_StringNumber];
+    if(pData != NULL)
     {
       for(nI = 0; nI < m_StringNumber; nI++)
       {
-        m_Data[nI] = NULL;
-      }
-    }
-    else
-    {
-      for(nI = 0; nI < m_StringNumber; nI++)
-      {
-        m_Data[nI] = strdup(pData->at(nI).GetCStr());
+        m_Data[nI] = pData->at(nI).toWx();
       }
     }
   }
@@ -57,15 +50,5 @@ mafStringSet::mafStringSet(wxInt32 nStringNumber, const std::vector<mafString> *
 mafStringSet::~mafStringSet()
 //----------------------------------------------------------------------------
 {
-  wxInt32 nI;
-
-  if(m_Data != NULL)
-  {
-    for(nI = 0; nI < m_StringNumber; nI++)
-    {
-      if(m_Data[nI] != NULL)
-        free(m_Data[nI]);
-    }
-    free(m_Data);
-  }
+    delete[] m_Data;
 }

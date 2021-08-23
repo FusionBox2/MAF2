@@ -542,10 +542,10 @@ void mafViewIntGraph::savePlotGen(void)
     if(vme)
     {
       std::vector<mafString> strv;
-      char **sttr = pSave->GetData();
+      wxString *sttr = pSave->GetData();
       int nm = pSave->GetStringNumber();
       for(int i = 0; i < nm; i++)
-        strv.push_back(_R(sttr[i]));
+        strv.push_back(mafWxToString(sttr[i]));
       vme->GetTagArray()->SetTag(mafTagItem(_R(mafINTGG_SAVEINFO_TAG), strv));
       mafEventMacro(mafEvent(this,VME_MODIFIED, vme));
     }

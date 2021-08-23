@@ -30,9 +30,9 @@
 //----------------------------------------------------------------------------
 namespace
 {
-  const char *saVarDesc[]  = {"Local Pos X", "Local Pos Y", "Local Pos Z", "Local Ori X", "Local Ori Y", "Local Ori Z"};
+  const mafString saVarDesc[]  = {_R("Local Pos X"), _R("Local Pos Y"), _R("Local Pos Z"), _R("Local Ori X"), _R("Local Ori Y"), _R("Local Ori Z")};
 
-  const char *saVarUnits[] = {"mm" ,"mm" ,"mm", "deg","deg","deg"};
+  const mafString saVarUnits[] = {_R("mm") ,_R("mm") ,_R("mm"), _R("deg"),_R("deg"),_R("deg")};
 
   double saCoefs[] = {1.0, 1.0, 1.0, mafMatrix3x3::DegreesToRadians(), mafMatrix3x3::DegreesToRadians(), mafMatrix3x3::DegreesToRadians()};
 }
@@ -41,14 +41,14 @@ namespace
 mafCxxTypeMacro(lhpPipeIntGraphLocal);
 
 
-const char *lhpPipeIntGraphLocal::GetVarTitle(int i) const
+const mafString& lhpPipeIntGraphLocal::GetVarTitle(int i) const
 {
   if(i < Superclass::GDT_LAST)
     return Superclass::GetVarTitle(i);
   return saVarDesc[i - Superclass::GDT_LAST];
 }
 
-const char *lhpPipeIntGraphLocal::GetVarUnit(int i)const
+const mafString& lhpPipeIntGraphLocal::GetVarUnit(int i)const
 {
   if(i < Superclass::GDT_LAST)
     return Superclass::GetVarUnit(i);

@@ -52,8 +52,8 @@ public:
     ID_LAST
   };
 
-  virtual const char *GetVarTitle(int i) const = 0;
-  virtual const char *GetVarUnit(int i) const = 0;
+  virtual const mafString& GetVarTitle(int i) const = 0;
+  virtual const mafString& GetVarUnit(int i) const = 0;
   virtual double     GetVarDerivativeCoef(int i) const = 0;
   virtual std::istream& operator>>(std::istream& is);
   virtual std::ostream& operator<<(std::ostream& os) const ;
