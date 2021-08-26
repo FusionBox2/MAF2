@@ -43,7 +43,11 @@ public:
 
 protected:  
 	/** Called to set the button as default. */
-  virtual void SetDefault() {};
+#if wxCHECK_VERSION(3, 0, 0)
+    virtual wxWindow* SetDefault() { return wxButtonBase::SetDefault(); };
+#else
+    virtual void SetDefault() {};
+#endif
   
 	/** Overriden function member to intercept event generation and forward it to the Listener. */
   virtual void Command(wxCommandEvent& event);

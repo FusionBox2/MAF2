@@ -30,7 +30,6 @@
 // mafGUIPanelStack
 //----------------------------------------------------------------------------
 BEGIN_EVENT_TABLE(mafGUIPanelStack,mafGUIPanel)
-    EVT_SIZE(mafGUIPanelStack::OnSize)
 END_EVENT_TABLE()
 //---------------------------------------------------------------------------
 
@@ -92,7 +91,7 @@ void mafGUIPanelStack::Push(mafGUIPanel* p)
   m_CurrentPanel->Reparent(this);
   m_Sizer->Add(m_CurrentPanel,1,wxEXPAND);
    
-  DoLayout();
+  Layout();
 }
 //----------------------------------------------------------------------------
 void mafGUIPanelStack::Pop()
@@ -111,18 +110,5 @@ void mafGUIPanelStack::Pop()
   m_CurrentPanel->Reparent(this);
   m_Sizer->Add(m_CurrentPanel,1,wxEXPAND);
 
-  DoLayout();
-}
-//----------------------------------------------------------------------------
-void mafGUIPanelStack::OnSize(wxSizeEvent& WXUNUSED(event))
-//----------------------------------------------------------------------------
-{
-  DoLayout();
-}
-//----------------------------------------------------------------------------
-void mafGUIPanelStack::DoLayout()
-//----------------------------------------------------------------------------
-{
-  wxSizeEvent e;
-	wxPanel::OnSize(e);
+  Layout();
 }

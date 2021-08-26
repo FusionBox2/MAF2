@@ -530,7 +530,7 @@ void mafPipeSurface::OnEvent(mafEventBase *maf_event)
         m_Gui->Enable(ID_SCALARS_ARRAY_SELECTION, m_ScalarVisibility != 0 && dataAttribute->GetNumberOfArrays() > 0);
         for(int sa = 0; sa < dataAttribute->GetNumberOfArrays(); sa++)
         {
-          m_ScalarsArraySelection->Append(_T(dataAttribute->GetArrayName(sa)));
+          m_ScalarsArraySelection->Append(mafString(_R(dataAttribute->GetArrayName(sa))).toWx());
         }
         m_ScalarsArraySelection->SetSelection(0);
         m_Gui->Update();

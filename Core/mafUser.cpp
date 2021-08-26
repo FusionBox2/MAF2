@@ -297,7 +297,7 @@ void mafUser::UpdateUserCredentialsFile()
 void mafUser::InitUserInfoHome()
 //----------------------------------------------------------------------------
 {
-  wxStandardPaths std_paths;
+  auto& std_paths = wxStandardPaths::Get();
   m_UserHome = mafWxToString(std_paths.GetUserLocalDataDir());
   if (!mafDirExists(m_UserHome))
   {

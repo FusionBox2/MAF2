@@ -56,8 +56,6 @@ SET(PROJECT_SRCS
   mafGUIColorSwatch.h
   mafGUIColorWidget.cpp
   mafGUIColorWidget.h
-  mafGUICrossSplitter.cpp
-  mafGUICrossSplitter.h
   mafGUIDialog.cpp
   mafGUIDialog.h
   mafGUIDockManager.cpp
@@ -66,8 +64,6 @@ SET(PROJECT_SRCS
   mafGUIDockSettings.h
   mafGUIFileHistory.cpp
   mafGUIFileHistory.h
-  mafGUIFlagSplitter.cpp
-  mafGUIFlagSplitter.h
   mafGUIFloatSlider.cpp
   mafGUIFloatSlider.h
   mafGUIFrame.cpp

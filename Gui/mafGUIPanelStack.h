@@ -46,12 +46,6 @@ public:
 	void Pop ();
 
 protected:
-  /** Call DoLayout. */
-	void OnSize(wxSizeEvent& event);
-  
-	/** Adjust the size calling wxPanel::OnSize. */
-	void DoLayout();
-
   wxBoxSizer   *m_Sizer;
   mafGUIPanel     *m_CurrentPanel;
 /** Event table declaration macro  */
