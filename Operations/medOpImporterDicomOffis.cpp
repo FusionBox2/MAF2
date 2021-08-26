@@ -2223,7 +2223,7 @@ void medOpImporterDicomOffis::CreateLoadPage()
 	}
 }
 
-int wxCALLBACK _myCompareFunction(long item1, long item2, long WXUNUSED(sortData))
+int wxCALLBACK _myCompareFunction(wxIntPtr item1, wxIntPtr item2, wxIntPtr WXUNUSED(sortData))
 {
 	// inverse the order
 	if (item1 < item2)
