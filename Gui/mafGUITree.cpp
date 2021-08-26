@@ -431,7 +431,7 @@ bool mafGUITree::SelectNode(intptr_t node_id)
 void mafGUITree::OnSize(wxSizeEvent& event)
 //----------------------------------------------------------------------------
 {
-	mafGUINamedPanel::OnSize(event);
+  event.Skip();
   m_NodeTree->Refresh();
 }
 //----------------------------------------------------------------------------

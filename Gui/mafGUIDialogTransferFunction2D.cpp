@@ -261,7 +261,8 @@ void mafGUIDialogTransferFunction2D::CreateGUI()
   // first page: slice preview
   wxPanel *previewPage = new wxPanel(this->m_PreviewBook);
   this->m_PreviewBook->AddPage(previewPage, "XY");
-  wxFlexGridSizer *gridSizer = new wxFlexGridSizer(2, 2);
+#pragma message("Looks strange, potentially wxFlexGridSizer(2, 2, 0, 0) is expected")
+  wxFlexGridSizer *gridSizer = new wxFlexGridSizer(2, 2, 0);
   gridSizer->AddGrowableCol(0);
   gridSizer->AddGrowableRow(0);
   previewPage->SetAutoLayout(TRUE);

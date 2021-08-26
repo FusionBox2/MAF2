@@ -153,7 +153,7 @@ void mafExpirationDate::InitializePathFileName()
 	if(wxApp::GetInstance() != NULL)
 	{
 		std::string dir;
-		wxStandardPaths std_paths;
+		auto& std_paths = wxStandardPaths::Get();
 		dir = std_paths.GetUserLocalDataDir().c_str();
 		if (!wxDirExists(dir.c_str()))
 		{

@@ -38,7 +38,6 @@
 #include "mafGUIPicButton.h"
 #include "mafGUISplittedPanel.h"
 #include "mafGUINamedPanel.h"
-#include "mafGUICrossSplitter.h"
 #include "mafGUITimeBar.h"
 #include "mafGUILocaleSettings.h"
 #include "mafGUIMeasureUnitSettings.h"

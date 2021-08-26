@@ -54,7 +54,7 @@ public:
   void SetBitmap(const mafString& BitmapId, wxWindowID id = 0);
 
 protected:  
-  virtual void SetDefault() {};
+    virtual wxWindow* SetDefault() { return wxButtonBase::SetDefault(); };
 
   /** Overriden function member to intercept event generation and forward it to the Listener. */
   virtual void Command(wxCommandEvent& event);

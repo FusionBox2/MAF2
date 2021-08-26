@@ -135,12 +135,6 @@ protected:
 	/** Send the MENU_FILE_QUIT event. */
   void OnCloseWindow(wxCloseEvent& event);
 
-	/** Redraw sash panels. */
-  void OnSashDrag(wxSashEvent& event);
-
-	/** Call LayoutWindow method. */
-  void OnLayout(wxCommandEvent& event);
-
 	/** Update the memory status on the status bas. */
   void OnIdle(wxIdleEvent& event);
 
@@ -149,9 +143,6 @@ protected:
 
   /** Send an event to open the msf or zip file. */
   void OnDropFile(wxDropFilesEvent &event);
-
-	/** Redraw widgets on interface. */
-  void LayoutWindow();
 
 	/** Create the status bar on main application frame. */
   void CreateStatusbar();

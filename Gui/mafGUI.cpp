@@ -1448,7 +1448,7 @@ wxGrid *mafGUI::Grid(int id, const mafString& label,int height, int row, int col
 
 	grid->EnableEditing(false);
 	grid->SetColLabelSize(LH);
-	grid->SetLabelSize(wxVERTICAL,LW);
+	grid->SetRowLabelSize(LW);
 	grid->SetColSize(0,EW);
 	grid->SetColSize(1,EW);
 

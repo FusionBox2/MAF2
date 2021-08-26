@@ -101,7 +101,7 @@ void mafGUILocaleSettings::OnEvent(mafEventBase *maf_event)
         m_Language = wxLANGUAGE_ENGLISH;
         m_LanguageDictionary = _R("en");
       }
-      m_Config->Write("Language",m_Language);
+      m_Config->Write("Language",(int)m_Language);
       m_Config->Write("Dictionary",m_LanguageDictionary.toWx());
       m_Config->Flush();
     }
@@ -126,7 +126,7 @@ void mafGUILocaleSettings::InitializeSettings()
   else
   {
     // no language set; use default language: English
-    m_Config->Write("Language",wxLANGUAGE_ENGLISH);
+    m_Config->Write("Language",(int)wxLANGUAGE_ENGLISH);
     m_Config->Write("Dictionary","en");
     m_Language = wxLANGUAGE_ENGLISH;
     m_LanguageDictionary = _R("en");
@@ -232,7 +232,7 @@ void mafGUILocaleSettings::SetLanguageDirectory(const char* prefix, const char* 
 void mafGUILocaleSettings::ChangeLanguage(wxLanguage languageEnum, const char *languageAcronym)
 //----------------------------------------------------------------------------
 {
-  m_Config->Write("Language",languageEnum);
+  m_Config->Write("Language",(int)languageEnum);
   m_Config->Write("Dictionary",languageAcronym);
   m_Language = languageEnum;
   m_LanguageDictionary = _R(languageAcronym);
