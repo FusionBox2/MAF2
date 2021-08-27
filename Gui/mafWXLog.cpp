@@ -40,19 +40,19 @@ mafWXLog::~mafWXLog()
   if(m_Fp) fclose(m_Fp);
 }
 // ----------------------------------------------------------------------------
-void mafWXLog::DoLogString(const wxChar *szString, time_t WXUNUSED(t))
+void mafWXLog::DoLogText(const wxString& msg)
 // ----------------------------------------------------------------------------
 {
-  wxString msg;
+  wxString logMsg;
   //TimeStamp(&msg);
   wxDateTime log_time = wxDateTime::UNow();
-  msg = wxString::Format("%02d:%02d:%02d:%03d ",log_time.GetHour(), log_time.GetMinute(),log_time.GetSecond(), log_time.GetMillisecond());
-  msg << szString << wxT('\n');
-  m_PTextCtrl->AppendText(msg);
+  logMsg = wxString::Format("%02d:%02d:%02d:%03d ",log_time.GetHour(), log_time.GetMinute(),log_time.GetSecond(), log_time.GetMillisecond());
+  logMsg << msg << wxT('\n');
+  m_PTextCtrl->AppendText(logMsg);
     
   if(m_Fp && m_LogToFile)
   {
-    fputs(msg.mb_str(), m_Fp);
+    fputs(logMsg.mb_str(), m_Fp);
 		fflush(m_Fp);
   }		
 }
