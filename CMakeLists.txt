@@ -156,6 +156,7 @@ IF(MAF_FOUND)
     SUBDIRS (Views)
     SUBDIRS (VME)
   ENDIF (MED_BUILD_MEDDLL)
+  SUBDIRS(Application)
   
   # Configuring Doxygen documentation  
   SUBDIRS (Docs)
