@@ -156,8 +156,8 @@
 IMPLEMENT_APP(medApp)
 
 ////BES: 14.5.2008 - OnIdle to unlock blocks
-//BEGIN_EVENT_TABLE(lhpFusionBoxApp, wxApp)
-//  EVT_IDLE(lhpFusionBoxApp::OnIdle)
+//BEGIN_EVENT_TABLE(medApp, wxApp)
+//  EVT_IDLE(medApp::OnIdle)
 //END_EVENT_TABLE()
 
 //--------------------------------------------------------------------------------
@@ -397,9 +397,6 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
 
   wxBitmap splashBitmap;
   splashBitmap.LoadFile("../Splash/SPLASH_SCREEN.bmp", wxBITMAP_TYPE_BMP);
-    logic->ShowSplashScreen(splashBitmap); 
-
-  // show the application
   logic->ShowSplashScreen(splashBitmap);
   logic->Show();
 
@@ -417,7 +414,7 @@ int medApp::OnExit()
   return 0;
 }
 
-//void lhpFusionBoxApp::OnIdle( wxIdleEvent &event )
+//void medApp::OnIdle( wxIdleEvent &event )
 //{ 
 //  vtkDataArrayMemMng::GetDataArrayMemMng()->UnlockAllMemory(0);
 //  event.Skip();
