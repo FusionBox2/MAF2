@@ -46,6 +46,10 @@
 #include "mafOpExporterBmp.h"
 #include "mafOpCreateGroup.h"
 #include "mafOpCreateMeter.h"
+#include "mafOpCreateMuscleWrapping2.h"
+#include "mafOpCreateMeter2.h"
+#include "mafOpCreateGravityLine.h"
+#include "mafOpCreateCenterLine.h"
 #include "mafOpCreateSlicer.h"
 #include "mafOpCreateRefSys.h"
 #include "mafOpFilterSurface.h"
@@ -57,11 +61,18 @@
 #include "mafOpImporterSTL.h"
 #include "mafOpExporterSTL.h"
 #include "mafOpExporterVTK.h"
+#include "mafOpExporterVRML.h"
+#include "mafOpExporterGeomTex.h"
 #include "mafOpImporterVTK.h"
 #include "mafOpImporterMSF1x.h"
 #include "mafOpImporterVRML.h"
 #include "mafOpCreateVolume.h"
+#include "mafOpCreatePlane.h"
+#include "mafOpCreateOsteometricBoard.h"
 #include "mafOpVOIDensityEditor.h"
+#include "mafOpCreateQuadricSurfaceFitting.h"
+//#include "mafOpCreateMuscleWrapper.h"
+//BES: 23.6.2008 - Large Volume - to be merged 
 #include "mafOpImporterRAWVolume.h"
 #include "mafOpExporterRaw.h"
 #include "mafOpExtractIsosurface.h"
@@ -69,12 +80,17 @@
 #include "mafOpVOIDensity.h"
 #include "mafOpAddLandmark.h"
 #include "mafOpCreateSurfaceParametric.h"
+#include "mafOpCreateEllipsoid.h"
+#include "mafOpCreateHyperboloid.h"
+#include "mafOpCreateHyperboloid2S.h"
+#include "mafOpCreateCylinder.h"
 #include "mafOpImporterMesh.h"
 #include "mafOpImporterVMEDataSetAttributes.h"
 #include "mafViewVTK.h"
 #include "mafViewCompound.h"
 #include "mafOpValidateTree.h"
 #include "mafOpApplyTrajectory.h"
+#include "mafOpCrop3DSurface.h"
 
 #include <vtkTimerLog.h>
 
@@ -181,21 +197,32 @@ bool mafApp::OnInit()
   //------------------------- Operations -------------------------
   logic->Plug(new mafOpValidateTree());
   logic->Plug(new mafOpCreateGroup(_R("Group")),_R("Create/New"));
-	logic->Plug(new mafOpCreateSurfaceParametric(_R("Parametric Surface")),_R("Create/New"));
-	logic->Plug(new mafOpAddLandmark(_R("Add Landmark \tCtrl+A")),_R("Create/New"));
+  logic->Plug(new mafOpCreateSurfaceParametric(_R("Parametric Surface")),_R("Create/New"));
+  logic->Plug(new mafOpCreateEllipsoid(_R("Ellipsoid")), _R("Create/New/QuadricSurface"));
+  logic->Plug(new mafOpCreateHyperboloid(_R("Hyperboloid1S")), _R("Create/New/QuadricSurface"));
+  logic->Plug(new mafOpCreateHyperboloid2S(_R("Hyperboloid2S")), _R("Create/New/QuadricSurface"));
+  logic->Plug(new mafOpCreateCylinder(_R("Cylinder")), _R("Create/New/QuadricSurface"));
+  logic->Plug(new mafOpCreateQuadricSurfaceFitting(_R("Quadric Surface Fitting")), _R("Create/Derive"));
+  logic->Plug(new mafOpAddLandmark(_R("Add Landmark \tCtrl+A")),_R("Create/New"));
   logic->Plug(new mafOpCreateMeter(_R("Meter")),_R("Create/Derive"));
+  logic->Plug(new mafOpCreateMeter2(_R("Meter2")), _R("Create/Derive"));
+  logic->Plug(new mafOpCreateCenterLine(_R("Centerline")), _R("Create/Derive"));
+  logic->Plug(new mafOpCreateGravityLine(_R("GravityLine")), _R("Create/New/Osteometric Tools"));
 
+  logic->Plug(new mafOpCreateMuscleWrapping2(_R("Muscle Wrapper_2")), _R("Create/Derive"));
   logic->Plug(new mafOpReparentTo(_R("Reparent to...  \tCtrl+R")),_R("Modify/Fuse"));
   logic->Plug(new mafOpReparentTo(_R("Local reparent to..."), false),_R("Modify/Fuse"));
+  logic->Plug(new mafOpCreatePlane(_R("Plane")), _R("Create/New/Osteometric Tools"));
   logic->Plug(new mafOpCreateVolume(_R("Constant Volume")),_R("Create/New"));
 
-  logic->Plug(new mafOpCreateRefSys(_R("Refsys")),_R("Create/New"));
+  //logic->Plug(new mafOpCreateRefSys(_R("Refsys")),_R("Create/New"));
   logic->Plug(new mafOpCreateSlicer(_R("Slicer")),_R("Create/Derive"));
   logic->Plug(new mafOpFilterSurface(_R("Filter Surface")),_R("Modify"));
   logic->Plug(new mafOpVOIDensityEditor(_R("Volume Density")),_R("Modify"));
   logic->Plug(new mafOpApplyTrajectory(_R("Apply Trajectory")), _R("Modify"));
   logic->Plug(new mafOpExtractIsosurface(_R("Extract Isosurface")),_R("Create/Derive"));
   logic->Plug(new mafOpCrop(_R("Crop Volume")),_R("Modify"));
+  logic->Plug(new mafOpCrop3DSurface(_R("Crop 3D Surface")), _R("Modify"));
   logic->Plug(new mafOp2DMeasure(_R("2D Measure")),_R("Measure"));
   logic->Plug(new mafOpVOIDensity(_R("VOI Density")),_R("Measure"));
   logic->Plug(new mafOpImporterVMEDataSetAttributes(_R("VME DataSet Attributes Adder")),_R("Modify"));
