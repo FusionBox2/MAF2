@@ -163,6 +163,9 @@ public:
   virtual void OnSize(wxSizeEvent &event);
 	/** Do nothing. */
 	virtual void OnIdle(wxIdleEvent& event);
+   /** Do nothing. */
+   void OnMouseCaptureLost(wxMouseCaptureLostEvent&);
+
 
   /** Redefined to set the m_CustomInteractorStyle flag. */
   void SetInteractorStyle(vtkInteractorObserver *o);

@@ -98,6 +98,7 @@ BEGIN_EVENT_TABLE(mafRWIBase, wxWindow)
   EVT_CHAR(mafRWIBase::OnChar)
   EVT_SIZE(mafRWIBase::OnSize)
   EVT_IDLE(mafRWIBase::OnIdle)
+  EVT_MOUSE_CAPTURE_LOST(mafRWIBase::OnMouseCaptureLost)
 END_EVENT_TABLE()
 //----------------------------------------------------------------------------
 vtkInstantiatorNewMacro(mafRWIBase)
@@ -605,6 +606,13 @@ void mafRWIBase::OnIdle(wxIdleEvent& event)
   //   this->Show(true);
   //}
 }
+
+//----------------------------------------------------------------------------
+void mafRWIBase::OnMouseCaptureLost(wxMouseCaptureLostEvent&)
+//----------------------------------------------------------------------------
+{
+}
+
 //----------------------------------------------------------------------------
 void mafRWIBase::NotifyClick()
 //----------------------------------------------------------------------------
