@@ -87,7 +87,7 @@ mmaMaterial::mmaMaterial()
   m_Specular[1]      = 1.0;
   m_Specular[2]      = 1.0;
   m_SpecularIntensity= 0.0;
-  m_SpecularPower    = 0.0;
+  m_SpecularPower    = 1.0;
   m_Opacity          = 1.0;
   m_Representation   = 2.0;
 
@@ -371,6 +371,7 @@ int mmaMaterial::InternalRestore(mafStorageElement *node)
     node->RestoreDouble(_R("Specular2"), m_Specular[2]);
     node->RestoreDouble(_R("SpecularIntensity"), m_SpecularIntensity);
     node->RestoreDouble(_R("SpecularPower"), m_SpecularPower);
+    m_SpecularPower = (std::max)(1.0, m_SpecularPower);
     node->RestoreDouble(_R("Opacity"), m_Opacity);
     node->RestoreDouble(_R("Representation"), m_Representation);
     node->RestoreInteger(_R("MaterialType"), m_MaterialType);
