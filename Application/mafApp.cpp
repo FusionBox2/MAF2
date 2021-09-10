@@ -236,17 +236,6 @@ bool mafApp::OnInit()
   bool view_visibility = 0;//fullVersion;
   //------------------------- Views -------------------------
 
-  // View DRR
-  mafViewVTK *vdrr = new mafViewVTK(_R("DRR"));
-  vdrr->PlugVisualPipe(_R("mafVMEVolumeGray"),_R("medPipeVolumeDRR"),MUTEX);
-  vdrr->PlugVisualPipe(_R("mafVMEVolumeLarge"),_R("medPipeVolumeDRR"),MUTEX);
-  logic->Plug(vdrr, view_visibility);
-
-  // View Analog graph
-  mafViewVTK *graph = new mafViewVTK(_R("Analog Graph"), CAMERA_PERSPECTIVE, false);
-  graph->PlugVisualPipe(_R("medVMEAnalog"), _R("medPipeGraph"),MUTEX);
-  logic->Plug(graph/*, view_visibility*/);
-
   mafViewVTK *viso = new mafViewVTK(_R("Isosurface"));
   viso->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeIsosurface"),MUTEX);
   viso->PlugVisualPipe(_R("medVMELabeledVolume"), _R("mafPipeIsosurface"),MUTEX);
@@ -256,12 +245,10 @@ bool mafApp::OnInit()
   mafViewVTK *visoGPU = new mafViewVTK(_R("Isosurface (GPU)"));
   visoGPU->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeIsosurfaceGPU"),MUTEX);   //BES: 13.11.2008 - GPU support, mafPipeIsosurfaceGPU to be merged with mafPipeIsosurface in future 
   visoGPU->PlugVisualPipe(_R("medVMELabeledVolume"), _R("mafPipeIsosurfaceGPU"),MUTEX);
-  visoGPU->PlugVisualPipe(_R("mafVMEVolumeLarge"), _R("mafPipeIsosurfaceGPU"),MUTEX);
   logic->Plug(visoGPU, view_visibility);
 
   mafViewVTK *vsurface = new mafViewVTK(_R("Surface"));
   vsurface->PlugVisualPipe(_R("mafVMESurface"),_R("mafPipeSurface"));
-  vsurface->PlugVisualPipe(_R("mafVMELandmark"), _R("medPipeTrajectories"));
   logic->Plug(vsurface);
 
   //-------------------------------------------------------------
