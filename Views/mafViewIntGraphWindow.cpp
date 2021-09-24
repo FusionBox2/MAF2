@@ -74,14 +74,14 @@
 #define SPACING_Y_COEFF 1.5
 #define DERIV_ABS_MIN 0.001
 
-#define ID__CLOSE            40023
-#define ID__RECALCRANGES     40024
-#define ID__GRIDONOFF        40025
-#define ID__PRECGRIDONOFF    40026
-#define ID__SAVEIMAGE        40027
-#define ID__SAVECSV          40028
-#define ID__ADJUSTCURVE      40029
-#define ID__FIRSTAUTOMENU    40031
+#define ID__CLOSE            30023
+#define ID__RECALCRANGES     30024
+#define ID__GRIDONOFF        30025
+#define ID__PRECGRIDONOFF    30026
+#define ID__SAVEIMAGE        30027
+#define ID__SAVECSV          30028
+#define ID__ADJUSTCURVE      30029
+#define ID__FIRSTAUTOMENU    30031
 
 #define MAXTEXTLEN           1024 
 
