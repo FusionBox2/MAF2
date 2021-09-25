@@ -466,9 +466,9 @@ bool lhpFusionBoxApp::OnInit()
   LibHandle C3DLib      = NULL;
   LibHandle matlabLib   = NULL;
   LibHandle fullControl = NULL;
-  bool fullVersion      = false;
+  bool fullVersion      = true;
 
-  fullControl = mafDynamicLoader::OpenLibrary("full_ver");
+  /*fullControl = mafDynamicLoader::OpenLibrary("full_ver");
   if(fullControl)
   {
     unsigned (*fnfull_ver)() = (unsigned(*)())mafDynamicLoader::GetSymbolAddress(fullControl, "fnfull_ver");
@@ -477,7 +477,7 @@ bool lhpFusionBoxApp::OnInit()
       fullVersion = true;
     }
     m_Plugins.push_back(std::make_pair(fullControl, (void(*)())NULL));
-  }
+  }*/
 
   matlabLib = mafDynamicLoader::OpenLibrary("MATLAB");
   if(matlabLib)
