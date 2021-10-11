@@ -537,10 +537,13 @@ void mafVMEAFRefSys::CalculateMatrix(mafMatrix& mat, mafTimeStamp ts)
   Param<double> *ZParam = NULL;
   Param<double> *PParam = NULL;
 
-  XParam = m_vm->GetParam("X");
-  YParam = m_vm->GetParam("Y");
-  ZParam = m_vm->GetParam("Z");
-  PParam = m_vm->GetParam("P");
+  if(m_vm)
+  {
+      XParam = m_vm->GetParam("X");
+      YParam = m_vm->GetParam("Y");
+      ZParam = m_vm->GetParam("Z");
+      PParam = m_vm->GetParam("P");
+  }
 
   if(XParam == NULL || XParam->GetType() != Param<double>::VECTOR || !XParam->IsValid())
     calculated = false;
