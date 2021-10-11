@@ -805,8 +805,8 @@ void mafVMEPlane::InternalUpdate()
 	pts_change = false;
 	
 
-	mafEvent ev(this,CAMERA_UPDATE);
-	this->ForwardUpEvent(&ev);
+	//mafEvent ev(this,CAMERA_UPDATE);
+	//this->ForwardUpEvent(&ev);
 }
 
 double mafVMEPlane::GetUVector(int a)
