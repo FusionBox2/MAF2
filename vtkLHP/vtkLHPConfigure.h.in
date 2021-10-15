@@ -5,9 +5,9 @@ wishing to create their own VTK classes locally.
 #ifndef __@PROJECT_NAME@Configure_h
 #define __@PROJECT_NAME@Configure_h
 
-#if @VTKLOCAL_BUILD_SHARED_LIBS_CONFIG@
-# define @PROJECT_NAME@_SHARED
-#endif
+//#if @BUILD_SHARED_LIBS@
+//# define @PROJECT_NAME@_SHARED
+//#endif
 
 #if defined(_MSC_VER) && defined(@PROJECT_NAME@_SHARED)
 # pragma warning ( disable : 4275 )
