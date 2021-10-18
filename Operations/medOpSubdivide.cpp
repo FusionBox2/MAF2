@@ -81,15 +81,15 @@ void medOpSubdivide::OpRun()
   surface->Update();
 
   vtkPolyData *polydataInput = vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData());
-  polydataInput->Update();
+  //polydataInput->Update();
 
   vtkNEW(m_OriginalPolydata);
   m_OriginalPolydata->DeepCopy(polydataInput);
-  m_OriginalPolydata->Update();
+  //m_OriginalPolydata->Update();
 
   vtkNEW(m_ResultPolydata);
   m_ResultPolydata->DeepCopy(polydataInput);
-  m_ResultPolydata->Update();
+  //m_ResultPolydata->Update();
 
   for(int i=0;i<polydataInput->GetNumberOfCells();i++)
   {
@@ -101,14 +101,14 @@ void medOpSubdivide::OpRun()
       vtkTriangleFilter *triangleFilter;
       vtkNEW(triangleFilter);
 
-      triangleFilter->SetInput(polydataInput);
+      triangleFilter->SetInputConnection(surface->GetOutput()->GetVTKOutputPort());
       triangleFilter->Update();
 
       surface->SetData(triangleFilter->GetOutput(),surface->GetTimeStamp());
       surface->Update();
 
       m_ResultPolydata->DeepCopy(triangleFilter->GetOutput());
-      m_ResultPolydata->Update();
+      //m_ResultPolydata->Update();
 
       vtkDEL(triangleFilter);
 
@@ -223,14 +223,14 @@ void medOpSubdivide::Algorithm()
   surface->Update();
 
   vtkPolyData *polydataInput = vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData());
-  polydataInput->Update();
+  //polydataInput->Update();
 
-  subdivisionFilter->SetInput(polydataInput);
+  subdivisionFilter->SetInputConnection(surface->GetOutput()->GetVTKOutputPort());
   subdivisionFilter->SetNumberOfSubdivisions(m_NumberOfSubdivision);
   subdivisionFilter->Update();
 
   m_ResultPolydata->DeepCopy(subdivisionFilter->GetOutput());
-  m_ResultPolydata->Update();
+  //m_ResultPolydata->Update();
 
   surface->SetData(m_ResultPolydata,surface->GetTimeStamp());
   surface->Update();

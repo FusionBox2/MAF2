@@ -17,6 +17,8 @@
 
 #include "vtkMedRayCastCleaner.h"
 
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkStructuredPoints.h"
 #include "vtkUnsignedShortArray.h"
@@ -30,7 +32,6 @@ enum RAY_CAST_MODALITY
   MR_MODALITY,
 };
 
-vtkCxxRevisionMacro(vtkMEDRayCastCleaner, "$Revision: 1.0 $");
 vtkStandardNewMacro(vtkMEDRayCastCleaner);
 
 //----------------------------------------------------------------------------
@@ -59,18 +60,26 @@ vtkMEDRayCastCleaner::~vtkMEDRayCastCleaner()
 
 
 //------------------------------------------------------------------------------
-void vtkMEDRayCastCleaner::Execute()
-//------------------------------------------------------------------------------
+int vtkMEDRayCastCleaner::RequestData(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
-  vtkStructuredPoints *outputImage = this->GetOutput();
-  this->GetInput()->Update();
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
+  // get the input and output
+  vtkStructuredGrid *input = vtkStructuredGrid::SafeDownCast(
+    inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkStructuredGrid *outputImage = vtkStructuredGrid::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
 
   double range[2];
   double newValue, boneValue;
   //generating a copy of the input 
-  outputImage->DeepCopy(this->GetInput());
-  outputImage->UpdateData();
-  outputImage->Update();
+  outputImage->DeepCopy(input);
 
   //getting image dimension for neighbors calculation  
   outputImage->GetDimensions(VolumeDimension);
@@ -123,11 +132,11 @@ void vtkMEDRayCastCleaner::Execute()
   outputImage->GetPointData()->SetScalars(newScalars);
   outputImage->GetPointData()->Modified();
   outputImage->GetPointData()->Update();
-  outputImage->UpdateData();
-  outputImage->Update();
   this->SetOutput(outputImage);
 
   vtkDEL(newScalars);
+
+  return 1;
 }
 
 #define SP_COORD_TO_ID(x,y,z)  z*(VolumeDimension[0])*(VolumeDimension[1]) + y*(VolumeDimension[0]) + x;

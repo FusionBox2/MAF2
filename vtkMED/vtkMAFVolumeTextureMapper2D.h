@@ -19,6 +19,7 @@
 #define vtkMAFVolumeTextureMapper2D_h__
 
 #include "vtkMEDConfigure.h"
+#ifdef COMPLETED
 #include "vtkOpenGLVolumeTextureMapper2D.h"
 
 class vtkRenderer;
@@ -36,7 +37,7 @@ public:
   /** create object  instance. */
   static vtkMAFVolumeTextureMapper2D *New();
   /**  RTTI Macro. */
-  vtkTypeRevisionMacro(vtkMAFVolumeTextureMapper2D, vtkOpenGLVolumeTextureMapper2D);	
+  vtkTypeMacro(vtkMAFVolumeTextureMapper2D, vtkOpenGLVolumeTextureMapper2D);	
 
 public:
   /** WARNING: INTERNAL METHOD - NOT INTENDED FOR GENERAL USE. Initialize rendering for this volume. */
@@ -67,5 +68,5 @@ private:
   /** assignment operator, not implemented. */
   void operator=(const vtkMAFVolumeTextureMapper2D&);
 };
-
+#endif
 #endif // vtkMAFVolumeTextureMapper2D_h__

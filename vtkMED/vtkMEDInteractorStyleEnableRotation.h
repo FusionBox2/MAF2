@@ -29,7 +29,7 @@ class VTK_vtkMED_EXPORT vtkMEDInteractorStyleEnableRotation : public vtkInteract
 {
 public:
   static vtkMEDInteractorStyleEnableRotation *New();
-  vtkTypeRevisionMacro(vtkMEDInteractorStyleEnableRotation, vtkInteractorStyleTrackballCamera);
+  vtkTypeMacro(vtkMEDInteractorStyleEnableRotation, vtkInteractorStyleTrackballCamera);
 
   void EnableRotation(bool enable) {m_RotationEnabled = enable ;  this->Modified() ;}
   virtual void Rotate();

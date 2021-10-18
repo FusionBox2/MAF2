@@ -46,6 +46,7 @@ University of Bedfordshire, UK
 #include "vtkAppendPolyData.h"
 #include "vtkIdList.h"
 #include "vtkCellData.h"
+#include "vtkAlgorithmOutput.h"
 
 #include "itkCellInterface.h"
 
@@ -116,7 +117,7 @@ medVMEStent::medVMEStent()
   SetOutput(output);
 
   mafDataPipeCustom *pipe = mafDataPipeCustom::New(); // Deleted by MAF
-  pipe->SetInput(m_StentPolyData);
+  pipe->SetInputData(m_StentPolyData);
   SetDataPipe(pipe);
 
   // deformation filter
@@ -829,7 +830,7 @@ void medVMEStent::UpdateStentPolydataFromSimplex_Simple()
     int pointCount =0;
     for(SimplexMeshType::PointsContainer::Iterator pointIndex = sPoints->Begin(); pointIndex != sPoints->End(); ++pointIndex){
       int idx = pointIndex->Index();
-      vtkFloatingPointType * pp = pointIndex->Value().GetDataPointer();
+      double * pp = pointIndex->Value().GetDataPointer();
       vpoints->SetPoint(idx,pp);
       pointCount++;
     }
@@ -837,7 +838,7 @@ void medVMEStent::UpdateStentPolydataFromSimplex_Simple()
     vpoints->Squeeze() ;
 
 
-    int tindices[2];
+    vtkIdType tindices[2];
     vtkCellArray *lines = vtkCellArray::New() ;
     lines->Allocate(40000) ;  
 
@@ -931,7 +932,7 @@ void medVMEStent::UpdateStentPolydataFromSimplex_Abbott()
     int pointCount =0;
     for(SimplexMeshType::PointsContainer::Iterator pointIndex = sPoints->Begin(); pointIndex != sPoints->End(); ++pointIndex){
       int idx = pointIndex->Index();
-      vtkFloatingPointType * pp = pointIndex->Value().GetDataPointer();
+      double * pp = pointIndex->Value().GetDataPointer();
       vpoints->SetPoint(idx,pp);
       pointCount++;
     }
@@ -991,7 +992,7 @@ void medVMEStent::UpdateStentPolydataFromSimplex_Abbott()
 
       // Construct and insert pair of strut cells
       if (isLinkPoint){
-        int t[5] ;
+        vtkIdType t[5] ;
         t[0] = tindices_struts[0] ;
         t[1] = newPtIds[1] ;
         t[2] = newPtIds[0] ;
@@ -1007,7 +1008,7 @@ void medVMEStent::UpdateStentPolydataFromSimplex_Abbott()
         lines->InsertNextCell(5, t);
       }
       else{
-        int t[4] ;
+        vtkIdType t[4] ;
         t[0] = tindices_struts[0] ;
         t[1] = newPtIds[1] ;
         t[2] = newPtIds[0] ;
@@ -1027,7 +1028,7 @@ void medVMEStent::UpdateStentPolydataFromSimplex_Abbott()
     // Link cells
     //----------------------------------------
     for(StrutIterator iter = m_StentSource->GetLinksList().begin(); iter !=m_StentSource->GetLinksList().end(); iter++){
-      int tindices[2];
+      vtkIdType tindices[2];
       tindices[0] = iter->startVertex;
       tindices[1] = iter->endVertex;
       lines->InsertNextCell(2, tindices);
@@ -1139,7 +1140,7 @@ void medVMEStent::UpdateStentPolydataFromSimplex_ViewAsSimplex()
     for(SimplexMeshType::PointsContainer::Iterator pointIndex = sPoints->Begin(); pointIndex != sPoints->End(); pointIndex++)
     {
       int idx = pointIndex->Index();
-      vtkFloatingPointType * pp = pointIndex->Value().GetDataPointer();
+      double * pp = pointIndex->Value().GetDataPointer();
       vpoints->SetPoint(idx,pp);
     }
     vpoints->Squeeze() ;
@@ -1147,7 +1148,7 @@ void medVMEStent::UpdateStentPolydataFromSimplex_ViewAsSimplex()
     vpoints->Delete() ;
 
 
-    int tindices[10];
+    vtkIdType tindices[10];
     vtkCellArray *cells = vtkCellArray::New() ;
     cells->Allocate(40000) ;  
 
@@ -1213,7 +1214,7 @@ void medVMEStent::SetVesselCenterLine(mafNode* node)
     m_CenterLineNodeID = vme->GetId() ;
     m_CenterLineVMEDefined = true ;
     vtkPolyData *polyLine =vtkPolyData::SafeDownCast( vme->GetOutput()->GetVTKData());
-    polyLine->Update();
+    vme->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
     SetVesselCenterLine(polyLine);
   }
 }
@@ -1239,7 +1240,7 @@ void medVMEStent::SetVesselSurface(mafNode* node)
     m_VesselNodeID = vme->GetId() ;
     m_VesselVMEDefined = true ;
     vtkPolyData *polySurface = vtkPolyData::SafeDownCast(vme->GetOutput()->GetVTKData());
-    polySurface->Update();
+    vme->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
     SetVesselSurface(polySurface) ;
   }
 }
@@ -1502,7 +1503,7 @@ void medVMEStent::CreateExtrapolatedLine(vtkPolyData* lineIn, vtkPolyData* lineO
   }
 
   // create the polyline cell
-  int *ids = new int[m] ;
+  vtkIdType *ids = new vtkIdType[m] ;
   for (int i = 0 ;  i < m ;  i++)
     ids[i] = i ;
   lines->InsertNextCell(m, ids) ;
@@ -1543,7 +1544,7 @@ void medVMEStent::CreateTruncatedLine(vtkPolyData* lineIn, vtkPolyData* lineOut,
 
   // create the polyline cell
   vtkCellArray *lines = vtkCellArray::New() ;
-  int *ids = new int[m] ;
+  vtkIdType*ids = new vtkIdType[m] ;
   for (int i = 0 ;  i < m ;  i++)
     ids[i] = i ;
   lines->InsertNextCell(m, ids) ;
@@ -1962,7 +1963,7 @@ void medVMEStent::PartialInitDefFilterFromStentModel()
   m_DeformFilter->SetCenterLocationIdx(m_StentSource->centerLocationIndex.begin()) ;
 
   // copy info about struts and links
-  int tindices[2];
+  vtkIdType tindices[2];
   vtkCellArray* strutArray = vtkCellArray::New() ;
   vtkCellArray* linkArray = vtkCellArray::New() ;
 
@@ -2094,7 +2095,7 @@ void medVMEStent::SetDeployedPolydataVME(mafNode* inputNode)
   m_DeployedPolydataVME = mafVMEPolyline::SafeDownCast(inputNode) ;
   m_DeployedPolydataNodeID = inputNode->GetId() ;
   vtkPolyData *pd = vtkPolyData::SafeDownCast(m_DeployedPolydataVME->GetOutput()->GetVTKData()) ;
-  pd->Update() ;
+  m_DeployedPolydataVME->GetOutput()->GetVTKOutputPort()->GetProducer()->Update() ;
   SetStentPolyData(pd) ;
   m_DeployedPolydataStatus = DEPLOYED_PD_OK ;
 }

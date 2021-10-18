@@ -1864,7 +1864,7 @@ void medViewArbitraryOrthoSlice::VolumeWindowing(mafVME *volume)
 {
 	double sr[2];
 	vtkDataSet *data = ((mafVME *)volume)->GetOutput()->GetVTKData();
-	data->Update();
+	//data->Update();
 	data->GetScalarRange(sr);
 
 	mmaMaterial *currentSurfaceMaterial = m_SlicerZ->GetMaterial();
@@ -1935,7 +1935,7 @@ void medViewArbitraryOrthoSlice::ShowMafVMEVolume( mafVME * vme, bool show )
 	EnableWidgets(true);
 
 	vtkDataSet *volumeVTKData = vmeVolume->GetOutput()->GetVTKData();
-	volumeVTKData->Update();
+	//volumeVTKData->Update();
 
 	volumeVTKData->GetCenter(volumeVTKDataCenterLocalCoords);
 
@@ -1961,7 +1961,7 @@ void medViewArbitraryOrthoSlice::ShowMafVMEVolume( mafVME * vme, bool show )
 
 	vtkTransformPolyDataFilter *localToABSTPDF;
 	vtkNEW(localToABSTPDF);
-	localToABSTPDF->SetInput(sliceCenterLocalCoordsPolydata);
+	localToABSTPDF->SetInputData(sliceCenterLocalCoordsPolydata);
 	localToABSTPDF->SetTransform(sliceCenterLocalCoordsToABSCoordsTransform);
 	localToABSTPDF->Update();
 	localToABSTPDF->GetOutput()->GetCenter(m_VolumeVTKDataCenterABSCoords);
@@ -3271,11 +3271,11 @@ void medViewArbitraryOrthoSlice::AccumulateTextures( mafVMESlicer *inSlicer, dou
 	mafVMEOutputSurface *outputSurface = mafVMEOutputSurface::SafeDownCast(inSlicer->GetSurfaceOutput());
 	assert(outputSurface);
 
-	vtkImageData *slicerTexture = outputSurface->GetMaterial()->GetMaterialTexture();
+	vtkImageData *slicerTexture = outputSurface->GetMaterial()->GetMaterialTextureData();
 	assert(slicerTexture);
 
-	inSlicer->GetSurfaceOutput()->GetVTKData()->Modified();
-	inSlicer->GetSurfaceOutput()->GetVTKData()->Update();
+	//inSlicer->GetSurfaceOutput()->GetOutputDataSet()->Modified();
+	//inSlicer->GetSurfaceOutput()->GetOutputDataSet()->Update();
 
 	// sum the texture scalars in a new image: built from original default texture
 	vtkMAFSmartPointer<vtkImageData> scalarsAccumulationTargetTexture;
@@ -3343,18 +3343,18 @@ void medViewArbitraryOrthoSlice::AccumulateTextures( mafVMESlicer *inSlicer, dou
 		inSlicer->SetAbsMatrix(currentProfileMafMatrix);
 
 		inSlicer->GetSurfaceOutput()->GetVTKData()->Modified();
-		inSlicer->GetSurfaceOutput()->GetVTKData()->Update();
+		//inSlicer->GetSurfaceOutput()->GetOutputDataSet()->Update();
 
 		if (false)
 		{
 			std::ostringstream stringStream;
 			stringStream << "Slicer number: " << profileId  << " matrix" << std::endl;          
-			inSlicer->GetAbsMatrixPipe()->GetMatrix().GetVTKMatrix()->PrintSelf(stringStream, NULL);
+			inSlicer->GetAbsMatrixPipe()->GetMatrix().GetVTKMatrix()->PrintSelf(stringStream, vtkIndent());
             mafLogMessage(_M(stringStream.str().c_str()));
 		}
 		// get the current slice profile texture
 
-		vtkImageData *currentTexture = inSlicer->GetSurfaceOutput()->GetMaterial()->GetMaterialTexture();
+		vtkImageData *currentTexture = inSlicer->GetSurfaceOutput()->GetMaterial()->GetMaterialTextureData();
 		assert(currentTexture);
 
 		vtkDataArray *currentSliceScalars = vtkUnsignedShortArray::SafeDownCast(currentTexture->GetPointData()->GetScalars());
@@ -3392,7 +3392,7 @@ void medViewArbitraryOrthoSlice::AccumulateTextures( mafVMESlicer *inSlicer, dou
 	inSlicer->SetAbsMatrix(originalABSTransform->GetMatrix());
 
 	inSlicer->GetSurfaceOutput()->GetVTKData()->Modified();
-	inSlicer->GetSurfaceOutput()->GetVTKData()->Update(); 
+	//inSlicer->GetSurfaceOutput()->GetOutputDataSet()->Update(); 
 
 	// test set accumulated image to slicer 
 	slicerTexture->DeepCopy(scalarsAccumulationTargetTexture);
@@ -3427,7 +3427,7 @@ void medViewArbitraryOrthoSlice::ShowVTKDataAsVMESurface( vtkPolyData *vmeVTKDat
 	vmeSurface->SetAbsMatrix(inputABSMatrix);
 
 	vmeSurface->GetOutput()->GetVTKData()->Modified();
-	vmeSurface->GetOutput()->GetVTKData()->Update();
+	//vmeSurface->GetOutput()->GetOutputDataSet()->Update();
 }
 
 void medViewArbitraryOrthoSlice::BuildSlicingPlane(mafVMESurface *inVME, 
@@ -3669,11 +3669,11 @@ void medViewArbitraryOrthoSlice::BuildSlicingPlane(mafVMESurface *inVME,
 	assert(m_Plane1PD->GetNumberOfCells() == 1);
 
 	vtkTransformPolyDataFilter *plane1TPDF = vtkTransformPolyDataFilter::New();
-	plane1TPDF->SetInput(m_Plane1PD);
+	plane1TPDF->SetInputConnection(plane1SourceSlicer->GetSurfaceOutput()->GetVTKOutputPort());
 	plane1TPDF->SetTransform(inputABSTransform);
 	plane1TPDF->Update();
 
-	boundsCutter->SetInput(plane1TPDF->GetOutput());
+	boundsCutter->SetInputConnection(plane1TPDF->GetOutputPort());
 	boundsCutter->SetCutFunction(plane2);
 	boundsCutter->Update();
 
@@ -3698,7 +3698,7 @@ void medViewArbitraryOrthoSlice::BuildSlicingPlane(mafVMESurface *inVME,
 		lineSource->Update();
 
 		vtkTubeFilter *tubeFilter = vtkTubeFilter::New();
-		tubeFilter->SetInput(lineSource->GetOutput());
+		tubeFilter->SetInputConnection(lineSource->GetOutputPort());
 		tubeFilter->SetRadius(0.3); // to be adapted to input vme
 		tubeFilter->SetNumberOfSides(10);
 		tubeFilter->Update();
@@ -4125,15 +4125,15 @@ void medViewArbitraryOrthoSlice::SaveSlicesTextureToFile(int choosedExportAxis)
 		{
 			// update the slicer
 			currentSlicer->GetSurfaceOutput()->GetVTKData()->Modified();
-			currentSlicer->GetSurfaceOutput()->GetVTKData()->Update();
+			//currentSlicer->GetSurfaceOutput()->GetOutputDataSet()->Update();
 
 			mafVMEOutputSurface *outputSurface = mafVMEOutputSurface::SafeDownCast(currentSlicer->GetSurfaceOutput());
 			assert(outputSurface);
 
 			// get the slicer texture for exporting purposes
-			textureToWriteOnDisk = outputSurface->GetMaterial()->GetMaterialTexture();
+			textureToWriteOnDisk = outputSurface->GetMaterial()->GetMaterialTextureData();
 			assert(textureToWriteOnDisk);
-			writer->SetInput(textureToWriteOnDisk);
+			writer->SetInputData(textureToWriteOnDisk);
 
 			mafEventMacro(mafEvent(this,CAMERA_UPDATE));				
 		}
@@ -4141,7 +4141,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesTextureToFile(int choosedExportAxis)
 		{
 			textureToWriteOnDisk = vtkImageData::New();
 			AccumulateTextures(currentSlicer, m_ThicknessValue[choosedExportAxis], textureToWriteOnDisk, false );
-			writer->SetInput(textureToWriteOnDisk);
+			writer->SetInputData(textureToWriteOnDisk);
 			textureToWriteOnDisk->Delete();
 
 			mafEventMacro(mafEvent(this,CAMERA_UPDATE));				
@@ -4182,7 +4182,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesTextureToFile(int choosedExportAxis)
 	}
 
 	currentSlicer->GetSurfaceOutput()->GetVTKData()->Modified();
-	currentSlicer->GetSurfaceOutput()->GetVTKData()->Update();
+	//currentSlicer->GetSurfaceOutput()->GetOutputDataSet()->Update();
 
 
 	mafEvent eHide(this,PROGRESSBAR_HIDE);
@@ -4245,7 +4245,7 @@ void medViewArbitraryOrthoSlice::UpdateSlicers(int axis)
 
 	slicers[axis]->SetAbsMatrix(slicers[axis]->GetAbsMatrixPipe()->GetMatrix());
 	slicers[axis]->GetSurfaceOutput()->GetVTKData()->Modified();
-	slicers[axis]->GetSurfaceOutput()->GetVTKData()->Update();
+	//slicers[axis]->GetSurfaceOutput()->GetOutputDataSet()->Update();
 }
 
 void medViewArbitraryOrthoSlice::OnEventID_THICKNESS_VALUE_CHANGED( int color )
@@ -4312,7 +4312,7 @@ void medViewArbitraryOrthoSlice::CreateViewCameraNormalFeedbackActor(double col[
 	coord->SetValue(size[0]-1, size[1]-1, 0);
 
 	vtkPolyDataMapper2D *pdmd = vtkPolyDataMapper2D::New();
-	pdmd->SetInput(ss->GetOutput());
+	pdmd->SetInputConnection(ss->GetOutputPort());
 	pdmd->SetTransformCoordinate(coord);
 
 	vtkProperty2D *pd = vtkProperty2D::New();
@@ -4754,15 +4754,15 @@ void medViewArbitraryOrthoSlice::SaveSlicesFromRenderWindowToFile(int chooseExpo
 		{
 			// update the slicer
 			currentSlicer->GetSurfaceOutput()->GetVTKData()->Modified();
-			currentSlicer->GetSurfaceOutput()->GetVTKData()->Update();
+			//currentSlicer->GetSurfaceOutput()->GetOutputDataSet()->Update();
 
 			mafVMEOutputSurface *outputSurface = mafVMEOutputSurface::SafeDownCast(currentSlicer->GetSurfaceOutput());
 			assert(outputSurface);
 
 			// get the slicer texture for exporting purposes
-			textureToWriteOnDisk = outputSurface->GetMaterial()->GetMaterialTexture();
+			textureToWriteOnDisk = outputSurface->GetMaterial()->GetMaterialTextureData();
 			assert(textureToWriteOnDisk);
-			writer->SetInput(textureToWriteOnDisk);
+			writer->SetInputData(textureToWriteOnDisk);
 
 			mafEventMacro(mafEvent(this,CAMERA_UPDATE));				
 		}
@@ -4770,7 +4770,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesFromRenderWindowToFile(int chooseExpo
 		{
 			textureToWriteOnDisk = vtkImageData::New();
 			AccumulateTextures(currentSlicer, m_ThicknessValue[chooseExportAxis], textureToWriteOnDisk, false );
-			writer->SetInput(textureToWriteOnDisk);
+			writer->SetInputData(textureToWriteOnDisk);
 			textureToWriteOnDisk->Delete();
 
 			mafEventMacro(mafEvent(this,CAMERA_UPDATE));				
@@ -4870,7 +4870,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesFromRenderWindowToFile(int chooseExpo
 	}
 
 	currentSlicer->GetSurfaceOutput()->GetVTKData()->Modified();
-	currentSlicer->GetSurfaceOutput()->GetVTKData()->Update();
+	//currentSlicer->GetSurfaceOutput()->GetOutputDataSet()->Update();
 
 	mafEvent eHide(this,PROGRESSBAR_HIDE);
 	mafEventMacro(eHide);

@@ -239,7 +239,7 @@ void medViewCompoundWindowing::ImageWindowing(mafVMEImage *image)
 {
   double sr[2];
   vtkDataSet *data = image->GetOutput()->GetVTKData();
-  data->Update();
+  //data->Update();
 
   //Get scalar range of the image
   data->GetScalarRange(sr);

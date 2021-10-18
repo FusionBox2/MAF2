@@ -40,7 +40,7 @@
 #include "vtkImageCast.h"
 #include "vtkPiecewiseFunction.h"
 #include "vtkVolumeProperty.h"
-#include "vtkVolumeRayCastMIPFunction.h"
+//#include "vtkVolumeRayCastMIPFunction.h"
 #include "vtkLODProp3D.h"
 #include "vtkPlaneSource.h"
 #include "vtkPolyDataMapper.h"
@@ -109,12 +109,12 @@ void medPipeVolumeMIP::Create(mafNode *node, mafView *view)
     m_Box->SetBounds(b);
 
     vtkNEW(m_Mapper);
-    m_Mapper->SetInput(m_Box->GetOutput());
+    m_Mapper->SetInputConnection(m_Box->GetOutputPort());
 
-    if(m_Vme->IsAnimated())
-      m_Mapper->ImmediateModeRenderingOn();	 //avoid Display-Lists for animated items.
-    else
-      m_Mapper->ImmediateModeRenderingOff();
+    //if(m_Vme->IsAnimated())
+    //  m_Mapper->ImmediateModeRenderingOn();	 //avoid Display-Lists for animated items.
+    //else
+    //  m_Mapper->ImmediateModeRenderingOff();
 
     vtkNEW(m_Actor);
     m_Actor->SetMapper(m_Mapper);
@@ -126,14 +126,14 @@ void medPipeVolumeMIP::Create(mafNode *node, mafView *view)
 
   vtkImageData *image_data = vtkImageData::SafeDownCast(m_Vme->GetOutput()->GetVTKData());
   assert(image_data);
-  image_data->Update();
+  //image_data->Update();
   image_data->GetScalarRange(sr);
 
   vtkNEW(m_ResampleFilter);
   double image_data_spacing[3];
   image_data->GetSpacing(image_data_spacing);
   m_ResampleFilter->SetInformationInput(image_data);
-  m_ResampleFilter->SetInput(image_data);
+  m_ResampleFilter->SetInputData(image_data);
   m_ResampleFilter->SetDimensionality(3);
   m_ResampleFilter->SetOutputSpacing(image_data_spacing[0]/m_ResampleFactor,image_data_spacing[1]/m_ResampleFactor,image_data_spacing[2]/m_ResampleFactor);
   m_ResampleFilter->SetAxisMagnificationFactor(0,0.5);
@@ -142,7 +142,7 @@ void medPipeVolumeMIP::Create(mafNode *node, mafView *view)
   m_ResampleFilter->Update();
 
   vtkNEW(m_Caster);
-  m_Caster->SetInput(m_ResampleFilter->GetOutput());
+  m_Caster->SetInputConnection(m_ResampleFilter->GetOutputPort());
   m_Caster->SetNumberOfThreads(1);
   m_Caster->SetOutputScalarType(VTK_UNSIGNED_SHORT);
   m_Caster->ClampOverflowOn();
@@ -168,7 +168,7 @@ void medPipeVolumeMIP::Create(mafNode *node, mafView *view)
   m_VolumeProperty->SetScalarOpacity(m_OpacityTransferFunction);
   m_VolumeProperty->SetInterpolationTypeToLinear();
 
-  vtkNEW(m_MIPFunction);
+  /*vtkNEW(m_MIPFunction);
   m_MIPFunction->SetMaximizeMethodToOpacity();
 
   vtkNEW(m_VolumeMapper);
@@ -185,7 +185,7 @@ void medPipeVolumeMIP::Create(mafNode *node, mafView *view)
   m_VolumeMapper->Update();	
 
   vtkNEW(m_Volume);
-  m_Volume->SetMapper(m_VolumeMapper);
+  m_Volume->SetMapper(m_VolumeMapper);*/
   m_Volume->SetProperty(m_VolumeProperty);
   m_Volume->PickableOff();
 
@@ -212,8 +212,8 @@ medPipeVolumeMIP::~medPipeVolumeMIP()
   vtkDEL(m_ResampleFilter);
   vtkDEL(m_VolumeProperty);
   vtkDEL(m_ColorLUT);
-  vtkDEL(m_MIPFunction);
-  vtkDEL(m_VolumeMapper);
+  //vtkDEL(m_MIPFunction);
+  //vtkDEL(m_VolumeMapper);
   vtkDEL(m_Volume);
   vtkDEL(m_Caster);
 }
@@ -255,9 +255,9 @@ void medPipeVolumeMIP::OnEvent(mafEventBase *maf_event)
     case ID_RESAMPLE_FACTOR:
       if(m_ResampleFilter!=0)
       {
-        m_VolumeMapper->SetImageSampleDistance(1/m_ResampleFactor);
-        m_VolumeMapper->SetMaximumImageSampleDistance(10);
-        m_VolumeMapper->SetMinimumImageSampleDistance(1/m_ResampleFactor);
+        //m_VolumeMapper->SetImageSampleDistance(1/m_ResampleFactor);
+        //m_VolumeMapper->SetMaximumImageSampleDistance(10);
+        //m_VolumeMapper->SetMinimumImageSampleDistance(1/m_ResampleFactor);
 
         m_Volume->Update();
         mafEventMacro(mafEvent(this, CAMERA_UPDATE));
@@ -276,9 +276,9 @@ void medPipeVolumeMIP::SetResampleFactor(double value)
   m_ResampleFactor = value;
   if(m_ResampleFilter!=0)
   {
-    m_VolumeMapper->SetImageSampleDistance(1/m_ResampleFactor);
-    m_VolumeMapper->SetMaximumImageSampleDistance(10);
-    m_VolumeMapper->SetMinimumImageSampleDistance(1/m_ResampleFactor);
+    //m_VolumeMapper->SetImageSampleDistance(1/m_ResampleFactor);
+    //m_VolumeMapper->SetMaximumImageSampleDistance(10);
+    //m_VolumeMapper->SetMinimumImageSampleDistance(1/m_ResampleFactor);
 
     m_Volume->Update();
     mafEventMacro(mafEvent(this, CAMERA_UPDATE));
@@ -305,7 +305,7 @@ void medPipeVolumeMIP::UpdateMIPFromLUT()
 //      m_ColorTransferFunction->AddRGBPoint(p, rgba[0], rgba[1], rgba[2]);
       m_OpacityTransferFunction->AddPoint(p, (double)v/(double)tv);
     }
-    m_OpacityTransferFunction->Update();
+    //m_OpacityTransferFunction->Update();
     mafEventMacro(mafEvent(this,CAMERA_UPDATE));
   }
 

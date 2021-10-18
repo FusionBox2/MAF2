@@ -250,7 +250,7 @@ void medOpSegmentationRegionGrowingConnectedThreshold::Algorithm()
   
   vtkMAFSmartPointer<vtkImageCast> vtkImageToFloat;
   vtkImageToFloat->SetOutputScalarTypeToFloat ();
-  vtkImageToFloat->SetInput(im);
+  vtkImageToFloat->SetInputConnection(mafVMEVolumeGray::SafeDownCast(m_ResampleInput)->GetOutput()->GetVTKOutputPort());
   vtkImageToFloat->Modified();
   vtkImageToFloat->Update();
 
@@ -307,11 +307,11 @@ void medOpSegmentationRegionGrowingConnectedThreshold::Algorithm()
   m_VolumeOut->SetName(_R("Connected Threshold"));
 
   vtkImageData *image = ((vtkImageData*)itkTOvtk->GetOutput());
-  image->Update();
+  //image->Update();
 
 
   vtkMAFSmartPointer<vtkImageToStructuredPoints> image_to_sp;
-  image_to_sp->SetInput(image);
+  image_to_sp->SetInputData(image);
   image_to_sp->Update();
   m_VolumeOut->SetData(image_to_sp->GetOutput(),mafVME::SafeDownCast(m_ResampleInput)->GetTimeStamp());
 
@@ -327,7 +327,7 @@ void medOpSegmentationRegionGrowingConnectedThreshold::Algorithm()
 
   
   vtkMAFSmartPointer<vtkMEDVolumeToClosedSmoothSurface> volToSurface;
-  volToSurface->SetInput(m_VolumeOut->GetOutput()->GetVTKData());
+  volToSurface->SetInputConnection(m_VolumeOut->GetOutput()->GetVTKOutputPort());
   volToSurface->SetContourValue(127.5);
   volToSurface->Update();
   vtkPolyData *surface=volToSurface->GetOutput();
@@ -372,7 +372,7 @@ void medOpSegmentationRegionGrowingConnectedThreshold::OnEvent(mafEventBase *maf
         mafVMEVolumeGray::SafeDownCast(m_ResampleInput)->GetOutput()->GetBounds(b);
 
         vtkStructuredPoints *sp = vtkStructuredPoints::SafeDownCast(mafVMEVolumeGray::SafeDownCast(m_ResampleInput)->GetOutput()->GetVTKData());
-        sp->Update();
+        //sp->Update();
 
         sp->GetSpacing(spacing);
         sp->GetOrigin(origin);
@@ -410,7 +410,7 @@ void medOpSegmentationRegionGrowingConnectedThreshold::OnEvent(mafEventBase *maf
           mafEventMacro(mafEvent(this,CAMERA_UPDATE));
 
           vtkStructuredPoints *sp = vtkStructuredPoints::SafeDownCast(mafVMEVolumeGray::SafeDownCast(m_ResampleInput)->GetOutput()->GetVTKData());
-          sp->Update();
+          //sp->Update();
 
           int id;
           id = e->GetArg();
@@ -508,7 +508,7 @@ int medOpSegmentationRegionGrowingConnectedThreshold::CreateResample()
     m_Resample->Resample();
      
     mafVME *Output = mafVME::SafeDownCast(m_Resample->GetOutput());
-    Output->GetOutput()->GetVTKData()->Update();
+    //Output->GetOutput()->GetOutputDataSet()->Update();
     m_ResampleInput=mafVMEVolumeGray::SafeDownCast(Output);
     m_ResampleInput->Update();
 

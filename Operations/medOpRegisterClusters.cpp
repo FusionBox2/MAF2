@@ -45,6 +45,7 @@
 #include "vtkWeightedLandmarkTransform.h"
 #include "vtkTransform.h"
 #include "vtkTransformPolyDataFilter.h"
+#include "vtkAlgorithmOutput.h"
 
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(medOpRegisterClusters);
@@ -419,11 +420,10 @@ void medOpRegisterClusters::OpDo()
 					  points->InsertNextPoint(coords);
           }
 					data->SetPoints(points);
-					data->Update();
 					
           // TODO: refactoring to use directly the matrix pipe
           transform->SetMatrix(m_Registered->GetOutput()->GetMatrix()->GetVTKMatrix());  //modified by Marco. 2-2-2004
-					transformData->SetInput(data);
+					transformData->SetInputData(data);
 					transformData->Update();
 					
 					matrix->Identity();
@@ -454,13 +454,12 @@ void medOpRegisterClusters::OpDo()
 				points->InsertNextPoint(coords);
 				}
 				data->SetPoints(points);
-				data->Update();
 
 				//m_Registered->GetMatrix(matrix,cTime);
   
 				// TODO: refactoring to use directly the matrix pipe
         transform->SetMatrix(m_Registered->GetOutput()->GetMatrix()->GetVTKMatrix());
-				transformData->SetInput(data);
+				transformData->SetInputData(data);
 				transformData->Update();
 				
 				matrix->Identity();
@@ -607,8 +606,8 @@ int medOpRegisterClusters::ExtractMatchingPoints(double time)
   vtkDataSet *polySource =m_Source->GetOutput()->GetVTKData();
   vtkDataSet *polyTarget =m_Target->GetOutput()->GetVTKData();
 
-  polySource->Update();
-  polyTarget->Update();
+  m_Source->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
+  m_Target->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
 
 
 	int npSource = polySource->GetNumberOfPoints();

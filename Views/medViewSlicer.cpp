@@ -162,7 +162,7 @@ void medViewSlicer::VmeShow(mafNode *node, bool show)
 
 			// get the VTK volume
       vtkDataSet *data = ((mafVME *)node)->GetOutput()->GetVTKData();
-      data->Update();	
+      //data->Update();	
 		}
 		else if(Vme->IsA("mafVMESurface") || Vme->IsA("mafVMESurfaceParametric"))
 		{

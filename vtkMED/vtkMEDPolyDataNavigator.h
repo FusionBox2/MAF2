@@ -17,7 +17,7 @@ University of Bedfordshire
 #include "vtkMEDConfigure.h"
 #include "vtkObject.h"
 #include "vtkPolyData.h"
-#include "vtkIdType.h"
+#include "vtkType.h"
 #include "vtkIdList.h"
 #include <vector>
 #include <map>
@@ -61,7 +61,7 @@ class VTK_vtkMED_EXPORT vtkMEDPolyDataNavigator : public vtkObject
 {
 public:
   static vtkMEDPolyDataNavigator *New();
-  vtkTypeRevisionMacro(vtkMEDPolyDataNavigator, vtkObject);
+  vtkTypeMacro(vtkMEDPolyDataNavigator, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) {} ;
 
 

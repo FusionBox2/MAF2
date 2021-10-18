@@ -139,7 +139,7 @@ void mmiInfoImage::OnEvent(mafEventBase *event)
                 v->GetPickedPosition(picked_pos);
                 int pid = data->FindPoint(picked_pos);
                 vtkDataArray *scalars = data->GetPointData()->GetScalars();
-                scalars->GetTuple(pid,&iso_value);
+                //scalars->GetTuple(pid,&iso_value);
                 info += _R("x = ") + mafToString((int)picked_pos[0]) + _R(" y = ") + mafToString((int)picked_pos[1]) + _R(" z = ") + mafToString((int)picked_pos[2]) + _R(" d = ") + mafToString(iso_value);
                 mafEventMacro(mafEvent(this,PROGRESSBAR_SET_TEXT,&info));
               }

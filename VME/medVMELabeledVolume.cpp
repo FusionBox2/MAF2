@@ -63,6 +63,7 @@
 #include "vtkDataSet.h"
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"
+#include "vtkAlgorithmOutput.h"
 
 #include <list>
 #include <vector>
@@ -117,7 +118,7 @@ medVMELabeledVolume::medVMELabeledVolume()
   mafDataPipeCustom *dpipe = mafDataPipeCustom::New();
   dpipe->SetDependOnAbsPose(true);
   SetDataPipe(dpipe);
-  dpipe->SetInput(NULL);
+  dpipe->SetInputConnection(NULL);
    
   for(int i=0; i<6; i++) 
     m_BBox[i] = 0;
@@ -218,10 +219,10 @@ void medVMELabeledVolume::CopyDataset()
   if (m_VolumeLink)
   {
     vtkDataSet *data = m_VolumeLink->GetOutput()->GetVTKData();
-    data->Update();
+    m_VolumeLink->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
     m_Dataset = data->NewInstance();
     m_Dataset->DeepCopy(data);
-    ((mafDataPipeCustom *)GetDataPipe())->SetInput(m_Dataset); 
+    ((mafDataPipeCustom *)GetDataPipe())->SetInputData(m_Dataset); 
     RetrieveTag();
     m_DataCopied = true;
 
@@ -287,7 +288,8 @@ void medVMELabeledVolume::UpdateScalars()
   if (m_VolumeLink)
   {
     vtkDataSet *data = m_VolumeLink->GetOutput()->GetVTKData();
-    data->Update();
+    m_VolumeLink->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
+
     m_Dataset->GetPointData()->GetScalars()->DeepCopy(data->GetPointData()->GetScalars());
     m_Dataset->GetPointData()->GetScalars()->Modified();
   }
@@ -745,8 +747,8 @@ void medVMELabeledVolume::CreateSlicePipeline()
     m_SP->Modified();
 
     // Create a probe filter with the volume as source and a structuredPoints as input
-    m_ProbeFilter->SetSource( sp );
-    m_ProbeFilter->SetInput( m_SP );
+    m_ProbeFilter->SetSourceData( sp );
+    m_ProbeFilter->SetInputData( m_SP );
   }
   else if ( m_Dataset->IsA( "vtkRectilinearGrid" ) )
   {    
@@ -765,15 +767,15 @@ void medVMELabeledVolume::CreateSlicePipeline()
     m_SP->Modified();
 
     // Create a probe filter with the volume as source and a structuredPoints as input
-    m_ProbeFilter->SetSource( rg );
-    m_ProbeFilter->SetInput( m_SP );
+    m_ProbeFilter->SetSourceData( rg );
+    m_ProbeFilter->SetInputData( m_SP );
   }
 
   // Create a texture with the default m_LookUpTable and with input the probeFilter output
   m_Texture = vtkTexture::New();	
-  m_Texture->SetInput( m_ProbeFilter->GetStructuredPointsOutput() );
+  m_Texture->SetInputConnection( m_ProbeFilter->GetOutputPort() );
   m_Texture->InterpolateOn();
-  m_Texture->MapColorScalarsThroughLookupTableOn();//
+  //m_Texture->MapColorScalarsThroughLookupTableOn();//
   m_Texture->SetLookupTable( m_LookUpTable );
 
   vtkPlaneSource * planeSource = vtkPlaneSource::New();
@@ -786,7 +788,7 @@ void medVMELabeledVolume::CreateSlicePipeline()
   planeSource->SetCenter( xCenter, yCenter, m_Slice );
 
   m_SMapper	= vtkPolyDataMapper::New();
-  m_SMapper->SetInput( planeSource->GetOutput() );
+  m_SMapper->SetInputConnection( planeSource->GetOutputPort() );
   vtkDEL( planeSource );
 
   m_ActorSlice= vtkActor::New();

@@ -32,7 +32,7 @@ class vtkMAFLargeDataProvider;
 class VTK_vtkMED_EXPORT vtkMAFLargeDataSet : public vtkDataObject
 {
 public:
-	vtkTypeRevisionMacro(vtkMAFLargeDataSet,vtkDataObject);
+	vtkTypeMacro(vtkMAFLargeDataSet,vtkDataObject);
 	void PrintSelf(ostream& os, vtkIndent indent);
 
 	// Description:
@@ -163,7 +163,7 @@ public:
 	// Description:
 	// Datasets are composite objects and need to check each part for MTime
 	// THIS METHOD IS THREAD SAFE
-	unsigned long int GetMTime();
+	vtkMTimeType GetMTime();
 
 	// Description:
 	// Compute the data bounding box from data points.

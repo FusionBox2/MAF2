@@ -21,8 +21,6 @@
 #include "vtkMAFLargeDataSet.h"
 #include "vtkMAFLargeDataProvider.h"
 
-vtkCxxRevisionMacro(vtkMAFLargeDataSet, "$Revision: 1.1.2.1 $");
-
 #include "mafMemDbg.h"
 
 //----------------------------------------------------------------------------
@@ -196,9 +194,9 @@ double vtkMAFLargeDataSet::GetLength()
 }
 
 //----------------------------------------------------------------------------
-unsigned long int vtkMAFLargeDataSet::GetMTime()
+vtkMTimeType vtkMAFLargeDataSet::GetMTime()
 {
-	unsigned long mtime, result;
+	vtkMTimeType mtime, result;
 
 	result = vtkDataObject::GetMTime();
 	if (this->PointDataProvider != NULL)
@@ -398,8 +396,8 @@ void vtkMAFLargeDataSet::PrintSelf(ostream& os, vtkIndent indent)
 	os << indent << "  Z: " << sample[2] << "\n";	
 	os << indent << "  Autosampling: " << this->GetAutoSampleRate() << "\n";
 	os << indent << "  Memory limit: " << this->GetMemoryLimit() << "\n";	
-
+	bool ReleaseDataFlag=this->GetGlobalReleaseDataFlag();
 	os << indent << "Compute Time: " <<this->ComputeTime.GetMTime() << "\n";
-	os << indent << "Release Data: " << (this->ReleaseDataFlag ? "On\n" : "Off\n");
+	os << indent << "Release Data: " << (  ReleaseDataFlag ? "On\n" : "Off\n");
 }
 

@@ -184,7 +184,7 @@ void medPipeVolumeSliceBlend::Create(mafNode *node, mafView *view)
   double b[6];
   //Update input data
   m_Vme->GetOutput()->Update();
-  m_Vme->GetOutput()->GetVTKData()->Update();
+  //m_Vme->GetOutput()->GetVTKData()->Update();
   m_Vme->GetOutput()->GetVMELocalBounds(b);
 
   mmaVolumeMaterial *material = ((mafVMEVolume *)m_Vme)->GetMaterial();
@@ -268,10 +268,10 @@ void medPipeVolumeSliceBlend::Create(mafNode *node, mafView *view)
 
   //Create selection actor
   vtkNEW(m_VolumeBox);
-  m_VolumeBox->SetInput(m_Vme->GetOutput()->GetVTKData());
+  m_VolumeBox->SetInputConnection(m_Vme->GetOutput()->GetVTKOutputPort());
 
   vtkNEW(m_VolumeBoxMapper);
-  m_VolumeBoxMapper->SetInput(m_VolumeBox->GetOutput());
+  m_VolumeBoxMapper->SetInputConnection(m_VolumeBox->GetOutputPort());
 
   vtkNEW(m_VolumeBoxActor);
   m_VolumeBoxActor->SetMapper(m_VolumeBoxMapper);
@@ -291,7 +291,7 @@ void medPipeVolumeSliceBlend::Create(mafNode *node, mafView *view)
     vtkNEW(m_Box);
     m_Box->SetBounds(bounds);
     vtkNEW(m_Mapper);
-    m_Mapper->SetInput(m_Box->GetOutput());
+    m_Mapper->SetInputConnection(m_Box->GetOutputPort());
     vtkNEW(m_Actor);
     m_Actor->SetMapper(m_Mapper);
     m_AssemblyUsed->AddPart(m_Actor);
@@ -321,7 +321,7 @@ void medPipeVolumeSliceBlend::CreateSlice(int direction)
   double xspc = 0.33, yspc = 0.33, zspc = 1.0;
 
   vtkDataSet *vtk_data = m_Vme->GetOutput()->GetVTKData();
-  vtk_data->Update();
+  //vtk_data->Update();
   if(vtk_data->IsA("vtkImageData") || vtk_data->IsA("vtkStructuredPoints"))
   {
     ((vtkImageData *)vtk_data)->GetSpacing(xspc,yspc,zspc);
@@ -336,12 +336,12 @@ void medPipeVolumeSliceBlend::CreateSlice(int direction)
     m_SlicerImage[i][direction]->SetPlaneAxisY(m_YVector[direction]);
     m_SlicerPolygonal[i][direction]->SetPlaneAxisX(m_XVector[direction]);
     m_SlicerPolygonal[i][direction]->SetPlaneAxisY(m_YVector[direction]);
-    m_SlicerImage[i][direction]->SetInput(vtk_data);
-    m_SlicerPolygonal[i][direction]->SetInput(vtk_data);
+    m_SlicerImage[i][direction]->SetInputData(vtk_data);
+    m_SlicerPolygonal[i][direction]->SetInputData(vtk_data);
 
     vtkNEW(m_Image[i][direction]);
-    m_Image[i][direction]->SetScalarType(vtk_data->GetPointData()->GetScalars()->GetDataType());
-    m_Image[i][direction]->SetNumberOfScalarComponents(vtk_data->GetPointData()->GetScalars()->GetNumberOfComponents());
+    //m_Image[i][direction]->SetScalarType(vtk_data->GetPointData()->GetScalars()->GetDataType());
+    //m_Image[i][direction]->SetNumberOfScalarComponents(vtk_data->GetPointData()->GetScalars()->GetNumberOfComponents());
     m_Image[i][direction]->SetExtent(0, m_TextureRes - 1, 0, m_TextureRes - 1, 0, 0);
     m_Image[i][direction]->SetSpacing(xspc, yspc, zspc);
 
@@ -352,9 +352,9 @@ void medPipeVolumeSliceBlend::CreateSlice(int direction)
     m_Texture[i][direction]->RepeatOff();
     m_Texture[i][direction]->InterpolateOn();
     m_Texture[i][direction]->SetQualityTo32Bit();
-    m_Texture[i][direction]->SetInput(m_Image[i][direction]);
+    m_Texture[i][direction]->SetInputData(m_Image[i][direction]);
     m_Texture[i][direction]->SetLookupTable(m_ColorLUT);
-    m_Texture[i][direction]->MapColorScalarsThroughLookupTableOn();
+    //m_Texture[i][direction]->MapColorScalarsThroughLookupTableOn();
 
     vtkNEW(m_SlicePolydata[i][direction]);
     m_SlicerPolygonal[i][direction]->SetOutput(m_SlicePolydata[i][direction]);
@@ -362,7 +362,7 @@ void medPipeVolumeSliceBlend::CreateSlice(int direction)
     m_SlicerPolygonal[i][direction]->Update();
 
     vtkNEW(m_SliceMapper[i][direction]);
-    m_SliceMapper[i][direction]->SetInput(m_SlicePolydata[i][direction]);
+    m_SliceMapper[i][direction]->SetInputData(m_SlicePolydata[i][direction]);
     m_SliceMapper[i][direction]->ScalarVisibilityOff();
 
     vtkNEW(m_SliceActor[i][direction]);

@@ -306,8 +306,8 @@ void medOpExporterMeters::ExportClassicMeterCoordinates(int index, int indexTime
 {
   //classic meter
   mafVMEMeter *vmeMeter =  mafVMEMeter::SafeDownCast(m_CurrentVme);
-  vmeMeter->GetOutput()->GetVTKData()->Modified();
-  vmeMeter->GetOutput()->GetVTKData()->Update();
+  //vmeMeter->GetOutput()->GetVTKData()->Modified();
+  //vmeMeter->GetOutput()->GetVTKData()->Update();
   vmeMeter->Modified();
   vmeMeter->Update();
   vmeMeter->Update();
@@ -340,8 +340,8 @@ void medOpExporterMeters::ExportWrappedMeterCoordinates(int index, int indexTime
 
   //wrapped meter
   medVMEWrappedMeter *vmeWrappedMeter =  medVMEWrappedMeter::SafeDownCast(m_CurrentVme);
-  vmeWrappedMeter->GetOutput()->GetVTKData()->Modified();
-  vmeWrappedMeter->GetOutput()->GetVTKData()->Update();
+  //vmeWrappedMeter->GetOutput()->GetVTKData()->Modified();
+  //vmeWrappedMeter->GetOutput()->GetVTKData()->Update();
   vmeWrappedMeter->Modified();
   vmeWrappedMeter->Update();
   

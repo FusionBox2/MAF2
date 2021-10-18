@@ -252,14 +252,14 @@ void medOpExporterVTKXML::SaveVTKData()
   if (m_ABSMatrixFlag)
   {
     vtkMAFSmartPointer<vtkTransformPolyDataFilter> v_tpdf;
-    v_tpdf->SetInput((vtkPolyData *)((mafVME *)m_Input)->GetOutput()->GetVTKData());
+    v_tpdf->SetInputConnection(((mafVME *)m_Input)->GetOutput()->GetVTKOutputPort());
     v_tpdf->SetTransform(((mafVME *)m_Input)->GetOutput()->GetTransform()->GetVTKTransform());
     v_tpdf->Update();
-    writer->SetInput(v_tpdf->GetOutput());
+    writer->SetInputConnection(v_tpdf->GetOutputPort());
   }
   else
   {
-    writer->SetInput(writerInput);
+    writer->SetInputConnection(((mafVME*)m_Input)->GetOutput()->GetVTKOutputPort());
   }
 
   if (this->m_Binary)

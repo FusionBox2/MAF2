@@ -120,7 +120,7 @@ void medPipeVolumeDRR::Create(mafNode *node, mafView *view)
 	vtkNEW(m_VolumeMapper);
 	if(vtkImageData::SafeDownCast(data))
 	{
-		m_ResampleFilter->SetInput((vtkImageData*)data);
+		m_ResampleFilter->SetInputData((vtkImageData*)data);
 		for(int i=0;i<3;i++)
 			m_ResampleFilter->SetAxisMagnificationFactor(i,m_ResampleFactor);
 		m_ResampleFilter->Update();
@@ -161,10 +161,10 @@ void medPipeVolumeDRR::Create(mafNode *node, mafView *view)
   m_AssemblyFront->AddPart(m_Volume);
   
   vtkMAFSmartPointer<vtkOutlineCornerFilter> selection_filter;
-  selection_filter->SetInput(data);  
+  selection_filter->SetInputData(data);  
 
   vtkMAFSmartPointer<vtkPolyDataMapper> selection_papper;
-  selection_papper->SetInput(selection_filter->GetOutput());
+  selection_papper->SetInputConnection(selection_filter->GetOutputPort());
 
   vtkMAFSmartPointer<vtkProperty> selection_property;
   selection_property->SetColor(1,1,1);

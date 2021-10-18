@@ -21,12 +21,12 @@
 //---------------------------------------------
 // includes:
 //---------------------------------------------
-#include "vtkUnstructuredGridToPolyDataFilter.h"
+#include "vtkUnstructuredGrid.h"
 #include "vtkMEDConfigure.h"
 #include "assert.h"
 #include <vector>
 #include <map>
-
+#include "vtkPolyData.h"
 #include "vtkPlane.h"
 
 //---------------------------------------------
@@ -57,11 +57,11 @@ edges cut by the plane, although their endpoints are.
 3) No cells of lower order than triangles are created.
 Therefore if the plane cuts exactly through an isolated edge or vertex, the output
 polydata will contain the points, but no cell will be created.*/
-class VTK_vtkMED_EXPORT vtkMAFMeshCutter_BES : public vtkUnstructuredGridToPolyDataFilter
+class VTK_vtkMED_EXPORT vtkMAFMeshCutter_BES : public vtkUnstructuredGrid
 {
 public:
   /** RTTI macro*/
-  vtkTypeRevisionMacro(vtkMAFMeshCutter_BES,vtkUnstructuredGridToPolyDataFilter);
+  vtkTypeMacro(vtkMAFMeshCutter_BES,vtkUnstructuredGrid);
   /** return object instance */
   static vtkMAFMeshCutter_BES *New() ;
   /** print object information */
@@ -69,7 +69,7 @@ public:
 
    /** Overload standard modified time function. If cut function is modified,
   then this object is modified as well. */
-  unsigned long GetMTime();
+  vtkMTimeType GetMTime();
 
   /** Set the cutting plane (but does not register the object) */
   void SetCutFunction(vtkPlane *P) ;
@@ -111,7 +111,7 @@ protected:
   ~vtkMAFMeshCutter_BES() ;                                                             
 
   /** execute method */
-  void Execute();
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
 
   // edge described by id's of endpoints

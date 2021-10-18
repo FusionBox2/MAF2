@@ -12,6 +12,8 @@ See the COPYINGS file for license details
 */
 
 #include "vtkMEDPolyDataDeformation.h"
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkPolyData.h"
 #include "vtkIdList.h"
@@ -20,7 +22,7 @@ See the COPYINGS file for license details
 #include "vtkCellLocator.h"
 #include "vtkGenericCell.h"
 #include "vtkUnstructuredGrid.h"
-#include "vtkUnstructuredGridToPolyDataFilter.h"
+
 #include "vtkPointData.h"
 #include "vtkCellData.h"
 #include "vtkIntArray.h"
@@ -38,7 +40,6 @@ See the COPYINGS file for license details
 #endif
 
 
-vtkCxxRevisionMacro(vtkMEDPolyDataDeformation, "$Revision: 1.1.2.6 $");
 vtkStandardNewMacro(vtkMEDPolyDataDeformation);
 
 #include "mafMemDbg.h"
@@ -625,7 +626,7 @@ vtkMEDPolyDataDeformation::~vtkMEDPolyDataDeformation()
 
 //------------------------------------------------------------------------
 //Return this object's modified time.
-/*virtual*/ unsigned long int vtkMEDPolyDataDeformation::GetMTime()
+/*virtual*/ vtkMTimeType vtkMEDPolyDataDeformation::GetMTime()
 //------------------------------------------------------------------------
 {
   unsigned long mtime = Superclass::GetMTime();
@@ -660,15 +661,21 @@ vtkMEDPolyDataDeformation::~vtkMEDPolyDataDeformation()
 //------------------------------------------------------------------------
 //By default, UpdateInformation calls this method to copy information
 //unmodified from the input to the output.
-/*virtual*/void vtkMEDPolyDataDeformation::ExecuteInformation()
-//------------------------------------------------------------------------
+/*virtual*/int vtkMEDPolyDataDeformation::RequestInformation(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
   //check input
-  vtkPolyData* input = GetInput();
+  vtkPolyData* input = GetPolyDataInput(0);
   if (input == NULL)
   {
     vtkErrorMacro(<< "Invalid input for vtkMEDPolyDataDeformation.");
-    return;   //we have no input
+    return 1;   //we have no input
   }
 
   //check output
@@ -677,19 +684,19 @@ vtkMEDPolyDataDeformation::~vtkMEDPolyDataDeformation()
     SetOutput(vtkPolyData::New());
 
   //copy input to output
-  Superclass::ExecuteInformation();  
-}
-
-//------------------------------------------------------------------------
-//This method is the one that should be used by subclasses, right now the 
-//default implementation is to call the backwards compatibility method
-/*virtual*/void vtkMEDPolyDataDeformation::ExecuteData(vtkDataObject *output)
+  vtkInformation* re;
+  Superclass::RequestInformation(      re,    inputVector,  outputVector);
+      /*
 {
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
   //check whether output is valid
   vtkPolyData* input = GetInput();
   if (input == NULL)
-    return;
-
+    return 1;
+}*/
   vtkPolyData* pPoly = vtkPolyData::SafeDownCast(output);
   if (pPoly != NULL)
     pPoly->DeepCopy(input);
@@ -697,7 +704,7 @@ vtkMEDPolyDataDeformation::~vtkMEDPolyDataDeformation()
   if (pPoly == NULL || pPoly->GetPoints() == NULL || pPoly->GetPoints()->GetNumberOfPoints() == 0)
   {
     vtkWarningMacro(<< "Invalid output for vtkMEDPolyDataDeformation.");
-    return;   //we have no valid output
+    return 1;   //we have no valid output
   }  
 
   //process every single skeleton and construct 
@@ -705,7 +712,7 @@ vtkMEDPolyDataDeformation::~vtkMEDPolyDataDeformation()
   if (!CreateSuperSkeleton())
   {
     vtkWarningMacro(<< "Missing control skeleton for vtkMEDPolyDataDeformation.");
-    return;
+    return 1;
   }
 
   //OK, we have super skeleton, let us build cells and neighbors (if they do not exist)
@@ -764,7 +771,7 @@ vtkMEDPolyDataDeformation::~vtkMEDPolyDataDeformation()
   {
     scalar->SetTuple1(pEdge->m_ROI[i], 0);
   }
-*/
+  */
 
   for (int i = 0; i < nCount; i++)
   {
@@ -800,6 +807,8 @@ vtkMEDPolyDataDeformation::~vtkMEDPolyDataDeformation()
 
   delete[] MeshVertices;
   MeshVertices = NULL;
+
+  return 0;
 }  
 
 
@@ -1966,7 +1975,7 @@ double vtkMEDPolyDataDeformation::GetDistance( vtkIdType nPtStartId,
 //------------------------------------------------------------------------
 {
   const static double dblStep = 0.01;   //constant sampling
-  vtkPolyData* input = GetInput();
+  vtkPolyData* input = GetPolyDataInput(0);
 
   double ptStart[3];
   input->GetPoint(nPtStartId, ptStart);
@@ -1974,7 +1983,8 @@ double vtkMEDPolyDataDeformation::GetDistance( vtkIdType nPtStartId,
   //this is just to speed-up the search for intersection
   vtkGenericCell* cellLoc = vtkGenericCell::New();
 
-  int nCellId, nSubId;
+  vtkIdType nCellId;
+  int nSubId;
   double x[3], par_x[3];
   double dblRetDist = 0.0, t = 0.0;
   while (dblRetDist < dblMaxDist)     //search is limited
@@ -2061,7 +2071,7 @@ double vtkMEDPolyDataDeformation::GetPathLength(vtkIdType nPtFrom,
                                       vtkIdType nPtTo, double dblMaxDist)
 //------------------------------------------------------------------------
 {
-  vtkPolyData* input = GetInput();
+  vtkPolyData* input = GetPolyDataInput(0);
   int nPoints = input->GetNumberOfPoints();
 
   //initialize path distance
@@ -2429,7 +2439,7 @@ void vtkMEDPolyDataDeformation::ComputeParametrization(int nPtId, const double* 
 void vtkMEDPolyDataDeformation::ComputeMeshParametrization()
 //------------------------------------------------------------------------
 { 
-  vtkPolyData* input = GetInput();    
+  vtkPolyData* input = GetPolyDataInput(0);    
   int nPoints = input->GetNumberOfPoints();
   int nCount = (int)SuperSkeleton->POCSkel->Edges.size();
 
@@ -2684,7 +2694,7 @@ double vtkMEDPolyDataDeformation::ComputeInputMeshAvgEdgeLength()
   double dblEdgeLen = 0.0;
   int nEdges = 0;
 
-  vtkPolyData* input = GetInput();
+  vtkPolyData* input = GetPolyDataInput(0);
   input->BuildCells();  //just for sure
 
   int nCells = input->GetNumberOfCells();

@@ -147,12 +147,12 @@ void medOpLabelizeSurface::OpRun()
 
 	vtkPolyData *inputPolydata=vtkPolyData::SafeDownCast(m_VmeEditor->GetOutput()->GetVTKData());
 	inputPolydata->Modified();
-	inputPolydata->Update();
+	//inputPolydata->Update();
 
 	vtkNEW(m_OriginalPolydata);
 	m_OriginalPolydata->DeepCopy(inputPolydata);
 	m_OriginalPolydata->Modified();
-	m_OriginalPolydata->Update();
+	//m_OriginalPolydata->Update();
 
 	if(!inputPolydata->GetCellData()->GetArray("CELL_LABEL"))
 	{
@@ -173,13 +173,13 @@ void medOpLabelizeSurface::OpRun()
 		inputPolydata->GetCellData()->Update();
 
 		inputPolydata->Modified();
-		inputPolydata->Update();
+		//inputPolydata->Update();
 	}
 	else
 	{
 		inputPolydata->GetCellData()->SetActiveScalars("CELL_LABEL");
 		inputPolydata->Modified();
-		inputPolydata->Update();
+		//inputPolydata->Update();
 	}
 
 	m_VmeEditor->Modified();
@@ -253,7 +253,7 @@ void medOpLabelizeSurface::CreateGizmos()
 {
 	m_ImplicitPlaneGizmo->GetOutput()->GetVTKData()->ComputeBounds();
 	m_ImplicitPlaneGizmo->Modified();
-	m_ImplicitPlaneGizmo->Update();
+	//m_ImplicitPlaneGizmo->Update();
 
 	m_GizmoTranslate = new mafGizmoTranslate(mafVME::SafeDownCast(m_ImplicitPlaneGizmo), this);
 	m_GizmoTranslate->SetRefSys(m_ImplicitPlaneGizmo);
@@ -354,8 +354,8 @@ void medOpLabelizeSurface::ShowClipPlane(bool show)
 			m_ArrowShape->SetTipResolution(40);
 
 			vtkNEW(m_Arrow);
-			m_Arrow->SetInput(m_PlaneSource->GetOutput());
-			m_Arrow->SetSource(m_ArrowShape->GetOutput());
+			m_Arrow->SetInputConnection(m_PlaneSource->GetOutputPort());
+			m_Arrow->SetSourceConnection(m_ArrowShape->GetOutputPort());
 			m_Arrow->SetVectorModeToUseNormal();
 
 			int clip_sign = m_LabelInside ? 1 : -1;
@@ -363,8 +363,8 @@ void medOpLabelizeSurface::ShowClipPlane(bool show)
 			m_Arrow->Update();
 
 			vtkNEW(m_Gizmo);
-			m_Gizmo->AddInput(m_PlaneSource->GetOutput());
-			m_Gizmo->AddInput(m_Arrow->GetOutput());
+			m_Gizmo->AddInputConnection(m_PlaneSource->GetOutputPort());
+			m_Gizmo->AddInputConnection(m_Arrow->GetOutputPort());
 			m_Gizmo->Update();
 
 			mafNEW(m_ImplicitPlaneGizmo);
@@ -666,13 +666,13 @@ void medOpLabelizeSurface::Labelize()
 	if(m_LabelInside==1)//if clip reverse is necessary rotate plane
 	{
 		before_transform_plane->SetTransform(rotate);
-		before_transform_plane->SetInput(m_PlaneSource->GetOutput());
+		before_transform_plane->SetInputConnection(m_PlaneSource->GetOutputPort());
 		before_transform_plane->Update();
 
-		transform_plane->SetInput(before_transform_plane->GetOutput());
+		transform_plane->SetInputConnection(before_transform_plane->GetOutputPort());
 	}
 	else
-		transform_plane->SetInput(m_PlaneSource->GetOutput());
+		transform_plane->SetInputConnection(m_PlaneSource->GetOutputPort());
 
 
 	transform_plane->SetTransform(m_ImplicitPlaneGizmo->GetAbsMatrixPipe()->GetVTKTransform());
@@ -680,17 +680,17 @@ void medOpLabelizeSurface::Labelize()
 
 	vtkMAFSmartPointer<vtkTransformPolyDataFilter> transform_data_input;
 	transform_data_input->SetTransform(((mafVME*)m_VmeEditor)->GetAbsMatrixPipe()->GetVTKTransform());
-	transform_data_input->SetInput((vtkPolyData *)((mafVME *)m_VmeEditor)->GetOutput()->GetVTKData());
+	transform_data_input->SetInputConnection(((mafVME *)m_VmeEditor)->GetOutput()->GetVTKOutputPort());
 	transform_data_input->Update();
 
-	m_ClipperBoundingBox->SetInput(transform_data_input->GetOutput());
-	m_ClipperBoundingBox->SetMask(transform_plane->GetOutput());
+	m_ClipperBoundingBox->SetInputConnection(transform_data_input->GetOutputPort());
+	m_ClipperBoundingBox->SetMaskConnection(transform_plane->GetOutputPort());
 	m_ClipperBoundingBox->SetClipInside(1);
 	m_ClipperBoundingBox->Update();
 
 	vtkMAFSmartPointer<vtkPolyData> newPolyData1;
 	newPolyData1->DeepCopy(m_ClipperBoundingBox->GetOutput());
-	newPolyData1->Update();
+	//newPolyData1->Update();
 
 	vtkDoubleArray *cellScalar = vtkDoubleArray::SafeDownCast(newPolyData1->GetCellData()->GetArray("CELL_LABEL"));
 	if(cellScalar)
@@ -711,21 +711,21 @@ void medOpLabelizeSurface::Labelize()
 
 	vtkMAFSmartPointer<vtkPolyData> newPolyData2;
 	newPolyData2->DeepCopy(m_ClipperBoundingBox->GetOutput());
-	newPolyData2->Update();
+	//newPolyData2->Update();
 
 	vtkMAFSmartPointer<vtkAppendPolyData> append;
-	append->SetInput(newPolyData1);
-	append->AddInput(newPolyData2);
+	append->SetInputData(newPolyData1);
+	append->AddInputData(newPolyData2);
 	append->Update();
 
 
 	vtkMAFSmartPointer<vtkCleanPolyData> clean;
-	clean->SetInput(append.GetPointer()->GetOutput());
+	clean->SetInputData(append.GetPointer()->GetOutput());
 	clean->Update();
 
 	vtkMAFSmartPointer<vtkTransformPolyDataFilter> transform_data_output;
 	transform_data_output->SetTransform(((mafVME*)m_VmeEditor)->GetAbsMatrixPipe()->GetVTKTransform()->GetInverse());
-	transform_data_output->SetInput(clean->GetOutput());
+	transform_data_output->SetInputConnection(clean->GetOutputPort());
 	transform_data_output->Update();
 
 	int result=(m_VmeEditor)->SetData(transform_data_output->GetOutput(),m_VmeEditor->GetTimeStamp());
@@ -735,7 +735,7 @@ void medOpLabelizeSurface::Labelize()
 		vtkPolyData *poly;
 		vtkNEW(poly);
 		poly->DeepCopy(transform_data_output->GetOutput());
-		poly->Update();
+		//poly->Update();
 		m_ResultPolyData.push_back(poly);
 	}
 

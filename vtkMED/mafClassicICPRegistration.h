@@ -65,7 +65,7 @@ class VTK_vtkMED_EXPORT mafClassicICPRegistration : public vtkIterativeClosestPo
 {
 public:
   static mafClassicICPRegistration *New();
-	vtkTypeRevisionMacro(mafClassicICPRegistration, vtkIterativeClosestPointTransform);
+	vtkTypeMacro(mafClassicICPRegistration, vtkIterativeClosestPointTransform);
   //vtkTypeMacro(mflClassicICPRegistration,vtkIterativeClosestPointTransform);
   //void PrintSelf(ostream& os, vtkIndent indent);
 
@@ -122,7 +122,7 @@ protected:
 
   /**
   Get the MTime of this object also considering the locator.*/
-  unsigned long int GetMTime();
+  vtkMTimeType GetMTime();
 
   mafClassicICPRegistration();
   ~mafClassicICPRegistration();

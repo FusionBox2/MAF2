@@ -152,7 +152,7 @@ void medOpSurfaceMirror::OpRun()
 
 
 		m_MirrorFilter = vtkMEDPolyDataMirror::New();
-		m_MirrorFilter->SetInput(m_InputPolydata);
+		m_MirrorFilter->SetInputData(m_InputPolydata);
 
 		Preview();
 	}
@@ -210,7 +210,7 @@ void medOpSurfaceMirror::OpDo()
 				//m_OutputGroup->AddChild(((mafVMEGroup*)m_Input)->GetChild(i));
 
 
-				m_MirrorFilter->SetInput(m_InputPolydata);
+				m_MirrorFilter->SetInputData(m_InputPolydata);
 				m_MirrorFilter->Update();
 
 
@@ -222,7 +222,6 @@ void medOpSurfaceMirror::OpDo()
 
 
 				m_OutputPolydata->DeepCopy(m_MirrorFilter->GetOutput());
-				m_OutputPolydata->Update();
 				
 				wxBusyInfo wait4("mirror output ok");
 				Sleep(2500);
@@ -362,7 +361,6 @@ void medOpSurfaceMirror::Preview()
   
 
   m_OutputPolydata->DeepCopy(m_MirrorFilter->GetOutput());
-  m_OutputPolydata->Update();
   ((mafVMESurface *)m_Input)->SetData(m_OutputPolydata,((mafVME *)m_Input)->GetTimeStamp());
 
 

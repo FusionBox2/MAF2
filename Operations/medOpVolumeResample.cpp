@@ -212,7 +212,7 @@ void medOpVolumeResample::CreateGizmos()
 	transform->SetMatrix(inputVolume->GetOutput()->GetMatrix()->GetVTKMatrix());
 	transform->Update();
 	vtkMAFSmartPointer<vtkTransformPolyDataFilter> transformFilter;
-	transformFilter->SetInput(polydata);
+	transformFilter->SetInputData(polydata);
 	transformFilter->SetTransform(transform);
 	transformFilter->Update();
 	transformFilter->GetOutput()->GetCenter(m_VolumeCenterPosition);
@@ -489,9 +489,9 @@ void medOpVolumeResample::Resample()
         
         vtkMAFSmartPointer<vtkStructuredPoints> outputSPVtkData;
         outputSPVtkData->SetSpacing(m_VolumeSpacing);
-        outputSPVtkData->SetScalarType(inputData->GetPointData()->GetScalars()->GetDataType());
+        //outputSPVtkData->SetScalarType(inputData->GetPointData()->GetScalars()->GetDataType());
         outputSPVtkData->SetExtent(outputSPExtent);
-        outputSPVtkData->SetUpdateExtent(outputSPExtent);
+        //outputSPVtkData->SetUpdateExtent(outputSPExtent);
 
         vtkDoubleArray *scalar = vtkDoubleArray::SafeDownCast(outputSPVtkData->GetPointData()->GetScalars());
         
@@ -502,20 +502,20 @@ void medOpVolumeResample::Resample()
 
         volumeResampleFilter->SetWindow(w);
         volumeResampleFilter->SetLevel(l);
-        volumeResampleFilter->SetInput(inputData);
+        volumeResampleFilter->SetInputData(inputData);
         volumeResampleFilter->SetOutput(outputSPVtkData);
         volumeResampleFilter->AutoSpacingOff();
         volumeResampleFilter->Update();
         
         std::ostringstream stringStream;
-        volumeResampleFilter->PrintSelf(stringStream,NULL);
+        volumeResampleFilter->PrintSelf(stringStream,vtkIndent());
         mafLogMessage(_M(stringStream.str().c_str()));
 
         stringStream.str("");
         this->PrintSelf(stringStream);
         mafLogMessage(_M(stringStream.str().c_str()));
 
-        outputSPVtkData->SetSource(NULL);
+        //outputSPVtkData->SetSource(NULL);
         outputSPVtkData->SetOrigin(m_VolumeBounds[0],m_VolumeBounds[2],m_VolumeBounds[4]);
 
         m_ResampledVme->SetDataByDetaching(outputSPVtkData, input_item->GetTimeStamp());
@@ -1151,7 +1151,7 @@ void medOpVolumeResample::ShiftCenterResampled()
 
 	vtkMAFSmartPointer<vtkPolyData> poly;
 	poly->SetPoints(points);
-	poly->Update();
+	//poly->Update();
 
 	vtkMAFSmartPointer<vtkTransform> t;
 	t->RotateX(m_ROIOrientation[0]);
@@ -1161,7 +1161,7 @@ void medOpVolumeResample::ShiftCenterResampled()
 
 	vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
 	ptf->SetTransform(t);
-	ptf->SetInput(poly);
+	ptf->SetInputData(poly);
 	ptf->Update();
 
 	double pt[3];
@@ -1316,7 +1316,7 @@ void medOpVolumeResample::PrintInt3( ostream& os, int array[3], const char *logM
 void medOpVolumeResample::PrintVolume( ostream& os , mafNode *volume , const char *logMessage /*= NULL*/ )
 {
   mafVMEVolumeGray *input = mafVMEVolumeGray::SafeDownCast(volume);
-  input->GetOutput()->GetVTKData()->Update();
+  //input->GetOutput()->GetOutputDataSet()->Update();
   vtkDataSet *inputDataSet = input->GetOutput()->GetVTKData();
   if (logMessage) os << logMessage << std::endl;
   os << "data is: ";

@@ -991,12 +991,12 @@ void medOpMeshDeformation::OnEvent(mafEventBase *maf_event)
             
       _VERIFY_RET(NULL != (pPoly = vtkPolyData::SafeDownCast(
         m_OCToAdd->GetOutput()->GetVTKData()))); 
-      pPoly->Update();
+      //pPoly->Update();
       VertCount[0] = pPoly->GetPoints()->GetNumberOfPoints();
       
       _VERIFY_RET(NULL != (pPoly = vtkPolyData::SafeDownCast(
         m_DCToAdd->GetOutput()->GetVTKData())));
-      pPoly->Update();
+      //pPoly->Update();
       VertCount[1] = pPoly->GetPoints()->GetNumberOfPoints();
 
       pCC = vtkIdList::New();
@@ -1357,7 +1357,7 @@ void medOpMeshDeformation::OnEvent(mafEventBase *maf_event)
   UpdateControlCurve(pCurve, CHANGE_ALL);
   UpdateControlCurveVisibility(pCurve);
 */
-  m_Meshes[0]->pPoly->Update();
+  //m_Meshes[0]->pPoly->Update();
   vtkCharArray* scalars = vtkCharArray::SafeDownCast(
     m_Meshes[0]->pPoly->GetPointData()->GetScalars());
   if (scalars != NULL)
@@ -1404,7 +1404,9 @@ void medOpMeshDeformation::OnEvent(mafEventBase *maf_event)
     
     for (int i = 0; i < 2; i++)
     {
+#if VTK_MAJOR_VERSION <= 7
       m_Meshes[i]->pMapper->ImmediateModeRenderingOn();
+#endif
       m_Meshes[i]->pMapper->ScalarVisibilityOn();
       m_Meshes[i]->pMapper->SetColorModeToMapScalars();
       m_Meshes[i]->pMapper->SetScalarModeToUsePointData();  
@@ -1437,10 +1439,10 @@ void medOpMeshDeformation::OnEvent(mafEventBase *maf_event)
 //Volume preservation feature
 #ifdef DEBUG_medOpMeshDeformation
   vtkMassProperties* props = vtkMassProperties::New();
-  props->SetInput(m_Meshes[0]->pPoly); //GetVolume calls Update    
+  props->SetInputData(m_Meshes[0]->pPoly); //GetVolume calls Update    
   double dblOrigVolume = props->GetVolume();
 
-  props->SetInput(m_Meshes[1]->pPoly);  //GetVolume calls Update      
+  props->SetInputData(m_Meshes[1]->pPoly);  //GetVolume calls Update      
   double dblNewVolume = props->GetVolume();
   props->Delete();
 
@@ -2229,7 +2231,7 @@ void medOpMeshDeformation::DeformMeshT()
 {
   vtkMAFSmartPointer< T > md;
 
-  md->SetInput(m_Meshes[0]->pPoly);    
+  md->SetInputData(m_Meshes[0]->pPoly);    
   md->SetOutput(m_Meshes[1]->pPoly);
 
   int nCount = (int)m_Curves.size();
@@ -2284,7 +2286,7 @@ void medOpMeshDeformation::DeformMeshT()
 
   vtkNEW(m_SelPointGlyph);
   vtkPolyDataMapper* pMapper = vtkPolyDataMapper::New();
-  pMapper->SetInput(m_SelPointGlyph->GetOutput());
+  pMapper->SetInputConnection(m_SelPointGlyph->GetOutputPort());
 
   vtkNEW(m_SelPointActor);
   m_SelPointActor->SetMapper(pMapper);
@@ -2374,7 +2376,7 @@ mafPolylineGraph* medOpMeshDeformation::CreatePolylineGraph(mafVME* vme)
     vme->GetOutput()->GetVTKData());  
 
   _VERIFY_RETVAL(NULL != pPoly, NULL);  
-  pPoly->Update();  //to force construction of vtkPoints
+  //pPoly->Update();  //to force construction of vtkPoints
 
   mafPolylineGraph* pRet = new mafPolylineGraph();
   if (pRet->CopyFromPolydata(pPoly))
@@ -2462,21 +2464,21 @@ medOpMeshDeformation::CONTROL_CURVE* medOpMeshDeformation::
     {
       //correspondences are just tubes no spheres
       pRet->pTubes[i]->SetRadius(m_Spheres[0]->GetRadius() / 4);
-      pMapper->SetInput(pRet->pTubes[i]->GetOutput());
+      pMapper->SetInputConnection(pRet->pTubes[i]->GetOutputPort());
     }
     else
     {
       pRet->pTubes[i]->SetRadius(m_Spheres[i]->GetRadius() / 2);
 
       pRet->pGlyphs[i] = vtkGlyph3D::New();
-      pRet->pGlyphs[i]->SetSource(m_Spheres[i]->GetOutput());
+      pRet->pGlyphs[i]->SetSourceConnection(m_Spheres[i]->GetOutputPort());
       pRet->pGlyphs[i]->SetScaleModeToDataScalingOff();
       pRet->pGlyphs[i]->SetRange(0.0,1.0);
 
       vtkAppendPolyData* pAppendPoly = vtkAppendPolyData::New();
-      pAppendPoly->AddInput(pRet->pTubes[i]->GetOutput());
-      pAppendPoly->AddInput(pRet->pGlyphs[i]->GetOutput());
-      pMapper->SetInput(pAppendPoly->GetOutput());
+      pAppendPoly->AddInputConnection(pRet->pTubes[i]->GetOutputPort());
+      pAppendPoly->AddInputConnection(pRet->pGlyphs[i]->GetOutputPort());
+      pMapper->SetInputConnection(pAppendPoly->GetOutputPort());
       pAppendPoly->Delete();  //this is no longer needed
     }
 
@@ -2503,7 +2505,7 @@ void medOpMeshDeformation::UpdateMesh(MESH* pMesh)
     pMesh->pActor->SetVisibility(0);
   else
   {
-    pMesh->pMapper->SetInput(pMesh->pPoly);
+    pMesh->pMapper->SetInputData(pMesh->pPoly);
     pMesh->pMapper->Update();
 
     pMesh->pActor->SetVisibility(1);
@@ -2563,7 +2565,7 @@ void medOpMeshDeformation::UpdateControlCurve(CONTROL_CURVE* pCurve, int flags)
         vtkIdList *idlist = vtkIdList::New() ;
         
         int nCount = pCurve->pCCList->GetNumberOfIds();
-        int* ptIdx = pCurve->pCCList->GetPointer(0);
+        vtkIdType* ptIdx = pCurve->pCCList->GetPointer(0);
         for (int j = 0; j < nCount; j += 2)
         {
           const mafPolylineGraph::Vertex* pV0 = pCurve->pPolyLines[0]->GetConstVertexPtr(ptIdx[j]);
@@ -2606,8 +2608,8 @@ void medOpMeshDeformation::UpdateControlCurve(CONTROL_CURVE* pCurve, int flags)
     {
       //set tubes and glyphs      
       if (i != 2)
-        pCurve->pGlyphs[i]->SetInput(pCurve->pPolys[i]);
-      pCurve->pTubes[i]->SetInput(pCurve->pPolys[i]);
+        pCurve->pGlyphs[i]->SetInputData(pCurve->pPolys[i]);
+      pCurve->pTubes[i]->SetInputData(pCurve->pPolys[i]);
       pCurve->pActors[i]->GetMapper()->Update();      
       pCurve->pActors[i]->SetVisibility(1);
     }

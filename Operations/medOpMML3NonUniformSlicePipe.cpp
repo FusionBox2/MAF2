@@ -78,7 +78,7 @@ medOpMML3NonUniformSlicePipe::medOpMML3NonUniformSlicePipe(vtkPolyData *surface,
   m_Transform = vtkTransform::New() ;
 
   vtkTransformPolyDataFilter *transformFilter = vtkTransformPolyDataFilter::New() ;
-  transformFilter->SetInput(surface) ;
+  transformFilter->SetInputData(surface) ;
   transformFilter->SetTransform(m_Transform) ;
 
   vtkPlane *plane = vtkPlane::New() ;
@@ -87,14 +87,14 @@ medOpMML3NonUniformSlicePipe::medOpMML3NonUniformSlicePipe(vtkPolyData *surface,
 
   vtkCutter *cutter = vtkCutter::New();
   cutter->SetCutFunction(plane);
-  cutter->SetInput((vtkDataSet *) transformFilter->GetOutput());
+  cutter->SetInputConnection(transformFilter->GetOutputPort());
   cutter->SetNumberOfContours(1) ;
   cutter->SetValue(0, 0.0);          // set the function value which defines each contour
   cutter->SetSortBy(0);
   cutter->SetGenerateCutScalars(0);
 
   vtkPolyDataMapper2D *contourMapper = vtkPolyDataMapper2D::New() ;
-  contourMapper->SetInput(cutter->GetOutput()) ;
+  contourMapper->SetInputConnection(cutter->GetOutputPort()) ;
   contourMapper->SetTransformCoordinate(coordSystem) ;
 
   m_ContourActor = vtkActor2D::New() ;
@@ -120,11 +120,11 @@ medOpMML3NonUniformSlicePipe::medOpMML3NonUniformSlicePipe(vtkPolyData *surface,
     m_Sphere[i]->SetRadius(5) ;
 
     sphereTransform[i] = vtkTransformPolyDataFilter::New() ;
-    sphereTransform[i]->SetInput(m_Sphere[i]->GetOutput()) ;
+    sphereTransform[i]->SetInputConnection(m_Sphere[i]->GetOutputPort()) ;
     sphereTransform[i]->SetTransform(m_Transform) ;
 
     sphereMapper[i] = vtkPolyDataMapper2D::New() ;
-    sphereMapper[i]->SetInput(sphereTransform[i]->GetOutput()) ;
+    sphereMapper[i]->SetInputConnection(sphereTransform[i]->GetOutputPort()) ;
     sphereMapper[i]->SetTransformCoordinate(coordSystem) ;
 
     m_SphereActor[i] = vtkActor2D::New() ;
@@ -153,7 +153,7 @@ medOpMML3NonUniformSlicePipe::medOpMML3NonUniformSlicePipe(vtkPolyData *surface,
 
   vtkCellArray *sectionLinesCells = vtkCellArray::New() ;
   for (int i = 0 ;  i < numberOfSectionLines ;  i++){
-    int endPtIndices[2] ;
+    vtkIdType endPtIndices[2] ;
 
     // left tick mark
     endPtIndices[0] = 4*i ;
@@ -173,7 +173,7 @@ medOpMML3NonUniformSlicePipe::medOpMML3NonUniformSlicePipe(vtkPolyData *surface,
   sectionLinesCells->Delete() ;
 
   vtkPolyDataMapper2D *sectionLinesMapper = vtkPolyDataMapper2D::New() ;
-  sectionLinesMapper->SetInput(sectionLinesPolydata) ;
+  sectionLinesMapper->SetInputData(sectionLinesPolydata) ;
   sectionLinesMapper->SetTransformCoordinate(coordSystem) ;
 
   m_SectionLinesActor = vtkActor2D::New() ;
@@ -202,7 +202,7 @@ medOpMML3NonUniformSlicePipe::medOpMML3NonUniformSlicePipe(vtkPolyData *surface,
   sliceLinesCells->Delete() ;
 
   vtkPolyDataMapper2D *sliceLinesMapper = vtkPolyDataMapper2D::New() ;
-  sliceLinesMapper->SetInput(m_SliceLinesPolydata) ;
+  sliceLinesMapper->SetInputData(m_SliceLinesPolydata) ;
   sliceLinesMapper->SetTransformCoordinate(coordSystem) ;
 
   m_SliceLinesActor = vtkActor2D::New() ;
@@ -447,7 +447,7 @@ void medOpMML3NonUniformSlicePipe::UpdateSliceLines()
   vtkCellArray *sliceLinesCells = m_SliceLinesPolydata->GetLines() ;
   sliceLinesCells->Initialize() ;
   for (int i = 0 ;  i < m_NumberOfSlices ;  i++){
-    int endPtIndices[2] ;
+    vtkIdType endPtIndices[2] ;
     endPtIndices[0] = 2*i ;
     endPtIndices[1] = 2*i+1 ;
     sliceLinesCells->InsertNextCell(2, endPtIndices) ;

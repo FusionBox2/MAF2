@@ -23,10 +23,10 @@
 
 
 
-vtkCxxRevisionMacro(vtkMAFLargeDataProvider, "$Revision: 1.1.2.3 $");
-
 #include "mafMemDbg.h"
 #include <assert.h>
+
+typedef unsigned char BYTE;
 
 vtkMAFLargeDataProvider::vtkMAFLargeDataProvider()
 {
@@ -74,7 +74,7 @@ vtkMAFLargeDataProvider::~vtkMAFLargeDataProvider()
 }
 
 // Return this object's modified time.
-/*virtual*/ unsigned long vtkMAFLargeDataProvider::GetMTime()
+/*virtual*/ vtkMTimeType vtkMAFLargeDataProvider::GetMTime()
 {
 	unsigned long mt = Superclass::GetMTime();
 	for (int i = 0; i < (int)Descriptors.size(); i++) 

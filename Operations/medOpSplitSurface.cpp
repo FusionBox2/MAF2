@@ -322,21 +322,21 @@ void medOpSplitSurface::ClipBoundingBox()
 
 	vtkMAFSmartPointer<vtkTransformPolyDataFilter> transform_plane;
 	transform_plane->SetTransform(m_ImplicitPlaneGizmo->GetAbsMatrixPipe()->GetVTKTransform());
-	transform_plane->SetInput(m_PlaneSource->GetOutput());
+	transform_plane->SetInputConnection(m_PlaneSource->GetOutputPort());
 	transform_plane->Update();
 
 	vtkMAFSmartPointer<vtkTransformPolyDataFilter> transform_data_input;
 	transform_data_input->SetTransform(((mafVME*)m_Input)->GetAbsMatrixPipe()->GetVTKTransform());
-	transform_data_input->SetInput(m_OldSurface);
+	transform_data_input->SetInputData(m_OldSurface);
 	transform_data_input->Update();
 
-	m_ClipperBoundingBox->SetInput(transform_data_input->GetOutput());
-	m_ClipperBoundingBox->SetMask(transform_plane->GetOutput());
+	m_ClipperBoundingBox->SetInputConnection(transform_data_input->GetOutputPort());
+	m_ClipperBoundingBox->SetMaskConnection(transform_plane->GetOutputPort());
 	m_ClipperBoundingBox->SetClipInside(m_ClipInside);
 	m_ClipperBoundingBox->Update();
 
 	m_ResultPolyData->DeepCopy(m_ClipperBoundingBox->GetOutput());
-	m_ResultPolyData->Update();
+	//m_ResultPolyData->Update();
 
 	int result=((mafVMESurface*)m_Input)->SetData(m_ResultPolyData,((mafVME*)m_Input)->GetTimeStamp());
 
@@ -346,7 +346,7 @@ void medOpSplitSurface::ClipBoundingBox()
 		m_ClipperBoundingBox->Update();
 
 		m_ClippedPolyData->DeepCopy(m_ClipperBoundingBox->GetOutput());
-		m_ClippedPolyData->Update();
+		//m_ClippedPolyData->Update();
 	}
 
 	if(!m_TestMode)
@@ -534,7 +534,7 @@ void medOpSplitSurface::OpDo()
 {
 	vtkMAFSmartPointer<vtkTransformPolyDataFilter> transform_output;
 	transform_output->SetTransform((vtkAbstractTransform *)((mafVME *)m_Input)->GetAbsMatrixPipe()->GetVTKTransform()->GetInverse());
-	transform_output->SetInput(m_ResultPolyData);
+	transform_output->SetInputData(m_ResultPolyData);
 	transform_output->Update();
 
 	((mafVMESurface *)m_Input)->SetData(transform_output->GetOutput(),((mafVME *)m_Input)->GetTimeStamp());
@@ -542,7 +542,7 @@ void medOpSplitSurface::OpDo()
 	{
 		vtkMAFSmartPointer<vtkTransformPolyDataFilter> transform_clipped_output;
 		transform_clipped_output->SetTransform((vtkAbstractTransform *)((mafVME *)m_Input)->GetAbsMatrixPipe()->GetVTKTransform()->GetInverse());
-		transform_clipped_output->SetInput(m_ClippedPolyData);
+		transform_clipped_output->SetInputData(m_ClippedPolyData);
 		transform_clipped_output->Update();
 
 		mafNEW(m_ClippedVME);
@@ -583,24 +583,24 @@ int medOpSplitSurface::Clip()
 
     vtkMAFSmartPointer<vtkTransformPolyDataFilter> transform_data_input;
     transform_data_input->SetTransform((vtkAbstractTransform *)((mafVME *)m_Input)->GetAbsMatrixPipe()->GetVTKTransform());
-    transform_data_input->SetInput((vtkPolyData *)((mafVME *)m_Input)->GetOutput()->GetVTKData());
+    transform_data_input->SetInputConnection(((mafVME *)m_Input)->GetOutput()->GetVTKOutputPort());
     transform_data_input->Update();
 
     // clip input surface by another surface
     // triangulate input for subdivision filter
 		vtkMAFSmartPointer<vtkTriangleFilter> triangulatedInput;
-		triangulatedInput->SetInput(transform_data_input->GetOutput());
+		triangulatedInput->SetInputConnection(transform_data_input->GetOutputPort());
     triangulatedInput->Update();
 		
     m_ClipperVME->Update();
     vtkMAFSmartPointer<vtkTransformPolyDataFilter> transform_data_clipper;
     transform_data_clipper->SetTransform((vtkAbstractTransform *)m_ClipperVME->GetAbsMatrixPipe()->GetVTKTransform());
-    transform_data_clipper->SetInput((vtkPolyData *)m_ClipperVME->GetOutput()->GetVTKData());
+    transform_data_clipper->SetInputConnection(m_ClipperVME->GetOutput()->GetVTKOutputPort());
     transform_data_clipper->Update();
 
 		vtkMAFSmartPointer<vtkMAFImplicitPolyData> implicitPolyData;
 		implicitPolyData->SetInput(transform_data_clipper->GetOutput());
-		m_Clipper->SetInput(triangulatedInput->GetOutput());
+		m_Clipper->SetInputConnection(triangulatedInput->GetOutputPort());
 		m_Clipper->SetClipFunction(implicitPolyData);
 	}
   else
@@ -625,7 +625,7 @@ int medOpSplitSurface::Clip()
 			tr->Update();
 
 			m_ClipperPlane->SetTransform(tr);
-			m_Clipper->SetInput(vtkPolyData::SafeDownCast(((mafVME *)m_Input)->GetOutput()->GetVTKData()));
+			m_Clipper->SetInputConnection(((mafVME *)m_Input)->GetOutput()->GetVTKOutputPort());
 			m_Clipper->SetClipFunction(m_ClipperPlane);
 			tr->Delete();
 			mat->Delete();
@@ -638,7 +638,7 @@ int medOpSplitSurface::Clip()
   m_Clipper->Update();
 
 	m_ResultPolyData->DeepCopy(m_Clipper->GetOutput());
-	m_ResultPolyData->Update();
+	//m_ResultPolyData->Update();
 
 	if(m_GenerateClippedOutput)
 	{
@@ -647,7 +647,7 @@ int medOpSplitSurface::Clip()
 		m_Clipper->Update();
 
 		m_ClippedPolyData->DeepCopy(m_Clipper->GetOutput());
-		m_ClippedPolyData->Update();
+		//m_ClippedPolyData->Update();
 
 	}
 
@@ -720,8 +720,8 @@ void medOpSplitSurface::ShowClipPlane(bool show)
       m_ArrowShape->SetTipResolution(40);
 
       vtkNEW(m_Arrow);
-      m_Arrow->SetInput(m_PlaneSource->GetOutput());
-      m_Arrow->SetSource(m_ArrowShape->GetOutput());
+      m_Arrow->SetInputConnection(m_PlaneSource->GetOutputPort());
+      m_Arrow->SetSourceConnection(m_ArrowShape->GetOutputPort());
       m_Arrow->SetVectorModeToUseNormal();
       
       int clip_sign = m_ClipInside ? 1 : -1;
@@ -729,8 +729,8 @@ void medOpSplitSurface::ShowClipPlane(bool show)
       m_Arrow->Update();
 
       vtkNEW(m_Gizmo);
-      m_Gizmo->AddInput(m_PlaneSource->GetOutput());
-      m_Gizmo->AddInput(m_Arrow->GetOutput());
+      m_Gizmo->AddInputConnection(m_PlaneSource->GetOutputPort());
+      m_Gizmo->AddInputConnection(m_Arrow->GetOutputPort());
       m_Gizmo->Update();
 
       mafNEW(m_ImplicitPlaneGizmo);

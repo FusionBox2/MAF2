@@ -31,7 +31,7 @@ class VTK_vtkMED_EXPORT vtkMAFLargeImageData : public vtkMAFLargeDataSet
 public:
 	static vtkMAFLargeImageData *New();
 
-	vtkTypeRevisionMacro(vtkMAFLargeImageData,vtkMAFLargeDataSet);
+	vtkTypeMacro(vtkMAFLargeImageData,vtkMAFLargeDataSet);
 	virtual void PrintSelf(ostream& os, vtkIndent indent);
 
 #pragma region vtkLargeDataAPI
@@ -199,7 +199,8 @@ public:
 	// The Extent is stored  in the order (X, Y, Z).
 	void SetExtent(int extent[6]);
 	void SetExtent(int x1, int x2, int y1, int y2, int z1, int z2);
-	vtkGetVector6Macro(Extent,int);
+	int Extent[6];
+	vtkGetVector6Macro(Extent, int);
 
 protected:
 	//Computes the increments in line, plane and space

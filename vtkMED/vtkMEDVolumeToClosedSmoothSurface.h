@@ -38,7 +38,7 @@ class VTK_vtkMED_EXPORT vtkMEDVolumeToClosedSmoothSurface : public vtkMAFContour
 public:
   
   /** Add collect revision method */
-  vtkTypeRevisionMacro(vtkMEDVolumeToClosedSmoothSurface,vtkMAFContourVolumeMapper);
+  vtkTypeMacro(vtkMEDVolumeToClosedSmoothSurface,vtkMAFContourVolumeMapper);
 
   
   /**

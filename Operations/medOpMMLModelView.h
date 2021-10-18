@@ -76,6 +76,7 @@
 #include "vtkPolyDataMapper2D.h"
 #include "vtkPolyDataNormals.h"
 #include "vtkDataSet.h"
+#include "vtkPolyDataWriter.h"
 
 //----------------------------------------------------------------------------
 // medOpMMLModelView     :

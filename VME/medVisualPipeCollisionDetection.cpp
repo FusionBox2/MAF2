@@ -84,7 +84,7 @@ void medVisualPipeCollisionDetection::Create(mafNode *n, mafView *v/*, bool use_
   m_Matrix0->DeepCopy(m_Vme->GetOutput()->GetAbsMatrix());
 
   vtkPolyData *pd = vtkPolyData::SafeDownCast(surface_output->GetVTKData());
-  pd->Update();
+  //pd->Update();
 
   vtkNEW(m_CollisionFilter);
   m_CollisionFilter->SetInput(0,pd);
@@ -101,18 +101,18 @@ void medVisualPipeCollisionDetection::Create(mafNode *n, mafView *v/*, bool use_
       assert(surfaceOutputToCollide);
       surfaceOutputToCollide->Update();
       vtkPolyData *pdToCollide = vtkPolyData::SafeDownCast(surfaceOutputToCollide->GetVTKData());
-      pdToCollide->Update();
+      //pdToCollide->Update();
 
       mafMatrix *m1;
       mafNEW(m1);
       //Store old matrix to speedup dispacth of events
       m1->DeepCopy(m_SurfacesToCollide[i]->GetOutput()->GetAbsMatrix());
-      m_CollisionFilter->SetInput(1,pdToCollide);
+      m_CollisionFilter->SetInputData(1,pdToCollide);
       m_CollisionFilter->SetMatrix(1,m1->GetVTKMatrix());
       m_Matrix1.push_back(m1);
 
       output0->DeepCopy(m_CollisionFilter->GetOutput(0));
-      output0->Update();
+      //output0->Update();
       //Create scalars array to visualize contacts cells
       vtkMAFSmartPointer<vtkDoubleArray> contactScalars;
       contactScalars->SetName("CONTACT");
@@ -138,7 +138,7 @@ void medVisualPipeCollisionDetection::Create(mafNode *n, mafView *v/*, bool use_
   {
     //Set input of the mapper as first input surface
     output0->DeepCopy(pd);
-    output0->Update();
+    //output0->Update();
   }
 
   vtkMAFSmartPointer<vtkColorTransferFunction> table;
@@ -153,7 +153,7 @@ void medVisualPipeCollisionDetection::Create(mafNode *n, mafView *v/*, bool use_
   m_Mapper->SetScalarModeToUseCellData();
   m_Mapper->SetLookupTable(table);
   m_Mapper->UseLookupTableScalarRangeOn();
-  m_Mapper->SetInput(output0);
+  m_Mapper->SetInputData(output0);
 
   vtkNEW(m_Actor);
   m_Actor->SetMapper(m_Mapper);
@@ -296,10 +296,10 @@ void medVisualPipeCollisionDetection::UpdatePipeline(bool force /* = false */)
 	      return;
 	    }
       vtkPolyData *data = vtkPolyData::SafeDownCast(m_SurfacesToCollide[i]->GetOutput()->GetVTKData());
-      data->Update();
+      //data->Update();
       if (m_CollisionFilter->GetInput(1) != data)
       {
-        m_CollisionFilter->SetInput(1,data);
+        m_CollisionFilter->SetInputData(1,data);
       }
       //store new matrix
       m_Matrix0->DeepCopy(m0);
@@ -311,7 +311,7 @@ void medVisualPipeCollisionDetection::UpdatePipeline(bool force /* = false */)
       //Create the array with correct scalars to view contact cells
       vtkMAFSmartPointer<vtkPolyData> poly;
       poly->DeepCopy(vtkPolyData::SafeDownCast(m_SurfacesToCollide[i]->GetOutput()->GetVTKData()));
-      poly->Update();
+      //poly->Update();
       vtkDataArray *array1 = m_CollisionFilter->GetOutput(1)->GetFieldData()->GetArray("ContactCells");
       vtkDataArray *arrayToExclude1 = poly->GetCellData()->GetArray(m_ScalarNameToExclude.c_str());
       vtkDataArray *array0 = m_CollisionFilter->GetOutput(0)->GetFieldData()->GetArray("ContactCells");
@@ -356,7 +356,7 @@ void medVisualPipeCollisionDetection::UpdatePipeline(bool force /* = false */)
         t->SetMatrix(m1->GetVTKMatrix());
         vtkMAFSmartPointer<vtkTransformPolyDataFilter> tpd;
         tpd->SetTransform(t);
-        tpd->SetInput(poly);
+        tpd->SetInputData(poly);
         tpd->Update();
         vtkMAFSmartPointer<vtkDoubleArray> contactScalars1;
         contactScalars1->SetName("CONTACT");
@@ -400,15 +400,15 @@ void medVisualPipeCollisionDetection::UpdatePipeline(bool force /* = false */)
         }
         vtkMAFSmartPointer<vtkPolyData> polyResult;
         polyResult->DeepCopy(tpd->GetOutput());
-        polyResult->Update();
+       // polyResult->Update();
         polyResult->GetCellData()->AddArray(contactScalars1);
         polyResult->GetCellData()->SetActiveScalars("CONTACT");
-        polyResult->Update();
+        //polyResult->Update();
 
         //Add new mapper if a new surface has been added
         if (m_SurfaceToCollideMapper.size() > i)
         {
-          m_SurfaceToCollideMapper[i]->SetInput(polyResult);
+          m_SurfaceToCollideMapper[i]->SetInputData(polyResult);
           m_SurfaceToCollideMapper[i]->Update();
         }
         else
@@ -420,7 +420,7 @@ void medVisualPipeCollisionDetection::UpdatePipeline(bool force /* = false */)
           table->Build();
           vtkPolyDataMapper *mapper;
           vtkNEW(mapper);
-          mapper->SetInput(polyResult);
+          mapper->SetInputData(polyResult);
           mapper->ScalarVisibilityOn();
           //Collision scalars are presents inside cells
           mapper->SetScalarModeToUseCellData();
@@ -439,11 +439,11 @@ void medVisualPipeCollisionDetection::UpdatePipeline(bool force /* = false */)
     // Store scalars to the output data
     vtkMAFSmartPointer<vtkPolyData> output0;
     output0->DeepCopy(mafVME::SafeDownCast(m_Vme)->GetOutput()->GetVTKData());
-    output0->Update();
+    //output0->Update();
     output0->GetCellData()->AddArray(contactScalars0);
     output0->GetCellData()->SetActiveScalars("CONTACT");
-    output0->Update();
-    m_Mapper->SetInput(output0);
+    //output0->Update();
+    m_Mapper->SetInputData(output0);
     m_Mapper->Update();
     mafEventMacro(mafEvent(this,CAMERA_UPDATE));
   }

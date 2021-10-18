@@ -259,7 +259,7 @@ void medOpInteractionDebugger::BuildVMEPolyline( vtkPoints * in_points, mafVMEPo
   vtkMAFSmartPointer<vtkPolyData> in_data;
   vtkMAFSmartPointer<vtkCellArray> in_cells;
 
-  int pointId[2];
+  vtkIdType pointId[2];
   for(int i = 0; i< in_points->GetNumberOfPoints();i++)
   {
     if (i > 0)
@@ -272,8 +272,6 @@ void medOpInteractionDebugger::BuildVMEPolyline( vtkPoints * in_points, mafVMEPo
 
   in_data->SetPoints(in_points);
   in_data->SetLines(in_cells);
-  in_data->Modified();
-  in_data->Update();
 
 
   // try to set this data to the volume
@@ -341,7 +339,7 @@ void medOpInteractionDebugger::AddMEDVMEPolylineGraphTestConstrain1ToTree()
   mafNEW(polyline);
   
   polyline->SetData(pd, -1);
-  polyline->GetOutput()->GetVTKData()->Update();
+  polyline->GetOutput()->Update();
   polyline->Update();
 
   polyline->SetName(_R("test graph"));

@@ -22,6 +22,8 @@
 #include "vtkDoubleArray.h"
 #include "vtkLine.h"
 #include "vtkMath.h"
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkPlane.h"
 #include "vtkPolyData.h"
@@ -37,7 +39,6 @@
 #include <float.h>
 
 
-vtkCxxRevisionMacro(vtkMEDFillingHole, "$Revision: 1.1.2.6 $");
 vtkStandardNewMacro(vtkMEDFillingHole);
 
 #include "mafMemDbg.h"
@@ -75,7 +76,7 @@ vtkMEDFillingHole::CVertex::~CVertex()
 bool vtkMEDFillingHole::CVertex::IsTwoRingVertex(int id)
 //----------------------------------------------------------------------------
 {
-  vtkstd::vector<int>::iterator end;
+  std::vector<int>::iterator end;
 
   end = TwoRingVertex.end();
   if( end == find(TwoRingVertex.begin(),end,id) ) return false;
@@ -354,14 +355,15 @@ void vtkMEDFillingHole::BuildPatch()
   int dv1,dv2;
   bool bflag;
   double dLength;
-  int *pVertexIndex,*pVertexIndex2,*pEdgeIndex;
+  vtkIdType* pVertexIndex, * pVertexIndex2;
+  int *pEdgeIndex;
 
   CVertex		*pVertex1,*pVertex2;
   CTriangle	*pTriangle, *pNeighTriangle;
   CEdge		*pEdge;
 
-  vtkstd::vector<int>::iterator	neight,end;
-  vtkstd::vector<CTriangle*>::iterator	start,triangle;
+  std::vector<int>::iterator	neight,end;
+  std::vector<CTriangle*>::iterator	start,triangle;
 
   start = PatchTriangles.begin();
   for( t=0,triangle=start; t<NumOfPatchTriangle; t++,triangle++)
@@ -720,7 +722,8 @@ vtkMEDFillingHole::CVertex* vtkMEDFillingHole::AddOnePointToTriangle(double *pCo
   CVertex		*pNewVertex;
   CTriangle	*pNewTriangle;
   CEdge		*pEdge, *pNewEdge;
-  int				*pVertexIndex,*pEdgeIndex;
+  vtkIdType* pVertexIndex;
+  int* pEdgeIndex;
 
   //add a new vertex
   pNewVertex = new CVertex(pCoord);
@@ -1111,7 +1114,7 @@ void vtkMEDFillingHole::RefinePatch()
   CVertex		*pVertex,*pNewVertex;
   CTriangle *pTriangle;
   CEdge *pEdge;
-  int *pVertexIndex;
+  vtkIdType *pVertexIndex;
   int *pEdgeIndex;
 
 #if defined(_FILLING_DBG)
@@ -1217,7 +1220,7 @@ void vtkMEDFillingHole::RefinePatch()
   }//for while
 
   //clear deleted triangles.
-  vtkstd::vector<CTriangle*>::iterator	oldtriangle,newtriangle;
+  std::vector<CTriangle*>::iterator	oldtriangle,newtriangle;
 
   nTriangle = NumOfPatchTriangle;	
   oldtriangle = newtriangle = PatchTriangles.begin();
@@ -1273,10 +1276,10 @@ void vtkMEDFillingHole::ExtendPatch()
   int id;
   CVertex *pVertex,*pNewVertex;
   CTriangle	*pTriangle,*pNewTriangle;
-  int		*pVertexIndex,*pNewVertexIndex;
+  vtkIdType		*pVertexIndex,*pNewVertexIndex;
 
-  vtkstd::vector<int>::iterator	oneringend,onering;
-  vtkstd::vector<int> surroundvertexes,surroundtriangles;
+  std::vector<int>::iterator	oneringend,onering;
+  std::vector<int> surroundvertexes,surroundtriangles;
 
   //set the seed vertexes in original mesh
   end = HolePointIDs.size();
@@ -1422,8 +1425,8 @@ void vtkMEDFillingHole::BuildPatchLaplacian()
 
   CVertex  *pVertex;
   CVertex  *pVertexFirst,*pVertexSecond;
-  vtkstd::vector<int>::iterator	  first,second;
-  vtkstd::vector<int>::iterator   end,start;
+  std::vector<int>::iterator	  first,second;
+  std::vector<int>::iterator   end,start;
 
   //Build vertex two ring relationship
   for(i=0;i<NumOfPatchVertex;i++)
@@ -1494,8 +1497,8 @@ void vtkMEDFillingHole::ComputeLTransposeLMatrix(double *A)
   CVertex     *pVertex;
   CLaplacian    *pVertexLaplaican;
 
-  vtkstd::vector<int>::iterator	  first,second;
-  vtkstd::vector<int>::iterator   end,start;
+  std::vector<int>::iterator	  first,second;
+  std::vector<int>::iterator   end,start;
 
   //A[i,j] = sum(k = 0..n-1)L[k,i]*L[k,j]
   //A[i,j] = sum(index = 0..n-1)L[index,i]*L[index,j]
@@ -1563,7 +1566,7 @@ void vtkMEDFillingHole::LTransposeMatrixVector( double *source,double *result )
   int i,j;
   CVertex *pVertex;
   double	*pLaplacian,dSource;
-  vtkstd::vector<int>::iterator	onering,end;
+  std::vector<int>::iterator	onering,end;
 
   //xi = sum(j = 1..n)bj*Lij = bi*Lii + sum(j = 1..n, j!=i)bj*Lij
   //Lij = 0 if there is no edge from vertex pi to pj =>
@@ -1604,8 +1607,8 @@ void vtkMEDFillingHole::LTransposeLMatrixVector( double *A,double *xyz,double *r
   double	dValue;
   CVertex    *pVertex;
 
-  vtkstd::vector<int>::iterator	tworing,end;
-  vtkstd::vector<CVertex*>::iterator	vertexiterator;
+  std::vector<int>::iterator	tworing,end;
+  std::vector<CVertex*>::iterator	vertexiterator;
 
   vertexiterator = PatchVertexes.begin();
   for(index=0,i=0;i<NumOfPatchVertex;i++,index += NumOfPatchVertex,vertexiterator++)
@@ -2054,13 +2057,13 @@ void vtkMEDFillingHole::MergePatch()
   CVertex	*pVertex,*pNewVertex;
   CTriangle	*pNewTriangle;
   int v0,v1,v2;
-  int *pVertexIndex;
+  vtkIdType *pVertexIndex;
   int NumOfNewTriangle;
 
-  vtkstd::vector<CVertex*>::iterator	vertex,vertexstart;
-  vtkstd::vector<CVertex*>::iterator	vertexend;
-  vtkstd::vector<CTriangle*>::iterator	triangle;
-  vtkstd::vector<CTriangle*>::iterator	triangleend;
+  std::vector<CVertex*>::iterator	vertex,vertexstart;
+  std::vector<CVertex*>::iterator	vertexend;
+  std::vector<CTriangle*>::iterator	triangle;
+  std::vector<CTriangle*>::iterator	triangleend;
 
   vertexstart = PatchVertexes.begin();
   vertexend = PatchVertexes.end();
@@ -2446,7 +2449,8 @@ void vtkMEDFillingHole::BuildMesh()
   bool bflag;
 
   double dLength;
-  int *pVertexIndex,*pVertexIndex2,*pEdgeIndex;
+  vtkIdType * pVertexIndex, * pVertexIndex2;
+  int *pEdgeIndex;
   
   CEdge		*pEdge;
   CTriangle	*pTriangle, *pNeighTriangle;
@@ -2580,13 +2584,13 @@ void vtkMEDFillingHole::UpdateMesh(int id)
   bool bflag;
 
   double dLength;
-  int *pVertexIndex,*pVertexIndex2;
+  vtkIdType *pVertexIndex,*pVertexIndex2;
 
   CVertex		*pVertex,*pVertex1,*pVertex2;
   CTriangle	*pTriangle, *pNeighTriangle;
   CEdge		*pEdge;
 
-  vtkstd::vector<int>::iterator	neight,end;
+  std::vector<int>::iterator	neight,end;
 
   for(t=id; t<NumOfTriangle; t++)
   {
@@ -2720,7 +2724,7 @@ bool vtkMEDFillingHole::FindAHole()
 
   CEdge *pEdge;
   CVertex *pVertex, *pStartVertex;
-  vtkstd::vector<int>::iterator ringedge;	
+  std::vector<int>::iterator ringedge;	
 
   if( BorderPointID >= NumOfVertex) 
     return false;
@@ -2802,7 +2806,7 @@ void vtkMEDFillingHole::InitMesh()
   CTriangle *pTriangle;
   vtkIdList *ptids;
 
-  InputMesh = this->GetInput();
+  InputMesh = this->GetPolyDataInput(0);
   OutputMesh = this->GetOutput();
 
   NumOfTriangle = InputMesh->GetNumberOfCells();
@@ -2898,9 +2902,21 @@ void vtkMEDFillingHole::BuildPatchOutput()
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-void vtkMEDFillingHole::Execute()
-//----------------------------------------------------------------------------
-{  
+int vtkMEDFillingHole::RequestData(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
+{
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
+  // get the input and output
+  vtkDataSet *input = vtkDataSet::SafeDownCast(
+    inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkDataSet *output = vtkDataSet::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+  
   //InitManifoldMesh();
   InitMesh();
   BuildMesh();
@@ -2942,4 +2958,6 @@ void vtkMEDFillingHole::Execute()
   }
   DoneMesh();
   ClearMesh();
+
+  return 0;
 }

@@ -128,7 +128,7 @@ public:
   // Instantiate the object.
   static medOpMMLContourWidget *New();
 
-  vtkTypeRevisionMacro(medOpMMLContourWidget,vtkPolyDataSourceWidget);
+  vtkTypeMacro(medOpMMLContourWidget,vtkPolyDataSourceWidget);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
@@ -249,8 +249,8 @@ public:
   // PolyData.  Make changes to this before calling the initial PlaceWidget()
   // to have the initial placement follow suit.  Or, make changes after the
   // widget has been initialised and call UpdatePlacement() to realise.
-  vtkPolyDataSource* GetPolyDataSource();
-   
+  virtual vtkPolyDataAlgorithm* GetPolyDataAlgorithm() { return m_PlaneSource; }
+
   // Description:
   // Satisfies superclass API.  This will change the state of the widget to
   // match changes that have been made to the underlying PolyDataSource

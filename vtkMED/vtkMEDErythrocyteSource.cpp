@@ -21,7 +21,6 @@
 #include "mafDbg.h"
 
 
-vtkCxxRevisionMacro(vtkMEDErythrocyteSource, "$Revision: 1.1.2.2 $");
 vtkStandardNewMacro(vtkMEDErythrocyteSource);
 
 vtkMEDErythrocyteSource::vtkMEDErythrocyteSource(void)
@@ -72,7 +71,7 @@ vtkMEDErythrocyteSource::vtkMEDErythrocyteSource(void)
 
   //scaling
   double scale = 2*this->Radius / l_2;  //e6 because l_2 is given in micrometers
-  double dblMaxT = 2*vtkMath::DoublePi();
+  double dblMaxT = 2*vtkMath::Pi();
   double t_step = dblMaxT / this->ThetaResolution;
   //double u_step = U / this->PhiResolution;
 

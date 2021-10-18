@@ -48,6 +48,7 @@
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkCellArray.h"
 #include "vtkMAFSmartPointer.h"
+#include "vtkAlgorithmOutput.h"
 
 #include <assert.h>
 
@@ -79,7 +80,7 @@ medVMEMaps::medVMEMaps()
   mafDataPipeCustom *dpipe = mafDataPipeCustom::New();
   dpipe->SetDependOnAbsPose(true);
   SetDataPipe(dpipe);
-  dpipe->GetVTKDataPipe()->SetNthInput(0, m_PolyData);
+  dpipe->GetVTKDataPipe()->SetInputData(0, m_PolyData);
 
   GetMaterial()->m_MaterialType = mmaMaterial::USE_LOOKUPTABLE;
 
@@ -118,7 +119,7 @@ int medVMEMaps::DeepCopy(mafNode *a)
     if (dpipe)
     {
       dpipe->SetDependOnAbsPose(true);
-      dpipe->GetVTKDataPipe()->SetNthInput(0, m_PolyData);
+      dpipe->GetVTKDataPipe()->SetInputData(0, m_PolyData);
     }
     m_MappedName      = maps->m_MappedName;
     GetMaterial()->m_MaterialType = mmaMaterial::USE_LOOKUPTABLE;
@@ -246,9 +247,8 @@ void medVMEMaps::InternalPreUpdate()
   if(!vme)
     return;
   vtkPolyData *data = (vtkPolyData *)vme->GetOutput()->GetVTKData();
-  data->Update();
 
-  m_Normals->SetInput(data);
+  m_Normals->SetInputConnection(vme->GetOutput()->GetVTKOutputPort());
   m_Normals->ComputePointNormalsOn();
   m_Normals->SplittingOff();
   m_Normals->Update();
@@ -270,10 +270,9 @@ void medVMEMaps::InternalPreUpdate()
     }
 
     vtkDataSet *datasetvol = ((mafVME*)m_Volume)->GetOutput()->GetVTKData();
-    datasetvol->Update();
     m_DistanceFilter->SetDistanceModeToScalar();
-    m_DistanceFilter->SetSource(datasetvol);
-    m_DistanceFilter->SetInput((vtkDataSet::SafeDownCast(m_Normals->GetOutput())));
+    m_DistanceFilter->SetSourceConnection(((mafVME*)m_Volume)->GetOutput()->GetVTKOutputPort());
+    m_DistanceFilter->SetInputConnection(m_Normals->GetOutputPort());
     m_DistanceFilter->SetMaxDistance(m_MaxDistance);
     m_DistanceFilter->SetThreshold(m_FirstThreshold);
     m_DistanceFilter->SetInputMatrix(vme->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
@@ -289,7 +288,7 @@ void medVMEMaps::InternalPreUpdate()
 
     if(polyout = m_DistanceFilter->GetPolyDataOutput())
     {
-      polyout->Update();
+      m_DistanceFilter->GetOutputPort()->GetProducer()->Update();
 
       scalars->DeepCopy(polyout->GetPointData()->GetScalars());
 
@@ -301,7 +300,6 @@ void medVMEMaps::InternalPreUpdate()
       m_PolyData->GetPointData()->SetActiveScalars("Distance_density");
 
       m_PolyData->Modified();
-      m_PolyData->Update();
     }
 
 //     if(polyout)
@@ -333,7 +331,7 @@ void medVMEMaps::InternalUpdate()
 {
   if (m_PolyData)
   {
-    m_PolyData->Update();
+    //m_PolyData->Update();
   }
 
 }
@@ -583,7 +581,7 @@ void medVMEMaps::UpdateFilter()
   if(!vme)
     return;
   vtkPolyData *data = (vtkPolyData *)vme->GetOutput()->GetVTKData();
-  data->Update();
+  //data->Update();
 
   //m_Normals->SetInput(data);
   //m_Normals->ComputePointNormalsOn();
@@ -607,10 +605,10 @@ void medVMEMaps::UpdateFilter()
     }
 
     vtkDataSet *datasetvol = ((mafVME*)m_Volume)->GetOutput()->GetVTKData();
-    datasetvol->Update();
+    //datasetvol->Update();
     m_DistanceFilter->SetDistanceModeToScalar();
-    m_DistanceFilter->SetSource(datasetvol);
-    m_DistanceFilter->SetInput((vtkDataSet::SafeDownCast(m_Normals->GetOutput())));
+    m_DistanceFilter->SetSourceConnection(((mafVME*)m_Volume)->GetOutput()->GetVTKOutputPort());
+    m_DistanceFilter->SetInputConnection(m_Normals->GetOutputPort());
     m_DistanceFilter->SetMaxDistance(m_MaxDistance);
     m_DistanceFilter->SetThreshold(m_FirstThreshold);
     m_DistanceFilter->SetInputMatrix(vme->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
@@ -621,7 +619,7 @@ void medVMEMaps::UpdateFilter()
 
     if(polyout = m_DistanceFilter->GetPolyDataOutput())
     {
-      polyout->Update();
+      m_DistanceFilter->Update();
 
       scalars->DeepCopy(polyout->GetPointData()->GetScalars());
 
@@ -633,7 +631,6 @@ void medVMEMaps::UpdateFilter()
       m_PolyData->GetPointData()->SetActiveScalars("Distance_density");
 
       m_PolyData->Modified();
-      m_PolyData->Update();
     }
   }
 

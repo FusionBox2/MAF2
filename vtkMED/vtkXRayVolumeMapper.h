@@ -63,6 +63,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #else
+#include <windows.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #endif
@@ -78,11 +79,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class VTK_vtkMED_EXPORT vtkXRayVolumeMapper : public vtkVolumeMapper {
   public:
     static vtkXRayVolumeMapper *New();
-    vtkTypeRevisionMacro(vtkXRayVolumeMapper, vtkVolumeMapper);
+    vtkTypeMacro(vtkXRayVolumeMapper, vtkVolumeMapper);
     
     // standard vtkVolumeMapper only accept vtkImageData. Overwrite input functions
     void  SetInput(vtkDataSet *input);
-    vtkDataSet*  GetInput() { return vtkVolumeMapper::GetInput(); }
+    vtkImageData*  GetInput() { return vtkVolumeMapper::GetInput(); }
 
     // Render the volume
     virtual void Render(vtkRenderer *ren, vtkVolume *vol);

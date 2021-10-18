@@ -171,7 +171,7 @@ void medGUIWizardPageNew::UpdateWindowing()
   vtkActorCollection *actorCollection = m_Rwi->m_RenFront->GetActors();
   actorCollection->InitTraversal();
   actorCollection->GetNextItem();
-  actorCollection->GetNextItem()->GetTexture()->GetLookupTable()->GetTableRange(tableRange);
+  //actorCollection->GetNextItem()->GetTexture()->GetLookupTable()->GetTableRange(tableRange);
 
   actorCollection->InitTraversal();
   actorCollection->GetNextItem();
@@ -217,7 +217,7 @@ void medGUIWizardPageNew::UpdateActor()
   vtkActorCollection *actorCollection = m_Rwi->m_RenFront->GetActors();
   actorCollection->InitTraversal();
   actorCollection->GetNextItem();
-  actorCollection->GetNextItem()->GetTexture()->GetLookupTable()->SetTableRange(low,hi);
+  //actorCollection->GetNextItem()->GetTexture()->GetLookupTable()->SetTableRange(low,hi);
   m_Rwi->CameraUpdate();
 }
 //--------------------------------------------------------------------------------

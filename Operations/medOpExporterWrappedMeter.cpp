@@ -224,7 +224,7 @@ void medOpExporterWrappedMeter::ExportWrappedMeterCoordinates(int index, int ind
 
 	medVMEComputeWrapping *vmeWrappedMeter =  medVMEComputeWrapping::SafeDownCast(m_CurrentVme);
 	vmeWrappedMeter->GetOutput()->GetVTKData()->Modified();
-	vmeWrappedMeter->GetOutput()->GetVTKData()->Update();
+	//vmeWrappedMeter->GetOutput()->GetOutputDataSet()->Update();
 	vmeWrappedMeter->Modified();
 	vmeWrappedMeter->Update();
 	int size;
@@ -492,7 +492,7 @@ void medOpExporterWrappedMeter::Test()
 
 
 	wrappedMeter->ReparentTo(cloud);
-	wrappedMeter->GetOutput()->GetVTKData()->Update();
+	//wrappedMeter->GetOutput()->GetVTKData()->Update();
 	wrappedMeter->Modified();
 	wrappedMeter->Update();
 

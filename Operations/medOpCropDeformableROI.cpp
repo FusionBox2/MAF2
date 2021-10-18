@@ -212,7 +212,7 @@ void medOpCropDeformableROI::Algorithm(mafVME *vme)
 			// to delete
 			transformFilter = vtkTransformFilter::New();
 			
-			transformFilter->SetInput(maskPolydata);
+			transformFilter->SetInputData(maskPolydata);
 			transformFilter->SetTransform(transform);
 			transformFilter->Update();
 
@@ -222,7 +222,7 @@ void medOpCropDeformableROI::Algorithm(mafVME *vme)
 
 		vtkNEW(m_MaskPolydataFilter);
 		mafVMEVolumeGray *volume = mafVMEVolumeGray::SafeDownCast(m_Input);
-		m_MaskPolydataFilter->SetInput(volume->GetOutput()->GetVTKData());
+		m_MaskPolydataFilter->SetInputConnection(volume->GetOutput()->GetVTKOutputPort());
 		m_MaskPolydataFilter->SetDistance(m_Distance);
 		m_MaskPolydataFilter->SetFillValue(m_FillValue);
 		m_MaskPolydataFilter->SetInsideOut(m_InsideOut);

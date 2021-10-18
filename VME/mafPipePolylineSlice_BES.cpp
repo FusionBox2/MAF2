@@ -129,19 +129,19 @@ void mafPipePolylineSlice_BES::Create(mafNode *node, mafView *view)
   assert(polyline_output);
   polyline_output->Update();
   vtkPolyData *data = vtkPolyData::SafeDownCast(polyline_output->GetVTKData());
-  data->Update();
+  //data->Update();
   assert(data);
   vtkDataArray *scalars = data->GetPointData()->GetScalars();
   double sr[2] = {0,1};
 
   vtkNEW(m_PolydataToPolylineFilter);
-  m_PolydataToPolylineFilter->SetInput(data);
+  m_PolydataToPolylineFilter->SetInputData(data);
   m_PolydataToPolylineFilter->Update();
 
   //////////////////////////////////
   vtkNEW(m_Tube);
   m_Tube->UseDefaultNormalOn();
-  m_Tube->SetInput(m_PolydataToPolylineFilter->GetOutput());
+  m_Tube->SetInputConnection(m_PolydataToPolylineFilter->GetOutputPort());
   m_Tube->SetRadius(m_Radius);
   m_Tube->SetCapping(1);
   m_Tube->SetNumberOfSides(16);
@@ -159,7 +159,7 @@ void mafPipePolylineSlice_BES::Create(mafNode *node, mafView *view)
   m_VTKTransform->SetInputMatrix(m_Vme->GetAbsMatrixPipe()->GetMatrixPointer());
   m_Plane->SetTransform(m_VTKTransform);
 
-  m_Cutter->SetInput(m_Tube->GetOutput());
+  m_Cutter->SetInputConnection(m_Tube->GetOutputPort());
   m_Cutter->SetCutFunction(m_Plane);
   m_Cutter->Update();
 
@@ -186,11 +186,11 @@ void mafPipePolylineSlice_BES::Create(mafNode *node, mafView *view)
   if(m_RoiEnable)
   {
     intermediatePolyData = ExecuteROI(m_PolyData);
-    m_Mapper->SetInput(intermediatePolyData);
+    m_Mapper->SetInputData(intermediatePolyData);
   }
   else
   {
-    m_Mapper->SetInput(m_PolyData);
+    m_Mapper->SetInputData(m_PolyData);
   }
 
 
@@ -200,12 +200,12 @@ void mafPipePolylineSlice_BES::Create(mafNode *node, mafView *view)
   if(m_Vme->IsAnimated())
   {
     m_RenderingDisplayListFlag = 1;
-    m_Mapper->ImmediateModeRenderingOn();	 //avoid Display-Lists for animated items.
+    //m_Mapper->ImmediateModeRenderingOn();	 //avoid Display-Lists for animated items.
   }
   else
   {
     m_RenderingDisplayListFlag = 0;
-    m_Mapper->ImmediateModeRenderingOff();
+    //m_Mapper->ImmediateModeRenderingOff();
   }
   m_Mapper->Update();
 
@@ -218,10 +218,10 @@ void mafPipePolylineSlice_BES::Create(mafNode *node, mafView *view)
 
   // selection highlight
   m_OutlineBox = vtkOutlineCornerFilter::New();
-  m_OutlineBox->SetInput(data);  
+  m_OutlineBox->SetInputData(data);  
 
   m_OutlineMapper = vtkPolyDataMapper::New();
-  m_OutlineMapper->SetInput(m_OutlineBox->GetOutput());
+  m_OutlineMapper->SetInputConnection(m_OutlineBox->GetOutputPort());
 
   m_OutlineProperty = vtkProperty::New();
   m_OutlineProperty->SetColor(1,1,1);
@@ -329,9 +329,9 @@ void mafPipePolylineSlice_BES::OnEvent(mafEventBase *maf_event)
     case ID_FILL:
       {
         if(m_Fill)
-          m_Mapper->SetInput(RegionsCapping(m_Cutter->GetOutput()));
+          m_Mapper->SetInputData(RegionsCapping(m_Cutter->GetOutput()));
         else
-          m_Mapper->SetInput(m_Cutter->GetOutput());
+          m_Mapper->SetInputConnection(m_Cutter->GetOutputPort());
         mafEventMacro(mafEvent(this,CAMERA_UPDATE));
       }
       break;
@@ -428,21 +428,21 @@ void mafPipePolylineSlice_BES::UpdateProperty()
   vtkPolyData *data = vtkPolyData::SafeDownCast(out_polyline->GetVTKData());
   if(data == NULL) return;
   data->Modified();
-  data->Update();
+  //data->Update();
 
   if(m_SplineMode)
     data = SplineProcess(data);
 
   data->Modified();
-  data->Update();
+  //data->Update();
 
-  m_PolydataToPolylineFilter->SetInput(data);
+  m_PolydataToPolylineFilter->SetInputData(data);
   m_PolydataToPolylineFilter->Update();
 
 
-  m_Tube->SetInput(m_PolydataToPolylineFilter->GetOutput());
+  m_Tube->SetInputConnection(m_PolydataToPolylineFilter->GetOutputPort());
   m_Tube->Update();
-  m_Cutter->SetInput(m_Tube->GetOutput());
+  m_Cutter->SetInputConnection(m_Tube->GetOutputPort());
   m_Cutter->Update();
 
   if(m_Fill)
@@ -454,11 +454,11 @@ void mafPipePolylineSlice_BES::UpdateProperty()
   if(m_RoiEnable)
   {
     intermediatePolyData = ExecuteROI(m_PolyData);
-    m_Mapper->SetInput(intermediatePolyData);
+    m_Mapper->SetInputData(intermediatePolyData);
   }
   else
   {
-    m_Mapper->SetInput(m_PolyData);
+    m_Mapper->SetInputData(m_PolyData);
   }
 
   m_Mapper->Update();
@@ -500,13 +500,13 @@ vtkPolyData *mafPipePolylineSlice_BES::SplineProcess(vtkPolyData *polyData)
 
 
   m_PolySpline->SetPoints(ptsSplined);
-  m_PolySpline->Update();
+  //m_PolySpline->Update();
 
   //order
   //cell 
   vtkCellArray *cellArray;
   vtkNEW(cellArray);
-  int pointId[2];
+  vtkIdType pointId[2];
 
   for(int i = 0; i< m_PolySpline->GetNumberOfPoints();i++)
   {
@@ -520,7 +520,7 @@ vtkPolyData *mafPipePolylineSlice_BES::SplineProcess(vtkPolyData *polyData)
 
   m_PolySpline->SetLines(cellArray);
   m_PolySpline->Modified();
-  m_PolySpline->Update();
+  //m_PolySpline->Update();
 
   vtkDEL(cellArray);
 
@@ -586,7 +586,7 @@ vtkPolyData *mafPipePolylineSlice_BES::ExecuteROI(vtkPolyData *polydata)
   vtkMAFSmartPointer<vtkMAFImplicitPolyData> implicitDataset;
   implicitDataset->SetInput(cube->GetOutput());
 
-  m_ClipPolyData->SetInput(polydata);
+  m_ClipPolyData->SetInputData(polydata);
   m_ClipPolyData->InsideOutOn();
   m_ClipPolyData->SetClipFunction(implicitDataset);
   m_ClipPolyData->Update();
@@ -597,7 +597,7 @@ vtkPolyData *mafPipePolylineSlice_BES::ExecuteROI(vtkPolyData *polydata)
   planeDown->SetNormal(normaldown);
   planeDown->Modified();
 
-  m_ClipPolyDataUp->SetInput(m_ClipPolyData->GetOutput());
+  m_ClipPolyDataUp->SetInputConnection(m_ClipPolyData->GetOutputPort());
   m_ClipPolyDataUp->SetClipFunction(planeDown);
   m_ClipPolyDataUp->InsideOutOn();
   m_ClipPolyDataUp->Update();
@@ -608,7 +608,7 @@ vtkPolyData *mafPipePolylineSlice_BES::ExecuteROI(vtkPolyData *polydata)
   planeUp->SetNormal(normalUp);
   planeUp->Modified();
 
-  m_ClipPolyDataDown->SetInput(m_ClipPolyDataUp->GetOutput());
+  m_ClipPolyDataDown->SetInputConnection(m_ClipPolyDataUp->GetOutputPort());
   m_ClipPolyDataDown->SetClipFunction(planeUp);
   m_ClipPolyDataDown->InsideOutOn();
   m_ClipPolyDataDown->Update();
@@ -623,7 +623,7 @@ vtkPolyData *mafPipePolylineSlice_BES::RegionsCapping(vtkPolyData* inputBorder)
 {
   m_AppendPolyData->RemoveAllInputs();
   vtkMAFSmartPointer<vtkPolyDataConnectivityFilter> connectivityFilter;
-  connectivityFilter->SetInput(inputBorder);
+  connectivityFilter->SetInputData(inputBorder);
   connectivityFilter->SetExtractionModeToSpecifiedRegions();
   connectivityFilter->Update();
   int regionNumbers = connectivityFilter->GetNumberOfExtractedRegions();
@@ -633,7 +633,7 @@ vtkPolyData *mafPipePolylineSlice_BES::RegionsCapping(vtkPolyData* inputBorder)
     connectivityFilter->InitializeSpecifiedRegionList();
     connectivityFilter->AddSpecifiedRegion(region);
     connectivityFilter->Update();
-    connectivityFilter->GetOutput()->Update();
+    //connectivityFilter->GetOutput()->Update();
 
     vtkMAFSmartPointer<vtkPolyData> p;
 
@@ -641,7 +641,7 @@ vtkPolyData *mafPipePolylineSlice_BES::RegionsCapping(vtkPolyData* inputBorder)
 
     p->SetPoints(connectivityFilter->GetOutput()->GetPoints());
     p->SetLines(connectivityFilter->GetOutput()->GetLines());
-    p->Update();
+    //p->Update();
     /*mafString filename1 = "C:\\conn_";
     filename1 << region;
     filename1 << ".vtk";
@@ -662,7 +662,7 @@ vtkPolyData *mafPipePolylineSlice_BES::RegionsCapping(vtkPolyData* inputBorder)
     pdWriter->Update();*/
     //end write polydata
 
-    m_AppendPolyData->AddInput(p);
+    m_AppendPolyData->AddInputData(p);
     m_AppendPolyData->Update();
   }
 
@@ -673,7 +673,7 @@ vtkPolyData *mafPipePolylineSlice_BES::CappingFilter(vtkPolyData* inputBorder)
 //----------------------------------------------------------------------------
 {
   int i, iCell;
-  inputBorder->Update();
+  //inputBorder->Update();
   // prerequisites: connected polydata with line cells that represent the edge of the hole to be capped. 
   // search average point
   double averagePoint[3] = {0.0,0.0,0.0};
@@ -716,7 +716,7 @@ vtkPolyData *mafPipePolylineSlice_BES::CappingFilter(vtkPolyData* inputBorder)
   }
   // set the cell array to the polydata
   output->SetPolys(outputCellArray);
-  output->Update();
+  //output->Update();
 
   return output;
 }

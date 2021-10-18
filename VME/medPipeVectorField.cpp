@@ -27,6 +27,7 @@
 
 #include "vtkDataSet.h"
 #include "vtkPointData.h"
+#include "vtkDataArray.h"
 
 #include "mafDbg.h"
 
@@ -80,7 +81,7 @@ void medPipeVectorField::Create(mafNode *node, mafView *view)
   //The default implementation is to update VME
   
   vtkDataSet* ds = m_Vme->GetOutput()->GetVTKData();
-  ds->Update(); //force its update
+  //ds->Update(); //force its update
 }
 
 //------------------------------------------------------------------------

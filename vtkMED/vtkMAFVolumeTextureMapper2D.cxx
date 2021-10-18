@@ -12,6 +12,7 @@ See the COPYINGS file for license details
 */
 
 #include "vtkMAFVolumeTextureMapper2D.h"
+#ifdef COMPLETED
 #include "vtkObjectFactory.h"
 #include "vtkRenderer.h"
 #include "vtkMatrix4x4.h"
@@ -22,7 +23,6 @@ See the COPYINGS file for license details
 #include "vtkVolumeProperty.h"
 #include "gl/gl.h"
 
-vtkCxxRevisionMacro(vtkMAFVolumeTextureMapper2D, "$Revision: 1.1.2.2 $");
 vtkStandardNewMacro(vtkMAFVolumeTextureMapper2D);
 
 #include "mafMemDbg.h"
@@ -168,3 +168,4 @@ vtkStandardNewMacro(vtkMAFVolumeTextureMapper2D);
   if (!bBlend)
     glDisable(GL_BLEND);
 }
+#endif

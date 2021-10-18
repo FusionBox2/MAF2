@@ -35,7 +35,6 @@
 
 #include "mafICPUtility.h"
 
-	vtkCxxRevisionMacro(mafClassicICPRegistration, "$Revision: 1.1.2.1 $");
   vtkStandardNewMacro(mafClassicICPRegistration);
 
 /*//--------------------------------------------------------------------------
@@ -197,7 +196,7 @@ void mafClassicICPRegistration::SetResultsFileName(const char *name)
 	this->Modified();
 }
 //----------------------------------------------------------------------------
-unsigned long mafClassicICPRegistration::GetMTime()
+vtkMTimeType mafClassicICPRegistration::GetMTime()
 //----------------------------------------------------------------------------
 {
   unsigned long result = vtkIterativeClosestPointTransform::GetMTime();

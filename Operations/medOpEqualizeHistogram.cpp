@@ -177,7 +177,7 @@ void medOpEqualizeHistogram::CreateHistogramDialog()
   m_Histogram->SetListener(this);
   m_Histogram->SetRepresentation(vtkMAFHistogram::BAR_REPRESENTATION);
   vtkImageData *hd = vtkImageData::SafeDownCast(m_VolumeOutput->GetOutput()->GetVTKData());
-  hd->Update();
+  //hd->Update();
   m_Histogram->SetData(hd->GetPointData()->GetScalars());
 
   mafGUI *gui = new mafGUI(this);
@@ -261,11 +261,11 @@ void medOpEqualizeHistogram::Algorithm()
 //----------------------------------------------------------------------------
 {
   vtkImageData *im = vtkImageData::SafeDownCast(m_VolumeInput->GetOutput()->GetVTKData());
-  im->Update();
+  //im->Update();
 
   vtkMAFSmartPointer<vtkImageCast> vtkImageToFloat;
   vtkImageToFloat->SetOutputScalarTypeToFloat ();
-  vtkImageToFloat->SetInput(im);
+  vtkImageToFloat->SetInputConnection(m_VolumeInput->GetOutput()->GetVTKOutputPort());
   vtkImageToFloat->Modified();
   vtkImageToFloat->Update();
 
@@ -292,10 +292,10 @@ void medOpEqualizeHistogram::Algorithm()
 
   vtkMAFSmartPointer<vtkImageData> imOut;
   imOut->DeepCopy(itkTOvtk->GetOutput());
-  imOut->Update();
+  //imOut->Update();
 
   vtkMAFSmartPointer<vtkImageToStructuredPoints> imTosp;
-  imTosp->SetInput(imOut);
+  imTosp->SetInputData(imOut);
   imTosp->Update();
 
   m_VolumeOutput->SetData(imTosp->GetOutput(),m_VolumeInput->GetTimeStamp());

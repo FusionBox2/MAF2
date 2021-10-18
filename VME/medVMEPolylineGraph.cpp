@@ -55,8 +55,8 @@ int medVMEPolylineGraph::SetData(vtkPolyData *data, mafTimeStamp t, int mode)
 
 	vtkPolyData *polydata=data;
 
-	if (polydata)
-		polydata->Update();
+	//if (polydata)
+		//polydata->Update();
 
   int result=MAF_ERROR;
 	

@@ -98,10 +98,10 @@ public:
 	}
 	
 public:
-	vtkTypeRevisionMacro(vtkMAFLargeDataProvider,vtkObject);    
+	vtkTypeMacro(vtkMAFLargeDataProvider,vtkObject);    
 
 	// Return this object's modified time.
-	/*virtual*/ unsigned long GetMTime();
+	/*virtual*/ vtkMTimeType GetMTime();
 
 #pragma region DESCRIPTOR OPERATIONS
 	// Release all descriptors but do not delete this object.

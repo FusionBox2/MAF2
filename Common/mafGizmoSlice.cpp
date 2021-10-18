@@ -55,6 +55,7 @@
 #include "vtkDoubleArray.h"
 #include "vtkMAFDOFMatrix.h"
 #include "vtkMatrix4x4.h"
+#include "vtkAlgorithmOutput.h"
 
 
 //----------------------------------------------------------------------------
@@ -156,7 +157,7 @@ void mafGizmoSlice::CreateGizmoSliceInLocalPositionOnAxis(int gizmoSliceId, int 
 	double localBounds[6];
   if (vtkDataSet *VolumeVTKData = m_InputVME->GetOutput()->GetVTKData())
   {
-    VolumeVTKData->Update();
+    m_InputVME->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
 	  VolumeVTKData->GetBounds(localBounds);
 	  double wx = localBounds[1]-localBounds[0];
 	  double wy = localBounds[3]-localBounds[2];
@@ -238,20 +239,20 @@ void mafGizmoSlice::CreateGizmoSliceInLocalPositionOnAxis(int gizmoSliceId, int 
 		  break;
 	  }
 
-    vtkDataSetToPolyDataFilter *cornerFilter;
+    vtkAlgorithm *cornerFilter;
 
     if(m_CentralClipFactor == 0)
     {
       // create the gizmo outline 
       cornerFilter = vtkOutlineFilter::New();
-      cornerFilter->SetInput(ps->GetOutput());
+      cornerFilter->SetInputConnection(ps->GetOutputPort());
       cornerFilter->Update();
     }
     else
     {
       // create the gizmo outline 
       cornerFilter = vtkOutlineCornerFilter::New();
-      cornerFilter->SetInput(ps->GetOutput());
+      cornerFilter->SetInputConnection(ps->GetOutputPort());
       ((vtkOutlineCornerFilter*)cornerFilter)->SetCornerFactor(m_CentralClipFactor);
       cornerFilter->Update();
     }
@@ -267,8 +268,8 @@ void mafGizmoSlice::CreateGizmoSliceInLocalPositionOnAxis(int gizmoSliceId, int 
     // append outline and handle
 	  vtkMAFSmartPointer<vtkAppendPolyData> apd;
     if(visibleCubeHandler == true)
-      apd->AddInput(cs->GetOutput());
-	  apd->AddInput(cornerFilter->GetOutput());
+      apd->AddInputConnection(cs->GetOutputPort());
+	  apd->AddInputConnection(cornerFilter->GetOutputPort());
 	  apd->Update();
 
     cornerFilter->Delete();
@@ -316,7 +317,7 @@ void mafGizmoSlice::InitSnapArray(mafVME *vol, int axis)
 		if (vtkDataSet *vol_data = vol->GetOutput()->GetVTKData())
 		{
 			double b[6];
-			vol_data->Update();
+			vol->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
 			vol_data->GetBounds(b);
 			
 			if(axis == GIZMO_SLICE_X)
@@ -357,7 +358,7 @@ void mafGizmoSlice::InitSnapArray(mafVME *vol, int axis)
   if (vtkDataSet *vol_data = vol->GetOutput()->GetVTKData())
   {
     double b[6], z;
-    vol_data->Update();
+	vol->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
     vol_data->GetBounds(b);
     if(vol_data->IsA("vtkRectilinearGrid"))
     {

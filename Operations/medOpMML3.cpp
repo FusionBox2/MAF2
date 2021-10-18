@@ -1820,7 +1820,7 @@ void medOpMML3::OnMuscleSelection()
   vtkTransform *transform = vtkTransform::New();
   vtkTransformPolyDataFilter *musclepd = vtkTransformPolyDataFilter::New();
   transform->SetMatrix(m_SurfaceVME->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
-  musclepd->SetInput((vtkPolyData*)m_SurfaceVME->GetOutput()->GetVTKData());
+  musclepd->SetInputConnection(m_SurfaceVME->GetOutput()->GetVTKOutputPort());
   musclepd->SetTransform(transform);
   transform->Delete() ;
 
@@ -3405,7 +3405,7 @@ bool medOpMML3::SetUpModelView()
 
   // initialize lut slider 
   double r[2] ;
-  m_Volume->Update() ;
+  //m_Volume->Update() ;
   m_Volume->GetScalarRange(r) ;
   m_Lut->SetRange(r[0], r[1]);
   m_Lut->SetSubRange(r[0], r[1]);
@@ -3749,7 +3749,7 @@ mafRWI* medOpMML3::CreateParameterViewmafRWI(vtkTextSource *ts, wxString lab, fl
   ts->SetText(lab.c_str());
 
   vtkPolyDataMapper2D *mapper = vtkPolyDataMapper2D::New();
-  mapper->SetInput(ts->GetOutput());
+  mapper->SetInputConnection(ts->GetOutputPort());
 
   vtkActor2D *labactor = vtkActor2D::New();
   labactor->SetMapper(mapper);

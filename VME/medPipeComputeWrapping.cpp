@@ -100,7 +100,7 @@ void medPipeComputeWrapping::Create(mafNode *node, mafView *view/*, bool use_axe
 
   vtkNEW(m_Tube);
   m_Tube->UseDefaultNormalOff();
-  m_Tube->SetInput(data);
+  m_Tube->SetInputData(data);
   m_Tube->SetRadius(m_WrappedMeterVME->GetMeterRadius());
   m_Tube->SetCapping(m_WrappedMeterVME->GetMeterCapping());
   m_Tube->SetNumberOfSides(20);
@@ -117,14 +117,14 @@ void medPipeComputeWrapping::Create(mafNode *node, mafView *view/*, bool use_axe
 
   vtkNEW(m_DataMapper);
   if (m_WrappedMeterVME->GetMeterRepresentation() == medVMEComputeWrapping::LINE_REPRESENTATION)
-    m_DataMapper->SetInput(data);
+    m_DataMapper->SetInputData(data);
   else
   {
     m_Tube->Update();
-    m_DataMapper->SetInput(m_Tube->GetOutput());
+    m_DataMapper->SetInputConnection(m_Tube->GetOutputPort());
   }
     
-	m_DataMapper->ImmediateModeRenderingOff();
+	//m_DataMapper->ImmediateModeRenderingOff();
   if(m_WrappedMeterVME->GetMeterColorMode() == medVMEComputeWrapping::RANGE_COLOR)
     m_DataMapper->SetLookupTable(m_Lut);
 
@@ -136,10 +136,10 @@ void medPipeComputeWrapping::Create(mafNode *node, mafView *view/*, bool use_axe
 
   // selection hilight
 	vtkNEW(m_SelectionBox);
-	m_SelectionBox->SetInput(data);  
+	m_SelectionBox->SetInputData(data);  
 
 	vtkNEW(m_SelectionMapper);
-	m_SelectionMapper->SetInput(m_SelectionBox->GetOutput());
+	m_SelectionMapper->SetInputConnection(m_SelectionBox->GetOutputPort());
 
 	vtkNEW(m_SelectionProperty);
 	m_SelectionProperty->SetColor(1,1,1);
@@ -341,13 +341,13 @@ void medPipeComputeWrapping::UpdateProperty(bool fromTag)
 
   
 	vtkPolyData *data =vtkPolyData::SafeDownCast(m_WrappedMeterVME->GetWrappedMeterOutput()->GetVTKData());
-  data->Update();
+  //data->Update();
   if (m_WrappedMeterVME->GetMeterRepresentation() == medVMEComputeWrapping::LINE_REPRESENTATION)
-    m_DataMapper->SetInput(data);
+    m_DataMapper->SetInputData(data);
   else
   {
     m_Tube->Update();
-    m_DataMapper->SetInput(m_Tube->GetOutput());
+    m_DataMapper->SetInputConnection(m_Tube->GetOutputPort());
   }
 
   double distance_value = m_WrappedMeterVME->GetDistance();
@@ -397,7 +397,7 @@ void medPipeComputeWrapping::UpdateProperty(bool fromTag)
 
   GetGui()->Update();
 
-  m_SelectionBox->SetInput(data); 
+  m_SelectionBox->SetInputData(data); 
   m_SelectionBox->Update();
   
   /*

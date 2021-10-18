@@ -45,6 +45,8 @@
 #include "vtkDataSet.h"
 #include "vtkLookupTable.h"
 #include "vtkPoints.h"
+#include "vtkAlgorithm.h"
+#include "vtkAlgorithmOutput.h"
 
 //----------------------------------------------------------------------------
 // constants:
@@ -227,7 +229,7 @@ void mafViewRXCT::VmeShow(mafNode *node, bool show)
 
       // get the VTK volume
       vtkDataSet *data = ((mafVME *)node)->GetOutput()->GetVTKData();
-      data->Update();
+      ((mafVME*)node)->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
       data->GetCenter(center);
       data->GetScalarRange(sr);
       double totalSR[2];

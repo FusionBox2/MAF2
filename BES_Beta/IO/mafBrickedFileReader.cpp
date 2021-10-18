@@ -109,7 +109,7 @@ void mafBrickedFileReader::SetOutputRLGDataSet(vtkRectilinearGrid* ds)
 	}
 
 	//NB: GetOutputDataSet to force the construction of m_DataSet, if it does not exist
-	GetOutputDataSet()->SetScalarType(m_FileHeader.datatype);	
+	//GetOutputDataSet()->SetScalarType(m_FileHeader.datatype);	
 	m_NVoxelSizeInB = m_FileHeader.numcomps*m_DataSet->GetScalarSize();
 
 	m_NBrickSize[0] = m_FileHeader.bricksize;		 
@@ -299,8 +299,8 @@ void mafBrickedFileReader::SetOutputRLGDataSet(vtkRectilinearGrid* ds)
 	}
 
 	output->SetExtent(outExtent);
-	output->SetWholeExtent(outExtent);
-	output->SetUpdateExtentToWholeExtent();
+	//output->SetWholeExtent(outExtent);
+	//output->SetUpdateExtentToWholeExtent();
 
 	//now we must update also origin
 	double sp[3], origin[3];
@@ -314,9 +314,9 @@ void mafBrickedFileReader::SetOutputRLGDataSet(vtkRectilinearGrid* ds)
 	output->SetSpacing(sp);		
 
 	//set scalar type, number of components and we are ready
-	output->SetScalarType(m_FileHeader.datatype);
-	output->SetNumberOfScalarComponents(m_FileHeader.numcomps);		
-	output->AllocateScalars();
+	//output->SetScalarType(m_FileHeader.datatype);
+	//output->SetNumberOfScalarComponents(m_FileHeader.numcomps);		
+	//output->AllocateScalars();
 
 	if (m_BROIValid)
 	{
@@ -418,7 +418,7 @@ void mafBrickedFileReader::GetBricksExtent(int VOI[6], int inBExt[6], int bndBEx
 	}	
 
 	//compute variables to help us compute the output address	
-	int outIncr[3], outIncrInB[3];
+	vtkIdType outIncr[3], outIncrInB[3];
 	vtkImageData* output = GetOutputDataSet();	
 	output->GetIncrements(outIncr);
 	for (int i = 0; i < 3; i++) 

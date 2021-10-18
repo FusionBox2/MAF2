@@ -41,6 +41,7 @@ June 9-11, 2008, Manchester, UK, p. 1-8
 #include "vtkRectilinearGrid.h"
 #include "vtkPointData.h"
 #include "vtkImageClip.h"
+#include "vtkAlgorithmOutput.h"
 
 #include "mafGizmoROI_BES.h"
 #ifndef VME_VOLUME_LARGE_EXCLUDE_CROP
@@ -168,7 +169,7 @@ mmaVolumeMaterial *mafVMEVolumeLarge::GetMaterial()
     
     if(GetOutput() && GetOutput()->GetVTKData())
     {
-      GetOutput()->GetVTKData()->Update();
+      GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
       double sr[2];
       GetOutput()->GetVTKData()->GetScalarRange(sr);
       material->m_ColorLut->SetTableRange(sr);
@@ -210,6 +211,7 @@ mmaVolumeMaterial *mafVMEVolumeLarge::GetMaterial()
 #endif
   
   stck.push(pLargeData);
+#ifdef COMPLETED
   while (!stck.empty())
   {
     vtkDataObject* pDataObj = stck.top();    
@@ -238,6 +240,7 @@ mmaVolumeMaterial *mafVMEVolumeLarge::GetMaterial()
       //in VTK 4.4 used currently by openMAF
     } //end for   
   } //end while
+#endif
 }
 
 /** Internally called to update the output */
@@ -2040,7 +2043,7 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 	
 	//dims
 	int wext[6];
-	ds->GetWholeExtent(wext);
+	//ds->GetWholeExtent(wext);
 	m_SampleDimensions = mafString::Format(_R("%d x %d x %d"), wext[1] - wext[0] + 1,
 		wext[3] - wext[2] + 1, wext[5] - wext[4] + 1);
 

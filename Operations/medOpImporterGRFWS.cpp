@@ -259,8 +259,8 @@ void medOpImporterGRFWS::ReadForcePlates()
   vtkMAFSmartPointer<vtkPoints> pointsm2;
   vtkMAFSmartPointer<vtkCellArray> cellArraym1;
   vtkMAFSmartPointer<vtkCellArray> cellArraym2;
-  int pointId1[2];
-  int pointId2[2];
+  vtkIdType pointId1[2];
+  vtkIdType pointId2[2];
 
   mafNEW(m_ForceLeft);
   mafNEW(m_ForceRight);
@@ -331,20 +331,20 @@ void medOpImporterGRFWS::ReadForcePlates()
       cellArrayf1->InsertNextCell(2, pointId1);  
       force1->SetPoints(pointsf1);
       force1->SetLines(cellArrayf1);
-      force1->Update();
+      //force1->Update();
 
       vtkMAFSmartPointer<vtkTransformPolyDataFilter> transfForL;
       vtkMAFSmartPointer<vtkTransform> transff;
      
       transff->Translate(cop1X, cop1Y, cop1Z);
       transfForL->SetTransform(transff);
-      transfForL->SetInput(force1);
+      transfForL->SetInputData(force1);
       transfForL->Update();
 
       m_ForceLeft->SetData(transfForL->GetOutput(), time);
       m_ForceLeft->Modified();
       m_ForceLeft->Update();
-      m_ForceLeft->GetOutput()->GetVTKData()->Update();
+      //m_ForceLeft->GetOutput()->GetVTKData()->Update();
 
       // MOMENT
       pointsm1->InsertPoint(0, 0, 0, 0);
@@ -354,20 +354,20 @@ void medOpImporterGRFWS::ReadForcePlates()
       cellArraym1->InsertNextCell(2, pointId1);  
       moment1->SetPoints(pointsm1);
       moment1->SetLines(cellArraym1);
-      moment1->Update();
+      //moment1->Update();
 
       vtkMAFSmartPointer<vtkTransformPolyDataFilter> transfMomL;
       vtkMAFSmartPointer<vtkTransform> transfm;
      
       transfm->Translate(cop1X, cop1Y, cop1Z);
       transfMomL->SetTransform(transfm);
-      transfMomL->SetInput(moment1);
+      transfMomL->SetInputData(moment1);
       transfMomL->Update();
 
       m_MomentLeft->SetData(transfMomL->GetOutput(), time);
       m_MomentLeft->Modified();
       m_MomentLeft->Update();
-      m_MomentLeft->GetOutput()->GetVTKData()->Update();
+      //m_MomentLeft->GetOutput()->GetVTKData()->Update();
     }
 
     //Values of the second platform
@@ -410,20 +410,20 @@ void medOpImporterGRFWS::ReadForcePlates()
       cellArrayf2->InsertNextCell(2, pointId2);  
       force2->SetPoints(pointsf2);
       force2->SetLines(cellArrayf2);
-      force2->Update();
+      //force2->Update();
 
       vtkMAFSmartPointer<vtkTransformPolyDataFilter> transfForR;
       vtkMAFSmartPointer<vtkTransform> transffr;
       
       transffr->Translate(cop2X, cop2Y, cop2Z);
       transfForR->SetTransform(transffr);
-      transfForR->SetInput(force2);
+      transfForR->SetInputData(force2);
       transfForR->Update();
  
       m_ForceRight->SetData(transfForR->GetOutput(), time);
       m_ForceRight->Modified();
       m_ForceRight->Update();
-      m_ForceRight->GetOutput()->GetVTKData()->Update();
+      //m_ForceRight->GetOutput()->GetVTKData()->Update();
 
       // MOMENT
       pointsm2->InsertPoint(0, 0, 0, 0);
@@ -433,20 +433,20 @@ void medOpImporterGRFWS::ReadForcePlates()
       cellArraym2->InsertNextCell(2, pointId2);  
       moment2->SetPoints(pointsm2);
       moment2->SetLines(cellArraym2);
-      moment2->Update();
+      //moment2->Update();
 
       vtkMAFSmartPointer<vtkTransformPolyDataFilter> transfMomR;
       vtkMAFSmartPointer<vtkTransform> transfmr;
       
       transfmr->Translate(cop2X, cop2Y, cop2Z);
       transfMomR->SetTransform(transfmr);
-      transfMomR->SetInput(moment2);
+      transfMomR->SetInputData(moment2);
       transfMomR->Update();
  
       m_MomentRight->SetData(transfMomR->GetOutput(), time);
       m_MomentRight->Modified();
       m_MomentRight->Update();
-      m_MomentRight->GetOutput()->GetVTKData()->Update();
+      //m_MomentRight->GetOutput()->GetVTKData()->Update();
     }
 
     count++;
@@ -538,7 +538,7 @@ void medOpImporterGRFWS::ReadSingleVector()
   vtkMAFSmartPointer<vtkPolyData> force1;
   vtkMAFSmartPointer<vtkPoints> pointsf1;
   vtkMAFSmartPointer<vtkCellArray> cellArrayf1;
-  int pointId1[2];
+  vtkIdType pointId1[2];
 
   mafNEW(m_ForceLeft);
 
@@ -588,20 +588,20 @@ void medOpImporterGRFWS::ReadSingleVector()
       cellArrayf1->InsertNextCell(2, pointId1);  
       force1->SetPoints(pointsf1);
       force1->SetLines(cellArrayf1);
-      force1->Update();
+      //force1->Update();
 
       vtkMAFSmartPointer<vtkTransformPolyDataFilter> transfForL;
       vtkMAFSmartPointer<vtkTransform> transff;
      
       transff->Translate(cop1X, cop1Y, cop1Z);
       transfForL->SetTransform(transff);
-      transfForL->SetInput(force1);
+      transfForL->SetInputData(force1);
       transfForL->Update();
 
       m_ForceLeft->SetData(transfForL->GetOutput(), time);
       m_ForceLeft->Modified();
       m_ForceLeft->Update();
-      m_ForceLeft->GetOutput()->GetVTKData()->Update();
+      //m_ForceLeft->GetOutput()->GetVTKData()->Update();
     }
 
     count++;

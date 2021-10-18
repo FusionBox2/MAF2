@@ -276,7 +276,7 @@ void medOpFreezeVME::OpRun()
 					if(material)
 					{
 						newSurface->GetMaterial()->DeepCopy(material);
-						newSurface->GetMaterial()->SetMaterialTexture(newSurface->GetSurfaceOutput()->GetTexture());
+						newSurface->GetMaterial()->SetMaterialTextureData(newSurface->GetSurfaceOutput()->GetTexture());
 						newSurface->GetMaterial()->UpdateProp();
 					}
 

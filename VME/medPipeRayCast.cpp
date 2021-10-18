@@ -44,8 +44,8 @@
 #include "vtkDataSet.h"
 #include "vtkPiecewiseFunction.h"
 #include "vtkColorTransferFunction.h"
-#include "vtkVolumeRayCastMapper.h"
-#include "vtkVolumeRayCastCompositeFunction.h"
+//#include "vtkVolumeRayCastMapper.h"
+//#include "vtkVolumeRayCastCompositeFunction.h"
 #include "vtkVolumeProperty.h"
 #include "vtkImageCast.h"
 #include "vtkImageData.h"
@@ -119,7 +119,7 @@ void medPipeRayCast::Create(mafNode *n, mafView *v)
   //to have a single call to that function
   //if the volume is already loaded m_Onloading changes simple do nothing
   m_OnLoading=true;
-  dataset->Update();
+  //dataset->Update();
   m_OnLoading=false;
 
 
@@ -134,10 +134,10 @@ void medPipeRayCast::Create(mafNode *n, mafView *v)
     
   // selection box
   vtkNEW(m_OutlineBox);
-  m_OutlineBox->SetInput(dataset);
+  m_OutlineBox->SetInputData(dataset);
 
   vtkNEW(m_OutlineMapper);
-  m_OutlineMapper->SetInput(m_OutlineBox->GetOutput());
+  m_OutlineMapper->SetInputConnection(m_OutlineBox->GetOutputPort());
 
   vtkNEW(m_OutlineActor);
   m_OutlineActor->SetMapper(m_OutlineMapper);
@@ -172,7 +172,7 @@ medPipeRayCast::~medPipeRayCast()
   //Free memory
 	vtkDEL(m_Volume);
 
-  vtkDEL(m_RayCastMapper);
+  //vtkDEL(m_RayCastMapper);
   vtkDEL(m_ColorFunction);
   vtkDEL(m_OpacityFunction);
   
@@ -331,7 +331,7 @@ void medPipeRayCast::UpdateFromData()
   vtkMAFVolumeResample		 *resampleFilter;	
 
   vtkDataSet *dataset = m_Vme->GetOutput()->GetVTKData();
-  dataset->Update();
+  //dataset->Update();
 
   int resampled=false;
 
@@ -384,9 +384,9 @@ void medPipeRayCast::UpdateFromData()
 
     volume->SetSpacing(volSpacing);
     //output scalars are of the same type of input
-    volume->SetScalarType(rgrid->GetPointData()->GetScalars()->GetDataType());
+    //volume->SetScalarType(rgrid->GetPointData()->GetScalars()->GetDataType());
     volume->SetExtent(output_extent);
-    volume->SetUpdateExtent(output_extent);
+    //volume->SetUpdateExtent(output_extent);
     volume->SetOrigin(bounds[0],bounds[2],bounds[4]);
 
     double sr[2];
@@ -398,7 +398,7 @@ void medPipeRayCast::UpdateFromData()
     //Setting Filter parameters 
     resampleFilter->SetWindow(w);
     resampleFilter->SetLevel(l);
-    resampleFilter->SetInput(rgrid);
+    resampleFilter->SetInputData(rgrid);
     resampleFilter->SetOutput(volume);
     resampleFilter->AutoSpacingOff();
     resampleFilter->Update();
@@ -427,7 +427,7 @@ void medPipeRayCast::UpdateFromData()
   //scalars shifted by - lower range 
   if (m_RayCastCleaner==NULL)
     vtkNEW(m_RayCastCleaner);
-  m_RayCastCleaner->SetInput(volume);
+  m_RayCastCleaner->SetInputData(volume);
   m_RayCastCleaner->SetBloodLowerThreshold(m_BloodLowerThreshold);
   m_RayCastCleaner->SetBloodUpperThreshold(m_BloodUpperThreshold);
   m_RayCastCleaner->SetBoneLowerThreshold(m_BoneLowerThreshold);
@@ -448,23 +448,23 @@ void medPipeRayCast::UpdateFromData()
 
   //Create Raycast Mapper and relative functions  
 
-  if (m_RayCastMapper==NULL)
-    vtkNEW(m_RayCastMapper);
+  //if (m_RayCastMapper==NULL)
+    //vtkNEW(m_RayCastMapper);
   if (m_ColorFunction==NULL)
     vtkNEW(m_ColorFunction);
   if (m_OpacityFunction==NULL)
     vtkNEW(m_OpacityFunction);
 
   //The ray cast function know how to render the data
-  vtkMAFSmartPointer<vtkVolumeRayCastCompositeFunction> compositeFunction;
-  compositeFunction->SetCompositeMethodToClassifyFirst();
-  m_RayCastMapper->SetVolumeRayCastFunction(compositeFunction);
-  m_RayCastMapper->SetInput(m_RayCastCleaner->GetOutput());
+  //vtkMAFSmartPointer<vtkVolumeRayCastCompositeFunction> compositeFunction;
+  //compositeFunction->SetCompositeMethodToClassifyFirst();
+  //m_RayCastMapper->SetVolumeRayCastFunction(compositeFunction);
+  //m_RayCastMapper->SetInput(m_RayCastCleaner->GetOutput());
   
   //Create a empty volume to manage the mapper
   if (m_Volume==NULL)
     vtkNEW(m_Volume);
-  m_Volume->SetMapper(m_RayCastMapper);
+  //m_Volume->SetMapper(m_RayCastMapper);
   SetRayCastFunctions();
   m_Volume->PickableOff();
   m_AssemblyFront->AddPart(m_Volume);

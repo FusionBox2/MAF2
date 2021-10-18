@@ -438,14 +438,14 @@ void medOpExtractGeometry::VolumeSmoothing()
     im->SetSpacing(spacing[0],spacing[1],0.0);
     im->GetPointData()->AddArray(sliceScalars);
     im->GetPointData()->SetActiveScalars("SCALARS");
-    im->SetScalarTypeToUnsignedChar();
-    im->Update();
+    //im->SetScalarTypeToUnsignedChar();
+    //im->Update();
 
     vtkMAFSmartPointer<vtkImageData> filteredImage;
 
     vtkMAFSmartPointer<vtkImageCast> vtkImageToUnsignedChar;
     vtkImageToUnsignedChar->SetOutputScalarTypeToUnsignedChar();
-    vtkImageToUnsignedChar->SetInput(im);
+    vtkImageToUnsignedChar->SetInputData(im);
     vtkImageToUnsignedChar->Modified();
     vtkImageToUnsignedChar->Update();
 
@@ -472,7 +472,7 @@ void medOpExtractGeometry::VolumeSmoothing()
     itkTOvtk->SetInput( smoothingFilter->GetOutput() ); 
 
     filteredImage = ((vtkImageData*)itkTOvtk->GetOutput());
-    filteredImage->Update();
+    //filteredImage->Update();
 
     vtkDataArray *binaryScalars = filteredImage->GetPointData()->GetScalars();
 
@@ -487,11 +487,11 @@ void medOpExtractGeometry::VolumeSmoothing()
 
   vtkMAFSmartPointer<vtkImageData> newImageData;
   newImageData->CopyStructure(m_OriginalData);
-  newImageData->Update();
+  //newImageData->Update();
   newImageData->GetPointData()->AddArray(smoothedVolumeScalars);
   newImageData->GetPointData()->SetActiveScalars("SCALARS");
-  newImageData->SetScalarTypeToUnsignedChar();
-  newImageData->Update();
+  //newImageData->SetScalarTypeToUnsignedChar();
+  //newImageData->Update();
 
   m_ResampledVolume->SetData(newImageData,mafVME::SafeDownCast(m_ResampledVolume)->GetTimeStamp());
 }
@@ -502,7 +502,7 @@ void medOpExtractGeometry::SurfaceCleaning()
 {
   vtkMAFSmartPointer<vtkCleanPolyData>clearFilter;
 
-  clearFilter->SetInput(m_SurfaceData);
+  clearFilter->SetInputData(m_SurfaceData);
   clearFilter->ConvertLinesToPointsOff();
   clearFilter->ConvertPolysToLinesOff();
   clearFilter->ConvertStripsToPolysOff();
@@ -517,13 +517,13 @@ void medOpExtractGeometry::SurfaceDecimation()
 {
   // triangle
   vtkMAFSmartPointer<vtkTriangleFilter> triangleFilter;
-  triangleFilter->SetInput(m_SurfaceData);
+  triangleFilter->SetInputData(m_SurfaceData);
   triangleFilter->Update();
   m_SurfaceData->DeepCopy(triangleFilter->GetOutput());
 
   //decimate
   vtkMAFSmartPointer<vtkDecimatePro> decimate;
-  decimate->SetInput(m_SurfaceData);
+  decimate->SetInputData(m_SurfaceData);
   decimate->SetPreserveTopology(1); 
   int m_Reduction = 50;
   decimate->SetTargetReduction(m_Reduction/100.0);
@@ -540,7 +540,7 @@ void medOpExtractGeometry::SurfaceSmoothing()
 {
 
   vtkMAFSmartPointer<vtkSmoothPolyDataFilter> smoothFilter;
-  smoothFilter->SetInput(m_SurfaceData);
+  smoothFilter->SetInputData(m_SurfaceData);
   smoothFilter->SetNumberOfIterations(m_SmoothSurfaceIterationsNumber);
   smoothFilter->FeatureEdgeSmoothingOn();
   smoothFilter->Update();
@@ -553,7 +553,7 @@ void medOpExtractGeometry::SurfaceConnectivity()
 //----------------------------------------------------------------------------
 {
   vtkMAFSmartPointer<vtkPolyDataConnectivityFilter> connectivityFilter;
-  connectivityFilter->SetInput(m_SurfaceData);
+  connectivityFilter->SetInputData(m_SurfaceData);
   connectivityFilter->Update();
 
   m_SurfaceData->DeepCopy((vtkPolyData*)(connectivityFilter->GetOutput()));
@@ -599,7 +599,7 @@ int medOpExtractGeometry::GenerateIsosurface()
 
     m_ResampledVolume->Update();
     m_OriginalData = vtkImageData::SafeDownCast(mafVMEVolumeGray::SafeDownCast(m_ResampledVolume)->GetOutput()->GetVTKData());
-    m_OriginalData->Update();
+    //m_OriginalData->Update();
 
     m_VolumeInput = m_ResampledVolume;
     m_VolumeInput->Update();
@@ -612,7 +612,7 @@ int medOpExtractGeometry::GenerateIsosurface()
   // VTKmafContourVolumeMapper
 
   m_SurfaceExtractor = vtkMEDVolumeToClosedSmoothSurface::New();
-  m_SurfaceExtractor->SetInput(m_OriginalData);
+  m_SurfaceExtractor->SetInputData(m_OriginalData);
   m_SurfaceExtractor->AutoLODRenderOn();
   m_SurfaceExtractor->AutoLODCreateOn();
 
@@ -641,14 +641,14 @@ int medOpExtractGeometry::GenerateIsosurface()
 
   if(m_Connectivity)
     SurfaceConnectivity();
-  m_SurfaceData->Update();
+  //m_SurfaceData->Update();
 
   wxBusyInfo wait(_("Extracting Isosurface: please wait ..."));
 
   if (m_ProcessingType==0)
   {
     vtkMAFSmartPointer<vtkMEDFixTopology> fixTopologyFilter;
-    fixTopologyFilter->SetInput(m_SurfaceData);
+    fixTopologyFilter->SetInputData(m_SurfaceData);
     fixTopologyFilter->Update();
     m_SurfaceData->DeepCopy(fixTopologyFilter->GetOutput());
   }
@@ -662,7 +662,7 @@ int medOpExtractGeometry::GenerateIsosurface()
     // vtkCleanPolyData
     SurfaceCleaning();
 
-    m_SurfaceData->Update();
+    //m_SurfaceData->Update();
   }
 
   if(m_SmoothSurface)
@@ -670,14 +670,14 @@ int medOpExtractGeometry::GenerateIsosurface()
     //vtkSmoothPolyDataFilter
     SurfaceSmoothing();
 
-    m_SurfaceData->Update();
+    //m_SurfaceData->Update();
   }
 
   if(m_DecimateSurface)
   {
     // (vtkTriangleFilter) + vtkDecimate 
     SurfaceDecimation();
-    m_SurfaceData->Update();
+    //m_SurfaceData->Update();
   }
 
 

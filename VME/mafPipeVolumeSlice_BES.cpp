@@ -202,7 +202,7 @@ void mafPipeVolumeSlice_BES::Create(mafNode *node, mafView *view)
   vtkDataSet *data = m_Vme->GetOutput()->GetVTKData();
   double b[6];
   m_Vme->GetOutput()->Update();
-  data->Update();
+  //data->Update();
   m_Vme->GetOutput()->GetVMELocalBounds(b);
 
   mmaVolumeMaterial *material = m_VolumeOutput->GetMaterial();
@@ -273,10 +273,10 @@ void mafPipeVolumeSlice_BES::Create(mafNode *node, mafView *view)
 	CreateTICKs();
 
   vtkMAFSmartPointer<vtkOutlineCornerFilter> corner;
-	corner->SetInput(data);
+	corner->SetInputData(data);
 
   vtkMAFSmartPointer<vtkPolyDataMapper> corner_mapper;
-	corner_mapper->SetInput(corner->GetOutput());
+	corner_mapper->SetInputConnection(corner->GetOutputPort());
 
 	vtkNEW(m_VolumeBoxActor);
 	m_VolumeBoxActor->SetMapper(corner_mapper);
@@ -296,7 +296,7 @@ void mafPipeVolumeSlice_BES::Create(mafNode *node, mafView *view)
 		vtkNEW(m_Box);
 		m_Box->SetBounds(bounds);
 		vtkNEW(m_Mapper);
-		m_Mapper->SetInput(m_Box->GetOutput());
+		m_Mapper->SetInputConnection(m_Box->GetOutputPort());
 		vtkNEW(m_Actor);
 		m_Actor->SetMapper(m_Mapper);
 		m_AssemblyUsed->AddPart(m_Actor);
@@ -324,11 +324,11 @@ void mafPipeVolumeSlice_BES::CreateTICKs()
 	vtkPolyData  *CTLinesPD      = vtkPolyData::New();	
 	vtkPoints    *CTLinesPoints  = vtkPoints::New();	
 	vtkCellArray *CTCells        = vtkCellArray::New();
-	int points_id[2];    
+	vtkIdType points_id[2];    
 	int	counter = 0;
 
 	vtkDataSet *vtk_data = m_Vme->GetOutput()->GetVTKData();
-	vtk_data->Update();
+	//vtk_data->Update();
 
 	double bounds[6];
 	vtk_data->GetBounds(bounds);
@@ -399,7 +399,7 @@ void mafPipeVolumeSlice_BES::CreateTICKs()
 
 	//Add tick to scene
 	vtkPolyDataMapper *TickMapper = vtkPolyDataMapper::New();
-	TickMapper->SetInput(CTLinesPD);
+	TickMapper->SetInputData(CTLinesPD);
 
 	vtkProperty	*TickProperty = vtkProperty::New();
 	TickProperty->SetColor(1,0,0);
@@ -430,36 +430,36 @@ void mafPipeVolumeSlice_BES::CreateSlice(int direction)
 	double xspc = 0.33, yspc = 0.33, zspc = 1.0;
 
   vtkDataSet *vtk_data = m_Vme->GetOutput()->GetVTKData();
-  vtk_data->Update();
+  //vtk_data->Update();
   if(vtk_data->IsA("vtkImageData") || vtk_data->IsA("vtkStructuredPoints"))
   {
     ((vtkImageData *)vtk_data)->GetSpacing(xspc,yspc,zspc);
   }
 
-	vtkNEW(m_SlicerPolygonal[direction]);
-	vtkNEW(m_SlicerImage[direction]);
-	m_SlicerImage[direction]->SetPlaneOrigin(m_Origin[0], m_Origin[1], m_Origin[2]);
-	m_SlicerPolygonal[direction]->SetPlaneOrigin(m_SlicerImage[direction]->GetPlaneOrigin());
-	m_SlicerImage[direction]->SetPlaneAxisX(m_XVector[direction]);
-	m_SlicerImage[direction]->SetPlaneAxisY(m_YVector[direction]);
-	m_SlicerPolygonal[direction]->SetPlaneAxisX(m_XVector[direction]);
-	m_SlicerPolygonal[direction]->SetPlaneAxisY(m_YVector[direction]);
-	m_SlicerImage[direction]->SetInput(vtk_data);
-	m_SlicerPolygonal[direction]->SetInput(vtk_data);
+	//vtkNEW(m_SlicerPolygonal[direction]);
+	//vtkNEW(m_SlicerImage[direction]);
+	//m_SlicerImage[direction]->SetPlaneOrigin(m_Origin[0], m_Origin[1], m_Origin[2]);
+	//m_SlicerPolygonal[direction]->SetPlaneOrigin(m_SlicerImage[direction]->GetPlaneOrigin());
+	//m_SlicerImage[direction]->SetPlaneAxisX(m_XVector[direction]);
+	//m_SlicerImage[direction]->SetPlaneAxisY(m_YVector[direction]);
+	//m_SlicerPolygonal[direction]->SetPlaneAxisX(m_XVector[direction]);
+	//m_SlicerPolygonal[direction]->SetPlaneAxisY(m_YVector[direction]);
+	//m_SlicerImage[direction]->SetInputData(vtk_data);
+	//m_SlicerPolygonal[direction]->SetInputData(vtk_data);
 //  m_SlicerImage[direction]->SetSliceTransform(m_Vme->GetOutput()->GetAbsTransform()->GetVTKTransform()->GetLinearInverse());
 //  m_SlicerPolygonal[direction]->SetSliceTransform(m_Vme->GetOutput()->GetAbsTransform()->GetVTKTransform()->GetLinearInverse());
   
 	vtkNEW(m_Image[direction]);
-  m_Image[direction]->SetScalarType(vtk_data->GetPointData()->GetScalars()->GetDataType());
+  //m_Image[direction]->SetScalarType(vtk_data->GetPointData()->GetScalars()->GetDataType());
   //m_Image[direction]->SetScalarTypeToUnsignedChar();
-	m_Image[direction]->SetNumberOfScalarComponents(vtk_data->GetPointData()->GetScalars()->GetNumberOfComponents());
+	//m_Image[direction]->SetNumberOfScalarComponents(vtk_data->GetPointData()->GetScalars()->GetNumberOfComponents());
   //m_Image[direction]->SetNumberOfScalarComponents(3);
 	m_Image[direction]->SetExtent(0, m_TextureRes - 1, 0, m_TextureRes - 1, 0, 0);
 	m_Image[direction]->SetSpacing(xspc, yspc, zspc);
 
-	m_SlicerImage[direction]->SetOutput(m_Image[direction]);
-  m_SlicerImage[direction]->SetGPUEnabled(m_EnableGPU);
-  m_SlicerImage[direction]->Update();
+	//m_SlicerImage[direction]->SetOutput(m_Image[direction]);
+  //m_SlicerImage[direction]->SetGPUEnabled(m_EnableGPU);
+  //m_SlicerImage[direction]->Update();
 
 	vtkNEW(m_Texture[direction]);
 	m_Texture[direction]->RepeatOff();
@@ -472,18 +472,18 @@ void mafPipeVolumeSlice_BES::CreateSlice(int direction)
     m_Texture[direction]->InterpolateOff();
   }
 	m_Texture[direction]->SetQualityTo32Bit();
-	m_Texture[direction]->SetInput(m_Image[direction]);
+	m_Texture[direction]->SetInputData(m_Image[direction]);
   m_Texture[direction]->SetLookupTable(m_ColorLUT);
-  m_Texture[direction]->MapColorScalarsThroughLookupTableOn();
+  //m_Texture[direction]->MapColorScalarsThroughLookupTableOn();
 
   vtkNEW(m_SlicePolydata[direction]);
-	m_SlicerPolygonal[direction]->SetOutput(m_SlicePolydata[direction]);
-	m_SlicerPolygonal[direction]->SetTexture(m_Image[direction]);
-  m_SlicerPolygonal[direction]->SetGPUEnabled(m_EnableGPU);
-	m_SlicerPolygonal[direction]->Update();
+	//m_SlicerPolygonal[direction]->SetOutput(m_SlicePolydata[direction]);
+	//m_SlicerPolygonal[direction]->SetTexture(m_Image[direction]);
+  //m_SlicerPolygonal[direction]->SetGPUEnabled(m_EnableGPU);
+	//m_SlicerPolygonal[direction]->Update();
 
 	vtkNEW(m_SliceMapper[direction]);
-	m_SliceMapper[direction]->SetInput(m_SlicePolydata[direction]);
+	m_SliceMapper[direction]->SetInputData(m_SlicePolydata[direction]);
 	m_SliceMapper[direction]->ScalarVisibilityOff();
 
 	vtkNEW(m_SliceActor[direction]);
@@ -514,11 +514,11 @@ mafPipeVolumeSlice_BES::~mafPipeVolumeSlice_BES()
       m_AssemblyUsed->RemovePart(m_SliceActor[i]);
 		if (m_SlicerImage[i])
 		{
-      m_SlicerImage[i]->SetSliceTransform(NULL);
+      //m_SlicerImage[i]->SetSliceTransform(NULL);
 		}
     if (m_SlicerPolygonal[i])
     {
-      m_SlicerPolygonal[i]->SetSliceTransform(NULL);
+      //m_SlicerPolygonal[i]->SetSliceTransform(NULL);
     }
     vtkDEL(m_SlicerImage[i]);
 		vtkDEL(m_SlicerPolygonal[i]);
@@ -641,12 +641,12 @@ void mafPipeVolumeSlice_BES::SetSlice(double* Origin, double* Normal)
 	{
 		if(m_SlicerImage[i])
 		{
-			m_SlicerImage[i]->SetPlaneOrigin(m_Origin[0], m_Origin[1], m_Origin[2]);
-			m_SlicerPolygonal[i]->SetPlaneOrigin(m_SlicerImage[i]->GetPlaneOrigin());
-			m_SlicerImage[i]->SetPlaneAxisX(m_XVector[i]);
-			m_SlicerImage[i]->SetPlaneAxisY(m_YVector[i]);
-			m_SlicerPolygonal[i]->SetPlaneAxisX(m_XVector[i]);
-			m_SlicerPolygonal[i]->SetPlaneAxisY(m_YVector[i]);      
+			//m_SlicerImage[i]->SetPlaneOrigin(m_Origin[0], m_Origin[1], m_Origin[2]);
+			//m_SlicerPolygonal[i]->SetPlaneOrigin(m_SlicerImage[i]->GetPlaneOrigin());
+			//m_SlicerImage[i]->SetPlaneAxisX(m_XVector[i]);
+			//m_SlicerImage[i]->SetPlaneAxisY(m_YVector[i]);
+			//m_SlicerPolygonal[i]->SetPlaneAxisX(m_XVector[i]);
+			//m_SlicerPolygonal[i]->SetPlaneAxisY(m_YVector[i]);      
     }
 	}
 
@@ -841,14 +841,14 @@ void mafPipeVolumeSlice_BES::UpdateSlice()
   {
     if (m_SlicerImage[i] != NULL)
     {
-      m_SlicerImage[i]->SetGPUEnabled(m_EnableGPU);
+      //m_SlicerImage[i]->SetGPUEnabled(m_EnableGPU);
       m_SlicerImage[i]->SetTrilinearInterpolation(m_TrilinearInterpolationOn == 1);
       m_SlicerImage[i]->Update();
     }
 
     if (m_SlicerPolygonal[i] != NULL)
     {
-      m_SlicerPolygonal[i]->SetGPUEnabled(m_EnableGPU);
+      //m_SlicerPolygonal[i]->SetGPUEnabled(m_EnableGPU);
       m_SlicerPolygonal[i]->SetTrilinearInterpolation(m_TrilinearInterpolationOn == 1);
       m_SlicerPolygonal[i]->Update();
     }

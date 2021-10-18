@@ -389,7 +389,7 @@ void medOpMML::OnRegistrationOK()
 
   // muscle: deformed version
   vtkTransformPolyDataFilter *deformedpd = vtkTransformPolyDataFilter::New();
-  deformedpd->SetInput(m_Model->GetMuscleTransform2PolyDataFilter()->GetOutput());
+  deformedpd->SetInputConnection(m_Model->GetMuscleTransform2PolyDataFilter()->GetOutputPort());
   deformedpd->SetTransform(deformedt);
   deformedpd->Update();
 
@@ -795,7 +795,7 @@ void medOpMML::OnMuscleSelection()
   vtkTransform *transform = vtkTransform::New();
   vtkTransformPolyDataFilter *musclepd = vtkTransformPolyDataFilter::New();
   transform->SetMatrix(m_Surface->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
-  musclepd->SetInput((vtkPolyData*)m_Surface->GetOutput()->GetVTKData());
+  musclepd->SetInputConnection(m_Surface->GetOutput()->GetVTKOutputPort());
   musclepd->SetTransform(transform);
   musclepd->Update();
 
@@ -2772,7 +2772,7 @@ mafRWI* medOpMML::CreateParameterViewmafRWI(wxString lab, float r, float g, floa
   ts->SetText(lab.c_str());
 
   vtkPolyDataMapper2D *mapper = vtkPolyDataMapper2D::New();
-  mapper->SetInput(ts->GetOutput());
+  mapper->SetInputConnection(ts->GetOutputPort());
 
   vtkActor2D *labactor = vtkActor2D::New();
   labactor->SetMapper(mapper);

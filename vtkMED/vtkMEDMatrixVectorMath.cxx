@@ -30,7 +30,6 @@
 
 //------------------------------------------------------------------------------
 // standard macros
-vtkCxxRevisionMacro(vtkMEDMatrixVectorMath, "$Revision: 1.0 $");
 vtkStandardNewMacro(vtkMEDMatrixVectorMath);
 //------------------------------------------------------------------------------
 

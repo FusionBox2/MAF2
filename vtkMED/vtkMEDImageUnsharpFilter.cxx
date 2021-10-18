@@ -25,7 +25,6 @@
 
 #include <math.h>
 
-vtkCxxRevisionMacro(vtkMEDImageUnsharpFilter, "$Revision: 1.1 $");
 vtkStandardNewMacro(vtkMEDImageUnsharpFilter);
 
 //----------------------------------------------------------------------------
@@ -77,7 +76,7 @@ void vtkMEDImageUnsharpFilter::ThreadedExecute(vtkImageData *inData,
   typedef itk::VTKImageToImageFilter< OutputImageType > ConvertervtkTOitk;
   ConvertervtkTOitk::Pointer vtkTOitk = ConvertervtkTOitk::New(); // i prefer the smart pointer...
 
-  vtkTOitk->SetInput( GetInput() );
+  vtkTOitk->SetInput(vtkImageData::SafeDownCast( GetInput()) );
 
   try
   {

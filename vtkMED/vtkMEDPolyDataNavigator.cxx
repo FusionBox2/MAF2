@@ -14,7 +14,7 @@ University of Bedfordshire
 #include "vtkObjectFactory.h"
 #include "vtkObject.h"
 #include "vtkPolyData.h"
-#include "vtkIdType.h"
+#include "vtkType.h"
 #include "vtkIdList.h"
 #include "vtkCell.h"
 #include "vtkCellArray.h"
@@ -43,7 +43,6 @@ University of Bedfordshire
 
 //------------------------------------------------------------------------------
 // standard macros
-vtkCxxRevisionMacro(vtkMEDPolyDataNavigator, "$Revision: 1.1.2.7 $");
 vtkStandardNewMacro(vtkMEDPolyDataNavigator);
 //------------------------------------------------------------------------------
 
@@ -3076,7 +3075,7 @@ bool vtkMEDPolyDataNavigator::ChangePointIdInCell(vtkPolyData *polydata, int cel
   vtkCell *cell = polydata->GetCell(cellId) ; // probably very inefficient !
   int n = cell->GetNumberOfPoints() ;
 
-  int *ptIds = new int[n] ;
+  vtkIdType *ptIds = new vtkIdType[n] ;
   for (int i = 0 ;  i < n ;  i++){
     int id = cell->GetPointId(i) ;
     if (id == idold){
@@ -3714,8 +3713,8 @@ void vtkMEDPolyDataNavigator::MergePoints(vtkPolyData *polydata, vtkIdList *idsI
 
   // use vtkCleanPolydata to remove unused points
   vtkCleanPolyData *clean = vtkCleanPolyData::New() ;
-  clean->SetInput(polydata) ;
-  clean->GetOutput()->Update() ;
+  clean->SetInputData(polydata) ;
+  clean->Update() ;
   polydata->DeepCopy(clean->GetOutput()) ;
   clean->Delete() ;
 

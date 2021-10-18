@@ -137,9 +137,9 @@ void medOpExtrusionHoles::OpRun()
   ((mafVMESurface*)m_Input)->Update();
 
 	m_OriginalPolydata->DeepCopy(((vtkPolyData*)((mafVMESurface*)m_Input)->GetOutput()->GetVTKData()));
-	m_OriginalPolydata->Update();
+	//m_OriginalPolydata->Update();
 	m_ResultPolydata->DeepCopy(((vtkPolyData*)((mafVMESurface*)m_Input)->GetOutput()->GetVTKData()));
-	m_ResultPolydata->Update();
+	//m_ResultPolydata->Update();
 
   double BoundingBox[6];
   m_ResultPolydata->GetBounds(BoundingBox);
@@ -260,16 +260,16 @@ void medOpExtrusionHoles::SaveExtrusion()
   {
 	  vtkCleanPolyData  *clean;
 	  vtkNEW(clean);
-	  clean->SetInput(m_ResultAfterExtrusion->GetOutput());
+	  clean->SetInputConnection(m_ResultAfterExtrusion->GetOutputPort());
 	  clean->Update();
 	  vtkMAFSmartPointer<vtkTriangleFilter> triangle;
-	  triangle->SetInput(clean->GetOutput());
+	  triangle->SetInputConnection(clean->GetOutputPort());
 	  triangle->Update();
 	  m_ResultPolydata->DeepCopy(triangle->GetOutput());
-	  m_ResultPolydata->Update();
+	  //m_ResultPolydata->Update();
 	  if(!m_TestMode)
 	  {
-		  m_SurfaceMapper->SetInput(m_ResultPolydata);
+		  m_SurfaceMapper->SetInputData(m_ResultPolydata);
 		  m_SurfaceMapper->Update();
 	  }
 	  if(!m_TestMode)
@@ -314,10 +314,10 @@ void medOpExtrusionHoles::Extrude()
 	vtkPolyData *appo;
   vtkNEW(appo);
 	appo->SetPoints(points);
-	appo->Update();
+	//appo->Update();
 	vtkTextureMapToPlane *computeMedianPlane;
 	vtkNEW(computeMedianPlane);
-	computeMedianPlane->SetInput(appo);
+	computeMedianPlane->SetInputData(appo);
 	computeMedianPlane->AutomaticPlaneGenerationOn();
 	computeMedianPlane->Update();
 	double normal[3];
@@ -343,18 +343,18 @@ void medOpExtrusionHoles::Extrude()
   double diameter = lenght/vtkMath::Pi();
   m_ExtrusionFilter->SetLength(m_ExtrusionFactor*diameter);
   //m_ExtrusionFilter->SetDirection(normal) ;
-	m_ExtrusionFilter->SetInput(m_ExtractHole->GetOutput());
-  m_ExtrusionFilter->GetOutput()->Update() ;
+	m_ExtrusionFilter->SetInputConnection(m_ExtractHole->GetOutputPort());
+  //m_ExtrusionFilter->GetOutput()->Update() ;
 	m_ExtrusionFilter->Update();
 
 	m_ResultAfterExtrusion->RemoveAllInputs();
-	m_ResultAfterExtrusion->SetInput(m_ResultPolydata);
-	m_ResultAfterExtrusion->AddInput(m_ExtrusionFilter->GetOutput());
+	m_ResultAfterExtrusion->SetInputData(m_ResultPolydata);
+	m_ResultAfterExtrusion->AddInputConnection(m_ExtrusionFilter->GetOutputPort());
 	m_ResultAfterExtrusion->Update();
 
 	if(!m_TestMode)
 	{
-		m_SurfaceMapper->SetInput(m_ResultAfterExtrusion->GetOutput());
+		m_SurfaceMapper->SetInputConnection(m_ResultAfterExtrusion->GetOutputPort());
 		m_SurfaceMapper->Update();
 
 		m_Rwi->CameraUpdate();
@@ -370,7 +370,7 @@ void medOpExtrusionHoles::SelectHole(int pointID)
 	double	coordPointSelected[3];
 	m_ResultPolydata->GetPoint(pointID,coordPointSelected);
 
-	m_ExtractHole->SetInput(m_ExtractFreeEdges->GetOutput());
+	m_ExtractHole->SetInputConnection(m_ExtractFreeEdges->GetOutputPort());
 	m_ExtractHole->SetPoint(coordPointSelected);
 	m_ExtractHole->Update();
 
@@ -381,11 +381,11 @@ void medOpExtrusionHoles::SelectHole(int pointID)
 
 		vtkGlyph3D *glyph;
 		vtkNEW(glyph);
-		glyph->SetInput(m_ExtractHole->GetOutput());
-		glyph->SetSource(m_Sphere->GetOutput());
+		glyph->SetInputConnection(m_ExtractHole->GetOutputPort());
+		glyph->SetSourceConnection(m_Sphere->GetOutputPort());
 
 		vtkNEW(m_SelectedHoleMapper);
-		m_SelectedHoleMapper->SetInput(glyph->GetOutput());
+		m_SelectedHoleMapper->SetInputConnection(glyph->GetOutputPort());
 
 		//Show the selected hole - selected hole is red
 		vtkNEW(m_SelectedHoleActor);
@@ -518,7 +518,7 @@ void medOpExtrusionHoles::ExtractFreeEdge()
 //----------------------------------------------------------------------------
 {
 	//Extract Holes from the input surface
-	m_ExtractFreeEdges->SetInput(m_ResultPolydata);
+	m_ExtractFreeEdges->SetInputData(m_ResultPolydata);
 	m_ExtractFreeEdges->SetBoundaryEdges(1);
 	m_ExtractFreeEdges->SetFeatureEdges(0);
 	m_ExtractFreeEdges->SetNonManifoldEdges(0);
@@ -530,12 +530,12 @@ void medOpExtrusionHoles::CreatePolydataPipeline()
 //----------------------------------------------------------------------------
 {
 
-  m_ResultPolydata->Update();
+  //m_ResultPolydata->Update();
 
 	double BoundingBox[6];
 	m_ResultPolydata->GetBounds(BoundingBox);
 	vtkNEW(m_SurfaceMapper);
-	m_SurfaceMapper->SetInput(m_ResultPolydata);
+	m_SurfaceMapper->SetInputData(m_ResultPolydata);
 	m_SurfaceMapper->ScalarVisibilityOff();
   m_SurfaceMapper->Update();
 
@@ -560,11 +560,11 @@ void medOpExtrusionHoles::CreatePolydataPipeline()
 	//Create a Glyph to highlight the holes
 	vtkGlyph3D *glyph;
 	vtkNEW(glyph);
-	glyph->SetInput(m_ExtractFreeEdges->GetOutput());
-	glyph->SetSource(m_Sphere->GetOutput());
+	glyph->SetInputConnection(m_ExtractFreeEdges->GetOutputPort());
+	glyph->SetSourceConnection(m_Sphere->GetOutputPort());
 
 	vtkNEW(m_HolesMapper);
-	m_HolesMapper->SetInput(glyph->GetOutput());
+	m_HolesMapper->SetInputConnection(glyph->GetOutputPort());
 
 	vtkNEW(m_HolesActor);
 	m_HolesActor->SetMapper(m_HolesMapper);

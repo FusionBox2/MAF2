@@ -31,7 +31,7 @@ using namespace std;
 
 #include "vtkCell.h"
 #include "vtkIdList.h"
-#include "vtkIdType.h"
+#include "vtkType.h"
 #include "vtkPoints.h"
 #include "vtkTriangle.h"
 #include "vtkDataSet.h"
@@ -379,10 +379,10 @@ int medOpComputeInertialTensor::ComputeLocalInertialTensor(mafNode* node, int cu
 	if (surf->GetOutput() == NULL || surf->GetOutput()->GetVTKData() == NULL)
 		return OP_RUN_CANCEL;
 	surf->GetOutput()->Update();
-	surf->GetOutput()->GetVTKData()->Update();
+	//surf->GetOutput()->GetVTKData()->Update();
 	
 	vtkMAFSmartPointer<vtkTransformPolyDataFilter> tranformFilter;
-  tranformFilter->SetInput((vtkPolyData *)surf->GetOutput()->GetVTKData());
+  tranformFilter->SetInputConnection(surf->GetOutput()->GetVTKOutputPort());
   tranformFilter->SetTransform(surf->GetOutput()->GetTransform()->GetVTKTransform());
   tranformFilter->Update();
 

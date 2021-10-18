@@ -195,11 +195,11 @@ void medPipeTensorFieldSurface::OnEvent(mafEventBase *maf_event)
   m_ColorMappingLUT->Build(); 
 
   vtkGeometryFilter* filter = vtkGeometryFilter::New();
-  filter->SetInput(m_Vme->GetOutput()->GetVTKData());
+  filter->SetInputConnection(m_Vme->GetOutput()->GetVTKOutputPort());
 
   m_SurfaceMapper = vtkPolyDataMapper::New();
-  m_SurfaceMapper->SetInput(filter->GetOutput());
-  m_SurfaceMapper->ImmediateModeRenderingOn();
+  m_SurfaceMapper->SetInputConnection(filter->GetOutputPort());
+  //m_SurfaceMapper->ImmediateModeRenderingOn();
   m_SurfaceMapper->SetScalarModeToUsePointFieldData();// PointData();
   m_SurfaceMapper->SetColorModeToMapScalars();
   m_SurfaceMapper->SetLookupTable(m_ColorMappingLUT);
@@ -274,7 +274,7 @@ void medPipeTensorFieldSurface::OnEvent(mafEventBase *maf_event)
 
   double sr[2];
   vtkDataArray* da ;
-  vtkStructuredPoints *orgData =vtkStructuredPoints::SafeDownCast(m_Vme->GetOutput()->GetVTKData()) ;  
+  vtkStructuredPoints *orgData =vtkStructuredPoints::SafeDownCast(m_Vme->GetOutput()->GetVTKData()) ;
   da = orgData->GetPointData()->GetTensors(tensor_name);
   
   m_SurfaceMapper->SelectColorArray(tensor_name);
@@ -398,7 +398,7 @@ bool medPipeTensorFieldSurface::ComputeEigenvalues(vtkStructuredPoints* tensorVo
 	tensorVolume->GetPointData()->SetVectors(eigenvalueArray);
 	tensorVolume->GetPointData()->SetTensors(eigenvalueArray);
 	tensorVolume->GetPointData()->SetScalars(scalars) ;
-	tensorVolume->Update();
+	//tensorVolume->Update();
 	eigenvalueArray->Delete();
 	return true;
 }

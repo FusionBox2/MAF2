@@ -56,7 +56,7 @@ class VTK_vtkMED_EXPORT vtkMEDMatrixVectorMath : public vtkObject
 {
 public:
   static vtkMEDMatrixVectorMath *New();
-  vtkTypeRevisionMacro(vtkMEDMatrixVectorMath, vtkObject);
+  vtkTypeMacro(vtkMEDMatrixVectorMath, vtkObject);
   void PrintSelf(ostream& os, vtkIndent indent) {} ;
 
 

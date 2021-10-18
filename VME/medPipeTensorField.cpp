@@ -27,6 +27,7 @@
 
 #include "vtkDataSet.h"
 #include "vtkPointData.h"
+#include "vtkDataArray.h"
 
 #include "mafDbg.h"
 
@@ -79,7 +80,7 @@ void medPipeTensorField::Create(mafNode *node, mafView *view)
 //------------------------------------------------------------------------
 {
   vtkDataSet* ds = m_Vme->GetOutput()->GetVTKData();
-  ds->Update(); //force its update
+  //ds->Update(); //force its update
 }
 
 //------------------------------------------------------------------------

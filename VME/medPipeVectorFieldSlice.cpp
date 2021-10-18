@@ -165,10 +165,10 @@ void medPipeVectorFieldSlice::OnEvent(mafEventBase *maf_event)
   vtkNEW(m_CutPlane);
 
   vtkCutter* cutter = vtkCutter::New();
-  cutter->SetInput(m_Vme->GetOutput()->GetVTKData());
+  cutter->SetInputConnection(m_Vme->GetOutput()->GetVTKOutputPort());
   cutter->SetCutFunction(m_CutPlane);
 
-  m_SurfaceMapper->SetInput(cutter->GetOutput());
+  m_SurfaceMapper->SetInputConnection(cutter->GetOutputPort());
   cutter->Delete(); //no longer needed
 }
 

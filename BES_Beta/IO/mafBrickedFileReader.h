@@ -176,7 +176,7 @@ protected:
 	//copies the part of brick data that is within brckExt into pOutPtr 
 	//in an unbricked form, the brick is denoted by pBrickData 	
 	inline void CopyBrickData(const char* pBrickData, int brckExt[6],
-		char* pOutPtr, int outIncrInB[3]);
+		char* pOutPtr, vtkIdType outIncrInB[3]);
 };
 
 //returns true, if the brick at position xb relative to the
@@ -236,7 +236,7 @@ inline void mafBrickedFileReader::LoadBrick(int nBrickIndex, char* pOutPtr) thro
 //copies the part of brick data that is within brckExt into pOutPtr 
 //in an unbricked form, the brick is denoted by pBrickData 	
 inline void mafBrickedFileReader::CopyBrickData(const char* pBrickData, int brckExt[6],
-												char* pOutPtr, int outIncrInB[3])
+												char* pOutPtr, vtkIdType outIncrInB[3])
 {
 	pBrickData += brckExt[4]*m_NBrickSizeInB[1] + 	//move to the first item
 				brckExt[2]*m_NBrickSizeInB[0] +	

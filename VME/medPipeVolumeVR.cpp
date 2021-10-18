@@ -134,10 +134,10 @@ void medPipeVolumeVR::Create(mafNode *node, mafView *view)
 
     m_StructuredImage->SetSpacing(spaceInt_x,spaceInt_y,spaceInt_z);
 
-    m_StructuredImage->Update();
+    //m_StructuredImage->Update();
 
-    m_Probe->SetInput(m_StructuredImage);
-    m_Probe->SetSource(m_Vme->GetOutput()->GetVTKData());
+    m_Probe->SetInputData(m_StructuredImage);
+    m_Probe->SetSourceConnection(m_Vme->GetOutput()->GetVTKOutputPort());
 
     m_Probe->Update();
 
@@ -170,8 +170,8 @@ void medPipeVolumeVR::Create(mafNode *node, mafView *view)
   m_PropertyLOD->SetSpecular(0.2);
   m_PropertyLOD->SetSpecularPower(10.0);
 
-  m_VolumeTextureMapperHigh = vtkMAFVolumeTextureMapper2D::New();
-  m_VolumeTextureMapperLow = vtkMAFVolumeTextureMapper2D::New(); 
+  //m_VolumeTextureMapperHigh = vtkMAFVolumeTextureMapper2D::New();
+  //m_VolumeTextureMapperLow = vtkMAFVolumeTextureMapper2D::New(); 
 
   m_Vme->GetOutput()->GetVTKData()->GetScalarRange(m_Range);
 
@@ -185,17 +185,17 @@ void medPipeVolumeVR::Create(mafNode *node, mafView *view)
     m_ImageShift = vtkImageShiftScale::New();
 
     if (!m_IsStructured){
-      m_ImageShift->SetInput((vtkImageData *)m_Probe->GetOutput());
+      m_ImageShift->SetInputConnection(m_Probe->GetOutputPort());
     }
     else 
     {
       vtkDataSet* data = m_Vme->GetOutput()->GetVTKData();
       vtkNEW(m_ResampleFilter);
-      m_ResampleFilter->SetInput((vtkImageData*)data);
+      m_ResampleFilter->SetInputData((vtkImageData*)data);
       for(int i=0;i<3;i++)
         m_ResampleFilter->SetAxisMagnificationFactor(i,m_ResampleFactor);
       m_ResampleFilter->Update();
-      m_ImageShift->SetInput((vtkImageData *)m_ResampleFilter->GetOutput());
+      m_ImageShift->SetInputConnection(m_ResampleFilter->GetOutputPort());
 
     }
 
@@ -205,8 +205,8 @@ void medPipeVolumeVR::Create(mafNode *node, mafView *view)
 
     m_ImageShift->Update();
 
-    m_VolumeTextureMapperHigh->SetInput((vtkImageData *)m_ImageShift->GetOutput());
-    m_VolumeTextureMapperLow->SetInput((vtkImageData *)m_ImageShift->GetOutput());
+    //m_VolumeTextureMapperHigh->SetInputConnection(m_ImageShift->GetOutputPort());
+    //m_VolumeTextureMapperLow->SetInputConnection(m_ImageShift->GetOutputPort());
 
     ((vtkImageData *)m_ImageShift->GetOutput())->GetScalarRange(m_UnsignRange);
   }
@@ -214,8 +214,8 @@ void medPipeVolumeVR::Create(mafNode *node, mafView *view)
   {
     if (!m_IsStructured)
     {
-      m_VolumeTextureMapperHigh->SetInput((vtkImageData *)m_Probe->GetOutput());
-      m_VolumeTextureMapperLow->SetInput((vtkImageData *)m_Probe->GetOutput());
+      //m_VolumeTextureMapperHigh->SetInputConnection(m_Probe->GetOutputPort());
+      //m_VolumeTextureMapperLow->SetInput(Connectionm_Probe->GetOutputPort());
 
       ((vtkImageData *)m_Probe->GetOutput())->GetScalarRange(m_UnsignRange);
     }
@@ -223,15 +223,15 @@ void medPipeVolumeVR::Create(mafNode *node, mafView *view)
     else 
     {
       vtkDataSet* data = m_Vme->GetOutput()->GetVTKData();
-      data->Update();
+      //data->Update();
       vtkNEW(m_ResampleFilter);
-      m_ResampleFilter->SetInput((vtkImageData*)data);
+      m_ResampleFilter->SetInputData((vtkImageData*)data);
       for(int i=0;i<3;i++)
         m_ResampleFilter->SetAxisMagnificationFactor(i,m_ResampleFactor);
       m_ResampleFilter->Update();
 
-      m_VolumeTextureMapperHigh->SetInput((vtkImageData *)m_ResampleFilter->GetOutput());
-      m_VolumeTextureMapperLow->SetInput((vtkImageData *)m_ResampleFilter->GetOutput());
+      //m_VolumeTextureMapperHigh->SetInputConnection(m_ResampleFilter->GetOutputPort());
+      //m_VolumeTextureMapperLow->SetInputConnection(m_ResampleFilter->GetOutputPort());
 
       ((vtkImageData *)m_ResampleFilter->GetOutput())->GetScalarRange(m_UnsignRange);
     }    
@@ -273,20 +273,20 @@ void medPipeVolumeVR::Create(mafNode *node, mafView *view)
   m_ColorTransferFunction->AddRGBPoint((41843 / 65535.0)*MaxR, 1.00, 1.00, 1.00);
   m_ColorTransferFunction->AddRGBPoint((65535 / 65535.0)*MaxR, 1.00, 1.00, 1.00); 
 
-  m_VolumeTextureMapperHigh->SetMaximumNumberOfPlanes(1024);
-  m_VolumeTextureMapperHigh->SetTargetTextureSize(512,512);
-  m_VolumeTextureMapperHigh->SetMaximumStorageSize(64*1024*1024);  //BES 2.6.2008 - enable texture saving using up to 64 MB
+  //m_VolumeTextureMapperHigh->SetMaximumNumberOfPlanes(1024);
+  //m_VolumeTextureMapperHigh->SetTargetTextureSize(512,512);
+  //m_VolumeTextureMapperHigh->SetMaximumStorageSize(64*1024*1024);  //BES 2.6.2008 - enable texture saving using up to 64 MB
 
-  m_VolumeTextureMapperLow->SetMaximumNumberOfPlanes(128);
-  m_VolumeTextureMapperLow->SetTargetTextureSize(32, 32);
-  m_VolumeTextureMapperLow->SetMaximumStorageSize(8*1024*1024);   //BES 2.6.2008 - enable texture saving using up to 8 MB
+  //m_VolumeTextureMapperLow->SetMaximumNumberOfPlanes(128);
+  //m_VolumeTextureMapperLow->SetTargetTextureSize(32, 32);
+  //m_VolumeTextureMapperLow->SetMaximumStorageSize(8*1024*1024);   //BES 2.6.2008 - enable texture saving using up to 8 MB
 
 
   //BES 25.4.2008 - with texture saving, we are enable to render High and Low in zero time
   //=> as VTK selects LOD from first index, high must go first
   m_ActorLOD = vtkLODProp3D ::New();
-  int nID1 = m_ActorLOD->AddLOD(m_VolumeTextureMapperHigh, m_VolumePropertyHigh, 0);
-  int nID2 = m_ActorLOD->AddLOD(m_VolumeTextureMapperLow, m_VolumePropertyLow, 0);
+  int nID1 = 0;// m_ActorLOD->AddLOD(m_VolumeTextureMapperHigh, m_VolumePropertyHigh, 0);
+  int nID2 = 0;// m_ActorLOD->AddLOD(m_VolumeTextureMapperLow, m_VolumePropertyLow, 0);
   m_ActorLOD->SetLODLevel(nID1, 0);
   m_ActorLOD->SetLODLevel(nID2, 1);
 
@@ -318,8 +318,8 @@ medPipeVolumeVR::~medPipeVolumeVR()
   vtkDEL(m_ColorTransferFunction);
   vtkDEL(m_VolumePropertyLow);
   vtkDEL(m_VolumePropertyHigh);
-  vtkDEL(m_VolumeTextureMapperLow);
-  vtkDEL(m_VolumeTextureMapperHigh);
+  //vtkDEL(m_VolumeTextureMapperLow);
+  //vtkDEL(m_VolumeTextureMapperHigh);
   vtkDEL(m_ImageShift);
   vtkDEL(m_GradientFunction);
   vtkDEL(m_StructuredImage);
@@ -446,14 +446,14 @@ void medPipeVolumeVR::SetNumberPoints(int n)
   m_StructuredImage->SetSpacing(spaceInt_x,spaceInt_y,spaceInt_z);
 
   //m_StructuredImage->Modified();
-  m_StructuredImage->Update();
+  //m_StructuredImage->Update();
 
   if(m_Probe) m_Probe->Delete();
 
   m_Probe = vtkProbeFilter::New();
 
-  m_Probe->SetInput(m_StructuredImage);
-  m_Probe->SetSource(m_Vme->GetOutput()->GetVTKData());
+  m_Probe->SetInputData(m_StructuredImage);
+  m_Probe->SetSourceConnection(m_Vme->GetOutput()->GetVTKOutputPort());
 
   m_Probe->Update();	
 }
@@ -474,8 +474,8 @@ void medPipeVolumeVR::SetResampleFactor(double value)
   {
     m_AssemblyFront->RemovePart(m_ActorLOD);
     vtkDEL(m_ActorLOD);
-    vtkDEL(m_VolumeTextureMapperHigh);
-    vtkDEL(m_VolumeTextureMapperLow);
+    //vtkDEL(m_VolumeTextureMapperHigh);
+    //vtkDEL(m_VolumeTextureMapperLow);
 
     m_ResampleFilter->Update();
 
@@ -484,22 +484,22 @@ void medPipeVolumeVR::SetResampleFactor(double value)
 
     m_ResampleFilter->Update();
 
-    vtkNEW(m_VolumeTextureMapperHigh);
-    vtkNEW(m_VolumeTextureMapperLow);
+    //vtkNEW(m_VolumeTextureMapperHigh);
+    //vtkNEW(m_VolumeTextureMapperLow);
 
-    m_VolumeTextureMapperHigh->SetInput(m_ResampleFilter->GetOutput());
-    m_VolumeTextureMapperLow->SetInput(m_ResampleFilter->GetOutput());
+    //m_VolumeTextureMapperHigh->SetInput(m_ResampleFilter->GetOutput());
+    //m_VolumeTextureMapperLow->SetInput(m_ResampleFilter->GetOutput());
 
-    m_VolumeTextureMapperHigh->SetMaximumNumberOfPlanes(1024);
-    m_VolumeTextureMapperHigh->SetTargetTextureSize(512,512);
+    //m_VolumeTextureMapperHigh->SetMaximumNumberOfPlanes(1024);
+    //m_VolumeTextureMapperHigh->SetTargetTextureSize(512,512);
 
-    m_VolumeTextureMapperLow->SetMaximumNumberOfPlanes(128);
-    m_VolumeTextureMapperLow->SetTargetTextureSize(32, 32);
+    //m_VolumeTextureMapperLow->SetMaximumNumberOfPlanes(128);
+    //m_VolumeTextureMapperLow->SetTargetTextureSize(32, 32);
 
     vtkNEW(m_ActorLOD);
 
-    m_ActorLOD->AddLOD(m_VolumeTextureMapperLow, m_VolumePropertyLow, 0);
-    m_ActorLOD->AddLOD(m_VolumeTextureMapperHigh, m_VolumePropertyHigh, 0);
+    //m_ActorLOD->AddLOD(m_VolumeTextureMapperLow, m_VolumePropertyLow, 0);
+    //m_ActorLOD->AddLOD(m_VolumeTextureMapperHigh, m_VolumePropertyHigh, 0);
     m_ActorLOD->PickableOff();
     m_ActorLOD->SetLODProperty(1, m_PropertyLOD);
     m_ActorLOD->SetLODProperty(2, m_PropertyLOD);

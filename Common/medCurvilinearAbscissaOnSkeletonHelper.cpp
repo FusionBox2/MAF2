@@ -51,6 +51,7 @@ const bool DEBUG_MODE = true;
 #include "vtkSphereSource.h"
 #include "vtkAppendPolyData.h"
 #include "vtkTransform.h"
+#include "vtkAlgorithmOutput.h"
 
 // new stuff
 #include "medVMEPolylineGraph.h"
@@ -393,7 +394,7 @@ void medCurvilinearAbscissaOnSkeletonHelper::SetConstraintPolylineGraph( medVMEP
   vtkPolyData *pd = vtkPolyData::SafeDownCast(m_ConstraintVMEPolylineGraph->GetOutput()->GetVTKData());
   assert(pd);
 
-  pd->Update();
+  m_ConstraintVMEPolylineGraph->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
 
   m_ConstraintPolylineGraph->Clear();
   m_ConstraintPolylineGraph->CopyFromPolydata(pd);

@@ -110,8 +110,8 @@ medPipeGraph::~medPipeGraph()
   m_CheckedVector.clear();
 
   vtkDEL(m_TimeArray);
-  m_PlotActor->RemoveAllInputs();
-  m_PlotTimeLineActor->RemoveAllInputs();
+  m_PlotActor->RemoveAllDataSetInputConnections();
+  m_PlotTimeLineActor->RemoveAllDataSetInputConnections();
   vtkDEL(m_PlotActor);
   vtkDEL(m_PlotTimeLineActor);
   }
@@ -166,7 +166,7 @@ void medPipeGraph::Create(mafNode *node, mafView *view)
   m_PlotTimeLineActor->SetAxisLabelTextProperty(tProp);
   m_PlotTimeLineActor->SetTitleTextProperty(tProp);	
 
-  m_LegendBoxTimeLine_Actor = m_PlotTimeLineActor->GetLegendBoxActor();
+  //m_LegendBoxTimeLine_Actor = m_PlotTimeLineActor->GetLegendBoxActor();
   m_PlotTimeLineActor->SetLegendPosition(0.75, 0.85); //Set position and size of the Legend Box
   m_PlotTimeLineActor->SetLegendPosition2(0.35, 0.25);
   m_PlotTimeLineActor->SetPosition(0.01,0.01);
@@ -198,7 +198,7 @@ void medPipeGraph::Create(mafNode *node, mafView *view)
   m_PlotActor->SetAxisLabelTextProperty(tProp);
   m_PlotActor->SetTitleTextProperty(tProp);	
 
-  m_LegendBox_Actor = m_PlotActor->GetLegendBoxActor();
+  //m_LegendBox_Actor = m_PlotActor->GetLegendBoxActor();
   m_PlotActor->SetLegendPosition(0.75, 0.85); //Set position and size of the Legend Box
   m_PlotActor->SetLegendPosition2(0.35, 0.25);
   m_PlotActor->SetPosition(0.01,0.01);
@@ -361,7 +361,7 @@ void medPipeGraph::UpdateGraph()
       rect_grid->SetXCoordinates(newTimeArray); 
       rect_grid->GetPointData()->SetScalars(m_ScalarArray.at(c)); 
       m_VtkData.push_back(rect_grid);
-      m_PlotActor->AddInput(m_VtkData.at(c));
+      m_PlotActor->AddDataSetInput(m_VtkData.at(c));
     }
     else
     {
@@ -376,7 +376,7 @@ void medPipeGraph::UpdateGraph()
       rect_grid->SetXCoordinates(fakeTimeArray); 
       rect_grid->GetPointData()->SetScalars(m_ScalarArray.at(c)); 
       m_VtkData.push_back(rect_grid);
-      m_PlotActor->AddInput(m_VtkData.at(c));
+      m_PlotActor->AddDataSetInput(m_VtkData.at(c));
     }
   }
 
@@ -440,13 +440,13 @@ void medPipeGraph::UpdateGraph()
   m_TimeLine->SetDimensions(2, 1, 1);
   m_TimeLine->SetXCoordinates(lineArray);
   m_TimeLine->GetPointData()->SetScalars(scalarArrayLine); 
-  m_TimeLine->Update();
+  //m_TimeLine->Update();
 
   vtkDEL(lineArray);
   vtkDEL(scalarArrayLine);
 
   m_VtkData.push_back(m_TimeLine);
-  m_PlotTimeLineActor->AddInput((vtkDataSet*)m_TimeLine);
+  m_PlotTimeLineActor->AddDataSetInput((vtkDataSet*)m_TimeLine);
 
   m_RenFront->AddActor2D(m_PlotActor);
   //m_RenFront->AddActor2D(m_PlotTimeLineActor);
@@ -459,13 +459,13 @@ void medPipeGraph::CreateLegend()
   int counter_legend = 0;
   mafString name; 
   mafTagItem *tag_Signals = m_Vme->GetTagArray()->GetTag(_R("SIGNALS_COLOR"));
-  m_PlotActor->RemoveAllInputs();
+  m_PlotActor->RemoveAllDataSetInputConnections();
   for (int c = 0; c < m_NumberOfSignals ; c++)
   {
     int idx = c*3;
     if (m_CheckBox->IsItemChecked(c))
     { 
-      m_PlotActor->AddInput(m_VtkData.at(c));
+      m_PlotActor->AddDataSetInput(m_VtkData.at(c));
       m_LegendBox_Actor->SetNumberOfEntries(counter_legend + 1);
       name = m_CheckBox->GetItemLabel(c);
       m_LegendBox_Actor->SetEntryString(counter_legend, name.GetCStr());
@@ -481,9 +481,9 @@ void medPipeGraph::CreateLegend()
     }
   }
 
-  m_PlotTimeLineActor->RemoveAllInputs();
+  m_PlotTimeLineActor->RemoveAllDataSetInputConnections();
 
-  m_PlotTimeLineActor->AddInput(m_VtkData.at(m_VtkData.size()-1));
+  m_PlotTimeLineActor->AddDataSetInput(m_VtkData.at(m_VtkData.size()-1));
 
 }
 //----------------------------------------------------------------------------
@@ -609,7 +609,7 @@ void medPipeGraph::OnEvent(mafEventBase *maf_event)
           mafErrorMessage(_M("Invalid plot range!"));
           return;
         }
-        m_PlotActor->RemoveAllInputs();
+        m_PlotActor->RemoveAllDataSetInputConnections();
         UpdateGraph();
         CreateLegend();
         mafEventMacro(mafEvent(this,CAMERA_UPDATE));
@@ -619,7 +619,7 @@ void medPipeGraph::OnEvent(mafEventBase *maf_event)
       {
         m_Gui->Enable(ID_RANGE_X, !m_FitPlot);
         m_Gui->Enable(ID_RANGE_Y, !m_FitPlot);
-        m_PlotActor->RemoveAllInputs();
+        m_PlotActor->RemoveAllDataSetInputConnections();
         UpdateGraph();
         CreateLegend();
         mafEventMacro(mafEvent(this,CAMERA_UPDATE));
@@ -631,7 +631,7 @@ void medPipeGraph::OnEvent(mafEventBase *maf_event)
         m_ColorRGB[1] = m_SignalColor.Green()/255.0;
         m_ColorRGB[2] = m_SignalColor.Blue()/255.0;
         ChangeSignalColor();
-        m_PlotActor->RemoveAllInputs();
+        m_PlotActor->RemoveAllDataSetInputConnections();
         UpdateGraph();
         CreateLegend();
         mafEventMacro(mafEvent(this,CAMERA_UPDATE));
@@ -639,7 +639,7 @@ void medPipeGraph::OnEvent(mafEventBase *maf_event)
       break;
     case ID_DRAW:
       {
-        m_PlotActor->RemoveAllInputs();
+        m_PlotActor->RemoveAllDataSetInputConnections();
         UpdateGraph();
         CreateLegend();
         mafEventMacro(mafEvent(this,CAMERA_UPDATE));
@@ -750,7 +750,7 @@ void medPipeGraph::OnEvent(mafEventBase *maf_event)
     m_TimeLine->SetDimensions(2, 1, 1);
     m_TimeLine->SetXCoordinates(lineArray);
     m_TimeLine->GetPointData()->SetScalars(scalarArrayLine); 
-    m_TimeLine->Update();
+    //m_TimeLine->Update();
 
     vtkDEL(lineArray);
     vtkDEL(scalarArrayLine);
@@ -758,7 +758,7 @@ void medPipeGraph::OnEvent(mafEventBase *maf_event)
     m_VtkData.pop_back();
     m_VtkData.push_back(m_TimeLine);
 
-    m_PlotTimeLineActor->AddInput((vtkDataSet*)m_TimeLine);
+    m_PlotTimeLineActor->AddDataSetInput((vtkDataSet*)m_TimeLine);
     m_RenFront->AddActor2D(m_PlotTimeLineActor);
     
     CreateLegend();

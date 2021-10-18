@@ -84,7 +84,7 @@ void medPipePolylineGraphEditor::Create(mafNode *node, mafView *view)
 	assert(out_polyline);
 	vtkPolyData *data = vtkPolyData::SafeDownCast(out_polyline->GetVTKData());
 	assert(data);
-	data->Update();
+	//data->Update();
 
 	double range[2]={0.0,1.0};
 
@@ -103,15 +103,15 @@ void medPipePolylineGraphEditor::Create(mafNode *node, mafView *view)
 	VTKTransform->SetInputMatrix(m_Vme->GetAbsMatrixPipe()->GetMatrixPointer());
 	m_Plane->SetTransform(VTKTransform);
 
-	m_Cutter->SetInput(data);
+	m_Cutter->SetInputData(data);
 	m_Cutter->SetCutFunction(m_Plane);
 	m_Cutter->Update();
 
 	vtkNEW(m_Mapper);
 	if(m_Modality==ID_SLICE)
-		m_Mapper->SetInput(m_Cutter->GetOutput());
+		m_Mapper->SetInputConnection(m_Cutter->GetOutputPort());
 	else if(m_Modality==ID_PERSPECTIVE)
-		m_Mapper->SetInput(data);
+		m_Mapper->SetInputData(data);
 	m_Mapper->SetLookupTable(m_LUT);
 	m_Mapper->SetScalarRange(range);
 	if(data->GetPointData()->GetScalars())
@@ -170,9 +170,9 @@ void medPipePolylineGraphEditor::SetModalityPerspective()
 		assert(out_polyline);
 		vtkPolyData *data = vtkPolyData::SafeDownCast(out_polyline->GetVTKData());
 		assert(data);
-		data->Update();
+		//data->Update();
 
-		m_Mapper->SetInput(data);
+		m_Mapper->SetInputData(data);
 		m_Mapper->Update();
 	}
 }
@@ -184,7 +184,7 @@ void medPipePolylineGraphEditor::SetModalitySlice()
 
 	if(m_Mapper)
 	{
-		m_Mapper->SetInput(m_Cutter->GetOutput());
+		m_Mapper->SetInputConnection(m_Cutter->GetOutputPort());
 		m_Mapper->Update();
 	}
 }

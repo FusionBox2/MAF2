@@ -91,8 +91,8 @@ medVMEWrappedMeter::medVMEWrappedMeter()
   //vtkNEW(m_LineSourceMiddle);
   vtkNEW(m_Goniometer);
 
-  m_Goniometer->AddInput(m_LineSource->GetOutput());
-  m_Goniometer->AddInput(m_LineSource2->GetOutput());
+  m_Goniometer->AddInputConnection(m_LineSource->GetOutputPort());
+  m_Goniometer->AddInputConnection(m_LineSource2->GetOutputPort());
 
   mafNEW(m_TmpTransform);
 
@@ -102,7 +102,7 @@ medVMEWrappedMeter::medVMEWrappedMeter()
   mafDataPipeCustom *dpipe = mafDataPipeCustom::New();
   dpipe->SetDependOnAbsPose(true);
   SetDataPipe(dpipe);
-  dpipe->SetInput(m_Goniometer->GetOutput());
+  dpipe->SetInputConnection(m_Goniometer->GetOutputPort());
 
 }
 //-------------------------------------------------------------------------
@@ -153,7 +153,7 @@ int medVMEWrappedMeter::DeepCopy(mafNode *a)
 		mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
 		if (dpipe)
 		{
-			dpipe->SetInput(m_Goniometer->GetOutput());
+			dpipe->SetInputConnection(m_Goniometer->GetOutputPort());
 		}
 		return MAF_OK;
 	}
@@ -371,12 +371,12 @@ void medVMEWrappedMeter::InternalUpdateAutomatedIOR()
     // create ordered list of tangent point (2) real algorithm
     vtkMAFSmartPointer<vtkTransformPolyDataFilter> transformFirstDataInput;
     transformFirstDataInput->SetTransform((vtkAbstractTransform *)((mafVME *)wrapped_vme)->GetAbsMatrixPipe()->GetVTKTransform());
-    transformFirstDataInput->SetInput((vtkPolyData *)((mafVME *)wrapped_vme)->GetOutput()->GetVTKData());
+    transformFirstDataInput->SetInputConnection(((mafVME *)wrapped_vme)->GetOutput()->GetVTKOutputPort());
     transformFirstDataInput->Update();
 
     vtkMAFSmartPointer<vtkTransformPolyDataFilter> transformFirstData;
     transformFirstData->SetTransform((vtkAbstractTransform *)m_TmpTransform->GetVTKTransform());
-    transformFirstData->SetInput((vtkPolyData *)transformFirstDataInput->GetOutput());
+    transformFirstData->SetInputConnection(transformFirstDataInput->GetOutputPort());
     transformFirstData->Update(); 
 
     // here REAL ALGORITHM //////////////////////////////
@@ -508,7 +508,7 @@ void medVMEWrappedMeter::InternalUpdateAutomatedIOR()
     m_PlaneCutter->SetNormal(m_PlaneSource->GetNormal());
 
 
-    m_Cutter->SetInput(transformFirstData->GetOutput());
+    m_Cutter->SetInputConnection(transformFirstData->GetOutputPort());
     m_Cutter->SetCutFunction(m_PlaneCutter);
 
     double midPoint[3];
@@ -580,7 +580,7 @@ void medVMEWrappedMeter::InternalUpdateAutomatedIOR()
     m_PlaneClip->SetNormal(normal);
 
 
-    m_Clip->SetInput(m_Cutter->GetOutput());
+    m_Clip->SetInputConnection(m_Cutter->GetOutputPort());
     m_Clip->SetClipFunction(m_PlaneClip);
 
     double clipLength = 0;
@@ -609,10 +609,10 @@ void medVMEWrappedMeter::InternalUpdateAutomatedIOR()
     m_LineSource->SetPoint1(local_start[0],local_start[1],local_start[2]);
     m_LineSource->SetPoint2(pointTangent1[0],pointTangent1[1],pointTangent1[2]);
 
-    m_Goniometer->AddInput(m_LineSource->GetOutput());
-    m_Goniometer->AddInput(m_LineSource2->GetOutput());
+    m_Goniometer->AddInputConnection(m_LineSource->GetOutputPort());
+    m_Goniometer->AddInputConnection(m_LineSource2->GetOutputPort());
     //m_Goniometer->AddInput(m_LineSourceMiddle->GetOutput());
-    m_Goniometer->AddInput(m_Clip->GetOutput());
+    m_Goniometer->AddInputConnection(m_Clip->GetOutputPort());
 
 
     InvokeEvent(this, VME_OUTPUT_DATA_UPDATE);
@@ -791,7 +791,7 @@ void medVMEWrappedMeter::AvoidWrapping(double *local_start, double *local_end)
   //if there is no intersection with geometry
   m_LineSource->SetPoint1(local_start[0],local_start[1],local_start[2]);
   m_LineSource->SetPoint2(local_end[0],local_end[1],local_end[2]);
-  m_Goniometer->AddInput(m_LineSource->GetOutput());
+  m_Goniometer->AddInputConnection(m_LineSource->GetOutputPort());
   
   m_Distance = sqrt(vtkMath::Distance2BetweenPoints(local_start, local_end));
 
@@ -930,12 +930,12 @@ void medVMEWrappedMeter::InternalUpdateAutomated()
   // create ordered list of tangent point (2) real algorithm
   vtkMAFSmartPointer<vtkTransformPolyDataFilter> transformFirstDataInput;
   transformFirstDataInput->SetTransform(wrapped_vme->GetAbsMatrixPipe()->GetVTKTransform());
-  transformFirstDataInput->SetInput((vtkPolyData *)wrapped_vme->GetOutput()->GetVTKData());
+  transformFirstDataInput->SetInputConnection(wrapped_vme->GetOutput()->GetVTKOutputPort());
   transformFirstDataInput->Update();
 
   vtkMAFSmartPointer<vtkTransformPolyDataFilter> transformFirstData;
   transformFirstData->SetTransform(m_TmpTransform->GetVTKTransform());
-  transformFirstData->SetInput((vtkPolyData *)transformFirstDataInput->GetOutput());
+  transformFirstData->SetInputConnection(transformFirstDataInput->GetOutputPort());
   transformFirstData->Update(); 
 
   // here REAL ALGORITHM //////////////////////////////
@@ -950,7 +950,7 @@ void medVMEWrappedMeter::InternalUpdateAutomated()
     //if one point is inside connect start and end
     m_LineSource->SetPoint1(local_start[0],local_start[1],local_start[2]);
     m_LineSource->SetPoint2(local_end[0],local_end[1],local_end[2]);
-    m_Goniometer->AddInput(m_LineSource->GetOutput());
+    m_Goniometer->AddInputConnection(m_LineSource->GetOutputPort());
 
     m_Distance = sqrt(vtkMath::Distance2BetweenPoints(local_start, local_end));
 
@@ -975,7 +975,7 @@ void medVMEWrappedMeter::InternalUpdateAutomated()
     //if there is no intersection with geometry
     m_LineSource->SetPoint1(local_start[0],local_start[1],local_start[2]);
     m_LineSource->SetPoint2(local_end[0],local_end[1],local_end[2]);
-    m_Goniometer->AddInput(m_LineSource->GetOutput());
+    m_Goniometer->AddInputConnection(m_LineSource->GetOutputPort());
 
     m_Distance = sqrt(vtkMath::Distance2BetweenPoints(local_start, local_end));
 
@@ -1281,7 +1281,7 @@ void medVMEWrappedMeter::InternalUpdateAutomated()
   m_PlaneCutter->SetNormal(m_PlaneSource->GetNormal());
 
 
-  m_Cutter->SetInput(transformFirstData->GetOutput());
+  m_Cutter->SetInputConnection(transformFirstData->GetOutputPort());
   m_Cutter->SetCutFunction(m_PlaneCutter);
 
   double midPoint[3];
@@ -1300,7 +1300,7 @@ void medVMEWrappedMeter::InternalUpdateAutomated()
   m_PlaneClip->SetNormal(normal);
 
 
-  m_Clip->SetInput(m_Cutter->GetOutput());
+  m_Clip->SetInputConnection(m_Cutter->GetOutputPort());
   m_Clip->SetClipFunction(m_PlaneClip);
 
   double clipLength = 0;
@@ -1329,10 +1329,10 @@ void medVMEWrappedMeter::InternalUpdateAutomated()
   m_LineSource->SetPoint1(local_start[0],local_start[1],local_start[2]);
   m_LineSource->SetPoint2(pointTangent1[0],pointTangent1[1],pointTangent1[2]);
 
-  m_Goniometer->AddInput(m_LineSource->GetOutput());
+  m_Goniometer->AddInputConnection(m_LineSource->GetOutputPort());
   //m_Goniometer->AddInput(m_LineSourceMiddle->GetOutput());
-  m_Goniometer->AddInput(m_Clip->GetOutput());
-  m_Goniometer->AddInput(m_LineSource2->GetOutput());
+  m_Goniometer->AddInputConnection(m_Clip->GetOutputPort());
+  m_Goniometer->AddInputConnection(m_LineSource2->GetOutputPort());
 
 
   InvokeEvent(this, VME_OUTPUT_DATA_UPDATE);
@@ -1517,15 +1517,15 @@ void medVMEWrappedMeter::InternalUpdateManual()
         m_LineSource->SetPoint1(local_start[0],local_start[1],local_start[2]);
         m_LineSource->SetPoint2(local_end[0],local_end[1],local_end[2]);
 				
-        m_Goniometer->AddInput(m_LineSource->GetOutput());
-        m_Goniometer->AddInput(m_LineSource2->GetOutput());
+        m_Goniometer->AddInputConnection(m_LineSource->GetOutputPort());
+        m_Goniometer->AddInputConnection(m_LineSource2->GetOutputPort());
 
       }
 
       for(int j=0; j<m_MiddlePointList.size(); j++)
       {    
         m_LineSourceList.push_back(vtkLineSource::New());
-        m_Goniometer->AddInput(m_LineSourceList[m_LineSourceList.size()-1]->GetOutput());
+        m_Goniometer->AddInputConnection(m_LineSourceList[m_LineSourceList.size()-1]->GetOutputPort());
         if(j==0)
         {        
           m_LineSourceList[m_LineSourceList.size()-1]->SetPoint1(local_start[0],local_start[1],local_start[2]);
@@ -1541,7 +1541,7 @@ void medVMEWrappedMeter::InternalUpdateManual()
         if(j == m_MiddlePointList.size()-1)
         {
           m_LineSourceList.push_back(vtkLineSource::New());
-          m_Goniometer->AddInput(m_LineSourceList[m_LineSourceList.size()-1]->GetOutput());
+          m_Goniometer->AddInputConnection(m_LineSourceList[m_LineSourceList.size()-1]->GetOutputPort());
        
           m_LineSourceList[m_LineSourceList.size()-1]->SetPoint1(localMiddlePointList[j][0],localMiddlePointList[j][1],localMiddlePointList[j][2]);
           m_LineSourceList[m_LineSourceList.size()-1]->SetPoint2(local_end[0],local_end[1],local_end[2]);
