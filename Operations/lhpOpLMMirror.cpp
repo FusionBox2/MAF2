@@ -31,7 +31,6 @@
 #include "mafVMELandmarkCloud.h"
 
 #include "vtkPolyData.h"
-#include "vtkMEDPolyDataMirror.h"
 
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(lhpOpLMMirror);
