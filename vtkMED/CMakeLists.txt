@@ -48,8 +48,6 @@ SET(vtkMED_SRCS
   vtkMEDSubdividePolylines.h
   vtkMEDLandmarkCloudPolydataFilter.cxx
   vtkMEDLandmarkCloudPolydataFilter.h
-  vtkBox.cxx
-  vtkBox.h
   vtkMaskPolyDataFilter.cxx
   vtkMaskPolyDataFilter.h
   vtkHoleConnectivity.cxx
@@ -133,8 +131,6 @@ ENDIF (MAF_USE_ITK)
 
 SET(vtkMED_SRCS
   ${vtkMED_SRCS}
-  vtkBoundingBox.cxx
-  vtkBoundingBox.h
   vtkMEDPastValuesList.cpp
   vtkMEDPastValuesList.h
   vtkMEDStentModelSource.cpp

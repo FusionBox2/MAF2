@@ -27,7 +27,7 @@ hack for mafLogMessage was used.
 #include "vtkPoints.h"
 #include "vtkCellArray.h"
 #include "vtkCell.h"
-#include "vtkIdType.h"
+#include "vtkType.h"
 #include "vtkIdList.h"
 #include "vtkMath.h"
 #include "vtkIndent.h"
@@ -47,7 +47,7 @@ hack for mafLogMessage was used.
 #endif
 #endif
 
-const /*static*/ vtkIdType mafPolylineGraph::m_UndefinedId = VTK_LARGE_ID ;
+const /*static*/ vtkIdType mafPolylineGraph::m_UndefinedId = VTK_ID_MAX ;
 const /*static*/ int mafPolylineGraph::m_UndefinedInt = -1 ;
 const /*static*/ char* mafPolylineGraph::m_UndefinedName = "****" ;
 
