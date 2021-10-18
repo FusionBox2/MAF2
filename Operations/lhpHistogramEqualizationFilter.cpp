@@ -40,7 +40,6 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 
 //----------------------------------------------------------------------------
 // mandatory vtk macro
-vtkCxxRevisionMacro(lhpHistogramEqualizationFilter, "$Revision: 1.1.2.1 $");
 
 
 //----------------------------------------------------------------------------
@@ -103,18 +102,18 @@ void lhpHistogramEqualizationFilter::ExecuteInformation(vtkImageData *inData, vt
 //----------------------------------------------------------------------------
 {
   // Mustn't multithread this filter
-  this->SetNumberOfThreads(1) ;
+  //this->SetNumberOfThreads(1) ;
 
   inData->GetDimensions(m_dims) ;
   inData->GetSpacing(m_spacing) ;
   inData->GetOrigin(m_origin) ;
 
   outData->SetDimensions(m_dims) ;
-  outData->SetWholeExtent(0, m_dims[0]-1, 0, m_dims[1]-1, 0, m_dims[2]-1) ;
+  //outData->SetWholeExtent(0, m_dims[0]-1, 0, m_dims[1]-1, 0, m_dims[2]-1) ;
   outData->SetOrigin(m_origin) ;
   outData->SetSpacing(m_spacing) ;
-  outData->SetNumberOfScalarComponents(1) ;
-  outData->SetScalarTypeToUnsignedChar() ;
+  //outData->SetNumberOfScalarComponents(1) ;
+  //outData->SetScalarTypeToUnsignedChar() ;
 
 }
 
@@ -129,7 +128,7 @@ void lhpHistogramEqualizationFilter::ComputeInputUpdateExtent(int inExt[6], int 
 {
   int *wholeExtent;
 
-  wholeExtent = this->GetInput()->GetWholeExtent();
+  //wholeExtent = this->GetInput()->GetWholeExtent();
   memcpy(inExt, wholeExtent, 6*sizeof(int));
 }
 
@@ -304,8 +303,8 @@ void lhpHistogramEqualizationFilter::ThreadedExecute(
   switch (inData->GetScalarType())
   {
     // The VTK_TT argument is set to a null pointer of type inData->GetScalarType()
-    vtkTemplateMacro6(ImageFilterExecute1, this, inData,
-      static_cast<VTK_TT*>(inPtr), outData, outExt, id);
+    //vtkTemplateMacro6(ImageFilterExecute1, this, inData,
+      //static_cast<VTK_TT*>(inPtr), outData, outExt, id);
   default:
     vtkErrorMacro(<< "Execute: Unknown input ScalarType");
     return;

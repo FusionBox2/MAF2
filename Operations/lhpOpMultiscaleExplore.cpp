@@ -1064,8 +1064,8 @@ void lhpOpMultiscaleExplore::OnStartRender(vtkRenderer *renderer)
 
   // Get the current scale in tidy units and display in the dialog
   int iscale ;
-  std::ostrstream units ;
-  std::ostrstream value ;
+  std::ostringstream units ;
+  std::ostringstream value ;
 
   double scale = GetMultiscaleUtility()->GetCameraUtility()->CalculateScale(renderer->GetActiveCamera()) ;
   GetMultiscaleUtility()->ConvertScaleToTidyUnits(scale, m_BaseUnits, &iscale, units) ;
@@ -1455,7 +1455,7 @@ void lhpOpMultiscaleExplore::OnDebug(std::ostream& os, vtkRenderer *renderer)
 //------------------------------------------------------------------------------
 {
   // print state of system as held by multiscale utility
-  GetMultiscaleUtility()->PrintSelf(os, 0) ;
+  GetMultiscaleUtility()->PrintSelf(os, vtkIndent(0)) ;
 
   // print positions and sizes of actors
   os << "size and postion of actors" << std::endl ;

@@ -22,6 +22,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "lhpTextureOrientationUseful.h"
 #include "vtkMath.h"
 #include "vtkPointData.h"
+#include "vtkDataArray.h"
 
 namespace lhpTextureOrientationUseful
 {
@@ -113,7 +114,7 @@ namespace lhpTextureOrientationUseful
   void PrintAttributeData(ostream& os, vtkDataSet *dataset)
     //------------------------------------------------------------------------------
   {
-    dataset->Update() ;
+    //dataset->Update() ;
     vtkPointData *PD = dataset->GetPointData() ;
 
     int na = PD->GetNumberOfArrays() ;

@@ -17,13 +17,13 @@ See the COPYINGS file for license details
 #include "vtkObject.h"
 #include "vtkPoints.h"
 
-#pragma region vtkMAFMuscleFibers
+#pragma region vtkMAFMuscleFibers;
 //abstract class for all muscle fibers geometries
 //IMPORTANT NOTE: fiber templates use left hand oriented coordinate system
 class VTK_vtkLHP_EXPORT vtkMAFMuscleFibers : public vtkObject
 {
 public:  
-  vtkTypeRevisionMacro(vtkMAFMuscleFibers, vtkObject);  
+  vtkTypeMacro(vtkMAFMuscleFibers, vtkObject);  
 
   typedef double VCoord[3];
 
@@ -127,7 +127,7 @@ private:
 class vtkMAFParallelMuscleFibers : public vtkMAFMuscleFibers
 {
 public:  
-  vtkTypeRevisionMacro(vtkMAFParallelMuscleFibers, vtkMAFMuscleFibers); 
+  vtkTypeMacro(vtkMAFParallelMuscleFibers, vtkMAFMuscleFibers); 
   inline static vtkMAFParallelMuscleFibers* New() {
     return new vtkMAFParallelMuscleFibers();
   }
@@ -144,7 +144,7 @@ private:
 class vtkMAFPennateMuscleFibers : public vtkMAFMuscleFibers
 {
 public:  
-  vtkTypeRevisionMacro(vtkMAFPennateMuscleFibers, vtkMAFMuscleFibers); 
+  vtkTypeMacro(vtkMAFPennateMuscleFibers, vtkMAFMuscleFibers); 
 
   /** dblX_factor denotes the size of origin (O) and insertion (I) area in the unit cube. 
   Both are from interval (0, 1). dblPennateFactor defines the degree of pennation (should be >= 1)*/
@@ -166,7 +166,7 @@ private:
 class vtkMAFCurvedMuscleFibers : public vtkMAFMuscleFibers
 {
 public:  
-  vtkTypeRevisionMacro(vtkMAFCurvedMuscleFibers, vtkMAFMuscleFibers); 
+  vtkTypeMacro(vtkMAFCurvedMuscleFibers, vtkMAFMuscleFibers); 
 
   /** dblOI_factor is from interval (0 to 0.5)
   dblCurvedFactor defines the degree of attraction towards inner points (should be >= 1) */
@@ -186,7 +186,7 @@ private:
 class vtkMAFFannedMuscleFibers : public vtkMAFMuscleFibers
 {
 public:  
-  vtkTypeRevisionMacro(vtkMAFFannedMuscleFibers, vtkMAFMuscleFibers); 
+  vtkTypeMacro(vtkMAFFannedMuscleFibers, vtkMAFMuscleFibers); 
 
   /** dblX1_factor denotes the size of origin (O) and insertion (I) area of the 
   outer band of fibers (in unit cube). dblFanCenter is y-position of middle 
@@ -209,7 +209,7 @@ private:
 class vtkMAFRectusMuscleFibers : public vtkMAFMuscleFibers
 {
 public:  
-  vtkTypeRevisionMacro(vtkMAFRectusMuscleFibers, vtkMAFMuscleFibers); 
+  vtkTypeMacro(vtkMAFRectusMuscleFibers, vtkMAFMuscleFibers); 
 
   /** See Blemker's paper about rectus modeling. O1_x and O2_x denote the x-coordinates
   of origin rectangular area on the first side of unit cube, O12_y is denotes the 

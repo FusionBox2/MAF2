@@ -107,7 +107,7 @@ medVMEMuscleWrapper::medVMEMuscleWrapper()
   mafDataPipeCustom *dpipe = mafDataPipeCustom::New();
   dpipe->SetDependOnAbsPose(true);
   SetDataPipe(dpipe);
-  dpipe->SetInput(m_PolyData); 
+  dpipe->SetInputData(m_PolyData); 
 }
 //-------------------------------------------------------------------------
 medVMEMuscleWrapper::~medVMEMuscleWrapper()
@@ -177,7 +177,7 @@ int medVMEMuscleWrapper::DeepCopy(mafNode *a)
     //=> we need to reassign input for the data pipe
     mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
     if (dpipe != NULL){
-      dpipe->SetInput(m_PolyData);
+      dpipe->SetInputData(m_PolyData);
     }    
     
     return MAF_OK;
@@ -606,7 +606,7 @@ void medVMEMuscleWrapper::InternalUpdate()
 
         //get control curve from the associated VME
         pPoly = vtkPolyData::SafeDownCast(pItem->pVmeRP_CP[iPos]->GetOutput()->GetVTKData());
-        pPoly->Update();    //force update        
+        pItem->pVmeRP_CP[iPos]->GetOutput()->Update();    //force update        
           
         unsigned long nNewCheckSum = ComputeCheckSum(pPoly);
         if (nNewCheckSum != pItem->VMECheckSums[i])
@@ -680,7 +680,7 @@ void medVMEMuscleWrapper::InternalUpdate()
       if (m_InputMode != 0)
       {
         pPoly = vtkPolyData::SafeDownCast(m_MuscleVme->GetOutput()->GetVTKData());
-        pPoly->Update();
+        m_MuscleVme->GetOutput()->Update();
       }
       else
       {
@@ -688,7 +688,7 @@ void medVMEMuscleWrapper::InternalUpdate()
         m_MuscleVme->SetTimeStamp(0);
 
         pPoly = vtkPolyData::SafeDownCast(m_MuscleVme->GetOutput()->GetVTKData());
-        pPoly->Update();    //force update
+        m_MuscleVme->GetOutput()->Update();    //force update
 
         m_MuscleVme->SetTimeStamp(t);      
       }
@@ -775,15 +775,13 @@ void medVMEMuscleWrapper::DeformMuscle(vtkPolyData* pMuscle)
   else
   {
     //otherwise perform the deformation
-    pDeformer->SetInput(pMuscle);
+    pDeformer->SetInputData(pMuscle);
 
     if (m_VisMode == 0)  //we do not want to generate fibers    
     {
       pDeformer->SetOutput(m_PolyData);    
       pDeformer->Update();
-
-      //disconnect PolyData from its source
-      pDeformer->SetOutput(NULL);
+      m_PolyData->DeepCopy(pDeformer->GetOutput());
     }
     else
     {
@@ -820,7 +818,7 @@ void medVMEMuscleWrapper::GenerateFibers(vtkPolyData* pMuscle)
   vtkPoints* ins_points = CreatePointsFromVME(m_OIVME[1]);
 
   vtkMAFMuscleDecomposition* pMD = vtkMAFMuscleDecomposition::New();
-  pMD->SetInput(pMuscle);
+  pMD->SetInputData(pMuscle);
   pMD->SetFibersTemplate(pFibres);
   pMD->SetNumberOfFibres(m_FbNumFib);
   pMD->SetResolution(m_FbResolution);
@@ -848,15 +846,14 @@ void medVMEMuscleWrapper::GenerateFibers(vtkPolyData* pMuscle)
   else
   {
     vtkTubeFilter* pTube = vtkTubeFilter::New();
-    pTube->SetInput(pMD->GetOutput());
+    pTube->SetInputConnection(pMD->GetOutputPort());
     //pTube->UseDefaultNormalOff();        
     //pTube->SetCapping(true);
     pTube->SetNumberOfSides(8);
     pTube->SetRadius(m_FbThickness); //0.01);
-    pTube->SetOutput(m_PolyData);
     pTube->Update();
+    m_PolyData->DeepCopy(pTube->GetOutput());
 
-    pTube->SetOutput(NULL);
     pTube->Delete();
   }
   pMD->Delete();
@@ -1009,7 +1006,7 @@ vtkPolyData* medVMEMuscleWrapper::FixPolyline(vtkPolyData* input)
   int nInEdges = input->GetNumberOfCells();
   int nOutEdges = 0;
 
-  typedef int Edge[2];
+  typedef vtkIdType Edge[2];
   Edge* pEdges = new Edge[nInEdges];
   for (int i = 0; i < nInEdges; i++)
   {
@@ -1072,7 +1069,7 @@ bool medVMEMuscleWrapper::GetRefSysVMEOrigin(mafVME* vme, double* origin)
   if (ds == NULL)
     return false;
 
-  ds->Update();
+  vme->GetOutput()->Update();
   ds->GetCenter(origin);
 
   //returned coordinates are local, so we will need to convert them to 

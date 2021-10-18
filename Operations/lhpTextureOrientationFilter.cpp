@@ -42,7 +42,6 @@ using namespace lhpTextureOrientation ;
 
 //----------------------------------------------------------------------------
 // mandatory vtk macro
-vtkCxxRevisionMacro(lhpTextureOrientationFilter, "$Revision: 1.1.2.2 $");
 
 
 //----------------------------------------------------------------------------
@@ -177,7 +176,7 @@ void lhpTextureOrientationFilter::SetTexWinStepSize(double step)
 void lhpTextureOrientationFilter::Execute()
 //----------------------------------------------------------------------------
 {
-  m_input = this->GetInput() ;
+  m_input = (vtkImageData*)this->GetInput() ;
   m_output = this->GetOutput() ;
 
   // Refresh the filter and output data
@@ -211,7 +210,7 @@ void lhpTextureOrientationFilter::FilterExecute()
   int ncompsIn = m_input->GetNumberOfScalarComponents() ;
 
   // Get properties of the input image
-  m_input->GetWholeExtent(inputWholeExt) ;
+  //m_input->GetWholeExtent(inputWholeExt) ;
   m_input->GetExtent(inputExt) ;
   m_input->GetOrigin(origin) ;
   m_input->GetSpacing(spacing) ;
@@ -448,9 +447,9 @@ void lhpTextureOrientationFilter::PrintSelf(ostream& os, vtkIndent indent)
 void lhpTextureOrientationFilter::PrintResults(ostream& os)
 //----------------------------------------------------------------------------
 {
-  m_output->Update() ;
+  //m_output->Update() ;
 
-  PrintSelf(os, 0) ;
+  PrintSelf(os, vtkIndent()) ;
 
   vtkPoints *points = m_output->GetPoints() ;
   vtkPointData *PD = m_output->GetPointData() ;

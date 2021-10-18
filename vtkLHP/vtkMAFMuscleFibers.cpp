@@ -17,8 +17,7 @@ See the COPYINGS file for license details
 #include "vtkCellArray.h"
 #include "vtkIdList.h"
 
-vtkCxxRevisionMacro(vtkMAFMuscleFibers, "$Revision: 1.1.2.2 $");
-vtkInstantiatorNewMacro(vtkMAFMuscleFibers);
+//vtkStandardNewMacro(vtkMAFMuscleFibers);
 
 #include "mafMemDbg.h"
 #include "mafDbg.h"
@@ -267,7 +266,6 @@ vtkMAFMuscleFibers::GetControlPolygon(double r, double s, int& nVerts, double& W
 #pragma endregion //vtkMAFMuscleFibers
 
 #pragma region vtkMAFParallelMuscleFibers
-vtkCxxRevisionMacro(vtkMAFParallelMuscleFibers, "$Revision: 1.1.2.2 $");
 //------------------------------------------------------------------------
 vtkMAFParallelMuscleFibers::vtkMAFParallelMuscleFibers()
 //------------------------------------------------------------------------
@@ -304,7 +302,6 @@ vtkMAFParallelMuscleFibers::vtkMAFParallelMuscleFibers()
 #pragma endregion //vtkMAFParallelMuscleFibers
 
 #pragma region vtkMAFPennateMuscleFibers
-vtkCxxRevisionMacro(vtkMAFPennateMuscleFibers, "$Revision: 1.1.2.2 $");
 //------------------------------------------------------------------------
 //dblX_factor denotes the size of origin (O) and insertion (I) area in the unit cube.
 //Both are from interval (0, 1). dblPennateFactor defines the degree of pennation (should by >= 1)
@@ -376,7 +373,6 @@ vtkMAFPennateMuscleFibers::vtkMAFPennateMuscleFibers(double dblO_factor,
 #pragma endregion //vtkMAFPennateMuscleFibers
 
 #pragma region vtkMAFCurvedMuscleFibers
-vtkCxxRevisionMacro(vtkMAFCurvedMuscleFibers, "$Revision: 1.1.2.2 $");
 //------------------------------------------------------------------------
 //dblOI_factor is from interval (0 to 0.5)
 //dblCurvedFactor defines the degree of attraction towards inner points (should be >= 1) 
@@ -479,7 +475,6 @@ vtkMAFCurvedMuscleFibers::vtkMAFCurvedMuscleFibers(double dblOI_factor, double d
 #pragma endregion //vtkMAFCurvedMuscleFibers
 
 #pragma region vtkMAFFannedMuscleFibers
-vtkCxxRevisionMacro(vtkMAFFannedMuscleFibers, "$Revision: 1.1.2.2 $");
 //------------------------------------------------------------------------
 //dblX1_factor denotes the size of origin (O) and insertion (I) area of the 
 //outer band of fibers (in unit cube). dblFanCenter is y-position of middle 
@@ -583,7 +578,6 @@ vtkMAFFannedMuscleFibers::vtkMAFFannedMuscleFibers(double dblO1_factor,
 
 
 #pragma region vtkMAFRectusMuscleFibers
-vtkCxxRevisionMacro(vtkMAFRectusMuscleFibers, "$Revision: 1.1.2.2 $");
 //------------------------------------------------------------------------
 //See Blemker's paper about rectus modeling. O1_x and O2_x denote the x-coordinates
 //of origin rectangular area on the first side of unit cube, O12_y is denotes the 

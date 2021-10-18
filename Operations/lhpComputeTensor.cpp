@@ -80,7 +80,7 @@ bool ComputeTensor(vtkImageData* volume, vtkDataSet* displacementVectors, vtkIma
     TensorCalcGauss((double*)pVectors, (double*)pTensors, J, slices, rows, cols);
 
   // set the tensors to the Volume dataset
-  tensorVolume->Update();
+  //tensorVolume->Update();
   tensorVolume->GetPointData()->SetTensors(tensors);
   tensors->Delete();
   return true;
@@ -114,7 +114,7 @@ bool ComputeEigenvalues(vtkImageData* tensorVolume)
   
   // set the tensors to the Volume dataset
   tensorVolume->GetPointData()->SetVectors(eigenvalueArray);
-  tensorVolume->Update();
+  //tensorVolume->Update();
   eigenvalueArray->Delete();
   return true;
 }
@@ -696,7 +696,7 @@ void TransformComponentToScalars(vtkImageData *volume, vtkDataArray* dataArray, 
 
   // replace the old array
   volume->GetPointData()->SetScalars(createdArray);
-  volume->Update();
+  //volume->Update();
   createdArray->Delete();
 }
 
@@ -767,7 +767,7 @@ void SetArrayToVolume(vtkImageData *volume, vtkDoubleArray* dataArray, double or
     }
   // replace the old array
   volume->GetPointData()->SetScalars(newScalars);
-  volume->Update();
+  //volume->Update();
   newScalars->Delete();
 }
 

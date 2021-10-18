@@ -558,7 +558,7 @@ void lhpOpTextureOrientation::CreateVisualPipe()
 //----------------------------------------------------------------------------
 {
   vtkImageData *inputData = (vtkImageData*)(((mafVMEVolumeGray*)m_Input)->GetVTKOutput()->GetVTKData()) ;
-  inputData->Update() ;
+  ((mafVMEVolumeGray*)m_Input)->GetOutput()->Update() ;
 
   //--------------------------------------------------------------
   // Visualize the input data

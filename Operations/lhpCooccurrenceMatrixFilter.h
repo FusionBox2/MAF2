@@ -1,7 +1,7 @@
 #ifndef __lhpCooccurrenceMatrixFilter_H__
 #define __lhpCooccurrenceMatrixFilter_H__
 
-#include <vtkImageToImageFilter.h>
+#include <vtkImageAlgorithm.h>
 #include <ostream>
 
 
@@ -38,11 +38,11 @@ enum CooCalculationId {
 //------------------------------------------------------------------------------
 // Cooccurrence matrix class
 //------------------------------------------------------------------------------
-class lhpCooccurrenceMatrixFilter : public vtkImageToImageFilter
+class lhpCooccurrenceMatrixFilter : public vtkImageAlgorithm
 {
 public:
   static lhpCooccurrenceMatrixFilter *New();
-  vtkTypeRevisionMacro(lhpCooccurrenceMatrixFilter,vtkImageToImageFilter);
+  vtkTypeMacro(lhpCooccurrenceMatrixFilter,vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Set/get the output dimensions
@@ -128,7 +128,8 @@ protected:
   // This gives the subclass a chance to configure the output
   // see VTK user's guide p 246
   void ExecuteInformation(vtkImageData *inData, vtkImageData *outData);
-  void ExecuteInformation(){this->vtkImageToImageFilter::ExecuteInformation();};
+  void ExecuteInformation() {}//this->vtkImageToImageFilter::ExecuteInformation();
+
   void ComputeInputUpdateExtent(int inExt[6], int outExt[6]);
 
   void ThreadedExecute(vtkImageData *inData, vtkImageData *outData, 

@@ -40,7 +40,6 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 
 //----------------------------------------------------------------------------
 // mandatory vtk macro
-vtkCxxRevisionMacro(lhpCooccurrenceMatrixFilter, "$Revision: 1.1.2.1 $");
 
 
 //----------------------------------------------------------------------------
@@ -180,7 +179,7 @@ void lhpCooccurrenceMatrixFilter::ExecuteInformation(vtkImageData *inData, vtkIm
 //----------------------------------------------------------------------------
 {
   // Mustn't multithread this filter
-  this->SetNumberOfThreads(1) ;
+  //this->SetNumberOfThreads(1) ;
 
   // The output dimensions depend on the input scalar range.
   // To set it here automatically we would have to call inData->Update(), which is a bit ropy, 
@@ -188,11 +187,11 @@ void lhpCooccurrenceMatrixFilter::ExecuteInformation(vtkImageData *inData, vtkIm
   assert(m_outDimsSet) ;
 
   outData->SetDimensions(m_dimsOut) ;
-  outData->SetWholeExtent(0, m_dimsOut[0]-1, 0, m_dimsOut[1]-1, 0, m_dimsOut[2]-1) ;
+  //outData->SetWholeExtent(0, m_dimsOut[0]-1, 0, m_dimsOut[1]-1, 0, m_dimsOut[2]-1) ;
   outData->SetOrigin(0,0,0) ;
   outData->SetSpacing(1,1,1) ;
-  outData->SetNumberOfScalarComponents(1) ;
-  outData->SetScalarTypeToInt() ;
+  //outData->SetNumberOfScalarComponents(1) ;
+  //outData->SetScalarTypeToInt() ;
 
 
   //----------------------------------------------------------------------------
@@ -200,7 +199,7 @@ void lhpCooccurrenceMatrixFilter::ExecuteInformation(vtkImageData *inData, vtkIm
   //----------------------------------------------------------------------------
   int inDims[3], inExt[6] ;
   inData->GetDimensions(inDims) ;
-  inData->GetWholeExtent(inExt) ;
+  //inData->GetWholeExtent(inExt) ;
 
   if (!m_voiDimsSet){
     // if not set, default dimensions for voi is whole image
@@ -227,7 +226,7 @@ void lhpCooccurrenceMatrixFilter::ComputeInputUpdateExtent(int inExt[6], int *vt
 {
   int *wholeExtent;
 
-  wholeExtent = this->GetInput()->GetWholeExtent();
+  //wholeExtent = this->GetInput()->GetWholeExtent();
   memcpy(inExt, wholeExtent, 6*sizeof(int));
 }
 
@@ -662,8 +661,8 @@ void lhpCooccurrenceMatrixFilter::ThreadedExecute(
   switch (inData->GetScalarType())
   {
     // The VTK_TT argument is set to a null pointer of type inData->GetScalarType()
-    vtkTemplateMacro6(ImageFilterExecute1, this, inData,
-      static_cast<VTK_TT*>(inPtr), outData, outExt, id);
+    //vtkTemplateMacro6(ImageFilterExecute1, this, inData,
+      //static_cast<VTK_TT*>(inPtr), outData, outExt, id);
   default:
     vtkErrorMacro(<< "Execute: Unknown input ScalarType");
     return;

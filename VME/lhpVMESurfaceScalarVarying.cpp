@@ -94,7 +94,7 @@ lhpVMESurfaceScalarVarying::lhpVMESurfaceScalarVarying()
   mafDataPipeCustom *dpipe = mafDataPipeCustom::New();
   dpipe->SetDependOnAbsPose(true);
   SetDataPipe(dpipe);
-  dpipe->SetInput(m_PolyData);
+  dpipe->SetInputData(m_PolyData);
 }
 
 //-------------------------------------------------------------------------
@@ -181,7 +181,7 @@ void lhpVMESurfaceScalarVarying::InternalUpdate()
   vtkDataArray *scalars = NULL;
   scalars = m_PolyData->GetPointData()->GetScalars();
   vtkPolyData *p = vtkPolyData::SafeDownCast(GetOutput()->GetVTKData());
-  p->Update();
+  GetOutput()->Update();
   if (scalars)
   {
     p->GetPointData()->SetScalars(scalars);
@@ -300,7 +300,7 @@ void lhpVMESurfaceScalarVarying::SetSurfaceLink(mafNode *surface)
     vtkPolyData *polydata = vtkPolyData::SafeDownCast(surf_link->GetOutput()->GetVTKData());
     if (polydata != NULL)
     {
-      polydata->Update();
+      surf_link->GetOutput()->Update();
       m_PolyData->DeepCopy(polydata);
       m_SurfaceName = surf_link ? surf_link->GetName() : _L("none");
       if (m_Gui)
@@ -318,7 +318,7 @@ void lhpVMESurfaceScalarVarying::SetSurfaceLink(mafNode *surface)
       mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
       if (dpipe)
       {
-        dpipe->SetInput(m_PolyData);
+        dpipe->SetInputData(m_PolyData);
       }
       Modified();
     }
@@ -337,7 +337,7 @@ void lhpVMESurfaceScalarVarying::InitScalars()
     m_ScalarMin = mat.min_value();
   }
   vtkPolyData *polydata = vtkPolyData::SafeDownCast(surf_link->GetOutput()->GetVTKData());
-  polydata->Update();
+  surf_link->GetOutput()->Update();
   m_PolyData->DeepCopy(polydata);
 
   m_Locator = vtkPointLocator::New();
@@ -385,7 +385,7 @@ void lhpVMESurfaceScalarVarying::UpdateSurface()
     double sr[2];
     m_SurfaceScalars->Modified();
     m_SurfaceScalars->GetRange(sr);
-    m_PolyData->Update();
+    //m_PolyData->Update();
     m_PolyData->GetScalarRange(sr);
   }
 }

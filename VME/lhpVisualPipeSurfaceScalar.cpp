@@ -70,12 +70,7 @@ void lhpVisualPipeSurfaceScalar::Create(mafNode *node, mafView *view)
 
   m_Vme->AddObserver(this);
 
-  vtkPolyData *data = output_surface->GetSurfaceData();
-  data->Update();
-
   double sr[2];
-  vtkDataArray *scalar = data->GetPointData()->GetScalars();
-  //scalar->GetRange(sr);
 
   m_Material = output_surface->GetMaterial();
   m_Material->m_MaterialType = mmaMaterial::USE_LOOKUPTABLE;
@@ -83,8 +78,10 @@ void lhpVisualPipeSurfaceScalar::Create(mafNode *node, mafView *view)
 
   int immediate = m_Vme->IsAnimated() ? 1 : 0;
 	vtkNEW(m_Mapper);
-  m_Mapper->SetInput(data);
+  m_Mapper->SetInputConnection(output_surface->GetVTKOutputPort());
+ #if VTK_MAJOR_VERSION <= 7
 	m_Mapper->SetImmediateModeRendering(immediate);
+#endif
   m_Mapper->ScalarVisibilityOn();
   m_Mapper->SetScalarModeToUsePointData();  
   m_Mapper->SetLookupTable((vtkScalarsToColors *)m_Material->m_ColorLut);
@@ -99,10 +96,10 @@ void lhpVisualPipeSurfaceScalar::Create(mafNode *node, mafView *view)
 
   // selection highlight
   vtkMAFSmartPointer<vtkOutlineCornerFilter> corner;
-	corner->SetInput(data);  
+	corner->SetInputConnection(output_surface->GetVTKOutputPort());
 
   vtkMAFSmartPointer<vtkPolyDataMapper> corner_mapper;
-	corner_mapper->SetInput(corner->GetOutput());
+	corner_mapper->SetInputConnection(corner->GetOutputPort());
 
   vtkMAFSmartPointer<vtkProperty> corner_props;
 	corner_props->SetColor(1,1,1);
@@ -182,7 +179,7 @@ void lhpVisualPipeSurfaceScalar::UpdateProperty(bool fromTag)
   mafVMEOutputSurface *output_surface = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
   output_surface->Update();
   vtkPolyData *data = output_surface->GetSurfaceData();
-  data->Update();
+  //data->Update();
 
   if (vme->GetNumberOfScalarData() == 1)
   {

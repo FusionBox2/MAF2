@@ -32,7 +32,7 @@
 #pragma warning(push)
 #pragma warning(disable:4996)
 #include "vtkLHPConfigure.h"
-#include "vtkPolyDataToPolyDataFilter.h"
+#include "vtkPolyDataAlgorithm.h"
 #pragma warning(pop)
 
 #include "vtkMAFMuscleFibers.h"
@@ -40,12 +40,12 @@
 class vtkPoints;
 class vtkCellLocator;
 
-class VTK_vtkLHP_EXPORT vtkMAFMuscleDecomposition : public vtkPolyDataToPolyDataFilter
+class VTK_vtkLHP_EXPORT vtkMAFMuscleDecomposition : public vtkPolyDataAlgorithm
 {
 public:
   static vtkMAFMuscleDecomposition *New();
 
-  vtkTypeRevisionMacro(vtkMAFMuscleDecomposition, vtkPolyDataToPolyDataFilter);  
+  vtkTypeMacro(vtkMAFMuscleDecomposition, vtkPolyDataAlgorithm);  
 
 protected:
   vtkMAFMuscleDecomposition();           

@@ -592,7 +592,7 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
           m_InputVolume = mafVMEVolumeGray::SafeDownCast(VolumeSelection());
           if(m_InputVolume)
           {
-            m_InputVolume->GetOutput()->GetVTKData()->Update();
+            m_InputVolume->GetOutput()->Update();
             m_InputVolume->Update();
             m_InputVolumeName =  m_InputVolume->GetName();
             m_Gui->Update();
@@ -734,7 +734,7 @@ int lhpOpBonemat::HUIntegration()
   assert(inputUnstructuredGrid);
 
   // this wil feed the algorithm...
-  inputUnstructuredGrid->Update();
+  inMesh->GetUnstructuredGridOutput()->Update();
   
   // if VME matrix is not identity apply it to dataset
   vtkTransform *transform = NULL;
@@ -763,7 +763,7 @@ int lhpOpBonemat::HUIntegration()
 
     inputUGTransformed = vtkUnstructuredGrid::New();
 
-    transformFilter->SetInput(inputUnstructuredGrid);
+    transformFilter->SetInputConnection(inMesh->GetUnstructuredGridOutput()->GetVTKOutputPort());
     transformFilter->SetTransform(transform);
     transformFilter->Update();
 
@@ -790,7 +790,7 @@ int lhpOpBonemat::HUIntegration()
     if(volume = vtkImageData::SafeDownCast(mafVMEVolumeGray::SafeDownCast(m_InputVolume)->GetOutput()->GetVTKData()))
     {
       vtkImageData * imagedata = vtkImageData::SafeDownCast(volume);
-      imagedata->Update();
+      m_InputVolume->GetOutput()->Update();
       dataset = SP::New();
       int dimensions[3]; 
       double spacing[3];
@@ -834,7 +834,7 @@ int lhpOpBonemat::HUIntegration()
     {
 
       vtkRectilinearGrid *rectilinearGrid = vtkRectilinearGrid::SafeDownCast(volume);
-      rectilinearGrid->Update();
+      m_InputVolume->GetOutput()->Update();
 
       dataset = RG::New();
       int dimensions[3];
@@ -1120,7 +1120,7 @@ int lhpOpBonemat::HUIntegration()
   cells->DeepCopy(inputUnstructuredGrid->GetCells());
   outputUG->SetPoints(pts);
   outputUG->SetCells(inputUnstructuredGrid->GetCellTypesArray(),inputUnstructuredGrid->GetCellLocationsArray(),cells);
-	outputUG->Update();
+	//outputUG->Update();
 
 	vtkCellData *outCellData = outputUG->GetCellData();
   vtkPointData *outPointData = outputUG->GetPointData();
@@ -1136,7 +1136,7 @@ int lhpOpBonemat::HUIntegration()
   outCellData->AddArray(arrayRho);
 
 	outputUG->Modified();
-  outputUG->Update();
+  //outputUG->Update();
 	
   // COMPUTE MATERIALS & WRITE FREQUENCY FILE
 
@@ -1231,7 +1231,7 @@ int lhpOpBonemat::HUIntegration()
   outputUG->SetFieldData(fdata);
   
   outputUG->Modified();
-  outputUG->Update();
+  //outputUG->Update();
 
   //grouping
   for(int currentCell = 0 ; currentCell<outputUG->GetNumberOfCells(); currentCell++)
@@ -1258,7 +1258,7 @@ int lhpOpBonemat::HUIntegration()
   }
 
   outputUG->Modified();
-  outputUG->Update();
+  //outputUG->Update();
 
   if (inputMeshABSMatrixEqualToIdentity)
   {
@@ -1347,7 +1347,7 @@ int lhpOpBonemat::YoungModuleIntegration()
   assert(inputUnstructuredGrid);
 
   // this wil feed the algorithm...
-  inputUnstructuredGrid->Update();
+  inMesh->GetUnstructuredGridOutput()->Update();
 
   // if VME matrix is not identity apply it to dataset
   vtkTransform *transform = NULL;
@@ -1376,7 +1376,7 @@ int lhpOpBonemat::YoungModuleIntegration()
 
     inputUGTransformed = vtkUnstructuredGrid::New();
 
-    transformFilter->SetInput(inputUnstructuredGrid);
+    transformFilter->SetInputData(inputUnstructuredGrid);
     transformFilter->SetTransform(transform);
     transformFilter->Update();
 
@@ -1402,7 +1402,7 @@ int lhpOpBonemat::YoungModuleIntegration()
     if(volume = vtkImageData::SafeDownCast(mafVMEVolumeGray::SafeDownCast(m_InputVolume)->GetOutput()->GetVTKData()))
     {
       vtkImageData * imagedata = vtkImageData::SafeDownCast(volume);
-      imagedata->Update();
+      m_InputVolume->GetOutput()->Update();
       dataset = SP::New();
       int dimensions[3]; 
       double spacing[3];
@@ -1444,7 +1444,7 @@ int lhpOpBonemat::YoungModuleIntegration()
     {
 
       vtkRectilinearGrid *rectilinearGrid = vtkRectilinearGrid::SafeDownCast(volume);
-      rectilinearGrid->Update();
+      m_InputVolume->GetOutput()->Update();
 
       dataset = RG::New();
       int dimensions[3]; 
@@ -1841,7 +1841,7 @@ int lhpOpBonemat::YoungModuleIntegration()
   outputUG->SetPoints(pts);
   outputUG->SetCells(inputUnstructuredGrid->GetCellTypesArray(),inputUnstructuredGrid->GetCellLocationsArray(),cells);
   
-  outputUG->Update();
+  //outputUG->Update();
 
   vtkCellData *outCellData = outputUG->GetCellData();
   vtkPointData *outPointData = outputUG->GetPointData();
@@ -1857,7 +1857,7 @@ int lhpOpBonemat::YoungModuleIntegration()
   outCellData->AddArray(arrayRo);
 
   outputUG->Modified();
-  outputUG->Update();
+  //outputUG->Update();
 
 
 	mafVMEMesh::SafeDownCast(m_Input)->SetData(outputUG, 0);
@@ -2116,7 +2116,7 @@ int lhpOpBonemat::YoungModuleIntegration()
 
   outputUG->SetFieldData(fdata);
   outputUG->Modified();
-  outputUG->Update();
+  //outputUG->Update();
 
   //grouping
   for(int currentCell = 0 ; currentCell<outputUG->GetNumberOfCells(); currentCell++)
@@ -2142,7 +2142,7 @@ int lhpOpBonemat::YoungModuleIntegration()
 
 
   outputUG->Modified();
-  outputUG->Update();
+  //outputUG->Update();
 
   if (inputMeshABSMatrixEqualToIdentity)
   {

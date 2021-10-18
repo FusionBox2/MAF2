@@ -129,7 +129,7 @@ void lhpTextureOrientationCalculator::Execute()
   // Update the input image
   //----------------------------------------------------------------------------
   assert(m_inputImage != NULL) ;
-  m_inputImage->Update() ;
+  //m_inputImage->Update() ;
 
   // Get dims, bounds and spacing
   int dims[3] ;
@@ -153,7 +153,7 @@ void lhpTextureOrientationCalculator::Execute()
   // ---------------------------------------------------------------------------
 
   lhpCooccurrenceMatrixFilter *coMat = lhpCooccurrenceMatrixFilter::New() ;
-  coMat->SetInput(m_inputImage) ;
+  coMat->SetInputData(m_inputImage) ;
   coMat->SetOutputDimensions(m_numberOfGreyLevels) ;
   coMat->SetCalculationRequest(CooCorrelation, true) ;
   coMat->SetVoiToSoftBoundary() ;

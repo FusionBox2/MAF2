@@ -50,10 +50,10 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "vtkColorTransferFunction.h"
 #include "vtkVolumeMapper.h"
 #include "vtkVolumeProperty.h"
-#include "vtkVolumeTextureMapper2D.h"
+//#include "vtkVolumeTextureMapper2D.h"
 #include "vtkOutlineFilter.h"
-#include "vtkVolumeRayCastCompositeFunction.h"
-#include "vtkVolumeRayCastMapper.h"
+//#include "vtkVolumeRayCastCompositeFunction.h"
+//#include "vtkVolumeRayCastMapper.h"
 #include "vtkXRayVolumeMapper.h"
 #include "vtkMAFVolumeTextureMapper2D.h"
 #include "vtkHedgehog.h"
@@ -221,8 +221,8 @@ bool lhpOpComputeTensor::DatasetsMatch()
     return false;
 
   // update the data before running the computation
-  volume->Update();
-  vectors->Update();
+  //volume->Update();
+  //vectors->Update();
 
   // check if the number of points matches
   if (volume->GetNumberOfPoints() != vectors->GetNumberOfPoints())
@@ -256,13 +256,13 @@ int lhpOpComputeTensor::ComputeTensors()
     return MAF_ERROR;
 
   // update the data before running the computation
-  volume->Update();
-  vectors->Update();
+  //volume->Update();
+  //vectors->Update();
 
   // calculate tensor
   mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(m_VmeTensors->GetDataVector()->GetItem(0));
   m_RenderVolume = vtkImageData::SafeDownCast(item->GetData());
-  m_RenderVolume->Update();
+  //m_RenderVolume->Update();
 
   bool bSamplingInGaussPoints = false;
   if (m_InterpolationType == INTERPOLATION_POINT_GAUSS)
@@ -310,7 +310,7 @@ void lhpOpComputeTensor::CreateOutputDataset()
     // clear the Eigenvalues from the data array ...
     if (!m_bAddEigenvaluesToOutput)
       m_RenderVolume->GetPointData()->SetVectors(NULL);
-    m_RenderVolume->Update();
+    //m_RenderVolume->Update();
     m_VmeTensors->Update();
    
 
@@ -903,10 +903,10 @@ void lhpOpComputeTensor::CreateOutlinePipeline()
   vtkImageData *volume = vtkImageData::SafeDownCast(m_VmeData->GetOutput()->GetVTKData());
   // bounding box actor
   vtkOutlineCornerFilter* OutlineFilter = vtkOutlineCornerFilter::New();
-  OutlineFilter->SetInput(volume);
+  OutlineFilter->SetInputData(volume);
 
   vtkPolyDataMapper* OutlineMapper = vtkPolyDataMapper::New();
-  OutlineMapper->SetInput(OutlineFilter->GetOutput());
+  OutlineMapper->SetInputConnection(OutlineFilter->GetOutputPort());
 
   m_OutlineBox = vtkActor::New();
   m_OutlineBox->SetMapper(OutlineMapper);
@@ -939,14 +939,14 @@ void lhpOpComputeTensor::CreateDataIsosurfacePipeline()
   
   // temporarily use contour filter, because it requires less code
   m_ContourFilter = vtkContourFilter::New();
-  m_ContourFilter->SetInput(volume);
+  m_ContourFilter->SetInputData(volume);
   m_ContourFilter->ComputeNormalsOn();
   m_ContourFilter->ComputeGradientsOff();
   m_ContourFilter->ComputeScalarsOn();
   m_ContourFilter->SetValue(0, m_IsosurfaceValue);
 
   m_IsoMapper = vtkPolyDataMapper::New();
-  m_IsoMapper->SetInput(m_ContourFilter->GetOutput());  
+  m_IsoMapper->SetInputConnection(m_ContourFilter->GetOutputPort());  
   m_IsoMapper->Update();
 
   m_DataIsosurfaceActor = vtkActor::New();
@@ -989,12 +989,12 @@ void lhpOpComputeTensor::CreateTensorVolumePipeline()
   volumeProperty->SetInterpolationTypeToNearest();
  
 
-  vtkVolumeTextureMapper2D *volumeMapper = vtkVolumeTextureMapper2D::New();
-  volumeMapper->SetInput(volume);
+  //vtkVolumeTextureMapper2D *volumeMapper = vtkVolumeTextureMapper2D::New();
+  //volumeMapper->SetInput(volume);
 
   // create the 'actor' and the property
   m_RenderVolumeActor = vtkVolume::New();
-  m_RenderVolumeActor->SetMapper(volumeMapper);
+  //m_RenderVolumeActor->SetMapper(volumeMapper);
   m_RenderVolumeActor->SetProperty(volumeProperty);
   m_RenderVolumeActor->SetVisibility(m_bShowTensors);
 
@@ -1003,7 +1003,7 @@ void lhpOpComputeTensor::CreateTensorVolumePipeline()
 
   // cleanup
   vtkDEL(volumeProperty);
-  vtkDEL(volumeMapper);
+  //vtkDEL(volumeMapper);
 }
 
 
@@ -1016,13 +1016,13 @@ void lhpOpComputeTensor::CreateVectorHedgehogPipeline()
    
   // create vector as a hedgehog (set of lines)
   vtkHedgeHog *hedgehog = vtkHedgeHog::New();
-  hedgehog->SetInput(vectors);
+  hedgehog->SetInputData(vectors);
   hedgehog->SetVectorModeToUseVector();
   hedgehog->SetScaleFactor(1.0);
   hedgehog->Update();
 
   vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();
-  mapper->SetInput(hedgehog->GetOutput());
+  mapper->SetInputConnection(hedgehog->GetOutputPort());
   mapper->Update();
   
   m_VectorHedgehogActor = vtkActor::New();
@@ -1048,15 +1048,15 @@ void lhpOpComputeTensor::CreateVectorGlyphPipeline()
   cone->SetHeight(4);
 
   vtkGlyph3D  *glyph = vtkGlyph3D::New();
-  glyph->SetInput(vectorVolume);
-  glyph->SetSource(cone->GetOutput());
+  glyph->SetInputData(vectorVolume);
+  glyph->SetSourceConnection(cone->GetOutputPort());
   glyph->SetVectorModeToUseVector();
   glyph->SetScaleModeToScaleByVector();
   glyph->SetScaleFactor(1.0);
   glyph->Update();
 
   vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();
-  mapper->SetInput(glyph->GetOutput());
+  mapper->SetInputConnection(glyph->GetOutputPort());
   mapper->Update();
 
   m_VectorGlyphActor = vtkActor::New();
@@ -1102,11 +1102,11 @@ void lhpOpComputeTensor::CreateTensorGlyphPipeline()
   vtkSphereSource* sphere = vtkSphereSource::New();
   sphere->SetThetaResolution(3);
   sphere->SetPhiResolution(3);
-  sphere->GetOutput()->Update();
+  sphere->Update();
   
   vtkTensorGlyph* ellipsoids = vtkTensorGlyph::New();
-  ellipsoids->SetInput(volume);         // here we should input our tensors
-  ellipsoids->SetSource(sphere->GetOutput());
+  ellipsoids->SetInputData(volume);         // here we should input our tensors
+  ellipsoids->SetSourceConnection(sphere->GetOutputPort());
   ellipsoids->SetScaleFactor(CalculateScalingFactor(volume, volume->GetPointData()->GetVectors()));
   ellipsoids->ClampScalingOff();
 
@@ -1115,12 +1115,12 @@ void lhpOpComputeTensor::CreateTensorGlyphPipeline()
   ellipsoidNormals->SetInput(ellipsoids->GetOutput());*/
 
   // test count the number of polygons
-  ellipsoids->GetOutput()->Update();
+  ellipsoids->Update();
 
 
   vtkPolyDataMapper* ellipsoidMapper = vtkPolyDataMapper::New(); 
   //ellipsoidMapper->SetInput(ellipsoidNormals->GetOutput());
-  ellipsoidMapper->SetInput(ellipsoids->GetOutput());
+  ellipsoidMapper->SetInputConnection(ellipsoids->GetOutputPort());
 
   m_TensorGlyphActor = vtkActor::New();
   m_TensorGlyphActor->SetMapper(ellipsoidMapper);

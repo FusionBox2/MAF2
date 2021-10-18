@@ -26,7 +26,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "vtkLight.h"
 #include "vtkLightCollection.h"
 #include "vtkActorCollection.h"
-#include "vtkIdType.h"
+#include "vtkType.h"
 
 #include "lhpMultiscaleActor.h"
 #include "lhpMultiscaleActorCoordsUtility.h"
@@ -339,7 +339,7 @@ void lhpMultiscaleUtility::ResetCameraFitAll(vtkRenderer *renderer)
 //------------------------------------------------------------------------------
 // convert scale value to tidy units, eg 0.342 m -> 300 mm, or 0.6 cm -> 60 mm
 // scale is the input value, and baseUnits is the units which the value is expressed in.
-void lhpMultiscaleUtility::ConvertScaleToTidyUnits(double scale, int baseUnits, int *iscale, std::ostrstream& units)
+void lhpMultiscaleUtility::ConvertScaleToTidyUnits(double scale, int baseUnits, int *iscale, std::ostream& units)
 //------------------------------------------------------------------------------
 {
   // Convert scale to metres

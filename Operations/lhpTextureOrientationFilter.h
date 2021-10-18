@@ -1,7 +1,7 @@
 #ifndef __lhpTextureOrientationFilter_H__
 #define __lhpTextureOrientationFilter_H__
 
-#include "vtkStructuredPointsToPolyDataFilter.h"
+#include "vtkPolyDataAlgorithm.h"
 #include "vtkPolyData.h"
 #include "vtkCommand.h"
 
@@ -22,7 +22,7 @@ namespace lhpTextureOrientation
   };
 }
 
-
+class vtkImageData;
 //------------------------------------------------------------------------------
 // Texture orientation filter
 // This returns a grid of polydata points across the image.
@@ -36,11 +36,11 @@ namespace lhpTextureOrientation
 // 
 //------------------------------------------------------------------------------
 
-class lhpTextureOrientationFilter : public vtkStructuredPointsToPolyDataFilter
+class lhpTextureOrientationFilter : public vtkPolyDataAlgorithm
 {
 public:
   static lhpTextureOrientationFilter *New();
-  vtkTypeRevisionMacro(lhpTextureOrientationFilter, vtkStructuredPointsToPolyDataFilter);
+  vtkTypeMacro(lhpTextureOrientationFilter, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // print results

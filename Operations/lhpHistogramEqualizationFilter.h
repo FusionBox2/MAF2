@@ -1,7 +1,7 @@
 #ifndef __lhpHistogramEqualizationFilter_H__
 #define __lhpHistogramEqualizationFilter_H__
 
-#include <vtkImageToImageFilter.h>
+#include <vtkImageAlgorithm.h>
 
 
 //------------------------------------------------------------------------------
@@ -9,11 +9,11 @@
 // Output image is one component, unsigned char.
 //------------------------------------------------------------------------------
 
-class lhpHistogramEqualizationFilter : public vtkImageToImageFilter
+class lhpHistogramEqualizationFilter : public vtkImageAlgorithm
 {
 public:
   static lhpHistogramEqualizationFilter *New();
-  vtkTypeRevisionMacro(lhpHistogramEqualizationFilter,vtkImageToImageFilter);
+  vtkTypeMacro(lhpHistogramEqualizationFilter,vtkImageAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // set/get which scalar component to use (0, 1 or 2)
@@ -37,7 +37,7 @@ protected:
   // This gives the subclass a chance to configure the output
   // see VTK user's guide p 246
   void ExecuteInformation(vtkImageData *inData, vtkImageData *outData);
-  void ExecuteInformation(){this->vtkImageToImageFilter::ExecuteInformation();};
+  void ExecuteInformation(){}//this->vtkImageToImageFilter::ExecuteInformation();};
   void ComputeInputUpdateExtent(int inExt[6], int outExt[6]);
 
   void ThreadedExecute(vtkImageData *inData, vtkImageData *outData, 

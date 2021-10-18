@@ -55,7 +55,7 @@ lhpTextureOrientationVectorGlyphPipe::lhpTextureOrientationVectorGlyphPipe(mafVM
 {
   // get volume data from vme (could be struct pts or rect grid)
   vtkDataSet *vtk_data = vme->GetOutput()->GetVTKData() ;
-  vtk_data->Update() ;
+  vme->GetOutput()->Update() ;
 
   // get pose matrix from vme
   vtkMatrix4x4 *mat = vme->GetOutput()->GetMatrix()->GetVTKMatrix() ;
@@ -65,14 +65,14 @@ lhpTextureOrientationVectorGlyphPipe::lhpTextureOrientationVectorGlyphPipe(mafVM
   // Equalize the histogram
   //----------------------------------------------------------------------------
   m_histEq = lhpHistogramEqualizationFilter::New() ;
-  m_histEq->SetInput((vtkImageData*)vtk_data) ;
+  m_histEq->SetInputConnection(vme->GetOutput()->GetVTKOutputPort()) ;
   m_histEq->SetNumberOfGreyLevels(6) ;
 
   // --------------------------------------------------------------
   // Calculate the texture direction at points in image
   // --------------------------------------------------------------
   m_texFilter = lhpTextureOrientationFilter::New() ;
-  m_texFilter->SetInput(m_histEq->GetOutput()) ;
+  m_texFilter->SetInputConnection(m_histEq->GetOutputPort()) ;
   m_texFilter->SetOutputToVectorFormat() ;
   m_texFilter->SetTexWinSize(5) ;
   m_texFilter->SetTexWinStepSize(5) ;
@@ -91,13 +91,13 @@ lhpTextureOrientationVectorGlyphPipe::lhpTextureOrientationVectorGlyphPipe(mafVM
   m_transform->Scale(1.0, 0.2, 0.2) ; // glyphing axis is x, so make this the long axis
 
   m_transformPD = vtkTransformPolyDataFilter::New() ;
-  m_transformPD->SetInput((vtkPolyData *)m_ellipsoid->GetOutput());
+  m_transformPD->SetInputConnection(m_ellipsoid->GetOutputPort());
   m_transformPD->SetTransform(m_transform);
 
   m_glyph3D = vtkGlyph3D::New() ;
-  m_glyph3D->SetInput((vtkDataSet *) m_texFilter->GetOutput());
-  m_glyph3D->SetNumberOfSources(1);
-  m_glyph3D->SetSource(m_transformPD->GetOutput());
+  m_glyph3D->SetInputConnection(m_texFilter->GetOutputPort());
+  //m_glyph3D->SetNumberOfSources(1);
+  m_glyph3D->SetSourceConnection(m_transformPD->GetOutputPort());
   m_glyph3D->SetScaleFactor(1);
   m_glyph3D->SetScaleModeToScaleByVector() ;
   m_glyph3D->OrientOn() ;
@@ -105,7 +105,7 @@ lhpTextureOrientationVectorGlyphPipe::lhpTextureOrientationVectorGlyphPipe(mafVM
   m_glyph3D->SetColorModeToColorByScalar() ;  // uses zero component only and maps (0.0, 1.0) to (red, blue)
 
   m_glyphMapper = vtkPolyDataMapper::New() ;
-  m_glyphMapper->SetInput(m_glyph3D->GetOutput()) ;
+  m_glyphMapper->SetInputConnection(m_glyph3D->GetOutputPort()) ;
   m_glyphMapper->SetScalarVisibility(1) ;
 
   m_glyphActor = vtkActor::New() ;
@@ -164,7 +164,7 @@ void lhpTextureOrientationVectorGlyphPipe::SetVisibility(int visibility)
 vtkPolyData* lhpTextureOrientationVectorGlyphPipe::GetPolydata() 
 //------------------------------------------------------------------------------
 {
-  m_texFilter->GetOutput()->Update() ;
+  m_texFilter->Update() ;
   vtkPolyData *poly = m_texFilter->GetOutput() ;
 
   std::fstream thing2 ;

@@ -53,11 +53,8 @@ lhpMultiscaleSurfacePipeline::lhpMultiscaleSurfacePipeline(mafVME* vme, vtkRende
 {
   this->SetType(MSCALE_SURFACE_PIPE) ;
 
-  // get polydata from vme
-  vtkPolyData* polydata = vtkPolyData::SafeDownCast(vme->GetOutput()->GetVTKData());
-
   m_mapper = vtkPolyDataMapper::New() ;
-  m_mapper->SetInput(polydata);
+  m_mapper->SetInputConnection(vme->GetOutput()->GetVTKOutputPort());
   m_mapper->ScalarVisibilityOn();
 
   m_actor = vtkActor::New() ;
@@ -123,7 +120,7 @@ lhpMultiscaleTokenPipeline::lhpMultiscaleTokenPipeline(vtkRenderer *renderer, in
   m_tokenSource->SetZLength(1.0) ;
 
   m_mapper	= vtkPolyDataMapper::New();
-  m_mapper->SetInput(m_tokenSource->GetOutput());
+  m_mapper->SetInputConnection(m_tokenSource->GetOutputPort());
   m_mapper->ScalarVisibilityOn();
 
   m_actor = vtkActor::New();
@@ -246,7 +243,7 @@ lhpMultiscaleVolumeSlicePipeline::lhpMultiscaleVolumeSlicePipeline(mafVME* vme, 
 
   // get volume data from vme (could be struct pts or rect grid)
   vtkDataSet *vtk_data = vme->GetOutput()->GetVTKData() ;
-  vtk_data->Update() ;
+  vme->GetOutput()->Update() ;
   if(vtk_data->IsA("vtkImageData") || vtk_data->IsA("vtkStructuredPoints"))
   {
     ((vtkImageData *)vtk_data)->GetSpacing(xspc,yspc,zspc);
@@ -261,9 +258,9 @@ lhpMultiscaleVolumeSlicePipeline::lhpMultiscaleVolumeSlicePipeline(mafVME* vme, 
 
   // set up pipeline to visualize bounding box
   m_ocf = vtkOutlineCornerFilter::New() ;
-  m_ocf->SetInput(vtk_data) ;
+  m_ocf->SetInputConnection(vme->GetOutput()->GetVTKOutputPort()) ;
   m_boxMapper = vtkPolyDataMapper::New() ;
-  m_boxMapper->SetInput(m_ocf->GetOutput()) ;
+  m_boxMapper->SetInputConnection(m_ocf->GetOutputPort()) ;
   m_boxMapper->ScalarVisibilityOn() ;
   m_boxActor = vtkActor::New() ;
   m_boxActor->SetMapper(m_boxMapper) ;
@@ -292,14 +289,14 @@ lhpMultiscaleVolumeSlicePipeline::lhpMultiscaleVolumeSlicePipeline(mafVME* vme, 
   m_SlicerImage = vtkMAFVolumeSlicer::New() ;
   this->SetSlicePosition(pos) ;
   this->SetSliceDirection(viewId) ;
-  m_SlicerImage->SetInput(vtk_data);
-  m_SlicerPolygonal->SetInput(vtk_data);
+  m_SlicerImage->SetInputConnection(vme->GetOutput()->GetVTKOutputPort());
+  m_SlicerPolygonal->SetInputConnection(vme->GetOutput()->GetVTKOutputPort());
 
  
   // set up image to be output of image slicer
   m_Image = vtkImageData::New() ;
-  m_Image->SetScalarType(vtk_data->GetPointData()->GetScalars()->GetDataType());
-  m_Image->SetNumberOfScalarComponents(vtk_data->GetPointData()->GetScalars()->GetNumberOfComponents());
+  //m_Image->SetScalarType(vtk_data->GetPointData()->GetScalars()->GetDataType());
+  //m_Image->SetNumberOfScalarComponents(vtk_data->GetPointData()->GetScalars()->GetNumberOfComponents());
   m_Image->SetExtent(0, m_TextureRes - 1, 0, m_TextureRes - 1, 0, 0);
   m_Image->SetSpacing(xspc, yspc, zspc);
 
@@ -313,8 +310,8 @@ lhpMultiscaleVolumeSlicePipeline::lhpMultiscaleVolumeSlicePipeline(mafVME* vme, 
   m_Texture->InterpolateOn();
   m_Texture->SetQualityTo32Bit();
   m_Texture->SetLookupTable(lut);
-  m_Texture->MapColorScalarsThroughLookupTableOn();
-  m_Texture->SetInput(m_Image);
+  //m_Texture->MapColorScalarsThroughLookupTableOn();
+  m_Texture->SetInputData(m_Image);
 
 
   // Set up polydata slice and add texture
@@ -326,7 +323,7 @@ lhpMultiscaleVolumeSlicePipeline::lhpMultiscaleVolumeSlicePipeline(mafVME* vme, 
 
   // Set the mapper with the lut
   m_sliceMapper = vtkPolyDataMapper::New() ;
-  m_sliceMapper->SetInput(m_SlicePolydata);
+  m_sliceMapper->SetInputData(m_SlicePolydata);
   lut->Delete() ;
 
   m_sliceActor = vtkActor::New() ;

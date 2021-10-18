@@ -33,7 +33,6 @@
 #endif
 
 
-vtkCxxRevisionMacro(vtkMAFMuscleDecomposition, "$Revision: 1.1.2.2 $");
 vtkStandardNewMacro(vtkMAFMuscleDecomposition);
 
 #include "mafMemDbg.h"
@@ -734,7 +733,7 @@ void vtkMAFMuscleDecomposition::SmoothFiber(VCoord* pPoints, int nPoints)
 //------------------------------------------------------------------------
 {
   //check input
-  vtkPolyData* input = GetInput();
+  vtkPolyData* input = GetPolyDataInput(0);
   if (input == NULL)
   {
     vtkErrorMacro(<< "Invalid input for vtkMAFPolyDataDeformation.");
@@ -750,7 +749,10 @@ void vtkMAFMuscleDecomposition::SmoothFiber(VCoord* pPoints, int nPoints)
     this->FibersTemplate = vtkMAFPennateMuscleFibers::New();  //default is a pennate muscle
 
   //copy input to output
-  Superclass::ExecuteInformation();  
+
+  vtkInformation* info;
+  vtkInformationVector** infoVect, *infoV;
+  Superclass::RequestInformation(info, infoVect,infoV);// ExecuteInformation();
 }
 
 
@@ -762,7 +764,7 @@ void vtkMAFMuscleDecomposition::SmoothFiber(VCoord* pPoints, int nPoints)
 {
 #pragma region Input Checks
   //check whether output is valid
-  vtkPolyData* input = GetInput();
+  vtkPolyData* input = GetPolyDataInput(0);
   if (input == NULL)
     return;
 
@@ -873,7 +875,7 @@ void vtkMAFMuscleDecomposition::SmoothFiber(VCoord* pPoints, int nPoints)
 
     vtkCutter* cutter = vtkCutter::New();
     cutter->SetCutFunction(cutPlane);
-    cutter->SetInput(input);  
+    cutter->SetInputData(input);  
 
 #ifdef _DEBUG_CREATE_CONTOURS
     vtkPoints* pPoints = vtkPoints::New();
@@ -1538,7 +1540,7 @@ void vtkMAFMuscleDecomposition::DebugVisualizeFitting(
   //Prepare Target
 #pragma region Input Mesh
   vtkPolyDataMapper* pMapper = vtkPolyDataMapper::New();
-  pMapper->SetInput(GetInput()) ;
+  pMapper->SetInputConnection(  this->GetOutputPort()) ;//GetInput()
 
   vtkActor* pActorMuscle = vtkActor::New();
   pActorMuscle->SetMapper( pMapper );
@@ -1549,19 +1551,19 @@ void vtkMAFMuscleDecomposition::DebugVisualizeFitting(
 
 #pragma region Target OI Areas
   vtkSphereSource* pSphere = vtkSphereSource::New();
-  pSphere->SetRadius(GetInput()->GetLength() / 800);
+  pSphere->SetRadius(GetPolyDataInput(0)->GetLength() / 800);
   
   vtkPolyData* pTarget_O = vtkPolyData::New();
   pTarget_O->SetPoints(target_O);
 
   vtkGlyph3D* pTarget_O_Gl = vtkGlyph3D::New();
-  pTarget_O_Gl->SetInput(pTarget_O);
-  pTarget_O_Gl->SetSource(pSphere->GetOutput());
+  pTarget_O_Gl->SetInputData(pTarget_O);
+  pTarget_O_Gl->SetSourceConnection(pSphere->GetOutputPort());
   pTarget_O_Gl->SetScaleModeToDataScalingOff();
   pTarget_O_Gl->SetRange(0.0,1.0);
   
   pMapper = vtkPolyDataMapper::New();
-  pMapper->SetInput(pTarget_O_Gl->GetOutput()) ;
+  pMapper->SetInputConnection(pTarget_O_Gl->GetOutputPort()) ;
   pTarget_O_Gl->Delete();
 
   vtkActor* pActorTarget_O = vtkActor::New();
@@ -1573,13 +1575,13 @@ void vtkMAFMuscleDecomposition::DebugVisualizeFitting(
   pTarget_I->SetPoints(target_I);
 
   vtkGlyph3D* pTarget_I_Gl = vtkGlyph3D::New();
-  pTarget_I_Gl->SetInput(pTarget_I);
-  pTarget_I_Gl->SetSource(pSphere->GetOutput());
+  pTarget_I_Gl->SetInputData(pTarget_I);
+  pTarget_I_Gl->SetSourceConnection(pSphere->GetOutputPort());
   pTarget_I_Gl->SetScaleModeToDataScalingOff();
   pTarget_I_Gl->SetRange(0.0,1.0);
 
   pMapper = vtkPolyDataMapper::New();
-  pMapper->SetInput(pTarget_I_Gl->GetOutput()) ;
+  pMapper->SetInputConnection(pTarget_I_Gl->GetOutputPort()) ;
   pTarget_I_Gl->Delete();
 
   vtkActor* pActorTarget_I = vtkActor::New();
@@ -1651,13 +1653,13 @@ void vtkMAFMuscleDecomposition::DebugVisualizeFitting(
   pCells->Delete();
 
   vtkTubeFilter* pTube = vtkTubeFilter::New();
-  pTube->SetInput(pCubeSrc);
+  pTube->SetInputData(pCubeSrc);
   pTube->SetNumberOfSides(12);
-  pTube->SetRadius(GetInput()->GetLength() / 1000);    
+  pTube->SetRadius(GetPolyDataInput(0)->GetLength() / 1000);    
   pCubeSrc->Delete();
   
   pMapper = vtkPolyDataMapper::New();
-  pMapper->SetInput(pTube->GetOutput());
+  pMapper->SetInputConnection(pTube->GetOutputPort());
   pTube->Delete();
 
   vtkActor* pActorCube = vtkActor::New();
@@ -1673,9 +1675,9 @@ void vtkMAFMuscleDecomposition::DebugVisualizeFitting(
   vtkActor* pActorTemplate_OI2[2];
   
   vtkCubeSource* pGlyph = vtkCubeSource::New();
-  pGlyph->SetXLength(GetInput()->GetLength() / 300);
-  pGlyph->SetYLength(GetInput()->GetLength() / 300);
-  pGlyph->SetZLength(GetInput()->GetLength() / 300);
+  pGlyph->SetXLength(GetPolyDataInput(0)->GetLength() / 300);
+  pGlyph->SetYLength(GetPolyDataInput(0)->GetLength() / 300);
+  pGlyph->SetZLength(GetPolyDataInput(0)->GetLength() / 300);
 
   const char* FibTemplNames[] = {
     "vtkMAFPennateMuscleFibers", "vtkMAFFannedMuscleFibers", NULL,
@@ -1759,20 +1761,20 @@ void vtkMAFMuscleDecomposition::DebugVisualizeFitting(
     pCells->Delete();
 
     vtkGlyph3D* pTemplGl = vtkGlyph3D::New();
-    pTemplGl->SetInput(pCubeSrc);
-    pTemplGl->SetSource(pGlyph->GetOutput());
+    pTemplGl->SetInputData(pCubeSrc);
+    pTemplGl->SetSourceConnection(pGlyph->GetOutputPort());
     pTemplGl->SetScaleModeToDataScalingOff();
     pTemplGl->SetRange(0.0,1.0);
 
 
     pTube = vtkTubeFilter::New();
-    pTube->SetInput(pCubeSrc);
+    pTube->SetInputData(pCubeSrc);
     pTube->SetNumberOfSides(12);
-    pTube->SetRadius(GetInput()->GetLength() / 800);
+    pTube->SetRadius(GetPolyDataInput(0)->GetLength() / 800);
     pCubeSrc->Delete();
 
     pMapper = vtkPolyDataMapper::New();
-    pMapper->SetInput(pTemplGl->GetOutput());
+    pMapper->SetInputConnection(pTemplGl->GetOutputPort());
     pTemplGl->Delete();
 
     pActorTemplate_OI[i] = vtkActor::New();
@@ -1784,7 +1786,7 @@ void vtkMAFMuscleDecomposition::DebugVisualizeFitting(
     pMapper->Delete();
 
     pMapper = vtkPolyDataMapper::New();
-    pMapper->SetInput(pTube->GetOutput());
+    pMapper->SetInputConnection(pTube->GetOutputPort());
     pTube->Delete();
 
     pActorTemplate_OI2[i] = vtkActor::New();
@@ -1801,7 +1803,7 @@ void vtkMAFMuscleDecomposition::DebugVisualizeFitting(
 
 
 #pragma region Text
-  char szText[MAX_PATH];
+  char szText[_MAX_PATH];
   sprintf(szText, "#%d (out of %d) - score = %.2f", nIndex, nCount, dblScore);
   if (bBestOne)
     strcat(szText, " (BEST ONE)");

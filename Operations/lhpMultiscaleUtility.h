@@ -226,7 +226,7 @@ public:
   //----------------------------------------------------------------------------
 
   /** convert scale to tidy units, eg 0.342 m -> 300 mm */
-  void ConvertScaleToTidyUnits(double scale, int baseUnits, int *iscale, std::ostrstream& units) ;
+  void ConvertScaleToTidyUnits(double scale, int baseUnits, int *iscale, std::ostream& units) ;
 
 
   //----------------------------------------------------------------------------
