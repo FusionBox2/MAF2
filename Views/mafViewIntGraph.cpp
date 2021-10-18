@@ -231,7 +231,6 @@ void mafViewIntGraph::GetVisualPipeName(mafNode *node, mafString &pipe_name)
   assert(v);
 
   v->Modified();
-  vtkDataSet *data = v->GetOutput()->GetVTKData();
   // custom visualization for the view should be considered only
   // if we are not in editing mode.
   mafString vme_type = _R(v->GetTypeName());
