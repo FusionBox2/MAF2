@@ -54,16 +54,32 @@ Then Render()
 #include <vector>
 
 #include "vtkVolumeMapper.h"
+#include "vtkMAFContourVolumeMapper.h"
 #include "vtkPolyData.h"
 #include "vtkMatrix4x4.h"
 
-#ifdef __APPLE__
-#include <OpenGL/gl.h>
-#else
-#include <GL/gl.h>
-#endif
+#include <vtkOpenGL.h>
 
 #include "vtkMAFConfigure.h"
+class VTK_vtkMAF_EXPORT vtkMAFContourVolumeMapperGPU : public vtkMAFContourVolumeMapper
+{
+public:
+    /** create an instance of the object */
+    static vtkMAFContourVolumeMapperGPU* New();
+    /** RTTI Macro */
+    vtkTypeMacro(vtkMAFContourVolumeMapperGPU, vtkMAFContourVolumeMapper);
+protected:
+    /** constructor */
+    vtkMAFContourVolumeMapperGPU();
+    /** destructor */
+    ~vtkMAFContourVolumeMapperGPU();
+
+private:
+    vtkMAFContourVolumeMapperGPU(const vtkMAFContourVolumeMapperGPU&) = delete;
+    void operator=(const vtkMAFContourVolumeMapperGPU&) = delete;
+};
+
+#ifdef COMPLETED
 /**
 namespace name: Baoquan
 */
@@ -245,13 +261,13 @@ class name: vtkMAFContourVolumeMapperGPU.
     /** create an instance of the object */
     static vtkMAFContourVolumeMapperGPU *New();
     /** RTTI Macro */
-    vtkTypeRevisionMacro(vtkMAFContourVolumeMapperGPU, vtkVolumeMapper);
+    vtkTypeMacro(vtkMAFContourVolumeMapperGPU, vtkVolumeMapper);
     
 
     /** The input should be either vtkImageData or vtkRectilinearGrid */
     void  SetInput(vtkDataSet *input);
     /** Get current input*/
-    vtkDataSet*  GetInput() { return (vtkDataSet*)vtkVolumeMapper::GetInput(); }
+    //vtkDataSet*  GetInput() { return (vtkDataSet*)vtkVolumeMapper::GetInput(); }
 
     /** 
     Render the isosurface.
@@ -599,4 +615,5 @@ these classes are used for optimizing the surface by analyzing 2D contours
     Polyline2DGPU *FindContour(int x, int y, int polylineLengthThreshold, int distance = 1);
   };
 //}//end baoquan space
+#endif 
 #endif

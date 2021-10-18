@@ -62,6 +62,7 @@
 #include "vtkCellData.h"
 #include "vtkPlane.h"
 #include "vtkPolyDataNormals.h"
+#include "vtkAlgorithmOutput.h"
 
 #include <vector>
 
@@ -143,7 +144,7 @@ void mafPipeMeshSlice::ExecutePipe()
 //----------------------------------------------------------------------------
 {
   m_Vme->Update();
-  m_Vme->GetOutput()->GetVTKData()->Update();
+  m_Vme->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
 
   m_Selected = false;
   m_Mapper          = NULL;
@@ -156,6 +157,7 @@ void mafPipeMeshSlice::ExecutePipe()
 
   assert(m_Vme->GetOutput()->IsMAFType(mafVMEOutputMesh));
   vtkUnstructuredGrid *data = NULL;
+  vtkAlgorithmOutput* port = nullptr;
   
 
   if(m_Vme->GetOutput()->IsMAFType(mafVMEOutputMesh))
@@ -164,7 +166,8 @@ void mafPipeMeshSlice::ExecutePipe()
     assert(mesh_output);
     mesh_output->Update();
     data = vtkUnstructuredGrid::SafeDownCast(mesh_output->GetVTKData());
-    data->Update();
+	port = mesh_output->GetVTKOutputPort();
+	port->GetProducer()->Update();
     m_MeshMaterial = (mmaMaterial *)m_Vme->GetAttribute(_R("MaterialAttributes"));
   }
 
@@ -204,13 +207,12 @@ void mafPipeMeshSlice::ExecutePipe()
   m_VTKTransform->SetInputMatrix(m_Vme->GetAbsMatrixPipe()->GetMatrixPointer());
   m_Plane->SetTransform(m_VTKTransform);
 
-  m_Cutter->SetInput(data);
+  m_Cutter->SetInputConnection(port);
   m_Cutter->SetCutFunction(m_Plane);
-  m_Cutter->GetOutput()->Update();
   m_Cutter->Update();
 
   vtkNEW(m_NormalFilter);
-  m_NormalFilter->SetInput(m_Cutter->GetOutput());
+  m_NormalFilter->SetInputConnection(m_Cutter->GetOutputPort());
   m_NormalFilter->FlipNormalsOn(); //this is On because off slice of all views have camera position in the bottom 
   m_NormalFilter->Update();
 
@@ -225,7 +227,7 @@ void mafPipeMeshSlice::ExecutePipe()
 	m_Table->Build();
 
   m_Mapper = vtkPolyDataMapper::New();
-  m_Mapper->SetInput(m_NormalFilter->GetOutput());
+  m_Mapper->SetInputConnection(m_NormalFilter->GetOutputPort());
   m_Mapper->SetScalarVisibility(m_ScalarMapActive);
   m_Mapper->SetScalarRange(sr);
 
@@ -241,12 +243,16 @@ void mafPipeMeshSlice::ExecutePipe()
   if(m_Vme->IsAnimated())
   {
     m_RenderingDisplayListFlag = 1;
+#if VTK_MAJOR_VERSION <= 7
     m_Mapper->ImmediateModeRenderingOn();	 //avoid Display-Lists for animated items.
+#endif
   }
   else
   {
     m_RenderingDisplayListFlag = 0;
+#if VTK_MAJOR_VERSION <= 7
     m_Mapper->ImmediateModeRenderingOff();
+#endif
   }
 
   m_Actor = vtkActor::New();
@@ -256,7 +262,7 @@ void mafPipeMeshSlice::ExecutePipe()
     m_Actor->SetProperty(m_MeshMaterial->m_Prop);
 
   vtkNEW(m_MapperWired);
-  m_MapperWired->SetInput(m_NormalFilter->GetOutput());
+  m_MapperWired->SetInputConnection(m_NormalFilter->GetOutputPort());
   m_MapperWired->SetScalarRange(0,0);
   m_MapperWired->ScalarVisibilityOff();
 
@@ -278,10 +284,10 @@ void mafPipeMeshSlice::ExecutePipe()
 
   // selection highlight
   m_OutlineBox = vtkOutlineCornerFilter::New();
-  m_OutlineBox->SetInput(data);  
+  m_OutlineBox->SetInputConnection(port);  
 
   m_OutlineMapper = vtkPolyDataMapper::New();
-  m_OutlineMapper->SetInput(m_OutlineBox->GetOutput());
+  m_OutlineMapper->SetInputConnection(m_OutlineBox->GetOutputPort());
 
   m_OutlineProperty = vtkProperty::New();
   m_OutlineProperty->SetColor(1,1,1);
@@ -680,7 +686,7 @@ void mafPipeMeshSlice::SetFlipNormalOff()
 void mafPipeMeshSlice::UpdateScalars()
 //----------------------------------------------------------------------------
 {
-  m_Vme->GetOutput()->GetVTKData()->Update();
+  m_Vme->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
   m_Vme->Update();
 
   UpdateVtkPolyDataNormalFilterActiveScalar();
@@ -692,7 +698,8 @@ void mafPipeMeshSlice::UpdateLUTAndMapperFromNewActiveScalars()
 //----------------------------------------------------------------------------
 {
   vtkUnstructuredGrid *data = vtkUnstructuredGrid::SafeDownCast(m_Vme->GetOutput()->GetVTKData());
-  data->Update();
+  vtkAlgorithmOutput* port = m_Vme->GetOutput()->GetVTKOutputPort();
+  port ->GetProducer()->Update();
   double sr[2];
 
   mafString activeScalarName = m_ScalarsVTKName[m_ScalarIndex];
@@ -716,7 +723,7 @@ void mafPipeMeshSlice::UpdateLUTAndMapperFromNewActiveScalars()
   if(m_ActiveScalarType == CELL_TYPE)
     m_Mapper->SetScalarModeToUseCellData();
 
-  m_Mapper->SetInput(m_NormalFilter->GetOutput());
+  m_Mapper->SetInputConnection(m_NormalFilter->GetOutputPort());
   m_Mapper->SetLookupTable(m_Table);  
   m_Mapper->UseLookupTableScalarRangeOn();
   if (DEBUG_MODE)
@@ -831,7 +838,6 @@ void mafPipeMeshSlice::UpdateVtkPolyDataNormalFilterActiveScalar()
 	  mafLogMessage(_M(stringStream.str().c_str()));
     }
   }
-  m_NormalFilter->GetOutput()->Update();
   m_NormalFilter->Update();
 }
 

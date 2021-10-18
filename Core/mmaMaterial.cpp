@@ -39,7 +39,6 @@
 
 #include "vtkMAFSmartPointer.h"
 #include "vtkProperty.h"
-#include "vtkMAFTransferFunction2D.h"
 #include "vtkTexturedSphereSource.h"
 #include "vtkTexture.h"
 #include "vtkPolyDataMapper.h"
@@ -52,6 +51,9 @@
 #include "vtkLight.h"
 #include "vtkImageExport.h"
 #include "vtkLookupTable.h"
+#include "vtkAlgorithm.h"
+#include "vtkAlgorithmOutput.h"
+#include "vtkTrivialProducer.h"
 
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(mmaMaterial)
@@ -69,7 +71,7 @@ mmaMaterial::mmaMaterial()
   vtkNEW(m_Prop);
   lutPreset(4,m_ColorLut);
   m_Icon        = NULL;
-  m_TextureImage= NULL;
+  m_TexturePort = NULL;
   m_VmeImageName = _R("");
   m_TextureMappingMode = PLANE_MAPPING;
 
@@ -160,12 +162,14 @@ wxBitmap *mmaMaterial::MakeIcon()
 	vtkMAFSmartPointer<vtkTexture> texture;
   if (m_MaterialType == USE_TEXTURE)
   {
-    texture->SetInput(m_TextureImage);
+    texture->SetInputConnection(m_TexturePort);
   }
   
   vtkMAFSmartPointer<vtkPolyDataMapper> pdm;
-	pdm->SetInput(ss->GetOutput());
+	pdm->SetInputConnection(ss->GetOutputPort());
+#if VTK_MAJOR_VERSION <= 7
 	pdm->SetImmediateModeRendering(0);
+#endif
 
 	vtkMAFSmartPointer<vtkActor> actor;
   actor->SetMapper(pdm);
@@ -197,7 +201,7 @@ wxBitmap *mmaMaterial::MakeIcon()
 
   //flip it - windows Bitmap are upside-down
   vtkMAFSmartPointer<vtkImageExport> ie;
-	ie->SetInput(w2i->GetOutput());
+	ie->SetInputConnection(w2i->GetOutputPort());
   ie->ImageLowerLeftOff();
   ie->SetExportVoidPointer(buffer);
 	ie->Export();
@@ -238,7 +242,13 @@ void mmaMaterial::DeepCopy(const mafAttribute *a)
   // texture
   m_TextureID           = ((mmaMaterial *)a)->m_TextureID;
   m_TextureMappingMode  = ((mmaMaterial *)a)->m_TextureMappingMode;
-  m_TextureImage        = ((mmaMaterial *)a)->m_TextureImage;
+  m_TexturePort         = ((mmaMaterial *)a)->m_TexturePort;
+  vtkAlgorithm* alg = nullptr;
+  if (m_TexturePort)
+  {
+      alg = m_TexturePort->GetProducer();
+  }
+  m_TextureAlgorithm = alg;
   // lut
   m_HueRange[0]         = ((mmaMaterial *)a)->m_HueRange[0];
   m_HueRange[1]         = ((mmaMaterial *)a)->m_HueRange[1];
@@ -274,7 +284,7 @@ bool mmaMaterial::Equals(const mafAttribute *a)
       m_SpecularPower       == ((mmaMaterial *)a)->m_SpecularPower      &&
       m_Opacity             == ((mmaMaterial *)a)->m_Opacity            &&
       m_TextureID           == ((mmaMaterial *)a)->m_TextureID          &&
-      m_TextureImage        == ((mmaMaterial *)a)->m_TextureImage       &&
+      m_TexturePort         == ((mmaMaterial *)a)->m_TexturePort        &&
       m_HueRange[0]         == ((mmaMaterial *)a)->m_HueRange[0]        &&
       m_HueRange[1]         == ((mmaMaterial *)a)->m_HueRange[1]        &&
       m_SaturationRange[0]  == ((mmaMaterial *)a)->m_SaturationRange[0] &&
@@ -439,33 +449,70 @@ void mmaMaterial::UpdateFromLut()
   m_ColorLut->GetTableRange(m_TableRange);
 }
 //-----------------------------------------------------------------------
-void mmaMaterial::SetMaterialTexture(vtkImageData *tex, mafString na)
+void mmaMaterial::SetMaterialTextureConnection(vtkAlgorithmOutput* port, const mafString& na)
 //-----------------------------------------------------------------------
 {
-  m_TextureImage  = tex;
+  vtkAlgorithm* alg = nullptr;
+  m_TexturePort  = port;
+  if (m_TexturePort)
+  {
+      alg = m_TexturePort->GetProducer();
+  }
+  m_TextureAlgorithm = alg;
   m_TextureID     = -1;
   m_VmeImageName = na;// ((mafVME*)m_TextureImage)->GetName();
 
 }
-void mmaMaterial::SetMaterialTexture(vtkImageData *tex)
+void mmaMaterial::SetMaterialTextureConnection(vtkAlgorithmOutput* port)
 //-----------------------------------------------------------------------
 {
-
-	m_TextureImage = tex;
-	m_TextureID = -1;
+    vtkAlgorithm* alg = nullptr;
+    m_TexturePort = port;
+    if (m_TexturePort)
+    {
+        alg = m_TexturePort->GetProducer();
+    }
+    m_TextureAlgorithm = alg;
+    m_TextureID = -1;
 }
 //-----------------------------------------------------------------------
-void mmaMaterial::SetMaterialTexture(int tex_id)
+void mmaMaterial::SetMaterialTextureData(vtkImageData* tex, const mafString& na)
+//-----------------------------------------------------------------------
+{
+    vtkTrivialProducer* producer = vtkTrivialProducer::New();
+    producer->SetOutput(tex);
+    SetMaterialTextureConnection(producer->GetOutputPort(), na);
+    producer->Delete();
+}
+void mmaMaterial::SetMaterialTextureData(vtkImageData* tex)
+//-----------------------------------------------------------------------
+{
+    vtkTrivialProducer* producer = vtkTrivialProducer::New();
+    producer->SetOutput(tex);
+    SetMaterialTextureConnection(producer->GetOutputPort());
+    producer->Delete();
+}
+//-----------------------------------------------------------------------
+void mmaMaterial::SetMaterialTextureID(int tex_id)
 //-----------------------------------------------------------------------
 {
   m_TextureID     = tex_id;
-  m_TextureImage  = NULL;
+  m_TextureAlgorithm  = nullptr;
+  m_TexturePort = nullptr;
 }
 //-----------------------------------------------------------------------
-vtkImageData *mmaMaterial::GetMaterialTexture()
+vtkAlgorithmOutput *mmaMaterial::GetMaterialTexturePort()
 //-----------------------------------------------------------------------
 {
-  return m_TextureImage;
+  return m_TexturePort;
+}
+//-----------------------------------------------------------------------
+vtkImageData* mmaMaterial::GetMaterialTextureData()
+//-----------------------------------------------------------------------
+{
+    if(m_TextureAlgorithm)
+        return (vtkImageData*)m_TextureAlgorithm->GetOutputDataObject(0);
+    return nullptr;
 }
 //-----------------------------------------------------------------------
 int mmaMaterial::GetMaterialTextureID()

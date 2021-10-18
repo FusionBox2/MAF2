@@ -78,7 +78,7 @@ int mafVMEGeneric::SetData(vtkDataSet *data, mafTimeStamp t, int mode)
   case MAF_VME_COPY_DATA:
   {
     // update and make a copy of the VTK dataset
-    data->Update();
+    //data->Update();
     vtkDataSet *new_data=data->NewInstance();
     new_data->DeepCopy(data);
     item->SetData(new_data);
@@ -86,13 +86,9 @@ int mafVMEGeneric::SetData(vtkDataSet *data, mafTimeStamp t, int mode)
   }
   break;
   case MAF_VME_REFERENCE_DATA:
+  case MAF_VME_DETACH_DATA:  
     // simply reference the VTK dataset (keep it attached to the source) 
     item->SetData(data);
-  break;
-  case MAF_VME_DETACH_DATA:  
-    // reference the dataset and detach it from its source
-    item->SetData(data);
-    data->SetSource(NULL);
   break;
   }
 

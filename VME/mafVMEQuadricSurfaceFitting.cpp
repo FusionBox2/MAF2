@@ -220,7 +220,7 @@ mafVMEQuadricSurfaceFitting::mafVMEQuadricSurfaceFitting()
 
   // attach a data pipe which creates a bridge between VTK and MAF
 	mafDataPipeCustom *dpipe = mafDataPipeCustom::New();
-	dpipe->SetInput(m_PolyData);
+	dpipe->SetInputData(m_PolyData);
 	SetDataPipe(dpipe);
 }
 
@@ -312,7 +312,7 @@ int mafVMEQuadricSurfaceFitting::DeepCopy(mafNode *a)
     mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
     if (dpipe)
     {
-      dpipe->SetInput(m_PolyData);
+      dpipe->SetInputData(m_PolyData);
     }
     InternalUpdate();
     return MAF_OK;
@@ -519,7 +519,6 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 							  surf->SetThetaResolution(m_SphereTheRes);
 							  surf->Update();
 							  m_PolyData->DeepCopy(surf->GetOutput());
-							  m_PolyData->Update();
 	}
 		break;
 	case POINTS_SELECTION_Ellipsoid5://cone
@@ -556,11 +555,10 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 										 t->Update();
 										 vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
 										 ptf->SetTransform(t);
-										 ptf->SetInput(surf->GetOutput());
+										 ptf->SetInputConnection(surf->GetOutputPort());
 										 ptf->Update();
 
 										 m_PolyData->DeepCopy(ptf->GetOutput());
-										 m_PolyData->Update();
 
 										 m_Gui->Update();
 	}
@@ -599,11 +597,10 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 										 t->Update();
 										 vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
 										 ptf->SetTransform(t);
-										 ptf->SetInput(surf->GetOutput());
+										 ptf->SetInputConnection(surf->GetOutputPort());
 										 ptf->Update();
 
 										 m_PolyData->DeepCopy(ptf->GetOutput());
-										 m_PolyData->Update();
 
 										 m_Gui->Update();
 
@@ -625,7 +622,7 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 							  if (parent->IsMAFType(mafVMESurfaceParametric))
 							  {
 								  data = ((mafVMESurfaceParametric*)parent)->GetSurfaceOutput()->GetSurfaceData();
-								  data->Update();
+								  ((mafVMESurfaceParametric*)parent)->GetSurfaceOutput()->Update();
 
 								  fitEllipsoid(data->GetPoints(), &m_PointsXRes, &m_PointsYRes, &m_PointsZRes, &m_PointsR1, &m_PointsR2, &m_PointsR3, &rotationMat);
 							  
@@ -633,7 +630,7 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 							  if (parent->IsMAFType(mafVMESurface))
 							  {
 								  data = ((mafVMESurface*)parent)->GetSurfaceOutput()->GetSurfaceData();
-								  data->Update();
+								  ((mafVMESurface*)parent)->GetSurfaceOutput()->Update();
 								  fitEllipsoid(data->GetPoints(), &m_PointsXRes, &m_PointsYRes, &m_PointsZRes, &m_PointsR1, &m_PointsR2, &m_PointsR3, &rotationMat);
 							  }
 							  if (parent->IsMAFType(mafVMELandmarkCloud))
@@ -668,7 +665,7 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 									  wxBusyInfo wait1("data ok ");
 									  Sleep(2500);
 									  data = ((mafVMELandmarkCloud*)parent)->GetPointSetOutput()->GetPointSetData();
-									  data->Update();
+									  ((mafVMELandmarkCloud*)parent)->GetPointSetOutput()->Update();
 									  fitEllipsoid(data->GetPoints(), &m_PointsXRes, &m_PointsYRes, &m_PointsZRes, &m_PointsR1, &m_PointsR2, &m_PointsR3, &rotationMat);
 								  }
 								  else
@@ -720,11 +717,10 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 							  t->Update();
 							  vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
 							  ptf->SetTransform(t);
-							  ptf->SetInput(surf->GetOutput());
+							  ptf->SetInputConnection(surf->GetOutputPort());
 							  ptf->Update();
 
 							  m_PolyData->DeepCopy(ptf->GetOutput());
-							  m_PolyData->Update();
 
 							  m_Gui->Update();
 
@@ -771,11 +767,10 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 										 t->Update();
 										 vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
 										 ptf->SetTransform(t);
-										 ptf->SetInput(surf->GetOutput());
+										 ptf->SetInputConnection(surf->GetOutputPort());
 										 ptf->Update();
 
 										 m_PolyData->DeepCopy(ptf->GetOutput());
-										 m_PolyData->Update();
 
 										 m_Gui->Update();
 	}
@@ -814,11 +809,10 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 										 t->Update();
 										 vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
 										 ptf->SetTransform(t);
-										 ptf->SetInput(surf->GetOutput());
+										 ptf->SetInputConnection(surf->GetOutputPort());
 										 ptf->Update();
 
 										 m_PolyData->DeepCopy(ptf->GetOutput());
-										 m_PolyData->Update();
 
 										 m_Gui->Update();
 	}
@@ -857,11 +851,10 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 										t->Update();
 										vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
 										ptf->SetTransform(t);
-										ptf->SetInput(surf->GetOutput());
+										ptf->SetInputConnection(surf->GetOutputPort());
 										ptf->Update();
 
 										m_PolyData->DeepCopy(ptf->GetOutput());
-										m_PolyData->Update();
 
 										m_Gui->Update();
 
@@ -904,11 +897,10 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 										t->Update();
 										vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
 										ptf->SetTransform(t);
-										ptf->SetInput(surf->GetOutput());
+										ptf->SetInputConnection(surf->GetOutputPort());
 										ptf->Update();
 
 										m_PolyData->DeepCopy(ptf->GetOutput());
-										m_PolyData->Update();
 
 										m_Gui->Update();
 

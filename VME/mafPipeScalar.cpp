@@ -71,7 +71,7 @@ void mafPipeScalar::Create(mafNode *node, mafView *view)
   tprop->ShadowOn();
 
   vtkMAFSmartPointer<vtkPolyDataMapper> mapper;
-  mapper->SetInput((vtkPolyData *)ds);
+  mapper->SetInputConnection(m_Vme->GetOutput()->GetVTKOutputPort());
   mapper->ScalarVisibilityOn();
   mapper->SetScalarRange(ds->GetScalarRange());
 
@@ -81,7 +81,7 @@ void mafPipeScalar::Create(mafNode *node, mafView *view)
   m_AssemblyFront->AddPart(m_Actor);
 
   vtkNEW(m_CubeAxes);
-  m_CubeAxes->SetInput(ds);
+  m_CubeAxes->SetInputConnection(m_Vme->GetOutput()->GetVTKOutputPort());
   m_CubeAxes->SetCamera(m_RenFront->GetActiveCamera());
   m_CubeAxes->SetLabelFormat("%6.4g");
   m_CubeAxes->SetNumberOfLabels(5);

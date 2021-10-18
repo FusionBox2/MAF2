@@ -26,6 +26,7 @@
 class mafVMEGeneric;
 #ifdef MAF_USE_VTK
 class vtkPolyData;
+class vtkTrivialProducer;
 #endif //MAF_USE_VTK
 
 /** NULL output for VME node with a scalar output data.
@@ -54,7 +55,7 @@ public:
   of stored Items is 0. Also special VME could not support VTK dataset output.
   An event rise when the output data changes to allow attached classes to 
   update their input.*/
-  virtual vtkDataSet *GetVTKData();
+  virtual vtkAlgorithmOutput *GetVTKOutputPort();
 
   /** Function to update VTK representation of double value representing the scalar data.*/
   void UpdateVTKRepresentation();
@@ -72,6 +73,7 @@ protected:
 
 #ifdef MAF_USE_VTK
   vtkPolyData *m_Polydata;
+  vtkTrivialProducer* m_Producer;
 #endif
 
   mafString m_ScalarDataString;

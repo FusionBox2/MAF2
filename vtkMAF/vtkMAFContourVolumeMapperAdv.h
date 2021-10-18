@@ -55,11 +55,7 @@ Then Render()
 
 #include "vtkMAFContourVolumeMapper.h"
 
-#ifdef __APPLE__
-#include <OpenGL/gl.h>
-#else
-#include <GL/gl.h>
-#endif
+#include <vtkOpenGL.h>
 
 #include "vtkMAFConfigure.h"
 
@@ -79,7 +75,7 @@ public:
   /** create an instance of the object */
   static vtkMAFContourVolumeMapperAdv *New();
   /** RTTI Macro */
-  vtkTypeRevisionMacro(vtkMAFContourVolumeMapperAdv, vtkMAFContourVolumeMapper);
+  vtkTypeMacro(vtkMAFContourVolumeMapperAdv, vtkMAFContourVolumeMapper);
 
 protected:
   /** constructor */

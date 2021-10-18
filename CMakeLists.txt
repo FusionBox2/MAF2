@@ -146,17 +146,12 @@ IF (MAF_CAN_BUILD)
   ###############add all subdirs but "modules"
   SET(INCLUDE_DIRS "${MAF_BINARY_DIR}" "${MAF_SOURCE_DIR}/Base" "${MAF_BINARY_DIR}/Interaction" "${MAF_SOURCE_DIR}/Interaction" "${MAF_SOURCE_DIR}/Interaction/Drivers" 
               "${MAF_SOURCE_DIR}/Core" "${MAF_SOURCE_DIR}/Gui" "${MAF_SOURCE_DIR}/IO" "${MAF_SOURCE_DIR}/Operations" "${MAF_SOURCE_DIR}/VME" 
-              "${MAF_SOURCE_DIR}/VME/DataPipes" "${MAF_SOURCE_DIR}/vtkMAF" "${MAF_BINARY_DIR}/vtkMAF" "${MAF_SOURCE_DIR}/GPUAPI" 
-              "${MAF_SOURCE_DIR}/GPUAPI/GLEW" "${MAF_SOURCE_DIR}/GPUAPI/FBO")
+              "${MAF_SOURCE_DIR}/VME/DataPipes" "${MAF_SOURCE_DIR}/vtkMAF" "${MAF_BINARY_DIR}/vtkMAF")
   SET(INCLUDE_DIRS ${INCLUDE_DIRS} "${MAF_SOURCE_DIR}/mafDLL")
   SET(INCLUDE_DIRS ${INCLUDE_DIRS} "${MAF_SOURCE_DIR}/../eigen")
   SET(INCLUDE_DIRS ${INCLUDE_DIRS} "${MAF_SOURCE_DIR}/../boost")
   
   INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
-
-IF(WIN32)
-	LINK_DIRECTORIES(${MAF_SOURCE_DIR}/GPUAPI/GLEW)
-ENDIF(WIN32)
 
 # IF(MAF_BUILD_MAFDLL)
   ################################
@@ -188,11 +183,11 @@ ENDIF(WIN32)
   DBG_MESSAGE("MAF: Configuring MAF Kits")
   MESSAGE(STATUS "MAF: Configuring MAF Kits")
   
+  MESSAGE("${VTK_DIR}")
+  MESSAGE("${VTK_SOURCE_DIR}")
+  MESSAGE("${VTK_BINARY_DIR}")
   IF(MAF_BUILD_MAFDLL)
   
-    IF(WIN32)
-      SUBDIRS (GPUAPI)
-    ENDIF(WIN32)
     IF (MAF_USE_VTK)
       SUBDIRS (vtkMAF)
     ENDIF (MAF_USE_VTK)
@@ -200,9 +195,6 @@ ENDIF(WIN32)
     
   ELSE (MAF_BUILD_MAFDLL)
   
-    IF(WIN32)
-      SUBDIRS (GPUAPI)
-    ENDIF(WIN32)
       SUBDIRS (Base)
     IF (MAF_USE_VTK)
       SUBDIRS (Interaction)

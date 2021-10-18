@@ -149,7 +149,7 @@ void mafOpExporterRAW::SaveVolume()
 		int zdim = dim[2];
 			
 		vtkImageWriter *exporter = vtkImageWriter::New();
-		exporter->SetInput(ImageData);
+		exporter->SetInputConnection(volume->GetOutput()->GetVTKOutputPort());
 
 		mafString prefix;
 
@@ -258,12 +258,12 @@ void mafOpExporterRAW::SaveVolume()
 			double spacing_z = 1;
 
 			StructuredPoints->SetSpacing(spacing_x, spacing_y, spacing_z);
-			StructuredPoints->SetScalarTypeToShort();
-			StructuredPoints->Update();
+			//StructuredPoints->SetScalarTypeToShort();
+			//StructuredPoints->Update();
 
 			vtkImageWriter *exporter = vtkImageWriter::New();
 				
-			exporter->SetInput(StructuredPoints);
+			exporter->SetInputData(StructuredPoints);
 
 			vtkRectilinearGrid *RectilinearGrid = (vtkRectilinearGrid *)(volume->GetOutput()->GetVTKData());
 			vtkDoubleArray *z_coords = ((vtkDoubleArray *)RectilinearGrid->GetZCoordinates());
@@ -313,7 +313,7 @@ void mafOpExporterRAW::SaveVolume()
 				short_scalars->SetValue(k, double_scalars->GetValue(k));
 					
 			StructuredPoints->GetPointData()->SetScalars(short_scalars);		
-			StructuredPoints->Update();
+			//StructuredPoints->Update();
 			exporter->Modified();								
 						
 			int a[3];
@@ -346,11 +346,11 @@ void mafOpExporterRAW::SaveVolume()
 			double spacing_y = (ymax-ymin)/ydim;
 								
 			StructuredPoints->SetSpacing(spacing_x, spacing_y, 0);
-			StructuredPoints->SetScalarTypeToShort();
-			StructuredPoints->Update();
+			//StructuredPoints->SetScalarTypeToShort();
+			//StructuredPoints->Update();
 
 			vtkImageWriter *exporter = vtkImageWriter::New();
-			exporter->SetInput(StructuredPoints);
+			exporter->SetInputData(StructuredPoints);
 
 			vtkRectilinearGrid *RectilinearGrid = (vtkRectilinearGrid *)(volume->GetOutput()->GetVTKData());
 			vtkDoubleArray *z_coords = ((vtkDoubleArray *)RectilinearGrid->GetZCoordinates());
@@ -413,7 +413,7 @@ void mafOpExporterRAW::SaveVolume()
 						
 				StructuredPoints->GetPointData()->SetScalars(short_scalars);
 								
-				StructuredPoints->Update();
+				//StructuredPoints->Update();
 				exporter->Modified();								
 								
 				mafString filename = path + name + mafString::Format(_R("_%dx%d_%04d.raw"),xdim,ydim,i);							

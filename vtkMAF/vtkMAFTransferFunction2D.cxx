@@ -12,9 +12,7 @@
 
 #include "vtkMAFTransferFunction2D.h"
 
-vtkCxxRevisionMacro(vtkMAFTransferFunction2D, "$Revision: 1.1.2.1 $");
 vtkStandardNewMacro(vtkMAFTransferFunction2D);
-vtkCxxRevisionMacro(vtkVolumeProperty2, "$Revision: 1.1.2.1 $");
 vtkStandardNewMacro(vtkVolumeProperty2);
 
 typedef unsigned char u_char;
@@ -628,7 +626,7 @@ void vtkVolumeProperty2::SetTransferFunction2D(vtkMAFTransferFunction2D *functio
 }
 
 //-----------------------------------------------------------------
-unsigned long int vtkVolumeProperty2::GetMTime() 
+vtkMTimeType vtkVolumeProperty2::GetMTime()
 //-----------------------------------------------------------------
 {
   unsigned long mTime = vtkVolumeProperty::GetMTime();

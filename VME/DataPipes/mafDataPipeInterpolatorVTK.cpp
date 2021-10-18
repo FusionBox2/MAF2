@@ -31,6 +31,7 @@
 #include "mafVMEGeneric.h"
 #include "vtkMAFDataPipe.h"
 #include "mafEventBase.h"
+#include "vtkDataSet.h"
 
 #include <assert.h>
 
@@ -61,12 +62,12 @@ bool mafDataPipeInterpolatorVTK::Accept(mafVME *vme)
 }
 
 //------------------------------------------------------------------------------
-vtkDataSet *mafDataPipeInterpolatorVTK::GetVTKData()
+vtkAlgorithmOutput *mafDataPipeInterpolatorVTK::GetVTKOutputPort()
 //------------------------------------------------------------------------------
 {
   m_VTKDataPipe->UpdateInformation();
-  vtkDataSet *data = m_VTKDataPipe->GetInput();
-  return (data != NULL) ? m_VTKDataPipe->GetOutput() : NULL;
+  vtkDataSet *data = vtkDataSet::SafeDownCast(m_VTKDataPipe->GetInput());
+  return (data != NULL) ? m_VTKDataPipe->GetOutputPort() : NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -89,13 +90,13 @@ void mafDataPipeInterpolatorVTK::PreExecute()
   // interpolating different items)
   if ( m_CurrentItem && (m_CurrentItem!=m_OldItem || \
     mtime>m_UpdateTime.GetMTime() || \
-    mtime>m_VTKDataPipe->GetInformationTime() ||
+    //mtime>m_VTKDataPipe->GetInformationTime() ||
     !m_CurrentItem->IsDataPresent()))
   {
     vtkDataSet *data = GetCurrentItem()->GetData();
     if (data != NULL)
     {
-      m_VTKDataPipe->SetNthInput(0,data);
+      m_VTKDataPipe->SetInputData(data);
       m_UpdateTime.Modified();
     }
   } 

@@ -524,8 +524,8 @@ void mafOpExtractIsosurface::CreateSlicePipeline()
 
   m_SliceImage = vtkImageData::New();
 
-  m_SliceImage->SetScalarType(dataset->GetPointData()->GetScalars()->GetDataType());
-  m_SliceImage->SetNumberOfScalarComponents(dataset->GetPointData()->GetScalars()->GetNumberOfComponents());  
+  //m_SliceImage->SetScalarType(dataset->GetPointData()->GetScalars()->GetDataType());
+  //m_SliceImage->SetNumberOfScalarComponents(dataset->GetPointData()->GetScalars()->GetNumberOfComponents());  
   //m_SliceImage->SetExtent(ext[0], ext[1], ext[2], ext[3], 0, 0);
   double textureRes=512;
   m_SliceImage->SetExtent(0, textureRes - 1, 0, textureRes - 1, 0, 0);
@@ -563,7 +563,7 @@ void mafOpExtractIsosurface::CreateSlicePipeline()
   m_SliceTexture->InterpolateOn();
   m_SliceTexture->SetQualityTo32Bit();
   m_SliceTexture->SetLookupTable(material->m_ColorLut);
-  m_SliceTexture->MapColorScalarsThroughLookupTableOn();
+  //m_SliceTexture->MapColorScalarsThroughLookupTableOn();
   m_SliceTexture->SetInputData(m_SliceImage);
 
   m_Polydata	= vtkPolyData::New();
@@ -768,7 +768,7 @@ void mafOpExtractIsosurface::OnEvent(mafEventBase *maf_event)
         vtkPoints *pts = NULL; 
         pts = (vtkPoints *)e->GetVtkObj();
         pts->GetPoint(0,pos);
-        vol->SetUpdateExtentToWholeExtent();
+        //vol->SetUpdateExtentToWholeExtent();
         ((mafVME*)m_Input)->GetOutput()->Update();
         int pid = vol->FindPoint(pos);
         vtkDataArray *scalars = vol->GetPointData()->GetScalars();

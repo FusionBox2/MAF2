@@ -520,7 +520,9 @@ void vtkMAFMultiResolutionActor::CreateDecimatedModels(bool parallel)
     {
       vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();
       mapper->SetInput(outputData);
+#if VTK_MAJOR_VERSION <= 7
       mapper->SetImmediateModeRendering(this->Mapper->GetImmediateModeRendering());
+#endif
       outputData->Delete();   // delete extra reference
       assert(this->Mappers[i] == NULL);
       this->Mappers[i] = mapper;

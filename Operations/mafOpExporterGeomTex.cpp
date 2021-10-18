@@ -37,6 +37,7 @@ PURPOSE.  See the above copyright notice for more information.
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkTransform.h"
 #include "vtkBMPWriter.h"
+#include "vtkImageData.h"
 
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(mafOpExporterGeomTex);
@@ -165,7 +166,7 @@ void mafOpExporterGeomTex::ExportTexture()
 	
 	vtkMAFSmartPointer<vtkBMPWriter> exporter;
 	
-	exporter->SetInput(out_surface->GetTexture());
+	exporter->SetInputData(out_surface->GetTexture());
 	exporter->SetFileName("C:\\texture.bmp") ;
 	exporter->Write();
 	exporter->Delete();
@@ -179,10 +180,10 @@ void mafOpExporterGeomTex::ExportSurface()
 	
 	vtkMAFSmartPointer<vtkTriangleFilter>triangles;
 	vtkMAFSmartPointer<vtkTransformPolyDataFilter> v_tpdf;
-	triangles->SetInput(out_surface->GetSurfaceData());
+	triangles->SetInputConnection(out_surface->GetVTKOutputPort());
 	triangles->Update();
 
-	v_tpdf->SetInput(triangles->GetOutput());
+	v_tpdf->SetInputConnection(triangles->GetOutputPort());
 	v_tpdf->SetTransform(out_surface->GetAbsTransform()->GetVTKTransform());
 	v_tpdf->Update();
 
@@ -190,9 +191,9 @@ void mafOpExporterGeomTex::ExportSurface()
 	mafEventMacro(mafEvent(this, BIND_TO_PROGRESSBAR, writer));
 	writer->SetFileName(m_File.GetCStr());
 	if (this->m_ABSMatrixFlag)
-		writer->SetInput(v_tpdf->GetOutput());
+		writer->SetInputConnection(v_tpdf->GetOutputPort());
 	else
-		writer->SetInput(triangles->GetOutput());
+		writer->SetInputConnection(triangles->GetOutputPort());
 	if (this->m_Binary)
 		writer->SetFileTypeToBinary();
 	else

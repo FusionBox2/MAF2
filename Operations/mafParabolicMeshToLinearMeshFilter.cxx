@@ -24,6 +24,8 @@
 
 #include "mafParabolicMeshToLinearMeshFilter.h"
 
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkCell.h"
 #include "vtkCellData.h"
 #include "vtkDoubleArray.h"
@@ -41,7 +43,6 @@
 
 #include "mafString.h"
 
-vtkCxxRevisionMacro(mafParabolicMeshToLinearMeshFilter, "$Revision: 1.4 $");
 vtkStandardNewMacro(mafParabolicMeshToLinearMeshFilter);
 
 mafParabolicMeshToLinearMeshFilter::mafParabolicMeshToLinearMeshFilter()
@@ -58,19 +59,27 @@ mafParabolicMeshToLinearMeshFilter::~mafParabolicMeshToLinearMeshFilter()
 //#include <atlbase.h>
 //#include "G:/Programs/Libraries/BSGenLib/BSGenLib/Include/BSGenLib.h"
 
-void mafParabolicMeshToLinearMeshFilter::Execute()
+int mafParabolicMeshToLinearMeshFilter::RequestData(
+    vtkInformation* request,
+    vtkInformationVector** inputVector,
+    vtkInformationVector* outputVector)
 {
-//  PROFILE_THIS_FUNCTION();
+    // get the info objects
+    vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
+    vtkInformation* outInfo = outputVector->GetInformationObject(0);
+
+    // get the input and output
+    vtkUnstructuredGrid* input = vtkUnstructuredGrid::SafeDownCast(
+        inInfo->Get(vtkDataObject::DATA_OBJECT()));
+    vtkUnstructuredGrid* output = vtkUnstructuredGrid::SafeDownCast(
+        outInfo->Get(vtkDataObject::DATA_OBJECT()));
+  //  PROFILE_THIS_FUNCTION();
 
   int nCells;
   int numPointsNew;
   int oldCellType, newCellType;
   int numPointsPerCellNew;
   
-  // 
-  vtkUnstructuredGrid *input = this->GetInput();
-  vtkUnstructuredGrid *output = this->GetOutput();
-
   nCells = input->GetNumberOfCells();
   
   // since the mesh is not hybrid I can ask for the first element to determine the element type
@@ -100,7 +109,7 @@ void mafParabolicMeshToLinearMeshFilter::Execute()
       output->DeepCopy(input);
 
       mafLogMessage(_M("Mesh is already linear or made of unsupported type elements! Bypassing the filter"));
-      return;
+      return 1;
     }
   }  
 
@@ -217,6 +226,7 @@ void mafParabolicMeshToLinearMeshFilter::Execute()
     output->GetFieldData()->DeepCopy(inFD);
   
     output->Squeeze();     
+    return 1;
 }
 
 void mafParabolicMeshToLinearMeshFilter::PrintSelf(ostream& os, vtkIndent indent)

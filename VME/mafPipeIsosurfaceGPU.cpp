@@ -219,7 +219,7 @@ void mafPipeIsosurfaceGPU::OnEvent(mafEventBase *maf_event)
 			break;
 
       case ID_ENABLE_GPU:
-        m_ContourMapper->SetGPUEnabled(m_EnableGPU);        
+        //m_ContourMapper->SetGPUEnabled(m_EnableGPU);        
         m_Vme->ForwardUpEvent(&mafEvent(this,CAMERA_UPDATE));
         break;
 

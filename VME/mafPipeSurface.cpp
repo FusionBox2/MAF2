@@ -114,8 +114,9 @@ void mafPipeSurface::Create(mafNode *node, mafView *view)
   assert(surface_output);
   surface_output->Update();
   vtkPolyData *data = vtkPolyData::SafeDownCast(surface_output->GetVTKData());
-  assert(data);
-  data->Update();
+  vtkAlgorithmOutput* port = surface_output->GetVTKOutputPort();
+  assert(port);
+  //data->Update();
 
   m_Vme->AddObserver(this);
 
@@ -146,19 +147,21 @@ void mafPipeSurface::Create(mafNode *node, mafView *view)
 	//BES: 11.9.2012 - VTK rendering core is stupid to calculate normal vectors all the time unless they are specified in the input data
 	//to speed up rendering in time-variant situations (in static, display lists make this problem negligible), we calculate normal vectors here
 	if (data->GetPointData() == NULL || data->GetPointData()->GetNormals() != NULL) 
-		m_Mapper->SetInput(data);
+		m_Mapper->SetInputConnection(port);
 	else
 	{
 		vtkMAFSmartPointer< vtkMAFPolyDataNormals > normals;
-		normals->SetInput(data);
+		normals->SetInputConnection(port);
 		normals->SetComputePointNormals(1);
 		normals->SetComputeCellNormals(0);
-		m_Mapper->SetInput(normals->GetOutput());	
+		m_Mapper->SetInputConnection(normals->GetOutputPort());	
 	}			
   
   //m_RenderingDisplayListFlag = m_Vme->IsAnimated() ? 0 : 1;
   m_RenderingDisplayListFlag = m_Vme->IsAnimated() ? 1 : 0;
+#if VTK_MAJOR_VERSION <= 7
   m_Mapper->SetImmediateModeRendering(m_RenderingDisplayListFlag);
+#endif
   
   // TODO: REFACTOR THIS 
   // workaround code to show RefSys colors by default... RefSys could have a different pipe
@@ -199,10 +202,10 @@ void mafPipeSurface::Create(mafNode *node, mafView *view)
 
   // selection highlight
   vtkMAFSmartPointer<vtkOutlineCornerFilter> corner;
-	corner->SetInput(data);
+	corner->SetInputConnection(port);
 
   vtkMAFSmartPointer<vtkPolyDataMapper> corner_mapper;
-	corner_mapper->SetInput(corner->GetOutput());
+	corner_mapper->SetInputConnection(corner->GetOutputPort());
 
   vtkMAFSmartPointer<vtkProperty> corner_props;
 	corner_props->SetColor(1,1,1);
@@ -239,11 +242,9 @@ void mafPipeSurface::CreateEdgesPipe()
 {
 	mafVMEOutputSurface *surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
 	surface_output->Update();
-	vtkPolyData *data = vtkPolyData::SafeDownCast(surface_output->GetVTKData());
-	data->Update();
 
 	vtkNEW(m_ExtractEdges);
-	m_ExtractEdges->SetInput(data);
+	m_ExtractEdges->SetInputConnection(surface_output->GetVTKOutputPort());
 	m_ExtractEdges->SetBoundaryEdges(1);
 	m_ExtractEdges->SetFeatureEdges(0);
 	m_ExtractEdges->SetNonManifoldEdges(0);
@@ -251,7 +252,7 @@ void mafPipeSurface::CreateEdgesPipe()
 	m_ExtractEdges->Update();
 
 	vtkNEW(m_EdgesMapper);
-	m_EdgesMapper->SetInput(m_ExtractEdges->GetOutput());
+	m_EdgesMapper->SetInputConnection(m_ExtractEdges->GetOutputPort());
 	m_EdgesMapper->ScalarVisibilityOff();
 	m_EdgesMapper->Update();
 
@@ -268,19 +269,18 @@ void mafPipeSurface::CreateEdgesPipe()
 void mafPipeSurface::CreateNormalsPipe()
 //----------------------------------------------------------------------------
 {
-	mafVMEOutputSurface *surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
-	surface_output->Update();
+    mafVMEOutputSurface *surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
+    surface_output->Update();
 	vtkPolyData *data = vtkPolyData::SafeDownCast(surface_output->GetVTKData());
-	data->Update();
 
 	vtkNEW(m_CenterPointsFilter);
-	m_CenterPointsFilter->SetInput(data);
+	m_CenterPointsFilter->SetInputConnection(surface_output->GetVTKOutputPort());
 	m_CenterPointsFilter->Update();
 
 	vtkPolyData *centers = m_CenterPointsFilter->GetOutput();
-	centers->Update();
-	centers->GetPointData()->SetNormals(data->GetCellData()->GetNormals());
-	centers->Update();
+	m_CenterPointsFilter->Update();
+	//centers->GetPointData()->SetNormals(data->GetCellData()->GetNormals());
+	//m_CenterPointsFilter->Update();
 
 	double bounds[6];
 	data->GetBounds(bounds);
@@ -296,13 +296,13 @@ void mafPipeSurface::CreateNormalsPipe()
 	m_NormalArrow->Update();
 
 	vtkNEW(m_NormalGlyph);
-	m_NormalGlyph->SetInput(centers);
-	m_NormalGlyph->SetSource(m_NormalArrow->GetOutput());
+	m_NormalGlyph->SetInputConnection(m_CenterPointsFilter->GetOutputPort());
+	m_NormalGlyph->SetSourceConnection(m_NormalArrow->GetOutputPort());
 	m_NormalGlyph->SetVectorModeToUseNormal();
 	m_NormalGlyph->Update();
 
 	vtkNEW(m_NormalMapper);
-	m_NormalMapper->SetInput(m_NormalGlyph->GetOutput());
+	m_NormalMapper->SetInputConnection(m_NormalGlyph->GetOutputPort());
 	m_NormalMapper->Update();
 
 	vtkNEW(m_NormalActor);
@@ -480,7 +480,7 @@ void mafPipeSurface::OnEvent(mafEventBase *maf_event)
       break;
       case ID_RENDERING_DISPLAY_LIST:
       {
-        m_Mapper->SetImmediateModeRendering(m_RenderingDisplayListFlag);
+        //m_Mapper->SetImmediateModeRendering(m_RenderingDisplayListFlag);
         mafEventMacro(mafEvent(this,CAMERA_UPDATE));
       }
       break;

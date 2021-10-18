@@ -628,7 +628,7 @@ void mafGUIDialogTransferFunction2D::SetControlsRange()
 
   wxSlider *slider = (wxSlider*)this->FindWindow(ID_SLICE_NUMBER);
   int extent[6];
-  this->m_Vme->GetOutput()->GetVTKData()->GetWholeExtent(extent);
+  //this->m_Vme->GetOutput()->GetDataSet()->GetWholeExtent(extent);
   slider->SetRange(0, extent[5] - extent[4]);
 }
 
@@ -685,7 +685,7 @@ VTK_THREAD_RETURN_TYPE mafGUIDialogTransferFunction2D::CreatePipe(void *argDialo
     imageData = vtkImageData::New();
     imageData->ShallowCopy(gridData);
     imageData->SetDimensions(gridData->GetDimensions());
-    imageData->SetNumberOfScalarComponents(gridData->GetPointData()->GetNumberOfComponents());
+    imageData->AllocateScalars(gridData->GetPointData()->GetArray(0)->GetDataType(), gridData->GetPointData()->GetNumberOfComponents());
     double offset[3], spacing[3];
     offset[0] = gridData->GetXCoordinates()->GetTuple(0)[0];
     offset[1] = gridData->GetYCoordinates()->GetTuple(0)[0];
@@ -695,25 +695,6 @@ VTK_THREAD_RETURN_TYPE mafGUIDialogTransferFunction2D::CreatePipe(void *argDialo
     spacing[2] = gridData->GetZCoordinates()->GetTuple(1)[0] - offset[2];;
     imageData->SetOrigin(offset);
     imageData->SetSpacing(spacing);
-    // set type
-    vtkDataArray *data = gridData->GetPointData()->GetArray(0);
-    if (data->IsA("vtkUnsignedShortArray"))
-      imageData->SetScalarType(VTK_UNSIGNED_SHORT);
-    else if (data->IsA("vtkShortArray"))
-      imageData->SetScalarType(VTK_SHORT);
-    else if (data->IsA("vtkCharArray"))
-      imageData->SetScalarType(VTK_CHAR);
-    else if (data->IsA("vtkUnsignedCharArray"))
-      imageData->SetScalarType(VTK_UNSIGNED_CHAR);
-    else if (data->IsA("vtkFloatArray"))
-      imageData->SetScalarType(VTK_FLOAT);
-    else if (data->IsA("vtkDoubleArray"))
-      imageData->SetScalarType(VTK_DOUBLE);
-    else 
-		{
-      imageData->Delete();
-      imageData = NULL;
-    }
   }
 
   vtkDataArray *scalars = data->GetPointData()->GetScalars();
@@ -722,9 +703,9 @@ VTK_THREAD_RETURN_TYPE mafGUIDialogTransferFunction2D::CreatePipe(void *argDialo
     scalars->GetDataType() != VTK_CHAR ||
     scalars->GetDataType() != VTK_UNSIGNED_CHAR)
   {
-    chardata->SetInput(imageData);
+    chardata->SetInputData(imageData);
     chardata->Update();
-    dialog->m_Mapper3D->SetInput(chardata->GetOutput());
+    dialog->m_Mapper3D->SetInputConnection(chardata->GetOutputPort());
   }
   else
   {
@@ -750,7 +731,7 @@ VTK_THREAD_RETURN_TYPE mafGUIDialogTransferFunction2D::CreatePipe(void *argDialo
 
   // filter
   dialog->m_SliceFilter = vtkMAFImageMapToWidgetColors::New();
-  dialog->m_SliceFilter->SetInput(imageData);
+  dialog->m_SliceFilter->SetInputData(imageData);
   if (gridData && imageData)
     imageData->Delete();
   dialog->m_SliceWinowing = dialog->m_DataRange[1] - dialog->m_DataRange[0];
@@ -763,12 +744,12 @@ VTK_THREAD_RETURN_TYPE mafGUIDialogTransferFunction2D::CreatePipe(void *argDialo
   // resample image
   dialog->m_SliceResampler = vtkImageResample::New();
   dialog->m_SliceResampler->SetNumberOfThreads(1);
-  dialog->m_SliceResampler->SetInput(dialog->m_SliceFilter->GetOutput());
+  dialog->m_SliceResampler->SetInputConnection(dialog->m_SliceFilter->GetOutputPort());
   dialog->m_SliceResampler->InterpolateOn();
 
   // mapper
   dialog->m_SliceMapper = vtkImageMapper::New();
-  dialog->m_SliceMapper->SetInput(dialog->m_SliceResampler->GetOutput());
+  dialog->m_SliceMapper->SetInputConnection(dialog->m_SliceResampler->GetOutputPort());
   dialog->m_SliceMapper->SetColorWindow(255.f);
   dialog->m_SliceMapper->SetColorLevel(127.5f);
   dialog->m_SliceActor->SetMapper(dialog->m_SliceMapper);
@@ -1014,7 +995,7 @@ void mafGUIDialogTransferFunction2D::ResizePreviewWindow()
   if (this->m_Vme && this->m_SlicePipeStatus >= PipeReady) 
 	{
     int extent[6];
-    this->m_Vme->GetOutput()->GetVTKData()->GetWholeExtent(extent);
+    //this->m_Vme->GetOutput()->GetDataSet()->GetWholeExtent(extent);
     double zoom = min(m_SliceRwi->GetClientSize().x / double(extent[1] - extent[0]), m_SliceRwi->GetClientSize().y / double(extent[3] - extent[2]));
     this->m_SliceResampler->SetAxisMagnificationFactor(0, zoom);
     this->m_SliceResampler->SetAxisMagnificationFactor(1, zoom);

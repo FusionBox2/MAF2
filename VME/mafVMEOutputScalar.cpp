@@ -39,6 +39,7 @@
 #include "vtkDoubleArray.h"
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
+#include "vtkTrivialProducer.h"
 #endif
 
 #include <assert.h>
@@ -53,6 +54,8 @@ mafVMEOutputScalar::mafVMEOutputScalar()
 {
 #ifdef MAF_USE_VTK
   vtkNEW(m_Polydata);
+  vtkNEW(m_Producer);
+  m_Producer->SetOutput(m_Polydata);
 #endif
 
   m_ScalarDataString = _R("");
@@ -64,6 +67,7 @@ mafVMEOutputScalar::~mafVMEOutputScalar()
 {
 #ifdef MAF_USE_VTK
   vtkDEL(m_Polydata);
+  vtkDEL(m_Producer);
 #endif
 }
 
@@ -80,11 +84,11 @@ double mafVMEOutputScalar::GetScalarData()
 
 #ifdef MAF_USE_VTK
 //-------------------------------------------------------------------------
-vtkDataSet *mafVMEOutputScalar::GetVTKData()
+vtkAlgorithmOutput *mafVMEOutputScalar::GetVTKOutputPort()
 //-------------------------------------------------------------------------
 {
   UpdateVTKRepresentation();
-  return m_Polydata;
+  return m_Producer->GetOutputPort();
 }
 //-------------------------------------------------------------------------
 void mafVMEOutputScalar::UpdateVTKRepresentation()
@@ -92,7 +96,7 @@ void mafVMEOutputScalar::UpdateVTKRepresentation()
 {
   double data = GetScalarData();
 
-  int pointId[2];
+  vtkIdType pointId[2];
   double time_point = GetTimeStamp();
   vtkMAFSmartPointer<vtkPoints> points;
   vtkMAFSmartPointer<vtkCellArray> verts;

@@ -7,15 +7,19 @@
   Version:   $Revision: 1.2 $
 
 =========================================================================*/
-#include "vtkObjectFactory.h"
+#include "vtkCharArray.h"
+#include "vtkDataArray.h"
 #include "vtkImageData.h"
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
+#include "vtkObjectFactory.h"
+#include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkPointData.h"
 
 #include "vtkMAFTransferFunction2D.h"
 #include "vtkMAFImageMapToWidgetColors.h"
 
 
-vtkCxxRevisionMacro(vtkMAFImageMapToWidgetColors, "$Revision: 1.2 $");
 vtkStandardNewMacro(vtkMAFImageMapToWidgetColors);
 
 template<typename type> static inline type clip(type x, type xmin, type xmax) { if (x < xmin) return xmin; if (x > xmax) return xmax; return x; }
@@ -39,10 +43,18 @@ vtkMAFImageMapToWidgetColors::~vtkMAFImageMapToWidgetColors()
 }
 
 //----------------------------------------------------------------------------
-void vtkMAFImageMapToWidgetColors::ExecuteData(vtkDataObject *output) 
+int vtkMAFImageMapToWidgetColors::RequestData(vtkInformation* request,
+    vtkInformationVector** inputVector,
+    vtkInformationVector* outputVector)
 {
-  vtkImageData *outData = (vtkImageData *)(output);
- 
+  vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
+
+  vtkImageData* outData = vtkImageData::SafeDownCast(
+      outInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkImageData* inData = vtkImageData::SafeDownCast(
+      inInfo->Get(vtkDataObject::DATA_OBJECT()));
+
   if (this->DataWasPassed) 
   {
     outData->GetPointData()->SetScalars(NULL);
@@ -51,7 +63,7 @@ void vtkMAFImageMapToWidgetColors::ExecuteData(vtkDataObject *output)
 
   // prepare gradients
   int extent[6];
-  output->GetUpdateExtent(extent);
+  GetUpdateExtent(extent);
   const int sx = extent[1] - extent[0] + 1, sy = extent[3] - extent[2] + 1, sz = extent[5] - extent[4] + 1;
   const int newCacheSize = sx * sy * sz;
   bool  newCache = false;
@@ -67,42 +79,40 @@ void vtkMAFImageMapToWidgetColors::ExecuteData(vtkDataObject *output)
   if (newCache || this->GradientCacheMTime < this->GetInput()->GetMTime() || memcmp(this->GradientExtent, extent, sizeof(extent)) != 0) 
   {
     memcpy(this->GradientExtent, extent, sizeof(extent));
-    void *inPtr = this->GetInput()->GetScalarPointerForExtent(this->GradientExtent);
-    switch (this->GetInput()->GetScalarType()) 
+    void *inPtr = inData->GetScalarPointerForExtent(this->GradientExtent);
+    switch (inData->GetScalarType())
     {
       case VTK_CHAR:
-        this->UpdateGradientCache((char*)inPtr);
+        this->UpdateGradientCache(inData, (char*)inPtr);
         break;
       case VTK_UNSIGNED_CHAR:
-        this->UpdateGradientCache((unsigned char*)inPtr);
+        this->UpdateGradientCache(inData, (unsigned char*)inPtr);
         break;
       case VTK_SHORT:
-        this->UpdateGradientCache((short*)inPtr);
+        this->UpdateGradientCache(inData, (short*)inPtr);
         break;
       case VTK_UNSIGNED_SHORT:
-        this->UpdateGradientCache((unsigned short*)inPtr);
+        this->UpdateGradientCache(inData, (unsigned short*)inPtr);
         break;
       default:
         vtkErrorMacro(<< "Execute: Unknown ScalarType");
-        return;
+        return 1;
     }
     this->GradientCacheMTime.Modified();
   }
 
-  this->vtkImageToImageFilter::ExecuteData(output);
+  return vtkThreadedImageAlgorithm::RequestData(request, inputVector, outputVector);
 }
 
 //----------------------------------------------------------------------------
-template<class T> void vtkMAFImageMapToWidgetColors::UpdateGradientCache(T *dataPointer) 
+template<class T> void vtkMAFImageMapToWidgetColors::UpdateGradientCache(vtkImageData* imageData, T *dataPointer)
 {
-  vtkImageData *imageData = this->GetInput();
-
   int inDims[3], outDims[3] = { this->GradientExtent[1] - this->GradientExtent[0] + 1, this->GradientExtent[3] - this->GradientExtent[2] + 1, this->GradientExtent[5] - this->GradientExtent[4] + 1};
   imageData->GetDimensions(inDims);
   const int lastIndex[3] = { inDims[0] - 1, inDims[1] - 1, inDims[2] - 1};
-  int contIncrementX, contIncrementY, contIncrementZ;
+  vtkIdType contIncrementX, contIncrementY, contIncrementZ;
   imageData->GetContinuousIncrements(this->GradientExtent, contIncrementX, contIncrementY, contIncrementZ);
-  const int* inc = imageData->GetIncrements();
+  const vtkIdType* inc = imageData->GetIncrements();
   const int numberOfInputComponents  = imageData->GetNumberOfScalarComponents();
 
   double ispacing[3];
@@ -142,12 +152,12 @@ template<class T> void vtkMAFImageMapToWidgetColors::UpdateGradientCache(T *data
 }
 
 //----------------------------------------------------------------------------
-unsigned long vtkMAFImageMapToWidgetColors::GetMTime() 
+vtkMTimeType vtkMAFImageMapToWidgetColors::GetMTime()
 {
-  unsigned long t1 = this->vtkImageToImageFilter::GetMTime();
+  vtkMTimeType t1 = vtkImageAlgorithm::GetMTime();
   if (this->TransferFunction) 
   {
-    unsigned long t2 = this->TransferFunction->GetMTime();
+    vtkMTimeType t2 = this->TransferFunction->GetMTime();
     if (t2 > t1)
       t1 = t2;
   }
@@ -155,44 +165,39 @@ unsigned long vtkMAFImageMapToWidgetColors::GetMTime()
 }
 
 //----------------------------------------------------------------------------
-void vtkMAFImageMapToWidgetColors::ExecuteInformation(vtkImageData *inData, vtkImageData *outData) 
+int vtkMAFImageMapToWidgetColors::RequestInformation(
+    vtkInformation* vtkNotUsed(request),
+    vtkInformationVector** inputVector,
+    vtkInformationVector* outputVector)
 {
-  outData->SetScalarType(VTK_UNSIGNED_CHAR);
-  outData->SetNumberOfScalarComponents(3);
+  // get the info objects
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
+  vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
+  vtkDataObject::SetPointDataActiveScalarInfo(outInfo, VTK_UNSIGNED_CHAR, 3);
+  return 1;
 }
 
 //----------------------------------------------------------------------------
 // This method is passed a input and output data, and executes the filter
 // algorithm to fill the output from the input.
-void vtkMAFImageMapToWidgetColors::ThreadedExecute(vtkImageData *inData, vtkImageData *outData, int outExt[6], int id) 
+void vtkMAFImageMapToWidgetColors::ThreadedRequestData(
+    vtkInformation* vtkNotUsed(request),
+    vtkInformationVector** inputVector,
+    vtkInformationVector* vtkNotUsed(outputVector),
+    vtkImageData*** inData,
+    vtkImageData** outData,
+    int outExt[6], int id)
 {
-  void *inPtr = inData->GetScalarPointerForExtent(outExt);
-  unsigned char *outPtr = (unsigned char *)outData->GetScalarPointerForExtent(outExt);
-  assert(outData->GetScalarType() == VTK_UNSIGNED_CHAR);
-
-  switch (inData->GetScalarType()) 
-  {
-    case VTK_CHAR:
-      this->Execute(inData, (char *)(inPtr), outData, outPtr, outExt);
-      break;
-    case VTK_UNSIGNED_CHAR:
-      this->Execute(inData, (unsigned char *)(inPtr), outData, outPtr, outExt);
-      break;
-    case VTK_SHORT:
-      this->Execute(inData, (short *)(inPtr), outData, outPtr, outExt);
-      break;
-    case VTK_UNSIGNED_SHORT:
-      this->Execute(inData, (unsigned short *)(inPtr), outData, outPtr, outExt);
-      break;
-    default:
-      vtkErrorMacro(<< "Execute: Unknown ScalarType");
-      return;
-  }
+  vtkDataArray* outArray = outData[0]->GetPointData()->GetScalars();
+  vtkCharArray *maskArray = vtkCharArray::SafeDownCast/*vtkArrayDownCast<vtkCharArray>*/(inData[0][0]->GetPointData()->GetArray("vtkValidPointMask"));
+  vtkDataArray* inArray = this->GetInputArrayToProcess(0, inputVector);
+  this->Execute(inData[0][0], inArray, maskArray, outData[0], outArray, outExt);
 }
 
 //----------------------------------------------------------------------------
 // This non-templated function executes the filter for any type of data.
-template<class T> void vtkMAFImageMapToWidgetColors::Execute(vtkImageData *inData,  T *inPtr, vtkImageData *outData, unsigned char *outPtr, int outExt[6]) 
+void vtkMAFImageMapToWidgetColors::Execute(vtkImageData* inData, vtkDataArray* inArray, vtkCharArray* maskArray,
+    vtkImageData* outData, vtkDataArray* outArray, int outExt[6])
 {
   // color mapping
   const double shift = this->Window / 2.0 - this->Level;
@@ -213,17 +218,34 @@ template<class T> void vtkMAFImageMapToWidgetColors::Execute(vtkImageData *inDat
   const int extZ = outExt[5] - outExt[4] + 1;
 
   // Get increments to march through data 
-  int inIncX, inIncY, inIncZ;
-  int outIncX, outIncY, outIncZ;
-  inData->GetContinuousIncrements(outExt, inIncX, inIncY, inIncZ);
-  outData->GetContinuousIncrements(outExt, outIncX, outIncY, outIncZ);
+  vtkIdType inIncX, inIncY, inIncZ, inMaskIncX, inMaskIncY, inMaskIncZ;
+  vtkIdType outIncX, outIncY, outIncZ;
+  int dataType = inArray->GetDataType();
+  int scalarSize = inArray->GetDataTypeSize();
+
+  int coordinate[3] = { outExt[0], outExt[2], outExt[4] };
+  void* inPtr = inData->GetArrayPointer(inArray, coordinate);
+  char* inMask = maskArray ? static_cast<char*>(inData->GetArrayPointer(maskArray, coordinate)) : nullptr;
+
+  inData->GetContinuousIncrements(inArray, outExt, inIncX, inIncY, inIncZ);
+  inMaskIncX = inMaskIncY = inMaskIncZ = 0;
+  if (maskArray)
+  {
+      inData->GetContinuousIncrements(maskArray, outExt, inMaskIncX, inMaskIncY, inMaskIncZ);
+  }
+  // because we are using void * and char * we must take care
+  // of the scalar size in the increments
+  inIncY *= scalarSize;
+  inIncZ *= scalarSize;
+  outData->GetContinuousIncrements(outArray, outExt, outIncX, outIncY, outIncZ);
   const int numberOfInputComponents  = inData->GetNumberOfScalarComponents();
   const int numberOfOutputComponents = outData->GetNumberOfScalarComponents();
   assert(numberOfOutputComponents == 3);
 
+  unsigned char* outPtr = static_cast<unsigned char*>(outData->GetArrayPointer(outArray, coordinate));
   // Loop through output pixels
   unsigned char *optr = outPtr;
-  const T       *iptr = inPtr;
+  const void *iptr = inPtr;
   const double   *gptr = this->GradientCache;
   for (int z = 0; z < extZ; z++) 
   {
@@ -231,11 +253,31 @@ template<class T> void vtkMAFImageMapToWidgetColors::Execute(vtkImageData *inDat
     {
       for (int x = 0; x < extX; x++) 
       {
-        unsigned char originalColor = (unsigned char)clip(int(((*iptr + shift) * scale)), 0, 255);
+          int inValue = 0;
+          switch (dataType)
+          {
+          case VTK_CHAR:
+              inValue = *((char*)(iptr));
+              break;
+          case VTK_UNSIGNED_CHAR:
+              inValue = *((unsigned char*)(iptr));
+              break;
+          case VTK_SHORT:
+              inValue = *((short*)(iptr));
+              break;
+          case VTK_UNSIGNED_SHORT:
+              inValue = *((unsigned short*)(iptr));
+              break;
+          default:
+              vtkErrorMacro(<< "Execute: Unknown ScalarType");
+              return;
+          }
+
+        unsigned char originalColor = (unsigned char)clip(int(((inValue + shift) * scale)), 0, 255);
 
         if (widgetValid) 
         {
-          optr[0] = (unsigned char)(widget.Attenuation(*iptr, *gptr) * 255.0);
+          optr[0] = (unsigned char)(widget.Attenuation(inValue, *gptr) * 255.0);
           optr[1] = originalColor >> 1;
           optr[2] = originalColor;
         }
@@ -245,16 +287,16 @@ template<class T> void vtkMAFImageMapToWidgetColors::Execute(vtkImageData *inDat
           optr[1] = originalColor >> 1;
           optr[2] = originalColor;
         }
-        iptr += numberOfInputComponents;
+        iptr = static_cast<const void*>(static_cast<const char*>(iptr) + numberOfInputComponents * scalarSize);
         optr += numberOfOutputComponents;
         gptr += 1;
       }      
       //gptr   += gIncY;
       optr += outIncY;
-      iptr  += inIncY;
+      iptr = static_cast<const void*>(static_cast<const char*>(iptr) + inIncY);
     }
     //gptr += gIncZ;
     optr += outIncZ;
-    iptr += inIncZ;
+    iptr = static_cast<const void*>(static_cast<const char*>(iptr) + inIncZ);
   }
 }

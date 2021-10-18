@@ -117,7 +117,6 @@ void mafOpCrop3DSurface::OpRun()
 	{
 		vtkNEW(m_InputPolyData);
 		m_InputPolyData->DeepCopy(((mafVMESurfaceParametric*)volume)->GetSurfaceOutput()->GetSurfaceData());
-		m_InputPolyData->Update();
 		vtkPolyData*	data = ((mafVMESurfaceParametric*)volume)->GetSurfaceOutput()->GetSurfaceData();
 		data->GetBounds(m_InputBounds);
 		if (!m_TestMode)
@@ -134,7 +133,6 @@ void mafOpCrop3DSurface::OpRun()
 		vtkNEW(m_InputPolyData);
 		
 		m_InputPolyData->DeepCopy(((mafVMESurface*)volume)->GetSurfaceOutput()->GetSurfaceData());
-		m_InputPolyData->Update();
 		vtkPolyData*	data = ((mafVMESurface*)volume)->GetSurfaceOutput()->GetSurfaceData();
 		data->GetBounds(m_InputBounds);
 		if (!m_TestMode)
@@ -242,7 +240,7 @@ void mafOpCrop3DSurface::Crop()
 			boundsIndexArray[2 * numArray + 1] = maxId;
 		}
 		vtkExtractRectilinearGrid *extractRG = vtkExtractRectilinearGrid::New();
-		extractRG->SetInput(rgData);
+		extractRG->SetInputConnection(output->GetVTKOutputPort());
 		extractRG->SetVOI(boundsIndexArray);
 		extractRG->Update();
 
@@ -342,8 +340,8 @@ void mafOpCrop3DSurface::Crop()
 		}
 
 		vtkMAFSmartPointer<vtkProbeFilter> probeFilter;
-		probeFilter->SetInput(v_esp);
-		probeFilter->SetSource(m_InputSP);
+		probeFilter->SetInputData(v_esp);
+		probeFilter->SetSourceData(m_InputSP);
 		probeFilter->Update();
 
 		vtkNEW(m_OutputSP);

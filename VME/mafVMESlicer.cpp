@@ -46,6 +46,7 @@
 #include "vtkLinearTransform.h"
 #include "vtkPointData.h"
 #include "vtkTransform.h"
+#include "vtkAlgorithmOutput.h"
 
 #include <assert.h>
 
@@ -70,7 +71,7 @@ mafVMESlicer::mafVMESlicer()
 
   vtkMAFSmartPointer<vtkImageData> image;
   image->SetExtent(0, m_TextureRes - 1, 0, m_TextureRes - 1, 0, 0);
-  image->SetUpdateExtent(0, m_TextureRes - 1, 0, m_TextureRes - 1, 0, 0);
+  //image->SetUpdateExtent(0, m_TextureRes - 1, 0, m_TextureRes - 1, 0, 0);
   image->SetSpacing(m_Xspc, m_Yspc, 1.f);
 
   vtkMAFSmartPointer<vtkPolyData> slice;
@@ -82,7 +83,7 @@ mafVMESlicer::mafVMESlicer()
   m_ISlicer->SetOutput(image);
   
   vtkNEW(m_BackTransform);
-  m_BackTransform->SetInput(slice);
+  m_BackTransform->SetInputData(slice);
 
   DependsOnLinkedNodeOn();
 
@@ -91,12 +92,12 @@ mafVMESlicer::mafVMESlicer()
   dpipe->SetDependOnAbsPose(true);
   SetDataPipe(dpipe);
 
-  dpipe->SetInput(m_BackTransform->GetOutput());
-  dpipe->SetNthInput(1,image);
+  dpipe->SetInputConnection(m_BackTransform->GetOutputPort());
+  //dpipe->SetNthInput(1,image);
 
   // set the texture in the output, must do it here, after setting slicer filter's input
   GetSurfaceOutput()->SetTexture((vtkImageData *)((mafDataPipeCustom *)GetDataPipe())->GetVTKDataPipe()->GetOutput(1));
-  GetMaterial()->SetMaterialTexture(GetSurfaceOutput()->GetTexture());
+  //GetMaterial()->SetMaterialTexture(GetSurfaceOutput()->GetTexture());
   GetMaterial()->m_MaterialType = mmaMaterial::USE_TEXTURE;
   GetMaterial()->m_TextureMappingMode = mmaMaterial::PLANE_MAPPING;
 
@@ -149,11 +150,11 @@ int mafVMESlicer::DeepCopy(mafNode *a)
     if (dpipe)
     {
       dpipe->SetDependOnAbsPose(true);
-      dpipe->SetInput(m_BackTransform->GetOutput());
-      dpipe->SetNthInput(1,m_PSlicer->GetTexture());
+      dpipe->SetInputConnection(m_BackTransform->GetOutputPort());
+      //dpipe->SetNthInput(1,m_PSlicer->GetTexture());
     }
     m_SlicedName      = slicer->m_SlicedName;
-    GetMaterial()->SetMaterialTexture(m_PSlicer->GetTexture());
+    //GetMaterial()->SetMaterialTexture(m_PSlicer->GetTexture());
     return MAF_OK;
   }  
   return MAF_ERROR;
@@ -282,7 +283,7 @@ void mafVMESlicer::InternalPreUpdate()
   mafVME *vol = mafVME::SafeDownCast(GetSlicedVMELink());
   if(vol)
   {
-    vtkDataSet *vtkdata = vol->GetOutput()->GetVTKData();
+    vtkAlgorithmOutput *vtkdata = vol->GetOutput()->GetVTKOutputPort();
     if (vtkdata)
     {
       double pos[3];
@@ -318,19 +319,18 @@ void mafVMESlicer::InternalPreUpdate()
       vtkMath::Cross(n, vectX, vectY);
       vtkMath::Normalize(vectY);
 
-      vtkdata->Update();
-      vtkDataArray *scalars = vtkdata->GetPointData()->GetScalars();
+      vtkdata->GetProducer()->Update();
+      vtkDataArray *scalars = vol->GetOutput()->GetVTKData()->GetPointData()->GetScalars();
       if (scalars == NULL)
       {
         return;
       }
 
       vtkImageData *texture = m_PSlicer->GetTexture();
-      texture->SetScalarType(scalars->GetDataType());
-      texture->SetNumberOfScalarComponents(scalars->GetNumberOfComponents());
+      texture->AllocateScalars(scalars->GetDataType(), scalars->GetNumberOfComponents());
       texture->Modified();
 
-      GetMaterial()->SetMaterialTexture(texture);
+      GetMaterial()->SetMaterialTextureData(texture);
       texture->GetScalarRange(GetMaterial()->m_TableRange);
       
 	  if (m_UpdateVTKPropertiesFromMaterial == true)
@@ -338,12 +338,12 @@ void mafVMESlicer::InternalPreUpdate()
 		  GetMaterial()->UpdateProp();
 	  }
 	  
-      m_PSlicer->SetInput(vtkdata);
+      //m_PSlicer->SetInput(vtkdata);
       m_PSlicer->SetPlaneOrigin(pos);
       m_PSlicer->SetPlaneAxisX(vectX);
       m_PSlicer->SetPlaneAxisY(vectY);
 
-      m_ISlicer->SetInput(vtkdata);
+      //m_ISlicer->SetInput(vtkdata);
       m_ISlicer->SetPlaneOrigin(pos);
       m_ISlicer->SetPlaneAxisX(vectX);
       m_ISlicer->SetPlaneAxisY(vectY);
@@ -381,7 +381,7 @@ void mafVMESlicer::InternalUpdate()
 
       vtkImageData *texture = m_PSlicer->GetTexture();
 
-      GetMaterial()->SetMaterialTexture(texture);
+      GetMaterial()->SetMaterialTextureData(texture);
       texture->GetScalarRange(GetMaterial()->m_TableRange);
 
 	  if (m_UpdateVTKPropertiesFromMaterial == true)

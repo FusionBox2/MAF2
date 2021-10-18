@@ -35,13 +35,14 @@
 //------------------------------------------------------------------------------
 class vtkDataObject;
 class vtkImageData;
+class vtkCharArray;
 
 
 class VTK_vtkMAF_EXPORT vtkMAFImageMapToWidgetColors : public vtkImageMapToColors 
 {
 public:
   static vtkMAFImageMapToWidgetColors *New();
-  vtkTypeRevisionMacro(vtkMAFImageMapToWidgetColors,vtkImageMapToColors);
+  vtkTypeMacro(vtkMAFImageMapToWidgetColors,vtkImageMapToColors);
 
   /**
   Set / Get transfer function*/
@@ -67,18 +68,26 @@ public:
   vtkSetMacro( Level, double );
   vtkGetMacro( Level, double );
   
-  unsigned long GetMTime();
+  vtkMTimeType GetMTime();
 
 protected:
   vtkMAFImageMapToWidgetColors();
-  ~vtkMAFImageMapToWidgetColors();
+  ~vtkMAFImageMapToWidgetColors() override;
 
-  void ExecuteInformation(vtkImageData *inData, vtkImageData *outData);
-  void ExecuteInformation(){this->vtkImageMapToColors::ExecuteInformation();};
-  void ThreadedExecute(vtkImageData *inData, vtkImageData *outData,
-                       int extent[6], int id);
-  void ExecuteData(vtkDataObject *output);
-  template<class T> void UpdateGradientCache(T *dataPointer);
+  int RequestInformation(vtkInformation *,
+                                 vtkInformationVector **,
+                                 vtkInformationVector *) override;
+
+  void ThreadedRequestData(vtkInformation *request,
+                           vtkInformationVector **inputVector,
+                           vtkInformationVector *outputVector,
+                           vtkImageData ***inData, vtkImageData **outData,
+                           int extent[6], int id) override;
+
+  int RequestData(vtkInformation *request,
+                          vtkInformationVector **inputVector,
+                          vtkInformationVector *outputVector) override;
+  template<class T> void UpdateGradientCache(vtkImageData* imageData, T *dataPointer);
 
   vtkMAFTransferFunction2D *TransferFunction;
 
@@ -92,11 +101,11 @@ protected:
   vtkTimeStamp GradientCacheMTime;
   int          GradientExtent[6];
 
-  template <class T> void Execute(vtkImageData *inData,  T *inPtr,
-                                  vtkImageData *outData, unsigned char *outPtr, int outExt[6]);
+  void Execute(vtkImageData* inData, vtkDataArray* inArray, vtkCharArray* maskArray,
+      vtkImageData* outData, vtkDataArray* outArray, int outExt[6]);
 
 private:
-  vtkMAFImageMapToWidgetColors(const vtkMAFImageMapToWidgetColors&);  // Not implemented.
-  void operator=(const vtkMAFImageMapToWidgetColors&);  // Not implemented.
+  vtkMAFImageMapToWidgetColors(const vtkMAFImageMapToWidgetColors&) = delete;
+  void operator=(const vtkMAFImageMapToWidgetColors&) = delete;
 };
 #endif

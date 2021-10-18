@@ -145,9 +145,9 @@ void mafOpCreateVolume::CreateVolume()
   vol->SetSpacing(m_Spacing);
   vol->SetDimensions(dim);
   vol->SetExtent(0, dim[0]-1, 0, dim[1]-1, 0, dim[2]-1);
-  vol->SetNumberOfScalarComponents(1);
+  //vol->SetNumberOfScalarComponents(1);
   vol->GetPointData()->SetScalars(sca);
-  vol->Update();
+  //vol->Update();
   sca->Delete();
 
   mafNEW(m_Volume);

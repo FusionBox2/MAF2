@@ -574,7 +574,7 @@ void mafPipeMesh::UpdateActiveScalarsInVMEDataVectorItems()
 
   }
   m_Vme->Modified();
-  m_Vme->GetOutput()->GetVTKData()->Update();
+  m_Vme->GetOutput()->Update();
   m_Vme->Update();
   
 
@@ -622,7 +622,7 @@ void mafPipeMesh::UpdateActiveScalarsInVMEDataVectorItems()
         outputVTK->GetCellData()->GetScalars()->Modified();
       }
       outputVTK->Modified();
-      outputVTK->Update();
+      //outputVTK->Update();
       
     }
   }
@@ -639,7 +639,8 @@ void mafPipeMesh::UpdateVisualizationWithNewSelectedScalars()
 //----------------------------------------------------------------------------
 {
   vtkUnstructuredGrid *data = vtkUnstructuredGrid::SafeDownCast(m_Vme->GetOutput()->GetVTKData());
-  data->Update();
+  vtkAlgorithmOutput* port = m_Vme->GetOutput()->GetVTKOutputPort();
+  m_Vme->GetOutput()->Update();
   double sr[2];
   if(m_ActiveScalarType == POINT_TYPE)
     data->GetPointData()->GetScalars()->GetRange(sr);

@@ -31,7 +31,6 @@
 #include "vtkPolyData.h"
 
 
-vtkCxxRevisionMacro(vtkMAFTextOrientator, "$Revision: 1.3.2.2 $");
 vtkStandardNewMacro(vtkMAFTextOrientator);
 //------------------------------------------------------------------------------
 vtkMAFTextOrientator::vtkMAFTextOrientator()
@@ -53,6 +52,7 @@ vtkMAFTextOrientator::vtkMAFTextOrientator()
   TextSourceUpMapper = NULL;
   TextSourceUp = NULL;
 
+  m_ScaleTransform = NULL;
 
   Dimension = 10;
   AttachPositionFlag = false;
@@ -83,63 +83,63 @@ vtkMAFTextOrientator::~vtkMAFTextOrientator()
   if(TextSourceUpActor) TextSourceUpActor->Delete();
   if(TextSourceUpMapper) TextSourceUpMapper->Delete();
   if(TextSourceUp) TextSourceUp->Delete();
+
+  if(m_ScaleTransform) m_ScaleTransform->Delete();
 	
 }
-//------------------------------------------------------------------------------
-void vtkMAFTextOrientator::PrintSelf(ostream& os, vtkIndent indent)
-//------------------------------------------------------------------------------
-{
-  this->Superclass::PrintSelf(os,indent);
-}
+
 //------------------------------------------------------------------------------
 int vtkMAFTextOrientator::RenderOverlay(vtkViewport *viewport)
 //------------------------------------------------------------------------------
 {
-  vtkRenderer *ren = static_cast<vtkRenderer *>(viewport);
-
-  /*vtkCamera *cam = ren->GetActiveCamera();
-  if(!cam->GetParallelProjection()) return 0;*/
-
-
-  OrientatorUpdate(ren);
+  int renderedSomething = 0;
+  OrientatorUpdate(viewport);
   this->Modified();
 
   if(TextSourceLeftActor->GetVisibility())
-    TextSourceLeftActor->RenderOverlay(viewport);
+    renderedSomething += TextSourceLeftActor->RenderOverlay(viewport);
   if(TextSourceDownActor->GetVisibility())
-    TextSourceDownActor->RenderOverlay(viewport);
+    renderedSomething += TextSourceDownActor->RenderOverlay(viewport);
   if(TextSourceRightActor->GetVisibility())
-    TextSourceRightActor->RenderOverlay(viewport);
+    renderedSomething += TextSourceRightActor->RenderOverlay(viewport);
   if(TextSourceUpActor->GetVisibility())
-    TextSourceUpActor->RenderOverlay(viewport);
-
-  return 1;
-  
+    renderedSomething += TextSourceUpActor->RenderOverlay(viewport);
+  return renderedSomething;
 }
 //------------------------------------------------------------------------------
 int vtkMAFTextOrientator::RenderOpaqueGeometry(vtkViewport *viewport)
 //------------------------------------------------------------------------------
 {
-	vtkRenderer *ren = static_cast<vtkRenderer *>(viewport);
-
-	OrientatorUpdate(ren);
-	this->Modified();
+  int renderedSomething = 0;
+  OrientatorUpdate(viewport);
+  this->Modified();
 
   if(TextSourceLeftActor->GetVisibility())
-    TextSourceLeftActor->RenderOpaqueGeometry(viewport);
+    renderedSomething += TextSourceLeftActor->RenderOpaqueGeometry(viewport);
   if(TextSourceDownActor->GetVisibility())
-    TextSourceDownActor->RenderOpaqueGeometry(viewport);
+    renderedSomething += TextSourceDownActor->RenderOpaqueGeometry(viewport);
   if(TextSourceRightActor->GetVisibility())
-    TextSourceRightActor->RenderOpaqueGeometry(viewport);
+    renderedSomething += TextSourceRightActor->RenderOpaqueGeometry(viewport);
   if(TextSourceUpActor->GetVisibility())
-    TextSourceUpActor->RenderOpaqueGeometry(viewport);
+    renderedSomething += TextSourceUpActor->RenderOpaqueGeometry(viewport);
    
-	return 0;
+  return renderedSomething;
 }
 //------------------------------------------------------------------------------
 void vtkMAFTextOrientator::OrientatorCreate()
 //------------------------------------------------------------------------------
 {
+  vtkTransform* m_ScaleTransform = vtkTransform::New();
+  m_ScaleTransform->PostMultiply();
+  vtkTransformPolyDataFilter* ltpdf = vtkTransformPolyDataFilter::New();
+  ltpdf->SetTransform(m_ScaleTransform);
+  vtkTransformPolyDataFilter* rtpdf = vtkTransformPolyDataFilter::New();
+  rtpdf->SetTransform(m_ScaleTransform);
+  vtkTransformPolyDataFilter* utpdf = vtkTransformPolyDataFilter::New();
+  utpdf->SetTransform(m_ScaleTransform);
+  vtkTransformPolyDataFilter* dtpdf = vtkTransformPolyDataFilter::New();
+  dtpdf->SetTransform(m_ScaleTransform);
+
   //left
   TextSourceLeft = vtkTextSource::New();
   TextSourceLeft->BackingOn();
@@ -148,8 +148,9 @@ void vtkMAFTextOrientator::OrientatorCreate()
   TextSourceLeft->SetBackgroundColor(0.0,0.0,0.0);
   TextSourceLeft->Update();
 
+  ltpdf->SetInputConnection(TextSourceLeft->GetOutputPort());
   TextSourceLeftMapper = vtkPolyDataMapper2D::New();
-  TextSourceLeftMapper->SetInput(TextSourceLeft->GetOutput());
+  TextSourceLeftMapper->SetInputConnection(ltpdf->GetOutputPort());
   
   TextSourceLeftActor = vtkActor2D::New();
   TextSourceLeftActor->SetMapper(TextSourceLeftMapper);
@@ -162,8 +163,9 @@ void vtkMAFTextOrientator::OrientatorCreate()
   TextSourceDown->SetBackgroundColor(0.0,0.0,0.0);
   TextSourceDown->Update();
 
+  dtpdf->SetInputConnection(TextSourceDown->GetOutputPort());
   TextSourceDownMapper = vtkPolyDataMapper2D::New();
-  TextSourceDownMapper->SetInput(TextSourceDown->GetOutput());
+  TextSourceLeftMapper->SetInputConnection(dtpdf->GetOutputPort());
 
   TextSourceDownActor = vtkActor2D::New();
   TextSourceDownActor->SetMapper(TextSourceDownMapper);
@@ -176,8 +178,9 @@ void vtkMAFTextOrientator::OrientatorCreate()
   TextSourceRight->SetBackgroundColor(0.0,0.0,0.0);
   TextSourceRight->Update();
 
+  rtpdf->SetInputConnection(TextSourceRight->GetOutputPort());
   TextSourceRightMapper = vtkPolyDataMapper2D::New();
-  TextSourceRightMapper->SetInput(TextSourceRight->GetOutput());
+  TextSourceLeftMapper->SetInputConnection(rtpdf->GetOutputPort());
 
   TextSourceRightActor = vtkActor2D::New();
   TextSourceRightActor->SetMapper(TextSourceRightMapper);
@@ -190,18 +193,23 @@ void vtkMAFTextOrientator::OrientatorCreate()
   TextSourceUp->SetBackgroundColor(0.0,0.0,0.0);
   TextSourceUp->Update();
 
+  utpdf->SetInputConnection(TextSourceUp->GetOutputPort());
   TextSourceUpMapper = vtkPolyDataMapper2D::New();
-  TextSourceUpMapper->SetInput(TextSourceUp->GetOutput());
+  TextSourceLeftMapper->SetInputConnection(utpdf->GetOutputPort());
 
   TextSourceUpActor = vtkActor2D::New();
   TextSourceUpActor->SetMapper(TextSourceUpMapper);
+  ltpdf->Delete();
+  rtpdf->Delete();
+  utpdf->Delete();
+  dtpdf->Delete();
 }
 //----------------------------------------------------------------------------
-void vtkMAFTextOrientator::OrientatorUpdate(vtkRenderer *ren)
+void vtkMAFTextOrientator::OrientatorUpdate(vtkViewport* viewport)
 //----------------------------------------------------------------------------
 {
   int *renderSize;
-  renderSize = ren->GetSize();
+  renderSize = viewport->GetSize();
   
   int middleX = renderSize[0]/2;
   int middleY = renderSize[1]/2;
@@ -229,9 +237,9 @@ void vtkMAFTextOrientator::OrientatorUpdate(vtkRenderer *ren)
     
 
     double displayUp[3];
-    ren->SetWorldPoint(AttachPositionUp[0],AttachPositionUp[1],AttachPositionUp[2],1.);
-    ren->WorldToDisplay();
-    ren->GetDisplayPoint(displayUp);
+    viewport->SetWorldPoint(AttachPositionUp[0],AttachPositionUp[1],AttachPositionUp[2],1.);
+    viewport->WorldToDisplay();
+    viewport->GetDisplayPoint(displayUp);
     int temporaryXUp,temporaryYUp;
     temporaryXUp = displayUp[0] + DisplayOffsetUp[0];
     temporaryYUp = displayUp[1]+ DisplayOffsetUp[1];
@@ -250,9 +258,9 @@ void vtkMAFTextOrientator::OrientatorUpdate(vtkRenderer *ren)
 
 
     double displayRight[3];
-    ren->SetWorldPoint(AttachPositionRight[0],AttachPositionRight[1],AttachPositionRight[2],1.);
-    ren->WorldToDisplay();
-    ren->GetDisplayPoint(displayRight);
+    viewport->SetWorldPoint(AttachPositionRight[0],AttachPositionRight[1],AttachPositionRight[2],1.);
+    viewport->WorldToDisplay();
+    viewport->GetDisplayPoint(displayRight);
     int temporaryXRight,temporaryYRight;
     temporaryXRight = displayRight[0] + DisplayOffsetRight[0];
     temporaryYRight = displayRight[1]+ DisplayOffsetRight[1];
@@ -271,9 +279,9 @@ void vtkMAFTextOrientator::OrientatorUpdate(vtkRenderer *ren)
     TextSourceRightActor->SetPosition(temporaryXRight, temporaryYRight);
 
     double displayDown[3];
-    ren->SetWorldPoint(AttachPositionDown[0],AttachPositionDown[1],AttachPositionDown[2],1.);
-    ren->WorldToDisplay();
-    ren->GetDisplayPoint(displayDown);
+    viewport->SetWorldPoint(AttachPositionDown[0],AttachPositionDown[1],AttachPositionDown[2],1.);
+    viewport->WorldToDisplay();
+    viewport->GetDisplayPoint(displayDown);
     int temporaryXDown,temporaryYDown;
     temporaryXDown = displayDown[0] + DisplayOffsetDown[0];
     temporaryYDown = displayDown[1] + DisplayOffsetDown[1];
@@ -291,9 +299,9 @@ void vtkMAFTextOrientator::OrientatorUpdate(vtkRenderer *ren)
     TextSourceDownActor->SetPosition(temporaryXDown, temporaryYDown);
 
     double displayLeft[3];
-    ren->SetWorldPoint(AttachPositionLeft[0],AttachPositionLeft[1],AttachPositionLeft[2],1.);
-    ren->WorldToDisplay();
-    ren->GetDisplayPoint(displayLeft);
+    viewport->SetWorldPoint(AttachPositionLeft[0],AttachPositionLeft[1],AttachPositionLeft[2],1.);
+    viewport->WorldToDisplay();
+    viewport->GetDisplayPoint(displayLeft);
     int temporaryXLeft,temporaryYLeft;
     temporaryXLeft = displayLeft[0] + DisplayOffsetLeft[0];
     temporaryYLeft = displayLeft[1] + DisplayOffsetLeft[1];
@@ -359,39 +367,11 @@ void vtkMAFTextOrientator::SetScale(double multiple)
 //----------------------------------------------------------------------------
 {
   Dimension *= multiple;
-  vtkTransform *transform = vtkTransform::New();
-  transform->Scale(multiple,multiple,multiple);
-  transform->Update();
-
-  vtkTransformPolyDataFilter *tpdf = vtkTransformPolyDataFilter::New();
-  tpdf->SetTransform(transform);
-  //left
-  tpdf->SetInput(TextSourceLeft->GetOutput());
-  tpdf->Update();
-  
-  TextSourceLeft->GetOutput()->DeepCopy(tpdf->GetOutput());
-  TextSourceLeft->GetOutput()->Update();
-  //down
-  tpdf->SetInput(TextSourceDown->GetOutput());
-  tpdf->Update();
-  
-  TextSourceDown->GetOutput()->DeepCopy(tpdf->GetOutput());
-  TextSourceDown->GetOutput()->Update();
-  //right
-  tpdf->SetInput(TextSourceRight->GetOutput());
-  tpdf->Update();
-
-  TextSourceRight->GetOutput()->DeepCopy(tpdf->GetOutput());
-  TextSourceRight->GetOutput()->Update();
-  //up
-  tpdf->SetInput(TextSourceUp->GetOutput());
-  tpdf->Update();
-
-  TextSourceUp->GetOutput()->DeepCopy(tpdf->GetOutput());
-  TextSourceUp->GetOutput()->Update();
-
-  tpdf->Delete();
-  transform->Delete();
+  m_ScaleTransform->Scale(multiple,multiple,multiple);
+  TextSourceLeftMapper->Update();
+  TextSourceRightMapper->Update();
+  TextSourceUpMapper->Update();
+  TextSourceDownMapper->Update();
 }
 //----------------------------------------------------------------------------
 void vtkMAFTextOrientator::SetSingleActorVisibility(int actor, bool show)

@@ -91,9 +91,9 @@ void mafPipeVector::Create(mafNode *node, mafView *view)
 
   mafVMEOutputPolyline *out_polyline = mafVMEOutputPolyline::SafeDownCast(m_Vme->GetOutput());
   assert(out_polyline);
-  m_Data = vtkPolyData::SafeDownCast(out_polyline->GetVTKData());
+  m_Data = out_polyline->GetPolylineData();
   assert(m_Data);
-  m_Data->Update(); 
+  //m_Data->Update(); 
 
   m_Vector = mafVMEVector::SafeDownCast(m_Vme);
   m_Vector->GetTimeStamps(m_TimeVector);
@@ -115,15 +115,17 @@ void mafPipeVector::Create(mafNode *node, mafView *view)
 
   m_Sphere->Update();
   m_Apd = vtkAppendPolyData::New();
-  m_Apd->AddInput(m_Data);
-  m_Apd->AddInput(m_Sphere->GetOutput());
-  m_Apd->AddInput(m_ArrowTip->GetOutput());
+  m_Apd->AddInputConnection(out_polyline->GetVTKOutputPort());
+  m_Apd->AddInputConnection(m_Sphere->GetOutputPort());
+  m_Apd->AddInputConnection(m_ArrowTip->GetOutputPort());
   m_Apd->Update();
-  m_Mapper->SetInput(m_Apd->GetOutput());
+  m_Mapper->SetInputConnection(m_Apd->GetOutputPort());
  
 
   int renderingDisplayListFlag = m_Vme->IsAnimated() ? 1 : 0;
+#if VTK_MAJOR_VERSION <= 7
   m_Mapper->SetImmediateModeRendering(renderingDisplayListFlag);
+#endif
 
   m_Actor = vtkActor::New();
   m_Actor->SetMapper(m_Mapper);
@@ -140,10 +142,10 @@ void mafPipeVector::Create(mafNode *node, mafView *view)
   m_AssemblyFront->AddPart(m_ActorBunch);
 
   vtkMAFSmartPointer<vtkOutlineCornerFilter> corner;
-  corner->SetInput(m_Data);  
+  corner->SetInputConnection(out_polyline->GetVTKOutputPort());
 
   vtkMAFSmartPointer<vtkPolyDataMapper> corner_mapper;
-  corner_mapper->SetInput(corner->GetOutput());
+  corner_mapper->SetInputConnection(corner->GetOutputPort());
 
   vtkMAFSmartPointer<vtkProperty> corner_props;
   corner_props->SetColor(1,1,1);
@@ -193,7 +195,7 @@ void mafPipeVector::Select(bool sel)
 void mafPipeVector::UpdateProperty(bool fromTag)
 //----------------------------------------------------------------------------
 { 
-  m_Data->Update();
+  //m_Data->Update();
 
   double pointCop[3];
   m_Data->GetPoint(0,pointCop);
@@ -258,18 +260,18 @@ void mafPipeVector::AllVector(bool fromTag)
       double point2[3];
 
       m_Vector->SetTimeStamp(m_TimeVector[n]);
-      m_Vector->GetOutput()->GetVTKData()->GetPoint(0, point1);
-      m_Vector->GetOutput()->GetVTKData()->GetPoint(1, point2);
+      //m_Vector->GetOutput()->GetVTKData()->GetPoint(0, point1);
+      //m_Vector->GetOutput()->GetVTKData()->GetPoint(1, point2);
 
       line->SetPoint1(point1);
       line->SetPoint2(point2);
  
-      m_Bunch->AddInput(line->GetOutput());
+      m_Bunch->AddInputConnection(line->GetOutputPort());
     } 
 
-    if (m_Bunch->GetNumberOfInputs() == 0)
+    if (m_Bunch->GetNumberOfInputConnections(0) == 0)
     {
-      m_MapperBunch->SetInput(m_Bunch->GetOutput());
+      m_MapperBunch->SetInputConnection(m_Bunch->GetOutputPort());
     }
   }
 }
@@ -325,13 +327,13 @@ void mafPipeVector::OnEvent(mafEventBase *maf_event)
       case ID_USE_ARROW:
         if (m_UseArrow == FALSE)
         {
-          m_Apd->RemoveInput(m_ArrowTip->GetOutput());
+          m_Apd->RemoveInputConnection(0, m_ArrowTip->GetOutputPort());
           m_Apd->Update();
         }
         else
         {
           UpdateProperty();
-          m_Apd->AddInput(m_ArrowTip->GetOutput());
+          m_Apd->AddInputConnection(m_ArrowTip->GetOutputPort());
           m_Apd->Update();
         }
         mafEventMacro(mafEvent(this,CAMERA_UPDATE));
@@ -339,13 +341,13 @@ void mafPipeVector::OnEvent(mafEventBase *maf_event)
       case ID_USE_SPHERE:
         if (m_UseSphere == FALSE)
         {
-          m_Apd->RemoveInput(m_Sphere->GetOutput());
+          m_Apd->RemoveInputConnection(0, m_Sphere->GetOutputPort());
           m_Apd->Update();
         }
         else
         {
           UpdateProperty();
-          m_Apd->AddInput(m_Sphere->GetOutput());
+          m_Apd->AddInputConnection(m_Sphere->GetOutputPort());
           m_Apd->Update();
         }
         mafEventMacro(mafEvent(this,CAMERA_UPDATE));

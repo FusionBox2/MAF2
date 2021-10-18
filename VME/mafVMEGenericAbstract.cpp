@@ -102,8 +102,8 @@ int mafVMEGenericAbstract::DeepCopyVmeLarge(mafNode *a)
     if (vme->GetDataVector())
     {
       //////////////////////////////////////////////////////////////////////////
-      mafDataPipeInterpolatorVTK::SafeDownCast(vme->GetDataPipe())->GetVTKDataPipe()->RemoveAllInputs();
-      mafDataPipeInterpolatorVTK::SafeDownCast(vme->GetDataPipe())->GetVTKDataPipe()->UnRegisterAllOutputs();
+      //mafDataPipeInterpolatorVTK::SafeDownCast(vme->GetDataPipe())->GetVTKDataPipe()->RemoveAllInputs();
+      //mafDataPipeInterpolatorVTK::SafeDownCast(vme->GetDataPipe())->GetVTKDataPipe()->UnRegisterAllOutputs();
       //////////////////////////////////////////////////////////////////////////
 
       if(m_DataVector == NULL)

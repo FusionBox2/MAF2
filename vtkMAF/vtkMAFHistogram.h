@@ -58,7 +58,7 @@ class VTK_vtkMAF_EXPORT vtkMAFHistogram : public vtkActor2D
 {
  public:
   /** RTTI macro */
-  vtkTypeRevisionMacro(vtkMAFHistogram, vtkActor2D);
+  vtkTypeMacro(vtkMAFHistogram, vtkActor2D);
   /** Print Object Information*/
   void PrintSelf(ostream& os, vtkIndent indent);
   /** Function that create an instance of the object*/
@@ -138,11 +138,12 @@ class VTK_vtkMAF_EXPORT vtkMAFHistogram : public vtkActor2D
   void SetLabel(const char *lab);
 
   /** Draw the object to the screen */
-  int	 RenderOverlay(vtkViewport *viewport);
+  int	 RenderOverlay(vtkViewport *viewport) override;
   /** Method is intended for rendering Opaque Geometry.*/
-  int	 RenderOpaqueGeometry(vtkViewport *viewport);
+  int	 RenderOpaqueGeometry(vtkViewport *viewport) override;
   /** Method is intended for rendering Translucent Geometry. */
-  int	 RenderTranslucentGeometry(vtkViewport *viewport)  {return 0;};
+  int	 RenderTranslucentPolygonalGeometry(vtkViewport* viewport) override { return 0; }
+  int	 HasTranslucentPolygonalGeometry() override { return 0; }
   /** Adjust the clipping range (this method is empty).*/
   void AdjustClippingRange(vtkViewport *viewport)        {};
 

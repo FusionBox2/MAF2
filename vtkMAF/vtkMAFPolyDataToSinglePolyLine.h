@@ -18,9 +18,9 @@
 #define __vtkMAFPolyDataToSinglePolyLine_h
 
 #include "vtkMAFConfigure.h"
-#include "vtkPolyDataToPolyDataFilter.h"
+#include "vtkPolyDataAlgorithm.h"
 //----------------------------------------------------------------------------
-class VTK_vtkMAF_EXPORT vtkMAFPolyDataToSinglePolyLine : public vtkPolyDataToPolyDataFilter
+class VTK_vtkMAF_EXPORT vtkMAFPolyDataToSinglePolyLine : public vtkPolyDataAlgorithm
 //----------------------------------------------------------------------------
 {
 public:
@@ -31,7 +31,7 @@ public:
   static vtkMAFPolyDataToSinglePolyLine* New();
 
 protected:
-  void Execute();
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
 private:
 	vtkMAFPolyDataToSinglePolyLine(const vtkMAFPolyDataToSinglePolyLine&);  // Not implemented.

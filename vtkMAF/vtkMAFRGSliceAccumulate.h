@@ -52,15 +52,15 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include <memory.h>
 
 #include "vtkMAFConfigure.h"
-#include <vtkRectilinearGridSource.h>
+#include <vtkRectilinearGridAlgorithm.h>
 #include "vtkRectilinearGrid.h"
 #include <vtkStructuredPoints.h>
 #include <vtkImageData.h>
 
-class VTK_vtkMAF_EXPORT vtkMAFRGSliceAccumulate : public vtkRectilinearGridSource
+class VTK_vtkMAF_EXPORT vtkMAFRGSliceAccumulate : public vtkRectilinearGridAlgorithm
 {
 public:
-  vtkTypeRevisionMacro(vtkMAFRGSliceAccumulate,vtkRectilinearGridSource);
+  vtkTypeMacro(vtkMAFRGSliceAccumulate,vtkRectilinearGridAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
 	static vtkMAFRGSliceAccumulate *New();
@@ -125,8 +125,11 @@ protected:
 
 	vtkMAFRGSliceAccumulate();
   ~vtkMAFRGSliceAccumulate();
-	vtkMAFRGSliceAccumulate(const vtkMAFRGSliceAccumulate&);
-  void operator=(const vtkMAFRGSliceAccumulate&);
+
+  int FillInputPortInformation(int port, vtkInformation* info) override;
+
+  /** Execute the filter. */
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
   vtkSetObjectMacro(Slices, vtkRectilinearGrid);
   vtkGetObjectMacro(Slices, vtkRectilinearGrid);
@@ -137,5 +140,8 @@ protected:
   
   vtkRectilinearGrid * Slices;
 
+private:
+    vtkMAFRGSliceAccumulate(const vtkMAFRGSliceAccumulate&) = delete;
+    void operator=(const vtkMAFRGSliceAccumulate&) = delete;
 };
 #endif

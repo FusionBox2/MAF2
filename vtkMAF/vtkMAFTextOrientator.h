@@ -48,6 +48,7 @@ class vtkRenderer;
 class vtkProperty2D;
 class vtkPolyDataMapper2D;
 class vtkMapper;
+class vtkTransform;
 
 
 /**
@@ -59,9 +60,7 @@ class VTK_vtkMAF_EXPORT vtkMAFTextOrientator : public vtkActor2D
 {
  public:
   /** RTTI Macro */
-  vtkTypeRevisionMacro(vtkMAFTextOrientator,vtkActor2D);
-  /** Print Object Information */
-  void PrintSelf(ostream& os, vtkIndent indent);
+  vtkTypeMacro(vtkMAFTextOrientator,vtkActor2D);
   /** create an instance of the object */
   static	vtkMAFTextOrientator *New();
   
@@ -128,13 +127,14 @@ protected:
 	/** create orientator actor */
 	void			OrientatorCreate();	
     /** update orientator actor */
-	void			OrientatorUpdate(vtkRenderer *ren);
+	void			OrientatorUpdate(vtkViewport* viewport);
   /** Draw the object to the screen */
-  int	 RenderOverlay(vtkViewport *viewport);
+  int	 RenderOverlay(vtkViewport *viewport) override;
   /** Draw the object to the screen */
-  int	 RenderOpaqueGeometry(vtkViewport *viewport);      
+  int	 RenderOpaqueGeometry(vtkViewport *viewport) override;      
   /** Draw the object to the screen */
-  int	 RenderTranslucentGeometry(vtkViewport *viewport)  {return 0;}
+  int	 RenderTranslucentPolygonalGeometry(vtkViewport *viewport) override  {return 0;}
+  int	 HasTranslucentPolygonalGeometry() override  {return 0;}
 
   //variables
   int                     Dimension;
@@ -165,14 +165,13 @@ protected:
   vtkActor2D						 *TextSourceUpActor;
   vtkPolyDataMapper2D		 *TextSourceUpMapper;
   vtkTextSource          *TextSourceUp;
+
+  vtkTransform           *m_ScaleTransform;
 	
 private:
-  /** hide the two paraOrientator Render() method from the user and the compiler. */
-  virtual void Render(vtkRenderer *, vtkMapper *) {};
-private:
   /** Copy Constructor , not implemented */
-  vtkMAFTextOrientator(const vtkMAFTextOrientator&);  	// Not implemented.
+  vtkMAFTextOrientator(const vtkMAFTextOrientator&) = delete;
   /** operator =, not implemented */
-  void operator=(const vtkMAFTextOrientator&);  // Not implemented.
+  void operator=(const vtkMAFTextOrientator&) = delete;
 };
 #endif

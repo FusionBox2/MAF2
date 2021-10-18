@@ -31,6 +31,8 @@
 
 #include "vtkImageData.h"
 #include "vtkWindowLevelLookupTable.h"
+#include "vtkAlgorithmOutput.h"
+#include "vtkAlgorithm.h"
 
 #include <assert.h>
 
@@ -56,7 +58,7 @@ mafVMEOutputImage::~mafVMEOutputImage()
 }
 
 //-------------------------------------------------------------------------
-vtkImageData *mafVMEOutputImage::GetImageData()
+vtkImageData *mafVMEOutputImage::GetImageData_()
 //-------------------------------------------------------------------------
 {
   return (vtkImageData *)GetVTKData();
@@ -104,7 +106,7 @@ mafGUI* mafVMEOutputImage::CreateGui()
 
   wxBusyCursor wait;
 
-  if (m_VME && m_VME->GetDataPipe() && m_VME->GetDataPipe()->GetVTKData())
+  if (m_VME && m_VME->GetDataPipe() && m_VME->GetDataPipe()->GetVTKOutputPort())
   {
     this->Update();
   }

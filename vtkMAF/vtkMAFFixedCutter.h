@@ -27,7 +27,7 @@ that is the center of the input.
 class VTK_vtkMAF_EXPORT vtkMAFFixedCutter : public vtkCutter
 {
 public:
-  vtkTypeRevisionMacro(vtkMAFFixedCutter,vtkCutter);
+  vtkTypeMacro(vtkMAFFixedCutter,vtkCutter);
   /** constructor */
            vtkMAFFixedCutter();
   /** destructor */
@@ -37,12 +37,12 @@ public:
 
 protected:
   /** reimplement execute fixing the algorithm when the number of points of the cutter output is zero.*/
-  void Execute();
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
 private:
     /** Copy Constructor , not implemented */
-	vtkMAFFixedCutter(const vtkMAFFixedCutter&);
+	vtkMAFFixedCutter(const vtkMAFFixedCutter&) = delete;
   /** operator =, not implemented */
-  void operator=(const vtkMAFFixedCutter&);
+  void operator=(const vtkMAFFixedCutter&) = delete;
 };
 #endif

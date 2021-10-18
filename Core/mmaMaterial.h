@@ -22,12 +22,15 @@
 //----------------------------------------------------------------------------
 #include "mafAttribute.h"
 #include "mafVME.h"
+#include "vtkSmartPointer.h"
 //----------------------------------------------------------------------------
 // forward refs :
 //----------------------------------------------------------------------------
 class vtkProperty;
 class vtkLookupTable;
 class vtkImageData;
+class vtkAlgorithm;
+class vtkAlgorithmOutput;
 
 //----------------------------------------------------------------------------
 // mmaMaterial:
@@ -68,17 +71,20 @@ public:
   virtual bool Equals(const mafAttribute *a);
 
   /** Set the texture image to map on the surface */
-  void SetMaterialTexture(vtkImageData *tex, mafString tex_name);
-  void SetMaterialTexture(vtkImageData *tex);
+  void SetMaterialTextureData(vtkImageData* tex, const mafString& tex_name);
+  void SetMaterialTextureData(vtkImageData *tex);
+  void SetMaterialTextureConnection(vtkAlgorithmOutput* port, const mafString& tex_name);
+  void SetMaterialTextureConnection(vtkAlgorithmOutput* port);
 
   /** Return the texture set as vtkImageData */
-  vtkImageData *GetMaterialTexture();
+  vtkAlgorithmOutput* GetMaterialTexturePort();
+  vtkImageData* GetMaterialTextureData();
 
   /** Return the vme's id representing the texture */
   int GetMaterialTextureID();
   mafString GetMaterialTextureName();
   /** Set the mafVMEImage id to use as texture to map on the surface */
-  void SetMaterialTexture(int tex_id);
+  void SetMaterialTextureID(int tex_id);
  // void SetMaterialTexture(mafString tex_name);
   /** Apply shading parameters to the vtkProperty */
   virtual void UpdateProp();
@@ -110,7 +116,8 @@ public:
   int       m_TextureMappingMode;
 
 protected:
-  vtkImageData *m_TextureImage;
+  vtkSmartPointer<vtkAlgorithm> m_TextureAlgorithm;
+  vtkAlgorithmOutput* m_TexturePort;
   int           m_TextureID;
   mafString m_VmeImageName;
   virtual int InternalStore(mafStorageElement *parent);

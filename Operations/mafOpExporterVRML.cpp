@@ -56,6 +56,7 @@
 #include "vtkTexture.h"
 #include "vtkDataArray.h"
 #include "vtkPointData.h"
+#include "vtkAlgorithmOutput.h"
 
 #include <iostream>
 #include <fstream>
@@ -204,7 +205,7 @@ void mafOpExporterVRML::ExportVRML()
 
   vtkPolyData *data = vtkPolyData::SafeDownCast(out_surface->GetVTKData());
   assert(data);
-  data->Update();
+  //data->Update();
   vtkPointData *ptData=data->GetPointData();
   vtkDataArray *scalars=ptData->GetScalars() ;
   double sr[2] = { 0, 1 };
@@ -225,10 +226,10 @@ void mafOpExporterVRML::ExportVRML()
 
   vtkMAFSmartPointer<vtkTriangleFilter>triangles;
   vtkMAFSmartPointer<vtkTransformPolyDataFilter> v_tpdf;
-  triangles->SetInput(out_surface->GetSurfaceData());
+  triangles->SetInputConnection(out_surface->GetVTKOutputPort());
   triangles->Update();
 
-  v_tpdf->SetInput(triangles->GetOutput());
+  v_tpdf->SetInputConnection(triangles->GetOutputPort());
   v_tpdf->SetTransform(out_surface->GetAbsTransform()->GetVTKTransform());
   
   v_tpdf->Update();
@@ -243,7 +244,7 @@ void mafOpExporterVRML::ExportVRML()
 		writer->SetInput(triangles->GetOutput());*/
 
 	vtkPolyDataMapper* mapper = vtkPolyDataMapper::New();
-	mapper->SetInput(data);
+	mapper->SetInputConnection(out_surface->GetVTKOutputPort());
 	mapper->SetScalarVisibility(m_ScalarVisibility);
 	mapper->SetScalarRange(sr);
 
@@ -268,26 +269,24 @@ void mafOpExporterVRML::ExportVRML()
 
 	
 	vtkMAFSmartPointer<vtkBMPWriter> exporter;
-	vtkImageData *image;
-	
-	
 	vtkTexture *m_Texture=vtkTexture::New();
 	m_Texture->SetQualityTo32Bit();
 	m_Texture->InterpolateOn();
 	if (m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_TEXTURE)
 	{
-		if (m_SurfaceMaterial->GetMaterialTexture() != NULL)
+		if (m_SurfaceMaterial->GetMaterialTexturePort() != NULL)
 		{
-			vtkImageData *image = m_SurfaceMaterial->GetMaterialTexture();
-			m_Texture->SetInput(image);
+			vtkImageData *image = m_SurfaceMaterial->GetMaterialTextureData();
+			m_Texture->SetInputConnection(m_SurfaceMaterial->GetMaterialTexturePort());
+			m_SurfaceMaterial->GetMaterialTexturePort()->GetProducer()->Update();
 			image->GetScalarRange(sr);
 		}
 		else if (m_SurfaceMaterial->GetMaterialTextureID() != -1)
 		{
 			mafVME *texture_vme = mafVME::SafeDownCast(m_Input->GetRoot()->FindInTreeById(m_SurfaceMaterial->GetMaterialTextureID()));
-			texture_vme->GetOutput()->GetVTKData()->Update();
+			texture_vme->GetOutput()->Update();
 			vtkImageData *image = (vtkImageData *)texture_vme->GetOutput()->GetVTKData();
-			m_Texture->SetInput(image);
+			m_Texture->SetInputConnection(texture_vme->GetOutput()->GetVTKOutputPort());
 			image->GetScalarRange(sr);
 		}
 		else

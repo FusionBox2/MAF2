@@ -106,15 +106,15 @@ void mafPipeMuscleWrapperAQ::Create(mafNode *node, mafView *view/*, bool use_axe
   m_MuscleWrapperVME->AddObserver(this);
   assert(m_MuscleWrapperVME->GetPolylineOutput());
   m_MuscleWrapperVME->GetPolylineOutput()->Update();
-  vtkPolyData *data = m_MuscleWrapperVME->GetPolylineOutput()->GetPolylineData();
+  vtkAlgorithmOutput *port = m_MuscleWrapperVME->GetPolylineOutput()->GetVTKOutputPort();
  
  // vtkPolyData *data = m_MuscleWrapperVME->e->getOutput();
 
-  assert(data);
+  assert(port);
 
   vtkNEW(m_Tube);
   m_Tube->UseDefaultNormalOff();
-  m_Tube->SetInput(data);
+  m_Tube->SetInputConnection(port);
   m_Tube->SetRadius(m_MuscleWrapperVME->GetMeterRadius());
   m_Tube->SetCapping(m_MuscleWrapperVME->GetMeterCapping());
   m_Tube->SetNumberOfSides(20);
@@ -131,14 +131,16 @@ void mafPipeMuscleWrapperAQ::Create(mafNode *node, mafView *view/*, bool use_axe
 
   vtkNEW(m_DataMapper);
   if (m_MuscleWrapperVME->GetMeterRepresentation() == mafVMEMuscleWrapperAQ::LINE_REPRESENTATION)
-    m_DataMapper->SetInput(data);
+    m_DataMapper->SetInputConnection(port);
   else
   {
     m_Tube->Update();
-    m_DataMapper->SetInput(m_Tube->GetOutput());
+    m_DataMapper->SetInputConnection(m_Tube->GetOutputPort());
   }
     
+#if VTK_MAJOR_VERSION <= 7
 	m_DataMapper->ImmediateModeRenderingOff();
+#endif
 	if (m_MuscleWrapperVME->GetMeterColorMode() == mafVMEMuscleWrapperAQ::RANGE_COLOR)
     m_DataMapper->SetLookupTable(m_Lut);
 
@@ -150,10 +152,10 @@ void mafPipeMuscleWrapperAQ::Create(mafNode *node, mafView *view/*, bool use_axe
 
   // selection hilight
 	vtkNEW(m_SelectionBox);
-	m_SelectionBox->SetInput(data);  
+	m_SelectionBox->SetInputConnection(port);  
 
 	vtkNEW(m_SelectionMapper);
-	m_SelectionMapper->SetInput(m_SelectionBox->GetOutput());
+	m_SelectionMapper->SetInputConnection(m_SelectionBox->GetOutputPort());
 
 	vtkNEW(m_SelectionProperty);
 	m_SelectionProperty->SetColor(1,1,1);
@@ -418,15 +420,15 @@ void mafPipeMuscleWrapperAQ::UpdateProperty(bool fromTag)
 		return;
 	}
   
-  vtkPolyData *data = m_MuscleWrapperVME->GetPolylineOutput()->GetPolylineData();
+  vtkAlgorithmOutput *port = m_MuscleWrapperVME->GetPolylineOutput()->GetVTKOutputPort();
   if (m_MuscleWrapperVME->GetMeterRepresentation() == mafVMEMuscleWrapperAQ::LINE_REPRESENTATION)
   {
-    m_DataMapper->SetInput(data);
+    m_DataMapper->SetInputConnection(port);
   }
   else
   {
     m_Tube->Update();
-    m_DataMapper->SetInput(m_Tube->GetOutput());
+    m_DataMapper->SetInputConnection(m_Tube->GetOutputPort());
   }
 
   double distance_value = m_MuscleWrapperVME->GetDistance();

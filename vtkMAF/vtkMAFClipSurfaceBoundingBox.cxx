@@ -14,6 +14,8 @@
 
 =========================================================================*/
 
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 
 #include "vtkMAFClipSurfaceBoundingBox.h"
@@ -24,7 +26,6 @@
 #include "vtkLinearSubdivisionFilter.h"
 #include "vtkClipPolyData.h"
 
-vtkCxxRevisionMacro(vtkMAFClipSurfaceBoundingBox, "$Revision: 1.1 $");  
 vtkStandardNewMacro(vtkMAFClipSurfaceBoundingBox);
 
 //-------------------------------------------------------------------------
@@ -32,33 +33,55 @@ vtkMAFClipSurfaceBoundingBox::vtkMAFClipSurfaceBoundingBox()
 //-------------------------------------------------------------------------
 {
 	ClipInside = 0;
+    this->SetNumberOfInputPorts(2);
+    this->SetNumberOfOutputPorts(1);
 }
 //-------------------------------------------------------------------------
 vtkMAFClipSurfaceBoundingBox::~vtkMAFClipSurfaceBoundingBox()
 //-------------------------------------------------------------------------
 {
-	SetMask(NULL);
 }
-//-------------------------------------------------------------------------
-void vtkMAFClipSurfaceBoundingBox::Execute() 
-//-------------------------------------------------------------------------
+//----------------------------------------------------------------------------
+int vtkMAFClipSurfaceBoundingBox::FillInputPortInformation(
+    int vtkNotUsed(port), vtkInformation* info)
 {
-	vtkPolyData *output = this->GetOutput();
-	vtkPolyData *input	= this->GetInput();
-	vtkPolyData *mask		=	this->GetMask();
-	
-	double bounds[6];
-	input->GetBounds(bounds);
-	double p1[3],p2[3];
-	for(int i=0;i<3;i++)
-	{
-		p1[i]=bounds[i*2];
-		p2[i]=bounds[i*2+1];
-	}
-	double scale_factor=2*sqrt(vtkMath::Distance2BetweenPoints(p1,p2));
+    info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkPolyData");
+    return 1;
+}
+
+void vtkMAFClipSurfaceBoundingBox::SetMaskData(vtkDataSet* input)
+{
+    this->Superclass::SetInputData(1, input);
+}
+
+//----------------------------------------------------------------------------
+// Specify the input data or filter. New style.
+void vtkMAFClipSurfaceBoundingBox::SetMaskConnection(vtkAlgorithmOutput* algOutput)
+{
+    this->Superclass::SetInputConnection(1, algOutput);
+}
+
+
+//-------------------------------------------------------------------------
+int vtkMAFClipSurfaceBoundingBox::RequestData(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
+{
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
+  // get the input and output
+  vtkPolyData *input = vtkPolyData::SafeDownCast(
+    inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkPolyData *output = vtkPolyData::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
+	double scale_factor=2*input->GetLength();
 
 	vtkLinearExtrusionFilter *extrusionFilter = vtkLinearExtrusionFilter::New();
-	extrusionFilter->SetInput(mask);
+	extrusionFilter->SetInputConnection(GetInputConnection(1, 0));
 	extrusionFilter->SetScaleFactor(scale_factor);
 	extrusionFilter->Modified();
 	extrusionFilter->Update();
@@ -67,16 +90,18 @@ void vtkMAFClipSurfaceBoundingBox::Execute()
 	implicitPolyData->SetInput(extrusionFilter->GetOutput());
 
 	vtkClipPolyData *clipFilter = vtkClipPolyData::New();
-	clipFilter->SetInput(input);
+	clipFilter->SetInputConnection(GetInputConnection(0, 0));
 	clipFilter->SetGenerateClipScalars(0);
 	clipFilter->SetClipFunction(implicitPolyData);
 	clipFilter->SetInsideOut(ClipInside);
 	clipFilter->SetValue(0);
 	clipFilter->Update();
 
-	output->DeepCopy(clipFilter->GetOutput());
+	output->DeepCopy(clipFilter->GetOutputDataObject(0));
 
 	clipFilter->Delete();
 	implicitPolyData->Delete();
 	extrusionFilter->Delete();
+
+	return 1;
 }

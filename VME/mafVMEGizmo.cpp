@@ -121,7 +121,7 @@ void mafVMEGizmo::SetData(vtkPolyData *data)
     
     // set data as input to VTK 
     mafDataPipeCustom *dpipe=mafDataPipeCustom::SafeDownCast(GetDataPipe());
-    dpipe->GetVTKDataPipe()->SetNthInput(0,data);
+    dpipe->GetVTKDataPipe()->SetInputData(0,data);
     
     Modified();
   }

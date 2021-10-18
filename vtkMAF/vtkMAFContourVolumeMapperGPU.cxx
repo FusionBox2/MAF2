@@ -13,10 +13,10 @@
  PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-
+#ifdef COMPLETED 
 #define GLEW_STATIC
-#include "../GPUAPI/glew/glew.h"
-
+//#include "../GPUAPI/glew/glew.h"
+#endif
 #include <assert.h>
 #include <vector>
 
@@ -38,8 +38,8 @@
 #include "vtkRectilinearGrid.h"
 #include "vtkTimerLog.h"
 #include "vtkVolumeProperty.h"
-#include "vtkMarchingCubesCases.h"
-#include "vtkMarchingSquaresCases.h"
+#include "vtkMarchingCubesTriangleCases.h"
+#include "vtkMarchingSquaresLineCases.h"
 #include "vtkMAFContourVolumeMapperGPU.h"
 
 
@@ -50,6 +50,18 @@
 #include <string>
 #include <algorithm>
 
+vtkStandardNewMacro(vtkMAFContourVolumeMapperGPU);
+
+vtkMAFContourVolumeMapperGPU::vtkMAFContourVolumeMapperGPU()
+{
+}
+
+vtkMAFContourVolumeMapperGPU::~vtkMAFContourVolumeMapperGPU()
+{
+}
+
+
+#ifdef COMPLETED 
 
 static const vtkMarchingCubesTriangleCases* marchingCubesCases = vtkMarchingCubesTriangleCases::GetCases();
 
@@ -58,8 +70,6 @@ static const vtkMarchingCubesTriangleCases* marchingCubesCases = vtkMarchingCube
 
   using namespace vtkMAFContourVolumeMapperNamespace;
 
-  vtkCxxRevisionMacro(vtkMAFContourVolumeMapperGPU, "$Revision: 1.1.2.3 $");
-  vtkStandardNewMacro(vtkMAFContourVolumeMapperGPU);
 
 
   //baoquan 's function
@@ -4115,3 +4125,4 @@ static const vtkMarchingCubesTriangleCases* marchingCubesCases = vtkMarchingCube
   }
 #pragma endregion
 //}//end baoquan space
+#endif

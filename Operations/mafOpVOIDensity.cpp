@@ -42,6 +42,7 @@
 #include "vtkDataSet.h"
 #include "vtkMAFImplicitPolyData.h"
 #include "vtkTransformPolyDataFilter.h"
+#include "vtkAlgorithmOutput.h"
 
 #define min(x0, x1) (((x0) < (x1)) ? (x0) : (x1))
 #define max(x0, x1) (((x0) > (x1)) ? (x0) : (x1))
@@ -199,7 +200,7 @@ void mafOpVOIDensity::OnEvent(mafEventBase *maf_event)
         }
 				VME->Update();
 				vtkMAFSmartPointer<vtkFeatureEdges> FE;
-				FE->SetInput((vtkPolyData *)(VME->GetOutput()->GetVTKData()));
+				FE->SetInputConnection(VME->GetOutput()->GetVTKOutputPort());
 				FE->SetFeatureAngle(30);
 				FE->SetBoundaryEdges(1);
 				FE->SetColoring(0);
@@ -249,16 +250,14 @@ void mafOpVOIDensity::ExtractVolumeScalars()
   
   m_NumberOfScalars = 0;
 	vtkAbstractTransform *transform;
-	vtkPolyData *polydata;
 	mafVME *VME = mafVME::SafeDownCast(m_Surface);
 	VME->GetOutput()->GetBounds(b);
 	VME->Update();
 	transform=(vtkAbstractTransform*)VME->GetAbsMatrixPipe()->GetVTKTransform();
-	polydata=(vtkPolyData *)VME->GetOutput()->GetVTKData();
 
 	vtkMAFSmartPointer<vtkTransformPolyDataFilter> TransformDataClipper;
   TransformDataClipper->SetTransform(transform);
-  TransformDataClipper->SetInput(polydata);
+  TransformDataClipper->SetInputConnection(VME->GetOutput()->GetVTKOutputPort());
   TransformDataClipper->Update();
 
 	vtkMAFSmartPointer<vtkMAFImplicitPolyData> ImplicitSurface;
@@ -269,7 +268,7 @@ void mafOpVOIDensity::ExtractVolumeScalars()
 	ImplicitBox->Modified();
 
   vtkMAFSmartPointer<vtkDataSet> VolumeData = ((mafVME*)m_Input)->GetOutput()->GetVTKData();
-  VolumeData->Update();
+  ((mafVME*)m_Input)->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
 	NumberVoxels = VolumeData->GetNumberOfPoints();
   
 	for (int voxel=0; voxel<NumberVoxels; voxel++)
@@ -283,7 +282,7 @@ void mafOpVOIDensity::ExtractVolumeScalars()
       {
         //store the corresponding point's scalar value
         PointId = VolumeData->FindPoint(Point);
-        InsideScalar = VolumeData->GetPointData()->GetTuple(PointId)[0];
+        InsideScalar = VolumeData->GetPointData()->GetArray(0)->GetTuple(PointId)[0];
         SumScalars += InsideScalar;
         m_MaxScalar = max(InsideScalar,m_MaxScalar);
         m_MinScalar = min(InsideScalar,m_MinScalar);

@@ -48,8 +48,9 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkDataArray.h"
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 
-vtkCxxRevisionMacro(vtkMAFRGSliceAccumulate, "$Revision: 1.1.2.4 $");
 vtkStandardNewMacro(vtkMAFRGSliceAccumulate);
 
 //--------------------------------------------------------------------------------------
@@ -76,6 +77,20 @@ vtkMAFRGSliceAccumulate::~vtkMAFRGSliceAccumulate()
 {
   SetSlices(NULL);
 }
+
+int vtkMAFRGSliceAccumulate::FillInputPortInformation(int port, vtkInformation* info)
+{
+	info->Set(vtkAlgorithm::INPUT_REQUIRED_DATA_TYPE(), "vtkImageData");
+    info->Set(vtkAlgorithm::INPUT_IS_REPEATABLE(), 1);
+    return 1;
+}
+
+/** Execute the filter. */
+int vtkMAFRGSliceAccumulate::RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*)
+{
+    return 1;
+}
+
 //--------------------------------------------------------------------------------------
 void vtkMAFRGSliceAccumulate::AddSlice(vtkImageData * slice)
 //--------------------------------------------------------------------------------------

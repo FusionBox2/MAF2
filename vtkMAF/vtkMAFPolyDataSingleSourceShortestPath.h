@@ -29,17 +29,18 @@
 #ifndef __vtkMAFPolyDataSingleSourceShortestPath_h__
 #define __vtkMAFPolyDataSingleSourceShortestPath_h__
 
-#include "vtkPolyDataToPolyDataFilter.h"
+#include "vtkMAFConfigure.h"
+#include "vtkPolyDataAlgorithm.h"
 
 class vtkDoubleArray;
 class vtkIntArray;
 class vtkIdList;
 class vtkFloatArray;
 
-class vtkMAFPolyDataSingleSourceShortestPath : public vtkPolyDataToPolyDataFilter
+class vtkMAFPolyDataSingleSourceShortestPath : public vtkPolyDataAlgorithm
 {
 public:
-	vtkTypeRevisionMacro(vtkMAFPolyDataSingleSourceShortestPath,vtkPolyDataToPolyDataFilter);
+	vtkTypeMacro(vtkMAFPolyDataSingleSourceShortestPath,vtkPolyDataAlgorithm);
 	
 	static vtkMAFPolyDataSingleSourceShortestPath *New();
 	
@@ -77,7 +78,7 @@ public:
 	vtkBooleanMacro(UseScalarWeights, int);
 	
 	// Description:
-	unsigned long GetMTime();
+	vtkMTimeType GetMTime();
 
   // Description:
   // Get Path Lenght
@@ -90,8 +91,9 @@ protected:
 	void operator=(const vtkMAFPolyDataSingleSourceShortestPath&);
 	
 	// Usual data generation method
-	void Execute();
-	
+	int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+	vtkPolyData* input;
+	vtkPolyData* output;
 	// Build a graph description of the mesh
 	void BuildAdjacency(vtkPolyData *pd);
 	

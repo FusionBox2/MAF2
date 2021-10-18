@@ -128,7 +128,11 @@ void mafPipeImage3D::Create(mafNode *node, mafView *view)
     m_ImageLUT->SetWindow(w);
     m_ImageLUT->SetLevel(l);
     m_ImageTexture->SetLookupTable(m_ImageLUT);
+#if VTK_MAJOR_VERSION > 7
+	m_ImageTexture->SetColorMode(VTK_COLOR_MODE_MAP_SCALARS);
+#else
     m_ImageTexture->MapColorScalarsThroughLookupTableOn();
+#endif
   }
 
   m_ImageTexture->Modified();

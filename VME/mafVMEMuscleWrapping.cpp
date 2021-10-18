@@ -199,8 +199,8 @@ mafVMEMuscleWrapping::mafVMEMuscleWrapping()
   // attach a data pipe which creates a bridge between VTK and MAF
 	mafDataPipeCustom *dpipe = mafDataPipeCustom::New();
 	m_PolyData->DeepCopy(m_Goniometer->GetOutput());
-	m_PolyData->Update();
-	dpipe->SetInput(m_PolyData);
+	//m_PolyData->Update();
+	dpipe->SetInputData(m_PolyData);
 	
 	SetDataPipe(dpipe);
 
@@ -256,8 +256,8 @@ int mafVMEMuscleWrapping::DeepCopy(mafNode *a)
     mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
     if (dpipe)
     {
-      dpipe->SetInput(m_PolyData);
-	  m_PolyData->Update();
+      dpipe->SetInputData(m_PolyData);
+	  InternalUpdate();
     }
   
     return MAF_OK;
@@ -784,7 +784,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 
 
 					m_Goniometer->RemoveAllInputs();
-					m_Goniometer->AddInput(line13->getVTKPolydata());
+					m_Goniometer->AddInputConnection(line13->GetOutput()->GetVTKOutputPort());
 					m_Goniometer->Update();
 					m_PolyData->DeepCopy(m_Goniometer->GetOutput());
 
@@ -958,10 +958,10 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					gError = mafToString(globalError);
 
 					m_Goniometer->RemoveAllInputs();
-					m_Goniometer->AddInput(line13->getVTKPolydata());
+					m_Goniometer->AddInputConnection(line13->GetOutput()->GetVTKOutputPort());
 					//if (path.size()>1)
-					m_Goniometer->AddInput(line15->getVTKPolydata());
-					m_Goniometer->AddInput(line14->getVTKPolydata());
+					m_Goniometer->AddInputConnection(line15->GetOutput()->GetVTKOutputPort());
+					m_Goniometer->AddInputConnection(line14->GetOutput()->GetVTKOutputPort());
 					m_Goniometer->Update();
 					m_PolyData->DeepCopy(m_Goniometer->GetOutput());
 
@@ -1145,10 +1145,10 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					gError = mafToString(globalError);
 
 					m_Goniometer->RemoveAllInputs();
-					m_Goniometer->AddInput(line13->getVTKPolydata());
+					m_Goniometer->AddInputConnection(line13->GetOutput()->GetVTKOutputPort());
 					if (path.size() > 1)
-						m_Goniometer->AddInput(line15->getVTKPolydata());
-					m_Goniometer->AddInput(line14->getVTKPolydata());
+						m_Goniometer->AddInputConnection(line15->GetOutput()->GetVTKOutputPort());
+					m_Goniometer->AddInputConnection(line14->GetOutput()->GetVTKOutputPort());
 
 					m_Goniometer->Update();
 					m_PolyData->DeepCopy(m_Goniometer->GetOutput());
@@ -1448,17 +1448,17 @@ void mafVMEMuscleWrapping::InternalUpdate()
 
 
 					m_Goniometer->RemoveAllInputs();
-					m_Goniometer->AddInput(line13->getVTKPolydata());
+					m_Goniometer->AddInputConnection(line13->GetOutput()->GetVTKOutputPort());
 
 					if (path.size() > 1)
-						m_Goniometer->AddInput(line15->getVTKPolydata());
+						m_Goniometer->AddInputConnection(line15->GetOutput()->GetVTKOutputPort());
 
-					m_Goniometer->AddInput(line14->getVTKPolydata());
+					m_Goniometer->AddInputConnection(line14->GetOutput()->GetVTKOutputPort());
 
 					//if (path2.size()>1)
-					m_Goniometer->AddInput(line11->getVTKPolydata());
+					m_Goniometer->AddInputConnection(line11->GetOutput()->GetVTKOutputPort());
 
-					m_Goniometer->AddInput(line12->getVTKPolydata());
+					m_Goniometer->AddInputConnection(line12->GetOutput()->GetVTKOutputPort());
 
 					m_Goniometer->Update();
 					m_PolyData->DeepCopy(m_Goniometer->GetOutput());
@@ -1533,7 +1533,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					gError = mafToString(globalError);
 
 					m_Goniometer->RemoveAllInputs();
-					m_Goniometer->AddInput(line11->getVTKPolydata());
+					m_Goniometer->AddInputConnection(line11->GetOutput()->GetVTKOutputPort());
 
 					m_Goniometer->Update();
 					m_PolyData->DeepCopy(m_Goniometer->GetOutput());
@@ -1730,12 +1730,12 @@ void mafVMEMuscleWrapping::InternalUpdate()
 
 
 					m_Goniometer->RemoveAllInputs();
-					m_Goniometer->AddInput(line13->getVTKPolydata());
+					m_Goniometer->AddInputConnection(line13->GetOutput()->GetVTKOutputPort());
 
 					if (pts5->GetNumberOfPoints() > 1)
-						m_Goniometer->AddInput(line15->getVTKPolydata());
+						m_Goniometer->AddInputConnection(line15->GetOutput()->GetVTKOutputPort());
 
-					m_Goniometer->AddInput(line14->getVTKPolydata());
+					m_Goniometer->AddInputConnection(line14->GetOutput()->GetVTKOutputPort());
 					m_Goniometer->Update();
 					m_PolyData->DeepCopy(m_Goniometer->GetOutput());
 
@@ -1784,7 +1784,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 
 
 				m_Goniometer->RemoveAllInputs();
-				m_Goniometer->AddInput(line11->getVTKPolydata());
+				m_Goniometer->AddInputConnection(line11->GetOutput()->GetVTKOutputPort());
 
 				m_Goniometer->Update();
 				m_PolyData->DeepCopy(m_Goniometer->GetOutput());

@@ -106,9 +106,9 @@ mafVMEMuscleWrapperAQ::mafVMEMuscleWrapperAQ()
   vtkNEW(m_PolyData);
   
 
-  m_Goniometer->AddInput(m_LineSource1->GetOutput());
-  m_Goniometer->AddInput(m_LineSource2->GetOutput());
-  m_Goniometer->AddInput(m_LineSource3->GetOutput());
+  m_Goniometer->AddInputConnection(m_LineSource1->GetOutputPort());
+  m_Goniometer->AddInputConnection(m_LineSource2->GetOutputPort());
+  m_Goniometer->AddInputConnection(m_LineSource3->GetOutputPort());
 
   m_PolyData->DeepCopy(m_Goniometer->GetOutput());
 
@@ -120,7 +120,7 @@ mafVMEMuscleWrapperAQ::mafVMEMuscleWrapperAQ()
   mafDataPipeCustom *dpipe = mafDataPipeCustom::New();
   dpipe->SetDependOnAbsPose(true);
   SetDataPipe(dpipe);
-  dpipe->SetInput(m_PolyData);
+  dpipe->SetInputData(m_PolyData);
 
   // histogram
   // Probing tool
@@ -194,8 +194,8 @@ int mafVMEMuscleWrapperAQ::DeepCopy(mafNode *a)
 		mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
 		if (dpipe)
 		{
-			dpipe->SetInput(m_Goniometer->GetOutput());
-			m_Goniometer->Update();
+			dpipe->SetInputData(m_PolyData);
+			InternalUpdate();
 		}
 		return MAF_OK;
 	}
@@ -760,7 +760,7 @@ void mafVMEMuscleWrapperAQ::InternalUpdate()
       s = vtkMath::Dot(v1,v2);
       if(vn1 != 0 && vn2 != 0)
       {
-        m_Angle = acos(s / (vn1 * vn2)) * vtkMath::RadiansToDegrees();
+        m_Angle = vtkMath::DegreesFromRadians(acos(s / (vn1 * vn2)));
 		if (GetMeterMeasureType() == mafVMEMuscleWrapperAQ::RELATIVE_MEASURE)
           m_Angle -= GetMeterAttributes()->m_InitMeasure;
       }
@@ -806,7 +806,7 @@ void mafVMEMuscleWrapperAQ::InternalUpdate()
   m_Goniometer->Update();
   vtkPolyData *polydata = m_Goniometer->GetOutput();
   int num = m_Goniometer->GetOutput()->GetNumberOfPoints();
-  int pointId[2];
+  vtkIdType pointId[2];
   vtkMAFSmartPointer<vtkCellArray> cellArray;
   for(int i = 0; i< num;i++)
   {
@@ -820,7 +820,7 @@ void mafVMEMuscleWrapperAQ::InternalUpdate()
 
   m_PolyData->SetPoints(m_Goniometer->GetOutput()->GetPoints());
   m_PolyData->SetLines(cellArray);
-  m_PolyData->Update();
+  //m_PolyData->Update();
 
   wxBusyInfo wait2("muscle wrapperAQ getting update done");
   Sleep(3000);
@@ -1379,8 +1379,6 @@ void mafVMEMuscleWrapperAQ::CreateHistogram()
     mafTimeStamp tsPrb = m_ProbedVME->GetTimeStamp();
     m_ProbedVME->SetTimeStamp(currTs);
     m_ProbedVME->Update();
-    vtkDataSet *probed_data = m_ProbedVME->GetOutput()->GetVTKData();
-    probed_data->Update();
 
     vtkMAFSmartPointer<vtkTransform> transformStart;
     mafVME *start_vme = GetStartVME();
@@ -1439,14 +1437,13 @@ void mafVMEMuscleWrapperAQ::CreateHistogram()
     m_ProbingLine->Update();
 
     vtkMAFSmartPointer<vtkProbeFilter> prober;
-    prober->SetInput(m_ProbingLine->GetOutput());
-    prober->SetSource(probed_data);
+    prober->SetInputConnection(m_ProbingLine->GetOutputPort());
+    prober->SetSourceConnection(m_ProbedVME->GetOutput()->GetVTKOutputPort());
     prober->Update();
 
-    m_PlotActor->RemoveAllInputs();
+    m_PlotActor->RemoveAllDataSetInputConnections();
 
-    vtkPolyData *probimg_result = prober->GetPolyDataOutput();
-    m_PlotActor->AddInput(probimg_result);
+    m_PlotActor->AddDataSetInputConnection(prober->GetOutputPort());
     if(m_HistogramRWI) m_HistogramRWI->m_RwiBase->Render();
 
     m_ProbedVME->SetTimeStamp(tsPrb);

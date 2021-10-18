@@ -87,7 +87,7 @@ class VTK_vtkMAF_EXPORT vtkMAFProjectRG : public vtkMAFRectilinearGridToRectilin
 {
 public:
   /** RTTI Macro */
-  vtkTypeRevisionMacro(vtkMAFProjectRG,vtkMAFRectilinearGridToRectilinearGridFilter);
+  vtkTypeMacro(vtkMAFProjectRG,vtkMAFRectilinearGridToRectilinearGridFilter);
   /** Print object information */
   void PrintSelf(ostream& os, vtkIndent indent);
 
@@ -133,9 +133,9 @@ protected:
   void operator=(const vtkMAFProjectRG&);
 
   /** Update dimensions and whole extents */
-  void ExecuteInformation();
+  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
   /** Execute the projection and fill output scalars */
-  void Execute();
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
 
   int ProjectionMode;  
 };

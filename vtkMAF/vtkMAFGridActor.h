@@ -58,7 +58,7 @@ class VTK_vtkMAF_EXPORT vtkMAFGridActor : public vtkActor
 {
  public:
   /** RTTI macro. */
-  vtkTypeRevisionMacro(vtkMAFGridActor,vtkActor);
+  vtkTypeMacro(vtkMAFGridActor,vtkActor);
   /** Print information regarding the status of the object. */
   void PrintSelf(ostream& os, vtkIndent indent);
   /** Create an instance of the object. */
@@ -78,7 +78,9 @@ class VTK_vtkMAF_EXPORT vtkMAFGridActor : public vtkActor
   /** Method is intended for rendering Opaque Geometry.*/
   virtual  int			RenderOpaqueGeometry(vtkViewport *viewport);
   /** Method is intended for rendering Translucent Geometry. */
-  virtual  int			RenderTranslucentGeometry(vtkViewport *viewport);
+  virtual  int			RenderTranslucentPolygonalGeometry(vtkViewport *viewport);
+  /** Does this prop have some translucent polygonal geometry? */
+  virtual  int			HasTranslucentPolygonalGeometry();
 
 protected:
   /** constructor. */
@@ -103,11 +105,9 @@ protected:
 	vtkTextActor     *Label; 
 
 private:
-  /** Hide the two parameter Render() method from the user and the compiler.*/
-  virtual void Render(vtkRenderer *, vtkMapper *) {};
   /** Copy Constructor Not implemented. */
-  vtkMAFGridActor(const vtkMAFGridActor&);  	// Not implemented.
+  vtkMAFGridActor(const vtkMAFGridActor&) = delete;
   /** Assign Operator Not implemented. */
-  void operator=(const vtkMAFGridActor&);  // Not implemented.
+  void operator=(const vtkMAFGridActor&) = delete;
 };
 #endif

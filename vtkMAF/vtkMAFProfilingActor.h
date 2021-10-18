@@ -53,7 +53,7 @@ class VTK_vtkMAF_EXPORT vtkMAFProfilingActor : public vtkActor2D
 {
  public:
   /** RTTI Macro */
-  vtkTypeRevisionMacro(vtkMAFProfilingActor,vtkActor2D);
+  vtkTypeMacro(vtkMAFProfilingActor,vtkActor2D);
   /** Print Object Information */
   void PrintSelf(ostream& os, vtkIndent indent);
   /** create an instance of the object */
@@ -64,8 +64,9 @@ class VTK_vtkMAF_EXPORT vtkMAFProfilingActor : public vtkActor2D
   /** Draw the object to the screen */
   int	 RenderOpaqueGeometry(vtkViewport *viewport);
   /** Draw the object to the screen */
-  int	 RenderTranslucentGeometry(vtkViewport *viewport)  {return 0;}
- 
+  int	 RenderTranslucentPolygonalGeometry(vtkViewport*) { return 0; }
+  int	 HasTranslucentPolygonalGeometry() { return 0; }
+
 protected:
     /** constructor */
 					vtkMAFProfilingActor();
@@ -84,12 +85,9 @@ protected:
 	char TextBuff[128];
 	
 private:
-  /** hide the two paraOrientator Render() method from the user and the compiler. */
-  virtual void Render(vtkRenderer *, vtkMapper *) {};
-private:
   /** Copy Constructor , not implemented */
-  vtkMAFProfilingActor(const vtkMAFProfilingActor&);
+  vtkMAFProfilingActor(const vtkMAFProfilingActor&) = delete;
   /** operator =, not implemented */
-  void operator=(const vtkMAFProfilingActor&);  // Not implemented.
+  void operator=(const vtkMAFProfilingActor&) = delete;
 };
 #endif

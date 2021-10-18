@@ -71,7 +71,7 @@ struct VTK_vtkMAF_EXPORT tfWidget {
 class VTK_vtkMAF_EXPORT vtkMAFTransferFunction2D : public vtkDataObject {
   public:
     static vtkMAFTransferFunction2D *New();
-    vtkTypeRevisionMacro(vtkMAFTransferFunction2D,vtkDataObject);
+    vtkTypeMacro(vtkMAFTransferFunction2D,vtkDataObject);
     
     void Initialize();
     void DeepCopy( vtkDataObject *f ) { this->ShallowCopy(f); }
@@ -166,20 +166,20 @@ class VTK_vtkMAF_EXPORT vtkMAFTransferFunction2D : public vtkDataObject {
     void      UpdateRanges();
 
   private:
-    vtkMAFTransferFunction2D(const vtkMAFTransferFunction2D&);  // Not implemented.
-    void operator=(const vtkMAFTransferFunction2D&);  // Not implemented.
+    vtkMAFTransferFunction2D(const vtkMAFTransferFunction2D&) = delete;
+    void operator=(const vtkMAFTransferFunction2D&) = delete;
 };
 
 
 class VTK_vtkMAF_EXPORT vtkVolumeProperty2 : public vtkVolumeProperty {
   public:
     static vtkVolumeProperty2 *New();
-    vtkTypeRevisionMacro(vtkVolumeProperty2, vtkVolumeProperty);
+    vtkTypeMacro(vtkVolumeProperty2, vtkVolumeProperty);
 
     void SetTransferFunction2D(vtkMAFTransferFunction2D *function);
     vtkMAFTransferFunction2D *GetTransferFunction2D() const { return this->TransferFunction2D; }
 
-    unsigned long int GetMTime();
+    vtkMTimeType GetMTime();
 
     void DeepCopy(vtkVolumeProperty *f );
     void ShallowCopy(vtkVolumeProperty *f );
@@ -191,8 +191,8 @@ class VTK_vtkMAF_EXPORT vtkVolumeProperty2 : public vtkVolumeProperty {
     vtkMAFTransferFunction2D *TransferFunction2D;
   
   private:
-    vtkVolumeProperty2(const vtkVolumeProperty2&);  // Not implemented.
-    void operator=(const vtkVolumeProperty2&);  // Not implemented.
+    vtkVolumeProperty2(const vtkVolumeProperty2&) = delete;
+    void operator=(const vtkVolumeProperty2&) = delete;
   };
 
 

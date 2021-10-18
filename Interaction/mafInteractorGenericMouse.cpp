@@ -1312,7 +1312,7 @@ void mafInteractorGenericMouse::NormalOnSurface()
 
 	// fill it with cellnormals
 	vtkMAFSmartPointer<vtkPolyDataNormals> normalsOnPoly;
-	normalsOnPoly->SetInput(polyCopy);
+	normalsOnPoly->SetInputData(polyCopy);
 	normalsOnPoly->ComputeCellNormalsOff();
 	normalsOnPoly->ComputePointNormalsOn();
 	normalsOnPoly->Update();

@@ -46,6 +46,7 @@
 #include "vtkPointData.h"
 #include "vtkMAFImplicitPolyData.h"
 #include "vtkTransformPolyDataFilter.h"
+#include "vtkAlgorithmOutput.h"
 
 #define min(x0, x1) (((x0) < (x1)) ? (x0) : (x1))
 #define max(x0, x1) (((x0) > (x1)) ? (x0) : (x1))
@@ -163,7 +164,7 @@ void mafOpVOIDensityEditor::OnEvent(mafEventBase *maf_event)
         }
 				VME->Update();
 				vtkMAFSmartPointer<vtkFeatureEdges> FE;
-				FE->SetInput((vtkPolyData *)(VME->GetOutput()->GetVTKData()));
+				FE->SetInputConnection(VME->GetOutput()->GetVTKOutputPort());
 				FE->SetFeatureAngle(30);
 				FE->SetBoundaryEdges(1);
 				FE->SetColoring(0);
@@ -222,7 +223,7 @@ void mafOpVOIDensityEditor::EditVolumeScalars()
 
 	vtkMAFSmartPointer<vtkTransformPolyDataFilter> transformDataClipper;
   transformDataClipper->SetTransform(transform);
-  transformDataClipper->SetInput(polydata);
+  transformDataClipper->SetInputConnection(VME->GetOutput()->GetVTKOutputPort());
   transformDataClipper->Update();
 
 	vtkMAFSmartPointer<vtkMAFImplicitPolyData> implicitSurface;
@@ -233,7 +234,7 @@ void mafOpVOIDensityEditor::EditVolumeScalars()
 	implicitBox->Modified();
 
   vtkDataSet *volumeData = ((mafVME*)m_Input)->GetOutput()->GetVTKData();
-  volumeData->Update();
+  ((mafVME*)m_Input)->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
   
   if (volumeData->IsA("vtkStructuredPoints"))
   {
@@ -259,13 +260,12 @@ void mafOpVOIDensityEditor::EditVolumeScalars()
       {
         //edit the corresponding point's scalar value
         pointId = volumeData->FindPoint(point);
-        volumeData->GetPointData()->SetTuple(pointId, &m_ScalarValue);
+        //volumeData->GetPointData()->SetTuple(0, pointId, &m_ScalarValue);
       }
     }
   }
 
   volumeData->GetPointData()->GetScalars()->Modified();
-  volumeData->Update();
 
   if (!m_TestMode)
   {

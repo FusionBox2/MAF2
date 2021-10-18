@@ -40,12 +40,13 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 =========================================================================*/
 #include "vtkMAFProjectRG.h"
 //#include "vtkMath2.h"
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkDataArray.h"
 #include "vtkStructuredPoints.h"
 
-vtkCxxRevisionMacro(vtkMAFProjectRG, "$Revision: 1.1 $");
 vtkStandardNewMacro(vtkMAFProjectRG);
 
 //=========================================================================
@@ -56,9 +57,15 @@ vtkMAFProjectRG::vtkMAFProjectRG()
 }
 
 //=========================================================================
-void vtkMAFProjectRG::ExecuteInformation()
-//=========================================================================
+int vtkMAFProjectRG::RequestInformation(
+  vtkInformation *request,
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
   vtkRectilinearGrid *input=this->GetInput();
   vtkRectilinearGrid *output=this->GetOutput();
   int dims[3], outDims[3], wholeExtent[6];
@@ -66,15 +73,13 @@ void vtkMAFProjectRG::ExecuteInformation()
   if (this->GetInput() == NULL)
     {
     vtkErrorMacro("Missing input");
-    return;
+    return 0;
     }
-  this->vtkMAFRectilinearGridToRectilinearGridFilter::ExecuteInformation();
+  this->Superclass::RequestInformation(
+      request,
+      inputVector,
+      outputVector);
 
-  input->GetWholeExtent( wholeExtent );
-  dims[0] = wholeExtent[1] - wholeExtent[0] + 1;
-  dims[1] = wholeExtent[3] - wholeExtent[2] + 1;
-  dims[2] = wholeExtent[5] - wholeExtent[4] + 1;
-  
   switch (this->ProjectionMode) {
   case VTK_PROJECT_FROM_X:
     outDims[0] = dims[1];
@@ -99,23 +104,33 @@ void vtkMAFProjectRG::ExecuteInformation()
   wholeExtent[4] = 0;
   wholeExtent[5] = outDims[2] - 1;
   
-  output->SetWholeExtent( wholeExtent );
-  output->SetUpdateExtent( wholeExtent );   // cosi funziona - Silvano & Robez
+  //outInfo->Set(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), wholeExtent ,6);
+  //output->SetUpdateExtent( wholeExtent );   // cosi funziona - Silvano & Robez
 
   vtkDebugMacro(<<"Whole Extent is " << wholeExtent[1] << " " << wholeExtent[3] << " " << wholeExtent[5]);
+  return 1;
 }
 
 //=========================================================================
-void vtkMAFProjectRG::Execute()
-//=========================================================================
+int vtkMAFProjectRG::RequestData(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
+  // get the input and output
+  vtkRectilinearGrid *input = vtkRectilinearGrid::SafeDownCast(
+    inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkRectilinearGrid *output = vtkRectilinearGrid::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
   int i, j, k, dims[3], outDims[3], dim, idx, newIdx;  
   int sliceSize, outSize, jOffset, kOffset;
   float I;
  
-  vtkRectilinearGrid 	*input	=(vtkRectilinearGrid *)this->GetInput();
-  vtkRectilinearGrid 	*output	=(vtkRectilinearGrid *)this->GetOutput();
-
   vtkDataArray 			*XCoordinates, *YCoordinates, *ZCoordinates;
 
   vtkPointData 			*pd		=input->GetPointData();
@@ -247,6 +262,7 @@ void vtkMAFProjectRG::Execute()
   
 	outPD->SetScalars(outSc);
 	outSc->Delete();
+    return 1;
 }
 
 

@@ -165,7 +165,7 @@ void mafOpExporterBmp::SaveBmp()
   double spacing_x, spacing_y;
   if (rg)
   {  
-    rg->Update();
+    //rg->Update();
     rg->GetDimensions(dim);
     xdim = dim[0];
     ydim = dim[1];
@@ -179,15 +179,15 @@ void mafOpExporterBmp::SaveBmp()
     spacing_y = (ymax-ymin)/ydim;
 
     imageDataRg->SetSpacing(spacing_x, spacing_y, 1);
-    imageDataRg->SetScalarType(rg->GetPointData()->GetScalars()->GetDataType());
+    //imageDataRg->SetScalarType(rg->GetPointData()->GetScalars()->GetDataType());
     imageDataRg->GetPointData()->SetScalars(rg->GetPointData()->GetScalars());
-    imageDataRg->Update();
+    //imageDataRg->Update();
 
     imageData = imageDataRg;
   }
   else
   {
-    imageData->Update();
+    //imageData->Update();
     imageData->GetDimensions(dim);
     xdim = dim[0];
     ydim = dim[1];
@@ -201,7 +201,7 @@ void mafOpExporterBmp::SaveBmp()
   imageData->GetScalarRange(m_ScalarRange);
   
   vtkMAFSmartPointer<vtkImageData> imageSlice;
-  imageSlice->SetScalarTypeToUnsignedChar();
+  //imageSlice->SetScalarTypeToUnsignedChar();
   imageSlice->SetDimensions(xdim, ydim, 1);
   imageSlice->SetSpacing(spacing_x, spacing_y, 1);
 
@@ -223,26 +223,26 @@ void mafOpExporterBmp::SaveBmp()
     {   
       vtkMAFSmartPointer<vtkImageShiftScale> pImageCast;
 
-      imageData->Update(); //important
+      //imageData->Update(); //important
       pImageCast->SetShift(-m_ScalarRange[0]);
       pImageCast->SetScale(255/(m_ScalarRange[1]-m_ScalarRange[0]));
       pImageCast->SetOutputScalarTypeToUnsignedChar();
 
       pImageCast->ClampOverflowOn();
-      pImageCast->SetInput(imageData);
+      //pImageCast->SetInput(imageData);
 
-      imageFlip->SetInput(pImageCast->GetOutput());
+      imageFlip->SetInputConnection(pImageCast->GetOutputPort());
 
     }  //resampling   
     else 
     {
-      imageFlip->SetInput(imageData);
+      //imageFlip->SetInput(imageData);
     }  
 
     mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
     vtkMAFSmartPointer<vtkBMPWriter> exporter;
     //mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR, exporter));
-    exporter->SetInput(imageFlip->GetOutput());
+    exporter->SetInputConnection(imageFlip->GetOutputPort());
     exporter->SetFileDimensionality(2); // the writer will create a number of 2D images
     exporter->SetFilePattern("%s_%04d.bmp");
 #pragma message ("strange const_cast need")
@@ -269,8 +269,8 @@ void mafOpExporterBmp::SaveBmp()
       }
       for (int i = counter, n = 0; i < (counter + size); i++,n++)
       {
-        tuple = imageData->GetPointData()->GetTuple(i)[0];
-        scalarSliceIn->InsertTuple(n, &tuple);
+        //tuple = imageData->GetPointData()->GetTuple(i)[0];
+        //scalarSliceIn->InsertTuple(n, &tuple);
       }
       counter += size;
       imageSlice->GetPointData()->SetScalars(scalarSliceIn);

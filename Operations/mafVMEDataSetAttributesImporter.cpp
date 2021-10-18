@@ -97,7 +97,7 @@ int mafVMEDataSetAttributesImporter::Read()
   }
 
   vtkDataSet *data = m_Input->GetOutput()->GetVTKData();
-  data->Update();
+  m_Input->GetOutput()->Update();
 
   if (data == NULL)
   {

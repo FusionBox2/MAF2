@@ -36,7 +36,6 @@
 #include "vtkDirectory.h"
 #include "vtkTransformPolydataFilter.h"
 
-vtkCxxRevisionMacro(vtkMAFGlobalAxesHeadActor, "$Revision: 1.1.2.5 $");
 vtkStandardNewMacro(vtkMAFGlobalAxesHeadActor);
 
 #include "mafConfigure.h"
@@ -72,7 +71,16 @@ vtkMAFGlobalAxesHeadActor::vtkMAFGlobalAxesHeadActor()
 
   vtkPolyDataMapper *headMapper = vtkPolyDataMapper::New();
   this->HeadActor = vtkActor::New();
-  headMapper->SetInput( this->HeadReader->GetOutput() );
+
+  this->InitTransform = vtkTransform::New();
+  vtkTransformPolyDataFilter* transformer = vtkTransformPolyDataFilter::New();
+
+  this->InitTransform->Identity();
+  transformer->SetInputConnection(this->HeadReader->GetOutputPort());
+  transformer->SetTransform(this->InitTransform);
+  transformer->Update();
+  transformer->Delete();
+  headMapper->SetInputConnection( transformer->GetOutputPort() );
   this->HeadActor->SetMapper( headMapper );
   this->HeadActor->SetVisibility(1);
   headMapper->Delete();
@@ -93,6 +101,7 @@ vtkMAFGlobalAxesHeadActor::~vtkMAFGlobalAxesHeadActor()
   this->HeadActor->Delete();
 
   this->Assembly->Delete();
+  this->InitTransform->Delete();
 }
 
 
@@ -176,7 +185,7 @@ double *vtkMAFGlobalAxesHeadActor::GetBounds()
 }
 
 //-------------------------------------------------------------------------
-unsigned long int vtkMAFGlobalAxesHeadActor::GetMTime()
+vtkMTimeType vtkMAFGlobalAxesHeadActor::GetMTime()
 {
   return this->Assembly->GetMTime();
 }
@@ -253,27 +262,5 @@ bool vtkMAFGlobalAxesHeadActor::FileExists(const char* filename)
 
 void vtkMAFGlobalAxesHeadActor::SetInitialPose(vtkMatrix4x4* initMatrix)
 {
-  // Directly transform polydata
-  vtkPolyData* data = ((vtkPolyData*)((vtkPolyDataMapper*)this->HeadActor->GetMapper())->GetInput());
-
-  vtkTransform* initTransform;
-  vtkTransformPolyDataFilter* transformer;
-
-  initTransform = vtkTransform::New();
-  transformer = vtkTransformPolyDataFilter::New();
-
-  initTransform->SetMatrix(initMatrix);
-  transformer->SetInput(data);
-  transformer->SetTransform(initTransform);
-  transformer->Update();
-
-  data->DeepCopy(transformer->GetOutput());
-  data->Update();
-  data->Modified();
-  ((vtkPolyDataMapper*)this->HeadActor->GetMapper())->Update();
-  ((vtkPolyDataMapper*)this->HeadActor->GetMapper())->Modified();
-  this->HeadActor->Modified();
-
-  transformer->Delete();
-  initTransform->Delete();
+  this->InitTransform->SetMatrix(initMatrix);
 }

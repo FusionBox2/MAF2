@@ -768,7 +768,7 @@ void mafInteractor2DDistance::CreateHistogram()
   if (m_ProbedVME != NULL)
   {
     vtkDataSet *probed_data = m_ProbedVME->GetOutput()->GetVTKData();
-    probed_data->Update();
+    m_ProbedVME->GetOutput()->Update();
 
     m_PlotActor->SetXRange(0,m_Distance);
     m_PlotActor->SetPlotCoordinate(0,m_Distance);

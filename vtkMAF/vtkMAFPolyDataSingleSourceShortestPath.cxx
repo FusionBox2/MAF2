@@ -11,6 +11,8 @@
 
 #include "vtkMAFPolyDataSingleSourceShortestPath.h"
 #include "vtkFloatArray.h"
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkMath.h"
 #include "vtkIdList.h"
@@ -21,7 +23,6 @@
 #include "vtkPointData.h"
 #include "vtkCellArray.h"
 
-vtkCxxRevisionMacro(vtkMAFPolyDataSingleSourceShortestPath, "$Revision: 1.1.2.3 $");
 vtkStandardNewMacro(vtkMAFPolyDataSingleSourceShortestPath);
 
 //----------------------------------------------------------------------------
@@ -65,17 +66,35 @@ vtkMAFPolyDataSingleSourceShortestPath::~vtkMAFPolyDataSingleSourceShortestPath(
 	DeleteAdjacency();
 }
 
-unsigned long vtkMAFPolyDataSingleSourceShortestPath::GetMTime()
+vtkMTimeType vtkMAFPolyDataSingleSourceShortestPath::GetMTime()
 {
-	unsigned long mTime=this->MTime.GetMTime();
+	vtkMTimeType mTime=this->MTime.GetMTime();
 	
 	return mTime;
 }
 
-void vtkMAFPolyDataSingleSourceShortestPath::Execute()
+int vtkMAFPolyDataSingleSourceShortestPath::RequestData(
+  vtkInformation *vtkNotUsed(request),
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
+  // get the info objects
+  vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
+  vtkInformation *outInfo = outputVector->GetInformationObject(0);
+
+  // get the input and output
+ /* vtkPointSet *input = vtkPointSet::SafeDownCast(
+    inInfo->Get(vtkDataObject::DATA_OBJECT()));
+  vtkPointSet *output = vtkPointSet::SafeDownCast(
+    outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
 	vtkPolyData *input = this->GetInput();
-	vtkPolyData *output = this->GetOutput();
+	vtkPolyData *output = this->GetOutput();*/
+
+   input = vtkPolyData::SafeDownCast(
+	  inInfo->Get(vtkDataObject::DATA_OBJECT()));
+   output = vtkPolyData::SafeDownCast(
+	  outInfo->Get(vtkDataObject::DATA_OBJECT()));
 	
 	vtkDebugMacro(<< "vtkMAFPolyDataSingleSourceShortestPath finding shortest path");
 	
@@ -84,16 +103,16 @@ void vtkMAFPolyDataSingleSourceShortestPath::Execute()
 	ShortestPath(this->StartVertex, this->EndVertex);
 	
 	TraceShortestPath(input, output, this->StartVertex, this->EndVertex);
-	
+	return 1;
 }
 
 void vtkMAFPolyDataSingleSourceShortestPath::Init()
 {
-	BuildAdjacency(this->GetInput());
+	BuildAdjacency(input);
 	
 	IdList->Reset();
 	
-	this->N = this->GetInput()->GetNumberOfPoints();
+	this->N = input->GetNumberOfPoints();
 	
 	this->D->SetNumberOfComponents(1);
 	this->D->SetNumberOfTuples(this->N);
@@ -299,7 +318,7 @@ void vtkMAFPolyDataSingleSourceShortestPath::ShortestPath(int startv, int endv)
 			if (!this->S->GetValue(v))
 			{
 				// Only relax edges where the end is not in s and edge is in the front set
-				double w = EdgeCost(this->GetInput(), u, v);
+				double w = EdgeCost(input, u, v);
 				
 				if (this->F->GetValue(v))
 				{
@@ -418,7 +437,7 @@ void vtkMAFPolyDataSingleSourceShortestPath::HeapDecreaseKey(int v)
 
 void vtkMAFPolyDataSingleSourceShortestPath::PrintSelf(ostream& os, vtkIndent indent)
 {
-	vtkPolyDataToPolyDataFilter::PrintSelf(os,indent);
+	vtkPolyDataAlgorithm::PrintSelf(os,indent);
 
 	// Add all members later...
 }

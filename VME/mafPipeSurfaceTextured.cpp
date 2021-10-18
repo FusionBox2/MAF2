@@ -64,6 +64,7 @@
 #include "vtkSTLReader.h"
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkTriangleFilter.h"
+#include "vtkAlgorithmOutput.h"
 
 #include <iostream>
 #include <fstream>
@@ -116,12 +117,13 @@ void mafPipeSurfaceTextured::Create(mafNode *node, mafView *view/*, bool use_axe
 
   m_Vme->Update();
   assert(m_Vme->GetOutput()->IsMAFType(mafVMEOutputSurface));
-  mafVMEOutputSurface *surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
+  mafVMEOutputSurface* surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
   assert(surface_output);
   surface_output->Update();
-  vtkPolyData *data = vtkPolyData::SafeDownCast(surface_output->GetVTKData());
+  vtkPolyData* data = vtkPolyData::SafeDownCast(surface_output->GetVTKData());
+  vtkAlgorithmOutput* port = surface_output->GetVTKOutputPort();
   assert(data);
-  data->Update();
+  port->GetProducer()->Update();
 
   m_Vme->AddObserver(this);
 
@@ -149,16 +151,18 @@ void mafPipeSurfaceTextured::Create(mafNode *node, mafView *view/*, bool use_axe
     }
     else
     {
-      m_Mapper->SetInput(data);
+      m_Mapper->SetInputConnection(port);
     }
   }
   else
   {
-    m_Mapper->SetInput(data);
+    m_Mapper->SetInputConnection(port);
   }
   
   m_RenderingDisplayListFlag = m_Vme->IsAnimated() ? 1 : 0;
+#if VTK_MAJOR_VERSION <= 7
   m_Mapper->SetImmediateModeRendering(m_RenderingDisplayListFlag);
+#endif
   m_Mapper->SetScalarVisibility(m_ScalarVisibility);
 
   vtkNEW(m_Texture);
@@ -166,18 +170,19 @@ void mafPipeSurfaceTextured::Create(mafNode *node, mafView *view/*, bool use_axe
   m_Texture->InterpolateOn();
   if (m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_TEXTURE)
   {
-    if (m_SurfaceMaterial->GetMaterialTexture() != NULL)
+    if (m_SurfaceMaterial->GetMaterialTexturePort() != NULL)
     {
-      vtkImageData *image1 = m_SurfaceMaterial->GetMaterialTexture();
-	  m_Texture->SetInput(image1);
+      vtkImageData *image1 = m_SurfaceMaterial->GetMaterialTextureData();
+	  m_SurfaceMaterial->GetMaterialTexturePort()->GetProducer()->Update();
+	  m_Texture->SetInputConnection(m_SurfaceMaterial->GetMaterialTexturePort());
 	  image1->GetScalarRange(sr);
     }
 	else if (!m_SurfaceMaterial->GetMaterialTextureName().IsEmpty())
 	{
 		mafVME *texture_vme = mafVME::SafeDownCast(m_Vme->GetRoot()->FindInTreeByName(m_SurfaceMaterial->GetMaterialTextureName()));
-		texture_vme->GetOutput()->GetVTKData()->Update();
+		texture_vme->GetOutput()->Update();
 		vtkImageData *image1 = (vtkImageData *)texture_vme->GetOutput()->GetVTKData();
-		m_Texture->SetInput((vtkImageData*)image1);
+		m_Texture->SetInputConnection(texture_vme->GetOutput()->GetVTKOutputPort());
 		image1->GetScalarRange(sr);
 	}
     else if (m_SurfaceMaterial->GetMaterialTextureID() != -1)
@@ -185,9 +190,9 @@ void mafPipeSurfaceTextured::Create(mafNode *node, mafView *view/*, bool use_axe
 		int id = m_SurfaceMaterial->GetMaterialTextureID();
 
       mafVME *texture_vme = mafVME::SafeDownCast(m_Vme->GetRoot()->FindInTreeById(m_SurfaceMaterial->GetMaterialTextureID()));
-      texture_vme->GetOutput()->GetVTKData()->Update();
-	  vtkImageData *image1 = (vtkImageData *)texture_vme->GetOutput()->GetVTKData();
-	  m_Texture->SetInput((vtkImageData*)image1);
+	  texture_vme->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
+	  vtkImageData* image1 = (vtkImageData*)texture_vme->GetOutput()->GetVTKData();
+	  m_Texture->SetInputConnection(texture_vme->GetOutput()->GetVTKOutputPort());
 	  image1->GetScalarRange(sr);
     }
     else
@@ -261,10 +266,10 @@ void mafPipeSurfaceTextured::Create(mafNode *node, mafView *view/*, bool use_axe
 
   // selection highlight
   vtkMAFSmartPointer<vtkOutlineCornerFilter> corner;
-	corner->SetInput(data);  
+	corner->SetInputConnection(port);  
 
   vtkMAFSmartPointer<vtkPolyDataMapper> corner_mapper;
-	corner_mapper->SetInput(corner->GetOutput());
+	corner_mapper->SetInputConnection(corner->GetOutputPort());
 
   vtkMAFSmartPointer<vtkProperty> corner_props;
 	corner_props->SetColor(1,1,1);
@@ -401,7 +406,7 @@ mafGUI *mafPipeSurfaceTextured::CreateGui()
     mafVMEOutputSurface *surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
     m_SurfaceMaterial = surface_output->GetMaterial();
   }
-  bool texture_falg = m_SurfaceMaterial->GetMaterialTexture() != NULL || m_SurfaceMaterial->GetMaterialTextureID() != -1;
+  bool texture_falg = m_SurfaceMaterial->GetMaterialTexturePort() != NULL || m_SurfaceMaterial->GetMaterialTextureID() != -1;
   m_Gui->Enable(ID_USE_TEXTURE, texture_falg);
   m_Gui->Enable(ID_USE_LOOKUP_TABLE, m_SurfaceMaterial->m_ColorLut != NULL);
 	m_Gui->Divider();
@@ -489,13 +494,13 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
           m_Gui->Enable(ID_USE_TEXTURE,image1 != NULL);
           if (image1)
           {
-            image1->Update();
+			  ((mafVME*)n)->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
            // m_SurfaceMaterial->SetMaterialTexture(n->GetId());
 			mafString na = n->GetName();
 			
-			m_SurfaceMaterial->SetMaterialTexture(image1,na);
+			m_SurfaceMaterial->SetMaterialTextureConnection(((mafVME*)n)->GetOutput()->GetVTKOutputPort(),na);
 			m_SurfaceMaterial->m_MaterialType =  mmaMaterial::USE_TEXTURE;
-            m_Texture->SetInput(image1);
+            m_Texture->SetInputConnection(((mafVME*)n)->GetOutput()->GetVTKOutputPort());
             m_Actor->SetTexture(m_Texture);
             m_Gui->Enable(ID_TEXTURE_MAPPING_MODE,true);
 			m_UseTexture = 1;
@@ -510,7 +515,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
         mafEventMacro(mafEvent(this,CAMERA_UPDATE));
       break;
       case ID_RENDERING_DISPLAY_LIST:
-        m_Mapper->SetImmediateModeRendering(m_RenderingDisplayListFlag);
+        //m_Mapper->SetImmediateModeRendering(m_RenderingDisplayListFlag);
         mafEventMacro(mafEvent(this,CAMERA_UPDATE));
       break;
 	 
@@ -547,7 +552,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 									 
 									 if (m_Actor->GetTexture()!= NULL)
 									 {
-										 exporter->SetInput(m_Actor->GetTexture()->GetInput());
+										 exporter->SetInputConnection(m_Actor->GetTexture()->GetInputConnection(0, 0));
 
 										 mafString imageName = m_File;
 										 imageName.Erase(imageName.Length() - 3, imageName.Length() - 1);
@@ -632,9 +637,9 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 								  mafVMEOutputSurface *data = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
 								  data->Update();
 
-								  vtkPolyData* datachild = vtkPolyData::SafeDownCast(data->GetVTKData());
+								  vtkAlgorithmOutput* portchild = data->GetVTKOutputPort();
 								  //assert(data);
-								  datachild->Update();
+								  portchild->GetProducer()->Update();
 								 
 							
 								//  vtkMAFSmartPointer<vtkTriangleFilter>triangles;
@@ -658,7 +663,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 								 // actor->SetTexture(m_Texture);
 
 								  vtkCleanPolyData* vtkCleaner = vtkCleanPolyData::New();
-								  vtkCleaner->SetInput(datachild);
+								  vtkCleaner->SetInputConnection(portchild);
 								  vtkCleaner->SetTolerance(0.0);
 								  vtkCleaner->ConvertStripsToPolysOn();
 								  vtkCleaner->ConvertPolysToLinesOn();
@@ -667,7 +672,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 								  ;
 								  vtkPolyDataMapper* mapperchild = vtkPolyDataMapper::New();
 								  vtkActor* actorchild = vtkActor::New();
-								  mapperchild->SetInput(vtkCleaner->GetOutput());
+								  mapperchild->SetInputConnection(vtkCleaner->GetOutputPort());
 								  actorchild->SetMapper(mapperchild);
 
 								 
@@ -707,7 +712,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 									  pathName.ExtractPathName();
 
 									  vtkMAFSmartPointer<vtkJPEGWriter> exporter;
-									  exporter->SetInput(m_Actor->GetTexture()->GetInput());
+									  exporter->SetInputConnection(m_Actor->GetTexture()->GetInputConnection(0, 0));
 									  mafString imageName = m_File;
 									  imageName.Erase(imageName.Length() - 3, imageName.Length() - 1);
 
@@ -792,34 +797,33 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 void mafPipeSurfaceTextured::GenerateTextureMapCoordinate()
 //----------------------------------------------------------------------------
 {
-  vtkPolyData *data = vtkPolyData::SafeDownCast(m_Vme->GetOutput()->GetVTKData());
-  data->Update();
+  vtkAlgorithmOutput *port = m_Vme->GetOutput()->GetVTKOutputPort();
+  port->GetProducer()->Update();
 
   if (m_SurfaceMaterial->m_TextureMappingMode == mmaMaterial::PLANE_MAPPING)
   {
     vtkMAFSmartPointer<vtkTextureMapToPlane> plane_texture_mapper;
-    plane_texture_mapper->SetInput(data);
+    plane_texture_mapper->SetInputConnection(port);
     plane_texture_mapper->AutomaticPlaneGenerationOn();
-    vtkPolyData *tdata = (vtkPolyData *)plane_texture_mapper->GetOutput();
-    m_Mapper->SetInput(data);
+    m_Mapper->SetInputConnection(plane_texture_mapper->GetOutputPort());
   }
   else if (m_SurfaceMaterial->m_TextureMappingMode == mmaMaterial::CYLINDER_MAPPING)
   {
     vtkMAFSmartPointer<vtkTextureMapToCylinder> cylinder_texture_mapper;
-    cylinder_texture_mapper->SetInput(data);
+    cylinder_texture_mapper->SetInputConnection(port);
     cylinder_texture_mapper->PreventSeamOff();
-    m_Mapper->SetInput((vtkPolyData *)cylinder_texture_mapper->GetOutput());
+    m_Mapper->SetInputConnection(cylinder_texture_mapper->GetOutputPort());
   }
   else if (m_SurfaceMaterial->m_TextureMappingMode == mmaMaterial::SPHERE_MAPPING)
   {
     vtkMAFSmartPointer<vtkTextureMapToSphere> sphere_texture_mapper;
-    sphere_texture_mapper->SetInput(data);
+    sphere_texture_mapper->SetInputConnection(port);
     sphere_texture_mapper->PreventSeamOff();
-    m_Mapper->SetInput((vtkPolyData *)sphere_texture_mapper->GetOutput());
+    m_Mapper->SetInputConnection(sphere_texture_mapper->GetOutputPort());
   }
   else
   {
-    m_Mapper->SetInput(data);
+    m_Mapper->SetInputConnection(port);
   }
 }
 //----------------------------------------------------------------------------
