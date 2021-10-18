@@ -266,9 +266,9 @@ void lhpOpLMProj::OpDo()
   {
     surface = mafVMEOutputSurface::SafeDownCast(mafVME::SafeDownCast(m_Source)->GetOutput());
     surface->Update();
-    triangles->SetInput(surface->GetSurfaceData());
+    triangles->SetInputConnection(surface->GetVTKOutputPort());
     triangles->Update();
-    v_tpdf->SetInput(triangles->GetOutput());
+    v_tpdf->SetInputConnection(triangles->GetOutputPort());
     v_tpdf->SetTransform(surface->GetAbsTransform()->GetVTKTransform());
     v_tpdf->Update();
     input = v_tpdf->GetOutput();

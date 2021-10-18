@@ -233,10 +233,10 @@ void lhpOpJoinSurf::OpStop(int result)
 
   vtkMAFSmartPointer<vtkTriangleFilter> triangles1;
   vtkMAFSmartPointer<vtkTransformPolyDataFilter> v_tpdf1;
-  triangles1->SetInput(surface1->GetSurfaceData());
+  triangles1->SetInputConnection(surface1->GetVTKOutputPort());
   triangles1->Update();
 
-  v_tpdf1->SetInput(triangles1->GetOutput());
+  v_tpdf1->SetInputConnection(triangles1->GetOutputPort());
   v_tpdf1->SetTransform(surface1->GetAbsTransform()->GetVTKTransform());
   v_tpdf1->Update();
 
@@ -267,9 +267,9 @@ void lhpOpJoinSurf::OpStop(int result)
   vtkNEW(output);
 
   // All of the data in the first piece.
-  if(output->GetUpdatePiece() > 0)
+  //if(output->GetUpdatePiece() > 0)
   {
-    return;
+  //  return;
   }
 
   newPts = vtkPoints::New();
@@ -300,10 +300,10 @@ void lhpOpJoinSurf::OpStop(int result)
 
     vtkMAFSmartPointer<vtkTriangleFilter> triangles2;
     vtkMAFSmartPointer<vtkTransformPolyDataFilter> v_tpdf2;
-    triangles2->SetInput(surface2->GetSurfaceData());
+    triangles2->SetInputConnection(surface2->GetVTKOutputPort());
     triangles2->Update();
 
-    v_tpdf2->SetInput(triangles2->GetOutput());
+    v_tpdf2->SetInputConnection(triangles2->GetOutputPort());
     v_tpdf2->SetTransform(surface2->GetAbsTransform()->GetVTKTransform());
     v_tpdf2->Update();
 

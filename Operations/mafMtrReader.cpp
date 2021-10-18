@@ -31,12 +31,14 @@
 #include <forarray.h>
 #include <splines.h>
 #include "createSplineSurf.h"
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
+
 //#include "mafEvent.h"
 
 #define wxInt32    int    signed
 #define DIASSERT(c) if (!c) {vtkErrorMacro(<<"A FileName must be specified.");}
 
-vtkCxxRevisionMacro(mafMTRReader, "$Revision: 1.1 $");
 vtkStandardNewMacro(mafMTRReader);
 
 
@@ -49,6 +51,7 @@ mafMTRReader::mafMTRReader()
   m_PointShift  = 20.5; 
   m_linesetMode = true;
   m_tendonMode  = false;
+  SetNumberOfInputPorts(0);
 }
 
 mafMTRReader::~mafMTRReader()
@@ -70,23 +73,31 @@ void mafMTRReader::PrintSelf(ostream& os, vtkIndent indent)
   
 }
 
-void mafMTRReader::Execute()
+int mafMTRReader::RequestData(
+  vtkInformation *request,
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
 {
   FILE         *fp;
   vtkPoints    *newPts;
   vtkCellArray *newCells;
-  vtkPolyData  *output = this->GetOutput();
-  
+  // get the info objects
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
+
+  vtkPolyData* output = vtkPolyData::SafeDownCast(
+      outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
+
   // All of the data in the first piece.
-  if(output->GetUpdatePiece() > 0)
+  //if(output->GetUpdatePiece() > 0)
   {
-    return;
+    //return;
   }
   
   if(!this->m_FileName)
   {
     vtkErrorMacro(<<"A FileName must be specified.");
-    return;
+    return 0;
   }
 
   // Initialize
@@ -95,7 +106,7 @@ void mafMTRReader::Execute()
   if(fp == NULL)
   {
     vtkErrorMacro(<< "File " << this->m_FileName << " not found");
-    return;
+    return 0;
   }
 
   newPts = vtkPoints::New();
@@ -106,10 +117,10 @@ void mafMTRReader::Execute()
   // Depending upon file type, read differently
   //
   if(!m_linesetMode && m_Set != mafMTRReader::SetNotDefined)
-    return;
+    return 0;
   if(ReadASCIIMTR(fp,newPts,newCells) == FALSE)
   {
-    return;
+    return 0;
   }
   vtkDebugMacro(<< "Read: " 
   << newPts->GetNumberOfPoints() << " points, "
@@ -121,7 +132,7 @@ void mafMTRReader::Execute()
 // Update ourselves
 //
   output->SetPoints(newPts);
-  output->Update();
+  //output->Update();
   if(m_linesetMode)
     output->SetLines(newCells);
   else
@@ -130,9 +141,10 @@ void mafMTRReader::Execute()
     output->Squeeze();
   }
   output->Modified();
-  output->Update();
+  //output->Update();
   newPts->Delete();
   newCells->Delete();
+  return 1;
 }
 
 static void _addSegments(const std::vector<V3d<double> >& coords, unsigned from, unsigned to, vtkPoints *pnts, vtkCellArray  *cells)

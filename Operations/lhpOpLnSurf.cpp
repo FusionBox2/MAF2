@@ -272,21 +272,21 @@ void lhpOpLnSurf::OpDo()
   vtkPolyData *surf = vtkPolyData::New();
 
   musc->SetPoints(newPtsMsc);
-  musc->Update();
+  //musc->Update();
   tend->SetPoints(newPtsTnd);
-  tend->Update();
+  //tend->Update();
   surf->SetPoints(newPtsSurf);
-  surf->Update();
+  //surf->Update();
   musc->SetLines(newCellsMsc);
   tend->SetLines(newCellsTnd);
   surf->SetPolys(newCellsSurf);
   surf->Squeeze();
   musc->Modified();
-  musc->Update();
+  //musc->Update();
   tend->Modified();
-  tend->Update();
+  //tend->Update();
   surf->Modified();
-  surf->Update();
+  //surf->Update();
 
   newPtsSurf->Delete();
   newCellsSurf->Delete();

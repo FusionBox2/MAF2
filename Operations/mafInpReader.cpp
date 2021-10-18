@@ -25,8 +25,9 @@
 #include "vtkMergePoints.h"
 #include "vtkObjectFactory.h"
 #include "vtkPolyData.h"
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 
-vtkCxxRevisionMacro(mafINPReader, "$Revision: 1.1 $");
 vtkStandardNewMacro(mafINPReader);
 
 // Construct object with merging set to true.
@@ -35,6 +36,7 @@ mafINPReader::mafINPReader()
 //----------------------------------------------------------------------------
 {
   m_FileName = NULL;
+  SetNumberOfInputPorts(0);
 }
 
 //----------------------------------------------------------------------------
@@ -60,24 +62,32 @@ void mafINPReader::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void mafINPReader::Execute()
+int mafINPReader::RequestData(
+  vtkInformation *request,
+  vtkInformationVector **inputVector,
+  vtkInformationVector *outputVector)
+
 //----------------------------------------------------------------------------
 {
   FILE         *fp;
   vtkPoints    *newPts;
   vtkCellArray *newPolys;
-  vtkPolyData  *output = this->GetOutput();
-  
+  // get the info objects
+  vtkInformation* outInfo = outputVector->GetInformationObject(0);
+
+  vtkPolyData* output = vtkPolyData::SafeDownCast(
+      outInfo->Get(vtkDataObject::DATA_OBJECT()));
+
   // All of the data in the first piece.
-  if(output->GetUpdatePiece() > 0)
+  //if(output->GetUpdatePiece() > 0)
   {
-    return;
+    //return;
   }
   
   if(!this->m_FileName)
   {
     vtkErrorMacro(<<"A FileName must be specified.");
-    return;
+    return 0;
   }
 
   // Initialize
@@ -86,7 +96,7 @@ void mafINPReader::Execute()
   if(fp == NULL)
   {
     vtkErrorMacro(<< "File " << this->m_FileName << " not found");
-    return;
+    return 0;
   }
 
   std::vector<double> pointsRead;
@@ -96,7 +106,7 @@ void mafINPReader::Execute()
   //
   if(this->ReadASCIIINP(fp,pointsRead,pointsIndRead,indRead) == FALSE)
   {
-    return;
+    return 0;
   }
 
   newPts = vtkPoints::New();
@@ -134,6 +144,7 @@ void mafINPReader::Execute()
   output->Squeeze();
   newPts->Delete();
   newPolys->Delete();
+  return 1;
 }
 
 #define MAX_LINE 1000

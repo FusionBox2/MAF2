@@ -24,7 +24,7 @@
 #ifndef __mafMTRReader_h
 #define __mafMTRReader_h
 
-#include "vtkPolyDataSource.h"
+#include "vtkPolyDataAlgorithm.h"
 
 class vtkCellArray;
 class vtkFloatArray;
@@ -58,11 +58,11 @@ virtual char* Get##name () { \
   return this->m_##name; \
   } 
 
-class MAF_EXPORT mafMTRReader: public vtkPolyDataSource 
+class MAF_EXPORT mafMTRReader: public vtkPolyDataAlgorithm 
 {
 public:
   static const int SetNotDefined = -1;
-  vtkTypeRevisionMacro(mafMTRReader, vtkPolyDataSource);
+  vtkTypeMacro(mafMTRReader, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
@@ -90,7 +90,8 @@ protected:
   bool   m_linesetMode;
   bool   m_tendonMode;
 
-  void Execute();
+  virtual int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+
   int ReadASCIIMTR(FILE *fp, vtkPoints *vpPoints, vtkCellArray* tpTriangles);
 private:
   mafMTRReader(const mafMTRReader&);  // Not implemented.

@@ -90,7 +90,7 @@ mafVMEBSplineSurface::mafVMEBSplineSurface()
 
   m_Polygons = NULL;
   vtkNEW(m_Polygons);
-  dpipe->SetInput(m_Polygons);
+  dpipe->SetInputData(m_Polygons);
 
   m_PointsGroupName = _R("");
   m_BSurface   = NULL;
@@ -134,8 +134,8 @@ int mafVMEBSplineSurface::DeepCopy(mafNode *a)
     mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
     if (dpipe)
     {
-      dpipe->SetInput(m_Polygons);
-      m_Polygons->Update();
+      dpipe->SetInputData(m_Polygons);
+      InternalUpdate();
     }
     return MAF_OK;
   }  
@@ -383,7 +383,7 @@ void mafVMEBSplineSurface::InternalUpdate() //Multi
     newPts->InsertNextPoint(result[i].components);
   }
 
-  int pointId[3];
+  vtkIdType pointId[3];
   for(unsigned i = 1; i < m_TesselX; i++)
   {
     for(unsigned j = 0; j < m_TesselY - 1; j++)
@@ -430,10 +430,7 @@ void mafVMEBSplineSurface::InternalUpdate() //Multi
   }*/
 
   polygons->SetPoints(newPts);
-  polygons->Update();
   polygons->SetPolys(newCells);
-  polygons->Modified();
-  polygons->Update();
   newPts->Delete();
   newCells->Delete();
 

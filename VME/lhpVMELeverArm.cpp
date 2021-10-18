@@ -85,7 +85,7 @@ lhpVMELeverArm::lhpVMELeverArm()
   m_StartPointGlobal[1] = 0;
   m_StartPointGlobal[2] = 0;
 
-  m_Goniometer->AddInput(m_LineSource->GetOutput());
+  m_Goniometer->AddInputConnection(m_LineSource->GetOutputPort());
 
   m_PolyData->DeepCopy(m_Goniometer->GetOutput());
 
@@ -97,7 +97,7 @@ lhpVMELeverArm::lhpVMELeverArm()
   mafDataPipeCustom *dpipe = mafDataPipeCustom::New();
   dpipe->SetDependOnAbsPose(true);
   SetDataPipe(dpipe);
-  dpipe->SetInput(m_PolyData);
+  dpipe->SetInputData(m_PolyData);
 }
 //-------------------------------------------------------------------------
 lhpVMELeverArm::~lhpVMELeverArm()
@@ -132,8 +132,8 @@ int lhpVMELeverArm::DeepCopy(mafNode *a)
     mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
     if (dpipe)
     {
-      dpipe->SetInput(m_Goniometer->GetOutput());
-      m_Goniometer->Update();
+      dpipe->SetInputData(m_PolyData);
+      InternalUpdate();
     }
     return MAF_OK;
   }  
@@ -254,7 +254,7 @@ void lhpVMELeverArm::InternalUpdate()
       mafSmartPointer<mafTransform> matr;
       vtkMAFSmartPointer<vtkTransformPolyDataFilter> transf;
       matr->SetMatrix(tmLine);
-      transf->SetInput(line->GetPolylineData());
+      transf->SetInputConnection(line->GetVTKOutputPort());
       transf->SetTransform(matr->GetVTKTransform());
       transf->Update();
 
@@ -362,7 +362,7 @@ void lhpVMELeverArm::InternalUpdate()
   m_Goniometer->Update();
   vtkPolyData *polydata = m_Goniometer->GetOutput();
   int num = m_Goniometer->GetOutput()->GetNumberOfPoints();
-  int pointId[2];
+  vtkIdType pointId[2];
   vtkMAFSmartPointer<vtkCellArray> cellArray;
   for(int i = 0; i< num;i++)
   {
@@ -376,7 +376,6 @@ void lhpVMELeverArm::InternalUpdate()
 
   m_PolyData->SetPoints(m_Goniometer->GetOutput()->GetPoints());
   m_PolyData->SetLines(cellArray);
-  m_PolyData->Update();
 
 }
 //-----------------------------------------------------------------------

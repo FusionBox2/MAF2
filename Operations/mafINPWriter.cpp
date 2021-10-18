@@ -33,7 +33,6 @@
 # include <io.h> /* unlink */
 #endif
 
-vtkCxxRevisionMacro(mafINPWriter, "$Revision: 1.1 $");
 vtkStandardNewMacro(mafINPWriter);
 
 //----------------------------------------------------------------------------

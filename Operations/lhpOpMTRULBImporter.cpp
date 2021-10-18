@@ -222,7 +222,7 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
       mafVMEPolyline *lines;
       mafTimeStamp t;
       vtkPolyData *data = readertn->GetOutput();
-      data->Update();
+      //data->Update();
       if(data->GetNumberOfPoints() != 0 && data->GetNumberOfCells() != 0)
       {
         t = ((mafVME *)m_Input)->GetTimeStamp();
@@ -247,7 +247,7 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
       mafVMEPolyline *lines;
       mafTimeStamp t;
       vtkPolyData *data = readermc->GetOutput();
-      data->Update();
+      //data->Update();
       if(data->GetNumberOfPoints() != 0 && data->GetNumberOfCells() != 0)
       {
         t = ((mafVME *)m_Input)->GetTimeStamp();
@@ -272,7 +272,7 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
       mafVMESurface *surf;
       mafTimeStamp t;
       vtkPolyData *data = readerSf->GetOutput();
-      data->Update();
+      //data->Update();
       if(data->GetNumberOfPoints() != 0 && data->GetNumberOfCells() != 0)
       {
         t = ((mafVME *)m_Input)->GetTimeStamp();

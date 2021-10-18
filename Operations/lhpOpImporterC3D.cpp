@@ -889,14 +889,14 @@ void lhpOpImporterC3D::ImportPlatform(lhpOpImporterC3D::_InternalC3DData &intDat
     vtkMAFSmartPointer<vtkPolyData> vectorForce;
     vtkMAFSmartPointer<vtkPoints> pointsForce;
     vtkMAFSmartPointer<vtkCellArray> cellArrayForce;
-    int pointIdForce[2] = {0,1};
+    vtkIdType pointIdForce[2] = {0,1};
     vectorForce->SetPoints(pointsForce);
     vectorForce->SetLines(cellArrayForce);
 
     vtkMAFSmartPointer<vtkPolyData> vectorMoment;
     vtkMAFSmartPointer<vtkPoints> pointsMoment;
     vtkMAFSmartPointer<vtkCellArray> cellArrayMoment;
-    int pointIdMoment[2] = {0,1};
+    vtkIdType pointIdMoment[2] = {0,1};
     vectorMoment->SetPoints(pointsMoment);
     vectorMoment->SetLines(cellArrayMoment);
 
@@ -923,14 +923,13 @@ void lhpOpImporterC3D::ImportPlatform(lhpOpImporterC3D::_InternalC3DData &intDat
       pointsForce->InsertPoint(1, intData.m_ForceX, intData.m_ForceY, intData.m_ForceZ);
       cellArrayForce->Reset();
       cellArrayForce->InsertNextCell(2, pointIdForce);
-      vectorForce->Update();
 
       vtkMAFSmartPointer<vtkTransformPolyDataFilter> transfVecForce;
       vtkMAFSmartPointer<vtkTransform> transfForce;
 
       transfForce->Translate(intData.m_CopX, intData.m_CopY, z); //z = 0
       transfVecForce->SetTransform(transfForce);
-      transfVecForce->SetInput(vectorForce);
+      transfVecForce->SetInputData(vectorForce);
       transfVecForce->Update();
 
       
@@ -938,7 +937,7 @@ void lhpOpImporterC3D::ImportPlatform(lhpOpImporterC3D::_InternalC3DData &intDat
 
       intData.m_ForceList[currentPlatform]->Modified();
       intData.m_ForceList[currentPlatform]->Update();
-      intData.m_ForceList[currentPlatform]->GetOutput()->GetVTKData()->Update();
+      intData.m_ForceList[currentPlatform]->GetOutput()->Update();
 
       //moment
       
@@ -949,14 +948,13 @@ void lhpOpImporterC3D::ImportPlatform(lhpOpImporterC3D::_InternalC3DData &intDat
 
       cellArrayMoment->Reset();
       cellArrayMoment->InsertNextCell(2, pointIdMoment);  
-      vectorMoment->Update();
 
       vtkMAFSmartPointer<vtkTransformPolyDataFilter> transfVecMoment;
       vtkMAFSmartPointer<vtkTransform> transfMoment;
 
       transfMoment->Translate(intData.m_CopX, intData.m_CopY, z); //z = 0
       transfVecMoment->SetTransform(transfMoment);
-      transfVecMoment->SetInput(vectorMoment);
+      transfVecMoment->SetInputData(vectorMoment);
       transfVecMoment->Update();
 
 
@@ -964,7 +962,7 @@ void lhpOpImporterC3D::ImportPlatform(lhpOpImporterC3D::_InternalC3DData &intDat
 
       intData.m_MomentList[currentPlatform]->Modified();
       intData.m_MomentList[currentPlatform]->Update();
-      intData.m_MomentList[currentPlatform]->GetOutput()->GetVTKData()->Update();
+      intData.m_MomentList[currentPlatform]->GetOutput()->Update();
 
       progress = (currentSample + 1 + (currentPlatform * intData.m_NumSamples )) * 100 / (intData.m_NumSamples * intData.m_NumPlatforms);
       mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));

@@ -136,7 +136,7 @@ mafVMEArrow::mafVMEArrow() : mafVMEGeneric()
   m_ZAxisTransform->Update();
 
   m_ZAxis  = vtkTransformPolyDataFilter::New();
-  m_ZAxis->SetInput(m_ZArrow->GetOutput());
+  m_ZAxis->SetInputConnection(m_ZArrow->GetOutputPort());
   m_ZAxis->SetTransform(m_ZAxisTransform);
   m_ZAxis->Update();
 
@@ -152,7 +152,7 @@ mafVMEArrow::mafVMEArrow() : mafVMEGeneric()
 
   // this filter do not copy the scalars also if all input 
   m_Axes = vtkAppendPolyData::New();    
-  m_Axes->AddInput(m_ZAxis->GetOutput());
+  m_Axes->AddInputConnection(m_ZAxis->GetOutputPort());
 
   m_Axes->Update();
 
@@ -161,19 +161,18 @@ mafVMEArrow::mafVMEArrow() : mafVMEGeneric()
   m_ScaleAxisTransform->Update();
 
   vtkMAFSmartPointer<vtkPolyData> axes_surface;
-  axes_surface = m_Axes->GetOutput();
-  axes_surface->SetSource(NULL);
+  axes_surface->DeepCopy(m_Axes->GetOutput());
   axes_surface->GetPointData()->SetScalars(data);
   vtkDEL(data);
 
   m_ScaleAxis  = vtkTransformPolyDataFilter::New();
-  m_ScaleAxis->SetInput(axes_surface.GetPointer());
+  m_ScaleAxis->SetInputData(axes_surface);
   m_ScaleAxis->SetTransform(m_ScaleAxisTransform);
   m_ScaleAxis->Update();
 
   //SetData(m_ScaleAxis->GetOutput(), -1);
 
-  dpipe->SetInput(m_ScaleAxis->GetOutput());
+  dpipe->SetInputConnection(m_ScaleAxis->GetOutputPort());
 }
 //-------------------------------------------------------------------------
 int mafVMEArrow::InternalInitialize()

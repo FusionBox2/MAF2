@@ -369,12 +369,12 @@ mafVMEHelAxis::mafVMEHelAxis() : mafVME()
 
 
   m_ZAxis  = vtkTransformPolyDataFilter::New();
-  m_ZAxis->SetInput(m_ZArrow->GetOutput());
+  m_ZAxis->SetInputConnection(m_ZArrow->GetOutputPort());
   m_ZAxis->SetTransform(m_ZAxisTransform);
   m_ZAxis->Update();
 
   m_Center  = vtkTransformPolyDataFilter::New();
-  m_Center->SetInput(m_CenterSphere->GetOutput());
+  m_Center->SetInputConnection(m_CenterSphere->GetOutputPort());
   m_Center->SetTransform(m_CenterTransform);
   m_Center->Update();
 
@@ -390,8 +390,8 @@ mafVMEHelAxis::mafVMEHelAxis() : mafVME()
 
   // this filter do not copy the scalars also if all input 
   m_Axes = vtkAppendPolyData::New();    
-  m_Axes->AddInput(m_ZAxis->GetOutput());
-  m_Axes->AddInput(m_Center->GetOutput());
+  m_Axes->AddInputConnection(m_ZAxis->GetOutputPort());
+  m_Axes->AddInputConnection(m_Center->GetOutputPort());
 
   m_Axes->Update();
 
@@ -400,19 +400,18 @@ mafVMEHelAxis::mafVMEHelAxis() : mafVME()
   m_ScaleAxisTransform->Update();
 
   vtkMAFSmartPointer<vtkPolyData> axes_surface;
-  axes_surface = m_Axes->GetOutput();
-  axes_surface->SetSource(NULL);
+  axes_surface->DeepCopy(m_Axes->GetOutput());
   axes_surface->GetPointData()->SetScalars(data);
   vtkDEL(data);
 
   m_ScaleAxis  = vtkTransformPolyDataFilter::New();
-  m_ScaleAxis->SetInput(axes_surface.GetPointer());
+  m_ScaleAxis->SetInputData(axes_surface);
   m_ScaleAxis->SetTransform(m_ScaleAxisTransform);
   m_ScaleAxis->Update();
 
   //SetData(m_ScaleAxis->GetOutput(), -1);
 
-  dpipe->SetInput(m_ScaleAxis->GetOutput());
+  dpipe->SetInputConnection(m_ScaleAxis->GetOutputPort());
   m_ProximalName = _R("");
   m_DistalName = _R("");
 }

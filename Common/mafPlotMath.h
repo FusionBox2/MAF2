@@ -366,18 +366,18 @@ VecType EulerAngles(const vtkMatrix4x4& M, int order, const VecType& prev = VecT
   if (f == EulFrmR)   { std::swap(p[0], p[2]); }
   if (s == EulRepYes)
   {
-    auto sy = sqrt(M[i][j] * M[i][j] + M[i][k] * M[i][k]);
+    auto sy = sqrt(M.Element[i][j] * M.Element[i][j] + M.Element[i][k] * M.Element[i][k]);
     if (sy > 16 * FLT_EPSILON)
     {
-      u[0] = atan2(M[i][j], M[i][k]);
-      u[1] = atan2(sy, M[i][i]);
-      u[2] = atan2(M[j][i], -M[k][i]);
+      u[0] = atan2(M.Element[i][j], M.Element[i][k]);
+      u[1] = atan2(sy, M.Element[i][i]);
+      u[2] = atan2(M.Element[j][i], -M.Element[k][i]);
     }
     else
     {
-      auto sd = atan2(-M[j][k], M[j][j]);
-      u[1] = atan2(sy, M[i][i]);
-      if (M[i][i] > 0)
+      auto sd = atan2(-M.Element[j][k], M.Element[j][j]);
+      u[1] = atan2(sy, M.Element[i][i]);
+      if (M.Element[i][i] > 0)
       {
         u[0] = (p[0] - p[2] + sd) / 2;
         u[2] = (p[2] - p[0] + sd) / 2;
@@ -394,18 +394,18 @@ VecType EulerAngles(const vtkMatrix4x4& M, int order, const VecType& prev = VecT
   }
   else
   {
-    auto cy = sqrt(M[i][i] * M[i][i] + M[j][i] * M[j][i]);
+    auto cy = sqrt(M.Element[i][i] * M.Element[i][i] + M.Element[j][i] * M.Element[j][i]);
     if (cy > 16 * FLT_EPSILON)
     {
-      u[0] = atan2(M[k][j], M[k][k]);
-      u[1] = atan2(-M[k][i], cy);
-      u[2] = atan2(M[j][i], M[i][i]);
+      u[0] = atan2(M.Element[k][j], M.Element[k][k]);
+      u[1] = atan2(-M.Element[k][i], cy);
+      u[2] = atan2(M.Element[j][i], M.Element[i][i]);
     }
     else
     {
-      auto sd = atan2(-M[j][k], M[j][j]);
-      u[1] = atan2(-M[k][i], cy);
-      if (M[k][i] > 0)
+      auto sd = atan2(-M.Element[j][k], M.Element[j][j]);
+      u[1] = atan2(-M.Element[k][i], cy);
+      if (M.Element[k][i] > 0)
       {
         u[0] = (p[0] - p[2] + sd) / 2;
         u[2] = (p[2] - p[0] + sd) / 2;
@@ -530,17 +530,17 @@ void eulerTransform(vtkMatrix4x4& M, int conv, const VecType& eul, const VecType
   cc = ci*ch; cs = ci*sh; sc = si*ch; ss = si*sh;
   if (s == EulRepYes)
   {
-    M[i][i] = cj;       M[i][j] = sj * si;       M[i][k] = sj * ci;
-    M[j][i] = sj * sh;  M[j][j] = -cj * ss + cc; M[j][k] = -cj * cs - sc;
-    M[k][i] = -sj * ch; M[k][j] = cj * sc + cs;  M[k][k] = cj * cc - ss;
+    M.Element[i][i] = cj;       M.Element[i][j] = sj * si;       M.Element[i][k] = sj * ci;
+    M.Element[j][i] = sj * sh;  M.Element[j][j] = -cj * ss + cc; M.Element[j][k] = -cj * cs - sc;
+    M.Element[k][i] = -sj * ch; M.Element[k][j] = cj * sc + cs;  M.Element[k][k] = cj * cc - ss;
   }
   else
   {
-    M[i][i] = cj * ch; M[i][j] = sj * sc - cs; M[i][k] = sj * cc + ss;
-    M[j][i] = cj * sh; M[j][j] = sj * ss + cc; M[j][k] = sj * cs - sc;
-    M[k][i] = -sj;     M[k][j] = cj * si;      M[k][k] = cj * ci;
+    M.Element[i][i] = cj * ch; M.Element[i][j] = sj * sc - cs; M.Element[i][k] = sj * cc + ss;
+    M.Element[j][i] = cj * sh; M.Element[j][j] = sj * ss + cc; M.Element[j][k] = sj * cs - sc;
+    M.Element[k][i] = -sj;     M.Element[k][j] = cj * si;      M.Element[k][k] = cj * ci;
   }
-  M[0][3] = trn[0];  M[1][3] = trn[1]; M[2][3] = trn[2];
+  M.Element[0][3] = trn[0];  M.Element[1][3] = trn[1]; M.Element[2][3] = trn[2];
   return M;
 }
 template<int conv, class VecType>
@@ -564,11 +564,11 @@ template<class Type, class VecType = V3d<Type> >
 VecType OVPAngles(const vtkMatrix4x4& M, const VecType& prev = VecType())
 {
   VecType u = VecType();
-  Type    a = Type(0.5) * (M[2][1] - M[1][2]);
-  Type    b = Type(0.5) * (M[0][2] - M[2][0]);
-  Type    c = Type(0.5) * (M[1][0] - M[0][1]);
+  Type    a = Type(0.5) * (M.Element[2][1] - M.Element[1][2]);
+  Type    b = Type(0.5) * (M.Element[0][2] - M.Element[2][0]);
+  Type    c = Type(0.5) * (M.Element[1][0] - M.Element[0][1]);
   Type    s = sqrt(a * a + b * b + c * c);
-  Type    co = Type(0.5) * (M[0][0] + M[1][1] + M[2][2] - 1);
+  Type    co = Type(0.5) * (M.Element[0][0] + M.Element[1][1] + M.Element[2][2] - 1);
   Type    fi = atan2(s, co);
   Type    t;
 
@@ -584,24 +584,24 @@ VecType OVPAngles(const vtkMatrix4x4& M, const VecType& prev = VecType())
   else if (fabs(fi) > Type(0.1e-12) && co > 0)
   {
     t = Type(1) / v;
-    u[0] = sign(M[2][1] - M[1][2]) * sqrt(abs((M[0][0] - co) * t));
-    u[1] = sign(M[0][2] - M[2][0]) * sqrt(abs((M[1][1] - co) * t));
-    u[2] = sign(M[1][0] - M[0][1]) * sqrt(abs((M[2][2] - co) * t));
+    u[0] = sign(M.Element[2][1] - M.Element[1][2]) * sqrt(abs((M.Element[0][0] - co) * t));
+    u[1] = sign(M.Element[0][2] - M.Element[2][0]) * sqrt(abs((M.Element[1][1] - co) * t));
+    u[2] = sign(M.Element[1][0] - M.Element[0][1]) * sqrt(abs((M.Element[2][2] - co) * t));
   }
   else if (fabs(fi) > Type(0.1e-12) && co < 0)
   {
     t = Type(1) / v;
-    u[0] = sqrt(abs((M[0][0] - co) * t));
-    u[1] = sqrt(abs((M[1][1] - co) * t));
-    u[2] = sqrt(abs((M[2][2] - co) * t));
+    u[0] = sqrt(abs((M.Element[0][0] - co) * t));
+    u[1] = sqrt(abs((M.Element[1][1] - co) * t));
+    u[2] = sqrt(abs((M.Element[2][2] - co) * t));
 
-    if (M[2][1] - M[1][2] >= 0)
+    if (M.Element[2][1] - M.Element[1][2] >= 0)
       s = Type(1);
     else
       s = Type(-1);
     u[0] = u[0] * s;
-    u[1] = u[1] * sign(M[1][0] + M[0][1]) * s;
-    u[2] = u[2] * sign(M[2][1] + M[0][2]) * s;
+    u[1] = u[1] * sign(M.Element[1][0] + M.Element[0][1]) * s;
+    u[2] = u[2] * sign(M.Element[2][1] + M.Element[0][2]) * s;
   }
   return Fix2PI(fi, u * prev) * u;
   return Fix2PI(fi, (u * (u * fi - prev))) * u;
@@ -616,11 +616,11 @@ template<class VecType>
 void ovpTransform(vtkMatrix4x4& M, const VecType& ovp, const VecType& trn = VecType())
 {
   using Type = decltype(VecType() * VecType());
-  M[0][0] = M[0][1] = M[0][2] = Type();
-  M[1][0] = M[1][1] = M[1][2] = Type();
-  M[2][0] = M[2][1] = M[2][2] = Type();
-  M[0][0] = M[1][1] = M[2][2] = Type(1);
-  M[0][3] = trn[0];  M[1][3] = trn[1]; M[2][3] = trn[2];
+  M.Element[0][0] = M.Element[0][1] = M.Element[0][2] = Type();
+  M.Element[1][0] = M.Element[1][1] = M.Element[1][2] = Type();
+  M.Element[2][0] = M.Element[2][1] = M.Element[2][2] = Type();
+  M.Element[0][0] = M.Element[1][1] = M.Element[2][2] = Type(1);
+  M.Element[0][3] = trn[0];  M.Element[1][3] = trn[1]; M.Element[2][3] = trn[2];
   Type fi = norm(ovp);
   if (fi < Type(1e-8))
     return M;
@@ -639,10 +639,10 @@ void ovpTransform(vtkMatrix4x4& M, const VecType& ovp, const VecType& trn = VecT
     V3d<Type>(ovp[2] * ovp[0], ovp[2] * ovp[1], ovp[2] * ovp[2]) };
   for (size_t i = 0; i < 3; ++i)
   {
-    M[0][i] = cfi * E[0][i] + sinc * A[0][i] + cosc * T[0][i];
-    M[1][i] = cfi * E[1][i] + sinc * A[1][i] + cosc * T[1][i];
-    M[2][i] = cfi * E[2][i] + sinc * A[2][i] + cosc * T[2][i];
-    M[i][3] = trn[i];
+    M.Element[0][i] = cfi * E[0][i] + sinc * A[0][i] + cosc * T[0][i];
+    M.Element[1][i] = cfi * E[1][i] + sinc * A[1][i] + cosc * T[1][i];
+    M.Element[2][i] = cfi * E[2][i] + sinc * A[2][i] + cosc * T[2][i];
+    M.Element[i][3] = trn[i];
   }
   return M;
 }

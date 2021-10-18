@@ -714,8 +714,8 @@ int lhpOpImporterC3DFused::ExtractMatchingPoints(mafVMELandmarkCloud *src, mafVM
   vtkDataSet *polySource =src->GetOutput()->GetVTKData();
   vtkDataSet *polyTarget =trg->GetOutput()->GetVTKData();
 
-  polySource->Update();
-  polyTarget->Update();
+  src->GetOutput()->Update();
+  trg->GetOutput()->Update();
 
   int npSource = polySource->GetNumberOfPoints();
   int npTarget = polyTarget->GetNumberOfPoints();

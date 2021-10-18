@@ -82,7 +82,7 @@ lhpVMELMCLines::lhpVMELMCLines()
 
   m_Polyline = NULL;
   vtkNEW(m_Polyline);
-  dpipe->SetInput(m_Polyline);
+  dpipe->SetInputData(m_Polyline);
 
   m_Looped          = 0;
   m_PointsCloudName = _L("");
@@ -114,8 +114,8 @@ int lhpVMELMCLines::DeepCopy(mafNode *a)
     mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
     if (dpipe)
     {
-      dpipe->SetInput(m_Polyline);
-      m_Polyline->Update();
+      dpipe->SetInputData(m_Polyline);
+      InternalUpdate();
     }
     return MAF_OK;
   }  
@@ -223,7 +223,7 @@ void lhpVMELMCLines::InternalUpdate() //Multi
   newCells = vtkCellArray::New();
   newCells->Allocate(10000,20000);
 
-  int pointId[2];
+  vtkIdType pointId[2];
   for(unsigned i = 0; i < src.size(); i++)
   {
     newPts->InsertNextPoint(src[i].components);
@@ -235,10 +235,7 @@ void lhpVMELMCLines::InternalUpdate() //Multi
   }
 
   polyline->SetPoints(newPts);
-  polyline->Update();
   polyline->SetLines(newCells);
-  polyline->Modified();
-  polyline->Update();
   newPts->Delete();
   newCells->Delete();
 

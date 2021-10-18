@@ -299,10 +299,10 @@ void lhpOpSoftReg::OpDo()
 
   vtkMAFSmartPointer<vtkTriangleFilter>triangles;
   vtkMAFSmartPointer<vtkTransformPolyDataFilter> v_tpdf;
-  triangles->SetInput(out_surface->GetSurfaceData());
+  triangles->SetInputConnection(out_surface->GetVTKOutputPort());
   triangles->Update();
 
-  v_tpdf->SetInput(triangles->GetOutput());
+  v_tpdf->SetInputConnection(triangles->GetOutputPort());
   v_tpdf->SetTransform(out_surface->GetAbsTransform()->GetVTKTransform());
   v_tpdf->Update();
 
@@ -342,9 +342,9 @@ void lhpOpSoftReg::OpDo()
     vtkNEW(output);
 
     // All of the data in the first piece.
-    if(output->GetUpdatePiece() > 0)
+    //if(output->GetUpdatePiece() > 0)
     {
-      return;
+      //return;
     }
 
     newPts = vtkPoints::New();

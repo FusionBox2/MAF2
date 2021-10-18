@@ -16,7 +16,7 @@
 //----------------------------------------------------------------------------
 // Includes
 //----------------------------------------------------------------------------
-#include "vtkPolyDataSource.h"
+#include "vtkPolyDataAlgorithm.h"
 #include <vector>
 
 //----------------------------------------------------------------------------
@@ -57,10 +57,10 @@ virtual char* Get##name () { \
 //----------------------------------------------------------------------------
 // class mafINPReader
 //----------------------------------------------------------------------------
-class MAF_EXPORT mafINPReader: public vtkPolyDataSource 
+class MAF_EXPORT mafINPReader: public vtkPolyDataAlgorithm
 {
 public:
-  vtkTypeRevisionMacro(mafINPReader, vtkPolyDataSource);
+  vtkTypeMacro(mafINPReader, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
@@ -78,7 +78,8 @@ protected:
 
   char *m_FileName;
 
-  void Execute();
+  virtual int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+
   int ReadASCIIINP(FILE *fp, std::vector<double> &pointsRead, std::vector<int> &pointsIndRead, std::vector<vtkIdType> &indRead);
 private:
   mafINPReader(const mafINPReader&);  // Not implemented.

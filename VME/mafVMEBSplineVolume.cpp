@@ -90,7 +90,7 @@ mafVMEBSplineVolume::mafVMEBSplineVolume()
 
   m_Polygons = NULL;
   vtkNEW(m_Polygons);
-  dpipe->SetInput(m_Polygons);
+  dpipe->SetInputData(m_Polygons);
 
   m_PointsGroupName = _R("");
   m_BVolume    = NULL;
@@ -129,8 +129,8 @@ int mafVMEBSplineVolume::DeepCopy(mafNode *a)
     mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
     if (dpipe)
     {
-      dpipe->SetInput(m_Polygons);
-      m_Polygons->Update();
+      dpipe->SetInputData(m_Polygons);
+      InternalUpdate();
     }
     return MAF_OK;
   }  
@@ -231,7 +231,7 @@ void mafVMEBSplineVolume::InternalUpdate() //Multi
     newPts->InsertNextPoint(result[i].components);
   }
 
-  int pointId[3];
+  vtkIdType pointId[3];
   unsigned supl = 0;
   for(unsigned i = 1; i < m_TesselX; i++)
   {
@@ -330,10 +330,10 @@ void mafVMEBSplineVolume::InternalUpdate() //Multi
   supl += m_TesselY * m_TesselZ;
 
   polygons->SetPoints(newPts);
-  polygons->Update();
+  //polygons->Update();
   polygons->SetPolys(newCells);
   polygons->Modified();
-  polygons->Update();
+  //polygons->Update();
   newPts->Delete();
   newCells->Delete();
 

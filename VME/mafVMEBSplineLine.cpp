@@ -148,7 +148,7 @@ mafVMEBSplineLine::mafVMEBSplineLine()
 
   m_Polyline = NULL;
   vtkNEW(m_Polyline);
-  dpipe->SetInput(m_Polyline);
+  dpipe->SetInputData(m_Polyline);
 
   m_PointsCloudName = _L("");
 
@@ -194,8 +194,8 @@ int mafVMEBSplineLine::DeepCopy(mafNode *a)
     mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
     if (dpipe)
     {
-      dpipe->SetInput(m_Polyline);
-      m_Polyline->Update();
+      dpipe->SetInputData(m_Polyline);
+      InternalUpdate();
     }
     return MAF_OK;
   }  
@@ -345,7 +345,7 @@ void mafVMEBSplineLine::InternalUpdate() //Multi
   newCells = vtkCellArray::New();
   newCells->Allocate(10000,20000);
 
-  int pointId[2];
+  vtkIdType pointId[2];
   for(unsigned i = 0; i < result.size(); i++)
   {
     newPts->InsertNextPoint(result[i].components);
@@ -357,10 +357,7 @@ void mafVMEBSplineLine::InternalUpdate() //Multi
   }
 
   polyline->SetPoints(newPts);
-  polyline->Update();
   polyline->SetLines(newCells);
-  polyline->Modified();
-  polyline->Update();
   newPts->Delete();
   newCells->Delete();
 

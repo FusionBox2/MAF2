@@ -25,7 +25,7 @@ class MAF_EXPORT mafINPWriter : public vtkPolyDataWriter
 {
 public:
   static mafINPWriter *New();
-  vtkTypeRevisionMacro(mafINPWriter,vtkPolyDataWriter);
+  vtkTypeMacro(mafINPWriter,vtkPolyDataWriter);
   virtual void PrintSelf(ostream& os, vtkIndent indent);
 
 protected:
