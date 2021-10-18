@@ -51,11 +51,11 @@ mafVMEOutputVTK::~mafVMEOutputVTK()
 }
 
 //-------------------------------------------------------------------------
-vtkDataSet *mafVMEOutputVTK::GetVTKData()
+vtkAlgorithmOutput *mafVMEOutputVTK::GetVTKOutputPort()
 //-------------------------------------------------------------------------
 {
   assert(m_VME);
-  return m_VME->GetDataPipe()->GetVTKData();
+  return m_VME->GetDataPipe()->GetVTKOutputPort();
 }
 
 /*

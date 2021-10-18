@@ -18,7 +18,8 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "vtkDataSetToDataSetFilter.h"
+#include "vtkDataSetAlgorithm.h"
+
 //----------------------------------------------------------------------------
 // forward declarations
 //----------------------------------------------------------------------------
@@ -33,24 +34,15 @@ class vtkDataSet;
   @todo
   -
 */
-class MAF_EXPORT vtkMAFDataPipe : public vtkDataSetToDataSetFilter
+class MAF_EXPORT vtkMAFDataPipe : public vtkDataSetAlgorithm
 {
 public:
-  vtkTypeMacro(vtkMAFDataPipe,vtkDataSetToDataSetFilter);
+  vtkTypeMacro(vtkMAFDataPipe,vtkDataSetAlgorithm);
 
   static vtkMAFDataPipe *New();
 
-  /** Set the dataset to be reported as output of the VTK data pipe */
-  virtual void SetNthInput(int num, vtkDataSet *input);
-
-  virtual vtkDataSet *GetOutput(int idx);
-  virtual vtkDataSet *GetOutput();
-
   /** A bit of magic making this filter to take into consideration VME data pipe MTime */
-  virtual unsigned long GetMTime();
-
-  /** return the modification time for internally stored information */
-  virtual unsigned long GetInformationTime();
+  virtual vtkMTimeType GetMTime();
 
   /** the data pipe it is linked to */
   void SetDataPipe(mafDataPipe *dpipe);
@@ -67,8 +59,13 @@ protected:
   vtkMAFDataPipe();
   virtual ~vtkMAFDataPipe();
 
-  virtual void ExecuteInformation();
-  virtual void Execute();
+  virtual int RequestUpdateExtent(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+
+  virtual int RequestDataObject(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+
+  virtual int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+
+  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   mafDataPipe *m_DataPipe; ///< the data pipe this object is linked to
 

@@ -101,8 +101,8 @@ mafVMECenterLine::mafVMECenterLine()
   // attach a data pipe which creates a bridge between VTK and MAF
 	mafDataPipeCustom *dpipe = mafDataPipeCustom::New();
 	//m_PolyData->DeepCopy(m_Goniometer->GetOutput());
-	m_PolyData->Update();
-	dpipe->SetInput(m_PolyData);
+	//m_PolyData->Update();
+	dpipe->SetInputData(m_PolyData);
 	
 	SetDataPipe(dpipe);
 
@@ -1521,7 +1521,7 @@ int mafVMECenterLine::DeepCopy(mafNode *a)
     mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
     if (dpipe)
     {
-      dpipe->SetInput(m_PolyData);
+      dpipe->SetInputData(m_PolyData);
     }
     InternalUpdate();
     return MAF_OK;
@@ -2869,7 +2869,7 @@ void mafVMECenterLine::InternalUpdate()
 		vtkPoints* pts = vtkPoints::New();
 		vtkPolyData *polydata = vtkPolyData::New(); 
 		int num = result2.cols();
-		int pointId[2];
+		vtkIdType pointId[2];
 		double* f;
 		f = new double[3];
 
@@ -2934,7 +2934,7 @@ void mafVMECenterLine::InternalUpdate()
 
 		m_PolyData->SetPoints(pts);
 		m_PolyData->SetLines(cellArray);
-		m_PolyData->Update();
+		//m_PolyData->Update();
 			////
 
 			

@@ -84,8 +84,10 @@ void mafPipeGizmo::Create(mafNode *node, mafView *view)
 	m_Vme->AddObserver(this);
 
 	m_Mapper = vtkPolyDataMapper::New();
-	m_Mapper->SetInput(data);
+	m_Mapper->SetInputData(data);
+#if VTK_MAJOR_VERSION <= 7
 	m_Mapper->ImmediateModeRenderingOff();
+#endif
 
 	m_GizmoActor = vtkActor::New();
 	m_GizmoActor->SetMapper(m_Mapper);
@@ -127,10 +129,10 @@ void mafPipeGizmo::Create(mafNode *node, mafView *view)
 
 	// selection highlight
 	vtkMAFSmartPointer<vtkOutlineCornerFilter> corner;
-	corner->SetInput(data);  
+	corner->SetInputData(data);  
 
 	vtkMAFSmartPointer<vtkPolyDataMapper> corner_mapper;
-	corner_mapper->SetInput(corner->GetOutput());
+	corner_mapper->SetInputConnection(corner->GetOutputPort());
 
 	vtkMAFSmartPointer<vtkProperty> corner_props;
 	corner_props->SetColor(1,1,1);
@@ -152,7 +154,7 @@ void mafPipeGizmo::Create(mafNode *node, mafView *view)
 	//m_CaptionActor->GetCaptionTextProperty()->SetFontFamilyToTimes();
 	m_CaptionActor->GetCaptionTextProperty()->SetFontFamilyToArial();
 	m_CaptionActor->GetCaptionTextProperty()->BoldOn();
-	m_CaptionActor->GetCaptionTextProperty()->AntiAliasingOn();
+	//m_CaptionActor->GetCaptionTextProperty()->AntiAliasingOn();
 	m_CaptionActor->GetCaptionTextProperty()->ItalicOff();
 	m_CaptionActor->GetCaptionTextProperty()->ShadowOn();
 	m_CaptionActor->SetPadding(0);

@@ -214,7 +214,7 @@ SUBDIRS(DataPipes)
 SET(PROJECT_LIBS mafDataPipes)
 
 IF (MAF_USE_VTK)
-  SET(PROJECT_LIBS ${PROJECT_LIBS} vtkIO vtkRendering vtkGraphics vtkHybrid)
+#  SET(PROJECT_LIBS ${PROJECT_LIBS} vtkIO vtkRendering vtkGraphics vtkHybrid)
 ENDIF (MAF_USE_VTK)
 
 # Create the library.

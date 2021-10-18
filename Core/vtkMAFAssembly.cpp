@@ -27,7 +27,6 @@
 #include "vtkMAFAssembly.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkMAFAssembly, "$Revision: 1.5.2.2 $");
 vtkStandardNewMacro(vtkMAFAssembly);
 
 // Construct object with no children.

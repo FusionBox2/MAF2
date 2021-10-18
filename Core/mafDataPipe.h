@@ -31,6 +31,7 @@ class mafVME;
 
 #ifdef MAF_USE_VTK
   class vtkDataSet;
+  class vtkAlgorithmOutput;
 #endif
 
 /** abstract class for process objects producing data as output of a VME.
@@ -75,7 +76,8 @@ public:
 #ifdef MAF_USE_VTK
   /**
     Return a VTK dataset corresponding to the current time.*/
-  virtual vtkDataSet *GetVTKData() {return NULL;}
+  virtual vtkAlgorithmOutput *GetVTKOutputPort() {return nullptr;}
+  virtual vtkDataSet *GetVTKData();
 #endif
 
   /** Set/Get the current time */

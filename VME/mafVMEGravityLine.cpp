@@ -194,8 +194,8 @@ mafVMEGravityLine::mafVMEGravityLine()
   // attach a data pipe which creates a bridge between VTK and MAF
 	mafDataPipeCustom *dpipe = mafDataPipeCustom::New();
 	m_PolyData->DeepCopy(m_Goniometer->GetOutput());
-	m_PolyData->Update();
-	dpipe->SetInput(m_PolyData);
+	//m_PolyData->Update();
+	dpipe->SetInputData(m_PolyData);
 	
 	SetDataPipe(dpipe);
 
@@ -254,7 +254,7 @@ int mafVMEGravityLine::DeepCopy(mafNode *a)
     mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
     if (dpipe)
     {
-      dpipe->SetInput(m_PolyData);
+      dpipe->SetInputData(m_PolyData);
     }
     InternalUpdate();
     return MAF_OK;
@@ -657,12 +657,12 @@ void mafVMEGravityLine::InternalUpdate()
 		//}
 
 		
-		m_Goniometer->SetInput(m_LineSource->GetOutput());
+		m_Goniometer->SetInputConnection(m_LineSource->GetOutputPort());
 		m_Goniometer->Update();
 		/////
 		vtkPolyData *polydata = m_Goniometer->GetOutput();
 		int num = m_Goniometer->GetOutput()->GetNumberOfPoints();
-		int pointId[2];
+		vtkIdType pointId[2];
 		vtkMAFSmartPointer<vtkCellArray> cellArray;
 		for (int i = 0; i< num; i++)
 		{
@@ -676,7 +676,7 @@ void mafVMEGravityLine::InternalUpdate()
 
 		m_PolyData->SetPoints(m_Goniometer->GetOutput()->GetPoints());
 		m_PolyData->SetLines(cellArray);
-		m_PolyData->Update();
+		//m_PolyData->Update();
 		////
 
 		
@@ -830,12 +830,12 @@ void mafVMEGravityLine::InternalUpdate()
 				m_LineSource->SetPoint2(coordLocal);
 				m_LineSource->Update();
 
-				m_Goniometer->SetInput(m_LineSource->GetOutput());
+				m_Goniometer->SetInputConnection(m_LineSource->GetOutputPort());
 				m_Goniometer->Update();
 				/////
 				vtkPolyData *polydata = m_Goniometer->GetOutput();
 				int num = m_Goniometer->GetOutput()->GetNumberOfPoints();
-				int pointId[2];
+				vtkIdType pointId[2];
 				vtkMAFSmartPointer<vtkCellArray> cellArray;
 				for (int i = 0; i< num; i++)
 				{
@@ -849,7 +849,7 @@ void mafVMEGravityLine::InternalUpdate()
 
 				m_PolyData->SetPoints(m_Goniometer->GetOutput()->GetPoints());
 				m_PolyData->SetLines(cellArray);
-				m_PolyData->Update();
+				//m_PolyData->Update();
 				////
 
 				//string sss4 = "visualization ok";

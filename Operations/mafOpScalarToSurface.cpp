@@ -107,7 +107,7 @@ void mafOpScalarToSurface::OpRun()
     scalar_item = vtkPolyData::New();
     scalar_item->DeepCopy(current_item);
     items.push_back(scalar_item);
-    scalar_surface->AddInput(items[t]);
+    scalar_surface->AddInputData(items[t]);
   }
   scalar_surface->Update();
   scalar->SetTimeStamp(ts);
@@ -115,7 +115,7 @@ void mafOpScalarToSurface::OpRun()
   {
     mafEventMacro(mafEvent(this, BIND_TO_PROGRESSBAR,delaunay));
   }
-  delaunay->SetInput(scalar_surface->GetOutput());
+  delaunay->SetInputConnection(scalar_surface->GetOutputPort());
   delaunay->Update();
   m_Surface->SetData(delaunay->GetOutput(),ts);
   m_Output = m_Surface;

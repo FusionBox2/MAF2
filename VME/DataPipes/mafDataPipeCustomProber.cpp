@@ -59,8 +59,8 @@ mafDataPipeCustomProber::mafDataPipeCustomProber()
 
   vtkNEW(m_Normals);
   vtkNEW(m_Prober);
-  m_Prober->SetInput((vtkDataSet *)m_Normals->GetOutput());
-  SetInput(m_Prober->GetOutput());
+  m_Prober->SetInputConnection(m_Normals->GetOutputPort());
+  SetInputConnection(m_Prober->GetOutputPort());
 }
 
 //------------------------------------------------------------------------------
@@ -77,12 +77,11 @@ void mafDataPipeCustomProber::SetSurface(mafNode *surface)
   m_Surface = surface;
   if (m_Surface)
   {
-    vtkDataSet *surf_data = ((mafVME *)m_Surface)->GetOutput()->GetVTKData();
-    m_Normals->SetInput((vtkPolyData *)surf_data);
+    m_Normals->SetInputConnection(((mafVME*)m_Surface)->GetOutput()->GetVTKOutputPort());
   }
   else
   {
-    m_Normals->SetInput(NULL);
+    m_Normals->SetInputConnection(nullptr);
   }
 }
 //------------------------------------------------------------------------------
@@ -92,12 +91,11 @@ void mafDataPipeCustomProber::SetVolume(mafNode *volume)
   m_Volume = volume;
   if (m_Volume)
   {
-    vtkDataSet *vol_data = ((mafVME *)m_Volume)->GetOutput()->GetVTKData();
-    m_Prober->SetSource(vol_data);
+    m_Prober->SetSourceConnection(((mafVME*)m_Volume)->GetOutput()->GetVTKOutputPort());
   }
   else
   {
-    m_Prober->SetSource(NULL);
+    m_Prober->SetSourceConnection(nullptr);
   }
 }
 //------------------------------------------------------------------------------
@@ -136,14 +134,16 @@ void mafDataPipeCustomProber::PreExecute()
     surf->GetOutput()->Update();
     vtkDataSet *vol_data = vol->GetOutput()->GetVTKData();
     vtkDataSet *surf_data = surf->GetOutput()->GetVTKData();
+    vtkAlgorithmOutput* vol_port = vol->GetOutput()->GetVTKOutputPort();
+    vtkAlgorithmOutput* surf_port = surf->GetOutput()->GetVTKOutputPort();
     if(vol_data && surf_data)
     {
-      m_Normals->SetInput((vtkPolyData *)surf_data);
+      m_Normals->SetInputConnection(surf_port);
       m_Normals->ComputePointNormalsOn();
       m_Normals->SplittingOff();
       m_Normals->Update();
 
-      m_Prober->SetSource(vol_data);
+      m_Prober->SetSourceConnection(vol_port);
       if(GetMode() == mafDataPipeCustomProber::DENSITY_MODE)
         m_Prober->SetFilterModeToDensity();
       else
@@ -168,7 +168,7 @@ void mafDataPipeCustomProber::PreExecute()
   }
   else
   {
-    m_Prober->SetSource(NULL);
+    m_Prober->SetSourceConnection(nullptr);
   }
 }
 //------------------------------------------------------------------------------

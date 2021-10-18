@@ -77,12 +77,13 @@ void mafPipeIsosurface::Create(mafNode *node, mafView *view)
 
   m_Vme->AddObserver(this);
 
+  m_Vme->GetOutput()->Update();
 	vtkDataSet *dataset = m_Vme->GetOutput()->GetVTKData();
-	dataset->Update();
+	vtkAlgorithmOutput* port = m_Vme->GetOutput()->GetVTKOutputPort();
 
 	// contour pipeline
 	vtkNEW(m_ContourMapper);
-	m_ContourMapper->SetInput(dataset);
+	m_ContourMapper->SetInputConnection(port);
 	m_ContourMapper->AutoLODRenderOn();
 	m_ContourMapper->SetAlpha(m_AlphaValue);
 
@@ -103,10 +104,10 @@ void mafPipeIsosurface::Create(mafNode *node, mafView *view)
 
 	// selection box
 	vtkNEW(m_OutlineBox);
-	m_OutlineBox->SetInput(dataset);
+	m_OutlineBox->SetInputConnection(port);
 
 	vtkNEW(m_OutlineMapper);
-	m_OutlineMapper->SetInput(m_OutlineBox->GetOutput());
+	m_OutlineMapper->SetInputConnection(m_OutlineBox->GetOutputPort());
 
 	vtkNEW(m_OutlineActor);
 	m_OutlineActor->SetMapper(m_OutlineMapper);
@@ -229,11 +230,12 @@ void mafPipeIsosurface::UpdateFromData()
   vtkDataSet *dataset = m_Vme->GetOutput()->GetVTKData();
   if(dataset)
   {
-    dataset->Update();
+	vtkAlgorithmOutput* port = m_Vme->GetOutput()->GetVTKOutputPort();
+	m_Vme->GetOutput()->Update();
 
     if (m_ContourMapper != NULL)
     {
-      m_ContourMapper->SetInput(dataset);
+      m_ContourMapper->SetInputConnection(port);
       m_ContourMapper->Update();
     }
   }

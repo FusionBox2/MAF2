@@ -48,7 +48,7 @@ public:
   of stored Items is 0. Also special VME could not support VTK dataset output.
   An event is rised when the output data changes to allow attached classes to 
   update their input.*/
-  virtual vtkDataSet *GetVTKData();
+  virtual vtkAlgorithmOutput *GetVTKOutputPort();
 
   /** Redefined to update gui.*/
   virtual void Update();

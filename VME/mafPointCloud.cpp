@@ -118,14 +118,14 @@ vtkMAFSmartPointer<vtkActor> mafdmPointCloud::makeRenderer()
 
 
 	vtkMAFSmartPointer<vtkGlyph3D> glyphFilter;
-	glyphFilter->SetInput(polydata);
+	glyphFilter->SetInputData(polydata);
 	glyphFilter->Update();
 
 	// Visualize
 	//vtkSmartPointer<vtkNamedColors> colors = vtkSmartPointer<vtkNamedColors>::New();
 
 	vtkMAFSmartPointer<vtkPolyDataMapper> mapper ;
-	mapper->SetInput(glyphFilter->GetOutput());
+	mapper->SetInputConnection(glyphFilter->GetOutputPort());
 	vtkMAFSmartPointer<vtkActor> actor;
 	//actor->setDataElement(this);
 	

@@ -32,7 +32,10 @@
 #include "mafVME.h"
 
 #include "vtkDataSet.h"
+#include "vtkInformation.h"
+#include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkErrorCode.h"
 //------------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMAFDataPipe)
@@ -59,15 +62,8 @@ void vtkMAFDataPipe::SetDataPipe(mafDataPipe *dpipe)
 }
 
 //----------------------------------------------------------------------------
-void vtkMAFDataPipe::SetNthInput(int num, vtkDataSet *input)
-//----------------------------------------------------------------------------
-{
-  Superclass::SetNthInput(num,input);
-}
-
-//----------------------------------------------------------------------------
 // Get the MTime. Take in consideration also modifications to the MAF data pipe
-unsigned long vtkMAFDataPipe::GetMTime()
+vtkMTimeType vtkMAFDataPipe::GetMTime()
 //------------------------------------------------------------------------------
 {
   unsigned long mtime = this->Superclass::GetMTime();
@@ -84,101 +80,68 @@ unsigned long vtkMAFDataPipe::GetMTime()
   return mtime;
 }
 
-//------------------------------------------------------------------------------
-unsigned long vtkMAFDataPipe::GetInformationTime()
-//------------------------------------------------------------------------------
-{
-  return InformationTime.GetMTime();
-}
-
-//------------------------------------------------------------------------------
-vtkDataSet *vtkMAFDataPipe::GetOutput(int idx)
-//------------------------------------------------------------------------------
-{
-  if (this->NumberOfOutputs < idx+1)
-  {
-    UpdateInformation(); // force creating the outputs
-  }
-  return Superclass::GetOutput(idx);
-}
-
-//------------------------------------------------------------------------------
-vtkDataSet *vtkMAFDataPipe::GetOutput()
-//------------------------------------------------------------------------------
-{
-  if (this->NumberOfOutputs == 0)
-  {
-    UpdateInformation(); // force creating the outputs
-  }
-  return Superclass::GetOutput();
-}
-
-//------------------------------------------------------------------------------
 void vtkMAFDataPipe::UpdateInformation()
+{
+    if (m_DataPipe)
+        m_DataPipe->OnEvent(&mafEventBase(this, VME_OUTPUT_DATA_PREUPDATE));
+    Superclass::UpdateInformation();
+}
+
+int vtkMAFDataPipe::RequestUpdateExtent(
+    vtkInformation* request,
+    vtkInformationVector** inputVector,
+    vtkInformationVector* outputVector)
+{
+    return Superclass::RequestUpdateExtent(request, inputVector, outputVector);
+}
+
+int vtkMAFDataPipe::RequestDataObject(
+    vtkInformation* request,
+    vtkInformationVector** inputVector,
+    vtkInformationVector* outputVector)
+{
+    // forward event to MAF data pipe
+    if (m_DataPipe)
+        m_DataPipe->OnEvent(&mafEventBase(this, VME_OUTPUT_DATA_PREUPDATE));
+    return Superclass::RequestDataObject(request, inputVector, outputVector);
+}
+
+//------------------------------------------------------------------------------
+int vtkMAFDataPipe::RequestInformation(
+    vtkInformation* request,
+    vtkInformationVector** inputVector,
+    vtkInformationVector* outputVector)
 //------------------------------------------------------------------------------
 {
   // forward event to MAF data pipe
   if (m_DataPipe)
     m_DataPipe->OnEvent(&mafEventBase(this,VME_OUTPUT_DATA_PREUPDATE));
-
-  this->Superclass::UpdateInformation();
+  return this->Superclass::RequestInformation(request, inputVector, outputVector);
 }
 
-//------------------------------------------------------------------------------
-void vtkMAFDataPipe::ExecuteInformation()
-//------------------------------------------------------------------------------
-{
-  this->SetErrorCode( vtkErrorCode::NoError );
-  
-  // check if output array is still empty
-  if (this->Outputs==NULL||this->Outputs[0]==NULL)
-  {
-    // create a new object of the same type of those in the array
-    if (GetNumberOfInputs()>0)
-    {
-      for (int i=0;i<GetNumberOfInputs();i++)
-      {
-        
-        vtkDataSet *data=(vtkDataSet *)GetInputs()[i];
-        if (data)
-        {
-          data->UpdateInformation();
-          vtkDataSet *new_data=data->NewInstance();
-          new_data->CopyInformation(data);
-          this->SetNthOutput(i,new_data);
-          new_data->Delete();
-        }
-      }
-    }
-  } 
-  
-  if (GetNumberOfInputs()>0&&GetInput()) // work around to skip vtkDataSet bug with zero inputs
-    Superclass::ExecuteInformation(); 
-}
 
 //------------------------------------------------------------------------------
-void vtkMAFDataPipe::Execute()
-//------------------------------------------------------------------------------
+int vtkMAFDataPipe::RequestData(
+    vtkInformation* request,
+    vtkInformationVector** inputVector,
+    vtkInformationVector* outputVector)
+    //------------------------------------------------------------------------------
 {
-  if (GetInput())
-  {
-    if(m_DataPipe->IsA("mafDataPipeCustom"))
-      m_DataPipe->OnEvent(&mafEventBase(this,VME_OUTPUT_DATA_UPDATE));
-    for (int i=0;i<GetNumberOfInputs();i++)
+    vtkDataObject* input = nullptr;
+    vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
+    vtkInformation* outInfo = outputVector->GetInformationObject(0);
+    if (inInfo)
     {
-      if (GetNumberOfOutputs()>i)
-      {
-        vtkDataSet *input=(vtkDataSet *)GetInputs()[i];
-        input->Update();
-        this->Outputs[i]->ShallowCopy(input);
-      }
-      else
-      {
-        vtkErrorMacro("DEBUG: NULL output pointer!");
-      }
+        input = inInfo->Get(vtkDataObject::DATA_OBJECT());
     }
-    // forward event to MAF data pipe
-    if(!m_DataPipe->IsA("mafDataPipeCustom"))
-      m_DataPipe->OnEvent(&mafEventBase(this,VME_OUTPUT_DATA_UPDATE));
-  }
+        //get the info objects
+    if (input && m_DataPipe->IsA("mafDataPipeCustom"))
+        m_DataPipe->OnEvent(&mafEventBase(this, VME_OUTPUT_DATA_UPDATE));
+    //vtkDataObject* input = inInfo->Get(vtkDataObject::DATA_OBJECT());
+    vtkDataObject* output = outInfo->Get(vtkDataObject::DATA_OBJECT());
+    output->ShallowCopy(input);
+    int res = Superclass::RequestData(request, inputVector, outputVector);
+    if (input && !m_DataPipe->IsA("mafDataPipeCustom"))
+        m_DataPipe->OnEvent(&mafEventBase(this, VME_OUTPUT_DATA_UPDATE));
+    return 1;
 }

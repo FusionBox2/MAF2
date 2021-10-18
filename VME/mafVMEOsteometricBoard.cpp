@@ -168,7 +168,7 @@ mafVMEOsteometricBoard::mafVMEOsteometricBoard()
 
 	// attach a data pipe which creates a bridge between VTK and MAF
 	mafDataPipeCustom *dpipe = mafDataPipeCustom::New();
-	dpipe->SetInput(m_PolyData);
+	dpipe->SetInputData(m_PolyData);
 	SetDataPipe(dpipe);
 }
 
@@ -219,7 +219,7 @@ int mafVMEOsteometricBoard::DeepCopy(mafNode *a)
 		mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
 		if (dpipe)
 		{
-			dpipe->SetInput(m_PolyData);
+			dpipe->SetInputData(m_PolyData);
 		}
 		InternalUpdate();
 		return MAF_OK;

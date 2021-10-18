@@ -172,7 +172,7 @@ ENDIF (MAF_USE_ITK)
 SET(PROJECT_LIBS "mafInteraction")
 
 IF (MAF_USE_VTK)
-  SET(PROJECT_LIBS ${PROJECT_LIBS} vtkCommon vtkMAF)
+  SET(PROJECT_LIBS ${PROJECT_LIBS} vtkMAF)
 ENDIF (MAF_USE_VTK)
 
 # Create the library.

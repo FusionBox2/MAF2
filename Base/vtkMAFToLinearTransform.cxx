@@ -23,7 +23,6 @@
 #include "vtkMatrix4x4.h"
 #include "vtkObjectFactory.h"
 
-vtkCxxRevisionMacro(vtkMAFToLinearTransform, "$Revision: 1.5.4.1 $");
 vtkStandardNewMacro(vtkMAFToLinearTransform);
 
 //----------------------------------------------------------------------------
@@ -146,7 +145,7 @@ vtkAbstractTransform *vtkMAFToLinearTransform::MakeTransform()
 
 //----------------------------------------------------------------------------
 // Get the MTime
-unsigned long vtkMAFToLinearTransform::GetMTime()
+vtkMTimeType vtkMAFToLinearTransform::GetMTime()
 //----------------------------------------------------------------------------
 {
   unsigned long mtime = this->vtkLinearTransform::GetMTime();

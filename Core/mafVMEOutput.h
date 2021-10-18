@@ -38,6 +38,7 @@ class mafOBB;
 class mafNodeIterator;
 class mafGUI;
 #ifdef MAF_USE_VTK
+class vtkAlgorithmOutput;
 class vtkDataSet;
 #endif //MAF_USE_VTK
 
@@ -103,6 +104,7 @@ public:
     of stored Items is 0. Also special VME could not support VTK dataset output.
     An event is rised when the output data changes to allow attached classes to 
     update their input.*/
+  virtual vtkAlgorithmOutput *GetVTKOutputPort();
   virtual vtkDataSet *GetVTKData();
 #endif
 

@@ -83,16 +83,16 @@ mafVMEEllipsoid::mafVMEEllipsoid()
 	t->Update();
 	vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
 	ptf->SetTransform(t);
-	ptf->SetInput(surf->GetOutput());
+	ptf->SetInputConnection(surf->GetOutputPort());
 	ptf->Update();
 
 	m_PolyData->DeepCopy(ptf->GetOutput());
-	m_PolyData->Update();
+	//m_PolyData->Update();
 
 	DependsOnLinkedNodeOn();
 	// attach a data pipe which creates a bridge between VTK and MAF
 	mafDataPipeCustom *dpipe = mafDataPipeCustom::New();
-	dpipe->SetInput(m_PolyData);
+	dpipe->SetInputData(m_PolyData);
 	SetDataPipe(dpipe);
 }
 
@@ -510,11 +510,11 @@ void mafVMEEllipsoid::InternalUpdate()
 	t->Update();
 	vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
 	ptf->SetTransform(t);
-	ptf->SetInput(surf->GetOutput());
+	ptf->SetInputConnection(surf->GetOutputPort());
 	ptf->Update();
 
 	m_PolyData->DeepCopy(ptf->GetOutput());
-	m_PolyData->Update();
+	//m_PolyData->Update();
 
 
 	if (currTs == 0)
@@ -558,7 +558,7 @@ int mafVMEEllipsoid::DeepCopy(mafNode *a)
 		mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
 		if (dpipe)
 		{
-			dpipe->SetInput(m_PolyData);
+			dpipe->SetInputData(m_PolyData);
 		}
 		InternalUpdate();
 		return MAF_OK;
@@ -619,7 +619,7 @@ vtkTransformPolyDataFilter* mafVMEEllipsoid::getTransformPDF()
 	t->Update();
 	vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
 	ptf->SetTransform(t);
-	ptf->SetInput(surf->GetOutput());
+	ptf->SetInputConnection(surf->GetOutputPort());
 	ptf->Update();
 
 

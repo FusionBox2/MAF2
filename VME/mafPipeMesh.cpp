@@ -120,7 +120,7 @@ void mafPipeMesh::ExecutePipe()
 //----------------------------------------------------------------------------
 {
   m_Vme->Update();
-  m_Vme->GetOutput()->GetVTKData()->Update();
+  m_Vme->GetOutput()->Update();
 
   CreateFieldDataControlArrays();
 
@@ -129,8 +129,8 @@ void mafPipeMesh::ExecutePipe()
 	assert(mesh_output);
 	mesh_output->Update();
 	vtkUnstructuredGrid *data = vtkUnstructuredGrid::SafeDownCast(mesh_output->GetVTKData());
-	assert(data);
-	data->Update();
+	vtkAlgorithmOutput* port = mesh_output->GetVTKOutputPort();
+	assert(port);
 
 	m_MeshMaterial = (mmaMaterial *)m_Vme->GetAttribute(_R("MaterialAttributes"));
 
@@ -176,18 +176,20 @@ void mafPipeMesh::ExecutePipe()
 
   // create the linearization filter
   vtkNEW(m_LinearizationFilter);
-  m_LinearizationFilter->SetInput(data);
+  m_LinearizationFilter->SetInputConnection(port);
   m_LinearizationFilter->Update();
 
 	vtkNEW(m_GeometryFilter);
-	m_GeometryFilter->SetInput(m_LinearizationFilter->GetOutput());
+	m_GeometryFilter->SetInputConnection(m_LinearizationFilter->GetOutputPort());
 	m_GeometryFilter->Update();
 
 	vtkNEW(m_Mapper);
+#if VTK_MAJOR_VERSION <= 7
   m_Mapper->ImmediateModeRenderingOn();
+#endif
   m_Mapper->SetColorModeToMapScalars();
   m_Mapper->SetLookupTable(m_Table);
-	m_Mapper->SetInput(m_GeometryFilter->GetOutput());
+	m_Mapper->SetInputConnection(m_GeometryFilter->GetOutputPort());
 	m_Mapper->SetScalarRange(sr);
 
   if(m_ActiveScalarType == POINT_TYPE)
@@ -204,7 +206,7 @@ void mafPipeMesh::ExecutePipe()
 
 
   vtkNEW(m_MapperWired);
-  m_MapperWired->SetInput(m_GeometryFilter->GetOutput());
+  m_MapperWired->SetInputConnection(m_GeometryFilter->GetOutputPort());
   m_MapperWired->SetScalarRange(0,0);
   m_MapperWired->ScalarVisibilityOff();
 
@@ -239,10 +241,10 @@ void mafPipeMesh::ExecutePipe()
   
   // selection highlight
   vtkMAFSmartPointer<vtkOutlineCornerFilter> corner;
-	corner->SetInput(data);  
+	corner->SetInputConnection(port);  
 
   vtkMAFSmartPointer<vtkPolyDataMapper> corner_mapper;
-	corner_mapper->SetInput(corner->GetOutput());
+	corner_mapper->SetInputConnection(corner->GetOutputPort());
 
   vtkMAFSmartPointer<vtkProperty> corner_props;
 	corner_props->SetColor(1,1,1);
@@ -553,7 +555,7 @@ void mafPipeMesh::UpdateActiveScalarsInVMEDataVectorItems()
 //----------------------------------------------------------------------------
 {
   
-  m_Vme->GetOutput()->GetVTKData()->Update();
+  m_Vme->GetOutput()->Update();
   m_Vme->Update();
   
   if(m_ActiveScalarType == POINT_TYPE)

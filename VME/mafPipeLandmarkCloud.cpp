@@ -114,11 +114,11 @@ void mafPipeLandmarkCloud::Create(mafNode *node, mafView *view)
   {
     if (m_Cloud)
     {
-      CreateClosedCloudPipe(m_Cloud->GetOutput()->GetVTKData(), m_Cloud->GetRadius(), m_Cloud->GetSphereResolution());
+      CreateClosedCloudPipe(m_Cloud->GetOutput()->GetVTKOutputPort(), m_Cloud->GetRadius(), m_Cloud->GetSphereResolution());
     }
     else
     {
-      CreateClosedCloudPipe(m_Landmark->GetOutput()->GetVTKData(), m_Landmark->GetRadius(), m_Landmark->GetSphereResolution());
+      CreateClosedCloudPipe(m_Landmark->GetOutput()->GetVTKOutputPort(), m_Landmark->GetRadius(), m_Landmark->GetSphereResolution());
     }
   }
 }
@@ -249,7 +249,9 @@ void mafPipeLandmarkCloud::OnEvent(mafEventBase *maf_event)
           mafEventMacro(mafEvent(this,CAMERA_UPDATE));
         }
       case ID_RENDERING_DISPLAY_LIST:
+#if VTK_MAJOR_VERSION <= 7
         m_CloudMapper->SetImmediateModeRendering(m_RenderingDisplayListFlag);
+#endif
         mafEventMacro(mafEvent(this,CAMERA_UPDATE));
       break;
       default:
@@ -280,7 +282,7 @@ void mafPipeLandmarkCloud::OnEvent(mafEventBase *maf_event)
         mafEvent e(this,VME_SHOW,child_lm,false);
         m_Cloud->ForwardUpEvent(&e);
       }*/
-      CreateClosedCloudPipe(m_Cloud->GetOutput()->GetVTKData(), m_Cloud->GetRadius(), m_Cloud->GetSphereResolution());
+      CreateClosedCloudPipe(m_Cloud->GetOutput()->GetVTKOutputPort(), m_Cloud->GetRadius(), m_Cloud->GetSphereResolution());
     }
     mafEventMacro(mafEvent(this,CAMERA_UPDATE));
   }
@@ -304,7 +306,7 @@ void mafPipeLandmarkCloud::OnEvent(mafEventBase *maf_event)
   
 }
 //----------------------------------------------------------------------------
-void mafPipeLandmarkCloud::CreateClosedCloudPipe(vtkDataSet *data, double radius, double resolution)
+void mafPipeLandmarkCloud::CreateClosedCloudPipe(vtkAlgorithmOutput *port, double radius, double resolution)
 //----------------------------------------------------------------------------
 {
   vtkNEW(m_SphereSource);
@@ -314,24 +316,26 @@ void mafPipeLandmarkCloud::CreateClosedCloudPipe(vtkDataSet *data, double radius
   m_SphereSource->Update();
 
   vtkNEW(m_Normals);
-  m_Normals->SetInput(m_SphereSource->GetOutput());
+  m_Normals->SetInputConnection(m_SphereSource->GetOutputPort());
   m_Normals->Update();
 
   vtkNEW(m_Glyph);
-  m_Glyph->SetInput(data);
-  m_Glyph->SetSource(m_Normals->GetOutput());
+  m_Glyph->SetInputConnection(port);
+  m_Glyph->SetSourceConnection(m_Normals->GetOutputPort());
   m_Glyph->OrientOff();
   m_Glyph->ScalingOff();
   m_Glyph->ScalarVisibilityOn();
   m_Glyph->Update();
 
   vtkNEW(m_CloudMapper);
-  m_CloudMapper->SetInput(m_Glyph->GetOutput());
+  m_CloudMapper->SetInputConnection(m_Glyph->GetOutputPort());
   m_CloudMapper->ScalarVisibilityOff();
+#if VTK_MAJOR_VERSION <= 7
   if(m_Vme->IsAnimated())				
     m_CloudMapper->ImmediateModeRenderingOn();	 //avoid Display-Lists for animated items.
   else
     m_CloudMapper->ImmediateModeRenderingOff();
+#endif
 
   vtkNEW(m_CloudActor);
   if (m_Cloud)
@@ -356,10 +360,10 @@ void mafPipeLandmarkCloud::CreateClosedCloudPipe(vtkDataSet *data, double radius
 
   // selection highlight
   vtkMAFSmartPointer<vtkOutlineCornerFilter> corner;
-  corner->SetInput(m_Glyph->GetOutput());  
+  corner->SetInputConnection(m_Glyph->GetOutputPort());  
 
   vtkMAFSmartPointer<vtkPolyDataMapper> corner_mapper;
-  corner_mapper->SetInput(corner->GetOutput());
+  corner_mapper->SetInputConnection(corner->GetOutputPort());
 
   vtkMAFSmartPointer<vtkProperty> corner_props;
   corner_props->SetColor(1,1,1);

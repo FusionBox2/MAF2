@@ -112,7 +112,7 @@ mafVMELineSeg::mafVMELineSeg()
 	
   // attach a data pipe which creates a bridge between VTK and MAF
 	mafDataPipeCustom *dpipe = mafDataPipeCustom::New();
-	dpipe->SetInput(m_PolyData);
+	dpipe->SetInputData(m_PolyData);
 	
 	SetDataPipe(dpipe);
 }
@@ -155,7 +155,7 @@ int mafVMELineSeg::DeepCopy(mafNode *a)
     mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
     if (dpipe)
     {
-      dpipe->SetInput(m_PolyData);
+      dpipe->SetInputData(m_PolyData);
     }
     InternalUpdate();
     return MAF_OK;
@@ -298,7 +298,7 @@ void mafVMELineSeg::InternalUpdate()
 
 
 
-	int pointId[2];
+	vtkIdType pointId[2];
 	for (int i = 0; i< nbr; i++)
 	{
 		if (i > 0)
@@ -312,7 +312,7 @@ void mafVMELineSeg::InternalUpdate()
 
 	m_PolyData->SetPoints(pts);
 	m_PolyData->SetLines(cellArray);
-	m_PolyData->Update();
+	//m_PolyData->Update();
 }
 //-----------------------------------------------------------------------
 vtkPolyData* mafVMELineSeg::getVTKPolydata()

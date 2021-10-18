@@ -286,7 +286,7 @@ void mafOpLabelExtractor::UpdateDataLabel()
 
   //Get dataset from volume linked to
   vtkDataSet *data = linkedVolume->GetOutput()->GetVTKData();
-  data->Update();
+  linkedVolume->GetOutput()->Update();
 
   //Create a copy of the dataset not to modify the original one
   m_Ds = data->NewInstance();
@@ -373,7 +373,7 @@ void mafOpLabelExtractor::ExtractLabel()
   {
     mafSmartPointer<mafVME> vmeLabeled = (mafVME *)m_Input;
     m_Ds = vmeLabeled->GetOutput()->GetVTKData();
-    m_Ds->Update();
+    vmeLabeled->GetOutput()->Update();
   }
 
   vtkMAFSmartPointer<vtkImageData> vol;
@@ -467,12 +467,11 @@ void mafOpLabelExtractor::ExtractLabel()
 
     resampler->SetWindow(w);
     resampler->SetLevel(l);
-    resampler->SetInput(rgrid);
+    resampler->SetInputConnection(((mafVME*)m_Input)->GetOutput()->GetVTKOutputPort());
     resampler->SetOutput(sp);
     resampler->AutoSpacingOff();
     resampler->Update();
 
-    sp->SetSource(NULL);
     sp->SetOrigin(bounds[0],bounds[2],bounds[4]);
     m_OutputData = sp->NewInstance();
     m_OutputData->DeepCopy(sp);
@@ -493,7 +492,7 @@ void mafOpLabelExtractor::ExtractLabel()
   
 
 	vtkMAFSmartPointer<vtkImageThreshold> it;
-  it->SetInput(vol);
+  it->SetInputData(vol);
 
 	double maxValue;
 	switch(vol->GetScalarType()) 
@@ -530,17 +529,17 @@ void mafOpLabelExtractor::ExtractLabel()
   if(m_SmoothVolume)
   {
     int b[6];
-    smooth->SetInput(it->GetOutput());
+    smooth->SetInputConnection(it->GetOutputPort());
     smooth->SetRadiusFactor(m_RadiusFactor);
     smooth->SetStandardDeviation(m_StdDev[0],m_StdDev[1],m_StdDev[2]);
     smooth->SetDimensionality(3);
     smooth->Update();
     smooth->GetOutput()->GetExtent(b);
-    extract->SetInput(smooth->GetOutput());
+    extract->SetInputConnection(smooth->GetOutputPort());
     extract->SetVOI(b);
     extract->SetSampleRate(m_SamplingRate);
     extract->Update();
-    smoothAfter->SetInput(extract->GetOutput());
+    smoothAfter->SetInputConnection(extract->GetOutputPort());
     smoothAfter->SetRadiusFactor(m_RadiusFactorAfter);
     smoothAfter->SetStandardDeviation(m_StdDevAfter[0],m_StdDevAfter[1],m_StdDevAfter[2]);
     smoothAfter->SetDimensionality(3);
@@ -552,11 +551,11 @@ void mafOpLabelExtractor::ExtractLabel()
     vol->DeepCopy(it->GetOutput());
   }
 
-  imageToSp->SetInput(vol);
+  imageToSp->SetInputData(vol);
   imageToSp->Update();
  
   vtkMAFSmartPointer<vtkMAFContourVolumeMapper> contourMapper;
-  contourMapper->SetInput((vtkDataSet *)imageToSp->GetOutput());
+  contourMapper->SetInputConnection(imageToSp->GetOutputPort());
   contourMapper->SetContourValue(m_ValLabel);
 
 	vtkMAFSmartPointer<vtkPolyData> surface;

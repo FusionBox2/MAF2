@@ -34,7 +34,7 @@ class MAF_EXPORT vtkMAFAssembly : public vtkAssembly
 public:
   static vtkMAFAssembly *New();
 
-  vtkTypeRevisionMacro(vtkMAFAssembly,vtkAssembly);
+  vtkTypeMacro(vtkMAFAssembly,vtkAssembly);
 
   /**
   Get the VME associated to this Assembly */

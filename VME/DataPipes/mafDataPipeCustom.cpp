@@ -53,11 +53,11 @@ mafDataPipeCustom::~mafDataPipeCustom()
 } 
 
 //------------------------------------------------------------------------------
-vtkDataSet *mafDataPipeCustom::GetVTKData()
+vtkAlgorithmOutput *mafDataPipeCustom::GetVTKOutputPort()
 //------------------------------------------------------------------------------
 {
   m_VTKDataPipe->UpdateInformation();
-  return m_VTKDataPipe->GetOutput();
+  return m_VTKDataPipe->GetOutputPort();
 }
 
 //----------------------------------------------------------------------------
@@ -80,7 +80,7 @@ void mafDataPipeCustom::UpdateBounds()
 {
   if (m_VTKDataPipe->GetOutput())
   {
-	  m_VTKDataPipe->GetOutput()->Update();
+	  m_VTKDataPipe->Update();
 	  m_VTKDataPipe->GetOutput()->ComputeBounds();
 	  m_Bounds.DeepCopy(m_VTKDataPipe->GetOutput()->GetBounds());
   }
@@ -107,15 +107,15 @@ void mafDataPipeCustom::OnEvent(mafEventBase *e)
 }
 
 //------------------------------------------------------------------------------
-void mafDataPipeCustom::SetInput(vtkDataSet *input_dataset)
+void mafDataPipeCustom::SetInputConnection(vtkAlgorithmOutput *input_dataset)
 //------------------------------------------------------------------------------
 {
-  SetNthInput(0,input_dataset);
+  GetVTKDataPipe()->SetInputConnection(0,input_dataset);
 }
 
 //------------------------------------------------------------------------------
-void mafDataPipeCustom::SetNthInput(int n, vtkDataSet *input_dataset)
+void mafDataPipeCustom::SetInputData(vtkDataSet *input_dataset)
 //------------------------------------------------------------------------------
 {
-  GetVTKDataPipe()->SetNthInput(n,input_dataset);
+  GetVTKDataPipe()->SetInputData(0,input_dataset);
 }

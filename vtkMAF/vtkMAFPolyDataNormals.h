@@ -34,18 +34,12 @@ but unlike vtkPolyDataNormals, it does not recalculate them when nothing has cha
 class VTK_vtkMAF_EXPORT  vtkMAFPolyDataNormals : public vtkPolyDataNormals
 {
 public:
-  vtkTypeRevisionMacro(vtkMAFPolyDataNormals, vtkPolyDataNormals);  
+  vtkTypeMacro(vtkMAFPolyDataNormals, vtkPolyDataNormals);  
   static vtkMAFPolyDataNormals *New();
-
-protected:
-	unsigned long m_LastUpdateTime;	
 
 protected:
   vtkMAFPolyDataNormals();
 	
-	//this is update method to avoid recalculation of things
-	/*virtual*/ void UpdateData(vtkDataObject *outputo);
-
 private:
   vtkMAFPolyDataNormals(const vtkMAFPolyDataNormals&);  // Not implemented.
   void operator=(const vtkMAFPolyDataNormals&);					// Not implemented.

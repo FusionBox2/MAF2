@@ -82,16 +82,16 @@ mafVMECylinder::mafVMECylinder()
 	t->Update();
 	vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
 	ptf->SetTransform(t);
-	ptf->SetInput(surf->GetOutput());
+	ptf->SetInputConnection(surf->GetOutputPort());
 	ptf->Update();
 
 	m_PolyData->DeepCopy(ptf->GetOutput());
-	m_PolyData->Update();
+	//m_PolyData->Update();
 
 	DependsOnLinkedNodeOn();
 	// attach a data pipe which creates a bridge between VTK and MAF
 	mafDataPipeCustom *dpipe = mafDataPipeCustom::New();
-	dpipe->SetInput(m_PolyData);
+	dpipe->SetInputData(m_PolyData);
 	SetDataPipe(dpipe);
 }
 
@@ -550,7 +550,7 @@ void mafVMECylinder::InternalUpdate()
 
 	//m_PolyData->DeepCopy(ptf->GetOutput());
 	m_PolyData->DeepCopy(surf->GetOutput());
-	m_PolyData->Update();
+	//m_PolyData->Update();
 
 	if (currTs==0)
 	{	double xyz[3];
@@ -597,7 +597,7 @@ int mafVMECylinder::DeepCopy(mafNode *a)
 		mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
 		if (dpipe)
 		{
-			dpipe->SetInput(m_PolyData);
+			dpipe->SetInputData(m_PolyData);
 		}
 		InternalUpdate();
 	
@@ -660,7 +660,7 @@ vtkTransformPolyDataFilter* mafVMECylinder::getTransformPDF()
 	t->Update();
 	vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
 	ptf->SetTransform(t);
-	ptf->SetInput(surf->GetOutput());
+	ptf->SetInputConnection(surf->GetOutputPort());
 	ptf->Update();
 
 

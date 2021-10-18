@@ -88,8 +88,9 @@ void mafPipeImage3D::Create(mafNode *node, mafView *view)
 
   // image pipeline
   m_Vme->GetOutput()->Update();
+  vtkAlgorithmOutput *port = m_Vme->GetOutput()->GetVTKOutputPort();
   vtkImageData *image_data = (vtkImageData *)m_Vme->GetOutput()->GetVTKData();
-  image_data->Update();
+  //image_data->Update();
 
   double b[6];
   image_data->GetBounds(b);
@@ -118,7 +119,7 @@ void mafPipeImage3D::Create(mafNode *node, mafView *view)
   m_ImageTexture->RepeatOff();
   m_ImageTexture->InterpolateOn();
   m_ImageTexture->SetQualityTo32Bit();
-  m_ImageTexture->SetInput(image_data);
+  m_ImageTexture->SetInputConnection(port);
   
   if(IsGrayImage())
   {
@@ -133,12 +134,14 @@ void mafPipeImage3D::Create(mafNode *node, mafView *view)
   m_ImageTexture->Modified();
 
   m_ImageMapper = vtkPolyDataMapper::New();
-	m_ImageMapper->SetInput(m_ImagePlane->GetOutput());
+	m_ImageMapper->SetInputConnection(m_ImagePlane->GetOutputPort());
 	m_ImageMapper->ScalarVisibilityOff();
+#if VTK_MAJOR_VERSION <= 7
 	if(m_Vme->IsAnimated())
 		m_ImageMapper->ImmediateModeRenderingOn();
 	else
 		m_ImageMapper->ImmediateModeRenderingOff();
+#endif
 
   m_ImageActor = vtkActor::New();
 	m_ImageActor->SetMapper(m_ImageMapper);
@@ -148,10 +151,10 @@ void mafPipeImage3D::Create(mafNode *node, mafView *view)
 
   // selection highlight
 	m_SelectionFilter = vtkOutlineCornerFilter::New();
-	m_SelectionFilter->SetInput(m_Vme->GetOutput()->GetVTKData());  
+    m_SelectionFilter->SetInputConnection(port);
 
 	m_SelectionMapper = vtkPolyDataMapper::New();
-	m_SelectionMapper->SetInput(m_SelectionFilter->GetOutput());
+	m_SelectionMapper->SetInputConnection(m_SelectionFilter->GetOutputPort());
 
 	m_SelectionProperty = vtkProperty::New();
 	m_SelectionProperty->SetColor(1,1,1);

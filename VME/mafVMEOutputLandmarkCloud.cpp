@@ -53,7 +53,7 @@ mafVMEOutputLandmarkCloud::~mafVMEOutputLandmarkCloud()
 }
 
 //-------------------------------------------------------------------------
-vtkDataSet *mafVMEOutputLandmarkCloud::GetVTKData()
+vtkAlgorithmOutput *mafVMEOutputLandmarkCloud::GetVTKOutputPort()
 //-------------------------------------------------------------------------
 {
   assert(m_VME);
@@ -64,7 +64,7 @@ vtkDataSet *mafVMEOutputLandmarkCloud::GetVTKData()
   }
   else
   {
-    return Superclass::GetVTKData();
+    return Superclass::GetVTKOutputPort();
   }
 }
 

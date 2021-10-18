@@ -89,7 +89,7 @@ protected:
   mafGUIMaterialButton *m_MaterialButton;
 
   /** Create visual-pipe for closed cloud or single landmark */
-  virtual void CreateClosedCloudPipe(vtkDataSet *data, double radius, double resolution);
+  virtual void CreateClosedCloudPipe(vtkAlgorithmOutput *data, double radius, double resolution);
 
   /** Remove visual-pipe for closed cloud */
   virtual void RemoveClosedCloudPipe();

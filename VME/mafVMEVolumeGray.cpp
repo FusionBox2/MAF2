@@ -31,6 +31,7 @@
 #include "vtkImageData.h"
 #include "vtkRectilinearGrid.h"
 #include "vtkPointData.h"
+#include "vtkDataArray.h"
 
 //-------------------------------------------------------------------------
 mafCxxTypeMacro(mafVMEVolumeGray)
@@ -67,7 +68,7 @@ mafVMEOutput *mafVMEVolumeGray::GetOutput()
 int mafVMEVolumeGray::SetData(vtkRectilinearGrid *data, mafTimeStamp t, int mode)
 //-------------------------------------------------------------------------
 {
-  data->Update();
+  //data->Update();
   if (data->GetPointData()&&data->GetPointData()->GetNumberOfComponents()==1)
     return Superclass::SetData(data,t,mode);
 
@@ -79,7 +80,7 @@ int mafVMEVolumeGray::SetData(vtkRectilinearGrid *data, mafTimeStamp t, int mode
 int mafVMEVolumeGray::SetData(vtkImageData *data, mafTimeStamp t, int mode)
 //-------------------------------------------------------------------------
 {
-  data->Update();
+  //data->Update();
   if (data->GetPointData()&&data->GetPointData()->GetNumberOfComponents()==1)
     return Superclass::SetData(data,t,mode);
 
@@ -93,7 +94,7 @@ int mafVMEVolumeGray::SetData(vtkDataSet *data, mafTimeStamp t, int mode)
   assert(data);
   if (data->IsA("vtkImageData")||data->IsA("vtkRectilinearGrid"))
   {
-    data->Update();
+    //data->Update();
     if (data->GetPointData()&&data->GetPointData()->GetScalars() != NULL &&
       data->GetPointData()->GetScalars()->GetNumberOfComponents()==1) //BES: 28.5.2009 - GetNumberOfComponents must be called on scalars
       return Superclass::SetData(data,t,mode);

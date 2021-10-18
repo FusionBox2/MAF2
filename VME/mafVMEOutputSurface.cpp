@@ -34,6 +34,8 @@
 
 #include "vtkPolyData.h"
 #include "vtkImageData.h"
+#include "vtkAlgorithm.h"
+#include "vtkAlgorithmOutput.h"
 
 #include <assert.h>
 
@@ -80,7 +82,7 @@ vtkImageData *mafVMEOutputSurface::GetTexture()
 //-------------------------------------------------------------------------
 {
   if (m_VME && m_VME->GetDataPipe() && m_VME->GetDataPipe()->GetVTKData())
-    m_VME->GetDataPipe()->GetVTKData()->UpdateInformation();
+    m_VME->GetDataPipe()->GetVTKOutputPort()->GetProducer()->UpdateInformation();
   return m_Texture;
 }
 
@@ -128,7 +130,7 @@ void mafVMEOutputSurface::Update()
   if (GetSurfaceData())
   {
     //GetSurfaceData()->Modified();	//BES: 12.9.2012 - I do not see any reason for this except to make troubles during rendering since this forces rerender of everything
-    GetSurfaceData()->Update();
+    this->Update();
     int num = GetSurfaceData()->GetNumberOfPolys();
     m_NumTriangles = mafToString(num);
   }

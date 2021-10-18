@@ -39,15 +39,11 @@
 //------------------------------------------------------------------------------
 #include "vtkMAFConfigure.h" //??
 #include "vtkActor.h"
-#include "vtkActor2D.h"
 #include "vtkTextActor.h"
 
 //------------------------------------------------------------------------------
 // Forward declarations
 //------------------------------------------------------------------------------
-class vtkViewport;
-class vtkCamera;
-class vtkRenderer;
 
 /**
 class vtkMAFTextActorMeter:
@@ -55,30 +51,24 @@ class vtkMAFTextActorMeter:
   Camera must be in ParallelProjection and aligned with world axis.
 */
 //-----------------------------------------------------------------------------
-class VTK_vtkMAF_EXPORT vtkMAFTextActorMeter : public vtkActor2D
+class VTK_vtkMAF_EXPORT vtkMAFTextActorMeter : public vtkTextActor
 //-----------------------------------------------------------------------------
 {
  public:
   /** RTTI macro. */
-  vtkTypeRevisionMacro(vtkMAFTextActorMeter,vtkActor2D);
-  /** Print useful information. */
-  void PrintSelf(ostream& os, vtkIndent indent);
+  vtkTypeMacro(vtkMAFTextActorMeter,vtkTextActor);
   /** Create an instance of the object. */
   static	vtkMAFTextActorMeter *New();
   
   /** Method is intended for rendering. */
   int	 RenderOverlay(vtkViewport *viewport);
-  /** Method is intended for rendering Opaque Geometry */
-  int	 RenderOpaqueGeometry(vtkViewport *viewport);
-  /** Method is intended for rendering Translucent Geometry */
-  int	 RenderTranslucentGeometry(vtkViewport *viewport)  {return 0;}
- 
+
   /** Retrieve text actor input. */
-  char*   GetText(){return TextActor->GetInput();}
+  char*   GetText(){return GetInput();}
   /** Modify text actor input. */
-  void 	  SetText(const char * inputString){TextActor->SetInput(inputString);}
+  void 	  SetText(const char * inputString){SetInput(inputString);}
   /** Modify text actor position. */
-  void    SetTextPosition(double pos[3]){TextPosition[0]=pos[0];TextPosition[1]=pos[1];TextPosition[2]=pos[2];TextPosition[3]=1;}
+  void    SetTextPosition(double pos[3]) { TextPosition[0] = pos[0]; TextPosition[1] = pos[1]; TextPosition[2] = pos[2]; TextPosition[3] = 1; Modified(); }
   /** Retrieve text actor position. */
   double* GetTextPosition();
 
@@ -91,19 +81,9 @@ protected:
   /** destructor. */
 	~vtkMAFTextActorMeter();
 	
-  /** Create Instances of text actor. */
-	void			MeterCreate();	
-  /** Update 2d Position of the meter */
-	void			MeterUpdate(vtkRenderer *ren);
-   
   //variables
-  vtkTextActor *TextActor;
   double TextPosition[4];
-
-	
 private:
-  /** Hide the two parameter Render() method from the user and the compiler. */
-  virtual void Render(vtkRenderer *, vtkMapper *) {};
   /** Copy Constructor Not implemented. */
   vtkMAFTextActorMeter(const vtkMAFTextActorMeter&);
   /** Assign Operator Not implemented. */

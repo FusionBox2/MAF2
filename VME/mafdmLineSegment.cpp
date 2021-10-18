@@ -39,7 +39,7 @@ vtkMAFSmartPointer<vtkActor> mafdmLineSegment::makeRenderer()
 	// Visualize
 	vtkMAFSmartPointer<vtkPolyDataMapper> mapper = vtkPolyDataMapper::New();
 
-	mapper->SetInput(lineSource->GetOutput());
+	mapper->SetInputConnection(lineSource->GetOutputPort());
 	vtkMAFSmartPointer<vtkActor> actor = vtkActor::New();
 //	actor->setDataElement(this);
 	actor->SetMapper(mapper);

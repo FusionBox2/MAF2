@@ -88,12 +88,14 @@ void mafPipeBox::Create(mafNode *node, mafView *view/*, bool use_axes*/)
   m_Box->SetBounds(b);
 
   vtkNEW(m_Mapper);
-	m_Mapper->SetInput(m_Box->GetOutput());
+	m_Mapper->SetInputConnection(m_Box->GetOutputPort());
   
+#if VTK_MAJOR_VERSION <= 7
 	if(m_Vme->IsAnimated())
 		m_Mapper->ImmediateModeRenderingOn();	 //avoid Display-Lists for animated items.
 	else
 		m_Mapper->ImmediateModeRenderingOff();
+#endif
 
   vtkNEW(m_Actor);
 	m_Actor->SetMapper(m_Mapper);
@@ -102,10 +104,10 @@ void mafPipeBox::Create(mafNode *node, mafView *view/*, bool use_axes*/)
 
   // selection highlight
 	vtkNEW(m_OutlineBox);
-	m_OutlineBox->SetInput(m_Box->GetOutput());
+	m_OutlineBox->SetInputConnection(m_Box->GetOutputPort());
 
 	vtkNEW(m_OutlineMapper);
-	m_OutlineMapper->SetInput(m_OutlineBox->GetOutput());
+	m_OutlineMapper->SetInputConnection(m_OutlineBox->GetOutputPort());
 
 	vtkNEW(m_OutlineProperty);
 	m_OutlineProperty->SetColor(1,1,1);

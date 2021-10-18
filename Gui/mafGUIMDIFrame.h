@@ -28,7 +28,7 @@
 //----------------------------------------------------------------------------
 // forward reference
 //----------------------------------------------------------------------------
-class vtkProcessObject;
+class vtkAlgorithm;
 class vtkViewport;
 class vtkObject;
 class mafGUIMDIFrameCallback; 
@@ -108,7 +108,7 @@ class MAF_EXPORT mafGUIMDIFrame: public wxMDIParentFrame, public mafEventSender
   void BindToProgressBar(vtkObject* vtkobj);
 
   /** Link a vtk process object (filter) to the progress bar. */
-  void BindToProgressBar(vtkProcessObject* filter);
+  void BindToProgressBar(vtkAlgorithm* filter);
 
   /** Link a vtkViewport to the progress bar. */
   void BindToProgressBar(vtkViewport* ren);

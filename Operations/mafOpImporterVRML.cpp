@@ -195,11 +195,10 @@ void  mafOpImporterVRML::ImportVRML()
 
   vtkMAFSmartPointer<vtkVRMLImporter> importer;
 
+  importer->SetRenderWindow(rw.GetPointer());
   importer->SetFileName(m_File.GetCStr());
-  importer->Read();
   importer->Update();
 
-  importer->SetRenderWindow(rw.GetPointer());
   mafMatrix matrix;
 
   vtkRendererCollection *rc = rw->GetRenderers();
@@ -230,7 +229,7 @@ void  mafOpImporterVRML::ImportVRML()
       mafSmartPointer<mafVMESurface> surface;
       surface->SetName(name);
       vtkPolyData *data = (vtkPolyData *)actor->GetMapper()->GetInput();
-      data->Update();
+	  actor->GetMapper()->Update();
       if(data->GetNumberOfPolys() != 0)
       {
         surface->SetData(data,t);

@@ -279,8 +279,10 @@ void mafGUIMaterialChooser::CreatePipe()
 	m_Sphere->SetThetaResolution(20);
 	
 	m_Mapper = vtkPolyDataMapper::New();
-	m_Mapper->SetInput(m_Sphere->GetOutput());
+	m_Mapper->SetInputConnection(m_Sphere->GetOutputPort());
+#if VTK_MAJOR_VERSION <= 7
 	m_Mapper->SetImmediateModeRendering(0);
+#endif
 	m_Mapper->SetScalarVisibility(1);
   m_Mapper->SetColorMode(0);     
   m_Mapper->SetScalarMode(0);      

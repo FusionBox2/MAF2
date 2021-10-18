@@ -87,14 +87,14 @@ mafVMEHyperboloid::mafVMEHyperboloid()
 
 
 
-	vtkPolyData* surf = plotFunction(quadric, resPhi);
+	vtkAlgorithm* surfAlg = plotFunction(quadric, resPhi);
 	vtkMAFSmartPointer<vtkTransform> t;
 	t->Scale(1, 1, 1);
 	t->Update();
 
 	vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
 	ptf->SetTransform(t);
-	ptf->SetInput(surf);
+	ptf->SetInputConnection(surfAlg->GetOutputPort());
 	ptf->Update();
 	
 	
@@ -106,7 +106,7 @@ mafVMEHyperboloid::mafVMEHyperboloid()
 	DependsOnLinkedNodeOn();
 	// attach a data pipe which creates a bridge between VTK and MAF
 	mafDataPipeCustom *dpipe = mafDataPipeCustom::New();
-	dpipe->SetInput(m_PolyData);
+	dpipe->SetInputData(m_PolyData);
 	SetDataPipe(dpipe);
 }
 
@@ -502,18 +502,18 @@ void mafVMEHyperboloid::InternalUpdate()
 	center(1) = centerAbs[01]; 
 	center(02) = centerAbs[02];
 
-	vtkPolyData* surf = plotFunction(quadric, resPhi);
+	vtkAlgorithm* surfAlg = plotFunction(quadric, resPhi);
 
 	vtkMAFSmartPointer<vtkTransform> t;
 	t->Scale(1, 1, 1);
 	t->Update();
 	vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
 	ptf->SetTransform(t);
-	ptf->SetInput(surf);
+	ptf->SetInputConnection(surfAlg->GetOutputPort());
 	ptf->Update();
 
 	m_PolyData->DeepCopy(ptf->GetOutput());
-	m_PolyData->Update();
+	//m_PolyData->Update();
 	
 	//string ss;
 	//ss = "local position "+std::to_string(center[0]) + " " + std::to_string(center[1]) + " " + std::to_string(center[2]);
@@ -561,7 +561,7 @@ int mafVMEHyperboloid::DeepCopy(mafNode *a)
 		mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
 		if (dpipe)
 		{
-			dpipe->SetInput(m_PolyData);
+			dpipe->SetInputData(m_PolyData);
 		}
 		InternalUpdate();
 		return MAF_OK;
@@ -618,14 +618,14 @@ vtkTransformPolyDataFilter* mafVMEHyperboloid::getTransformPDF()
 
 
 
-	vtkPolyData* surf = plotFunction(quadric, resPhi);
+	vtkAlgorithm* surfAlg = plotFunction(quadric, resPhi);
 
 	vtkMAFSmartPointer<vtkTransform> t;
 	t->Scale(1, 1, 1);
 	t->Update();
 	vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
 	ptf->SetTransform(t);
-	ptf->SetInput(surf);
+	ptf->SetInputConnection(surfAlg->GetOutputPort());
 	ptf->Update();
 
 
@@ -688,7 +688,7 @@ void mafVMEHyperboloid::SetCenterLink(const mafString& link_name, mafNode *n)
 		SetLink(link_name, n);
 }
 
-vtkPolyData* mafVMEHyperboloid::plotFunction(vtkQuadric* quadric, double value)
+vtkAlgorithm* mafVMEHyperboloid::plotFunction(vtkQuadric* quadric, double value)
 {
 
 	
@@ -703,14 +703,9 @@ vtkPolyData* mafVMEHyperboloid::plotFunction(vtkQuadric* quadric, double value)
 
 	sample->ComputeNormalsOff();
 	vtkContourFilter* contours = vtkContourFilter::New();
-	contours->SetInput((vtkDataSet*)sample->GetOutput());
+	contours->SetInputConnection(sample->GetOutputPort());
 	contours->GenerateValues(1, value-0.5, value+0.5);
-
-
-
-	vtkPolyData* polydata = contours->GetOutput();
-
-	return polydata;
+	return contours;
 
 
 }

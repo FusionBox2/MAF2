@@ -148,7 +148,7 @@ ENDIF (MAF_USE_VTK)
 SET(PROJECT_LIBS mafBase mafIO mafGui mafInteraction mafOperations CURL::libcurl)
 
 IF (MAF_USE_VTK)
-  SET(PROJECT_LIBS ${PROJECT_LIBS} vtkCommon)
+#  SET(PROJECT_LIBS ${PROJECT_LIBS} vtkCommon)
 ENDIF (MAF_USE_VTK)
 
 

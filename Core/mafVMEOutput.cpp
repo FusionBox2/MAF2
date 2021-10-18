@@ -58,6 +58,14 @@ mafVMEOutput::~mafVMEOutput()
 
 #ifdef MAF_USE_VTK
 //-------------------------------------------------------------------------
+vtkAlgorithmOutput *mafVMEOutput::GetVTKOutputPort()
+//-------------------------------------------------------------------------
+{
+  assert(m_VME);
+  return m_VME&&m_VME->GetDataPipe()?m_VME->GetDataPipe()->GetVTKOutputPort():nullptr;
+}
+
+//-------------------------------------------------------------------------
 vtkDataSet *mafVMEOutput::GetVTKData()
 //-------------------------------------------------------------------------
 {

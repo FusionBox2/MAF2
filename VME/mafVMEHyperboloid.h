@@ -72,7 +72,7 @@ private:
 	virtual mafString GetVisualPipe() { return mafString(_R("mafPipeSurface")); };
 	
 public:
-	vtkPolyData* plotFunction(vtkQuadric* quadric, double value);;
+	vtkAlgorithm* plotFunction(vtkQuadric* quadric, double value);;
 	virtual void Update();
 	double* GetCenter();
 	double* GetCenterAbs();

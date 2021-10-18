@@ -32,7 +32,6 @@
 #include "mafGUI.h"
 
 #include "vtkMAFAssembly.h"
-#include "vtkMAFRayCast3DPicker.h"
 #include "vtkCellPicker.h"
 #include "vtkRendererCollection.h"
 #include "vtkAssemblyPath.h"
@@ -174,7 +173,7 @@ bool mafView::FindPickedVme(vtkAssemblyPath *ap)
       vtkAssemblyNode *an = (vtkAssemblyNode*)ap->GetItemAsObject(i);
       if (an)
       {
-        vtkProp *p = an->GetProp();
+        vtkProp *p = an->GetViewProp();
         if(p && p->IsA("vtkMAFAssembly"))
         {
           as = (vtkMAFAssembly*)p;

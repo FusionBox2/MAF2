@@ -140,7 +140,7 @@ void mafVMEOutputVolume::Update()
     m_VolumeBounds[1] = _R(" ymin: ") + mafString::Format(_R("%g"),RoundValue(b[2])) + _R("   ymax: ") + mafString::Format(_R("%g"),RoundValue(b[3]));
     m_VolumeBounds[2] = _R(" zmin: ") + mafString::Format(_R("%g"),RoundValue(b[4])) + _R("   zmax: ") + mafString::Format(_R("%g"),RoundValue(b[5]));
     double srange[2];
-    this->GetVTKData()->Update();
+    //this->GetVTKData()->Update();
     this->GetVTKData()->GetScalarRange(srange);
     m_ScaralRangeString = mafString::Format(_R("min: %6.2f max: %6.2f"), srange[0], srange[1]);;
     //m_ScaralRangeString << " min: " << srange[0] << "    max: " << srange[1];
