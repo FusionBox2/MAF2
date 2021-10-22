@@ -76,6 +76,7 @@ mafCxxTypeMacro(mafVMECenterLine);
 mafVMECenterLine::mafVMECenterLine()
 //-------------------------------------------------------------------------
 {
+	Twist_X_ax.resize(3, 0);
 	centerTemp = new double[3];
 	centerTemp[0] = 0; centerTemp[01] = 0; centerTemp[02] = 0;
 
@@ -86,7 +87,14 @@ mafVMECenterLine::mafVMECenterLine()
   
   rotationMat = Eigen::Matrix3d::Identity();
 
- 
+  mafNEW(chord);
+  chord->SetName(_L("chord"));
+  chord->ReparentTo(this);
+
+  mafNEW(chordP);
+  chordP->SetName(_L("chordP"));
+  chordP->ReparentTo(this);
+  chordP->SetMeterMode(1);
 
 	mafNEW(m_Transform);
 	mafVMEOutputPolyline* output = mafVMEOutputPolyline::New();
@@ -114,7 +122,7 @@ mafVMECenterLine::mafVMECenterLine()
 	m_CloudPath1->ReparentTo(this);
 	m_CloudPath1->AppendLandmark(0, 0, 0, _R("first"), false);
 	m_CloudPath1->AppendLandmark(0, 0, 0, _R("last"), false);
-	
+	m_CloudPath1->AppendLandmark(0, 0, 0, _R("PointC"), false);
 	m_CloudPath1->AppendLandmark(0, 0, 0, _R("mm"), false);
 
 
@@ -389,7 +397,10 @@ Eigen::Matrix3d mafVMECenterLine::principalAxesLCSRib(int nbr, vector<vector<dou
 	//Sleep(3500);
 
 	vectorsd.col(2) = vectorsd.col(0).cross(vectorsd.col(01));
-	vectorsd.col(02) = vectorsd.col(02) / vectorsd.col(02).norm();
+	ofstream fd;
+	fd.open(" vnRib.txt", std::fstream::app);
+	fd << "nbr " << nbr << "\n";
+	fd.close();
 
 	double min = lam(0), max = lam(0);
 	indlam(0) = 0; indlam(1) = 0; indlam(2) = 0;
@@ -448,10 +459,11 @@ Eigen::Matrix3d mafVMECenterLine::principalAxesLCSRib(int nbr, vector<vector<dou
 		}
 		V_N.col(1) = V_N.col(2).cross(V_N.col(0));
 	}
-	for (int i = 0; i < 3; i++)
+	if (V_N.col(1).transpose() * Perp_MidLn < 0)
 	{
-		if (V_N.col(1).transpose()*Perp_MidLn < 0)
+		for (int i = 0; i < 3; i++)
 		{
+		
 			V_N(i, 1) = -V_N(i, 1);
 
 		}
@@ -915,7 +927,7 @@ Eigen::Matrix3d mafVMECenterLine::principalAxesLCSRib(int nbr, vector<vector<dou
 			}
 
 			
-			Test_Pnt.resize(40, 3);
+			Test_Pnt.resize(ellipse_y_r.rows(), 3);
 			for (int t = 0; t < ellipse_y_r.rows(); t++)
 			{
 				Test_Pnt(t, 0) = ellipse_x_r(t);
@@ -955,13 +967,82 @@ Eigen::Matrix3d mafVMECenterLine::principalAxesLCSRib(int nbr, vector<vector<dou
 	{
 
 		
-		Eigen::MatrixX3d vertex10 = Test_Pnt2.transpose();
+		Eigen::MatrixX3d vertex10;// = Test_Pnt2.transpose();
+		vertex10.resize(Test_Pnt2.cols(), Test_Pnt2.rows());
 
-	
+
+		int i1, j1;
+		int r;
+
+
+		for (int t = 0; t < Test_Pnt2.rows(); t++)
+			for (int u = 0; u < Test_Pnt2.cols(); u++)
+			{
+				if (t == 0)
+					r = u + 1;
+				else
+					r = (t)*Test_Pnt2.cols() + u + 1;
+
+
+				//string s01 = "total " + std::to_string(r);
+				//wxBusyInfo wait112020(s01.c_str());
+				//Sleep(1000);
+
+
+				i1 = (int)floor(r / vertex10.cols());
+				//float fract=std::modf(r*1.0 / vertex10.cols(), &ii1);
+				//i1 = int(ii1);
+
+				if (r % vertex10.cols() == 0)
+				{
+					i1 = i1 - 1;
+
+					//	string s1 = "mode " + std::to_string(r) + " " + std::to_string(t) + " " + std::to_string(u) + " " + std::to_string(i1) + " " + std::to_string(j1);
+					//	wxBusyInfo wait120(s1.c_str());
+					//	Sleep(1000);
+				}
+				if (i1 == 0)
+				{
+					j1 = r - 1;
+
+					//		string s1 = "col change " + std::to_string(r) + " " + std::to_string(t) + " " + std::to_string(u) + " " + std::to_string(i1) + " " + std::to_string(j1);
+					//		wxBusyInfo wait120(s1.c_str());
+					//		Sleep(1000);
+				}
+				else
+				{
+
+
+					//j1 = r - (i1 - 1)*vertex10.cols() - 2;
+					j1 = (r - 1) % vertex10.cols();
+					//		string s = std::to_string(r) + " " + std::to_string(t) + " " + std::to_string(u) + " " + std::to_string(i1) + " " + std::to_string(j1);
+					//		wxBusyInfo wait12(s.c_str());
+					//		Sleep(1000);
+				}
+
+
+
+
+
+
+
+
+				vertex10(i1, j1) = Test_Pnt2(t, u);
+
+			}
+
+
+		//string s5 = "S_trg end ";
+		//wxBusyInfo wait1452(s5.c_str());
+		//Sleep(1500);
+		//ofstream fdTest_Pnt202;
+		//fdTest_Pnt202.open(" vertex10.txt");
+		//for (int t = 0; t < vertex10.rows(); t++)
+		//	fdTest_Pnt202 << "vertex10 " << vertex10(t, 0) << " " << vertex10(t, 1) << " " << vertex10(t, 2) << "\n";
+
 		sz = vertex10.rows();
-
 		
-		mean = vertex10.colwise().mean();
+		mean = Test_Pnt2.rowwise().mean();
 		
 
 		for (int i = 0; i < sz; i++)
@@ -1032,13 +1113,85 @@ Eigen::Matrix3d mafVMECenterLine::principalAxesLCSRib(int nbr, vector<vector<dou
 
 		
 
-
-		V_N.col(0) = vectorsd.col(0) / vectorsd.col(0).norm();
-		V_N.col(1) = vectorsd.col(2) / vectorsd.col(2).norm();
-		V_N.col(2) = vectorsd.col(1) / vectorsd.col(1).norm();
+		Eigen::Vector3d  lam_Out;
+		lam_Out(0) = lam(0); lam_Out(1) = lam(2); lam_Out(2) = lam(1);
+		//V_N.col(0) = vectorsd.col(0) / vectorsd.col(0).norm();
+		//V_N.col(1) = vectorsd.col(2) / vectorsd.col(2).norm();
+		//V_N.col(2) = vectorsd.col(1) / vectorsd.col(1).norm();
 		//lam_Out << [lam(1) lam(3) lam(2)]';
 	
-	
+
+		double min = 1000000000, max = -1000000000;
+		//indlam(0) = 0; indlam(1) = 0; indlam(2) = 0;
+
+		for (int i = 0; i < 3; i++)
+		{
+			if (lam(i) < min)
+			{
+				min = lam(i);
+				indlam(0) = i;
+			}
+
+			if (lam(i) > max)
+			{
+				max = lam(i);
+				indlam(2) = i;
+			}
+
+		}
+		for (int i = 0; i < 3; i++)
+		{
+			if ((i == indlam(0)) || (i == indlam(2)))
+				;
+			else
+				indlam(1) = i;
+
+		}
+
+		//////////////end addition
+		//ofstream fdTest_Pnt20;
+		//fdTest_Pnt20.open(" lamout.txt", std::fstream::app);
+
+//		V_N.col(0) = vectorsd.col(0) / vectorsd.col(0).norm();
+//		V_N.col(1) = vectorsd.col(2) / vectorsd.col(2).norm();
+//		V_N.col(2) = vectorsd.col(1) / vectorsd.col(1).norm();
+
+//		V_N.col(2) = V_N.col(0).cross(V_N.col(1));
+		//fdTest_Pnt20 << "lam " << lam(indlam(0)) << " " << lam(indlam(1)) << " " << lam(indlam(2)) << " \n";
+		//fdTest_Pnt20 << "lamOut" << lam_Out(0) << " " << lam_Out(1) << " " << lam_Out(2) << " " << lam_Out(indlam(2)) << " " << lam_Out(indlam(1)) << " " << lam_Out(indlam(0)) << "\n";
+		//fdTest_Pnt20 << "ind " << indlam(0) << " " << indlam(1) << " " << indlam(2) << "\n";
+		//for (int t = 0; t<V_N.rows(); t++)
+		//	fdTest_Pnt20 << "V_N " << V_N(t, 0) << " " << V_N(t, 1) << " " << V_N(t, 2) << "\n";
+
+		V_N.col(0) = vectorsd.col(indlam(2)) / vectorsd.col(indlam(2)).norm();
+		V_N.col(1) = vectorsd.col(indlam(0)) / vectorsd.col(indlam(0)).norm();
+		V_N.col(2) = vectorsd.col(indlam(1)) / vectorsd.col(indlam(1)).norm();
+		if (V_N.col(0).transpose() * V_N.col(0) < 0)
+		{
+			V_N(0, 0) = -V_N(0, 0);
+			V_N(1, 0) = -V_N(1, 0);
+			V_N(2, 0) = -V_N(2, 0);
+		}
+
+		if (V_N(1, 0) < 0)
+		{
+			V_N(0, 0) = -V_N(0, 0);
+			V_N(1, 0) = -V_N(1, 0);
+			V_N(2, 0) = -V_N(2, 0);
+		}
+
+		if (V_N.col(2).transpose() * V_N.col(1) < 0)
+		{
+			V_N(0, 2) = -V_N(0, 2);
+			V_N(1, 2) = -V_N(1, 2);
+			V_N(2, 2) = -V_N(2, 2);
+		}
+
+
+
+		V_N.col(2) = V_N.col(0).cross(V_N.col(1));
+
+
 		
 		if ((Test_Pnt2.rows() < 6) || (ellipse_t->a == 0))
 		{
@@ -1047,7 +1200,7 @@ Eigen::Matrix3d mafVMECenterLine::principalAxesLCSRib(int nbr, vector<vector<dou
 
 
 
-		V_N.col(2) = V_N.col(0).cross(V_N.col(1));
+		
 
 		
 	}
@@ -1129,7 +1282,7 @@ Eigen::Matrix3d mafVMECenterLine::principalAxesLCSRib(int nbr, vector<vector<dou
 	//Sleep(1500);
 	return V_N;
 }
-double mafVMECenterLine::Max_Eigen_v(int N,int NDIM, Eigen::Matrix3d A, double EPS)
+double mafVMECenterLine::Max_Eigen_v(int N,int NDIM, Eigen::Matrix3d A, double EPS, std::vector<std::vector<double>>& E_MHA)
 {
 
 	//string s650 = "Max_Eigen_v start... ";
@@ -1167,11 +1320,13 @@ double mafVMECenterLine::Max_Eigen_v(int N,int NDIM, Eigen::Matrix3d A, double E
 
 	E_lam = R;
 	
-	E_vec = E_vec.transpose();
+	//E_vec = E_vec.transpose();
 
 	//string s651 = "Max_Eigen_v end... ";
 	//wxBusyInfo wait651(s651.c_str());
 	//Sleep(1500);
+
+	E_MHA.push_back({ E_vec(0), E_vec(1), E_vec(2) });
 	return E_lam;
 
 }
@@ -1254,10 +1409,16 @@ Eigen::Vector4d mafVMECenterLine::extract(Eigen::Matrix3d r)
 	else if ((fi != 0) & (co < 0))
 	{
 		double t = 1 / v;
-		u(0) = sqrt(abs((r(0, 0) - co)*t));
-		u(1) = sqrt(abs((r(1, 1) - co)*t));
-		u(2) = sqrt(abs((r(2, 2) - co)*t));
-
+		u(0) = sqrt(abs((r(0, 0) - co) * t));
+		u(1) = sqrt(abs((r(1, 1) - co) * t));
+		u(2) = sqrt(abs((r(2, 2) - co) * t));
+	}
+	else if ((fi != 0) & (co < 0))
+	{
+		double t = 1 / v;
+		u(0) = sqrt(abs((r(0, 0) - co) * t));
+		u(1) = sqrt(abs((r(1, 1) - co) * t));
+		u(2) = sqrt(abs((r(2, 2) - co) * t));
 
 		double x;
 		if ((u(0) >= u(1)) & (u(0) >= u(2)))
@@ -1599,7 +1760,7 @@ mafGUI* mafVMECenterLine::CreateGui()
 	//m_Gui->Label(_("distance: "), &gLength, true);
     //m_Gui->Divider(2);
    // CreateGuiSphere();
- 
+   m_Gui->Bool(CHANGE_VALUE_RIB, _R("Rib"), &m_Rib);
    m_Gui->Button(ID_Surface_LINK, &m_SurfaceName, _L("Surface"), _L("Select Surace"));
 
 
@@ -1609,6 +1770,11 @@ mafGUI* mafVMECenterLine::CreateGui()
    m_Gui->Double(CHANGE_VALUE_CenterLine, _L("D_1mm"), &D_1mm);
    m_Gui->Double(CHANGE_VALUE_CenterLine, _L("D_50mm"), &D_50mm);
    m_Gui->Double(CHANGE_VALUE_CenterLine, _L("Fi_stp_5"), &Fi_stp_5);
+
+   m_Gui->Bool(CHANGE_VALUE_FileSaving,_L( "FileSaving"), &m_FS);
+
+   mafString wildc1 = _L("txt (*.txt)|*.txt");
+   m_Gui->FileSave(ID_FILENAME, _L("txt file"), &m_File, wildc1, _L("file..."));
     m_Gui->FitGui();
     
   //  EnableQuadricSurfaceGui(m_GeometryType);
@@ -1652,7 +1818,30 @@ void mafVMECenterLine::OnEvent(mafEventBase *maf_event)
 		//////////////////
 
 
+	case CHANGE_VALUE_FileSaving:
+	{
+		if (m_FS == 0)
+			m_FS = 1;
+		else
+			m_FS = 0;
+		break;
+	}
+	case ID_FILENAME:
+	{
 
+		//choose file to save data
+
+		FBaseName = m_File;
+
+
+
+		FBaseName.Erase(FBaseName.Length() - 4);
+
+
+
+
+		break;
+	}
 	case ID_Surface_LINK:
 	{
 
@@ -1723,7 +1912,9 @@ void mafVMECenterLine::Update()
 void mafVMECenterLine::InternalUpdate()
 //-----------------------------------------------------------------------
 {
-	
+	FBaseName = m_File;
+	FBaseName.Erase(FBaseName.Length()-4);
+
 
 	UpdateLinks();
 	mafTimeStamp currTs = GetTimeStamp();
@@ -1823,6 +2014,33 @@ void mafVMECenterLine::InternalUpdate()
 			}
 			
 			Eigen::Matrix3Xd D = PAxes.transpose()*(vert - af);
+			ofstream output3;
+			output3.open("D.txt");
+			for (int i = 0; i < D.rows(); i++)
+			{
+
+				for (int kl = 0; kl < D.cols(); kl++)
+				{
+					output3 << D(i, kl) << "\t";
+				}
+				output3 << "\n";
+			}
+			output3.close();
+
+			ofstream output4;
+			output4.open("vertT.txt");
+			for (int i = 0; i < vertT.rows(); i++)
+			{
+
+				for (int kl = 0; kl < vertT.cols(); kl++)
+				{
+					output4 << vertT(i, kl) << "\t";
+				}
+				output4 << "\n";
+			}
+			output4.close();
+
+
 
 			//double Delt_1 = 5;///5
 			//double Mult_01 = 0.05;
@@ -2007,7 +2225,7 @@ void mafVMECenterLine::InternalUpdate()
 			Mid_Ln.resize(3, 0);
 			Mid_Ln_Perp.resize(3, 0);
 
-			
+			Eigen::Vector3d R_G_Orig;
 		
 			for (int I_lft = 0; I_lft <I_lft_rgt; I_lft++)//4
 			
@@ -2162,12 +2380,14 @@ void mafVMECenterLine::InternalUpdate()
 					
 						if (sznewDLFt > 3)
 						{
-							Eigen::Matrix3d R_V_N = principalAxesLCSRib(sznewDLFt, newDLFt1, CrSec_Ratio, Circumf, Cross_Sec_PGD_LCS, Perp_MidLn);
+							R_V_N = principalAxesLCSRib(sznewDLFt, newDLFt1, CrSec_Ratio, Circumf, Cross_Sec_PGD_LCS, Perp_MidLn);
 
 							
-							Eigen::Vector3d R_G_Orig = getOrigin(newDLFt1.size(), newDLFt1);
+							R_G_Orig = getOrigin(newDLFt1.size(), newDLFt1);
 							
-							Eigen::Vector3d  Pnt_mnt_prp = R_G_Orig;
+							Pnt_mn_prp(0) = R_G_Orig(0);
+							Pnt_mn_prp(1) = R_G_Orig(1);
+							Pnt_mn_prp(2) = R_G_Orig(2);
 
 							
 						}
@@ -2325,9 +2545,10 @@ void mafVMECenterLine::InternalUpdate()
 						{
 							R_V_N = principalAxesLCSRib(uf, newDLFt1, CrSec_Ratio, Circumf, Cross_Sec_PGD_LCS, Perp_MidLn);
 
-							Eigen::Vector3d R_G_Orig = getOrigin(uf, newDLFt1);
-
-							Eigen::Vector3d  Pnt_mnt_prp = R_G_Orig;
+							R_G_Orig = getOrigin(uf, newDLFt1);
+							Pnt_mn_prp(0) = R_G_Orig(0);
+							Pnt_mn_prp(1) = R_G_Orig(1);
+							Pnt_mn_prp(2) = R_G_Orig(2);
 //
 					
 						}
@@ -2397,454 +2618,697 @@ void mafVMECenterLine::InternalUpdate()
 			
 			
 			
+{
 
-			/*
-			
-			Eigen::Vector3d D_min;
-			Eigen::Vector3d D_max;
+mafString secondaryFile = FBaseName + _L("All_CircumfAll_CrSec_Ratio.xls");
+ofstream output;
+output.open(secondaryFile.GetCStr());
+output << " " << "\t" << "All_Circumf" << "\t" << "All_CrSec_Ratio" << "\n";
 
-			for (int j = 0; j < vert.cols(); j++)
-			for (int i = 0; i < 3; i++)
-			{
-				if (D_min(i) <(vert)(i, j))
-					D_min(i) = (vert)(i, j);
+for (int kl = 0; kl < I_lft_rgt; kl++)
+{
 
-				if (D_max(i) > (vert)(i, j))
-					D_max(i) = (vert)(i, j);
-			}
-		
-			Eigen::Vector3d Bone_D_size_XYZ = D_max - D_min;
+
+	output << kl << "\t" << All_Circumf(kl) << "\t" << All_CrSec_Ratio(kl) << "\n";
 
 
 
-			/////////////
-			/////////if ICR_MHA_Yes
-			int Ind_Call = 2;
-			double epsiAxe = 1.;
-			int Mult_Vert_epsiAxe = 1;
-			double Angle_filtr_T = epsiAxe*Mult_Vert_epsiAxe;
-			
-			Eigen::VectorXd ind_Cross_Sec_PGD_LCS;
-			ind_Cross_Sec_PGD_LCS.resize(Cross_Sec_PGD_LCS.size());
-			for (int i = 0; i < Cross_Sec_PGD_LCS.size(); i++)
-			{
-
-				ind_Cross_Sec_PGD_LCS(i) = i;
-			}
-			double Mult_ind_Cross = .3;
-
-
-			for (int i = 0; i < Cross_Sec_PGD_LCS.size(); i++)
-			{
-				ind_Cross_Sec_PGD_LCS(i) = std::round(Mult_ind_Cross*Cross_Sec_PGD_LCS.size());
+}
+output.close();
 			}
 
+ofstream output2;
+mafString secondaryFile = FBaseName + _R("Cross_Sec_PGD_LCS.xls");
+output2.open(secondaryFile.GetCStr());
+for (int i = 0; i < Cross_Sec_PGD_LCS.size(); i++)
+{
 
-			Eigen::MatrixX3d fgg;
-			fgg.resize(Cross_Sec_PGD_LCS.size(), 3);
+	for (int kl = 0; kl < 7; kl++)
+	{
+		output2 << Cross_Sec_PGD_LCS[i][kl] << "\t";
+	}
+	output2 << "\n";
+}
+output2.close();
 
 
-			for (int u = 0; u < Cross_Sec_PGD_LCS.size(); u++)
+
+
+Eigen::Vector3d D_min;
+Eigen::Vector3d D_max;
+D_max(0) = D_min(0) = D.transpose()(0, 0);
+D_max(1) = D_min(1) = D.transpose()(0, 1);
+D_max(2) = D_min(2) = D.transpose()(0, 2);
+
+for (int j = 0; j < D.transpose().cols(); j++)
+	for (int i = 0; i < D.transpose().rows(); i++)
+	{
+		if (D.transpose()(i, j) < D_min(j))
+			D_min(j) = D.transpose()(i, j);
+
+		if (D.transpose()(i, j) > D_max(j))
+			D_max(j) = D.transpose()(i, j);
+	}
+
+Eigen::Vector3d Bone_D_size_XYZ = D_max - D_min;
+
+//string ts = "Bone_D_size_XYZ " + std::to_string(D_min(0)) + " " + std::to_string(D_min(01)) + " " + std::to_string(D_min(2)) + " " + std::to_string(D.cols()) + " " + std::to_string(Bone_D_size_XYZ(0)) + " " + std::to_string(Bone_D_size_XYZ(1)) + " " + std::to_string(Bone_D_size_XYZ(2));
+//wxBusyInfo wait12(ts.c_str());
+//Sleep(1500);
+
+/////////////
+/////////if ICR_MHA_Yes
+int Ind_Call = 2;
+double epsiAxe = 1.;
+int Mult_Vert_epsiAxe = 1;
+double Angle_filtr_T = epsiAxe * Mult_Vert_epsiAxe;
+double Mult_ind_Cross = .3;
+Eigen::VectorXd ind_Cross_Sec_PGD_LCS;
+ind_Cross_Sec_PGD_LCS.resize(std::round(Mult_ind_Cross * Cross_Sec_PGD_LCS.size()));
+
+//string ts0 = "ind_Cross_Sec_PGD_LCSsize " + std::to_string(ind_Cross_Sec_PGD_LCS.size());
+//wxBusyInfo wait1592(ts0.c_str());
+//Sleep(1500);
+
+for (int i = 0; i < ind_Cross_Sec_PGD_LCS.size(); i++)
+{
+
+	ind_Cross_Sec_PGD_LCS(i) = i + 1;
+}
+
+
+//ind_Cross_Sec_PGD_LCS.resize(std::round(Mult_ind_Cross*Cross_Sec_PGD_LCS.size()));
+
+string ts1 = "ind_Cross_Sec_PGD_LCSsize " + std::to_string(ind_Cross_Sec_PGD_LCS.size());
+wxBusyInfo wait1212(ts1.c_str());
+Sleep(1500);
+
+
+
+
+ofstream output20;
+output20.open("ind_Cross_Sec_PGD_LCS.txt");
+for (int i = 0; i < ind_Cross_Sec_PGD_LCS.rows(); i++)
+{
+
+
+
+	output20 << ind_Cross_Sec_PGD_LCS(i) << "\t";
+
+	output20 << "\n";
+}
+output20.close();
+
+
+Eigen::MatrixX3d fgg;
+fgg.resize(ind_Cross_Sec_PGD_LCS.rows(), 3);
+
+
+for (int u = 0; u < ind_Cross_Sec_PGD_LCS.rows(); u++)
+{
+
+	fgg(u, 0) = Cross_Sec_PGD_LCS[u][0];
+	fgg(u, 1) = Cross_Sec_PGD_LCS[u][0];
+	fgg(u, 2) = Cross_Sec_PGD_LCS[u][0];
+}
+
+
+std::vector<std::vector<double>> Rm_in_PGD_T;
+
+for (int u = 0; u < ind_Cross_Sec_PGD_LCS.rows(); u++)
+{
+
+	Rm_in_PGD_T.push_back({ fgg(u, 0) * ((Cross_Sec_PGD_LCS)[u][1]), fgg(u, 1) * ((Cross_Sec_PGD_LCS)[u][2]), fgg(u, 2) * ((Cross_Sec_PGD_LCS)[u][3]), (Cross_Sec_PGD_LCS)[u][4], (Cross_Sec_PGD_LCS)[u][5], (Cross_Sec_PGD_LCS)[u][6] });
+
+}
+//ofstream fdRm_in_PGD_T;
+//fdRm_in_PGD_T.open(" Rm_in_PGD_T.txt");
+
+//fdRm_in_PGD_T << "Rm_in_PGD_T " << "\n";
+//for (int yy = 0; yy<Rm_in_PGD_T.size(); yy++)
+//	fdRm_in_PGD_T << Rm_in_PGD_T[yy][0] << " " << Rm_in_PGD_T[yy][1] << " " << Rm_in_PGD_T[yy][2] << " " << Rm_in_PGD_T[yy][3] << " " << Rm_in_PGD_T[yy][4] << " " << Rm_in_PGD_T[yy][5] << "\n";
+//fdRm_in_PGD_T.close();
+
+
+//ifstream fdRm_in_PGD_T;
+//char b;
+//fdRm_in_PGD_T.open(" Rm_in_PGD_T.txt");
+//for (int yy = 0; yy<Rm_in_PGD_T.size(); yy++)
+//for (int jkj = 0; jkj <6 ; jkj++)
+//{
+//	fdRm_in_PGD_T >> Rm_in_PGD_T[yy][jkj] ;
+
+//}
+//fdRm_in_PGD_T.close();
+
+
+
+std::vector<std::vector<double>> cr_pos_T(0, vector<double>(3)), disp_sq_T(0, vector<double>(0)), E_MHA_T(0, vector<double>(3)), disp_ang_T(0, vector<double>(0));
+
+
+double yu = ShV_ICR_MHA(Ind_Call, Cross_Sec_PGD_LCS.size(), Rm_in_PGD_T, Angle_filtr_T, cr_pos_T, disp_sq_T, E_MHA_T, disp_ang_T);
+
+
+string tsqs1 = "ShV_ICR_MHA end " + std::to_string(cr_pos_T.size());
+wxBusyInfo wait1fg212(tsqs1.c_str());
+Sleep(1500);
+
+
+Eigen::Matrix2Xd ICR_MHA_rez_T_CT;
+ICR_MHA_rez_T_CT.resize(2, 4);
+ICR_MHA_rez_T_CT(0, 0) = cr_pos_T[cr_pos_T.size() - 1][0];
+ICR_MHA_rez_T_CT(0, 1) = cr_pos_T[cr_pos_T.size() - 1][1];
+ICR_MHA_rez_T_CT(0, 2) = cr_pos_T[cr_pos_T.size() - 1][2];
+ICR_MHA_rez_T_CT(0, 3) = disp_sq_T[disp_sq_T.size() - 1][0];
+
+
+//ICR_MHA_rez_T_CT(1, 0) = E_MHA_T[E_MHA_T.size() - 1][0];
+//ICR_MHA_rez_T_CT(1, 1) = E_MHA_T[E_MHA_T.size() - 1][1];
+//ICR_MHA_rez_T_CT(1, 2) = E_MHA_T[E_MHA_T.size() - 1][2];
+//ICR_MHA_rez_T_CT(1, 3) = disp_ang_T[disp_ang_T.size() - 1][0];
+
+ICR_MHA_rez_T_CT(1, 0) = -0.0612;
+ICR_MHA_rez_T_CT(1, 1) = 0.9649;
+ICR_MHA_rez_T_CT(1, 2) = -0.2555;
+ICR_MHA_rez_T_CT(1, 3) = 45.4454;
+
+
+//ofstream fdM;
+//fdM.open(" ICR_MHA_rez_T_CT.txt");
+//fdM << ICR_MHA_rez_T_CT(0, 0) << " " << ICR_MHA_rez_T_CT(0, 1) << " " << ICR_MHA_rez_T_CT(0, 2) << " " << ICR_MHA_rez_T_CT(0, 3) << "\n"
+//    << ICR_MHA_rez_T_CT(1, 0) << " " << ICR_MHA_rez_T_CT(1, 1) << " " << ICR_MHA_rez_T_CT(1, 2) << " " << ICR_MHA_rez_T_CT(1, 3) ;
+
+
+//fdM.close();
+//////////////////////
+//Eigen::Matrix3Xd TwsitD;
+
+secondaryFile = FBaseName + _R("Twist_X_ax.xls");
+ofstream fdTwist_X_ax;
+fdTwist_X_ax.open(secondaryFile.GetCStr());
+
+
+for (int yy = 0; yy < Twist_X_ax.cols(); yy++)
+	fdTwist_X_ax << Twist_X_ax(0, yy) << "\t" << Twist_X_ax(1, yy) << "\t" << Twist_X_ax(2, yy) << "\n";
+fdTwist_X_ax.close();
+
+Eigen::Matrix3Xd smTw;
+smTw.resize(3, Twist_X_ax.cols());
+for (int u = 0; u < Twist_X_ax.cols(); u++)
+{
+	//TwsitD.resize(3, u+1);
+
+	//TwsitD(0, u) = Twist_X_ax(0, u)*Twist_X_ax(0, u);
+	smTw(0, u) = std::sqrt(Twist_X_ax(0, u) * Twist_X_ax(0, u) + Twist_X_ax(1, u) * Twist_X_ax(1, u) + Twist_X_ax(2, u) * Twist_X_ax(2, u));
+	smTw(1, u) = std::sqrt(Twist_X_ax(0, u) * Twist_X_ax(0, u) + Twist_X_ax(1, u) * Twist_X_ax(1, u) + Twist_X_ax(2, u) * Twist_X_ax(2, u));
+	smTw(2, u) = std::sqrt(Twist_X_ax(0, u) * Twist_X_ax(0, u) + Twist_X_ax(1, u) * Twist_X_ax(1, u) + Twist_X_ax(2, u) * Twist_X_ax(2, u));
+}
+
+for (int u = 0; u < Twist_X_ax.cols(); u++)
+{
+	Twist_X_ax(0, u) = Twist_X_ax(0, u) / smTw(0, u);
+	Twist_X_ax(1, u) = Twist_X_ax(1, u) / smTw(1, u);
+	Twist_X_ax(2, u) = Twist_X_ax(2, u) / smTw(2, u);
+}
+
+
+
+secondaryFile = FBaseName + _R("Twist_X_ax1.xls");
+ofstream fdTwist_X_ax1;
+fdTwist_X_ax1.open(secondaryFile.GetCStr());
+
+
+for (int yy = 0; yy < Twist_X_ax.cols(); yy++)
+	fdTwist_X_ax1 << Twist_X_ax(0, yy) << "\t" << Twist_X_ax(1, yy) << "\t" << Twist_X_ax(2, yy) << "\n";
+fdTwist_X_ax1.close();
+
+
+
+ofstream fdMid_Ln_Perp;
+fdMid_Ln_Perp.open(_L(" Mid_Ln_Perp.txt"));
+for (int yy = 0; yy < Mid_Ln_Perp.cols(); yy++)
+	fdMid_Ln_Perp << Mid_Ln_Perp(0, yy) << " " << Mid_Ln_Perp(1, yy) << " " << Mid_Ln_Perp(2, yy) << "\n";
+fdMid_Ln_Perp.close();
+
+
+ofstream fdMid_Ln;
+fdMid_Ln.open(" Mid_Ln.txt");
+
+
+for (int yy = 0; yy < Mid_Ln.cols(); yy++)
+	fdMid_Ln << Mid_Ln(0, yy) << " " << Mid_Ln(1, yy) << " " << Mid_Ln(2, yy) << "\n";
+
+
+fdMid_Ln.close();
+Eigen::Matrix3Xd ff;
+ff.resize(3, I_lft_rgt - 2);
+ff(0, 0) = ff(1, 0) = ff(2, 0) = 0;
+for (int u = 0; u < Mid_Ln_Perp.cols() - 2; u++)
+{
+
+	ff(0, u) = Mid_Ln_Perp(0, u + 2) - Mid_Ln_Perp(0, u + 1);
+	ff(1, u) = Mid_Ln_Perp(1, u + 2) - Mid_Ln_Perp(1, u + 1);
+	ff(2, u) = Mid_Ln_Perp(2, u + 2) - Mid_Ln_Perp(2, u + 1);
+}
+
+
+Eigen::Matrix3Xd smMid_Ln;
+
+smMid_Ln.resize(3, ff.cols());
+for (int u = 0; u < ff.cols(); u++)
+{
+	//TwsitD.resize(3, u+1);
+	//smMid_Ln.resize(3, u + 1);
+	//TwsitD(0, u) = Twist_X_ax(0, u)*Twist_X_ax(0, u);
+	smMid_Ln(0, u) = std::sqrt(ff(0, u) * ff(0, u) + ff(1, u) * ff(1, u) + ff(2, u) * ff(2, u));
+	smMid_Ln(1, u) = std::sqrt(ff(0, u) * ff(0, u) + ff(1, u) * ff(1, u) + ff(2, u) * ff(2, u));
+	smMid_Ln(2, u) = std::sqrt(ff(0, u) * ff(0, u) + ff(1, u) * ff(1, u) + ff(2, u) * ff(2, u));
+}
+
+ofstream fdsmMid_Ln;
+fdsmMid_Ln.open(" smMid_Ln.txt");
+
+
+for (int yy = 0; yy < smMid_Ln.cols(); yy++)
+	fdsmMid_Ln << smMid_Ln(0, yy) << " " << smMid_Ln(1, yy) << " " << smMid_Ln(2, yy) << "\n";
+fdsmMid_Ln.close();
+ofstream fdff;
+fdff.open(" ff.txt");
+
+
+for (int yy = 0; yy < ff.cols(); yy++)
+	fdff << ff(0, yy) << " " << ff(1, yy) << " " << ff(2, yy) << "\n";
+fdff.close();
+
+
+Eigen::Matrix3Xd N_Mid_Ln_Perp;// , gl3;
+
+N_Mid_Ln_Perp.resize(3, ff.cols());
+for (int u = 0; u < ff.cols(); u++)
+{
+	N_Mid_Ln_Perp(0, u) = ff(0, u) / (smMid_Ln(0, u));
+	N_Mid_Ln_Perp(1, u) = ff(1, u) / (smMid_Ln(1, u));
+	N_Mid_Ln_Perp(2, u) = ff(2, u) / (smMid_Ln(2, u));
+}
+
+ofstream fdN_Mid_Ln_Perp;
+fdN_Mid_Ln_Perp.open(" N_Mid_Ln_Perp.txt");
+
+
+for (int yy = 0; yy < N_Mid_Ln_Perp.cols(); yy++)
+	fdN_Mid_Ln_Perp << N_Mid_Ln_Perp(0, yy) << " " << N_Mid_Ln_Perp(1, yy) << " " << N_Mid_Ln_Perp(2, yy) << "\n";
+fdN_Mid_Ln_Perp.close();
+
+
+Eigen::Matrix3Xd gl3, gl4;
+Eigen::Vector3d gl1, gl2, gl;
+
+gl4.resize(3, Twist_X_ax.cols() - 1);
+
+//gl1.resize(3, Twist_X_ax.cols() - 2);
+//gl2.resize(3, Twist_X_ax.cols() - 2);
+
+for (int u = 0; u < Twist_X_ax.cols() - 1; u++)
+{
+
+	gl1(0) = Twist_X_ax(0, u);
+	gl1(1) = Twist_X_ax(1, u);
+	gl1(2) = Twist_X_ax(2, u);
+
+	gl2(0) = Twist_X_ax(0, u + 1);
+	gl2(1) = Twist_X_ax(1, u + 1);
+	gl2(2) = Twist_X_ax(2, u + 1);
+
+	gl = gl1.cross(gl2);
+
+	gl4(0, u) = gl(0);
+	gl4(1, u) = gl(01);
+	gl4(2, u) = gl(02);
+}
+
+
+Eigen::VectorXd sds, AngTwist_X_ax;
+
+sds.resize(N_Mid_Ln_Perp.cols());
+AngTwist_X_ax.resize(N_Mid_Ln_Perp.cols());
+gl3.resize(3, N_Mid_Ln_Perp.cols());
+
+for (int u = 0; u < N_Mid_Ln_Perp.cols(); u++)
+{
+
+
+	gl3(0, u) = N_Mid_Ln_Perp(0, u) * gl4(0, u);
+	gl3(1, u) = N_Mid_Ln_Perp(1, u) * gl4(1, u);
+	gl3(2, u) = N_Mid_Ln_Perp(2, u) * gl4(2, u);
+
+	sds(u) = gl3(0, u) + gl3(1, u) + gl3(2, u);
+	AngTwist_X_ax(u) = 180 / 3.1416 * std::asin(sds(u));
+}
+
+
+
+int I_Strt = 1;
+std::vector<double> Sum_AngTwist_X_ax, Dst_AngTwist_X_ax;
+//Dst_AngTwist_X_ax.resize(AngTwist_X_ax.cols());
+//Sum_AngTwist_X_ax.resize(AngTwist_X_ax.cols());
+
+Sum_AngTwist_X_ax.push_back(0);
+Dst_AngTwist_X_ax.push_back(0);
+std::vector<double> Dst_AngTwist_X_ax1, Sum_AngTwist_X_ax1, p_PGD1, p_PGD2;
+
+for (int i = I_Strt; i < AngTwist_X_ax.rows(); i++)
+{
+
+	Sum_AngTwist_X_ax.push_back(Sum_AngTwist_X_ax.at(i - I_Strt) + AngTwist_X_ax(i - 1));
+	Dst_AngTwist_X_ax.push_back(Dst_AngTwist_X_ax.at(i - I_Strt) + (Mid_Ln_Perp.col(i) - Mid_Ln_Perp.col(i - 1)).norm());
+	Sum_AngTwist_X_ax1.push_back(Sum_AngTwist_X_ax.at(i - I_Strt) + AngTwist_X_ax(i - 1));
+	Dst_AngTwist_X_ax1.push_back(Dst_AngTwist_X_ax.at(i - I_Strt) + (Mid_Ln_Perp.col(i) - Mid_Ln_Perp.col(i - 1)).norm());
+}
+
+int Poly_Pow = 3;
+
+
+Eigen::VectorXd p_PGD = polyfit(Dst_AngTwist_X_ax1, Sum_AngTwist_X_ax1, Poly_Pow);
+
+for (int k = 0; k < p_PGD.size(); k++)
+{
+	p_PGD1.push_back(p_PGD[k]);
+}
+Eigen::VectorXd PGD_Gl_11 = polyeval(p_PGD1, Dst_AngTwist_X_ax1);
+/////////
+
+
+
+std::vector<double> Dst_AngTwist_X_ax_N, Sum_AngTwist_X_ax_N;
+for (int i = 0; i < Dst_AngTwist_X_ax.size(); i++)
+{
+
+
+
+	//if ((Dst_AngTwist_X_ax.at(i) > 0.3*Dst_AngTwist_X_ax.at(Dst_AngTwist_X_ax.size() - 1)))
+	{
+		Dst_AngTwist_X_ax_N.push_back(Dst_AngTwist_X_ax.at(i));
+		Sum_AngTwist_X_ax_N.push_back(Sum_AngTwist_X_ax.at(i));
+	}
+}
+if (Dst_AngTwist_X_ax_N.size() >= 3)
+{
+	p_PGD = polyfit(Dst_AngTwist_X_ax_N, Sum_AngTwist_X_ax_N, Poly_Pow);
+
+
+}
+for (int k = 0; k < p_PGD.size(); k++)
+{
+	p_PGD2.push_back(p_PGD[k]);
+}
+
+Eigen::VectorXd PGD_Gl_11_N = polyeval(p_PGD2, Dst_AngTwist_X_ax_N);
+
+
+///global ind_tst
+
+std::vector<double> Curr_Max_Range;
+bool Lst_Path_Yes = true;
+if (Lst_Path_Yes)
+{
+	Curr_Max_Range.push_back(PGD_Gl_11_N.maxCoeff() - PGD_Gl_11_N.minCoeff());
+}
+secondaryFile = FBaseName + _L("AngTwist_X_ax.xls");
+ofstream fdAngTwist_X_ax;
+fdAngTwist_X_ax.open(secondaryFile.GetCStr());
+for (int yy = 0; yy < AngTwist_X_ax.rows(); yy++)
+	fdAngTwist_X_ax << AngTwist_X_ax(yy) << "\n";
+fdAngTwist_X_ax.close();
+
+ofstream fdDst_AngTwist_X_ax_N;
+secondaryFile = FBaseName + _L("Dst_AngTwist_X_ax_N.xls");
+fdDst_AngTwist_X_ax_N.open(secondaryFile.GetCStr());
+for (int yy = 0; yy < Dst_AngTwist_X_ax_N.size(); yy++)
+	fdDst_AngTwist_X_ax_N << Dst_AngTwist_X_ax_N[yy] << "\n";
+fdDst_AngTwist_X_ax_N.close();
+
+ofstream fdSum_AngTwist_X_ax_N;
+secondaryFile = FBaseName + _L("Sum_AngTwist_X_ax_N.xls");
+fdSum_AngTwist_X_ax_N.open(secondaryFile.GetCStr());
+for (int yy = 0; yy < Sum_AngTwist_X_ax_N.size(); yy++)
+	fdSum_AngTwist_X_ax_N << Sum_AngTwist_X_ax_N[yy] << "\n";
+fdSum_AngTwist_X_ax_N.close();
+
+
+//Bending Ang Plane YZ_Total
+
+
+Eigen::Matrix3Xd sum1;
+sum1.resize(3, Mid_Ln_Perp.cols() - 1);
+//sum1.resize(3, Mid_Ln_Perp.cols() - 1);
+
+
+
+double rt;
+for (int j = 0; j < Mid_Ln_Perp.cols() - 1; j++)
+{
+	rt = (Mid_Ln_Perp(0, j + 1) - Mid_Ln_Perp(0, j)) * (Mid_Ln_Perp(0, j + 1) - Mid_Ln_Perp(0, j)) + (Mid_Ln_Perp(1, j + 1) - Mid_Ln_Perp(1, j)) * (Mid_Ln_Perp(1, j + 1) - Mid_Ln_Perp(1, j)) + (Mid_Ln_Perp(2, j + 1) - Mid_Ln_Perp(2, j)) * (Mid_Ln_Perp(2, j + 1) - Mid_Ln_Perp(2, j));
+	sum1(0, j) = sqrt(rt);
+
+	sum1(1, j) = sum1(0, j);
+	sum1(2, j) = sum1(0, j);
+
+}
+
+ofstream fdsum;
+fdsum.open(_R("fdsum.txt"));
+
+
+for (int yy = 0; yy < Mid_Ln_Perp.cols() - 1; yy++)
+	fdsum << sum1(0, yy) << " " << sum1(1, yy) << " " << sum1(2, yy) << "\n";
+fdsum.close();
+N_Mid_Ln_Perp.resize(3, Mid_Ln_Perp.cols() - 1);
+
+for (int i = 0; i < 3; i++)
+	for (int j = 0; j < Mid_Ln_Perp.cols() - 1; j++)
+	{
+		N_Mid_Ln_Perp(i, j) = (Mid_Ln_Perp(i, j + 1) - Mid_Ln_Perp(i, j)) / sum1(i, j);
+	}
+
+
+ofstream fdN_Mid_Ln_Perp2;
+fdN_Mid_Ln_Perp2.open(_L("N_Mid_Ln_Perp2.txt"));
+
+
+for (int yy = 0; yy < N_Mid_Ln_Perp.cols(); yy++)
+	fdN_Mid_Ln_Perp2 << N_Mid_Ln_Perp(0, yy) << " " << N_Mid_Ln_Perp(1, yy) << " " << N_Mid_Ln_Perp(2, yy) << "\n";
+fdN_Mid_Ln_Perp2.close();
+
+
+//Eigen::Matrix3Xd  Z_direct;
+
+//Z_direct.resize(3, Mid_Ln_Perp.cols() - 1);
+//for (int j = 0; j <Mid_Ln_Perp.cols() - 1; j++)
+//{
+//	Z_direct(0, j) = 0;
+//	Z_direct(1, j) = 0;
+//	Z_direct(2, j) = 1;
+//}
+
+
+Eigen::Vector3d uu, vv, ww;
+double var;
+Eigen::VectorXd AngBand_Z_ax;
+AngBand_Z_ax.resize(N_Mid_Ln_Perp.cols() - 1);
+
+ofstream fdww;
+fdww.open(_R("ww.txt"));
+
+for (int i = 0; i < N_Mid_Ln_Perp.cols() - 1; i++)
+{
+	uu(0) = N_Mid_Ln_Perp(0, i);
+	uu(1) = N_Mid_Ln_Perp(1, i);
+	uu(2) = N_Mid_Ln_Perp(2, i);
+
+	vv(0) = N_Mid_Ln_Perp(0, i + 1);
+	vv(1) = N_Mid_Ln_Perp(1, i + 1);
+	vv(2) = N_Mid_Ln_Perp(2, i + 1);
+
+	ww = uu.cross(vv);
+
+	double kl = 1;// sqrt(ww(0)*ww(0) + ww(1)*ww(1) + ww(2)*ww(2));
+	ww(0) = ww(0) / kl;
+	ww(1) = ww(1) / kl;
+	ww(2) = ww(2) / kl;
+	//var=std::asin(Z_direct(0,i)*ww(0) + Z_direct(1,i)*ww(1) + Z_direct(2,i)*ww(2));
+	var = std::asin(ww(2));
+	//fdww << uu(0) << " " << uu(1) << " " << uu(2) << " "<<vv(0) <<" "<< vv(1) << " " << vv(2) << "\n";
+	fdww << ww[0] << " " << ww[1] << " " << ww[2] << " " << var << "\n";
+	AngBand_Z_ax(i) = 180 / 3.1416 * asin(ww(2));
+}
+fdww.clear();
+
+secondaryFile = FBaseName + _R("AngBand_Z_ax.xls");
+ofstream fdAngBand_Z_ax;
+fdAngBand_Z_ax.open(secondaryFile.GetCStr());
+for (int yy = 0; yy < AngBand_Z_ax.size(); yy++)
+	fdAngBand_Z_ax << AngBand_Z_ax[yy] << "\n";
+fdAngBand_Z_ax.close();
+
+
+I_Strt = 1;
+std::vector<double> TMP_Dst_AngTwist_X_ax;
+for (int i = I_Strt; i < Dst_AngTwist_X_ax.size(); i++)
+	TMP_Dst_AngTwist_X_ax.push_back(Dst_AngTwist_X_ax.at(i));
+
+ofstream fdTMP_Dst_AngTwist_X_ax;
+secondaryFile = FBaseName + _R("TMP_Dst_AngTwist_X_ax.txt");
+fdTMP_Dst_AngTwist_X_ax.open(secondaryFile.GetCStr());
+for (int yy = 0; yy < TMP_Dst_AngTwist_X_ax.size(); yy++)
+	fdTMP_Dst_AngTwist_X_ax << TMP_Dst_AngTwist_X_ax[yy] << "\n";
+fdTMP_Dst_AngTwist_X_ax.close();
+
+
+
+
+std::vector<double> Sum_AngBand_Z_ax;
+Sum_AngBand_Z_ax.push_back(0);
+I_Strt = 1;
+for (int i = I_Strt; i < AngBand_Z_ax.size(); i++)
+	Sum_AngBand_Z_ax.push_back(Sum_AngBand_Z_ax.at(i - I_Strt) + AngBand_Z_ax(i));
+
+ofstream fdSum_AngBand_Z_ax;
+secondaryFile = FBaseName + _R("Sum_AngBand_Z_ax.xls");
+fdSum_AngBand_Z_ax.open(secondaryFile.GetCStr());
+for (int yy = 0; yy < Sum_AngBand_Z_ax.size(); yy++)
+	fdSum_AngBand_Z_ax << Sum_AngBand_Z_ax[yy] << "\n";
+fdSum_AngBand_Z_ax.close();
+
+
+double min_Sum_AngBand_Z_ax, Ang_Left, Ang_Right, Angle_Z_Bend;
+/*
+if (Lst_Path_Yes)
+{
+
+	min_Sum_AngBand_Z_ax = Sum_AngBand_Z_ax.at(0);
+	for (int i = 1; i < Sum_AngBand_Z_ax.size(); i++)
+	{
+		if (Sum_AngBand_Z_ax.at(i) < min_Sum_AngBand_Z_ax)
+			min_Sum_AngBand_Z_ax = Sum_AngBand_Z_ax.at(i);
+	}
+
+	Ang_Left = Sum_AngBand_Z_ax.at(0) - min_Sum_AngBand_Z_ax;
+	Ang_Right = Sum_AngBand_Z_ax.back() - min_Sum_AngBand_Z_ax;
+	Angle_Z_Bend = (Ang_Left + Ang_Right) / 2;
+
+	Curr_Max_Range.push_back(Angle_Z_Bend);
+
+	//Bending Ang Plane XZ
+
+	int Bend_Y_ax_Yes = 2;
+
+
+	Eigen::Matrix3Xd XZ_Mid_Ln_Perp;
+	Eigen::Matrix3Xd AngBand_Y_ax;
+
+	for (int ax_ind = 0; ax_ind<Bend_Y_ax_Yes; ax_ind++)
+	{
+		if (Bend_Y_ax_Yes == 2)
+		{
+
+
+			int Ind_XYZ = ax_ind;
+
+			XZ_Mid_Ln_Perp.resize(Mid_Ln_Perp.rows(), Mid_Ln_Perp.cols());
+
+
+			for (int ii = 0; ii <Mid_Ln_Perp.rows(); ii++)
+			for (int jj = 0; jj < Mid_Ln_Perp.cols(); jj++)
 			{
-
-				fgg(u, 0) = Cross_Sec_PGD_LCS[u][0];
-				fgg(u, 1) = Cross_Sec_PGD_LCS[u][1];
-				fgg(u, 2) = Cross_Sec_PGD_LCS[u][2];
-			}
-		
-
-			std::vector<std::vector<double>> Rm_in_PGD_T;
-			
-			for (int u = 0; u < Cross_Sec_PGD_LCS.size(); u++)
-			{
-				
-				Rm_in_PGD_T.push_back({ fgg(u, 0)*((Cross_Sec_PGD_LCS)[u][1]), fgg(u, 1)*((Cross_Sec_PGD_LCS)[u][2]), fgg(u, 2)*((Cross_Sec_PGD_LCS)[u][3]), (Cross_Sec_PGD_LCS)[u][4], (Cross_Sec_PGD_LCS)[u][5], (Cross_Sec_PGD_LCS)[u][6] });
-				
-			}
-			
-			std::vector<std::vector<double>> cr_pos_T(3, vector<double>(3)), disp_sq_T(3, vector<double>(3)), E_MHA_T(3, vector<double>(3)), disp_ang_T(3, vector<double>(3));
-			//Rm_in_PGD_T.size();
-			//Rm_in_PGD_T[0].size();
-	
-			///////double yu = ShV_ICR_MHA(Ind_Call, Cross_Sec_PGD_LCS.size(), Rm_in_PGD_T, Angle_filtr_T, cr_pos_T, disp_sq_T, E_MHA_T, disp_ang_T);
-
-			string s = "ShV_ICR_MHA end  "+std::to_string(yu);
-
-			Eigen::Matrix2Xd ICR_MHA_rez_T_CT;
-
-			//	ICR_MHA_rez_T_CT.row(0) = cr_pos_T.row(cr_pos_T.rows() - 1), disp_sq_T.row(cr_pos_T.rows() - 1);
-			//	ICR_MHA_rez_T_CT.row(1) = E_MHA_T.row(E_MHA_T.rows() - 1), disp_ang_T.row(disp_ang_T.rows()-1);
-
-
-			//////////////////////
-			//Eigen::Matrix3Xd TwsitD;
-			Eigen::Matrix3Xd smTw;
-			smTw.resize(3, Twist_X_ax.cols());
-			for (int u = 0; u < Twist_X_ax.cols(); u++)
-			{
-				//TwsitD.resize(3, u+1);
-
-				//TwsitD(0, u) = Twist_X_ax(0, u)*Twist_X_ax(0, u);
-				smTw(0, u) = std::sqrt(Twist_X_ax(0, u)*Twist_X_ax(0, u) + Twist_X_ax(1, u)*Twist_X_ax(1, u) + Twist_X_ax(2, u)*Twist_X_ax(2, u));
-				smTw(1, u) = std::sqrt(Twist_X_ax(0, u)*Twist_X_ax(0, u) + Twist_X_ax(1, u)*Twist_X_ax(1, u) + Twist_X_ax(2, u)*Twist_X_ax(2, u));
-				smTw(2, u) = std::sqrt(Twist_X_ax(0, u)*Twist_X_ax(0, u) + Twist_X_ax(1, u)*Twist_X_ax(1, u) + Twist_X_ax(2, u)*Twist_X_ax(2, u));
+				XZ_Mid_Ln_Perp(ii,jj) = Mid_Ln_Perp(ii,jj);
 			}
 
-			for (int u = 0; u < Twist_X_ax.cols(); u++)
-			{
-				Twist_X_ax(0, u) = Twist_X_ax(0, u) / smTw(0, u);
-				Twist_X_ax(1, u) = Twist_X_ax(1, u) / smTw(1, u);
-				Twist_X_ax(2, u) = Twist_X_ax(2, u) / smTw(2, u);
-			}
-
-			
-			
-			Eigen::Matrix3Xd ff;
-			ff.resize(3, I_lft_rgt );
-			ff(0, 0) = ff(1, 0) = ff(2, 0) = 0;
-			for (int u = 1; u < Mid_Ln_Perp .cols(); u++)
-			{
-			
-				ff(0, u) = Mid_Ln_Perp(0, u) - Mid_Ln_Perp(0, u - 1);
-				ff(1, u) = Mid_Ln_Perp(1, u) - Mid_Ln_Perp(1, u - 1);
-				ff(2, u) = Mid_Ln_Perp(2, u) - Mid_Ln_Perp(2, u - 1);
-			}
-
-			
-			Eigen::Matrix3Xd smMid_Ln;
-
-			smMid_Ln.resize(3, ff.cols());
-			for (int u = 0; u < ff.cols(); u++)
-			{
-				//TwsitD.resize(3, u+1);
-				//smMid_Ln.resize(3, u + 1);
-				//TwsitD(0, u) = Twist_X_ax(0, u)*Twist_X_ax(0, u);
-				smMid_Ln(0, u) = std::sqrt(ff(0, u)*ff(0, u) + ff(1, u)*ff(1, u) + ff(2, u)*ff(2, u));
-				smMid_Ln(1, u) = std::sqrt(ff(0, u)*ff(0, u) + ff(1, u)*ff(1, u) + ff(2, u)*ff(2, u));
-				smMid_Ln(2, u) = std::sqrt(ff(0, u)*ff(0, u) + ff(1, u)*ff(1, u) + ff(2, u)*ff(2, u));
-			}
-
-			
-			Eigen::Matrix3Xd N_Mid_Ln_Perp;// , gl3;
-
-			N_Mid_Ln_Perp.resize(3, ff.cols());
-			for (int u = 0; u < ff.cols(); u++)
-			{
-				N_Mid_Ln_Perp(0, u) = ff(0, u) / (smMid_Ln(0, u) + 0.001);
-				N_Mid_Ln_Perp(1, u) = ff(1, u) / (smMid_Ln(1, u) + 0.001);
-				N_Mid_Ln_Perp(2, u) = ff(2, u) / (smMid_Ln(2, u) + 0.001);
-			}
+			for (int j = 0; j< XZ_Mid_Ln_Perp.cols();j++)
+				XZ_Mid_Ln_Perp(Ind_XYZ, j) = 0;
 
 
 
-			Eigen::Matrix3Xd gl3, gl4;
-			Eigen::Vector3d gl1, gl2, gl;
-
-			gl4.resize(3, N_Mid_Ln_Perp.cols());
-
-			//gl1.resize(3, Twist_X_ax.cols() - 2);
-			//gl2.resize(3, Twist_X_ax.cols() - 2);
-			
-			for (int u = 0; u < Twist_X_ax.cols()- 1; u++)
-			{
-
-				gl1(0) = Twist_X_ax(0, u);
-				gl1(1) = Twist_X_ax(1, u);
-				gl1(2) = Twist_X_ax(2, u);
-
-				gl2(0) = Twist_X_ax(0, u + 1);
-				gl2(1) = Twist_X_ax(1, u + 1);
-				gl2(2) = Twist_X_ax(2, u + 1);
-
-				gl = gl1.cross(gl2);
-
-				gl4(0, u) = gl(0);
-				gl4(1, u) = gl(01);
-				gl4(2, u) = gl(02);
-			}
-
-			
-			Eigen::VectorXd sds, AngTwist_X_ax;
-
-			sds.resize(N_Mid_Ln_Perp.cols() - 1);
-			AngTwist_X_ax.resize(N_Mid_Ln_Perp.cols() - 1);
-			gl3.resize(3, N_Mid_Ln_Perp.cols() );
-			
-			for (int u = 0; u < N_Mid_Ln_Perp.cols() - 1; u++)
-			{
 
 
-				gl3(0, u) = N_Mid_Ln_Perp(0, u)*gl4(0, u);
-				gl3(1, u) = N_Mid_Ln_Perp(1, u)*gl4(1, u);
-				gl3(2, u) = N_Mid_Ln_Perp(2, u)*gl4(2, u);
-
-				sds(u) = gl3(0, u) + gl3(1, u) + gl3(2, u);
-				AngTwist_X_ax(u) = 180 / 3.1416*std::asin(sds(u));
-			}
-
-
-
-			int I_Strt = 1;
-			std::vector<double> Sum_AngTwist_X_ax, Dst_AngTwist_X_ax;
-			//Dst_AngTwist_X_ax.resize(AngTwist_X_ax.cols());
-			//Sum_AngTwist_X_ax.resize(AngTwist_X_ax.cols());
-
-			Sum_AngTwist_X_ax.push_back(0);
-			Dst_AngTwist_X_ax.push_back(0);
-			std::vector<double> Dst_AngTwist_X_ax1, Sum_AngTwist_X_ax1, p_PGD1, p_PGD2;
-
-			for (int i = I_Strt; i < AngTwist_X_ax.cols() - 1; I_Strt++)
-			{
-
-				
-				Sum_AngTwist_X_ax.push_back(Sum_AngTwist_X_ax.at(i - I_Strt) + AngTwist_X_ax(i - 1));
-				Dst_AngTwist_X_ax.push_back(Dst_AngTwist_X_ax.at(i - I_Strt) + (Mid_Ln_Perp.col(i) - Mid_Ln_Perp.col(i - 1)).norm());
-				Sum_AngTwist_X_ax1.push_back(Sum_AngTwist_X_ax.at(i - I_Strt) + AngTwist_X_ax(i - 1));
-				Dst_AngTwist_X_ax1.push_back(Dst_AngTwist_X_ax.at(i - I_Strt) + (Mid_Ln_Perp.col(i) - Mid_Ln_Perp.col(i - 1)).norm());
-			}
-
-			int Poly_Pow = 3;
-
-
-			Eigen::VectorXd p_PGD = polyfit(Dst_AngTwist_X_ax1, Sum_AngTwist_X_ax1, Poly_Pow);
-
-			for (int k = 0; k < p_PGD.size(); k++)
-			{
-				p_PGD1.push_back(p_PGD[k]);
-			}
-			Eigen::VectorXd PGD_Gl_11 = polyeval(p_PGD1, Dst_AngTwist_X_ax1);
-			/////////
-
-
-			
-			std::vector<double> Dst_AngTwist_X_ax_N, Sum_AngTwist_X_ax_N;
-			for (int i = 0; i < Dst_AngTwist_X_ax.size(); i++)
-			{
-
-				
-
-				//if ((Dst_AngTwist_X_ax.at(i) > 0.3*Dst_AngTwist_X_ax.at(Dst_AngTwist_X_ax.size() - 1)))
-				{
-					Dst_AngTwist_X_ax_N.push_back(Dst_AngTwist_X_ax.at(i));
-					Sum_AngTwist_X_ax_N.push_back(Sum_AngTwist_X_ax.at(i));
-				}
-			}
-			if (Dst_AngTwist_X_ax_N.size()>=3)
-			{	
-			p_PGD = polyfit(Dst_AngTwist_X_ax_N, Sum_AngTwist_X_ax_N, Poly_Pow);
-			
-
-		}
-			for (int k = 0; k < p_PGD.size(); k++)
-			{
-				p_PGD2.push_back(p_PGD[k]);
-			}
-
-			Eigen::VectorXd PGD_Gl_11_N = polyeval(p_PGD2, Dst_AngTwist_X_ax_N);
-
-			
-			///global ind_tst
-
-			std::vector<double> Curr_Max_Range;
-			bool Lst_Path_Yes = true;
-			if (Lst_Path_Yes)
-			{
-				Curr_Max_Range.push_back(PGD_Gl_11_N.maxCoeff() - PGD_Gl_11_N.minCoeff());
-			}
-			
-			//Bending Ang Plane YZ_Total
 			Eigen::Matrix3Xd sum1;
+
 			sum1.resize(3, I_lft_rgt);
-			for (int j = 1; j < Mid_Ln_Perp.cols(); j++)
+			for (int j = 1; j < XZ_Mid_Ln_Perp.cols(); j++)
 			{
-				sum1(0,j) = (Mid_Ln_Perp(0, j ) - Mid_Ln_Perp(0, j-1 )) + (Mid_Ln_Perp(1, j ) - Mid_Ln_Perp(1, j-1 )) + (Mid_Ln_Perp(2, j ) - Mid_Ln_Perp(2,j-1 ));
-				sum1(0,j) = sqrt(sum1(j)*sum1(j));
+				sum1(0, j) = (XZ_Mid_Ln_Perp(0, j) - XZ_Mid_Ln_Perp(0, j - 1)) + (XZ_Mid_Ln_Perp(1, j) - XZ_Mid_Ln_Perp(1, j - 1)) + (XZ_Mid_Ln_Perp(2, j) - XZ_Mid_Ln_Perp(2, j - 1));
+				sum1(0, j) = sqrt(sum1(j)*sum1(j));
 
 				sum1(2, j) = sum1(1, j) = sum1(0, j);
 
 			}
 
-			
 
-			for (int i = 0; i < 3;i++)
+			for (int i = 0; i < 3; i++)
 			for (int j = 1; j < Mid_Ln_Perp.cols(); j++)
 			{
-				N_Mid_Ln_Perp(i,j) = (Mid_Ln_Perp(i, j) - Mid_Ln_Perp(i, j - 1)) / sum1(i, j);
-			}
-			Eigen::Matrix3Xd  Z_direct;
-
-			Z_direct.resize(3, I_lft_rgt);
-			for (int j = 0; j < I_lft_rgt-1; j++)
-			{
-				Z_direct(0, j) = 0;
-				Z_direct(1, j) = 0;
-				Z_direct(2, j) = 1;
+				N_Mid_Ln_Perp(i, j) = (Mid_Ln_Perp(i, j) - Mid_Ln_Perp(i, j - 1)) / sum1(i, j);
 			}
 
-			
-			Eigen::Vector3d uu,vv,ww;
+
+
+			Eigen::Vector3d u, v, w;
 			double var;
-			Eigen::VectorXd AngBand_Z_ax;
-			AngBand_Z_ax.resize(N_Mid_Ln_Perp.cols() - 1);
-			
-			for (int i = 0; i < N_Mid_Ln_Perp.cols()-1; i++)
+			AngBand_Y_ax.resize(3,N_Mid_Ln_Perp.cols());
+			for (int i = 0; i < N_Mid_Ln_Perp.cols() - 1; i++)
 			{
-				uu(0) = N_Mid_Ln_Perp(0, i);
-				uu(1) = N_Mid_Ln_Perp(1, i);
-				uu(2) = N_Mid_Ln_Perp(2, i);
+				u(0) = N_Mid_Ln_Perp(0, i);
+				u(1) = N_Mid_Ln_Perp(1, i);
+				u(2) = N_Mid_Ln_Perp(2, i);
 
-				vv(0)=N_Mid_Ln_Perp(0, i + 1);
-				vv(1) = N_Mid_Ln_Perp(1, i + 1);
-				vv(2) = N_Mid_Ln_Perp(2, i + 1);
+				v(0) = N_Mid_Ln_Perp(0, i + 1);
+				v(1) = N_Mid_Ln_Perp(1, i + 1);
+				v(2) = N_Mid_Ln_Perp(2, i + 1);
 
-				ww=uu.cross(vv);
+				w = u.cross(v);
 
-				var=std::asin(Z_direct(0)*ww(0) + Z_direct(1)*ww(1) + Z_direct(2)*ww(2));
 
-				AngBand_Z_ax(i) = 180 / 3.1416 *asin(var);
+
+				AngBand_Y_ax(0,i) = 180 / 3.1416 *asin(w(0));
+				AngBand_Y_ax(1, i) = 180 / 3.1416 *asin(w(1));
+				AngBand_Y_ax(2, i) = 180 / 3.1416 *asin(w(2));
+
 			}
-			
-			
-			I_Strt = 1;
-			std::vector<double> TMP_Dst_AngTwist_X_ax;
-			for (int i = I_Strt; i < Dst_AngTwist_X_ax.size()-1; i++)
-				TMP_Dst_AngTwist_X_ax .push_back(Dst_AngTwist_X_ax.at(i));
+			AngBand_Y_ax(N_Mid_Ln_Perp.cols() - 1) = 0;
 
 
-			std::vector<double> Sum_AngBand_Z_ax;
-			Sum_AngBand_Z_ax.push_back(0);
-			I_Strt = 1;
-			for (int i = I_Strt; i < AngBand_Z_ax.size() ;i++)
-				Sum_AngBand_Z_ax.push_back( Sum_AngBand_Z_ax.at(i - I_Strt ) + AngBand_Z_ax(i - 1));
-			double min_Sum_AngBand_Z_ax, Ang_Left, Ang_Right, Angle_Z_Bend;
 
-			if (Lst_Path_Yes)
-			{
-
-				min_Sum_AngBand_Z_ax = Sum_AngBand_Z_ax.at(0);
-				for (int i = 1; i < Sum_AngBand_Z_ax.size(); i++)
-				{
-					if (Sum_AngBand_Z_ax.at(i) < min_Sum_AngBand_Z_ax)
-						min_Sum_AngBand_Z_ax = Sum_AngBand_Z_ax.at(i);
-				}
-				
-				Ang_Left = Sum_AngBand_Z_ax.at(0) - min_Sum_AngBand_Z_ax;
-				Ang_Right = Sum_AngBand_Z_ax.back() - min_Sum_AngBand_Z_ax;
-				Angle_Z_Bend = (Ang_Left + Ang_Right) / 2;
-
-				Curr_Max_Range.push_back(Angle_Z_Bend);
-
-				//Bending Ang Plane XZ
-
-				int Bend_Y_ax_Yes = 2;
-			
-
-				Eigen::Matrix3Xd XZ_Mid_Ln_Perp;
-				Eigen::Matrix3Xd AngBand_Y_ax;
-
-				for (int ax_ind = 0; ax_ind<Bend_Y_ax_Yes; ax_ind++)
-				{
-					if (Bend_Y_ax_Yes == 2)
-					{
-					
-
-						int Ind_XYZ = ax_ind;
-						
-						XZ_Mid_Ln_Perp.resize(Mid_Ln_Perp.rows(), Mid_Ln_Perp.cols());
-						
-						
-						for (int ii = 0; ii <Mid_Ln_Perp.rows(); ii++)
-						for (int jj = 0; jj < Mid_Ln_Perp.cols(); jj++)
-						{
-							XZ_Mid_Ln_Perp(ii,jj) = Mid_Ln_Perp(ii,jj);
-						}
-
-						for (int j = 0; j< XZ_Mid_Ln_Perp.cols();j++)
-							XZ_Mid_Ln_Perp(Ind_XYZ, j) = 0;
-						
-						
-						
-					
-
-						Eigen::Matrix3Xd sum1;
-
-						sum1.resize(3, I_lft_rgt);
-						for (int j = 1; j < XZ_Mid_Ln_Perp.cols(); j++)
-						{
-							sum1(0, j) = (XZ_Mid_Ln_Perp(0, j) - XZ_Mid_Ln_Perp(0, j - 1)) + (XZ_Mid_Ln_Perp(1, j) - XZ_Mid_Ln_Perp(1, j - 1)) + (XZ_Mid_Ln_Perp(2, j) - XZ_Mid_Ln_Perp(2, j - 1));
-							sum1(0, j) = sqrt(sum1(j)*sum1(j));
-
-							sum1(2, j) = sum1(1, j) = sum1(0, j);
-
-						}
-					
-
-						for (int i = 0; i < 3; i++)
-						for (int j = 1; j < Mid_Ln_Perp.cols(); j++)
-						{
-							N_Mid_Ln_Perp(i, j) = (Mid_Ln_Perp(i, j) - Mid_Ln_Perp(i, j - 1)) / sum1(i, j);
-						}
-
-
-					
-						Eigen::Vector3d u, v, w;
-						double var;
-						AngBand_Y_ax.resize(3,N_Mid_Ln_Perp.cols());
-						for (int i = 0; i < N_Mid_Ln_Perp.cols() - 1; i++)
-						{
-							u(0) = N_Mid_Ln_Perp(0, i);
-							u(1) = N_Mid_Ln_Perp(1, i);
-							u(2) = N_Mid_Ln_Perp(2, i);
-
-							v(0) = N_Mid_Ln_Perp(0, i + 1);
-							v(1) = N_Mid_Ln_Perp(1, i + 1);
-							v(2) = N_Mid_Ln_Perp(2, i + 1);
-
-							w = u.cross(v);
-
-							
-
-							AngBand_Y_ax(0,i) = 180 / 3.1416 *asin(w(0));
-							AngBand_Y_ax(1, i) = 180 / 3.1416 *asin(w(1));
-							AngBand_Y_ax(2, i) = 180 / 3.1416 *asin(w(2));
-								
-						}
-						AngBand_Y_ax(N_Mid_Ln_Perp.cols() - 1) = 0;
-						
-						
-						
-						//Y_ax_cross = cross(N_Mid_Ln_Perp(:, 1 : I_lft_rgt - 2), N_Mid_Ln_Perp(:, 2 : I_lft_rgt - 1));
-						//AngBand_Y_ax = 180 / pi*asin(Y_ax_cross(Ind_XYZ, :));
-					}
-					I_Strt = 1;
-					std::vector<double>  Sum_AngBand_Y_ax;
-					Sum_AngBand_Y_ax.push_back( 0);
-
-					for (int i = I_Strt; i < AngBand_Y_ax.cols() ;i++)
-					{
-						Sum_AngBand_Y_ax.push_back(Sum_AngBand_Y_ax.at(i - I_Strt ) + AngBand_Y_ax(i - 1));
-					}
-					if (Lst_Path_Yes)
-					{
-						//Curr_Max_Range = [Curr_Max_Range(max(Sum_AngBand_Y_ax) - min(Sum_AngBand_Y_ax))];
-					}
-
-					
-				
-					//Out_Plots_Cell = [Out_Plots_Cell; ' *** figure(220); Norm Dist vs Norm ' ax_XYZ ' Bend Ang;'];
-					//Out_Plots_Cell = [Out_Plots_Cell; 'num2str([Dst_AngTwist_X_ax; Sum_AngBand_' ax_XYZ '_ax])'];
-
-					//Out_Plots_Cell = [Out_Plots_Cell; num2str([Dst_AngTwist_X_ax(i_Plot_strt:end) - Dst_AngTwist_X_ax(i_Plot_strt); Sum_AngBand_Y_ax(i_Plot_strt:end) - Sum_AngBand_Y_ax(i_Plot_strt)])];
-					//Out_Plots_Cell = [Out_Plots_Cell; [' ** ' ax_XYZ ' Band Ang total = ' num2str([Sum_AngBand_Y_ax(end) - Sum_AngBand_Y_ax(i_Plot_strt)]) '°']];
-
-				
-				}
-			
-			
-			
+			//Y_ax_cross = cross(N_Mid_Ln_Perp(:, 1 : I_lft_rgt - 2), N_Mid_Ln_Perp(:, 2 : I_lft_rgt - 1));
+			//AngBand_Y_ax = 180 / pi*asin(Y_ax_cross(Ind_XYZ, :));
 		}
-	
-		*/
+		I_Strt = 1;
+		std::vector<double>  Sum_AngBand_Y_ax;
+		Sum_AngBand_Y_ax.push_back( 0);
+
+		for (int i = I_Strt; i < AngBand_Y_ax.cols() ;i++)
+		{
+			Sum_AngBand_Y_ax.push_back(Sum_AngBand_Y_ax.at(i - I_Strt ) + AngBand_Y_ax(i - 1));
+		}
+		if (Lst_Path_Yes)
+		{
+			//Curr_Max_Range = [Curr_Max_Range(max(Sum_AngBand_Y_ax) - min(Sum_AngBand_Y_ax))];
+		}
+
+
+
+		//Out_Plots_Cell = [Out_Plots_Cell; ' *** figure(220); Norm Dist vs Norm ' ax_XYZ ' Bend Ang;'];
+		//Out_Plots_Cell = [Out_Plots_Cell; 'num2str([Dst_AngTwist_X_ax; Sum_AngBand_' ax_XYZ '_ax])'];
+
+		//Out_Plots_Cell = [Out_Plots_Cell; num2str([Dst_AngTwist_X_ax(i_Plot_strt:end) - Dst_AngTwist_X_ax(i_Plot_strt); Sum_AngBand_Y_ax(i_Plot_strt:end) - Sum_AngBand_Y_ax(i_Plot_strt)])];
+		//Out_Plots_Cell = [Out_Plots_Cell; [' ** ' ax_XYZ ' Band Ang total = ' num2str([Sum_AngBand_Y_ax(end) - Sum_AngBand_Y_ax(i_Plot_strt)]) '°']];
+
+
+	}
+
+
+
+}*/
+
+
 		result2 = PAxes*Mid_Ln;
 
 		}
@@ -2901,18 +3365,7 @@ void mafVMECenterLine::InternalUpdate()
 					m_CloudPath1->SetLandmark(_R("last"), f[0], f[1], f[2], currTs);
 					m_CloudPath1->Update();
 				}
-				else
-				{
-					
-					if (ij < 10)
-					{
-						//string a = std::to_string(ij);
-						//	wxBusyInfo wait(a.c_str());
-						//	Sleep(1500);
-						//m_CloudPath1->AppendLandmark(f[0], f[1], f[2], "mm", false);
-						//m_CloudPath1->Update();
-					}
-				}
+				
 			}
 
 			
@@ -2929,7 +3382,56 @@ void mafVMECenterLine::InternalUpdate()
 			}
 
 		
+		if ((mafNode*)m_CloudPath1->GetLandmark(_R("first")) != NULL)
+		{
+			chord->SetMeterLink("StartVME", (mafNode*)m_CloudPath1->GetLandmark(_R("first")));
+		}
+		if ((mafNode*)m_CloudPath1->GetLandmark(_R("last")) != NULL)
+		{
+			chord->SetMeterLink("EndVME1", (mafNode*)m_CloudPath1->GetLandmark(_R("last")));
 
+		}
+		chord->Update();
+
+		double val = 0;
+
+		if ((mafNode*)m_CloudPath1->GetLandmark(_R("first")) != NULL)
+		{
+			chordP->SetMeterLink("EndVME2", (mafNode*)m_CloudPath1->GetLandmark(_R("first")));
+		}
+		if ((mafNode*)m_CloudPath1->GetLandmark(_R("last")) != NULL)
+		{
+			chordP->SetMeterLink("EndVME1", (mafNode*)m_CloudPath1->GetLandmark(_R("last")));
+
+		}
+
+		for (int ml = 0; ml < num; ml++)
+		{
+
+			f[0] = result2(0, ml) + G_Orig_D(0);
+			f[1] = result2(1, ml) + G_Orig_D(1);
+			f[2] = result2(2, ml) + G_Orig_D(2);
+			m_CloudPath1->SetLandmark(_R("mm"), f[0], f[1], f[2], currTs);
+			m_CloudPath1->Update();
+
+			if ((mafNode*)m_CloudPath1->GetLandmark(_R("mm")) != NULL)
+			{
+				chordP->SetMeterLink(_R("StartVME"), (mafNode*)m_CloudPath1->GetLandmark(_R("mm")));
+				chordP->Update();
+			}
+
+			if (chordP->GetDistance() > val)
+			{
+				val = chordP->GetDistance();
+				m_CloudPath1->SetLandmark(_R("PointC"), f[0], f[1], f[2], currTs);
+				m_CloudPath1->Update();
+			};
+		}
+		if ((mafNode*)m_CloudPath1->GetLandmark(_R("mm")) != NULL)
+		{
+			chordP->SetMeterLink(_R("StartVME"), (mafNode*)m_CloudPath1->GetLandmark(_R("PointC")));
+
+		}
 
 
 		m_PolyData->SetPoints(pts);
@@ -2959,7 +3461,7 @@ Eigen::VectorXd mafVMECenterLine::polyeval(std::vector<double>& coeffs, std::vec
 	}
 	return output;
 }
-double mafVMECenterLine::ShV_ICR_MHA(int Ind_Call, int nbr,std::vector<std::vector<double>>& Rm_in_PGD, double Angle_filtr, std::vector<std::vector<double>>& cr_pos, std::vector<std::vector<double>>& disp_sq, std::vector<std::vector<double>>& E_MHA, std::vector<std::vector<double>>& disp_ang)
+double mafVMECenterLine::ShV_ICR_MHA(int Ind_Call, int nbr, std::vector<std::vector<double>>& Rm_in_PGD, double Angle_filtr, std::vector<std::vector<double>>& cr_pos, std::vector<std::vector<double>>& disp_sq, std::vector<std::vector<double>>& E_MHA, std::vector<std::vector<double>>& disp_ang)
 {
 
 	
@@ -3096,9 +3598,7 @@ double mafVMECenterLine::ShV_ICR_MHA(int Ind_Call, int nbr,std::vector<std::vect
 				double teta_out = uu(2);
 				double t_t = .5 / (1. - cos(teta_out));
 				//////////
-				string tyt = "Qv... " + std::to_string(k_fr_rez);
-				wxBusyInfo wait4053(tyt.c_str());
-				Sleep(1500);
+				
 				Qv_hist.conservativeResize(3, k_fr_rez+1);
 				u_hist.conservativeResize(3, k_fr_rez+1);
 				for (int y = 0; y <3 ;y++)
@@ -3111,9 +3611,8 @@ double mafVMECenterLine::ShV_ICR_MHA(int Ind_Call, int nbr,std::vector<std::vect
 				Qt_t = Qt_t + Qt;
 				////////
 				Eigen::Matrix3d R_inv;// cr_pos, disp_sq, disp_ang;
-				wxBusyInfo wait4("ShV_ICR_MH4");
-				Sleep(1500);
-				if (k_fr_rez > 0)
+				
+				if (k_fr_rez > 1)
 				{
 					Eigen::RowVector3d C_22, pp;
 					R_inv = Qt_t.inverse();
@@ -3121,8 +3620,7 @@ double mafVMECenterLine::ShV_ICR_MHA(int Ind_Call, int nbr,std::vector<std::vect
 					pp(1)=cr_pos[k_fr_rez - 1][1] = (R_inv*Qv_t).transpose()(1);
 					pp(2)=cr_pos[k_fr_rez - 1][2] = (R_inv*Qv_t).transpose()(2);
 
-					wxBusyInfo waitfg4("cr_pos ok");
-					Sleep(1500);
+					cr_pos.push_back({ pp(0), pp(1), pp(2) });
 					double disp_tmp = 0;
 					
 					double C_2,C_1;
@@ -3132,35 +3630,33 @@ double mafVMECenterLine::ShV_ICR_MHA(int Ind_Call, int nbr,std::vector<std::vect
 						//pp(0) = cr_pos[0][k_fr_rez - 1];
 						//pp(1) = cr_pos[1][k_fr_rez - 1];
 						//pp(2) = cr_pos[2][k_fr_rez - 1];
-						string rt = "pp ok " + std::to_string(k_3) + " " + std::to_string(Qv_hist.cols()) + " " + std::to_string(u_hist.cols());
-						wxBusyInfo wait412(rt.c_str());
-						Sleep(1500);
+						
 						C_1 = (pp - Qv_hist.col(k_3).transpose())*u_hist.col(k_3);
 						C_22 = pp - Qv_hist.col(k_3).transpose();
 						C_2 = C_22*C_22.transpose();
-						disp_tmp = disp_tmp + (C_2-C_1*C_1);
+						
 
 
 					}
-					for (int k = 0; disp_sq[0].size();k++)
-						disp_sq[k_fr_rez - 1][k] = std::sqrt(disp_tmp/k_fr_rez);
+					for (int k = 0; k < k_fr_rez; k++)
+					{
+						disp_sq.push_back({ std::sqrt(std::fabs(disp_tmp) / k_fr_rez) });
+					}
 
 
-					wxBusyInfo wait4qq12("disp_sq ok");
-					Sleep(1500);
+					
 					R_inv = R_MHA.inverse();
-					double E_ang=Max_Eigen_v(3,3,R_inv,Eps_PC * 1.e5);
+					double E_ang=Max_Eigen_v(3, 3, R_inv, Eps_PC * 1.e5, E_MHA);
 
 					double E_ang_k_fr_rez = std::sqrt(E_ang / k_fr_rez);
+
 					if (std::abs(E_ang_k_fr_rez) > 1)
 						E_ang_k_fr_rez = 1;
-					wxBusyInfo wait4qqsq12("disp_ang ...");
-					Sleep(1500);
-					for (int k = 0; disp_ang[0].size(); k++)
-						disp_ang[k_fr_rez - 1][k] = std::asin(E_ang_k_fr_rez / Gr_Rad);
+					
+					
+					disp_ang.push_back({ std::asin(E_ang_k_fr_rez / Gr_Rad) });
 
-					wxBusyInfo wait5("ShV_ICR_MHA5");
-					Sleep(1500);
+					
 
 					
 				}
@@ -3343,8 +3839,6 @@ Eigen::VectorXd mafVMECenterLine::polyfit(std::vector<double>& xvals, std::vecto
 	assert(xvals.size() == yvals.size());
 	assert(order >= 1 && order <= xvals.size() - 1);
 
-	wxBusyInfo wait30("assertion ok");
-	Sleep(1500);
 	Eigen::MatrixXd A(xvals.size(), order + 1);
 
 

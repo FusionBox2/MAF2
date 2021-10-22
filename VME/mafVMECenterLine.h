@@ -81,8 +81,15 @@ class MAF_EXPORT mafVMECenterLine : public mafVME
 public:
 
 	mafTypeMacro(mafVMECenterLine, mafVME);
-    
+	mafString FBaseName = _R("");
   ellipse_struct* fitellipse(Eigen::MatrixX3d,int ,int);
+
+  double Circumf = 0;
+  double CrSec_Ratio = 0;
+  Eigen::Matrix3Xd Twist_X_ax;
+  Eigen::VectorXd All_Circumf;
+  Eigen::VectorXd All_CrSec_Ratio;
+
   Eigen::Matrix3d principalAxesLCSRib(int, std::vector<std::vector<double>>& vertex, double, double, std::vector<std::vector<double>>& Cross_Sec_PGD_LCS,Eigen::Vector3d);
   Eigen::Matrix3d principalAxesLCS(int, std::vector<std::vector<double>>& vertex, double, double, std::vector<std::vector<double>>& Cross_Sec_PGD_LCS);
   virtual void Update();
@@ -91,7 +98,7 @@ public:
   Eigen::RowVectorXd deg2rad(Eigen::RowVectorXd);
   Eigen::Vector4d extract(Eigen::Matrix3d R);
 
-  double Max_Eigen_v(int N,int NDIM, Eigen::Matrix3d A, double EPS);
+  double Max_Eigen_v(int N, int NDIM, Eigen::Matrix3d A, double EPS, std::vector<std::vector<double>>&);
   int sign(double);
  
 
@@ -140,8 +147,10 @@ public:
   mafVMECenterLine();
   virtual ~mafVMECenterLine();
 protected:
-
-
+	mafVMEMeter* chord, * chordP;
+	int m_Rib = 0;
+	int m_FS = 1;
+	mafString m_File = _L("ptsResults.txt");
   enum PARAMETRIC_SURFACE_WIDGET_ID
   {
 
@@ -149,6 +158,9 @@ protected:
 //	CHANGE_VALUE_POINTS1,
 	ID_LAST,
 	CHANGE_VALUE_CenterLine,
+	CHANGE_VALUE_RIB,
+	CHANGE_VALUE_FileSaving,
+	ID_FILENAME,
 	ID_Surface_LINK
   };
 
