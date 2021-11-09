@@ -184,19 +184,21 @@ vector< Vector3d > mafQuadraticSurface::computeGeodesicPath(mafVMELandmark* mp0,
     state_type xp = { p(0) , p(1) , p(2), up(0) ,up(1),up(2)}; // initial conditions
     state_type xq = { q(0) , q(1) , q(2), uq(0) ,uq(1),uq(2)}; // initial conditions
 
-    vector< Vector3d > mstates;
-	//vector< Vector3d > mstates20;
+    vector< Vector3d > mstates1;
+	vector< Vector3d > mstates10;
 	vector< Vector3d > mstates2;
-	//vector< Vector3d > mstates50;
+	vector< Vector3d > mstates20;
+
+    vector< Vector3d > mstatestotal;
     // TODO the two lambda's might be declared outside
     auto stateEquation = [this] (const state_type x , state_type &dxdt , double t) { geodesicCurveTrajectory(x,dxdt,t); } ;
-    auto stateCollector = [&] (const state_type &x , double t) {mstates.push_back(Vector3d(x[0],x[1],x[2])); };
-	//auto stateCollector2 = [&](const state_type &x, double t) {mstates2.push_back(Vector3d(x[0], x[1], x[2])); };
+    auto stateCollector = [&] (const state_type &x , double t) {mstates1.push_back(Vector3d(x[0],x[1],x[2])); };
+	auto stateCollector2 = [&](const state_type &x, double t) {mstates10.push_back(Vector3d(x[0], x[1], x[2])); };
 	double dt = 1/(1.0*rate);
 	//wxBusyInfo wait150(std::to_string(dt).c_str());
 	//Sleep(1500);
 	integrate(stateEquation, xp, 0.0, length, dt, stateCollector);//80->180
-	//integrate(stateEquation, xq, 0.0, length, 0.001, stateCollector2);//80->180//stateCollector2
+	integrate(stateEquation, xq, 0.0, length, dt, stateCollector2);//80->180//stateCollector2
 	//for (int i = mstates20.size() - 1; i > 0; i--)
 	//{
 	//	mstates50.push_back(mstates20.at(i));
@@ -224,26 +226,84 @@ vector< Vector3d > mafQuadraticSurface::computeGeodesicPath(mafVMELandmark* mp0,
 	Sleep(1500);*/
 	double epsilon = 0;
 	double distToQ = 10000000;
+    double distToP = 10000000;
 	int i = 0;
-	if (mstates.size() > 1)
+	if (mstates1.size() > 1)
 	{
-		while (((mstates.at(i) - q).norm() < distToQ + epsilon) && (i < mstates.size() - 1))
-		if ((std::abs(mstates.at(i)[0])< 1000000) && (std::abs(mstates.at(i)[1])< 1000000) && (std::abs(mstates.at(i)[2])< 1000000))
+		while (((mstates1.at(i) - q).norm() < distToQ + epsilon) && (i < mstates1.size() - 1))
+		if ((std::abs(mstates1.at(i)[0])< 1000000) && (std::abs(mstates1.at(i)[1])< 1000000) && (std::abs(mstates1.at(i)[2])< 1000000))
 		{
 			
-				mstates2.push_back(mstates.at(i));
-				distToQ = (mstates.at(i) - q).norm();
+				mstates2.push_back(mstates1.at(i));
+				distToQ = (mstates1.at(i) - q).norm();
 				i++;
 		
 		}
 		else
 		{
-			string s20 = "mstates out of bounds " + std::to_string(mstates.at(i)[0]) + " " + std::to_string(mstates.at(i)[1]) + " " + std::to_string(mstates.at(i)[2]);
+			string s20 = "mstates out of bounds " + std::to_string(mstates1.at(i)[0]) + " " + std::to_string(mstates1.at(i)[1]) + " " + std::to_string(mstates1.at(i)[2]);
 			wxBusyInfo wait5(s20.c_str());
 			Sleep(250);
 		}
 	}
-	(*error) = distToQ;
+
+
+    i = 0;
+    if (mstates10.size() > 1)
+    {
+        while (((mstates10.at(i) - p).norm() < distToP + epsilon) && (i < mstates10.size() - 1))
+        {
+
+            if ((std::abs(mstates10.at(i)[0]) < 1000000) && (std::abs(mstates10.at(i)[1]) < 1000000) && (std::abs(mstates10.at(i)[2]) < 1000000))
+            {
+                mstates20.push_back(mstates10.at(i));
+                distToP = (mstates10.at(i) - p).norm();
+                i++;
+
+
+            }
+            else
+            {
+                string s120 = "mstates10 size " + std::to_string(mstates10.at(i)[0]) + " " + std::to_string(mstates10.at(i)[1]) + " " + std::to_string(mstates10.at(i)[2]);
+                wxBusyInfo wait5(s120.c_str());
+                Sleep(1250);
+
+            }
+
+        }
+
+        //string s30 = "mstates20 size " + std::to_string(mstates20.size());
+        //wxBusyInfo wait15(s30.c_str());
+        //Sleep(1250);
+    }
+    else
+    {
+        string s20 = "mstates out of bounds " + std::to_string(mstates10.at(i)[0]) + " " + std::to_string(mstates10.at(i)[1]) + " " + std::to_string(mstates10.at(i)[2]);
+        wxBusyInfo wait5(s20.c_str());
+        Sleep(250);
+    }
+
+
+
+
+    if (distToP < distToQ)
+    {
+
+        //string s20 = "path1 mstates2 "+std::to_string(mstates2.size());;
+        //wxBusyInfo wait5(s20.c_str());
+        //Sleep(1250);
+        (*error) = distToQ;
+        //	return mstates2;
+    }
+    else
+    {
+        //string s20 = "path2 mstates20 " + std::to_string(mstates20.size());;
+        //wxBusyInfo wait5(s20.c_str());
+        //Sleep(1250);
+        (*error) = distToP;
+        //	return mstates20;
+    }
+
 	//string s20 = "size to Q " + std::to_string(i)+" error toQ " +std::to_string(distToQ);
 	//wxBusyInfo wait5(s20.c_str());
 	//Sleep(250); 
@@ -257,8 +317,33 @@ vector< Vector3d > mafQuadraticSurface::computeGeodesicPath(mafVMELandmark* mp0,
 		}
 	}*/
 
+    int sz = std::min(mstates20.size(), mstates2.size());
 
-    return mstates2;
+    double d = (p - q).norm();
+    int jk = 1;
+    while (d > ((mstates20.at(jk) - mstates2.at(jk)).norm()) && (jk < sz))
+    {
+        d = (mstates20.at(jk) - mstates2.at(jk)).norm();
+
+        jk++;
+    }
+
+    //string s210 = "index " + std::to_string(jk) + " size " + std::to_string(mstates20.size());
+    //wxBusyInfo wait15(s210.c_str());
+    //Sleep(1250);
+
+    for (int i = 0; i < jk; i++)
+    {
+        mstatestotal.push_back(mstates20.at(i));
+    }
+
+    for (int i = jk; i >= 0; i--)
+    {
+        mstatestotal.push_back(mstates2.at(i));
+    }
+
+    return mstatestotal;
+    //return mstates2;
 
 
 }
