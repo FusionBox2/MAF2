@@ -22,7 +22,6 @@
 #include "vtkUnsignedShortArray.h"
 #include "vtkPointData.h"
 #include "vtkMAFSmartPointer.h"
-#include "mafDefines.h"
 
 enum RAY_CAST_MODALITY
 {
@@ -79,8 +78,7 @@ void vtkMEDRayCastCleaner::Execute()
   //Creating a copy of data array 
   //(proximity checks need to be done with unmodified original values)
   vtkDataArray* imgScalars = (vtkDataArray*)outputImage->GetPointData()->GetScalars();
-  vtkUnsignedShortArray * newScalars;
-  vtkNEW(newScalars);
+  vtkUnsignedShortArray * newScalars = vtkUnsignedShortArray::New();
   
   int nPoints=outputImage->GetNumberOfPoints();
 
@@ -127,7 +125,8 @@ void vtkMEDRayCastCleaner::Execute()
   outputImage->Update();
   this->SetOutput(outputImage);
 
-  vtkDEL(newScalars);
+  if (newScalars)
+      newScalars->Delete();
 }
 
 #define SP_COORD_TO_ID(x,y,z)  z*(VolumeDimension[0])*(VolumeDimension[1]) + y*(VolumeDimension[0]) + x;
