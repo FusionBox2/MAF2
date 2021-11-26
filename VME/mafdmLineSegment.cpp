@@ -4,6 +4,7 @@
 //
 //  Created by Bart Jansen on 29/10/2018.
 //
+#include "mafDefines.h" 
 #include <vtkLineSource.h>
 #include "mafdmLineSegment.hpp"
 #include "vtkMAFSmartPointer.h"

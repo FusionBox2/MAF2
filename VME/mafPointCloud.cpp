@@ -5,6 +5,7 @@
 //  Created by Bart Jansen on 27/10/2018.
 //
 
+#include "mafDefines.h" 
 #include "mafPointCloud.hpp"
 #include "vtkMAFSmartPointer.h"
 //#include "../DataElementInfoPanel.hpp"
