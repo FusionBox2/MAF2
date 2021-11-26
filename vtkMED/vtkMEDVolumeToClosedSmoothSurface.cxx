@@ -31,7 +31,6 @@
 #include "vtkRectilinearGridWriter.h"
 #include "vtkDoubleArray.h"
 
-#include "mafDefines.h"
 #include "vtkMEDVolumeToClosedSmoothSurface.h"
 
 
@@ -55,8 +54,14 @@ vtkMEDVolumeToClosedSmoothSurface::~vtkMEDVolumeToClosedSmoothSurface()
 //----------------------------------------------------------------------------
 { 
     //Deleting pre allocated structures
-    vtkDEL(BorderVolumeID);
-    vtkDEL(BorderVolumeRG);
+    if (BorderVolumeID)
+    {
+        BorderVolumeRG->Delete();
+    }
+    if (BorderVolumeID)
+    {
+        BorderVolumeRG->Delete();
+    }
 }
 
 
@@ -184,7 +189,7 @@ vtkPolyData * vtkMEDVolumeToClosedSmoothSurface::GetOutput( int level /*= 0*/, v
     //get number of points
     nPoints=polydata->GetNumberOfPoints();
     
-    vtkNEW(newPoints);
+    newPoints = vtkPoints::New();
     //new point array whitout border
     newPoints->SetNumberOfPoints(nPoints);
 
@@ -224,7 +229,8 @@ vtkPolyData * vtkMEDVolumeToClosedSmoothSurface::GetOutput( int level /*= 0*/, v
     
     polydata->SetPoints(newPoints);
     
-    vtkDEL(newPoints);
+    if (newPoints)
+        newPoints->Delete();
   
   }
 
@@ -272,7 +278,7 @@ void vtkMEDVolumeToClosedSmoothSurface::Update()
       inputScalars=inputPD->GetScalars();
 
       //Creating new imagedata with border outside
-      vtkNEW(BorderVolumeID);
+      BorderVolumeID = vtkImageData::New();
       BorderVolumeID->SetSpacing(spacing);
       //New origin is in x-xSpacing,y-ySpacing,z-zSpacing 
       //because we add a voxel outside the volume
@@ -309,14 +315,14 @@ void vtkMEDVolumeToClosedSmoothSurface::Update()
       inputScalars=inputPD->GetScalars();
 
 
-      vtkNEW(BorderVolumeRG);
+      BorderVolumeRG = vtkRectilinearGrid::New();
       newPD=BorderVolumeRG->GetPointData();
 
       //Create a new coordinate array with two voxel more
       //One on the left and one on the right
       inputXCoord=inputVolume->GetXCoordinates();
       ncoord=inputXCoord->GetNumberOfTuples();
-      vtkNEW(newXCoord);
+      newXCoord = vtkDoubleArray::New();
       newXCoord->SetNumberOfComponents(1);
       newXCoord->SetNumberOfTuples(ncoord+2);
       //The size of the added left voxel  is the same of the first
@@ -333,7 +339,7 @@ void vtkMEDVolumeToClosedSmoothSurface::Update()
       //One on the left and one on the right
       inputYCoord=inputVolume->GetYCoordinates();
       ncoord=inputYCoord->GetNumberOfTuples();
-      vtkNEW(newYCoord);
+      newYCoord = vtkDoubleArray::New();
       newYCoord->SetNumberOfComponents(1);
       newYCoord->SetNumberOfTuples(ncoord+2);
       //The size of the added left voxel  is the same of the first
@@ -349,7 +355,7 @@ void vtkMEDVolumeToClosedSmoothSurface::Update()
       //One on the left and one on the right
       inputZCoord=inputVolume->GetZCoordinates();
       ncoord=inputZCoord->GetNumberOfTuples();
-      vtkNEW(newZCoord);
+      newZCoord = vtkDoubleArray::New();
       newZCoord->SetNumberOfComponents(1);
       newZCoord->SetNumberOfTuples(ncoord+2);
       //The size of the added left voxel  is the same of the first
@@ -362,9 +368,12 @@ void vtkMEDVolumeToClosedSmoothSurface::Update()
       VoxelShift[5]=(inputZCoord->GetTuple1(ncoord-1)-inputZCoord->GetTuple1(ncoord-2))/3.0;
       BorderVolumeRG->SetZCoordinates(newZCoord);
 
-      vtkDEL(newXCoord);
-      vtkDEL(newYCoord);
-      vtkDEL(newZCoord);
+      if(newXCoord)
+        newXCoord->Delete();
+      if(newYCoord)
+        newYCoord->Delete();
+      if(newZCoord)
+        newZCoord->Delete();
     }
      
     //COMMON PART
@@ -376,7 +385,7 @@ void vtkMEDVolumeToClosedSmoothSurface::Update()
     newDimension[2]=inputDimensions[2]+2;
     newPoints=newDimension[0]*newDimension[1]*newDimension[2];
 
-    vtkNEW(newScalars);
+    newScalars = vtkDoubleArray::New();
     newScalars->SetNumberOfComponents(1);
     newScalars->SetNumberOfTuples(newPoints);
 
