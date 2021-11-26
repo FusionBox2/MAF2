@@ -24,6 +24,7 @@
 #include "wx/arrimpl.cpp"
 #include <wx/wxprec.h>
 #include "wx/busyinfo.h"
+#include "wx/msw/private.h"
 #include <math.h>
 
 
