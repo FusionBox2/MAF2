@@ -274,7 +274,7 @@ void mafGizmoSlice::CreateGizmoSliceInLocalPositionOnAxis(int gizmoSliceId, int 
 
     cornerFilter->Delete();
 
-    m_VmeGizmo->SetData(apd->GetOutput());
+    m_VmeGizmo->SetInputConnection(apd->GetOutputPort());
 
     // position the gizmo 
 	  mafSmartPointer<mafTransform> t;

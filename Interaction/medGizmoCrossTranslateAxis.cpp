@@ -117,7 +117,7 @@ medGizmoCrossTranslateAxis::medGizmoCrossTranslateAxis(mafVME *input, mafBaseEve
 	m_TranslationCylinderGizmo = mafVMEGizmo::New();
 	//  m_TranslationCylinderGizmo->GetTagArray()->SetTag(mafTagItem("VISIBLE_IN_THE_TREE", 1));
 	m_TranslationCylinderGizmo->SetName(_R("AxisTranslationGizmo"));
-	m_TranslationCylinderGizmo->SetData(m_Append->GetOutput());
+	m_TranslationCylinderGizmo->SetInputConnection(m_Append->GetOutputPort());
 	m_TranslationCylinderGizmo->SetMediator(GetListener());
 	// cone gizmo
 
@@ -596,7 +596,7 @@ void medGizmoCrossTranslateAxis::CreateFeedbackGizmoPipeline()
 
 	m_TranslationFeedbackGizmo->SetName(_R("AxisTranslationFeedbackGizmo"));
 	m_TranslationFeedbackGizmo->SetMediator(GetListener());
-	m_TranslationFeedbackGizmo->SetData(m_FeedbackStuffAppendPolydata->GetOutput());
+	m_TranslationFeedbackGizmo->SetInputConnection(m_FeedbackStuffAppendPolydata->GetOutputPort());
 	//  m_TranslationFeedbackGizmo->GetTagArray()->SetTag(mafTagItem("VISIBLE_IN_THE_TREE", 1));
 	assert(m_InputVme);
 

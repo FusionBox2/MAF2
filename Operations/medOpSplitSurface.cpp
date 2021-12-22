@@ -734,7 +734,7 @@ void medOpSplitSurface::ShowClipPlane(bool show)
       m_Gizmo->Update();
 
       mafNEW(m_ImplicitPlaneGizmo);
-      m_ImplicitPlaneGizmo->SetData(m_Gizmo->GetOutput());
+      m_ImplicitPlaneGizmo->SetInputConnection(m_Gizmo->GetOutputPort());
       m_ImplicitPlaneGizmo->SetName(_R("implicit plane gizmo"));
       m_ImplicitPlaneGizmo->ReparentTo(mafVME::SafeDownCast(m_Input->GetRoot()));
 

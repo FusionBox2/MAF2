@@ -74,7 +74,7 @@ medGizmoCrossRotateFan::medGizmoCrossRotateFan(mafVME *input, mafBaseEventHandle
   // the circle gizmo
   m_Gizmo = mafVMEGizmo::New();
   m_Gizmo->SetName(_R("fan"));
-  m_Gizmo->SetData(m_ChangeFanAxisTPDF->GetOutput());
+  m_Gizmo->SetInputConnection(m_ChangeFanAxisTPDF->GetOutputPort());
   m_Gizmo->SetMediator(GetListener());
   this->SetMediator(GetListener());
 

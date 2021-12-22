@@ -901,7 +901,7 @@ void medOpInteractiveClipSurface::ShowClipPlane(bool show)
       m_AppendPolydata->Update();
 
       mafNEW(m_ImplicitPlaneVMEGizmo);
-      m_ImplicitPlaneVMEGizmo->SetData(m_AppendPolydata->GetOutput());
+      m_ImplicitPlaneVMEGizmo->SetInputConnection(m_AppendPolydata->GetOutputPort());
       m_ImplicitPlaneVMEGizmo->SetName(_R("implicit plane gizmo"));
       m_ImplicitPlaneVMEGizmo->ReparentTo(mafVME::SafeDownCast(m_Input->GetRoot()));
 

@@ -136,7 +136,7 @@ medGizmoCrossTranslatePlane::medGizmoCrossTranslatePlane(mafVME *input, mafBaseE
 		vmeName = _R("part");
 		vmeName += mafToString(i);
 		m_Gizmo[i]->SetName(vmeName);
-		m_Gizmo[i]->SetData(m_RotatePDF[i]->GetOutput());
+		m_Gizmo[i]->SetInputConnection(m_RotatePDF[i]->GetOutputPort());
 		m_Gizmo[i]->SetMediator(GetListener());
 	}
 	// assign isa to S1 and S2;
@@ -620,7 +620,7 @@ void medGizmoCrossTranslatePlane::CreateFeedbackGizmoPipeline()
 
 	m_TranslationFeedbackGizmo->SetName(_R("PlaneTranslationFeedbackGizmo"));
 	m_TranslationFeedbackGizmo->SetMediator(GetListener());
-	m_TranslationFeedbackGizmo->SetData(m_FeedbackStuffAppendPolydata->GetOutput());
+	m_TranslationFeedbackGizmo->SetInputConnection(m_FeedbackStuffAppendPolydata->GetOutputPort());
 	assert(m_InputVme);
 
 	m_TranslationFeedbackGizmo->GetMaterial()->m_Prop->SetColor(1,1,0);
