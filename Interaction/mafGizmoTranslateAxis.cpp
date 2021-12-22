@@ -79,7 +79,7 @@ mafGizmoTranslateAxis::mafGizmoTranslateAxis(mafVME *input, mafBaseEventHandler 
   } else {
 	  m_CylGizmo->SetName(name);
   }
-  m_CylGizmo->SetData(m_RotatePDF[CYLINDER]->GetOutput());
+  m_CylGizmo->SetInputConnection(m_RotatePDF[CYLINDER]->GetOutputPort());
   m_CylGizmo->SetMediator(GetListener());
 
   // cone gizmo
@@ -89,7 +89,7 @@ mafGizmoTranslateAxis::mafGizmoTranslateAxis(mafVME *input, mafBaseEventHandler 
   } else {
      m_ConeGizmo->SetName(name);
   }
-  m_ConeGizmo->SetData(m_RotatePDF[CONE]->GetOutput());
+  m_ConeGizmo->SetInputConnection(m_RotatePDF[CONE]->GetOutputPort());
   m_ConeGizmo->SetMediator(GetListener());
 
   // assign isa to cylinder and cone

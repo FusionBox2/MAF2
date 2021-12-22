@@ -215,7 +215,7 @@ void mafOpVolumeResample::CreateGizmoCube()
 
   mafNEW(m_ResampleBoxVme);
   m_ResampleBoxVme->SetName(_R("GizmoCube"));
-  m_ResampleBoxVme->SetData(m_ResampleBox->GetOutput());
+  m_ResampleBoxVme->SetInputConnection(m_ResampleBox->GetOutputPort());
   m_ResampleBoxVme->GetMaterial()->m_Diffuse[0] = 1;
   m_ResampleBoxVme->GetMaterial()->m_Diffuse[1] = 0;
   m_ResampleBoxVme->GetMaterial()->m_Diffuse[2] = 0;

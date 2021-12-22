@@ -81,7 +81,7 @@ mafGizmoRotateCircle::mafGizmoRotateCircle(mafVME *input, mafBaseEventHandler *l
   // build the circle gizmo
   m_GizmoCircle = mafVMEGizmo::New();
   m_GizmoCircle->SetName(name);
-  m_GizmoCircle->SetData(m_RotatePDF->GetOutput());
+  m_GizmoCircle->SetInputConnection(m_RotatePDF->GetOutputPort());
   m_GizmoCircle->SetMediator(GetListener());
 
   // assign isa to S1 and S2;

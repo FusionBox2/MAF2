@@ -84,9 +84,9 @@ void mafGizmoPath::Constructor(mafNode *imputVme, mafBaseEventHandler *listener,
 
   CreateVMEGizmo();
   
-  m_VmeGizmoPath->SetData(m_LineSource->GetOutput());
+  m_VmeGizmoPath->SetInputConnection(m_LineSource->GetOutputPort());
 
-  assert(m_VmeGizmoPath->GetData()->GetNumberOfPoints());
+  //assert(m_VmeGizmoPath->GetData()->GetNumberOfPoints());
 
 
   CreateInteractor();

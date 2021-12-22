@@ -78,13 +78,13 @@ void mafPipeGizmo::Create(mafNode *node, mafView *view)
 	inputVMEGizmo = mafVMEGizmo::SafeDownCast(m_Vme);
 	assert(inputVMEGizmo);
 	inputVMEGizmo->Update();
-	vtkPolyData *data = inputVMEGizmo->GetData();
-	assert(data);
+	vtkAlgorithmOutput *port = inputVMEGizmo->GetOutputPort();
+	assert(port);
 
 	m_Vme->AddObserver(this);
 
 	m_Mapper = vtkPolyDataMapper::New();
-	m_Mapper->SetInputData(data);
+	m_Mapper->SetInputConnection(port);
 #if VTK_MAJOR_VERSION <= 7
 	m_Mapper->ImmediateModeRenderingOff();
 #endif
@@ -129,7 +129,7 @@ void mafPipeGizmo::Create(mafNode *node, mafView *view)
 
 	// selection highlight
 	vtkMAFSmartPointer<vtkOutlineCornerFilter> corner;
-	corner->SetInputData(data);  
+	corner->SetInputConnection(port);  
 
 	vtkMAFSmartPointer<vtkPolyDataMapper> corner_mapper;
 	corner_mapper->SetInputConnection(corner->GetOutputPort());
@@ -271,8 +271,6 @@ void mafPipeGizmo::UpdatePipe()
 	mafVMEGizmo *gizmo = mafVMEGizmo::SafeDownCast(m_Vme);
 	assert(gizmo);
 	gizmo->Update();
-	vtkPolyData *data = gizmo->GetData();
-	assert(data);
 
 	if(m_CaptionActor != NULL)
 	{

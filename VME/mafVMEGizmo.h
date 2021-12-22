@@ -22,6 +22,7 @@
 //----------------------------------------------------------------------------
 #include "mafVME.h"
 #include "mafBaseEventHandler.h"
+#include "vtkSmartPointer.h"
 //----------------------------------------------------------------------------
 // forward declarations :
 //----------------------------------------------------------------------------
@@ -29,6 +30,8 @@ class vtkPolyData;
 class mafTransform;
 class mafVMEOutputSurface;
 class mmaMaterial;
+class vtkAlgorithm;
+class vtkAlgorithmOutput;
 
 /* mafVMEGizmo - this class represent a non persistent node of the tree.
  mafVMEGizmo is a non persistent node of the tree used by application modules
@@ -48,10 +51,11 @@ public:
   /**
   For VME Gizmo it is allowed to directly set the Data to be used
   to display the node.*/
-  void SetData(vtkPolyData *data);
-  
+  void SetInputConnection(vtkAlgorithmOutput *port);
+  void SetInputData(vtkPolyData *data);
+
   /** return the polydata used to display this gizmo */
-  vtkPolyData *GetData() {return m_GizmoData;}
+  vtkAlgorithmOutput *GetOutputPort();
   
   /** Copy the contents of another VME-Gizmo into this one. */
   virtual int DeepCopy(mafNode *a);
@@ -124,7 +128,8 @@ protected:
   //virtual void InternalUpdate();
 
   mafTransform *m_Transform; ///< pose matrix for the slicer plane
-  vtkPolyData  *m_GizmoData;
+  vtkSmartPointer<vtkAlgorithm> m_Algorithm;
+  vtkAlgorithmOutput* m_Port;
 
   mafString m_TextValue;
   double m_TextPosition[3];

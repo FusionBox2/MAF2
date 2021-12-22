@@ -63,7 +63,7 @@ mafGizmoBoundingBox::mafGizmoBoundingBox(mafVME *input, mafBaseEventHandler *lis
   m_BoxGizmo->SetName(_R("BoxGizmo"));
   
   // since i'm working in local mode i reparent to input vme the gizmo
-  m_BoxGizmo->SetData(m_BoxOutline->GetOutput());
+  m_BoxGizmo->SetInputConnection(m_BoxOutline->GetOutputPort());
 	m_BoxGizmo->GetOutput()->GetVTKData()->ComputeBounds();
 	if(parent)
 		m_BoxGizmo->ReparentTo(parent);

@@ -86,7 +86,7 @@ mafGizmoTranslatePlane::mafGizmoTranslatePlane(mafVME *input, mafBaseEventHandle
     vmeName = _R("part");
     vmeName += mafToString(i);
     m_Gizmo[i]->SetName(vmeName);
-    m_Gizmo[i]->SetData(m_RotatePDF[i]->GetOutput());
+    m_Gizmo[i]->SetInputConnection(m_RotatePDF[i]->GetOutputPort());
 	m_Gizmo[i]->SetMediator(GetListener());
   }
 

@@ -77,7 +77,7 @@ mafGizmoRotateFan::mafGizmoRotateFan(mafVME *input, mafBaseEventHandler *listene
   // the circle gizmo
   m_GizmoFan = mafVMEGizmo::New();
   m_GizmoFan->SetName(_R("fan"));
-  m_GizmoFan->SetData(m_ChangeFanAxisTPDF->GetOutput());
+  m_GizmoFan->SetInputConnection(m_ChangeFanAxisTPDF->GetOutputPort());
   
   // set the default axis to X axis
   this->SetAxis(m_ActiveAxis);

@@ -578,7 +578,7 @@ void mafOpBooleanSurface::ShowClipPlane(bool show)
 			gizmo->Update();
 
 			//mafNEW(m_ImplicitPlaneGizmo);
-			m_ImplicitPlaneGizmo->SetData(gizmo->GetOutput());
+			m_ImplicitPlaneGizmo->SetInputConnection(gizmo->GetOutputPort());
 			m_ImplicitPlaneGizmo->SetName(_R("implicit plane gizmo"));
 			m_ImplicitPlaneGizmo->ReparentTo(mafVME::SafeDownCast(m_Input->GetRoot()));
 

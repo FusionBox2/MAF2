@@ -33,6 +33,9 @@
 #include "mafEventSender.h"
 
 #include "vtkPolyData.h"
+#include "vtkAlgorithm.h"
+#include "vtkAlgorithmOutput.h"
+#include "vtkTrivialProducer.h"
 #include "vtkMAFDataPipe.h"
 
 //-------------------------------------------------------------------------
@@ -44,7 +47,7 @@ mafVMEGizmo::mafVMEGizmo()
 //-------------------------------------------------------------------------
 {
   m_Mediator = NULL;
-  m_GizmoData = NULL;
+  m_Port = NULL;
   mafNEW(m_Transform);
   mafVMEOutputSurface *output=mafVMEOutputSurface::New(); // an output with no data
   output->SetTransform(m_Transform); // force my transform in the output
@@ -70,7 +73,6 @@ mafVMEGizmo::~mafVMEGizmo()
 //-------------------------------------------------------------------------
 {
   mafDEL(m_Transform);
-  vtkDEL(m_GizmoData);
 }
 //-------------------------------------------------------------------------
 int mafVMEGizmo::DeepCopy(mafNode *a)
@@ -80,7 +82,7 @@ int mafVMEGizmo::DeepCopy(mafNode *a)
   {
     mafVMEGizmo *vme_gizmo=mafVMEGizmo::SafeDownCast(a);
     m_Transform->SetMatrix(vme_gizmo->m_Transform->GetMatrix());
-    SetData(vme_gizmo->GetData());
+    //SetData(vme_gizmo->GetData());
     return MAF_OK;
   }  
   return MAF_ERROR;
@@ -110,21 +112,39 @@ mmaMaterial *mafVMEGizmo::GetMaterial()
 }
 
 //-------------------------------------------------------------------------
-void mafVMEGizmo::SetData(vtkPolyData *data)
+void mafVMEGizmo::SetInputConnection(vtkAlgorithmOutput* port)
 //-------------------------------------------------------------------------
 {
-  assert(data);  // just check if data is set to NULL...
-  if (data!=m_GizmoData)
-  {
-    m_GizmoData = data;
-    m_GizmoData->Register(NULL);
-    
+    vtkAlgorithm* alg = nullptr;
+    m_Port = port;
+    if (m_Port)
+    {
+        alg = m_Port->GetProducer();
+    }
+    m_Algorithm = alg;
+
     // set data as input to VTK 
-    mafDataPipeCustom *dpipe=mafDataPipeCustom::SafeDownCast(GetDataPipe());
-    dpipe->GetVTKDataPipe()->SetInputData(0,data);
-    
+    mafDataPipeCustom* dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
+    dpipe->GetVTKDataPipe()->SetInputConnection(m_Port);
+
     Modified();
-  }
+}
+
+//-------------------------------------------------------------------------
+void mafVMEGizmo::SetInputData(vtkPolyData* data)
+//-------------------------------------------------------------------------
+{
+    vtkTrivialProducer* producer = vtkTrivialProducer::New();
+    producer->SetOutput(data);
+    SetInputConnection(producer->GetOutputPort());
+    producer->Delete();
+}
+
+//-------------------------------------------------------------------------
+vtkAlgorithmOutput* mafVMEGizmo::GetOutputPort()
+//-------------------------------------------------------------------------
+{
+    return m_Port;
 }
 
 //-------------------------------------------------------------------------
