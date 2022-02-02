@@ -159,6 +159,7 @@ void mafInteractorPicker::SendPickingInformation(mafView *v, double *mouse_pos, 
     /*mafViewCompound *vc = mafViewCompound::SafeDownCast(v);
     if (vc)
       v = vc->GetSubView();*/ // the code is integrated into the GetRWI method of the mafViewCompound, so it is not necessary!
+    double pos_picked[3] = {0.0, 0.0, 0.0};
     if(mouse_flag)
     {
       vtkRendererCollection *rc = vvtk->GetRWI()->GetRenderWindow()->GetRenderers();
@@ -169,6 +170,7 @@ void mafInteractorPicker::SendPickingInformation(mafView *v, double *mouse_pos, 
         if(cellPicker->Pick(mouse_pos[0],mouse_pos[1],0,r))
         {
           picked_something = true;
+          cellPicker->GetPickPosition(pos_picked);
         }
       }
     }
@@ -177,8 +179,6 @@ void mafInteractorPicker::SendPickingInformation(mafView *v, double *mouse_pos, 
     if (picked_something)
     {
       vtkPoints *p = vtkPoints::New();
-      double pos_picked[3];
-      cellPicker->GetPickPosition(pos_picked);
       p->SetNumberOfPoints(1);
       p->SetPoint(0,pos_picked);
       double scalar_value = 0;
