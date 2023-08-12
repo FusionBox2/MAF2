@@ -83,9 +83,9 @@ public:
 	double* getPoint1();
 	double* getPoint2();
 	double* getPoint3();
-	void setPoint1(double[3]);
-	void setPoint2(double[3]);
-	void setPoint3(double[3]);
+	void setPoint1(double, double, double);
+	void setPoint2(double, double, double);
+	void setPoint3(double,double,double);
 	//double* getPoint4();
 	double* getNormalVector();
 	void computeNormal();
@@ -99,9 +99,9 @@ public:
 	void SetUVector(double,int);
 	double GetUVector(int);
 	void SetLandmarkLink(const mafString&, mafNode *);
-//	void Setm_p1LName(mafString);
-//	void Setm_p2LName(mafString);
-//	void Setm_p3LName(mafString);
+	void Setm_p1LName(mafString);
+	void Setm_p2LName(mafString);
+	void Setm_p3LName(mafString);
 	void Update();
 protected:
 	double tr=0;
@@ -114,8 +114,8 @@ protected:
 		
 		CHANGE_VALUE_PLANE,
 		ID_P1_LINK,
-//		ID_P2_LINK,
-//		ID_P3_LINK,
+		ID_P2_LINK,
+		ID_P3_LINK,
 		ID_PLAN1_LINK,
 		//ID_P4_LINK,
 		//CHANGE_VALUE_ELLIPSOID,
@@ -127,16 +127,16 @@ protected:
 	
 	void SetPlaneLink(const mafString&, mafNode *);
 	mafString m_p1LandmarkName;
-//	mafString m_p2LandmarkName;
-//	mafString m_p3LandmarkName;
+	mafString m_p2LandmarkName;
+	mafString m_p3LandmarkName;
 	mafString m_plan1Name;
 	mafString angleBPlanes;
 	double angPlanes;
 	//mafString m_p4LandmarkName;
-	mafVMELandmarkCloud	*m_Cloud2;
+	//mafVMELandmarkCloud	*m_Cloud2;
 	mafVME* p1;
-	//mafVME* p2;
-	//mafVME* p3;
+	mafVME* p2;
+	mafVME* p3;
 	mafVME* plan1;
 	//mafVME* p4;
 	/** this function uses PARAMETRIC_SURFACE_TYPE_ID as argument*/

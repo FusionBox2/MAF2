@@ -62,14 +62,14 @@ public:
   enum PARAMETRIC_SURFACE_TYPE_ID
   {
 	  
-	  POINTS_SELECTION_Ellipsoid1=0,
-	  POINTS_SELECTION_Ellipsoid2,
-	  POINTS_SELECTION_Ellipsoid3,
-	  POINTS_SELECTION_Ellipsoid4,
-	  POINTS_SELECTION_Ellipsoid5,
-	  PARAMETRIC_SPHERE,
+	 // POINTS_SELECTION_Ellipsoid1=0,
+	 // POINTS_SELECTION_Ellipsoid2,
+	 // POINTS_SELECTION_Ellipsoid3,
+	 // POINTS_SELECTION_Ellipsoid4,
+	 // POINTS_SELECTION_Ellipsoid5,
+	  PARAMETRIC_SPHERE=0,
 	  PARENT_POINTS,
-	  POINTS_SELECTION_Ellipsoid7,
+	 // POINTS_SELECTION_Ellipsoid7,
 	
   };
 
@@ -141,22 +141,22 @@ public:
 protected:
   enum PARAMETRIC_SURFACE_WIDGET_ID
   {
-    CHANGE_PARAMETER = Superclass::ID_LAST,
-	CHANGE_VALUE_SPHERE,
-	CHANGE_VALUE_CONE,
-	CHANGE_VALUE_CYLINDER,
-	CHANGE_VALUE_CUBE,
-	CHANGE_VALUE_PLANE,
-	CHANGE_VALUE_ELLIPSOID,
-	CHANGE_VALUE_POINTS2,
-	CHANGE_VALUE_POINTS3,
-	CHANGE_VALUE_POINTS4,
-	CHANGE_VALUE_POINTS5,
-	CHANGE_VALUE_POINTS6,
-	CHANGE_VALUE_POINTS7,
+    //CHANGE_PARAMETER = Superclass::ID_LAST,
+	//CHANGE_VALUE_SPHERE,
+	//CHANGE_VALUE_CONE,
+	//CHANGE_VALUE_CYLINDER,
+	//CHANGE_VALUE_CUBE,
+	//CHANGE_VALUE_PLANE,
+	//CHANGE_VALUE_ELLIPSOID,
+	//CHANGE_VALUE_POINTS2,
+	//CHANGE_VALUE_POINTS3,
+	//CHANGE_VALUE_POINTS4,
+	//CHANGE_VALUE_POINTS5,
+	//CHANGE_VALUE_POINTS6,
+	//CHANGE_VALUE_POINTS7,
 	CHANGE_VALUE_POINTS10,
-	CHANGE_VALUE_POINTS1,
-	CHANGE_VALUE_PARENTPOINTS,
+	//CHANGE_VALUE_POINTS1,
+	//CHANGE_VALUE_PARENTPOINTS,
     ID_GEOMETRY_TYPE,
     ID_LAST
   };
@@ -229,56 +229,56 @@ protected:
 
 
   vtkMAFSmartPointer<vtkPoints> points;
-  double m_Points1Point1[3];
-  double m_Points1Point2[3];
-  double m_Points1Point3[3];
-  double m_Points1Point4[3];
-  double m_Points1Point5[3];
-  double m_Points1Point6[3];
+  //double m_Points1Point1[3];
+  //double m_Points1Point2[3];
+  //double m_Points1Point3[3];
+  //double m_Points1Point4[3];
+  //double m_Points1Point5[3];
+  //double m_Points1Point6[3];
   
-  double m_Points2Point1[3];
-  double m_Points2Point2[3];
-  double m_Points2Point3[3];
-  double m_Points2Point4[3];
-  double m_Points2Point5[3];
-  double m_Points2Point6[3];
+  //double m_Points2Point1[3];
+  //double m_Points2Point2[3];
+  //double m_Points2Point3[3];
+  //double m_Points2Point4[3];
+  //double m_Points2Point5[3];
+  //double m_Points2Point6[3];
 
-  double m_Points3Point1[3];
-  double m_Points3Point2[3];
-  double m_Points3Point3[3];
-  double m_Points3Point4[3];
-  double m_Points3Point5[3];
-  double m_Points3Point6[3];
+  //double m_Points3Point1[3];
+  //double m_Points3Point2[3];
+  //double m_Points3Point3[3];
+  //double m_Points3Point4[3];
+  //double m_Points3Point5[3];
+  //double m_Points3Point6[3];
 
-  double m_Points4Point1[3];
-  double m_Points4Point2[3];
-  double m_Points4Point3[3];
-  double m_Points4Point4[3];
-  double m_Points4Point5[3];
-  double m_Points4Point6[3];
-
-
-  double m_Points5Point1[3];
-  double m_Points5Point2[3];
-  double m_Points5Point3[3];
-  double m_Points5Point4[3];
-  double m_Points5Point5[3];
-  double m_Points5Point6[3];
+  //double m_Points4Point1[3];
+  //double m_Points4Point2[3];
+  //double m_Points4Point3[3];
+  //double m_Points4Point4[3];
+  //double m_Points4Point5[3];
+  //double m_Points4Point6[3];
 
 
-  double m_Points6Point1[3];
-  double m_Points6Point2[3];
-  double m_Points6Point3[3];
-  double m_Points6Point4[3];
-  double m_Points6Point5[3];
-  double m_Points6Point6[3];
+  //double m_Points5Point1[3];
+  //double m_Points5Point2[3];
+  //double m_Points5Point3[3];
+  //double m_Points5Point4[3];
+  //double m_Points5Point5[3];
+  //double m_Points5Point6[3];
 
-  double m_Points7Point1[3];
-  double m_Points7Point2[3];
-  double m_Points7Point3[3];
-  double m_Points7Point4[3];
-  double m_Points7Point5[3];
-  double m_Points7Point6[3];
+
+  //double m_Points6Point1[3];
+  //double m_Points6Point2[3];
+  //double m_Points6Point3[3];
+  //double m_Points6Point4[3];
+  //double m_Points6Point5[3];
+  //double m_Points6Point6[3];
+
+  //double m_Points7Point1[3];
+  //double m_Points7Point2[3];
+  //double m_Points7Point3[3];
+  //double m_Points7Point4[3];
+  //double m_Points7Point5[3];
+  //double m_Points7Point6[3];
 
 
   double m_PointsR1;
@@ -314,8 +314,8 @@ protected:
   int m_EllipsoidOrientationAxis;
 
   Eigen::Matrix3d rotationMat;
-  mafVMELandmarkCloud	*m_Cloud;
-  mafVMELandmarkCloud	*m_Cloud3;
+  //mafVMELandmarkCloud	*m_Cloud;
+  //mafVMELandmarkCloud	*m_Cloud3;
 private:
 	mafVMEQuadricSurfaceFitting(const mafVMEQuadricSurfaceFitting&); // Not implemented
 	void operator=(const mafVMEQuadricSurfaceFitting&); // Not implemented

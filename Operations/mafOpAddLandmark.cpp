@@ -21,7 +21,7 @@
 #include "mafInteractorPicker.h"
 #include "mafInteractor.h"
 #include "mafGUI.h"
-
+#include "wx/BusyInfo.h"
 //dictionary
 #include "mafGUIHolder.h"
 #include "mafGUISplittedPanel.h"
@@ -136,7 +136,7 @@ bool mafOpAddLandmark::Accept(mafNode *node)
 		m_PickingActiveFlag = true;
 		return true;
 	}
-
+  
 	m_PickingActiveFlag = false;
   return true; //accept all other vmes
 }
@@ -177,7 +177,13 @@ void mafOpAddLandmark::OpRun()
         return;
       }
     }
+
+
   }
+
+
+
+
 	if(m_PickingActiveFlag == true)
 	{
 		if(m_Input->IsMAFType(mafVMESurface) ||
@@ -338,14 +344,19 @@ void mafOpAddLandmark::OnEvent(mafEventBase *maf_event)
 		  break;
 
       case VME_PICKED:
+
+		  
+		
         if(this->m_Cloud && this->m_Cloud->FindInTreeByName(m_LandmarkName))
         {
+			
           ExistingLandmarkMessage();
           m_LandmarkName = _R("");
           m_Gui->Update();
         }
         else
         {
+			
           pts = vtkPoints::SafeDownCast(e->GetVtkObj());
           if (pts)
           {

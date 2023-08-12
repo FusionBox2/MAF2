@@ -90,8 +90,8 @@ public:
   Eigen::VectorXd All_Circumf;
   Eigen::VectorXd All_CrSec_Ratio;
 
-  Eigen::Matrix3d principalAxesLCSRib(int, std::vector<std::vector<double>>& vertex, double, double, std::vector<std::vector<double>>& Cross_Sec_PGD_LCS,Eigen::Vector3d);
-  Eigen::Matrix3d principalAxesLCS(int, std::vector<std::vector<double>>& vertex, double, double, std::vector<std::vector<double>>& Cross_Sec_PGD_LCS);
+  Eigen::Matrix3d principalAxesLCSRib(int, std::vector<std::vector<double>>& vertex, std::vector<std::vector<double>>& Cross_Sec_PGD_LCS, Eigen::Vector3d);
+  Eigen::Matrix3d principalAxesLCS(int nbr, std::vector<std::vector<double>>& vertex, std::vector<std::vector<double>>& Cross_Sec_PGD_LCS);
   virtual void Update();
   Eigen::Matrix3d theta2r(Eigen::Vector3d);
 

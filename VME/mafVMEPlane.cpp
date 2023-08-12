@@ -73,32 +73,32 @@ mafVMEPlane::mafVMEPlane()
 	m_PlanePoint2[1] = 3.0;	m_PlanePoint2[0] = m_PlanePoint2[2] = 1.0;
 	
 
-	pts_change = true;
+	//pts_change = true;
 	double rxyz[3];
 	p1 = mafVMELandmark::New();
 	p1->SetName(_R("p1"));
 	p1->SetAbsPose(m_PlaneOrigin,rxyz,-1);
-//	p2 = mafVMELandmark::New();
-//	p2->SetName("p2");
-//	p2->SetAbsPose(m_PlanePoint1, rxyz, -1);
-//	p3 = mafVMELandmark::New();
-//	p3->SetName("p3");
-//	p3->SetAbsPose(m_PlanePoint2, rxyz, -1);
-	 mafNEW(m_Cloud2);
+	p2 = mafVMELandmark::New();
+	p2->SetName(_R("p2"));
+	p2->SetAbsPose(m_PlanePoint1, rxyz, -1);
+	p3 = mafVMELandmark::New();
+	p3->SetName(_R("p3"));
+	p3->SetAbsPose(m_PlanePoint2, rxyz, -1);
+	//mafNEW(m_Cloud2);
 
-	m_Cloud2->Open();
-	m_Cloud2->SetName(_L("Plane points"));
-	m_Cloud2->SetRadius(1.5);
-	m_Cloud2->ReparentTo(this);
-	m_Cloud2->AppendLandmark(m_PlaneOrigin[0], m_PlaneOrigin[1], m_PlaneOrigin[2], _R("p1"), false);
-	m_Cloud2->AppendLandmark(m_PlanePoint1[0], m_PlanePoint1[1], m_PlanePoint1[2], _R("p2"), false);
-	m_Cloud2->AppendLandmark(m_PlanePoint2[0], m_PlanePoint2[1], m_PlanePoint2[2], _R("p3"), false);
+	//m_Cloud2->Open();
+	//m_Cloud2->SetName(_L("Plane points"));
+	//m_Cloud2->SetRadius(1.5);
+	//m_Cloud2->ReparentTo(this);
+	//m_Cloud2->AppendLandmark(m_PlaneOrigin[0], m_PlaneOrigin[1], m_PlaneOrigin[2], _R("p1"), false);
+	//m_Cloud2->AppendLandmark(m_PlanePoint1[0], m_PlanePoint1[1], m_PlanePoint1[2], _R("p2"), false);
+	//m_Cloud2->AppendLandmark(m_PlanePoint2[0], m_PlanePoint2[1], m_PlanePoint2[2], _R("p3"), false);
 	
 	normal[0] = normal[01] = normal[02] = 0;
 
 	m_p1LandmarkName = _R("");
-//	m_p2LandmarkName = _R("");
-//	m_p3LandmarkName = _R("");
+	m_p2LandmarkName = _R("");
+	m_p3LandmarkName = _R("");
 	m_plan1Name = _R("");
 	//m_p4LandmarkName = _R("");
 	surf = vtkPlaneSource::New();
@@ -249,29 +249,29 @@ double* mafVMEPlane::getPoint1()
 	
 	mafNEW(m_TmpTransform);
 	
-	m_Cloud2->GetOutput()->GetAbsMatrix(tm, currTs);
+	this->GetOutput()->GetAbsMatrix(tm, currTs);
 	m_TmpTransform->SetMatrix(tm);
 
-	((mafVMELandmarkCloud *)m_Cloud2)->GetLandmark(GetLinkSubId(_R("p1")), m_PlaneOrigin, currTs);
+	//((mafVMELandmarkCloud *)m_Cloud2)->GetLandmark(GetLinkSubId(_R("p1")), m_PlaneOrigin, currTs);
 	m_TmpTransform->TransformPoint(m_PlaneOrigin, d);
 
 	return d;// m_PlaneOrigin;//d;
 	
 }
 
-void mafVMEPlane::setPoint1(double d[3])
+void mafVMEPlane::setPoint1(double d0,double d1,double d2)
 //-------------------------------------------------------------------------
 {
 	
-	m_PlaneOrigin[0] = d[0];
-	m_PlaneOrigin[1] = d[1];
-	m_PlaneOrigin[2] = d[2];
+	m_PlaneOrigin[0] = d0;
+	m_PlaneOrigin[1] = d1;
+	m_PlaneOrigin[2] = d2;
 
 
 	double rxyz[3];
-	p1->SetAbsPose(m_PlaneOrigin, rxyz, -1);
-	p1->Update();
-	m_Cloud2->SetLandmark(_R("p1"), m_PlaneOrigin[0], m_PlaneOrigin[1], m_PlaneOrigin[2], -1);
+//	p1->SetAbsPose(m_PlaneOrigin, rxyz, -1);
+//	p1->Update();
+	//m_Cloud2->SetLandmark(_R("p1"), m_PlaneOrigin[0], m_PlaneOrigin[1], m_PlaneOrigin[2], -1);
 	//pts_change = true;
 
 }
@@ -302,27 +302,27 @@ double* mafVMEPlane::getPoint2()
 
 	mafNEW(m_TmpTransform);
 
-	m_Cloud2->GetOutput()->GetAbsMatrix(tm, currTs);
+	this->GetOutput()->GetAbsMatrix(tm, currTs);
 	m_TmpTransform->SetMatrix(tm);
 
-	((mafVMELandmarkCloud *)m_Cloud2)->GetLandmark(GetLinkSubId(_R("p2")), m_PlanePoint1, currTs);
+	//((mafVMELandmarkCloud *)m_Cloud2)->GetLandmark(GetLinkSubId(_R("p2")), m_PlanePoint1, currTs);
 	m_TmpTransform->TransformPoint(m_PlanePoint1, d);
 
 	return d;// m_PlanePoint1;// d;
 }
-void mafVMEPlane::setPoint2(double d[3])
+void mafVMEPlane::setPoint2(double d0,double d1,double d2)
 //-------------------------------------------------------------------------
 {
 	
-	m_PlanePoint1[0] = d[0];
-	m_PlanePoint1[01] = d[01];
-	m_PlanePoint1[02] = d[02];
+	m_PlanePoint1[0] = d0;
+	m_PlanePoint1[01] = d1;
+	m_PlanePoint1[02] = d2;
 
 
 	double rxyz[3];
 	//p2->SetAbsPose(m_PlanePoint1, rxyz, -1);
-
-	m_Cloud2->SetLandmark(_R("p2"), m_PlanePoint1[0], m_PlanePoint1[1], m_PlanePoint1[2], -1);
+	//p2->Update();
+	//m_Cloud2->SetLandmark(_R("p2"), m_PlanePoint1[0], m_PlanePoint1[1], m_PlanePoint1[2], -1);
 	//pts_change = true;
 }
 double* mafVMEPlane::getNormalVector()
@@ -366,29 +366,29 @@ double* mafVMEPlane::getPoint3()
 	
 	mafNEW(m_TmpTransform);
 
-	m_Cloud2->GetOutput()->GetAbsMatrix(tm, currTs);
+	this->GetOutput()->GetAbsMatrix(tm, currTs);
 	m_TmpTransform->SetMatrix(tm);
 
-	((mafVMELandmarkCloud *)m_Cloud2)->GetLandmark(GetLinkSubId(_R("p3")), m_PlanePoint2, currTs);
+	//((mafVMELandmarkCloud *)m_Cloud2)->GetLandmark(GetLinkSubId(_R("p3")), m_PlanePoint2, currTs);
 	m_TmpTransform->TransformPoint(m_PlanePoint2, d);
 	//return m_PlanePoint2;
 	return d;
 }
-void mafVMEPlane::setPoint3(double d[3])
+void mafVMEPlane::setPoint3(double d0,double d1,double d2)
 //-------------------------------------------------------------------------
 {
 
 	
-	m_PlanePoint2[0] = d[0];
-	m_PlanePoint2[1] = d[1];
-	m_PlanePoint2[2] = d[2];
+	m_PlanePoint2[0] = d0;
+	m_PlanePoint2[1] = d1;
+	m_PlanePoint2[2] = d2;
 
 
 	double rxyz[3];
-//	p3->SetAbsPose(m_PlanePoint2, rxyz, -1);
+	//p3->SetAbsPose(m_PlanePoint2, rxyz, -1);
 	//p3->SetPose(m_PlanePoint2, rxyz, -1);
 	//p3->Update();
-	m_Cloud2->SetLandmark(_R("p3"), m_PlanePoint2[0], m_PlanePoint2[1], m_PlanePoint2[2], -1);
+	//m_Cloud2->SetLandmark(_R("p3"), m_PlanePoint2[0], m_PlanePoint2[1], m_PlanePoint2[2], -1);
 	
 	
 	//string sss40 =  std::to_string(m_PlanePoint2[0]) + " " + std::to_string(m_PlanePoint2[1]) + " " + std::to_string(m_PlanePoint2[2]);
@@ -415,11 +415,11 @@ mafGUI* mafVMEPlane::CreateGui()
 	m_Gui->Label(_R("Plane Gui"));
 	
 
-	m_Gui->Double(CHANGE_VALUE_PLANE, _L("Ux"), &m_PlaneXRes);
-	m_Gui->Double(CHANGE_VALUE_PLANE, _L("Uy"), &m_PlaneYRes);
+//	m_Gui->Double(CHANGE_VALUE_PLANE, _L("Ux"), &m_PlaneXRes);
+//	m_Gui->Double(CHANGE_VALUE_PLANE, _L("Uy"), &m_PlaneYRes);
 	m_Gui->Button(ID_P1_LINK, &m_p1LandmarkName, _L("first_Point"), _L("Select 1st Point"));
-//	m_Gui->Button(ID_P2_LINK, &m_p2LandmarkName, _L("second_Point"), _L("Select 2nd Point"));
-//	m_Gui->Button(ID_P3_LINK, &m_p3LandmarkName, _L("third_Point"), _L("Select 3rd Point"));
+	m_Gui->Button(ID_P2_LINK, &m_p2LandmarkName, _L("second_Point"), _L("Select 2nd Point"));
+	m_Gui->Button(ID_P3_LINK, &m_p3LandmarkName, _L("third_Point"), _L("Select 3rd Point"));
 
 	m_Gui->Label(_R("Plane intersection"));
 	m_Gui->Button(ID_PLAN1_LINK, &m_plan1Name, _L("Plan_intersect"), _L("Select plan to intersect"));
@@ -505,20 +505,20 @@ void mafVMEPlane::OnEvent(mafEventBase *maf_event)
 							   SetLandmarkLink(_R("first_Point"), n);
 							   m_p1LandmarkName = n->GetName();
 							   m_Gui->Update();
-							   pts_change = true;
+							   //pts_change = true;
 							   InternalUpdate();
 
 						   }
 		}
 			break;
 		
-			/*case ID_P2_LINK:
+		case ID_P2_LINK:
 		{
 
 						   
 
 						   mafID button_id = e->GetId();
-						   mafString title = _("Choose P2 Landmark link");
+						   mafString title = _L("Choose P2 Landmark link");
 						   e->SetId(VME_CHOOSE);
 
 						   e->SetString(&title);
@@ -528,11 +528,11 @@ void mafVMEPlane::OnEvent(mafEventBase *maf_event)
 						   {
 
 							   
-							   SetLandmarkLink("second_Point", n);
+							   SetLandmarkLink(_R("second_Point"), n);
 							   m_p2LandmarkName = n->GetName();
 
 							   m_Gui->Update();
-							   pts_change = true;
+							  // pts_change = true;
 							   InternalUpdate();
 
 						   }
@@ -544,7 +544,7 @@ void mafVMEPlane::OnEvent(mafEventBase *maf_event)
 						   
 
 						   mafID button_id = e->GetId();
-						   mafString title = _("Choose P3 Landmark link");
+						   mafString title = _L("Choose P3 Landmark link");
 						   e->SetId(VME_CHOOSE);
 
 						   e->SetString(&title);
@@ -554,18 +554,18 @@ void mafVMEPlane::OnEvent(mafEventBase *maf_event)
 						   {
 
 							   
-							   SetLandmarkLink("third_Point", n);
+							   SetLandmarkLink(_R("third_Point"), n);
 							   m_p3LandmarkName = n->GetName();
 
 							   m_Gui->Update();
-							   pts_change = true;
+							   //pts_change = true;
 							   InternalUpdate();
 
 						   }
 		}
 			break;
 			
-			*/
+		
 		default:
 			mafVME::OnEvent(maf_event);
 		}
@@ -580,7 +580,7 @@ void mafVMEPlane::OnEvent(mafEventBase *maf_event)
 void mafVMEPlane::SetLandmarkLink(const mafString& link_name, mafNode *n)
 //-------------------------------------------------------------------------
 {
-	pts_change = true;
+	//pts_change = true;
 	if (n->IsMAFType(mafVMELandmark))
 	{
 		SetLink(link_name, n, ((mafVMELandmarkCloud *)(n->GetParent()))->FindLandmarkIndex(n->GetName()));
@@ -636,13 +636,13 @@ void mafVMEPlane::InternalUpdate()
 
 			
 
-		//	m_Cloud2->SetLandmark("p1", m_PlaneOrigin[0], m_PlaneOrigin[1], m_PlaneOrigin[2], currTs);
-		//	m_Cloud2->SetLandmark("p2", m_PlanePoint1[0], m_PlanePoint1[1], m_PlanePoint1[2], currTs);
-		//	m_Cloud2->SetLandmark("p3", m_PlanePoint2[0], m_PlanePoint2[1], m_PlanePoint2[2], currTs);
-		//	m_Cloud2->Update();
+			/*m_Cloud2->SetLandmark(_R("p1"), m_PlaneOrigin[0], m_PlaneOrigin[1], m_PlaneOrigin[2], currTs);
+			m_Cloud2->SetLandmark(_R("p2"), m_PlanePoint1[0], m_PlanePoint1[1], m_PlanePoint1[2], currTs);
+			m_Cloud2->SetLandmark(_R("p3"), m_PlanePoint2[0], m_PlanePoint2[1], m_PlanePoint2[2], currTs);
+			m_Cloud2->Update();*/
 			//
 		
-	/*	if (pts_change)
+	//	if (pts_change)
 			if ((p1 != NULL) )
 				{
 
@@ -668,8 +668,8 @@ void mafVMEPlane::InternalUpdate()
 				{
 
 				}
-				*/
-			/*if (pts_change)
+				
+			//if (pts_change)
 			if ((p2 != NULL) )
 				{
 					//p2->GetOutput()->GetAbsPose(m_PlanePoint1, xyzr, currTs);
@@ -698,8 +698,8 @@ void mafVMEPlane::InternalUpdate()
 					//wxBusyInfo wait52(s24.c_str());
 					//Sleep(1500);
 				}
-				*/
-			/*if (pts_change)
+				
+			//if (pts_change)
 			if ((p3 != NULL) )
 				{
 
@@ -730,7 +730,7 @@ void mafVMEPlane::InternalUpdate()
 				//	wxBusyInfo wait52(s24.c_str());
 				//	Sleep(1500);
 				}
-				*/
+				
 				
 		}
 			
@@ -750,17 +750,17 @@ void mafVMEPlane::InternalUpdate()
 			Uy[2] = m_PlanePoint2[2] - m_PlaneOrigin[2];
 			
 
-			m_PlaneOriginP[0] = m_PlaneOrigin[0] - (Ux[0] + Uy[0]) * m_PlaneXRes;
-			m_PlaneOriginP[1] = m_PlaneOrigin[1] - (Ux[1] + Uy[1]) * m_PlaneXRes;
-			m_PlaneOriginP[2] = m_PlaneOrigin[2] - (Ux[2] + Uy[2]) * m_PlaneXRes;
+			m_PlaneOriginP[0] = m_PlaneOrigin[0];// -(Ux[0] + Uy[0]) * m_PlaneXRes;
+			m_PlaneOriginP[1] = m_PlaneOrigin[1];// -(Ux[1] + Uy[1]) * m_PlaneXRes;
+			m_PlaneOriginP[2] = m_PlaneOrigin[2];// -(Ux[2] + Uy[2]) * m_PlaneXRes;
 
-			m_PlanePoint1P[0] = m_PlanePoint1[0] - (Ux[0] + Uy[0]) * m_PlaneXRes + Ux[0] * m_PlaneYRes;
-			m_PlanePoint1P[1] = m_PlanePoint1[1] - (Ux[1] + Uy[1]) * m_PlaneXRes + Ux[1] * m_PlaneYRes;
-			m_PlanePoint1P[2] = m_PlanePoint1[2] - (Ux[2] + Uy[2]) * m_PlaneXRes + Ux[2] * m_PlaneYRes;
+			m_PlanePoint1P[0] = m_PlanePoint1[0];// -(Ux[0] + Uy[0]) * m_PlaneXRes + Ux[0] * m_PlaneYRes;
+			m_PlanePoint1P[1] = m_PlanePoint1[1];// -(Ux[1] + Uy[1]) * m_PlaneXRes + Ux[1] * m_PlaneYRes;
+			m_PlanePoint1P[2] = m_PlanePoint1[2];// -(Ux[2] + Uy[2]) * m_PlaneXRes + Ux[2] * m_PlaneYRes;
 
-			m_PlanePoint2P[0] = m_PlanePoint2[0] - (Ux[0] + Uy[0]) * m_PlaneXRes + Uy[0] * m_PlaneYRes;
-			m_PlanePoint2P[1] = m_PlanePoint2[1] - (Ux[1] + Uy[1]) * m_PlaneXRes + Uy[1] * m_PlaneYRes;
-			m_PlanePoint2P[2] = m_PlanePoint2[2] - (Ux[2] + Uy[2]) * m_PlaneXRes + Uy[2] * m_PlaneYRes;
+			m_PlanePoint2P[0] = m_PlanePoint2[0];// -(Ux[0] + Uy[0]) * m_PlaneXRes + Uy[0] * m_PlaneYRes;
+			m_PlanePoint2P[1] = m_PlanePoint2[1];// -(Ux[1] + Uy[1]) * m_PlaneXRes + Uy[1] * m_PlaneYRes;
+			m_PlanePoint2P[2] = m_PlanePoint2[2];// -(Ux[2] + Uy[2]) * m_PlaneXRes + Uy[2] * m_PlaneYRes;
 
 			surf->RemoveAllInputs();
 			surf->SetOrigin(m_PlaneOriginP);
@@ -801,7 +801,7 @@ void mafVMEPlane::InternalUpdate()
 			
 	
 	
-	pts_change = false;
+	//pts_change = false;
 	
 
 	//mafEvent ev(this,CAMERA_UPDATE);
@@ -979,7 +979,7 @@ void mafVMEPlane::UpdateLinks()
 
 	
 	//if (pts_change)
-	//{
+	{
 
 		mafTimeStamp currTs = GetTimeStamp();
 		double xyzr[3];
@@ -995,35 +995,35 @@ void mafVMEPlane::UpdateLinks()
 			m_p1LandmarkName = p1 ? p1->GetName() : _L("none");
 
 
-		/*
+		
 
-		p2 = GetLandmarkVME("second_Point");
+		p2 = GetLandmarkVME(_R("second_Point"));
 		if (p2 && p2->IsMAFType(mafVMELandmark))
 		{
-			sub_id = GetLinkSubId("second_Point");
-			m_p2LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)p2->GetParent())->GetLandmarkName(sub_id) : _("none");
+			sub_id = GetLinkSubId(_R("second_Point"));
+			m_p2LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)p2->GetParent())->GetLandmarkName(sub_id) : _L("none");
 		}
 		else
-			m_p2LandmarkName = p2 ? p2->GetName() : _("none");
+			m_p2LandmarkName = p2 ? p2->GetName() : _L("none");
 
 
 
 
-		p3 = GetLandmarkVME("third_Point");
+		p3 = GetLandmarkVME(_R("third_Point"));
 		if (p3 && p3->IsMAFType(mafVMELandmark))
 		{
-			sub_id = GetLinkSubId("third_Point");
-			m_p3LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)p3->GetParent())->GetLandmarkName(sub_id) : _("none");
+			sub_id = GetLinkSubId(_R("third_Point"));
+			m_p3LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)p3->GetParent())->GetLandmarkName(sub_id) : _L("none");
 		}
 		else
 		{
-			m_p3LandmarkName = p3 ? p3->GetName() : _("none");
+			m_p3LandmarkName = p3 ? p3->GetName() : _L("none");
 
 			
 		}
 			
 	}
-	*/
+	
 	
 
 }
@@ -1042,18 +1042,19 @@ void mafVMEPlane::computeNormal()
 	mafTimeStamp currTs = GetTimeStamp();
 	mafNEW(m_TmpTransform);
 	mafMatrix tm;
-	m_Cloud2->GetOutput()->GetAbsMatrix(tm, currTs);
+	this->GetOutput()->GetAbsMatrix(tm, currTs);
+	//m_Cloud2->GetOutput()->GetAbsMatrix(tm, currTs);
 	m_TmpTransform->SetMatrix(tm);
 
-	((mafVMELandmarkCloud *)m_Cloud2)->GetLandmark(GetLinkSubId(_R("p1")), m_PlaneOrigin, currTs);
+	//((mafVMELandmarkCloud *)m_Cloud2)->GetLandmark(GetLinkSubId(_R("p1")), m_PlaneOrigin, currTs);
 	m_TmpTransform->TransformPoint(m_PlaneOrigin, origin);
 
 
-	((mafVMELandmarkCloud *)m_Cloud2)->GetLandmark(GetLinkSubId(_R("p2")), m_PlanePoint1, currTs);
+	//((mafVMELandmarkCloud *)m_Cloud2)->GetLandmark(GetLinkSubId(_R("p2")), m_PlanePoint1, currTs);
 	m_TmpTransform->TransformPoint(m_PlanePoint1, Point1);
 
 
-	((mafVMELandmarkCloud *)m_Cloud2)->GetLandmark(GetLinkSubId(_R("p3")), m_PlanePoint2, currTs);
+	//((mafVMELandmarkCloud *)m_Cloud2)->GetLandmark(GetLinkSubId(_R("p3")), m_PlanePoint2, currTs);
 	m_TmpTransform->TransformPoint(m_PlanePoint2, Point2);
 	
 	v1[0] = Point1[0] - origin[0];
@@ -1102,14 +1103,14 @@ mafVME *mafVMEPlane::GetLandmarkVME(mafString str)
 	return mafVME::SafeDownCast(GetLink(str));
 }
 
-mafVME *mafVMEPlane::GetVMEPt1()
+/*mafVME* mafVMEPlane::GetVMEPt1()
 {
 
 
 	return m_Cloud2->GetLandmark(0);
-}
+}*/
 
-/*void mafVMEPlane::Setm_p1LName(mafString a)
+void mafVMEPlane::Setm_p1LName(mafString a)
 {
 	m_p1LandmarkName = a;
 }
@@ -1121,4 +1122,4 @@ void mafVMEPlane::Setm_p2LName(mafString a)
 void mafVMEPlane::Setm_p3LName(mafString a)
 {
 	m_p3LandmarkName = a;
-}*/
+}

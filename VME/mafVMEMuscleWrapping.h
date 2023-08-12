@@ -331,7 +331,7 @@ protected:
 
   Eigen::Matrix3d rotationMat;
   //mafVMELandmarkCloud	*m_Cloud1;
-  mafVMELandmarkCloud	*m_Cloud2;
+  //mafVMELandmarkCloud	*m_Cloud2;
   //mafVMELandmarkCloud	*m_CloudPath1;
   //mafVMELandmarkCloud	*m_CloudPath2;
   

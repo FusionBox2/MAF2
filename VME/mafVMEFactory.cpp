@@ -42,6 +42,7 @@
 #include "mafVMEProber.h"
 #include "mafVMERefSys.h"
 #include "mafVMEEllipsoid.h"
+#include "mafVMEQuadricSurfaceFitting.h"
 #include "mafVMEHyperboloid.h"
 #include "mafVMECylinder.h"
 #include "mafVMELineSeg.h"
@@ -152,6 +153,7 @@ mafVMEFactory::mafVMEFactory()
   mafPlugNodeMacro(mafVMERefSys,"VME representing a reference system");
   mafPlugNodeMacro(mafVMEScalar,"VME representing time varying scalar values");
   mafPlugNodeMacro(mafVMEEllipsoid, "VME representing Ellipsoid");
+  mafPlugNodeMacro(mafVMEQuadricSurfaceFitting, "VME representing quadric fitting");
   mafPlugNodeMacro(mafVMECylinder, "VME representing Cylinder");
   mafPlugNodeMacro(mafVMEHyperboloid, "VME representing Hyperboloid");
   mafPlugNodeMacro(mafVMEPlane, "VME representing Plane");

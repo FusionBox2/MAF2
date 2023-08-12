@@ -89,7 +89,8 @@ void mafGUIMaterialButton::CreateGui()
   wxStaticText *lab = new wxStaticText(m_Gui, -1, "material", wxDefaultPosition, wxSize(60,16), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
   
   m_Material->MakeIcon();
-  m_MaterialButton = new mafGUIPicButton(m_Gui, m_Material->m_Icon, ID_MATERIAL, this);
+  if(this)
+	m_MaterialButton = new mafGUIPicButton(m_Gui, m_Material->m_Icon, ID_MATERIAL, this);
 
   //m_MaterialLabel = new wxStaticText(m_Gui,ID_MATERIAL,"",wxDefaultPosition, wxSize(100,16), wxST_NO_AUTORESIZE );
   m_MaterialLabel = new wxStaticText(m_Gui,-1,"",wxDefaultPosition, wxSize(100,16), wxST_NO_AUTORESIZE );

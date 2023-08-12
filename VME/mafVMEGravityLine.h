@@ -7,7 +7,7 @@
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
-
+cloud
  This software is distributed WITHOUT ANY WARRANTY; without even
  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
  PURPOSE.  See the above copyright notice for more information.
@@ -127,7 +127,7 @@ protected:
 
 	CHANGE_VALUE_POINTS1,
 	ID_LAST,
-	//ID_PLANE_LINK,
+	ID_PLANE_LINK,
 	ID_P0_LINK,
 	ID_Surface_LINK
   };
@@ -138,7 +138,7 @@ protected:
     ID_Y_AXIS,
     ID_Z_AXIS,
   };
-  void SetInputPointsCloud(vtkPoints *);
+ // void SetInputPointsCloud(vtkPoints *);
 
   /** this function uses PARAMETRIC_SURFACE_TYPE_ID as argument*/
   //void EnableQuadricSurfaceGui(int surfaceTypeID);
@@ -158,7 +158,7 @@ protected:
 
   //void CreateGuiSelectPoints();
 
-  //mafString m_PlaneVmeName;
+  mafString m_PlaneVmeName;
   mafString m_SurfaceName;
   //mafGUI *m_GuiSphere;
 
@@ -170,11 +170,11 @@ protected:
   mafTransform *m_Transform; 
   vtkPolyData  *m_PolyData;
   mafString gLength;
-  int m_GeometryType;
+  //int m_GeometryType;
 
   double PointToPlanPt1[3];
-  double PointToPlanPt2[3];
-  double PointToPlanPt3[3];
+  //double PointToPlanPt2[3];
+  //double PointToPlanPt3[3];
 
   double distToPlan=0;
 
@@ -196,7 +196,7 @@ protected:
   protected:
 	  mafVME* GetP0VME();
 	  vtkXYPlotActor *m_PlotActor;
-	//  mafVMEPlane* GetPlaneVME();
+	  mafVMEPlane* GetPlaneVME();
 	  mafVMESurface* GetSurfaceVME();
 	  
 	  mafVME *P0;

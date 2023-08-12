@@ -88,11 +88,11 @@ mafVMECenterLine::mafVMECenterLine()
   rotationMat = Eigen::Matrix3d::Identity();
 
   mafNEW(chord);
-  chord->SetName(_L("chord"));
+  chord->SetName(_R("chord"));
   chord->ReparentTo(this);
 
   mafNEW(chordP);
-  chordP->SetName(_L("chordP"));
+  chordP->SetName(_R("chordP"));
   chordP->ReparentTo(this);
   chordP->SetMeterMode(1);
 
@@ -117,13 +117,13 @@ mafVMECenterLine::mafVMECenterLine()
 
 	mafNEW(m_CloudPath1);
 	m_CloudPath1->Open();
-	m_CloudPath1->SetName(_L("path1"));
+	m_CloudPath1->SetName(_R("path1"));
 	m_CloudPath1->SetRadius(1.5);
 	m_CloudPath1->ReparentTo(this);
 	m_CloudPath1->AppendLandmark(0, 0, 0, _R("first"), false);
 	m_CloudPath1->AppendLandmark(0, 0, 0, _R("last"), false);
 	m_CloudPath1->AppendLandmark(0, 0, 0, _R("PointC"), false);
-	m_CloudPath1->AppendLandmark(0, 0, 0, _R("mm"), false);
+//	m_CloudPath1->AppendLandmark(0, 0, 0, _R("mm"), false);
 
 
 }
@@ -151,7 +151,7 @@ mmaMaterial *mafVMECenterLine::GetMaterial()
 	return material;
 }
 //-------------------------------------------------------------------------
-Eigen::Matrix3d mafVMECenterLine::principalAxesLCS(int nbr, vector<vector<double>>& vertex, double Circumf, double CrSec_Ratio, std::vector<std::vector<double>>& Cross_Sec_PGD_LCS)
+Eigen::Matrix3d mafVMECenterLine::principalAxesLCS(int nbr, std::vector<std::vector<double>>& vertex, std::vector<std::vector<double>>& Cross_Sec_PGD_LCS)
 {
 
 	//string s650 = "principalAxesLCS start... ";
@@ -306,7 +306,7 @@ Eigen::Matrix3d mafVMECenterLine::principalAxesLCS(int nbr, vector<vector<double
 	//VNfile.close();
 	return V_N0;
 }
-Eigen::Matrix3d mafVMECenterLine::principalAxesLCSRib(int nbr, vector<vector<double>>& vertex, double Circumf, double CrSec_Ratio, std::vector<std::vector<double>>& Cross_Sec_PGD_LCS, Eigen::Vector3d Perp_MidLn)
+Eigen::Matrix3d mafVMECenterLine::principalAxesLCSRib(int nbr, vector<vector<double>>& vertex, std::vector<std::vector<double>>& Cross_Sec_PGD_LCS, Eigen::Vector3d Perp_MidLn)
 {
 
 
@@ -855,7 +855,7 @@ Eigen::Matrix3d mafVMECenterLine::principalAxesLCSRib(int nbr, vector<vector<dou
 
 			double p = 0.5*(a + b + c);
 			S_trg = S_trg + sqrt(p*(p - a)*(p - b)*(p - c));
-			(Circumf) = (Circumf)+c; // current Circumference
+			Circumf = Circumf+c; // current Circumference
 			Test_Pnt.conservativeResize(Test_Pnt.rows() + 1, 3);
 			Test_Pnt(Test_Pnt.rows() - 1, 0) = Curr_point_1(0);
 			Test_Pnt(Test_Pnt.rows() - 1, 1) = Curr_point_1(1);
@@ -911,7 +911,7 @@ Eigen::Matrix3d mafVMECenterLine::principalAxesLCSRib(int nbr, vector<vector<dou
 			double Y0 = ellipse_t->Y0;
 			// the ellipse
 			Eigen::VectorXd theta_r, ellipse_x_r, ellipse_y_r, zer;
-			for (int i = 0; i <= 39; i++)
+			for (int i = 0; i <= 40; i++)
 			{
 				theta_r.conservativeResize(i + 1); 
 				ellipse_x_r.conservativeResize(i + 1);
@@ -1195,7 +1195,7 @@ Eigen::Matrix3d mafVMECenterLine::principalAxesLCSRib(int nbr, vector<vector<dou
 		
 		if ((Test_Pnt2.rows() < 6) || (ellipse_t->a == 0))
 		{
-			CrSec_Ratio = lam(2) / lam(1);
+			CrSec_Ratio = lam_Out(2) / lam_Out(0);
 		}
 
 
@@ -1359,7 +1359,7 @@ Eigen::Vector4d mafVMECenterLine::extract(Eigen::Matrix3d r)
 	double deg = fi * 180 / 3.1416;
 	Eigen::Matrix3d eye;
 	eye << 1, 0, 0, 0, 1, 0, 0, 0, 1;
-	if (deg > 135);
+	if (deg > 135)
 	{
 		Eigen::Matrix3d R = r;
 		Eigen::Matrix3d b_ttt = 0.5*(R + R.transpose()) - cos(fi) * eye;
@@ -1406,13 +1406,6 @@ Eigen::Vector4d mafVMECenterLine::extract(Eigen::Matrix3d r)
 		u(1) = sign(r(0, 2) - r(2, 0))*sqrt(abs((r(1, 1) - co)*t));
 		u(2) = sign(r(1, 0) - r(0, 1))*sqrt(abs((r(2, 2) - co)*t));
 		}
-	else if ((fi != 0) & (co < 0))
-	{
-		double t = 1 / v;
-		u(0) = sqrt(abs((r(0, 0) - co) * t));
-		u(1) = sqrt(abs((r(1, 1) - co) * t));
-		u(2) = sqrt(abs((r(2, 2) - co) * t));
-	}
 	else if ((fi != 0) & (co < 0))
 	{
 		double t = 1 / v;
@@ -1760,16 +1753,16 @@ mafGUI* mafVMECenterLine::CreateGui()
 	//m_Gui->Label(_("distance: "), &gLength, true);
     //m_Gui->Divider(2);
    // CreateGuiSphere();
-   m_Gui->Bool(CHANGE_VALUE_RIB, _R("Rib"), &m_Rib);
+   //m_Gui->Bool(CHANGE_VALUE_RIB, _R("Rib"), &m_Rib);
    m_Gui->Button(ID_Surface_LINK, &m_SurfaceName, _L("Surface"), _L("Select Surace"));
 
 
 
-   m_Gui->Double(CHANGE_VALUE_CenterLine, _L("Delt_1"), &Delt_1);
-   m_Gui->Double(CHANGE_VALUE_CenterLine, _L("Mult_01"), &Mult_01);
-   m_Gui->Double(CHANGE_VALUE_CenterLine, _L("D_1mm"), &D_1mm);
-   m_Gui->Double(CHANGE_VALUE_CenterLine, _L("D_50mm"), &D_50mm);
-   m_Gui->Double(CHANGE_VALUE_CenterLine, _L("Fi_stp_5"), &Fi_stp_5);
+   //m_Gui->Double(CHANGE_VALUE_CenterLine, _L("Delt_1"), &Delt_1);
+   //m_Gui->Double(CHANGE_VALUE_CenterLine, _L("Mult_01"), &Mult_01);
+   //m_Gui->Double(CHANGE_VALUE_CenterLine, _L("D_1mm"), &D_1mm);
+   //m_Gui->Double(CHANGE_VALUE_CenterLine, _L("D_50mm"), &D_50mm);
+   m_Gui->Double(CHANGE_VALUE_CenterLine, _L("discretisation angle"), &Fi_stp_5);
 
    m_Gui->Bool(CHANGE_VALUE_FileSaving,_L( "FileSaving"), &m_FS);
 
@@ -1957,7 +1950,7 @@ void mafVMECenterLine::InternalUpdate()
 			
 			{
 				coord = surface->GetSurfaceOutput()->GetVTKData()->GetPoint(i);
-				m_TmpTransform1->TransformPoint(coord, coord);
+				//m_TmpTransform1->TransformPoint(coord, coord);
 
 
 
@@ -1979,18 +1972,24 @@ void mafVMECenterLine::InternalUpdate()
 
 
 			}
+			ofstream fdcoord;
+			fdcoord.open("fdcoord.txt");
 
+			fdcoord << "fdcoord " << "\n";
+			for (int yy = 0; yy < vert.cols(); yy++)
+				fdcoord << vert(0, yy) << " " << vert(1, yy) << " " << vert(2, yy) << "\n ";;
+			fdcoord.close();
 			
 			//principal axes computation
-			double CrSec_Ratio = 0;
-			double Circumf = 0;
+			CrSec_Ratio = 0;
+			Circumf = 0;
 			Eigen::Matrix3d PAxes;
 			
 			//	Eigen::MatrixXd Cross_Sec_PGD_LCS;
 			std::vector<std::vector<double>> Cross_Sec_PGD_LCS(0, vector<double>(7));
 			if (nbr > 3)
 			{
-				PAxes = principalAxesLCS(nbr, coordd, CrSec_Ratio, Circumf, Cross_Sec_PGD_LCS);
+				PAxes = principalAxesLCS(nbr, coordd, Cross_Sec_PGD_LCS);
 		
 				G_Orig_D = getOrigin(nbr, coordd);
 			}
@@ -2014,31 +2013,31 @@ void mafVMECenterLine::InternalUpdate()
 			}
 			
 			Eigen::Matrix3Xd D = PAxes.transpose()*(vert - af);
-			ofstream output3;
-			output3.open("D.txt");
-			for (int i = 0; i < D.rows(); i++)
-			{
+			//ofstream output3;
+			//output3.open("D.txt");
+			//for (int i = 0; i < D.rows(); i++)
+			//{
 
-				for (int kl = 0; kl < D.cols(); kl++)
-				{
-					output3 << D(i, kl) << "\t";
-				}
-				output3 << "\n";
-			}
-			output3.close();
+			//	for (int kl = 0; kl < D.cols(); kl++)
+			//	{
+			//		output3 << D(i, kl) << "\t";
+			//	}
+			//	output3 << "\n";
+			//}
+			//output3.close();
 
-			ofstream output4;
-			output4.open("vertT.txt");
-			for (int i = 0; i < vertT.rows(); i++)
-			{
+			//ofstream output4;
+			//output4.open("vertT.txt");
+			//for (int i = 0; i < vertT.rows(); i++)
+			//{
 
-				for (int kl = 0; kl < vertT.cols(); kl++)
-				{
-					output4 << vertT(i, kl) << "\t";
-				}
-				output4 << "\n";
-			}
-			output4.close();
+			//	for (int kl = 0; kl < vertT.cols(); kl++)
+			//	{
+			//		output4 << vertT(i, kl) << "\t";
+			//	}
+			//	output4 << "\n";
+			//}
+			//output4.close();
 
 
 
@@ -2184,7 +2183,14 @@ void mafVMECenterLine::InternalUpdate()
 			V_lft = V_lft / V_lft.norm();
 			Eigen::Vector3d V_rgt = rgt - Ori_XYZ;
 			V_rgt = V_rgt / V_rgt.norm();
+			ofstream fdrgt;
+			fdrgt.open("fdrgt.txt");
 
+			fdrgt << "frrgt " << "\n";
+			for (int yy = 0; yy < D_rgt.cols(); yy++)
+				fdrgt << D_rgt(0, yy) << " " << D_rgt(1, yy) << " " << D_rgt(2, yy) << "\n ";;
+			fdrgt.close();
+			
 			
 			/////
 			
@@ -2212,7 +2218,7 @@ void mafVMECenterLine::InternalUpdate()
 			Eigen::Matrix3Xd Mid_Ln_Perp;
 			Eigen::Matrix3d R_V_N;
 			Eigen::VectorXd S_trg_Area;
-			Eigen::Matrix3Xd Twist_X_ax;
+			//Eigen::Matrix3Xd Twist_X_ax;
 			Eigen::VectorXd Rib_Long_Pos;
 			Rib_Long_Pos.resize(I_lft_rgt);
 			S_trg_Area.resize(I_lft_rgt);
@@ -2380,7 +2386,7 @@ void mafVMECenterLine::InternalUpdate()
 					
 						if (sznewDLFt > 3)
 						{
-							R_V_N = principalAxesLCSRib(sznewDLFt, newDLFt1, CrSec_Ratio, Circumf, Cross_Sec_PGD_LCS, Perp_MidLn);
+							R_V_N = principalAxesLCSRib(sznewDLFt, newDLFt1, Cross_Sec_PGD_LCS, Perp_MidLn);
 
 							
 							R_G_Orig = getOrigin(newDLFt1.size(), newDLFt1);
@@ -2543,7 +2549,7 @@ void mafVMECenterLine::InternalUpdate()
 					
 						if (uf > 3)
 						{
-							R_V_N = principalAxesLCSRib(uf, newDLFt1, CrSec_Ratio, Circumf, Cross_Sec_PGD_LCS, Perp_MidLn);
+							R_V_N = principalAxesLCSRib(uf, newDLFt1, Cross_Sec_PGD_LCS, Perp_MidLn);
 
 							R_G_Orig = getOrigin(uf, newDLFt1);
 							Pnt_mn_prp(0) = R_G_Orig(0);
@@ -2616,7 +2622,13 @@ void mafVMECenterLine::InternalUpdate()
 				
 			}////for (int I_lft = 0; I_lft < 1; I_lft++)
 			
-			
+			ofstream fdmidLn;
+			fdmidLn.open("fdmidLn00.txt");
+
+			fdmidLn << "fdmidLn " << "\n";
+			for (int yy = 0; yy < Mid_Ln_Perp.cols(); yy++)
+				fdmidLn << Mid_Ln_Perp(0,yy) << " " << Mid_Ln_Perp(1,yy) << " " << Mid_Ln_Perp(2,yy) << "\n ";;
+			fdmidLn.close();
 			
 {
 
@@ -2699,9 +2711,9 @@ for (int i = 0; i < ind_Cross_Sec_PGD_LCS.size(); i++)
 
 //ind_Cross_Sec_PGD_LCS.resize(std::round(Mult_ind_Cross*Cross_Sec_PGD_LCS.size()));
 
-string ts1 = "ind_Cross_Sec_PGD_LCSsize " + std::to_string(ind_Cross_Sec_PGD_LCS.size());
-wxBusyInfo wait1212(ts1.c_str());
-Sleep(1500);
+//string ts1 = "ind_Cross_Sec_PGD_LCSsize " + std::to_string(ind_Cross_Sec_PGD_LCS.size());
+//wxBusyInfo wait1212(ts1.c_str());
+//Sleep(1500);
 
 
 
@@ -2741,13 +2753,13 @@ for (int u = 0; u < ind_Cross_Sec_PGD_LCS.rows(); u++)
 	Rm_in_PGD_T.push_back({ fgg(u, 0) * ((Cross_Sec_PGD_LCS)[u][1]), fgg(u, 1) * ((Cross_Sec_PGD_LCS)[u][2]), fgg(u, 2) * ((Cross_Sec_PGD_LCS)[u][3]), (Cross_Sec_PGD_LCS)[u][4], (Cross_Sec_PGD_LCS)[u][5], (Cross_Sec_PGD_LCS)[u][6] });
 
 }
-//ofstream fdRm_in_PGD_T;
-//fdRm_in_PGD_T.open(" Rm_in_PGD_T.txt");
+ofstream fdRm_in_PGD_T;
+fdRm_in_PGD_T.open(" Rm_in_PGD_T.txt");
 
-//fdRm_in_PGD_T << "Rm_in_PGD_T " << "\n";
-//for (int yy = 0; yy<Rm_in_PGD_T.size(); yy++)
-//	fdRm_in_PGD_T << Rm_in_PGD_T[yy][0] << " " << Rm_in_PGD_T[yy][1] << " " << Rm_in_PGD_T[yy][2] << " " << Rm_in_PGD_T[yy][3] << " " << Rm_in_PGD_T[yy][4] << " " << Rm_in_PGD_T[yy][5] << "\n";
-//fdRm_in_PGD_T.close();
+fdRm_in_PGD_T << "Rm_in_PGD_T " << "\n";
+for (int yy = 0; yy<Rm_in_PGD_T.size(); yy++)
+	fdRm_in_PGD_T << Rm_in_PGD_T[yy][0] << " " << Rm_in_PGD_T[yy][1] << " " << Rm_in_PGD_T[yy][2] << " " << Rm_in_PGD_T[yy][3] << " " << Rm_in_PGD_T[yy][4] << " " << Rm_in_PGD_T[yy][5] << "\n";
+fdRm_in_PGD_T.close();
 
 
 //ifstream fdRm_in_PGD_T;
@@ -2769,9 +2781,9 @@ std::vector<std::vector<double>> cr_pos_T(0, vector<double>(3)), disp_sq_T(0, ve
 double yu = ShV_ICR_MHA(Ind_Call, Cross_Sec_PGD_LCS.size(), Rm_in_PGD_T, Angle_filtr_T, cr_pos_T, disp_sq_T, E_MHA_T, disp_ang_T);
 
 
-string tsqs1 = "ShV_ICR_MHA end " + std::to_string(cr_pos_T.size());
-wxBusyInfo wait1fg212(tsqs1.c_str());
-Sleep(1500);
+//string tsqs1 = "ShV_ICR_MHA end " + std::to_string(cr_pos_T.size())+ " "+ std::to_string(Cross_Sec_PGD_LCS.size());
+//wxBusyInfo wait1fg212(tsqs1.c_str());
+//Sleep(1500);
 
 
 Eigen::Matrix2Xd ICR_MHA_rez_T_CT;
@@ -2782,15 +2794,15 @@ ICR_MHA_rez_T_CT(0, 2) = cr_pos_T[cr_pos_T.size() - 1][2];
 ICR_MHA_rez_T_CT(0, 3) = disp_sq_T[disp_sq_T.size() - 1][0];
 
 
-//ICR_MHA_rez_T_CT(1, 0) = E_MHA_T[E_MHA_T.size() - 1][0];
-//ICR_MHA_rez_T_CT(1, 1) = E_MHA_T[E_MHA_T.size() - 1][1];
-//ICR_MHA_rez_T_CT(1, 2) = E_MHA_T[E_MHA_T.size() - 1][2];
-//ICR_MHA_rez_T_CT(1, 3) = disp_ang_T[disp_ang_T.size() - 1][0];
+ICR_MHA_rez_T_CT(1, 0) = E_MHA_T[E_MHA_T.size() - 1][0];
+ICR_MHA_rez_T_CT(1, 1) = E_MHA_T[E_MHA_T.size() - 1][1];
+ICR_MHA_rez_T_CT(1, 2) = E_MHA_T[E_MHA_T.size() - 1][2];
+ICR_MHA_rez_T_CT(1, 3) = disp_ang_T[disp_ang_T.size() - 1][0];
 
-ICR_MHA_rez_T_CT(1, 0) = -0.0612;
-ICR_MHA_rez_T_CT(1, 1) = 0.9649;
-ICR_MHA_rez_T_CT(1, 2) = -0.2555;
-ICR_MHA_rez_T_CT(1, 3) = 45.4454;
+//ICR_MHA_rez_T_CT(1, 0) = -0.0612;
+//ICR_MHA_rez_T_CT(1, 1) = 0.9649;
+//ICR_MHA_rez_T_CT(1, 2) = -0.2555;
+//ICR_MHA_rez_T_CT(1, 3) = 45.4454;
 
 
 //ofstream fdM;
@@ -3181,7 +3193,7 @@ fdSum_AngBand_Z_ax.close();
 
 
 double min_Sum_AngBand_Z_ax, Ang_Left, Ang_Right, Angle_Z_Bend;
-/*
+
 if (Lst_Path_Yes)
 {
 
@@ -3197,7 +3209,12 @@ if (Lst_Path_Yes)
 	Angle_Z_Bend = (Ang_Left + Ang_Right) / 2;
 
 	Curr_Max_Range.push_back(Angle_Z_Bend);
-
+	ofstream fdCurr_Max_Range;
+	secondaryFile = FBaseName + _R("Curr_Max_Range.xls");
+	fdCurr_Max_Range.open(secondaryFile.GetCStr());
+	for (int yy = 0; yy < Curr_Max_Range.size(); yy++)
+		fdCurr_Max_Range << Curr_Max_Range[yy] << "\n";
+	fdCurr_Max_Range.close();
 	//Bending Ang Plane XZ
 
 	int Bend_Y_ax_Yes = 2;
@@ -3206,7 +3223,7 @@ if (Lst_Path_Yes)
 	Eigen::Matrix3Xd XZ_Mid_Ln_Perp;
 	Eigen::Matrix3Xd AngBand_Y_ax;
 
-	for (int ax_ind = 0; ax_ind<Bend_Y_ax_Yes; ax_ind++)
+	for (int ax_ind = 0; ax_ind<=Bend_Y_ax_Yes; ax_ind++)
 	{
 		if (Bend_Y_ax_Yes == 2)
 		{
@@ -3227,11 +3244,8 @@ if (Lst_Path_Yes)
 				XZ_Mid_Ln_Perp(Ind_XYZ, j) = 0;
 
 
-
-
-
 			Eigen::Matrix3Xd sum1;
-
+			
 			sum1.resize(3, I_lft_rgt);
 			for (int j = 1; j < XZ_Mid_Ln_Perp.cols(); j++)
 			{
@@ -3241,12 +3255,12 @@ if (Lst_Path_Yes)
 				sum1(2, j) = sum1(1, j) = sum1(0, j);
 
 			}
-
-
+			N_Mid_Ln_Perp.resize(3, Mid_Ln_Perp.cols()-1);
+			
 			for (int i = 0; i < 3; i++)
-			for (int j = 1; j < Mid_Ln_Perp.cols(); j++)
+			for (int j = 0; j < Mid_Ln_Perp.cols()-1; j++)
 			{
-				N_Mid_Ln_Perp(i, j) = (Mid_Ln_Perp(i, j) - Mid_Ln_Perp(i, j - 1)) / sum1(i, j);
+				N_Mid_Ln_Perp(i, j) = (Mid_Ln_Perp(i, j+1) - Mid_Ln_Perp(i, j )) / sum1(i, j+1);
 			}
 
 
@@ -3254,7 +3268,7 @@ if (Lst_Path_Yes)
 			Eigen::Vector3d u, v, w;
 			double var;
 			AngBand_Y_ax.resize(3,N_Mid_Ln_Perp.cols());
-			for (int i = 0; i < N_Mid_Ln_Perp.cols() - 1; i++)
+			for (int i = 0; i < N_Mid_Ln_Perp.cols() - 2; i++)
 			{
 				u(0) = N_Mid_Ln_Perp(0, i);
 				u(1) = N_Mid_Ln_Perp(1, i);
@@ -3267,23 +3281,32 @@ if (Lst_Path_Yes)
 				w = u.cross(v);
 
 
-
+				
 				AngBand_Y_ax(0,i) = 180 / 3.1416 *asin(w(0));
 				AngBand_Y_ax(1, i) = 180 / 3.1416 *asin(w(1));
 				AngBand_Y_ax(2, i) = 180 / 3.1416 *asin(w(2));
 
 			}
-			AngBand_Y_ax(N_Mid_Ln_Perp.cols() - 1) = 0;
+			AngBand_Y_ax(0,N_Mid_Ln_Perp.cols() - 1) = 0;
+			AngBand_Y_ax(1, N_Mid_Ln_Perp.cols() - 1) = 0;
+			AngBand_Y_ax(2, N_Mid_Ln_Perp.cols() - 1) = 0;
 
 
-
+			
 			//Y_ax_cross = cross(N_Mid_Ln_Perp(:, 1 : I_lft_rgt - 2), N_Mid_Ln_Perp(:, 2 : I_lft_rgt - 1));
 			//AngBand_Y_ax = 180 / pi*asin(Y_ax_cross(Ind_XYZ, :));
 		}
+
+		
+		secondaryFile = FBaseName + _R("AngBand_Y_ax.xls");
+		ofstream fdAngBand_Y_ax;
+		fdAngBand_Y_ax.open(secondaryFile.GetCStr());
+		for (int yy = 0; yy < AngBand_Y_ax.cols(); yy++)
+			fdAngBand_Y_ax << AngBand_Y_ax(0,yy)<<" "<< AngBand_Y_ax(1, yy)<<" "<<AngBand_Y_ax(2, yy) << "\n";
+		fdAngBand_Y_ax.close();
 		I_Strt = 1;
 		std::vector<double>  Sum_AngBand_Y_ax;
 		Sum_AngBand_Y_ax.push_back( 0);
-
 		for (int i = I_Strt; i < AngBand_Y_ax.cols() ;i++)
 		{
 			Sum_AngBand_Y_ax.push_back(Sum_AngBand_Y_ax.at(i - I_Strt ) + AngBand_Y_ax(i - 1));
@@ -3292,7 +3315,7 @@ if (Lst_Path_Yes)
 		{
 			//Curr_Max_Range = [Curr_Max_Range(max(Sum_AngBand_Y_ax) - min(Sum_AngBand_Y_ax))];
 		}
-
+		
 
 
 		//Out_Plots_Cell = [Out_Plots_Cell; ' *** figure(220); Norm Dist vs Norm ' ax_XYZ ' Bend Ang;'];
@@ -3304,9 +3327,9 @@ if (Lst_Path_Yes)
 
 	}
 
+	
 
-
-}*/
+}
 
 
 		result2 = PAxes*Mid_Ln;
@@ -3315,9 +3338,10 @@ if (Lst_Path_Yes)
 	}
 	else
 		{
-			string s = "vertices extraction problem";
-			wxBusyInfo wait12(s.c_str());
-			Sleep(500);
+			//string s = "vertices extraction problem";
+			//wxBusyInfo wait12(s.c_str());
+			//Sleep(500);
+			;
 		}
 
 
@@ -3397,11 +3421,11 @@ if (Lst_Path_Yes)
 
 		if ((mafNode*)m_CloudPath1->GetLandmark(_R("first")) != NULL)
 		{
-			chordP->SetMeterLink("EndVME2", (mafNode*)m_CloudPath1->GetLandmark(_R("first")));
+			chordP->SetMeterLink(_R("EndVME2"), (mafNode*)m_CloudPath1->GetLandmark(_R("first")));
 		}
 		if ((mafNode*)m_CloudPath1->GetLandmark(_R("last")) != NULL)
 		{
-			chordP->SetMeterLink("EndVME1", (mafNode*)m_CloudPath1->GetLandmark(_R("last")));
+			chordP->SetMeterLink(_R("EndVME1"), (mafNode*)m_CloudPath1->GetLandmark(_R("last")));
 
 		}
 
@@ -3411,14 +3435,14 @@ if (Lst_Path_Yes)
 			f[0] = result2(0, ml) + G_Orig_D(0);
 			f[1] = result2(1, ml) + G_Orig_D(1);
 			f[2] = result2(2, ml) + G_Orig_D(2);
-			m_CloudPath1->SetLandmark(_R("mm"), f[0], f[1], f[2], currTs);
-			m_CloudPath1->Update();
+			//m_CloudPath1->SetLandmark(_R("mm"), f[0], f[1], f[2], currTs);
+			//m_CloudPath1->Update();
 
-			if ((mafNode*)m_CloudPath1->GetLandmark(_R("mm")) != NULL)
-			{
-				chordP->SetMeterLink(_R("StartVME"), (mafNode*)m_CloudPath1->GetLandmark(_R("mm")));
-				chordP->Update();
-			}
+			//if ((mafNode*)m_CloudPath1->GetLandmark(_R("mm")) != NULL)
+			//{
+			//	chordP->SetMeterLink(_R("StartVME"), (mafNode*)m_CloudPath1->GetLandmark(_R("mm")));
+			//	chordP->Update();
+			//}
 
 			if (chordP->GetDistance() > val)
 			{
@@ -3427,15 +3451,17 @@ if (Lst_Path_Yes)
 				m_CloudPath1->Update();
 			};
 		}
-		if ((mafNode*)m_CloudPath1->GetLandmark(_R("mm")) != NULL)
-		{
-			chordP->SetMeterLink(_R("StartVME"), (mafNode*)m_CloudPath1->GetLandmark(_R("PointC")));
+		//if ((mafNode*)m_CloudPath1->GetLandmark(_R("mm")) != NULL)
+		//{
+		//	chordP->SetMeterLink(_R("StartVME"), (mafNode*)m_CloudPath1->GetLandmark(_R("PointC")));
 
-		}
+		//}
 
 
 		m_PolyData->SetPoints(pts);
 		m_PolyData->SetLines(cellArray);
+	/// 
+	/// 
 		//m_PolyData->Update();
 			////
 
@@ -3464,23 +3490,21 @@ Eigen::VectorXd mafVMECenterLine::polyeval(std::vector<double>& coeffs, std::vec
 double mafVMECenterLine::ShV_ICR_MHA(int Ind_Call, int nbr, std::vector<std::vector<double>>& Rm_in_PGD, double Angle_filtr, std::vector<std::vector<double>>& cr_pos, std::vector<std::vector<double>>& disp_sq, std::vector<std::vector<double>>& E_MHA, std::vector<std::vector<double>>& disp_ang)
 {
 
-	
 	Eigen::Matrix3d eye = Eigen::Matrix3d::Identity();
 	int Mtr_Tr_s[2];
 
-//	wxBusyInfo wait("ShV_ICR_MHA  init");
-//	Sleep(1500);
+
 
 	Mtr_Tr_s[0] = Rm_in_PGD.size();
 	Mtr_Tr_s[1] = Rm_in_PGD[0].size();
 	int k_frames;
 	Eigen::Matrix3d M_1, M_2;
 	Eigen::Vector3d Transl_k1, Transl_k2;
+
+
 	
 
-//	Mtr_Tr_s[2] = d3;
-
-	Eigen::MatrixXd Qv_hist,u_hist;
+	Eigen::MatrixXd Qv_hist, u_hist;
 
 	/*if (Ind_Call == 1)
 	{
@@ -3493,185 +3517,210 @@ double mafVMECenterLine::ShV_ICR_MHA(int Ind_Call, int nbr, std::vector<std::vec
 		}
 
 
-		
+
 		Transl_k1(0) = Rm_in_PGD[0][3][0];
 		Transl_k1(01) = Rm_in_PGD[1][3][0];
 		Transl_k1(02) = Rm_in_PGD[2][3][0];
 	}
 	else*/
-	
-		k_frames = Mtr_Tr_s[0];
 
-		std::vector<double> x;
+	k_frames = Mtr_Tr_s[0];
 
-
-		
-		for (int j = 0; j < 3; j++)
-			x.push_back( 3.1416*Rm_in_PGD[0][j] / 180);
+	std::vector<double> x;
 
 
-		M_1 = ov_mr_ShV(x);
 
-		Transl_k1(0) = Rm_in_PGD[0][3];
-		Transl_k1(1) = Rm_in_PGD[0][4];
-		Transl_k1(2) = Rm_in_PGD[0][5];
-	
-		double Eps_PC = 1.e-12, Gr_Rad = atan(1.) / 45.;
-		Eigen::Vector3d Qv_t = Eigen::Vector3d::Zero();
-		Eigen::Matrix3d Qt_t = Eigen::Matrix3d::Zero();
-		Eigen::Matrix3d R_MHA = Eigen::Matrix3d::Zero();
-		int k_fr_rez = 0;
-//		string ii = "k frames " + std::to_string(k_frames) ;
-//		wxBusyInfo wait4(ii.c_str());
-//		Sleep(1500);
-		for (int k = 1; k < k_frames;k++)
+	for (int j = 0; j < 3; j++)
+		x.push_back(3.1416 * Rm_in_PGD[0][j] / 180);
+
+
+	M_1 = ov_mr_ShV(x);
+
+	//ofstream fdM;
+	//fdM.open("M.txt");
+
+	//fdM << "x " << x[0] << " " << x[1] << " " << x[2] << "\n";
+	//fdM << "M_1 " << M_1(0,0) << " " << M_1(0,1) << " " << M_1(0,2)<<"\n";
+	//fdM << "M_1 " << M_1(1, 0) << " " << M_1(1, 1) << " " << M_1(1, 2) << "\n";
+	//fdM << "M_1 " << M_1(2, 0) << " " << M_1(2, 1) << " " << M_1(2, 2) << "\n";
+
+
+
+	Transl_k1(0) = Rm_in_PGD[0][3];
+	Transl_k1(1) = Rm_in_PGD[0][4];
+	Transl_k1(2) = Rm_in_PGD[0][5];
+
+	double Eps_PC = 1.e-12, Gr_Rad = atan(1.) / 45.;
+	Eigen::Vector3d Qv_t = Eigen::Vector3d::Zero();
+	Eigen::Matrix3d Qt_t = Eigen::Matrix3d::Zero();
+	Eigen::Matrix3d R_MHA = Eigen::Matrix3d::Zero();
+	int k_fr_rez = 0;
+
+	for (int k = 1; k < k_frames; k++)
+	{
+		/*if (Ind_Call == 1)
 		{
-			/*if (Ind_Call == 1)
+			for (int i = 0; i < 3; i++)
+			for (int j = 0; j < 3; j++)
 			{
-				for (int i = 0; i < 3; i++)
-				for (int j = 0; j < 3; j++)
-				{
-					M_1(i, j) = Rm_in_PGD[i][j][k];
-				}
-				Transl_k2(0) = Rm_in_PGD[0][3][k];
-				Transl_k2(01) = Rm_in_PGD[01][3][k];
-				Transl_k2(02) = Rm_in_PGD[02][3][k];
-			}*/
-			//else
-			//{
-				std::vector<double> x1;
-				//string ii = "k_fr_rez " + std::to_string(k_fr_rez);
-				//wxBusyInfo wait4(ii.c_str());
-				//Sleep(1500);
-				for (int j = 0; j < 3; j++)
-				{
-
-					
-					x1.push_back(3.1416*Rm_in_PGD[k][j] / 180);
-				}
-					
-				
-					
-					
-				M_2 = ov_mr_ShV(x1);
-//				string iii = "ov_mr_ShV ends..." + std::to_string(k);
-//				wxBusyInfo wait4i(iii.c_str());
-//				Sleep(1500);
-				
-				Transl_k2(0) = Rm_in_PGD[k][3];
-				Transl_k2(1) = Rm_in_PGD[k][4];
-				Transl_k2(2) = Rm_in_PGD[k][5];
-
-//				string iii2 = "Transl_k2 init ok..." + std::to_string(k);
-//				wxBusyInfo wait4i2(iii2.c_str());
-//				Sleep(1500);
-			//}
-		
-			Eigen::Matrix3d R = M_2*M_1.transpose();
-//			string iii2R = "R ok..." + std::to_string(k);
-//			wxBusyInfo wait4iR(iii2R.c_str());
-//			Sleep(1500);
-			double	cq = 0.5*(R(0, 0) + R(1, 1) + R(2, 2) - 1.); 
-			double	qc = 0.;
-			
-//			string iti = "pt inserted " + std::to_string(M_2(0)) + " " + std::to_string(M_2(1)) + " " + std::to_string(M_2(2)) ;
-//			wxBusyInfo wait4j(iti.c_str());
-//			Sleep(1500);
-			if (abs(cq) < 1.)
-			{ 
-				qc = acos(cq) / Gr_Rad;
+				M_1(i, j) = Rm_in_PGD[i][j][k];
 			}
+			Transl_k2(0) = Rm_in_PGD[0][3][k];
+			Transl_k2(01) = Rm_in_PGD[01][3][k];
+			Transl_k2(02) = Rm_in_PGD[02][3][k];
+		}*/
+		//else
+		//{
+		std::vector<double> x1;
 
-			if (qc >= Angle_filtr)
-			{
-				k_fr_rez = k_fr_rez + 1;
-				Eigen::Vector3d v = Transl_k2 - R*Transl_k1;
-				Eigen::Matrix3d Q  = R - eye;
-				Eigen::Vector3d Qv = -Q.transpose()*v;
-				Eigen::Matrix3d Qt = Q*Q.transpose();
-				Eigen::Vector4d uu = extract(R);
-				
-				Eigen::Vector3d u;
-				u(0) = uu(0); 
-				u(1) = uu(1);
-				u(2) = uu(2);
-				double teta_out = uu(2);
-				double t_t = .5 / (1. - cos(teta_out));
-				//////////
-				
-				Qv_hist.conservativeResize(3, k_fr_rez+1);
-				u_hist.conservativeResize(3, k_fr_rez+1);
-				for (int y = 0; y <3 ;y++)
-				{
-					Qv_hist(y,k_fr_rez) = t_t*Qv(y);
-					u_hist(y,k_fr_rez) = u(y);
-				}
-				R_MHA = R_MHA + eye - u*u.transpose();
-				Qv_t = Qv_t + Qv;
-				Qt_t = Qt_t + Qt;
-				////////
-				Eigen::Matrix3d R_inv;// cr_pos, disp_sq, disp_ang;
-				
-				if (k_fr_rez > 1)
-				{
-					Eigen::RowVector3d C_22, pp;
-					R_inv = Qt_t.inverse();
-					pp(0)=cr_pos[k_fr_rez - 1][0] = (R_inv*Qv_t).transpose()(0);
-					pp(1)=cr_pos[k_fr_rez - 1][1] = (R_inv*Qv_t).transpose()(1);
-					pp(2)=cr_pos[k_fr_rez - 1][2] = (R_inv*Qv_t).transpose()(2);
-
-					cr_pos.push_back({ pp(0), pp(1), pp(2) });
-					double disp_tmp = 0;
-					
-					double C_2,C_1;
-					
-					for (int k_3 = 0; k_3 <k_fr_rez; k_3++)
-					{
-						//pp(0) = cr_pos[0][k_fr_rez - 1];
-						//pp(1) = cr_pos[1][k_fr_rez - 1];
-						//pp(2) = cr_pos[2][k_fr_rez - 1];
-						
-						C_1 = (pp - Qv_hist.col(k_3).transpose())*u_hist.col(k_3);
-						C_22 = pp - Qv_hist.col(k_3).transpose();
-						C_2 = C_22*C_22.transpose();
-						
+		//		fdM << " k " << k << "\n";
+		for (int j = 0; j < 3; j++)
+		{
 
 
-					}
-					for (int k = 0; k < k_fr_rez; k++)
-					{
-						disp_sq.push_back({ std::sqrt(std::fabs(disp_tmp) / k_fr_rez) });
-					}
-
-
-					
-					R_inv = R_MHA.inverse();
-					double E_ang=Max_Eigen_v(3, 3, R_inv, Eps_PC * 1.e5, E_MHA);
-
-					double E_ang_k_fr_rez = std::sqrt(E_ang / k_fr_rez);
-
-					if (std::abs(E_ang_k_fr_rez) > 1)
-						E_ang_k_fr_rez = 1;
-					
-					
-					disp_ang.push_back({ std::asin(E_ang_k_fr_rez / Gr_Rad) });
-
-					
-
-					
-				}
-				
-				M_1 = M_2;
-				Transl_k1 = Transl_k2;
-
-			}
-			//k_fr_rez = k_fr_rez - 1;
+			x1.push_back(3.1416 * Rm_in_PGD[k][j] / 180);
 		}
-/////
-/////
-/////
-		k_fr_rez = k_fr_rez - 1;
-		return k_fr_rez;
+
+
+		//				fdM << "x1 " << x1.at(0) << " " << x1.at(1) << " " << x1.at(2) << "\n";
+
+
+		M_2 = ov_mr_ShV(x1);
+
+
+		//				string iii = "ov_mr_ShV ends..." + std::to_string(k);
+		//				wxBusyInfo wait4i(iii.c_str());
+		//				Sleep(1500);
+
+		Transl_k2(0) = Rm_in_PGD[k][3];
+		Transl_k2(1) = Rm_in_PGD[k][4];
+		Transl_k2(2) = Rm_in_PGD[k][5];
+
+		//				string iii2 = "Transl_k2 init ok..." + std::to_string(k);
+		//				wxBusyInfo wait4i2(iii2.c_str());
+		//				Sleep(1500);
+					//}
+
+		Eigen::Matrix3d R = M_2 * M_1.transpose();
+		//			string iii2R = "R ok..." + std::to_string(k);
+		//			wxBusyInfo wait4iR(iii2R.c_str());
+		//			Sleep(1500);
+		double	cq = 0.5 * (R(0, 0) + R(1, 1) + R(2, 2) - 1.);
+		double	qc = 0.;
+
+		//			string iti = "pt inserted " + std::to_string(M_2(0)) + " " + std::to_string(M_2(1)) + " " + std::to_string(M_2(2)) ;
+		//			wxBusyInfo wait4j(iti.c_str());
+		//			Sleep(1500);
+		if (abs(cq) < 1.)
+		{
+			qc = acos(cq) / Gr_Rad;
+		}
+
+
+		if (qc >= Angle_filtr)
+		{
+
+
+			k_fr_rez = k_fr_rez + 1;
+			Eigen::Vector3d v = Transl_k2 - R * Transl_k1;
+			Eigen::Matrix3d Q = R - eye;
+			Eigen::Vector3d Qv = -Q.transpose() * v;
+			Eigen::Matrix3d Qt = Q * Q.transpose();
+			Eigen::Vector4d uu = extract(R);
+
+			Eigen::Vector3d u;
+			u(0) = uu(0);
+			u(1) = uu(1);
+			u(2) = uu(2);
+			double teta_out = uu(2);
+			double t_t = .5 / (1. - cos(teta_out));
+			//////////
+
+			Qv_hist.conservativeResize(3, k_fr_rez + 1);
+			u_hist.conservativeResize(3, k_fr_rez + 1);
+			for (int y = 0; y < 3; y++)
+			{
+				Qv_hist(y, k_fr_rez) = t_t * Qv(y);
+				u_hist(y, k_fr_rez) = u(y);
+			}
+			R_MHA = R_MHA + eye - u * u.transpose();
+			Qv_t = Qv_t + Qv;
+			Qt_t = Qt_t + Qt;
+			////////
+			Eigen::Matrix3d R_inv;// cr_pos, disp_sq, disp_ang;
+
+		//	fdM << "if ...\n";
+			if (k_fr_rez > 1)
+			{
+				Eigen::RowVector3d C_22, pp;
+				R_inv = Qt_t.inverse();
+				pp(0) = (R_inv * Qv_t).transpose()(0);
+				pp(1) = (R_inv * Qv_t).transpose()(1);
+				pp(2) = (R_inv * Qv_t).transpose()(2);
+				cr_pos.push_back({ pp(0), pp(1), pp(2) });
+
+			//	string tsqs10 = "cr_pos " + std::to_string(pp(0)) + " " + std::to_string(pp(1)) + " " + std::to_string(pp(2));
+			//	wxBusyInfo wait1fg212(tsqs10.c_str());
+			//	Sleep(1500);
+
+				double disp_tmp = 0;
+
+				double C_2, C_1;
+
+				for (int k_3 = 0; k_3 < k_fr_rez; k_3++)
+				{
+					//pp(0) = cr_pos[0][k_fr_rez - 1];
+					//pp(1) = cr_pos[1][k_fr_rez - 1];
+					//pp(2) = cr_pos[2][k_fr_rez - 1];
+
+					C_1 = (pp - Qv_hist.col(k_3).transpose()) * u_hist.col(k_3);
+					C_22 = pp - Qv_hist.col(k_3).transpose();
+					C_2 = C_22 * C_22.transpose();
+					//disp_tmp = disp_tmp + (C_2-C_1*C_1);
+
+				}
+
+
+				for (int k = 0; k < k_fr_rez; k++)
+				{
+					disp_sq.push_back({ std::sqrt(std::fabs(disp_tmp) / k_fr_rez) });
+				}
+
+
+				//		fdM << "disp_sq \n";
+
+				R_inv = R_MHA.inverse();
+				//fdM << R_inv(0,0)<< " " << R_inv(0,1) << " " << R_inv(0,2) << "\n"
+				//	<< R_inv(1,0) << " " << R_inv(1,1) << " " << R_inv(1,2) << "\n"
+				//	<< R_inv(2,0) << " " << R_inv(2,1) << " " << R_inv(2,2) << "\n";
+				double E_ang = Max_Eigen_v(3, 3, R_inv, Eps_PC * 1.e5, E_MHA);
+				//fdM << "E_ang "<<E_ang << "\n";
+				double E_ang_k_fr_rez = std::sqrt(E_ang / k_fr_rez);
+				if (std::abs(E_ang_k_fr_rez) > 1)
+					E_ang_k_fr_rez = 1;
+
+				//fdM << "disp_ang" << std::asin(E_ang_k_fr_rez / Gr_Rad) << "\n";
+				//for (int k = 0; k<k_fr_rez; k++)
+				disp_ang.push_back({ std::asin(E_ang_k_fr_rez / Gr_Rad) });
+				//disp_ang.push_back({ 0.0 });
+
+
+		//		fdM << "if end\n";
+			}
+
+			M_1 = M_2;
+			Transl_k1 = Transl_k2;
+
+		}
+		//k_fr_rez = k_fr_rez - 1;
+	}
+	/////
+	/////
+	/////
+			//fdM.close();
+	k_fr_rez = k_fr_rez - 1;
+
+	return k_fr_rez;
 
 }
 Eigen::RowVectorXd mafVMECenterLine::deg2rad(Eigen::RowVectorXd a)

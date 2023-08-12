@@ -375,9 +375,11 @@ mafGUI *mafPipeSurfaceTextured::CreateGui()
   m_Gui->Bool(ID_SCALAR_VISIBILITY,_R("scalar vis."), &m_ScalarVisibility,0,_R("turn on/off the scalar visibility"));
   m_Gui->Divider();
   m_Gui->Bool(ID_USE_VTK_PROPERTY,_R("property"),&m_UseVTKProperty);
+  
   m_MaterialButton = new mafGUIMaterialButton(m_Vme,this);
   m_Gui->AddGui(m_MaterialButton->GetGui());
   m_MaterialButton->Enable(m_UseVTKProperty != 0);
+  
   m_Gui->Divider();
   m_Gui->Bool(ID_USE_TEXTURE,_R("texture"),&m_UseTexture);
   m_Gui->Button(ID_CHOOSE_TEXTURE, &m_VmeImageName,_L("Select the texture image"),_L("texture"));
