@@ -46,8 +46,12 @@ SET(PROJECT_SRCS
   medOpMML3ParameterView.cpp
   medOpMML3ParameterView.h
 
+
+
   medOpRegisterClusters.cpp
   medOpRegisterClusters.h
+  medOpRegisterClusters2.cpp
+  medOpRegisterClusters2.h
   medOpVolumeMeasure.cpp
   medOpVolumeMeasure.h
   medOpImporterRAWImages.cpp
