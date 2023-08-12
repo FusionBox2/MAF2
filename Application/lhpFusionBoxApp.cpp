@@ -95,7 +95,9 @@
 #include "mafOpVOIDensity.h"
 #include "medOpVolumeResample.h"
 #include "mafOpAddLandmark.h"
+#include "medOpRegisterClusters2.h"
 #include "medOpRegisterClusters.h"
+
 #include "lhpOpFuseLMScripted.h"
 #include "lhpOpRegisterLMScripted.h"
 #include "mafOpCreateSurfaceParametric.h"
@@ -165,6 +167,7 @@
 #include "medOpCropDeformableROI.h"
 #include "mafOpValidateTree.h"
 #include "mafOpApplyTrajectory.h"
+
 #include "mafOpCrop3DSurface.h"
 #include "medOpComputeWrapping.h"
 #include "medVMEComputeWrapping.h"
@@ -690,7 +693,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   m_Logic->Plug(new mafOpCreateMeter(_R("Meter")),_R("Create/Derive"));
   m_Logic->Plug(new mafOpCreateMeter2(_R("Meter2")), _R("Create/Derive"));
   m_Logic->Plug(new mafOpCreateCenterLine(_R("Centerline")), _R("Create/Derive"));
-  m_Logic->Plug(new mafOpCreateGravityLine(_R("GravityLine")), _R("Create/New/Osteometric Tools"));
+  m_Logic->Plug(new mafOpCreateGravityLine(_R("Virtual Osteometricboard")), _R("Create/New/Osteometric Tools"));
   m_Logic->Plug(new lhpOpFindCentroid(_R("Geometry centroid")),_R("Create/Derive"));
 
 //  m_Logic->Plug(new mafOpCreateMuscleWrapperAQ(_R("Muscle Wrapper_AQ")), _R("Create/Derive"));
@@ -716,6 +719,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
     m_Logic->Plug(new mafOpCreateSlicer(_R("Slicer")),_R("Create/Derive"));
     m_Logic->Plug(new medOpFreezeVME(_R("Freeze VME")),_R("Create/Derive"));
     m_Logic->Plug(new medOpRegisterClusters(_R("Register Landmark Cloud")),_R("Modify/Fuse"));
+    m_Logic->Plug(new medOpRegisterClusters2(_R("Motion Scale")), _R("Modify/Fuse"));
     m_Logic->Plug(new lhpOpFuseLMScripted(_R("Fuse LM based model")),_R("Modify/Fuse"));
     m_Logic->Plug(new lhpOpRegisterLMScripted(_R("Register Landmark Cloud Tree")),_R("Modify/Fuse"));
     //m_Logic->Plug(new medOpCreateWrappedMeter(_R("Wrapped Meter")),_R("Create/Derive"));
@@ -726,6 +730,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
     m_Logic->Plug(new mafOpVOIDensityEditor(_R("Volume Density")),_R("Modify"));
     m_Logic->Plug(new medOpMeshDeformation(_R("Deform Surface")), _R("Modify"));
     m_Logic->Plug(new mafOpApplyTrajectory(_R("Apply Trajectory")), _R("Modify"));
+   
     m_Logic->Plug(new mafOpExtractIsosurface(_R("Extract Isosurface")),_R("Create/Derive"));
     m_Logic->Plug(new medOpSurfaceMirror(_R("Group/Surface Mirror")),_R("Modify"));
     m_Logic->Plug(new mafOpCrop(_R("Crop Volume")),_R("Modify"));
