@@ -154,6 +154,17 @@ SET(PROJECT_SRCS
   medGUIMDIFrame.cpp
   medGUIMDIFrame.h
   
+
+
+
+
+
+  lhpGUINetworkConnectionSettings.cpp
+  lhpGUINetworkConnectionSettings.h
+  lhpGUIPythonSettings.cpp
+  lhpGUIPythonSettings.h
+  psLoaderGUIContextualMenu.cpp
+  psLoaderGUIContextualMenu.h
 )
 
 IF (MAF_USE_CURL)

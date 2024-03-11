@@ -59,6 +59,24 @@ SET(PROJECT_SRCS
   medViewSliceNotInterpolated.h
   medViewSliceNotInterpolatedCompound.cpp
   medViewSliceNotInterpolatedCompound.h
+
+
+
+
+lhpViewInfo.cpp
+lhpViewInfo.h
+lhpViewInfoWnd.cpp
+lhpViewInfoWnd.h
+mafGraphIDDesc.cpp
+mafGraphIDDesc.h
+mafMemGraph.cpp
+mafMemGraph.h
+mafStringSet.cpp
+mafStringSet.h
+mafViewIntGraph.cpp
+mafViewIntGraph.h
+mafViewIntGraphWindow.cpp
+mafViewIntGraphWindow.h
 )
 
 # List libraries that are needed by this project.

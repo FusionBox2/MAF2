@@ -144,7 +144,7 @@ IF (MAF_CAN_BUILD)
   INCLUDE_DIRECTORIES(BEFORE ".")
 
   ###############add all subdirs but "modules"
-  SET(INCLUDE_DIRS "${MAF_BINARY_DIR}" "${MAF_SOURCE_DIR}/Base" "${MAF_BINARY_DIR}/Interaction" "${MAF_SOURCE_DIR}/Common" "${MAF_SOURCE_DIR}/Interaction" "${MAF_SOURCE_DIR}/Interaction/Drivers" 
+  SET(INCLUDE_DIRS "${MAF_BINARY_DIR}" "${MAF_SOURCE_DIR}/Application" "${MAF_SOURCE_DIR}/Base" "${MAF_BINARY_DIR}/Interaction" "${MAF_SOURCE_DIR}/Common" "${MAF_SOURCE_DIR}/Interaction" "${MAF_SOURCE_DIR}/Interaction/Drivers" 
               "${MAF_SOURCE_DIR}/Core" "${MAF_SOURCE_DIR}/Gui" "${MAF_SOURCE_DIR}/IO" "${MAF_SOURCE_DIR}/Operations" "${MAF_SOURCE_DIR}/VME" 
               "${MAF_SOURCE_DIR}/VME/DataPipes" "${MAF_SOURCE_DIR}/vtkMAF" "${MAF_BINARY_DIR}/vtkMAF" "${MAF_SOURCE_DIR}/Views")
   SET(INCLUDE_DIRS ${INCLUDE_DIRS} "${MAF_SOURCE_DIR}/mafDLL")
@@ -196,6 +196,8 @@ IF (MAF_CAN_BUILD)
   CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/Views/medViewsDefines.h.in ${PROJECT_BINARY_DIR}/medViewsDefines.h @ONLY)
   CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/Interaction/medInteractionDefines.h.in ${PROJECT_BINARY_DIR}/medInteractionDefines.h @ONLY)
   CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/VME/medVMEDefines.h.in ${PROJECT_BINARY_DIR}/medVMEDefines.h @ONLY)
+
+  CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/lhpDefines.h.in ${PROJECT_BINARY_DIR}/lhpDefines.h @ONLY)
 
   # Configuring MAF kits
   DBG_MESSAGE("MAF: Configuring MAF Kits")

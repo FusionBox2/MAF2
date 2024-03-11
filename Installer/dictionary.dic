@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<DIC Name="Terry_DB" Version="2.0">
+    <Dictionary>
+		<DItem>most lateral point on greater trochanter</DItem>
+		<DItem>most lateral point on lateral epicondyle</DItem>
+		<DItem>most medial point on medial epicondyle</DItem>
+		<DItem>most superior point on head of femur</DItem>
+		<DItem>superior margin of fovea of acetabular ligament</DItem>
+		<DItem>most anterior superior point on greater trochanter</DItem>
+		<DItem>bottom of superior cavity in trochanteric fossa</DItem>
+		<DItem>center of depression on anterior surface of greater trochanter</DItem>
+		<DItem>lateral posterior prominence of greater trochanter</DItem>
+		<DItem>quadrate tubercle on intertrochanteric crest</DItem>
+		<DItem>bottom of inferior cavity in trochanteric fossa</DItem>
+		<DItem>midpoint of ridge between lesser trochanter and femoral head</DItem>
+		<DItem>midpoint between previous ridge and inferior cavity</DItem>
+		<DItem>most prominent point on lesser trochanter</DItem>
+		<DItem>inferior base of lesser trochanter on pectineal line</DItem>
+		<DItem>on gluteal line at height of inferior base of lesser trochanter</DItem>
+		<DItem>on gluteal line at midpoint between previous point and juncture of pectineal/gluteal lines</DItem>
+		<DItem>on linea aspera at juncture of pectineal/gluteal lines</DItem>
+		<DItem>most anterior point on anterior surface of femoral shaft at height of juncture of pectineal/gluteal lines</DItem>
+		<DItem>superior nutrient foramen</DItem>
+		<DItem>on linea aspera at midpoint between juncture of pectineal/gluteal lines and juncture of medial/lateral supracondylar lines</DItem>
+		<DItem>most medial corner of femoral shaft cross section at height of midpoint between juncture of pectineal/gluteal lines and juncture of medial/lateral supracondylar lines</DItem>
+		<DItem>most lateral corner of femoral shaft cross section at height of midpoint between juncture of pectineal/gluteal lines and juncture of medial/lateral supracondylar lines</DItem>
+		<DItem>inferior nutrient foramen</DItem>
+		<DItem>juncture of medial/lateral supracondylar lines</DItem>
+		<DItem>anterior medial corner of femoral shaft cross section directly superior to medial border of patellar groove joins at height of juncture of medial supracondylar line and adductor tubercle ridge</DItem>
+		<DItem>superior corner of adductor tubercle above medial epicondyle</DItem>
+		<DItem>most medial point on medial epicondyle</DItem>
+		<DItem>superior medial corner of medial condyle</DItem>
+		<DItem>most superior point on medial condyle</DItem>
+		<DItem>most posterior point on medial condyle</DItem>
+		<DItem>most inferior point on medial condyle</DItem>
+		<DItem>midpoint of superior margin of intercondylar fossa</DItem>
+		<DItem>most superior point on lateral condyle</DItem>
+		<DItem>most posterior point on lateral condyle</DItem>
+		<DItem>most inferior point on lateral condyle</DItem>
+		<DItem>superior lateral corner of lateral condyle</DItem>
+		<DItem>posterior end of the groove for Popliteus tendon on the lateral epicondyle</DItem>
+		<DItem>on the medial surface of the lateral condyle, posterior and superior to the short raised ridge</DItem>
+		<DItem>on the lateral surface of the medial condyle, distal and anterior to the margin of the fossa</DItem>
+		<DItem>center of the depression on the medial epicondyle, posterior to the most medial point</DItem>
+    </Dictionary>
+</DIC>

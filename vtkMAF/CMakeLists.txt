@@ -236,10 +236,17 @@ SET(vtkMED_SRCS
   ###############################################################
 )
 
+SET(vtkLHP_SRCS
+	vtkMAFMuscleDecomposition.cpp	
+	vtkMAFMuscleDecomposition.h	
+	vtkMAFMuscleFibers.cpp	
+	vtkMAFMuscleFibers.h
+)
+
 IF (MAF_USE_VTK)
   SET(PROJECT_LIBS ${PROJECT_LIBS} ${VTK_LIBRARIES})
 ENDIF (MAF_USE_VTK)
 
 # Create the library.
-ADD_LIBRARY(${PROJECT_NAME} ${vtkMAF_SRCS} ${vtkMED_SRCS})
+ADD_LIBRARY(${PROJECT_NAME} ${vtkMAF_SRCS} ${vtkMED_SRCS} ${vtkLHP_SRCS})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})

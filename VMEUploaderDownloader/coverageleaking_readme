@@ -1,0 +1,33 @@
+Coverage & MemoryLeak Test Module 
+Usage:
+
+coverageleaking.py -x MODULE.py [ARG1 ARG2 ...]
+    Execute module, passing the given command-line arguments, collecting
+    coverage data.
+
+python coverageleaking.py -e
+    Erase collected coverage data.
+
+python coverageleaking.py -r [-m] FILE1 FILE2 ...
+    Report on the statement coverage for the given files.  With the -m
+    option, show line numbers of the statements that weren't executed.
+
+python coverageleaking.py -a [-d dir] FILE1 FILE2 ...
+    Make annotated copies of the given files, marking statements that
+    are executed with > and statements that are missed with !.  With
+    the -d option, make the copies in that directory.  Without the -d
+    option, make each copy in the same directory as the original.
+
+python coverageleaking.py -b [-m] [-t] DIR
+    Execute all Test modules found into DIR and its subfolders and report
+    with coverage statment percentage and percentage of tested module over
+    all modules found. This option also report for memoryleaks.
+
+    With -m option missing statements are shown in report
+    With -t option only total percentage is shown
+
+    
+
+Coverage data is saved in the file .coverage by default.  Set the
+COVERAGE_FILE environment variable to save it somewhere else.
+Works with Python 2.5.X

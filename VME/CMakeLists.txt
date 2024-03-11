@@ -194,6 +194,67 @@ SET(PROJECT_SRCS
   medPipeRayCast.h
   
 
+
+
+
+
+  
+	lhpPipeInfo.cpp
+	lhpPipeInfo.h
+	lhpPipeIntGraph.cpp
+	lhpPipeIntGraph.h
+	lhpPipeIntGraphAbstract.cpp
+	lhpPipeIntGraphAbstract.h
+	lhpPipeIntGraphAnalog.cpp
+	lhpPipeIntGraphAnalog.h
+	lhpPipeIntGraphEuler.cpp
+	lhpPipeIntGraphEuler.h
+	lhpPipeIntGraphFixed.cpp
+	lhpPipeIntGraphFixed.h
+	lhpPipeIntGraphGlobal.cpp
+	lhpPipeIntGraphGlobal.h
+	lhpPipeIntGraphHAxis.cpp
+	lhpPipeIntGraphHAxis.h
+	lhpPipeIntGraphLocal.cpp
+	lhpPipeIntGraphLocal.h
+	lhpPipeIntGraphOVPGES.cpp
+	lhpPipeIntGraphOVPGES.h
+	lhpPipeIntGraphPolyline.cpp
+	lhpPipeIntGraphPolyline.h
+	lhpPipeIntGraphTime.cpp
+	lhpPipeIntGraphTime.h
+	lhpPipeLeverArm.cpp
+	lhpPipeLeverArm.h
+	lhpVMEKMInfo.cpp
+	lhpVMEKMInfo.h
+	lhpVMELeverArm.cpp
+	lhpVMELeverArm.h
+	lhpVMELMCLines.cpp
+	lhpVMELMCLines.h
+	mafVMEArrow.cpp
+	mafVMEArrow.h
+	mafVMEBSplineLine.cpp
+	mafVMEBSplineLine.h
+	mafVMEBSplineSurface.cpp
+	mafVMEBSplineSurface.h
+	mafVMEBSplineVolume.cpp
+	mafVMEBSplineVolume.h
+	mafVMEPGDData.cpp
+	mafVMEPGDData.h
+	mafVMESurfaceRegParam.cpp
+	mafVMESurfaceRegParam.h
+	mafVMEAFRefSys.cpp
+	mafVMEAFRefSys.h
+	mafVMEC3DData.cpp
+	mafVMEC3DData.h
+	mafVMEHelAxis.cpp
+	mafVMEHelAxis.h
+
+	lhpVisualPipeSurfaceScalar.cpp
+	lhpVisualPipeSurfaceScalar.h
+	
+	medVMEMuscleWrapper.cpp	
+	medVMEMuscleWrapper.h	
 )
 
 IF (MAF_USE_ITK)
@@ -232,6 +293,12 @@ SET(PROJECT_SRCS  ${PROJECT_SRCS}
   kdtree.h
 
   
+
+
+
+	lhpVMESurfaceScalarVarying.cpp
+	lhpVMESurfaceScalarVarying.h
+
   )
 ENDIF (MAF_USE_ITK)
 

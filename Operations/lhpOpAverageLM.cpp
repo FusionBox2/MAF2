@@ -1,0 +1,250 @@
+/*=========================================================================
+  Program:   Multimod Application Framework
+  Module:    $RCSfile: lhpOpAverageLM.cpp,v $
+  Language:  C++
+  Date:      $Date: 2008-07-25 12:19:11 $
+  Version:   $Revision: 1.3 $
+  Authors:   Fedor Moiseev / Vladik Aranov
+==========================================================================
+  Copyright (c) 2001/2007 
+  ULB - Universite Libre de Bruxelles (www.ulb.ac.be)
+=========================================================================*/
+
+#include "mafDefines.h" 
+//----------------------------------------------------------------------------
+// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
+// This force to include Window,wxWidgets and VTK exactly in this order.
+// Failing in doing this will result in a run-time error saying:
+// "Failure#0: The value of ESP was not properly saved across a function call"
+//----------------------------------------------------------------------------
+
+#include "lhpOpAverageLM.h"
+
+#include "wx/textfile.h"
+#include "wx/arrimpl.cpp"
+#include <wx/wxprec.h>
+#include "wx/busyinfo.h"
+#include <math.h>
+
+#include "mafDecl.h"
+#include "mafEvent.h"
+#include "mafGUI.h"
+
+#include "mafOpExplodeCollapse.h"
+
+#include "mafSmartPointer.h"
+#include "mafVMELandmarkCloud.h"
+#include "mafVME.h"
+#include "mafVMESurface.h"
+#include "mafVMELandmark.h"
+
+//----------------------------------------------------------------------------
+// Required for MSVC
+//----------------------------------------------------------------------------
+#ifdef _MSC_FULL_VER
+#pragma warning (disable: 4786)
+#endif
+
+//----------------------------------------------------------------------------
+// Constants :
+//----------------------------------------------------------------------------
+
+mafCxxTypeMacro(lhpOpAverageLM)
+
+//----------------------------------------------------------------------------
+lhpOpAverageLM::lhpOpAverageLM(const mafString& label) : Superclass(label)
+//----------------------------------------------------------------------------
+{
+  m_OpType    = OPTYPE_OP;
+  m_Canundo   = true;
+  m_LimbCloud = NULL;
+  m_NewIndex  = 0;
+}
+
+//----------------------------------------------------------------------------
+lhpOpAverageLM::~lhpOpAverageLM()
+//----------------------------------------------------------------------------
+{
+}
+
+//----------------------------------------------------------------------------
+mafOp* lhpOpAverageLM::Copy()
+//----------------------------------------------------------------------------
+{
+  return new lhpOpAverageLM(GetLabel());
+}
+
+//----------------------------------------------------------------------------
+bool lhpOpAverageLM::Accept(mafNode* vme)
+//----------------------------------------------------------------------------
+{
+  if(!vme) return false;
+
+  if(!vme->IsA("mafVMELandmarkCloud"))
+  {
+    return false;
+  }
+
+  return true;
+}
+
+//----------------------------------------------------------------------------
+void lhpOpAverageLM::OpRun()   
+//----------------------------------------------------------------------------
+{
+  m_LimbCloud     = (mafVMELandmarkCloud *)m_Input;
+  //CreateGui();
+  mafEventMacro(mafEvent(this,OP_RUN_OK)); 
+}
+
+//----------------------------------------------------------------------------
+void lhpOpAverageLM::CreateGui()
+//----------------------------------------------------------------------------
+{
+  if(m_Gui == NULL)
+  {
+    m_Gui = new mafGUI(this);
+    m_Gui->SetListener(this);
+    m_Gui->Label(_R(""));
+    m_Gui->OkCancel();
+  }
+  ShowGui();
+}
+
+//----------------------------------------------------------------------------
+void lhpOpAverageLM::OpStop(int result)
+//----------------------------------------------------------------------------
+{
+  if (result == OP_RUN_CANCEL)
+  {
+    HideGui();
+    mafEventMacro(mafEvent(this,result));
+  }
+  else if (result == OP_RUN_OK)
+  {
+    HideGui();
+    mafEventMacro(mafEvent(this,result));
+  }
+}
+//----------------------------------------------------------------------------
+void lhpOpAverageLM::OnEvent(mafEventBase *maf_event) 
+//----------------------------------------------------------------------------
+{ 
+  switch(maf_event->GetId())
+  {
+    case wxOK:          
+    { 
+      OpStop(OP_RUN_OK);
+      break;
+    }
+    case wxCANCEL:
+    {    
+      OpStop(OP_RUN_CANCEL);
+      break;
+    }
+    default:
+    {
+      mafEventMacro(*maf_event); 
+    }
+    break;
+  }
+}
+
+//----------------------------------------------------------------------------
+void lhpOpAverageLM::OpDo()
+//----------------------------------------------------------------------------
+{
+  wxInt32 nI, nJ;
+  std::vector<mafTimeStamp> kframes;
+
+  //modified by Stefano. 18-9-2003
+  wxBusyInfo wait("Please wait, working...");
+
+  bool bCloudClosed = !m_LimbCloud->IsOpen();
+  if(!bCloudClosed)
+  {
+    mafOp *OpenOp = new mafOpExplodeCollapse(_R("close cloud"));
+    OpenOp->SetInput(m_LimbCloud);
+    OpenOp->SetListener(GetListener());
+    OpenOp->OpDo();
+    cppDEL(OpenOp); 
+  }
+
+
+  m_LimbCloud->GetTimeStamps(kframes);
+  mafString newLMName;
+  int  avInd = 0;
+  newLMName = _R("Average");
+
+  while(m_LimbCloud->FindLandmarkIndex(newLMName) >= 0)
+  {
+    newLMName = _R("Average") + mafToString(avInd);
+    avInd++;
+  }
+  m_NewIndex = m_LimbCloud->AppendLandmark(newLMName);
+
+  //mafProgressBarShowMacro();
+  //mafProgressBarSetTextMacro("Creating average landmark...");
+
+  for(nI = 0; nI < kframes.size(); nI++)
+  {
+    double xa = 0.0, ya = 0.0, za = 0.0;
+    //long p = nI * 100 / kframes.size();
+    //mafProgressBarSetValueMacro(p);
+    for(nJ = 0; nJ < m_LimbCloud->GetNumberOfLandmarks(); nJ++)
+    {
+      double x, y, z;
+      if(m_NewIndex == nJ)
+        continue;
+      m_LimbCloud->GetLandmark(nJ, x, y, z, kframes[nI]);
+      xa += x;
+      ya += y;
+      za += z;
+    }
+    xa /= m_LimbCloud->GetNumberOfLandmarks() - 1;
+    ya /= m_LimbCloud->GetNumberOfLandmarks() - 1;
+    za /= m_LimbCloud->GetNumberOfLandmarks() - 1;
+    m_LimbCloud->SetLandmark(m_NewIndex, xa, ya, za, kframes[nI]);
+    m_LimbCloud->Modified();
+  }
+  if(!bCloudClosed)
+  {
+    mafOp *OpenOp = new mafOpExplodeCollapse(_R("open cloud"));
+    OpenOp->SetInput(m_LimbCloud);
+    OpenOp->SetListener(GetListener());
+    OpenOp->OpDo();
+    cppDEL(OpenOp); 
+  }
+  //mafProgressBarHideMacro(); 
+
+  return;
+}
+
+
+
+//----------------------------------------------------------------------------
+void lhpOpAverageLM::OpUndo()
+//----------------------------------------------------------------------------
+{
+  bool bCloudWasOpen = m_LimbCloud->IsOpen();
+  if(bCloudWasOpen)
+  {
+    mafOp *pCloseOp = new mafOpExplodeCollapse(_R("close cloud"));
+    pCloseOp->SetInput(m_LimbCloud);
+    pCloseOp->SetListener(GetListener());
+    pCloseOp->OpDo();
+    cppDEL(pCloseOp); 
+  }
+
+  m_LimbCloud->RemoveLandmark(m_NewIndex);
+  m_LimbCloud->Modified();
+  
+  if(bCloudWasOpen)
+  {
+    mafOp *OpenOp = new mafOpExplodeCollapse(_R("open cloud"));
+    OpenOp->SetInput(m_LimbCloud);
+    OpenOp->SetListener(GetListener());
+    OpenOp->OpDo();
+    cppDEL(OpenOp); 
+  }
+}
