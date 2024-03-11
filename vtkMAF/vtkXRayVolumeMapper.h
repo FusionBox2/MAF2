@@ -54,7 +54,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "vtkMEDConfigure.h"
+#include "vtkMAFConfigure.h"
 #include "vtkVolumeMapper.h"
 #include "vtkImageData.h"
 #include "vtkCamera.h"
@@ -76,7 +76,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     It can enable LOD, corrects resolution, handles with colors and gamma correction.
     
 */
-class VTK_vtkMED_EXPORT vtkXRayVolumeMapper : public vtkVolumeMapper {
+class VTK_vtkMAF_EXPORT vtkXRayVolumeMapper : public vtkVolumeMapper {
   public:
     static vtkXRayVolumeMapper *New();
     vtkTypeMacro(vtkXRayVolumeMapper, vtkVolumeMapper);

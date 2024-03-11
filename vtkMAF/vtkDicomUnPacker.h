@@ -27,7 +27,7 @@
 #include "vtkImageUnPacker.h"
 #include "vtkPackedImage.h"
 
-#include "vtkMEDConfigure.h"
+#include "vtkMAFConfigure.h"
 
 #include <string>
 
@@ -50,7 +50,7 @@ typedef unsigned char     uint8;
 
 typedef long int          int32;
 
-class VTK_vtkMED_EXPORT vtkDicomUnPacker : public vtkImageUnPacker
+class VTK_vtkMAF_EXPORT vtkDicomUnPacker : public vtkImageUnPacker
 {
 public:
   /************************************************

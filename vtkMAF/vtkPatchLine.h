@@ -13,10 +13,10 @@ See the COPYINGS file for license details
 #ifndef __vtkPatchLine_h
 #define __vtkPatchLine_h
 
-#include "vtkMEDConfigure.h"
+#include "vtkMAFConfigure.h"
 #include "vtkPolyDataAlgorithm.h"
 
-class VTK_vtkMED_EXPORT vtkPatchLine : public vtkPolyDataAlgorithm
+class VTK_vtkMAF_EXPORT vtkPatchLine : public vtkPolyDataAlgorithm
 {
 	public:
 	/** RTTI macro*/

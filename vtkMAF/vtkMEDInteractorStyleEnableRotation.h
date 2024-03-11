@@ -14,7 +14,7 @@ University of Bedfordshire
 #ifndef __vtkMEDInteractorStyleEnableRotation_h
 #define __vtkMEDInteractorStyleEnableRotation_h
 
-#include "vtkMEDConfigure.h"
+#include "vtkMAFConfigure.h"
 #include "vtkInteractorStyleTrackballCamera.h"
 
 
@@ -25,7 +25,7 @@ University of Bedfordshire
 //
 // Version 14.3.14
 //------------------------------------------------------------------------------
-class VTK_vtkMED_EXPORT vtkMEDInteractorStyleEnableRotation : public vtkInteractorStyleTrackballCamera
+class VTK_vtkMAF_EXPORT vtkMEDInteractorStyleEnableRotation : public vtkInteractorStyleTrackballCamera
 {
 public:
   static vtkMEDInteractorStyleEnableRotation *New();

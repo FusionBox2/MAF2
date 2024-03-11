@@ -20,7 +20,7 @@
 #define __vtkPackedImage_h
 
 #include "vtkUnsignedCharArray.h"
-#include "vtkMEDConfigure.h"
+#include "vtkMAFConfigure.h"
 
 
 #define VTK_IMG_PACK_NONE 0
@@ -29,7 +29,7 @@
     vtkPackedImage is a class derived from vtkUnsignedCharArray, thought to contain data of
     packed images. The only extra field in this class refers to the type of packaging.
 */
-class VTK_vtkMED_EXPORT vtkPackedImage : public vtkUnsignedCharArray
+class VTK_vtkMAF_EXPORT vtkPackedImage : public vtkUnsignedCharArray
 {
 public:
   /** construct the object*/

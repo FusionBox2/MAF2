@@ -22,13 +22,13 @@
 #include "vtkImageAlgorithm.h"
 #include "vtkPackedImage.h"
 
-#include "vtkMEDConfigure.h"
+#include "vtkMAFConfigure.h"
 
 #ifndef VTK_IMG_PACK_NONE
   #define VTK_IMG_PACK_NONE 0
 #endif
 
-class VTK_vtkMED_EXPORT vtkImageUnPacker : public vtkImageAlgorithm
+class VTK_vtkMAF_EXPORT vtkImageUnPacker : public vtkImageAlgorithm
 {
 public:
   static vtkImageUnPacker *New();

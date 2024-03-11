@@ -14,7 +14,7 @@ University of Bedfordshire
 #ifndef __vtkMEDAddScalarsFilter_h
 #define __vtkMEDAddScalarsFilter_h
 
-#include "vtkMEDConfigure.h"
+#include "vtkMAFConfigure.h"
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkPolyData.h"
 #include <ostream>
@@ -32,7 +32,7 @@ University of Bedfordshire
 
   
 
-class VTK_vtkMED_EXPORT vtkMEDAddScalarsFilter : public vtkPolyDataAlgorithm
+class VTK_vtkMAF_EXPORT vtkMEDAddScalarsFilter : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeMacro(vtkMEDAddScalarsFilter,vtkPolyDataAlgorithm);

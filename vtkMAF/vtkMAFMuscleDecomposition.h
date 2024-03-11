@@ -31,7 +31,7 @@
 
 #pragma warning(push)
 #pragma warning(disable:4996)
-#include "vtkLHPConfigure.h"
+#include "vtkMAFConfigure.h"
 #include "vtkPolyDataAlgorithm.h"
 #pragma warning(pop)
 
@@ -40,7 +40,7 @@
 class vtkPoints;
 class vtkCellLocator;
 
-class VTK_vtkLHP_EXPORT vtkMAFMuscleDecomposition : public vtkPolyDataAlgorithm
+class VTK_vtkMAF_EXPORT vtkMAFMuscleDecomposition : public vtkPolyDataAlgorithm
 {
 public:
   static vtkMAFMuscleDecomposition *New();

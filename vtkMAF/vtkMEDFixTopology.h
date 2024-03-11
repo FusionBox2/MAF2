@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "vtkMEDConfigure.h"
+#include "vtkMAFConfigure.h"
 #include "vtkPolyData.h"
 #include "vtkCellArray.h"
 #include "vtkPointData.h"
@@ -37,7 +37,7 @@
 class name: vtkMEDFixTopology
 This class is a filter which use vtkMEDPoissonSurfaceReconstruction class for fixing the topology.
 */
-class VTK_vtkMED_EXPORT vtkMEDFixTopology : public vtkPolyDataAlgorithm
+class VTK_vtkMAF_EXPORT vtkMEDFixTopology : public vtkPolyDataAlgorithm
 {
   public:
     /** create instance of the class*/

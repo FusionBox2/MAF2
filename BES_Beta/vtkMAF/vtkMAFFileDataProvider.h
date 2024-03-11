@@ -20,7 +20,7 @@
 #include "vtkMAFLargeDataProvider.h"
 #include "vtkMAFFile.h"
 
-class VTK_vtkMED_EXPORT vtkMAFFileDataProvider : public vtkMAFLargeDataProvider
+class VTK_vtkMAF_EXPORT vtkMAFFileDataProvider : public vtkMAFLargeDataProvider
 {	
 protected:
   vtkMAFFile* File;				  //<file source, 								

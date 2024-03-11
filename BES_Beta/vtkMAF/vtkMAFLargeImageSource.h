@@ -14,13 +14,13 @@
 #ifndef __vtkMAFLargeImageSource_h
 #define __vtkMAFLargeImageSource_h
 
-#include "vtkMEDConfigure.h"
+#include "vtkMAFConfigure.h"
 #include "vtkDataSetAlgorithm.h"
 #include "vtkMAFIdType64.h"
 
 class vtkMAFLargeImageData;
 
-class VTK_vtkMED_EXPORT vtkMAFLargeImageSource : public vtkDataSetAlgorithm
+class VTK_vtkMAF_EXPORT vtkMAFLargeImageSource : public vtkDataSetAlgorithm
 {
 public:
   static vtkMAFLargeImageSource* New();

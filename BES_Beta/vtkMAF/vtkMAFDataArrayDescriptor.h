@@ -19,7 +19,7 @@
 
 class vtkIdList;
 
-class VTK_vtkMED_EXPORT vtkMAFDataArrayDescriptor : public vtkObject 
+class VTK_vtkMAF_EXPORT vtkMAFDataArrayDescriptor : public vtkObject 
 {
 public:
 	vtkTypeMacro(vtkMAFDataArrayDescriptor,vtkObject);

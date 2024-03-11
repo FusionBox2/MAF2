@@ -39,7 +39,7 @@
 #define __vtkMEDCollisionDetectionFilter_h
 
 #include "vtkPolyDataAlgorithm.h"
-#include "vtkMEDConfigure.h" // Include configuration header.
+#include "vtkMAFConfigure.h" // Include configuration header.
 
 #include "vtkLinearTransform.h"
 #include "vtkIdTypeArray.h"
@@ -50,7 +50,7 @@ class vtkPolyData;
 class vtkPoints;
 class vtkMatrix4x4;
 
-class VTK_vtkMED_EXPORT vtkMEDCollisionDetectionFilter : public vtkPolyDataAlgorithm
+class VTK_vtkMAF_EXPORT vtkMEDCollisionDetectionFilter : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeMacro(vtkMEDCollisionDetectionFilter, vtkPolyDataAlgorithm);

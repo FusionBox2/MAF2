@@ -21,7 +21,7 @@
 #ifndef __vtkMEDMatrixVectorMath_h
 #define __vtkMEDMatrixVectorMath_h
 
-#include "vtkMEDConfigure.h"
+#include "vtkMAFConfigure.h"
 #include "vtkObject.h"
 #include <ostream>
 
@@ -52,7 +52,7 @@
 //
 // Modified: Nigel McFarlane 27.4.11
 //------------------------------------------------------------------------------
-class VTK_vtkMED_EXPORT vtkMEDMatrixVectorMath : public vtkObject
+class VTK_vtkMAF_EXPORT vtkMEDMatrixVectorMath : public vtkObject
 {
 public:
   static vtkMEDMatrixVectorMath *New();

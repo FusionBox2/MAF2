@@ -17,7 +17,7 @@
 #ifndef __vtkMEDBinaryImageFloodFill_H__
 #define __vvtkMEDBinaryImageFloodFill_H__
 
-#include "vtkMEDConfigure.h"
+#include "vtkMAFConfigure.h"
 #include "vtkStructuredPoints.h"
 #include "vtkStructuredGridAlgorithm.h"
 
@@ -31,7 +31,7 @@ class vtkStructuredPoints;
     This filter operate on binary images and fill/erease the area identified by the specified seed.
 */
 //---------------------------------------------------------------------------
-class VTK_vtkMED_EXPORT vtkMEDBinaryImageFloodFill : public vtkStructuredGridAlgorithm
+class VTK_vtkMAF_EXPORT vtkMEDBinaryImageFloodFill : public vtkStructuredGridAlgorithm
 //---------------------------------------------------------------------------
 {
 public:

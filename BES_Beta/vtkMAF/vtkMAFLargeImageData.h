@@ -26,7 +26,7 @@ class vtkVoxel;
 
 #pragma warning(disable: 4068)	//pragma region is unsupported in VS2003
 
-class VTK_vtkMED_EXPORT vtkMAFLargeImageData : public vtkMAFLargeDataSet
+class VTK_vtkMAF_EXPORT vtkMAFLargeImageData : public vtkMAFLargeDataSet
 {
 public:
 	static vtkMAFLargeImageData *New();

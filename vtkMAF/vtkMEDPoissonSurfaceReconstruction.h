@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "vtkMEDConfigure.h"
+#include "vtkMAFConfigure.h"
 #include "vtkPolyData.h"
 #include "vtkCellArray.h"
 #include "vtkPointData.h"
@@ -45,7 +45,7 @@ class name: vtkMEDPoissonSurfaceReconstruction
 This class implement Poisson Surface Reconstruction method.
 A paper can be viewed here: research.microsoft.com/en-us/um/people/hoppe/poissonrecon.pdf
 */
-class VTK_vtkMED_EXPORT vtkMEDPoissonSurfaceReconstruction : public vtkDataSetAlgorithm
+class VTK_vtkMAF_EXPORT vtkMEDPoissonSurfaceReconstruction : public vtkDataSetAlgorithm
 {
 public:
   /** create instance of the object */
@@ -720,7 +720,7 @@ public:
 class name: TriangulationEdge
 Edge created by triangulation
 */
-class VTK_vtkMED_EXPORT TriangulationEdge
+class VTK_vtkMAF_EXPORT TriangulationEdge
 {
 public:
   /** Constructor. */
@@ -733,7 +733,7 @@ public:
 class name: TriangulationTriangle
 Triangle created by triangulation
 */
-class VTK_vtkMED_EXPORT TriangulationTriangle
+class VTK_vtkMAF_EXPORT TriangulationTriangle
 {
 public:
   /** Constructor. */
@@ -1453,7 +1453,7 @@ Octrees are most often used to partition a three dimensional space by recursivel
 Octrees are the three-dimensional analog of quadtrees.
 */
 template<class NodeData,class Real=float>
-class VTK_vtkMED_EXPORT OctNode
+class VTK_vtkMAF_EXPORT OctNode
 {
 private:
 	static int UseAlloc;
@@ -1773,7 +1773,7 @@ public:
 	static long long CenterIndex(const TreeOctNode* node,const int& maxDepth);
 };
 /** class name: SortedTreeNodes */
-class VTK_vtkMED_EXPORT SortedTreeNodes{
+class VTK_vtkMAF_EXPORT SortedTreeNodes{
 public:
 	TreeOctNode** treeNodes;
 	int *nodeCount;
@@ -1788,7 +1788,7 @@ public:
 /** class name: TreeNodeData
     index, weight and values associated with every tree node
 */
-class VTK_vtkMED_EXPORT TreeNodeData{
+class VTK_vtkMAF_EXPORT TreeNodeData{
 public:
 	static int UseIndex;
 	union{

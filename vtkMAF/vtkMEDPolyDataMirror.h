@@ -15,7 +15,7 @@
 #define __vtkMEDPolyDataMirror_h
 
 #include "vtkPolyDataAlgorithm.h"
-#include "vtkMEDConfigure.h"
+#include "vtkMAFConfigure.h"
 
 class vtkDoubleArray;
 class vtkIdList;
@@ -25,7 +25,7 @@ class vtkPolyData;
   class name: vtkMEDPolyDataMirror
   Mirror the polydata over one or more axises.
 */
-class VTK_vtkMED_EXPORT vtkMEDPolyDataMirror : public vtkPolyDataAlgorithm
+class VTK_vtkMAF_EXPORT vtkMEDPolyDataMirror : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeMacro(vtkMEDPolyDataMirror,vtkPolyDataAlgorithm);

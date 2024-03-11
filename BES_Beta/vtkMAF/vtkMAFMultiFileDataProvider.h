@@ -17,11 +17,11 @@
 #define vtkMAFMultiFileDataProvider_h__
 
 #pragma once
-#include "vtkMEDConfigure.h"
+#include "vtkMAFConfigure.h"
 #include "vtkMAFLargeDataProvider.h"
 #include "vtkMAFFile.h"
 
-class VTK_vtkMED_EXPORT vtkMAFMultiFileDataProvider : public vtkMAFLargeDataProvider
+class VTK_vtkMAF_EXPORT vtkMAFMultiFileDataProvider : public vtkMAFLargeDataProvider
 {
 protected:
   //describes one file 

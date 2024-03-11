@@ -10,7 +10,7 @@
   See the COPYINGS file for license details 
   =========================================================================
 */
-#include "vtkMEDConfigure.h"
+#include "vtkMAFConfigure.h"
 
 #pragma  once
 
@@ -27,14 +27,14 @@ typedef long long vtkIdType64;
 
 #if defined(_MSC_VER) && (_MSC_VER < 1300)
 # if !defined(VTK_NO_INT64_OSTREAM_OPERATOR)
-VTK_vtkMED_EXPORT ostream& vtkIdTypeOutput(ostream& os, __int64 id);
+VTK_vtkMAF_EXPORT ostream& vtkIdTypeOutput(ostream& os, __int64 id);
 inline ostream& operator << (ostream& os, __int64 id)
 {
 	return vtkIdTypeOutput(os, id);
 }
 # endif
 # if !defined(VTK_NO_INT64_ISTREAM_OPERATOR)
-VTK_vtkMED_EXPORT istream& vtkIdTypeInput(istream& is, __int64& id);
+VTK_vtkMAF_EXPORT istream& vtkIdTypeInput(istream& is, __int64& id);
 inline istream& operator >> (istream& is, __int64& id)
 {
 	return vtkIdTypeInput(is, id);

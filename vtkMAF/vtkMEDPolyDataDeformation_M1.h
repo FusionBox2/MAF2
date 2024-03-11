@@ -42,7 +42,7 @@
 #ifndef vtkMEDPolyDataDeformation_M1_h__
 #define vtkMEDPolyDataDeformation_M1_h__
 
-#include "vtkMEDConfigure.h"
+#include "vtkMAFConfigure.h"
 
 // #include "mafDllMacros.h"
 
@@ -62,13 +62,13 @@ class vtkPolyData;
 class vtkIdList;
 class vtkCellLocator;
 
-// EXPORT_STL_VECTOR(VTK_vtkMED_EXPORT,CSkeletonEdge*);
-// EXPORT_STL_VECTOR(VTK_vtkMED_EXPORT,CSkeletonVertex*);
-// EXPORT_STL_VECTOR(VTK_vtkMED_EXPORT,CMeshVertex);
-// EXPORT_STL_VECTOR(VTK_vtkMED_EXPORT,vtkIdType);
+// EXPORT_STL_VECTOR(VTK_vtkMAF_EXPORT,CSkeletonEdge*);
+// EXPORT_STL_VECTOR(VTK_vtkMAF_EXPORT,CSkeletonVertex*);
+// EXPORT_STL_VECTOR(VTK_vtkMAF_EXPORT,CMeshVertex);
+// EXPORT_STL_VECTOR(VTK_vtkMAF_EXPORT,vtkIdType);
     
 
-class VTK_vtkMED_EXPORT vtkMEDPolyDataDeformation_M1 : public vtkPolyDataAlgorithm
+class VTK_vtkMAF_EXPORT vtkMEDPolyDataDeformation_M1 : public vtkPolyDataAlgorithm
 {
 public:
 
@@ -113,7 +113,7 @@ protected:
       
 
   //internal structure for one vertex in the skeleton
-  class VTK_vtkMED_EXPORT CSkeletonVertex
+  class VTK_vtkMAF_EXPORT CSkeletonVertex
   {
   public:
     int m_Id;             //<ID of this point
@@ -174,7 +174,7 @@ protected:
   };
   
   //internal structure for one edge in the skeleton
-  class VTK_vtkMED_EXPORT CSkeletonEdge
+  class VTK_vtkMAF_EXPORT CSkeletonEdge
   {
   public:
     int Id;                     //<ID of this edge
@@ -217,7 +217,7 @@ protected:
   };
 
   //Internal data structure to encapsulates one skeleton
-  class VTK_vtkMED_EXPORT CSkeleton
+  class VTK_vtkMAF_EXPORT CSkeleton
   {
   public:
     std::vector< CSkeletonVertex* > Vertices;

@@ -18,7 +18,7 @@
 #ifndef vtkMAFVolumeTextureMapper2D_h__
 #define vtkMAFVolumeTextureMapper2D_h__
 
-#include "vtkMEDConfigure.h"
+#include "vtkMAFConfigure.h"
 #ifdef COMPLETED
 #include "vtkOpenGLVolumeTextureMapper2D.h"
 
@@ -28,7 +28,7 @@ class vtkVolume;
     class name: vtkMAFVolumeTextureMapper2D
     Mapper class used by texture 2D volume pipe.
 */
-class VTK_vtkMED_EXPORT vtkMAFVolumeTextureMapper2D : public vtkOpenGLVolumeTextureMapper2D
+class VTK_vtkMAF_EXPORT vtkMAFVolumeTextureMapper2D : public vtkOpenGLVolumeTextureMapper2D
 {
 protected:
   unsigned long LastCheckSum;   ///<Here is stored CheckSum used to detect if Casting needs to be reexecuted

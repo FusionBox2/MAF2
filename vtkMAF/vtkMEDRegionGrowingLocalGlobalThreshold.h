@@ -19,9 +19,9 @@ PURPOSE.  See the above copyright notice for more information.
 class vtkImageData;
 
 #include "vtkAlgorithm.h"
-#include "vtkMEDConfigure.h"
+#include "vtkMAFConfigure.h"
 
-class VTK_vtkMED_EXPORT vtkMEDRegionGrowingLocalGlobalThreshold : public vtkAlgorithm
+class VTK_vtkMAF_EXPORT vtkMEDRegionGrowingLocalGlobalThreshold : public vtkAlgorithm
 {
 public:
   vtkTypeMacro(vtkMEDRegionGrowingLocalGlobalThreshold, vtkAlgorithm);
