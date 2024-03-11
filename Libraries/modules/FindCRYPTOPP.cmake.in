@@ -3,6 +3,6 @@
 #
 
 # add search path for CURL
-SET(cryptopp_DIR @MAF_CRP_DIR@/lib/cmake/cryptopp)
+SET(cryptopp_DIR @MAF_CRP_DIR@)
 
-find_package(cryptopp REQUIRED)
+find_package(cryptopp REQUIRED CONFIG)
