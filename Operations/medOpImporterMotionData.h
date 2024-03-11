@@ -1,0 +1,231 @@
+/*=========================================================================
+
+ Program: MAF2Medical
+ Module: medOpImporterMotionData
+ Authors: Fedor Moiseev, Simone Brazzale
+ 
+ Copyright (c) B3C
+ All rights reserved. See Copyright.txt or
+ http://www.scsitaly.com/Copyright.htm for details.
+
+ This software is distributed WITHOUT ANY WARRANTY; without even
+ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ PURPOSE.  See the above copyright notice for more information.
+
+=========================================================================*/
+
+#ifndef __medOpImporterMotionData_H__
+#define __medOpImporterMotionData_H__
+
+//----------------------------------------------------------------------------
+// Include :
+//----------------------------------------------------------------------------
+#include "mafDefines.h" 
+#include "mafOp.h"
+
+#include <wx/busyinfo.h>
+
+#include "mafDecl.h"
+#include "mafEvent.h"
+#include "mafVME.h"
+#include "mafTagArray.h"
+#include "mafSmartPointer.h"
+
+//----------------------------------------------------------------------------
+// forward references :
+//----------------------------------------------------------------------------
+class mafVME;                      
+class mafEvent;
+//----------------------------------------------------------------------------
+// medOpImporterMotionData :
+//----------------------------------------------------------------------------
+/** */
+template <class MotionReader>
+class medOpImporterMotionData : public mafOp
+{
+public:
+  medOpImporterMotionData(const mafString& label, const mafString& pgdWildc, const mafString& dicWildc) :  mafOp(label), m_PgdWildc(pgdWildc), m_DicWildc(dicWildc)
+        //----------------------------------------------------------------------------
+  {
+    m_OpType	= OPTYPE_IMPORTER;
+    m_Canundo	= true;
+    m_File		= _R("");
+    m_Dict		= _R("");
+    m_FileDir = mafGetApplicationDirectory() + _R("/Data/External/");
+    m_DictDir = mafGetApplicationDirectory() + _R("/Config/Dictionary/");
+
+    m_Vme		= NULL;
+
+    m_DictionaryAvailable = 0;
+  }
+      //----------------------------------------------------------------------------
+  ~medOpImporterMotionData( ) 
+    //----------------------------------------------------------------------------
+  {
+    // Must unregister in order to avoid leaks or data loss
+    if (m_Output)
+    {
+      m_Vme->UnRegister(m_Output);
+      m_Output = NULL;
+    }
+    m_Vme = NULL;    
+  }
+  //----------------------------------------------------------------------------
+  mafOp* Copy()   
+    /** restituisce una copia di se stesso, serve per metterlo nell'undo stack */
+    //----------------------------------------------------------------------------
+  {
+    //non devo incrementare l'id counter --- vfc le operazioni sono gia inserite nei menu;
+    medOpImporterMotionData *cp = new medOpImporterMotionData(GetLabel(), m_PgdWildc, m_DicWildc);
+    cp->m_Canundo = m_Canundo;
+    cp->m_OpType = m_OpType;
+    cp->SetListener(GetListener());
+    cp->m_Next = NULL;
+
+    cp->m_File = m_File;
+    cp->m_Dict = m_Dict;
+    cp->m_Vme = m_Vme;
+    return cp;
+  }
+
+	/** Return true for the acceptable vme type. */
+	bool Accept(mafNode* node) {return true;};
+
+  //----------------------------------------------------------------------------
+  /** Builds operation's interface. */
+  void OpRun()   
+    //----------------------------------------------------------------------------
+  {
+    int result = OP_RUN_CANCEL;
+    m_File = _R("");
+    m_Dict = _R("");
+
+    mafString f = mafGetOpenFile(m_FileDir,m_PgdWildc); 
+    if(!f.IsEmpty())
+    {
+      m_File = f;
+      f = mafGetOpenFile(m_DictDir,m_DicWildc,_R("Open Dictionary")); 
+      if(!f.IsEmpty())
+      {
+        m_Dict = f;
+        SetDictionaryFlagOn();
+        result = OP_RUN_OK;
+      }
+      else
+      {
+        SetDictionaryFlagOff();
+        result = OP_RUN_OK;
+      }
+    }
+    mafEventMacro(mafEvent(this,result));
+  }
+  //----------------------------------------------------------------------------
+  /** Execute the operation. */
+  void OpDo()   
+    //----------------------------------------------------------------------------
+  {
+    // Modified by Simone Brazzale, 03/12/2010
+    assert(!m_Vme);
+
+    if (!m_TestMode)
+    {
+      wxBusyInfo wait("Please wait, working...");
+    }
+
+    mafSmartPointer<MotionReader> reader; 
+    reader->SetFileName(m_File.GetCStr());
+    reader->SetDictionaryFileName(m_Dict.GetCStr());
+
+    if (GetDictionaryFlag()==1)
+      reader->DictionaryOn();
+    else
+      reader->DictionaryOff();
+
+    reader->Read();
+
+    m_Vme = reader;
+
+    mafString path, name, ext;
+    mafSplitPath(m_File,&path,&name,&ext);
+    m_Vme->SetName(name);
+
+    mafTagItem tag_Nature;
+    tag_Nature.SetName(_R("VME_NATURE"));
+    tag_Nature.SetValue(_R("NATURAL"));
+
+    m_Vme->GetTagArray()->SetTag(tag_Nature); 
+
+    // Must register in order to preserve output for do/undo operation (since it is a smart pointer)
+    m_Output = m_Vme;
+    m_Vme->Register(m_Output);
+    mafEventMacro(mafEvent(this,VME_ADD,m_Vme));
+  }
+  //----------------------------------------------------------------------------
+  /** Set file name. */
+  void SetFileName(const mafString& filename)   
+    //----------------------------------------------------------------------------
+  {
+    m_File = filename;
+  }
+  //----------------------------------------------------------------------------
+  /** Set dictionary name. */
+  void SetDictionaryName(const mafString& dicname)   
+    //----------------------------------------------------------------------------
+  {
+    m_Dict = dicname;
+  }
+  //----------------------------------------------------------------------------
+  /** Set dictionary flag. */
+  void SetDictionaryFlagOn()   
+    //----------------------------------------------------------------------------
+  {
+    this->m_DictionaryAvailable = 1;
+  }
+  //----------------------------------------------------------------------------
+  /** Set dictionary flag. */
+  void SetDictionaryFlagOff()   
+    //----------------------------------------------------------------------------
+  {
+    this->m_DictionaryAvailable = 0;
+  }
+  //----------------------------------------------------------------------------
+  /** Get dictionary flag. */
+  int GetDictionaryFlag()   
+    //----------------------------------------------------------------------------
+  {
+    return this->m_DictionaryAvailable;
+  }
+  //----------------------------------------------------------------------------
+  /** Get output. */
+  mafNode* GetOutput()   
+    //----------------------------------------------------------------------------
+  {
+    return this->m_Vme;
+  }
+  //----------------------------------------------------------------------------
+  //** Makes the undo for the operation.
+  void OpUndo()   
+  //----------------------------------------------------------------------------
+  {
+    assert(m_Vme);
+    m_Output = NULL;
+    // Must unregister in order to delete completely all data (since it was a smart pointer)
+    m_Vme->UnRegister(m_Output);
+    m_Vme->ReparentTo(NULL);
+    // m_Vme->Delete(); // remove vme from the tree will kill it - do not use this if it has been previously registered
+    m_Vme = NULL;
+  }
+  
+
+protected:
+  mafString m_FileDir;
+	mafString m_DictDir;
+	mafString m_File;
+	mafString m_Dict;
+  mafString m_PgdWildc;
+  mafString m_DicWildc;
+	mafVME  *m_Vme; 						
+	int m_DictionaryAvailable;
+};
+
+#endif

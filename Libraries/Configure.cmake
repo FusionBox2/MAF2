@@ -25,6 +25,10 @@ OPTION(MAF_USE_XercesC "Find and Link the XercesC library." ON)
 
 OPTION(MAF_USE_CURL "Find and Link the cURL library." ON)
 
+OPTION(MED_USE_Offis "Find and Link the Offis library." ON)
+OPTION(MED_USE_BTK "Find and Link the BTK library." ON)
+
+
 IF (EXISTS ${MFL_SOURCE_DIR}/wxMozilla)
   OPTION(MAF_USE_WXMOZILLA "Find and Link the wxMozilla library." OFF)
 ENDIF (EXISTS ${MFL_SOURCE_DIR}/wxMozilla)
@@ -74,6 +78,21 @@ IF (MAF_USE_WX)
     SET(MAF_WXW_LIBDIR "vc_lib" CACHE PATH "wxWidgets lib subfolder")
   ENDIF(HAVE_64_BIT)
 ENDIF (MAF_USE_WX)
+
+
+#
+# Offis Library
+#
+IF (MED_USE_Offis)
+  SET(MED_DCMTK_DIR "${DCMTK_DIR}")
+ENDIF(MED_USE_Offis)
+
+#
+# BTK Library
+#
+IF (MED_USE_BTK)
+  find_package(BTK REQUIRED)
+ENDIF(MED_USE_BTK)
 
 
 #

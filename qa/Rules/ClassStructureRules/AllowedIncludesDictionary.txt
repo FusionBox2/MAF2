@@ -1,2 +1,4 @@
 mafDecl.h
 mafConfigure.h
+medDecl.h
+medConfigure.h

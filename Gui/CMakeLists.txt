@@ -128,6 +128,32 @@ SET(PROJECT_SRCS
   mafGUISettingsHelp.cpp
   mafObjectWithGUI.cpp
   mafObjectWithGUI.h
+
+
+
+  medGUILandmark.cpp
+  medGUILandmark.h
+  medGUIWizard.cpp
+  medGUIWizard.h
+  medGUIWizardPage.cpp
+  medGUIWizardPage.h
+  medGUIWizardPageNew.cpp
+  medGUIWizardPageNew.h
+  medGUIDicomSettings.cpp
+  medGUIDicomSettings.h
+  # medGUIContextualMenu.cpp
+  # medGUIContextualMenu.h
+  medGUISettingsAdvanced.cpp
+  medGUISettingsAdvanced.h
+  medGUIDynamicVP.cpp
+  medGUIDynamicVP.h
+  medGUILutHistogramSwatch.cpp
+  medGUILutHistogramSwatch.h
+  medGUILutHistogramEditor.cpp
+  medGUILutHistogramEditor.h
+  medGUIMDIFrame.cpp
+  medGUIMDIFrame.h
+  
 )
 
 IF (MAF_USE_CURL)
@@ -193,9 +219,7 @@ ENDIF(WITH_OPENSSL)
 
 
 # List the kits from VTK that are needed by this project.
-SET(PROJECT_LIBS
-  mafBase
-)
+SET(PROJECT_LIBS mafBase mafIO vtkMAF)
 
 IF (MAF_USE_CURL)
   SET(PROJECT_LIBS ${PROJECT_LIBS} CURL::libcurl)
