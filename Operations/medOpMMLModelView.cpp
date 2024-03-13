@@ -3088,10 +3088,10 @@ void medOpMMLModelView::Print(vtkObject *obj, wxString msg)
         message=message.Mid(pos+1);
       }
 		#else
-			strstream ss1,ss2;
+			std::stringstream ss1,ss2;
 			obj->Print(ss1);
       wxLogMessage("[%s PRINTOUT:]\n", obj->GetClassName());
-			wxLogMessage("%s\n", ss1.str()); 
+			wxLogMessage("%s\n", ss1.str().c_str()); 
 		#endif
 
 }
