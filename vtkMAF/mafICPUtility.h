@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <utility>
 #include <map>
+#include <random>
 #include <vnl/vnl_matrix.h>
 #include <vnl/vnl_vector.h>
 #include <vnl/vnl_matrix_fixed.h>
@@ -185,7 +186,11 @@ inline void mafICPUtility::Rows_randperm(vnl_matrix<double>& M)
 
 	vnl_vector<int> index(nrows);
 	for(int i=0; i< nrows; i++) index.put(i,i);
-	std::random_shuffle(index.begin(), index.end());
+
+	std::random_device rd;
+	std::mt19937 g(rd());
+
+	std::shuffle(index.begin(), index.end(), g);
 	
 	vnl_matrix<double> temp(nrows, ncols);
 	for(int i=0;i<M.rows(); i++) temp.set_row(i,M[index[i]]);

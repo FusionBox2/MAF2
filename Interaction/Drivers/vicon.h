@@ -76,19 +76,16 @@ public:
 		return v;
 	}
 
-	struct CompareNames : std::binary_function<std::string, std::string, bool>
+	static bool CompareNames(const std::string& a_S1, const std::string& a_S2)
 	{
-		bool operator()(const std::string & a_S1, const std::string & a_S2) const
-		{
-			std::string::const_iterator iS1 = a_S1.begin();
-			std::string::const_iterator iS2 = a_S2.begin();
+		std::string::const_iterator iS1 = a_S1.begin();
+		std::string::const_iterator iS2 = a_S2.begin();
 
-			while(iS1 != a_S1.end() && iS2 != a_S2.end())
-				if(toupper(*(iS1++)) != toupper(*(iS2++))) return false;
+		while (iS1 != a_S1.end() && iS2 != a_S2.end())
+			if (toupper(*(iS1++)) != toupper(*(iS2++))) return false;
 
-			return a_S1.size() == a_S2.size();
-		}
-	};
+		return a_S1.size() == a_S2.size();
+	}
 
 
 
@@ -133,8 +130,7 @@ public:
 
 	bool operator==(const std::string & a_rName) 
 	{
-		ClientCodes::CompareNames comparitor;
-		return comparitor(Name, a_rName);
+		return ClientCodes::CompareNames(Name, a_rName);
 	}
 
 };
@@ -197,8 +193,7 @@ public:
 
 	bool operator==(const std::string & a_rName) 
 	{
-		ClientCodes::CompareNames comparitor;
-		return comparitor(Name, a_rName);
+		return ClientCodes::CompareNames(Name, a_rName);
 	}
 };
 

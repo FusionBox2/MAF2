@@ -90,28 +90,28 @@ public:
 
 protected:
 	//Called by Update to fill some internal structures
-	/*virtual*/ void ExecuteInformation() throw(...);
+	/*virtual*/ void ExecuteInformation() ;
 
 	//allocates the required buffers
-	/*virtual*/ void AllocateBuffers() throw(...);
+	/*virtual*/ void AllocateBuffers() ;
 
 	//deallocates the buffers created in AllocateBuffers
-	/*virtual*/ void DeallocateBuffers() throw(...);
+	/*virtual*/ void DeallocateBuffers() ;
 
 	//processes data
-	virtual void ExecuteData() throw(...);
+	virtual void ExecuteData() ;
 
 	//processes the currently loaded block of data
 	//creating its bricked version
-	virtual void ConstructBricks() throw(...);
+	virtual void ConstructBricks() ;
 
 	//Process the currently loaded bricks, computing average values
 	//for every brick and determining which bricks are uniform
-	virtual void ProcessBricks(int nCurBrickPlane) throw(...);
+	virtual void ProcessBricks(int nCurBrickPlane) ;
 
   /** Process the grid coordinates for rectilinear grid
   If the input data is regular, this method does nothing */
-  virtual void ProcessCoordinates() throw(...);
+  virtual void ProcessCoordinates() ;
 
 protected:
 	//computes an average value for every brick in the current

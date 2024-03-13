@@ -31,7 +31,7 @@ vtkStandardNewMacro(vtkMAFFile2);
 
 //creates a new file
 //returns false if an error occurs
-bool vtkMAFFile::Create(const char* fname) throw(...)
+bool vtkMAFFile::Create(const char* fname) 
 {
   Close();  //close previously associated FILE
 
@@ -48,7 +48,7 @@ bool vtkMAFFile::Create(const char* fname) throw(...)
 
 //opens an existing file for R/W or RO (bRO == true)  
 //returns false if an error occurs
-bool vtkMAFFile::Open(const char* fname, bool bRO) throw(...)
+bool vtkMAFFile::Open(const char* fname, bool bRO) 
 {
   Close();  //close previously associated FILE
 
@@ -101,7 +101,7 @@ long long vtkMAFFile::GetFileSize()
 
 //creates a new file
 //throws std::exceptions if an error occurs
-void vtkMAFFile2::Create(const char* fname) throw(...)
+void vtkMAFFile2::Create(const char* fname) 
 {
   if (!vtkMAFFile::Create(fname))
   {
@@ -112,7 +112,7 @@ void vtkMAFFile2::Create(const char* fname) throw(...)
 
 //opens an existing file for R/W or RO (bRO == true)  
 //throws std::exceptions if an error occurs
-void vtkMAFFile2::Open(const char* fname, bool bRO) throw(...)
+void vtkMAFFile2::Open(const char* fname, bool bRO) 
 {
   if (!vtkMAFFile::Open(fname))
   {
@@ -122,7 +122,7 @@ void vtkMAFFile2::Open(const char* fname, bool bRO) throw(...)
 }
 
 //returns the current file length, throws an exception if an error occurs
-long long vtkMAFFile2::GetFileSize() throw(...)
+long long vtkMAFFile2::GetFileSize() 
 {
 #ifdef _WIN32
   LARGE_INTEGER liSize;
@@ -141,7 +141,7 @@ long long vtkMAFFile2::GetFileSize() throw(...)
 }
 
 //returns file size, throwing exception if an error occurs (e.g., file not found)
-/*static*/ long long vtkMAFFile2::GetFileSize(const char* fname) throw(...)
+/*static*/ long long vtkMAFFile2::GetFileSize(const char* fname) 
 {
   vtkMAFFile2 f;
   f.Open(fname, true);

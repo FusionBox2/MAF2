@@ -19,7 +19,7 @@ class Array1D : public ArrayND<T>, private std::vector<T>
 {
 public:
   Array1D():std::vector<T>(){}
-  Array1D(size_type _XSize):std::vector<T>(_XSize){}
+  Array1D(size_t _XSize):std::vector<T>(_XSize){}
   Array1D(const Array1D& _array):std::vector<T>(_array){}
 
   ArrayND<T>* CreateDimCopy() const {return new Array1D<T>(GetDimension());}
@@ -32,7 +32,7 @@ public:
   {
     return at(i);
   }
-  void resize(size_type _XSize)
+  void resize(size_t _XSize)
   {
     std::vector<T>::resize(_XSize);
   }
@@ -84,7 +84,7 @@ public:
 
   Array2D(const NRVec<double>& vec, const Dimension& dim):std::vector<Array1D<T> >(dim.x)
   {
-    for(size_type i = 0; i < dim.x; i++)
+    for(size_t i = 0; i < dim.x; i++)
       at(i).resize(dim.y);
     assert(vec.size() == GetNumElems() * T::DIMENSION);
     for(unsigned i = 0; i < GetNumElems(); i++)
@@ -95,15 +95,15 @@ public:
   }
   Array2D(const Dimension& dim):std::vector<Array1D<T> >(dim.x)
   {
-    for(size_type i = 0; i < dim.x; i++)
+    for(size_t i = 0; i < dim.x; i++)
       at(i).resize(dim.y);
   }
 
   Array2D():std::vector<Array1D<T> >(){}
 
-  Array2D(size_type _XSize, size_type _YSize):std::vector<Array1D<T> >(_XSize)
+  Array2D(size_t _XSize, size_t _YSize):std::vector<Array1D<T> >(_XSize)
   {
-    for(size_type i = 0; i < _XSize; i++)
+    for(size_t i = 0; i < _XSize; i++)
       at(i).resize(_YSize);
   }
   Array2D(const Array2D& _array):std::vector<Array1D<T> >(_array){}
@@ -130,10 +130,10 @@ public:
     assert(GetNumElems() > 0);
     return at(i)(j);
   }
-  void resize(size_type _XSize, size_type _YSize)
+  void resize(size_t _XSize, size_t _YSize)
   {
     std::vector<Array1D<T> >::resize(_XSize);
-    for(size_type i = 0; i < _XSize; i++)
+    for(size_t i = 0; i < _XSize; i++)
       at(i).resize(_YSize);
   }
   void GetDimension(size_t& dimX, size_t& dimY)const
@@ -152,7 +152,7 @@ public:
       return Dimension(0, 0);
     return Dimension(size(), at(0).GetDimension());
   }
-  void SetDimension(size_type _XSize, size_type _YSize)
+  void SetDimension(size_t _XSize, size_t _YSize)
   {
     resize(_XSize, _YSize);
   }
@@ -188,14 +188,14 @@ public:
   };
 
   Array3D():std::vector<Array2D<T> >(){}
-  Array3D(size_type _XSize, size_type _YSize, size_type _ZSize):std::vector<Array2D<T> >(_XSize)
+  Array3D(size_t _XSize, size_t _YSize, size_t _ZSize):std::vector<Array2D<T> >(_XSize)
   {
-    for(size_type i = 0; i < _XSize; i++)
+    for(size_t i = 0; i < _XSize; i++)
       at(i).resize(_YSize, _ZSize);
   }
   Array3D(const Dimension& dim):std::vector<Array2D<T> >(dim.x)
   {
-    for(size_type i = 0; i < dim.x; i++)
+    for(size_t i = 0; i < dim.x; i++)
       at(i).resize(dim.y, dim.z);
   }
 
@@ -221,10 +221,10 @@ public:
     assert(GetNumElems() > 0);
     return at(i)(j, k);
   }
-  void resize(size_type _XSize, size_type _YSize, size_type _ZSize)
+  void resize(size_t _XSize, size_t _YSize, size_t _ZSize)
   {
     std::vector<Array2D<T> >::resize(_XSize);
-    for(size_type i = 0; i < _XSize; i++)
+    for(size_t i = 0; i < _XSize; i++)
       at(i).resize(_YSize, _ZSize);
   }
   void GetDimension(size_t& dimX, size_t& dimY, size_t& dimZ)const
@@ -244,7 +244,7 @@ public:
       return Dimension(0, 0, 0);
     return Dimension(size(), at(0).GetDimension());
   }
-  void SetDimension(size_type _XSize, size_type _YSize, size_type _ZSize)
+  void SetDimension(size_t _XSize, size_t _YSize, size_t _ZSize)
   {
     resize(_XSize, _YSize, _ZSize);
   }

@@ -107,7 +107,7 @@ protected:
 	//creates BBF files with LOD with sample rate ranges from 1 to nMaxSampleRate
 	//skipping less important levels in order to fit into nTotalMaxSize Bytes
   //returns number of constructed levels and in nTotalMaxSize their size in bytes
-	int CreateLODs(int nMaxSampleRate, vtkIdType64& nTotalMaxSize) throw(...);
+	int CreateLODs(int nMaxSampleRate, vtkIdType64& nTotalMaxSize);
 };
 
 #endif //__mafBrickingProcessObject__

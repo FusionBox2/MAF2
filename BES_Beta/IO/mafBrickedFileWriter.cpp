@@ -143,7 +143,7 @@ void mafBrickedFileWriter::SetInputZCoordinates(vtkDoubleArray* pCoords)
 }
 
 //Called by Update to fill some internal structures
-/*virtual*/ void mafBrickedFileWriter::ExecuteInformation() throw(...)
+/*virtual*/ void mafBrickedFileWriter::ExecuteInformation() 
 {
 	if (m_InputDataSet == NULL)	//error
 		throw std::invalid_argument(_("Invalid argument. Input Data Set cannot be NULL"));
@@ -192,7 +192,7 @@ void mafBrickedFileWriter::SetInputZCoordinates(vtkDoubleArray* pCoords)
 }
 
 //allocates the required buffers
-/*virtual*/ void mafBrickedFileWriter::AllocateBuffers() throw(...)
+/*virtual*/ void mafBrickedFileWriter::AllocateBuffers() 
 {	
 	m_PDataBuffer = new char[m_NBricksDimSizeInB[1]];
 	m_PBricksBuffer = new char[m_NBricksDimSizeInB[1]];	
@@ -222,7 +222,7 @@ void mafBrickedFileWriter::SetInputZCoordinates(vtkDoubleArray* pCoords)
 }
 
 //allocates the required buffers
-/*virtual*/ void mafBrickedFileWriter::DeallocateBuffers() throw(...)
+/*virtual*/ void mafBrickedFileWriter::DeallocateBuffers() 
 {
 	cppDEL(m_PLowResLevel);
 	cppDEL(m_PMainIdxTable);	
@@ -238,7 +238,7 @@ void mafBrickedFileWriter::SetInputZCoordinates(vtkDoubleArray* pCoords)
 }
 
 //processes data
-/*virtual*/ void mafBrickedFileWriter::ExecuteData()  throw(...)
+/*virtual*/ void mafBrickedFileWriter::ExecuteData()  
 {
 	int nSampleRate = this->GetSampleRate();
 
@@ -347,7 +347,7 @@ void mafBrickedFileWriter::SetInputZCoordinates(vtkDoubleArray* pCoords)
 //------------------------------------------------------------------------
 //Process the grid coordinates for rectilinear grid
 //If the input data is regular, this method does nothing
-/*virtual*/ void mafBrickedFileWriter::ProcessCoordinates() throw(...)
+/*virtual*/ void mafBrickedFileWriter::ProcessCoordinates() 
 //------------------------------------------------------------------------
 {
   if (!this->IsRectilinearGrid())
@@ -411,7 +411,7 @@ void mafBrickedFileWriter::SetInputZCoordinates(vtkDoubleArray* pCoords)
 //processes the currently loaded block of data
 //creating its bricked version, computing average values
 //for every brick and determining which bricks are uniform
-/*virtual*/ void mafBrickedFileWriter::ConstructBricks()  throw(...)
+/*virtual*/ void mafBrickedFileWriter::ConstructBricks()  
 {
 	char* pCurLineBuf = m_PDataBuffer;
 
@@ -441,7 +441,7 @@ void mafBrickedFileWriter::SetInputZCoordinates(vtkDoubleArray* pCoords)
 
 //Process the currently loaded bricks, computing average values
 //for every brick and determining which bricks are uniform
-/*virtual*/ void mafBrickedFileWriter::ProcessBricks(int nCurBrickPlane)  throw(...)
+/*virtual*/ void mafBrickedFileWriter::ProcessBricks(int nCurBrickPlane)  
 {
 	switch (m_InputDataSet->GetScalarType())
 	{

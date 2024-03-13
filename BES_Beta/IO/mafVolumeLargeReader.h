@@ -176,14 +176,14 @@ public:
 
 protected:
 	//processes data
-	virtual void ExecuteData() throw(...);
+	virtual void ExecuteData() ;
 
 	//Called by Update to fill some internal structures
-	/*virtual*/ void ExecuteInformation() throw(...);
+	/*virtual*/ void ExecuteInformation() ;
 
 
 	//Creates all levels
-	virtual void CreateLODs() throw(...);
+	virtual void CreateLODs() ;
 
 	//Releases every level
 	virtual void DestroyLODs();

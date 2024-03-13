@@ -90,7 +90,7 @@ public:
 
   //returns the current position in file, 
   //returns -1, if an error occurs
-  inline long long GetCurrentPos() throw(...);
+  inline long long GetCurrentPos() ;
 
   //returns the current file length, 
   //returns -1, if an error occurs
@@ -159,7 +159,7 @@ inline bool vtkMAFFile::Seek(long long pos, int origin)
 }
 
 //returns the current position in file, throws an exception if an error occurs
-inline long long vtkMAFFile::GetCurrentPos() throw(...)
+inline long long vtkMAFFile::GetCurrentPos() 
 {
 #ifdef _WIN32
   LARGE_INTEGER liCurPos;
@@ -208,39 +208,39 @@ private:
 public:
   //creates a new file
   //throws std::exceptions if an error occurs
-  void Create(const char* fname) throw(...);
+  void Create(const char* fname) ;
 
   //opens an existing file for R/W or RO (bRO == true)  
   //throws std::exceptions if an error occurs
-  void Open(const char* fname, bool bRO = true) throw(...);
+  void Open(const char* fname, bool bRO = true) ;
 
 	//reads count bytes from the file into buffer
 	//throws std::exceptions if an error occurs
-	inline void Read(void* buffer, int count) throw(...);
+	inline void Read(void* buffer, int count) ;
 
 	//writes count bytes from the buffer into the file
 	//throws std::exceptions if an error occurs
-	inline void Write(void* buffer, int count) throw(...);	
+	inline void Write(void* buffer, int count) ;	
 
 	//set the current position in file to a new location according to
   //pos and origin. If origin is SEEK_CUR - pos is given as the distance 
   //from the current position, SEEK_END - pos is the distance from the 
   //end of file. SEEK_SET (default) - from the beginning of file
-	inline void Seek(long long pos, int origin = SEEK_SET) throw(...);
+	inline void Seek(long long pos, int origin = SEEK_SET) ;
 
   //returns the current position in file, throws an exception if an error occurs
-  inline long long GetCurrentPos() throw(...);
+  inline long long GetCurrentPos() ;
 
   //returns the current file length, throws an exception if an error occurs
-  long long GetFileSize() throw(...);
+  long long GetFileSize() ;
 
 	//returns file size, throwing exception if an error occurs (e.g., file not found)
-	static long long GetFileSize(const char* fname) throw(...);
+	static long long GetFileSize(const char* fname) ;
 };
 
 //writes count bytes from the buffer into the file
 //throws std::exceptions if an error occurs
-inline void vtkMAFFile2::Write(void* buffer, int count) throw(...)
+inline void vtkMAFFile2::Write(void* buffer, int count) 
 {
 #ifdef _WIN32
   DWORD dwWritten;
@@ -264,7 +264,7 @@ inline void vtkMAFFile2::Write(void* buffer, int count) throw(...)
 
 //reads count bytes from the file into the buffer
 //throws std::exceptions if an error occurs
-inline void vtkMAFFile2::Read(void* buffer, int count) throw(...)
+inline void vtkMAFFile2::Read(void* buffer, int count) 
 {
 #ifdef _WIN32
   DWORD dwRead;
@@ -286,14 +286,14 @@ inline void vtkMAFFile2::Read(void* buffer, int count) throw(...)
 }
 
 //set the current position in file to pos
-inline void vtkMAFFile2::Seek(long long pos, int origin) throw(...)
+inline void vtkMAFFile2::Seek(long long pos, int origin) 
 {
   if (!vtkMAFFile::Seek(pos, origin))
     throw std::ios::failure(("Unable to seek in the specified file."));
 }
 
 //returns the current position in file, throws an exception if an error occurs
-inline long long vtkMAFFile2::GetCurrentPos() throw(...)
+inline long long vtkMAFFile2::GetCurrentPos() 
 {
   long long ret = vtkMAFFile::GetCurrentPos();
   if (ret < 0)

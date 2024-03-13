@@ -254,13 +254,13 @@ public:
 
 protected:
 	//Called by Update to fill some internal structures
-	virtual void ExecuteInformation() throw(...) = 0;
+	virtual void ExecuteInformation()  = 0;
 
 	//allocates the required buffers
-	virtual void AllocateBuffers()  throw(...) {};
+	virtual void AllocateBuffers()   {};
 
 	//deallocates the buffers created in AllocateBuffers
-	virtual void DeallocateBuffers()  throw(...) {};
+	virtual void DeallocateBuffers()   {};
 };
 
 #endif //__mafBrickedFile__

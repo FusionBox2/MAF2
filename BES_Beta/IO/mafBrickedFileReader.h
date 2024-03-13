@@ -131,22 +131,22 @@ public:
 
 protected:
 	//Called by Update to fill some internal structures
-	/*virtual*/ void ExecuteInformation() throw(...);
+	/*virtual*/ void ExecuteInformation() ;
 
 	//allocates the required buffers
-	/*virtual*/ void AllocateBuffers() throw(...);
+	/*virtual*/ void AllocateBuffers() ;
 
 	//deallocates the buffers created in AllocateBuffers
-	/*virtual*/ void DeallocateBuffers() throw(...);
+	/*virtual*/ void DeallocateBuffers() ;
 
 	//processes data
-	virtual void ExecuteData() throw(...);
+	virtual void ExecuteData() ;
 
   /** processes data by converting m_DataSet into m_DataSetRLG */
   virtual void ExecuteRLGData();
 
 	//opens the brick file, loading index table, etc. 
-	virtual void OpenBrickFile() throw(...);
+	virtual void OpenBrickFile() ;
 
 	//closes the currently opened brick file (if there is any)
 	//releasing memory allocated for index table, etc.
@@ -167,7 +167,7 @@ protected:
 
 	//loads the brick with the given index from file 
 	//into the memory denoted by pOutPtr
-	inline void LoadBrick(int nBrickIndex, char* pOutPtr) throw(...);
+	inline void LoadBrick(int nBrickIndex, char* pOutPtr) ;
 	
 	//computes extents in inner bricks and boundary bricks	
 	//for the given extent VOI that is specified in voxels (of highest resolution level)
@@ -225,7 +225,7 @@ inline void mafBrickedFileReader::FillBrick(char* pOutPtr, const char* pConstVal
 
 //loads the brick with the given index from file 
 //into the memory denoted by pOutPtr
-inline void mafBrickedFileReader::LoadBrick(int nBrickIndex, char* pOutPtr) throw(...)
+inline void mafBrickedFileReader::LoadBrick(int nBrickIndex, char* pOutPtr) 
 {
 	long long offset = ((long long)nBrickIndex)*m_NBrickSizeInB[2] + sizeof(BBF_HEADER);
 

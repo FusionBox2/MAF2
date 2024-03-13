@@ -84,7 +84,7 @@ void mafVolumeLargeReader::SetOutputRLGDataSet(vtkRectilinearGrid* ds)
 
 
 //Creates all levels
-/*virtual*/ void mafVolumeLargeReader::CreateLODs() throw(...)
+/*virtual*/ void mafVolumeLargeReader::CreateLODs() 
 {
 	mafString szPath, szFile, szExt;
 	mafSplitPath(m_BrickFileName, &szPath, &szFile, &szExt);
@@ -169,7 +169,7 @@ void mafVolumeLargeReader::SetOutputRLGDataSet(vtkRectilinearGrid* ds)
 }
 
 //Called by Update to fill some internal structures
-/*virtual*/ void mafVolumeLargeReader::ExecuteInformation() throw(...)
+/*virtual*/ void mafVolumeLargeReader::ExecuteInformation() 
 {
 	if (m_NLevels == 0)
 		CreateLODs();	//creates level of details
@@ -202,7 +202,7 @@ void mafVolumeLargeReader::SetOutputRLGDataSet(vtkRectilinearGrid* ds)
 }
 
 //processes data
-/*virtual*/ void mafVolumeLargeReader::ExecuteData() throw(...)
+/*virtual*/ void mafVolumeLargeReader::ExecuteData() 
 {	
 	m_PLevels[m_NCurrentLevel]->Update();
 

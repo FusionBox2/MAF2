@@ -50,7 +50,7 @@ std::vector<mafString> ZIPOpen(const mafString& file)
   int length_header_name = header_name.Length();
   bool enable_mid = false;
 
-  std::auto_ptr<wxZipEntry> entry;
+  std::unique_ptr<wxZipEntry> entry;
 
   wxFFileInputStream in(file.toWx());
   wxZipInputStream zip(in);

@@ -128,7 +128,7 @@ bool mafEncryptFileFromMemory(const char *in, unsigned int len, const char *file
     FileSink *fsink = new FileSink(filename_out);
     DefaultEncryptorWithMAC  * mac =	new DefaultEncryptorWithMAC(passPhrase, fsink);
 
-    StringSource s((const byte *)in, len, true, mac);
+    StringSource s((const CryptoPP::byte *)in, len, true, mac);
   }
   catch (...)
   {
@@ -203,7 +203,7 @@ void mafCalculateteChecksum(const char *filename, std::string &checksum_result)
     MD5 hashMD5;
     HashFilter filterMD5(hashMD5);
 
-    std::auto_ptr<ChannelSwitch>
+    std::unique_ptr<ChannelSwitch>
       channelSwitch(new ChannelSwitch);
 
     channelSwitch->AddDefaultRoute(filterMD5);
@@ -228,12 +228,12 @@ void mafCalculateteChecksum(const char *input_string, int input_len, std::string
     MD5 hashMD5;
     HashFilter filterMD5(hashMD5);
 
-    std::auto_ptr<ChannelSwitch>
+    std::unique_ptr<ChannelSwitch>
       channelSwitch(new ChannelSwitch);
 
     channelSwitch->AddDefaultRoute(filterMD5);
 
-    StringSource s((const byte *)input_string, input_len, true, channelSwitch.release());
+    StringSource s((const CryptoPP::byte *)input_string, input_len, true, channelSwitch.release());
 
     HexEncoder encoder(new StringSink( checksum_result ), true);
     filterMD5.TransferTo( encoder );
