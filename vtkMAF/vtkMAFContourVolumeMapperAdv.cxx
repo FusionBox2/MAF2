@@ -156,7 +156,7 @@ template<typename DataType> void vtkMAFContourVolumeMapperAdv::PrepareContoursTe
           caseIndex |= (voxelVals[1] > ContourValue) << 1;
           caseIndex |= (voxelVals[2] > ContourValue) << 2;
           caseIndex |= (voxelVals[3] > ContourValue) << 3;
-          const EDGE_LIST * edge = marchingSquaresCases[caseIndex].edges;
+          const int * edge = marchingSquaresCases[caseIndex].edges;
           if (*edge < 0)
             continue;
 
