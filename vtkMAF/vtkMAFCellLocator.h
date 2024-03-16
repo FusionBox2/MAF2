@@ -34,23 +34,12 @@ public:
   /**  RTTI Macro. */
   vtkTypeMacro(vtkMAFCellLocator, vtkCellLocator);	
 
-public:
-
-  // Description:
-  // Given a finite line defined by the two points (p1,p2), return the list
-  // of unique cell ids in the buckets containing the line. It is possible
-  // that an empty cell list is returned. The user must provide the vtkIdList
-  // to populate. This method returns data only after the locator has been
-  // built.
-  void FindCellsAlongLine(double p1[3], double p2[3], double tolerance,
-                          vtkIdList *cells);
-
 protected:
-  /** constructor */
-  vtkMAFCellLocator() {
-  }
-  /** destructor. */
-  ~vtkMAFCellLocator() {}
+  vtkMAFCellLocator();
+  
+private:
+  vtkMAFCellLocator(const vtkMAFCellLocator&);  // Not implemented.
+  void operator=(const vtkMAFCellLocator&);  // Not implemented.
 };
 
 #endif // vtkMAFCellLocator_h__
