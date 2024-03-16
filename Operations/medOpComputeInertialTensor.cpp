@@ -429,7 +429,11 @@ int medOpComputeInertialTensor::ComputeLocalInertialTensor(mafNode* node, int cu
     int type = cell->GetCellType();
     
     vtkIdType numPts = 0;
-    vtkIdType *ptIds = 0;
+#if VTK_MAJOR_VERSION > 8
+	const vtkIdType* ptIds = 0;
+#else
+	vtkIdType* ptIds = 0;
+#endif
 
     // get cell points
     switch (ds->GetDataObjectType())

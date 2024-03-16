@@ -288,7 +288,11 @@ void lhpOpLMProj::OpDo()
     }
 
     vtkIdType npts = 0;
-    vtkIdType *indx = 0;
+#if VTK_MAJOR_VERSION > 8
+	const vtkIdType* indx = 0;
+#else
+	vtkIdType* indx = 0;
+#endif
 
     mafMatrix m, nm;
     cloud->GetOutput()->GetAbsMatrix(m, stmps[i]);

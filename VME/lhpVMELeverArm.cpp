@@ -278,7 +278,11 @@ void lhpVMELeverArm::InternalUpdate()
       }
 
       vtkIdType npts = 0;
-      vtkIdType *indx = 0;
+#if VTK_MAJOR_VERSION > 8
+	  const vtkIdType* indx = 0;
+#else
+	  vtkIdType* indx = 0;
+#endif
 
       for (lines->InitTraversal(); lines->GetNextCell(npts, indx); )
       {

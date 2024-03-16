@@ -86,7 +86,11 @@ void vtkPatchLine::ExecuteData(vtkDataObject *output)
 	for(int i = 0; i < nNumLines; i++)
 	{
 		vtkIdType npts;
+#if VTK_MAJOR_VERSION > 8
+		const vtkIdType* pts;
+#else
 		vtkIdType* pts;
+#endif
 		origLines->GetNextCell(npts, pts);
 
 		if(i == 0)

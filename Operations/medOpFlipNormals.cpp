@@ -556,7 +556,12 @@ void medOpFlipNormals::TraverseMeshAndMark( double radius )
 
 	vtkIdType cellId, ptId, numIds, idCellInWave;
 	int idPoint, k;
-	vtkIdType *cellPointsList, *cellsFromPoint, numCellPoints;
+	vtkIdType *cellsFromPoint, numCellPoints;
+#if VTK_MAJOR_VERSION > 8
+	const vtkIdType* cellPointsList;
+#else
+	vtkIdType* cellPointsList;
+#endif
 	vtkIdList *tmpWave;
 	unsigned short ncells = 0;
 

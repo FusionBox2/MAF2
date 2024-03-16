@@ -203,7 +203,11 @@ void vtkMAFPolyDataSingleSourceShortestPath::BuildAdjacency(vtkPolyData *pd)
 		// TODO: All types
 		if (ctype == VTK_POLYGON || ctype == VTK_TRIANGLE || ctype == VTK_LINE)
 		{
-			vtkIdType *pts;
+#if VTK_MAJOR_VERSION > 8
+			const vtkIdType* pts;
+#else
+			vtkIdType* pts;
+#endif
 			vtkIdType npts;
 			pd->GetCellPoints (i, npts, pts);
 			

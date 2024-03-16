@@ -2122,7 +2122,13 @@ double vtkMEDPolyDataDeformation_M2::GetDistance( vtkIdType nPtStartId,
     {
       //there is an intersection (at x) with the mesh
       //find the closest mesh point 
-      vtkIdType nPtIds, *pPtIds;
+      vtkIdType nPtIds;
+#if VTK_MAJOR_VERSION > 8
+	  const vtkIdType* pPtIds;
+#else
+	  vtkIdType* pPtIds;
+#endif
+
       input->GetCellPoints(nCellId, nPtIds, pPtIds);
 
       int iMinPos = 0;
@@ -2220,7 +2226,12 @@ double vtkMEDPolyDataDeformation_M2::GetPathLength(vtkIdType nPtFrom,
     input->GetPointCells(nCurItemId, nCellsIds, pCellsIds);
     for (int i = 0; i < nCellsIds; i++)
     {
-      vtkIdType nPtsIds, *pPtsIds;
+      vtkIdType nPtsIds;
+#if VTK_MAJOR_VERSION > 8
+	  const vtkIdType* pPtsIds;
+#else
+	  vtkIdType* pPtsIds;
+#endif
       input->GetCellPoints(pCellsIds[i], nPtsIds, pPtsIds);
       for (int j = 0; j < nPtsIds; j++)
       {
@@ -2652,8 +2663,12 @@ vtkMEDPolyDataDeformation_M2::CreateSkeleton(vtkPolyData* pPoly)
   int nEdgeId = 0;
   for (int i = 0; i < nCells; i++)
   {
-    vtkIdType* pIds;
     vtkIdType nCount;    
+#if VTK_MAJOR_VERSION > 8
+	const vtkIdType* pIds;
+#else
+	vtkIdType* pIds;
+#endif
     pPoly->GetCellPoints(i, nCount, pIds);
 
     //create edges
@@ -2741,7 +2756,12 @@ double vtkMEDPolyDataDeformation_M2::ComputeInputMeshAvgEdgeLength()
   int nCells = input->GetNumberOfCells();
   for (int i = 0; i < nCells; i++)
   {
-    vtkIdType nPoints, *ptIds;
+    vtkIdType nPoints;
+#if VTK_MAJOR_VERSION > 8
+	const vtkIdType* ptIds;
+#else
+	vtkIdType* ptIds;
+#endif
     input->GetCellPoints(i, nPoints, ptIds);
     for (int j = 0; j < nPoints; j++)
     {

@@ -81,7 +81,11 @@ namespace itk
     //vtkCell* pCell;
 
     vtkIdType npts = 0;
-    vtkIdType *pts=0;
+#if VTK_MAJOR_VERSION > 8
+    const vtkIdType *pts=0;
+#else
+	vtkIdType* pts = 0;
+#endif
 
     vtkIdType start,end;
 

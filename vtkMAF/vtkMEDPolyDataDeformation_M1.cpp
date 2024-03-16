@@ -2696,8 +2696,12 @@ vtkMEDPolyDataDeformation_M1::CreateSkeleton(vtkPolyData* pPoly)
   int nEdgeId = 0;
   for (int i = 0; i < nCells; i++)
   {
-    vtkIdType* pIds;
-    vtkIdType nCount;    
+#if VTK_MAJOR_VERSION > 8
+	  const vtkIdType* pIds;
+#else
+	  vtkIdType* pIds;
+#endif
+	  vtkIdType nCount;
     pPoly->GetCellPoints(i, nCount, pIds);
 
     //create edges
@@ -2733,7 +2737,12 @@ double vtkMEDPolyDataDeformation_M1::ComputeInputMeshAvgEdgeLength()
   int nCells = input->GetNumberOfCells();
   for (int i = 0; i < nCells; i++)
   {
-    vtkIdType nPoints, *ptIds;
+    vtkIdType nPoints;
+#if VTK_MAJOR_VERSION > 8
+	const vtkIdType* ptIds;
+#else
+	vtkIdType* ptIds;
+#endif
     input->GetCellPoints(i, nPoints, ptIds);
     for (int j = 0; j < nPoints; j++)
     {

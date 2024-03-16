@@ -299,8 +299,12 @@ void vtkMaskPolyDataFilter::InitCurrentSliceMask()
 void vtkMaskPolyDataFilter::UpdateCurrentSliceMask(double z)
 {
 	int nPoints=Mask->GetNumberOfPoints();
-	vtkIdType *cellIds;
-	
+#if VTK_MAJOR_VERSION > 8
+	const vtkIdType* cellIds;
+#else
+	vtkIdType* cellIds;
+#endif
+
 	//generate points
 	vtkPoints *new_points;
 	vtkNEW(new_points);

@@ -1010,7 +1010,12 @@ vtkPolyData* medVMEMuscleWrapper::FixPolyline(vtkPolyData* input)
   Edge* pEdges = new Edge[nInEdges];
   for (int i = 0; i < nInEdges; i++)
   {
-    vtkIdType nPts, *pPtIds;
+    vtkIdType nPts;
+#if VTK_MAJOR_VERSION > 8
+	const vtkIdType* pPtIds;
+#else
+	vtkIdType* pPtIds;
+#endif
     input->GetCellPoints(i, nPts, pPtIds);
 
     pEdges[nOutEdges][0] = pPtIdMap[pPtIds[0]];

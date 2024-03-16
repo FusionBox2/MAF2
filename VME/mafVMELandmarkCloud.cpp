@@ -1121,7 +1121,11 @@ int mafVMELandmarkCloud::SetLandmarkVisibility(vtkPolyData *polydata,int idx,boo
       for (int i = 0; i < cells->GetNumberOfCells(); i++)
       {
         vtkIdType npts; 
-        vtkIdType *pts;
+#if VTK_MAJOR_VERSION > 8
+		const vtkIdType* pts;
+#else
+		vtkIdType* pts;
+#endif
         cells->GetNextCell(npts, pts);
         if (npts != 1)
         {

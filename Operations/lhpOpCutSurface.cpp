@@ -228,7 +228,11 @@ void lhpOpCutSurface::OpStop(int result)
   {
     int counter = 0;
     vtkIdType npts = 0;
-    vtkIdType *indx = 0;
+#if VTK_MAJOR_VERSION > 8
+	const vtkIdType* indx = 0;
+#else
+	vtkIdType* indx = 0;
+#endif
     unsigned plInd = 0;
 
     for (polys->InitTraversal(); polys->GetNextCell(npts, indx); )
@@ -297,7 +301,11 @@ void lhpOpCutSurface::OpStop(int result)
   {
     int counter = 0;
     vtkIdType npts = 0;
-    vtkIdType *indx = 0;
+#if VTK_MAJOR_VERSION > 8
+	const vtkIdType* indx = 0;
+#else
+	vtkIdType* indx = 0;
+#endif
     unsigned plInd = 0;
     std::vector<vtkIdType> polyreind;
 

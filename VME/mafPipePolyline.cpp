@@ -866,7 +866,11 @@ vtkPolyData *mafPipePolyline::SplineProcess(vtkPolyData *polyData)
   vtkNEW(cellArray);
 
   vtkCellArray *lines=polyData->GetLines();
-  vtkIdType *linePoints;
+#if VTK_MAJOR_VERSION > 8
+  const vtkIdType* linePoints;
+#else
+  vtkIdType* linePoints;
+#endif
   vtkIdType linePointsNum;
   int evaluedPoints=0;
   int cellID=0;
@@ -935,7 +939,11 @@ vtkPolyData * mafPipePolyline::LineProcess( vtkPolyData *polyData )
   m_PolyFilteredLine->DeepCopy(polyData);
 
   vtkCellArray *lines=polyData->GetLines();
-  vtkIdType *linePoints;
+#if VTK_MAJOR_VERSION > 8
+  const vtkIdType* linePoints;
+#else
+  vtkIdType* linePoints;
+#endif
   double oldPoint[3],currPoint[3];
   vtkIdType linePointsNum;
   int evaluedPoints=0;

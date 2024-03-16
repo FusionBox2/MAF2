@@ -258,7 +258,12 @@ int* vtkMAFMuscleDecomposition::GetSortedEdges(vtkPolyData* contour)
   int* pEdgeIds = new int[nEntries];
   for (int i = 0, j = 0; i < nCells; i++, j += 2)
   {
-    vtkIdType nPts, *pPts;
+    vtkIdType nPts;
+#if VTK_MAJOR_VERSION > 8
+	const vtkIdType* pPts;
+#else
+	vtkIdType* pPts;
+#endif
     contour->GetCellPoints(i, nPts, pPts);
     
     pEdgeIds[j + 0] = pPts[0];

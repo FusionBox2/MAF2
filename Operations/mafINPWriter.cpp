@@ -96,8 +96,12 @@ void mafINPWriter::WriteAsciiINP(vtkPoints *pts, vtkCellArray *polys)
   FILE      *fp;
   double    v1[3];
   vtkIdType npts = 0;
-  vtkIdType *indx = 0;
-  
+#if VTK_MAJOR_VERSION > 8
+  const vtkIdType* indx = 0;
+#else
+  vtkIdType* indx = 0;
+#endif
+
   if ((fp = fopen(this->FileName, "w")) == NULL)
   {
     vtkErrorMacro(<< "Couldn't open file: " << this->FileName);
@@ -150,7 +154,11 @@ void mafINPWriter::WriteBinaryINP(vtkPoints *pts, vtkCellArray *polys)
   FILE      *fp;
   double    v1[3];
   vtkIdType npts = 0;
-  vtkIdType *indx = 0;
+#if VTK_MAJOR_VERSION > 8
+  const vtkIdType* indx = 0;
+#else
+  vtkIdType* indx = 0;
+#endif
 
   if ((fp = fopen(this->FileName, "wb")) == NULL)
   {
