@@ -588,9 +588,9 @@ int mafOpImporterRAWVolume::GetFileLength(const char * filename)
 //----------------------------------------------------------------------------
 {
 	int l,m,len;
-	ifstream file (filename, ios::in|ios::binary);
+	std::ifstream file (filename, std::ios::in|std::ios::binary);
 	l = file.tellg();
-	file.seekg (0, ios::end);
+	file.seekg (0, std::ios::end);
 	m = file.tellg();
 	file.close();
 	len = (m-l);

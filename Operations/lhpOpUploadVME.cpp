@@ -251,7 +251,7 @@ void lhpOpUploadVME::SaveConnectionConfigurationFile()
   }
 
   // open auto tags file and try to handle tags using tags factory 
-  ofstream configurationFile;
+  std::ofstream configurationFile;
 
   configurationFile.open(m_ConnectionConfigurationFileName.GetCStr());
   if (!configurationFile) {
@@ -1034,7 +1034,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
   m_UnhandledAutoTagsListFromFactory.Clear();
 
   // open auto tags file and try to handle tags using tags factory 
-  ifstream inManualTagsFile;
+  std::ifstream inManualTagsFile;
 
   inManualTagsFile.open(m_ManualTagsListFromXMLDictionaryFileName.GetCStr());
   if (!inManualTagsFile) {
@@ -1053,7 +1053,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
   inManualTagsFile.close();
 
   // open auto tags file and try to handle tags using tags factory 
-  ifstream inAutoTagsFile;
+  std::ifstream inAutoTagsFile;
 
   inAutoTagsFile.open(m_AutoTagsListFromXMLDictionaryFileName.GetCStr());
   if (!inAutoTagsFile) {
@@ -1112,7 +1112,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
 
   // generates handled auto file
   // open auto tags file and try to handle tags using tags factory 
-  ofstream handledAutoTagsFile;
+  std::ofstream handledAutoTagsFile;
 
   handledAutoTagsFile.open(m_HandledAutoTagsFileName.GetCStr());
 
@@ -1126,7 +1126,7 @@ int lhpOpUploadVME::GeneratesTagsListsFromXMLDictionary()
 
   // generates manual tag file 
   // open auto tags file and try to handle tags using tags factory 
-  ofstream unhandledPlusManualTagsFile;
+  std::ofstream unhandledPlusManualTagsFile;
 
   unhandledPlusManualTagsFile.open(mafWxToString(m_CurrentCache + m_CsvName).toStd());
 

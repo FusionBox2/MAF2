@@ -199,13 +199,13 @@ void mafOpImporterSTL::ImportSTL()
 	  { //swapping the file
 		  std::ifstream f_in;
       mafString swapped;				
-		  f_in.open (m_Files[kk].GetCStr(), ifstream::in| ifstream::binary);
+		  f_in.open (m_Files[kk].GetCStr(), std::ifstream::in| std::ifstream::binary);
 		  int dot_pos = m_Files[kk].FindLastChr('.');
       swapped.NCopy(m_Files[kk],dot_pos);
 		  swapped += _R("_swapped");
 		  swapped += _R(".stl");
 		  std::ofstream f_out;
-		  f_out.open(swapped.GetCStr(), ofstream::out | ofstream::binary);
+		  f_out.open(swapped.GetCStr(), std::ofstream::out | std::ofstream::binary);
   		
 		  char ch;
 		  unsigned int number = 0, v = 0;

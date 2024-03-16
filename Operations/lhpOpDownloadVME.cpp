@@ -252,7 +252,7 @@ void lhpOpDownloadVME::OpRun()
   DebugPath.Append(_R("\\Debug.py"));
   if (mafFileExists(DebugPath))
   {
-    ifstream debugFile;
+    std::ifstream debugFile;
     debugFile.open(DebugPath.GetCStr());
     if (!debugFile) 
     {
@@ -312,7 +312,7 @@ void lhpOpDownloadVME::SaveConnectionConfigurationFile()
   }
 
   // open auto tags file and try to handle tags using tags factory 
-  ofstream configurationFile;
+  std::ofstream configurationFile;
   configurationFile.open(m_ConnectionConfigurationFileName.GetCStr());
   if (!configurationFile) {
     mafString message = m_ConnectionConfigurationFileName;
@@ -965,7 +965,7 @@ int lhpOpDownloadVME::RetrieveInformationFromBasketListFile()
       mafLogMessage(_M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
   // open auto tags file and try to handle tags using tags factory 
-  ifstream inBasketListFile;
+  std::ifstream inBasketListFile;
 
   inBasketListFile.open(m_BasketListFileName.GetCStr());
   if (!inBasketListFile) {

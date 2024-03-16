@@ -233,7 +233,7 @@ void lhpOpUploadVMERefactor::SaveConnectionConfigurationFile()
   }
 
   // open auto tags file and try to handle tags using tags factory 
-  ofstream configurationFile;
+  std::ofstream configurationFile;
 
   configurationFile.open(m_ConnectionConfigurationFileName.GetCStr());
   if (!configurationFile) {
@@ -835,7 +835,7 @@ int lhpOpUploadVMERefactor::GeneratesHandledAndUnhandledPlusManualTagsFileFromXM
   parametersCargo->Delete();
 
   // open auto tags file and try to handle tags using tags factory 
-  ofstream handledAutoTagsFile;
+  std::ofstream handledAutoTagsFile;
 
   handledAutoTagsFile.open(m_HandledAutoTagsLocalFileName.GetCStr());
 
@@ -850,7 +850,7 @@ int lhpOpUploadVMERefactor::GeneratesHandledAndUnhandledPlusManualTagsFileFromXM
   // ------- unhandledPlusManualTagsFile -------
 
   // open auto tags file and try to handle tags using tags factory 
-  ofstream unhandledPlusManualTagsFile;
+  std::ofstream unhandledPlusManualTagsFile;
 
   unhandledPlusManualTagsFile.open((m_CurrentCacheChildABSFolder + m_UnhandledPlusManualTagsLocalFileName).toStd());
 
@@ -1290,7 +1290,7 @@ int lhpOpUploadVMERefactor::FillAutoTagsAndManualTagsVARsFromXMLMasterDictionary
   outManualTags.Clear();
 
   // fill output manualTagsArrayString
-  ifstream inManualTagsFile;
+  std::ifstream inManualTagsFile;
 
   inManualTagsFile.open(manualTagsListFromXMLDictionaryLocalFileName.GetCStr());
   if (!inManualTagsFile) {
@@ -1310,7 +1310,7 @@ int lhpOpUploadVMERefactor::FillAutoTagsAndManualTagsVARsFromXMLMasterDictionary
   inManualTagsFile.close();
 
   // fill output autoTagsArrayString
-  ifstream inAutoTagsFile;
+  std::ifstream inAutoTagsFile;
 
   inAutoTagsFile.open(autoTagsListFromXMLDictionaryLocalFileName.GetCStr());
   if (!inAutoTagsFile) {

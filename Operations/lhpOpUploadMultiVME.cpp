@@ -215,7 +215,7 @@ void lhpOpUploadMultiVME::OpRun()
   DebugPath.Append(_R("\\Debug.py"));
   if (mafFileExists(DebugPath))
   {
-    ifstream debugFile;
+    std::ifstream debugFile;
     debugFile.open(DebugPath.GetCStr());
     if (!debugFile) {
       mafLogMessage(_M("Unable to open Debug.py file"));
@@ -394,7 +394,7 @@ void lhpOpUploadMultiVME::SaveConnectionConfigurationFile()
   }
 
   // open auto tags file and try to handle tags using tags factory 
-  ofstream configurationFile;
+  std::ofstream configurationFile;
 
   configurationFile.open(m_ConnectionConfigurationFileName.GetCStr());
   if (!configurationFile) {
@@ -977,7 +977,7 @@ int lhpOpUploadMultiVME::SaveLinkURIFile(mafNode *node, std::vector<mafString> l
     mafFileRemove(lockPath);
 
   // open auto tags file and try to handle tags using tags factory 
-  ofstream listURIFile;
+  std::ofstream listURIFile;
 
   listURIFile.open(lockPath.GetCStr());
   if (!listURIFile)
@@ -1049,7 +1049,7 @@ int lhpOpUploadMultiVME::SaveChildURIFile(mafNode* node, mafString URI)
   m_FileCreatedVector.push_back(lockPath);
 
   // open auto tags file and try to handle tags using tags factory 
-  ofstream listURIFile;
+  std::ofstream listURIFile;
 
   listURIFile.open(lockPath.GetCStr(), fstream::in | fstream::out | fstream::app);
   if (!listURIFile)

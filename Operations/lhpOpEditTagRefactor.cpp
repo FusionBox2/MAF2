@@ -233,7 +233,7 @@ void lhpOpEditTagRefactor::OpRun()
   DebugPath.Append(_R("\\Debug.py"));
   if (mafFileExists(DebugPath))
   {
-    ifstream debugFile;
+      std::ifstream debugFile;
     debugFile.open(DebugPath.GetCStr());
     if (!debugFile) {
       mafLogMessage(_M("Unable to open Debug.py file"));
@@ -680,7 +680,7 @@ int lhpOpEditTagRefactor::GeneratesTagsListsFromXMLDictionary()
   m_UnhandledAutoTagsListFromFactory.Clear();
 
   // open auto tags file and try to handle tags using tags factory 
-  ifstream inManualTagsFile;
+  std::ifstream inManualTagsFile;
 
   inManualTagsFile.open(m_ManualTagsListFromXMLDictionaryFileName.GetCStr());
   if (!inManualTagsFile) {
@@ -699,7 +699,7 @@ int lhpOpEditTagRefactor::GeneratesTagsListsFromXMLDictionary()
   inManualTagsFile.close();
 
   // open auto tags file and try to handle tags using tags factory 
-  ifstream inAutoTagsFile;
+  std::ifstream inAutoTagsFile;
 
   inAutoTagsFile.open(m_AutoTagsListFromXMLDictionaryFileName.GetCStr());
   if (!inAutoTagsFile) {
@@ -763,7 +763,7 @@ int lhpOpEditTagRefactor::GeneratesTagsListsFromXMLDictionary()
   // generates handled auto file
 
   // open auto tags file and try to handle tags using tags factory 
-  ofstream handledAutoTagsFile;
+  std::ofstream handledAutoTagsFile;
 
   handledAutoTagsFile.open(m_HandledAutoTagsLocalFileName.GetCStr());
 
@@ -778,7 +778,7 @@ int lhpOpEditTagRefactor::GeneratesTagsListsFromXMLDictionary()
   
   // generates manual tag file 
   // open auto tags file and try to handle tags using tags factory 
-  ofstream unhandledPlusManualTagsFile;
+  std::ofstream unhandledPlusManualTagsFile;
 
   unhandledPlusManualTagsFile.open((m_CurrentCache + m_UnhandledPlusManualTagsLocalFileName).GetCStr());
 
