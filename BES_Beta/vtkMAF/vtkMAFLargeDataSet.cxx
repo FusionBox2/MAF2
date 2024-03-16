@@ -235,7 +235,7 @@ void vtkMAFLargeDataSet::GetCellNeighbors(vtkIdType64 cellId, vtkIdList *ptIds,
 		for ( numPts=ptIds->GetNumberOfIds(), i=1; i < numPts; i++)
 		{
 			this->GetPointCells(ptIds->GetId(i), otherCells);
-			cellIds->IntersectWith(*otherCells);
+			cellIds->IntersectWith(otherCells);
 		}
 	}
 

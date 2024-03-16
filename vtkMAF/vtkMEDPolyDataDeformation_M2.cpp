@@ -2222,7 +2222,7 @@ double vtkMEDPolyDataDeformation_M2::GetPathLength(vtkIdType nPtFrom,
 
     //now get all neighbors for the vertex u
     vtkIdType *pCellsIds;
-    unsigned short nCellsIds;
+    vtkIdType nCellsIds;
     input->GetPointCells(nCurItemId, nCellsIds, pCellsIds);
     for (int i = 0; i < nCellsIds; i++)
     {

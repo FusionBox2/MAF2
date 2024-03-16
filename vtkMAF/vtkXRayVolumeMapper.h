@@ -83,7 +83,7 @@ class VTK_vtkMAF_EXPORT vtkXRayVolumeMapper : public vtkVolumeMapper {
     
     // standard vtkVolumeMapper only accept vtkImageData. Overwrite input functions
     void  SetInput(vtkDataSet *input);
-    vtkImageData*  GetInput() { return vtkVolumeMapper::GetInput(); }
+    vtkDataSet*  GetInput() { return vtkVolumeMapper::GetInput(); }
 
     // Render the volume
     virtual void Render(vtkRenderer *ren, vtkVolume *vol);

@@ -893,7 +893,7 @@ void vtkMEDExtrudeToCircle::GetPointsAroundHole(vtkPolyData *hole, vtkIdList *pt
 {
   int i ;
   vtkIdType numPtsInCell ;
-  unsigned short numCellsOnPt ;
+  vtkIdType numCellsOnPt ;
 #if VTK_MAJOR_VERSION > 8
   const vtkIdType* ptlist;
 #else

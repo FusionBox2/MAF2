@@ -509,7 +509,7 @@ void medOpSmoothSurfaceCells::TraverseMeshAndMark( double radius )
 	vtkIdType* cellPointsList;
 #endif
 	vtkIdList *tmpWave;
-	unsigned short ncells = 0;
+	vtkIdType ncells = 0;
 
 	double seedCenter[3] = {0,0,0};
 	FindTriangleCellCenter(m_CellSeed, seedCenter);
