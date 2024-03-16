@@ -17,12 +17,12 @@
 #define __mafInteractorConstraint_h
 
 #include "vtkMAFSmartPointer.h"
+#include "vtkDoubleArray.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :
 //----------------------------------------------------------------------------
 class mafRefSys;
-class vtkDoubleArray;
 
 //----------------------------------------------------------------------------
 
