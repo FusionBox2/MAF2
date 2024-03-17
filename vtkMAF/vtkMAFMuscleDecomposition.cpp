@@ -35,7 +35,7 @@
 
 vtkStandardNewMacro(vtkMAFMuscleDecomposition);
 
-#include "mafMemDbg.h"
+//#include "mafMemDbg.h"
 #include "mafDbg.h"
 
 
