@@ -310,11 +310,13 @@ void vtkMAFMeshCutter_BES::GetCellNeighboursOfPoint(vtkIdType idpt, vtkIdList *i
 //-----------------------------------------------------------------------------
 {
   // get cell neighbours of point
-  vtkCellLinks::Link& lnk = UnstructGrid->GetCellLinks()->GetLink(idpt);
+  UnstructGrid->GetPointCells(idpt, idlist);
+
+  /*vtkCellLinks::Link& lnk = UnstructGrid->GetCellLinks()->GetLink(idpt);
   vtkIdType* dstList = idlist->WritePointer(0, lnk.ncells);
   
   // copy cell id's to idlist
-  memcpy(dstList, lnk.cells, lnk.ncells*sizeof(vtkIdType));  
+  memcpy(dstList, lnk.cells, lnk.ncells*sizeof(vtkIdType));  */
 }
 
 //-----------------------------------------------------------------------------
