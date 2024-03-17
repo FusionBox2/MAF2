@@ -64,7 +64,6 @@
 #include "vtkImageMapper.h"
 #include "vtkImageResample.h"
 #include "vtkPolyDataMapper.h"
-#include "vtkCriticalSection.h"
 #include "vtkMultiThreader.h"
 #include "vtkMAFImageMapToWidgetColors.h"
 #include "vtkMAFAdaptiveVolumeMapper.h"
@@ -169,7 +168,7 @@ void mafGUIDialogTransferFunction2D::ShowModal(mafVME *vme)
   this->m_CurrentWidget = 0;
   this->m_Filename = "";
 
-  this->m_CriticalSection = vtkCriticalSection::New();
+  this->m_CriticalSection = new std::mutex;
 
   //initialize widget properties
   strcpy(this->m_Widget.Name, "new");
@@ -198,8 +197,8 @@ void mafGUIDialogTransferFunction2D::ShowModal(mafVME *vme)
   this->wxDialog::ShowModal();
 
   ///////////////////// free memory
-  this->m_CriticalSection->Lock(); // wait for thread to finish
-  this->m_CriticalSection->Unlock();
+  this->m_CriticalSection->lock(); // wait for thread to finish
+  this->m_CriticalSection->unlock();
 
   vtkDEL(this->m_VolumeProperty);
   
@@ -229,7 +228,7 @@ void mafGUIDialogTransferFunction2D::ShowModal(mafVME *vme)
   cppDEL(this->m_Rwi3D);
   cppDEL(this->m_GraphRwi);
 
-  vtkDEL(this->m_CriticalSection);
+  delete this->m_CriticalSection;
   threader->Delete();
 }
 //----------------------------------------------------------------------------
@@ -661,7 +660,7 @@ VTK_THREAD_RETURN_TYPE mafGUIDialogTransferFunction2D::CreatePipe(void *argDialo
 {
   mafGUIDialogTransferFunction2D *dialog = (mafGUIDialogTransferFunction2D*)(((ThreadInfoStruct *)argDialog)->UserData);
 
-  dialog->m_CriticalSection->Lock();
+  dialog->m_CriticalSection->lock();
 
   // 3d pipe
   dialog->m_Volume3D = vtkVolume::New();
@@ -761,7 +760,7 @@ VTK_THREAD_RETURN_TYPE mafGUIDialogTransferFunction2D::CreatePipe(void *argDialo
   dialog->Enable();
   dialog->m_SlicePipeStatus = PipeReady;
 
-  dialog->m_CriticalSection->Unlock();
+  dialog->m_CriticalSection->unlock();
   
   return VTK_THREAD_RETURN_VALUE;
 }

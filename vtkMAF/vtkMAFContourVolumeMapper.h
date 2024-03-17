@@ -56,7 +56,7 @@ Then Render()
 #include "vtkVolumeMapper.h"
 #include "vtkPolyData.h"
 
-#include <vtkOpenGL.h>
+#include <vtk_glew.h>
 
 #include "vtkMAFConfigure.h"
 

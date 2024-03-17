@@ -16,6 +16,7 @@
 
 #include <math.h>
 #include "vtkPolyData.h"
+#include "vtkPolygon.h"
 #include "vtkImplicitFunction.h"
 #include "vtkTriangleFilter.h"
 #include "vtkIdList.h"

@@ -1156,7 +1156,7 @@ template<typename DataType> void vtkMAFContourVolumeMapper::RenderMCubes(vtkRend
                 }
 
                 // get list of edges
-                const EDGE_LIST *edge = marchingCubesCases[caseIndex].edges;
+                const int *edge = marchingCubesCases[caseIndex].edges;
                 if (*edge < 0)
                   continue;
 
@@ -1583,7 +1583,7 @@ template<typename DataType> void vtkMAFContourVolumeMapper::CreateMCubes(int LOD
             }
 
             // get list of edges
-            const EDGE_LIST *edge = marchingCubesCases[caseIndex].edges;
+            const int *edge = marchingCubesCases[caseIndex].edges;
             if (*edge < 0)
               continue;
 

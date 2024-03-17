@@ -137,8 +137,8 @@ vtkMAFAdaptiveVolumeMapper::vtkMAFAdaptiveVolumeMapper()
   // multi-processing
   this->NumProcesses = 0;
   this->Controller = (vtkMultiThreader::GetGlobalDefaultNumberOfThreads() > 1) ? vtkMultiThreader::New() : NULL;
-  this->RenderingQueueCS = (this->Controller == NULL) ? NULL : vtkCriticalSection::New();
-  this->ThreadLockCS = this->Controller ? vtkCriticalSection::New() : NULL;
+  this->RenderingQueueCS = (this->Controller == NULL) ? NULL : new std::mutex;
+  this->ThreadLockCS = this->Controller ? new std::mutex : NULL;
 
   this->AuxTimer = vtkTimerLog::New();
   this->DataPreprocessed = false;
@@ -161,13 +161,13 @@ vtkMAFAdaptiveVolumeMapper::~vtkMAFAdaptiveVolumeMapper()
   if (this->ThreadLockCS) 
   {
     this->NumProcesses = 0; // flag to stop the process
-    this->ThreadLockCS->Unlock();
+    this->ThreadLockCS->unlock();
     this->Controller->TerminateThread(0);
-    this->ThreadLockCS->Delete();
+    delete this->ThreadLockCS;
   }
   
   if (this->RenderingQueueCS)
-    this->RenderingQueueCS->Delete();
+    delete this->RenderingQueueCS;
 
   if (this->Controller)
     this->Controller->Delete();
@@ -236,7 +236,7 @@ void vtkMAFAdaptiveVolumeMapper::Render(vtkRenderer *renderer, vtkVolume *volume
   this->UpdateProgress(0.f);
   if (this->Controller && this->NumProcesses == 0) 
   {
-    this->ThreadLockCS->Lock(); // pause other processes
+    this->ThreadLockCS->lock(); // pause other processes
     this->Controller->SpawnThread(&RenderProcess, this);
     this->NumProcesses++;
   }
@@ -279,22 +279,22 @@ void vtkMAFAdaptiveVolumeMapper::RenderServer(vtkRenderer *renderer, vtkVolume *
     this->NumOfRenderingPortionsLeft = this->NumOfRenderingPortions;
 
     // resume the other thread
-    this->ThreadLockCS->Unlock();
+    this->ThreadLockCS->unlock();
 
     while (this->NumOfRenderingPortionsLeft >= 0) 
     {
-      this->RenderingQueueCS->Lock();
+      this->RenderingQueueCS->lock();
 
       const int portion = this->NumOfRenderingPortions - this->NumOfRenderingPortionsLeft;
       this->NumOfRenderingPortionsLeft--;
-      this->RenderingQueueCS->Unlock();
+      this->RenderingQueueCS->unlock();
       
       if (portion < this->NumOfRenderingPortions)
         this->RenderRegion(this->ViewportBBoxPortions[portion]);
     }
     
     // wait for other processes to finish the job and stop them
-    this->ThreadLockCS->Lock();
+    this->ThreadLockCS->lock();
   }
   else 
   {
@@ -785,21 +785,21 @@ VTK_THREAD_RETURN_TYPE vtkMAFAdaptiveVolumeMapper::RenderProcess(void *pThreadIn
   
   while (mapper->NumProcesses) 
   {
-    mapper->ThreadLockCS->Lock(); // continue the thread
+    mapper->ThreadLockCS->lock(); // continue the thread
 
     while (mapper->NumOfRenderingPortionsLeft > 0) 
     {
-      mapper->RenderingQueueCS->Lock();
+      mapper->RenderingQueueCS->lock();
       const int portion = mapper->NumOfRenderingPortions - mapper->NumOfRenderingPortionsLeft;
       if (mapper->NumOfRenderingPortionsLeft > 0)
         mapper->NumOfRenderingPortionsLeft--;
-      mapper->RenderingQueueCS->Unlock();
+      mapper->RenderingQueueCS->unlock();
       
       if (portion < mapper->NumOfRenderingPortions)
         mapper->RenderRegion(mapper->ViewportBBoxPortions[portion]);
     }
 
-    mapper->ThreadLockCS->Unlock();
+    mapper->ThreadLockCS->unlock();
   }
   return VTK_THREAD_RETURN_VALUE;
 }

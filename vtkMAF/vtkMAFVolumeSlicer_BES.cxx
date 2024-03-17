@@ -15,7 +15,7 @@
 =========================================================================*/
 //it must be included before gl.h and glu.h
 #include "vtkObject.h"
-#include "vtkOpenGL.h"
+#include "vtk_glew.h"
 
 #include "vtkMAFVolumeSlicer_BES.h"
 #include "vtkInformation.h"

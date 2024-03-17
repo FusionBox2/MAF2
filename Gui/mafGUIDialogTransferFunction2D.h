@@ -24,7 +24,7 @@
 
 #include "vtkProp.h"
 #include "vtkMAFTransferFunction2D.h"
-
+#include <mutex>
 //----------------------------------------------------------------------------
 // forward refs :
 //----------------------------------------------------------------------------
@@ -49,7 +49,6 @@ class vtkActor;
 class vtkActor2D;
 class vtkVolume;
 class vtkTextActor;
-class vtkCriticalSection;
 class vtkWidgetActor;
 class vtkInteractorStyleWidget;
 class vtkInteractorStylePreviewImage;
@@ -123,7 +122,7 @@ protected:
   vtkRenderWindow *m_GraphWindow;
   vtkWidgetActor  *m_WidgetActor;
 
-  vtkCriticalSection *m_CriticalSection;
+  std::mutex *m_CriticalSection;
 
   tfWidget   m_Widget;
   wxListBox *m_WidgetList;
