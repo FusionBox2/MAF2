@@ -167,10 +167,10 @@ ENDIF (MAF_USE_VTK)
 # ------------------------------------
 #INCLUDE_DIRECTORIES(/usr/include/gtk-2.0 /usr/lib/gtk-2.0/include /usr/include/atk-1.0 /usr/X11R6/include /usr/include/glib-2.0 #/usr/lib/glib-2.0/include /usr/include/pango-1.0 /usr/include/freetype2 /usr/include/freetype2/config )
 
-IF (NOT WIN32)
-  INCLUDE (${MAF_SOURCE_DIR}/modules/FindGTK2.cmake)
-  INCLUDE_DIRECTORIES(${GTK_INCLUDE_DIRECTORIES})
-ENDIF (NOT WIN32)
+#IF (NOT WIN32)
+#  INCLUDE (${MAF_SOURCE_DIR}/modules/FindGTK2.cmake)
+#  INCLUDE_DIRECTORIES(${GTK_INCLUDE_DIRECTORIES})
+#ENDIF (NOT WIN32)
 
 # Create the library.
 ADD_LIBRARY(${PROJECT_NAME} ${PROJECT_SRCS})
