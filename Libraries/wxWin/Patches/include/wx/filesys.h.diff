@@ -1,3 +1,0 @@
-186a188,189
->     // Removes FS handler
->     static wxFileSystemHandler* RemoveHandler(wxFileSystemHandler *handler);

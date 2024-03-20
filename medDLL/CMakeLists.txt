@@ -405,7 +405,7 @@ SET(OPERATIONS_SRCS
   ../Operations/medOpExtractGeometry.h
 )
   
-IF (MED_USE_Offis)
+IF (MAF_USE_Offis)
   SET(OPERATIONS_SRCS 
     ${OPERATIONS_SRCS}
     ../Operations/medOpImporterDicomOffis.h
@@ -414,7 +414,7 @@ IF (MED_USE_Offis)
     ../Operations/medDicomCardiacMRIHelper.cpp
     ../Operations/medDicomCardiacMRIHelper.h
    )
-ENDIF (MED_USE_Offis)
+ENDIF (MAF_USE_Offis)
 
   
 IF (MAF_USE_ITK)

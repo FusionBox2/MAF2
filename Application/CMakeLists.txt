@@ -28,7 +28,7 @@ ELSE (WIN32)
 ENDIF (WIN32)
 
 SET(PROJECT_LIBS
-  mafBase mafCore mafGUI mafInteraction mafOperations mafVME vtkMAF ${CURL_LIBRARIES} wldap32 ws2_32
+  mafBase mafCore mafGui mafInteraction mafOperations mafVME vtkMAF ${CURL_LIBRARIES} wldap32 ws2_32
 )
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${VTK_LIBRARIES} )
