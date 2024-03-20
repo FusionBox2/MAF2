@@ -8,13 +8,13 @@ CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/vtkMAFConfigure.h.in
 SET(vtkMAF_SRCS
 
   vtkMAFOrientationMarkerWidget.h
-  vtkMAFOrientationMarkerWidget.cpp
+  vtkMAFOrientationMarkerWidget.cxx
   
   vtkMAFAnnotatedCubeActor.h
-  vtkMAFAnnotatedCubeActor.cpp
+  vtkMAFAnnotatedCubeActor.cxx
   
   vtkMAFGlobalAxesHeadActor.h
-  vtkMAFGlobalAxesHeadActor.cpp
+  vtkMAFGlobalAxesHeadActor.cxx
   
   vtkMAFCellsFilter.cxx
   vtkMAFCellsFilter.h  
@@ -142,7 +142,7 @@ SET(vtkMED_SRCS
   vtkHoleConnectivity.cxx
   vtkHoleConnectivity.h
   vtkPatchLine.h
-  vtkPatchLine.cpp
+  vtkPatchLine.cxx
   
   ############# VolumeLarge Files - TO BE COMMITTED DOWN ########
   ../BES_Beta/vtkMAF/vtkMAFDataArrayDescriptor.cxx
@@ -157,9 +157,9 @@ SET(vtkMED_SRCS
   ../BES_Beta/vtkMAF/vtkMAFLargeImageSource.h
   ../BES_Beta/vtkMAF/vtkMAFFile.cxx
   ../BES_Beta/vtkMAF/vtkMAFFile.h	
-  ../BES_Beta/vtkMAF/vtkMAFDataArrayLayout.cpp
+  ../BES_Beta/vtkMAF/vtkMAFDataArrayLayout.cxx
   ../BES_Beta/vtkMAF/vtkMAFDataArrayLayout.h
-  ../BES_Beta/vtkMAF/vtkMAFMultiFileDataProvider.cpp
+  ../BES_Beta/vtkMAF/vtkMAFMultiFileDataProvider.cxx
   ../BES_Beta/vtkMAF/vtkMAFMultiFileDataProvider.h
   ###############################################################
   
@@ -175,17 +175,17 @@ SET(vtkMED_SRCS
   ###############################################
   
   ########## Probably could be committed down ###
-  vtkMEDPolyDataDeformation.cpp
+  vtkMEDPolyDataDeformation.cxx
   vtkMEDPolyDataDeformation.h
-  vtkMEDPolyDataDeformation_M1.cpp
+  vtkMEDPolyDataDeformation_M1.cxx
   vtkMEDPolyDataDeformation_M1.h
-  vtkMEDPolyDataDeformation_M2.cpp
+  vtkMEDPolyDataDeformation_M2.cxx
   vtkMEDPolyDataDeformation_M2.h  
   ###############################################
     
 
   
-  vtkMEDErythrocyteSource.cpp
+  vtkMEDErythrocyteSource.cxx
   vtkMEDErythrocyteSource.h
   
   vtkMEDImageFillHolesRemoveIslands.cxx
@@ -201,7 +201,7 @@ SET(vtkMED_SRCS
   vtkMEDCollisionDetectionFilter.cxx
   vtkMEDCollisionDetectionFilter.h
   
-  vtkMEDRayCastCleaner.cpp
+  vtkMEDRayCastCleaner.cxx
   vtkMEDRayCastCleaner.h
   
   vtkMEDVolumeToClosedSmoothSurface.cxx
@@ -220,9 +220,9 @@ ENDIF (MAF_USE_ITK)
 
 SET(vtkMED_SRCS
   ${vtkMED_SRCS}
-  vtkMEDPastValuesList.cpp
+  vtkMEDPastValuesList.cxx
   vtkMEDPastValuesList.h
-  vtkMEDStentModelSource.cpp
+  vtkMEDStentModelSource.cxx
   vtkMEDStentModelSource.h
   vtkMEDDeformableSimplexMeshFilter.h
   vtkMEDDeformableSimplexMeshFilter_Impl.h
@@ -237,9 +237,9 @@ SET(vtkMED_SRCS
 )
 
 SET(vtkLHP_SRCS
-	vtkMAFMuscleDecomposition.cpp	
+	vtkMAFMuscleDecomposition.cxx	
 	vtkMAFMuscleDecomposition.h	
-	vtkMAFMuscleFibers.cpp	
+	vtkMAFMuscleFibers.cxx	
 	vtkMAFMuscleFibers.h
 )
 
