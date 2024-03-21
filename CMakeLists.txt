@@ -81,7 +81,6 @@ if(MAF_USE_WX)
   set(wxWidgets_DIR ${WXW_DIR})
   find_package(wxWidgets REQUIRED CONFIG)#COMPONENTS adv core base aui CONFIG)
   if(wxWidgets_FOUND)
-  INCLUDE("${wxWidgets_USE_FILE}")
   LINK_LIBRARIES(${wxWidgets_LIBRARIES})
 #    include("${wxWidgets_USE_FILE}")
 #    add_subdirectory(wxApp)
@@ -103,9 +102,6 @@ endif(MAF_USE_QT)
 
 if(MAF_USE_VTK)
   find_package(VTK REQUIRED CONFIG)
-  if(VTK_FOUND)
-    INCLUDE(${VTK_USE_FILE})
-  endif(VTK_FOUND)
 endif(MAF_USE_VTK)
 
 if(MAF_USE_ITK)
@@ -155,48 +151,30 @@ if(MAF_USE_BTK)
   endif(BTK_FOUND)
 endif(MAF_USE_BTK)
 
-#-----------------------------------------------------------------------------
-# If MFL found or configure continue with MAF Configuration
-#-----------------------------------------------------------------------------
-  # include all necessary for using the MFL
-  # Add single dirs to inclusion path
-  INCLUDE_DIRECTORIES(BEFORE ".")
+INCLUDE_DIRECTORIES(BEFORE ".")
 
-  ###############add all subdirs but "modules"
-  SET(INCLUDE_DIRS "${MAF_BINARY_DIR}" "${MAF_SOURCE_DIR}/Application" "${MAF_SOURCE_DIR}/Base" "${MAF_BINARY_DIR}/Interaction" "${MAF_SOURCE_DIR}/Common" "${MAF_SOURCE_DIR}/Interaction" "${MAF_SOURCE_DIR}/Interaction/Drivers" 
-              "${MAF_SOURCE_DIR}/Core" "${MAF_SOURCE_DIR}/Gui" "${MAF_SOURCE_DIR}/IO" "${MAF_SOURCE_DIR}/Operations" "${MAF_SOURCE_DIR}/VME" 
-              "${MAF_SOURCE_DIR}/VME/DataPipes" "${MAF_SOURCE_DIR}/vtkMAF" "${MAF_BINARY_DIR}/vtkMAF" "${MAF_SOURCE_DIR}/Views")
-  SET(INCLUDE_DIRS ${INCLUDE_DIRS} "${MAF_SOURCE_DIR}/mafDLL")
-  SET(INCLUDE_DIRS ${INCLUDE_DIRS} "${MAF_SOURCE_DIR}/../eigen")
-  SET(INCLUDE_DIRS ${INCLUDE_DIRS} "${MAF_SOURCE_DIR}/../boost")
+SET(INCLUDE_DIRS "${MAF_BINARY_DIR}" 
+                 "${MAF_BINARY_DIR}/Interaction" 
+                 "${MAF_BINARY_DIR}/vtkMAF" 
+                 "${MAF_SOURCE_DIR}/Application" 
+                 "${MAF_SOURCE_DIR}/Base" 
+                 "${MAF_SOURCE_DIR}/Common" 
+                 "${MAF_SOURCE_DIR}/Core" 
+                 "${MAF_SOURCE_DIR}/Gui"
+                 "${MAF_SOURCE_DIR}/Interaction" 
+                 "${MAF_SOURCE_DIR}/Interaction/Drivers" 
+                 "${MAF_SOURCE_DIR}/IO" 
+                 "${MAF_SOURCE_DIR}/Operations" 
+                 "${MAF_SOURCE_DIR}/Views"
+                 "${MAF_SOURCE_DIR}/VME" 
+                 "${MAF_SOURCE_DIR}/VME/DataPipes" 
+                 "${MAF_SOURCE_DIR}/vtkMAF") 
+SET(INCLUDE_DIRS ${INCLUDE_DIRS} "${MAF_SOURCE_DIR}/mafDLL")
+SET(INCLUDE_DIRS ${INCLUDE_DIRS} "${MAF_SOURCE_DIR}/../eigen")
+SET(INCLUDE_DIRS ${INCLUDE_DIRS} "${MAF_SOURCE_DIR}/../boost")
 
-  INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
 
-# IF(MAF_BUILD_MAFDLL)
-  ################################
-  #It's necessary to delete the previous files from the mafDLL project
-  # FILE(GLOB h_to_delete "${MAF_SOURCE_DIR}/mafDLL/*.h")
-  # FILE(GLOB cpp_to_delete "${MAF_SOURCE_DIR}/mafDLL/*.cpp")
-  # FILE(GLOB cxx_to_delete "${MAF_SOURCE_DIR}/mafDLL/*.cxx")
-  # FILE(GLOB txx_to_delete "${MAF_SOURCE_DIR}/mafDLL/*.txx")
-
-  # FOREACH(f ${h_to_delete})
-    # FILE(REMOVE "${f}")
-  # ENDFOREACH(f ${h_to_delete})
-
-  # FOREACH(f ${cpp_to_delete})
-    # FILE(REMOVE "${f}")
-  # ENDFOREACH(f ${cpp_to_delete})
-  
-  # FOREACH(f ${cxx_to_delete})
-    # FILE(REMOVE "${f}")
-  # ENDFOREACH(f ${cxx_to_delete})
-
-  # FOREACH(f ${txx_to_delete})
-    # FILE(REMOVE "${f}")
-  # ENDFOREACH(f ${txx_to_delete})
-  ################################
-# ENDIF(MAF_BUILD_MAFDLL)
 
 	IF(MAF_BUILD_MAFDLL)
 		OPTION(MED_BUILD_MEDDLL "Build medDLL.dll." OFF)
@@ -208,56 +186,39 @@ endif(MAF_USE_BTK)
     SET(MED_BUILD_MEDDLL 0)
 	ENDIF (MED_BUILD_MEDDLL)
   
-  CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/medDefines.h.in ${PROJECT_BINARY_DIR}/medDefines.h @ONLY)
-  CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/Common/medCommonDefines.h.in ${PROJECT_BINARY_DIR}/medCommonDefines.h @ONLY)
-  CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/Gui/medGuiDefines.h.in ${PROJECT_BINARY_DIR}/medGuiDefines.h @ONLY)
-  CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/Operations/medOperationsDefines.h.in ${PROJECT_BINARY_DIR}/medOperationsDefines.h @ONLY)
-  CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/Views/medViewsDefines.h.in ${PROJECT_BINARY_DIR}/medViewsDefines.h @ONLY)
-  CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/Interaction/medInteractionDefines.h.in ${PROJECT_BINARY_DIR}/medInteractionDefines.h @ONLY)
-  CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/VME/medVMEDefines.h.in ${PROJECT_BINARY_DIR}/medVMEDefines.h @ONLY)
-
-  CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/lhpDefines.h.in ${PROJECT_BINARY_DIR}/lhpDefines.h @ONLY)
+CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/Common/medCommonDefines.h.in ${PROJECT_BINARY_DIR}/medCommonDefines.h @ONLY)
+CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/Gui/medGuiDefines.h.in ${PROJECT_BINARY_DIR}/medGuiDefines.h @ONLY)
+CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/Operations/medOperationsDefines.h.in ${PROJECT_BINARY_DIR}/medOperationsDefines.h @ONLY)
+CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/Views/medViewsDefines.h.in ${PROJECT_BINARY_DIR}/medViewsDefines.h @ONLY)
+CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/Interaction/medInteractionDefines.h.in ${PROJECT_BINARY_DIR}/medInteractionDefines.h @ONLY)
+CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/VME/medVMEDefines.h.in ${PROJECT_BINARY_DIR}/medVMEDefines.h @ONLY)
+CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/medDefines.h.in ${PROJECT_BINARY_DIR}/medDefines.h @ONLY)
+CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/lhpDefines.h.in ${PROJECT_BINARY_DIR}/lhpDefines.h @ONLY)
 
   
-      SUBDIRS (Base)
-    IF (MAF_USE_VTK)
-      SUBDIRS (Interaction)
-    ENDIF (MAF_USE_VTK)	
-    SUBDIRS (Views)
-    SUBDIRS (Common)
-    SUBDIRS (Gui)
-    SUBDIRS (IO)
-    SUBDIRS (Core)
-    IF (MAF_USE_VTK)
-      SUBDIRS (vtkMAF)
-      SUBDIRS (VME)
-      SUBDIRS (Operations)
-    ENDIF (MAF_USE_VTK)
-  SUBDIRS(Application)
+SUBDIRS(Application)
+SUBDIRS(Base)
+SUBDIRS(Common)
+SUBDIRS(Core)
+SUBDIRS(Gui)
+SUBDIRS(Interaction)
+SUBDIRS(IO)
+SUBDIRS(Operations)
+SUBDIRS(Views)
+SUBDIRS(VME)
+SUBDIRS(vtkMAF)
 
   SET(BUILD_SHARED_LIBS 0)
   
   IF(WIN32)
-		# Disable automatic manifest generation.
-		STRING(REPLACE "/MANIFEST" "/MANIFEST:NO" CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS})
-		# Explicitly disable it since it is the default for newer versions of VS
-    STRING(REGEX MATCH "MANIFEST:NO" tmp_manifest ${CMAKE_EXE_LINKER_FLAGS})
-    IF(NOT tmp_manifest)
-        SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /MANIFEST:NO")
-    ENDIF(NOT tmp_manifest)
-	ENDIF(WIN32)
-
-  CONFIGURE_FILE(
-  ${MAF_SOURCE_DIR}/MAFConfig.cmake.in
-  ${MAF_BINARY_DIR}/MAFConfig.cmake
-  @ONLY IMMEDIATE
-  )
-    
-  CONFIGURE_FILE(
-  ${MAF_SOURCE_DIR}/MAFUse.cmake.in
-  ${MAF_BINARY_DIR}/MAFUse.cmake
-  @ONLY IMMEDIATE
-  )
+  # Disable automatic manifest generation.
+  STRING(REPLACE "/MANIFEST" "/MANIFEST:NO" CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS})
+  # Explicitly disable it since it is the default for newer versions of VS
+  STRING(REGEX MATCH "MANIFEST:NO" tmp_manifest ${CMAKE_EXE_LINKER_FLAGS})
+  IF(NOT tmp_manifest)
+    SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /MANIFEST:NO")
+  ENDIF(NOT tmp_manifest)
+ENDIF(WIN32)
 
 # Create the header to configure the classes.
 CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/mafConfigure.h.in

@@ -1,1 +1,0 @@
-copy .\Build\Libraries\wxWin\Build\bin\release\*.dll .\Build\bin\release\

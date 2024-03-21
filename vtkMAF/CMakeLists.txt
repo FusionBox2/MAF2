@@ -1,5 +1,5 @@
+cmake_minimum_required(VERSION 3.20)
 project(vtkMAF)
-cmake_minimum_required(VERSION 2.8)
 
 CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/vtkMAFConfigure.h.in
                ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Configure.h
