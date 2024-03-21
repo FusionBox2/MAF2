@@ -37,8 +37,8 @@
 #include "mafVMELandmark.h" 
 #include "mafPipeFactoryVME.h"
 #include "mafPipeVolumeSlice.h"
-#include "medPipeFactoryVME.h"
-#include "medVMEFactory.h"
+#include "mafPipeFactoryVME.h"
+#include "mafVMEFactory.h"
 #include "medPipeVolumeDRR.h"
 #include "medPipeTrajectories.h" 
 #include "mafVMEAFRefSys.h" 
@@ -527,11 +527,11 @@ bool lhpFusionBoxApp::OnInit()
 
   int result;
  
-  result = medVMEFactory::Initialize();
+  result = mafVMEFactory::Initialize();
   assert(result == MAF_OK);
 
-	result = medPipeFactoryVME::Initialize();
-	assert(result==MAF_OK);
+  result = mafPipeFactoryVME::Initialize();
+  assert(result == MAF_OK);
 
   result = mafInteractionFactory::Initialize();
   assert(result==MAF_OK);

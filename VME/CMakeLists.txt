@@ -59,12 +59,8 @@ SET(PROJECT_SRCS
 
 
 
-  medVMEFactory.cpp 
-  medVMEFactory.h
   medVMELabeledVolume.cpp
   medVMELabeledVolume.h
-  medPipeFactoryVME.cpp
-  medPipeFactoryVME.h
 
   medPipeVolumeMIP.cpp
   medPipeVolumeMIP.h

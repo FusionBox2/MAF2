@@ -81,6 +81,28 @@
 #include <string>
 #include <ostream>
 
+
+
+
+#include "medVMEWrappedMeter.h"
+#include "medVMEPolylineGraph.h"
+#include "medVMEPolylineEditor.h"
+#include "medVMEMaps.h"
+
+#include "medVMESurfaceEditor.h"
+#include "medVMELabeledVolume.h"
+#include "medVMESegmentationVolume.h"
+#include "medAttributeSegmentationVolume.h"
+
+#ifdef MAF_USE_ITK
+#include "mafVMERawMotionData.h"
+#include "medVMEAnalog.h"
+#include "medVMEStent.h"
+#endif
+
+#include "mafVMEVolumeLarge.h"
+
+
 mafCxxTypeMacro(mafVMEFactory);
 
 bool mafVMEFactory::m_Initialized=false;
@@ -168,6 +190,29 @@ mafVMEFactory::mafVMEFactory()
 #endif
   mafPlugNodeMacro(mafVMESlicer,"VME representing a slice of a volume");
   mafPlugNodeMacro(mafVMEVector,"VME representing aa applyed vector");
+
+
+
+  //mafPlugObjectMacro(mmaObject,"Object attributes");
+  mafPlugObjectMacro(medAttributeSegmentationVolume, "Segmentation Volume attributes");
+
+  mafPlugNodeMacro(medVMEWrappedMeter, "Generalized VME Meter with wrapping geometry");
+  mafPlugNodeMacro(medVMEPolylineGraph, "VME for Graph and Polyline");
+  mafPlugNodeMacro(medVMEPolylineEditor, "VME for Editing Graph and Polyline");
+  mafPlugNodeMacro(medVMESurfaceEditor, "VME for Editing Surface");
+  mafPlugNodeMacro(medVMELabeledVolume, "VME representing a label put on a volume");
+  mafPlugNodeMacro(medVMEMaps, "VME representing density-distace surface scalars");
+  mafPlugNodeMacro(medVMESegmentationVolume, "VME for Segmented Volume");
+
+#ifdef MAF_USE_ITK
+  mafPlugNodeMacro(mafVMERawMotionData, "VME that is a group for RawMotionData");
+  mafPlugNodeMacro(medVMEAnalog, "VME rapresenting EMG scalar data");
+  mafPlugNodeMacro(medVMEStent, "VME representing stent structure");
+#endif
+  //mafPlugNodeMacro(mafVMEthing,"VME representing a thing");
+
+  //TODO: to be committed down
+  mafPlugNodeMacro(mafVMEVolumeLarge, "VME storing large volume datasets with one scalar component");
 }
 
 //------------------------------------------------------------------------------
