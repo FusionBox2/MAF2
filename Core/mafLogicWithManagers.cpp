@@ -292,7 +292,6 @@ mafLogicWithManagers::~mafLogicWithManagers()
   cppDEL(m_HelpSettings);
   cppDEL(m_PrintSupport);
   cppDEL(m_SettingsDialog); 
-  cppDEL(m_Config);
 }
 //----------------------------------------------------------------------------
 void mafLogicWithManagers::Configure()
