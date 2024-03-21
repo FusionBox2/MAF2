@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.27)
 #
 # Program:   MULTIMOD APPLICATION FRAMEWORK (MAF)
 # Module:    $RCSfile: CMakeLists.txt,v $

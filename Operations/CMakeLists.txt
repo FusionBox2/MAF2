@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.27)
 #
 # Copyright and description to be placed here
 #

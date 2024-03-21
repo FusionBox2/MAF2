@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.27)
 PROJECT (lhpFusionBox)
 
 SET(PROJECT_SRCS 
