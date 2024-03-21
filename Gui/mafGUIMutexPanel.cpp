@@ -95,7 +95,7 @@ wxWindow *mafGUIMutexPanel::GetCurrentClient()
 
   if (num_children == 1)
   {
-    wxWindowList::Node *node = this->GetChildren().GetFirst();
+    auto node = this->GetChildren().GetFirst();
     return (wxWindow *)node->GetData();
   }
   return NULL;

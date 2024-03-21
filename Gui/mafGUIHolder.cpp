@@ -93,7 +93,7 @@ wxWindow *mafGUIHolder::GetCurrentGui()
 
   if (num_children == 1)
   {
-    wxWindowList::Node *node = m_Panel->GetChildren().GetFirst();
+    auto node = m_Panel->GetChildren().GetFirst();
     return (wxWindow *)node->GetData();
   }
   return NULL;
