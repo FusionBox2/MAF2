@@ -51,7 +51,7 @@ int rs232InitCommunications(COMM_PORT *port, DWORD comPort, DWORD baudRate)
     rs232DeinitCommunications(port);
 
     FillMemory(&dcb, sizeof(dcb), 0);
-    port->portHandle = CreateFile((comPort == 1 ? "COM1" : (comPort == 2 ? "COM2" :
+    port->portHandle = CreateFileA((comPort == 1 ? "COM1" : (comPort == 2 ? "COM2" :
                             (comPort == 3 ? "COM3" : "COM4"))),
                             GENERIC_READ | GENERIC_WRITE,
                             0,
