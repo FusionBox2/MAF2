@@ -33,7 +33,7 @@ ELSE (WIN32)
 ENDIF (WIN32)
 
 SET(PROJECT_LIBS
-  medCommon mafCore mafGui mafOperations medViews mafVME vtkMAF
+  mafCommon mafCore mafGui mafOperations mafViews mafVME vtkMAF
 )
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${VTK_LIBRARIES} )

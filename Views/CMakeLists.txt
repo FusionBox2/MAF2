@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.27)
 # Copyright and description to be placed here
 #
 
-PROJECT(medViews)
+PROJECT(mafViews)
 
 # Set your list of sources here.
 SET(PROJECT_SRCS
@@ -85,14 +85,6 @@ SET(PROJECT_LIBS mafVME mafInteraction mafCore)
 
 SET(PROJECT_LIBS ${PROJECT_LIBS} vtkMAF)
 
-IF(MED_BUILD_MEDDLL)
-  SET(BUILD_SHARED_LIBS 1)
-  ADD_DEFINITIONS(-DMED_VIEWS_EXPORTS)
-  # Create the library.
-  ADD_LIBRARY(${PROJECT_NAME} ${PROJECT_SRCS})
-  TARGET_LINK_LIBRARIES(${PROJECT_NAME} mafDLL vtkMAF medCommon mafVME mafInteraction)
-ELSE(MED_BUILD_MEDDLL)
-  # Create the library.
-  ADD_LIBRARY(${PROJECT_NAME} ${PROJECT_SRCS})
-  TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
-ENDIF (MED_BUILD_MEDDLL)
+# Create the library.
+ADD_LIBRARY(${PROJECT_NAME} ${PROJECT_SRCS})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
