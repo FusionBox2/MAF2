@@ -137,23 +137,6 @@ PURPOSE.  See the above copyright notice for more information.
 #include "time.h"
 #include "vtkImageReslice.h"
 
-// copied from wx/list.h : needed to make Visual Assist X work correctly 
-// with this class (al least in version 10.5.1711)
-#define WX_DECLARE_LIST_3(T, Tbase, name, nodetype, classexp)               \
-	WX_DECLARE_LIST_4(T, Tbase, name, nodetype, classexp, WX_LIST_PTROP_NONE)
-#define WX_DECLARE_LIST_PTR_3(T, Tbase, name, nodetype, classexp)        \
-	WX_DECLARE_LIST_4(T, Tbase, name, nodetype, classexp, WX_LIST_PTROP)
-
-#define WX_DECLARE_LIST_2(elementtype, listname, nodename, classexp)        \
-	WX_DECLARE_LIST_3(elementtype, elementtype, listname, nodename, classexp)
-#define WX_DECLARE_LIST_PTR_2(elementtype, listname, nodename, classexp)        \
-	WX_DECLARE_LIST_PTR_3(elementtype, elementtype, listname, nodename, classexp)
-
-#define WX_DECLARE_LIST(elementtype, listname)                              \
-	typedef elementtype _WX_LIST_ITEM_TYPE_##listname;                      \
-	WX_DECLARE_LIST_2(elementtype, listname, wx##listname##Node, class)
-// end copy
-
 WX_DECLARE_LIST(medDicomSlice, medDicomSeriesSliceList);
 
 void medOpImporterDicomOffis::PrintDicomList(medDicomSeriesSliceList *dicomList)
@@ -195,9 +178,9 @@ enum DICOM_IMPORTER_MODALITY
 };
 
 /** methods used to sort medDICOMListElement based on custom criteria */
-int CompareX(const medDicomSlice **arg1,const medDicomSlice **arg2);
-int CompareY(const medDicomSlice **arg1,const medDicomSlice **arg2);
-int CompareZ(const medDicomSlice **arg1,const medDicomSlice **arg2);
+int CompareX(const void* arg1, const void* arg2);
+int CompareY(const void* arg1, const void* arg2);
+int CompareZ(const void* arg1, const void* arg2);
 int CompareTriggerTime(const medDicomSlice **arg1,const medDicomSlice **arg2);
 int CompareImageNumber(const medDicomSlice **arg1,const medDicomSlice **arg2);
 
@@ -5304,7 +5287,7 @@ void medOpImporterDicomOffis::RescaleTo16Bit(vtkImageData *dataSet)
 
 }
 //----------------------------------------------------------------------------
-int CompareX(const medDicomSlice **arg1,const medDicomSlice **arg2)
+int CompareX(const void* arg1,const void *arg2)
 	//----------------------------------------------------------------------------
 {
 	// compare the x coordinate of both arguments
@@ -5326,7 +5309,7 @@ int CompareX(const medDicomSlice **arg1,const medDicomSlice **arg2)
 		return 0;
 }
 //----------------------------------------------------------------------------
-int CompareY(const medDicomSlice **arg1,const medDicomSlice **arg2)
+int CompareY(const void* arg1, const void* arg2)
 	//----------------------------------------------------------------------------
 {
 	// compare the y coordinate of both arguments
@@ -5348,7 +5331,7 @@ int CompareY(const medDicomSlice **arg1,const medDicomSlice **arg2)
 		return 0;
 }
 //----------------------------------------------------------------------------
-int CompareZ(const medDicomSlice **arg1,const medDicomSlice **arg2)
+int CompareZ(const void* arg1, const void* arg2)
 	//----------------------------------------------------------------------------
 {
 	// compare the z coordinate of both arguments
