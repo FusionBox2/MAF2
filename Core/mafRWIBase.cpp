@@ -112,6 +112,10 @@ mafRWIBase::mafRWIBase(wxWindow *parent, wxWindowID id, const wxPoint &pos,
     m_Timer(this, ID_mafRWIBase_TIMER)
 //----------------------------------------------------------------------------
 {
+#if wxCHECK_VERSION(3,3,0)
+	MSWDisableComposited();
+#endif
+
   m_Hidden = true;
   this->Show(false);
 	//m_SaveDir = ::wxGetHomeDir().c_str(); 
