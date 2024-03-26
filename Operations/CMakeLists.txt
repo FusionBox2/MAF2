@@ -455,6 +455,8 @@ IF (MAF_USE_VTK)
 	lhpOpHelAxis.h
 	lhpOpINPExporter.cpp
 	lhpOpINPExporter.h
+	mafOpExporterOBJ.cpp
+	mafOpExporterOBJ.h
 	lhpOpINPImporter.cpp
 	lhpOpINPImporter.h
 	lhpOpMTRExporter.cpp

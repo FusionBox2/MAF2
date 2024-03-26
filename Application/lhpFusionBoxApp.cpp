@@ -108,6 +108,7 @@
 #include "lhpOpBuildHierarchy.h"
 #include "lhpOpTimeReduce.h"
 #include "lhpOpTimeShift.h"
+#include "mafOpExporterOBJ.h"
 #include "lhpOpINPExporter.h"
 #include "lhpOpMTRExporter.h"
 #include "lhpOpINPImporter.h"
@@ -661,6 +662,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   //------------------------- Exporters -------------------------
   m_Logic->Plug(new mafOpExporterSTL(_R("STL")),_R("Geometries"));
   m_Logic->Plug(new lhpOpINPExporter(_R("INP")),_R("Geometries"));
+  m_Logic->Plug(new mafOpExporterOBJ(_R("OBJ")), _R("Geometries"));
   //m_Logic->Plug(new mafOpExporterVRML(_R("VRML")), _R("Geometries"));
   //m_Logic->Plug(new mafOpExporterVRML(_R("FBX")), _R("Geometries"));
   //m_Logic->Plug(new mafOpExporterGeomTex(_R("GEOMTEX")), _R("Geometries"));
