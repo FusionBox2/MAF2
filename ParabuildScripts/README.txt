@@ -1,1 +1,0 @@
-This directory contain scripts used by Parabuild application.
