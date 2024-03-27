@@ -132,12 +132,12 @@ void mafTransformBase::Update()
 //----------------------------------------------------------------------------
 {
   // locking is require to ensure that the class is thread-safe
-  m_UpdateMutex.Lock();
+  m_UpdateMutex.lock();
 
   if (GetMTime() >= m_UpdateTime.GetMTime())
   {  
     InternalUpdate();
     m_UpdateTime.Modified();
   }
-  m_UpdateMutex.Unlock();
+  m_UpdateMutex.unlock();
 }

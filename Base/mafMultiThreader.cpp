@@ -104,15 +104,15 @@ int mafMultiThreader::SpawnThread( mafThreadFunctionType f, void *UserData )
     {
       m_SpawnedThreadActiveFlagLock[id] = new mafMutexLock;
     }
-    m_SpawnedThreadActiveFlagLock[id]->Lock();
+    m_SpawnedThreadActiveFlagLock[id]->lock();
     if (m_SpawnedThreadActiveFlag[id] == 0)
     {
       // We've got a usable thread id, so grab it
       m_SpawnedThreadActiveFlag[id] = 1;
-      m_SpawnedThreadActiveFlagLock[id]->Unlock();
+      m_SpawnedThreadActiveFlagLock[id]->unlock();
       break;
     }
-    m_SpawnedThreadActiveFlagLock[id]->Unlock();
+    m_SpawnedThreadActiveFlagLock[id]->unlock();
       
     id++;
   }
@@ -203,9 +203,9 @@ void mafMultiThreader::TerminateThread( int ThreadID )
     return;
   }
 
-  m_SpawnedThreadActiveFlagLock[ThreadID]->Lock();
+  m_SpawnedThreadActiveFlagLock[ThreadID]->lock();
   m_SpawnedThreadActiveFlag[ThreadID] = 0;
-  m_SpawnedThreadActiveFlagLock[ThreadID]->Unlock();
+  m_SpawnedThreadActiveFlagLock[ThreadID]->unlock();
 
 #ifdef CMAKE_USE_WIN32_THREADS_INIT
   //WaitForSingleObject(m_SpawnedThreadProcessID[ThreadID], INFINITE); // Giunchi: commented to stop Wii-Mote devices

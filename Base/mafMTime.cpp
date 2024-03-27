@@ -36,10 +36,10 @@ void mafMTime::Modified()
   static vtkTimeStamp timeStamp;
   static mafMutexLock TimeStampMutex;
 
-  TimeStampMutex.Lock();
+  TimeStampMutex.lock();
   timeStamp.Modified();
   m_ModifiedTime = timeStamp.GetMTime();
-  TimeStampMutex.Unlock();
+  TimeStampMutex.unlock();
 
 #else
   //#if defined(WIN32) || defined(_WIN32)

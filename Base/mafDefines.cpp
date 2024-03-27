@@ -44,7 +44,7 @@ void mafLogMessage(mafMessageBuf msg)
 //------------------------------------------------------------------------------
 {
   
-  mafLogMutex.Lock();
+  mafLogMutex.lock();
   wxSnprintf(mafLogBuffer, BUFFER_DIMENSION, wxT("%s"), msg.GetBuf());
 
 #ifdef MAF_USE_WX
@@ -67,14 +67,14 @@ void mafLogMessage(mafMessageBuf msg)
   cerr << mafLogBuffer;    
 #endif
   
-  mafLogMutex.Unlock();
+  mafLogMutex.unlock();
 }
 //------------------------------------------------------------------------------
 // open a warning dialog and write a message
 void mafWarningMessage(mafMessageBuf msg)
 //------------------------------------------------------------------------------
 {
-  mafLogMutex.Lock();
+  mafLogMutex.lock();
   wxSnprintf(mafLogBuffer, BUFFER_DIMENSION, wxT("%s"), msg.GetBuf());
 
 #ifdef MAF_USE_WX
@@ -83,7 +83,7 @@ void mafWarningMessage(mafMessageBuf msg)
   cerr << "Warning: " << mafLogBuffer;    
 #endif
   
-  mafLogMutex.Unlock();
+  mafLogMutex.unlock();
 }
 
 //------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ void mafWarningMessage(mafMessageBuf msg)
 void mafErrorMessage(mafMessageBuf msg)
 //------------------------------------------------------------------------------
 {
-  mafLogMutex.Lock();
+  mafLogMutex.lock();
   wxSnprintf(mafLogBuffer, BUFFER_DIMENSION, wxT("%s"), msg.GetBuf());
 
 #ifdef MAF_USE_WX
@@ -100,7 +100,7 @@ void mafErrorMessage(mafMessageBuf msg)
   cerr << "Error:" << mafLogBuffer;
 #endif
   
-  mafLogMutex.Unlock();
+  mafLogMutex.unlock();
 }
 
 //------------------------------------------------------------------------------
@@ -108,7 +108,7 @@ void mafErrorMessage(mafMessageBuf msg)
 void mafMessage(mafMessageBuf msg)
 //------------------------------------------------------------------------------
 {
-  mafLogMutex.Lock();
+  mafLogMutex.lock();
   wxSnprintf(mafLogBuffer, BUFFER_DIMENSION, wxT("%s"), msg.GetBuf());
 
 #ifdef MAF_USE_WX
@@ -117,7 +117,7 @@ void mafMessage(mafMessageBuf msg)
   cerr << mafLogBuffer;
 #endif
   
-  mafLogMutex.Unlock();
+  mafLogMutex.unlock();
 }
 
 

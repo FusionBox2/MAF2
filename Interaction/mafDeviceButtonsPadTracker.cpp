@@ -234,7 +234,7 @@ void mafDeviceButtonsPadTracker::SetLastPoseMatrix(const mafMatrix &matrix)
 { 
   // I had to add a test on elapsed time since it seems sometimes
   // an event gets lost! :-(((
-  m_LastPoseMutex.Lock(); 
+  m_LastPoseMutex.lock(); 
   mafTimeStamp elapsed_time = (vtkTimerLog::GetUniversalTime()-m_LastMoveTime);
 
   // This is a very tricky thing: remove a move event after a give timeout
@@ -286,11 +286,11 @@ void mafDeviceButtonsPadTracker::SetLastPoseMatrix(const mafMatrix &matrix)
     m_LastMoveTime=m_LastPoseMatrix->GetTimeStamp();
     AsyncInvokeEvent(&move_event,MCH_INPUT);
    // m_LastMoveEvent = move_event;
-    m_LastPoseMutex.Unlock();
+    m_LastPoseMutex.unlock();
   }
   else
   {
-    m_LastPoseMutex.Unlock();
+    m_LastPoseMutex.unlock();
     mafSleep(25); // wait for a while to give time to serve last event
   }
 }
@@ -571,20 +571,20 @@ void mafDeviceButtonsPadTracker::OnEvent(mafEventBase *event)
 
   if ( event->GetId()==AGENT_ASYNC_DISPATCH && event->GetSender()==this )
   { 
-    m_LastPoseMutex.Lock();                     /// LOCK
+    m_LastPoseMutex.lock();                     /// LOCK
     // avoid concurrent access to the flag
     mafEventBase *async_event=(mafEventBase *)event->GetData();
     mafID id=async_event->GetId();
-    m_LastPoseMutex.Unlock();                   /// UNLOCK
+    m_LastPoseMutex.unlock();                   /// UNLOCK
 
     // process the event
     Superclass::OnEvent(event);
 
-    m_LastPoseMutex.Lock();                     /// LOCK
+    m_LastPoseMutex.lock();                     /// LOCK
     // if it was a move event clear the m_LastMoveEvent variable
     if (id==GetTracker3DMoveId())
       m_LastPose=0;
-    m_LastPoseMutex.Unlock();                   /// UNLOCK
+    m_LastPoseMutex.unlock();                   /// UNLOCK
   }
   else
   {

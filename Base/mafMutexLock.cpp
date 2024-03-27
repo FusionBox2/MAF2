@@ -162,7 +162,7 @@ mafMutexLock::~mafMutexLock()
 }
 
 //----------------------------------------------------------------------------
-void mafMutexLock::Lock() const
+void mafMutexLock::lock() const
 //----------------------------------------------------------------------------
 {
   if (m_PIMPLMutexLock)
@@ -170,7 +170,7 @@ void mafMutexLock::Lock() const
 }
 
 //----------------------------------------------------------------------------
-void mafMutexLock::Unlock() const
+void mafMutexLock::unlock() const
 //----------------------------------------------------------------------------
 {
   if (m_PIMPLMutexLock)

@@ -37,10 +37,10 @@ public:
   ~mafMutexLock();
   
   /** Lock access. */
-  void Lock( void ) const;
+  void lock( void ) const;
 
   /** Unlock access. */
-  void Unlock( void ) const;
+  void unlock( void ) const;
 protected:
   mmuPIMPLMutexLock *m_PIMPLMutexLock;
 };
