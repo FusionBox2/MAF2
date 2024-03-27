@@ -45,9 +45,6 @@ public:
   /** Get user credentials */
   void GetCredentials();
 
-  /** Superclass override with subapps specific contextual menu */
-  void ViewContextualMenu(bool vme_menu);
-
 protected:
   /** Respond to a VME_ADDED evt. propagate evt. to SideBar,ViewManager,ecc.. */
   virtual void VmeAdded(mafNode *vme);

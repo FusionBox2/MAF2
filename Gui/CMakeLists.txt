@@ -164,8 +164,6 @@ SET(PROJECT_SRCS
   lhpGUINetworkConnectionSettings.h
   lhpGUIPythonSettings.cpp
   lhpGUIPythonSettings.h
-  psLoaderGUIContextualMenu.cpp
-  psLoaderGUIContextualMenu.h
 )
 
 IF (MAF_USE_CURL)

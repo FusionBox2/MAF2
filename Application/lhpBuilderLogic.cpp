@@ -29,7 +29,6 @@
 #include "lhpGUIPythonSettings.h"
 #include "lhpUser.h"
 
-#include "psLoaderGUIContextualMenu.h"
 #include "mafViewManager.h"
 #include "mafGUIMDIChild.h"
 #include "mafGUIMDIFrame.h"
@@ -143,24 +142,4 @@ void lhpBuilderLogic::GetCredentials()
     retry = m_User->CheckUserCredentials();
   }
   m_OpManager->SetMafUser(m_User);
-}
-
-//----------------------------------------------------------------------------
-void lhpBuilderLogic::ViewContextualMenu(bool vme_menu)
-//----------------------------------------------------------------------------
-{
-  if (m_AppTitle == _R("PSLoader"))
-  {
-    psLoaderGUIContextualMenu *contextMenu = new psLoaderGUIContextualMenu();
-    contextMenu->SetListener(this);
-    mafView *v = m_ViewManager->GetSelectedView();
-    mafGUIMDIChild *c = (mafGUIMDIChild *)m_Win->GetActiveChild();
-    if(c != NULL)
-      contextMenu->ShowContextualMenu(c,v,vme_menu);
-    cppDEL(contextMenu);
-  }
-  else
-  {
-    medLogicWithManagers::ViewContextualMenu(vme_menu);
-  }
 }
