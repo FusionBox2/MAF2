@@ -14,7 +14,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "lhpBuilderLogic.h"
+#include "medLogicWithManagers.h"
 #include "mafEvent.h"
 #include "mafBaseEventHandler.h"
 #include "mafDynamicLoader.h"
@@ -35,7 +35,7 @@ public:
   //DECLARE_EVENT_TABLE()
 
 protected:
-  lhpBuilderLogic *m_Logic;
+  medLogicWithManagers *m_Logic;
   std::vector<std::pair<LibHandle, void(*)() > > m_Plugins;
 
 };

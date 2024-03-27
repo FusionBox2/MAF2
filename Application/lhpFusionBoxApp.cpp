@@ -559,7 +559,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
 
   mafPlugPipe<lhpPipeInfo>("Visual pipe for lever arm");
 
-  m_Logic = new lhpBuilderLogic();
+  m_Logic = new medLogicWithManagers();
   if(fullVersion)
   {
     m_Logic->GetTopWin()->SetTitle("LHPFusionBox");

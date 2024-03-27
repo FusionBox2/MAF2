@@ -4,8 +4,6 @@ PROJECT (lhpFusionBox)
 SET(PROJECT_SRCS 
 	lhpFusionBoxApp.cpp
 	lhpFusionBoxApp.h
-	lhpBuilderLogic.cpp
-	lhpBuilderLogic.h
 	lhpBuilderDecl.h
 	
 )

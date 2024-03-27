@@ -18,11 +18,4 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 
 #include "lhpDefines.h"
 
-enum LHP_MAIN_EVENT_ID
-{
-	ID_MSF_DATA_CACHE = EVT_USER_START,
-  ID_REQUEST_USER,
-  ID_REQUEST_APPLICATION_NAME
-};
-
 #endif
