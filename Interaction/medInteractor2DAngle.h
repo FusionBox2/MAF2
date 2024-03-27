@@ -17,7 +17,7 @@
 #ifndef __medInteractor2DAngle_h
 #define __medInteractor2DAngle_h
 
-#include "medInteractionDefines.h"
+
 #include "mafInteractorPER.h"
 #include "mafEvent.h"
 #include "vtkMAFTextActorMeter.h"

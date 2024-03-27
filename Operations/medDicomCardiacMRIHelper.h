@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "medOperationsDefines.h"
+
 #include "vnl/vnl_matrix.h"
 #include "vnl/vnl_vector.h"
 #include <vector>

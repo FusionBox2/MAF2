@@ -12,7 +12,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #ifndef __mafVMEBSplineVolume_h
 #define __mafVMEBSplineVolume_h
 
-#include "lhpDefines.h"
+#include "mafDefines.h"
 
 //----------------------------------------------------------------------------
 // Include:

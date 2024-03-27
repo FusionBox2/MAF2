@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include :
 //----------------------------------------------------------------------------
-#include "medOperationsDefines.h"
+
 #include "mafOp.h"
 #include "mafVMEVector.h"
 #include "mafVMESurface.h"

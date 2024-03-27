@@ -13,7 +13,7 @@
 #ifndef _lhpPipeIntGraphEuler_H_
 #define _lhpPipeIntGraphEuler_H_
 
-#include "lhpDefines.h"
+#include "mafDefines.h"
 
 //----------------------------------------------------------------------------
 // Includes

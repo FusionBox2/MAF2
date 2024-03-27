@@ -18,7 +18,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "medVMEDefines.h"
+
 #include "mafVME.h"
 #include "medVMEOutputWrappedMeter.h"
 #include "mafEvent.h"

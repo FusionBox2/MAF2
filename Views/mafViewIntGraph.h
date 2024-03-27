@@ -13,7 +13,7 @@
 #ifndef __mafViewIntGraph_H__
 #define __mafViewIntGraph_H__
 
-#include "lhpDefines.h"
+#include "mafDefines.h"
 
 #ifndef WX_PRECOMP
     #include "wx/wx.h"

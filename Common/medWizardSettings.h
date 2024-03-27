@@ -17,7 +17,7 @@
 #define __mafGUILocaleSettings_H__
 
 #include "mafGUISettings.h"
-#include "medCommonDefines.h"
+
 
 //----------------------------------------------------------------------------
 // forward reference

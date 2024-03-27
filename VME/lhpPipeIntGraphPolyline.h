@@ -13,7 +13,7 @@
 #ifndef _lhpPipeIntGraphPolyline_H_
 #define _lhpPipeIntGraphPolyline_H_
 
-#include "lhpDefines.h"
+#include "mafDefines.h"
 
 //----------------------------------------------------------------------------
 // Includes

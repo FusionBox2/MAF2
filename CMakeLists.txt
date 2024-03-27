@@ -186,16 +186,6 @@ INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
     SET(MED_BUILD_MEDDLL 0)
 	ENDIF (MED_BUILD_MEDDLL)
   
-CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/Common/medCommonDefines.h.in ${PROJECT_BINARY_DIR}/medCommonDefines.h @ONLY)
-CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/Gui/medGuiDefines.h.in ${PROJECT_BINARY_DIR}/medGuiDefines.h @ONLY)
-CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/Operations/medOperationsDefines.h.in ${PROJECT_BINARY_DIR}/medOperationsDefines.h @ONLY)
-CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/Views/medViewsDefines.h.in ${PROJECT_BINARY_DIR}/medViewsDefines.h @ONLY)
-CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/Interaction/medInteractionDefines.h.in ${PROJECT_BINARY_DIR}/medInteractionDefines.h @ONLY)
-CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/VME/medVMEDefines.h.in ${PROJECT_BINARY_DIR}/medVMEDefines.h @ONLY)
-CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/medDefines.h.in ${PROJECT_BINARY_DIR}/medDefines.h @ONLY)
-CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/lhpDefines.h.in ${PROJECT_BINARY_DIR}/lhpDefines.h @ONLY)
-
-  
 SUBDIRS(Application)
 SUBDIRS(Base)
 SUBDIRS(Common)

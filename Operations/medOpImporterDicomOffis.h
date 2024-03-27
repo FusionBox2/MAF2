@@ -20,7 +20,7 @@ PURPOSE.  See the above copyright notice for more information.
 //----------------------------------------------------------------------------
 // Include :
 //----------------------------------------------------------------------------
-#include "medOperationsDefines.h"
+
 #include "mafOp.h"
 #include "vtkImageData.h"
 #include <map>

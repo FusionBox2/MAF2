@@ -12,7 +12,7 @@
 #ifndef __lhpVMELeverArm_h
 #define __lhpVMELeverArm_h
 
-#include "lhpDefines.h"
+#include "mafDefines.h"
 
 //----------------------------------------------------------------------------
 // Include:

@@ -13,7 +13,7 @@
 #ifndef __mafVMEArrow_h
 #define __mafVMEArrow_h
 
-#include "lhpDefines.h"
+#include "mafDefines.h"
 
 //-----------------------------------------------------------------------
 // Includes:

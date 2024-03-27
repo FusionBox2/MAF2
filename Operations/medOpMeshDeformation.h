@@ -17,7 +17,7 @@
 #ifndef __medOpMeshDeformation_H__
 #define __medOpMeshDeformation_H__
 
-#include "medOperationsDefines.h"
+
 #include "mafOp.h"
 #include "mmiVTKPicker.h"
 

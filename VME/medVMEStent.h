@@ -13,7 +13,7 @@ University of Bedfordshire, UK
 #ifndef __medVMEStent_h 
 #define __medVMEStent_h
 
-#include "medVMEDefines.h"  //very important for MED_VME_EXPORT
+  //very important for MED_VME_EXPORT
 
 #include "mafNode.h"
 #include "mafVME.h"

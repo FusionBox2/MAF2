@@ -17,7 +17,7 @@ to use in VTK filters (=> wxString was replaced by char*)*/
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "medCommonDefines.h"
+
 #include "vtkPolydata.h"
 #include <ostream>
 #include <vector>

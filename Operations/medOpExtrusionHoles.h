@@ -19,7 +19,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "medOperationsDefines.h"
+
 #include "mafOp.h"
 #include "vtkAppendPolyData.h"
 #include "vtkFeatureEdges.h"

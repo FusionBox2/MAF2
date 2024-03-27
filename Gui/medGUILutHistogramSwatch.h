@@ -17,7 +17,7 @@
 #ifndef __mafGUILutSwatch_H__
 #define __mafGUILutSwatch_H__
 
-#include "medGuiDefines.h"
+
 #include "mafEvent.h"
 #include "mafEventSender.h"
 #include "vtkLookupTable.h"

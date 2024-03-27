@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "medInteractionDefines.h"
+
 #include "mafBaseEventHandler.h"
 #include "mafGUITransformInterface.h"
 

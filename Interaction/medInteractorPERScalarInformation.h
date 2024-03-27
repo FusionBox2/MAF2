@@ -16,7 +16,7 @@
 #ifndef __medInteractorPERScalarInformation_h
 #define __medInteractorPERScalarInformation_h
 
-#include "medInteractionDefines.h"
+
 #include "mafInteractorPER.h"
 
 //----------------------------------------------------------------------------

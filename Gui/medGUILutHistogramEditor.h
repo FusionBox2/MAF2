@@ -17,7 +17,7 @@
 #ifndef __medGUILutHistogramEditor_H__
 #define __medGUILutHistogramEditor_H__
 
-#include "medGuiDefines.h"
+
 #include "mafEvent.h"
 #include "mafLUTLibrary.h"
 

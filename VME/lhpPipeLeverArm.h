@@ -13,7 +13,7 @@
 #ifndef __lhpPipeLeverArm_H__
 #define __lhpPipeLeverArm_H__
 
-#include "lhpDefines.h"
+#include "mafDefines.h"
 
 #include "mafPipeVTK.h"
 //----------------------------------------------------------------------------

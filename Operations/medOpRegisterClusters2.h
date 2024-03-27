@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include :
 //----------------------------------------------------------------------------
-#include "medOperationsDefines.h"
+
 #include "mafOp.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafVMEGroup.h"

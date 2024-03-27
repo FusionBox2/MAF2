@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "medCommonDefines.h"
+
 #include "mafObject.h"
 #include "medResultQueryAbstractHandler.h"
 

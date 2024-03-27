@@ -49,7 +49,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //-----------------------------------------------
 // Include:
 //-----------------------------------------------
-#include "medCommonDefines.h"
+
+#include "mafDefines.h"
 #include <vnl/vnl_matrix.h>
 
 /**

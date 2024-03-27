@@ -12,7 +12,7 @@
 #ifndef __mafVMEBSplineSurface_h
 #define __mafVMEBSplineSurface_h
 
-#include "lhpDefines.h"
+#include "mafDefines.h"
 
 //----------------------------------------------------------------------------
 // Include:

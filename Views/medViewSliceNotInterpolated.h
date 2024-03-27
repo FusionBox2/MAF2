@@ -18,7 +18,7 @@
 #define __medViewSliceNotInterpolated_H__
 
 #include "mafViewVTK.h"
-#include "medViewsDefines.h"
+
 
 class wxBoxSizer;
 class mafGUIFloatSlider;

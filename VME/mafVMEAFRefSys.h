@@ -13,7 +13,7 @@
 #ifndef __mfAFRefSys_h
 #define __mfAFRefSys_h
 
-#include "lhpDefines.h"
+#include "mafDefines.h"
 
 //----------------------------------------------------------------------------
 // Includes:

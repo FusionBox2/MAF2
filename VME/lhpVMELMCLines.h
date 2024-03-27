@@ -12,7 +12,7 @@
 #ifndef __lhpVMELMCLines_h
 #define __lhpVMELMCLines_h
 
-#include "lhpDefines.h"
+#include "mafDefines.h"
 
 //----------------------------------------------------------------------------
 // Include:

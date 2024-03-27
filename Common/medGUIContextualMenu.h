@@ -17,7 +17,7 @@
 #ifndef __medGUIContextualMenu_H__
 #define __medGUIContextualMenu_H__
 
-#include "medCommonDefines.h"
+
 #include "mafEventSender.h"
 
 //----------------------------------------------------------------------------

@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "medInteractionDefines.h"
+
 #include "mafGizmoInterface.h"
 #include "mafMatrix.h"
 #include "mafInteractorGenericMouse.h"

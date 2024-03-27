@@ -13,7 +13,7 @@
 #ifndef __mafVMEPGDData_h
 #define __mafVMEPGDData_h
 
-#include "lhpDefines.h"
+#include "mafDefines.h"
 
 //----------------------------------------------------------------------------
 // Include:

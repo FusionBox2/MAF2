@@ -16,7 +16,7 @@
 #ifndef __medInteractorPERBrushFeedback_h
 #define __medInteractorPERBrushFeedback_h
 
-#include "medInteractionDefines.h"
+
 #include "mafInteractorPER.h"
 
 class vtkActor2D;

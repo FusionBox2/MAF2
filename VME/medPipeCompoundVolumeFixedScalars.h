@@ -16,7 +16,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "medVMEDefines.h"
+
 #include "medPipeCompoundVolume.h"
 
 /** Scalar visual pipe is fixed and cannot be changed. Vector visual pipe

@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // includes :
 //----------------------------------------------------------------------------
-#include "medCommonDefines.h"
+
 #include "medVect3d.h"
 #include "mafOpManager.h"
 #include "medWizard.h"

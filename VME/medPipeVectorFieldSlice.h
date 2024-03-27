@@ -16,7 +16,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "medVMEDefines.h"
+
 #include "medPipeVectorFieldSurface.h"
 #include "mafPipeSlice.h"
 

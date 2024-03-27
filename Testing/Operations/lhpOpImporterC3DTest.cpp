@@ -11,7 +11,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 =========================================================================*/
 
 #include "mafDefines.h" 
-#include "lhpDefines.h"
+#include "mafDefines.h"
 //----------------------------------------------------------------------------
 // NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
 // This force to include Window,wxWidgets and VTK exactly in this order.

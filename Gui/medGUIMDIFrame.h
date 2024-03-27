@@ -18,7 +18,7 @@ PURPOSE.  See the above copyright notice for more information.
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "medGuiDefines.h"
+
 #include "mafGUIMDIFrame.h"
 //----------------------------------------------------------------------------
 // forward reference

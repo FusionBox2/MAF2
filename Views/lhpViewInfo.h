@@ -13,7 +13,7 @@
 #ifndef __lhpViewInfo_H__
 #define __lhpViewInfo_H__
 
-#include "lhpDefines.h"
+#include "mafDefines.h"
 
 #ifndef WX_PRECOMP
     #include "wx/wx.h"

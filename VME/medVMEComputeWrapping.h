@@ -30,7 +30,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "medVMEDefines.h"
+
 #include "mafVME.h"
 #include "medVMEOutputComputeWrapping.h"
 #include "mafEvent.h"

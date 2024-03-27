@@ -17,7 +17,7 @@
 #ifndef __medOpExporterWrappedMeter_H__
 #define __medOpExporterWrappedMeter_H__
 
-#include "medOperationsDefines.h"
+
 #include "mafOp.h"
 #include <vnl/vnl_matrix.h>
 #include "wx/busyinfo.h"

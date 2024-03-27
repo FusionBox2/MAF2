@@ -17,7 +17,7 @@
 #ifndef __medInteractorPicker_h
 #define __medInteractorPicker_h
 
-#include "medInteractionDefines.h"
+
 #include "mafInteractorCameraMove.h"
 
 //----------------------------------------------------------------------------

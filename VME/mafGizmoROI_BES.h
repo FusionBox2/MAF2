@@ -21,7 +21,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "medVMEDefines.h"
+
 #include "mafGizmoInterface.h"
 #include "mafBaseEventHandler.h"
 #include "mafGizmoHandle.h"

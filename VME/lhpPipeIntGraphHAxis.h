@@ -13,7 +13,7 @@
 #ifndef _lhpPipeIntGraphHAxis_H_
 #define _lhpPipeIntGraphHAxis_H_
 
-#include "lhpDefines.h"
+#include "mafDefines.h"
 
 //----------------------------------------------------------------------------
 // Includes

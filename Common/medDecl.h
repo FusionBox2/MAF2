@@ -17,7 +17,7 @@
 #ifndef __medDecl_H__
 #define __medDecl_H__
 
-#include "medDefines.h"
+#include "mafDefines.h"
 #include "mafDecl.h"
 
 const int MAXWIZARD = 50; 

@@ -17,7 +17,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "medCommonDefines.h"
+
 #include "vtkCommand.h"
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"

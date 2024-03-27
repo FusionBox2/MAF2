@@ -31,7 +31,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "medInteractionDefines.h"
+
 #include "mafVMESurface.h"
 #include "mafGizmoInterface.h"
 

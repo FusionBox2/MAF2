@@ -21,7 +21,7 @@
 #include "mafMatrix.h"
 #include "mafNode.h"
 #include "medVMESegmentationVolume.h"
-#include "medOperationsDefines.h"
+
 #include "vtkSystemIncludes.h"
 #include "wx/gauge.h"
 

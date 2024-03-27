@@ -13,7 +13,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "mafDecl.h"
 
 #include "lhpUtils.h"
-#include "lhpDefines.h"
+#include "mafDefines.h"
 
 mafString lhpUtils::lhpGetApplicationDirectory()
 {

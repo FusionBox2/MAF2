@@ -14,7 +14,7 @@
 
 =========================================================================*/
 
-#include "medOperationsDefines.h"
+
 #include "mafOp.h"
 #include "vtkDirectory.h"
 

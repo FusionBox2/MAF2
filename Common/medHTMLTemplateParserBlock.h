@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "medCommonDefines.h" //important: mafDefines should always be included as first
+ //important: mafDefines should always be included as first
 #include <vector>
 
 //----------------------------------------------------------------------------

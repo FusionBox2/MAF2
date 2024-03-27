@@ -18,7 +18,7 @@
 #define __medPipeRayCast_H__
 
 #include "mafPipeVTK.h"
-#include "medVMEDefines.h"
+
 
 //----------------------------------------------------------------------------
 // forward refs :

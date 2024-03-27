@@ -13,7 +13,7 @@
 #ifndef _lhpPipeIntGraphTime_H_
 #define _lhpPipeIntGraphTime_H_
 
-#include "lhpDefines.h"
+#include "mafDefines.h"
 
 //----------------------------------------------------------------------------
 // Includes

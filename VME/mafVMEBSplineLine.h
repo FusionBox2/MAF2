@@ -12,7 +12,7 @@
 #ifndef __mafVMEBSplineLine_h
 #define __mafVMEBSplineLine_h
 
-#include "lhpDefines.h"
+#include "mafDefines.h"
 
 //----------------------------------------------------------------------------
 // Include:

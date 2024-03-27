@@ -20,7 +20,7 @@ See the COPYINGS file for license details
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "medViewsDefines.h"
+
 #include "medViewCompoundWindowing.h"
 #include "mafSceneNode.h"
 #include "vtkPoints.h"

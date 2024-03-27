@@ -28,6 +28,12 @@
 # endif
 #else
 # define MAF_EXPORT
+#define MED_COMMON_EXPORT
+#define MED_GUI_EXPORT
+#define MED_VME_EXPORT
+#define MED_INTERACTION_EXPORT
+#define MED_OPERATION_EXPORT
+#define MED_VIEWS_EXPORT
 #endif
 
 //--------------------------------------------------------------------------
@@ -61,5 +67,11 @@
 // Data root used to reach data for testing
 //--------------------------------------------------------------------------
 #define MAF_DATA_ROOT "@MAF_DATA_ROOT@"
+#define MED_DATA_ROOT "@MED_DATA_ROOT@"
+#define LHP_DATA_ROOT "@LHP_DATA_ROOT@"
+
+#define LHP_SOURCE_DIR "@LHP_SOURCE_DIR@"
+
+#cmakedefine MAF_USE_BTK
 
 #endif // __mafConfigure_h

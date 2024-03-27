@@ -16,7 +16,7 @@
 
 
 
-#include "medDefines.h" 
+#include "mafDefines.h" 
 #include "mafDecl.h"
 //----------------------------------------------------------------------------
 // NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.

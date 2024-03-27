@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "medCommonDefines.h"
+
 #include "vtkIdList.h"
 #include "mafEvent.h"
 #include "mafEventSender.h"

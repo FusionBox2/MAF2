@@ -21,7 +21,7 @@ This is VME for large volumetric data sets
 //#define VME_VOLUME_VER1
 //#define VME_VOLUME_LARGE_EXCLUDE_CROP
 
-#include "medVMEDefines.h"
+
 #include "mafVMEVolume.h"
 #ifdef VME_VOLUME_VER1
 #include "../BES_Beta/vtkMAF/vtkMAFLargeDataSet.h"

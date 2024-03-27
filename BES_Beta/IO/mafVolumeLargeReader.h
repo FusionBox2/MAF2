@@ -15,7 +15,7 @@
 #define __mafVolumeLargeReader__
 
 #include "mafobject.h"
-#include "medVMEDefines.h"
+
 #include "mafString.h"
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"

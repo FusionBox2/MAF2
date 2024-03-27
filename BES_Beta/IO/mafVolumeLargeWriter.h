@@ -14,7 +14,7 @@
 #ifndef __mafVolumeLargeWriter__
 #define __mafVolumeLargeWriter__
 
-#include "medVMEDefines.h"
+
 #include "mafObject.h"
 #include "mafString.h"
 #include "mafBaseEventHandler.h"

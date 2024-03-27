@@ -17,7 +17,7 @@
 #ifndef __medPipeVolumeSliceNotInterpolated_H__
 #define __medPipeVolumeSliceNotInterpolated_H__
 
-#include "medVMEDefines.h"
+
 #include "mafPipeSlice.h"
 
 class vtkMEDVolumeSlicerNotInterpolated;

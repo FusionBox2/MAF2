@@ -17,7 +17,7 @@
 #ifndef __medOpMML_H__
 #define __medOpMML_H__
 
-#include "medOperationsDefines.h"
+
 
 #include <vtkPoints.h>
 #include <vtkPolyData.h>

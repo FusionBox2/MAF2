@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "medInteractionDefines.h"
+
 #include "mafInteractorCameraMove.h"
 #include "mafMTime.h"
 

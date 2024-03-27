@@ -17,7 +17,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "medGuiDefines.h"
+
 #include "mafEvent.h"
 #include "mafEventSender.h"
 #include "mafBaseEventHandler.h"

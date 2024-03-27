@@ -13,7 +13,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #ifndef __mafVMESurfaceRegParam_h
 #define __mafVMESurfaceRegParam_h
 
-#include "lhpDefines.h"
+#include "mafDefines.h"
 
 //----------------------------------------------------------------------------
 // Include:

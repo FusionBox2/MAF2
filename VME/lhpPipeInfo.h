@@ -13,7 +13,7 @@
 #ifndef _lhpPipeInfo_H_
 #define _lhpPipeInfo_H_
 
-#include "lhpDefines.h"
+#include "mafDefines.h"
 
 //----------------------------------------------------------------------------
 // Includes

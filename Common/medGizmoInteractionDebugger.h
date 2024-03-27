@@ -21,7 +21,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "medCommonDefines.h"
+
 #include "mafGizmoInterface.h"
 #include "mafMatrix.h"
 #include "medCurvilinearAbscissaOnSkeletonHelper.h"
