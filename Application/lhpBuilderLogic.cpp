@@ -104,21 +104,6 @@ void lhpBuilderLogic::OnEvent(mafEventBase *maf_event)
   medLogicWithManagers::OnEvent(maf_event);
 }
 //----------------------------------------------------------------------------
-void lhpBuilderLogic::VmeAdded(mafNode *vme)
-//----------------------------------------------------------------------------
-{
-  mafLogicWithManagers::VmeAdded(vme);
-  // check for the presence of the LHDL attribute
-
-  mafTagArray *lhdlArray = mafTagArray::SafeDownCast(vme->GetAttribute(_R("LHDL")));
-  if (lhdlArray == NULL)
-  {
-    lhdlArray = mafTagArray::New();
-    lhdlArray->SetName(_R("LHDL"));
-    vme->SetAttribute(_R("LHDL"),lhdlArray);
-  }
-}
-//----------------------------------------------------------------------------
 void lhpBuilderLogic::Configure()
 //----------------------------------------------------------------------------
 {

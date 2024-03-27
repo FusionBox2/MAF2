@@ -40,10 +40,7 @@ public:
   Are plugged also all the setting to the dialogs interface. */
   virtual void Configure();
 
-protected:
-  /** Respond to a VME_ADDED evt. propagate evt. to SideBar,ViewManager,ecc.. */
-  virtual void VmeAdded(mafNode *vme);
-  
+protected:  
   lhpGUINetworkConnectionSettings *m_NetworkConnectionSettings;
   lhpGUIPythonSettings *m_PythonSettings;
 };
