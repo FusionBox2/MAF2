@@ -18,16 +18,11 @@
 
 #include "mafDevice.h"
 #include <list>
-
-#ifdef MAF_EXPORTS
-#include "mafDllMacros.h"
-EXPORT_STL_LIST(MAF_EXPORT,mafDevice *);
-#endif
+#include "mafMutexLock.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :
 //----------------------------------------------------------------------------
-class mafMutexLock;
 /**
   This class manages a set of usb-devices, and stores a list of all child devices' pointers. It also
   dispatches some commands to child devices, e.g. initializzation commands. Being also an event 

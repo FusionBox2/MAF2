@@ -18,12 +18,11 @@
 #define __mafAgentEventQueue_h
 
 #include "mafAgent.h"
-
+#include "mafMutexLock.h"
 
 //----------------------------------------------------------------------------
 // forward declarations
 //----------------------------------------------------------------------------
-class mafMutexLock;
 
 /** Base class for managing event queueing and synchronized dispatching.
   This class is thought to manage events queueing and synchronized dispatching in a multithreaded 

@@ -16,35 +16,9 @@
 #ifndef __mafMutexLock_h
 #define __mafMutexLock_h
 
-#include "mafBase.h" 
+#include <mutex> 
 
-class mmuPIMPLMutexLock;
-
-/** Critical section locking class that can be allocated on the stack.
-  mafMutexLock allows the locking of variables which are accessed 
-  through different threads.
-  On Windows 9x/NT platforms mafMutexLock is less flexible, in that
-  it does not work across processes, but on the other hand it costs less:
-  it does not evoke the 600-cycle x86 ring transition. The 
-  mafMutexLock provides a higher-performance locking mechanism on 
-  Windows, but won't work across processes.
-*/
-class MAF_EXPORT mafMutexLock : public mafBase
-{
-public:
-  /** Constructor and destructor left public purposely because of stack allocation. */
-  mafMutexLock();
-  ~mafMutexLock();
-  
-  /** Lock access. */
-  void lock( void ) const;
-
-  /** Unlock access. */
-  void unlock( void ) const;
-protected:
-  mmuPIMPLMutexLock *m_PIMPLMutexLock;
-};
-
+using mafMutexLock = std::mutex;;
 #endif
 
 

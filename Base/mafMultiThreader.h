@@ -20,6 +20,7 @@
 #include "mafDefines.h"
 #include "mafBase.h"
 #include "mafIncludeWIN32.h"
+#include "mafMutexLock.h"
 
 #define MAF_MAX_THREADS 16
 
@@ -63,9 +64,6 @@ typedef HANDLE mmuThreadProcessIDType;
 typedef void (*mmuInternalThreadFunctionType)(void *);
 typedef int mmuThreadProcessIDType;
 #endif
-
-
-class mafMutexLock;
 
 /** mafMultiThreader - A class for performing multithreaded execution.
   mafMultiThreader is a class that provides support for multithreaded

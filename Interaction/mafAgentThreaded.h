@@ -19,11 +19,11 @@
 
 #include "mafAgentEventQueue.h"
 #include "mafMultiThreader.h"
+#include "mafMutexLock.h"
 
 //------------------------------------------------------------------------------
 // Forward declarations:
 //------------------------------------------------------------------------------
-class mafMutexLock;
 
 /** An agent processing the queued events on a separate thread.
   This is a special case of agent, able to run a separate thread for processing
