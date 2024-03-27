@@ -885,7 +885,6 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   // show the application
   m_Logic->ShowSplashScreen(splashBitmap);
   m_Logic->Show();
-  m_Logic->GetCredentials();
 
   m_Logic->Init(0,NULL); // calls FileNew - which create the root
 

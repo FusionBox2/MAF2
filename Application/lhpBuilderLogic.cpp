@@ -27,7 +27,6 @@
 #include "mafOpManager.h"
 #include "mafGUISettingsDialog.h"
 #include "lhpGUIPythonSettings.h"
-#include "mafUser.h"
 
 #include "mafViewManager.h"
 #include "mafGUIMDIChild.h"
@@ -38,7 +37,6 @@ lhpBuilderLogic::lhpBuilderLogic()
 //----------------------------------------------------------------------------
 {
   m_PythonSettings = new lhpGUIPythonSettings(this);
-  m_User = new mafUser();
 }
 //----------------------------------------------------------------------------
 lhpBuilderLogic::~lhpBuilderLogic()
@@ -129,17 +127,4 @@ void lhpBuilderLogic::Configure()
   {
     m_SettingsDialog->AddPage(m_PythonSettings->GetGui(), m_PythonSettings->GetLabel());
   }
-}
-//----------------------------------------------------------------------------
-void lhpBuilderLogic::GetCredentials()
-//----------------------------------------------------------------------------
-{
-  bool retry = false;
-  //retry = m_User->CheckUserCredentials();
-
-  while (retry)
-  {
-    retry = m_User->CheckUserCredentials();
-  }
-  m_OpManager->SetMafUser(m_User);
 }

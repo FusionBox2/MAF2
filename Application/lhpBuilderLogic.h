@@ -22,8 +22,6 @@
 //----------------------------------------------------------------------------
 class lhpGUINetworkConnectionSettings;
 class lhpGUIPythonSettings;
-class mafUser;
-
 //----------------------------------------------------------------------------
 // lhpBuilderLogic :
 //----------------------------------------------------------------------------
@@ -42,15 +40,11 @@ public:
   Are plugged also all the setting to the dialogs interface. */
   virtual void Configure();
 
-  /** Get user credentials */
-  void GetCredentials();
-
 protected:
   /** Respond to a VME_ADDED evt. propagate evt. to SideBar,ViewManager,ecc.. */
   virtual void VmeAdded(mafNode *vme);
   
   lhpGUINetworkConnectionSettings *m_NetworkConnectionSettings;
   lhpGUIPythonSettings *m_PythonSettings;
-  mafUser  *m_User;
 };
 #endif
