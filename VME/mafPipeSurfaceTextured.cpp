@@ -635,6 +635,24 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
       break;
 	  case ID_CHOOSE_FILENAME2:
 	  {
+		  {
+			  vtkRenderer* renderer = vtkRenderer::New();
+			  renderer->AddActor(m_Actor);
+
+			  vtkRenderWindow* renderWindow = vtkRenderWindow::New();
+			  renderWindow->AddRenderer(renderer);
+			  vtkOBJExporter* writer = vtkOBJExporter::New();
+			  writer->SetRenderWindow(renderWindow);
+			  mafString mtlName = m_File;
+			  mtlName.Erase(mtlName.Length() - 4);
+			  writer->SetFilePrefix(mtlName.GetCStr());
+			  writer->Update();
+			  writer->Delete();
+			  renderWindow->Delete();
+			  renderer->Delete();
+			  break;
+		  }
+
 								  
 								  mafVMEOutputSurface *data = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
 								  data->Update();
