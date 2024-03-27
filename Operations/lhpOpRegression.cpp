@@ -26,7 +26,6 @@
 #include "wx/busyinfo.h"
 #include <math.h>
 
-#include "lhpBuilderDecl.h"
 #include "mafEvent.h"
 #include "mafGUI.h"
 

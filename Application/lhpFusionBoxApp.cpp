@@ -23,7 +23,11 @@
 #include <wx/datetime.h>
 #include <wx/config.h>
 
-#include "lhpBuilderDecl.h"
+#include "mafDefines.h"
+#include "mafDecl.h"
+
+#include "lhpDefines.h"
+
 #include "mafVMEFactory.h"
 #include "mafPics.h"
 #include "mafGUIMDIFrame.h"

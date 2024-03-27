@@ -21,7 +21,6 @@
 #include "lhpUtils.h"
 #include "lhpTagHandler.h"
 #include "mafDecl.h"
-#include "lhpBuilderDecl.h"
 
 mafCxxTypeMacro(lhpTagHandlerInputOutputParametersCargo);
 //------------------------------------------------------------------------

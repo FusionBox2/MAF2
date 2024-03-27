@@ -12,10 +12,5 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 
 #ifndef __lhpBuilderDecl_H__
 #define __lhpBuilderDecl_H__
-
-#include "mafDefines.h"
-#include "mafDecl.h"
-
-#include "lhpDefines.h"
-
+  
 #endif

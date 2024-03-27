@@ -4,8 +4,6 @@ PROJECT (lhpFusionBox)
 SET(PROJECT_SRCS 
 	lhpFusionBoxApp.cpp
 	lhpFusionBoxApp.h
-	lhpBuilderDecl.h
-	
 )
 
 IF (NOT EXECUTABLE_OUTPUT_PATH)
