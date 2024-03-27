@@ -20,8 +20,6 @@
 //----------------------------------------------------------------------------
 // forward reference
 //----------------------------------------------------------------------------
-class lhpGUINetworkConnectionSettings;
-class lhpGUIPythonSettings;
 //----------------------------------------------------------------------------
 // lhpBuilderLogic :
 //----------------------------------------------------------------------------
@@ -34,14 +32,5 @@ public:
 	virtual     ~lhpBuilderLogic(); 
 
 	virtual void OnEvent(mafEventBase *maf_event);
-
-  /** Configure the application.
-  At this point are plugged all the managers, the side-bar docking panel. 
-  Are plugged also all the setting to the dialogs interface. */
-  virtual void Configure();
-
-protected:  
-  lhpGUINetworkConnectionSettings *m_NetworkConnectionSettings;
-  lhpGUIPythonSettings *m_PythonSettings;
 };
 #endif

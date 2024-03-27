@@ -154,16 +154,6 @@ SET(PROJECT_SRCS
   medGUILutHistogramEditor.h
   medGUIMDIFrame.cpp
   medGUIMDIFrame.h
-  
-
-
-
-
-
-  lhpGUINetworkConnectionSettings.cpp
-  lhpGUINetworkConnectionSettings.h
-  lhpGUIPythonSettings.cpp
-  lhpGUIPythonSettings.h
 )
 
 IF (MAF_USE_CURL)

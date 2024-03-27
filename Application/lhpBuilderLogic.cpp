@@ -26,7 +26,6 @@
 #include "mafOp.h"
 #include "mafOpManager.h"
 #include "mafGUISettingsDialog.h"
-#include "lhpGUIPythonSettings.h"
 
 #include "mafViewManager.h"
 #include "mafGUIMDIChild.h"
@@ -36,13 +35,11 @@
 lhpBuilderLogic::lhpBuilderLogic()
 //----------------------------------------------------------------------------
 {
-  m_PythonSettings = new lhpGUIPythonSettings(this);
 }
 //----------------------------------------------------------------------------
 lhpBuilderLogic::~lhpBuilderLogic()
 //----------------------------------------------------------------------------
 {
-  cppDEL(m_PythonSettings);
 }
 //----------------------------------------------------------------------------
 void lhpBuilderLogic::OnEvent(mafEventBase *maf_event)
@@ -76,24 +73,6 @@ void lhpBuilderLogic::OnEvent(mafEventBase *maf_event)
         e->SetMafObject((mafObject*)m_User);
       }
       break;
-    case ID_REQUEST_PYTHON_EXE_INTERPRETER:
-      {
-        if(m_PythonSettings->GetPythonExe().GetCStr())
-        {
-          e->SetString(&m_PythonSettings->GetPythonExe());
-        }
-      }
-      break;
-    
-    case ID_REQUEST_PYTHONW_EXE_INTERPRETER:
-      {
-        if(m_PythonSettings->GetPythonwExe().GetCStr())
-        {
-
-          e->SetString(&m_PythonSettings->GetPythonwExe());
-        }
-      }
-      break;
 
     default:
 			medLogicWithManagers::OnEvent(maf_event);
@@ -102,14 +81,4 @@ void lhpBuilderLogic::OnEvent(mafEventBase *maf_event)
     return;
 	} // end if SafeDowncast
   medLogicWithManagers::OnEvent(maf_event);
-}
-//----------------------------------------------------------------------------
-void lhpBuilderLogic::Configure()
-//----------------------------------------------------------------------------
-{
-  mafLogicWithManagers::Configure(); // create the GUI - and calls CreateMenu
-  if (m_PythonSettings)
-  {
-    m_SettingsDialog->AddPage(m_PythonSettings->GetGui(), m_PythonSettings->GetLabel());
-  }
 }
