@@ -1,1 +1,0 @@
-msiexec.exe /x python-2.5.msi /qb

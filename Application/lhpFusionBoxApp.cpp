@@ -136,18 +136,10 @@
 #include "medOpImporterLandmark.h"
 #include "medOpImporterLandmarkWS.h"
 #include "lhpOpBonemat.h"
-#include "lhpOpImporterAnsysInputFile.h"
-#include "lhpOpExporterAnsysInputFile.h"
-#include "lhpOpImporterAnsysCDBFile.h"
 #include "medOpFreezeVME.h"
 #include "medOpExporterWrappedMeter.h"
 #include "medOpIterativeRegistration.h"
 #include "medOpCreateLabeledVolume.h"
-#include "lhpOpUploadVME.h"
-#include "lhpOpUploadMultiVME.h"
-#include "lhpOpEditTag.h"
-#include "lhpOpKeyczarIntegrationTest.h"
-#include "lhpOpDownloadVME.h"
 #include "medOpSurfaceMirror.h"
 #include "medOpImporterAnalogWS.h"
 #include "medOpMML.h"
@@ -177,12 +169,6 @@
 
 //temporary for testing
 #include "mafViewSingleSliceCompound.h"
-
-// VMEUploaderDownloader Refactor Target
-#include "lhpOpUploadVMERefactor.h"
-#include "lhpOpUploadMultiVMERefactor.h"
-#include "lhpOpEditTagRefactor.h"
-#include "lhpOpDownloadVMERefactor.h"
 
 #include "lhpOpFindCentroid.h"
 
@@ -644,8 +630,6 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
     // m_Logic->Plug(new lhpOpLandmarkImporter(_R("Landmark"))); //Old Importer
     m_Logic->Plug(new medOpImporterGRFWS(_R("ASCII Force Plates (VWs)")), _R("Motion Analysis"));
     m_Logic->Plug(new mafOpImporterMesh(_R("Generic Mesh")), _R("Finite Element"));
-    m_Logic->Plug(new lhpOpImporterAnsysInputFile(_R("Ansys Input File")), _R("Finite Element"));	
-    m_Logic->Plug(new lhpOpImporterAnsysCDBFile(_R("Ansys CDB File")), _R("Finite Element"));	
     m_Logic->Plug(new mafOpImporterExternalFile(_R("External data")), _R("Other"));
     m_Logic->Plug(new medOpImporterAnalogWS(_R("ASCII Analog (VWs)")), _R("Motion Analysis"));
     m_Logic->Plug(new lhpOpKinectUtil(false, _R("Kinect Full"),  false, true, true ),_R("Motion Analysis"));  
@@ -677,7 +661,6 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
     m_Logic->Plug(new mafOpExporterRAW(_R("Raw")), _R("Images"));
     m_Logic->Plug(new medOpExporterWrappedMeter(_R("Wrapped Meter")), _R("Other"));
     m_Logic->Plug(new medOpExporterMeters(_R("Meters")), _R("Other"));
-    m_Logic->Plug(new lhpOpExporterAnsysInputFile(_R("Ansys Input File")),_R("Finite Element"));
   }
   //-------------------------------------------------------------
 
@@ -775,26 +758,15 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
     m_Logic->Plug(new medOpIterativeRegistration(_R("Iterative Registration")),_R("Modify/Fuse"));
     m_Logic->Plug(new mafOpOpenExternalFile(_R("Open with external program")),_R("Manage")); 
     m_Logic->Plug(new medOpCreateLabeledVolume(_R("Labeled Volume")),_R("Create/Derive"));
-    //m_Logic->Plug(new lhpOpUploadVME(_R("Upload VME")),_R("Manage"));
-    m_Logic->Plug(new lhpOpUploadMultiVME(_R("Upload VME")),_R("Manage"));
-    m_Logic->Plug(new lhpOpEditTag(_R("Edit Tag VME")),_R("Manage"));
-    m_Logic->Plug(new lhpOpDownloadVME(_R("Download VME"), lhpOpDownloadVME::FROM_BASKET),_R("Manage"));
-    m_Logic->Plug(new lhpOpDownloadVME(_R("Download VME from sandbox"),lhpOpDownloadVME::FROM_SANDBOX),_R("Manage"));
 
     m_Logic->Plug(new mafOpDecomposeTimeVarVME(_R("Decompose Time")),_R("Create/Derive"));
     m_Logic->Plug(new mafOpLabelExtractor(_R("Extract Label")),_R("Create/Derive"));
     m_Logic->Plug(new lhpOpMultiscaleExplore(_R("Multiscale Viewer")),_R("Manage"));
     m_Logic->Plug(new medOpMML(_R("Register from template")),_R("Modify"));
-    m_Logic->Plug(new lhpOpKeyczarIntegrationTest(_R("Security Libraries Integration")),_R("Test"));
     m_Logic->Plug(new lhpOpComputeTensor(_R("Compute Tensors")), _R("Modify"));
 
     m_Logic->Plug(new lhpOpTextureOrientation(_R("Texture Orientation")),_R("Create/Derive"));
 
-    // Upload Download VME Refactor Target
-    m_Logic->Plug(new lhpOpUploadMultiVMERefactor(_R("Upload Multi VME Refactor")),_R("Devel"));
-    m_Logic->Plug(new lhpOpEditTagRefactor(_R("Edit Tag VME Refactor")),_R("Devel"));
-    m_Logic->Plug(new lhpOpDownloadVMERefactor(_R("Download Multi VME Refactor")),_R("Devel"));
-    // m_Logic->Plug(new lhpOpUploadVMERefactor(_R("Upload VME Refactor")),_R("Devel"));
   }
   
   //-------------------------------------------------------------

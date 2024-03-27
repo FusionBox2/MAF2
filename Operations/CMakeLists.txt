@@ -335,56 +335,11 @@ IF (MAF_USE_VTK)
 	lhpTagHandler.cpp
 	lhpTagHandler.h
 	
-	lhpOpUploadVME.cpp
-	lhpOpUploadVME.h
-	
-	lhpOpUploadMultiVME.cpp
-	lhpOpUploadMultiVME.h
-	
-	lhpOpDownloadVME.cpp
-	lhpOpDownloadVME.h
-	
-	lhpOpEditTag.cpp
-	lhpOpEditTag.h
-	
-	#
-	# VMEUploaderDownloader Refactor Target
-	#
-	
-	lhpOpUploadVMERefactor.cpp
-	lhpOpUploadVMERefactor.h
-	
-	lhpOpUploadMultiVMERefactor.cpp
-	lhpOpUploadMultiVMERefactor.h
-	
-	lhpOpDownloadVMERefactor.cpp
-	lhpOpDownloadVMERefactor.h
-	
-	lhpOpEditTagRefactor.cpp
-	lhpOpEditTagRefactor.h
-	
-	
-	#######################################
-	
-	#
-	# Google KeyCZar Integration Test
-	#
-
-	lhpOpKeyczarIntegrationTest.cpp
-	lhpOpKeyczarIntegrationTest.h
-
 	#######################################
 	
 	#
 	lhpOpBonemat.cpp
 	lhpOpBonemat.h
-	lhpOpImporterAnsysInputFile.cpp
-	lhpOpImporterAnsysInputFile.h
-	lhpOpExporterAnsysInputFile.cpp
-	lhpOpExporterAnsysInputFile.h
-
-    lhpOpImporterAnsysCDBFile.cpp
-	lhpOpImporterAnsysCDBFile.h
 	
 	# multiscale files
 	lhpOpMultiscaleExplore.cpp

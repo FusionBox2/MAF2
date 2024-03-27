@@ -1,5 +1,0 @@
-Dicom_CT_model
-Dicom_CT_tubecurrent(mA)
-pippo
-pluto
-paperino
