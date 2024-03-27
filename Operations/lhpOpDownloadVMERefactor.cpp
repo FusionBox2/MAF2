@@ -61,7 +61,7 @@ MafMedical is partially based on OpenMAF.
 
 #include "lhpUtils.h"
 #include "mafGUI.h"
-#include "lhpUser.h"
+#include "mafUser.h"
 #include "mafNode.h"
 #include "mafNodeManager.h"
 #include "mafVMEGenericAbstract.h"
@@ -159,7 +159,7 @@ lhpOpDownloadVMERefactor::~lhpOpDownloadVMERefactor()
 bool lhpOpDownloadVMERefactor::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  lhpUser *user = NULL;
+  mafUser *user = NULL;
   //Get User values
   mafEvent event;
   event.SetSender(this);
@@ -167,7 +167,7 @@ bool lhpOpDownloadVMERefactor::Accept(mafNode* vme)
   mafEventMacro(event);
   if(event.GetMafObject() != NULL) //if proxy string contains something != ""
   {
-    user = (lhpUser*)event.GetMafObject();
+    user = (mafUser*)event.GetMafObject();
   }
   return (user != NULL && user->IsAuthenticated() && vme != NULL);
 
@@ -218,7 +218,7 @@ void lhpOpDownloadVMERefactor::OpRun()
   mafEventMacro(eventGetUser);
   if(eventGetUser.GetMafObject() != NULL) //if proxy string contains something != ""
   {
-    m_User = (lhpUser*)eventGetUser.GetMafObject();
+    m_User = (mafUser*)eventGetUser.GetMafObject();
   }
 
   //Get Proxy values

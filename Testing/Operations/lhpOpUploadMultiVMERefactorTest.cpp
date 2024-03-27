@@ -25,7 +25,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "lhpOpUploadMultiVMERefactorTest.h"
 
 #include "medVMEFactory.h"
-#include "lhpUser.h"
+#include "mafUser.h"
 
 #include "mafVMERoot.h"
 #include "mafVMEMesh.h"
@@ -181,7 +181,7 @@ void lhpOpUploadMultiVMERefactorTest::TestUpload15DifferentVMETypesWithSmallData
   opUploadMultiVME->m_OpUploadVME->m_PythonExe = "python.exe ";
   opUploadMultiVME->m_OpUploadVME->m_PythonwExe = "pythonw.exe ";
 
-  lhpUser *user = new lhpUser(NULL);
+  mafUser *user = new mafUser();
   int proxyFlag = 0;
   mafString proxyHost = "";
   mafString proxyPort = "";
@@ -301,7 +301,7 @@ void lhpOpUploadMultiVMERefactorTest::TestUpload2DifferentVMETypesWithSmallData(
   opUploadMultiVME->m_OpUploadVME->m_PythonExe = "python.exe ";
   opUploadMultiVME->m_OpUploadVME->m_PythonwExe = "pythonw.exe ";
 
-  lhpUser *user = new lhpUser(NULL);
+  mafUser *user = new mafUser();
   int proxyFlag = 0;
   mafString proxyHost = "";
   mafString proxyPort = "";

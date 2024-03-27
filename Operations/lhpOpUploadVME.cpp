@@ -56,7 +56,7 @@ MafMedical is partially based on OpenMAF.
 #include "lhpOpUploadVME.h"
 
 #include "mafGUI.h"
-#include "lhpUser.h"
+#include "mafUser.h"
 #include "mafNode.h"
 #include "mafNodeManager.h"
 #include "mafVMEGenericAbstract.h"
@@ -321,7 +321,7 @@ int lhpOpUploadVME::UploadVME(mafString &XMLURI, bool isBinaryDataPresent, bool 
   mafEventMacro(event);
   if(event.GetMafObject() != NULL) //if proxy string contains something != ""
   {
-    m_User = (lhpUser*)event.GetMafObject();
+    m_User = (mafUser*)event.GetMafObject();
   }
 
   //check if vme has a name

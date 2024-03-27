@@ -22,7 +22,7 @@ class mafVME;
 //----------------------------------------------------------------------------
 #include "mafObject.h"
 #include "mafString.h"
-#include "lhpUser.h"
+#include "mafUser.h"
 
 class MAF_EXPORT lhpTagHandlerInputOutputParametersCargo : public mafObject
 {

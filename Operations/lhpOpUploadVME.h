@@ -49,7 +49,7 @@ MafMedical is partially based on OpenMAF.
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
-class lhpUser;
+class mafUser;
 class mafVME;
 
 //----------------------------------------------------------------------------
@@ -152,7 +152,7 @@ protected:
   mafString m_ManualTagsListFromXMLDictionaryFileName;
   mafString m_UnhandledPlusManualTagsFileName;
 
-  lhpUser  *m_User;
+  mafUser  *m_User;
   
   mafString m_ConnectionConfigurationFileName;
   mafString m_ProxyURL;

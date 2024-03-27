@@ -49,7 +49,7 @@ MafMedical is partially based on OpenMAF.
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
-class lhpUser;
+class mafUser;
 
 //----------------------------------------------------------------------------
 // lhpOpEditTag :
@@ -140,7 +140,7 @@ protected:
   mafString m_ManualTagsListFromXMLDictionaryFileName;
   mafString m_UnhandledPlusManualTagsFileName;
 
-  lhpUser  *m_User;
+  mafUser  *m_User;
   
 private:
   mafString GetXMLDictionaryFileName(mafString dictionaryFileNamePrefix);

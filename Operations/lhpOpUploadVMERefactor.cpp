@@ -57,7 +57,7 @@ MafMedical is partially based on OpenMAF.
 #include "lhpTagHandler.h"
 
 #include "mafGUI.h"
-#include "lhpUser.h"
+#include "mafUser.h"
 #include "mafNode.h"
 #include "mafNodeManager.h"
 #include "mafVMEGenericAbstract.h"
@@ -1119,7 +1119,7 @@ void lhpOpUploadVMERefactor::GetPythonInterpretersAndClientSoftwareUser()
   mafEventMacro(event);
   if(event.GetMafObject() != NULL) 
   {
-    m_User = (lhpUser*)event.GetMafObject();
+    m_User = (mafUser*)event.GetMafObject();
   }
 }
 

@@ -51,7 +51,7 @@ MafMedical is partially based on OpenMAF.
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
-class lhpUser;
+class mafUser;
 class mafNode;
 class lhpOpUploadVME;
 
@@ -115,7 +115,7 @@ protected:
   mafString m_ProxyURL;
   mafString m_ProxyPort;
 
-  lhpUser *m_User;
+  mafUser *m_User;
 
 private:
   mafString GetXMLDictionaryFileName(mafString dictionaryFileNamePrefix);

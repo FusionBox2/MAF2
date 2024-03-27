@@ -59,7 +59,7 @@ MafMedical is partially based on OpenMAF.
 #include "mafTagArray.h"
 
 #include "mafGUI.h"
-#include "lhpUser.h"
+#include "mafUser.h"
 #include "mafNode.h"
 #include "mafNodeManager.h"
 #include "mafVMEGenericAbstract.h"
@@ -174,7 +174,7 @@ mafOp* lhpOpEditTagRefactor::Copy()
 bool lhpOpEditTagRefactor::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  //lhpUser *user = NULL;
+  //mafUser *user = NULL;
   ////Get User values
   //mafEvent event;
   //event.SetSender(this);
@@ -182,7 +182,7 @@ bool lhpOpEditTagRefactor::Accept(mafNode* vme)
   //mafEventMacro(event);
   //if(event.GetMafObject() != NULL) //if proxy string contains something != ""
   //{
-  //  user = (lhpUser*)event.GetMafObject();
+  //  user = (mafUser*)event.GetMafObject();
   //}
   return (vme != NULL);
 }
@@ -226,7 +226,7 @@ void lhpOpEditTagRefactor::OpRun()
   mafEventMacro(eventGetUser);
   if(eventGetUser.GetMafObject() != NULL) 
   {
-    m_User = (lhpUser*)eventGetUser.GetMafObject();
+    m_User = (mafUser*)eventGetUser.GetMafObject();
   }
 
   mafString DebugPath = m_VMEUploaderDownloaderDir;

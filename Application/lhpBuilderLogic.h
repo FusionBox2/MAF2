@@ -22,7 +22,7 @@
 //----------------------------------------------------------------------------
 class lhpGUINetworkConnectionSettings;
 class lhpGUIPythonSettings;
-class lhpUser;
+class mafUser;
 
 //----------------------------------------------------------------------------
 // lhpBuilderLogic :
@@ -51,6 +51,6 @@ protected:
   
   lhpGUINetworkConnectionSettings *m_NetworkConnectionSettings;
   lhpGUIPythonSettings *m_PythonSettings;
-  lhpUser  *m_User;
+  mafUser  *m_User;
 };
 #endif

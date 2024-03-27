@@ -27,7 +27,7 @@
 #include "mafOpManager.h"
 #include "mafGUISettingsDialog.h"
 #include "lhpGUIPythonSettings.h"
-#include "lhpUser.h"
+#include "mafUser.h"
 
 #include "mafViewManager.h"
 #include "mafGUIMDIChild.h"
@@ -38,7 +38,7 @@ lhpBuilderLogic::lhpBuilderLogic()
 //----------------------------------------------------------------------------
 {
   m_PythonSettings = new lhpGUIPythonSettings(this);
-  m_User = new lhpUser(this);
+  m_User = new mafUser();
 }
 //----------------------------------------------------------------------------
 lhpBuilderLogic::~lhpBuilderLogic()

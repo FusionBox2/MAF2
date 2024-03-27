@@ -142,14 +142,6 @@ IF (MAF_USE_VTK)
   mafGUITreeContextualMenu.h
   vtkMAFAssembly.cpp
   vtkMAFAssembly.h
-
-
-
-
-  # lhpFactoryTagHandler.cpp
-  # lhpFactoryTagHandler.h
-  lhpUser.cpp
-  lhpUser.h
   )
 ENDIF (MAF_USE_VTK)
 

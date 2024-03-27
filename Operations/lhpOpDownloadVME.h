@@ -49,7 +49,7 @@ MafMedical is partially based on OpenMAF.
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
-class lhpUser;
+class mafUser;
 class mafVMEGroup;
 
 //----------------------------------------------------------------------------
@@ -163,7 +163,7 @@ protected:
   mafVMEGroup *m_RootGroup;
   mafVMEGroup *m_Group;
 
-  lhpUser  *m_User;
+  mafUser  *m_User;
 
   bool m_FillLinkVector;
   bool m_WholeMsfDownload;
