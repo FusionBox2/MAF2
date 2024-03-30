@@ -227,7 +227,7 @@ protected:
   double m_Step[3];
 
   /** Snap array modality*/
-  vtkMAFAutoPointer<vtkDoubleArray> m_SnapArray[3];
+  vtkSmartPointer<vtkDoubleArray> m_SnapArray[3];
   
 };
 

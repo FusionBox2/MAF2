@@ -19,6 +19,8 @@
 
 #include "mafInteractor.h"
 #include "mafStorable.h"
+#include "vtkProp3D.h"
+#include "vtkActor2D.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :
@@ -30,10 +32,8 @@ class mafEventBase;
 class mafMatrix;
 class mafDeviceButtonsPadTracker;
 class mafView;
-class vtkProp3D;
 class vtkActor;
 class vtkRenderer;
-class vtkActor2D;
 class vtkAbstractPropPicker;
 
 /**

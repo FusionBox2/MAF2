@@ -19,32 +19,8 @@
 #include "mafConfigure.h"
 #include "vtkSmartPointer.h"
 
-/** Hold a reference to a vtkObjectBase instance.
-  vtkMAFSmartPointer is a specialization of vtkSmartPointer which automatically
-  instantiate an object in the default constructor.
-*/
 template <class T>
-class vtkMAFAutoPointer: public vtkSmartPointer<T>
-{
-public:
-  /** Initialize smart pointer to a new instanse of class T.*/
-  vtkMAFAutoPointer():vtkSmartPointer<T>() {}
-
-  /**
-  Initialize smart pointer to given object pointer and reference the given object.*/
-  vtkMAFAutoPointer(T* r): vtkSmartPointer<T>(r) {}
-  
-  /**
-  Initialize smart pointer with a new reference to the same object
-  referenced by given smart pointer.*/
-  vtkMAFAutoPointer(const vtkSmartPointerBase& r): vtkSmartPointer<T>(r) {}
-  /**
-  Allows passing the smart pointer to any function requiring a "T *".*/
-  operator T *() const {return (T *)this->Object;}
-};
-
-template <class T>
-class vtkMAFSmartPointer: public vtkMAFAutoPointer<T>
+class vtkMAFSmartPointer: public vtkSmartPointer<T>
 {
 public:
   /**
@@ -53,7 +29,7 @@ public:
 
   /**
   Initialize smart pointer to given object pointer and reference the given object.*/
-  vtkMAFSmartPointer(T* r): vtkMAFAutoPointer<T>(r) {}
+  vtkMAFSmartPointer(T* r): vtkSmartPointer<T>(r) {}
   
   /**
   Initialize smart pointer with a new reference to the same object

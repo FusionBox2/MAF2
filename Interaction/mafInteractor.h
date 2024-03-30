@@ -20,6 +20,8 @@
 #include "mafAgent.h"
 #include "mafString.h"
 #include "vtkMAFSmartPointer.h"
+#include "vtkRenderer.h"
+#include "vtkProp3D.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :
@@ -28,9 +30,6 @@ class mafDevice;
 class mafEventInteraction;
 class mafVME;
 class mafMatrix;
-
-class vtkRenderer;
-class vtkProp3D;
 
 /** Abstract class for MAF interactors
   This class provides base interface and features of MAF continuous event interactors.
