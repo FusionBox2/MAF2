@@ -20,6 +20,7 @@
 #include "mafAgentEventQueue.h"
 #include "mafMultiThreader.h"
 #include "mafMutexLock.h"
+#include <condition_variable>
 
 //------------------------------------------------------------------------------
 // Forward declarations:
@@ -92,7 +93,6 @@ protected:
 
   /** Internal function used to request the dispatching*/
   virtual void RequestForDispatching();
-  void StopThread();
   virtual int InternalInitialize();
   virtual void InternalShutdown();
 
@@ -105,35 +105,13 @@ protected:
   /**
    This function is used to startup the thread. Subclasses should override
    the InternalUpdateLoop() function which is called by this one.*/
-  static void UpdateLoop(mmuThreadInfoStruct *data);
+  void UpdateLoop();
     
-  /**
-    Get the present value of the Thread Active flag. This function is
-    thread safe and returns the value of the activeFlag member
-    variable of the ThreadInfoStruct stored in ThreadData.*/
-  int GetActiveFlag();
-
-  /**
-  // Internal functions used to send a wakeup signal among the different threads*/
-  void SignalNewMessage();
-  void WaitForNewMessage();
-
-  mafMultiThreader*     m_Threader;
-  mmuThreadInfoStruct*  m_ThreadData;
-
-  int                   m_ThreadId;
+  std::thread m_Thread;
   int                   m_Threaded;
-  int                   m_ActiveFlag;
-
-#ifdef _WIN32
- 
-  /** Event signaling the arrival of a new message. Windows implementation only. */
-  HANDLE        m_MessageSignal;
-#else
-  
-  /** This mutex is normally locked. It is used to block the execution of the receiving process when the send has not been called yet. */
-  mafMutexLock* m_Gate;
-#endif
+  std::atomic<int>                   m_ActiveFlag;
+  mafMutexLock m_Gate;
+  std::condition_variable cv;
 
 private:
   mafAgentThreaded(const mafAgentThreaded&);  // Not implemented.

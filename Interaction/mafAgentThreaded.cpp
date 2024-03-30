@@ -34,19 +34,10 @@ mafAgentThreaded::mafAgentThreaded()
 //------------------------------------------------------------------------------
 {
   m_Threaded      = 1;
-  m_ThreadId      = -1;
-  m_ThreadData    = NULL;
-  m_Threader      = NULL;
   m_ActiveFlag    = 0;
 
   SetDispatchModeToSelfProcess();
 
-#ifdef _WIN32
-  m_MessageSignal = CreateEvent(0, FALSE, FALSE, 0);
-#else
-  m_Gate = new mafMutexLock;
-  m_Gate->Lock();
-#endif
 }
 
 //------------------------------------------------------------------------------
@@ -54,36 +45,20 @@ mafAgentThreaded::~mafAgentThreaded()
 //------------------------------------------------------------------------------
 {
   Shutdown();
-#ifdef _WIN32
-  CloseHandle(m_MessageSignal);
-#else
-  delete m_Gate;
-#endif
 }
 
 //------------------------------------------------------------------------------
 void mafAgentThreaded::InternalShutdown()
 //------------------------------------------------------------------------------
 {
-  StopThread();
-}
-
-//------------------------------------------------------------------------------
-void mafAgentThreaded::StopThread()
-//------------------------------------------------------------------------------
-{
-  if (m_ThreadId!=-1)
+  if (m_Thread.joinable())
   {
     if (m_ActiveFlag)
     {
       m_ActiveFlag=0;
-      this->SignalNewMessage(); //awoke the thread to make it die
+      cv.notify_all();
     }
-    // terminate the thread
-    m_Threader->TerminateThread(m_ThreadId);
-    m_ThreadId = -1;
-
-    delete m_Threader;
+    m_Thread.join();
   }
 }
 
@@ -94,56 +69,50 @@ int mafAgentThreaded::InternalInitialize()
   // Spawns a thread if necessary
   if (m_Threaded)
   {
-    if (m_ActiveFlag || m_ThreadId != -1) 
+    if (m_ActiveFlag || m_Thread.joinable()) 
     {
       mafErrorMacro("Dispatcher handler polling thread already started!");
       return -1;
     }
 
-    m_Threader = new mafMultiThreader;
     m_ActiveFlag=1;
 
-    m_ThreadId = m_Threader->SpawnThread(&mafAgentThreaded::UpdateLoop,this);    
+    m_Thread = std::thread(&mafAgentThreaded::UpdateLoop,this);
   }
 
   return 0;
 }
 
 //------------------------------------------------------------------------------
-int mafAgentThreaded::GetActiveFlag()
+void mafAgentThreaded::UpdateLoop()
 //------------------------------------------------------------------------------
 {
-  return m_ActiveFlag;
-}
-
-      
-//------------------------------------------------------------------------------
-void mafAgentThreaded::UpdateLoop(mmuThreadInfoStruct *data)
-//------------------------------------------------------------------------------
-{
-  mafAgentThreaded *self = (mafAgentThreaded *)(data->m_UserData);
-
-  self->m_ThreadData=data;
-
   // wait for initialization to be completed
-  for (;self->GetActiveFlag()&&!self->IsInitialized();)
+  for (;m_ActiveFlag&&!IsInitialized();)
     mafSleep(100); 
 
   // This loop is termintated when active flag is set by TerminateThread() or 
   // if InternalUpdate() returns a value !=0
-  for (;self->GetActiveFlag()&&!self->InternalUpdate();) ; // active loop
+  for (;m_ActiveFlag&&!InternalUpdate();) ; // active loop
 
-  self->m_ThreadData=NULL;
 
-  self->m_ThreadId=-1;
+  for (;;)
+  {
+      std::unique_lock<std::mutex> lock(m_Gate);
+      cv.wait(lock,
+          [this] { return m_ActiveFlag || !IsQueueEmpty(); });
+      if (!m_ActiveFlag)
+          return;
+      InternalUpdate();
+  }
+
+
 }
 
 //------------------------------------------------------------------------------
 int mafAgentThreaded::InternalUpdate()
 //------------------------------------------------------------------------------
 {
-  this->WaitForNewMessage();
-
   this->DispatchEvents();
   
   return 0;
@@ -190,7 +159,7 @@ void mafAgentThreaded::RequestForDispatching()
     else
     {
       // send my self an event to awoke my thread
-      this->SignalNewMessage();
+        cv.notify_one();
     }
   //}
   //else
@@ -232,27 +201,6 @@ void mafAgentThreaded::AsyncInvokeEvent(mafID id, mafID channel,void *data)
   AsyncInvokeEvent(&mafEventBase(this,id,data,channel),channel);
 }
 
-//----------------------------------------------------------------------------
-void mafAgentThreaded::WaitForNewMessage()
-//------------------------------------------------------------------------------
-{
-#ifdef _WIN32
-  WaitForSingleObject( m_MessageSignal, INFINITE );
-#else
-  m_Gate->Lock();
-#endif
-}
-
-//----------------------------------------------------------------------------
-void mafAgentThreaded::SignalNewMessage()
-//------------------------------------------------------------------------------
-{
-#ifdef _WIN32
-  SetEvent( m_MessageSignal );
-#else
-  m_Gate->Unlock();
-#endif
-}
 //----------------------------------------------------------------------------
 void mafAgentThreaded::AsyncSendEvent(mafBaseEventHandler *target, void *sender, mafID id, mafID channel,void *data)
 //----------------------------------------------------------------------------
