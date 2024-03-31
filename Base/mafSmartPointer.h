@@ -65,9 +65,9 @@ public:
 		return *this;
 	}
 
-  bool operator==(const mafAutoPointer<T>& r) const {return r.m_Object==m_Object;}
-  bool operator==(const T *r) const {return r==m_Object;}
-  
+	template <class U>
+  bool operator==(const mafAutoPointer<U>& r) const {return r.m_Object==m_Object;}
+
   /** Get the contained pointer. */
   T* GetPointer() const {return m_Object;}
 
@@ -124,25 +124,6 @@ public:
   referenced by given smart pointer.*/
   mafSmartPointer(const mafAutoPointer<T>& r): mafAutoPointer<T>(r) {;}
 };
-
-
-//----------------------------------------------------------------------------
-template <class T>
-inline bool operator == (const mafAutoPointer<T>& l, const mafAutoPointer<T>& r) \
-//----------------------------------------------------------------------------
-{ return (static_cast<void*>(l.GetPointer()) == static_cast<void*>(r.GetPointer())); }
-
-//----------------------------------------------------------------------------
-template <class T>
-inline bool operator == (mafReferenceCounted* l, const mafAutoPointer<T>& r) \
-//----------------------------------------------------------------------------
-{ return (static_cast<void*>(l) == static_cast<void*>(r.GetPointer())); }
-
-//----------------------------------------------------------------------------
-template <class T>
-inline bool operator == (const mafAutoPointer<T>& l, mafReferenceCounted* r) \
-//----------------------------------------------------------------------------
-{ return (static_cast<void*>(l.GetPointer()) == static_cast<void*>(r)); }
 
 
 #endif
