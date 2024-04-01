@@ -23,17 +23,5 @@
   class name: mafGUIPanel
    Inherits directly from wxPanel and adds the pointer to the next panel
 */
-class MAF_EXPORT mafGUIPanel: public wxPanel
-{
-public:
-  /** constructor */
-  mafGUIPanel(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition, 
-           const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL, const mafString& name = _R("panel"));
-
-  mafGUIPanel *m_NextPanel;
-
-protected:
-/** Event table declaration macro  */
-DECLARE_EVENT_TABLE()
-};
+using mafGUIPanel = wxPanel;
 #endif

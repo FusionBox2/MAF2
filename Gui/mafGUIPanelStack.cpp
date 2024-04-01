@@ -36,16 +36,10 @@ END_EVENT_TABLE()
 //----------------------------------------------------------------------------
 mafGUIPanelStack::mafGUIPanelStack(wxWindow* parent, wxWindowID id, const wxPoint& pos, 
                const wxSize& size, long style, const mafString& name)
-:mafGUIPanel(parent,id,pos,size,style,name)         
+:mafGUIPanel(parent,id,pos,size,style,name.toWx())         
 //----------------------------------------------------------------------------
 {
   m_Sizer =  new wxBoxSizer( wxVERTICAL );
-
-  m_CurrentPanel= new mafGUIPanel(this,-1); 
-  m_NextPanel = NULL;
-
-  Push(new mafGUIPanel(this,-1));
-
   this->SetAutoLayout( TRUE );
   this->SetSizer( m_Sizer );
   m_Sizer->Fit(this);
@@ -67,8 +61,6 @@ bool mafGUIPanelStack::Put(mafGUIPanel* p)
 bool mafGUIPanelStack::Remove(mafGUIPanel* p)
 //----------------------------------------------------------------------------
 {
-  assert(p);
-  assert(p==m_CurrentPanel);
   Pop();
   return true;
 }
@@ -76,20 +68,20 @@ bool mafGUIPanelStack::Remove(mafGUIPanel* p)
 void mafGUIPanelStack::Push(mafGUIPanel* p)
 //----------------------------------------------------------------------------
 {
-  if(m_CurrentPanel == p ) return;
+  if(!m_Panels.empty() && m_Panels.top() == p) return;
 
-  assert(p);
-  assert(m_CurrentPanel);
-  m_CurrentPanel->Reparent(mafGetFrame());
-  m_CurrentPanel->Show(false);
-  m_Sizer->Detach(m_CurrentPanel);
+  if(!m_Panels.empty())
+  {
+	  m_Panels.top()->Reparent(mafGetFrame());
+	  m_Panels.top()->Show(false);
+	  m_Sizer->Detach(m_Panels.top());
+  }
 
-  p->m_NextPanel = m_CurrentPanel;
-  m_CurrentPanel= p;
+  m_Panels.push(p);
 
-  m_CurrentPanel->Show(true);
-  m_CurrentPanel->Reparent(this);
-  m_Sizer->Add(m_CurrentPanel,1,wxEXPAND);
+  m_Panels.top()->Show(true);
+  m_Panels.top()->Reparent(this);
+  m_Sizer->Add(m_Panels.top(),1,wxEXPAND);
    
   Layout();
 }
@@ -97,18 +89,20 @@ void mafGUIPanelStack::Push(mafGUIPanel* p)
 void mafGUIPanelStack::Pop()
 //----------------------------------------------------------------------------
 {
-  assert(m_CurrentPanel);
+	if (m_Panels.empty()) return;
 
-  m_CurrentPanel->Show(false);
-  m_CurrentPanel->Reparent(mafGetFrame());
-  m_Sizer->Detach(m_CurrentPanel);
+	m_Panels.top()->Show(false);
+	m_Panels.top()->Reparent(mafGetFrame());
+  m_Sizer->Detach(m_Panels.top());
 
-  m_CurrentPanel= m_CurrentPanel->m_NextPanel;
-  assert(m_CurrentPanel);
+  m_Panels.pop();
 
-  m_CurrentPanel->Show(true);
-  m_CurrentPanel->Reparent(this);
-  m_Sizer->Add(m_CurrentPanel,1,wxEXPAND);
+  if(!m_Panels.empty())
+  {
+	  m_Panels.top()->Show(true);
+	  m_Panels.top()->Reparent(this);
+	  m_Sizer->Add(m_Panels.top(), 1, wxEXPAND);
+  }
 
   Layout();
 }

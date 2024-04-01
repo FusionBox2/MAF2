@@ -21,31 +21,6 @@
 #include "mafEvent.h"
 #include <wx/docview.h>
 #include <wx/confbase.h>
+using mafGUIFileHistory = wxFileHistory;
 
-//----------------------------------------------------------------------------
-// mafGUIFileHistory :
-//----------------------------------------------------------------------------
-/**
-  class name: mafGUIFileHistory
-  class that handle a list of file called history.  Tipically it is used by an application
-  as an history for last opened files.
-*/
-class MAF_EXPORT mafGUIFileHistory : public wxFileHistory
-{
-public:
-  /** constructor */
- 	mafGUIFileHistory();
-
-  /** Add filename to history. */
-	virtual void AddFileToHistory(const wxString& file);
-
-  /** Remove filename to history. */
-  virtual void RemoveFileFromHistory(int i);
-
-  /** Add filename item to men. */
-  virtual void AddFilesToMenu();
-
-  /** Add filename item to a given men. */
-  virtual void AddFilesToMenu(wxMenu* menu);
-};
 #endif

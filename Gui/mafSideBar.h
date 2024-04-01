@@ -32,7 +32,6 @@
 class mafGUIHolder;
 class mafGUI;
 class mafGUIPanelStack;
-class mafGUIPanel;
 class mafNode;
 class mafView;
 class mafGUINamedPanel;

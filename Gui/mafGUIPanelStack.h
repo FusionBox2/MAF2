@@ -20,6 +20,7 @@
 //----------------------------------------------------------------------------
 #include <wx/laywin.h>
 #include "mafGUIPanel.h"
+#include <stack>
 /**
   class name:  mafGUIPanelStack
    Panel with the same behaviour of a stack container (push and pop methods)
@@ -47,7 +48,7 @@ public:
 
 protected:
   wxBoxSizer   *m_Sizer;
-  mafGUIPanel     *m_CurrentPanel;
+  std::stack<mafGUIPanel*> m_Panels;
 /** Event table declaration macro  */
 DECLARE_EVENT_TABLE()
 };
