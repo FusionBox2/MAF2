@@ -419,20 +419,17 @@ mafStorageElement *mafStorageElement::StoreObject(const mafString& name,mafStora
 //------------------------------------------------------------------------------
 {
   assert(storable);
-  if (storable->IsStorable())
+  mafStorageElement *element=AppendChild(name);
+  if (element)
   {
-    mafStorageElement *element=AppendChild(name);
-    if (element)
-    {
-      element->SetAttribute(_R("Type"),type_name);
+    element->SetAttribute(_R("Type"),type_name);
 
-      if (storable->Store(element)==MAF_OK)
-      {
-        return element;
-      }
+    if (storable->Store(element)==MAF_OK)
+    {
+      return element;
     }
-    mafErrorMacro("Failed to store object of type \""<<type_name.GetCStr() <<"\"");
   }
+  mafErrorMacro("Failed to store object of type \""<<type_name.GetCStr() <<"\"");
   
   return NULL;
 }

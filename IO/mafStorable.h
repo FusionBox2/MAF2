@@ -39,7 +39,7 @@ class mafStorageElement;
 class MAF_EXPORT mafStorable
 {
 public:
-  mafStorable():m_Storable(true) {}
+  mafStorable(){}
   virtual ~mafStorable(){}
   /**
     Storing this object as part of an XML document. The element node must be passed as argument,
@@ -53,9 +53,6 @@ public:
     means the calling restore loop should have identified the node passed as argument as of type
     to be restored by this object.*/
   int Restore(mafStorageElement *element);
-
-  /** return true if the object should be stored */
-  bool IsStorable() {return m_Storable;}
 protected:
   /**
     This is called by Store() and must be reimplemented by subclasses. 
@@ -66,7 +63,5 @@ protected:
     This is called by Restore() and must be reimplemented by subclasses 
     The element from which the object should restore itself is passed as argument*/
   virtual int InternalRestore(mafStorageElement *node)=0;
-
-  bool m_Storable; ///< if this flag is set to false the object does not store itself
 };
 #endif // __mafStorable_h__
