@@ -22,10 +22,9 @@ class mafStorageElement;
 class mafStorable;
 
 
-class MAF_EXPORT mafParser: public mafObject
+class MAF_EXPORT mafParser
 {
 public:
-  mafAbstractTypeMacro(mafParser,mafObject);
 
   enum PARSER_IO_ERRORS {IO_OK=0,IO_GENERIC_ERROR,IO_WRONG_OBJECT_TYPE,IO_RESTORE_ERROR,IO_WRONG_FILE_TYPE,IO_WRONG_FILE_VERSION,IO_WRONG_URL,IO_LAST_ERROR};
 

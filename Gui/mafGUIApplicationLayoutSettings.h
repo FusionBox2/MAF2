@@ -26,7 +26,7 @@ class mafViewManager;
 class mmaApplicationLayout;
 class mafGUIMDIFrame;
 class mafVMEStorage;
-class mafXMLParser;
+class mafParser;
 class mafVMERoot;
 
 //----------------------------------------------------------------------------
@@ -120,8 +120,7 @@ protected:
   mafString              m_LayoutFileSave;
   mafViewManager        *m_ViewManager;
   mmaApplicationLayout  *m_Layout;
-  //mafVMEStorage         *m_Storage;
-	mafXMLParser          *m_XMLStorage;
+	std::unique_ptr<mafParser> m_Storage;
 	mafVMERoot            *m_XMLRoot;
   int                    m_VisibilityVme;
   wxListBox				      *m_List;

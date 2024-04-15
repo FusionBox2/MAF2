@@ -37,10 +37,8 @@ class mmuXMLDOM;
 */  
 class MAF_EXPORT mafXMLParser: public mafParser
 {
-public:
-  mafTypeMacro(mafXMLParser,mafParser);
-  
-  enum XML_IO_ERRORS {IO_XML_PARSE_ERROR=Superclass::IO_LAST_ERROR,IO_DOM_XML_ERROR,IO_XML_PARSER_INTERNAL_ERROR, IO_LAST_ERROR};
+public:  
+  enum XML_IO_ERRORS {IO_XML_PARSE_ERROR=mafParser::IO_LAST_ERROR,IO_DOM_XML_ERROR,IO_XML_PARSER_INTERNAL_ERROR, IO_LAST_ERROR};
 
   mafXMLParser();
   virtual ~mafXMLParser();

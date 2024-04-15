@@ -59,7 +59,6 @@ mafGUISettings(listener, label)
   m_Layout        = NULL;
   m_Win           = NULL;
   m_List          = NULL;
-  m_XMLStorage    = NULL;
   m_XMLRoot       = NULL;
 
   m_SelectedItem  = -1;
@@ -70,7 +69,6 @@ mafGUISettings(listener, label)
 mafGUIApplicationLayoutSettings::~mafGUIApplicationLayoutSettings() 
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_XMLStorage);
   mafDEL(m_XMLRoot);
 }
 //----------------------------------------------------------------------------
@@ -218,13 +216,13 @@ void mafGUIApplicationLayoutSettings::SaveTreeLayout()
 void mafGUIApplicationLayoutSettings::InitializeSettings()
 //----------------------------------------------------------------------------
 {
-  m_XMLStorage = mafXMLParser::New();
-  m_XMLStorage->SetFileType(_R("MLY"));
-  m_XMLStorage->SetVersion(_R("2.0"));
+  m_Storage = std::make_unique<mafXMLParser>();
+  m_Storage->SetFileType(_R("MLY"));
+  m_Storage->SetVersion(_R("2.0"));
   mafNEW(m_XMLRoot);
   m_XMLRoot->SetName(_R("ApplicationLayout"));
   m_XMLRoot->Initialize();
-  m_XMLStorage->SetDocument(m_XMLRoot);
+  m_Storage->SetDocument(m_XMLRoot);
 
   //reg key for application layout
   wxString layout_filename;
@@ -264,13 +262,13 @@ void mafGUIApplicationLayoutSettings::AddLayout()
 
     // delete old child which will be substituted
     m_List->Delete(idx);
-    mafNode *root = ((mafNode *)m_XMLStorage->GetDocument());
+    mafNode *root = ((mafNode *)m_Storage->GetDocument());
     mafSmartPointer<mafNodeLayout> child;
     root->RemoveChild(root->FindInTreeByName(name));
   }
 
   // storage
-  if (m_XMLStorage)
+  if (m_Storage)
   {
     wxFrame *frame = (wxFrame *)mafGetFrame();
     int pos[2], size[2];
@@ -281,7 +279,7 @@ void mafGUIApplicationLayoutSettings::AddLayout()
     size[0] = rect.GetSize().GetWidth();
     size[1] = rect.GetSize().GetHeight();
 
-    mafNode *root = ((mafNode *)m_XMLStorage->GetDocument());
+    mafNode *root = ((mafNode *)m_Storage->GetDocument());
     mafSmartPointer<mafNodeLayout> child;
     root->AddChild(child);
     
@@ -330,7 +328,7 @@ void mafGUIApplicationLayoutSettings::RemoveLayout()
   {   
     // delete old child which will be substituted
     mafString name = mafWxToString(m_List->GetString(m_SelectedItem));
-    mafNode *root = ((mafNode *)m_XMLStorage->GetDocument());
+    mafNode *root = ((mafNode *)m_Storage->GetDocument());
     if(((mafNodeLayout *)root->FindInTreeByName(name))->GetLayout()->GetLayoutName() == _R("Default"))
       m_DefaultLayoutName = _R(" - ");
 
@@ -346,10 +344,10 @@ void mafGUIApplicationLayoutSettings::RemoveLayout()
 void mafGUIApplicationLayoutSettings::SaveApplicationLayout()
 //----------------------------------------------------------------------------
 {
-  if(m_XMLStorage)
+  if(m_Storage)
   {
-    m_XMLStorage->SetURL(m_LayoutFileSave);
-    m_XMLStorage->Store();
+    m_Storage->SetURL(m_LayoutFileSave);
+    m_Storage->Store();
     m_ModifiedLayouts = false;
   }
 }
@@ -367,17 +365,17 @@ void mafGUIApplicationLayoutSettings::LoadLayout(bool fileDefault)
   if(file.IsEmpty())
     return;
 
-  if(m_XMLStorage && mafFileExists(file))
+  if(m_Storage && mafFileExists(file))
   {
     //clear tree
-    ((mafNode *)m_XMLStorage->GetDocument())->CleanTree();
+    ((mafNode *)m_Storage->GetDocument())->CleanTree();
     m_List->Clear();
 
-    m_XMLStorage->SetURL(file);
-    m_XMLStorage->Restore();
+    m_Storage->SetURL(file);
+    m_Storage->Restore();
 
     //fill listbox
-    mafNodeIterator *iter = ((mafNode *)m_XMLStorage->GetDocument())->NewIterator();
+    mafNodeIterator *iter = ((mafNode *)m_Storage->GetDocument())->NewIterator();
     for(mafNode *vme = iter->GetFirstNode(); vme; vme = iter->GetNextNode())
     {
       if(!vme->IsMAFType(mafVMERoot))
@@ -428,7 +426,7 @@ void mafGUIApplicationLayoutSettings::ApplyLayout()
   mafString name = mafWxToString(m_List->GetString(m_SelectedItem));
 
   // Retrieve the saved layout.
-  mafNode *root = ((mafNode *)m_XMLStorage->GetDocument());
+  mafNode *root = ((mafNode *)m_Storage->GetDocument());
   mafNodeLayout *vme = mafNodeLayout::SafeDownCast(root->FindInTreeByName(name));
   mmaApplicationLayout *app_layout = mmaApplicationLayout::SafeDownCast(vme->GetLayout()); //application layout
   m_ActiveLayoutName = vme->GetName();
@@ -585,7 +583,7 @@ void mafGUIApplicationLayoutSettings::SetLayoutAsDefault()
   if(m_SelectedItem != -1)
   {   
     m_ModifiedLayouts = true;
-    mafNodeIterator *iter = ((mafNode *)m_XMLStorage->GetDocument())->NewIterator();
+    mafNodeIterator *iter = ((mafNode *)m_Storage->GetDocument())->NewIterator();
     for(mafNode *vme = iter->GetFirstNode(); vme; vme = iter->GetNextNode())
     {
       if(!vme->IsMAFType(mafVMERoot))
@@ -602,7 +600,7 @@ void mafGUIApplicationLayoutSettings::SetLayoutAsDefault()
       return;
     }
 
-    mafNode *root = ((mafNode *)m_XMLStorage->GetDocument());    
+    mafNode *root = ((mafNode *)m_Storage->GetDocument());    
     ((mafNodeLayout *)root->FindInTreeByName(m_DefaultLayoutName))->GetLayout()->SetLayoutName(_R("Default")); //m_DefaultLayout.GetCStr()
     
     m_ModifiedLayouts = true;

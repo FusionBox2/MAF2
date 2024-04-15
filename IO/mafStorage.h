@@ -19,6 +19,7 @@
 #include "mafObject.h"
 #include "mafString.h"
 #include <set>
+#include <memory>
 #include "mafBaseEventHandler.h"
 
 //----------------------------------------------------------------------------
@@ -147,7 +148,7 @@ protected:
   mafString           m_ParserURL;    ///< name of the last parsed file (used for SaveAs)
   mafID               m_TmpFileId;    ///< counter for unique tmp file naming
   mafString           m_TmpFolder;    ///< folder where to store tmp files
-  mafParser           *m_Parser;
+  std::unique_ptr<mafParser> m_Parser;
   
   std::set<mafString> m_TmpFileNames; ///< name of tmp files in the MSF dir
   std::set<mafString> m_FilesDictionary; ///< list of files in the storage folder: to be populated by OpenDirectory()

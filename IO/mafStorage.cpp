@@ -29,14 +29,13 @@ mafStorage::mafStorage()
   m_TmpFileId       = 0;
   m_ErrorCode       = 0;
   m_TmpFolder       = mafWxToString(wxGetCwd());
-  m_Parser          = mafXMLParser::New();
+  m_Parser          = std::make_unique<mafXMLParser>();
 }
 
 //------------------------------------------------------------------------------
 mafStorage::~mafStorage()
 //------------------------------------------------------------------------------
 {
-  mafDEL(m_Parser);
 }
 
 //------------------------------------------------------------------------------
