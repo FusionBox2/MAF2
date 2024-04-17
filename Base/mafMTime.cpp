@@ -18,7 +18,7 @@
 //
 #include "mafMTime.h"
 #include "mafDefines.h"
-#include "mafMutexLock.h"
+#include <mutex>
 #include "mafIncludeWIN32.h"
 
 #ifdef MAF_USE_VTK
@@ -34,7 +34,7 @@ void mafMTime::Modified()
 #ifdef MAF_USE_VTK  
 
   static vtkTimeStamp timeStamp;
-  static mafMutexLock TimeStampMutex;
+  static std::mutex TimeStampMutex;
 
   TimeStampMutex.lock();
   timeStamp.Modified();
@@ -50,7 +50,7 @@ void mafMTime::Modified()
 //  #else
 
     static unsigned long mafMTimeTime = 0;
-    static mafMutexLock TimeStampMutex;
+    static std::mutex TimeStampMutex;
     
     TimeStampMutex.Lock();
     m_ModifiedTime = ++mafMTimeTime;

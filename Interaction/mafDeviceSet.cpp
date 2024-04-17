@@ -24,7 +24,7 @@
 // serialization
 #include "mafStorageElement.h"
 
-#include "mafMutexLock.h"
+#include <mutex>
 #include "mmuIdFactory.h"
 
 //------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ mafCxxTypeMacro(mafDeviceSet)
 mafDeviceSet::mafDeviceSet()
 //------------------------------------------------------------------------------
 {
-  m_DevicesMutex = new mafMutexLock;
+  m_DevicesMutex = new std::mutex;
 }
 
 //------------------------------------------------------------------------------

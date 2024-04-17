@@ -19,7 +19,7 @@
 
 #include "mafReferenceCounted.h"
 #include "mafMTime.h"
-#include "mafMutexLock.h"
+#include <mutex>
 #include "mafMatrix.h"
 #include "mafSmartPointer.h"
 
@@ -153,7 +153,7 @@ protected:
   mafAutoPointer<mafMatrix> m_Matrix;        ///< internally stored matrix.
   mafMTime        m_MTime;           ///< modification time
   mafMTime        m_UpdateTime;      ///< We need to record the time of the last update
-  mafMutexLock    m_UpdateMutex; ///< we also need to do mutex locking so updates don't collide.
+  std::mutex    m_UpdateMutex; ///< we also need to do mutex locking so updates don't collide.
 
   mafTimeStamp    m_TimeStamp;   ///< the timestamp to assign to the output matrix (default=0)
 

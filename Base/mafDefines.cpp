@@ -14,7 +14,7 @@
 
 =========================================================================*/
 #include "mafDefines.h"
-#include "mafMutexLock.h"
+#include <mutex>
 
 #include "wx/string.h"
 #include "mafIncludeWIN32.h"
@@ -31,7 +31,7 @@ using namespace std;
 
 #define BUFFER_DIMENSION 4096
 
-static mafMutexLock mafLogMutex; 
+static std::mutex mafLogMutex;
 static char mafLogBuffer[BUFFER_DIMENSION];
 
 mafMessageBuf _M(const char *s)

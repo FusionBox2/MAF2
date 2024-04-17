@@ -8,7 +8,7 @@ Version:   $Revision: 1.8 $
 
 =========================================================================*/
 #include "mafAgentEventQueue.h"
-#include "mafMutexLock.h"
+#include <mutex>
 #include "mmuIdFactory.h"
 
 #include <assert.h>
@@ -51,7 +51,7 @@ mafAgentEventQueue::mafAgentEventQueue()
   m_DequeueMode     = MultipleEventMode;
   m_PushMode        = DispatchEventMode;
   
-  m_Mutex = new mafMutexLock;
+  m_Mutex = new std::mutex;
 }
 
 //------------------------------------------------------------------------------

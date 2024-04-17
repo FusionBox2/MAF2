@@ -18,7 +18,7 @@
 
 #include "mafDevice.h"
 #include <list>
-#include "mafMutexLock.h"
+#include <mutex>
 
 //----------------------------------------------------------------------------
 // forward declarations :
@@ -108,7 +108,7 @@ protected:
 
   std::list<mafDevice *> m_Devices;
 
-  mafMutexLock*          m_DevicesMutex;
+  std::mutex *          m_DevicesMutex;
 
 private:
   mafDeviceSet(const mafDeviceSet&);  // Not implemented.

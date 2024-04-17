@@ -19,7 +19,7 @@
 
 #include "mafAgentEventQueue.h"
 #include "mafMultiThreader.h"
-#include "mafMutexLock.h"
+#include <mutex>
 #include <condition_variable>
 
 //------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ protected:
   std::thread m_Thread;
   int                   m_Threaded;
   std::atomic<int>                   m_ActiveFlag;
-  mafMutexLock m_Gate;
+  std::mutex m_Gate;
   std::condition_variable cv;
 
 private:

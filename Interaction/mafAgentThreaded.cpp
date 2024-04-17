@@ -15,7 +15,7 @@
 =========================================================================*/
 
 #include "mafAgentThreaded.h"
-#include "mafMutexLock.h"
+#include <mutex>
 #include "mmuIdFactory.h"
 
 #include <assert.h>

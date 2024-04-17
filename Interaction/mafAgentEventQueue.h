@@ -18,7 +18,7 @@
 #define __mafAgentEventQueue_h
 
 #include "mafAgent.h"
-#include "mafMutexLock.h"
+#include <mutex>
 
 //----------------------------------------------------------------------------
 // forward declarations
@@ -162,7 +162,7 @@ protected:
 
   InternalEventQueue *m_EventQueue;
 
-  mafMutexLock *m_Mutex;
+  std::mutex *m_Mutex;
 
   int m_DispatchMode;
   int m_DequeueMode;

@@ -1,5 +1,5 @@
 #include "mafMultiThreader.h"
-#include "mafMutexLock.h"
+#include <mutex>
 
 #include <iostream>
 using namespace std;
@@ -9,7 +9,7 @@ class test_data
 public:
   int thread_id;
   int flag;
-  mafMutexLock lock;
+  std::mutex lock;
 };
 
 static void ThreadFunction(mmuThreadInfoStruct *data)
@@ -18,7 +18,7 @@ static void ThreadFunction(mmuThreadInfoStruct *data)
   test_data *mydata=(test_data *)(data->m_UserData);
   mydata->flag=1;
   std::cerr<<"Thread "<<mydata->thread_id<<" (ID="<<data->m_ThreadID<<") waiting for gate\n";
-  mydata->lock.Lock(); // wait for gate
+  mydata->lock.lock(); // wait for gate
   mydata->flag=2;
   for (;mydata->flag;) mafSleep(10); // wait for flag reset
   std::cerr<<"Thread "<<mydata->thread_id<<" (ID="<<data->m_ThreadID<<") is dying\n";
@@ -33,7 +33,7 @@ int main()
   {
     data[i].thread_id=i;
     data[i].flag=0;
-    data[i].lock.Lock();
+    data[i].lock.lock();
     threader.SpawnThread(ThreadFunction,&(data[i]));
   }
   mafSleep(2000); // wait 2secs for all threads to complete their work
@@ -42,7 +42,7 @@ int main()
   for (i=0;i<8;i++)
   {
     MAF_TEST(data[i].flag==1);
-    data[i].lock.Unlock();
+    data[i].lock.unlock();
   }
   mafSleep(2000); // wait 2secs for all threads to complete their work
   

@@ -18,7 +18,7 @@
 #define __mafDeviceButtonsPadTracker_h
 
 #include "mafDeviceButtonsPad.h"
-#include "mafMutexLock.h"
+#include <mutex>
 #include "mafSmartPointer.h"
 #include "mafOBB.h"
 #include "mafAvatar.h"
@@ -209,7 +209,7 @@ protected:
   mafMatrix*            m_LastPoseMatrix; ///< stores the last pose matrix
   int                   m_LastPose;       ///< Flag used when last pose has not been served yet
   mafTimeStamp          m_LastMoveTime;   ///< Time stamp of last MoveEvent
-  mafMutexLock          m_LastPoseMutex;
+  std::mutex          m_LastPoseMutex;
   //mafEventInteraction*  m_LastMoveEvent;     
   mafTimeStamp          m_MoveEventTimeOut;
 
