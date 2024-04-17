@@ -191,7 +191,6 @@ ENDIF (WIN32)
 
 ############ mafEventTest
 ADD_TEST(mafEventTest ${EXECUTABLE_OUTPUT_PATH}/mafEventTest)
-ADD_EXECUTABLE(MultithreaderTest testMultithreader.cpp)
 IF (WIN32)
   SET_TARGET_PROPERTIES(mafEventTest PROPERTIES LINK_FLAGS "/MANIFEST")
 ENDIF (WIN32)

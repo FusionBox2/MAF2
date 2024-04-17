@@ -36,8 +36,6 @@ mafMatrix.cpp
 mafMatrix.h
 mafMatrix3x3.cpp
 mafMatrix3x3.h
-mafMultiThreader.h
-mafMultiThreader.cpp
 mafOBB.cpp
 mafOBB.h
 mafObject.cpp

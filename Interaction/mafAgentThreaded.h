@@ -18,7 +18,7 @@
 #define __mafAgentThreaded_h
 
 #include "mafAgentEventQueue.h"
-#include "mafMultiThreader.h"
+#include <thread>
 #include <mutex>
 #include <condition_variable>
 
