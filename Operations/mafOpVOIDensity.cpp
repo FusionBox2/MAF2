@@ -267,7 +267,7 @@ void mafOpVOIDensity::ExtractVolumeScalars()
   ImplicitBox->SetBounds(b);
 	ImplicitBox->Modified();
 
-  vtkMAFSmartPointer<vtkDataSet> VolumeData = ((mafVME*)m_Input)->GetOutput()->GetVTKData();
+  vtkSmartPointer<vtkDataSet> VolumeData = ((mafVME*)m_Input)->GetOutput()->GetVTKData();
   ((mafVME*)m_Input)->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
 	NumberVoxels = VolumeData->GetNumberOfPoints();
   
