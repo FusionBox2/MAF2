@@ -1334,9 +1334,6 @@ bool medOpSegmentation::ApplyRefinementFilter(vtkStructuredPoints *inputImage, v
   typedef itk::VotingBinaryIterativeHoleFillingImageFilter<UCharImage> ITKVotingIterativeHoleFillingFilter;
   ITKVotingIterativeHoleFillingFilter::Pointer iterativeHoleFillingFilter = ITKVotingIterativeHoleFillingFilter::New();
 
-  vtkMAFSmartPointer<vtkStructuredPoints> refinedImage;
-
-
   vtkMAFSmartPointer<vtkImageCast> vtkImageToFloat;
   vtkImageToFloat->SetOutputScalarTypeToUnsignedChar();
   vtkImageToFloat->SetInputData(inputImage);
@@ -1417,7 +1414,7 @@ bool medOpSegmentation::ApplyRefinementFilter(vtkStructuredPoints *inputImage, v
   itkTOvtk->Update();
   //////////////////////////////////////////////////////////////////////////
 
-  refinedImage = ((vtkStructuredPoints*)itkTOvtk->GetOutput());
+  vtkSmartPointer<vtkStructuredPoints> refinedImage = ((vtkStructuredPoints*)itkTOvtk->GetOutput());
   //refinedImage->Update();
 
   outputImage->DeepCopy(refinedImage);

@@ -2092,8 +2092,7 @@ vtkPolyData* medOpImporterDicomOffis::ExtractPolyData(int ts, int silceId)
 		GenerateSliceTexture(currImageId);
 	}
 
-	vtkMAFSmartPointer<vtkImageData> imageData;
-	imageData = m_SliceTexture->GetInput();
+	vtkSmartPointer<vtkImageData> imageData = m_SliceTexture->GetInput();
 
 	for(int x=0;x<imageData->GetPointData()->GetNumberOfTuples();x++)
 	{
