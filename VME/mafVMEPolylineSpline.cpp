@@ -191,7 +191,7 @@ void mafVMEPolylineSpline::InternalUpdate() //Multi
   GetPolylineOutput()->GetVTKOutputPort()->GetProducer()->Update();
   if(m_OrderByAxisMode) OrderPolylineByAxis(polyline, m_OrderByAxisMode);
 
-  vtkMAFSmartPointer<vtkPolyData> poly;
+  vtkNew<vtkPolyData> poly;
   poly->DeepCopy(polyline);
 
   this->SplinePolyline(poly); // generate a "splined" polyline 
@@ -339,7 +339,7 @@ void mafVMEPolylineSpline::OrderPolyline(vtkPolyData *polyline)
 //-------------------------------------------------------------------------
 {
   //cell 
-  vtkMAFSmartPointer<vtkCellArray> cellArray;
+  vtkNew<vtkCellArray> cellArray;
   vtkIdType pointId[2];
 
   for(int i = 0; i< polyline->GetNumberOfPoints();i++)
@@ -364,19 +364,19 @@ void mafVMEPolylineSpline::SplinePolyline(vtkPolyData *polyline)
   m_PointsSplined->Reset();
 
   //cleaned point list
-  vtkMAFSmartPointer<vtkPoints> pts;
+  vtkNew<vtkPoints> pts;
 
   pts->DeepCopy(polyline->GetPoints());
 
-  /*vtkMAFSmartPointer<vtkCellArray> lineCells;
+  /*vtkNew<vtkCellArray> lineCells;
   lineCells->InsertNextCell(pts->GetNumberOfPoints());
   for (int i = 0; i < pts->GetNumberOfPoints(); i ++)
   lineCells->InsertCellPoint(i);      */ 
 
 
-  vtkMAFSmartPointer<vtkCardinalSpline> splineX;
-  vtkMAFSmartPointer<vtkCardinalSpline> splineY;
-  vtkMAFSmartPointer<vtkCardinalSpline> splineZ;
+  vtkNew<vtkCardinalSpline> splineX;
+  vtkNew<vtkCardinalSpline> splineY;
+  vtkNew<vtkCardinalSpline> splineZ;
 
   for(int i=0 ; i<pts->GetNumberOfPoints(); i++)
   {
@@ -454,14 +454,14 @@ mmaMaterial *mafVMEPolylineSpline::GetMaterial()
 void mafVMEPolylineSpline::OrderPolylineByAxis(vtkPolyData* polyline, int axis)
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkPolyData> poly;
+  vtkNew<vtkPolyData> poly;
   poly->DeepCopy(polyline);
   //poly->Update();
 
-  vtkMAFSmartPointer<vtkPoints> points;
+  vtkNew<vtkPoints> points;
   points->DeepCopy(poly->GetPoints());
 
-  vtkMAFSmartPointer<vtkCellArray> cells;
+  vtkNew<vtkCellArray> cells;
   cells->DeepCopy(poly->GetLines());
 
   double firstPoint[3], lastPoint[3];
@@ -469,8 +469,8 @@ void mafVMEPolylineSpline::OrderPolylineByAxis(vtkPolyData* polyline, int axis)
   points->GetPoint(0, firstPoint);
   points->GetPoint(points->GetNumberOfPoints()-1, lastPoint);
 
-  vtkMAFSmartPointer<vtkPoints> newPoints;
-  vtkMAFSmartPointer<vtkCellArray> newLines;
+  vtkNew<vtkPoints> newPoints;
+  vtkNew<vtkCellArray> newLines;
 
   if(axis == AXIS_X)
   {

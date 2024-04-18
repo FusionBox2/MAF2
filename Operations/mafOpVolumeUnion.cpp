@@ -138,8 +138,8 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 
 	//Input data(first volume)
 	m_FirstVMEVolume->Update();
-	vtkMAFSmartPointer<vtkRectilinearGrid> rgrid_firstvol;
-	vtkMAFSmartPointer<vtkStructuredPoints> rgrid_firstvolstr;
+	vtkNew<vtkRectilinearGrid> rgrid_firstvol;
+	vtkNew<vtkStructuredPoints> rgrid_firstvolstr;
 	if(m_FirstVMEVolume->GetOutput()->GetVTKData()->IsA("vtkRectilinearGrid"))
 	{
 	  rgrid_firstvol->DeepCopy(m_FirstVMEVolume->GetVolumeOutput()->GetRectilinearData());
@@ -156,8 +156,8 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 
 	//Input data(second volume)
 	m_SecondVMEVolume->Update();
-	vtkMAFSmartPointer<vtkRectilinearGrid> rgrid_secondvol;
-	vtkMAFSmartPointer<vtkStructuredPoints> rgrid_secondvolstr;
+	vtkNew<vtkRectilinearGrid> rgrid_secondvol;
+	vtkNew<vtkStructuredPoints> rgrid_secondvolstr;
 	if(m_SecondVMEVolume->GetOutput()->GetVTKData()->IsA("vtkRectilinearGrid"))
 	{
 	  rgrid_secondvol->DeepCopy(m_SecondVMEVolume->GetVolumeOutput()->GetRectilinearData());
@@ -199,7 +199,7 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 	}
 
 	//Input data for the probe filter operation
-	vtkMAFSmartPointer<vtkRectilinearGrid> rgrid_totvol;
+	vtkNew<vtkRectilinearGrid> rgrid_totvol;
 	int resolution[3];
 	resolution[0] = (int)(m_resolutionXYZ[0]);
 	resolution[1] = (int)(m_resolutionXYZ[1]);
@@ -208,7 +208,7 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 	rgrid_totvol->SetDimensions(resolution[0],resolution[1],resolution[2]);
 	
 	//Coordinates
-	vtkMAFSmartPointer<vtkDoubleArray> daVector[3];
+	vtkNew<vtkDoubleArray> daVector[3];
 	daVector[0]->SetNumberOfValues(resolution[0]);
 	daVector[1]->SetNumberOfValues(resolution[1]);
 	daVector[2]->SetNumberOfValues(resolution[2]);
@@ -272,7 +272,7 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 
 	
 	// projection of the rgrid_firstvol selected into the rgrid_totvol
-	vtkMAFSmartPointer<vtkProbeFilter> sampleVolume1;
+	vtkNew<vtkProbeFilter> sampleVolume1;
 	sampleVolume1->SetInputData(rgrid_totvol);
 	//The source is the dataset to probe
 	if(m_FirstVMEVolume->GetOutput()->GetVTKData()->IsA("vtkRectilinearGrid"))
@@ -332,7 +332,7 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 	//----
 
 	// projection of the rgrid_secondvol selected into the rgrid_totvol
-	vtkMAFSmartPointer<vtkProbeFilter> sampleVolume2;
+	vtkNew<vtkProbeFilter> sampleVolume2;
 	sampleVolume2->SetInputData(rgrid_totvol);
 	//The source is the dataset to probe
 	if(m_SecondVMEVolume->GetOutput()->GetVTKData()->IsA("vtkRectilinearGrid"))

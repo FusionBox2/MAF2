@@ -156,8 +156,8 @@ void lhpOpINPExporter::ExportOneSurface(const char *filename, mafVMEOutputSurfac
   mafVMEOutputSurface *out_surface = surf;
   out_surface->Update();
 
-  vtkMAFSmartPointer<vtkTriangleFilter>triangles;
-  vtkMAFSmartPointer<vtkTransformPolyDataFilter> v_tpdf;
+  vtkNew<vtkTriangleFilter>triangles;
+  vtkNew<vtkTransformPolyDataFilter> v_tpdf;
   triangles->SetInputConnection(out_surface->GetVTKOutputPort());
   triangles->Update();
 
@@ -165,7 +165,7 @@ void lhpOpINPExporter::ExportOneSurface(const char *filename, mafVMEOutputSurfac
   v_tpdf->SetTransform(out_surface->GetAbsTransform()->GetVTKTransform());
   v_tpdf->Update();
 
-  vtkMAFSmartPointer<mafINPWriter> writer;
+  vtkNew<mafINPWriter> writer;
   mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR,writer));
   writer->SetFileName(filename);
   if(this->m_ABSMatrixFlag)

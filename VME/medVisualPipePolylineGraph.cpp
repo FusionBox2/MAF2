@@ -263,10 +263,10 @@ void medVisualPipePolylineGraph::ExecutePipe()
   m_OutlineActor->SetProperty(m_OutlineProperty);
 
 
-  vtkMAFSmartPointer<vtkCellCenters> centers;
+  vtkNew<vtkCellCenters> centers;
   centers->SetInputData(data);
   centers->Update();
-  vtkMAFSmartPointer<vtkLabeledDataMapper> mapperLabel;
+  vtkNew<vtkLabeledDataMapper> mapperLabel;
   mapperLabel->SetInputConnection(centers->GetOutputPort());
   
 

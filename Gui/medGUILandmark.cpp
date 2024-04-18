@@ -191,7 +191,7 @@ void medGUILandmark::OnEvent(mafEventBase *maf_event)
 
     case ID_TRANSFORM:
       { 
-        vtkMAFSmartPointer<vtkTransform> tr;
+        vtkNew<vtkTransform> tr;
         tr->PostMultiply();
         tr->SetMatrix(m_Landmark->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
         tr->Concatenate(e->GetMatrix()->GetVTKMatrix());
@@ -505,14 +505,14 @@ void medGUILandmark::GetSpawnPointCoordinates(double newPointCoord[3])
 
     if (m_LMCloud->GetNumberOfLandmarks() == 1)
     {    
-      vtkMAFSmartPointer<vtkIdList> idList;
+      vtkNew<vtkIdList> idList;
       idList->SetNumberOfIds(npoints);
       
       double pos[3];
       //mafVMELandmark::SafeDownCast(m_LMCloud->GetChild(0))->GetPosition(pos);
       mafVMELandmark::SafeDownCast(m_LMCloud->GetChild(0))->GetPoint(pos);
 
-      vtkMAFSmartPointer<vtkPointLocator> locator;
+      vtkNew<vtkPointLocator> locator;
       locator->SetDataSet(data);
       //locator->FindClosestNPoints(npoints, pos[0], pos[1], pos[2], idList);
       locator->Update();
@@ -521,13 +521,13 @@ void medGUILandmark::GetSpawnPointCoordinates(double newPointCoord[3])
     }
     else
     {
-      vtkMAFSmartPointer<vtkPointSource> pSource;
+      vtkNew<vtkPointSource> pSource;
       pSource->SetNumberOfPoints(1);
       pSource->SetCenter(data->GetCenter());
       pSource->SetRadius(data->GetLength() / 2);
       pSource->Update();
 
-      vtkMAFSmartPointer<vtkPointLocator> locator;
+      vtkNew<vtkPointLocator> locator;
       locator->SetDataSet(data);
       pId = locator->FindClosestPoint(pSource->GetOutput()->GetPoint(0));     
       locator->Update(); 

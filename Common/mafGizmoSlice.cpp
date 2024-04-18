@@ -169,7 +169,7 @@ void mafGizmoSlice::CreateGizmoSliceInLocalPositionOnAxis(int gizmoSliceId, int 
     cubeHandleLocalPosition[1] = 0;
     cubeHandleLocalPosition[2] = 0;
 
-	  vtkMAFSmartPointer<vtkPlaneSource> ps;
+	  vtkNew<vtkPlaneSource> ps;
 	  ps->SetOrigin(cubeHandleLocalPosition);
 
     
@@ -259,14 +259,14 @@ void mafGizmoSlice::CreateGizmoSliceInLocalPositionOnAxis(int gizmoSliceId, int 
     
 
     // create the gizmo handle
-	  vtkMAFSmartPointer<vtkCubeSource> cs;
+	  vtkNew<vtkCubeSource> cs;
 	  cs->SetXLength(VolumeVTKData->GetLength()/50);
 	  cs->SetYLength(VolumeVTKData->GetLength()/50);
 	  cs->SetZLength(VolumeVTKData->GetLength()/50);
 	  cs->Update();
 
     // append outline and handle
-	  vtkMAFSmartPointer<vtkAppendPolyData> apd;
+	  vtkNew<vtkAppendPolyData> apd;
     if(visibleCubeHandler == true)
       apd->AddInputConnection(cs->GetOutputPort());
 	  apd->AddInputConnection(cornerFilter->GetOutputPort());

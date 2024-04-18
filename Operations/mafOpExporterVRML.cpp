@@ -159,7 +159,7 @@ void mafOpExporterVRML::OnEvent(mafEventBase *maf_event)
 		
 		/*mafNode *n = e->GetVme();
 		vtkImageData *image = vtkImageData::SafeDownCast(((mafVME *)n)->GetOutput()->GetVTKData());
-		vtkMAFSmartPointer<vtkBMPWriter> exporter;
+		vtkNew<vtkBMPWriter> exporter;
 		exporter->SetInput(image);
 		exporter->SetFileName("C:\texture.bmp");
 		exporter->Write();
@@ -224,8 +224,8 @@ void mafOpExporterVRML::ExportVRML()
   m_SurfaceMaterial = out_surface->GetMaterial();
   assert(m_SurfaceMaterial);
 
-  vtkMAFSmartPointer<vtkTriangleFilter>triangles;
-  vtkMAFSmartPointer<vtkTransformPolyDataFilter> v_tpdf;
+  vtkNew<vtkTriangleFilter>triangles;
+  vtkNew<vtkTransformPolyDataFilter> v_tpdf;
   triangles->SetInputConnection(out_surface->GetVTKOutputPort());
   triangles->Update();
 
@@ -235,7 +235,7 @@ void mafOpExporterVRML::ExportVRML()
   v_tpdf->Update();
 	/**/
 	/**/
-	vtkMAFSmartPointer<vtkVRMLExporter> writer;
+	vtkNew<vtkVRMLExporter> writer;
 	//mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR,writer));
 	writer->SetFileName(m_File.GetCStr());
 	/*if(this->m_ABSMatrixFlag)
@@ -268,7 +268,7 @@ void mafOpExporterVRML::ExportVRML()
 	/**/
 
 	
-	vtkMAFSmartPointer<vtkBMPWriter> exporter;
+	vtkNew<vtkBMPWriter> exporter;
 	vtkTexture *m_Texture=vtkTexture::New();
 	m_Texture->SetQualityTo32Bit();
 	m_Texture->InterpolateOn();

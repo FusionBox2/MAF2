@@ -150,7 +150,7 @@ void mafPipeSurface::Create(mafNode *node, mafView *view)
 		m_Mapper->SetInputConnection(port);
 	else
 	{
-		vtkMAFSmartPointer< vtkMAFPolyDataNormals > normals;
+		vtkNew< vtkMAFPolyDataNormals > normals;
 		normals->SetInputConnection(port);
 		normals->SetComputePointNormals(1);
 		normals->SetComputeCellNormals(0);
@@ -201,13 +201,13 @@ void mafPipeSurface::Create(mafNode *node, mafView *view)
   m_AssemblyFront->AddPart(m_Actor);
 
   // selection highlight
-  vtkMAFSmartPointer<vtkOutlineCornerFilter> corner;
+  vtkNew<vtkOutlineCornerFilter> corner;
 	corner->SetInputConnection(port);
 
-  vtkMAFSmartPointer<vtkPolyDataMapper> corner_mapper;
+  vtkNew<vtkPolyDataMapper> corner_mapper;
 	corner_mapper->SetInputConnection(corner->GetOutputPort());
 
-  vtkMAFSmartPointer<vtkProperty> corner_props;
+  vtkNew<vtkProperty> corner_props;
 	corner_props->SetColor(1,1,1);
 	corner_props->SetAmbient(1);
 	corner_props->SetRepresentationToWireframe();

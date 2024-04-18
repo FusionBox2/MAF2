@@ -283,7 +283,7 @@ void mafLUTLibrary::Load()
   Clear();
   m_LutMap.clear();
 
-  vtkMAFSmartPointer<vtkDirectory> vtkDir;
+  vtkNew<vtkDirectory> vtkDir;
   int result = vtkDir->Open(m_LibraryDir.GetCStr());
   assert(result == 1);
 

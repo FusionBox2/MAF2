@@ -140,10 +140,10 @@ void mafOpTransformInterface::OpDo()
   rotoTraslMatrix = rotMat;
   mafTransform::SetPosition(rotoTraslMatrix, position);
 
-  vtkMAFSmartPointer<vtkPolyData> pd;
-  vtkMAFSmartPointer<vtkUnstructuredGrid> ug;
-  vtkMAFSmartPointer<vtkRectilinearGrid> rg;
-  vtkMAFSmartPointer<vtkStructuredPoints> sp;
+  vtkNew<vtkPolyData> pd;
+  vtkNew<vtkUnstructuredGrid> ug;
+  vtkNew<vtkRectilinearGrid> rg;
+  vtkNew<vtkStructuredPoints> sp;
 
   if (m_EnableScaling == 1 && 
       // group has no dataset
@@ -165,7 +165,7 @@ void mafOpTransformInterface::OpDo()
     // apply scale to data
     
     // create the scale transform to be applied to data
-    vtkMAFSmartPointer<vtkTransform> scaleTransform;
+    vtkNew<vtkTransform> scaleTransform;
     scaleTransform->Scale(scaling);
 
     mafVME *inVME = mafVME::SafeDownCast(m_Input);
@@ -184,7 +184,7 @@ void mafOpTransformInterface::OpDo()
 
       pd->DeepCopy(currentPD);
 
-      vtkMAFSmartPointer<vtkTransformPolyDataFilter> tPDF;
+      vtkNew<vtkTransformPolyDataFilter> tPDF;
       tPDF->SetInputData(pd);
       tPDF->SetTransform(scaleTransform);
 
@@ -208,7 +208,7 @@ void mafOpTransformInterface::OpDo()
 
       ug->DeepCopy(currentUG);
 
-      vtkMAFSmartPointer<vtkTransformFilter> tf;
+      vtkNew<vtkTransformFilter> tf;
       tf->SetInputData(ug);
       tf->SetTransform(scaleTransform);
 

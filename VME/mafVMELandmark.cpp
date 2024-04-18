@@ -54,17 +54,17 @@ mafVMELandmark::mafVMELandmark()
   SetOutput(mafVMEOutputPointSet::New()); // create the output
 
   vtkNEW(m_Polydata);
-  vtkMAFSmartPointer<vtkPoints> points;
+  vtkNew<vtkPoints> points;
   points->InsertNextPoint(0,0,0);
   m_Polydata->SetPoints(points);
 
   // add cellarray for visibility
-  vtkMAFSmartPointer<vtkCellArray> cells;
+  vtkNew<vtkCellArray> cells;
   m_Polydata->SetVerts(cells);
 
   // add scalars for visibility attribute
   vtkPointData* point_data = m_Polydata->GetPointData();
-  vtkMAFSmartPointer<vtkBitArray> scalars;
+  vtkNew<vtkBitArray> scalars;
   scalars->SetNumberOfValues(1);
   point_data->SetScalars(scalars);
 

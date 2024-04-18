@@ -76,7 +76,7 @@ mafVMEHyperboloid::mafVMEHyperboloid()
 	GetMaterial();
 	vtkNEW(m_PolyData);
 	
-	/*vtkMAFSmartPointer<vtkSphereSource> surf;
+	/*vtkNew<vtkSphereSource> surf;
 	surf->SetRadius(b);
 	surf->SetPhiResolution(resPhi);
 	surf->SetThetaResolution(resTheta);
@@ -88,11 +88,11 @@ mafVMEHyperboloid::mafVMEHyperboloid()
 
 
 	vtkAlgorithm* surfAlg = plotFunction(quadric, resPhi);
-	vtkMAFSmartPointer<vtkTransform> t;
+	vtkNew<vtkTransform> t;
 	t->Scale(1, 1, 1);
 	t->Update();
 
-	vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
+	vtkNew<vtkTransformPolyDataFilter> ptf;
 	ptf->SetTransform(t);
 	ptf->SetInputConnection(surfAlg->GetOutputPort());
 	ptf->Update();
@@ -504,10 +504,10 @@ void mafVMEHyperboloid::InternalUpdate()
 
 	vtkAlgorithm* surfAlg = plotFunction(quadric, resPhi);
 
-	vtkMAFSmartPointer<vtkTransform> t;
+	vtkNew<vtkTransform> t;
 	t->Scale(1, 1, 1);
 	t->Update();
-	vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
+	vtkNew<vtkTransformPolyDataFilter> ptf;
 	ptf->SetTransform(t);
 	ptf->SetInputConnection(surfAlg->GetOutputPort());
 	ptf->Update();
@@ -620,10 +620,10 @@ vtkTransformPolyDataFilter* mafVMEHyperboloid::getTransformPDF()
 
 	vtkAlgorithm* surfAlg = plotFunction(quadric, resPhi);
 
-	vtkMAFSmartPointer<vtkTransform> t;
+	vtkNew<vtkTransform> t;
 	t->Scale(1, 1, 1);
 	t->Update();
-	vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
+	vtkNew<vtkTransformPolyDataFilter> ptf;
 	ptf->SetTransform(t);
 	ptf->SetInputConnection(surfAlg->GetOutputPort());
 	ptf->Update();

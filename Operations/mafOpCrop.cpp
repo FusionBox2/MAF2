@@ -271,8 +271,8 @@ void mafOpCrop::Crop()
 		double in_org[3];
 		m_InputSP->GetOrigin(in_org);
 
-		// using the vtkMAFSmartPointer allows you to don't mind the object Delete
-		vtkMAFSmartPointer<vtkStructuredPoints> v_esp;
+		// using the vtkNew allows you to don't mind the object Delete
+		vtkNew<vtkStructuredPoints> v_esp;
 		v_esp->SetOrigin(in_org[0] + voi_dim[0] * m_XSpacing,
 										 in_org[1] + voi_dim[2] * m_YSpacing,
 										 in_org[2] + voi_dim[4] * m_ZSpacing);
@@ -288,7 +288,7 @@ void mafOpCrop::Crop()
 			wxBusyInfo wait(_("please wait, cropping..."));
 		}
     
-		vtkMAFSmartPointer<vtkProbeFilter> probeFilter;
+		vtkNew<vtkProbeFilter> probeFilter;
 		probeFilter->SetInputData(v_esp);
 		probeFilter->SetSourceData(m_InputSP);
 		probeFilter->Update();

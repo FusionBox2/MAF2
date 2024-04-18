@@ -145,7 +145,7 @@ void medPipeRayCast::Create(mafNode *n, mafView *v)
   m_OutlineActor->PickableOff();
 
   //box property
-  vtkMAFSmartPointer<vtkProperty> property;
+  vtkNew<vtkProperty> property;
   property->SetColor(1,1,1);
   property->SetAmbient(1);
   property->SetRepresentationToWireframe();
@@ -456,7 +456,7 @@ void medPipeRayCast::UpdateFromData()
     vtkNEW(m_OpacityFunction);
 
   //The ray cast function know how to render the data
-  //vtkMAFSmartPointer<vtkVolumeRayCastCompositeFunction> compositeFunction;
+  //vtkNew<vtkVolumeRayCastCompositeFunction> compositeFunction;
   //compositeFunction->SetCompositeMethodToClassifyFirst();
   //m_RayCastMapper->SetVolumeRayCastFunction(compositeFunction);
   //m_RayCastMapper->SetInput(m_RayCastCleaner->GetOutput());
@@ -614,7 +614,7 @@ void medPipeRayCast::SetRayCastFunctions()
   }
     
   // The property describes how the data will look
-  vtkMAFSmartPointer<vtkVolumeProperty> volumeProperty;
+  vtkNew<vtkVolumeProperty> volumeProperty;
   volumeProperty->SetColor(m_ColorFunction);
   volumeProperty->SetScalarOpacity(m_OpacityFunction);
   //Set property  

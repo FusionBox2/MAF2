@@ -236,7 +236,7 @@ void mafOpFilterVolume::OnSmooth()
 		m_Gui->Update();
 	}
 
-  vtkMAFSmartPointer<vtkImageGaussianSmooth> smoothFilter;
+  vtkNew<vtkImageGaussianSmooth> smoothFilter;
 	if (m_ApplyDirectlyOnInput)
     smoothFilter->SetInputData(m_InputData);
   else
@@ -280,7 +280,7 @@ void mafOpFilterVolume::OnMedian()
 	  m_Gui->Update();
   }
 
-  vtkMAFSmartPointer<vtkImageMedian3D> medianFilter;
+  vtkNew<vtkImageMedian3D> medianFilter;
   if (m_ApplyDirectlyOnInput)
     medianFilter->SetInputData(m_InputData);
   else

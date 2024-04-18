@@ -33,7 +33,7 @@ void vtkPatchLine::ExecuteData(vtkDataObject *output)
 	//source->Update();
 	
 	//Remove duplicate points etc.
-	vtkMAFSmartPointer<vtkCleanPolyData> cleaner;
+	vtkNew<vtkCleanPolyData> cleaner;
 	//cleaner->SetInput(source.GetPointer());
 
 	cleaner->SetInputConnection(0,this->GetOutputPort());
@@ -125,7 +125,7 @@ void vtkPatchLine::ExecuteData(vtkDataObject *output)
 		endVertices.erase(bestEnd_it);
 	}
 
-	vtkMAFSmartPointer<vtkPolyLine> polyLine;
+	vtkNew<vtkPolyLine> polyLine;
 	polyLine->GetPointIds()->SetNumberOfIds(nNumPoints);
 
 	//Set starting point of polyline
@@ -135,7 +135,7 @@ void vtkPatchLine::ExecuteData(vtkDataObject *output)
 	for(int i = 0; i < nNumPoints-1; i++)
 		polyLine->GetPointIds()->SetId(i+1, segments[polyLine->GetPointIds()->GetId(i)]); //so as to leave out last points in 'segments', which isn't connected to anything
 
-	vtkMAFSmartPointer<vtkCellArray> cells;
+	vtkNew<vtkCellArray> cells;
 	cells->InsertNextCell(polyLine->GetPointIds());
 
 	vtkSmartPointer<vtkPolyData> newLine = vtkPolyData::SafeDownCast(output);

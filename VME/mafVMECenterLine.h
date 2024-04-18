@@ -197,7 +197,7 @@ protected:
   mafTransform *m_Transform; 
   vtkPolyData  *m_PolyData;
 
-  vtkMAFSmartPointer<vtkPoints> points;
+  vtkNew<vtkPoints> points;
 
   
  

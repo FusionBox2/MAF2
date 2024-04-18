@@ -164,7 +164,7 @@ void mafOpExporterGeomTex::ExportTexture()
 	mafVMEOutputSurface *out_surface = mafVMEOutputSurface::SafeDownCast(((mafVME *)m_Input)->GetOutput());
 	out_surface->Update();
 	
-	vtkMAFSmartPointer<vtkBMPWriter> exporter;
+	vtkNew<vtkBMPWriter> exporter;
 	
 	exporter->SetInputData(out_surface->GetTexture());
 	exporter->SetFileName("C:\\texture.bmp") ;
@@ -178,8 +178,8 @@ void mafOpExporterGeomTex::ExportSurface()
 	mafVMEOutputSurface *out_surface = mafVMEOutputSurface::SafeDownCast(((mafVME *)m_Input)->GetOutput());
 	out_surface->Update();
 	
-	vtkMAFSmartPointer<vtkTriangleFilter>triangles;
-	vtkMAFSmartPointer<vtkTransformPolyDataFilter> v_tpdf;
+	vtkNew<vtkTriangleFilter>triangles;
+	vtkNew<vtkTransformPolyDataFilter> v_tpdf;
 	triangles->SetInputConnection(out_surface->GetVTKOutputPort());
 	triangles->Update();
 
@@ -187,7 +187,7 @@ void mafOpExporterGeomTex::ExportSurface()
 	v_tpdf->SetTransform(out_surface->GetAbsTransform()->GetVTKTransform());
 	v_tpdf->Update();
 
-	vtkMAFSmartPointer<vtkSTLWriter> writer;
+	vtkNew<vtkSTLWriter> writer;
 	mafEventMacro(mafEvent(this, BIND_TO_PROGRESSBAR, writer));
 	writer->SetFileName(m_File.GetCStr());
 	if (this->m_ABSMatrixFlag)

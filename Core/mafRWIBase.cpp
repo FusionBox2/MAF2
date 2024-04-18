@@ -666,7 +666,7 @@ void mafRWIBase::GetImage(wxBitmap& bitmap, int magnification)
 {
 	int dim[3];
   GetRenderWindow()->OffScreenRenderingOn();
-	  vtkMAFSmartPointer<vtkWindowToImageFilter> w2i;
+	  vtkNew<vtkWindowToImageFilter> w2i;
 	  w2i->SetInput(GetRenderWindow());
 #if VTK_MAJOR_VERSION > 7
     w2i->SetScale(magnification);
@@ -681,7 +681,7 @@ void mafRWIBase::GetImage(wxBitmap& bitmap, int magnification)
   unsigned char *buffer = new unsigned char [dim[0]*dim[1]*3];
 
   //flip it - windows Bitmap are upside-down
-  vtkMAFSmartPointer<vtkImageExport> ie;
+  vtkNew<vtkImageExport> ie;
   ie->SetInputConnection(w2i->GetOutputPort());
   ie->ImageLowerLeftOff();
   ie->SetExportVoidPointer(buffer);
@@ -803,7 +803,7 @@ void mafRWIBase::SaveImage(const mafString& filename_, int magnification , int f
   }
 
   GetRenderWindow()->OffScreenRenderingOn();
-  vtkMAFSmartPointer<vtkWindowToImageFilter> w2i;
+  vtkNew<vtkWindowToImageFilter> w2i;
   w2i->SetInput(GetRenderWindow());
 #if VTK_MAJOR_VERSION > 7
     w2i->SetScale(magnification);
@@ -817,7 +817,7 @@ void mafRWIBase::SaveImage(const mafString& filename_, int magnification , int f
   ext.MakeLower();
   if (ext == _R("bmp"))
   {
-    vtkMAFSmartPointer<vtkBMPWriter> w;
+    vtkNew<vtkBMPWriter> w;
     w->SetInputConnection(w2i->GetOutputPort());
     w->SetPixelPerMeterX(pixelXMeterX);
     w->SetPixelPerMeterY(pixelXMeterY);
@@ -826,28 +826,28 @@ void mafRWIBase::SaveImage(const mafString& filename_, int magnification , int f
   }
   else if (ext == _R("jpg"))
   {
-    vtkMAFSmartPointer<vtkJPEGWriter> w;
+    vtkNew<vtkJPEGWriter> w;
     w->SetInputConnection(w2i->GetOutputPort());
     w->SetFileName(filename.GetCStr());
     w->Write();
   }
   else if (ext == _R("tiff"))
   {
-    vtkMAFSmartPointer<vtkTIFFWriter> w;
+    vtkNew<vtkTIFFWriter> w;
     w->SetInputConnection(w2i->GetOutputPort());
     w->SetFileName(filename.GetCStr());
     w->Write();
   }
   else if (ext == _R("ps"))
   {
-    vtkMAFSmartPointer<vtkPostScriptWriter> w;
+    vtkNew<vtkPostScriptWriter> w;
     w->SetInputConnection(w2i->GetOutputPort());
     w->SetFileName(filename.GetCStr());
     w->Write();
   }
   else if (ext == _R("png"))
   {
-    vtkMAFSmartPointer<vtkPNGWriter> w;
+    vtkNew<vtkPNGWriter> w;
     w->SetInputConnection(w2i->GetOutputPort());
     w->SetPixelPerMeterX(pixelXMeterX);
     w->SetPixelPerMeterY(pixelXMeterY);
@@ -1014,7 +1014,7 @@ void mafRWIBase::RecursiveSaving(const mafString& filename, mafViewCompound *v,i
 
       }
       currentView->GetRWI()->GetRenderWindow()->OffScreenRenderingOn();
-      vtkMAFSmartPointer<vtkWindowToImageFilter> w2i;
+      vtkNew<vtkWindowToImageFilter> w2i;
       w2i->SetInput(currentView->GetRWI()->GetRenderWindow());
 #if VTK_MAJOR_VERSION > 7
       w2i->SetScale(magnification);
@@ -1027,7 +1027,7 @@ void mafRWIBase::RecursiveSaving(const mafString& filename, mafViewCompound *v,i
       extension.MakeLower();
       if (extension == _R("bmp"))
       {
-        vtkMAFSmartPointer<vtkBMPWriter> w;
+        vtkNew<vtkBMPWriter> w;
         w->SetInputConnection(w2i->GetOutputPort());
         w->SetPixelPerMeterX(pixelXMeterX);
         w->SetPixelPerMeterY(pixelXMeterY);
@@ -1036,28 +1036,28 @@ void mafRWIBase::RecursiveSaving(const mafString& filename, mafViewCompound *v,i
       }
       else if (extension == _R("jpg"))
       {
-        vtkMAFSmartPointer<vtkJPEGWriter> w;
+        vtkNew<vtkJPEGWriter> w;
         w->SetInputConnection(w2i->GetOutputPort());
         w->SetFileName(temp.GetCStr());
         w->Write();
       }
       else if (extension == _R("tiff"))
       {
-        vtkMAFSmartPointer<vtkTIFFWriter> w;
+        vtkNew<vtkTIFFWriter> w;
         w->SetInputConnection(w2i->GetOutputPort());
         w->SetFileName(temp.GetCStr());
         w->Write();
       }
       else if (extension == _R("ps"))
       {
-        vtkMAFSmartPointer<vtkPostScriptWriter> w;
+        vtkNew<vtkPostScriptWriter> w;
         w->SetInputConnection(w2i->GetOutputPort());
         w->SetFileName(temp.GetCStr());
         w->Write();
       }
       else if (extension == _R("png"))
       {
-        vtkMAFSmartPointer<vtkPNGWriter> w;
+        vtkNew<vtkPNGWriter> w;
         w->SetInputConnection(w2i->GetOutputPort());
         w->SetPixelPerMeterX(pixelXMeterX);
         w->SetPixelPerMeterY(pixelXMeterY);

@@ -98,9 +98,9 @@ void mafVMEOutputScalar::UpdateVTKRepresentation()
 
   vtkIdType pointId[2];
   double time_point = GetTimeStamp();
-  vtkMAFSmartPointer<vtkPoints> points;
-  vtkMAFSmartPointer<vtkCellArray> verts;
-  vtkMAFSmartPointer<vtkDoubleArray> scalars;
+  vtkNew<vtkPoints> points;
+  vtkNew<vtkCellArray> verts;
+  vtkNew<vtkDoubleArray> scalars;
   scalars->SetNumberOfValues(1);
   scalars->SetNumberOfComponents(1);
   scalars->FillComponent(0,data);

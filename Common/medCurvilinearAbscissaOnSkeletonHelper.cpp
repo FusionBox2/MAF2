@@ -215,7 +215,7 @@ vtkIdType &outputVertexId, vtkIdType &outputEdgeID, vtkIdType &outputBranchId)
   stringStream << "Vertices connected to bifurcation vertex with ID: " << bifurcationVertexId << std::endl;
 
   // get near branches versor at endpoint
-  vtkMAFSmartPointer<vtkIdList> radiatingPointsIdList;
+  vtkNew<vtkIdList> radiatingPointsIdList;
   m_ConstraintPolylineGraph->GetConstVertexPtr(bifurcationVertexId)->GetVerticesIdList(radiatingPointsIdList);
   int radiatingPointsNumber = radiatingPointsIdList->GetNumberOfIds();
 
@@ -237,8 +237,8 @@ vtkIdType &outputVertexId, vtkIdType &outputEdgeID, vtkIdType &outputBranchId)
   double bifurcationPoint[3] = {0,0,0};
   m_ConstraintPolylineGraph->GetVertexCoords(bifurcationVertexId, bifurcationPoint);
 
-  vtkMAFSmartPointer<vtkPoints> neighborsLocalCoordinates ;
-  vtkMAFSmartPointer<vtkPoints> localRadiatingVersors;
+  vtkNew<vtkPoints> neighborsLocalCoordinates ;
+  vtkNew<vtkPoints> localRadiatingVersors;
 
   double localPoint[3] = {0,0,0};
   double localVector[3] = {0,0,0};
@@ -812,7 +812,7 @@ void medCurvilinearAbscissaOnSkeletonHelper::FindBoundaryVertices( vtkIdType inp
   inS = CheckS(inputSkeletonBranchId, inS);
 
   // get the vtk polyline cell
-  vtkMAFSmartPointer<vtkIdList> branchPointsIdList;
+  vtkNew<vtkIdList> branchPointsIdList;
   m_ConstraintPolylineGraph->GetConstBranchPtr(inputSkeletonBranchId)->GetVerticesIdList(branchPointsIdList);
 
   double endP[3], startP[3];

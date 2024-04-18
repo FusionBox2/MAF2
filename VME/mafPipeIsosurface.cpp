@@ -114,7 +114,7 @@ void mafPipeIsosurface::Create(mafNode *node, mafView *view)
 	m_OutlineActor->VisibilityOn();
 	m_OutlineActor->PickableOff();
 
-	vtkMAFSmartPointer<vtkProperty> property;
+	vtkNew<vtkProperty> property;
 	property->SetColor(1,1,1);
 	property->SetAmbient(1);
 	property->SetRepresentationToWireframe();

@@ -158,7 +158,7 @@ void medPipeDensityDistance::Create(mafNode *node, mafView *view/*, bool use_axe
 
 
 		//Calculate the areas
-		vtkMAFSmartPointer<vtkMassProperties> mass_all;
+		vtkNew<vtkMassProperties> mass_all;
 		mass_all->SetInput(m_DistanceFilter->GetPolyDataOutput());
 		mass_all->Update();
 
@@ -168,13 +168,13 @@ void medPipeDensityDistance::Create(mafNode *node, mafView *view/*, bool use_axe
 		step=(double)(m_MaxDistance*2)/(m_NumSections);
 		mafString message;
 
-		vtkMAFSmartPointer<vtkClipPolyData> clip;
+		vtkNew<vtkClipPolyData> clip;
 		clip->SetInput(m_DistanceFilter->GetPolyDataOutput());
 		clip->SetValue(m_MaxDistance);
 		clip->GenerateClippedOutputOn();
 		clip->Update();
 
-		vtkMAFSmartPointer<vtkMassProperties> mass;
+		vtkNew<vtkMassProperties> mass;
 		mass->SetInput(clip->GetOutput());
 		mass->Update();
 		area = (mass->GetSurfaceArea() / total_area) * 100.0;
@@ -182,11 +182,11 @@ void medPipeDensityDistance::Create(mafNode *node, mafView *view/*, bool use_axe
 		message= wxString::Format("From infinity To %d\t%.3lf %" , m_MaxDistance,area);
 		mafLogMessage(message);
 	
-		vtkMAFSmartPointer<vtkClipPolyData> clip_old;
+		vtkNew<vtkClipPolyData> clip_old;
 		clip_old=clip;
 		for (i=m_MaxDistance-step;i>=-m_MaxDistance;i-=step)
 		{
-			vtkMAFSmartPointer<vtkClipPolyData> clip;
+			vtkNew<vtkClipPolyData> clip;
 			clip->SetInput(clip_old->GetClippedOutput());
 			clip->SetValue(i);
 			clip->GenerateClippedOutputOn();
@@ -194,7 +194,7 @@ void medPipeDensityDistance::Create(mafNode *node, mafView *view/*, bool use_axe
 
 			clip_old=clip;
 
-			vtkMAFSmartPointer<vtkMassProperties> mass;
+			vtkNew<vtkMassProperties> mass;
 			mass->SetInput(clip->GetOutput());
 			mass->Update();
 			area = (mass->GetSurfaceArea() / total_area) * 100.0;
@@ -203,7 +203,7 @@ void medPipeDensityDistance::Create(mafNode *node, mafView *view/*, bool use_axe
 			mafLogMessage(message);
 		}
 
-		vtkMAFSmartPointer<vtkMassProperties> mass_final;
+		vtkNew<vtkMassProperties> mass_final;
 		mass_final->SetInput(clip_old->GetClippedOutput());
 		mass_final->Update();
 		area = (mass_final->GetSurfaceArea() / total_area) * 100.0;
@@ -222,43 +222,43 @@ void medPipeDensityDistance::Create(mafNode *node, mafView *view/*, bool use_axe
 		m_Mapper->SetInputConnection(m_DistanceFilter->GetOutputPort());
 
 		//Calculate the areas
-		vtkMAFSmartPointer<vtkMassProperties> mass_all;
+		vtkNew<vtkMassProperties> mass_all;
 		mass_all->SetInputConnection(m_DistanceFilter->GetOutputPort());
 		mass_all->Update();
 
 		double total_area = mass_all->GetSurfaceArea();
 
-		vtkMAFSmartPointer<vtkClipPolyData> clipHigh;
+		vtkNew<vtkClipPolyData> clipHigh;
 		clipHigh->SetInputConnection(m_DistanceFilter->GetOutputPort());
 		clipHigh->SetValue(m_MaxDistance);
 		clipHigh->GenerateClippedOutputOn();
 		clipHigh->Update();
 
-		vtkMAFSmartPointer<vtkClipPolyData> clipMidHight;
+		vtkNew<vtkClipPolyData> clipMidHight;
 		clipMidHight->SetInputConnection(clipHigh->GetClippedOutputPort());
 		clipMidHight->SetValue(0);
 		clipMidHight->GenerateClippedOutputOn();
 		clipMidHight->Update();
 
-		vtkMAFSmartPointer<vtkClipPolyData> clipMidLow;
+		vtkNew<vtkClipPolyData> clipMidLow;
 		clipMidLow->SetInputConnection(clipMidHight->GetClippedOutputPort());
 		clipMidLow->SetValue(-m_MaxDistance);
 		clipMidLow->GenerateClippedOutputOn();
 		clipMidLow->Update();
 
-		vtkMAFSmartPointer<vtkMassProperties> mass_high;
+		vtkNew<vtkMassProperties> mass_high;
 		mass_high->SetInputConnection(clipHigh->GetOutputPort());
 		mass_high->Update();
 
-		/*vtkMAFSmartPointer<vtkMassProperties> mass_mid1;
+		/*vtkNew<vtkMassProperties> mass_mid1;
 		mass_mid1->SetInput(clipMidHight->GetOutput());
 		mass_mid1->Update();*/
 
-		vtkMAFSmartPointer<vtkMassProperties> mass_mid;
+		vtkNew<vtkMassProperties> mass_mid;
 		mass_mid->SetInputConnection(clipMidLow->GetOutputPort());
 		mass_mid->Update();
 
-		vtkMAFSmartPointer<vtkMassProperties> mass_low;
+		vtkNew<vtkMassProperties> mass_low;
 		mass_low->SetInputConnection(clipMidLow->GetClippedOutputPort());
 		mass_low->Update();
 
@@ -524,33 +524,33 @@ void medPipeDensityDistance::OnEvent(mafEventBase *maf_event)
 					m_Mapper->Modified();
 
 					//Calculate the areas
-					vtkMAFSmartPointer<vtkMassProperties> mass_all;
+					vtkNew<vtkMassProperties> mass_all;
 					mass_all->SetInputConnection(m_DistanceFilter->GetOutputPort());
 					mass_all->Update();
 
 					double total_area = mass_all->GetSurfaceArea();
 
-					vtkMAFSmartPointer<vtkClipPolyData> clipHigh;
+					vtkNew<vtkClipPolyData> clipHigh;
 					clipHigh->SetInputConnection(m_DistanceFilter->GetOutputPort());
 					clipHigh->SetValue(m_MaxDistance);
 					clipHigh->GenerateClippedOutputOn();
 					clipHigh->Update();
 
-					vtkMAFSmartPointer<vtkClipPolyData> clipMidLow;
+					vtkNew<vtkClipPolyData> clipMidLow;
 					clipMidLow->SetInputConnection(clipHigh->GetClippedOutputPort());
 					clipMidLow->SetValue(-m_MaxDistance);
 					clipMidLow->GenerateClippedOutputOn();
 					clipMidLow->Update();
 
-					vtkMAFSmartPointer<vtkMassProperties> mass_high;
+					vtkNew<vtkMassProperties> mass_high;
 					mass_high->SetInputConnection(clipHigh->GetOutputPort());
 					mass_high->Update();
 
-					vtkMAFSmartPointer<vtkMassProperties> mass_mid;
+					vtkNew<vtkMassProperties> mass_mid;
 					mass_mid->SetInputConnection(clipMidLow->GetOutputPort());
 					mass_mid->Update();
 
-					vtkMAFSmartPointer<vtkMassProperties> mass_low;
+					vtkNew<vtkMassProperties> mass_low;
 					mass_low->SetInputConnection(clipMidLow->GetClippedOutputPort());
 					mass_low->Update();
 
@@ -649,7 +649,7 @@ void medPipeDensityDistance::UpdatePipeline()
 		  m_Mapper->Modified();
 
 		  //Calculate the areas
-		  vtkMAFSmartPointer<vtkMassProperties> mass_all;
+		  vtkNew<vtkMassProperties> mass_all;
 		  mass_all->SetInput(m_DistanceFilter->GetPolyDataOutput());
 		  mass_all->Update();
 
@@ -659,13 +659,13 @@ void medPipeDensityDistance::UpdatePipeline()
 		  step=(double)(m_MaxDistance*2)/(m_NumSections);
 		  mafString message;
 
-		  vtkMAFSmartPointer<vtkClipPolyData> clip;
+		  vtkNew<vtkClipPolyData> clip;
 		  clip->SetInput(m_DistanceFilter->GetPolyDataOutput());
 		  clip->SetValue(m_MaxDistance);
 		  clip->GenerateClippedOutputOn();
 		  clip->Update();
 
-		  vtkMAFSmartPointer<vtkMassProperties> mass;
+		  vtkNew<vtkMassProperties> mass;
 		  mass->SetInput(clip->GetOutput());
 		  mass->Update();
 		  area = (mass->GetSurfaceArea() / total_area) * 100.0;
@@ -673,11 +673,11 @@ void medPipeDensityDistance::UpdatePipeline()
 		  message= wxString::Format("From infinity To %d\t%.3lf %" , m_MaxDistance,area);
 		  mafLogMessage(message);
   	
-		  vtkMAFSmartPointer<vtkClipPolyData> clip_old;
+		  vtkNew<vtkClipPolyData> clip_old;
 		  clip_old=clip;
 		  for (i=m_MaxDistance-step;i>=-m_MaxDistance;i-=step)
 		  {
-			  vtkMAFSmartPointer<vtkClipPolyData> clip;
+			  vtkNew<vtkClipPolyData> clip;
 			  clip->SetInput(clip_old->GetClippedOutput());
 			  clip->SetValue(i);
 			  clip->GenerateClippedOutputOn();
@@ -685,7 +685,7 @@ void medPipeDensityDistance::UpdatePipeline()
 
 			  clip_old=clip;
 
-			  vtkMAFSmartPointer<vtkMassProperties> mass;
+			  vtkNew<vtkMassProperties> mass;
 			  mass->SetInput(clip->GetOutput());
 			  mass->Update();
 			  area = (mass->GetSurfaceArea() / total_area) * 100.0;
@@ -694,7 +694,7 @@ void medPipeDensityDistance::UpdatePipeline()
 			  mafLogMessage(message);
 		  }
 
-		  vtkMAFSmartPointer<vtkMassProperties> mass_final;
+		  vtkNew<vtkMassProperties> mass_final;
 		  mass_final->SetInput(clip_old->GetClippedOutput());
 		  mass_final->Update();
 		  area = (mass_final->GetSurfaceArea() / total_area) * 100.0;
@@ -715,33 +715,33 @@ void medPipeDensityDistance::UpdatePipeline()
 		  m_Mapper->Modified();
 
 		  //Calculate the areas
-		  vtkMAFSmartPointer<vtkMassProperties> mass_all;
+		  vtkNew<vtkMassProperties> mass_all;
 		  mass_all->SetInputConnection(m_DistanceFilter->GetOutputPort());
 		  mass_all->Update();
 
 		  double total_area = mass_all->GetSurfaceArea();
 
-		  vtkMAFSmartPointer<vtkClipPolyData> clipHigh;
+		  vtkNew<vtkClipPolyData> clipHigh;
 		  clipHigh->SetInputConnection(m_DistanceFilter->GetOutputPort());
 		  clipHigh->SetValue(m_MaxDistance);
 		  clipHigh->GenerateClippedOutputOn();
 		  clipHigh->Update();
 
-		  vtkMAFSmartPointer<vtkClipPolyData> clipMidLow;
+		  vtkNew<vtkClipPolyData> clipMidLow;
 		  clipMidLow->SetInputConnection(clipHigh->GetClippedOutputPort());
 		  clipMidLow->SetValue(-m_MaxDistance);
 		  clipMidLow->GenerateClippedOutputOn();
 		  clipMidLow->Update();
 
-		  vtkMAFSmartPointer<vtkMassProperties> mass_high;
+		  vtkNew<vtkMassProperties> mass_high;
 		  mass_high->SetInputConnection(clipHigh->GetOutputPort());
 		  mass_high->Update();
 
-		  vtkMAFSmartPointer<vtkMassProperties> mass_mid;
+		  vtkNew<vtkMassProperties> mass_mid;
 		  mass_mid->SetInputConnection(clipMidLow->GetOutputPort());
 		  mass_mid->Update();
 
-		  vtkMAFSmartPointer<vtkMassProperties> mass_low;
+		  vtkNew<vtkMassProperties> mass_low;
 		  mass_low->SetInputConnection(clipMidLow->GetClippedOutputPort());
 		  mass_low->Update();
 
@@ -794,33 +794,33 @@ void medPipeDensityDistance::UpdatePipeline()
 
 
 		  //Calculate the areas
-		  vtkMAFSmartPointer<vtkMassProperties> mass_all;
+		  vtkNew<vtkMassProperties> mass_all;
 		  mass_all->SetInputConnection(m_DistanceFilter->GetOutputPort());
 		  mass_all->Update();
 
 		  double total_area = mass_all->GetSurfaceArea();
 
-		  vtkMAFSmartPointer<vtkClipPolyData> clipHigh;
+		  vtkNew<vtkClipPolyData> clipHigh;
 		  clipHigh->SetInputConnection(m_DistanceFilter->GetOutputPort());
 		  clipHigh->SetValue(m_FirstThreshold);
 		  clipHigh->GenerateClippedOutputOn();
 		  clipHigh->Update();
 
-		  vtkMAFSmartPointer<vtkClipPolyData> clipMidLow;
+		  vtkNew<vtkClipPolyData> clipMidLow;
 		  clipMidLow->SetInputConnection(clipHigh->GetClippedOutputPort());
 		  clipMidLow->SetValue(m_SecondThreshold);
 		  clipMidLow->GenerateClippedOutputOn();
 		  clipMidLow->Update();
 
-		  vtkMAFSmartPointer<vtkMassProperties> mass_high;
+		  vtkNew<vtkMassProperties> mass_high;
 		  mass_high->SetInputConnection(clipHigh->GetOutputPort());
 		  mass_high->Update();
 
-		  vtkMAFSmartPointer<vtkMassProperties> mass_mid;
+		  vtkNew<vtkMassProperties> mass_mid;
 		  mass_mid->SetInputConnection(clipMidLow->GetOutputPort());
 		  mass_mid->Update();
 
-		  vtkMAFSmartPointer<vtkMassProperties> mass_low;
+		  vtkNew<vtkMassProperties> mass_low;
 		  mass_low->SetInputConnection(clipMidLow->GetClippedOutputPort());
 		  mass_low->Update();
 
@@ -842,7 +842,7 @@ double medPipeDensityDistance::GetTotalArea()
 //----------------------------------------------------------------------------
 {
   //Calculate the areas
-  vtkMAFSmartPointer<vtkMassProperties> mass_all;
+  vtkNew<vtkMassProperties> mass_all;
   mass_all->SetInputConnection(m_DistanceFilter->GetOutputPort());
   mass_all->Update();
 

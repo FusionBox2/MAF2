@@ -240,13 +240,13 @@ void mafPipeMesh::ExecutePipe()
   //m_ActorWired->SetScale(1.1);
   
   // selection highlight
-  vtkMAFSmartPointer<vtkOutlineCornerFilter> corner;
+  vtkNew<vtkOutlineCornerFilter> corner;
 	corner->SetInputConnection(port);  
 
-  vtkMAFSmartPointer<vtkPolyDataMapper> corner_mapper;
+  vtkNew<vtkPolyDataMapper> corner_mapper;
 	corner_mapper->SetInputConnection(corner->GetOutputPort());
 
-  vtkMAFSmartPointer<vtkProperty> corner_props;
+  vtkNew<vtkProperty> corner_props;
 	corner_props->SetColor(1,1,1);
 	corner_props->SetAmbient(1);
 	corner_props->SetRepresentationToWireframe();

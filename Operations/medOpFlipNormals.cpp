@@ -128,7 +128,7 @@ void medOpFlipNormals::OpRun()
 
 	if(!((vtkPolyData*)((mafVME *)m_Input)->GetOutput()->GetVTKData()->GetCellData()->GetNormals()))
 	{
-		vtkMAFSmartPointer<vtkPolyDataNormals> normalFilter;
+		vtkNew<vtkPolyDataNormals> normalFilter;
 		normalFilter->SetInputConnection(((mafVME *)m_Input)->GetOutput()->GetVTKOutputPort());
 
 		normalFilter->ComputeCellNormalsOn();
@@ -472,7 +472,7 @@ void medOpFlipNormals::OnEvent(mafEventBase *maf_event)
 void medOpFlipNormals::ModifyAllNormal()
 //----------------------------------------------------------------------------
 {
-	vtkMAFSmartPointer<vtkOBBTree> OBBFilter;
+	vtkNew<vtkOBBTree> OBBFilter;
 	OBBFilter->SetDataSet(m_ResultPolydata);
 	OBBFilter->CacheCellBoundsOn();
 	OBBFilter->BuildLocator();

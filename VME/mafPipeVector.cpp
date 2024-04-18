@@ -141,13 +141,13 @@ void mafPipeVector::Create(mafNode *node, mafView *view)
   m_AssemblyFront->AddPart(m_Actor);
   m_AssemblyFront->AddPart(m_ActorBunch);
 
-  vtkMAFSmartPointer<vtkOutlineCornerFilter> corner;
+  vtkNew<vtkOutlineCornerFilter> corner;
   corner->SetInputConnection(out_polyline->GetVTKOutputPort());
 
-  vtkMAFSmartPointer<vtkPolyDataMapper> corner_mapper;
+  vtkNew<vtkPolyDataMapper> corner_mapper;
   corner_mapper->SetInputConnection(corner->GetOutputPort());
 
-  vtkMAFSmartPointer<vtkProperty> corner_props;
+  vtkNew<vtkProperty> corner_props;
   corner_props->SetColor(1,1,1);
   corner_props->SetAmbient(1);
   corner_props->SetRepresentationToWireframe();
@@ -254,7 +254,7 @@ void mafPipeVector::AllVector(bool fromTag)
 
     for (mafTimeStamp n = (minValue + 1); n <= maxValue; n= n + m_Step) //Cicle to draw vectors
     {
-      vtkMAFSmartPointer<vtkLineSource> line;
+      vtkNew<vtkLineSource> line;
      
       double point1[3];
       double point2[3];

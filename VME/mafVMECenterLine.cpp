@@ -3366,7 +3366,7 @@ if (Lst_Path_Yes)
 		
 
 		pts->SetNumberOfPoints(num);
-		vtkMAFSmartPointer<vtkCellArray> cellArray;
+		vtkNew<vtkCellArray> cellArray;
 
 		for (int ij = 0; ij< num; ij++)
 			{

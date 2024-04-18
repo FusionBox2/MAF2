@@ -186,7 +186,7 @@ void medOpCleanSurface::OnClean()
 	  m_Gui->Update();
   }
 
-	vtkMAFSmartPointer<vtkCleanPolyData> cleanFilter;
+	vtkNew<vtkCleanPolyData> cleanFilter;
 	cleanFilter->SetTolerance(0.0); // aacc expose from GUI?
 	cleanFilter->SetInputData(m_ResultPolydata);
 	cleanFilter->Update();

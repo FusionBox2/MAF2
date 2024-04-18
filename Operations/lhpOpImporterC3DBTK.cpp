@@ -764,7 +764,7 @@ void lhpOpImporterC3DBTK::ImportPlatform(lhpOpImporterC3DBTK::_InternalC3DData &
     minY = mafMin(mafMin(mafMin(mafMin(minY,platformCorner1[1]),platformCorner2[1]),platformCorner3[1]),platformCorner4[1]);
     maxY = mafMax(mafMax(mafMax(mafMax(maxY,platformCorner1[1]),platformCorner2[1]),platformCorner3[1]),platformCorner4[1]);
 
-    vtkMAFSmartPointer<vtkCubeSource> cube;
+    vtkNew<vtkCubeSource> cube;
 
     mafVMESurface *platform;
     mafNEW(platform);
@@ -805,16 +805,16 @@ void lhpOpImporterC3DBTK::ImportPlatform(lhpOpImporterC3DBTK::_InternalC3DData &
     momentName.Append(platformNumber);
     intData.m_MomentList[currentPlatform]->SetName(momentName);
 
-    vtkMAFSmartPointer<vtkPolyData> vectorForce;
-    vtkMAFSmartPointer<vtkPoints> pointsForce;
-    vtkMAFSmartPointer<vtkCellArray> cellArrayForce;
+    vtkNew<vtkPolyData> vectorForce;
+    vtkNew<vtkPoints> pointsForce;
+    vtkNew<vtkCellArray> cellArrayForce;
     vtkIdType pointIdForce[2] = {0,1};
     vectorForce->SetPoints(pointsForce);
     vectorForce->SetLines(cellArrayForce);
 
-    vtkMAFSmartPointer<vtkPolyData> vectorMoment;
-    vtkMAFSmartPointer<vtkPoints> pointsMoment;
-    vtkMAFSmartPointer<vtkCellArray> cellArrayMoment;
+    vtkNew<vtkPolyData> vectorMoment;
+    vtkNew<vtkPoints> pointsMoment;
+    vtkNew<vtkCellArray> cellArrayMoment;
     vtkIdType pointIdMoment[2] = {0,1};
     vectorMoment->SetPoints(pointsMoment);
     vectorMoment->SetLines(cellArrayMoment);
@@ -865,8 +865,8 @@ void lhpOpImporterC3DBTK::ImportPlatform(lhpOpImporterC3DBTK::_InternalC3DData &
       cellArrayForce->Reset();
       cellArrayForce->InsertNextCell(2, pointIdForce);
 
-      vtkMAFSmartPointer<vtkTransformPolyDataFilter> transfVecForce;
-      vtkMAFSmartPointer<vtkTransform> transfForce;
+      vtkNew<vtkTransformPolyDataFilter> transfVecForce;
+      vtkNew<vtkTransform> transfForce;
 
       transfForce->Translate(intData.m_CopX, intData.m_CopY, z); //z = 0
       transfVecForce->SetTransform(transfForce);
@@ -890,8 +890,8 @@ void lhpOpImporterC3DBTK::ImportPlatform(lhpOpImporterC3DBTK::_InternalC3DData &
       cellArrayMoment->Reset();
       cellArrayMoment->InsertNextCell(2, pointIdMoment);  
 
-      vtkMAFSmartPointer<vtkTransformPolyDataFilter> transfVecMoment;
-      vtkMAFSmartPointer<vtkTransform> transfMoment;
+      vtkNew<vtkTransformPolyDataFilter> transfVecMoment;
+      vtkNew<vtkTransform> transfMoment;
 
       transfMoment->Translate(intData.m_CopX, intData.m_CopY, z); //z = 0
       transfVecMoment->SetTransform(transfMoment);

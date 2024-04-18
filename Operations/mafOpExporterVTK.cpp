@@ -217,7 +217,7 @@ void mafOpExporterVTK::SaveVTKData()
 
   vtkAlgorithmOutput *writerInput = NULL;
 
-  vtkMAFSmartPointer<vtkImageCast> imageCast;
+  vtkNew<vtkImageCast> imageCast;
   
   if (m_ForceUnsignedShortScalarOutputForStructuredPoints)
   {    
@@ -231,11 +231,11 @@ void mafOpExporterVTK::SaveVTKData()
     writerInput = inputPort;
   }
 
-  vtkMAFSmartPointer<vtkDataSetWriter> writer;
+  vtkNew<vtkDataSetWriter> writer;
 
   if (m_ABSMatrixFlag)
   {
-    vtkMAFSmartPointer<vtkTransformPolyDataFilter> v_tpdf;
+    vtkNew<vtkTransformPolyDataFilter> v_tpdf;
     v_tpdf->SetInputConnection(((mafVME *)m_Input)->GetOutput()->GetVTKOutputPort());
     v_tpdf->SetTransform(((mafVME *)m_Input)->GetOutput()->GetAbsTransform()->GetVTKTransform());
     v_tpdf->Update();

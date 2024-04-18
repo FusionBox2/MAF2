@@ -337,14 +337,14 @@ void mafGizmoAutoscaleHelper::InternalProcessEvents(vtkObject* sender, unsigned 
 				assert(vmeGizmo);
 
 				self->InternalUpdate();
-				vtkMAFSmartPointer<vtkTransform> tr;
+				vtkNew<vtkTransform> tr;
 
 				double scale[3];
 
 				const mafMatrix tmp = self->m_Matrix->GetVTKMatrix();
 				mafTransform::GetScale(tmp, scale);
 
-				vtkMAFSmartPointer<vtkTransform> scaleM;
+				vtkNew<vtkTransform> scaleM;
 				scaleM->Scale(scale);		
 
 				mafGizmoInterface *gizmoInterface = NULL;

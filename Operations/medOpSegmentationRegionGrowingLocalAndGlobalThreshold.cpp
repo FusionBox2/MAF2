@@ -186,7 +186,7 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::OpRun()
   {
     m_ComputedMedianFilter = true;
 
-    vtkMAFSmartPointer<vtkImageMedian3D> median;
+    vtkNew<vtkImageMedian3D> median;
     median->SetInputConnection(m_VolumeInput->GetOutput()->GetVTKOutputPort());
     median->SetKernelSize(3,3,3);
     median->Update();
@@ -201,7 +201,7 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::OpRun()
     mafString name = m_Input->GetName();
     name+=_R(" - Applied Median Filter");
     volMediano->SetName(name);
-    vtkMAFSmartPointer<vtkImageToStructuredPoints> f;
+    vtkNew<vtkImageToStructuredPoints> f;
     f->SetInputConnection(median->GetOutputPort());
     f->Update();
     volMediano->SetData(f->GetOutput(),m_VolumeInput->GetTimeStamp());
@@ -284,7 +284,7 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::RegionGrowing()
   
   //Apply the region growing filter
   mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
-  vtkMAFSmartPointer<vtkMEDRegionGrowingLocalGlobalThreshold> localFilter;
+  vtkNew<vtkMEDRegionGrowingLocalGlobalThreshold> localFilter;
   localFilter->SetInput(imageData);
   localFilter->SetLowerLabel(m_LowerLabel);
   localFilter->SetLowerThreshold(m_Threshold);
@@ -405,7 +405,7 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::HistogramEqualizatio
   vtkImageData *im = vtkImageData::SafeDownCast(m_VolumeInput->GetOutput()->GetVTKData());
   //im->Update();
 
-  vtkMAFSmartPointer<vtkImageCast> vtkImageToFloat;
+  vtkNew<vtkImageCast> vtkImageToFloat;
   vtkImageToFloat->SetOutputScalarTypeToFloat ();
   vtkImageToFloat->SetInputConnection(m_VolumeInput->GetOutput()->GetVTKOutputPort());
   vtkImageToFloat->Modified();
@@ -514,14 +514,14 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::WriteHistogramFiles(
   hd->GetScalarRange(sr);
   double srw = sr[1]-sr[0];
 
-  vtkMAFSmartPointer<vtkImageData> imageData;
+  vtkNew<vtkImageData> imageData;
   imageData->SetDimensions(hd->GetPointData()->GetScalars()->GetNumberOfTuples(),1,1);
   //imageData->SetScalarType(hd->GetPointData()->GetScalars()->GetDataType());
   imageData->GetPointData()->SetScalars(hd->GetPointData()->GetScalars());
   //imageData->Update();
   imageData->GetScalarRange(sr);
 
-  vtkMAFSmartPointer<vtkImageAccumulate> accumulate;
+  vtkNew<vtkImageAccumulate> accumulate;
   accumulate->SetInputData(imageData);
   accumulate->SetComponentOrigin(sr[0],0,0);  
   accumulate->SetComponentExtent(0,srw,0,0,0,0);
@@ -618,14 +618,14 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::FittingLM()
   hd->GetScalarRange(sr);
   double srw = sr[1]-sr[0];
 
-  vtkMAFSmartPointer<vtkImageData> imageData;
+  vtkNew<vtkImageData> imageData;
   imageData->SetDimensions(hd->GetPointData()->GetScalars()->GetNumberOfTuples(),1,1);
   //imageData->SetScalarType(hd->GetPointData()->GetScalars()->GetDataType());
   imageData->GetPointData()->SetScalars(hd->GetPointData()->GetScalars());
   //imageData->Update();
   imageData->GetScalarRange(sr);
 
-  vtkMAFSmartPointer<vtkImageAccumulate> accumulate;
+  vtkNew<vtkImageAccumulate> accumulate;
   accumulate->SetInputData(imageData);
   accumulate->SetComponentOrigin(sr[0],0,0);  
   accumulate->SetComponentExtent(0,srw,0,0,0,0);
@@ -741,7 +741,7 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::OnEvent(mafEventBase
         RegionGrowing();
 
         //Convert the output of the region growing into structured points
-        vtkMAFSmartPointer<vtkImageToStructuredPoints> filter;
+        vtkNew<vtkImageToStructuredPoints> filter;
         filter->SetInputData(m_SegmentedImage);
         filter->Update();
 
@@ -767,7 +767,7 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::OnEvent(mafEventBase
         MorphologicalMathematics();
 
         //Convert the output of the region growing into structured points
-        vtkMAFSmartPointer<vtkImageToStructuredPoints> filter;
+        vtkNew<vtkImageToStructuredPoints> filter;
         filter->SetInputData(m_MorphoImage);
         filter->Update();
 
@@ -777,12 +777,12 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::OnEvent(mafEventBase
         m_VolumeOutputMorpho->ReparentTo(m_VolumeInput);
         m_VolumeOutputMorpho->Update();
 
-        vtkMAFSmartPointer<vtkMAFContourVolumeMapper> extractIsosurface;
+        vtkNew<vtkMAFContourVolumeMapper> extractIsosurface;
         extractIsosurface->SetInputConnection(filter->GetOutputPort());
         extractIsosurface->SetContourValue(m_UpperLabel);
         extractIsosurface->Update();
 
-        vtkMAFSmartPointer<vtkPolyDataConnectivityFilter> connectivityFilter;
+        vtkNew<vtkPolyDataConnectivityFilter> connectivityFilter;
         int result = MAF_OK;
         if (m_ApplyConnectivityFilter == TRUE)
         {

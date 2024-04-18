@@ -168,7 +168,7 @@ void mafAttachCamera::SetVme(mafNode *node)
   m_AttachedVme = mafVME::SafeDownCast(node);
   m_AttachedVmeMatrix->DeepCopy(m_StartingMatrix);
 
-  vtkMAFSmartPointer<vtkTransform> delta;
+  vtkNew<vtkTransform> delta;
   delta->PreMultiply();
   delta->Concatenate(m_StartingMatrix);
 
@@ -202,7 +202,7 @@ void mafAttachCamera::UpdateCameraMatrix()
 
     m_AttachedVmeMatrix->Invert();
 
-    vtkMAFSmartPointer<vtkTransform> delta;
+    vtkNew<vtkTransform> delta;
     delta->PreMultiply();
     delta->Concatenate(new_matrix);
     delta->Concatenate(m_AttachedVmeMatrix);

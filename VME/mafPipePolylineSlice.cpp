@@ -699,12 +699,12 @@ void mafPipePolylineSlice::SetMaximumROI()
 vtkPolyData *mafPipePolylineSlice::ExecuteROI(vtkPolyData *polydata)
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkCubeSource> cube;
+  vtkNew<vtkCubeSource> cube;
   cube->SetBounds(m_ROI);
   cube->Modified();
   cube->Update();
 
-  vtkMAFSmartPointer<vtkMAFImplicitPolyData> implicitDataset;
+  vtkNew<vtkMAFImplicitPolyData> implicitDataset;
   implicitDataset->SetInput(cube->GetOutput());
 
   m_ClipPolyData->SetInputData(polydata);
@@ -712,7 +712,7 @@ vtkPolyData *mafPipePolylineSlice::ExecuteROI(vtkPolyData *polydata)
   m_ClipPolyData->SetClipFunction(implicitDataset);
   m_ClipPolyData->Update();
 
-  vtkMAFSmartPointer<vtkPlane> planeDown;
+  vtkNew<vtkPlane> planeDown;
   planeDown->SetOrigin(m_ROI[0], m_ROI[2], m_ROI[4]);
   double normaldown[3] = {0,0,-1};
   planeDown->SetNormal(normaldown);
@@ -723,7 +723,7 @@ vtkPolyData *mafPipePolylineSlice::ExecuteROI(vtkPolyData *polydata)
   m_ClipPolyDataUp->InsideOutOn();
   m_ClipPolyDataUp->Update();
 
-  vtkMAFSmartPointer<vtkPlane> planeUp;
+  vtkNew<vtkPlane> planeUp;
   planeUp->SetOrigin(m_ROI[1], m_ROI[3], m_ROI[5]);
   double normalUp[3] = {0,0,1};
   planeUp->SetNormal(normalUp);
@@ -743,7 +743,7 @@ vtkPolyData *mafPipePolylineSlice::RegionsCapping(vtkPolyData* inputBorder)
 //----------------------------------------------------------------------------
 {
   m_AppendPolyData->RemoveAllInputs();
-  vtkMAFSmartPointer<vtkPolyDataConnectivityFilter> connectivityFilter;
+  vtkNew<vtkPolyDataConnectivityFilter> connectivityFilter;
   connectivityFilter->SetInputData(inputBorder);
   connectivityFilter->SetExtractionModeToSpecifiedRegions();
   connectivityFilter->Update();
@@ -755,7 +755,7 @@ vtkPolyData *mafPipePolylineSlice::RegionsCapping(vtkPolyData* inputBorder)
     connectivityFilter->AddSpecifiedRegion(region);
     connectivityFilter->Update();
 
-    vtkMAFSmartPointer<vtkPolyData> p;
+    vtkNew<vtkPolyData> p;
     
     //write polydata
     
@@ -765,7 +765,7 @@ vtkPolyData *mafPipePolylineSlice::RegionsCapping(vtkPolyData* inputBorder)
     /*mafString filename1 = "C:\\conn_";
     filename1 << region;
     filename1 << ".vtk";
-    vtkMAFSmartPointer<vtkPolyDataWriter> pdWriter;
+    vtkNew<vtkPolyDataWriter> pdWriter;
     pdWriter->SetInput(p);
     pdWriter->SetFileName(filename1);
     pdWriter->Update();*/
@@ -797,8 +797,8 @@ vtkPolyData *mafPipePolylineSlice::CappingFilter(vtkPolyData* inputBorder)
   // prerequisites: connected polydata with line cells that represent the edge of the hole to be capped. 
   // search average point
   double averagePoint[3] = {0.0,0.0,0.0};
-  vtkMAFSmartPointer<vtkPoints>outputPoints;
-  vtkMAFSmartPointer<vtkCellArray> outputCellArray;
+  vtkNew<vtkPoints>outputPoints;
+  vtkNew<vtkCellArray> outputCellArray;
   vtkPolyData *output;
   vtkNEW(output);
   outputPoints->DeepCopy(inputBorder->GetPoints());
@@ -824,7 +824,7 @@ vtkPolyData *mafPipePolylineSlice::CappingFilter(vtkPolyData* inputBorder)
   for(int i=0; i<inputBorder->GetNumberOfCells();i++)
   {
     //each line of the inputPolydata should be transformed into a triangle.
-    vtkMAFSmartPointer<vtkIdList> currentCellIds;
+    vtkNew<vtkIdList> currentCellIds;
     for (iCell = 0; iCell < inputBorder->GetCell(i)->GetNumberOfPoints(); iCell++)
     {
       currentCellIds->InsertNextId(inputBorder->GetCell(i)->GetPointIds()->GetId(iCell));

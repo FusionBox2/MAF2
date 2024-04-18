@@ -272,10 +272,10 @@ void mafPipeVolumeSlice_BES::Create(mafNode *node, mafView *view)
 
 	CreateTICKs();
 
-  vtkMAFSmartPointer<vtkOutlineCornerFilter> corner;
+  vtkNew<vtkOutlineCornerFilter> corner;
 	corner->SetInputData(data);
 
-  vtkMAFSmartPointer<vtkPolyDataMapper> corner_mapper;
+  vtkNew<vtkPolyDataMapper> corner_mapper;
 	corner_mapper->SetInputConnection(corner->GetOutputPort());
 
 	vtkNEW(m_VolumeBoxActor);

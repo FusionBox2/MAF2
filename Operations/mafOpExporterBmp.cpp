@@ -147,7 +147,7 @@ void mafOpExporterBmp::SaveBmp()
   vtkImageData *imageData = vtkImageData::SafeDownCast(ds);
   vtkRectilinearGrid *rg = vtkRectilinearGrid::SafeDownCast(ds);
 
-  vtkMAFSmartPointer<vtkImageData> imageDataRg;
+  vtkNew<vtkImageData> imageDataRg;
 
   double bounds[6];
   int dim[3], xdim, ydim, zdim, slice_size;
@@ -200,12 +200,12 @@ void mafOpExporterBmp::SaveBmp()
   int size = xdim * ydim;
   imageData->GetScalarRange(m_ScalarRange);
   
-  vtkMAFSmartPointer<vtkImageData> imageSlice;
+  vtkNew<vtkImageData> imageSlice;
   //imageSlice->SetScalarTypeToUnsignedChar();
   imageSlice->SetDimensions(xdim, ydim, 1);
   imageSlice->SetSpacing(spacing_x, spacing_y, 1);
 
-  vtkMAFSmartPointer<vtkDoubleArray> scalarSliceIn;
+  vtkNew<vtkDoubleArray> scalarSliceIn;
   scalarSliceIn->SetNumberOfTuples(size);
 
   mafString prefix = path + name + mafString::Format(_R("_%dx%d"),xdim,ydim);
@@ -213,7 +213,7 @@ void mafOpExporterBmp::SaveBmp()
 
   if (m_Bit8 == 0)
   {
-    vtkMAFSmartPointer<vtkImageFlip> imageFlip;
+    vtkNew<vtkImageFlip> imageFlip;
     imageFlip->SetFilteredAxis(1);
 
     //if volume data is not UNSIGNED_CHAR or UNSIGNED_SHORT
@@ -221,7 +221,7 @@ void mafOpExporterBmp::SaveBmp()
 
     if (imageData->GetScalarType() != VTK_UNSIGNED_CHAR) 
     {   
-      vtkMAFSmartPointer<vtkImageShiftScale> pImageCast;
+      vtkNew<vtkImageShiftScale> pImageCast;
 
       //imageData->Update(); //important
       pImageCast->SetShift(-m_ScalarRange[0]);
@@ -240,7 +240,7 @@ void mafOpExporterBmp::SaveBmp()
     }  
 
     mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
-    vtkMAFSmartPointer<vtkBMPWriter> exporter;
+    vtkNew<vtkBMPWriter> exporter;
     //mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR, exporter));
     exporter->SetInputConnection(imageFlip->GetOutputPort());
     exporter->SetFileDimensionality(2); // the writer will create a number of 2D images

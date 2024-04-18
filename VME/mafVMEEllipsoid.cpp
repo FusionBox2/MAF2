@@ -69,7 +69,7 @@ mafVMEEllipsoid::mafVMEEllipsoid()
 	GetMaterial();
 	vtkNEW(m_PolyData);
 	
-	vtkMAFSmartPointer<vtkSphereSource> surf;
+	vtkNew<vtkSphereSource> surf;
 	surf->SetRadius(b);
 	surf->SetPhiResolution(resPhi);
 	surf->SetThetaResolution(resTheta);
@@ -78,10 +78,10 @@ mafVMEEllipsoid::mafVMEEllipsoid()
 
 
 
-	vtkMAFSmartPointer<vtkTransform> t;
+	vtkNew<vtkTransform> t;
 	t->Scale(a / b, 1, c / b);
 	t->Update();
-	vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
+	vtkNew<vtkTransformPolyDataFilter> ptf;
 	ptf->SetTransform(t);
 	ptf->SetInputConnection(surf->GetOutputPort());
 	ptf->Update();
@@ -491,7 +491,7 @@ void mafVMEEllipsoid::InternalUpdate()
 
 	}
 
-	vtkMAFSmartPointer<vtkSphereSource> surf;
+	vtkNew<vtkSphereSource> surf;
 
 
 	m_TmpTransform->SetMatrix(GetOutput()->GetAbsTransform()->GetMatrix());
@@ -505,10 +505,10 @@ void mafVMEEllipsoid::InternalUpdate()
 	surf->SetThetaResolution(resTheta);
 	surf->Update();
 
-	vtkMAFSmartPointer<vtkTransform> t;
+	vtkNew<vtkTransform> t;
 	t->Scale(a / b, 1, c / b);
 	t->Update();
-	vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
+	vtkNew<vtkTransformPolyDataFilter> ptf;
 	ptf->SetTransform(t);
 	ptf->SetInputConnection(surf->GetOutputPort());
 	ptf->Update();
@@ -607,17 +607,17 @@ bool mafVMEEllipsoid::Equals(mafVME *vme)
 vtkTransformPolyDataFilter* mafVMEEllipsoid::getTransformPDF()
 {
 
-	vtkMAFSmartPointer<vtkSphereSource> surf;
+	vtkNew<vtkSphereSource> surf;
 	surf->SetCenter(center(0), center(1), center(2));
 	surf->SetRadius(a);
 	surf->SetPhiResolution(resPhi);
 	surf->SetThetaResolution(resTheta);
 	surf->Update();
 
-	vtkMAFSmartPointer<vtkTransform> t;
+	vtkNew<vtkTransform> t;
 	t->Scale(a / b, 1, c / b);
 	t->Update();
-	vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
+	vtkNew<vtkTransformPolyDataFilter> ptf;
 	ptf->SetTransform(t);
 	ptf->SetInputConnection(surf->GetOutputPort());
 	ptf->Update();

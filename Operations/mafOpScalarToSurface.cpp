@@ -90,8 +90,8 @@ void mafOpScalarToSurface::OpRun()
   mafNEW(m_Surface);
   m_Surface->SetName(surface_name);
   
-  vtkMAFSmartPointer<vtkAppendPolyData> scalar_surface;
-  vtkMAFSmartPointer<vtkDelaunay2D> delaunay;
+  vtkNew<vtkAppendPolyData> scalar_surface;
+  vtkNew<vtkDelaunay2D> delaunay;
 
   std::vector<vtkPolyData *> items;
   vtkPolyData *scalar_item;

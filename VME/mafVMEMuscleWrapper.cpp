@@ -807,7 +807,7 @@ void mafVMEMuscleWrapperAQ::InternalUpdate()
   vtkPolyData *polydata = m_Goniometer->GetOutput();
   int num = m_Goniometer->GetOutput()->GetNumberOfPoints();
   vtkIdType pointId[2];
-  vtkMAFSmartPointer<vtkCellArray> cellArray;
+  vtkNew<vtkCellArray> cellArray;
   for(int i = 0; i< num;i++)
   {
     if (i > 0)
@@ -1380,7 +1380,7 @@ void mafVMEMuscleWrapperAQ::CreateHistogram()
     m_ProbedVME->SetTimeStamp(currTs);
     m_ProbedVME->Update();
 
-    vtkMAFSmartPointer<vtkTransform> transformStart;
+    vtkNew<vtkTransform> transformStart;
     mafVME *start_vme = GetStartVME();
     mafMatrix matrixStart;
     start_vme->GetOutput()->GetMatrix(matrixStart, currTs);
@@ -1399,7 +1399,7 @@ void mafVMEMuscleWrapperAQ::CreateHistogram()
       point1[2] = m_StartPoint[2];
     }
 
-    vtkMAFSmartPointer<vtkTransform> transformEnd;
+    vtkNew<vtkTransform> transformEnd;
    
     mafVME *end_vme1 = GetEnd1VME();
     mafMatrix matrixEnd1;
@@ -1436,7 +1436,7 @@ void mafVMEMuscleWrapperAQ::CreateHistogram()
     m_ProbingLine->SetResolution((int)m_Distance);
     m_ProbingLine->Update();
 
-    vtkMAFSmartPointer<vtkProbeFilter> prober;
+    vtkNew<vtkProbeFilter> prober;
     prober->SetInputConnection(m_ProbingLine->GetOutputPort());
     prober->SetSourceConnection(m_ProbedVME->GetOutput()->GetVTKOutputPort());
     prober->Update();
@@ -1490,7 +1490,7 @@ double mafVMEMuscleWrapperAQ::GetValue()
 	p= new mafdmLandmark(X(0), X(1), X(2), "p");
 	mafdmLandmark* q= new mafdmLandmark(X(3), X(4), X(5), "q");
 	vector<Vector3d> path = e->computeGeodesicPath(*p0, *q0, *p, *q);
-	vtkMAFSmartPointer<vtkPoints> points;
+	vtkNew<vtkPoints> points;
 	for (int i = 0; i<path.size(); i++)
 		points->InsertNextPoint(path[i][0], path[i][1], path[i][2]);
 

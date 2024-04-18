@@ -254,8 +254,8 @@ void lhpOpLMProj::OpDo()
   m_Output->ReparentTo(m_Input->GetParent());
 
   mafVMEOutputSurface *surface = NULL;
-  vtkMAFSmartPointer<vtkTriangleFilter> triangles;
-  vtkMAFSmartPointer<vtkTransformPolyDataFilter> v_tpdf;
+  vtkNew<vtkTriangleFilter> triangles;
+  vtkNew<vtkTransformPolyDataFilter> v_tpdf;
   vtkPolyData  *input = NULL;
   vtkPoints    *pts   = NULL;
   vtkCellArray *polys = NULL;

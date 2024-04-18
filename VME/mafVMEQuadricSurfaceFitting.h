@@ -228,7 +228,7 @@ protected:
   double m_PointsThetaRes;
 
 
-  vtkMAFSmartPointer<vtkPoints> points;
+  vtkNew<vtkPoints> points;
   //double m_Points1Point1[3];
   //double m_Points1Point2[3];
   //double m_Points1Point3[3];

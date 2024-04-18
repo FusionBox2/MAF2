@@ -1949,7 +1949,7 @@ void medOpMeshDeformation::DeletePoint(int index, int iType, double pos[3])
       //for every point from Q find the point from Q with the longest distance
       //and if there is no edge between these two points, construct it
       //remove original edges
-      vtkMAFSmartPointer< vtkIdList > ids;
+      vtkNew< vtkIdList > ids;
       pVertex->GetVerticesIdList(ids);        
 
       int nCount = ids->GetNumberOfIds();
@@ -2229,7 +2229,7 @@ template < class T >
 void medOpMeshDeformation::DeformMeshT()
 //------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer< T > md;
+  vtkNew< T > md;
 
   md->SetInputData(m_Meshes[0]->pPoly);    
   md->SetOutput(m_Meshes[1]->pPoly);

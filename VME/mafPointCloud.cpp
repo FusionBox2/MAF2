@@ -111,23 +111,23 @@ void mafdmPointCloud::describe()
 }
 
 
-vtkMAFSmartPointer<vtkActor> mafdmPointCloud::makeRenderer()
+vtkNew<vtkActor> mafdmPointCloud::makeRenderer()
 {
 	// Add the points to a polydata
-	vtkMAFSmartPointer<vtkPolyData> polydata;
+	vtkNew<vtkPolyData> polydata;
 	polydata->SetPoints(points);
 
 
-	vtkMAFSmartPointer<vtkGlyph3D> glyphFilter;
+	vtkNew<vtkGlyph3D> glyphFilter;
 	glyphFilter->SetInputData(polydata);
 	glyphFilter->Update();
 
 	// Visualize
 	//vtkSmartPointer<vtkNamedColors> colors = vtkSmartPointer<vtkNamedColors>::New();
 
-	vtkMAFSmartPointer<vtkPolyDataMapper> mapper ;
+	vtkNew<vtkPolyDataMapper> mapper ;
 	mapper->SetInputConnection(glyphFilter->GetOutputPort());
-	vtkMAFSmartPointer<vtkActor> actor;
+	vtkNew<vtkActor> actor;
 	//actor->setDataElement(this);
 	
 	int R = 100; int G = 53; int B = 150;

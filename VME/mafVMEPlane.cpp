@@ -777,7 +777,7 @@ void mafVMEPlane::InternalUpdate()
 			computeNormal();
 		
 							 
-			vtkMAFSmartPointer<vtkTriangleFilter> triangle;
+			vtkNew<vtkTriangleFilter> triangle;
 			triangle->SetInputConnection(surf->GetOutputPort());
 			triangle->Update();
 

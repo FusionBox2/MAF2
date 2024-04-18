@@ -248,7 +248,7 @@ void mafOpImporterSTL::ImportSTL()
 		  fn = swapped;
 	  }
 
-    vtkMAFSmartPointer<vtkSTLReader> reader;
+    vtkNew<vtkSTLReader> reader;
 	  mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR,reader));
     reader->SetFileName(fn.GetCStr());
 	  reader->Update();

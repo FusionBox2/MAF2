@@ -359,13 +359,13 @@ void mafPipeLandmarkCloud::CreateClosedCloudPipe(vtkAlgorithmOutput *port, doubl
   }
 
   // selection highlight
-  vtkMAFSmartPointer<vtkOutlineCornerFilter> corner;
+  vtkNew<vtkOutlineCornerFilter> corner;
   corner->SetInputConnection(m_Glyph->GetOutputPort());  
 
-  vtkMAFSmartPointer<vtkPolyDataMapper> corner_mapper;
+  vtkNew<vtkPolyDataMapper> corner_mapper;
   corner_mapper->SetInputConnection(corner->GetOutputPort());
 
-  vtkMAFSmartPointer<vtkProperty> corner_props;
+  vtkNew<vtkProperty> corner_props;
   corner_props->SetColor(1,1,1);
   corner_props->SetAmbient(1);
   corner_props->SetRepresentationToWireframe();

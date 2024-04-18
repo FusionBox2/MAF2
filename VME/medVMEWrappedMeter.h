@@ -372,11 +372,11 @@ protected:
   mafString m_EndVme2Name;
   mafString m_WrappedVmeName;
 
-  vtkMAFSmartPointer<vtkPlaneSource> m_PlaneSource;
-  vtkMAFSmartPointer<vtkPlane> m_PlaneCutter;
-  vtkMAFSmartPointer<vtkCutter> m_Cutter;
-  vtkMAFSmartPointer<vtkPlane> m_PlaneClip;
-  vtkMAFSmartPointer<vtkClipPolyData> m_Clip;
+  vtkNew<vtkPlaneSource> m_PlaneSource;
+  vtkNew<vtkPlane> m_PlaneCutter;
+  vtkNew<vtkCutter> m_Cutter;
+  vtkNew<vtkPlane> m_PlaneClip;
+  vtkNew<vtkClipPolyData> m_Clip;
 
   wxListBox *m_ListBox;
 	int        m_WrappedMode;

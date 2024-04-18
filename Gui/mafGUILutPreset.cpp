@@ -2765,7 +2765,7 @@ bool lutEquals(vtkLookupTable *a, vtkLookupTable *b)
 int presetsIdxByLut(vtkLookupTable *lut)
 {
 	//creating a temp lut
-	vtkMAFSmartPointer<vtkLookupTable> tmpTable;
+	vtkNew<vtkLookupTable> tmpTable;
 
 	//searching between lut presets
 	for (int i=0;i<lutPresetNum;i++)

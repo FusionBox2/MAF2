@@ -616,12 +616,12 @@ vtkPolyData *mafVMELandmarkCloud::NewPolyData(mafTimeStamp t)
   if (polydata)
   {
     // add cell array for visible points
-    vtkMAFSmartPointer<vtkCellArray> cells;
+    vtkNew<vtkCellArray> cells;
     polydata->SetVerts(cells);
 
     // add scalars for visibility attribute
     vtkPointData* pdata = polydata->GetPointData();
-    vtkMAFSmartPointer<vtkBitArray> data;
+    vtkNew<vtkBitArray> data;
     pdata->SetScalars(data);
     AppendPoint(polydata,0,0,0,GetNumberOfLandmarks());
   }
@@ -1116,7 +1116,7 @@ int mafVMELandmarkCloud::SetLandmarkVisibility(vtkPolyData *polydata,int idx,boo
       //
       // Create a new CellArray without the cell of the invisible the point.
       //
-      vtkMAFSmartPointer<vtkCellArray> newcells;
+      vtkNew<vtkCellArray> newcells;
       cells->InitTraversal();        
       for (int i = 0; i < cells->GetNumberOfCells(); i++)
       {
@@ -1380,7 +1380,7 @@ int mafVMELandmarkCloud::InternalStore(mafStorageElement *parent)
       assert(item);
       if (vtkPolyData *polydata = (vtkPolyData *)item->GetData())
       {
-        vtkMAFSmartPointer<vtkDataSetWriter> w;
+        vtkNew<vtkDataSetWriter> w;
         w->SetInput(polydata);
         w->WriteToOutputStringOn();
         w->Write();

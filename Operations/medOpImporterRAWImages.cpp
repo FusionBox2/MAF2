@@ -234,10 +234,10 @@ void medOpImporterRAWImages::CreatePipeline()
   ////// ROI gizmo
   vtkNEW(m_GizmoPlane);
 
-  vtkMAFSmartPointer<vtkOutlineFilter> outlineFilter;
+  vtkNew<vtkOutlineFilter> outlineFilter;
   outlineFilter->SetInputConnection(m_GizmoPlane->GetOutputPort());
 
-  vtkMAFSmartPointer<vtkPolyDataMapper> polyDataMapper;
+  vtkNew<vtkPolyDataMapper> polyDataMapper;
   polyDataMapper->SetInputConnection(outlineFilter->GetOutputPort());
 
   vtkNEW(m_GizmoActor);
@@ -1049,9 +1049,9 @@ bool medOpImporterRAWImages::Import()
   mafString pattern = m_Pattern + m_Extension;
 
 #ifdef VME_VOLUME_LARGE
-  vtkMAFSmartPointer< vtkMAFLargeImageReader > r;
+  vtkNew< vtkMAFLargeImageReader > r;
 #else
-  vtkMAFSmartPointer< vtkImageReader > r;
+  vtkNew< vtkImageReader > r;
 #endif //VME_VOLUME_LARGE
   r->SetFilePrefix(prefix.GetCStr());
   r->SetFilePattern(pattern.GetCStr());
@@ -1117,7 +1117,7 @@ bool medOpImporterRAWImages::Import()
   mafString path, name, ext;
   mafSplitPath(slice_name,&path,&name,&ext);
 
-  vtkMAFSmartPointer<vtkImageToStructuredPoints> convert;
+  vtkNew<vtkImageToStructuredPoints> convert;
 
   vtkDoubleArray* ZDoubleArray = NULL;
   if (m_Rect)

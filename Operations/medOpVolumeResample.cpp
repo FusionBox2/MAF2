@@ -203,21 +203,21 @@ void medOpVolumeResample::CreateGizmos()
 	inputVolume->GetOutput()->GetVTKData()->GetCenter(m_VolumeCenterPosition);
 
 	//Compute the center of Volume in absolute coordinate to center gizmo
-	vtkMAFSmartPointer<vtkPoints> point;
+	vtkNew<vtkPoints> point;
 	point->InsertNextPoint(m_VolumeCenterPosition);
-	vtkMAFSmartPointer<vtkPolyData> polydata;
+	vtkNew<vtkPolyData> polydata;
 	polydata->SetPoints(point);
-	vtkMAFSmartPointer<vtkTransform> transform;
+	vtkNew<vtkTransform> transform;
 	transform->Identity();
 	transform->SetMatrix(inputVolume->GetOutput()->GetMatrix()->GetVTKMatrix());
 	transform->Update();
-	vtkMAFSmartPointer<vtkTransformPolyDataFilter> transformFilter;
+	vtkNew<vtkTransformPolyDataFilter> transformFilter;
 	transformFilter->SetInputData(polydata);
 	transformFilter->SetTransform(transform);
 	transformFilter->Update();
 	transformFilter->GetOutput()->GetCenter(m_VolumeCenterPosition);
 
-	vtkMAFSmartPointer<vtkTransform> startTransform;
+	vtkNew<vtkTransform> startTransform;
 	startTransform->Identity();
 	startTransform->Translate(m_VolumeCenterPosition);
 	startTransform->RotateX(m_VolumeOrientation[0]);
@@ -364,7 +364,7 @@ void medOpVolumeResample::InizializeVMEDummy()
 //----------------------------------------------------------------------------
 {
 	mafNEW(m_VMEDummy);
-	vtkMAFSmartPointer<vtkCubeSource> cube;
+	vtkNew<vtkCubeSource> cube;
 	m_VMEDummy->SetData(vtkPolyData::SafeDownCast(cube->GetOutput()),0.0);
 	m_VMEDummy->SetVisibleToTraverse(false);
 	m_VMEDummy->GetTagArray()->SetTag(mafTagItem(_R("VISIBLE_IN_THE_TREE"), 0.0));
@@ -444,7 +444,7 @@ void medOpVolumeResample::Resample()
       if (vtkDataSet *inputData = input_item->GetData())
       {
         // the resample filter
-        vtkMAFSmartPointer<vtkMAFVolumeResample> volumeResampleFilter;
+        vtkNew<vtkMAFVolumeResample> volumeResampleFilter;
         volumeResampleFilter->SetZeroValue(m_ZeroPadValue);
 
         // Set the target be vme's parent frame. And Input frame to the root. I've to 
@@ -487,7 +487,7 @@ void medOpVolumeResample::Resample()
         volumeResampleFilter->SetVolumeAxisX(xAxis);
         volumeResampleFilter->SetVolumeAxisY(yAxis);
         
-        vtkMAFSmartPointer<vtkStructuredPoints> outputSPVtkData;
+        vtkNew<vtkStructuredPoints> outputSPVtkData;
         outputSPVtkData->SetSpacing(m_VolumeSpacing);
         //outputSPVtkData->SetScalarType(inputData->GetPointData()->GetScalars()->GetDataType());
         outputSPVtkData->SetExtent(outputSPExtent);
@@ -1066,7 +1066,7 @@ void medOpVolumeResample::PostMultiplyEventMatrix(mafEventBase *maf_event)
 		}
 		m_Gui->Update();
 
-		vtkMAFSmartPointer<vtkTransform> tran_bound_box;
+		vtkNew<vtkTransform> tran_bound_box;
 		tran_bound_box->PostMultiply();
 		tran_bound_box->SetMatrix(m_VMEDummy->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
 		tran_bound_box->Concatenate(e->GetMatrix()->GetVTKMatrix());
@@ -1146,20 +1146,20 @@ void medOpVolumeResample::ShiftCenterResampled()
 
 	((mafVME *)m_Input)->GetOutput()->GetVTKData()->GetCenter(inputVolumeLocalVTKBBCenter);
 
-	vtkMAFSmartPointer<vtkPoints> points;
+	vtkNew<vtkPoints> points;
 	points->InsertNextPoint(inputVolumeLocalVTKBBCenter);
 
-	vtkMAFSmartPointer<vtkPolyData> poly;
+	vtkNew<vtkPolyData> poly;
 	poly->SetPoints(points);
 	//poly->Update();
 
-	vtkMAFSmartPointer<vtkTransform> t;
+	vtkNew<vtkTransform> t;
 	t->RotateX(m_ROIOrientation[0]);
 	t->RotateY(m_ROIOrientation[1]);
 	t->RotateZ(m_ROIOrientation[2]);
 	t->Update();
 
-	vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
+	vtkNew<vtkTransformPolyDataFilter> ptf;
 	ptf->SetTransform(t);
 	ptf->SetInputData(poly);
 	ptf->Update();

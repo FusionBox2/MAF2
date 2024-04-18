@@ -231,8 +231,8 @@ void lhpOpJoinSurf::OpStop(int result)
   int totalVerts = surface1->GetSurfaceData()->GetNumberOfPoints();
   int totalCells = surface1->GetSurfaceData()->GetNumberOfCells();
 
-  vtkMAFSmartPointer<vtkTriangleFilter> triangles1;
-  vtkMAFSmartPointer<vtkTransformPolyDataFilter> v_tpdf1;
+  vtkNew<vtkTriangleFilter> triangles1;
+  vtkNew<vtkTransformPolyDataFilter> v_tpdf1;
   triangles1->SetInputConnection(surface1->GetVTKOutputPort());
   triangles1->Update();
 
@@ -302,8 +302,8 @@ void lhpOpJoinSurf::OpStop(int result)
     mafVMEOutputSurface *surface2 = mafVMEOutputSurface::SafeDownCast(m_JoinSurf[k]->GetOutput());
     surface2->Update();
 
-    vtkMAFSmartPointer<vtkTriangleFilter> triangles2;
-    vtkMAFSmartPointer<vtkTransformPolyDataFilter> v_tpdf2;
+    vtkNew<vtkTriangleFilter> triangles2;
+    vtkNew<vtkTransformPolyDataFilter> v_tpdf2;
     triangles2->SetInputConnection(surface2->GetVTKOutputPort());
     triangles2->Update();
 

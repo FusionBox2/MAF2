@@ -184,7 +184,7 @@ int medOpImporterVTKXML::ImportVTKXML()
   mafNEW(m_VmeMesh);
   mafNEW(m_VmeGeneric);
 
-  vtkMAFSmartPointer<vtkXMLImageDataReader> imageReader;
+  vtkNew<vtkXMLImageDataReader> imageReader;
   imageReader->AddObserver(vtkCommand::ErrorEvent,m_EventRouter);
   imageReader->SetFileName(m_File.GetCStr());
   imageReader->Update();
@@ -212,7 +212,7 @@ int medOpImporterVTKXML::ImportVTKXML()
 
   ResetErrorCount();
 
-	vtkMAFSmartPointer<vtkXMLPolyDataReader> polydataReader;
+	vtkNew<vtkXMLPolyDataReader> polydataReader;
 	polydataReader->AddObserver(vtkCommand::ErrorEvent,m_EventRouter);
 	polydataReader->SetFileName(m_File.GetCStr());
 	polydataReader->Update();
@@ -244,7 +244,7 @@ int medOpImporterVTKXML::ImportVTKXML()
 
 	ResetErrorCount();
 
-  vtkMAFSmartPointer<vtkXMLRectilinearGridReader> rgReader;
+  vtkNew<vtkXMLRectilinearGridReader> rgReader;
   rgReader->AddObserver(vtkCommand::ErrorEvent,m_EventRouter);
   rgReader->SetFileName(m_File.GetCStr());
   rgReader->Update();
@@ -272,7 +272,7 @@ int medOpImporterVTKXML::ImportVTKXML()
 
   ResetErrorCount();
 
-  vtkMAFSmartPointer<vtkXMLUnstructuredGridReader> ugReader;
+  vtkNew<vtkXMLUnstructuredGridReader> ugReader;
   ugReader->AddObserver(vtkCommand::ErrorEvent,m_EventRouter);
   ugReader->SetFileName(m_File.GetCStr());
   ugReader->Update();
@@ -296,7 +296,7 @@ int medOpImporterVTKXML::ImportVTKXML()
 
   ResetErrorCount();
 
-  vtkMAFSmartPointer<vtkXMLStructuredGridReader> sgReader;
+  vtkNew<vtkXMLStructuredGridReader> sgReader;
   sgReader->AddObserver(vtkCommand::ErrorEvent,m_EventRouter);
   sgReader->SetFileName(m_File.GetCStr());
   sgReader->Update();

@@ -282,7 +282,7 @@ void medVMEMaps::InternalPreUpdate()
 
 
     vtkPolyData *polyout;
-    vtkMAFSmartPointer<vtkFloatArray> scalars;
+    vtkNew<vtkFloatArray> scalars;
 
     //m_PolyData = m_DistanceFilter->GetPolyDataOutput();
 
@@ -615,7 +615,7 @@ void medVMEMaps::UpdateFilter()
     m_DistanceFilter->Update(); 
 
     vtkPolyData *polyout;
-    vtkMAFSmartPointer<vtkFloatArray> scalars;
+    vtkNew<vtkFloatArray> scalars;
 
     if(polyout = m_DistanceFilter->GetPolyDataOutput())
     {

@@ -231,7 +231,7 @@ void medDataPipeCustomSegmentationVolume::ApplyManualSegmentation()
     regionGrowingScalar = m_RegionGrowingSP->GetPointData()->GetScalars();
   }
 
-  vtkMAFSmartPointer<vtkUnsignedCharArray> newScalars;
+  vtkNew<vtkUnsignedCharArray> newScalars;
   newScalars->SetName("SCALARS");
   newScalars->SetNumberOfTuples(maskScalar->GetNumberOfTuples());
 
@@ -265,7 +265,7 @@ void medDataPipeCustomSegmentationVolume::ApplyManualSegmentation()
 
   if (volumeData->IsA("vtkStructuredPoints"))
   {
-    vtkMAFSmartPointer<vtkStructuredPoints> newSP;
+    vtkNew<vtkStructuredPoints> newSP;
     newSP->CopyStructure(vtkStructuredPoints::SafeDownCast(volumeData));
     //newSP->Update();
     newSP->GetPointData()->AddArray(newScalars);
@@ -280,7 +280,7 @@ void medDataPipeCustomSegmentationVolume::ApplyManualSegmentation()
   }
   else
   {
-    vtkMAFSmartPointer<vtkRectilinearGrid> newRG;
+    vtkNew<vtkRectilinearGrid> newRG;
     newRG->CopyStructure(vtkRectilinearGrid::SafeDownCast(volumeData));
     //newRG->Update();
     newRG->GetPointData()->AddArray(newScalars);
@@ -322,7 +322,7 @@ void medDataPipeCustomSegmentationVolume::ApplyAutomaticSegmentation()
   mafEvent e(this,PROGRESSBAR_SHOW);
   this->GetVME()->ForwardUpEvent(&e);
 
-  vtkMAFSmartPointer<vtkUnsignedCharArray> newScalars;
+  vtkNew<vtkUnsignedCharArray> newScalars;
   newScalars->SetName("SCALARS");
   newScalars->SetNumberOfTuples(volumeDimensions[0]*volumeDimensions[1]*volumeDimensions[2]);
 
@@ -395,7 +395,7 @@ void medDataPipeCustomSegmentationVolume::ApplyAutomaticSegmentation()
 
   if (volumeData->IsA("vtkStructuredPoints"))
   {
-    vtkMAFSmartPointer<vtkStructuredPoints> newSP;
+    vtkNew<vtkStructuredPoints> newSP;
     newSP->CopyStructure(vtkStructuredPoints::SafeDownCast(volumeData));
     //newSP->Update();
     newSP->GetPointData()->AddArray(newScalars);
@@ -410,7 +410,7 @@ void medDataPipeCustomSegmentationVolume::ApplyAutomaticSegmentation()
   }
   else
   {
-    vtkMAFSmartPointer<vtkRectilinearGrid> newRG;
+    vtkNew<vtkRectilinearGrid> newRG;
     newRG->CopyStructure(vtkRectilinearGrid::SafeDownCast(volumeData));
     //newRG->Update();
     newRG->GetPointData()->AddArray(newScalars);
@@ -497,7 +497,7 @@ void medDataPipeCustomSegmentationVolume::ApplyRefinementSegmentation()
     manualScalar = m_ManualSP->GetPointData()->GetScalars();
   }
 
-  vtkMAFSmartPointer<vtkUnsignedCharArray> newScalars;
+  vtkNew<vtkUnsignedCharArray> newScalars;
   newScalars->SetName("SCALARS");
   newScalars->SetNumberOfTuples(maskScalar->GetNumberOfTuples());
 
@@ -531,7 +531,7 @@ void medDataPipeCustomSegmentationVolume::ApplyRefinementSegmentation()
 
   if (volumeData->IsA("vtkStructuredPoints"))
   {
-    vtkMAFSmartPointer<vtkStructuredPoints> newSP;
+    vtkNew<vtkStructuredPoints> newSP;
     newSP->CopyStructure(vtkStructuredPoints::SafeDownCast(volumeData));
     //newSP->Update();
     newSP->GetPointData()->AddArray(newScalars);
@@ -546,7 +546,7 @@ void medDataPipeCustomSegmentationVolume::ApplyRefinementSegmentation()
   }
   else
   {
-    vtkMAFSmartPointer<vtkRectilinearGrid> newRG;
+    vtkNew<vtkRectilinearGrid> newRG;
     newRG->CopyStructure(vtkRectilinearGrid::SafeDownCast(volumeData));
     //newRG->Update();
     newRG->GetPointData()->AddArray(newScalars);
@@ -602,7 +602,7 @@ void medDataPipeCustomSegmentationVolume::ApplyRegionGrowingSegmentation()
   mafEvent eUpdate(this,PROGRESSBAR_SET_VALUE,(intptr_t)5);
   this->GetVME()->ForwardUpEvent(&eUpdate);
 
-  vtkMAFSmartPointer<vtkStructuredPoints> spInputOfRegionGrowing;
+  vtkNew<vtkStructuredPoints> spInputOfRegionGrowing;
   vtkDataSet *automaticData;
   if (volumeData->IsA("vtkStructuredPoints"))
   {
@@ -615,7 +615,7 @@ void medDataPipeCustomSegmentationVolume::ApplyRegionGrowingSegmentation()
   {
     int dim[3];
     vtkRectilinearGrid::SafeDownCast(volumeData)->GetDimensions(dim);
-    vtkMAFSmartPointer<vtkDoubleArray> oldScalars;
+    vtkNew<vtkDoubleArray> oldScalars;
     oldScalars->SetNumberOfTuples(volumeData->GetNumberOfPoints());
     oldScalars->SetName("SCALARS");
     for (int k=0;k<volumeData->GetNumberOfPoints();k++)
@@ -636,7 +636,7 @@ void medDataPipeCustomSegmentationVolume::ApplyRegionGrowingSegmentation()
   eUpdate.SetArg(10);
   this->GetVME()->ForwardUpEvent(&eUpdate);
 
-  vtkMAFSmartPointer<vtkImageCast> vtkImageToFloat;
+  vtkNew<vtkImageCast> vtkImageToFloat;
   vtkImageToFloat->SetOutputScalarTypeToDouble();
   vtkImageToFloat->SetInputData(spInputOfRegionGrowing);
   vtkImageToFloat->Modified();
@@ -703,7 +703,7 @@ void medDataPipeCustomSegmentationVolume::ApplyRegionGrowingSegmentation()
     imageData->GetDimensions(volumeDimensions);
   }
 
-  vtkMAFSmartPointer<vtkUnsignedCharArray> newScalars;
+  vtkNew<vtkUnsignedCharArray> newScalars;
   newScalars->SetNumberOfTuples(volumeData->GetNumberOfPoints());
   newScalars->SetName("SCALARS");
   newScalars->SetNumberOfTuples(volumeDimensions[0]*volumeDimensions[1]*volumeDimensions[2]);

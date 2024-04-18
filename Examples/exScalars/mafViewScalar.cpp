@@ -229,8 +229,8 @@ void mafViewScalar::ViewData()
   m_ScalarsArray[0]->GetRange(sr);
   m_Lut->SetTableRange(sr);
 
-  vtkMAFSmartPointer<vtkPoints> points;
-  vtkMAFSmartPointer<vtkCellArray> cells;
+  vtkNew<vtkPoints> points;
+  vtkNew<vtkCellArray> cells;
   points->SetNumberOfPoints(tuple);
   for (int p=0; p<tuple; p++) 
   {
@@ -247,7 +247,7 @@ void mafViewScalar::ViewData()
   m_Mapper->UseLookupTableScalarRangeOn();
   m_Mapper->SetLookupTable(m_Lut);
 
-  vtkMAFSmartPointer<vtkActor> actor;
+  vtkNew<vtkActor> actor;
   actor->SetMapper(m_Mapper);
 
   m_Rwi->m_RenFront->AddActor(actor);
@@ -262,8 +262,8 @@ void mafViewScalar::UpdateData()
     m_ComponentActivated = m_ScalarsArray.size() - 1;
   }
   unsigned tuple = m_ScalarsArray[m_ComponentActivated]->GetNumberOfTuples();
-  vtkMAFSmartPointer<vtkCellArray> cells;
-  vtkMAFSmartPointer<vtkPoints> points;
+  vtkNew<vtkCellArray> cells;
+  vtkNew<vtkPoints> points;
   points->SetNumberOfPoints(tuple);
   for (int p=0; p<tuple; p++) 
   {

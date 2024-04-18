@@ -199,7 +199,7 @@ void medOpSmoothSurface::OnSmooth()
 	  m_Gui->Update();
   }
 
-	vtkMAFSmartPointer<vtkSmoothPolyDataFilter> smoothFilter;
+	vtkNew<vtkSmoothPolyDataFilter> smoothFilter;
 	smoothFilter->SetInputData(m_ResultPolydata);
 	smoothFilter->SetNumberOfIterations(m_Iterations);
 	smoothFilter->FeatureEdgeSmoothingOn();

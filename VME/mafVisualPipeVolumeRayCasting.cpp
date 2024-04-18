@@ -88,7 +88,7 @@ void mafVisualPipeVolumeRayCasting::Create(mafNode *node, mafView *view)
   port->GetProducer()->Update();
   this->m_Mapper = vtkMAFAdaptiveVolumeMapper::New();
 
-  vtkMAFSmartPointer<vtkImageCast> chardata;
+  vtkNew<vtkImageCast> chardata;
   chardata->SetOutputScalarTypeToShort();
 
   // convert rect. data to image data
@@ -181,10 +181,10 @@ void mafVisualPipeVolumeRayCasting::Create(mafNode *node, mafView *view)
   this->m_Volume->SetProperty(vp);
 
   // selection box
-  vtkMAFSmartPointer<vtkOutlineCornerFilter> outlineFilter;
+  vtkNew<vtkOutlineCornerFilter> outlineFilter;
   outlineFilter->SetInputData(data);
 
-  vtkMAFSmartPointer<vtkPolyDataMapper> outlineMapper;
+  vtkNew<vtkPolyDataMapper> outlineMapper;
   outlineMapper->SetInputConnection(outlineFilter->GetOutputPort());
 
   this->m_Box = vtkActor::New();

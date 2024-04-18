@@ -175,8 +175,8 @@ void lhpOpCutSurface::OpStop(int result)
   mafVMEOutputSurface *out_surface = mafVMEOutputSurface::SafeDownCast(mafVME::SafeDownCast(m_Input)->GetOutput());
   out_surface->Update();
 
-  vtkMAFSmartPointer<vtkTriangleFilter>triangles;
-  vtkMAFSmartPointer<vtkTransformPolyDataFilter> v_tpdf;
+  vtkNew<vtkTriangleFilter>triangles;
+  vtkNew<vtkTransformPolyDataFilter> v_tpdf;
   triangles->SetInputConnection(out_surface->GetVTKOutputPort());
   triangles->Update();
 

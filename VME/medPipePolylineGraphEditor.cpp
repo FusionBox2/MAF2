@@ -99,7 +99,7 @@ void medPipePolylineGraphEditor::Create(mafNode *node, mafView *view)
 
 	m_Plane->SetOrigin(m_Origin);
 	m_Plane->SetNormal(m_Normal);
-	vtkMAFSmartPointer<vtkMAFToLinearTransform>VTKTransform;
+	vtkNew<vtkMAFToLinearTransform>VTKTransform;
 	VTKTransform->SetInputMatrix(m_Vme->GetAbsMatrixPipe()->GetMatrixPointer());
 	m_Plane->SetTransform(VTKTransform);
 

@@ -183,7 +183,7 @@ void mafOpImporterRAWVolume_BES::OpRun()
 	//m_Texture->MapColorScalarsThroughLookupTableOn();
 	m_Texture->SetLookupTable((vtkLookupTable *)m_LookupTable);	
 
-	vtkMAFSmartPointer<vtkPolyDataMapper> mapper;
+	vtkNew<vtkPolyDataMapper> mapper;
 	mapper ->SetInputConnection(m_Plane->GetOutputPort());
 
 	vtkNEW(m_Actor);
@@ -641,7 +641,7 @@ bool mafOpImporterRAWVolume_BES::Import()
 		mafEventMacro(mafEvent(this, PROGRESSBAR_SET_TEXT, &szText));
 	}
 
-  vtkMAFSmartPointer<vtkDoubleArray> ZDoubleArray;	//Ref(ZDoubleArray) = 1
+  vtkNew<vtkDoubleArray> ZDoubleArray;	//Ref(ZDoubleArray) = 1
   if (m_BuildRectilinearGrid)
   {
     std::ifstream f_in;
@@ -665,7 +665,7 @@ bool mafOpImporterRAWVolume_BES::Import()
 	//bool bIsLargeVolume = IsVolumeLarge() || IsFileLarge();
 	if (IsVolumeLarge())
 	{
-		vtkMAFSmartPointer< vtkMAFLargeImageReader > reader;
+		vtkNew< vtkMAFLargeImageReader > reader;
 		reader->SetMemoryLimit(1);	//some sampling (but fast)
 
 		vtkMAFLargeImageData* img;
@@ -748,7 +748,7 @@ bool mafOpImporterRAWVolume_BES::Import()
     if (IsFileLarge())
     {
       //File is large => read it by our technique but it will be small volume
-      vtkMAFSmartPointer< vtkMAFLargeImageReader > reader;
+      vtkNew< vtkMAFLargeImageReader > reader;
       reader->SetMemoryLimit(m_MemLimit * 1024);
       
       vtkMAFLargeImageData* imgLarge;
@@ -774,7 +774,7 @@ bool mafOpImporterRAWVolume_BES::Import()
     else
     {
 #endif
-		  vtkMAFSmartPointer< vtkImageReader > reader;
+		  vtkNew< vtkImageReader > reader;
 		
 		  if (!m_TestMode) {
 			  mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR, reader));
@@ -785,7 +785,7 @@ bool mafOpImporterRAWVolume_BES::Import()
     }
 #endif
 
-		vtkMAFSmartPointer<vtkImageToStructuredPoints> image_to_sp;
+		vtkNew<vtkImageToStructuredPoints> image_to_sp;
 		image_to_sp->SetInputData(img);
 		img->Delete();	//we no longer need img, release it
 
@@ -798,8 +798,8 @@ bool mafOpImporterRAWVolume_BES::Import()
 			vtkSmartPointer<vtkPointData> data = structured_data->GetPointData();
 			vtkSmartPointer<vtkDataArray> scalars = data->GetScalars();
 
-			vtkMAFSmartPointer<vtkDoubleArray> XDoubleArray;	//Ref(XDoubleArray) = 1
-			vtkMAFSmartPointer<vtkDoubleArray> YDoubleArray;	//Ref(YDoubleArray) = 1			
+			vtkNew<vtkDoubleArray> XDoubleArray;	//Ref(XDoubleArray) = 1
+			vtkNew<vtkDoubleArray> YDoubleArray;	//Ref(YDoubleArray) = 1			
 
 			double origin[3];
 			structured_data->GetOrigin(origin);
@@ -818,7 +818,7 @@ bool mafOpImporterRAWVolume_BES::Import()
 				YDoubleArray->InsertNextValue(currentValue);					
 			}	
 			
-			vtkMAFSmartPointer<vtkRectilinearGrid> rectilinear_data;	//Ref(rectilinear_data) = 1
+			vtkNew<vtkRectilinearGrid> rectilinear_data;	//Ref(rectilinear_data) = 1
 
 			rectilinear_data->SetXCoordinates(XDoubleArray);	//Ref(XDoubleArray) = 2
 			rectilinear_data->SetYCoordinates(YDoubleArray);	//Ref(YDoubleArray) = 2

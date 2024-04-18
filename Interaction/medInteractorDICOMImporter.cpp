@@ -86,7 +86,7 @@ void medInteractorDICOMImporter::SendCropPosition(int event_id)
   double wp[4];
   ComputeDisplayToWorld(m_LastMousePose[0],m_LastMousePose[1],-1,wp);
 
-  vtkMAFSmartPointer<vtkPoints> position_point; 
+  vtkNew<vtkPoints> position_point; 
   position_point->SetNumberOfPoints(1);
   position_point->SetPoint(0,wp[0],wp[1],wp[2]);
 

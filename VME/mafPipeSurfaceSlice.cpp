@@ -118,7 +118,7 @@ void mafPipeSurfaceSlice::Create(mafNode *node, mafView *view/*, bool use_axes*/
 
 	m_Vme->AddObserver(this);
   
-  vtkMAFSmartPointer<vtkMAFExtendedGlyph3D> glyph;
+  vtkNew<vtkMAFExtendedGlyph3D> glyph;
 
   if(m_Vme->GetOutput()->IsMAFType(mafVMEOutputSurface))
   {
@@ -282,13 +282,13 @@ void mafPipeSurfaceSlice::Create(mafNode *node, mafView *view/*, bool use_axes*/
   m_AssemblyFront->AddPart(m_Actor);
 
   // selection highlight
-  vtkMAFSmartPointer<vtkOutlineCornerFilter> corner;
+  vtkNew<vtkOutlineCornerFilter> corner;
 	corner->SetInputConnection(port);  
 
-	vtkMAFSmartPointer<vtkPolyDataMapper> corner_mapper;
+	vtkNew<vtkPolyDataMapper> corner_mapper;
 	corner_mapper->SetInputConnection(corner->GetOutputPort());
 
-	vtkMAFSmartPointer<vtkProperty> corner_props;
+	vtkNew<vtkProperty> corner_props;
 	corner_props->SetColor(1,1,1);
 	corner_props->SetAmbient(1);
 	corner_props->SetRepresentationToWireframe();
@@ -432,20 +432,20 @@ void mafPipeSurfaceSlice::GenerateTextureMapCoordinate()
 
   if (material->m_TextureMappingMode == mmaMaterial::PLANE_MAPPING)
   {
-    vtkMAFSmartPointer<vtkTextureMapToPlane> plane_texture_mapper;
+    vtkNew<vtkTextureMapToPlane> plane_texture_mapper;
     plane_texture_mapper->SetInputConnection(port);
     m_Mapper->SetInputConnection(plane_texture_mapper->GetOutputPort());
   }
   else if (material->m_TextureMappingMode == mmaMaterial::CYLINDER_MAPPING)
   {
-    vtkMAFSmartPointer<vtkTextureMapToCylinder> cylinder_texture_mapper;
+    vtkNew<vtkTextureMapToCylinder> cylinder_texture_mapper;
     cylinder_texture_mapper->SetInputConnection(port);
     cylinder_texture_mapper->PreventSeamOff();
     m_Mapper->SetInputConnection(cylinder_texture_mapper->GetOutputPort());
   }
   else if (material->m_TextureMappingMode == mmaMaterial::SPHERE_MAPPING)
   {
-    vtkMAFSmartPointer<vtkTextureMapToSphere> sphere_texture_mapper;
+    vtkNew<vtkTextureMapToSphere> sphere_texture_mapper;
     sphere_texture_mapper->SetInputConnection(port);
     sphere_texture_mapper->PreventSeamOff();
     m_Mapper->SetInputConnection(sphere_texture_mapper->GetOutputPort());
@@ -620,13 +620,13 @@ void mafPipeSurfaceSlice::CreateClosedCloudPipe()
   m_AssemblyFront->AddPart(m_Actor);
 
   // selection highlight
-  vtkMAFSmartPointer<vtkOutlineCornerFilter> corner;
+  vtkNew<vtkOutlineCornerFilter> corner;
 	corner->SetInputConnection(port);  
 
-  vtkMAFSmartPointer<vtkPolyDataMapper> corner_mapper;
+  vtkNew<vtkPolyDataMapper> corner_mapper;
 	corner_mapper->SetInputConnection(corner->GetOutputPort());
 
-  vtkMAFSmartPointer<vtkProperty> corner_props;
+  vtkNew<vtkProperty> corner_props;
 	corner_props->SetColor(1,1,1);
 	corner_props->SetAmbient(1);
 	corner_props->SetRepresentationToWireframe();

@@ -163,7 +163,7 @@ void mafOpVOIDensityEditor::OnEvent(mafEventBase *maf_event)
           return;
         }
 				VME->Update();
-				vtkMAFSmartPointer<vtkFeatureEdges> FE;
+				vtkNew<vtkFeatureEdges> FE;
 				FE->SetInputConnection(VME->GetOutput()->GetVTKOutputPort());
 				FE->SetFeatureAngle(30);
 				FE->SetBoundaryEdges(1);
@@ -221,15 +221,15 @@ void mafOpVOIDensityEditor::EditVolumeScalars()
 	transform=(vtkAbstractTransform*)VME->GetAbsMatrixPipe()->GetVTKTransform();
 	polydata=(vtkPolyData *)VME->GetOutput()->GetVTKData();
 
-	vtkMAFSmartPointer<vtkTransformPolyDataFilter> transformDataClipper;
+	vtkNew<vtkTransformPolyDataFilter> transformDataClipper;
   transformDataClipper->SetTransform(transform);
   transformDataClipper->SetInputConnection(VME->GetOutput()->GetVTKOutputPort());
   transformDataClipper->Update();
 
-	vtkMAFSmartPointer<vtkMAFImplicitPolyData> implicitSurface;
+	vtkNew<vtkMAFImplicitPolyData> implicitSurface;
 	implicitSurface->SetInput(transformDataClipper->GetOutput());
 
-	vtkMAFSmartPointer<vtkPlanes> implicitBox;
+	vtkNew<vtkPlanes> implicitBox;
   implicitBox->SetBounds(b);
 	implicitBox->Modified();
 

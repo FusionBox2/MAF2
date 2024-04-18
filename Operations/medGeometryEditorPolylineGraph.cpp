@@ -61,7 +61,7 @@ medGeometryEditorPolylineGraph::medGeometryEditorPolylineGraph(mafVME *input, ma
     m_PolylineGraph->MergeSimpleJoinedBranches();
   }
 
-	vtkMAFSmartPointer<vtkPolyData> data;
+	vtkNew<vtkPolyData> data;
 	m_PolylineGraph->CopyToPolydata(data);
 
 	mafNEW(m_VMEPolylineEditor);
@@ -109,10 +109,10 @@ medGeometryEditorPolylineGraph::medGeometryEditorPolylineGraph(mafVME *input, ma
 void medGeometryEditorPolylineGraph::CreatePipe() 
 //----------------------------------------------------------------------------
 {
-	vtkMAFSmartPointer<vtkPolyData> data;
+	vtkNew<vtkPolyData> data;
 	m_PolylineGraph->CopyToPolydata(data);
 
-	//vtkMAFSmartPointer<vtkSphereSource> Sphere;
+	//vtkNew<vtkSphereSource> Sphere;
   vtkNEW(m_Sphere);
 	m_Sphere->SetRadius(m_SphereRadius);
 	m_Sphere->SetPhiResolution(5);
@@ -187,7 +187,7 @@ void medGeometryEditorPolylineGraph::OnEvent(mafEventBase *maf_event)
           m_Sphere->Update();
           m_Tube->SetRadius(m_SphereRadius/2);
           m_Tube->Update();
-          vtkMAFSmartPointer<vtkPolyData> poly_new;
+          vtkNew<vtkPolyData> poly_new;
           m_PolylineGraph->CopyToPolydata(poly_new);
           UpdateVMEEditorData(poly_new);
           mafEventMacro(mafEvent(this,CAMERA_UPDATE));
@@ -237,7 +237,7 @@ void medGeometryEditorPolylineGraph::OnEvent(mafEventBase *maf_event)
 					DeleteBranch(m_SelectedBranch);
 					m_SelectedBranch=UNDEFINED_BRANCH_ID;
 
-					vtkMAFSmartPointer<vtkPolyData> poly_new;
+					vtkNew<vtkPolyData> poly_new;
 					m_PolylineGraph->CopyToPolydata(poly_new);
 					UpdateVMEEditorData(poly_new);
 
@@ -330,7 +330,7 @@ mafGUI* medGeometryEditorPolylineGraph::GetGui()
 int medGeometryEditorPolylineGraph::AddNewVertex(double vertex[3],vtkIdType branch)
 //-------------------------------------------------------------------------
 {
-	vtkMAFSmartPointer<vtkPolyData> polydata;
+	vtkNew<vtkPolyData> polydata;
 	int result;
 	if(m_PolylineGraph->GetNumberOfBranches()!=0)//If there are at least a branch
 	{
@@ -392,7 +392,7 @@ int medGeometryEditorPolylineGraph::UpdateVMEEditorData(vtkPolyData *polydata)
 	m_AppendPolydata->AddInputConnection(m_Tube->GetOutputPort());
 	m_AppendPolydata->Update();
 
-	vtkMAFSmartPointer<vtkCharArray> scalar;
+	vtkNew<vtkCharArray> scalar;
 	scalar->SetNumberOfComponents(1);
 	scalar->SetNumberOfTuples(m_AppendPolydata->GetOutput()->GetNumberOfPoints());
 	for (int i=0;i<m_AppendPolydata->GetOutput()->GetNumberOfPoints();i++)
@@ -630,7 +630,7 @@ int medGeometryEditorPolylineGraph::InsertPoint(double position[3])
 	for(int i=0;i<nEdge;i++)
 		m_PolylineGraph->AddExistingEdgeToBranch(branch,eList[i]);
 
-	vtkMAFSmartPointer<vtkPolyData> poly;
+	vtkNew<vtkPolyData> poly;
 	m_PolylineGraph->CopyToPolydata(poly);
 
 	m_SelectedPoint=m_PolylineGraph->GetMaxVertexId();
@@ -772,11 +772,11 @@ void medGeometryEditorPolylineGraph::SelectPoint(int pointID)
 {
 	double position[3];
 	m_PolylineGraph->GetVertexCoords(m_SelectedPoint,position);
-	vtkMAFSmartPointer<vtkPolyData> poly;
+	vtkNew<vtkPolyData> poly;
 	m_PolylineGraph->CopyToPolydata(poly);
 	m_SelectedPointVTK=poly->FindPoint(position);
 
-	vtkMAFSmartPointer<vtkCharArray> scalar;
+	vtkNew<vtkCharArray> scalar;
 	scalar->SetNumberOfComponents(1);
 	scalar->SetNumberOfTuples(m_PolylineGraph->GetNumberOfVertices());
 	for (int i=0;i<m_PolylineGraph->GetNumberOfVertices();i++)
@@ -802,7 +802,7 @@ int medGeometryEditorPolylineGraph::DeletePoint(int pointID)
 
 	if(m_PolylineGraph->GetConstVertexPtr(pointID)->GetDegree()<3)//a point could be delete only if has degree < 3
 	{
-		vtkMAFSmartPointer<vtkIdList> vList;
+		vtkNew<vtkIdList> vList;
 		m_PolylineGraph->GetConstVertexPtr(pointID)->GetVerticesIdList(vList);
 
 		int branch;
@@ -857,9 +857,9 @@ int medGeometryEditorPolylineGraph::DeletePoint(int pointID)
 		}
    
 
-		vtkMAFSmartPointer<vtkPolyData> poly;
+		vtkNew<vtkPolyData> poly;
 		m_PolylineGraph->CopyToPolydata(poly);
-		vtkMAFSmartPointer<vtkCharArray> scalar;
+		vtkNew<vtkCharArray> scalar;
 		scalar->SetNumberOfComponents(1);
 		scalar->SetNumberOfTuples(m_PolylineGraph->GetNumberOfVertices());
 		for (int i=0;i<m_PolylineGraph->GetNumberOfVertices();i++)
@@ -901,7 +901,7 @@ int medGeometryEditorPolylineGraph::DeletePoint(double position[3])
 void medGeometryEditorPolylineGraph::SelectBranch(double position[3])
 //----------------------------------------------------------------------------
 {
-	vtkMAFSmartPointer<vtkPolyData> poly;
+	vtkNew<vtkPolyData> poly;
 	m_PolylineGraph->CopyToPolydata(poly);
 	UpdateVMEEditorData(poly);
 
@@ -921,7 +921,7 @@ void medGeometryEditorPolylineGraph::SelectBranch(double position[3])
 	position2[1]=(position[1])-(normal[1]*m_SphereRadius);
 	position2[2]=(position[2])-(normal[2]*m_SphereRadius);
 
-	vtkMAFSmartPointer<vtkCellLocator> locator;
+	vtkNew<vtkCellLocator> locator;
 	locator->SetDataSet(poly);
 	locator->BuildLocator();
 	double t;
@@ -936,10 +936,10 @@ void medGeometryEditorPolylineGraph::SelectBranch(double position[3])
 
 	//Polydata for VMEEditorSelection
 	//This is needed to avoid scalar interpolation problem
-	vtkMAFSmartPointer<vtkPolyData> poly_selected;
-	vtkMAFSmartPointer<vtkPoints> points;
-	vtkMAFSmartPointer<vtkCellArray> lines;
-	vtkMAFSmartPointer<vtkIdList> idlist;
+	vtkNew<vtkPolyData> poly_selected;
+	vtkNew<vtkPoints> points;
+	vtkNew<vtkCellArray> lines;
+	vtkNew<vtkIdList> idlist;
 
 	vtkIdList *IDS=poly->GetCell(CellID)->GetPointIds();
   mafLogMessage(_M(mafString::Format(_R("Points %.3f %.3f %.3f"),position[0],position[1],position[2]))),
@@ -955,7 +955,7 @@ void medGeometryEditorPolylineGraph::SelectBranch(double position[3])
 	poly_selected->SetPoints(points);
   
 	//All point of poly_selected must have scalar 1.0 in way to color the tubes
-	vtkMAFSmartPointer<vtkCharArray> scalar_sel;
+	vtkNew<vtkCharArray> scalar_sel;
 	scalar_sel->SetNumberOfComponents(1);
 	scalar_sel->SetNumberOfTuples(poly_selected->GetNumberOfPoints());
 	for (int i=0;i<poly_selected->GetNumberOfPoints();i++)
@@ -964,7 +964,7 @@ void medGeometryEditorPolylineGraph::SelectBranch(double position[3])
 	}
 	poly_selected->GetPointData()->SetScalars(scalar_sel);
 
-	vtkMAFSmartPointer<vtkTubeFilter> tube;
+	vtkNew<vtkTubeFilter> tube;
 	tube->UseDefaultNormalOff();
 	tube->SetInputData(poly_selected);
 	tube->SetRadius(m_SphereRadius/1.8);

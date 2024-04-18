@@ -233,7 +233,7 @@ void medOpExporterVTKXML::SaveVTKData()
 
   vtkDataSet *writerInput = inputData;
 
-  /*vtkMAFSmartPointer<vtkImageCast> imageCast;
+  /*vtkNew<vtkImageCast> imageCast;
   
   if (m_ForceUnsignedShortScalarOutputForStructuredPoints)
   {    
@@ -247,11 +247,11 @@ void medOpExporterVTKXML::SaveVTKData()
     writerInput = inputData;
   }*/
 
-  vtkMAFSmartPointer<vtkXMLDataSetWriter> writer;
+  vtkNew<vtkXMLDataSetWriter> writer;
 
   if (m_ABSMatrixFlag)
   {
-    vtkMAFSmartPointer<vtkTransformPolyDataFilter> v_tpdf;
+    vtkNew<vtkTransformPolyDataFilter> v_tpdf;
     v_tpdf->SetInputConnection(((mafVME *)m_Input)->GetOutput()->GetVTKOutputPort());
     v_tpdf->SetTransform(((mafVME *)m_Input)->GetOutput()->GetTransform()->GetVTKTransform());
     v_tpdf->Update();

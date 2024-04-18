@@ -137,7 +137,7 @@ void mafOpBooleanSurface::OpRun()
 
   //creation of vme result
   mafNEW(m_ResultVME);
-	vtkMAFSmartPointer<vtkPolyData> poly;
+	vtkNew<vtkPolyData> poly;
 	poly->DeepCopy((vtkPolyData*)((mafVME*)m_Input)->GetOutput()->GetVTKData());
   m_ResultVME->SetData(poly,((mafVME*)m_Input)->GetTimeStamp());
   mafString name = _L("bool_");
@@ -280,7 +280,7 @@ void mafOpBooleanSurface::OnEvent(mafEventBase *maf_event)
 			break;
 		case ID_TRANSFORM:
 			{
-				vtkMAFSmartPointer<vtkTransform> currTr;
+				vtkNew<vtkTransform> currTr;
 				currTr->PostMultiply();
 				currTr->SetMatrix(m_ImplicitPlaneGizmo->GetAbsMatrixPipe()->GetVTKTransform()->GetMatrix());
 				currTr->Concatenate(e->GetMatrix()->GetVTKMatrix());
@@ -326,7 +326,7 @@ void mafOpBooleanSurface::Clip()
 	tr->Update();
 
 	m_ClipperPlane->SetTransform(tr);
-	vtkMAFSmartPointer<vtkClipPolyData>clipper;
+	vtkNew<vtkClipPolyData>clipper;
 	clipper->SetInputConnection(m_FirstOperatorVME->GetOutput()->GetVTKOutputPort());
 	clipper->SetClipFunction(m_ClipperPlane);
 	tr->Delete();
@@ -390,24 +390,24 @@ void mafOpBooleanSurface::Union()
 		vtkPolyData *dataSecondOperator = vtkPolyData::SafeDownCast(m_SecondOperatorVME->GetOutput()->GetVTKData());
 		if(dataFirstOperator && dataSecondOperator)
 		{
-			vtkMAFSmartPointer<vtkTransformPolyDataFilter> transformFirstDataInput;
+			vtkNew<vtkTransformPolyDataFilter> transformFirstDataInput;
 			transformFirstDataInput->SetTransform((vtkAbstractTransform *)((mafVME *)m_FirstOperatorVME)->GetAbsMatrixPipe()->GetVTKTransform());
 			transformFirstDataInput->SetInputConnection(((mafVME *)m_FirstOperatorVME)->GetOutput()->GetVTKOutputPort());
 			transformFirstDataInput->Update();
 
-			vtkMAFSmartPointer<vtkTransformPolyDataFilter> transformSecondDataInput;
+			vtkNew<vtkTransformPolyDataFilter> transformSecondDataInput;
 			transformSecondDataInput->SetTransform((vtkAbstractTransform *)((mafVME *)m_SecondOperatorVME)->GetAbsMatrixPipe()->GetVTKTransform());
 			transformSecondDataInput->SetInputConnection(((mafVME *)m_SecondOperatorVME)->GetOutput()->GetVTKOutputPort());
 			transformSecondDataInput->Update();
 
 			//Union
-			vtkMAFSmartPointer<vtkAppendPolyData> append;
+			vtkNew<vtkAppendPolyData> append;
 			append->SetInputConnection(transformFirstDataInput->GetOutputPort());
 			append->AddInputConnection(transformSecondDataInput->GetOutputPort());
 			append->Update();
 			//End Union
 
-			vtkMAFSmartPointer<vtkTransformPolyDataFilter> transformResultDataInput;
+			vtkNew<vtkTransformPolyDataFilter> transformResultDataInput;
 			transformResultDataInput->SetTransform((vtkAbstractTransform *)((mafVME *)m_FirstOperatorVME)->GetAbsMatrixPipe()->GetVTKTransform()->GetInverse());
 			transformResultDataInput->SetInputConnection(append->GetOutputPort());
 			transformResultDataInput->Update();
@@ -558,7 +558,7 @@ void mafOpBooleanSurface::ShowClipPlane(bool show)
 			m_ClipperPlane->SetOrigin(m_PlaneSource->GetOrigin());
 			m_ClipperPlane->SetNormal(m_PlaneSource->GetNormal());
 
-			vtkMAFSmartPointer<vtkArrowSource> arrow_shape;
+			vtkNew<vtkArrowSource> arrow_shape;
 			arrow_shape->SetShaftResolution(40);
 			arrow_shape->SetTipResolution(40);
 
@@ -572,7 +572,7 @@ void mafOpBooleanSurface::ShowClipPlane(bool show)
 			m_Arrow->SetScaleFactor(clip_sign * abs(maxBound/10.0));
 			m_Arrow->Update();
 
-			vtkMAFSmartPointer<vtkAppendPolyData> gizmo;
+			vtkNew<vtkAppendPolyData> gizmo;
 			gizmo->AddInputConnection(m_PlaneSource->GetOutputPort());
 			gizmo->AddInputConnection(m_Arrow->GetOutputPort());
 			gizmo->Update();
@@ -755,7 +755,7 @@ void mafOpBooleanSurface::VmeChoose(mafString title,mafEvent *e)
 	m_SecondOperatorVME = mafVMESurface::SafeDownCast(e->GetVme());
 	if(m_SecondOperatorVME == NULL && mafVMESurfaceParametric::SafeDownCast(e->GetVme()) != NULL)
   {
-    vtkMAFSmartPointer<vtkTransformPolyDataFilter> transformSecondDataInput;
+    vtkNew<vtkTransformPolyDataFilter> transformSecondDataInput;
     transformSecondDataInput->SetTransform((vtkAbstractTransform *)((mafVME *)e->GetVme())->GetAbsMatrixPipe()->GetVTKTransform());
     transformSecondDataInput->SetInputConnection(((mafVME *)e->GetVme())->GetOutput()->GetVTKOutputPort());
     transformSecondDataInput->Update();

@@ -725,7 +725,7 @@ int medOpImporterDicomOffis::BuildOutputVMEImagesFromDicom()
 		GenerateSliceTexture(count);
 
 		double spacing[3];
-		vtkMAFSmartPointer<vtkImageData> im;
+		vtkNew<vtkImageData> im;
 		im->DeepCopy(m_SliceTexture->GetInput());
 		if(!this->m_TestMode)
 		{
@@ -893,7 +893,7 @@ int medOpImporterDicomOffis::BuildOutputVMEImagesFromDicomCineMRI()
 			}
 
 			double spacing[3];
-			vtkMAFSmartPointer<vtkImageData> im;
+			vtkNew<vtkImageData> im;
 			im->DeepCopy(m_SliceTexture->GetInput());
 			if(!this->m_TestMode)
 			{
@@ -1185,7 +1185,7 @@ int medOpImporterDicomOffis::BuildOutputVMEGrayVolumeFromDicom()
 	}
 
 	n_slices -= numSliceToSkip;
-	vtkMAFSmartPointer<vtkMAFRGSliceAccumulate> accumulate;
+	vtkNew<vtkMAFRGSliceAccumulate> accumulate;
 	accumulate->SetNumberOfSlices(n_slices);
 	accumulate->BuildVolumeOnAxes(m_SortAxes);
 
@@ -1286,7 +1286,7 @@ int medOpImporterDicomOffis::BuildOutputVMEGrayVolumeFromDicom()
 	accumulate->Update();
 
 	//to reduce the use of memory bug #2305
-	//vtkMAFSmartPointer<vtkRectilinearGrid> rg_out;
+	//vtkNew<vtkRectilinearGrid> rg_out;
 	vtkRectilinearGrid *rg_out;
 	rg_out=accumulate->GetOutput();
 	//rg_out->Update();
@@ -1685,7 +1685,7 @@ int medOpImporterDicomOffis::BuildOutputVMEGrayVolumeFromDicomCineMRI()
 		}
 
 		// Build item at timestamp ts    
-		vtkMAFSmartPointer<vtkMAFRGSliceAccumulate> accumulator;
+		vtkNew<vtkMAFRGSliceAccumulate> accumulator;
 
 		// always build the volume on z-axis
 		accumulator->BuildVolumeOnAxes(m_SortAxes);
@@ -1711,7 +1711,7 @@ int medOpImporterDicomOffis::BuildOutputVMEGrayVolumeFromDicomCineMRI()
 
 		accumulator->Update();
 
-		vtkMAFSmartPointer<vtkRectilinearGrid> rg_out;
+		vtkNew<vtkRectilinearGrid> rg_out;
 		rg_out->DeepCopy(accumulator->GetOutput());
 		//rg_out->Update();
 
@@ -3205,10 +3205,10 @@ void medOpImporterDicomOffis::CreateSliceVTKPipeline()
 
 	vtkNEW(m_CropPlane);
 
-	vtkMAFSmartPointer<vtkOutlineFilter>	of;
+	vtkNew<vtkOutlineFilter>	of;
 	of->SetInputConnection(m_CropPlane->GetOutputPort());
 
-	vtkMAFSmartPointer<vtkPolyDataMapper> pdm;
+	vtkNew<vtkPolyDataMapper> pdm;
 	pdm->SetInputConnection(of->GetOutputPort());
 
 	vtkNEW(m_CropActor);
@@ -3998,7 +3998,7 @@ bool medOpImporterDicomOffis::ReadDicomFileList(mafString& currentSliceABSDirNam
 			}
 			m_RescaleIntercept = dcmRescaleIntercept;
 
-			vtkMAFSmartPointer<vtkImageData> dicomSliceVTKImageData;
+			vtkNew<vtkImageData> dicomSliceVTKImageData;
 			dicomSliceVTKImageData->SetDimensions(dcmRows, dcmColumns,1);
 			//dicomSliceVTKImageData->SetWholeExtent(0,dcmColumns-1,0,dcmRows-1,0,0);
 			//dicomSliceVTKImageData->SetUpdateExtent(0,dcmColumns-1,0,dcmRows-1,0,0);
@@ -4932,7 +4932,7 @@ void medOpImporterDicomOffis::GenerateSliceTexture(int imageID)
 		// double dim_x_clip = ceil((double)(((crop_bounds[1] - crop_bounds[0]) / spacing[0]) + 1));
 		// double dim_y_clip = ceil((double)(((crop_bounds[3] - crop_bounds[2]) / spacing[1]) + 1));
 
-		vtkMAFSmartPointer<vtkStructuredPoints> clip;
+		vtkNew<vtkStructuredPoints> clip;
 
 		double origin[3] = {crop_bounds[0], crop_bounds[2], crop_bounds[4]};
 
@@ -4949,7 +4949,7 @@ void medOpImporterDicomOffis::GenerateSliceTexture(int imageID)
 
 		//clip->Update();
 
-		vtkMAFSmartPointer<vtkProbeFilter> probe;
+		vtkNew<vtkProbeFilter> probe;
 		probe->SetInputData(clip);
 
 		vtkImageData *imageData = NULL;
@@ -5181,7 +5181,7 @@ void medOpImporterDicomOffis::ResampleVolume()
 			if (vtkDataSet *input_data = input_item->GetData())
 			{
 				// the resample filter
-				vtkMAFSmartPointer<vtkMAFVolumeResample> resampler;
+				vtkNew<vtkMAFVolumeResample> resampler;
 				double m_ZeroPadValue = 0.;
 				resampler->SetZeroValue(m_ZeroPadValue);
 
@@ -5224,7 +5224,7 @@ void medOpImporterDicomOffis::ResampleVolume()
 				resampler->SetVolumeAxisX(x_axis);
 				resampler->SetVolumeAxisY(y_axis);
 
-				vtkMAFSmartPointer<vtkStructuredPoints> outputSPData;
+				vtkNew<vtkStructuredPoints> outputSPData;
 				outputSPData->SetSpacing(m_VolumeSpacing);
 				// TODO: here I probably should allow a data type casting... i.e. a GUI widget
 				//outputSPData->SetScalarType(input_data->GetPointData()->GetScalars()->GetDataType());
@@ -5269,7 +5269,7 @@ void medOpImporterDicomOffis::RescaleTo16Bit(vtkImageData *dataSet)
 	if(dataSet->GetScalarType() == VTK_UNSIGNED_SHORT) return;
 
 	int i=0, size = dataSet->GetNumberOfPoints();
-	vtkMAFSmartPointer<vtkUnsignedShortArray> newScalars;
+	vtkNew<vtkUnsignedShortArray> newScalars;
 	for(;i<size;i++)
 	{
 		double value = dataSet->GetPointData()->GetScalars()->GetTuple1(i);

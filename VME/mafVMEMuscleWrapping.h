@@ -252,7 +252,7 @@ public:
   /*
   Fit an ellipsoid to a set of points
   */
-  //void fitEllipsoid(vtkMAFSmartPointer<vtkPoints> points, double* xres, double* yres, double* zres, double*r1, double* r2, double* r3, Matrix3d* rotationMatrix);
+  //void fitEllipsoid(vtkNew<vtkPoints> points, double* xres, double* yres, double* zres, double*r1, double* r2, double* r3, Matrix3d* rotationMatrix);
 
   mafVMEMuscleWrapping();
 	virtual ~mafVMEMuscleWrapping();
@@ -315,7 +315,7 @@ protected:
   mafString gError;
   double length;
   int m_ComputeStateCheckbox;
-  vtkMAFSmartPointer<vtkPoints> points;
+  vtkNew<vtkPoints> points;
  
 
   void SetLandmarkLink(const mafString&, mafNode *);

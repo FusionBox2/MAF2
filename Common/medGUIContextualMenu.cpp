@@ -277,7 +277,7 @@ void medGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
       if (!file.IsEmpty())
       {
         vtkRenderWindow *renwin = m_ViewActive->GetRWI()->GetRenderWindow();
-        vtkMAFSmartPointer<vtkVRMLExporter> vrml_exporter;
+        vtkNew<vtkVRMLExporter> vrml_exporter;
         vrml_exporter->SetFileName(file.GetCStr());
         vrml_exporter->SetInput(renwin);
         vrml_exporter->Update();

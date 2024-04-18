@@ -262,7 +262,7 @@ void medOpExtrusionHoles::SaveExtrusion()
 	  vtkNEW(clean);
 	  clean->SetInputConnection(m_ResultAfterExtrusion->GetOutputPort());
 	  clean->Update();
-	  vtkMAFSmartPointer<vtkTriangleFilter> triangle;
+	  vtkNew<vtkTriangleFilter> triangle;
 	  triangle->SetInputConnection(clean->GetOutputPort());
 	  triangle->Update();
 	  m_ResultPolydata->DeepCopy(triangle->GetOutput());
@@ -294,7 +294,7 @@ void medOpExtrusionHoles::Extrude()
   	return;
   }
 
-	vtkMAFSmartPointer<vtkPoints> points;
+	vtkNew<vtkPoints> points;
 	if(m_MaxBounds<100)
 	{
 		for(int i=0;i<m_ExtractHole->GetOutput()->GetNumberOfPoints();i++)

@@ -263,7 +263,7 @@ void medOpEqualizeHistogram::Algorithm()
   vtkImageData *im = vtkImageData::SafeDownCast(m_VolumeInput->GetOutput()->GetVTKData());
   //im->Update();
 
-  vtkMAFSmartPointer<vtkImageCast> vtkImageToFloat;
+  vtkNew<vtkImageCast> vtkImageToFloat;
   vtkImageToFloat->SetOutputScalarTypeToFloat ();
   vtkImageToFloat->SetInputConnection(m_VolumeInput->GetOutput()->GetVTKOutputPort());
   vtkImageToFloat->Modified();
@@ -290,11 +290,11 @@ void medOpEqualizeHistogram::Algorithm()
   itkTOvtk->SetInput( histeqFilter->GetOutput() );
   itkTOvtk->Update();
 
-  vtkMAFSmartPointer<vtkImageData> imOut;
+  vtkNew<vtkImageData> imOut;
   imOut->DeepCopy(itkTOvtk->GetOutput());
   //imOut->Update();
 
-  vtkMAFSmartPointer<vtkImageToStructuredPoints> imTosp;
+  vtkNew<vtkImageToStructuredPoints> imTosp;
   imTosp->SetInputData(imOut);
   imTosp->Update();
 

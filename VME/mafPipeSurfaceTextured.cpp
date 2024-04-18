@@ -265,13 +265,13 @@ void mafPipeSurfaceTextured::Create(mafNode *node, mafView *view/*, bool use_axe
     m_AssemblyFront->AddPart(m_Actor);
 
   // selection highlight
-  vtkMAFSmartPointer<vtkOutlineCornerFilter> corner;
+  vtkNew<vtkOutlineCornerFilter> corner;
 	corner->SetInputConnection(port);  
 
-  vtkMAFSmartPointer<vtkPolyDataMapper> corner_mapper;
+  vtkNew<vtkPolyDataMapper> corner_mapper;
 	corner_mapper->SetInputConnection(corner->GetOutputPort());
 
-  vtkMAFSmartPointer<vtkProperty> corner_props;
+  vtkNew<vtkProperty> corner_props;
 	corner_props->SetColor(1,1,1);
 	corner_props->SetAmbient(1);
 	corner_props->SetRepresentationToWireframe();
@@ -528,7 +528,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 								 imageNameTemp.Append(_R("temp.wrl"));
 								 
 								 
-								 vtkMAFSmartPointer<vtkVRMLExporter> writer;
+								 vtkNew<vtkVRMLExporter> writer;
 								 writer->SetFileName(imageNameTemp.GetCStr());
 								 vtkRenderer* renderer = vtkRenderer::New();
 								 renderer->AddActor(m_Actor);
@@ -549,7 +549,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 								 //writer->Write();
 								 //mafEventMacro(mafEvent(this, PROGRESSBAR_HIDE));
 									
-									 vtkMAFSmartPointer<vtkJPEGWriter> exporter;
+									 vtkNew<vtkJPEGWriter> exporter;
 									 //mafEventMacro(mafEvent(m_Actor->GetTexture()->GetInput(), BIND_TO_PROGRESSBAR, exporter));
 									 
 									 if (m_Actor->GetTexture()!= NULL)
@@ -662,8 +662,8 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 								  portchild->GetProducer()->Update();
 								 
 							
-								//  vtkMAFSmartPointer<vtkTriangleFilter>triangles;
-								//  vtkMAFSmartPointer<vtkTransformPolyDataFilter> v_tpdf;
+								//  vtkNew<vtkTriangleFilter>triangles;
+								//  vtkNew<vtkTransformPolyDataFilter> v_tpdf;
 								//  triangles->SetInput(data->GetSurfaceData());
 								//  triangles->Update();
 
@@ -712,7 +712,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 								  Sleep(1500);
 								  
 
-								  vtkMAFSmartPointer<vtkOBJExporter> writer;
+								  vtkNew<vtkOBJExporter> writer;
 								  writer->SetRenderWindow(renderWindow);
 								  mafString name = m_File;
 								  writer->SetFilePrefix(name.GetCStr());
@@ -731,7 +731,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 									  pathName = m_File;
 									  pathName.ExtractPathName();
 
-									  vtkMAFSmartPointer<vtkJPEGWriter> exporter;
+									  vtkNew<vtkJPEGWriter> exporter;
 									  exporter->SetInputConnection(m_Actor->GetTexture()->GetInputConnection(0, 0));
 									  mafString imageName = m_File;
 									  imageName.Erase(imageName.Length() - 3, imageName.Length() - 1);
@@ -822,21 +822,21 @@ void mafPipeSurfaceTextured::GenerateTextureMapCoordinate()
 
   if (m_SurfaceMaterial->m_TextureMappingMode == mmaMaterial::PLANE_MAPPING)
   {
-    vtkMAFSmartPointer<vtkTextureMapToPlane> plane_texture_mapper;
+    vtkNew<vtkTextureMapToPlane> plane_texture_mapper;
     plane_texture_mapper->SetInputConnection(port);
     plane_texture_mapper->AutomaticPlaneGenerationOn();
     m_Mapper->SetInputConnection(plane_texture_mapper->GetOutputPort());
   }
   else if (m_SurfaceMaterial->m_TextureMappingMode == mmaMaterial::CYLINDER_MAPPING)
   {
-    vtkMAFSmartPointer<vtkTextureMapToCylinder> cylinder_texture_mapper;
+    vtkNew<vtkTextureMapToCylinder> cylinder_texture_mapper;
     cylinder_texture_mapper->SetInputConnection(port);
     cylinder_texture_mapper->PreventSeamOff();
     m_Mapper->SetInputConnection(cylinder_texture_mapper->GetOutputPort());
   }
   else if (m_SurfaceMaterial->m_TextureMappingMode == mmaMaterial::SPHERE_MAPPING)
   {
-    vtkMAFSmartPointer<vtkTextureMapToSphere> sphere_texture_mapper;
+    vtkNew<vtkTextureMapToSphere> sphere_texture_mapper;
     sphere_texture_mapper->SetInputConnection(port);
     sphere_texture_mapper->PreventSeamOff();
     m_Mapper->SetInputConnection(sphere_texture_mapper->GetOutputPort());

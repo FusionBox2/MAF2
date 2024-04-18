@@ -464,7 +464,7 @@ void medOpSegmentation::OpDo()
   wxBusyInfo wait(_("Wait! Generating Surface Output"));
 
   
-  vtkMAFSmartPointer<vtkMEDVolumeToClosedSmoothSurface> volToSurface;
+  vtkNew<vtkMEDVolumeToClosedSmoothSurface> volToSurface;
   volToSurface->SetInputConnection(m_OutputVolume->GetOutput()->GetVTKOutputPort());
   volToSurface->SetContourValue(127.5);
   volToSurface->Update();
@@ -972,7 +972,7 @@ void medOpSegmentation::FloodFill(vtkIdType seed)
     wxBusyCursor wait_cursor;
     wxBusyInfo wait(_("Wait! The algorithm could take long time!"));
 
-    vtkMAFSmartPointer <vtkImageData>dummy;
+    vtkNew <vtkImageData>dummy;
     dummy->SetExtent(0,m_VolumeDimensions[0]-1,0,m_VolumeDimensions[1]-1,0,m_VolumeDimensions[2]-1);
     dummy->SetSpacing(m_VolumeSpacing);
     dummy->SetOrigin(0,0,0);
@@ -997,7 +997,7 @@ void medOpSegmentation::FloodFill(vtkIdType seed)
     ext[m_CurrentSlicePlane * 2] = (int)low;
     ext[m_CurrentSlicePlane * 2 + 1] = (int)hi;
 
-    vtkMAFSmartPointer <vtkImageClip> clipper;
+    vtkNew <vtkImageClip> clipper;
     clipper->SetInputData(dummy);
     clipper->SetOutputWholeExtent(ext);
     clipper->SetClipData(TRUE);
@@ -1005,7 +1005,7 @@ void medOpSegmentation::FloodFill(vtkIdType seed)
     vtkImageData *clippedDummy = clipper->GetOutput();
     //clippedDummy->Update();
 
-    vtkMAFSmartPointer <vtkImageData> input;
+    vtkNew <vtkImageData> input;
     input->SetExtent(0,(ext[1]-ext[0]),0,(ext[3]-ext[2]),0,(ext[5]-ext[4]));
     input->SetSpacing(m_VolumeSpacing);
     input->SetOrigin(0,0,0);
@@ -1013,7 +1013,7 @@ void medOpSegmentation::FloodFill(vtkIdType seed)
     //input->SetScalarTypeToUnsignedChar();
     //input->Update();
 
-    vtkMAFSmartPointer <vtkImageData> output;
+    vtkNew <vtkImageData> output;
 
     int center = ApplyFloodFill(input,output,seed);
 
@@ -1141,7 +1141,7 @@ bool medOpSegmentation::Refinement()
     m_ProgressBar->Update();
     m_GuiDialog->Update();
 
-    vtkMAFSmartPointer<vtkUnsignedCharArray> newScalars;
+    vtkNew<vtkUnsignedCharArray> newScalars;
     newScalars->SetName("SCALARS");
     newScalars->SetNumberOfTuples(m_VolumeDimensions[0]*m_VolumeDimensions[1]*m_VolumeDimensions[2]);
 
@@ -1149,7 +1149,7 @@ bool medOpSegmentation::Refinement()
     inputDataSet->GetPoint(m_CurrentSliceIndex*m_VolumeDimensions[0]*m_VolumeDimensions[1], point);
 
     vtkDataArray *inputScalars = inputDataSet->GetPointData()->GetScalars();
-    vtkMAFSmartPointer<vtkUnsignedCharArray> scalars;
+    vtkNew<vtkUnsignedCharArray> scalars;
     scalars->SetName("SCALARS");
     scalars->SetNumberOfTuples(m_VolumeDimensions[0]*m_VolumeDimensions[1]);
 
@@ -1167,7 +1167,7 @@ bool medOpSegmentation::Refinement()
           scalars->SetTuple1(k,value);
         }
 
-        vtkMAFSmartPointer<vtkStructuredPoints> im;
+        vtkNew<vtkStructuredPoints> im;
         im->SetDimensions(m_VolumeDimensions[0],m_VolumeDimensions[1],1);
         im->SetSpacing(m_VolumeSpacing[0],m_VolumeSpacing[1],0.0);
         im->GetPointData()->AddArray(scalars);
@@ -1175,7 +1175,7 @@ bool medOpSegmentation::Refinement()
         //im->SetScalarTypeToUnsignedChar();
         //im->Update();
 
-        vtkMAFSmartPointer<vtkStructuredPoints> filteredImage;
+        vtkNew<vtkStructuredPoints> filteredImage;
         if(ApplyRefinementFilter2(im, filteredImage) && filteredImage)
         {
           vtkDataArray *binaryScalars = filteredImage->GetPointData()->GetScalars();
@@ -1210,7 +1210,7 @@ bool medOpSegmentation::Refinement()
             scalars->SetTuple1(k,value);
           }
 
-          vtkMAFSmartPointer<vtkStructuredPoints> im;
+          vtkNew<vtkStructuredPoints> im;
           im->SetDimensions(m_VolumeDimensions[0],m_VolumeDimensions[1],1);
           im->SetSpacing(m_VolumeSpacing[0],m_VolumeSpacing[1],0.0);
           im->GetPointData()->AddArray(scalars);
@@ -1218,7 +1218,7 @@ bool medOpSegmentation::Refinement()
           //im->SetScalarTypeToUnsignedChar();
           //im->Update();
 
-          vtkMAFSmartPointer<vtkStructuredPoints> filteredImage;
+          vtkNew<vtkStructuredPoints> filteredImage;
           if(ApplyRefinementFilter2(im, filteredImage) && filteredImage)
           {
             vtkDataArray *binaryScalars = filteredImage->GetPointData()->GetScalars();
@@ -1238,7 +1238,7 @@ bool medOpSegmentation::Refinement()
 
     if (inputDataSet->IsA("vtkStructuredPoints"))
     {
-      vtkMAFSmartPointer<vtkStructuredPoints> newSP;
+      vtkNew<vtkStructuredPoints> newSP;
       newSP->CopyStructure(vtkStructuredPoints::SafeDownCast(inputDataSet));
       //newSP->Update();
       newSP->GetPointData()->AddArray(newScalars);
@@ -1254,7 +1254,7 @@ bool medOpSegmentation::Refinement()
 
     else
     {
-      vtkMAFSmartPointer<vtkRectilinearGrid> newRG;
+      vtkNew<vtkRectilinearGrid> newRG;
       newRG->CopyStructure(vtkRectilinearGrid::SafeDownCast(inputDataSet));
       //newRG->Update();
       newRG->GetPointData()->AddArray(newScalars);
@@ -1334,7 +1334,7 @@ bool medOpSegmentation::ApplyRefinementFilter(vtkStructuredPoints *inputImage, v
   typedef itk::VotingBinaryIterativeHoleFillingImageFilter<UCharImage> ITKVotingIterativeHoleFillingFilter;
   ITKVotingIterativeHoleFillingFilter::Pointer iterativeHoleFillingFilter = ITKVotingIterativeHoleFillingFilter::New();
 
-  vtkMAFSmartPointer<vtkImageCast> vtkImageToFloat;
+  vtkNew<vtkImageCast> vtkImageToFloat;
   vtkImageToFloat->SetOutputScalarTypeToUnsignedChar();
   vtkImageToFloat->SetInputData(inputImage);
   vtkImageToFloat->Modified();
@@ -3693,7 +3693,7 @@ void medOpSegmentation::OnRefinementSegmentationEvent(mafEvent *e)
         dataSet->GetPointData()->SetScalars(undoScalars);
         //dataSet->Update();
 
-        vtkMAFSmartPointer<vtkStructuredPoints> newDataSet;
+        vtkNew<vtkStructuredPoints> newDataSet;
         newDataSet->DeepCopy(dataSet);
 
         m_RefinementVolumeMask->SetData(newDataSet, m_Volume->GetTimeStamp());
@@ -3730,7 +3730,7 @@ void medOpSegmentation::OnRefinementSegmentationEvent(mafEvent *e)
         dataSet->GetPointData()->SetScalars(redoScalars);
         //dataSet->Update();
 
-        vtkMAFSmartPointer<vtkStructuredPoints> newDataSet;
+        vtkNew<vtkStructuredPoints> newDataSet;
         newDataSet->DeepCopy(dataSet);
 
         m_RefinementVolumeMask->SetData(newDataSet, m_Volume->GetTimeStamp());
@@ -4002,7 +4002,7 @@ void medOpSegmentation::SelectBrushImage(double x, double y, double z, bool sele
 
   dataset->GetPointData()->Update();
   //dataset->Update();
-  vtkMAFSmartPointer<vtkStructuredPoints> newImage;
+  vtkNew<vtkStructuredPoints> newImage;
   newImage->DeepCopy(dataset);
   //newImage->Update();
   m_ManualVolumeSlice->SetData(newImage,mafVME::SafeDownCast(m_ThresholdVolume)->GetTimeStamp(), 2);
@@ -4132,7 +4132,7 @@ void medOpSegmentation::SelectBrushImage(double x, double y, double z, bool sele
 
   dataset->GetPointData()->Update();
   dataset->Update();
-  vtkMAFSmartPointer<vtkStructuredPoints> newImage;
+  vtkNew<vtkStructuredPoints> newImage;
   newImage->DeepCopy(dataset);
   newImage->Update();
 
@@ -4554,7 +4554,7 @@ void medOpSegmentation::InitDataVolumeSlice(mafVMEVolumeGray *slice)
 
   vtkDataArray *inputScalars = inputData->GetPointData()->GetScalars();
 
-  vtkMAFSmartPointer<ImageType> scalars;
+  vtkNew<ImageType> scalars;
   scalars->SetName("SCALARS");
 
   double origin[3]; 
@@ -4619,7 +4619,7 @@ void medOpSegmentation::InitDataVolumeSlice(mafVMEVolumeGray *slice)
   if(ds->IsA("vtkStructuredPoints"))
   {
     vtkDataSet *imageData = slice->GetOutput()->GetVTKData();
-    vtkMAFSmartPointer<vtkStructuredPoints> newImageData;
+    vtkNew<vtkStructuredPoints> newImageData;
 
     if(m_CurrentSlicePlane == XY)
       newImageData->SetDimensions(m_VolumeDimensions[0],m_VolumeDimensions[1],numberOfSlices);
@@ -4645,7 +4645,7 @@ void medOpSegmentation::InitDataVolumeSlice(mafVMEVolumeGray *slice)
 
     vtkDataSet *rgData = slice->GetOutput()->GetVTKData();
 
-    vtkMAFSmartPointer<vtkRectilinearGrid> newRgData;
+    vtkNew<vtkRectilinearGrid> newRgData;
 
     vtkDataArray *x = vtkRectilinearGrid::SafeDownCast(inputData)->GetXCoordinates();
     vtkDataArray *y = vtkRectilinearGrid::SafeDownCast(inputData)->GetYCoordinates();
@@ -4744,7 +4744,7 @@ void medOpSegmentation::UpdateVolumeSlice()
 
   vtkDataArray *inputScalars = inputData->GetPointData()->GetScalars();
 
-  vtkMAFSmartPointer<vtkUnsignedCharArray> scalars;
+  vtkNew<vtkUnsignedCharArray> scalars;
   scalars->SetName("SCALARS");
 
   double origin[3]; 
@@ -4809,7 +4809,7 @@ void medOpSegmentation::UpdateVolumeSlice()
   if(ds->IsA("vtkStructuredPoints"))
   {
     vtkDataSet *imageData = m_ManualVolumeSlice->GetOutput()->GetVTKData();
-    vtkMAFSmartPointer<vtkStructuredPoints> newImageData;
+    vtkNew<vtkStructuredPoints> newImageData;
   
     if(m_CurrentSlicePlane == XY)
        newImageData->SetDimensions(m_VolumeDimensions[0],m_VolumeDimensions[1],numberOfSlices);
@@ -4835,7 +4835,7 @@ void medOpSegmentation::UpdateVolumeSlice()
 
     vtkDataSet *rgData = m_ManualVolumeSlice->GetOutput()->GetVTKData();
 
-    vtkMAFSmartPointer<vtkRectilinearGrid> newRgData;
+    vtkNew<vtkRectilinearGrid> newRgData;
 
     vtkDataArray *x = vtkRectilinearGrid::SafeDownCast(inputData)->GetXCoordinates();
     vtkDataArray *y = vtkRectilinearGrid::SafeDownCast(inputData)->GetYCoordinates();

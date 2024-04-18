@@ -221,7 +221,7 @@ int mafAgent::PlugEventSource(vtkObject *source,void (*f)(void *), void *self, m
   if (f==NULL)
     return 0;
 
-  vtkMAFSmartPointer<vtkOldStyleCallbackCommand> router; // to this object is delegated the due to receive incoming callbacks
+  vtkNew<vtkOldStyleCallbackCommand> router; // to this object is delegated the due to receive incoming callbacks
 
   router->SetClientData(self);
   router->SetCallback(f);

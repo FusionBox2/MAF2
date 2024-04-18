@@ -151,7 +151,7 @@ vtkStructuredPoints *vtkMEDBinaryImageFloodFill::FloodFill(vtkStructuredPoints *
   typedef itk::ImageToVTKImageFilter < Double > ItkDouble2Vtk;
 
   // must cast the image before pass it to the itk pipeline
-  vtkMAFSmartPointer<vtkImageCast> caster;
+  vtkNew<vtkImageCast> caster;
   caster->SetOutputScalarTypeToUnsignedChar();
   caster->SetInputData(input);
   caster->Update();

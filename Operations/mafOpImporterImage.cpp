@@ -260,28 +260,28 @@ void mafOpImporterImage::BuildImageSequence()
 
 		if(ext == _R("BMP"))
 		{
-			vtkMAFSmartPointer<vtkBMPReader> r;
+			vtkNew<vtkBMPReader> r;
 			r->SetFileName(m_Files[i].GetCStr());
 			r->Update();
       m_ImportedImage->SetData(r->GetOutput(),time);
 		} 
 		else if (ext == _R("JPG") || ext == _R("JPEG") )
 		{
-			vtkMAFSmartPointer<vtkJPEGReader> r;
+			vtkNew<vtkJPEGReader> r;
 			r->SetFileName(m_Files[i].GetCStr());
 			r->Update();
       m_ImportedImage->SetData(r->GetOutput(),time);
 		}
 		else if (ext == _R("PNG"))
 		{
-			vtkMAFSmartPointer<vtkPNGReader> r;
+			vtkNew<vtkPNGReader> r;
 			r->SetFileName(m_Files[i].GetCStr());
 			r->Update();
       m_ImportedImage->SetData(r->GetOutput(),time);
 		}
 		else if (ext == _R("TIF") || ext == _R("TIFF") )
 		{
-			vtkMAFSmartPointer<vtkTIFFReader> r;
+			vtkNew<vtkTIFFReader> r;
 			r->SetFileName(m_Files[i].GetCStr());
 			r->Update();
       m_ImportedImage->SetData(r->GetOutput(),time);

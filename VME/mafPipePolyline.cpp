@@ -852,7 +852,7 @@ vtkPolyData *mafPipePolyline::SplineProcess(vtkPolyData *polyData)
 {
   //cleaned point list
   vtkPoints *pts;
-  vtkMAFSmartPointer<vtkPoints> ptsSplined;
+  vtkNew<vtkPoints> ptsSplined;
   
   //Clear old data
   if (m_PolyFilteredLine!=NULL)
@@ -881,9 +881,9 @@ vtkPolyData *mafPipePolyline::SplineProcess(vtkPolyData *polyData)
   for(int lin=0;lin<polyData->GetNumberOfLines();lin++)
   {
 
-    vtkMAFSmartPointer<vtkCardinalSpline> splineX;
-    vtkMAFSmartPointer<vtkCardinalSpline> splineY;
-    vtkMAFSmartPointer<vtkCardinalSpline> splineZ;
+    vtkNew<vtkCardinalSpline> splineX;
+    vtkNew<vtkCardinalSpline> splineY;
+    vtkNew<vtkCardinalSpline> splineZ;
     int branchStart=evaluedPoints;
 
     lines->GetCell(cellID,linePointsNum,linePoints);
@@ -1045,14 +1045,14 @@ vtkPolyData *mafPipePolyline::BorderCreation()
 
   for(; s < m_HalfNumberOfBorders; s++)
   {
-    vtkMAFSmartPointer<vtkPolyData> polyUp;
+    vtkNew<vtkPolyData> polyUp;
     polyUp->DeepCopy(data); //value original
 
     vtkPoints *points = polyUp->GetPoints();
-    vtkMAFSmartPointer<vtkPoints> temporaryPointsUp;
+    vtkNew<vtkPoints> temporaryPointsUp;
 
-    vtkMAFSmartPointer<vtkPolyData> polyDown;
-    vtkMAFSmartPointer<vtkPoints> temporaryPointsDown;
+    vtkNew<vtkPolyData> polyDown;
+    vtkNew<vtkPoints> temporaryPointsDown;
 
     if(polyUp->GetNumberOfPoints() == 0)
     {
@@ -1175,8 +1175,8 @@ vtkPolyData *mafPipePolyline::BorderCreation()
 
     }
 
-    vtkMAFSmartPointer<vtkCellArray> cellArrayUp;
-    vtkMAFSmartPointer<vtkCellArray> cellArrayDown;
+    vtkNew<vtkCellArray> cellArrayUp;
+    vtkNew<vtkCellArray> cellArrayDown;
 
     vtkIdType pointId[2];
     for(int i = 0; i< temporaryPointsUp->GetNumberOfPoints();i++)

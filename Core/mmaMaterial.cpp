@@ -119,14 +119,14 @@ wxBitmap *mmaMaterial::MakeIcon()
 {
   //UpdateProp();
 
-	vtkMAFSmartPointer<vtkCamera> camera;
+	vtkNew<vtkCamera> camera;
   camera->ParallelProjectionOff();
   camera->SetViewAngle(30);
   camera->SetFocalPoint(0,0,0);
   camera->SetPosition(0,0,2);
   camera->SetViewUp(0,1,0);
 
-	vtkMAFSmartPointer<vtkLight> light;
+	vtkNew<vtkLight> light;
   light->SetPosition(-1,1,1);
 
   wxColour col = wxSystemSettings::GetColour(wxSYS_COLOUR_3DLIGHT);
@@ -134,18 +134,18 @@ wxBitmap *mmaMaterial::MakeIcon()
   float g = col.Green()/ 255.0;
   float b = col.Blue() / 255.0;
   
-	vtkMAFSmartPointer<vtkRenderer> ren;
+	vtkNew<vtkRenderer> ren;
   ren->SetBackground(r,g,b);
 	ren->AddLight(light);
 	ren->LightFollowCameraOff();
 	ren->SetActiveCamera(camera);
 	
-  vtkMAFSmartPointer<vtkRenderWindow> renwin;
+  vtkNew<vtkRenderWindow> renwin;
   renwin->AddRenderer(ren);
   renwin->OffScreenRenderingOn(); 
 	renwin->SetSize(25, 25);
 
-	vtkMAFSmartPointer<vtkTexturedSphereSource> ss;
+	vtkNew<vtkTexturedSphereSource> ss;
 	ss->SetPhiResolution(20);
 	ss->SetThetaResolution(20);
 	if (this->m_Prop->GetRepresentation() == 1)
@@ -159,19 +159,19 @@ wxBitmap *mmaMaterial::MakeIcon()
 		ss->SetPhiResolution(20);
   } 
 	
-	vtkMAFSmartPointer<vtkTexture> texture;
+	vtkNew<vtkTexture> texture;
   if (m_MaterialType == USE_TEXTURE)
   {
     texture->SetInputConnection(m_TexturePort);
   }
   
-  vtkMAFSmartPointer<vtkPolyDataMapper> pdm;
+  vtkNew<vtkPolyDataMapper> pdm;
 	pdm->SetInputConnection(ss->GetOutputPort());
 #if VTK_MAJOR_VERSION <= 7
 	pdm->SetImmediateModeRendering(0);
 #endif
 
-	vtkMAFSmartPointer<vtkActor> actor;
+	vtkNew<vtkActor> actor;
   actor->SetMapper(pdm);
   if (m_MaterialType == USE_VTK_PROPERTY)
   {
@@ -190,7 +190,7 @@ wxBitmap *mmaMaterial::MakeIcon()
   renwin->Render();
 
   //capture image from renderer
-	vtkMAFSmartPointer<vtkWindowToImageFilter> w2i;
+	vtkNew<vtkWindowToImageFilter> w2i;
 	w2i->SetInput(renwin);
 	w2i->Update();
 
@@ -200,7 +200,7 @@ wxBitmap *mmaMaterial::MakeIcon()
 	unsigned char buffer[25*25*3];
 
   //flip it - windows Bitmap are upside-down
-  vtkMAFSmartPointer<vtkImageExport> ie;
+  vtkNew<vtkImageExport> ie;
 	ie->SetInputConnection(w2i->GetOutputPort());
   ie->ImageLowerLeftOff();
   ie->SetExportVoidPointer(buffer);

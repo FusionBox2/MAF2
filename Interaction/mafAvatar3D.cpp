@@ -101,24 +101,24 @@ mafAvatar3D::mafAvatar3D()
 
   SetDebugTextPosition(0.15,0.15);
 
-  vtkMAFSmartPointer<vtkActor> wb_actor;
+  vtkNew<vtkActor> wb_actor;
   vtkNEW(m_WorkingBox); // use a member var to be able change size
 
-  vtkMAFSmartPointer<vtkPolyDataMapper> wb_mapper;
+  vtkNew<vtkPolyDataMapper> wb_mapper;
   wb_mapper->SetInputConnection(m_WorkingBox->GetOutputPort());
   wb_actor->SetMapper(wb_mapper);
   wb_actor->SetPickable(0);
 
-  vtkMAFSmartPointer<vtkAxes> axes;
-  vtkMAFSmartPointer<vtkPolyDataMapper> axes_mapper;
-  vtkMAFSmartPointer<vtkActor> axes_actor;
+  vtkNew<vtkAxes> axes;
+  vtkNew<vtkPolyDataMapper> axes_mapper;
+  vtkNew<vtkActor> axes_actor;
   axes->SetScaleFactor(.5); // Set fixed dimensions...
   axes_mapper->SetInputConnection(axes->GetOutputPort());
   axes_actor->SetMapper(axes_mapper);
   axes_actor->GetProperty()->SetInterpolationToFlat();
   axes_actor->SetPickable(0);
   
-  vtkMAFSmartPointer<vtkAssembly> wb_asm;
+  vtkNew<vtkAssembly> wb_asm;
   wb_asm->AddPart(wb_actor);
   wb_asm->AddPart(axes_actor);
   wb_asm->SetPickable(0);

@@ -622,10 +622,10 @@ void mafInteractor2DDistance::DrawMeasureTool(double x, double y)
     m_LineSourceVector1[m_LineSourceVector1.size()-1]->Update();
 
 		/*
-		vtkMAFSmartPointer<vtkAppendPolyData> polyAppend;
+		vtkNew<vtkAppendPolyData> polyAppend;
 		if(m_MeasureType == DISTANCE_BETWEEN_POINTS)
 		{
-			vtkMAFSmartPointer<vtkSphereSource> sphere; 
+			vtkNew<vtkSphereSource> sphere; 
 			sphere->SetCenter(tmpPt);
 			sphere->SetRadius(m_Distance/100.0);
 			sphere->SetThetaResolution(8);
@@ -811,7 +811,7 @@ void mafInteractor2DDistance::CreateHistogram()
     m_ProbingLine->SetResolution((int)m_Distance);
     m_ProbingLine->Update();
 
-    vtkMAFSmartPointer<vtkProbeFilter> prober;
+    vtkNew<vtkProbeFilter> prober;
     prober->SetInputConnection(m_ProbingLine->GetOutputPort());
     prober->SetSourceConnection(m_ProbedVME->GetOutput()->GetVTKOutputPort());
     prober->Update();
@@ -960,10 +960,10 @@ void mafInteractor2DDistance::SetManualDistance(double manualDistance)
 
 
 		/*
-		vtkMAFSmartPointer<vtkAppendPolyData> polyAppend;
+		vtkNew<vtkAppendPolyData> polyAppend;
 		if(m_MeasureType == DISTANCE_BETWEEN_POINTS)
 		{
-		vtkMAFSmartPointer<vtkSphereSource> sphere; 
+		vtkNew<vtkSphereSource> sphere; 
 		sphere->SetCenter(tmpPt);
 		sphere->SetRadius(m_Distance/100.0);
 		sphere->SetThetaResolution(8);

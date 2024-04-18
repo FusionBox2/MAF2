@@ -709,26 +709,26 @@ void medOpSmoothSurfaceCells::SmoothCells()
   m_RemoveUnSelectedCells->RemoveMarkedCells();
   m_RemoveUnSelectedCells->Update();
 
-  vtkMAFSmartPointer<vtkPolyData> toSmoothPolyData;
+  vtkNew<vtkPolyData> toSmoothPolyData;
   toSmoothPolyData->DeepCopy(m_RemoveUnSelectedCells->GetOutput());
   //toSmoothPolyData->Update();
 
   m_RemoveSelectedCells->RemoveMarkedCells();
   m_RemoveSelectedCells->Update();
 
-  vtkMAFSmartPointer<vtkPolyData> polyData;
+  vtkNew<vtkPolyData> polyData;
   polyData->DeepCopy(m_RemoveSelectedCells->GetOutput());
   //polyData->Update();
 
 
-  /*vtkMAFSmartPointer<vtkLinearSubdivisionFilter> linearSubdivisionFilter;
+  /*vtkNew<vtkLinearSubdivisionFilter> linearSubdivisionFilter;
   linearSubdivisionFilter->SetInput(toSmoothPolyData);
   linearSubdivisionFilter->SetNumberOfSubdivisions(1);
   linearSubdivisionFilter->Update();
 
   int num = linearSubdivisionFilter->GetOutput()->GetNumberOfPoints();*/
 
-  vtkMAFSmartPointer<vtkSmoothPolyDataFilter> smoothFilter;
+  vtkNew<vtkSmoothPolyDataFilter> smoothFilter;
   smoothFilter->SetInputData(toSmoothPolyData);
   smoothFilter->SetNumberOfIterations(m_SmoothParameterNumberOfInteractions);
   smoothFilter->BoundarySmoothingOff();//always true
@@ -736,12 +736,12 @@ void medOpSmoothSurfaceCells::SmoothCells()
   smoothFilter->SetFeatureAngle(m_SmoothParameterFeatureAngle);
   smoothFilter->Update();
 
-  vtkMAFSmartPointer<vtkAppendPolyData> appendFilter; 
+  vtkNew<vtkAppendPolyData> appendFilter; 
   appendFilter->AddInputConnection(smoothFilter->GetOutputPort());
   appendFilter->AddInputData(polyData);
   appendFilter->Update();
 
-  vtkMAFSmartPointer<vtkCleanPolyData> cleanFilter; 
+  vtkNew<vtkCleanPolyData> cleanFilter; 
   cleanFilter->SetInputConnection(appendFilter->GetOutputPort());
   cleanFilter->Update();
 

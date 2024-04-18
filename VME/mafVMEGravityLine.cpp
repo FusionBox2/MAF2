@@ -668,7 +668,7 @@ void mafVMEGravityLine::InternalUpdate()
 		vtkPolyData *polydata = m_Goniometer->GetOutput();
 		int num = m_Goniometer->GetOutput()->GetNumberOfPoints();
 		vtkIdType pointId[2];
-		vtkMAFSmartPointer<vtkCellArray> cellArray;
+		vtkNew<vtkCellArray> cellArray;
 		for (int i = 0; i< num; i++)
 		{
 			if (i > 0)
@@ -843,7 +843,7 @@ void mafVMEGravityLine::InternalUpdate()
 				vtkPolyData *polydata = m_Goniometer->GetOutput();
 				int num = m_Goniometer->GetOutput()->GetNumberOfPoints();
 				vtkIdType pointId[2];
-				vtkMAFSmartPointer<vtkCellArray> cellArray;
+				vtkNew<vtkCellArray> cellArray;
 				for (int i = 0; i< num; i++)
 				{
 					if (i > 0)

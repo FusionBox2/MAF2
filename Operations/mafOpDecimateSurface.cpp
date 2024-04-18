@@ -224,7 +224,7 @@ void mafOpDecimateSurface::OnDecimate()
 		m_Gui->Update();
 	}
 
-	vtkMAFSmartPointer<vtkDecimatePro> decimate;
+	vtkNew<vtkDecimatePro> decimate;
 	decimate->SetInputData(m_ResultPolydata);
 	decimate->SetPreserveTopology(m_TopologyFlag); 
 	decimate->SetTargetReduction(m_Reduction/100.0);

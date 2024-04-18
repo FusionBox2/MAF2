@@ -257,9 +257,9 @@ void medPipeTrajectories::UpdateProperty(bool fromTag)
 
   m_Traj->RemoveAllInputs();
 
-  vtkMAFSmartPointer<vtkPolyData> line;
-  vtkMAFSmartPointer<vtkPoints> points;
-  vtkMAFSmartPointer<vtkCellArray> cellArray;
+  vtkNew<vtkPolyData> line;
+  vtkNew<vtkPoints> points;
+  vtkNew<vtkCellArray> cellArray;
 
   vtkIdType pointId[2];
   int counter = 0;

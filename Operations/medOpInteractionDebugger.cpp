@@ -256,8 +256,8 @@ void medOpInteractionDebugger::BuildPolyline2(vtkPoints *in_points)
 
 void medOpInteractionDebugger::BuildVMEPolyline( vtkPoints * in_points, mafVMEPolyline *polyline )
 {
-  vtkMAFSmartPointer<vtkPolyData> in_data;
-  vtkMAFSmartPointer<vtkCellArray> in_cells;
+  vtkNew<vtkPolyData> in_data;
+  vtkNew<vtkCellArray> in_cells;
 
   vtkIdType pointId[2];
   for(int i = 0; i< in_points->GetNumberOfPoints();i++)
@@ -316,7 +316,7 @@ void medOpInteractionDebugger::BuildPolyline3(vtkPoints *in_points)
 
 void medOpInteractionDebugger::AddMAFVMEPolylineTestConstrain1ToTree()
 {
-  vtkMAFSmartPointer<vtkPoints> in_points;
+  vtkNew<vtkPoints> in_points;
   mafVMEPolyline *polyline;
   mafNEW(polyline);
 
@@ -332,7 +332,7 @@ void medOpInteractionDebugger::AddMAFVMEPolylineTestConstrain1ToTree()
 
 void medOpInteractionDebugger::AddMEDVMEPolylineGraphTestConstrain1ToTree()
 {
-  vtkMAFSmartPointer<vtkPolyData> pd;
+  vtkNew<vtkPolyData> pd;
   BuildGraph1(pd);
 
   medVMEPolylineGraph *polyline;
@@ -362,7 +362,7 @@ void medOpInteractionDebugger::RemoveTestConstraintGraph1FromTree()
 
 void medOpInteractionDebugger::AddMAFVMEPolylineTestConstrain2ToTree()
 {
-  vtkMAFSmartPointer<vtkPoints> in_points;
+  vtkNew<vtkPoints> in_points;
   mafVMEPolyline *polyline;
   mafNEW(polyline);
 
@@ -377,7 +377,7 @@ void medOpInteractionDebugger::AddMAFVMEPolylineTestConstrain2ToTree()
 
 void medOpInteractionDebugger::AddMAFVMEPolylineTestConstrain3ToTree()
 {
-  vtkMAFSmartPointer<vtkPoints> in_points;
+  vtkNew<vtkPoints> in_points;
   mafVMEPolyline *polyline;
   mafNEW(polyline);
 

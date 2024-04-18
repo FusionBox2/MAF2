@@ -737,7 +737,7 @@ void medVMEMuscleWrapper::SetVmeTimeStamp(mafVME* vme, double t)
 void medVMEMuscleWrapper::DeformMuscle(vtkPolyData* pMuscle)
 //------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer< vtkMEDPolyDataDeformation > pDeformer;
+  vtkNew< vtkMEDPolyDataDeformation > pDeformer;
   
   int nCurves = 0;
   pDeformer->SetNumberOfSkeletons(0);

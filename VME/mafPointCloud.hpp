@@ -18,7 +18,7 @@ public:
     mafdmPointCloud();
     mafdmPointCloud(vtkSmartPointer<vtkPoints> points);
     
-    vtkMAFSmartPointer<vtkActor> makeRenderer();
+    vtkNew<vtkActor> makeRenderer();
     void describe();
         wxXmlNode* getNode();
 		void SetMatrix(const mafMatrix &mat){};

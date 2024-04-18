@@ -43,7 +43,7 @@ On left button up: Send cursor position in world coordinates to the listener
 Picked World Coordinates position is sent as single vtkPoint to the listener
 in the following way:
 -----------------
-vtkMAFSmartPointer<vtkPoints> position_point; 
+vtkNew<vtkPoints> position_point; 
 position_point->SetNumberOfPoints(1);
 position_point->SetPoint(0,wp[0],wp[1],wp[2]);
 

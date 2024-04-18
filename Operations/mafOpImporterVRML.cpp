@@ -191,9 +191,9 @@ void  mafOpImporterVRML::ImportVRML()
   mafNEW(m_Group);
   m_Group->SetName(name);
 
-  vtkMAFSmartPointer<vtkRenderWindow> rw;
+  vtkNew<vtkRenderWindow> rw;
 
-  vtkMAFSmartPointer<vtkVRMLImporter> importer;
+  vtkNew<vtkVRMLImporter> importer;
 
   importer->SetRenderWindow(rw.GetPointer());
   importer->SetFileName(m_File.GetCStr());

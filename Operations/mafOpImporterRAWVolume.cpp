@@ -133,15 +133,15 @@ void mafOpImporterRAWVolume::OpRun()
 	vtkNEW(m_Reader);
 	vtkNEW(m_LookupTable);
 
-  vtkMAFSmartPointer<vtkTexture> texture;
+  vtkNew<vtkTexture> texture;
 	texture->SetInputConnection(m_Reader->GetOutputPort());
 	texture->InterpolateOn();
   //texture->MapColorScalarsThroughLookupTableOn();
   texture->SetLookupTable((vtkLookupTable *)m_LookupTable);
 
-	vtkMAFSmartPointer<vtkPlaneSource> plane;
+	vtkNew<vtkPlaneSource> plane;
 
-	vtkMAFSmartPointer<vtkPolyDataMapper> mapper;
+	vtkNew<vtkPolyDataMapper> mapper;
 	mapper ->SetInputConnection(plane->GetOutputPort());
 
 	vtkNEW(m_Actor);
@@ -420,7 +420,7 @@ bool mafOpImporterRAWVolume::Import()
 	if(!m_TestMode)
 		wxBusyInfo wait(_("Importing RAW data, please wait..."));
 
- 	vtkMAFSmartPointer<vtkImageReader> reader;
+ 	vtkNew<vtkImageReader> reader;
 	reader->SetFileName(m_RawFile.GetCStr());
 
 	switch(m_ScalarType)
@@ -472,7 +472,7 @@ bool mafOpImporterRAWVolume::Import()
 //  reader->SetDataOrigin(0.0,0.0,m_SliceVOI[0]*m_DataSpacing[2]);
 	reader->Update();
 
-  vtkMAFSmartPointer<vtkImageToStructuredPoints> image_to_sp;
+  vtkNew<vtkImageToStructuredPoints> image_to_sp;
   image_to_sp->SetInputConnection(reader->GetOutputPort());
   image_to_sp->Update();
 
@@ -484,9 +484,9 @@ bool mafOpImporterRAWVolume::Import()
 		vtkSmartPointer<vtkPointData> data = structured_data->GetPointData();
 		vtkSmartPointer<vtkDataArray> scalars = data->GetScalars();
 
-		vtkMAFSmartPointer<vtkDoubleArray> XDoubleArray;
-		vtkMAFSmartPointer<vtkDoubleArray> YDoubleArray;
-		vtkMAFSmartPointer<vtkDoubleArray> ZDoubleArray;
+		vtkNew<vtkDoubleArray> XDoubleArray;
+		vtkNew<vtkDoubleArray> YDoubleArray;
+		vtkNew<vtkDoubleArray> ZDoubleArray;
 
 		double origin[3];
 		structured_data->GetOrigin(origin);
@@ -522,7 +522,7 @@ bool mafOpImporterRAWVolume::Import()
 
 		f_in.close();
 
-		vtkMAFSmartPointer<vtkRectilinearGrid> rectilinear_data;
+		vtkNew<vtkRectilinearGrid> rectilinear_data;
 
 		rectilinear_data->SetXCoordinates(XDoubleArray);
 		rectilinear_data->SetYCoordinates(YDoubleArray);

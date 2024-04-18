@@ -160,13 +160,13 @@ void medPipeVolumeDRR::Create(mafNode *node, mafView *view)
   
   m_AssemblyFront->AddPart(m_Volume);
   
-  vtkMAFSmartPointer<vtkOutlineCornerFilter> selection_filter;
+  vtkNew<vtkOutlineCornerFilter> selection_filter;
   selection_filter->SetInputData(data);  
 
-  vtkMAFSmartPointer<vtkPolyDataMapper> selection_papper;
+  vtkNew<vtkPolyDataMapper> selection_papper;
   selection_papper->SetInputConnection(selection_filter->GetOutputPort());
 
-  vtkMAFSmartPointer<vtkProperty> selection_property;
+  vtkNew<vtkProperty> selection_property;
   selection_property->SetColor(1,1,1);
   selection_property->SetAmbient(1);
   selection_property->SetRepresentationToWireframe();

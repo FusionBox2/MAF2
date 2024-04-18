@@ -66,11 +66,11 @@ void mafPipeScalarMatrix::Create(mafNode *node, mafView *view)
 
   vtkDataSet *ds = m_Vme->GetOutput()->GetVTKData();
 
-  vtkMAFSmartPointer<vtkTextProperty> tprop;
+  vtkNew<vtkTextProperty> tprop;
   tprop->SetColor(1, 1, 1);
   tprop->ShadowOn();
 
-  vtkMAFSmartPointer<vtkPolyDataMapper> mapper;
+  vtkNew<vtkPolyDataMapper> mapper;
   mapper->SetInputConnection(m_Vme->GetOutput()->GetVTKOutputPort());
   mapper->ScalarVisibilityOn();
   mapper->SetScalarRange(ds->GetScalarRange());

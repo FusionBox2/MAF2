@@ -157,7 +157,7 @@ void mmiVTKPicker::OnMouseMove()
         pointNewPos[i] = cameraPos[i] + pointNewPos[i]*dblDist;        
       }
 
-      vtkMAFSmartPointer< vtkPoints > points;      
+      vtkNew< vtkPoints > points;      
       points->InsertNextPoint(pointNewPos);
 
       mafEvent ev(this, VME_PICKING, points);

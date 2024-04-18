@@ -252,7 +252,7 @@ void lhpVMELeverArm::InternalUpdate()
       line->GetPolylineData();
 
       mafSmartPointer<mafTransform> matr;
-      vtkMAFSmartPointer<vtkTransformPolyDataFilter> transf;
+      vtkNew<vtkTransformPolyDataFilter> transf;
       matr->SetMatrix(tmLine);
       transf->SetInputConnection(line->GetVTKOutputPort());
       transf->SetTransform(matr->GetVTKTransform());
@@ -367,7 +367,7 @@ void lhpVMELeverArm::InternalUpdate()
   vtkPolyData *polydata = m_Goniometer->GetOutput();
   int num = m_Goniometer->GetOutput()->GetNumberOfPoints();
   vtkIdType pointId[2];
-  vtkMAFSmartPointer<vtkCellArray> cellArray;
+  vtkNew<vtkCellArray> cellArray;
   for(int i = 0; i< num;i++)
   {
     if (i > 0)

@@ -127,7 +127,7 @@ int lhpVMEMeshRSScanImporter::Read()
     }
     sscanf(frs, "Frame %i (%lf ms)", &frame, &ts);
     ts += m_TimeShift;
-    vtkMAFSmartPointer<vtkUnstructuredGrid> grid;
+    vtkNew<vtkUnstructuredGrid> grid;
     grid->Initialize();
     GenerateGrid(grid);
     vnl_matrix<double> TempMatrix;

@@ -69,7 +69,7 @@ mafVMECylinder::mafVMECylinder()
 	GetMaterial();
 	vtkNEW(m_PolyData);
 	
-	vtkMAFSmartPointer<vtkCylinderSource> surf;
+	vtkNew<vtkCylinderSource> surf;
 	surf->SetRadius(a);
 	surf->SetResolution(res);
 	
@@ -77,10 +77,10 @@ mafVMECylinder::mafVMECylinder()
 
 
 
-	vtkMAFSmartPointer<vtkTransform> t;
+	vtkNew<vtkTransform> t;
 	t->Scale(1, 1, 1);
 	t->Update();
-	vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
+	vtkNew<vtkTransformPolyDataFilter> ptf;
 	ptf->SetTransform(t);
 	ptf->SetInputConnection(surf->GetOutputPort());
 	ptf->Update();
@@ -498,7 +498,7 @@ void mafVMECylinder::InternalUpdate()
 
 	}
 
-	vtkMAFSmartPointer<vtkCylinderSource> surf;
+	vtkNew<vtkCylinderSource> surf;
 
 
 	m_TmpTransform->SetMatrix(GetOutput()->GetAbsTransform()->GetMatrix());
@@ -517,7 +517,7 @@ void mafVMECylinder::InternalUpdate()
 	surf->Update();
 	
 
-	/*vtkMAFSmartPointer<vtkTransform> t;
+	/*vtkNew<vtkTransform> t;
 	t->Translate(-centerLocal[0], -centerLocal[1], -centerLocal[2]);
 	t->PostMultiply();
 
@@ -542,7 +542,7 @@ void mafVMECylinder::InternalUpdate()
 
 	
 
-	vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
+	vtkNew<vtkTransformPolyDataFilter> ptf;
 	ptf->SetTransform(t);
 	ptf->SetInput(surf->GetOutput());
 	ptf->Update();*/
@@ -648,17 +648,17 @@ bool mafVMECylinder::Equals(mafVME *vme)
 vtkTransformPolyDataFilter* mafVMECylinder::getTransformPDF()
 {
 
-	vtkMAFSmartPointer<vtkCylinderSource> surf;
+	vtkNew<vtkCylinderSource> surf;
 	surf->SetCenter(center(0), center(1), center(2));
 	surf->SetRadius(a);
 	surf->SetResolution(res);
 	surf->SetHeight(h);
 	surf->Update();
 
-	vtkMAFSmartPointer<vtkTransform> t;
+	vtkNew<vtkTransform> t;
 	t->Scale(1, 1,1);
 	t->Update();
-	vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
+	vtkNew<vtkTransformPolyDataFilter> ptf;
 	ptf->SetTransform(t);
 	ptf->SetInputConnection(surf->GetOutputPort());
 	ptf->Update();

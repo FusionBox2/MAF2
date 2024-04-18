@@ -142,7 +142,7 @@ void mafOpConnectivitySurface::CreateGui()
   m_Gui->Label(_L("Extracted:"), &m_NumberOfExtractedSurfaces);
 
 
-  vtkMAFSmartPointer<vtkPolyDataConnectivityFilter> connectivityFilter;
+  vtkNew<vtkPolyDataConnectivityFilter> connectivityFilter;
   connectivityFilter->SetInputData(m_OriginalPolydata);
   connectivityFilter->SetExtractionModeToAllRegions();
   connectivityFilter->Update();
@@ -211,7 +211,7 @@ void mafOpConnectivitySurface::OnEvent(mafEventBase *maf_event)
 				}
 				else
 				{
-					vtkMAFSmartPointer<vtkPolyDataConnectivityFilter> connectivityFilter;
+					vtkNew<vtkPolyDataConnectivityFilter> connectivityFilter;
 					connectivityFilter->SetInputData(m_OriginalPolydata);
 					connectivityFilter->SetExtractionModeToAllRegions();
 					connectivityFilter->Update();
@@ -285,7 +285,7 @@ void mafOpConnectivitySurface::OnVtkConnect()
 //     m_Gui->Update();
 //     return;
 //   }
-	vtkMAFSmartPointer<vtkPolyDataConnectivityFilter> connectivityFilter;
+	vtkNew<vtkPolyDataConnectivityFilter> connectivityFilter;
 	connectivityFilter->SetInputData(m_OriginalPolydata);
 	int regionNumbers;
 	if(m_ExtractBiggestSurface == 1)
@@ -318,7 +318,7 @@ void mafOpConnectivitySurface::OnVtkConnect()
 		if(valueBoundThreshold <= maxBound)
 		{
 
-      vtkMAFSmartPointer<vtkCleanPolyData> clean;
+      vtkNew<vtkCleanPolyData> clean;
       clean->SetInputConnection(connectivityFilter->GetOutputPort());
       clean->Update();
 

@@ -67,7 +67,7 @@ int medOpImporterVTK::ImportVTK()
   if(!this->m_TestMode)
     wxBusyInfo wait(_("Loading file: ..."));
 
-  vtkMAFSmartPointer<vtkDataSetReader> reader;
+  vtkNew<vtkDataSetReader> reader;
   reader->SetFileName(m_File.GetCStr());
 
   int canRead=TRUE;

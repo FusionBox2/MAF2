@@ -186,7 +186,7 @@ void medOpTriangulateSurface::OnTriangle()
 	  m_Gui->Update();
   }
 
-	vtkMAFSmartPointer<vtkTriangleFilter> smoothFilter;
+	vtkNew<vtkTriangleFilter> smoothFilter;
 	smoothFilter->SetInputData(m_ResultPolydata);
 	smoothFilter->Update();
 

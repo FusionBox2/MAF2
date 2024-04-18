@@ -169,7 +169,7 @@ void mafInteractor6DOFCameraMove::Update()
   oriz_trans[1] = oriz_trans_mod * x_vect[1];
   oriz_trans[2] = oriz_trans_mod * x_vect[2];
   
-  vtkMAFSmartPointer<vtkTransform> trans2;
+  vtkNew<vtkTransform> trans2;
   trans2->DeepCopy(trans);
   trans2->Translate(-up_trans[0],-up_trans[1],-up_trans[2]);
   trans2->Translate(-oriz_trans[0],-oriz_trans[1],-oriz_trans[2]);

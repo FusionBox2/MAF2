@@ -777,7 +777,7 @@ void mafVMEMeter::InternalUpdate()
   vtkPolyData *polydata = m_Goniometer->GetOutput();
   int num = m_Goniometer->GetOutput()->GetNumberOfPoints();
   vtkIdType pointId[2];
-  vtkMAFSmartPointer<vtkCellArray> cellArray;
+  vtkNew<vtkCellArray> cellArray;
   for(int i = 0; i< num;i++)
   {
     if (i > 0)
@@ -1280,7 +1280,7 @@ void mafVMEMeter::CreateHistogram()
     m_ProbedVME->SetTimeStamp(currTs);
     m_ProbedVME->Update();
 
-    vtkMAFSmartPointer<vtkTransform> transformStart;
+    vtkNew<vtkTransform> transformStart;
     mafVME *start_vme = GetStartVME();
     mafMatrix matrixStart;
     start_vme->GetOutput()->GetMatrix(matrixStart, currTs);
@@ -1299,7 +1299,7 @@ void mafVMEMeter::CreateHistogram()
       point1[2] = m_StartPoint[2];
     }
 
-    vtkMAFSmartPointer<vtkTransform> transformEnd;
+    vtkNew<vtkTransform> transformEnd;
    
     mafVME *end_vme1 = GetEnd1VME();
     mafMatrix matrixEnd1;
@@ -1352,7 +1352,7 @@ void mafVMEMeter::CreateHistogram()
     m_ProbingLine->SetResolution((int)m_Distance);
     m_ProbingLine->Update();
 
-    vtkMAFSmartPointer<vtkProbeFilter> prober;
+    vtkNew<vtkProbeFilter> prober;
     prober->SetInputConnection(m_ProbingLine->GetOutputPort());
     prober->SetSourceConnection(m_ProbedVME->GetOutput()->GetVTKOutputPort());
     prober->Update();

@@ -713,7 +713,7 @@ void mafVMEOsteometricBoard::InternalUpdate()
 			
 		
 							 
-			//vtkMAFSmartPointer<vtkTriangleFilter> triangle;
+			//vtkNew<vtkTriangleFilter> triangle;
 			//triangle->SetInput(surf->GetOutput());
 			//triangle->Update();
 			if (plan2 != NULL)

@@ -381,7 +381,7 @@ int medOpComputeInertialTensor::ComputeLocalInertialTensor(mafNode* node, int cu
 	surf->GetOutput()->Update();
 	//surf->GetOutput()->GetVTKData()->Update();
 	
-	vtkMAFSmartPointer<vtkTransformPolyDataFilter> tranformFilter;
+	vtkNew<vtkTransformPolyDataFilter> tranformFilter;
   tranformFilter->SetInputConnection(surf->GetOutput()->GetVTKOutputPort());
   tranformFilter->SetTransform(surf->GetOutput()->GetTransform()->GetVTKTransform());
   tranformFilter->Update();

@@ -279,7 +279,7 @@ void mafOpFilterSurface::OnClean()
     m_Gui->Update();
 	}
 
-	vtkMAFSmartPointer<vtkCleanPolyData> cleanPolydata;
+	vtkNew<vtkCleanPolyData> cleanPolydata;
   cleanPolydata->SetTolerance(0.0);
 	cleanPolydata->SetInputData(m_ResultPolydata);
 // 	cleanPolydata->PointMergingOff(); 
@@ -311,7 +311,7 @@ void mafOpFilterSurface::OnVtkConnect()
 		m_Gui->Update();
 	}
 
-	vtkMAFSmartPointer<vtkPolyDataConnectivityFilter> connectivityFilter;
+	vtkNew<vtkPolyDataConnectivityFilter> connectivityFilter;
 	connectivityFilter->SetInputData(m_ResultPolydata);
 	connectivityFilter->Update();
 
@@ -339,7 +339,7 @@ void mafOpFilterSurface::OnSmooth()
 		m_Gui->Update();
 	}
 
-	vtkMAFSmartPointer<vtkSmoothPolyDataFilter> smoothFilter;
+	vtkNew<vtkSmoothPolyDataFilter> smoothFilter;
 	smoothFilter->SetInputData(m_ResultPolydata);
 	smoothFilter->SetNumberOfIterations(m_Iterations);
 	smoothFilter->FeatureEdgeSmoothingOn();
@@ -372,7 +372,7 @@ void mafOpFilterSurface::OnDecimate()
 		m_Gui->Update();
 	}
 
-	vtkMAFSmartPointer<vtkDecimatePro> decimate;
+	vtkNew<vtkDecimatePro> decimate;
 	decimate->SetInputData(m_ResultPolydata);
 	decimate->SetPreserveTopology(m_TopologyFlag); 
 	decimate->SetTargetReduction(m_Reduction/100.0);
@@ -405,7 +405,7 @@ void mafOpFilterSurface::OnStripper()
 		m_Gui->Update();
 	}
 
-  vtkMAFSmartPointer<vtkStripper> stripper;
+  vtkNew<vtkStripper> stripper;
 	stripper->SetInputData(m_ResultPolydata);
 	stripper->Update();
 
@@ -432,7 +432,7 @@ void mafOpFilterSurface::OnTriangulate()
 		m_Gui->Update();
 	}
 
-	vtkMAFSmartPointer<vtkTriangleFilter> triangleFilter;
+	vtkNew<vtkTriangleFilter> triangleFilter;
 	triangleFilter->SetInputData(m_ResultPolydata);
 	triangleFilter->Update();
 
@@ -462,7 +462,7 @@ void mafOpFilterSurface::OnGenerateNormals()
 		m_Gui->Update();
 	}
 
-	vtkMAFSmartPointer<vtkPolyDataNormals> normalFilter;
+	vtkNew<vtkPolyDataNormals> normalFilter;
 	normalFilter->SetInputData(m_ResultPolydata);
 
 	if (m_FlipNormals) 

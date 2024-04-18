@@ -513,7 +513,7 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 	{
 	case PARAMETRIC_SPHERE://6
 	{
-							  vtkMAFSmartPointer<vtkSphereSource> surf;
+							  vtkNew<vtkSphereSource> surf;
 							  surf->SetRadius(m_SphereRadius);
 							  surf->SetPhiResolution(m_SpherePhiRes);
 							  surf->SetThetaResolution(m_SphereTheRes);
@@ -544,16 +544,16 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 										 //ellipseQ->setResolution(m_PointsPhiRes, m_PointsThetaRes);
 										 //m_PolyData->DeepCopy(ellipseQ->getOutput());
 
-										 vtkMAFSmartPointer<vtkSphereSource> surf;
+										 vtkNew<vtkSphereSource> surf;
 										 surf->SetCenter(m_PointsXRes * (m_PointsR2 / m_PointsR1), m_PointsYRes * 1, m_PointsZRes * (m_PointsR2 / m_PointsR3));
 										 surf->SetRadius(m_PointsR2);
 										 surf->SetPhiResolution(m_PointsPhiRes);
 										 surf->SetThetaResolution(m_PointsThetaRes);
 										 surf->Update();
-										 vtkMAFSmartPointer<vtkTransform> t;
+										 vtkNew<vtkTransform> t;
 										 t->Scale(m_PointsR1 / m_PointsR2, 1, m_PointsR3 / m_PointsR2);
 										 t->Update();
-										 vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
+										 vtkNew<vtkTransformPolyDataFilter> ptf;
 										 ptf->SetTransform(t);
 										 ptf->SetInputConnection(surf->GetOutputPort());
 										 ptf->Update();
@@ -586,16 +586,16 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 										 //ellipseQ->setResolution(m_PointsPhiRes, m_PointsThetaRes);
 										 //m_PolyData->DeepCopy(ellipseQ->getOutput());
 
-										 vtkMAFSmartPointer<vtkSphereSource> surf;
+										 vtkNew<vtkSphereSource> surf;
 										 surf->SetCenter(m_PointsXRes * (m_PointsR2 / m_PointsR1), m_PointsYRes * 1, m_PointsZRes * (m_PointsR2 / m_PointsR3));
 										 surf->SetRadius(m_PointsR2);
 										 surf->SetPhiResolution(m_PointsPhiRes);
 										 surf->SetThetaResolution(m_PointsThetaRes);
 										 surf->Update();
-										 vtkMAFSmartPointer<vtkTransform> t;
+										 vtkNew<vtkTransform> t;
 										 t->Scale(m_PointsR1 / m_PointsR2, 1, m_PointsR3 / m_PointsR2);
 										 t->Update();
-										 vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
+										 vtkNew<vtkTransformPolyDataFilter> ptf;
 										 ptf->SetTransform(t);
 										 ptf->SetInputConnection(surf->GetOutputPort());
 										 ptf->Update();
@@ -699,16 +699,16 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 							  //wxBusyInfo wait(mafs);
 							  //Sleep(2500);
 
-							  vtkMAFSmartPointer<vtkSphereSource> surf;
+							  vtkNew<vtkSphereSource> surf;
 							  surf->SetCenter(m_PointsXRes * (m_PointsR2 / m_PointsR1), m_PointsYRes * 1, m_PointsZRes * (m_PointsR2 / m_PointsR3));
 							  surf->SetRadius(m_PointsR2);
 							  surf->SetPhiResolution(m_PointsPhiRes);
 							  surf->SetThetaResolution(m_PointsThetaRes);
 							  surf->Update();
-							  vtkMAFSmartPointer<vtkTransform> t;
+							  vtkNew<vtkTransform> t;
 							  t->Scale(m_PointsR1 / m_PointsR2, 1, m_PointsR3 / m_PointsR2);
 							  t->Update();
-							  vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
+							  vtkNew<vtkTransformPolyDataFilter> ptf;
 							  ptf->SetTransform(t);
 							  ptf->SetInputConnection(surf->GetOutputPort());
 							  ptf->Update();
@@ -749,16 +749,16 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 										 //ellipseQ->setResolution(m_PointsPhiRes, m_PointsThetaRes);
 										 //m_PolyData->DeepCopy(ellipseQ->getOutput());
 
-										 vtkMAFSmartPointer<vtkSphereSource> surf;
+										 vtkNew<vtkSphereSource> surf;
 										 surf->SetCenter(m_PointsXRes * (m_PointsR2 / m_PointsR1), m_PointsYRes * 1, m_PointsZRes * (m_PointsR2 / m_PointsR3));
 										 surf->SetRadius(m_PointsR2);
 										 surf->SetPhiResolution(m_PointsPhiRes);
 										 surf->SetThetaResolution(m_PointsThetaRes);
 										 surf->Update();
-										 vtkMAFSmartPointer<vtkTransform> t;
+										 vtkNew<vtkTransform> t;
 										 t->Scale(m_PointsR1 / m_PointsR2, 1, m_PointsR3 / m_PointsR2);
 										 t->Update();
-										 vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
+										 vtkNew<vtkTransformPolyDataFilter> ptf;
 										 ptf->SetTransform(t);
 										 ptf->SetInputConnection(surf->GetOutputPort());
 										 ptf->Update();
@@ -791,16 +791,16 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 										 //ellipseQ->setResolution(m_PointsPhiRes, m_PointsThetaRes);
 										 //m_PolyData->DeepCopy(ellipseQ->getOutput());
 
-										 vtkMAFSmartPointer<vtkSphereSource> surf;
+										 vtkNew<vtkSphereSource> surf;
 										 surf->SetCenter(m_PointsXRes * (m_PointsR2 / m_PointsR1), m_PointsYRes * 1, m_PointsZRes * (m_PointsR2 / m_PointsR3));
 										 surf->SetRadius(m_PointsR2);
 										 surf->SetPhiResolution(m_PointsPhiRes);
 										 surf->SetThetaResolution(m_PointsThetaRes);
 										 surf->Update();
-										 vtkMAFSmartPointer<vtkTransform> t;
+										 vtkNew<vtkTransform> t;
 										 t->Scale(m_PointsR1 / m_PointsR2, 1, m_PointsR3 / m_PointsR2);
 										 t->Update();
-										 vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
+										 vtkNew<vtkTransformPolyDataFilter> ptf;
 										 ptf->SetTransform(t);
 										 ptf->SetInputConnection(surf->GetOutputPort());
 										 ptf->Update();
@@ -833,16 +833,16 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 										//ellipseQ->setResolution(m_PointsPhiRes, m_PointsThetaRes);
 										//m_PolyData->DeepCopy(ellipseQ->getOutput());
 
-										vtkMAFSmartPointer<vtkSphereSource> surf;
+										vtkNew<vtkSphereSource> surf;
 										surf->SetCenter(m_PointsXRes * (m_PointsR2 / m_PointsR1), m_PointsYRes * 1, m_PointsZRes * (m_PointsR2 / m_PointsR3)); 
 										surf->SetRadius(m_PointsR2);
 										surf->SetPhiResolution(m_PointsPhiRes);
 										surf->SetThetaResolution(m_PointsThetaRes);
 										surf->Update();
-										vtkMAFSmartPointer<vtkTransform> t;
+										vtkNew<vtkTransform> t;
 										t->Scale(m_PointsR1 / m_PointsR2, 1, m_PointsR3 / m_PointsR2);
 										t->Update();
-										vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
+										vtkNew<vtkTransformPolyDataFilter> ptf;
 										ptf->SetTransform(t);
 										ptf->SetInputConnection(surf->GetOutputPort());
 										ptf->Update();
@@ -879,16 +879,16 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 										
 
 
-										vtkMAFSmartPointer<vtkSphereSource> surf;
+										vtkNew<vtkSphereSource> surf;
 										surf->SetCenter(m_PointsXRes * (m_PointsR2 / m_PointsR1), m_PointsYRes * 1, m_PointsZRes * (m_PointsR2 / m_PointsR3));
 										surf->SetRadius(m_PointsR2);
 										surf->SetPhiResolution(m_PointsPhiRes);
 										surf->SetThetaResolution(m_PointsThetaRes);
 										surf->Update();
-										vtkMAFSmartPointer<vtkTransform> t;
+										vtkNew<vtkTransform> t;
 										t->Scale(m_PointsR1 / m_PointsR2, 1, m_PointsR3 / m_PointsR2);
 										t->Update();
-										vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
+										vtkNew<vtkTransformPolyDataFilter> ptf;
 										ptf->SetTransform(t);
 										ptf->SetInputConnection(surf->GetOutputPort());
 										ptf->Update();

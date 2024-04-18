@@ -396,10 +396,10 @@ void medOpRegisterClusters2::OpDo()
 			m_Registered->GetLocalTimeStamps(time); // time is to be deleted
 			int num = time.size();
 			
-			vtkMAFSmartPointer<vtkPolyData> data;
+			vtkNew<vtkPolyData> data;
 			mafSmartPointer<mafMatrix> matrix; //modified by Marco. 2-2-2004
-			vtkMAFSmartPointer<vtkTransform> transform;
-			vtkMAFSmartPointer<vtkTransformPolyDataFilter> transformData;
+			vtkNew<vtkTransform> transform;
+			vtkNew<vtkTransformPolyDataFilter> transformData;
 			transformData->SetTransform(transform);
       
       if(!m_Registered->IsOpen())
@@ -417,7 +417,7 @@ void medOpRegisterClusters2::OpDo()
           //data = (vtkPolyData *)m_Registered->GetOutput()->GetVTKData(); //GetCurrentData();
 					
 					/** Variante */
-					vtkMAFSmartPointer<vtkPoints> points;
+					vtkNew<vtkPoints> points;
 
           for(int i=0; i< m_Registered->GetNumberOfLandmarks(); i++)
 					{
@@ -451,7 +451,7 @@ void medOpRegisterClusters2::OpDo()
         //data = (vtkPolyData *)m_Registered->GetOutput()->GetVTKData(); //GetCurrentData();
 
 				/** Variante */
-				vtkMAFSmartPointer<vtkPoints> points;
+				vtkNew<vtkPoints> points;
 
 				for(int i=0; i< m_Registered->GetNumberOfLandmarks(); i++)
 				{

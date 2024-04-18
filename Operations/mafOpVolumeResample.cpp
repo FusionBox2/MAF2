@@ -340,7 +340,7 @@ void mafOpVolumeResample::Resample()
       if (vtkDataSet *input_data = input_item->GetData())
       {
         // the resample filter
-        vtkMAFSmartPointer<vtkMAFVolumeResample> resampler;
+        vtkNew<vtkMAFVolumeResample> resampler;
         resampler->SetZeroValue(m_ZeroPadValue);
 
         // Set the target be vme's parent frame. And Input frame to the root. I've to 
@@ -392,7 +392,7 @@ void mafOpVolumeResample::Resample()
         resampler->SetVolumeAxisX(x_axis);
         resampler->SetVolumeAxisY(y_axis);
         
-        vtkMAFSmartPointer<vtkStructuredPoints> output_data;
+        vtkNew<vtkStructuredPoints> output_data;
         output_data->SetSpacing(m_VolumeSpacing);
         // TODO: here I probably should allow a data type casting... i.e. a GUI widget
         //output_data->SetScalarType(input_data->GetPointData()->GetScalars()->GetDataType());
@@ -645,20 +645,20 @@ void mafOpVolumeResample::ShiftCenterResampled()
 
 	((mafVME *)m_Input)->GetOutput()->GetVTKData()->GetCenter(centerVolume);
 
-	vtkMAFSmartPointer<vtkPoints> points;
+	vtkNew<vtkPoints> points;
 	points->InsertNextPoint(centerVolume);
 
-	vtkMAFSmartPointer<vtkPolyData> poly;
+	vtkNew<vtkPolyData> poly;
 	poly->SetPoints(points);
 
-	vtkMAFSmartPointer<vtkTransform> t;
+	vtkNew<vtkTransform> t;
 	t->RotateX(m_VolumeOrientation[0]);
 	t->RotateY(m_VolumeOrientation[1]);
 	t->RotateZ(m_VolumeOrientation[2]);
 	t->Update();
 
 
-	vtkMAFSmartPointer<vtkTransformPolyDataFilter> ptf;
+	vtkNew<vtkTransformPolyDataFilter> ptf;
 	ptf->SetTransform(t);
 	ptf->SetInputData(poly);
 	ptf->Update();

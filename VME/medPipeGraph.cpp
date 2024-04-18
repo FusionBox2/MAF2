@@ -299,8 +299,8 @@ void medPipeGraph::UpdateGraph()
 
   m_EmgPlot = medVMEAnalog::SafeDownCast(m_Vme);
 
-   vtkMAFSmartPointer<vtkDoubleArray> newTimeArray;
-   vtkMAFSmartPointer<vtkDoubleArray> fakeTimeArray;
+   vtkNew<vtkDoubleArray> newTimeArray;
+   vtkNew<vtkDoubleArray> fakeTimeArray;
 
    //cycle to get a fake scalar value
    for (int c = 0; c < m_NumberOfSignals ; c++)

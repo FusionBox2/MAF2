@@ -372,8 +372,8 @@ void medOpIterativeRegistration::OnEventGuiTarget(mafEventBase *maf_event)
 int medOpIterativeRegistration::Register() 
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkPoints> sourcePoints; 
-  vtkMAFSmartPointer<vtkPoints> targetPoints; 
+  vtkNew<vtkPoints> sourcePoints; 
+  vtkNew<vtkPoints> targetPoints; 
 
 	sourcePoints->Reset();
 	targetPoints->Reset();
@@ -405,7 +405,7 @@ int medOpIterativeRegistration::Register()
 		} 
   }    
   
- 	vtkMAFSmartPointer<vtkLandmarkTransform> RegisterTransform; 
+ 	vtkNew<vtkLandmarkTransform> RegisterTransform; 
 	RegisterTransform->SetSourceLandmarks(sourcePoints);	
 	RegisterTransform->SetTargetLandmarks(targetPoints);	
   RegisterTransform->SetModeToRigidBody();

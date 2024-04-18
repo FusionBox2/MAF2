@@ -270,13 +270,13 @@ void mafPipeSurfaceSlice_BES::Create(mafNode *node, mafView *view/*, bool use_ax
   m_AssemblyFront->AddPart(m_Actor);
 
   // selection highlight
-  vtkMAFSmartPointer<vtkOutlineCornerFilter> corner;
+  vtkNew<vtkOutlineCornerFilter> corner;
 	corner->SetInputData(data);  
 
-	vtkMAFSmartPointer<vtkPolyDataMapper> corner_mapper;
+	vtkNew<vtkPolyDataMapper> corner_mapper;
 	corner_mapper->SetInputConnection(corner->GetOutputPort());
 
-	vtkMAFSmartPointer<vtkProperty> corner_props;
+	vtkNew<vtkProperty> corner_props;
 	corner_props->SetColor(1,1,1);
 	corner_props->SetAmbient(1);
 	corner_props->SetRepresentationToWireframe();
@@ -419,20 +419,20 @@ void mafPipeSurfaceSlice_BES::GenerateTextureMapCoordinate()
 
   if (material->m_TextureMappingMode == mmaMaterial::PLANE_MAPPING)
   {
-    vtkMAFSmartPointer<vtkTextureMapToPlane> plane_texture_mapper;
+    vtkNew<vtkTextureMapToPlane> plane_texture_mapper;
     plane_texture_mapper->SetInputData(data);
     m_Mapper->SetInputConnection(plane_texture_mapper->GetOutputPort());
   }
   else if (material->m_TextureMappingMode == mmaMaterial::CYLINDER_MAPPING)
   {
-    vtkMAFSmartPointer<vtkTextureMapToCylinder> cylinder_texture_mapper;
+    vtkNew<vtkTextureMapToCylinder> cylinder_texture_mapper;
     cylinder_texture_mapper->SetInputData(data);
     cylinder_texture_mapper->PreventSeamOff();
     m_Mapper->SetInputConnection(cylinder_texture_mapper->GetOutputPort());
   }
   else if (material->m_TextureMappingMode == mmaMaterial::SPHERE_MAPPING)
   {
-    vtkMAFSmartPointer<vtkTextureMapToSphere> sphere_texture_mapper;
+    vtkNew<vtkTextureMapToSphere> sphere_texture_mapper;
     sphere_texture_mapper->SetInputData(data);
     sphere_texture_mapper->PreventSeamOff();
     m_Mapper->SetInputConnection(sphere_texture_mapper->GetOutputPort());
@@ -604,13 +604,13 @@ void mafPipeSurfaceSlice_BES::CreateClosedCloudPipe()
   m_AssemblyFront->AddPart(m_Actor);
 
   // selection highlight
-  vtkMAFSmartPointer<vtkOutlineCornerFilter> corner;
+  vtkNew<vtkOutlineCornerFilter> corner;
 	corner->SetInputData(data);  
 
-  vtkMAFSmartPointer<vtkPolyDataMapper> corner_mapper;
+  vtkNew<vtkPolyDataMapper> corner_mapper;
 	corner_mapper->SetInputConnection(corner->GetOutputPort());
 
-  vtkMAFSmartPointer<vtkProperty> corner_props;
+  vtkNew<vtkProperty> corner_props;
 	corner_props->SetColor(1,1,1);
 	corner_props->SetAmbient(1);
 	corner_props->SetRepresentationToWireframe();

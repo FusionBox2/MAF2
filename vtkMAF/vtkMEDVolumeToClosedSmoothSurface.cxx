@@ -113,7 +113,7 @@ vtkPolyData * vtkMEDVolumeToClosedSmoothSurface::GetOutput( int level /*= 0*/, v
   if (SmoothSurface)
   {
     //Smoothing Procedure
-    vtkMAFSmartPointer<vtkWindowedSincPolyDataFilter> smoothFilter;
+    vtkNew<vtkWindowedSincPolyDataFilter> smoothFilter;
 
     double bounds[6];
     double traslation[3];
@@ -123,11 +123,11 @@ vtkPolyData * vtkMEDVolumeToClosedSmoothSurface::GetOutput( int level /*= 0*/, v
     //To improve the numerical stability of the solution 
     polydata->GetBounds(bounds);
     GetTransformFactor(true,bounds,scale,traslation);
-    vtkMAFSmartPointer<vtkTransform> transform;
+    vtkNew<vtkTransform> transform;
     transform->PostMultiply();
     transform->Translate(traslation);
     transform->Scale(scale);
-    vtkMAFSmartPointer<vtkTransformPolyDataFilter> transformFilter;
+    vtkNew<vtkTransformPolyDataFilter> transformFilter;
     transformFilter->SetTransform(transform);
     transformFilter->SetInputData(polydata);
     transformFilter->Update();
@@ -147,11 +147,11 @@ vtkPolyData * vtkMEDVolumeToClosedSmoothSurface::GetOutput( int level /*= 0*/, v
     //To remove filter scaling/traslation artifact
     smoothFilter->GetOutput()->GetBounds(bounds);
     GetTransformFactor(true,bounds,scale,traslation);
-    vtkMAFSmartPointer<vtkTransform> transform2;
+    vtkNew<vtkTransform> transform2;
     transform2->PostMultiply();
     transform2->Translate(traslation);
     transform2->Scale(scale);
-    vtkMAFSmartPointer<vtkTransformPolyDataFilter> transformFilter2;
+    vtkNew<vtkTransformPolyDataFilter> transformFilter2;
     transformFilter2->SetTransform(transform2);
     transformFilter2->SetInputConnection(smoothFilter->GetOutputPort());
     transformFilter2->Update();
@@ -160,13 +160,13 @@ vtkPolyData * vtkMEDVolumeToClosedSmoothSurface::GetOutput( int level /*= 0*/, v
     //inverse transform to align outputs to original bounds 
     polydata->GetBounds(bounds);
     GetTransformFactor(false,bounds,scale,traslation);
-    vtkMAFSmartPointer<vtkTransform> transform3;
+    vtkNew<vtkTransform> transform3;
     //in this case we need to scale first to obtain the surface 
     //at the original size and then we translate it to the original pos
     transform3->PostMultiply();
     transform3->Scale(scale);
     transform3->Translate(traslation);
-    vtkMAFSmartPointer<vtkTransformPolyDataFilter> transformFilter3;
+    vtkNew<vtkTransformPolyDataFilter> transformFilter3;
     transformFilter3->SetTransform(transform3);
     transformFilter3->SetInputConnection(transformFilter2->GetOutputPort());
     transformFilter3->Update();

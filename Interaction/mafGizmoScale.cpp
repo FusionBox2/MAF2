@@ -290,11 +290,11 @@ void mafGizmoScale::OnEventGizmoComponents(mafEventBase *maf_event)
 					//            transform->SetMatrix(VME_RS)
 					//            transform->Concatenate(S)
 
-					vtkMAFSmartPointer<vtkTransform> scaleTrans;
+					vtkNew<vtkTransform> scaleTrans;
 					scaleTrans->PostMultiply();
 					scaleTrans->SetMatrix(m_VmeMatrixRelativeToRefSysVME->GetVTKMatrix());
 
-					vtkMAFSmartPointer<vtkTransform> absScaleTrans;
+					vtkNew<vtkTransform> absScaleTrans;
 					if (m_ActiveGizmoComponent == X_AXIS)
 					{
 						absScaleTrans->Scale(scale, 1, 1); 
@@ -519,7 +519,7 @@ void mafGizmoScale::SendTransformMatrixFromGui(mafEventBase *maf_event)
 	mafMatrix *refSysVMEAbsMatrix = mafMatrix::New();
 	refSysVMEAbsMatrix->DeepCopy(m_RefSysVME->GetOutput()->GetAbsMatrix());
 
-	vtkMAFSmartPointer<vtkTransform> scaleTransform;
+	vtkNew<vtkTransform> scaleTransform;
 	scaleTransform->PostMultiply();
 	scaleTransform->SetMatrix(vmeMatrixRelativeToRefSysVME->GetVTKMatrix());  
 	scaleTransform->Concatenate(e->GetMatrix()->GetVTKMatrix());

@@ -399,7 +399,7 @@ mafVMEHelAxis::mafVMEHelAxis() : mafVME()
   m_ScaleAxisTransform->Scale(m_RadiusFactor,m_RadiusFactor,m_LengthFactor);
   m_ScaleAxisTransform->Update();
 
-  vtkMAFSmartPointer<vtkPolyData> axes_surface;
+  vtkNew<vtkPolyData> axes_surface;
   axes_surface->DeepCopy(m_Axes->GetOutput());
   axes_surface->GetPointData()->SetScalars(data);
   vtkDEL(data);

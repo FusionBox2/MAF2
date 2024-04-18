@@ -210,8 +210,8 @@ void medOpImporterGRFWS::ReadForcePlates()
     platform2[i] = atof(platform2St[i].GetCStr());
   }
 
-  vtkMAFSmartPointer<vtkCubeSource> platformLeft;
-  vtkMAFSmartPointer<vtkCubeSource> platformRight;
+  vtkNew<vtkCubeSource> platformLeft;
+  vtkNew<vtkCubeSource> platformRight;
 
   //Get values for platforms
    mafNEW(m_PlatformLeft);
@@ -247,18 +247,18 @@ void medOpImporterGRFWS::ReadForcePlates()
   mafString cop1StX,cop1StY,cop1StZ,ref1StX,ref1StY,ref1StZ,force1StX,force1StY,force1StZ,moment1StX,moment1StY,moment1StZ;
   mafString cop2StX,cop2StY,cop2StZ,ref2StX,ref2StY,ref2StZ,force2StX,force2StY,force2StZ,moment2StX,moment2StY,moment2StZ;
 
-  vtkMAFSmartPointer<vtkPolyData> force1;
-  vtkMAFSmartPointer<vtkPolyData> force2;
-  vtkMAFSmartPointer<vtkPolyData> moment1;
-  vtkMAFSmartPointer<vtkPolyData> moment2;
-  vtkMAFSmartPointer<vtkPoints> pointsf1;
-  vtkMAFSmartPointer<vtkPoints> pointsf2;
-  vtkMAFSmartPointer<vtkCellArray> cellArrayf1;
-  vtkMAFSmartPointer<vtkCellArray> cellArrayf2;
-  vtkMAFSmartPointer<vtkPoints> pointsm1;
-  vtkMAFSmartPointer<vtkPoints> pointsm2;
-  vtkMAFSmartPointer<vtkCellArray> cellArraym1;
-  vtkMAFSmartPointer<vtkCellArray> cellArraym2;
+  vtkNew<vtkPolyData> force1;
+  vtkNew<vtkPolyData> force2;
+  vtkNew<vtkPolyData> moment1;
+  vtkNew<vtkPolyData> moment2;
+  vtkNew<vtkPoints> pointsf1;
+  vtkNew<vtkPoints> pointsf2;
+  vtkNew<vtkCellArray> cellArrayf1;
+  vtkNew<vtkCellArray> cellArrayf2;
+  vtkNew<vtkPoints> pointsm1;
+  vtkNew<vtkPoints> pointsm2;
+  vtkNew<vtkCellArray> cellArraym1;
+  vtkNew<vtkCellArray> cellArraym2;
   vtkIdType pointId1[2];
   vtkIdType pointId2[2];
 
@@ -333,8 +333,8 @@ void medOpImporterGRFWS::ReadForcePlates()
       force1->SetLines(cellArrayf1);
       //force1->Update();
 
-      vtkMAFSmartPointer<vtkTransformPolyDataFilter> transfForL;
-      vtkMAFSmartPointer<vtkTransform> transff;
+      vtkNew<vtkTransformPolyDataFilter> transfForL;
+      vtkNew<vtkTransform> transff;
      
       transff->Translate(cop1X, cop1Y, cop1Z);
       transfForL->SetTransform(transff);
@@ -356,8 +356,8 @@ void medOpImporterGRFWS::ReadForcePlates()
       moment1->SetLines(cellArraym1);
       //moment1->Update();
 
-      vtkMAFSmartPointer<vtkTransformPolyDataFilter> transfMomL;
-      vtkMAFSmartPointer<vtkTransform> transfm;
+      vtkNew<vtkTransformPolyDataFilter> transfMomL;
+      vtkNew<vtkTransform> transfm;
      
       transfm->Translate(cop1X, cop1Y, cop1Z);
       transfMomL->SetTransform(transfm);
@@ -412,8 +412,8 @@ void medOpImporterGRFWS::ReadForcePlates()
       force2->SetLines(cellArrayf2);
       //force2->Update();
 
-      vtkMAFSmartPointer<vtkTransformPolyDataFilter> transfForR;
-      vtkMAFSmartPointer<vtkTransform> transffr;
+      vtkNew<vtkTransformPolyDataFilter> transfForR;
+      vtkNew<vtkTransform> transffr;
       
       transffr->Translate(cop2X, cop2Y, cop2Z);
       transfForR->SetTransform(transffr);
@@ -435,8 +435,8 @@ void medOpImporterGRFWS::ReadForcePlates()
       moment2->SetLines(cellArraym2);
       //moment2->Update();
 
-      vtkMAFSmartPointer<vtkTransformPolyDataFilter> transfMomR;
-      vtkMAFSmartPointer<vtkTransform> transfmr;
+      vtkNew<vtkTransformPolyDataFilter> transfMomR;
+      vtkNew<vtkTransform> transfmr;
       
       transfmr->Translate(cop2X, cop2Y, cop2Z);
       transfMomR->SetTransform(transfmr);
@@ -535,9 +535,9 @@ void medOpImporterGRFWS::ReadSingleVector()
 
   mafString cop1StX,cop1StY,cop1StZ,ref1StX,ref1StY,ref1StZ,force1StX,force1StY,force1StZ;
 
-  vtkMAFSmartPointer<vtkPolyData> force1;
-  vtkMAFSmartPointer<vtkPoints> pointsf1;
-  vtkMAFSmartPointer<vtkCellArray> cellArrayf1;
+  vtkNew<vtkPolyData> force1;
+  vtkNew<vtkPoints> pointsf1;
+  vtkNew<vtkCellArray> cellArrayf1;
   vtkIdType pointId1[2];
 
   mafNEW(m_ForceLeft);
@@ -590,8 +590,8 @@ void medOpImporterGRFWS::ReadSingleVector()
       force1->SetLines(cellArrayf1);
       //force1->Update();
 
-      vtkMAFSmartPointer<vtkTransformPolyDataFilter> transfForL;
-      vtkMAFSmartPointer<vtkTransform> transff;
+      vtkNew<vtkTransformPolyDataFilter> transfForL;
+      vtkNew<vtkTransform> transff;
      
       transff->Translate(cop1X, cop1Y, cop1Z);
       transfForL->SetTransform(transff);

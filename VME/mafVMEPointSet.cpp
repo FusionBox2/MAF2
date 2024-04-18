@@ -181,8 +181,8 @@ vtkPolyData *mafVMEPointSet::GetPolyData(mafTimeStamp t)
 vtkPolyData *mafVMEPointSet::NewPolyData(mafTimeStamp t)
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkPolyData> polydata;
-  vtkMAFSmartPointer<vtkPoints> points;
+  vtkNew<vtkPolyData> polydata;
+  vtkNew<vtkPoints> points;
   polydata->SetPoints(points);
   this->SetDataByReference(polydata,t);
   return polydata;

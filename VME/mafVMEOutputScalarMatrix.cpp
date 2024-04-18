@@ -162,10 +162,10 @@ void mafVMEOutputScalarMatrix::UpdateVTKRepresentation()
       int progress_point = 0;
       double time_point = GetTimeStamp();
       double x_coord, y_coord, z_coord;
-      vtkMAFSmartPointer<vtkPoints> points;
-      vtkMAFSmartPointer<vtkCellArray> verts;
+      vtkNew<vtkPoints> points;
+      vtkNew<vtkCellArray> verts;
       vnl_vector<double> vs;
-      vtkMAFSmartPointer<vtkDoubleArray> scalars;
+      vtkNew<vtkDoubleArray> scalars;
       scalars->SetNumberOfValues(num_of_points);
       scalars->SetNumberOfComponents(1);
       scalars->FillComponent(0,0.0);

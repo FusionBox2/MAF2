@@ -811,7 +811,7 @@ bool lhpOpImporterPressionCenter::Import()
     minY = mafMin(mafMin(mafMin(mafMin(minY,platformCorner1[1]),platformCorner2[1]),platformCorner3[1]),platformCorner4[1]);
     maxY = mafMax(mafMax(mafMax(mafMax(maxY,platformCorner1[1]),platformCorner2[1]),platformCorner3[1]),platformCorner4[1]);
 
-    vtkMAFSmartPointer<vtkCubeSource> cube;
+    vtkNew<vtkCubeSource> cube;
 
     mafVMESurface *platform;
     mafNEW(platform);
@@ -852,16 +852,16 @@ bool lhpOpImporterPressionCenter::Import()
     momentName.Append(platformNumber);
     intData.m_MomentList[currentPlatform]->SetName(momentName);
 
-    vtkMAFSmartPointer<vtkPolyData> vectorForce;
-    vtkMAFSmartPointer<vtkPoints> pointsForce;
-    vtkMAFSmartPointer<vtkCellArray> cellArrayForce;
+    vtkNew<vtkPolyData> vectorForce;
+    vtkNew<vtkPoints> pointsForce;
+    vtkNew<vtkCellArray> cellArrayForce;
     int pointIdForce[2] = {0,1};
     vectorForce->SetPoints(pointsForce);
     vectorForce->SetLines(cellArrayForce);
 
-    vtkMAFSmartPointer<vtkPolyData> vectorMoment;
-    vtkMAFSmartPointer<vtkPoints> pointsMoment;
-    vtkMAFSmartPointer<vtkCellArray> cellArrayMoment;
+    vtkNew<vtkPolyData> vectorMoment;
+    vtkNew<vtkPoints> pointsMoment;
+    vtkNew<vtkCellArray> cellArrayMoment;
     int pointIdMoment[2] = {0,1};
     vectorMoment->SetPoints(pointsMoment);
     vectorMoment->SetLines(cellArrayMoment);
@@ -913,8 +913,8 @@ bool lhpOpImporterPressionCenter::Import()
       cellArrayForce->InsertNextCell(2, pointIdForce);
       vectorForce->Update();
 
-      vtkMAFSmartPointer<vtkTransformPolyDataFilter> transfVecForce;
-      vtkMAFSmartPointer<vtkTransform> transfForce;
+      vtkNew<vtkTransformPolyDataFilter> transfVecForce;
+      vtkNew<vtkTransform> transfForce;
 
       transfForce->Translate(intData.m_CopX, intData.m_CopY, z); //z = 0
       transfVecForce->SetTransform(transfForce);
@@ -939,8 +939,8 @@ bool lhpOpImporterPressionCenter::Import()
       cellArrayMoment->InsertNextCell(2, pointIdMoment);  
       vectorMoment->Update();
 
-      vtkMAFSmartPointer<vtkTransformPolyDataFilter> transfVecMoment;
-      vtkMAFSmartPointer<vtkTransform> transfMoment;
+      vtkNew<vtkTransformPolyDataFilter> transfVecMoment;
+      vtkNew<vtkTransform> transfMoment;
 
       transfMoment->Translate(intData.m_CopX, intData.m_CopY, z); //z = 0
       transfVecMoment->SetTransform(transfMoment);

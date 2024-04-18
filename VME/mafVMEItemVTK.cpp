@@ -514,7 +514,7 @@ int mafVMEItemVTK::UpdateReader(vtkDataReader *reader, mafString &filename)
     //BES: 14.5.2008 - SetInputString creates a copy of m_InputMemory    
     reader->ReadFromInputStringOn();
     //reader->SetInputString(m_InputMemory, m_InputMemorySize);
-    vtkMAFSmartPointer<vtkCharArray> pCharArray;
+    vtkNew<vtkCharArray> pCharArray;
     pCharArray->SetArray(const_cast<char*>(m_InputMemory), m_InputMemorySize, 0);
     reader->SetInputArray(pCharArray);
     reader->Update();
@@ -601,7 +601,7 @@ int mafVMEItemVTK::InternalStoreData(const char *url)
       // force release old writer if present
       ReleaseOutputMemory();
 
-      vtkMAFSmartPointer<vtkDataSetWriter> writer;
+      vtkNew<vtkDataSetWriter> writer;
       // Progressbar removed to improve vector data storage speed
       // writer->SetProgressText("Storing data...");
       // mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR,writer));
@@ -711,7 +711,7 @@ int mafVMEItemVTK::CheckFile(const char *filename)
 //-------------------------------------------------------------------------
 {
   // Check stored file correctness
-  vtkMAFSmartPointer<vtkDataReader> file_chk;
+  vtkNew<vtkDataReader> file_chk;
   file_chk->SetFileName(filename);
   int res = file_chk->IsFileValid(m_DataType.GetCStr());
   if (res == VTK_ERROR)
@@ -736,7 +736,7 @@ int mafVMEItemVTK::CheckFile(const char *filename)
 int mafVMEItemVTK::CheckFile(const char *input_string, int input_len)
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkDataReader> file_chk;
+  vtkNew<vtkDataReader> file_chk;
   file_chk->SetInputString(input_string, input_len);
   file_chk->ReadFromInputStringOn();
   int res = file_chk->IsFileValid(m_DataType.GetCStr());

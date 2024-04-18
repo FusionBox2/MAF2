@@ -268,7 +268,7 @@ void medOpFreezeVME::OpRun()
 					mafSmartPointer<mafVMESurface> newSurface;
 					newSurface->SetName(slicer->GetName());
 					newSurface->SetData(polyData,slicer->GetTimeStamp());
-					vtkMAFSmartPointer<vtkImageData> text;
+					vtkNew<vtkImageData> text;
 					text->DeepCopy(slicer->GetSurfaceOutput()->GetTexture());
 					newSurface->GetSurfaceOutput()->SetTexture(text);
 					newSurface->Update();

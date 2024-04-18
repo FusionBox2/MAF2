@@ -248,7 +248,7 @@ void medOpSegmentationRegionGrowingConnectedThreshold::Algorithm()
 
   vtkImageData *im = vtkImageData::SafeDownCast(mafVMEVolumeGray::SafeDownCast(m_ResampleInput)->GetOutput()->GetVTKData());
   
-  vtkMAFSmartPointer<vtkImageCast> vtkImageToFloat;
+  vtkNew<vtkImageCast> vtkImageToFloat;
   vtkImageToFloat->SetOutputScalarTypeToFloat ();
   vtkImageToFloat->SetInputConnection(mafVMEVolumeGray::SafeDownCast(m_ResampleInput)->GetOutput()->GetVTKOutputPort());
   vtkImageToFloat->Modified();
@@ -310,7 +310,7 @@ void medOpSegmentationRegionGrowingConnectedThreshold::Algorithm()
   //image->Update();
 
 
-  vtkMAFSmartPointer<vtkImageToStructuredPoints> image_to_sp;
+  vtkNew<vtkImageToStructuredPoints> image_to_sp;
   image_to_sp->SetInputData(image);
   image_to_sp->Update();
   m_VolumeOut->SetData(image_to_sp->GetOutput(),mafVME::SafeDownCast(m_ResampleInput)->GetTimeStamp());
@@ -326,7 +326,7 @@ void medOpSegmentationRegionGrowingConnectedThreshold::Algorithm()
   m_VolumeOut->GetTagArray()->SetTag(mafTagItem(_R("VOLUME_TYPE"),_R("BINARY")));
 
   
-  vtkMAFSmartPointer<vtkMEDVolumeToClosedSmoothSurface> volToSurface;
+  vtkNew<vtkMEDVolumeToClosedSmoothSurface> volToSurface;
   volToSurface->SetInputConnection(m_VolumeOut->GetOutput()->GetVTKOutputPort());
   volToSurface->SetContourValue(127.5);
   volToSurface->Update();

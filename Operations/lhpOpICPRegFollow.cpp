@@ -182,7 +182,7 @@ void lhpOpICPRegFollow::OpDo()
   m_Target->GetOutput()->GetAbsMatrix(*target_matrix,m_Target->GetTimeStamp());
 	
 
-	vtkMAFSmartPointer<mafClassicICPRegistration> icp; //to be deleted 
+	vtkNew<mafClassicICPRegistration> icp; //to be deleted 
 	//mafProgressMacro(icp,"classic ICP - registering");
 	icp->SetConvergence(m_Convergence);
 	icp->SetSource(m_Source->GetOutput()->GetVTKData());
@@ -190,7 +190,7 @@ void lhpOpICPRegFollow::OpDo()
 	icp->SetResultsFileName(m_ReportFilename.GetCStr());
 	icp->SaveResultsOn();
 	icp->Update();
-	vtkMAFSmartPointer<vtkMatrix4x4> appo_matrix;
+	vtkNew<vtkMatrix4x4> appo_matrix;
 	icp->GetMatrix(appo_matrix);
 	icp_matrix->SetVTKMatrix(appo_matrix);
    //modified by Stefano 7-11-2004
@@ -222,7 +222,7 @@ void lhpOpICPRegFollow::OpDo()
 
   mafVME *sourceVME = mafVME::SafeDownCast(m_Input);
 
-  vtkMAFSmartPointer<vtkTransform> sourceABSPoseInverseTr;
+  vtkNew<vtkTransform> sourceABSPoseInverseTr;
   sourceABSPoseInverseTr->PostMultiply();
   sourceABSPoseInverseTr->SetMatrix((sourceVME->GetAbsMatrixPipe()->GetMatrix()).GetVTKMatrix());
   sourceABSPoseInverseTr->Inverse();

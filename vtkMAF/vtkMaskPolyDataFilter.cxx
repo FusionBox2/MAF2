@@ -156,7 +156,7 @@ int vtkMaskPolyDataFilter::RequestData(
 	InitCurrentSliceMask();
 
 
-	vtkMAFSmartPointer<vtkCellLocator> cellLocator;
+	vtkNew<vtkCellLocator> cellLocator;
 
 	for (i = 0; i < numPts && !abortExecute; i++) 
 	{

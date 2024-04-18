@@ -143,7 +143,7 @@ void lhpOpImporterPLY::ImportPLY()
     mafString fn;
     fn = m_Files[kk];
     
-    vtkMAFSmartPointer<vtkPLYReader> reader;
+    vtkNew<vtkPLYReader> reader;
 	  mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR,reader));
     reader->SetFileName(fn.GetCStr());
 	  reader->Update();

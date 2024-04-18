@@ -694,7 +694,7 @@ void medViewArbitraryOrthoSlice::OnEventGizmoCrossRotateZNormalView(mafEventBase
 
 			vtkMatrix4x4 *mat = event->GetMatrix()->GetVTKMatrix();
 
-			vtkMAFSmartPointer<vtkTransform> tr;
+			vtkNew<vtkTransform> tr;
 			tr->SetMatrix(mat);
 
 			m_ChildViewList[X_VIEW]->GetRWI()->GetCamera()->ApplyTransform(tr);
@@ -818,7 +818,7 @@ void medViewArbitraryOrthoSlice::OnEventGizmoCrossRotateYNormalView(mafEventBase
 
 			vtkMatrix4x4 *mat = event->GetMatrix()->GetVTKMatrix();
 
-			vtkMAFSmartPointer<vtkTransform> tr;
+			vtkNew<vtkTransform> tr;
 			tr->SetMatrix(mat);
 
 			m_ChildViewList[Z_VIEW]->GetRWI()->GetCamera()->ApplyTransform(tr);
@@ -1041,7 +1041,7 @@ void medViewArbitraryOrthoSlice::OnEventGizmoCrossRotateXNormalView(mafEventBase
 
 			vtkMatrix4x4 *mat = event->GetMatrix()->GetVTKMatrix();
 
-			vtkMAFSmartPointer<vtkTransform> tr;
+			vtkNew<vtkTransform> tr;
 			tr->SetMatrix(mat);
 
 			m_ChildViewList[Y_VIEW]->GetRWI()->GetCamera()->ApplyTransform(tr);
@@ -2280,7 +2280,7 @@ void medViewArbitraryOrthoSlice::ShowSlicers( mafVME * vmeVolume, bool show )
 	m_InputVolume = mafVMEVolumeGray::SafeDownCast(vmeVolume);
 	assert(m_InputVolume);
 
-	vtkMAFSmartPointer<vtkTransform> slicerXTransform;
+	vtkNew<vtkTransform> slicerXTransform;
 	slicerXTransform->SetMatrix(m_SlicerZResetMatrix->GetVTKMatrix());
 	slicerXTransform->RotateY(89.999);
 	slicerXTransform->Update();
@@ -2303,7 +2303,7 @@ void medViewArbitraryOrthoSlice::ShowSlicers( mafVME * vmeVolume, bool show )
 
 	BuildXCameraConeVME();
 
-	vtkMAFSmartPointer<vtkTransform> slicerYTransform;
+	vtkNew<vtkTransform> slicerYTransform;
 	slicerYTransform->SetMatrix(m_SlicerZResetMatrix->GetVTKMatrix());
 	slicerYTransform->RotateX(90);
 	slicerYTransform->Update();
@@ -3265,7 +3265,7 @@ void medViewArbitraryOrthoSlice::AccumulateTextures( mafVMESlicer *inSlicer, dou
 	assert(slicerAbsMatrix);
 
 	// copy the middle image to get original scalars
-	vtkMAFSmartPointer<vtkTransform> originalABSTransform;
+	vtkNew<vtkTransform> originalABSTransform;
 	originalABSTransform->SetMatrix(slicerAbsMatrix);
 
 	mafVMEOutputSurface *outputSurface = mafVMEOutputSurface::SafeDownCast(inSlicer->GetSurfaceOutput());
@@ -3278,7 +3278,7 @@ void medViewArbitraryOrthoSlice::AccumulateTextures( mafVMESlicer *inSlicer, dou
 	//inSlicer->GetSurfaceOutput()->GetOutputDataSet()->Update();
 
 	// sum the texture scalars in a new image: built from original default texture
-	vtkMAFSmartPointer<vtkImageData> scalarsAccumulationTargetTexture;
+	vtkNew<vtkImageData> scalarsAccumulationTargetTexture;
 	scalarsAccumulationTargetTexture->DeepCopy(slicerTexture);	
 
 	// add the texture up scalars
@@ -3318,7 +3318,7 @@ void medViewArbitraryOrthoSlice::AccumulateTextures( mafVMESlicer *inSlicer, dou
 
 		// build the profile probe matrix
 		double currentHeight = profileId * profileDistance;
-		vtkMAFSmartPointer<vtkTransform> currentSliceMatrix;
+		vtkNew<vtkTransform> currentSliceMatrix;
 		currentSliceMatrix->PostMultiply();
 		currentSliceMatrix->Concatenate(originalABSTransform);
 
@@ -3439,7 +3439,7 @@ void medViewArbitraryOrthoSlice::BuildSlicingPlane(mafVMESurface *inVME,
 	double plane2Normal[3];
 	double plane2Origin[3];
 
-	vtkMAFSmartPointer<vtkTransform> tr;
+	vtkNew<vtkTransform> tr;
 
 	// Z direction cut feedback
 	if (fromDirection == FROM_Z && guestView == X_VIEW)
@@ -3484,7 +3484,7 @@ void medViewArbitraryOrthoSlice::BuildSlicingPlane(mafVMESurface *inVME,
 		vtkMatrix4x4 *mat = m_GizmoXView->GetAbsPose()->GetVTKMatrix();
 		assert(mat);
 
-		vtkMAFSmartPointer<vtkTransform> tr;
+		vtkNew<vtkTransform> tr;
 		tr->SetMatrix(mat);
 
 		// negative sliceHeight means going upper :P
@@ -3522,7 +3522,7 @@ void medViewArbitraryOrthoSlice::BuildSlicingPlane(mafVMESurface *inVME,
 		vtkMatrix4x4 *mat = m_GizmoXView->GetAbsPose()->GetVTKMatrix();
 		assert(mat);
 
-		vtkMAFSmartPointer<vtkTransform> tr;
+		vtkNew<vtkTransform> tr;
 		tr->SetMatrix(mat);
 
 		// positive sliceHeight is toward triangle camera
@@ -3555,7 +3555,7 @@ void medViewArbitraryOrthoSlice::BuildSlicingPlane(mafVMESurface *inVME,
 		vtkMatrix4x4 *mat = m_GizmoXView->GetAbsPose()->GetVTKMatrix();
 		assert(mat);
 
-		vtkMAFSmartPointer<vtkTransform> tr;
+		vtkNew<vtkTransform> tr;
 		tr->SetMatrix(mat);
 
 		// positive sliceHeight is toward triangle camera
@@ -3593,7 +3593,7 @@ void medViewArbitraryOrthoSlice::BuildSlicingPlane(mafVMESurface *inVME,
 		vtkMatrix4x4 *mat = m_GizmoXView->GetAbsPose()->GetVTKMatrix();
 		assert(mat);
 
-		vtkMAFSmartPointer<vtkTransform> tr;
+		vtkNew<vtkTransform> tr;
 		tr->SetMatrix(mat);
 
 		// positive sliceHeight is toward triangle camera
@@ -3625,7 +3625,7 @@ void medViewArbitraryOrthoSlice::BuildSlicingPlane(mafVMESurface *inVME,
 		vtkMatrix4x4 *mat = m_GizmoXView->GetAbsPose()->GetVTKMatrix();
 		assert(mat);
 
-		vtkMAFSmartPointer<vtkTransform> tr;
+		vtkNew<vtkTransform> tr;
 		tr->SetMatrix(mat);
 
 		// positive sliceHeight is toward triangle camera
@@ -4079,7 +4079,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesTextureToFile(int choosedExportAxis)
 	double thickness = m_FeedbackLineHeight[choosedExportAxis] * 2;
 	double step = thickness / (m_NumberOfAxialSections[choosedExportAxis] - 1);
 
-	vtkMAFSmartPointer<vtkMatrix4x4> originalMatrix;
+	vtkNew<vtkMatrix4x4> originalMatrix;
 
 	vtkMatrix4x4 *slicerMatrix = currentSlicer->GetAbsMatrixPipe()->GetMatrix().GetVTKMatrix();
 	originalMatrix->DeepCopy(slicerMatrix);
@@ -4096,7 +4096,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesTextureToFile(int choosedExportAxis)
 		mafEventMacro(eUpdate);
 
 		// move the slicer in the target abs pose
-		vtkMAFSmartPointer<vtkTransform> tr;
+		vtkNew<vtkTransform> tr;
 		tr->PostMultiply();
 		tr->SetMatrix(originalMatrix);
 
@@ -4117,7 +4117,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesTextureToFile(int choosedExportAxis)
 
 		currentSlicer->SetAbsMatrix(tr->GetMatrix());
 
-		vtkMAFSmartPointer<vtkPNGWriter> writer;
+		vtkNew<vtkPNGWriter> writer;
 
 		vtkImageData *textureToWriteOnDisk = NULL;
 
@@ -4708,7 +4708,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesFromRenderWindowToFile(int chooseExpo
 	double thickness = m_FeedbackLineHeight[chooseExportAxis] * 2;
 	double step = thickness / (m_NumberOfAxialSections[chooseExportAxis] - 1);
 
-	vtkMAFSmartPointer<vtkMatrix4x4> originalMatrix;
+	vtkNew<vtkMatrix4x4> originalMatrix;
 
 	vtkMatrix4x4 *slicerMatrix = currentSlicer->GetAbsMatrixPipe()->GetMatrix().GetVTKMatrix();
 	originalMatrix->DeepCopy(slicerMatrix);
@@ -4725,7 +4725,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesFromRenderWindowToFile(int chooseExpo
 		mafEventMacro(eUpdate);
 
 		// move the slicer in the target abs pose
-		vtkMAFSmartPointer<vtkTransform> tr;
+		vtkNew<vtkTransform> tr;
 		tr->PostMultiply();
 		tr->SetMatrix(originalMatrix);
 
@@ -4746,7 +4746,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesFromRenderWindowToFile(int chooseExpo
 
 		currentSlicer->SetAbsMatrix(tr->GetMatrix());
 
-		vtkMAFSmartPointer<vtkPNGWriter> writer;
+		vtkNew<vtkPNGWriter> writer;
 
 		vtkImageData *textureToWriteOnDisk = NULL;
 

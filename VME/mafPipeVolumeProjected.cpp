@@ -278,10 +278,10 @@ void mafPipeVolumeProjected::Create(mafNode *node, mafView *view)
 	m_UsedAssembly->AddPart(m_RXActor);	
 
   // selection pipeline ////////////////////////////////
-	vtkMAFSmartPointer<vtkOutlineCornerFilter> corner;
+	vtkNew<vtkOutlineCornerFilter> corner;
 	corner->SetInputConnection(m_Vme->GetOutput()->GetVTKOutputPort());
 
-	vtkMAFSmartPointer<vtkPolyDataMapper> corner_mapper;
+	vtkNew<vtkPolyDataMapper> corner_mapper;
 	corner_mapper->SetInputConnection(corner->GetOutputPort());
 
 	vtkNEW(m_VolumeBoxActor);

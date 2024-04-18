@@ -932,8 +932,8 @@ void mafOpExtractIsosurface::ExtractSurface(bool clean)
     }
     vtkPolyData *surface;
     surface = m_ContourVolumeMapper->GetOutput();
-    vtkMAFSmartPointer<vtkCleanPolyData>clearFilter;
-    vtkMAFSmartPointer<vtkTriangleFilter>triangleFilter;
+    vtkNew<vtkCleanPolyData>clearFilter;
+    vtkNew<vtkTriangleFilter>triangleFilter;
     if(m_Clean)
     {
       clearFilter->SetInputConnection(m_ContourVolumeMapper->GetOutputPort());

@@ -69,12 +69,12 @@ mafVMESlicer::mafVMESlicer()
   m_TextureRes = 512;
   m_Xspc = m_Yspc = 0.3;
 
-  vtkMAFSmartPointer<vtkImageData> image;
+  vtkNew<vtkImageData> image;
   image->SetExtent(0, m_TextureRes - 1, 0, m_TextureRes - 1, 0, 0);
   //image->SetUpdateExtent(0, m_TextureRes - 1, 0, m_TextureRes - 1, 0, 0);
   image->SetSpacing(m_Xspc, m_Yspc, 1.f);
 
-  vtkMAFSmartPointer<vtkPolyData> slice;
+  vtkNew<vtkPolyData> slice;
 
   vtkNEW(m_PSlicer);
   vtkNEW(m_ISlicer);

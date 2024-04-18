@@ -80,7 +80,7 @@ void mafOpInteractionOp::OpRun()
   // CREATE A SPHERE GIZMO
   mafNEW(m_Gizmo);
 
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->SetRadius(10);
   m_Gizmo->SetData(sphere->GetOutput());
   

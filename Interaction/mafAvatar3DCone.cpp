@@ -51,8 +51,8 @@ mafAvatar3DCone::mafAvatar3DCone()
   vtkNEW(m_CursorAxes);
   vtkNEW(m_CursorAxesMapper);
   vtkNEW(m_CursorAxesActor);
-  //vtkMAFSmartPointer<mafActiveAssembly> cursor3D;
-  vtkMAFSmartPointer<vtkAssembly> cursor3D;
+  //vtkNew<mafActiveAssembly> cursor3D;
+  vtkNew<vtkAssembly> cursor3D;
   
   SetActor3D(cursor3D);
 

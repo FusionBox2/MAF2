@@ -376,8 +376,8 @@ void mafOpLabelExtractor::ExtractLabel()
     vmeLabeled->GetOutput()->Update();
   }
 
-  vtkMAFSmartPointer<vtkImageData> vol;
-  vtkMAFSmartPointer<vtkImageToStructuredPoints> imageToSp;
+  vtkNew<vtkImageData> vol;
+  vtkNew<vtkImageToStructuredPoints> imageToSp;
 
   //setting the ImageData for RectilinearGrid
   if (m_Ds->IsA("vtkRectilinearGrid"))
@@ -387,7 +387,7 @@ void mafOpLabelExtractor::ExtractLabel()
     double bounds[6];
     rgrid->GetBounds(bounds);
 
-    vtkMAFSmartPointer<vtkStructuredPoints> sp;
+    vtkNew<vtkStructuredPoints> sp;
 
     double xmin = bounds[0];
     double xmax = bounds[1];
@@ -444,7 +444,7 @@ void mafOpLabelExtractor::ExtractLabel()
     output_extent[5] = (bounds[5] - bounds[4]) / volumeSpacing[2];
 
     // the resample filter
-    vtkMAFSmartPointer<vtkMAFVolumeResample> resampler;
+    vtkNew<vtkMAFVolumeResample> resampler;
     resampler->SetZeroValue(0);
 
     double origin[3];
@@ -491,7 +491,7 @@ void mafOpLabelExtractor::ExtractLabel()
   }
   
 
-	vtkMAFSmartPointer<vtkImageThreshold> it;
+	vtkNew<vtkImageThreshold> it;
   it->SetInputData(vol);
 
 	double maxValue;
@@ -522,9 +522,9 @@ void mafOpLabelExtractor::ExtractLabel()
   it->ThresholdBetween(m_ValLabel, m_ValLabel);
   it->Update();
 
-  vtkMAFSmartPointer<vtkImageGaussianSmooth> smooth;
-  vtkMAFSmartPointer<vtkImageGaussianSmooth> smoothAfter;
-  vtkMAFSmartPointer<vtkExtractVOI> extract;
+  vtkNew<vtkImageGaussianSmooth> smooth;
+  vtkNew<vtkImageGaussianSmooth> smoothAfter;
+  vtkNew<vtkExtractVOI> extract;
 
   if(m_SmoothVolume)
   {
@@ -554,11 +554,11 @@ void mafOpLabelExtractor::ExtractLabel()
   imageToSp->SetInputData(vol);
   imageToSp->Update();
  
-  vtkMAFSmartPointer<vtkMAFContourVolumeMapper> contourMapper;
+  vtkNew<vtkMAFContourVolumeMapper> contourMapper;
   contourMapper->SetInputConnection(imageToSp->GetOutputPort());
   contourMapper->SetContourValue(m_ValLabel);
 
-	vtkMAFSmartPointer<vtkPolyData> surface;
+	vtkNew<vtkPolyData> surface;
   contourMapper->GetOutput(0, surface);	
 	contourMapper->Update();
 

@@ -369,18 +369,18 @@ void medVMEWrappedMeter::InternalUpdateAutomatedIOR()
       aligned = true;
 
     // create ordered list of tangent point (2) real algorithm
-    vtkMAFSmartPointer<vtkTransformPolyDataFilter> transformFirstDataInput;
+    vtkNew<vtkTransformPolyDataFilter> transformFirstDataInput;
     transformFirstDataInput->SetTransform((vtkAbstractTransform *)((mafVME *)wrapped_vme)->GetAbsMatrixPipe()->GetVTKTransform());
     transformFirstDataInput->SetInputConnection(((mafVME *)wrapped_vme)->GetOutput()->GetVTKOutputPort());
     transformFirstDataInput->Update();
 
-    vtkMAFSmartPointer<vtkTransformPolyDataFilter> transformFirstData;
+    vtkNew<vtkTransformPolyDataFilter> transformFirstData;
     transformFirstData->SetTransform((vtkAbstractTransform *)m_TmpTransform->GetVTKTransform());
     transformFirstData->SetInputConnection(transformFirstDataInput->GetOutputPort());
     transformFirstData->Update(); 
 
     // here REAL ALGORITHM //////////////////////////////
-    vtkMAFSmartPointer<vtkOBBTree> locator;
+    vtkNew<vtkOBBTree> locator;
     locator->SetDataSet(transformFirstData->GetOutput());
     locator->SetGlobalWarningDisplay(0);
     locator->BuildLocator();
@@ -393,9 +393,9 @@ void medVMEWrappedMeter::InternalUpdateAutomatedIOR()
       return;
     }
 
-    vtkMAFSmartPointer<vtkPoints> temporaryIntersection;
-    vtkMAFSmartPointer<vtkPoints> pointsIntersection1;
-    vtkMAFSmartPointer<vtkPoints> pointsIntersection2;
+    vtkNew<vtkPoints> temporaryIntersection;
+    vtkNew<vtkPoints> pointsIntersection1;
+    vtkNew<vtkPoints> pointsIntersection2;
 
     //control if there is an intersection
     locator->IntersectWithLine(local_start, local_end, temporaryIntersection, NULL);
@@ -712,7 +712,7 @@ void medVMEWrappedMeter::WrappingCore(double *init, double *center, double *end,
 
       //function
 
-      vtkMAFSmartPointer<vtkPlaneSource> planeSource;
+      vtkNew<vtkPlaneSource> planeSource;
       planeSource->SetOrigin(init);
       planeSource->SetPoint1(center);
       planeSource->SetPoint2(end);
@@ -928,18 +928,18 @@ void medVMEWrappedMeter::InternalUpdateAutomated()
     aligned = true;
 
   // create ordered list of tangent point (2) real algorithm
-  vtkMAFSmartPointer<vtkTransformPolyDataFilter> transformFirstDataInput;
+  vtkNew<vtkTransformPolyDataFilter> transformFirstDataInput;
   transformFirstDataInput->SetTransform(wrapped_vme->GetAbsMatrixPipe()->GetVTKTransform());
   transformFirstDataInput->SetInputConnection(wrapped_vme->GetOutput()->GetVTKOutputPort());
   transformFirstDataInput->Update();
 
-  vtkMAFSmartPointer<vtkTransformPolyDataFilter> transformFirstData;
+  vtkNew<vtkTransformPolyDataFilter> transformFirstData;
   transformFirstData->SetTransform(m_TmpTransform->GetVTKTransform());
   transformFirstData->SetInputConnection(transformFirstDataInput->GetOutputPort());
   transformFirstData->Update(); 
 
   // here REAL ALGORITHM //////////////////////////////
-  vtkMAFSmartPointer<vtkOBBTree> locator;
+  vtkNew<vtkOBBTree> locator;
   locator->SetDataSet(transformFirstData->GetOutput());
   locator->SetGlobalWarningDisplay(0);
   locator->BuildLocator();
@@ -960,9 +960,9 @@ void medVMEWrappedMeter::InternalUpdateAutomated()
     return;
   }
 
-  vtkMAFSmartPointer<vtkPoints> temporaryIntersection;
-  vtkMAFSmartPointer<vtkPoints> pointsIntersection1;
-  vtkMAFSmartPointer<vtkPoints> pointsIntersection2;
+  vtkNew<vtkPoints> temporaryIntersection;
+  vtkNew<vtkPoints> pointsIntersection1;
+  vtkNew<vtkPoints> pointsIntersection2;
 
   //control if there is an intersection
   locator->IntersectWithLine(local_start, local_end, temporaryIntersection, NULL);

@@ -1112,10 +1112,10 @@ int lhpOpBonemat::HUIntegration()
   
   mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
 
-  vtkMAFSmartPointer<vtkPoints> pts;
-  vtkMAFSmartPointer<vtkCellArray> cells;
+  vtkNew<vtkPoints> pts;
+  vtkNew<vtkCellArray> cells;
 
-	vtkMAFSmartPointer<vtkUnstructuredGrid> outputUG;
+	vtkNew<vtkUnstructuredGrid> outputUG;
   pts->DeepCopy(inputUnstructuredGrid->GetPoints());
   cells->DeepCopy(inputUnstructuredGrid->GetCells());
   outputUG->SetPoints(pts);
@@ -1832,10 +1832,10 @@ int lhpOpBonemat::YoungModuleIntegration()
 
   mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
 
-  vtkMAFSmartPointer<vtkPoints> pts;
-  vtkMAFSmartPointer<vtkCellArray> cells;
+  vtkNew<vtkPoints> pts;
+  vtkNew<vtkCellArray> cells;
 
-  vtkMAFSmartPointer<vtkUnstructuredGrid> outputUG;
+  vtkNew<vtkUnstructuredGrid> outputUG;
   pts->DeepCopy(inputUnstructuredGrid->GetPoints());
   cells->DeepCopy(inputUnstructuredGrid->GetCells());
   outputUG->SetPoints(pts);

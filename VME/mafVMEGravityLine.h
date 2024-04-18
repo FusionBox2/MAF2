@@ -178,7 +178,7 @@ protected:
 
   double distToPlan=0;
 
-  vtkMAFSmartPointer<vtkPoints> points;
+  vtkNew<vtkPoints> points;
 
   void SetLandmarkLink(const mafString&, mafNode *);
  

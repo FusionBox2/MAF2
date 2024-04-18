@@ -128,7 +128,7 @@ int mafVMEDataSetAttributesImporter::Read()
   numNodes = m_Input->GetOutput()->GetVTKData()->GetNumberOfPoints();
   numElements = m_Input->GetOutput()->GetVTKData()->GetNumberOfCells();
 
-  vtkMAFSmartPointer<vtkDirectory> dirAccessor;
+  vtkNew<vtkDirectory> dirAccessor;
   int isDirOpen = dirAccessor->Open(m_ResultsDir.GetCStr());
   
   if (isDirOpen == 0)
@@ -503,7 +503,7 @@ int mafVMEDataSetAttributesImporter::Read()
     // for everery column add the array to the dataset attribute data  
     for (int labelId = 0; labelId < labelsVector.size() - 1; labelId++)
     {
-      vtkMAFSmartPointer<vtkDoubleArray> attributeDoubleArray;
+      vtkNew<vtkDoubleArray> attributeDoubleArray;
       attributeDoubleArray->SetNumberOfComponents(1);
       attributeDoubleArray->SetName(labelsVector[labelId+1].c_str());
       attributeDoubleArray->SetNumberOfTuples(attributesNumber);      

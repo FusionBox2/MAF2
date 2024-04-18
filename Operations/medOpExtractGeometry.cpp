@@ -410,7 +410,7 @@ void medOpExtractGeometry::VolumeSmoothing()
   // scalars to replace the original ones.
   //////////////////////////////////////////////////////////////////////////
 
-  vtkMAFSmartPointer<vtkUnsignedCharArray> smoothedVolumeScalars;
+  vtkNew<vtkUnsignedCharArray> smoothedVolumeScalars;
   smoothedVolumeScalars->SetName("SCALARS");
   smoothedVolumeScalars->SetNumberOfTuples(originalScalars->GetNumberOfTuples());
   //////////////////////////////////////////////////////////////////////////
@@ -421,7 +421,7 @@ void medOpExtractGeometry::VolumeSmoothing()
   // Iteration to process every single slice scalars
   //////////////////////////////////////////////////////////////////////////
 
-  vtkMAFSmartPointer<vtkUnsignedCharArray> sliceScalars;
+  vtkNew<vtkUnsignedCharArray> sliceScalars;
   sliceScalars->SetName("SCALARS");
   sliceScalars->SetNumberOfTuples(dim[0]*dim[1]);
 
@@ -433,7 +433,7 @@ void medOpExtractGeometry::VolumeSmoothing()
       sliceScalars->SetTuple1(k,value);
     }
 
-    vtkMAFSmartPointer<vtkImageData> im;
+    vtkNew<vtkImageData> im;
     im->SetDimensions(dim[0],dim[1],1);
     im->SetSpacing(spacing[0],spacing[1],0.0);
     im->GetPointData()->AddArray(sliceScalars);
@@ -441,7 +441,7 @@ void medOpExtractGeometry::VolumeSmoothing()
     //im->SetScalarTypeToUnsignedChar();
     //im->Update();
 
-    vtkMAFSmartPointer<vtkImageCast> vtkImageToUnsignedChar;
+    vtkNew<vtkImageCast> vtkImageToUnsignedChar;
     vtkImageToUnsignedChar->SetOutputScalarTypeToUnsignedChar();
     vtkImageToUnsignedChar->SetInputData(im);
     vtkImageToUnsignedChar->Modified();
@@ -483,7 +483,7 @@ void medOpExtractGeometry::VolumeSmoothing()
   }
   //////////////////////////////////////////////////////////////////////////
 
-  vtkMAFSmartPointer<vtkImageData> newImageData;
+  vtkNew<vtkImageData> newImageData;
   newImageData->CopyStructure(m_OriginalData);
   //newImageData->Update();
   newImageData->GetPointData()->AddArray(smoothedVolumeScalars);
@@ -498,7 +498,7 @@ void medOpExtractGeometry::VolumeSmoothing()
 void medOpExtractGeometry::SurfaceCleaning()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkCleanPolyData>clearFilter;
+  vtkNew<vtkCleanPolyData>clearFilter;
 
   clearFilter->SetInputData(m_SurfaceData);
   clearFilter->ConvertLinesToPointsOff();
@@ -514,13 +514,13 @@ void medOpExtractGeometry::SurfaceDecimation()
 //----------------------------------------------------------------------------
 {
   // triangle
-  vtkMAFSmartPointer<vtkTriangleFilter> triangleFilter;
+  vtkNew<vtkTriangleFilter> triangleFilter;
   triangleFilter->SetInputData(m_SurfaceData);
   triangleFilter->Update();
   m_SurfaceData->DeepCopy(triangleFilter->GetOutput());
 
   //decimate
-  vtkMAFSmartPointer<vtkDecimatePro> decimate;
+  vtkNew<vtkDecimatePro> decimate;
   decimate->SetInputData(m_SurfaceData);
   decimate->SetPreserveTopology(1); 
   int m_Reduction = 50;
@@ -537,7 +537,7 @@ void medOpExtractGeometry::SurfaceSmoothing()
 //----------------------------------------------------------------------------
 {
 
-  vtkMAFSmartPointer<vtkSmoothPolyDataFilter> smoothFilter;
+  vtkNew<vtkSmoothPolyDataFilter> smoothFilter;
   smoothFilter->SetInputData(m_SurfaceData);
   smoothFilter->SetNumberOfIterations(m_SmoothSurfaceIterationsNumber);
   smoothFilter->FeatureEdgeSmoothingOn();
@@ -550,7 +550,7 @@ void medOpExtractGeometry::SurfaceSmoothing()
 void medOpExtractGeometry::SurfaceConnectivity()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkPolyDataConnectivityFilter> connectivityFilter;
+  vtkNew<vtkPolyDataConnectivityFilter> connectivityFilter;
   connectivityFilter->SetInputData(m_SurfaceData);
   connectivityFilter->Update();
 
@@ -645,7 +645,7 @@ int medOpExtractGeometry::GenerateIsosurface()
 
   if (m_ProcessingType==0)
   {
-    vtkMAFSmartPointer<vtkMEDFixTopology> fixTopologyFilter;
+    vtkNew<vtkMEDFixTopology> fixTopologyFilter;
     fixTopologyFilter->SetInputData(m_SurfaceData);
     fixTopologyFilter->Update();
     m_SurfaceData->DeepCopy(fixTopologyFilter->GetOutput());
