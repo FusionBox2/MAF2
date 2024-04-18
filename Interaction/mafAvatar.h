@@ -200,8 +200,8 @@ protected:
   /** process event sent when a view has been selected */
   virtual void OnViewSelected(mafEvent *e);
 
-  vtkMAFSmartPointer<vtkProp3D>   m_Actor3D;  ///< 3D representation of the avatar
-  vtkMAFSmartPointer<vtkActor2D>  m_Actor2D;  ///< 2D representation of the avatar
+  vtkSmartPointer<vtkProp3D>   m_Actor3D;  ///< 3D representation of the avatar
+  vtkSmartPointer<vtkActor2D>  m_Actor2D;  ///< 2D representation of the avatar
 
   mafGUI*           m_Gui;  ///< the settings Gui
   mafView*          m_View; ///< the selected view

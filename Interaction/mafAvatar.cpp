@@ -68,6 +68,7 @@ mafAvatar::mafAvatar()
   m_Cursor2DHideCounter   = 0;
   m_Mode                  = MODE_3D;
   m_Gui                   = NULL;
+  m_Actor2D = vtkSmartPointer<vtkActor2D>::New();
 }
 
 //------------------------------------------------------------------------------
