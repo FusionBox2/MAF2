@@ -134,7 +134,7 @@ public:
   /*
   Fit an ellipsoid to a set of points
   */
-  void fitEllipsoid(vtkMAFSmartPointer<vtkPoints> points, double* xres, double* yres, double* zres, double*r1, double* r2, double* r3, Matrix3d* rotationMatrix);
+  void fitEllipsoid(vtkSmartPointer<vtkPoints> points, double* xres, double* yres, double* zres, double*r1, double* r2, double* r3, Matrix3d* rotationMatrix);
 
 	mafVMEQuadricSurfaceFitting();
 	virtual ~mafVMEQuadricSurfaceFitting();

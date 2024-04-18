@@ -1385,7 +1385,7 @@ void mafVMEQuadricSurfaceFitting::EnableQuadricSurfaceGui(int surfaceTypeID)
 
 //void SetInputPointsCloud(vtkSmartPointer<vtkPoints> points)
 
-void mafVMEQuadricSurfaceFitting::fitEllipsoid(vtkMAFSmartPointer<vtkPoints> points, double* xres, double* yres, double* zres, double*r1, double* r2, double* r3, Matrix3d* rotationMatrix)
+void mafVMEQuadricSurfaceFitting::fitEllipsoid(vtkSmartPointer<vtkPoints> points, double* xres, double* yres, double* zres, double*r1, double* r2, double* r3, Matrix3d* rotationMatrix)
 {
 
 	//%%% see "Turner, 1999. An algorithm for fitting an ellipsoid to data"  eq 4 & 5
