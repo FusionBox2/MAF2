@@ -43,7 +43,7 @@ void vtkDicomUnPackerTest::ReadTest()
 //-------------------------------------------------------------------------
 {
 	//Inizialize DICOM DIRECTORY
-	vtkMAFSmartPointer<vtkDirectory> DicomDirectory;
+	vtkNew<vtkDirectory> DicomDirectory;
 	mafString DicomPath=MED_DATA_ROOT;
 	DicomPath<<"/DicomUnpacker/TestDicomUnpacker";
 	DicomDirectory->Open(DicomPath);
@@ -71,7 +71,7 @@ void vtkDicomUnPackerTest::ReadTest()
 			FilePath<<CurrentFile;
 			
 			//Inizialize DICOM READER
-			vtkMAFSmartPointer<vtkDicomUnPacker> DicomReader;
+			vtkNew<vtkDicomUnPacker> DicomReader;
 			DicomReader->SetFileName(FilePath);
 			DicomReader->UseDefaultDictionaryOff();
 			DicomReader->SetDictionaryFileName(DictonaryFilename);

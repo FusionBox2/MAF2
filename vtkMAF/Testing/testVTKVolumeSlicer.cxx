@@ -35,17 +35,17 @@ int VolumeSlicerTest()
   pslicer = vtkMAFVolumeSlicer::New();
 
   // create windows
-  vtkMAFSmartPointer<vtkRenderer> renderer;
-  vtkMAFSmartPointer<vtkRenderWindow> renWin;
+  vtkNew<vtkRenderer> renderer;
+  vtkNew<vtkRenderWindow> renWin;
   renWin->AddRenderer(renderer);
 
-  vtkMAFSmartPointer<vtkRenderWindowInteractor> iren;
+  vtkNew<vtkRenderWindowInteractor> iren;
   iren->SetRenderWindow(renWin);
 
   // prepare for rendering
   iren->SetStillUpdateRate(0.05f);
   iren->SetDesiredUpdateRate(15.f);
-  vtkMAFSmartPointer<vtkInteractorStyleSwitch> style;
+  vtkNew<vtkInteractorStyleSwitch> style;
   iren->SetInteractorStyle(style);
   style->SetCurrentStyleToTrackballActor();
 
@@ -54,7 +54,7 @@ int VolumeSlicerTest()
 
   //------------------ load (create) data
   int dataExtent[6];
-  vtkMAFSmartPointer<vtkImageData> data;
+  vtkNew<vtkImageData> data;
   data->SetScalarTypeToUnsignedChar();
   data->SetExtent(0, 255, 0, 255, 0, 255);
   data->AllocateScalars();
@@ -101,7 +101,7 @@ int VolumeSlicerTest()
   slicer->SetInput(data);
   pslicer->SetInput(data);
 
-  vtkMAFSmartPointer<vtkImageData> idata;
+  vtkNew<vtkImageData> idata;
   idata->SetScalarTypeToUnsignedChar();
   idata->SetNumberOfScalarComponents(4);
   idata->SetExtent(0, 1023, 0, 1023, 0, 0);
@@ -113,18 +113,18 @@ int VolumeSlicerTest()
   MAF_TEST(slicer->GetWindow() == 800);
   MAF_TEST(slicer->GetLevel() == -100);
 
-  vtkMAFSmartPointer<vtkTexture> texture;
+  vtkNew<vtkTexture> texture;
   texture->RepeatOff();
   texture->InterpolateOn();
   texture->SetQualityTo32Bit();
   texture->SetInput(idata);
 
-  vtkMAFSmartPointer<vtkPolyDataMapper> smapper;
-  vtkMAFSmartPointer<vtkPolyData>       polydata;
+  vtkNew<vtkPolyDataMapper> smapper;
+  vtkNew<vtkPolyData>       polydata;
   pslicer->SetOutput(polydata);
   pslicer->SetTexture(idata);
   smapper->SetInput(polydata);
-  vtkMAFSmartPointer<vtkActor> sactor;
+  vtkNew<vtkActor> sactor;
   sactor->SetMapper(smapper);
   sactor->VisibilityOn();
   sactor->PickableOff();

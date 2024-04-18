@@ -49,22 +49,22 @@ void vtkMAFRemoveCellsFilterTest::TestFixture()
 
 void vtkMAFRemoveCellsFilterTest::RenderData( vtkPolyData *data )
 {
-  vtkMAFSmartPointer<vtkRenderer> renderer;
+  vtkNew<vtkRenderer> renderer;
   renderer->SetBackground(0.1, 0.1, 0.1);
   
-  vtkMAFSmartPointer<vtkRenderWindow> renderWindow;
+  vtkNew<vtkRenderWindow> renderWindow;
   renderWindow->AddRenderer(renderer);
   renderWindow->SetSize(640, 480);
   renderWindow->SetPosition(400,0);
   
-  vtkMAFSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor;
+  vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
   renderWindowInteractor->SetRenderWindow(renderWindow);
 
-  vtkMAFSmartPointer<vtkPolyDataMapper> mapper;
+  vtkNew<vtkPolyDataMapper> mapper;
   mapper->SetInput(data);
   mapper->ScalarVisibilityOn();
   
-  vtkMAFSmartPointer<vtkActor> actor;
+  vtkNew<vtkActor> actor;
   actor->SetMapper(mapper);
   
   renderer->AddActor(actor);
@@ -83,10 +83,10 @@ void vtkMAFRemoveCellsFilterTest::RenderData( vtkPolyData *data )
 void vtkMAFRemoveCellsFilterTest::TestRemoveMarkedCells()
 {
   
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->Update();
 
-	vtkMAFSmartPointer<vtkMAFRemoveCellsFilter> rc;
+	vtkNew<vtkMAFRemoveCellsFilter> rc;
   rc->SetInput(sphere->GetOutput());
   rc->Update();
 
@@ -111,10 +111,10 @@ void vtkMAFRemoveCellsFilterTest::TestRemoveMarkedCells()
 
 void vtkMAFRemoveCellsFilterTest::TestMarkCell()
 {
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->Update();
 
-  vtkMAFSmartPointer<vtkMAFRemoveCellsFilter> rc;
+  vtkNew<vtkMAFRemoveCellsFilter> rc;
   rc->SetInput(sphere->GetOutput());
   rc->Update();
 
@@ -136,10 +136,10 @@ void vtkMAFRemoveCellsFilterTest::TestMarkCell()
 
 void vtkMAFRemoveCellsFilterTest::TestUndoMarks()
 {
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->Update();
 
-  vtkMAFSmartPointer<vtkMAFRemoveCellsFilter> rc;
+  vtkNew<vtkMAFRemoveCellsFilter> rc;
   rc->SetInput(sphere->GetOutput());
   rc->Update();
 

@@ -57,11 +57,11 @@ void vtkMAFGlobalAxisCoordinateTest::TestDynamicAllocation()
 }*/
 void vtkMAFGlobalAxisCoordinateTest::TestGetComputedUserDefinedValue()
 {
-  vtkMAFSmartPointer<vtkMAFGlobalAxisCoordinate> coord;
+  vtkNew<vtkMAFGlobalAxisCoordinate> coord;
 
-  vtkMAFSmartPointer<vtkRenderWindow> renWin;
-  vtkMAFSmartPointer<vtkRenderer> ren1;
-  vtkMAFSmartPointer<vtkCamera> camera;
+  vtkNew<vtkRenderWindow> renWin;
+  vtkNew<vtkRenderer> ren1;
+  vtkNew<vtkCamera> camera;
 
   double w[4] = {2.,7.,5.,1.};
   coord->SetValue(w[0],w[1],w[2]);

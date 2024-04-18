@@ -60,7 +60,7 @@ static int index = 0;
 void vtkMEDCollisionDetectionFilterTest::TestDynamicAllocation()
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMEDCollisionDetectionFilter> filter1;
+  vtkNew<vtkMEDCollisionDetectionFilter> filter1;
 
   vtkMEDCollisionDetectionFilter *filter2 = vtkMEDCollisionDetectionFilter::New();
   
@@ -70,25 +70,25 @@ void vtkMEDCollisionDetectionFilterTest::TestDynamicAllocation()
 void vtkMEDCollisionDetectionFilterTest::Test()
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkSphereSource> s1;
+  vtkNew<vtkSphereSource> s1;
   s1->SetRadius(10.0);
   s1->SetCenter(0.0,0.0,0.0);
   s1->SetPhiResolution(100);
   s1->SetThetaResolution(100);
   s1->Update();
 
-  vtkMAFSmartPointer<vtkSphereSource> s2;
+  vtkNew<vtkSphereSource> s2;
   s2->SetRadius(10.0);
   s2->SetCenter(10.0,10.0,10.0);
   s2->SetPhiResolution(100);
   s2->SetThetaResolution(100);
   s2->Update();
 
-  vtkMAFSmartPointer<vtkMatrix4x4> m1;
-  vtkMAFSmartPointer<vtkMatrix4x4> m2;
+  vtkNew<vtkMatrix4x4> m1;
+  vtkNew<vtkMatrix4x4> m2;
 
   long timeStart = time(NULL);
-  vtkMAFSmartPointer<vtkMEDCollisionDetectionFilter> filter;
+  vtkNew<vtkMEDCollisionDetectionFilter> filter;
   filter->SetInput(0,s1->GetOutput());
   filter->SetInput(1,s2->GetOutput());
   filter->SetMatrix(0,m1);
@@ -102,10 +102,10 @@ void vtkMEDCollisionDetectionFilterTest::Test()
 
   printf("\n\t%d sec. to compute collision detection\n",timeToCompute);
 
-  vtkMAFSmartPointer<vtkPolyData> output0;
+  vtkNew<vtkPolyData> output0;
   output0->DeepCopy(filter->GetOutput(0));
   output0->Update();
-  vtkMAFSmartPointer<vtkDoubleArray> contactScalars;
+  vtkNew<vtkDoubleArray> contactScalars;
   contactScalars->SetName("CONTACT");
   contactScalars->SetNumberOfTuples(filter->GetOutput(0)->GetNumberOfCells());
   for (int i=0;i<filter->GetOutput(0)->GetNumberOfCells();i++)
@@ -121,7 +121,7 @@ void vtkMEDCollisionDetectionFilterTest::Test()
 
   output0->GetCellData()->AddArray(contactScalars);
 
-  vtkMAFSmartPointer<vtkPolyDataWriter> w;
+  vtkNew<vtkPolyDataWriter> w;
   w->SetInput(output0);
   w->SetFileName("test0.vtk");
   w->Write();
@@ -132,7 +132,7 @@ void vtkMEDCollisionDetectionFilterTest::Test()
   w->SetFileName("test1.vtk");
   w->Write();
 
-  vtkMAFSmartPointer<vtkProperty> p;
+  vtkNew<vtkProperty> p;
   p->SetOpacity(0.5);
 
   AddPolydataToVisualize(s1->GetOutput(),p);
@@ -182,11 +182,11 @@ void vtkMEDCollisionDetectionFilterTest::Visualize( vtkActor *actor )
 void vtkMEDCollisionDetectionFilterTest::AddPolydataToVisualize(vtkPolyData *data, vtkProperty *property /* = NULL */)
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkPolyDataMapper> mapper;
+  vtkNew<vtkPolyDataMapper> mapper;
   mapper->SetInput(data);
   mapper->Update();
 
-  vtkMAFSmartPointer<vtkActor> actor;
+  vtkNew<vtkActor> actor;
   if (property != NULL)
   {
     actor->SetProperty(property);
@@ -199,25 +199,25 @@ void vtkMEDCollisionDetectionFilterTest::AddPolydataToVisualize(vtkPolyData *dat
 void vtkMEDCollisionDetectionFilterTest::TestChangingMatrix()
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkSphereSource> s1;
+  vtkNew<vtkSphereSource> s1;
   s1->SetRadius(10.0);
   s1->SetCenter(0.0,0.0,0.0);
   s1->SetPhiResolution(50);
   s1->SetThetaResolution(50);
   s1->Update();
 
-  vtkMAFSmartPointer<vtkSphereSource> s2;
+  vtkNew<vtkSphereSource> s2;
   s2->SetRadius(10.0);
   s2->SetCenter(10.0,10.0,10.0);
   s2->SetPhiResolution(50);
   s2->SetThetaResolution(50);
   s2->Update();
 
-  vtkMAFSmartPointer<vtkMatrix4x4> m1;
-  vtkMAFSmartPointer<vtkMatrix4x4> m2;
+  vtkNew<vtkMatrix4x4> m1;
+  vtkNew<vtkMatrix4x4> m2;
 
   clock_t timeStart = clock();
-  vtkMAFSmartPointer<vtkMEDCollisionDetectionFilter> filter;
+  vtkNew<vtkMEDCollisionDetectionFilter> filter;
   filter->SetInput(0,s1->GetOutput());
   filter->SetInput(1,s2->GetOutput());
   filter->SetMatrix(0,m1);
@@ -229,7 +229,7 @@ void vtkMEDCollisionDetectionFilterTest::TestChangingMatrix()
 
   printf("\n\t%.3f sec. to compute collision detection\n",timeToCompute);
 
-  vtkMAFSmartPointer<vtkProperty> p;
+  vtkNew<vtkProperty> p;
   p->SetOpacity(0.5);
 
   AddPolydataToVisualize(s1->GetOutput(),p);
@@ -249,7 +249,7 @@ void vtkMEDCollisionDetectionFilterTest::TestChangingMatrix()
   for (int i=0;i<10;i++)
   {
     vtkMatrix4x4 *m3 = vtkMatrix4x4::New();
-    vtkMAFSmartPointer<vtkTransform> transform;
+    vtkNew<vtkTransform> transform;
     transform->SetMatrix(m3);
     transform->Translate(i/10.0,i/10.0,i/10.0);
 
@@ -304,14 +304,14 @@ void vtkMEDCollisionDetectionFilterTest::CompareImages(int index , wxString fold
 
   // visualization control
   m_RenderWindow->OffScreenRenderingOn();
-  vtkMAFSmartPointer<vtkWindowToImageFilter> w2i;
+  vtkNew<vtkWindowToImageFilter> w2i;
   w2i->SetInput(m_RenderWindow);
   //w2i->SetMagnification(magnification);
   w2i->Update();
   m_RenderWindow->OffScreenRenderingOff();
 
   //write comparing image
-  vtkMAFSmartPointer<vtkJPEGWriter> w;
+  vtkNew<vtkJPEGWriter> w;
   w->SetInput(w2i->GetOutput());
   wxString imageFile=MED_DATA_ROOT;
 
@@ -346,7 +346,7 @@ void vtkMEDCollisionDetectionFilterTest::CompareImages(int index , wxString fold
   controlStream.close();
 
   //read original Image
-  vtkMAFSmartPointer<vtkJPEGReader> rO;
+  vtkNew<vtkJPEGReader> rO;
   wxString imageFileOrig=MED_DATA_ROOT;
   imageFileOrig << "/";
   imageFileOrig << folder;
@@ -361,13 +361,13 @@ void vtkMEDCollisionDetectionFilterTest::CompareImages(int index , wxString fold
   vtkImageData *imDataOrig = rO->GetOutput();
 
   //read compared image
-  vtkMAFSmartPointer<vtkJPEGReader> rC;
+  vtkNew<vtkJPEGReader> rC;
   rC->SetFileName(imageFile.c_str());
   rC->Update();
 
   vtkImageData *imDataComp = rC->GetOutput();
 
-  vtkMAFSmartPointer<vtkImageMathematics> imageMath;
+  vtkNew<vtkImageMathematics> imageMath;
   imageMath->SetInput1(imDataOrig);
   imageMath->SetInput2(imDataComp);
   imageMath->SetOperationToSubtract();

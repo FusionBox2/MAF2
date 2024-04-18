@@ -39,7 +39,7 @@ void vtkMEDRayCastCleanerTest::TestDynamicAllocation()
 //-------------------------------------------------------------------------
 {
   //Testing with smart pointer
-  vtkMAFSmartPointer<vtkMEDRayCastCleaner> filter1;
+  vtkNew<vtkMEDRayCastCleaner> filter1;
 
   //Test with new/Delete
   vtkMEDRayCastCleaner *filter2;
@@ -55,21 +55,21 @@ void vtkMEDRayCastCleanerTest::TestFilter()
   vtkStructuredPoints *oldOutput,*newOutput;
 
   //Loading unfiltered data
-  vtkMAFSmartPointer<vtkStructuredPointsReader> r;
+  vtkNew<vtkStructuredPointsReader> r;
   mafString filename=MED_DATA_ROOT;
   filename<<"/VTK_Volumes/volumeRayCastTest.vtk";
   r->SetFileName(filename.GetCStr());
   r->Update();
 
   //Loading prefiltered data
-  vtkMAFSmartPointer<vtkStructuredPointsReader> r2;
+  vtkNew<vtkStructuredPointsReader> r2;
   mafString filteredFilename=MED_DATA_ROOT;
   filteredFilename<<"/Test_vtkMEDRayCastCleaner/outputVolume.vtk";
   r2->SetFileName(filteredFilename.GetCStr());
   r2->Update();
 
   //creating filter
-  vtkMAFSmartPointer<vtkMEDRayCastCleaner> filter;
+  vtkNew<vtkMEDRayCastCleaner> filter;
   filter->SetInput(r->GetOutput());
   filter->SetModalityToCT();
   filter->Update();
@@ -105,7 +105,7 @@ void vtkMEDRayCastCleanerTest::TestFilter()
   /* 
   //Used to generate initial test file 
   
-  vtkMAFSmartPointer<vtkStructuredPointsWriter> w;
+  vtkNew<vtkStructuredPointsWriter> w;
   mafString outFilename=MED_DATA_ROOT;
   outFilename<<"/Test_vtkMEDRayCastCleaner/outputVolume.vtk";
   w->SetFileName(outFilename.GetCStr());
@@ -125,21 +125,21 @@ void vtkMEDRayCastCleanerTest::TestFilterMR()
   vtkStructuredPoints *oldOutput,*newOutput;
   
   //Loading unfiltered data
-  vtkMAFSmartPointer<vtkStructuredPointsReader> r;
+  vtkNew<vtkStructuredPointsReader> r;
   mafString filename=MED_DATA_ROOT;
   filename<<"/VTK_Volumes/volumeRayCastTestMR.vtk";
   r->SetFileName(filename.GetCStr());
   r->Update();
 
   //Loading prefiltered data
-  vtkMAFSmartPointer<vtkStructuredPointsReader> r2;
+  vtkNew<vtkStructuredPointsReader> r2;
   mafString filteredFilename=MED_DATA_ROOT;
   filteredFilename<<"/Test_vtkMEDRayCastCleaner/outputVolumeMR.vtk";
   r2->SetFileName(filteredFilename.GetCStr());
   r2->Update();
   
   //creating filter
-  vtkMAFSmartPointer<vtkMEDRayCastCleaner> filter;
+  vtkNew<vtkMEDRayCastCleaner> filter;
   filter->SetInput(r->GetOutput());
   filter->SetModalityToMR();
   filter->Update();
@@ -173,7 +173,7 @@ void vtkMEDRayCastCleanerTest::TestFilterMR()
      
   //Used to generate initial test file 
   /*
-  vtkMAFSmartPointer<vtkStructuredPointsWriter> w;
+  vtkNew<vtkStructuredPointsWriter> w;
   mafString outFilename=MED_DATA_ROOT;
   outFilename<<"/Test_vtkMEDRayCastCleaner/outputVolumeMR.vtk";
   w->SetFileName(outFilename.GetCStr());
@@ -191,7 +191,7 @@ void vtkMEDRayCastCleanerTest::TestSetterGetter()
 
   //testing setter/getter 
 
-  vtkMAFSmartPointer<vtkMEDRayCastCleaner> filter;
+  vtkNew<vtkMEDRayCastCleaner> filter;
   
   filter->SetBloodLowerThreshold(145.0);
   CPPUNIT_ASSERT(filter->GetBloodLowerThreshold() == 145.0);

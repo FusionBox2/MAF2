@@ -62,8 +62,8 @@ void vtkMAFLocalAxisCoordinateTest::TestDynamicAllocation()
 
 void vtkMAFLocalAxisCoordinateTest::TestMatrixAccessors()
 {
-  vtkMAFSmartPointer<vtkMAFLocalAxisCoordinate> coord;
-  vtkMAFSmartPointer<vtkMatrix4x4> matrix;
+  vtkNew<vtkMAFLocalAxisCoordinate> coord;
+  vtkNew<vtkMatrix4x4> matrix;
   coord->SetMatrix(matrix);
 
   bool result = true;
@@ -81,8 +81,8 @@ void vtkMAFLocalAxisCoordinateTest::TestMatrixAccessors()
 }
 void vtkMAFLocalAxisCoordinateTest::TestDatasetAccessors()
 {
-  vtkMAFSmartPointer<vtkMAFLocalAxisCoordinate> coord;
-  vtkMAFSmartPointer<vtkCubeSource> cube;
+  vtkNew<vtkMAFLocalAxisCoordinate> coord;
+  vtkNew<vtkCubeSource> cube;
 
   coord->SetDataSet((vtkDataSet*)cube->GetOutput());
 
@@ -91,14 +91,14 @@ void vtkMAFLocalAxisCoordinateTest::TestDatasetAccessors()
 
 void vtkMAFLocalAxisCoordinateTest::TestGetComputedUserDefinedValue()
 {
-  vtkMAFSmartPointer<vtkMAFLocalAxisCoordinate> coord;
+  vtkNew<vtkMAFLocalAxisCoordinate> coord;
 
-  vtkMAFSmartPointer<vtkRenderWindow> renWin;
-  vtkMAFSmartPointer<vtkRenderer> ren1;
-  vtkMAFSmartPointer<vtkCamera> camera;
+  vtkNew<vtkRenderWindow> renWin;
+  vtkNew<vtkRenderer> ren1;
+  vtkNew<vtkCamera> camera;
 
-  vtkMAFSmartPointer<vtkCubeSource> cube;
-  vtkMAFSmartPointer<vtkMatrix4x4> matrix;
+  vtkNew<vtkCubeSource> cube;
+  vtkNew<vtkMatrix4x4> matrix;
 
   double w[4] = {2.,7.,5.,1.};
   coord->SetValue(w[0],w[1],w[2]);

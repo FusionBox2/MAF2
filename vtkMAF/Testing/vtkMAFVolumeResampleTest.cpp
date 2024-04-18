@@ -155,7 +155,7 @@ void vtkMAFVolumeResampleTest::TestResampleInternal( const char *inFileName , co
 
 void vtkMAFVolumeResampleTest::WriteVTKDatasetToFile( vtkDataSet * outputVolumeVTKData, const char *outputFilename )
 {
-  vtkMAFSmartPointer<vtkDataSetWriter> writer;
+  vtkNew<vtkDataSetWriter> writer;
   writer->SetInput(outputVolumeVTKData);
 
   string fullPathOutputFilename;

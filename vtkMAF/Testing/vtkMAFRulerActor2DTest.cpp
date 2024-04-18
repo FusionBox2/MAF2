@@ -46,19 +46,19 @@ void vtkMAFRulerActor2DTest::tearDown()
 void vtkMAFRulerActor2DTest::RenderData(vtkActor2D *actor)
 //------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkRenderer> renderer;
+  vtkNew<vtkRenderer> renderer;
   renderer->SetBackground(0.0, 0.0, 0.0);
 
   vtkCamera *camera = renderer->GetActiveCamera();
   camera->ParallelProjectionOn();
   camera->Modified();
 
-  vtkMAFSmartPointer<vtkRenderWindow> renderWindow;
+  vtkNew<vtkRenderWindow> renderWindow;
   renderWindow->AddRenderer(renderer);
   renderWindow->SetSize(640, 480);
   renderWindow->SetPosition(100,0);
 
-  vtkMAFSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor;
+  vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
   renderWindowInteractor->SetRenderWindow(renderWindow);
 
   renderer->AddActor2D(actor);

@@ -42,7 +42,7 @@ void vtkMAFProjectRGTest::tearDown()
 void vtkMAFProjectRGTest::TestDynamicAllocation()
 //--------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMAFProjectRG> filter;
+  vtkNew<vtkMAFProjectRG> filter;
   vtkMAFProjectRG *filter2 = vtkMAFProjectRG::New();
   filter2->Delete();
 }
@@ -51,7 +51,7 @@ void vtkMAFProjectRGTest::TestExecutionProjectionModeToX()
 //--------------------------------------------------
 {
   //create RG with scalars
-  vtkMAFSmartPointer<vtkRectilinearGrid> rg;
+  vtkNew<vtkRectilinearGrid> rg;
 
   vtkFloatArray *vx = vtkFloatArray::New();
   vtkFloatArray *vy = vtkFloatArray::New();
@@ -82,7 +82,7 @@ void vtkMAFProjectRGTest::TestExecutionProjectionModeToX()
 
   int i = 0;
   int size = Dimension[0] * Dimension[1] * Dimension[2];
-  vtkMAFSmartPointer<vtkFloatArray> array;
+  vtkNew<vtkFloatArray> array;
   array->Allocate(8);
   
   for(; i < size; i++)
@@ -118,7 +118,7 @@ void vtkMAFProjectRGTest::TestExecutionProjectionModeToX()
   must divided by dim[0]
   */
 
-  vtkMAFSmartPointer<vtkFloatArray> arrayControl;
+  vtkNew<vtkFloatArray> arrayControl;
   arrayControl->InsertNextTuple1(1./Dimension[0]);
   arrayControl->InsertNextTuple1(5./Dimension[0]);
   arrayControl->InsertNextTuple1(9./Dimension[0]);
@@ -126,7 +126,7 @@ void vtkMAFProjectRGTest::TestExecutionProjectionModeToX()
 
   
   //use filter
-  vtkMAFSmartPointer<vtkMAFProjectRG> filter;
+  vtkNew<vtkMAFProjectRG> filter;
   filter->SetInput(rg);
   filter->SetProjectionModeToX();
   filter->Update();
@@ -148,7 +148,7 @@ void vtkMAFProjectRGTest::TestExecutionProjectionModeToY()
 //--------------------------------------------------
 {
   //create RG with scalars
-  vtkMAFSmartPointer<vtkRectilinearGrid> rg;
+  vtkNew<vtkRectilinearGrid> rg;
 
   vtkFloatArray *vx = vtkFloatArray::New();
   vtkFloatArray *vy = vtkFloatArray::New();
@@ -179,7 +179,7 @@ void vtkMAFProjectRGTest::TestExecutionProjectionModeToY()
 
   int i = 0;
   int size = Dimension[0] * Dimension[1] * Dimension[2];
-  vtkMAFSmartPointer<vtkFloatArray> array;
+  vtkNew<vtkFloatArray> array;
   array->Allocate(8);
 
   for(; i < size; i++)
@@ -213,14 +213,14 @@ void vtkMAFProjectRGTest::TestExecutionProjectionModeToY()
   must divided by dim[1]
   */
 
-  vtkMAFSmartPointer<vtkFloatArray> arrayControl;
+  vtkNew<vtkFloatArray> arrayControl;
   arrayControl->InsertNextTuple1(2./Dimension[1]);
   arrayControl->InsertNextTuple1(4./Dimension[1]);
   arrayControl->InsertNextTuple1(10./Dimension[1]);
   arrayControl->InsertNextTuple1(12./Dimension[1]);
 
   //use filter
-  vtkMAFSmartPointer<vtkMAFProjectRG> filter;
+  vtkNew<vtkMAFProjectRG> filter;
   filter->SetInput(rg);
   filter->SetProjectionModeToY();
   filter->Update();
@@ -241,7 +241,7 @@ void vtkMAFProjectRGTest::TestExecutionProjectionModeToZ()
 //--------------------------------------------------
 {
   //create RG with scalars
-  vtkMAFSmartPointer<vtkRectilinearGrid> rg;
+  vtkNew<vtkRectilinearGrid> rg;
 
   vtkFloatArray *vx = vtkFloatArray::New();
   vtkFloatArray *vy = vtkFloatArray::New();
@@ -272,7 +272,7 @@ void vtkMAFProjectRGTest::TestExecutionProjectionModeToZ()
 
   int i = 0;
   int size = Dimension[0] * Dimension[1] * Dimension[2];
-  vtkMAFSmartPointer<vtkFloatArray> array;
+  vtkNew<vtkFloatArray> array;
   array->Allocate(8);
 
   for(; i < size; i++)
@@ -307,7 +307,7 @@ void vtkMAFProjectRGTest::TestExecutionProjectionModeToZ()
   must divided by dim[2]
   */
 
-  vtkMAFSmartPointer<vtkFloatArray> arrayControl;
+  vtkNew<vtkFloatArray> arrayControl;
   arrayControl->InsertNextTuple1(4./Dimension[2]);
   arrayControl->InsertNextTuple1(6./Dimension[2]);
   arrayControl->InsertNextTuple1(8./Dimension[2]);
@@ -316,7 +316,7 @@ void vtkMAFProjectRGTest::TestExecutionProjectionModeToZ()
   
 
   //use filter
-  vtkMAFSmartPointer<vtkMAFProjectRG> filter;
+  vtkNew<vtkMAFProjectRG> filter;
   filter->SetInput(rg);
   filter->SetProjectionModeToZ();
   filter->Update();
@@ -336,7 +336,7 @@ void vtkMAFProjectRGTest::TestExecutionProjectionModeToZ()
 void vtkMAFProjectRGTest::TestPrintSelf()
 //--------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMAFProjectRG> filter;
+  vtkNew<vtkMAFProjectRG> filter;
   filter->SetProjectionModeToX();
   std::cout;
   filter->PrintSelf(cout, 2);

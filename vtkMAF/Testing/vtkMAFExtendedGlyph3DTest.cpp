@@ -216,7 +216,7 @@ void vtkMAFExtendedGlyph3DTest::TestDynamicAllocation()
   filter = vtkMAFExtendedGlyph3D::New();
   filter->Delete();
   //////////////////////////////////////////////////////////////////////////
-  vtkMAFSmartPointer<vtkMAFExtendedGlyph3D> filterSmart;
+  vtkNew<vtkMAFExtendedGlyph3D> filterSmart;
   //////////////////////////////////////////////////////////////////////////
 
 }

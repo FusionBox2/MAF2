@@ -38,7 +38,7 @@
 void vtkMEDFillingHoleTest::TestDynamicAllocation()
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMEDFillingHole> filter1;
+  vtkNew<vtkMEDFillingHole> filter1;
 
   vtkMEDFillingHole *filter2;
   vtkNEW(filter2);
@@ -49,13 +49,13 @@ void vtkMEDFillingHoleTest::TestDynamicAllocation()
 void vtkMEDFillingHoleTest::TestSetFillAHole()
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkPolyDataReader> r;
+  vtkNew<vtkPolyDataReader> r;
   mafString filename=MED_DATA_ROOT;
   filename<<"/Tes_vtkMEDFillingHole/SphereWithHoles.vtk";
   r->SetFileName(filename.GetCStr());
   r->Update();
 
-  vtkMAFSmartPointer<vtkFeatureEdges> fEdge;
+  vtkNew<vtkFeatureEdges> fEdge;
   fEdge->SetInput(r->GetOutput());
   fEdge->SetBoundaryEdges(TRUE);
   fEdge->SetManifoldEdges(FALSE);
@@ -67,7 +67,7 @@ void vtkMEDFillingHoleTest::TestSetFillAHole()
   CPPUNIT_ASSERT( fEdge->GetOutput()->GetNumberOfLines() == 16 );
   CPPUNIT_ASSERT( fEdge->GetOutput()->GetNumberOfPoints() == 16 );
 
-  vtkMAFSmartPointer<vtkMEDFillingHole> filter;
+  vtkNew<vtkMEDFillingHole> filter;
   filter->SetInput(r->GetOutput());
   filter->SetFillAHole(10);
   filter->Update();
@@ -94,13 +94,13 @@ void vtkMEDFillingHoleTest::TestSetFillAHole()
 void vtkMEDFillingHoleTest::TestSetFillAllHole()
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkPolyDataReader> r;
+  vtkNew<vtkPolyDataReader> r;
   mafString filename=MED_DATA_ROOT;
   filename<<"/Tes_vtkMEDFillingHole/SphereWithHoles.vtk";
   r->SetFileName(filename.GetCStr());
   r->Update();
 
-  vtkMAFSmartPointer<vtkFeatureEdges> fEdge;
+  vtkNew<vtkFeatureEdges> fEdge;
   fEdge->SetInput(r->GetOutput());
   fEdge->SetBoundaryEdges(TRUE);
   fEdge->SetManifoldEdges(FALSE);
@@ -112,7 +112,7 @@ void vtkMEDFillingHoleTest::TestSetFillAllHole()
   CPPUNIT_ASSERT( fEdge->GetOutput()->GetNumberOfLines() == 16 );
   CPPUNIT_ASSERT( fEdge->GetOutput()->GetNumberOfPoints() == 16 );
 
-  vtkMAFSmartPointer<vtkMEDFillingHole> filter;
+  vtkNew<vtkMEDFillingHole> filter;
   filter->SetInput(r->GetOutput());
   filter->SetFillAllHole();
   filter->Update();
@@ -128,13 +128,13 @@ void vtkMEDFillingHoleTest::TestSetFillAllHole()
 void vtkMEDFillingHoleTest::TestGetLastPatch()
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkPolyDataReader> r;
+  vtkNew<vtkPolyDataReader> r;
   mafString filename=MED_DATA_ROOT;
   filename<<"/Tes_vtkMEDFillingHole/SphereWithHoles.vtk";
   r->SetFileName(filename.GetCStr());
   r->Update();
 
-  vtkMAFSmartPointer<vtkFeatureEdges> fEdge;
+  vtkNew<vtkFeatureEdges> fEdge;
   fEdge->SetInput(r->GetOutput());
   fEdge->SetBoundaryEdges(TRUE);
   fEdge->SetManifoldEdges(FALSE);
@@ -146,7 +146,7 @@ void vtkMEDFillingHoleTest::TestGetLastPatch()
   CPPUNIT_ASSERT( fEdge->GetOutput()->GetNumberOfLines() == 16 );
   CPPUNIT_ASSERT( fEdge->GetOutput()->GetNumberOfPoints() == 16 );
 
-  vtkMAFSmartPointer<vtkMEDFillingHole> filter;
+  vtkNew<vtkMEDFillingHole> filter;
   filter->SetInput(r->GetOutput());
   filter->SetFillAHole(0);
   filter->Update();
@@ -157,12 +157,12 @@ void vtkMEDFillingHoleTest::TestGetLastPatch()
   vtkPolyData *closedSphere = filter->GetOutput();
   closedSphere->Update();
 
-  vtkMAFSmartPointer<vtkAppendPolyData> append;
+  vtkNew<vtkAppendPolyData> append;
   append->SetInput(r->GetOutput());
   append->AddInput(patch);
   append->Update();
 
-  vtkMAFSmartPointer<vtkCleanPolyData> clean;
+  vtkNew<vtkCleanPolyData> clean;
   clean->SetInput(append->GetOutput());
   clean->Update();
 

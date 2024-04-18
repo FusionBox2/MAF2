@@ -40,10 +40,10 @@ void vtkMAFCellsFilterTest::TestFixture()
 
 void vtkMAFCellsFilterTest::TestMarkCell()
 {  
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->Update();
 
-	vtkMAFSmartPointer<vtkMAFCellsFilter> mc;
+	vtkNew<vtkMAFCellsFilter> mc;
   mc->SetInput(sphere->GetOutput());
   mc->Update();
 
@@ -67,10 +67,10 @@ void vtkMAFCellsFilterTest::TestMarkCell()
 
 void vtkMAFCellsFilterTest::TestUnmarkCell()
 {  
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->Update();
 
-  vtkMAFSmartPointer<vtkMAFCellsFilter> mc;
+  vtkNew<vtkMAFCellsFilter> mc;
   mc->SetInput(sphere->GetOutput());
   mc->Update();
 
@@ -102,10 +102,10 @@ void vtkMAFCellsFilterTest::TestUnmarkCell()
 
 void vtkMAFCellsFilterTest::TestToggleCell()
 {  
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->Update();
 
-  vtkMAFSmartPointer<vtkMAFCellsFilter> mc;
+  vtkNew<vtkMAFCellsFilter> mc;
   mc->SetInput(sphere->GetOutput());
   mc->Update();
 
@@ -137,10 +137,10 @@ void vtkMAFCellsFilterTest::TestToggleCell()
 
 void vtkMAFCellsFilterTest::TestUndoMarks()
 {  
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->Update();
 
-  vtkMAFSmartPointer<vtkMAFCellsFilter> mc;
+  vtkNew<vtkMAFCellsFilter> mc;
   mc->SetInput(sphere->GetOutput());
   mc->Update();
 
@@ -168,10 +168,10 @@ void vtkMAFCellsFilterTest::TestUndoMarks()
 
 void vtkMAFCellsFilterTest::TestGetNumberOfMarkedCells()
 {  
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->Update();
 
-  vtkMAFSmartPointer<vtkMAFCellsFilter> mc;
+  vtkNew<vtkMAFCellsFilter> mc;
   mc->SetInput(sphere->GetOutput());
   mc->Update();
   
@@ -195,10 +195,10 @@ void vtkMAFCellsFilterTest::TestGetNumberOfMarkedCells()
 
 void vtkMAFCellsFilterTest::TestGetIdMarkedCell()
 {  
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->Update();
 
-  vtkMAFSmartPointer<vtkMAFCellsFilter> mc;
+  vtkNew<vtkMAFCellsFilter> mc;
   mc->SetInput(sphere->GetOutput());
   mc->Update();
 

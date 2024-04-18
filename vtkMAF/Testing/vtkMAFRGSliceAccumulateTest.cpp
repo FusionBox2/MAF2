@@ -54,12 +54,12 @@ void vtkMAFRGSliceAccumulateTest::TestDynamicAllocation()
 void vtkMAFRGSliceAccumulateTest::TestSetSlice()
 //---------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkImageData> slice1;
+  vtkNew<vtkImageData> slice1;
   slice1->SetOrigin(0.0,0.0,1.0);
   slice1->SetSpacing(1.0,1.0,1.0);
   slice1->SetDimensions(10,10,1);
   double orientation[6] = {1.,0.,0.,0.,1.,0.};
-  vtkMAFSmartPointer<vtkFloatArray> scalar1;
+  vtkNew<vtkFloatArray> scalar1;
   float value = 0.0;
   for(int i=0;i<100;i++)
   {
@@ -70,11 +70,11 @@ void vtkMAFRGSliceAccumulateTest::TestSetSlice()
   slice1->GetPointData()->SetActiveScalars("scalar");
   slice1->Update();
 
-  vtkMAFSmartPointer<vtkImageData> slice2;
+  vtkNew<vtkImageData> slice2;
   slice2->SetOrigin(0.0,0.0,2.0);
   slice2->SetSpacing(1.0,1.0,1.0);
   slice2->SetDimensions(10,10,1);
-  vtkMAFSmartPointer<vtkFloatArray> scalar2;
+  vtkNew<vtkFloatArray> scalar2;
   value = 1.0;
   for(int i=0;i<100;i++)
   {
@@ -86,11 +86,11 @@ void vtkMAFRGSliceAccumulateTest::TestSetSlice()
   slice2->Update();
 
 
-  vtkMAFSmartPointer<vtkImageData> slice3;
+  vtkNew<vtkImageData> slice3;
   slice3->SetOrigin(0.0,0.0,3.0);
   slice3->SetSpacing(1.0,1.0,1.0);
   slice3->SetDimensions(10,10,1);
-  vtkMAFSmartPointer<vtkFloatArray> scalar3;
+  vtkNew<vtkFloatArray> scalar3;
   value = 2.0;
   for(int i=0;i<100;i++)
   {
@@ -101,7 +101,7 @@ void vtkMAFRGSliceAccumulateTest::TestSetSlice()
   slice3->GetPointData()->SetActiveScalars("scalar");
   slice3->Update();
 
-  vtkMAFSmartPointer<vtkMAFRGSliceAccumulate> accumulate;
+  vtkNew<vtkMAFRGSliceAccumulate> accumulate;
   accumulate->SetNumberOfSlices(3);
   accumulate->SetSlice(0,slice1,orientation);
   accumulate->SetSlice(1,slice2,orientation);
@@ -139,11 +139,11 @@ void vtkMAFRGSliceAccumulateTest::TestSetSlice()
 void vtkMAFRGSliceAccumulateTest::TestAddSlice()
 //---------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkImageData> slice1;
+  vtkNew<vtkImageData> slice1;
   slice1->SetOrigin(0.0,0.0,1.0);
   slice1->SetSpacing(1.0,1.0,1.0);
   slice1->SetDimensions(10,10,1);
-  vtkMAFSmartPointer<vtkFloatArray> scalar1;
+  vtkNew<vtkFloatArray> scalar1;
   float value = 0.0;
   for(int i=0;i<100;i++)
   {
@@ -154,11 +154,11 @@ void vtkMAFRGSliceAccumulateTest::TestAddSlice()
   slice1->GetPointData()->SetActiveScalars("scalar");
   slice1->Update();
 
-  vtkMAFSmartPointer<vtkImageData> slice2;
+  vtkNew<vtkImageData> slice2;
   slice2->SetOrigin(0.0,0.0,2.0);
   slice2->SetSpacing(1.0,1.0,1.0);
   slice2->SetDimensions(10,10,1);
-  vtkMAFSmartPointer<vtkFloatArray> scalar2;
+  vtkNew<vtkFloatArray> scalar2;
   value = 1.0;
   for(int i=0;i<100;i++)
   {
@@ -170,11 +170,11 @@ void vtkMAFRGSliceAccumulateTest::TestAddSlice()
   slice2->Update();
 
 
-  vtkMAFSmartPointer<vtkImageData> slice3;
+  vtkNew<vtkImageData> slice3;
   slice3->SetOrigin(0.0,0.0,3.0);
   slice3->SetSpacing(1.0,1.0,1.0);
   slice3->SetDimensions(10,10,1);
-  vtkMAFSmartPointer<vtkFloatArray> scalar3;
+  vtkNew<vtkFloatArray> scalar3;
   value = 2.0;
   for(int i=0;i<100;i++)
   {
@@ -185,7 +185,7 @@ void vtkMAFRGSliceAccumulateTest::TestAddSlice()
   slice3->GetPointData()->SetActiveScalars("scalar");
   slice3->Update();
 
-  vtkMAFSmartPointer<vtkMAFRGSliceAccumulate> accumulate;
+  vtkNew<vtkMAFRGSliceAccumulate> accumulate;
   //accumulate->SetNumberOfSlices(3);
   accumulate->AddSlice(slice2);
   accumulate->AddSlice(slice1);

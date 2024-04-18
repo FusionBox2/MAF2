@@ -40,7 +40,7 @@ void vtkMAFFixedCutterTest::tearDown()
 void vtkMAFFixedCutterTest::TestDynamicAllocation()
 //--------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMAFFixedCutter> filter1;
+  vtkNew<vtkMAFFixedCutter> filter1;
   vtkMAFFixedCutter *filter2 = vtkMAFFixedCutter::New();
   filter2->Delete();
 }
@@ -48,9 +48,9 @@ void vtkMAFFixedCutterTest::TestDynamicAllocation()
 void vtkMAFFixedCutterTest::TestExecute()
 //--------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMAFFixedCutter> filter;
-  vtkMAFSmartPointer<vtkPlane> plane;
-  vtkMAFSmartPointer<vtkCubeSource> cube;
+  vtkNew<vtkMAFFixedCutter> filter;
+  vtkNew<vtkPlane> plane;
+  vtkNew<vtkCubeSource> cube;
 
   filter->SetInput((vtkDataSet*)cube->GetOutput());
   filter->SetCutFunction(plane);

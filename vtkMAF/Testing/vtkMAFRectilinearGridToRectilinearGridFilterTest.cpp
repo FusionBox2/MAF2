@@ -43,7 +43,7 @@ void vtkMAFRectilinearGridToRectilinearGridFilterTest::tearDown()
 
 void vtkMAFRectilinearGridToRectilinearGridFilterTest::TestGetInput()
 {
-  vtkMAFSmartPointer<vtkRectilinearGrid> originalRectilinearGrid;
+  vtkNew<vtkRectilinearGrid> originalRectilinearGrid;
 
   int dim[3];
   int extent[6] = {0, 127, 128, 255, 0, 127};
@@ -57,7 +57,7 @@ void vtkMAFRectilinearGridToRectilinearGridFilterTest::TestGetInput()
 
   originalRectilinearGrid->GetDimensions(dim);
 
-  vtkMAFSmartPointer<vtkMAFDummyRectilinearGridToRectilinearGridFilter> dummyFilter;
+  vtkNew<vtkMAFDummyRectilinearGridToRectilinearGridFilter> dummyFilter;
   dummyFilter->SetInput(originalRectilinearGrid);
   dummyFilter->Update();
 

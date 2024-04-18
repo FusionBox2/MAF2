@@ -42,7 +42,7 @@ void vtkMAFProjectSPTest::tearDown()
 void vtkMAFProjectSPTest::TestDynamicAllocation()
 //--------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMAFProjectSP> filter;
+  vtkNew<vtkMAFProjectSP> filter;
   vtkMAFProjectSP *filter2 = vtkMAFProjectSP::New();
   filter2->Delete();
 }
@@ -51,7 +51,7 @@ void vtkMAFProjectSPTest::TestExecutionProjectionModeToX()
 //--------------------------------------------------
 {
   //create imageData with scalars
-  vtkMAFSmartPointer<vtkImageData> image;
+  vtkNew<vtkImageData> image;
   int dimension[3] = {2,2,2};
   double spacing[3] = {1. ,1. ,1.};
   image->SetDimensions(dimension);
@@ -60,7 +60,7 @@ void vtkMAFProjectSPTest::TestExecutionProjectionModeToX()
 
   int i = 0;
   int size = dimension[0] * dimension[1] * dimension[2];
-  vtkMAFSmartPointer<vtkFloatArray> array;
+  vtkNew<vtkFloatArray> array;
   array->Allocate(8);
   
   for(; i < size; i++)
@@ -96,7 +96,7 @@ void vtkMAFProjectSPTest::TestExecutionProjectionModeToX()
   must divided by dim[0]
   */
 
-  vtkMAFSmartPointer<vtkFloatArray> arrayControl;
+  vtkNew<vtkFloatArray> arrayControl;
   arrayControl->InsertNextTuple1(1./dimension[0]);
   arrayControl->InsertNextTuple1(5./dimension[0]);
   arrayControl->InsertNextTuple1(9./dimension[0]);
@@ -104,7 +104,7 @@ void vtkMAFProjectSPTest::TestExecutionProjectionModeToX()
 
   
   //use filter
-  vtkMAFSmartPointer<vtkMAFProjectSP> filter;
+  vtkNew<vtkMAFProjectSP> filter;
   filter->SetInput(image);
   filter->SetProjectionModeToX();
   filter->Update();
@@ -126,7 +126,7 @@ void vtkMAFProjectSPTest::TestExecutionProjectionModeToY()
 //--------------------------------------------------
 {
   //create imageData with scalars
-  vtkMAFSmartPointer<vtkImageData> image;
+  vtkNew<vtkImageData> image;
   int dimension[3] = {2,2,2};
   double spacing[3] = {1. ,1. ,1.};
   image->SetDimensions(dimension);
@@ -135,7 +135,7 @@ void vtkMAFProjectSPTest::TestExecutionProjectionModeToY()
 
   int i = 0;
   int size = dimension[0] * dimension[1] * dimension[2];
-  vtkMAFSmartPointer<vtkFloatArray> array;
+  vtkNew<vtkFloatArray> array;
   array->Allocate(8);
 
   for(; i < size; i++)
@@ -169,14 +169,14 @@ void vtkMAFProjectSPTest::TestExecutionProjectionModeToY()
   must divided by dim[1]
   */
 
-  vtkMAFSmartPointer<vtkFloatArray> arrayControl;
+  vtkNew<vtkFloatArray> arrayControl;
   arrayControl->InsertNextTuple1(2./dimension[1]);
   arrayControl->InsertNextTuple1(4./dimension[1]);
   arrayControl->InsertNextTuple1(10./dimension[1]);
   arrayControl->InsertNextTuple1(12./dimension[1]);
 
   //use filter
-  vtkMAFSmartPointer<vtkMAFProjectSP> filter;
+  vtkNew<vtkMAFProjectSP> filter;
   filter->SetInput(image);
   filter->SetProjectionModeToY();
   filter->Update();
@@ -197,7 +197,7 @@ void vtkMAFProjectSPTest::TestExecutionProjectionModeToZ()
 //--------------------------------------------------
 {
   //create imageData with scalars
-  vtkMAFSmartPointer<vtkImageData> image;
+  vtkNew<vtkImageData> image;
   int dimension[3] = {2,2,2};
   double spacing[3] = {1. ,1. ,1.};
   image->SetDimensions(dimension);
@@ -206,7 +206,7 @@ void vtkMAFProjectSPTest::TestExecutionProjectionModeToZ()
 
   int i = 0;
   int size = dimension[0] * dimension[1] * dimension[2];
-  vtkMAFSmartPointer<vtkFloatArray> array;
+  vtkNew<vtkFloatArray> array;
   array->Allocate(8);
 
   for(; i < size; i++)
@@ -241,7 +241,7 @@ void vtkMAFProjectSPTest::TestExecutionProjectionModeToZ()
   must divided by dim[2]
   */
 
-  vtkMAFSmartPointer<vtkFloatArray> arrayControl;
+  vtkNew<vtkFloatArray> arrayControl;
   arrayControl->InsertNextTuple1(4./dimension[2]);
   arrayControl->InsertNextTuple1(6./dimension[2]);
   arrayControl->InsertNextTuple1(8./dimension[2]);
@@ -250,7 +250,7 @@ void vtkMAFProjectSPTest::TestExecutionProjectionModeToZ()
   
 
   //use filter
-  vtkMAFSmartPointer<vtkMAFProjectSP> filter;
+  vtkNew<vtkMAFProjectSP> filter;
   filter->SetInput(image);
   filter->SetProjectionModeToZ();
   filter->Update();
@@ -270,7 +270,7 @@ void vtkMAFProjectSPTest::TestExecutionProjectionModeToZ()
 void vtkMAFProjectSPTest::TestPrintSelf()
 //--------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMAFProjectSP> filter;
+  vtkNew<vtkMAFProjectSP> filter;
   filter->SetProjectionModeToX();
   std::cout;
   filter->PrintSelf(cout, 2);

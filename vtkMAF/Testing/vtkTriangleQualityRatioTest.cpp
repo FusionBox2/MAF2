@@ -132,8 +132,8 @@ void vtkTriangleQualityRatioTest::RenderData(vtkPolyData *data)
   //----------------------------
 
   // i reverse the color table  to use blue for the lowest values and red for the highest
-  vtkMAFSmartPointer<vtkLookupTable> defaultLut;
-  vtkMAFSmartPointer<vtkLookupTable> reverseLut;
+  vtkNew<vtkLookupTable> defaultLut;
+  vtkNew<vtkLookupTable> reverseLut;
 
   int colNum = 256;
 
@@ -155,18 +155,18 @@ void vtkTriangleQualityRatioTest::RenderData(vtkPolyData *data)
 
   //----------------------------
 
-  vtkMAFSmartPointer<vtkRenderer> renderer;
+  vtkNew<vtkRenderer> renderer;
   renderer->SetBackground(0.1, 0.1, 0.1);
 
-  vtkMAFSmartPointer<vtkRenderWindow> renderWindow;
+  vtkNew<vtkRenderWindow> renderWindow;
   renderWindow->AddRenderer(renderer);
   renderWindow->SetSize(640, 480);
   renderWindow->SetPosition(400,0);
 
-  vtkMAFSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor;
+  vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
   renderWindowInteractor->SetRenderWindow(renderWindow);
 
-  vtkMAFSmartPointer<vtkPolyDataMapper> mapper;
+  vtkNew<vtkPolyDataMapper> mapper;
   mapper->ScalarVisibilityOn();
 
   mapper->SetScalarModeToUseCellData();
@@ -177,7 +177,7 @@ void vtkTriangleQualityRatioTest::RenderData(vtkPolyData *data)
   mapper->SetLookupTable(reverseLut);
   mapper->SetInput(data);
 
-  vtkMAFSmartPointer<vtkActor> actor;
+  vtkNew<vtkActor> actor;
   actor->SetMapper(mapper);
 
   renderer->AddActor(actor);

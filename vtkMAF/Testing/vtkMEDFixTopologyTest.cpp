@@ -39,7 +39,7 @@
 void vtkMEDFixTopologyTest::TestDynamicAllocation()
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMEDFixTopology> filter1;
+  vtkNew<vtkMEDFixTopology> filter1;
 
   vtkMEDFixTopology *filter2;
   vtkNEW(filter2);
@@ -50,9 +50,9 @@ void vtkMEDFixTopologyTest::TestDynamicAllocation()
 void vtkMEDFixTopologyTest::TestExecute()
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkPoints> points;
-  vtkMAFSmartPointer<vtkCellArray> lines;
-  vtkMAFSmartPointer<vtkPolyData> polydata;
+  vtkNew<vtkPoints> points;
+  vtkNew<vtkCellArray> lines;
+  vtkNew<vtkPolyData> polydata;
 
   // coordinates of vertices
    double vertices[7][3] ={
@@ -92,20 +92,20 @@ void vtkMEDFixTopologyTest::TestExecute()
    polydata->SetPolys(lines);
    polydata->Update();
 
-   vtkMAFSmartPointer<vtkMEDFixTopology> fixTopology;
+   vtkNew<vtkMEDFixTopology> fixTopology;
    fixTopology->SetInput(polydata);
    fixTopology->Update();
 
    vtkPolyData *outputFixTopology = fixTopology->GetOutput();
    outputFixTopology->Update();
 
-   vtkMAFSmartPointer<vtkTriangleFilter> triangleFilter;
+   vtkNew<vtkTriangleFilter> triangleFilter;
    triangleFilter->SetInput(polydata);
    triangleFilter->Update();
-   vtkMAFSmartPointer<vtkPolyDataNormals> polyDataNormalsFilter;
+   vtkNew<vtkPolyDataNormals> polyDataNormalsFilter;
    polyDataNormalsFilter->SetInput(triangleFilter->GetOutput());
    polyDataNormalsFilter->Update();
-   vtkMAFSmartPointer<vtkMEDPoissonSurfaceReconstruction> poissonSurfaceReconstructionFilter;
+   vtkNew<vtkMEDPoissonSurfaceReconstruction> poissonSurfaceReconstructionFilter;
    poissonSurfaceReconstructionFilter->SetInput(polyDataNormalsFilter->GetOutput());
    poissonSurfaceReconstructionFilter->Update();
 

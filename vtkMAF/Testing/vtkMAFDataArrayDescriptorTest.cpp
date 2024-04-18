@@ -46,7 +46,7 @@ void vtkMAFDataArrayDescriptorTest::TestDynamicAllocation()
   vtkMAFDataArrayDescriptor *array1 = vtkMAFDataArrayDescriptor::New();
   array1->Delete();
 
-  vtkMAFSmartPointer<vtkMAFDataArrayDescriptor> array2;
+  vtkNew<vtkMAFDataArrayDescriptor> array2;
 
   vtkMAFDataArrayDescriptor *array3;
   vtkNEW(array3);
@@ -56,7 +56,7 @@ void vtkMAFDataArrayDescriptorTest::TestDynamicAllocation()
 void vtkMAFDataArrayDescriptorTest::TestSetName()
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMAFDataArrayDescriptor> array;
+  vtkNew<vtkMAFDataArrayDescriptor> array;
 
   array->SetName("TEST1");
 
@@ -71,7 +71,7 @@ void vtkMAFDataArrayDescriptorTest::TestSetName()
 void vtkMAFDataArrayDescriptorTest::TestSetDataType()
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMAFDataArrayDescriptor> array;
+  vtkNew<vtkMAFDataArrayDescriptor> array;
   //////////////////////////////////////////////////////////////////////////
   array->SetDataType(VTK_BIT);
   CPPUNIT_ASSERT( array->GetDataType() == VTK_BIT );
@@ -114,7 +114,7 @@ void vtkMAFDataArrayDescriptorTest::TestSetDataType()
 void vtkMAFDataArrayDescriptorTest::TestGetDataTypeSize()
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMAFDataArrayDescriptor> array;
+  vtkNew<vtkMAFDataArrayDescriptor> array;
   //////////////////////////////////////////////////////////////////////////
   array->SetDataType(VTK_BIT);
   CPPUNIT_ASSERT( array->GetDataTypeSize() == 0 );
@@ -176,7 +176,7 @@ void vtkMAFDataArrayDescriptorTest::TestGetDataTypeSize()
 void vtkMAFDataArrayDescriptorTest::TestSetNumberOfComponents()
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMAFDataArrayDescriptor> array;
+  vtkNew<vtkMAFDataArrayDescriptor> array;
   array->SetNumberOfComponents(1);
 
   CPPUNIT_ASSERT( array->GetNumberOfComponents() == 1 );
@@ -189,7 +189,7 @@ void vtkMAFDataArrayDescriptorTest::TestSetNumberOfComponents()
 void vtkMAFDataArrayDescriptorTest::TestSetNumberOfTuples()
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMAFDataArrayDescriptor> array;
+  vtkNew<vtkMAFDataArrayDescriptor> array;
   array->SetNumberOfTuples(1);
 
   CPPUNIT_ASSERT( array->GetNumberOfTuples() == 1 );
@@ -202,7 +202,7 @@ void vtkMAFDataArrayDescriptorTest::TestSetNumberOfTuples()
 void vtkMAFDataArrayDescriptorTest::TestGetSize()
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMAFDataArrayDescriptor> array;
+  vtkNew<vtkMAFDataArrayDescriptor> array;
   array->SetNumberOfComponents(3);
   array->SetNumberOfTuples(5);
 
@@ -217,7 +217,7 @@ void vtkMAFDataArrayDescriptorTest::TestGetSize()
 void vtkMAFDataArrayDescriptorTest::TestGetActualMemorySize()
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMAFDataArrayDescriptor> array;
+  vtkNew<vtkMAFDataArrayDescriptor> array;
   //////////////////////////////////////////////////////////////////////////
   array->SetDataType(VTK_BIT);
   array->SetNumberOfComponents(3);
@@ -280,7 +280,7 @@ void vtkMAFDataArrayDescriptorTest::TestGetActualMemorySize()
 void vtkMAFDataArrayDescriptorTest::TestGetDataTypeMin()
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMAFDataArrayDescriptor> array;
+  vtkNew<vtkMAFDataArrayDescriptor> array;
   //////////////////////////////////////////////////////////////////////////
   array->SetDataType(VTK_BIT);
   CPPUNIT_ASSERT( array->GetDataTypeMin() == VTK_BIT_MIN );
@@ -321,7 +321,7 @@ void vtkMAFDataArrayDescriptorTest::TestGetDataTypeMin()
 void vtkMAFDataArrayDescriptorTest::TestGetDataTypeMax()
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMAFDataArrayDescriptor> array;
+  vtkNew<vtkMAFDataArrayDescriptor> array;
   //////////////////////////////////////////////////////////////////////////
   array->SetDataType(VTK_BIT);
   CPPUNIT_ASSERT( array->GetDataTypeMax() == VTK_BIT_MAX );
@@ -362,7 +362,7 @@ void vtkMAFDataArrayDescriptorTest::TestGetDataTypeMax()
 void vtkMAFDataArrayDescriptorTest::TestGetDataTypeRange()
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMAFDataArrayDescriptor> array;
+  vtkNew<vtkMAFDataArrayDescriptor> array;
   double range[2];
   //////////////////////////////////////////////////////////////////////////
   array->SetDataType(VTK_BIT);

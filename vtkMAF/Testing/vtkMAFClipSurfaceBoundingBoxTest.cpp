@@ -71,7 +71,7 @@ void vtkMAFClipSurfaceBoundingBoxTest::tearDown()
 void vtkMAFClipSurfaceBoundingBoxTest::TestDynamicAllocation()
 //--------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMAFClipSurfaceBoundingBox> filter;
+  vtkNew<vtkMAFClipSurfaceBoundingBox> filter;
   vtkMAFClipSurfaceBoundingBox *filter2 = vtkMAFClipSurfaceBoundingBox::New();
   filter2->Delete();
 }
@@ -79,7 +79,7 @@ void vtkMAFClipSurfaceBoundingBoxTest::TestDynamicAllocation()
 void vtkMAFClipSurfaceBoundingBoxTest::TestSetGetMask()
 //--------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMAFClipSurfaceBoundingBox> filter;
+  vtkNew<vtkMAFClipSurfaceBoundingBox> filter;
   filter->SetMask(m_PlaneMask->GetOutput());
 
   CPPUNIT_ASSERT(filter->GetMask() == m_PlaneMask->GetOutput());
@@ -88,7 +88,7 @@ void vtkMAFClipSurfaceBoundingBoxTest::TestSetGetMask()
 void vtkMAFClipSurfaceBoundingBoxTest::TestSetGetClipInside()
 //--------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMAFClipSurfaceBoundingBox> filter;
+  vtkNew<vtkMAFClipSurfaceBoundingBox> filter;
   filter->SetClipInside(TRUE);
 
   CPPUNIT_ASSERT(filter->GetClipInside() == TRUE);  
@@ -125,7 +125,7 @@ void vtkMAFClipSurfaceBoundingBoxTest::TestExecution(int clipInside)
   m_PlaneMask->SetPoint2(0.0,0.0,5.0);
   m_PlaneMask->Update();
 
-  vtkMAFSmartPointer<vtkMAFClipSurfaceBoundingBox> filter;
+  vtkNew<vtkMAFClipSurfaceBoundingBox> filter;
   filter->SetInput(m_SphereInput->GetOutput());
   filter->SetMask(m_PlaneMask->GetOutput());
   filter->SetClipInside(clipInside);
@@ -165,19 +165,19 @@ void vtkMAFClipSurfaceBoundingBoxTest::TestExecution(int clipInside)
 void vtkMAFClipSurfaceBoundingBoxTest::RenderData(vtkActorCollection *actorCollection)
 //------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkRenderer> renderer;
+  vtkNew<vtkRenderer> renderer;
   renderer->SetBackground(0.0, 0.0, 0.0);
 
   vtkCamera *camera = renderer->GetActiveCamera();
   camera->SetPosition(20.0,3.0,20.0);
   camera->Modified();
 
-  vtkMAFSmartPointer<vtkRenderWindow> renderWindow;
+  vtkNew<vtkRenderWindow> renderWindow;
   renderWindow->AddRenderer(renderer);
   renderWindow->SetSize(640, 480);
   renderWindow->SetPosition(100,0);
 
-  vtkMAFSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor;
+  vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
   renderWindowInteractor->SetRenderWindow(renderWindow);
 
   actorCollection->InitTraversal();

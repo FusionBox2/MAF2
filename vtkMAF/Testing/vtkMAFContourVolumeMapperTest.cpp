@@ -89,7 +89,7 @@ void vtkMAFContourVolumeMapperTest::TestRectilinearGrid()
   char filename[]   = "cubePolyFromRG";
   //------------------ create objects
   vtkMAFContourVolumeMapper *mapper = vtkMAFContourVolumeMapper::New();
-  vtkMAFSmartPointer<vtkVolume> volume;
+  vtkNew<vtkVolume> volume;
   volume->SetMapper(mapper);
 
   // create windows
@@ -217,7 +217,7 @@ void vtkMAFContourVolumeMapperTest::TestImageData()
   char filename[]   = "cubePolyFromID";
   //------------------ create objects
   vtkMAFContourVolumeMapper *mapper = vtkMAFContourVolumeMapper::New();
-  vtkMAFSmartPointer<vtkVolume> volume;
+  vtkNew<vtkVolume> volume;
   volume->SetMapper(mapper);
 
   // create windows

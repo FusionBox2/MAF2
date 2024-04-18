@@ -48,10 +48,10 @@ void vtkMAFPolyDataToSinglePolyLineTest::TestFixture()
 void vtkMAFPolyDataToSinglePolyLineTest::TestConversion()
 //--------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkPolyData> polyOriginal;
+  vtkNew<vtkPolyData> polyOriginal;
 
-  vtkMAFSmartPointer<vtkPoints> points;
-  vtkMAFSmartPointer<vtkCellArray> cellArray;
+  vtkNew<vtkPoints> points;
+  vtkNew<vtkCellArray> cellArray;
 
   polyOriginal->SetPoints(points);
   polyOriginal->SetLines(cellArray);
@@ -82,7 +82,7 @@ void vtkMAFPolyDataToSinglePolyLineTest::TestConversion()
 
   polyOriginal->Update();
 
-  vtkMAFSmartPointer<vtkMAFPolyDataToSinglePolyLine> psp;
+  vtkNew<vtkMAFPolyDataToSinglePolyLine> psp;
   psp->SetInput(polyOriginal);
   psp->Update();
 

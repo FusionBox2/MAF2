@@ -37,7 +37,7 @@
 void vtkHoleConnectivityTest::TestDynamicAllocation()
 //-------------------------------------------------------------------------
 {
-	vtkMAFSmartPointer<vtkHoleConnectivity> hc;
+	vtkNew<vtkHoleConnectivity> hc;
 
   vtkHoleConnectivity *hc2 = vtkHoleConnectivity::New();
 
@@ -47,14 +47,14 @@ void vtkHoleConnectivityTest::TestDynamicAllocation()
 void vtkHoleConnectivityTest::TestPrintSelf()
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkHoleConnectivity> hc;  
+  vtkNew<vtkHoleConnectivity> hc;  
   hc->PrintSelf(std::cout, 5);
 }
 //-------------------------------------------------------------------------
 void vtkHoleConnectivityTest::TestGetClassName()
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkHoleConnectivity> hc;
+  vtkNew<vtkHoleConnectivity> hc;
   mafString check = hc->GetClassName();
   CPPUNIT_ASSERT(check.Equals("vtkHoleConnectivity"));
 }
@@ -62,7 +62,7 @@ void vtkHoleConnectivityTest::TestGetClassName()
 void vtkHoleConnectivityTest::TestSetGetPointID()
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkHoleConnectivity> hc;
+  vtkNew<vtkHoleConnectivity> hc;
   hc->SetPointID(5);
   CPPUNIT_ASSERT(hc->GetPointID() == 5);
 }
@@ -71,7 +71,7 @@ void vtkHoleConnectivityTest::TestSetGetPoint()
 //-------------------------------------------------------------------------
 {
   double point[3] = {1.,2.,3.};
-  vtkMAFSmartPointer<vtkHoleConnectivity> hc;
+  vtkNew<vtkHoleConnectivity> hc;
   hc->SetPoint(point);
   CPPUNIT_ASSERT(hc->GetPoint()[0] == point[0] &&
                  hc->GetPoint()[1] == point[1] &&
@@ -85,19 +85,19 @@ void vtkHoleConnectivityTest::TestExecution()
   mafString surfaceFile=MED_DATA_ROOT;
   surfaceFile<<"/Test_HoleConnectivity/test.vtk";
 
-  vtkMAFSmartPointer<vtkPolyDataReader> preader;
+  vtkNew<vtkPolyDataReader> preader;
   preader->SetFileName(surfaceFile);
   preader->Update();
 
 
-  vtkMAFSmartPointer<vtkHoleConnectivity> hc;
+  vtkNew<vtkHoleConnectivity> hc;
   hc->SetInput(preader->GetOutput());
   double point[3] = {0.,0.,0.};
   hc->SetPoint(point);
 
   hc->Update();
 
-  vtkMAFSmartPointer<vtkPolyDataConnectivityFilter> connectivityFilter;
+  vtkNew<vtkPolyDataConnectivityFilter> connectivityFilter;
   connectivityFilter->SetInput(preader->GetOutput());
   connectivityFilter->SetExtractionModeToClosestPointRegion ();
   connectivityFilter->SetClosestPoint(point);
