@@ -347,7 +347,7 @@ bool mafOpExporterBmp::WriteImageDataAsMonocromeBitmap(vtkImageData *img, mafStr
   double spacing_x = img->GetSpacing()[0];
   double spacing_y = img->GetSpacing()[1];
 
-  vtkMAFSmartPointer<vtkDataArray> scal = img->GetPointData()->GetScalars();
+  vtkSmartPointer<vtkDataArray> scal = img->GetPointData()->GetScalars();
   int n_scal =  scal->GetNumberOfTuples();
   double *tuple = scal->GetTuple(0);
 

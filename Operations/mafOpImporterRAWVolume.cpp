@@ -480,9 +480,9 @@ bool mafOpImporterRAWVolume::Import()
 	{
 		// conversion from vtkStructuredPoints to vtkRectilinearGrid
 
-		vtkMAFSmartPointer<vtkStructuredPoints> structured_data = vtkStructuredPoints::SafeDownCast(image_to_sp->GetOutput());
-		vtkMAFSmartPointer<vtkPointData> data = structured_data->GetPointData();
-		vtkMAFSmartPointer<vtkDataArray> scalars = data->GetScalars();
+		vtkSmartPointer<vtkStructuredPoints> structured_data = vtkStructuredPoints::SafeDownCast(image_to_sp->GetOutput());
+		vtkSmartPointer<vtkPointData> data = structured_data->GetPointData();
+		vtkSmartPointer<vtkDataArray> scalars = data->GetScalars();
 
 		vtkMAFSmartPointer<vtkDoubleArray> XDoubleArray;
 		vtkMAFSmartPointer<vtkDoubleArray> YDoubleArray;

@@ -794,9 +794,9 @@ bool mafOpImporterRAWVolume_BES::Import()
 		if (m_BuildRectilinearGrid)
 		{
 			// conversion from vtkStructuredPoints to vtkRectilinearGrid
-			vtkMAFSmartPointer<vtkStructuredPoints> structured_data = (vtkStructuredPoints*)image_to_sp->GetOutput();	//image_to_sp->Output +1
-			vtkMAFSmartPointer<vtkPointData> data = structured_data->GetPointData();
-			vtkMAFSmartPointer<vtkDataArray> scalars = data->GetScalars();
+			vtkSmartPointer<vtkStructuredPoints> structured_data = (vtkStructuredPoints*)image_to_sp->GetOutput();	//image_to_sp->Output +1
+			vtkSmartPointer<vtkPointData> data = structured_data->GetPointData();
+			vtkSmartPointer<vtkDataArray> scalars = data->GetScalars();
 
 			vtkMAFSmartPointer<vtkDoubleArray> XDoubleArray;	//Ref(XDoubleArray) = 1
 			vtkMAFSmartPointer<vtkDoubleArray> YDoubleArray;	//Ref(YDoubleArray) = 1			
