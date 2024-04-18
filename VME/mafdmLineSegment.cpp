@@ -26,9 +26,9 @@ void mafdmLineSegment::describe()
 
 
 
-vtkMAFSmartPointer<vtkActor> mafdmLineSegment::makeRenderer()
+vtkSmartPointer<vtkActor> mafdmLineSegment::makeRenderer()
 {
-	vtkMAFSmartPointer<vtkLineSource> lineSource = vtkLineSource::New();
+	vtkSmartPointer<vtkLineSource> lineSource = vtkSmartPointer<vtkLineSource>::New();
 
 	Vector3d c1 = p1->getCenter();
 	Vector3d c2 = p2->getCenter();
@@ -38,10 +38,10 @@ vtkMAFSmartPointer<vtkActor> mafdmLineSegment::makeRenderer()
 	lineSource->Update();
 
 	// Visualize
-	vtkMAFSmartPointer<vtkPolyDataMapper> mapper = vtkPolyDataMapper::New();
+	vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 
 	mapper->SetInputConnection(lineSource->GetOutputPort());
-	vtkMAFSmartPointer<vtkActor> actor = vtkActor::New();
+	vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
 //	actor->setDataElement(this);
 	actor->SetMapper(mapper);
 	actor->GetProperty()->SetLineWidth(4);

@@ -25,7 +25,7 @@ mafdmPointCloud::mafdmPointCloud()
 // rotates the ellispoid and shifts it away from 0
 void mafdmPointCloud::makePointSet()
 {
-	vtkMAFSmartPointer<vtkPoints> points = vtkPoints::New();
+	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
 	double pi = M_PI;
 
 	// 3 main axis
@@ -99,7 +99,7 @@ void mafdmPointCloud::makePointSet()
 	}
 }
 
-mafdmPointCloud::mafdmPointCloud(vtkMAFSmartPointer<vtkPoints> points)
+mafdmPointCloud::mafdmPointCloud(vtkSmartPointer<vtkPoints> points)
 {
 	this->points = points;
 	this->name = "pointcloud";

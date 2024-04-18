@@ -18,7 +18,7 @@ private:
 	mafdmLandmark* p2;
 public:
 	mafdmLineSegment(mafdmLandmark* m1, mafdmLandmark* m2);
-	vtkMAFSmartPointer<vtkActor> makeRenderer();
+	vtkSmartPointer<vtkActor> makeRenderer();
 	wxXmlNode* getNode();
 	void describe();
 	void SetMatrix(const mafMatrix &mat){};

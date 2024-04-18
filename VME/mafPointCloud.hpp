@@ -16,7 +16,7 @@ class mafdmPointCloud : public mafDataElement
 {
 public:
     mafdmPointCloud();
-    mafdmPointCloud(vtkMAFSmartPointer<vtkPoints> points);
+    mafdmPointCloud(vtkSmartPointer<vtkPoints> points);
     
     vtkMAFSmartPointer<vtkActor> makeRenderer();
     void describe();
@@ -24,7 +24,7 @@ public:
 		void SetMatrix(const mafMatrix &mat){};
 		void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes){};
 private:
-    vtkMAFSmartPointer <vtkPoints> points;
+    vtkSmartPointer <vtkPoints> points;
     void makePointSet();
 };
 
