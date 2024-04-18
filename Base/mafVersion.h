@@ -18,7 +18,6 @@
 #define __mafVersion_h
 
 
-#include "mafBase.h" 
 #include "mafConfigure.h"
 
 #define MAF_SOURCE_VERSION "maf version " MAF_VERSION ", maf source $Revision: 1.4 $, $Date: 2005-02-20 23:33:19 $ (GMT)"
@@ -31,7 +30,7 @@
   This file will change frequently to update the MAF_SOURCE_VERSION which
   timestamps a particular source release.
 */
-class MAF_EXPORT mafVersion : public mafBase
+class MAF_EXPORT mafVersion
 {
 public:
   mafVersion() {};

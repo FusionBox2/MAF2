@@ -18,14 +18,13 @@
 #define __mafIndent_h
 
 #include "mafConfigure.h"
-#include "mafBase.h" 
 #include <ostream>
 
 
 /** mafIndent - a simple class to control print indentation.
   mafIndent is used to control indentation during the chaining print 
   process. This way nested objects can correctly indent themselves.*/
-class MAF_EXPORT mafIndent : public mafBase
+class MAF_EXPORT mafIndent
 {
 public:
   mafIndent(int ind=0);

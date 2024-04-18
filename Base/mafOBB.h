@@ -15,7 +15,7 @@
 =========================================================================*/
 #ifndef __mafOBB_h
 #define __mafOBB_h
-#include "mafBase.h" 
+#include "mafConfigure.h" 
 #include "mafTimeStamped.h"
 
 #include "mafDefines.h"
@@ -33,7 +33,7 @@
   @todo
   - a Test program 
 */
-class MAF_EXPORT mafOBB : public mafBase, public mafTimeStamped
+class MAF_EXPORT mafOBB : public mafTimeStamped
 {
 public:
   mafOBB();

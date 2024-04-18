@@ -17,7 +17,6 @@
 #define __mafSmartPointer_h
 
 #include "mafConfigure.h"
-#include "mafBase.h"
 
 //----------------------------------------------------------------------------
 // forward declarations
@@ -29,7 +28,7 @@ class mafReferenceCounted;
   allocated on the stack this object allows to automatically unregister an object 
   when exiting from the scope. */
 template <class T>
-class mafAutoPointer : public mafBase
+class mafAutoPointer
 {
 public:  
   /** Initialize smart pointer to (optional) given object. */

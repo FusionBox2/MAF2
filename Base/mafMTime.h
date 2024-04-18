@@ -18,7 +18,6 @@
 #define __mafMTime_h
 
 #include "mafConfigure.h"
-#include "mafBase.h" 
 
 #ifdef MAF_USE_VTK
 class vtkTimeStamp;
@@ -34,7 +33,7 @@ class vtkTimeStamp;
  - fix the InterlockedIncrement - which was temporary commented out (sil)
 */
 
-class MAF_EXPORT mafMTime : public mafBase
+class MAF_EXPORT mafMTime
 {
 public:
   mafMTime() {m_ModifiedTime = 0;}; 

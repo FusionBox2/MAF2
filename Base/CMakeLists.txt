@@ -9,7 +9,6 @@ DBG_MESSAGE("Configuring project mafCore")
 
 # Set your list of sources here.
 SET(PROJECT_SRCS
-mafBase.h
 mafDecl.cpp
 mafDecl.h
 mafDefines.cpp

@@ -15,7 +15,6 @@
 =========================================================================*/
 #ifndef __mafDynamicLoader_h
 #define __mafDynamicLoader_h
-#include "mafBase.h"
 #include "mafConfigure.h"
 
 // Ugly stuff for library handles.
@@ -48,7 +47,7 @@ typedef void* LibHandle;
   defined before of this class to be mis-compiled.
   
  */
-class MAF_EXPORT mafDynamicLoader : public mafBase
+class MAF_EXPORT mafDynamicLoader
 {
 public:
   /** Load a dynamic library into the current process.

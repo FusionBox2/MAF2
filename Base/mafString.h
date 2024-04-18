@@ -18,7 +18,6 @@
 #define __mafString_h
 
 #include "mafDefines.h"
-#include "mafBase.h" 
 #include <string.h>
 #include <string>
 //----------------------------------------------------------
@@ -74,7 +73,7 @@ private:
   This string can be passed as argument wherever a const char * is expected.
   @sa mafCString
   */
-class MAF_EXPORT mafString : public mafBase
+class MAF_EXPORT mafString
 {
 public:
     mafString();
