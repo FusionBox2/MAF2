@@ -441,8 +441,6 @@ void medOpExtractGeometry::VolumeSmoothing()
     //im->SetScalarTypeToUnsignedChar();
     //im->Update();
 
-    vtkMAFSmartPointer<vtkImageData> filteredImage;
-
     vtkMAFSmartPointer<vtkImageCast> vtkImageToUnsignedChar;
     vtkImageToUnsignedChar->SetOutputScalarTypeToUnsignedChar();
     vtkImageToUnsignedChar->SetInputData(im);
@@ -471,7 +469,7 @@ void medOpExtractGeometry::VolumeSmoothing()
     ConverteritkTOvtk::Pointer itkTOvtk = ConverteritkTOvtk::New();
     itkTOvtk->SetInput( smoothingFilter->GetOutput() ); 
 
-    filteredImage = ((vtkImageData*)itkTOvtk->GetOutput());
+    vtkSmartPointer<vtkImageData>filteredImage = ((vtkImageData*)itkTOvtk->GetOutput());
     //filteredImage->Update();
 
     vtkDataArray *binaryScalars = filteredImage->GetPointData()->GetScalars();
