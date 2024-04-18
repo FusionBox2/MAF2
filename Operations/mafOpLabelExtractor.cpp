@@ -298,8 +298,8 @@ void mafOpLabelExtractor::UpdateDataLabel()
 void mafOpLabelExtractor::GenerateLabeledVolume()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkDataArray> originalScalars = m_OutputData->GetPointData()->GetScalars(); 
-  vtkMAFSmartPointer<vtkDataArray> labelScalars = m_OutputData->GetPointData()->GetScalars();
+  vtkSmartPointer<vtkDataArray> originalScalars = m_OutputData->GetPointData()->GetScalars(); 
+  vtkSmartPointer<vtkDataArray> labelScalars = m_OutputData->GetPointData()->GetScalars();
 
   std::vector<int> minVector;
   std::vector<int> maxVector;
@@ -382,7 +382,7 @@ void mafOpLabelExtractor::ExtractLabel()
   //setting the ImageData for RectilinearGrid
   if (m_Ds->IsA("vtkRectilinearGrid"))
   {
-    vtkMAFSmartPointer<vtkRectilinearGrid> rgrid = (vtkRectilinearGrid*) m_Ds;
+    vtkSmartPointer<vtkRectilinearGrid> rgrid = (vtkRectilinearGrid*) m_Ds;
 
     double bounds[6];
     rgrid->GetBounds(bounds);
@@ -486,7 +486,7 @@ void mafOpLabelExtractor::ExtractLabel()
   }
   else
   {
-    vtkMAFSmartPointer<vtkStructuredPoints> sp = (vtkStructuredPoints *)m_Ds;
+    vtkSmartPointer<vtkStructuredPoints> sp = (vtkStructuredPoints *)m_Ds;
     vol->DeepCopy((vtkImageData *)sp);  
   }
   
