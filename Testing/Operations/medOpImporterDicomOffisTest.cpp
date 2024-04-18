@@ -214,7 +214,7 @@ void medOpImporterDicomOffisTest::TestCompareDicomImage()
 	    importer->GenerateSliceTexture(0);
 	
 	    wxSplitPath(txtFilePath, &path, &short_name, &ext);
-	    vtkMAFSmartPointer<vtkImageData> imageImported = importer->GetSliceImageDataFromLocalDicomFileName(short_name);
+	    vtkNew<vtkImageData> imageImported = importer->GetSliceImageDataFromLocalDicomFileName(short_name);
 	   
 	    wxFileInputStream inputFile( txtFilePath );
 	    wxTextInputStream text( inputFile );

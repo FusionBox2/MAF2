@@ -101,7 +101,7 @@ void medOpSmoothSurfaceCellsTest::TestOpRun()
   //Only a test to check leaks
   //////////////////////////////////////////////////////////////////////////
 
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->Update();
 
   mafSmartPointer<mafVMESurface> input;
@@ -140,7 +140,7 @@ void medOpSmoothSurfaceCellsTest::TestSetSeed()
 void medOpSmoothSurfaceCellsTest::TestMarkCells() 
 //-----------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->SetRadius(5.0);
   sphere->Update();
 
@@ -178,7 +178,7 @@ void medOpSmoothSurfaceCellsTest::TestMarkCells()
 void medOpSmoothSurfaceCellsTest::TestSmoothCells() 
 //-----------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->SetRadius(2.0);
   sphere->Update();
 
@@ -213,8 +213,8 @@ void medOpSmoothSurfaceCellsTest::TestSmoothCells()
   //////////////////////////////////////////////////////////////////////////
   //Extract the marked cell
   //////////////////////////////////////////////////////////////////////////
-  vtkMAFSmartPointer<vtkMAFRemoveCellsFilter> cellFilter1;
-  vtkMAFSmartPointer<vtkMAFRemoveCellsFilter> cellFilter2;
+  vtkNew<vtkMAFRemoveCellsFilter> cellFilter1;
+  vtkNew<vtkMAFRemoveCellsFilter> cellFilter2;
   cellFilter1->SetInput(sphere->GetOutput());
   cellFilter1->Update();
   cellFilter2->SetInput(sphere->GetOutput());
@@ -232,7 +232,7 @@ void medOpSmoothSurfaceCellsTest::TestSmoothCells()
   cellFilter1->RemoveMarkedCells();
   cellFilter1->Update();
 
-  vtkMAFSmartPointer<vtkPolyData> toSmoothPolyData;
+  vtkNew<vtkPolyData> toSmoothPolyData;
   toSmoothPolyData->DeepCopy(cellFilter1->GetOutput());
   toSmoothPolyData->Update();
 
@@ -240,11 +240,11 @@ void medOpSmoothSurfaceCellsTest::TestSmoothCells()
   cellFilter2->RemoveMarkedCells();
   cellFilter2->Update();
 
-  vtkMAFSmartPointer<vtkPolyData> polyData;
+  vtkNew<vtkPolyData> polyData;
   polyData->DeepCopy(cellFilter2->GetOutput());
   polyData->Update();
 
-  vtkMAFSmartPointer<vtkSmoothPolyDataFilter> smoothFilter;
+  vtkNew<vtkSmoothPolyDataFilter> smoothFilter;
   smoothFilter->SetInput(toSmoothPolyData);
   smoothFilter->SetNumberOfIterations(op->GetNumberOfInteractions());
   smoothFilter->BoundarySmoothingOff();//always true
@@ -252,16 +252,16 @@ void medOpSmoothSurfaceCellsTest::TestSmoothCells()
   smoothFilter->SetFeatureAngle(op->GetFeatureAngle());
   smoothFilter->Update();
 
-  vtkMAFSmartPointer<vtkAppendPolyData> appendFilter; 
+  vtkNew<vtkAppendPolyData> appendFilter; 
   appendFilter->AddInput(smoothFilter->GetOutput());
   appendFilter->AddInput(polyData);
   appendFilter->Update();
 
-  vtkMAFSmartPointer<vtkCleanPolyData> cleanFilter; 
+  vtkNew<vtkCleanPolyData> cleanFilter; 
   cleanFilter->SetInput(appendFilter->GetOutput());
   cleanFilter->Update();
 
-  vtkMAFSmartPointer<vtkPolyData> outputFilter;
+  vtkNew<vtkPolyData> outputFilter;
   outputFilter->DeepCopy(cleanFilter->GetOutput());
   outputFilter->Update();
 

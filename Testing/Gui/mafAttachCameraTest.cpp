@@ -151,10 +151,10 @@ void mafAttachCameraTest::CreateTestData()
   CPPUNIT_ASSERT(m_TestSurface == NULL);
   mafNEW(m_TestSurface);
 
-  vtkMAFSmartPointer<vtkAxes> axes;
+  vtkNew<vtkAxes> axes;
   axes->SetScaleFactor(2.5);
 
-  vtkMAFSmartPointer<vtkTubeFilter> tube;
+  vtkNew<vtkTubeFilter> tube;
   tube->SetInput(axes->GetOutput());
   tube->SetRadius(0.1);
   tube->CappingOn();

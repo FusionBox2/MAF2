@@ -230,7 +230,7 @@ void mafVMEOutputTest::TestGetVTKData()
 
   mafString filename=MAF_DATA_ROOT;
   filename<<"/Test_VMEOutput/sphere.vtk";
-  vtkMAFSmartPointer<vtkPolyDataReader> reader;
+  vtkNew<vtkPolyDataReader> reader;
   reader->SetFileName(filename.GetCStr());
   reader->Update();
   vtkDataSet *dataset = (vtkDataSet*)reader->GetOutput();

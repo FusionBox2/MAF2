@@ -72,7 +72,7 @@ void medOpFlipNormalsTest::TestAccept()
 void medOpFlipNormalsTest::TestOpRun() 
 //-----------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->Update();
 
   CPPUNIT_ASSERT( sphere->GetOutput()->GetCellData()->GetNormals() == NULL );
@@ -120,7 +120,7 @@ void medOpFlipNormalsTest::TestSetDiameter()
 void medOpFlipNormalsTest::TestFlipNormals() 
 //-----------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->Update();
 
   CPPUNIT_ASSERT( sphere->GetOutput()->GetCellData()->GetNormals() == NULL );
@@ -136,7 +136,7 @@ void medOpFlipNormalsTest::TestFlipNormals()
   flip->SetInput(surface);
   flip->OpRun();
 
-  vtkMAFSmartPointer<vtkPolyData> polydataInput;
+  vtkNew<vtkPolyData> polydataInput;
   polydataInput->DeepCopy(mafVMESurface::SafeDownCast(flip->GetInput())->GetOutput()->GetVTKData());
   polydataInput->Update();
 
@@ -146,7 +146,7 @@ void medOpFlipNormalsTest::TestFlipNormals()
   flip->FlipNormals();
   flip->OpDo();
 
-  vtkMAFSmartPointer<vtkPolyData> polydataOutput;
+  vtkNew<vtkPolyData> polydataOutput;
   polydataOutput->DeepCopy(mafVMESurface::SafeDownCast(flip->GetInput())->GetOutput()->GetVTKData());
   polydataOutput->Update();
   
@@ -181,7 +181,7 @@ void medOpFlipNormalsTest::TestFlipNormals()
 void medOpFlipNormalsTest::TestModifyAllNormal() 
 //-----------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->Update();
 
   CPPUNIT_ASSERT( sphere->GetOutput()->GetCellData()->GetNormals() == NULL );
@@ -197,7 +197,7 @@ void medOpFlipNormalsTest::TestModifyAllNormal()
   flip->SetInput(surface);
   flip->OpRun();
 
-  vtkMAFSmartPointer<vtkPolyData> polydataInput;
+  vtkNew<vtkPolyData> polydataInput;
   polydataInput->DeepCopy(mafVMESurface::SafeDownCast(flip->GetInput())->GetOutput()->GetVTKData());
   polydataInput->Update();
 
@@ -208,7 +208,7 @@ void medOpFlipNormalsTest::TestModifyAllNormal()
   flip->ModifyAllNormal();
   flip->OpDo();
 
-  vtkMAFSmartPointer<vtkPolyData> polydataOutput;
+  vtkNew<vtkPolyData> polydataOutput;
   polydataOutput->DeepCopy(mafVMESurface::SafeDownCast(flip->GetInput())->GetOutput()->GetVTKData());
   polydataOutput->Update();
 

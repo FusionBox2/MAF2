@@ -61,8 +61,8 @@ int main()
   MAF_TEST(mafEquals(xyz[2],-1));
 
   // create windows
-  vtkMAFSmartPointer<vtkRenderer> renderer;
-  vtkMAFSmartPointer<vtkRenderWindow> renWin;
+  vtkNew<vtkRenderer> renderer;
+  vtkNew<vtkRenderWindow> renWin;
   renWin->AddRenderer(renderer);
 
   renWin->SetSize(800,800);
@@ -93,17 +93,17 @@ int main()
   MAF_TEST(num_lm == 4);
 
   // create actor to display the slicer plane
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->SetRadius(rad);
 
-  vtkMAFSmartPointer<vtkGlyph3D> glyph_mapper;
+  vtkNew<vtkGlyph3D> glyph_mapper;
   glyph_mapper->SetInput(cloud->GetOutput()->GetVTKData());
   glyph_mapper->SetSource(sphere->GetOutput());
 
-  vtkMAFSmartPointer<vtkPolyDataMapper> cloud_mapper;
+  vtkNew<vtkPolyDataMapper> cloud_mapper;
   cloud_mapper->SetInput(glyph_mapper->GetOutput());
   
-  vtkMAFSmartPointer<vtkActor> cloud_actor;
+  vtkNew<vtkActor> cloud_actor;
   cloud_actor->SetMapper(cloud_mapper);
 
   renderer->AddActor(cloud_actor);

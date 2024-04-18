@@ -47,7 +47,7 @@ void mafAxesTest::setUp()
   
   m_Renderer = vtkRenderer::New();
 
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->Update();
   
   m_VMESurfaceSphere->SetData(sphere->GetOutput(),0);
@@ -71,19 +71,19 @@ void mafAxesTest::RenderData( vtkDataSet *data )
 {
   m_Renderer->SetBackground(0.1, 0.1, 0.1);
   
-  vtkMAFSmartPointer<vtkRenderWindow> renderWindow;
+  vtkNew<vtkRenderWindow> renderWindow;
   renderWindow->AddRenderer(m_Renderer);
   renderWindow->SetSize(640, 480);
   renderWindow->SetPosition(400,0);
   
-  vtkMAFSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor;
+  vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
   renderWindowInteractor->SetRenderWindow(renderWindow);
 
-  vtkMAFSmartPointer<vtkDataSetMapper> mapper;
+  vtkNew<vtkDataSetMapper> mapper;
   mapper->SetInput(data);
   mapper->ScalarVisibilityOn();
   
-  vtkMAFSmartPointer<vtkActor> actor;
+  vtkNew<vtkActor> actor;
   actor->SetMapper(mapper);
   actor->GetProperty()->SetOpacity(0.5);
 
@@ -98,7 +98,7 @@ void mafAxesTest::RenderData( vtkDataSet *data )
 void mafAxesTest::TestRenderData()
 {
   
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->Update();
   
   // remove comment for render window interaction

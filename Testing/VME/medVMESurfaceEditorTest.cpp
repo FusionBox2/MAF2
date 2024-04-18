@@ -84,14 +84,14 @@ void medVMESurfaceEditorTest::TestSetData()
   medVMESurfaceEditor *editor = NULL;
   mafNEW(editor);
   
-  vtkMAFSmartPointer<vtkPolyData> inputPolydata;
+  vtkNew<vtkPolyData> inputPolydata;
   inputPolydata->DeepCopy(vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData()));
   int pointsNumberIn = inputPolydata->GetNumberOfPoints();
   editor->SetData(inputPolydata,0.0);
   editor->Modified();
   editor->Update();
 
-  vtkMAFSmartPointer<vtkPolyData> outputPolydata=vtkPolyData::SafeDownCast(editor->GetOutput()->GetVTKData());
+  vtkNew<vtkPolyData> outputPolydata=vtkPolyData::SafeDownCast(editor->GetOutput()->GetVTKData());
   outputPolydata->Modified();
   outputPolydata->Update();
   int pointsNumberOut = outputPolydata->GetNumberOfPoints();

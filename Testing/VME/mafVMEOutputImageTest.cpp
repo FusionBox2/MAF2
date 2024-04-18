@@ -67,7 +67,7 @@ void mafVMEOutputImageTest::TestDynamicAllocation()
 void mafVMEOutputImageTest::TestGetImageData()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkImageData> im;
+  vtkNew<vtkImageData> im;
   im->SetDimensions(5, 5, 1);
   im->SetOrigin(0, 0, 0);
   im->SetSpacing(1,1,1);

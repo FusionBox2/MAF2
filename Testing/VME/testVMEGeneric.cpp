@@ -58,8 +58,8 @@ int main()
   root->SetName("ROOT");
 
   // create windows
-  vtkMAFSmartPointer<vtkRenderer> renderer;
-  vtkMAFSmartPointer<vtkRenderWindow> renWin;
+  vtkNew<vtkRenderer> renderer;
+  vtkNew<vtkRenderWindow> renWin;
   renWin->AddRenderer(renderer);
 
   renWin->SetSize(500,500);
@@ -67,21 +67,21 @@ int main()
   renderer->SetBackground( 0.1, 0.2, 0.4 );
 
 
-  vtkMAFSmartPointer<vtkConeSource> test_cone;
+  vtkNew<vtkConeSource> test_cone;
   test_cone->SetResolution(30);
   test_cone->SetHeight(2);
   test_cone->SetRadius( 1.0 );
   //test_cone->CappingOn();
-  vtkMAFSmartPointer<vtkPolyDataMapper> test_mapper;
+  vtkNew<vtkPolyDataMapper> test_mapper;
   test_mapper->SetInput(test_cone->GetOutput());
 
-  vtkMAFSmartPointer<vtkActor> test_actor;
+  vtkNew<vtkActor> test_actor;
   test_actor->SetMapper(test_mapper);
   test_actor->SetPosition(4,0,0);
   //test_actor->GetProperty()->SetColor(1,0,0);
   renderer->AddActor(test_actor);
 
-  vtkMAFSmartPointer<vtkAxes> axes;
+  vtkNew<vtkAxes> axes;
   axes->SetScaleFactor(2);
 
   // create a tree of VMEs: notice ref. counter is initially set to 0,
@@ -160,7 +160,7 @@ int main()
     vtitle->SetPose(trans.GetMatrix(),i); //
 
     // The sphere
-    vtkMAFSmartPointer<vtkSphereSource> sphere;
+    vtkNew<vtkSphereSource> sphere;
     sphere->SetRadius(.1+.01*i);
     sphere->Update();
 
@@ -185,7 +185,7 @@ int main()
     }
 
     // the cone
-    vtkMAFSmartPointer<vtkConeSource> cone;
+    vtkNew<vtkConeSource> cone;
     cone->SetResolution(103-i);
     cone->Update();
 
@@ -203,13 +203,13 @@ int main()
     // the morphing tube
     if (i<50)
     {
-      vtkMAFSmartPointer<vtkCylinderSource> cyl;
+      vtkNew<vtkCylinderSource> cyl;
       cyl->SetResolution(52-i);
       morph=cyl;
     }
     else
     {
-      vtkMAFSmartPointer<vtkCubeSource> cube;
+      vtkNew<vtkCubeSource> cube;
       cube->SetYLength((100.0-(double)i)/100.0+.5);
       cube->SetXLength(1);
       cube->SetZLength(1);
@@ -297,7 +297,7 @@ int main()
     
       if (vme->IsA("mafVMERoot")) 
       {
-        vtkMAFSmartPointer<vtkAssembly> vmeasm;
+        vtkNew<vtkAssembly> vmeasm;
         mafSmartPointer<mafClientData> attr;
         attr->m_Prop3D=vmeasm;
         vme->SetAttribute("ClientData",attr);
@@ -310,14 +310,14 @@ int main()
 
         MAF_TEST(data->IsA("vtkPolyData")!=0);
 
-        vtkMAFSmartPointer<vtkGlyph3D> glyph;
+        vtkNew<vtkGlyph3D> glyph;
         glyph->SetInput((vtkPolyData *)data);
 
-        vtkMAFSmartPointer<vtkPolyDataMapper> mapper;
+        vtkNew<vtkPolyDataMapper> mapper;
 
         mapper->SetInput(glyph->GetOutput());
 
-        vtkMAFSmartPointer<vtkSphereSource> sphere;
+        vtkNew<vtkSphereSource> sphere;
         sphere->SetRadius(.01);
   
 
@@ -326,10 +326,10 @@ int main()
         glyph->SetScaleModeToScaleByScalar();
         glyph->SetColorModeToColorByScale();
   
-        vtkMAFSmartPointer<vtkActor> vmeact;
+        vtkNew<vtkActor> vmeact;
         vmeact->SetMapper(mapper);
         vmeact->GetProperty()->SetColor(0,1,0);
-        vtkMAFSmartPointer<vtkAssembly> vmeasm;
+        vtkNew<vtkAssembly> vmeasm;
         vmeasm->AddPart(vmeact);
         mafSmartPointer<mafClientData> attr;
         attr->m_Prop3D=vmeasm;
@@ -357,13 +357,13 @@ int main()
 
         mapper->SetInput((vtkPolyData *)data);
   
-        vtkMAFSmartPointer<vtkActor> vmeact;
+        vtkNew<vtkActor> vmeact;
         vmeact->GetProperty()->SetColor(0,1,0);
         vmeact->GetProperty()->SetOpacity(1);
         vmeact->SetMapper(mapper);
         mapper->Delete();
 
-        vtkMAFSmartPointer<vtkAssembly> vmeasm;
+        vtkNew<vtkAssembly> vmeasm;
         vmeasm->AddPart(vmeact);
 
         vmeasm->SetUserTransform(vme->GetOutput()->GetTransform()->GetVTKTransform());

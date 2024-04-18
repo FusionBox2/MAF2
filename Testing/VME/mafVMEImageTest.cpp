@@ -101,9 +101,9 @@ void mafVMEImageTest::TestSetData()
 	mafSmartPointer<mafVMEImage> vmeImage;
 
   // We'll create the building blocks of polydata including data attributes.
-  vtkMAFSmartPointer<vtkImageData> image;
+  vtkNew<vtkImageData> image;
   
-  vtkMAFSmartPointer<vtkFloatArray> scalars;
+  vtkNew<vtkFloatArray> scalars;
 
   int dimensions[3] = {10,10,1};
   double spacing[3] = {1.0,1.0,1.0};
@@ -127,11 +127,11 @@ void mafVMEImageTest::TestSetData()
 void mafVMEImageTest::TestVMEImageVisualization()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkRenderWindow> renWin;
-  vtkMAFSmartPointer<vtkRenderer> renderer;
-  vtkMAFSmartPointer<vtkRenderWindowInteractor> iren;
-  vtkMAFSmartPointer<vtkActor> actor;
-  vtkMAFSmartPointer<vtkDataSetMapper> mapper;
+  vtkNew<vtkRenderWindow> renWin;
+  vtkNew<vtkRenderer> renderer;
+  vtkNew<vtkRenderWindowInteractor> iren;
+  vtkNew<vtkActor> actor;
+  vtkNew<vtkDataSetMapper> mapper;
   actor->SetMapper(mapper);
   renderer->AddActor(actor);
 
@@ -145,11 +145,11 @@ void mafVMEImageTest::TestVMEImageVisualization()
 
   mafSmartPointer<mafVMEImage> imageVME;
 
-  vtkMAFSmartPointer<vtkImageData> imageData;
+  vtkNew<vtkImageData> imageData;
   int dimensions[3] = {10,10,1};
   double spacing[3] = {1.0,1.0,1.0};
 
-  vtkMAFSmartPointer<vtkFloatArray> scalars;
+  vtkNew<vtkFloatArray> scalars;
   // Load the point, cell, and data attributes.
   int i;
   for (i=0; i<100; i++) scalars->InsertTuple1(i,i);
@@ -189,9 +189,9 @@ int mafVMEImageTest::PlayTree(mafVMERoot *root, bool ignoreVisibleToTraverse)
   // Test display of generic VME tree of surfaces
   //
 
-  vtkMAFSmartPointer<vtkRenderWindow> renWin;
-  vtkMAFSmartPointer<vtkRenderer> renderer;
-  vtkMAFSmartPointer<vtkRenderWindowInteractor> iren;
+  vtkNew<vtkRenderWindow> renWin;
+  vtkNew<vtkRenderer> renderer;
+  vtkNew<vtkRenderWindowInteractor> iren;
 
   renWin->AddRenderer(renderer);
   iren->SetRenderWindow(renWin);
@@ -211,7 +211,7 @@ int mafVMEImageTest::PlayTree(mafVMERoot *root, bool ignoreVisibleToTraverse)
     {
       if (vme->IsMAFType(mafVMERoot))
       {
-        vtkMAFSmartPointer<vtkAssembly> vmeasm;
+        vtkNew<vtkAssembly> vmeasm;
         mafClientData *clientdata=mafClientData::SafeDownCast(vme->GetAttribute("ClientData"));
         if (!clientdata)
         {
@@ -229,15 +229,15 @@ int mafVMEImageTest::PlayTree(mafVMERoot *root, bool ignoreVisibleToTraverse)
       else
       {
         vtkDataSet *vmedata=vme->GetOutput()->GetVTKData();
-        vtkMAFSmartPointer<vtkDataSetMapper> mapper;
+        vtkNew<vtkDataSetMapper> mapper;
         mapper->SetInput((vtkPolyData *)vmedata);
         mapper->SetScalarModeToDefault();
         mapper->SetScalarRange(0,100);
 
-        vtkMAFSmartPointer<vtkActor> vmeact;
+        vtkNew<vtkActor> vmeact;
         vmeact->SetMapper(mapper);
 
-        vtkMAFSmartPointer<vtkAssembly> vmeasm;
+        vtkNew<vtkAssembly> vmeasm;
         vmeasm->AddPart(vmeact);
         vmeasm->SetUserTransform(vme->GetOutput()->GetTransform()->GetVTKTransform());
         mafClientData *clientdata=mafClientData::SafeDownCast(vme->GetAttribute("ClientData"));
@@ -306,17 +306,17 @@ void mafVMEImageTest::CreateVMETestTree()
   m_VmeRoot = mafVMERoot::New();
  // mafSmartPointer<mafVMERoot> m_VmeRoot;
 
-  vtkMAFSmartPointer<vtkFileOutputWindow> log;
+  vtkNew<vtkFileOutputWindow> log;
   log->SetInstance(log);
   log->SetFileName("testMSF.log"); // log of VTK error messages
 
   // plug the custom attribute in the Node Factory
   mafPlugAttribute<mafClientData>("Simple attribute for attaching actors to VMEs");
 
-  vtkMAFSmartPointer<vtkAxes> axes;
+  vtkNew<vtkAxes> axes;
   axes->SetScaleFactor(2);
 
-  vtkMAFSmartPointer<vtkTextSource> text;
+  vtkNew<vtkTextSource> text;
 
   text->SetText("VME Tree Test");
   text->Update();
@@ -343,25 +343,25 @@ void mafVMEImageTest::CreateVMETestTree()
   FirstChild->AddChild(image2);
   FirstChild->AddChild(image3);
   int i;
-  vtkMAFSmartPointer<vtkImageData> texture1;
+  vtkNew<vtkImageData> texture1;
   texture1->SetSpacing(1.0,1.0,1.0);
   texture1->SetDimensions(10,10,1);
-  vtkMAFSmartPointer<vtkFloatArray> scalars1;
+  vtkNew<vtkFloatArray> scalars1;
   for (i=0; i<100; i++) scalars1->InsertTuple1(i,i);
   texture1->GetPointData()->SetScalars(scalars1);
 
-  vtkMAFSmartPointer<vtkImageData> texture2;
+  vtkNew<vtkImageData> texture2;
   texture2->SetSpacing(2.0,2.0,2.0);
   texture2->SetDimensions(10,10,1);
-  vtkMAFSmartPointer<vtkFloatArray> scalars2;
+  vtkNew<vtkFloatArray> scalars2;
   for (i=0; i<100; i++) scalars2->InsertTuple1(i,i/2);
   texture2->GetPointData()->SetScalars(scalars2);
 
 
-  vtkMAFSmartPointer<vtkImageData> texture3;
+  vtkNew<vtkImageData> texture3;
   texture3->SetSpacing(3.0,3.0,3.0);
   texture3->SetDimensions(10,10,1);
-  vtkMAFSmartPointer<vtkFloatArray> scalars3;
+  vtkNew<vtkFloatArray> scalars3;
   for (i=0; i<100; i++) scalars3->InsertTuple1(i,i);
   texture3->GetPointData()->SetScalars(scalars3);
 

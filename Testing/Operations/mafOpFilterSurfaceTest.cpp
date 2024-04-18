@@ -180,7 +180,7 @@ void mafOpFilterSurfaceTest::TestOnClean()
 
   mafString fileName = MAF_DATA_ROOT;
   fileName<<"\\Test_FilterSurface\\SurfaceToClean.vtk";
-  vtkMAFSmartPointer<vtkPolyDataReader> reader;
+  vtkNew<vtkPolyDataReader> reader;
   reader->SetFileName(fileName.GetCStr());
   reader->Update();
 
@@ -194,7 +194,7 @@ void mafOpFilterSurfaceTest::TestOnClean()
 
   CPPUNIT_ASSERT( polyIn->GetNumberOfPoints() == 24 );
 
-  vtkMAFSmartPointer<vtkPolyData> inputVtkFilter;
+  vtkNew<vtkPolyData> inputVtkFilter;
   inputVtkFilter->DeepCopy(polyIn);
   inputVtkFilter->Update();
 
@@ -211,7 +211,7 @@ void mafOpFilterSurfaceTest::TestOnClean()
 
   CPPUNIT_ASSERT( polyOut->GetNumberOfPoints() == 8 );
 
-  vtkMAFSmartPointer<vtkCleanPolyData> cleanFilter;
+  vtkNew<vtkCleanPolyData> cleanFilter;
   cleanFilter->SetTolerance(0.0);
   cleanFilter->SetInput(inputVtkFilter);
   cleanFilter->Update();
@@ -231,7 +231,7 @@ void mafOpFilterSurfaceTest::TestOnSmooth()
 
   mafString fileName = MAF_DATA_ROOT;
   fileName<<"\\Test_FilterSurface\\SurfaceToSmooth.vtk";
-  vtkMAFSmartPointer<vtkPolyDataReader> reader;
+  vtkNew<vtkPolyDataReader> reader;
   reader->SetFileName(fileName.GetCStr());
   reader->Update();
 
@@ -243,7 +243,7 @@ void mafOpFilterSurfaceTest::TestOnSmooth()
   vtkPolyData *polyIn = vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData());
   polyIn->Update();
 
-  vtkMAFSmartPointer<vtkPolyData> inputVtkFilter;
+  vtkNew<vtkPolyData> inputVtkFilter;
   inputVtkFilter->DeepCopy(polyIn);
   inputVtkFilter->Update();
 
@@ -258,7 +258,7 @@ void mafOpFilterSurfaceTest::TestOnSmooth()
   vtkPolyData *polyOut = vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData());
   polyOut->Update();
 
-  vtkMAFSmartPointer<vtkSmoothPolyDataFilter> smoothFilter;
+  vtkNew<vtkSmoothPolyDataFilter> smoothFilter;
   smoothFilter->SetNumberOfIterations(op->GetNumberOfIterations());
   smoothFilter->SetInput(inputVtkFilter);
   smoothFilter->Update();
@@ -279,7 +279,7 @@ void mafOpFilterSurfaceTest::TestOnDecimate()
 
   mafString fileName = MAF_DATA_ROOT;
   fileName<<"\\Test_FilterSurface\\SurfaceToDecimate.vtk";
-  vtkMAFSmartPointer<vtkPolyDataReader> reader;
+  vtkNew<vtkPolyDataReader> reader;
   reader->SetFileName(fileName.GetCStr());
   reader->Update();
 
@@ -291,7 +291,7 @@ void mafOpFilterSurfaceTest::TestOnDecimate()
   vtkPolyData *polyIn = vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData());
   polyIn->Update();
 
-  vtkMAFSmartPointer<vtkPolyData> inputVtkFilter;
+  vtkNew<vtkPolyData> inputVtkFilter;
   inputVtkFilter->DeepCopy(polyIn);
   inputVtkFilter->Update();
 
@@ -306,7 +306,7 @@ void mafOpFilterSurfaceTest::TestOnDecimate()
   vtkPolyData *polyOut = vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData());
   polyOut->Update();
 
-  vtkMAFSmartPointer<vtkDecimatePro> decimateFilter;
+  vtkNew<vtkDecimatePro> decimateFilter;
   decimateFilter->SetPreserveTopology(op->GetPreserveTopology());
   decimateFilter->SetTargetReduction(op->GetTargetReduction()/100.0);
   decimateFilter->SetInput(inputVtkFilter);
@@ -328,7 +328,7 @@ void mafOpFilterSurfaceTest::TestOnTriangulate()
 
   mafString fileName = MAF_DATA_ROOT;
   fileName<<"\\Test_FilterSurface\\SurfaceToTriangulate.vtk";
-  vtkMAFSmartPointer<vtkPolyDataReader> reader;
+  vtkNew<vtkPolyDataReader> reader;
   reader->SetFileName(fileName.GetCStr());
   reader->Update();
 
@@ -340,7 +340,7 @@ void mafOpFilterSurfaceTest::TestOnTriangulate()
   vtkPolyData *polyIn = vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData());
   polyIn->Update();
 
-  vtkMAFSmartPointer<vtkPolyData> inputVtkFilter;
+  vtkNew<vtkPolyData> inputVtkFilter;
   inputVtkFilter->DeepCopy(polyIn);
   inputVtkFilter->Update();
 
@@ -355,7 +355,7 @@ void mafOpFilterSurfaceTest::TestOnTriangulate()
   vtkPolyData *polyOut = vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData());
   polyOut->Update();
 
-  vtkMAFSmartPointer<vtkTriangleFilter> triangleFilter;
+  vtkNew<vtkTriangleFilter> triangleFilter;
   triangleFilter->SetInput(inputVtkFilter);
   triangleFilter->Update();
 
@@ -375,7 +375,7 @@ void mafOpFilterSurfaceTest::TestOnVtkConnect()
 
   mafString fileName = MAF_DATA_ROOT;
   fileName<<"\\Test_FilterSurface\\SurfaceToVtkConnect.vtk";
-  vtkMAFSmartPointer<vtkPolyDataReader> reader;
+  vtkNew<vtkPolyDataReader> reader;
   reader->SetFileName(fileName.GetCStr());
   reader->Update();
 
@@ -387,7 +387,7 @@ void mafOpFilterSurfaceTest::TestOnVtkConnect()
   vtkPolyData *polyIn = vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData());
   polyIn->Update();
 
-  vtkMAFSmartPointer<vtkPolyData> inputVtkFilter;
+  vtkNew<vtkPolyData> inputVtkFilter;
   inputVtkFilter->DeepCopy(polyIn);
   inputVtkFilter->Update();
 
@@ -399,7 +399,7 @@ void mafOpFilterSurfaceTest::TestOnVtkConnect()
   vtkPolyData *polyOut = vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData());
   polyOut->Update();
 
-  vtkMAFSmartPointer<vtkPolyDataConnectivityFilter> connectivityFilter;
+  vtkNew<vtkPolyDataConnectivityFilter> connectivityFilter;
   connectivityFilter->SetInput(inputVtkFilter);
   connectivityFilter->Update();
 
@@ -419,7 +419,7 @@ void mafOpFilterSurfaceTest::TestOnStripper()
 
   mafString fileName = MAF_DATA_ROOT;
   fileName<<"\\Test_FilterSurface\\SurfaceToStripper.vtk";
-  vtkMAFSmartPointer<vtkPolyDataReader> reader;
+  vtkNew<vtkPolyDataReader> reader;
   reader->SetFileName(fileName.GetCStr());
   reader->Update();
 
@@ -431,7 +431,7 @@ void mafOpFilterSurfaceTest::TestOnStripper()
   vtkPolyData *polyIn = vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData());
   polyIn->Update();
 
-  vtkMAFSmartPointer<vtkPolyData> inputVtkFilter;
+  vtkNew<vtkPolyData> inputVtkFilter;
   inputVtkFilter->DeepCopy(polyIn);
   inputVtkFilter->Update();
 
@@ -443,7 +443,7 @@ void mafOpFilterSurfaceTest::TestOnStripper()
   vtkPolyData *polyOut = vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData());
   polyOut->Update();
 
-  vtkMAFSmartPointer<vtkStripper> stripperFilter;
+  vtkNew<vtkStripper> stripperFilter;
   stripperFilter->SetInput(inputVtkFilter);
   stripperFilter->Update();
 
@@ -463,7 +463,7 @@ void mafOpFilterSurfaceTest::TestOnGenerateNormals()
 
   mafString fileName = MAF_DATA_ROOT;
   fileName<<"\\Test_FilterSurface\\SurfaceToGenerateNormals.vtk";
-  vtkMAFSmartPointer<vtkPolyDataReader> reader;
+  vtkNew<vtkPolyDataReader> reader;
   reader->SetFileName(fileName.GetCStr());
   reader->Update();
 
@@ -475,7 +475,7 @@ void mafOpFilterSurfaceTest::TestOnGenerateNormals()
   vtkPolyData *polyIn = vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData());
   polyIn->Update();
 
-  vtkMAFSmartPointer<vtkPolyData> inputVtkFilter;
+  vtkNew<vtkPolyData> inputVtkFilter;
   inputVtkFilter->DeepCopy(polyIn);
   inputVtkFilter->Update();
 
@@ -487,7 +487,7 @@ void mafOpFilterSurfaceTest::TestOnGenerateNormals()
   vtkPolyData *polyOut = vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData());
   polyOut->Update();
 
-  vtkMAFSmartPointer<vtkPolyDataNormals> normalsFilter;
+  vtkNew<vtkPolyDataNormals> normalsFilter;
   normalsFilter->SetFlipNormals(op->GetFlipNormals());
   normalsFilter->SetSplitting(op->GetEdgeSplit());
   normalsFilter->SetFeatureAngle(op->GetFeatureAngle());
@@ -511,7 +511,7 @@ void mafOpFilterSurfaceTest::TestUndo()
 
   mafString fileName = MAF_DATA_ROOT;
   fileName<<"\\Test_FilterSurface\\SurfaceToGenerateNormals.vtk";
-  vtkMAFSmartPointer<vtkPolyDataReader> reader;
+  vtkNew<vtkPolyDataReader> reader;
   reader->SetFileName(fileName.GetCStr());
   reader->Update();
 
@@ -523,7 +523,7 @@ void mafOpFilterSurfaceTest::TestUndo()
   vtkPolyData *polyIn = vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData());
   polyIn->Update();
 
-  vtkMAFSmartPointer<vtkPolyData> inputVtkFilter;
+  vtkNew<vtkPolyData> inputVtkFilter;
   inputVtkFilter->DeepCopy(polyIn);
   inputVtkFilter->Update();
 

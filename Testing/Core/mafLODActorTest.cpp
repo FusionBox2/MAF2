@@ -63,22 +63,22 @@ void mafLODActorTest::TestFixture()
 void mafLODActorTest::RenderData(mafLODActor *actor)
 //------------------------------------------------------------
 {
-	vtkMAFSmartPointer<vtkSphereSource> sphere;
-	vtkMAFSmartPointer<vtkPolyDataMapper> mapper;
+	vtkNew<vtkSphereSource> sphere;
+	vtkNew<vtkPolyDataMapper> mapper;
 	mapper->SetInput(sphere->GetOutput());
 	actor->SetMapper(mapper);
 	actor->Modified();
 
-  vtkMAFSmartPointer<vtkRenderer> renderer;
+  vtkNew<vtkRenderer> renderer;
   renderer->SetBackground(0.5, 0.5, 0.5);
 
-  vtkMAFSmartPointer<vtkRenderWindow> renderWindow;
+  vtkNew<vtkRenderWindow> renderWindow;
   renderWindow->AddRenderer(renderer);
   renderWindow->SetSize(640, 480);
   renderWindow->SetPosition(100,0);
 
 
-  vtkMAFSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor;
+  vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
   renderWindowInteractor->SetRenderWindow(renderWindow);
 
   renderer->AddActor(actor);

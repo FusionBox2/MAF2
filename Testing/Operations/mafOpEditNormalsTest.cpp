@@ -47,7 +47,7 @@ void mafOpEditNormalsTest::Test()
 	mafString filename=MAF_DATA_ROOT;
 	filename<<"/STL/normals.stl";
 
-	vtkMAFSmartPointer<vtkSTLReader> reader;
+	vtkNew<vtkSTLReader> reader;
 	reader->SetFileName(filename.GetCStr());
 	reader->Update();
   mafSmartPointer<mafVMESurface> surface;
@@ -55,7 +55,7 @@ void mafOpEditNormalsTest::Test()
 	surface->GetOutput()->GetVTKData()->Update();
 	surface->Update();
 
-	vtkMAFSmartPointer<vtkPolyData>originalPolydata;
+	vtkNew<vtkPolyData>originalPolydata;
 	originalPolydata->DeepCopy(vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData()));
 	originalPolydata->Update();
 
@@ -68,7 +68,7 @@ void mafOpEditNormalsTest::Test()
 
 	surface->GetOutput()->GetVTKData()->Update();
 	
-	vtkMAFSmartPointer<vtkPolyData> resultPolydata1;
+	vtkNew<vtkPolyData> resultPolydata1;
 	resultPolydata1->DeepCopy(vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData())); 
 	resultPolydata1->Update();
 
@@ -86,7 +86,7 @@ void mafOpEditNormalsTest::Test()
 
 	surface->GetOutput()->GetVTKData()->Update();
 
-	vtkMAFSmartPointer<vtkPolyData> resultPolydata2;
+	vtkNew<vtkPolyData> resultPolydata2;
 	resultPolydata2->DeepCopy(vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData()));
 	resultPolydata2->Update();
 
@@ -120,7 +120,7 @@ void mafOpEditNormalsTest::TestUndo1()
 	mafString filename=MAF_DATA_ROOT;
 	filename<<"/STL/normals.stl";
 
-	vtkMAFSmartPointer<vtkSTLReader> reader;
+	vtkNew<vtkSTLReader> reader;
 	reader->SetFileName(filename.GetCStr());
 	reader->Update();
 	mafSmartPointer<mafVMESurface> surface;
@@ -128,7 +128,7 @@ void mafOpEditNormalsTest::TestUndo1()
 	surface->GetOutput()->GetVTKData()->Update();
 	surface->Update();
 
-	vtkMAFSmartPointer<vtkPolyData>originalPolydata;
+	vtkNew<vtkPolyData>originalPolydata;
 	originalPolydata->DeepCopy(vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData()));
 	originalPolydata->Update();
 
@@ -146,7 +146,7 @@ void mafOpEditNormalsTest::TestUndo1()
 
 	surface->GetOutput()->GetVTKData()->Update();
 
-	vtkMAFSmartPointer<vtkPolyData>resultPolydata1;
+	vtkNew<vtkPolyData>resultPolydata1;
 	resultPolydata1->DeepCopy(vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData())); 
 	resultPolydata1->Update();
 
@@ -164,7 +164,7 @@ void mafOpEditNormalsTest::TestUndo2()
 	mafString filename=MAF_DATA_ROOT;
 	filename<<"/STL/normals.stl";
 
-	vtkMAFSmartPointer<vtkSTLReader> reader;
+	vtkNew<vtkSTLReader> reader;
 	reader->SetFileName(filename.GetCStr());
 	reader->Update();
 	mafSmartPointer<mafVMESurface> surface;
@@ -182,7 +182,7 @@ void mafOpEditNormalsTest::TestUndo2()
 
 	surface->GetOutput()->GetVTKData()->Update();
 
-	vtkMAFSmartPointer<vtkPolyData>originalPolydata;
+	vtkNew<vtkPolyData>originalPolydata;
 	originalPolydata->DeepCopy(vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData()));
 	originalPolydata->Update();
 
@@ -200,7 +200,7 @@ void mafOpEditNormalsTest::TestUndo2()
 
 	surface->GetOutput()->GetVTKData()->Update();
 
-	vtkMAFSmartPointer<vtkPolyData>resultPolydata2;
+	vtkNew<vtkPolyData>resultPolydata2;
 	resultPolydata2->DeepCopy(vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData()));
 	resultPolydata2->Update();
 

@@ -302,7 +302,7 @@ void mafPipeSurfaceSlice_BESTest::TestSurfacePipeExecution()
 
   ////// Create VME ////////////////////
 
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->SetRadius(8.0);
   sphere->Update();
 
@@ -508,7 +508,7 @@ void mafPipeSurfaceSlice_BESTest::TestSurfacePipeCreation()
 
   ////// Create VME ////////////////////
 
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->SetRadius(8.0);
   sphere->Update();
 
@@ -559,7 +559,7 @@ void mafPipeSurfaceSlice_BESTest::TestSetGetThickness()
 
   ////// Create VME ////////////////////
 
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->SetRadius(8.0);
   sphere->Update();
 

@@ -99,15 +99,15 @@ void medPipeVectorFieldGlyphsTest::TestCreate()
   volumeDimensions[1] = 5;
   volumeDimensions[2] = 5;
 
-  vtkMAFSmartPointer<vtkImageData> imageData;
+  vtkNew<vtkImageData> imageData;
   imageData->SetDimensions(volumeDimensions[0],volumeDimensions[1],volumeDimensions[2]);
   imageData->SetSpacing(1.,1.,1.);
 
-  vtkMAFSmartPointer<vtkFloatArray> scalarArray;
+  vtkNew<vtkFloatArray> scalarArray;
   scalarArray->SetNumberOfComponents(1);
   scalarArray->SetName("Scalar");
   
-  vtkMAFSmartPointer<vtkFloatArray> vectorArray;
+  vtkNew<vtkFloatArray> vectorArray;
   vectorArray->SetNumberOfComponents(3);
   vectorArray->SetNumberOfTuples(volumeDimensions[0]*volumeDimensions[1]*volumeDimensions[2]);
   vectorArray->SetName("Vector");

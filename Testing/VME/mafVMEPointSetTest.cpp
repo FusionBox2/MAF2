@@ -73,8 +73,8 @@ void mafVMEPointSetTest::TestDynamicAllocation()
 void mafVMEPointSetTest::TestSetData()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkPolyData>polydata;
-  vtkMAFSmartPointer<vtkPoints>pts;
+  vtkNew<vtkPolyData>polydata;
+  vtkNew<vtkPoints>pts;
 
   for (int i=0;i<NUM_OF_POINTS;i++)
   {
@@ -88,7 +88,7 @@ void mafVMEPointSetTest::TestSetData()
 
   CPPUNIT_ASSERT(result);
 
-  vtkMAFSmartPointer<vtkCellArray> cells;
+  vtkNew<vtkCellArray> cells;
   for (int i=0;i<NUM_OF_POINTS-1;i++)
   {
     int cell[2] = {i,i+1};
@@ -102,7 +102,7 @@ void mafVMEPointSetTest::TestSetData()
 
   CPPUNIT_ASSERT(result);
 
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->Update();
 
   result = m_PointSetVme->SetData(sphere->GetOutput(),0.0) == MAF_ERROR;
@@ -116,8 +116,8 @@ void mafVMEPointSetTest::TestSetData()
 void mafVMEPointSetTest::TestAppendPoint()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkPolyData>polydata1;
-  vtkMAFSmartPointer<vtkPoints>pts1;
+  vtkNew<vtkPolyData>polydata1;
+  vtkNew<vtkPoints>pts1;
 
   for (int i=0;i<NUM_OF_POINTS;i++)
   {
@@ -131,8 +131,8 @@ void mafVMEPointSetTest::TestAppendPoint()
 
   CPPUNIT_ASSERT(result);
 
-  vtkMAFSmartPointer<vtkPolyData>polydata2;
-  vtkMAFSmartPointer<vtkPoints>pts2;
+  vtkNew<vtkPolyData>polydata2;
+  vtkNew<vtkPoints>pts2;
 
   for (int i=0;i<NUM_OF_POINTS;i++)
   {
@@ -177,8 +177,8 @@ void mafVMEPointSetTest::TestAppendPoint()
 void mafVMEPointSetTest::TestRemovePoint()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkPolyData>polydata1;
-  vtkMAFSmartPointer<vtkPoints>pts1;
+  vtkNew<vtkPolyData>polydata1;
+  vtkNew<vtkPoints>pts1;
 
   for (int i=0;i<NUM_OF_POINTS;i++)
   {
@@ -192,8 +192,8 @@ void mafVMEPointSetTest::TestRemovePoint()
 
   CPPUNIT_ASSERT(result);
 
-  vtkMAFSmartPointer<vtkPolyData>polydata2;
-  vtkMAFSmartPointer<vtkPoints>pts2;
+  vtkNew<vtkPolyData>polydata2;
+  vtkNew<vtkPoints>pts2;
 
   for (int i=0;i<NUM_OF_POINTS;i++)
   {
@@ -239,8 +239,8 @@ void mafVMEPointSetTest::TestRemovePoint()
 void mafVMEPointSetTest::TestSetPoint()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkPolyData>polydata1;
-  vtkMAFSmartPointer<vtkPoints>pts1;
+  vtkNew<vtkPolyData>polydata1;
+  vtkNew<vtkPoints>pts1;
 
   for (int i=0;i<NUM_OF_POINTS;i++)
   {
@@ -254,8 +254,8 @@ void mafVMEPointSetTest::TestSetPoint()
 
   CPPUNIT_ASSERT(result);
 
-  vtkMAFSmartPointer<vtkPolyData>polydata2;
-  vtkMAFSmartPointer<vtkPoints>pts2;
+  vtkNew<vtkPolyData>polydata2;
+  vtkNew<vtkPoints>pts2;
 
   for (int i=0;i<NUM_OF_POINTS;i++)
   {
@@ -302,8 +302,8 @@ void mafVMEPointSetTest::TestSetPoint()
 void mafVMEPointSetTest::TestGetPoint()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkPolyData>polydata1;
-  vtkMAFSmartPointer<vtkPoints>pts1;
+  vtkNew<vtkPolyData>polydata1;
+  vtkNew<vtkPoints>pts1;
 
   for (int i=0;i<NUM_OF_POINTS;i++)
   {
@@ -317,8 +317,8 @@ void mafVMEPointSetTest::TestGetPoint()
 
   CPPUNIT_ASSERT(result);
 
-  vtkMAFSmartPointer<vtkPolyData>polydata2;
-  vtkMAFSmartPointer<vtkPoints>pts2;
+  vtkNew<vtkPolyData>polydata2;
+  vtkNew<vtkPoints>pts2;
 
   for (int i=0;i<NUM_OF_POINTS;i++)
   {
@@ -354,8 +354,8 @@ void mafVMEPointSetTest::TestGetPoint()
 void mafVMEPointSetTest::TestGetNumberOfPoints()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkPolyData>polydata;
-  vtkMAFSmartPointer<vtkPoints>pts;
+  vtkNew<vtkPolyData>polydata;
+  vtkNew<vtkPoints>pts;
 
   for (int i=0;i<NUM_OF_POINTS;i++)
   {
@@ -380,8 +380,8 @@ void mafVMEPointSetTest::TestGetNumberOfPoints()
 void mafVMEPointSetTest::TestSetNumberOfPoints()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkPolyData>polydata;
-  vtkMAFSmartPointer<vtkPoints>pts;
+  vtkNew<vtkPolyData>polydata;
+  vtkNew<vtkPoints>pts;
 
   for (int i=0;i<NUM_OF_POINTS;i++)
   {

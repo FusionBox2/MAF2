@@ -49,7 +49,7 @@ void vtkMAFToLinearTransformTest::tearDown()
 void vtkMAFToLinearTransformTest::TestSmartAllocation()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMAFToLinearTransform> tl;
+  vtkNew<vtkMAFToLinearTransform> tl;
 }
 //----------------------------------------------------------------------------
 void vtkMAFToLinearTransformTest::TestDynamicAllocation()
@@ -66,7 +66,7 @@ void vtkMAFToLinearTransformTest::TestSetGetInputMatrix()
   matrix1->Identity();
   matrix1->SetElement(2,2,2); //set i=2, j=2 element to 2 instead of 1
   
-  vtkMAFSmartPointer<vtkMAFToLinearTransform> tl;
+  vtkNew<vtkMAFToLinearTransform> tl;
   tl->SetInputMatrix(matrix1);
   tl->Update();
 
@@ -90,7 +90,7 @@ void vtkMAFToLinearTransformTest::TestSetGetInputTransform()
   transform->SetMatrix(*matrix1);
   transform->Update();
 
-  vtkMAFSmartPointer<vtkMAFToLinearTransform> tl;
+  vtkNew<vtkMAFToLinearTransform> tl;
   tl->SetInputTransform(transform);
   tl->Update();
 
@@ -127,7 +127,7 @@ void vtkMAFToLinearTransformTest::TestInverse()
   transform1->SetMatrix(m);
   transform1->Update();
 
-  vtkMAFSmartPointer<vtkMAFToLinearTransform> tl;
+  vtkNew<vtkMAFToLinearTransform> tl;
   tl->SetInputTransform(transform1);
   tl->Inverse();
   tl->Update();
@@ -145,7 +145,7 @@ void vtkMAFToLinearTransformTest::TestMTime()
   m->Modified();
   unsigned long timeMatrix = m->GetMTime();
 
-  vtkMAFSmartPointer<vtkMAFToLinearTransform> tl0;
+  vtkNew<vtkMAFToLinearTransform> tl0;
   tl0->SetInputMatrix(m);
   tl0->Update();
 
@@ -155,7 +155,7 @@ void vtkMAFToLinearTransformTest::TestMTime()
   transform->Modified();
   unsigned long timeTransform = transform->GetMTime();
 
-  vtkMAFSmartPointer<vtkMAFToLinearTransform> tl1;
+  vtkNew<vtkMAFToLinearTransform> tl1;
   tl1->SetInputTransform(transform);
   tl1->Update();
 
@@ -166,7 +166,7 @@ void vtkMAFToLinearTransformTest::TestMTime()
 void vtkMAFToLinearTransformTest::TestMakeTransform()
 //-------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMAFToLinearTransform> tl1;
+  vtkNew<vtkMAFToLinearTransform> tl1;
   vtkLinearTransform *copy = NULL;
   copy = vtkLinearTransform::SafeDownCast(tl1->MakeTransform());
 

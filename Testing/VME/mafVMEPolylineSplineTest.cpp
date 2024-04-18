@@ -44,9 +44,9 @@ void mafVMEPolylineSplineTest::TestSetData()
 //----------------------------------------------------------------------------
 {
 
-  vtkMAFSmartPointer<vtkPolyData> in_data;
-	vtkMAFSmartPointer<vtkPoints> in_points;
-	vtkMAFSmartPointer<vtkCellArray> in_cells;
+  vtkNew<vtkPolyData> in_data;
+	vtkNew<vtkPoints> in_points;
+	vtkNew<vtkCellArray> in_cells;
   
   double point[3];
   // point 1

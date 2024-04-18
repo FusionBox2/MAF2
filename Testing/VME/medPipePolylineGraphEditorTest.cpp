@@ -111,7 +111,7 @@ void medPipePolylineGraphEditorTest::TestPipeExecution()
 
   CreateExamplePolydata();
 
-  vtkMAFSmartPointer<vtkDoubleArray> scalars;
+  vtkNew<vtkDoubleArray> scalars;
   scalars->SetName("SCALARS");
 
   int nPoints = m_Polydata->GetNumberOfPoints();
@@ -124,22 +124,22 @@ void medPipePolylineGraphEditorTest::TestPipeExecution()
   m_Polydata->GetPointData()->SetActiveScalars("SCALARS");
   m_Polydata->Update();
 
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->SetRadius(0.5);
   sphere->Update();
-  vtkMAFSmartPointer<vtkGlyph3D> glyph;
+  vtkNew<vtkGlyph3D> glyph;
   glyph->SetInput(m_Polydata);
   glyph->SetSource(sphere->GetOutput());
   glyph->SetScaleModeToDataScalingOff();//without this with a scalar value equal to 0 the sphere disappears
   glyph->Update();
 
-  vtkMAFSmartPointer<vtkTubeFilter> tube;
+  vtkNew<vtkTubeFilter> tube;
   tube->SetInput(m_Polydata);
   tube->SetRadius(0.2);
   tube->Update();
 
   int n = glyph->GetOutput()->GetNumberOfPoints();
-  vtkMAFSmartPointer<vtkAppendPolyData> append;
+  vtkNew<vtkAppendPolyData> append;
   append->SetInput(glyph->GetOutput());
   append->AddInput(tube->GetOutput());
   append->Update();
@@ -185,7 +185,7 @@ void medPipePolylineGraphEditorTest::TestPipeExecution()
     else if(i == SELECT_TEST)
     {
 
-      vtkMAFSmartPointer<vtkDoubleArray> scalars;
+      vtkNew<vtkDoubleArray> scalars;
       scalars->SetName("SCALARS");
 
       int nPoints = m_Polydata->GetNumberOfPoints();
@@ -207,10 +207,10 @@ void medPipePolylineGraphEditorTest::TestPipeExecution()
       m_Polydata->GetPointData()->SetActiveScalars("SCALARS");
       m_Polydata->Update();
 
-      vtkMAFSmartPointer<vtkSphereSource> sphere;
+      vtkNew<vtkSphereSource> sphere;
       sphere->SetRadius(0.5);
       sphere->Update();
-      vtkMAFSmartPointer<vtkGlyph3D> glyph;
+      vtkNew<vtkGlyph3D> glyph;
       glyph->SetInput(m_Polydata);
       glyph->SetSource(sphere->GetOutput());
       glyph->SetScaleModeToDataScalingOff();//without this with a scalar value equal to 0 the sphere disappears
@@ -234,7 +234,7 @@ void medPipePolylineGraphEditorTest::TestPipeExecution()
     else if(i == CUT_TEST)
     {
 
-      vtkMAFSmartPointer<vtkDoubleArray> scalars;
+      vtkNew<vtkDoubleArray> scalars;
       scalars->SetName("SCALARS");
 
       int nPoints = m_Polydata->GetNumberOfPoints();
@@ -247,7 +247,7 @@ void medPipePolylineGraphEditorTest::TestPipeExecution()
       m_Polydata->GetPointData()->SetActiveScalars("SCALARS");
       m_Polydata->Update();
 
-      vtkMAFSmartPointer<vtkTubeFilter> tube;
+      vtkNew<vtkTubeFilter> tube;
       tube->SetInput(m_Polydata);
       tube->SetRadius(0.5);
       tube->Update();

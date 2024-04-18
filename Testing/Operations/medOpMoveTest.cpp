@@ -75,7 +75,7 @@ void medOpMoveTest::TestAccept()
 void medOpMoveTest::TestReset() 
 //-----------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->Update();
 
   mafSmartPointer<mafVMESurface> surface;

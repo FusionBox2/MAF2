@@ -79,17 +79,17 @@ void medVMEOutputPolylineEditorTest::TestGetPolylineData_Update()
   medVMEPolylineEditor *vmePolylineEditor;
   mafNEW(vmePolylineEditor);
   
-  vtkMAFSmartPointer<vtkPoints> pts;
+  vtkNew<vtkPoints> pts;
   pts->InsertNextPoint(0.0,0.0,0.0);
   pts->InsertNextPoint(1.0,1.0,1.0);
 
-  vtkMAFSmartPointer<vtkCellArray> cells;
+  vtkNew<vtkCellArray> cells;
   vtkIdType lineids[2];
   lineids[0] = 0;
   lineids[1] = 1;
   cells->InsertNextCell(2,lineids);
 
-  vtkMAFSmartPointer<vtkPolyData> polyline;
+  vtkNew<vtkPolyData> polyline;
   polyline->SetPoints(pts);
   polyline->SetLines(cells);
   vmePolylineEditor->SetData(polyline, 0.0);

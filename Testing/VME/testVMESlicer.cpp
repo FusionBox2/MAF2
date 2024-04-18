@@ -43,7 +43,7 @@ int main()
   vvol->AddChild(vslicer);
 
   //set data to VME volume
-  vtkMAFSmartPointer<vtkDataSetReader> reader;
+  vtkNew<vtkDataSetReader> reader;
   mafString filename=MAF_DATA_ROOT;
   filename<<"/VTK_Volumes/mummy_head.vtk";
   //filename<<"/VTK_Volumes/femur_r.vtk";
@@ -57,8 +57,8 @@ int main()
   mafTransform trans;
 
   // create windows
-  vtkMAFSmartPointer<vtkRenderer> renderer;
-  vtkMAFSmartPointer<vtkRenderWindow> renWin;
+  vtkNew<vtkRenderer> renderer;
+  vtkNew<vtkRenderWindow> renWin;
   renWin->AddRenderer(renderer);
 
   renWin->SetSize(1000,1000);
@@ -71,22 +71,22 @@ int main()
   
   volBoundsBox->SetBounds(volBounds.m_Bounds);
 
-  vtkMAFSmartPointer<vtkPolyDataMapper> vol_mapper;
+  vtkNew<vtkPolyDataMapper> vol_mapper;
   vol_mapper->SetInput(volBoundsBox->GetOutput());
 
-  vtkMAFSmartPointer<vtkActor> vol_actor;
+  vtkNew<vtkActor> vol_actor;
   vol_actor->SetMapper(vol_mapper);
   vol_actor->GetProperty()->SetColor(1,0,0);
   renderer->AddActor(vol_actor);
   
   // create actor to display the slicer plane
-  vtkMAFSmartPointer<vtkPolyDataMapper> slicer_mapper;
+  vtkNew<vtkPolyDataMapper> slicer_mapper;
   slicer_mapper->SetInput(vslicer->GetSurfaceOutput()->GetSurfaceData());
   
-  vtkMAFSmartPointer<vtkTexture> slicer_tex;
+  vtkNew<vtkTexture> slicer_tex;
   slicer_tex->SetInput(vslicer->GetSurfaceOutput()->GetTexture());
 
-  vtkMAFSmartPointer<vtkActor> slicer_actor;
+  vtkNew<vtkActor> slicer_actor;
   slicer_actor->SetMapper(slicer_mapper);
   slicer_actor->SetTexture(slicer_tex);
 
@@ -103,7 +103,7 @@ int main()
   renderer->ResetCamera();
   renderer->Render();
   
-  //vtkMAFSmartPointer<vtkDataSetWriter> writer;
+  //vtkNew<vtkDataSetWriter> writer;
   //writer->SetInput(vslicer->GetSurfaceOutput()->GetTexture());
 
   int t;

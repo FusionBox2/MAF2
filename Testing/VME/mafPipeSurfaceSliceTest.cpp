@@ -303,7 +303,7 @@ void mafPipeSurfaceSliceTest::TestSurfacePipeExecution()
 
   ////// Create VME ////////////////////
 
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->SetRadius(8.0);
   sphere->Update();
 

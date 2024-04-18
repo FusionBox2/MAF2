@@ -85,9 +85,9 @@ int play_tree(mafVMERoot *m_StorageRoot)
   //
   // Test display of generic VME tree of surfaces
   //
-  vtkMAFSmartPointer<vtkRenderWindow> renWin;
-  vtkMAFSmartPointer<vtkRenderer> renderer;
-  vtkMAFSmartPointer<vtkRenderWindowInteractor> iren;
+  vtkNew<vtkRenderWindow> renWin;
+  vtkNew<vtkRenderer> renderer;
+  vtkNew<vtkRenderWindowInteractor> iren;
 
   renWin->AddRenderer(renderer);
   iren->SetRenderWindow(renWin);
@@ -106,7 +106,7 @@ int play_tree(mafVMERoot *m_StorageRoot)
     {
       if (vme->IsMAFType(mafVMERoot))
       {
-        vtkMAFSmartPointer<vtkAssembly> vmeasm;
+        vtkNew<vtkAssembly> vmeasm;
         mafClientData *clientdata=mafClientData::SafeDownCast(vme->GetAttribute("ClientData"));
         if (!clientdata)
         {
@@ -124,13 +124,13 @@ int play_tree(mafVMERoot *m_StorageRoot)
       else
       {
         vtkDataSet *vmedata=vme->GetOutput()->GetVTKData();
-        vtkMAFSmartPointer<vtkDataSetMapper> mapper;
+        vtkNew<vtkDataSetMapper> mapper;
         mapper->SetInput((vtkPolyData *)vmedata);
 
-        vtkMAFSmartPointer<vtkActor> vmeact;
+        vtkNew<vtkActor> vmeact;
         vmeact->SetMapper(mapper);
 
-        vtkMAFSmartPointer<vtkAssembly> vmeasm;
+        vtkNew<vtkAssembly> vmeasm;
         vmeasm->AddPart(vmeact);
         vmeasm->SetUserTransform(vme->GetOutput()->GetTransform()->GetVTKTransform());
         mafClientData *clientdata=mafClientData::SafeDownCast(vme->GetAttribute("ClientData"));
@@ -321,17 +321,17 @@ void mafVMEStorageTest::TestSaveAs()
 void mafVMEStorageTest::CreateVMETestTree()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkFileOutputWindow> log;
+  vtkNew<vtkFileOutputWindow> log;
   log->SetInstance(log);
   log->SetFileName("testMSF.log"); // log of VTK error messages
 
   // plug the custom attribute in the Node Factory
   mafPlugAttribute<mafClientData>("Simple attribute for attaching actors to VMEs");
 
-  vtkMAFSmartPointer<vtkAxes> axes;
+  vtkNew<vtkAxes> axes;
   axes->SetScaleFactor(2);
 
-  vtkMAFSmartPointer<vtkTextSource> text;
+  vtkNew<vtkTextSource> text;
 
   text->SetText("VME Tree Test");
   text->Update();
@@ -362,8 +362,8 @@ void mafVMEStorageTest::CreateVMETestTree()
   m_RootVme->AddChild(vcone);
   m_RootVme->AddChild(vmorph);
 
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
-  vtkMAFSmartPointer<vtkConeSource> cone;
+  vtkNew<vtkSphereSource> sphere;
+  vtkNew<vtkConeSource> cone;
 
   int i;
   for (i=0;i<100;i++)
@@ -477,7 +477,7 @@ void mafVMEStorageTest::TestTreeEditAndGarbageCollection()
   //
   // Testing editing of the tree
   //
-  vtkMAFSmartPointer<vtkConeSource> cone;
+  vtkNew<vtkConeSource> cone;
   cone->SetRadius(2.5);
 
   std::vector<mafString> cone_items_fname;
@@ -500,7 +500,7 @@ void mafVMEStorageTest::TestTreeEditAndGarbageCollection()
 
   {
     // also add a new sub-node of title
-    vtkMAFSmartPointer<vtkCubeSource> new_cube;
+    vtkNew<vtkCubeSource> new_cube;
     mafSmartPointer<mafVMESurface> new_cube_vme;
     new_cube_vme->SetData(new_cube->GetOutput(),0);
 

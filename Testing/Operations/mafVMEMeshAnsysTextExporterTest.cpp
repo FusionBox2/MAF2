@@ -119,7 +119,7 @@ mafString inputELISTFileName /*= "ELIST.lis"*/, mafString inputMPLISTFileName /*
 void mafVMEMeshAnsysTextExporterTest::SaveUnstructuredGridToFile(mafString &dirPrefix, mafString &fileName, vtkUnstructuredGrid *data)
 {
   // save output to file
-  vtkMAFSmartPointer<vtkUnstructuredGridWriter> writer;
+  vtkNew<vtkUnstructuredGridWriter> writer;
   writer->SetInput(data) ;
   writer->SetFileTypeToASCII();
 
@@ -248,8 +248,8 @@ void mafVMEMeshAnsysTextExporterTest::RenderData(  vtkUnstructuredGrid *data, in
   //----------------------------
 
   // i reverse the color table  to use blue for the lowest values and red for the highest
-  vtkMAFSmartPointer<vtkLookupTable> defaultLut;
-  vtkMAFSmartPointer<vtkLookupTable> reverseLut;
+  vtkNew<vtkLookupTable> defaultLut;
+  vtkNew<vtkLookupTable> reverseLut;
 
   int colNum = 256;
 
@@ -285,18 +285,18 @@ void mafVMEMeshAnsysTextExporterTest::RenderData(  vtkUnstructuredGrid *data, in
 
   //----------------------------
 
-  vtkMAFSmartPointer<vtkRenderer> renderer;
+  vtkNew<vtkRenderer> renderer;
   renderer->SetBackground(0.1, 0.1, 0.1);
 
-  vtkMAFSmartPointer<vtkRenderWindow> renderWindow;
+  vtkNew<vtkRenderWindow> renderWindow;
   renderWindow->AddRenderer(renderer);
   renderWindow->SetSize(640, 480);
   renderWindow->SetPosition(400,0);
 
-  vtkMAFSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor;
+  vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
   renderWindowInteractor->SetRenderWindow(renderWindow);
 
-  vtkMAFSmartPointer<vtkDataSetMapper> mapper;
+  vtkNew<vtkDataSetMapper> mapper;
   mapper->ScalarVisibilityOn();
 
   if (dataType == POINT_DATA)
@@ -313,7 +313,7 @@ void mafVMEMeshAnsysTextExporterTest::RenderData(  vtkUnstructuredGrid *data, in
   mapper->SetLookupTable(reverseLut);
   mapper->SetInput(data);
 
-  vtkMAFSmartPointer<vtkActor> actor;
+  vtkNew<vtkActor> actor;
   actor->SetMapper(mapper);
 
   renderer->AddActor(actor);
@@ -468,7 +468,7 @@ void mafVMEMeshAnsysTextExporterTest::TestBonemattedTetra10ElementsIdJumpingMate
 
   CPPUNIT_ASSERT(wxFileExists(fileName.GetCStr()));
 
-  vtkMAFSmartPointer<vtkUnstructuredGridReader> ugr;
+  vtkNew<vtkUnstructuredGridReader> ugr;
   ugr->SetFileName(fileName.GetCStr());
   ugr->Update();
 
@@ -517,7 +517,7 @@ void mafVMEMeshAnsysTextExporterTest::TestBonemattedTetra10ElementsIdJumpingMate
 
   CPPUNIT_ASSERT(wxFileExists(fileName.GetCStr()));
 
-  vtkMAFSmartPointer<vtkUnstructuredGridReader> ugr;
+  vtkNew<vtkUnstructuredGridReader> ugr;
   ugr->SetFileName(fileName.GetCStr());
   ugr->Update();
 
@@ -541,7 +541,7 @@ void mafVMEMeshAnsysTextExporterTest::TestBonemattedTetra10ElementsIdJumpingMate
   mafString outputMaterialsFileName = dirPrefix;
   outputMaterialsFileName.Append("MPLISTWithAppliedPoseMeshWithMaterialsWritten.txt");
 
-  vtkMAFSmartPointer<vtkMatrix4x4> mat;
+  vtkNew<vtkMatrix4x4> mat;
   mat->SetElement(0,3,10);
   mat->SetElement(1,3,20);
   mat->SetElement(2,3,30);
@@ -573,7 +573,7 @@ void mafVMEMeshAnsysTextExporterTest::TestBonemattedTetra10ElementsIdJumpingNoMa
 
   CPPUNIT_ASSERT(wxFileExists(fileName.GetCStr()));
 
-  vtkMAFSmartPointer<vtkUnstructuredGridReader> ugr;
+  vtkNew<vtkUnstructuredGridReader> ugr;
   ugr->SetFileName(fileName.GetCStr());
   ugr->Update();
 
@@ -621,7 +621,7 @@ void mafVMEMeshAnsysTextExporterTest::TestExportTetra10VtkWithoutAnsysInformatio
 
   CPPUNIT_ASSERT(wxFileExists(fileName.GetCStr()));
 
-  vtkMAFSmartPointer<vtkUnstructuredGridReader> ugr;
+  vtkNew<vtkUnstructuredGridReader> ugr;
   ugr->SetFileName(fileName.GetCStr());
   ugr->Update();
 
@@ -686,7 +686,7 @@ void mafVMEMeshAnsysTextExporterTest::TestExportTetra4VtkWithoutAnsysInformation
 
   CPPUNIT_ASSERT(wxFileExists(fileName.GetCStr()));
 
-  vtkMAFSmartPointer<vtkUnstructuredGridReader> ugr;
+  vtkNew<vtkUnstructuredGridReader> ugr;
   ugr->SetFileName(fileName.GetCStr());
   ugr->Update();
 

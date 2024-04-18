@@ -44,7 +44,7 @@ void medOpLabelizeSurfaceTest::Test()
 {
 	mafString filename=MED_DATA_ROOT;
 	filename<<"/Surface/Sphere.vtk";
-	vtkMAFSmartPointer<vtkPolyDataReader> reader;
+	vtkNew<vtkPolyDataReader> reader;
 	reader->SetFileName(filename.GetCStr());
 	reader->Update();
 
@@ -88,7 +88,7 @@ void medOpLabelizeSurfaceTest::Test()
 	scalars->GetRange(range);
 	CPPUNIT_ASSERT(range[0]==0 && range[1]==1);
 
-	vtkMAFSmartPointer<vtkCellCenters> centers;
+	vtkNew<vtkCellCenters> centers;
 	centers->SetInput(surfaceOutput);
 	centers->Update();
 

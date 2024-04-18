@@ -89,7 +89,7 @@ void mafVMESlicerTest::TestBug2454And2524Regression()
 	volumeToSlice->AddChild(vmeSlicer);	
 	vmeSlicer->SetSlicedVMELink(volumeToSlice);
 
-	vtkMAFSmartPointer<vtkDataSetReader> datasetReader;
+	vtkNew<vtkDataSetReader> datasetReader;
 	mafString filename=MAF_DATA_ROOT;
 	filename<<"/VTK_Volumes/CropTestVolumeSP.vtk";
 	datasetReader->SetFileName(filename);
@@ -102,8 +102,8 @@ void mafVMESlicerTest::TestBug2454And2524Regression()
 
 	mafSmartPointer<mafTransform> trans;
 
-	vtkMAFSmartPointer<vtkRenderer> renderer;
-	vtkMAFSmartPointer<vtkRenderWindow> renWin;
+	vtkNew<vtkRenderer> renderer;
+	vtkNew<vtkRenderWindow> renWin;
 	renWin->AddRenderer(renderer);
 
 	renWin->SetSize(1000,1000);
@@ -111,7 +111,7 @@ void mafVMESlicerTest::TestBug2454And2524Regression()
 
 	vmeSlicer->Update();
 
-	vtkMAFSmartPointer<vtkPolyDataMapper> slicerMapper;
+	vtkNew<vtkPolyDataMapper> slicerMapper;
 
 	vtkDataSet *slicerData = vmeSlicer->GetSurfaceOutput()->GetVTKData();
 	CPPUNIT_ASSERT(slicerData);
@@ -124,12 +124,12 @@ void mafVMESlicerTest::TestBug2454And2524Regression()
 
 	slicerMapper->SetInput(surfaceData);
 
-	vtkMAFSmartPointer<vtkTexture> slicerTexure;
+	vtkNew<vtkTexture> slicerTexure;
 	vtkImageData *texture = vmeSlicer->GetSurfaceOutput()->GetTexture();
 	CPPUNIT_ASSERT(texture);
 	slicerTexure->SetInput(texture);
 
-	vtkMAFSmartPointer<vtkActor> slicerActor;
+	vtkNew<vtkActor> slicerActor;
 	slicerActor->SetMapper(slicerMapper);
 	slicerActor->SetTexture(slicerTexure);
 

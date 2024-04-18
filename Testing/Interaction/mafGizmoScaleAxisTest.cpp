@@ -105,10 +105,10 @@ void mafGizmoScaleAxisTest::CreateTestData()
   CPPUNIT_ASSERT(m_GizmoInputSurface == NULL);
   mafNEW(m_GizmoInputSurface);
 
-  vtkMAFSmartPointer<vtkAxes> axes;
+  vtkNew<vtkAxes> axes;
   axes->SetScaleFactor(2.5);
   
-  vtkMAFSmartPointer<vtkTubeFilter> tube;
+  vtkNew<vtkTubeFilter> tube;
   tube->SetInput(axes->GetOutput());
   tube->SetRadius(0.5);
   tube->SetNumberOfSides(20);

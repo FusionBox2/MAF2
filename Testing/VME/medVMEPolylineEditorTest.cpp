@@ -58,7 +58,7 @@ void medVMEPolylineEditorTest::TestSetData()
   medVMEPolylineEditor *editor = NULL;
   mafNEW(editor);
 
-  vtkMAFSmartPointer<vtkSphereSource> input1;
+  vtkNew<vtkSphereSource> input1;
   input1->Update();
 
   int resultSetData;
@@ -76,7 +76,7 @@ void medVMEPolylineEditorTest::TestSetData()
 
   CPPUNIT_ASSERT( pointsNumberIn == pointsNumberOut );
 
-  vtkMAFSmartPointer<vtkPolyData> input2;
+  vtkNew<vtkPolyData> input2;
   CreateExamplePolydata(input2);
   resultSetData = editor->SetData(input2,0.0);
   CPPUNIT_ASSERT( resultSetData == MAF_OK );
@@ -131,8 +131,8 @@ void medVMEPolylineEditorTest::TestSetGetVisualPipe()
 void medVMEPolylineEditorTest::CreateExamplePolydata(vtkPolyData *polydata)
 //------------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkPoints> points;
-  vtkMAFSmartPointer<vtkCellArray> lines;
+  vtkNew<vtkPoints> points;
+  vtkNew<vtkCellArray> lines;
 
   int i ;
 

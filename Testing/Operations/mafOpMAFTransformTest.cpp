@@ -90,7 +90,7 @@ void mafOpMAFTransformTest::TestOnEventGizmoTranslate()
 //----------------------------------------------------------------------------
 {
   mafSmartPointer<mafVMESurface> input;
-  vtkMAFSmartPointer<vtkCubeSource> cube;
+  vtkNew<vtkCubeSource> cube;
   cube->Update();
 
   input->SetData(cube->GetOutput(),0.0);
@@ -134,7 +134,7 @@ void mafOpMAFTransformTest::TestOnEventGizmoRotate()
 //----------------------------------------------------------------------------
 {
   mafSmartPointer<mafVMESurface> input;
-  vtkMAFSmartPointer<vtkCubeSource> cube;
+  vtkNew<vtkCubeSource> cube;
   cube->Update();
 
   input->SetData(cube->GetOutput(),0.0);
@@ -178,7 +178,7 @@ void mafOpMAFTransformTest::TestOnEventGizmoScale()
 //----------------------------------------------------------------------------
 {
   mafSmartPointer<mafVMESurface> input;
-  vtkMAFSmartPointer<vtkCubeSource> cube;
+  vtkNew<vtkCubeSource> cube;
   cube->Update();
 
   input->SetData(cube->GetOutput(),0.0);
@@ -217,7 +217,7 @@ void mafOpMAFTransformTest::TestOnEventGuiTransform()
 //----------------------------------------------------------------------------
 {
   mafSmartPointer<mafVMESurface> input;
-  vtkMAFSmartPointer<vtkCubeSource> cube;
+  vtkNew<vtkCubeSource> cube;
   cube->Update();
 
   input->SetData(cube->GetOutput(),0.0);
@@ -262,7 +262,7 @@ void mafOpMAFTransformTest::TestOnEventGuiSaveRestorePose()
 //----------------------------------------------------------------------------
 {
   mafSmartPointer<mafVMESurface> input;
-  vtkMAFSmartPointer<vtkCubeSource> cube;
+  vtkNew<vtkCubeSource> cube;
   cube->Update();
 
   input->SetData(cube->GetOutput(),0.0);
@@ -307,7 +307,7 @@ void mafOpMAFTransformTest::TestReset()
 //----------------------------------------------------------------------------
 {
   mafSmartPointer<mafVMESurface> input;
-  vtkMAFSmartPointer<vtkCubeSource> cube;
+  vtkNew<vtkCubeSource> cube;
   cube->Update();
 
   input->SetData(cube->GetOutput(),0.0);
@@ -356,7 +356,7 @@ void mafOpMAFTransformTest::TestOpUndo()
 //----------------------------------------------------------------------------
 {
   mafSmartPointer<mafVMESurface> input;
-  vtkMAFSmartPointer<vtkCubeSource> cube;
+  vtkNew<vtkCubeSource> cube;
   cube->Update();
 
   input->SetData(cube->GetOutput(),0.0);

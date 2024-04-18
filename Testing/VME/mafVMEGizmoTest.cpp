@@ -85,9 +85,9 @@ int mafVMEGizmoTest::PlayTree(mafVMERoot *root, bool ignoreVisibleToTraverse)
   // Test display of generic VME tree of surfaces
   //
   
-  vtkMAFSmartPointer<vtkRenderWindow> renWin;
-  vtkMAFSmartPointer<vtkRenderer> renderer;
-  vtkMAFSmartPointer<vtkRenderWindowInteractor> iren;
+  vtkNew<vtkRenderWindow> renWin;
+  vtkNew<vtkRenderer> renderer;
+  vtkNew<vtkRenderWindowInteractor> iren;
 
   renWin->AddRenderer(renderer);
   iren->SetRenderWindow(renWin);
@@ -107,7 +107,7 @@ int mafVMEGizmoTest::PlayTree(mafVMERoot *root, bool ignoreVisibleToTraverse)
     {
       if (vme->IsMAFType(mafVMERoot))
       {
-        vtkMAFSmartPointer<vtkAssembly> vmeasm;
+        vtkNew<vtkAssembly> vmeasm;
         mafClientData *clientdata=mafClientData::SafeDownCast(vme->GetAttribute("ClientData"));
         if (!clientdata)
         {
@@ -125,13 +125,13 @@ int mafVMEGizmoTest::PlayTree(mafVMERoot *root, bool ignoreVisibleToTraverse)
       else
       {
         vtkDataSet *vmedata=vme->GetOutput()->GetVTKData();
-        vtkMAFSmartPointer<vtkDataSetMapper> mapper;
+        vtkNew<vtkDataSetMapper> mapper;
         mapper->SetInput((vtkPolyData *)vmedata);
 
-        vtkMAFSmartPointer<vtkActor> vmeact;
+        vtkNew<vtkActor> vmeact;
         vmeact->SetMapper(mapper);
 
-        vtkMAFSmartPointer<vtkAssembly> vmeasm;
+        vtkNew<vtkAssembly> vmeasm;
         vmeasm->AddPart(vmeact);
         vmeasm->SetUserTransform(vme->GetOutput()->GetTransform()->GetVTKTransform());
         mafClientData *clientdata=mafClientData::SafeDownCast(vme->GetAttribute("ClientData"));
@@ -235,11 +235,11 @@ void mafVMEGizmoTest::TestGizmoCreateAndDestroy()
 void mafVMEGizmoTest::TestGizmoVisualizatioAlone()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkRenderWindow> renWin;
-  vtkMAFSmartPointer<vtkRenderer> renderer;
-  vtkMAFSmartPointer<vtkRenderWindowInteractor> iren;
-  vtkMAFSmartPointer<vtkActor> actor;
-  vtkMAFSmartPointer<vtkDataSetMapper> mapper;
+  vtkNew<vtkRenderWindow> renWin;
+  vtkNew<vtkRenderer> renderer;
+  vtkNew<vtkRenderWindowInteractor> iren;
+  vtkNew<vtkActor> actor;
+  vtkNew<vtkDataSetMapper> mapper;
   actor->SetMapper(mapper);
   renderer->AddActor(actor);
 
@@ -253,7 +253,7 @@ void mafVMEGizmoTest::TestGizmoVisualizatioAlone()
 
   mafSmartPointer<mafVMEGizmo> gizmo;
   
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
 
   gizmo->SetData(sphere->GetOutput());
 
@@ -286,17 +286,17 @@ void mafVMEGizmoTest::CreateVMETestTree()
 {
   m_VmeRoot = mafVMERoot::New();
 
-  vtkMAFSmartPointer<vtkFileOutputWindow> log;
+  vtkNew<vtkFileOutputWindow> log;
   log->SetInstance(log);
   log->SetFileName("testMSF.log"); // log of VTK error messages
 
   // plug the custom attribute in the Node Factory
   mafPlugAttribute<mafClientData>("Simple attribute for attaching actors to VMEs");
 
-  vtkMAFSmartPointer<vtkAxes> axes;
+  vtkNew<vtkAxes> axes;
   axes->SetScaleFactor(2);
 
-  vtkMAFSmartPointer<vtkTextSource> text;
+  vtkNew<vtkTextSource> text;
 
   text->SetText("VME Tree Test");
   text->Update();
@@ -324,8 +324,8 @@ void mafVMEGizmoTest::CreateVMETestTree()
   m_FirstChild->AddChild(vcone);
   m_FirstChild->AddChild(vmorph);
 
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
-  vtkMAFSmartPointer<vtkConeSource> cone;
+  vtkNew<vtkSphereSource> sphere;
+  vtkNew<vtkConeSource> cone;
 
   int i;
   for (i=0;i<100;i++)

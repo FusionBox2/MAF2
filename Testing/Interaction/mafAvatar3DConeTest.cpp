@@ -91,7 +91,7 @@ void mafAvatar3DConeTest::TestPick()
   m_RenderWindow->SetSize(400, 400);
   m_RenderWindow->SetPosition(400,0);
 
-  vtkMAFSmartPointer<vtkIdentityTransform> ctransform;
+  vtkNew<vtkIdentityTransform> ctransform;
   m_Renderer->GetActiveCamera()->GetViewTransformObject()->SetInput(ctransform);
 
   mafSmartPointer<mafAvatar3DCone> avatar;
@@ -108,15 +108,15 @@ void mafAvatar3DConeTest::TestPick()
   mafSleep(800);
   // Add an actor to the scene
 
-  vtkMAFSmartPointer<vtkDiskSource> disk;
+  vtkNew<vtkDiskSource> disk;
 
   disk->SetOuterRadius( .2 );
   disk->SetInnerRadius(0);
   disk->SetRadialResolution(80);
   disk->Update();
-  vtkMAFSmartPointer<vtkPolyDataMapper> mapper;
+  vtkNew<vtkPolyDataMapper> mapper;
   mapper->SetInput(disk->GetOutput());
-  vtkMAFSmartPointer<vtkActor> actor;
+  vtkNew<vtkActor> actor;
   actor->SetMapper(mapper);
   actor->SetPosition(0,0,0);
   m_Renderer->AddActor(actor);

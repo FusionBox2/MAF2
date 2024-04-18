@@ -72,15 +72,15 @@ void mafVMEVectorTest::TestGetVisualPipe()
 void mafVMEVectorTest::TestSetData()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkPoints> pts;
+  vtkNew<vtkPoints> pts;
   pts->InsertNextPoint(0.0,0.0,0.0);
   pts->InsertNextPoint(1.0,1.0,1.0);
 
-  vtkMAFSmartPointer<vtkCellArray> cells;
+  vtkNew<vtkCellArray> cells;
   int cell[2] = {0,1};
   cells->InsertNextCell(2,cell);
 
-  vtkMAFSmartPointer<vtkPolyData> line;
+  vtkNew<vtkPolyData> line;
   line->SetPoints(pts);
   line->SetLines(cells);
   line->Update();
@@ -89,16 +89,16 @@ void mafVMEVectorTest::TestSetData()
 
   TEST_RESULT;
 
-  vtkMAFSmartPointer<vtkPoints> pts_bad_1;
+  vtkNew<vtkPoints> pts_bad_1;
   pts_bad_1->InsertNextPoint(0.0,0.0,0.0);
   pts_bad_1->InsertNextPoint(1.0,1.0,1.0);
   pts_bad_1->InsertNextPoint(2.0,2.0,2.0);
 
-  vtkMAFSmartPointer<vtkCellArray> cells_bad_1;
+  vtkNew<vtkCellArray> cells_bad_1;
   int cell_bad_1[3] = {0,1,2};
   cells_bad_1->InsertNextCell(3,cell_bad_1);
 
-  vtkMAFSmartPointer<vtkPolyData> line_bad_1;
+  vtkNew<vtkPolyData> line_bad_1;
   line_bad_1->SetPoints(pts_bad_1);
   line_bad_1->SetLines(cells_bad_1);
   line_bad_1->Update();
@@ -107,13 +107,13 @@ void mafVMEVectorTest::TestSetData()
 
   TEST_RESULT;
 
-  vtkMAFSmartPointer<vtkPoints> pts_bad_2;
+  vtkNew<vtkPoints> pts_bad_2;
   pts_bad_2->InsertNextPoint(0.0,0.0,0.0);
   pts_bad_2->InsertNextPoint(1.0,1.0,1.0);
   pts_bad_2->InsertNextPoint(2.0,2.0,2.0);
   pts_bad_2->InsertNextPoint(3.0,3.0,3.0);
 
-  vtkMAFSmartPointer<vtkCellArray> cells_bad_2;
+  vtkNew<vtkCellArray> cells_bad_2;
   int cell_bad_2_0[2] = {0,1};
   int cell_bad_2_1[2] = {1,2};
   int cell_bad_2_2[2] = {2,3};
@@ -121,7 +121,7 @@ void mafVMEVectorTest::TestSetData()
   cells_bad_2->InsertNextCell(2,cell_bad_2_1);
   cells_bad_2->InsertNextCell(2,cell_bad_2_2);
 
-  vtkMAFSmartPointer<vtkPolyData> line_bad_2;
+  vtkNew<vtkPolyData> line_bad_2;
   line_bad_2->SetPoints(pts_bad_2);
   line_bad_2->SetLines(cells_bad_2);
   line_bad_2->Update();
@@ -137,15 +137,15 @@ void mafVMEVectorTest::TestSetData()
 void mafVMEVectorTest::TestGetModule()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkPoints> pts;
+  vtkNew<vtkPoints> pts;
   pts->InsertNextPoint(0.0,0.0,0.0);
   pts->InsertNextPoint(1.0,0.0,0.0);
 
-  vtkMAFSmartPointer<vtkCellArray> cells;
+  vtkNew<vtkCellArray> cells;
   int cell[2] = {0,1};
   cells->InsertNextCell(2,cell);
 
-  vtkMAFSmartPointer<vtkPolyData> line;
+  vtkNew<vtkPolyData> line;
   line->SetPoints(pts);
   line->SetLines(cells);
   line->Update();

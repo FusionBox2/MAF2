@@ -79,7 +79,7 @@ void mafAbsMatrixPipeTest::TestSetVME()
 //----------------------------------------------------------------------------
 {
   mafSmartPointer<mafAbsMatrixPipe> matrixPipe;
-  vtkMAFSmartPointer<vtkCubeSource> cubeVTK;
+  vtkNew<vtkCubeSource> cubeVTK;
   mafSmartPointer<mafVMESurface> cubeVME;
 
   //Test Set/Get
@@ -110,7 +110,7 @@ void mafAbsMatrixPipeTest::TestSetVME()
   TEST_RESULT;
   //////////////////////////////////////////////////////////////////////////
   //Test with a parent
-  vtkMAFSmartPointer<vtkSphereSource> sphereVTK;
+  vtkNew<vtkSphereSource> sphereVTK;
   mafSmartPointer<mafVMESurface> sphereVME;
 
   sphereVME->SetData(sphereVTK->GetOutput(),0.0);

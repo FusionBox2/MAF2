@@ -85,7 +85,7 @@ void mafMatrixInterpolatorTest::TestAccept()
 //----------------------------------------------------------------------------
 {
   mafSmartPointer<mafVMETestClass> surfaceTest;
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   
   surfaceTest->SetData(sphere->GetOutput(), 0.0);
   surfaceTest->Update();
@@ -115,7 +115,7 @@ void mafMatrixInterpolatorTest::TestGetCurrentItem_SetTimeStamp_Update()
 //----------------------------------------------------------------------------
 {
   mafSmartPointer<mafVMETestClass> surfaceTest;
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->Update();
   surfaceTest->SetData(sphere->GetOutput(), 0.0);
   surfaceTest->Update();

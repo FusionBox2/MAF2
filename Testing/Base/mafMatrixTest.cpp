@@ -73,7 +73,7 @@ void mafMatrixTest::TestAllConstructors()
   CPPUNIT_ASSERT(mafEquals(m2->GetElement(0,3), 5.0));
   cppDEL(m2);
 
-  vtkMAFSmartPointer<vtkMatrix4x4> vtk_mat;
+  vtkNew<vtkMatrix4x4> vtk_mat;
   vtk_mat->SetElement(0,3,5.0);
   
   mafSmartPointer<mafMatrix> smart_matrix;
@@ -143,7 +143,7 @@ void mafMatrixTest::TestGetVersor()
 void mafMatrixTest::TestSetVTKMatrix()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMatrix4x4> vtk_mat;
+  vtkNew<vtkMatrix4x4> vtk_mat;
   vtk_mat->SetElement(0,3,5.0);
 
   mafMatrix m;
@@ -160,7 +160,7 @@ void mafMatrixTest::TestSetVTKMatrix()
 void mafMatrixTest::TestSetTimeStamp()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMatrix4x4> vtk_mat;
+  vtkNew<vtkMatrix4x4> vtk_mat;
   vtk_mat->SetElement(0,3,5.0);
 
   mafMatrix m;

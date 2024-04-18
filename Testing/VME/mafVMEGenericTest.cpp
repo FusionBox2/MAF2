@@ -78,7 +78,7 @@ void mafVMEGenericTest::TestSetData()
   vtkRectilinearGrid *rectilinearGrid = vtkRectilinearGrid::New() ;
 
   // create rectilinear grid data
-   vtkMAFSmartPointer<vtkDoubleArray> xCoordinates;
+   vtkNew<vtkDoubleArray> xCoordinates;
   xCoordinates->SetNumberOfValues(5);
   xCoordinates->SetValue(0, 0);
   xCoordinates->SetValue(1, 1);
@@ -86,7 +86,7 @@ void mafVMEGenericTest::TestSetData()
   xCoordinates->SetValue(3, 1);
   xCoordinates->SetValue(4, 0); 
 
-  vtkMAFSmartPointer<vtkDoubleArray> yCoordinates;
+  vtkNew<vtkDoubleArray> yCoordinates;
   yCoordinates->SetNumberOfValues(5);
   yCoordinates->SetValue(0, 0);
   yCoordinates->SetValue(1, 1);
@@ -94,7 +94,7 @@ void mafVMEGenericTest::TestSetData()
   yCoordinates->SetValue(3, 1);
   yCoordinates->SetValue(4, 0); 
 
-  vtkMAFSmartPointer<vtkDoubleArray> zCoordinates;
+  vtkNew<vtkDoubleArray> zCoordinates;
   zCoordinates->SetNumberOfValues(5);
   zCoordinates->SetValue(0, 0);
   zCoordinates->SetValue(1, 1);
@@ -115,7 +115,7 @@ void mafVMEGenericTest::TestSetData()
   result = vmeGeneric->SetData(rectilinearGrid,0);
   CPPUNIT_ASSERT(result == MAF_OK);
 
-  vtkMAFSmartPointer<vtkRectilinearGrid> rectilinearGridA;
+  vtkNew<vtkRectilinearGrid> rectilinearGridA;
   rectilinearGridA = (vtkRectilinearGrid*)vmeGeneric->GetOutput()->GetVTKData();
   rectilinearGridA->Update();
 
@@ -133,7 +133,7 @@ void mafVMEGenericTest::TestSetData()
   result = vmeGeneric->SetDataByReference(rectilinearGrid,0);
   CPPUNIT_ASSERT(result == MAF_OK);
 
-  vtkMAFSmartPointer<vtkRectilinearGrid> rectilinearGridB;
+  vtkNew<vtkRectilinearGrid> rectilinearGridB;
   rectilinearGridB = (vtkRectilinearGrid*)vmeGeneric->GetOutput()->GetVTKData();
   rectilinearGridB->Update();
 
@@ -150,7 +150,7 @@ void mafVMEGenericTest::TestSetData()
   result = vmeGeneric->SetDataByDetaching(rectilinearGrid,0);
   CPPUNIT_ASSERT(result == MAF_OK);
 
-  vtkMAFSmartPointer<vtkRectilinearGrid> rectilinearGridC;
+  vtkNew<vtkRectilinearGrid> rectilinearGridC;
   rectilinearGridC = (vtkRectilinearGrid*)vmeGeneric->GetOutput()->GetVTKData();
   rectilinearGridC->Update();
 

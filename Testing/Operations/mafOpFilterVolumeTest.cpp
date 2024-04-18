@@ -48,7 +48,7 @@ void mafOpFilterVolumeTest::CreateDataTest()
   vtkNEW(m_InputIM);
   m_InputIM->SetSpacing(0.5,1.0,1.5);
   m_InputIM->SetDimensions(10,15,5);
-  vtkMAFSmartPointer<vtkDoubleArray> scalarsIM;
+  vtkNew<vtkDoubleArray> scalarsIM;
   scalarsIM->SetNumberOfTuples(10*15*5);
   for(int i=0;i<10*15*5;i++)
   {
@@ -61,21 +61,21 @@ void mafOpFilterVolumeTest::CreateDataTest()
   vtkNEW(m_InputRG);
   m_InputRG->SetDimensions(5,10,15);
 
-  vtkMAFSmartPointer<vtkDoubleArray> x;
+  vtkNew<vtkDoubleArray> x;
   x->SetNumberOfTuples(5);
   for (int i=0;i<5;i++)
   {
     x->SetTuple1(i,i);
   }
 
-  vtkMAFSmartPointer<vtkDoubleArray> y;
+  vtkNew<vtkDoubleArray> y;
   y->SetNumberOfTuples(10);
   for (int i=0;i<10;i++)
   {
     y->SetTuple1(i,i);
   }
 
-  vtkMAFSmartPointer<vtkDoubleArray> z;
+  vtkNew<vtkDoubleArray> z;
   z->SetNumberOfTuples(15);
   for (int i=0;i<15;i++)
   {
@@ -86,7 +86,7 @@ void mafOpFilterVolumeTest::CreateDataTest()
   m_InputRG->SetYCoordinates(y);
   m_InputRG->SetZCoordinates(z);
 
-  vtkMAFSmartPointer<vtkDoubleArray> scalarsRG;
+  vtkNew<vtkDoubleArray> scalarsRG;
   scalarsRG->SetNumberOfTuples(10*15*5);
   for(int i=0;i<10*15*5;i++)
   {
@@ -190,7 +190,7 @@ void mafOpFilterVolumeTest::TestOnSmooth()
   vtkImageData *outputIM = (vtkImageData*)mafVMEVolumeGray::SafeDownCast(op->GetInput())->GetOutput()->GetVTKData();
   outputIM->Update();
 
-  vtkMAFSmartPointer<vtkImageGaussianSmooth> filterSmooth;
+  vtkNew<vtkImageGaussianSmooth> filterSmooth;
   filterSmooth->SetInput(m_InputIM);
   filterSmooth->SetStandardDeviations(stDev);
   filterSmooth->SetRadiusFactors(radius);
@@ -271,13 +271,13 @@ void mafOpFilterVolumeTest::TestApplyFiltersToInputData()
   vtkImageData *outputIM = (vtkImageData*)mafVMEVolumeGray::SafeDownCast(op->GetInput())->GetOutput()->GetVTKData();
   outputIM->Update();
 
-  vtkMAFSmartPointer<vtkImageGaussianSmooth> filterSmooth;
+  vtkNew<vtkImageGaussianSmooth> filterSmooth;
   filterSmooth->SetInput(m_InputIM);
   filterSmooth->SetStandardDeviations(stDev);
   filterSmooth->SetRadiusFactors(radius);
   filterSmooth->Update();
 
-  vtkMAFSmartPointer<vtkImageMedian3D> filterMedian;
+  vtkNew<vtkImageMedian3D> filterMedian;
   filterMedian->SetInput(filterSmooth->GetOutput());
   filterMedian->SetKernelSize(kernelSize[0],kernelSize[1],kernelSize[2]);
   filterMedian->Update();
@@ -349,7 +349,7 @@ void mafOpFilterVolumeTest::TestOnMedian()
   vtkImageData *outputIM = (vtkImageData*)mafVMEVolumeGray::SafeDownCast(op->GetInput())->GetOutput()->GetVTKData();
   outputIM->Update();
 
-  vtkMAFSmartPointer<vtkImageMedian3D> filterMedian;
+  vtkNew<vtkImageMedian3D> filterMedian;
   filterMedian->SetInput(m_InputIM);
   filterMedian->SetKernelSize(kernelSize[0],kernelSize[1],kernelSize[2]);
   filterMedian->Update();

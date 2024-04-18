@@ -100,21 +100,21 @@ void medPipeVectorFieldSliceTest::TestCreate()
   mafNEW(volume);
   volume->ReparentTo(storage->GetRoot());
 
-  vtkMAFSmartPointer<vtkFloatArray> scalarArray;
+  vtkNew<vtkFloatArray> scalarArray;
   scalarArray->SetName("Scalar");
 
-  vtkMAFSmartPointer<vtkFloatArray> vectorArray;
+  vtkNew<vtkFloatArray> vectorArray;
   vectorArray->SetNumberOfComponents(3);
   vectorArray->SetName("velocity");
 
-  vtkMAFSmartPointer<vtkFloatArray> tensorArray;
+  vtkNew<vtkFloatArray> tensorArray;
   tensorArray->SetNumberOfComponents(9);
   tensorArray->SetName("tensor");
 
 
   int x,y,z;
   x = y = z = 10;
-  vtkMAFSmartPointer<vtkStructuredPoints> image;
+  vtkNew<vtkStructuredPoints> image;
   double origin[3] = {0.0,0.0, -45.};
   image->SetOrigin(origin);
   image->SetDimensions(x,y,z);

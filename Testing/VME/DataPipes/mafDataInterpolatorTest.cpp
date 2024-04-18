@@ -106,7 +106,7 @@ void mafDataInterpolatorTest::TestAccept()
 //----------------------------------------------------------------------------
 {
   mafSmartPointer<mafVMETestClass> surfaceTest;
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   
   surfaceTest->SetData(sphere->GetOutput(), 0.0);
   surfaceTest->Update();
@@ -148,7 +148,7 @@ void mafDataInterpolatorTest::TestUpdateBounds()
 //----------------------------------------------------------------------------
 {
   mafSmartPointer<mafVMETestClass> surfaceTest;
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->SetThetaResolution(100);
   sphere->SetPhiResolution(100);
   sphere->SetRadius(5.0);
@@ -189,7 +189,7 @@ void mafDataInterpolatorTest::TestGetCurrentItem()
 //----------------------------------------------------------------------------
 {
   mafSmartPointer<mafVMETestClass> surfaceTest;
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->Update();
 
   int numberOfSpherePoints = sphere->GetOutput()->GetNumberOfPoints();

@@ -62,7 +62,7 @@ void lhpTagHandlerContainerTest::CreateTestData()
 {
   m_TestVMESurface = NULL;  
   m_TestVMESurface = mafVMESurface::New();
-  vtkMAFSmartPointer<vtkSphereSource> sphereSource;
+  vtkNew<vtkSphereSource> sphereSource;
 
   m_TestVMESurface->SetData(sphereSource->GetOutput(),-1);
 

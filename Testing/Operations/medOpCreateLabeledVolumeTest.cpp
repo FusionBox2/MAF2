@@ -48,12 +48,12 @@ void medOpCreateLabeledVolumeTest::TestDynamicAllocation()
 void medOpCreateLabeledVolumeTest::TestOpRun() 
 //-----------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkImageData> data;
+  vtkNew<vtkImageData> data;
   data->SetSpacing(1.0,1.0,1.0);
   data->SetDimensions(10,10,10);
   
 
-  vtkMAFSmartPointer<vtkCharArray> array;
+  vtkNew<vtkCharArray> array;
   array->Allocate(10*10*10);
 
   data->GetPointData()->AddArray(array);
@@ -104,12 +104,12 @@ void medOpCreateLabeledVolumeTest::TestAccept()
 void medOpCreateLabeledVolumeTest::TestOpDo() 
 //-----------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkImageData> data;
+  vtkNew<vtkImageData> data;
   data->SetSpacing(1.0,1.0,1.0);
   data->SetDimensions(10,10,10);
 
 
-  vtkMAFSmartPointer<vtkCharArray> array;
+  vtkNew<vtkCharArray> array;
   array->Allocate(10*10*10);
 
   data->GetPointData()->AddArray(array);

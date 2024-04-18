@@ -562,7 +562,7 @@ void lhpOpBonematTest::TestCase( const char *inputConfFile, const char *inputDat
 
 
   // load the VTK data for the mesh
-  vtkMAFSmartPointer<vtkUnstructuredGridReader> reader;
+  vtkNew<vtkUnstructuredGridReader> reader;
   reader->SetFileName(inputVTKMesh);
   reader->Update();
 
@@ -576,7 +576,7 @@ void lhpOpBonematTest::TestCase( const char *inputConfFile, const char *inputDat
   vtkUnstructuredGrid *inGrid = vmeMesh->GetUnstructuredGridOutput()->GetUnstructuredGridData();
   CPPUNIT_ASSERT(inGrid->GetNumberOfCells()  == 15);
 
-  vtkMAFSmartPointer<vtkRectilinearGridReader> vreader;
+  vtkNew<vtkRectilinearGridReader> vreader;
   vreader->SetFileName(inputVTKVolume);
   vreader->Update();
 
@@ -636,7 +636,7 @@ void lhpOpBonematTest::TestCase( const char *inputConfFile, const char *inputDat
 
   vtkUnstructuredGrid *outputMesh = vmeMesh->GetUnstructuredGridOutput()->GetUnstructuredGridData();
 
-  vtkMAFSmartPointer<vtkUnstructuredGridWriter> writer;
+  vtkNew<vtkUnstructuredGridWriter> writer;
   writer->SetInput(outputMesh);
   writer->SetFileTypeToASCII();
   writer->SetFileName(outputMeshFileName.GetCStr());

@@ -53,13 +53,13 @@ void medOpScaleDatasetTest::TestStaticAllocation()
 void medOpScaleDatasetTest::TestOpDoVolume() 
 //-----------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkStructuredPoints> sp;
+  vtkNew<vtkStructuredPoints> sp;
   sp->SetOrigin(0.0,0.0,0.0);
   sp->SetSpacing(1.0,1.0,1.0);
   sp->SetDimensions(5,10,6);
   sp->Update();
 
-  vtkMAFSmartPointer<vtkDoubleArray> scalars;
+  vtkNew<vtkDoubleArray> scalars;
   scalars->SetNumberOfTuples(300);
   for (int i=0;i<300;i++)
   {
@@ -113,7 +113,7 @@ void medOpScaleDatasetTest::TestOpDoVolume()
 void medOpScaleDatasetTest::TestOpDoSurface() 
 //-----------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkCubeSource> cube;
+  vtkNew<vtkCubeSource> cube;
   cube->Update();
 
   double startPoint[3];
@@ -161,7 +161,7 @@ void medOpScaleDatasetTest::TestOpDoSurface()
 void medOpScaleDatasetTest::TestReset() 
 //-----------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkCubeSource> cube;
+  vtkNew<vtkCubeSource> cube;
   cube->Update();
 
   double startPoint[3];

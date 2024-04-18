@@ -143,7 +143,7 @@ void medDicomSliceTest::TestGetVTKImageData()
 {
   //Using the default constructor
   medDicomSlice *sliceDicom = new medDicomSlice();
-  vtkMAFSmartPointer<vtkImageReader> reader;
+  vtkNew<vtkImageReader> reader;
   mafString fileName=MED_DATA_ROOT;
   fileName<<"/VTK_Volumes/volume.vtk";
   reader->SetFileName(fileName.GetCStr());
@@ -245,7 +245,7 @@ void medDicomSliceTest::TestGetDcmImageOrientationPatientMatrix()
   sliceDicom->SetDcmImageOrientationPatient(patientOri);
 
   double testOri[6];
-  vtkMAFSmartPointer<vtkMatrix4x4> matrix;
+  vtkNew<vtkMatrix4x4> matrix;
   double Vx0,Vx1,Vx2,Vy0,Vy1,Vy2;
   sliceDicom->GetOrientation(matrix);
 

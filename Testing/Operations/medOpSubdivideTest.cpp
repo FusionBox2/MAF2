@@ -47,7 +47,7 @@ void medOpSubdivideTest::TestOpRun()
 //-----------------------------------------------------------
 {
 	vtkPolyData *testPolyData;
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   testPolyData = sphere->GetOutput();
   testPolyData->Update();
 

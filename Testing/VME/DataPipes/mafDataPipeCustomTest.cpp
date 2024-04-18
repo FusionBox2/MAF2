@@ -112,7 +112,7 @@ void mafDataPipeCustomTest::TestOnEvent()
 void mafDataPipeCustomTest::TestGetVTKData()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->SetThetaResolution(100);
   sphere->SetPhiResolution(100);
   sphere->SetRadius(5.0);
@@ -148,7 +148,7 @@ void mafDataPipeCustomTest::TestGetVTKDataPipe()
 void mafDataPipeCustomTest::TestUpdate()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->SetThetaResolution(100);
   sphere->SetPhiResolution(100);
   sphere->SetRadius(5.0);
@@ -184,7 +184,7 @@ void mafDataPipeCustomTest::TestUpdateBounds()
 //----------------------------------------------------------------------------
 {
   mafSmartPointer<mafVMETestClass> surfaceTest;
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->SetThetaResolution(100);
   sphere->SetPhiResolution(100);
   sphere->SetRadius(5.0);
@@ -225,7 +225,7 @@ void mafDataPipeCustomTest::TestUpdateBounds()
 void mafDataPipeCustomTest::TestSetInput()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->SetThetaResolution(100);
   sphere->SetPhiResolution(100);
   sphere->SetRadius(5.0);
@@ -250,19 +250,19 @@ void mafDataPipeCustomTest::TestSetInput()
 void mafDataPipeCustomTest::TestSetNthInput()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkSphereSource> sphere1;
+  vtkNew<vtkSphereSource> sphere1;
   sphere1->SetThetaResolution(3);
   sphere1->SetPhiResolution(3);
   sphere1->SetRadius(5.0);
   sphere1->Update();
 
-  vtkMAFSmartPointer<vtkSphereSource> sphere2;
+  vtkNew<vtkSphereSource> sphere2;
   sphere2->SetThetaResolution(5);
   sphere2->SetPhiResolution(5);
   sphere2->SetRadius(10.0);
   sphere2->Update();
 
-  vtkMAFSmartPointer<vtkSphereSource> sphere3;
+  vtkNew<vtkSphereSource> sphere3;
   sphere3->SetThetaResolution(10);
   sphere3->SetPhiResolution(10);
   sphere3->SetRadius(15.0);

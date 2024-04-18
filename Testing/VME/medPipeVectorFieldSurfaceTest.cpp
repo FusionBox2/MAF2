@@ -102,16 +102,16 @@ void medPipeVectorFieldSurfaceTest::TestCreate()
   volumeDimensions[1] = 2;
   volumeDimensions[2] = 2;
 
-  vtkMAFSmartPointer<vtkFloatArray> scalarArray;
+  vtkNew<vtkFloatArray> scalarArray;
   scalarArray->SetNumberOfComponents(1);
   scalarArray->SetName("Scalar");
   //scalarArray->InsertNextTuple1(1.0);
 
-  vtkMAFSmartPointer<vtkImageData> image;
+  vtkNew<vtkImageData> image;
   image->SetDimensions(volumeDimensions[0],volumeDimensions[1],volumeDimensions[2]);
   image->SetSpacing(1.,1.,1.);
 
-  vtkMAFSmartPointer<vtkFloatArray> vectorArray;
+  vtkNew<vtkFloatArray> vectorArray;
   vectorArray->SetNumberOfComponents(3);
   vectorArray->SetNumberOfTuples(volumeDimensions[0]*volumeDimensions[1]*volumeDimensions[2]);
   vectorArray->SetName("Vector");

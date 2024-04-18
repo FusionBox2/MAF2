@@ -56,9 +56,9 @@ void mafGizmoPathTest::CreateTestData()
   m_Root = NULL;
   m_TestPolyline = NULL;
 
-  vtkMAFSmartPointer<vtkPolyData> polydata;
-  vtkMAFSmartPointer<vtkPoints> points;
-  vtkMAFSmartPointer<vtkCellArray> cells;
+  vtkNew<vtkPolyData> polydata;
+  vtkNew<vtkPoints> points;
+  vtkNew<vtkCellArray> cells;
 
   double point[3];
   // point 1

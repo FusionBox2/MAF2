@@ -102,7 +102,7 @@ void mafPipeLandmarkCloudTest::TestPipeExecution()
   cloud->GetOutput()->Update();
   cloud->Update();
 
-  vtkMAFSmartPointer<vtkDoubleArray> scalars;
+  vtkNew<vtkDoubleArray> scalars;
   scalars->InsertNextTuple1(0.0);//This is a special value, with this value the pipe will not show the landmark
   scalars->InsertNextTuple1(10.0);
   scalars->InsertNextTuple1(20.0);
@@ -234,14 +234,14 @@ void mafPipeLandmarkCloudTest::CompareImages(int imageIndex)
 
   // visualization control
   m_RenderWindow->OffScreenRenderingOn();
-  vtkMAFSmartPointer<vtkWindowToImageFilter> w2i;
+  vtkNew<vtkWindowToImageFilter> w2i;
   w2i->SetInput(m_RenderWindow);
   //w2i->SetMagnification(magnification);
   w2i->Update();
   m_RenderWindow->OffScreenRenderingOff();
 
   //write comparing image
-  vtkMAFSmartPointer<vtkJPEGWriter> w;
+  vtkNew<vtkJPEGWriter> w;
   w->SetInput(w2i->GetOutput());
   mafString imageFile=MAF_DATA_ROOT;
 
@@ -274,7 +274,7 @@ void mafPipeLandmarkCloudTest::CompareImages(int imageIndex)
   controlStream.close();
 
   //read original Image
-  vtkMAFSmartPointer<vtkJPEGReader> rO;
+  vtkNew<vtkJPEGReader> rO;
   mafString imageFileOrig=MAF_DATA_ROOT;
   imageFileOrig<<"/Test_PipeLandmarkcloud/";
   imageFileOrig<<name.c_str();
@@ -288,14 +288,14 @@ void mafPipeLandmarkCloudTest::CompareImages(int imageIndex)
   vtkImageData *imDataOrig = rO->GetOutput();
 
   //read compared image
-  vtkMAFSmartPointer<vtkJPEGReader> rC;
+  vtkNew<vtkJPEGReader> rC;
   rC->SetFileName(imageFile.GetCStr());
   rC->Update();
 
   vtkImageData *imDataComp = rC->GetOutput();
 
 
-  vtkMAFSmartPointer<vtkImageMathematics> imageMath;
+  vtkNew<vtkImageMathematics> imageMath;
   imageMath->SetInput1(imDataOrig);
   imageMath->SetInput2(imDataComp);
   imageMath->SetOperationToSubtract();

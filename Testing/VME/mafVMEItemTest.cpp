@@ -191,7 +191,7 @@ void mafVMEItemTest::GetTagArrayTest()
   // Create an object that is a real implementation of mafVMEItem (mafVMEItemVTK)
   mafSmartPointer<mafVMEItemVTK> itemVTK;
 
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
 
   itemVTK->SetData(vtkDataSet::SafeDownCast(sphere->GetOutput()));
 

@@ -73,7 +73,7 @@ void vtkMAFDataPipeTest::tearDown()
 void vtkMAFDataPipeTest::TestDynamicAllocation()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkMAFDataPipe> dp;
+  vtkNew<vtkMAFDataPipe> dp;
 
 	vtkMAFDataPipe * dp2;
 	vtkNEW(dp2);
@@ -85,7 +85,7 @@ void vtkMAFDataPipeTest::TestSetNthInput()
 {
 	vtkPolyData *poly0 = vtkPolyData::New();
 	vtkPolyData *poly1 = vtkPolyData::New();
-	vtkMAFSmartPointer<vtkMAFDataPipe> dp;
+	vtkNew<vtkMAFDataPipe> dp;
 	dp->SetNthInput(0, poly0);
 	dp->SetNthInput(1, poly1);
 
@@ -102,7 +102,7 @@ void vtkMAFDataPipeTest::TestGetOutput()
 	poly0->Update();
 
 	vtkDataSet *pDataSet = NULL;
-	vtkMAFSmartPointer<vtkMAFDataPipe> vdp;
+	vtkNew<vtkMAFDataPipe> vdp;
 
 	vdp->SetNthInput(0, poly0->GetOutput());
 
@@ -123,7 +123,7 @@ void vtkMAFDataPipeTest::TestGetOutput()
 void vtkMAFDataPipeTest::TestGetMTime()
 //----------------------------------------------------------------------------
 {
-	vtkMAFSmartPointer<vtkMAFDataPipe> dp;
+	vtkNew<vtkMAFDataPipe> dp;
 	
 	//m_DataPipe == NULL
 	long time1, time2;
@@ -152,7 +152,7 @@ void vtkMAFDataPipeTest::TestGetMTime()
 void vtkMAFDataPipeTest::TestGetInformationTime()
 //----------------------------------------------------------------------------
 {
-	vtkMAFSmartPointer<vtkMAFDataPipe> dp;
+	vtkNew<vtkMAFDataPipe> dp;
   long time1, time2;
 	time1 = dp->GetInformationTime();
 	dp->UpdateInformation();
@@ -165,7 +165,7 @@ void vtkMAFDataPipeTest::TestGetInformationTime()
 void vtkMAFDataPipeTest::TestSetGetDataPipe()
 //----------------------------------------------------------------------------
 {
-	vtkMAFSmartPointer<vtkMAFDataPipe> vdp;
+	vtkNew<vtkMAFDataPipe> vdp;
   mafSmartPointer<mafDataPipe> mdp;
 
 	vdp->SetDataPipe(mdp);
@@ -183,7 +183,7 @@ void vtkMAFDataPipeTest::TestUpdateInformation()
 	mafVMETestClass *vmeTest;
 	mafNEW(vmeTest);
 
-	vtkMAFSmartPointer<vtkMAFDataPipe> vdp;
+	vtkNew<vtkMAFDataPipe> vdp;
 	mafSmartPointer<mafDataPipe> dp;
 	dp->SetVME(vmeTest);
 	vdp->SetDataPipe(dp);

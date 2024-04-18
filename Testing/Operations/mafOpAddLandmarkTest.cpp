@@ -109,7 +109,7 @@ void mafOpAddLandmarkTest::TestOpUndo()
   double lnd1[3]={0.0,0.0,0.0};
 
   mafSmartPointer<mafVMESurface> surface;
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->Update();
 
   surface->SetData(sphere->GetOutput(),0.0);
@@ -212,7 +212,7 @@ void mafOpAddLandmarkTest::TestAddLandmark()
   double lnd2[3]={1.0,0.0,2.0};
 
   mafSmartPointer<mafVMESurface> surface;
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->Update();
 
   surface->SetData(sphere->GetOutput(),0.0);
@@ -321,7 +321,7 @@ void mafOpAddLandmarkTest::TestOpRun()
   mafOpAddLandmark *op = new mafOpAddLandmark();
 
   mafSmartPointer<mafVMESurface> surface;
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
+  vtkNew<vtkSphereSource> sphere;
   sphere->Update();
 
   surface->SetData(sphere->GetOutput(),0.0);

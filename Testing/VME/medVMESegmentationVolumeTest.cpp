@@ -51,7 +51,7 @@ void medVMESegmentationVolumeTest::setUp()
   m_Volume = NULL;
   mafNEW(m_Volume);
   m_Volume->ReparentTo(m_Storage->GetRoot());
-  vtkMAFSmartPointer<vtkDataSetReader> r;
+  vtkNew<vtkDataSetReader> r;
   mafString filename=MED_DATA_ROOT;
   filename<<"/VTK_Volumes/volumeSP.vtk";
   r->SetFileName(filename);

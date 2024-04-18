@@ -57,9 +57,9 @@ int mafVMEVolumeRGBTest::CreateVolumeWithImageData()
 {
   // create some VTK data
   
-  vtkMAFSmartPointer<vtkFloatArray> scalarsR;
-  vtkMAFSmartPointer<vtkFloatArray> scalarsG;
-  vtkMAFSmartPointer<vtkFloatArray> scalarsB;
+  vtkNew<vtkFloatArray> scalarsR;
+  vtkNew<vtkFloatArray> scalarsG;
+  vtkNew<vtkFloatArray> scalarsB;
   scalarsR->SetNumberOfComponents(1);
   scalarsG->SetNumberOfComponents(1);
   scalarsB->SetNumberOfComponents(1);
@@ -98,9 +98,9 @@ int mafVMEVolumeRGBTest::CreateVolumeWithRectilinearGrid()
   // create some VTK data
   vtkRectilinearGrid *rectilinearGrid = vtkRectilinearGrid::New() ;
 
-  vtkMAFSmartPointer<vtkFloatArray> scalarsR;
-  vtkMAFSmartPointer<vtkFloatArray> scalarsG;
-  vtkMAFSmartPointer<vtkFloatArray> scalarsB;
+  vtkNew<vtkFloatArray> scalarsR;
+  vtkNew<vtkFloatArray> scalarsG;
+  vtkNew<vtkFloatArray> scalarsB;
   scalarsR->SetNumberOfComponents(1);
   scalarsG->SetNumberOfComponents(1);
   scalarsB->SetNumberOfComponents(1);

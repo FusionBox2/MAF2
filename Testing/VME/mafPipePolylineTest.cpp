@@ -110,7 +110,7 @@ void mafPipePolylineTest::TestPipeExecution()
 
 
   ////// Create VME (import vtkData) ////////////////////
-  vtkMAFSmartPointer<vtkDataSetReader> importer;
+  vtkNew<vtkDataSetReader> importer;
   mafString filename=MAF_DATA_ROOT;
   filename<<"/Test_PipePolyline/polyline.vtk";
   importer->SetFileName(filename);

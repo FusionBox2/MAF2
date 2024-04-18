@@ -74,7 +74,7 @@ void medVMELabeledVolumeTest::TestVolumeCopy()
   mafString filename_volume=MED_DATA_ROOT;
   filename_volume<<"/VTK_Volumes/LabeledVolumeTest.vtk";
 
-  vtkMAFSmartPointer<vtkRectilinearGridReader>volumeReader;
+  vtkNew<vtkRectilinearGridReader>volumeReader;
   volumeReader->SetFileName(filename_volume);
   volumeReader->Update();
 
@@ -114,7 +114,7 @@ void medVMELabeledVolumeTest::TestGenerateLabeledVolume()
   mafString filename_volume=MED_DATA_ROOT;
   filename_volume<<"/VTK_Volumes/LabeledVolumeTest.vtk";
 
-  vtkMAFSmartPointer<vtkRectilinearGridReader>volumeReader;
+  vtkNew<vtkRectilinearGridReader>volumeReader;
   volumeReader->SetFileName(filename_volume);
   volumeReader->Update();
 
@@ -175,7 +175,7 @@ void medVMELabeledVolumeTest::TestRemoveLabelTag()
   mafString filename_volume=MED_DATA_ROOT;
   filename_volume<<"/VTK_Volumes/LabeledVolumeTest.vtk";
 
-  vtkMAFSmartPointer<vtkRectilinearGridReader>volumeReader;
+  vtkNew<vtkRectilinearGridReader>volumeReader;
   volumeReader->SetFileName(filename_volume);
   volumeReader->Update();
 
@@ -222,7 +222,7 @@ void medVMELabeledVolumeTest::TestSetLabelTag()
   mafString filename_volume=MED_DATA_ROOT;
   filename_volume<<"/VTK_Volumes/LabeledVolumeTest.vtk";
 
-  vtkMAFSmartPointer<vtkRectilinearGridReader>volumeReader;
+  vtkNew<vtkRectilinearGridReader>volumeReader;
   volumeReader->SetFileName(filename_volume);
   volumeReader->Update();
 
@@ -233,7 +233,7 @@ void medVMELabeledVolumeTest::TestSetLabelTag()
   volume->Update();
 
   //Get the scalar data of the copied original volume 
-  vtkMAFSmartPointer<vtkDataArray> volumeScalars;
+  vtkNew<vtkDataArray> volumeScalars;
   volumeScalars = volumeReader->GetOutput()->GetPointData()->GetScalars();
   volumeScalars->Modified();
 
@@ -288,7 +288,7 @@ void medVMELabeledVolumeTest::TestDeepCopy()
   mafString filename_volume=MED_DATA_ROOT;
   filename_volume<<"/VTK_Volumes/LabeledVolumeTest.vtk";
 
-  vtkMAFSmartPointer<vtkRectilinearGridReader>volumeReader;
+  vtkNew<vtkRectilinearGridReader>volumeReader;
   volumeReader->SetFileName(filename_volume);
   volumeReader->Update();
 

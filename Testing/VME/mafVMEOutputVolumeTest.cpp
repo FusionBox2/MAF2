@@ -83,7 +83,7 @@ void mafVMEOutputVolumeTest::TestGetStructuredData()
   const int dimension = 5;
   //create a vme volume gray with imagedata inside
 
-  vtkMAFSmartPointer<vtkIntArray> array;
+  vtkNew<vtkIntArray> array;
   int i = 0;
   for(;i<dimension*dimension*dimension - 1; i++)
   {
@@ -91,7 +91,7 @@ void mafVMEOutputVolumeTest::TestGetStructuredData()
   }
   array->SetName("scalars");
 
-  vtkMAFSmartPointer<vtkImageData> imageData;
+  vtkNew<vtkImageData> imageData;
   imageData->SetDimensions(dimension,dimension,dimension);
   imageData->SetSpacing(1.,1.,1.);
   imageData->GetPointData()->AddArray(array);
@@ -120,7 +120,7 @@ void mafVMEOutputVolumeTest::TestGetRectilinearData()
   const int dimension = 5;
   //create a vme volume gray with rectilinear grid inside
 
-  vtkMAFSmartPointer<vtkIntArray> array;
+  vtkNew<vtkIntArray> array;
   int i = 0;
   for(;i<dimension*dimension*dimension - 1; i++)
   {
@@ -129,7 +129,7 @@ void mafVMEOutputVolumeTest::TestGetRectilinearData()
   array->SetName("scalars");
 
   // create rectilinear grid data
-  vtkMAFSmartPointer<vtkFloatArray> xCoordinates;
+  vtkNew<vtkFloatArray> xCoordinates;
   xCoordinates->SetNumberOfValues(dimension);
   xCoordinates->SetValue(0, 0.f);
   xCoordinates->SetValue(1, 1.f);
@@ -137,7 +137,7 @@ void mafVMEOutputVolumeTest::TestGetRectilinearData()
   xCoordinates->SetValue(3, 1.f);
   xCoordinates->SetValue(4, 0.f); 
 
-  vtkMAFSmartPointer<vtkFloatArray> yCoordinates;
+  vtkNew<vtkFloatArray> yCoordinates;
   yCoordinates->SetNumberOfValues(dimension);
   yCoordinates->SetValue(0, 0.f);
   yCoordinates->SetValue(1, 1.f);
@@ -145,7 +145,7 @@ void mafVMEOutputVolumeTest::TestGetRectilinearData()
   yCoordinates->SetValue(3, 1.f);
   yCoordinates->SetValue(4, 0.f); 
 
-  vtkMAFSmartPointer<vtkFloatArray> zCoordinates;
+  vtkNew<vtkFloatArray> zCoordinates;
   zCoordinates->SetNumberOfValues(dimension);
   zCoordinates->SetValue(0, 0.f);
   zCoordinates->SetValue(1, 1.f);
@@ -153,7 +153,7 @@ void mafVMEOutputVolumeTest::TestGetRectilinearData()
   zCoordinates->SetValue(3, 1.f);
   zCoordinates->SetValue(4, 0.f); 
 
-  vtkMAFSmartPointer<vtkRectilinearGrid> rectilinearGrid;
+  vtkNew<vtkRectilinearGrid> rectilinearGrid;
   rectilinearGrid->SetDimensions(dimension,dimension,dimension);
   rectilinearGrid->SetXCoordinates(xCoordinates);
   rectilinearGrid->SetYCoordinates(yCoordinates);
@@ -181,7 +181,7 @@ void mafVMEOutputVolumeTest::TestGetRectilinearData()
 void mafVMEOutputVolumeTest::TestGetUnstructuredData()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkPoints> voxelPoints;
+  vtkNew<vtkPoints> voxelPoints;
   voxelPoints->SetNumberOfPoints(8);
   voxelPoints->InsertPoint(0, 0, 0, 0);
   voxelPoints->InsertPoint(1, 1, 0, 0);
@@ -191,7 +191,7 @@ void mafVMEOutputVolumeTest::TestGetUnstructuredData()
   voxelPoints->InsertPoint(5, 1, 0, 1);
   voxelPoints->InsertPoint(6, 0, 1, 1);
   voxelPoints->InsertPoint(7, 1, 1, 1);
-  vtkMAFSmartPointer<vtkVoxel> aVoxel;
+  vtkNew<vtkVoxel> aVoxel;
   aVoxel->GetPointIds()->SetId(0, 0);
   aVoxel->GetPointIds()->SetId(1, 1);
   aVoxel->GetPointIds()->SetId(2, 2);
@@ -200,7 +200,7 @@ void mafVMEOutputVolumeTest::TestGetUnstructuredData()
   aVoxel->GetPointIds()->SetId(5, 5);
   aVoxel->GetPointIds()->SetId(6, 6);
   aVoxel->GetPointIds()->SetId(7, 7);
-  vtkMAFSmartPointer<vtkUnstructuredGrid> aVoxelGrid;
+  vtkNew<vtkUnstructuredGrid> aVoxelGrid;
   aVoxelGrid->Allocate(1, 1);
   aVoxelGrid->InsertNextCell(aVoxel->GetCellType(), aVoxel->GetPointIds());
   aVoxelGrid->SetPoints(voxelPoints);
@@ -227,7 +227,7 @@ void mafVMEOutputVolumeTest::TestSetGetVolumeMaterial()
   const int dimension = 5;
   //create a vme volume gray with imagedata inside
 
-  vtkMAFSmartPointer<vtkIntArray> array;
+  vtkNew<vtkIntArray> array;
   int i = 0;
   for(;i<dimension*dimension*dimension - 1; i++)
   {
@@ -235,7 +235,7 @@ void mafVMEOutputVolumeTest::TestSetGetVolumeMaterial()
   }
   array->SetName("scalars");
 
-  vtkMAFSmartPointer<vtkImageData> imageData;
+  vtkNew<vtkImageData> imageData;
   imageData->SetDimensions(dimension,dimension,dimension);
   imageData->SetSpacing(1.,1.,1.);
   imageData->GetPointData()->AddArray(array);
@@ -269,7 +269,7 @@ void mafVMEOutputVolumeTest::TestGetVTKDataTypeAsString_Update()
   const int dimension = 5;
   //create a vme volume gray with imagedata inside
 
-  vtkMAFSmartPointer<vtkIntArray> array;
+  vtkNew<vtkIntArray> array;
   int i = 0;
   for(;i<dimension*dimension*dimension - 1; i++)
   {
@@ -277,7 +277,7 @@ void mafVMEOutputVolumeTest::TestGetVTKDataTypeAsString_Update()
   }
   array->SetName("scalars");
 
-  vtkMAFSmartPointer<vtkImageData> imageData;
+  vtkNew<vtkImageData> imageData;
   imageData->SetDimensions(dimension,dimension,dimension);
   imageData->SetSpacing(1.,1.,1.);
   imageData->GetPointData()->AddArray(array);

@@ -57,18 +57,18 @@ void mafVMEMeshTest::TestFixture()
 
 void mafVMEMeshTest::TestSetData()
 {
-  vtkMAFSmartPointer<vtkPoints> points;
+  vtkNew<vtkPoints> points;
   for (int i = 0; i < 25; i++)
   {
     points->InsertPoint(i, vtkMath::Random(0,1), vtkMath::Random(0,1), vtkMath::Random(0,1));	  
   }
 
-  vtkMAFSmartPointer<vtkPolyData> pointsToTriangulate;
+  vtkNew<vtkPolyData> pointsToTriangulate;
   pointsToTriangulate->SetPoints(points);
 
   //Delaunay3D is used to triangulate the points
   //the output of the filter is an unstructured grid
-  vtkMAFSmartPointer<vtkDelaunay3D> triangulation;
+  vtkNew<vtkDelaunay3D> triangulation;
   triangulation->SetInput(pointsToTriangulate);
   triangulation->SetTolerance(0.01);
   triangulation->SetAlpha(0.2);

@@ -123,13 +123,13 @@ void medOpSegmentationRegionGrowingConnectedThresholdTest::TestAlgorithm()
 //----------------------------------------------------------------------------
 {
   //Read the data of input and use it as input of the operation
-  vtkMAFSmartPointer<vtkDataSetReader> r;
+  vtkNew<vtkDataSetReader> r;
   mafString fileNameIn = MED_DATA_ROOT;
   fileNameIn<<"/VTK_Volumes/volume.vtk";
   r->SetFileName(fileNameIn.GetCStr());
   r->Update();
 
-  vtkMAFSmartPointer<vtkImageCast> imageToFloat;
+  vtkNew<vtkImageCast> imageToFloat;
   imageToFloat->SetInput(vtkImageData::SafeDownCast(r->GetOutput()));
   imageToFloat->SetOutputScalarTypeToFloat();
   imageToFloat->Update();
@@ -217,10 +217,10 @@ void medOpSegmentationRegionGrowingConnectedThresholdTest::TestAlgorithm()
   r->Update();
 
   //Compare the two results
-  vtkMAFSmartPointer<vtkImageData> imITK;
+  vtkNew<vtkImageData> imITK;
   imITK->DeepCopy(vtkImageData::SafeDownCast(r->GetOutput()));
   imITK->Update();
-  vtkMAFSmartPointer<vtkImageData> imOP;
+  vtkNew<vtkImageData> imOP;
   imOP->DeepCopy(vtkImageData::SafeDownCast(volumeOperationOutput->GetOutput()->GetVTKData()));
   imOP->Update();
 
@@ -271,17 +271,17 @@ void medOpSegmentationRegionGrowingConnectedThresholdTest::TestAlgorithmRG()
   volumeOperationOutput->Update();
 
   //read the result expected
-  vtkMAFSmartPointer<vtkDataSetReader> outputRead;
+  vtkNew<vtkDataSetReader> outputRead;
   mafString fileNameOut = MED_DATA_ROOT;
   fileNameOut<<"/VTK_Volumes/ConnectedThreshold.vtk";
   outputRead->SetFileName(fileNameOut.GetCStr());
   outputRead->Update();
  
   //Compare the two results
-  vtkMAFSmartPointer<vtkImageData> imFile;
+  vtkNew<vtkImageData> imFile;
   imFile->DeepCopy(vtkImageData::SafeDownCast(outputRead->GetOutput()));
   imFile->Update();
-  vtkMAFSmartPointer<vtkImageData> imOP;
+  vtkNew<vtkImageData> imOP;
   imOP->DeepCopy(vtkImageData::SafeDownCast(volumeOperationOutput->GetOutput()->GetVTKData()));
   imOP->Update();
 

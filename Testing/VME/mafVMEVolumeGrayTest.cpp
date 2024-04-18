@@ -42,7 +42,7 @@ void mafVMEVolumeGrayTest::TestSetData()
   // create some VTK data
   vtkRectilinearGrid *rectilinearGrid = vtkRectilinearGrid::New() ;
 
-  vtkMAFSmartPointer<vtkFloatArray> scalars;
+  vtkNew<vtkFloatArray> scalars;
   scalars->SetNumberOfComponents(1);
   for (int s = 0; s < 25; s++)
   {

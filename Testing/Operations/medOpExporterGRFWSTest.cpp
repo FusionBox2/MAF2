@@ -93,16 +93,16 @@ void medOpExporterGRFWSTest::TestWrite()
   platform2->ReparentTo(group);
 
   // Fill platforms
-  vtkMAFSmartPointer<vtkCubeSource> platformLeft;
-  vtkMAFSmartPointer<vtkCubeSource> platformRight;
+  vtkNew<vtkCubeSource> platformLeft;
+  vtkNew<vtkCubeSource> platformRight;
   platformLeft->SetBounds(0,10,0,50,0,5);
   platformRight->SetBounds(0,10,0,50,0,5);
   platform1->SetData(platformLeft->GetOutput(), 0);
   platform2->SetData(platformRight->GetOutput(), 0);
 
-  vtkMAFSmartPointer<vtkPoints> points;
-  vtkMAFSmartPointer<vtkCellArray> cellArray;
-  vtkMAFSmartPointer<vtkPolyData> force;
+  vtkNew<vtkPoints> points;
+  vtkNew<vtkCellArray> cellArray;
+  vtkNew<vtkPolyData> force;
   int pointId[2];
 
   // Fill vectors
@@ -260,16 +260,16 @@ void medOpExporterGRFWSTest::TestWriteFast()
   platform2->ReparentTo(group);
 
   // Fill platforms
-  vtkMAFSmartPointer<vtkCubeSource> platformLeft;
-  vtkMAFSmartPointer<vtkCubeSource> platformRight;
+  vtkNew<vtkCubeSource> platformLeft;
+  vtkNew<vtkCubeSource> platformRight;
   platformLeft->SetBounds(0,10,0,50,0,5);
   platformRight->SetBounds(0,10,0,50,0,5);
   platform1->SetData(platformLeft->GetOutput(), 0);
   platform2->SetData(platformRight->GetOutput(), 0);
 
-  vtkMAFSmartPointer<vtkPoints> points;
-  vtkMAFSmartPointer<vtkCellArray> cellArray;
-  vtkMAFSmartPointer<vtkPolyData> force;
+  vtkNew<vtkPoints> points;
+  vtkNew<vtkCellArray> cellArray;
+  vtkNew<vtkPolyData> force;
   int pointId[2];
 
   // Fill vectors
@@ -434,9 +434,9 @@ void medOpExporterGRFWSTest::TestWriteSingleVector()
   mafVMEVector* vector;
   mafNEW(vector);
 
-  vtkMAFSmartPointer<vtkPoints> points;
-  vtkMAFSmartPointer<vtkCellArray> cellArray;
-  vtkMAFSmartPointer<vtkPolyData> force;
+  vtkNew<vtkPoints> points;
+  vtkNew<vtkCellArray> cellArray;
+  vtkNew<vtkPolyData> force;
   int pointId[2];
 
   // Fill vector
@@ -524,9 +524,9 @@ void medOpExporterGRFWSTest::TestWriteSingleVectorFast()
   mafVMEVector* vector;
   mafNEW(vector);
 
-  vtkMAFSmartPointer<vtkPoints> points;
-  vtkMAFSmartPointer<vtkCellArray> cellArray;
-  vtkMAFSmartPointer<vtkPolyData> force;
+  vtkNew<vtkPoints> points;
+  vtkNew<vtkCellArray> cellArray;
+  vtkNew<vtkPolyData> force;
   int pointId[2];
 
   // Fill vector

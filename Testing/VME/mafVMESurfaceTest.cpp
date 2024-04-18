@@ -101,10 +101,10 @@ void mafVMESurfaceTest::TestSetData()
 	mafSmartPointer<mafVMESurface> vmeSurface;
 
   // We'll create the building blocks of polydata including data attributes.
-  vtkMAFSmartPointer<vtkPolyData> cube;
-  vtkMAFSmartPointer<vtkPoints> points;
-  vtkMAFSmartPointer<vtkCellArray> polys;
-  vtkMAFSmartPointer<vtkFloatArray> scalars;
+  vtkNew<vtkPolyData> cube;
+  vtkNew<vtkPoints> points;
+  vtkNew<vtkCellArray> polys;
+  vtkNew<vtkFloatArray> scalars;
 
   // Load the point, cell, and data attributes.
 	int i;
@@ -125,7 +125,7 @@ void mafVMESurfaceTest::TestSetData()
 	CPPUNIT_ASSERT(result == MAF_OK);
 
 	// create bad polydata for mafVMESurface
-	vtkMAFSmartPointer<vtkPolyData> bad_polyData;
+	vtkNew<vtkPolyData> bad_polyData;
   bad_polyData->SetPoints(points);
 	result = vmeSurface->SetData(bad_polyData,0);
 	CPPUNIT_ASSERT(result == MAF_ERROR);
@@ -135,11 +135,11 @@ void mafVMESurfaceTest::TestSetData()
 void mafVMESurfaceTest::TestVMESurfaceVisualization()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkRenderWindow> renWin;
-  vtkMAFSmartPointer<vtkRenderer> renderer;
-  vtkMAFSmartPointer<vtkRenderWindowInteractor> iren;
-  vtkMAFSmartPointer<vtkActor> actor;
-  vtkMAFSmartPointer<vtkDataSetMapper> mapper;
+  vtkNew<vtkRenderWindow> renWin;
+  vtkNew<vtkRenderer> renderer;
+  vtkNew<vtkRenderWindowInteractor> iren;
+  vtkNew<vtkActor> actor;
+  vtkNew<vtkDataSetMapper> mapper;
   actor->SetMapper(mapper);
   renderer->AddActor(actor);
 
@@ -153,7 +153,7 @@ void mafVMESurfaceTest::TestVMESurfaceVisualization()
 
   mafSmartPointer<mafVMESurface> sphereSurfaceVME;
 
-  vtkMAFSmartPointer<vtkSphereSource> sphereSource;
+  vtkNew<vtkSphereSource> sphereSource;
 
   sphereSurfaceVME->SetData(sphereSource->GetOutput(),-1);
 
@@ -182,9 +182,9 @@ int mafVMESurfaceTest::PlayTree(mafVMERoot *root, bool ignoreVisibleToTraverse)
   // Test display of generic VME tree of surfaces
   //
 
-  vtkMAFSmartPointer<vtkRenderWindow> renWin;
-  vtkMAFSmartPointer<vtkRenderer> renderer;
-  vtkMAFSmartPointer<vtkRenderWindowInteractor> iren;
+  vtkNew<vtkRenderWindow> renWin;
+  vtkNew<vtkRenderer> renderer;
+  vtkNew<vtkRenderWindowInteractor> iren;
 
   renWin->AddRenderer(renderer);
   iren->SetRenderWindow(renWin);
@@ -204,7 +204,7 @@ int mafVMESurfaceTest::PlayTree(mafVMERoot *root, bool ignoreVisibleToTraverse)
     {
       if (vme->IsMAFType(mafVMERoot))
       {
-        vtkMAFSmartPointer<vtkAssembly> vmeasm;
+        vtkNew<vtkAssembly> vmeasm;
         mafClientData *clientdata=mafClientData::SafeDownCast(vme->GetAttribute("ClientData"));
         if (!clientdata)
         {
@@ -222,13 +222,13 @@ int mafVMESurfaceTest::PlayTree(mafVMERoot *root, bool ignoreVisibleToTraverse)
       else
       {
         vtkDataSet *vmedata=vme->GetOutput()->GetVTKData();
-        vtkMAFSmartPointer<vtkDataSetMapper> mapper;
+        vtkNew<vtkDataSetMapper> mapper;
         mapper->SetInput((vtkPolyData *)vmedata);
 
-        vtkMAFSmartPointer<vtkActor> vmeact;
+        vtkNew<vtkActor> vmeact;
         vmeact->SetMapper(mapper);
 
-        vtkMAFSmartPointer<vtkAssembly> vmeasm;
+        vtkNew<vtkAssembly> vmeasm;
         vmeasm->AddPart(vmeact);
         vmeasm->SetUserTransform(vme->GetOutput()->GetTransform()->GetVTKTransform());
         mafClientData *clientdata=mafClientData::SafeDownCast(vme->GetAttribute("ClientData"));
@@ -295,17 +295,17 @@ void mafVMESurfaceTest::CreateVMETestTree()
   m_VmeRoot = mafVMERoot::New();
  // mafSmartPointer<mafVMERoot> m_VmeRoot;
 
-  vtkMAFSmartPointer<vtkFileOutputWindow> log;
+  vtkNew<vtkFileOutputWindow> log;
   log->SetInstance(log);
   log->SetFileName("testMSF.log"); // log of VTK error messages
 
   // plug the custom attribute in the Node Factory
   mafPlugAttribute<mafClientData>("Simple attribute for attaching actors to VMEs");
 
-  vtkMAFSmartPointer<vtkAxes> axes;
+  vtkNew<vtkAxes> axes;
   axes->SetScaleFactor(2);
 
-  vtkMAFSmartPointer<vtkTextSource> text;
+  vtkNew<vtkTextSource> text;
 
   text->SetText("VME Tree Test");
   text->Update();
@@ -333,8 +333,8 @@ void mafVMESurfaceTest::CreateVMETestTree()
   FirstChild->AddChild(vcone);
   FirstChild->AddChild(vmorph);
 
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
-  vtkMAFSmartPointer<vtkConeSource> cone;
+  vtkNew<vtkSphereSource> sphere;
+  vtkNew<vtkConeSource> cone;
 
   int i;
   for (i=0;i<100;i++)

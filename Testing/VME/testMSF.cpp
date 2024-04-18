@@ -57,9 +57,9 @@ int play_tree(mafVMERoot *root)
   //
   // Test display of generic VME tree of surfaces
   //
-  vtkMAFSmartPointer<vtkRenderWindow> renWin;
-  vtkMAFSmartPointer<vtkRenderer> renderer;
-  vtkMAFSmartPointer<vtkRenderWindowInteractor> iren;
+  vtkNew<vtkRenderWindow> renWin;
+  vtkNew<vtkRenderer> renderer;
+  vtkNew<vtkRenderWindowInteractor> iren;
 
   renWin->AddRenderer(renderer);
   iren->SetRenderWindow(renWin);
@@ -78,7 +78,7 @@ int play_tree(mafVMERoot *root)
     {
       if (vme->IsMAFType(mafVMERoot))
       {
-        vtkMAFSmartPointer<vtkAssembly> vmeasm;
+        vtkNew<vtkAssembly> vmeasm;
         mafClientData *clientdata=mafClientData::SafeDownCast(vme->GetAttribute("ClientData"));
         if (!clientdata)
         {
@@ -95,13 +95,13 @@ int play_tree(mafVMERoot *root)
       else
       {
         vtkDataSet *vmedata=vme->GetOutput()->GetVTKData();
-        vtkMAFSmartPointer<vtkDataSetMapper> mapper;
+        vtkNew<vtkDataSetMapper> mapper;
         mapper->SetInput((vtkPolyData *)vmedata);
   
-        vtkMAFSmartPointer<vtkActor> vmeact;
+        vtkNew<vtkActor> vmeact;
         vmeact->SetMapper(mapper);
 
-        vtkMAFSmartPointer<vtkAssembly> vmeasm;
+        vtkNew<vtkAssembly> vmeasm;
         vmeasm->AddPart(vmeact);
         vmeasm->SetUserTransform(vme->GetOutput()->GetTransform()->GetVTKTransform());
         
@@ -174,10 +174,10 @@ int main( int argc, char *argv[] )
   // plug the custom attribute in the Node Factory
   mafPlugAttribute<mafClientData>("Simple attribute for attaching actors to VMEs");
 
-  vtkMAFSmartPointer<vtkAxes> axes;
+  vtkNew<vtkAxes> axes;
   axes->SetScaleFactor(2);
 
-  vtkMAFSmartPointer<vtkTextSource> text;
+  vtkNew<vtkTextSource> text;
   
   text->SetText("VME Tree Test");
   text->Update();
@@ -210,8 +210,8 @@ int main( int argc, char *argv[] )
   vtitle->AddChild(vcone);
   vtitle->AddChild(vmorph);
 
-  vtkMAFSmartPointer<vtkSphereSource> sphere;
-  vtkMAFSmartPointer<vtkConeSource> cone;
+  vtkNew<vtkSphereSource> sphere;
+  vtkNew<vtkConeSource> cone;
 
   int i;
   for (i=0;i<100;i++)
@@ -316,7 +316,7 @@ int main( int argc, char *argv[] )
 
   {
     // also add a new subnode of title
-    vtkMAFSmartPointer<vtkCubeSource> new_cube;
+    vtkNew<vtkCubeSource> new_cube;
     mafSmartPointer<mafVMESurface> new_cube_vme;
     new_cube_vme->SetData(new_cube->GetOutput(),0);
 

@@ -36,7 +36,7 @@ void mafOpCreateGroupTest::Test()
 {
   mafString fileName = MAF_DATA_ROOT;
   fileName<<"\\Test_FilterSurface\\SurfaceToClean.vtk";
-  vtkMAFSmartPointer<vtkPolyDataReader> reader;
+  vtkNew<vtkPolyDataReader> reader;
   reader->SetFileName(fileName.GetCStr());
   reader->Update();
 

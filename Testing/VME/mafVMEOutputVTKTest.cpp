@@ -57,7 +57,7 @@ void mafVMEOutputVTKTest::TestGetVTKData()
 //----------------------------------------------------------------------------
 {
 
-  vtkMAFSmartPointer<vtkImageData> data;
+  vtkNew<vtkImageData> data;
   data->SetDimensions(5, 5, 1);
   data->SetOrigin(0, 0, 0);
   data->SetSpacing(1,1,1);

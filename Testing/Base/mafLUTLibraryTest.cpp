@@ -141,7 +141,7 @@ void mafLUTLibraryTest::TestAdd()
   lutLib->SetDir(newDir.c_str());
   lutLib->Save();
 
-  vtkMAFSmartPointer<vtkLookupTable> anotherLUT;
+  vtkNew<vtkLookupTable> anotherLUT;
   lutPreset(4, anotherLUT);
 
   lutLib->Add(anotherLUT, "anotherLUT"); 

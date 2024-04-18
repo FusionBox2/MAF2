@@ -74,7 +74,7 @@ void lhpFactoryTagHandlerTest::CreateTestData()
 {
   m_SphereSurfaceVME = NULL;  
   m_SphereSurfaceVME = mafVMESurface::New();
-  vtkMAFSmartPointer<vtkSphereSource> sphereSource;
+  vtkNew<vtkSphereSource> sphereSource;
 
   m_SphereSurfaceVME->SetData(sphereSource->GetOutput(),-1);
   

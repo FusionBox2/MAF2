@@ -95,9 +95,9 @@ void mafPipeVectorTest::TestPipeExecution()
 
 
   ////// Create VME ////////////////////
-  vtkMAFSmartPointer<vtkPolyData> poly;
-  vtkMAFSmartPointer<vtkPoints> points1;
-  vtkMAFSmartPointer<vtkCellArray> cellArray1;
+  vtkNew<vtkPolyData> poly;
+  vtkNew<vtkPoints> points1;
+  vtkNew<vtkCellArray> cellArray1;
   int pointId1[2];
   double force1X = 12.5;
   double force1Y = 201.7;

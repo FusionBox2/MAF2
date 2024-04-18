@@ -145,7 +145,7 @@ void medOpCropDeformableROITest::TestOpExecute()
   // mask surface
   mafString filename=MED_DATA_ROOT;
   filename<<"/Surface/Sphere.vtk";
-  vtkMAFSmartPointer<vtkPolyDataReader> reader;
+  vtkNew<vtkPolyDataReader> reader;
   reader->SetFileName(filename.GetCStr());
   reader->Update();
 
@@ -158,7 +158,7 @@ void medOpCropDeformableROITest::TestOpExecute()
   // volume input
   filename = MED_DATA_ROOT;
   filename<<"/VTK_Volumes/volume.vtk";
-  vtkMAFSmartPointer<vtkStructuredPointsReader> volumeReader;
+  vtkNew<vtkStructuredPointsReader> volumeReader;
   volumeReader->SetFileName(filename.GetCStr());
   volumeReader->Update();
 

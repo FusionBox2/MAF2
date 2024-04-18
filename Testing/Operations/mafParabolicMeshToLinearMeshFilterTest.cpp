@@ -152,14 +152,14 @@ void mafParabolicMeshToLinearMeshFilterTest::ReadLinearizeAndDisplay( mafString 
   }
 
   // create the linearization filter
-  vtkMAFSmartPointer<mafParabolicMeshToLinearMeshFilter> linearizationFilter;   
+  vtkNew<mafParabolicMeshToLinearMeshFilter> linearizationFilter;   
   linearizationFilter->SetInput(dataBeforeLinearization);
   linearizationFilter->Update();
 
   if (writeToDisk)
   {
     // save non lineairzed output to file
-    vtkMAFSmartPointer<vtkUnstructuredGridWriter> nonLinearizedGridWriter;
+    vtkNew<vtkUnstructuredGridWriter> nonLinearizedGridWriter;
     nonLinearizedGridWriter->SetInput(dataBeforeLinearization) ;
     nonLinearizedGridWriter->SetFileTypeToASCII();
     
@@ -177,7 +177,7 @@ void mafParabolicMeshToLinearMeshFilterTest::ReadLinearizeAndDisplay( mafString 
     nonLinearizedGridWriter->Write();
  
     // save linearized output to file
-    vtkMAFSmartPointer<vtkUnstructuredGridWriter> linearizedGridWriter;
+    vtkNew<vtkUnstructuredGridWriter> linearizedGridWriter;
     linearizedGridWriter->SetInput(linearizationFilter->GetOutput()) ;
     linearizedGridWriter->SetFileTypeToASCII();
 
@@ -232,8 +232,8 @@ void mafParabolicMeshToLinearMeshFilterTest::RenderData(  vtkUnstructuredGrid *d
   //----------------------------
 
   // i reverse the color table  to use blue for the lowest values and red for the highest
-  vtkMAFSmartPointer<vtkLookupTable> defaultLut;
-  vtkMAFSmartPointer<vtkLookupTable> reverseLut;
+  vtkNew<vtkLookupTable> defaultLut;
+  vtkNew<vtkLookupTable> reverseLut;
 
   int colNum = 256;
 
@@ -266,18 +266,18 @@ void mafParabolicMeshToLinearMeshFilterTest::RenderData(  vtkUnstructuredGrid *d
 
   //----------------------------
 
-  vtkMAFSmartPointer<vtkRenderer> renderer;
+  vtkNew<vtkRenderer> renderer;
   renderer->SetBackground(0.1, 0.1, 0.1);
 
-  vtkMAFSmartPointer<vtkRenderWindow> renderWindow;
+  vtkNew<vtkRenderWindow> renderWindow;
   renderWindow->AddRenderer(renderer);
   renderWindow->SetSize(640, 480);
   renderWindow->SetPosition(400,0);
 
-  vtkMAFSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor;
+  vtkNew<vtkRenderWindowInteractor> renderWindowInteractor;
   renderWindowInteractor->SetRenderWindow(renderWindow);
 
-  vtkMAFSmartPointer<vtkDataSetMapper> mapper;
+  vtkNew<vtkDataSetMapper> mapper;
   mapper->ScalarVisibilityOn();
 
   if (dataType == POINT_DATA)
@@ -294,7 +294,7 @@ void mafParabolicMeshToLinearMeshFilterTest::RenderData(  vtkUnstructuredGrid *d
   mapper->SetLookupTable(reverseLut);
   mapper->SetInput(data);
 
-  vtkMAFSmartPointer<vtkActor> actor;
+  vtkNew<vtkActor> actor;
   actor->SetMapper(mapper);
 
   renderer->AddActor(actor);

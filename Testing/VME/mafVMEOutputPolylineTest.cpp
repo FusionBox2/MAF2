@@ -72,7 +72,7 @@ void mafVMEOutputPolylineTest::TestDynamicAllocation()
 void mafVMEOutputPolylineTest::TestUpdate()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkPoints> pts;
+  vtkNew<vtkPoints> pts;
   pts->InsertNextPoint(0.0,0.0,0.0);
   pts->InsertNextPoint(0.0,1.0,0.0);
   pts->InsertNextPoint(0.0,2.5,0.0);
@@ -84,12 +84,12 @@ void mafVMEOutputPolylineTest::TestUpdate()
     {3,4}
   };
 
-  vtkMAFSmartPointer<vtkCellArray> cells;
+  vtkNew<vtkCellArray> cells;
   cells->InsertNextCell(2,lineids[0]);
   cells->InsertNextCell(2,lineids[1]);
   cells->InsertNextCell(2,lineids[2]);
 
-  vtkMAFSmartPointer<vtkPolyData> polylineVTK;
+  vtkNew<vtkPolyData> polylineVTK;
   polylineVTK->SetPoints(pts);
   polylineVTK->SetLines(cells);
   polylineVTK->Update();
@@ -121,7 +121,7 @@ void mafVMEOutputPolylineTest::TestUpdate()
 void mafVMEOutputPolylineTest::TestCalculateLength()
 //----------------------------------------------------------------------------
 {
-  vtkMAFSmartPointer<vtkPoints> pts;
+  vtkNew<vtkPoints> pts;
   pts->InsertNextPoint(0.0,0.0,0.0);
   pts->InsertNextPoint(0.0,1.0,0.0);
   pts->InsertNextPoint(0.0,2.5,0.0);
@@ -133,12 +133,12 @@ void mafVMEOutputPolylineTest::TestCalculateLength()
     {3,4}
   };
 
-  vtkMAFSmartPointer<vtkCellArray> cells;
+  vtkNew<vtkCellArray> cells;
   cells->InsertNextCell(2,lineids[0]);
   cells->InsertNextCell(2,lineids[1]);
   cells->InsertNextCell(2,lineids[2]);
 
-  vtkMAFSmartPointer<vtkPolyData> polylineVTK;
+  vtkNew<vtkPolyData> polylineVTK;
   polylineVTK->SetPoints(pts);
   polylineVTK->SetLines(cells);
   polylineVTK->Update();
@@ -173,7 +173,7 @@ void mafVMEOutputPolylineTest::TestGetPolylineData()
     {0.0,2.5,3.0}
   };
 
-  vtkMAFSmartPointer<vtkPoints> pts;
+  vtkNew<vtkPoints> pts;
   pts->InsertNextPoint(pointsCoord[0]);
   pts->InsertNextPoint(pointsCoord[1]);
   pts->InsertNextPoint(pointsCoord[2]);
@@ -185,12 +185,12 @@ void mafVMEOutputPolylineTest::TestGetPolylineData()
     {3,4}
   };
 
-  vtkMAFSmartPointer<vtkCellArray> cells;
+  vtkNew<vtkCellArray> cells;
   cells->InsertNextCell(2,lineids[0]);
   cells->InsertNextCell(2,lineids[1]);
   cells->InsertNextCell(2,lineids[2]);
 
-  vtkMAFSmartPointer<vtkPolyData> polylineVTK;
+  vtkNew<vtkPolyData> polylineVTK;
   polylineVTK->SetPoints(pts);
   polylineVTK->SetLines(cells);
   polylineVTK->Update();
@@ -235,7 +235,7 @@ void mafVMEOutputPolylineTest::TestGetMaterial()
     {0.0,2.5,3.0}
   };
 
-  vtkMAFSmartPointer<vtkPoints> pts;
+  vtkNew<vtkPoints> pts;
   pts->InsertNextPoint(pointsCoord[0]);
   pts->InsertNextPoint(pointsCoord[1]);
   pts->InsertNextPoint(pointsCoord[2]);
@@ -247,12 +247,12 @@ void mafVMEOutputPolylineTest::TestGetMaterial()
     {3,4}
   };
 
-  vtkMAFSmartPointer<vtkCellArray> cells;
+  vtkNew<vtkCellArray> cells;
   cells->InsertNextCell(2,lineids[0]);
   cells->InsertNextCell(2,lineids[1]);
   cells->InsertNextCell(2,lineids[2]);
 
-  vtkMAFSmartPointer<vtkPolyData> polylineVTK;
+  vtkNew<vtkPolyData> polylineVTK;
   polylineVTK->SetPoints(pts);
   polylineVTK->SetLines(cells);
   polylineVTK->Update();

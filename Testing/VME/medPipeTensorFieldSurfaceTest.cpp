@@ -92,21 +92,21 @@ void medPipeTensorFieldSurfaceTest::TestCreate()
   mafNEW(volume);
   volume->ReparentTo(storage->GetRoot());
 
-  vtkMAFSmartPointer<vtkFloatArray> scalarArray;
+  vtkNew<vtkFloatArray> scalarArray;
   scalarArray->SetName("Scalar");
   scalarArray->InsertNextTuple1(1.0);
 
-  vtkMAFSmartPointer<vtkFloatArray> vectorArray;
+  vtkNew<vtkFloatArray> vectorArray;
   vectorArray->SetNumberOfComponents(3);
   vectorArray->SetName("Vector");
   vectorArray->InsertNextTuple3(1.0,1.0,1.0);
 
-  vtkMAFSmartPointer<vtkFloatArray> tensorArray;
+  vtkNew<vtkFloatArray> tensorArray;
   tensorArray->SetNumberOfComponents(9);
   tensorArray->SetName("Tensor");
   tensorArray->InsertNextTuple9(1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0);
 
-  vtkMAFSmartPointer<vtkImageData> image;
+  vtkNew<vtkImageData> image;
   image->SetDimensions(10,10,10);
   image->SetSpacing(1.,1.,1.);
 

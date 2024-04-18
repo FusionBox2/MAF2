@@ -75,7 +75,7 @@ void mafOpTransformInterfaceTest::TestPostMultiplyEventMatrix()
 //----------------------------------------------------------------------------
 {
   mafSmartPointer<mafVMESurface> input;
-  vtkMAFSmartPointer<vtkCubeSource> cube;
+  vtkNew<vtkCubeSource> cube;
   cube->Update();
 
   input->SetData(cube->GetOutput(),0.0);
@@ -117,7 +117,7 @@ void mafOpTransformInterfaceTest::TestOpDo()
 //----------------------------------------------------------------------------
 {
   mafSmartPointer<mafVMESurface> input;
-  vtkMAFSmartPointer<vtkCubeSource> cube;
+  vtkNew<vtkCubeSource> cube;
   cube->Update();
 
   input->SetData(cube->GetOutput(),0.0);

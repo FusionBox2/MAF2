@@ -64,10 +64,10 @@ int main()
   root->SetName("ROOT");
 
   // create windows
-  vtkMAFSmartPointer<vtkRenderer> renderer;
-  vtkMAFSmartPointer<vtkRenderWindow> renWin;
+  vtkNew<vtkRenderer> renderer;
+  vtkNew<vtkRenderWindow> renWin;
   renWin->AddRenderer(renderer);
-  vtkMAFSmartPointer<vtkRenderWindowInteractor> iren = vtkRenderWindowInteractor::New();
+  vtkNew<vtkRenderWindowInteractor> iren = vtkRenderWindowInteractor::New();
   iren->SetRenderWindow(renWin);
 
   //renderer->SetBackground(0.1, 0.1, 0.1);
@@ -94,7 +94,7 @@ int main()
   box0->AddChild(box1);
   box0->AddChild(box2);
 
-  vtkMAFSmartPointer<vtkCubeSource> box_source;
+  vtkNew<vtkCubeSource> box_source;
   box_source->SetCenter(0,0,0);
   box_source->SetXLength(1);
   box_source->SetYLength(1);
@@ -319,7 +319,7 @@ int main()
     
       if (vme->IsA("mafVMERoot")) 
       {
-        vtkMAFSmartPointer<vtkAssembly> vmeasm;
+        vtkNew<vtkAssembly> vmeasm;
         mafSmartPointer<mafClientData> attr;
         attr->m_Prop3D=vmeasm;
         vme->SetAttribute("ClientData",attr);
@@ -336,11 +336,11 @@ int main()
 
         mapper->SetInput((vtkPolyData *)data);
   
-        vtkMAFSmartPointer<vtkActor> vmeact;
+        vtkNew<vtkActor> vmeact;
         vmeact->SetMapper(mapper);
         mapper->Delete();
 
-        vtkMAFSmartPointer<vtkAssembly> vmeasm;
+        vtkNew<vtkAssembly> vmeasm;
         vmeasm->AddPart(vmeact);
 
         vmeasm->SetUserTransform(vme->GetOutput()->GetTransform()->GetVTKTransform());
