@@ -29,7 +29,7 @@
 #include "mafEventInteraction.h"
 #include "mafInteractor6DOF.h"
 #include "mafInteractor6DOFTest.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafDeviceButtonsPadTracker.h"
 
 //----------------------------------------------------------------------------

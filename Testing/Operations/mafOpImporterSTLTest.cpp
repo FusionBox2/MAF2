@@ -35,7 +35,7 @@
 #include "mafNodeIterator.h"
 #include "mafVMESurface.h"
 #include "mafSmartPointer.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkDataSet.h"
 

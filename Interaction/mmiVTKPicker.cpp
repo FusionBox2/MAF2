@@ -23,7 +23,7 @@
 #include "mafEvent.h"
 #include "mafEventInteraction.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkCamera.h"
 #include "vtkPointPicker.h"
 #include "vtkCellPicker.h"

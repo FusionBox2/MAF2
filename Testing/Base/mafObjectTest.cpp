@@ -27,7 +27,7 @@
 
 #include "mafObject.h"
 #include "mafObjectTest.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafString.h"
 
 

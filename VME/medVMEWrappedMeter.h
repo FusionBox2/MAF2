@@ -23,7 +23,7 @@
 #include "medVMEOutputWrappedMeter.h"
 #include "mafEvent.h"
 #include "mafVMESurfaceParametric.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPlane.h"
 #include "vtkPlaneSource.h"
 #include "vtkCutter.h"

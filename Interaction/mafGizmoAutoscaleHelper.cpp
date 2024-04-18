@@ -33,7 +33,7 @@
 #include <assert.h>
 
 #include "vtkActor.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkDataSet.h"
 
 #include "mafVME.h"

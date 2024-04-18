@@ -31,7 +31,7 @@
 #include "mafVME.h"
 #include "mafVMESurface.h"
 #include "mafSmartPointer.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafFilesDirs.h"
 
 #include "vtkPLYReader.h"

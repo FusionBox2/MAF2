@@ -30,7 +30,7 @@
 #include "mafVMEOutputSurface.h"
 #include "mafAbsMatrixPipe.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkFeatureEdges.h"
 #include "vtkDataArray.h"

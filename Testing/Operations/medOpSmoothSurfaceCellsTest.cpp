@@ -28,7 +28,7 @@
 #include "mafVMESurface.h"
 #include "mafVMEVolumeGray.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkSphereSource.h"
 #include "vtkDataSet.h"
 #include "vtkPolyData.h"

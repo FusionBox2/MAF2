@@ -30,7 +30,7 @@
 #include "vtkPoints.h"
 #include "vtkCellArray.h"
 #include "vtkPointData.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 //-----------------------------------------------------------
 void vtkMEDErythrocyteSourceTest::TestDynamicAllocation() 

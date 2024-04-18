@@ -27,7 +27,7 @@
 
 #include "mafMatrixInterpolator.h"
 #include "mafDataPipe.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafSmartPointer.h"
 #include "mafVMESurface.h"
 #include "mafOBB.h"

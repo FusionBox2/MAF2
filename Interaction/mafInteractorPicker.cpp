@@ -40,7 +40,7 @@
 #include "mafVME.h"
 #include "mafTransform.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkCellPicker.h"
 #include "vtkMAFRayCast3DPicker.h"
 #include "vtkObjectFactory.h"

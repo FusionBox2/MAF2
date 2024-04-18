@@ -19,7 +19,7 @@
 
 #include "mafAgent.h"
 #include "mafString.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkRenderer.h"
 #include "vtkProp3D.h"
 

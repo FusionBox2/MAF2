@@ -29,7 +29,7 @@
 #include "medVMEPolylineGraph.h"
 #include "mafVMESurface.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkSphereSource.h"
 #include "vtkDataSet.h"
 #include "vtkCellData.h"

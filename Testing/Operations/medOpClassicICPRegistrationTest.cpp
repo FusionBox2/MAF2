@@ -31,7 +31,7 @@
 #include "mafVMELandmarkCloud.h"
 #include "mafSmartPointer.h"
 #include "mafAbsMatrixPipe.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "medOpImporterVTK.h"
 
 #include <string>

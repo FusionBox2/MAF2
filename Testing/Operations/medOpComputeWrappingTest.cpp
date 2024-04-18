@@ -27,7 +27,7 @@
 
 #include "mafVMEVolumeGray.h"
 #include "medVMEComputeWrapping.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafSmartPointer.h"
 
 #include <string>

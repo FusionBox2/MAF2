@@ -22,7 +22,7 @@
 #include "mafVME.h"
 #include "mafEventInteraction.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMath.h"
 #include "vtkLine.h"
 #include "vtkPolyData.h"

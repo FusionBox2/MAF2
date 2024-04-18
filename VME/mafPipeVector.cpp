@@ -34,7 +34,7 @@
 
 #include "mafEventSender.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFAssembly.h"
 
 #include "vtkAppendPolyData.h"

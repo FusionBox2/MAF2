@@ -28,7 +28,7 @@
 #include "vtkDicomUnPackerTest.h"
 
 #include "mafString.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkDirectory.h"
 #include "vtkImageData.h"

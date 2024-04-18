@@ -22,7 +22,7 @@
 //----------------------------------------------------------------------------
 #include "mafVME.h"
 #include "mafEvent.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPointSet.h"
 #include "Eigen/Dense"
 #include "mafVMEEllipsoid.h"

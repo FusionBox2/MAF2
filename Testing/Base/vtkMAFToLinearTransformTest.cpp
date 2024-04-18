@@ -30,7 +30,7 @@
 #include "mafTransform.h"
 
 #include "vtkMAFToLinearTransform.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkLinearTransform.h"
 #include <iostream>

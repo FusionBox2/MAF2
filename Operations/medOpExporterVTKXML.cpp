@@ -27,7 +27,7 @@
 
 #include "mafDecl.h"
 #include "mafGUI.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafVMELandmark.h"
 #include "mafVMERoot.h"

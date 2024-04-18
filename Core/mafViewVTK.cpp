@@ -47,7 +47,7 @@
 #include "mafVMELandmark.h"
 #include "mafVMERoot.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkCamera.h"
 #include "vtkTransform.h"
 #include "vtkMatrix4x4.h"

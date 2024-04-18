@@ -30,7 +30,7 @@
 #include "mafVMEGizmo.h"
 
 #include "vtkMAFAssembly.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "mafEventSender.h"
 

@@ -32,7 +32,7 @@
 
 #include "mafAbsMatrixPipe.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkDataSet.h"
 #include "vtkStructuredPoints.h"

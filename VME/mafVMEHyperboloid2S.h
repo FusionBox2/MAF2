@@ -18,7 +18,7 @@
 #include "mafTransform.h"
 #include "mafVMEOutputSurface.h"
 #include "mafObjectFactory.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 class mmaMaterial;
 class mafNode;
 class mmaMaterial;

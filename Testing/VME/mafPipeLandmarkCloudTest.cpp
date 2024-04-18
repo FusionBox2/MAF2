@@ -33,7 +33,7 @@
 #include "mafSceneNode.h"
 #include "mmaMaterial.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFAssembly.h"
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"

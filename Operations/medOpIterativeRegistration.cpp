@@ -36,7 +36,7 @@
 #include "mafVMELandmarkCloud.h" 
 //#include "mflMatrixPipeDirectCinematic.h"
 #include "mafAbsMatrixPipe.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafVMELandmark.h"
 #include "mafTransform.h"
 

@@ -28,7 +28,7 @@
 
 #include "mafVMEImage.h"
 #include "mafVMEVolumeGray.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkDataSetReader.h"
 #include "vtkImageData.h"

@@ -30,7 +30,7 @@
 #include "mafMatrix.h"
 #include "mafTransform.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkDataSet.h"
 #include "vtkCubeSource.h"
 #include "vtkSphereSource.h"

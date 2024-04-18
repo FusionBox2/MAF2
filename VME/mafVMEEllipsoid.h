@@ -17,7 +17,7 @@
 #include "mafTransform.h"
 #include "mafVMEOutputSurface.h"
 #include "mafObjectFactory.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafVMELandmarkCloud.h"
 class mmaMaterial;
 class mafNode;

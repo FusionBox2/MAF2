@@ -31,7 +31,7 @@
 #include "mafVMEStorage.h"
 #include "mafVMERoot.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPolyData.h"
 //#include "vtkdataSet.h"
 

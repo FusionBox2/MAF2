@@ -33,7 +33,7 @@
 #include "mafVMERoot.h"
 #include "mafNode.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMapper.h"
 #include "vtkDataSetMapper.h"
 #include "vtkPolyDataReader.h"

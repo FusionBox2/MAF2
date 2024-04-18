@@ -35,7 +35,7 @@
 #include "mafVMEScalar.h"
 #include "mafVMEOutputScalar.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFAssembly.h"
 #include "vtkRenderer.h"
 

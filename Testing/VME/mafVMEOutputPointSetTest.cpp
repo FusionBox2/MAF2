@@ -34,7 +34,7 @@
 #include "vtkPointSet.h"
 #include "mmaMaterial.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPolyData.h"
 
 #include <iostream>

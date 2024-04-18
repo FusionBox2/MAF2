@@ -31,7 +31,7 @@
 #include "mafVME.h"
 #include "mafVMEOutputVolume.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFAssembly.h"
 #include "vtkDataSet.h"
 #include "vtkActor.h"

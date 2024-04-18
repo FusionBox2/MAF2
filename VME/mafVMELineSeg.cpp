@@ -41,7 +41,7 @@
 #include "mafVMEOutputPolyline.h"
 #include "mafDataPipeCustom.h"
 #include "wx/string.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPolyData.h"
 #include "vtkLine.h"
 #include "vtkCellArray.h"

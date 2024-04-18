@@ -26,7 +26,7 @@
 #include "mafOpCreateGroupTest.h"
 
 #include "mafOpCreateGroup.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafVMESurface.h"
 #include "vtkPolyDataReader.h"
 

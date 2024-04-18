@@ -31,7 +31,7 @@
 #include "mafVMEOutputSurface.h"
 #include "mafTransformBase.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkSTLWriter.h"
 #include "vtkTriangleFilter.h"
 #include "vtkTransformPolyDataFilter.h"

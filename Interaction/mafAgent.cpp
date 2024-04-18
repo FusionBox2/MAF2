@@ -19,7 +19,7 @@ Version:   $Revision: 1.10 $
 #include "vtkCallbackCommand.h"
 #include "vtkOldStyleCallbackCommand.h"
 #include "vtkObject.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #endif
 
 

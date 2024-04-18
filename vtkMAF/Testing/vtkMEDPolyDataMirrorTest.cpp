@@ -25,7 +25,7 @@
 #include "vtkMEDPolyDataMirror.h"
 #include "vtkMEDPolyDataMirrorTest.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafString.h"
 #include "vtkSphereSource.h"
 #include "vtkLookupTable.h"

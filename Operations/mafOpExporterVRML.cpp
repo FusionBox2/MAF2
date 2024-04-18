@@ -27,7 +27,7 @@
 #include "mafDecl.h"
 #include "mafGUI.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafVMELandmark.h"
 #include "mafVMERoot.h"
@@ -39,7 +39,7 @@
 #include "mafTransformBase.h"
 #include "mmaMaterial.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkVRMLExporter.h"
 #include "vtkPolyDataMapper.h" 
 #include "vtkActor.h"

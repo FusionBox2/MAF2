@@ -34,7 +34,7 @@
 #include "mafGUI.h"
 #include "mmaMaterial.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFDataPipe.h"
 #include "vtkTransform.h"
 #include "vtkObjectFactory.h"

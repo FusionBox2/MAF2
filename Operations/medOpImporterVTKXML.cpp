@@ -48,7 +48,7 @@
 #include "vtkXMLUnstructuredGridReader.h"
 #include "vtkCallbackCommand.h"
 #include "vtkXMLStructuredGridReader.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(medOpImporterVTKXML);

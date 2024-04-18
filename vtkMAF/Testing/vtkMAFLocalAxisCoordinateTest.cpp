@@ -19,7 +19,7 @@
 #include "vtkMAFLocalAxisCoordinateTest.h"
 #include "vtkMAFLocalAxisCoordinate.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkCubeSource.h"
 #include "vtkPolyData.h"

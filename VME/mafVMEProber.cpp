@@ -38,7 +38,7 @@
 #include "mafAbsMatrixPipe.h"
 
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPolyData.h"
 #include "vtkTransformPolyDataFilter.h"
 

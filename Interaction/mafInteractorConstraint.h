@@ -16,7 +16,7 @@
 #ifndef __mafInteractorConstraint_h
 #define __mafInteractorConstraint_h
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkDoubleArray.h"
 
 //----------------------------------------------------------------------------

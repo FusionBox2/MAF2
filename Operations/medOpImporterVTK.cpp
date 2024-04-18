@@ -33,7 +33,7 @@
 #include "vtkDataSet.h"
 #include "vtkDataSetReader.h"
 #include "vtkPolyDataReader.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(medOpImporterVTK);

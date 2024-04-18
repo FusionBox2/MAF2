@@ -47,7 +47,7 @@
 #include "vtkPointData.h"
 #include "vtkRectilinearGrid.h"
 #include "vtkLegendBoxActor.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(medPipeGraph);

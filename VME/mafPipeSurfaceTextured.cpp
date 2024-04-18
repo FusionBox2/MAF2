@@ -39,7 +39,7 @@
 #include "wx/busyinfo.h"
 
 #include <ctime>
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFAssembly.h"
 #include "vtkPointData.h"
 #include "vtkImageData.h"

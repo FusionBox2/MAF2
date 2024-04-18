@@ -38,7 +38,7 @@
 #include "mafDataVector.h"
 #include "mafNodeManager.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(mafOpImporterMSF);

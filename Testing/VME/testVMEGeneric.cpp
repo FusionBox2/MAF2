@@ -12,7 +12,7 @@
 #include "mafTagItem.h"
 #include "mafStorageElement.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkActor.h"
 #include "vtkAssembly.h"
 #include "vtkRenderer.h"

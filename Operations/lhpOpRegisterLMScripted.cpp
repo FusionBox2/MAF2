@@ -38,7 +38,7 @@
 #include "mafSmartPointer.h"
 #include "mafVMELandmark.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafMatrixVector.h"
 #include "mafAbsMatrixPipe.h"
 

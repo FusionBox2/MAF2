@@ -32,7 +32,7 @@
 #include "mafNode.h"
 #include "mafOpImporterVTK.h"
 #include "mafSmartPointer.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkRectilinearGrid.h"
 #include "vtkDataArray.h"

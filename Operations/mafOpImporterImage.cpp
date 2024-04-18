@@ -32,7 +32,7 @@
 #include "mafVMEImage.h"
 #include "mafVMEItem.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkImageData.h"
 #include "vtkBMPReader.h"
 #include "vtkJPEGReader.h"

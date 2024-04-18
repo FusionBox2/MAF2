@@ -40,7 +40,7 @@
 
 #include <assert.h>
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFDataPipe.h"
 #include "vtkDataSet.h"
 #include "vtkDataSetWriter.h"

@@ -7,7 +7,7 @@
 
 #include "mafDefines.h" 
 #include "mafPointCloud.hpp"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 //#include "../DataElementInfoPanel.hpp"
 #include <wx/xml/xml.h>
 #include <vtkGlyph3D.h>

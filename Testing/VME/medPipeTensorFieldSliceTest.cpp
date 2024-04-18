@@ -40,7 +40,7 @@
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFAssembly.h"
 
 #include "vtkJPEGWriter.h"

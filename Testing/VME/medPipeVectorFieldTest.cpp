@@ -42,7 +42,7 @@
 #include "vtkRenderWindowInteractor.h"
 #include "vtkStructuredPoints.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFAssembly.h"
 
 #include <iostream>

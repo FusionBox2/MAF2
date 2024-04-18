@@ -30,7 +30,7 @@
 #include "mafVMEVolumeGray.h"
 #include "mmaVolumeMaterial.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "mafMatrix.h"
 #include "vtkImageData.h"

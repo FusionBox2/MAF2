@@ -31,7 +31,7 @@
 #include "medVMEPolylineGraph.h"
 #include "mafInteractorPicker.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPolyData.h"
 #include "vtkMath.h"
 #include "vtkPointData.h"

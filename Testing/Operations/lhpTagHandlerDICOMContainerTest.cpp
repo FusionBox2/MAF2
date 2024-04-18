@@ -26,7 +26,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "mafVMESurface.h"
 #include "mafTagArray.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkSphereSource.h"
 
 //----------------------------------------------------

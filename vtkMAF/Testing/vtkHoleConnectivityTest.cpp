@@ -28,7 +28,7 @@
 #include "vtkHoleConnectivityTest.h"
 #include "mafString.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPolyDataReader.h"
 #include "vtkPolyDataConnectivityFilter.h"
 #include "vtkPolyData.h"

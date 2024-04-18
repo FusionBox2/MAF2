@@ -30,7 +30,7 @@
 #include "mafVMEMeshAnsysTextImporter.h"
 #include "mafParabolicMeshToLinearMeshFilter.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkUnstructuredGrid.h"
 #include "vtkUnstructuredGridWriter.h"
 #include "vtkCell.h"

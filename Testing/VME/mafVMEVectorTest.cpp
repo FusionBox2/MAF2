@@ -27,7 +27,7 @@
 #include "mafVMEVectorTest.h"
 #include "mafVMEVector.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPoints.h"
 #include "vtkCellArray.h"
 #include "vtkPolyData.h"

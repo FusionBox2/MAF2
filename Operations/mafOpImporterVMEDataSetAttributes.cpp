@@ -31,7 +31,7 @@
 #include "mafTagArray.h"
 #include "mafVME.h"
 #include "mafSmartPointer.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafVMEDataSetAttributesImporter.h"
 #include "mafVMEGeneric.h"
 

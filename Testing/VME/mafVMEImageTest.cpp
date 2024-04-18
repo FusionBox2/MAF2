@@ -37,7 +37,7 @@
 #include "mafVMEItem.h"
 #include "mafDataVector.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkAssembly.h"
 #include "vtkCubeSource.h"
 #include "vtkConeSource.h"

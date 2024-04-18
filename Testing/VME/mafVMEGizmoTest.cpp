@@ -53,7 +53,7 @@
 #include "vtkFileOutputWindow.h"
 #include "vtkPolyData.h"
 #include "vtkSmartPointer.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include <wx/dir.h>
 

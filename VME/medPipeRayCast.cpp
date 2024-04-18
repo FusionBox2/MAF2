@@ -38,7 +38,7 @@
 #include "wx/busyinfo.h"
 
 #include "vtkMAFAssembly.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkActor.h"
 #include "vtkVolume.h"
 #include "vtkDataSet.h"

@@ -23,7 +23,7 @@
 #include "vtkStructuredPoints.h"
 #include "vtkUnsignedShortArray.h"
 #include "vtkPointData.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 enum RAY_CAST_MODALITY
 {

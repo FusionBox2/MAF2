@@ -32,7 +32,7 @@
 #include "mafVMEGenericAbstract.h"
 #include "mafOpApplyTrajectory.h"
 #include "mafTransform.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #define TEST_RESULT CPPUNIT_ASSERT(result);
 

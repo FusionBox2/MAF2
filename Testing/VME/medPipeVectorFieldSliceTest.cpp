@@ -42,7 +42,7 @@
 #include "vtkStructuredPoints.h"
 #include "vtkCamera.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFAssembly.h"
 
 #include <iostream>

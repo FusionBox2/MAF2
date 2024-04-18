@@ -30,7 +30,7 @@
 
 #include "medVMEPolylineEditor.h"
 #include "mafMatrix.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkPolyData.h"
 #include "vtkCellArray.h"

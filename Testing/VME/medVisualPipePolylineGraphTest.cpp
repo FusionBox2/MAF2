@@ -32,7 +32,7 @@
 
 #include "mafVMERoot.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFAssembly.h"
 #include "vtkMapper.h"
 #include "vtkJPEGWriter.h"

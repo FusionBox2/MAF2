@@ -31,7 +31,7 @@
 #include "mafVMEVolumeGray.h"
 
 #include "vtkMAFAssembly.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkActor.h"
 #include "vtkWindowLevelLookupTable.h"

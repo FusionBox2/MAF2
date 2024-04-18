@@ -31,7 +31,7 @@
 
 #include "mafVMEGizmo.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkSphereSource.h"
 #include "vtkPolyData.h"
 

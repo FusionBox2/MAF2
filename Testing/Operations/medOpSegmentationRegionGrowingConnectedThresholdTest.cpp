@@ -28,7 +28,7 @@
 #include "medOpSegmentationRegionGrowingConnectedThreshold.h"
 #include "mafVMEVolumeGray.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkDataSetReader.h"
 #include "vtkImageCast.h"
 #include "vtkDataSetWriter.h"

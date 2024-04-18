@@ -31,7 +31,7 @@
 #include "mafVMEImage.h"
 #include "mafVMEScalar.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkImageData.h"
 #include "vtkRectilinearGrid.h"
 #include "vtkDoubleArray.h"

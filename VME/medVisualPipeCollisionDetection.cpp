@@ -29,7 +29,7 @@
 #include "mafVME.h"
 #include "mafVMEOutputSurface.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFAssembly.h"
 #include "vtkMEDCollisionDetectionFilter.h"
 #include "vtkPolyData.h"

@@ -18,7 +18,7 @@
 
 #include "vtkMAFClipSurfaceBoundingBoxTest.h"
 #include "vtkMAFClipSurfaceBoundingBox.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkSphereSource.h"
 #include "vtkPlaneSource.h"
@@ -27,7 +27,7 @@
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkActor.h"
 #include "vtkActorCollection.h"
 #include "vtkCamera.h"

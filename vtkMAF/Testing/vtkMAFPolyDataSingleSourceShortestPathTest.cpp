@@ -18,7 +18,7 @@
 
 #include "vtkMAFPolyDataSingleSourceShortestPathTest.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkActor.h"
 #include "vtkPolyDatamapper.h"

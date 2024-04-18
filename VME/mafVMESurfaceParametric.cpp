@@ -39,7 +39,7 @@
 #include "mafVMEOutputSurface.h"
 #include "mafDataPipeCustom.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPolyData.h"
 #include "vtkCellArray.h"
 #include "vtkBitArray.h"

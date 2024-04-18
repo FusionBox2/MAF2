@@ -21,7 +21,7 @@
 #include "vtkCubeSource.h"
 #include "vtkPlane.h"
 #include "vtkPolyData.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 //--------------------------------------------------
 void vtkMAFFixedCutterTest::setUp()

@@ -23,7 +23,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 
 #include "lhpVMEMeshRSScanImporter.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkUnstructuredGrid.h"
 #include "vtkCellArray.h"
 #include "vtkDoubleArray.h"

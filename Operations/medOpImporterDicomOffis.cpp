@@ -50,7 +50,7 @@ PURPOSE.  See the above copyright notice for more information.
 #include "mafMatrixPipe.h"
 
 #include "vtkMAFVolumeResample.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkDirectory.h"
 #include "vtkWindowLevelLookupTable.h"
 #include "vtkPlaneSource.h"

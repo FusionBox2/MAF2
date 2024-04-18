@@ -27,7 +27,7 @@
 #include "vtkMEDFillingHole.h"
 #include "vtkMEDFillingHoleCEdgeTest.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPolyDataReader.h"
 #include "vtkFeatureEdges.h"
 #include "vtkPolyData.h"

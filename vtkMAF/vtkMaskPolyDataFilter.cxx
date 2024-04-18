@@ -47,7 +47,7 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkCellArray.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkCellLocator.h"
 
 vtkStandardNewMacro(vtkMaskPolyDataFilter);

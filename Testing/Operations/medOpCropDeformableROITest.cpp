@@ -28,7 +28,7 @@
 #include "mafSmartPointer.h"
 #include "mafVMESurface.h"
 #include "mafVMEVolumeGray.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkDataSet.h"
 #include "vtkMaskPolyDataFilter.h"

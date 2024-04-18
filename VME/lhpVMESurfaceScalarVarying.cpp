@@ -43,7 +43,7 @@
 #include "mafAbsMatrixPipe.h"
 #include "mafVMEOutputScalarMatrix.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkDataSet.h"
 #include "vtkPolyData.h"
 #include "vtkPointData.h"

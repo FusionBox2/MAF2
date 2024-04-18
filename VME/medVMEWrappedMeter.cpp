@@ -36,7 +36,7 @@
 #include "mmuIdFactory.h"
 #include "mafGUI.h"
 #include "mafAbsMatrixPipe.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkMAFDataPipe.h"
 #include "vtkMath.h"

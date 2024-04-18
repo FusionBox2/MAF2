@@ -27,7 +27,7 @@
 #include "mafVMEPolylineTest.h"
 
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafVMEPolyline.h"
 #include "mafVMEOutputPolyline.h"
 #include "vtkPoints.h"

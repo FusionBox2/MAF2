@@ -46,7 +46,7 @@
 #include "mafTransformFrame.h"
 #include "mafInteractorGenericMouse.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFVolumeResample.h"
 #include "vtkOutlineSource.h"
 #include "vtkProperty.h"

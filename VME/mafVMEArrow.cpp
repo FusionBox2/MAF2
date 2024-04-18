@@ -38,7 +38,7 @@
 #include "mafJointAnalysis.h"
 #include "mafVectors.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkObjectFactory.h"
 #include "vtkPolyData.h"
 #include "vtkArrowSource.h"

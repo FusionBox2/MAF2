@@ -26,7 +26,7 @@
 #include "medVMEPolylineEditorTest.h"
 #include "medVMEPolylineEditor.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkSphereSource.h"
 #include "vtkPolyData.h"
 #include "vtkPoints.h"

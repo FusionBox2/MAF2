@@ -7,7 +7,7 @@
 #include "mafDefines.h" 
 #include <vtkLineSource.h>
 #include "mafdmLineSegment.hpp"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 //#include "../DataElementInfoPanel.hpp"
 #include <wx/xml/xml.h>
 

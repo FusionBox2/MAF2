@@ -29,7 +29,7 @@
 #include "mafVMEOutputVTK.h"
 #include "mafVMEGeneric.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkImageData.h"
 
 #define TEST_RESULT CPPUNIT_ASSERT(m_Result)

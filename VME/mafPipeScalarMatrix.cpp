@@ -35,7 +35,7 @@
 #include "mafTagItem.h"
 #include "mafTagArray.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFAssembly.h"
 #include "vtkRenderer.h"
 

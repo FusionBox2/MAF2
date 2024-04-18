@@ -42,7 +42,7 @@
 #include "../BES_Beta/vtkMAF/vtkMAFLargeDataSetCallback.h"
 #endif // VME_VOLUME_LARGE
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkRenderer.h"
 #include "vtkImageReader.h"
 #include "vtkImageData.h"

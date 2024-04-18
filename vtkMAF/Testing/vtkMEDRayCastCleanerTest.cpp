@@ -27,7 +27,7 @@
 #include "vtkMEDRayCastCleaner.h"
 #include "vtkMEDRayCastCleanerTest.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkStructuredPointsReader.h"
 #include "vtkStructuredPointsWriter.h"
 #include "vtkStructuredPoints.h"

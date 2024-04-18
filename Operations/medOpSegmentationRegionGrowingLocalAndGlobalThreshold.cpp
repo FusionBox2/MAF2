@@ -38,7 +38,7 @@
 #include "mafEventInteraction.h"
 
 #include "vtkMath.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMEDRegionGrowingLocalGlobalThreshold.h"
 #include "vtkImageData.h"
 #include "vtkPointData.h"

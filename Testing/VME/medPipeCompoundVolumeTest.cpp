@@ -29,7 +29,7 @@
 #include "medGUIDynamicVP.h"
 
 #include "mafVMEVolumeGray.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkImageData.h"
 #include "vtkPointData.h"
 #include "vtkFloatArray.h"

@@ -31,7 +31,7 @@
 #include "mafGizmoPath.h"
 #include "mafVMERoot.h"
 #include "mafSmartPointer.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafVMEOutputPolyline.h"
 #include "vtkPoints.h"
 #include "vtkCellArray.h"

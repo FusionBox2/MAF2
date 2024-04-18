@@ -101,7 +101,7 @@ const int BOUND_1=1;
 #include "vtkProperty2D.h"
 #include "vtkOutlineFilter.h"
 #include "vtkSphereSource.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkTextSource.h"
 #include "vtkCaptionActor2D.h"
 

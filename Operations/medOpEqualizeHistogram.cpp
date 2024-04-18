@@ -31,7 +31,7 @@
 #include "mafVMEVolumeGray.h"
 #include "medOpVolumeResample.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFHistogram.h"
 #include "vtkImageData.h"
 #include "vtkImageCast.h"

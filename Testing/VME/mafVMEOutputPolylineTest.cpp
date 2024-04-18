@@ -30,7 +30,7 @@
 #include "mafVMEPolyline.h"
 #include "mmaMaterial.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkDataSet.h"
 #include "vtkPoints.h"
 #include "vtkCellArray.h"

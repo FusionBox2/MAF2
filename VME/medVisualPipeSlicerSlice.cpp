@@ -38,7 +38,7 @@
 #include "mafVMEOutputPointSet.h"
 #include "mafEventSender.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFAssembly.h"
 #include "vtkRenderer.h"
 #include "vtkOutlineCornerFilter.h"

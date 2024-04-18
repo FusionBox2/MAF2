@@ -17,7 +17,7 @@ See the COPYINGS file for license details
 #include "vtkObjectFactory.h"
 #include "vtkCleanPolyData.h"
 #include "vtkPolyData.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkCellArray.h"
 #include "vtkMath.h"
 #include "vtkPolyLine.h"

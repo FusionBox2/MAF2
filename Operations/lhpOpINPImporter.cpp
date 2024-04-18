@@ -32,7 +32,7 @@
 #include "mafVMEGroup.h"
 #include "mafTagArray.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPolyData.h"
 
 //----------------------------------------------------------------------------

@@ -29,7 +29,7 @@
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"
 #include "vtkRenderWindowInteractor.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkActor.h"
 #include "vtkSphereSource.h"
 #include "vtkPolyDataMapper.h"

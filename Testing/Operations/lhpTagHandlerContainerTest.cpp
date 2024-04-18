@@ -35,7 +35,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "mafMatrixVector.h"
 #include "mafUser.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkSphereSource.h"
 #include "vtkDataSet.h"
 

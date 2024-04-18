@@ -37,7 +37,7 @@
 #include "vtkPointData.h"
 #include "vtkMatrixToLinearTransform.h"
 #include "vtkTransform.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkCellArray.h"
 #include "vtkStructuredGrid.h"
 vtkStandardNewMacro(vtkMEDCollisionDetectionFilter);

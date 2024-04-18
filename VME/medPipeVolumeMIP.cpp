@@ -35,7 +35,7 @@
 #include "mmaVolumeMaterial.h"
 
 #include "vtkMAFAssembly.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkImageData.h"
 #include "vtkImageCast.h"
 #include "vtkPiecewiseFunction.h"

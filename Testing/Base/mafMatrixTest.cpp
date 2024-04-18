@@ -29,7 +29,7 @@
 #include "mafMatrix.h"
 #include "mafSmartPointer.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMatrix4x4.h"
 
 #include <iostream>

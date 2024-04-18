@@ -44,7 +44,7 @@
 #include "vtkImageCast.h"
 #include "vtkImageData.h"
 #include "vtkMEDVolumeToClosedSmoothSurface.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
 #include "vtkPolyDataConnectivityFilter.h"

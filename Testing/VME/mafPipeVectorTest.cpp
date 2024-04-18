@@ -46,7 +46,7 @@
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
 #include "vtkCamera.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 // render window stuff
 #include "vtkRenderer.h"

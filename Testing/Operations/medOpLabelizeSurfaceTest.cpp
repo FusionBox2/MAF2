@@ -29,7 +29,7 @@
 #include "mafVMESurface.h"
 #include "mafString.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPolyData.h"
 #include "vtkPlaneSource.h"
 #include "vtkPolyDataReader.h"

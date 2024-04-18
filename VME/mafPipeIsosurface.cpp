@@ -38,7 +38,7 @@
 #include "mafEventSender.h"
 
 #include "vtkMAFAssembly.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkProperty.h"
 #include "vtkActor.h"
 #include "vtkVolume.h"

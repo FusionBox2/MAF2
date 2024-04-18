@@ -33,7 +33,7 @@
 
 #include "mafNode.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkLookupTable.h"
 #include "vtkPiecewiseFunction.h"
 #include "vtkColorTransferFunction.h"

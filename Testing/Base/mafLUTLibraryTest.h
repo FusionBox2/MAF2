@@ -29,7 +29,7 @@ using namespace std;
 
 #include "mafLUTLibrary.h"
 #include "mafString.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkLookupTable.h"
 
 class mafLUTLibraryTest : public CPPUNIT_NS::TestFixture

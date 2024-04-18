@@ -27,7 +27,7 @@
 
 #include "mafVMESurface.h"
 #include "mafVMEGroup.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafSmartPointer.h"
 #include "medOpImporterVTK.h"
 #include "mafTagItem.h"

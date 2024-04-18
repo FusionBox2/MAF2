@@ -16,7 +16,7 @@
 
 
 #include "vtkMEDBinaryImageFloodFill.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"

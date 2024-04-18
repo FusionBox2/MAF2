@@ -22,7 +22,7 @@
 
 #include "vtkPolyData.h"
 #include "vtkDataSet.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkSphereSource.h"
 
 enum VME_ITEM_WRITE_MODALITIY {DEFAULT,TMP_FILE,MEMORY};

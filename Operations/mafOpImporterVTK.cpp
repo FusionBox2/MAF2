@@ -38,7 +38,7 @@
 #include "mafVMEMesh.h"
 
 #include "mafTagArray.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkDataSet.h"
 #include "vtkDataSetReader.h"

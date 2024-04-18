@@ -36,7 +36,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "vtkUnstructuredGridWriter.h"
 #include "vtkUnstructuredGrid.h"
 #include "vtkDirectory.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkDataSet.h"
 #include "vtkRectilinearGrid.h"
 #include "vtkRectilinearGridReader.h"

@@ -18,7 +18,7 @@
 
 #include "vtkMAFProjectSPTest.h"
 #include "vtkMAFProjectSP.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkImageData.h"
 #include "vtkStructuredPoints.h"

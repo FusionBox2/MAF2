@@ -33,7 +33,7 @@
 #include "vtkPointData.h"
 #include "medGizmoInteractionDebugger.h"
 #include "medVMEPolylineGraph.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkDoubleArray.h"
 #include "vtkPoints.h"
 #include "vtkPolyData.h"

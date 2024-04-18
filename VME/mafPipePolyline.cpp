@@ -58,7 +58,7 @@
 #include "vtkScalarBarActor.h"
 #include "vtkColorTransferFunction.h"
 #include "vtkCardinalSpline.h" 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPoints.h"
 #include "vtkCellArray.h" 
 #include "vtkFloatArray.h"

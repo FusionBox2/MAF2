@@ -31,7 +31,7 @@
 #include "mafGUI.h"
 #include "mafJointAnalysis.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafMatrixVector.h"
 #include "mafAbsMatrixPipe.h"
 

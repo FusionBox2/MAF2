@@ -55,7 +55,7 @@
 #include "mafEventInteraction.h"
 #include "mafEvent.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkRenderWindow.h"
 #include "vtkRenderer.h"
 #include "vtkCamera.h"

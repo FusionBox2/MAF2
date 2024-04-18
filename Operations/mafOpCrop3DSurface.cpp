@@ -35,7 +35,7 @@
 #include "mafVMESurfaceParametric.h"
 #include "mafVMESurface.h"
 #include "vtkMAFDistanceFilter.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPolyData.h"
 #include "vtkRectilinearGrid.h"
 #include "vtkStructuredPoints.h"

@@ -24,7 +24,7 @@
 #include "mafEvent.h"
 #include "mafGUI.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "lhpOpICPRegFollow.h"
 

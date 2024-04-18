@@ -37,7 +37,7 @@
 #include "mafIndent.h"
 #include "mafNode.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkProperty.h"
 #include "vtkTexturedSphereSource.h"
 #include "vtkTexture.h"

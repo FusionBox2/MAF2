@@ -33,7 +33,7 @@
 #include "mafEventBase.h"
 #include "mafString.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include <iostream>
 #include <utility>

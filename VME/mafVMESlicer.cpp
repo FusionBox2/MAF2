@@ -36,7 +36,7 @@
 #include "mafVMEVolume.h"
 #include "mafVMEOutputSurface.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFDataPipe.h"
 #include "vtkMath.h"
 #include "vtkImageData.h"

@@ -17,7 +17,7 @@
 #include <cppunit/config/SourcePrefix.h>
 #include "vtkMAFRGSliceAccumulateTest.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFRGSliceAccumulate.h"
 #include "vtkImageData.h"
 #include "vtkFloatArray.h"

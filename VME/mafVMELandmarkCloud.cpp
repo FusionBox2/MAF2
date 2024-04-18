@@ -39,7 +39,7 @@ const bool DEBUG_MODE = false;
 #include "mmaMaterial.h"
 #include "mafNodeIterator.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPolyData.h"
 #include "vtkCellArray.h"
 #include "vtkBitArray.h"

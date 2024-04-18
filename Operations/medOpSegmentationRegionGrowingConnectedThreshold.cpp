@@ -42,7 +42,7 @@
 #include "itkImage.h"
 #include "itkImageToVTKImageFilter.h"
 #include "itkConnectedThresholdImageFilter.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkImageToStructuredPoints.h"
 #include "medOpVolumeResample.h"
 #include "vtkRectilinearGrid.h"

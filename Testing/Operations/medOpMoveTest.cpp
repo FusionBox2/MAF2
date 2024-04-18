@@ -28,7 +28,7 @@
 #include "mafVMEVolumeGray.h"
 #include "medVMEPolylineGraph.h"
 #include "mafVMESurface.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafVMERoot.h"
 #include "mafVME.h"
 #include "mafVMEExternalData.h"

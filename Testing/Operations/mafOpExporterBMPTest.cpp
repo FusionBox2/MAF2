@@ -37,7 +37,7 @@
 #include "mafVMEOutputSurface.h"
 
 #include "vtkImageMathematics.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkImageData.h"
 #include "vtkStructuredPoints.h"
 #include "vtkPointData.h"

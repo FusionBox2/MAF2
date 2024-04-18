@@ -34,7 +34,7 @@
 #include "mafInteractorGenericMouse.h"
 #include "mafTransform.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkCubeSource.h"
 #include "vtkPolyData.h"
 

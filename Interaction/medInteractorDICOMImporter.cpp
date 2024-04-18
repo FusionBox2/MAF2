@@ -24,7 +24,7 @@
 #include "mafEvent.h"
 
 #include "vtkPoints.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMath.h"
 #include "vtkRenderer.h"
 

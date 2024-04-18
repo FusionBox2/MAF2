@@ -44,7 +44,7 @@
 
 #include "mafVMEItemVTK.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFAssembly.h"
 #include "vtkMAFToLinearTransform.h"
 

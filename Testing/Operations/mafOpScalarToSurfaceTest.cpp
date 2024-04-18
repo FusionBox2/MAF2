@@ -40,7 +40,7 @@
 #include "mafVMEPolyline.h"
 #include "mafVMESurface.h"
 
-/*#include "vtkMAFSmartPointer.h"
+/*#include "vtkSmartPointer.h"
 #include "vtkPolyDataReader.h"
 #include "vtkPolyData.h"
 #include "vtkCleanPolyData.h"

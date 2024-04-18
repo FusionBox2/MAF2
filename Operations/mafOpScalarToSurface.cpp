@@ -34,7 +34,7 @@
 #include "mafVMESurface.h"
 #include "mafVMEOutputScalar.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPolyData.h"
 #include "vtkAppendPolyData.h"
 #include "vtkDelaunay2D.h"

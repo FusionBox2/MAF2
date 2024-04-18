@@ -39,7 +39,7 @@
 #include "mafVMEGeneric.h"
 #include "mafVMEOutput.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkTransform.h"
 #include "vtkPolyData.h"
 #include "vtkUnstructuredGrid.h"

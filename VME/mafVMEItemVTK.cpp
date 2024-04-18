@@ -34,7 +34,7 @@
 #include "mafCrypt.h"
 #include "mafTagArray.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkDataSet.h"
 #include "vtkPolyData.h"
 #include "vtkPolyDataReader.h"

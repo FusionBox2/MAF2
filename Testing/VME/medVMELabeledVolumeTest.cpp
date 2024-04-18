@@ -34,7 +34,7 @@
 #include "mafVMEStorage.h"
 #include "vtkStructuredPoints.h"
 #include "vtkRectilinearGrid.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPointData.h"
 #include "vtkRectilinearGridReader.h"
 

@@ -28,7 +28,7 @@
 #include "mafVME.h"
 #include "medVMESegmentationVolume.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMath.h"
 #include "vtkDataSet.h"
 #include "vtkImageData.h"

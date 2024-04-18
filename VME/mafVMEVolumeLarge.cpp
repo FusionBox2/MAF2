@@ -52,7 +52,7 @@ June 9-11, 2008, Manchester, UK, p. 1-8
 
 #include <stack>
 #include <wx/busyinfo.h>
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #if defined(_DEBUG) && defined(_WIN32)
 //#define _PROFILE_LARGEDATA_UPDATE

@@ -37,7 +37,7 @@
 
 #include "vtkDataSet.h"
 #include "vtkFloatArray.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafSmartPointer.h"
 
 #define TEST_RESULT CPPUNIT_ASSERT(result);

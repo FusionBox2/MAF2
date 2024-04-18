@@ -31,7 +31,7 @@
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkCleanPolyData.h"
 
 //----------------------------------------------------------------------------

@@ -34,7 +34,7 @@
 #include "mafVMEGroup.h"
 #include "mafMatrixVector.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPolyData.h"
 #include "vtkProperty.h"
 #include "vtkMapper.h"

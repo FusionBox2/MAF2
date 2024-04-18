@@ -26,7 +26,7 @@
 #include "vtkMEDCollisionDetectionFilter.h"
 #include "vtkMEDCollisionDetectionFilterTest.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkSphereSource.h"
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"

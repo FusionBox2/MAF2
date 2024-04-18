@@ -42,7 +42,7 @@ using namespace std;
 #include "vtkGeometryFilter.h"
 #include "vtkMAFCellLocator.h"
 #include "vtkTransformPolyDataFilter.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkTransform.h"
 

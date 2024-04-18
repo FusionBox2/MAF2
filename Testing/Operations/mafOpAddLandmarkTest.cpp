@@ -34,7 +34,7 @@
 #include "mafVMELandmark.h"
 #include "mafVMEGroup.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkDataSet.h"
 #include "vtkSphereSource.h"
 

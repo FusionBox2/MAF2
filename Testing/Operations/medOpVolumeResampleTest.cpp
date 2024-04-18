@@ -39,7 +39,7 @@ typedef medOpVolumeResample movr;
 #include "mafSmartPointer.h"
 #include "mafAbsMatrixPipe.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkDataSet.h"
 #include "vtkStructuredPoints.h"
 #include "vtkRectilinearGrid.h"

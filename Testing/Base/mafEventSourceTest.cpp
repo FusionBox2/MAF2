@@ -28,7 +28,7 @@
 
 #include "mafReferenceCounted.h"
 #include "mafEventSource.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafEvent.h"
 
 #include <iostream>

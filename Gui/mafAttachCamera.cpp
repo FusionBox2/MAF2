@@ -32,7 +32,7 @@
 #include "mafVME.h"
 #include "mafEventSender.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkTransform.h"
 #include "vtkMatrix4x4.h"
 #include "vtkCamera.h"

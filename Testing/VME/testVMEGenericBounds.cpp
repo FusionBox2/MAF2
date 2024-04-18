@@ -11,7 +11,7 @@
 //#include "mafTagItem.h"
 #include "mafOBB.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkActor.h"
 #include "vtkAssembly.h"
 #include "vtkRenderer.h"

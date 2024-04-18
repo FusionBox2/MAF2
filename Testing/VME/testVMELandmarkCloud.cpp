@@ -6,7 +6,7 @@
 #include "mafVMEOutputPointSet.h"
 #include "mafTransform.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkActor.h"
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"

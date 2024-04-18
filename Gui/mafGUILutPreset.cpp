@@ -23,7 +23,7 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 #include "mafGUILutPreset.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 void lutVolRenGreen(vtkLookupTable *lut);
 void lutVolRenGlow(vtkLookupTable *lut);

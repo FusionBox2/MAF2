@@ -40,7 +40,7 @@
 #include "mafVMEGizmo.h"
 #include "mafEventInteraction.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkProperty.h"
 #include "vtkPlaneSource.h"
 #include "vtkOutlineFilter.h"

@@ -32,7 +32,7 @@
 
 #include "lhpVMEMeshRSScanImporter.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include <fstream>
 

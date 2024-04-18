@@ -30,7 +30,7 @@
 #include <wx/tokenzr.h>
 #include <wx/wfstream.h>
 
-#include <vtkMAFSmartPointer.h>
+#include <vtkSmartPointer.h>
 #include <vtkCubeSource.h>
 #include <vtkCellArray.h>
 #include <vtkPoints.h>

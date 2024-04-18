@@ -10,7 +10,7 @@
 #include <vtkTransform.h>
 #include <vtkQuadric.h>
 //#include <vtkSphereSource.h>
-#include <vtkMAFSmartPointer.h>
+#include <vtkSmartPointer.h>
 #include <vtkTransformPolyDataFilter.h>
 #include "mafGUI.h"
 #include "mmaMaterial.h"
@@ -32,7 +32,7 @@
 #include "mafVMEOutputSurface.h"
 #include "mafDataPipeCustom.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPolyData.h"
 #include "vtkCellArray.h"
 #include "vtkBitArray.h"

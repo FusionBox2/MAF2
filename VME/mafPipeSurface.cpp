@@ -31,7 +31,7 @@
 #include "mmaMaterial.h"
 #include "mafVMESurface.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFAssembly.h"
 
 #include "vtkPointData.h"

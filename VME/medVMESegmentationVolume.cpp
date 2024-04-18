@@ -35,7 +35,7 @@
 #include "medAttributeSegmentationVolume.h"
 
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 //-------------------------------------------------------------------------
 mafCxxTypeMacro(medVMESegmentationVolume)

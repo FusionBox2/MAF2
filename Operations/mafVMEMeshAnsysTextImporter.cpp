@@ -27,7 +27,7 @@
 
 #include "mafVMEMeshAnsysTextImporter.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkUnstructuredGrid.h"
 #include "vtkCellArray.h"
 #include "vtkDoubleArray.h"

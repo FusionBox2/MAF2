@@ -31,7 +31,7 @@
 #include "vtkActor2D.h"
 #include "vtkTransform.h"
 #include "vtkMatrix4x4.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkProperty.h"
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"

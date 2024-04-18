@@ -27,7 +27,7 @@
 #include "vtkCellArray.h"
 #include "vtkCellData.h"
 #include "vtkPolyData.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkTriangleFilter.h"
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkTransform.h"

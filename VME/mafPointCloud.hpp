@@ -9,7 +9,7 @@
 #define __PointCloud_hpp
 
 #include "mafDataElement.hpp"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 
 class mafdmPointCloud : public mafDataElement

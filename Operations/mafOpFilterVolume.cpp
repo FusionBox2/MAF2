@@ -30,7 +30,7 @@
 
 #include "mafVMEVolumeGray.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkImageData.h"
 #include "vtkImageGaussianSmooth.h"
 #include "vtkImageMedian3D.h"

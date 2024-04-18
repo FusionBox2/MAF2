@@ -33,7 +33,7 @@
 #include "mafVMELandmark.h"
 #include "mafDictionary.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafMatrixVector.h"
 #include "mafAbsMatrixPipe.h"
 #include "mafNodeIterator.h"

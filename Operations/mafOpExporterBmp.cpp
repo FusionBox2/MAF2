@@ -30,7 +30,7 @@
 
 #include "mafVMEVolumeGray.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkDataSet.h"
 #include "vtkImageData.h"
 #include "vtkRectilinearGrid.h"

@@ -18,7 +18,7 @@
 
 #include "vtkMAFExtendedGlyph3DTest.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFExtendedGlyph3D.h"
 #include "vtkPoints.h"
 #include "vtkPolyData.h"

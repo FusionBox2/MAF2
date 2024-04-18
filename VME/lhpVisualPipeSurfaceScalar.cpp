@@ -31,7 +31,7 @@
 #include "lhpVMESurfaceScalarVarying.h"
 
 #include "vtkMAFAssembly.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkLookupTable.h"
 #include "vtkRenderer.h"
 #include "vtkOutlineCornerFilter.h"

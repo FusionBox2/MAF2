@@ -62,8 +62,6 @@ mafVersion.h
 mmuIdFactory.cpp
 mmuIdFactory.h
 mafUtility.h
-vtkMAFSmartPointer.h
-vtkMAFToLinearTransform.h
 mafZipUtility.cpp
 mafZipUtility.h
 
@@ -74,7 +72,6 @@ IF (MAF_USE_VTK)
     ${PROJECT_SRCS}
     vtkMAFToLinearTransform.cxx
     vtkMAFToLinearTransform.h
-    vtkMAFSmartPointer.h
   )
 ENDIF (MAF_USE_VTK)
 

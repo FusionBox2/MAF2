@@ -28,7 +28,7 @@
 #include "mafStorageElement.h"
 #include "mafIndent.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #ifdef _MSC_FULL_VER
 #pragma warning (disable: 4786)

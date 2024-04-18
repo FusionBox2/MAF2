@@ -47,7 +47,7 @@
 #include "vtkLookuptable.h"
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkCellArray.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkAlgorithmOutput.h"
 
 #include <assert.h>

@@ -35,7 +35,7 @@
 #include "mafVMEOutput.h"
 #include "mafVMEOutputPointSet.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFAssembly.h"
 #include "vtkSphereSource.h"
 #include "vtkPolyDataNormals.h"

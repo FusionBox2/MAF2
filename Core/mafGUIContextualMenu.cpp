@@ -46,7 +46,7 @@
 #include "mafVME.h"
 #include "mafVMELandmark.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkVRMLExporter.h"
 
 //----------------------------------------------------------------------------

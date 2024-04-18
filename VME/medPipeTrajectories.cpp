@@ -48,7 +48,7 @@
 #include "vtkPolyData.h"
 #include "vtkActor.h"
 #include "vtkProperty.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkProperty2D.h"
 #include "vtkCaptionActor2D.h"
 

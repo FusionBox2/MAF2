@@ -10,7 +10,7 @@
 
 #include "mafDataElement.hpp"
 #include "mafLandmark.hpp"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 class mafdmLineSegment : public mafDataElement
 {
 private:

@@ -34,7 +34,7 @@
 
 #include "vtkMatrix4x4.h"
 #include "vtkPolyData.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(lhpOpMTRULBImporter);

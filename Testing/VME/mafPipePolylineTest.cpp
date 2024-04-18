@@ -33,7 +33,7 @@
 #include "mmaMaterial.h"
 #include "vtkMAFAssembly.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkMapper.h"
 #include "vtkJPEGWriter.h"

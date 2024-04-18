@@ -34,7 +34,7 @@
 
 #include "mafASCIIImporterUtility.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPoints.h"
 #include "vtkCellArray.h"
 #include "vtkPolyDataMapper.h"

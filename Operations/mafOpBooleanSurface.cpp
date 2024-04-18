@@ -34,7 +34,7 @@
 #include "mmaMaterial.h"
 #include "mafInteractorCompositorMouse.h"
 #include "mafInteractorGenericMouse.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkPolyData.h"
 #include "vtkAppendPolyData.h"

@@ -17,7 +17,7 @@
 #include <cppunit/config/SourcePrefix.h>
 #include "vtkMAFVolumeResampleTest.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFVolumeResample.h"
 
 #include "vtkDataSet.h"

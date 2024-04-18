@@ -22,7 +22,7 @@ cloud
 //----------------------------------------------------------------------------
 #include "mafVME.h"
 #include "mafEvent.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPointSet.h"
 #include "../Eigen/Eigen/Dense"
 #include "mafVMEPlane.h"

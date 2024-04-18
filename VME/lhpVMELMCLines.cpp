@@ -29,7 +29,7 @@
 #include "mafGUI.h"
 #include "mmaMaterial.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFDataPipe.h"
 #include "vtkPolyData.h"
 #include "vtkCardinalSpline.h"

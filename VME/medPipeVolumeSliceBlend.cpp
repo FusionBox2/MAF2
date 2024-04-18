@@ -33,7 +33,7 @@
 #include "mafVMEOutputVolume.h"
 #include "mafGUIFloatSlider.h"
 #include "mafLODActor.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFAssembly.h"
 #include "vtkMath.h"
 #include "vtkPointData.h"

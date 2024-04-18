@@ -31,7 +31,7 @@
 #include "mafVMERoot.h"
 #include "mafVMEVolumeGray.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkStructuredPoints.h"
 #include "vtkPointData.h"
 #include "vtkDoubleArray.h"

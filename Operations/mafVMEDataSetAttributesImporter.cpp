@@ -29,7 +29,7 @@ const int DEBUG_MODE = false;
 #include "vtkMath.h"
 #include "vtkObjectFactory.h"
 #include "vtkDataSet.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPointData.h"
 #include "vtkCellData.h"
 #include "vtkUnstructuredGrid.h"

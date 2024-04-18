@@ -23,7 +23,7 @@
 
 #include "mafSmartPointer.h"
 #include "mafVME.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafVMEGroup.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafVMELandmark.h"
@@ -35,7 +35,7 @@
 #include <vtkCubeSource.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkTransform.h>
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkCellArray.h"
 #include <vtkPoints.h>
 #include <vtkPolyData.h>

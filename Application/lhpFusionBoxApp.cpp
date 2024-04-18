@@ -225,7 +225,7 @@
 #include "lhpOpImporterRSScan.h"
 #include "lhpOpCutSurface.h"
 #include "vtkUnstructuredGrid.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkTransformFilter.h"
 #include "vtkStructuredPoints.h"
 

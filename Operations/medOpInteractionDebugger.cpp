@@ -36,12 +36,12 @@
 #include "mafVME.h"
 
 #include "mafVMEMeshAnsysTextImporter.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include <fstream>
 
 // new stuff
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafVMEPolyline.h"
 #include "mafVMEOutputPolyline.h"
 #include "vtkPoints.h"

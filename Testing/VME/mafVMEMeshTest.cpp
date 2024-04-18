@@ -29,7 +29,7 @@
 
 #include "mafVMEGeneric.h"
 #include "mafVMEMesh.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkConeSource.h"
 #include "vtkPoints.h"

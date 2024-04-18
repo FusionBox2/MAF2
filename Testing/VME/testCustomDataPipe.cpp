@@ -5,7 +5,7 @@
 #include "mafVMEOutputSurface.h"
 #include "mafTransform.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFDataPipe.h"
 #include "vtkActor.h"
 #include "vtkRenderer.h"

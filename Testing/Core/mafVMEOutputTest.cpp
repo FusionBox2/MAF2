@@ -35,7 +35,7 @@
 #include "mafMatrix.h"
 #include "mafSmartPointer.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPolyDataReader.h"
 #include "vtkDataSet.h"
 

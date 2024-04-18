@@ -38,7 +38,7 @@
 #include "vtkPoints.h"
 #include "vtkMath.h"
 #include "vtkDelaunay3D.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include <iostream>
 

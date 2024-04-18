@@ -44,7 +44,7 @@
 #include "vtkPolyData.h"
 #include "mafTransformBase.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkTriangleFilter.h"
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkTransform.h"

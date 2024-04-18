@@ -38,7 +38,7 @@
 #include "vtkPolyDataMapper.h"
 
 #include "vtkSphereSource.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPolyData.h"
 #include "vtkDataSet.h"
 

@@ -27,7 +27,7 @@
 
 #include "mafVMEVolumeGray.h"
 #include "medVMELabeledVolume.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafSmartPointer.h"
 
 #include "vtkCharArray.h"

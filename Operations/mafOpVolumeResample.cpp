@@ -39,7 +39,7 @@
 #include "mafTransform.h"
 #include "mafTransformFrame.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFVolumeResample.h"
 #include "vtkOutlineSource.h"
 #include "vtkProperty.h"

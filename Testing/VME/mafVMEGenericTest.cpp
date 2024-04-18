@@ -40,7 +40,7 @@
 
 
 #include "vtkPointData.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkRectilinearGrid.h"
 #include "vtkImageData.h"
 #include "vtkDoubleArray.h"

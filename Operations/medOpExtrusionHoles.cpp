@@ -32,7 +32,7 @@
 #include "mmiSelectPoint.h"
 #include "mafVMESurface.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkRenderWindow.h"
 #include "vtkHoleConnectivity.h"

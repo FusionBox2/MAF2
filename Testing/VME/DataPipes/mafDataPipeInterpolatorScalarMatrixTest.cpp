@@ -27,7 +27,7 @@
 
 #include "mafDataPipeInterpolatorScalarMatrix.h"
 #include "mafDataPipe.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "mafSmartPointer.h"
 #include "mafVMEScalarMatrix.h"
 #include "mafOBB.h"

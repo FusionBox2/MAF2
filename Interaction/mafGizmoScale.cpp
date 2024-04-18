@@ -37,7 +37,7 @@ PURPOSE.  See the above copyright notice for more information.
 #include "mafInteractorGenericMouse.h"
 
 // vtk includes
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkTransform.h"
 #include "vtkMath.h"
 

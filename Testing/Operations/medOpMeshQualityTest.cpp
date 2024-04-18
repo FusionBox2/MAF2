@@ -32,7 +32,7 @@
 #include "vtkPolyData.h"
 #include "vtkTriangleQualityRatio.h"
 #include "vtkPolyDataReader.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include <string>
 #include <assert.h>

@@ -30,7 +30,7 @@
 
 #include "vtkDirectory.h"
 #include "vtkLookupTable.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include <iostream>
 #include <fstream>

@@ -29,7 +29,7 @@
 #include "mafVMEMesh.h"
 #include "mafVMEMeshAnsysTextExporter.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkUnstructuredGrid.h"
 #include "vtkUnstructuredGridWriter.h"
 #include "vtkCell.h"

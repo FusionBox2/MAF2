@@ -30,7 +30,7 @@
 #include "mafVMELandmarkCloud.h"
 #include "mafVMELandmark.h"
 #include "mafOpExplodeCollapse.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #define TEST_RESULT CPPUNIT_ASSERT(result);
 

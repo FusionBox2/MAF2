@@ -27,7 +27,7 @@
 
 #include "mafVMEPointSet.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPolyData.h"
 #include "vtkPoints.h"
 #include "vtkCellArray.h"

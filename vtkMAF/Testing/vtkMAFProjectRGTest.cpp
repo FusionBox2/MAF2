@@ -18,7 +18,7 @@
 
 #include "vtkMAFProjectRGTest.h"
 #include "vtkMAFProjectRG.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkPointData.h"
 #include "vtkFloatArray.h"

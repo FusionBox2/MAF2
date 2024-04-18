@@ -35,7 +35,7 @@
 #include "mafVMESurface.h"
 
 #include "vtkImageData.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
 #include "vtkDataSetMapper.h"

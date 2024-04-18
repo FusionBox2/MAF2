@@ -34,7 +34,7 @@
 #include "mafIndent.h"
 
 #ifdef MAF_USE_VTK
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPoints.h"
 #include "vtkCellArray.h"
 #include "vtkDoubleArray.h"

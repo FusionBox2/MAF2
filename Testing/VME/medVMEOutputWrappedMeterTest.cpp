@@ -33,7 +33,7 @@
 #include "mafVMESurface.h"
 #include "medVMEWrappedMeter.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkDataSet.h"
 #include "vtkPolyData.h"

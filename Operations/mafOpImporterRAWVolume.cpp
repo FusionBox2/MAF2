@@ -34,7 +34,7 @@
 #include "mafVMEVolumeGray.h"
 #include "mafVMEVolumeRGB.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkRenderer.h"
 #include "vtkImageReader.h"
 #include "vtkImageData.h"

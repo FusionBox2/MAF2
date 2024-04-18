@@ -18,7 +18,7 @@
 #define __mafLUTLibrary_H__
 
 #include "mafString.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkLookupTable.h"
 
 #include <map>

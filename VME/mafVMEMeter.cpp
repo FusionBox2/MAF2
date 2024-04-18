@@ -44,7 +44,7 @@
 
 #include "vtkMAFDataPipe.h"
 #include "vtkMath.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkPolyData.h"
 #include "vtkLine.h"
 #include "vtkLineSource.h"

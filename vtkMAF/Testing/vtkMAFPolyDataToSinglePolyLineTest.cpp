@@ -18,7 +18,7 @@
 
 #include "vtkMAFPolyDataToSinglePolyLineTest.h"
 #include "vtkMAFPolyDataToSinglePolyLine.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkPolyData.h"
 #include "vtkPoints.h"

@@ -38,7 +38,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkUnstructuredGrid.h"
 #include "vtkRectilinearGrid.h"
 #include "vtkImageData.h"

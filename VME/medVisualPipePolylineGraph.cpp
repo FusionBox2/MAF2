@@ -39,7 +39,7 @@
 
 #include "vtkMAFAssembly.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkLabeledDataMapper.h"
 #include "vtkCellCenters.h"
 #include "vtkPointData.h"

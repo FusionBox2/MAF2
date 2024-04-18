@@ -21,7 +21,7 @@
 #include "vtkRectilinearGrid.h"
 #include "vtkObjectFactory.h"
 #include "vtkMatrix4x4.h"
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFContourVolumeMapper.h"
 #include "vtkMEDFillingHole.h"
 #include "vtkTransformPolyDataFilter.h"

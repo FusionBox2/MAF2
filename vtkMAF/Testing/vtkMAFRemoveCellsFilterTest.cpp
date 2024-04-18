@@ -16,7 +16,7 @@
 
 #include <cppunit/config/SourcePrefix.h>
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"

@@ -33,7 +33,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "mafVMELandmarkCloud.h"
 #include "mafMatrix.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 #include "vtkMAFDataPipe.h"
 #include "vtkPoints.h"
 #include "vtkGlyph3D.h"

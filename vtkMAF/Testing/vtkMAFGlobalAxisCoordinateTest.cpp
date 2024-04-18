@@ -19,7 +19,7 @@
 #include "vtkMAFGlobalAxisCoordinateTest.h"
 #include "vtkMAFGlobalAxisCoordinate.h"
 
-#include "vtkMAFSmartPointer.h"
+#include "vtkSmartPointer.h"
 
 #include "vtkCamera.h"
 #include "vtkRenderer.h"
