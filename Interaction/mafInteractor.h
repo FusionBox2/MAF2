@@ -213,8 +213,8 @@ protected:
 
   mafVME       *m_VME;                  ///< the object being interacted (optional)
 
-  vtkMAFSmartPointer<vtkRenderer> m_Renderer; ///< the renderer this interactor is working on
-  vtkMAFSmartPointer<vtkProp3D>   m_Prop;     ///< the prop being interacted (optional)
+  vtkSmartPointer<vtkRenderer> m_Renderer; ///< the renderer this interactor is working on
+  vtkSmartPointer<vtkProp3D>   m_Prop;     ///< the prop being interacted (optional)
 
   bool m_TestMode;///< Flag used with cppunitTest
 

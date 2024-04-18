@@ -58,10 +58,8 @@ mafCxxAbstractTypeMacro(mafInteractor);
 mafInteractor::mafInteractor()
 //------------------------------------------------------------------------------
 {
-  m_Renderer            = NULL;
   m_Device              = NULL;
   m_VME                 = NULL;
-  m_Prop                = NULL;
   m_TestMode = false;
   
   m_LockDevice            = true;
