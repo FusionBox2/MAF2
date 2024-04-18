@@ -96,7 +96,7 @@ mafVMEMeshAnsysTextImporter::~mafVMEMeshAnsysTextImporter()
 //----------------------------------------------------------------------------
 int mafVMEMeshAnsysTextImporter::Read()
 {	
-  vtkMAFSmartPointer<vtkUnstructuredGrid> grid;
+  vtkSmartPointer<vtkUnstructuredGrid> grid = vtkSmartPointer<vtkUnstructuredGrid>::New();
   grid->Initialize();
 
   if (this->ParseNodesFile(grid) == -1) return MAF_ERROR ; 
@@ -122,7 +122,7 @@ int mafVMEMeshAnsysTextImporter::Read()
 
   // material file is present?
 
-  vtkMAFSmartPointer<vtkUnstructuredGrid> gridToLinearize;
+  vtkSmartPointer<vtkUnstructuredGrid> gridToLinearize = vtkSmartPointer<vtkUnstructuredGrid>::New();
   
   if (ret == 0)
   {
