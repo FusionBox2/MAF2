@@ -44,8 +44,8 @@ IF (MAF_USE_XercesC)
     ${PROJECT_SRCS}
     mafXMLElement.cpp
     mafXMLElement.h
-    mafXMLStorage.cpp
-    mafXMLStorage.h
+    mafXMLParser.cpp
+    mafXMLParser.h
     mafXMLString.cpp
     mafXMLString.h
     mmuXMLDOM.h

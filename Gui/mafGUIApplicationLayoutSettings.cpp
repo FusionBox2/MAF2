@@ -34,7 +34,7 @@
 #include "mafSmartPointer.h"
 #include "mmaApplicationLayout.h"
 #include "mafVMEStorage.h"
-#include "mafXMLStorage.h"
+#include "mafXMLParser.h"
 #include "mafVMERoot.h"
 #include "mafNodeLayout.h"
 #include "mafNodeIterator.h"

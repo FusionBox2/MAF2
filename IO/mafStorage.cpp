@@ -17,7 +17,7 @@
 #include "mafStorage.h"
 #include "mafStorable.h"
 #include "mafDirectory.h"
-#include "mafXMLStorage.h"
+#include "mafXMLParser.h"
 
 //------------------------------------------------------------------------------
 mafCxxTypeMacro(mafStorage);

@@ -61,7 +61,7 @@
   
 #include "mafVME.h"
 #include "mafVMEGizmo.h"
-#include "mafXMLStorage.h"
+#include "mafXMLParser.h"
 #include "mafStorageElement.h"
 
 #include "vtkRenderer.h"

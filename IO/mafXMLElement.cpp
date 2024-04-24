@@ -18,7 +18,7 @@
 #include "mmuXMLDOM.h"
 #include "mafXMLElement.h"
 
-#include "mafXMLStorage.h"
+#include "mafXMLParser.h"
 #include "mafXMLString.h"
 
 #include "mafMatrix.h"

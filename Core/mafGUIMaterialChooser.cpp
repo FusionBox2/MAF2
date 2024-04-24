@@ -44,7 +44,7 @@
 #include "mafRWI.h"
 #include "mafGUIPicButton.h"
 
-#include "mafXMLStorage.h"
+#include "mafXMLParser.h"
 #include "mafStorageElement.h"
 #include "mafVME.h"
 

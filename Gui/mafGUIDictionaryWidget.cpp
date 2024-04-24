@@ -41,7 +41,7 @@
 #include "mafVMERoot.h"
 #include "mafVMELandmarkCloud.h"
 
-#include "mafXMLStorage.h"
+#include "mafXMLParser.h"
 #include "mafStorageElement.h"
 
 

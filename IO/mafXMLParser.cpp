@@ -16,7 +16,7 @@
 
 //#include "mafIncludeWX.h" // to be removed
 
-#include "mafXMLStorage.h"
+#include "mafXMLParser.h"
 #include "mafXMLElement.h"
 #include "mafXMLString.h"
 #include "mafStorable.h"
