@@ -110,7 +110,7 @@ int mafXMLParser::InternalStore()
         // extract root element and wrap it with an mafXMLElement object
         XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *root = m_DOM->m_XMLDoc->getDocumentElement();
         assert(root);
-        mafStorageElement *documentElement = new mafXMLElement(new mmuXMLDOMElement(root),NULL,this);
+        mafStorageElement *documentElement = new mafXMLElement(new mmuXMLDOMElement(root),this);
 
         // attach version attribute to the root node
         documentElement->SetAttribute(_R("Version"),m_Version);
@@ -219,7 +219,7 @@ int mafXMLParser::InternalRestore()
           m_DOM->m_XMLDoc = m_DOM->m_XMLParser->getDocument();
           XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *root = m_DOM->m_XMLDoc->getDocumentElement();
           assert(root);
-          mafStorageElement *documentElement = new mafXMLElement(new mmuXMLDOMElement(root),NULL,this);
+          mafStorageElement *documentElement = new mafXMLElement(new mmuXMLDOMElement(root),this);
 
           if (m_FileType == documentElement->GetName())
           {

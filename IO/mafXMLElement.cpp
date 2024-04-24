@@ -30,8 +30,8 @@
 #include "stdio.h"
 
 //------------------------------------------------------------------------------
-mafXMLElement::mafXMLElement(mmuXMLDOMElement *element,mafXMLElement *parent,mafParser *storage) :
-  mafStorageElement(parent,storage)
+mafXMLElement::mafXMLElement(mmuXMLDOMElement *element,mafParser *storage) :
+  mafStorageElement(storage)
 //------------------------------------------------------------------------------
 {
   assert(storage);
@@ -65,7 +65,7 @@ mafStorageElement::ChildrenVector &mafXMLElement::GetChildrenList()
       if (child_element->getNodeType()==XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
       {
         mafXMLElement *child=new mafXMLElement(
-			new mmuXMLDOMElement((XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *)child_element),this,GetStorage());
+			new mmuXMLDOMElement((XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *)child_element),GetStorage());
         m_Children->push_back(child);
       }
     }
@@ -78,7 +78,7 @@ mafStorageElement *mafXMLElement::AppendChild(const mafString& name)
 {
   XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *child_element=m_DOMElement->m_XMLElement->getOwnerDocument()->createElement(mafXMLString(name.GetCStr()));
   m_DOMElement->m_XMLElement->appendChild(child_element);
-  mafXMLElement *child=new mafXMLElement(new mmuXMLDOMElement(child_element),this,GetStorage());
+  mafXMLElement *child=new mafXMLElement(new mmuXMLDOMElement(child_element),GetStorage());
   GetChildrenList().push_back(child);
   return child;
 }

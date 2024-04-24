@@ -253,7 +253,7 @@ int mafStorageElement::StoreVectorN(const mafString& name,const std::vector<mafS
   return MAF_OK;
 }
 //------------------------------------------------------------------------------
-mafStorageElement::mafStorageElement(mafStorageElement *parent,mafParser *storage)
+mafStorageElement::mafStorageElement(mafParser *storage)
 //------------------------------------------------------------------------------
 {
   assert(storage); // no NULL storage is allowed

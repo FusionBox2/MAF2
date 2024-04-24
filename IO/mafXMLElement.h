@@ -31,7 +31,7 @@ class mmuXMLDOMElement;
 class MAF_EXPORT mafXMLElement : public mafStorageElement
 {
 public:
-  mafXMLElement(mmuXMLDOMElement *element,mafXMLElement *parent,mafParser *storage);
+  mafXMLElement(mmuXMLDOMElement *element,mafParser *storage);
   virtual ~mafXMLElement();
 
   /** Store a generic text into an XML document */

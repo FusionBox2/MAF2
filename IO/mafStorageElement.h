@@ -144,7 +144,7 @@ protected:
   virtual ChildrenVector &GetChildrenList()=0;
 
   /** elements can be created only by means of AppendChild() or FindNestedElement() */
-  mafStorageElement(mafStorageElement *parent,mafParser *storage);
+  mafStorageElement(mafParser *storage);
 
   /** commodity function to store a storable object creating on the fly the element to store it inside. */
   mafStorageElement *StoreObject(const mafString& name,mafStorable *storable, const mafString& type_name);
