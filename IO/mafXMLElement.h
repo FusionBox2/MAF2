@@ -59,9 +59,6 @@ protected:
   /** Return the list of children. The list is created from DOM-Tree at the first access during restoring. */ 
   virtual ChildrenVector &GetChildrenList();
 
-  /** return DOM-XML element stored inside this mafXMLElement */
-  mmuXMLDOMElement *GetXMLElement();
-
   mmuXMLDOMElement *m_DOMElement; ///< XML element wrapped by this object (USING PIMPL due to Internal Compile errors of VS7)
 
 };

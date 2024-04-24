@@ -49,12 +49,6 @@ mafXMLElement::~mafXMLElement()
   cppDEL(m_DOMElement);
 }
 //------------------------------------------------------------------------------
-mmuXMLDOMElement *mafXMLElement::GetXMLElement()
-//------------------------------------------------------------------------------
-{
-  return m_DOMElement;
-}
-//------------------------------------------------------------------------------
 mafStorageElement::ChildrenVector &mafXMLElement::GetChildrenList()
 //------------------------------------------------------------------------------
 {
@@ -82,7 +76,7 @@ mafStorageElement::ChildrenVector &mafXMLElement::GetChildrenList()
 mafStorageElement *mafXMLElement::AppendChild(const mafString& name)
 //------------------------------------------------------------------------------
 {
-  XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *child_element=GetXMLElement()->m_XMLElement->getOwnerDocument()->createElement(mafXMLString(name.GetCStr()));
+  XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *child_element=m_DOMElement->m_XMLElement->getOwnerDocument()->createElement(mafXMLString(name.GetCStr()));
   m_DOMElement->m_XMLElement->appendChild(child_element);
   mafXMLElement *child=new mafXMLElement(new mmuXMLDOMElement(child_element),this,GetStorage());
   GetChildrenList().push_back(child);
@@ -110,7 +104,7 @@ bool mafXMLElement::GetAttribute(const mafString& name, mafString &value)
 int mafXMLElement::StoreText(const mafString& text)
 //------------------------------------------------------------------------------
 {
-  XERCES_CPP_NAMESPACE_QUALIFIER DOMText *text_node=GetXMLElement()->m_XMLElement->getOwnerDocument()->createTextNode(mafXMLString(text.GetCStr()));
+  XERCES_CPP_NAMESPACE_QUALIFIER DOMText *text_node=m_DOMElement->m_XMLElement->getOwnerDocument()->createTextNode(mafXMLString(text.GetCStr()));
   m_DOMElement->m_XMLElement->appendChild(text_node);
   return MAF_OK;
 }
@@ -118,7 +112,7 @@ int mafXMLElement::StoreText(const mafString& text)
 int mafXMLElement::RestoreText(mafString &buffer)
 //------------------------------------------------------------------------------
 {
-  buffer=_R(mafXMLString(this->GetXMLElement()->m_XMLElement->getTextContent()));
+  buffer=_R(mafXMLString(this->m_DOMElement->m_XMLElement->getTextContent()));
 
   return MAF_OK;
 }

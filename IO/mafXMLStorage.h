@@ -43,11 +43,6 @@ public:
   mafXMLParser();
   virtual ~mafXMLParser();
 
-  /** 
-    Return the instance of the DOM document used while reading and writing.
-    This object is created when Store/Restore starts and destroyed when stops.*/
-  mmuXMLDOM *GetXMLDOM() {return m_DOM;}
-
 protected:
   /** This is called by Store() and must be reimplemented by subclasses */
   virtual int InternalStore();
