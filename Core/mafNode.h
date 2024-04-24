@@ -47,7 +47,7 @@ EXPORT_STL_MAP(MAF_EXPORT,mafString,mafAutoPointer<mafAttribute>);
 #endif
 
 /** data structure used to store a link VME and its Id */
-class MAF_EXPORT mmuNodeLink :public mafUtility
+class MAF_EXPORT mmuNodeLink
 {
 public:
   mmuNodeLink(/*mafID id=-1,*/mafNode *node=NULL, mafID sub_id=-1):m_NodeId(-1),m_Node(node),m_NodeSubId(sub_id) {}

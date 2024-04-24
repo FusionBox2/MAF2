@@ -18,7 +18,7 @@
 //----------------------------------------------------------------------------
 // includes :
 //----------------------------------------------------------------------------
-#include "mafUtility.h"
+#include "mafConfigure.h"
 #include "mafStorable.h"
 #include "mafString.h"
 #include <vector>
@@ -41,7 +41,7 @@ EXPORT_STL_VECTOR(MAF_EXPORT,mafString);
   an utility class for storing <key-type-array of values> information.
   @sa mafTagArray
 */
-class MAF_EXPORT mafTagItem : public mafUtility, public mafStorable
+class MAF_EXPORT mafTagItem : public mafStorable
 {
 public:
   mafTagItem();

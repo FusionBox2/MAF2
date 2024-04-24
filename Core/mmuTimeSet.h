@@ -18,7 +18,6 @@
 //----------------------------------------------------------------------------
 // includes :
 //----------------------------------------------------------------------------
-#include "mafUtility.h"
 #include "mafDefines.h"
 #include <set>
 #include <vector>
@@ -39,7 +38,7 @@ typedef std::vector<mafTimeStamp> mmuTimeVector;
   @todo
   - test Merge of variuos case of time vectors
 */
-class MAF_EXPORT mmuTimeSet: public mafUtility
+class MAF_EXPORT mmuTimeSet
 {
 public:
   mmuTimeSet();

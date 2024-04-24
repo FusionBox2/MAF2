@@ -24,7 +24,6 @@
 #include "mafTagItem.h"
 #include "mafVMEItemVTK.h"
 #include "mafDataVector.h"
-#include "mafUtility.h"
 #include "mafStorable.h"
 #include "mafStorageElement.h"
 #include "mmaMaterial.h"

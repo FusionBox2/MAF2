@@ -20,8 +20,6 @@
 #include "mafTransformBase.h"
 #include "mafInteractorConstraint.h"
 
-#include "mafUtility.h"
-
 //------------------------------------------------------------------------------
 // Forward declarations
 //------------------------------------------------------------------------------

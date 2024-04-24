@@ -16,7 +16,7 @@
 #ifndef __mmuXMLDOMElement_h__
 #define __mmuXMLDOMElement_h__
 
-#include "mafUtility.h"
+#include "mafConfigure.h"
 
 
 #include <xercesc/dom/DOM.hpp>
@@ -39,7 +39,7 @@
 /** PIMPL class to hide XercesC specific XML DOM objects. 
   This class is internally used by mafXMLElement for accessing XML DOM objects.
 */
-class MAF_EXPORT mmuXMLDOMElement: public mafUtility
+class MAF_EXPORT mmuXMLDOMElement
 {
 public:
   /** constructor */

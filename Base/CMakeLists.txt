@@ -60,7 +60,6 @@ mafVectors.h
 mafVersion.h
 mmuIdFactory.cpp
 mmuIdFactory.h
-mafUtility.h
 mafZipUtility.cpp
 mafZipUtility.h
 

@@ -18,7 +18,6 @@
 
 #include "mafStorage.h"
 #include "mafParser.h"
-#include "mafUtility.h"
 #include "mafNodeManager.h"
 
 //----------------------------------------------------------------------------
@@ -32,7 +31,7 @@ class mafMatrixVector;
 
 /** utility class representing the MSF document.
  This class is used by mafMSFImporter to restore MSF 1.x files.*/
-class MAF_EXPORT mafMSFImporter : public mafUtility, public mafNodeManager
+class MAF_EXPORT mafMSFImporter : public mafNodeManager
 {
 public:
   mafMSFImporter(){}

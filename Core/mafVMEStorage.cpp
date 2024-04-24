@@ -18,7 +18,6 @@
 
 #include "mafVMEStorage.h"
 #include "mafNodeManager.h"
-#include "mafUtility.h"
 #include "mafStorable.h"
 #include "mafStorageElement.h"
 #include "mmuIdFactory.h"

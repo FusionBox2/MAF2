@@ -16,7 +16,7 @@
 #ifndef __mmuXMLDOM_h__
 #define __mmuXMLDOM_h__
 
-#include "mafUtility.h"
+#include "mafConfigure.h"
 
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
@@ -39,7 +39,7 @@
   This class is internally used by mafXMLStorage and mafXMLElement for accessing
   XML DOM objects.
 */
-class MAF_EXPORT mmuXMLDOM: public mafUtility
+class MAF_EXPORT mmuXMLDOM
 {
 public:
   /** constructor */
