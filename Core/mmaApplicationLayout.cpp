@@ -204,7 +204,7 @@ int mmaApplicationLayout::InternalStore(mafStorageElement *parent)
       {
         vme_ids_in_view = _R("VME_IDS_IN_VIEW_");
         vme_ids_in_view += mafToString(i);
-        parent->StoreVectorN(vme_ids_in_view,info.m_VisibleVmes, info.m_VisibleVmes.size());
+        parent->StoreVectorN(vme_ids_in_view,info.m_VisibleVmes);
 
         view_camera_parameters = _R("VIEW_CAMERA_PARAMETERS_");
         view_camera_parameters += mafToString(i);
@@ -271,7 +271,7 @@ int mmaApplicationLayout::InternalRestore(mafStorageElement *node)
         vme_ids_in_view = _R("VME_IDS_IN_VIEW_");
         vme_ids_in_view += mafToString(i);
         info.m_VisibleVmes.resize(num_vme);
-        node->RestoreVectorN(vme_ids_in_view,info.m_VisibleVmes, num_vme);
+        node->RestoreVectorN(vme_ids_in_view,info.m_VisibleVmes);
 
         view_camera_parameters = _R("VIEW_CAMERA_PARAMETERS_");
         view_camera_parameters += mafToString(i);

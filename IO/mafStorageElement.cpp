@@ -27,14 +27,14 @@
 
 //------------------------------------------------------------------------------
 template <class T>
-void InternalStoreVectorN(mafStorageElement *element,T *comps,int num,const char *name)
+void InternalStoreVectorN(mafStorageElement *element,T *comps,size_t num,const char *name)
 //------------------------------------------------------------------------------
 {
   assert(name);
 
   // Write all the elements into as a single 3-tupla  
   mafString elements;
-  for (int i=0;i<num;i++)
+  for (size_t i=0;i<num;i++)
   { 
     elements += mafToString(comps[i]) + _R(" ");
   }
@@ -43,30 +43,20 @@ void InternalStoreVectorN(mafStorageElement *element,T *comps,int num,const char
 }
 //------------------------------------------------------------------------------
 template <class T>
-void InternalStoreVectorN(mafStorageElement *element,const std::vector<T> &comps,int num,const char *name)
+void InternalStoreVectorN(mafStorageElement *element,const std::vector<T> &comps,const char *name)
 //------------------------------------------------------------------------------
 {
-  assert(name);
-
-  // Write all the elements into as a single 3-tupla  
-  mafString elements;
-  for (int i=0;i<num;i++)
-  { 
-    elements += mafToString(comps[i]) + _R(" ");
-  }
-
-  mafStorageElement *vector_node=element->AppendChild(_R(name));
-  vector_node->StoreText(elements);
+    InternalStoreVectorN(element, comps.data(), comps.size(), name);
 }
 //------------------------------------------------------------------------------
 template <class T>
-int InternalParseData(const mafString& text,T *vector,int size)
+size_t InternalParseData(const mafString& text,T *vector,size_t size)
 //------------------------------------------------------------------------------
 {
 #pragma message ("potentially hacky")
   std::istringstream instr(text.toStd());
 
-  for (int i=0;i<size;i++)
+  for (size_t i=0;i<size;i++)
   {
     if (instr.eof())
       return i;
@@ -79,27 +69,35 @@ int InternalParseData(const mafString& text,T *vector,int size)
 
 //------------------------------------------------------------------------------
 template <class T>
-int InternalParseData(const mafString& text,std::vector<T> &vector,int size)
+size_t InternalParseData(const mafString& text,std::vector<T> &vector)
 //------------------------------------------------------------------------------
 {
-#pragma message ("potentially hacky")
-    std::istringstream instr(text.toStd());
-
-  for (int i=0;i<size;i++)
-  {
-    if (instr.eof())
-      return i;
-
-    T tmp;
-    instr>>tmp;
-    vector[i]=tmp;
-  }
-
-  return size;
+    return InternalParseData(text, vector.data(), vector.size());
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::ParseData(std::vector<double> &vector,int size)
+size_t mafStorageElement::ParseData(std::vector<double> &vector)
+//------------------------------------------------------------------------------
+{
+  mafString text_data;
+  RestoreText(text_data);
+  if (text_data.IsEmpty())
+    return 0;
+  return InternalParseData(text_data,vector);
+}
+//------------------------------------------------------------------------------
+size_t mafStorageElement::ParseData(std::vector<int> &vector)
+//------------------------------------------------------------------------------
+{
+  mafString text_data;
+  RestoreText(text_data);
+  if (text_data.IsEmpty())
+    return 0;
+  return InternalParseData(text_data,vector);
+}
+
+//------------------------------------------------------------------------------
+size_t mafStorageElement::ParseData(double *vector,size_t size)
 //------------------------------------------------------------------------------
 {
   mafString text_data;
@@ -109,29 +107,7 @@ int mafStorageElement::ParseData(std::vector<double> &vector,int size)
   return InternalParseData(text_data,vector,size);
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::ParseData(std::vector<int> &vector,int size)
-//------------------------------------------------------------------------------
-{
-  mafString text_data;
-  RestoreText(text_data);
-  if (text_data.IsEmpty())
-    return 0;
-  return InternalParseData(text_data,vector,size);
-  return 0;
-}
-
-//------------------------------------------------------------------------------
-int mafStorageElement::ParseData(double *vector,int size)
-//------------------------------------------------------------------------------
-{
-  mafString text_data;
-  RestoreText(text_data);
-  if (text_data.IsEmpty())
-    return 0;
-  return InternalParseData(text_data,vector,size);
-}
-//------------------------------------------------------------------------------
-int mafStorageElement::ParseData(int *vector,int size)
+size_t mafStorageElement::ParseData(int *vector,size_t size)
 //------------------------------------------------------------------------------
 {
   mafString text_data;
@@ -187,10 +163,10 @@ int mafStorageElement::RestoreVectorN(int *comps,unsigned int num)
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(std::vector<double> &comps,unsigned int num)
+int mafStorageElement::RestoreVectorN(std::vector<double> &comps)
 //------------------------------------------------------------------------------
 {
-  if (this->ParseData(comps,num)==num)
+  if (this->ParseData(comps)==comps.size())
     return MAF_OK;
 
   mafWarningMacro("Storage Parse Error while parsing <"<<GetName().GetCStr()<<"> element: wrong number of fields inside Storage element." );
@@ -199,10 +175,10 @@ int mafStorageElement::RestoreVectorN(std::vector<double> &comps,unsigned int nu
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(std::vector<int> &comps,unsigned int num)
+int mafStorageElement::RestoreVectorN(std::vector<int> &comps)
 //------------------------------------------------------------------------------
 {
-  if (this->ParseData(comps,num)==num)
+  if (this->ParseData(comps)==comps.size())
     return MAF_OK;
 
   mafWarningMacro("Storage Parse Error while parsing <"<<GetName().GetCStr()<<"> element: wrong number of fields inside Storage element." );
@@ -227,28 +203,28 @@ int mafStorageElement::StoreVectorN(const mafString& name,int *comps,int num)
   return MAF_OK;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::StoreVectorN(const mafString& name,const std::vector<double> &comps,int num)
+int mafStorageElement::StoreVectorN(const mafString& name,const std::vector<double> &comps)
 //------------------------------------------------------------------------------
 {
-  InternalStoreVectorN(this,comps,num,name.GetCStr());
+  InternalStoreVectorN(this,comps,name.GetCStr());
   return MAF_OK;
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::StoreVectorN(const mafString& name,const std::vector<int> &comps,int num)
+int mafStorageElement::StoreVectorN(const mafString& name,const std::vector<int> &comps)
 //------------------------------------------------------------------------------
 {
-  InternalStoreVectorN(this,comps,num,name.GetCStr());
+  InternalStoreVectorN(this,comps,name.GetCStr());
   return MAF_OK;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::StoreVectorN(const mafString& name,const std::vector<mafString> &comps,int num,const mafString& tag)
+int mafStorageElement::StoreVectorN(const mafString& name,const std::vector<mafString> &comps,const mafString& tag)
 //------------------------------------------------------------------------------
 {
   mafStorageElement *subelement = AppendChild(name);
-  for (int i=0;i<num;i++)
+  for (auto& elem : comps)
   {
-    subelement->StoreText(tag,comps[i]);
+    subelement->StoreText(tag,elem);
   }
   return MAF_OK;
 }
@@ -724,13 +700,13 @@ int mafStorageElement::RestoreVectorN(const mafString& name,int *comps,unsigned 
   return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<double> &comps,unsigned int num)
+int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<double> &comps)
 //------------------------------------------------------------------------------
 {
   mafStorageElement *elem=FindNestedElement(name);
   if (elem)
   {
-    return elem->RestoreVectorN(comps,num);
+    return elem->RestoreVectorN(comps);
   }
 
   mafWarningMacro("Parse Error while parsing <"<<GetName().GetCStr() <<"> element: cannot find nested Storage element <"<<name.GetCStr() <<">" );
@@ -738,13 +714,13 @@ int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<double> 
   return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<int> &comps,unsigned int num)
+int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<int> &comps)
 //------------------------------------------------------------------------------
 {
   mafStorageElement *elem=FindNestedElement(name);
   if (elem)
   {
-    return elem->RestoreVectorN(comps,num);
+    return elem->RestoreVectorN(comps);
   }
 
   mafWarningMacro("Parse Error while parsing <"<<GetName().GetCStr() <<"> element: cannot find nested Storage element <"<<name.GetCStr() <<">" );
@@ -752,13 +728,13 @@ int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<int> &co
   return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<mafString> &comps,unsigned int num,const mafString& tag)
+int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<mafString> &comps,const mafString& tag)
 //------------------------------------------------------------------------------
 {
   mafStorageElement *elem=FindNestedElement(name);
   if (elem)
   {
-    return elem->RestoreVectorN(comps,num,tag);
+    return elem->RestoreVectorN(comps,tag);
   }
 
   mafWarningMacro("Parse Error while parsing <"<<GetName().GetCStr() <<"> element: cannot find nested Storage element <"<<name.GetCStr() <<">" );
@@ -766,7 +742,7 @@ int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<mafStrin
   return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(std::vector<mafString> &comps,unsigned int num,const mafString& tag)
+int mafStorageElement::RestoreVectorN(std::vector<mafString> &comps,const mafString& tag)
 //------------------------------------------------------------------------------
 {
   mafString tag_name=tag;

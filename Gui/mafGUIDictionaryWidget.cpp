@@ -198,7 +198,7 @@ int mafStorableDictionary::InternalRestore(mafStorageElement *element)
 {
   m_StrVector.resize(element->GetChildren()[0]->GetChildren().size());
   
-  if(element->RestoreVectorN(_R("Dictionary"),m_StrVector,element->GetChildren()[0]->GetChildren().size(),_R("DItem")))
+  if(element->RestoreVectorN(_R("Dictionary"),m_StrVector,_R("DItem")))
     return MAF_ERROR;
   return MAF_OK;
 }

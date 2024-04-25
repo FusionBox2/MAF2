@@ -63,24 +63,24 @@ public:
   int StoreMatrix (const mafString& name,const mafMatrix *matrix);
   int StoreVectorN(const mafString& name, double *comps,int num);
   int StoreVectorN(const mafString& name, int *comps,int num);
-  int StoreVectorN(const mafString& name, const std::vector<double> &comps,int num);
-  int StoreVectorN(const mafString& name, const std::vector<int> &comps,int num);
-  int StoreVectorN(const mafString& name, const std::vector<mafString> &comps,int num,const mafString& tag);
+  int StoreVectorN(const mafString& name, const std::vector<double> &comps);
+  int StoreVectorN(const mafString& name, const std::vector<int> &comps);
+  int StoreVectorN(const mafString& name, const std::vector<mafString> &comps,const mafString& tag);
 
   int RestoreText(const mafString& name,mafString &buffer);
   int RestoreMatrix(const mafString& name,mafMatrix *matrix);
   int RestoreVectorN(const mafString& name,double *comps,unsigned int num);
   int RestoreVectorN(const mafString& name,int *comps,unsigned int num);
-  int RestoreVectorN(const mafString& name,std::vector<double> &comps,unsigned int num);
-  int RestoreVectorN(const mafString& name,std::vector<int> &comps,unsigned int num);
-  int RestoreVectorN(const mafString& name,std::vector<mafString> &comps,unsigned int num,const mafString& tag);
+  int RestoreVectorN(const mafString& name,std::vector<double> &comps);
+  int RestoreVectorN(const mafString& name,std::vector<int> &comps);
+  int RestoreVectorN(const mafString& name,std::vector<mafString> &comps,const mafString& tag);
 
   int RestoreMatrix(mafMatrix *matrix);
   int RestoreVectorN(double *comps,unsigned int num);
   int RestoreVectorN(int *comps,unsigned int num);
-  int RestoreVectorN(std::vector<double> &comps,unsigned int num);
-  int RestoreVectorN(std::vector<int> &comps,unsigned int num);
-  int RestoreVectorN(std::vector<mafString> &comps,unsigned int num,const mafString& tag);
+  int RestoreVectorN(std::vector<double> &comps);
+  int RestoreVectorN(std::vector<int> &comps);
+  int RestoreVectorN(std::vector<mafString> &comps,const mafString& tag);
 
   virtual bool GetAttribute(const mafString& name,mafString &value)=0;
   virtual void SetAttribute(const mafString& name,const mafString& value)=0;
@@ -156,9 +156,9 @@ protected:
   mafString                        m_Name; ///< Convenient copy of etagName
 
 private:
-  int ParseData(std::vector<double> &vector,int size);
-  int ParseData(std::vector<int> &vector,int size);
-  int ParseData(double *vector,int size);
-  int ParseData(int *vector,int size);
+  size_t ParseData(std::vector<double> &vector);
+  size_t ParseData(std::vector<int> &vector);
+  size_t ParseData(double *vector,size_t size);
+  size_t ParseData(int *vector,size_t size);
 };
 #endif // _mafStorageElement_h_

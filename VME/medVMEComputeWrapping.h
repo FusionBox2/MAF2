@@ -626,8 +626,6 @@ protected:
   std::vector<bool> m_lmcs;
   std::vector<std::pair<mafNode*, mafNode*> > m_nodesPatch;
 
-	int              m_OrderMiddlePointsVMEListNumberOfElements;
-
 	mafString m_StartVmeName;
 	mafString m_EndVme1Name;
 	mafString m_EndVme2Name;

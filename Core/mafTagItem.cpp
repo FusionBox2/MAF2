@@ -471,7 +471,7 @@ int mafTagItem::InternalStore(mafStorageElement *parent)
   GetTypeAsString(type);
   parent->SetAttribute(_R("Type"),type);
 
-  if (parent->StoreVectorN(_R("TItem"),m_Components,GetNumberOfComponents(),_R("TC"))==MAF_ERROR)
+  if (parent->StoreVectorN(_R("TItem"),m_Components,_R("TC"))==MAF_ERROR)
     return MAF_ERROR;
 
   return MAF_OK;
@@ -511,6 +511,6 @@ int mafTagItem::InternalRestore(mafStorageElement *node)
   
   SetNumberOfComponents(num);
   
-  return node->RestoreVectorN(_R("TItem"),m_Components,GetNumberOfComponents(),_R("TC"));
+  return node->RestoreVectorN(_R("TItem"),m_Components,_R("TC"));
 }
 

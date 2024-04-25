@@ -365,8 +365,6 @@ protected:
 	std::vector<int> m_OrderMiddlePointsVMEList; //order list of VME ID
 	std::vector<mafString> m_OrderMiddlePointsNameVMEList; //order list of VME Name
 
-	int              m_OrderMiddlePointsVMEListNumberOfElements;
-
   mafString m_StartVmeName;
   mafString m_EndVme1Name;
   mafString m_EndVme2Name;

@@ -5010,7 +5010,7 @@ int medVMEComputeWrapping::InternalStore(mafStorageElement *parent)
 			}
 		}
 		parent->StoreInteger(_R("OrderMiddlePointVmeNumberOfElements"), m_OrderMiddlePointsVMEList.size());
-		parent->StoreVectorN(_R("OrderMiddlePointVme"),m_OrderMiddlePointsVMEList,m_OrderMiddlePointsVMEList.size());
+		parent->StoreVectorN(_R("OrderMiddlePointVme"),m_OrderMiddlePointsVMEList);
 
 		parent->StoreInteger(_R("WrapMode"), m_WrappedMode1);
 		parent->StoreInteger(_R("WrapMode2"), m_WrappedMode2);
@@ -5033,9 +5033,10 @@ int medVMEComputeWrapping::InternalRestore(mafStorageElement *node)
 		if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK)
 		{
 			m_Transform->SetMatrix(matrix);
-			node->RestoreInteger(_R("OrderMiddlePointVmeNumberOfElements"), m_OrderMiddlePointsVMEListNumberOfElements);
-			m_OrderMiddlePointsVMEList.resize(m_OrderMiddlePointsVMEListNumberOfElements);
-			node->RestoreVectorN(_R("OrderMiddlePointVme"),m_OrderMiddlePointsVMEList,m_OrderMiddlePointsVMEListNumberOfElements);
+			int              orderMiddlePointsVMEListNumberOfElements;
+			node->RestoreInteger(_R("OrderMiddlePointVmeNumberOfElements"), orderMiddlePointsVMEListNumberOfElements);
+			m_OrderMiddlePointsVMEList.resize(orderMiddlePointsVMEListNumberOfElements);
+			node->RestoreVectorN(_R("OrderMiddlePointVme"),m_OrderMiddlePointsVMEList);
 
 			node->RestoreInteger(_R("WrapMode"), m_WrappedMode1);
 			node->RestoreInteger(_R("WrapMode2"), m_WrappedMode2);

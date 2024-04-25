@@ -407,10 +407,10 @@ int medVMEStent::InternalStore(mafStorageElement *node)
 	//
 	if (node->StoreInteger(_R("MaxRisk"),m_MaxRisk) != MAF_OK) return MAF_ERROR;
 	if (node->StoreDouble(_R("FatigueBending"),m_FatigueBending) != MAF_OK) return MAF_ERROR;
-	if (node->StoreVectorN(_R("TubeInitialStretching"),m_TubeInitialStretching,m_TubeInitialStretching.size()) != MAF_OK) return MAF_ERROR;
-	if (node->StoreVectorN(_R("TubeFinalStretching"),m_TubeFinalStretching,m_TubeFinalStretching.size()) != MAF_OK) return MAF_ERROR;
-	if (node->StoreVectorN(_R("TubeYoungModulus"),m_TubeYoungModulus,m_TubeYoungModulus.size()) != MAF_OK) return MAF_ERROR;
-	if (node->StoreVectorN(_R("TubeDiameter"),m_TubeDiameter,m_TubeDiameter.size()) != MAF_OK) return MAF_ERROR;
+	if (node->StoreVectorN(_R("TubeInitialStretching"),m_TubeInitialStretching) != MAF_OK) return MAF_ERROR;
+	if (node->StoreVectorN(_R("TubeFinalStretching"),m_TubeFinalStretching) != MAF_OK) return MAF_ERROR;
+	if (node->StoreVectorN(_R("TubeYoungModulus"),m_TubeYoungModulus) != MAF_OK) return MAF_ERROR;
+	if (node->StoreVectorN(_R("TubeDiameter"),m_TubeDiameter) != MAF_OK) return MAF_ERROR;
 
     // vessel
     if (node->StoreInteger(_R("VesselNodeId"), m_VesselNodeID) != MAF_OK) return MAF_ERROR; 
@@ -501,10 +501,10 @@ int medVMEStent::InternalRestore(mafStorageElement *node)
 		m_TubeDiameter.resize(GetNumberOfUnits());
 		if (node->RestoreInteger(_R("MaxRisk"),m_MaxRisk) != MAF_OK) return MAF_ERROR;
 		if (node->RestoreDouble(_R("FatigueBending"),m_FatigueBending) != MAF_OK) return MAF_ERROR;
-		if (node->RestoreVectorN(_R("TubeInitialStretching"),m_TubeInitialStretching,GetNumberOfUnits()) != MAF_OK) return MAF_ERROR;
-		if (node->RestoreVectorN(_R("TubeFinalStretching"),m_TubeFinalStretching,GetNumberOfUnits()) != MAF_OK) return MAF_ERROR;
-		if (node->RestoreVectorN(_R("TubeYoungModulus"),m_TubeYoungModulus,GetNumberOfUnits()) != MAF_OK) return MAF_ERROR;
-		if (node->RestoreVectorN(_R("TubeDiameter"),m_TubeDiameter,GetNumberOfUnits()) != MAF_OK) return MAF_ERROR;
+		if (node->RestoreVectorN(_R("TubeInitialStretching"),m_TubeInitialStretching) != MAF_OK) return MAF_ERROR;
+		if (node->RestoreVectorN(_R("TubeFinalStretching"),m_TubeFinalStretching) != MAF_OK) return MAF_ERROR;
+		if (node->RestoreVectorN(_R("TubeYoungModulus"),m_TubeYoungModulus) != MAF_OK) return MAF_ERROR;
+		if (node->RestoreVectorN(_R("TubeDiameter"),m_TubeDiameter) != MAF_OK) return MAF_ERROR;
 	}
 
 
