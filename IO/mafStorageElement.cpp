@@ -605,13 +605,14 @@ int mafStorageElement::StoreInteger(const mafString& name,const int &value)
 int mafStorageElement::RestoreDouble(const mafString& name,double &value)
 //------------------------------------------------------------------------------
 {
-  mafString tmp;
-
-  if (RestoreText(name,tmp)==MAF_OK)
+  mafStorageElement* elem = FindNestedElement(name);
+  if (elem)
   {
-    value=atof(tmp.GetCStr());
-    return MAF_OK;
+    return elem->RestoreDouble(value);
   }
+
+  mafWarningMacro("Parse Error while parsing <" << GetName().GetCStr() << "> element: cannot find nested Storage element <" << name.GetCStr() << ">");
+
   return MAF_ERROR;
 }
 
@@ -647,12 +648,13 @@ int mafStorageElement::RestoreInteger(int &value)
 int mafStorageElement::RestoreInteger(const mafString& name,int &value)
 //------------------------------------------------------------------------------
 {
-  mafString tmp;
-  if (RestoreText(name,tmp)==MAF_OK)
+  mafStorageElement* elem = FindNestedElement(name);
+  if (elem)
   {
-    value=atof(tmp.GetCStr());
-    return MAF_OK;
+    return elem->RestoreInteger(value);
   }
+
+  mafWarningMacro("Parse Error while parsing <" << GetName().GetCStr() << "> element: cannot find nested Storage element <" << name.GetCStr() << ">");
 
   return MAF_ERROR;
 }
