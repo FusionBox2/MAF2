@@ -35,10 +35,10 @@ public:
   virtual ~mafXMLElement();
 
   /** Store a generic text into an XML document */
-  virtual int StoreText(const mafString& text);
+  virtual int StoreText(const mafString& text) override;
 
   /** Restore a generic text string from an XML document */
-  virtual int RestoreText(mafString &buffer);
+  virtual int RestoreText(mafString &buffer) override;
 
   /** Create a new XML child element and return its pointer.  */
   virtual mafStorageElement *AppendChild(const mafString& name);
@@ -47,17 +47,17 @@ public:
     Append an XML attribute to this element. Attribute 'name' and
     'value' must be passed as argument. This utility function takes care
     of string conversion problems. */
-  virtual void SetAttribute(const mafString& name,const mafString& value);
+  virtual void SetAttribute(const mafString& name,const mafString& value) override;
 
   /** 
     Return find an attribute given its name and return its value.
     Return false if not found. This function takes care of string
     conversion problems. */
-  virtual bool GetAttribute(const mafString& name,mafString &value);
+  virtual bool GetAttribute(const mafString& name,mafString &value) override;
 
 protected:
   /** Return the list of children. The list is created from DOM-Tree at the first access during restoring. */ 
-  virtual ChildrenVector &GetChildrenList();
+  virtual ChildrenVector &GetChildrenList() override;
 
   mmuXMLDOMElement *m_DOMElement; ///< XML element wrapped by this object (USING PIMPL due to Internal Compile errors of VS7)
 
