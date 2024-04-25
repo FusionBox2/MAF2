@@ -700,22 +700,11 @@ int mafMSFImporter::RestoreTagArray(mafStorageElement *node, mafTagArray *tarray
               titem.SetType(atof(tag_type.GetCStr()));
             }
 
-            mafStorageElement::ChildrenVector tag_comps;
-            tag_comps = children[i]->GetChildren();
-            int idx=0;
-            for (int n = 0;n<tag_comps.size();n++)
+            std::vector<mafString> tags;
+            children[i]->RestoreVectorN(tags, _R("TC"));
+            for (int n = 0;n<tags.size();n++)
             {
-              if (tag_comps[n]->GetName() == _R("TC"))
-              {
-                mafString tc;
-                tag_comps[n]->RestoreText(tc);
-                titem.SetComponent(tc,idx);
-                idx++;
-              }
-              else
-              {
-                mafErrorMacro("Error parning a TItem element inside a TagArray: expected <TC> sub element, found <"<<tag_comps[n]->GetName().GetCStr() <<">");
-              } 
+              titem.SetComponent(tags[n], n);
             } 
             tarray->SetTag(titem);
           } // Type

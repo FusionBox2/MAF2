@@ -78,23 +78,25 @@ public:
   int RestoreMatrix(mafMatrix *matrix);
   int RestoreVectorN(double *comps,unsigned int num);
   int RestoreVectorN(int *comps,unsigned int num);
-  int RestoreVectorN(std::vector<double> &comps);
-  int RestoreVectorN(std::vector<int> &comps);
   int RestoreVectorN(std::vector<mafString> &comps,const mafString& tag);
 
   virtual bool GetAttribute(const mafString& name,mafString &value)=0;
   virtual void SetAttribute(const mafString& name,const mafString& value)=0;
-  virtual int StoreText(const mafString &buffer)=0;
-  virtual int RestoreText(mafString &buffer)=0;
 
   int StoreDouble(const mafString& name,const double &value);
   int RestoreDouble(const mafString& name,double &value);
-  int RestoreDouble(double &value);
 
   int StoreInteger(const mafString& name, const int &value);
   int RestoreInteger(const mafString& name,int &value);
-  int RestoreInteger(int &value);
+protected:
+  virtual int StoreText(const mafString &buffer)=0;
+  virtual int RestoreText(mafString &buffer)=0;
+  int RestoreDouble(double& value);
+  int RestoreInteger(int& value);
+  int RestoreVectorN(std::vector<double> &comps);
+  int RestoreVectorN(std::vector<int> &comps);
   
+public:
   /**
     Function to try restoring a mafObject from a mafStorageElement. If the element has
     an attribute with name "Type", the function try to instantiate an object with the same

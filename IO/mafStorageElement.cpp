@@ -38,8 +38,7 @@ void InternalStoreVectorN(mafStorageElement *element,T *comps,size_t num,const c
   { 
     elements += mafToString(comps[i]) + _R(" ");
   }
-  mafStorageElement *vector_node=element->AppendChild(_R(name));
-  vector_node->StoreText(elements);
+  element->StoreText(_R(name), elements);
 }
 //------------------------------------------------------------------------------
 template <class T>
@@ -747,24 +746,14 @@ int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<mafStrin
 int mafStorageElement::RestoreVectorN(std::vector<mafString> &comps,const mafString& tag)
 //------------------------------------------------------------------------------
 {
-  mafString tag_name=tag;
-
-  // force children list creation
-  const ChildrenVector &children=this->GetChildren();
+  ChildrenVector children;
+  GetNestedElementsByName(tag, children);
 
   // to be rewritten as a map access
-  for (unsigned int i=0;i<children.size();i++)
+  for (size_t i=0;i<children.size();i++)
   {
     mafStorageElement *item_node=children[i];
-    if (tag_name==item_node->GetName())
-    {
-      item_node->RestoreText(comps[i]);
-    }
-    else
-    {
-      mafWarningMacro("Storage Parse Error while parsing <"<<GetName().GetCStr() <<"> item_node: wrong sub-element inside nested Storage element <"<<tag_name.GetCStr()<<">" );
-      return MAF_ERROR;
-    }
+    item_node->RestoreText(comps[i]);
   }
   return MAF_OK;
 }

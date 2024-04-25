@@ -150,26 +150,23 @@ int mafAttributeTraceability::InternalRestore(mafStorageElement *node)
   {
     m_Traceability traceability;
 
-    std::vector<mafStorageElement*> listTrialEvent;
-    node->GetNestedElementsByName(_R("TrialEvent"), listTrialEvent);
+    std::vector<mafStorageElement*> listTrialEventElems;
+    node->GetNestedElementsByName(_R("TrialEvent"), listTrialEventElems);
 
-    std::vector<mafStorageElement*> listOperation;
-    node->GetNestedElementsByName(_R("Operation"), listOperation);
-
-    std::vector<mafStorageElement*> listParameters;
-    node->GetNestedElementsByName(_R("Parameters"), listParameters);
-
-    std::vector<mafStorageElement*> listDate;
-    node->GetNestedElementsByName(_R("Date"), listDate);
-
-    std::vector<mafStorageElement*> listApplication;
-    node->GetNestedElementsByName(_R("Application"), listApplication);
-
-    std::vector<mafStorageElement*> listOperatorID;
-    node->GetNestedElementsByName(_R("OperatorID"), listOperatorID);
-
-    std::vector<mafStorageElement*> listIsNatural;
-    node->GetNestedElementsByName(_R("IsNatural"), listIsNatural);
+	std::vector<mafString> listTrialEvent(listTrialEventElems.size());
+    std::vector<mafString> listOperation(listTrialEventElems.size());
+	std::vector<mafString> listParameters(listTrialEventElems.size());
+	std::vector<mafString> listDate(listTrialEventElems.size());
+	std::vector<mafString> listApplication(listTrialEventElems.size());
+	std::vector<mafString> listOperatorID(listTrialEventElems.size());
+	std::vector<mafString> listIsNatural(listTrialEventElems.size());
+	node->RestoreVectorN(listTrialEvent, _R("TrialEvent"));
+    node->RestoreVectorN(listOperation, _R("Operation"));
+    node->RestoreVectorN(listParameters, _R("Parameters"));
+    node->RestoreVectorN(listDate, _R("Date"));
+    node->RestoreVectorN(listApplication, _R("Application"));
+    node->RestoreVectorN(listOperatorID, _R("OperatorID"));
+    node->RestoreVectorN(listIsNatural, _R("IsNatural"));
 
     try
     {
@@ -178,17 +175,17 @@ int mafAttributeTraceability::InternalRestore(mafStorageElement *node)
       {
         m_Traceability traceability;
 
-        listTrialEvent[i]->RestoreText(traceability.m_TrialEvent);
-        listOperation[i]->RestoreText(traceability.m_OperationName);
+        traceability.m_TrialEvent = listTrialEvent[i];
+        traceability.m_OperationName = listOperation[i];
         if (listParameters.size() > i)
-          listParameters[i]->RestoreText(traceability.m_Parameters);
-        listDate[i]->RestoreText(traceability.m_Date);
-        listApplication[i]->RestoreText(traceability.m_AppStamp);
-        listOperatorID[i]->RestoreText(traceability.m_OperatorID);
+            traceability.m_Parameters = listParameters[i];
+        traceability.m_Date = listDate[i];
+        traceability.m_AppStamp = listApplication[i];
+        traceability.m_OperatorID = listOperatorID[i];
         if (traceability.m_TrialEvent == _R("Create"))
         {
           //BES: 27.11.2008 - BUG FIX - listIsNatural can contain less items than listTrialEvent
-          listIsNatural[iCreateIdx++]->RestoreText(traceability.m_IsNatural);  
+            traceability.m_IsNatural = listIsNatural[iCreateIdx++];
         }
         m_TraceabilityVector.push_back(traceability);
       }
