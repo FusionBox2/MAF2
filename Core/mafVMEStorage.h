@@ -36,8 +36,6 @@ class mafNodeManager;
 class MAF_EXPORT mafVMEStorage: public mafStorage, public mafBaseEventHandler, public mafEventSender
 {
 public:
-  mafTypeMacro(mafVMEStorage,mafStorage)
-
   mafVMEStorage();
   virtual ~mafVMEStorage();
   

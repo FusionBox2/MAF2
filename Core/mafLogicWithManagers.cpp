@@ -1375,7 +1375,7 @@ bool mafLogicWithManagers::OnFileClose(bool force)
   }
   m_NodeManager->SetRoot(NULL);
   m_NodeManager->MSFModified(false);
-  mafDEL(m_Storage);
+  cppDEL(m_Storage);
   m_NodeManager->SetListener(this);
   VmeSelected(NULL);
   m_MSFFile.Clear();
@@ -1462,7 +1462,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
     const mafString& cache_folder = m_StorageSettings->GetCacheFolder();
     if (!mafDirExists(cache_folder))
       mafDirMake(cache_folder);
-    mafRemoteStorage *rs = mafRemoteStorage::New();
+    mafRemoteStorage *rs = new mafRemoteStorage;
     if(!rs)
       return false;
     rs->SetTmpFolder(cache_folder);
@@ -1491,7 +1491,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
       }
       return false;
     }
-    m_Storage = mafVMEStorage::New();
+    m_Storage = new mafVMEStorage;
   }
 
   if(!m_Storage)
@@ -1530,7 +1530,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
     {
       mafMessage(_M(mafString(_L("Bad or corrupted zmsf file!"))));
       m_NodeManager->SetListener(this);
-      mafDEL(m_Storage);
+      cppDEL(m_Storage);
       if(!m_TestMode) // Losi 02/16/2010 for test class
       {
         cppDEL(disableAll);
@@ -1550,7 +1550,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
   int res = m_Storage->Restore();
   if(res != mafStorage::IO_OK && res != mafStorage::IO_WRONG_OBJECT_TYPE)
   {
-    mafDEL(m_Storage);
+    cppDEL(m_Storage);
     m_NodeManager->SetListener(this);
     if(!m_TestMode) // Losi 02/16/2010 for test class
     {
@@ -1569,7 +1569,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
   {
     //Application stamp not valid
     mafMessage(_M(mafString(_L("File not valid for this application!"))));
-    mafDEL(m_Storage);
+    cppDEL(m_Storage);
     m_NodeManager->SetListener(this);
     m_NodeManager->SetRoot(NULL);
     if(!m_TestMode) // Losi 02/16/2010 for test class
@@ -1770,7 +1770,7 @@ bool mafLogicWithManagers::OnFileSaveAs()
 
   if(!m_Storage)
   {
-    m_Storage = mafVMEStorage::New();
+    m_Storage = new mafVMEStorage;
     if(!m_Storage)
       return false;
     m_Storage->SetListener(this);

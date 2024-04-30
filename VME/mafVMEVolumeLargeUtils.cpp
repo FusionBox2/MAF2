@@ -78,7 +78,7 @@
   }
 
   mafString szStr;
-  mafVMEStorage* storage = mafVMEStorage::SafeDownCast(e.GetStorage());
+  mafVMEStorage* storage = dynamic_cast<mafVMEStorage*>(e.GetStorage());
   if (storage == NULL)
     szStr = mafGetDirName(mafGetApplicationDirectory(), 
     _L("Select a folder for optimized volume files"));

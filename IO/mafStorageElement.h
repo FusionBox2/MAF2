@@ -158,8 +158,6 @@ protected:
   mafString                        m_Name; ///< Convenient copy of etagName
 
 private:
-  size_t ParseData(std::vector<double> &vector);
-  size_t ParseData(std::vector<int> &vector);
   size_t ParseData(double *vector,size_t size);
   size_t ParseData(int *vector,size_t size);
 };

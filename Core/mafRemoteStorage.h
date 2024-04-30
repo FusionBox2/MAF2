@@ -37,8 +37,7 @@ class mmdRemoteFileManager;
 class MAF_EXPORT mafRemoteStorage: public mafVMEStorage
 {
 public:
-  mafTypeMacro(mafRemoteStorage, mafVMEStorage)
-
+  using Superclass = mafVMEStorage;
   mafRemoteStorage();
   virtual ~mafRemoteStorage();
   

@@ -223,7 +223,7 @@ void mafVMEExternalData::InitializeCurrentPath()
 {
   mafEventIO e(this,NODE_GET_STORAGE);
   ForwardUpEvent(e);
-  mafVMEStorage *storage=mafVMEStorage::SafeDownCast(e.GetStorage());
+  mafVMEStorage *storage=dynamic_cast<mafVMEStorage*>(e.GetStorage());
   if (storage != NULL)
   {
     m_MSFPath = storage->GetURL();

@@ -113,9 +113,8 @@ int mafOpImporterMSF::ImportMSF()
   unixname.ParsePathName(); // convert to unix format
 
   m_MSFFile = unixname; 
-  mafVMEStorage *storage;
   mafNodeManager manager;
-  storage = mafVMEStorage::New();
+  auto storage = std::make_unique<mafVMEStorage>();
   storage->SetManager(&manager);
   storage->SetURL(m_File);
 
@@ -177,6 +176,5 @@ int mafOpImporterMSF::ImportMSF()
   m_Group->Update();
   m_Output = m_Group;
 
-  mafDEL(storage);
   return MAF_OK;
 }

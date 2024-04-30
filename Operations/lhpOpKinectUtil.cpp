@@ -205,9 +205,8 @@ namespace
     unixname.ParsePathName(); // convert to unix format
 
     m_MSFFile = unixname; 
-    mafVMEStorage *storage;
     mafNodeManager manager;
-    storage = mafVMEStorage::New();
+    auto storage = std::make_unique<mafVMEStorage>();
     storage->SetManager(&manager);
     storage->SetURL(m_MSFFile);
 
@@ -271,7 +270,6 @@ namespace
     }
     m_Group->Update();
     mafRemoveDirectory(m_TmpDir);
-    cppDEL(storage);
     return m_Group;
   }
 
