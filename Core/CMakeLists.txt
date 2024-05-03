@@ -15,8 +15,6 @@ SET(PROJECT_SRCS
   mafAttribute.h
   mafAttributeTraceability.cpp
   mafAttributeTraceability.h
-  mafCoreFactory.cpp
-  mafCoreFactory.h
   mafDataPipe.cpp
   mafDataPipe.h
   mafExpiration.h
