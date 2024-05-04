@@ -44,7 +44,8 @@
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-mafXMLParser::mafXMLParser()
+mafXMLParser::mafXMLParser(const mafString& filetype, const mafString& version)
+    : mafParser(filetype, version)
 //------------------------------------------------------------------------------
 {
   m_DOM = new mmuXMLDOM;

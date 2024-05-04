@@ -836,11 +836,7 @@ int mafInteractionManager::Store(const char *filename)
 //------------------------------------------------------------------------------
 {
   assert(filename);
-  mafXMLParser writer;
-  
-  // Multimod Interaction Settings file format
-  writer.SetFileType(_R("MIS"));
-  writer.SetVersion(MIS_VERSION);
+  mafXMLParser writer(_R("MIS"), MIS_VERSION);
 
   writer.SetURL(_R(filename));
   writer.SetDocument(this);
@@ -853,11 +849,7 @@ int mafInteractionManager::Restore(const char *filename)
 //------------------------------------------------------------------------------
 {
   assert(filename);
-  mafXMLParser reader;
-
-  // Multimod Interaction Settings file format
-  reader.SetFileType(_R("MIS"));
-  reader.SetVersion(MIS_VERSION);
+  mafXMLParser reader(_R("MIS"), MIS_VERSION);
 
   reader.SetURL(_R(filename));
   reader.SetDocument(this);

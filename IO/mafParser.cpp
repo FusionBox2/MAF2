@@ -13,13 +13,14 @@
 #include "mafParser.h"
 #include "mafStorable.h"
 
-mafParser::mafParser()
+mafParser::mafParser(const mafString& filetype, const mafString& version)
+	: m_FileType(filetype)
+	, m_Version(version)
 //------------------------------------------------------------------------------
 {
   m_Document        = NULL;
   m_NeedsUpgrade    = false;
   m_ErrorCode       = 0;
-  m_Version         = _R("1.1");
 }
 //------------------------------------------------------------------------------
 int mafParser::Store()

@@ -248,10 +248,8 @@ void mafAnimate::LoadPoseFromFile(const mafString &fileName)
   mafTagArray *newCam = new mafTagArray();
 
   // XML storage to restore
-  mafXMLParser restore;
+  mafXMLParser restore(_R("CAM"), _R("1.0"));
   restore.SetURL(fileName);
-  restore.SetFileType(_R("CAM"));
-  restore.SetVersion(_R("1.0"));
   restore.SetDocument(newCam);
   restore.Restore();
 
@@ -267,10 +265,8 @@ void mafAnimate::StorePoseToFile(const mafString &fileName)
   if(m_StoredPositions->GetNumberOfTags() == 0) return;
 
   // XML storage to restore
-  mafXMLParser restore;
+  mafXMLParser restore(_R("CAM"), _R("1.0"));
   restore.SetURL(fileName);
-  restore.SetFileType(_R("CAM"));
-  restore.SetVersion(_R("1.0"));
   restore.SetDocument(m_StoredPositions);
   restore.Store();
 }

@@ -216,9 +216,7 @@ void mafGUIApplicationLayoutSettings::SaveTreeLayout()
 void mafGUIApplicationLayoutSettings::InitializeSettings()
 //----------------------------------------------------------------------------
 {
-  m_Storage = std::make_unique<mafXMLParser>();
-  m_Storage->SetFileType(_R("MLY"));
-  m_Storage->SetVersion(_R("2.0"));
+  m_Storage = std::make_unique<mafXMLParser>(_R("MLY"), _R("2.0"));
   mafNEW(m_XMLRoot);
   m_XMLRoot->SetName(_R("ApplicationLayout"));
   m_XMLRoot->Initialize();

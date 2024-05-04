@@ -28,19 +28,8 @@ public:
 
   enum PARSER_IO_ERRORS {IO_OK=0,IO_GENERIC_ERROR,IO_WRONG_OBJECT_TYPE,IO_RESTORE_ERROR,IO_WRONG_FILE_TYPE,IO_WRONG_FILE_VERSION,IO_WRONG_URL,IO_LAST_ERROR};
 
-  mafParser();
+  mafParser(const mafString& filetype, const mafString& version);
   virtual ~mafParser() {}
-
-  /** The TAG identifying the type (i.e. format) of file. (e.g. "MSF") */
-  void SetFileType(const mafString& filetype){m_FileType = filetype;}
-  /** The TAG identifying the type (i.e. format) of file. (e.g. "MSF") */
-  const mafString& GetFileType(){return m_FileType;}
-
-  /** The version of the file format used type of file. (default "1.1") */
-  void SetVersion(const mafString& version){m_Version = version;}
-
-  /** The version of the file format used type of file. (default "1.1") */
-  const mafString& GetVersion(){return m_Version;}
 
   /** Set the URL of the document to be read or written */
   virtual void SetURL(const mafString& url){m_URL = url;}

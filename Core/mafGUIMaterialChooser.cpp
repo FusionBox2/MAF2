@@ -596,10 +596,8 @@ void mafGUIMaterialChooser::LoadLibraryFromFile()
   ClearList();
 
   // XML storage to restore
-  mafXMLParser restore;
+  mafXMLParser restore(_R("MAP"), _R("1.0"));
   restore.SetURL(m_Filename);
-  restore.SetFileType(_R("MAP"));
-  restore.SetVersion(_R("1.0"));
 
   mafStorableMaterialLibrary *mat_lib = new mafStorableMaterialLibrary(&m_List);
   restore.SetDocument(mat_lib);
@@ -622,10 +620,8 @@ void mafGUIMaterialChooser::StoreLibraryToFile()
 	if(m_List.empty()) return;
 
   // XML storage to restore
-  mafXMLParser restore;
+  mafXMLParser restore(_R("MAP"), _R("1.0"));
   restore.SetURL(m_Filename);
-  restore.SetFileType(_R("MAP"));
-  restore.SetVersion(_R("1.0"));
 
   mafStorableMaterialLibrary *mat_lib = new mafStorableMaterialLibrary(&m_List);
   restore.SetDocument(mat_lib);

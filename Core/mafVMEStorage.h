@@ -38,15 +38,10 @@ class MAF_EXPORT mafVMEStorage: public mafStorage, public mafBaseEventHandler, p
 public:
   mafVMEStorage();
   virtual ~mafVMEStorage();
-  
-  mafNodeManager *GetManager();
 
   void SetManager(mafNodeManager *manager);
 
   /** process events coming from tree */
   virtual void OnEvent(mafEventBase *e);
-
-protected:  
-  mafNodeManager    *m_NodeManager; ///< the VME root node
 };
 #endif // _mafVMEStorage_h_

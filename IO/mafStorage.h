@@ -52,7 +52,7 @@ public:
 
   enum STORAGE_IO_ERRORS {IO_OK=0,IO_GENERIC_ERROR,IO_WRONG_OBJECT_TYPE,IO_RESTORE_ERROR,IO_WRONG_FILE_TYPE,IO_WRONG_FILE_VERSION,IO_WRONG_URL,IO_LAST_ERROR};
 
-  mafStorage();
+  mafStorage(const mafString& filetype, const mafString& version);
   virtual ~mafStorage();
 
   /** Set the URL of the document to be read or written */

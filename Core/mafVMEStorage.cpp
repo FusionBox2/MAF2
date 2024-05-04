@@ -25,12 +25,9 @@
 
 //------------------------------------------------------------------------------
 mafVMEStorage::mafVMEStorage()
+	: mafStorage(_R("MSF"), _R("2.2"))
 //------------------------------------------------------------------------------
 {
-  m_NodeManager = NULL;
-  m_Parser->SetVersion(_R("2.2"));
-  m_Parser->SetFileType(_R("MSF"));
-  m_Parser->SetDocument(m_NodeManager); // create a MSF doc and set the root node
 }
 
 //------------------------------------------------------------------------------
@@ -44,19 +41,11 @@ mafVMEStorage::~mafVMEStorage()
 void mafVMEStorage::SetManager(mafNodeManager *manager)
 //------------------------------------------------------------------------------
 {
-  if(m_NodeManager)
-    m_NodeManager->SetListener(NULL);
-  m_NodeManager = manager;
-  if(m_NodeManager)
-    m_NodeManager->SetListener(this);
-  if(m_Parser)
-    m_Parser->SetDocument(m_NodeManager);
-}
-//------------------------------------------------------------------------------
-mafNodeManager *mafVMEStorage::GetManager()
-//------------------------------------------------------------------------------
-{
-  return m_NodeManager;
+  if(auto currentManager = static_cast<mafNodeManager*>(GetDocument()))
+    currentManager->SetListener(NULL);
+  if(manager)
+    manager->SetListener(this);
+  SetDocument(manager);
 }
 
 //------------------------------------------------------------------------------

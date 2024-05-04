@@ -20,13 +20,13 @@
 #include "mafXMLParser.h"
 
 //------------------------------------------------------------------------------
-mafStorage::mafStorage()
+mafStorage::mafStorage(const mafString& filetype, const mafString& version)
 //------------------------------------------------------------------------------
 {
   m_TmpFileId       = 0;
   m_ErrorCode       = 0;
   m_TmpFolder       = mafWxToString(wxGetCwd());
-  m_Parser          = std::make_unique<mafXMLParser>();
+  m_Parser          = std::make_unique<mafXMLParser>(filetype, version);
 }
 
 //------------------------------------------------------------------------------
