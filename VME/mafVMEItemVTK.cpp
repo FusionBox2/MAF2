@@ -385,7 +385,7 @@ int mafVMEItemVTK::ReadData(mafString &filename, int resolvedURL)
 //-------------------------------------------------------------------------
 {
   vtkDataSet *data;
-  vtkDataReader *reader;
+  vtkDataSetReader *reader;
 
   const mafString& datatype = GetDataType();
 
@@ -402,46 +402,9 @@ int mafVMEItemVTK::ReadData(mafString &filename, int resolvedURL)
 #endif
     }
 
-    // Workaround for double read bug of the vtkDataSetReader class
-    // Read immediately the data and destroy the reader to close the input file
-    if (datatype == _R("vtkPolyData"))
-    {
-      reader = vtkPolyDataReader::New();
-      UpdateReader(reader, filename);
-      data = ((vtkPolyDataReader *)reader)->GetOutput();
-    }
-    else if (datatype == _R("vtkStructuredPoints") || datatype == _R("vtkImageData"))
-    {
-      reader = vtkStructuredPointsReader::New();
-      UpdateReader(reader, filename);
-      data = ((vtkStructuredPointsReader *)reader)->GetOutput();
-    }
-    else if (datatype == _R("vtkStructuredGrid"))
-    {
-      reader = vtkStructuredGridReader::New();
-      UpdateReader(reader, filename);
-      data = ((vtkStructuredGridReader *)reader)->GetOutput();
-    }
-    else if (datatype == _R("vtkRectilinearGrid"))
-    {
-      reader = vtkRectilinearGridReader::New();
-      UpdateReader(reader, filename);
-      data = ((vtkRectilinearGridReader *)reader)->GetOutput();
-    }
-    else if (datatype == _R("vtkUnstructuredGrid"))
-    {
-      reader = vtkUnstructuredGridReader::New();
-      UpdateReader(reader, filename);
-      data = ((vtkUnstructuredGridReader *)reader)->GetOutput();
-    }
-    else
-    {
-      // using generic vtkDataSet reader...
-      mafWarningMacro("Unknown data type, using generic VTK dataset reader");
-      reader = vtkDataSetReader::New();
-      UpdateReader(reader, filename);
-      data = ((vtkDataSetReader *)reader)->GetOutput();
-    }
+    reader = vtkDataSetReader::New();
+    UpdateReader(reader, filename);
+	data = reader->GetOutput();
 
     //BES: 23.5.2008 - m_DataReader is apparently not necessary, however,
     //it may consume lot of memory (especially, if the data is loaded from memory)
