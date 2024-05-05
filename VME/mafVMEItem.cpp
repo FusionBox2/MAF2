@@ -25,10 +25,7 @@
 
 
 #include "mafVMEItem.h"
-#include <wx/zipstrm.h>
-#include <wx/zstream.h>
-#include <wx/wfstream.h>
-#include <wx/fs_zip.h>
+#include "mafFilesDirs.h"
 
 #include "mafVMERoot.h"
 #include "mafTagArray.h"
@@ -314,36 +311,14 @@ int mafVMEItem::RestoreData()
 int mafVMEItem::ExtractFileFromArchive(mafString &archive_fullname, mafString &item_file)
 //-------------------------------------------------------------------------
 {
-  wxFileInputStream in(archive_fullname.toWx());
-  wxZipInputStream zip(in);
-  if (!in || !zip)
-    return MAF_ERROR;
-  wxZipEntry *entry = NULL;
-  // convert the local name we are looking for into the internal format
-  wxString name = wxZipEntry::GetInternalName(item_file.toWx());
-
-  // call GetNextEntry() until the required internal name is found
-  // to be re-factored for efficiency reasons.
-  do 
+  void* buffer = nullptr;
+  size_t size = 0;
+  if (!mafExtractZIP(archive_fullname, item_file, buffer, size))
   {
-    if (entry)
-    {
-      delete entry;
-      entry = NULL;
-    }
-    entry = zip.GetNextEntry();
-  } while(entry != NULL && entry->GetInternalName() != name);
-
-  if (entry != NULL) 
-  {
-    // read the entry's data...
-    m_InputMemorySize = entry->GetSize();
-    m_InputMemory = new char[m_InputMemorySize];
-    zip.Read((char *)m_InputMemory, m_InputMemorySize);
-    delete entry;
-    entry = NULL;
+      return MAF_ERROR;
   }
-  
+  m_InputMemorySize = size;
+  m_InputMemory = (const char*)buffer;
   return MAF_OK;
 }
 

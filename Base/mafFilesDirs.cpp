@@ -314,12 +314,12 @@ void mafOpenZIP(const mafString& filename, const mafString& temp_directory)
   cppDEL(zipHandler);
   cppDEL(fileSystem);
 }
-void mafExtractZIP(const mafString& filename, const mafString& entry_name, void *& buffer, size_t& size)
+bool mafExtractZIP(const mafString& filename, const mafString& entry_name, void *& buffer, size_t& size)
 {
   wxFileInputStream in(filename.toWx());
   wxZipInputStream zip(in);
   if (!in || !zip)
-    return;
+    return false;
   wxZipEntry *entry = NULL;
   // convert the local name we are looking for into the internal format
   wxString name = wxZipEntry::GetInternalName(entry_name.toWx());
@@ -344,6 +344,7 @@ void mafExtractZIP(const mafString& filename, const mafString& entry_name, void 
     delete entry;
     entry = NULL;
   }
+  return true;
 }
 
 //----------------------------------------------------------------------------
