@@ -175,7 +175,7 @@ void medOpExporterMeters::OpDo()
   mafString wildc = _R("configuration file (*.txt)|*.txt");
   m_File = mafGetSaveFile(initialFileName, wildc);
   m_FileCSV = m_File;
-  m_FileCSV.Erase(m_File.Length() - 4, m_FileCSV.Length() - 1);
+  m_FileCSV.Erase(m_File.length() - 4, m_FileCSV.length() - 1);
   m_FileCSV.append(_R(".csv"));
 
   if (m_File.empty() || m_FileCSV.empty()) return;

@@ -170,7 +170,7 @@ int mafVMEDataSetAttributesImporter::Read()
   std::string genericFileName = *fileNamesVectorIterator;
 
   // remove the prefix from the string
-  genericFileName.erase(0, m_FilePrefix.Length());
+  genericFileName.erase(0, m_FilePrefix.length());
 
   // get the number of characters composing the increasing index
   int indNumChar = genericFileName.find(m_FileExtension[0]);

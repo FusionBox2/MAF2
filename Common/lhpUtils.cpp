@@ -25,7 +25,7 @@ mafString lhpUtils::lhpGetApplicationDirectory()
              // DEBUG
              mafString sourceDir = _R(LHP_SOURCE_DIR);
 
-             for (unsigned int i=0;i<sourceDir.Length();i++)
+             for (unsigned int i=0;i<sourceDir.length();i++)
              {
                if (sourceDir[i]=='/')
                  sourceDir[i]='\\';

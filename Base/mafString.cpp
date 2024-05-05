@@ -65,10 +65,17 @@ int mafString::Replace(const mafString& s1, const mafString& s2, bool replaceAll
 #endif
 
 //----------------------------------------------------------------------------
-const mafID mafString::Length() const
+size_t mafString::length() const
 //----------------------------------------------------------------------------
 {
     return m_str.length();
+}
+
+//----------------------------------------------------------------------------
+size_t mafString::size() const
+//----------------------------------------------------------------------------
+{
+	return m_str.size();
 }
 
 //----------------------------------------------------------------------------
@@ -89,7 +96,7 @@ void mafString::NCopy(const mafString& str, int n)
 void mafString::Erase(int start, int end)
 //----------------------------------------------------------------------------
 {
-    int len = Length();
+    int len = length();
     if (end == -1 || end >= len)
         end = len - 1;
     if (start > end || end < 0)
@@ -328,14 +335,14 @@ void mafString::ParsePathName()
         return;
     // for Windows platforms parse the string to substitute "/" and "\\" with the right one.
 #ifdef _WIN32
-    mafID length = Length();
+    size_t len = length();
     unsigned start = 0;
-    if (length >= 2)
+    if (len >= 2)
     {
         if (m_str[0] == '\\' && m_str[1] == '\\')
             start = 2;
     }
-    for (unsigned int i = start; i < length; i++)
+    for (size_t i = start; i < len; i++)
     {
         if (m_str[i] == '\\')
             m_str[i] = '/';

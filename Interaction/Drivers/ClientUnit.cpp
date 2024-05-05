@@ -99,7 +99,7 @@ void ClientUnit::SendMessageToServer(mafString &cmd)
 
   //m_sock->SetFlags(wxSOCKET_WAITALL);
   msg1 = (const char *)cmd.GetCStr();
-  len  = cmd.Length() + 1;
+  len  = cmd.length() + 1;
 
   m_sock->Write(msg1, len);
   m_sock->Discard();

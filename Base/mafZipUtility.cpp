@@ -47,7 +47,7 @@ std::vector<mafString> ZIPOpen(const mafString& file)
 
   mafString pkg = _R("#zip:");
   mafString header_name = complete_name + pkg;
-  int length_header_name = header_name.Length();
+  int length_header_name = header_name.length();
   bool enable_mid = false;
 
   std::unique_ptr<wxZipEntry> entry;

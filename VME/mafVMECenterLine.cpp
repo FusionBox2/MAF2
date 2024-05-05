@@ -1828,7 +1828,7 @@ void mafVMECenterLine::OnEvent(mafEventBase *maf_event)
 
 
 
-		FBaseName.Erase(FBaseName.Length() - 4);
+		FBaseName.Erase(FBaseName.length() - 4);
 
 
 
@@ -1906,7 +1906,7 @@ void mafVMECenterLine::InternalUpdate()
 //-----------------------------------------------------------------------
 {
 	FBaseName = m_File;
-	FBaseName.Erase(FBaseName.Length()-4);
+	FBaseName.Erase(FBaseName.length()-4);
 
 
 	UpdateLinks();

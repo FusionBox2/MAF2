@@ -1339,7 +1339,7 @@ int medOpImporterRAWImages::GetFileLength(const char * filename)
 void medOpImporterRAWImages::OnStringPrefix() 
 //----------------------------------------------------------------------------
 {
-  int length = m_Prefix.Length();
+  int length = m_Prefix.length();
   m_NumberSlices = 0;
   for( int i = 0; i < m_NumberFile; i++)
   {

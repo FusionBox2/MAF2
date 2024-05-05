@@ -196,7 +196,7 @@ void medOpExporterLandmark::ExportOneCloud(std::ostream &out, mafVMELandmarkClou
   {
     int lc;
     lmName = cloud->GetLandmarkName(j);
-    lc = lmName.Length();
+    lc = lmName.length();
     if(nmLength < lc)
       nmLength = lc;
   }
@@ -239,7 +239,7 @@ void medOpExporterLandmark::ExportOneCloud(std::ostream &out, mafVMELandmarkClou
         else
           cloud->GetLandmarkPosition(j, pos, t);*/
         out << lmName.GetCStr();
-        int curL = lmName.Length();
+        int curL = lmName.length();
         for (int i = 0; i < nmLength - curL; i++)
         {
           out << " ";
@@ -295,7 +295,7 @@ void medOpExporterLandmark::ExportOneCloud(std::ostream &out, mafVMELandmarkClou
       else
       cloud->GetLandmarkPosition(j, pos, t);*/
       out << lmName.GetCStr();
-      int curL = lmName.Length();
+      int curL = lmName.length();
       for (int i = 0; i < nmLength - curL; i++)
       {
         out << " ";

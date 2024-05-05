@@ -277,7 +277,7 @@ void mafUser::UpdateUserCredentialsFile()
     credentials += mafToString(m_ProxyFlag);
 #ifdef MAF_USE_CRYPTO
     bool encrypt_success = false;
-    encrypt_success = mafDefaultEncryptFileFromMemory(credentials.GetCStr(), credentials.Length(), m_UserInfoFile.GetCStr());
+    encrypt_success = mafDefaultEncryptFileFromMemory(credentials.GetCStr(), credentials.length(), m_UserInfoFile.GetCStr());
     if (!encrypt_success)
     {
       mafLogMessage(_M(mafString(_L("Error on Encryption!!"))));

@@ -162,7 +162,7 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
   wxZlibInputStream *zip_is;
   mafString pkg = _R("#zip:");
   mafString header_name = complete_name + pkg;
-  int length_header_name = header_name.Length();
+  int length_header_name = header_name.length();
   bool enable_mid = false;
 
   fileSystem->ChangePathTo(filename.toWx());
@@ -255,7 +255,7 @@ void mafOpenZIP(const mafString& filename, const mafString& temp_directory)
   wxZlibInputStream *zip_is;
   mafString pkg = _R("#zip:");
   mafString header_name = complete_name + pkg;
-  int length_header_name = header_name.Length();
+  int length_header_name = header_name.length();
   bool enable_mid = false;
   if(fileSystem == NULL)
     fileSystem = new wxFileSystem();

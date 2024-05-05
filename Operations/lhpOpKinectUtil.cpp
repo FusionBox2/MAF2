@@ -632,7 +632,7 @@ namespace
 
     strm << "Dir_Name_Data = '"; 
 
-    for(int i = 0; i < kinectDirName.Length(); i++)
+    for(int i = 0; i < kinectDirName.length(); i++)
     {
       if(kinectDirName[i] == '/')
         strm << '\\';
@@ -645,7 +645,7 @@ namespace
     strm << "%%%%% ===========================================" << endl;
     strm << "Dir_Name_Results = '";
 
-    for(int i = 0; i < outKinectDirName.Length(); i++)
+    for(int i = 0; i < outKinectDirName.length(); i++)
     {
       if(outKinectDirName[i] == '/')
         strm << '\\';

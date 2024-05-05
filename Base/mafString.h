@@ -92,7 +92,9 @@ public:
 #endif
     
   /** This method returns the size of this string. */
-  const mafID Length() const;
+  size_t length() const;
+
+  size_t size() const;
 
   /** Copy N characters of another string to this string.*/
   void NCopy(mafStrBuf src, int n);

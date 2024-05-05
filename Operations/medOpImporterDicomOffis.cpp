@@ -2723,7 +2723,7 @@ void medOpImporterDicomOffis::ReadDicom()
 	}
 
 	int tmp = m_PatientName.FindChr('^');
-	if(tmp != -1 && tmp >= 0 && tmp < m_PatientName.Length())
+	if(tmp != -1 && tmp >= 0 && tmp < m_PatientName.length())
 		m_PatientName[tmp] = ' ';
 }
 

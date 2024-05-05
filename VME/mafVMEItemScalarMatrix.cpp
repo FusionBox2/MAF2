@@ -476,7 +476,7 @@ int mafVMEItemScalarMatrix::InternalStoreData(const char *url)
         else
         {
           m_OutputMemory = m_DataString.GetCStr();
-          m_OutputMemorySize = m_DataString.Length();
+          m_OutputMemorySize = m_DataString.length();
         }
       }
       else

@@ -267,7 +267,7 @@ bool lhpOpKinectModel::Import()
 
   mafString path, nameext;
   mafSplitPath(m_ExtAppPath, &path, &nameext);
-  size_t length = path.Length();
+  size_t length = path.length();
   if(length != 0 && path[length - 1] != '/' && path[length - 1] != '\\')
     path += _R("/");
 

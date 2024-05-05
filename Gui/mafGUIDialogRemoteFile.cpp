@@ -210,7 +210,7 @@ void mafGUIDialogRemoteFile::RemoteFileBrowsing()
       remoteMsf = tkz.GetNextToken();
       if (remoteMsf.Find(m_Host.GetCStr()) != -1)
       {
-        remoteMsf = remoteMsf.SubString(m_Host.Length(),remoteMsf.Length());
+        remoteMsf = remoteMsf.SubString(m_Host.length(),remoteMsf.Length());
         if (remoteMsf.Find(':') == 0)
         {
           remoteMsf = remoteMsf.SubString(port.Length()+1,remoteMsf.Length());

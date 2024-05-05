@@ -1733,7 +1733,7 @@ bool mafLogicWithManagers::OnFileSaveAs()
   {
     mafString path, name, ext, file_dir;
     mafSplitPath(file,&path,&name,&ext);
-    size_t length = path.Length();
+    size_t length = path.length();
     if(length > 0 && path[length - 1] != '\\' && path[length - 1] != '/')
       file_dir = path + _R("/");
     file_dir = path + _R("/") + name;
