@@ -403,14 +403,14 @@ mafString mafString::Format(mafStrBuf format, ...)
 }
 
 //----------------------------------------------------------------------------
-char& mafString::operator [] (const int i)
+mafStringChar& mafString::operator [] (const int i)
 //----------------------------------------------------------------------------
 {
     return m_str[i];
 }
 
 //----------------------------------------------------------------------------
-const char mafString::operator [] (const int i) const
+const mafStringChar mafString::operator [] (const int i) const
 //----------------------------------------------------------------------------
 {
     return m_str[i];
