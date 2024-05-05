@@ -632,14 +632,14 @@ void medOpMakeVMETimevarying::Execute()
   mafMatrix * lastVmeMatrix = NULL;
 
   //Fill VME's DataVector and MatrixVector
-  for(auto AddedVMEsIter = m_AddedVMEs.begin();AddedVMEsIter != m_AddedVMEs.end();AddedVMEsIter++)
+  for(auto& AddedVME : m_AddedVMEs)
   {
     //Data changes
     mafVMEItemVTK * vmeItem;
     mafNEW(vmeItem);
-    vmeItem->SetData((* AddedVMEsIter)->m_VME->GetOutput()->GetVTKData());
+    vmeItem->SetData(AddedVME->m_VME->GetOutput()->GetVTKData());
 
-    vmeItem->SetTimeStamp((mafTimeStamp)(* AddedVMEsIter)->m_TimeStamp);
+    vmeItem->SetTimeStamp((mafTimeStamp)AddedVME->m_TimeStamp);
     if(lastVmeItem == NULL)
     {
       mafNEW(lastVmeItem);
@@ -648,7 +648,7 @@ void medOpMakeVMETimevarying::Execute()
     }
     else
     {
-      lastVmeItem->SetTimeStamp((mafTimeStamp)(* AddedVMEsIter)->m_TimeStamp);
+      lastVmeItem->SetTimeStamp((mafTimeStamp)AddedVME->m_TimeStamp);
       //Todo: Add conditions on vme type
       lastVmeItem->GlobalCompareDataFlagOn();//For volumes and meshes must compare scalar values
       vmeItem->GlobalCompareDataFlagOn();
@@ -663,8 +663,8 @@ void medOpMakeVMETimevarying::Execute()
     //Matrix changes
     mafMatrix * vmeMatrix;
     mafNEW(vmeMatrix);
-    vmeMatrix->DeepCopy((* AddedVMEsIter)->m_VME->GetOutput()->GetMatrix());
-    vmeMatrix->SetTimeStamp((mafTimeStamp)(* AddedVMEsIter)->m_TimeStamp);
+    vmeMatrix->DeepCopy(AddedVME->m_VME->GetOutput()->GetMatrix());
+    vmeMatrix->SetTimeStamp((mafTimeStamp)AddedVME->m_TimeStamp);
     if(lastVmeMatrix==NULL)
     {
       mafNEW(lastVmeMatrix);
@@ -673,7 +673,7 @@ void medOpMakeVMETimevarying::Execute()
     }
     else
     {
-      lastVmeMatrix->SetTimeStamp((mafTimeStamp)(* AddedVMEsIter)->m_TimeStamp);
+      lastVmeMatrix->SetTimeStamp((mafTimeStamp)AddedVME->m_TimeStamp);
       if(!lastVmeMatrix->Equals(vmeMatrix))
       {
          m_VMETimevarying->GetMatrixVector()->SetMatrix(vmeMatrix);
